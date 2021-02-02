@@ -1,0 +1,15 @@
+{
+  "required": true,
+  "package": "jackiecrazy.wardance.mixin",
+  "compatibilityLevel": "JAVA_8",
+  "refmap": "caelus.refmap.json",
+  "mixins": [
+    "MixinOffhandAttack"
+  ],
+  "client": [
+  ],
+  "injectors": {
+    "defaultRequire": 1
+  },
+  "minVersion": "0.8"
+}
