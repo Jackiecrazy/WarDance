@@ -6,6 +6,7 @@ import jackiecrazy.wardance.capability.DummyCombatCap;
 import jackiecrazy.wardance.capability.ICombatCapability;
 import net.minecraft.block.Block;
 import net.minecraft.block.Blocks;
+import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.capabilities.CapabilityManager;
 import net.minecraftforge.event.RegistryEvent;

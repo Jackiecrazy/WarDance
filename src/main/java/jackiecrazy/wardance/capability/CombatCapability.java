@@ -5,6 +5,8 @@ import net.minecraft.entity.ai.attributes.AttributeModifier;
 import net.minecraft.entity.ai.attributes.Attributes;
 import net.minecraft.util.Hand;
 import net.minecraft.util.math.MathHelper;
+import net.minecraftforge.common.capabilities.Capability;
+import net.minecraftforge.common.capabilities.CapabilityInject;
 
 import java.lang.ref.WeakReference;
 import java.util.UUID;

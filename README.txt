@@ -1,21 +1,14 @@
 Project: War Dance is Taoism Lite, adding the mechanics without the weapons.
-    Posture: a stat that quantifies how steady the player is on his feet. Stamina and poise
-rolled into one if you play souls-likes, but actually heavily inspired by Sekiro and DMC.
-- Max posture is calculated by (width*height*5*(1+armor/20)), so a player starts with
-10 posture and can gain up to double by wearing diamond armor.
-- Being attacked consumes posture regardless of parry. This makes parrying
-unequivocably the best option, since you’ll be taking posture damage either way.
-- Posture recovers quickly when not attacking, but has a 1s cooldown after being
-consumed. At full HP, standing still naked, you heal 20 posture per second.
+    Posture: a stat that quantifies how steady the player is on his feet. Stamina and poise rolled into one if you play souls-likes, but actually heavily inspired by Sekiro and DMC.
+- Max posture is calculated by (width*height*5*(1+armor/20)), so a player starts with 10 posture and can gain up to double by wearing diamond armor.
+- Being attacked consumes posture regardless of parry. This makes parrying unequivocably the best option, since you’ll be taking posture damage either way.
+- Posture recovers quickly when not attacking, but has a 1s cooldown after being consumed. At full HP, standing still naked, you heal 20 posture per second.
 - Armor will decrease regeneration speed down to 0.7x. This offers an anti-tank option.
-- Moving slows posture regen down by 7% per block per second, so regeneration is
-roughly 70% while walking and 60% while sprinting.
+- Moving slows posture regen down by 7% per block per second, so regeneration is roughly 70% while walking and 60% while sprinting.
 - Regeneration also is multiplied by your current health percentage.
 - Posture will not regenerate while rolling or attacking; chanting does not affect it.
-- This means that while weight plays a factor (49%), the real deal-breaker is health.
-Defeating an enemy requires wearing down their health to make staggering easier.
-- At 0 posture the entity is knocked back and staggered, taking 1.5x damage and
-losing 5 armor. The entity cannot perform any action during this time. The stagger ends after 0.5s(+%missing hp*3) or after taking physical damage thrice. Posture regenerates during stagger, so the entity doesn’t get stun-locked.
+- This means that while weight plays a factor (49%), the real deal-breaker is health. Defeating an enemy requires wearing down their health to make staggering easier.
+- At 0 posture the entity is knocked back and staggered, taking 1.5x damage and losing 5 armor. The entity cannot perform any action during this time. The stagger ends after 0.5s(+%missing hp*3) or after taking physical damage thrice. Posture regenerates during stagger, so the entity doesn’t get stun-locked.
 Combo: continuous attacks will improve your combat efficacy... just don’t get interrupted. Heavily inspired by DMC, Scourgebringer and other action games.
 - Combo is gained by a buildup bar, taking about 5 normal attacks to gain a tier.
 - The bar increases from any attack, whether they were parried or not.
@@ -68,17 +61,16 @@ Spells and skills: hit stuff so you can hit harder!
 - Skills can be augmented by items/runes that add or modify behavior, see example.
 - Instant casts are usually things that act with yourself as center, and are cast just by moving the mouse over the pie slice in the selection. Failure to use effects of a bolstering skill will refund half charge rounded up, without resetting others. These three are chosen to be packaged into the base API due to their general applicability:
 
-▪ Enhanced blow: the next attack in 2 seconds guarantees a crit when dealing damage, and disables the parrying hand if parried. Recharge in 3 attacks, weapon bound.
-Shatter: mark hit enemies, causing next 2 attacks to deal 1.5x damage; stagger: deal equivalent posture and 1.2s slow; lunge: range+2 and dash forward; poise: 1 free parry for 2 seconds after the attack; introspect: instantly gain a combo tier.
-▪ Enhanced parry: the next parry in 1 second (particles) reflects the posture damage onto attacker. If the attack was ranged, the shot is reflected back at the caster. Cancels out with enhanced blow. Recharge in 5 attacks, weapon bound.
-Overpower: knockback reflected to attacker; grapple: slow attacker by 40% and disable hand; backpedal: all posture cost converted to knockback; recovery: reset cooldown of all resources; second wind: +2 free posture/s for 5 seconds.
+▪ Heavy blow: the next attack in 2 seconds guarantees a crit when dealing damage, and disables the parrying hand if parried. Recharge in 3 attacks, weapon bound.
+Shatter: mark hit enemies, causing next 2 attacks to deal 1.5x damage; stagger: deal equivalent posture and 0.8s slow; lunge: range+2 and dash forward; poise: free parries until attack; resolve: double resource regen speed for 2 seconds.
+▪ Iron guard: the next parry in 1 second (particles) reflects the posture damage onto attacker. If the attack was ranged, the shot is reflected back at the caster. Cancels out with heavy blow. Recharge in 5 attacks, weapon bound.
+Overpower: knockback reflected to attacker; grapple: slow attacker by 40% and disable hand; backpedal: all posture cost converted to knockback; recovery: reset cooldown of all resources; mikiri: cooldown -1, auto trigger.
 ▪ Kick: the next attack in 2 seconds has 2 range but deals 6 unblockable posture damage and 1 blockable falling damage. Recharge in 5 attacks, self bound.
-Backflip: jump back and gain 30% lost posture; tackle: dashes and kicks first entity collided; iron knee: knockback converted to posture damage; trip: apply 3 seconds of 40% decaying slow; overextend: double damage but deal half to self.
+Backflip: jump back and gain 30% lost posture; tackle: dashes and kicks first entity collided; iron knee: knockback converted to extra posture damage; trip: fatigue for double the cooldown time; overextend: double damage but deal half to self.
 - Bound casts are chosen, then bound to the attack key in combat mode. Casting them generally requires chanting, but they’re more powerful. As expected, items can have different spells bound to them, or even just have a magic missile as its normal attack. This also enables throwable weapons (such as poison sand or daggers) to be used as melee. There should be an interface for such items. Only two bound skills are included as examples. Chanting can be interrupted by taking damage, using a breath weapon, asphyxiating, eating, drinking, or chanting something else.
 ▪ Phantom strike: after 0.6s of chanting, launch a shadow of your weapon, dealing a normal attack on impact. Cost 2 qi, range 16.
-Warp: light gravity, teleport to hit location; crush: triple size but half speed and range, clips through blocks and pierces, slow for 3 seconds; heartseeker: gain 1 per 2s and retain up to 5, released automatically with tracking on melee attack; vengeance: ricochet up to 5 times between enemies; trap: only fires when someone crosses its LoS in 10 blocks.
-▪ Fighting spirit: passive available until active cast ends, then can only be
-recharged by sleeping or after 2 minutes have elapsed. Genies from some game.
+Warp: light gravity, teleport to hit location; crush: triple size and damage but half speed and range, clips and pierces; hamstring: slow target by 40% for 2 seconds; vengeance: ricochet up to 5 times between enemies; trap: only fires when someone crosses its LoS in 10 blocks.
+▪ Fighting spirit: passive available until active cast ends, then can only be recharged by sleeping or after 2 minutes have elapsed. Genies from some game.
 Name
  Active
  Passive
