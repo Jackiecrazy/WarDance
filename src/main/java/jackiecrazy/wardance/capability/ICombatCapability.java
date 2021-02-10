@@ -1,5 +1,6 @@
 package jackiecrazy.wardance.capability;
 
+import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.util.Hand;
 
 public interface ICombatCapability {
@@ -26,7 +27,7 @@ public interface ICombatCapability {
 
     void setQiGrace(int amount);
 
-    void decrementQiGrace(int amount);
+    int decrementQiGrace(int amount);
 
     float getSpirit();
 
@@ -44,7 +45,7 @@ public interface ICombatCapability {
 
     void setSpiritGrace(int amount);
 
-    void decrementSpiritGrace(int amount);
+    int decrementSpiritGrace(int amount);
 
     float getPosture();
 
@@ -62,7 +63,7 @@ public interface ICombatCapability {
 
     void setPostureGrace(int amount);
 
-    void decrementPostureGrace(int amount);
+    int decrementPostureGrace(int amount);
 
     float getCombo();
 
@@ -96,13 +97,13 @@ public interface ICombatCapability {
 
     void setComboGrace(int amount);
 
-    void decrementComboGrace(int amount);
+    int decrementComboGrace(int amount);
 
     int getStaggerTime();
 
     void setStaggerTime(int amount);
 
-    void decrementStaggerTime(int amount);
+    int decrementStaggerTime(int amount);
 
     int getStaggerCount();
 
@@ -153,4 +154,10 @@ public interface ICombatCapability {
     void setHandBind(Hand h, int amount);
 
     void decrementHandBind(Hand h, int amount);
+
+    void update();
+
+    void read(CompoundNBT tag);
+
+    CompoundNBT write();
 }

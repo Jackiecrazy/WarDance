@@ -1,6 +1,10 @@
 package jackiecrazy.wardance.capability;
 
+import net.minecraft.nbt.CompoundNBT;
+import net.minecraft.util.Hand;
+
 public class DummyCombatCap implements ICombatCapability{
+
 
     @Override
     public float getQi() {
@@ -33,8 +37,8 @@ public class DummyCombatCap implements ICombatCapability{
     }
 
     @Override
-    public void decrementQiGrace(int amount) {
-
+    public int decrementQiGrace(int amount) {
+        return 0;
     }
 
     @Override
@@ -68,8 +72,8 @@ public class DummyCombatCap implements ICombatCapability{
     }
 
     @Override
-    public void decrementSpiritGrace(int amount) {
-
+    public int decrementSpiritGrace(int amount) {
+        return 0;
     }
 
     @Override
@@ -103,8 +107,8 @@ public class DummyCombatCap implements ICombatCapability{
     }
 
     @Override
-    public void decrementPostureGrace(int amount) {
-
+    public int decrementPostureGrace(int amount) {
+        return 0;
     }
 
     @Override
@@ -158,8 +162,8 @@ public class DummyCombatCap implements ICombatCapability{
     }
 
     @Override
-    public void decrementComboGrace(int amount) {
-
+    public int decrementComboGrace(int amount) {
+        return 0;
     }
 
     @Override
@@ -173,8 +177,8 @@ public class DummyCombatCap implements ICombatCapability{
     }
 
     @Override
-    public void decrementStaggerTime(int amount) {
-
+    public int decrementStaggerTime(int amount) {
+        return 0;
     }
 
     @Override
@@ -255,5 +259,65 @@ public class DummyCombatCap implements ICombatCapability{
     @Override
     public void toggleCombatMode(boolean on) {
 
+    }
+
+    @Override
+    public float getWounding() {
+        return 0;
+    }
+
+    @Override
+    public void setWounding(float amount) {
+
+    }
+
+    @Override
+    public float getFatigue() {
+        return 0;
+    }
+
+    @Override
+    public void setFatigue(float amount) {
+
+    }
+
+    @Override
+    public float getBurnout() {
+        return 0;
+    }
+
+    @Override
+    public void setBurnout(float amount) {
+
+    }
+
+    @Override
+    public int getHandBind(Hand h) {
+        return 0;
+    }
+
+    @Override
+    public void setHandBind(Hand h, int amount) {
+
+    }
+
+    @Override
+    public void decrementHandBind(Hand h, int amount) {
+
+    }
+
+    @Override
+    public void update() {
+
+    }
+
+    @Override
+    public void read(CompoundNBT tag) {
+
+    }
+
+    @Override
+    public CompoundNBT write() {
+        return null;
     }
 }

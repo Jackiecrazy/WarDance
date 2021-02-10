@@ -4,6 +4,8 @@ import jackiecrazy.wardance.capability.CombatCapability;
 import jackiecrazy.wardance.capability.CombatStorage;
 import jackiecrazy.wardance.capability.DummyCombatCap;
 import jackiecrazy.wardance.capability.ICombatCapability;
+import jackiecrazy.wardance.networking.CombatChannel;
+import jackiecrazy.wardance.networking.UpdateClientPacket;
 import net.minecraft.block.Block;
 import net.minecraft.block.Blocks;
 import net.minecraft.util.ResourceLocation;
@@ -22,6 +24,7 @@ import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import java.util.Random;
 import java.util.stream.Collectors;
 
 // The value here should match an entry in the META-INF/mods.toml file
@@ -29,6 +32,7 @@ import java.util.stream.Collectors;
 public class WarDance
 {
     public static final String MODID="wardance";
+    public static final Random rand=new Random();
 
     // Directly reference a log4j logger.
     private static final Logger LOGGER = LogManager.getLogger();
@@ -52,8 +56,8 @@ public class WarDance
     private void setup(final FMLCommonSetupEvent event)
     {
         // some preinit code
-        LOGGER.info("HELLO FROM PREINIT");
-        LOGGER.info("DIRT BLOCK >> {}", Blocks.DIRT.getRegistryName());
+        int index=0;
+        CombatChannel.INSTANCE.registerMessage(index++, UpdateClientPacket.class, new UpdateClientPacket.UpdateClientEncoder(), new UpdateClientPacket.UpdateClientDecoder(), new UpdateClientPacket.UpdateClientHandler());
     }
 
     private void doClientStuff(final FMLClientSetupEvent event) {

@@ -1,8 +1,13 @@
 package jackiecrazy.wardance.mixin;
 
+import jackiecrazy.wardance.api.CombatDamageSource;
 import jackiecrazy.wardance.capability.CombatData;
-import jackiecrazy.wardance.handlers.CombatHandler;
+import jackiecrazy.wardance.events.HandedAttackEvent;
+import jackiecrazy.wardance.events.HandedCritEvent;
+import jackiecrazy.wardance.utils.CombatUtils;
+import jackiecrazy.wardance.utils.GeneralUtils;
 import net.minecraft.enchantment.EnchantmentHelper;
+import net.minecraft.enchantment.Enchantments;
 import net.minecraft.entity.CreatureAttribute;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityType;
@@ -25,10 +30,9 @@ import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.vector.Vector3d;
 import net.minecraft.world.World;
 import net.minecraft.world.server.ServerWorld;
+import net.minecraftforge.event.entity.player.CriticalHitEvent;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Overwrite;
-import org.spongepowered.asm.mixin.injection.At;
-import org.spongepowered.asm.mixin.injection.ModifyArg;
 
 @Mixin(PlayerEntity.class)
 public abstract class MixinOffhandAttack extends LivingEntity {
@@ -47,29 +51,35 @@ public abstract class MixinOffhandAttack extends LivingEntity {
         //replaced all "this" with casted "player"
         PlayerEntity player = (PlayerEntity) (Object) this;
         Hand h = CombatData.getCap(player).isOffhandAttack() ? Hand.OFF_HAND : Hand.MAIN_HAND;
-        //TODO replace forge hook with custom hook if player is offhand attacking
-        if (!net.minecraftforge.common.ForgeHooks.onPlayerAttackTarget(player, targetEntity)) return;
+        //introduce stack variable to hand
+        ItemStack stack = player.getHeldItem(h);
+        //replace forge hook with custom hook if player is offhand attacking
+        if (!HandedAttackEvent.onModifiedAttack(player, targetEntity, h, stack)) return;
         if (targetEntity.canBeAttackedWithItem()) {
             if (!targetEntity.hitByEntity(player)) {
-                //TODO fix attack damage attribute calculation, deleting main hand and adding offhand damage
-                float damage = (float) player.getAttributeValue(Attributes.ATTACK_DAMAGE);
+                //wipes out main hand attack damage and adds in offhand attack damage
+                float damage = (float) GeneralUtils.getAttributeValueHandSensitive(player, Attributes.ATTACK_DAMAGE, h);
                 float extraDamage;
                 if (targetEntity instanceof LivingEntity) {
-                    //TODO replace all instances of getHeldItemMainhand() with hand sensitive version
-                    extraDamage = EnchantmentHelper.getModifierForCreature(player.getHeldItemMainhand(), ((LivingEntity) targetEntity).getCreatureAttribute());
+                    //no longer on main hand, centralize to stack
+                    extraDamage = EnchantmentHelper.getModifierForCreature(stack, ((LivingEntity) targetEntity).getCreatureAttribute());
                 } else {
-                    extraDamage = EnchantmentHelper.getModifierForCreature(player.getHeldItemMainhand(), CreatureAttribute.UNDEFINED);
+                    //no longer necessarily on main hand, centralize to stack
+                    extraDamage = EnchantmentHelper.getModifierForCreature(stack, CreatureAttribute.UNDEFINED);
                 }
 
-                float cooledStrength = player.getCooledAttackStrength(0.5F);
+                //replace cooldown with cooldown checker that respects both hands
+                float cooledStrength = CombatUtils.getCooledAttackStrength(player, h, 0.5f);
                 damage = damage * (0.2F + cooledStrength * cooledStrength * 0.8F);
                 extraDamage = extraDamage * cooledStrength;
-                player.resetCooldown();
+                //due to handedness, cooldown reset is replaced with a custom version
+                CombatUtils.setHandCooldown(player, h, 0);
                 if (damage > 0.0F || extraDamage > 0.0F) {
                     boolean cooled = cooledStrength > 0.9F;
                     boolean sprintCooled = false;
                     int knockback = 0;
-                    knockback = knockback + EnchantmentHelper.getKnockbackModifier(player);
+                    //replace knockback check with straight check for hand. The knockback enchantment only checks for main hand, so this is necessary
+                    knockback = knockback + EnchantmentHelper.getEnchantmentLevel(Enchantments.KNOCKBACK, stack);
                     if (player.isSprinting() && cooled) {
                         player.world.playSound((PlayerEntity) null, player.getPosX(), player.getPosY(), player.getPosZ(), SoundEvents.ENTITY_PLAYER_ATTACK_KNOCKBACK, player.getSoundCategory(), 1.0F, 1.0F);
                         ++knockback;
@@ -79,7 +89,8 @@ public abstract class MixinOffhandAttack extends LivingEntity {
                     //onGround no longer public, changed to getter
                     boolean crit = cooled && player.fallDistance > 0.0F && !player.isOnGround() && !player.isOnLadder() && !player.isInWater() && !player.isPotionActive(Effects.BLINDNESS) && !player.isPassenger() && targetEntity instanceof LivingEntity;
                     crit = crit && !player.isSprinting();
-                    net.minecraftforge.event.entity.player.CriticalHitEvent hitResult = net.minecraftforge.common.ForgeHooks.getCriticalHit(player, targetEntity, crit, crit ? 1.5F : 1.0F);
+                    //replace forge hook with custom hook. I've never seen a mod actually use this except me, but welp.
+                    CriticalHitEvent hitResult = HandedCritEvent.modifiedCrit(player, targetEntity, crit, crit ? 1.5F : 1.0F, h, stack);
                     crit = hitResult != null;
                     if (crit) {
                         damage *= hitResult.getDamageModifier();
@@ -90,16 +101,16 @@ public abstract class MixinOffhandAttack extends LivingEntity {
                     double distanceWalkedLastTick = (double) (player.distanceWalkedModified - player.prevDistanceWalkedModified);
                     //onGround no longer public, changed to getter
                     if (cooled && !crit && !sprintCooled && player.isOnGround() && distanceWalkedLastTick < (double) player.getAIMoveSpeed()) {
-                        ItemStack itemstack = player.getHeldItem(Hand.MAIN_HAND);
-                        if (itemstack.getItem() instanceof SwordItem) {
+                        //no longer on main hand, centralize to stack
+                        if (stack.getItem() instanceof SwordItem) {
                             sweep = true;
                         }
                     }
 
                     float health = 0.0F;
                     boolean burn = false;
-                    //TODO modify to only check specific hand
-                    int fireAspect = EnchantmentHelper.getFireAspectModifier(player);
+                    //replace fire check with straight check for hand. The fire aspect enchantment only checks for main hand, so this is necessary
+                    int fireAspect = EnchantmentHelper.getEnchantmentLevel(Enchantments.FIRE_ASPECT, stack);
                     if (targetEntity instanceof LivingEntity) {
                         health = ((LivingEntity) targetEntity).getHealth();
                         if (fireAspect > 0 && !targetEntity.isBurning()) {
@@ -109,7 +120,7 @@ public abstract class MixinOffhandAttack extends LivingEntity {
                     }
 
                     Vector3d targetMotion = targetEntity.getMotion();
-                    boolean dealDamage = targetEntity.attackEntityFrom(DamageSource.causePlayerDamage(player), damage);
+                    boolean dealDamage = targetEntity.attackEntityFrom(new CombatDamageSource("player", player).setDamageDealer(stack).setAttackingHand(h).setProcAttackEffects(true).setProcAutoEffects(true).setCrit(crit), damage);
                     if (dealDamage) {
                         if (knockback > 0) {
                             if (targetEntity instanceof LivingEntity) {
@@ -124,7 +135,7 @@ public abstract class MixinOffhandAttack extends LivingEntity {
 
                         if (sweep) {
                             //TODO rewrite sweep for full damage and effects
-                            float sweepRatio = 1.0F + EnchantmentHelper.getSweepingDamageRatio(player) * damage;
+                            float sweepRatio = 1.0F + EnchantmentHelper.getEnchantmentLevel(Enchantments.SWEEPING, stack) * damage;
 
                             for (LivingEntity livingentity : player.world.getEntitiesWithinAABB(LivingEntity.class, targetEntity.getBoundingBox().grow(1.0D, 0.25D, 1.0D))) {
                                 if (livingentity != player && livingentity != targetEntity && !player.isOnSameTeam(livingentity) && (!(livingentity instanceof ArmorStandEntity) || !((ArmorStandEntity) livingentity).hasMarker()) && player.getDistanceSq(livingentity) < 9.0D) {
@@ -162,22 +173,24 @@ public abstract class MixinOffhandAttack extends LivingEntity {
 
                         player.setLastAttackedEntity(targetEntity);
                         if (targetEntity instanceof LivingEntity) {
+                            //TODO mixin thorns helper to account for offhand
                             EnchantmentHelper.applyThornEnchantments((LivingEntity) targetEntity, player);
                         }
 
+                        //TODO mixin thorns helper to account for offhand
                         EnchantmentHelper.applyArthropodEnchantments(player, targetEntity);
-                        ItemStack attackingStack = player.getHeldItemMainhand();
                         Entity entity = targetEntity;
                         if (targetEntity instanceof EnderDragonPartEntity) {
                             entity = ((EnderDragonPartEntity) targetEntity).dragon;
                         }
 
-                        if (!player.world.isRemote && !attackingStack.isEmpty() && entity instanceof LivingEntity) {
-                            ItemStack copy = attackingStack.copy();
-                            attackingStack.hitEntity((LivingEntity) entity, player);
-                            if (attackingStack.isEmpty()) {
-                                net.minecraftforge.event.ForgeEventFactory.onPlayerDestroyItem(player, copy, Hand.MAIN_HAND);
-                                player.setHeldItem(Hand.MAIN_HAND, ItemStack.EMPTY);
+                        //no longer on main hand, centralize to stack
+                        if (!player.world.isRemote && !stack.isEmpty() && entity instanceof LivingEntity) {
+                            ItemStack copy = stack.copy();
+                            stack.hitEntity((LivingEntity) entity, player);
+                            if (stack.isEmpty()) {
+                                net.minecraftforge.event.ForgeEventFactory.onPlayerDestroyItem(player, copy, h);
+                                player.setHeldItem(h, ItemStack.EMPTY);
                             }
                         }
 

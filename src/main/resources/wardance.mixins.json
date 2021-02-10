@@ -4,6 +4,8 @@
   "compatibilityLevel": "JAVA_8",
   "refmap": "caelus.refmap.json",
   "mixins": [
+    "MixinAttackSpeed",
+    "MixinEnchantmentHelper",
     "MixinOffhandAttack"
   ],
   "client": [

@@ -1,28 +1,42 @@
 package jackiecrazy.wardance.capability;
 
+import jackiecrazy.wardance.networking.CombatChannel;
+import jackiecrazy.wardance.networking.UpdateClientPacket;
+import jackiecrazy.wardance.utils.GeneralUtils;
+import net.minecraft.entity.Entity;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.ai.attributes.AttributeModifier;
 import net.minecraft.entity.ai.attributes.Attributes;
+import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.nbt.CompoundNBT;
+import net.minecraft.potion.Effects;
 import net.minecraft.util.Hand;
 import net.minecraft.util.math.MathHelper;
-import net.minecraftforge.common.capabilities.Capability;
-import net.minecraftforge.common.capabilities.CapabilityInject;
+import net.minecraftforge.fml.network.PacketDistributor;
+import org.w3c.dom.Attr;
 
 import java.lang.ref.WeakReference;
 import java.util.UUID;
+import java.util.function.Supplier;
 
 public class CombatCapability implements ICombatCapability {
     public static final float MAXQI = 10;
+    public static final int COOLDOWN = 30;
     public static final UUID WOUND = UUID.fromString("982bbbb2-bbd0-4166-801a-560d1a4149c8");
+    private static final int MAXDOWNTIME = 50;
+    private static final AttributeModifier STAGGERA = new AttributeModifier(WOUND, "stagger armor debuff", -9, AttributeModifier.Operation.ADDITION);
+    private static final AttributeModifier STAGGERS = new AttributeModifier(WOUND, "stagger speed debuff", -1, AttributeModifier.Operation.MULTIPLY_TOTAL);
 
     private WeakReference<LivingEntity> dude = null;
     private float qi, spirit, posture, combo, mpos, mspi, wounding, burnout, fatigue;
     private int qcd, scd, pcd, ccd, mBind, oBind;
     private int staggert, staggerc, ocd, shield, roll;
     private boolean offhand, combat;
+    private long lastUpdate;
 
     public CombatCapability(LivingEntity e) {
         dude = new WeakReference<>(e);
+        setTrueMaxSpirit(10);
     }
 
     @Override
@@ -47,6 +61,7 @@ public class CombatCapability implements ICombatCapability {
         if (qi - amount < above) return false;
         qi -= amount;
         fatigue += amount / 10f;
+        setQiGrace(COOLDOWN);
         return true;
     }
 
@@ -61,9 +76,14 @@ public class CombatCapability implements ICombatCapability {
     }
 
     @Override
-    public void decrementQiGrace(int amount) {
+    public int decrementQiGrace(int amount) {
         qcd -= amount;
-        if (qcd < 0) qcd = 0;
+        if (qcd < 0) {
+            int temp = qcd;
+            qcd = 0;
+            return -temp;
+        }
+        return 0;
     }
 
     @Override
@@ -88,6 +108,7 @@ public class CombatCapability implements ICombatCapability {
         if (spirit - amount < above) return false;
         spirit -= amount;
         burnout += amount / 10f;
+        setSpiritGrace(COOLDOWN);
         return true;
     }
 
@@ -102,10 +123,14 @@ public class CombatCapability implements ICombatCapability {
     }
 
     @Override
-    public void decrementSpiritGrace(int amount) {
-        if (scd - amount > 0)
-            scd -= amount;
-        else scd = 0;
+    public int decrementSpiritGrace(int amount) {
+        scd -= amount;
+        if (scd < 0) {
+            int temp = scd;
+            scd = 0;
+            return -temp;
+        }
+        return 0;
     }
 
     @Override
@@ -129,12 +154,20 @@ public class CombatCapability implements ICombatCapability {
     public boolean consumePosture(float amount, float above) {
         if (posture - amount < above) {
             //TODO stagger. armor down, knockback, ban moving, other theatrics
-            posture=0;
+            posture = 0;
             setStaggerCount(3);
-            setStaggerTime(Math.min((int)(amount*20), 60));
+            setStaggerTime(Math.min((int) (amount * 20), 60));
+            LivingEntity elb = dude.get();
+            if (elb == null) return false;
+            elb.getAttribute(Attributes.MOVEMENT_SPEED).removeModifier(WOUND);
+            elb.getAttribute(Attributes.MOVEMENT_SPEED).applyPersistentModifier(STAGGERS);
+            elb.getAttribute(Attributes.ARMOR).removeModifier(WOUND);
+            elb.getAttribute(Attributes.ARMOR).applyPersistentModifier(STAGGERA);
+            return false;
         }
         posture -= amount;
         fatigue += amount / 10f;
+        setPostureGrace(COOLDOWN);
         return true;
     }
 
@@ -149,10 +182,14 @@ public class CombatCapability implements ICombatCapability {
     }
 
     @Override
-    public void decrementPostureGrace(int amount) {
-        if (pcd - amount > 0)
-            pcd -= amount;
-        else pcd = 0;
+    public int decrementPostureGrace(int amount) {
+        pcd -= amount;
+        if (pcd < 0) {
+            int temp = pcd;
+            pcd = 0;
+            return -temp;
+        }
+        return 0;
     }
 
 
@@ -211,10 +248,14 @@ public class CombatCapability implements ICombatCapability {
     }
 
     @Override
-    public void decrementComboGrace(int amount) {
-        if (ccd - amount > 0)
-            ccd -= amount;
-        else ccd = 0;
+    public int decrementComboGrace(int amount) {
+        ccd -= amount;
+        if (ccd < 0) {
+            int temp = ccd;
+            ccd = 0;
+            return -temp;
+        }
+        return 0;
     }
 
 
@@ -226,13 +267,28 @@ public class CombatCapability implements ICombatCapability {
     @Override
     public void setStaggerTime(int amount) {
         staggert = amount;
+        if (amount == 0 && dude.get() != null) {
+            LivingEntity elb = dude.get();
+            elb.getAttribute(Attributes.MOVEMENT_SPEED).removeModifier(WOUND);
+            elb.getAttribute(Attributes.ARMOR).removeModifier(WOUND);
+        }
     }
 
     @Override
-    public void decrementStaggerTime(int amount) {
+    public int decrementStaggerTime(int amount) {
         if (staggert - amount > 0)
             staggert -= amount;
-        else staggert = 0;
+        else {
+            LivingEntity elb = dude.get();
+            if (staggert > 0 && elb != null) {
+                elb.getAttribute(Attributes.MOVEMENT_SPEED).removeModifier(WOUND);
+                elb.getAttribute(Attributes.ARMOR).removeModifier(WOUND);
+            }
+            int temp = staggert;
+            staggert = 0;
+            return -temp;
+        }
+        return 0;
     }
 
 
@@ -250,7 +306,10 @@ public class CombatCapability implements ICombatCapability {
     public void decrementStaggerCount(int amount) {
         if (staggerc - amount > 0)
             staggerc -= amount;
-        else staggerc = 0;
+        else {
+            setStaggerTime(0);
+            staggerc = 0;
+        }
     }
 
 
@@ -388,5 +447,109 @@ public class CombatCapability implements ICombatCapability {
             case OFF_HAND:
                 oBind -= amount;
         }
+    }
+
+    @Override
+    public void update() {
+        LivingEntity elb = dude.get();
+        if (elb == null) return;
+        int ticks = (int) (elb.world.getGameTime() - lastUpdate);
+        if (ticks < 1) return;//sometimes time runs backwards
+        setTrueMaxPosture((float) (5 * Math.ceil(elb.getWidth()) * Math.ceil(elb.getHeight()) + elb.getTotalArmorValue() / 2d));
+        decrementComboGrace(ticks);
+        int qiExtra = decrementQiGrace(ticks);
+        int spExtra = decrementSpiritGrace(ticks);
+        int poExtra = decrementPostureGrace(ticks);
+        decrementHandBind(Hand.MAIN_HAND, ticks);
+        decrementHandBind(Hand.OFF_HAND, ticks);
+        decrementOffhandCooldown(ticks);
+        decrementRollTime(ticks);
+        decrementShieldTime(ticks);
+        int stExtra = decrementStaggerTime(ticks);
+        //check max posture, max spirit, decrement bind and offhand cooldown
+        if (getPostureGrace() == 0 && getStaggerTime() == 0 && getPosture() < getMaxPosture()) {
+            addPosture(getPPS() * poExtra);
+        }
+        if (getSpiritGrace() == 0 && getStaggerTime() == 0 && getSpirit() < getMaxSpirit()) {
+            addSpirit(getPPS() * spExtra);
+        }
+        if (getQiGrace() == 0) {
+            setQi(getQi() - qiExtra * 0.1f);
+        }
+        if (getComboGrace() == 0) {
+            setCombo((float) Math.floor(getCombo()));
+        }
+        lastUpdate = elb.world.getGameTime();
+        CombatChannel.INSTANCE.send(PacketDistributor.TRACKING_ENTITY.with(() -> elb), new UpdateClientPacket(elb.getEntityId(), write()));
+
+    }
+
+    @Override
+    public void read(CompoundNBT c) {
+        setQi(c.getFloat("qi"));
+        setPosture(c.getFloat("posture"));
+        setCombo(c.getFloat("combo"));
+        setSpirit(c.getFloat("spirit"));
+        setTrueMaxPosture(c.getFloat("maxpos"));
+        setTrueMaxSpirit(c.getFloat("maxspi"));
+        setBurnout(c.getFloat("burnout"));
+        setWounding(c.getFloat("wounding"));
+        setFatigue(c.getFloat("fatigue"));
+        setComboGrace(c.getInt("combocd"));
+        setQiGrace(c.getInt("qicd"));
+        setPostureGrace(c.getInt("posturecd"));
+        setSpiritGrace(c.getInt("spiritcd"));
+        setShieldTime(c.getInt("shield"));
+        setStaggerCount(c.getInt("staggerc"));
+        setStaggerTime(c.getInt("staggert"));
+        setOffhandCooldown(c.getInt("offhandcd"));
+        setRollTime(c.getInt("roll"));
+        setHandBind(Hand.MAIN_HAND, c.getInt("bMain"));
+        setHandBind(Hand.OFF_HAND, c.getInt("bOff"));
+        setOffhandAttack(c.getBoolean("offhand"));
+        toggleCombatMode(c.getBoolean("combat"));
+        lastUpdate = c.getLong("lastUpdate");
+    }
+
+    @Override
+    public CompoundNBT write() {
+        CompoundNBT c = new CompoundNBT();
+        c.putFloat("qi", getQi());
+        c.putFloat("posture", getPosture());
+        c.putFloat("combo", getCombo());
+        c.putFloat("spirit", getSpirit());
+        c.putFloat("maxpos", getTrueMaxPosture());
+        c.putFloat("maxspi", getTrueMaxSpirit());
+        c.putFloat("burnout", getBurnout());
+        c.putFloat("fatigue", getFatigue());
+        c.putFloat("wounding", getWounding());
+        c.putInt("combocd", getComboGrace());
+        c.putInt("qicd", getQiGrace());
+        c.putInt("posturecd", getPostureGrace());
+        c.putInt("spiritcd", getSpiritGrace());
+        c.putInt("shield", getShieldTime());
+        c.putInt("staggerc", getStaggerCount());
+        c.putInt("staggert", getStaggerTime());
+        c.putInt("offhandcd", getOffhandCooldown());
+        c.putInt("roll", getRollTime());
+        c.putInt("bMain", getHandBind(Hand.MAIN_HAND));
+        c.putInt("bOff", getHandBind(Hand.OFF_HAND));
+        c.putBoolean("offhand", isOffhandAttack());
+        c.putBoolean("combat", isCombatMode());
+        c.putLong("lastUpdate", lastUpdate);
+        return c;
+    }
+
+    private float getPPS() {
+        LivingEntity elb = dude.get();
+        if (elb == null) return 0;
+        float nausea = elb instanceof PlayerEntity || elb.getActivePotionEffect(Effects.NAUSEA) == null ? 0 : (elb.getActivePotionEffect(Effects.NAUSEA).getAmplifier() + 1) * 0.05f;
+        float armorMod = Math.max(1f - ((float) elb.getTotalArmorValue() / 40f), 0);
+        float healthMod = elb.getHealth() / elb.getMaxHealth();
+        float speedMod = 0.2f / (float) Math.max(0.2, GeneralUtils.getSpeedSq(elb));
+        if (getStaggerTime() > 0) {
+            return getMaxPosture() * armorMod * speedMod * healthMod / (1.5f * MAXDOWNTIME);
+        }
+        return (0.2f * armorMod * healthMod * speedMod) - nausea;
     }
 }
