@@ -2,7 +2,7 @@
   "required": true,
   "package": "jackiecrazy.wardance.mixin",
   "compatibilityLevel": "JAVA_8",
-  "refmap": "caelus.refmap.json",
+  "refmap": "wardance.refmap.json",
   "mixins": [
     "MixinAttackSpeed",
     "MixinEnchantmentHelper",

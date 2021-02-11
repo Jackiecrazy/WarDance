@@ -4,6 +4,7 @@ import jackiecrazy.wardance.capability.CombatCapability;
 import jackiecrazy.wardance.capability.CombatStorage;
 import jackiecrazy.wardance.capability.DummyCombatCap;
 import jackiecrazy.wardance.capability.ICombatCapability;
+import jackiecrazy.wardance.config.WarConfig;
 import jackiecrazy.wardance.networking.CombatChannel;
 import jackiecrazy.wardance.networking.UpdateClientPacket;
 import net.minecraft.block.Block;
@@ -14,7 +15,9 @@ import net.minecraftforge.common.capabilities.CapabilityManager;
 import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.InterModComms;
+import net.minecraftforge.fml.ModLoadingContext;
 import net.minecraftforge.fml.common.Mod;
+import net.minecraftforge.fml.config.ModConfig;
 import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
 import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
 import net.minecraftforge.fml.event.lifecycle.InterModEnqueueEvent;
@@ -34,8 +37,7 @@ public class WarDance
     public static final String MODID="wardance";
     public static final Random rand=new Random();
 
-    // Directly reference a log4j logger.
-    private static final Logger LOGGER = LogManager.getLogger();
+    public static final Logger LOGGER = LogManager.getLogger();
 
     public WarDance() {
         // Register the setup method for modloading
@@ -49,12 +51,12 @@ public class WarDance
 
         // Register ourselves for server and other game events we are interested in
         MinecraftForge.EVENT_BUS.register(this);
-
-        CapabilityManager.INSTANCE.register(ICombatCapability.class, new CombatStorage(), DummyCombatCap::new);
+        ModLoadingContext.get().registerConfig(ModConfig.Type.SERVER, WarConfig.CONFIG_SPEC);
     }
 
     private void setup(final FMLCommonSetupEvent event)
     {
+        CapabilityManager.INSTANCE.register(ICombatCapability.class, new CombatStorage(), DummyCombatCap::new);
         // some preinit code
         int index=0;
         CombatChannel.INSTANCE.registerMessage(index++, UpdateClientPacket.class, new UpdateClientPacket.UpdateClientEncoder(), new UpdateClientPacket.UpdateClientDecoder(), new UpdateClientPacket.UpdateClientHandler());

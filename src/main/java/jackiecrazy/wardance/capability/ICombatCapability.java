@@ -86,11 +86,11 @@ public interface ICombatCapability {
     void setTrueMaxSpirit(float amount);
 
     default float getMaxPosture() {
-        return getMaxPosture() - getFatigue();
+        return getTrueMaxPosture() - getFatigue();
     }
 
     default float getMaxSpirit() {
-        return getMaxSpirit() - getBurnout();
+        return getTrueMaxSpirit() - getBurnout();
     }
 
     int getComboGrace();
@@ -121,7 +121,7 @@ public interface ICombatCapability {
 
     void setOffhandCooldown(int amount);
 
-    void decrementOffhandCooldown(int amount);
+    void addOffhandCooldown(int amount);
 
     int getRollTime();
 

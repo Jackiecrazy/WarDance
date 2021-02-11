@@ -1,21 +1,76 @@
 package jackiecrazy.wardance.utils;
 
+import jackiecrazy.wardance.WarDance;
 import jackiecrazy.wardance.api.CombatDamageSource;
 import jackiecrazy.wardance.capability.CombatData;
+import jackiecrazy.wardance.config.WarConfig;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.ai.attributes.Attributes;
 import net.minecraft.item.AxeItem;
+import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.SwordItem;
 import net.minecraft.util.DamageSource;
 import net.minecraft.util.Hand;
+import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.vector.Vector3d;
+import net.minecraftforge.registries.ForgeRegistries;
 
 import javax.annotation.Nullable;
+import java.util.HashMap;
 
 public class CombatUtils {
+    private static class CombatInfo {
+        private final double attackPostureMultiplier, defensePostureMultiplier;
+        private final boolean isShield;
+
+        private CombatInfo(double attack, double defend, boolean shield) {
+            attackPostureMultiplier = attack;
+            defensePostureMultiplier = defend;
+            isShield = shield;
+        }
+    }
+
+    private static CombatInfo DEFAULT = new CombatInfo(1, 1, false);
+    private static HashMap<Item, CombatInfo> combatList;
+    public static HashMap<String, Float> customPosture;
+
+    public static void updateLists(WarConfig wc) {
+        DEFAULT = new CombatInfo(wc.defaultMultiplierPostureAttack.get(), wc.defaultMultiplierPostureDefend.get(), false);
+        combatList = new HashMap<>();
+        customPosture = new HashMap<>();
+        for (String s : wc.combatItems.get()) {
+            String[] val = s.split(",");
+            String name = val[0];
+            double attack = wc.defaultMultiplierPostureAttack.get();
+            double defend = wc.defaultMultiplierPostureDefend.get();
+            boolean shield = false;
+            if (val.length > 1)
+                try {
+                    attack = Float.parseFloat(val[1].trim());
+                } catch (NumberFormatException ignored) {
+                }
+            if (val.length > 2)
+                try {
+                    defend = Float.parseFloat(val[2].trim());
+                } catch (NumberFormatException ignored) {
+                }
+            if (val.length > 3)
+                shield = Boolean.parseBoolean(val[3].trim());
+            if (ForgeRegistries.ITEMS.getValue(new ResourceLocation(name)) != null)
+                combatList.put(ForgeRegistries.ITEMS.getValue(new ResourceLocation(name)), new CombatInfo(attack, defend, shield));
+        }
+        for (String s : wc.customPosture.get()) {
+            try {
+                String[] val = s.split(",");
+                customPosture.put(val[0], Float.parseFloat(val[1]));
+            } catch (Exception e) {
+                WarDance.LOGGER.warn("improperly formatted custom posture definition " + s + "!");
+            }
+        }
+    }
 
     public static float getCooledAttackStrength(LivingEntity e, Hand h, float adjustTicks) {
         return MathHelper.clamp(((float) (h == Hand.MAIN_HAND ? e.ticksSinceLastSwing : CombatData.getCap(e).getOffhandCooldown()) + adjustTicks) / getCooldownPeriod(e, h), 0.0F, 1.0F);
@@ -75,11 +130,18 @@ public class CombatUtils {
     }
 
     public static float getPostureAtk(LivingEntity e, float amount, ItemStack stack) {
-        return amount * 0.35f;//TODO read config
+        if (combatList.containsKey(stack.getItem())) {
+            return (float) combatList.get(stack.getItem()).attackPostureMultiplier;
+        }
+        return amount * (float) DEFAULT.attackPostureMultiplier;
     }
 
     public static float getPostureDef(LivingEntity e, ItemStack stack) {
-        return 1f;//TODO read config
+        if (stack == null) return (float) DEFAULT.defensePostureMultiplier;
+        if (combatList.containsKey(stack.getItem())) {
+            return (float) combatList.get(stack.getItem()).defensePostureMultiplier;
+        }
+        return (float) DEFAULT.defensePostureMultiplier;
     }
 
     public static boolean isMeleeAttack(DamageSource s) {
@@ -146,6 +208,7 @@ public class CombatUtils {
             motionX -= xRatio / (double) pythagora * (double) strength;
             motionZ -= zRatio / (double) pythagora * (double) strength;
             to.setMotion(motionX, motionY, motionZ);
+            to.velocityChanged = true;
         }
     }
 

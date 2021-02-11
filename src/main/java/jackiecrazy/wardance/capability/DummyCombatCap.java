@@ -222,7 +222,7 @@ public class DummyCombatCap implements ICombatCapability{
     }
 
     @Override
-    public void decrementOffhandCooldown(int amount) {
+    public void addOffhandCooldown(int amount) {
 
     }
 

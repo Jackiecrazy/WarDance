@@ -12,7 +12,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 public class MixinAttackSpeed {
 
     @Inject(at = @At("RETURN"), method = "registerAttributes()Lnet/minecraft/entity/ai/attributes/AttributeModifierMap$MutableAttribute;")
-    private static void createAttributes(CallbackInfoReturnable<AttributeModifierMap.MutableAttribute> cb) {
+    private static void registerAttributes(CallbackInfoReturnable<AttributeModifierMap.MutableAttribute> cb) {
         cb.getReturnValue().createMutableAttribute(Attributes.ATTACK_SPEED, 4);
     }
 }

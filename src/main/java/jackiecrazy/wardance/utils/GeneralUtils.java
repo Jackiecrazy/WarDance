@@ -425,6 +425,7 @@ public class GeneralUtils {
     }
 
     public static double getAttributeValueHandSensitive(LivingEntity e, Attribute a, Hand h) {
+        if (e.getAttribute(a) == null) return 4;
         if (h == Hand.MAIN_HAND) return e.getAttributeValue(a);
         ModifiableAttributeInstance mai = new ModifiableAttributeInstance(a, (n) -> {
         });

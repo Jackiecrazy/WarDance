@@ -4,6 +4,7 @@ import jackiecrazy.wardance.WarDance;
 import jackiecrazy.wardance.api.ICombatManipulator;
 import jackiecrazy.wardance.capability.CombatData;
 import jackiecrazy.wardance.capability.ICombatCapability;
+import jackiecrazy.wardance.config.WarConfig;
 import jackiecrazy.wardance.utils.CombatUtils;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.LivingEntity;
@@ -16,6 +17,7 @@ import net.minecraft.util.math.RayTraceResult;
 import net.minecraft.util.math.vector.Vector3d;
 import net.minecraftforge.event.entity.ProjectileImpactEvent;
 import net.minecraftforge.event.entity.living.LivingAttackEvent;
+import net.minecraftforge.event.entity.living.LivingHurtEvent;
 import net.minecraftforge.event.entity.living.LivingKnockBackEvent;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 import net.minecraftforge.eventbus.api.EventPriority;
@@ -29,7 +31,7 @@ public class CombatHandler {
     public static void projectileParry(final ProjectileImpactEvent e) {
         if (e.getRayTraceResult().getType() == RayTraceResult.Type.ENTITY && e.getRayTraceResult().hitInfo instanceof LivingEntity) {
             LivingEntity uke = (LivingEntity) e.getRayTraceResult().hitInfo;
-            float consume = 0.5f;//TODO config variable consumption
+            float consume = WarConfig.CONFIG.posturePerProjectile.get().floatValue();
             if ((CombatUtils.isShield(uke, uke.getHeldItemMainhand()) || CombatUtils.isShield(uke, uke.getHeldItemOffhand()) && CombatData.getCap(uke).consumePosture(consume))) {
                 Vector3d look = uke.getLookVec();
                 e.setCanceled(true);
@@ -45,15 +47,22 @@ public class CombatHandler {
             ICombatCapability ukeCap = CombatData.getCap(uke);
             ItemStack attack = CombatUtils.getAttackingItemStack(e.getSource());
             if (e.getSource().getTrueSource() instanceof LivingEntity && attack != null) {
-                if (ukeCap.getStaggerTime() > 0) return;
                 LivingEntity seme = (LivingEntity) e.getSource().getTrueSource();
+                ICombatCapability semeCap = CombatData.getCap(seme);
+                if (semeCap.getStaggerTime() > 0 || semeCap.getHandBind(semeCap.isOffhandAttack() ? Hand.OFF_HAND : Hand.MAIN_HAND) > 0) {
+                    e.setCanceled(true);
+                    return;
+                }
+                if (ukeCap.getStaggerTime() > 0) {
+                    ukeCap.decrementStaggerCount(1);
+                    return; //also cancels posture consumption, so you keep regenerating
+                }
                 float atkMult = CombatUtils.getPostureAtk(seme, e.getAmount(), attack);
-                float defMult = 1f;//TODO config variable consumption
                 ItemStack defend = CombatUtils.getDefendingItemStack(uke);
+                float defMult = CombatUtils.getPostureDef(uke, defend);
                 if (ukeCap.consumePosture(atkMult * defMult) && defend != null) {
                     e.setCanceled(true);
                     //knockback based on posture consumed
-                    ICombatCapability semeCap = CombatData.getCap(seme);
                     CombatUtils.knockBack(seme, uke, Math.min(1.5f, atkMult * defMult * 2f / semeCap.getMaxPosture()), true, false);
                     CombatUtils.knockBack(uke, seme, Math.min(1.5f, atkMult * defMult * 2f / ukeCap.getMaxPosture()), true, false);
                     //shield disabling
@@ -67,7 +76,7 @@ public class CombatHandler {
                             }
                             disshield = true;
                         } else if (ukeCap.getShieldTime() != 0) {
-                            ukeCap.setShieldTime(30);//TODO shield threshold config
+                            ukeCap.setShieldTime(WarConfig.CONFIG.shieldThreshold.get());
                         }
                     }
                     uke.world.playSound(null, uke.getPosX(), uke.getPosY(), uke.getPosZ(), disshield ? SoundEvents.ITEM_SHIELD_BLOCK : SoundEvents.BLOCK_ANVIL_PLACE, SoundCategory.PLAYERS, 0.25f + WarDance.rand.nextFloat() * 0.5f, (1 - (ukeCap.getPosture() / ukeCap.getMaxPosture())) + WarDance.rand.nextFloat() * 0.5f);
@@ -107,10 +116,17 @@ public class CombatHandler {
     }
 
     @SubscribeEvent
+    public static void pain(LivingHurtEvent e) {
+        ICombatCapability cap = CombatData.getCap(e.getEntityLiving());
+        cap.setCombo((float) (Math.floor(cap.getCombo()) / 2d));
+    }
+
+    @SubscribeEvent
     public static void offhandAttack(final PlayerInteractEvent.EntityInteract e) {
         if (CombatUtils.isWeapon(e.getPlayer(), e.getPlayer().getHeldItemOffhand())) {
             CombatData.getCap(e.getPlayer()).setOffhandAttack(true);
-            e.getPlayer().attackTargetEntityWithCurrentItem(e.getEntity());
+            e.getPlayer().swing(Hand.OFF_HAND, true);
+            e.getPlayer().attackTargetEntityWithCurrentItem(e.getTarget());
             CombatData.getCap(e.getPlayer()).setOffhandAttack(true);
         }
     }

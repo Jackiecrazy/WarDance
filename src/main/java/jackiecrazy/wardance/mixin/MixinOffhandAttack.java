@@ -51,6 +51,7 @@ public abstract class MixinOffhandAttack extends LivingEntity {
         //replaced all "this" with casted "player"
         PlayerEntity player = (PlayerEntity) (Object) this;
         Hand h = CombatData.getCap(player).isOffhandAttack() ? Hand.OFF_HAND : Hand.MAIN_HAND;
+        System.out.println(h.toString());
         //introduce stack variable to hand
         ItemStack stack = player.getHeldItem(h);
         //replace forge hook with custom hook if player is offhand attacking

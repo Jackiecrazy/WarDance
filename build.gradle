@@ -1,21 +1,25 @@
 buildscript {
     repositories {
         maven { url = 'https://files.minecraftforge.net/maven' }
+        maven { url 'https://plugins.gradle.org/m2/' }
+        maven { url = 'https://dist.creeper.host/Sponge/maven' }
         jcenter()
         mavenCentral()
     }
     dependencies {
         classpath group: 'net.minecraftforge.gradle', name: 'ForgeGradle', version: '3.+', changing: true
+        classpath 'gradle.plugin.com.matthewprenger:CurseGradle:1.4.0'
+        classpath 'org.spongepowered:mixingradle:0.7-SNAPSHOT'
     }
 }
 apply plugin: 'net.minecraftforge.gradle'
-// Only edit below this line, the above code adds and enables the necessary things for Forge to be setup.
-apply plugin: 'eclipse'
+apply plugin: 'com.matthewprenger.cursegradle'
 apply plugin: 'maven-publish'
+apply plugin: 'org.spongepowered.mixin'
 
 version = '1.0'
-group = 'com.yourname.modid' // http://maven.apache.org/guides/mini/guide-naming-conventions.html
-archivesBaseName = 'modid'
+group = 'jackiecrazy.wardance' // http://maven.apache.org/guides/mini/guide-naming-conventions.html
+archivesBaseName = 'wardance'
 
 sourceCompatibility = targetCompatibility = compileJava.sourceCompatibility = compileJava.targetCompatibility = '1.8' // Need this here so eclipse task generates correctly.
 
@@ -36,6 +40,7 @@ minecraft {
     runs {
         client {
             workingDirectory project.file('run')
+            arg "-mixin.config=wardance.mixins.json"
 
             // Recommended logging data for a userdev environment
             property 'forge.logging.markers', 'SCAN,REGISTRIES,REGISTRYDUMP'
@@ -44,7 +49,7 @@ minecraft {
             property 'forge.logging.console.level', 'debug'
 
             mods {
-                examplemod {
+                wardance {
                     source sourceSets.main
                 }
             }
@@ -52,6 +57,7 @@ minecraft {
 
         server {
             workingDirectory project.file('run')
+            arg "-mixin.config=wardance.mixins.json"
 
             // Recommended logging data for a userdev environment
             property 'forge.logging.markers', 'SCAN,REGISTRIES,REGISTRYDUMP'
@@ -60,7 +66,7 @@ minecraft {
             property 'forge.logging.console.level', 'debug'
 
             mods {
-                examplemod {
+                wardance {
                     source sourceSets.main
                 }
             }
@@ -79,7 +85,7 @@ minecraft {
             args '--mod', 'examplemod', '--all', '--output', file('src/generated/resources/'), '--existing', file('src/main/resources/')
 
             mods {
-                examplemod {
+                wardance {
                     source sourceSets.main
                 }
             }
@@ -120,13 +126,14 @@ dependencies {
 jar {
     manifest {
         attributes([
-            "Specification-Title": "examplemod",
-            "Specification-Vendor": "examplemodsareus",
+            "Specification-Title": "wardance",
+            "Specification-Vendor": "jackiecrazy",
             "Specification-Version": "1", // We are version 1 of ourselves
             "Implementation-Title": project.name,
             "Implementation-Version": "${version}",
-            "Implementation-Vendor" :"examplemodsareus",
-            "Implementation-Timestamp": new Date().format("yyyy-MM-dd'T'HH:mm:ssZ")
+            "Implementation-Vendor" :"jackiecrazy",
+            "Implementation-Timestamp": new Date().format("yyyy-MM-dd'T'HH:mm:ssZ"),
+            "MixinConfigs": "wardance.mixins.json"
         ])
     }
 }
@@ -148,4 +155,8 @@ publishing {
             url "file:///${project.projectDir}/mcmodsrepo"
         }
     }
+}
+
+mixin {
+    add sourceSets.main, "wardance.refmap.json"
 }

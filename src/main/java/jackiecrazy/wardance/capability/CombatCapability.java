@@ -1,9 +1,10 @@
 package jackiecrazy.wardance.capability;
 
+import jackiecrazy.wardance.WarDance;
+import jackiecrazy.wardance.config.WarConfig;
 import jackiecrazy.wardance.networking.CombatChannel;
 import jackiecrazy.wardance.networking.UpdateClientPacket;
 import jackiecrazy.wardance.utils.GeneralUtils;
-import net.minecraft.entity.Entity;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.ai.attributes.AttributeModifier;
 import net.minecraft.entity.ai.attributes.Attributes;
@@ -11,23 +12,21 @@ import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.potion.Effects;
 import net.minecraft.util.Hand;
+import net.minecraft.util.SoundCategory;
+import net.minecraft.util.SoundEvents;
 import net.minecraft.util.math.MathHelper;
 import net.minecraftforge.fml.network.PacketDistributor;
-import org.w3c.dom.Attr;
 
 import java.lang.ref.WeakReference;
 import java.util.UUID;
-import java.util.function.Supplier;
 
 public class CombatCapability implements ICombatCapability {
     public static final float MAXQI = 10;
-    public static final int COOLDOWN = 30;
     public static final UUID WOUND = UUID.fromString("982bbbb2-bbd0-4166-801a-560d1a4149c8");
-    private static final int MAXDOWNTIME = 50;
     private static final AttributeModifier STAGGERA = new AttributeModifier(WOUND, "stagger armor debuff", -9, AttributeModifier.Operation.ADDITION);
     private static final AttributeModifier STAGGERS = new AttributeModifier(WOUND, "stagger speed debuff", -1, AttributeModifier.Operation.MULTIPLY_TOTAL);
 
-    private WeakReference<LivingEntity> dude = null;
+    private WeakReference<LivingEntity> dude;
     private float qi, spirit, posture, combo, mpos, mspi, wounding, burnout, fatigue;
     private int qcd, scd, pcd, ccd, mBind, oBind;
     private int staggert, staggerc, ocd, shield, roll;
@@ -53,6 +52,7 @@ public class CombatCapability implements ICombatCapability {
     public float addQi(float amount) {
         float temp = qi + amount;
         setQi(temp);
+        setQiGrace(WarConfig.CONFIG.qiGrace.get());
         return temp % 10;
     }
 
@@ -61,7 +61,6 @@ public class CombatCapability implements ICombatCapability {
         if (qi - amount < above) return false;
         qi -= amount;
         fatigue += amount / 10f;
-        setQiGrace(COOLDOWN);
         return true;
     }
 
@@ -108,7 +107,7 @@ public class CombatCapability implements ICombatCapability {
         if (spirit - amount < above) return false;
         spirit -= amount;
         burnout += amount / 10f;
-        setSpiritGrace(COOLDOWN);
+        setSpiritGrace(WarConfig.CONFIG.spiritCD.get());
         return true;
     }
 
@@ -153,12 +152,12 @@ public class CombatCapability implements ICombatCapability {
     @Override
     public boolean consumePosture(float amount, float above) {
         if (posture - amount < above) {
-            //TODO stagger. armor down, knockback, ban moving, other theatrics
             posture = 0;
-            setStaggerCount(3);
-            setStaggerTime(Math.min((int) (amount * 20), 60));
+            setStaggerCount(WarConfig.CONFIG.staggerHits.get());
+            setStaggerTime(Math.min((int) (amount * 20), WarConfig.CONFIG.staggerDuration.get()));
             LivingEntity elb = dude.get();
             if (elb == null) return false;
+            elb.world.playSound(null, elb.getPosX(), elb.getPosY(), elb.getPosZ(), SoundEvents.ENTITY_ZOMBIE_BREAK_WOODEN_DOOR, SoundCategory.PLAYERS, 0.5f + WarDance.rand.nextFloat() * 0.5f, 0.75f + WarDance.rand.nextFloat() * 0.5f);
             elb.getAttribute(Attributes.MOVEMENT_SPEED).removeModifier(WOUND);
             elb.getAttribute(Attributes.MOVEMENT_SPEED).applyPersistentModifier(STAGGERS);
             elb.getAttribute(Attributes.ARMOR).removeModifier(WOUND);
@@ -167,7 +166,7 @@ public class CombatCapability implements ICombatCapability {
         }
         posture -= amount;
         fatigue += amount / 10f;
-        setPostureGrace(COOLDOWN);
+        setPostureGrace(WarConfig.CONFIG.postureCD.get());
         return true;
     }
 
@@ -207,6 +206,7 @@ public class CombatCapability implements ICombatCapability {
     public float addCombo(float amount) {
         float overflow = Math.max(0, combo + amount - 10);
         setCombo(combo + amount);
+        setComboGrace(WarConfig.CONFIG.comboGrace.get());
         return overflow;
     }
 
@@ -342,10 +342,8 @@ public class CombatCapability implements ICombatCapability {
     }
 
     @Override
-    public void decrementOffhandCooldown(int amount) {
-        if (ocd - amount > 0)
-            ocd -= amount;
-        else ocd = 0;
+    public void addOffhandCooldown(int amount) {
+        ocd += amount;
     }
 
 
@@ -462,13 +460,13 @@ public class CombatCapability implements ICombatCapability {
         int poExtra = decrementPostureGrace(ticks);
         decrementHandBind(Hand.MAIN_HAND, ticks);
         decrementHandBind(Hand.OFF_HAND, ticks);
-        decrementOffhandCooldown(ticks);
+        addOffhandCooldown(ticks);
         decrementRollTime(ticks);
         decrementShieldTime(ticks);
         int stExtra = decrementStaggerTime(ticks);
         //check max posture, max spirit, decrement bind and offhand cooldown
         if (getPostureGrace() == 0 && getStaggerTime() == 0 && getPosture() < getMaxPosture()) {
-            addPosture(getPPS() * poExtra);
+            addPosture(getPPS() * (poExtra + stExtra));
         }
         if (getSpiritGrace() == 0 && getStaggerTime() == 0 && getSpirit() < getMaxSpirit()) {
             addSpirit(getPPS() * spExtra);
@@ -548,7 +546,7 @@ public class CombatCapability implements ICombatCapability {
         float healthMod = elb.getHealth() / elb.getMaxHealth();
         float speedMod = 0.2f / (float) Math.max(0.2, GeneralUtils.getSpeedSq(elb));
         if (getStaggerTime() > 0) {
-            return getMaxPosture() * armorMod * speedMod * healthMod / (1.5f * MAXDOWNTIME);
+            return getMaxPosture() * armorMod * speedMod * healthMod / (1.5f * WarConfig.CONFIG.staggerDuration.get());
         }
         return (0.2f * armorMod * healthMod * speedMod) - nausea;
     }
