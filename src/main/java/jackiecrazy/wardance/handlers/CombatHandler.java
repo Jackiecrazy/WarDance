@@ -10,11 +10,14 @@ import net.minecraft.entity.Entity;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
+import net.minecraft.particles.ParticleTypes;
+import net.minecraft.util.DamageSource;
 import net.minecraft.util.Hand;
 import net.minecraft.util.SoundCategory;
 import net.minecraft.util.SoundEvents;
 import net.minecraft.util.math.RayTraceResult;
 import net.minecraft.util.math.vector.Vector3d;
+import net.minecraft.world.server.ServerWorld;
 import net.minecraftforge.event.entity.ProjectileImpactEvent;
 import net.minecraftforge.event.entity.living.LivingAttackEvent;
 import net.minecraftforge.event.entity.living.LivingHurtEvent;
@@ -31,7 +34,7 @@ public class CombatHandler {
     public static void projectileParry(final ProjectileImpactEvent e) {
         if (e.getRayTraceResult().getType() == RayTraceResult.Type.ENTITY && e.getRayTraceResult().hitInfo instanceof LivingEntity) {
             LivingEntity uke = (LivingEntity) e.getRayTraceResult().hitInfo;
-            float consume = WarConfig.CONFIG.posturePerProjectile.get().floatValue();
+            float consume = WarConfig.posturePerProjectile;
             if ((CombatUtils.isShield(uke, uke.getHeldItemMainhand()) || CombatUtils.isShield(uke, uke.getHeldItemOffhand()) && CombatData.getCap(uke).consumePosture(consume))) {
                 Vector3d look = uke.getLookVec();
                 e.setCanceled(true);
@@ -42,13 +45,15 @@ public class CombatHandler {
 
     @SubscribeEvent
     public static void parry(final LivingAttackEvent e) {
-        if (e.getSource() != null && CombatUtils.isMeleeAttack(e.getSource())) {
+        if (!e.getEntityLiving().world.isRemote && e.getSource() != null && CombatUtils.isMeleeAttack(e.getSource())) {
             LivingEntity uke = e.getEntityLiving();
             ICombatCapability ukeCap = CombatData.getCap(uke);
             ItemStack attack = CombatUtils.getAttackingItemStack(e.getSource());
             if (e.getSource().getTrueSource() instanceof LivingEntity && attack != null) {
                 LivingEntity seme = (LivingEntity) e.getSource().getTrueSource();
                 ICombatCapability semeCap = CombatData.getCap(seme);
+                ukeCap.update();
+                semeCap.update();
                 if (semeCap.getStaggerTime() > 0 || semeCap.getHandBind(semeCap.isOffhandAttack() ? Hand.OFF_HAND : Hand.MAIN_HAND) > 0) {
                     e.setCanceled(true);
                     return;
@@ -76,7 +81,7 @@ public class CombatHandler {
                             }
                             disshield = true;
                         } else if (ukeCap.getShieldTime() != 0) {
-                            ukeCap.setShieldTime(WarConfig.CONFIG.shieldThreshold.get());
+                            ukeCap.setShieldTime(WarConfig.shieldThreshold);
                         }
                     }
                     uke.world.playSound(null, uke.getPosX(), uke.getPosY(), uke.getPosZ(), disshield ? SoundEvents.ITEM_SHIELD_BLOCK : SoundEvents.BLOCK_ANVIL_PLACE, SoundCategory.PLAYERS, 0.25f + WarDance.rand.nextFloat() * 0.5f, (1 - (ukeCap.getPosture() / ukeCap.getMaxPosture())) + WarDance.rand.nextFloat() * 0.5f);
@@ -117,8 +122,20 @@ public class CombatHandler {
 
     @SubscribeEvent
     public static void pain(LivingHurtEvent e) {
-        ICombatCapability cap = CombatData.getCap(e.getEntityLiving());
+        LivingEntity uke = e.getEntityLiving();
+        ICombatCapability cap = CombatData.getCap(uke);
         cap.setCombo((float) (Math.floor(cap.getCombo()) / 2d));
+        if(cap.getStaggerTime()>0){
+            //fatality!
+            DamageSource ds=e.getSource();
+            if (ds.getTrueSource() != null && ds.getTrueSource() instanceof LivingEntity) {
+                LivingEntity seme = ((LivingEntity) ds.getTrueSource());
+                if (seme.world instanceof ServerWorld) {
+                    ((ServerWorld) seme.world).spawnParticle(ParticleTypes.ANGRY_VILLAGER, uke.getPosX(), uke.getPosY(), uke.getPosZ(), 5, uke.getWidth(), uke.getHeight(), uke.getWidth(), 0.5f);
+                }
+                seme.world.playSound(null, uke.getPosX(), uke.getPosY(), uke.getPosZ(), SoundEvents.ENTITY_GENERIC_BIG_FALL, SoundCategory.PLAYERS, 0.25f + WarDance.rand.nextFloat() * 0.5f, 0.75f + WarDance.rand.nextFloat() * 0.5f);
+            }
+        }
     }
 
     @SubscribeEvent

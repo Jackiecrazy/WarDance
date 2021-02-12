@@ -52,7 +52,7 @@ public class CombatCapability implements ICombatCapability {
     public float addQi(float amount) {
         float temp = qi + amount;
         setQi(temp);
-        setQiGrace(WarConfig.CONFIG.qiGrace.get());
+        setQiGrace(WarConfig.qiGrace);
         return temp % 10;
     }
 
@@ -107,7 +107,7 @@ public class CombatCapability implements ICombatCapability {
         if (spirit - amount < above) return false;
         spirit -= amount;
         burnout += amount / 10f;
-        setSpiritGrace(WarConfig.CONFIG.spiritCD.get());
+        setSpiritGrace(WarConfig.spiritCD);
         return true;
     }
 
@@ -153,8 +153,8 @@ public class CombatCapability implements ICombatCapability {
     public boolean consumePosture(float amount, float above) {
         if (posture - amount < above) {
             posture = 0;
-            setStaggerCount(WarConfig.CONFIG.staggerHits.get());
-            setStaggerTime(Math.min((int) (amount * 20), WarConfig.CONFIG.staggerDuration.get()));
+            setStaggerCount(WarConfig.staggerHits);
+            setStaggerTime(Math.min((int) (amount * 20), WarConfig.staggerDuration));
             LivingEntity elb = dude.get();
             if (elb == null) return false;
             elb.world.playSound(null, elb.getPosX(), elb.getPosY(), elb.getPosZ(), SoundEvents.ENTITY_ZOMBIE_BREAK_WOODEN_DOOR, SoundCategory.PLAYERS, 0.5f + WarDance.rand.nextFloat() * 0.5f, 0.75f + WarDance.rand.nextFloat() * 0.5f);
@@ -166,7 +166,8 @@ public class CombatCapability implements ICombatCapability {
         }
         posture -= amount;
         fatigue += amount / 10f;
-        setPostureGrace(WarConfig.CONFIG.postureCD.get());
+        setPostureGrace(WarConfig.postureCD);
+        sync();
         return true;
     }
 
@@ -206,7 +207,7 @@ public class CombatCapability implements ICombatCapability {
     public float addCombo(float amount) {
         float overflow = Math.max(0, combo + amount - 10);
         setCombo(combo + amount);
-        setComboGrace(WarConfig.CONFIG.comboGrace.get());
+        setComboGrace(WarConfig.comboGrace);
         return overflow;
     }
 
@@ -478,8 +479,14 @@ public class CombatCapability implements ICombatCapability {
             setCombo((float) Math.floor(getCombo()));
         }
         lastUpdate = elb.world.getGameTime();
-        CombatChannel.INSTANCE.send(PacketDistributor.TRACKING_ENTITY.with(() -> elb), new UpdateClientPacket(elb.getEntityId(), write()));
+        sync();
+    }
 
+    @Override
+    public void sync() {
+        LivingEntity elb = dude.get();
+        if (elb == null || elb.world.isRemote) return;
+        CombatChannel.INSTANCE.send(PacketDistributor.TRACKING_ENTITY.with(() -> elb), new UpdateClientPacket(elb.getEntityId(), write()));
     }
 
     @Override
@@ -546,7 +553,7 @@ public class CombatCapability implements ICombatCapability {
         float healthMod = elb.getHealth() / elb.getMaxHealth();
         float speedMod = 0.2f / (float) Math.max(0.2, GeneralUtils.getSpeedSq(elb));
         if (getStaggerTime() > 0) {
-            return getMaxPosture() * armorMod * speedMod * healthMod / (1.5f * WarConfig.CONFIG.staggerDuration.get());
+            return getMaxPosture() * armorMod * speedMod * healthMod / (1.5f * WarConfig.staggerDuration);
         }
         return (0.2f * armorMod * healthMod * speedMod) - nausea;
     }

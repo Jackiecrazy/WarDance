@@ -325,7 +325,7 @@ public class GeneralUtils {
         Vector3d relativePosVec = new Vector3d(xDiff, entity1.getPosY() - entity2.getPosY(), zDiff);
         double dotsqLook = ((relativePosVec.dotProduct(lookVec) * Math.abs(relativePosVec.dotProduct(lookVec))) / (relativePosVec.lengthSquared() * lookVec.lengthSquared()));
         double dotsqBody = ((relativePosVec.dotProduct(bodyVec) * Math.abs(relativePosVec.dotProduct(bodyVec))) / (relativePosVec.lengthSquared() * bodyVec.lengthSquared()));
-        double cos = MathHelper.cos(rad(horAngle / 2));
+        double cos = MathHelper.cos(rad(horAngle / 2f));
         return dotsqBody < -(cos * cos) || dotsqLook < -(cos * cos);
     }
 
@@ -362,7 +362,7 @@ public class GeneralUtils {
         Vector3d relativePosVec = new Vector3d(xDiffCompensated, 0, zDiffCompensated);
         double dotsqLook = ((relativePosVec.dotProduct(lookVec) * Math.abs(relativePosVec.dotProduct(lookVec))) / (relativePosVec.lengthSquared() * lookVec.lengthSquared()));
         double dotsqBody = ((relativePosVec.dotProduct(bodyVec) * Math.abs(relativePosVec.dotProduct(bodyVec))) / (relativePosVec.lengthSquared() * bodyVec.lengthSquared()));
-        double cos = MathHelper.cos(rad(horAngle / 2));
+        double cos = MathHelper.cos(rad(horAngle / 2f));
         return dotsqBody > cos * cos || dotsqLook > cos * cos;
     }
 

@@ -21,6 +21,7 @@ import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.monster.AbstractSkeletonEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.Hand;
+import net.minecraft.util.Rotation;
 import net.minecraft.util.Tuple;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.MathHelper;
@@ -41,24 +42,28 @@ import java.util.List;
 public class ClientEvents {
     @SubscribeEvent
     public static void down(RenderLivingEvent.Pre event) {
-        float width = event.getEntity().getWidth();
-        float height = event.getEntity().getHeight();
-        if (event.getEntity().isAlive()) {
+        final LivingEntity e = event.getEntity();
+        float width = e.getWidth();
+        float height = e.getHeight();
+        if (e.isAlive()) {
             if (CombatData.getCap(event.getEntity()).getStaggerTime() > 0) {
-                System.out.println("yes");
+                //System.out.println("yes");
                 MatrixStack ms = event.getMatrixStack();
-                LivingEntity e = event.getEntity();
                 ms.push();
                 //tall bois become flat bois
                 if (width < height) {
-                    ms.translate(e.getPosX(), e.getPosY(), e.getPosZ());
-                    ms.rotate(new Quaternion(0, 0, 1, 90));
-                    //ms.rotate(Vector3f.XN);
-                    ms.translate(-e.getPosX(), -e.getPosY() - e.getHeight() / 2, -e.getPosZ());
+                    ms.rotate(Vector3f.XN.rotationDegrees(90));
+                    ms.rotate(Vector3f.ZP.rotationDegrees(-e.renderYawOffset));
+                    ms.rotate(Vector3f.YP.rotationDegrees(e.renderYawOffset));
+                    ms.translate(0, -e.getHeight() / 2, 0);
+//                    GlStateManager.rotate(180f, 0, 0, 0);
+//                    GlStateManager.rotate(90f, 1, 0, 0);
+//                    GlStateManager.rotate(event.getEntity().renderYawOffset, 0, 0, 1);
+//                    GlStateManager.rotate(event.getEntity().renderYawOffset, 0, 1, 0);
                 }
                 //cube bois become side bois
                 //flat bois become flatter bois
-                else {//this means it didn't update, which happens when there's nothing to change, i.e. you're flat already
+                else {
                     ms.translate(0, -e.getHeight() / 2, 0);
                 }
                 //multi bois do nothing
@@ -75,29 +80,29 @@ public class ClientEvents {
         }
     }
 
-//    @SubscribeEvent
-//    public static void handRaising(RenderHandEvent e) {
-//        if (e.getHand().equals(Hand.MAIN_HAND)) return;
-//        AbstractClientPlayerEntity p = Minecraft.getInstance().player;
-//        //cancel event so two handed weapons give a visual cue to their two-handedness
-////        if (p.getHeldItemMainhand().getItem() instanceof ITwoHanded) {
-////            if (((TaoWeapon) p.getHeldItemMainhand().getItem()).isTwoHanded(p.getHeldItemMainhand())) {
-////                e.setCanceled(true);
-////
-////                return;
-////            }
-////        }
-//        //force offhand to have some semblance of cooldown
-//        if (!CombatUtils.isWeapon(p, e.getItemStack()) && !CombatUtils.isShield(p, e.getItemStack()))
-//            return;
-//        e.setCanceled(true);
-//        ItemRenderer ir = Minecraft.getInstance().getItemRenderer();
-//        float f1 = p.prevRotationPitch + (p.rotationPitch - p.prevRotationPitch) * e.getPartialTicks();
-//        //MathHelper.clamp((!requipM ? f * f * f : 0.0F) - this.equippedProgressMainHand, -0.4F, 0.4F);//mainhand add per
-//        float cd = CombatUtils.getCooledAttackStrength(p, Hand.OFF_HAND, e.getPartialTicks());
-//        float f6 = 1 - (cd * cd * cd);
-//        Minecraft.getInstance().getFirstPersonRenderer().renderItemInFirstPerson(p, e.getPartialTicks(), f1, Hand.OFF_HAND, e.getSwingProgress(), p.getHeldItemOffhand(), f6);
-//    }
+    @SubscribeEvent
+    public static void handRaising(RenderHandEvent e) {
+        if (e.getHand().equals(Hand.MAIN_HAND)) return;
+        AbstractClientPlayerEntity p = Minecraft.getInstance().player;
+        //cancel event so two handed weapons give a visual cue to their two-handedness
+//        if (p.getHeldItemMainhand().getItem() instanceof ITwoHanded) {
+//            if (((TaoWeapon) p.getHeldItemMainhand().getItem()).isTwoHanded(p.getHeldItemMainhand())) {
+//                e.setCanceled(true);
+//
+//                return;
+//            }
+//        }
+        //force offhand to have some semblance of cooldown
+        if (!CombatUtils.isWeapon(p, e.getItemStack()) && !CombatUtils.isShield(p, e.getItemStack()))
+            return;
+        e.setCanceled(true);
+        ItemRenderer ir = Minecraft.getInstance().getItemRenderer();
+        float f1 = p.prevRotationPitch + (p.rotationPitch - p.prevRotationPitch) * e.getPartialTicks();
+        //MathHelper.clamp((!requipM ? f * f * f : 0.0F) - this.equippedProgressMainHand, -0.4F, 0.4F);//mainhand add per
+        float cd = CombatUtils.getCooledAttackStrength(p, Hand.OFF_HAND, e.getPartialTicks());
+        float f6 = 1 - (cd * cd * cd);
+        Minecraft.getInstance().getFirstPersonRenderer().renderItemInFirstPerson(p, e.getPartialTicks(), f1, Hand.OFF_HAND, e.getSwingProgress(), p.getHeldItemOffhand(), f6, e.getMatrixStack(), e.getBuffers(), e.getLight());
+    }
 //
 //    @SubscribeEvent
 //    public static void displayCoolie(RenderGameOverlayEvent.Post event) {

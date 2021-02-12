@@ -312,6 +312,11 @@ public class DummyCombatCap implements ICombatCapability{
     }
 
     @Override
+    public void sync() {
+
+    }
+
+    @Override
     public void read(CompoundNBT tag) {
 
     }

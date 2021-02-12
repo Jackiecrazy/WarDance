@@ -157,6 +157,8 @@ public interface ICombatCapability {
 
     void update();
 
+    void sync();
+
     void read(CompoundNBT tag);
 
     CompoundNBT write();

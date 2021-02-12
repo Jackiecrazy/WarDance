@@ -20,6 +20,7 @@ import net.minecraftforge.registries.ForgeRegistries;
 
 import javax.annotation.Nullable;
 import java.util.HashMap;
+import java.util.List;
 
 public class CombatUtils {
     private static class CombatInfo {
@@ -34,18 +35,18 @@ public class CombatUtils {
     }
 
     private static CombatInfo DEFAULT = new CombatInfo(1, 1, false);
-    private static HashMap<Item, CombatInfo> combatList;
-    public static HashMap<String, Float> customPosture;
+    private static HashMap<Item, CombatInfo> combatList=new HashMap<>();
+    public static HashMap<String, Float> customPosture=new HashMap<>();
 
-    public static void updateLists(WarConfig wc) {
-        DEFAULT = new CombatInfo(wc.defaultMultiplierPostureAttack.get(), wc.defaultMultiplierPostureDefend.get(), false);
+    public static void updateLists(List<? extends String> interpretC, List<? extends String> interpretP, float defaultMultiplierPostureAttack, float defaultMultiplierPostureDefend) {
+        DEFAULT = new CombatInfo(defaultMultiplierPostureAttack, defaultMultiplierPostureDefend, false);
         combatList = new HashMap<>();
         customPosture = new HashMap<>();
-        for (String s : wc.combatItems.get()) {
+        for (String s : interpretC) {
             String[] val = s.split(",");
             String name = val[0];
-            double attack = wc.defaultMultiplierPostureAttack.get();
-            double defend = wc.defaultMultiplierPostureDefend.get();
+            double attack = defaultMultiplierPostureAttack;
+            double defend = defaultMultiplierPostureDefend;
             boolean shield = false;
             if (val.length > 1)
                 try {
@@ -62,10 +63,10 @@ public class CombatUtils {
             if (ForgeRegistries.ITEMS.getValue(new ResourceLocation(name)) != null)
                 combatList.put(ForgeRegistries.ITEMS.getValue(new ResourceLocation(name)), new CombatInfo(attack, defend, shield));
         }
-        for (String s : wc.customPosture.get()) {
+        for (String s : interpretP) {
             try {
                 String[] val = s.split(",");
-                customPosture.put(val[0], Float.parseFloat(val[1]));
+                CombatUtils.customPosture.put(val[0], Float.parseFloat(val[1]));
             } catch (Exception e) {
                 WarDance.LOGGER.warn("improperly formatted custom posture definition " + s + "!");
             }
@@ -130,7 +131,7 @@ public class CombatUtils {
     }
 
     public static float getPostureAtk(LivingEntity e, float amount, ItemStack stack) {
-        if (combatList.containsKey(stack.getItem())) {
+        if (stack != null && combatList.containsKey(stack.getItem())) {
             return (float) combatList.get(stack.getItem()).attackPostureMultiplier;
         }
         return amount * (float) DEFAULT.attackPostureMultiplier;

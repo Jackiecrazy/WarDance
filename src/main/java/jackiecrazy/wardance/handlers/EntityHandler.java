@@ -2,6 +2,7 @@ package jackiecrazy.wardance.handlers;
 
 import jackiecrazy.wardance.WarDance;
 import jackiecrazy.wardance.capability.CombatData;
+import jackiecrazy.wardance.config.WarConfig;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.player.PlayerEntity;
@@ -52,7 +53,7 @@ public class EntityHandler {
 
     @SubscribeEvent
     public static void tickMobs(LivingEvent.LivingUpdateEvent e) {
-        if (!e.getEntityLiving().world.isRemote && !(e.getEntityLiving() instanceof PlayerEntity) && e.getEntityLiving().ticksExisted % 20 == 0) {
+        if (!e.getEntityLiving().world.isRemote && !(e.getEntityLiving() instanceof PlayerEntity) && e.getEntityLiving().ticksExisted % WarConfig.mobUpdateInterval == 0) {
             CombatData.getCap(e.getEntityLiving()).update();
         }
     }
