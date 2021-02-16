@@ -431,7 +431,6 @@ public class GeneralUtils {
         });
         Collection<AttributeModifier> ignore = e.getHeldItemMainhand().getAttributeModifiers(EquipmentSlotType.MAINHAND).get(a);
         apply:
-        //FIXME on the instant of switching weapons, if you're holding an identical weapon on the offhand,, the mainhand item no longer has the modifier but the player still does
         for (AttributeModifier am : e.getAttribute(a).getModifierListCopy()) {
             for (AttributeModifier f : ignore) if (f.getID().equals(am.getID())) continue apply;
             mai.applyNonPersistentModifier(am);

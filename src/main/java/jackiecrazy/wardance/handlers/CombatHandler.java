@@ -6,6 +6,7 @@ import jackiecrazy.wardance.capability.CombatData;
 import jackiecrazy.wardance.capability.ICombatCapability;
 import jackiecrazy.wardance.config.CombatConfig;
 import jackiecrazy.wardance.utils.CombatUtils;
+import jackiecrazy.wardance.utils.GeneralUtils;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.player.PlayerEntity;
@@ -32,9 +33,18 @@ public class CombatHandler {
         if (e.getRayTraceResult().getType() == RayTraceResult.Type.ENTITY && e.getRayTraceResult().hitInfo instanceof LivingEntity) {
             LivingEntity uke = (LivingEntity) e.getRayTraceResult().hitInfo;
             float consume = CombatConfig.posturePerProjectile;
-            if ((CombatUtils.isShield(uke, uke.getHeldItemMainhand()) || CombatUtils.isShield(uke, uke.getHeldItemOffhand()) && CombatData.getCap(uke).consumePosture(consume))) {
-                Vector3d look = uke.getLookVec();
+            ICombatCapability ukeCap = CombatData.getCap(uke);
+            ItemStack defend = CombatUtils.getDefendingItemStack(uke, true);
+            if (defend != null && ukeCap.consumePosture(consume)){
                 e.setCanceled(true);
+                if (ukeCap.getShieldTime() == 0) {
+                    Tuple<Integer, Integer> stat = CombatUtils.getShieldStats(defend);
+                    ukeCap.setShieldTime(stat.getA());
+                    ukeCap.setShieldCount(stat.getB());
+                } else {
+                    ukeCap.decrementShieldCount(1);
+                }
+                Vector3d look = uke.getLookVec();
                 e.getEntity().setVelocity(look.x, look.y, look.z);
             }
         }
@@ -59,11 +69,11 @@ public class CombatHandler {
                     ukeCap.decrementStaggerCount(1);
                     return; //also cancels posture consumption, so you keep regenerating
                 }
-                Hand h=semeCap.isOffhandAttack()?Hand.OFF_HAND:Hand.MAIN_HAND;
+                Hand h = semeCap.isOffhandAttack() ? Hand.OFF_HAND : Hand.MAIN_HAND;
                 float atkMult = CombatUtils.getPostureAtk(seme, h, e.getAmount(), attack);
-                ItemStack defend = CombatUtils.getDefendingItemStack(uke);
+                ItemStack defend = CombatUtils.getDefendingItemStack(uke, false);
                 float defMult = CombatUtils.getPostureDef(uke, defend);
-                if (ukeCap.consumePosture(atkMult * defMult) && defend != null) {
+                if (ukeCap.consumePosture(atkMult * defMult) && GeneralUtils.isFacingEntity(uke, seme, 120) && defend != null) {
                     e.setCanceled(true);
                     //knockback based on posture consumed
                     CombatUtils.knockBack(seme, uke, Math.min(1.5f, atkMult * defMult * 2f / semeCap.getMaxPosture()), true, false);
@@ -98,6 +108,8 @@ public class CombatHandler {
                         ((ICombatManipulator) uke.getHeldItem(other).getItem()).onOtherHandParry(seme, uke, uke.getHeldItem(other), e.getAmount());
                     }
                 }
+                if (!(seme instanceof PlayerEntity))
+                    CombatUtils.setHandCooldown(seme, h, 0, false);
             }
         }
     }

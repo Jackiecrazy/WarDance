@@ -487,6 +487,8 @@ public class CombatCapability implements ICombatCapability {
         decrementHandBind(Hand.MAIN_HAND, ticks);
         decrementHandBind(Hand.OFF_HAND, ticks);
         addOffhandCooldown(ticks);
+        if(!(elb instanceof PlayerEntity))
+            elb.ticksSinceLastSwing++;
         decrementRollTime(ticks);
         decrementShieldTime(ticks);
         int stExtra = decrementStaggerTime(ticks);
@@ -590,7 +592,7 @@ public class CombatCapability implements ICombatCapability {
         float nausea = elb instanceof PlayerEntity || elb.getActivePotionEffect(Effects.NAUSEA) == null ? 0 : (elb.getActivePotionEffect(Effects.NAUSEA).getAmplifier() + 1) * 0.05f;
         float armorMod = Math.max(1f - ((float) elb.getTotalArmorValue() / 40f), 0);
         float healthMod = elb.getHealth() / elb.getMaxHealth();
-        float speedMod = 0.2f / (float) Math.max(0.2, GeneralUtils.getSpeedSq(elb));
+        float speedMod = 0.003f / (float) Math.max(0.003, GeneralUtils.getSpeedSq(elb));
         if (getStaggerTime() > 0) {
             return getMaxPosture() * armorMod * speedMod * healthMod / (1.5f * CombatConfig.staggerDuration);
         }

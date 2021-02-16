@@ -51,7 +51,7 @@ public class EntityHandler {
     @SubscribeEvent
     public static void caps(AttachCapabilitiesEvent<Entity> e) {
         if (e.getObject() instanceof LivingEntity) {
-            e.addCapability(new ResourceLocation("wardance:combatinfo"), new CombatData((LivingEntity) e.getObject()));//FIXME might not attach in time?
+            e.addCapability(new ResourceLocation("wardance:combatinfo"), new CombatData((LivingEntity) e.getObject()));
         }
     }
 
@@ -90,7 +90,7 @@ public class EntityHandler {
 
     @SubscribeEvent
     public static void tickMobs(LivingEvent.LivingUpdateEvent e) {
-        if (!e.getEntityLiving().world.isRemote && !(e.getEntityLiving() instanceof PlayerEntity)){// && e.getEntityLiving().ticksExisted % CombatConfig.mobUpdateInterval == 0) {
+        if (!e.getEntityLiving().world.isRemote && !(e.getEntityLiving() instanceof PlayerEntity)){// && e.getEntityLiving().ticksExisted % CombatConfig.mobUpdateInterval == 0) {//TODO request update from client
             CombatData.getCap(e.getEntityLiving()).update();
         }
     }

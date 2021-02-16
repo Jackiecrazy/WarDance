@@ -8,7 +8,6 @@ import jackiecrazy.wardance.networking.CombatChannel;
 import jackiecrazy.wardance.networking.UpdateAttackPacket;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.LivingEntity;
-import net.minecraft.entity.MobEntity;
 import net.minecraft.entity.ai.attributes.Attributes;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.ServerPlayerEntity;
@@ -124,11 +123,11 @@ public class CombatUtils {
     }
 
     @Nullable
-    public static ItemStack getDefendingItemStack(LivingEntity e) {
+    public static ItemStack getDefendingItemStack(LivingEntity e, boolean shieldsOnly) {
         ItemStack ret = null;
         float posMod = 1337;
-        boolean mainRec = getCooledAttackStrength(e, Hand.MAIN_HAND, 0.5f) > 0.9f || e instanceof MobEntity;
-        boolean offRec = getCooledAttackStrength(e, Hand.OFF_HAND, 0.5f) > 0.9f || e instanceof MobEntity;
+        boolean mainRec = getCooledAttackStrength(e, Hand.MAIN_HAND, 0.5f) > 0.9f && (e instanceof PlayerEntity || WarDance.rand.nextFloat() < CombatConfig.mobParryChance);
+        boolean offRec = getCooledAttackStrength(e, Hand.OFF_HAND, 0.5f) > 0.9f && (e instanceof PlayerEntity || WarDance.rand.nextFloat() < CombatConfig.mobParryChance);
         if (offRec && isShield(e, e.getHeldItemOffhand())) {
             ret = e.getHeldItemOffhand();
             posMod = getPostureDef(e, e.getHeldItemOffhand());
@@ -139,6 +138,7 @@ public class CombatUtils {
                 ret = e.getHeldItemMainhand();
             }
         }
+        if (shieldsOnly) return ret;
         if (offRec && isWeapon(e, e.getHeldItemOffhand())) {
             if (ret == null || getPostureDef(e, e.getHeldItemMainhand()) < posMod) {
                 posMod = getPostureDef(e, e.getHeldItemOffhand());
@@ -172,10 +172,13 @@ public class CombatUtils {
     }
 
     public static float getPostureAtk(LivingEntity e, Hand h, float amount, ItemStack stack) {
+        float base = amount * (float) DEFAULT.attackPostureMultiplier;
         if (stack != null && combatList.containsKey(stack.getItem())) {
-            return (float) combatList.get(stack.getItem()).attackPostureMultiplier * getCooledAttackStrength(e, h, 1);
+            base = (float) combatList.get(stack.getItem()).attackPostureMultiplier;
+        } else if (stack == null || stack.isEmpty()) {
+            base = amount * CombatConfig.kenshiroScaler;
         }
-        return amount * (float) DEFAULT.attackPostureMultiplier * getCooledAttackStrength(e, h, 1);
+        return base * getCooledAttackStrength(e, h, 1) * (e instanceof PlayerEntity ? 1 : CombatConfig.mobScaler);
     }
 
     public static float getPostureDef(LivingEntity e, ItemStack stack) {

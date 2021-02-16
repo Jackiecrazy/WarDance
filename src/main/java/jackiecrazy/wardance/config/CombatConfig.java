@@ -16,7 +16,7 @@ import java.util.List;
 public class CombatConfig {
     public static final CombatConfig CONFIG;
     public static final ForgeConfigSpec CONFIG_SPEC;
-    private static final String[] THANKS_DARKMEGA={
+    private static final String[] THANKS_DARKMEGA = {
             "example:sword, 3.5, 1.5, false",
             "example:shield, 0.3, 0.6, true, 20, 1",
             "minecraft:netherite_pickaxe, 0.75, 1.0, false",
@@ -490,6 +490,8 @@ public class CombatConfig {
     private final ForgeConfigSpec.ConfigValue<List<? extends String>> _combatItems;
     private final ForgeConfigSpec.ConfigValue<List<? extends String>> _customPosture;
     private final ForgeConfigSpec.DoubleValue _mobParryChance;
+    private final ForgeConfigSpec.DoubleValue _mobScaler;
+    private final ForgeConfigSpec.DoubleValue _kenshiroScaler;
 
     public static float posturePerProjectile;
     public static float defaultMultiplierPostureDefend;
@@ -506,7 +508,7 @@ public class CombatConfig {
     public static int comboGrace;
     public static int spiritCD;
     public static int postureCD;
-    public static float mobParryChance;
+    public static float mobParryChance, mobScaler, kenshiroScaler;
 
     public CombatConfig(ForgeConfigSpec.Builder b) {
         b.push("numbers");
@@ -526,6 +528,8 @@ public class CombatConfig {
         _staggerDurationMin = b.translation("wardance.config.staggerM").comment("Minimum number of ticks an entity should be staggered for when its posture reaches 0. The actual length of a given stagger is scaled by HP between the min and max values").defineInRange("staggerDurationMin", 10, 1, Integer.MAX_VALUE);
         _staggerHits = b.translation("wardance.config.staggerH").comment("Number of hits a staggered entity will take before stagger is automatically canceled").defineInRange("staggerHits", 3, 1, Integer.MAX_VALUE);
         _mobParryChance = b.translation("wardance.config.mobP").comment("chance that a mob parries out of 1").defineInRange("mobParryChance", 0.6, 0, 1);
+        _mobScaler = b.translation("wardance.config.mobB").comment("posture damage from mob attacks will be scaled by this number").defineInRange("mobBuff", 2, 0, Double.MAX_VALUE);
+        _kenshiroScaler = b.translation("wardance.config.kenB").comment("posture damage from empty fists will be scaled by this number. Notice many mobs, such as endermen and ravagers, technically are empty-handed!").defineInRange("unarmedBuff", 1.6, 0, Double.MAX_VALUE);
         b.pop();
         b.push("lists");
         _combatItems = b.translation("wardance.config.combatItems").comment("Items eligible for parrying. Format should be name, attack posture consumption, defense multiplier, is shield. Shields can have two extra variables that dictate their parry time and parry counter. Default values provided graciously by DarkMega, thank you!").defineList("combatItems", Arrays.asList(THANKS_DARKMEGA), String.class::isInstance);
@@ -550,6 +554,8 @@ public class CombatConfig {
         staggerDurationMin = CONFIG._staggerDurationMin.get();
         staggerHits = CONFIG._staggerHits.get();
         mobParryChance = CONFIG._mobParryChance.get().floatValue();
+        mobScaler = CONFIG._mobScaler.get().floatValue();
+        kenshiroScaler = CONFIG._kenshiroScaler.get().floatValue();
         CombatUtils.updateLists(CONFIG._combatItems.get(), CONFIG._customPosture.get(), defaultMultiplierPostureAttack, defaultMultiplierPostureDefend, shieldThreshold, shieldCount);
     }
 
