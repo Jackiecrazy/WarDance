@@ -12,11 +12,13 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 public class CombatData implements ICapabilitySerializable<CompoundNBT> {
+    private static ICombatCapability OHNO=new DummyCombatCap();
+
     @CapabilityInject(ICombatCapability.class)
-    public static final Capability<ICombatCapability> CAP = null;
+    public static Capability<ICombatCapability> CAP = null;
 
     public static ICombatCapability getCap(LivingEntity le) {
-        return le.getCapability(CAP).orElseThrow(() -> new IllegalArgumentException("attempted to find a nonexistent capability"));
+        return le.getCapability(CAP).orElse(OHNO);//.orElseThrow(() -> new IllegalArgumentException("attempted to find a nonexistent capability"));
     }
 
     private final LazyOptional<ICombatCapability> instance;

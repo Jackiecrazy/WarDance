@@ -429,14 +429,17 @@ public class GeneralUtils {
         if (h == Hand.MAIN_HAND) return e.getAttributeValue(a);
         ModifiableAttributeInstance mai = new ModifiableAttributeInstance(a, (n) -> {
         });
-        Collection<AttributeModifier> stuff = e.getHeldItemMainhand().getAttributeModifiers(EquipmentSlotType.MAINHAND).get(a);
+        Collection<AttributeModifier> ignore = e.getHeldItemMainhand().getAttributeModifiers(EquipmentSlotType.MAINHAND).get(a);
         apply:
-        for (AttributeModifier am : e.getAttribute(Attributes.ATTACK_DAMAGE).getModifierListCopy()) {
-            for (AttributeModifier f : stuff) if (f.getID().equals(am.getID())) continue apply;
+        //FIXME on the instant of switching weapons, if you're holding an identical weapon on the offhand,, the mainhand item no longer has the modifier but the player still does
+        for (AttributeModifier am : e.getAttribute(a).getModifierListCopy()) {
+            for (AttributeModifier f : ignore) if (f.getID().equals(am.getID())) continue apply;
             mai.applyNonPersistentModifier(am);
         }
-        for (AttributeModifier f : e.getHeldItemOffhand().getAttributeModifiers(EquipmentSlotType.MAINHAND).get(a))
+        for (AttributeModifier f : e.getHeldItemOffhand().getAttributeModifiers(EquipmentSlotType.MAINHAND).get(a)) {
+            mai.removeModifier(f.getID());
             mai.applyNonPersistentModifier(f);
+        }
         return mai.getValue();
     }
 }

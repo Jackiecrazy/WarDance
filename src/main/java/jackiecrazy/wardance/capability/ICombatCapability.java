@@ -1,5 +1,6 @@
 package jackiecrazy.wardance.capability;
 
+import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.util.Hand;
 
@@ -117,6 +118,12 @@ public interface ICombatCapability {
 
     void decrementShieldTime(int amount);
 
+    int getShieldCount();
+
+    void setShieldCount(int amount);
+
+    void decrementShieldCount(int amount);
+
     int getOffhandCooldown();
 
     void setOffhandCooldown(int amount);
@@ -160,6 +167,8 @@ public interface ICombatCapability {
     void sync();
 
     void read(CompoundNBT tag);
+
+    boolean isValid();
 
     CompoundNBT write();
 }

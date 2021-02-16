@@ -1,7 +1,7 @@
 package jackiecrazy.wardance.capability;
 
 import jackiecrazy.wardance.WarDance;
-import jackiecrazy.wardance.config.WarConfig;
+import jackiecrazy.wardance.config.CombatConfig;
 import jackiecrazy.wardance.networking.CombatChannel;
 import jackiecrazy.wardance.networking.UpdateClientPacket;
 import jackiecrazy.wardance.utils.GeneralUtils;
@@ -9,6 +9,8 @@ import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.ai.attributes.AttributeModifier;
 import net.minecraft.entity.ai.attributes.Attributes;
 import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.entity.player.ServerPlayerEntity;
+import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.potion.Effects;
 import net.minecraft.util.Hand;
@@ -23,19 +25,21 @@ import java.util.UUID;
 public class CombatCapability implements ICombatCapability {
     public static final float MAXQI = 10;
     public static final UUID WOUND = UUID.fromString("982bbbb2-bbd0-4166-801a-560d1a4149c8");
-    private static final AttributeModifier STAGGERA = new AttributeModifier(WOUND, "stagger armor debuff", -9, AttributeModifier.Operation.ADDITION);
+    private static final AttributeModifier STAGGERA = new AttributeModifier(WOUND, "stagger armor debuff", -5, AttributeModifier.Operation.ADDITION);
     private static final AttributeModifier STAGGERS = new AttributeModifier(WOUND, "stagger speed debuff", -1, AttributeModifier.Operation.MULTIPLY_TOTAL);
 
-    private WeakReference<LivingEntity> dude;
+    private final WeakReference<LivingEntity> dude;
+    private ItemStack prev;
     private float qi, spirit, posture, combo, mpos, mspi, wounding, burnout, fatigue;
     private int qcd, scd, pcd, ccd, mBind, oBind;
-    private int staggert, staggerc, ocd, shield, roll;
+    private int staggert, staggerc, ocd, shield, sc, roll;
     private boolean offhand, combat;
     private long lastUpdate;
 
     public CombatCapability(LivingEntity e) {
         dude = new WeakReference<>(e);
         setTrueMaxSpirit(10);
+        setPosture(getMaxPosture());
     }
 
     @Override
@@ -52,7 +56,7 @@ public class CombatCapability implements ICombatCapability {
     public float addQi(float amount) {
         float temp = qi + amount;
         setQi(temp);
-        setQiGrace(WarConfig.qiGrace);
+        setQiGrace(CombatConfig.qiGrace);
         return temp % 10;
     }
 
@@ -92,7 +96,7 @@ public class CombatCapability implements ICombatCapability {
 
     @Override
     public void setSpirit(float amount) {
-        spirit = MathHelper.clamp(amount, 0, mspi);
+        spirit = MathHelper.clamp(amount, 0, getMaxSpirit());
     }
 
     @Override
@@ -107,7 +111,7 @@ public class CombatCapability implements ICombatCapability {
         if (spirit - amount < above) return false;
         spirit -= amount;
         burnout += amount / 10f;
-        setSpiritGrace(WarConfig.spiritCD);
+        setSpiritGrace(CombatConfig.spiritCD);
         return true;
     }
 
@@ -139,7 +143,7 @@ public class CombatCapability implements ICombatCapability {
 
     @Override
     public void setPosture(float amount) {
-        posture = MathHelper.clamp(amount, 0, getTrueMaxPosture());
+        posture = MathHelper.clamp(amount, 0, getMaxPosture());
     }
 
     @Override
@@ -153,11 +157,11 @@ public class CombatCapability implements ICombatCapability {
     public boolean consumePosture(float amount, float above) {
         if (posture - amount < above) {
             posture = 0;
-            setStaggerCount(WarConfig.staggerHits);
-            setStaggerTime(Math.min((int) (amount * 20), WarConfig.staggerDuration));
             LivingEntity elb = dude.get();
             if (elb == null) return false;
-            elb.world.playSound(null, elb.getPosX(), elb.getPosY(), elb.getPosZ(), SoundEvents.ENTITY_ZOMBIE_BREAK_WOODEN_DOOR, SoundCategory.PLAYERS, 0.5f + WarDance.rand.nextFloat() * 0.5f, 0.75f + WarDance.rand.nextFloat() * 0.5f);
+            setStaggerCount(CombatConfig.staggerHits);
+            setStaggerTime(CombatConfig.staggerDurationMin + Math.max(0, (int) (elb.getHealth() / elb.getMaxHealth() * (CombatConfig.staggerDuration - CombatConfig.staggerDurationMin))));
+            elb.world.playSound(null, elb.getPosX(), elb.getPosY(), elb.getPosZ(), SoundEvents.ENTITY_ZOMBIE_BREAK_WOODEN_DOOR, SoundCategory.PLAYERS, 0.3f + WarDance.rand.nextFloat() * 0.5f, 0.75f + WarDance.rand.nextFloat() * 0.5f);
             elb.getAttribute(Attributes.MOVEMENT_SPEED).removeModifier(WOUND);
             elb.getAttribute(Attributes.MOVEMENT_SPEED).applyPersistentModifier(STAGGERS);
             elb.getAttribute(Attributes.ARMOR).removeModifier(WOUND);
@@ -166,7 +170,7 @@ public class CombatCapability implements ICombatCapability {
         }
         posture -= amount;
         fatigue += amount / 10f;
-        setPostureGrace(WarConfig.postureCD);
+        setPostureGrace(CombatConfig.postureCD);
         sync();
         return true;
     }
@@ -207,7 +211,7 @@ public class CombatCapability implements ICombatCapability {
     public float addCombo(float amount) {
         float overflow = Math.max(0, combo + amount - 10);
         setCombo(combo + amount);
-        setComboGrace(WarConfig.comboGrace);
+        setComboGrace(CombatConfig.comboGrace);
         return overflow;
     }
 
@@ -284,6 +288,7 @@ public class CombatCapability implements ICombatCapability {
             if (staggert > 0 && elb != null) {
                 elb.getAttribute(Attributes.MOVEMENT_SPEED).removeModifier(WOUND);
                 elb.getAttribute(Attributes.ARMOR).removeModifier(WOUND);
+                staggerc = 0;
             }
             int temp = staggert;
             staggert = 0;
@@ -308,6 +313,7 @@ public class CombatCapability implements ICombatCapability {
         if (staggerc - amount > 0)
             staggerc -= amount;
         else {
+            addPosture(getPPS() * staggert);
             setStaggerTime(0);
             staggerc = 0;
         }
@@ -328,7 +334,26 @@ public class CombatCapability implements ICombatCapability {
     public void decrementShieldTime(int amount) {
         if (shield - amount > 0)
             shield -= amount;
-        else shield = 0;
+        else {
+            shield = 0;
+            setShieldCount(0);
+        }
+    }
+
+    @Override
+    public int getShieldCount() {
+        return sc;
+    }
+
+    @Override
+    public void setShieldCount(int amount) {
+        sc = amount;
+    }
+
+    @Override
+    public void decrementShieldCount(int amount) {
+        sc -= Math.min(sc, amount);
+        setShieldTime(0);
     }
 
 
@@ -478,6 +503,10 @@ public class CombatCapability implements ICombatCapability {
         if (getComboGrace() == 0) {
             setCombo((float) Math.floor(getCombo()));
         }
+        if (prev == null || !ItemStack.areItemStacksEqual(elb.getHeldItemOffhand(), prev)) {
+            prev = elb.getHeldItemOffhand();
+            setOffhandCooldown(0);
+        }
         lastUpdate = elb.world.getGameTime();
         sync();
     }
@@ -487,6 +516,9 @@ public class CombatCapability implements ICombatCapability {
         LivingEntity elb = dude.get();
         if (elb == null || elb.world.isRemote) return;
         CombatChannel.INSTANCE.send(PacketDistributor.TRACKING_ENTITY.with(() -> elb), new UpdateClientPacket(elb.getEntityId(), write()));
+        if (elb instanceof ServerPlayerEntity)
+            CombatChannel.INSTANCE.send(PacketDistributor.PLAYER.with(() -> (ServerPlayerEntity) elb), new UpdateClientPacket(elb.getEntityId(), write()));
+
     }
 
     @Override
@@ -513,7 +545,13 @@ public class CombatCapability implements ICombatCapability {
         setHandBind(Hand.OFF_HAND, c.getInt("bOff"));
         setOffhandAttack(c.getBoolean("offhand"));
         toggleCombatMode(c.getBoolean("combat"));
+        setShieldCount(c.getInt("shieldC"));
         lastUpdate = c.getLong("lastUpdate");
+    }
+
+    @Override
+    public boolean isValid() {
+        return true;
     }
 
     @Override
@@ -542,6 +580,7 @@ public class CombatCapability implements ICombatCapability {
         c.putBoolean("offhand", isOffhandAttack());
         c.putBoolean("combat", isCombatMode());
         c.putLong("lastUpdate", lastUpdate);
+        c.putInt("shieldC", sc);
         return c;
     }
 
@@ -553,7 +592,7 @@ public class CombatCapability implements ICombatCapability {
         float healthMod = elb.getHealth() / elb.getMaxHealth();
         float speedMod = 0.2f / (float) Math.max(0.2, GeneralUtils.getSpeedSq(elb));
         if (getStaggerTime() > 0) {
-            return getMaxPosture() * armorMod * speedMod * healthMod / (1.5f * WarConfig.staggerDuration);
+            return getMaxPosture() * armorMod * speedMod * healthMod / (1.5f * CombatConfig.staggerDuration);
         }
         return (0.2f * armorMod * healthMod * speedMod) - nausea;
     }

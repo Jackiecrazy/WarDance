@@ -4,6 +4,8 @@ import io.netty.util.internal.shaded.org.jctools.queues.MessagePassingQueue;
 import jackiecrazy.wardance.capability.CombatData;
 import jackiecrazy.wardance.capability.ICombatCapability;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.world.ClientWorld;
+import net.minecraft.entity.Entity;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.network.PacketBuffer;
@@ -45,8 +47,11 @@ public class UpdateClientPacket {
         @Override
         public void accept(UpdateClientPacket updateClientPacket, Supplier<NetworkEvent.Context> contextSupplier) {
             contextSupplier.get().enqueueWork(() -> {
-                if (Minecraft.getInstance().world != null)
-                    CombatData.getCap((LivingEntity) (Objects.requireNonNull(Minecraft.getInstance().world.getEntityByID(updateClientPacket.e)))).read(updateClientPacket.icc);
+                ClientWorld world = Minecraft.getInstance().world;
+                if (world != null) {
+                    Entity entity = world.getEntityByID(updateClientPacket.e);
+                    if (entity instanceof LivingEntity) CombatData.getCap((LivingEntity) entity).read(updateClientPacket.icc);
+                }
             });
             contextSupplier.get().setPacketHandled(true);
         }

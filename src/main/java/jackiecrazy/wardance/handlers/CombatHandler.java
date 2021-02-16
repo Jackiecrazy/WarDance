@@ -4,17 +4,14 @@ import jackiecrazy.wardance.WarDance;
 import jackiecrazy.wardance.api.ICombatManipulator;
 import jackiecrazy.wardance.capability.CombatData;
 import jackiecrazy.wardance.capability.ICombatCapability;
-import jackiecrazy.wardance.config.WarConfig;
+import jackiecrazy.wardance.config.CombatConfig;
 import jackiecrazy.wardance.utils.CombatUtils;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.particles.ParticleTypes;
-import net.minecraft.util.DamageSource;
-import net.minecraft.util.Hand;
-import net.minecraft.util.SoundCategory;
-import net.minecraft.util.SoundEvents;
+import net.minecraft.util.*;
 import net.minecraft.util.math.RayTraceResult;
 import net.minecraft.util.math.vector.Vector3d;
 import net.minecraft.world.server.ServerWorld;
@@ -34,7 +31,7 @@ public class CombatHandler {
     public static void projectileParry(final ProjectileImpactEvent e) {
         if (e.getRayTraceResult().getType() == RayTraceResult.Type.ENTITY && e.getRayTraceResult().hitInfo instanceof LivingEntity) {
             LivingEntity uke = (LivingEntity) e.getRayTraceResult().hitInfo;
-            float consume = WarConfig.posturePerProjectile;
+            float consume = CombatConfig.posturePerProjectile;
             if ((CombatUtils.isShield(uke, uke.getHeldItemMainhand()) || CombatUtils.isShield(uke, uke.getHeldItemOffhand()) && CombatData.getCap(uke).consumePosture(consume))) {
                 Vector3d look = uke.getLookVec();
                 e.setCanceled(true);
@@ -62,7 +59,8 @@ public class CombatHandler {
                     ukeCap.decrementStaggerCount(1);
                     return; //also cancels posture consumption, so you keep regenerating
                 }
-                float atkMult = CombatUtils.getPostureAtk(seme, e.getAmount(), attack);
+                Hand h=semeCap.isOffhandAttack()?Hand.OFF_HAND:Hand.MAIN_HAND;
+                float atkMult = CombatUtils.getPostureAtk(seme, h, e.getAmount(), attack);
                 ItemStack defend = CombatUtils.getDefendingItemStack(uke);
                 float defMult = CombatUtils.getPostureDef(uke, defend);
                 if (ukeCap.consumePosture(atkMult * defMult) && defend != null) {
@@ -80,13 +78,18 @@ public class CombatHandler {
                                 uke.world.setEntityState(uke, (byte) 30);
                             }
                             disshield = true;
-                        } else if (ukeCap.getShieldTime() != 0) {
-                            ukeCap.setShieldTime(WarConfig.shieldThreshold);
+                        } else if (ukeCap.getShieldTime() == 0) {
+                            Tuple<Integer, Integer> stat = CombatUtils.getShieldStats(defend);
+                            ukeCap.setShieldTime(stat.getA());
+                            ukeCap.setShieldCount(stat.getB());
+                        } else {
+                            ukeCap.decrementShieldCount(1);
                         }
                     }
                     uke.world.playSound(null, uke.getPosX(), uke.getPosY(), uke.getPosZ(), disshield ? SoundEvents.ITEM_SHIELD_BLOCK : SoundEvents.BLOCK_ANVIL_PLACE, SoundCategory.PLAYERS, 0.25f + WarDance.rand.nextFloat() * 0.5f, (1 - (ukeCap.getPosture() / ukeCap.getMaxPosture())) + WarDance.rand.nextFloat() * 0.5f);
                     //reset cooldown
-                    CombatUtils.setHandCooldown(uke, uke.getHeldItemOffhand() == defend ? Hand.OFF_HAND : Hand.MAIN_HAND, 0.5f);
+                    if (defMult != 0)//shield time
+                        CombatUtils.setHandCooldown(uke, uke.getHeldItemOffhand() == defend ? Hand.OFF_HAND : Hand.MAIN_HAND, 0.5f, true);
                     if (defend.getItem() instanceof ICombatManipulator) {
                         ((ICombatManipulator) defend.getItem()).onParry(seme, uke, defend, e.getAmount());
                     }
@@ -99,7 +102,6 @@ public class CombatHandler {
         }
     }
 
-    //by config option, will also replace the idiotic chance to resist knock with ratio resist. Somewhat intrusive.
     @SubscribeEvent(priority = EventPriority.HIGHEST)
     public static void knockKnockWhosThere(LivingKnockBackEvent e) {
         if (CombatData.getCap(e.getEntityLiving()).getStaggerTime() > 0) {
@@ -125,9 +127,9 @@ public class CombatHandler {
         LivingEntity uke = e.getEntityLiving();
         ICombatCapability cap = CombatData.getCap(uke);
         cap.setCombo((float) (Math.floor(cap.getCombo()) / 2d));
-        if(cap.getStaggerTime()>0){
+        if (cap.getStaggerTime() > 0) {
             //fatality!
-            DamageSource ds=e.getSource();
+            DamageSource ds = e.getSource();
             if (ds.getTrueSource() != null && ds.getTrueSource() instanceof LivingEntity) {
                 LivingEntity seme = ((LivingEntity) ds.getTrueSource());
                 if (seme.world instanceof ServerWorld) {
@@ -140,11 +142,11 @@ public class CombatHandler {
 
     @SubscribeEvent
     public static void offhandAttack(final PlayerInteractEvent.EntityInteract e) {
-        if (CombatUtils.isWeapon(e.getPlayer(), e.getPlayer().getHeldItemOffhand())) {
+        if (CombatUtils.isWeapon(e.getPlayer(), e.getPlayer().getHeldItemOffhand()) && (e.getPlayer().swingingHand != Hand.OFF_HAND || !e.getPlayer().isSwingInProgress)) {
             CombatData.getCap(e.getPlayer()).setOffhandAttack(true);
             e.getPlayer().swing(Hand.OFF_HAND, true);
             e.getPlayer().attackTargetEntityWithCurrentItem(e.getTarget());
-            CombatData.getCap(e.getPlayer()).setOffhandAttack(true);
+            CombatData.getCap(e.getPlayer()).setOffhandAttack(false);
         }
     }
 }

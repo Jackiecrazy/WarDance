@@ -2,6 +2,7 @@ package jackiecrazy.wardance.mixin;
 
 import jackiecrazy.wardance.api.CombatDamageSource;
 import jackiecrazy.wardance.capability.CombatData;
+import jackiecrazy.wardance.capability.ICombatCapability;
 import jackiecrazy.wardance.events.HandedAttackEvent;
 import jackiecrazy.wardance.events.HandedCritEvent;
 import jackiecrazy.wardance.utils.CombatUtils;
@@ -50,7 +51,8 @@ public abstract class MixinOffhandAttack extends LivingEntity {
     public void attackTargetEntityWithCurrentItem(Entity targetEntity) {
         //replaced all "this" with casted "player"
         PlayerEntity player = (PlayerEntity) (Object) this;
-        Hand h = CombatData.getCap(player).isOffhandAttack() ? Hand.OFF_HAND : Hand.MAIN_HAND;
+        final ICombatCapability cap = CombatData.getCap(player);
+        Hand h = cap.isOffhandAttack() ? Hand.OFF_HAND : Hand.MAIN_HAND;
         //introduce stack variable to hand
         ItemStack stack = player.getHeldItem(h);
         //replace forge hook with custom hook if player is offhand attacking
@@ -72,8 +74,7 @@ public abstract class MixinOffhandAttack extends LivingEntity {
                 float cooledStrength = CombatUtils.getCooledAttackStrength(player, h, 0.5f);
                 damage = damage * (0.2F + cooledStrength * cooledStrength * 0.8F);
                 extraDamage = extraDamage * cooledStrength;
-                //due to handedness, cooldown reset is replaced with a custom version
-                CombatUtils.setHandCooldown(player, h, 0);
+                //due to handedness and convenience for events, cooldown reset is moved to the bottom.
                 if (damage > 0.0F || extraDamage > 0.0F) {
                     boolean cooled = cooledStrength > 0.9F;
                     boolean sprintCooled = false;
@@ -121,6 +122,9 @@ public abstract class MixinOffhandAttack extends LivingEntity {
 
                     Vector3d targetMotion = targetEntity.getMotion();
                     boolean dealDamage = targetEntity.attackEntityFrom(new CombatDamageSource("player", player).setDamageDealer(stack).setAttackingHand(h).setProcAttackEffects(true).setProcAutoEffects(true).setCrit(crit), damage);
+                    cap.addCombo(0.2f);
+                    cap.addQi(4 / CombatUtils.getCooldownPeriod(player, h) * 0.004f * (1 + (cap.getCombo() / 10f)));
+                    cap.consumePosture(0);
                     if (dealDamage) {
                         if (knockback > 0) {
                             if (targetEntity instanceof LivingEntity) {
@@ -215,7 +219,7 @@ public abstract class MixinOffhandAttack extends LivingEntity {
                         }
                     }
                 }
-
+                CombatUtils.setHandCooldown(player, h, 0, false);
             }
         }
     }

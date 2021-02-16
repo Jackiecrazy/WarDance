@@ -9,6 +9,7 @@
     "MixinOffhandAttack"
   ],
   "client": [
+    "MixinEquipProgress"
   ],
   "injectors": {
     "defaultRequire": 1

@@ -2,28 +2,65 @@ package jackiecrazy.wardance.handlers;
 
 import jackiecrazy.wardance.WarDance;
 import jackiecrazy.wardance.capability.CombatData;
-import jackiecrazy.wardance.config.WarConfig;
+import jackiecrazy.wardance.config.CombatConfig;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.LivingEntity;
+import net.minecraft.entity.MobEntity;
+import net.minecraft.entity.ai.goal.Goal;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.event.AttachCapabilitiesEvent;
 import net.minecraftforge.event.TickEvent;
+import net.minecraftforge.event.entity.EntityJoinWorldEvent;
 import net.minecraftforge.event.entity.living.LivingEvent;
 import net.minecraftforge.event.entity.player.PlayerEvent;
-import net.minecraftforge.event.entity.player.PlayerSleepInBedEvent;
 import net.minecraftforge.event.entity.player.PlayerWakeUpEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.LogicalSide;
 import net.minecraftforge.fml.common.Mod;
 
+import java.util.EnumSet;
+
 
 @Mod.EventBusSubscriber(modid = WarDance.MODID)
 public class EntityHandler {
+    private static class NoGoal extends Goal {
+        LivingEntity e;
+        static final EnumSet<Flag> mutex = EnumSet.allOf(Flag.class);
+
+        NoGoal(LivingEntity bind) {
+            e = bind;
+        }
+
+        @Override
+        public boolean shouldExecute() {
+            return CombatData.getCap(e).isValid() && CombatData.getCap(e).getStaggerTime() > 0;
+        }
+
+        @Override
+        public boolean isPreemptible() {
+            return false;
+        }
+
+        @Override
+        public EnumSet<Flag> getMutexFlags() {
+            return mutex;
+        }
+    }
+
     @SubscribeEvent
     public static void caps(AttachCapabilitiesEvent<Entity> e) {
         if (e.getObject() instanceof LivingEntity) {
-            e.addCapability(new ResourceLocation("wardance:combatinfo"), new CombatData((LivingEntity) e.getObject()));
+            e.addCapability(new ResourceLocation("wardance:combatinfo"), new CombatData((LivingEntity) e.getObject()));//FIXME might not attach in time?
+        }
+    }
+
+    @SubscribeEvent
+    public static void takeThis(EntityJoinWorldEvent e) {
+        if (e.getEntity() instanceof MobEntity) {
+            MobEntity mob = (MobEntity) e.getEntity();
+            mob.goalSelector.addGoal(-1, new NoGoal(mob));
+            mob.targetSelector.addGoal(-1, new NoGoal(mob));
         }
     }
 
@@ -38,7 +75,7 @@ public class EntityHandler {
     }
 
     @SubscribeEvent
-    public static void sleep(PlayerWakeUpEvent e){
+    public static void sleep(PlayerWakeUpEvent e) {
         CombatData.getCap(e.getPlayer()).setFatigue(0);
         CombatData.getCap(e.getPlayer()).setBurnout(0);
         CombatData.getCap(e.getPlayer()).setWounding(0);
@@ -53,7 +90,7 @@ public class EntityHandler {
 
     @SubscribeEvent
     public static void tickMobs(LivingEvent.LivingUpdateEvent e) {
-        if (!e.getEntityLiving().world.isRemote && !(e.getEntityLiving() instanceof PlayerEntity) && e.getEntityLiving().ticksExisted % WarConfig.mobUpdateInterval == 0) {
+        if (!e.getEntityLiving().world.isRemote && !(e.getEntityLiving() instanceof PlayerEntity)){// && e.getEntityLiving().ticksExisted % CombatConfig.mobUpdateInterval == 0) {
             CombatData.getCap(e.getEntityLiving()).update();
         }
     }

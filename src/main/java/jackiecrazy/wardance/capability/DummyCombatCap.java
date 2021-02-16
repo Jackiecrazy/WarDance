@@ -212,6 +212,21 @@ public class DummyCombatCap implements ICombatCapability{
     }
 
     @Override
+    public int getShieldCount() {
+        return 0;
+    }
+
+    @Override
+    public void setShieldCount(int amount) {
+
+    }
+
+    @Override
+    public void decrementShieldCount(int amount) {
+
+    }
+
+    @Override
     public int getOffhandCooldown() {
         return 0;
     }
@@ -319,6 +334,11 @@ public class DummyCombatCap implements ICombatCapability{
     @Override
     public void read(CompoundNBT tag) {
 
+    }
+
+    @Override
+    public boolean isValid() {
+        return false;
     }
 
     @Override
