@@ -17,6 +17,7 @@ import net.minecraft.util.Hand;
 import net.minecraft.util.SoundCategory;
 import net.minecraft.util.SoundEvents;
 import net.minecraft.util.math.MathHelper;
+import net.minecraft.util.math.vector.Vector3d;
 import net.minecraftforge.fml.network.PacketDistributor;
 
 import java.lang.ref.WeakReference;
@@ -154,11 +155,17 @@ public class CombatCapability implements ICombatCapability {
     }
 
     @Override
-    public boolean consumePosture(float amount, float above) {
+    public float consumePosture(float amount, float above) {
+        float ret = 0;
+        if (amount > getTrueMaxPosture() / 4f) {
+            //hard cap, knock back
+            ret = amount - getTrueMaxPosture() / 4f;
+            amount = getTrueMaxPosture() / 4f;
+        }
         if (posture - amount < above) {
             posture = 0;
             LivingEntity elb = dude.get();
-            if (elb == null) return false;
+            if (elb == null) return ret;
             setStaggerCount(CombatConfig.staggerHits);
             setStaggerTime(CombatConfig.staggerDurationMin + Math.max(0, (int) (elb.getHealth() / elb.getMaxHealth() * (CombatConfig.staggerDuration - CombatConfig.staggerDurationMin))));
             elb.world.playSound(null, elb.getPosX(), elb.getPosY(), elb.getPosZ(), SoundEvents.ENTITY_ZOMBIE_BREAK_WOODEN_DOOR, SoundCategory.PLAYERS, 0.3f + WarDance.rand.nextFloat() * 0.5f, 0.75f + WarDance.rand.nextFloat() * 0.5f);
@@ -166,13 +173,13 @@ public class CombatCapability implements ICombatCapability {
             elb.getAttribute(Attributes.MOVEMENT_SPEED).applyPersistentModifier(STAGGERS);
             elb.getAttribute(Attributes.ARMOR).removeModifier(WOUND);
             elb.getAttribute(Attributes.ARMOR).applyPersistentModifier(STAGGERA);
-            return false;
+            return -1f;
         }
         posture -= amount;
         fatigue += amount / 10f;
         setPostureGrace(CombatConfig.postureCD);
         sync();
-        return true;
+        return ret;
     }
 
     @Override
@@ -230,6 +237,7 @@ public class CombatCapability implements ICombatCapability {
     @Override
     public void setTrueMaxPosture(float amount) {
         mpos = amount;
+        if (getPosture() > getMaxPosture()) setPosture(getMaxPosture());
     }
 
     @Override
@@ -372,7 +380,6 @@ public class CombatCapability implements ICombatCapability {
         ocd += amount;
     }
 
-
     @Override
     public int getRollTime() {
         return roll;
@@ -385,9 +392,17 @@ public class CombatCapability implements ICombatCapability {
 
     @Override
     public void decrementRollTime(int amount) {
-        if (roll - amount > 0)
+        if (roll + amount < 0)
+            roll += amount;
+        else if (roll - amount > 0)
             roll -= amount;
-        else roll = 0;
+        else {
+            if (roll < 0 && dude.get() instanceof PlayerEntity) {
+                PlayerEntity p = (PlayerEntity) dude.get();
+                p.setForcedPose(null);
+            }
+            roll = 0;
+        }
     }
 
 
@@ -479,7 +494,7 @@ public class CombatCapability implements ICombatCapability {
         if (elb == null) return;
         int ticks = (int) (elb.world.getGameTime() - lastUpdate);
         if (ticks < 1) return;//sometimes time runs backwards
-        setTrueMaxPosture((float) (5 * Math.ceil(elb.getWidth()) * Math.ceil(elb.getHeight()) + elb.getTotalArmorValue() / 2d));
+        setTrueMaxPosture((float) (Math.ceil(5 * elb.getWidth() * elb.getHeight()) + elb.getTotalArmorValue() / 2d));
         decrementComboGrace(ticks);
         int qiExtra = decrementQiGrace(ticks);
         int spExtra = decrementSpiritGrace(ticks);
@@ -487,13 +502,13 @@ public class CombatCapability implements ICombatCapability {
         decrementHandBind(Hand.MAIN_HAND, ticks);
         decrementHandBind(Hand.OFF_HAND, ticks);
         addOffhandCooldown(ticks);
-        if(!(elb instanceof PlayerEntity))
+        if (!(elb instanceof PlayerEntity))
             elb.ticksSinceLastSwing++;
         decrementRollTime(ticks);
         decrementShieldTime(ticks);
         int stExtra = decrementStaggerTime(ticks);
         //check max posture, max spirit, decrement bind and offhand cooldown
-        if (getPostureGrace() == 0 && getStaggerTime() == 0 && getPosture() < getMaxPosture()) {
+        if ((getPostureGrace() == 0 || getStaggerTime() > 0) && getPosture() < getMaxPosture()) {
             addPosture(getPPS() * (poExtra + stExtra));
         }
         if (getSpiritGrace() == 0 && getStaggerTime() == 0 && getSpirit() < getMaxSpirit()) {
@@ -592,7 +607,8 @@ public class CombatCapability implements ICombatCapability {
         float nausea = elb instanceof PlayerEntity || elb.getActivePotionEffect(Effects.NAUSEA) == null ? 0 : (elb.getActivePotionEffect(Effects.NAUSEA).getAmplifier() + 1) * 0.05f;
         float armorMod = Math.max(1f - ((float) elb.getTotalArmorValue() / 40f), 0);
         float healthMod = elb.getHealth() / elb.getMaxHealth();
-        float speedMod = 0.003f / (float) Math.max(0.003, GeneralUtils.getSpeedSq(elb));
+        Vector3d spd = elb.getMotion();
+        float speedMod = (float) Math.min(1, 0.007f / (spd.x * spd.x + spd.z * spd.z));
         if (getStaggerTime() > 0) {
             return getMaxPosture() * armorMod * speedMod * healthMod / (1.5f * CombatConfig.staggerDuration);
         }

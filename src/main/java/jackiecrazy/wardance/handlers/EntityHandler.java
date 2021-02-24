@@ -2,8 +2,13 @@ package jackiecrazy.wardance.handlers;
 
 import jackiecrazy.wardance.WarDance;
 import jackiecrazy.wardance.capability.CombatData;
+import jackiecrazy.wardance.capability.ICombatCapability;
 import jackiecrazy.wardance.config.CombatConfig;
+import jackiecrazy.wardance.networking.CombatChannel;
+import jackiecrazy.wardance.networking.RequestUpdatePacket;
+import net.minecraft.client.Minecraft;
 import net.minecraft.entity.Entity;
+import net.minecraft.entity.EntityType;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.MobEntity;
 import net.minecraft.entity.ai.goal.Goal;
@@ -11,6 +16,7 @@ import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.event.AttachCapabilitiesEvent;
 import net.minecraftforge.event.TickEvent;
+import net.minecraftforge.event.entity.EntityAttributeCreationEvent;
 import net.minecraftforge.event.entity.EntityJoinWorldEvent;
 import net.minecraftforge.event.entity.living.LivingEvent;
 import net.minecraftforge.event.entity.player.PlayerEvent;
@@ -18,6 +24,8 @@ import net.minecraftforge.event.entity.player.PlayerWakeUpEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.LogicalSide;
 import net.minecraftforge.fml.common.Mod;
+import net.minecraftforge.registries.ForgeRegistries;
+import net.minecraftforge.registries.RegistryManager;
 
 import java.util.EnumSet;
 
@@ -88,17 +96,33 @@ public class EntityHandler {
         }
     }
 
+//    @SubscribeEvent
+//    public static void attribute(EntityAttributeCreationEvent e) {
+//        //todo hmm
+//    }
+
     @SubscribeEvent
     public static void tickMobs(LivingEvent.LivingUpdateEvent e) {
-        if (!e.getEntityLiving().world.isRemote && !(e.getEntityLiving() instanceof PlayerEntity)){// && e.getEntityLiving().ticksExisted % CombatConfig.mobUpdateInterval == 0) {//TODO request update from client
-            CombatData.getCap(e.getEntityLiving()).update();
+        if (!e.getEntityLiving().world.isRemote && !(e.getEntityLiving() instanceof PlayerEntity)) {
+            //staggered mobs bypass update interval
+            ICombatCapability cap = CombatData.getCap(e.getEntityLiving());
+            if (cap.getStaggerTime() > 0 || e.getEntityLiving().ticksExisted % CombatConfig.mobUpdateInterval == 0)
+                cap.update();
+        }
+    }
+
+    @SubscribeEvent
+    public static void tickPlayer(TickEvent.PlayerTickEvent e) {
+        PlayerEntity p = e.player;
+        if (p.world.isRemote && Minecraft.getInstance().pointedEntity instanceof LivingEntity) {
+            CombatChannel.INSTANCE.sendToServer(new RequestUpdatePacket(Minecraft.getInstance().pointedEntity.getEntityId()));
         }
     }
 
     @SubscribeEvent
     public static void noJump(LivingEvent.LivingJumpEvent e) {
         if (!(e.getEntityLiving() instanceof PlayerEntity) && CombatData.getCap(e.getEntityLiving()).getStaggerTime() > 0) {
-            e.setCanceled(true);
+            e.getEntityLiving().setMotion(0, 0, 0);
         }
     }
 }

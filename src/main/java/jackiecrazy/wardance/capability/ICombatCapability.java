@@ -1,6 +1,5 @@
 package jackiecrazy.wardance.capability;
 
-import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.util.Hand;
 
@@ -54,11 +53,18 @@ public interface ICombatCapability {
 
     float addPosture(float amount);
 
-    default boolean consumePosture(float amount) {
+    default boolean doConsumePosture(float amount) {
+        return consumePosture(amount, 0) == 0;
+    }
+
+    default float consumePosture(float amount) {
         return consumePosture(amount, 0);
     }
 
-    boolean consumePosture(float amount, float above);
+    /**
+     * returns -1 if staggered
+     */
+    float consumePosture(float amount, float above);
 
     int getPostureGrace();
 
@@ -130,6 +136,9 @@ public interface ICombatCapability {
 
     void addOffhandCooldown(int amount);
 
+    /**
+     * for the sake of convenience, positive is sidestep and negative is dodge
+     */
     int getRollTime();
 
     void setRollTime(int amount);

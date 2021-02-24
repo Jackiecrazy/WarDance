@@ -2,6 +2,7 @@ Project: War Dance is Taoism Lite, adding the mechanics without the weapons.
     Posture: a stat that quantifies how steady the player is on his feet. Stamina and poise rolled into one if you play souls-likes, but actually heavily inspired by Sekiro and DMC.
 - Max posture is calculated by (width*height*5*(1+armor/20)), so a player starts with 10 posture and can gain up to double by wearing diamond armor.
 - Being attacked consumes posture regardless of parry. This makes parrying unequivocably the best option, since you’ll be taking posture damage either way.
+- To avoid ravagers instantly staggering everything else, posture consumption is hard capped at 1/4 of your max each time. Overflow posture damage will be converted into knockback.
 - Posture recovers quickly when not attacking, but has a 1s cooldown after being consumed. At full HP, standing still naked, you heal 20 posture per second.
 - Armor will decrease regeneration speed down to 0.7x. This offers an anti-tank option.
 - Moving slows posture regen down by 7% per block per second, so regeneration is roughly 70% while walking and 60% while sprinting.
@@ -70,7 +71,7 @@ Shatter: mark hit enemies, causing next 2 attacks to deal 1.5x damage; stagger: 
 ▪ Iron guard: the next parry in 1 second (particles) reflects the posture damage onto attacker. If the attack was ranged, the shot is reflected back at the caster. Cancels out with heavy blow. Recharge in 5 attacks, weapon bound.
 Overpower: knockback reflected to attacker; grapple: slow attacker by 40% and disable hand; backpedal: all posture cost converted to knockback; recovery: reset cooldown of all resources; mikiri: cooldown -1, auto trigger.
 ▪ Kick: the next attack in 2 seconds has 2 range but deals 6 unblockable posture damage and 1 blockable falling damage. Recharge in 5 attacks, self bound.
-Backflip: jump back and gain 30% lost posture; tackle: dashes and kicks first entity collided; iron knee: knockback converted to extra posture damage; trip: fatigue for double the cooldown time; overextend: double damage but deal half to self.
+Backflip: jump back and gain 30% lost posture; tackle: dashes and kicks first entity collided; iron knee: knockback converted to extra posture damage; trip: fatigue for double the cooldown time, cooldown -1; overextend: double damage but deal half to self.
 - Bound casts are chosen, then bound to the attack key in combat mode. Casting them generally requires chanting, but they’re more powerful. As expected, items can have different spells bound to them, or even just have a magic missile as its normal attack. This also enables throwable weapons (such as poison sand or daggers) to be used as melee. There should be an interface for such items. Only two bound skills are included as examples. Chanting can be interrupted by taking damage, using a breath weapon, asphyxiating, eating, drinking, or chanting something else.
 ▪ Phantom strike: after 0.6s of chanting, launch a shadow of your weapon, dealing a normal attack on impact. Cost 2 qi, range 16.
 Warp: light gravity, teleport to hit location; crush: triple size and damage but half speed and range, clips and pierces; hamstring: slow target by 40% for 2 seconds; vengeance: ricochet up to 5 times between enemies; trap: only fires when someone crosses its LoS in 10 blocks.
@@ -78,17 +79,17 @@ Warp: light gravity, teleport to hit location; crush: triple size and damage but
 Name
  Active
  Passive
-Boulder Guard
+Boulder Brace
  Refill posture and regen unconditionally for 10 seconds
  Halved posture cooldown time
 Wind Scar
  Gain 20 charges, every extra block reach consumes a charge
  +1 range
 Winter Wolf
- Stop projectiles and no decrease in passive for 15 seconds, attacks additionally fatigue target
+ Stop projectiles and maintain passive for 15 seconds, attacks additionally fatigue target
  Speed slowly increases to +40% until attack, slow target equivalently
 Flame Dance
- +10% extra damage per hit up to double for 15 seconds
+ Every third hit deals double damage and give you a free parry (independent of iron guard) for 15 seconds
  +10% attack speed up to double for successful attack
 Timberfall
  Guarantee crit and add 2+10% damage for 6 hits

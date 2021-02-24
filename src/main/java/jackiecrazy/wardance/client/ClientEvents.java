@@ -9,6 +9,9 @@ import jackiecrazy.wardance.capability.CombatData;
 import jackiecrazy.wardance.capability.ICombatCapability;
 import jackiecrazy.wardance.config.ClientConfig;
 import jackiecrazy.wardance.config.CombatConfig;
+import jackiecrazy.wardance.networking.CombatChannel;
+import jackiecrazy.wardance.networking.CombatPacket;
+import jackiecrazy.wardance.networking.DodgePacket;
 import jackiecrazy.wardance.utils.CombatUtils;
 import net.minecraft.client.GameSettings;
 import net.minecraft.client.MainWindow;
@@ -20,6 +23,7 @@ import net.minecraft.client.renderer.FirstPersonRenderer;
 import net.minecraft.client.renderer.ItemRenderer;
 import net.minecraft.client.renderer.RenderHelper;
 import net.minecraft.client.settings.AttackIndicatorStatus;
+import net.minecraft.client.settings.KeyBinding;
 import net.minecraft.client.settings.PointOfView;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.LivingEntity;
@@ -34,21 +38,24 @@ import net.minecraft.util.math.RayTraceResult;
 import net.minecraft.util.math.vector.Quaternion;
 import net.minecraft.util.math.vector.Vector3d;
 import net.minecraft.util.math.vector.Vector3f;
+import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraft.world.World;
 import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.client.event.RenderGameOverlayEvent;
-import net.minecraftforge.client.event.RenderHandEvent;
-import net.minecraftforge.client.event.RenderLivingEvent;
+import net.minecraftforge.client.event.*;
 import net.minecraftforge.event.entity.player.PlayerEvent;
+import net.minecraftforge.eventbus.api.EventPriority;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
+import net.minecraftforge.registries.ForgeRegistries;
 
 import java.awt.*;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Optional;
 
 @Mod.EventBusSubscriber(value = Dist.CLIENT, modid = WarDance.MODID)
 public class ClientEvents {
+    private static HashMap<String, Boolean> rotate;
     static int maxDown = 0;
     private static final int ALLOWANCE = 7;
     private static final ResourceLocation hud = new ResourceLocation(WarDance.MODID, "textures/hud/yeet.png");
@@ -59,8 +66,90 @@ public class ClientEvents {
     private static long[] lastTap = {0, 0, 0, 0};
     private static boolean[] tapped = {false, false, false, false};
     private static boolean jump = false, sneak = false;
-    private static int leftClickAt = 0, rightClickAt = 0;
     private static float currentQiLevel = 0;
+
+    public static void updateList(List<? extends String> pos) {
+        for (String s : pos) {
+            try {
+                String[] val = s.split(",");
+                rotate.put(val[0], Boolean.parseBoolean(val[2]));
+            } catch (Exception e) {
+                WarDance.LOGGER.warn("improperly formatted custom rotation definition " + s + "!");
+            }
+        }
+    }
+
+    @SubscribeEvent(priority = EventPriority.HIGHEST)
+    public static void dodge(InputUpdateEvent e) {
+        Minecraft mc = Minecraft.getInstance();
+        MovementInput mi = e.getMovementInput();
+        final ICombatCapability itsc = CombatData.getCap(mc.player);
+        if (Keybinds.COMBAT.getKeyConflictContext().isActive() && Keybinds.COMBAT.isPressed()) {
+            mc.player.sendStatusMessage(new TranslationTextComponent("taoism.combat." + (itsc.isCombatMode() ? "off" : "on")), true);
+            CombatChannel.INSTANCE.sendToServer(new CombatPacket());
+        }
+//        if (itsc.getStaggerTime() > 0) {
+//            //no moving while you're rooted!
+//            KeyBinding.unPressAllKeys();
+//            return;
+//        }
+        if (itsc.isCombatMode()) {
+            final boolean onSprint = mc.gameSettings.keyBindSprint.isPressed();
+            int dir = -1;
+            if (mi.leftKeyDown && (!tapped[0] || onSprint)) {
+                if (mc.world.getGameTime() - lastTap[0] <= ALLOWANCE || onSprint) {
+                    dir = 0;
+                }
+                lastTap[0] = mc.world.getGameTime();
+            }
+            tapped[0] = mi.leftKeyDown;
+            if (mi.backKeyDown && (!tapped[1] || onSprint)) {
+                if (mc.world.getGameTime() - lastTap[1] <= ALLOWANCE || onSprint) {
+                    dir = 1;
+                }
+                lastTap[1] = mc.world.getGameTime();
+            }
+            tapped[1] = mi.backKeyDown;
+            if (mi.rightKeyDown && (!tapped[2] || onSprint)) {
+                if (mc.world.getGameTime() - lastTap[2] <= ALLOWANCE || onSprint) {
+                    dir = 2;
+                }
+                lastTap[2] = mc.world.getGameTime();
+            }
+            tapped[2] = mi.rightKeyDown;
+            if (mi.forwardKeyDown && (!tapped[3] || onSprint)) {
+                if (mc.world.getGameTime() - lastTap[3] <= ALLOWANCE || onSprint) {
+                    dir = 3;
+                }
+                lastTap[3] = mc.world.getGameTime();
+            }
+            tapped[3] = mi.forwardKeyDown;
+            if (dir != -1) ;
+            CombatChannel.INSTANCE.sendToServer(new DodgePacket(dir, mi.sneaking));
+        }
+
+        if (itsc.getStaggerTime() > 0) {
+            //no moving while you're down! (except for a safety roll)
+            KeyBinding.unPressAllKeys();
+            return;
+        }
+
+        if (itsc.isCombatMode()) {
+//            if (mi.jump && !jump) {
+//                //if(mc.world.getTotalWorldTime()-lastSneak<=ALLOWANCE){
+//                Taoism.net.sendToServer(new PacketJump());
+//                //}
+//            }
+//            jump = mi.jump;
+
+            if (mc.player.isSprinting() && mi.sneaking && !sneak) {
+                //if(mc.world.getTotalWorldTime()-lastSneak<=ALLOWANCE){
+                CombatChannel.INSTANCE.sendToServer(new DodgePacket(99, true));
+                //}
+            }
+            sneak = mi.sneaking;
+        }
+    }
 
     @SubscribeEvent
     public static void down(RenderLivingEvent.Pre event) {
@@ -71,17 +160,15 @@ public class ClientEvents {
             if (CombatData.getCap(event.getEntity()).getStaggerTime() > 0) {
                 //System.out.println("yes");
                 MatrixStack ms = event.getMatrixStack();
-                ms.push();
+                //ms.push();
                 //tall bois become flat bois
-                if (width < height) {
+                boolean reg = (ForgeRegistries.ENTITIES.getKey(e.getType()) != null && rotate.containsKey(ForgeRegistries.ENTITIES.getKey(e.getType()).toString()));
+                boolean rot = reg ? rotate.getOrDefault(ForgeRegistries.ENTITIES.getKey(e.getType()).toString(), false) : width < height;
+                if (rot) {
                     ms.rotate(Vector3f.XN.rotationDegrees(90));
                     ms.rotate(Vector3f.ZP.rotationDegrees(-e.renderYawOffset));
                     ms.rotate(Vector3f.YP.rotationDegrees(e.renderYawOffset));
                     ms.translate(0, -e.getHeight() / 2, 0);
-//                    GlStateManager.rotate(180f, 0, 0, 0);
-//                    GlStateManager.rotate(90f, 1, 0, 0);
-//                    GlStateManager.rotate(event.getEntity().renderYawOffset, 0, 0, 1);
-//                    GlStateManager.rotate(event.getEntity().renderYawOffset, 0, 1, 0);
                 }
                 //cube bois become side bois
                 //flat bois become flatter bois
@@ -89,15 +176,6 @@ public class ClientEvents {
                     ms.translate(0, -e.getHeight() / 2, 0);
                 }
                 //multi bois do nothing
-            }
-        }
-    }
-
-    @SubscribeEvent
-    public static void downEnd(RenderLivingEvent.Post event) {
-        if (event.getEntity().isAlive()) {
-            if (CombatData.getCap(event.getEntity()).getStaggerTime() > 0) {//TaoCasterData.getTaoCap(event.getEntity()).getDownTimer()>0
-                event.getMatrixStack().pop();
             }
         }
     }
@@ -300,7 +378,7 @@ public class ClientEvents {
             int filled = (int) (itsc.getPosture() / itsc.getMaxPosture() * (float) (barWidth));
             //int invulTime = (int) ((float) itsc.getPosInvulTime() / (float) CombatConfig.ssptime * (float) (barWidth));
             mc.ingameGUI.blit(ms, left, atY, 0, 64, barWidth, 5);
-            RenderSystem.color3f(1-posPerc, posPerc, 30f/255);
+            RenderSystem.color3f(1 - posPerc, posPerc, 30f / 255);
             mc.ingameGUI.blit(ms, left, atY, 0, 69, filled, 5);
             if (itsc.getStaggerTime() > 0) {
                 int invulTime = (int) (MathHelper.clamp((float) itsc.getStaggerTime() / (float) CombatConfig.staggerDuration, 0, 1) * (float) (barWidth));//apparently this is synced to the client?

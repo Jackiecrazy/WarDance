@@ -92,8 +92,8 @@ public class DummyCombatCap implements ICombatCapability{
     }
 
     @Override
-    public boolean consumePosture(float amount, float above) {
-        return false;
+    public float consumePosture(float amount, float above) {
+        return 0;
     }
 
     @Override

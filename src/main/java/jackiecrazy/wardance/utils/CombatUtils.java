@@ -3,6 +3,7 @@ package jackiecrazy.wardance.utils;
 import jackiecrazy.wardance.WarDance;
 import jackiecrazy.wardance.api.CombatDamageSource;
 import jackiecrazy.wardance.capability.CombatData;
+import jackiecrazy.wardance.client.ClientEvents;
 import jackiecrazy.wardance.config.CombatConfig;
 import jackiecrazy.wardance.networking.CombatChannel;
 import jackiecrazy.wardance.networking.UpdateAttackPacket;
@@ -19,6 +20,8 @@ import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.Tuple;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.vector.Vector3d;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.fml.DistExecutor;
 import net.minecraftforge.fml.network.PacketDistributor;
 import net.minecraftforge.registries.ForgeRegistries;
 
@@ -99,10 +102,16 @@ public class CombatUtils {
             try {
                 String[] val = s.split(",");
                 CombatUtils.customPosture.put(val[0], Float.parseFloat(val[1]));
+
             } catch (Exception e) {
                 WarDance.LOGGER.warn("improperly formatted custom posture definition " + s + "!");
             }
         }
+        DistExecutor.safeRunWhenOn(Dist.CLIENT, () -> {
+            return () -> {
+                ClientEvents.updateList(interpretP);
+            };
+        });
     }
 
     public static float getCooledAttackStrength(LivingEntity e, Hand h, float adjustTicks) {
@@ -176,7 +185,7 @@ public class CombatUtils {
         if (stack != null && combatList.containsKey(stack.getItem())) {
             base = (float) combatList.get(stack.getItem()).attackPostureMultiplier;
         } else if (stack == null || stack.isEmpty()) {
-            base = amount * CombatConfig.kenshiroScaler;
+            base *= CombatConfig.kenshiroScaler;
         }
         return base * getCooledAttackStrength(e, h, 1) * (e instanceof PlayerEntity ? 1 : CombatConfig.mobScaler);
     }
@@ -204,7 +213,7 @@ public class CombatUtils {
      * knocks the target back, with regards to the attacker's relative angle to the target, and adding y knockback
      */
     public static void knockBack(Entity to, Entity from, float strength, boolean considerRelativeAngle, boolean bypassAllChecks) {
-        Vector3d distVec = to.getPositionVec().subtractReverse(from.getPositionVec()).normalize();
+        Vector3d distVec = to.getPositionVec().add(0, to.getHeight() / 2, 0).subtractReverse(from.getPositionVec().add(0, from.getHeight() / 2, 0)).mul(1, 0.5, 1).normalize();
         if (to instanceof LivingEntity && !bypassAllChecks) {
             if (considerRelativeAngle)
                 knockBack((LivingEntity) to, from, strength, distVec.x, distVec.y, distVec.z, false);

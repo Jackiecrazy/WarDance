@@ -219,6 +219,7 @@ public abstract class MixinOffhandAttack extends LivingEntity {
                         }
                     }
                 }
+                //cooldown moved to the bottom
                 CombatUtils.setHandCooldown(player, h, 0, false);
             }
         }
