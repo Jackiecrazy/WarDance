@@ -496,6 +496,9 @@ public class CombatConfig {
     private final ForgeConfigSpec.DoubleValue _mobParryChance;
     private final ForgeConfigSpec.DoubleValue _mobScaler;
     private final ForgeConfigSpec.DoubleValue _kenshiroScaler;
+    private final ForgeConfigSpec.DoubleValue _wound;
+    private final ForgeConfigSpec.DoubleValue _fatig;
+    private final ForgeConfigSpec.DoubleValue _burno;
 
     public static float posturePerProjectile;
     public static float defaultMultiplierPostureDefend;
@@ -513,31 +516,35 @@ public class CombatConfig {
     public static int spiritCD;
     public static int postureCD;
     public static float mobParryChance, mobScaler, kenshiroScaler;
+    public static float wound, fatigue, burnout;
 
     public CombatConfig(ForgeConfigSpec.Builder b) {
         b.push("numbers");
-        _posturePerProjectile = b.translation("wardance.config.ppp").comment("Posture consumed per projectile parried").defineInRange("posturePerProjectile", 0.5, 0, Double.MAX_VALUE);
-        _defaultMultiplierPostureAttack = b.translation("wardance.config.dmpa").comment("Default multiplier for any items not defined in the config, multiplied by their attack damage").defineInRange("defaultPostureMultiplierAttack", 0.15, 0, Double.MAX_VALUE);
-        _defaultMultiplierPostureDefend = b.translation("wardance.config.dmpd").comment("Default multiplier for any item not defined in the config, when used for parrying").defineInRange("defaultPostureMultiplierDefend", 1.4, 0, Double.MAX_VALUE);
-        _rollThreshold = b.translation("wardance.config.rollT").comment("Within this number of ticks after rolling the entity is considered invulnerable").defineInRange("rollThreshold", 15, 0, Integer.MAX_VALUE);
-        _rollCooldown = b.translation("wardance.config.rollC").comment("Within this number of ticks after rolling the entity cannot roll again").defineInRange("rollCooldown", 20, 0, Integer.MAX_VALUE);
-        _shieldThreshold = b.translation("wardance.config.shieldT").comment("Within this number of ticks after a shield parry, parrying is free").defineInRange("shieldThreshold", 16, 0, Integer.MAX_VALUE);
-        _shieldCount = b.translation("wardance.config.shieldT").comment("This many parries are free after a parry that cost posture").defineInRange("shieldCount", 1, 0, Integer.MAX_VALUE);
-        _mobUpdateInterval = b.translation("wardance.config.mobU").comment("Mobs are forced to sync to client every this number of ticks").defineInRange("mobUpdateInterval", 100, 1, Integer.MAX_VALUE);
-        _qiGrace = b.translation("wardance.config.qiG").comment("Number of ticks after gaining qi during which it will not decrease").defineInRange("qiGrace", 100, 1, Integer.MAX_VALUE);
-        _comboGrace = b.translation("wardance.config.comboG").comment("Number of ticks after gaining combo during which it will not decrease").defineInRange("comboGrace", 100, 1, Integer.MAX_VALUE);
-        _spiritCD = b.translation("wardance.config.spiritC").comment("Number of ticks after consuming spirit during which it will not regenerate").defineInRange("spiritCD", 30, 1, Integer.MAX_VALUE);
-        _postureCD = b.translation("wardance.config.postureC").comment("Number of ticks after consuming posture during which it will not regenerate").defineInRange("postureCD", 30, 1, Integer.MAX_VALUE);
-        _staggerDuration = b.translation("wardance.config.staggerD").comment("Maximum number of ticks an entity should be staggered for when its posture reaches 0. The actual length of a given stagger is scaled by HP between the min and max values").defineInRange("staggerDurationMax", 60, 1, Integer.MAX_VALUE);
-        _staggerDurationMin = b.translation("wardance.config.staggerM").comment("Minimum number of ticks an entity should be staggered for when its posture reaches 0. The actual length of a given stagger is scaled by HP between the min and max values").defineInRange("staggerDurationMin", 10, 1, Integer.MAX_VALUE);
-        _staggerHits = b.translation("wardance.config.staggerH").comment("Number of hits a staggered entity will take before stagger is automatically canceled").defineInRange("staggerHits", 3, 1, Integer.MAX_VALUE);
-        _mobParryChance = b.translation("wardance.config.mobP").comment("chance that a mob parries out of 1").defineInRange("mobParryChance", 0.6, 0, 1);
-        _mobScaler = b.translation("wardance.config.mobB").comment("posture damage from mob attacks will be scaled by this number").defineInRange("mobBuff", 2, 0, Double.MAX_VALUE);
-        _kenshiroScaler = b.translation("wardance.config.kenB").comment("posture damage from empty fists will be scaled by this number. Notice many mobs, such as endermen and ravagers, technically are empty-handed!").defineInRange("unarmedBuff", 1.6, 0, Double.MAX_VALUE);
+        _posturePerProjectile = b.translation("wardance.config.ppp").comment("Posture consumed per projectile parried").defineInRange("posture per projectile", 0.5, 0, Double.MAX_VALUE);
+        _defaultMultiplierPostureAttack = b.translation("wardance.config.dmpa").comment("Default multiplier for any items not defined in the config, multiplied by their attack damage").defineInRange("default attack multiplier", 0.15, 0, Double.MAX_VALUE);
+        _defaultMultiplierPostureDefend = b.translation("wardance.config.dmpd").comment("Default multiplier for any item not defined in the config, when used for parrying").defineInRange("default defense multiplier", 1.4, 0, Double.MAX_VALUE);
+        _rollThreshold = b.translation("wardance.config.rollT").comment("Within this number of ticks after rolling the entity is considered invulnerable").defineInRange("roll time", 15, 0, Integer.MAX_VALUE);
+        _rollCooldown = b.translation("wardance.config.rollC").comment("Within this number of ticks after dodging the entity cannot dodge again").defineInRange("roll cooldown", 20, 0, Integer.MAX_VALUE);
+        _shieldThreshold = b.translation("wardance.config.shieldT").comment("Within this number of ticks after a shield parry, parrying is free").defineInRange("default shield time", 16, 0, Integer.MAX_VALUE);
+        _shieldCount = b.translation("wardance.config.shieldT").comment("This many parries are free after a parry that cost posture").defineInRange("default shield count", 1, 0, Integer.MAX_VALUE);
+        _mobUpdateInterval = b.translation("wardance.config.mobU").comment("Mobs are forced to sync to client every this number of ticks").defineInRange("forced mob update interval", 100, 1, Integer.MAX_VALUE);
+        _qiGrace = b.translation("wardance.config.qiG").comment("Number of ticks after gaining qi during which it will not decrease").defineInRange("qi grace period", 100, 1, Integer.MAX_VALUE);
+        _comboGrace = b.translation("wardance.config.comboG").comment("Number of ticks after gaining combo during which it will not decrease").defineInRange("combo grace period", 100, 1, Integer.MAX_VALUE);
+        _spiritCD = b.translation("wardance.config.spiritC").comment("Number of ticks after consuming spirit during which it will not regenerate").defineInRange("spirit cooldown", 30, 1, Integer.MAX_VALUE);
+        _postureCD = b.translation("wardance.config.postureC").comment("Number of ticks after consuming posture during which it will not regenerate").defineInRange("posture cooldown", 30, 1, Integer.MAX_VALUE);
+        _staggerDuration = b.translation("wardance.config.staggerD").comment("Maximum number of ticks an entity should be staggered for when its posture reaches 0. The actual length of a given stagger is scaled by HP between the min and max values").defineInRange("max stagger duration", 60, 1, Integer.MAX_VALUE);
+        _staggerDurationMin = b.translation("wardance.config.staggerM").comment("Minimum number of ticks an entity should be staggered for when its posture reaches 0. The actual length of a given stagger is scaled by HP between the min and max values").defineInRange("min stagger duration", 10, 1, Integer.MAX_VALUE);
+        _staggerHits = b.translation("wardance.config.staggerH").comment("Number of hits a staggered entity will take before stagger is automatically canceled").defineInRange("stagger hits", 3, 1, Integer.MAX_VALUE);
+        _mobParryChance = b.translation("wardance.config.mobP").comment("chance that a mob parries out of 1").defineInRange("mob parry chance", 0.6, 0, 1);
+        _mobScaler = b.translation("wardance.config.mobB").comment("posture damage from mob attacks will be scaled by this number").defineInRange("mob posture damage buff", 2, 0, Double.MAX_VALUE);
+        _kenshiroScaler = b.translation("wardance.config.kenB").comment("posture damage from empty fists will be scaled by this number. Notice many mobs, such as endermen and ravagers, technically are empty-handed!").defineInRange("unarmed buff", 1.6, 0, Double.MAX_VALUE);
+        _wound = b.translation("wardance.config.wound").comment("this percentage of incoming damage before armor is also added to wounding").defineInRange("wound percentage", 0.1, 0, 1d);
+        _fatig = b.translation("wardance.config.fatigue").comment("this percentage of posture damage is also added to fatigue").defineInRange("fatigue percentage", 0.1, 0, 1d);
+        _burno = b.translation("wardance.config.burnout").comment("this percentage of stamina use is also added to burnout").defineInRange("burnout percentage", 0.1, 0, 1d);
         b.pop();
         b.push("lists");
-        _combatItems = b.translation("wardance.config.combatItems").comment("Items eligible for parrying. Format should be name, attack posture consumption, defense multiplier, is shield. Shields can have two extra variables that dictate their parry time and parry counter. Default values provided graciously by DarkMega, thank you!").defineList("combatItems", Arrays.asList(THANKS_DARKMEGA), String.class::isInstance);
-        _customPosture = b.translation("wardance.config.combatItems").comment("Here you can define custom max posture for mobs. Format is name, max posture, whether they're rotated when staggered. Armor is still calculated").defineList("customPosture", Lists.newArrayList("example:dragon, 100, false", "example:ghast, 8, true"), String.class::isInstance);
+        _combatItems = b.translation("wardance.config.combatItems").comment("Items eligible for parrying. Format should be name, attack posture consumption, defense multiplier, is shield. Shields can have two extra variables that dictate their parry time and parry counter. Default values provided graciously by DarkMega, thank you!").defineList("combat items", Arrays.asList(THANKS_DARKMEGA), String.class::isInstance);
+        _customPosture = b.translation("wardance.config.combatItems").comment("Here you can define custom max posture for mobs. Format is name, max posture, whether they're rotated when staggered. Armor is still calculated").defineList("custom mob posture", Lists.newArrayList("example:dragon, 100, false", "example:ghast, 8, true"), String.class::isInstance);
         b.pop();
     }
 
@@ -560,6 +567,9 @@ public class CombatConfig {
         mobParryChance = CONFIG._mobParryChance.get().floatValue();
         mobScaler = CONFIG._mobScaler.get().floatValue();
         kenshiroScaler = CONFIG._kenshiroScaler.get().floatValue();
+        wound=CONFIG._wound.get().floatValue();
+        fatigue=CONFIG._fatig.get().floatValue();
+        burnout=CONFIG._burno.get().floatValue();
         CombatUtils.updateLists(CONFIG._combatItems.get(), CONFIG._customPosture.get(), defaultMultiplierPostureAttack, defaultMultiplierPostureDefend, shieldThreshold, shieldCount);
     }
 

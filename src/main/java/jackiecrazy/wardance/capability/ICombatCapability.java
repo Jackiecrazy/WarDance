@@ -93,11 +93,11 @@ public interface ICombatCapability {
     void setTrueMaxSpirit(float amount);
 
     default float getMaxPosture() {
-        return getTrueMaxPosture() - getFatigue();
+        return Math.max(0.1f, getTrueMaxPosture() - getFatigue());
     }
 
     default float getMaxSpirit() {
-        return getTrueMaxSpirit() - getBurnout();
+        return Math.max(0.1f, getTrueMaxSpirit() - getBurnout());
     }
 
     int getComboGrace();

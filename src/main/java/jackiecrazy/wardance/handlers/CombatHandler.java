@@ -160,6 +160,7 @@ public class CombatHandler {
                 seme.world.playSound(null, uke.getPosX(), uke.getPosY(), uke.getPosZ(), SoundEvents.ENTITY_GENERIC_BIG_FALL, SoundCategory.PLAYERS, 0.25f + WarDance.rand.nextFloat() * 0.5f, 0.75f + WarDance.rand.nextFloat() * 0.5f);
             }
         }
+        cap.setWounding(cap.getWounding() + e.getAmount() * CombatConfig.wound);
     }
 
     @SubscribeEvent

@@ -111,7 +111,7 @@ public class CombatCapability implements ICombatCapability {
     public boolean consumeSpirit(float amount, float above) {
         if (spirit - amount < above) return false;
         spirit -= amount;
-        burnout += amount / 10f;
+        burnout += amount / CombatConfig.burnout;
         setSpiritGrace(CombatConfig.spiritCD);
         return true;
     }
@@ -176,7 +176,7 @@ public class CombatCapability implements ICombatCapability {
             return -1f;
         }
         posture -= amount;
-        fatigue += amount / 10f;
+        fatigue += amount / CombatConfig.fatigue;
         setPostureGrace(CombatConfig.postureCD);
         sync();
         return ret;
