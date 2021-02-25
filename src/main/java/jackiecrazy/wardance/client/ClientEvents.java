@@ -69,6 +69,7 @@ public class ClientEvents {
     private static float currentQiLevel = 0;
 
     public static void updateList(List<? extends String> pos) {
+        rotate = new HashMap<>();
         for (String s : pos) {
             try {
                 String[] val = s.split(",");
@@ -117,15 +118,15 @@ public class ClientEvents {
                 lastTap[2] = mc.world.getGameTime();
             }
             tapped[2] = mi.rightKeyDown;
-            if (mi.forwardKeyDown && (!tapped[3] || onSprint)) {
-                if (mc.world.getGameTime() - lastTap[3] <= ALLOWANCE || onSprint) {
-                    dir = 3;
-                }
-                lastTap[3] = mc.world.getGameTime();
-            }
-            tapped[3] = mi.forwardKeyDown;
-            if (dir != -1) ;
-            CombatChannel.INSTANCE.sendToServer(new DodgePacket(dir, mi.sneaking));
+//            if (mi.forwardKeyDown && (!tapped[3] || onSprint)) {
+//                if (mc.world.getGameTime() - lastTap[3] <= ALLOWANCE || onSprint) {
+//                    dir = 3;
+//                }
+//                lastTap[3] = mc.world.getGameTime();
+//            }
+//            tapped[3] = mi.forwardKeyDown;
+            if (dir != -1)
+                CombatChannel.INSTANCE.sendToServer(new DodgePacket(dir, mi.sneaking));
         }
 
         if (itsc.getStaggerTime() > 0) {
@@ -305,6 +306,7 @@ public class ClientEvents {
                     currentQiLevel = targetQiLevel;
                 int qi = (int) (currentQiLevel);
                 float qiExtra = currentQiLevel - qi;
+                if (qiExtra < 0.1) qiExtra = 0;
                 //System.out.println(currentQiLevel);
                 //System.out.println(qi);
                 if (qi != 0 || qiExtra != 0f) {
@@ -372,19 +374,26 @@ public class ClientEvents {
         mc.getProfiler().startSection("postureBar");
         float cap = itsc.getMaxPosture();
         int left = atX - 91;
-        float posPerc = MathHelper.clamp(itsc.getPosture() / itsc.getMaxPosture(), 0, 1);
+        float posPerc = MathHelper.clamp(itsc.getPosture() / itsc.getTrueMaxPosture(), 0, 1);
         if (cap > 0) {
             short barWidth = 182;
-            int filled = (int) (itsc.getPosture() / itsc.getMaxPosture() * (float) (barWidth));
+            int filled = (int) (itsc.getPosture() / itsc.getTrueMaxPosture() * (float) (barWidth));
             //int invulTime = (int) ((float) itsc.getPosInvulTime() / (float) CombatConfig.ssptime * (float) (barWidth));
+            //base
             mc.ingameGUI.blit(ms, left, atY, 0, 64, barWidth, 5);
             RenderSystem.color3f(1 - posPerc, posPerc, 30f / 255);
+            //bar on top
             mc.ingameGUI.blit(ms, left, atY, 0, 69, filled, 5);
+            //fatigue
+            filled = (int) (itsc.getMaxPosture() / itsc.getTrueMaxPosture() * (float) (barWidth));
+            RenderSystem.color3f(1, 0.1f, 0.1f);
+            mc.ingameGUI.blit(ms, left + filled, atY, filled, 69, barWidth - filled, 5);
             if (itsc.getStaggerTime() > 0) {
                 int invulTime = (int) (MathHelper.clamp((float) itsc.getStaggerTime() / (float) CombatConfig.staggerDuration, 0, 1) * (float) (barWidth));//apparently this is synced to the client?
                 RenderSystem.color3f(0, 0, 0);//, ((float) itsc.getPosInvulTime()) / (float) CombatConfig.ssptime);
                 mc.ingameGUI.blit(ms, left, atY, 0, 69, invulTime, 5);
             }
+
         }
         mc.getProfiler().endSection();
 //        mc.mcProfiler.startSection("postureNumber");

@@ -4,8 +4,9 @@ import jackiecrazy.wardance.WarDance;
 import jackiecrazy.wardance.config.CombatConfig;
 import jackiecrazy.wardance.networking.CombatChannel;
 import jackiecrazy.wardance.networking.UpdateClientPacket;
-import jackiecrazy.wardance.utils.GeneralUtils;
+import jackiecrazy.wardance.utils.MovementUtils;
 import net.minecraft.entity.LivingEntity;
+import net.minecraft.entity.Pose;
 import net.minecraft.entity.ai.attributes.AttributeModifier;
 import net.minecraft.entity.ai.attributes.Attributes;
 import net.minecraft.entity.player.PlayerEntity;
@@ -24,6 +25,7 @@ import java.lang.ref.WeakReference;
 import java.util.UUID;
 
 public class CombatCapability implements ICombatCapability {
+
     public static final float MAXQI = 10;
     public static final UUID WOUND = UUID.fromString("982bbbb2-bbd0-4166-801a-560d1a4149c8");
     private static final AttributeModifier STAGGERA = new AttributeModifier(WOUND, "stagger armor debuff", -5, AttributeModifier.Operation.ADDITION);
@@ -65,7 +67,6 @@ public class CombatCapability implements ICombatCapability {
     public boolean consumeQi(float amount, float above) {
         if (qi - amount < above) return false;
         qi -= amount;
-        fatigue += amount / 10f;
         return true;
     }
 
@@ -111,7 +112,7 @@ public class CombatCapability implements ICombatCapability {
     public boolean consumeSpirit(float amount, float above) {
         if (spirit - amount < above) return false;
         spirit -= amount;
-        burnout += amount / CombatConfig.burnout;
+        burnout += amount * CombatConfig.burnout;
         setSpiritGrace(CombatConfig.spiritCD);
         return true;
     }
@@ -149,7 +150,7 @@ public class CombatCapability implements ICombatCapability {
 
     @Override
     public float addPosture(float amount) {
-        float overflow = Math.max(0, posture + amount - getTrueMaxPosture());
+        float overflow = Math.max(0, posture + amount - getMaxPosture());
         setPosture(posture + amount);
         return overflow;
     }
@@ -176,7 +177,7 @@ public class CombatCapability implements ICombatCapability {
             return -1f;
         }
         posture -= amount;
-        fatigue += amount / CombatConfig.fatigue;
+        fatigue += amount * CombatConfig.fatigue;
         setPostureGrace(CombatConfig.postureCD);
         sync();
         return ret;
@@ -296,6 +297,7 @@ public class CombatCapability implements ICombatCapability {
             if (staggert > 0 && elb != null) {
                 elb.getAttribute(Attributes.MOVEMENT_SPEED).removeModifier(WOUND);
                 elb.getAttribute(Attributes.ARMOR).removeModifier(WOUND);
+                setPosture(getMaxPosture());
                 staggerc = 0;
             }
             int temp = staggert;
@@ -321,7 +323,7 @@ public class CombatCapability implements ICombatCapability {
         if (staggerc - amount > 0)
             staggerc -= amount;
         else {
-            addPosture(getPPS() * staggert);
+            setPosture(getMaxPosture());
             setStaggerTime(0);
             staggerc = 0;
         }
@@ -433,7 +435,7 @@ public class CombatCapability implements ICombatCapability {
 
     @Override
     public void setWounding(float amount) {
-        wounding = amount;
+        wounding = Math.max(0, amount);
         if (dude.get() != null) {
             dude.get().getAttribute(Attributes.MAX_HEALTH).removeModifier(WOUND);
             dude.get().getAttribute(Attributes.MAX_HEALTH).applyNonPersistentModifier(new AttributeModifier(WOUND, "wounding", -amount, AttributeModifier.Operation.ADDITION));
@@ -447,7 +449,7 @@ public class CombatCapability implements ICombatCapability {
 
     @Override
     public void setFatigue(float amount) {
-        fatigue = amount;
+        fatigue = Math.max(0, amount);
     }
 
     @Override
@@ -457,7 +459,7 @@ public class CombatCapability implements ICombatCapability {
 
     @Override
     public void setBurnout(float amount) {
-        burnout = amount;
+        burnout = Math.max(0, amount);
     }
 
     @Override
@@ -494,7 +496,7 @@ public class CombatCapability implements ICombatCapability {
         if (elb == null) return;
         int ticks = (int) (elb.world.getGameTime() - lastUpdate);
         if (ticks < 1) return;//sometimes time runs backwards
-        setTrueMaxPosture((float) (Math.ceil(5 * elb.getWidth() * elb.getHeight()) + elb.getTotalArmorValue() / 2d));
+        setTrueMaxPosture((float) (Math.ceil(10 / 1.09 * elb.getWidth() * elb.getHeight()) + elb.getTotalArmorValue() / 2d));
         decrementComboGrace(ticks);
         int qiExtra = decrementQiGrace(ticks);
         int spExtra = decrementSpiritGrace(ticks);
@@ -508,14 +510,27 @@ public class CombatCapability implements ICombatCapability {
         decrementShieldTime(ticks);
         int stExtra = decrementStaggerTime(ticks);
         //check max posture, max spirit, decrement bind and offhand cooldown
-        if ((getPostureGrace() == 0 || getStaggerTime() > 0) && getPosture() < getMaxPosture()) {
+        if (getPostureGrace() == 0 && getStaggerTime() == 0 && getPosture() < getMaxPosture()) {
             addPosture(getPPS() * (poExtra + stExtra));
         }
         if (getSpiritGrace() == 0 && getStaggerTime() == 0 && getSpirit() < getMaxSpirit()) {
             addSpirit(getPPS() * spExtra);
         }
         if (getQiGrace() == 0) {
-            setQi(getQi() - qiExtra * 0.1f);
+            float over = qiExtra * 0.1f;
+            setQi(getQi() - over);
+            if (getQi() > 0) {
+                int divisor = 0;
+                if (fatigue > 0) divisor++;
+                if (burnout > 0) divisor++;
+                if (wounding > 0) divisor++;
+                if (divisor > 0) {
+                    float heal = over / divisor;
+                    setWounding(wounding - heal);
+                    setFatigue(fatigue - heal);
+                    setBurnout(burnout - heal);
+                }
+            }
         }
         if (getComboGrace() == 0) {
             setCombo((float) Math.floor(getCombo()));
@@ -540,6 +555,7 @@ public class CombatCapability implements ICombatCapability {
 
     @Override
     public void read(CompoundNBT c) {
+        int temp = roll;
         setQi(c.getFloat("qi"));
         setPosture(c.getFloat("posture"));
         setCombo(c.getFloat("combo"));
@@ -564,6 +580,12 @@ public class CombatCapability implements ICombatCapability {
         toggleCombatMode(c.getBoolean("combat"));
         setShieldCount(c.getInt("shieldC"));
         lastUpdate = c.getLong("lastUpdate");
+        if (dude.get() instanceof PlayerEntity) {
+            if (MovementUtils.hasInvFrames(dude.get()))
+                ((PlayerEntity) dude.get()).setForcedPose(Pose.SWIMMING);
+            else if (temp == -(int)(CombatConfig.rollEndsAt))
+                ((PlayerEntity) dude.get()).setForcedPose(null);
+        }
     }
 
     @Override

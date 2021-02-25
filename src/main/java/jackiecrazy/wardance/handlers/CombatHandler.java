@@ -7,6 +7,7 @@ import jackiecrazy.wardance.capability.ICombatCapability;
 import jackiecrazy.wardance.config.CombatConfig;
 import jackiecrazy.wardance.utils.CombatUtils;
 import jackiecrazy.wardance.utils.GeneralUtils;
+import jackiecrazy.wardance.utils.MovementUtils;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.player.PlayerEntity;
@@ -32,6 +33,7 @@ public class CombatHandler {
     public static void projectileParry(final ProjectileImpactEvent e) {
         if (e.getRayTraceResult().getType() == RayTraceResult.Type.ENTITY && e.getRayTraceResult().hitInfo instanceof LivingEntity) {
             LivingEntity uke = (LivingEntity) e.getRayTraceResult().hitInfo;
+            if (MovementUtils.hasInvFrames(uke)) e.setCanceled(true);
             float consume = CombatConfig.posturePerProjectile;
             ICombatCapability ukeCap = CombatData.getCap(uke);
             ItemStack defend = CombatUtils.getDefendingItemStack(uke, true);
@@ -56,6 +58,7 @@ public class CombatHandler {
     public static void parry(final LivingAttackEvent e) {
         if (!e.getEntityLiving().world.isRemote && e.getSource() != null && CombatUtils.isMeleeAttack(e.getSource())) {
             LivingEntity uke = e.getEntityLiving();
+            if (MovementUtils.hasInvFrames(uke)) e.setCanceled(true);
             ICombatCapability ukeCap = CombatData.getCap(uke);
             ItemStack attack = CombatUtils.getAttackingItemStack(e.getSource());
             if (e.getSource().getTrueSource() instanceof LivingEntity && attack != null) {
@@ -71,14 +74,14 @@ public class CombatHandler {
                 if (ukeCap.getStaggerTime() > 0) {
                     ukeCap.decrementStaggerCount(1);
                     downingHit = false;
-                    return; //also cancels posture consumption, so you keep regenerating
+                    return;
                 }
                 float atkMult = CombatUtils.getPostureAtk(seme, h, e.getAmount(), attack);
                 ItemStack defend = CombatUtils.getDefendingItemStack(uke, false);
                 float defMult = CombatUtils.getPostureDef(uke, defend);
                 downingHit = true;
                 float kb = ukeCap.consumePosture(atkMult * defMult);
-                if (kb > 0) {
+                if (ukeCap.getStaggerTime() == 0) {
                     CombatUtils.knockBack(uke, seme, Math.min(1f, (atkMult * defMult * 2f + kb / 20f) / ukeCap.getMaxPosture()), true, false);
                     if (GeneralUtils.isFacingEntity(uke, seme, 120) && defend != null) {
                         e.setCanceled(true);

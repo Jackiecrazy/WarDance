@@ -114,7 +114,7 @@ public class EntityHandler {
     @SubscribeEvent
     public static void tickPlayer(TickEvent.PlayerTickEvent e) {
         PlayerEntity p = e.player;
-        if (p.world.isRemote && Minecraft.getInstance().pointedEntity instanceof LivingEntity) {
+        if (p.world.isRemote && Minecraft.getInstance().pointedEntity instanceof LivingEntity && Minecraft.getInstance().pointedEntity.isAlive()) {
             CombatChannel.INSTANCE.sendToServer(new RequestUpdatePacket(Minecraft.getInstance().pointedEntity.getEntityId()));
         }
     }

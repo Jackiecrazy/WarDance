@@ -108,8 +108,11 @@ public class CombatUtils {
             }
         }
         DistExecutor.safeRunWhenOn(Dist.CLIENT, () -> {
-            return () -> {
-                ClientEvents.updateList(interpretP);
+            return new DistExecutor.SafeRunnable() {
+                @Override
+                public void run() {
+                    ClientEvents.updateList(interpretP);
+                }
             };
         });
     }

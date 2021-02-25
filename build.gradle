@@ -3,6 +3,7 @@ buildscript {
         maven { url = 'https://files.minecraftforge.net/maven' }
         maven { url 'https://plugins.gradle.org/m2/' }
         maven { url = 'https://dist.creeper.host/Sponge/maven' }
+        maven { url "https://www.cursemaven.com" }
         jcenter()
         mavenCentral()
     }
@@ -119,7 +120,7 @@ dependencies {
     // For more info...
     // http://www.gradle.org/docs/current/userguide/artifact_dependencies_tutorial.html
     // http://www.gradle.org/docs/current/userguide/dependency_management.html
-
+    compile fg.deobf("curse.maven:elenaidodge2-442962:3215435")
 }
 
 // Example for how to get properties into the manifest for reading by the runtime..

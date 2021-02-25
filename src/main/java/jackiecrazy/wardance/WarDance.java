@@ -79,6 +79,7 @@ public class WarDance {
 
     private void processIMC(final InterModProcessEvent event) {
         // some example code to receive and process InterModComms from other mods
+        WarCompat.checkCompatStatus();
     }
 
     // You can use SubscribeEvent and let the Event Bus discover methods to call

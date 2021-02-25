@@ -54,11 +54,11 @@ Combat mode: because I hate keybinds, and AcademyCraft is cool.
 Sidesteps and rolls: OP pls nerf
 - Double tapping any movement key except forward has you sidestep in that direction.
 - You can also sidestep by key+sprint. Both are only available in combat mode.
-- The player performs a small jump with large horizontal velocity, ending about 5 blocks from where they begin. The player has step assist during this period of movement. The cooldown is configurable, but defaults to 1.5 seconds (30 ticks).
+- The player performs a small jump with large horizontal velocity, ending about 5 blocks from where they begin. The player has step assist during this period of movement. The cooldown is configurable, but defaults to 0.75 seconds (15 ticks).
 - If your crosshair is on an entity within 5 blocks, you will sidestep in an arc around it.
 - It is intended as a quick way to adjust one’s position around a target or dodge a hit.
 - By sneaking when sidestepping you perform a higher-risk and higher-reward roll, ending 3 blocks from where you begin.
-- While rolling you are immune to all melee and projectile attacks for 20 ticks, but it also reduces your max posture as you become 0.6x0.6. Failure to escape as you come out of recovery could result in the opponent staggering you very easily.
+- While rolling you are immune to all melee and projectile attacks for 10 ticks, but it also reduces your max posture as you become 0.6x0.6. Failure to escape as you come out of recovery could result in the opponent staggering you very easily.
 - Sprint-sneaking will perform a slide forward with the same effect as dodge.
 Spells and skills: hit stuff so you can hit harder!
 - Skills must be first set in the skill screen, then brought up in combat mode with the F key as a radial menu. Half the screen (4 slots) is available for each hand to add skills, and two-handing gives 8 skill slots. Combined with 4 spell slots that don’t require weapons, you can have 12 skills equipped at any given time.
@@ -89,8 +89,8 @@ Winter Wolf
  Stop projectiles and maintain passive for 15 seconds, attacks additionally fatigue target
  Speed slowly increases to +40% until attack, slow target equivalently
 Flame Dance
- Every third hit deals double damage and give you a free parry (independent of iron guard) for 15 seconds
- +10% attack speed up to double for successful attack
+ Every third hit deals extra damage and give you a free parry (independent of iron guard) for 15 seconds
+ +10% attack speed for every bar of combo acquired
 Timberfall
  Guarantee crit and add 2+10% damage for 6 hits
  30% of attack damage added to posture

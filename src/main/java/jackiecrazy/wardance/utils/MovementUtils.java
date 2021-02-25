@@ -3,6 +3,7 @@ package jackiecrazy.wardance.utils;
 import jackiecrazy.wardance.capability.CombatData;
 import jackiecrazy.wardance.capability.ICombatCapability;
 import jackiecrazy.wardance.config.CombatConfig;
+import net.minecraft.entity.Entity;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.Pose;
 import net.minecraft.entity.player.PlayerEntity;
@@ -11,8 +12,8 @@ import net.minecraft.util.math.vector.Vector3d;
 
 public class MovementUtils {
 
-    public static boolean isDodging(LivingEntity elb) {
-        return Math.abs(CombatData.getCap(elb).getRollTime()) > CombatConfig.rollEndsAt;
+    public static boolean hasInvFrames(LivingEntity elb) {
+        return -(CombatData.getCap(elb).getRollTime()) > CombatConfig.rollEndsAt;
     }
 
 //    /**
@@ -211,12 +212,27 @@ public class MovementUtils {
     }
 
     public static boolean attemptDodge(LivingEntity elb, int side, boolean roll) {
+        /*
+        stepping around logic:
+        known: sidestep distance is 5, distance to mob is x
+        acquire angle theta via cosine rule
+        use theta to find the angle of other angles
+        add said angle to yaw
+        twiddle till it works :v
+         */
         if (side == 99) attemptSlide(elb);
         ICombatCapability itsc = CombatData.getCap(elb);
         if (!itsc.isCombatMode()) return false;
         if (itsc.getRollTime() == 0) {//
-            //System.out.println("execute roll to side " + side);
             itsc.setRollTime((roll ? -1 : 1) * CombatConfig.rollCooldown);
+//            Entity target = GeneralUtils.raytraceEntity(elb.world, elb, 32);
+//            float adjustment = 0;
+//            if (target != null) {
+//                float distsq = (float) (elb.getDistanceSq(target));
+//                float toacos = (distsq + distsq - 36) / (2 * distsq);//magic number wee
+//                float acos=(float) Math.acos(toacos);
+//                adjustment = GeneralUtils.deg(acos) / 2f;
+//            }
             double x = 0, y = 0.3, z = 0;
             switch (side) {
                 case 0://left
@@ -236,8 +252,7 @@ public class MovementUtils {
                     z = MathHelper.sin(GeneralUtils.rad(elb.rotationYaw + 90));
                     break;
             }
-            float divisor = side == 3 ? 10f : 20f;
-            float multiplier = (1 + (itsc.getQi() / divisor));
+            float multiplier = side == 1 ? 1f : 2f;
             x *= 0.6 * multiplier;
             z *= 0.6 * multiplier;
 
