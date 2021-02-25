@@ -9,7 +9,7 @@ Project: War Dance is Taoism Lite, adding the mechanics without the weapons.
 - Regeneration also is multiplied by your current health percentage.
 - Posture will not regenerate while rolling or attacking; chanting does not affect it.
 - This means that while weight plays a factor (49%), the real deal-breaker is health. Defeating an enemy requires wearing down their health to make staggering easier.
-- At 0 posture the entity is knocked back and staggered, taking 1.5x damage and losing 5 armor. The entity cannot perform any action during this time. The stagger ends after 0.5s(+%missing hp*3) or after taking physical damage thrice. Posture regenerates during stagger, so the entity doesn’t get stun-locked.
+- At 0 posture the entity is knocked back and staggered, taking 1.5x damage and losing 5 armor. The entity cannot perform any action during this time. The stagger ends after 0.5s(+%missing hp*3) or after taking physical damage thrice. Posture is instantly filled after the stagger to prevent stun-locking.
 Combo: continuous attacks will improve your combat efficacy... just don’t get interrupted. Heavily inspired by DMC, Scourgebringer and other action games.
 - Combo is gained by a buildup bar, taking about 5 normal attacks to gain a tier.
 - The bar increases from any attack, whether they were parried or not.
