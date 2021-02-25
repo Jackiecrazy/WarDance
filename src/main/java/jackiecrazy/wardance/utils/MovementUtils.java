@@ -3,7 +3,6 @@ package jackiecrazy.wardance.utils;
 import jackiecrazy.wardance.capability.CombatData;
 import jackiecrazy.wardance.capability.ICombatCapability;
 import jackiecrazy.wardance.config.CombatConfig;
-import net.minecraft.entity.Entity;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.Pose;
 import net.minecraft.entity.player.PlayerEntity;
@@ -206,7 +205,7 @@ public class MovementUtils {
         }
         Vector3d v = elb.getLookVec().subtract(0, elb.getLookVec().y, 0).normalize();
         //TODO tweak slide amount to make it fair
-        elb.setMotion((1 + itsc.getQi() / 4) * v.x, 0, (1 + itsc.getQi() / 4) * v.z);
+        elb.setMotion((1 + itsc.getMight() / 4) * v.x, 0, (1 + itsc.getMight() / 4) * v.z);
         elb.velocityChanged = true;
         return true;
     }

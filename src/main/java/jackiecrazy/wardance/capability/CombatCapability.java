@@ -46,42 +46,42 @@ public class CombatCapability implements ICombatCapability {
     }
 
     @Override
-    public float getQi() {
+    public float getMight() {
         return qi;
     }
 
     @Override
-    public void setQi(float amount) {
+    public void setMight(float amount) {
         qi = MathHelper.clamp(amount, 0, MAXQI);
     }
 
     @Override
-    public float addQi(float amount) {
+    public float addMight(float amount) {
         float temp = qi + amount;
-        setQi(temp);
-        setQiGrace(CombatConfig.qiGrace);
+        setMight(temp);
+        setMightGrace(CombatConfig.qiGrace);
         return temp % 10;
     }
 
     @Override
-    public boolean consumeQi(float amount, float above) {
+    public boolean consumeMight(float amount, float above) {
         if (qi - amount < above) return false;
         qi -= amount;
         return true;
     }
 
     @Override
-    public int getQiGrace() {
+    public int getMightGrace() {
         return qcd;
     }
 
     @Override
-    public void setQiGrace(int amount) {
+    public void setMightGrace(int amount) {
         qcd = amount;
     }
 
     @Override
-    public int decrementQiGrace(int amount) {
+    public int decrementMightGrace(int amount) {
         qcd -= amount;
         if (qcd < 0) {
             int temp = qcd;
@@ -498,7 +498,7 @@ public class CombatCapability implements ICombatCapability {
         if (ticks < 1) return;//sometimes time runs backwards
         setTrueMaxPosture((float) (Math.ceil(10 / 1.09 * elb.getWidth() * elb.getHeight()) + elb.getTotalArmorValue() / 2d));
         decrementComboGrace(ticks);
-        int qiExtra = decrementQiGrace(ticks);
+        int qiExtra = decrementMightGrace(ticks);
         int spExtra = decrementSpiritGrace(ticks);
         int poExtra = decrementPostureGrace(ticks);
         decrementHandBind(Hand.MAIN_HAND, ticks);
@@ -516,10 +516,10 @@ public class CombatCapability implements ICombatCapability {
         if (getSpiritGrace() == 0 && getStaggerTime() == 0 && getSpirit() < getMaxSpirit()) {
             addSpirit(getPPS() * spExtra);
         }
-        if (getQiGrace() == 0) {
+        if (getMightGrace() == 0) {
             float over = qiExtra * 0.1f;
-            setQi(getQi() - over);
-            if (getQi() > 0) {
+            setMight(getMight() - over);
+            if (getMight() > 0) {
                 int divisor = 0;
                 if (fatigue > 0) divisor++;
                 if (burnout > 0) divisor++;
@@ -556,7 +556,7 @@ public class CombatCapability implements ICombatCapability {
     @Override
     public void read(CompoundNBT c) {
         int temp = roll;
-        setQi(c.getFloat("qi"));
+        setMight(c.getFloat("qi"));
         setPosture(c.getFloat("posture"));
         setCombo(c.getFloat("combo"));
         setSpirit(c.getFloat("spirit"));
@@ -566,7 +566,7 @@ public class CombatCapability implements ICombatCapability {
         setWounding(c.getFloat("wounding"));
         setFatigue(c.getFloat("fatigue"));
         setComboGrace(c.getInt("combocd"));
-        setQiGrace(c.getInt("qicd"));
+        setMightGrace(c.getInt("qicd"));
         setPostureGrace(c.getInt("posturecd"));
         setSpiritGrace(c.getInt("spiritcd"));
         setShieldTime(c.getInt("shield"));
@@ -596,7 +596,7 @@ public class CombatCapability implements ICombatCapability {
     @Override
     public CompoundNBT write() {
         CompoundNBT c = new CompoundNBT();
-        c.putFloat("qi", getQi());
+        c.putFloat("qi", getMight());
         c.putFloat("posture", getPosture());
         c.putFloat("combo", getCombo());
         c.putFloat("spirit", getSpirit());
@@ -606,7 +606,7 @@ public class CombatCapability implements ICombatCapability {
         c.putFloat("fatigue", getFatigue());
         c.putFloat("wounding", getWounding());
         c.putInt("combocd", getComboGrace());
-        c.putInt("qicd", getQiGrace());
+        c.putInt("qicd", getMightGrace());
         c.putInt("posturecd", getPostureGrace());
         c.putInt("spiritcd", getSpiritGrace());
         c.putInt("shield", getShieldTime());

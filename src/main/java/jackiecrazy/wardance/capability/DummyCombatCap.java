@@ -7,37 +7,37 @@ public class DummyCombatCap implements ICombatCapability{
 
 
     @Override
-    public float getQi() {
+    public float getMight() {
         return 0;
     }
 
     @Override
-    public void setQi(float amount) {
+    public void setMight(float amount) {
 
     }
 
     @Override
-    public float addQi(float amount) {
+    public float addMight(float amount) {
         return 0;
     }
 
     @Override
-    public boolean consumeQi(float amount, float above) {
+    public boolean consumeMight(float amount, float above) {
         return false;
     }
 
     @Override
-    public int getQiGrace() {
+    public int getMightGrace() {
         return 0;
     }
 
     @Override
-    public void setQiGrace(int amount) {
+    public void setMightGrace(int amount) {
 
     }
 
     @Override
-    public int decrementQiGrace(int amount) {
+    public int decrementMightGrace(int amount) {
         return 0;
     }
 

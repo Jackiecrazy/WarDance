@@ -4,30 +4,30 @@ import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.util.Hand;
 
 public interface ICombatCapability {
-    //qi, spirit, posture, combo
-    //qi cooldown, spirit cooldown, posture cooldown, combo grace period
+    //might, spirit, posture, combo
+    //might cooldown, spirit cooldown, posture cooldown, combo grace period
     //stagger timer, stagger counter for downed attacks
     //offhand cooldown, shield parry time, sidestep/roll timer
     //set, get, increment/decrement, consume (resource only)
     //is offhand attack, combat mode
     //TODO skills
-    float getQi();
+    float getMight();
 
-    void setQi(float amount);
+    void setMight(float amount);
 
-    float addQi(float amount);
+    float addMight(float amount);
 
-    default boolean consumeQi(float amount) {
-        return consumeQi(amount, 0);
+    default boolean consumeMight(float amount) {
+        return consumeMight(amount, 0);
     }
 
-    boolean consumeQi(float amount, float above);
+    boolean consumeMight(float amount, float above);
 
-    int getQiGrace();
+    int getMightGrace();
 
-    void setQiGrace(int amount);
+    void setMightGrace(int amount);
 
-    int decrementQiGrace(int amount);
+    int decrementMightGrace(int amount);
 
     float getSpirit();
 

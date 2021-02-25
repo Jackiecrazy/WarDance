@@ -18,10 +18,10 @@ Combo: continuous attacks will improve your combat efficacy... just don’t get 
 - There are nine levels of combo, taking a total of 45 normal attacks.
 - Combo is halved upon taking a full-damage hit, and the bar is cleared.
 - Physical skills can fill the bar faster, encouraging their use.
-Qi: by remaining in combat, one can gradually unlock more and more moves.
-- Qi is gained at a flat rate every attack.
+Might: by remaining in combat, one can gradually unlock more and more moves.
+- Might is gained at a flat rate every attack.
 - Every hit in your combo will increase its generation multiplier by 0.1, up to double.
-- After not being used for half a minute, qi will decrease slowly, becoming spirit xp.
+- After not being used for half a minute, might will decrease slowly, healing fatigue, burnout, and wounding, in that order. This is just for insomnia runs.
 Spirit: suspiciously remniscent of a stamina bar.
 - Spirit obeys the same rules as posture, sans armor increasing its cap.
 - Taking damage will pause spirit regen for 2 seconds.
@@ -62,7 +62,7 @@ Sidesteps and rolls: OP pls nerf
 - Sprint-sneaking will perform a slide forward with the same effect as dodge.
 Spells and skills: hit stuff so you can hit harder!
 - Skills must be first set in the skill screen, then brought up in combat mode with the F key as a radial menu. Half the screen (4 slots) is available for each hand to add skills, and two-handing gives 8 skill slots. Combined with 4 spell slots that don’t require weapons, you can have 12 skills equipped at any given time.
-- Skills are split into categories depending on their resource consumption for recharge (e.g. qi, spirit, time, normal attacks, distance moved, etc). All skills of the same category have their “timers” set to half upon casting one so you can’t continuously chain moves of the same category.
+- Skills are split into categories depending on their resource consumption for recharge (e.g. might, spirit, time, normal attacks, distance moved, etc). All skills of the same category have their “timers” set to half upon casting one so you can’t continuously chain moves of the same category.
 - Skills can be augmented by items/runes that add or modify behavior, see example.
 - Instant casts are usually things that act with yourself as center, and are cast just by moving the mouse over the pie slice in the selection. Failure to use effects of a bolstering skill will refund half charge rounded up, without resetting others. These three are chosen to be packaged into the base API due to their general applicability:
 
@@ -73,7 +73,7 @@ Overpower: knockback reflected to attacker; grapple: slow attacker by 40% and di
 ▪ Kick: the next attack in 2 seconds has 2 range but deals 6 unblockable posture damage and 1 blockable falling damage. Recharge in 5 attacks, self bound.
 Backflip: jump back and gain 30% lost posture; tackle: dashes and kicks first entity collided; iron knee: knockback converted to extra posture damage; trip: fatigue for double the cooldown time, cooldown -1; overextend: double damage but deal half to self.
 - Bound casts are chosen, then bound to the attack key in combat mode. Casting them generally requires chanting, but they’re more powerful. As expected, items can have different spells bound to them, or even just have a magic missile as its normal attack. This also enables throwable weapons (such as poison sand or daggers) to be used as melee. There should be an interface for such items. Only two bound skills are included as examples. Chanting can be interrupted by taking damage, using a breath weapon, asphyxiating, eating, drinking, or chanting something else.
-▪ Phantom strike: after 0.6s of chanting, launch a shadow of your weapon, dealing a normal attack on impact. Cost 2 qi, range 16.
+▪ Phantom strike: after 0.6s of chanting, launch a shadow of your weapon, dealing a normal attack on impact. Cost 2 might, range 16.
 Warp: light gravity, teleport to hit location; crush: triple size and damage but half speed and range, clips and pierces; hamstring: slow target by 40% for 2 seconds; vengeance: ricochet up to 5 times between enemies; trap: only fires when someone crosses its LoS in 10 blocks.
 ▪ Fighting spirit: passive available until active cast ends, then can only be recharged by sleeping or after 2 minutes have elapsed. Genies from some game.
 Name
