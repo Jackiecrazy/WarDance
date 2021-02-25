@@ -86,6 +86,7 @@ public class CombatHandler {
                     if (GeneralUtils.isFacingEntity(uke, seme, 120) && defend != null) {
                         e.setCanceled(true);
                         downingHit = false;
+                        ukeCap.addCombo(0);
                         //knockback based on posture consumed
                         CombatUtils.knockBack(seme, uke, Math.min(1f, atkMult * defMult * 2f / semeCap.getMaxPosture()), true, false);
                         //shield disabling
@@ -168,7 +169,7 @@ public class CombatHandler {
 
     @SubscribeEvent
     public static void offhandAttack(final PlayerInteractEvent.EntityInteract e) {
-        if (CombatUtils.isWeapon(e.getPlayer(), e.getPlayer().getHeldItemOffhand()) && (e.getPlayer().swingingHand != Hand.OFF_HAND || !e.getPlayer().isSwingInProgress)) {
+        if ((CombatUtils.isWeapon(e.getPlayer(), e.getPlayer().getHeldItemOffhand()) || e.getPlayer().getHeldItemOffhand().isEmpty()) && (e.getPlayer().swingingHand != Hand.OFF_HAND || !e.getPlayer().isSwingInProgress)) {
             CombatData.getCap(e.getPlayer()).setOffhandAttack(true);
             e.getPlayer().swing(Hand.OFF_HAND, true);
             e.getPlayer().attackTargetEntityWithCurrentItem(e.getTarget());

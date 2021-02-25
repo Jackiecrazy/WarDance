@@ -56,17 +56,17 @@ import java.util.Optional;
 @Mod.EventBusSubscriber(value = Dist.CLIENT, modid = WarDance.MODID)
 public class ClientEvents {
     private static HashMap<String, Boolean> rotate;
-    static int maxDown = 0;
     private static final int ALLOWANCE = 7;
     private static final ResourceLocation hud = new ResourceLocation(WarDance.MODID, "textures/hud/yeet.png");
     private static final ResourceLocation hood = new ResourceLocation(WarDance.MODID, "textures/hud/icons.png");
     /**
      * left, back, right
      */
-    private static long[] lastTap = {0, 0, 0, 0};
-    private static boolean[] tapped = {false, false, false, false};
-    private static boolean jump = false, sneak = false;
+    private static final long[] lastTap = {0, 0, 0, 0};
+    private static final boolean[] tapped = {false, false, false, false};
+    private static boolean sneak = false;
     private static float currentQiLevel = 0;
+    private static float[] comboBuffer = new float[9];
 
     public static void updateList(List<? extends String> pos) {
         rotate = new HashMap<>();
@@ -183,7 +183,7 @@ public class ClientEvents {
 
     @SubscribeEvent
     public static void handRaising(RenderHandEvent e) {
-        if (e.getHand().equals(Hand.MAIN_HAND) || e.getHand().equals(Hand.OFF_HAND)) return;
+        if (e.getHand().equals(Hand.MAIN_HAND)) return;
         AbstractClientPlayerEntity p = Minecraft.getInstance().player;
         //cancel event so two handed weapons give a visual cue to their two-handedness
 //        if (p.getHeldItemMainhand().getItem() instanceof ITwoHanded) {
@@ -194,15 +194,12 @@ public class ClientEvents {
 //            }
 //        }
         //force offhand to have some semblance of cooldown
-        if (!CombatUtils.isWeapon(p, e.getItemStack()) && !CombatUtils.isShield(p, e.getItemStack()))
+        if (!e.getItemStack().isEmpty())
             return;
         e.setCanceled(true);
-        ItemRenderer ir = Minecraft.getInstance().getItemRenderer();
-        float f1 = p.prevRotationPitch + (p.rotationPitch - p.prevRotationPitch) * e.getPartialTicks();
-        //MathHelper.clamp((!requipM ? f * f * f : 0.0F) - this.equippedProgressMainHand, -0.4F, 0.4F);//mainhand add per
         float cd = CombatUtils.getCooledAttackStrength(p, Hand.OFF_HAND, e.getPartialTicks());
         float f6 = 1 - (cd * cd * cd);
-        Minecraft.getInstance().getFirstPersonRenderer().renderItemInFirstPerson(p, e.getPartialTicks(), e.getInterpolatedPitch(), Hand.OFF_HAND, e.getSwingProgress(), p.getHeldItemOffhand(), f6, e.getMatrixStack(), e.getBuffers(), e.getLight());
+        Minecraft.getInstance().getFirstPersonRenderer().renderArmFirstPerson(e.getMatrixStack(), e.getBuffers(), e.getLight(), f6, e.getSwingProgress(), p.getPrimaryHand() == HandSide.RIGHT ? HandSide.LEFT : HandSide.RIGHT);
     }
 
     @SubscribeEvent
@@ -290,7 +287,6 @@ public class ClientEvents {
                 ICombatCapability cap = CombatData.getCap(player);
                 int width = sr.getScaledWidth();
                 int height = sr.getScaledHeight();
-                //if (gamesettings.thirdPersonView == 0) {
                 mc.getTextureManager().bindTexture(hud);
                 float targetQiLevel = cap.getQi();
                 boolean closeEnough = true;
@@ -307,54 +303,56 @@ public class ClientEvents {
                 int qi = (int) (currentQiLevel);
                 float qiExtra = currentQiLevel - qi;
                 if (qiExtra < 0.1) qiExtra = 0;
-                //System.out.println(currentQiLevel);
-                //System.out.println(qi);
-                if (qi != 0 || qiExtra != 0f) {
-                    //render qi bar
-                    event.getMatrixStack().push();
-                    //GlStateManager.bindTexture(mc.renderEngine.getTexture(qibar).getGlTextureId());
-                    //bar
-                    event.getMatrixStack().push();
-                    RenderSystem.enableBlend();
-                    RenderSystem.enableAlphaTest();
-                    //int c = GRADIENTE[MathHelper.clamp((int) (qiExtra *(GRADIENTE.length)), 0, GRADIENTE.length - 1)];
-                    //GlStateManager.color(red(c), green(c), blue(c));
-                    RenderSystem.blendColor(1, 1, 1, qi > 0 ? 1 : qiExtra);
-                    mc.ingameGUI.blit(event.getMatrixStack(), Math.min(ClientConfig.qiX, width - 64), Math.min(ClientConfig.qiY, height - 64), 0, 0, 64, 64);//+(int)(qiExtra*32)
-                    event.getMatrixStack().pop();
-
-                    if (qi > 0) {
-                        //overlay
+                if (cap.isCombatMode()) {
+                    if (qi != 0 || qiExtra != 0f) {
+                        //render qi bar
                         event.getMatrixStack().push();
-                        RenderSystem.color4f(qiExtra, qiExtra, qiExtra, qiExtra);
-                        //GlStateManager.bindTexture(mc.renderEngine.getTexture(qihud[qi]).getGlTextureId());
-                        mc.ingameGUI.blit(event.getMatrixStack(), Math.min(ClientConfig.qiX, width - 64), Math.min(ClientConfig.qiY, height - 64), ((qi + 1) * 64) % 256, Math.floorDiv((qi + 1), 4) * 64, 64, 64);
-                        //GlStateManager.resetColor();
-                        //mc.renderEngine.bindTexture();
+                        //bar
+                        event.getMatrixStack().push();
+                        RenderSystem.enableBlend();
+                        RenderSystem.enableAlphaTest();
+                        RenderSystem.blendColor(1, 1, 1, qi > 0 ? 1 : qiExtra);
+                        mc.ingameGUI.blit(event.getMatrixStack(), Math.min(ClientConfig.qiX, width - 64), Math.min(ClientConfig.qiY, height - 64), 0, 0, 64, 64);//+(int)(qiExtra*32)
                         event.getMatrixStack().pop();
 
-                        //overlay layer 2
-                        event.getMatrixStack().push();
-                        RenderSystem.color3f(1f, 1f, 1f);
-                        //GlStateManager.bindTexture(mc.renderEngine.getTexture(qihud[qi]).getGlTextureId());
-                        mc.ingameGUI.blit(event.getMatrixStack(), Math.min(ClientConfig.qiX, width - 64), Math.min(ClientConfig.qiY, height - 64), (qi * 64) % 256, Math.floorDiv(qi, 4) * 64, 64, 64);
-                        //GlStateManager.resetColor();
-                        //mc.renderEngine.bindTexture();
+                        if (qi > 0) {
+                            //overlay
+                            event.getMatrixStack().push();
+                            RenderSystem.color4f(qiExtra, qiExtra, qiExtra, qiExtra);
+                            mc.ingameGUI.blit(event.getMatrixStack(), Math.min(ClientConfig.qiX, width - 64), Math.min(ClientConfig.qiY, height - 64), ((qi + 1) * 64) % 256, Math.floorDiv((qi + 1), 4) * 64, 64, 64);
+                            event.getMatrixStack().pop();
+
+                            //overlay layer 2
+                            event.getMatrixStack().push();
+                            RenderSystem.color3f(1f, 1f, 1f);
+                            mc.ingameGUI.blit(event.getMatrixStack(), Math.min(ClientConfig.qiX, width - 64), Math.min(ClientConfig.qiY, height - 64), (qi * 64) % 256, Math.floorDiv(qi, 4) * 64, 64, 64);
+                            event.getMatrixStack().pop();
+                        }
+                        RenderSystem.disableAlphaTest();
+                        RenderSystem.disableBlend();
                         event.getMatrixStack().pop();
                     }
-                    RenderSystem.disableAlphaTest();
-                    RenderSystem.disableBlend();
+                    //combo bar at 224,20 to 229, 110. Tidbit at 8 to 20
+                    //initial bar
+                    event.getMatrixStack().push();
+                    RenderSystem.defaultBlendFunc();
+                    mc.ingameGUI.blit(event.getMatrixStack(), width - 5 + ClientConfig.comboX, Math.min(height / 2 + ClientConfig.comboY, height - 90), 224, 20, 5, 90);
+                    event.getMatrixStack().pop();
+                    //TODO colors!
+                    //keep an arraylist of increments. If the new combo level is higher, add the difference to the list
+                    //when rendering, keep a counter that adds down the list, and render each layer's color according to the difference
+                    event.getMatrixStack().push();
+                    RenderSystem.defaultBlendFunc();
+                    mc.ingameGUI.blit(event.getMatrixStack(), width - 5 + ClientConfig.comboX, Math.min(height / 2 + ClientConfig.comboY, height - 90), 224, 20, 5, 90);
                     event.getMatrixStack().pop();
                 }
-
-                //render posture bar if not full
+                //render posture bar if not full, displayed even out of combat mode because it's pretty relevant to not dying
                 if (cap.getPosture() < cap.getMaxPosture() || cap.getStaggerTime() > 0)
                     drawPostureBarreAt(event.getMatrixStack(), player, width / 2 + ClientConfig.yourPostureX, height - ClientConfig.yourPostureY);
                 Entity look = getEntityLookedAt(player);
                 if (look instanceof LivingEntity && ClientConfig.displayEnemyPosture && (CombatData.getCap((LivingEntity) look).getPosture() < CombatData.getCap((LivingEntity) look).getMaxPosture() || CombatData.getCap((LivingEntity) look).getStaggerTime() > 0)) {
                     drawPostureBarreAt(event.getMatrixStack(), (LivingEntity) look, width / 2 + ClientConfig.theirPostureX, ClientConfig.theirPostureY);//Math.min(HudConfig.client.enemyPosture.x, width - 64), Math.min(HudConfig.client.enemyPosture.y, height - 64));
                 }
-                //}
             }
     }
 

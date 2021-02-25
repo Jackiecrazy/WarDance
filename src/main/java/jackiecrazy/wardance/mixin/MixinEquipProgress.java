@@ -1,20 +1,15 @@
 package jackiecrazy.wardance.mixin;
 
-import jackiecrazy.wardance.capability.CombatData;
 import jackiecrazy.wardance.utils.CombatUtils;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.FirstPersonRenderer;
-import net.minecraft.entity.ai.attributes.AttributeModifierMap;
-import net.minecraft.entity.ai.attributes.Attributes;
 import net.minecraft.util.Hand;
 import net.minecraft.util.math.MathHelper;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
-import org.spongepowered.asm.mixin.injection.ModifyArg;
 import org.spongepowered.asm.mixin.injection.ModifyVariable;
 import org.spongepowered.asm.mixin.injection.Redirect;
-import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 @Mixin(FirstPersonRenderer.class)
 public abstract class MixinEquipProgress {
@@ -32,4 +27,5 @@ public abstract class MixinEquipProgress {
         //return MathHelper.clamp((float)(!requip ? 1 : 0) - this.equippedProgressOffHand, min, max);
         //return 0;
     }
+
 }
