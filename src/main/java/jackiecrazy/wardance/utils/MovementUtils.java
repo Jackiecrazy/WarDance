@@ -1,5 +1,6 @@
 package jackiecrazy.wardance.utils;
 
+import jackiecrazy.wardance.WarCompat;
 import jackiecrazy.wardance.capability.CombatData;
 import jackiecrazy.wardance.capability.ICombatCapability;
 import jackiecrazy.wardance.config.CombatConfig;
@@ -219,9 +220,9 @@ public class MovementUtils {
         add said angle to yaw
         twiddle till it works :v
          */
-        if (side == 99) attemptSlide(elb);
         ICombatCapability itsc = CombatData.getCap(elb);
-        if (!itsc.isCombatMode()) return false;
+        if (!itsc.isCombatMode() && (!WarCompat.elenaiDodge || itsc.getStaggerTime() == 0)) return false;
+        if (side == 99) attemptSlide(elb);
         if (itsc.getRollTime() == 0) {//
             itsc.setRollTime((roll ? -1 : 1) * CombatConfig.rollCooldown);
 //            Entity target = GeneralUtils.raytraceEntity(elb.world, elb, 32);
@@ -235,7 +236,7 @@ public class MovementUtils {
             double x = 0, y = 0.3, z = 0;
             switch (side) {
                 case 0://left
-                    x = MathHelper.cos(GeneralUtils.rad(elb.rotationYaw));
+                    x = MathHelper.cos(GeneralUtils.rad(elb.rotationYaw));//+adjustment
                     z = MathHelper.sin(GeneralUtils.rad(elb.rotationYaw));
                     break;
                 case 1://back
@@ -243,7 +244,7 @@ public class MovementUtils {
                     z = MathHelper.sin(GeneralUtils.rad(elb.rotationYaw - 90));
                     break;
                 case 2://right
-                    x = MathHelper.cos(GeneralUtils.rad(elb.rotationYaw - 180));
+                    x = MathHelper.cos(GeneralUtils.rad(elb.rotationYaw - 180));//-adjustment
                     z = MathHelper.sin(GeneralUtils.rad(elb.rotationYaw - 180));
                     break;
                 case 3://forward
@@ -251,7 +252,7 @@ public class MovementUtils {
                     z = MathHelper.sin(GeneralUtils.rad(elb.rotationYaw + 90));
                     break;
             }
-            float multiplier = side == 1 ? 1f : 2f;
+            float multiplier = 2.5f;
             x *= 0.6 * multiplier;
             z *= 0.6 * multiplier;
 

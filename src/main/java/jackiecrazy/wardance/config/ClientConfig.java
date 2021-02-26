@@ -42,7 +42,7 @@ public class ClientConfig {
         _qiY = b.translation("wardance.config.qiY").comment("qi HUD y position").defineInRange("qiY", 0, 0, Integer.MAX_VALUE);
         b.pop();
         b.push("combo");
-        _comboX = b.translation("wardance.config.comboX").comment("combo HUD x position from the left of the screen").defineInRange("combo X", 0, -Integer.MAX_VALUE, 0);
+        _comboX = b.translation("wardance.config.comboX").comment("combo HUD x position from the left of the screen").defineInRange("combo X", -5, -Integer.MAX_VALUE, 0);
         _comboY = b.translation("wardance.config.comboY").comment("combo HUD y position from the center of the screen").defineInRange("combo Y", 0, -Integer.MAX_VALUE, Integer.MAX_VALUE);
         b.pop();
         b.push("yours");

@@ -499,6 +499,9 @@ public class CombatConfig {
     private final ForgeConfigSpec.DoubleValue _wound;
     private final ForgeConfigSpec.DoubleValue _fatig;
     private final ForgeConfigSpec.DoubleValue _burno;
+    private final ForgeConfigSpec.BooleanValue _elenai;
+    private final ForgeConfigSpec.BooleanValue _elenaiP;
+    private final ForgeConfigSpec.BooleanValue _elenaiC;
 
     public static float posturePerProjectile;
     public static float defaultMultiplierPostureDefend;
@@ -517,6 +520,7 @@ public class CombatConfig {
     public static int postureCD;
     public static float mobParryChance, mobScaler, kenshiroScaler;
     public static float wound, fatigue, burnout;
+    public static boolean elenai, elenaiP, elenaiC;
 
     public CombatConfig(ForgeConfigSpec.Builder b) {
         b.push("numbers");
@@ -541,6 +545,11 @@ public class CombatConfig {
         _wound = b.translation("wardance.config.wound").comment("this percentage of incoming damage before armor is also added to wounding").defineInRange("wound percentage", 0.1, 0, 1d);
         _fatig = b.translation("wardance.config.fatigue").comment("this percentage of posture damage is also added to fatigue").defineInRange("fatigue percentage", 0.1, 0, 1d);
         _burno = b.translation("wardance.config.burnout").comment("this percentage of stamina use is also added to burnout").defineInRange("burnout percentage", 0.1, 0, 1d);
+        b.pop();
+        b.push("compat");
+        _elenai = b.translation("wardance.config.elenaiCompat").comment("whether Elenai Dodge 2 compat is enabled. This disables sidesteps and rolls, turns dodging into a safety roll when staggered, and causes dodges to reset posture cooldown").define("enable Elenai Dodge compat", true);
+        _elenaiP = b.translation("wardance.config.elenaiPosture").comment("if compat is enabled, whether posture cooldown disables feather recharging").define("feather posture", true);
+        _elenaiC = b.translation("wardance.config.elenaiCombo").comment("if compat is enabled, whether high combo multiplies feather regeneration speed").define("feather combo", true);
         b.pop();
         b.push("lists");
         _combatItems = b.translation("wardance.config.combatItems").comment("Items eligible for parrying. Format should be name, attack posture consumption, defense multiplier, is shield. Shields can have two extra variables that dictate their parry time and parry counter. Default values provided graciously by DarkMega, thank you!").defineList("combat items", Arrays.asList(THANKS_DARKMEGA), String.class::isInstance);
@@ -567,9 +576,12 @@ public class CombatConfig {
         mobParryChance = CONFIG._mobParryChance.get().floatValue();
         mobScaler = CONFIG._mobScaler.get().floatValue();
         kenshiroScaler = CONFIG._kenshiroScaler.get().floatValue();
-        wound=CONFIG._wound.get().floatValue();
-        fatigue=CONFIG._fatig.get().floatValue();
-        burnout=CONFIG._burno.get().floatValue();
+        wound = CONFIG._wound.get().floatValue();
+        fatigue = CONFIG._fatig.get().floatValue();
+        burnout = CONFIG._burno.get().floatValue();
+        elenai = CONFIG._elenai.get();
+        elenaiC = CONFIG._elenaiC.get();
+        elenaiP = CONFIG._elenaiP.get();
         CombatUtils.updateLists(CONFIG._combatItems.get(), CONFIG._customPosture.get(), defaultMultiplierPostureAttack, defaultMultiplierPostureDefend, shieldThreshold, shieldCount);
     }
 

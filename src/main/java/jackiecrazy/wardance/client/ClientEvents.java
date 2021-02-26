@@ -1,8 +1,10 @@
 package jackiecrazy.wardance.client;
 
+import com.elenai.elenaidodge2.event.ClientTickEventListener;
 import com.mojang.blaze3d.matrix.MatrixStack;
 import com.mojang.blaze3d.platform.GlStateManager;
 import com.mojang.blaze3d.systems.RenderSystem;
+import jackiecrazy.wardance.WarCompat;
 import jackiecrazy.wardance.WarDance;
 import jackiecrazy.wardance.capability.CombatData;
 import jackiecrazy.wardance.capability.ICombatCapability;
@@ -11,6 +13,7 @@ import jackiecrazy.wardance.config.CombatConfig;
 import jackiecrazy.wardance.networking.CombatChannel;
 import jackiecrazy.wardance.networking.CombatPacket;
 import jackiecrazy.wardance.networking.DodgePacket;
+import jackiecrazy.wardance.networking.RequestUpdatePacket;
 import jackiecrazy.wardance.utils.CombatUtils;
 import net.minecraft.client.GameSettings;
 import net.minecraft.client.MainWindow;
@@ -18,6 +21,7 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.entity.player.AbstractClientPlayerEntity;
 import net.minecraft.client.entity.player.ClientPlayerEntity;
 import net.minecraft.client.gui.AbstractGui;
+import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.renderer.RenderHelper;
 import net.minecraft.client.settings.AttackIndicatorStatus;
 import net.minecraft.client.settings.KeyBinding;
@@ -36,11 +40,15 @@ import net.minecraft.util.math.vector.Vector3f;
 import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.client.event.*;
+import net.minecraftforge.event.TickEvent;
 import net.minecraftforge.eventbus.api.EventPriority;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
+import net.minecraftforge.fml.LogicalSide;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.registries.ForgeRegistries;
 
+import java.math.RoundingMode;
+import java.text.DecimalFormat;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Optional;
@@ -58,7 +66,12 @@ public class ClientEvents {
     private static final boolean[] tapped = {false, false, false, false};
     private static boolean sneak = false;
     private static float currentQiLevel = 0;
-    private static float[] comboBuffer = new float[9];
+    private static float currentComboLevel = 0;
+    private static DecimalFormat formatter = new DecimalFormat("#.#");
+
+    static {
+        formatter.setRoundingMode(RoundingMode.DOWN);
+    }
 
     public static void updateList(List<? extends String> pos) {
         rotate = new HashMap<>();
@@ -86,7 +99,7 @@ public class ClientEvents {
 //            KeyBinding.unPressAllKeys();
 //            return;
 //        }
-        if (itsc.isCombatMode()) {
+        if (itsc.isCombatMode()&& (!WarCompat.elenaiDodge || itsc.getStaggerTime() != 0)) {
             final boolean onSprint = mc.gameSettings.keyBindSprint.isPressed();
             int dir = -1;
             if (mi.leftKeyDown && (!tapped[0] || onSprint)) {
@@ -177,16 +190,7 @@ public class ClientEvents {
     public static void handRaising(RenderHandEvent e) {
         if (e.getHand().equals(Hand.MAIN_HAND)) return;
         AbstractClientPlayerEntity p = Minecraft.getInstance().player;
-        //cancel event so two handed weapons give a visual cue to their two-handedness
-//        if (p.getHeldItemMainhand().getItem() instanceof ITwoHanded) {
-//            if (((TaoWeapon) p.getHeldItemMainhand().getItem()).isTwoHanded(p.getHeldItemMainhand())) {
-//                e.setCanceled(true);
-//
-//                return;
-//            }
-//        }
-        //force offhand to have some semblance of cooldown
-        if (!e.getItemStack().isEmpty())
+        if (p == null || (!CombatData.getCap(p).isCombatMode() && (p.swingingHand != Hand.OFF_HAND || !p.isSwingInProgress)) || !e.getItemStack().isEmpty())
             return;
         e.setCanceled(true);
         float cd = CombatUtils.getCooledAttackStrength(p, Hand.OFF_HAND, e.getPartialTicks());
@@ -324,19 +328,48 @@ public class ClientEvents {
                         RenderSystem.disableBlend();
                         event.getMatrixStack().pop();
                     }
-                    //combo bar at 224,20 to 229, 110. Tidbit at 8 to 20
+                    //combo bar at 224,20 to 229, 121. Grace at 222,95 to 224, 121
                     //initial bar
+                    RenderSystem.enableBlend();
+                    mc.getTextureManager().bindTexture(hood);
+                    int barHeight = 101;
                     event.getMatrixStack().push();
                     RenderSystem.defaultBlendFunc();
-                    mc.ingameGUI.blit(event.getMatrixStack(), width - 5 + ClientConfig.comboX, Math.min(height / 2 + ClientConfig.comboY, height - 90), 224, 20, 5, 90);
+                    mc.ingameGUI.blit(event.getMatrixStack(), width - 8 + ClientConfig.comboX, Math.min(height / 2 - barHeight / 2 + ClientConfig.comboY, height - barHeight), 220, 20, 8, barHeight);
                     event.getMatrixStack().pop();
-                    //TODO colors!
-                    //keep an arraylist of increments. If the new combo level is higher, add the difference to the list
-                    //when rendering, keep a counter that adds down the list, and render each layer's color according to the difference
+                    //combo
+                    float targetCombo = cap.getCombo();
+                    closeEnough = true;
+                    if (targetCombo > currentComboLevel) {
+                        currentComboLevel += Math.min(0.1, (targetCombo - currentComboLevel) / 20);
+                        closeEnough = false;
+                    }
+                    if (targetCombo < currentComboLevel) {
+                        currentComboLevel += Math.min(0.1, (targetCombo - currentComboLevel) / 20);
+                        closeEnough = !closeEnough;
+                    }
+                    if (closeEnough)
+                        currentComboLevel = targetCombo;
+                    int emptyPerc = (int) ((Math.ceil(currentComboLevel) - currentComboLevel) * barHeight);
+                    if (emptyPerc != 0) {
+                        event.getMatrixStack().push();
+                        RenderSystem.defaultBlendFunc();
+                        RenderSystem.color3f(0.15f, 0.2f, 1f);
+                        mc.ingameGUI.blit(event.getMatrixStack(), width - 3 + ClientConfig.comboX, Math.min(height / 2 - barHeight / 2 + ClientConfig.comboY, height - barHeight) + emptyPerc, 224, 20 + emptyPerc, 3, barHeight - emptyPerc);
+                        event.getMatrixStack().pop();
+                    }
+                    //grace
+                    barHeight = 26;
                     event.getMatrixStack().push();
                     RenderSystem.defaultBlendFunc();
-                    mc.ingameGUI.blit(event.getMatrixStack(), width - 5 + ClientConfig.comboX, Math.min(height / 2 + ClientConfig.comboY, height - 90), 224, 20, 5, 90);
+                    RenderSystem.color3f(1 - cap.getComboGrace() / (float) CombatConfig.comboGrace, cap.getComboGrace() / (float) CombatConfig.comboGrace, 0);
+                    emptyPerc = (int) ((CombatConfig.comboGrace - cap.getComboGrace()) / (float) CombatConfig.comboGrace * barHeight);
+                    mc.ingameGUI.blit(event.getMatrixStack(), width - 7 + ClientConfig.comboX, Math.min(height / 2 - barHeight / 2 + ClientConfig.comboY, height - barHeight) + 38 + emptyPerc, 220, 95 + emptyPerc, 4, barHeight - emptyPerc);
                     event.getMatrixStack().pop();
+                    RenderSystem.disableBlend();
+                    //multiplier
+                    String combo = formatter.format(1 + Math.floor(currentComboLevel) / 10) + "X";
+                    mc.fontRenderer.drawString(event.getMatrixStack(), combo, width - 28 + ClientConfig.comboX, Math.min(height / 2 - barHeight / 2 + ClientConfig.comboY, height - barHeight) + 60, 0);
                 }
                 //render posture bar if not full, displayed even out of combat mode because it's pretty relevant to not dying
                 if (cap.getPosture() < cap.getMaxPosture() || cap.getStaggerTime() > 0)
@@ -466,4 +499,31 @@ public class ClientEvents {
         Vector3d next = origin.add(ray.normalize().scale(len));
         return e.world.rayTraceBlocks(new RayTraceContext(origin, next, RayTraceContext.BlockMode.OUTLINE, RayTraceContext.FluidMode.NONE, e));
     }
+
+    private static double dodgeDecimal;
+
+    @SubscribeEvent
+    public static void tickPlayer(TickEvent.ClientTickEvent e) {
+        PlayerEntity p = Minecraft.getInstance().player;
+        if (p != null && !Minecraft.getInstance().isGamePaused()) {
+            if (e.phase == TickEvent.Phase.START) {
+                if (Minecraft.getInstance().pointedEntity instanceof LivingEntity && Minecraft.getInstance().pointedEntity.isAlive()) {
+                    CombatChannel.INSTANCE.sendToServer(new RequestUpdatePacket(Minecraft.getInstance().pointedEntity.getEntityId()));
+                }
+            } else {
+                if (WarCompat.elenaiDodge) {
+                    if (CombatConfig.elenaiP && CombatData.getCap(p).getPostureGrace() > 0) {
+                        ClientTickEventListener.regen++;
+                    } else if (CombatConfig.elenaiC) {
+                        dodgeDecimal += Math.floor(CombatData.getCap(p).getCombo()) / 10;
+                        if (dodgeDecimal > 1) {
+                            dodgeDecimal--;
+                            ClientTickEventListener.regen--;
+                        }
+                    }
+                }
+            }
+        }
+    }
+
 }

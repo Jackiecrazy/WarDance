@@ -6,8 +6,10 @@ import jackiecrazy.wardance.capability.ICombatCapability;
 import jackiecrazy.wardance.client.Keybinds;
 import jackiecrazy.wardance.config.ClientConfig;
 import jackiecrazy.wardance.config.CombatConfig;
+import jackiecrazy.wardance.handlers.ElenaiHandler;
 import jackiecrazy.wardance.networking.*;
 import net.minecraft.block.Block;
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.settings.KeyBinding;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.capabilities.CapabilityManager;
@@ -80,6 +82,8 @@ public class WarDance {
     private void processIMC(final InterModProcessEvent event) {
         // some example code to receive and process InterModComms from other mods
         WarCompat.checkCompatStatus();
+        if(WarCompat.elenaiDodge)
+            MinecraftForge.EVENT_BUS.register(ElenaiHandler.class);
     }
 
     // You can use SubscribeEvent and let the Event Bus discover methods to call

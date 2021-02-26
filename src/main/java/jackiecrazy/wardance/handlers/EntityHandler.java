@@ -112,14 +112,6 @@ public class EntityHandler {
     }
 
     @SubscribeEvent
-    public static void tickPlayer(TickEvent.PlayerTickEvent e) {
-        PlayerEntity p = e.player;
-        if (p.world.isRemote && Minecraft.getInstance().pointedEntity instanceof LivingEntity && Minecraft.getInstance().pointedEntity.isAlive()) {
-            CombatChannel.INSTANCE.sendToServer(new RequestUpdatePacket(Minecraft.getInstance().pointedEntity.getEntityId()));
-        }
-    }
-
-    @SubscribeEvent
     public static void noJump(LivingEvent.LivingJumpEvent e) {
         if (!(e.getEntityLiving() instanceof PlayerEntity) && CombatData.getCap(e.getEntityLiving()).getStaggerTime() > 0) {
             e.getEntityLiving().setMotion(0, 0, 0);

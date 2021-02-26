@@ -1,10 +1,12 @@
 package jackiecrazy.wardance;
 
+import jackiecrazy.wardance.config.CombatConfig;
 import net.minecraftforge.fml.ModList;
 
 public class WarCompat {
     public static boolean elenaiDodge;
-    public static void checkCompatStatus(){
-        elenaiDodge= ModList.get().isLoaded("moveplus");
+
+    public static void checkCompatStatus() {
+        elenaiDodge = ModList.get().isLoaded("elenaidodge2") && CombatConfig.elenai;
     }
 }
