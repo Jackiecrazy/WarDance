@@ -169,7 +169,7 @@ public class CombatHandler {
 
     @SubscribeEvent
     public static void offhandAttack(final PlayerInteractEvent.EntityInteract e) {
-        if ((CombatUtils.isWeapon(e.getPlayer(), e.getPlayer().getHeldItemOffhand()) || e.getPlayer().getHeldItemOffhand().isEmpty()) && (e.getPlayer().swingingHand != Hand.OFF_HAND || !e.getPlayer().isSwingInProgress)) {
+        if ((CombatUtils.isWeapon(e.getPlayer(), e.getPlayer().getHeldItemOffhand()) || (e.getPlayer().getHeldItemOffhand().isEmpty() && CombatData.getCap(e.getPlayer()).isCombatMode())) && (e.getPlayer().swingingHand != Hand.OFF_HAND || !e.getPlayer().isSwingInProgress)) {
             CombatData.getCap(e.getPlayer()).setOffhandAttack(true);
             e.getPlayer().swing(Hand.OFF_HAND, true);
             e.getPlayer().attackTargetEntityWithCurrentItem(e.getTarget());

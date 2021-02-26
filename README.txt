@@ -34,12 +34,14 @@ Wounding, Fatigue, and Burnout: can't fight forever, now can you?
 - These negative stats are increased by consuming their respective resources: health, posture, and spirit.
 - They decrease the caps of their respective resources, and can be cleared by sleeping.
 - The intent is to prevent players with absurd regen face-tanking everything.
+- The negative stats can be reduced by might decay, for insomnia runs such as Enigmatic Legacy's Ring of Seven Curses
 Absorption, Deflection and Shatter: because of course we need to be even more unkillable!
 - Absorption reduces incoming damage by a fixed amount. This makes it excellent for defending against small, rapid strikes, and basically useless for big hits. Seen often on light/soft armor.
 - Deflection acts as a parry for your two flanks. It costs the default to parry like this, so skilled fighters can angle themselves towards strikes in order to quickly riposte. Plate wearers rejoice!
 - Shatter absorbs all damage. Period. However, it's quickly lost and takes time to recover. Shatter regenerates at 1/sec after 10 seconds of not taking (shatter) damage. Found on crystalline and ceramic armor.
 Dual wielding: weapons in the offhand can be swung.
 - Bows and the like will function as per normal.
+- The exception to the rule is fists: they can always be swung in the offhand. Boxer builds are now viable.
 - An empty offhand confers no benefit without explicit investment in skills etc.
 - The intent is to make two-handing, shields, and dual-wielding equally viable.
 Damage type: a weapon can have a mix of slashing, blunt, and piercing damage.
@@ -51,6 +53,7 @@ Damage type: a weapon can have a mix of slashing, blunt, and piercing damage.
 Combat mode: because I hate keybinds, and AcademyCraft is cool.
 - Pressing backslash enters combat mode.
 - In combat mode, normal key function is overridden with PWD key functions.
+- relevant HUDs and your offhand (if it is empty) also only show up in combat mode. The one exception is posture, since it's rather essential to not dying.
 Sidesteps and rolls: OP pls nerf
 - Double tapping any movement key except forward has you sidestep in that direction.
 - You can also sidestep by key+sprint. Both are only available in combat mode.
