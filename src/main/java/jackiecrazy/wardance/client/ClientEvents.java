@@ -21,7 +21,6 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.entity.player.AbstractClientPlayerEntity;
 import net.minecraft.client.entity.player.ClientPlayerEntity;
 import net.minecraft.client.gui.AbstractGui;
-import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.renderer.RenderHelper;
 import net.minecraft.client.settings.AttackIndicatorStatus;
 import net.minecraft.client.settings.KeyBinding;
@@ -30,7 +29,10 @@ import net.minecraft.entity.Entity;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
-import net.minecraft.util.*;
+import net.minecraft.util.Hand;
+import net.minecraft.util.HandSide;
+import net.minecraft.util.MovementInput;
+import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.RayTraceContext;
@@ -39,11 +41,13 @@ import net.minecraft.util.math.vector.Vector3d;
 import net.minecraft.util.math.vector.Vector3f;
 import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.client.event.*;
+import net.minecraftforge.client.event.InputUpdateEvent;
+import net.minecraftforge.client.event.RenderGameOverlayEvent;
+import net.minecraftforge.client.event.RenderHandEvent;
+import net.minecraftforge.client.event.RenderLivingEvent;
 import net.minecraftforge.event.TickEvent;
 import net.minecraftforge.eventbus.api.EventPriority;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
-import net.minecraftforge.fml.LogicalSide;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.registries.ForgeRegistries;
 
@@ -67,7 +71,7 @@ public class ClientEvents {
     private static boolean sneak = false;
     private static float currentQiLevel = 0;
     private static float currentComboLevel = 0;
-    private static DecimalFormat formatter = new DecimalFormat("#.#");
+    private static final DecimalFormat formatter = new DecimalFormat("#.#");
 
     static {
         formatter.setRoundingMode(RoundingMode.DOWN);
@@ -99,7 +103,7 @@ public class ClientEvents {
 //            KeyBinding.unPressAllKeys();
 //            return;
 //        }
-        if (itsc.isCombatMode()&& (!WarCompat.elenaiDodge || itsc.getStaggerTime() != 0)) {
+        if (itsc.isCombatMode() && (!WarCompat.elenaiDodge || itsc.getStaggerTime() != 0) && mc.world != null) {
             final boolean onSprint = mc.gameSettings.keyBindSprint.isPressed();
             int dir = -1;
             if (mi.leftKeyDown && (!tapped[0] || onSprint)) {
