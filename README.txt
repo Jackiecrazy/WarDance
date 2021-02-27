@@ -63,6 +63,7 @@ Sidesteps and rolls: OP pls nerf
 - By sneaking when sidestepping you perform a higher-risk and higher-reward roll, ending 3 blocks from where you begin.
 - While rolling you are immune to all melee and projectile attacks for 10 ticks, but it also reduces your max posture as you become 0.6x0.6. Failure to escape as you come out of recovery could result in the opponent staggering you very easily.
 - Sprint-sneaking will perform a slide forward with the same effect as dodge.
+- Sidesteps and rolls are suppressed with Elenai Dodge 2 installed. Might bonus from combo will also apply to feather regeneration, but regeneration will be halted by posture cooldown. Dodges when staggered are changed into rolls.
 Spells and skills: hit stuff so you can hit harder!
 - Skills must be first set in the skill screen, then brought up in combat mode with the F key as a radial menu. Half the screen (4 slots) is available for each hand to add skills, and two-handing gives 8 skill slots. Combined with 4 spell slots that don’t require weapons, you can have 12 skills equipped at any given time.
 - Skills are split into categories depending on their resource consumption for recharge (e.g. might, spirit, time, normal attacks, distance moved, etc). All skills of the same category have their “timers” set to half upon casting one so you can’t continuously chain moves of the same category.

@@ -127,6 +127,7 @@ public abstract class MixinOffhandAttack extends LivingEntity {
                     cap.consumePosture(0);
                     if (dealDamage) {
                         if (knockback > 0) {
+                            knockback *= cooledStrength;
                             if (targetEntity instanceof LivingEntity) {
                                 ((LivingEntity) targetEntity).applyKnockback((float) knockback * 0.5F, (double) MathHelper.sin(player.rotationYaw * ((float) Math.PI / 180F)), (double) (-MathHelper.cos(player.rotationYaw * ((float) Math.PI / 180F))));
                             } else {
