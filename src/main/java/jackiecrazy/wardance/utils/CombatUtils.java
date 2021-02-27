@@ -138,26 +138,29 @@ public class CombatUtils {
     public static ItemStack getDefendingItemStack(LivingEntity e, boolean shieldsOnly) {
         ItemStack ret = null;
         float posMod = 1337;
-        boolean mainRec = getCooledAttackStrength(e, Hand.MAIN_HAND, 0.5f) > 0.9f && (e instanceof PlayerEntity || WarDance.rand.nextFloat() < CombatConfig.mobParryChance);
-        boolean offRec = getCooledAttackStrength(e, Hand.OFF_HAND, 0.5f) > 0.9f && (e instanceof PlayerEntity || WarDance.rand.nextFloat() < CombatConfig.mobParryChance);
-        if (offRec && isShield(e, e.getHeldItemOffhand())) {
+        float rand = WarDance.rand.nextFloat();
+        boolean canShield=(e instanceof PlayerEntity || rand < CombatConfig.mobParryChanceShield);
+        boolean canWeapon=(e instanceof PlayerEntity || rand < CombatConfig.mobParryChanceWeapon);
+        boolean mainRec = getCooledAttackStrength(e, Hand.MAIN_HAND, 0.5f) > 0.9f;
+        boolean offRec = getCooledAttackStrength(e, Hand.OFF_HAND, 0.5f) > 0.9f;
+        if (offRec && canShield && isShield(e, e.getHeldItemOffhand())) {
             ret = e.getHeldItemOffhand();
             posMod = getPostureDef(e, e.getHeldItemOffhand());
         }
-        if (mainRec && isShield(e, e.getHeldItemMainhand())) {
+        if (mainRec && canShield && isShield(e, e.getHeldItemMainhand())) {
             if (ret == null || getPostureDef(e, e.getHeldItemMainhand()) < posMod) {
                 posMod = getPostureDef(e, e.getHeldItemMainhand());
                 ret = e.getHeldItemMainhand();
             }
         }
         if (shieldsOnly) return ret;
-        if (offRec && isWeapon(e, e.getHeldItemOffhand())) {
+        if (offRec && canWeapon && isWeapon(e, e.getHeldItemOffhand())) {
             if (ret == null || getPostureDef(e, e.getHeldItemMainhand()) < posMod) {
                 posMod = getPostureDef(e, e.getHeldItemOffhand());
                 ret = e.getHeldItemMainhand();
             }
         }
-        if (mainRec && isWeapon(e, e.getHeldItemMainhand())) {
+        if (mainRec && canWeapon && isWeapon(e, e.getHeldItemMainhand())) {
             if (ret == null || getPostureDef(e, e.getHeldItemMainhand()) < posMod) {
                 ret = e.getHeldItemMainhand();
             }

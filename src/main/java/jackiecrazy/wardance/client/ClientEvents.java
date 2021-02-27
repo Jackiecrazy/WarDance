@@ -339,7 +339,7 @@ public class ClientEvents {
                     int barHeight = 101;
                     event.getMatrixStack().push();
                     RenderSystem.defaultBlendFunc();
-                    mc.ingameGUI.blit(event.getMatrixStack(), width - 8 + ClientConfig.comboX, Math.min(height / 2 - barHeight / 2 + ClientConfig.comboY, height - barHeight), 220, 20, 8, barHeight);
+                    mc.ingameGUI.blit(event.getMatrixStack(), width - 8 + ClientConfig.comboX, Math.min(height / 2 - barHeight / 2 + ClientConfig.comboY, height - barHeight), 220, 20, 10, barHeight);
                     event.getMatrixStack().pop();
                     //combo
                     float targetCombo = cap.getCombo();
@@ -359,7 +359,7 @@ public class ClientEvents {
                         event.getMatrixStack().push();
                         RenderSystem.defaultBlendFunc();
                         RenderSystem.color3f(0.15f, 0.2f, 1f);
-                        mc.ingameGUI.blit(event.getMatrixStack(), width - 3 + ClientConfig.comboX, Math.min(height / 2 - barHeight / 2 + ClientConfig.comboY, height - barHeight) + emptyPerc, 224, 20 + emptyPerc, 3, barHeight - emptyPerc);
+                        mc.ingameGUI.blit(event.getMatrixStack(), width - 3 + ClientConfig.comboX, Math.min(height / 2 - barHeight / 2 + ClientConfig.comboY, height - barHeight) + emptyPerc, 224, 20 + emptyPerc, 10, barHeight - emptyPerc);
                         event.getMatrixStack().pop();
                     }
                     //grace

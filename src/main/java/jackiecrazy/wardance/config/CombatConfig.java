@@ -493,7 +493,8 @@ public class CombatConfig {
     private final ForgeConfigSpec.IntValue _postureCD;
     private final ForgeConfigSpec.ConfigValue<List<? extends String>> _combatItems;
     private final ForgeConfigSpec.ConfigValue<List<? extends String>> _customPosture;
-    private final ForgeConfigSpec.DoubleValue _mobParryChance;
+    private final ForgeConfigSpec.DoubleValue _mobParryChanceWeapon;
+    private final ForgeConfigSpec.DoubleValue _mobParryChanceShield;
     private final ForgeConfigSpec.DoubleValue _mobScaler;
     private final ForgeConfigSpec.DoubleValue _kenshiroScaler;
     private final ForgeConfigSpec.DoubleValue _wound;
@@ -518,7 +519,7 @@ public class CombatConfig {
     public static int comboGrace;
     public static int spiritCD;
     public static int postureCD;
-    public static float mobParryChance, mobScaler, kenshiroScaler;
+    public static float mobParryChanceWeapon, mobParryChanceShield, mobScaler, kenshiroScaler;
     public static float wound, fatigue, burnout;
     public static boolean elenai, elenaiP, elenaiC;
 
@@ -539,7 +540,8 @@ public class CombatConfig {
         _staggerDuration = b.translation("wardance.config.staggerD").comment("Maximum number of ticks an entity should be staggered for when its posture reaches 0. The actual length of a given stagger is scaled by HP between the min and max values").defineInRange("max stagger duration", 60, 1, Integer.MAX_VALUE);
         _staggerDurationMin = b.translation("wardance.config.staggerM").comment("Minimum number of ticks an entity should be staggered for when its posture reaches 0. The actual length of a given stagger is scaled by HP between the min and max values").defineInRange("min stagger duration", 10, 1, Integer.MAX_VALUE);
         _staggerHits = b.translation("wardance.config.staggerH").comment("Number of hits a staggered entity will take before stagger is automatically canceled").defineInRange("stagger hits", 3, 1, Integer.MAX_VALUE);
-        _mobParryChance = b.translation("wardance.config.mobP").comment("chance that a mob parries out of 1").defineInRange("mob parry chance", 0.6, 0, 1);
+        _mobParryChanceWeapon = b.translation("wardance.config.mobPW").comment("chance that a mob parries with a weapon out of 1").defineInRange("mob parry chance", 0.3, 0, 1);
+        _mobParryChanceShield = b.translation("wardance.config.mobPS").comment("chance that a mob parries with a shield out of 1").defineInRange("mob parry chance", 0.9, 0, 1);
         _mobScaler = b.translation("wardance.config.mobB").comment("posture damage from mob attacks will be scaled by this number").defineInRange("mob posture damage buff", 2, 0, Double.MAX_VALUE);
         _kenshiroScaler = b.translation("wardance.config.kenB").comment("posture damage from empty fists will be scaled by this number. Notice many mobs, such as endermen and ravagers, technically are empty-handed!").defineInRange("unarmed buff", 1.6, 0, Double.MAX_VALUE);
         _wound = b.translation("wardance.config.wound").comment("this percentage of incoming damage before armor is also added to wounding").defineInRange("wound percentage", 0.1, 0, 1d);
@@ -573,7 +575,8 @@ public class CombatConfig {
         staggerDuration = CONFIG._staggerDuration.get();
         staggerDurationMin = CONFIG._staggerDurationMin.get();
         staggerHits = CONFIG._staggerHits.get();
-        mobParryChance = CONFIG._mobParryChance.get().floatValue();
+        mobParryChanceWeapon = CONFIG._mobParryChanceWeapon.get().floatValue();
+        mobParryChanceShield = CONFIG._mobParryChanceShield.get().floatValue();
         mobScaler = CONFIG._mobScaler.get().floatValue();
         kenshiroScaler = CONFIG._kenshiroScaler.get().floatValue();
         wound = CONFIG._wound.get().floatValue();
