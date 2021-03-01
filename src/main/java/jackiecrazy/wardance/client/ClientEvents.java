@@ -303,6 +303,19 @@ public class ClientEvents {
                 int qi = (int) (currentQiLevel);
                 float qiExtra = currentQiLevel - qi;
                 if (qiExtra < 0.1) qiExtra = 0;
+
+                float targetCombo = cap.getCombo();
+                boolean comboCloseEnough = true;
+                if (targetCombo > currentComboLevel) {
+                    currentComboLevel += Math.min(0.1, (targetCombo - currentComboLevel) / 20);
+                    comboCloseEnough = false;
+                }
+                if (targetCombo < currentComboLevel) {
+                    currentComboLevel += Math.min(0.1, (targetCombo - currentComboLevel) / 20);
+                    comboCloseEnough = !comboCloseEnough;
+                }
+                if (comboCloseEnough)
+                    currentComboLevel = targetCombo;
                 if (cap.isCombatMode()) {
                     if (qi != 0 || qiExtra != 0f) {
                         //render qi bar
@@ -336,24 +349,12 @@ public class ClientEvents {
                     //initial bar
                     RenderSystem.enableBlend();
                     mc.getTextureManager().bindTexture(hood);
-                    int barHeight = 101;
+                    int barHeight = 102;
                     event.getMatrixStack().push();
                     RenderSystem.defaultBlendFunc();
                     mc.ingameGUI.blit(event.getMatrixStack(), width - 8 + ClientConfig.comboX, Math.min(height / 2 - barHeight / 2 + ClientConfig.comboY, height - barHeight), 220, 20, 10, barHeight);
                     event.getMatrixStack().pop();
                     //combo
-                    float targetCombo = cap.getCombo();
-                    closeEnough = true;
-                    if (targetCombo > currentComboLevel) {
-                        currentComboLevel += Math.min(0.1, (targetCombo - currentComboLevel) / 20);
-                        closeEnough = false;
-                    }
-                    if (targetCombo < currentComboLevel) {
-                        currentComboLevel += Math.min(0.1, (targetCombo - currentComboLevel) / 20);
-                        closeEnough = !closeEnough;
-                    }
-                    if (closeEnough)
-                        currentComboLevel = targetCombo;
                     int emptyPerc = (int) ((Math.ceil(currentComboLevel) - currentComboLevel) * barHeight);
                     if (emptyPerc != 0) {
                         event.getMatrixStack().push();
