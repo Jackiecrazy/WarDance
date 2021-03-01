@@ -14,6 +14,7 @@ import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.particles.ParticleTypes;
 import net.minecraft.util.*;
+import net.minecraft.util.math.EntityRayTraceResult;
 import net.minecraft.util.math.RayTraceResult;
 import net.minecraft.util.math.vector.Vector3d;
 import net.minecraft.world.server.ServerWorld;
@@ -31,22 +32,25 @@ public class CombatHandler {
 
     @SubscribeEvent
     public static void projectileParry(final ProjectileImpactEvent e) {
-        if (e.getRayTraceResult().getType() == RayTraceResult.Type.ENTITY && e.getRayTraceResult().hitInfo instanceof LivingEntity) {
-            LivingEntity uke = (LivingEntity) e.getRayTraceResult().hitInfo;
+        if (e.getRayTraceResult().getType() == RayTraceResult.Type.ENTITY && e.getRayTraceResult() instanceof EntityRayTraceResult && ((EntityRayTraceResult) e.getRayTraceResult()).getEntity() instanceof LivingEntity) {
+            LivingEntity uke = (LivingEntity) ((EntityRayTraceResult) e.getRayTraceResult()).getEntity();
             if (MovementUtils.hasInvFrames(uke)) e.setCanceled(true);
             float consume = CombatConfig.posturePerProjectile;
             ICombatCapability ukeCap = CombatData.getCap(uke);
             ItemStack defend = CombatUtils.getDefendingItemStack(uke, true);
             if (defend != null && ukeCap.doConsumePosture(consume)) {
                 e.setCanceled(true);
+                boolean free = false;
                 if (ukeCap.getShieldTime() == 0) {
                     Tuple<Integer, Integer> stat = CombatUtils.getShieldStats(defend);
                     ukeCap.setShieldTime(stat.getA());
                     ukeCap.setShieldCount(stat.getB());
                 } else {
+                    free = true;
                     ukeCap.decrementShieldCount(1);
                 }
-                Vector3d look = uke.getLookVec();
+                uke.world.playSound(null, uke.getPosX(), uke.getPosY(), uke.getPosZ(), free ? SoundEvents.BLOCK_WOOD_STEP : SoundEvents.BLOCK_WOOD_BREAK, SoundCategory.PLAYERS, 0.25f + WarDance.rand.nextFloat() * 0.5f, (1 - (ukeCap.getPosture() / ukeCap.getMaxPosture())) + WarDance.rand.nextFloat() * 0.5f);
+                Vector3d look = uke.getLookVec().mul(0.1, 0.1, 0.1);
                 e.getEntity().setVelocity(look.x, look.y, look.z);
             }
         }
@@ -82,13 +86,13 @@ public class CombatHandler {
                 downingHit = true;
                 float kb = ukeCap.consumePosture(atkMult * defMult);
                 if (ukeCap.getStaggerTime() == 0) {
-                    CombatUtils.knockBack(uke, seme, Math.min(1f, (atkMult * defMult * 2f + kb / 20f) / ukeCap.getMaxPosture()), true, false);
+                    CombatUtils.knockBack(uke, seme, Math.min(1.5f, (atkMult * Math.max(defMult, 0.5f) * 3f + kb / 20f) / ukeCap.getMaxPosture()), true, false);
                     if (GeneralUtils.isFacingEntity(uke, seme, 120) && defend != null) {
                         e.setCanceled(true);
                         downingHit = false;
                         ukeCap.addCombo(0);
                         //knockback based on posture consumed
-                        CombatUtils.knockBack(seme, uke, Math.min(1f, atkMult * defMult * 2f / semeCap.getMaxPosture()), true, false);
+                        CombatUtils.knockBack(seme, uke, Math.min(1.5f, atkMult * Math.max(defMult, 0.5f) * 3f / semeCap.getMaxPosture()), true, false);
                         //shield disabling
                         boolean disshield = false;
                         if (CombatUtils.isShield(uke, defend)) {
