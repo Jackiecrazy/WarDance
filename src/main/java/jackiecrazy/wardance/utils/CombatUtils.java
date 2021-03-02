@@ -156,6 +156,7 @@ public class CombatUtils {
     }
 
     public static boolean isShield(LivingEntity e, ItemStack stack) {
+        if (stack == null) return false;
         return combatList.containsKey(stack.getItem()) && combatList.getOrDefault(stack.getItem(), DEFAULT).isShield;//stack.isShield(e);
     }
 

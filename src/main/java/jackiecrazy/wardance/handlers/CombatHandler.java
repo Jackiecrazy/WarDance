@@ -56,12 +56,11 @@ public class CombatHandler {
                 return;
             }
             //deflection
-            if (GeneralUtils.isFacingEntity(uke, e.getEntity(), 120 + 2 * (int) uke.getAttributeValue(WarAttributes.DEFLECTION.get())) && !GeneralUtils.isFacingEntity(uke, e.getEntity(), 120) && ukeCap.doConsumePosture(consume * CombatConfig.deflectionPenalty)) {
+            if (GeneralUtils.isFacingEntity(uke, e.getEntity(), 120 + 2 * (int) uke.getAttributeValue(WarAttributes.DEFLECTION.get())) && !GeneralUtils.isFacingEntity(uke, e.getEntity(), 120) && ukeCap.doConsumePosture(consume)) {
                 e.setCanceled(true);
                 uke.world.playSound(null, uke.getPosX(), uke.getPosY(), uke.getPosZ(), SoundEvents.BLOCK_IRON_TRAPDOOR_OPEN, SoundCategory.PLAYERS, 0.25f + WarDance.rand.nextFloat() * 0.5f, (1 - (ukeCap.getPosture() / ukeCap.getMaxPosture())) + WarDance.rand.nextFloat() * 0.5f);
                 Vector3d look = e.getEntity().getMotion().mul(-1, -1, -1).normalize();
                 e.getEntity().setVelocity(look.x, look.y, look.z);
-                return;
             }
         }
     }
@@ -80,6 +79,8 @@ public class CombatHandler {
                 ICombatCapability semeCap = CombatData.getCap(seme);
                 ukeCap.update();
                 semeCap.update();
+                boolean canParry = GeneralUtils.isFacingEntity(uke, seme, 120);
+                boolean useDeflect = GeneralUtils.isFacingEntity(uke, e.getEntity(), 120 + 2 * (int) uke.getAttributeValue(WarAttributes.DEFLECTION.get())) && !canParry;
                 Hand h = semeCap.isOffhandAttack() ? Hand.OFF_HAND : Hand.MAIN_HAND;
                 if (semeCap.getStaggerTime() > 0 || semeCap.getHandBind(h) > 0) {
                     e.setCanceled(true);
@@ -91,18 +92,23 @@ public class CombatHandler {
                     return;
                 }
                 float atkMult = CombatUtils.getPostureAtk(seme, h, e.getAmount(), attack);
-                ItemStack defend = CombatUtils.getDefendingItemStack(uke, false);
+                ItemStack defend = null;
+                if (canParry) defend = CombatUtils.getDefendingItemStack(uke, false);
                 float defMult = CombatUtils.getPostureDef(uke, defend);
                 downingHit = true;
                 float kb = ukeCap.consumePosture(atkMult * defMult);
                 if (ukeCap.getStaggerTime() == 0) {
                     CombatUtils.knockBack(uke, seme, Math.min(1.5f, (atkMult * Math.max(defMult, 0.5f) * 3f + kb / 20f) / ukeCap.getMaxPosture()), true, false);
-                    if (GeneralUtils.isFacingEntity(uke, seme, 120) && defend != null) {
+                    if ((canParry && defend != null) || useDeflect) {
                         e.setCanceled(true);
                         downingHit = false;
                         ukeCap.addCombo(0);
                         //knockback based on posture consumed
                         CombatUtils.knockBack(seme, uke, Math.min(1.5f, atkMult * Math.max(defMult, 0.5f) * 3f / semeCap.getMaxPosture()), true, false);
+                        if (defend == null) {
+                            uke.world.playSound(null, uke.getPosX(), uke.getPosY(), uke.getPosZ(), SoundEvents.BLOCK_LAVA_EXTINGUISH, SoundCategory.PLAYERS, 0.25f + WarDance.rand.nextFloat() * 0.5f, (1 - (ukeCap.getPosture() / ukeCap.getMaxPosture())) + WarDance.rand.nextFloat() * 0.5f);
+                            return;
+                        }
                         //shield disabling
                         boolean disshield = false;
                         if (CombatUtils.isShield(uke, defend)) {

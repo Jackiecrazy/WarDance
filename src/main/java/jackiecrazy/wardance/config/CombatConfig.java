@@ -505,7 +505,6 @@ public class CombatConfig {
     }
 
     private final ForgeConfigSpec.DoubleValue _posturePerProjectile;
-    private final ForgeConfigSpec.DoubleValue _deflectionPenalty;
     private final ForgeConfigSpec.IntValue _shatterCooldown;
     private final ForgeConfigSpec.DoubleValue _defaultMultiplierPostureDefend;
     private final ForgeConfigSpec.DoubleValue _defaultMultiplierPostureAttack;
@@ -536,7 +535,6 @@ public class CombatConfig {
     private final ForgeConfigSpec.BooleanValue _elenaiC;
 
     public static float posturePerProjectile;
-    public static float deflectionPenalty;
     public static int shatterCooldown;
     public static float defaultMultiplierPostureDefend;
     public static float defaultMultiplierPostureAttack;
@@ -559,7 +557,6 @@ public class CombatConfig {
     public CombatConfig(ForgeConfigSpec.Builder b) {
         b.push("numbers");
         _posturePerProjectile = b.translation("wardance.config.ppp").comment("Posture consumed per projectile parried").defineInRange("posture per projectile", 0.5, 0, Double.MAX_VALUE);
-        _deflectionPenalty = b.translation("wardance.config.deflect").comment("Posture multiplier for using deflection rather than a proper parry").defineInRange("deflection penalty", 1.8, 0, Double.MAX_VALUE);
         _defaultMultiplierPostureAttack = b.translation("wardance.config.dmpa").comment("Default multiplier for any items not defined in the config, multiplied by their attack damage").defineInRange("default attack multiplier", 0.15, 0, Double.MAX_VALUE);
         _defaultMultiplierPostureDefend = b.translation("wardance.config.dmpd").comment("Default multiplier for any item not defined in the config, when used for parrying").defineInRange("default defense multiplier", 1.4, 0, Double.MAX_VALUE);
         _rollThreshold = b.translation("wardance.config.rollT").comment("Within this number of ticks after rolling the entity is considered invulnerable. This also determines the animation, so changing it might mean you land before or after standing up again").defineInRange("roll time", 10, 0, Integer.MAX_VALUE);
@@ -597,7 +594,6 @@ public class CombatConfig {
 
     private static void bake() {
         posturePerProjectile = CONFIG._posturePerProjectile.get().floatValue();
-        deflectionPenalty = CONFIG._deflectionPenalty.get().floatValue();
         defaultMultiplierPostureDefend = CONFIG._defaultMultiplierPostureDefend.get().floatValue();
         defaultMultiplierPostureAttack = CONFIG._defaultMultiplierPostureAttack.get().floatValue();
         rollCooldown = CONFIG._rollCooldown.get();
