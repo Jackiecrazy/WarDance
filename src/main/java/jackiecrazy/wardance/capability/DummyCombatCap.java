@@ -322,6 +322,36 @@ public class DummyCombatCap implements ICombatCapability{
     }
 
     @Override
+    public float getShatter() {
+        return 0;
+    }
+
+    @Override
+    public void setShatter(float value) {
+
+    }
+
+    @Override
+    public float consumeShatter(float value) {
+        return 0;
+    }
+
+    @Override
+    public int getShatterCooldown() {
+        return 0;
+    }
+
+    @Override
+    public void setShatterCooldown(int value) {
+
+    }
+
+    @Override
+    public int decrementShatterCooldown(int value) {
+        return 0;
+    }
+
+    @Override
     public void update() {
 
     }

@@ -2,6 +2,7 @@ package jackiecrazy.wardance.utils;
 
 import jackiecrazy.wardance.WarDance;
 import jackiecrazy.wardance.api.CombatDamageSource;
+import jackiecrazy.wardance.api.WarAttributes;
 import jackiecrazy.wardance.capability.CombatData;
 import jackiecrazy.wardance.client.ClientEvents;
 import jackiecrazy.wardance.config.CombatConfig;
@@ -9,6 +10,8 @@ import jackiecrazy.wardance.networking.CombatChannel;
 import jackiecrazy.wardance.networking.UpdateAttackPacket;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.LivingEntity;
+import net.minecraft.entity.ai.attributes.AttributeModifier;
+import net.minecraft.entity.ai.attributes.AttributeModifierMap;
 import net.minecraft.entity.ai.attributes.Attributes;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.ServerPlayerEntity;
@@ -55,8 +58,9 @@ public class CombatUtils {
     private static CombatInfo DEFAULT = new CombatInfo(1, 1, false, 0, 0);
     private static HashMap<Item, CombatInfo> combatList = new HashMap<>();
     public static HashMap<String, Float> customPosture = new HashMap<>();
+    public static HashMap<Item, AttributeModifier[]> armorStats = new HashMap<>();
 
-    public static void updateLists(List<? extends String> interpretC, List<? extends String> interpretP, float defaultMultiplierPostureAttack, float defaultMultiplierPostureDefend, int st, int sc) {
+    public static void updateLists(List<? extends String> interpretC, List<? extends String> interpretP, List<? extends String> interpretA, float defaultMultiplierPostureAttack, float defaultMultiplierPostureDefend, int st, int sc) {
         DEFAULT = new CombatInfo(defaultMultiplierPostureAttack, defaultMultiplierPostureDefend, false, st, sc);
         combatList = new HashMap<>();
         customPosture = new HashMap<>();
@@ -98,6 +102,31 @@ public class CombatUtils {
             if (ForgeRegistries.ITEMS.containsKey(key))
                 combatList.put(ForgeRegistries.ITEMS.getValue(key), new CombatInfo(attack, defend, shield, pTime, pCount));
         }
+        for (String s : interpretA) {
+            String[] val = s.split(",");
+            String name = val[0];
+            double absorption = 0, deflection = 0, shatter = 0;
+            try {
+                absorption = Double.parseDouble(val[1]);
+                deflection = Double.parseDouble(val[2]);
+                shatter = Double.parseDouble(val[3]);
+            } catch (Exception ignored) {
+                WarDance.LOGGER.warn("armor data for config entry " + s + "is not properly formatted, filling in zeros.");
+            }
+            ResourceLocation key = null;
+            try {
+                key = new ResourceLocation(name);
+            } catch (Exception e) {
+                WarDance.LOGGER.warn(name + "is not a proper item name, it will not be registered.");
+            }
+            if (ForgeRegistries.ITEMS.containsKey(key)) {
+                armorStats.put(ForgeRegistries.ITEMS.getValue(key), new AttributeModifier[]{
+                        new AttributeModifier(WarAttributes.MODIFIERS, "war dance modifier", absorption, AttributeModifier.Operation.ADDITION),
+                        new AttributeModifier(WarAttributes.MODIFIERS, "war dance modifier", deflection, AttributeModifier.Operation.ADDITION),
+                        new AttributeModifier(WarAttributes.MODIFIERS, "war dance modifier", shatter, AttributeModifier.Operation.ADDITION)
+                });
+            }
+        }
         for (String s : interpretP) {
             try {
                 String[] val = s.split(",");
@@ -130,7 +159,7 @@ public class CombatUtils {
         return combatList.containsKey(stack.getItem()) && combatList.getOrDefault(stack.getItem(), DEFAULT).isShield;//stack.isShield(e);
     }
 
-    public static boolean isWeapon(LivingEntity e, ItemStack stack) {
+    public static boolean isWeapon(@Nullable LivingEntity e, ItemStack stack) {
         return combatList.containsKey(stack.getItem()) && !combatList.getOrDefault(stack.getItem(), DEFAULT).isShield;//stack.getItem() instanceof SwordItem || stack.getItem() instanceof AxeItem;
     }
 
@@ -139,8 +168,8 @@ public class CombatUtils {
         ItemStack ret = null;
         float posMod = 1337;
         float rand = WarDance.rand.nextFloat();
-        boolean canShield=(e instanceof PlayerEntity || rand < CombatConfig.mobParryChanceShield);
-        boolean canWeapon=(e instanceof PlayerEntity || rand < CombatConfig.mobParryChanceWeapon);
+        boolean canShield = (e instanceof PlayerEntity || rand < CombatConfig.mobParryChanceShield);
+        boolean canWeapon = (e instanceof PlayerEntity || rand < CombatConfig.mobParryChanceWeapon);
         boolean mainRec = getCooledAttackStrength(e, Hand.MAIN_HAND, 0.5f) > 0.9f;
         boolean offRec = getCooledAttackStrength(e, Hand.OFF_HAND, 0.5f) > 0.9f;
         if (offRec && canShield && isShield(e, e.getHeldItemOffhand())) {
@@ -179,6 +208,9 @@ public class CombatUtils {
         return null;
     }
 
+    /**
+     * first is threshold, second is count
+     */
     public static Tuple<Integer, Integer> getShieldStats(ItemStack stack) {
         if (stack != null && combatList.containsKey(stack.getItem())) {
             return new Tuple<>(combatList.get(stack.getItem()).parryTime, combatList.get(stack.getItem()).parryCount);
@@ -186,19 +218,20 @@ public class CombatUtils {
         return new Tuple<>(CombatConfig.shieldThreshold, CombatConfig.shieldCount);
     }
 
-    public static float getPostureAtk(LivingEntity e, Hand h, float amount, ItemStack stack) {
+    public static float getPostureAtk(@Nullable LivingEntity e, @Nullable Hand h, float amount, ItemStack stack) {
         float base = amount * (float) DEFAULT.attackPostureMultiplier;
         if (stack != null && combatList.containsKey(stack.getItem())) {
             base = (float) combatList.get(stack.getItem()).attackPostureMultiplier;
         } else if (stack == null || stack.isEmpty()) {
             base *= CombatConfig.kenshiroScaler;
         }
+        if (e == null || h == null) return base;
         return base * getCooledAttackStrength(e, h, 1) * (e instanceof PlayerEntity ? 1 : CombatConfig.mobScaler);
     }
 
-    public static float getPostureDef(LivingEntity e, ItemStack stack) {
+    public static float getPostureDef(@Nullable LivingEntity e, ItemStack stack) {
         if (stack == null) return (float) DEFAULT.defensePostureMultiplier;
-        if (isShield(e, stack) && CombatData.getCap(e).getShieldTime() > 0 && CombatData.getCap(e).getShieldCount() > 0) {
+        if (e != null && isShield(e, stack) && CombatData.getCap(e).getShieldTime() > 0 && CombatData.getCap(e).getShieldCount() > 0) {
             return 0;
         }
         if (combatList.containsKey(stack.getItem())) {
@@ -213,6 +246,14 @@ public class CombatUtils {
             return cds.canProcAutoEffects();
         }
         return s.getTrueSource() == s.getImmediateSource() && !s.isExplosion() && !s.isFireDamage() && !s.isMagicDamage() && !s.isUnblockable() && !s.isProjectile();
+    }
+
+    public static boolean isPhysicalAttack(DamageSource s) {
+        if (s instanceof CombatDamageSource) {
+            CombatDamageSource cds = (CombatDamageSource) s;
+            return cds.getDamageTyping() == CombatDamageSource.TYPE.PHYSICAL;
+        }
+        return !s.isExplosion() && !s.isFireDamage() && !s.isMagicDamage() && !s.isUnblockable();
     }
 
     /**

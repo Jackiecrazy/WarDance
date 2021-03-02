@@ -1,21 +1,21 @@
 package jackiecrazy.wardance;
 
+import jackiecrazy.wardance.api.WarAttributes;
 import jackiecrazy.wardance.capability.CombatStorage;
 import jackiecrazy.wardance.capability.DummyCombatCap;
 import jackiecrazy.wardance.capability.ICombatCapability;
 import jackiecrazy.wardance.client.Keybinds;
+import jackiecrazy.wardance.compat.WarCompat;
 import jackiecrazy.wardance.config.ClientConfig;
 import jackiecrazy.wardance.config.CombatConfig;
-import jackiecrazy.wardance.handlers.ElenaiHandler;
+import jackiecrazy.wardance.compat.ElenaiCompat;
 import jackiecrazy.wardance.networking.*;
 import net.minecraft.block.Block;
-import net.minecraft.client.Minecraft;
-import net.minecraft.client.settings.KeyBinding;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.capabilities.CapabilityManager;
 import net.minecraftforge.event.RegistryEvent;
+import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
-import net.minecraftforge.fml.InterModComms;
 import net.minecraftforge.fml.ModLoadingContext;
 import net.minecraftforge.fml.client.registry.ClientRegistry;
 import net.minecraftforge.fml.common.Mod;
@@ -26,12 +26,10 @@ import net.minecraftforge.fml.event.lifecycle.InterModEnqueueEvent;
 import net.minecraftforge.fml.event.lifecycle.InterModProcessEvent;
 import net.minecraftforge.fml.event.server.FMLServerStartingEvent;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
-import net.minecraftforge.registries.ForgeRegistries;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import java.util.Random;
-import java.util.stream.Collectors;
 
 // The value here should match an entry in the META-INF/mods.toml file
 @Mod("wardance")
@@ -55,6 +53,8 @@ public class WarDance {
         MinecraftForge.EVENT_BUS.register(this);
         ModLoadingContext.get().registerConfig(ModConfig.Type.COMMON, CombatConfig.CONFIG_SPEC);
         ModLoadingContext.get().registerConfig(ModConfig.Type.CLIENT, ClientConfig.CONFIG_SPEC);
+        IEventBus bus = FMLJavaModLoadingContext.get().getModEventBus();
+        WarAttributes.ATTRIBUTES.register(bus);
     }
 
     private void setup(final FMLCommonSetupEvent event) {
@@ -83,7 +83,7 @@ public class WarDance {
         // some example code to receive and process InterModComms from other mods
         WarCompat.checkCompatStatus();
         if(WarCompat.elenaiDodge)
-            MinecraftForge.EVENT_BUS.register(ElenaiHandler.class);
+            MinecraftForge.EVENT_BUS.register(ElenaiCompat.class);
     }
 
     // You can use SubscribeEvent and let the Event Bus discover methods to call

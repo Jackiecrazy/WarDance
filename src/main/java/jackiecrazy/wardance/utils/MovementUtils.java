@@ -1,6 +1,6 @@
 package jackiecrazy.wardance.utils;
 
-import jackiecrazy.wardance.WarCompat;
+import jackiecrazy.wardance.compat.WarCompat;
 import jackiecrazy.wardance.capability.CombatData;
 import jackiecrazy.wardance.capability.ICombatCapability;
 import jackiecrazy.wardance.config.CombatConfig;

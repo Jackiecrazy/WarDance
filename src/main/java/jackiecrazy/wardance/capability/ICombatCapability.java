@@ -10,6 +10,7 @@ public interface ICombatCapability {
     //offhand cooldown, shield parry time, sidestep/roll timer
     //set, get, increment/decrement, consume (resource only)
     //is offhand attack, combat mode
+    //shatter, shatter cooldown
     //TODO skills
     float getMight();
 
@@ -170,6 +171,18 @@ public interface ICombatCapability {
     void setHandBind(Hand h, int amount);
 
     void decrementHandBind(Hand h, int amount);
+
+    float getShatter();
+
+    void setShatter(float value);
+
+    float consumeShatter(float value);
+
+    int getShatterCooldown();
+
+    void setShatterCooldown(int value);
+
+    int decrementShatterCooldown(int value);
 
     void update();
 

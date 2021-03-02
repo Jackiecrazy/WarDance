@@ -122,7 +122,10 @@ public abstract class MixinOffhandAttack extends LivingEntity {
 
                     Vector3d targetMotion = targetEntity.getMotion();
                     targetEntity.hurtResistantTime = 0;
-                    boolean dealDamage = targetEntity.attackEntityFrom(new CombatDamageSource("player", player).setDamageDealer(stack).setAttackingHand(h).setProcAttackEffects(true).setProcAutoEffects(true).setCrit(crit), damage);
+                    if (targetEntity instanceof LivingEntity) {
+                        ((LivingEntity) targetEntity).hurtTime = ((LivingEntity) targetEntity).maxHurtTime = 0;
+                    }
+                    boolean dealDamage = targetEntity.attackEntityFrom(new CombatDamageSource("player", player).setDamageDealer(stack).setAttackingHand(h).setProcAttackEffects(true).setProcAutoEffects(true).setCrit(crit).setDamageTyping(CombatDamageSource.TYPE.PHYSICAL), damage);
                     cap.addCombo(0.2f);
                     cap.addMight((CombatUtils.getCooldownPeriod(player, h) * CombatUtils.getCooldownPeriod(player, h)) / 781.25f * (1 + (cap.getCombo() / 10f)));
                     cap.consumePosture(0);

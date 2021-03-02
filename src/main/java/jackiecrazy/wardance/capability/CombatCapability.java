@@ -1,6 +1,7 @@
 package jackiecrazy.wardance.capability;
 
 import jackiecrazy.wardance.WarDance;
+import jackiecrazy.wardance.api.WarAttributes;
 import jackiecrazy.wardance.config.CombatConfig;
 import jackiecrazy.wardance.networking.CombatChannel;
 import jackiecrazy.wardance.networking.UpdateClientPacket;
@@ -34,15 +35,17 @@ public class CombatCapability implements ICombatCapability {
     private final WeakReference<LivingEntity> dude;
     private ItemStack prev;
     private float qi, spirit, posture, combo, mpos, mspi, wounding, burnout, fatigue;
+    private float shatter;
+    private int shatterCD;
     private int qcd, scd, pcd, ccd, mBind, oBind;
     private int staggert, staggerc, ocd, shield, sc, roll;
     private boolean offhand, combat;
     private long lastUpdate;
+    private boolean first;
 
     public CombatCapability(LivingEntity e) {
         dude = new WeakReference<>(e);
         setTrueMaxSpirit(10);
-        setPosture(getMaxPosture());
     }
 
     @Override
@@ -212,6 +215,9 @@ public class CombatCapability implements ICombatCapability {
 
     @Override
     public void setCombo(float amount) {
+//        if (WarCompat.elenaiDodge && dude.get() instanceof ServerPlayerEntity && CombatConfig.elenaiC) {
+//            ElenaiCompat.manipulateRegenTime(dude.get(), );
+//        }
         combo = MathHelper.clamp(amount, 0, 10);
     }
 
@@ -491,12 +497,57 @@ public class CombatCapability implements ICombatCapability {
     }
 
     @Override
+    public float getShatter() {
+        return shatter;
+    }
+
+    @Override
+    public void setShatter(float value) {
+        shatter = value;
+    }
+
+    @Override
+    public float consumeShatter(float value) {
+        float ret = 0;
+        shatter -= value;
+        if (shatter < 0) {
+            ret = -shatter;
+            shatter = 0;
+        }
+        setShatterCooldown(CombatConfig.shatterCooldown);
+        return ret;
+    }
+
+    @Override
+    public int getShatterCooldown() {
+        return shatterCD;
+    }
+
+    @Override
+    public void setShatterCooldown(int value) {
+        shatterCD = value;
+    }
+
+    @Override
+    public int decrementShatterCooldown(int value) {
+        int ret = 0;
+        shatterCD -= value;
+        if (shatterCD < 0) {
+            ret = -shatterCD;
+            shatterCD = 0;
+        }
+        return ret;
+    }
+
+    @Override
     public void update() {
         LivingEntity elb = dude.get();
         if (elb == null) return;
         int ticks = (int) (elb.world.getGameTime() - lastUpdate);
         if (ticks < 1) return;//sometimes time runs backwards
         setTrueMaxPosture((float) (Math.ceil(10 / 1.09 * elb.getWidth() * elb.getHeight()) + elb.getTotalArmorValue() / 2d));
+        if (first)
+            setPosture(getMaxPosture());
         decrementComboGrace(ticks);
         int qiExtra = decrementMightGrace(ticks);
         int spExtra = decrementSpiritGrace(ticks);
@@ -505,13 +556,16 @@ public class CombatCapability implements ICombatCapability {
         decrementHandBind(Hand.OFF_HAND, ticks);
         addOffhandCooldown(ticks);
         if (!(elb instanceof PlayerEntity))
-            elb.ticksSinceLastSwing++;
+            elb.ticksSinceLastSwing+=ticks;
         decrementRollTime(ticks);
         decrementShieldTime(ticks);
-        int stExtra = decrementStaggerTime(ticks);
+        int shcd = decrementShatterCooldown(ticks);
         //check max posture, max spirit, decrement bind and offhand cooldown
         if (getPostureGrace() == 0 && getStaggerTime() == 0 && getPosture() < getMaxPosture()) {
-            addPosture(getPPS() * (poExtra + stExtra));
+            addPosture(getPPS() * (poExtra));
+        }
+        if (shcd != 0) {
+            setShatter((float) elb.getAttributeValue(WarAttributes.SHATTER.get()));
         }
         if (getSpiritGrace() == 0 && getStaggerTime() == 0 && getSpirit() < getMaxSpirit()) {
             addSpirit(getPPS() * spExtra);
@@ -540,6 +594,7 @@ public class CombatCapability implements ICombatCapability {
             setOffhandCooldown(0);
         }
         lastUpdate = elb.world.getGameTime();
+        first = false;
         sync();
     }
 
@@ -579,11 +634,14 @@ public class CombatCapability implements ICombatCapability {
         setOffhandAttack(c.getBoolean("offhand"));
         toggleCombatMode(c.getBoolean("combat"));
         setShieldCount(c.getInt("shieldC"));
+        setShatterCooldown(c.getInt("shattercd"));
+        setShatter(c.getFloat("shatter"));
         lastUpdate = c.getLong("lastUpdate");
+        first = c.getBoolean("first");
         if (dude.get() instanceof PlayerEntity) {
             if (MovementUtils.hasInvFrames(dude.get()))
                 ((PlayerEntity) dude.get()).setForcedPose(Pose.SWIMMING);
-            else if (temp == -(int)(CombatConfig.rollEndsAt))
+            else if (temp == -(int) (CombatConfig.rollEndsAt))
                 ((PlayerEntity) dude.get()).setForcedPose(null);
         }
     }
@@ -620,6 +678,9 @@ public class CombatCapability implements ICombatCapability {
         c.putBoolean("combat", isCombatMode());
         c.putLong("lastUpdate", lastUpdate);
         c.putInt("shieldC", sc);
+        c.putBoolean("first", first);
+        c.putInt("shattercd", getShatterCooldown());
+        c.putFloat("shatter", getShatter());
         return c;
     }
 

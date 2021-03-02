@@ -2,6 +2,7 @@ package jackiecrazy.wardance.handlers;
 
 import jackiecrazy.wardance.WarDance;
 import jackiecrazy.wardance.api.ICombatManipulator;
+import jackiecrazy.wardance.api.WarAttributes;
 import jackiecrazy.wardance.capability.CombatData;
 import jackiecrazy.wardance.capability.ICombatCapability;
 import jackiecrazy.wardance.config.CombatConfig;
@@ -20,6 +21,7 @@ import net.minecraft.util.math.vector.Vector3d;
 import net.minecraft.world.server.ServerWorld;
 import net.minecraftforge.event.entity.ProjectileImpactEvent;
 import net.minecraftforge.event.entity.living.LivingAttackEvent;
+import net.minecraftforge.event.entity.living.LivingDamageEvent;
 import net.minecraftforge.event.entity.living.LivingHurtEvent;
 import net.minecraftforge.event.entity.living.LivingKnockBackEvent;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
@@ -37,21 +39,29 @@ public class CombatHandler {
             if (MovementUtils.hasInvFrames(uke)) e.setCanceled(true);
             float consume = CombatConfig.posturePerProjectile;
             ICombatCapability ukeCap = CombatData.getCap(uke);
+            boolean free = ukeCap.getShieldTime() > 0;
             ItemStack defend = CombatUtils.getDefendingItemStack(uke, true);
-            if (defend != null && ukeCap.doConsumePosture(consume)) {
+            if (defend != null && GeneralUtils.isFacingEntity(uke, e.getEntity(), 120) && ukeCap.doConsumePosture(free ? 0 : consume)) {
                 e.setCanceled(true);
-                boolean free = false;
-                if (ukeCap.getShieldTime() == 0) {
+                if (!free) {
                     Tuple<Integer, Integer> stat = CombatUtils.getShieldStats(defend);
                     ukeCap.setShieldTime(stat.getA());
                     ukeCap.setShieldCount(stat.getB());
                 } else {
-                    free = true;
                     ukeCap.decrementShieldCount(1);
                 }
-                uke.world.playSound(null, uke.getPosX(), uke.getPosY(), uke.getPosZ(), free ? SoundEvents.BLOCK_WOOD_STEP : SoundEvents.BLOCK_WOOD_BREAK, SoundCategory.PLAYERS, 0.25f + WarDance.rand.nextFloat() * 0.5f, (1 - (ukeCap.getPosture() / ukeCap.getMaxPosture())) + WarDance.rand.nextFloat() * 0.5f);
-                Vector3d look = uke.getLookVec().mul(0.1, 0.1, 0.1);
+                uke.world.playSound(null, uke.getPosX(), uke.getPosY(), uke.getPosZ(), free ? SoundEvents.BLOCK_WOODEN_TRAPDOOR_OPEN : SoundEvents.BLOCK_WOODEN_TRAPDOOR_CLOSE, SoundCategory.PLAYERS, 0.25f + WarDance.rand.nextFloat() * 0.5f, (1 - (ukeCap.getPosture() / ukeCap.getMaxPosture())) + WarDance.rand.nextFloat() * 0.5f);
+                Vector3d look = e.getEntity().getMotion().mul(-1, -1, -1).normalize();
                 e.getEntity().setVelocity(look.x, look.y, look.z);
+                return;
+            }
+            //deflection
+            if (GeneralUtils.isFacingEntity(uke, e.getEntity(), 120 + 2 * (int) uke.getAttributeValue(WarAttributes.DEFLECTION.get())) && !GeneralUtils.isFacingEntity(uke, e.getEntity(), 120) && ukeCap.doConsumePosture(consume * CombatConfig.deflectionPenalty)) {
+                e.setCanceled(true);
+                uke.world.playSound(null, uke.getPosX(), uke.getPosY(), uke.getPosZ(), SoundEvents.BLOCK_IRON_TRAPDOOR_OPEN, SoundCategory.PLAYERS, 0.25f + WarDance.rand.nextFloat() * 0.5f, (1 - (ukeCap.getPosture() / ukeCap.getMaxPosture())) + WarDance.rand.nextFloat() * 0.5f);
+                Vector3d look = e.getEntity().getMotion().mul(-1, -1, -1).normalize();
+                e.getEntity().setVelocity(look.x, look.y, look.z);
+                return;
             }
         }
     }
@@ -167,8 +177,20 @@ public class CombatHandler {
                 }
                 seme.world.playSound(null, uke.getPosX(), uke.getPosY(), uke.getPosZ(), SoundEvents.ENTITY_GENERIC_BIG_FALL, SoundCategory.PLAYERS, 0.25f + WarDance.rand.nextFloat() * 0.5f, 0.75f + WarDance.rand.nextFloat() * 0.5f);
             }
+        } else if (CombatUtils.isPhysicalAttack(e.getSource())) {
+            e.setAmount(cap.consumeShatter(e.getAmount()));
         }
         cap.setWounding(cap.getWounding() + e.getAmount() * CombatConfig.wound);
+    }
+
+    @SubscribeEvent
+    public static void tanky(LivingDamageEvent e) {
+        if (CombatData.getCap(e.getEntityLiving()).getStaggerTime() == 0 && CombatUtils.isPhysicalAttack(e.getSource())) {
+            float amount = e.getAmount();
+            //absorption
+            amount -= e.getEntityLiving().getAttributeValue(WarAttributes.ABSORPTION.get());
+            e.setAmount(amount);
+        }
     }
 
     @SubscribeEvent

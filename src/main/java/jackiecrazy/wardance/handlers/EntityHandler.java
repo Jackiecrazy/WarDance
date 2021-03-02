@@ -1,6 +1,7 @@
 package jackiecrazy.wardance.handlers;
 
 import jackiecrazy.wardance.WarDance;
+import jackiecrazy.wardance.api.WarAttributes;
 import jackiecrazy.wardance.capability.CombatData;
 import jackiecrazy.wardance.capability.ICombatCapability;
 import jackiecrazy.wardance.config.CombatConfig;
@@ -11,12 +12,14 @@ import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.MobEntity;
+import net.minecraft.entity.ai.attributes.Attributes;
 import net.minecraft.entity.ai.goal.Goal;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.event.AttachCapabilitiesEvent;
 import net.minecraftforge.event.TickEvent;
 import net.minecraftforge.event.entity.EntityAttributeCreationEvent;
+import net.minecraftforge.event.entity.EntityAttributeModificationEvent;
 import net.minecraftforge.event.entity.EntityJoinWorldEvent;
 import net.minecraftforge.event.entity.living.LivingEvent;
 import net.minecraftforge.event.entity.player.PlayerEvent;
@@ -95,11 +98,6 @@ public class EntityHandler {
             CombatData.getCap(e.player).update();
         }
     }
-
-//    @SubscribeEvent
-//    public static void attribute(EntityAttributeCreationEvent e) {
-//        //todo hmm
-//    }
 
     @SubscribeEvent
     public static void tickMobs(LivingEvent.LivingUpdateEvent e) {

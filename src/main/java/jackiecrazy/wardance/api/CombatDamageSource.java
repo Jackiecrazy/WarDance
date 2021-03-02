@@ -9,6 +9,21 @@ import net.minecraft.util.Hand;
 import javax.annotation.Nullable;
 
 public class CombatDamageSource extends EntityDamageSource {
+    public TYPE getDamageTyping() {
+        return damageTyping;
+    }
+
+    public CombatDamageSource setDamageTyping(TYPE damageTyping) {
+        this.damageTyping = damageTyping;
+        return this;
+    }
+
+    public enum TYPE {
+        PHYSICAL,//reduced by absorption, deflection, shatter, and armor
+        MAGICAL,//reduced by resist
+        TRUE//not reduced by anything
+    }
+
     private ItemStack damageDealer = ItemStack.EMPTY;
     private Hand attackingHand = Hand.MAIN_HAND;
     private Entity proxy = null;
@@ -16,7 +31,9 @@ public class CombatDamageSource extends EntityDamageSource {
     private boolean procAutoEffects = false;
     private boolean procAttackEffects = false;
     private boolean procSkillEffects = false;
-    private boolean crit=false;
+    private boolean crit = false;
+    private TYPE damageTyping = TYPE.PHYSICAL;
+
     public CombatDamageSource(String damageTypeIn, @Nullable Entity damageSourceEntityIn) {
         super(damageTypeIn, damageSourceEntityIn);
     }
@@ -91,12 +108,5 @@ public class CombatDamageSource extends EntityDamageSource {
     public CombatDamageSource setProcSkillEffects(boolean procSkillEffects) {
         this.procSkillEffects = procSkillEffects;
         return this;
-    }
-
-
-    public enum TYPE{
-        PHYSICAL,
-        MAGICAL,
-        TRUE
     }
 }

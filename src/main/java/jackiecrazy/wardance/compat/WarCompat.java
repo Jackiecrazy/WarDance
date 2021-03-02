@@ -1,4 +1,4 @@
-package jackiecrazy.wardance;
+package jackiecrazy.wardance.compat;
 
 import jackiecrazy.wardance.config.CombatConfig;
 import net.minecraftforge.fml.ModList;

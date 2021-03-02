@@ -469,6 +469,34 @@ public class CombatConfig {
             "minecraft:netherite_sword, 1.3, 1.0, false",
             "iceandfire:copper_pickaxe, 0.4, 1.0, false", "iceandfire:copper_shovel, 1.7, 0.9, false", "iceandfire:copper_sword, 1.1, 1.0, false", "iceandfire:copper_axe, 2.7, 0.9, false", "iceandfire:copper_hoe, 0.3, 1.5, false", "iceandfire:silver_pickaxe, 0.5, 1.0, false", "iceandfire:silver_shovel, 1.8, 0.9, false", "iceandfire:silver_sword, 1.2, 1.0, false", "iceandfire:silver_axe, 3.0, 0.8, false", "iceandfire:silver_hoe, 0.4, 1.4, false", "iceandfire:dragonbone_pickaxe, 0.7, 1.0, false", "iceandfire:dragonbone_shovel, 2.6, 0.9, false", "iceandfire:dragonbone_sword, 1.4, 1.0, false", "iceandfire:dragonbone_sword_ice, 1.5, 1.0, false", "iceandfire:dragonbone_sword_fire, 1.4, 0.9, false", "iceandfire:dragonbone_sword_lightning, 1.5, 0.9, false", "iceandfire:hippogryph_sword, 1.2, 1.0, false", "iceandfire:hippocampus_slapper, 1.5, 1.4, false", "iceandfire:deathworm_gauntlet_red, 1.0, 0.8, false", "iceandfire:deathworm_gauntlet_white, 1.0, 0.8, false", "iceandfire:deathworm_gauntlet_yellow, 1.0, 0.8, false", "iceandfire:dragonbone_axe, 3.8, 0.8, false", "iceandfire:dragonbone_hoe, 0.6, 1.4, false", "iceandfire:myrmex_desert_pickaxe, 0.5, 1.0, false", "iceandfire:myrmex_desert_shovel, 1.8, 0.9, false", "iceandfire:myrmex_desert_sword, 1.3, 1.0, false", "iceandfire:myrmex_desert_sword_venom, 1.3, 1.0, false", "iceandfire:myrmex_desert_axe, 3.4, 0.8, false", "iceandfire:myrmex_desert_hoe, 0.5, 1.4, false", "iceandfire:myrmex_jungle_pickaxe, 0.5, 1.0, false", "iceandfire:myrmex_jungle_shovel, 1.8, 0.9, false", "iceandfire:myrmex_jungle_sword, 1.3, 1.0, false", "iceandfire:myrmex_jungle_sword_venom, 1.3, 1.0, false", "iceandfire:myrmex_jungle_axe, 3.4, 0.8, false", "iceandfire:myrmex_jungle_hoe, 0.5, 1.4, false", "iceandfire:dragonsteel_ice_pickaxe, 0.9, 0.85, false", "iceandfire:dragonsteel_ice_shovel, 3.0, 0.75, false", "iceandfire:dragonsteel_ice_sword, 1.6, 0.85, false", "iceandfire:dragonsteel_ice_axe, 4.0, 0.75, false", "iceandfire:dragonsteel_ice_hoe, 0.7, 1.2, false", "iceandfire:dragonsteel_fire_pickaxe, 1.0, 0.9, false", "iceandfire:dragonsteel_fire_shovel, 3.3, 0.8, false", "iceandfire:dragonsteel_fire_sword, 1.8, 0.9, false", "iceandfire:dragonsteel_fire_axe, 4.4, 0.8, false", "iceandfire:dragonsteel_fire_hoe, 0.9, 1.3, false", "iceandfire:dragonsteel_lightning_pickaxe, 0.9, 0.9, false", "iceandfire:dragonsteel_lightning_shovel, 3.0, 0.8, false", "iceandfire:dragonsteel_lightning_sword, 1.6, 0.9, false", "iceandfire:dragonsteel_lightning_axe, 4.0, 0.8, false", "iceandfire:dragonsteel_lightning_hoe, 0.7, 1.3, false", "iceandfire:dread_sword, 1.2, 1.0, false", "iceandfire:dread_knight_sword, 1.5, 0.9, false", "iceandfire:dread_queen_sword, 1.7, 0.9, false", "iceandfire:ghost_sword, 1.3, 0.9, false", "iceandfire:troll_weapon_axe, 10.0, 0.5, true, 20, 1", "iceandfire:troll_weapon_column, 10.0, 0.5, true, 20, 1", "iceandfire:troll_weapon_column_forest, 10.0, 0.5, true, 20, 1", "iceandfire:troll_weapon_column_frost, 10.0, 0.5, true, 20, 1", "iceandfire:troll_weapon_hammer, 10.0, 0.5, true, 20, 1", "iceandfire:troll_weapon_trunk, 10.0, 0.5, true, 20, 1", "iceandfire:troll_weapon_trunk_frost, 10.0, 0.5, true, 20, 1", "bloodmagic:soulpickaxe, 0.5, 1.0, false", "bloodmagic:soulshovel, 1.8, 0.9, false", "bloodmagic:soulsword, 1.2, 1.0, false", "bloodmagic:soulaxe, 3.0, 0.8, false", "bloodmagic:soulscythe, 0.4, 1.4, false", "pandoras_creatures:arachnon_hammer, 3.0, 0.8, false", "enigmaticlegacy:astral_breaker, 3.0, 0.8, false", "vampirism:heart_seeker_normal, 1.2, 1.1, true, 1,1", "vampirism:heart_seeker_enhanced, 1.3, 1.05, true, 1,1", "vampirism:heart_seeker_ultimate, 1.4, 1.0, true, 1,1", "vampirism:heart_striker_normal, 0.8, 0.9, true, 1,1", "vampirism:heart_striker_enhanced, 0.9, 0.85, true, 1,1", "vampirism:heart_striker_ultimate, 1.0, 0.8, true, 1,1", "vampirism:hunter_axe_normal, 4.0, 0.9, true, 1,1", "vampirism:hunter_axe_enhanced, 4.2, 0.8, true, 1,1", "vampirism:hunter_axe_ultimate, 4.5, 0.7, true, 1,1", "consecration:fire_stick, 0.5, 1.2, false", "eidolon:reversal_pick, 0.5, 1.0, false", "eidolon:reaper_scythe, 2.0, 0.9, false", "eidolon:sapping_sword, 1.2, 1.0, false", "wyrmroost:platinum_pickaxe, 0.5, 1.0, false", "wyrmroost:platinum_shovel, 1.8, 0.9, false", "wyrmroost:platinum_sword, 1.2, 1.0, false", "wyrmroost:platinum_axe, 3.0, 0.8, false", "wyrmroost:platinum_hoe, 0.4, 1.4, false", "wyrmroost:blue_geode_pickaxe, 0.5, 1.0, false", "wyrmroost:blue_geode_shovel, 2.0, 0.9, false", "wyrmroost:blue_geode_sword, 1.2, 1.0, false", "enigmaticlegacy:forbidden_axe, 1.2, 1.0, false", "wyrmroost:blue_geode_axe, 3.3, 0.8, false", "wyrmroost:blue_geode_hoe, 0.4, 1.4, false", "wyrmroost:red_geode_pickaxe, 0.6, 1.0, false", "wyrmroost:red_geode_shovel, 2.4, 0.9, false", "wyrmroost:red_geode_sword, 1.3, 1.0, false", "wyrmroost:red_geode_axe, 3.6, 0.8, false", "wyrmroost:red_geode_hoe, 0.5, 1.4, false", "wyrmroost:purple_geode_pickaxe, 0.7, 1.0, false", "wyrmroost:purple_geode_shovel, 2.6, 0.9, false", "wyrmroost:purple_geode_sword, 1.4, 1.0, false", "wyrmroost:purple_geode_axe, 3.8, 0.8, false", "wyrmroost:purple_geode_hoe, 0.6, 1.4, false", "byg:pendorite_pickaxe, 0.7, 1.0, false", "byg:pendorite_shovel, 2.6, 0.9, false", "byg:pendorite_sword, 1.4, 1.0, false", "byg:pendorite_axe, 3.8, 0.8, false", "byg:pendorite_battleaxe, 4.0, 0.9, false", "byg:pendorite_hoe, 0.6, 1.4, false", "aquaculture:neptunium_pickaxe, 0.7, 1.0, false", "aquaculture:neptunium_shovel, 2.6, 0.9, false", "aquaculture:neptunium_sword, 1.4, 1.0, false", "aquaculture:neptunium_axe, 3.8, 0.8, false", "aquaculture:neptunium_hoe, 0.6, 1.4, false", "aquaculture:wooden_fillet_knife, 0.5, 1.4, false", "aquaculture:stone_fillet_knife, 0.5, 1.4, false", "aquaculture:iron_fillet_knife, 0.6, 1.3, false", "aquaculture:gold_fillet_knife, 0.6, 1.4, false", "aquaculture:diamond_fillet_knife, 0.7, 1.3, false", "aquaculture:neptunium_fillet_knife, 0.8, 1.1, false", "mahoutsukai:caliburn, 1.2, 1.0, false", "mahoutsukai:clarent, 1.2, 1.0, false", "mahoutsukai:morgan, 1.2, 1.0, false", "mahoutsukai:dagger, 0.5, 1.3, false", "mahoutsukai:theripper, 0.5, 1.3, false", "mahoutsukai:proximity_projection_keys, 0.5, 1.3, false", "enigmaticlegacy:etherium_pickaxe, 0.7, 1.0, false", "enigmaticlegacy:etherium_shovel, 2.6, 0.9, false", "enigmaticlegacy:etherium_sword, 1.4, 1.0, false", "enigmaticlegacy:etherium_axe, 3.8, 0.8, false", "enigmaticlegacy:etherium_hoe, 0.6, 1.4, false", "create:deforester, 3.8, 0.8, false", "astral:phantasmal_pickaxe, 0.4, 1.0, false", "astral:phantasmal_shovel, 1.7, 0.9, false", "astral:phantasmal_sword, 1.1, 1.0, false", "astral:phantasmal_axe, 2.7, 0.9, false", "astral:phantasmal_hoe, 0.3, 1.5, false", "vampirism:pitchfork, 1.0, 1.6, false", "vampirism:stake, 1.0, 1.6, false", "meetyourfight:depth_star, 3.0, 1.1, false", "meetyourfight:cocktail_cutlass, 1.2, 1.1, false", "evilcraft:mace_of_distortion, 2.4, 0.9, false", "evilcraft:mace_of_destruction, 2.4, 0.9, false", "evilcraft:vein_sword, 1.3, 1.0, false", "evilcraft:vengeance_pickaxe, 0.4, 1.3, false"
     };
+    private static final String[] ARMOR = {
+            "minecraft:leather_helmet, 0.3, 0, 0",
+            "minecraft:leather_chestplate, 0.6, 0, 0",
+            "minecraft:leather_leggings, 0.4, 0, 0",
+            "minecraft:leather_boots, 0.3, 0, 0",
+            "minecraft:chainmail_helmet, 0.1, 4, 3",
+            "minecraft:chainmail_chestplate, 0.3, 9, 5",
+            "minecraft:chainmail_leggings, 0.2, 7, 4",
+            "minecraft:chainmail_boots, 0.1, 4, 2",
+            "minecraft:golden_helmet, 0.4, 2, 1",
+            "minecraft:golden_chestplate, 1.0, 6, 2",
+            "minecraft:golden_leggings, 0.6, 5, 1",
+            "minecraft:golden_boots, 0.2, 2, 1",
+            "minecraft:turtle_helmet, 0.1, 7, 3",
+            "minecraft:iron_helmet, 0.1, 6, 1",
+            "minecraft:iron_chestplate, 0.1, 16, 3",
+            "minecraft:iron_leggings, 0.1, 12, 2",
+            "minecraft:iron_boots, 0.1, 6, 1",
+            "minecraft:diamond_helmet, 0, 5, 6",
+            "minecraft:diamond_chestplate, 0, 10, 16",
+            "minecraft:diamond_leggings, 0, 8, 12",
+            "minecraft:diamond_boots, 0, 5, 6",
+            "minecraft:netherite_helmet, 0.4, 6, 0",
+            "minecraft:netherite_chestplate, 1.0, 16, 0",
+            "minecraft:netherite_leggings, 0.6, 12, 0",
+            "minecraft:netherite_boots, 0.2, 6, 0"
+
+    };
 
     static {
         final Pair<CombatConfig, ForgeConfigSpec> specPair = new ForgeConfigSpec.Builder().configure(CombatConfig::new);
@@ -477,6 +505,8 @@ public class CombatConfig {
     }
 
     private final ForgeConfigSpec.DoubleValue _posturePerProjectile;
+    private final ForgeConfigSpec.DoubleValue _deflectionPenalty;
+    private final ForgeConfigSpec.IntValue _shatterCooldown;
     private final ForgeConfigSpec.DoubleValue _defaultMultiplierPostureDefend;
     private final ForgeConfigSpec.DoubleValue _defaultMultiplierPostureAttack;
     private final ForgeConfigSpec.IntValue _rollThreshold;
@@ -493,6 +523,7 @@ public class CombatConfig {
     private final ForgeConfigSpec.IntValue _postureCD;
     private final ForgeConfigSpec.ConfigValue<List<? extends String>> _combatItems;
     private final ForgeConfigSpec.ConfigValue<List<? extends String>> _customPosture;
+    private final ForgeConfigSpec.ConfigValue<List<? extends String>> _customArmor;
     private final ForgeConfigSpec.DoubleValue _mobParryChanceWeapon;
     private final ForgeConfigSpec.DoubleValue _mobParryChanceShield;
     private final ForgeConfigSpec.DoubleValue _mobScaler;
@@ -505,6 +536,8 @@ public class CombatConfig {
     private final ForgeConfigSpec.BooleanValue _elenaiC;
 
     public static float posturePerProjectile;
+    public static float deflectionPenalty;
+    public static int shatterCooldown;
     public static float defaultMultiplierPostureDefend;
     public static float defaultMultiplierPostureAttack;
     public static int rollEndsAt;
@@ -526,6 +559,7 @@ public class CombatConfig {
     public CombatConfig(ForgeConfigSpec.Builder b) {
         b.push("numbers");
         _posturePerProjectile = b.translation("wardance.config.ppp").comment("Posture consumed per projectile parried").defineInRange("posture per projectile", 0.5, 0, Double.MAX_VALUE);
+        _deflectionPenalty = b.translation("wardance.config.deflect").comment("Posture multiplier for using deflection rather than a proper parry").defineInRange("deflection penalty", 1.8, 0, Double.MAX_VALUE);
         _defaultMultiplierPostureAttack = b.translation("wardance.config.dmpa").comment("Default multiplier for any items not defined in the config, multiplied by their attack damage").defineInRange("default attack multiplier", 0.15, 0, Double.MAX_VALUE);
         _defaultMultiplierPostureDefend = b.translation("wardance.config.dmpd").comment("Default multiplier for any item not defined in the config, when used for parrying").defineInRange("default defense multiplier", 1.4, 0, Double.MAX_VALUE);
         _rollThreshold = b.translation("wardance.config.rollT").comment("Within this number of ticks after rolling the entity is considered invulnerable. This also determines the animation, so changing it might mean you land before or after standing up again").defineInRange("roll time", 10, 0, Integer.MAX_VALUE);
@@ -540,6 +574,7 @@ public class CombatConfig {
         _staggerDuration = b.translation("wardance.config.staggerD").comment("Maximum number of ticks an entity should be staggered for when its posture reaches 0. The actual length of a given stagger is scaled by HP between the min and max values").defineInRange("max stagger duration", 60, 1, Integer.MAX_VALUE);
         _staggerDurationMin = b.translation("wardance.config.staggerM").comment("Minimum number of ticks an entity should be staggered for when its posture reaches 0. The actual length of a given stagger is scaled by HP between the min and max values").defineInRange("min stagger duration", 10, 1, Integer.MAX_VALUE);
         _staggerHits = b.translation("wardance.config.staggerH").comment("Number of hits a staggered entity will take before stagger is automatically canceled").defineInRange("stagger hits", 3, 1, Integer.MAX_VALUE);
+        _shatterCooldown = b.translation("wardance.config.shatterCD").comment("Ticks after a hit for which shatter will not be replenished").defineInRange("shatter cooldown", 200, 1, Integer.MAX_VALUE);
         _mobParryChanceWeapon = b.translation("wardance.config.mobPW").comment("chance that a mob parries with a weapon out of 1").defineInRange("mob weapon parry chance", 0.3, 0, 1);
         _mobParryChanceShield = b.translation("wardance.config.mobPS").comment("chance that a mob parries with a shield out of 1").defineInRange("mob shield parry chance", 0.9, 0, 1);
         _mobScaler = b.translation("wardance.config.mobB").comment("posture damage from mob attacks will be scaled by this number").defineInRange("mob posture damage buff", 2, 0, Double.MAX_VALUE);
@@ -555,12 +590,14 @@ public class CombatConfig {
         b.pop();
         b.push("lists");
         _combatItems = b.translation("wardance.config.combatItems").comment("Items eligible for parrying. Format should be name, attack posture consumption, defense multiplier, is shield. Shields can have two extra variables that dictate their parry time and parry counter. Default values provided graciously by DarkMega, thank you!").defineList("combat items", Arrays.asList(THANKS_DARKMEGA), String.class::isInstance);
-        _customPosture = b.translation("wardance.config.combatItems").comment("Here you can define custom max posture for mobs. Format is name, max posture, whether they're rotated when staggered. Armor is still calculated").defineList("custom mob posture", Lists.newArrayList("example:dragon, 100, false", "example:ghast, 8, true"), String.class::isInstance);
+        _customPosture = b.translation("wardance.config.postureMobs").comment("Here you can define custom max posture for mobs. Format is name, max posture, whether they're rotated when staggered. Armor is still calculated").defineList("custom mob posture", Lists.newArrayList("example:dragon, 100, false", "example:ghast, 8, true"), String.class::isInstance);
+        _customArmor = b.translation("wardance.config.armorItems").comment("define protective stats of armor and held items here. Format is item, absorption, deflection, shatter.").defineList("custom protection attributes", Lists.newArrayList(ARMOR), String.class::isInstance);
         b.pop();
     }
 
     private static void bake() {
         posturePerProjectile = CONFIG._posturePerProjectile.get().floatValue();
+        deflectionPenalty = CONFIG._deflectionPenalty.get().floatValue();
         defaultMultiplierPostureDefend = CONFIG._defaultMultiplierPostureDefend.get().floatValue();
         defaultMultiplierPostureAttack = CONFIG._defaultMultiplierPostureAttack.get().floatValue();
         rollCooldown = CONFIG._rollCooldown.get();
@@ -575,6 +612,7 @@ public class CombatConfig {
         staggerDuration = CONFIG._staggerDuration.get();
         staggerDurationMin = CONFIG._staggerDurationMin.get();
         staggerHits = CONFIG._staggerHits.get();
+        shatterCooldown = CONFIG._shatterCooldown.get();
         mobParryChanceWeapon = CONFIG._mobParryChanceWeapon.get().floatValue();
         mobParryChanceShield = CONFIG._mobParryChanceShield.get().floatValue();
         mobScaler = CONFIG._mobScaler.get().floatValue();
@@ -585,7 +623,7 @@ public class CombatConfig {
         elenai = CONFIG._elenai.get();
         elenaiC = CONFIG._elenaiC.get();
         elenaiP = CONFIG._elenaiP.get();
-        CombatUtils.updateLists(CONFIG._combatItems.get(), CONFIG._customPosture.get(), defaultMultiplierPostureAttack, defaultMultiplierPostureDefend, shieldThreshold, shieldCount);
+        CombatUtils.updateLists(CONFIG._combatItems.get(), CONFIG._customPosture.get(), CONFIG._customArmor.get(), defaultMultiplierPostureAttack, defaultMultiplierPostureDefend, shieldThreshold, shieldCount);
     }
 
     @SubscribeEvent

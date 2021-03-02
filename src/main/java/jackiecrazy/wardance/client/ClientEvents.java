@@ -4,7 +4,7 @@ import com.elenai.elenaidodge2.event.ClientTickEventListener;
 import com.mojang.blaze3d.matrix.MatrixStack;
 import com.mojang.blaze3d.platform.GlStateManager;
 import com.mojang.blaze3d.systems.RenderSystem;
-import jackiecrazy.wardance.WarCompat;
+import jackiecrazy.wardance.compat.WarCompat;
 import jackiecrazy.wardance.WarDance;
 import jackiecrazy.wardance.capability.CombatData;
 import jackiecrazy.wardance.capability.ICombatCapability;
@@ -69,8 +69,11 @@ public class ClientEvents {
     private static final long[] lastTap = {0, 0, 0, 0};
     private static final boolean[] tapped = {false, false, false, false};
     private static boolean sneak = false;
-    private static float currentQiLevel = 0;
+    private static float currentMightLevel = 0;
     private static float currentComboLevel = 0;
+    private static float currentSpiritLevel = 0;
+    private static float yourCurrentPostureLevel = 0;
+    private static float theirCurrentPostureLevel = 0;
     private static final DecimalFormat formatter = new DecimalFormat("#.#");
 
     static {
@@ -95,7 +98,7 @@ public class ClientEvents {
         MovementInput mi = e.getMovementInput();
         final ICombatCapability itsc = CombatData.getCap(mc.player);
         if (Keybinds.COMBAT.getKeyConflictContext().isActive() && Keybinds.COMBAT.isPressed()) {
-            mc.player.sendStatusMessage(new TranslationTextComponent("taoism.combat." + (itsc.isCombatMode() ? "off" : "on")), true);
+            mc.player.sendStatusMessage(new TranslationTextComponent("wardance.combat." + (itsc.isCombatMode() ? "off" : "on")), true);
             CombatChannel.INSTANCE.sendToServer(new CombatPacket());
         }
 //        if (itsc.getStaggerTime() > 0) {
@@ -282,74 +285,83 @@ public class ClientEvents {
 
         if (event.getType().equals(RenderGameOverlayEvent.ElementType.ALL))
             if (mc.getRenderViewEntity() instanceof PlayerEntity) {
-                GameSettings gamesettings = mc.gameSettings;
                 ClientPlayerEntity player = mc.player;
                 ICombatCapability cap = CombatData.getCap(player);
                 int width = sr.getScaledWidth();
                 int height = sr.getScaledHeight();
-                mc.getTextureManager().bindTexture(hud);
-                float targetQiLevel = cap.getMight();
-                boolean closeEnough = true;
-                if (targetQiLevel > currentQiLevel) {
-                    currentQiLevel += Math.min(0.1, (targetQiLevel - currentQiLevel) / 20);
-                    closeEnough = false;
-                }
-                if (targetQiLevel < currentQiLevel) {
-                    currentQiLevel -= Math.min(0.1, (currentQiLevel - targetQiLevel) / 20);
-                    closeEnough = !closeEnough;
-                }
-                if (closeEnough)
-                    currentQiLevel = targetQiLevel;
-                int qi = (int) (currentQiLevel);
-                float qiExtra = currentQiLevel - qi;
-                if (qiExtra < 0.1) qiExtra = 0;
-
-                float targetCombo = cap.getCombo();
-                boolean comboCloseEnough = true;
-                if (targetCombo > currentComboLevel) {
-                    currentComboLevel += Math.min(0.1, (targetCombo - currentComboLevel) / 20);
-                    comboCloseEnough = false;
-                }
-                if (targetCombo < currentComboLevel) {
-                    currentComboLevel += Math.min(0.1, (targetCombo - currentComboLevel) / 20);
-                    comboCloseEnough = !comboCloseEnough;
-                }
-                if (comboCloseEnough)
-                    currentComboLevel = targetCombo;
+                mc.getTextureManager().bindTexture(hood);
+                currentSpiritLevel = updateValue(currentSpiritLevel, cap.getSpirit());
+                currentMightLevel = updateValue(currentMightLevel, cap.getMight());
+                currentComboLevel = updateValue(currentComboLevel, cap.getCombo());
+                yourCurrentPostureLevel = updateValue(yourCurrentPostureLevel, cap.getPosture());
                 if (cap.isCombatMode()) {
-                    if (qi != 0 || qiExtra != 0f) {
-                        //render qi bar
-                        event.getMatrixStack().push();
-                        //bar
-                        event.getMatrixStack().push();
-                        RenderSystem.enableBlend();
-                        RenderSystem.enableAlphaTest();
-                        RenderSystem.blendColor(1, 1, 1, qi > 0 ? 1 : qiExtra);
-                        mc.ingameGUI.blit(event.getMatrixStack(), Math.min(ClientConfig.qiX, width - 64), Math.min(ClientConfig.qiY, height - 64), 0, 0, 64, 64);//+(int)(qiExtra*32)
-                        event.getMatrixStack().pop();
+                    event.getMatrixStack().push();
+                    RenderSystem.enableBlend();
+                    RenderSystem.enableAlphaTest();
+                    //bar
+//                        event.getMatrixStack().push();
+//                        RenderSystem.blendColor(1, 1, 1, qi > 0 ? 1 : qiExtra);
+//                        mc.ingameGUI.blit(event.getMatrixStack(), Math.min(ClientConfig.mightX, width - 64), Math.min(ClientConfig.mightY, height - 64), 0, 0, 64, 64);//+(int)(qiExtra*32)
+//                        event.getMatrixStack().pop();
+//
+//                        if (qi > 0) {
+//                            //overlay
+//                            event.getMatrixStack().push();
+//                            RenderSystem.color4f(qiExtra, qiExtra, qiExtra, qiExtra);
+//                            mc.ingameGUI.blit(event.getMatrixStack(), Math.min(ClientConfig.mightX, width - 64), Math.min(ClientConfig.mightY, height - 64), ((qi + 1) * 64) % 256, Math.floorDiv((qi + 1), 4) * 64, 64, 64);
+//                            event.getMatrixStack().pop();
+//
+//                            //overlay layer 2
+//                            event.getMatrixStack().push();
+//                            RenderSystem.color3f(1f, 1f, 1f);
+//                            mc.ingameGUI.blit(event.getMatrixStack(), Math.min(ClientConfig.mightX, width - 64), Math.min(ClientConfig.mightY, height - 64), (qi * 64) % 256, Math.floorDiv(qi, 4) * 64, 64, 64);
+//                            event.getMatrixStack().pop();
+//                        }
+                    int x = Math.max(width / 4 - ClientConfig.mightX - 16, 0);
+                    int y = Math.min(height - ClientConfig.mightY, height - 32);
+                    //circle
+                    event.getMatrixStack().push();
+                    event.getMatrixStack().push();
+                    RenderSystem.color4f(currentMightLevel / 10, currentMightLevel / 10, currentMightLevel / 10, 1);
+                    mc.ingameGUI.blit(event.getMatrixStack(), x, y, 66, 129, 32, 32);
+                    event.getMatrixStack().pop();
+                    //might
+                    event.getMatrixStack().push();
+                    RenderSystem.color4f(1, 1, 1, 1);
+                    mc.ingameGUI.blit(event.getMatrixStack(), x, y, 0, 129, 32, 32);
+                    event.getMatrixStack().pop();
+                    //multiplier
+                    //mc.fontRenderer.drawStringWithShadow(event.getMatrixStack(), display, x + 1, y + 14, 16711937);
+                    event.getMatrixStack().pop();
+                    int tempx=x, tempy=y;
 
-                        if (qi > 0) {
-                            //overlay
-                            event.getMatrixStack().push();
-                            RenderSystem.color4f(qiExtra, qiExtra, qiExtra, qiExtra);
-                            mc.ingameGUI.blit(event.getMatrixStack(), Math.min(ClientConfig.qiX, width - 64), Math.min(ClientConfig.qiY, height - 64), ((qi + 1) * 64) % 256, Math.floorDiv((qi + 1), 4) * 64, 64, 64);
-                            event.getMatrixStack().pop();
+                    event.getMatrixStack().push();
+                    x = Math.max(3 * width / 4 - ClientConfig.spiritX - 16, 0);
+                    y = Math.min(height - ClientConfig.spiritY, height - 32);
+                    String display = formatter.format(currentSpiritLevel) + "/" + formatter.format(cap.getMaxSpirit());
+                    //circle
+                    event.getMatrixStack().push();
+                    RenderSystem.color4f(currentSpiritLevel / 10, currentSpiritLevel / 10, currentSpiritLevel / 10, 1);
+                    mc.ingameGUI.blit(event.getMatrixStack(), x, y, 66, 129, 32, 32);
+                    event.getMatrixStack().pop();
+                    //spirit
+                    event.getMatrixStack().push();
+                    RenderSystem.color4f(1, 1, 1, 1);
+                    mc.ingameGUI.blit(event.getMatrixStack(), x, y, 33, 129, 32, 32);
+                    event.getMatrixStack().pop();
+                    //multiplier
+                    mc.fontRenderer.drawStringWithShadow(event.getMatrixStack(), display, x + 1, y + 14, 16711937);
+                    mc.fontRenderer.drawStringWithShadow(event.getMatrixStack(), formatter.format(currentMightLevel) + "/" + formatter.format(10), tempx + 3, tempy + 14, 16711937);
+                    event.getMatrixStack().pop();
 
-                            //overlay layer 2
-                            event.getMatrixStack().push();
-                            RenderSystem.color3f(1f, 1f, 1f);
-                            mc.ingameGUI.blit(event.getMatrixStack(), Math.min(ClientConfig.qiX, width - 64), Math.min(ClientConfig.qiY, height - 64), (qi * 64) % 256, Math.floorDiv(qi, 4) * 64, 64, 64);
-                            event.getMatrixStack().pop();
-                        }
-                        RenderSystem.disableAlphaTest();
-                        RenderSystem.disableBlend();
-                        event.getMatrixStack().pop();
-                    }
+                    RenderSystem.disableAlphaTest();
+                    RenderSystem.disableBlend();
+                    event.getMatrixStack().pop();
                     //combo bar at 224,20 to 229, 121. Grace at 222,95 to 224, 121
                     //initial bar
                     RenderSystem.enableBlend();
                     mc.getTextureManager().bindTexture(hood);
-                    int barHeight = 102;
+                    int barHeight = 103;
                     event.getMatrixStack().push();
                     RenderSystem.defaultBlendFunc();
                     mc.ingameGUI.blit(event.getMatrixStack(), width - 8 + ClientConfig.comboX, Math.min(height / 2 - barHeight / 2 + ClientConfig.comboY, height - barHeight), 220, 20, 10, barHeight);
@@ -360,7 +372,7 @@ public class ClientEvents {
                         event.getMatrixStack().push();
                         RenderSystem.defaultBlendFunc();
                         RenderSystem.color3f(0.15f, 0.2f, 1f);
-                        mc.ingameGUI.blit(event.getMatrixStack(), width - 3 + ClientConfig.comboX, Math.min(height / 2 - barHeight / 2 + ClientConfig.comboY, height - barHeight) + emptyPerc, 224, 20 + emptyPerc, 10, barHeight - emptyPerc);
+                        mc.ingameGUI.blit(event.getMatrixStack(), width - 3 + ClientConfig.comboX, Math.min(height / 2 - barHeight / 2 + ClientConfig.comboY, height - barHeight) + emptyPerc, 224, 20 + emptyPerc, 9, barHeight - emptyPerc);
                         event.getMatrixStack().pop();
                     }
                     //grace
@@ -378,11 +390,11 @@ public class ClientEvents {
                 }
                 //render posture bar if not full, displayed even out of combat mode because it's pretty relevant to not dying
                 if (cap.getPosture() < cap.getMaxPosture() || cap.getStaggerTime() > 0)
-                    drawPostureBarreAt(event.getMatrixStack(), player, width / 2 + ClientConfig.yourPostureX, height - ClientConfig.yourPostureY);
+                    drawPostureBarreAt(true, event.getMatrixStack(), player, width / 2 + ClientConfig.yourPostureX, height - ClientConfig.yourPostureY);
                 Entity look = getEntityLookedAt(player);
                 if (look instanceof LivingEntity && ClientConfig.displayEnemyPosture && (CombatData.getCap((LivingEntity) look).getPosture() < CombatData.getCap((LivingEntity) look).getMaxPosture() || CombatData.getCap((LivingEntity) look).getStaggerTime() > 0)) {
-                    drawPostureBarreAt(event.getMatrixStack(), (LivingEntity) look, width / 2 + ClientConfig.theirPostureX, ClientConfig.theirPostureY);//Math.min(HudConfig.client.enemyPosture.x, width - 64), Math.min(HudConfig.client.enemyPosture.y, height - 64));
-                }
+                    drawPostureBarreAt(false, event.getMatrixStack(), (LivingEntity) look, width / 2 + ClientConfig.theirPostureX, ClientConfig.theirPostureY);//Math.min(HudConfig.client.enemyPosture.x, width - 64), Math.min(HudConfig.client.enemyPosture.y, height - 64));
+                } else theirCurrentPostureLevel = -1;
             }
     }
 
@@ -393,7 +405,7 @@ public class ClientEvents {
      * @param atX
      * @param atY
      */
-    private static void drawPostureBarreAt(MatrixStack ms, LivingEntity elb, int atX, int atY) {
+    private static void drawPostureBarreAt(boolean you, MatrixStack ms, LivingEntity elb, int atX, int atY) {
         Minecraft mc = Minecraft.getInstance();
         mc.getTextureManager().bindTexture(hood);
         RenderSystem.defaultBlendFunc();
@@ -402,10 +414,11 @@ public class ClientEvents {
         mc.getProfiler().startSection("postureBar");
         float cap = itsc.getMaxPosture();
         int left = atX - 91;
-        float posPerc = MathHelper.clamp(itsc.getPosture() / itsc.getTrueMaxPosture(), 0, 1);
+        float posture = itsc.getPosture();
+        float posPerc = MathHelper.clamp(posture / itsc.getTrueMaxPosture(), 0, 1);
         if (cap > 0) {
             short barWidth = 182;
-            int filled = (int) (itsc.getPosture() / itsc.getTrueMaxPosture() * (float) (barWidth));
+            int filled = (int) (posture / itsc.getTrueMaxPosture() * (float) (barWidth));
             //int invulTime = (int) ((float) itsc.getPosInvulTime() / (float) CombatConfig.ssptime * (float) (barWidth));
             //base
             mc.ingameGUI.blit(ms, left, atY, 0, 64, barWidth, 5);
@@ -517,6 +530,7 @@ public class ClientEvents {
                 }
             } else {
                 if (WarCompat.elenaiDodge) {
+
                     if (CombatConfig.elenaiP && CombatData.getCap(p).getPostureGrace() > 0) {
                         ClientTickEventListener.regen++;
                     } else if (CombatConfig.elenaiC) {
@@ -529,6 +543,22 @@ public class ClientEvents {
                 }
             }
         }
+    }
+
+    private static float updateValue(float f, float to) {
+        if (f == -1) return to;
+        boolean close = true;
+        if (to > f) {
+            f += Math.min(0.1, (to - f) / 20);
+            close = false;
+        }
+        if (to < f) {
+            f += Math.min(0.1, (to - f) / 20);
+            close = !close;
+        }
+        if (close)
+            f = to;
+        return f;
     }
 
 }

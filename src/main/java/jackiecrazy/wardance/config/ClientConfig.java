@@ -21,13 +21,17 @@ public class ClientConfig {
     private final ForgeConfigSpec.IntValue _qiY;
     private final ForgeConfigSpec.IntValue _comboX;
     private final ForgeConfigSpec.IntValue _comboY;
+    private final ForgeConfigSpec.IntValue _spiritX;
+    private final ForgeConfigSpec.IntValue _spiritY;
     private final ForgeConfigSpec.IntValue _yourPostureY;
     private final ForgeConfigSpec.IntValue _yourPostureX;
     private final ForgeConfigSpec.IntValue _theirPostureY;
     private final ForgeConfigSpec.IntValue _theirPostureX;
     public static boolean displayEnemyPosture;
-    public static int qiX;
-    public static int qiY;
+    public static int mightX;
+    public static int mightY;
+    public static int spiritX;
+    public static int spiritY;
     public static int comboX;
     public static int comboY;
     public static int yourPostureX;
@@ -37,9 +41,13 @@ public class ClientConfig {
 
     public ClientConfig(ForgeConfigSpec.Builder b) {
         _displayEnemyPosture = b.translation("wardance.config.displayPosture").comment("whether to display the posture of the entity looked at").define("displayEnemyPosture", true);
-        b.push("qi");
-        _qiX = b.translation("wardance.config.qiX").comment("qi HUD x position").defineInRange("qiX", 0, 0, Integer.MAX_VALUE);
-        _qiY = b.translation("wardance.config.qiY").comment("qi HUD y position").defineInRange("qiY", 0, 0, Integer.MAX_VALUE);
+        b.push("might");
+        _qiX = b.translation("wardance.config.mightX").comment("might HUD x position from the center of the screen").defineInRange("might X", 0, -Integer.MAX_VALUE, Integer.MAX_VALUE);
+        _qiY = b.translation("wardance.config.mightY").comment("might HUD y position from the bottom of the screen").defineInRange("might Y", 0, 0, Integer.MAX_VALUE);
+        b.pop();
+        b.push("spirit");
+        _spiritX = b.translation("wardance.config.spiritX").comment("spirit HUD x position from the center of the screen").defineInRange("spirit X", 0, -Integer.MAX_VALUE, Integer.MAX_VALUE);
+        _spiritY = b.translation("wardance.config.spiritY").comment("spirit HUD y position from the bottom of the screen").defineInRange("spirit Y", 0, 0, Integer.MAX_VALUE);
         b.pop();
         b.push("combo");
         _comboX = b.translation("wardance.config.comboX").comment("combo HUD x position from the left of the screen").defineInRange("combo X", -5, -Integer.MAX_VALUE, 0);
@@ -57,8 +65,10 @@ public class ClientConfig {
 
     public static void bake() {
         displayEnemyPosture = CONFIG._displayEnemyPosture.get();
-        qiX = CONFIG._qiX.get();
-        qiY = CONFIG._qiY.get();
+        mightX = CONFIG._qiX.get();
+        mightY = CONFIG._qiY.get();
+        spiritX = CONFIG._spiritX.get();
+        spiritY = CONFIG._spiritY.get();
         comboX = CONFIG._comboX.get();
         comboY = CONFIG._comboY.get();
         yourPostureX = CONFIG._yourPostureX.get();

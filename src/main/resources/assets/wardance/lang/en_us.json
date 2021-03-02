@@ -1,0 +1,10 @@
+{
+  "wardance.tooltip.postureAttack": "Posture per attack: %.2d",
+  "wardance.tooltip.postureDefend": "Defense posture multiplier: %.2d",
+  "wardance.tooltip.parryTime": "Next %s parries in %.2d seconds after a parry are free",
+  "wardance.absorption": "Absorption",
+  "wardance.deflection": "Deflection Angle",
+  "wardance.shatter": "Shatter",
+  "wardance.combat.on": "Combat Mode Activated",
+  "wardance.combat.off": "Combat Mode Deactivated"
+}

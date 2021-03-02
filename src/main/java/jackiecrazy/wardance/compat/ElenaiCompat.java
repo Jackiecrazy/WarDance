@@ -1,13 +1,37 @@
-package jackiecrazy.wardance.handlers;
+package jackiecrazy.wardance.compat;
 
 import com.elenai.elenaidodge2.api.DodgeEvent;
+import com.elenai.elenaidodge2.api.FeathersHelper;
 import jackiecrazy.wardance.capability.CombatData;
 import jackiecrazy.wardance.config.CombatConfig;
 import jackiecrazy.wardance.utils.MovementUtils;
+import net.minecraft.entity.LivingEntity;
+import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraftforge.eventbus.api.EventPriority;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 
-public class ElenaiHandler {
+import javax.annotation.Nullable;
+
+public class ElenaiCompat {
+    private static Object handler;
+
+    private static FeathersHelper getFeatherHandler() {
+        if (handler == null) handler = new FeathersHelper();
+        return (FeathersHelper) handler;
+    }
+
+    public static void manipulateFeather(ServerPlayerEntity e, int amount) {
+        if (amount > 0)
+            getFeatherHandler().increaseFeathers(e, amount);
+        else getFeatherHandler().decreaseFeathers(e, -amount);
+    }
+
+    public static void manipulateRegenTime(ServerPlayerEntity e, int amount) {
+        if (amount > 0)
+            getFeatherHandler().increaseRegenModifier(e, amount);
+        else getFeatherHandler().decreaseRegenModifier(e, -amount);
+    }
+
     @SubscribeEvent(priority = EventPriority.HIGHEST)
     public static void noDodge(DodgeEvent.ServerDodgeEvent e) {
         if (CombatConfig.elenai && CombatData.getCap(e.getPlayer()).getStaggerTime() > 0) {
