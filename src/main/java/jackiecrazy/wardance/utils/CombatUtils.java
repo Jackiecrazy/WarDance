@@ -15,6 +15,7 @@ import net.minecraft.entity.ai.attributes.AttributeModifierMap;
 import net.minecraft.entity.ai.attributes.Attributes;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.ServerPlayerEntity;
+import net.minecraft.item.ArmorItem;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.DamageSource;
@@ -31,6 +32,7 @@ import net.minecraftforge.registries.ForgeRegistries;
 import javax.annotation.Nullable;
 import java.util.HashMap;
 import java.util.List;
+import java.util.UUID;
 
 public class CombatUtils {
     private static class CombatInfo {
@@ -119,11 +121,12 @@ public class CombatUtils {
             } catch (Exception e) {
                 WarDance.LOGGER.warn(name + "is not a proper item name, it will not be registered.");
             }
-            if (ForgeRegistries.ITEMS.containsKey(key)) {
+            if (ForgeRegistries.ITEMS.containsKey(key)&&(ForgeRegistries.ITEMS.getValue(key)) instanceof ArmorItem) {
+                UUID touse=WarAttributes.MODIFIERS[((ArmorItem)(ForgeRegistries.ITEMS.getValue(key))).getEquipmentSlot().getIndex()];
                 armorStats.put(ForgeRegistries.ITEMS.getValue(key), new AttributeModifier[]{
-                        new AttributeModifier(WarAttributes.MODIFIERS, "war dance modifier", absorption, AttributeModifier.Operation.ADDITION),
-                        new AttributeModifier(WarAttributes.MODIFIERS, "war dance modifier", deflection, AttributeModifier.Operation.ADDITION),
-                        new AttributeModifier(WarAttributes.MODIFIERS, "war dance modifier", shatter, AttributeModifier.Operation.ADDITION)
+                        new AttributeModifier(touse, "war dance modifier", absorption, AttributeModifier.Operation.ADDITION),
+                        new AttributeModifier(touse, "war dance modifier", deflection, AttributeModifier.Operation.ADDITION),
+                        new AttributeModifier(touse, "war dance modifier", shatter, AttributeModifier.Operation.ADDITION)
                 });
             }
         }

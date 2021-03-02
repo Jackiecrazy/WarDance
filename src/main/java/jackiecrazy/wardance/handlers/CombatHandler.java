@@ -80,7 +80,7 @@ public class CombatHandler {
                 ukeCap.update();
                 semeCap.update();
                 boolean canParry = GeneralUtils.isFacingEntity(uke, seme, 120);
-                boolean useDeflect = GeneralUtils.isFacingEntity(uke, e.getEntity(), 120 + 2 * (int) uke.getAttributeValue(WarAttributes.DEFLECTION.get())) && !canParry;
+                boolean useDeflect = GeneralUtils.isFacingEntity(uke, seme, 120 + 2 * (int) uke.getAttributeValue(WarAttributes.DEFLECTION.get())) && !canParry;
                 Hand h = semeCap.isOffhandAttack() ? Hand.OFF_HAND : Hand.MAIN_HAND;
                 if (semeCap.getStaggerTime() > 0 || semeCap.getHandBind(h) > 0) {
                     e.setCanceled(true);
@@ -106,7 +106,7 @@ public class CombatHandler {
                         //knockback based on posture consumed
                         CombatUtils.knockBack(seme, uke, Math.min(1.5f, atkMult * Math.max(defMult, 0.5f) * 3f / semeCap.getMaxPosture()), true, false);
                         if (defend == null) {
-                            uke.world.playSound(null, uke.getPosX(), uke.getPosY(), uke.getPosZ(), SoundEvents.BLOCK_LAVA_EXTINGUISH, SoundCategory.PLAYERS, 0.25f + WarDance.rand.nextFloat() * 0.5f, (1 - (ukeCap.getPosture() / ukeCap.getMaxPosture())) + WarDance.rand.nextFloat() * 0.5f);
+                            uke.world.playSound(null, uke.getPosX(), uke.getPosY(), uke.getPosZ(), SoundEvents.ITEM_ARMOR_EQUIP_IRON, SoundCategory.PLAYERS, 0.25f + WarDance.rand.nextFloat() * 0.5f, (1 - (ukeCap.getPosture() / ukeCap.getMaxPosture())) + WarDance.rand.nextFloat() * 0.5f);
                             return;
                         }
                         //shield disabling

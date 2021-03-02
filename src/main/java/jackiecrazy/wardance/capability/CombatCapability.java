@@ -20,6 +20,7 @@ import net.minecraft.util.SoundCategory;
 import net.minecraft.util.SoundEvents;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.vector.Vector3d;
+import net.minecraftforge.common.util.FakePlayer;
 import net.minecraftforge.fml.network.PacketDistributor;
 
 import java.lang.ref.WeakReference;
@@ -556,7 +557,7 @@ public class CombatCapability implements ICombatCapability {
         decrementHandBind(Hand.OFF_HAND, ticks);
         addOffhandCooldown(ticks);
         if (!(elb instanceof PlayerEntity))
-            elb.ticksSinceLastSwing+=ticks;
+            elb.ticksSinceLastSwing += ticks;
         decrementRollTime(ticks);
         decrementShieldTime(ticks);
         int shcd = decrementShatterCooldown(ticks);
@@ -603,7 +604,7 @@ public class CombatCapability implements ICombatCapability {
         LivingEntity elb = dude.get();
         if (elb == null || elb.world.isRemote) return;
         CombatChannel.INSTANCE.send(PacketDistributor.TRACKING_ENTITY.with(() -> elb), new UpdateClientPacket(elb.getEntityId(), write()));
-        if (elb instanceof ServerPlayerEntity)
+        if (!(elb instanceof FakePlayer) && elb instanceof ServerPlayerEntity)
             CombatChannel.INSTANCE.send(PacketDistributor.PLAYER.with(() -> (ServerPlayerEntity) elb), new UpdateClientPacket(elb.getEntityId(), write()));
 
     }
