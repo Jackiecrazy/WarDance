@@ -294,7 +294,7 @@ public class ClientEvents {
                 currentSpiritLevel = updateValue(currentSpiritLevel, cap.getSpirit());
                 currentMightLevel = updateValue(currentMightLevel, cap.getMight());
                 currentComboLevel = updateValue(currentComboLevel, cap.getCombo());
-                yourCurrentPostureLevel = updateValue(yourCurrentPostureLevel, cap.getPosture());
+                //yourCurrentPostureLevel = updateValue(yourCurrentPostureLevel, cap.getPosture());
                 if (cap.isCombatMode()) {
                     event.getMatrixStack().push();
                     RenderSystem.enableBlend();
@@ -351,8 +351,8 @@ public class ClientEvents {
                     mc.ingameGUI.blit(event.getMatrixStack(), x, y, 33, 129, 32, 32);
                     event.getMatrixStack().pop();
                     //multiplier
-                    mc.fontRenderer.drawStringWithShadow(event.getMatrixStack(), display, x + 1, y + 14, 16711937);
-                    mc.fontRenderer.drawStringWithShadow(event.getMatrixStack(), formatter.format(currentMightLevel) + "/" + formatter.format(10), tempx + 1, tempy + 14, 16711937);
+                    mc.fontRenderer.drawStringWithShadow(event.getMatrixStack(), display, x - 2, y + 14, 16711937);
+                    mc.fontRenderer.drawStringWithShadow(event.getMatrixStack(), formatter.format(currentMightLevel) + "/" + formatter.format(10), tempx - 2, tempy + 14, 16711937);
                     event.getMatrixStack().pop();
 
                     RenderSystem.disableAlphaTest();

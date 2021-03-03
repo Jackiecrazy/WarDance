@@ -206,7 +206,7 @@ public class CombatUtils {
             return ((CombatDamageSource) ds).getDamageDealer();
         else if (ds.getTrueSource() instanceof LivingEntity) {
             LivingEntity e = (LivingEntity) ds.getTrueSource();
-            return CombatData.getCap(e).isOffhandAttack() ? e.getHeldItemOffhand() : e.getHeldItemMainhand();
+            return e.getHeldItemMainhand();//CombatData.getCap(e).isOffhandAttack() ? e.getHeldItemOffhand() : e.getHeldItemMainhand();
         }
         return null;
     }
@@ -229,7 +229,7 @@ public class CombatUtils {
             base *= CombatConfig.kenshiroScaler;
         }
         if (e == null || h == null) return base;
-        return base * getCooledAttackStrength(e, h, 1) * (e instanceof PlayerEntity ? 1 : CombatConfig.mobScaler);
+        return base * getCooledAttackStrength(e, Hand.MAIN_HAND, 1) * (e instanceof PlayerEntity ? 1 : CombatConfig.mobScaler);
     }
 
     public static float getPostureDef(@Nullable LivingEntity e, ItemStack stack) {
@@ -350,10 +350,18 @@ public class CombatUtils {
 //        attributes.addAll(off.getAttributeModifiers(EquipmentSlotType.MAINHAND).keys());
 //        attributes.addAll(off.getAttributeModifiers(EquipmentSlotType.OFFHAND).keys());
 //        attributes.forEach((att)->{Optional.ofNullable(e.getAttribute(att)).ifPresent(ModifiableAttributeInstance::compute);});
-        main.getAttributeModifiers(EquipmentSlotType.MAINHAND).forEach((att, mod)->{Optional.ofNullable(e.getAttribute(att)).ifPresent((mai)->{mai.removeModifier(mod);});});
-        main.getAttributeModifiers(EquipmentSlotType.OFFHAND).forEach((att, mod)->{Optional.ofNullable(e.getAttribute(att)).ifPresent((mai)->{mai.applyNonPersistentModifier(mod);});});
-        off.getAttributeModifiers(EquipmentSlotType.MAINHAND).forEach((att, mod)->{Optional.ofNullable(e.getAttribute(att)).ifPresent((mai)->{mai.applyNonPersistentModifier(mod);});});
-        off.getAttributeModifiers(EquipmentSlotType.OFFHAND).forEach((att, mod)->{Optional.ofNullable(e.getAttribute(att)).ifPresent((mai)->{mai.removeModifier(mod);});});
+        main.getAttributeModifiers(EquipmentSlotType.MAINHAND).forEach((att, mod) -> {
+            Optional.ofNullable(e.getAttribute(att)).ifPresent((mai) -> {mai.removeModifier(mod);});
+        });
+        main.getAttributeModifiers(EquipmentSlotType.OFFHAND).forEach((att, mod) -> {
+            Optional.ofNullable(e.getAttribute(att)).ifPresent((mai) -> {mai.applyNonPersistentModifier(mod);});
+        });
+        off.getAttributeModifiers(EquipmentSlotType.MAINHAND).forEach((att, mod) -> {
+            Optional.ofNullable(e.getAttribute(att)).ifPresent((mai) -> {mai.applyNonPersistentModifier(mod);});
+        });
+        off.getAttributeModifiers(EquipmentSlotType.OFFHAND).forEach((att, mod) -> {
+            Optional.ofNullable(e.getAttribute(att)).ifPresent((mai) -> {mai.removeModifier(mod);});
+        });
         e.ticksSinceLastSwing = cap.getOffhandCooldown();
         cap.setOffhandCooldown(tssl);
         e.setSilent(silent);

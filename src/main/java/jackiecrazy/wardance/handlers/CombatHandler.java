@@ -142,7 +142,7 @@ public class CombatHandler {
                     }
                 }
                 if (!(seme instanceof PlayerEntity))
-                    CombatUtils.setHandCooldown(seme, h, 0, false);
+                    CombatUtils.setHandCooldown(seme, Hand.MAIN_HAND, 0, false);
             }
         }
 
@@ -208,14 +208,12 @@ public class CombatHandler {
     @SubscribeEvent
     public static void offhandAttack(final PlayerInteractEvent.EntityInteract e) {
         if (!e.getPlayer().world.isRemote && (CombatUtils.isWeapon(e.getPlayer(), e.getPlayer().getHeldItemOffhand()) || (e.getPlayer().getHeldItemOffhand().isEmpty() && CombatData.getCap(e.getPlayer()).isCombatMode())) && (e.getPlayer().swingingHand != Hand.OFF_HAND || !e.getPlayer().isSwingInProgress)) {
-//            CombatData.getCap(e.getPlayer()).setOffhandAttack(true);
-//            e.getPlayer().swing(Hand.OFF_HAND, true);
-//            e.getPlayer().attackTargetEntityWithCurrentItem(e.getTarget());
-//            CombatData.getCap(e.getPlayer()).setOffhandAttack(false);
+            CombatData.getCap(e.getPlayer()).setOffhandAttack(true);
             CombatUtils.swapHeldItems(e.getPlayer());
             e.getPlayer().attackTargetEntityWithCurrentItem(e.getTarget());
             e.getPlayer().swing(Hand.OFF_HAND, true);
             CombatUtils.swapHeldItems(e.getPlayer());
+            CombatData.getCap(e.getPlayer()).setOffhandAttack(false);
         }
     }
 }
