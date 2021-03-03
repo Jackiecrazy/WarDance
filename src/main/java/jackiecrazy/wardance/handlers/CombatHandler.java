@@ -41,7 +41,8 @@ public class CombatHandler {
             ICombatCapability ukeCap = CombatData.getCap(uke);
             boolean free = ukeCap.getShieldTime() > 0;
             ItemStack defend = CombatUtils.getDefendingItemStack(uke, true);
-            if (defend != null && GeneralUtils.isFacingEntity(uke, e.getEntity(), 120) && ukeCap.doConsumePosture(free ? 0 : consume)) {
+            Entity projectile = e.getEntity();
+            if (defend != null && GeneralUtils.isFacingEntity(uke, projectile, 120) && ukeCap.doConsumePosture(free ? 0 : consume)) {
                 e.setCanceled(true);
                 if (!free) {
                     Tuple<Integer, Integer> stat = CombatUtils.getShieldStats(defend);
@@ -51,16 +52,16 @@ public class CombatHandler {
                     ukeCap.decrementShieldCount(1);
                 }
                 uke.world.playSound(null, uke.getPosX(), uke.getPosY(), uke.getPosZ(), free ? SoundEvents.BLOCK_WOODEN_TRAPDOOR_OPEN : SoundEvents.BLOCK_WOODEN_TRAPDOOR_CLOSE, SoundCategory.PLAYERS, 0.25f + WarDance.rand.nextFloat() * 0.5f, (1 - (ukeCap.getPosture() / ukeCap.getMaxPosture())) + WarDance.rand.nextFloat() * 0.5f);
-                Vector3d look = e.getEntity().getMotion().mul(-1, -1, -1).normalize();
-                e.getEntity().setVelocity(look.x, look.y, look.z);
+                Vector3d look = uke.getLookVec();
+                projectile.setVelocity(look.x, look.y, look.z);
                 return;
             }
             //deflection
-            if (GeneralUtils.isFacingEntity(uke, e.getEntity(), 120 + 2 * (int) uke.getAttributeValue(WarAttributes.DEFLECTION.get())) && !GeneralUtils.isFacingEntity(uke, e.getEntity(), 120) && ukeCap.doConsumePosture(consume)) {
+            if (GeneralUtils.isFacingEntity(uke, projectile, 120 + 2 * (int) uke.getAttributeValue(WarAttributes.DEFLECTION.get())) && !GeneralUtils.isFacingEntity(uke, projectile, 120) && ukeCap.doConsumePosture(consume)) {
                 e.setCanceled(true);
                 uke.world.playSound(null, uke.getPosX(), uke.getPosY(), uke.getPosZ(), SoundEvents.BLOCK_IRON_TRAPDOOR_OPEN, SoundCategory.PLAYERS, 0.25f + WarDance.rand.nextFloat() * 0.5f, (1 - (ukeCap.getPosture() / ukeCap.getMaxPosture())) + WarDance.rand.nextFloat() * 0.5f);
-                Vector3d look = e.getEntity().getMotion().mul(-1, -1, -1).normalize();
-                e.getEntity().setVelocity(look.x, look.y, look.z);
+                Vector3d look = projectile.getMotion().mul(-1, -1, -1);
+                projectile.setVelocity(look.x, look.y, look.z);
             }
         }
     }

@@ -560,6 +560,7 @@ public class CombatCapability implements ICombatCapability {
             elb.ticksSinceLastSwing += ticks;
         decrementRollTime(ticks);
         decrementShieldTime(ticks);
+        decrementStaggerTime(ticks);
         int shcd = decrementShatterCooldown(ticks);
         //check max posture, max spirit, decrement bind and offhand cooldown
         if (getPostureGrace() == 0 && getStaggerTime() == 0 && getPosture() < getMaxPosture()) {
