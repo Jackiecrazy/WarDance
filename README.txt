@@ -38,7 +38,7 @@ Wounding, Fatigue, and Burnout: can't fight forever, now can you?
 Absorption, Deflection and Shatter: because of course we need to be even more unkillable!
 - Absorption reduces incoming damage by a fixed amount. This makes it excellent for defending against small, rapid strikes, and basically useless for big hits. Seen often on light/soft armor.
 - Deflection acts as a parry for your two flanks, up to 60 degrees on each side. It costs the default to parry like this, so skilled fighters can angle themselves towards strikes in order to quickly riposte. Plate wearers rejoice!
-- Shatter absorbs all damage. Period. However, it's quickly lost and takes time to recover. Shatter regenerates at 1/sec after 10 seconds of not taking (shatter) damage. Found on crystalline and ceramic armor.
+- Shatter absorbs all damage. Period. However, it's quickly lost and takes time to recover. Shatter completely regenerates after 10 seconds of not taking (shatter) damage. Found on crystalline and ceramic armor.
 Dual wielding: weapons in the offhand can be swung.
 - Bows and the like will function as per normal.
 - The exception to the rule is fists: they can always be swung in the offhand. Boxer builds are now viable.
