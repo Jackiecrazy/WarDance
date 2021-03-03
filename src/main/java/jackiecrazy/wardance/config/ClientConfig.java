@@ -42,7 +42,7 @@ public class ClientConfig {
     public ClientConfig(ForgeConfigSpec.Builder b) {
         _displayEnemyPosture = b.translation("wardance.config.displayPosture").comment("whether to display the posture of the entity looked at").define("displayEnemyPosture", true);
         b.push("might");
-        _qiX = b.translation("wardance.config.mightX").comment("might HUD x position from the center of the screen").defineInRange("might X", 0, -Integer.MAX_VALUE, Integer.MAX_VALUE);
+        _qiX = b.translation("wardance.config.mightX").comment("might HUD x position from the center of the screen").defineInRange("might X", -32, -Integer.MAX_VALUE, Integer.MAX_VALUE);
         _qiY = b.translation("wardance.config.mightY").comment("might HUD y position from the bottom of the screen").defineInRange("might Y", 0, 0, Integer.MAX_VALUE);
         b.pop();
         b.push("spirit");

@@ -57,7 +57,7 @@ public class CombatHandler {
                 return;
             }
             //deflection
-            if (GeneralUtils.isFacingEntity(uke, projectile, 120 + 2 * (int) uke.getAttributeValue(WarAttributes.DEFLECTION.get())) && !GeneralUtils.isFacingEntity(uke, projectile, 120) && ukeCap.doConsumePosture(consume)) {
+            if ((uke instanceof PlayerEntity || WarDance.rand.nextFloat() > CombatConfig.mobDeflectChance) && GeneralUtils.isFacingEntity(uke, projectile, 120 + 2 * (int) uke.getAttributeValue(WarAttributes.DEFLECTION.get())) && !GeneralUtils.isFacingEntity(uke, projectile, 120) && ukeCap.doConsumePosture(consume)) {
                 e.setCanceled(true);
                 uke.world.playSound(null, uke.getPosX(), uke.getPosY(), uke.getPosZ(), SoundEvents.BLOCK_IRON_TRAPDOOR_OPEN, SoundCategory.PLAYERS, 0.25f + WarDance.rand.nextFloat() * 0.5f, (1 - (ukeCap.getPosture() / ukeCap.getMaxPosture())) + WarDance.rand.nextFloat() * 0.5f);
                 Vector3d look = projectile.getMotion().mul(-1, -1, -1);
@@ -81,7 +81,7 @@ public class CombatHandler {
                 ukeCap.update();
                 semeCap.update();
                 boolean canParry = GeneralUtils.isFacingEntity(uke, seme, 120);
-                boolean useDeflect = GeneralUtils.isFacingEntity(uke, seme, 120 + 2 * (int) uke.getAttributeValue(WarAttributes.DEFLECTION.get())) && !canParry;
+                boolean useDeflect = (uke instanceof PlayerEntity || WarDance.rand.nextFloat() > CombatConfig.mobDeflectChance) && GeneralUtils.isFacingEntity(uke, seme, 120 + 2 * (int) uke.getAttributeValue(WarAttributes.DEFLECTION.get())) && !canParry;
                 Hand h = semeCap.isOffhandAttack() ? Hand.OFF_HAND : Hand.MAIN_HAND;
                 if (semeCap.getStaggerTime() > 0 || semeCap.getHandBind(h) > 0) {
                     e.setCanceled(true);
@@ -207,11 +207,15 @@ public class CombatHandler {
 
     @SubscribeEvent
     public static void offhandAttack(final PlayerInteractEvent.EntityInteract e) {
-        if ((CombatUtils.isWeapon(e.getPlayer(), e.getPlayer().getHeldItemOffhand()) || (e.getPlayer().getHeldItemOffhand().isEmpty() && CombatData.getCap(e.getPlayer()).isCombatMode())) && (e.getPlayer().swingingHand != Hand.OFF_HAND || !e.getPlayer().isSwingInProgress)) {
-            CombatData.getCap(e.getPlayer()).setOffhandAttack(true);
-            e.getPlayer().swing(Hand.OFF_HAND, true);
+        if (!e.getPlayer().world.isRemote && (CombatUtils.isWeapon(e.getPlayer(), e.getPlayer().getHeldItemOffhand()) || (e.getPlayer().getHeldItemOffhand().isEmpty() && CombatData.getCap(e.getPlayer()).isCombatMode())) && (e.getPlayer().swingingHand != Hand.OFF_HAND || !e.getPlayer().isSwingInProgress)) {
+//            CombatData.getCap(e.getPlayer()).setOffhandAttack(true);
+//            e.getPlayer().swing(Hand.OFF_HAND, true);
+//            e.getPlayer().attackTargetEntityWithCurrentItem(e.getTarget());
+//            CombatData.getCap(e.getPlayer()).setOffhandAttack(false);
+            CombatUtils.swapHeldItems(e.getPlayer());
             e.getPlayer().attackTargetEntityWithCurrentItem(e.getTarget());
-            CombatData.getCap(e.getPlayer()).setOffhandAttack(false);
+            e.getPlayer().swing(Hand.OFF_HAND, true);
+            CombatUtils.swapHeldItems(e.getPlayer());
         }
     }
 }

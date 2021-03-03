@@ -78,6 +78,7 @@ public class ClientEvents {
 
     static {
         formatter.setRoundingMode(RoundingMode.DOWN);
+        formatter.setMinimumFractionDigits(1);
     }
 
     public static void updateList(List<? extends String> pos) {
@@ -351,7 +352,7 @@ public class ClientEvents {
                     event.getMatrixStack().pop();
                     //multiplier
                     mc.fontRenderer.drawStringWithShadow(event.getMatrixStack(), display, x + 1, y + 14, 16711937);
-                    mc.fontRenderer.drawStringWithShadow(event.getMatrixStack(), formatter.format(currentMightLevel) + "/" + formatter.format(10), tempx + 3, tempy + 14, 16711937);
+                    mc.fontRenderer.drawStringWithShadow(event.getMatrixStack(), formatter.format(currentMightLevel) + "/" + formatter.format(10), tempx + 1, tempy + 14, 16711937);
                     event.getMatrixStack().pop();
 
                     RenderSystem.disableAlphaTest();

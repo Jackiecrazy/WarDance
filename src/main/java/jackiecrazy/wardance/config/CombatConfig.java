@@ -908,6 +908,7 @@ public class CombatConfig {
     private final ForgeConfigSpec.BooleanValue _woundWL;
     private final ForgeConfigSpec.DoubleValue _mobParryChanceWeapon;
     private final ForgeConfigSpec.DoubleValue _mobParryChanceShield;
+    private final ForgeConfigSpec.DoubleValue _mobDeflectChance;
     private final ForgeConfigSpec.DoubleValue _mobScaler;
     private final ForgeConfigSpec.DoubleValue _kenshiroScaler;
     private final ForgeConfigSpec.DoubleValue _wound;
@@ -933,7 +934,7 @@ public class CombatConfig {
     public static int comboGrace;
     public static int spiritCD;
     public static int postureCD;
-    public static float mobParryChanceWeapon, mobParryChanceShield, mobScaler, kenshiroScaler;
+    public static float mobParryChanceWeapon, mobParryChanceShield, mobDeflectChance, mobScaler, kenshiroScaler;
     public static float wound, fatigue, burnout;
     public static boolean elenai, elenaiP, elenaiC;
     public static ArrayList<String> woundList;
@@ -959,6 +960,7 @@ public class CombatConfig {
         _shatterCooldown = b.translation("wardance.config.shatterCD").comment("Ticks after a hit for which shatter will not be replenished").defineInRange("shatter cooldown", 200, 1, Integer.MAX_VALUE);
         _mobParryChanceWeapon = b.translation("wardance.config.mobPW").comment("chance that a mob parries with a weapon out of 1").defineInRange("mob weapon parry chance", 0.3, 0, 1);
         _mobParryChanceShield = b.translation("wardance.config.mobPS").comment("chance that a mob parries with a shield out of 1").defineInRange("mob shield parry chance", 0.9, 0, 1);
+        _mobDeflectChance = b.translation("wardance.config.mobD").comment("chance that a mob deflects with armor out of 1").defineInRange("mob deflect chance", 0.6, 0, 1);
         _mobScaler = b.translation("wardance.config.mobB").comment("posture damage from mob attacks will be scaled by this number").defineInRange("mob posture damage buff", 2, 0, Double.MAX_VALUE);
         _kenshiroScaler = b.translation("wardance.config.kenB").comment("posture damage from empty fists will be scaled by this number. Notice many mobs, such as endermen and ravagers, technically are empty-handed!").defineInRange("unarmed buff", 1.6, 0, Double.MAX_VALUE);
         _wound = b.translation("wardance.config.wound").comment("this percentage of incoming damage before armor is also added to wounding").defineInRange("wound percentage", 0.1, 0, 1d);
@@ -998,6 +1000,7 @@ public class CombatConfig {
         shatterCooldown = CONFIG._shatterCooldown.get();
         mobParryChanceWeapon = CONFIG._mobParryChanceWeapon.get().floatValue();
         mobParryChanceShield = CONFIG._mobParryChanceShield.get().floatValue();
+        mobDeflectChance = CONFIG._mobDeflectChance.get().floatValue();
         mobScaler = CONFIG._mobScaler.get().floatValue();
         kenshiroScaler = CONFIG._kenshiroScaler.get().floatValue();
         wound = CONFIG._wound.get().floatValue();

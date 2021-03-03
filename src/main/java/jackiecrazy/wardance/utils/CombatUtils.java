@@ -4,17 +4,17 @@ import jackiecrazy.wardance.WarDance;
 import jackiecrazy.wardance.api.CombatDamageSource;
 import jackiecrazy.wardance.api.WarAttributes;
 import jackiecrazy.wardance.capability.CombatData;
+import jackiecrazy.wardance.capability.ICombatCapability;
 import jackiecrazy.wardance.client.ClientEvents;
 import jackiecrazy.wardance.config.CombatConfig;
 import jackiecrazy.wardance.networking.CombatChannel;
 import jackiecrazy.wardance.networking.UpdateAttackPacket;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.LivingEntity;
-import net.minecraft.entity.ai.attributes.AttributeModifier;
-import net.minecraft.entity.ai.attributes.AttributeModifierMap;
-import net.minecraft.entity.ai.attributes.Attributes;
+import net.minecraft.entity.ai.attributes.*;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.ServerPlayerEntity;
+import net.minecraft.inventory.EquipmentSlotType;
 import net.minecraft.item.ArmorItem;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
@@ -31,9 +31,7 @@ import net.minecraftforge.fml.network.PacketDistributor;
 import net.minecraftforge.registries.ForgeRegistries;
 
 import javax.annotation.Nullable;
-import java.util.HashMap;
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
 
 public class CombatUtils {
     private static class CombatInfo {
@@ -334,5 +332,30 @@ public class CombatUtils {
                 CombatData.getCap(e).setOffhandCooldown(real);
                 break;
         }
+    }
+
+    private static ArrayList<Attribute> attributes = new ArrayList<>();
+
+    public static void swapHeldItems(LivingEntity e) {
+        //attributes = new ArrayList<>();
+        ItemStack main = e.getHeldItemMainhand(), off = e.getHeldItemOffhand();
+        int tssl = e.ticksSinceLastSwing;
+        boolean silent = e.isSilent();
+        e.setSilent(true);
+        ICombatCapability cap = CombatData.getCap(e);
+        e.setHeldItem(Hand.MAIN_HAND, e.getHeldItemOffhand());
+        e.setHeldItem(Hand.OFF_HAND, main);
+//        attributes.addAll(main.getAttributeModifiers(EquipmentSlotType.MAINHAND).keys());
+//        attributes.addAll(main.getAttributeModifiers(EquipmentSlotType.OFFHAND).keys());
+//        attributes.addAll(off.getAttributeModifiers(EquipmentSlotType.MAINHAND).keys());
+//        attributes.addAll(off.getAttributeModifiers(EquipmentSlotType.OFFHAND).keys());
+//        attributes.forEach((att)->{Optional.ofNullable(e.getAttribute(att)).ifPresent(ModifiableAttributeInstance::compute);});
+        main.getAttributeModifiers(EquipmentSlotType.MAINHAND).forEach((att, mod)->{Optional.ofNullable(e.getAttribute(att)).ifPresent((mai)->{mai.removeModifier(mod);});});
+        main.getAttributeModifiers(EquipmentSlotType.OFFHAND).forEach((att, mod)->{Optional.ofNullable(e.getAttribute(att)).ifPresent((mai)->{mai.applyNonPersistentModifier(mod);});});
+        off.getAttributeModifiers(EquipmentSlotType.MAINHAND).forEach((att, mod)->{Optional.ofNullable(e.getAttribute(att)).ifPresent((mai)->{mai.applyNonPersistentModifier(mod);});});
+        off.getAttributeModifiers(EquipmentSlotType.OFFHAND).forEach((att, mod)->{Optional.ofNullable(e.getAttribute(att)).ifPresent((mai)->{mai.removeModifier(mod);});});
+        e.ticksSinceLastSwing = cap.getOffhandCooldown();
+        cap.setOffhandCooldown(tssl);
+        e.setSilent(silent);
     }
 }
