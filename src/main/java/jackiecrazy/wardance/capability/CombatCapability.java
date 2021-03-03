@@ -572,7 +572,7 @@ public class CombatCapability implements ICombatCapability {
             addSpirit(getPPS() * spExtra);
         }
         if (getMightGrace() == 0) {
-            float over = qiExtra * 0.1f;
+            float over = qiExtra * 0.001f;
             setMight(getMight() - over);
             if (getMight() > 0) {
                 int divisor = 0;

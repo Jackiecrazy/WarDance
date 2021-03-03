@@ -523,6 +523,8 @@ public class CombatConfig {
     private final ForgeConfigSpec.ConfigValue<List<? extends String>> _combatItems;
     private final ForgeConfigSpec.ConfigValue<List<? extends String>> _customPosture;
     private final ForgeConfigSpec.ConfigValue<List<? extends String>> _customArmor;
+    private final ForgeConfigSpec.ConfigValue<List<? extends String>> _woundBL;
+    private final ForgeConfigSpec.BooleanValue _woundWL;
     private final ForgeConfigSpec.DoubleValue _mobParryChanceWeapon;
     private final ForgeConfigSpec.DoubleValue _mobParryChanceShield;
     private final ForgeConfigSpec.DoubleValue _mobScaler;
@@ -589,6 +591,8 @@ public class CombatConfig {
         _combatItems = b.translation("wardance.config.combatItems").comment("Items eligible for parrying. Format should be name, attack posture consumption, defense multiplier, is shield. Shields can have two extra variables that dictate their parry time and parry counter. Default values provided graciously by DarkMega, thank you!").defineList("combat items", Arrays.asList(THANKS_DARKMEGA), String.class::isInstance);
         _customPosture = b.translation("wardance.config.postureMobs").comment("Here you can define custom max posture for mobs. Format is name, max posture, whether they're rotated when staggered. Armor is still calculated").defineList("custom mob posture", Lists.newArrayList("example:dragon, 100, false", "example:ghast, 8, true"), String.class::isInstance);
         _customArmor = b.translation("wardance.config.armorItems").comment("define protective stats of armor here. Format is item, absorption, deflection, shatter.").defineList("custom protection attributes", Lists.newArrayList(ARMOR), String.class::isInstance);
+        _woundBL = b.translation("wardance.config.woundBL").comment("damage sources added to this list will either not inflict wounding or be the only ones that inflict wounding, depending on whitelist mode").defineList("damage source list", Lists.newArrayList("magic", "indirectmagic", "survivaloverhaul.electrocution", "survivaloverhaul.hypothermia", "survivaloverhaul.hyperthermia", "inWall", "drown", "starve"), String.class::isInstance);
+        _woundWL = b.translation("wardance.config.woundWL").comment("whether the wounding list is a whitelist or a blacklist").define("whitelist mode", false);
         b.pop();
     }
 

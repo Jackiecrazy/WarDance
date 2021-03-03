@@ -25,6 +25,7 @@ import net.minecraft.util.Tuple;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.vector.Vector3d;
 import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.common.util.FakePlayer;
 import net.minecraftforge.fml.DistExecutor;
 import net.minecraftforge.fml.network.PacketDistributor;
 import net.minecraftforge.registries.ForgeRegistries;
@@ -121,8 +122,8 @@ public class CombatUtils {
             } catch (Exception e) {
                 WarDance.LOGGER.warn(name + "is not a proper item name, it will not be registered.");
             }
-            if (ForgeRegistries.ITEMS.containsKey(key)&&(ForgeRegistries.ITEMS.getValue(key)) instanceof ArmorItem) {
-                UUID touse=WarAttributes.MODIFIERS[((ArmorItem)(ForgeRegistries.ITEMS.getValue(key))).getEquipmentSlot().getIndex()];
+            if (ForgeRegistries.ITEMS.containsKey(key) && (ForgeRegistries.ITEMS.getValue(key)) instanceof ArmorItem) {
+                UUID touse = WarAttributes.MODIFIERS[((ArmorItem) (ForgeRegistries.ITEMS.getValue(key))).getEquipmentSlot().getIndex()];
                 armorStats.put(ForgeRegistries.ITEMS.getValue(key), new AttributeModifier[]{
                         new AttributeModifier(touse, "war dance modifier", absorption, AttributeModifier.Operation.ADDITION),
                         new AttributeModifier(touse, "war dance modifier", deflection, AttributeModifier.Operation.ADDITION),
@@ -326,7 +327,7 @@ public class CombatUtils {
         switch (h) {
             case MAIN_HAND:
                 e.ticksSinceLastSwing = real;
-                if (e instanceof ServerPlayerEntity && sync)
+                if (!(e instanceof FakePlayer) && e instanceof ServerPlayerEntity && sync)
                     CombatChannel.INSTANCE.send(PacketDistributor.PLAYER.with(() -> (ServerPlayerEntity) e), new UpdateAttackPacket(e.getEntityId(), real));
                 break;
             case OFF_HAND:
