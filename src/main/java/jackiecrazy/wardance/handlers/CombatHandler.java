@@ -186,7 +186,8 @@ public class CombatHandler {
         } else if (CombatUtils.isPhysicalAttack(e.getSource())) {
             e.setAmount(cap.consumeShatter(e.getAmount()));
         }
-        cap.setWounding(cap.getWounding() + e.getAmount() * CombatConfig.wound);
+        if (CombatConfig.woundWL == CombatConfig.woundList.contains(e.getSource().getDamageType()))//returns true if whitelist and included, or if blacklist and excluded
+            cap.setWounding(cap.getWounding() + e.getAmount() * CombatConfig.wound);
     }
 
     @SubscribeEvent
