@@ -1007,9 +1007,9 @@ public class CombatConfig {
         b.push("potion");
         _nausea = b.translation("wardance.config.nausea").comment("how much posture nausea deducts per tick, for mobs only").defineInRange("nausea posture damage", 0.05, 0, Double.MAX_VALUE);
         _poison = b.translation("wardance.config.poison").comment("how much each level of poison multiplies posture regeneration by").defineInRange("poison posture debuff", 0.8, 0, Double.MAX_VALUE);
-        _weakness = b.translation("wardance.config.hunger").comment("how much the hunger effect extends the posture cooldown by").defineInRange("hunger posture extension", 1.25, 0, Double.MAX_VALUE);
-        _hunger = b.translation("wardance.config.weakness").comment("how much weakness multiplies might generation rate").defineInRange("weakness might debuff", 0.7, 0, Double.MAX_VALUE);
-        _luck = b.translation("wardance.config.luck").comment("when attacking an entity, a number between 0 and luck is rolled for both parties. Damage is multiplied by this value for every level of difference between the attacker's and defender's rolled values").defineInRange("luck multiplier", 1.5, 0, Double.MAX_VALUE);
+        _hunger = b.translation("wardance.config.hunger").comment("how much the hunger effect extends the posture cooldown by").defineInRange("hunger posture extension", 1.25, 0, Double.MAX_VALUE);
+        _weakness = b.translation("wardance.config.weakness").comment("how much weakness multiplies might generation rate").defineInRange("weakness might debuff", 0.7, 0, Double.MAX_VALUE);
+        _luck = b.translation("wardance.config.luck").comment("when attacking an entity, a number between 0 and luck is rolled for both parties. The difference between the attacker's and defender's rolled values is multiplied by this and dealt as additional damage.").defineInRange("luck multiplier", 1.5, 0, Double.MAX_VALUE);
         b.pop();
     }
 

@@ -11,6 +11,7 @@ import jackiecrazy.wardance.utils.GeneralUtils;
 import jackiecrazy.wardance.utils.MovementUtils;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.LivingEntity;
+import net.minecraft.entity.ai.attributes.Attributes;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.particles.ParticleTypes;
@@ -101,14 +102,14 @@ public class CombatHandler {
                 float defMult = CombatUtils.getPostureDef(uke, defend);
                 downingHit = true;
                 //overflow posture
+                CombatUtils.AWARENESS awareness = CombatUtils.getAwareness(seme, uke);
+                if (awareness != CombatUtils.AWARENESS.ALERT) {
+                    atkMult *= awareness == CombatUtils.AWARENESS.UNAWARE ? CombatConfig.unaware : CombatConfig.distract;
+                }
                 float knockback = ukeCap.consumePosture(atkMult * defMult);
                 if (ukeCap.getStaggerTime() == 0) {
                     float consume = atkMult * Math.max(defMult, 0.5f) * 3f;
                     //stabby bonus
-                    CombatUtils.AWARENESS awareness = CombatUtils.getAwareness(seme, uke);
-                    if (awareness != CombatUtils.AWARENESS.ALERT) {
-                        consume *= awareness == CombatUtils.AWARENESS.UNAWARE ? CombatConfig.unaware : CombatConfig.distract;
-                    }
                     CombatUtils.knockBack(uke, seme, Math.min(1.5f, (consume + knockback / 20f) / ukeCap.getMaxPosture()), true, false);
                     //no parries if stabby
                     if (CombatConfig.ignore && awareness == CombatUtils.AWARENESS.UNAWARE) return;
@@ -184,8 +185,9 @@ public class CombatHandler {
     public static void pain(LivingHurtEvent e) {
         LivingEntity uke = e.getEntityLiving();
         LivingEntity kek = null;
-        if (e.getSource().getImmediateSource() instanceof LivingEntity) {
-            kek = (LivingEntity) e.getSource().getImmediateSource();
+        DamageSource ds = e.getSource();
+        if (ds.getImmediateSource() instanceof LivingEntity) {
+            kek = (LivingEntity) ds.getImmediateSource();
         }
         ICombatCapability cap = CombatData.getCap(uke);
         cap.setCombo((float) (Math.floor(cap.getCombo()) / 2d));
@@ -193,31 +195,38 @@ public class CombatHandler {
         if (awareness != CombatUtils.AWARENESS.ALERT) {
             e.setAmount(e.getAmount() * (awareness == CombatUtils.AWARENESS.UNAWARE ? CombatConfig.unaware : CombatConfig.distract));
         }
+        if (ds.getTrueSource() instanceof LivingEntity) {
+            LivingEntity seme = ((LivingEntity) ds.getTrueSource());
+            double luckDiff = WarDance.rand.nextFloat() * (seme.getAttributeValue(Attributes.LUCK)) - WarDance.rand.nextFloat() * (uke.getAttributeValue(Attributes.LUCK));
+            e.setAmount(e.getAmount() + (float) luckDiff * CombatConfig.luck);
+        }
+        if (CombatConfig.woundWL == CombatConfig.woundList.contains(e.getSource().getDamageType()))//returns true if whitelist and included, or if blacklist and excluded
+            cap.setWounding(cap.getWounding() + e.getAmount() * CombatConfig.wound);
         if (cap.getStaggerTime() > 0) {
             e.setAmount(e.getAmount() * CombatConfig.staggerDamage);
             //fatality!
-            DamageSource ds = e.getSource();
-            if (ds.getTrueSource() != null && ds.getTrueSource() instanceof LivingEntity) {
+            if (ds.getTrueSource() instanceof LivingEntity) {
                 LivingEntity seme = ((LivingEntity) ds.getTrueSource());
                 if (seme.world instanceof ServerWorld) {
                     ((ServerWorld) seme.world).spawnParticle(ParticleTypes.ANGRY_VILLAGER, uke.getPosX(), uke.getPosY(), uke.getPosZ(), 5, uke.getWidth(), uke.getHeight(), uke.getWidth(), 0.5f);
                 }
                 seme.world.playSound(null, uke.getPosX(), uke.getPosY(), uke.getPosZ(), SoundEvents.ENTITY_GENERIC_BIG_FALL, SoundCategory.PLAYERS, 0.25f + WarDance.rand.nextFloat() * 0.5f, 0.75f + WarDance.rand.nextFloat() * 0.5f);
             }
-        } else if (CombatUtils.isPhysicalAttack(e.getSource())) {
+        } else if (CombatUtils.isPhysicalAttack(e.getSource()) && awareness != CombatUtils.AWARENESS.UNAWARE) {
             float temp = e.getAmount();
             e.setAmount(cap.consumeShatter(e.getAmount()));
             if (e.getAmount() > 0 && temp != e.getAmount()) {//shattered
                 uke.world.playSound(null, uke.getPosX(), uke.getPosY(), uke.getPosZ(), SoundEvents.BLOCK_GLASS_BREAK, SoundCategory.PLAYERS, 0.25f + WarDance.rand.nextFloat() * 0.5f, 0.75f + WarDance.rand.nextFloat() * 0.5f);
             }
         }
-        if (CombatConfig.woundWL == CombatConfig.woundList.contains(e.getSource().getDamageType()))//returns true if whitelist and included, or if blacklist and excluded
-            cap.setWounding(cap.getWounding() + e.getAmount() * CombatConfig.wound);
+
     }
 
     @SubscribeEvent
     public static void tanky(LivingDamageEvent e) {
         if (CombatData.getCap(e.getEntityLiving()).getStaggerTime() == 0 && CombatUtils.isPhysicalAttack(e.getSource())) {
+            if (e.getSource().getTrueSource() instanceof LivingEntity && CombatUtils.getAwareness((LivingEntity) e.getSource().getTrueSource(), e.getEntityLiving()) == CombatUtils.AWARENESS.UNAWARE)
+                return;
             float amount = e.getAmount();
             //absorption
             amount -= e.getEntityLiving().getAttributeValue(WarAttributes.ABSORPTION.get());

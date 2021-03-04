@@ -20,6 +20,7 @@ public class AttributeHandler {
             e.add((EntityType<? extends LivingEntity>) t, WarAttributes.ABSORPTION.get());
             e.add((EntityType<? extends LivingEntity>) t, WarAttributes.DEFLECTION.get());
             e.add((EntityType<? extends LivingEntity>) t, WarAttributes.SHATTER.get());
+            e.add((EntityType<? extends LivingEntity>) t, Attributes.LUCK);
         }
     }
 }

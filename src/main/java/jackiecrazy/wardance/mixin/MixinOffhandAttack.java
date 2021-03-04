@@ -3,43 +3,26 @@ package jackiecrazy.wardance.mixin;
 import jackiecrazy.wardance.api.CombatDamageSource;
 import jackiecrazy.wardance.capability.CombatData;
 import jackiecrazy.wardance.capability.ICombatCapability;
-import jackiecrazy.wardance.events.HandedAttackEvent;
-import jackiecrazy.wardance.events.HandedCritEvent;
-import jackiecrazy.wardance.utils.CombatUtils;
-import jackiecrazy.wardance.utils.GeneralUtils;
-import net.minecraft.enchantment.EnchantmentHelper;
-import net.minecraft.enchantment.Enchantments;
-import net.minecraft.entity.CreatureAttribute;
+import jackiecrazy.wardance.config.CombatConfig;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.LivingEntity;
-import net.minecraft.entity.ai.attributes.Attributes;
-import net.minecraft.entity.boss.dragon.EnderDragonPartEntity;
-import net.minecraft.entity.item.ArmorStandEntity;
 import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.entity.player.ServerPlayerEntity;
-import net.minecraft.item.ItemStack;
-import net.minecraft.item.SwordItem;
-import net.minecraft.network.play.server.SEntityVelocityPacket;
-import net.minecraft.particles.ParticleTypes;
 import net.minecraft.potion.Effects;
-import net.minecraft.stats.Stats;
 import net.minecraft.util.DamageSource;
 import net.minecraft.util.Hand;
-import net.minecraft.util.SoundEvents;
-import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.vector.Vector3d;
 import net.minecraft.world.World;
-import net.minecraft.world.server.ServerWorld;
 import net.minecraftforge.event.entity.player.CriticalHitEvent;
 import org.spongepowered.asm.mixin.Mixin;
-import org.spongepowered.asm.mixin.Overwrite;
-import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.Redirect;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.LocalCapture;
+
+import java.util.Optional;
+import java.util.concurrent.atomic.AtomicReference;
 
 @Mixin(PlayerEntity.class)
 public abstract class MixinOffhandAttack extends LivingEntity {
@@ -51,7 +34,7 @@ public abstract class MixinOffhandAttack extends LivingEntity {
     }
 
     @Inject(method = "attackTargetEntityWithCurrentItem", locals = LocalCapture.CAPTURE_FAILSOFT,
-            at = @At(value = "INVOKE", shift= At.Shift.BEFORE, target = "Lnet/minecraft/entity/player/PlayerEntity;resetCooldown()V"))
+            at = @At(value = "INVOKE", shift = At.Shift.BEFORE, target = "Lnet/minecraft/entity/player/PlayerEntity;resetCooldown()V"))
     private void noReset(Entity targetEntity, CallbackInfo ci, float f, float f1, float f2) {
         CombatData.getCap(this).setCachedCooldown(f2);
     }
@@ -77,7 +60,13 @@ public abstract class MixinOffhandAttack extends LivingEntity {
         }
         ICombatCapability cap = CombatData.getCap(this);
         cap.addCombo(0.2f);
-        cap.addMight((f2 * f2) / 781.25f * (1 + (cap.getCombo() / 10f)));
+        float might = ((f2 * f2) / 781.25f * (1 + (cap.getCombo() / 10f)));
+        float weakness = 1;
+        if (var22.isPotionActive(Effects.WEAKNESS))
+            for (int foo = 0; foo < var22.getActivePotionEffect(Effects.WEAKNESS).getAmplifier() + 1; foo++) {
+                weakness *= CombatConfig.weakness;
+            }
+        cap.addMight(might * weakness);
         cap.consumePosture(0);
     }
 

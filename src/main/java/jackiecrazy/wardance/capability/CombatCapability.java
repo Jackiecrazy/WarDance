@@ -182,8 +182,9 @@ public class CombatCapability implements ICombatCapability {
             return -1f;
         }
         float weakness = 1;
-        if (elb != null && elb.getActivePotionEffect(Effects.WEAKNESS) != null) {
-            weakness = elb.getActivePotionEffect(Effects.WEAKNESS).getAmplifier() + 1;
+        if (elb != null && elb.isPotionActive(Effects.HUNGER)) {
+            for(int uwu=0;uwu<elb.getActivePotionEffect(Effects.HUNGER).getAmplifier() + 1;uwu++)
+                weakness*=CombatConfig.weakness;
         }
         posture -= amount;
         fatigue += amount * CombatConfig.fatigue;
@@ -704,19 +705,19 @@ public class CombatCapability implements ICombatCapability {
     private float getPPS() {
         LivingEntity elb = dude.get();
         if (elb == null) return 0;
-        float nausea = elb instanceof PlayerEntity || elb.getActivePotionEffect(Effects.NAUSEA) == null ? 0 : (elb.getActivePotionEffect(Effects.NAUSEA).getAmplifier() + 1) * CombatConfig.nausea;
-        int exp = elb.getActivePotionEffect(Effects.POISON) == null ? 0 : (elb.getActivePotionEffect(Effects.POISON).getAmplifier() + 1);
-        float poison = CombatConfig.poison;
+        float nausea = elb instanceof PlayerEntity || !elb.isPotionActive(Effects.NAUSEA) ? 0 : (elb.getActivePotionEffect(Effects.NAUSEA).getAmplifier() + 1) * CombatConfig.nausea;
+        int exp = !elb.isPotionActive(Effects.POISON) ? 0 : (elb.getActivePotionEffect(Effects.POISON).getAmplifier() + 1);
+        float poison = 1;
         for (int j = 0; j < exp; j++) {
-            poison *= poison;
+            poison *= CombatConfig.poison;
         }
         float armorMod = Math.max(1f - ((float) elb.getTotalArmorValue() / 40f), 0);
         float healthMod = elb.getHealth() / elb.getMaxHealth();
         Vector3d spd = elb.getMotion();
         float speedMod = (float) Math.min(1, 0.007f / (spd.x * spd.x + spd.z * spd.z));
-        if (getStaggerTime() > 0) {
-            return getMaxPosture() * armorMod * speedMod * healthMod / (1.5f * CombatConfig.staggerDuration);
-        }
-        return (0.2f * armorMod * healthMod * speedMod) - nausea;
+//        if (getStaggerTime() > 0) {
+//            return getMaxPosture() * armorMod * speedMod * healthMod / (1.5f * CombatConfig.staggerDuration);
+//        }
+        return (0.2f * armorMod * healthMod * speedMod * poison) - nausea;
     }
 }
