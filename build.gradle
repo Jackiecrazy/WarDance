@@ -17,7 +17,7 @@ apply plugin: 'com.matthewprenger.cursegradle'
 apply plugin: 'maven-publish'
 apply plugin: 'org.spongepowered.mixin'
 
-version = '0.2.5'
+version = '0.2.6'
 group = 'jackiecrazy.wardance' // http://maven.apache.org/guides/mini/guide-naming-conventions.html
 archivesBaseName = 'wardance'
 
@@ -41,6 +41,7 @@ minecraft {
         client {
             workingDirectory project.file('run')
             arg "-mixin.config=wardance.mixins.json"
+            //property 'mixin.env.disableRefMap', 'true'
 
             // Recommended logging data for a userdev environment
             property 'forge.logging.markers', 'SCAN,REGISTRIES,REGISTRYDUMP'

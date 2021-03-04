@@ -43,8 +43,6 @@ import org.spongepowered.asm.mixin.injection.callback.LocalCapture;
 
 @Mixin(PlayerEntity.class)
 public abstract class MixinOffhandAttack extends LivingEntity {
-    @Shadow
-    public abstract void resetCooldown();
 
     private static boolean tempCrit;
 
@@ -52,10 +50,10 @@ public abstract class MixinOffhandAttack extends LivingEntity {
         super(type, worldIn);
     }
 
-    @Redirect(method = "attackTargetEntityWithCurrentItem",
-            at = @At(value = "INVOKE", ordinal = 0, target = "Lnet/minecraft/entity/player/PlayerEntity;resetCooldown()V"))
-    private void noReset(PlayerEntity playerEntity) {
-        //do nothing to effectively delete the line.
+    @Inject(method = "attackTargetEntityWithCurrentItem", locals = LocalCapture.CAPTURE_FAILSOFT,
+            at = @At(value = "INVOKE", shift= At.Shift.BEFORE, target = "Lnet/minecraft/entity/player/PlayerEntity;resetCooldown()V"))
+    private void noReset(Entity targetEntity, CallbackInfo ci, float f, float f1, float f2) {
+        CombatData.getCap(this).setCachedCooldown(f2);
     }
 
     @Inject(method = "attackTargetEntityWithCurrentItem", locals = LocalCapture.CAPTURE_FAILSOFT,
@@ -85,10 +83,10 @@ public abstract class MixinOffhandAttack extends LivingEntity {
 
     //TODO rewrite sweep for full damage and effects
 
-    @Inject(method = "attackTargetEntityWithCurrentItem", at = @At(value = "TAIL"))
-    private void resetCD(Entity targetEntity, CallbackInfo ci) {
-        this.resetCooldown();
-    }
+//    @Inject(method = "attackTargetEntityWithCurrentItem", at = @At(value = "TAIL"))
+//    private void resetCD(Entity targetEntity, CallbackInfo ci) {
+//        this.resetCooldown();
+//    }
 
 //    /**
 //     * here we go...

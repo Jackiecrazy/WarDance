@@ -184,6 +184,10 @@ public interface ICombatCapability {
 
     int decrementShatterCooldown(int value);
 
+    float getCachedCooldown();
+
+    void setCachedCooldown(float value);
+
     void update();
 
     void sync();

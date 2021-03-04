@@ -352,6 +352,16 @@ public class DummyCombatCap implements ICombatCapability{
     }
 
     @Override
+    public float getCachedCooldown() {
+        return 0;
+    }
+
+    @Override
+    public void setCachedCooldown(float value) {
+
+    }
+
+    @Override
     public void update() {
 
     }

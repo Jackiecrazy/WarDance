@@ -53,7 +53,7 @@ public class CombatHandler {
                 }
                 uke.world.playSound(null, uke.getPosX(), uke.getPosY(), uke.getPosZ(), free ? SoundEvents.BLOCK_WOODEN_TRAPDOOR_OPEN : SoundEvents.BLOCK_WOODEN_TRAPDOOR_CLOSE, SoundCategory.PLAYERS, 0.25f + WarDance.rand.nextFloat() * 0.5f, (1 - (ukeCap.getPosture() / ukeCap.getMaxPosture())) + WarDance.rand.nextFloat() * 0.5f);
                 Vector3d look = uke.getLookVec();
-                projectile.setVelocity(look.x, look.y, look.z);
+                projectile.setMotion(look.x, look.y, look.z);
                 return;
             }
             //deflection
@@ -61,7 +61,7 @@ public class CombatHandler {
                 e.setCanceled(true);
                 uke.world.playSound(null, uke.getPosX(), uke.getPosY(), uke.getPosZ(), SoundEvents.BLOCK_IRON_TRAPDOOR_OPEN, SoundCategory.PLAYERS, 0.25f + WarDance.rand.nextFloat() * 0.5f, (1 - (ukeCap.getPosture() / ukeCap.getMaxPosture())) + WarDance.rand.nextFloat() * 0.5f);
                 Vector3d look = projectile.getMotion().mul(-1, -1, -1);
-                projectile.setVelocity(look.x, look.y, look.z);
+                projectile.setMotion(look.x, look.y, look.z);
             }
         }
     }

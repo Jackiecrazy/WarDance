@@ -43,6 +43,7 @@ public class CombatCapability implements ICombatCapability {
     private boolean offhand, combat;
     private long lastUpdate;
     private boolean first;
+    private float cache;//no need to save this because it'll be used within the span of a tick
 
     public CombatCapability(LivingEntity e) {
         dude = new WeakReference<>(e);
@@ -538,6 +539,16 @@ public class CombatCapability implements ICombatCapability {
             shatterCD = 0;
         }
         return ret;
+    }
+
+    @Override
+    public float getCachedCooldown() {
+        return cache;
+    }
+
+    @Override
+    public void setCachedCooldown(float value) {
+        cache = value;
     }
 
     @Override

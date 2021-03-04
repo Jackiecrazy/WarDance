@@ -229,7 +229,7 @@ public class CombatUtils {
             base *= CombatConfig.kenshiroScaler;
         }
         if (e == null || h == null) return base;
-        return base * getCooledAttackStrength(e, Hand.MAIN_HAND, 1) * (e instanceof PlayerEntity ? 1 : CombatConfig.mobScaler);
+        return base * CombatData.getCap(e).getCachedCooldown() * (e instanceof PlayerEntity ? 1 : CombatConfig.mobScaler);
     }
 
     public static float getPostureDef(@Nullable LivingEntity e, ItemStack stack) {
