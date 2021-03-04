@@ -58,7 +58,7 @@ public class ElenaiCompat {
     @SubscribeEvent(priority = EventPriority.LOWEST)
     public static void dodge(DodgeEvent.ServerDodgeEvent e) {
         if (CombatConfig.elenai && !e.isCanceled()) {
-            CombatData.getCap(e.getPlayer()).setPostureGrace(CombatConfig.postureCD);
+            CombatData.getCap(e.getPlayer()).consumePosture(0);
         }
     }
 }

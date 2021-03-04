@@ -46,14 +46,6 @@ public class CombatUtils {
             parryCount = pCount;
             parryTime = pTime;
         }
-
-        public int getParryTime() {
-            return parryTime;
-        }
-
-        public int getParryCount() {
-            return parryCount;
-        }
     }
 
     private static CombatInfo DEFAULT = new CombatInfo(1, 1, false, 0, 0);
@@ -102,6 +94,7 @@ public class CombatUtils {
             }
             if (ForgeRegistries.ITEMS.containsKey(key))
                 combatList.put(ForgeRegistries.ITEMS.getValue(key), new CombatInfo(attack, defend, shield, pTime, pCount));
+            System.out.print("\"" + name + ", " + attack + ", " + defend + ", " + shield + (shield ? ", " + pTime + ", " + pCount : "") + "\", ");
         }
         for (String s : interpretA) {
             String[] val = s.split(",");
@@ -365,5 +358,18 @@ public class CombatUtils {
         e.ticksSinceLastSwing = cap.getOffhandCooldown();
         cap.setOffhandCooldown(tssl);
         e.setSilent(silent);
+    }
+
+    public enum AWARENESS {
+        UNAWARE,//deals 1.5x (posture) damage, cannot be parried, absorbed, shattered, or deflected
+        DISTRACTED,//deals 1.5x (posture) damage
+        ALERT//normal damage and reduction
+    }
+
+    public static AWARENESS getAwareness(LivingEntity attacker, LivingEntity target) {
+        if (!CombatConfig.stab) return AWARENESS.ALERT;
+        if (target.getRevengeTarget() == null) return AWARENESS.UNAWARE;
+        else if (target.getRevengeTarget() != attacker) return AWARENESS.DISTRACTED;
+        else return AWARENESS.ALERT;
     }
 }

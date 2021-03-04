@@ -36,6 +36,9 @@ public class CombatHandler {
     public static void projectileParry(final ProjectileImpactEvent e) {
         if (e.getRayTraceResult().getType() == RayTraceResult.Type.ENTITY && e.getRayTraceResult() instanceof EntityRayTraceResult && ((EntityRayTraceResult) e.getRayTraceResult()).getEntity() instanceof LivingEntity) {
             LivingEntity uke = (LivingEntity) ((EntityRayTraceResult) e.getRayTraceResult()).getEntity();
+            if (CombatUtils.getAwareness(null, uke) != CombatUtils.AWARENESS.ALERT) {
+                return;
+            }
             if (MovementUtils.hasInvFrames(uke)) e.setCanceled(true);
             float consume = CombatConfig.posturePerProjectile;
             ICombatCapability ukeCap = CombatData.getCap(uke);
@@ -97,15 +100,24 @@ public class CombatHandler {
                 if (canParry) defend = CombatUtils.getDefendingItemStack(uke, false);
                 float defMult = CombatUtils.getPostureDef(uke, defend);
                 downingHit = true;
-                float kb = ukeCap.consumePosture(atkMult * defMult);
+                //overflow posture
+                float knockback = ukeCap.consumePosture(atkMult * defMult);
                 if (ukeCap.getStaggerTime() == 0) {
-                    CombatUtils.knockBack(uke, seme, Math.min(1.5f, (atkMult * Math.max(defMult, 0.5f) * 3f + kb / 20f) / ukeCap.getMaxPosture()), true, false);
+                    float consume = atkMult * Math.max(defMult, 0.5f) * 3f;
+                    //stabby bonus
+                    CombatUtils.AWARENESS awareness = CombatUtils.getAwareness(seme, uke);
+                    if (awareness != CombatUtils.AWARENESS.ALERT) {
+                        consume *= awareness == CombatUtils.AWARENESS.UNAWARE ? CombatConfig.unaware : CombatConfig.distract;
+                    }
+                    CombatUtils.knockBack(uke, seme, Math.min(1.5f, (consume + knockback / 20f) / ukeCap.getMaxPosture()), true, false);
+                    //no parries if stabby
+                    if (CombatConfig.ignore && awareness == CombatUtils.AWARENESS.UNAWARE) return;
                     if ((canParry && defend != null) || useDeflect) {
                         e.setCanceled(true);
                         downingHit = false;
                         ukeCap.addCombo(0);
                         //knockback based on posture consumed
-                        CombatUtils.knockBack(seme, uke, Math.min(1.5f, atkMult * Math.max(defMult, 0.5f) * 3f / semeCap.getMaxPosture()), true, false);
+                        CombatUtils.knockBack(seme, uke, Math.min(1.5f, consume / semeCap.getMaxPosture()), true, false);
                         if (defend == null) {
                             uke.world.playSound(null, uke.getPosX(), uke.getPosY(), uke.getPosZ(), SoundEvents.ITEM_ARMOR_EQUIP_IRON, SoundCategory.PLAYERS, 0.25f + WarDance.rand.nextFloat() * 0.5f, (1 - (ukeCap.getPosture() / ukeCap.getMaxPosture())) + WarDance.rand.nextFloat() * 0.5f);
                             return;
@@ -171,10 +183,18 @@ public class CombatHandler {
     @SubscribeEvent
     public static void pain(LivingHurtEvent e) {
         LivingEntity uke = e.getEntityLiving();
+        LivingEntity kek = null;
+        if (e.getSource().getImmediateSource() instanceof LivingEntity) {
+            kek = (LivingEntity) e.getSource().getImmediateSource();
+        }
         ICombatCapability cap = CombatData.getCap(uke);
         cap.setCombo((float) (Math.floor(cap.getCombo()) / 2d));
+        CombatUtils.AWARENESS awareness = CombatUtils.getAwareness(kek, uke);
+        if (awareness != CombatUtils.AWARENESS.ALERT) {
+            e.setAmount(e.getAmount() * (awareness == CombatUtils.AWARENESS.UNAWARE ? CombatConfig.unaware : CombatConfig.distract));
+        }
         if (cap.getStaggerTime() > 0) {
-            e.setAmount(e.getAmount() * 1.5f);
+            e.setAmount(e.getAmount() * CombatConfig.staggerDamage);
             //fatality!
             DamageSource ds = e.getSource();
             if (ds.getTrueSource() != null && ds.getTrueSource() instanceof LivingEntity) {

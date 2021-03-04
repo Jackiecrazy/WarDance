@@ -163,14 +163,14 @@ public class CombatCapability implements ICombatCapability {
     @Override
     public float consumePosture(float amount, float above) {
         float ret = 0;
-        if (amount > getTrueMaxPosture() / 4f) {
+        LivingEntity elb = dude.get();
+        if (amount > getTrueMaxPosture() * CombatConfig.posCap) {
             //hard cap, knock back
-            ret = amount - getTrueMaxPosture() / 4f;
-            amount = getTrueMaxPosture() / 4f;
+            ret = amount - getTrueMaxPosture() * CombatConfig.posCap;
+            amount = getTrueMaxPosture() * CombatConfig.posCap;
         }
         if (posture - amount < above) {
             posture = 0;
-            LivingEntity elb = dude.get();
             if (elb == null) return ret;
             setStaggerCount(CombatConfig.staggerHits);
             setStaggerTime(CombatConfig.staggerDurationMin + Math.max(0, (int) (elb.getHealth() / elb.getMaxHealth() * (CombatConfig.staggerDuration - CombatConfig.staggerDurationMin))));
@@ -181,9 +181,13 @@ public class CombatCapability implements ICombatCapability {
             elb.getAttribute(Attributes.ARMOR).applyPersistentModifier(STAGGERA);
             return -1f;
         }
+        float weakness = 1;
+        if (elb != null && elb.getActivePotionEffect(Effects.WEAKNESS) != null) {
+            weakness = elb.getActivePotionEffect(Effects.WEAKNESS).getAmplifier() + 1;
+        }
         posture -= amount;
         fatigue += amount * CombatConfig.fatigue;
-        setPostureGrace(CombatConfig.postureCD);
+        setPostureGrace((int) (CombatConfig.postureCD * weakness));
         sync();
         return ret;
     }
@@ -700,7 +704,12 @@ public class CombatCapability implements ICombatCapability {
     private float getPPS() {
         LivingEntity elb = dude.get();
         if (elb == null) return 0;
-        float nausea = elb instanceof PlayerEntity || elb.getActivePotionEffect(Effects.NAUSEA) == null ? 0 : (elb.getActivePotionEffect(Effects.NAUSEA).getAmplifier() + 1) * 0.05f;
+        float nausea = elb instanceof PlayerEntity || elb.getActivePotionEffect(Effects.NAUSEA) == null ? 0 : (elb.getActivePotionEffect(Effects.NAUSEA).getAmplifier() + 1) * CombatConfig.nausea;
+        int exp = elb.getActivePotionEffect(Effects.POISON) == null ? 0 : (elb.getActivePotionEffect(Effects.POISON).getAmplifier() + 1);
+        float poison = CombatConfig.poison;
+        for (int j = 0; j < exp; j++) {
+            poison *= poison;
+        }
         float armorMod = Math.max(1f - ((float) elb.getTotalArmorValue() / 40f), 0);
         float healthMod = elb.getHealth() / elb.getMaxHealth();
         Vector3d spd = elb.getMotion();
