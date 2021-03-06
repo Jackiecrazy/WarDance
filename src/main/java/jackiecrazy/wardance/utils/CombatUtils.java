@@ -11,7 +11,9 @@ import jackiecrazy.wardance.networking.CombatChannel;
 import jackiecrazy.wardance.networking.UpdateAttackPacket;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.LivingEntity;
+import net.minecraft.entity.MobEntity;
 import net.minecraft.entity.ai.attributes.*;
+import net.minecraft.entity.monster.IMob;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.inventory.EquipmentSlotType;
@@ -31,6 +33,7 @@ import net.minecraftforge.fml.network.PacketDistributor;
 import net.minecraftforge.registries.ForgeRegistries;
 
 import javax.annotation.Nullable;
+import java.text.DecimalFormat;
 import java.util.*;
 
 public class CombatUtils {
@@ -94,7 +97,7 @@ public class CombatUtils {
             }
             if (ForgeRegistries.ITEMS.containsKey(key))
                 combatList.put(ForgeRegistries.ITEMS.getValue(key), new CombatInfo(attack, defend, shield, pTime, pCount));
-            System.out.print("\"" + name + ", " + attack + ", " + defend + ", " + shield + (shield ? ", " + pTime + ", " + pCount : "") + "\", ");
+            //System.out.print("\"" + name + ", " + formatter.format(attack + 1.5) + ", " + formatter.format(defend) + ", " + shield + (shield ? ", " + pTime + ", " + pCount : "") + "\", ");
         }
         for (String s : interpretA) {
             String[] val = s.split(",");
@@ -166,13 +169,13 @@ public class CombatUtils {
         float rand = WarDance.rand.nextFloat();
         boolean canShield = (e instanceof PlayerEntity || rand < CombatConfig.mobParryChanceShield);
         boolean canWeapon = (e instanceof PlayerEntity || rand < CombatConfig.mobParryChanceWeapon);
-        boolean mainRec = getCooledAttackStrength(e, Hand.MAIN_HAND, 0.5f) > 0.9f;
-        boolean offRec = getCooledAttackStrength(e, Hand.OFF_HAND, 0.5f) > 0.9f;
-        if (offRec && canShield && isShield(e, e.getHeldItemOffhand())) {
+        boolean mainRec = getCooledAttackStrength(e, Hand.MAIN_HAND, 0.5f) > 0.9f && CombatData.getCap(e).getHandBind(Hand.MAIN_HAND) == 0;
+        boolean offRec = getCooledAttackStrength(e, Hand.OFF_HAND, 0.5f) > 0.9f && CombatData.getCap(e).getHandBind(Hand.OFF_HAND) == 0;
+        if (offRec && canShield && isShield(e, e.getHeldItemOffhand()) && (!(e instanceof PlayerEntity) || ((PlayerEntity) e).getCooldownTracker().getCooldown(e.getHeldItemOffhand().getItem(), 0) == 0)) {
             ret = e.getHeldItemOffhand();
             posMod = getPostureDef(e, e.getHeldItemOffhand());
         }
-        if (mainRec && canShield && isShield(e, e.getHeldItemMainhand())) {
+        if (mainRec && canShield && isShield(e, e.getHeldItemMainhand()) && (!(e instanceof PlayerEntity) || ((PlayerEntity) e).getCooldownTracker().getCooldown(e.getHeldItemMainhand().getItem(), 0) == 0)) {
             if (ret == null || getPostureDef(e, e.getHeldItemMainhand()) < posMod) {
                 posMod = getPostureDef(e, e.getHeldItemMainhand());
                 ret = e.getHeldItemMainhand();
@@ -227,7 +230,7 @@ public class CombatUtils {
 
     public static float getPostureDef(@Nullable LivingEntity e, ItemStack stack) {
         if (stack == null) return (float) DEFAULT.defensePostureMultiplier;
-        if (e != null && isShield(e, stack) && CombatData.getCap(e).getShieldTime() > 0 && CombatData.getCap(e).getShieldCount() > 0) {
+        if (e != null && isShield(e, stack) && CombatData.getCap(e).getShieldTime() > 0) {
             return 0;
         }
         if (combatList.containsKey(stack.getItem())) {
@@ -284,7 +287,7 @@ public class CombatUtils {
             xRatio = event.getRatioX();
             zRatio = event.getRatioZ();
         } else {
-            strength *= (float) (1 - to.getAttributeValue(Attributes.KNOCKBACK_RESISTANCE));
+            strength *= (float) (1 - GeneralUtils.getAttributeValueSafe(to, Attributes.KNOCKBACK_RESISTANCE));
         }
         if (strength != 0f) {
             Vector3d vec = to.getMotion();
@@ -367,9 +370,11 @@ public class CombatUtils {
     }
 
     public static AWARENESS getAwareness(LivingEntity attacker, LivingEntity target) {
-        if (!CombatConfig.stab) return AWARENESS.ALERT;
-        if (target.getRevengeTarget() == null) return AWARENESS.UNAWARE;
-        else if (target.getRevengeTarget() != attacker) return AWARENESS.DISTRACTED;
+        if (!CombatConfig.stab || target instanceof PlayerEntity) return AWARENESS.ALERT;
+        if (target.getRevengeTarget() == null && (!(target instanceof MobEntity) || ((MobEntity) target).getAttackTarget() == null))
+            return AWARENESS.UNAWARE;
+        else if (target.getRevengeTarget() != attacker && (!(target instanceof MobEntity) || ((MobEntity) target).getAttackTarget() != attacker))
+            return AWARENESS.DISTRACTED;
         else return AWARENESS.ALERT;
     }
 }

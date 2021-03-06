@@ -1,6 +1,7 @@
 package jackiecrazy.wardance.handlers;
 
 import jackiecrazy.wardance.WarDance;
+import jackiecrazy.wardance.api.CombatDamageSource;
 import jackiecrazy.wardance.api.ICombatManipulator;
 import jackiecrazy.wardance.api.WarAttributes;
 import jackiecrazy.wardance.capability.CombatData;
@@ -61,7 +62,7 @@ public class CombatHandler {
                 return;
             }
             //deflection
-            if ((uke instanceof PlayerEntity || WarDance.rand.nextFloat() > CombatConfig.mobDeflectChance) && GeneralUtils.isFacingEntity(uke, projectile, 120 + 2 * (int) uke.getAttributeValue(WarAttributes.DEFLECTION.get())) && !GeneralUtils.isFacingEntity(uke, projectile, 120) && ukeCap.doConsumePosture(consume)) {
+            if ((uke instanceof PlayerEntity || WarDance.rand.nextFloat() > CombatConfig.mobDeflectChance) && GeneralUtils.isFacingEntity(uke, projectile, 120 + 2 * (int) GeneralUtils.getAttributeValueSafe(uke, WarAttributes.DEFLECTION.get())) && !GeneralUtils.isFacingEntity(uke, projectile, 120) && ukeCap.doConsumePosture(consume)) {
                 e.setCanceled(true);
                 uke.world.playSound(null, uke.getPosX(), uke.getPosY(), uke.getPosZ(), SoundEvents.BLOCK_IRON_TRAPDOOR_OPEN, SoundCategory.PLAYERS, 0.25f + WarDance.rand.nextFloat() * 0.5f, (1 - (ukeCap.getPosture() / ukeCap.getMaxPosture())) + WarDance.rand.nextFloat() * 0.5f);
                 Vector3d look = projectile.getMotion().mul(-1, -1, -1);
@@ -85,7 +86,7 @@ public class CombatHandler {
                 ukeCap.update();
                 semeCap.update();
                 boolean canParry = GeneralUtils.isFacingEntity(uke, seme, 120);
-                boolean useDeflect = (uke instanceof PlayerEntity || WarDance.rand.nextFloat() > CombatConfig.mobDeflectChance) && GeneralUtils.isFacingEntity(uke, seme, 120 + 2 * (int) uke.getAttributeValue(WarAttributes.DEFLECTION.get())) && !canParry;
+                boolean useDeflect = (uke instanceof PlayerEntity || WarDance.rand.nextFloat() > CombatConfig.mobDeflectChance) && GeneralUtils.isFacingEntity(uke, seme, 120 + 2 * (int) GeneralUtils.getAttributeValueSafe(uke, WarAttributes.DEFLECTION.get())) && !canParry;
                 Hand h = semeCap.isOffhandAttack() ? Hand.OFF_HAND : Hand.MAIN_HAND;
                 if (semeCap.getStaggerTime() > 0 || semeCap.getHandBind(h) > 0) {
                     e.setCanceled(true);
@@ -106,6 +107,8 @@ public class CombatHandler {
                 if (awareness != CombatUtils.AWARENESS.ALERT) {
                     atkMult *= awareness == CombatUtils.AWARENESS.UNAWARE ? CombatConfig.unaware : CombatConfig.distract;
                 }
+                if (e.getSource() instanceof CombatDamageSource && ((CombatDamageSource) e.getSource()).isCrit())
+                    atkMult *= 1.5;
                 float knockback = ukeCap.consumePosture(atkMult * defMult);
                 if (ukeCap.getStaggerTime() == 0) {
                     float consume = atkMult * Math.max(defMult, 0.5f) * 3f;
@@ -132,6 +135,7 @@ public class CombatHandler {
                                     ((PlayerEntity) uke).getCooldownTracker().setCooldown(defend.getItem(), 60);
                                     uke.world.setEntityState(uke, (byte) 30);
                                 }
+                                ukeCap.setHandBind(uke.getHeldItemOffhand() == defend ? Hand.OFF_HAND : Hand.MAIN_HAND, 60);
                                 disshield = true;
                             } else if (ukeCap.getShieldTime() == 0) {
                                 Tuple<Integer, Integer> stat = CombatUtils.getShieldStats(defend);
@@ -197,7 +201,7 @@ public class CombatHandler {
         }
         if (ds.getTrueSource() instanceof LivingEntity) {
             LivingEntity seme = ((LivingEntity) ds.getTrueSource());
-            double luckDiff = WarDance.rand.nextFloat() * (seme.getAttributeValue(Attributes.LUCK)) - WarDance.rand.nextFloat() * (uke.getAttributeValue(Attributes.LUCK));
+            double luckDiff = WarDance.rand.nextFloat() * (GeneralUtils.getAttributeValueSafe(seme, Attributes.LUCK)) - WarDance.rand.nextFloat() * (GeneralUtils.getAttributeValueSafe(uke, Attributes.LUCK));
             e.setAmount(e.getAmount() + (float) luckDiff * CombatConfig.luck);
         }
         if (CombatConfig.woundWL == CombatConfig.woundList.contains(e.getSource().getDamageType()))//returns true if whitelist and included, or if blacklist and excluded
@@ -229,7 +233,7 @@ public class CombatHandler {
                 return;
             float amount = e.getAmount();
             //absorption
-            amount -= e.getEntityLiving().getAttributeValue(WarAttributes.ABSORPTION.get());
+            amount -= GeneralUtils.getAttributeValueSafe(e.getEntityLiving(), WarAttributes.ABSORPTION.get());
             e.setAmount(amount);
         }
     }

@@ -5,6 +5,7 @@ import jackiecrazy.wardance.api.WarAttributes;
 import jackiecrazy.wardance.config.CombatConfig;
 import jackiecrazy.wardance.networking.CombatChannel;
 import jackiecrazy.wardance.networking.UpdateClientPacket;
+import jackiecrazy.wardance.utils.GeneralUtils;
 import jackiecrazy.wardance.utils.MovementUtils;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.Pose;
@@ -183,8 +184,8 @@ public class CombatCapability implements ICombatCapability {
         }
         float weakness = 1;
         if (elb != null && elb.isPotionActive(Effects.HUNGER)) {
-            for(int uwu=0;uwu<elb.getActivePotionEffect(Effects.HUNGER).getAmplifier() + 1;uwu++)
-                weakness*=CombatConfig.weakness;
+            for (int uwu = 0; uwu < elb.getActivePotionEffect(Effects.HUNGER).getAmplifier() + 1; uwu++)
+                weakness *= CombatConfig.weakness;
         }
         posture -= amount;
         fatigue += amount * CombatConfig.fatigue;
@@ -376,7 +377,8 @@ public class CombatCapability implements ICombatCapability {
     @Override
     public void decrementShieldCount(int amount) {
         sc -= Math.min(sc, amount);
-        setShieldTime(0);
+        if (sc == 0)
+            setShieldTime(0);
     }
 
 
@@ -583,7 +585,7 @@ public class CombatCapability implements ICombatCapability {
             addPosture(getPPS() * (poExtra));
         }
         if (shcd != 0) {
-            setShatter((float) elb.getAttributeValue(WarAttributes.SHATTER.get()));
+            setShatter((float) GeneralUtils.getAttributeValueSafe(elb, WarAttributes.SHATTER.get()));
         }
         if (getSpiritGrace() == 0 && getStaggerTime() == 0 && getSpirit() < getMaxSpirit()) {
             addSpirit(getPPS() * spExtra);
@@ -706,7 +708,7 @@ public class CombatCapability implements ICombatCapability {
         LivingEntity elb = dude.get();
         if (elb == null) return 0;
         float nausea = elb instanceof PlayerEntity || !elb.isPotionActive(Effects.NAUSEA) ? 0 : (elb.getActivePotionEffect(Effects.NAUSEA).getAmplifier() + 1) * CombatConfig.nausea;
-        int exp = !elb.isPotionActive(Effects.POISON) ? 0 : (elb.getActivePotionEffect(Effects.POISON).getAmplifier() + 1);
+        int exp = elb.isPotionActive(Effects.POISON) ? (elb.getActivePotionEffect(Effects.POISON).getAmplifier() + 1) : 0;
         float poison = 1;
         for (int j = 0; j < exp; j++) {
             poison *= CombatConfig.poison;

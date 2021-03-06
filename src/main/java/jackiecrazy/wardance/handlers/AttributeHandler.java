@@ -12,15 +12,15 @@ import net.minecraftforge.fml.common.Mod;
 @Mod.EventBusSubscriber(modid = WarDance.MODID, bus = Mod.EventBusSubscriber.Bus.MOD)
 public class AttributeHandler {
 
-    @SuppressWarnings("unchecked")
-    @SubscribeEvent
-    public static void attribute(EntityAttributeModificationEvent e) {
-        for (EntityType<?> t : e.getTypes()) {
-            e.add((EntityType<? extends LivingEntity>) t, Attributes.ATTACK_SPEED);
-            e.add((EntityType<? extends LivingEntity>) t, WarAttributes.ABSORPTION.get());
-            e.add((EntityType<? extends LivingEntity>) t, WarAttributes.DEFLECTION.get());
-            e.add((EntityType<? extends LivingEntity>) t, WarAttributes.SHATTER.get());
-            e.add((EntityType<? extends LivingEntity>) t, Attributes.LUCK);
-        }
-    }
+//    @SuppressWarnings("unchecked")
+//    @SubscribeEvent
+//    public static void attribute(EntityAttributeModificationEvent e) {
+//        for (EntityType<?> t : e.getTypes()) {
+//            e.add((EntityType<? extends LivingEntity>) t, Attributes.ATTACK_SPEED);
+//            e.add((EntityType<? extends LivingEntity>) t, WarAttributes.ABSORPTION.get());
+//            e.add((EntityType<? extends LivingEntity>) t, WarAttributes.DEFLECTION.get());
+//            e.add((EntityType<? extends LivingEntity>) t, WarAttributes.SHATTER.get());
+//            e.add((EntityType<? extends LivingEntity>) t, Attributes.LUCK);
+//        }
+//    }
 }

@@ -221,6 +221,7 @@ public class MovementUtils {
         twiddle till it works :v
          */
         ICombatCapability itsc = CombatData.getCap(elb);
+        if (!CombatConfig.dodge) return false;
         if (!itsc.isCombatMode() && (!WarCompat.elenaiDodge || itsc.getStaggerTime() == 0)) return false;
         if (side == 99) attemptSlide(elb);
         if (itsc.getRollTime() == 0) {//

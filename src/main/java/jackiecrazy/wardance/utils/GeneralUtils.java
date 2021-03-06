@@ -426,7 +426,7 @@ public class GeneralUtils {
 
     public static double getAttributeValueHandSensitive(LivingEntity e, Attribute a, Hand h) {
         if (e.getAttribute(a) == null) return 4;
-        if (h == Hand.MAIN_HAND) return e.getAttributeValue(a);
+        if (h == Hand.MAIN_HAND) return getAttributeValueSafe(e, a);
         ModifiableAttributeInstance mai = new ModifiableAttributeInstance(a, (n) -> {
         });
         Collection<AttributeModifier> ignore = e.getHeldItemMainhand().getAttributeModifiers(EquipmentSlotType.MAINHAND).get(a);
@@ -440,6 +440,11 @@ public class GeneralUtils {
             mai.applyNonPersistentModifier(f);
         }
         return mai.getValue();
+    }
+
+    public static double getAttributeValueSafe(LivingEntity e, Attribute a) {
+        if (e.getAttribute(a) != null) return e.getAttributeValue(a);
+        return 0;
     }
 
 }
