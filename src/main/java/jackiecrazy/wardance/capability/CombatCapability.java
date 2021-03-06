@@ -5,6 +5,7 @@ import jackiecrazy.wardance.api.WarAttributes;
 import jackiecrazy.wardance.config.CombatConfig;
 import jackiecrazy.wardance.networking.CombatChannel;
 import jackiecrazy.wardance.networking.UpdateClientPacket;
+import jackiecrazy.wardance.utils.CombatUtils;
 import jackiecrazy.wardance.utils.GeneralUtils;
 import jackiecrazy.wardance.utils.MovementUtils;
 import net.minecraft.entity.LivingEntity;
@@ -499,9 +500,9 @@ public class CombatCapability implements ICombatCapability {
     public void decrementHandBind(Hand h, int amount) {
         switch (h) {
             case MAIN_HAND:
-                mBind -= amount;
+                mBind -= Math.min(amount, mBind);
             case OFF_HAND:
-                oBind -= amount;
+                oBind -= Math.min(amount, oBind);
         }
     }
 
@@ -571,8 +572,10 @@ public class CombatCapability implements ICombatCapability {
         int qiExtra = decrementMightGrace(ticks);
         int spExtra = decrementSpiritGrace(ticks);
         int poExtra = decrementPostureGrace(ticks);
-        decrementHandBind(Hand.MAIN_HAND, ticks);
-        decrementHandBind(Hand.OFF_HAND, ticks);
+        for (Hand h : Hand.values()){
+            decrementHandBind(h, ticks);
+            if (getHandBind(h) != 0) CombatUtils.setHandCooldown(elb, h, 0, true);
+        }
         addOffhandCooldown(ticks);
         if (!(elb instanceof PlayerEntity))
             elb.ticksSinceLastSwing += ticks;
