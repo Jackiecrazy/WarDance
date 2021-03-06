@@ -378,8 +378,6 @@ public class CombatCapability implements ICombatCapability {
     @Override
     public void decrementShieldCount(int amount) {
         sc -= Math.min(sc, amount);
-        if (sc == 0)
-            setShieldTime(0);
     }
 
 

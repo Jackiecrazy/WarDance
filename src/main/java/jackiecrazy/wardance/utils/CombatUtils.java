@@ -32,6 +32,7 @@ import net.minecraftforge.fml.DistExecutor;
 import net.minecraftforge.fml.network.PacketDistributor;
 import net.minecraftforge.registries.ForgeRegistries;
 
+import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.text.DecimalFormat;
 import java.util.*;
@@ -194,6 +195,21 @@ public class CombatUtils {
             }
         }
         return ret;
+    }
+
+    public static boolean canParry(LivingEntity e, @Nonnull ItemStack i) {
+        Hand h = e.getHeldItemOffhand() == i ? Hand.OFF_HAND : Hand.MAIN_HAND;
+        float rand = WarDance.rand.nextFloat();
+        boolean recharge = getCooledAttackStrength(e, h, 0.5f) > 0.9f && CombatData.getCap(e).getHandBind(h) == 0;
+        recharge &= (!(e instanceof PlayerEntity) || ((PlayerEntity) e).getCooldownTracker().getCooldown(e.getHeldItemOffhand().getItem(), 0) == 0);
+        if (isShield(e, i)) {
+            boolean canShield = (e instanceof PlayerEntity || rand < CombatConfig.mobParryChanceShield);
+            boolean parryExpended = CombatData.getCap(e).getShieldTime() != 0 && CombatData.getCap(e).getShieldCount() == 0;
+            return recharge & parryExpended & canShield;
+        } else if (isWeapon(e, i)) {
+            boolean canWeapon = (e instanceof PlayerEntity || rand < CombatConfig.mobParryChanceWeapon);
+            return recharge & canWeapon;
+        } else return false;
     }
 
     @Nullable

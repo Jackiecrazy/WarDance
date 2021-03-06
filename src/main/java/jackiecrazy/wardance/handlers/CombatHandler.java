@@ -45,7 +45,11 @@ public class CombatHandler {
             float consume = CombatConfig.posturePerProjectile;
             ICombatCapability ukeCap = CombatData.getCap(uke);
             boolean free = ukeCap.getShieldTime() > 0;
-            ItemStack defend = CombatUtils.getDefendingItemStack(uke, true);
+            ItemStack defend = null;
+            if (CombatUtils.isShield(uke, uke.getHeldItemOffhand()) && CombatUtils.canParry(uke, uke.getHeldItemOffhand()))
+                defend = uke.getHeldItemOffhand();
+            else if (CombatUtils.isShield(uke, uke.getHeldItemMainhand()) && CombatUtils.canParry(uke, uke.getHeldItemMainhand()))
+                defend = uke.getHeldItemMainhand();
             Entity projectile = e.getEntity();
             if (defend != null && GeneralUtils.isFacingEntity(uke, projectile, 120) && ukeCap.doConsumePosture(free ? 0 : consume)) {
                 e.setCanceled(true);
@@ -97,22 +101,33 @@ public class CombatHandler {
                     downingHit = false;
                     return;
                 }
+                //parry code start, grab attack multiplier
                 float atkMult = CombatUtils.getPostureAtk(seme, h, e.getAmount(), attack);
-                ItemStack defend = null;
-                if (canParry) defend = CombatUtils.getDefendingItemStack(uke, false);
-                float defMult = CombatUtils.getPostureDef(uke, defend);
                 downingHit = true;
-                //overflow posture
+                //stabby bonus
                 CombatUtils.AWARENESS awareness = CombatUtils.getAwareness(seme, uke);
                 if (awareness != CombatUtils.AWARENESS.ALERT) {
                     atkMult *= awareness == CombatUtils.AWARENESS.UNAWARE ? CombatConfig.unaware : CombatConfig.distract;
                 }
+                //crit bonus
                 if (e.getSource() instanceof CombatDamageSource && ((CombatDamageSource) e.getSource()).isCrit())
                     atkMult *= 1.5;
+                //grab defending stack
+                ItemStack defend = null;
+                if (canParry) {
+                    float posMod = 1337;
+                    if (CombatUtils.canParry(uke, uke.getHeldItemOffhand())) {
+                        defend = uke.getHeldItemOffhand();
+                        posMod = CombatUtils.getPostureDef(uke, uke.getHeldItemOffhand());
+                    }
+                    if (CombatUtils.canParry(uke, uke.getHeldItemMainhand()) && CombatUtils.getPostureDef(uke, uke.getHeldItemMainhand()) < posMod)
+                        defend = uke.getHeldItemMainhand();
+                }
+                float defMult = CombatUtils.getPostureDef(uke, defend);
+                //overflow posture
                 float knockback = ukeCap.consumePosture(atkMult * defMult);
                 if (ukeCap.getStaggerTime() == 0) {
                     float consume = atkMult * Math.max(defMult, 0.5f) * 3f;
-                    //stabby bonus
                     CombatUtils.knockBack(uke, seme, Math.min(1.5f, (consume + knockback / 20f) / ukeCap.getMaxPosture()), true, false);
                     //no parries if stabby
                     if (CombatConfig.ignore && awareness == CombatUtils.AWARENESS.UNAWARE) return;
