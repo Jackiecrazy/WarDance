@@ -27,14 +27,20 @@ import net.minecraftforge.event.entity.player.PlayerWakeUpEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.LogicalSide;
 import net.minecraftforge.fml.common.Mod;
+import net.minecraftforge.fml.event.server.FMLServerStartingEvent;
+import net.minecraftforge.fml.event.server.FMLServerStoppingEvent;
 import net.minecraftforge.registries.ForgeRegistries;
 import net.minecraftforge.registries.RegistryManager;
 
+import java.util.ArrayList;
 import java.util.EnumSet;
+import java.util.HashMap;
 
 
 @Mod.EventBusSubscriber(modid = WarDance.MODID)
 public class EntityHandler {
+    public static HashMap<PlayerEntity, Entity> mustUpdate=new HashMap<>();
+
     private static class NoGoal extends Goal {
         LivingEntity e;
         static final EnumSet<Flag> mutex = EnumSet.allOf(Flag.class);
@@ -57,6 +63,16 @@ public class EntityHandler {
         public EnumSet<Flag> getMutexFlags() {
             return mutex;
         }
+    }
+
+    @SubscribeEvent
+    public static void start(FMLServerStartingEvent e){
+        mustUpdate=new HashMap<>();
+    }
+
+    @SubscribeEvent
+    public static void stop(FMLServerStoppingEvent e){
+        mustUpdate=new HashMap<>();
     }
 
     @SubscribeEvent
@@ -104,7 +120,7 @@ public class EntityHandler {
         if (!e.getEntityLiving().world.isRemote && !(e.getEntityLiving() instanceof PlayerEntity)) {
             //staggered mobs bypass update interval
             ICombatCapability cap = CombatData.getCap(e.getEntityLiving());
-            if (cap.getStaggerTime() > 0 || e.getEntityLiving().ticksExisted % CombatConfig.mobUpdateInterval == 0)
+            if (cap.getStaggerTime() > 0 || mustUpdate.containsValue(e.getEntity()) || e.getEntityLiving().ticksExisted % CombatConfig.mobUpdateInterval == 0)
                 cap.update();
         }
     }

@@ -1,6 +1,7 @@
 package jackiecrazy.wardance.networking;
 
 import jackiecrazy.wardance.capability.CombatData;
+import jackiecrazy.wardance.handlers.EntityHandler;
 import net.minecraft.client.Minecraft;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.player.ServerPlayerEntity;
@@ -41,8 +42,10 @@ public class RequestUpdatePacket {
         public void accept(RequestUpdatePacket updateClientPacket, Supplier<NetworkEvent.Context> contextSupplier) {
             contextSupplier.get().enqueueWork(() -> {
                 ServerPlayerEntity sender = contextSupplier.get().getSender();
-                if (sender != null && sender.world.getEntityByID(updateClientPacket.e) != null)
+                if (sender != null && sender.world.getEntityByID(updateClientPacket.e) instanceof LivingEntity) {
+                    EntityHandler.mustUpdate.put(sender, sender.world.getEntityByID(updateClientPacket.e));
                     CombatData.getCap(((LivingEntity) (sender.world.getEntityByID(updateClientPacket.e)))).update();
+                } else EntityHandler.mustUpdate.put(sender, null);
             });
             contextSupplier.get().setPacketHandled(true);
         }

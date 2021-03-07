@@ -334,7 +334,7 @@ public class ClientEvents {
                     //multiplier
                     //mc.fontRenderer.drawStringWithShadow(event.getMatrixStack(), display, x + 1, y + 14, 16711937);
                     event.getMatrixStack().pop();
-                    int tempx=x, tempy=y;
+                    int tempx = x, tempy = y;
 
                     event.getMatrixStack().push();
                     x = Math.max(3 * width / 4 - ClientConfig.spiritX - 16, 0);
@@ -455,6 +455,9 @@ public class ClientEvents {
         //RenderSystem.enableLighting();
     }
 
+    /**
+     * @author Vazkii
+     */
     public static Entity getEntityLookedAt(Entity e) {
         Entity foundEntity = null;
         final double finalDistance = 32;
@@ -520,14 +523,21 @@ public class ClientEvents {
     }
 
     private static double dodgeDecimal;
+    private static Entity lastTickLookAt;
 
     @SubscribeEvent
     public static void tickPlayer(TickEvent.ClientTickEvent e) {
-        PlayerEntity p = Minecraft.getInstance().player;
-        if (p != null && !Minecraft.getInstance().isGamePaused()) {
+        Minecraft mc = Minecraft.getInstance();
+        PlayerEntity p = mc.player;
+        if (p != null && !mc.isGamePaused()) {
             if (e.phase == TickEvent.Phase.START) {
-                if (Minecraft.getInstance().pointedEntity instanceof LivingEntity && Minecraft.getInstance().pointedEntity.isAlive()) {
-                    CombatChannel.INSTANCE.sendToServer(new RequestUpdatePacket(Minecraft.getInstance().pointedEntity.getEntityId()));
+                Entity look = getEntityLookedAt(p);
+                if (look != lastTickLookAt) {
+                    lastTickLookAt = look;
+                    if (look instanceof LivingEntity && look.isAlive())
+                        CombatChannel.INSTANCE.sendToServer(new RequestUpdatePacket(look.getEntityId()));
+                    else
+                        CombatChannel.INSTANCE.sendToServer(new RequestUpdatePacket(-1));
                 }
             } else {
                 if (WarCompat.elenaiDodge) {
