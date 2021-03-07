@@ -204,8 +204,8 @@ public class CombatUtils {
         recharge &= (!(e instanceof PlayerEntity) || ((PlayerEntity) e).getCooldownTracker().getCooldown(e.getHeldItemOffhand().getItem(), 0) == 0);
         if (isShield(e, i)) {
             boolean canShield = (e instanceof PlayerEntity || rand < CombatConfig.mobParryChanceShield);
-            boolean parryExpended = CombatData.getCap(e).getShieldTime() != 0 && CombatData.getCap(e).getShieldCount() == 0;
-            return recharge & parryExpended & canShield;
+            boolean canParry = CombatData.getCap(e).getShieldTime() == 0 || CombatData.getCap(e).getShieldCount() != 0;
+            return recharge & canParry & canShield;
         } else if (isWeapon(e, i)) {
             boolean canWeapon = (e instanceof PlayerEntity || rand < CombatConfig.mobParryChanceWeapon);
             return recharge & canWeapon;
@@ -241,12 +241,12 @@ public class CombatUtils {
             base *= CombatConfig.kenshiroScaler;
         }
         if (e == null || h == null) return base;
-        return base * CombatData.getCap(e).getCachedCooldown() * (e instanceof PlayerEntity ? 1 : CombatConfig.mobScaler);
+        return base * (e instanceof PlayerEntity ? CombatData.getCap(e).getCachedCooldown() : CombatConfig.mobScaler);
     }
 
     public static float getPostureDef(@Nullable LivingEntity e, ItemStack stack) {
         if (stack == null) return (float) DEFAULT.defensePostureMultiplier;
-        if (e != null && isShield(e, stack) && CombatData.getCap(e).getShieldTime() > 0) {
+        if (e != null && isShield(e, stack) && CombatData.getCap(e).getShieldTime() > 0 && CombatData.getCap(e).getShieldCount() > 0) {
             return 0;
         }
         if (combatList.containsKey(stack.getItem())) {

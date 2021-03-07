@@ -43,8 +43,8 @@ public class UpdateAttackPacket {
         @Override
         public void accept(UpdateAttackPacket updateClientPacket, Supplier<NetworkEvent.Context> contextSupplier) {
             contextSupplier.get().enqueueWork(() -> {
-                if (Minecraft.getInstance().world != null)
-                    ((LivingEntity) (Objects.requireNonNull(Minecraft.getInstance().world.getEntityByID(updateClientPacket.e)))).ticksSinceLastSwing= updateClientPacket.e;
+                if (Minecraft.getInstance().world != null && Minecraft.getInstance().world.getEntityByID(updateClientPacket.e) instanceof LivingEntity)
+                    ((LivingEntity) (Minecraft.getInstance().world.getEntityByID(updateClientPacket.e))).ticksSinceLastSwing = updateClientPacket.e;
             });
             contextSupplier.get().setPacketHandled(true);
         }

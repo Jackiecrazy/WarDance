@@ -68,16 +68,16 @@ Spells and skills: hit stuff so you can hit harder!
 - Skills must be first set in the skill screen, then brought up in combat mode with the F key as a radial menu. Half the screen (4 slots) is available for each hand to add skills, and two-handing gives 8 skill slots. Combined with 4 spell slots that don’t require weapons, you can have 12 skills equipped at any given time.
 - Skills are split into categories depending on their resource consumption for recharge (e.g. might, spirit, time, normal attacks, distance moved, etc). All skills of the same category have their “timers” set to half upon casting one so you can’t continuously chain moves of the same category.
 - Skills can be augmented by items/runes that add or modify behavior, see example.
-- Instant casts are usually things that act with yourself as center, and are cast just by moving the mouse over the pie slice in the selection. Failure to use effects of a bolstering skill will refund half charge rounded up, without resetting others. These four are chosen to be packaged into the base API due to their general applicability:
+- Instant casts are usually things that act with yourself as center, and are cast just by moving the mouse over the pie slice in the selection. Failure to use effects of a bolstering skill will refund half charge rounded up, without resetting others. These skills are chosen to be packaged into the base API due to their general applicability:
 
 ▪ Heavy blow: the next attack in 2 seconds guarantees a crit when dealing damage, and disables the parrying hand if parried. Recharge in 3 attacks, weapon bound.
 Shatter: mark hit enemies, causing next 2 attacks to deal 1.5x damage; stagger: deal equivalent posture and 0.8s slow; lunge: range+2 and dash forward; poise: free parries until attack; resolve: double resource regen speed for 2 seconds.
-▪ Iron guard: the next parry in 1 second (particles) reflects the posture damage onto attacker. If the attack was ranged, the shot is reflected back at the caster. Cancels out with heavy blow. Recharge in 5 attacks, weapon bound.
+▪ Iron guard: the next parry in 1 second (particles) reflects the posture damage onto attacker. If the attack was ranged, the shot is reflected back at the caster with full force. Cancels out with heavy blow. Recharge in 5 attacks, weapon bound.
 Overpower: knockback reflected to attacker; grapple: slow attacker by 40% and disable hand; backpedal: all posture cost converted to knockback; recovery: reset cooldown of all resources; mikiri: cooldown -1, auto trigger.
 ▪ Kick: the next attack in 2 seconds has 2 range but deals 6 unblockable posture damage and 1 blockable falling damage. Recharge in 5 attacks, self bound.
 Backflip: jump back and gain 30% lost posture; tackle: dashes and kicks first entity collided; iron knee: knockback converted to extra posture damage; trip: fatigue for double the cooldown time, cooldown -1; overextend: double damage but deal half to self.
 ▪ Grapple: instantly stagger (they keep their posture when getting back up) by attacking a single enemy within 2 blocks twice uninterrupted within 3 seconds. Recharge in 7 attacks, weapon bound, fists and hand weapons only.
-Clinch: bind both hands on first strike; reversal: exchanges posture by percentage; submission: instantly succeeds if opponent has less posture; throw: pick up enemy and use as projectile; pin: double stagger count for this stagger.
+Clinch: bind both hands on first strike; reversal: exchanges posture by percentage; submission: instantly succeeds if opponent has less health; throw: pick up enemy and use as projectile; pin: double stagger count for this stagger.
 ▪ Shield bash: for 2 seconds, your shield becomes a range 2 blunt weapon that deals posture damage equivalent to shield time. Recharge in 4 parries, weapon bound, shield only.
 Rim punch: range increased to 3, nauseates enemy on attack; foot slam: additionally inflicts slowness and distracts enemy; arm lock: parrying with bash active disables attacking hand, cooldown+1; berserk: recharge other hand and gain brief attack speed buff on cast and after attack; overbear: base damage increased by shield time/3 and posture damage doubled, but slow self briefly if enemy isn't staggered by hit.
 - Bound casts are chosen, then bound to the attack key in combat mode. Casting them generally requires chanting, but they’re more powerful. As expected, items can have different spells bound to them, or even just have a magic missile as its normal attack. This also enables throwable weapons (such as poison sand or daggers) to be used as melee. There should be an interface for such items. Only two bound skills are included as examples. Chanting can be interrupted by taking damage, using a breath weapon, asphyxiating, eating, drinking, or chanting something else.
@@ -91,7 +91,7 @@ Boulder Brace
  Refill posture and regen unconditionally for 10 seconds
  Halved posture cooldown time
 Wind Scar
- Gain 20 charges, every extra block reach consumes a charge
+ Gain 20 charges and infinite range, every extra block reach consumes a charge
  +1 range
 Winter Wolf
  Stop projectiles and maintain passive for 15 seconds, attacks additionally fatigue target

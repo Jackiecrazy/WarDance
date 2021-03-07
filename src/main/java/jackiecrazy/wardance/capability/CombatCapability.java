@@ -24,6 +24,7 @@ import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.vector.Vector3d;
 import net.minecraftforge.common.util.FakePlayer;
 import net.minecraftforge.fml.network.PacketDistributor;
+import net.minecraftforge.registries.ForgeRegistries;
 
 import java.lang.ref.WeakReference;
 import java.util.UUID;
@@ -119,7 +120,7 @@ public class CombatCapability implements ICombatCapability {
     public boolean consumeSpirit(float amount, float above) {
         if (spirit - amount < above) return false;
         spirit -= amount;
-        burnout += amount * CombatConfig.burnout;
+        setBurnout(this.getBurnout() + amount * CombatConfig.burnout);
         setSpiritGrace(CombatConfig.spiritCD);
         return true;
     }
@@ -186,10 +187,10 @@ public class CombatCapability implements ICombatCapability {
         float weakness = 1;
         if (elb != null && elb.isPotionActive(Effects.HUNGER)) {
             for (int uwu = 0; uwu < elb.getActivePotionEffect(Effects.HUNGER).getAmplifier() + 1; uwu++)
-                weakness *= CombatConfig.weakness;
+                weakness *= CombatConfig.hunger;
         }
         posture -= amount;
-        fatigue += amount * CombatConfig.fatigue;
+        setFatigue(getFatigue() + amount * CombatConfig.fatigue);
         setPostureGrace((int) (CombatConfig.postureCD * weakness));
         sync();
         return ret;
@@ -451,6 +452,10 @@ public class CombatCapability implements ICombatCapability {
     public void setWounding(float amount) {
         wounding = Math.max(0, amount);
         if (dude.get() != null) {
+            boolean reg = (ForgeRegistries.ENTITIES.getKey(dude.get().getType()) != null && CombatConfig.immortal.contains(ForgeRegistries.ENTITIES.getKey(dude.get().getType()).toString()));
+            if (!CombatConfig.immortalWL == reg) {
+                wounding = 0;
+            }
             dude.get().getAttribute(Attributes.MAX_HEALTH).removeModifier(WOUND);
             dude.get().getAttribute(Attributes.MAX_HEALTH).applyNonPersistentModifier(new AttributeModifier(WOUND, "wounding", -amount, AttributeModifier.Operation.ADDITION));
         }
@@ -464,6 +469,12 @@ public class CombatCapability implements ICombatCapability {
     @Override
     public void setFatigue(float amount) {
         fatigue = Math.max(0, amount);
+        if (dude.get() != null) {
+            boolean reg = (ForgeRegistries.ENTITIES.getKey(dude.get().getType()) != null && CombatConfig.immortal.contains(ForgeRegistries.ENTITIES.getKey(dude.get().getType()).toString()));
+            if (!CombatConfig.immortalWL == reg) {
+                fatigue = 0;
+            }
+        }
     }
 
     @Override
@@ -474,6 +485,12 @@ public class CombatCapability implements ICombatCapability {
     @Override
     public void setBurnout(float amount) {
         burnout = Math.max(0, amount);
+        if (dude.get() != null) {
+            boolean reg = (ForgeRegistries.ENTITIES.getKey(dude.get().getType()) != null && CombatConfig.immortal.contains(ForgeRegistries.ENTITIES.getKey(dude.get().getType()).toString()));
+            if (!CombatConfig.immortalWL == reg) {
+                burnout = 0;
+            }
+        }
     }
 
     @Override
@@ -570,7 +587,7 @@ public class CombatCapability implements ICombatCapability {
         int qiExtra = decrementMightGrace(ticks);
         int spExtra = decrementSpiritGrace(ticks);
         int poExtra = decrementPostureGrace(ticks);
-        for (Hand h : Hand.values()){
+        for (Hand h : Hand.values()) {
             decrementHandBind(h, ticks);
             if (getHandBind(h) != 0) CombatUtils.setHandCooldown(elb, h, 0, true);
         }

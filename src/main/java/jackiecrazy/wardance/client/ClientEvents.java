@@ -416,7 +416,7 @@ public class ClientEvents {
         float cap = itsc.getMaxPosture();
         int left = atX - 91;
         float posture = itsc.getPosture();
-        float posPerc = MathHelper.clamp(posture / itsc.getTrueMaxPosture(), 0, 1);
+        float posPerc = MathHelper.clamp(posture / Math.max(0.1f, itsc.getTrueMaxPosture()), 0, 1);
         if (cap > 0) {
             short barWidth = 182;
             int filled = (int) (posture / itsc.getTrueMaxPosture() * (float) (barWidth));
@@ -531,7 +531,6 @@ public class ClientEvents {
                 }
             } else {
                 if (WarCompat.elenaiDodge) {
-
                     if (CombatConfig.elenaiP && CombatData.getCap(p).getPostureGrace() > 0) {
                         ClientTickEventListener.regen++;
                     } else if (CombatConfig.elenaiC) {
