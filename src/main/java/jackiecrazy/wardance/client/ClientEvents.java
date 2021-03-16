@@ -561,8 +561,18 @@ public class ClientEvents {
 
     @SubscribeEvent
     public static void sweepSwingOff(PlayerInteractEvent.RightClickEmpty e) {
-        CombatChannel.INSTANCE.sendToServer(new RequestSweepPacket(false));
-        e.getPlayer().swing(Hand.OFF_HAND,false);
+        if (e.getHand() == Hand.OFF_HAND) {
+            e.getPlayer().swing(Hand.OFF_HAND, false);
+            CombatChannel.INSTANCE.sendToServer(new RequestSweepPacket(false));
+        }
+    }
+
+    @SubscribeEvent
+    public static void sweepSwingOffItem(PlayerInteractEvent.RightClickItem e) {
+        if (e.getHand() == Hand.OFF_HAND) {
+            e.getPlayer().swing(Hand.OFF_HAND, false);
+            CombatChannel.INSTANCE.sendToServer(new RequestSweepPacket(false));
+        }
     }
 
 

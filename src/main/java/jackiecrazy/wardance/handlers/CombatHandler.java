@@ -23,6 +23,7 @@ import net.minecraft.util.math.EntityRayTraceResult;
 import net.minecraft.util.math.RayTraceResult;
 import net.minecraft.util.math.vector.Vector3d;
 import net.minecraft.world.server.ServerWorld;
+import net.minecraftforge.common.ForgeMod;
 import net.minecraftforge.event.entity.ProjectileImpactEvent;
 import net.minecraftforge.event.entity.living.*;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
@@ -37,7 +38,7 @@ public class CombatHandler {
     public static void projectileParry(final ProjectileImpactEvent e) {
         if (e.getRayTraceResult().getType() == RayTraceResult.Type.ENTITY && e.getRayTraceResult() instanceof EntityRayTraceResult && ((EntityRayTraceResult) e.getRayTraceResult()).getEntity() instanceof LivingEntity) {
             LivingEntity uke = (LivingEntity) ((EntityRayTraceResult) e.getRayTraceResult()).getEntity();
-            if(uke.isActiveItemStackBlocking())return;
+            if (uke.isActiveItemStackBlocking()) return;
             if (CombatUtils.getAwareness(null, uke) != CombatUtils.AWARENESS.ALERT) {
                 return;
             }
@@ -90,7 +91,7 @@ public class CombatHandler {
                 ukeCap.update();
                 semeCap.update();
                 //add stats if it's the first attack this tick and cooldown is sufficient
-                if(seme.getLastAttackedEntityTime()!=seme.ticksExisted){//first hit of a potential sweep attack
+                if (seme.getLastAttackedEntityTime() != seme.ticksExisted) {//first hit of a potential sweep attack
                     semeCap.addCombo(0.2f);
                     float might = ((semeCap.getCachedCooldown() * semeCap.getCachedCooldown()) / 781.25f * (1 + (semeCap.getCombo() / 10f)));
                     float weakness = 1;
@@ -116,7 +117,7 @@ public class CombatHandler {
                     return;
                 }
                 //blocking, reset posture cooldown without resetting combo cooldown, bypass parry
-                if(uke.isActiveItemStackBlocking()){
+                if (uke.isActiveItemStackBlocking()) {
                     ukeCap.consumePosture(0);
                     return;
                 }
@@ -283,7 +284,10 @@ public class CombatHandler {
     public static void offhandAttack(final PlayerInteractEvent.EntityInteract e) {
         if (!e.getPlayer().world.isRemote && (CombatUtils.isWeapon(e.getPlayer(), e.getPlayer().getHeldItemOffhand()) || (e.getPlayer().getHeldItemOffhand().isEmpty() && CombatData.getCap(e.getPlayer()).isCombatMode())) && (e.getPlayer().swingingHand != Hand.OFF_HAND || !e.getPlayer().isSwingInProgress)) {
             CombatData.getCap(e.getPlayer()).setOffhandAttack(true);
+            int a = CombatData.getCap(e.getPlayer()).getOffhandCooldown();
+            CombatUtils.sweep(e.getPlayer(), e.getTarget(), Hand.OFF_HAND, GeneralUtils.getAttributeValueSafe(e.getPlayer(), ForgeMod.REACH_DISTANCE.get()));
             CombatUtils.swapHeldItems(e.getPlayer());
+            e.getPlayer().ticksSinceLastSwing = a;
             e.getPlayer().attackTargetEntityWithCurrentItem(e.getTarget());
             e.getPlayer().swing(Hand.OFF_HAND, true);
             CombatUtils.swapHeldItems(e.getPlayer());

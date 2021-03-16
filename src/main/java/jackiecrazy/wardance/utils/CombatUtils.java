@@ -383,7 +383,10 @@ public class CombatUtils {
 
     public static void sweep(LivingEntity e, Entity ignore, Hand h, double reach) {
         if (!CombatConfig.betterSweep) return;
-        if (h == Hand.OFF_HAND) swapHeldItems(e);
+        if (h == Hand.OFF_HAND){
+            swapHeldItems(e);
+            CombatData.getCap(e).setOffhandAttack(true);
+        }
         int angle = EnchantmentHelper.getMaxEnchantmentLevel(Enchantments.SWEEPING, e) * CombatConfig.sweepAngle;
         if (e.getHeldItemMainhand().getItem() instanceof ICombatManipulator)
             angle = ((ICombatManipulator) e.getHeldItemMainhand().getItem()).sweepArea(e, e.getHeldItemMainhand());
@@ -406,7 +409,10 @@ public class CombatUtils {
             e.world.playSound(null, e.getPosX(), e.getPosY(), e.getPosZ(), SoundEvents.ENTITY_PLAYER_ATTACK_SWEEP, e.getSoundCategory(), 1.0F, 1.0F);
         }
         isSweeping = false;
-        if (h == Hand.OFF_HAND) swapHeldItems(e);
+        if (h == Hand.OFF_HAND){
+            swapHeldItems(e);
+            CombatData.getCap(e).setOffhandAttack(false);
+        }
     }
 
     public enum AWARENESS {
