@@ -26,12 +26,14 @@ public class MixinNewSweepAttack {
     public ServerPlayerEntity player;
 
     @Inject(method = "processUseEntity", locals = LocalCapture.CAPTURE_FAILSOFT,
-            at = @At(value = "INVOKE", shift = At.Shift.AFTER, target = "Lnet/minecraft/entity/player/ServerPlayerEntity;attackTargetEntityWithCurrentItem(Lnet/minecraft/entity/Entity;)V"))
+            at = @At(value = "INVOKE", shift = At.Shift.BEFORE, target = "Lnet/minecraft/entity/player/ServerPlayerEntity;attackTargetEntityWithCurrentItem(Lnet/minecraft/entity/Entity;)V"))
     private void sweep(CUseEntityPacket packetIn, CallbackInfo ci, ServerWorld serverworld, Entity entity, double d0, Hand hand, ItemStack itemstack, Optional optional) {
         if (player != null && CombatUtils.getCooledAttackStrength(player, Hand.MAIN_HAND, 1f) >= 0.9f) {
             double move = player.distanceWalkedModified - player.prevDistanceWalkedModified;
+            int temp = player.ticksSinceLastSwing;
             if (!(player.fallDistance > 0.0F && !player.isOnLadder() && !player.isInWater() && !player.isPotionActive(Effects.BLINDNESS) && !player.isPassenger()) && !player.isSprinting() && player.isOnGround() && move < (double) player.getAIMoveSpeed())
                 CombatUtils.sweep(player, entity, Hand.MAIN_HAND, GeneralUtils.getAttributeValueSafe(player, ForgeMod.REACH_DISTANCE.get()));
+            player.ticksSinceLastSwing = temp;
         }
     }
 

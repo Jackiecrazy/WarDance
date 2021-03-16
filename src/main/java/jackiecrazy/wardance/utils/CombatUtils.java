@@ -393,7 +393,7 @@ public class CombatUtils {
         for (Entity target : e.world.getEntitiesWithinAABBExcludingEntity(e, e.getBoundingBox().grow(reach))) {
             if (target == ignore) continue;
             if (!GeneralUtils.isFacingEntity(e, target, angle)) continue;
-            if (e.canEntityBeSeen(target)) continue;
+            if (!e.canEntityBeSeen(target)) continue;
             CombatUtils.setHandCooldown(e, Hand.MAIN_HAND, charge, false);
             hit = true;
             if (e instanceof PlayerEntity)
