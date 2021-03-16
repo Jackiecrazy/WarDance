@@ -5,8 +5,9 @@
   "refmap": "wardance.refmap.json",
   "mixins": [
     "MixinAttackSpeed",
-    "MixinEnchantmentHelper",
-    "MixinOffhandAttack"
+    "MixinNewSweepAttack",
+    "MixinOffhandAttack",
+    "MixinSweepDurabilitySuppressor"
   ],
   "client": [
     "MixinEquipProgress"

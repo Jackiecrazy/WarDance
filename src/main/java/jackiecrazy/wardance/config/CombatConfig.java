@@ -916,6 +916,9 @@ public class CombatConfig {
     private final ForgeConfigSpec.ConfigValue<List<? extends String>> _immortal;
     private final ForgeConfigSpec.BooleanValue _woundWL;
     private final ForgeConfigSpec.BooleanValue _immortalWL;
+    private final ForgeConfigSpec.BooleanValue _betterSweep;
+    private final ForgeConfigSpec.BooleanValue _sweepDurability;
+    private final ForgeConfigSpec.IntValue _sweepPerSE;
     private final ForgeConfigSpec.BooleanValue _dodge;
     private final ForgeConfigSpec.DoubleValue _mobParryChanceWeapon;
     private final ForgeConfigSpec.DoubleValue _mobParryChanceShield;
@@ -964,7 +967,8 @@ public class CombatConfig {
     public static ArrayList<String> woundList;
     public static boolean woundWL;
     public static ArrayList<String> immortal;
-    public static boolean immortalWL;
+    public static boolean immortalWL, betterSweep, sweepDurability;
+    public static int sweepAngle;
 
     public CombatConfig(ForgeConfigSpec.Builder b) {
         b.push("defense");
@@ -983,6 +987,9 @@ public class CombatConfig {
         _shatterCooldown = b.translation("wardance.config.shatterCD").comment("Ticks after a hit for which shatter will not be replenished").defineInRange("shatter cooldown", 200, 1, Integer.MAX_VALUE);
         b.pop();
         b.push("offense");
+        _betterSweep = b.translation("wardance.config.sweep").comment("overrides vanilla sweep with a version hits all affected entities for full damage and effects and works regardless of aim, with sweeping edge determining the angle which is swept. Sweeps will be completely suppressed if you don't have the enchantment.").define("enable better sweep", true);
+        _sweepDurability = b.translation("wardance.config.sweepD").comment("whether better sweep deals durability damage for each mob hit").define("durability damage per hit mob", false);
+        _sweepPerSE = b.translation("wardance.config.sweepE").comment("every level of sweeping edge gives this much extra angles when using better sweep").defineInRange("sweeping edge angle per level", 40, 0, Integer.MAX_VALUE);
         _staggerDuration = b.translation("wardance.config.staggerD").comment("Maximum number of ticks an entity should be staggered for when its posture reaches 0. The actual length of a given stagger is scaled by HP between the min and max values").defineInRange("max stagger duration", 60, 1, Integer.MAX_VALUE);
         _staggerDurationMin = b.translation("wardance.config.staggerM").comment("Minimum number of ticks an entity should be staggered for when its posture reaches 0. The actual length of a given stagger is scaled by HP between the min and max values").defineInRange("min stagger duration", 10, 1, Integer.MAX_VALUE);
         _staggerHits = b.translation("wardance.config.staggerH").comment("Number of hits a staggered entity will take before stagger is automatically canceled").defineInRange("stagger hits", 3, 1, Integer.MAX_VALUE);
@@ -1063,6 +1070,7 @@ public class CombatConfig {
         woundList = new ArrayList<>(CONFIG._woundBL.get());
         immortal = new ArrayList<>(CONFIG._immortal.get());
         woundWL = CONFIG._woundWL.get();
+        immortalWL = CONFIG._immortalWL.get();
         stab = CONFIG._stab.get();
         distract = stab ? CONFIG._distract.get().floatValue() : 1;
         unaware = stab ? CONFIG._unaware.get().floatValue() : 1;
@@ -1072,6 +1080,9 @@ public class CombatConfig {
         hunger = CONFIG._hunger.get().floatValue();
         luck = CONFIG._luck.get().floatValue();
         nausea = CONFIG._nausea.get().floatValue();
+        betterSweep = CONFIG._betterSweep.get();
+        sweepAngle = CONFIG._sweepPerSE.get();
+        sweepDurability = CONFIG._sweepDurability.get();
         CombatUtils.updateLists(CONFIG._combatItems.get(), CONFIG._customPosture.get(), CONFIG._customArmor.get(), defaultMultiplierPostureAttack, defaultMultiplierPostureDefend, shieldThreshold, shieldCount);
     }
 

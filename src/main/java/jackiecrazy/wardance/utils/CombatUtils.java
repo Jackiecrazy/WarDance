@@ -2,6 +2,7 @@ package jackiecrazy.wardance.utils;
 
 import jackiecrazy.wardance.WarDance;
 import jackiecrazy.wardance.api.CombatDamageSource;
+import jackiecrazy.wardance.api.ICombatManipulator;
 import jackiecrazy.wardance.api.WarAttributes;
 import jackiecrazy.wardance.capability.CombatData;
 import jackiecrazy.wardance.capability.ICombatCapability;
@@ -9,6 +10,8 @@ import jackiecrazy.wardance.client.ClientEvents;
 import jackiecrazy.wardance.config.CombatConfig;
 import jackiecrazy.wardance.networking.CombatChannel;
 import jackiecrazy.wardance.networking.UpdateAttackPacket;
+import net.minecraft.enchantment.EnchantmentHelper;
+import net.minecraft.enchantment.Enchantments;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.MobEntity;
@@ -20,10 +23,7 @@ import net.minecraft.inventory.EquipmentSlotType;
 import net.minecraft.item.ArmorItem;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
-import net.minecraft.util.DamageSource;
-import net.minecraft.util.Hand;
-import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.Tuple;
+import net.minecraft.util.*;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.vector.Vector3d;
 import net.minecraftforge.api.distmarker.Dist;
@@ -377,6 +377,36 @@ public class CombatUtils {
         e.ticksSinceLastSwing = cap.getOffhandCooldown();
         cap.setOffhandCooldown(tssl);
         e.setSilent(silent);
+    }
+
+    public static boolean isSweeping = false;
+
+    public static void sweep(LivingEntity e, Entity ignore, Hand h, double reach) {
+        if (!CombatConfig.betterSweep) return;
+        if (h == Hand.OFF_HAND) swapHeldItems(e);
+        int angle = EnchantmentHelper.getMaxEnchantmentLevel(Enchantments.SWEEPING, e) * CombatConfig.sweepAngle;
+        if (e.getHeldItemMainhand().getItem() instanceof ICombatManipulator)
+            angle = ((ICombatManipulator) e.getHeldItemMainhand().getItem()).sweepArea(e, e.getHeldItemMainhand());
+        float charge = Math.max(CombatUtils.getCooledAttackStrength(e, Hand.MAIN_HAND, 0.5f), CombatData.getCap(e).getCachedCooldown());
+        boolean hit = false;
+        isSweeping = ignore != null;
+        for (Entity target : e.world.getEntitiesWithinAABBExcludingEntity(e, e.getBoundingBox().grow(reach))) {
+            if (target == ignore) continue;
+            if (!GeneralUtils.isFacingEntity(e, target, angle)) continue;
+            if (e.canEntityBeSeen(target)) continue;
+            CombatUtils.setHandCooldown(e, Hand.MAIN_HAND, charge, false);
+            hit = true;
+            if (e instanceof PlayerEntity)
+                ((PlayerEntity) e).attackTargetEntityWithCurrentItem(target);
+            else e.attackEntityAsMob(target);
+            isSweeping = true;
+        }
+        if (e instanceof PlayerEntity && hit) {
+            ((PlayerEntity) e).spawnSweepParticles();
+            e.world.playSound(null, e.getPosX(), e.getPosY(), e.getPosZ(), SoundEvents.ENTITY_PLAYER_ATTACK_SWEEP, e.getSoundCategory(), 1.0F, 1.0F);
+        }
+        isSweeping = false;
+        if (h == Hand.OFF_HAND) swapHeldItems(e);
     }
 
     public enum AWARENESS {

@@ -4,6 +4,7 @@ import jackiecrazy.wardance.api.CombatDamageSource;
 import jackiecrazy.wardance.capability.CombatData;
 import jackiecrazy.wardance.capability.ICombatCapability;
 import jackiecrazy.wardance.config.CombatConfig;
+import org.objectweb.asm.Opcodes;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.LivingEntity;
@@ -20,9 +21,6 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.Redirect;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.LocalCapture;
-
-import java.util.Optional;
-import java.util.concurrent.atomic.AtomicReference;
 
 @Mixin(PlayerEntity.class)
 public abstract class MixinOffhandAttack extends LivingEntity {
@@ -51,23 +49,21 @@ public abstract class MixinOffhandAttack extends LivingEntity {
         return new CombatDamageSource("player", player).setDamageDealer(player.getHeldItemMainhand()).setAttackingHand(CombatData.getCap(player).isOffhandAttack() ? Hand.OFF_HAND : Hand.MAIN_HAND).setProcAttackEffects(true).setProcAutoEffects(true).setCrit(tempCrit).setDamageTyping(CombatDamageSource.TYPE.PHYSICAL);
     }
 
-    @Inject(method = "attackTargetEntityWithCurrentItem", locals = LocalCapture.CAPTURE_FAILSOFT,
+    @Redirect(method = "attackTargetEntityWithCurrentItem",
+            at = @At(value = "FIELD", target = "Lnet/minecraft/entity/player/PlayerEntity;distanceWalkedModified:F", opcode = Opcodes.GETFIELD))
+    private float noSweep(PlayerEntity player) {
+        if (CombatConfig.betterSweep)
+            return Float.MAX_VALUE;
+        return distanceWalkedModified;
+    }
+
+    @Inject(method = "attackTargetEntityWithCurrentItem",
             at = @At(value = "INVOKE", target = "Lnet/minecraft/entity/Entity;attackEntityFrom(Lnet/minecraft/util/DamageSource;F)Z"))
-    private void stats(Entity targetEntity, CallbackInfo ci, float f, float f1, float f2, boolean flag, boolean flag1, int i, boolean flag2, CriticalHitEvent hitResult, boolean flag3, double d0, float f4, boolean flag4, int j, Vector3d vector3d, PlayerEntity var22) {
+    private void stats(Entity targetEntity, CallbackInfo ci) {
         targetEntity.hurtResistantTime = 0;
         if (targetEntity instanceof LivingEntity) {
             ((LivingEntity) targetEntity).hurtTime = ((LivingEntity) targetEntity).maxHurtTime = 0;
         }
-        ICombatCapability cap = CombatData.getCap(this);
-        cap.addCombo(0.2f);
-        float might = ((f2 * f2) / 781.25f * (1 + (cap.getCombo() / 10f)));
-        float weakness = 1;
-        if (var22.isPotionActive(Effects.WEAKNESS))
-            for (int foo = 0; foo < var22.getActivePotionEffect(Effects.WEAKNESS).getAmplifier() + 1; foo++) {
-                weakness *= CombatConfig.weakness;
-            }
-        cap.addMight(might * weakness);
-        cap.consumePosture(0);
     }
 
     //TODO rewrite sweep for full damage and effects

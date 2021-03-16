@@ -1,6 +1,7 @@
 buildscript {
     repositories {
         maven { url = 'https://files.minecraftforge.net/maven' }
+        maven { url = 'https://repo.spongepowered.org/repository/maven-public' }
         maven { url 'https://plugins.gradle.org/m2/' }
         maven { url = 'https://dist.creeper.host/Sponge/maven' }
         jcenter()
@@ -17,7 +18,7 @@ apply plugin: 'com.matthewprenger.cursegradle'
 apply plugin: 'maven-publish'
 apply plugin: 'org.spongepowered.mixin'
 
-version = '0.2.6.3'
+version = '0.2.7'
 group = 'jackiecrazy.wardance' // http://maven.apache.org/guides/mini/guide-naming-conventions.html
 archivesBaseName = 'wardance'
 
@@ -109,6 +110,7 @@ dependencies {
     // The userdev artifact is a special name and will get all sorts of transformations applied to it.
     minecraft 'net.minecraftforge:forge:1.16.5-36.0.42'
     compile fg.deobf("curse.maven:elenaidodge2-442962:3221492")
+    //compile fg.deobf("curse.maven:offhandcombat-417112:3203449")
 }
 
 // Example for how to get properties into the manifest for reading by the runtime..

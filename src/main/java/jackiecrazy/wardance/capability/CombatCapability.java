@@ -176,7 +176,7 @@ public class CombatCapability implements ICombatCapability {
             posture = 0;
             if (elb == null) return ret;
             setStaggerCount(CombatConfig.staggerHits);
-            setStaggerTime(CombatConfig.staggerDurationMin + Math.max(0, (int) (elb.getHealth() / elb.getMaxHealth() * (CombatConfig.staggerDuration - CombatConfig.staggerDurationMin))));
+            setStaggerTime(CombatConfig.staggerDurationMin + Math.max(0, (int) ((elb.getMaxHealth() - elb.getHealth()) / elb.getMaxHealth() * (CombatConfig.staggerDuration - CombatConfig.staggerDurationMin))));
             elb.world.playSound(null, elb.getPosX(), elb.getPosY(), elb.getPosZ(), SoundEvents.ENTITY_ZOMBIE_BREAK_WOODEN_DOOR, SoundCategory.PLAYERS, 0.3f + WarDance.rand.nextFloat() * 0.5f, 0.75f + WarDance.rand.nextFloat() * 0.5f);
             elb.getAttribute(Attributes.MOVEMENT_SPEED).removeModifier(WOUND);
             elb.getAttribute(Attributes.MOVEMENT_SPEED).applyPersistentModifier(STAGGERS);

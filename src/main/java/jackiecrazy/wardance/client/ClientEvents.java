@@ -10,10 +10,7 @@ import jackiecrazy.wardance.capability.CombatData;
 import jackiecrazy.wardance.capability.ICombatCapability;
 import jackiecrazy.wardance.config.ClientConfig;
 import jackiecrazy.wardance.config.CombatConfig;
-import jackiecrazy.wardance.networking.CombatChannel;
-import jackiecrazy.wardance.networking.CombatPacket;
-import jackiecrazy.wardance.networking.DodgePacket;
-import jackiecrazy.wardance.networking.RequestUpdatePacket;
+import jackiecrazy.wardance.networking.*;
 import jackiecrazy.wardance.utils.CombatUtils;
 import net.minecraft.client.GameSettings;
 import net.minecraft.client.MainWindow;
@@ -46,6 +43,7 @@ import net.minecraftforge.client.event.RenderGameOverlayEvent;
 import net.minecraftforge.client.event.RenderHandEvent;
 import net.minecraftforge.client.event.RenderLivingEvent;
 import net.minecraftforge.event.TickEvent;
+import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 import net.minecraftforge.eventbus.api.EventPriority;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
@@ -100,7 +98,7 @@ public class ClientEvents {
         final ICombatCapability itsc = CombatData.getCap(mc.player);
         if (Keybinds.COMBAT.getKeyConflictContext().isActive() && Keybinds.COMBAT.isPressed()) {
             mc.player.sendStatusMessage(new TranslationTextComponent("wardance.combat." + (itsc.isCombatMode() ? "off" : "on")), true);
-            CombatChannel.INSTANCE.sendToServer(new CombatPacket());
+            CombatChannel.INSTANCE.sendToServer(new CombatModePacket());
         }
 //        if (itsc.getStaggerTime() > 0) {
 //            //no moving while you're rooted!
@@ -554,6 +552,19 @@ public class ClientEvents {
             }
         }
     }
+
+    //TODO make reach affect attack
+    @SubscribeEvent
+    public static void sweepSwing(PlayerInteractEvent.LeftClickEmpty e) {
+        CombatChannel.INSTANCE.sendToServer(new RequestSweepPacket(true));
+    }
+
+    @SubscribeEvent
+    public static void sweepSwingOff(PlayerInteractEvent.RightClickEmpty e) {
+        CombatChannel.INSTANCE.sendToServer(new RequestSweepPacket(false));
+        e.getPlayer().swing(Hand.OFF_HAND,false);
+    }
+
 
     private static float updateValue(float f, float to) {
         if (f == -1) return to;

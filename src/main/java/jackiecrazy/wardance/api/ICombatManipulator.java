@@ -8,6 +8,11 @@ import net.minecraftforge.eventbus.api.Event;
 
 public interface ICombatManipulator {
     /**
+     * dictates the angle of the sweep area. Vanilla is 1 block flat range, PWD default is (+40 for every level of sweeping edge)
+     */
+    int sweepArea(LivingEntity attacker, ItemStack item);
+
+    /**
      * called on LivingAttackEvent to determine whether the hit is valid
      */
     boolean canAttack(DamageSource ds, LivingEntity attacker, LivingEntity target, ItemStack item, float orig);

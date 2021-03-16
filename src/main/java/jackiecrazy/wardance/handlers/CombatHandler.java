@@ -17,16 +17,14 @@ import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.projectile.ProjectileEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.particles.ParticleTypes;
+import net.minecraft.potion.Effects;
 import net.minecraft.util.*;
 import net.minecraft.util.math.EntityRayTraceResult;
 import net.minecraft.util.math.RayTraceResult;
 import net.minecraft.util.math.vector.Vector3d;
 import net.minecraft.world.server.ServerWorld;
 import net.minecraftforge.event.entity.ProjectileImpactEvent;
-import net.minecraftforge.event.entity.living.LivingAttackEvent;
-import net.minecraftforge.event.entity.living.LivingDamageEvent;
-import net.minecraftforge.event.entity.living.LivingHurtEvent;
-import net.minecraftforge.event.entity.living.LivingKnockBackEvent;
+import net.minecraftforge.event.entity.living.*;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 import net.minecraftforge.eventbus.api.EventPriority;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
@@ -39,6 +37,7 @@ public class CombatHandler {
     public static void projectileParry(final ProjectileImpactEvent e) {
         if (e.getRayTraceResult().getType() == RayTraceResult.Type.ENTITY && e.getRayTraceResult() instanceof EntityRayTraceResult && ((EntityRayTraceResult) e.getRayTraceResult()).getEntity() instanceof LivingEntity) {
             LivingEntity uke = (LivingEntity) ((EntityRayTraceResult) e.getRayTraceResult()).getEntity();
+            if(uke.isActiveItemStackBlocking())return;
             if (CombatUtils.getAwareness(null, uke) != CombatUtils.AWARENESS.ALERT) {
                 return;
             }
@@ -90,16 +89,35 @@ public class CombatHandler {
                 ICombatCapability semeCap = CombatData.getCap(seme);
                 ukeCap.update();
                 semeCap.update();
+                //add stats if it's the first attack this tick and cooldown is sufficient
+                if(seme.getLastAttackedEntityTime()!=seme.ticksExisted){//first hit of a potential sweep attack
+                    semeCap.addCombo(0.2f);
+                    float might = ((semeCap.getCachedCooldown() * semeCap.getCachedCooldown()) / 781.25f * (1 + (semeCap.getCombo() / 10f)));
+                    float weakness = 1;
+                    if (seme.isPotionActive(Effects.WEAKNESS))
+                        for (int foo = 0; foo < seme.getActivePotionEffect(Effects.WEAKNESS).getAmplifier() + 1; foo++) {
+                            weakness *= CombatConfig.weakness;
+                        }
+                    semeCap.addMight(might * weakness);
+                    semeCap.consumePosture(0);
+                }
                 boolean canParry = GeneralUtils.isFacingEntity(uke, seme, 120);
                 boolean useDeflect = (uke instanceof PlayerEntity || WarDance.rand.nextFloat() > CombatConfig.mobDeflectChance) && GeneralUtils.isFacingEntity(uke, seme, 120 + 2 * (int) GeneralUtils.getAttributeValueSafe(uke, WarAttributes.DEFLECTION.get())) && !canParry;
                 Hand h = semeCap.isOffhandAttack() ? Hand.OFF_HAND : Hand.MAIN_HAND;
+                //hand bound, no attack
                 if (semeCap.getStaggerTime() > 0 || semeCap.getHandBind(h) > 0) {
                     e.setCanceled(true);
                     return;
                 }
+                //staggered, no parry
                 if (ukeCap.getStaggerTime() > 0) {
                     ukeCap.decrementStaggerCount(1);
                     downingHit = false;
+                    return;
+                }
+                //blocking, reset posture cooldown without resetting combo cooldown, bypass parry
+                if(uke.isActiveItemStackBlocking()){
+                    ukeCap.consumePosture(0);
                     return;
                 }
                 //parry code start, grab attack multiplier
@@ -242,7 +260,7 @@ public class CombatHandler {
 
     }
 
-    @SubscribeEvent
+    @SubscribeEvent(priority = EventPriority.HIGHEST)
     public static void tanky(LivingDamageEvent e) {
         if (CombatData.getCap(e.getEntityLiving()).getStaggerTime() == 0 && CombatUtils.isPhysicalAttack(e.getSource())) {
             if (e.getSource().getTrueSource() instanceof LivingEntity && CombatUtils.getAwareness((LivingEntity) e.getSource().getTrueSource(), e.getEntityLiving()) == CombatUtils.AWARENESS.UNAWARE)
@@ -251,6 +269,13 @@ public class CombatHandler {
             //absorption
             amount -= GeneralUtils.getAttributeValueSafe(e.getEntityLiving(), WarAttributes.ABSORPTION.get());
             e.setAmount(amount);
+        }
+        if (e.getAmount() > e.getEntityLiving().getHealth() + e.getEntityLiving().getAbsorptionAmount()) {
+            //are we gonna die? Well, I don't really care either way. Begone, drain!
+            ICombatCapability icc = CombatData.getCap(e.getEntityLiving());
+            icc.setFatigue(0);
+            icc.setWounding(0);
+            icc.setBurnout(0);
         }
     }
 
@@ -264,5 +289,14 @@ public class CombatHandler {
             CombatUtils.swapHeldItems(e.getPlayer());
             CombatData.getCap(e.getPlayer()).setOffhandAttack(false);
         }
+    }
+
+    @SubscribeEvent(priority = EventPriority.LOWEST)
+    public static void adMortemInimicus(final LivingDeathEvent e) {
+        //you dead yet? Well, I don't really care either way. Begone, drain!
+        ICombatCapability icc = CombatData.getCap(e.getEntityLiving());
+        icc.setFatigue(0);
+        icc.setWounding(0);
+        icc.setBurnout(0);
     }
 }
