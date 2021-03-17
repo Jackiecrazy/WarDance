@@ -283,6 +283,8 @@ public class GeneralUtils {
      * if horAngle is negative, it'll invoke isBehindEntity instead.
      */
     public static boolean isFacingEntity(Entity entity1, Entity entity2, int horAngle, int vertAngle) {
+        horAngle = Math.min(horAngle, 360);
+        vertAngle = Math.min(vertAngle, 360);
         if (horAngle < 0) return isBehindEntity(entity2, entity1, -horAngle, Math.abs(vertAngle));
         double xDiff = entity1.getPosX() - entity2.getPosX(), zDiff = entity1.getPosZ() - entity2.getPosZ();
         if (vertAngle != 360) {

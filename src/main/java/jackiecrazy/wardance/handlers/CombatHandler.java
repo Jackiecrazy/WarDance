@@ -282,7 +282,7 @@ public class CombatHandler {
 
     @SubscribeEvent
     public static void offhandAttack(final PlayerInteractEvent.EntityInteract e) {
-        if (!e.getPlayer().world.isRemote && (CombatUtils.isWeapon(e.getPlayer(), e.getPlayer().getHeldItemOffhand()) || (e.getPlayer().getHeldItemOffhand().isEmpty() && CombatData.getCap(e.getPlayer()).isCombatMode())) && (e.getPlayer().swingingHand != Hand.OFF_HAND || !e.getPlayer().isSwingInProgress)) {
+        if (!e.getPlayer().world.isRemote && e.getHand() == Hand.OFF_HAND && (CombatUtils.isWeapon(e.getPlayer(), e.getPlayer().getHeldItemOffhand()) || (e.getPlayer().getHeldItemOffhand().isEmpty() && CombatData.getCap(e.getPlayer()).isCombatMode())) && (e.getPlayer().swingingHand != Hand.OFF_HAND || !e.getPlayer().isSwingInProgress)) {
             CombatData.getCap(e.getPlayer()).setOffhandAttack(true);
             int a = CombatData.getCap(e.getPlayer()).getOffhandCooldown();
             CombatUtils.sweep(e.getPlayer(), e.getTarget(), Hand.OFF_HAND, GeneralUtils.getAttributeValueSafe(e.getPlayer(), ForgeMod.REACH_DISTANCE.get()));

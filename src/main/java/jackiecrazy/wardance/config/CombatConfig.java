@@ -942,6 +942,10 @@ public class CombatConfig {
     private final ForgeConfigSpec.DoubleValue _weakness;
     private final ForgeConfigSpec.DoubleValue _hunger;
     private final ForgeConfigSpec.DoubleValue _luck;
+    private final ForgeConfigSpec.IntValue _baseDetectionHorizontal;
+    private final ForgeConfigSpec.IntValue _baseDetectionVertical;
+    private final ForgeConfigSpec.IntValue _anglePerArmor;
+    private final ForgeConfigSpec.DoubleValue _blockPerVolume;
 
     public static float posturePerProjectile;
     public static int shatterCooldown;
@@ -968,7 +972,8 @@ public class CombatConfig {
     public static boolean woundWL;
     public static ArrayList<String> immortal;
     public static boolean immortalWL, betterSweep, sweepDurability;
-    public static int sweepAngle;
+    public static int sweepAngle, baseHorizontalDetection, baseVerticalDetection, anglePerArmor;
+    public static double blockPerVolume;
 
     public CombatConfig(ForgeConfigSpec.Builder b) {
         b.push("defense");
@@ -1012,8 +1017,12 @@ public class CombatConfig {
         _elenaiP = b.translation("wardance.config.elenaiPosture").comment("if compat is enabled, whether posture cooldown disables feather recharging").define("feather posture", true);
         _elenaiC = b.translation("wardance.config.elenaiCombo").comment("if compat is enabled, whether high combo multiplies feather regeneration speed").define("feather combo", true);
         b.pop();
-        b.push("stabbing");
+        b.push("stealth");
         _stab = b.translation("wardance.config.stabby").comment("enable or disable the entire system").define("enable stabbing", true);
+        _baseDetectionHorizontal = b.translation("wardance.config.detectH").comment("mobs start out with this FoV of full detection on the xz plane").defineInRange("default mob horizontal FoV", 120, 0, 360);
+        _baseDetectionVertical = b.translation("wardance.config.detectV").comment("mobs start out with this FoV of full detection on the y axis").defineInRange("default mob vertical FoV", 60, 0, 360);
+        _anglePerArmor = b.translation("wardance.config.perarmor").comment("your armor points are multiplied by this to generate a new FoV for the purpose of detection by mobs, if it is greater than the default").defineInRange("armor stealth debuff", 18, 0, 360);
+        _blockPerVolume = b.translation("wardance.config.volume").comment("this value is multiplied by the volume of a sound to determine how far it'll alert mobs to investigate from. Large values will GREATLY impact performance, you have been warned.").defineInRange("alert volume multiplier", 4, 0, Double.MAX_VALUE);
         _distract = b.translation("wardance.config.distract").comment("posture and health damage multiplier for distracted stabs").defineInRange("distracted stab multiplier", 1.5, 0, Double.MAX_VALUE);
         _unaware = b.translation("wardance.config.unaware").comment("posture and health damage multiplier for unaware stabs").defineInRange("unaware stab multiplier", 1.5, 0, Double.MAX_VALUE);
         _ignore = b.translation("wardance.config.ignore").comment("whether unaware stabs ignore parry, deflection, shatter, and absorption").define("unaware stab defense ignore", true);
@@ -1083,6 +1092,10 @@ public class CombatConfig {
         betterSweep = CONFIG._betterSweep.get();
         sweepAngle = CONFIG._sweepPerSE.get();
         sweepDurability = CONFIG._sweepDurability.get();
+        anglePerArmor = CONFIG._anglePerArmor.get();
+        baseHorizontalDetection = CONFIG._baseDetectionHorizontal.get();
+        baseVerticalDetection = CONFIG._baseDetectionVertical.get();
+        blockPerVolume = CONFIG._blockPerVolume.get();
         CombatUtils.updateLists(CONFIG._combatItems.get(), CONFIG._customPosture.get(), CONFIG._customArmor.get(), defaultMultiplierPostureAttack, defaultMultiplierPostureDefend, shieldThreshold, shieldCount);
     }
 

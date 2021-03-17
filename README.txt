@@ -64,6 +64,16 @@ Sidesteps and rolls: OP pls nerf
 - While rolling you are immune to all melee and projectile attacks for 10 ticks, but it also reduces your max posture as you become 0.6x0.6. Failure to escape as you come out of recovery could result in the opponent staggering you very easily.
 - Sprint-sneaking will perform a slide forward with the same effect as dodge.
 - Sidesteps and rolls are suppressed with Elenai Dodge 2 installed. Might bonus from combo will also apply to feather regeneration, but regeneration will be halted by posture cooldown. Dodges when staggered are changed into rolls.
+Stealth: Sneak 100
+- Mobs are unaware if they are not in combat and haven't noticed you, distracted if they are attacking something else, and alert otherwise.
+- Distracted enemies take more damage, and unaware enemies additionally cannot parry, deflect, absorb, or shatter an incoming attack. Weapons have a stabbing multiplier that increases stabbing damage. Attacking an unaware enemy dispels your invisibility, if any.
+- Mob detection range is full in their 120 degree frontal sector and halved elsewhere.
+- The vision range is 60 degrees vertically, because living things are adapted to survey a flat area, and to encourage using vertical space.
+- Light level will decrease detection range by up to 50% at 0 light and increase by up to 10% at 15 light. Mobs with night vision do not receive a bonus or malus.
+- Armor adds detection range by 18 degrees per protection point. This overwrites the fixed mob detection range if it is higher, so leather doesn't impede stealth and full diamond nullifies the vision malus.
+- Sprinting adds 10% to detection radius; breaking LoS with the target will halve detection radius.
+- Mobs will investigate sound when unaware; this will distract them. Making sounds such as taking damage from fall and causing explosions will draw enemies in an area to you, but you can also shoot arrows to distract mobs for stealth missions.
+- If you are about to be discovered from out of LoS, the luck of you and your opponent will be compared to give you a chance of negating discovery. The max possible is a 60% chance to negate discovery.
 Spells and skills: hit stuff so you can hit harder!
 - Skills must be first set in the skill screen, then brought up in combat mode with the F key as a radial menu. Half the screen (4 slots) is available for each hand to add skills, and two-handing gives 8 skill slots. Combined with 4 spell slots that don’t require weapons, you can have 12 skills equipped at any given time.
 - Skills are split into categories depending on their resource consumption for recharge (e.g. might, spirit, time, normal attacks, distance moved, etc). All skills of the same category have their “timers” set to half upon casting one so you can’t continuously chain moves of the same category.

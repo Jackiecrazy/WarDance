@@ -1,15 +1,13 @@
 package jackiecrazy.wardance.handlers;
 
 import jackiecrazy.wardance.WarDance;
-import jackiecrazy.wardance.api.WarAttributes;
 import jackiecrazy.wardance.capability.CombatData;
 import jackiecrazy.wardance.capability.ICombatCapability;
 import jackiecrazy.wardance.config.CombatConfig;
-import jackiecrazy.wardance.networking.CombatChannel;
-import jackiecrazy.wardance.networking.RequestUpdatePacket;
-import net.minecraft.client.Minecraft;
+import jackiecrazy.wardance.utils.CombatUtils;
+import jackiecrazy.wardance.utils.GeneralUtils;
+import net.minecraft.entity.CreatureEntity;
 import net.minecraft.entity.Entity;
-import net.minecraft.entity.EntityType;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.MobEntity;
 import net.minecraft.entity.ai.attributes.Attributes;
@@ -18,10 +16,10 @@ import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.event.AttachCapabilitiesEvent;
 import net.minecraftforge.event.TickEvent;
-import net.minecraftforge.event.entity.EntityAttributeCreationEvent;
-import net.minecraftforge.event.entity.EntityAttributeModificationEvent;
 import net.minecraftforge.event.entity.EntityJoinWorldEvent;
+import net.minecraftforge.event.entity.PlaySoundAtEntityEvent;
 import net.minecraftforge.event.entity.living.LivingEvent;
+import net.minecraftforge.event.entity.living.LivingSetAttackTargetEvent;
 import net.minecraftforge.event.entity.player.PlayerEvent;
 import net.minecraftforge.event.entity.player.PlayerWakeUpEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
@@ -29,17 +27,14 @@ import net.minecraftforge.fml.LogicalSide;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.event.server.FMLServerStartingEvent;
 import net.minecraftforge.fml.event.server.FMLServerStoppingEvent;
-import net.minecraftforge.registries.ForgeRegistries;
-import net.minecraftforge.registries.RegistryManager;
 
-import java.util.ArrayList;
 import java.util.EnumSet;
 import java.util.HashMap;
 
 
 @Mod.EventBusSubscriber(modid = WarDance.MODID)
 public class EntityHandler {
-    public static HashMap<PlayerEntity, Entity> mustUpdate=new HashMap<>();
+    public static HashMap<PlayerEntity, Entity> mustUpdate = new HashMap<>();
 
     private static class NoGoal extends Goal {
         LivingEntity e;
@@ -66,13 +61,13 @@ public class EntityHandler {
     }
 
     @SubscribeEvent
-    public static void start(FMLServerStartingEvent e){
-        mustUpdate=new HashMap<>();
+    public static void start(FMLServerStartingEvent e) {
+        mustUpdate = new HashMap<>();
     }
 
     @SubscribeEvent
-    public static void stop(FMLServerStoppingEvent e){
-        mustUpdate=new HashMap<>();
+    public static void stop(FMLServerStoppingEvent e) {
+        mustUpdate = new HashMap<>();
     }
 
     @SubscribeEvent
@@ -129,6 +124,27 @@ public class EntityHandler {
     public static void noJump(LivingEvent.LivingJumpEvent e) {
         if (!(e.getEntityLiving() instanceof PlayerEntity) && CombatData.getCap(e.getEntityLiving()).getStaggerTime() > 0) {
             e.getEntityLiving().setMotion(0, 0, 0);
+        }
+    }
+
+    @SubscribeEvent
+    public static void sneak(final LivingEvent.LivingVisibilityEvent e) {
+        if (e.getLookingEntity() instanceof LivingEntity) {
+            LivingEntity sneaker = (LivingEntity) e.getLookingEntity(), watcher = e.getEntityLiving();
+            if (!GeneralUtils.isFacingEntity(watcher, sneaker, Math.max(CombatConfig.baseHorizontalDetection, sneaker.getTotalArmorValue() * CombatConfig.anglePerArmor), Math.max(CombatConfig.baseVerticalDetection, sneaker.getTotalArmorValue() * sneaker.getTotalArmorValue())))
+                e.modifyVisibility(0.5);
+            e.modifyVisibility(0.5 + sneaker.world.getLight(sneaker.getPosition()) * 0.04);
+            e.modifyVisibility(sneaker.isSprinting() ? 1.1 : watcher.canEntityBeSeen(sneaker) ? 0.5 : 1);
+        }
+    }
+
+    @SubscribeEvent
+    public static void pray(LivingSetAttackTargetEvent e) {
+        if (!GeneralUtils.isFacingEntity(e.getEntityLiving(), e.getTarget(), Math.max(CombatConfig.baseHorizontalDetection, e.getTarget().getTotalArmorValue() * CombatConfig.anglePerArmor), Math.max(CombatConfig.baseVerticalDetection, e.getTarget().getTotalArmorValue() * e.getTarget().getTotalArmorValue()))){
+            //outside of LoS, perform luck check. Pray to RNGesus!
+            double luckDiff = GeneralUtils.getAttributeValueSafe(e.getTarget(), Attributes.LUCK) - GeneralUtils.getAttributeValueSafe(e.getEntityLiving(), Attributes.LUCK);
+            if (luckDiff > 0 && WarDance.rand.nextFloat() < (luckDiff / (2 + luckDiff)))
+                ((MobEntity) e.getEntityLiving()).setAttackTarget(null);
         }
     }
 }

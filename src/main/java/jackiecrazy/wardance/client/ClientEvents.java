@@ -12,6 +12,7 @@ import jackiecrazy.wardance.config.ClientConfig;
 import jackiecrazy.wardance.config.CombatConfig;
 import jackiecrazy.wardance.networking.*;
 import jackiecrazy.wardance.utils.CombatUtils;
+import jackiecrazy.wardance.utils.GeneralUtils;
 import net.minecraft.client.GameSettings;
 import net.minecraft.client.MainWindow;
 import net.minecraft.client.Minecraft;
@@ -25,23 +26,16 @@ import net.minecraft.client.settings.PointOfView;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.entity.projectile.ProjectileHelper;
 import net.minecraft.item.ItemStack;
-import net.minecraft.util.Hand;
-import net.minecraft.util.HandSide;
-import net.minecraft.util.MovementInput;
-import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.math.AxisAlignedBB;
-import net.minecraft.util.math.MathHelper;
-import net.minecraft.util.math.RayTraceContext;
-import net.minecraft.util.math.RayTraceResult;
+import net.minecraft.util.*;
+import net.minecraft.util.math.*;
 import net.minecraft.util.math.vector.Vector3d;
 import net.minecraft.util.math.vector.Vector3f;
 import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.client.event.InputUpdateEvent;
-import net.minecraftforge.client.event.RenderGameOverlayEvent;
-import net.minecraftforge.client.event.RenderHandEvent;
-import net.minecraftforge.client.event.RenderLivingEvent;
+import net.minecraftforge.client.event.*;
+import net.minecraftforge.common.ForgeMod;
 import net.minecraftforge.event.TickEvent;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 import net.minecraftforge.eventbus.api.EventPriority;
@@ -70,8 +64,6 @@ public class ClientEvents {
     private static float currentMightLevel = 0;
     private static float currentComboLevel = 0;
     private static float currentSpiritLevel = 0;
-    private static float yourCurrentPostureLevel = 0;
-    private static float theirCurrentPostureLevel = 0;
     private static final DecimalFormat formatter = new DecimalFormat("#.#");
 
     static {
@@ -390,10 +382,10 @@ public class ClientEvents {
                 //render posture bar if not full, displayed even out of combat mode because it's pretty relevant to not dying
                 if (cap.getPosture() < cap.getMaxPosture() || cap.getStaggerTime() > 0)
                     drawPostureBarreAt(true, event.getMatrixStack(), player, width / 2 + ClientConfig.yourPostureX, height - ClientConfig.yourPostureY);
-                Entity look = getEntityLookedAt(player);
+                Entity look = getEntityLookedAt(player, 32);
                 if (look instanceof LivingEntity && ClientConfig.displayEnemyPosture && (CombatData.getCap((LivingEntity) look).getPosture() < CombatData.getCap((LivingEntity) look).getMaxPosture() || CombatData.getCap((LivingEntity) look).getStaggerTime() > 0)) {
                     drawPostureBarreAt(false, event.getMatrixStack(), (LivingEntity) look, width / 2 + ClientConfig.theirPostureX, ClientConfig.theirPostureY);//Math.min(HudConfig.client.enemyPosture.x, width - 64), Math.min(HudConfig.client.enemyPosture.y, height - 64));
-                } else theirCurrentPostureLevel = -1;
+                }
             }
     }
 
@@ -456,9 +448,8 @@ public class ClientEvents {
     /**
      * @author Vazkii
      */
-    public static Entity getEntityLookedAt(Entity e) {
+    public static Entity getEntityLookedAt(Entity e, double finalDistance) {
         Entity foundEntity = null;
-        final double finalDistance = 32;
         double distance = finalDistance;
         RayTraceResult pos = raycast(e, finalDistance);
         Vector3d positionVector = e.getPositionVec();
@@ -529,7 +520,7 @@ public class ClientEvents {
         PlayerEntity p = mc.player;
         if (p != null && !mc.isGamePaused()) {
             if (e.phase == TickEvent.Phase.START) {
-                Entity look = getEntityLookedAt(p);
+                Entity look = getEntityLookedAt(p, 32);
                 if (look != lastTickLookAt) {
                     lastTickLookAt = look;
                     if (look instanceof LivingEntity && look.isAlive())
@@ -556,25 +547,99 @@ public class ClientEvents {
     //TODO make reach affect attack
     @SubscribeEvent
     public static void sweepSwing(PlayerInteractEvent.LeftClickEmpty e) {
-        CombatChannel.INSTANCE.sendToServer(new RequestSweepPacket(true));
+        float temp=CombatUtils.getCooledAttackStrength(e.getPlayer(), Hand.MAIN_HAND, 0.5f);
+        Entity n = getEntityLookedAt(e.getPlayer(), GeneralUtils.getAttributeValueSafe(e.getPlayer(), ForgeMod.REACH_DISTANCE.get()));
+        CombatChannel.INSTANCE.sendToServer(new RequestSweepPacket(true, n));
+        if (n != null)
+            CombatChannel.INSTANCE.sendToServer(new RequestAttackPacket(false, n, temp));
     }
 
     @SubscribeEvent
     public static void sweepSwingOff(PlayerInteractEvent.RightClickEmpty e) {
         if (e.getHand() == Hand.OFF_HAND) {
+            Entity n = getEntityLookedAt(e.getPlayer(), GeneralUtils.getAttributeValueSafe(e.getPlayer(), ForgeMod.REACH_DISTANCE.get()));
             e.getPlayer().swing(Hand.OFF_HAND, false);
-            CombatChannel.INSTANCE.sendToServer(new RequestSweepPacket(false));
+            float temp=CombatUtils.getCooledAttackStrength(e.getPlayer(), Hand.MAIN_HAND, 0.5f);
+            CombatChannel.INSTANCE.sendToServer(new RequestSweepPacket(false, n));
+            if (n != null)
+                CombatChannel.INSTANCE.sendToServer(new RequestAttackPacket(false, n, temp));
         }
     }
 
     @SubscribeEvent
     public static void sweepSwingOffItem(PlayerInteractEvent.RightClickItem e) {
         if (e.getHand() == Hand.OFF_HAND) {
+            Entity n = getEntityLookedAt(e.getPlayer(), GeneralUtils.getAttributeValueSafe(e.getPlayer(), ForgeMod.REACH_DISTANCE.get()));
+            float temp=CombatUtils.getCooledAttackStrength(e.getPlayer(), Hand.MAIN_HAND, 0.5f);
             e.getPlayer().swing(Hand.OFF_HAND, false);
-            CombatChannel.INSTANCE.sendToServer(new RequestSweepPacket(false));
+            CombatChannel.INSTANCE.sendToServer(new RequestSweepPacket(false, n));
+            if (n != null)
+                CombatChannel.INSTANCE.sendToServer(new RequestAttackPacket(false, n, temp));
         }
     }
 
+    @SubscribeEvent
+    public static void noHit(InputEvent.KeyInputEvent e) {
+        Minecraft mc = Minecraft.getInstance();
+        if (mc.player == null) return;
+        double range = GeneralUtils.getAttributeValueSafe(mc.player, ForgeMod.REACH_DISTANCE.get());
+        Vector3d look = mc.player.getLook(1);
+        if (mc.pointedEntity != null) {
+            if (GeneralUtils.getDistSqCompensated(mc.pointedEntity, mc.player) > range * range) {
+                mc.pointedEntity = null;
+                Vector3d miss = mc.player.getPositionVec().add(look.scale(range));
+                mc.objectMouseOver = BlockRayTraceResult.createMiss(miss, Direction.getFacingFromVector(look.x, look.y, look.z), new BlockPos(miss));
+            }
+        } else if (getEntityLookedAt(mc.player, range) != null) {
+            EntityRayTraceResult ertr = ProjectileHelper.rayTraceEntities(mc.player, mc.player.getEyePosition(0.5f), mc.player.getEyePosition(0.5f).add(look.scale(range)), mc.player.getBoundingBox().expand(look.scale(range)).grow(1.0D, 1.0D, 1.0D), (p_215312_0_) -> !p_215312_0_.isSpectator() && p_215312_0_.canBeCollidedWith(), range);
+            if (ertr != null) {
+                mc.objectMouseOver = ertr;
+                mc.pointedEntity = ertr.getEntity();
+            }
+        }
+    }
+
+    @SubscribeEvent
+    public static void noHitMouse(InputEvent.MouseInputEvent e) {
+        Minecraft mc = Minecraft.getInstance();
+        if (mc.player == null) return;
+        double range = GeneralUtils.getAttributeValueSafe(mc.player, ForgeMod.REACH_DISTANCE.get());
+        Vector3d look = mc.player.getLook(1);
+        if (mc.pointedEntity != null) {
+            if (GeneralUtils.getDistSqCompensated(mc.pointedEntity, mc.player) > range * range) {
+                mc.pointedEntity = null;
+                Vector3d miss = mc.player.getPositionVec().add(look.scale(range));
+                mc.objectMouseOver = BlockRayTraceResult.createMiss(miss, Direction.getFacingFromVector(look.x, look.y, look.z), new BlockPos(miss));
+            }
+        } else if (getEntityLookedAt(mc.player, range) != null) {
+            EntityRayTraceResult ertr = ProjectileHelper.rayTraceEntities(mc.player, mc.player.getEyePosition(0.5f), mc.player.getEyePosition(0.5f).add(look.scale(range)), mc.player.getBoundingBox().expand(look.scale(range)).grow(1.0D, 1.0D, 1.0D), (p_215312_0_) -> !p_215312_0_.isSpectator() && p_215312_0_.canBeCollidedWith(), range);
+            if (ertr != null) {
+                mc.objectMouseOver = ertr;
+                mc.pointedEntity = ertr.getEntity();
+            }
+        }
+    }
+
+    @SubscribeEvent
+    public static void zTarget(TickEvent.RenderTickEvent event) {
+        if (event.phase == TickEvent.Phase.END) {
+            Minecraft mc = Minecraft.getInstance();
+            if (mc.player == null) return;
+            double range = GeneralUtils.getAttributeValueSafe(mc.player, ForgeMod.REACH_DISTANCE.get());
+            Vector3d look = mc.player.getLook(1);
+            if (mc.pointedEntity != null) {
+                if (GeneralUtils.getDistSqCompensated(mc.pointedEntity, mc.player) > range * range) {
+                    mc.pointedEntity = null;
+                    Vector3d miss = mc.player.getPositionVec().add(look.scale(range));
+                    mc.objectMouseOver = BlockRayTraceResult.createMiss(miss, Direction.getFacingFromVector(look.x, look.y, look.z), new BlockPos(miss));
+                }
+            } else if (getEntityLookedAt(mc.player, range) != null) {
+                Entity e = getEntityLookedAt(mc.player, range);
+                mc.objectMouseOver = new EntityRayTraceResult(e, e.getPositionVec());
+                mc.pointedEntity = e;
+            }
+        }
+    }
 
     private static float updateValue(float f, float to) {
         if (f == -1) return to;
