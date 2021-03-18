@@ -211,15 +211,16 @@ public class ClientEvents {
                     int height = sr.getScaledHeight();
 
                     ClientPlayerEntity player = mc.player;
+                    if (player == null) return;
                     if (!gamesettings.showDebugInfo || gamesettings.hideGUI || player.hasReducedDebug() || gamesettings.reducedDebugInfo) {
                         if (mc.gameSettings.attackIndicator == AttackIndicatorStatus.CROSSHAIR) {
                             GlStateManager.enableAlphaTest();
                             float cooldown = CombatUtils.getCooledAttackStrength(player, Hand.OFF_HAND, 0f);
                             boolean hyperspeed = false;
 
-                            if (mc.pointedEntity instanceof LivingEntity && cooldown >= 1.0F) {
+                            if (getEntityLookedAt(player, GeneralUtils.getAttributeValueHandSensitive(player, ForgeMod.REACH_DISTANCE.get(), Hand.OFF_HAND)) != null && cooldown >= 1.0F) {
                                 hyperspeed = CombatUtils.getCooldownPeriod(player, Hand.OFF_HAND) > 5.0F;
-                                hyperspeed = hyperspeed & (mc.pointedEntity).isAlive();
+                                hyperspeed = hyperspeed & (getEntityLookedAt(player, GeneralUtils.getAttributeValueHandSensitive(player, ForgeMod.REACH_DISTANCE.get(), Hand.OFF_HAND))).isAlive();
                             }
 
                             int y = height / 2 - 7 - 7;
@@ -547,8 +548,8 @@ public class ClientEvents {
     //TODO make reach affect attack
     @SubscribeEvent
     public static void sweepSwing(PlayerInteractEvent.LeftClickEmpty e) {
-        float temp=CombatUtils.getCooledAttackStrength(e.getPlayer(), Hand.MAIN_HAND, 0.5f);
-        Entity n = getEntityLookedAt(e.getPlayer(), GeneralUtils.getAttributeValueSafe(e.getPlayer(), ForgeMod.REACH_DISTANCE.get()));
+        float temp = CombatUtils.getCooledAttackStrength(e.getPlayer(), Hand.MAIN_HAND, 0.5f);
+        Entity n = getEntityLookedAt(e.getPlayer(), GeneralUtils.getAttributeValueSafe(e.getPlayer(), ForgeMod.REACH_DISTANCE.get()) - (e.getPlayer().getHeldItemMainhand().isEmpty() ? 1 : 0));
         CombatChannel.INSTANCE.sendToServer(new RequestSweepPacket(true, n));
         if (n != null)
             CombatChannel.INSTANCE.sendToServer(new RequestAttackPacket(false, n, temp));
@@ -557,9 +558,9 @@ public class ClientEvents {
     @SubscribeEvent
     public static void sweepSwingOff(PlayerInteractEvent.RightClickEmpty e) {
         if (e.getHand() == Hand.OFF_HAND) {
-            Entity n = getEntityLookedAt(e.getPlayer(), GeneralUtils.getAttributeValueSafe(e.getPlayer(), ForgeMod.REACH_DISTANCE.get()));
+            Entity n = getEntityLookedAt(e.getPlayer(), GeneralUtils.getAttributeValueSafe(e.getPlayer(), ForgeMod.REACH_DISTANCE.get()) - (e.getPlayer().getHeldItemMainhand().isEmpty() ? 1 : 0));
             e.getPlayer().swing(Hand.OFF_HAND, false);
-            float temp=CombatUtils.getCooledAttackStrength(e.getPlayer(), Hand.MAIN_HAND, 0.5f);
+            float temp = CombatUtils.getCooledAttackStrength(e.getPlayer(), Hand.MAIN_HAND, 0.5f);
             CombatChannel.INSTANCE.sendToServer(new RequestSweepPacket(false, n));
             if (n != null)
                 CombatChannel.INSTANCE.sendToServer(new RequestAttackPacket(false, n, temp));
@@ -569,8 +570,8 @@ public class ClientEvents {
     @SubscribeEvent
     public static void sweepSwingOffItem(PlayerInteractEvent.RightClickItem e) {
         if (e.getHand() == Hand.OFF_HAND) {
-            Entity n = getEntityLookedAt(e.getPlayer(), GeneralUtils.getAttributeValueSafe(e.getPlayer(), ForgeMod.REACH_DISTANCE.get()));
-            float temp=CombatUtils.getCooledAttackStrength(e.getPlayer(), Hand.MAIN_HAND, 0.5f);
+            Entity n = getEntityLookedAt(e.getPlayer(), GeneralUtils.getAttributeValueSafe(e.getPlayer(), ForgeMod.REACH_DISTANCE.get()) - (e.getPlayer().getHeldItemMainhand().isEmpty() ? 1 : 0));
+            float temp = CombatUtils.getCooledAttackStrength(e.getPlayer(), Hand.MAIN_HAND, 0.5f);
             e.getPlayer().swing(Hand.OFF_HAND, false);
             CombatChannel.INSTANCE.sendToServer(new RequestSweepPacket(false, n));
             if (n != null)
@@ -582,7 +583,7 @@ public class ClientEvents {
     public static void noHit(InputEvent.KeyInputEvent e) {
         Minecraft mc = Minecraft.getInstance();
         if (mc.player == null) return;
-        double range = GeneralUtils.getAttributeValueSafe(mc.player, ForgeMod.REACH_DISTANCE.get());
+        double range = GeneralUtils.getAttributeValueSafe(mc.player, ForgeMod.REACH_DISTANCE.get()) - (mc.player.getHeldItemMainhand().isEmpty() ? 1 : 0);
         Vector3d look = mc.player.getLook(1);
         if (mc.pointedEntity != null) {
             if (GeneralUtils.getDistSqCompensated(mc.pointedEntity, mc.player) > range * range) {
@@ -603,7 +604,7 @@ public class ClientEvents {
     public static void noHitMouse(InputEvent.MouseInputEvent e) {
         Minecraft mc = Minecraft.getInstance();
         if (mc.player == null) return;
-        double range = GeneralUtils.getAttributeValueSafe(mc.player, ForgeMod.REACH_DISTANCE.get());
+        double range = GeneralUtils.getAttributeValueSafe(mc.player, ForgeMod.REACH_DISTANCE.get()) - (mc.player.getHeldItemMainhand().isEmpty() ? 1 : 0);
         Vector3d look = mc.player.getLook(1);
         if (mc.pointedEntity != null) {
             if (GeneralUtils.getDistSqCompensated(mc.pointedEntity, mc.player) > range * range) {
@@ -625,7 +626,7 @@ public class ClientEvents {
         if (event.phase == TickEvent.Phase.END) {
             Minecraft mc = Minecraft.getInstance();
             if (mc.player == null) return;
-            double range = GeneralUtils.getAttributeValueSafe(mc.player, ForgeMod.REACH_DISTANCE.get());
+            double range = GeneralUtils.getAttributeValueSafe(mc.player, ForgeMod.REACH_DISTANCE.get()) - (mc.player.getHeldItemMainhand().isEmpty() ? 1 : 0);
             Vector3d look = mc.player.getLook(1);
             if (mc.pointedEntity != null) {
                 if (GeneralUtils.getDistSqCompensated(mc.pointedEntity, mc.player) > range * range) {
