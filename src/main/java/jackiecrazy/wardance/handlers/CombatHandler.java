@@ -200,6 +200,21 @@ public class CombatHandler {
 
     }
 
+    @SubscribeEvent(priority = EventPriority.LOWEST)
+    public static void noGettingAroundIt(LivingAttackEvent e) {
+        if (e.getSource().getTrueSource() instanceof LivingEntity) {
+            LivingEntity uke = e.getEntityLiving();
+            if (CombatUtils.isPhysicalAttack(e.getSource()) && CombatUtils.getAwareness((LivingEntity) e.getSource().getTrueSource(), uke) != CombatUtils.AWARENESS.UNAWARE) {
+                if (e.getAmount() < CombatData.getCap(uke).getShatter()){
+                    e.setCanceled(true);
+                    CombatData.getCap(uke).consumeShatter(e.getAmount());
+                    uke.world.playSound(null, uke.getPosX(), uke.getPosY(), uke.getPosZ(), SoundEvents.BLOCK_GLASS_BREAK, SoundCategory.PLAYERS, 0.25f + WarDance.rand.nextFloat() * 0.5f, 0.75f + WarDance.rand.nextFloat() * 0.5f);
+                }
+                //otherwise the rest of the damage goes through and is handled later down the line anyway
+            }
+        }
+    }
+
     @SubscribeEvent(priority = EventPriority.HIGHEST)
     public static void knockKnockWhosThere(LivingKnockBackEvent e) {
         if (!downingHit && CombatData.getCap(e.getEntityLiving()).getStaggerTime() > 0) {
@@ -255,7 +270,7 @@ public class CombatHandler {
             float temp = e.getAmount();
             e.setAmount(cap.consumeShatter(e.getAmount()));
             if (e.getAmount() > 0 && temp != e.getAmount()) {//shattered
-                uke.world.playSound(null, uke.getPosX(), uke.getPosY(), uke.getPosZ(), SoundEvents.BLOCK_GLASS_BREAK, SoundCategory.PLAYERS, 0.25f + WarDance.rand.nextFloat() * 0.5f, 0.75f + WarDance.rand.nextFloat() * 0.5f);
+                uke.world.playSound(null, uke.getPosX(), uke.getPosY(), uke.getPosZ(), SoundEvents.BLOCK_GLASS_BREAK, SoundCategory.PLAYERS, 0.75f + WarDance.rand.nextFloat() * 0.5f, 0.75f + WarDance.rand.nextFloat() * 0.5f);
             }
         }
 
