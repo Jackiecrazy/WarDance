@@ -202,10 +202,10 @@ public class CombatHandler {
 
     @SubscribeEvent(priority = EventPriority.LOWEST)
     public static void noGettingAroundIt(LivingAttackEvent e) {
-        if (e.getSource().getTrueSource() instanceof LivingEntity) {
+        if (!e.getEntityLiving().isActiveItemStackBlocking()) {
             LivingEntity uke = e.getEntityLiving();
-            if (CombatUtils.isPhysicalAttack(e.getSource()) && CombatUtils.getAwareness((LivingEntity) e.getSource().getTrueSource(), uke) != CombatUtils.AWARENESS.UNAWARE) {
-                if (e.getAmount() < CombatData.getCap(uke).getShatter()){
+            if (CombatUtils.isPhysicalAttack(e.getSource()) && CombatUtils.getAwareness(e.getSource().getImmediateSource() instanceof LivingEntity ? (LivingEntity) e.getSource().getImmediateSource() : null, uke) != CombatUtils.AWARENESS.UNAWARE) {
+                if (e.getAmount() < CombatData.getCap(uke).getShatter()) {
                     e.setCanceled(true);
                     CombatData.getCap(uke).consumeShatter(e.getAmount());
                     uke.world.playSound(null, uke.getPosX(), uke.getPosY(), uke.getPosZ(), SoundEvents.BLOCK_GLASS_BREAK, SoundCategory.PLAYERS, 0.25f + WarDance.rand.nextFloat() * 0.5f, 0.75f + WarDance.rand.nextFloat() * 0.5f);
