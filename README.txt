@@ -1,5 +1,7 @@
 Project: War Dance is Taoism Lite, adding the mechanics without the weapons.
-    Posture: a stat that quantifies how steady the player is on his feet. Stamina and poise rolled into one if you play souls-likes, but actually heavily inspired by Sekiro and DMC.
+Miscellaneous:
+- Sweep attacks cannot be executed without sweeping edge, but will hit everything in an area for full damage. The default angle increment for each extra level of sweeping edge is 40 degrees.
+Posture: a stat that quantifies how steady the player is on his feet. Stamina and poise rolled into one if you play souls-likes, but actually heavily inspired by Sekiro and DMC.
 - Max posture is calculated by (width*height*5*(1+armor/20)), so a player starts with 10 posture and can gain up to double by wearing diamond armor.
 - Being attacked consumes posture regardless of parry. This makes parrying unequivocably the best option, since you’ll be taking posture damage either way.
 - To avoid ravagers instantly staggering everything else, posture consumption is hard capped at 1/4 of your max each time. Overflow posture damage will be converted into knockback.
@@ -73,7 +75,7 @@ Stealth: Sneak 100
 - Armor adds detection range by 18 degrees per protection point. This overwrites the fixed mob detection range if it is higher, so leather doesn't impede stealth and full diamond nullifies the vision malus.
 - Sprinting adds 10% to detection radius; breaking LoS with the target will reduce detection radius by 60%.
 - Mobs will investigate sound when unaware; this will distract them. Making sounds such as taking damage from fall and causing explosions will draw enemies in an area to you, but you can also shoot arrows to distract mobs for stealth missions.
-- If you are about to be discovered from out of LoS, the luck of you and your opponent will be compared to give you a chance of negating discovery. The max possible is a 60% chance to negate discovery.
+- If you are about to be discovered from out of LoS, the luck of you and your opponent will be compared to give you a chance of negating discovery.
 Spells and skills: hit stuff so you can hit harder!
 - Skills must be first set in the skill screen, then brought up in combat mode with the F key as a radial menu. Half the screen (4 slots) is available for each hand to add skills, and two-handing gives 8 skill slots. Combined with 4 spell slots that don’t require weapons, you can have 12 skills equipped at any given time.
 - Skills are split into categories depending on their resource consumption for recharge (e.g. might, spirit, time, normal attacks, distance moved, etc). All skills of the same category have their “timers” set to half upon casting one so you can’t continuously chain moves of the same category.
