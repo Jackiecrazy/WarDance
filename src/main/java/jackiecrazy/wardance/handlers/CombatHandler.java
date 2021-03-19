@@ -79,7 +79,7 @@ public class CombatHandler {
 
     private static boolean downingHit = false;
 
-    @SubscribeEvent
+    @SubscribeEvent(priority = EventPriority.LOWEST)//because combat with BHT...
     public static void parry(final LivingAttackEvent e) {
         if (!e.getEntityLiving().world.isRemote && e.getSource() != null && CombatUtils.isMeleeAttack(e.getSource())) {
             LivingEntity uke = e.getEntityLiving();
@@ -197,23 +197,19 @@ public class CombatHandler {
                 if (!(seme instanceof PlayerEntity))
                     CombatUtils.setHandCooldown(seme, Hand.MAIN_HAND, 0, false);
             }
-        }
-
-    }
-
-    @SubscribeEvent(priority = EventPriority.LOWEST)
-    public static void noGettingAroundIt(LivingAttackEvent e) {
-        if (!e.getEntityLiving().isActiveItemStackBlocking()) {
-            LivingEntity uke = e.getEntityLiving();
-            if (CombatUtils.isPhysicalAttack(e.getSource()) && CombatUtils.getAwareness(e.getSource().getImmediateSource() instanceof LivingEntity ? (LivingEntity) e.getSource().getImmediateSource() : null, uke) != CombatUtils.AWARENESS.UNAWARE) {
-                if (e.getAmount() < CombatData.getCap(uke).getShatter()) {
-                    e.setCanceled(true);
-                    CombatData.getCap(uke).consumeShatter(e.getAmount());
-                    uke.world.playSound(null, uke.getPosX(), uke.getPosY(), uke.getPosZ(), SoundEvents.BLOCK_GLASS_BREAK, SoundCategory.PLAYERS, 0.25f + WarDance.rand.nextFloat() * 0.5f, 0.75f + WarDance.rand.nextFloat() * 0.5f);
+            //shatter, at the rock bottom of the attack event, saving your protected butt.
+            if (!uke.isActiveItemStackBlocking()) {
+                if (CombatUtils.isPhysicalAttack(e.getSource()) && CombatUtils.getAwareness(e.getSource().getImmediateSource() instanceof LivingEntity ? (LivingEntity) e.getSource().getImmediateSource() : null, uke) != CombatUtils.AWARENESS.UNAWARE) {
+                    if (e.getAmount() < CombatData.getCap(uke).getShatter()) {
+                        e.setCanceled(true);
+                        CombatData.getCap(uke).consumeShatter(e.getAmount());
+                        uke.world.playSound(null, uke.getPosX(), uke.getPosY(), uke.getPosZ(), SoundEvents.BLOCK_GLASS_BREAK, SoundCategory.PLAYERS, 0.25f + WarDance.rand.nextFloat() * 0.5f, 0.75f + WarDance.rand.nextFloat() * 0.5f);
+                    }
+                    //otherwise the rest of the damage goes through and is handled later down the line anyway
                 }
-                //otherwise the rest of the damage goes through and is handled later down the line anyway
             }
         }
+
     }
 
     @SubscribeEvent(priority = EventPriority.HIGHEST)
@@ -237,7 +233,7 @@ public class CombatHandler {
         //if (e.getStrength() == 0) e.setCanceled(true);
     }
 
-    @SubscribeEvent
+    @SubscribeEvent(priority = EventPriority.HIGHEST)
     public static void pain(LivingHurtEvent e) {
         LivingEntity uke = e.getEntityLiving();
         LivingEntity kek = null;
@@ -288,6 +284,10 @@ public class CombatHandler {
             amount -= GeneralUtils.getAttributeValueSafe(e.getEntityLiving(), WarAttributes.ABSORPTION.get());
             e.setAmount(amount);
         }
+    }
+
+    @SubscribeEvent(priority = EventPriority.LOWEST)
+    public static void udedlol(LivingDamageEvent e) {
         if (e.getAmount() > e.getEntityLiving().getHealth() + e.getEntityLiving().getAbsorptionAmount()) {
             //are we gonna die? Well, I don't really care either way. Begone, drain!
             ICombatCapability icc = CombatData.getCap(e.getEntityLiving());
@@ -295,21 +295,6 @@ public class CombatHandler {
             icc.setWounding(0);
             icc.setBurnout(0);
         }
-    }
-
-    @SubscribeEvent
-    public static void offhandAttack(final PlayerInteractEvent.EntityInteract e) {
-//        if (!e.getPlayer().world.isRemote && e.getHand() == Hand.OFF_HAND && (CombatUtils.isWeapon(e.getPlayer(), e.getPlayer().getHeldItemOffhand()) || (e.getPlayer().getHeldItemOffhand().isEmpty() && CombatData.getCap(e.getPlayer()).isCombatMode())) && (e.getPlayer().swingingHand != Hand.OFF_HAND || !e.getPlayer().isSwingInProgress)) {
-//            CombatData.getCap(e.getPlayer()).setOffhandAttack(true);
-//            int a = CombatData.getCap(e.getPlayer()).getOffhandCooldown();
-//            CombatUtils.sweep(e.getPlayer(), e.getTarget(), Hand.OFF_HAND, GeneralUtils.getAttributeValueSafe(e.getPlayer(), ForgeMod.REACH_DISTANCE.get()));
-//            CombatUtils.swapHeldItems(e.getPlayer());
-//            e.getPlayer().ticksSinceLastSwing = a;
-//            e.getPlayer().attackTargetEntityWithCurrentItem(e.getTarget());
-//            e.getPlayer().swing(Hand.OFF_HAND, true);
-//            CombatUtils.swapHeldItems(e.getPlayer());
-//            CombatData.getCap(e.getPlayer()).setOffhandAttack(false);
-//        }
     }
 
     @SubscribeEvent(priority = EventPriority.LOWEST)
