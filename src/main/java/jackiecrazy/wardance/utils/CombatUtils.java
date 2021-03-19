@@ -419,7 +419,8 @@ public class CombatUtils {
         isSweeping = ignore != null;
         for (Entity target : e.world.getEntitiesWithinAABBExcludingEntity(e, e.getBoundingBox().grow(reach))) {
             if (target == ignore) {
-                hit = true;
+                if (angle > 0)
+                    hit = true;
                 continue;
             }
             if (!GeneralUtils.isFacingEntity(e, target, angle)) continue;

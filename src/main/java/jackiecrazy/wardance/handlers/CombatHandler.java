@@ -1,5 +1,6 @@
 package jackiecrazy.wardance.handlers;
 
+import com.google.gson.annotations.JsonAdapter;
 import jackiecrazy.wardance.WarDance;
 import jackiecrazy.wardance.api.CombatDamageSource;
 import jackiecrazy.wardance.api.ICombatManipulator;
@@ -85,7 +86,7 @@ public class CombatHandler {
             if (MovementUtils.hasInvFrames(uke)) e.setCanceled(true);
             ICombatCapability ukeCap = CombatData.getCap(uke);
             ItemStack attack = CombatUtils.getAttackingItemStack(e.getSource());
-            if (e.getSource().getTrueSource() instanceof LivingEntity && attack != null) {
+            if (e.getSource().getTrueSource() instanceof LivingEntity && attack != null && e.getAmount() > 0) {
                 LivingEntity seme = (LivingEntity) e.getSource().getTrueSource();
                 seme.removeActivePotionEffect(Effects.INVISIBILITY);
                 ICombatCapability semeCap = CombatData.getCap(seme);

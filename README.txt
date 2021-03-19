@@ -1,6 +1,7 @@
 Project: War Dance is Taoism Lite, adding the mechanics without the weapons.
 Miscellaneous:
 - Sweep attacks cannot be executed without sweeping edge, but will hit everything in an area for full damage. The default angle increment for each extra level of sweeping edge is 40 degrees.
+- Reach distance will influence both attack reach and sweep reach.
 Posture: a stat that quantifies how steady the player is on his feet. Stamina and poise rolled into one if you play souls-likes, but actually heavily inspired by Sekiro and DMC.
 - Max posture is calculated by (width*height*5*(1+armor/20)), so a player starts with 10 posture and can gain up to double by wearing diamond armor.
 - Being attacked consumes posture regardless of parry. This makes parrying unequivocably the best option, since you’ll be taking posture damage either way.

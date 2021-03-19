@@ -22,13 +22,14 @@ public class RequestAttackPacket {
     public RequestAttackPacket(boolean isMainHand, int entityID, float cooldown) {
         main = isMainHand;
         id = entityID;
+        cd = cooldown;
     }
 
     public RequestAttackPacket(boolean isMainHand, Entity entity, float cooldown) {
         main = isMainHand;
         if (entity == null) id = -1;
         else id = entity.getEntityId();
-        cd=cooldown;
+        cd = cooldown;
     }
 
     public static class RequestAttackEncoder implements BiConsumer<RequestAttackPacket, PacketBuffer> {
@@ -58,13 +59,13 @@ public class RequestAttackPacket {
                 if (sender != null) {
                     Entity e = sender.world.getEntityByID(updateClientPacket.id);
                     if (e != null && GeneralUtils.getDistSqCompensated(sender, e) < GeneralUtils.getAttributeValueSafe(sender, ForgeMod.REACH_DISTANCE.get()) * GeneralUtils.getAttributeValueSafe(sender, ForgeMod.REACH_DISTANCE.get())) {
-                        if (!updateClientPacket.main){
+                        if (!updateClientPacket.main) {
                             CombatUtils.swapHeldItems(sender);
                             CombatData.getCap(sender).setOffhandAttack(true);
                         }
                         CombatUtils.setHandCooldown(sender, Hand.MAIN_HAND, updateClientPacket.cd, false);
                         sender.attackTargetEntityWithCurrentItem(e);
-                        if (!updateClientPacket.main){
+                        if (!updateClientPacket.main) {
                             CombatUtils.swapHeldItems(sender);
                             CombatData.getCap(sender).setOffhandAttack(false);
                         }

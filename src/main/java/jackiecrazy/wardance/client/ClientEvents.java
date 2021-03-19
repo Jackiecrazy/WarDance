@@ -557,7 +557,7 @@ public class ClientEvents {
 
     @SubscribeEvent
     public static void sweepSwingOff(PlayerInteractEvent.RightClickEmpty e) {
-        if (e.getHand() == Hand.OFF_HAND) {
+        if (e.getHand() == Hand.OFF_HAND && (!e.getItemStack().isEmpty() || CombatData.getCap(e.getPlayer()).isCombatMode())) {
             Entity n = getEntityLookedAt(e.getPlayer(), GeneralUtils.getAttributeValueSafe(e.getPlayer(), ForgeMod.REACH_DISTANCE.get()) - (e.getPlayer().getHeldItemMainhand().isEmpty() ? 1 : 0));
             e.getPlayer().swing(Hand.OFF_HAND, false);
             float temp = CombatUtils.getCooledAttackStrength(e.getPlayer(), Hand.MAIN_HAND, 0.5f);
@@ -579,7 +579,7 @@ public class ClientEvents {
 
     @SubscribeEvent
     public static void sweepSwingOffItem(PlayerInteractEvent.RightClickItem e) {
-        if (e.getHand() == Hand.OFF_HAND) {
+        if (e.getHand() == Hand.OFF_HAND && (!e.getItemStack().isEmpty() || CombatData.getCap(e.getPlayer()).isCombatMode())) {
             Entity n = getEntityLookedAt(e.getPlayer(), GeneralUtils.getAttributeValueSafe(e.getPlayer(), ForgeMod.REACH_DISTANCE.get()) - (e.getPlayer().getHeldItemMainhand().isEmpty() ? 1 : 0));
             float temp = CombatUtils.getCooledAttackStrength(e.getPlayer(), Hand.MAIN_HAND, 0.5f);
             e.getPlayer().swing(Hand.OFF_HAND, false);
@@ -591,7 +591,7 @@ public class ClientEvents {
 
     @SubscribeEvent
     public static void sweepSwingOffItemBlock(PlayerInteractEvent.RightClickBlock e) {
-        if (e.getHand() == Hand.OFF_HAND) {
+        if (e.getHand() == Hand.OFF_HAND && (!e.getItemStack().isEmpty() || CombatData.getCap(e.getPlayer()).isCombatMode())) {
             Entity n = getEntityLookedAt(e.getPlayer(), GeneralUtils.getAttributeValueSafe(e.getPlayer(), ForgeMod.REACH_DISTANCE.get()) - (e.getPlayer().getHeldItemMainhand().isEmpty() ? 1 : 0));
             float temp = CombatUtils.getCooledAttackStrength(e.getPlayer(), Hand.MAIN_HAND, 0.5f);
             e.getPlayer().swing(Hand.OFF_HAND, false);

@@ -614,7 +614,29 @@ public class CombatConfig {
             "epicfight:stone_spear, 2, 1.7, false, 1.1, 1.2",
             "epicfight:iron_spear, 2.1, 1.6, false, 1.1, 1.2",
             "epicfight:gold_spear, 2, 1.7, false, 1.1, 1.2",
-            "epicfight:diamond_spear, 2.2, 1.5, false, 1.1, 1.2"
+            "epicfight:diamond_spear, 2.2, 1.5, false, 1.1, 1.2",
+            "druidcraft:bone_pickaxe, 0.6, 1.0, false, 1.4, 2",
+            "druidcraft:bone_shovel, 2.4, 0.9, false, 1.1, 1.2",
+            "druidcraft:bone_sword, 1.3, 1.0, false, 1.25, 1.5",
+            "druidcraft:bone_axe, 3.6, 0.8, false, 1.1, 1.2",
+            "druidcraft:bone_hoe, 0.5, 1.4, false, 1.4, 2",
+            "druidcraft:bone_shield, 1.0, 0.8, true, 15, 3",
+            "druidcraft:moonstone_shield, 1.0, 0.7, true, 30, 1",
+            "druidcraft:moonstone_pickaxe, 0.6, 1.0, false, 1.4, 2",
+            "druidcraft:moonstone_shovel, 2.4, 0.9, false, 1.1, 1.2",
+            "druidcraft:moonstone_sword, 1.3, 1.0, false, 1.25, 1.5",
+            "druidcraft:moonstone_axe, 3.6, 0.8, false, 1.1, 1.2",
+            "druidcraft:moonstone_hoe, 0.5, 1.4, false, 1.4, 2",
+            "druidcraft:chitin_shield, 1.0, 0.8, true, 30, 1",
+            "artifacts:umbrella, 1.0, 0.8, true, 30, 1",
+            "pandoras_creatures:arachnon_hammer, 3.0, 0.8, false, 0.1, 0.2",
+            "betterendforge:iron_hammer, 2.6, 0.9, false, 0.1, 0.2",
+            "betterendforge:golden_hammer, 2.6, 0.8, false, 0.1, 0.2",
+            "betterendforge:diamond_hammer, 2.8, 0.8, false, 0.1, 0.2",
+            "betterendforge:netherite_hammer, 3.0, 0.8, false, 0.1, 0.2",
+            "betterendforge:thalassium_hammer, 3.0, 0.8, false, 0.1, 0.2",
+            "betterendforge:terminite_hammer, 3.1, 0.8, false, 0.1, 0.2",
+            "betterendforge:aeternium_hammer, 3.3, 0.8, false, 0.1, 0.2"
 
     };
     private static final String[] ARMOR = {
