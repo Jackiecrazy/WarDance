@@ -1,11 +1,11 @@
 package jackiecrazy.wardance.networking;
 
+import jackiecrazy.wardance.capability.CombatData;
 import jackiecrazy.wardance.utils.CombatUtils;
 import jackiecrazy.wardance.utils.GeneralUtils;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.network.PacketBuffer;
-import net.minecraft.potion.Effects;
 import net.minecraft.util.Hand;
 import net.minecraftforge.common.ForgeMod;
 import net.minecraftforge.fml.network.NetworkEvent;
@@ -58,10 +58,16 @@ public class RequestAttackPacket {
                 if (sender != null) {
                     Entity e = sender.world.getEntityByID(updateClientPacket.id);
                     if (e != null && GeneralUtils.getDistSqCompensated(sender, e) < GeneralUtils.getAttributeValueSafe(sender, ForgeMod.REACH_DISTANCE.get()) * GeneralUtils.getAttributeValueSafe(sender, ForgeMod.REACH_DISTANCE.get())) {
-                        if (!updateClientPacket.main) CombatUtils.swapHeldItems(sender);
+                        if (!updateClientPacket.main){
+                            CombatUtils.swapHeldItems(sender);
+                            CombatData.getCap(sender).setOffhandAttack(true);
+                        }
                         CombatUtils.setHandCooldown(sender, Hand.MAIN_HAND, updateClientPacket.cd, false);
                         sender.attackTargetEntityWithCurrentItem(e);
-                        if (!updateClientPacket.main) CombatUtils.swapHeldItems(sender);
+                        if (!updateClientPacket.main){
+                            CombatUtils.swapHeldItems(sender);
+                            CombatData.getCap(sender).setOffhandAttack(false);
+                        }
                     }
                 }
             });

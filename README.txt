@@ -67,11 +67,11 @@ Sidesteps and rolls: OP pls nerf
 Stealth: Sneak 100
 - Mobs are unaware if they are not in combat and haven't noticed you, distracted if they are attacking something else, and alert otherwise.
 - Distracted enemies take more damage, and unaware enemies additionally cannot parry, deflect, absorb, or shatter an incoming attack. Weapons have a stabbing multiplier that increases stabbing damage. Attacking an unaware enemy dispels your invisibility, if any.
-- Mob detection range is full in their 120 degree frontal sector and halved elsewhere.
+- Mob detection range is full in their 120 degree frontal sector and 0.2x elsewhere.
 - The vision range is 60 degrees vertically, because living things are adapted to survey a flat area, and to encourage using vertical space.
-- Light level will decrease detection range by up to 50% at 0 light and increase by up to 10% at 15 light. Mobs with night vision do not receive a bonus or malus.
+- Light level will decrease detection range by up to 80% at 0 light and increase by up to 10% at 15 light. Mobs with night vision do not receive a bonus or malus.
 - Armor adds detection range by 18 degrees per protection point. This overwrites the fixed mob detection range if it is higher, so leather doesn't impede stealth and full diamond nullifies the vision malus.
-- Sprinting adds 10% to detection radius; breaking LoS with the target will halve detection radius.
+- Sprinting adds 10% to detection radius; breaking LoS with the target will reduce detection radius by 60%.
 - Mobs will investigate sound when unaware; this will distract them. Making sounds such as taking damage from fall and causing explosions will draw enemies in an area to you, but you can also shoot arrows to distract mobs for stealth missions.
 - If you are about to be discovered from out of LoS, the luck of you and your opponent will be compared to give you a chance of negating discovery. The max possible is a 60% chance to negate discovery.
 Spells and skills: hit stuff so you can hit harder!

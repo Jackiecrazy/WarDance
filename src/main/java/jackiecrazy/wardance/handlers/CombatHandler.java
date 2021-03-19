@@ -87,6 +87,7 @@ public class CombatHandler {
             ItemStack attack = CombatUtils.getAttackingItemStack(e.getSource());
             if (e.getSource().getTrueSource() instanceof LivingEntity && attack != null) {
                 LivingEntity seme = (LivingEntity) e.getSource().getTrueSource();
+                seme.removeActivePotionEffect(Effects.INVISIBILITY);
                 ICombatCapability semeCap = CombatData.getCap(seme);
                 ukeCap.update();
                 semeCap.update();
@@ -126,9 +127,7 @@ public class CombatHandler {
                 downingHit = true;
                 //stabby bonus
                 CombatUtils.AWARENESS awareness = CombatUtils.getAwareness(seme, uke);
-                if (awareness != CombatUtils.AWARENESS.ALERT) {
-                    atkMult *= awareness == CombatUtils.AWARENESS.UNAWARE ? CombatConfig.unaware : CombatConfig.distract;
-                }
+                atkMult *= CombatUtils.getDamageMultiplier(awareness, attack);
                 //crit bonus
                 if (e.getSource() instanceof CombatDamageSource && ((CombatDamageSource) e.getSource()).isCrit())
                     atkMult *= 1.5;
@@ -148,7 +147,7 @@ public class CombatHandler {
                 float knockback = ukeCap.consumePosture(atkMult * defMult);
                 if (ukeCap.getStaggerTime() == 0) {
                     float consume = atkMult * Math.max(defMult, 0.5f) * 3f;
-                    CombatUtils.knockBack(uke, seme, Math.min(1.5f, (consume + knockback / 20f) / ukeCap.getMaxPosture()), true, false);
+                    CombatUtils.knockBack(uke, seme, Math.min(1.5f, knockback / (20f * ukeCap.getMaxPosture())), true, false);
                     //no parries if stabby
                     if (CombatConfig.ignore && awareness == CombatUtils.AWARENESS.UNAWARE) return;
                     if ((canParry && defend != null) || useDeflect) {
@@ -156,6 +155,7 @@ public class CombatHandler {
                         downingHit = false;
                         ukeCap.addCombo(0);
                         //knockback based on posture consumed
+                        CombatUtils.knockBack(uke, seme, Math.min(1.5f, consume / ukeCap.getMaxPosture()), true, false);
                         CombatUtils.knockBack(seme, uke, Math.min(1.5f, consume / semeCap.getMaxPosture()), true, false);
                         if (defend == null) {
                             uke.world.playSound(null, uke.getPosX(), uke.getPosY(), uke.getPosZ(), SoundEvents.ITEM_ARMOR_EQUIP_IRON, SoundCategory.PLAYERS, 0.75f + WarDance.rand.nextFloat() * 0.5f, (1 - (ukeCap.getPosture() / ukeCap.getMaxPosture())) + WarDance.rand.nextFloat() * 0.5f);
@@ -232,6 +232,7 @@ public class CombatHandler {
                     CombatData.getCap((LivingEntity) ride).consumePosture(e.getStrength() / divisor);
             }
         }
+        e.setStrength(e.getStrength() * CombatConfig.kbNerf);
         //if (e.getStrength() == 0) e.setCanceled(true);
     }
 
@@ -247,7 +248,7 @@ public class CombatHandler {
         cap.setCombo((float) (Math.floor(cap.getCombo()) / 2d));
         CombatUtils.AWARENESS awareness = CombatUtils.getAwareness(kek, uke);
         if (awareness != CombatUtils.AWARENESS.ALERT) {
-            e.setAmount(e.getAmount() * (awareness == CombatUtils.AWARENESS.UNAWARE ? CombatConfig.unaware : CombatConfig.distract));
+            e.setAmount((float) (e.getAmount() * CombatUtils.getDamageMultiplier(awareness, CombatUtils.getAttackingItemStack(ds))));
         }
         if (ds.getTrueSource() instanceof LivingEntity) {
             LivingEntity seme = ((LivingEntity) ds.getTrueSource());
@@ -297,17 +298,17 @@ public class CombatHandler {
 
     @SubscribeEvent
     public static void offhandAttack(final PlayerInteractEvent.EntityInteract e) {
-        if (!e.getPlayer().world.isRemote && e.getHand() == Hand.OFF_HAND && (CombatUtils.isWeapon(e.getPlayer(), e.getPlayer().getHeldItemOffhand()) || (e.getPlayer().getHeldItemOffhand().isEmpty() && CombatData.getCap(e.getPlayer()).isCombatMode())) && (e.getPlayer().swingingHand != Hand.OFF_HAND || !e.getPlayer().isSwingInProgress)) {
-            CombatData.getCap(e.getPlayer()).setOffhandAttack(true);
-            int a = CombatData.getCap(e.getPlayer()).getOffhandCooldown();
-            CombatUtils.sweep(e.getPlayer(), e.getTarget(), Hand.OFF_HAND, GeneralUtils.getAttributeValueSafe(e.getPlayer(), ForgeMod.REACH_DISTANCE.get()));
-            CombatUtils.swapHeldItems(e.getPlayer());
-            e.getPlayer().ticksSinceLastSwing = a;
-            e.getPlayer().attackTargetEntityWithCurrentItem(e.getTarget());
-            e.getPlayer().swing(Hand.OFF_HAND, true);
-            CombatUtils.swapHeldItems(e.getPlayer());
-            CombatData.getCap(e.getPlayer()).setOffhandAttack(false);
-        }
+//        if (!e.getPlayer().world.isRemote && e.getHand() == Hand.OFF_HAND && (CombatUtils.isWeapon(e.getPlayer(), e.getPlayer().getHeldItemOffhand()) || (e.getPlayer().getHeldItemOffhand().isEmpty() && CombatData.getCap(e.getPlayer()).isCombatMode())) && (e.getPlayer().swingingHand != Hand.OFF_HAND || !e.getPlayer().isSwingInProgress)) {
+//            CombatData.getCap(e.getPlayer()).setOffhandAttack(true);
+//            int a = CombatData.getCap(e.getPlayer()).getOffhandCooldown();
+//            CombatUtils.sweep(e.getPlayer(), e.getTarget(), Hand.OFF_HAND, GeneralUtils.getAttributeValueSafe(e.getPlayer(), ForgeMod.REACH_DISTANCE.get()));
+//            CombatUtils.swapHeldItems(e.getPlayer());
+//            e.getPlayer().ticksSinceLastSwing = a;
+//            e.getPlayer().attackTargetEntityWithCurrentItem(e.getTarget());
+//            e.getPlayer().swing(Hand.OFF_HAND, true);
+//            CombatUtils.swapHeldItems(e.getPlayer());
+//            CombatData.getCap(e.getPlayer()).setOffhandAttack(false);
+//        }
     }
 
     @SubscribeEvent(priority = EventPriority.LOWEST)

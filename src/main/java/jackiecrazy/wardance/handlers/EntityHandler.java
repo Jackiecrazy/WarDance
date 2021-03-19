@@ -1,23 +1,22 @@
 package jackiecrazy.wardance.handlers;
 
 import jackiecrazy.wardance.WarDance;
+import jackiecrazy.wardance.capability.CombatCapability;
 import jackiecrazy.wardance.capability.CombatData;
 import jackiecrazy.wardance.capability.ICombatCapability;
 import jackiecrazy.wardance.config.CombatConfig;
-import jackiecrazy.wardance.utils.CombatUtils;
 import jackiecrazy.wardance.utils.GeneralUtils;
-import net.minecraft.entity.CreatureEntity;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.MobEntity;
 import net.minecraft.entity.ai.attributes.Attributes;
 import net.minecraft.entity.ai.goal.Goal;
 import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.potion.Effects;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.event.AttachCapabilitiesEvent;
 import net.minecraftforge.event.TickEvent;
 import net.minecraftforge.event.entity.EntityJoinWorldEvent;
-import net.minecraftforge.event.entity.PlaySoundAtEntityEvent;
 import net.minecraftforge.event.entity.living.LivingEvent;
 import net.minecraftforge.event.entity.living.LivingSetAttackTargetEvent;
 import net.minecraftforge.event.entity.player.PlayerEvent;
@@ -129,22 +128,24 @@ public class EntityHandler {
 
     @SubscribeEvent
     public static void sneak(final LivingEvent.LivingVisibilityEvent e) {
-        if (e.getLookingEntity() instanceof LivingEntity) {
-            LivingEntity sneaker = (LivingEntity) e.getLookingEntity(), watcher = e.getEntityLiving();
+        if (e.getLookingEntity() instanceof LivingEntity && CombatConfig.stealthSystem) {
+            LivingEntity sneaker = e.getEntityLiving(), watcher = (LivingEntity) e.getLookingEntity();
             if (!GeneralUtils.isFacingEntity(watcher, sneaker, Math.max(CombatConfig.baseHorizontalDetection, sneaker.getTotalArmorValue() * CombatConfig.anglePerArmor), Math.max(CombatConfig.baseVerticalDetection, sneaker.getTotalArmorValue() * sneaker.getTotalArmorValue())))
-                e.modifyVisibility(0.5);
-            e.modifyVisibility(0.5 + sneaker.world.getLight(sneaker.getPosition()) * 0.04);
-            e.modifyVisibility(sneaker.isSprinting() ? 1.1 : watcher.canEntityBeSeen(sneaker) ? 0.5 : 1);
+                e.modifyVisibility(0.2);
+            if (!watcher.isPotionActive(Effects.NIGHT_VISION))
+                e.modifyVisibility(0.2 + sneaker.world.getLight(sneaker.getPosition()) * sneaker.world.getLight(sneaker.getPosition()) * 0.06);
+            e.modifyVisibility(sneaker.isSprinting() ? 1.1 : watcher.canEntityBeSeen(sneaker) ? 0.4 : 1);
         }
     }
 
     @SubscribeEvent
     public static void pray(LivingSetAttackTargetEvent e) {
-        if (!GeneralUtils.isFacingEntity(e.getEntityLiving(), e.getTarget(), Math.max(CombatConfig.baseHorizontalDetection, e.getTarget().getTotalArmorValue() * CombatConfig.anglePerArmor), Math.max(CombatConfig.baseVerticalDetection, e.getTarget().getTotalArmorValue() * e.getTarget().getTotalArmorValue()))){
+        if (e.getTarget() != null && e.getEntityLiving() != null && CombatConfig.stealthSystem && !GeneralUtils.isFacingEntity(e.getEntityLiving(), e.getTarget(), Math.max(CombatConfig.baseHorizontalDetection, e.getTarget().getTotalArmorValue() * CombatConfig.anglePerArmor), Math.max(CombatConfig.baseVerticalDetection, e.getTarget().getTotalArmorValue() * e.getTarget().getTotalArmorValue()))) {
             //outside of LoS, perform luck check. Pray to RNGesus!
             double luckDiff = GeneralUtils.getAttributeValueSafe(e.getTarget(), Attributes.LUCK) - GeneralUtils.getAttributeValueSafe(e.getEntityLiving(), Attributes.LUCK);
-            if (luckDiff > 0 && WarDance.rand.nextFloat() < (luckDiff / (2 + luckDiff)))
+            if (luckDiff > 0 && WarDance.rand.nextFloat() < (luckDiff / (2 + luckDiff))) {
                 ((MobEntity) e.getEntityLiving()).setAttackTarget(null);
+            }
         }
     }
 }

@@ -9,6 +9,7 @@ import jackiecrazy.wardance.utils.CombatUtils;
 import jackiecrazy.wardance.utils.GeneralUtils;
 import jackiecrazy.wardance.utils.MovementUtils;
 import net.minecraft.entity.LivingEntity;
+import net.minecraft.entity.MobEntity;
 import net.minecraft.entity.Pose;
 import net.minecraft.entity.ai.attributes.AttributeModifier;
 import net.minecraft.entity.ai.attributes.Attributes;
@@ -20,6 +21,7 @@ import net.minecraft.potion.Effects;
 import net.minecraft.util.Hand;
 import net.minecraft.util.SoundCategory;
 import net.minecraft.util.SoundEvents;
+import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.vector.Vector3d;
 import net.minecraftforge.common.util.FakePlayer;
@@ -592,8 +594,9 @@ public class CombatCapability implements ICombatCapability {
             if (getHandBind(h) != 0) CombatUtils.setHandCooldown(elb, h, 0, true);
         }
         addOffhandCooldown(ticks);
-        if (!(elb instanceof PlayerEntity))
+        if (!(elb instanceof PlayerEntity)) {
             elb.ticksSinceLastSwing += ticks;
+        }
         decrementRollTime(ticks);
         decrementShieldTime(ticks);
         decrementStaggerTime(ticks);

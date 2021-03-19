@@ -16,7 +16,6 @@ import net.minecraft.entity.Entity;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.MobEntity;
 import net.minecraft.entity.ai.attributes.*;
-import net.minecraft.entity.monster.IMob;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.inventory.EquipmentSlotType;
@@ -34,70 +33,81 @@ import net.minecraftforge.registries.ForgeRegistries;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import java.text.DecimalFormat;
 import java.util.*;
 
 public class CombatUtils {
     private static class CombatInfo {
         private final double attackPostureMultiplier, defensePostureMultiplier;
+        private final double distractDamageBonus, unawareDamageBonus;
         private final int parryTime, parryCount;
         private final boolean isShield;
 
-        private CombatInfo(double attack, double defend, boolean shield, int pTime, int pCount) {
+        private CombatInfo(double attack, double defend, boolean shield, int pTime, int pCount, double distract, double unaware) {
             attackPostureMultiplier = attack;
             defensePostureMultiplier = defend;
             isShield = shield;
             parryCount = pCount;
             parryTime = pTime;
+            distractDamageBonus = distract;
+            unawareDamageBonus = unaware;
         }
     }
 
-    private static CombatInfo DEFAULT = new CombatInfo(1, 1, false, 0, 0);
+    private static CombatInfo DEFAULT = new CombatInfo(1, 1, false, 0, 0, 1, 1);
     private static HashMap<Item, CombatInfo> combatList = new HashMap<>();
     public static HashMap<String, Float> customPosture = new HashMap<>();
     public static HashMap<Item, AttributeModifier[]> armorStats = new HashMap<>();
 
-    public static void updateLists(List<? extends String> interpretC, List<? extends String> interpretP, List<? extends String> interpretA, float defaultMultiplierPostureAttack, float defaultMultiplierPostureDefend, int st, int sc) {
-        DEFAULT = new CombatInfo(defaultMultiplierPostureAttack, defaultMultiplierPostureDefend, false, st, sc);
+    public static void updateLists(List<? extends String> interpretC, List<? extends String> interpretP, List<? extends String> interpretA) {
+        DEFAULT = new CombatInfo(CombatConfig.defaultMultiplierPostureAttack, CombatConfig.defaultMultiplierPostureDefend, false, CombatConfig.shieldThreshold, CombatConfig.shieldCount, CombatConfig.distract, CombatConfig.unaware);
         combatList = new HashMap<>();
         customPosture = new HashMap<>();
+        armorStats = new HashMap<>();
         for (String s : interpretC) {
             String[] val = s.split(",");
             String name = val[0];
-            double attack = defaultMultiplierPostureAttack;
-            double defend = defaultMultiplierPostureDefend;
+            double attack = CombatConfig.defaultMultiplierPostureAttack;
+            double defend = CombatConfig.defaultMultiplierPostureDefend;
             boolean shield = false;
             if (val.length > 1)
                 try {
                     attack = Float.parseFloat(val[1].trim());
                 } catch (NumberFormatException ignored) {
-                    WarDance.LOGGER.warn("attack data for config entry " + s + "is not properly formatted, replacing with default values.");
+                    WarDance.LOGGER.warn("attack data for config entry " + s + " is not properly formatted, replacing with default values.");
                 }
             if (val.length > 2)
                 try {
                     defend = Float.parseFloat(val[2].trim());
                 } catch (NumberFormatException ignored) {
-                    WarDance.LOGGER.warn("defense data for config entry " + s + "is not properly formatted, replacing with default values.");
+                    WarDance.LOGGER.warn("defense data for config entry " + s + " is not properly formatted, replacing with default values.");
                 }
             if (val.length > 3)
                 shield = Boolean.parseBoolean(val[3].trim());
-            int pTime = st, pCount = sc;
+            int pTime = CombatConfig.shieldThreshold, pCount = CombatConfig.shieldCount;
+            double distract = CombatConfig.distract, unaware = CombatConfig.unaware;
             if (shield) {
                 try {
                     pTime = Integer.parseInt(val[4].trim());
                     pCount = Integer.parseInt(val[5].trim());
                 } catch (Exception e) {
-                    WarDance.LOGGER.warn("additional data for shield config entry " + s + "is not properly formatted, replacing with default values.");
+                    WarDance.LOGGER.warn("additional data for shield config entry " + s + " is not properly formatted, replacing with default values.");
+                }
+            } else {
+                try {
+                    distract = Double.parseDouble(val[4].trim());
+                    unaware = Double.parseDouble(val[5].trim());
+                } catch (Exception e) {
+                    WarDance.LOGGER.warn("additional data for weapon config entry " + s + " is not properly formatted, replacing with default values.");
                 }
             }
             ResourceLocation key = null;
             try {
                 key = new ResourceLocation(name);
             } catch (Exception e) {
-                WarDance.LOGGER.warn(name + "is not a proper item name, it will not be registered.");
+                WarDance.LOGGER.warn(name + " is not a proper item name, it will not be registered.");
             }
             if (ForgeRegistries.ITEMS.containsKey(key))
-                combatList.put(ForgeRegistries.ITEMS.getValue(key), new CombatInfo(attack, defend, shield, pTime, pCount));
+                combatList.put(ForgeRegistries.ITEMS.getValue(key), new CombatInfo(attack, defend, shield, pTime, pCount, distract, unaware));
             //System.out.print("\"" + name + ", " + formatter.format(attack + 1.5) + ", " + formatter.format(defend) + ", " + shield + (shield ? ", " + pTime + ", " + pCount : "") + "\", ");
         }
         for (String s : interpretA) {
@@ -109,13 +119,13 @@ public class CombatUtils {
                 deflection = Double.parseDouble(val[2]);
                 shatter = Double.parseDouble(val[3]);
             } catch (Exception ignored) {
-                WarDance.LOGGER.warn("armor data for config entry " + s + "is not properly formatted, filling in zeros.");
+                WarDance.LOGGER.warn("armor data for config entry " + s + " is not properly formatted, filling in zeros.");
             }
             ResourceLocation key = null;
             try {
                 key = new ResourceLocation(name);
             } catch (Exception e) {
-                WarDance.LOGGER.warn(name + "is not a proper item name, it will not be registered.");
+                WarDance.LOGGER.warn(name + " is not a proper item name, it will not be registered.");
             }
             if (ForgeRegistries.ITEMS.containsKey(key) && (ForgeRegistries.ITEMS.getValue(key)) instanceof ArmorItem) {
                 UUID touse = WarAttributes.MODIFIERS[((ArmorItem) (ForgeRegistries.ITEMS.getValue(key))).getEquipmentSlot().getIndex()];
@@ -346,6 +356,20 @@ public class CombatUtils {
         }
     }
 
+    public static double getDamageMultiplier(AWARENESS a, ItemStack is) {
+        if (!CombatConfig.stealthSystem || is == null) return 1;
+        CombatInfo ci = combatList.getOrDefault(is.getItem(), DEFAULT);
+        switch (a) {
+            case DISTRACTED:
+                return ci.distractDamageBonus;
+            case UNAWARE:
+                return ci.unawareDamageBonus;
+            default:
+                return 1;
+
+        }
+    }
+
     private static ArrayList<Attribute> attributes = new ArrayList<>();
 
     public static void swapHeldItems(LivingEntity e) {
@@ -383,7 +407,7 @@ public class CombatUtils {
 
     public static void sweep(LivingEntity e, Entity ignore, Hand h, double reach) {
         if (!CombatConfig.betterSweep) return;
-        if (h == Hand.OFF_HAND){
+        if (h == Hand.OFF_HAND) {
             swapHeldItems(e);
             CombatData.getCap(e).setOffhandAttack(true);
         }
@@ -394,7 +418,10 @@ public class CombatUtils {
         boolean hit = false;
         isSweeping = ignore != null;
         for (Entity target : e.world.getEntitiesWithinAABBExcludingEntity(e, e.getBoundingBox().grow(reach))) {
-            if (target == ignore) continue;
+            if (target == ignore) {
+                hit = true;
+                continue;
+            }
             if (!GeneralUtils.isFacingEntity(e, target, angle)) continue;
             if (!e.canEntityBeSeen(target)) continue;
             CombatUtils.setHandCooldown(e, Hand.MAIN_HAND, charge, false);
@@ -409,7 +436,7 @@ public class CombatUtils {
             e.world.playSound(null, e.getPosX(), e.getPosY(), e.getPosZ(), SoundEvents.ENTITY_PLAYER_ATTACK_SWEEP, e.getSoundCategory(), 1.0F, 1.0F);
         }
         isSweeping = false;
-        if (h == Hand.OFF_HAND){
+        if (h == Hand.OFF_HAND) {
             swapHeldItems(e);
             CombatData.getCap(e).setOffhandAttack(false);
         }
@@ -422,7 +449,7 @@ public class CombatUtils {
     }
 
     public static AWARENESS getAwareness(LivingEntity attacker, LivingEntity target) {
-        if (!CombatConfig.stab || target instanceof PlayerEntity) return AWARENESS.ALERT;
+        if (!CombatConfig.stealthSystem || target instanceof PlayerEntity) return AWARENESS.ALERT;
         if (target.getRevengeTarget() == null && (!(target instanceof MobEntity) || ((MobEntity) target).getAttackTarget() == null))
             return AWARENESS.UNAWARE;
         else if (target.getRevengeTarget() != attacker && (!(target instanceof MobEntity) || ((MobEntity) target).getAttackTarget() != attacker))

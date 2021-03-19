@@ -22,9 +22,6 @@ public class ItemEventHandler {
             e.addModifier(WarAttributes.DEFLECTION.get(), a[1]);
             e.addModifier(WarAttributes.SHATTER.get(), a[2]);
         }
-        if(e.getItemStack().getItem() == Items.WOODEN_SWORD){
-            e.addModifier(ForgeMod.REACH_DISTANCE.get(), new AttributeModifier("test", 30, AttributeModifier.Operation.ADDITION));
-        }
     }
 
 }

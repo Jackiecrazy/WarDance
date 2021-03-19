@@ -300,35 +300,19 @@ public class GeneralUtils {
             double minRot = rad(entity1.rotationPitch - vertAngle / 2f);
             if (angleHead > maxRot || angleFoot < minRot) return false;
         }
-        //xz begins
-        //subtract half of width from calculations in the xz plane so wide mobs that are barely in frame still get lambasted
-//        double xDiffCompensated;
-//        if (xDiff < 0) {
-//            xDiffCompensated = Math.min(-0.1, xDiff + entity1.width / 2 + entity2.width / 2);
-//        } else {
-//            xDiffCompensated = Math.max(0.1, xDiff - entity1.width / 2 - entity2.width / 2);
-//        }
-//        double zDiffCompensated;
-//        if (zDiff < 0) {
-//            zDiffCompensated = Math.min(-0.1, zDiff + entity1.width / 2 + entity2.width / 2);
-//        } else {
-//            zDiffCompensated = Math.max(0.1, zDiff - entity1.width / 2 - entity2.width / 2);
-//        }
-//        double yDiffCompensated;
-//        if (entity1.posY-entity2.posY < 0) {
-//            yDiffCompensated = Math.min(-0.1, entity1.posY-entity2.posY + entity1.height / 2 + entity2.height / 2);
-//        } else {
-//            yDiffCompensated = Math.max(0.1, entity1.posY-entity2.posY - entity1.height / 2 - entity2.height / 2);
-//        }
         Vector3d lookVec = entity1.getLook(1.0F);
         Vector3d bodyVec = getBodyOrientation(entity1);
         //lookVec=new Vector3d(lookVec.x, 0, lookVec.z);
         //bodyVec=new Vector3d(bodyVec.x, 0, bodyVec.z);
-        Vector3d relativePosVec = new Vector3d(xDiff, entity1.getPosY() - entity2.getPosY(), zDiff);
-        double dotsqLook = ((relativePosVec.dotProduct(lookVec) * Math.abs(relativePosVec.dotProduct(lookVec))) / (relativePosVec.lengthSquared() * lookVec.lengthSquared()));
-        double dotsqBody = ((relativePosVec.dotProduct(bodyVec) * Math.abs(relativePosVec.dotProduct(bodyVec))) / (relativePosVec.lengthSquared() * bodyVec.lengthSquared()));
-        double cos = MathHelper.cos(rad(horAngle / 2f));
-        return dotsqBody < -(cos * cos) || dotsqLook < -(cos * cos);
+        Vector3d relativePosVec = entity2.getPositionVec().subtract(entity1.getPositionVec());
+        double angleLook = MathHelper.atan2(lookVec.z, lookVec.x);
+        double angleBody = MathHelper.atan2(bodyVec.z, bodyVec.x);
+        double anglePos = MathHelper.atan2(relativePosVec.z, relativePosVec.x);
+        angleBody += Math.PI;
+        angleLook += Math.PI;
+        anglePos += Math.PI;
+        double rad = rad(horAngle / 2f);
+        return Math.abs(angleLook - anglePos) < rad || Math.abs(angleBody - anglePos) < rad;
     }
 
     public static boolean isBehindEntity(Entity entity, Entity reference, int horAngle, int vertAngle) {

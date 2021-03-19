@@ -2,6 +2,7 @@
   "wardance.tooltip.postureAttack": "Posture per attack: %.2d",
   "wardance.tooltip.postureDefend": "Defense posture multiplier: %.2d",
   "wardance.tooltip.parry": "Parries up to %s times per %.2d seconds",
+  "wardance.tooltip.attack": "Ambushes distracted targets for %s damage and unaware targets for %s damage",
   "wardance.absorption": "Absorption",
   "wardance.deflection": "Deflection Angle",
   "wardance.shatter": "Shatter",

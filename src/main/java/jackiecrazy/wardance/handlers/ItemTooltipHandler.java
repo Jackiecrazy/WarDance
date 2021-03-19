@@ -19,6 +19,8 @@ public class ItemTooltipHandler {
             if (CombatUtils.isShield(null, e.getItemStack())) {
                 Tuple<Integer, Integer> rerorero = CombatUtils.getShieldStats(e.getItemStack());
                 e.getToolTip().add(new TranslationTextComponent("wardance.tooltip.parry", rerorero.getB() + 1, rerorero.getA() / 20f));
+            }else if (CombatUtils.isWeapon(null, e.getItemStack())) {
+                e.getToolTip().add(new TranslationTextComponent("wardance.tooltip.attack", CombatUtils.getDamageMultiplier(CombatUtils.AWARENESS.DISTRACTED, e.getItemStack())+"x", CombatUtils.getDamageMultiplier(CombatUtils.AWARENESS.UNAWARE, e.getItemStack())+"x"));
             }
         }
     }
