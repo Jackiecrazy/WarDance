@@ -1,11 +1,12 @@
 package jackiecrazy.wardance.handlers;
 
 import jackiecrazy.wardance.WarDance;
-import jackiecrazy.wardance.capability.CombatCapability;
 import jackiecrazy.wardance.capability.CombatData;
 import jackiecrazy.wardance.capability.ICombatCapability;
 import jackiecrazy.wardance.config.CombatConfig;
+import jackiecrazy.wardance.utils.CombatUtils;
 import jackiecrazy.wardance.utils.GeneralUtils;
+import net.minecraft.entity.CreatureEntity;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.MobEntity;
@@ -13,7 +14,13 @@ import net.minecraft.entity.ai.attributes.Attributes;
 import net.minecraft.entity.ai.goal.Goal;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.potion.Effects;
+import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.Tuple;
+import net.minecraft.util.math.AxisAlignedBB;
+import net.minecraft.util.math.BlockPos;
+import net.minecraft.world.World;
+import net.minecraft.world.server.ServerWorld;
 import net.minecraftforge.event.AttachCapabilitiesEvent;
 import net.minecraftforge.event.TickEvent;
 import net.minecraftforge.event.entity.EntityJoinWorldEvent;
@@ -23,17 +30,22 @@ import net.minecraftforge.event.entity.player.PlayerEvent;
 import net.minecraftforge.event.entity.player.PlayerWakeUpEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.LogicalSide;
+import net.minecraftforge.fml.LogicalSidedProvider;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.event.server.FMLServerStartingEvent;
 import net.minecraftforge.fml.event.server.FMLServerStoppingEvent;
+import net.minecraftforge.fml.server.ServerLifecycleHooks;
 
 import java.util.EnumSet;
 import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Map;
 
 
 @Mod.EventBusSubscriber(modid = WarDance.MODID)
 public class EntityHandler {
     public static HashMap<PlayerEntity, Entity> mustUpdate = new HashMap<>();
+    public static HashMap<Tuple<World, BlockPos>, Float> alertTracker = new HashMap<>();
 
     private static class NoGoal extends Goal {
         LivingEntity e;
@@ -62,11 +74,13 @@ public class EntityHandler {
     @SubscribeEvent
     public static void start(FMLServerStartingEvent e) {
         mustUpdate = new HashMap<>();
+        alertTracker = new HashMap<>();
     }
 
     @SubscribeEvent
     public static void stop(FMLServerStoppingEvent e) {
         mustUpdate = new HashMap<>();
+        alertTracker = new HashMap<>();
     }
 
     @SubscribeEvent
@@ -145,6 +159,23 @@ public class EntityHandler {
             double luckDiff = GeneralUtils.getAttributeValueSafe(e.getTarget(), Attributes.LUCK) - GeneralUtils.getAttributeValueSafe(e.getEntityLiving(), Attributes.LUCK);
             if (luckDiff > 0 && WarDance.rand.nextFloat() < (luckDiff / (2 + luckDiff))) {
                 ((MobEntity) e.getEntityLiving()).setAttackTarget(null);
+            }
+        }
+    }
+
+    @SubscribeEvent
+    public static void lure(TickEvent.ServerTickEvent e) {
+        Iterator<Map.Entry<Tuple<World, BlockPos>, Float>> it = alertTracker.entrySet().iterator();
+        {
+            if (it.hasNext()) {
+                Map.Entry<Tuple<World, BlockPos>, Float> n = it.next();
+                if (n.getKey().getA().isAreaLoaded(n.getKey().getB(), n.getValue().intValue())) {
+                    for (CreatureEntity c : (n.getKey().getA().getEntitiesWithinAABB(CreatureEntity.class, new AxisAlignedBB(n.getKey().getB()).grow(n.getValue())))) {
+                        if (CombatUtils.getAwareness(null, c) == CombatUtils.AWARENESS.UNAWARE)
+                            c.getNavigator().setPath(c.getNavigator().getPathToPos(n.getKey().getB(), (int) (n.getValue() + 3)), 1);
+                    }
+                    it.remove();
+                }
             }
         }
     }

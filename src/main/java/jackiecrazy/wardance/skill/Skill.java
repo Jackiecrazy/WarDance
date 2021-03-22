@@ -10,4 +10,5 @@ public abstract class Skill{
     public abstract int castingTime(LivingEntity caster, LivingEntity target);
     public abstract boolean shouldAct(LivingEntity caster, LivingEntity target);
     public abstract boolean act(LivingEntity caster, LivingEntity target);
+    public abstract int getVariation(LivingEntity caster);
 }

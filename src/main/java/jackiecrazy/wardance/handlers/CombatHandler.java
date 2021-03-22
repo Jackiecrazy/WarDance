@@ -79,14 +79,14 @@ public class CombatHandler {
 
     private static boolean downingHit = false;
 
-    @SubscribeEvent(priority = EventPriority.LOWEST)//because combat with BHT...
+    @SubscribeEvent(priority = EventPriority.LOWEST)//because compat with BHT...
     public static void parry(final LivingAttackEvent e) {
-        if (!e.getEntityLiving().world.isRemote && e.getSource() != null && CombatUtils.isMeleeAttack(e.getSource())) {
+        if (!e.getEntityLiving().world.isRemote && e.getSource() != null && CombatUtils.isPhysicalAttack(e.getSource())) {
             LivingEntity uke = e.getEntityLiving();
             if (MovementUtils.hasInvFrames(uke)) e.setCanceled(true);
             ICombatCapability ukeCap = CombatData.getCap(uke);
             ItemStack attack = CombatUtils.getAttackingItemStack(e.getSource());
-            if (e.getSource().getTrueSource() instanceof LivingEntity && attack != null && e.getAmount() > 0) {
+            if (CombatUtils.isMeleeAttack(e.getSource()) && e.getSource().getTrueSource() instanceof LivingEntity && attack != null && e.getAmount() > 0) {
                 LivingEntity seme = (LivingEntity) e.getSource().getTrueSource();
                 seme.removeActivePotionEffect(Effects.INVISIBILITY);
                 ICombatCapability semeCap = CombatData.getCap(seme);
@@ -198,7 +198,7 @@ public class CombatHandler {
                     CombatUtils.setHandCooldown(seme, Hand.MAIN_HAND, 0, false);
             }
             //shatter, at the rock bottom of the attack event, saving your protected butt.
-            if (!uke.isActiveItemStackBlocking()) {
+            if (!uke.isActiveItemStackBlocking() && !e.isCanceled()) {
                 if (CombatUtils.isPhysicalAttack(e.getSource()) && CombatUtils.getAwareness(e.getSource().getImmediateSource() instanceof LivingEntity ? (LivingEntity) e.getSource().getImmediateSource() : null, uke) != CombatUtils.AWARENESS.UNAWARE) {
                     if (e.getAmount() < CombatData.getCap(uke).getShatter()) {
                         e.setCanceled(true);
@@ -284,9 +284,10 @@ public class CombatHandler {
             amount -= GeneralUtils.getAttributeValueSafe(e.getEntityLiving(), WarAttributes.ABSORPTION.get());
             e.setAmount(amount);
         }
+
     }
 
-    @SubscribeEvent(priority = EventPriority.LOWEST)
+    @SubscribeEvent(priority = EventPriority.LOWEST, receiveCanceled = true)
     public static void udedlol(LivingDamageEvent e) {
         if (e.getAmount() > e.getEntityLiving().getHealth() + e.getEntityLiving().getAbsorptionAmount()) {
             //are we gonna die? Well, I don't really care either way. Begone, drain!

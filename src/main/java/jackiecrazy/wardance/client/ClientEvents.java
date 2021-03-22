@@ -548,22 +548,20 @@ public class ClientEvents {
     //TODO make reach affect attack
     @SubscribeEvent
     public static void sweepSwing(PlayerInteractEvent.LeftClickEmpty e) {
-        float temp = CombatUtils.getCooledAttackStrength(e.getPlayer(), Hand.MAIN_HAND, 0.5f);
-        Entity n = getEntityLookedAt(e.getPlayer(), GeneralUtils.getAttributeValueSafe(e.getPlayer(), ForgeMod.REACH_DISTANCE.get()) - (e.getPlayer().getHeldItemMainhand().isEmpty() ? 1 : 0));
-        CombatChannel.INSTANCE.sendToServer(new RequestSweepPacket(true, n));
+        Entity n = getEntityLookedAt(e.getPlayer(), GeneralUtils.getAttributeValueSafe(e.getPlayer(), ForgeMod.REACH_DISTANCE.get()) - (e.getItemStack().isEmpty() ? 1 : 0));
         if (n != null)
-            CombatChannel.INSTANCE.sendToServer(new RequestAttackPacket(false, n, temp));
+            CombatChannel.INSTANCE.sendToServer(new RequestAttackPacket(true, n));
+        CombatChannel.INSTANCE.sendToServer(new RequestSweepPacket(true, n));
     }
 
     @SubscribeEvent
     public static void sweepSwingOff(PlayerInteractEvent.RightClickEmpty e) {
-        if (e.getHand() == Hand.OFF_HAND && (!e.getItemStack().isEmpty() || CombatData.getCap(e.getPlayer()).isCombatMode())) {
-            Entity n = getEntityLookedAt(e.getPlayer(), GeneralUtils.getAttributeValueSafe(e.getPlayer(), ForgeMod.REACH_DISTANCE.get()) - (e.getPlayer().getHeldItemMainhand().isEmpty() ? 1 : 0));
+        if (e.getHand() == Hand.OFF_HAND && ((CombatUtils.isWeapon(e.getEntityLiving(), e.getItemStack()) || (e.getItemStack().isEmpty() && CombatData.getCap(e.getPlayer()).isCombatMode())))) {
+            Entity n = getEntityLookedAt(e.getPlayer(), GeneralUtils.getAttributeValueSafe(e.getPlayer(), ForgeMod.REACH_DISTANCE.get()) - (e.getItemStack().isEmpty() ? 1 : 0));
             e.getPlayer().swing(Hand.OFF_HAND, false);
-            float temp = CombatUtils.getCooledAttackStrength(e.getPlayer(), Hand.MAIN_HAND, 0.5f);
-            CombatChannel.INSTANCE.sendToServer(new RequestSweepPacket(false, n));
             if (n != null)
-                CombatChannel.INSTANCE.sendToServer(new RequestAttackPacket(false, n, temp));
+                CombatChannel.INSTANCE.sendToServer(new RequestAttackPacket(false, n));
+            CombatChannel.INSTANCE.sendToServer(new RequestSweepPacket(false, n));
         }
     }
 
@@ -571,33 +569,42 @@ public class ClientEvents {
     public static void sweepSwingBlock(PlayerInteractEvent.LeftClickBlock e) {
         if (Minecraft.getInstance().playerController.getIsHittingBlock()) return;
         float temp = CombatUtils.getCooledAttackStrength(e.getPlayer(), Hand.MAIN_HAND, 0.5f);
-        Entity n = getEntityLookedAt(e.getPlayer(), GeneralUtils.getAttributeValueSafe(e.getPlayer(), ForgeMod.REACH_DISTANCE.get()) - (e.getPlayer().getHeldItemMainhand().isEmpty() ? 1 : 0));
-        CombatChannel.INSTANCE.sendToServer(new RequestSweepPacket(true, n));
+        Entity n = getEntityLookedAt(e.getPlayer(), GeneralUtils.getAttributeValueSafe(e.getPlayer(), ForgeMod.REACH_DISTANCE.get()) - (e.getItemStack().isEmpty() ? 1 : 0));
         if (n != null)
-            CombatChannel.INSTANCE.sendToServer(new RequestAttackPacket(false, n, temp));
+            CombatChannel.INSTANCE.sendToServer(new RequestAttackPacket(true, n));
+        CombatChannel.INSTANCE.sendToServer(new RequestSweepPacket(true, n));
     }
 
     @SubscribeEvent
     public static void sweepSwingOffItem(PlayerInteractEvent.RightClickItem e) {
-        if (e.getHand() == Hand.OFF_HAND && (!e.getItemStack().isEmpty() || CombatData.getCap(e.getPlayer()).isCombatMode())) {
-            Entity n = getEntityLookedAt(e.getPlayer(), GeneralUtils.getAttributeValueSafe(e.getPlayer(), ForgeMod.REACH_DISTANCE.get()) - (e.getPlayer().getHeldItemMainhand().isEmpty() ? 1 : 0));
-            float temp = CombatUtils.getCooledAttackStrength(e.getPlayer(), Hand.MAIN_HAND, 0.5f);
+        if (e.getHand() == Hand.OFF_HAND && ((CombatUtils.isWeapon(e.getEntityLiving(), e.getItemStack()) || (e.getItemStack().isEmpty() && CombatData.getCap(e.getPlayer()).isCombatMode())))) {
+            Entity n = getEntityLookedAt(e.getPlayer(), GeneralUtils.getAttributeValueSafe(e.getPlayer(), ForgeMod.REACH_DISTANCE.get()) - (e.getItemStack().isEmpty() ? 1 : 0));
             e.getPlayer().swing(Hand.OFF_HAND, false);
-            CombatChannel.INSTANCE.sendToServer(new RequestSweepPacket(false, n));
             if (n != null)
-                CombatChannel.INSTANCE.sendToServer(new RequestAttackPacket(false, n, temp));
+                CombatChannel.INSTANCE.sendToServer(new RequestAttackPacket(false, n));
+            CombatChannel.INSTANCE.sendToServer(new RequestSweepPacket(false, n));
+        }
+    }
+
+    @SubscribeEvent
+    public static void punchy(PlayerInteractEvent.EntityInteract e) {
+        if (e.getHand() == Hand.OFF_HAND && (e.getItemStack().isEmpty() && CombatData.getCap(e.getPlayer()).isCombatMode())) {
+            Entity n = getEntityLookedAt(e.getPlayer(), GeneralUtils.getAttributeValueSafe(e.getPlayer(), ForgeMod.REACH_DISTANCE.get()) - (e.getItemStack().isEmpty() ? 1 : 0));
+            e.getPlayer().swing(Hand.OFF_HAND, false);
+            if (n != null)
+                CombatChannel.INSTANCE.sendToServer(new RequestAttackPacket(false, n));
+            CombatChannel.INSTANCE.sendToServer(new RequestSweepPacket(false, n));
         }
     }
 
     @SubscribeEvent
     public static void sweepSwingOffItemBlock(PlayerInteractEvent.RightClickBlock e) {
-        if (e.getHand() == Hand.OFF_HAND && (!e.getItemStack().isEmpty() || CombatData.getCap(e.getPlayer()).isCombatMode())) {
-            Entity n = getEntityLookedAt(e.getPlayer(), GeneralUtils.getAttributeValueSafe(e.getPlayer(), ForgeMod.REACH_DISTANCE.get()) - (e.getPlayer().getHeldItemMainhand().isEmpty() ? 1 : 0));
-            float temp = CombatUtils.getCooledAttackStrength(e.getPlayer(), Hand.MAIN_HAND, 0.5f);
+        if (e.getHand() == Hand.OFF_HAND && ((CombatUtils.isWeapon(e.getEntityLiving(), e.getItemStack()) || (e.getItemStack().isEmpty() && CombatData.getCap(e.getPlayer()).isCombatMode())))) {
+            Entity n = getEntityLookedAt(e.getPlayer(), GeneralUtils.getAttributeValueSafe(e.getPlayer(), ForgeMod.REACH_DISTANCE.get()) - (e.getItemStack().isEmpty() ? 1 : 0));
             e.getPlayer().swing(Hand.OFF_HAND, false);
-            CombatChannel.INSTANCE.sendToServer(new RequestSweepPacket(false, n));
             if (n != null)
-                CombatChannel.INSTANCE.sendToServer(new RequestAttackPacket(false, n, temp));
+                CombatChannel.INSTANCE.sendToServer(new RequestAttackPacket(false, n));
+            CombatChannel.INSTANCE.sendToServer(new RequestSweepPacket(false, n));
         }
     }
 

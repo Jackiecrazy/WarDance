@@ -58,6 +58,7 @@ public class RequestSweepPacket {
                     if (!(sender.fallDistance > 0.0F && !sender.isOnLadder() && !sender.isInWater() && !sender.isPotionActive(Effects.BLINDNESS) && !sender.isPassenger()) && !sender.isSprinting() && sender.isOnGround() && d0 < (double) sender.getAIMoveSpeed())
                         CombatUtils.sweep(sender, sender.world.getEntityByID(updateClientPacket.id), h, GeneralUtils.getAttributeValueSafe(sender, ForgeMod.REACH_DISTANCE.get()));
                 }
+                CombatUtils.setHandCooldown(sender, h, 0, false);
             });
             contextSupplier.get().setPacketHandled(true);
         }

@@ -17,19 +17,16 @@ import java.util.function.Supplier;
 public class RequestAttackPacket {
     boolean main;
     int id;
-    float cd;
 
-    public RequestAttackPacket(boolean isMainHand, int entityID, float cooldown) {
+    public RequestAttackPacket(boolean isMainHand, int entityID) {
         main = isMainHand;
         id = entityID;
-        cd = cooldown;
     }
 
-    public RequestAttackPacket(boolean isMainHand, Entity entity, float cooldown) {
+    public RequestAttackPacket(boolean isMainHand, Entity entity) {
         main = isMainHand;
         if (entity == null) id = -1;
         else id = entity.getEntityId();
-        cd = cooldown;
     }
 
     public static class RequestAttackEncoder implements BiConsumer<RequestAttackPacket, PacketBuffer> {
@@ -38,7 +35,6 @@ public class RequestAttackPacket {
         public void accept(RequestAttackPacket updateClientPacket, PacketBuffer packetBuffer) {
             packetBuffer.writeBoolean(updateClientPacket.main);
             packetBuffer.writeInt(updateClientPacket.id);
-            packetBuffer.writeFloat(updateClientPacket.cd);
         }
     }
 
@@ -46,7 +42,7 @@ public class RequestAttackPacket {
 
         @Override
         public RequestAttackPacket apply(PacketBuffer packetBuffer) {
-            return new RequestAttackPacket(packetBuffer.readBoolean(), packetBuffer.readInt(), packetBuffer.readFloat());
+            return new RequestAttackPacket(packetBuffer.readBoolean(), packetBuffer.readInt());
         }
     }
 
@@ -63,9 +59,11 @@ public class RequestAttackPacket {
                             CombatUtils.swapHeldItems(sender);
                             CombatData.getCap(sender).setOffhandAttack(true);
                         }
-                        CombatUtils.setHandCooldown(sender, Hand.MAIN_HAND, updateClientPacket.cd, false);
-                        sender.attackTargetEntityWithCurrentItem(e);
-                        if (!updateClientPacket.main) {
+                        if (sender.ticksSinceLastSwing > 0) {
+                            int temp = sender.ticksSinceLastSwing;
+                            sender.attackTargetEntityWithCurrentItem(e);
+                            sender.ticksSinceLastSwing = temp;
+                        } if (!updateClientPacket.main) {
                             CombatUtils.swapHeldItems(sender);
                             CombatData.getCap(sender).setOffhandAttack(false);
                         }
