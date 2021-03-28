@@ -10,6 +10,8 @@ import jackiecrazy.wardance.config.ClientConfig;
 import jackiecrazy.wardance.config.CombatConfig;
 import jackiecrazy.wardance.compat.ElenaiCompat;
 import jackiecrazy.wardance.networking.*;
+import jackiecrazy.wardance.skill.Skill;
+import jackiecrazy.wardance.skill.SkillData;
 import net.minecraft.block.Block;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.capabilities.CapabilityManager;
@@ -26,6 +28,7 @@ import net.minecraftforge.fml.event.lifecycle.InterModEnqueueEvent;
 import net.minecraftforge.fml.event.lifecycle.InterModProcessEvent;
 import net.minecraftforge.fml.event.server.FMLServerStartingEvent;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
+import org.apache.http.config.RegistryBuilder;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -86,6 +89,12 @@ public class WarDance {
         WarCompat.checkCompatStatus();
         if(WarCompat.elenaiDodge)
             MinecraftForge.EVENT_BUS.register(ElenaiCompat.class);
+    }
+
+    @SubscribeEvent
+    public void skillRegistry(RegistryEvent.NewRegistry event) {
+        RegistryBuilder<Skill> rb=RegistryBuilder.create();
+        rb.build();
     }
 
     // You can use SubscribeEvent and let the Event Bus discover methods to call

@@ -35,6 +35,8 @@ import net.minecraftforge.fml.common.Mod;
 @Mod.EventBusSubscriber(modid = WarDance.MODID)
 public class CombatHandler {
 
+    private static boolean downingHit = false;
+
     @SubscribeEvent
     public static void projectileParry(final ProjectileImpactEvent e) {
         if (e.getRayTraceResult().getType() == RayTraceResult.Type.ENTITY && e.getRayTraceResult() instanceof EntityRayTraceResult && ((EntityRayTraceResult) e.getRayTraceResult()).getEntity() instanceof LivingEntity) {
@@ -76,8 +78,6 @@ public class CombatHandler {
             }
         }
     }
-
-    private static boolean downingHit = false;
 
     @SubscribeEvent(priority = EventPriority.LOWEST)//because compat with BHT...
     public static void parry(final LivingAttackEvent e) {
@@ -252,8 +252,6 @@ public class CombatHandler {
             double luckDiff = WarDance.rand.nextFloat() * (GeneralUtils.getAttributeValueSafe(seme, Attributes.LUCK)) - WarDance.rand.nextFloat() * (GeneralUtils.getAttributeValueSafe(uke, Attributes.LUCK));
             e.setAmount(e.getAmount() + (float) luckDiff * CombatConfig.luck);
         }
-        if (CombatConfig.woundWL == CombatConfig.woundList.contains(e.getSource().getDamageType()))//returns true if whitelist and included, or if blacklist and excluded
-            cap.setWounding(cap.getWounding() + e.getAmount() * CombatConfig.wound);
         if (cap.getStaggerTime() > 0) {
             e.setAmount(e.getAmount() * CombatConfig.staggerDamage);
             //fatality!
@@ -295,7 +293,10 @@ public class CombatHandler {
             icc.setFatigue(0);
             icc.setWounding(0);
             icc.setBurnout(0);
-        }
+        } else if (CombatConfig.woundWL == CombatConfig.woundList.contains(e.getSource().getDamageType()))//returns true if whitelist and included, or if blacklist and excluded
+            //u hurt lol
+            CombatData.getCap(e.getEntityLiving()).setWounding(CombatData.getCap(e.getEntityLiving()).getWounding() + e.getAmount() * CombatConfig.wound);
+
     }
 
     @SubscribeEvent(priority = EventPriority.LOWEST)

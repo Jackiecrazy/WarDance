@@ -84,15 +84,41 @@ Spells and skills: hit stuff so you can hit harder!
 - Instant casts are usually things that act with yourself as center, and are cast just by moving the mouse over the pie slice in the selection. Failure to use effects of a bolstering skill will refund half charge rounded up, without resetting others. These skills are chosen to be packaged into the base API due to their general applicability:
 
 ▪ Heavy blow: the next attack in 2 seconds guarantees a crit when dealing damage, and disables the parrying hand if parried. Recharge in 3 attacks, weapon bound.
-Shatter: mark hit enemies, causing next 2 attacks to deal 1.5x damage; stagger: deal equivalent posture and 0.8s slow; lunge: range+2 and dash forward; poise: free parries until attack; resolve: double resource regen speed for 2 seconds.
+Shatter: mark hit enemies, causing next 2 attacks to deal 1.5x damage
+Stagger: deal equivalent posture and 0.8s slow
+Lunge: range+2 and dash forward
+Poise: free parries until attack
+Resolve: double resource regen speed for 2 seconds.
 ▪ Iron guard: the next parry in 1 second (particles) reflects the posture damage onto attacker. If the attack was ranged, the shot is reflected back at the caster with full force. Cancels out with heavy blow. Recharge in 5 attacks, weapon bound.
-Overpower: additionally deduct posture as if attacking with parrying hand; bind: disable attacking hand for melee; backpedal: all posture cost converted to knockback; recovery: reset cooldown of all resources; mikiri: cooldown -1, auto trigger.
+Overpower: additionally deduct posture as if attacking with parrying hand
+Bind: disable attacking hand for melee
+Backpedal: all posture cost converted to knockback
+Recovery: reset cooldown of all resources
+Mikiri: cooldown -1, auto trigger.
 ▪ Kick: the next attack in 2 seconds has 2 range but deals 6 unblockable posture damage and 1 blockable falling damage. Recharge in 5 attacks, self bound.
-Backflip: jump back and gain 30% lost posture; tackle: dashes and kicks first entity collided; iron knee: knockback converted to extra posture damage; trip: fatigue for double the cooldown time, only usable on ground, cooldown -1; overextend: double damage but deal half to self.
+Backflip: jump back and gain 30% lost posture
+Tackle: dashes and kicks first entity collided
+Iron knee: knockback converted to extra posture damage
+Trip: fatigue for double the cooldown time, only usable on ground, cooldown -1
+Overextend: double damage but deal half to self.
 ▪ Grapple: instantly stagger (they keep their posture when getting back up) by attacking a single enemy within 2 blocks twice uninterrupted within 3 seconds. Recharge in 7 attacks, weapon bound, fists and hand weapons only.
-Clinch: bind both hands on first strike; reversal: exchanges posture by percentage; submission: instantly succeeds if opponent has less health; throw: pick up enemy and use as projectile; suplex: consume all your own posture and deal it to the enemy on a multiplier, leaving them behind you.
+Clinch: bind both hands on first strike
+Reversal: exchanges posture by percentage
+Submission: instantly succeeds if opponent has less health
+Throw: pick up enemy and use as projectile
+Suplex: consume all your own posture and deal it to the enemy on a multiplier, leaving them behind you.
 ▪ Shield bash: for 2 seconds, your shield becomes a range 2 blunt weapon that deals posture damage equivalent to shield time. Recharge in 4 parries, weapon bound, shield only.
-Rim punch: range increased to 3, nauseates enemy on attack; foot slam: additionally inflicts slowness and distracts enemy; arm lock: parrying with bash active disables attacking hand, cooldown+1; berserk: recharge other hand and gain brief attack speed buff on cast and after attack; overbear: base damage increased by shield time/3 and posture damage doubled, but slow self briefly if enemy isn't staggered by hit.
+Rim punch: range increased to 3, nauseates enemy on attack
+Foot slam: additionally inflicts slowness and distracts enemy
+Arm lock: parrying with bash active disables attacking hand, cooldown+1
+Berserk: recharge other hand and gain brief attack speed buff on cast and after attack
+Overbear: base damage increased by shield time/3 and posture damage doubled, slow self briefly if enemy isn't staggered by hit.
+▪ Coup de grace: deal high damage to a staggered target. If this is the killing blow, gain 1 might. Weapon bound.
+Escapade: become invisible after a successful kill
+Eviscerate: mass fear on kill
+Reaping: weaker AoE that refreshes if it kills an enemy
+Silencer: usable on unaware enemies and deals true damage
+Reinvigorate: remove some fatigue/burnout/wounding on kill
 - Bound casts are chosen, then bound to the attack key in combat mode. Casting them generally requires chanting, but they’re more powerful. As expected, items can have different spells bound to them, or even just have a magic missile as its normal attack. This also enables throwable weapons (such as poison sand or daggers) to be used as melee. There should be an interface for such items. Only two bound skills are included as examples. Chanting can be interrupted by taking damage, using a breath weapon, asphyxiating, eating, drinking, or chanting something else.
 ▪ Phantom strike: after 0.6s of chanting, launch a shadow of your weapon, dealing a normal attack on impact. Cost 2 might, range 16.
 Warp: light gravity, teleport to hit location; crush: triple size and damage but half speed and range, clips and pierces; hamstring: slow target by 40% for 2 seconds; vengeance: ricochet up to 5 times between enemies; trap: only fires when someone crosses its LoS in 10 blocks.

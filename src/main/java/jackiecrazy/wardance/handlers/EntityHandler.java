@@ -40,12 +40,13 @@ import java.util.EnumSet;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 
 @Mod.EventBusSubscriber(modid = WarDance.MODID)
 public class EntityHandler {
     public static HashMap<PlayerEntity, Entity> mustUpdate = new HashMap<>();
-    public static HashMap<Tuple<World, BlockPos>, Float> alertTracker = new HashMap<>();
+    public static ConcurrentHashMap<Tuple<World, BlockPos>, Float> alertTracker = new ConcurrentHashMap<>();
 
     private static class NoGoal extends Goal {
         LivingEntity e;
@@ -74,13 +75,13 @@ public class EntityHandler {
     @SubscribeEvent
     public static void start(FMLServerStartingEvent e) {
         mustUpdate = new HashMap<>();
-        alertTracker = new HashMap<>();
+        alertTracker = new ConcurrentHashMap<>();
     }
 
     @SubscribeEvent
     public static void stop(FMLServerStoppingEvent e) {
         mustUpdate = new HashMap<>();
-        alertTracker = new HashMap<>();
+        alertTracker = new ConcurrentHashMap<>();
     }
 
     @SubscribeEvent
@@ -147,7 +148,7 @@ public class EntityHandler {
             if (!GeneralUtils.isFacingEntity(watcher, sneaker, Math.max(CombatConfig.baseHorizontalDetection, sneaker.getTotalArmorValue() * CombatConfig.anglePerArmor), Math.max(CombatConfig.baseVerticalDetection, sneaker.getTotalArmorValue() * sneaker.getTotalArmorValue())))
                 e.modifyVisibility(0.2);
             if (!watcher.isPotionActive(Effects.NIGHT_VISION))
-                e.modifyVisibility(0.2 + sneaker.world.getLight(sneaker.getPosition()) * sneaker.world.getLight(sneaker.getPosition()) * 0.06);
+                e.modifyVisibility(0.5 + sneaker.world.getLight(sneaker.getPosition()) * sneaker.world.getLight(sneaker.getPosition()) * 0.05);
             e.modifyVisibility(sneaker.isSprinting() ? 1.1 : watcher.canEntityBeSeen(sneaker) ? 0.4 : 1);
         }
     }
@@ -167,7 +168,7 @@ public class EntityHandler {
     public static void lure(TickEvent.ServerTickEvent e) {
         Iterator<Map.Entry<Tuple<World, BlockPos>, Float>> it = alertTracker.entrySet().iterator();
         {
-            if (it.hasNext()) {
+            while (it.hasNext()) {
                 Map.Entry<Tuple<World, BlockPos>, Float> n = it.next();
                 if (n.getKey().getA().isAreaLoaded(n.getKey().getB(), n.getValue().intValue())) {
                     for (CreatureEntity c : (n.getKey().getA().getEntitiesWithinAABB(CreatureEntity.class, new AxisAlignedBB(n.getKey().getB()).grow(n.getValue())))) {
