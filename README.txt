@@ -88,7 +88,7 @@ Shatter: mark hit enemies, causing next 2 attacks to deal 1.5x damage
 Stagger: deal equivalent posture and 0.8s slow
 Lunge: range+2 and dash forward
 Poise: free parries until attack
-Resolve: double resource regen speed for 2 seconds.
+Backstab: ignore armor if attacking the backside of enemy
 ▪ Iron guard: the next parry in 1 second (particles) reflects the posture damage onto attacker. If the attack was ranged, the shot is reflected back at the caster with full force. Cancels out with heavy blow. Recharge in 5 attacks, weapon bound.
 Overpower: additionally deduct posture as if attacking with parrying hand
 Bind: disable attacking hand for melee
@@ -113,12 +113,13 @@ Foot slam: additionally inflicts slowness and distracts enemy
 Arm lock: parrying with bash active disables attacking hand, cooldown+1
 Berserk: recharge other hand and gain brief attack speed buff on cast and after attack
 Overbear: base damage increased by shield time/3 and posture damage doubled, slow self briefly if enemy isn't staggered by hit.
-▪ Coup de grace: deal high damage to a staggered target. If this is the killing blow, gain 1 might. Weapon bound.
+▪ Coup de grace: deal triple damage to a staggered target. If this is the killing blow, gain 1 might. Weapon bound, auto proc.
 Escapade: become invisible after a successful kill
 Eviscerate: mass fear on kill
 Reaping: weaker AoE that refreshes if it kills an enemy
 Silencer: usable on unaware enemies and deals true damage
 Reinvigorate: remove some fatigue/burnout/wounding on kill
+
 - Bound casts are chosen, then bound to the attack key in combat mode. Casting them generally requires chanting, but they’re more powerful. As expected, items can have different spells bound to them, or even just have a magic missile as its normal attack. This also enables throwable weapons (such as poison sand or daggers) to be used as melee. There should be an interface for such items. Only two bound skills are included as examples. Chanting can be interrupted by taking damage, using a breath weapon, asphyxiating, eating, drinking, or chanting something else.
 ▪ Phantom strike: after 0.6s of chanting, launch a shadow of your weapon, dealing a normal attack on impact. Cost 2 might, range 16.
 Warp: light gravity, teleport to hit location; crush: triple size and damage but half speed and range, clips and pierces; hamstring: slow target by 40% for 2 seconds; vengeance: ricochet up to 5 times between enemies; trap: only fires when someone crosses its LoS in 10 blocks.

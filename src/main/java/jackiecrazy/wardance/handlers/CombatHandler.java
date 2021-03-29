@@ -57,8 +57,8 @@ public class CombatHandler {
             Entity projectile = e.getEntity();
             if (defend != null && GeneralUtils.isFacingEntity(uke, projectile, 120) && ukeCap.doConsumePosture(free ? 0 : consume)) {
                 e.setCanceled(true);
-                if (projectile instanceof ProjectileEntity)
-                    ((ProjectileEntity) projectile).setShooter(uke);
+//                if (projectile instanceof ProjectileEntity)
+//                    ((ProjectileEntity) projectile).setShooter(uke);//makes drowned tridents and skeleton arrows collectable, which is honestly silly
                 if (!free) {
                     Tuple<Integer, Integer> stat = CombatUtils.getShieldStats(defend);
                     ukeCap.setShieldTime(stat.getA());
@@ -95,7 +95,7 @@ public class CombatHandler {
                 //add stats if it's the first attack this tick and cooldown is sufficient
                 if (seme.getLastAttackedEntityTime() != seme.ticksExisted) {//first hit of a potential sweep attack
                     semeCap.addCombo(0.2f);
-                    float might = ((semeCap.getCachedCooldown() * semeCap.getCachedCooldown()) / 781.25f * (1 + (semeCap.getCombo() / 10f)));
+                    float might = ((semeCap.getCachedCooldown() * semeCap.getCachedCooldown() * CombatUtils.getCooldownPeriod(seme, Hand.MAIN_HAND) * CombatUtils.getCooldownPeriod(seme, Hand.MAIN_HAND)) / 781.25f * (1 + (semeCap.getCombo() / 10f)));
                     float weakness = 1;
                     if (seme.isPotionActive(Effects.WEAKNESS))
                         for (int foo = 0; foo < seme.getActivePotionEffect(Effects.WEAKNESS).getAmplifier() + 1; foo++) {

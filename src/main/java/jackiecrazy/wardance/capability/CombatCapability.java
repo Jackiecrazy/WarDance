@@ -35,7 +35,9 @@ public class CombatCapability implements ICombatCapability {
 
     public static final float MAXQI = 10;
     public static final UUID WOUND = UUID.fromString("982bbbb2-bbd0-4166-801a-560d1a4149c8");
-    private static final AttributeModifier STAGGERA = new AttributeModifier(WOUND, "stagger armor debuff", -5, AttributeModifier.Operation.ADDITION);
+    public static final UUID MORE = UUID.fromString("982bbbb2-bbd0-4166-801a-560d1a4149c9");
+    private static final AttributeModifier STAGGERA = new AttributeModifier(WOUND, "stagger armor debuff", -7, AttributeModifier.Operation.ADDITION);
+    private static final AttributeModifier STAGGERSA = new AttributeModifier(MORE, "additional stagger armor penalty", -0.5, AttributeModifier.Operation.MULTIPLY_TOTAL);
     private static final AttributeModifier STAGGERS = new AttributeModifier(WOUND, "stagger speed debuff", -1, AttributeModifier.Operation.MULTIPLY_TOTAL);
 
     private final WeakReference<LivingEntity> dude;
