@@ -1,4 +1,4 @@
-package jackiecrazy.wardance.capability;
+package jackiecrazy.wardance.capability.resources;
 
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.util.Hand;
@@ -165,6 +165,12 @@ public interface ICombatCapability {
     float getBurnout();
 
     void setBurnout(float amount);
+
+    void addWounding(float amount);
+
+    void addFatigue(float amount);
+
+    void addBurnout(float amount);
 
     int getHandBind(Hand h);
 

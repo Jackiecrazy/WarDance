@@ -1,4 +1,4 @@
-package jackiecrazy.wardance.capability;
+package jackiecrazy.wardance.capability.skill;
 
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.nbt.INBT;

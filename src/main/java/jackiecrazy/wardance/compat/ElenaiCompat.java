@@ -2,15 +2,12 @@ package jackiecrazy.wardance.compat;
 
 import com.elenai.elenaidodge2.api.DodgeEvent;
 import com.elenai.elenaidodge2.api.FeathersHelper;
-import jackiecrazy.wardance.capability.CombatData;
+import jackiecrazy.wardance.capability.resources.CombatData;
 import jackiecrazy.wardance.config.CombatConfig;
 import jackiecrazy.wardance.utils.MovementUtils;
-import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraftforge.eventbus.api.EventPriority;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
-
-import javax.annotation.Nullable;
 
 public class ElenaiCompat {
     private static Object handler;

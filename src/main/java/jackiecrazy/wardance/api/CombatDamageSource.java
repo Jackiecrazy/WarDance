@@ -9,6 +9,30 @@ import net.minecraft.util.Hand;
 import javax.annotation.Nullable;
 
 public class CombatDamageSource extends EntityDamageSource {
+    private ItemStack damageDealer = ItemStack.EMPTY;
+    private Hand attackingHand = Hand.MAIN_HAND;
+    private Entity proxy = null;
+    private Skill skillUsed = null;
+    private boolean procNormalEffects = false;
+    private boolean procAttackEffects = false;
+    private boolean procSkillEffects = false;
+    private boolean crit = false;
+    private float cdmg = 1.5f;
+    private TYPE damageTyping = TYPE.PHYSICAL;
+
+    public CombatDamageSource(String damageTypeIn, @Nullable Entity damageSourceEntityIn) {
+        super(damageTypeIn, damageSourceEntityIn);
+    }
+
+    public float getCritDamage() {
+        return cdmg;
+    }
+
+    public CombatDamageSource setCritDamage(float cdmg) {
+        this.cdmg = cdmg;
+        return this;
+    }
+
     public TYPE getDamageTyping() {
         return damageTyping;
     }
@@ -16,26 +40,6 @@ public class CombatDamageSource extends EntityDamageSource {
     public CombatDamageSource setDamageTyping(TYPE damageTyping) {
         this.damageTyping = damageTyping;
         return this;
-    }
-
-    public enum TYPE {
-        PHYSICAL,//reduced by absorption, deflection, shatter, and armor
-        MAGICAL,//reduced by resist
-        TRUE//not reduced by anything
-    }
-
-    private ItemStack damageDealer = ItemStack.EMPTY;
-    private Hand attackingHand = Hand.MAIN_HAND;
-    private Entity proxy = null;
-    private Skill skillUsed = null;
-    private boolean procAutoEffects = false;
-    private boolean procAttackEffects = false;
-    private boolean procSkillEffects = false;
-    private boolean crit = false;
-    private TYPE damageTyping = TYPE.PHYSICAL;
-
-    public CombatDamageSource(String damageTypeIn, @Nullable Entity damageSourceEntityIn) {
-        super(damageTypeIn, damageSourceEntityIn);
     }
 
     public boolean isCrit() {
@@ -84,11 +88,11 @@ public class CombatDamageSource extends EntityDamageSource {
     }
 
     public boolean canProcAutoEffects() {
-        return procAutoEffects;
+        return procNormalEffects;
     }
 
-    public CombatDamageSource setProcAutoEffects(boolean procAutoEffects) {
-        this.procAutoEffects = procAutoEffects;
+    public CombatDamageSource setProcNormalEffects(boolean procNormalEffects) {
+        this.procNormalEffects = procNormalEffects;
         return this;
     }
 
@@ -108,5 +112,11 @@ public class CombatDamageSource extends EntityDamageSource {
     public CombatDamageSource setProcSkillEffects(boolean procSkillEffects) {
         this.procSkillEffects = procSkillEffects;
         return this;
+    }
+
+    public enum TYPE {
+        PHYSICAL,//reduced by absorption, deflection, shatter, and armor
+        MAGICAL,//reduced by resist
+        TRUE//not reduced by anything
     }
 }

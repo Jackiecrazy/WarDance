@@ -1,4 +1,4 @@
-package jackiecrazy.wardance.capability;
+package jackiecrazy.wardance.capability.resources;
 
 import jackiecrazy.wardance.WarDance;
 import jackiecrazy.wardance.api.WarAttributes;
@@ -9,7 +9,6 @@ import jackiecrazy.wardance.utils.CombatUtils;
 import jackiecrazy.wardance.utils.GeneralUtils;
 import jackiecrazy.wardance.utils.MovementUtils;
 import net.minecraft.entity.LivingEntity;
-import net.minecraft.entity.MobEntity;
 import net.minecraft.entity.Pose;
 import net.minecraft.entity.ai.attributes.AttributeModifier;
 import net.minecraft.entity.ai.attributes.Attributes;
@@ -21,7 +20,6 @@ import net.minecraft.potion.Effects;
 import net.minecraft.util.Hand;
 import net.minecraft.util.SoundCategory;
 import net.minecraft.util.SoundEvents;
-import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.vector.Vector3d;
 import net.minecraftforge.common.util.FakePlayer;
@@ -186,6 +184,8 @@ public class CombatCapability implements ICombatCapability {
             elb.getAttribute(Attributes.MOVEMENT_SPEED).applyPersistentModifier(STAGGERS);
             elb.getAttribute(Attributes.ARMOR).removeModifier(WOUND);
             elb.getAttribute(Attributes.ARMOR).applyPersistentModifier(STAGGERA);
+            elb.getAttribute(Attributes.ARMOR).removeModifier(MORE);
+            elb.getAttribute(Attributes.ARMOR).applyPersistentModifier(STAGGERSA);
             return -1f;
         }
         float weakness = 1;
@@ -194,7 +194,7 @@ public class CombatCapability implements ICombatCapability {
                 weakness *= CombatConfig.hunger;
         }
         posture -= amount;
-        setFatigue(getFatigue() + amount * CombatConfig.fatigue);
+        addFatigue(amount * CombatConfig.fatigue);
         setPostureGrace((int) (CombatConfig.postureCD * weakness));
         sync();
         return ret;
@@ -305,6 +305,7 @@ public class CombatCapability implements ICombatCapability {
             LivingEntity elb = dude.get();
             elb.getAttribute(Attributes.MOVEMENT_SPEED).removeModifier(WOUND);
             elb.getAttribute(Attributes.ARMOR).removeModifier(WOUND);
+            elb.getAttribute(Attributes.ARMOR).removeModifier(MORE);
         }
     }
 
@@ -317,6 +318,7 @@ public class CombatCapability implements ICombatCapability {
             if (staggert > 0 && elb != null) {
                 elb.getAttribute(Attributes.MOVEMENT_SPEED).removeModifier(WOUND);
                 elb.getAttribute(Attributes.ARMOR).removeModifier(WOUND);
+                elb.getAttribute(Attributes.ARMOR).removeModifier(MORE);
                 setPosture(getMaxPosture());
                 staggerc = 0;
             }
@@ -498,6 +500,21 @@ public class CombatCapability implements ICombatCapability {
     }
 
     @Override
+    public void addWounding(float amount) {
+        setWounding(wounding + amount);
+    }
+
+    @Override
+    public void addFatigue(float amount) {
+        setFatigue(fatigue + amount);
+    }
+
+    @Override
+    public void addBurnout(float amount) {
+        setBurnout(burnout + amount);
+    }
+
+    @Override
     public int getHandBind(Hand h) {
         if (h == Hand.OFF_HAND) {
             return oBind;
@@ -596,9 +613,9 @@ public class CombatCapability implements ICombatCapability {
             if (getHandBind(h) != 0) CombatUtils.setHandCooldown(elb, h, 0, true);
         }
         addOffhandCooldown(ticks);
-        if (!(elb instanceof PlayerEntity)) {
-            elb.ticksSinceLastSwing += ticks;
-        }
+//        if (!(elb instanceof PlayerEntity)) {
+//            elb.ticksSinceLastSwing += ticks;
+//        }
         decrementRollTime(ticks);
         decrementShieldTime(ticks);
         decrementStaggerTime(ticks);
@@ -736,13 +753,14 @@ public class CombatCapability implements ICombatCapability {
         for (int j = 0; j < exp; j++) {
             poison *= CombatConfig.poison;
         }
-        float armorMod = Math.max(1f - ((float) elb.getTotalArmorValue() / 40f), 0);
+        float armorMod = 1;// Math.max(1f - ((float) elb.getTotalArmorValue() / 40f), 0);
         float healthMod = elb.getHealth() / elb.getMaxHealth();
         Vector3d spd = elb.getMotion();
         float speedMod = (float) Math.min(1, 0.007f / (spd.x * spd.x + spd.z * spd.z));
 //        if (getStaggerTime() > 0) {
 //            return getMaxPosture() * armorMod * speedMod * healthMod / (1.5f * CombatConfig.staggerDuration);
 //        }
-        return (0.2f * armorMod * healthMod * speedMod * poison) - nausea;
+        //0.2f
+        return ((getMaxPosture() - elb.getTotalArmorValue() / 2f) / 60f * armorMod * healthMod * speedMod * poison) - nausea;
     }
 }

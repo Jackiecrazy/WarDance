@@ -1,9 +1,9 @@
-package jackiecrazy.wardance.capability;
+package jackiecrazy.wardance.capability.resources;
 
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.util.Hand;
 
-public class DummyCombatCap implements ICombatCapability{
+public class DummyCombatCap implements ICombatCapability {
 
 
     @Override
@@ -303,6 +303,21 @@ public class DummyCombatCap implements ICombatCapability{
 
     @Override
     public void setBurnout(float amount) {
+
+    }
+
+    @Override
+    public void addWounding(float amount) {
+
+    }
+
+    @Override
+    public void addFatigue(float amount) {
+
+    }
+
+    @Override
+    public void addBurnout(float amount) {
 
     }
 

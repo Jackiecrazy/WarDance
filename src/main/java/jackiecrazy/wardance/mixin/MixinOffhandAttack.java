@@ -1,15 +1,13 @@
 package jackiecrazy.wardance.mixin;
 
 import jackiecrazy.wardance.api.CombatDamageSource;
-import jackiecrazy.wardance.capability.CombatData;
-import jackiecrazy.wardance.capability.ICombatCapability;
+import jackiecrazy.wardance.capability.resources.CombatData;
 import jackiecrazy.wardance.config.CombatConfig;
 import org.objectweb.asm.Opcodes;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.potion.Effects;
 import net.minecraft.util.DamageSource;
 import net.minecraft.util.Hand;
 import net.minecraft.util.math.vector.Vector3d;
@@ -26,6 +24,7 @@ import org.spongepowered.asm.mixin.injection.callback.LocalCapture;
 public abstract class MixinOffhandAttack extends LivingEntity {
 
     private static boolean tempCrit;
+    private static float tempCdmg;
 
     protected MixinOffhandAttack(EntityType<? extends LivingEntity> type, World worldIn) {
         super(type, worldIn);
@@ -37,16 +36,17 @@ public abstract class MixinOffhandAttack extends LivingEntity {
         CombatData.getCap(this).setCachedCooldown(f2);
     }
 
-    @Inject(method = "attackTargetEntityWithCurrentItem", locals = LocalCapture.CAPTURE_FAILSOFT,
+    @Inject(method = "attackTargetEntityWithCurrentItem", locals = LocalCapture.PRINT,
             at = @At(value = "INVOKE", target = "Lnet/minecraft/entity/Entity;attackEntityFrom(Lnet/minecraft/util/DamageSource;F)Z"))
     private void store(Entity targetEntity, CallbackInfo ci, float f, float f1, float f2, boolean flag, boolean flag1, int i, boolean flag2, CriticalHitEvent hitResult, boolean flag3, double d0, float f4, boolean flag4, int j, Vector3d vector3d) {
         tempCrit = flag2;
+        tempCdmg = hitResult == null ? 1 : hitResult.getDamageModifier();
     }
 
     @Redirect(method = "attackTargetEntityWithCurrentItem",
             at = @At(value = "INVOKE", target = "Lnet/minecraft/util/DamageSource;causePlayerDamage(Lnet/minecraft/entity/player/PlayerEntity;)Lnet/minecraft/util/DamageSource;"))
     private DamageSource customDamageSource(PlayerEntity player) {
-        return new CombatDamageSource("player", player).setDamageDealer(player.getHeldItemMainhand()).setAttackingHand(CombatData.getCap(player).isOffhandAttack() ? Hand.OFF_HAND : Hand.MAIN_HAND).setProcAttackEffects(true).setProcAutoEffects(true).setCrit(tempCrit).setDamageTyping(CombatDamageSource.TYPE.PHYSICAL);
+        return new CombatDamageSource("player", player).setDamageDealer(player.getHeldItemMainhand()).setAttackingHand(CombatData.getCap(player).isOffhandAttack() ? Hand.OFF_HAND : Hand.MAIN_HAND).setProcAttackEffects(true).setProcNormalEffects(true).setCrit(tempCrit).setCritDamage(tempCdmg).setDamageTyping(CombatDamageSource.TYPE.PHYSICAL);
     }
 
     @Redirect(method = "attackTargetEntityWithCurrentItem",

@@ -1,8 +1,6 @@
 package jackiecrazy.wardance.networking;
 
-import io.netty.util.internal.shaded.org.jctools.queues.MessagePassingQueue;
-import jackiecrazy.wardance.capability.CombatData;
-import jackiecrazy.wardance.capability.ICombatCapability;
+import jackiecrazy.wardance.capability.resources.CombatData;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.world.ClientWorld;
 import net.minecraft.entity.Entity;
@@ -11,7 +9,6 @@ import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.network.PacketBuffer;
 import net.minecraftforge.fml.network.NetworkEvent;
 
-import java.util.Objects;
 import java.util.function.BiConsumer;
 import java.util.function.Function;
 import java.util.function.Supplier;

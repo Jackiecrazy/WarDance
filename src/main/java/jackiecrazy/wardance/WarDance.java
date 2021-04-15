@@ -1,9 +1,12 @@
 package jackiecrazy.wardance;
 
 import jackiecrazy.wardance.api.WarAttributes;
-import jackiecrazy.wardance.capability.CombatStorage;
-import jackiecrazy.wardance.capability.DummyCombatCap;
-import jackiecrazy.wardance.capability.ICombatCapability;
+import jackiecrazy.wardance.capability.resources.CombatStorage;
+import jackiecrazy.wardance.capability.resources.DummyCombatCap;
+import jackiecrazy.wardance.capability.resources.ICombatCapability;
+import jackiecrazy.wardance.capability.skill.DummySkillCap;
+import jackiecrazy.wardance.capability.skill.ISkillCapability;
+import jackiecrazy.wardance.capability.skill.SkillStorage;
 import jackiecrazy.wardance.client.Keybinds;
 import jackiecrazy.wardance.compat.WarCompat;
 import jackiecrazy.wardance.config.ClientConfig;
@@ -11,8 +14,9 @@ import jackiecrazy.wardance.config.CombatConfig;
 import jackiecrazy.wardance.compat.ElenaiCompat;
 import jackiecrazy.wardance.networking.*;
 import jackiecrazy.wardance.skill.Skill;
-import jackiecrazy.wardance.skill.SkillData;
+import jackiecrazy.wardance.skill.WarSkills;
 import net.minecraft.block.Block;
+import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.capabilities.CapabilityManager;
 import net.minecraftforge.event.RegistryEvent;
@@ -28,7 +32,7 @@ import net.minecraftforge.fml.event.lifecycle.InterModEnqueueEvent;
 import net.minecraftforge.fml.event.lifecycle.InterModProcessEvent;
 import net.minecraftforge.fml.event.server.FMLServerStartingEvent;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
-import org.apache.http.config.RegistryBuilder;
+import net.minecraftforge.registries.RegistryBuilder;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -58,10 +62,13 @@ public class WarDance {
         ModLoadingContext.get().registerConfig(ModConfig.Type.CLIENT, ClientConfig.CONFIG_SPEC);
         IEventBus bus = FMLJavaModLoadingContext.get().getModEventBus();
         WarAttributes.ATTRIBUTES.register(bus);
+        WarSkills.SKILLS.makeRegistry("skills", RegistryBuilder::new);
+        WarSkills.SKILLS.register(bus);
     }
 
     private void setup(final FMLCommonSetupEvent event) {
         CapabilityManager.INSTANCE.register(ICombatCapability.class, new CombatStorage(), DummyCombatCap::new);
+        CapabilityManager.INSTANCE.register(ISkillCapability.class, new SkillStorage(), DummySkillCap::new);
         // some preinit code
         int index = 0;
         CombatChannel.INSTANCE.registerMessage(index++, UpdateClientPacket.class, new UpdateClientPacket.UpdateClientEncoder(), new UpdateClientPacket.UpdateClientDecoder(), new UpdateClientPacket.UpdateClientHandler());
@@ -87,14 +94,8 @@ public class WarDance {
     private void processIMC(final InterModProcessEvent event) {
         // some example code to receive and process InterModComms from other mods
         WarCompat.checkCompatStatus();
-        if(WarCompat.elenaiDodge)
+        if (WarCompat.elenaiDodge)
             MinecraftForge.EVENT_BUS.register(ElenaiCompat.class);
-    }
-
-    @SubscribeEvent
-    public void skillRegistry(RegistryEvent.NewRegistry event) {
-        RegistryBuilder<Skill> rb=RegistryBuilder.create();
-        rb.build();
     }
 
     // You can use SubscribeEvent and let the Event Bus discover methods to call
@@ -108,7 +109,14 @@ public class WarDance {
     @Mod.EventBusSubscriber(bus = Mod.EventBusSubscriber.Bus.MOD)
     public static class RegistryEvents {
         @SubscribeEvent
-        public static void onBlocksRegistry(final RegistryEvent.Register<Block> blockRegistryEvent) {
+        public static void skills(final RegistryEvent.Register<Skill> e) {
         }
+
+        @SubscribeEvent()
+        public void skillRegistry(RegistryEvent.NewRegistry event) {
+            //WarSkills.SKILLS=new RegistryBuilder<Skill>().setName(new ResourceLocation(MODID, "skills")).setType(Skill.class).create();
+        }
+
+
     }
 }

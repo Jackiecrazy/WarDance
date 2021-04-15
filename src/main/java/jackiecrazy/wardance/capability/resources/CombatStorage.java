@@ -1,9 +1,8 @@
-package jackiecrazy.wardance.capability;
+package jackiecrazy.wardance.capability.resources;
 
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.nbt.INBT;
 import net.minecraft.util.Direction;
-import net.minecraft.util.Hand;
 import net.minecraftforge.common.capabilities.Capability;
 
 import javax.annotation.Nullable;

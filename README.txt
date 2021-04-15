@@ -28,6 +28,7 @@ Might: by remaining in combat, one can gradually unlock more and more moves.
 Spirit: suspiciously remniscent of a stamina bar.
 - Spirit obeys the same rules as posture, sans armor increasing its cap.
 - Taking damage will pause spirit regen for 2 seconds.
+- Spirit will not regenerate when chanting.
 Idle parry:
 - By holding a “weapon” and orienting yourself towards an attack, you can parry it.
 - Idle parrying negates damage, but not posture consumption nor attack effects.
@@ -78,14 +79,15 @@ Stealth: Sneak 100
 - Mobs will investigate sound when unaware; this will distract them. Making sounds such as taking damage from fall and causing explosions will draw enemies in an area to you, but you can also shoot arrows to distract mobs for stealth missions.
 - If you are about to be discovered from out of LoS, the luck of you and your opponent will be compared to give you a chance of negating discovery.
 Spells and skills: hit stuff so you can hit harder!
-- Skills must be first set in the skill screen, then brought up in combat mode with the F key as a radial menu. Half the screen (4 slots) is available for each hand to add skills, and two-handing gives 8 skill slots. Combined with 4 spell slots that don’t require weapons, you can have 12 skills equipped at any given time.
-- Skills are split into categories depending on their resource consumption for recharge (e.g. might, spirit, time, normal attacks, distance moved, etc). All skills of the same category have their “timers” set to half upon casting one so you can’t continuously chain moves of the same category.
-- Skills can be augmented by items/runes that add or modify behavior, see example.
+- Skills must be first set in the skill screen, then brought up in combat mode with the F key as a radial menu. You have 12 slots in total, period. Since you can only do 12 things at any given time, the people who can switch sets mid-fight are going to have less slots per weapon.
+- Skills can be augmented by items/runes that add or modify behavior, see example. You can equip multiple variations of the same skill simultaneously.
+- Skills are split into categories depending on their resource consumption for recharge (e.g. might, spirit, time, normal attacks, distance moved, etc).
+- All skills of the same category have their “timers” set to half upon casting one so you can’t continuously chain moves of the same category. In addition, all variations of the same skill enter full cooldown.
 - Instant casts are usually things that act with yourself as center, and are cast just by moving the mouse over the pie slice in the selection. Failure to use effects of a bolstering skill will refund half charge rounded up, without resetting others. These skills are chosen to be packaged into the base API due to their general applicability:
 
-▪ Heavy blow: the next attack in 2 seconds guarantees a crit when dealing damage, and disables the parrying hand if parried. Recharge in 3 attacks, weapon bound.
-Shatter: mark hit enemies, causing next 2 attacks to deal 1.5x damage
-Stagger: deal equivalent posture and 0.8s slow
+▪ Heavy blow: the next attack in 2 seconds guarantees a crit when dealing damage, and disables the parrying hand for 1.5 seconds if parried. Recharge in 3 attacks, weapon bound.
+Shatter: bind time increases based on the variety of the last 3 skills used
+Intimidate: consume 1 might to add 3+(might difference/2) fatigue and 0.8+(might/10) seconds of slow
 Lunge: range+2 and dash forward
 Poise: free parries until attack
 Backstab: ignore armor if attacking the backside of enemy
@@ -94,35 +96,42 @@ Overpower: additionally deduct posture as if attacking with parrying hand
 Bind: disable attacking hand for melee
 Backpedal: all posture cost converted to knockback
 Recovery: reset cooldown of all resources
-Mikiri: cooldown -1, auto trigger.
+Mikiri: cooldown -1, auto trigger
 ▪ Kick: the next attack in 2 seconds has 2 range but deals 6 unblockable posture damage and 1 blockable falling damage. Recharge in 5 attacks, self bound.
 Backflip: jump back and gain 30% lost posture
 Tackle: dashes and kicks first entity collided
 Iron knee: knockback converted to extra posture damage
 Trip: fatigue for double the cooldown time, only usable on ground, cooldown -1
-Overextend: double damage but deal half to self.
+Overextend: double damage but deal half to self
 ▪ Grapple: instantly stagger (they keep their posture when getting back up) by attacking a single enemy within 2 blocks twice uninterrupted within 3 seconds. Recharge in 7 attacks, weapon bound, fists and hand weapons only.
 Clinch: bind both hands on first strike
 Reversal: exchanges posture by percentage
 Submission: instantly succeeds if opponent has less health
 Throw: pick up enemy and use as projectile
-Suplex: consume all your own posture and deal it to the enemy on a multiplier, leaving them behind you.
+Suplex: consume all your own posture and deal it to the enemy on a multiplier, leaving them behind you
 ▪ Shield bash: for 2 seconds, your shield becomes a range 2 blunt weapon that deals posture damage equivalent to shield time. Recharge in 4 parries, weapon bound, shield only.
 Rim punch: range increased to 3, nauseates enemy on attack
 Foot slam: additionally inflicts slowness and distracts enemy
 Arm lock: parrying with bash active disables attacking hand, cooldown+1
 Berserk: recharge other hand and gain brief attack speed buff on cast and after attack
-Overbear: base damage increased by shield time/3 and posture damage doubled, slow self briefly if enemy isn't staggered by hit.
-▪ Coup de grace: deal triple damage to a staggered target. If this is the killing blow, gain 1 might. Weapon bound, auto proc.
-Escapade: become invisible after a successful kill
+Overbear: base damage increased by shield time/3 and posture damage doubled, slow self briefly if enemy isn't staggered by hit
+▪ Coup de grace: mobs have a life count depending on their max health, formula pending. Deal one life's worth of true damage to a staggered target. If this is the killing blow, gain 1 might. Weapon bound, auto proc.
+Frenzy: other physical skills refreshed on kill
 Eviscerate: mass fear on kill
 Reaping: weaker AoE that refreshes if it kills an enemy
-Silencer: usable on unaware enemies and deals true damage
+Silencer: usable on unaware enemies
 Reinvigorate: remove some fatigue/burnout/wounding on kill
 
-- Bound casts are chosen, then bound to the attack key in combat mode. Casting them generally requires chanting, but they’re more powerful. As expected, items can have different spells bound to them, or even just have a magic missile as its normal attack. This also enables throwable weapons (such as poison sand or daggers) to be used as melee. There should be an interface for such items. Only two bound skills are included as examples. Chanting can be interrupted by taking damage, using a breath weapon, asphyxiating, eating, drinking, or chanting something else.
+- Bound casts are chosen, then bound to the attack key in combat mode. Casting them generally requires chanting, but they’re more powerful.
+- As expected, items can have different spells bound to them, or even just have a magic missile as its normal attack. This also enables throwable weapons (such as poison sand or daggers) to be used as melee, by using a single skill to toggle between ranged and melee. There should be an interface for such items.
+- Only two bound skills are included as examples.
+- Chanting can be interrupted by taking damage, using a breath weapon, asphyxiating, eating, drinking, or chanting something else.
 ▪ Phantom strike: after 0.6s of chanting, launch a shadow of your weapon, dealing a normal attack on impact. Cost 2 might, range 16.
-Warp: light gravity, teleport to hit location; crush: triple size and damage but half speed and range, clips and pierces; hamstring: slow target by 40% for 2 seconds; vengeance: ricochet up to 5 times between enemies; trap: only fires when someone crosses its LoS in 10 blocks.
+Warp: light gravity, teleport to hit location
+Crush: triple size and damage but half speed and range, clips and pierces
+Hamstring: slow target by 40% for 2 seconds
+Vengeance: ricochet up to 5 times between enemies
+Trap: only fires when someone crosses its LoS in 10 blocks
 ▪ Fighting spirit: passive available until active cast ends, then can only be recharged by sleeping or after 2 minutes have elapsed. Genies from some game.
 Name
  Active

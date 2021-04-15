@@ -1,8 +1,8 @@
 package jackiecrazy.wardance.utils;
 
 import jackiecrazy.wardance.compat.WarCompat;
-import jackiecrazy.wardance.capability.CombatData;
-import jackiecrazy.wardance.capability.ICombatCapability;
+import jackiecrazy.wardance.capability.resources.CombatData;
+import jackiecrazy.wardance.capability.resources.ICombatCapability;
 import jackiecrazy.wardance.config.CombatConfig;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.Pose;

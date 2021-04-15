@@ -4,8 +4,8 @@ import jackiecrazy.wardance.WarDance;
 import jackiecrazy.wardance.api.CombatDamageSource;
 import jackiecrazy.wardance.api.ICombatManipulator;
 import jackiecrazy.wardance.api.WarAttributes;
-import jackiecrazy.wardance.capability.CombatData;
-import jackiecrazy.wardance.capability.ICombatCapability;
+import jackiecrazy.wardance.capability.resources.CombatData;
+import jackiecrazy.wardance.capability.resources.ICombatCapability;
 import jackiecrazy.wardance.client.ClientEvents;
 import jackiecrazy.wardance.config.CombatConfig;
 import jackiecrazy.wardance.networking.CombatChannel;
@@ -36,27 +36,12 @@ import javax.annotation.Nullable;
 import java.util.*;
 
 public class CombatUtils {
-    private static class CombatInfo {
-        private final double attackPostureMultiplier, defensePostureMultiplier;
-        private final double distractDamageBonus, unawareDamageBonus;
-        private final int parryTime, parryCount;
-        private final boolean isShield;
-
-        private CombatInfo(double attack, double defend, boolean shield, int pTime, int pCount, double distract, double unaware) {
-            attackPostureMultiplier = attack;
-            defensePostureMultiplier = defend;
-            isShield = shield;
-            parryCount = pCount;
-            parryTime = pTime;
-            distractDamageBonus = distract;
-            unawareDamageBonus = unaware;
-        }
-    }
-
-    private static CombatInfo DEFAULT = new CombatInfo(1, 1, false, 0, 0, 1, 1);
-    private static HashMap<Item, CombatInfo> combatList = new HashMap<>();
     public static HashMap<String, Float> customPosture = new HashMap<>();
     public static HashMap<Item, AttributeModifier[]> armorStats = new HashMap<>();
+    public static boolean isSweeping = false;
+    private static CombatInfo DEFAULT = new CombatInfo(1, 1, false, 0, 0, 1, 1);
+    private static HashMap<Item, CombatInfo> combatList = new HashMap<>();
+    private static ArrayList<Attribute> attributes = new ArrayList<>();
 
     public static void updateLists(List<? extends String> interpretC, List<? extends String> interpretP, List<? extends String> interpretA) {
         DEFAULT = new CombatInfo(CombatConfig.defaultMultiplierPostureAttack, CombatConfig.defaultMultiplierPostureDefend, false, CombatConfig.shieldThreshold, CombatConfig.shieldCount, CombatConfig.distract, CombatConfig.unaware);
@@ -156,6 +141,8 @@ public class CombatUtils {
     }
 
     public static float getCooledAttackStrength(LivingEntity e, Hand h, float adjustTicks) {
+        //FIXME bht compat
+        if (!(e instanceof PlayerEntity) && h == Hand.MAIN_HAND) return 1;
         //if (h == Hand.OFF_HAND && adjustTicks == 1) System.out.println(getCooldownPeriod(e, h));
         return MathHelper.clamp(((float) (h == Hand.MAIN_HAND ? e.ticksSinceLastSwing : CombatData.getCap(e).getOffhandCooldown()) + adjustTicks) / getCooldownPeriod(e, h), 0.0F, 1.0F);
     }
@@ -346,6 +333,8 @@ public class CombatUtils {
         int real = percent == 0 ? 0 : (int) (percent * getCooldownPeriod(e, h));
         switch (h) {
             case MAIN_HAND:
+                //FIXME bht compat?
+                if (!(e instanceof PlayerEntity)) return;
                 e.ticksSinceLastSwing = real;
                 if (!(e instanceof FakePlayer) && e instanceof ServerPlayerEntity && sync)
                     CombatChannel.INSTANCE.send(PacketDistributor.PLAYER.with(() -> (ServerPlayerEntity) e), new UpdateAttackPacket(e.getEntityId(), real));
@@ -369,8 +358,6 @@ public class CombatUtils {
 
         }
     }
-
-    private static ArrayList<Attribute> attributes = new ArrayList<>();
 
     public static void swapHeldItems(LivingEntity e) {
         //attributes = new ArrayList<>();
@@ -403,8 +390,6 @@ public class CombatUtils {
         e.setSilent(silent);
     }
 
-    public static boolean isSweeping = false;
-
     public static void sweep(LivingEntity e, Entity ignore, Hand h, double reach) {
         if (!CombatConfig.betterSweep) return;
         if (h == Hand.OFF_HAND) {
@@ -417,7 +402,7 @@ public class CombatUtils {
         float charge = Math.max(CombatUtils.getCooledAttackStrength(e, Hand.MAIN_HAND, 0.5f), CombatData.getCap(e).getCachedCooldown());
         boolean hit = false;
         isSweeping = ignore != null;
-        for (Entity target : e.world.getEntitiesWithinAABBExcludingEntity(e, e.getBoundingBox().grow(reach))) {
+        for (Entity target : e.world.getEntitiesWithinAABBExcludingEntity(e, e.getBoundingBox().grow(reach))) {//TEST: fixed range 3 attacks
             if (target == ignore) {
                 if (angle > 0)
                     hit = true;
@@ -425,6 +410,7 @@ public class CombatUtils {
             }
             if (!GeneralUtils.isFacingEntity(e, target, angle)) continue;
             if (!e.canEntityBeSeen(target)) continue;
+            if (GeneralUtils.getDistSqCompensated(e, target) > 9) continue;
             CombatUtils.setHandCooldown(e, Hand.MAIN_HAND, charge, false);
             hit = true;
             if (e instanceof PlayerEntity)
@@ -443,12 +429,6 @@ public class CombatUtils {
         }
     }
 
-    public enum AWARENESS {
-        UNAWARE,//deals 1.5x (posture) damage, cannot be parried, absorbed, shattered, or deflected
-        DISTRACTED,//deals 1.5x (posture) damage
-        ALERT//normal damage and reduction
-    }
-
     public static AWARENESS getAwareness(LivingEntity attacker, LivingEntity target) {
         if (!CombatConfig.stealthSystem || target instanceof PlayerEntity) return AWARENESS.ALERT;
         if (target.getRevengeTarget() == null && (!(target instanceof MobEntity) || ((MobEntity) target).getAttackTarget() == null))
@@ -456,5 +436,28 @@ public class CombatUtils {
         else if (target.getRevengeTarget() != attacker && (!(target instanceof MobEntity) || ((MobEntity) target).getAttackTarget() != attacker))
             return AWARENESS.DISTRACTED;
         else return AWARENESS.ALERT;
+    }
+
+    public enum AWARENESS {
+        UNAWARE,//deals 1.5x (posture) damage, cannot be parried, absorbed, shattered, or deflected
+        DISTRACTED,//deals 1.5x (posture) damage
+        ALERT//normal damage and reduction
+    }
+
+    private static class CombatInfo {
+        private final double attackPostureMultiplier, defensePostureMultiplier;
+        private final double distractDamageBonus, unawareDamageBonus;
+        private final int parryTime, parryCount;
+        private final boolean isShield;
+
+        private CombatInfo(double attack, double defend, boolean shield, int pTime, int pCount, double distract, double unaware) {
+            attackPostureMultiplier = attack;
+            defensePostureMultiplier = defend;
+            isShield = shield;
+            parryCount = pCount;
+            parryTime = pTime;
+            distractDamageBonus = distract;
+            unawareDamageBonus = unaware;
+        }
     }
 }

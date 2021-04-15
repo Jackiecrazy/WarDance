@@ -1,8 +1,8 @@
 package jackiecrazy.wardance.handlers;
 
 import jackiecrazy.wardance.WarDance;
-import jackiecrazy.wardance.capability.CombatData;
-import jackiecrazy.wardance.capability.ICombatCapability;
+import jackiecrazy.wardance.capability.resources.CombatData;
+import jackiecrazy.wardance.capability.resources.ICombatCapability;
 import jackiecrazy.wardance.config.CombatConfig;
 import jackiecrazy.wardance.utils.CombatUtils;
 import jackiecrazy.wardance.utils.GeneralUtils;
@@ -14,13 +14,11 @@ import net.minecraft.entity.ai.attributes.Attributes;
 import net.minecraft.entity.ai.goal.Goal;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.potion.Effects;
-import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.Tuple;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
-import net.minecraft.world.server.ServerWorld;
 import net.minecraftforge.event.AttachCapabilitiesEvent;
 import net.minecraftforge.event.TickEvent;
 import net.minecraftforge.event.entity.EntityJoinWorldEvent;
@@ -30,11 +28,9 @@ import net.minecraftforge.event.entity.player.PlayerEvent;
 import net.minecraftforge.event.entity.player.PlayerWakeUpEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.LogicalSide;
-import net.minecraftforge.fml.LogicalSidedProvider;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.event.server.FMLServerStartingEvent;
 import net.minecraftforge.fml.event.server.FMLServerStoppingEvent;
-import net.minecraftforge.fml.server.ServerLifecycleHooks;
 
 import java.util.EnumSet;
 import java.util.HashMap;
@@ -47,30 +43,6 @@ import java.util.concurrent.ConcurrentHashMap;
 public class EntityHandler {
     public static HashMap<PlayerEntity, Entity> mustUpdate = new HashMap<>();
     public static ConcurrentHashMap<Tuple<World, BlockPos>, Float> alertTracker = new ConcurrentHashMap<>();
-
-    private static class NoGoal extends Goal {
-        LivingEntity e;
-        static final EnumSet<Flag> mutex = EnumSet.allOf(Flag.class);
-
-        NoGoal(LivingEntity bind) {
-            e = bind;
-        }
-
-        @Override
-        public boolean shouldExecute() {
-            return CombatData.getCap(e).isValid() && CombatData.getCap(e).getStaggerTime() > 0;
-        }
-
-        @Override
-        public boolean isPreemptible() {
-            return false;
-        }
-
-        @Override
-        public EnumSet<Flag> getMutexFlags() {
-            return mutex;
-        }
-    }
 
     @SubscribeEvent
     public static void start(FMLServerStartingEvent e) {
@@ -147,8 +119,11 @@ public class EntityHandler {
             LivingEntity sneaker = e.getEntityLiving(), watcher = (LivingEntity) e.getLookingEntity();
             if (!GeneralUtils.isFacingEntity(watcher, sneaker, Math.max(CombatConfig.baseHorizontalDetection, sneaker.getTotalArmorValue() * CombatConfig.anglePerArmor), Math.max(CombatConfig.baseVerticalDetection, sneaker.getTotalArmorValue() * sneaker.getTotalArmorValue())))
                 e.modifyVisibility(0.2);
-            if (!watcher.isPotionActive(Effects.NIGHT_VISION))
-                e.modifyVisibility(0.5 + sneaker.world.getLight(sneaker.getPosition()) * sneaker.world.getLight(sneaker.getPosition()) * 0.05);
+            if (!watcher.isPotionActive(Effects.NIGHT_VISION)) {
+                World world = sneaker.world;
+                if (world.isAreaLoaded(sneaker.getPosition(), 5) && world.isAreaLoaded(watcher.getPosition(), 5))
+                    e.modifyVisibility(0.5 + world.getLight(sneaker.getPosition()) * world.getLight(sneaker.getPosition()) * 0.05);
+            }
             e.modifyVisibility(sneaker.isSprinting() ? 1.1 : watcher.canEntityBeSeen(sneaker) ? 0.4 : 1);
         }
     }
@@ -175,9 +150,33 @@ public class EntityHandler {
                         if (CombatUtils.getAwareness(null, c) == CombatUtils.AWARENESS.UNAWARE)
                             c.getNavigator().setPath(c.getNavigator().getPathToPos(n.getKey().getB(), (int) (n.getValue() + 3)), 1);
                     }
-                    it.remove();
                 }
             }
+        }
+        alertTracker.clear();
+    }
+
+    private static class NoGoal extends Goal {
+        static final EnumSet<Flag> mutex = EnumSet.allOf(Flag.class);
+        LivingEntity e;
+
+        NoGoal(LivingEntity bind) {
+            e = bind;
+        }
+
+        @Override
+        public boolean shouldExecute() {
+            return CombatData.getCap(e).isValid() && CombatData.getCap(e).getStaggerTime() > 0;
+        }
+
+        @Override
+        public boolean isPreemptible() {
+            return false;
+        }
+
+        @Override
+        public EnumSet<Flag> getMutexFlags() {
+            return mutex;
         }
     }
 }

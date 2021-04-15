@@ -1,12 +1,11 @@
 package jackiecrazy.wardance.networking;
 
-import jackiecrazy.wardance.capability.CombatData;
+import jackiecrazy.wardance.capability.resources.CombatData;
 import jackiecrazy.wardance.utils.CombatUtils;
 import jackiecrazy.wardance.utils.GeneralUtils;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.network.PacketBuffer;
-import net.minecraft.util.Hand;
 import net.minecraftforge.common.ForgeMod;
 import net.minecraftforge.fml.network.NetworkEvent;
 
