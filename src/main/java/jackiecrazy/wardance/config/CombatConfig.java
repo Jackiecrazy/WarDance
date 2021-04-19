@@ -572,7 +572,7 @@ public class CombatConfig {
             "byg:pendorite_sword, 2.9, 1, false, 1.25, 1.5",
             "byg:pendorite_axe, 5.3, 0.8, false, 1.1, 1.2",
             "byg:pendorite_battleaxe, 5.5, 0.9, false, 1.1, 1.2",
-            "byg:pendorite_hoe, 2.1, 1.4, false, 1.4, 2, 1.4, 2",
+            "byg:pendorite_hoe, 2.1, 1.4, false, 1.4, 2",
             "aquaculture:neptunium_pickaxe, 2.2, 1, false, 1.4, 2",
             "aquaculture:neptunium_shovel, 4.1, 0.9, false, 1.1, 1.2",
             "aquaculture:neptunium_sword, 2.9, 1, false, 1.25, 1.5",

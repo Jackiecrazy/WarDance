@@ -633,7 +633,7 @@ public class CombatCapability implements ICombatCapability {
         if (getMightGrace() == 0) {
             float over = qiExtra * 0.01f;
             setMight(getMight() - over);
-            if (getMight() > 0) {
+            if (getMight() > 0 && !(elb instanceof PlayerEntity)) {
                 int divisor = 0;
                 if (fatigue > 0) divisor++;
                 if (burnout > 0) divisor++;

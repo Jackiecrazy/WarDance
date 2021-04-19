@@ -1,5 +1,7 @@
 package jackiecrazy.wardance.skill.ironguard;
 
+import jackiecrazy.wardance.capability.resources.CombatData;
+import jackiecrazy.wardance.event.ParryEvent;
 import jackiecrazy.wardance.skill.Skill;
 import jackiecrazy.wardance.skill.SkillData;
 import net.minecraft.entity.LivingEntity;
@@ -12,21 +14,22 @@ import java.util.HashSet;
 
 public class IronGuard extends Skill {
     private final Tag<String> tag = Tag.getTagFromContents(new HashSet<>(Arrays.asList("physical", "quickCast", "onParry", "rechargeWithParry")));
-    private final Tag<String> no = Tag.getTagFromContents(new HashSet<>(Arrays.asList("normalAttack", "noCrit")));
+    private final Tag<String> no = Tag.getTagFromContents(new HashSet<>(Arrays.asList("onParry")));
 
     @Override
     public Tag<String> getTags(LivingEntity caster, SkillData stats) {
-        return null;
+        return tag;
     }
 
     @Override
     public Tag<String> getIncompatibleTags(LivingEntity caster, SkillData stats) {
-        return null;
+        return no;
     }
 
     @Override
     public boolean onCast(LivingEntity caster, SkillData stats) {
-        return false;
+        activate(caster, 20);
+        return true;
     }
 
     @Override
@@ -36,6 +39,9 @@ public class IronGuard extends Skill {
 
     @Override
     public void onSuccessfulProc(LivingEntity caster, SkillData stats, @Nullable LivingEntity target, Event procPoint) {
-
+        if(procPoint instanceof ParryEvent){
+            CombatData.getCap(((ParryEvent) procPoint).getAttacker()).consumePosture(((ParryEvent) procPoint).getPostureConsumption());
+            ((ParryEvent) procPoint).setPostureConsumption(0);
+        }
     }
 }

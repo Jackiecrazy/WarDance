@@ -18,6 +18,7 @@ import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.Tuple;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.vector.Vector3d;
 import net.minecraft.world.World;
 import net.minecraftforge.event.AttachCapabilitiesEvent;
 import net.minecraftforge.event.TickEvent;
@@ -98,10 +99,20 @@ public class EntityHandler {
 
     @SubscribeEvent
     public static void tickMobs(LivingEvent.LivingUpdateEvent e) {
-        if (!e.getEntityLiving().world.isRemote && !(e.getEntityLiving() instanceof PlayerEntity)) {
+        LivingEntity elb = e.getEntityLiving();
+        if (!elb.world.isRemote && !(elb instanceof PlayerEntity)) {
+            if (elb instanceof MobEntity && ((MobEntity) elb).getAttackTarget() != null)
+                for (Entity fan : elb.world.getEntitiesWithinAABBExcludingEntity(elb, elb.getBoundingBox().grow(2))) {
+                    if (fan instanceof LivingEntity && GeneralUtils.getDistSqCompensated(fan, elb) < 2 && fan != ((MobEntity) elb).getAttackTarget()) {
+                        //mobs "avoid" clumping together
+                        Vector3d diff = elb.getPositionVec().subtract(fan.getPositionVec());
+                        fan.addVelocity(diff.x == 0 ? 0 : -0.03 / diff.x, 0, diff.z == 0 ? 0 : -0.03 / diff.z);
+                        elb.addVelocity(diff.x == 0 ? 0 : 0.03 / diff.x, 0, diff.z == 0 ? 0 : 0.03 / diff.z);
+                    }
+                }
             //staggered mobs bypass update interval
-            ICombatCapability cap = CombatData.getCap(e.getEntityLiving());
-            if (cap.getStaggerTime() > 0 || mustUpdate.containsValue(e.getEntity()) || e.getEntityLiving().ticksExisted % CombatConfig.mobUpdateInterval == 0)
+            ICombatCapability cap = CombatData.getCap(elb);
+            if (cap.getStaggerTime() > 0 || mustUpdate.containsValue(e.getEntity()) || elb.ticksExisted % CombatConfig.mobUpdateInterval == 0)
                 cap.update();
         }
     }

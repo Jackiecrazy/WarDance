@@ -201,7 +201,7 @@ public class CombatUtils {
         recharge &= (!(e instanceof PlayerEntity) || ((PlayerEntity) e).getCooldownTracker().getCooldown(e.getHeldItemOffhand().getItem(), 0) == 0);
         if (isShield(e, i)) {
             boolean canShield = (e instanceof PlayerEntity || rand < CombatConfig.mobParryChanceShield);
-            boolean canParry = CombatData.getCap(e).getShieldTime() == 0 || CombatData.getCap(e).getShieldCount() != 0;
+            boolean canParry = CombatData.getCap(e).getShieldTime() == 0 || CombatData.getCap(e).getShieldCount() > 0;
             return recharge & canParry & canShield;
         } else if (isWeapon(e, i)) {
             boolean canWeapon = (e instanceof PlayerEntity || rand < CombatConfig.mobParryChanceWeapon);

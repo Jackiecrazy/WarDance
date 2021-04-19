@@ -14,9 +14,11 @@ import jackiecrazy.wardance.utils.GeneralUtils;
 import jackiecrazy.wardance.utils.MovementUtils;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.LivingEntity;
+import net.minecraft.entity.ai.attributes.AttributeModifier;
 import net.minecraft.entity.ai.attributes.Attributes;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
+import net.minecraft.item.Items;
 import net.minecraft.particles.ParticleTypes;
 import net.minecraft.potion.Effects;
 import net.minecraft.util.*;
@@ -88,6 +90,12 @@ public class CombatHandler {
             ItemStack attack = CombatUtils.getAttackingItemStack(e.getSource());
             if (CombatUtils.isMeleeAttack(e.getSource()) && e.getSource().getTrueSource() instanceof LivingEntity && attack != null && e.getAmount() > 0) {
                 LivingEntity seme = (LivingEntity) e.getSource().getTrueSource();
+                if (attack.getItem() == Items.BONE) {
+                    System.out.println("the attacker has " + seme.getMaxHealth());
+                    if (seme.getAttribute(Attributes.MAX_HEALTH) != null)
+                        for (AttributeModifier am : seme.getAttribute(Attributes.MAX_HEALTH).getModifierListCopy())
+                            System.out.println("attribute modifier " + am.getName() + " gives " + am.getAmount());
+                }
                 seme.removeActivePotionEffect(Effects.INVISIBILITY);
                 ICombatCapability semeCap = CombatData.getCap(seme);
                 ukeCap.update();
@@ -161,9 +169,10 @@ public class CombatHandler {
                         downingHit = false;
                         ukeCap.addCombo(0);
                         //knockback based on posture consumed
-                        CombatUtils.knockBack(uke, seme, Math.min(1.5f, e.getAmount() * 3f / ukeCap.getMaxPosture()), true, false);
-                        CombatUtils.knockBack(seme, uke, Math.min(1.5f, e.getAmount() * 3f / semeCap.getMaxPosture()), true, false);
+                        CombatUtils.knockBack(uke, seme, Math.min(1f, pe.getPostureConsumption() * 3 / ukeCap.getMaxPosture()), true, false);
+                        CombatUtils.knockBack(seme, uke, Math.min(1f, pe.getPostureConsumption() * 3 / semeCap.getMaxPosture()), true, false);
                         if (defend == null) {
+                            //deflect
                             uke.world.playSound(null, uke.getPosX(), uke.getPosY(), uke.getPosZ(), SoundEvents.BLOCK_IRON_TRAPDOOR_OPEN, SoundCategory.PLAYERS, 0.75f + WarDance.rand.nextFloat() * 0.5f, (1 - (ukeCap.getPosture() / ukeCap.getMaxPosture())) + WarDance.rand.nextFloat() * 0.5f);
                             return;
                         }
@@ -189,7 +198,7 @@ public class CombatHandler {
                         uke.world.playSound(null, uke.getPosX(), uke.getPosY(), uke.getPosZ(), disshield ? SoundEvents.ITEM_SHIELD_BLOCK : SoundEvents.BLOCK_ANVIL_PLACE, SoundCategory.PLAYERS, 0.25f + WarDance.rand.nextFloat() * 0.5f, (1 - (ukeCap.getPosture() / ukeCap.getMaxPosture())) + WarDance.rand.nextFloat() * 0.5f);
                         //reset cooldown
                         if (defMult != 0)//shield time
-                            CombatUtils.setHandCooldown(uke, uke.getHeldItemOffhand() == defend ? Hand.OFF_HAND : Hand.MAIN_HAND, 0.5f, true);
+                            CombatUtils.setHandCooldown(uke, uke.getHeldItemOffhand() == defend ? Hand.OFF_HAND : Hand.MAIN_HAND, 0f, true);
                         if (defend.getItem() instanceof ICombatManipulator) {
                             ((ICombatManipulator) defend.getItem()).onParry(seme, uke, defend, e.getAmount());
                         }

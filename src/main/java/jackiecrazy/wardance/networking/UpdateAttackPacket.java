@@ -11,9 +11,9 @@ import java.util.function.Supplier;
 
 public class UpdateAttackPacket {
     int e;
-    float icc;
+    int icc;
 
-    public UpdateAttackPacket(int ent, float c) {
+    public UpdateAttackPacket(int ent, int c) {
         e = ent;
         icc = c;
     }
@@ -23,7 +23,7 @@ public class UpdateAttackPacket {
         @Override
         public void accept(UpdateAttackPacket updateClientPacket, PacketBuffer packetBuffer) {
             packetBuffer.writeInt(updateClientPacket.e);
-            packetBuffer.writeFloat(updateClientPacket.icc);
+            packetBuffer.writeInt(updateClientPacket.icc);
         }
     }
 
@@ -31,7 +31,7 @@ public class UpdateAttackPacket {
 
         @Override
         public UpdateAttackPacket apply(PacketBuffer packetBuffer) {
-            return new UpdateAttackPacket(packetBuffer.readInt(), packetBuffer.readFloat());
+            return new UpdateAttackPacket(packetBuffer.readInt(), packetBuffer.readInt());
         }
     }
 
@@ -41,7 +41,7 @@ public class UpdateAttackPacket {
         public void accept(UpdateAttackPacket updateClientPacket, Supplier<NetworkEvent.Context> contextSupplier) {
             contextSupplier.get().enqueueWork(() -> {
                 if (Minecraft.getInstance().world != null && Minecraft.getInstance().world.getEntityByID(updateClientPacket.e) instanceof LivingEntity)
-                    ((LivingEntity) (Minecraft.getInstance().world.getEntityByID(updateClientPacket.e))).ticksSinceLastSwing = updateClientPacket.e;
+                    ((LivingEntity) (Minecraft.getInstance().world.getEntityByID(updateClientPacket.e))).ticksSinceLastSwing = updateClientPacket.icc;
             });
             contextSupplier.get().setPacketHandled(true);
         }
