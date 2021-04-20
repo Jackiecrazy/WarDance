@@ -88,10 +88,6 @@ public class ClientEvents {
         Minecraft mc = Minecraft.getInstance();
         MovementInput mi = e.getMovementInput();
         final ICombatCapability itsc = CombatData.getCap(mc.player);
-        if (Keybinds.COMBAT.getKeyConflictContext().isActive() && Keybinds.COMBAT.isPressed()) {
-            mc.player.sendStatusMessage(new TranslationTextComponent("wardance.combat." + (itsc.isCombatMode() ? "off" : "on")), true);
-            CombatChannel.INSTANCE.sendToServer(new CombatModePacket());
-        }
 //        if (itsc.getStaggerTime() > 0) {
 //            //no moving while you're rooted!
 //            KeyBinding.unPressAllKeys();

@@ -1,6 +1,5 @@
 package jackiecrazy.wardance.skill.heavyblow;
 
-import jackiecrazy.wardance.event.ParryEvent;
 import jackiecrazy.wardance.skill.SkillData;
 import jackiecrazy.wardance.utils.GeneralUtils;
 import net.minecraft.entity.LivingEntity;
@@ -15,7 +14,7 @@ public class Backstab extends HeavyBlow {
     private final Tag<String> tag = Tag.getTagFromContents(new HashSet<>(Arrays.asList("physical", "boundCast", "normalAttack", "onHurt", "modifyCrit", "rechargeWithAttack", "onBeingParried")));
 
     @Override
-    public Tag<String> getTags(LivingEntity caster, SkillData stats) {
+    public Tag<String> getTags(LivingEntity caster) {
         return tag;
     }
 

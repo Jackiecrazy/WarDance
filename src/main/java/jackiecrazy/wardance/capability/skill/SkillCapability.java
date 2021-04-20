@@ -2,12 +2,15 @@ package jackiecrazy.wardance.capability.skill;
 
 import com.google.common.collect.Maps;
 import jackiecrazy.wardance.WarDance;
+import jackiecrazy.wardance.skill.ProcPoint;
 import jackiecrazy.wardance.skill.Skill;
 import jackiecrazy.wardance.skill.SkillData;
 import net.minecraft.entity.LivingEntity;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.nbt.ListNBT;
+import net.minecraft.util.text.StringTextComponent;
 
 import javax.annotation.Nullable;
 import java.lang.ref.WeakReference;
@@ -46,6 +49,8 @@ public class SkillCapability implements ISkillCapability {
         SkillData sd = activeSkills.get(s);
         if (sd != null && dude.get() != null) {
             sd.getSkill().onEffectEnd(dude.get(), sd);
+            if (dude.get() instanceof PlayerEntity)
+                ((PlayerEntity) dude.get()).sendStatusMessage(new StringTextComponent(s.getRegistryName() + " has entered cooldown"), true);
         }
         lastCast.add(s);
         while (lastCast.size() > 5)
@@ -71,10 +76,18 @@ public class SkillCapability implements ISkillCapability {
     @Override
     public boolean isTagActive(String tag) {
         for (Map.Entry<Skill, SkillData> e : activeSkills.entrySet()) {
-            if (e.getKey().getTags(dude.get(), e.getValue()).contains(tag))
+            if (e.getKey().getTags(dude.get()).contains(tag))
                 return true;
         }
         return false;
+    }
+
+    @Override
+    public void removeActiveTag(String tag) {
+        for (Map.Entry<Skill, SkillData> e : activeSkills.entrySet()) {
+            if (e.getKey().getTags(dude.get()).contains(tag))
+                markSkillUsed(e.getKey());
+        }
     }
 
     @Override
@@ -89,13 +102,22 @@ public class SkillCapability implements ISkillCapability {
     }
 
     @Override
+    public boolean isSkillCoolingDown(Skill s) {
+        return coolingSkills.containsKey(s);
+    }
+
+    @Override
     public void decrementSkillCooldown(Skill s, float amount) {
         if (!coolingSkills.containsKey(s)) return;
-        float now = coolingSkills.get(s) - amount;
-        if (now < 0) {
-            coolingSkills.remove(s);
-            s.onCooledDown(dude.get(), now);
-        }
+        float old = coolingSkills.get(s);
+        coolingSkills.put(s, old - amount);
+    }
+
+    @Override
+    public void coolSkill(Skill s) {
+        s.onCooledDown(dude.get(), coolingSkills.remove(s));
+        if (dude.get() instanceof PlayerEntity)
+            ((PlayerEntity) dude.get()).sendStatusMessage(new StringTextComponent(s.getRegistryName() + " has cooled down"), true);
     }
 
     @Override
@@ -151,6 +173,24 @@ public class SkillCapability implements ISkillCapability {
                 }
             }
         }
+    }
+
+    @Override
+    public void update() {
+        getActiveSkills().replaceAll((k, v) -> v.setDuration(v.getDuration() - (k.getTags(dude.get()).contains(ProcPoint.countdown) ? 1 : 0)));
+        getSkillCooldowns().replaceAll((k, v) -> v -= k.getTags(dude.get()).contains(ProcPoint.recharge_time) ? 1 : 0);
+        HashSet<Skill> finish = new HashSet<>();
+        for (Map.Entry<Skill, SkillData> cd : getActiveSkills().entrySet()) {
+            if (cd.getValue().getDuration() < 0) finish.add(cd.getKey());
+        }
+        for (Skill s : finish)
+            removeActiveSkill(s);
+        finish.clear();
+        for (Map.Entry<Skill, Float> cd : getSkillCooldowns().entrySet()) {
+            if (cd.getValue() < 0) finish.add(cd.getKey());
+        }
+        for (Skill s : finish)
+            coolSkill(s);
     }
 
     @Override

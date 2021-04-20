@@ -1,9 +1,9 @@
 package jackiecrazy.wardance.skill;
 
-import jackiecrazy.wardance.WarDance;
 import jackiecrazy.wardance.capability.skill.CasterData;
 import jackiecrazy.wardance.capability.skill.ISkillCapability;
 import jackiecrazy.wardance.event.SkillCooldownEvent;
+import jackiecrazy.wardance.networking.CastSkillPacket;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.tags.Tag;
 import net.minecraft.util.text.TextFormatting;
@@ -13,7 +13,6 @@ import net.minecraftforge.eventbus.api.Event;
 import net.minecraftforge.registries.ForgeRegistryEntry;
 
 import javax.annotation.Nullable;
-import java.util.Locale;
 
 /*
  * for chanting, make a dummy skill which does nothing but play a sound, if even that. This is the one that'll be displayed to players.
@@ -36,9 +35,9 @@ public abstract class Skill extends ForgeRegistryEntry<Skill> {
 
     public boolean canCast(LivingEntity caster) {
         ISkillCapability cap = CasterData.getCap(caster);
-        for (String s : getIncompatibleTags(caster, null).getAllElements())
+        for (String s : getIncompatibleTags(caster).getAllElements())
             if (cap.isTagActive(s)) return false;
-        return true;
+        return !cap.isSkillCoolingDown(this) && (getParentSkill() == null || getParentSkill().canCast(caster));
     }
 
     public void onCooledDown(LivingEntity caster, float overflow) {}
@@ -47,11 +46,16 @@ public abstract class Skill extends ForgeRegistryEntry<Skill> {
         return new TranslationTextComponent(TextFormatting.RED + this.getRegistryName().toString() + "_cannot_cast");
     }
 
-    public abstract Tag<String> getTags(LivingEntity caster, SkillData stats);//requires breath, debuffing, healing, aoe, etc. Also determines proc time (parry, attack, etc)
+    public abstract Tag<String> getTags(LivingEntity caster);//requires breath, debuffing, healing, aoe, etc. Also determines proc time (parry, attack, etc)
 
-    public abstract Tag<String> getIncompatibleTags(LivingEntity caster, SkillData stats);//uses sharp weapon, uses breath, undead using holy spell, etc
+    public abstract Tag<String> getIncompatibleTags(LivingEntity caster);//uses sharp weapon, uses breath, undead using holy spell, etc
 
-    public abstract boolean onCast(LivingEntity caster, SkillData stats);
+    public boolean checkAndCast(LivingEntity caster) {
+        if (!canCast(caster)) return false;
+        return onCast(caster);
+    }
+
+    public abstract boolean onCast(LivingEntity caster);
 
     public boolean tick(LivingEntity caster, SkillData stats) {
         if (stats.getDuration() <= 0) {
@@ -68,17 +72,18 @@ public abstract class Skill extends ForgeRegistryEntry<Skill> {
 
     public abstract void onSuccessfulProc(LivingEntity caster, SkillData stats, @Nullable LivingEntity target, Event procPoint);
 
-    protected void setCooldown(LivingEntity caster, float duration){
-        SkillCooldownEvent sce=new SkillCooldownEvent(caster, duration);
+    protected void setCooldown(LivingEntity caster, float duration) {
+        SkillCooldownEvent sce = new SkillCooldownEvent(caster, this, duration);
         MinecraftForge.EVENT_BUS.post(sce);
-        CasterData.getCap(caster).setSkillCooldown(this, sce.getCooldown());
+        CasterData.getCap(caster).setSkillCooldown(getParentSkill() == null ? this : getParentSkill(), sce.getCooldown());
     }
 
-    protected void activate(LivingEntity caster, float duration){
+    protected void activate(LivingEntity caster, float duration) {
+        //System.out.println("enabling for " + duration);
         CasterData.getCap(caster).activateSkill(new SkillData(this, duration));
     }
 
-    protected void markUsed(LivingEntity caster){
+    protected void markUsed(LivingEntity caster) {
         CasterData.getCap(caster).markSkillUsed(this);
     }
 }

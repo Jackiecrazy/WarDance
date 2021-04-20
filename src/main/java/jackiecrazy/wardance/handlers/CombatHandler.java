@@ -8,6 +8,7 @@ import jackiecrazy.wardance.capability.resources.CombatData;
 import jackiecrazy.wardance.capability.resources.ICombatCapability;
 import jackiecrazy.wardance.config.CombatConfig;
 import jackiecrazy.wardance.event.ParryEvent;
+import jackiecrazy.wardance.event.ProjectileParryEvent;
 import jackiecrazy.wardance.skill.coupdegrace.CoupDeGrace;
 import jackiecrazy.wardance.utils.CombatUtils;
 import jackiecrazy.wardance.utils.GeneralUtils;
@@ -37,7 +38,7 @@ import net.minecraftforge.fml.common.Mod;
 @Mod.EventBusSubscriber(modid = WarDance.MODID)
 public class CombatHandler {
 
-    private static boolean downingHit = false;
+    public static boolean downingHit = false;
 
     @SubscribeEvent
     public static void projectileParry(final ProjectileImpactEvent e) {
@@ -52,12 +53,18 @@ public class CombatHandler {
             ICombatCapability ukeCap = CombatData.getCap(uke);
             boolean free = ukeCap.getShieldTime() > 0;
             ItemStack defend = null;
-            if (CombatUtils.isShield(uke, uke.getHeldItemOffhand()) && CombatUtils.canParry(uke, uke.getHeldItemOffhand()))
+            Hand h = null;
+            if (CombatUtils.isShield(uke, uke.getHeldItemOffhand()) && CombatUtils.canParry(uke, uke.getHeldItemOffhand())) {
                 defend = uke.getHeldItemOffhand();
-            else if (CombatUtils.isShield(uke, uke.getHeldItemMainhand()) && CombatUtils.canParry(uke, uke.getHeldItemMainhand()))
+                h = Hand.OFF_HAND;
+            } else if (CombatUtils.isShield(uke, uke.getHeldItemMainhand()) && CombatUtils.canParry(uke, uke.getHeldItemMainhand())) {
                 defend = uke.getHeldItemMainhand();
+                h = Hand.MAIN_HAND;
+            }
             Entity projectile = e.getEntity();
-            if (defend != null && GeneralUtils.isFacingEntity(uke, projectile, 120) && ukeCap.doConsumePosture(free ? 0 : consume)) {
+            ProjectileParryEvent pe = new ProjectileParryEvent(uke, projectile, h, defend, free ? 0 : consume, projectile.getMotion().mul(-0.2, -0.2, -0.2));
+            MinecraftForge.EVENT_BUS.post(pe);
+            if (pe.getResult() == Event.Result.ALLOW || (defend != null && GeneralUtils.isFacingEntity(uke, projectile, 120) && ukeCap.doConsumePosture(pe.getPostureConsumption()) && pe.getResult() == Event.Result.DEFAULT)) {
                 e.setCanceled(true);
 //                if (projectile instanceof ProjectileEntity)
 //                    ((ProjectileEntity) projectile).setShooter(uke);//makes drowned tridents and skeleton arrows collectable, which is honestly silly
@@ -67,16 +74,14 @@ public class CombatHandler {
                     ukeCap.setShieldCount(stat.getB());
                 }
                 uke.world.playSound(null, uke.getPosX(), uke.getPosY(), uke.getPosZ(), free ? SoundEvents.BLOCK_WOODEN_TRAPDOOR_OPEN : SoundEvents.BLOCK_WOODEN_TRAPDOOR_CLOSE, SoundCategory.PLAYERS, 0.75f + WarDance.rand.nextFloat() * 0.5f, (1 - (ukeCap.getPosture() / ukeCap.getMaxPosture())) + WarDance.rand.nextFloat() * 0.5f);
-                Vector3d look = uke.getLookVec().mul(0.2, 0.2, 0.2);
-                projectile.setMotion(look.x, look.y, look.z);
+                projectile.setMotion(pe.getReturnVec().x, pe.getReturnVec().y, pe.getReturnVec().z);
                 return;
             }
             //deflection
             if ((uke instanceof PlayerEntity || WarDance.rand.nextFloat() > CombatConfig.mobDeflectChance) && GeneralUtils.isFacingEntity(uke, projectile, 120 + 2 * (int) GeneralUtils.getAttributeValueSafe(uke, WarAttributes.DEFLECTION.get())) && !GeneralUtils.isFacingEntity(uke, projectile, 120) && ukeCap.doConsumePosture(consume)) {
                 e.setCanceled(true);
                 uke.world.playSound(null, uke.getPosX(), uke.getPosY(), uke.getPosZ(), SoundEvents.BLOCK_IRON_TRAPDOOR_OPEN, SoundCategory.PLAYERS, 0.75f + WarDance.rand.nextFloat() * 0.5f, (1 - (ukeCap.getPosture() / ukeCap.getMaxPosture())) + WarDance.rand.nextFloat() * 0.5f);
-                Vector3d look = projectile.getMotion().mul(-0.2, -0.2, -0.2);
-                projectile.setMotion(look.x, look.y, look.z);
+                projectile.setMotion(pe.getReturnVec().x, pe.getReturnVec().y, pe.getReturnVec().z);
             }
         }
     }
@@ -256,7 +261,7 @@ public class CombatHandler {
             kek = (LivingEntity) ds.getImmediateSource();
         }
         ICombatCapability cap = CombatData.getCap(uke);
-        cap.setCombo((float) (Math.floor(cap.getCombo()) / 2d));
+        cap.setCombo((float) (Math.floor(cap.getCombo()) / (CombatUtils.isMeleeAttack(e.getSource()) ? 2d : 1)));
         if (ds.getTrueSource() instanceof LivingEntity) {
             LivingEntity seme = ((LivingEntity) ds.getTrueSource());
             double luckDiff = WarDance.rand.nextFloat() * (GeneralUtils.getAttributeValueSafe(seme, Attributes.LUCK)) - WarDance.rand.nextFloat() * (GeneralUtils.getAttributeValueSafe(uke, Attributes.LUCK));
@@ -288,11 +293,6 @@ public class CombatHandler {
 
     @SubscribeEvent(priority = EventPriority.HIGHEST)
     public static void tanky(LivingDamageEvent e) {
-        if (CombatData.getCap(e.getEntityLiving()).getStaggerTime() > 0 && !downingHit) {
-            //FIXME grr
-            e.setAmount(e.getAmount() + (float) CoupDeGrace.getLife(e.getEntityLiving()));
-            CombatData.getCap(e.getEntityLiving()).decrementStaggerCount(1);
-        }
         if (CombatData.getCap(e.getEntityLiving()).getStaggerTime() == 0 && CombatUtils.isPhysicalAttack(e.getSource())) {
             if (e.getSource().getTrueSource() instanceof LivingEntity && CombatUtils.getAwareness((LivingEntity) e.getSource().getTrueSource(), e.getEntityLiving()) == CombatUtils.AWARENESS.UNAWARE)
                 return;

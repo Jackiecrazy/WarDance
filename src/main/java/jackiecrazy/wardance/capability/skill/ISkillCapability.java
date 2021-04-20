@@ -23,11 +23,17 @@ public interface ISkillCapability {
 
     boolean isTagActive(String tag);
 
+    void removeActiveTag(String tag);
+
     void markSkillUsed(Skill s);
 
     void setSkillCooldown(Skill s, float amount);
 
+    boolean isSkillCoolingDown(Skill s);
+
     void decrementSkillCooldown(Skill s, float amount);
+
+    void coolSkill(Skill s);
 
     float getSkillCooldown(Skill s);
 
@@ -42,6 +48,8 @@ public interface ISkillCapability {
     CompoundNBT write(CompoundNBT to);
 
     void read(CompoundNBT from);
+
+    void update();
 
     Skill[] getPastCasts();
 }

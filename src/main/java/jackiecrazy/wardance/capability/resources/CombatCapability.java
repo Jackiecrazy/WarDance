@@ -633,18 +633,18 @@ public class CombatCapability implements ICombatCapability {
         if (getMightGrace() == 0) {
             float over = qiExtra * 0.01f;
             setMight(getMight() - over);
-            if (getMight() > 0 && !(elb instanceof PlayerEntity)) {
-                int divisor = 0;
-                if (fatigue > 0) divisor++;
-                if (burnout > 0) divisor++;
-                if (wounding > 0) divisor++;
-                if (divisor > 0) {
-                    float heal = over / divisor;
-                    setWounding(wounding - heal);
-                    setFatigue(fatigue - heal);
-                    setBurnout(burnout - heal);
-                }
-            }
+//            if (getMight() > 0 && !(elb instanceof PlayerEntity)) {
+//                int divisor = 0;
+//                if (fatigue > 0) divisor++;
+//                if (burnout > 0) divisor++;
+//                if (wounding > 0) divisor++;
+//                if (divisor > 0) {
+//                    float heal = over / divisor;
+//                    setWounding(wounding - heal);
+//                    setFatigue(fatigue - heal);
+//                    setBurnout(burnout - heal);
+//                }
+//            }
         }
         if (getComboGrace() == 0) {
             setCombo((float) Math.floor(getCombo()));
@@ -761,6 +761,6 @@ public class CombatCapability implements ICombatCapability {
 //            return getMaxPosture() * armorMod * speedMod * healthMod / (1.5f * CombatConfig.staggerDuration);
 //        }
         //0.2f
-        return ((getMaxPosture() - elb.getTotalArmorValue() / 2f) / 60f * armorMod * healthMod * speedMod * poison) - nausea;
+        return ((getTrueMaxPosture() - elb.getTotalArmorValue() / 2f) / 60f * armorMod * healthMod * speedMod * poison) - nausea;
     }
 }

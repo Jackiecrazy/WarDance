@@ -15,16 +15,16 @@ import java.util.Arrays;
 import java.util.HashSet;
 
 public class HeavyBlow extends Skill {
-    private final Tag<String> tag = Tag.getTagFromContents(new HashSet<>(Arrays.asList("physical", "boundCast", "normalAttack", "modifyCrit", "rechargeWithAttack", "onBeingParried")));
+    private final Tag<String> tag = Tag.getTagFromContents(new HashSet<>(Arrays.asList("physical", "boundCast", "normalAttack", "countdown", "modifyCrit", "rechargeWithAttack", "onBeingParried")));
     private final Tag<String> no = Tag.getTagFromContents(new HashSet<>(Arrays.asList("normalAttack", "noCrit")));
 
     @Override
-    public Tag<String> getTags(LivingEntity caster, SkillData stats) {
+    public Tag<String> getTags(LivingEntity caster) {
         return tag;
     }
 
     @Override
-    public Tag<String> getIncompatibleTags(LivingEntity caster, SkillData stats) {
+    public Tag<String> getIncompatibleTags(LivingEntity caster) {
         return no;
     }
 
@@ -35,7 +35,7 @@ public class HeavyBlow extends Skill {
     }
 
     @Override
-    public boolean onCast(LivingEntity caster, SkillData stats) {
+    public boolean onCast(LivingEntity caster) {
         activate(caster, 40);
         return true;
     }
@@ -47,7 +47,7 @@ public class HeavyBlow extends Skill {
 
     @Override
     public void onSuccessfulProc(LivingEntity caster, SkillData stats, LivingEntity target, Event procPoint) {
-        if (procPoint instanceof ParryEvent && ((ParryEvent) procPoint).getAttacker() == caster) {
+        if (procPoint instanceof ParryEvent && ((ParryEvent) procPoint).getDefendingHand() != null && ((ParryEvent) procPoint).getAttacker() == caster) {
             CombatData.getCap(target).setHandBind(((ParryEvent) procPoint).getDefendingHand(), 30);
             markUsed(caster);
         } else if (procPoint instanceof CriticalHitEvent) {

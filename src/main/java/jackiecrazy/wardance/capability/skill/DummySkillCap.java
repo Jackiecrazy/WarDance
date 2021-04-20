@@ -48,6 +48,11 @@ public class DummySkillCap implements ISkillCapability{
     }
 
     @Override
+    public void removeActiveTag(String tag) {
+
+    }
+
+    @Override
     public void markSkillUsed(Skill s) {
 
     }
@@ -58,7 +63,17 @@ public class DummySkillCap implements ISkillCapability{
     }
 
     @Override
+    public boolean isSkillCoolingDown(Skill s) {
+        return false;
+    }
+
+    @Override
     public void decrementSkillCooldown(Skill s, float amount) {
+
+    }
+
+    @Override
+    public void coolSkill(Skill s) {
 
     }
 
@@ -94,6 +109,11 @@ public class DummySkillCap implements ISkillCapability{
 
     @Override
     public void read(CompoundNBT from) {
+
+    }
+
+    @Override
+    public void update() {
 
     }
 

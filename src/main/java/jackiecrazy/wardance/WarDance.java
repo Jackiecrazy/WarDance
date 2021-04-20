@@ -78,12 +78,14 @@ public class WarDance {
         CombatChannel.INSTANCE.registerMessage(index++, CombatModePacket.class, new CombatModePacket.CombatEncoder(), new CombatModePacket.CombatDecoder(), new CombatModePacket.CombatHandler());
         CombatChannel.INSTANCE.registerMessage(index++, RequestSweepPacket.class, new RequestSweepPacket.RequestSweepEncoder(), new RequestSweepPacket.RequestSweepDecoder(), new RequestSweepPacket.RequestSweepHandler());
         CombatChannel.INSTANCE.registerMessage(index++, RequestAttackPacket.class, new RequestAttackPacket.RequestAttackEncoder(), new RequestAttackPacket.RequestAttackDecoder(), new RequestAttackPacket.RequestAttackHandler());
+        CombatChannel.INSTANCE.registerMessage(index++, CastSkillPacket.class, new CastSkillPacket.CombatEncoder(), new CastSkillPacket.CombatDecoder(), new CastSkillPacket.CombatHandler());
     }
 
     private void doClientStuff(final FMLClientSetupEvent event) {
         // do something that can only be done on the client
         ClientConfig.bake();
         ClientRegistry.registerKeyBinding(Keybinds.COMBAT);
+        ClientRegistry.registerKeyBinding(Keybinds.CAST);
     }
 
     private void enqueueIMC(final InterModEnqueueEvent event) {
