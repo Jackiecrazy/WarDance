@@ -48,7 +48,7 @@ public class Keybinds {
     @SubscribeEvent(priority = EventPriority.HIGHEST)
     public static void handleInputEvent(InputEvent event) {
         if (derp == null)
-            derp = Lists.newArrayList(WarSkills.HEAVY_BLOW.get(), WarSkills.IRONGUARD.get(), WarSkills.COUPDEGRACE.get(), WarSkills.SHATTER.get(), WarSkills.STAGGER.get(), WarSkills.LUNGE.get(), WarSkills.POISE.get(), WarSkills.BACKSTAB.get());
+            derp = Lists.newArrayList(WarSkills.HEAVY_BLOW.get(), WarSkills.IRONGUARD.get(), WarSkills.REINVIGORATE.get(), WarSkills.SHATTER.get(), WarSkills.STAGGER.get(), WarSkills.LUNGE.get(), WarSkills.POISE.get(), WarSkills.BACKSTAB.get());
         Minecraft mc = Minecraft.getInstance();
         if (mc.player == null) return;
         ICombatCapability itsc = CombatData.getCap(mc.player);

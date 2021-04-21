@@ -2,6 +2,7 @@ package jackiecrazy.wardance.skill;
 
 import jackiecrazy.wardance.WarDance;
 import jackiecrazy.wardance.skill.coupdegrace.CoupDeGrace;
+import jackiecrazy.wardance.skill.coupdegrace.Reinvigorate;
 import jackiecrazy.wardance.skill.heavyblow.*;
 import jackiecrazy.wardance.skill.ironguard.IronGuard;
 import net.minecraftforge.fml.RegistryObject;
@@ -20,4 +21,5 @@ public class WarSkills {
     public static final RegistryObject<Skill> BACKSTAB = SKILLS.register("backstab", Backstab::new);
     public static final RegistryObject<Skill> IRONGUARD = SKILLS.register("iron_guard", IronGuard::new);
     public static final RegistryObject<Skill> COUPDEGRACE = SKILLS.register("coup_de_grace", CoupDeGrace::new);
+    public static final RegistryObject<Skill> REINVIGORATE = SKILLS.register("reinvigorate", Reinvigorate::new);
 }

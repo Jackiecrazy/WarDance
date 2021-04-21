@@ -18,6 +18,7 @@ import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.ai.attributes.AttributeModifier;
 import net.minecraft.entity.ai.attributes.Attributes;
 import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.entity.projectile.ProjectileEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
 import net.minecraft.particles.ParticleTypes;
@@ -64,7 +65,8 @@ public class CombatHandler {
             Entity projectile = e.getEntity();
             ProjectileParryEvent pe = new ProjectileParryEvent(uke, projectile, h, defend, free ? 0 : consume, projectile.getMotion().mul(-0.2, -0.2, -0.2));
             MinecraftForge.EVENT_BUS.post(pe);
-            if (pe.getResult() == Event.Result.ALLOW || (defend != null && GeneralUtils.isFacingEntity(uke, projectile, 120) && ukeCap.doConsumePosture(pe.getPostureConsumption()) && pe.getResult() == Event.Result.DEFAULT)) {
+            boolean sneaking=(!(uke instanceof PlayerEntity) || CombatConfig.sneakParry == 0 || (uke.isSneaking() && EntityHandler.lastSneak.get((PlayerEntity) uke) < uke.ticksExisted + CombatConfig.sneakParry));
+            if (pe.getResult() == Event.Result.ALLOW || (defend != null && GeneralUtils.isFacingEntity(uke, projectile, 120) && sneaking && ukeCap.doConsumePosture(pe.getPostureConsumption()) && pe.getResult() == Event.Result.DEFAULT)) {
                 e.setCanceled(true);
 //                if (projectile instanceof ProjectileEntity)
 //                    ((ProjectileEntity) projectile).setShooter(uke);//makes drowned tridents and skeleton arrows collectable, which is honestly silly
@@ -75,6 +77,10 @@ public class CombatHandler {
                 }
                 uke.world.playSound(null, uke.getPosX(), uke.getPosY(), uke.getPosZ(), free ? SoundEvents.BLOCK_WOODEN_TRAPDOOR_OPEN : SoundEvents.BLOCK_WOODEN_TRAPDOOR_CLOSE, SoundCategory.PLAYERS, 0.75f + WarDance.rand.nextFloat() * 0.5f, (1 - (ukeCap.getPosture() / ukeCap.getMaxPosture())) + WarDance.rand.nextFloat() * 0.5f);
                 projectile.setMotion(pe.getReturnVec().x, pe.getReturnVec().y, pe.getReturnVec().z);
+                if(projectile instanceof ProjectileEntity){
+                    double power=pe.getReturnVec().x/pe.getReturnVec().normalize().x;
+                    ((ProjectileEntity) projectile).shoot(pe.getReturnVec().x,pe.getReturnVec().y, pe.getReturnVec().z, (float)power, 0);
+                }
                 return;
             }
             //deflection
@@ -82,6 +88,10 @@ public class CombatHandler {
                 e.setCanceled(true);
                 uke.world.playSound(null, uke.getPosX(), uke.getPosY(), uke.getPosZ(), SoundEvents.BLOCK_IRON_TRAPDOOR_OPEN, SoundCategory.PLAYERS, 0.75f + WarDance.rand.nextFloat() * 0.5f, (1 - (ukeCap.getPosture() / ukeCap.getMaxPosture())) + WarDance.rand.nextFloat() * 0.5f);
                 projectile.setMotion(pe.getReturnVec().x, pe.getReturnVec().y, pe.getReturnVec().z);
+                if(projectile instanceof ProjectileEntity){
+                    double power=pe.getReturnVec().x/pe.getReturnVec().normalize().x;
+                    ((ProjectileEntity) projectile).shoot(pe.getReturnVec().x,pe.getReturnVec().y, pe.getReturnVec().z, (float)power, 0);
+                }
             }
         }
     }
@@ -95,13 +105,7 @@ public class CombatHandler {
             ItemStack attack = CombatUtils.getAttackingItemStack(e.getSource());
             if (CombatUtils.isMeleeAttack(e.getSource()) && e.getSource().getTrueSource() instanceof LivingEntity && attack != null && e.getAmount() > 0) {
                 LivingEntity seme = (LivingEntity) e.getSource().getTrueSource();
-                if (attack.getItem() == Items.BONE) {
-                    System.out.println("the attacker has " + seme.getMaxHealth());
-                    if (seme.getAttribute(Attributes.MAX_HEALTH) != null)
-                        for (AttributeModifier am : seme.getAttribute(Attributes.MAX_HEALTH).getModifierListCopy())
-                            System.out.println("attribute modifier " + am.getName() + " gives " + am.getAmount());
-                }
-                seme.removeActivePotionEffect(Effects.INVISIBILITY);
+                seme.removePotionEffect(Effects.INVISIBILITY);
                 ICombatCapability semeCap = CombatData.getCap(seme);
                 ukeCap.update();
                 semeCap.update();
@@ -123,7 +127,7 @@ public class CombatHandler {
                     semeCap.addMight(might * weakness);
                     semeCap.consumePosture(0);
                 }
-                boolean canParry = GeneralUtils.isFacingEntity(uke, seme, 120);
+                boolean canParry = GeneralUtils.isFacingEntity(uke, seme, 120) && (!(uke instanceof PlayerEntity) || CombatConfig.sneakParry == 0 || (uke.isSneaking() && EntityHandler.lastSneak.get((PlayerEntity) uke) < uke.ticksExisted + CombatConfig.sneakParry));//why does everyone want this feature...
                 boolean useDeflect = (uke instanceof PlayerEntity || WarDance.rand.nextFloat() < CombatConfig.mobDeflectChance) && GeneralUtils.isFacingEntity(uke, seme, 120 + 2 * (int) GeneralUtils.getAttributeValueSafe(uke, WarAttributes.DEFLECTION.get())) && !canParry;
                 //staggered, no parry
                 if (ukeCap.getStaggerTime() > 0) {

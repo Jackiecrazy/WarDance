@@ -905,6 +905,35 @@ public class CombatConfig {
             "epicfight:stray_robes, 0.6, 0, 0",
             "epicfight:stray_pants, 0.4, 0, 0"
     };
+    public static float posturePerProjectile;
+    public static int shatterCooldown;
+    public static float defaultMultiplierPostureDefend;
+    public static float defaultMultiplierPostureAttack;
+    public static int rollEndsAt;
+    public static int rollCooldown;
+    public static int shieldThreshold;
+    public static int shieldCount;
+    public static int staggerDuration;
+    public static int staggerDurationMin;
+    public static int staggerHits;
+    public static float staggerDamage;
+    public static int mobUpdateInterval;
+    public static int qiGrace;
+    public static int comboGrace;
+    public static int spiritCD;
+    public static int postureCD;
+    public static int sneakParry;
+    public static float mobParryChanceWeapon, mobParryChanceShield, mobDeflectChance, mobScaler, kenshiroScaler;
+    public static float wound, fatigue, burnout, posCap, distract, unaware;
+    public static boolean dodge, elenai, elenaiP, elenaiC, stealthSystem, ignore;
+    public static float weakness, hunger, poison, luck, nausea;
+    public static ArrayList<String> woundList;
+    public static boolean woundWL;
+    public static ArrayList<String> immortal;
+    public static boolean immortalWL, betterSweep, sweepDurability;
+    public static int sweepAngle, baseHorizontalDetection, baseVerticalDetection, anglePerArmor;
+    public static double blockPerVolume;
+    public static float kbNerf;
 
     static {
         final Pair<CombatConfig, ForgeConfigSpec> specPair = new ForgeConfigSpec.Builder().configure(CombatConfig::new);
@@ -939,6 +968,7 @@ public class CombatConfig {
     private final ForgeConfigSpec.BooleanValue _sweepDurability;
     private final ForgeConfigSpec.IntValue _sweepPerSE;
     private final ForgeConfigSpec.BooleanValue _dodge;
+    private final ForgeConfigSpec.IntValue _sneakParry;
     private final ForgeConfigSpec.DoubleValue _mobParryChanceWeapon;
     private final ForgeConfigSpec.DoubleValue _mobParryChanceShield;
     private final ForgeConfigSpec.DoubleValue _mobDeflectChance;
@@ -967,37 +997,9 @@ public class CombatConfig {
     private final ForgeConfigSpec.DoubleValue _blockPerVolume;
     private final ForgeConfigSpec.DoubleValue _knockbackNerf;
 
-    public static float posturePerProjectile;
-    public static int shatterCooldown;
-    public static float defaultMultiplierPostureDefend;
-    public static float defaultMultiplierPostureAttack;
-    public static int rollEndsAt;
-    public static int rollCooldown;
-    public static int shieldThreshold;
-    public static int shieldCount;
-    public static int staggerDuration;
-    public static int staggerDurationMin;
-    public static int staggerHits;
-    public static float staggerDamage;
-    public static int mobUpdateInterval;
-    public static int qiGrace;
-    public static int comboGrace;
-    public static int spiritCD;
-    public static int postureCD;
-    public static float mobParryChanceWeapon, mobParryChanceShield, mobDeflectChance, mobScaler, kenshiroScaler;
-    public static float wound, fatigue, burnout, posCap, distract, unaware;
-    public static boolean dodge, elenai, elenaiP, elenaiC, stealthSystem, ignore;
-    public static float weakness, hunger, poison, luck, nausea;
-    public static ArrayList<String> woundList;
-    public static boolean woundWL;
-    public static ArrayList<String> immortal;
-    public static boolean immortalWL, betterSweep, sweepDurability;
-    public static int sweepAngle, baseHorizontalDetection, baseVerticalDetection, anglePerArmor;
-    public static double blockPerVolume;
-    public static float kbNerf;
-
     public CombatConfig(ForgeConfigSpec.Builder b) {
         b.push("defense");
+        _sneakParry = b.translation("wardance.config.sneakParry").comment("parries will only work in this many ticks after sneaking, 0 to disable. I don't know why everyone wants this option, but here it is.").defineInRange("sneak parry time", 0, 0, Integer.MAX_VALUE);
         _posturePerProjectile = b.translation("wardance.config.ppp").comment("Posture consumed per projectile parried").defineInRange("posture per projectile", 0.5, 0, Double.MAX_VALUE);
         _defaultMultiplierPostureAttack = b.translation("wardance.config.dmpa").comment("Default multiplier for any items not defined in the config, multiplied by their attack damage").defineInRange("default attack multiplier", 0.15, 0, Double.MAX_VALUE);
         _defaultMultiplierPostureDefend = b.translation("wardance.config.dmpd").comment("Default multiplier for any item not defined in the config, when used for parrying").defineInRange("default defense multiplier", 1.4, 0, Double.MAX_VALUE);
@@ -1119,6 +1121,7 @@ public class CombatConfig {
         baseVerticalDetection = CONFIG._baseDetectionVertical.get();
         blockPerVolume = CONFIG._blockPerVolume.get();
         kbNerf = CONFIG._knockbackNerf.get().floatValue();
+        sneakParry = CONFIG._sneakParry.get();
         CombatUtils.updateLists(CONFIG._combatItems.get(), CONFIG._customPosture.get(), CONFIG._customArmor.get());
     }
 

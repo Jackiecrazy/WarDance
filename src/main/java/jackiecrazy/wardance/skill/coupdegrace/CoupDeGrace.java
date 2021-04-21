@@ -56,8 +56,8 @@ public class CoupDeGrace extends Skill {
 
     }
 
-    protected void additionally(LivingEntity caster, LivingEntity target) {
-
+    protected void uponDeath(LivingEntity caster, LivingEntity target, float amount) {
+        CombatData.getCap(caster).addMight(1);
     }
 
     @Override
@@ -68,8 +68,7 @@ public class CoupDeGrace extends Skill {
                 e.setAmount(e.getAmount() + (float) CoupDeGrace.getLife(target));
                 CombatData.getCap(target).setStaggerCount(0);
                 if (e.getAmount() > target.getHealth()) {
-                    CombatData.getCap(caster).addMight(1);
-                    additionally(caster, target);
+                    uponDeath(caster, target, e.getAmount());
                 }
             }
         }

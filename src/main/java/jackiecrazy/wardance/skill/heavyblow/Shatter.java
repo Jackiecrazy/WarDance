@@ -27,7 +27,7 @@ public class Shatter extends HeavyBlow {
             if (flag) buff += 0.2f;
             index++;
         }
-        if (procPoint instanceof ParryEvent) {
+        if (procPoint instanceof ParryEvent && ((ParryEvent) procPoint).getDefendingHand() != null && ((ParryEvent) procPoint).getAttacker() == caster) {
             CombatData.getCap(target).setHandBind(((ParryEvent) procPoint).getDefendingHand(), (int) (30 * buff));
         } else if (procPoint instanceof CriticalHitEvent) {
             procPoint.setResult(Event.Result.ALLOW);

@@ -44,26 +44,29 @@ import java.util.concurrent.ConcurrentHashMap;
 @Mod.EventBusSubscriber(modid = WarDance.MODID)
 public class EntityHandler {
     public static HashMap<PlayerEntity, Entity> mustUpdate = new HashMap<>();
+    public static HashMap<PlayerEntity, Integer> lastSneak = new HashMap<>();
     public static ConcurrentHashMap<Tuple<World, BlockPos>, Float> alertTracker = new ConcurrentHashMap<>();
 
     @SubscribeEvent
     public static void start(FMLServerStartingEvent e) {
         mustUpdate = new HashMap<>();
+        lastSneak = new HashMap<>();
         alertTracker = new ConcurrentHashMap<>();
     }
 
     @SubscribeEvent
     public static void stop(FMLServerStoppingEvent e) {
-        mustUpdate = new HashMap<>();
-        alertTracker = new ConcurrentHashMap<>();
+        mustUpdate.clear();
+        lastSneak.clear();
+        alertTracker.clear();
     }
 
     @SubscribeEvent
     public static void caps(AttachCapabilitiesEvent<Entity> e) {
         if (e.getObject() instanceof LivingEntity) {
             e.addCapability(new ResourceLocation("wardance:combatinfo"), new CombatData((LivingEntity) e.getObject()));
-            if(e.getObject() instanceof PlayerEntity)
-            e.addCapability(new ResourceLocation("wardance:casterinfo"), new CasterData((LivingEntity) e.getObject()));
+            if (e.getObject() instanceof PlayerEntity)
+                e.addCapability(new ResourceLocation("wardance:casterinfo"), new CasterData((LivingEntity) e.getObject()));
         }
     }
 
@@ -98,6 +101,10 @@ public class EntityHandler {
         if (e.side == LogicalSide.SERVER && e.player.isAlive()) {
             CombatData.getCap(e.player).update();
             CasterData.getCap(e.player).update();
+            if (e.player.isSneaking()) {
+                if (!lastSneak.containsValue(e.player))
+                    lastSneak.put(e.player, e.player.ticksExisted);
+            } else lastSneak.remove(e.player);
         }
     }
 
@@ -113,7 +120,7 @@ public class EntityHandler {
                         double targDistSq = elb.getDistanceSq(((MobEntity) elb).getAttackTarget());
                         targDistSq = Math.max(targDistSq, 1);
                         //fan.addVelocity(diff.x == 0 ? 0 : -0.03 / diff.x, 0, diff.z == 0 ? 0 : -0.03 / diff.z);
-                        elb.addVelocity(diff.x == 0 ? 0 : 0.5 / (diff.x * targDistSq), 0, diff.z == 0 ? 0 : 0.5 / (diff.z * targDistSq));
+                        elb.addVelocity(diff.x == 0 ? 0 : 0.5 / Math.max(1, diff.x * targDistSq), 0, diff.z == 0 ? 0 : 0.5 / Math.max(1, diff.z * targDistSq));
                         /*
                         The battle circle AI basically works like this (from an enemy's perspective):
 First, walk towards the player until I get within a "danger" radius

@@ -1,6 +1,7 @@
 package jackiecrazy.wardance.handlers;
 
 import jackiecrazy.wardance.WarDance;
+import jackiecrazy.wardance.capability.resources.CombatData;
 import jackiecrazy.wardance.capability.skill.CasterData;
 import jackiecrazy.wardance.capability.skill.ISkillCapability;
 import jackiecrazy.wardance.event.ParryEvent;
@@ -39,11 +40,12 @@ public class SkillEventHandler {
                     s.getSkill().onSuccessfulProc(attacker, s, e.getEntityLiving(), e);
                 }
             }
-            for (Skill s : isc.getSkillCooldowns().keySet()) {
-                if (s.getTags(attacker).contains(ProcPoint.recharge_normal)) {
-                    isc.decrementSkillCooldown(s, 1);
+            if (CombatData.getCap(attacker).getCachedCooldown() > 0.9f)
+                for (Skill s : isc.getSkillCooldowns().keySet()) {
+                    if (s.getTags(attacker).contains(ProcPoint.recharge_normal)) {
+                        isc.decrementSkillCooldown(s, 1);
+                    }
                 }
-            }
         }
     }
 
@@ -91,7 +93,7 @@ public class SkillEventHandler {
     public static void parryFlags(ProjectileParryEvent e) {
         Entity proj = e.getProjectile();
         if (proj instanceof ProjectileEntity) {
-            Entity shooter =  ((ProjectileEntity) proj).func_234616_v_();
+            Entity shooter = ((ProjectileEntity) proj).func_234616_v_();
             if (shooter instanceof LivingEntity)
                 for (SkillData s : CasterData.getCap((LivingEntity) shooter).getActiveSkills().values()) {
                     if (s.getSkill().getTags((LivingEntity) shooter).contains(ProcPoint.on_projectile_impact)) {
