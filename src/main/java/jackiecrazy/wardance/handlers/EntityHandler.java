@@ -19,6 +19,7 @@ import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.Tuple;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.vector.Vector3d;
 import net.minecraft.world.World;
 import net.minecraftforge.event.AttachCapabilitiesEvent;
@@ -112,15 +113,18 @@ public class EntityHandler {
     public static void tickMobs(LivingEvent.LivingUpdateEvent e) {
         LivingEntity elb = e.getEntityLiving();
         if (!elb.world.isRemote && !(elb instanceof PlayerEntity)) {
-            if (elb instanceof MobEntity && CombatData.getCap(elb).getStaggerTime() == 0 && ((MobEntity) elb).getAttackTarget() != null)
-                for (Entity fan : elb.world.getEntitiesWithinAABBExcludingEntity(elb, elb.getBoundingBox().grow(3))) {
-                    if (fan instanceof LivingEntity && GeneralUtils.getDistSqCompensated(fan, elb) < 6 && fan != ((MobEntity) elb).getAttackTarget()) {
+            if (elb instanceof MobEntity && CombatData.getCap(elb).getStaggerTime() == 0 && ((MobEntity) elb).getAttackTarget() != null) {
+                double safeSpace = (elb.getWidth()) * 3;
+                for (Entity fan : elb.world.getEntitiesWithinAABBExcludingEntity(elb, elb.getBoundingBox().grow(safeSpace))) {
+                    if (fan instanceof MobEntity && ((MobEntity) fan).getAttackTarget() == ((MobEntity) fan).getAttackTarget() &&
+                    GeneralUtils.getDistSqCompensated(fan, elb) < (safeSpace + 1) * safeSpace && fan != ((MobEntity) elb).getAttackTarget())
+                    {
                         //mobs "avoid" clumping together
                         Vector3d diff = elb.getPositionVec().subtract(fan.getPositionVec());
                         double targDistSq = elb.getDistanceSq(((MobEntity) elb).getAttackTarget());
-                        targDistSq = Math.max(targDistSq, 1);
+                        //targDistSq = Math.max(targDistSq, 1);
                         //fan.addVelocity(diff.x == 0 ? 0 : -0.03 / diff.x, 0, diff.z == 0 ? 0 : -0.03 / diff.z);
-                        elb.addVelocity(diff.x == 0 ? 0 : 0.5 / Math.max(1, diff.x * targDistSq), 0, diff.z == 0 ? 0 : 0.5 / Math.max(1, diff.z * targDistSq));
+                        elb.addVelocity(diff.x == 0 ? 0 : MathHelper.clamp(0.5 / (diff.x * targDistSq), -1, 1), 0, diff.z == 0 ? 0 : MathHelper.clamp(0.5 / (diff.z * targDistSq), -1, 1));
                         /*
                         The battle circle AI basically works like this (from an enemy's perspective):
 First, walk towards the player until I get within a "danger" radius
@@ -138,6 +142,7 @@ Mobs should move into a position that is close to the player, far from allies, a
                          */
                     }
                 }
+            }
             //staggered mobs bypass update interval
             ICombatCapability cap = CombatData.getCap(elb);
             if (cap.getStaggerTime() > 0 || mustUpdate.containsValue(e.getEntity()) || elb.ticksExisted % CombatConfig.mobUpdateInterval == 0)

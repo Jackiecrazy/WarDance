@@ -5,7 +5,10 @@ import jackiecrazy.wardance.capability.skill.ISkillCapability;
 import jackiecrazy.wardance.event.SkillCooldownEvent;
 import jackiecrazy.wardance.networking.CastSkillPacket;
 import net.minecraft.entity.LivingEntity;
+import net.minecraft.item.ItemStack;
 import net.minecraft.tags.Tag;
+import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraftforge.common.MinecraftForge;
@@ -13,6 +16,9 @@ import net.minecraftforge.eventbus.api.Event;
 import net.minecraftforge.registries.ForgeRegistryEntry;
 
 import javax.annotation.Nullable;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
 
 /*
  * for chanting, make a dummy skill which does nothing but play a sound, if even that. This is the one that'll be displayed to players.
@@ -24,8 +30,17 @@ import javax.annotation.Nullable;
  * There are no grandchildren. If you make a grandchild, it won't show up.
  */
 public abstract class Skill extends ForgeRegistryEntry<Skill> {
-    public Skill() {
+    public static final HashMap<Skill, List<Skill>> variationMap = new HashMap<>();
 
+    public Skill() {
+        if (this.getParentSkill() == null && !variationMap.containsKey(this)) {
+            variationMap.put(this, new ArrayList<>());
+        } else if (this.getParentSkill() != null) {
+            List<Skill> insert = variationMap.get(getParentSkill());
+            if (insert == null) insert = new ArrayList<>();
+            insert.add(this);
+            variationMap.put(this.getParentSkill(), insert);
+        }
     }
 
     @Nullable
@@ -42,8 +57,16 @@ public abstract class Skill extends ForgeRegistryEntry<Skill> {
 
     public void onCooledDown(LivingEntity caster, float overflow) {}
 
-    public TranslationTextComponent requirement(LivingEntity caster) {
-        return new TranslationTextComponent(TextFormatting.RED + this.getRegistryName().toString() + "_cannot_cast");
+    public ITextComponent description() {
+        return new TranslationTextComponent(this.getRegistryName().toString() + ".desc");
+    }
+
+    public ITextComponent getDisplayName() {
+        return new TranslationTextComponent(this.getRegistryName().toString() + ".name");
+    }
+
+    public ResourceLocation icon() {
+        return new ResourceLocation(this.getRegistryName().toString() + "_icon");
     }
 
     public abstract Tag<String> getTags(LivingEntity caster);//requires breath, debuffing, healing, aoe, etc. Also determines proc time (parry, attack, etc)
@@ -86,4 +109,6 @@ public abstract class Skill extends ForgeRegistryEntry<Skill> {
     protected void markUsed(LivingEntity caster) {
         CasterData.getCap(caster).markSkillUsed(this);
     }
+
+
 }

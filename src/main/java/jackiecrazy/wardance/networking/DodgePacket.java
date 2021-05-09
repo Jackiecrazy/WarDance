@@ -1,8 +1,6 @@
 package jackiecrazy.wardance.networking;
 
 import jackiecrazy.wardance.utils.MovementUtils;
-import net.minecraft.client.Minecraft;
-import net.minecraft.entity.LivingEntity;
 import net.minecraft.network.PacketBuffer;
 import net.minecraftforge.fml.network.NetworkEvent;
 
@@ -42,7 +40,7 @@ public class DodgePacket {
         @Override
         public void accept(DodgePacket updateClientPacket, Supplier<NetworkEvent.Context> contextSupplier) {
             contextSupplier.get().enqueueWork(() -> {
-                MovementUtils.attemptDodge(Objects.requireNonNull(contextSupplier.get().getSender()), updateClientPacket.direction, updateClientPacket.isRoll);
+                MovementUtils.attemptDodge(Objects.requireNonNull(contextSupplier.get().getSender()), updateClientPacket.direction);
             });
             contextSupplier.get().setPacketHandled(true);
         }

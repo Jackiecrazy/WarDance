@@ -86,6 +86,8 @@ public class WarDance {
         ClientConfig.bake();
         ClientRegistry.registerKeyBinding(Keybinds.COMBAT);
         ClientRegistry.registerKeyBinding(Keybinds.CAST);
+        ClientRegistry.registerKeyBinding(Keybinds.SELECT);
+        ClientRegistry.registerKeyBinding(Keybinds.QUICKCAST);
     }
 
     private void enqueueIMC(final InterModEnqueueEvent event) {

@@ -4,12 +4,13 @@ import com.google.common.collect.Lists;
 import jackiecrazy.wardance.WarDance;
 import jackiecrazy.wardance.capability.resources.CombatData;
 import jackiecrazy.wardance.capability.resources.ICombatCapability;
+import jackiecrazy.wardance.client.screen.SkillCastScreen;
+import jackiecrazy.wardance.client.screen.SkillSelectionScreen;
 import jackiecrazy.wardance.networking.CastSkillPacket;
 import jackiecrazy.wardance.networking.CombatChannel;
 import jackiecrazy.wardance.networking.CombatModePacket;
 import jackiecrazy.wardance.skill.Skill;
 import jackiecrazy.wardance.skill.WarSkills;
-import net.java.games.input.Controller;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.settings.KeyBinding;
 import net.minecraft.client.util.InputMappings;
@@ -42,6 +43,7 @@ public class Keybinds {
     public static final KeyBinding COMBAT = new KeyBinding("wardance.combat", KeyConflictContext.IN_GAME, KeyModifier.SHIFT, InputMappings.Type.KEYSYM, 82, "key.categories.gameplay");
     public static final KeyBinding CAST = new KeyBinding("wardance.skill", IN_COMBAT, InputMappings.Type.KEYSYM, 82, "key.categories.gameplay");
     public static final KeyBinding QUICKCAST = new KeyBinding("wardance.quickSkill", IN_COMBAT, InputMappings.Type.MOUSE, 2, "key.categories.gameplay");
+    public static final KeyBinding SELECT = new KeyBinding("wardance.selectSkill", KeyConflictContext.IN_GAME, InputMappings.Type.KEYSYM, 82, "key.categories.gameplay");
     public static Skill quick = null;
     private static ArrayList<Skill> derp = null;
 
@@ -58,6 +60,9 @@ public class Keybinds {
         }
         if (CAST.getKeyConflictContext().isActive() && CAST.isPressed() && mc.player.isAlive()) {
             mc.displayGuiScreen(new SkillCastScreen(derp));
+        }
+        if (SELECT.getKeyConflictContext().isActive() && SELECT.isPressed() && mc.player.isAlive()) {
+            mc.displayGuiScreen(new SkillSelectionScreen());
         }
         if (quick != null && QUICKCAST.getKeyConflictContext().isActive() && QUICKCAST.isPressed() && mc.player.isAlive()) {
             CombatChannel.INSTANCE.sendToServer(new CastSkillPacket(quick.getRegistryName().toString()));

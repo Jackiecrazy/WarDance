@@ -257,8 +257,13 @@ public class CombatCapability implements ICombatCapability {
 
     @Override
     public void setTrueMaxPosture(float amount) {
+        float perc = posture / mpos;
+        float temp = mpos;
         mpos = amount;
-        if (getPosture() > getMaxPosture()) setPosture(getMaxPosture());
+        if (mpos != temp)
+            posture = perc * mpos;
+        if(Float.isNaN(posture))
+            posture=mpos;
     }
 
     @Override

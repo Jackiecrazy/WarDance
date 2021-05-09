@@ -87,14 +87,14 @@ Spells and skills: hit stuff so you can hit harder!
 
 ▪ Heavy blow: the next attack in 2 seconds guarantees a crit when dealing damage, and disables the parrying hand for 1.5 seconds if parried. Recharge in 3 attacks, weapon bound.
 Shatter: bind time increases based on the variety of the last 3 skills used
-Intimidate: consume 1 might to add 3+(might difference/2) fatigue and 0.8+(might/10) seconds of slow
+Stagger: adds up to 1.3 seconds of slow and 5 posture damage depending on your weapon's attack speed (slower is more)
 Lunge: range+2 and dash forward
 Poise: free parries until attack
-Backstab: ignore armor if attacking the backside of enemy
+Backstab: ignore armor and apply distraction multiplier if attacking the backside of enemy
 ▪ Iron guard: the next parry in 1 second (particles) reflects the posture damage onto attacker. If the attack was ranged, the shot is reflected back at the caster with full force. Cancels out with heavy blow. Recharge in 5 attacks, weapon bound.
 Overpower: additionally deduct posture as if attacking with parrying hand
 Bind: disable attacking hand for melee
-Backpedal: all posture cost converted to knockback
+Backpedal: all posture cost converted to knockback instead
 Recovery: reset cooldown of all resources
 Mikiri: cooldown -1, auto trigger
 ▪ Kick: the next attack in 2 seconds has 2 range but deals 6 unblockable posture damage and 1 blockable falling damage. Recharge in 5 attacks, self bound.

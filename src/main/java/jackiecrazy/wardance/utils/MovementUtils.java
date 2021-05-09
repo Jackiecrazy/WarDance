@@ -13,7 +13,7 @@ import net.minecraft.util.math.vector.Vector3d;
 public class MovementUtils {
 
     public static boolean hasInvFrames(LivingEntity elb) {
-        return -(CombatData.getCap(elb).getRollTime()) > CombatConfig.rollEndsAt;
+        return (CombatData.getCap(elb).getRollTime()) > CombatConfig.rollEndsAt;
     }
 
 //    /**
@@ -200,18 +200,14 @@ public class MovementUtils {
         if (!itsc.isCombatMode()) return false;
         itsc.consumePosture(0);
         itsc.setRollTime(-CombatConfig.rollCooldown);
-        if (elb instanceof PlayerEntity) {
-            PlayerEntity e = (PlayerEntity) elb;
-            e.setForcedPose(Pose.SWIMMING);
-        }
         Vector3d v = elb.getLookVec().subtract(0, elb.getLookVec().y, 0).normalize();
         //TODO tweak slide amount to make it fair
-        elb.setMotion((1 + itsc.getMight() / 4) * v.x, 0, (1 + itsc.getMight() / 4) * v.z);
+        elb.setMotion(v.x, 0, v.z);
         elb.velocityChanged = true;
         return true;
     }
 
-    public static boolean attemptDodge(LivingEntity elb, int side, boolean roll) {
+    public static boolean attemptDodge(LivingEntity elb, int side) {
         /*
         stepping around logic:
         known: sidestep distance is 5, distance to mob is x
@@ -225,7 +221,7 @@ public class MovementUtils {
         if (!itsc.isCombatMode() && (!WarCompat.elenaiDodge || itsc.getStaggerTime() == 0)) return false;
         if (side == 99) attemptSlide(elb);
         if (itsc.getRollTime() == 0) {//
-            itsc.setRollTime((roll ? -1 : 1) * CombatConfig.rollCooldown);
+            itsc.setRollTime( CombatConfig.rollCooldown);
 //            Entity target = GeneralUtils.raytraceEntity(elb.world, elb, 32);
 //            float adjustment = 0;
 //            if (target != null) {
@@ -264,10 +260,6 @@ public class MovementUtils {
 //            elb.motionY=y;
 //            elb.motionZ=z;
             itsc.consumePosture(0);
-            if (elb instanceof PlayerEntity && roll) {
-                PlayerEntity e = (PlayerEntity) elb;
-                e.setForcedPose(Pose.SWIMMING);
-            }
             return true;
         }
         return false;

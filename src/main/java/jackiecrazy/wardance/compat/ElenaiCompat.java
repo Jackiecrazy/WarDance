@@ -29,28 +29,28 @@ public class ElenaiCompat {
         else getFeatherHandler().decreaseRegenModifier(e, -amount);
     }
 
-    @SubscribeEvent(priority = EventPriority.HIGHEST)
-    public static void noDodge(DodgeEvent.ServerDodgeEvent e) {
-        if (CombatConfig.elenai && CombatData.getCap(e.getPlayer()).getStaggerTime() > 0) {
-            e.setCanceled(true);
-            int dir = -1;
-            switch (e.getDirection()) {
-                case FORWARD:
-                    dir = 99;
-                    break;
-                case BACK:
-                    dir = 1;
-                    break;
-                case LEFT:
-                    dir = 0;
-                    break;
-                case RIGHT:
-                    dir = 2;
-                    break;
-            }
-            MovementUtils.attemptDodge(e.getPlayer(), dir, true);
-        }
-    }
+//    @SubscribeEvent(priority = EventPriority.HIGHEST)
+//    public static void noDodge(DodgeEvent.ServerDodgeEvent e) {
+//        if (CombatConfig.elenai && CombatData.getCap(e.getPlayer()).getStaggerTime() > 0) {
+//            e.setCanceled(true);
+//            int dir = -1;
+//            switch (e.getDirection()) {
+//                case FORWARD:
+//                    dir = 99;
+//                    break;
+//                case BACK:
+//                    dir = 1;
+//                    break;
+//                case LEFT:
+//                    dir = 0;
+//                    break;
+//                case RIGHT:
+//                    dir = 2;
+//                    break;
+//            }
+//            MovementUtils.attemptDodge(e.getPlayer(), dir);
+//        }
+//    }
 
     @SubscribeEvent(priority = EventPriority.LOWEST)
     public static void dodge(DodgeEvent.ServerDodgeEvent e) {

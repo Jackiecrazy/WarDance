@@ -51,7 +51,6 @@ import java.util.Optional;
 
 @Mod.EventBusSubscriber(value = Dist.CLIENT, modid = WarDance.MODID)
 public class ClientEvents {
-    private static HashMap<String, Boolean> rotate;
     private static final int ALLOWANCE = 7;
     private static final ResourceLocation hud = new ResourceLocation(WarDance.MODID, "textures/hud/yeet.png");
     private static final ResourceLocation hood = new ResourceLocation(WarDance.MODID, "textures/hud/icons.png");
@@ -60,11 +59,15 @@ public class ClientEvents {
      */
     private static final long[] lastTap = {0, 0, 0, 0};
     private static final boolean[] tapped = {false, false, false, false};
+    private static final DecimalFormat formatter = new DecimalFormat("#.#");
+    private static HashMap<String, Boolean> rotate;
     private static boolean sneak = false;
     private static float currentMightLevel = 0;
     private static float currentComboLevel = 0;
     private static float currentSpiritLevel = 0;
-    private static final DecimalFormat formatter = new DecimalFormat("#.#");
+    private static double dodgeDecimal;
+    private static Entity lastTickLookAt;
+    private static boolean rightClick = false;
 
     static {
         formatter.setRoundingMode(RoundingMode.DOWN);
@@ -93,7 +96,7 @@ public class ClientEvents {
 //            KeyBinding.unPressAllKeys();
 //            return;
 //        }
-        if (itsc.isCombatMode() && (!WarCompat.elenaiDodge || itsc.getStaggerTime() != 0) && mc.world != null) {
+        if (itsc.isCombatMode() && !WarCompat.elenaiDodge && mc.world != null) {
             final boolean onSprint = mc.gameSettings.keyBindSprint.isPressed();
             int dir = -1;
             if (mi.leftKeyDown && (!tapped[0] || onSprint)) {
@@ -124,6 +127,12 @@ public class ClientEvents {
 //                lastTap[3] = mc.world.getGameTime();
 //            }
 //            tapped[3] = mi.forwardKeyDown;
+            if (mc.player.isSprinting() && mi.sneaking && !sneak) {
+                //if(mc.world.getTotalWorldTime()-lastSneak<=ALLOWANCE){
+                dir = 99;
+                //}
+            }
+            sneak = mi.sneaking;
             if (dir != -1)
                 CombatChannel.INSTANCE.sendToServer(new DodgePacket(dir, mi.sneaking));
         }
@@ -132,22 +141,6 @@ public class ClientEvents {
             //no moving while you're down! (except for a safety roll)
             KeyBinding.unPressAllKeys();
             return;
-        }
-
-        if (itsc.isCombatMode()) {
-//            if (mi.jump && !jump) {
-//                //if(mc.world.getTotalWorldTime()-lastSneak<=ALLOWANCE){
-//                Taoism.net.sendToServer(new PacketJump());
-//                //}
-//            }
-//            jump = mi.jump;
-
-            if (mc.player.isSprinting() && mi.sneaking && !sneak) {
-                //if(mc.world.getTotalWorldTime()-lastSneak<=ALLOWANCE){
-                CombatChannel.INSTANCE.sendToServer(new DodgePacket(99, true));
-                //}
-            }
-            sneak = mi.sneaking;
         }
     }
 
@@ -508,9 +501,6 @@ public class ClientEvents {
         return e.world.rayTraceBlocks(new RayTraceContext(origin, next, RayTraceContext.BlockMode.OUTLINE, RayTraceContext.FluidMode.NONE, e));
     }
 
-    private static double dodgeDecimal;
-    private static Entity lastTickLookAt;
-
     @SubscribeEvent
     public static void tickPlayer(TickEvent.ClientTickEvent e) {
         Minecraft mc = Minecraft.getInstance();
@@ -525,7 +515,10 @@ public class ClientEvents {
                     else
                         CombatChannel.INSTANCE.sendToServer(new RequestUpdatePacket(-1));
                 }
+
             } else {
+                if (!mc.gameSettings.keyBindUseItem.isKeyDown())
+                    rightClick = false;
                 if (WarCompat.elenaiDodge) {
                     if (CombatConfig.elenaiP && CombatData.getCap(p).getPostureGrace() > 0) {
                         ClientTickEventListener.regen++;
@@ -552,7 +545,8 @@ public class ClientEvents {
 
     @SubscribeEvent
     public static void sweepSwingOff(PlayerInteractEvent.RightClickEmpty e) {
-        if (e.getHand() == Hand.OFF_HAND && ((CombatUtils.isWeapon(e.getEntityLiving(), e.getItemStack()) || (e.getItemStack().isEmpty() && CombatData.getCap(e.getPlayer()).isCombatMode())))) {
+        if (!rightClick && e.getHand() == Hand.OFF_HAND && ((CombatUtils.isWeapon(e.getEntityLiving(), e.getItemStack()) || (e.getItemStack().isEmpty() && CombatData.getCap(e.getPlayer()).isCombatMode())))) {
+            rightClick = true;
             Entity n = getEntityLookedAt(e.getPlayer(), GeneralUtils.getAttributeValueSafe(e.getPlayer(), ForgeMod.REACH_DISTANCE.get()) - (e.getItemStack().isEmpty() ? 1 : 0));
             e.getPlayer().swing(Hand.OFF_HAND, false);
             if (n != null)
@@ -573,7 +567,8 @@ public class ClientEvents {
 
     @SubscribeEvent
     public static void sweepSwingOffItem(PlayerInteractEvent.RightClickItem e) {
-        if (e.getHand() == Hand.OFF_HAND && ((CombatUtils.isWeapon(e.getEntityLiving(), e.getItemStack()) || (e.getItemStack().isEmpty() && CombatData.getCap(e.getPlayer()).isCombatMode())))) {
+        if (!rightClick && e.getHand() == Hand.OFF_HAND && ((CombatUtils.isWeapon(e.getEntityLiving(), e.getItemStack()) || (e.getItemStack().isEmpty() && CombatData.getCap(e.getPlayer()).isCombatMode())))) {
+            rightClick = true;
             Entity n = getEntityLookedAt(e.getPlayer(), GeneralUtils.getAttributeValueSafe(e.getPlayer(), ForgeMod.REACH_DISTANCE.get()) - (e.getItemStack().isEmpty() ? 1 : 0));
             e.getPlayer().swing(Hand.OFF_HAND, false);
             if (n != null)
@@ -584,7 +579,8 @@ public class ClientEvents {
 
     @SubscribeEvent
     public static void punchy(PlayerInteractEvent.EntityInteract e) {
-        if (e.getHand() == Hand.OFF_HAND && (e.getItemStack().isEmpty() && CombatData.getCap(e.getPlayer()).isCombatMode())) {
+        if (!rightClick && e.getHand() == Hand.OFF_HAND && (e.getItemStack().isEmpty() && CombatData.getCap(e.getPlayer()).isCombatMode())) {
+            rightClick = true;
             Entity n = getEntityLookedAt(e.getPlayer(), GeneralUtils.getAttributeValueSafe(e.getPlayer(), ForgeMod.REACH_DISTANCE.get()) - (e.getItemStack().isEmpty() ? 1 : 0));
             e.getPlayer().swing(Hand.OFF_HAND, false);
             if (n != null)
@@ -595,7 +591,8 @@ public class ClientEvents {
 
     @SubscribeEvent
     public static void sweepSwingOffItemBlock(PlayerInteractEvent.RightClickBlock e) {
-        if (e.getHand() == Hand.OFF_HAND && ((CombatUtils.isWeapon(e.getEntityLiving(), e.getItemStack()) || (e.getItemStack().isEmpty() && CombatData.getCap(e.getPlayer()).isCombatMode())))) {
+        if (!rightClick && e.getHand() == Hand.OFF_HAND && ((CombatUtils.isWeapon(e.getEntityLiving(), e.getItemStack()) || (e.getItemStack().isEmpty() && CombatData.getCap(e.getPlayer()).isCombatMode())))) {
+            rightClick = true;
             Entity n = getEntityLookedAt(e.getPlayer(), GeneralUtils.getAttributeValueSafe(e.getPlayer(), ForgeMod.REACH_DISTANCE.get()) - (e.getItemStack().isEmpty() ? 1 : 0));
             e.getPlayer().swing(Hand.OFF_HAND, false);
             if (n != null)

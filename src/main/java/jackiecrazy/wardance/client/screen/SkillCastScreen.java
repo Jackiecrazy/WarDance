@@ -1,8 +1,9 @@
-package jackiecrazy.wardance.client;
+package jackiecrazy.wardance.client.screen;
 
 import com.mojang.blaze3d.matrix.MatrixStack;
 import com.mojang.blaze3d.systems.RenderSystem;
 import jackiecrazy.wardance.WarDance;
+import jackiecrazy.wardance.client.Keybinds;
 import jackiecrazy.wardance.networking.CastSkillPacket;
 import jackiecrazy.wardance.networking.CombatChannel;
 import jackiecrazy.wardance.skill.Skill;
@@ -11,6 +12,7 @@ import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.text.StringTextComponent;
+import net.minecraft.util.text.TextFormatting;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.client.gui.ForgeIngameGui;
@@ -73,8 +75,8 @@ public class SkillCastScreen extends Screen {
         }
         if (index >= 0 && elements[index] != null) {
             String name = elements[index].getRegistryName().toString();
-            int yee=mc.fontRenderer.getStringWidth(name);
-            mc.ingameGUI.getFontRenderer().drawString(matrixStack, name, (width-yee) / 2f, height / 2f-3, 0);
+            int yee = mc.fontRenderer.getStringWidth(name);
+            mc.ingameGUI.getFontRenderer().drawString(matrixStack, TextFormatting.BLUE + name + TextFormatting.RESET, (width - yee) / 2f, height / 2f - 3, 0);
         }
         RenderSystem.disableAlphaTest();
         RenderSystem.disableBlend();
@@ -154,7 +156,7 @@ public class SkillCastScreen extends Screen {
     protected void selectAndClose() {
         closeScreen();
         if (selected != null) {
-            Keybinds.quick=selected;
+            Keybinds.quick = selected;
             CombatChannel.INSTANCE.sendToServer(new CastSkillPacket(selected.getRegistryName().toString()));
         }
     }

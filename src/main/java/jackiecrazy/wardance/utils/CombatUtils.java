@@ -376,14 +376,14 @@ public class CombatUtils {
         main.getAttributeModifiers(EquipmentSlotType.MAINHAND).forEach((att, mod) -> {
             Optional.ofNullable(e.getAttribute(att)).ifPresent((mai) -> {mai.removeModifier(mod);});
         });
+        off.getAttributeModifiers(EquipmentSlotType.OFFHAND).forEach((att, mod) -> {
+            Optional.ofNullable(e.getAttribute(att)).ifPresent((mai) -> {mai.removeModifier(mod);});
+        });
         main.getAttributeModifiers(EquipmentSlotType.OFFHAND).forEach((att, mod) -> {
             Optional.ofNullable(e.getAttribute(att)).ifPresent((mai) -> {mai.applyNonPersistentModifier(mod);});
         });
         off.getAttributeModifiers(EquipmentSlotType.MAINHAND).forEach((att, mod) -> {
             Optional.ofNullable(e.getAttribute(att)).ifPresent((mai) -> {mai.applyNonPersistentModifier(mod);});
-        });
-        off.getAttributeModifiers(EquipmentSlotType.OFFHAND).forEach((att, mod) -> {
-            Optional.ofNullable(e.getAttribute(att)).ifPresent((mai) -> {mai.removeModifier(mod);});
         });
         e.ticksSinceLastSwing = cap.getOffhandCooldown();
         cap.setOffhandCooldown(tssl);
@@ -439,8 +439,8 @@ public class CombatUtils {
     }
 
     public enum AWARENESS {
-        UNAWARE,//deals 1.5x (posture) damage, cannot be parried, absorbed, shattered, or deflected
-        DISTRACTED,//deals 1.5x (posture) damage
+        UNAWARE,//cannot be parried, absorbed, shattered, or deflected
+        DISTRACTED,//deals extra (posture) damage
         ALERT//normal damage and reduction
     }
 

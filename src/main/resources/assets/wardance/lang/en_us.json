@@ -8,5 +8,15 @@
   "wardance.shatter": "Shatter",
   "wardance.combat.on": "Combat Mode Activated",
   "wardance.combat.off": "Combat Mode Deactivated",
-  "wardance.combat": "Toggle Combat Mode"
+  "wardance.combat": "Toggle Combat Mode",
+  "wardance:coup_de_grace.name": "Coup de Grace",
+  "wardance:reinvigorate.name": "Reinvigorate",
+  "wardance:iron_guard.name": "Iron Guard",
+  "wardance:backpedal.name": "Backpedal",
+  "wardance:heavy_blow.name": "Heavy Blow",
+  "wardance:backstab.name": "Backstab",
+  "wardance:poise.name": "Poise",
+  "wardance:stagger.name": "Stagger",
+  "wardance:lunge.name": "Lunge",
+  "wardance:shatter.name": "Shatter"
 }

@@ -6,7 +6,6 @@ import jackiecrazy.wardance.event.ProjectileParryEvent;
 import jackiecrazy.wardance.skill.Skill;
 import jackiecrazy.wardance.skill.SkillData;
 import jackiecrazy.wardance.skill.WarSkills;
-import jackiecrazy.wardance.skill.coupdegrace.CoupDeGrace;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.tags.Tag;
 import net.minecraftforge.eventbus.api.Event;

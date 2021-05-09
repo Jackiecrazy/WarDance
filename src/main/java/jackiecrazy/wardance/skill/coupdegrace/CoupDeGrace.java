@@ -24,7 +24,7 @@ public class CoupDeGrace extends Skill {
 
     private static double getLife(LivingEntity e) {
         if (e instanceof PlayerEntity) return 3;
-        return e.getMaxHealth() / Math.max(1, Math.cbrt(e.getMaxHealth()) - 2);
+        return e.getMaxHealth() / Math.max(1, Math.floor(Math.log(e.getMaxHealth())) - 1);
     }
 
     @Override
@@ -65,8 +65,8 @@ public class CoupDeGrace extends Skill {
         if (procPoint instanceof LivingDamageEvent) {
             LivingDamageEvent e = (LivingDamageEvent) procPoint;
             if (CombatData.getCap(e.getEntityLiving()).getStaggerTime() > 0 && !CombatHandler.downingHit) {
-                e.setAmount(e.getAmount() + (float) CoupDeGrace.getLife(target));
-                CombatData.getCap(target).setStaggerCount(0);
+                e.setAmount(e.getAmount() + (float) CoupDeGrace.getLife(target) * (0.5f + ((target.getMaxHealth() - target.getHealth()) / target.getMaxHealth())));
+                CombatData.getCap(target).decrementStaggerTime(CombatData.getCap(target).getStaggerTime());
                 if (e.getAmount() > target.getHealth()) {
                     uponDeath(caster, target, e.getAmount());
                 }

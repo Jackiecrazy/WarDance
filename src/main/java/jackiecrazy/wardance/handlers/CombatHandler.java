@@ -9,24 +9,21 @@ import jackiecrazy.wardance.capability.resources.ICombatCapability;
 import jackiecrazy.wardance.config.CombatConfig;
 import jackiecrazy.wardance.event.ParryEvent;
 import jackiecrazy.wardance.event.ProjectileParryEvent;
-import jackiecrazy.wardance.skill.coupdegrace.CoupDeGrace;
 import jackiecrazy.wardance.utils.CombatUtils;
 import jackiecrazy.wardance.utils.GeneralUtils;
 import jackiecrazy.wardance.utils.MovementUtils;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.LivingEntity;
-import net.minecraft.entity.ai.attributes.AttributeModifier;
 import net.minecraft.entity.ai.attributes.Attributes;
 import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.entity.projectile.AbstractArrowEntity;
 import net.minecraft.entity.projectile.ProjectileEntity;
 import net.minecraft.item.ItemStack;
-import net.minecraft.item.Items;
 import net.minecraft.particles.ParticleTypes;
 import net.minecraft.potion.Effects;
 import net.minecraft.util.*;
 import net.minecraft.util.math.EntityRayTraceResult;
 import net.minecraft.util.math.RayTraceResult;
-import net.minecraft.util.math.vector.Vector3d;
 import net.minecraft.world.server.ServerWorld;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.entity.ProjectileImpactEvent;
@@ -50,6 +47,8 @@ public class CombatHandler {
                 return;
             }
             if (MovementUtils.hasInvFrames(uke)) e.setCanceled(true);
+            if (e.getEntity() instanceof AbstractArrowEntity && ((AbstractArrowEntity) e.getEntity()).getPierceLevel() > 0)
+                return;
             float consume = CombatConfig.posturePerProjectile;
             ICombatCapability ukeCap = CombatData.getCap(uke);
             boolean free = ukeCap.getShieldTime() > 0;
@@ -65,7 +64,7 @@ public class CombatHandler {
             Entity projectile = e.getEntity();
             ProjectileParryEvent pe = new ProjectileParryEvent(uke, projectile, h, defend, free ? 0 : consume, projectile.getMotion().mul(-0.2, -0.2, -0.2));
             MinecraftForge.EVENT_BUS.post(pe);
-            boolean sneaking=(!(uke instanceof PlayerEntity) || CombatConfig.sneakParry == 0 || (uke.isSneaking() && EntityHandler.lastSneak.get((PlayerEntity) uke) < uke.ticksExisted + CombatConfig.sneakParry));
+            boolean sneaking = (!(uke instanceof PlayerEntity) || CombatConfig.sneakParry == 0 || (uke.isSneaking() && EntityHandler.lastSneak.get((PlayerEntity) uke) < uke.ticksExisted + CombatConfig.sneakParry));
             if (pe.getResult() == Event.Result.ALLOW || (defend != null && GeneralUtils.isFacingEntity(uke, projectile, 120) && sneaking && ukeCap.doConsumePosture(pe.getPostureConsumption()) && pe.getResult() == Event.Result.DEFAULT)) {
                 e.setCanceled(true);
 //                if (projectile instanceof ProjectileEntity)
@@ -77,9 +76,9 @@ public class CombatHandler {
                 }
                 uke.world.playSound(null, uke.getPosX(), uke.getPosY(), uke.getPosZ(), free ? SoundEvents.BLOCK_WOODEN_TRAPDOOR_OPEN : SoundEvents.BLOCK_WOODEN_TRAPDOOR_CLOSE, SoundCategory.PLAYERS, 0.75f + WarDance.rand.nextFloat() * 0.5f, (1 - (ukeCap.getPosture() / ukeCap.getMaxPosture())) + WarDance.rand.nextFloat() * 0.5f);
                 projectile.setMotion(pe.getReturnVec().x, pe.getReturnVec().y, pe.getReturnVec().z);
-                if(projectile instanceof ProjectileEntity){
-                    double power=pe.getReturnVec().x/pe.getReturnVec().normalize().x;
-                    ((ProjectileEntity) projectile).shoot(pe.getReturnVec().x,pe.getReturnVec().y, pe.getReturnVec().z, (float)power, 0);
+                if (projectile instanceof ProjectileEntity) {
+                    double power = pe.getReturnVec().x / pe.getReturnVec().normalize().x;
+                    ((ProjectileEntity) projectile).shoot(pe.getReturnVec().x, pe.getReturnVec().y, pe.getReturnVec().z, (float) power, 0);
                 }
                 return;
             }
@@ -88,9 +87,9 @@ public class CombatHandler {
                 e.setCanceled(true);
                 uke.world.playSound(null, uke.getPosX(), uke.getPosY(), uke.getPosZ(), SoundEvents.BLOCK_IRON_TRAPDOOR_OPEN, SoundCategory.PLAYERS, 0.75f + WarDance.rand.nextFloat() * 0.5f, (1 - (ukeCap.getPosture() / ukeCap.getMaxPosture())) + WarDance.rand.nextFloat() * 0.5f);
                 projectile.setMotion(pe.getReturnVec().x, pe.getReturnVec().y, pe.getReturnVec().z);
-                if(projectile instanceof ProjectileEntity){
-                    double power=pe.getReturnVec().x/pe.getReturnVec().normalize().x;
-                    ((ProjectileEntity) projectile).shoot(pe.getReturnVec().x,pe.getReturnVec().y, pe.getReturnVec().z, (float)power, 0);
+                if (projectile instanceof ProjectileEntity) {
+                    double power = pe.getReturnVec().x / pe.getReturnVec().normalize().x;
+                    ((ProjectileEntity) projectile).shoot(pe.getReturnVec().x, pe.getReturnVec().y, pe.getReturnVec().z, (float) power, 0);
                 }
             }
         }
@@ -173,7 +172,7 @@ public class CombatHandler {
                     CombatUtils.knockBack(uke, seme, Math.min(1.5f, knockback / (20f * ukeCap.getMaxPosture())), true, false);
                     //no parries if stabby
                     if (CombatConfig.ignore && awareness == CombatUtils.AWARENESS.UNAWARE) return;
-                    if (((canParry && defend != null) || useDeflect) && pe.getResult() != Event.Result.DENY) {
+                    if (pe.getResult() == Event.Result.ALLOW || (((canParry && defend != null) || useDeflect) && pe.getResult() == Event.Result.DEFAULT)) {
                         e.setCanceled(true);
                         downingHit = false;
                         ukeCap.addCombo(0);
@@ -258,6 +257,7 @@ public class CombatHandler {
 
     @SubscribeEvent(priority = EventPriority.HIGHEST)
     public static void pain(LivingHurtEvent e) {
+        WarDance.LOGGER.debug("damage from " + e.getSource() + " received with amount " + e.getAmount());
         LivingEntity uke = e.getEntityLiving();
         LivingEntity kek = null;
         DamageSource ds = e.getSource();
@@ -310,6 +310,10 @@ public class CombatHandler {
 
     @SubscribeEvent(priority = EventPriority.LOWEST, receiveCanceled = true)
     public static void udedlol(LivingDamageEvent e) {
+        WarDance.LOGGER.debug("damage from " + e.getSource() + " finalized with amount " + e.getAmount());
+        if (CombatData.getCap(e.getEntityLiving()).getStaggerTime() > 0 && !downingHit) {
+            CombatData.getCap(e.getEntityLiving()).decrementStaggerCount(1);
+        }
         if (e.getAmount() > e.getEntityLiving().getHealth() + e.getEntityLiving().getAbsorptionAmount()) {
             //are we gonna die? Well, I don't really care either way. Begone, drain!
             ICombatCapability icc = CombatData.getCap(e.getEntityLiving());

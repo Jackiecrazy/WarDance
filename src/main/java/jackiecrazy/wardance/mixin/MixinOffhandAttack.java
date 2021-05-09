@@ -36,7 +36,7 @@ public abstract class MixinOffhandAttack extends LivingEntity {
         CombatData.getCap(this).setCachedCooldown(f2);
     }
 
-    @Inject(method = "attackTargetEntityWithCurrentItem", locals = LocalCapture.PRINT,
+    @Inject(method = "attackTargetEntityWithCurrentItem", locals = LocalCapture.CAPTURE_FAILSOFT,
             at = @At(value = "INVOKE", target = "Lnet/minecraft/entity/Entity;attackEntityFrom(Lnet/minecraft/util/DamageSource;F)Z"))
     private void store(Entity targetEntity, CallbackInfo ci, float f, float f1, float f2, boolean flag, boolean flag1, int i, boolean flag2, CriticalHitEvent hitResult, boolean flag3, double d0, float f4, boolean flag4, int j, Vector3d vector3d) {
         tempCrit = flag2;
@@ -65,8 +65,6 @@ public abstract class MixinOffhandAttack extends LivingEntity {
             ((LivingEntity) targetEntity).hurtTime = ((LivingEntity) targetEntity).maxHurtTime = 0;
         }
     }
-
-    //TODO rewrite sweep for full damage and effects
 
 //    @Inject(method = "attackTargetEntityWithCurrentItem", at = @At(value = "TAIL"))
 //    private void resetCD(Entity targetEntity, CallbackInfo ci) {
