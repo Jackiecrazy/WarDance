@@ -43,6 +43,8 @@ public interface ISkillCapability {
 
     List<Skill> getEquippedSkills();
 
+    void setEquippedSkills(List<Skill> skills);
+
     boolean isSkillUsable(Skill skill);
 
     CompoundNBT write(CompoundNBT to);

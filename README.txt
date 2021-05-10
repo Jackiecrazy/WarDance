@@ -90,7 +90,7 @@ Shatter: bind time increases based on the variety of the last 3 skills used
 Stagger: adds up to 1.3 seconds of slow and 5 posture damage depending on your weapon's attack speed (slower is more)
 Lunge: range+2 and dash forward
 Poise: free parries until attack
-Backstab: ignore armor and apply distraction multiplier if attacking the backside of enemy
+Backstab: apply distraction multiplier to attack and additionally ignore armor if attacking the backside of enemy
 ▪ Iron guard: the next parry in 1 second (particles) reflects the posture damage onto attacker. If the attack was ranged, the shot is reflected back at the caster with full force. Cancels out with heavy blow. Recharge in 5 attacks, weapon bound.
 Overpower: additionally deduct posture as if attacking with parrying hand
 Bind: disable attacking hand for melee

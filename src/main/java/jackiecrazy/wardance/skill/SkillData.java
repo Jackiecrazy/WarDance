@@ -10,12 +10,6 @@ import javax.annotation.Nullable;
 public class SkillData {
     private final Skill s;
     private Hand h;
-
-    public SkillData setDuration(float duration) {
-        this.duration = duration;
-        return this;
-    }
-
     private float duration;
 
     public SkillData(Skill skill, float arbitraryDuration) {
@@ -26,13 +20,18 @@ public class SkillData {
     @Nullable
     public static SkillData read(CompoundNBT from) {
         if (!from.contains("skill") || from.getFloat("duration") == 0) return null;
-        if (!GameRegistry.findRegistry(Skill.class).containsKey(new ResourceLocation(from.getString("skill"))))
+        if (Skill.getSkill(from.getString("skill")) == null)
             return null;
-        return new SkillData(GameRegistry.findRegistry(Skill.class).getValue(new ResourceLocation(from.getString("skill"))), from.getFloat("duration"));
+        return new SkillData(Skill.getSkill(from.getString("skill")), from.getFloat("duration"));
     }
 
     public float getDuration() {
         return duration;
+    }
+
+    public SkillData setDuration(float duration) {
+        this.duration = duration;
+        return this;
     }
 
     public void decrementDuration() {

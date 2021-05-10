@@ -157,7 +157,7 @@ public class SkillCastScreen extends Screen {
         closeScreen();
         if (selected != null) {
             Keybinds.quick = selected;
-            CombatChannel.INSTANCE.sendToServer(new CastSkillPacket(selected.getRegistryName().toString()));
+            CombatChannel.INSTANCE.sendToServer(new CastSkillPacket(selected.getRegistryName()));
         }
     }
 }

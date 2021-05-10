@@ -3,6 +3,7 @@ package jackiecrazy.wardance.client.screen;
 import com.mojang.blaze3d.matrix.MatrixStack;
 import com.mojang.blaze3d.systems.RenderSystem;
 import jackiecrazy.wardance.WarDance;
+import jackiecrazy.wardance.capability.skill.CasterData;
 import jackiecrazy.wardance.skill.Skill;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
@@ -32,14 +33,22 @@ import java.util.stream.Collectors;
 
 public class SkillSelectionScreen extends Screen {
     private static final ResourceLocation radial = new ResourceLocation(WarDance.MODID, "textures/skill/radialhud.png");
+    private static final int[] fixedU = {
+            150, 300, 0, 150, 300, 0, 150, 300
+    };
+    private static final int[] fixedV = {
+            0, 0, 150, 150, 150, 300, 300, 300
+    };
     private static final int PADDING = 6;
     private final List<Skill> unsortedSkills;
     public SkillListWidget.SkillEntry selectedSkill = null;
+    public VariationListWidget.VariationEntry selectedVariation = null;
     private SkillListWidget skillList;
     private VariationListWidget variationList;
     private SkillSelectionScreen.InfoPanel modInfo;
-    private VariationListWidget.VariationEntry selectedVariation = null;
-    private int listWidth, skillCircleWidth = 150;
+    private SkillSliceButton[] skillPie = new SkillSliceButton[8];
+    //TODO passive buttons
+    private int listWidth;
     private List<Skill> skills;
     private int buttonMargin = 1;
     private int numButtons = SkillSelectionScreen.SortType.values().length;
@@ -76,6 +85,7 @@ public class SkillSelectionScreen extends Screen {
         listWidth = Math.max(Math.min(listWidth, width / 5), 100);
         listWidth += listWidth % numButtons != 0 ? (numButtons - listWidth % numButtons) : 0;
 
+        int skillCircleWidth = 150;
         int infoWidth = this.width - this.listWidth - skillCircleWidth - (PADDING * 4);
         int doneButtonWidth = Math.min(infoWidth, 200);
         int y = this.height - 20 - PADDING;
@@ -94,6 +104,11 @@ public class SkillSelectionScreen extends Screen {
         this.modInfo = new InfoPanel(this.minecraft, infoWidth, split, PADDING);
         this.variationList = new VariationListWidget(this, infoWidth, split + PADDING * 2, search.y - getFontRenderer().FONT_HEIGHT - PADDING);
         this.variationList.setLeftPos(PADDING * 2 + listWidth);
+
+        for (int d = 0; d < 8; d++) {
+            skillPie[d] = new SkillSliceButton(this, width - skillCircleWidth, PADDING/2, skillCircleWidth, fixedU[d], fixedV[d], radial, d);
+            children.add(skillPie[d]);
+        }
 
         children.add(search);
         children.add(skillList);
@@ -168,6 +183,9 @@ public class SkillSelectionScreen extends Screen {
         this.variationList.render(mStack, mouseX, mouseY, partialTicks);
         if (this.modInfo != null)
             this.modInfo.render(mStack, mouseX, mouseY, partialTicks);
+        for (SkillSliceButton ssb : skillPie) {
+            ssb.render(mStack, mouseX, mouseY, partialTicks);
+        }
 
         ITextComponent text = new TranslationTextComponent("fml.menu.mods.search");
         int x = skillList.getLeft() + ((skillList.getRight() - skillList.getLeft()) / 2) - (getFontRenderer().getStringPropertyWidth(text) / 2);
@@ -231,6 +249,8 @@ public class SkillSelectionScreen extends Screen {
 
     @Override
     public void closeScreen() {
+        CasterData.getCap(Minecraft.getInstance().player).setEquippedSkills();
+        //TODO send data to server
         this.minecraft.displayGuiScreen(null);
     }
 

@@ -10,7 +10,9 @@ import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.nbt.ListNBT;
+import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.text.StringTextComponent;
+import net.minecraftforge.fml.common.registry.GameRegistry;
 
 import javax.annotation.Nullable;
 import java.lang.ref.WeakReference;
@@ -19,8 +21,7 @@ import java.util.*;
 public class SkillCapability implements ISkillCapability {
     private final Map<Skill, SkillData> activeSkills = Maps.newHashMap();
     private final Map<Skill, Float> coolingSkills = Maps.newHashMap();
-    private final Map<ItemStack, Skill> stackBoundSkills = Maps.newHashMap();
-    private final List<Skill> equippedSkill = new ArrayList<>(12);//4 innate, 4 empty mainhand, 4 empty offhand
+    private final List<Skill> equippedSkill = new ArrayList<>(12);
     //weapon bound skills are added to their NBT instead of being handled here.
     //^not anymore. All skills are now self bound.
     private final WeakReference<LivingEntity> dude;
@@ -137,7 +138,13 @@ public class SkillCapability implements ISkillCapability {
 
     @Override
     public List<Skill> getEquippedSkills() {
-        return null;
+        return equippedSkill;
+    }
+
+    @Override
+    public void setEquippedSkills(List<Skill> skills) {
+        equippedSkill.clear();
+        equippedSkill.addAll(skills);
     }
 
     @Override
@@ -156,6 +163,9 @@ public class SkillCapability implements ISkillCapability {
 
             to.put("ActiveSkills", listnbt);
         }
+        for (int a = 0; a < equippedSkill.size(); a++)
+            if (equippedSkill.get(a) != null)
+                to.putString("equippedSkill" + a, equippedSkill.get(a).getRegistryName().toString());
         return to;
     }
 
@@ -173,6 +183,11 @@ public class SkillCapability implements ISkillCapability {
                 }
             }
         }
+        ArrayList<Skill> als = new ArrayList<>();
+        for (int a = 0; a < equippedSkill.size(); a++)
+            if (from.contains("equippedSkill" + a))
+                als.add(a, Skill.getSkill("equippedSkill" + a));
+        setEquippedSkills(als);
     }
 
     @Override

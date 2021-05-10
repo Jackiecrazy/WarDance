@@ -12,9 +12,9 @@ import java.util.function.Function;
 import java.util.function.Supplier;
 
 public class CastSkillPacket {
-    private final String sk;
+    private final ResourceLocation sk;
 
-    public CastSkillPacket(String skill) {
+    public CastSkillPacket(ResourceLocation skill) {
         sk = skill;
     }
 
@@ -22,7 +22,7 @@ public class CastSkillPacket {
 
         @Override
         public void accept(CastSkillPacket updateClientPacket, PacketBuffer packetBuffer) {
-            packetBuffer.writeString(updateClientPacket.sk);
+            packetBuffer.writeResourceLocation(updateClientPacket.sk);
         }
     }
 
@@ -30,7 +30,7 @@ public class CastSkillPacket {
 
         @Override
         public CastSkillPacket apply(PacketBuffer packetBuffer) {
-            return new CastSkillPacket(packetBuffer.readString());
+            return new CastSkillPacket(packetBuffer.readResourceLocation());
         }
     }
 
@@ -39,11 +39,11 @@ public class CastSkillPacket {
         @Override
         public void accept(CastSkillPacket updateClientPacket, Supplier<NetworkEvent.Context> contextSupplier) {
             contextSupplier.get().enqueueWork(() -> {
-                Skill s = GameRegistry.findRegistry(Skill.class).getValue(new ResourceLocation(updateClientPacket.sk));
+                Skill s = GameRegistry.findRegistry(Skill.class).getValue(updateClientPacket.sk);
                 if (s != null)
-                    if(s.checkAndCast(contextSupplier.get().getSender()))
-                        WarDance.LOGGER.debug("successfully cast "+updateClientPacket.sk);
-                    else WarDance.LOGGER.debug("failed to cast "+updateClientPacket.sk);
+                    if (s.checkAndCast(contextSupplier.get().getSender()))
+                        WarDance.LOGGER.debug("successfully cast " + updateClientPacket.sk);
+                    else WarDance.LOGGER.debug("failed to cast " + updateClientPacket.sk);
             });
             contextSupplier.get().setPacketHandled(true);
         }

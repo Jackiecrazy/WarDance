@@ -65,7 +65,7 @@ public class Keybinds {
             mc.displayGuiScreen(new SkillSelectionScreen());
         }
         if (quick != null && QUICKCAST.getKeyConflictContext().isActive() && QUICKCAST.isPressed() && mc.player.isAlive()) {
-            CombatChannel.INSTANCE.sendToServer(new CastSkillPacket(quick.getRegistryName().toString()));
+            CombatChannel.INSTANCE.sendToServer(new CastSkillPacket(quick.getRegistryName()));
         }
     }
 }

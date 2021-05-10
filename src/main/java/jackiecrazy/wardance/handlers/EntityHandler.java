@@ -187,6 +187,7 @@ Mobs should move into a position that is close to the player, far from allies, a
     public static void lure(TickEvent.ServerTickEvent e) {
         Iterator<Map.Entry<Tuple<World, BlockPos>, Float>> it = alertTracker.entrySet().iterator();
         {
+            //how does a concurrenthashmap throw CME?
             while (it.hasNext()) {
                 Map.Entry<Tuple<World, BlockPos>, Float> n = it.next();
                 if (n.getKey().getA().isAreaLoaded(n.getKey().getB(), n.getValue().intValue())) {

@@ -13,6 +13,7 @@ import net.minecraft.util.text.TextFormatting;
 import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.eventbus.api.Event;
+import net.minecraftforge.fml.common.registry.GameRegistry;
 import net.minecraftforge.registries.ForgeRegistryEntry;
 
 import javax.annotation.Nullable;
@@ -41,6 +42,16 @@ public abstract class Skill extends ForgeRegistryEntry<Skill> {
             insert.add(this);
             variationMap.put(this.getParentSkill(), insert);
         }
+    }
+
+    @Nullable
+    public static Skill getSkill(String name) {
+        return getSkill(new ResourceLocation(name));
+    }
+
+    @Nullable
+    public static Skill getSkill(ResourceLocation name) {
+        return GameRegistry.findRegistry(Skill.class).getValue(name);
     }
 
     @Nullable
