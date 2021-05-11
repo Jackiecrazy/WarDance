@@ -6,6 +6,7 @@ import net.minecraft.entity.ai.attributes.AttributeModifier;
 import net.minecraftforge.common.ForgeMod;
 import net.minecraftforge.eventbus.api.Event;
 
+import java.awt.*;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -21,6 +22,11 @@ public class Lunge extends HeavyBlow {
     public void onEffectEnd(LivingEntity caster, SkillData stats) {
         super.onEffectEnd(caster, stats);
         ForgeMod.REACH_DISTANCE.ifPresent((e)->{Optional.ofNullable(caster.getAttribute(e)).ifPresent((a)->{a.removeModifier(reach);});});
+    }
+
+    @Override
+    public Color getColor() {
+        return Color.CYAN;
     }
 
     @Override

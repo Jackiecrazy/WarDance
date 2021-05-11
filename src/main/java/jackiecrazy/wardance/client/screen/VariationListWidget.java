@@ -27,7 +27,7 @@ public class VariationListWidget extends ExtendedList<VariationListWidget.Variat
 
     @Override
     protected int getScrollbarPosition() {
-        return this.listWidth + x0 - 9;
+        return this.listWidth + x0 - 7;
     }
 
     @Override
@@ -65,14 +65,14 @@ public class VariationListWidget extends ExtendedList<VariationListWidget.Variat
             //ITextComponent version = new StringTextComponent(stripControlCodes(MavenVersionStringHelper.artifactVersionToString(modInfo.getVersion())));
             //VersionChecker.CheckResult vercheck = VersionChecker.getResult(modInfo);
             FontRenderer font = this.parent.getFontRenderer();
-            font.func_238422_b_(ms, LanguageMap.getInstance().func_241870_a(ITextProperties.func_240655_a_(font.func_238417_a_(name, listWidth))), left + 3, top + 2, 0xFFFFFF);
+            font.func_238422_b_(ms, LanguageMap.getInstance().func_241870_a(ITextProperties.func_240655_a_(font.func_238417_a_(name, listWidth))), left + 3, top + 2, s.getColor().getRGB());
             //font.func_238422_b_(ms, LanguageMap.getInstance().func_241870_a(ITextProperties.func_240655_a_(font.func_238417_a_(version, listWidth))), left + 3, top + 2 + font.FONT_HEIGHT, 0xCCCCCC);
             //lil' skill icon
-            Minecraft.getInstance().getTextureManager().bindTexture(s.icon());
-            RenderSystem.color4f(1, 1, 1, 1);
-            RenderSystem.pushMatrix();
-            AbstractGui.blit(ms, getLeft() + width - 12, top + entryHeight / 4, 0, 0, 8, 8, 64, 16);
-            RenderSystem.popMatrix();
+//            Minecraft.getInstance().getTextureManager().bindTexture(s.icon());
+//            RenderSystem.color4f(1, 1, 1, 1);
+//            RenderSystem.pushMatrix();
+//            AbstractGui.blit(ms, getLeft() + width - 12, top + entryHeight / 4, 0, 0, 8, 8, 64, 16);
+//            RenderSystem.popMatrix();
         }
 
         @Override

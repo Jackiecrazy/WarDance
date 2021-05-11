@@ -1,8 +1,10 @@
 package jackiecrazy.wardance.capability.skill;
 
 import jackiecrazy.wardance.skill.Skill;
+import jackiecrazy.wardance.skill.SkillCooldownData;
 import jackiecrazy.wardance.skill.SkillData;
 import net.minecraft.nbt.CompoundNBT;
+import net.minecraft.util.Tuple;
 
 import java.util.List;
 import java.util.Map;
@@ -37,7 +39,9 @@ public interface ISkillCapability {
 
     float getSkillCooldown(Skill s);
 
-    Map<Skill, Float> getSkillCooldowns();
+    float getMaxSkillCooldown(Skill s);
+
+    Map<Skill, SkillCooldownData> getSkillCooldowns();
 
     void clearSkillCooldowns();
 

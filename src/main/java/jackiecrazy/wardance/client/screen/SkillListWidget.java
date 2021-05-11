@@ -74,7 +74,7 @@ public class SkillListWidget extends ExtendedList<SkillListWidget.SkillEntry> {
                 Minecraft.getInstance().getTextureManager().bindTexture(s.icon());
                 RenderSystem.color4f(1, 1, 1, 1);
                 RenderSystem.pushMatrix();
-                AbstractGui.blit(ms, getLeft() + width - 12, top + entryHeight / 4, 0, 0, 8, 8, 64, 16);
+                AbstractGui.blit(ms, getLeft() + width - 12, top + entryHeight / 4, 0, 0, 8,8,8,8);
                 RenderSystem.popMatrix();
         }
 

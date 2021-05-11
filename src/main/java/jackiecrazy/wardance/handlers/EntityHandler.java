@@ -5,6 +5,8 @@ import jackiecrazy.wardance.capability.resources.CombatData;
 import jackiecrazy.wardance.capability.resources.ICombatCapability;
 import jackiecrazy.wardance.capability.skill.CasterData;
 import jackiecrazy.wardance.config.CombatConfig;
+import jackiecrazy.wardance.networking.CombatChannel;
+import jackiecrazy.wardance.networking.SyncSkillPacket;
 import jackiecrazy.wardance.utils.CombatUtils;
 import jackiecrazy.wardance.utils.GeneralUtils;
 import net.minecraft.entity.CreatureEntity;
@@ -14,6 +16,8 @@ import net.minecraft.entity.MobEntity;
 import net.minecraft.entity.ai.attributes.Attributes;
 import net.minecraft.entity.ai.goal.Goal;
 import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.entity.player.ServerPlayerEntity;
+import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.potion.Effects;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.Tuple;
@@ -34,6 +38,7 @@ import net.minecraftforge.fml.LogicalSide;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.event.server.FMLServerStartingEvent;
 import net.minecraftforge.fml.event.server.FMLServerStoppingEvent;
+import net.minecraftforge.fml.network.PacketDistributor;
 
 import java.util.EnumSet;
 import java.util.HashMap;
@@ -77,6 +82,8 @@ public class EntityHandler {
             MobEntity mob = (MobEntity) e.getEntity();
             mob.goalSelector.addGoal(-1, new NoGoal(mob));
             mob.targetSelector.addGoal(-1, new NoGoal(mob));
+        } else if (e.getEntity() instanceof ServerPlayerEntity) {
+            CombatChannel.INSTANCE.send(PacketDistributor.PLAYER.with(()-> (ServerPlayerEntity) e.getEntity()), new SyncSkillPacket(CasterData.getCap((LivingEntity) e.getEntity()).write(new CompoundNBT())));
         }
     }
 
@@ -117,8 +124,7 @@ public class EntityHandler {
                 double safeSpace = (elb.getWidth()) * 3;
                 for (Entity fan : elb.world.getEntitiesWithinAABBExcludingEntity(elb, elb.getBoundingBox().grow(safeSpace))) {
                     if (fan instanceof MobEntity && ((MobEntity) fan).getAttackTarget() == ((MobEntity) fan).getAttackTarget() &&
-                    GeneralUtils.getDistSqCompensated(fan, elb) < (safeSpace + 1) * safeSpace && fan != ((MobEntity) elb).getAttackTarget())
-                    {
+                            GeneralUtils.getDistSqCompensated(fan, elb) < (safeSpace + 1) * safeSpace && fan != ((MobEntity) elb).getAttackTarget()) {
                         //mobs "avoid" clumping together
                         Vector3d diff = elb.getPositionVec().subtract(fan.getPositionVec());
                         double targDistSq = elb.getDistanceSq(((MobEntity) elb).getAttackTarget());

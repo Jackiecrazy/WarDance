@@ -9,7 +9,14 @@ import net.minecraft.entity.LivingEntity;
 import net.minecraftforge.event.entity.player.CriticalHitEvent;
 import net.minecraftforge.eventbus.api.Event;
 
+import java.awt.*;
+
 public class Shatter extends HeavyBlow {
+    @Override
+    public Color getColor() {
+        return Color.ORANGE;
+    }
+
     @Override
     public void onSuccessfulProc(LivingEntity caster, SkillData stats, LivingEntity target, Event procPoint) {
         //O(n^2) incoming!

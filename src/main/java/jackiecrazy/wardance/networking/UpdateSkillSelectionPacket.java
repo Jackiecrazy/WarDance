@@ -57,8 +57,10 @@ public class UpdateSkillSelectionPacket {
         public void accept(UpdateSkillSelectionPacket updateSkillPacket, Supplier<NetworkEvent.Context> contextSupplier) {
             contextSupplier.get().enqueueWork(() -> {
                 ServerPlayerEntity sender = contextSupplier.get().getSender();
-                if (sender != null)
+                if (sender != null) {
+                    CasterData.getCap(sender).clearActiveSkills();
                     CasterData.getCap(sender).setEquippedSkills(updateSkillPacket.l);
+                }
             });
             contextSupplier.get().setPacketHandled(true);
         }

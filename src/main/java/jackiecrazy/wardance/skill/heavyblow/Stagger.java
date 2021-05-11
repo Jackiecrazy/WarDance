@@ -17,7 +17,14 @@ import net.minecraftforge.event.entity.living.LivingEvent;
 import net.minecraftforge.event.entity.player.CriticalHitEvent;
 import net.minecraftforge.eventbus.api.Event;
 
+import java.awt.*;
+
 public class Stagger extends HeavyBlow {
+    @Override
+    public Color getColor() {
+        return Color.RED;
+    }
+
     @Override
     public void onSuccessfulProc(LivingEntity caster, SkillData stats, LivingEntity target, Event procPoint) {
         super.onSuccessfulProc(caster, stats, target, procPoint);

@@ -4,8 +4,7 @@ import jackiecrazy.wardance.WarDance;
 import jackiecrazy.wardance.skill.coupdegrace.CoupDeGrace;
 import jackiecrazy.wardance.skill.coupdegrace.Reinvigorate;
 import jackiecrazy.wardance.skill.heavyblow.*;
-import jackiecrazy.wardance.skill.ironguard.Backpedal;
-import jackiecrazy.wardance.skill.ironguard.IronGuard;
+import jackiecrazy.wardance.skill.ironguard.*;
 import net.minecraftforge.fml.RegistryObject;
 import net.minecraftforge.registries.DeferredRegister;
 
@@ -21,6 +20,10 @@ public class WarSkills {
     public static final RegistryObject<Skill> BACKSTAB = SKILLS.register("backstab", Backstab::new);
     public static final RegistryObject<Skill> IRONGUARD = SKILLS.register("iron_guard", IronGuard::new);
     public static final RegistryObject<Skill> BACKPEDAL = SKILLS.register("backpedal", Backpedal::new);
+    public static final RegistryObject<Skill> BIND = SKILLS.register("bind", Bind::new);
+    public static final RegistryObject<Skill> MIKIRI = SKILLS.register("mikiri", Mikiri::new);
+    public static final RegistryObject<Skill> OVERPOWER = SKILLS.register("overpower", Overpower::new);
+    public static final RegistryObject<Skill> RECOVERY = SKILLS.register("recovery", Recovery::new);
     public static final RegistryObject<Skill> COUPDEGRACE = SKILLS.register("coup_de_grace", CoupDeGrace::new);
     public static final RegistryObject<Skill> REINVIGORATE = SKILLS.register("reinvigorate", Reinvigorate::new);
 }

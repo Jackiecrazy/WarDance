@@ -7,8 +7,14 @@ import net.minecraft.entity.LivingEntity;
 import net.minecraftforge.eventbus.api.Event;
 
 import javax.annotation.Nullable;
+import java.awt.*;
 
 public class Backpedal extends IronGuard {
+    @Override
+    public Color getColor() {
+        return Color.GRAY;
+    }
+
     @Override
     public void onSuccessfulProc(LivingEntity caster, SkillData stats, @Nullable LivingEntity target, Event procPoint) {
         if (procPoint instanceof ParryEvent) {

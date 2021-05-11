@@ -4,12 +4,15 @@ import com.mojang.blaze3d.matrix.MatrixStack;
 import com.mojang.blaze3d.systems.RenderSystem;
 import jackiecrazy.wardance.WarDance;
 import jackiecrazy.wardance.capability.skill.CasterData;
+import jackiecrazy.wardance.networking.CombatChannel;
+import jackiecrazy.wardance.networking.UpdateSkillSelectionPacket;
 import jackiecrazy.wardance.skill.Skill;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.widget.TextFieldWidget;
 import net.minecraft.client.gui.widget.button.Button;
+import net.minecraft.client.gui.widget.button.ImageButton;
 import net.minecraft.client.gui.widget.list.ExtendedList;
 import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.util.IReorderingProcessor;
@@ -41,17 +44,17 @@ public class SkillSelectionScreen extends Screen {
     };
     private static final int PADDING = 6;
     private final List<Skill> unsortedSkills;
+    private final SkillSliceButton[] skillPie = new SkillSliceButton[8];
+    private final PassiveButton[] passives = new PassiveButton[4];
+    private final int numButtons = SkillSelectionScreen.SortType.values().length;
     public SkillListWidget.SkillEntry selectedSkill = null;
     public VariationListWidget.VariationEntry selectedVariation = null;
     private SkillListWidget skillList;
     private VariationListWidget variationList;
     private SkillSelectionScreen.InfoPanel modInfo;
-    private SkillSliceButton[] skillPie = new SkillSliceButton[8];
-    //TODO passive buttons
     private int listWidth;
     private List<Skill> skills;
     private int buttonMargin = 1;
-    private int numButtons = SkillSelectionScreen.SortType.values().length;
     private String lastFilterText = "";
 
     private TextFieldWidget search;
@@ -73,7 +76,7 @@ public class SkillSelectionScreen extends Screen {
     clicking a skill highlights it and will call the main screen to display text down the middle to describe the skill
     A little panel at the bottom is reserved for displaying variation descriptions, to show the base and variation effects in a single screen.
     On the right is the skill octagon and four slots to click skills into
-    these slots can be tinted blue if it is selected, white if it's selectable, grey if it's not selectable, yellow if they share a parent skill, and red if the two skills are incompatible (such as breathing fire while chanting a spell).
+    these slots can be tinted blue if it is selected, grey if it's selectable, orange if it's not selectable, yellow if they share a parent skill, and red if the two skills are incompatible (such as breathing fire while chanting a spell).
     Upon closing, the octagon is sent to the server, double checked, and finalized.
      */
 
@@ -102,12 +105,20 @@ public class SkillSelectionScreen extends Screen {
 
         int split = (this.height - PADDING * 2 - fullButtonHeight) * 2 / 3;
         this.modInfo = new InfoPanel(this.minecraft, infoWidth, split, PADDING);
-        this.variationList = new VariationListWidget(this, infoWidth, split + PADDING * 2, search.y - getFontRenderer().FONT_HEIGHT - PADDING);
+        this.variationList = new VariationListWidget(this, infoWidth - 9, split + PADDING * 2, search.y - getFontRenderer().FONT_HEIGHT - PADDING);
         this.variationList.setLeftPos(PADDING * 2 + listWidth);
 
-        for (int d = 0; d < 8; d++) {
-            skillPie[d] = new SkillSliceButton(this, width - skillCircleWidth, PADDING/2, skillCircleWidth, fixedU[d], fixedV[d], radial, d);
+        List<Skill> oldList = CasterData.getCap(Minecraft.getInstance().player).getEquippedSkills();
+        for (int d = 0; d < skillPie.length; d++) {
+            skillPie[d] = new SkillSliceButton(this, width - skillCircleWidth, PADDING / 2, skillCircleWidth, fixedU[d], fixedV[d], radial, d);
+            skillPie[d].setSkill(oldList.get(d));
             children.add(skillPie[d]);
+        }
+
+        for (int d = 0; d < passives.length; d++) {
+            passives[d] = new PassiveButton(this, width - skillCircleWidth + d * (32 + PADDING), PADDING + skillCircleWidth, 23, d);
+            passives[d].setSkill(oldList.get(d + skillPie.length));
+            children.add(passives[d]);
         }
 
         children.add(search);
@@ -167,6 +178,14 @@ public class SkillSelectionScreen extends Screen {
         lastFilterText = search.getText();
     }
 
+    boolean isValidInsertion(Skill insert) {
+        for (SkillSelectionButton ssb : skillPie)
+            if (ssb.getSkill() != null && insert.isFamily(ssb.getSkill())) return false;
+        for (SkillSelectionButton ssb : passives)
+            if (ssb.getSkill() != null && insert.isFamily(ssb.getSkill())) return false;
+        return true;
+    }
+
     private void resortMods(SkillSelectionScreen.SortType newSort) {
         this.sortType = newSort;
 
@@ -185,6 +204,9 @@ public class SkillSelectionScreen extends Screen {
             this.modInfo.render(mStack, mouseX, mouseY, partialTicks);
         for (SkillSliceButton ssb : skillPie) {
             ssb.render(mStack, mouseX, mouseY, partialTicks);
+        }
+        for (PassiveButton pb : passives) {
+            pb.render(mStack, mouseX, mouseY, partialTicks);
         }
 
         ITextComponent text = new TranslationTextComponent("fml.menu.mods.search");
@@ -249,8 +271,13 @@ public class SkillSelectionScreen extends Screen {
 
     @Override
     public void closeScreen() {
-        CasterData.getCap(Minecraft.getInstance().player).setEquippedSkills();
-        //TODO send data to server
+        List<Skill> newSkills = new ArrayList<>();
+        for (SkillSliceButton ssb : skillPie)
+            newSkills.add(ssb.getSkill());
+        for (PassiveButton pb : passives)
+            newSkills.add(pb.getSkill());
+        CasterData.getCap(Minecraft.getInstance().player).setEquippedSkills(newSkills);
+        CombatChannel.INSTANCE.sendToServer(new UpdateSkillSelectionPacket(newSkills));
         this.minecraft.displayGuiScreen(null);
     }
 

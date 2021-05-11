@@ -6,6 +6,7 @@ import net.minecraft.entity.LivingEntity;
 import net.minecraft.tags.Tag;
 import net.minecraftforge.eventbus.api.Event;
 
+import java.awt.*;
 import java.util.Arrays;
 import java.util.HashSet;
 
@@ -21,6 +22,11 @@ public class Poise extends HeavyBlow {
     @Override
     public Tag<String> getIncompatibleTags(LivingEntity caster) {
         return no;
+    }
+
+    @Override
+    public Color getColor() {
+        return Color.GREEN;
     }
 
     @Override

@@ -4,15 +4,35 @@ import com.mojang.blaze3d.matrix.MatrixStack;
 import com.mojang.blaze3d.systems.RenderSystem;
 import jackiecrazy.wardance.skill.Skill;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.AbstractGui;
 import net.minecraft.client.gui.widget.button.ImageButton;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.MathHelper;
 
-public class SkillSliceButton extends ImageButton {
-    private final SkillSelectionScreen parent;
-    private final int index;
+import java.awt.*;
+
+public class SkillSliceButton extends SkillSelectionButton {
+    private static final int[] iconX = {
+            63,
+            100,
+            116,
+            102,
+            63,
+            26,
+            11,
+            26
+    };
+    private static final int[] iconY = {
+            12,
+            27,
+            63,
+            100,
+            115,
+            100,
+            63,
+            27
+    };
     private boolean wasHovered;
-    private Skill s;
 
     public SkillSliceButton(SkillSelectionScreen sss, int xIn, int yIn, int sides, int xTexStartIn, int yTexStartIn, ResourceLocation resourceLocationIn, int index) {
         super(xIn, yIn, sides, sides, xTexStartIn, yTexStartIn, 0, resourceLocationIn, 450, 450, (a) -> {});
@@ -22,16 +42,24 @@ public class SkillSliceButton extends ImageButton {
 
     @Override
     public void onPress() {
-        if (parent.selectedVariation != null)
-            s = parent.selectedVariation.getSkill();
-        else if (parent.selectedSkill != null)
-            s = parent.selectedSkill.getSkill();
-        else s = null;
+        if (isValidSelection())
+            s = getParentSelection();
     }
 
     @Override
     public boolean mouseClicked(double mouseX, double mouseY, int button) {
-        return super.mouseClicked(mouseX, mouseY, button);
+        if (this.active && this.visible && this.isHovered) {
+            if (this.clicked(mouseX, mouseY)) {
+                if (button == 0) {
+                    this.playDownSound(Minecraft.getInstance().getSoundHandler());
+                    this.onClick(mouseX, mouseY);
+                    return true;
+                } else if (button == 1) {
+                    s = null;
+                }
+            }
+        }
+        return false;
     }
 
     public void render(MatrixStack matrixStack, int mouseX, int mouseY, float partialTicks) {
@@ -57,13 +85,17 @@ public class SkillSliceButton extends ImageButton {
 
             if (this.visible) {
                 matrixStack.push();
-                if(!this.isHovered)
+                //blue if it is the literal skill, grey if it is selectable, orange if it is not selectable, red if they share a parent, yellow if they're incompatible
+                if (!this.isHovered) {
                     RenderSystem.color4f(0.6f, 0.6f, 0.6f, 1);
-                //TODO more colors
+                }
+                applySlotTint();
                 this.renderButton(matrixStack, mouseX, mouseY, partialTicks);
                 if (s != null) {
                     Minecraft.getInstance().textureManager.bindTexture(s.icon());
-                    blit(matrixStack, x, y, 16, 16, 16, 16);
+                    Color c = s.getColor();
+                    RenderSystem.color4f(c.getRed() / 255f, c.getGreen() / 255f, c.getBlue() / 255f, 1);
+                    AbstractGui.blit(matrixStack, x + iconX[index], y + iconY[index], 0, 0, 24, 24, 24, 24);
                 }
                 RenderSystem.color4f(1f, 1f, 1f, 1);
                 matrixStack.pop();

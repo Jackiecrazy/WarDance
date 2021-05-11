@@ -8,6 +8,7 @@ import jackiecrazy.wardance.skill.Skill;
 import jackiecrazy.wardance.skill.SkillData;
 import jackiecrazy.wardance.skill.WarSkills;
 import jackiecrazy.wardance.skill.heavyblow.HeavyBlow;
+import jackiecrazy.wardance.utils.CombatUtils;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.tags.Tag;
@@ -16,11 +17,12 @@ import net.minecraftforge.eventbus.api.Event;
 
 import javax.annotation.Nullable;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashSet;
 
 public class CoupDeGrace extends Skill {
     private final Tag<String> tag = Tag.getTagFromContents(new HashSet<>(Arrays.asList("physical", "afterArmor", "noRecharge", "execution")));
-    private final Tag<String> no = Tag.getTagFromContents(new HashSet<>(Arrays.asList("normalAttack")));
+    private final Tag<String> no = Tag.getTagFromContents(new HashSet<>(Collections.singletonList("execution")));
 
     private static double getLife(LivingEntity e) {
         if (e instanceof PlayerEntity) return 3;
@@ -64,13 +66,14 @@ public class CoupDeGrace extends Skill {
     public void onSuccessfulProc(LivingEntity caster, SkillData stats, LivingEntity target, Event procPoint) {
         if (procPoint instanceof LivingDamageEvent) {
             LivingDamageEvent e = (LivingDamageEvent) procPoint;
-            if (CombatData.getCap(e.getEntityLiving()).getStaggerTime() > 0 && !CombatHandler.downingHit) {
-                e.setAmount(e.getAmount() + (float) CoupDeGrace.getLife(target) * (0.5f + ((target.getMaxHealth() - target.getHealth()) / target.getMaxHealth())));
-                CombatData.getCap(target).decrementStaggerTime(CombatData.getCap(target).getStaggerTime());
-                if (e.getAmount() > target.getHealth()) {
-                    uponDeath(caster, target, e.getAmount());
+            if (CombatUtils.isWeapon(caster, CombatUtils.getAttackingItemStack(e.getSource())))
+                if (CombatData.getCap(e.getEntityLiving()).getStaggerTime() > 0 && !CombatHandler.downingHit) {
+                    e.setAmount(e.getAmount() + (float) CoupDeGrace.getLife(target) * (0.5f + ((target.getMaxHealth() - target.getHealth()) / target.getMaxHealth())));
+                    CombatData.getCap(target).decrementStaggerTime(CombatData.getCap(target).getStaggerTime());
+                    if (e.getAmount() > target.getHealth()) {
+                        uponDeath(caster, target, e.getAmount());
+                    }
                 }
-            }
         }
     }
 }

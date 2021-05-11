@@ -80,6 +80,7 @@ public class WarDance {
         CombatChannel.INSTANCE.registerMessage(index++, RequestAttackPacket.class, new RequestAttackPacket.RequestAttackEncoder(), new RequestAttackPacket.RequestAttackDecoder(), new RequestAttackPacket.RequestAttackHandler());
         CombatChannel.INSTANCE.registerMessage(index++, CastSkillPacket.class, new CastSkillPacket.CombatEncoder(), new CastSkillPacket.CombatDecoder(), new CastSkillPacket.CombatHandler());
         CombatChannel.INSTANCE.registerMessage(index++, UpdateSkillSelectionPacket.class, new UpdateSkillSelectionPacket.UpdateSkillEncoder(), new UpdateSkillSelectionPacket.UpdateSkillDecoder(), new UpdateSkillSelectionPacket.UpdateSkillHandler());
+        CombatChannel.INSTANCE.registerMessage(index++, SyncSkillPacket.class, new SyncSkillPacket.SyncSkillEncoder(), new SyncSkillPacket.SyncSkillDecoder(), new SyncSkillPacket.SyncSkillHandler());
     }
 
     private void doClientStuff(final FMLClientSetupEvent event) {

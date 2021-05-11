@@ -4,6 +4,7 @@ import com.google.common.collect.Lists;
 import jackiecrazy.wardance.WarDance;
 import jackiecrazy.wardance.capability.resources.CombatData;
 import jackiecrazy.wardance.capability.resources.ICombatCapability;
+import jackiecrazy.wardance.capability.skill.CasterData;
 import jackiecrazy.wardance.client.screen.SkillCastScreen;
 import jackiecrazy.wardance.client.screen.SkillSelectionScreen;
 import jackiecrazy.wardance.networking.CastSkillPacket;
@@ -45,12 +46,9 @@ public class Keybinds {
     public static final KeyBinding QUICKCAST = new KeyBinding("wardance.quickSkill", IN_COMBAT, InputMappings.Type.MOUSE, 2, "key.categories.gameplay");
     public static final KeyBinding SELECT = new KeyBinding("wardance.selectSkill", KeyConflictContext.IN_GAME, InputMappings.Type.KEYSYM, 82, "key.categories.gameplay");
     public static Skill quick = null;
-    private static ArrayList<Skill> derp = null;
 
     @SubscribeEvent(priority = EventPriority.HIGHEST)
     public static void handleInputEvent(InputEvent event) {
-        if (derp == null)
-            derp = Lists.newArrayList(WarSkills.HEAVY_BLOW.get(), WarSkills.IRONGUARD.get(), WarSkills.REINVIGORATE.get(), WarSkills.SHATTER.get(), WarSkills.STAGGER.get(), WarSkills.LUNGE.get(), WarSkills.POISE.get(), WarSkills.BACKSTAB.get());
         Minecraft mc = Minecraft.getInstance();
         if (mc.player == null) return;
         ICombatCapability itsc = CombatData.getCap(mc.player);
@@ -59,7 +57,7 @@ public class Keybinds {
             CombatChannel.INSTANCE.sendToServer(new CombatModePacket());
         }
         if (CAST.getKeyConflictContext().isActive() && CAST.isPressed() && mc.player.isAlive()) {
-            mc.displayGuiScreen(new SkillCastScreen(derp));
+            mc.displayGuiScreen(new SkillCastScreen(CasterData.getCap(mc.player).getEquippedSkills()));
         }
         if (SELECT.getKeyConflictContext().isActive() && SELECT.isPressed() && mc.player.isAlive()) {
             mc.displayGuiScreen(new SkillSelectionScreen());

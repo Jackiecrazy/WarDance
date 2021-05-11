@@ -157,6 +157,7 @@ public class CombatUtils {
     }
 
     public static boolean isWeapon(@Nullable LivingEntity e, ItemStack stack) {
+        if (stack == null) return false;
         return combatList.containsKey(stack.getItem()) && !combatList.getOrDefault(stack.getItem(), DEFAULT).isShield;//stack.getItem() instanceof SwordItem || stack.getItem() instanceof AxeItem;
     }
 
@@ -238,7 +239,7 @@ public class CombatUtils {
             base *= CombatConfig.kenshiroScaler;
         }
         if (e == null || h == null) return base;
-        return base * (e instanceof PlayerEntity ? CombatData.getCap(e).getCachedCooldown() : CombatConfig.mobScaler);
+        return base * (e instanceof PlayerEntity ? Math.max(CombatData.getCap(e).getCachedCooldown(), ((PlayerEntity) e).getCooledAttackStrength(0.5f)) : CombatConfig.mobScaler);
     }
 
     public static float getPostureDef(@Nullable LivingEntity e, ItemStack stack) {

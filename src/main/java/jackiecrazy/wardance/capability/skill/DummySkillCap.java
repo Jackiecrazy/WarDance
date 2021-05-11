@@ -1,16 +1,19 @@
 package jackiecrazy.wardance.capability.skill;
 
 import jackiecrazy.wardance.skill.Skill;
+import jackiecrazy.wardance.skill.SkillCooldownData;
 import jackiecrazy.wardance.skill.SkillData;
 import net.minecraft.nbt.CompoundNBT;
+import net.minecraft.util.Tuple;
 
 import javax.annotation.Nullable;
 import java.util.*;
 
-public class DummySkillCap implements ISkillCapability{
-    private static final Map<Skill, SkillData> dummy=new HashMap<>();
-    private static final Map<Skill, Float> otherDummy=new HashMap<>();
-    private static final List<Skill> moreDummies=new ArrayList<>();
+public class DummySkillCap implements ISkillCapability {
+    private static final Map<Skill, SkillData> dummy = new HashMap<>();
+    private static final Map<Skill, SkillCooldownData> otherDummy = new HashMap<>();
+    private static final List<Skill> moreDummies = new ArrayList<>();
+
     @Nullable
     @Override
     public Optional<SkillData> getActiveSkill(Skill s) {
@@ -83,7 +86,12 @@ public class DummySkillCap implements ISkillCapability{
     }
 
     @Override
-    public Map<Skill, Float> getSkillCooldowns() {
+    public float getMaxSkillCooldown(Skill s) {
+        return 0;
+    }
+
+    @Override
+    public Map<Skill, SkillCooldownData> getSkillCooldowns() {
         return otherDummy;
     }
 

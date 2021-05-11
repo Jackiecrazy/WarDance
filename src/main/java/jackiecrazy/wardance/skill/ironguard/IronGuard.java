@@ -36,7 +36,7 @@ public class IronGuard extends Skill {
 
     @Override
     public boolean onCast(LivingEntity caster) {
-        activate(caster, 20);
+        activate(caster, 30);
         return true;
     }
 

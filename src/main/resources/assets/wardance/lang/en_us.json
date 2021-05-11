@@ -18,5 +18,9 @@
   "wardance:poise.name": "Poise",
   "wardance:stagger.name": "Stagger",
   "wardance:lunge.name": "Lunge",
-  "wardance:shatter.name": "Shatter"
+  "wardance:shatter.name": "Shatter",
+  "wardance:bind.name": "Bind",
+  "wardance:mikiri.name": "Mikiri",
+  "wardance:overpower.name": "Overpower",
+  "wardance:recovery.name": "Recovery"
 }

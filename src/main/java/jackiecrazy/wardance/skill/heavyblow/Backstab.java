@@ -9,6 +9,7 @@ import net.minecraftforge.event.entity.living.LivingAttackEvent;
 import net.minecraftforge.event.entity.living.LivingHurtEvent;
 import net.minecraftforge.eventbus.api.Event;
 
+import java.awt.*;
 import java.util.Arrays;
 import java.util.HashSet;
 
@@ -18,6 +19,11 @@ public class Backstab extends HeavyBlow {
     @Override
     public Tag<String> getTags(LivingEntity caster) {
         return tag;
+    }
+
+    @Override
+    public Color getColor() {
+        return Color.GRAY;
     }
 
     @Override

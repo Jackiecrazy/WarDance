@@ -1,5 +1,6 @@
 package jackiecrazy.wardance.skill;
 
+import com.mojang.blaze3d.systems.RenderSystem;
 import jackiecrazy.wardance.capability.skill.CasterData;
 import jackiecrazy.wardance.capability.skill.ISkillCapability;
 import jackiecrazy.wardance.event.SkillCooldownEvent;
@@ -16,7 +17,9 @@ import net.minecraftforge.eventbus.api.Event;
 import net.minecraftforge.fml.common.registry.GameRegistry;
 import net.minecraftforge.registries.ForgeRegistryEntry;
 
+import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import java.awt.*;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -54,9 +57,27 @@ public abstract class Skill extends ForgeRegistryEntry<Skill> {
         return GameRegistry.findRegistry(Skill.class).getValue(name);
     }
 
+    public boolean isFamily(Skill s) {
+        if (s == null) return false;
+        if (s.getParentSkill() != null && (s.getParentSkill() == this || s.getParentSkill() == this.getParentSkill()))
+            return true;
+        else if (tryGetParentSkill() == s.tryGetParentSkill())
+            return true;
+        return false;
+    }
+
+    public boolean isPassive(LivingEntity caster) {
+        return getTags(caster).contains("passive");
+    }
+
     @Nullable
     public Skill getParentSkill() {
         return null;
+    }
+
+    @Nonnull
+    public final Skill tryGetParentSkill() {
+        return getParentSkill() == null ? this : getParentSkill();
     }
 
     public boolean canCast(LivingEntity caster) {
@@ -64,6 +85,15 @@ public abstract class Skill extends ForgeRegistryEntry<Skill> {
         for (String s : getIncompatibleTags(caster).getAllElements())
             if (cap.isTagActive(s)) return false;
         return !cap.isSkillCoolingDown(this) && (getParentSkill() == null || getParentSkill().canCast(caster));
+    }
+
+    public boolean isCompatibleWith(Skill s, LivingEntity caster) {
+        if (s == null) return true;
+        for (String tag : this.getTags(caster).getAllElements())
+            if (s.getIncompatibleTags(caster).contains(tag)) return false;
+        for (String tag : s.getTags(caster).getAllElements())
+            if (this.getIncompatibleTags(caster).contains(tag)) return false;
+        return true;
     }
 
     public void onCooledDown(LivingEntity caster, float overflow) {}
@@ -77,7 +107,13 @@ public abstract class Skill extends ForgeRegistryEntry<Skill> {
     }
 
     public ResourceLocation icon() {
-        return new ResourceLocation(this.getRegistryName().toString() + "_icon");
+        ResourceLocation rl = getRegistryName();
+        if (getParentSkill() != null) rl = getParentSkill().getRegistryName();
+        return new ResourceLocation(rl.getNamespace() + ":" + "textures/skill/" + rl.getPath() + ".png");
+    }
+
+    public Color getColor() {
+        return Color.WHITE;
     }
 
     public abstract Tag<String> getTags(LivingEntity caster);//requires breath, debuffing, healing, aoe, etc. Also determines proc time (parry, attack, etc)

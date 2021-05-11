@@ -23,6 +23,7 @@ import net.minecraftforge.fml.common.Mod;
 public class SkillEventHandler {
     @SubscribeEvent
     public static void forceCrit(CriticalHitEvent e) {
+        if(!e.getEntityLiving().isServerWorld())return;
         for (SkillData s : CasterData.getCap(e.getEntityLiving()).getActiveSkills().values()) {
             if (s.getSkill().getTags(e.getEntityLiving()).contains(ProcPoint.modify_crit)) {
                 s.getSkill().onSuccessfulProc(e.getEntityLiving(), s, e.getEntityLiving(), e);
@@ -32,6 +33,7 @@ public class SkillEventHandler {
 
     @SubscribeEvent
     public static void attackFlags(LivingAttackEvent e) {
+        if(!e.getEntityLiving().isServerWorld())return;
         if (e.getSource().getTrueSource() instanceof LivingEntity) {
             LivingEntity attacker = (LivingEntity) e.getSource().getTrueSource();
             ISkillCapability isc = CasterData.getCap(attacker);
@@ -51,6 +53,7 @@ public class SkillEventHandler {
 
     @SubscribeEvent
     public static void hurtFlags(LivingHurtEvent e) {
+        if(!e.getEntityLiving().isServerWorld())return;
         if (e.getSource().getTrueSource() instanceof LivingEntity) {
             LivingEntity attacker = (LivingEntity) e.getSource().getTrueSource();
             ISkillCapability isc = CasterData.getCap(attacker);
@@ -64,6 +67,7 @@ public class SkillEventHandler {
 
     @SubscribeEvent
     public static void damageFlags(LivingDamageEvent e) {
+        if(!e.getEntityLiving().isServerWorld())return;
         if (e.getSource().getTrueSource() instanceof LivingEntity) {
             LivingEntity attacker = (LivingEntity) e.getSource().getTrueSource();
             ISkillCapability isc = CasterData.getCap(attacker);
@@ -77,6 +81,7 @@ public class SkillEventHandler {
 
     @SubscribeEvent
     public static void parryFlags(ParryEvent e) {
+        if(!e.getEntityLiving().isServerWorld())return;
         for (SkillData s : CasterData.getCap(e.getAttacker()).getActiveSkills().values()) {
             if (s.getSkill().getTags(e.getAttacker()).contains(ProcPoint.on_being_parried)) {
                 s.getSkill().onSuccessfulProc(e.getAttacker(), s, e.getEntityLiving(), e);
@@ -91,6 +96,7 @@ public class SkillEventHandler {
 
     @SubscribeEvent
     public static void parryFlags(ProjectileParryEvent e) {
+        if(!e.getEntityLiving().isServerWorld())return;
         Entity proj = e.getProjectile();
         if (proj instanceof ProjectileEntity) {
             Entity shooter = ((ProjectileEntity) proj).func_234616_v_();
