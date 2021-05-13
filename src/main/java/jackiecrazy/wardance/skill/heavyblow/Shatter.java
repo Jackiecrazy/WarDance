@@ -5,6 +5,7 @@ import jackiecrazy.wardance.capability.skill.CasterData;
 import jackiecrazy.wardance.event.ParryEvent;
 import jackiecrazy.wardance.skill.Skill;
 import jackiecrazy.wardance.skill.SkillData;
+import jackiecrazy.wardance.skill.WarSkills;
 import net.minecraft.entity.LivingEntity;
 import net.minecraftforge.event.entity.player.CriticalHitEvent;
 import net.minecraftforge.eventbus.api.Event;
@@ -35,10 +36,13 @@ public class Shatter extends HeavyBlow {
             index++;
         }
         if (procPoint instanceof ParryEvent && ((ParryEvent) procPoint).getDefendingHand() != null && ((ParryEvent) procPoint).getAttacker() == caster) {
+            if (CasterData.getCap(target).isSkillActive(WarSkills.IRON_GUARD.get())) return;
             CombatData.getCap(target).setHandBind(((ParryEvent) procPoint).getDefendingHand(), (int) (30 * buff));
+            markUsed(caster);
         } else if (procPoint instanceof CriticalHitEvent) {
             procPoint.setResult(Event.Result.ALLOW);
             ((CriticalHitEvent) procPoint).setDamageModifier(((CriticalHitEvent) procPoint).getDamageModifier() * buff);
+            markUsed(caster);
         }
     }
 }

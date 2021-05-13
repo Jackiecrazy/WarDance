@@ -1,18 +1,15 @@
 package jackiecrazy.wardance.networking;
 
-import jackiecrazy.wardance.capability.resources.CombatData;
 import jackiecrazy.wardance.capability.skill.CasterData;
-import jackiecrazy.wardance.handlers.EntityHandler;
+import jackiecrazy.wardance.capability.skill.ISkillCapability;
 import jackiecrazy.wardance.skill.Skill;
-import jackiecrazy.wardance.skill.SkillData;
-import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.network.PacketBuffer;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.fml.network.NetworkEvent;
-import net.minecraftforge.registries.ForgeRegistries;
 
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 import java.util.function.BiConsumer;
 import java.util.function.Function;
@@ -51,6 +48,13 @@ public class UpdateSkillSelectionPacket {
         }
     }
 
+    private static final Comparator<Skill> comparator= (o1, o2) -> {
+        if(o1==o2&&o2==null)return 0;
+        if(o1==null||o1.getRegistryName()==null)return -1;
+        if(o2==null||o2.getRegistryName()==null)return 1;
+        return o1==o2?0:o1.getRegistryName().compareTo(o2.getRegistryName());
+    };
+
     public static class UpdateSkillHandler implements BiConsumer<UpdateSkillSelectionPacket, Supplier<NetworkEvent.Context>> {
 
         @Override
@@ -58,8 +62,19 @@ public class UpdateSkillSelectionPacket {
             contextSupplier.get().enqueueWork(() -> {
                 ServerPlayerEntity sender = contextSupplier.get().getSender();
                 if (sender != null) {
-                    CasterData.getCap(sender).clearActiveSkills();
-                    CasterData.getCap(sender).setEquippedSkills(updateSkillPacket.l);
+                    final ISkillCapability cap = CasterData.getCap(sender);
+                    List<Skill> prev=cap.getEquippedSkills();
+                    List<Skill> now=new ArrayList<>(updateSkillPacket.l);
+                    prev.sort(comparator);
+                    now.sort(comparator);
+//                    if(!prev.equals(now)) {
+//                        cap.clearActiveSkills();
+//                        cap.setEquippedSkills(updateSkillPacket.l);
+//                        for(Skill s:cap.getEquippedSkills())
+//                            if(s!=null)
+//                            cap.setSkillCooldown(s, 10);
+//                    }else
+                        cap.setEquippedSkills(updateSkillPacket.l);
                 }
             });
             contextSupplier.get().setPacketHandled(true);

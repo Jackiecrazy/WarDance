@@ -1,6 +1,7 @@
 package jackiecrazy.wardance.skill.heavyblow;
 
 import jackiecrazy.wardance.capability.resources.CombatData;
+import jackiecrazy.wardance.capability.skill.CasterData;
 import jackiecrazy.wardance.event.ParryEvent;
 import jackiecrazy.wardance.skill.Skill;
 import jackiecrazy.wardance.skill.SkillData;
@@ -48,6 +49,7 @@ public class HeavyBlow extends Skill {
     @Override
     public void onSuccessfulProc(LivingEntity caster, SkillData stats, LivingEntity target, Event procPoint) {
         if (procPoint instanceof ParryEvent && ((ParryEvent) procPoint).getDefendingHand() != null && ((ParryEvent) procPoint).getAttacker() == caster) {
+            if (CasterData.getCap(target).isSkillActive(WarSkills.IRON_GUARD.get())) return;
             CombatData.getCap(target).setHandBind(((ParryEvent) procPoint).getDefendingHand(), 30);
             markUsed(caster);
         } else if (procPoint instanceof CriticalHitEvent) {

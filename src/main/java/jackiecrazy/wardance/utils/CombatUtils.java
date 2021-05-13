@@ -6,16 +6,21 @@ import jackiecrazy.wardance.api.ICombatManipulator;
 import jackiecrazy.wardance.api.WarAttributes;
 import jackiecrazy.wardance.capability.resources.CombatData;
 import jackiecrazy.wardance.capability.resources.ICombatCapability;
+import jackiecrazy.wardance.capability.skill.CasterData;
 import jackiecrazy.wardance.client.ClientEvents;
 import jackiecrazy.wardance.config.CombatConfig;
 import jackiecrazy.wardance.networking.CombatChannel;
 import jackiecrazy.wardance.networking.UpdateAttackPacket;
+import jackiecrazy.wardance.potion.WarEffects;
+import jackiecrazy.wardance.skill.WarSkills;
 import net.minecraft.enchantment.EnchantmentHelper;
 import net.minecraft.enchantment.Enchantments;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.MobEntity;
-import net.minecraft.entity.ai.attributes.*;
+import net.minecraft.entity.ai.attributes.Attribute;
+import net.minecraft.entity.ai.attributes.AttributeModifier;
+import net.minecraft.entity.ai.attributes.Attributes;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.inventory.EquipmentSlotType;
@@ -158,6 +163,8 @@ public class CombatUtils {
 
     public static boolean isWeapon(@Nullable LivingEntity e, ItemStack stack) {
         if (stack == null) return false;
+        if (e != null && CasterData.getCap(e).isSkillActive(WarSkills.SHIELD_BASH.get()))
+            return combatList.containsKey(stack.getItem());
         return combatList.containsKey(stack.getItem()) && !combatList.getOrDefault(stack.getItem(), DEFAULT).isShield;//stack.getItem() instanceof SwordItem || stack.getItem() instanceof AxeItem;
     }
 
@@ -397,7 +404,7 @@ public class CombatUtils {
             swapHeldItems(e);
             CombatData.getCap(e).setOffhandAttack(true);
         }
-        int angle = EnchantmentHelper.getMaxEnchantmentLevel(Enchantments.SWEEPING, e) * CombatConfig.sweepAngle;
+        int angle = CombatData.getCap(e).getForcedSweep() > 0 ? CombatData.getCap(e).getForcedSweep() : EnchantmentHelper.getMaxEnchantmentLevel(Enchantments.SWEEPING, e) * CombatConfig.sweepAngle;
         if (e.getHeldItemMainhand().getItem() instanceof ICombatManipulator)
             angle = ((ICombatManipulator) e.getHeldItemMainhand().getItem()).sweepArea(e, e.getHeldItemMainhand());
         float charge = Math.max(CombatUtils.getCooledAttackStrength(e, Hand.MAIN_HAND, 0.5f), CombatData.getCap(e).getCachedCooldown());
@@ -435,6 +442,8 @@ public class CombatUtils {
         if (target.getRevengeTarget() == null && (!(target instanceof MobEntity) || ((MobEntity) target).getAttackTarget() == null))
             return AWARENESS.UNAWARE;
         else if (target.getRevengeTarget() != attacker && (!(target instanceof MobEntity) || ((MobEntity) target).getAttackTarget() != attacker))
+            return AWARENESS.DISTRACTED;
+        else if (target.isPotionActive(WarEffects.DISTRACTION.get()))
             return AWARENESS.DISTRACTED;
         else return AWARENESS.ALERT;
     }

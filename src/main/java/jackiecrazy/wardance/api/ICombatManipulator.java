@@ -38,13 +38,13 @@ public interface ICombatManipulator {
     float damageMultiplier(LivingEntity attacker, LivingEntity target, ItemStack item);
 
     /**
-     * this is called on LivingKnockBackEvent
+     * this is called on AttackKnockbackEvent
      * @return a new knockback if necessary
      */
     float onKnockingBack(LivingEntity attacker, LivingEntity target, ItemStack item, float orig);
 
     /**
-     * this is called on LivingKnockBackEvent
+     * this is called on AttackKnockbackEvent
      * @return a new knockback if necessary
      */
     float onBeingKnockedBack(LivingEntity attacker, LivingEntity target, ItemStack item, float orig);

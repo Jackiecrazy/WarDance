@@ -3,7 +3,7 @@ package jackiecrazy.wardance.mixin;
 import jackiecrazy.wardance.api.CombatDamageSource;
 import jackiecrazy.wardance.capability.resources.CombatData;
 import jackiecrazy.wardance.config.CombatConfig;
-import org.objectweb.asm.Opcodes;
+import jackiecrazy.wardance.event.MeleeKnockbackEvent;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.LivingEntity;
@@ -12,7 +12,9 @@ import net.minecraft.util.DamageSource;
 import net.minecraft.util.Hand;
 import net.minecraft.util.math.vector.Vector3d;
 import net.minecraft.world.World;
+import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.entity.player.CriticalHitEvent;
+import org.objectweb.asm.Opcodes;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
@@ -25,6 +27,7 @@ public abstract class MixinOffhandAttack extends LivingEntity {
 
     private static boolean tempCrit;
     private static float tempCdmg;
+    private static DamageSource ds;
 
     protected MixinOffhandAttack(EntityType<? extends LivingEntity> type, World worldIn) {
         super(type, worldIn);
@@ -46,7 +49,9 @@ public abstract class MixinOffhandAttack extends LivingEntity {
     @Redirect(method = "attackTargetEntityWithCurrentItem",
             at = @At(value = "INVOKE", target = "Lnet/minecraft/util/DamageSource;causePlayerDamage(Lnet/minecraft/entity/player/PlayerEntity;)Lnet/minecraft/util/DamageSource;"))
     private DamageSource customDamageSource(PlayerEntity player) {
-        return new CombatDamageSource("player", player).setDamageDealer(player.getHeldItemMainhand()).setAttackingHand(CombatData.getCap(player).isOffhandAttack() ? Hand.OFF_HAND : Hand.MAIN_HAND).setProcAttackEffects(true).setProcNormalEffects(true).setCrit(tempCrit).setCritDamage(tempCdmg).setDamageTyping(CombatDamageSource.TYPE.PHYSICAL);
+        DamageSource d = new CombatDamageSource("player", player).setDamageDealer(player.getHeldItemMainhand()).setAttackingHand(CombatData.getCap(player).isOffhandAttack() ? Hand.OFF_HAND : Hand.MAIN_HAND).setProcAttackEffects(true).setProcNormalEffects(true).setCrit(tempCrit).setCritDamage(tempCdmg).setDamageTyping(CombatDamageSource.TYPE.PHYSICAL);
+        ds = d;
+        return d;
     }
 
     @Redirect(method = "attackTargetEntityWithCurrentItem",
@@ -64,6 +69,14 @@ public abstract class MixinOffhandAttack extends LivingEntity {
         if (targetEntity instanceof LivingEntity) {
             ((LivingEntity) targetEntity).hurtTime = ((LivingEntity) targetEntity).maxHurtTime = 0;
         }
+    }
+
+    @Redirect(method = "attackTargetEntityWithCurrentItem",
+            at = @At(value = "INVOKE", ordinal = 0, target = "Lnet/minecraft/entity/LivingEntity;applyKnockback(FDD)V"))
+    private void mark(LivingEntity livingEntity, float strength, double ratioX, double ratioZ) {
+        MeleeKnockbackEvent mke = new MeleeKnockbackEvent(this, ds, livingEntity, strength, ratioX, ratioZ);
+        MinecraftForge.EVENT_BUS.post(mke);
+        livingEntity.applyKnockback(mke.getStrength(), mke.getRatioX(), mke.getRatioZ());
     }
 
 //    @Inject(method = "attackTargetEntityWithCurrentItem", at = @At(value = "TAIL"))

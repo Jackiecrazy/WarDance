@@ -92,7 +92,17 @@ public class DummyCombatCap implements ICombatCapability {
     }
 
     @Override
-    public float consumePosture(float amount, float above) {
+    public boolean isFirstStaggerStrike() {
+        return false;
+    }
+
+    @Override
+    public void setFirstStagger(boolean yes) {
+
+    }
+
+    @Override
+    public float consumePosture(float amount, float above, boolean force) {
         return 0;
     }
 
@@ -373,6 +383,16 @@ public class DummyCombatCap implements ICombatCapability {
 
     @Override
     public void setCachedCooldown(float value) {
+
+    }
+
+    @Override
+    public int getForcedSweep() {
+        return 0;
+    }
+
+    @Override
+    public void setForcedSweep(int angle) {
 
     }
 

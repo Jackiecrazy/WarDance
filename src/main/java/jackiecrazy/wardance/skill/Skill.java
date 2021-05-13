@@ -1,16 +1,12 @@
 package jackiecrazy.wardance.skill;
 
-import com.mojang.blaze3d.systems.RenderSystem;
 import jackiecrazy.wardance.capability.skill.CasterData;
 import jackiecrazy.wardance.capability.skill.ISkillCapability;
 import jackiecrazy.wardance.event.SkillCooldownEvent;
-import jackiecrazy.wardance.networking.CastSkillPacket;
 import net.minecraft.entity.LivingEntity;
-import net.minecraft.item.ItemStack;
 import net.minecraft.tags.Tag;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.text.ITextComponent;
-import net.minecraft.util.text.TextFormatting;
 import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.eventbus.api.Event;
@@ -140,16 +136,19 @@ public abstract class Skill extends ForgeRegistryEntry<Skill> {
      */
     public abstract void onEffectEnd(LivingEntity caster, SkillData stats);
 
-    public abstract void onSuccessfulProc(LivingEntity caster, SkillData stats, @Nullable LivingEntity target, Event procPoint);
+    public abstract void onSuccessfulProc(LivingEntity caster, SkillData stats, LivingEntity target, Event procPoint);
 
     protected void setCooldown(LivingEntity caster, float duration) {
         SkillCooldownEvent sce = new SkillCooldownEvent(caster, this, duration);
         MinecraftForge.EVENT_BUS.post(sce);
-        CasterData.getCap(caster).setSkillCooldown(getParentSkill() == null ? this : getParentSkill(), sce.getCooldown());
+        if (getParentSkill() != null)
+            CasterData.getCap(caster).setSkillCooldown(getParentSkill(), sce.getCooldown());
+        CasterData.getCap(caster).setSkillCooldown(this, sce.getCooldown());
     }
 
     protected void activate(LivingEntity caster, float duration) {
         //System.out.println("enabling for " + duration);
+        if(CasterData.getCap(caster).isSkillUsable(this))
         CasterData.getCap(caster).activateSkill(new SkillData(this, duration));
     }
 

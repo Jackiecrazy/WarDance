@@ -8,15 +8,14 @@ import jackiecrazy.wardance.capability.skill.DummySkillCap;
 import jackiecrazy.wardance.capability.skill.ISkillCapability;
 import jackiecrazy.wardance.capability.skill.SkillStorage;
 import jackiecrazy.wardance.client.Keybinds;
+import jackiecrazy.wardance.compat.ElenaiCompat;
 import jackiecrazy.wardance.compat.WarCompat;
 import jackiecrazy.wardance.config.ClientConfig;
 import jackiecrazy.wardance.config.CombatConfig;
-import jackiecrazy.wardance.compat.ElenaiCompat;
 import jackiecrazy.wardance.networking.*;
+import jackiecrazy.wardance.potion.WarEffects;
 import jackiecrazy.wardance.skill.Skill;
 import jackiecrazy.wardance.skill.WarSkills;
-import net.minecraft.block.Block;
-import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.capabilities.CapabilityManager;
 import net.minecraftforge.event.RegistryEvent;
@@ -64,6 +63,7 @@ public class WarDance {
         WarAttributes.ATTRIBUTES.register(bus);
         WarSkills.SKILLS.makeRegistry("skills", RegistryBuilder::new);
         WarSkills.SKILLS.register(bus);
+        WarEffects.EFFECTS.register(FMLJavaModLoadingContext.get().getModEventBus());
     }
 
     private void setup(final FMLCommonSetupEvent event) {

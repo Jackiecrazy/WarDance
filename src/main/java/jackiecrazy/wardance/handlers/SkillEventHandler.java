@@ -4,11 +4,13 @@ import jackiecrazy.wardance.WarDance;
 import jackiecrazy.wardance.capability.resources.CombatData;
 import jackiecrazy.wardance.capability.skill.CasterData;
 import jackiecrazy.wardance.capability.skill.ISkillCapability;
+import jackiecrazy.wardance.event.MeleeKnockbackEvent;
 import jackiecrazy.wardance.event.ParryEvent;
 import jackiecrazy.wardance.event.ProjectileParryEvent;
 import jackiecrazy.wardance.skill.ProcPoint;
 import jackiecrazy.wardance.skill.Skill;
 import jackiecrazy.wardance.skill.SkillData;
+import jackiecrazy.wardance.utils.CombatUtils;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.projectile.ProjectileEntity;
@@ -23,7 +25,7 @@ import net.minecraftforge.fml.common.Mod;
 public class SkillEventHandler {
     @SubscribeEvent
     public static void forceCrit(CriticalHitEvent e) {
-        if(!e.getEntityLiving().isServerWorld())return;
+        if (!e.getEntityLiving().isServerWorld()) return;
         for (SkillData s : CasterData.getCap(e.getEntityLiving()).getActiveSkills().values()) {
             if (s.getSkill().getTags(e.getEntityLiving()).contains(ProcPoint.modify_crit)) {
                 s.getSkill().onSuccessfulProc(e.getEntityLiving(), s, e.getEntityLiving(), e);
@@ -33,8 +35,8 @@ public class SkillEventHandler {
 
     @SubscribeEvent
     public static void attackFlags(LivingAttackEvent e) {
-        if(!e.getEntityLiving().isServerWorld())return;
-        if (e.getSource().getTrueSource() instanceof LivingEntity) {
+        if (!e.getEntityLiving().isServerWorld()) return;
+        if (CombatUtils.isMeleeAttack(e.getSource()) && e.getSource().getTrueSource() instanceof LivingEntity) {
             LivingEntity attacker = (LivingEntity) e.getSource().getTrueSource();
             ISkillCapability isc = CasterData.getCap(attacker);
             for (SkillData s : isc.getActiveSkills().values()) {
@@ -52,8 +54,22 @@ public class SkillEventHandler {
     }
 
     @SubscribeEvent
+    public static void knockbackFlags(MeleeKnockbackEvent e) {
+        if (!e.getEntityLiving().isServerWorld()) return;
+        if (CombatUtils.isMeleeAttack(e.getDamageSource()) && e.getDamageSource().getTrueSource() instanceof LivingEntity) {
+            LivingEntity attacker = e.getAttacker();
+            ISkillCapability isc = CasterData.getCap(attacker);
+            for (SkillData s : isc.getActiveSkills().values()) {
+                if (s.getSkill().getTags(attacker).contains(ProcPoint.knockback)) {
+                    s.getSkill().onSuccessfulProc(attacker, s, e.getEntityLiving(), e);
+                }
+            }
+        }
+    }
+
+    @SubscribeEvent
     public static void hurtFlags(LivingHurtEvent e) {
-        if(!e.getEntityLiving().isServerWorld())return;
+        if (!e.getEntityLiving().isServerWorld()) return;
         if (e.getSource().getTrueSource() instanceof LivingEntity) {
             LivingEntity attacker = (LivingEntity) e.getSource().getTrueSource();
             ISkillCapability isc = CasterData.getCap(attacker);
@@ -67,7 +83,7 @@ public class SkillEventHandler {
 
     @SubscribeEvent
     public static void damageFlags(LivingDamageEvent e) {
-        if(!e.getEntityLiving().isServerWorld())return;
+        if (!e.getEntityLiving().isServerWorld()) return;
         if (e.getSource().getTrueSource() instanceof LivingEntity) {
             LivingEntity attacker = (LivingEntity) e.getSource().getTrueSource();
             ISkillCapability isc = CasterData.getCap(attacker);
@@ -81,22 +97,28 @@ public class SkillEventHandler {
 
     @SubscribeEvent
     public static void parryFlags(ParryEvent e) {
-        if(!e.getEntityLiving().isServerWorld())return;
+        if (!e.getEntityLiving().isServerWorld()) return;
         for (SkillData s : CasterData.getCap(e.getAttacker()).getActiveSkills().values()) {
             if (s.getSkill().getTags(e.getAttacker()).contains(ProcPoint.on_being_parried)) {
                 s.getSkill().onSuccessfulProc(e.getAttacker(), s, e.getEntityLiving(), e);
             }
         }
-        for (SkillData s : CasterData.getCap(e.getEntityLiving()).getActiveSkills().values()) {
+        final ISkillCapability isc = CasterData.getCap(e.getEntityLiving());
+        for (SkillData s : isc.getActiveSkills().values()) {
             if (s.getSkill().getTags(e.getEntityLiving()).contains(ProcPoint.on_parry)) {
-                s.getSkill().onSuccessfulProc(e.getEntityLiving(), s, e.getEntityLiving(), e);
+                s.getSkill().onSuccessfulProc(e.getEntityLiving(), s, e.getAttacker(), e);
+            }
+        }
+        for (Skill s : isc.getSkillCooldowns().keySet()) {
+            if (s.getTags(e.getEntityLiving()).contains(ProcPoint.recharge_parry)) {
+                isc.decrementSkillCooldown(s, 1);
             }
         }
     }
 
     @SubscribeEvent
     public static void parryFlags(ProjectileParryEvent e) {
-        if(!e.getEntityLiving().isServerWorld())return;
+        if (!e.getEntityLiving().isServerWorld()) return;
         Entity proj = e.getProjectile();
         if (proj instanceof ProjectileEntity) {
             Entity shooter = ((ProjectileEntity) proj).func_234616_v_();

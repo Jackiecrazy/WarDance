@@ -4,7 +4,6 @@ import jackiecrazy.wardance.skill.Skill;
 import jackiecrazy.wardance.skill.SkillCooldownData;
 import jackiecrazy.wardance.skill.SkillData;
 import net.minecraft.nbt.CompoundNBT;
-import net.minecraft.util.Tuple;
 
 import javax.annotation.Nullable;
 import java.util.*;
@@ -116,7 +115,7 @@ public class DummySkillCap implements ISkillCapability {
     }
 
     @Override
-    public CompoundNBT write(CompoundNBT to) {
+    public CompoundNBT write() {
         return new CompoundNBT();
     }
 

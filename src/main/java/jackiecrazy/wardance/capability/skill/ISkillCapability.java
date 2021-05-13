@@ -4,7 +4,6 @@ import jackiecrazy.wardance.skill.Skill;
 import jackiecrazy.wardance.skill.SkillCooldownData;
 import jackiecrazy.wardance.skill.SkillData;
 import net.minecraft.nbt.CompoundNBT;
-import net.minecraft.util.Tuple;
 
 import java.util.List;
 import java.util.Map;
@@ -51,7 +50,7 @@ public interface ISkillCapability {
 
     boolean isSkillUsable(Skill skill);
 
-    CompoundNBT write(CompoundNBT to);
+    CompoundNBT write();
 
     void read(CompoundNBT from);
 

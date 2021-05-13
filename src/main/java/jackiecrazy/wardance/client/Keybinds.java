@@ -1,6 +1,5 @@
 package jackiecrazy.wardance.client;
 
-import com.google.common.collect.Lists;
 import jackiecrazy.wardance.WarDance;
 import jackiecrazy.wardance.capability.resources.CombatData;
 import jackiecrazy.wardance.capability.resources.ICombatCapability;
@@ -11,7 +10,6 @@ import jackiecrazy.wardance.networking.CastSkillPacket;
 import jackiecrazy.wardance.networking.CombatChannel;
 import jackiecrazy.wardance.networking.CombatModePacket;
 import jackiecrazy.wardance.skill.Skill;
-import jackiecrazy.wardance.skill.WarSkills;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.settings.KeyBinding;
 import net.minecraft.client.util.InputMappings;
@@ -24,8 +22,6 @@ import net.minecraftforge.client.settings.KeyModifier;
 import net.minecraftforge.eventbus.api.EventPriority;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
-
-import java.util.ArrayList;
 
 @Mod.EventBusSubscriber(value = Dist.CLIENT, modid = WarDance.MODID)
 public class Keybinds {
@@ -44,7 +40,7 @@ public class Keybinds {
     public static final KeyBinding COMBAT = new KeyBinding("wardance.combat", KeyConflictContext.IN_GAME, KeyModifier.SHIFT, InputMappings.Type.KEYSYM, 82, "key.categories.gameplay");
     public static final KeyBinding CAST = new KeyBinding("wardance.skill", IN_COMBAT, InputMappings.Type.KEYSYM, 82, "key.categories.gameplay");
     public static final KeyBinding QUICKCAST = new KeyBinding("wardance.quickSkill", IN_COMBAT, InputMappings.Type.MOUSE, 2, "key.categories.gameplay");
-    public static final KeyBinding SELECT = new KeyBinding("wardance.selectSkill", KeyConflictContext.IN_GAME, InputMappings.Type.KEYSYM, 82, "key.categories.gameplay");
+    public static final KeyBinding SELECT = new KeyBinding("wardance.selectSkill", KeyConflictContext.IN_GAME, InputMappings.Type.KEYSYM, 86, "key.categories.gameplay");
     public static Skill quick = null;
 
     @SubscribeEvent(priority = EventPriority.HIGHEST)

@@ -12,7 +12,7 @@ import java.awt.*;
 public class Backpedal extends IronGuard {
     @Override
     public Color getColor() {
-        return Color.GRAY;
+        return Color.LIGHT_GRAY;
     }
 
     @Override
@@ -21,11 +21,13 @@ public class Backpedal extends IronGuard {
             ((ParryEvent) procPoint).setPostureConsumption(0);
             caster.setMotion(caster.getMotion().add(caster.getPositionVec().subtractReverse(target.getPositionVec()).scale(0.1 * ((ParryEvent) procPoint).getPostureConsumption())));
             caster.velocityChanged = true;
+            markUsed(caster);
         }
         if (procPoint instanceof ProjectileParryEvent) {
             ((ProjectileParryEvent) procPoint).setPostureConsumption(0);
             caster.setMotion(caster.getMotion().add(caster.getPositionVec().subtractReverse(target.getPositionVec()).scale(0.1 * ((ParryEvent) procPoint).getPostureConsumption())));
             caster.velocityChanged = true;
+            markUsed(caster);
         }
     }
 }

@@ -1,12 +1,8 @@
 package jackiecrazy.wardance.networking;
 
-import jackiecrazy.wardance.capability.resources.CombatData;
 import jackiecrazy.wardance.capability.skill.CasterData;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.entity.player.ClientPlayerEntity;
-import net.minecraft.client.world.ClientWorld;
-import net.minecraft.entity.Entity;
-import net.minecraft.entity.LivingEntity;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.network.PacketBuffer;
 import net.minecraftforge.fml.network.NetworkEvent;
@@ -46,6 +42,7 @@ public class SyncSkillPacket {
                 ClientPlayerEntity p = Minecraft.getInstance().player;
                 if (p != null) {
                     CasterData.getCap(p).read(SyncSkillPacket.icc);
+
                 }
             });
             contextSupplier.get().setPacketHandled(true);

@@ -5,9 +5,9 @@ import jackiecrazy.wardance.api.WarAttributes;
 import jackiecrazy.wardance.config.CombatConfig;
 import jackiecrazy.wardance.networking.CombatChannel;
 import jackiecrazy.wardance.networking.UpdateClientPacket;
+import jackiecrazy.wardance.potion.WarEffects;
 import jackiecrazy.wardance.utils.CombatUtils;
 import jackiecrazy.wardance.utils.GeneralUtils;
-import jackiecrazy.wardance.utils.MovementUtils;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.Pose;
 import net.minecraft.entity.ai.attributes.AttributeModifier;
@@ -44,7 +44,7 @@ public class CombatCapability implements ICombatCapability {
     private float shatter;
     private int shatterCD;
     private int qcd, scd, pcd, ccd, mBind, oBind;
-    private int staggert, staggerc, ocd, shield, sc, roll;
+    private int staggert, staggerc, ocd, shield, sc, roll, sweep;
     private boolean offhand, combat;
     private long lastUpdate;
     private boolean first;
@@ -165,11 +165,24 @@ public class CombatCapability implements ICombatCapability {
         return overflow;
     }
 
+    private boolean isFirst;
+
     @Override
-    public float consumePosture(float amount, float above) {
+    public boolean isFirstStaggerStrike() {
+        return isFirst;
+    }
+
+    @Override
+    public void setFirstStagger(boolean yes) {
+        isFirst=yes;
+    }
+
+    @Override
+    public float consumePosture(float amount, float above, boolean force) {
         float ret = 0;
         LivingEntity elb = dude.get();
-        if (amount > getTrueMaxPosture() * CombatConfig.posCap) {
+        if (!Float.isFinite(posture)) posture = getMaxPosture();
+        if (amount > getTrueMaxPosture() * CombatConfig.posCap && !force) {
             //hard cap, knock back
             ret = amount - getTrueMaxPosture() * CombatConfig.posCap;
             amount = getTrueMaxPosture() * CombatConfig.posCap;
@@ -186,6 +199,7 @@ public class CombatCapability implements ICombatCapability {
             elb.getAttribute(Attributes.ARMOR).applyPersistentModifier(STAGGERA);
             elb.getAttribute(Attributes.ARMOR).removeModifier(MORE);
             elb.getAttribute(Attributes.ARMOR).applyPersistentModifier(STAGGERSA);
+            setFirstStagger(true);
             return -1f;
         }
         float weakness = 1;
@@ -262,8 +276,8 @@ public class CombatCapability implements ICombatCapability {
         mpos = amount;
         if (mpos != temp)
             posture = perc * mpos;
-        if(Float.isNaN(posture))
-            posture=mpos;
+        if (Float.isNaN(posture))
+            posture = mpos;
     }
 
     @Override
@@ -427,7 +441,7 @@ public class CombatCapability implements ICombatCapability {
         else {
             if (roll < 0 && dude.get() instanceof PlayerEntity) {
                 PlayerEntity p = (PlayerEntity) dude.get();
-                p.setForcedPose(null);
+                //p.setForcedPose(null);
             }
             roll = 0;
         }
@@ -601,6 +615,16 @@ public class CombatCapability implements ICombatCapability {
     }
 
     @Override
+    public int getForcedSweep() {
+        return sweep;
+    }
+
+    @Override
+    public void setForcedSweep(int angle) {
+        sweep = angle;
+    }
+
+    @Override
     public void update() {
         LivingEntity elb = dude.get();
         if (elb == null) return;
@@ -700,13 +724,14 @@ public class CombatCapability implements ICombatCapability {
         toggleCombatMode(c.getBoolean("combat"));
         setShieldCount(c.getInt("shieldC"));
         setShatterCooldown(c.getInt("shattercd"));
+        setForcedSweep(c.getInt("sweep"));
         setShatter(c.getFloat("shatter"));
         lastUpdate = c.getLong("lastUpdate");
         first = c.getBoolean("first");
         if (dude.get() instanceof PlayerEntity) {
-            if (MovementUtils.hasInvFrames(dude.get()))
+            if (getRollTime() > CombatConfig.rollEndsAt && c.getBoolean("rolling"))
                 ((PlayerEntity) dude.get()).setForcedPose(Pose.SWIMMING);
-            else if (temp == -(int) (CombatConfig.rollEndsAt))
+            else if (temp == (CombatConfig.rollEndsAt))
                 ((PlayerEntity) dude.get()).setForcedPose(null);
         }
     }
@@ -745,7 +770,9 @@ public class CombatCapability implements ICombatCapability {
         c.putInt("shieldC", sc);
         c.putBoolean("first", first);
         c.putInt("shattercd", getShatterCooldown());
+        c.putInt("sweep", getForcedSweep());
         c.putFloat("shatter", getShatter());
+        c.putBoolean("rolling", dude.get() instanceof PlayerEntity && ((PlayerEntity) dude.get()).getForcedPose() == Pose.SWIMMING);
         return c;
     }
 
@@ -758,6 +785,7 @@ public class CombatCapability implements ICombatCapability {
         for (int j = 0; j < exp; j++) {
             poison *= CombatConfig.poison;
         }
+        float exhaustMod = Math.max(0, elb.isPotionActive(WarEffects.EXHAUSTION.get()) ? 1 - elb.getActivePotionEffect(WarEffects.EXHAUSTION.get()).getAmplifier() * 0.2f : 1);
         float armorMod = 1;// Math.max(1f - ((float) elb.getTotalArmorValue() / 40f), 0);
         float healthMod = elb.getHealth() / elb.getMaxHealth();
         Vector3d spd = elb.getMotion();
@@ -766,6 +794,6 @@ public class CombatCapability implements ICombatCapability {
 //            return getMaxPosture() * armorMod * speedMod * healthMod / (1.5f * CombatConfig.staggerDuration);
 //        }
         //0.2f
-        return ((getTrueMaxPosture() - elb.getTotalArmorValue() / 2f) / 60f * armorMod * healthMod * speedMod * poison) - nausea;
+        return ((getTrueMaxPosture() - elb.getTotalArmorValue() / 2f) / 60f * exhaustMod * armorMod * healthMod * speedMod * poison) - nausea;
     }
 }

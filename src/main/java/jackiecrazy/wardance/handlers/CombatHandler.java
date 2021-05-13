@@ -9,6 +9,7 @@ import jackiecrazy.wardance.capability.resources.ICombatCapability;
 import jackiecrazy.wardance.config.CombatConfig;
 import jackiecrazy.wardance.event.ParryEvent;
 import jackiecrazy.wardance.event.ProjectileParryEvent;
+import jackiecrazy.wardance.potion.WarEffects;
 import jackiecrazy.wardance.utils.CombatUtils;
 import jackiecrazy.wardance.utils.GeneralUtils;
 import jackiecrazy.wardance.utils.MovementUtils;
@@ -95,6 +96,30 @@ public class CombatHandler {
         }
     }
 
+    @SubscribeEvent(priority = EventPriority.HIGHEST)//because compat with BHT...
+    public static void cancel(final LivingAttackEvent e) {
+        if (!e.getEntityLiving().world.isRemote && e.getSource() != null && CombatUtils.isPhysicalAttack(e.getSource())) {
+            LivingEntity uke = e.getEntityLiving();
+            if (MovementUtils.hasInvFrames(uke)){
+                e.setCanceled(true);
+            }
+            ICombatCapability ukeCap = CombatData.getCap(uke);
+            ItemStack attack = CombatUtils.getAttackingItemStack(e.getSource());
+            if (CombatUtils.isMeleeAttack(e.getSource()) && e.getSource().getTrueSource() instanceof LivingEntity && attack != null && e.getAmount() > 0) {
+                LivingEntity seme = (LivingEntity) e.getSource().getTrueSource();
+                ICombatCapability semeCap = CombatData.getCap(seme);
+                ukeCap.update();
+                semeCap.update();
+                Hand h = semeCap.isOffhandAttack() ? Hand.OFF_HAND : Hand.MAIN_HAND;
+                //hand bound or staggered, no attack
+                if (semeCap.getStaggerTime() > 0 || semeCap.getHandBind(h) > 0) {
+                    e.setCanceled(true);
+                    return;
+                }
+            }
+        }
+    }
+
     @SubscribeEvent(priority = EventPriority.LOWEST)//because compat with BHT...
     public static void parry(final LivingAttackEvent e) {
         if (!e.getEntityLiving().world.isRemote && e.getSource() != null && CombatUtils.isPhysicalAttack(e.getSource())) {
@@ -106,8 +131,6 @@ public class CombatHandler {
                 LivingEntity seme = (LivingEntity) e.getSource().getTrueSource();
                 seme.removePotionEffect(Effects.INVISIBILITY);
                 ICombatCapability semeCap = CombatData.getCap(seme);
-                ukeCap.update();
-                semeCap.update();
                 Hand h = semeCap.isOffhandAttack() ? Hand.OFF_HAND : Hand.MAIN_HAND;
                 //hand bound or staggered, no attack
                 if (semeCap.getStaggerTime() > 0 || semeCap.getHandBind(h) > 0) {
@@ -236,7 +259,7 @@ public class CombatHandler {
 
     @SubscribeEvent(priority = EventPriority.HIGHEST)
     public static void knockKnockWhosThere(LivingKnockBackEvent e) {
-        if (!downingHit && CombatData.getCap(e.getEntityLiving()).getStaggerTime() > 0) {
+        if (!CombatData.getCap(e.getEntityLiving()).isFirstStaggerStrike() && CombatData.getCap(e.getEntityLiving()).getStaggerTime() > 0) {
             e.setCanceled(true);
             return;
         }
@@ -259,13 +282,16 @@ public class CombatHandler {
     public static void pain(LivingHurtEvent e) {
         WarDance.LOGGER.debug("damage from " + e.getSource() + " received with amount " + e.getAmount());
         LivingEntity uke = e.getEntityLiving();
+        uke.removePotionEffect(WarEffects.DISTRACTION.get());
+        uke.removePotionEffect(WarEffects.SLEEP.get());
         LivingEntity kek = null;
         DamageSource ds = e.getSource();
         if (ds.getImmediateSource() instanceof LivingEntity) {
             kek = (LivingEntity) ds.getImmediateSource();
         }
         ICombatCapability cap = CombatData.getCap(uke);
-        cap.setCombo((float) (Math.floor(cap.getCombo()) / (CombatUtils.isMeleeAttack(e.getSource()) ? 2d : 1)));
+        if(CombatUtils.isMeleeAttack(e.getSource()))
+        cap.setCombo((float) (Math.floor(cap.getCombo()) / 2d));
         if (ds.getTrueSource() instanceof LivingEntity) {
             LivingEntity seme = ((LivingEntity) ds.getTrueSource());
             double luckDiff = WarDance.rand.nextFloat() * (GeneralUtils.getAttributeValueSafe(seme, Attributes.LUCK)) - WarDance.rand.nextFloat() * (GeneralUtils.getAttributeValueSafe(uke, Attributes.LUCK));
@@ -275,7 +301,7 @@ public class CombatHandler {
         if (awareness != CombatUtils.AWARENESS.ALERT) {
             e.setAmount((float) (e.getAmount() * CombatUtils.getDamageMultiplier(awareness, CombatUtils.getAttackingItemStack(ds))));
         }
-        if (cap.getStaggerTime() > 0 && !downingHit) {
+        if (cap.getStaggerTime() > 0 && !cap.isFirstStaggerStrike()) {
             e.setAmount(e.getAmount() * CombatConfig.staggerDamage);
             //fatality!
             if (ds.getTrueSource() instanceof LivingEntity) {
@@ -311,19 +337,19 @@ public class CombatHandler {
     @SubscribeEvent(priority = EventPriority.LOWEST, receiveCanceled = true)
     public static void udedlol(LivingDamageEvent e) {
         WarDance.LOGGER.debug("damage from " + e.getSource() + " finalized with amount " + e.getAmount());
-        if (CombatData.getCap(e.getEntityLiving()).getStaggerTime() > 0 && !downingHit) {
-            CombatData.getCap(e.getEntityLiving()).decrementStaggerCount(1);
+        final ICombatCapability cap = CombatData.getCap(e.getEntityLiving());
+        if (cap.getStaggerTime() > 0 && !cap.isFirstStaggerStrike()) {
+            cap.decrementStaggerCount(1);
         }
         if (e.getAmount() > e.getEntityLiving().getHealth() + e.getEntityLiving().getAbsorptionAmount()) {
             //are we gonna die? Well, I don't really care either way. Begone, drain!
-            ICombatCapability icc = CombatData.getCap(e.getEntityLiving());
-            icc.setFatigue(0);
-            icc.setWounding(0);
-            icc.setBurnout(0);
+            cap.setFatigue(0);
+            cap.setWounding(0);
+            cap.setBurnout(0);
         } else if (CombatConfig.woundWL == CombatConfig.woundList.contains(e.getSource().getDamageType()))//returns true if whitelist and included, or if blacklist and excluded
             //u hurt lol
-            CombatData.getCap(e.getEntityLiving()).addWounding(e.getAmount() * CombatConfig.wound);
-
+            cap.addWounding(e.getAmount() * CombatConfig.wound);
+        cap.setFirstStagger(false);
     }
 
     @SubscribeEvent(priority = EventPriority.LOWEST)

@@ -62,10 +62,15 @@ public interface ICombatCapability {
         return consumePosture(amount, 0);
     }
 
-    /**
-     * returns -1 if staggered
-     */
-    float consumePosture(float amount, float above);
+    default float consumePosture(float amount, float above) {
+        return consumePosture(amount, above, false);
+    }
+
+    boolean isFirstStaggerStrike();
+
+    void setFirstStagger(boolean yes);
+
+    float consumePosture(float amount, float above, boolean force);
 
     int getPostureGrace();
 
@@ -138,7 +143,7 @@ public interface ICombatCapability {
     void addOffhandCooldown(int amount);
 
     /**
-     * for the sake of convenience, positive is sidestep and negative is dodge
+     * for the sake of convenience, positive is subject to cooldown and negatives are free
      */
     int getRollTime();
 
@@ -193,6 +198,10 @@ public interface ICombatCapability {
     float getCachedCooldown();
 
     void setCachedCooldown(float value);
+
+    int getForcedSweep();
+
+    void setForcedSweep(int angle);
 
     void update();
 

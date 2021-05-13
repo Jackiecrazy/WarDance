@@ -4,6 +4,7 @@ import jackiecrazy.wardance.WarDance;
 import jackiecrazy.wardance.capability.resources.CombatData;
 import jackiecrazy.wardance.capability.resources.ICombatCapability;
 import jackiecrazy.wardance.capability.skill.CasterData;
+import jackiecrazy.wardance.capability.skill.ISkillCapability;
 import jackiecrazy.wardance.config.CombatConfig;
 import jackiecrazy.wardance.networking.CombatChannel;
 import jackiecrazy.wardance.networking.SyncSkillPacket;
@@ -17,7 +18,6 @@ import net.minecraft.entity.ai.attributes.Attributes;
 import net.minecraft.entity.ai.goal.Goal;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.ServerPlayerEntity;
-import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.potion.Effects;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.Tuple;
@@ -83,17 +83,23 @@ public class EntityHandler {
             mob.goalSelector.addGoal(-1, new NoGoal(mob));
             mob.targetSelector.addGoal(-1, new NoGoal(mob));
         } else if (e.getEntity() instanceof ServerPlayerEntity) {
-            CombatChannel.INSTANCE.send(PacketDistributor.PLAYER.with(()-> (ServerPlayerEntity) e.getEntity()), new SyncSkillPacket(CasterData.getCap((LivingEntity) e.getEntity()).write(new CompoundNBT())));
+            CombatChannel.INSTANCE.send(PacketDistributor.PLAYER.with(()-> (ServerPlayerEntity) e.getEntity()), new SyncSkillPacket(CasterData.getCap((LivingEntity) e.getEntity()).write()));
         }
     }
 
     @SubscribeEvent
     public static void respawn(PlayerEvent.Clone e) {
+        CasterData.getCap(e.getPlayer()).read(CasterData.getCap(e.getOriginal()).write());
         if (!e.isWasDeath()) {
-            CombatData.getCap(e.getPlayer()).read(CombatData.getCap(e.getOriginal()).write());
-            CombatData.getCap(e.getPlayer()).setFatigue(0);
-            CombatData.getCap(e.getPlayer()).setBurnout(0);
-            CombatData.getCap(e.getPlayer()).setWounding(0);
+            final ICombatCapability icc = CombatData.getCap(e.getPlayer());
+            icc.read(CombatData.getCap(e.getOriginal()).write());
+            icc.setFatigue(0);
+            icc.setBurnout(0);
+            icc.setWounding(0);
+        }else{
+            ISkillCapability isc=CasterData.getCap(e.getPlayer());
+            isc.clearActiveSkills();
+            isc.clearSkillCooldowns();
         }
     }
 

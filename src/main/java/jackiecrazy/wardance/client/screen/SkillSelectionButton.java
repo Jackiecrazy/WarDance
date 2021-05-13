@@ -31,12 +31,12 @@ public abstract class SkillSelectionButton extends ImageButton {
 
     protected void applySlotTint() {
         if (getParentSelection() != null) {
-            if (getParentSelection().isPassive(Minecraft.getInstance().player) != isPassive)
-                RenderSystem.color4f(230 / 255f, 110 / 255f, 0 / 255f, 1);
-            else if (getParentSelection() == getSkill())
+            if (getParentSelection() == getSkill())
                 RenderSystem.color4f(173 / 255f, 216 / 255f, 230 / 255f, 1);
             else if (getParentSelection().isFamily(s))
                 RenderSystem.color4f(220 / 255f, 20 / 255f, 60 / 255f, 1);
+            else if (getParentSelection().isPassive(Minecraft.getInstance().player) != isPassive)
+                RenderSystem.color4f(230 / 255f, 110 / 255f, 0 / 255f, 1);
 //            else if (getParentSelection().getParentSkill() != null && getSkill() != null && (getParentSelection().getParentSkill() == getSkill() || getParentSelection().getParentSkill() == getSkill().getParentSkill()))
 //                RenderSystem.color4f(220 / 255f, 20 / 255f, 60 / 255f, 1);
 //            else if (getSkill() != null && getSkill().getParentSkill() != null && (getSkill().getParentSkill() == getParentSelection() || getSkill().getParentSkill() == getParentSelection().getParentSkill()))
@@ -60,6 +60,7 @@ public abstract class SkillSelectionButton extends ImageButton {
 
     boolean isValidSelection() {
         Skill s = getParentSelection();
+        if (s.isPassive(Minecraft.getInstance().player) != isPassive) return false;
         if (!parent.isValidInsertion(s))
             return false;
         return true;

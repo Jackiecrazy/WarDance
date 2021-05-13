@@ -12,7 +12,7 @@ public class SkillStorage implements Capability.IStorage<ISkillCapability> {
     @Nullable
     @Override
     public INBT writeNBT(Capability<ISkillCapability> capability, ISkillCapability ISkillCapability, Direction direction) {
-        return ISkillCapability.write(new CompoundNBT());
+        return ISkillCapability.write();
     }
 
     @Override

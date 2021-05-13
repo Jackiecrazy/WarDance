@@ -1,8 +1,8 @@
 package jackiecrazy.wardance.utils;
 
-import jackiecrazy.wardance.compat.WarCompat;
 import jackiecrazy.wardance.capability.resources.CombatData;
 import jackiecrazy.wardance.capability.resources.ICombatCapability;
+import jackiecrazy.wardance.compat.WarCompat;
 import jackiecrazy.wardance.config.CombatConfig;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.Pose;
@@ -13,7 +13,7 @@ import net.minecraft.util.math.vector.Vector3d;
 public class MovementUtils {
 
     public static boolean hasInvFrames(LivingEntity elb) {
-        return (CombatData.getCap(elb).getRollTime()) > CombatConfig.rollEndsAt;
+        return CombatData.getCap(elb).getRollTime() > CombatConfig.rollEndsAt || CombatData.getCap(elb).getRollTime() < 0;
     }
 
 //    /**
@@ -199,9 +199,11 @@ public class MovementUtils {
         ICombatCapability itsc = CombatData.getCap(elb);
         if (!itsc.isCombatMode()) return false;
         itsc.consumePosture(0);
-        itsc.setRollTime(-CombatConfig.rollCooldown);
-        Vector3d v = elb.getLookVec().subtract(0, elb.getLookVec().y, 0).normalize();
+        itsc.setRollTime(CombatConfig.rollCooldown);
+        Vector3d v = elb.getLookVec().subtract(0, elb.getLookVec().y, 0).normalize().scale(1.5);
         //TODO tweak slide amount to make it fair
+        if (elb instanceof PlayerEntity)
+            ((PlayerEntity) elb).setForcedPose(Pose.SWIMMING);
         elb.setMotion(v.x, 0, v.z);
         elb.velocityChanged = true;
         return true;
@@ -221,7 +223,7 @@ public class MovementUtils {
         if (!itsc.isCombatMode() && (!WarCompat.elenaiDodge || itsc.getStaggerTime() == 0)) return false;
         if (side == 99) attemptSlide(elb);
         if (itsc.getRollTime() == 0) {//
-            itsc.setRollTime( CombatConfig.rollCooldown);
+            itsc.setRollTime(CombatConfig.rollCooldown);
 //            Entity target = GeneralUtils.raytraceEntity(elb.world, elb, 32);
 //            float adjustment = 0;
 //            if (target != null) {

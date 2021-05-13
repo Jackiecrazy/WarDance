@@ -12,7 +12,6 @@ import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.widget.TextFieldWidget;
 import net.minecraft.client.gui.widget.button.Button;
-import net.minecraft.client.gui.widget.button.ImageButton;
 import net.minecraft.client.gui.widget.list.ExtendedList;
 import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.util.IReorderingProcessor;
@@ -180,9 +179,9 @@ public class SkillSelectionScreen extends Screen {
 
     boolean isValidInsertion(Skill insert) {
         for (SkillSelectionButton ssb : skillPie)
-            if (ssb.getSkill() != null && insert.isFamily(ssb.getSkill())) return false;
+            if (ssb.getSkill() != null && ssb.getSkill().isFamily(insert)) return false;
         for (SkillSelectionButton ssb : passives)
-            if (ssb.getSkill() != null && insert.isFamily(ssb.getSkill())) return false;
+            if (ssb.getSkill() != null && ssb.getSkill().isFamily(insert)) return false;
         return true;
     }
 
@@ -245,11 +244,12 @@ public class SkillSelectionScreen extends Screen {
         List<String> lines = new ArrayList<>();
 
         lines.add(selectedSkill.getDisplayName().getString());
-        lines.add("wololo");
-        lines.add("more info goes here!");
+        lines.add(selectedSkill.description().getString());
         if (selectedVariation != null) {
-            lines.add("variation info goes here!");
+            //lines.add(String.valueOf(selectedVariation.getSkill().getColor().getRGB()));
+            lines.add(selectedVariation.getSkill().description().getString());
         }
+        lines.add("----------");
 
         modInfo.setInfo(lines, selectedSkill.icon());
     }

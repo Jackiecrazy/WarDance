@@ -88,25 +88,25 @@ Spells and skills: hit stuff so you can hit harder!
 ▪ Heavy blow: the next attack in 2 seconds guarantees a crit when dealing damage, and disables the parrying hand for 1.5 seconds if parried. Recharge in 3 attacks, weapon bound.
 Shatter: bind time increases based on the variety of the last 3 skills used
 Stagger: adds up to 1.3 seconds of slow and 5 posture damage depending on your weapon's attack speed (slower is more)
-Lunge: range+2 and dash forward
+Vault: range+2 and hop backwards
 Poise: free parries until attack
 Backstab: apply distraction multiplier to attack and additionally ignore armor if attacking the backside of enemy
-▪ Iron guard: the next parry in 1 second (particles) reflects the posture damage onto attacker. If the attack was ranged, the shot is reflected back at the caster with full force. Cancels out with heavy blow. Recharge in 5 attacks, weapon bound.
+▪ Iron guard: the next parry in 1 second (particles) reflects the posture damage onto attacker. If the attack was ranged, the shot is reflected back at the caster with full force. Recharge in 5 parries, weapon bound.
 Overpower: additionally deduct posture as if attacking with parrying hand
 Bind: disable attacking hand for melee
 Backpedal: all posture cost converted to knockback instead
 Recovery: reset cooldown of all resources
 Mikiri: cooldown -1, auto trigger
-▪ Kick: the next attack in 2 seconds has 2 range but deals 6 unblockable posture damage and 1 blockable falling damage. Recharge in 5 attacks, self bound.
+▪ Kick: the next attack in 2 seconds has 2 range but deals 6 unblockable posture damage. Recharge in 5 attacks, self bound.
 Backflip: jump back and gain 30% lost posture
-Tackle: dashes and kicks first entity collided
+Tackle: range+2 and dash forward
 Iron knee: knockback converted to extra posture damage
-Trip: fatigue for double the cooldown time, only usable on ground, cooldown -1
-Overextend: double damage but deal half to self
-▪ Grapple: instantly stagger (they keep their posture when getting back up) by attacking a single enemy within 2 blocks twice uninterrupted within 3 seconds. Recharge in 7 attacks, weapon bound, fists and hand weapons only.
-Clinch: bind both hands on first strike
-Reversal: exchanges posture by percentage
-Submission: instantly succeeds if opponent has less health
+Trip: double posture cooldown period, only usable on ground, cooldown -1
+Low sweep: hits enemies in a 30 degree area
+▪ Grapple: deal 10 posture damage by attacking a single enemy within 2 blocks twice uninterrupted within 3 seconds. Recharge in 7 attacks, weapon bound, fists and hand weapons only.
+Clinch: bind hand used to attack on first strike, or both if you're completely unarmed
+Reversal: exchanges posture by percentage instead
+Submission: instantly succeeds and cooldown -2 if opponent has less armor
 Throw: pick up enemy and use as projectile
 Suplex: consume all your own posture and deal it to the enemy on a multiplier, leaving them behind you
 ▪ Shield bash: for 2 seconds, your shield becomes a range 2 blunt weapon that deals posture damage equivalent to shield time. Recharge in 4 parries, weapon bound, shield only.
@@ -114,7 +114,7 @@ Rim punch: range increased to 3, nauseates enemy on attack
 Foot slam: additionally inflicts slowness and distracts enemy
 Arm lock: parrying with bash active disables attacking hand, cooldown+1
 Berserk: recharge other hand and gain brief attack speed buff on cast and after attack
-Overbear: base damage increased by shield time/3 and posture damage doubled, slow self briefly if enemy isn't staggered by hit
+Overbear: base damage increased by shield time*2 and posture damage doubled, slow self briefly if enemy isn't staggered by hit
 ▪ Coup de grace: mobs have a life count depending on their max health, formula pending. Deal one life's worth of true damage to a staggered target. If this is the killing blow, gain 1 might. Weapon bound, auto proc.
 Frenzy: other physical skills refreshed on kill
 Eviscerate: mass fear on kill

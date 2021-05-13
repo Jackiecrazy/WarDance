@@ -30,9 +30,15 @@ public class Poise extends HeavyBlow {
     }
 
     @Override
+    public boolean onCast(LivingEntity caster) {
+        activate(caster, 60);
+        return true;
+    }
+
+    @Override
     public void onSuccessfulProc(LivingEntity caster, SkillData stats, LivingEntity target, Event procPoint) {
         super.onSuccessfulProc(caster, stats, target, procPoint);
-        if (procPoint instanceof ParryEvent && ((ParryEvent) procPoint).getEntityLiving() == caster) {
+        if (procPoint instanceof ParryEvent && ((ParryEvent) procPoint).getDefendingHand()!=null && ((ParryEvent) procPoint).getEntityLiving() == caster) {
             ((ParryEvent) procPoint).setPostureConsumption(0);
         }
     }

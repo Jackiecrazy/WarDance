@@ -23,7 +23,7 @@ public class Backstab extends HeavyBlow {
 
     @Override
     public Color getColor() {
-        return Color.GRAY;
+        return Color.LIGHT_GRAY;
     }
 
     @Override

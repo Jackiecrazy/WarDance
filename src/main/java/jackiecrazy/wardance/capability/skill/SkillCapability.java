@@ -8,17 +8,10 @@ import jackiecrazy.wardance.skill.ProcPoint;
 import jackiecrazy.wardance.skill.Skill;
 import jackiecrazy.wardance.skill.SkillCooldownData;
 import jackiecrazy.wardance.skill.SkillData;
-import net.minecraft.client.entity.player.ClientPlayerEntity;
 import net.minecraft.entity.LivingEntity;
-import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.ServerPlayerEntity;
-import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.nbt.ListNBT;
-import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.Tuple;
-import net.minecraft.util.text.StringTextComponent;
-import net.minecraftforge.fml.common.registry.GameRegistry;
 import net.minecraftforge.fml.network.PacketDistributor;
 
 import javax.annotation.Nullable;
@@ -58,9 +51,6 @@ public class SkillCapability implements ISkillCapability {
         LivingEntity caster = dude.get();
         if (sd != null && caster != null) {
             sd.getSkill().onEffectEnd(caster, sd);
-            if (caster instanceof ClientPlayerEntity) {
-                ((PlayerEntity) caster).sendStatusMessage(new StringTextComponent(s.getDisplayName().getString() + " has entered cooldown"), true);
-            }
         }
         lastCast.add(s);
         while (lastCast.size() > 5)
@@ -75,12 +65,19 @@ public class SkillCapability implements ISkillCapability {
 
     @Override
     public void clearActiveSkills() {
-        for (Skill s : activeSkills.keySet())
+        Iterator<Skill> i = activeSkills.keySet().iterator();
+        while (i.hasNext()) {
+            Skill s=i.next();
             removeActiveSkill(s);
+        }
     }
 
     @Override
     public boolean isSkillActive(Skill skill) {
+        if (skill.getParentSkill() == null)
+            for (Skill s : activeSkills.keySet()) {
+                if (s.isFamily(skill)) return true;
+            }
         return activeSkills.containsKey(skill);
     }
 
@@ -113,11 +110,12 @@ public class SkillCapability implements ISkillCapability {
         if (coolingSkills.containsKey(s))
             highest = Math.max(coolingSkills.get(s).getMaxDuration(), amount);
         coolingSkills.put(s, new SkillCooldownData(s, highest, amount));
+        CombatChannel.INSTANCE.send(PacketDistributor.PLAYER.with(() -> (ServerPlayerEntity) dude.get()), new SyncSkillPacket(this.write()));
     }
 
     @Override
     public boolean isSkillCoolingDown(Skill s) {
-        return coolingSkills.containsKey(s.tryGetParentSkill());
+        return coolingSkills.containsKey(s.tryGetParentSkill())||coolingSkills.containsKey(s);
     }
 
     @Override
@@ -126,14 +124,16 @@ public class SkillCapability implements ISkillCapability {
         coolingSkills.get(s).decrementDuration(amount);
         LivingEntity caster = dude.get();
         if (caster instanceof ServerPlayerEntity)
-            CombatChannel.INSTANCE.send(PacketDistributor.PLAYER.with(() -> (ServerPlayerEntity) caster), new SyncSkillPacket(this.write(new CompoundNBT())));
+            CombatChannel.INSTANCE.send(PacketDistributor.PLAYER.with(() -> (ServerPlayerEntity) caster), new SyncSkillPacket(this.write()));
     }
 
     @Override
     public void coolSkill(Skill s) {
         s.onCooledDown(dude.get(), coolingSkills.remove(s).getDuration());
-        if (dude.get() instanceof PlayerEntity)
-            ((PlayerEntity) dude.get()).sendStatusMessage(new StringTextComponent(s.getDisplayName().getString() + " has cooled down"), true);
+        LivingEntity caster = dude.get();
+        if (caster instanceof ServerPlayerEntity)
+            CombatChannel.INSTANCE.send(PacketDistributor.PLAYER.with(() -> (ServerPlayerEntity) caster), new SyncSkillPacket(this.write()));
+        //todo skill cooldown hud
     }
 
     @Override
@@ -178,11 +178,13 @@ public class SkillCapability implements ISkillCapability {
 
     @Override
     public boolean isSkillUsable(Skill skill) {
+        if(!equippedSkill.contains(skill))return false;
         return skill.canCast(dude.get());
     }
 
     @Override
-    public CompoundNBT write(CompoundNBT to) {
+    public CompoundNBT write() {
+        CompoundNBT to=new CompoundNBT();
         if (!this.activeSkills.isEmpty()) {
             ListNBT listnbt = new ListNBT();
 
@@ -234,7 +236,7 @@ public class SkillCapability implements ISkillCapability {
             }
         }
         Skill[] als = new Skill[12];
-        for (int a = 0; a < equippedSkill.size(); a++)
+        for (int a = 0; a < als.length; a++)
             if (from.contains("equippedSkill" + a))
                 als[a] = (Skill.getSkill(from.getString("equippedSkill" + a)));
         setEquippedSkills(Arrays.asList(als));
@@ -275,7 +277,7 @@ public class SkillCapability implements ISkillCapability {
         for (Skill s : finish)
             coolSkill(s);
         if (sync && caster instanceof ServerPlayerEntity)
-            CombatChannel.INSTANCE.send(PacketDistributor.PLAYER.with(() -> (ServerPlayerEntity) caster), new SyncSkillPacket(this.write(new CompoundNBT())));
+            CombatChannel.INSTANCE.send(PacketDistributor.PLAYER.with(() -> (ServerPlayerEntity) caster), new SyncSkillPacket(this.write()));
     }
 
     @Override
