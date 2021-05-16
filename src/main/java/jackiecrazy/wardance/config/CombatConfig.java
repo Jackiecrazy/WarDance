@@ -639,6 +639,14 @@ public class CombatConfig {
             "betterendforge:aeternium_hammer, 3.3, 0.8, false, 0.1, 0.2"
 
     };
+    private static final String[] UNARMED = {
+            "spartanweaponry:cestus",
+            "spartanweaponry:cestus_studded",
+            "dungeons_gear:gauntlet",
+            "dungeons_gear:fighters_binding",
+            "dungeons_gear:soul_fist",
+            "dungeons_gear:mauler",
+    };
     private static final String[] ARMOR = {
             "minecraft:leather_helmet, 0.3, 0, 0",
             "minecraft:leather_chestplate, 0.6, 0, 0",
@@ -922,7 +930,9 @@ public class CombatConfig {
     public static int comboGrace;
     public static int spiritCD;
     public static int postureCD;
+    public static int armorPostureCD;
     public static int sneakParry;
+    public static int recovery;
     public static float mobParryChanceWeapon, mobParryChanceShield, mobDeflectChance, mobScaler, kenshiroScaler;
     public static float wound, fatigue, burnout, posCap, distract, unaware;
     public static boolean dodge, elenai, elenaiP, elenaiC, stealthSystem, ignore;
@@ -957,9 +967,12 @@ public class CombatConfig {
     private final ForgeConfigSpec.IntValue _comboGrace;
     private final ForgeConfigSpec.IntValue _spiritCD;
     private final ForgeConfigSpec.IntValue _postureCD;
+    private final ForgeConfigSpec.IntValue _armorPostureCD;
     private final ForgeConfigSpec.ConfigValue<List<? extends String>> _combatItems;
     private final ForgeConfigSpec.ConfigValue<List<? extends String>> _customPosture;
     private final ForgeConfigSpec.ConfigValue<List<? extends String>> _customArmor;
+    private final ForgeConfigSpec.ConfigValue<List<? extends String>> _customParry;
+    private final ForgeConfigSpec.ConfigValue<List<? extends String>> _unarmed;
     private final ForgeConfigSpec.ConfigValue<List<? extends String>> _woundBL;
     private final ForgeConfigSpec.ConfigValue<List<? extends String>> _immortal;
     private final ForgeConfigSpec.BooleanValue _woundWL;
@@ -967,6 +980,7 @@ public class CombatConfig {
     private final ForgeConfigSpec.BooleanValue _betterSweep;
     private final ForgeConfigSpec.BooleanValue _sweepDurability;
     private final ForgeConfigSpec.IntValue _sweepPerSE;
+    private final ForgeConfigSpec.IntValue _recovery;
     private final ForgeConfigSpec.BooleanValue _dodge;
     private final ForgeConfigSpec.IntValue _sneakParry;
     private final ForgeConfigSpec.DoubleValue _mobParryChanceWeapon;
@@ -1012,6 +1026,7 @@ public class CombatConfig {
         _mobParryChanceShield = b.translation("wardance.config.mobPS").comment("chance that a mob parries with a shield out of 1. Hands are individually calculated.").defineInRange("mob shield parry chance", 0.9, 0, 1);
         _mobDeflectChance = b.translation("wardance.config.mobD").comment("chance that a mob deflects with armor out of 1").defineInRange("mob deflect chance", 0.6, 0, 1);
         _posCap = b.translation("wardance.config.posCap").comment("percentage of max posture that can be dealt in a single hit").defineInRange("posture cap", 0.4, 0, 1);
+        _recovery = b.translation("wardance.config.recovery").comment("amount of ticks over which you'll quickly recover back to one posture cap's worth of posture if you're lower than that. This triggers after your posture cooldown elapses, plus 50% of that time. Set to 0 to disable this feature.").defineInRange("recovery speed", 15, 0, Integer.MAX_VALUE);
         _shatterCooldown = b.translation("wardance.config.shatterCD").comment("Ticks after a hit for which shatter will not be replenished").defineInRange("shatter cooldown", 200, 1, Integer.MAX_VALUE);
         b.pop();
         b.push("offense");
@@ -1028,7 +1043,8 @@ public class CombatConfig {
         _qiGrace = b.translation("wardance.config.qiG").comment("Number of ticks after gaining might during which it will not decrease").defineInRange("might grace period", 100, 1, Integer.MAX_VALUE);
         _comboGrace = b.translation("wardance.config.comboG").comment("Number of ticks after gaining combo during which it will not decrease").defineInRange("combo grace period", 100, 1, Integer.MAX_VALUE);
         _spiritCD = b.translation("wardance.config.spiritC").comment("Number of ticks after consuming spirit during which it will not regenerate").defineInRange("spirit cooldown", 30, 1, Integer.MAX_VALUE);
-        _postureCD = b.translation("wardance.config.postureC").comment("Number of ticks after consuming posture during which it will not regenerate").defineInRange("posture cooldown", 30, 1, Integer.MAX_VALUE);
+        _postureCD = b.translation("wardance.config.postureC").comment("Number of ticks after consuming posture during which it will not regenerate").defineInRange("posture cooldown", 20, 1, Integer.MAX_VALUE);
+        _armorPostureCD = b.translation("wardance.config.postureA").comment("Number of ticks full diamond armor will add onto posture cooldown. This will scale linearly between nothing and diamond, so by default iron adds 15 ticks, for instance.").defineInRange("armor posture cooldown", 20, 1, Integer.MAX_VALUE);
         _mobScaler = b.translation("wardance.config.mobB").comment("posture damage from mob attacks will be scaled by this number").defineInRange("mob posture damage buff", 2, 0, Double.MAX_VALUE);
         _wound = b.translation("wardance.config.wound").comment("this percentage of incoming damage before armor is also added to wounding").defineInRange("wound percentage", 0.1, 0, 1d);
         _fatig = b.translation("wardance.config.fatigue").comment("this percentage of posture damage is also added to fatigue").defineInRange("fatigue percentage", 0.1, 0, 1d);
@@ -1054,7 +1070,9 @@ public class CombatConfig {
         b.push("lists");
         _combatItems = b.translation("wardance.config.combatItems").comment("Items eligible for parrying. Format should be name, attack posture consumption, defense multiplier, is shield. If the item is a shield, the next two numbers are their parry time and parry counter; if the item is a weapon, the next two numbers are distracted stab damage bonus and unaware stab damage bonus. Default values provided graciously by DarkMega, thank you!").defineList("combat items", Arrays.asList(THANKS_DARKMEGA), String.class::isInstance);
         _customPosture = b.translation("wardance.config.postureMobs").comment("Here you can define custom max posture for mobs. Format is name, max posture, whether they're rotated when staggered. Armor is still calculated").defineList("custom mob posture", Lists.newArrayList("example:dragon, 100, false", "example:ghast, 8, true"), String.class::isInstance);
+        _customParry = b.translation("wardance.config.parryMobs").comment("Define mobs that are automatically capable of parrying. Entity settings override weapon settings. Format is name, defense posture multiplier, parry chance. Hands are individually calculated for chance. Filling in 0 for parry chance will disable parrying for that mob, regardless of weaponry.").defineList("auto parry mobs", Lists.newArrayList("example:golem, 0.9, 0.5", "example:fish, 1, 0"), String.class::isInstance);
         _customArmor = b.translation("wardance.config.armorItems").comment("define protective stats of armor here. Format is item, absorption, deflection, shatter.").defineList("custom protection attributes", Lists.newArrayList(ARMOR), String.class::isInstance);
+        _unarmed = b.translation("wardance.config.unarmedItems").comment("Items added to this list will count as unarmed for combat purposes.").defineList("unarmed items", Lists.newArrayList(UNARMED), String.class::isInstance);
         _woundBL = b.translation("wardance.config.woundBL").comment("damage sources added to this list will either not inflict wounding or be the only ones that inflict wounding, depending on whitelist mode").defineList("damage source list", Lists.newArrayList("magic", "indirectmagic", "survivaloverhaul.electrocution", "survivaloverhaul.hypothermia", "survivaloverhaul.hyperthermia", "inWall", "drown", "starve"), String.class::isInstance);
         _woundWL = b.translation("wardance.config.woundWL").comment("whether the wounding list is a whitelist or a blacklist").define("damage source whitelist mode", false);
         _immortal = b.translation("wardance.config.decayBL").comment("entities that are not (or are the only ones, depending on whitelist mode) susceptible to wounding, fatigue, and burnout. Save your pets!").defineList("decay list", Lists.newArrayList("example:scaryboss", "example:pet"), String.class::isInstance);
@@ -1122,7 +1140,9 @@ public class CombatConfig {
         blockPerVolume = CONFIG._blockPerVolume.get();
         kbNerf = CONFIG._knockbackNerf.get().floatValue();
         sneakParry = CONFIG._sneakParry.get();
-        CombatUtils.updateLists(CONFIG._combatItems.get(), CONFIG._customPosture.get(), CONFIG._customArmor.get());
+        armorPostureCD = CONFIG._armorPostureCD.get();
+        recovery = CONFIG._recovery.get();
+        CombatUtils.updateLists(CONFIG._combatItems.get(), CONFIG._customPosture.get(), CONFIG._customArmor.get(), CONFIG._customParry.get(), CONFIG._unarmed.get());
     }
 
     @SubscribeEvent

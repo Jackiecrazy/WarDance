@@ -5,19 +5,17 @@
 
 package jackiecrazy.wardance.utils;
 
-import java.util.*;
-
-import jdk.nashorn.internal.ir.Block;
-import net.minecraft.client.renderer.FaceDirection;
 import net.minecraft.entity.Entity;
+import net.minecraft.entity.EntityType;
 import net.minecraft.entity.LivingEntity;
-import net.minecraft.entity.MoverType;
 import net.minecraft.entity.ai.attributes.Attribute;
 import net.minecraft.entity.ai.attributes.AttributeModifier;
-import net.minecraft.entity.ai.attributes.Attributes;
 import net.minecraft.entity.ai.attributes.ModifiableAttributeInstance;
 import net.minecraft.entity.boss.dragon.EnderDragonEntity;
-import net.minecraft.entity.monster.*;
+import net.minecraft.entity.monster.AbstractSkeletonEntity;
+import net.minecraft.entity.monster.CreeperEntity;
+import net.minecraft.entity.monster.WitherSkeletonEntity;
+import net.minecraft.entity.monster.ZombieEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.inventory.EquipmentSlotType;
 import net.minecraft.item.ItemStack;
@@ -26,22 +24,45 @@ import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.util.Direction;
 import net.minecraft.util.EntityPredicates;
 import net.minecraft.util.Hand;
+import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.*;
-import net.minecraft.util.math.shapes.VoxelShape;
-import net.minecraft.util.math.shapes.VoxelShapes;
 import net.minecraft.util.math.vector.Vector3d;
 import net.minecraft.world.World;
-import net.minecraftforge.common.ForgeHooks;
-import net.minecraftforge.event.entity.living.LivingKnockBackEvent;
+import net.minecraftforge.registries.ForgeRegistries;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
+import java.util.Optional;
 
 public class GeneralUtils {
     public static double getSpeedSq(Entity e) {
         if (e.getRidingEntity() != null)
             return e.getLowestRidingEntity().getMotion().lengthSquared();
         return e.getMotion().lengthSquared();
+    }
+
+    @Nullable
+    public static EntityType getEntityTypeFromResourceLocation(ResourceLocation rl){
+        if(ForgeRegistries.ENTITIES.containsKey(rl))
+        return ForgeRegistries.ENTITIES.getValue(rl);
+        return null;
+    }
+
+    @Nullable
+    public static ResourceLocation getResourceLocationFromEntityType(EntityType et){
+        if(ForgeRegistries.ENTITIES.containsValue(et))
+            return ForgeRegistries.ENTITIES.getKey(et);
+        return null;
+    }
+
+    @Nullable
+    public static ResourceLocation getResourceLocationFromEntity(Entity et){
+        if(ForgeRegistries.ENTITIES.containsValue(et.getType()))
+            return ForgeRegistries.ENTITIES.getKey(et.getType());
+        return null;
     }
 
     @Nonnull

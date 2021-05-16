@@ -14,13 +14,13 @@ public class ItemTooltipHandler {
     @SubscribeEvent()
     public static void tooltip(ItemTooltipEvent e) {
         if (CombatUtils.isWeapon(null, e.getItemStack()) || CombatUtils.isShield(null, e.getItemStack())) {
-            e.getToolTip().add(new TranslationTextComponent("wardance.tooltip.postureAttack", CombatUtils.getPostureAtk(null, null, 0, e.getItemStack())));
-            e.getToolTip().add(new TranslationTextComponent("wardance.tooltip.postureDefend", CombatUtils.getPostureDef(null, e.getItemStack())));
+            e.getToolTip().add(new TranslationTextComponent("wardance.tooltip.postureAttack", CombatUtils.getPostureAtk(null, null, null, 0, e.getItemStack())));
+            e.getToolTip().add(new TranslationTextComponent("wardance.tooltip.postureDefend", CombatUtils.getPostureDef(null, null, e.getItemStack(), 0)));
             if (CombatUtils.isShield(null, e.getItemStack())) {
                 Tuple<Integer, Integer> rerorero = CombatUtils.getShieldStats(e.getItemStack());
                 e.getToolTip().add(new TranslationTextComponent("wardance.tooltip.parry", rerorero.getB() + 1, rerorero.getA() / 20f));
-            }else if (CombatUtils.isWeapon(null, e.getItemStack())) {
-                e.getToolTip().add(new TranslationTextComponent("wardance.tooltip.attack", CombatUtils.getDamageMultiplier(CombatUtils.AWARENESS.DISTRACTED, e.getItemStack())+"x", CombatUtils.getDamageMultiplier(CombatUtils.AWARENESS.UNAWARE, e.getItemStack())+"x"));
+            } else if (CombatUtils.isWeapon(null, e.getItemStack())) {
+                e.getToolTip().add(new TranslationTextComponent("wardance.tooltip.attack", CombatUtils.getDamageMultiplier(CombatUtils.AWARENESS.DISTRACTED, e.getItemStack()) + "x", CombatUtils.getDamageMultiplier(CombatUtils.AWARENESS.UNAWARE, e.getItemStack()) + "x"));
             }
         }
     }

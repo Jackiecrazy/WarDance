@@ -7,6 +7,8 @@ import net.minecraft.entity.Entity;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.network.PacketBuffer;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.fml.DistExecutor;
 import net.minecraftforge.fml.network.NetworkEvent;
 
 import java.util.function.BiConsumer;
@@ -44,11 +46,14 @@ public class UpdateClientPacket {
         @Override
         public void accept(UpdateClientPacket updateClientPacket, Supplier<NetworkEvent.Context> contextSupplier) {
             contextSupplier.get().enqueueWork(() -> {
-                ClientWorld world = Minecraft.getInstance().world;
-                if (world != null) {
-                    Entity entity = world.getEntityByID(updateClientPacket.e);
-                    if (entity instanceof LivingEntity) CombatData.getCap((LivingEntity) entity).read(updateClientPacket.icc);
-                }
+                DistExecutor.unsafeRunWhenOn(Dist.CLIENT, () -> () -> {
+                    ClientWorld world = Minecraft.getInstance().world;
+                    if (world != null) {
+                        Entity entity = world.getEntityByID(updateClientPacket.e);
+                        if (entity instanceof LivingEntity) CombatData.getCap((LivingEntity) entity).read(updateClientPacket.icc);
+                    }
+                });
+
             });
             contextSupplier.get().setPacketHandled(true);
         }

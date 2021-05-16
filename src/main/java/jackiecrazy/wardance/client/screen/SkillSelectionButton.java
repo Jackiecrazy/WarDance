@@ -60,6 +60,7 @@ public abstract class SkillSelectionButton extends ImageButton {
 
     boolean isValidSelection() {
         Skill s = getParentSelection();
+        if (s == null) return false;
         if (s.isPassive(Minecraft.getInstance().player) != isPassive) return false;
         if (!parent.isValidInsertion(s))
             return false;

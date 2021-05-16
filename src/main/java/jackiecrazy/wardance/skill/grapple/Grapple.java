@@ -5,6 +5,7 @@ import jackiecrazy.wardance.capability.resources.ICombatCapability;
 import jackiecrazy.wardance.skill.Skill;
 import jackiecrazy.wardance.skill.SkillData;
 import jackiecrazy.wardance.skill.WarSkills;
+import jackiecrazy.wardance.utils.CombatUtils;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.tags.Tag;
 import net.minecraftforge.event.entity.living.LivingAttackEvent;
@@ -52,7 +53,7 @@ public class Grapple extends Skill {
 
     @Override
     public void onSuccessfulProc(LivingEntity caster, SkillData stats, LivingEntity target, Event procPoint) {
-        if (procPoint instanceof LivingAttackEvent && caster.getHeldItemMainhand().isEmpty()) {
+        if (procPoint instanceof LivingAttackEvent && CombatUtils.isUnarmed(caster.getHeldItemMainhand(), caster)) {
             if (stats.isCondition() && caster.getLastAttackedEntity() == target) {
                 performEffect(caster, target);
                 markUsed(caster);

@@ -6,7 +6,7 @@
   "mixins": [
     "MixinAttackSpeed",
     "MixinNewSweepAttack",
-    "MixinOffhandAttack",
+    "MixinPlayerEntity",
     "MixinSoundAlert",
     "MixinSweepDurabilitySuppressor"
   ],

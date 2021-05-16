@@ -25,12 +25,12 @@ public class Overpower extends IronGuard {
             if (!CasterData.getCap(((ParryEvent) procPoint).getAttacker()).isSkillActive(WarSkills.HEAVY_BLOW.get())) {
                 ((ParryEvent) procPoint).setPostureConsumption(0);
                 CombatData.getCap(((ParryEvent) procPoint).getAttacker()).consumePosture(((ParryEvent) procPoint).getPostureConsumption());
-                CombatData.getCap(((ParryEvent) procPoint).getAttacker()).consumePosture(CombatUtils.getPostureAtk(caster, ((ParryEvent) procPoint).getDefendingHand(), ((ParryEvent) procPoint).getPostureConsumption(), ((ParryEvent) procPoint).getDefendingStack()));
+                CombatData.getCap(((ParryEvent) procPoint).getAttacker()).consumePosture(CombatUtils.getPostureAtk(caster, target, ((ParryEvent) procPoint).getDefendingHand(), ((ParryEvent) procPoint).getPostureConsumption(), ((ParryEvent) procPoint).getDefendingStack()));
             }
             markUsed(caster);
         }
         if (procPoint instanceof ProjectileParryEvent) {
-            float extra = CombatUtils.getPostureAtk(caster, ((ProjectileParryEvent) procPoint).getDefendingHand(), ((ProjectileParryEvent) procPoint).getPostureConsumption(), ((ProjectileParryEvent) procPoint).getDefendingStack());
+            float extra = CombatUtils.getPostureAtk(caster, target, ((ProjectileParryEvent) procPoint).getDefendingHand(), ((ProjectileParryEvent) procPoint).getPostureConsumption(), ((ProjectileParryEvent) procPoint).getDefendingStack());
             ((ProjectileParryEvent) procPoint).setReturnVec(((ProjectileParryEvent) procPoint).getProjectile().getMotion().inverse().scale(extra));
             ((ProjectileParryEvent) procPoint).setPostureConsumption(0);
         }

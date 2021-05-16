@@ -1,4 +1,4 @@
-package jackiecrazy.wardance.api;
+package jackiecrazy.wardance.capability.item;
 
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.LivingEntity;
@@ -6,7 +6,8 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.util.DamageSource;
 import net.minecraftforge.eventbus.api.Event;
 
-public interface ICombatManipulator {
+public interface ICombatItemCapability {
+
     /**
      * dictates the angle of the sweep area. Vanilla is 1 block flat range, PWD default is (+40 for every level of sweeping edge)
      */
@@ -38,43 +39,50 @@ public interface ICombatManipulator {
     float damageMultiplier(LivingEntity attacker, LivingEntity target, ItemStack item);
 
     /**
-     * this is called on AttackKnockbackEvent
+     * this is called on MeleeKnockbackEvent
+     *
      * @return a new knockback if necessary
      */
     float onKnockingBack(LivingEntity attacker, LivingEntity target, ItemStack item, float orig);
 
     /**
-     * this is called on AttackKnockbackEvent
+     * this is called on MeleeKnockbackEvent
+     *
      * @return a new knockback if necessary
      */
     float onBeingKnockedBack(LivingEntity attacker, LivingEntity target, ItemStack item, float orig);
 
     /**
      * this is called on LivingHurtEvent, before armor reductions
+     *
      * @return a new damage if necessary
      */
     float hurtStart(DamageSource ds, LivingEntity attacker, LivingEntity target, ItemStack item, float orig);
 
     /**
      * this is called on LivingDamageEvent, after armor, absorption, and all other reductions
+     *
      * @return a new damage if necessary
      */
     float damageStart(DamageSource ds, LivingEntity attacker, LivingEntity target, ItemStack item, float orig);
 
     /**
      * this is called on LivingHurtEvent to apply armor down for the particular attack only
+     *
      * @return how much armor to ignore
      */
     int armorIgnoreAmount(DamageSource ds, LivingEntity attacker, LivingEntity target, ItemStack item, float orig);
 
     /**
      * this is called on LivingHurtEvent, after hurtStart, but before downed damage multipliers have been applied
+     *
      * @return a new damage if necessary
      */
     float onBeingHurt(DamageSource ds, LivingEntity defender, ItemStack item, float amount);
 
     /**
      * this is called on LivingDamageEvent, after damageStart
+     *
      * @return a new damage if necessary
      */
     float onBeingDamaged(DamageSource ds, LivingEntity defender, ItemStack item, float amount);

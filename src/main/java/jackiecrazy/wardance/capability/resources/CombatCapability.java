@@ -21,7 +21,6 @@ import net.minecraft.util.Hand;
 import net.minecraft.util.SoundCategory;
 import net.minecraft.util.SoundEvents;
 import net.minecraft.util.math.MathHelper;
-import net.minecraft.util.math.vector.Vector3d;
 import net.minecraftforge.common.util.FakePlayer;
 import net.minecraftforge.fml.network.PacketDistributor;
 import net.minecraftforge.registries.ForgeRegistries;
@@ -49,10 +48,18 @@ public class CombatCapability implements ICombatCapability {
     private long lastUpdate;
     private boolean first;
     private float cache;//no need to save this because it'll be used within the span of a tick
+    private boolean isFirst;
+    private int recoveryTimer;
 
     public CombatCapability(LivingEntity e) {
         dude = new WeakReference<>(e);
         setTrueMaxSpirit(10);
+    }
+
+    private static float getMPos(LivingEntity elb) {
+        if (GeneralUtils.getResourceLocationFromEntity(elb) != null && CombatUtils.customPosture.containsKey(GeneralUtils.getResourceLocationFromEntity(elb)))
+            return CombatUtils.customPosture.get(GeneralUtils.getResourceLocationFromEntity(elb));
+        return (float) (Math.ceil(10 / 1.09 * elb.getWidth() * elb.getHeight()) + elb.getTotalArmorValue() / 2d);
     }
 
     @Override
@@ -165,8 +172,6 @@ public class CombatCapability implements ICombatCapability {
         return overflow;
     }
 
-    private boolean isFirst;
-
     @Override
     public boolean isFirstStaggerStrike() {
         return isFirst;
@@ -174,7 +179,7 @@ public class CombatCapability implements ICombatCapability {
 
     @Override
     public void setFirstStagger(boolean yes) {
-        isFirst=yes;
+        isFirst = yes;
     }
 
     @Override
@@ -203,13 +208,17 @@ public class CombatCapability implements ICombatCapability {
             return -1f;
         }
         float weakness = 1;
-        if (elb != null && elb.isPotionActive(Effects.HUNGER)) {
-            for (int uwu = 0; uwu < elb.getActivePotionEffect(Effects.HUNGER).getAmplifier() + 1; uwu++)
-                weakness *= CombatConfig.hunger;
+        float cooldown = CombatConfig.postureCD * weakness;
+        if (elb != null) {
+            cooldown += CombatConfig.armorPostureCD * elb.getTotalArmorValue() / 20f;
+            if (elb.isPotionActive(Effects.HUNGER))
+                for (int uwu = 0; uwu < elb.getActivePotionEffect(Effects.HUNGER).getAmplifier() + 1; uwu++)
+                    weakness *= CombatConfig.hunger;
         }
         posture -= amount;
         addFatigue(amount * CombatConfig.fatigue);
-        setPostureGrace((int) (CombatConfig.postureCD * weakness));
+        setPostureGrace((int) cooldown);
+        recoveryTimer = (int) (cooldown * 1.5f) + CombatConfig.recovery;
         sync();
         return ret;
     }
@@ -234,7 +243,6 @@ public class CombatCapability implements ICombatCapability {
         }
         return 0;
     }
-
 
     @Override
     public float getCombo() {
@@ -311,7 +319,6 @@ public class CombatCapability implements ICombatCapability {
         return 0;
     }
 
-
     @Override
     public int getStaggerTime() {
         return staggert;
@@ -348,7 +355,6 @@ public class CombatCapability implements ICombatCapability {
         return 0;
     }
 
-
     @Override
     public int getStaggerCount() {
         return staggerc;
@@ -364,12 +370,11 @@ public class CombatCapability implements ICombatCapability {
         if (staggerc - amount > 0)
             staggerc -= amount;
         else {
-            setPosture(getMaxPosture());
             setStaggerTime(0);
+            setPosture(getMaxPosture());
             staggerc = 0;
         }
     }
-
 
     @Override
     public int getShieldTime() {
@@ -406,7 +411,6 @@ public class CombatCapability implements ICombatCapability {
         sc -= Math.min(sc, amount);
     }
 
-
     @Override
     public int getOffhandCooldown() {
         return ocd;
@@ -441,12 +445,11 @@ public class CombatCapability implements ICombatCapability {
         else {
             if (roll < 0 && dude.get() instanceof PlayerEntity) {
                 PlayerEntity p = (PlayerEntity) dude.get();
-                //p.setForcedPose(null);
+                p.setForcedPose(null);
             }
             roll = 0;
         }
     }
-
 
     @Override
     public boolean isOffhandAttack() {
@@ -630,10 +633,11 @@ public class CombatCapability implements ICombatCapability {
         if (elb == null) return;
         int ticks = (int) (elb.world.getGameTime() - lastUpdate);
         if (ticks < 1) return;//sometimes time runs backwards
-        setTrueMaxPosture((float) (Math.ceil(10 / 1.09 * elb.getWidth() * elb.getHeight()) + elb.getTotalArmorValue() / 2d));
+        setTrueMaxPosture(getMPos(elb));
         if (first)
             setPosture(getMaxPosture());
         decrementComboGrace(ticks);
+        recoveryTimer -= ticks;
         int qiExtra = decrementMightGrace(ticks);
         int spExtra = decrementSpiritGrace(ticks);
         int poExtra = decrementPostureGrace(ticks);
@@ -651,13 +655,13 @@ public class CombatCapability implements ICombatCapability {
         int shcd = decrementShatterCooldown(ticks);
         //check max posture, max spirit, decrement bind and offhand cooldown
         if (getPostureGrace() == 0 && getStaggerTime() == 0 && getPosture() < getMaxPosture()) {
-            addPosture(getPPS() * (poExtra));
+            addPosture(getPPT() * (poExtra));
         }
         if (shcd != 0) {
             setShatter((float) GeneralUtils.getAttributeValueSafe(elb, WarAttributes.SHATTER.get()));
         }
         if (getSpiritGrace() == 0 && getStaggerTime() == 0 && getSpirit() < getMaxSpirit()) {
-            addSpirit(getPPS() * spExtra);
+            addSpirit(getPPT() * spExtra);
         }
         if (getMightGrace() == 0) {
             float over = qiExtra * 0.01f;
@@ -726,6 +730,7 @@ public class CombatCapability implements ICombatCapability {
         setShatterCooldown(c.getInt("shattercd"));
         setForcedSweep(c.getInt("sweep"));
         setShatter(c.getFloat("shatter"));
+        recoveryTimer = c.getInt("stumble");
         lastUpdate = c.getLong("lastUpdate");
         first = c.getBoolean("first");
         if (dude.get() instanceof PlayerEntity) {
@@ -771,12 +776,13 @@ public class CombatCapability implements ICombatCapability {
         c.putBoolean("first", first);
         c.putInt("shattercd", getShatterCooldown());
         c.putInt("sweep", getForcedSweep());
+        c.putInt("stumble", recoveryTimer);
         c.putFloat("shatter", getShatter());
         c.putBoolean("rolling", dude.get() instanceof PlayerEntity && ((PlayerEntity) dude.get()).getForcedPose() == Pose.SWIMMING);
         return c;
     }
 
-    private float getPPS() {
+    private float getPPT() {
         LivingEntity elb = dude.get();
         if (elb == null) return 0;
         float nausea = elb instanceof PlayerEntity || !elb.isPotionActive(Effects.NAUSEA) ? 0 : (elb.getActivePotionEffect(Effects.NAUSEA).getAmplifier() + 1) * CombatConfig.nausea;
@@ -786,14 +792,19 @@ public class CombatCapability implements ICombatCapability {
             poison *= CombatConfig.poison;
         }
         float exhaustMod = Math.max(0, elb.isPotionActive(WarEffects.EXHAUSTION.get()) ? 1 - elb.getActivePotionEffect(WarEffects.EXHAUSTION.get()).getAmplifier() * 0.2f : 1);
-        float armorMod = 1;// Math.max(1f - ((float) elb.getTotalArmorValue() / 40f), 0);
-        float healthMod = elb.getHealth() / elb.getMaxHealth();
-        Vector3d spd = elb.getMotion();
-        float speedMod = (float) Math.min(1, 0.007f / (spd.x * spd.x + spd.z * spd.z));
+        float armorMod = 2.5f + Math.min(elb.getTotalArmorValue(), 20) * 0.125f;
+        float cooldownMod = Math.min(CombatUtils.getCooledAttackStrength(elb, Hand.MAIN_HAND, 0.5f), CombatUtils.getCooledAttackStrength(elb, Hand.MAIN_HAND, 0.5f));
+        float healthMod = 0.25f + elb.getHealth() / elb.getMaxHealth() * 0.75f;
+        float recovery = 0;
+        if (recoveryTimer <= CombatConfig.recovery && recoveryTimer > 0 && posture < getMaxPosture() * CombatConfig.posCap) {
+            recovery = (getMaxPosture() * CombatConfig.posCap) / CombatConfig.recovery;
+        }
+        //Vector3d spd = elb.getMotion();
+        //float speedMod = (float) Math.min(1, 0.007f / (spd.x * spd.x + spd.z * spd.z));
 //        if (getStaggerTime() > 0) {
 //            return getMaxPosture() * armorMod * speedMod * healthMod / (1.5f * CombatConfig.staggerDuration);
 //        }
         //0.2f
-        return ((getTrueMaxPosture() - elb.getTotalArmorValue() / 2f) / 60f * exhaustMod * armorMod * healthMod * speedMod * poison) - nausea;
+        return (((getTrueMaxPosture() / (armorMod * 20)) * cooldownMod) + recovery) * exhaustMod * healthMod * poison - nausea;
     }
 }

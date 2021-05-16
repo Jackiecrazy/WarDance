@@ -3,6 +3,8 @@ package jackiecrazy.wardance.networking;
 import net.minecraft.client.Minecraft;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.network.PacketBuffer;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.fml.DistExecutor;
 import net.minecraftforge.fml.network.NetworkEvent;
 
 import java.util.function.BiConsumer;
@@ -40,8 +42,10 @@ public class UpdateAttackPacket {
         @Override
         public void accept(UpdateAttackPacket updateClientPacket, Supplier<NetworkEvent.Context> contextSupplier) {
             contextSupplier.get().enqueueWork(() -> {
-                if (Minecraft.getInstance().world != null && Minecraft.getInstance().world.getEntityByID(updateClientPacket.e) instanceof LivingEntity)
-                    ((LivingEntity) (Minecraft.getInstance().world.getEntityByID(updateClientPacket.e))).ticksSinceLastSwing = updateClientPacket.icc;
+                DistExecutor.unsafeRunWhenOn(Dist.CLIENT, () -> () -> {
+                    if (Minecraft.getInstance().world != null && Minecraft.getInstance().world.getEntityByID(updateClientPacket.e) instanceof LivingEntity)
+                        ((LivingEntity) (Minecraft.getInstance().world.getEntityByID(updateClientPacket.e))).ticksSinceLastSwing = updateClientPacket.icc;
+                });
             });
             contextSupplier.get().setPacketHandled(true);
         }

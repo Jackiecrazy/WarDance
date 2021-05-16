@@ -2,8 +2,8 @@ package jackiecrazy.wardance.utils;
 
 import jackiecrazy.wardance.WarDance;
 import jackiecrazy.wardance.api.CombatDamageSource;
-import jackiecrazy.wardance.api.ICombatManipulator;
 import jackiecrazy.wardance.api.WarAttributes;
+import jackiecrazy.wardance.capability.item.CombatManipulator;
 import jackiecrazy.wardance.capability.resources.CombatData;
 import jackiecrazy.wardance.capability.resources.ICombatCapability;
 import jackiecrazy.wardance.capability.skill.CasterData;
@@ -18,7 +18,6 @@ import net.minecraft.enchantment.Enchantments;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.MobEntity;
-import net.minecraft.entity.ai.attributes.Attribute;
 import net.minecraft.entity.ai.attributes.AttributeModifier;
 import net.minecraft.entity.ai.attributes.Attributes;
 import net.minecraft.entity.player.PlayerEntity;
@@ -41,18 +40,21 @@ import javax.annotation.Nullable;
 import java.util.*;
 
 public class CombatUtils {
-    public static HashMap<String, Float> customPosture = new HashMap<>();
+    public static HashMap<ResourceLocation, Float> customPosture = new HashMap<>();
+    public static HashMap<ResourceLocation, Tuple<Float, Float>> parryMap = new HashMap<>();
     public static HashMap<Item, AttributeModifier[]> armorStats = new HashMap<>();
     public static boolean isSweeping = false;
     private static CombatInfo DEFAULT = new CombatInfo(1, 1, false, 0, 0, 1, 1);
     private static HashMap<Item, CombatInfo> combatList = new HashMap<>();
-    private static ArrayList<Attribute> attributes = new ArrayList<>();
+    private static ArrayList<Item> unarmed = new ArrayList<>();
 
-    public static void updateLists(List<? extends String> interpretC, List<? extends String> interpretP, List<? extends String> interpretA) {
+    public static void updateLists(List<? extends String> interpretC, List<? extends String> interpretP, List<? extends String> interpretA, List<? extends String> interpretM, List<? extends String> interpretU) {
         DEFAULT = new CombatInfo(CombatConfig.defaultMultiplierPostureAttack, CombatConfig.defaultMultiplierPostureDefend, false, CombatConfig.shieldThreshold, CombatConfig.shieldCount, CombatConfig.distract, CombatConfig.unaware);
         combatList = new HashMap<>();
         customPosture = new HashMap<>();
         armorStats = new HashMap<>();
+        parryMap = new HashMap<>();
+        unarmed = new ArrayList<>();
         for (String s : interpretC) {
             String[] val = s.split(",");
             String name = val[0];
@@ -126,13 +128,33 @@ public class CombatUtils {
                 });
             }
         }
+        for (String name : interpretU) {
+            ResourceLocation key = null;
+            try {
+                key = new ResourceLocation(name);
+            } catch (Exception e) {
+                WarDance.LOGGER.warn(name + " is not a proper item name, it will not be registered.");
+            }
+            if (ForgeRegistries.ITEMS.containsKey(key)) {
+                unarmed.add(ForgeRegistries.ITEMS.getValue(key));
+            }
+        }
         for (String s : interpretP) {
             try {
                 String[] val = s.split(",");
-                CombatUtils.customPosture.put(val[0], Float.parseFloat(val[1]));
+                CombatUtils.customPosture.put(new ResourceLocation(val[0]), Float.parseFloat(val[1]));
 
             } catch (Exception e) {
                 WarDance.LOGGER.warn("improperly formatted custom posture definition " + s + "!");
+            }
+        }
+        for (String s : interpretM) {
+            try {
+                String[] val = s.split(",");
+                CombatUtils.parryMap.put(new ResourceLocation(val[0]), new Tuple<>(Float.parseFloat(val[1]), Float.parseFloat(val[2])));
+
+            } catch (Exception e) {
+                WarDance.LOGGER.warn("improperly formatted mob parrying definition " + s + "!");
             }
         }
         DistExecutor.safeRunWhenOn(Dist.CLIENT, () -> {
@@ -168,51 +190,24 @@ public class CombatUtils {
         return combatList.containsKey(stack.getItem()) && !combatList.getOrDefault(stack.getItem(), DEFAULT).isShield;//stack.getItem() instanceof SwordItem || stack.getItem() instanceof AxeItem;
     }
 
-    @Nullable
-    public static ItemStack getDefendingItemStack(LivingEntity e, boolean shieldsOnly) {
-        ItemStack ret = null;
-        float posMod = 1337;
-        float rand = WarDance.rand.nextFloat();
-        boolean canShield = (e instanceof PlayerEntity || rand < CombatConfig.mobParryChanceShield);
-        boolean canWeapon = (e instanceof PlayerEntity || rand < CombatConfig.mobParryChanceWeapon);
-        boolean mainRec = getCooledAttackStrength(e, Hand.MAIN_HAND, 0.5f) > 0.9f && CombatData.getCap(e).getHandBind(Hand.MAIN_HAND) == 0;
-        boolean offRec = getCooledAttackStrength(e, Hand.OFF_HAND, 0.5f) > 0.9f && CombatData.getCap(e).getHandBind(Hand.OFF_HAND) == 0;
-        if (offRec && canShield && isShield(e, e.getHeldItemOffhand()) && (!(e instanceof PlayerEntity) || ((PlayerEntity) e).getCooldownTracker().getCooldown(e.getHeldItemOffhand().getItem(), 0) == 0)) {
-            ret = e.getHeldItemOffhand();
-            posMod = getPostureDef(e, e.getHeldItemOffhand());
-        }
-        if (mainRec && canShield && isShield(e, e.getHeldItemMainhand()) && (!(e instanceof PlayerEntity) || ((PlayerEntity) e).getCooldownTracker().getCooldown(e.getHeldItemMainhand().getItem(), 0) == 0)) {
-            if (ret == null || getPostureDef(e, e.getHeldItemMainhand()) < posMod) {
-                posMod = getPostureDef(e, e.getHeldItemMainhand());
-                ret = e.getHeldItemMainhand();
-            }
-        }
-        if (shieldsOnly) return ret;
-        if (offRec && canWeapon && isWeapon(e, e.getHeldItemOffhand())) {
-            if (ret == null || getPostureDef(e, e.getHeldItemMainhand()) < posMod) {
-                posMod = getPostureDef(e, e.getHeldItemOffhand());
-                ret = e.getHeldItemMainhand();
-            }
-        }
-        if (mainRec && canWeapon && isWeapon(e, e.getHeldItemMainhand())) {
-            if (ret == null || getPostureDef(e, e.getHeldItemMainhand()) < posMod) {
-                ret = e.getHeldItemMainhand();
-            }
-        }
-        return ret;
+    public static boolean isUnarmed(ItemStack is, LivingEntity e) {
+        return is.isEmpty() || unarmed.contains(is.getItem());
     }
 
-    public static boolean canParry(LivingEntity e, @Nonnull ItemStack i) {
-        Hand h = e.getHeldItemOffhand() == i ? Hand.OFF_HAND : Hand.MAIN_HAND;
+    public static boolean canParry(LivingEntity defender, Entity attacker, @Nonnull ItemStack i, float damage) {
+        Hand h = defender.getHeldItemOffhand() == i ? Hand.OFF_HAND : Hand.MAIN_HAND;
         float rand = WarDance.rand.nextFloat();
-        boolean recharge = getCooledAttackStrength(e, h, 0.5f) > 0.9f && CombatData.getCap(e).getHandBind(h) == 0;
-        recharge &= (!(e instanceof PlayerEntity) || ((PlayerEntity) e).getCooldownTracker().getCooldown(e.getHeldItemOffhand().getItem(), 0) == 0);
-        if (isShield(e, i)) {
-            boolean canShield = (e instanceof PlayerEntity || rand < CombatConfig.mobParryChanceShield);
-            boolean canParry = CombatData.getCap(e).getShieldTime() == 0 || CombatData.getCap(e).getShieldCount() > 0;
+        boolean recharge = getCooledAttackStrength(defender, h, 0.5f) > 0.9f && CombatData.getCap(defender).getHandBind(h) == 0;
+        recharge &= (!(defender instanceof PlayerEntity) || ((PlayerEntity) defender).getCooldownTracker().getCooldown(defender.getHeldItemOffhand().getItem(), 0) == 0);
+        if (defender.getHeldItemMainhand().getCapability(CombatManipulator.CAP).isPresent() && attacker instanceof LivingEntity) {
+            return defender.getHeldItemMainhand().getCapability(CombatManipulator.CAP).resolve().get().canBlock(defender, attacker, i, recharge, damage);
+        }
+        if (isShield(defender, i)) {
+            boolean canShield = (defender instanceof PlayerEntity || rand < CombatConfig.mobParryChanceShield);
+            boolean canParry = CombatData.getCap(defender).getShieldTime() == 0 || CombatData.getCap(defender).getShieldCount() > 0;
             return recharge & canParry & canShield;
-        } else if (isWeapon(e, i)) {
-            boolean canWeapon = (e instanceof PlayerEntity || rand < CombatConfig.mobParryChanceWeapon);
+        } else if (isWeapon(defender, i)) {
+            boolean canWeapon = (defender instanceof PlayerEntity || rand < CombatConfig.mobParryChanceWeapon);
             return recharge & canWeapon;
         } else return false;
     }
@@ -238,21 +233,28 @@ public class CombatUtils {
         return new Tuple<>(CombatConfig.shieldThreshold, CombatConfig.shieldCount);
     }
 
-    public static float getPostureAtk(@Nullable LivingEntity e, @Nullable Hand h, float amount, ItemStack stack) {
+    public static float getPostureAtk(@Nullable LivingEntity attacker, @Nullable LivingEntity defender, @Nullable Hand h, float amount, ItemStack stack) {
         float base = amount * (float) DEFAULT.attackPostureMultiplier;
-        if (stack != null && combatList.containsKey(stack.getItem())) {
-            base = (float) combatList.get(stack.getItem()).attackPostureMultiplier;
+        if (stack != null) {
+            if (stack.getCapability(CombatManipulator.CAP).isPresent()) {
+                base = stack.getCapability(CombatManipulator.CAP).resolve().get().postureDealtBase(attacker, defender, stack, amount);
+            } else if (combatList.containsKey(stack.getItem()))
+                base = (float) combatList.get(stack.getItem()).attackPostureMultiplier;
+
         } else if (stack == null || stack.isEmpty()) {
             base *= CombatConfig.kenshiroScaler;
         }
-        if (e == null || h == null) return base;
-        return base * (e instanceof PlayerEntity ? Math.max(CombatData.getCap(e).getCachedCooldown(), ((PlayerEntity) e).getCooledAttackStrength(0.5f)) : CombatConfig.mobScaler);
+        if (attacker == null || h == null) return base;
+        return base * (attacker instanceof PlayerEntity ? Math.max(CombatData.getCap(attacker).getCachedCooldown(), ((PlayerEntity) attacker).getCooledAttackStrength(0.5f)) : CombatConfig.mobScaler);
     }
 
-    public static float getPostureDef(@Nullable LivingEntity e, ItemStack stack) {
+    public static float getPostureDef(@Nullable LivingEntity attacker, @Nullable LivingEntity defender, ItemStack stack, float amount) {
         if (stack == null) return (float) DEFAULT.defensePostureMultiplier;
-        if (e != null && isShield(e, stack) && CombatData.getCap(e).getShieldTime() > 0 && CombatData.getCap(e).getShieldCount() > 0) {
+        if (defender != null && isShield(defender, stack) && CombatData.getCap(defender).getShieldTime() > 0 && CombatData.getCap(defender).getShieldCount() > 0) {
             return 0;
+        }
+        if (stack.getCapability(CombatManipulator.CAP).isPresent()) {
+            return stack.getCapability(CombatManipulator.CAP).resolve().get().postureMultiplierDefend(attacker, defender, stack, amount);
         }
         if (combatList.containsKey(stack.getItem())) {
             return (float) combatList.get(stack.getItem()).defensePostureMultiplier;
@@ -405,8 +407,8 @@ public class CombatUtils {
             CombatData.getCap(e).setOffhandAttack(true);
         }
         int angle = CombatData.getCap(e).getForcedSweep() > 0 ? CombatData.getCap(e).getForcedSweep() : EnchantmentHelper.getMaxEnchantmentLevel(Enchantments.SWEEPING, e) * CombatConfig.sweepAngle;
-        if (e.getHeldItemMainhand().getItem() instanceof ICombatManipulator)
-            angle = ((ICombatManipulator) e.getHeldItemMainhand().getItem()).sweepArea(e, e.getHeldItemMainhand());
+        if (e.getHeldItemMainhand().getCapability(CombatManipulator.CAP).isPresent())
+            angle = e.getHeldItemMainhand().getCapability(CombatManipulator.CAP).resolve().get().sweepArea(e, e.getHeldItemMainhand());
         float charge = Math.max(CombatUtils.getCooledAttackStrength(e, Hand.MAIN_HAND, 0.5f), CombatData.getCap(e).getCachedCooldown());
         boolean hit = false;
         isSweeping = ignore != null;

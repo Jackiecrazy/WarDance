@@ -2,6 +2,7 @@ package jackiecrazy.wardance.mixin;
 
 import jackiecrazy.wardance.api.CombatDamageSource;
 import jackiecrazy.wardance.capability.resources.CombatData;
+import jackiecrazy.wardance.capability.skill.CasterData;
 import jackiecrazy.wardance.config.CombatConfig;
 import jackiecrazy.wardance.event.MeleeKnockbackEvent;
 import net.minecraft.entity.Entity;
@@ -23,13 +24,13 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.LocalCapture;
 
 @Mixin(PlayerEntity.class)
-public abstract class MixinOffhandAttack extends LivingEntity {
+public abstract class MixinPlayerEntity extends LivingEntity {
 
     private static boolean tempCrit;
     private static float tempCdmg;
     private static DamageSource ds;
 
-    protected MixinOffhandAttack(EntityType<? extends LivingEntity> type, World worldIn) {
+    protected MixinPlayerEntity(EntityType<? extends LivingEntity> type, World worldIn) {
         super(type, worldIn);
     }
 
@@ -68,6 +69,14 @@ public abstract class MixinOffhandAttack extends LivingEntity {
         targetEntity.hurtResistantTime = 0;
         if (targetEntity instanceof LivingEntity) {
             ((LivingEntity) targetEntity).hurtTime = ((LivingEntity) targetEntity).maxHurtTime = 0;
+        }
+    }
+
+    @Inject(method = "blockUsingShield",
+            at = @At("TAIL"))
+    private void block(LivingEntity entityIn, CallbackInfo ci) {
+        if(CasterData.getCap(entityIn).isTagActive("disableShield")){
+            ((PlayerEntity)(Object)this).disableShield(true);
         }
     }
 
