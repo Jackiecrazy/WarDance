@@ -14,7 +14,7 @@ import java.util.Arrays;
 import java.util.HashSet;
 
 public class Backstab extends HeavyBlow {
-    private final Tag<String> tag = Tag.getTagFromContents(new HashSet<>(Arrays.asList("physical", "disableShield", "beforeArmor", "boundCast", "normalAttack", "onHurt", "modifyCrit", "rechargeWithAttack", "onBeingParried")));
+    private final Tag<String> tag = Tag.getTagFromContents(new HashSet<>(Arrays.asList("physical", "melee", "disableShield", "beforeArmor", "boundCast", "normalAttack", "onHurt", "modifyCrit", "rechargeWithAttack", "onBeingParried")));
 
     @Override
     public Tag<String> getTags(LivingEntity caster) {

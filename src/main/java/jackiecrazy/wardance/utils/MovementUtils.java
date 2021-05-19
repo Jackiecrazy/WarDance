@@ -204,6 +204,7 @@ public class MovementUtils {
         //TODO tweak slide amount to make it fair
         if (elb instanceof PlayerEntity)
             ((PlayerEntity) elb).setForcedPose(Pose.SWIMMING);
+        elb.setSprinting(false);
         elb.setMotion(v.x, 0, v.z);
         elb.velocityChanged = true;
         return true;

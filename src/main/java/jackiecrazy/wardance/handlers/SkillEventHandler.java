@@ -74,7 +74,7 @@ public class SkillEventHandler {
             LivingEntity attacker = (LivingEntity) e.getSource().getTrueSource();
             ISkillCapability isc = CasterData.getCap(attacker);
             for (SkillData s : isc.getActiveSkills().values()) {
-                if (s.getSkill().getTags(attacker).contains(ProcPoint.on_hurt)) {
+                if (s.getSkill().getTags(attacker).contains(ProcPoint.on_hurt)&&!s.getSkill().getTags(attacker).contains(ProcPoint.on_hurt)||CombatUtils.isMeleeAttack(e.getSource())) {
                     s.getSkill().onSuccessfulProc(attacker, s, e.getEntityLiving(), e);
                 }
             }
@@ -88,7 +88,7 @@ public class SkillEventHandler {
             LivingEntity attacker = (LivingEntity) e.getSource().getTrueSource();
             ISkillCapability isc = CasterData.getCap(attacker);
             for (SkillData s : isc.getActiveSkills().values()) {
-                if (s.getSkill().getTags(attacker).contains(ProcPoint.on_damage)) {
+                if (s.getSkill().getTags(attacker).contains(ProcPoint.on_damage)&&!s.getSkill().getTags(attacker).contains(ProcPoint.on_hurt)||CombatUtils.isMeleeAttack(e.getSource())) {
                     s.getSkill().onSuccessfulProc(attacker, s, e.getEntityLiving(), e);
                 }
             }

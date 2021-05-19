@@ -19,7 +19,7 @@ public class ArmLock extends ShieldBash{
         return Color.GREEN;
     }
 
-    private final Tag<String> tag = Tag.getTagFromContents(new HashSet<>(Arrays.asList("physical", "boundCast", "normalAttack", "countdown", ProcPoint.on_parry, ProcPoint.recharge_parry)));
+    private final Tag<String> tag = Tag.getTagFromContents(new HashSet<>(Arrays.asList("physical", "melee", "boundCast", "normalAttack", "countdown", ProcPoint.on_parry, ProcPoint.recharge_parry)));
     private final Tag<String> no = Tag.getTagFromContents(new HashSet<>(Arrays.asList("normalAttack", ProcPoint.on_parry)));
     @Override
     public Tag<String> getTags(LivingEntity caster) {

@@ -12,7 +12,7 @@ import java.util.Arrays;
 import java.util.HashSet;
 
 public class IronKnee extends Kick {
-    private final Tag<String> tag = Tag.getTagFromContents(new HashSet<>(Arrays.asList("physical", "boundCast", "normalAttack", "countdown", "knockback", "rechargeWithAttack")));
+    private final Tag<String> tag = Tag.getTagFromContents(new HashSet<>(Arrays.asList("physical", "melee", "boundCast", "normalAttack", "countdown", "knockback", "rechargeWithAttack")));
 
     @Override
     public Tag<String> getTags(LivingEntity caster) {

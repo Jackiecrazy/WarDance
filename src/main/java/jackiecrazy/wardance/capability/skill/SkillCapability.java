@@ -65,9 +65,7 @@ public class SkillCapability implements ISkillCapability {
 
     @Override
     public void clearActiveSkills() {
-        Iterator<Skill> i = activeSkills.keySet().iterator();
-        while (i.hasNext()) {
-            Skill s=i.next();
+        for (Skill s : new HashSet<>(activeSkills.keySet())) {
             removeActiveSkill(s);
         }
     }

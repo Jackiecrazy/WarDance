@@ -408,10 +408,13 @@ public class ClientEvents {
         float cap = itsc.getMaxPosture();
         int left = atX - 91;
         float posture = itsc.getPosture();
-        float posPerc = MathHelper.clamp(posture / Math.max(0.1f, itsc.getTrueMaxPosture()), 0, 1);
+        final float trueMaxPosture = Float.isFinite(itsc.getTrueMaxPosture()) ? itsc.getTrueMaxPosture() : 1f;
+        float posPerc = posture / Math.max(0.1f, trueMaxPosture);
+        posPerc = Float.isFinite(posPerc) ? posPerc : 0;
+        posPerc = MathHelper.clamp(posPerc, 0, 1);
         if (cap > 0) {
             short barWidth = 182;
-            int filled = (int) (posture / itsc.getTrueMaxPosture() * (float) (barWidth));
+            int filled = (int) (posPerc * (float) (barWidth));
             //int invulTime = (int) ((float) itsc.getPosInvulTime() / (float) CombatConfig.ssptime * (float) (barWidth));
             //base
             mc.ingameGUI.blit(ms, left, atY, 0, 64, barWidth, 5);
@@ -419,7 +422,9 @@ public class ClientEvents {
             //bar on top
             mc.ingameGUI.blit(ms, left, atY, 0, 69, filled, 5);
             //fatigue
-            filled = (int) (itsc.getMaxPosture() / itsc.getTrueMaxPosture() * (float) (barWidth));
+            float fatigue = itsc.getMaxPosture() / trueMaxPosture;
+            fatigue = Float.isFinite(fatigue) ? fatigue : 0;
+            filled = (int) (fatigue * (float) (barWidth));
             RenderSystem.color3f(1, 0.1f, 0.1f);
             mc.ingameGUI.blit(ms, left + filled, atY, filled, 69, barWidth - filled, 5);
             if (itsc.getStaggerTime() > 0) {

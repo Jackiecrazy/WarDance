@@ -11,7 +11,7 @@ import java.util.Arrays;
 import java.util.HashSet;
 
 public class Poise extends HeavyBlow {
-    private final Tag<String> tag = Tag.getTagFromContents(new HashSet<>(Arrays.asList("physical", "boundCast", "disableShield", "normalAttack", "countdown", "onParry", "modifyCrit", "rechargeWithAttack", "onBeingParried")));
+    private final Tag<String> tag = Tag.getTagFromContents(new HashSet<>(Arrays.asList("physical", "boundCast", "disableShield", "melee", "normalAttack", "countdown", "onParry", "modifyCrit", "rechargeWithAttack", "onBeingParried")));
     private final Tag<String> no = Tag.getTagFromContents(new HashSet<>(Arrays.asList("normalAttack", "noCrit", "onParry")));
 
     @Override

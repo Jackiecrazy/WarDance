@@ -443,7 +443,7 @@ public class CombatCapability implements ICombatCapability {
         else if (roll - amount > 0)
             roll -= amount;
         else {
-            if (roll < 0 && dude.get() instanceof PlayerEntity) {
+            if (dude.get() instanceof PlayerEntity) {
                 PlayerEntity p = (PlayerEntity) dude.get();
                 p.setForcedPose(null);
             }

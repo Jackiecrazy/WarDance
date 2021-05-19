@@ -9,6 +9,7 @@ public class ProcPoint {
     public static final String on_parry ="onParry";
     public static final String on_projectile_parry ="onProjectileParry";
     public static final String modify_crit="modifyCrit";
+    public static final String melee="melee";
     public static final String recharge_normal ="rechargeWithAttack";
     public static final String recharge_parry ="rechargeWithParry";
     public static final String recharge_time ="rechargeWithTime";
