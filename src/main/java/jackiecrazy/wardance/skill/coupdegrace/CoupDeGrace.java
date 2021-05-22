@@ -11,7 +11,7 @@ import jackiecrazy.wardance.utils.CombatUtils;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.tags.Tag;
-import net.minecraftforge.event.entity.living.LivingDamageEvent;
+import net.minecraftforge.event.entity.living.LivingHurtEvent;
 import net.minecraftforge.eventbus.api.Event;
 
 import javax.annotation.Nullable;
@@ -74,11 +74,12 @@ public class CoupDeGrace extends Skill {
 
     @Override
     public void onSuccessfulProc(LivingEntity caster, SkillData stats, LivingEntity target, Event procPoint) {
-        if (procPoint instanceof LivingDamageEvent) {
-            LivingDamageEvent e = (LivingDamageEvent) procPoint;
+        if (procPoint instanceof LivingHurtEvent) {
+            LivingHurtEvent e = (LivingHurtEvent) procPoint;
             if (CombatUtils.getAttackingItemStack(e.getSource()) == null || CombatUtils.getAttackingItemStack(e.getSource()).isEmpty() || CombatUtils.isWeapon(caster, CombatUtils.getAttackingItemStack(e.getSource())))
                 if (isValid(e)) {
                     e.setAmount(e.getAmount() + (float) CoupDeGrace.getLife(target));
+                    e.getSource().setDamageBypassesArmor();
                     CombatData.getCap(target).decrementStaggerTime(CombatData.getCap(target).getStaggerTime());
                     if (e.getAmount() > target.getHealth()) {
                         uponDeath(caster, target, e.getAmount());
@@ -87,7 +88,7 @@ public class CoupDeGrace extends Skill {
         }
     }
 
-    protected boolean isValid(LivingDamageEvent e) {
+    protected boolean isValid(LivingHurtEvent e) {
         return CombatData.getCap(e.getEntityLiving()).getStaggerTime() > 0 && !CombatData.getCap(e.getEntityLiving()).isFirstStaggerStrike();
     }
 
@@ -97,7 +98,7 @@ public class CoupDeGrace extends Skill {
             return Color.LIGHT_GRAY;
         }
 
-        protected boolean isValid(LivingDamageEvent e) {
+        protected boolean isValid(LivingHurtEvent e) {
             if (e.getSource().getTrueSource() instanceof LivingEntity && CombatUtils.getAwareness((LivingEntity) e.getSource().getTrueSource(), e.getEntityLiving()) == CombatUtils.AWARENESS.UNAWARE)
                 return true;
             return super.isValid(e);

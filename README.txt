@@ -102,7 +102,7 @@ Backflip: jump back and gain 30% lost posture
 Tackle: range+2 and dash forward
 Iron knee: knockback converted to extra posture damage
 Trip: double posture cooldown period, only usable on ground, cooldown -1
-Low sweep: hits enemies in a 30 degree area
+Low sweep: hits enemies in a 60 degree area
 ▪ Grapple: deal 10 posture damage by attacking a single enemy within 2 blocks twice uninterrupted within 3 seconds. Recharge in 7 attacks, weapon bound, fists and hand weapons only.
 Clinch: bind hand used to attack on first strike, or both if you're completely unarmed
 Reversal: exchanges posture by percentage instead
@@ -115,7 +115,7 @@ Foot slam: additionally inflicts slowness and distracts enemy
 Arm lock: parrying with bash active disables attacking hand, cooldown+1
 Berserk: recharge other hand and gain brief attack speed buff on cast and after attack
 Overbear: base damage increased by shield time*2 and posture damage doubled, slow self briefly if enemy isn't staggered by hit
-▪ Coup de grace: mobs have a life count depending on their max health, formula pending. Deal one life's worth of true damage to a staggered target. If this is the killing blow, gain 1 might. Weapon bound, auto proc.
+▪ Coup de grace: mobs have a life count depending on their max health. After hitting a target with at least 1 skill, reveal its weak spot (direction). Attacking in its weak spot will deal one life's worth of true damage to a staggered target. If this is the killing blow, gain 1 might.
 Frenzy: other physical skills refreshed on kill
 Eviscerate: mass fear on kill
 Reaping: weaker AoE that refreshes if it kills an enemy
@@ -133,9 +133,6 @@ Hamstring: slow target by 40% for 2 seconds
 Vengeance: ricochet up to 5 times between enemies
 Trap: only fires when someone crosses its LoS in 10 blocks
 ▪ Fighting spirit: passive available until active cast ends, then can only be recharged by sleeping or after 5 minutes have elapsed. Genies from some game.
-Name
- Active
- Passive
 Boulder Brace
  Refill posture and regen unconditionally for 10 seconds
  Halved posture cooldown time
@@ -143,11 +140,11 @@ Wind Scar
  Gain 20 charges and infinite range, every extra block reach consumes a charge
  +1 range
 Winter Wolf
- Stop projectiles and maintain passive for 15 seconds, attacks additionally fatigue target
- Speed slowly increases to +40% until attack, slow target equivalently
+ Attacks on a slowed target freeze them, adding 3 armor. Frozen enemies are unaware and shatter when hit, sending out clouds of ice that block LoS and reset aggression.
+ Speed increases to +40% over 5 seconds, consumed to slow target equivalently
 Flame Dance
- Every third hit deals extra damage and give you a free parry (independent of iron guard) for 15 seconds
- +10% attack speed for every bar of combo acquired
+ Hex an enemy with flame on every attack. On fourth application, create a fiery explosion that further marks enemies
+ +5% attack speed for every level of combo gained
 Timberfall
- Guarantee crit and add 2+10% damage for 6 hits
- 30% of attack damage added to posture
+ Activate for (might*2) seconds and clear might. Attacks during this time have guaranteed crit and slow target. When time is over, release a shockwave with size equal to might, and clear it again.
+ 40% of might added to posture damage

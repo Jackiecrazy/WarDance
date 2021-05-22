@@ -56,7 +56,7 @@ public class SkillCapability implements ISkillCapability {
         lastCast.add(s);
         while (lastCast.size() > 5)
             lastCast.remove();
-        activeSkills.remove(s);
+        markSkillUsed(s);
     }
 
     @Override
@@ -128,10 +128,13 @@ public class SkillCapability implements ISkillCapability {
 
     @Override
     public void coolSkill(Skill s) {
-        s.onCooledDown(dude.get(), coolingSkills.remove(s).getDuration());
-        LivingEntity caster = dude.get();
-        if (caster instanceof ServerPlayerEntity)
-            CombatChannel.INSTANCE.send(PacketDistributor.PLAYER.with(() -> (ServerPlayerEntity) caster), new SyncSkillPacket(this.write()));
+        if(coolingSkills.containsKey(s)) {
+            s.onCooledDown(dude.get(), coolingSkills.get(s).getDuration());
+//        LivingEntity caster = dude.get();
+//        if (caster instanceof ServerPlayerEntity)
+//            CombatChannel.INSTANCE.send(PacketDistributor.PLAYER.with(() -> (ServerPlayerEntity) caster), new SyncSkillPacket(this.write()));
+            coolingSkills.get(s).setDuration(-1);
+        }
         //todo skill cooldown hud
     }
 
@@ -256,14 +259,16 @@ public class SkillCapability implements ISkillCapability {
             }
         }
         HashSet<Skill> finish = new HashSet<>();
-        for (Map.Entry<Skill, SkillData> cd : getActiveSkills().entrySet()) {
-            if (cd.getValue().getDuration() < 0) {
-                finish.add(cd.getKey());
+        for (SkillData cd : getActiveSkills().values()) {
+            if (cd.getDuration() < 0) {
+                finish.add(cd.getSkill());
                 sync = true;
             }
         }
-        for (Skill s : finish)
+        for (Skill s : finish) {
             removeActiveSkill(s);
+            activeSkills.remove(s);
+        }
         finish.clear();
         for (Map.Entry<Skill, SkillCooldownData> cd : getSkillCooldowns().entrySet()) {
             if (cd.getValue().getDuration() <= 0) {
@@ -271,8 +276,10 @@ public class SkillCapability implements ISkillCapability {
                 sync = true;
             }
         }
-        for (Skill s : finish)
+        for (Skill s : finish) {
             coolSkill(s);
+            coolingSkills.remove(s);
+        }
         if (sync && caster instanceof ServerPlayerEntity)
             CombatChannel.INSTANCE.send(PacketDistributor.PLAYER.with(() -> (ServerPlayerEntity) caster), new SyncSkillPacket(this.write()));
     }

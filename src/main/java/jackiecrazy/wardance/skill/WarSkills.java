@@ -52,4 +52,5 @@ public class WarSkills {
     public static final RegistryObject<Skill> FOOT_SLAM = SKILLS.register("foot_slam", ShieldBash.FootSlam::new);
     public static final RegistryObject<Skill> OVERBEAR = SKILLS.register("overbear", Overbear::new);
     public static final RegistryObject<Skill> BERSERK = SKILLS.register("berserk", Berserk::new);
+    public static final RegistryObject<Skill> BANDAGE = SKILLS.register("bandage", Bandage::new);
 }
