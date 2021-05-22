@@ -16,9 +16,7 @@ import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.MathHelper;
-import net.minecraft.util.math.vector.Vector2f;
 import net.minecraft.util.text.StringTextComponent;
-import net.minecraft.util.text.TextFormatting;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.client.gui.ForgeIngameGui;
@@ -105,7 +103,9 @@ public class SkillCastScreen extends Screen {
                 //radial slice for highlighting
                 matrixStack.push();
                 mc.textureManager.bindTexture(radial);
-                if (!s.canCast(mc.player))
+                if (CasterData.getCap(mc.player).isSkillActive(elements[a]))
+                    RenderSystem.color4f(0.4f, 0.7f, 0.4f, 1);
+                else if (!s.canCast(mc.player))
                     RenderSystem.color4f(0.4f, 0.4f, 0.4f, 1);
                 else if (a != index)
                     RenderSystem.color4f(0.6f, 0.6f, 0.6f, 1);

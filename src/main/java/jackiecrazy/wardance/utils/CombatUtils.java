@@ -42,18 +42,21 @@ import java.util.*;
 public class CombatUtils {
     public static HashMap<ResourceLocation, Float> customPosture = new HashMap<>();
     public static HashMap<ResourceLocation, Tuple<Float, Float>> parryMap = new HashMap<>();
+    public static HashMap<ResourceLocation, StealthData> stealthMap = new HashMap<>();
+    public static final StealthData STEALTH=new StealthData(false, false, false, false, false);
     public static HashMap<Item, AttributeModifier[]> armorStats = new HashMap<>();
     public static boolean isSweeping = false;
     private static CombatInfo DEFAULT = new CombatInfo(1, 1, false, 0, 0, 1, 1);
     private static HashMap<Item, CombatInfo> combatList = new HashMap<>();
     private static ArrayList<Item> unarmed = new ArrayList<>();
 
-    public static void updateLists(List<? extends String> interpretC, List<? extends String> interpretP, List<? extends String> interpretA, List<? extends String> interpretM, List<? extends String> interpretU) {
+    public static void updateLists(List<? extends String> interpretC, List<? extends String> interpretP, List<? extends String> interpretA, List<? extends String> interpretM, List<? extends String> interpretU, List<? extends String> interpretS) {
         DEFAULT = new CombatInfo(CombatConfig.defaultMultiplierPostureAttack, CombatConfig.defaultMultiplierPostureDefend, false, CombatConfig.shieldThreshold, CombatConfig.shieldCount, CombatConfig.distract, CombatConfig.unaware);
         combatList = new HashMap<>();
         customPosture = new HashMap<>();
         armorStats = new HashMap<>();
         parryMap = new HashMap<>();
+        stealthMap = new HashMap<>();
         unarmed = new ArrayList<>();
         for (String s : interpretC) {
             String[] val = s.split(",");
@@ -98,8 +101,10 @@ public class CombatUtils {
             } catch (Exception e) {
                 WarDance.LOGGER.warn(name + " is not a proper item name, it will not be registered.");
             }
-            if (ForgeRegistries.ITEMS.containsKey(key))
-                combatList.put(ForgeRegistries.ITEMS.getValue(key), new CombatInfo(attack, defend, shield, pTime, pCount, distract, unaware));
+            if (ForgeRegistries.ITEMS.containsKey(key)) {
+                final Item item = ForgeRegistries.ITEMS.getValue(key);
+                combatList.put(item, new CombatInfo(attack, defend, shield, pTime, pCount, distract, unaware));
+            }
             //System.out.print("\"" + name + ", " + formatter.format(attack + 1.5) + ", " + formatter.format(defend) + ", " + shield + (shield ? ", " + pTime + ", " + pCount : "") + "\", ");
         }
         for (String s : interpretA) {
@@ -157,6 +162,15 @@ public class CombatUtils {
                 WarDance.LOGGER.warn("improperly formatted mob parrying definition " + s + "!");
             }
         }
+        for (String s : interpretS) {
+            try {
+                String[] val = s.split(",");
+                CombatUtils.stealthMap.put(new ResourceLocation(val[0]), new StealthData(Boolean.parseBoolean(val[1]), Boolean.parseBoolean(val[2]), Boolean.parseBoolean(val[3]), Boolean.parseBoolean(val[4]), Boolean.parseBoolean(val[5])));
+
+            } catch (Exception e) {
+                WarDance.LOGGER.warn("improperly formatted mob stealth definition " + s + "!");
+            }
+        }
         DistExecutor.safeRunWhenOn(Dist.CLIENT, () -> {
             return new DistExecutor.SafeRunnable() {
                 @Override
@@ -168,7 +182,6 @@ public class CombatUtils {
     }
 
     public static float getCooledAttackStrength(LivingEntity e, Hand h, float adjustTicks) {
-        //FIXME bht compat
         if (!(e instanceof PlayerEntity) && h == Hand.MAIN_HAND) return 1;
         //if (h == Hand.OFF_HAND && adjustTicks == 1) System.out.println(getCooldownPeriod(e, h));
         return MathHelper.clamp(((float) (h == Hand.MAIN_HAND ? e.ticksSinceLastSwing : CombatData.getCap(e).getOffhandCooldown()) + adjustTicks) / getCooldownPeriod(e, h), 0.0F, 1.0F);
@@ -412,7 +425,7 @@ public class CombatUtils {
         float charge = Math.max(CombatUtils.getCooledAttackStrength(e, Hand.MAIN_HAND, 0.5f), CombatData.getCap(e).getCachedCooldown());
         boolean hit = false;
         isSweeping = ignore != null;
-        for (Entity target : e.world.getEntitiesWithinAABBExcludingEntity(e, e.getBoundingBox().grow(reach))) {//TEST: fixed range 3 attacks
+        for (Entity target : e.world.getEntitiesWithinAABBExcludingEntity(e, e.getBoundingBox().grow(reach + 3))) {//TEST: fixed range 3 attacks
             if (target == ignore) {
                 if (angle > 0)
                     hit = true;
@@ -420,7 +433,8 @@ public class CombatUtils {
             }
             if (!GeneralUtils.isFacingEntity(e, target, angle)) continue;
             if (!e.canEntityBeSeen(target)) continue;
-            if (GeneralUtils.getDistSqCompensated(e, target) > 9) continue;
+            double modRange = reach > 3 ? (reach - 3) / 2d + 3 : reach;
+            if (GeneralUtils.getDistSqCompensated(e, target) > modRange * modRange) continue;
             CombatUtils.setHandCooldown(e, Hand.MAIN_HAND, charge, false);
             hit = true;
             if (e instanceof PlayerEntity)
@@ -440,7 +454,7 @@ public class CombatUtils {
     }
 
     public static AWARENESS getAwareness(LivingEntity attacker, LivingEntity target) {
-        if (!CombatConfig.stealthSystem || target instanceof PlayerEntity) return AWARENESS.ALERT;
+        if (!CombatConfig.stealthSystem || target instanceof PlayerEntity||CombatUtils.stealthMap.getOrDefault(target.getType().getRegistryName(), CombatUtils.STEALTH).isVigilant()) return AWARENESS.ALERT;
         if (target.getRevengeTarget() == null && (!(target instanceof MobEntity) || ((MobEntity) target).getAttackTarget() == null))
             return AWARENESS.UNAWARE;
         else if (target.getRevengeTarget() != attacker && (!(target instanceof MobEntity) || ((MobEntity) target).getAttackTarget() != attacker))
@@ -454,6 +468,38 @@ public class CombatUtils {
         UNAWARE,//cannot be parried, absorbed, shattered, or deflected
         DISTRACTED,//deals extra (posture) damage
         ALERT//normal damage and reduction
+    }
+
+    public static class StealthData {
+        public boolean isDeaf() {
+            return deaf;
+        }
+
+        public boolean isNightVision() {
+            return nightvision;
+        }
+
+        public boolean isAllSeeing() {
+            return illuminati;
+        }
+
+        public boolean isObservant() {
+            return atheist;
+        }
+
+        public boolean isVigilant(){
+            return vigil;
+        }
+
+        private boolean deaf, nightvision, illuminati, atheist, vigil;
+
+        public StealthData(boolean isDeaf, boolean nightVision, boolean allSeeing, boolean observant, boolean vigilant) {
+            deaf = isDeaf;
+            nightvision = nightVision;
+            illuminati = allSeeing;
+            atheist = observant;
+            vigil=vigilant;
+        }
     }
 
     private static class CombatInfo {

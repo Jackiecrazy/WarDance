@@ -16,6 +16,7 @@ import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.MobEntity;
 import net.minecraft.entity.ai.attributes.Attributes;
 import net.minecraft.entity.ai.goal.Goal;
+import net.minecraft.entity.monster.MonsterEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.potion.Effects;
@@ -83,7 +84,7 @@ public class EntityHandler {
             mob.goalSelector.addGoal(-1, new NoGoal(mob));
             mob.targetSelector.addGoal(-1, new NoGoal(mob));
         } else if (e.getEntity() instanceof ServerPlayerEntity) {
-            CombatChannel.INSTANCE.send(PacketDistributor.PLAYER.with(()-> (ServerPlayerEntity) e.getEntity()), new SyncSkillPacket(CasterData.getCap((LivingEntity) e.getEntity()).write()));
+            CombatChannel.INSTANCE.send(PacketDistributor.PLAYER.with(() -> (ServerPlayerEntity) e.getEntity()), new SyncSkillPacket(CasterData.getCap((LivingEntity) e.getEntity()).write()));
         }
     }
 
@@ -96,8 +97,8 @@ public class EntityHandler {
             icc.setFatigue(0);
             icc.setBurnout(0);
             icc.setWounding(0);
-        }else{
-            ISkillCapability isc=CasterData.getCap(e.getPlayer());
+        } else {
+            ISkillCapability isc = CasterData.getCap(e.getPlayer());
             isc.clearActiveSkills();
             isc.clearSkillCooldowns();
         }
@@ -127,9 +128,9 @@ public class EntityHandler {
         LivingEntity elb = e.getEntityLiving();
         if (!elb.world.isRemote && !(elb instanceof PlayerEntity)) {
             if (elb instanceof MobEntity && CombatData.getCap(elb).getStaggerTime() == 0 && ((MobEntity) elb).getAttackTarget() != null) {
-                double safeSpace = (elb.getWidth()) * 3;
+                double safeSpace = (elb.getWidth()) * 2;
                 for (Entity fan : elb.world.getEntitiesWithinAABBExcludingEntity(elb, elb.getBoundingBox().grow(safeSpace))) {
-                    if (fan instanceof MobEntity && ((MobEntity) fan).getAttackTarget() == ((MobEntity) fan).getAttackTarget() &&
+                    if (fan instanceof MonsterEntity && ((MobEntity) fan).getAttackTarget() == ((MobEntity) fan).getAttackTarget() &&
                             GeneralUtils.getDistSqCompensated(fan, elb) < (safeSpace + 1) * safeSpace && fan != ((MobEntity) elb).getAttackTarget()) {
                         //mobs "avoid" clumping together
                         Vector3d diff = elb.getPositionVec().subtract(fan.getPositionVec());
@@ -173,20 +174,25 @@ Mobs should move into a position that is close to the player, far from allies, a
     public static void sneak(final LivingEvent.LivingVisibilityEvent e) {
         if (e.getLookingEntity() instanceof LivingEntity && CombatConfig.stealthSystem) {
             LivingEntity sneaker = e.getEntityLiving(), watcher = (LivingEntity) e.getLookingEntity();
-            if (!GeneralUtils.isFacingEntity(watcher, sneaker, Math.max(CombatConfig.baseHorizontalDetection, sneaker.getTotalArmorValue() * CombatConfig.anglePerArmor), Math.max(CombatConfig.baseVerticalDetection, sneaker.getTotalArmorValue() * sneaker.getTotalArmorValue())))
+            CombatUtils.StealthData sd = CombatUtils.stealthMap.getOrDefault(watcher.getType().getRegistryName(), CombatUtils.STEALTH);
+            if (sd.isVigilant()) return;
+            if (!sd.isAllSeeing() && !GeneralUtils.isFacingEntity(watcher, sneaker, Math.max(CombatConfig.baseHorizontalDetection, sneaker.getTotalArmorValue() * CombatConfig.anglePerArmor), Math.max(CombatConfig.baseVerticalDetection, sneaker.getTotalArmorValue() * sneaker.getTotalArmorValue())))
                 e.modifyVisibility(0.2);
-            if (!watcher.isPotionActive(Effects.NIGHT_VISION)) {
+            if (!sd.isNightVision() && !watcher.isPotionActive(Effects.NIGHT_VISION)) {
                 World world = sneaker.world;
                 if (world.isAreaLoaded(sneaker.getPosition(), 5) && world.isAreaLoaded(watcher.getPosition(), 5))
-                    e.modifyVisibility(0.5 + world.getLight(sneaker.getPosition()) * world.getLight(sneaker.getPosition()) * 0.05);
+                    e.modifyVisibility(0.5 + world.getLight(sneaker.getPosition()) * world.getLightValue(sneaker.getPosition()) * 0.05);
             }
-            e.modifyVisibility(sneaker.isSprinting() ? 1.1 : watcher.canEntityBeSeen(sneaker) ? 0.4 : 1);
+            if (!sd.isAllSeeing())
+                e.modifyVisibility(sneaker.isSprinting() ? 1.1 : watcher.canEntityBeSeen(sneaker) ? 0.4 : 1);
         }
     }
 
     @SubscribeEvent
     public static void pray(LivingSetAttackTargetEvent e) {
         if (e.getTarget() != null && e.getEntityLiving() != null && CombatConfig.stealthSystem && !GeneralUtils.isFacingEntity(e.getEntityLiving(), e.getTarget(), Math.max(CombatConfig.baseHorizontalDetection, e.getTarget().getTotalArmorValue() * CombatConfig.anglePerArmor), Math.max(CombatConfig.baseVerticalDetection, e.getTarget().getTotalArmorValue() * e.getTarget().getTotalArmorValue()))) {
+            CombatUtils.StealthData sd = CombatUtils.stealthMap.getOrDefault(e.getEntityLiving().getType().getRegistryName(), CombatUtils.STEALTH);
+            if (sd.isVigilant() || sd.isObservant()) return;
             //outside of LoS, perform luck check. Pray to RNGesus!
             double luckDiff = GeneralUtils.getAttributeValueSafe(e.getTarget(), Attributes.LUCK) - GeneralUtils.getAttributeValueSafe(e.getEntityLiving(), Attributes.LUCK);
             if (luckDiff > 0 && WarDance.rand.nextFloat() < (luckDiff / (2 + luckDiff))) {
@@ -204,7 +210,7 @@ Mobs should move into a position that is close to the player, far from allies, a
                 Map.Entry<Tuple<World, BlockPos>, Float> n = it.next();
                 if (n.getKey().getA().isAreaLoaded(n.getKey().getB(), n.getValue().intValue())) {
                     for (CreatureEntity c : (n.getKey().getA().getEntitiesWithinAABB(CreatureEntity.class, new AxisAlignedBB(n.getKey().getB()).grow(n.getValue())))) {
-                        if (CombatUtils.getAwareness(null, c) == CombatUtils.AWARENESS.UNAWARE)
+                        if (CombatUtils.getAwareness(null, c) == CombatUtils.AWARENESS.UNAWARE && !CombatUtils.stealthMap.getOrDefault(c.getType().getRegistryName(), CombatUtils.STEALTH).isDeaf())
                             c.getNavigator().setPath(c.getNavigator().getPathToPos(n.getKey().getB(), (int) (n.getValue() + 3)), 1);
                     }
                 }

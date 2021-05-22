@@ -4,7 +4,6 @@ import com.google.common.collect.Maps;
 import jackiecrazy.wardance.WarDance;
 import jackiecrazy.wardance.networking.CombatChannel;
 import jackiecrazy.wardance.networking.SyncSkillPacket;
-import jackiecrazy.wardance.skill.ProcPoint;
 import jackiecrazy.wardance.skill.Skill;
 import jackiecrazy.wardance.skill.SkillCooldownData;
 import jackiecrazy.wardance.skill.SkillData;
@@ -43,6 +42,8 @@ public class SkillCapability implements ISkillCapability {
             WarDance.LOGGER.warn("skill " + d + " is already active, overwriting.");
         }
         activeSkills.put(d.getSkill(), d);
+        if (dude.get() instanceof ServerPlayerEntity)
+            CombatChannel.INSTANCE.send(PacketDistributor.PLAYER.with(() -> (ServerPlayerEntity) dude.get()), new SyncSkillPacket(this.write()));
     }
 
     @Override
@@ -113,7 +114,7 @@ public class SkillCapability implements ISkillCapability {
 
     @Override
     public boolean isSkillCoolingDown(Skill s) {
-        return coolingSkills.containsKey(s.tryGetParentSkill())||coolingSkills.containsKey(s);
+        return coolingSkills.containsKey(s);
     }
 
     @Override
@@ -136,16 +137,16 @@ public class SkillCapability implements ISkillCapability {
 
     @Override
     public float getSkillCooldown(Skill s) {
-        if (!coolingSkills.containsKey(s.tryGetParentSkill()))
+        if (!coolingSkills.containsKey(s))
             return 0;
-        return coolingSkills.get(s.tryGetParentSkill()).getDuration();
+        return coolingSkills.get(s).getDuration();
     }
 
     @Override
     public float getMaxSkillCooldown(Skill s) {
-        if (!coolingSkills.containsKey(s.tryGetParentSkill()))
+        if (!coolingSkills.containsKey(s))
             return 1;
-        return coolingSkills.get(s.tryGetParentSkill()).getMaxDuration();
+        return coolingSkills.get(s).getMaxDuration();
     }
 
     @Override
@@ -176,13 +177,13 @@ public class SkillCapability implements ISkillCapability {
 
     @Override
     public boolean isSkillUsable(Skill skill) {
-        if(!equippedSkill.contains(skill))return false;
+        if (!equippedSkill.contains(skill)) return false;
         return skill.canCast(dude.get());
     }
 
     @Override
     public CompoundNBT write() {
-        CompoundNBT to=new CompoundNBT();
+        CompoundNBT to = new CompoundNBT();
         if (!this.activeSkills.isEmpty()) {
             ListNBT listnbt = new ListNBT();
 
@@ -245,14 +246,12 @@ public class SkillCapability implements ISkillCapability {
         boolean sync = false;
         final LivingEntity caster = dude.get();
         for (SkillData d : activeSkills.values()) {
-            if (d.getSkill().getTags(caster).contains(ProcPoint.countdown)) {
-                d.decrementDuration();
+            if (d.getSkill().tick(caster, d)) {
                 sync = true;
             }
         }
         for (SkillCooldownData d : coolingSkills.values()) {
-            if (d.getSkill().getTags(caster).contains(ProcPoint.recharge_time)) {
-                d.decrementDuration(-1);
+            if (d.getSkill().coolingTick(caster, d)) {
                 sync = true;
             }
         }

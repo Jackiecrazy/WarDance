@@ -37,4 +37,9 @@ public class Tackle extends Kick {
         CombatData.getCap(caster).setRollTime(-10);
         caster.velocityChanged=true;
     }
+
+    @Override
+    protected int distanceSq(){
+        return 16;
+    }
 }

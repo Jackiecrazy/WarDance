@@ -48,7 +48,7 @@ public class CombatCapability implements ICombatCapability {
     private long lastUpdate;
     private boolean first;
     private float cache;//no need to save this because it'll be used within the span of a tick
-    private boolean isFirst;
+    private long staggerTickExisted;
     private int recoveryTimer;
 
     public CombatCapability(LivingEntity e) {
@@ -174,12 +174,8 @@ public class CombatCapability implements ICombatCapability {
 
     @Override
     public boolean isFirstStaggerStrike() {
-        return isFirst;
-    }
-
-    @Override
-    public void setFirstStagger(boolean yes) {
-        isFirst = yes;
+        if (dude.get() == null) return false;
+        return dude.get().ticksExisted == staggerTickExisted;
     }
 
     @Override
@@ -204,7 +200,7 @@ public class CombatCapability implements ICombatCapability {
             elb.getAttribute(Attributes.ARMOR).applyPersistentModifier(STAGGERA);
             elb.getAttribute(Attributes.ARMOR).removeModifier(MORE);
             elb.getAttribute(Attributes.ARMOR).applyPersistentModifier(STAGGERSA);
-            setFirstStagger(true);
+            staggerTickExisted = elb.ticksExisted;
             return -1f;
         }
         float weakness = 1;
@@ -657,6 +653,8 @@ public class CombatCapability implements ICombatCapability {
         if (getPostureGrace() == 0 && getStaggerTime() == 0 && getPosture() < getMaxPosture()) {
             addPosture(getPPT() * (poExtra));
         }
+        float nausea = elb instanceof PlayerEntity || !elb.isPotionActive(Effects.NAUSEA) ? 0 : (elb.getActivePotionEffect(Effects.NAUSEA).getAmplifier() + 1) * CombatConfig.nausea;
+        addPosture(nausea*ticks);
         if (shcd != 0) {
             setShatter((float) GeneralUtils.getAttributeValueSafe(elb, WarAttributes.SHATTER.get()));
         }
@@ -785,7 +783,6 @@ public class CombatCapability implements ICombatCapability {
     private float getPPT() {
         LivingEntity elb = dude.get();
         if (elb == null) return 0;
-        float nausea = elb instanceof PlayerEntity || !elb.isPotionActive(Effects.NAUSEA) ? 0 : (elb.getActivePotionEffect(Effects.NAUSEA).getAmplifier() + 1) * CombatConfig.nausea;
         int exp = elb.isPotionActive(Effects.POISON) ? (elb.getActivePotionEffect(Effects.POISON).getAmplifier() + 1) : 0;
         float poison = 1;
         for (int j = 0; j < exp; j++) {
@@ -805,6 +802,6 @@ public class CombatCapability implements ICombatCapability {
 //            return getMaxPosture() * armorMod * speedMod * healthMod / (1.5f * CombatConfig.staggerDuration);
 //        }
         //0.2f
-        return (((getTrueMaxPosture() / (armorMod * 20)) * cooldownMod) + recovery) * exhaustMod * healthMod * poison - nausea;
+        return (((getTrueMaxPosture() / (armorMod * 20)) * cooldownMod) + recovery) * exhaustMod * healthMod * poison;
     }
 }

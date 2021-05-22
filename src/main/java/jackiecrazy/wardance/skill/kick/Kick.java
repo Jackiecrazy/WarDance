@@ -57,13 +57,17 @@ public class Kick extends Skill {
     public void onSuccessfulProc(LivingEntity caster, SkillData stats, LivingEntity target, Event procPoint) {
         if (procPoint instanceof LivingAttackEvent) {
             procPoint.setCanceled(true);
-            if (GeneralUtils.getDistSqCompensated(caster, target) <= 4) {
+            if (GeneralUtils.getDistSqCompensated(caster, target) <= distanceSq()) {
                 CombatData.getCap(target).consumePosture(6);
                 target.attackEntityFrom(DamageSource.FALLING_BLOCK, 1);
                 additionally(caster, target);
                 markUsed(caster);
             }
         }
+    }
+
+    protected int distanceSq(){
+        return 4;
     }
 
     public static class Backflip extends Kick {

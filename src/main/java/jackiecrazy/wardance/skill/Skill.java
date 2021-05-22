@@ -1,11 +1,14 @@
 package jackiecrazy.wardance.skill;
 
+import jackiecrazy.wardance.WarDance;
 import jackiecrazy.wardance.capability.skill.CasterData;
 import jackiecrazy.wardance.capability.skill.ISkillCapability;
 import jackiecrazy.wardance.event.SkillCooldownEvent;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.tags.Tag;
 import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.SoundCategory;
+import net.minecraft.util.SoundEvents;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraftforge.common.MinecraftForge;
@@ -92,7 +95,9 @@ public abstract class Skill extends ForgeRegistryEntry<Skill> {
         return true;
     }
 
-    public void onCooledDown(LivingEntity caster, float overflow) {}
+    public void onCooledDown(LivingEntity caster, float overflow) {
+        caster.world.playMovingSound(null, caster, SoundEvents.ENTITY_EXPERIENCE_ORB_PICKUP, SoundCategory.AMBIENT, 0.3f+ WarDance.rand.nextFloat(), 0.5f+ WarDance.rand.nextFloat());
+    }
 
     public ITextComponent description() {
         return new TranslationTextComponent(this.getRegistryName().toString() + ".desc");
@@ -118,17 +123,32 @@ public abstract class Skill extends ForgeRegistryEntry<Skill> {
 
     public boolean checkAndCast(LivingEntity caster) {
         if (!canCast(caster)) return false;
+        caster.world.playMovingSound(null, caster, SoundEvents.ITEM_FIRECHARGE_USE, SoundCategory.AMBIENT, 0.3f+ WarDance.rand.nextFloat(), 0.5f+ WarDance.rand.nextFloat());
         return onCast(caster);
     }
 
     public abstract boolean onCast(LivingEntity caster);
 
-    public boolean tick(LivingEntity caster, SkillData stats) {
-        if (stats.getDuration() <= 0) {
-            CasterData.getCap(caster).removeActiveSkill(this);
-            return false;
+    /**
+     * @return whether the client should be updated.
+     */
+    public boolean tick(LivingEntity caster, SkillData d) {
+        if (d.getSkill().getTags(caster).contains(ProcPoint.countdown)) {
+            d.decrementDuration();
+            return true;
         }
-        return true;
+        return false;
+    }
+
+    /**
+     * @return whether the client should be updated.
+     */
+    public boolean coolingTick(LivingEntity caster, SkillCooldownData d) {
+        if (d.getSkill().getTags(caster).contains(ProcPoint.recharge_time)) {
+            d.decrementDuration(1);
+            return true;
+        }
+        return false;
     }
 
     /**
@@ -141,8 +161,9 @@ public abstract class Skill extends ForgeRegistryEntry<Skill> {
     protected void setCooldown(LivingEntity caster, float duration) {
         SkillCooldownEvent sce = new SkillCooldownEvent(caster, this, duration);
         MinecraftForge.EVENT_BUS.post(sce);
-        if (getParentSkill() != null)
-            CasterData.getCap(caster).setSkillCooldown(getParentSkill(), sce.getCooldown());
+//        if (getParentSkill() != null)
+//            CasterData.getCap(caster).setSkillCooldown(getParentSkill(), sce.getCooldown());
+        caster.world.playMovingSound(null, caster, SoundEvents.BLOCK_FIRE_EXTINGUISH, SoundCategory.AMBIENT, 0.3f+ WarDance.rand.nextFloat(), 0.5f+ WarDance.rand.nextFloat());
         CasterData.getCap(caster).setSkillCooldown(this, sce.getCooldown());
     }
 

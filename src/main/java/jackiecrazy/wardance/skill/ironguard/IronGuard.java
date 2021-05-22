@@ -46,6 +46,7 @@ public class IronGuard extends Skill {
     public void onCooledDown(LivingEntity caster, float overflow) {
         if (CasterData.getCap(caster).isSkillUsable(WarSkills.MIKIRI.get()))
             WarSkills.MIKIRI.get().onCast(caster);
+        super.onCooledDown(caster, overflow);
     }
 
     @Override

@@ -129,9 +129,16 @@ public class SkillEventHandler {
                     }
                 }
         }
-        for (SkillData s : CasterData.getCap(e.getEntityLiving()).getActiveSkills().values()) {
+        final ISkillCapability isc = CasterData.getCap(e.getEntityLiving());
+        for (SkillData s : isc.getActiveSkills().values()) {
             if (s.getSkill().getTags(e.getEntityLiving()).contains(ProcPoint.on_projectile_parry)) {
                 s.getSkill().onSuccessfulProc(e.getEntityLiving(), s, e.getEntityLiving(), e);
+            }
+        }
+        if(e.getOriginalPostureConsumption()!=0)
+        for (Skill s : isc.getSkillCooldowns().keySet()) {
+            if (s.getTags(e.getEntityLiving()).contains(ProcPoint.recharge_parry)) {
+                isc.decrementSkillCooldown(s, 1);
             }
         }
     }

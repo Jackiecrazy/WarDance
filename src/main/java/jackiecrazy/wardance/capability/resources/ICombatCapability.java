@@ -68,8 +68,6 @@ public interface ICombatCapability {
 
     boolean isFirstStaggerStrike();
 
-    void setFirstStagger(boolean yes);
-
     float consumePosture(float amount, float above, boolean force);
 
     int getPostureGrace();

@@ -47,11 +47,12 @@ public class CoupDeGrace extends Skill {
     }
 
     public boolean canCast(LivingEntity caster) {
-        ISkillCapability cap = CasterData.getCap(caster);
-        if (cap.isSkillActive(this)) return true;
-        for (String s : getIncompatibleTags(caster).getAllElements())
-            if (cap.isTagActive(s)) return false;
-        return !cap.isSkillCoolingDown(this) && (getParentSkill() == null || getParentSkill().canCast(caster));
+//        ISkillCapability cap = CasterData.getCap(caster);
+//        if (cap.isSkillActive(this)) return true;
+//        for (String s : getIncompatibleTags(caster).getAllElements())
+//            if (cap.isTagActive(s)) return false;
+//        return !cap.isSkillCoolingDown(this) && (getParentSkill() == null || getParentSkill().canCast(caster));
+        return true;
     }
 
     @Override
@@ -64,7 +65,7 @@ public class CoupDeGrace extends Skill {
 
     @Override
     public void onEffectEnd(LivingEntity caster, SkillData stats) {
-
+        CasterData.getCap(caster).removeActiveTag("execution");
     }
 
     protected void uponDeath(LivingEntity caster, LivingEntity target, float amount) {
@@ -77,7 +78,7 @@ public class CoupDeGrace extends Skill {
             LivingDamageEvent e = (LivingDamageEvent) procPoint;
             if (CombatUtils.getAttackingItemStack(e.getSource()) == null || CombatUtils.getAttackingItemStack(e.getSource()).isEmpty() || CombatUtils.isWeapon(caster, CombatUtils.getAttackingItemStack(e.getSource())))
                 if (isValid(e)) {
-                    e.setAmount(e.getAmount() + (float) CoupDeGrace.getLife(target) * (0.5f + ((target.getMaxHealth() - target.getHealth()) / target.getMaxHealth())));
+                    e.setAmount(e.getAmount() + (float) CoupDeGrace.getLife(target));
                     CombatData.getCap(target).decrementStaggerTime(CombatData.getCap(target).getStaggerTime());
                     if (e.getAmount() > target.getHealth()) {
                         uponDeath(caster, target, e.getAmount());
@@ -111,9 +112,9 @@ public class CoupDeGrace extends Skill {
 
         protected void uponDeath(LivingEntity caster, LivingEntity target, float amount) {
             final ICombatCapability cap = CombatData.getCap(caster);
-            cap.addFatigue(-amount / 10);
-            cap.addWounding(-amount / 10);
-            cap.addBurnout(-amount / 10);
+            cap.addFatigue( Math.max(-amount / 10, -cap.getFatigue()*0.3f));
+            cap.addWounding(Math.max(-amount / 10, -cap.getWounding()*0.3f));
+            cap.addBurnout(Math.max(-amount / 10, -cap.getBurnout()*0.3f));
             cap.addPosture(amount / 10);
             cap.addSpirit(amount / 10);
             caster.heal(amount / 10);

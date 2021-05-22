@@ -342,6 +342,7 @@ public class CombatHandler {
             e.setAmount(icic.onBeingHurt(e.getSource(), uke, semeoff, e.getAmount()));
         }
         ICombatCapability cap = CombatData.getCap(uke);
+        CombatUtils.AWARENESS awareness = CombatUtils.getAwareness(kek, uke);
         if (ds.getTrueSource() instanceof LivingEntity) {
             LivingEntity seme = ((LivingEntity) ds.getTrueSource());
             if (seme.getHeldItemMainhand().getCapability(CombatManipulator.CAP).isPresent()) {
@@ -351,14 +352,13 @@ public class CombatHandler {
                 uke.getAttribute(Attributes.ARMOR).applyNonPersistentModifier(armor);
             }
             if (CombatUtils.isMeleeAttack(e.getSource())) {
+                if (awareness != CombatUtils.AWARENESS.ALERT) {
+                    e.setAmount((float) (e.getAmount() * CombatUtils.getDamageMultiplier(awareness, CombatUtils.getAttackingItemStack(ds))));
+                }
                 cap.setCombo((float) (Math.floor(cap.getCombo()) / 2d));
             }
             double luckDiff = WarDance.rand.nextFloat() * (GeneralUtils.getAttributeValueSafe(seme, Attributes.LUCK)) - WarDance.rand.nextFloat() * (GeneralUtils.getAttributeValueSafe(uke, Attributes.LUCK));
             e.setAmount(e.getAmount() + (float) luckDiff * CombatConfig.luck);
-        }
-        CombatUtils.AWARENESS awareness = CombatUtils.getAwareness(kek, uke);
-        if (awareness != CombatUtils.AWARENESS.ALERT) {
-            e.setAmount((float) (e.getAmount() * CombatUtils.getDamageMultiplier(awareness, CombatUtils.getAttackingItemStack(ds))));
         }
         if (cap.getStaggerTime() > 0 && !cap.isFirstStaggerStrike()) {
             e.setAmount(e.getAmount() * CombatConfig.staggerDamage);
@@ -410,7 +410,7 @@ public class CombatHandler {
             float amount = e.getAmount();
             //absorption
             amount -= GeneralUtils.getAttributeValueSafe(e.getEntityLiving(), WarAttributes.ABSORPTION.get());
-            e.setAmount(amount);
+            e.setAmount(Math.max(0, amount));
         }
 
     }
@@ -427,10 +427,9 @@ public class CombatHandler {
             cap.setFatigue(0);
             cap.setWounding(0);
             cap.setBurnout(0);
-        } else if (CombatConfig.woundWL == CombatConfig.woundList.contains(e.getSource().getDamageType()))//returns true if whitelist and included, or if blacklist and excluded
+        } else if (e.getAmount() > 0 && CombatConfig.woundWL == CombatConfig.woundList.contains(e.getSource().getDamageType()))//returns true if whitelist and included, or if blacklist and excluded
             //u hurt lol
             cap.addWounding(e.getAmount() * CombatConfig.wound);
-        cap.setFirstStagger(false);
     }
 
     @SubscribeEvent(priority = EventPriority.LOWEST)

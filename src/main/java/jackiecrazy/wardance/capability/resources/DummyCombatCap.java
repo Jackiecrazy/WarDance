@@ -97,11 +97,6 @@ public class DummyCombatCap implements ICombatCapability {
     }
 
     @Override
-    public void setFirstStagger(boolean yes) {
-
-    }
-
-    @Override
     public float consumePosture(float amount, float above, boolean force) {
         return 0;
     }

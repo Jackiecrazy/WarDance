@@ -73,7 +73,7 @@ Stealth: Sneak 100
 - Distracted enemies take more damage, and unaware enemies additionally cannot parry, deflect, absorb, or shatter an incoming attack. Weapons have a stabbing multiplier that increases stabbing damage. Attacking an unaware enemy dispels your invisibility, if any.
 - Mob detection range is full in their 120 degree frontal sector and 0.2x elsewhere.
 - The vision range is 60 degrees vertically, because living things are adapted to survey a flat area, and to encourage using vertical space.
-- Light level will decrease detection range by up to 80% at 0 light and increase by up to 10% at 15 light. Mobs with night vision do not receive a bonus or malus.
+- Light level will decrease detection range by up to 50% at 0 light and increase by up to 10% at 15 light. Mobs with night vision do not receive a bonus or malus.
 - Armor adds detection range by 18 degrees per protection point. This overwrites the fixed mob detection range if it is higher, so leather doesn't impede stealth and full diamond nullifies the vision malus.
 - Sprinting adds 10% to detection radius; breaking LoS with the target will reduce detection radius by 60%.
 - Mobs will investigate sound when unaware; this will distract them. Making sounds such as taking damage from fall and causing explosions will draw enemies in an area to you, but you can also shoot arrows to distract mobs for stealth missions.
@@ -126,13 +126,13 @@ Reinvigorate: remove some fatigue/burnout/wounding on kill
 - As expected, items can have different spells bound to them, or even just have a magic missile as its normal attack. This also enables throwable weapons (such as poison sand or daggers) to be used as melee, by using a single skill to toggle between ranged and melee. There should be an interface for such items.
 - Only two bound skills are included as examples.
 - Chanting can be interrupted by taking damage, using a breath weapon, asphyxiating, eating, drinking, or chanting something else.
-▪ Phantom strike: after 0.6s of chanting, launch a shadow of your weapon, dealing a normal attack on impact. Cost 2 might, range 16.
+▪ Phantom strike: after 0.6s of chanting, throw your weapon, dealing a normal attack on impact. Cost 2 might, range 16. The weapon is actually still held, but the hand will be bound until the item returns.
 Warp: light gravity, teleport to hit location
 Crush: triple size and damage but half speed and range, clips and pierces
 Hamstring: slow target by 40% for 2 seconds
 Vengeance: ricochet up to 5 times between enemies
 Trap: only fires when someone crosses its LoS in 10 blocks
-▪ Fighting spirit: passive available until active cast ends, then can only be recharged by sleeping or after 2 minutes have elapsed. Genies from some game.
+▪ Fighting spirit: passive available until active cast ends, then can only be recharged by sleeping or after 5 minutes have elapsed. Genies from some game.
 Name
  Active
  Passive
