@@ -1,22 +1,30 @@
 package jackiecrazy.wardance.skill.fightingspirit;
 
+import jackiecrazy.wardance.capability.resources.CombatData;
+import jackiecrazy.wardance.capability.resources.ICombatCapability;
+import jackiecrazy.wardance.capability.skill.CasterData;
+import jackiecrazy.wardance.skill.ProcPoint;
 import jackiecrazy.wardance.skill.Skill;
 import jackiecrazy.wardance.skill.SkillData;
+import jackiecrazy.wardance.skill.WarSkills;
 import net.minecraft.entity.LivingEntity;
+import net.minecraft.entity.ai.attributes.AttributeModifier;
+import net.minecraft.entity.ai.attributes.Attributes;
+import net.minecraft.potion.EffectInstance;
+import net.minecraft.potion.Effects;
 import net.minecraft.tags.Tag;
+import net.minecraftforge.event.entity.living.LivingHurtEvent;
 import net.minecraftforge.eventbus.api.Event;
 
-import java.util.Collections;
+import javax.annotation.Nullable;
+import java.util.Arrays;
 import java.util.HashSet;
+import java.util.UUID;
 
 public class FightingSpirit extends Skill {
-    private final Tag<String> tag = Tag.getTagFromContents(new HashSet<>(Collections.singletonList("passive")));
+    private static final AttributeModifier wrap = new AttributeModifier(UUID.fromString("67fe7ef6-a398-4c65-9bb1-42edaa80e7b1"), "bandaging wounds", -1, AttributeModifier.Operation.MULTIPLY_TOTAL);
+    private final Tag<String> tag = Tag.getTagFromContents(new HashSet<>(Arrays.asList("chant", ProcPoint.on_being_hurt, ProcPoint.countdown, ProcPoint.recharge_time, ProcPoint.recharge_sleep)));
     private final Tag<String> no = Tag.getEmptyTag();
-
-    @Override
-    public boolean tick(LivingEntity caster, SkillData d) {
-        return super.tick(caster, d);
-    }
 
     @Override
     public Tag<String> getTags(LivingEntity caster) {
@@ -24,27 +32,64 @@ public class FightingSpirit extends Skill {
     }
 
     @Override
-    public boolean isPassive(LivingEntity caster) {
-        return false;
-    }
-
-    @Override
     public Tag<String> getIncompatibleTags(LivingEntity caster) {
         return no;
     }
 
+    @Nullable
+    @Override
+    public Skill getParentSkill() {
+        return this.getClass() == FightingSpirit.class ? null : WarSkills.FIGHTINGSPIRIT.get();
+    }
+
+    @Override
+    public boolean canCast(LivingEntity caster) {
+        return !CasterData.getCap(caster).isSkillCoolingDown(this);
+    }
+
     @Override
     public boolean onCast(LivingEntity caster) {
-        return false;
+        final ICombatCapability cap = CombatData.getCap(caster);
+        if (cap.getMight() == 0 && cap.getPosture() == cap.getMaxPosture() && cap.getSpirit() == cap.getMaxSpirit()) {
+            activate(caster, 100);
+            CasterData.getCap(caster).getActiveSkill(this).ifPresent((a) -> a.flagCondition(true));
+            caster.getAttribute(Attributes.MOVEMENT_SPEED).applyNonPersistentModifier(wrap);
+        }else{
+            evoke(caster);
+            activate(caster, getDuration());
+        }
+        return true;
+    }
+
+    protected int getDuration() {
+        return 200;
+    }
+
+    protected void evoke(LivingEntity caster){
+        caster.addPotionEffect(new EffectInstance(Effects.REGENERATION, getDuration()));
+        caster.addPotionEffect(new EffectInstance(Effects.RESISTANCE, getDuration()));
+    }
+
+    @Override
+    public boolean activeTick(LivingEntity caster, SkillData d) {
+        if (d.getDuration() == 0 && d.isCondition()) {
+            CombatData.getCap(caster).setWounding(0);
+            CombatData.getCap(caster).setFatigue(0);
+            CombatData.getCap(caster).setBurnout(0);
+        }
+        return super.activeTick(caster, d);
     }
 
     @Override
     public void onEffectEnd(LivingEntity caster, SkillData stats) {
-
+        caster.getAttribute(Attributes.MOVEMENT_SPEED).removeModifier(wrap);
+        setCooldown(caster, 6000);
     }
 
     @Override
     public void onSuccessfulProc(LivingEntity caster, SkillData stats, LivingEntity target, Event procPoint) {
-
+        if (procPoint instanceof LivingHurtEvent) {
+            markUsed(caster);
+        }
     }
 }

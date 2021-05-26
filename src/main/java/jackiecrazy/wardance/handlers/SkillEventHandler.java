@@ -4,12 +4,12 @@ import jackiecrazy.wardance.WarDance;
 import jackiecrazy.wardance.capability.resources.CombatData;
 import jackiecrazy.wardance.capability.skill.CasterData;
 import jackiecrazy.wardance.capability.skill.ISkillCapability;
+import jackiecrazy.wardance.config.CombatConfig;
 import jackiecrazy.wardance.event.MeleeKnockbackEvent;
 import jackiecrazy.wardance.event.ParryEvent;
 import jackiecrazy.wardance.event.ProjectileParryEvent;
-import jackiecrazy.wardance.skill.ProcPoint;
-import jackiecrazy.wardance.skill.Skill;
-import jackiecrazy.wardance.skill.SkillData;
+import jackiecrazy.wardance.event.SkillCastEvent;
+import jackiecrazy.wardance.skill.*;
 import jackiecrazy.wardance.utils.CombatUtils;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.LivingEntity;
@@ -18,11 +18,51 @@ import net.minecraftforge.event.entity.living.LivingAttackEvent;
 import net.minecraftforge.event.entity.living.LivingDamageEvent;
 import net.minecraftforge.event.entity.living.LivingHurtEvent;
 import net.minecraftforge.event.entity.player.CriticalHitEvent;
+import net.minecraftforge.event.entity.player.PlayerWakeUpEvent;
+import net.minecraftforge.eventbus.api.EventPriority;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 
 @Mod.EventBusSubscriber(modid = WarDance.MODID)
 public class SkillEventHandler {
+    @SubscribeEvent(priority = EventPriority.LOWEST)
+    public static void sleep(PlayerWakeUpEvent e) {
+        /**
+         * @Author Tamaized
+         */
+        boolean flag = !e.wakeImmediately() && !e.updateWorld();
+        if (!flag) {
+            if (!e.wakeImmediately() && e.updateWorld()) {
+                flag = e.getPlayer().world.isDaytime();
+            }
+        }
+        if (flag && e.getEntityLiving().isServerWorld()) {
+            if (CombatConfig.sleepingHealsDecay) {
+                CombatData.getCap(e.getPlayer()).setFatigue(0);
+                CombatData.getCap(e.getPlayer()).setBurnout(0);
+                CombatData.getCap(e.getPlayer()).setWounding(0);
+            }
+            ISkillCapability isc = CasterData.getCap(e.getEntityLiving());
+            for (SkillCooldownData s : isc.getSkillCooldowns().values()) {
+                if (s.getSkill().getTags(e.getEntityLiving()).contains(ProcPoint.recharge_sleep)) {
+                    isc.coolSkill(s.getSkill());
+                }
+            }
+        }
+
+    }
+
+    @SubscribeEvent
+    public static void casting(SkillCastEvent e) {
+        ISkillCapability isc = CasterData.getCap(e.getEntityLiving());
+        if (e.getSkill().isPassive(e.getEntityLiving()) || !e.getEntityLiving().isServerWorld()) return;
+        for (Skill s : isc.getSkillCooldowns().keySet()) {
+            if (s.getTags(e.getEntityLiving()).contains(ProcPoint.recharge_cast)) {
+                isc.decrementSkillCooldown(s, 1);
+            }
+        }
+    }
+
     @SubscribeEvent
     public static void forceCrit(CriticalHitEvent e) {
         if (!e.getEntityLiving().isServerWorld()) return;
@@ -74,9 +114,16 @@ public class SkillEventHandler {
             LivingEntity attacker = (LivingEntity) e.getSource().getTrueSource();
             ISkillCapability isc = CasterData.getCap(attacker);
             for (SkillData s : isc.getActiveSkills().values()) {
-                if (s.getSkill().getTags(attacker).contains(ProcPoint.on_hurt)&&!s.getSkill().getTags(attacker).contains(ProcPoint.on_hurt)||CombatUtils.isMeleeAttack(e.getSource())) {
+                if (s.getSkill().getTags(attacker).contains(ProcPoint.on_hurt) && (!s.getSkill().getTags(attacker).contains(ProcPoint.melee) || CombatUtils.isMeleeAttack(e.getSource()))) {
                     s.getSkill().onSuccessfulProc(attacker, s, e.getEntityLiving(), e);
                 }
+            }
+        }
+        LivingEntity defender = e.getEntityLiving();
+        ISkillCapability isc = CasterData.getCap(defender);
+        for (SkillData s : isc.getActiveSkills().values()) {
+            if (s.getSkill().getTags(defender).contains(ProcPoint.on_being_hurt)) {
+                s.getSkill().onSuccessfulProc(defender, s, e.getEntityLiving(), e);
             }
         }
     }
@@ -88,7 +135,7 @@ public class SkillEventHandler {
             LivingEntity attacker = (LivingEntity) e.getSource().getTrueSource();
             ISkillCapability isc = CasterData.getCap(attacker);
             for (SkillData s : isc.getActiveSkills().values()) {
-                if (s.getSkill().getTags(attacker).contains(ProcPoint.on_damage)&&!s.getSkill().getTags(attacker).contains(ProcPoint.on_hurt)||CombatUtils.isMeleeAttack(e.getSource())) {
+                if (s.getSkill().getTags(attacker).contains(ProcPoint.on_damage) && (!s.getSkill().getTags(attacker).contains(ProcPoint.melee) || CombatUtils.isMeleeAttack(e.getSource()))) {
                     s.getSkill().onSuccessfulProc(attacker, s, e.getEntityLiving(), e);
                 }
             }
@@ -96,8 +143,14 @@ public class SkillEventHandler {
     }
 
     @SubscribeEvent
+    public static void timberfall(ParryEvent e) {
+        if (e.getAttacker() != null && CasterData.getCap(e.getAttacker()).isSkillUsable(WarSkills.TIMBERFALL.get()))
+            e.setPostureConsumption(e.getPostureConsumption() + CombatData.getCap(e.getAttacker()).getMight() * 0.4f);
+    }
+
+    @SubscribeEvent
     public static void parryFlags(ParryEvent e) {
-        if (!e.getEntityLiving().isServerWorld()) return;
+        if (!e.getEntityLiving().isServerWorld() || !e.canParry()) return;
         for (SkillData s : CasterData.getCap(e.getAttacker()).getActiveSkills().values()) {
             if (s.getSkill().getTags(e.getAttacker()).contains(ProcPoint.on_being_parried)) {
                 s.getSkill().onSuccessfulProc(e.getAttacker(), s, e.getEntityLiving(), e);
@@ -135,11 +188,11 @@ public class SkillEventHandler {
                 s.getSkill().onSuccessfulProc(e.getEntityLiving(), s, e.getEntityLiving(), e);
             }
         }
-        if(e.getOriginalPostureConsumption()!=0)
-        for (Skill s : isc.getSkillCooldowns().keySet()) {
-            if (s.getTags(e.getEntityLiving()).contains(ProcPoint.recharge_parry)) {
-                isc.decrementSkillCooldown(s, 1);
+        if (e.getOriginalPostureConsumption() != 0)
+            for (Skill s : isc.getSkillCooldowns().keySet()) {
+                if (s.getTags(e.getEntityLiving()).contains(ProcPoint.recharge_parry)) {
+                    isc.decrementSkillCooldown(s, 1);
+                }
             }
-        }
     }
 }

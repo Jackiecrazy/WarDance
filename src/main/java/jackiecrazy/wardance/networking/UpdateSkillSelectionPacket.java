@@ -68,6 +68,10 @@ public class UpdateSkillSelectionPacket {
                     prev.sort(comparator);
                     now.sort(comparator);
                     if (!prev.equals(now)) {
+                        for (Skill s : cap.getEquippedSkills())
+                            if (s != null) {
+                                s.onEffectEnd(sender, new SkillData(s, 0));
+                            }
                         cap.clearActiveSkills();
                         cap.setEquippedSkills(updateSkillPacket.l);
                         for (Skill s : cap.getEquippedSkills())

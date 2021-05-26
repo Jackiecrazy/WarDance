@@ -207,7 +207,7 @@ public class CombatHandler {
                     }
                 }
                 float finalPostureConsumption = atkMult * defMult;
-                ParryEvent pe = new ParryEvent(uke, seme, h, attack, parryHand, defend, finalPostureConsumption);
+                ParryEvent pe = new ParryEvent(uke, seme, ((canParry && defend != null) || useDeflect), h, attack, parryHand, defend, finalPostureConsumption);
                 MinecraftForge.EVENT_BUS.post(pe);
                 if (ukeCap.getStaggerTime() == 0) {
                     //overflow posture
@@ -215,7 +215,7 @@ public class CombatHandler {
                     CombatUtils.knockBack(uke, seme, Math.min(1.5f, knockback / (20f * ukeCap.getMaxPosture())), true, false);
                     //no parries if stabby
                     if (CombatConfig.ignore && awareness == CombatUtils.AWARENESS.UNAWARE) return;
-                    if (pe.getResult() == Event.Result.ALLOW || (((canParry && defend != null) || useDeflect) && pe.getResult() == Event.Result.DEFAULT)) {
+                    if (pe.canParry()) {
                         e.setCanceled(true);
                         downingHit = false;
                         ukeCap.addCombo(0);

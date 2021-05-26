@@ -4,6 +4,7 @@ import jackiecrazy.wardance.capability.resources.CombatData;
 import jackiecrazy.wardance.capability.resources.ICombatCapability;
 import jackiecrazy.wardance.capability.skill.CasterData;
 import jackiecrazy.wardance.capability.skill.ISkillCapability;
+import jackiecrazy.wardance.skill.ProcPoint;
 import jackiecrazy.wardance.skill.Skill;
 import jackiecrazy.wardance.skill.SkillData;
 import jackiecrazy.wardance.skill.WarSkills;
@@ -22,7 +23,7 @@ import java.util.HashSet;
 import java.util.Set;
 
 public class CoupDeGrace extends Skill {
-    private final Tag<String> tag = Tag.getTagFromContents(new HashSet<>(Arrays.asList("physical", "afterArmor", "noRecharge", "melee", "execution")));
+    private final Tag<String> tag = Tag.getTagFromContents(new HashSet<>(Arrays.asList("physical", ProcPoint.on_hurt, ProcPoint.recharge_cast, "noRecharge", "melee", "execution")));
     private final Tag<String> no = Tag.getTagFromContents(new HashSet<>(Collections.singletonList("execution")));
 
     private static double getLife(LivingEntity e) {
@@ -65,7 +66,7 @@ public class CoupDeGrace extends Skill {
 
     @Override
     public void onEffectEnd(LivingEntity caster, SkillData stats) {
-        CasterData.getCap(caster).removeActiveTag("execution");
+        setCooldown(caster, 5);
     }
 
     protected void uponDeath(LivingEntity caster, LivingEntity target, float amount) {
@@ -78,18 +79,52 @@ public class CoupDeGrace extends Skill {
             LivingHurtEvent e = (LivingHurtEvent) procPoint;
             if (CombatUtils.getAttackingItemStack(e.getSource()) == null || CombatUtils.getAttackingItemStack(e.getSource()).isEmpty() || CombatUtils.isWeapon(caster, CombatUtils.getAttackingItemStack(e.getSource())))
                 if (isValid(e)) {
-                    e.setAmount(e.getAmount() + (float) CoupDeGrace.getLife(target));
-                    e.getSource().setDamageBypassesArmor();
-                    CombatData.getCap(target).decrementStaggerTime(CombatData.getCap(target).getStaggerTime());
-                    if (e.getAmount() > target.getHealth()) {
+                    if (CombatData.getCap(e.getEntityLiving()).getStaggerTime() > 0 && !CombatData.getCap(e.getEntityLiving()).isFirstStaggerStrike()) {
+                        execute(e);
+//                        CombatData.getCap(target).decrementStaggerTime(CombatData.getCap(target).getStaggerTime());
+//                        if (e.getAmount() > target.getHealth()) {
                         uponDeath(caster, target, e.getAmount());
+                        markUsed(caster);
+                        //}
+                    } else {
+                        e.setCanceled(true);
+                        CombatData.getCap(target).consumePosture(e.getAmount());
                     }
                 }
         }
     }
 
+    protected void execute(LivingHurtEvent e) {
+        e.setAmount(e.getEntityLiving().getHealth());
+        e.getSource().setDamageBypassesArmor().setDamageIsAbsolute();
+    }
+
     protected boolean isValid(LivingHurtEvent e) {
-        return CombatData.getCap(e.getEntityLiving()).getStaggerTime() > 0 && !CombatData.getCap(e.getEntityLiving()).isFirstStaggerStrike();
+        return e.getEntityLiving().getHealth() < e.getEntityLiving().getMaxHealth() * 0.3;
+    }
+
+    public static class Warning extends CoupDeGrace {
+        @Override
+        public Color getColor() {
+            return Color.RED;
+        }
+
+        @Override
+        protected boolean isValid(LivingHurtEvent e) {
+            return true;
+        }
+
+        @Override
+        protected void execute(LivingHurtEvent e) {
+            e.setAmount(e.getAmount() + (float) CoupDeGrace.getLife(e.getEntityLiving()));
+            e.getSource().setDamageBypassesArmor().setDamageIsAbsolute();
+            CombatData.getCap(e.getEntityLiving()).decrementStaggerTime(CombatData.getCap(e.getEntityLiving()).getStaggerTime());
+        }
+
+        @Override
+        public void onEffectEnd(LivingEntity caster, SkillData stats) {
+            //do nothing! This can be toggled on and off without consequence.
+        }
     }
 
     public static class Silencer extends CoupDeGrace {
@@ -98,10 +133,13 @@ public class CoupDeGrace extends Skill {
             return Color.LIGHT_GRAY;
         }
 
+        @Override
+        protected void uponDeath(LivingEntity caster, LivingEntity target, float amount) {
+        }
+
+        @Override
         protected boolean isValid(LivingHurtEvent e) {
-            if (e.getSource().getTrueSource() instanceof LivingEntity && CombatUtils.getAwareness((LivingEntity) e.getSource().getTrueSource(), e.getEntityLiving()) == CombatUtils.AWARENESS.UNAWARE)
-                return true;
-            return super.isValid(e);
+            return e.getEntityLiving().getHealth() < e.getEntityLiving().getMaxHealth() * 0.3 * CombatUtils.getDamageMultiplier(CombatUtils.AWARENESS.UNAWARE, CombatUtils.getAttackingItemStack(e.getSource()));
         }
     }
 
@@ -113,9 +151,9 @@ public class CoupDeGrace extends Skill {
 
         protected void uponDeath(LivingEntity caster, LivingEntity target, float amount) {
             final ICombatCapability cap = CombatData.getCap(caster);
-            cap.addFatigue( Math.max(-amount / 10, -cap.getFatigue()*0.3f));
-            cap.addWounding(Math.max(-amount / 10, -cap.getWounding()*0.3f));
-            cap.addBurnout(Math.max(-amount / 10, -cap.getBurnout()*0.3f));
+            cap.addFatigue(-amount / 10);
+            cap.addWounding(-amount / 10);
+            cap.addBurnout(-amount / 10);
             cap.addPosture(amount / 10);
             cap.addSpirit(amount / 10);
             caster.heal(amount / 10);

@@ -1,6 +1,7 @@
 package jackiecrazy.wardance.skill.heavyblow;
 
 import jackiecrazy.wardance.event.ParryEvent;
+import jackiecrazy.wardance.skill.ProcPoint;
 import jackiecrazy.wardance.skill.SkillData;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.tags.Tag;
@@ -11,7 +12,7 @@ import java.util.Arrays;
 import java.util.HashSet;
 
 public class Poise extends HeavyBlow {
-    private final Tag<String> tag = Tag.getTagFromContents(new HashSet<>(Arrays.asList("physical", "boundCast", "disableShield", "melee", "normalAttack", "countdown", "onParry", "modifyCrit", "rechargeWithAttack", "onBeingParried")));
+    private final Tag<String> tag = Tag.getTagFromContents(new HashSet<>(Arrays.asList("physical", "disableShield", ProcPoint.melee, ProcPoint.on_hurt, "boundCast", ProcPoint.normal_attack, ProcPoint.countdown, ProcPoint.modify_crit, ProcPoint.recharge_normal, ProcPoint.on_being_parried, ProcPoint.on_parry)));
     private final Tag<String> no = Tag.getTagFromContents(new HashSet<>(Arrays.asList("normalAttack", "noCrit", "onParry")));
 
     @Override

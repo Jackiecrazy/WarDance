@@ -1,25 +1,21 @@
 package jackiecrazy.wardance.skill.heavyblow;
 
+import jackiecrazy.wardance.WarDance;
+import jackiecrazy.wardance.capability.skill.CasterData;
+import jackiecrazy.wardance.skill.Skill;
 import jackiecrazy.wardance.skill.SkillData;
+import jackiecrazy.wardance.skill.WarSkills;
 import jackiecrazy.wardance.utils.CombatUtils;
-import jackiecrazy.wardance.utils.GeneralUtils;
 import net.minecraft.entity.LivingEntity;
-import net.minecraft.tags.Tag;
-import net.minecraftforge.event.entity.living.LivingAttackEvent;
-import net.minecraftforge.event.entity.living.LivingHurtEvent;
+import net.minecraftforge.event.entity.player.CriticalHitEvent;
 import net.minecraftforge.eventbus.api.Event;
+import net.minecraftforge.eventbus.api.SubscribeEvent;
+import net.minecraftforge.fml.common.Mod;
 
 import java.awt.*;
-import java.util.Arrays;
-import java.util.HashSet;
 
+@Mod.EventBusSubscriber(modid = WarDance.MODID)
 public class Backstab extends HeavyBlow {
-    private final Tag<String> tag = Tag.getTagFromContents(new HashSet<>(Arrays.asList("physical", "melee", "disableShield", "beforeArmor", "boundCast", "normalAttack", "onHurt", "modifyCrit", "rechargeWithAttack", "onBeingParried")));
-
-    @Override
-    public Tag<String> getTags(LivingEntity caster) {
-        return tag;
-    }
 
     @Override
     public Color getColor() {
@@ -29,10 +25,14 @@ public class Backstab extends HeavyBlow {
     @Override
     public void onSuccessfulProc(LivingEntity caster, SkillData stats, LivingEntity target, Event procPoint) {
         super.onSuccessfulProc(caster, stats, target, procPoint);
-        if (procPoint instanceof LivingAttackEvent && GeneralUtils.isBehindEntity(caster, target, 180)) {
-            ((LivingAttackEvent) procPoint).getSource().setDamageBypassesArmor();
-        } else if (procPoint instanceof LivingHurtEvent) {
-            ((LivingHurtEvent) procPoint).setAmount((float) (((LivingHurtEvent) procPoint).getAmount() * CombatUtils.getDamageMultiplier(CombatUtils.AWARENESS.DISTRACTED, CombatUtils.getAttackingItemStack(((LivingHurtEvent) procPoint).getSource()))));
+    }
+
+    @SubscribeEvent
+    public static void spooketh(CriticalHitEvent e) {
+        final Skill back = WarSkills.BACKSTAB.get();
+        if (CasterData.getCap(e.getPlayer()).isSkillUsable(back) && e.getTarget() instanceof LivingEntity && CombatUtils.getAwareness(e.getPlayer(), (LivingEntity) e.getTarget()) == CombatUtils.AWARENESS.UNAWARE) {
+            back.onSuccessfulProc(e.getPlayer(), null, (LivingEntity) e.getTarget(), e);
+            CasterData.getCap(e.getPlayer()).setSkillCooldown(back, 3);
         }
     }
 }

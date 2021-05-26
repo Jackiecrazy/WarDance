@@ -132,19 +132,19 @@ Crush: triple size and damage but half speed and range, clips and pierces
 Hamstring: slow target by 40% for 2 seconds
 Vengeance: ricochet up to 5 times between enemies
 Trap: only fires when someone crosses its LoS in 10 blocks
-▪ Fighting spirit: passive available until active cast ends, then can only be recharged by sleeping or after 5 minutes have elapsed. Genies from some game.
+▪ Fighting spirit: passive available until active cast ends, then can only be recharged by sleeping or after 5 minutes have elapsed. If cast out of combat, heal all decay after 5 seconds. Base form gives regen and absorption for 10 seconds. Genies from some game.
 Boulder Brace
- Refill posture and regen unconditionally for 10 seconds
+ Refill posture and +1 posture per second unconditionally
  Halved posture cooldown time
 Wind Scar
- Gain 20 charges and infinite range, every extra block reach consumes a charge
+ +90 sweep
  +1 range
-Winter Wolf
- Attacks on a slowed target freeze them, adding 3 armor. Frozen enemies are unaware and shatter when hit, sending out clouds of ice that block LoS and reset aggression.
- Speed increases to +40% over 5 seconds, consumed to slow target equivalently
+Frost Fang
+ Speed self and slow target on attack
+ +2 luck
 Flame Dance
- Hex an enemy with flame on every attack. On fourth application, create a fiery explosion that further marks enemies
- +5% attack speed for every level of combo gained
+ Gain a free parry every 3 hits
+ +0.05 attack speed for every level of combo gained
 Timberfall
- Activate for (might*2) seconds and clear might. Attacks during this time have guaranteed crit and slow target. When time is over, release a shockwave with size equal to might, and clear it again.
+ Guarantee crit and add 40% damage
  40% of might added to posture damage

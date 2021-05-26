@@ -1,5 +1,6 @@
 package jackiecrazy.wardance.skill.kick;
 
+import jackiecrazy.wardance.WarDance;
 import jackiecrazy.wardance.capability.resources.CombatData;
 import jackiecrazy.wardance.capability.resources.ICombatCapability;
 import jackiecrazy.wardance.skill.Skill;
@@ -7,8 +8,10 @@ import jackiecrazy.wardance.skill.SkillData;
 import jackiecrazy.wardance.skill.WarSkills;
 import jackiecrazy.wardance.utils.GeneralUtils;
 import net.minecraft.entity.LivingEntity;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.tags.Tag;
-import net.minecraft.util.DamageSource;
+import net.minecraft.util.SoundCategory;
+import net.minecraft.util.SoundEvents;
 import net.minecraft.util.math.vector.Vector3d;
 import net.minecraftforge.event.entity.living.LivingAttackEvent;
 import net.minecraftforge.eventbus.api.Event;
@@ -59,7 +62,10 @@ public class Kick extends Skill {
             procPoint.setCanceled(true);
             if (GeneralUtils.getDistSqCompensated(caster, target) <= distanceSq()) {
                 CombatData.getCap(target).consumePosture(6);
-                target.attackEntityFrom(DamageSource.FALLING_BLOCK, 1);
+                if(caster instanceof PlayerEntity)
+                    ((PlayerEntity) caster).spawnSweepParticles();
+                caster.world.playSound(null, caster.getPosX(), caster.getPosY(), caster.getPosZ(), SoundEvents.ENTITY_ZOMBIE_ATTACK_WOODEN_DOOR , SoundCategory.PLAYERS, 0.25f + WarDance.rand.nextFloat() * 0.5f, 0.5f+WarDance.rand.nextFloat() * 0.5f);
+                //target.attackEntityFrom(DamageSource.FALLING_BLOCK, 1);
                 additionally(caster, target);
                 markUsed(caster);
             }

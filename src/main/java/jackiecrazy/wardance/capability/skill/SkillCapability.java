@@ -42,7 +42,7 @@ public class SkillCapability implements ISkillCapability {
             WarDance.LOGGER.warn("skill " + d + " is already active, overwriting.");
         }
         activeSkills.put(d.getSkill(), d);
-        if (dude.get() instanceof ServerPlayerEntity)
+        if (CombatChannel.INSTANCE != null && dude.get() instanceof ServerPlayerEntity)
             CombatChannel.INSTANCE.send(PacketDistributor.PLAYER.with(() -> (ServerPlayerEntity) dude.get()), new SyncSkillPacket(this.write()));
     }
 
@@ -73,11 +73,12 @@ public class SkillCapability implements ISkillCapability {
 
     @Override
     public boolean isSkillActive(Skill skill) {
+        if (activeSkills.containsKey(skill)) return true;
         if (skill.getParentSkill() == null)
             for (Skill s : activeSkills.keySet()) {
                 if (s.isFamily(skill)) return true;
             }
-        return activeSkills.containsKey(skill);
+        return false;
     }
 
     @Override
@@ -109,7 +110,8 @@ public class SkillCapability implements ISkillCapability {
         if (coolingSkills.containsKey(s))
             highest = Math.max(coolingSkills.get(s).getMaxDuration(), amount);
         coolingSkills.put(s, new SkillCooldownData(s, highest, amount));
-        CombatChannel.INSTANCE.send(PacketDistributor.PLAYER.with(() -> (ServerPlayerEntity) dude.get()), new SyncSkillPacket(this.write()));
+        if (dude.get() instanceof ServerPlayerEntity)
+            CombatChannel.INSTANCE.send(PacketDistributor.PLAYER.with(() -> (ServerPlayerEntity) dude.get()), new SyncSkillPacket(this.write()));
     }
 
     @Override
@@ -122,13 +124,13 @@ public class SkillCapability implements ISkillCapability {
         if (!coolingSkills.containsKey(s)) return;
         coolingSkills.get(s).decrementDuration(amount);
         LivingEntity caster = dude.get();
-        if (caster instanceof ServerPlayerEntity)
-            CombatChannel.INSTANCE.send(PacketDistributor.PLAYER.with(() -> (ServerPlayerEntity) caster), new SyncSkillPacket(this.write()));
+        //if (caster instanceof ServerPlayerEntity)
+        CombatChannel.INSTANCE.send(PacketDistributor.PLAYER.with(() -> (ServerPlayerEntity) caster), new SyncSkillPacket(this.write()));
     }
 
     @Override
     public void coolSkill(Skill s) {
-        if(coolingSkills.containsKey(s)) {
+        if (coolingSkills.containsKey(s)) {
             s.onCooledDown(dude.get(), coolingSkills.get(s).getDuration());
 //        LivingEntity caster = dude.get();
 //        if (caster instanceof ServerPlayerEntity)
@@ -241,23 +243,38 @@ public class SkillCapability implements ISkillCapability {
         for (int a = 0; a < als.length; a++)
             if (from.contains("equippedSkill" + a))
                 als[a] = (Skill.getSkill(from.getString("equippedSkill" + a)));
-        setEquippedSkills(Arrays.asList(als));
+        equippedSkill.clear();
+        equippedSkill.addAll(Arrays.asList(als));
     }
 
     @Override
     public void update() {
         boolean sync = false;
         final LivingEntity caster = dude.get();
-        for (SkillData d : activeSkills.values()) {
-            if (d.getSkill().tick(caster, d)) {
+        Skill.STATE state = Skill.STATE.INACTIVE;
+        for (Skill d : equippedSkill) {
+            if (d == null) continue;
+            if (isSkillActive(d) && d.activeTick(caster, getActiveSkill(d).get())) {
+                state = Skill.STATE.ACTIVE;
+                sync = true;
+            } else if (isSkillCoolingDown(d) && d.coolingTick(caster, coolingSkills.get(d))) {
+                state = Skill.STATE.COOLING;
+                sync = true;
+            }
+            if (d.equippedTick(caster, state)) {
                 sync = true;
             }
         }
-        for (SkillCooldownData d : coolingSkills.values()) {
-            if (d.getSkill().coolingTick(caster, d)) {
-                sync = true;
-            }
-        }
+//        for (SkillData d : activeSkills.values()) {
+//            if (d.getSkill().activeTick(caster, d)) {
+//                sync = true;
+//            }
+//        }
+//        for (SkillCooldownData d : coolingSkills.values()) {
+//            if (d.getSkill().coolingTick(caster, d)) {
+//                sync = true;
+//            }
+//        }
         HashSet<Skill> finish = new HashSet<>();
         for (SkillData cd : getActiveSkills().values()) {
             if (cd.getDuration() < 0) {

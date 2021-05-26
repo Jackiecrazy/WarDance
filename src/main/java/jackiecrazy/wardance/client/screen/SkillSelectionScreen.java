@@ -247,6 +247,7 @@ public class SkillSelectionScreen extends Screen {
         lines.add(selectedSkill.description().getString());
         if (selectedVariation != null) {
             //lines.add(String.valueOf(selectedVariation.getSkill().getColor().getRGB()));
+            lines.add("\n");
             lines.add(selectedVariation.getSkill().description().getString());
         }
         lines.add("----------");

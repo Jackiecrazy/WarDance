@@ -2,6 +2,7 @@ package jackiecrazy.wardance.skill;
 
 import jackiecrazy.wardance.WarDance;
 import jackiecrazy.wardance.skill.coupdegrace.CoupDeGrace;
+import jackiecrazy.wardance.skill.fightingspirit.*;
 import jackiecrazy.wardance.skill.grapple.Clinch;
 import jackiecrazy.wardance.skill.grapple.Grapple;
 import jackiecrazy.wardance.skill.grapple.Submission;
@@ -35,6 +36,7 @@ public class WarSkills {
     public static final RegistryObject<Skill> REINVIGORATE = SKILLS.register("reinvigorate", CoupDeGrace.Reinvigorate::new);
     public static final RegistryObject<Skill> SILENCER = SKILLS.register("silencer", CoupDeGrace.Silencer::new);
     public static final RegistryObject<Skill> FRENZY = SKILLS.register("frenzy", CoupDeGrace.Frenzy::new);
+    public static final RegistryObject<Skill> WARNING = SKILLS.register("i_warned_you", CoupDeGrace.Warning::new);
     public static final RegistryObject<Skill> KICK = SKILLS.register("kick", Kick::new);
     public static final RegistryObject<Skill> IRON_KNEE = SKILLS.register("iron_knee", IronKnee::new);
     public static final RegistryObject<Skill> TACKLE = SKILLS.register("tackle", Tackle::new);
@@ -52,5 +54,10 @@ public class WarSkills {
     public static final RegistryObject<Skill> FOOT_SLAM = SKILLS.register("foot_slam", ShieldBash.FootSlam::new);
     public static final RegistryObject<Skill> OVERBEAR = SKILLS.register("overbear", Overbear::new);
     public static final RegistryObject<Skill> BERSERK = SKILLS.register("berserk", Berserk::new);
-    public static final RegistryObject<Skill> BANDAGE = SKILLS.register("bandage", Bandage::new);
+    public static final RegistryObject<Skill> FIGHTINGSPIRIT = SKILLS.register("fighting_spirit", FightingSpirit::new);
+    public static final RegistryObject<Skill> BOULDERBRACE = SKILLS.register("boulder_brace", BoulderBrace::new);
+    public static final RegistryObject<Skill> WINDSCAR = SKILLS.register("wind_scar", WindScar::new);
+    public static final RegistryObject<Skill> FLAMEDANCE = SKILLS.register("flame_dance", FlameDance::new);
+    public static final RegistryObject<Skill> FROSTFANG = SKILLS.register("frost_fang", FrostFang::new);
+    public static final RegistryObject<Skill> TIMBERFALL = SKILLS.register("timberfall", Timberfall::new);
 }

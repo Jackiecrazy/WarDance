@@ -15,6 +15,7 @@ public class ProcPoint {
     public static final String recharge_normal ="rechargeWithAttack";
     public static final String recharge_parry ="rechargeWithParry";
     public static final String recharge_time ="rechargeWithTime";
+    public static final String recharge_cast ="rechargeWithCast";
     /**
      * skills tagged as such will automatically refresh on sleep. It's still possible to add an independent cooldown.
      */

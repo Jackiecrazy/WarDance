@@ -1604,12 +1604,12 @@ public class CombatConfig {
     public static int recovery;
     public static float mobParryChanceWeapon, mobParryChanceShield, mobDeflectChance, mobScaler, kenshiroScaler;
     public static float wound, fatigue, burnout, posCap, distract, unaware;
-    public static boolean dodge, elenai, elenaiP, elenaiC, stealthSystem, ignore;
+    public static boolean dodge, elenai, elenaiP, elenaiC, stealthSystem, ignore, blindness;
     public static float weakness, hunger, poison, luck, nausea;
     public static ArrayList<String> woundList;
     public static boolean woundWL;
     public static ArrayList<String> immortal;
-    public static boolean immortalWL, betterSweep, sweepDurability;
+    public static boolean immortalWL, betterSweep, sweepDurability, sleepingHealsDecay;
     public static int sweepAngle, baseHorizontalDetection, baseVerticalDetection, anglePerArmor;
     public static double blockPerVolume;
     public static float kbNerf;
@@ -1647,6 +1647,7 @@ public class CombatConfig {
     private final ForgeConfigSpec.ConfigValue<List<? extends String>> _customDetection;
     private final ForgeConfigSpec.BooleanValue _woundWL;
     private final ForgeConfigSpec.BooleanValue _immortalWL;
+    private final ForgeConfigSpec.BooleanValue _sleep;
     private final ForgeConfigSpec.BooleanValue _betterSweep;
     private final ForgeConfigSpec.BooleanValue _sweepDurability;
     private final ForgeConfigSpec.IntValue _sweepPerSE;
@@ -1670,6 +1671,7 @@ public class CombatConfig {
     private final ForgeConfigSpec.DoubleValue _distract;
     private final ForgeConfigSpec.DoubleValue _unaware;
     private final ForgeConfigSpec.BooleanValue _ignore;
+    private final ForgeConfigSpec.BooleanValue _blindness;
     private final ForgeConfigSpec.DoubleValue _nausea;
     private final ForgeConfigSpec.DoubleValue _poison;
     private final ForgeConfigSpec.DoubleValue _weakness;
@@ -1719,6 +1721,7 @@ public class CombatConfig {
         _wound = b.translation("wardance.config.wound").comment("this percentage of incoming damage before armor is also added to wounding").defineInRange("wound percentage", 0.1, 0, 1d);
         _fatig = b.translation("wardance.config.fatigue").comment("this percentage of posture damage is also added to fatigue").defineInRange("fatigue percentage", 0.1, 0, 1d);
         _burno = b.translation("wardance.config.burnout").comment("this percentage of stamina use is also added to burnout").defineInRange("burnout percentage", 0.1, 0, 1d);
+        _sleep = b.translation("wardance.config.sleeping").comment("whether sleeping clears wounding, fatigue, and burnout").define("sleeping heals decay", true);
         _knockbackNerf = b.translation("wardance.config.knockback").comment("knockback from all sources to everything will be multiplied by this amount").defineInRange("knockback multiplier", 1, 0, 10d);
         b.pop();
         _mobUpdateInterval = b.translation("wardance.config.mobU").comment("Mobs are forced to sync to client every this number of ticks").defineInRange("forced mob update interval", 100, 1, Integer.MAX_VALUE);
@@ -1750,6 +1753,7 @@ public class CombatConfig {
         _immortalWL = b.translation("wardance.config.decayWL").comment("whether the decay list is a whitelist or a blacklist").define("decay whitelist mode", false);
         b.pop();
         b.push("potion");
+        _blindness = b.translation("wardance.config.blindness").comment("whether blindness will cause mobs to drop aggro").define("mob blindness", true);
         _nausea = b.translation("wardance.config.nausea").comment("how much posture nausea deducts per tick, for mobs only").defineInRange("nausea posture damage", 0.05, 0, Double.MAX_VALUE);
         _poison = b.translation("wardance.config.poison").comment("how much each level of poison multiplies posture regeneration by").defineInRange("poison posture debuff", 0.8, 0, Double.MAX_VALUE);
         _hunger = b.translation("wardance.config.hunger").comment("how much the hunger effect extends the posture cooldown by").defineInRange("hunger posture extension", 1.25, 0, Double.MAX_VALUE);
@@ -1797,6 +1801,7 @@ public class CombatConfig {
         distract = stealthSystem ? CONFIG._distract.get().floatValue() : 1;
         unaware = stealthSystem ? CONFIG._unaware.get().floatValue() : 1;
         ignore = stealthSystem & CONFIG._ignore.get();
+        blindness=CONFIG._blindness.get();
         weakness = CONFIG._weakness.get().floatValue();
         poison = CONFIG._poison.get().floatValue();
         hunger = CONFIG._hunger.get().floatValue();
@@ -1813,6 +1818,7 @@ public class CombatConfig {
         sneakParry = CONFIG._sneakParry.get();
         armorPostureCD = CONFIG._armorPostureCD.get();
         recovery = CONFIG._recovery.get();
+        sleepingHealsDecay = CONFIG._sleep.get();
         CombatUtils.updateLists(CONFIG._combatItems.get(), CONFIG._customPosture.get(), CONFIG._customArmor.get(), CONFIG._customParry.get(), CONFIG._unarmed.get(), CONFIG._customDetection.get());
     }
 

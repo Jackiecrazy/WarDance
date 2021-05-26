@@ -32,8 +32,8 @@ import net.minecraftforge.event.TickEvent;
 import net.minecraftforge.event.entity.EntityJoinWorldEvent;
 import net.minecraftforge.event.entity.living.LivingEvent;
 import net.minecraftforge.event.entity.living.LivingSetAttackTargetEvent;
+import net.minecraftforge.event.entity.living.PotionEvent;
 import net.minecraftforge.event.entity.player.PlayerEvent;
-import net.minecraftforge.event.entity.player.PlayerWakeUpEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.LogicalSide;
 import net.minecraftforge.fml.common.Mod;
@@ -105,15 +105,8 @@ public class EntityHandler {
     }
 
     @SubscribeEvent
-    public static void sleep(PlayerWakeUpEvent e) {
-        CombatData.getCap(e.getPlayer()).setFatigue(0);
-        CombatData.getCap(e.getPlayer()).setBurnout(0);
-        CombatData.getCap(e.getPlayer()).setWounding(0);
-    }
-
-    @SubscribeEvent
     public static void tick(TickEvent.PlayerTickEvent e) {
-        if (e.side == LogicalSide.SERVER && e.player.isAlive()) {
+        if (e.side == LogicalSide.SERVER && e.player.isAlive() && e.phase == TickEvent.Phase.START) {
             CombatData.getCap(e.player).update();
             CasterData.getCap(e.player).update();
             if (e.player.isSneaking()) {
@@ -199,6 +192,12 @@ Mobs should move into a position that is close to the player, far from allies, a
                 ((MobEntity) e.getEntityLiving()).setAttackTarget(null);
             }
         }
+    }
+
+    @SubscribeEvent
+    public static void nigerundayo(final PotionEvent.PotionAddedEvent e) {
+        if (e.getPotionEffect().getPotion() == Effects.BLINDNESS && CombatConfig.blindness && e.getEntityLiving() instanceof MobEntity)
+            ((MobEntity) e.getEntityLiving()).setAttackTarget(null);
     }
 
     @SubscribeEvent

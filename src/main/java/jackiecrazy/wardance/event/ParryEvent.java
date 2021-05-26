@@ -8,6 +8,7 @@ import net.minecraftforge.eventbus.api.Event;
 
 @Event.HasResult
 public class ParryEvent extends LivingEvent {
+    private final boolean originally;
     private final LivingEntity attacker;
     private final Hand attackingHand, defendingHand;
     private final ItemStack attackingStack;
@@ -15,8 +16,9 @@ public class ParryEvent extends LivingEvent {
     private final float originalPostureConsumption;
     private float postureConsumption;
 
-    public ParryEvent(LivingEntity entity, LivingEntity seme, Hand hand, ItemStack a, Hand dhand, ItemStack d, float posture) {
+    public ParryEvent(LivingEntity entity, LivingEntity seme, boolean canParry, Hand hand, ItemStack a, Hand dhand, ItemStack d, float posture) {
         super(entity);
+        originally=canParry;
         attacker = seme;
         attackingHand = hand;
         attackingStack = a;
@@ -56,4 +58,9 @@ public class ParryEvent extends LivingEvent {
     public void setPostureConsumption(float amount) {
         postureConsumption = amount;
     }
+
+    public boolean canParry(){
+        return getResult() == Event.Result.ALLOW || (originally && getResult() == Event.Result.DEFAULT);
+    }
+    //TODO boolean function to evaluate if it will proc
 }
