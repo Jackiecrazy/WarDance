@@ -3,7 +3,7 @@ package jackiecrazy.wardance.utils;
 import jackiecrazy.wardance.WarDance;
 import jackiecrazy.wardance.api.CombatDamageSource;
 import jackiecrazy.wardance.api.WarAttributes;
-import jackiecrazy.wardance.capability.item.CombatManipulator;
+import jackiecrazy.wardance.capability.weaponry.CombatManipulator;
 import jackiecrazy.wardance.capability.resources.CombatData;
 import jackiecrazy.wardance.capability.resources.ICombatCapability;
 import jackiecrazy.wardance.capability.skill.CasterData;

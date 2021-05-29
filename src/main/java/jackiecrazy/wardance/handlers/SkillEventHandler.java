@@ -30,12 +30,7 @@ public class SkillEventHandler {
         /**
          * @Author Tamaized
          */
-        boolean flag = !e.wakeImmediately() && !e.updateWorld();
-        if (!flag) {
-            if (!e.wakeImmediately() && e.updateWorld()) {
-                flag = e.getPlayer().world.isDaytime();
-            }
-        }
+        boolean flag = !e.wakeImmediately() && (!e.updateWorld() || e.getPlayer().world.isDaytime());
         if (flag && e.getEntityLiving().isServerWorld()) {
             if (CombatConfig.sleepingHealsDecay) {
                 CombatData.getCap(e.getPlayer()).setFatigue(0);
@@ -49,6 +44,7 @@ public class SkillEventHandler {
                 }
             }
         }
+        System.out.println("wakeImmediately: "+e.wakeImmediately()+", update world: "+e.updateWorld()+", is daytime: "+e.getPlayer().world.isDaytime()+", recharge: "+CombatConfig.sleepingHealsDecay);
 
     }
 
@@ -174,7 +170,7 @@ public class SkillEventHandler {
         if (!e.getEntityLiving().isServerWorld()) return;
         Entity proj = e.getProjectile();
         if (proj instanceof ProjectileEntity) {
-            Entity shooter = ((ProjectileEntity) proj).func_234616_v_();
+            Entity shooter = ((ProjectileEntity) proj).getShooter();
             if (shooter instanceof LivingEntity)
                 for (SkillData s : CasterData.getCap((LivingEntity) shooter).getActiveSkills().values()) {
                     if (s.getSkill().getTags((LivingEntity) shooter).contains(ProcPoint.on_projectile_impact)) {

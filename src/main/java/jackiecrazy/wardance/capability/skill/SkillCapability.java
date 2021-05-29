@@ -124,8 +124,8 @@ public class SkillCapability implements ISkillCapability {
         if (!coolingSkills.containsKey(s)) return;
         coolingSkills.get(s).decrementDuration(amount);
         LivingEntity caster = dude.get();
-        //if (caster instanceof ServerPlayerEntity)
-        CombatChannel.INSTANCE.send(PacketDistributor.PLAYER.with(() -> (ServerPlayerEntity) caster), new SyncSkillPacket(this.write()));
+        if (caster instanceof ServerPlayerEntity)
+            CombatChannel.INSTANCE.send(PacketDistributor.PLAYER.with(() -> (ServerPlayerEntity) caster), new SyncSkillPacket(this.write()));
     }
 
     @Override

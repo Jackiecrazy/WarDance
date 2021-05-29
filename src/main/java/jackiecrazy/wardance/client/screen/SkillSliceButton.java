@@ -90,7 +90,7 @@ public class SkillSliceButton extends SkillSelectionButton {
                     RenderSystem.color4f(0.6f, 0.6f, 0.6f, 1);
                 }
                 applySlotTint();
-                this.renderButton(matrixStack, mouseX, mouseY, partialTicks);
+                this.renderWidget(matrixStack, mouseX, mouseY, partialTicks);
                 if (s != null) {
                     Minecraft.getInstance().textureManager.bindTexture(s.icon());
                     Color c = s.getColor();

@@ -1,4 +1,4 @@
-package jackiecrazy.wardance.capability.item;
+package jackiecrazy.wardance.capability.weaponry;
 
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.LivingEntity;

@@ -48,7 +48,7 @@ public class PassiveButton extends SkillSelectionButton {
         }
     }
 
-    public void renderButton(MatrixStack matrixStack, int mouseX, int mouseY, float partialTicks) {
+    public void renderWidget(MatrixStack matrixStack, int mouseX, int mouseY, float partialTicks) {
         Minecraft.getInstance().getTextureManager().bindTexture(passive);
         if (!this.isHovered) {
             RenderSystem.color4f(0.6f, 0.6f, 0.6f, 1);

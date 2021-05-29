@@ -45,22 +45,22 @@ public class GeneralUtils {
     }
 
     @Nullable
-    public static EntityType getEntityTypeFromResourceLocation(ResourceLocation rl){
-        if(ForgeRegistries.ENTITIES.containsKey(rl))
-        return ForgeRegistries.ENTITIES.getValue(rl);
+    public static EntityType getEntityTypeFromResourceLocation(ResourceLocation rl) {
+        if (ForgeRegistries.ENTITIES.containsKey(rl))
+            return ForgeRegistries.ENTITIES.getValue(rl);
         return null;
     }
 
     @Nullable
-    public static ResourceLocation getResourceLocationFromEntityType(EntityType et){
-        if(ForgeRegistries.ENTITIES.containsValue(et))
+    public static ResourceLocation getResourceLocationFromEntityType(EntityType et) {
+        if (ForgeRegistries.ENTITIES.containsValue(et))
             return ForgeRegistries.ENTITIES.getKey(et);
         return null;
     }
 
     @Nullable
-    public static ResourceLocation getResourceLocationFromEntity(Entity et){
-        if(ForgeRegistries.ENTITIES.containsValue(et.getType()))
+    public static ResourceLocation getResourceLocationFromEntity(Entity et) {
+        if (ForgeRegistries.ENTITIES.containsValue(et.getType()))
             return ForgeRegistries.ENTITIES.getKey(et.getType());
         return null;
     }
@@ -454,4 +454,8 @@ public class GeneralUtils {
         return 0;
     }
 
+    public static boolean isKitMain(ItemStack is) {
+        //if (is.getItem() == Items.IRON_AXE) return true;
+        return is.getTag() != null && is.getTag().getBoolean("kit");
+    }
 }

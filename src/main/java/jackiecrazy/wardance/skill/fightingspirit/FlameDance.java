@@ -18,6 +18,8 @@ import java.util.Arrays;
 import java.util.HashSet;
 import java.util.UUID;
 
+import jackiecrazy.wardance.skill.Skill.STATE;
+
 public class FlameDance extends FightingSpirit {
     private static final UUID attackSpeed = UUID.fromString("67fe7ef6-a398-4c65-9bb1-42edaa80e7b4");
     private final Tag<String> tag = Tag.getTagFromContents(new HashSet<>(Arrays.asList("chant", ProcPoint.melee, ProcPoint.on_parry, ProcPoint.on_being_hurt, ProcPoint.modify_crit, ProcPoint.countdown, ProcPoint.recharge_time, ProcPoint.recharge_sleep)));

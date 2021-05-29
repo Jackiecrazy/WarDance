@@ -19,7 +19,11 @@ import net.minecraft.entity.ai.goal.Goal;
 import net.minecraft.entity.monster.MonsterEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.ServerPlayerEntity;
+import net.minecraft.inventory.EquipmentSlotType;
+import net.minecraft.item.ItemStack;
+import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.potion.Effects;
+import net.minecraft.util.Hand;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.Tuple;
 import net.minecraft.util.math.AxisAlignedBB;
@@ -30,6 +34,7 @@ import net.minecraft.world.World;
 import net.minecraftforge.event.AttachCapabilitiesEvent;
 import net.minecraftforge.event.TickEvent;
 import net.minecraftforge.event.entity.EntityJoinWorldEvent;
+import net.minecraftforge.event.entity.living.LivingEquipmentChangeEvent;
 import net.minecraftforge.event.entity.living.LivingEvent;
 import net.minecraftforge.event.entity.living.LivingSetAttackTargetEvent;
 import net.minecraftforge.event.entity.living.PotionEvent;
@@ -46,7 +51,6 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
-
 
 @Mod.EventBusSubscriber(modid = WarDance.MODID)
 public class EntityHandler {
@@ -169,15 +173,51 @@ Mobs should move into a position that is close to the player, far from allies, a
             LivingEntity sneaker = e.getEntityLiving(), watcher = (LivingEntity) e.getLookingEntity();
             CombatUtils.StealthData sd = CombatUtils.stealthMap.getOrDefault(watcher.getType().getRegistryName(), CombatUtils.STEALTH);
             if (sd.isVigilant()) return;
-            if (!sd.isAllSeeing() && !GeneralUtils.isFacingEntity(watcher, sneaker, Math.max(CombatConfig.baseHorizontalDetection, sneaker.getTotalArmorValue() * CombatConfig.anglePerArmor), Math.max(CombatConfig.baseVerticalDetection, sneaker.getTotalArmorValue() * sneaker.getTotalArmorValue())))
-                e.modifyVisibility(0.2);
-            if (!sd.isNightVision() && !watcher.isPotionActive(Effects.NIGHT_VISION)) {
-                World world = sneaker.world;
-                if (world.isAreaLoaded(sneaker.getPosition(), 5) && world.isAreaLoaded(watcher.getPosition(), 5))
-                    e.modifyVisibility(0.5 + world.getLight(sneaker.getPosition()) * world.getLightValue(sneaker.getPosition()) * 0.05);
+            if(watcher.getAttackingEntity()!=sneaker&&watcher.getRevengeTarget()!=sneaker&&watcher.getLastAttackedEntity()!=sneaker) {
+                if (!sd.isAllSeeing() && !GeneralUtils.isFacingEntity(watcher, sneaker, Math.max(CombatConfig.baseHorizontalDetection, sneaker.getTotalArmorValue() * CombatConfig.anglePerArmor), Math.max(CombatConfig.baseVerticalDetection, sneaker.getTotalArmorValue() * sneaker.getTotalArmorValue())))
+                    e.modifyVisibility(0.2);
+                if (!sd.isNightVision() && !watcher.isPotionActive(Effects.NIGHT_VISION)) {
+                    World world = sneaker.world;
+                    if (world.isAreaLoaded(sneaker.getPosition(), 5) && world.isAreaLoaded(watcher.getPosition(), 5)) {
+                        float lightMalus = (15 - world.getLight(sneaker.getPosition())) * 0.05f;
+                        if (!sd.isDeaf())
+                            lightMalus *= (1 - Math.min(sneaker.getTotalArmorValue() / 20f, 1f));
+                        e.modifyVisibility(1 - lightMalus);
+                    }
+                }
             }
             if (!sd.isAllSeeing())
                 e.modifyVisibility(sneaker.isSprinting() ? 1.1 : watcher.canEntityBeSeen(sneaker) ? 0.4 : 1);
+        }
+    }
+
+    @SubscribeEvent
+    public static void kitCheck(LivingEvent.LivingUpdateEvent e) {
+        final LivingEntity le = e.getEntityLiving();
+        if (le instanceof PlayerEntity) {
+            if (GeneralUtils.isKitMain(le.getHeldItemMainhand())) {
+                ItemStack is = le.getHeldItemMainhand();
+                is.getOrCreateTag().put("kitItem", le.getHeldItemOffhand().write(new CompoundNBT()));
+                //this is called before kitUp, so this quickly overrides the latter
+            }
+        }
+    }
+
+    @SubscribeEvent
+    public static void kitUp(LivingEquipmentChangeEvent e) {
+        if (e.getSlot() == EquipmentSlotType.MAINHAND && !ItemStack.areItemsEqual(e.getFrom(), e.getTo())) {
+            ItemStack from = e.getFrom(), to = e.getTo();
+            final LivingEntity elb = e.getEntityLiving();
+            if (GeneralUtils.isKitMain(from)) {
+                //interesting, it's being written, then removed immediately.
+                e.getFrom().getOrCreateTag().put("kitItem", elb.getHeldItemOffhand().write(new CompoundNBT()));
+                elb.setHeldItem(Hand.OFF_HAND, CombatData.getCap(elb).getTempItemStack());
+            }
+            if (GeneralUtils.isKitMain(to)) {
+                CombatData.getCap(elb).setTempItemStack(elb.getHeldItemOffhand());
+                ItemStack replace = ItemStack.read(to.getOrCreateTag().getCompound("kitItem"));
+                elb.setHeldItem(Hand.OFF_HAND, replace);
+            }
         }
     }
 

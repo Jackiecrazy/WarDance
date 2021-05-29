@@ -1,4 +1,4 @@
-package jackiecrazy.wardance.capability.item;
+package jackiecrazy.wardance.capability.weaponry;
 
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.common.capabilities.Capability;

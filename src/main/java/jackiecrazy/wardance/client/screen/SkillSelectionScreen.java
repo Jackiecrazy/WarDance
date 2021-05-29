@@ -373,7 +373,7 @@ public class SkillSelectionScreen extends Screen {
             for (IReorderingProcessor line : lines) {
                 if (line != null) {
                     RenderSystem.enableBlend();
-                    SkillSelectionScreen.this.font.func_238407_a_(mStack, line, left + PADDING, relativeY, 0xFFFFFF);
+                    SkillSelectionScreen.this.font.drawTextWithShadow(mStack, line, left + PADDING, relativeY, 0xFFFFFF);
                     RenderSystem.disableAlphaTest();
                     RenderSystem.disableBlend();
                 }

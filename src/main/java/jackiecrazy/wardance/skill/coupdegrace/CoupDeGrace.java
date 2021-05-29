@@ -48,12 +48,7 @@ public class CoupDeGrace extends Skill {
     }
 
     public boolean canCast(LivingEntity caster) {
-//        ISkillCapability cap = CasterData.getCap(caster);
-//        if (cap.isSkillActive(this)) return true;
-//        for (String s : getIncompatibleTags(caster).getAllElements())
-//            if (cap.isTagActive(s)) return false;
-//        return !cap.isSkillCoolingDown(this) && (getParentSkill() == null || getParentSkill().canCast(caster));
-        return true;
+        return super.canCast(caster);
     }
 
     @Override

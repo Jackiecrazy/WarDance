@@ -1,5 +1,6 @@
 package jackiecrazy.wardance.capability.resources;
 
+import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.util.Hand;
 
@@ -399,6 +400,16 @@ public class DummyCombatCap implements ICombatCapability {
     @Override
     public void sync() {
 
+    }
+
+    @Override
+    public void setTempItemStack(ItemStack is) {
+
+    }
+
+    @Override
+    public ItemStack getTempItemStack() {
+        return null;
     }
 
     @Override

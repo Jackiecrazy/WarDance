@@ -50,6 +50,7 @@ public class CombatCapability implements ICombatCapability {
     private float cache;//no need to save this because it'll be used within the span of a tick
     private long staggerTickExisted;
     private int recoveryTimer;
+    private ItemStack tempOffhand = ItemStack.EMPTY;
 
     public CombatCapability(LivingEntity e) {
         dude = new WeakReference<>(e);
@@ -654,7 +655,7 @@ public class CombatCapability implements ICombatCapability {
             addPosture(getPPT() * (poExtra));
         }
         float nausea = elb instanceof PlayerEntity || !elb.isPotionActive(Effects.NAUSEA) ? 0 : (elb.getActivePotionEffect(Effects.NAUSEA).getAmplifier() + 1) * CombatConfig.nausea;
-        addPosture(nausea*ticks);
+        addPosture(nausea * ticks);
         if (shcd != 0) {
             setShatter((float) GeneralUtils.getAttributeValueSafe(elb, WarAttributes.SHATTER.get()));
         }
@@ -700,6 +701,16 @@ public class CombatCapability implements ICombatCapability {
     }
 
     @Override
+    public ItemStack getTempItemStack() {
+        return tempOffhand;
+    }
+
+    @Override
+    public void setTempItemStack(ItemStack is) {
+        tempOffhand = is == null ? ItemStack.EMPTY : is;
+    }
+
+    @Override
     public void read(CompoundNBT c) {
         int temp = roll;
         setMight(c.getFloat("qi"));
@@ -731,6 +742,7 @@ public class CombatCapability implements ICombatCapability {
         recoveryTimer = c.getInt("stumble");
         lastUpdate = c.getLong("lastUpdate");
         first = c.getBoolean("first");
+        setTempItemStack(ItemStack.read(c.getCompound("temp")));
         if (dude.get() instanceof PlayerEntity) {
             if (getRollTime() > CombatConfig.rollEndsAt && c.getBoolean("rolling"))
                 ((PlayerEntity) dude.get()).setForcedPose(Pose.SWIMMING);
@@ -777,6 +789,8 @@ public class CombatCapability implements ICombatCapability {
         c.putInt("stumble", recoveryTimer);
         c.putFloat("shatter", getShatter());
         c.putBoolean("rolling", dude.get() instanceof PlayerEntity && ((PlayerEntity) dude.get()).getForcedPose() == Pose.SWIMMING);
+        if(!tempOffhand.isEmpty())
+            c.put("temp", tempOffhand.write(new CompoundNBT()));
         return c;
     }
 

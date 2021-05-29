@@ -1,5 +1,6 @@
 package jackiecrazy.wardance.capability.resources;
 
+import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.util.Hand;
 
@@ -204,6 +205,10 @@ public interface ICombatCapability {
     void update();
 
     void sync();
+
+    void setTempItemStack(ItemStack is);
+
+    ItemStack getTempItemStack();
 
     void read(CompoundNBT tag);
 

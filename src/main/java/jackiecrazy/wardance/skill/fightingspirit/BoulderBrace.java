@@ -6,6 +6,8 @@ import net.minecraft.entity.LivingEntity;
 
 import java.awt.*;
 
+import jackiecrazy.wardance.skill.Skill.STATE;
+
 public class BoulderBrace extends FightingSpirit {
     @Override
     protected void evoke(LivingEntity caster) {

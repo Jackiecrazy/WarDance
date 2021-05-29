@@ -1,8 +1,10 @@
 package jackiecrazy.wardance;
 
 import jackiecrazy.wardance.api.WarAttributes;
-import jackiecrazy.wardance.capability.item.DummyCombatItemCap;
-import jackiecrazy.wardance.capability.item.ICombatItemCapability;
+import jackiecrazy.wardance.capability.kits.IKitItemStack;
+import jackiecrazy.wardance.capability.kits.KitCapability;
+import jackiecrazy.wardance.capability.weaponry.DummyCombatItemCap;
+import jackiecrazy.wardance.capability.weaponry.ICombatItemCapability;
 import jackiecrazy.wardance.capability.resources.CombatStorage;
 import jackiecrazy.wardance.capability.resources.DummyCombatCap;
 import jackiecrazy.wardance.capability.resources.ICombatCapability;
@@ -72,6 +74,7 @@ public class WarDance {
         CapabilityManager.INSTANCE.register(ICombatCapability.class, new CombatStorage(), DummyCombatCap::new);
         CapabilityManager.INSTANCE.register(ISkillCapability.class, new SkillStorage(), DummySkillCap::new);
         CapabilityManager.INSTANCE.register(ICombatItemCapability.class, new DummyCombatItemCap.Storage(), DummyCombatItemCap::new);
+        CapabilityManager.INSTANCE.register(IKitItemStack.class, new KitCapability.Storage(), KitCapability::new);
         // some preinit code
         int index = 0;
         CombatChannel.INSTANCE.registerMessage(index++, UpdateClientPacket.class, new UpdateClientPacket.UpdateClientEncoder(), new UpdateClientPacket.UpdateClientDecoder(), new UpdateClientPacket.UpdateClientHandler());
