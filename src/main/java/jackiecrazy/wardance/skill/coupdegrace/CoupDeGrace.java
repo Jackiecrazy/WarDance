@@ -115,11 +115,6 @@ public class CoupDeGrace extends Skill {
             e.getSource().setDamageBypassesArmor().setDamageIsAbsolute();
             CombatData.getCap(e.getEntityLiving()).decrementStaggerTime(CombatData.getCap(e.getEntityLiving()).getStaggerTime());
         }
-
-        @Override
-        public void onEffectEnd(LivingEntity caster, SkillData stats) {
-            //do nothing! This can be toggled on and off without consequence.
-        }
     }
 
     public static class Silencer extends CoupDeGrace {

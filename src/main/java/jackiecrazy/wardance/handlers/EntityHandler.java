@@ -173,7 +173,7 @@ Mobs should move into a position that is close to the player, far from allies, a
             LivingEntity sneaker = e.getEntityLiving(), watcher = (LivingEntity) e.getLookingEntity();
             CombatUtils.StealthData sd = CombatUtils.stealthMap.getOrDefault(watcher.getType().getRegistryName(), CombatUtils.STEALTH);
             if (sd.isVigilant()) return;
-            if(watcher.getAttackingEntity()!=sneaker&&watcher.getRevengeTarget()!=sneaker&&watcher.getLastAttackedEntity()!=sneaker) {
+            if (watcher.getAttackingEntity() != sneaker && watcher.getRevengeTarget() != sneaker && watcher.getLastAttackedEntity() != sneaker && (!(watcher instanceof MobEntity) || ((MobEntity) watcher).getAttackTarget() != sneaker)) {
                 if (!sd.isAllSeeing() && !GeneralUtils.isFacingEntity(watcher, sneaker, Math.max(CombatConfig.baseHorizontalDetection, sneaker.getTotalArmorValue() * CombatConfig.anglePerArmor), Math.max(CombatConfig.baseVerticalDetection, sneaker.getTotalArmorValue() * sneaker.getTotalArmorValue())))
                     e.modifyVisibility(0.2);
                 if (!sd.isNightVision() && !watcher.isPotionActive(Effects.NIGHT_VISION)) {

@@ -17,7 +17,11 @@ public class Vault extends HeavyBlow {
     @Override
     public boolean onCast(LivingEntity caster) {
         ForgeMod.REACH_DISTANCE.ifPresent((e) -> {
-            Optional.ofNullable(caster.getAttribute(e)).ifPresent((a) -> {a.applyPersistentModifier(reach);});
+
+            Optional.ofNullable(caster.getAttribute(e)).ifPresent((a) -> {
+                a.removeModifier(reach);
+                a.applyPersistentModifier(reach);
+            });
         });
         return super.onCast(caster);
     }
