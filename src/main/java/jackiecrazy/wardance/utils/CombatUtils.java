@@ -40,10 +40,10 @@ import javax.annotation.Nullable;
 import java.util.*;
 
 public class CombatUtils {
+    public static final StealthData STEALTH = new StealthData(false, false, false, false, false);
     public static HashMap<ResourceLocation, Float> customPosture = new HashMap<>();
     public static HashMap<ResourceLocation, Tuple<Float, Float>> parryMap = new HashMap<>();
     public static HashMap<ResourceLocation, StealthData> stealthMap = new HashMap<>();
-    public static final StealthData STEALTH=new StealthData(false, false, false, false, false);
     public static HashMap<Item, AttributeModifier[]> armorStats = new HashMap<>();
     public static boolean isSweeping = false;
     private static CombatInfo DEFAULT = new CombatInfo(1, 1, false, 0, 0, 1, 1);
@@ -322,9 +322,8 @@ public class CombatUtils {
             strength = event.getStrength();
             xRatio = event.getRatioX();
             zRatio = event.getRatioZ();
-        } else {
-            strength *= (float) (1 - GeneralUtils.getAttributeValueSafe(to, Attributes.KNOCKBACK_RESISTANCE));
         }
+        strength *= (float) Math.max(0, 1 - GeneralUtils.getAttributeValueSafe(to, Attributes.KNOCKBACK_RESISTANCE));
         if (strength != 0f) {
             Vector3d vec = to.getMotion();
             double motionX = vec.x, motionY = vec.y, motionZ = vec.z;
@@ -454,7 +453,8 @@ public class CombatUtils {
     }
 
     public static AWARENESS getAwareness(LivingEntity attacker, LivingEntity target) {
-        if (!CombatConfig.stealthSystem || target instanceof PlayerEntity||CombatUtils.stealthMap.getOrDefault(target.getType().getRegistryName(), CombatUtils.STEALTH).isVigilant()) return AWARENESS.ALERT;
+        if (!CombatConfig.stealthSystem || target instanceof PlayerEntity || CombatUtils.stealthMap.getOrDefault(target.getType().getRegistryName(), CombatUtils.STEALTH).isVigilant())
+            return AWARENESS.ALERT;
         if (target.getRevengeTarget() == null && (!(target instanceof MobEntity) || ((MobEntity) target).getAttackTarget() == null))
             return AWARENESS.UNAWARE;
         else if (target.getRevengeTarget() != attacker && (!(target instanceof MobEntity) || ((MobEntity) target).getAttackTarget() != attacker))
@@ -471,6 +471,16 @@ public class CombatUtils {
     }
 
     public static class StealthData {
+        private boolean deaf, nightvision, illuminati, atheist, vigil;
+
+        public StealthData(boolean isDeaf, boolean nightVision, boolean allSeeing, boolean observant, boolean vigilant) {
+            deaf = isDeaf;
+            nightvision = nightVision;
+            illuminati = allSeeing;
+            atheist = observant;
+            vigil = vigilant;
+        }
+
         public boolean isDeaf() {
             return deaf;
         }
@@ -487,18 +497,8 @@ public class CombatUtils {
             return atheist;
         }
 
-        public boolean isVigilant(){
+        public boolean isVigilant() {
             return vigil;
-        }
-
-        private boolean deaf, nightvision, illuminati, atheist, vigil;
-
-        public StealthData(boolean isDeaf, boolean nightVision, boolean allSeeing, boolean observant, boolean vigilant) {
-            deaf = isDeaf;
-            nightvision = nightVision;
-            illuminati = allSeeing;
-            atheist = observant;
-            vigil=vigilant;
         }
     }
 

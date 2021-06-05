@@ -28,11 +28,12 @@ public class SkillEventHandler {
     @SubscribeEvent(priority = EventPriority.LOWEST)
     public static void sleep(PlayerWakeUpEvent e) {
         /**
-         * @Author Tamaized
+         * Credit to Tamaized for figuring this out. Tamaized made AoV and TF, they're fun!
          */
+
         boolean flag = !e.wakeImmediately() && (!e.updateWorld() || e.getPlayer().world.isDaytime());
-        if (flag && e.getEntityLiving().isServerWorld()) {
-            if (CombatConfig.sleepingHealsDecay) {
+        if ((flag || CombatConfig.sleepingHealsDecay == CombatConfig.ThirdOption.FORCED) && e.getEntityLiving().isServerWorld()) {
+            if (CombatConfig.sleepingHealsDecay != CombatConfig.ThirdOption.FALSE) {
                 CombatData.getCap(e.getPlayer()).setFatigue(0);
                 CombatData.getCap(e.getPlayer()).setBurnout(0);
                 CombatData.getCap(e.getPlayer()).setWounding(0);
@@ -44,7 +45,7 @@ public class SkillEventHandler {
                 }
             }
         }
-        System.out.println("wakeImmediately: "+e.wakeImmediately()+", update world: "+e.updateWorld()+", is daytime: "+e.getPlayer().world.isDaytime()+", recharge: "+CombatConfig.sleepingHealsDecay);
+        //System.out.println("wakeImmediately: "+e.wakeImmediately()+", update world: "+e.updateWorld()+", is daytime: "+e.getPlayer().world.isDaytime()+", recharge: "+CombatConfig.sleepingHealsDecay);
 
     }
 

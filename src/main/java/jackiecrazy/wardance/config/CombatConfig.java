@@ -17,6 +17,11 @@ import java.util.List;
 public class CombatConfig {
     public static final CombatConfig CONFIG;
     public static final ForgeConfigSpec CONFIG_SPEC;
+    public enum ThirdOption{
+        TRUE,
+        FALSE,
+        FORCED
+    }
     private static final String[] SNEAK = {
             //deaf, night vision, all-seeing, observant, vigilant
             "ars_nouveau:ally_vex, false, false, false, false, true",
@@ -1820,7 +1825,8 @@ public class CombatConfig {
     public static ArrayList<String> woundList;
     public static boolean woundWL;
     public static ArrayList<String> immortal;
-    public static boolean immortalWL, betterSweep, sweepDurability, sleepingHealsDecay;
+    public static boolean immortalWL, betterSweep, sweepDurability;
+    public static ThirdOption sleepingHealsDecay;
     public static int sweepAngle, baseHorizontalDetection, baseVerticalDetection, anglePerArmor;
     public static double blockPerVolume;
     public static float kbNerf;
@@ -1858,7 +1864,7 @@ public class CombatConfig {
     private final ForgeConfigSpec.ConfigValue<List<? extends String>> _customDetection;
     private final ForgeConfigSpec.BooleanValue _woundWL;
     private final ForgeConfigSpec.BooleanValue _immortalWL;
-    private final ForgeConfigSpec.BooleanValue _sleep;
+    private final ForgeConfigSpec.EnumValue<ThirdOption> _sleep;
     private final ForgeConfigSpec.BooleanValue _betterSweep;
     private final ForgeConfigSpec.BooleanValue _sweepDurability;
     private final ForgeConfigSpec.IntValue _sweepPerSE;
@@ -1932,7 +1938,7 @@ public class CombatConfig {
         _wound = b.translation("wardance.config.wound").comment("this percentage of incoming damage before armor is also added to wounding").defineInRange("wound percentage", 0.1, 0, 1d);
         _fatig = b.translation("wardance.config.fatigue").comment("this percentage of posture damage is also added to fatigue").defineInRange("fatigue percentage", 0.1, 0, 1d);
         _burno = b.translation("wardance.config.burnout").comment("this percentage of stamina use is also added to burnout").defineInRange("burnout percentage", 0.1, 0, 1d);
-        _sleep = b.translation("wardance.config.sleeping").comment("whether sleeping clears wounding, fatigue, and burnout").define("sleeping heals decay", true);
+        _sleep = b.translation("wardance.config.sleeping").comment("whether sleeping clears wounding, fatigue, and burnout. Forced will make the act of lying on a bed, rather than waking up, the trigger, so change it to forced if it doesn't work.").defineEnum("sleeping heals decay", ThirdOption.TRUE);
         _knockbackNerf = b.translation("wardance.config.knockback").comment("knockback from all sources to everything will be multiplied by this amount").defineInRange("knockback multiplier", 1, 0, 10d);
         b.pop();
         _mobUpdateInterval = b.translation("wardance.config.mobU").comment("Mobs are forced to sync to client every this number of ticks").defineInRange("forced mob update interval", 100, 1, Integer.MAX_VALUE);
