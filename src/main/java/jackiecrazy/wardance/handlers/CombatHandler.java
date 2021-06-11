@@ -116,8 +116,8 @@ public class CombatHandler {
             if (CombatUtils.isMeleeAttack(e.getSource()) && e.getSource().getTrueSource() instanceof LivingEntity && attack != null && e.getAmount() > 0) {
                 LivingEntity seme = (LivingEntity) e.getSource().getTrueSource();
                 ICombatCapability semeCap = CombatData.getCap(seme);
-                ukeCap.update();
-                semeCap.update();
+                ukeCap.serverTick();
+                semeCap.serverTick();
                 Hand h = semeCap.isOffhandAttack() ? Hand.OFF_HAND : Hand.MAIN_HAND;
                 //hand bound or staggered, no attack
                 if (semeCap.getStaggerTime() > 0 || semeCap.getHandBind(h) > 0) {
@@ -142,9 +142,9 @@ public class CombatHandler {
                 LivingEntity seme = (LivingEntity) e.getSource().getTrueSource();
                 seme.removePotionEffect(Effects.INVISIBILITY);
                 ICombatCapability semeCap = CombatData.getCap(seme);
-                Hand h = semeCap.isOffhandAttack() ? Hand.OFF_HAND : Hand.MAIN_HAND;
+                Hand attackingHand = semeCap.isOffhandAttack() ? Hand.OFF_HAND : Hand.MAIN_HAND;
                 //hand bound or staggered, no attack
-                if (semeCap.getStaggerTime() > 0 || semeCap.getHandBind(h) > 0) {
+                if (semeCap.getStaggerTime() > 0 || semeCap.getHandBind(attackingHand) > 0) {
                     e.setCanceled(true);
                     return;
                 }
@@ -174,7 +174,7 @@ public class CombatHandler {
                     return;
                 }
                 //parry code start, grab attack multiplier
-                float atkMult = CombatUtils.getPostureAtk(seme, seme, h, e.getAmount(), attack);
+                float atkMult = CombatUtils.getPostureAtk(seme, seme, attackingHand, e.getAmount(), attack);
                 downingHit = true;
                 //stabby bonus
                 CombatUtils.AWARENESS awareness = CombatUtils.getAwareness(seme, uke);
@@ -207,7 +207,7 @@ public class CombatHandler {
                     }
                 }
                 float finalPostureConsumption = atkMult * defMult;
-                ParryEvent pe = new ParryEvent(uke, seme, ((canParry && defend != null) || useDeflect), h, attack, parryHand, defend, finalPostureConsumption);
+                ParryEvent pe = new ParryEvent(uke, seme, ((canParry && defend != null) || useDeflect), attackingHand, attack, parryHand, defend, finalPostureConsumption);
                 MinecraftForge.EVENT_BUS.post(pe);
                 if (ukeCap.getStaggerTime() == 0) {
                     //overflow posture
@@ -229,14 +229,14 @@ public class CombatHandler {
                         }
                         //shield disabling
                         boolean disshield = false;
+                        parryHand = uke.getHeldItemOffhand() == defend ? Hand.OFF_HAND : Hand.MAIN_HAND;
                         if (CombatUtils.isShield(uke, defend)) {
                             if (CasterData.getCap(seme).isTagActive("disableShield") || attack.getItem().canDisableShield(attack, defend, uke, seme)) {
                                 //shield is disabled
                                 if (uke instanceof PlayerEntity) {
-                                    ((PlayerEntity) uke).getCooldownTracker().setCooldown(defend.getItem(), 60);
-                                    uke.world.setEntityState(uke, (byte) 30);
+                                    ukeCap.setHandBind(parryHand, 60);
                                 }
-                                ukeCap.setHandBind(uke.getHeldItemOffhand() == defend ? Hand.OFF_HAND : Hand.MAIN_HAND, 60);
+                                ukeCap.setHandBind(parryHand, 60);
                                 disshield = true;
                             } else if (ukeCap.getShieldTime() == 0) {
                                 Tuple<Integer, Integer> stat = CombatUtils.getShieldStats(defend);
@@ -244,12 +244,23 @@ public class CombatHandler {
                                 ukeCap.setShieldCount(stat.getB());
                             } else {
                                 ukeCap.decrementShieldCount(1);
+                                if (ukeCap.getShieldCount() <= 0) {
+                                    ukeCap.setHandBind(parryHand, ukeCap.getShieldTime());
+                                }
                             }
                         }
                         uke.world.playSound(null, uke.getPosX(), uke.getPosY(), uke.getPosZ(), disshield ? SoundEvents.ITEM_SHIELD_BLOCK : SoundEvents.BLOCK_ANVIL_PLACE, SoundCategory.PLAYERS, 0.25f + WarDance.rand.nextFloat() * 0.5f, (1 - (ukeCap.getPosture() / ukeCap.getMaxPosture())) + WarDance.rand.nextFloat() * 0.5f);
                         //reset cooldown
-                        if (defMult != 0)//shield time
-                            CombatUtils.setHandCooldown(uke, uke.getHeldItemOffhand() == defend ? Hand.OFF_HAND : Hand.MAIN_HAND, 0f, true);
+                        if (defMult != 0) {//shield time
+                            CombatUtils.setHandCooldown(uke, parryHand, 0f, true);
+                            //TODO reel formula goes here!
+                            if (knockback > 0)
+                                ukeCap.setHandBind(parryHand, (int) (knockback * 10));
+                            else
+                                ukeCap.setHandReel(parryHand, getReel(pe.getPostureConsumption()));
+                        }
+                        //sword on sword is 1.4, sword on shield is 1.12
+                        //normal distribution?
                         ItemStack finalDefend = defend;
                         defend.getCapability(CombatManipulator.CAP).ifPresent((i) -> i.onParry(seme, uke, finalDefend, e.getAmount()));
                         Hand other = uke.getHeldItemMainhand() == defend ? Hand.OFF_HAND : Hand.MAIN_HAND;
@@ -263,9 +274,8 @@ public class CombatHandler {
             //shatter, at the rock bottom of the attack event, saving your protected butt.
             if (!uke.isActiveItemStackBlocking() && !e.isCanceled()) {
                 if (CombatUtils.isPhysicalAttack(e.getSource()) && CombatUtils.getAwareness(e.getSource().getImmediateSource() instanceof LivingEntity ? (LivingEntity) e.getSource().getImmediateSource() : null, uke) != CombatUtils.AWARENESS.UNAWARE) {
-                    if (e.getAmount() < CombatData.getCap(uke).getShatter()) {
+                    if (CombatData.getCap(uke).consumeShatter(e.getAmount())) {
                         e.setCanceled(true);
-                        CombatData.getCap(uke).consumeShatter(e.getAmount());
                         uke.world.playSound(null, uke.getPosX(), uke.getPosY(), uke.getPosZ(), SoundEvents.BLOCK_GLASS_BREAK, SoundCategory.PLAYERS, 0.25f + WarDance.rand.nextFloat() * 0.5f, 0.75f + WarDance.rand.nextFloat() * 0.5f);
                     }
                     //otherwise the rest of the damage goes through and is handled later down the line anyway
@@ -273,6 +283,30 @@ public class CombatHandler {
             }
         }
 
+    }
+
+    private static float getReel(double postureDamage) {
+        if (postureDamage == 0) return 0;
+        float ret = 0;
+        float counter = 0.4f;
+        postureDamage -= 1.4;
+        final double deviation = 0.5;
+        if (postureDamage < 0) {
+            postureDamage += deviation;
+            while (postureDamage < 0) {
+                ret += counter;
+                counter /= 2;
+                postureDamage += deviation;
+            }
+        } else if (postureDamage > 0) {
+            postureDamage -= deviation;
+            while (postureDamage > 0) {
+                ret -= counter;
+                counter /= 2;
+                postureDamage -= deviation;
+            }
+        }
+        return ret;
     }
 
     @SubscribeEvent
@@ -369,12 +403,6 @@ public class CombatHandler {
                     ((ServerWorld) seme.world).spawnParticle(ParticleTypes.ANGRY_VILLAGER, uke.getPosX(), uke.getPosY(), uke.getPosZ(), 5, uke.getWidth(), uke.getHeight(), uke.getWidth(), 0.5f);
                 }
                 seme.world.playSound(null, uke.getPosX(), uke.getPosY(), uke.getPosZ(), SoundEvents.ENTITY_GENERIC_BIG_FALL, SoundCategory.PLAYERS, 0.25f + WarDance.rand.nextFloat() * 0.5f, 0.75f + WarDance.rand.nextFloat() * 0.5f);
-            }
-        } else if (CombatUtils.isPhysicalAttack(e.getSource()) && awareness != CombatUtils.AWARENESS.UNAWARE) {
-            float temp = e.getAmount();
-            e.setAmount(cap.consumeShatter(e.getAmount()));
-            if (e.getAmount() > 0 && temp != e.getAmount()) {//shattered
-                uke.world.playSound(null, uke.getPosX(), uke.getPosY(), uke.getPosZ(), SoundEvents.BLOCK_GLASS_BREAK, SoundCategory.PLAYERS, 0.75f + WarDance.rand.nextFloat() * 0.5f, 0.75f + WarDance.rand.nextFloat() * 0.5f);
             }
         }
 

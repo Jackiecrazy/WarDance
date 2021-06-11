@@ -2,6 +2,7 @@ package jackiecrazy.wardance.skill.fightingspirit;
 
 import jackiecrazy.wardance.skill.ProcPoint;
 import jackiecrazy.wardance.skill.SkillData;
+import jackiecrazy.wardance.utils.CombatUtils;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.tags.Tag;
 import net.minecraftforge.event.entity.living.LivingHurtEvent;
@@ -40,7 +41,7 @@ public class Timberfall extends FightingSpirit {
     public void onSuccessfulProc(LivingEntity caster, SkillData stats, LivingEntity target, Event procPoint) {
         if (procPoint instanceof CriticalHitEvent)
             procPoint.setResult(Event.Result.ALLOW);
-        else if (procPoint instanceof LivingHurtEvent) {
+        else if (procPoint instanceof LivingHurtEvent && CombatUtils.isMeleeAttack(((LivingHurtEvent) procPoint).getSource())) {
             ((LivingHurtEvent) procPoint).setAmount(((LivingHurtEvent) procPoint).getAmount() * 1.4f);
         }
         super.onSuccessfulProc(caster, stats, target, procPoint);

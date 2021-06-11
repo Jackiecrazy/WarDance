@@ -3,10 +3,10 @@ package jackiecrazy.wardance.utils;
 import jackiecrazy.wardance.WarDance;
 import jackiecrazy.wardance.api.CombatDamageSource;
 import jackiecrazy.wardance.api.WarAttributes;
-import jackiecrazy.wardance.capability.weaponry.CombatManipulator;
 import jackiecrazy.wardance.capability.resources.CombatData;
 import jackiecrazy.wardance.capability.resources.ICombatCapability;
 import jackiecrazy.wardance.capability.skill.CasterData;
+import jackiecrazy.wardance.capability.weaponry.CombatManipulator;
 import jackiecrazy.wardance.client.ClientEvents;
 import jackiecrazy.wardance.config.CombatConfig;
 import jackiecrazy.wardance.networking.CombatChannel;
@@ -216,11 +216,11 @@ public class CombatUtils {
             return defender.getHeldItemMainhand().getCapability(CombatManipulator.CAP).resolve().get().canBlock(defender, attacker, i, recharge, damage);
         }
         if (isShield(defender, i)) {
-            boolean canShield = (defender instanceof PlayerEntity || rand < CombatConfig.mobParryChanceShield);
+            boolean canShield = (defender instanceof PlayerEntity || rand < CombatConfig.mobParryChanceShield + CombatData.getCap(defender).getHandReel(h));
             boolean canParry = CombatData.getCap(defender).getShieldTime() == 0 || CombatData.getCap(defender).getShieldCount() > 0;
             return recharge & canParry & canShield;
         } else if (isWeapon(defender, i)) {
-            boolean canWeapon = (defender instanceof PlayerEntity || rand < CombatConfig.mobParryChanceWeapon);
+            boolean canWeapon = (defender instanceof PlayerEntity || rand < CombatConfig.mobParryChanceWeapon + CombatData.getCap(defender).getHandReel(h));
             return recharge & canWeapon;
         } else return false;
     }
@@ -248,13 +248,13 @@ public class CombatUtils {
 
     public static float getPostureAtk(@Nullable LivingEntity attacker, @Nullable LivingEntity defender, @Nullable Hand h, float amount, ItemStack stack) {
         float base = amount * (float) DEFAULT.attackPostureMultiplier;
-        if (stack != null) {
+        if (stack != null&&!stack.isEmpty()) {
             if (stack.getCapability(CombatManipulator.CAP).isPresent()) {
                 base = stack.getCapability(CombatManipulator.CAP).resolve().get().postureDealtBase(attacker, defender, stack, amount);
             } else if (combatList.containsKey(stack.getItem()))
                 base = (float) combatList.get(stack.getItem()).attackPostureMultiplier;
 
-        } else if (stack == null || stack.isEmpty()) {
+        } else {
             base *= CombatConfig.kenshiroScaler;
         }
         if (attacker == null || h == null) return base;

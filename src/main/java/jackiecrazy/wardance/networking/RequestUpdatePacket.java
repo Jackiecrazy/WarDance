@@ -42,7 +42,7 @@ public class RequestUpdatePacket {
                 ServerPlayerEntity sender = contextSupplier.get().getSender();
                 if (sender != null && sender.world.getEntityByID(updateClientPacket.e) instanceof LivingEntity) {
                     EntityHandler.mustUpdate.put(sender, sender.world.getEntityByID(updateClientPacket.e));
-                    CombatData.getCap(((LivingEntity) (sender.world.getEntityByID(updateClientPacket.e)))).update();
+                    CombatData.getCap(((LivingEntity) (sender.world.getEntityByID(updateClientPacket.e)))).serverTick();
                 } else EntityHandler.mustUpdate.put(sender, null);
             });
             contextSupplier.get().setPacketHandled(true);

@@ -5,7 +5,7 @@
   "wardance.tooltip.attack": "Ambushes distracted targets for %s damage and unaware targets for %s damage",
   "wardance.absorption": "Absorption",
   "wardance.deflection": "Deflection Angle",
-  "wardance.shatter": "Shatter",
+  "wardance.shatter": "Shatter Ticks",
   "wardance.combat.on": "Combat Mode Activated",
   "wardance.combat.off": "Combat Mode Deactivated",
   "wardance.combat": "Toggle Combat Mode",
@@ -97,6 +97,6 @@
   "wardance:wind_scar.desc": " §lPassive:§r +1 block reach. \n§l Active:§r gain omnidirectional sweeping for 10 seconds.",
   "wardance:flame_dance.desc": " §lPassive:§r attack speed increases by 0.1 for every level of combo. \n§l Active:§r for 20 seconds, every third hit will crit for an additional 1.5x damage and cause your next parry to be free.",
   "wardance:frost_fang.desc": " §lPassive:§r +2 luck. \n§l Active:§r for 20 seconds, gain 40% speed and slow enemies for 3 seconds on hit; if they are alert, they are additionally blinded for 1 second.",
-  "wardance:timberfall.desc": " §lPassive:§r 40% of might is added to posture damage on attack. \n§l Active:§r guarantee crit and +40% dealt melee damage for 10 seconds.",
+  "wardance:timberfall.desc": " §lPassive:§r 5x the might generated is added to posture damage on attack. \n§l Active:§r guarantee crit and +40% dealt melee damage for 10 seconds.",
   "wardance:": ""
 }

@@ -343,18 +343,18 @@ public class DummyCombatCap implements ICombatCapability {
     }
 
     @Override
-    public float getShatter() {
+    public float getHandReel(Hand hand) {
         return 0;
     }
 
     @Override
-    public void setShatter(float value) {
+    public void setHandReel(Hand hand, float value) {
 
     }
 
     @Override
-    public float consumeShatter(float value) {
-        return 0;
+    public boolean consumeShatter(float value) {
+        return false;
     }
 
     @Override
@@ -393,7 +393,12 @@ public class DummyCombatCap implements ICombatCapability {
     }
 
     @Override
-    public void update() {
+    public void clientTick() {
+
+    }
+
+    @Override
+    public void serverTick() {
 
     }
 

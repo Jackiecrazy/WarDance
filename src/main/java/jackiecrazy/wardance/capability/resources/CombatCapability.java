@@ -39,18 +39,18 @@ public class CombatCapability implements ICombatCapability {
 
     private final WeakReference<LivingEntity> dude;
     private ItemStack prev;
-    private float qi, spirit, posture, combo, mpos, mspi, wounding, burnout, fatigue;
-    private float shatter;
+    private float qi, spirit, posture, combo, mpos, mspi, wounding, burnout, fatigue, mainReel, offReel;
     private int shatterCD;
     private int qcd, scd, pcd, ccd, mBind, oBind;
     private int staggert, staggerc, ocd, shield, sc, roll, sweep;
     private boolean offhand, combat;
     private long lastUpdate;
-    private boolean first;
+    private boolean first, shattering;
     private float cache;//no need to save this because it'll be used within the span of a tick
     private long staggerTickExisted;
     private int recoveryTimer;
     private ItemStack tempOffhand = ItemStack.EMPTY;
+    private float mainReelCounter = 0, offReelCounter = 0;
 
     public CombatCapability(LivingEntity e) {
         dude = new WeakReference<>(e);
@@ -562,25 +562,23 @@ public class CombatCapability implements ICombatCapability {
     }
 
     @Override
-    public float getShatter() {
-        return shatter;
+    public float getHandReel(Hand hand) {
+        if (hand == Hand.OFF_HAND)
+            return offReel;
+        return mainReel;
     }
 
     @Override
-    public void setShatter(float value) {
-        shatter = value;
+    public void setHandReel(Hand hand, float value) {
+        if (hand == Hand.OFF_HAND)
+            offReel = value;
+        else mainReel = value;
     }
 
     @Override
-    public float consumeShatter(float value) {
-        float ret = 0;
-        shatter -= value;
-        if (shatter < 0) {
-            ret = -shatter;
-            shatter = 0;
-        }
-        setShatterCooldown(CombatConfig.shatterCooldown);
-        return ret;
+    public boolean consumeShatter(float value) {
+        shattering = true;
+        return shatterCD > 0;
     }
 
     @Override
@@ -625,7 +623,29 @@ public class CombatCapability implements ICombatCapability {
     }
 
     @Override
-    public void update() {
+    public void clientTick(){
+        LivingEntity elb = dude.get();
+        if (elb == null) return;
+        if (elb instanceof PlayerEntity) {
+            mainReelCounter += mainReel;
+            offReelCounter += offReel;
+            if (Math.abs(mainReelCounter) > 1) {
+                elb.ticksSinceLastSwing += (int) mainReelCounter;
+                mainReelCounter %= 1;
+            }
+            if (Math.abs(offReelCounter) > 1) {
+                ocd += (int) offReelCounter;
+                offReelCounter %= 1;
+            }
+        }
+        if (prev == null || !ItemStack.areItemStacksEqual(elb.getHeldItemOffhand(), prev)) {
+            prev = elb.getHeldItemOffhand();
+            ocd=0;
+        }
+    }
+
+    @Override
+    public void serverTick() {
         LivingEntity elb = dude.get();
         if (elb == null) return;
         int ticks = (int) (elb.world.getGameTime() - lastUpdate);
@@ -643,21 +663,41 @@ public class CombatCapability implements ICombatCapability {
             if (getHandBind(h) != 0) CombatUtils.setHandCooldown(elb, h, 0, true);
         }
         addOffhandCooldown(ticks);
-//        if (!(elb instanceof PlayerEntity)) {
-//            elb.ticksSinceLastSwing += ticks;
-//        }
         decrementRollTime(ticks);
         decrementShieldTime(ticks);
         decrementStaggerTime(ticks);
-        int shcd = decrementShatterCooldown(ticks);
         //check max posture, max spirit, decrement bind and offhand cooldown
         if (getPostureGrace() == 0 && getStaggerTime() == 0 && getPosture() < getMaxPosture()) {
             addPosture(getPPT() * (poExtra));
         }
         float nausea = elb instanceof PlayerEntity || !elb.isPotionActive(Effects.NAUSEA) ? 0 : (elb.getActivePotionEffect(Effects.NAUSEA).getAmplifier() + 1) * CombatConfig.nausea;
         addPosture(nausea * ticks);
-        if (shcd != 0) {
-            setShatter((float) GeneralUtils.getAttributeValueSafe(elb, WarAttributes.SHATTER.get()));
+        if (shatterCD < 0) {
+            shatterCD += ticks;
+            if (shatterCD >= 0) {
+                shattering=false;
+                shatterCD = (int) GeneralUtils.getAttributeValueSafe(elb, WarAttributes.SHATTER.get());
+            }
+        } else if (shattering) {
+            shatterCD -= ticks;
+            if (shatterCD < 0) {
+                shatterCD = -CombatConfig.shatterCooldown;
+            }
+        }
+        if (elb instanceof PlayerEntity) {
+            mainReelCounter += mainReel * ticks;
+            offReelCounter += offReel * ticks;
+            //System.out.println(elb.ticksSinceLastSwing);
+            if (Math.abs(mainReelCounter) > 1) {
+                elb.ticksSinceLastSwing += (int) mainReelCounter;
+                mainReelCounter %= 1;
+                if (CombatUtils.getCooledAttackStrength(elb, Hand.MAIN_HAND, 0.5f) == 1) mainReel = 0;
+            }
+            if (Math.abs(offReelCounter) > 1) {
+                ocd += (int) offReelCounter;
+                offReelCounter %= 1;
+                if (CombatUtils.getCooledAttackStrength(elb, Hand.OFF_HAND, 0.5f) == 1) offReel = 0;
+            }
         }
         if (getSpiritGrace() == 0 && getStaggerTime() == 0 && getSpirit() < getMaxSpirit()) {
             addSpirit(getPPT() * spExtra);
@@ -665,18 +705,6 @@ public class CombatCapability implements ICombatCapability {
         if (getMightGrace() == 0) {
             float over = qiExtra * 0.01f;
             setMight(getMight() - over);
-//            if (getMight() > 0 && !(elb instanceof PlayerEntity)) {
-//                int divisor = 0;
-//                if (fatigue > 0) divisor++;
-//                if (burnout > 0) divisor++;
-//                if (wounding > 0) divisor++;
-//                if (divisor > 0) {
-//                    float heal = over / divisor;
-//                    setWounding(wounding - heal);
-//                    setFatigue(fatigue - heal);
-//                    setBurnout(burnout - heal);
-//                }
-//            }
         }
         if (getComboGrace() == 0) {
             setCombo((float) Math.floor(getCombo()));
@@ -731,14 +759,15 @@ public class CombatCapability implements ICombatCapability {
         setStaggerTime(c.getInt("staggert"));
         setOffhandCooldown(c.getInt("offhandcd"));
         setRollTime(c.getInt("roll"));
-        setHandBind(Hand.MAIN_HAND, c.getInt("bMain"));
-        setHandBind(Hand.OFF_HAND, c.getInt("bOff"));
+        setHandBind(Hand.MAIN_HAND, c.getInt("mainBind"));
+        setHandBind(Hand.OFF_HAND, c.getInt("offBind"));
         setOffhandAttack(c.getBoolean("offhand"));
         toggleCombatMode(c.getBoolean("combat"));
         setShieldCount(c.getInt("shieldC"));
         setShatterCooldown(c.getInt("shattercd"));
         setForcedSweep(c.getInt("sweep"));
-        setShatter(c.getFloat("shatter"));
+        setHandReel(Hand.MAIN_HAND, c.getFloat("mainReel"));
+        setHandReel(Hand.OFF_HAND, c.getFloat("offReel"));
         recoveryTimer = c.getInt("stumble");
         lastUpdate = c.getLong("lastUpdate");
         first = c.getBoolean("first");
@@ -777,8 +806,10 @@ public class CombatCapability implements ICombatCapability {
         c.putInt("staggert", getStaggerTime());
         c.putInt("offhandcd", getOffhandCooldown());
         c.putInt("roll", getRollTime());
-        c.putInt("bMain", getHandBind(Hand.MAIN_HAND));
-        c.putInt("bOff", getHandBind(Hand.OFF_HAND));
+        c.putInt("mainBind", getHandBind(Hand.MAIN_HAND));
+        c.putInt("offBind", getHandBind(Hand.OFF_HAND));
+        c.putFloat("mainReel", getHandReel(Hand.MAIN_HAND));
+        c.putFloat("offReel", getHandReel(Hand.OFF_HAND));
         c.putBoolean("offhand", isOffhandAttack());
         c.putBoolean("combat", isCombatMode());
         c.putLong("lastUpdate", lastUpdate);
@@ -787,9 +818,8 @@ public class CombatCapability implements ICombatCapability {
         c.putInt("shattercd", getShatterCooldown());
         c.putInt("sweep", getForcedSweep());
         c.putInt("stumble", recoveryTimer);
-        c.putFloat("shatter", getShatter());
         c.putBoolean("rolling", dude.get() instanceof PlayerEntity && ((PlayerEntity) dude.get()).getForcedPose() == Pose.SWIMMING);
-        if(!tempOffhand.isEmpty())
+        if (!tempOffhand.isEmpty())
             c.put("temp", tempOffhand.write(new CompoundNBT()));
         return c;
     }

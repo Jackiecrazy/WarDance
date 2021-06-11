@@ -182,11 +182,11 @@ public interface ICombatCapability {
 
     void decrementHandBind(Hand h, int amount);
 
-    float getShatter();
+    float getHandReel(Hand hand);
 
-    void setShatter(float value);
+    void setHandReel(Hand hand, float value);
 
-    float consumeShatter(float value);
+    boolean consumeShatter(float value);
 
     int getShatterCooldown();
 
@@ -202,7 +202,9 @@ public interface ICombatCapability {
 
     void setForcedSweep(int angle);
 
-    void update();
+    void clientTick();
+
+    void serverTick();
 
     void sync();
 

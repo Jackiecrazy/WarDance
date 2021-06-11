@@ -45,16 +45,13 @@ public class UpdateClientPacket {
 
         @Override
         public void accept(UpdateClientPacket updateClientPacket, Supplier<NetworkEvent.Context> contextSupplier) {
-            contextSupplier.get().enqueueWork(() -> {
-                DistExecutor.unsafeRunWhenOn(Dist.CLIENT, () -> () -> {
-                    ClientWorld world = Minecraft.getInstance().world;
-                    if (world != null) {
-                        Entity entity = world.getEntityByID(updateClientPacket.e);
-                        if (entity instanceof LivingEntity) CombatData.getCap((LivingEntity) entity).read(updateClientPacket.icc);
-                    }
-                });
-
-            });
+            contextSupplier.get().enqueueWork(() -> DistExecutor.unsafeRunWhenOn(Dist.CLIENT, () -> () -> {
+                ClientWorld world = Minecraft.getInstance().world;
+                if (world != null) {
+                    Entity entity = world.getEntityByID(updateClientPacket.e);
+                    if (entity instanceof LivingEntity) CombatData.getCap((LivingEntity) entity).read(updateClientPacket.icc);
+                }
+            }));
             contextSupplier.get().setPacketHandled(true);
         }
     }
