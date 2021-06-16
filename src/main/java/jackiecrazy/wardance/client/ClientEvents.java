@@ -551,7 +551,6 @@ public class ClientEvents {
         }
     }
 
-    //TODO make reach affect attack
     @SubscribeEvent
     public static void sweepSwing(PlayerInteractEvent.LeftClickEmpty e) {
         Entity n = getEntityLookedAt(e.getPlayer(), GeneralUtils.getAttributeValueSafe(e.getPlayer(), ForgeMod.REACH_DISTANCE.get()) - (e.getItemStack().isEmpty() ? 1 : 0));

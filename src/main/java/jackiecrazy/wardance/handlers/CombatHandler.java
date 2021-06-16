@@ -9,6 +9,7 @@ import jackiecrazy.wardance.capability.resources.CombatData;
 import jackiecrazy.wardance.capability.resources.ICombatCapability;
 import jackiecrazy.wardance.capability.skill.CasterData;
 import jackiecrazy.wardance.config.CombatConfig;
+import jackiecrazy.wardance.event.AttackMightEvent;
 import jackiecrazy.wardance.event.MeleeKnockbackEvent;
 import jackiecrazy.wardance.event.ParryEvent;
 import jackiecrazy.wardance.event.ProjectileParryEvent;
@@ -82,6 +83,11 @@ public class CombatHandler {
                     Tuple<Integer, Integer> stat = CombatUtils.getShieldStats(defend);
                     ukeCap.setShieldTime(stat.getA());
                     ukeCap.setShieldCount(stat.getB());
+                } else {
+                    ukeCap.decrementShieldCount(1);
+                    if (ukeCap.getShieldCount() <= 0) {
+                        ukeCap.setHandBind(h, ukeCap.getShieldTime());
+                    }
                 }
                 uke.world.playSound(null, uke.getPosX(), uke.getPosY(), uke.getPosZ(), free ? SoundEvents.BLOCK_WOODEN_TRAPDOOR_OPEN : SoundEvents.BLOCK_WOODEN_TRAPDOOR_CLOSE, SoundCategory.PLAYERS, 0.75f + WarDance.rand.nextFloat() * 0.5f, (1 - (ukeCap.getPosture() / ukeCap.getMaxPosture())) + WarDance.rand.nextFloat() * 0.5f);
                 projectile.setMotion(pe.getReturnVec().x, pe.getReturnVec().y, pe.getReturnVec().z);
@@ -154,12 +160,14 @@ public class CombatHandler {
                 if (seme.getLastAttackedEntityTime() != seme.ticksExisted) {//first hit of a potential sweep attack
                     semeCap.addCombo(0.2f);
                     float might = ((semeCap.getCachedCooldown() * semeCap.getCachedCooldown() * CombatUtils.getCooldownPeriod(seme, Hand.MAIN_HAND) * CombatUtils.getCooldownPeriod(seme, Hand.MAIN_HAND)) / 781.25f * (1 + (semeCap.getCombo() / 10f)));
+                    AttackMightEvent ame = new AttackMightEvent(seme, uke, might);
                     float weakness = 1;
                     if (seme.isPotionActive(Effects.WEAKNESS))
                         for (int foo = 0; foo < seme.getActivePotionEffect(Effects.WEAKNESS).getAmplifier() + 1; foo++) {
                             weakness *= CombatConfig.weakness;
                         }
-                    semeCap.addMight(might * weakness);
+                    MinecraftForge.EVENT_BUS.post(ame);
+                    semeCap.addMight(ame.getQuantity() * weakness);
                 }
                 boolean canParry = GeneralUtils.isFacingEntity(uke, seme, 120) && (!(uke instanceof PlayerEntity) || CombatConfig.sneakParry == 0 || (uke.isSneaking() && EntityHandler.lastSneak.get((PlayerEntity) uke) < uke.ticksExisted + CombatConfig.sneakParry));//why does everyone want this feature...
                 boolean useDeflect = (uke instanceof PlayerEntity || WarDance.rand.nextFloat() < CombatConfig.mobDeflectChance) && GeneralUtils.isFacingEntity(uke, seme, 120 + 2 * (int) GeneralUtils.getAttributeValueSafe(uke, WarAttributes.DEFLECTION.get())) && !canParry;
@@ -253,7 +261,6 @@ public class CombatHandler {
                         //reset cooldown
                         if (defMult != 0) {//shield time
                             CombatUtils.setHandCooldown(uke, parryHand, 0f, true);
-                            //TODO reel formula goes here!
                             if (knockback > 0)
                                 ukeCap.setHandBind(parryHand, (int) (knockback * 10));
                             else
@@ -362,6 +369,8 @@ public class CombatHandler {
         uke.removePotionEffect(WarEffects.SLEEP.get());
         LivingEntity kek = null;
         DamageSource ds = e.getSource();
+        if (uke.isPotionActive(WarEffects.VULNERABLE.get()) && !CombatUtils.isPhysicalAttack(ds))
+            e.setAmount(e.getAmount() + uke.getActivePotionEffect(WarEffects.VULNERABLE.get()).getAmplifier() + 1);
         if (ds.getImmediateSource() instanceof LivingEntity) {
             kek = (LivingEntity) ds.getImmediateSource();
         }

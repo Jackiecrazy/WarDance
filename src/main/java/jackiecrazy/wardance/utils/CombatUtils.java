@@ -9,10 +9,12 @@ import jackiecrazy.wardance.capability.skill.CasterData;
 import jackiecrazy.wardance.capability.weaponry.CombatManipulator;
 import jackiecrazy.wardance.client.ClientEvents;
 import jackiecrazy.wardance.config.CombatConfig;
+import jackiecrazy.wardance.event.EntityAwarenessEvent;
 import jackiecrazy.wardance.networking.CombatChannel;
 import jackiecrazy.wardance.networking.UpdateAttackPacket;
 import jackiecrazy.wardance.potion.WarEffects;
 import jackiecrazy.wardance.skill.WarSkills;
+import net.minecraft.block.material.Material;
 import net.minecraft.enchantment.EnchantmentHelper;
 import net.minecraft.enchantment.Enchantments;
 import net.minecraft.entity.Entity;
@@ -30,6 +32,7 @@ import net.minecraft.util.*;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.vector.Vector3d;
 import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.util.FakePlayer;
 import net.minecraftforge.fml.DistExecutor;
 import net.minecraftforge.fml.network.PacketDistributor;
@@ -209,6 +212,8 @@ public class CombatUtils {
 
     public static boolean canParry(LivingEntity defender, Entity attacker, @Nonnull ItemStack i, float damage) {
         Hand h = defender.getHeldItemOffhand() == i ? Hand.OFF_HAND : Hand.MAIN_HAND;
+        if (attacker instanceof LivingEntity && getPostureDef((LivingEntity) attacker, defender, i, damage) < 0)
+            return false;
         float rand = WarDance.rand.nextFloat();
         boolean recharge = getCooledAttackStrength(defender, h, 0.5f) > 0.9f && CombatData.getCap(defender).getHandBind(h) == 0;
         recharge &= (!(defender instanceof PlayerEntity) || ((PlayerEntity) defender).getCooldownTracker().getCooldown(defender.getHeldItemOffhand().getItem(), 0) == 0);
@@ -248,7 +253,7 @@ public class CombatUtils {
 
     public static float getPostureAtk(@Nullable LivingEntity attacker, @Nullable LivingEntity defender, @Nullable Hand h, float amount, ItemStack stack) {
         float base = amount * (float) DEFAULT.attackPostureMultiplier;
-        if (stack != null&&!stack.isEmpty()) {
+        if (stack != null && !stack.isEmpty()) {
             if (stack.getCapability(CombatManipulator.CAP).isPresent()) {
                 base = stack.getCapability(CombatManipulator.CAP).resolve().get().postureDealtBase(attacker, defender, stack, amount);
             } else if (combatList.containsKey(stack.getItem()))
@@ -355,7 +360,6 @@ public class CombatUtils {
         int real = percent == 0 ? 0 : (int) (percent * getCooldownPeriod(e, h));
         switch (h) {
             case MAIN_HAND:
-                //FIXME bht compat?
                 if (!(e instanceof PlayerEntity)) return;
                 e.ticksSinceLastSwing = real;
                 if (!(e instanceof FakePlayer) && e instanceof ServerPlayerEntity && sync)
@@ -455,13 +459,24 @@ public class CombatUtils {
     public static AWARENESS getAwareness(LivingEntity attacker, LivingEntity target) {
         if (!CombatConfig.stealthSystem || target instanceof PlayerEntity || CombatUtils.stealthMap.getOrDefault(target.getType().getRegistryName(), CombatUtils.STEALTH).isVigilant())
             return AWARENESS.ALERT;
-        if (target.getRevengeTarget() == null && (!(target instanceof MobEntity) || ((MobEntity) target).getAttackTarget() == null))
-            return AWARENESS.UNAWARE;
+        AWARENESS a = AWARENESS.ALERT;
+        if (target.isPotionActive(WarEffects.SLEEP.get()) || target.isPotionActive(WarEffects.PARALYSIS.get()) || target.isPotionActive(WarEffects.PETRIFY.get()))
+            a = AWARENESS.UNAWARE;
+        else if (target.isPotionActive(WarEffects.DISTRACTION.get()) || target.isPotionActive(WarEffects.CONFUSION.get()) || target.getAir() <= 0 || inWeb(target))
+            a = AWARENESS.DISTRACTED;
+        else if (target.getRevengeTarget() == null && (!(target instanceof MobEntity) || ((MobEntity) target).getAttackTarget() == null))
+            a = AWARENESS.UNAWARE;
         else if (target.getRevengeTarget() != attacker && (!(target instanceof MobEntity) || ((MobEntity) target).getAttackTarget() != attacker))
-            return AWARENESS.DISTRACTED;
-        else if (target.isPotionActive(WarEffects.DISTRACTION.get()))
-            return AWARENESS.DISTRACTED;
-        else return AWARENESS.ALERT;
+            a = AWARENESS.DISTRACTED;
+
+        EntityAwarenessEvent eae = new EntityAwarenessEvent(target, attacker, a);
+        MinecraftForge.EVENT_BUS.post(eae);
+        return eae.getAwareness();
+    }
+
+    private static boolean inWeb(LivingEntity e) {
+        if (e.world.isAreaLoaded(e.getPosition(), 5)) return false;
+        return e.world.getBlockState(e.getPosition()).getMaterial().equals(Material.WEB);//FIXME wrong!
     }
 
     public enum AWARENESS {

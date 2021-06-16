@@ -12,7 +12,6 @@ public interface ICombatCapability {
     //set, get, increment/decrement, consume (resource only)
     //is offhand attack, combat mode
     //shatter, shatter cooldown
-    //TODO skills
     float getMight();
 
     void setMight(float amount);

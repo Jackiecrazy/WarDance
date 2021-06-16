@@ -250,8 +250,8 @@ public class SkillSelectionScreen extends Screen {
             lines.add("\n");
             lines.add(selectedVariation.getSkill().description().getString());
         }
-        lines.add("----------");
-
+        lines.add("\n");
+        //TODO add keywords
         modInfo.setInfo(lines, selectedSkill.icon());
     }
 

@@ -95,7 +95,7 @@ public class CoupDeGrace extends Skill {
     }
 
     protected boolean isValid(LivingHurtEvent e) {
-        return e.getEntityLiving().getHealth() < e.getEntityLiving().getMaxHealth() * 0.3;
+        return e.getEntityLiving().getHealth() < (e.getEntityLiving().getMaxHealth() + CombatData.getCap(e.getEntityLiving()).getWounding()) * 0.3;
     }
 
     public static class Warning extends CoupDeGrace {

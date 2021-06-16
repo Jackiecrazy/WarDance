@@ -24,4 +24,7 @@ public class WarEffects {
     public static final RegistryObject<Effect> PETRIFY = EFFECTS.register("petrify", () -> new WarEffect(EffectType.HARMFUL, 0xc98fff).addAttributesModifier(Attributes.MOVEMENT_SPEED, "55FCED67-E92A-486E-9800-B47F202C4386", -1, AttributeModifier.Operation.MULTIPLY_TOTAL).addAttributesModifier(Attributes.ARMOR, "55FCED67-E92A-486E-9800-B47F202C4386", 4, AttributeModifier.Operation.ADDITION));
     //identical to paralysis, but only works once
     public static final RegistryObject<Effect> SLEEP = EFFECTS.register("sleep", () -> new WarEffect(EffectType.HARMFUL, 0xc98fff).addAttributesModifier(Attributes.MOVEMENT_SPEED, "55FCED67-E92A-486E-9800-B47F202C4386", -1, AttributeModifier.Operation.MULTIPLY_TOTAL));
+    //increases incoming non-combat damage by potency
+    public static final RegistryObject<Effect> VULNERABLE = EFFECTS.register("vulnerable", () -> new WarEffect(EffectType.HARMFUL, 0xc98fff));
+
 }

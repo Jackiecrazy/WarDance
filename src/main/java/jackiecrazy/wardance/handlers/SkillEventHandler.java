@@ -2,7 +2,6 @@ package jackiecrazy.wardance.handlers;
 
 import jackiecrazy.wardance.WarDance;
 import jackiecrazy.wardance.capability.resources.CombatData;
-import jackiecrazy.wardance.capability.resources.ICombatCapability;
 import jackiecrazy.wardance.capability.skill.CasterData;
 import jackiecrazy.wardance.capability.skill.ISkillCapability;
 import jackiecrazy.wardance.config.CombatConfig;
@@ -10,12 +9,14 @@ import jackiecrazy.wardance.event.MeleeKnockbackEvent;
 import jackiecrazy.wardance.event.ParryEvent;
 import jackiecrazy.wardance.event.ProjectileParryEvent;
 import jackiecrazy.wardance.event.SkillCastEvent;
-import jackiecrazy.wardance.skill.*;
+import jackiecrazy.wardance.skill.ProcPoint;
+import jackiecrazy.wardance.skill.Skill;
+import jackiecrazy.wardance.skill.SkillCooldownData;
+import jackiecrazy.wardance.skill.SkillData;
 import jackiecrazy.wardance.utils.CombatUtils;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.projectile.ProjectileEntity;
-import net.minecraft.util.Hand;
 import net.minecraftforge.event.entity.living.LivingAttackEvent;
 import net.minecraftforge.event.entity.living.LivingDamageEvent;
 import net.minecraftforge.event.entity.living.LivingHurtEvent;
@@ -138,15 +139,6 @@ public class SkillEventHandler {
                     s.getSkill().onSuccessfulProc(attacker, s, e.getEntityLiving(), e);
                 }
             }
-        }
-    }
-
-    @SubscribeEvent
-    public static void timberfall(ParryEvent e) {
-        if (e.getAttacker() != null && CasterData.getCap(e.getAttacker()).isSkillUsable(WarSkills.TIMBERFALL.get())) {
-            LivingEntity seme = e.getAttacker();
-            ICombatCapability semeCap = CombatData.getCap(seme);
-            e.setPostureConsumption(e.getPostureConsumption() + ((semeCap.getCachedCooldown() * semeCap.getCachedCooldown() * CombatUtils.getCooldownPeriod(seme, Hand.MAIN_HAND) * CombatUtils.getCooldownPeriod(seme, Hand.MAIN_HAND)) / 156.25f));
         }
     }
 

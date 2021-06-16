@@ -201,7 +201,6 @@ public class MovementUtils {
         itsc.consumePosture(0);
         itsc.setRollTime(CombatConfig.rollCooldown);
         Vector3d v = elb.getLookVec().subtract(0, elb.getLookVec().y, 0).normalize().scale(1.5);
-        //TODO tweak slide amount to make it fair
         if (elb instanceof PlayerEntity)
             ((PlayerEntity) elb).setForcedPose(Pose.SWIMMING);
         elb.setSprinting(false);

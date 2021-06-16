@@ -62,5 +62,4 @@ public class ParryEvent extends LivingEvent {
     public boolean canParry(){
         return getResult() == Event.Result.ALLOW || (originally && getResult() == Event.Result.DEFAULT);
     }
-    //TODO boolean function to evaluate if it will proc
 }

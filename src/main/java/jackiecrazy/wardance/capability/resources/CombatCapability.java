@@ -588,6 +588,7 @@ public class CombatCapability implements ICombatCapability {
 
     @Override
     public void setShatterCooldown(int value) {
+        shattering = value != 0;
         shatterCD = value;
     }
 
@@ -623,7 +624,7 @@ public class CombatCapability implements ICombatCapability {
     }
 
     @Override
-    public void clientTick(){
+    public void clientTick() {
         LivingEntity elb = dude.get();
         if (elb == null) return;
         if (elb instanceof PlayerEntity) {
@@ -640,7 +641,7 @@ public class CombatCapability implements ICombatCapability {
         }
         if (prev == null || !ItemStack.areItemStacksEqual(elb.getHeldItemOffhand(), prev)) {
             prev = elb.getHeldItemOffhand();
-            ocd=0;
+            ocd = 0;
         }
     }
 
@@ -675,7 +676,7 @@ public class CombatCapability implements ICombatCapability {
         if (shatterCD < 0) {
             shatterCD += ticks;
             if (shatterCD >= 0) {
-                shattering=false;
+                shattering = false;
                 shatterCD = (int) GeneralUtils.getAttributeValueSafe(elb, WarAttributes.SHATTER.get());
             }
         } else if (shattering) {
