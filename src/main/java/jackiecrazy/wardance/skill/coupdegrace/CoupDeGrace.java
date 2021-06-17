@@ -47,10 +47,6 @@ public class CoupDeGrace extends Skill {
         return this.getClass() == CoupDeGrace.class ? null : WarSkills.COUP_DE_GRACE.get();
     }
 
-    public boolean canCast(LivingEntity caster) {
-        return super.canCast(caster);
-    }
-
     @Override
     public boolean onCast(LivingEntity caster) {
         if (CasterData.getCap(caster).isTagActive("execution"))

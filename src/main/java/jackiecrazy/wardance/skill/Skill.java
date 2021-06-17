@@ -80,11 +80,15 @@ public abstract class Skill extends ForgeRegistryEntry<Skill> {
         return getParentSkill() == null ? this : getParentSkill();
     }
 
-    public boolean canCast(LivingEntity caster) {
+    public CastStatus castingCheck(LivingEntity caster) {
         ISkillCapability cap = CasterData.getCap(caster);
         for (String s : getIncompatibleTags(caster).getAllElements())
-            if (cap.isTagActive(s)) return false;
-        return !cap.isSkillCoolingDown(this) && (getParentSkill() == null || getParentSkill().canCast(caster));
+            if (cap.isTagActive(s)) return CastStatus.CONFLICT;
+        if (cap.isSkillCoolingDown(this))
+            return CastStatus.COOLDOWN;
+        if(getParentSkill()!=null)
+            return getParentSkill().castingCheck(caster);
+        return CastStatus.ALLOWED;
     }
 
     public boolean isCompatibleWith(Skill s, LivingEntity caster) {
@@ -123,7 +127,7 @@ public abstract class Skill extends ForgeRegistryEntry<Skill> {
     public abstract Tag<String> getIncompatibleTags(LivingEntity caster);//uses sharp weapon, uses breath, undead using holy spell, etc
 
     public boolean checkAndCast(LivingEntity caster) {
-        if (!canCast(caster)) return false;
+        if (castingCheck(caster)!=CastStatus.ALLOWED) return false;
         if (MinecraftForge.EVENT_BUS.post(new SkillCastEvent(caster, this))) return false;
         caster.world.playMovingSound(null, caster, SoundEvents.ITEM_FIRECHARGE_USE, SoundCategory.AMBIENT, 0.3f + WarDance.rand.nextFloat(), 0.5f + WarDance.rand.nextFloat());
         return onCast(caster);
@@ -181,6 +185,13 @@ public abstract class Skill extends ForgeRegistryEntry<Skill> {
 
     protected void markUsed(LivingEntity caster) {
         CasterData.getCap(caster).markSkillUsed(this);
+    }
+
+    public enum CastStatus {
+        ALLOWED,
+        COOLDOWN,
+        CONFLICT,
+        OTHER
     }
 
     public enum STATE {

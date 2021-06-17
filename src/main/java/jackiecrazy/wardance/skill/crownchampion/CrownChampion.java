@@ -25,6 +25,7 @@ import net.minecraftforge.eventbus.api.Event;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 
+import javax.annotation.Nullable;
 import java.awt.*;
 import java.util.Arrays;
 import java.util.HashSet;
@@ -87,13 +88,19 @@ elemental might: +1 burn/snowball/poison/drown damage to targets you have attack
 
     @SubscribeEvent
     public static void deady(LivingDeathEvent e) {
-        if (!CombatUtils.isPhysicalAttack(e.getSource())){
-            for(PlayerEntity pe:e.getEntityLiving().world.getEntitiesWithinAABB(PlayerEntity.class, e.getEntity().getBoundingBox().grow(5))){
-                if(CasterData.getCap(pe).isSkillActive(WarSkills.ELEMENTALMIGHT.get())){
+        if (!CombatUtils.isPhysicalAttack(e.getSource())) {
+            for (PlayerEntity pe : e.getEntityLiving().world.getEntitiesWithinAABB(PlayerEntity.class, e.getEntity().getBoundingBox().grow(5))) {
+                if (CasterData.getCap(pe).isSkillActive(WarSkills.ELEMENTALMIGHT.get())) {
                     CombatData.getCap(pe).addMight(1);
                 }
             }
         }
+    }
+
+    @Nullable
+    @Override
+    public Skill getParentSkill() {
+        return this.getClass() == CrownChampion.class ? null : WarSkills.HEAVY_BLOW.get();
     }
 
     @Override

@@ -52,6 +52,8 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
+import net.minecraft.entity.ai.goal.Goal.Flag;
+
 @Mod.EventBusSubscriber(modid = WarDance.MODID)
 public class EntityHandler {
     public static HashMap<PlayerEntity, Entity> mustUpdate = new HashMap<>();

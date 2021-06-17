@@ -10,9 +10,11 @@ import jackiecrazy.wardance.skill.WarSkills;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.ai.attributes.AttributeModifier;
 import net.minecraft.entity.ai.attributes.Attributes;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.potion.EffectInstance;
 import net.minecraft.potion.Effects;
 import net.minecraft.tags.Tag;
+import net.minecraftforge.event.ForgeEventFactory;
 import net.minecraftforge.event.entity.living.LivingHurtEvent;
 import net.minecraftforge.eventbus.api.Event;
 
@@ -43,8 +45,8 @@ public class FightingSpirit extends Skill {
     }
 
     @Override
-    public boolean canCast(LivingEntity caster) {
-        return !CasterData.getCap(caster).isSkillCoolingDown(this);
+    public CastStatus castingCheck(LivingEntity caster) {
+        return CasterData.getCap(caster).isSkillCoolingDown(this) ? CastStatus.COOLDOWN : CastStatus.ALLOWED;
     }
 
     @Override
@@ -54,7 +56,7 @@ public class FightingSpirit extends Skill {
             activate(caster, 100);
             CasterData.getCap(caster).getActiveSkill(this).ifPresent((a) -> a.flagCondition(true));
             caster.getAttribute(Attributes.MOVEMENT_SPEED).applyNonPersistentModifier(wrap);
-        }else{
+        } else {
             evoke(caster);
             activate(caster, getDuration());
         }
@@ -65,7 +67,7 @@ public class FightingSpirit extends Skill {
         return 200;
     }
 
-    protected void evoke(LivingEntity caster){
+    protected void evoke(LivingEntity caster) {
         caster.addPotionEffect(new EffectInstance(Effects.REGENERATION, getDuration()));
         caster.addPotionEffect(new EffectInstance(Effects.RESISTANCE, getDuration()));
     }
@@ -73,9 +75,8 @@ public class FightingSpirit extends Skill {
     @Override
     public boolean activeTick(LivingEntity caster, SkillData d) {
         if (d.getDuration() == 0 && d.isCondition()) {
-            CombatData.getCap(caster).setWounding(0);
-            CombatData.getCap(caster).setFatigue(0);
-            CombatData.getCap(caster).setBurnout(0);
+            if (caster instanceof PlayerEntity)
+                ForgeEventFactory.onPlayerWakeup(((PlayerEntity) caster), false, false);
         }
         return super.activeTick(caster, d);
     }

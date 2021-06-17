@@ -189,7 +189,12 @@ public class CombatCapability implements ICombatCapability {
             ret = amount - getTrueMaxPosture() * CombatConfig.posCap;
             amount = getTrueMaxPosture() * CombatConfig.posCap;
         }
-        if (posture - amount < above) {
+        if (above > 0 && posture - amount < above) {
+            //hard cap, set it there and do nothing else
+            ret = amount - above;
+            amount = posture - above;
+        }
+        else if (posture - amount < 0) {
             posture = 0;
             if (elb == null) return ret;
             setStaggerCount(CombatConfig.staggerHits);

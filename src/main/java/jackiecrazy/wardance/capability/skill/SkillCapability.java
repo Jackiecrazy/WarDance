@@ -13,7 +13,6 @@ import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.nbt.ListNBT;
 import net.minecraftforge.fml.network.PacketDistributor;
 
-import javax.annotation.Nullable;
 import java.lang.ref.WeakReference;
 import java.util.*;
 
@@ -30,10 +29,9 @@ public class SkillCapability implements ISkillCapability {
         dude = new WeakReference<>(attachTo);
     }
 
-    @Nullable
     @Override
     public Optional<SkillData> getActiveSkill(Skill s) {
-        return Optional.of(activeSkills.get(s));
+        return Optional.ofNullable(activeSkills.get(s));
     }
 
     @Override
@@ -183,7 +181,7 @@ public class SkillCapability implements ISkillCapability {
     @Override
     public boolean isSkillUsable(Skill skill) {
         if (!equippedSkill.contains(skill)) return false;
-        return skill.canCast(dude.get());
+        return skill.castingCheck(dude.get())== Skill.CastStatus.ALLOWED;
     }
 
     @Override

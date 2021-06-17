@@ -3,6 +3,7 @@ package jackiecrazy.wardance.skill;
 import jackiecrazy.wardance.WarDance;
 import jackiecrazy.wardance.skill.coupdegrace.CoupDeGrace;
 import jackiecrazy.wardance.skill.crownchampion.CrownChampion;
+import jackiecrazy.wardance.skill.feint.Feint;
 import jackiecrazy.wardance.skill.fightingspirit.*;
 import jackiecrazy.wardance.skill.grapple.Clinch;
 import jackiecrazy.wardance.skill.grapple.Grapple;
@@ -66,4 +67,10 @@ public class WarSkills {
     public static final RegistryObject<Skill> HIDDENMIGHT = SKILLS.register("hidden_might", CrownChampion.HiddenMight::new);
     public static final RegistryObject<Skill> PRIDEFULMIGHT = SKILLS.register("prideful_might", CrownChampion.PridefulMight::new);
     public static final RegistryObject<Skill> ELEMENTALMIGHT = SKILLS.register("elemental_might", CrownChampion.ElementalMight::new);
+    public static final RegistryObject<Skill> FEINT = SKILLS.register("feint", Feint::new);
+    public static final RegistryObject<Skill> LASTSURPRISE = SKILLS.register("feint", Feint.LastSurprise::new);
+    public static final RegistryObject<Skill> SMIRKINGSHADOW = SKILLS.register("feint", Feint.SmirkingShadow::new);
+    public static final RegistryObject<Skill> SCORPIONSTING = SKILLS.register("feint", Feint.ScorpionSting::new);
+    public static final RegistryObject<Skill> UPPERHAND = SKILLS.register("feint", Feint.UpperHand::new);
+
 }

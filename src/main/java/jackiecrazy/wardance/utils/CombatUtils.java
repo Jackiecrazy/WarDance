@@ -281,10 +281,6 @@ public class CombatUtils {
     }
 
     public static boolean isMeleeAttack(DamageSource s) {
-        if (s instanceof CombatDamageSource) {
-            CombatDamageSource cds = (CombatDamageSource) s;
-            return cds.canProcAutoEffects();
-        }
         return s.getTrueSource() == s.getImmediateSource() && !s.isExplosion() && !s.isFireDamage() && !s.isMagicDamage() && !s.isUnblockable() && !s.isProjectile();
     }
 

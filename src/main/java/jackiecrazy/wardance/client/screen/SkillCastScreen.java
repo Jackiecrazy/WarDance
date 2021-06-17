@@ -17,6 +17,7 @@ import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.text.StringTextComponent;
+import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.client.gui.ForgeIngameGui;
@@ -105,7 +106,7 @@ public class SkillCastScreen extends Screen {
                 mc.textureManager.bindTexture(radial);
                 if (CasterData.getCap(mc.player).isSkillActive(elements[a]))
                     RenderSystem.color4f(0.4f, 0.7f, 0.4f, 1);
-                else if (!s.canCast(mc.player))
+                else if (s.castingCheck(mc.player) != Skill.CastStatus.ALLOWED)
                     RenderSystem.color4f(0.4f, 0.4f, 0.4f, 1);
                 else if (a != index)
                     RenderSystem.color4f(0.6f, 0.6f, 0.6f, 1);
@@ -145,10 +146,26 @@ public class SkillCastScreen extends Screen {
 
             }
         }
-        if (index >= 0 && elements[index] != null) {
-            String name = elements[index].getDisplayName().getString();
-            int yee = mc.fontRenderer.getStringWidth(name);
-            mc.ingameGUI.getFontRenderer().drawString(matrixStack, name, (width - yee) / 2f, height / 2f - 3, elements[index].getColor().getRGB());
+        if (index >= 0 && selected != null) {
+            String print = selected.getDisplayName().getString();
+            int yee = mc.fontRenderer.getStringWidth(print);
+            mc.ingameGUI.getFontRenderer().drawString(matrixStack, print, (width - yee) / 2f, height / 2f - 3, selected.getColor().getRGB());
+            final Skill.CastStatus castStatus = selected.castingCheck(mc.player);
+            if (castStatus != Skill.CastStatus.ALLOWED) {
+                switch (castStatus) {
+                    case COOLDOWN:
+                        print = new TranslationTextComponent("wardance.skill.cooldown").toString();
+                        break;
+                    case CONFLICT:
+                        print = new TranslationTextComponent("wardance.skill.conflict").toString();
+                        break;
+                    case OTHER:
+                        print = new TranslationTextComponent(elements[index].getRegistryName().toString() + ".requirement").toString();
+                        break;
+                }
+                mc.ingameGUI.getFontRenderer().drawString(matrixStack, print, (width - yee) / 2f, height / 2f + 3, Color.RED.getRGB());
+            }
+
         }
         RenderSystem.disableAlphaTest();
         RenderSystem.disableBlend();

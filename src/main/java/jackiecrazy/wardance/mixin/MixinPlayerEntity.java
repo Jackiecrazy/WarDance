@@ -34,11 +34,11 @@ public abstract class MixinPlayerEntity extends LivingEntity {
         super(type, worldIn);
     }
 
-    @Inject(method = "attackTargetEntityWithCurrentItem", locals = LocalCapture.CAPTURE_FAILSOFT,
-            at = @At(value = "INVOKE", shift = At.Shift.BEFORE, target = "Lnet/minecraft/entity/player/PlayerEntity;resetCooldown()V"))
-    private void noReset(Entity targetEntity, CallbackInfo ci, float f, float f1, float f2) {
-        CombatData.getCap(this).setCachedCooldown(f2);
-    }
+//    @Inject(method = "attackTargetEntityWithCurrentItem", locals = LocalCapture.CAPTURE_FAILSOFT,
+//            at = @At(value = "INVOKE", shift = At.Shift.BEFORE, target = "Lnet/minecraft/entity/player/PlayerEntity;resetCooldown()V"))
+//    private void noReset(Entity targetEntity, CallbackInfo ci, float f, float f1, float f2) {
+//        CombatData.getCap(this).setCachedCooldown(f2);
+//    } //Mohist why
 
     @Inject(method = "attackTargetEntityWithCurrentItem", locals = LocalCapture.CAPTURE_FAILSOFT,
             at = @At(value = "INVOKE", target = "Lnet/minecraft/entity/Entity;attackEntityFrom(Lnet/minecraft/util/DamageSource;F)Z"))

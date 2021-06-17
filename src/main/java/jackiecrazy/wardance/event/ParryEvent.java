@@ -13,10 +13,10 @@ public class ParryEvent extends LivingEvent {
     private final Hand attackingHand, defendingHand;
     private final ItemStack attackingStack;
     private final ItemStack defendingStack;
-    private final float originalPostureConsumption;
+    private final float originalPostureConsumption, attackDamage;
     private float postureConsumption;
 
-    public ParryEvent(LivingEntity entity, LivingEntity seme, boolean canParry, Hand hand, ItemStack a, Hand dhand, ItemStack d, float posture) {
+    public ParryEvent(LivingEntity entity, LivingEntity seme, boolean canParry, Hand hand, ItemStack a, Hand dhand, ItemStack d, float posture, float damage) {
         super(entity);
         originally=canParry;
         attacker = seme;
@@ -25,6 +25,7 @@ public class ParryEvent extends LivingEvent {
         defendingHand = dhand;
         defendingStack = d;
         originalPostureConsumption = postureConsumption = posture;
+        attackDamage=damage;
     }
 
     public LivingEntity getAttacker() {
@@ -54,6 +55,8 @@ public class ParryEvent extends LivingEvent {
     public float getPostureConsumption() {
         return postureConsumption;
     }
+
+    public float getAttackDamage(){return attackDamage;}
 
     public void setPostureConsumption(float amount) {
         postureConsumption = amount;

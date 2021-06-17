@@ -44,8 +44,8 @@ public class HeavyBlow extends Skill {
     }
 
     @Override
-    public boolean canCast(LivingEntity caster) {
-        return super.canCast(caster) && CombatData.getCap(caster).getMight() > 1;
+    public CastStatus castingCheck(LivingEntity caster) {
+        return CombatData.getCap(caster).getMight() > 1 ? CastStatus.OTHER : super.castingCheck(caster);
     }
 
     @Override
@@ -61,7 +61,7 @@ public class HeavyBlow extends Skill {
             markUsed(caster);
         } else if (procPoint instanceof CriticalHitEvent) {
             procPoint.setResult(Event.Result.ALLOW);
-            ((CriticalHitEvent) procPoint).setDamageModifier(((CriticalHitEvent) procPoint).getDamageModifier()*1.4f);
+            ((CriticalHitEvent) procPoint).setDamageModifier(((CriticalHitEvent) procPoint).getDamageModifier() * 1.4f);
             markUsed(caster);
         }
     }
