@@ -18,7 +18,7 @@ public class Berserk extends ShieldBash {
     public boolean onCast(LivingEntity caster) {
         CombatUtils.setHandCooldown(caster, Hand.MAIN_HAND, 1, true);
         CombatUtils.setHandCooldown(caster, Hand.OFF_HAND, 1, false);
-        caster.addPotionEffect(new EffectInstance(Effects.HASTE, 30, 2));
+        caster.addPotionEffect(new EffectInstance(Effects.HASTE, 40, 2));
         return super.onCast(caster);
     }
 
@@ -26,6 +26,6 @@ public class Berserk extends ShieldBash {
     public void performEffect(LivingEntity caster, LivingEntity target) {
         CombatUtils.setHandCooldown(caster, Hand.MAIN_HAND, 1, true);
         CombatUtils.setHandCooldown(caster, Hand.OFF_HAND, 1, false);
-        caster.addPotionEffect(new EffectInstance(Effects.HASTE, 30, 2));
+        caster.addPotionEffect(new EffectInstance(Effects.HASTE, 60, 2));
     }
 }

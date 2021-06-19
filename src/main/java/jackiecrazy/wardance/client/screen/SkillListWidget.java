@@ -14,8 +14,7 @@ public class SkillListWidget extends ExtendedList<SkillListWidget.SkillEntry> {
     private SkillSelectionScreen parent;
 
 
-    public SkillListWidget(SkillSelectionScreen parent, int listWidth, int top, int bottom)
-    {
+    public SkillListWidget(SkillSelectionScreen parent, int listWidth, int top, int bottom) {
         super(parent.getMinecraftInstance(), listWidth, parent.height, top, bottom, parent.getFontRenderer().FONT_HEIGHT + 8);
         this.parent = parent;
         this.listWidth = listWidth;
@@ -27,25 +26,22 @@ public class SkillListWidget extends ExtendedList<SkillListWidget.SkillEntry> {
     private static String stripControlCodes(String value) { return net.minecraft.util.StringUtils.stripControlCodes(value); }
 
     @Override
-    protected int getScrollbarPosition()
-    {
-        return this.listWidth;
+    protected int getScrollbarPosition() {
+        return this.listWidth + 7;
     }
 
     @Override
-    public int getRowWidth()
-    {
+    public int getRowWidth() {
         return this.listWidth;
     }
 
     public void refreshList() {
         this.clearEntries();
-        parent.buildSkillList(this::addEntry, mod->new SkillEntry(mod, this.parent));
+        parent.buildSkillList(this::addEntry, mod -> new SkillEntry(mod, this.parent));
     }
 
     @Override
-    protected void renderBackground(MatrixStack mStack)
-    {
+    protected void renderBackground(MatrixStack mStack) {
         this.parent.renderBackground(mStack);
     }
 
@@ -58,7 +54,7 @@ public class SkillListWidget extends ExtendedList<SkillListWidget.SkillEntry> {
             parent = sss;
         }
 
-        public Skill getSkill(){
+        public Skill getSkill() {
             return s;
         }
 
@@ -71,16 +67,15 @@ public class SkillListWidget extends ExtendedList<SkillListWidget.SkillEntry> {
             font.func_238422_b_(ms, LanguageMap.getInstance().func_241870_a(ITextProperties.func_240655_a_(font.func_238417_a_(name, listWidth))), left + 3, top + 2, 0xFFFFFF);
             //font.func_238422_b_(ms, LanguageMap.getInstance().func_241870_a(ITextProperties.func_240655_a_(font.func_238417_a_(version, listWidth))), left + 3, top + 2 + font.FONT_HEIGHT, 0xCCCCCC);
             //lil' skill icon
-                Minecraft.getInstance().getTextureManager().bindTexture(s.icon());
-                RenderSystem.color4f(1, 1, 1, 1);
-                RenderSystem.pushMatrix();
-                AbstractGui.blit(ms, getLeft() + width - 12, top + entryHeight / 4, 0, 0, 8,8,8,8);
-                RenderSystem.popMatrix();
+            Minecraft.getInstance().getTextureManager().bindTexture(s.icon());
+            RenderSystem.color4f(1, 1, 1, 1);
+            RenderSystem.pushMatrix();
+            AbstractGui.blit(ms, getLeft() + width - 12, top + entryHeight / 4, 0, 0, 8, 8, 8, 8);
+            RenderSystem.popMatrix();
         }
 
         @Override
-        public boolean mouseClicked(double p_mouseClicked_1_, double p_mouseClicked_3_, int p_mouseClicked_5_)
-        {
+        public boolean mouseClicked(double p_mouseClicked_1_, double p_mouseClicked_3_, int p_mouseClicked_5_) {
             parent.setSelectedSkill(this);
             SkillListWidget.this.setSelected(this);
             return false;

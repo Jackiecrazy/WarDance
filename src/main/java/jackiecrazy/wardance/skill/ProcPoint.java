@@ -6,6 +6,8 @@ public class ProcPoint {
     public static final String on_damage ="afterArmor";
     public static final String on_being_hurt ="onHurt";
     public static final String on_being_damaged ="onDamage";
+    public static final String change_parry_result ="manipulateParry";
+    public static final String change_might ="manipulateMight";
     public static final String on_being_parried ="onBeingParried";
     public static final String on_projectile_impact ="onProjectileImpact";
     public static final String on_parry ="onParry";

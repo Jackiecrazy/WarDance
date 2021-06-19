@@ -59,25 +59,25 @@ elemental might: +1 burn/snowball/poison/drown damage to targets you have attack
     public static void hurt(LivingHurtEvent e) {
         Entity seme = e.getSource().getTrueSource();
         LivingEntity uke = e.getEntityLiving();
-        if (CasterData.getCap(uke).isSkillActive(WarSkills.VENGEFULMIGHT.get())) {
+        if (CasterData.getCap(uke).isSkillActive(WarSkills.VENGEFUL_MIGHT.get())) {
             CombatData.getCap(uke).addMight(e.getAmount() / 10);
             if (seme instanceof LivingEntity)
                 ((LivingEntity) seme).addPotionEffect(new EffectInstance(Effects.GLOWING, 100));
         }
-        if (CasterData.getCap(uke).isSkillActive(WarSkills.PRIDEFULMIGHT.get())) {
+        if (CasterData.getCap(uke).isSkillActive(WarSkills.PRIDEFUL_MIGHT.get())) {
             CombatData.getCap(uke).setMight(0);
         }
     }
 
     @SubscribeEvent
     public static void sneaky(LivingEvent.LivingVisibilityEvent e) {
-        if (CasterData.getCap(e.getEntityLiving()).isSkillActive(WarSkills.HIDDENMIGHT.get()))
+        if (CasterData.getCap(e.getEntityLiving()).isSkillActive(WarSkills.HIDDEN_MIGHT.get()))
             e.modifyVisibility(0.7 + CombatData.getCap(e.getEntityLiving()).getMight() * 0.03);
     }
 
     @SubscribeEvent
     public static void mighty(AttackMightEvent e) {
-        CasterData.getCap(e.getEntityLiving()).getActiveSkill(WarSkills.PRIDEFULMIGHT.get()).ifPresent((pd) -> {
+        CasterData.getCap(e.getEntityLiving()).getActiveSkill(WarSkills.PRIDEFUL_MIGHT.get()).ifPresent((pd) -> {
             pd.setArbitraryFloat(pd.getArbitraryFloat() + e.getQuantity());
             if (pd.getArbitraryFloat() > 3) {
                 pd.setArbitraryFloat(pd.getArbitraryFloat() % 3);
@@ -90,7 +90,7 @@ elemental might: +1 burn/snowball/poison/drown damage to targets you have attack
     public static void deady(LivingDeathEvent e) {
         if (!CombatUtils.isPhysicalAttack(e.getSource())) {
             for (PlayerEntity pe : e.getEntityLiving().world.getEntitiesWithinAABB(PlayerEntity.class, e.getEntity().getBoundingBox().grow(5))) {
-                if (CasterData.getCap(pe).isSkillActive(WarSkills.ELEMENTALMIGHT.get())) {
+                if (CasterData.getCap(pe).isSkillActive(WarSkills.ELEMENTAL_MIGHT.get())) {
                     CombatData.getCap(pe).addMight(1);
                 }
             }
@@ -100,7 +100,7 @@ elemental might: +1 burn/snowball/poison/drown damage to targets you have attack
     @Nullable
     @Override
     public Skill getParentSkill() {
-        return this.getClass() == CrownChampion.class ? null : WarSkills.HEAVY_BLOW.get();
+        return this.getClass() == CrownChampion.class ? null : WarSkills.CROWN_CHAMPION.get();
     }
 
     @Override

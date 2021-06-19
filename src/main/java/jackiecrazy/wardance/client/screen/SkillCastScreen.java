@@ -154,15 +154,16 @@ public class SkillCastScreen extends Screen {
             if (castStatus != Skill.CastStatus.ALLOWED) {
                 switch (castStatus) {
                     case COOLDOWN:
-                        print = new TranslationTextComponent("wardance.skill.cooldown").toString();
+                        print = new TranslationTextComponent("wardance.skill.cooldown").getString();
                         break;
                     case CONFLICT:
-                        print = new TranslationTextComponent("wardance.skill.conflict").toString();
+                        print = new TranslationTextComponent("wardance.skill.conflict").getString();
                         break;
                     case OTHER:
-                        print = new TranslationTextComponent(elements[index].getRegistryName().toString() + ".requirement").toString();
+                        print = new TranslationTextComponent(elements[index].getRegistryName().toString() + ".requirement").getString();
                         break;
                 }
+                yee = mc.fontRenderer.getStringWidth(print);
                 mc.ingameGUI.getFontRenderer().drawString(matrixStack, print, (width - yee) / 2f, height / 2f + 3, Color.RED.getRGB());
             }
 

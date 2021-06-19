@@ -5,10 +5,7 @@ import jackiecrazy.wardance.capability.resources.CombatData;
 import jackiecrazy.wardance.capability.skill.CasterData;
 import jackiecrazy.wardance.capability.skill.ISkillCapability;
 import jackiecrazy.wardance.config.CombatConfig;
-import jackiecrazy.wardance.event.MeleeKnockbackEvent;
-import jackiecrazy.wardance.event.ParryEvent;
-import jackiecrazy.wardance.event.ProjectileParryEvent;
-import jackiecrazy.wardance.event.SkillCastEvent;
+import jackiecrazy.wardance.event.*;
 import jackiecrazy.wardance.skill.ProcPoint;
 import jackiecrazy.wardance.skill.Skill;
 import jackiecrazy.wardance.skill.SkillCooldownData;
@@ -94,6 +91,18 @@ public class SkillEventHandler {
     }
 
     @SubscribeEvent
+    public static void mightFlags(AttackMightEvent e) {
+        if (!e.getEntityLiving().isServerWorld()) return;
+        LivingEntity attacker = e.getAttacker();
+        ISkillCapability isc = CasterData.getCap(attacker);
+        for (SkillData s : isc.getActiveSkills().values()) {
+            if (s.getSkill().getTags(attacker).contains(ProcPoint.change_might)) {
+                s.getSkill().onSuccessfulProc(attacker, s, e.getEntityLiving(), e);
+            }
+        }
+    }
+
+    @SubscribeEvent
     public static void knockbackFlags(MeleeKnockbackEvent e) {
         if (!e.getEntityLiving().isServerWorld()) return;
         if (CombatUtils.isMeleeAttack(e.getDamageSource()) && e.getDamageSource().getTrueSource() instanceof LivingEntity) {
@@ -144,6 +153,11 @@ public class SkillEventHandler {
 
     @SubscribeEvent
     public static void parryFlags(ParryEvent e) {
+        for (SkillData s : CasterData.getCap(e.getAttacker()).getActiveSkills().values()) {
+            if (s.getSkill().getTags(e.getAttacker()).contains(ProcPoint.change_parry_result)) {
+                s.getSkill().onSuccessfulProc(e.getAttacker(), s, e.getEntityLiving(), e);
+            }
+        }
         if (!e.getEntityLiving().isServerWorld() || !e.canParry()) return;
         for (SkillData s : CasterData.getCap(e.getAttacker()).getActiveSkills().values()) {
             if (s.getSkill().getTags(e.getAttacker()).contains(ProcPoint.on_being_parried)) {

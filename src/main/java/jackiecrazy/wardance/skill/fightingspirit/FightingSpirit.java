@@ -41,7 +41,7 @@ public class FightingSpirit extends Skill {
     @Nullable
     @Override
     public Skill getParentSkill() {
-        return this.getClass() == FightingSpirit.class ? null : WarSkills.FIGHTINGSPIRIT.get();
+        return this.getClass() == FightingSpirit.class ? null : WarSkills.FIGHTING_SPIRIT.get();
     }
 
     @Override

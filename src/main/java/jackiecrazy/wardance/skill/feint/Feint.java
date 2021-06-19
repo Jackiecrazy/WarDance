@@ -18,11 +18,12 @@ import net.minecraftforge.event.entity.living.LivingHurtEvent;
 import net.minecraftforge.eventbus.api.Event;
 
 import javax.annotation.Nullable;
+import java.awt.*;
 import java.util.Arrays;
 import java.util.HashSet;
 
 public class Feint extends Skill {
-    private final Tag<String> tag = Tag.getTagFromContents(new HashSet<>(Arrays.asList("physical", "disableShield", "noDamage", ProcPoint.melee, "boundCast", ProcPoint.countdown, ProcPoint.recharge_normal, ProcPoint.on_being_parried)));
+    private final Tag<String> tag = Tag.getTagFromContents(new HashSet<>(Arrays.asList("physical", "disableShield", "noDamage", ProcPoint.melee, "boundCast", ProcPoint.countdown, ProcPoint.recharge_normal, ProcPoint.change_parry_result)));
     private final Tag<String> no = Tag.getTagFromContents(new HashSet<>(Arrays.asList("normalAttack")));
 
     @Override
@@ -54,6 +55,8 @@ public class Feint extends Skill {
                 CombatUtils.setHandCooldown(target, Hand.OFF_HAND, 0, false);
             } else {
                 CombatData.getCap(target).consumePosture(((ParryEvent) procPoint).getAttackDamage(), 0.1f);
+                CombatData.getCap(target).consumePosture(((ParryEvent) procPoint).getPostureConsumption(), 0.1f);
+                ((ParryEvent) procPoint).setPostureConsumption(0);
                 procPoint.setResult(Event.Result.ALLOW);
             }
             markUsed(caster);
@@ -68,6 +71,10 @@ public class Feint extends Skill {
 
     public static class LastSurprise extends Feint {
         @Override
+        public Color getColor() {
+            return Color.GRAY;
+        }
+        @Override
         public void onSuccessfulProc(LivingEntity caster, SkillData stats, LivingEntity target, Event procPoint) {
             super.onSuccessfulProc(caster, stats, target, procPoint);
             target.addPotionEffect(new EffectInstance(WarEffects.DISTRACTION.get(), 60));
@@ -75,7 +82,10 @@ public class Feint extends Skill {
     }
 
     public static class SmirkingShadow extends Feint {
-
+        @Override
+        public Color getColor() {
+            return Color.CYAN;
+        }
         @Override
         public void onSuccessfulProc(LivingEntity caster, SkillData stats, LivingEntity target, Event procPoint) {
             super.onSuccessfulProc(caster, stats, target, procPoint);
@@ -85,7 +95,11 @@ public class Feint extends Skill {
     }
 
     public static class ScorpionSting extends Feint {
-        private final Tag<String> tag = Tag.getTagFromContents(new HashSet<>(Arrays.asList("physical", "disableShield", "noDamage", ProcPoint.melee, "boundCast", ProcPoint.on_hurt, ProcPoint.countdown, ProcPoint.recharge_normal, ProcPoint.on_being_parried)));
+        @Override
+        public Color getColor() {
+            return Color.RED;
+        }
+        private final Tag<String> tag = Tag.getTagFromContents(new HashSet<>(Arrays.asList("physical", "disableShield", "noDamage", ProcPoint.melee, "boundCast", ProcPoint.on_hurt, ProcPoint.countdown, ProcPoint.recharge_normal, ProcPoint.change_parry_result)));
         private final Tag<String> no = Tag.getTagFromContents(new HashSet<>(Arrays.asList("normalAttack")));
 
         @Override
@@ -117,6 +131,10 @@ public class Feint extends Skill {
     }
 
     public static class UpperHand extends Feint {
+        @Override
+        public Color getColor() {
+            return Color.GREEN;
+        }
         @Override
         public void onSuccessfulProc(LivingEntity caster, SkillData stats, LivingEntity target, Event procPoint) {
             if (procPoint instanceof LivingHurtEvent) {

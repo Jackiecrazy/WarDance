@@ -117,7 +117,7 @@ Berserk: recharge other hand and gain brief attack speed buff on cast and after 
 Overbear: base damage increased by shield time*2 and posture damage doubled, slow self briefly if enemy isn't staggered by hit
 ▪ Coup de grace: mobs have a life count depending on their max health. After hitting a target with at least 1 skill, reveal its weak spot (direction). Attacking in its weak spot will deal one life's worth of true damage to a staggered target. If this is the killing blow, gain 1 might.
 Frenzy: other physical skills refreshed on kill
-Eviscerate: mass fear on kill
+Dance with death: cooldown reduced by combo level
 Reaping: weaker AoE that refreshes if it kills an enemy
 Silencer: usable on unaware enemies
 Reinvigorate: remove some fatigue/burnout/wounding on kill
