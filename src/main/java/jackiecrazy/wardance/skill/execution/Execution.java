@@ -1,6 +1,8 @@
 package jackiecrazy.wardance.skill.execution;
 
 import jackiecrazy.wardance.capability.resources.CombatData;
+import jackiecrazy.wardance.capability.skill.CasterData;
+import jackiecrazy.wardance.capability.skill.ISkillCapability;
 import jackiecrazy.wardance.event.AttackMightEvent;
 import jackiecrazy.wardance.event.ParryEvent;
 import jackiecrazy.wardance.skill.ProcPoint;
@@ -60,8 +62,8 @@ Onslaught: casts heavy blow before every attack (this is a lot easier)
 
     @Override
     public boolean onCast(LivingEntity caster) {
+        activate(caster, 100);
         CombatData.getCap(caster).consumeMight(8);
-        activate(caster, 1);
         return true;
     }
 
@@ -111,16 +113,20 @@ Onslaught: casts heavy blow before every attack (this is a lot easier)
 
         @Override
         public boolean onCast(LivingEntity caster) {
+            activate(caster, 100);
             CombatData.getCap(caster).consumeMight(5);
-            activate(caster, 1);
             return true;
         }
 
         @Override
         public CastStatus castingCheck(LivingEntity caster) {
-            CastStatus cs = super.castingCheck(caster);
-            if (cs == CastStatus.ALLOWED && CombatData.getCap(caster).getMight() < 5) return CastStatus.OTHER;
-            return cs;
+            ISkillCapability cap = CasterData.getCap(caster);
+            for (String s : getIncompatibleTags(caster).getAllElements())
+                if (cap.isTagActive(s)) return CastStatus.CONFLICT;
+            if (cap.isSkillCoolingDown(this))
+                return CastStatus.COOLDOWN;
+            if (CombatData.getCap(caster).getMight() < 5) return CastStatus.OTHER;
+            return CastStatus.ALLOWED;
         }
     }
 

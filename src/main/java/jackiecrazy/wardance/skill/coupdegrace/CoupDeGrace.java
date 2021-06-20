@@ -107,7 +107,7 @@ public class CoupDeGrace extends Skill {
     public static class DanseMacabre extends CoupDeGrace {
         @Override
         public Color getColor() {
-            return Color.BLACK;
+            return Color.GRAY;
         }
 
         @Override

@@ -45,7 +45,7 @@ public class HeavyBlow extends Skill {
 
     @Override
     public CastStatus castingCheck(LivingEntity caster) {
-        return CombatData.getCap(caster).getMight() > 1 ? CastStatus.OTHER : super.castingCheck(caster);
+        return CombatData.getCap(caster).getMight() <= 1 ? CastStatus.OTHER : super.castingCheck(caster);
     }
 
     @Override

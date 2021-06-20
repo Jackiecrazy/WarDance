@@ -22,7 +22,7 @@ public class Trip extends Kick {
 
     @Override
     public CastStatus castingCheck(LivingEntity caster) {
-        return caster.isOnGround() ? CastStatus.OTHER : super.castingCheck(caster);
+        return !caster.isOnGround() ? CastStatus.OTHER : super.castingCheck(caster);
     }
 
     @Override

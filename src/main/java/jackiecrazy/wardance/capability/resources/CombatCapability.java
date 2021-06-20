@@ -677,7 +677,7 @@ public class CombatCapability implements ICombatCapability {
             addPosture(getPPT() * (poExtra));
         }
         float nausea = elb instanceof PlayerEntity || !elb.isPotionActive(Effects.NAUSEA) ? 0 : (elb.getActivePotionEffect(Effects.NAUSEA).getAmplifier() + 1) * CombatConfig.nausea;
-        addPosture(nausea * ticks);
+        addPosture(-nausea * ticks);
         if (shatterCD < 0) {
             shatterCD += ticks;
             if (shatterCD >= 0) {
