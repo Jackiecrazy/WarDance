@@ -3,7 +3,7 @@ package jackiecrazy.wardance.skill.feint;
 import jackiecrazy.wardance.capability.resources.CombatData;
 import jackiecrazy.wardance.event.ParryEvent;
 import jackiecrazy.wardance.potion.WarEffects;
-import jackiecrazy.wardance.skill.ProcPoint;
+import jackiecrazy.wardance.skill.SkillTags;
 import jackiecrazy.wardance.skill.Skill;
 import jackiecrazy.wardance.skill.SkillData;
 import jackiecrazy.wardance.skill.WarSkills;
@@ -23,7 +23,7 @@ import java.util.Arrays;
 import java.util.HashSet;
 
 public class Feint extends Skill {
-    private final Tag<String> tag = Tag.getTagFromContents(new HashSet<>(Arrays.asList("physical", "disableShield", "noDamage", ProcPoint.melee, "boundCast", ProcPoint.countdown, ProcPoint.recharge_normal, ProcPoint.change_parry_result)));
+    private final Tag<String> tag = Tag.getTagFromContents(new HashSet<>(Arrays.asList("physical", "disableShield", "noDamage", SkillTags.melee, "boundCast", SkillTags.countdown, SkillTags.recharge_normal, SkillTags.change_parry_result)));
     private final Tag<String> no = Tag.getTagFromContents(new HashSet<>(Arrays.asList("normalAttack")));
 
     @Override
@@ -99,7 +99,7 @@ public class Feint extends Skill {
         public Color getColor() {
             return Color.RED;
         }
-        private final Tag<String> tag = Tag.getTagFromContents(new HashSet<>(Arrays.asList("physical", "disableShield", "noDamage", ProcPoint.melee, "boundCast", ProcPoint.on_hurt, ProcPoint.countdown, ProcPoint.recharge_normal, ProcPoint.change_parry_result)));
+        private final Tag<String> tag = Tag.getTagFromContents(new HashSet<>(Arrays.asList("physical", "disableShield", "noDamage", SkillTags.melee, "boundCast", SkillTags.on_hurt, SkillTags.countdown, SkillTags.recharge_normal, SkillTags.change_parry_result)));
         private final Tag<String> no = Tag.getTagFromContents(new HashSet<>(Arrays.asList("normalAttack")));
 
         @Override

@@ -26,7 +26,7 @@ public class SpiritExplosion extends Explosion {
     private World world;
     public SpiritExplosion(World worldIn, @Nullable Entity entityIn, double x, double y, double z, float size, DamageSource ds, float damage) {
         super(worldIn, entityIn, ds, null, x, y, z, size, false, Mode.NONE);
-        this.size=size;
+        this.size=size*2;
         world=worldIn;
         this.damage=damage;
 

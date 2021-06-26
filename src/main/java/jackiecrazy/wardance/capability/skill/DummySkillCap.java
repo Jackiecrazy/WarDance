@@ -100,6 +100,11 @@ public class DummySkillCap implements ISkillCapability {
     }
 
     @Override
+    public Skill getEquippedVariation(Skill base) {
+        return base;
+    }
+
+    @Override
     public List<Skill> getEquippedSkills() {
         return moreDummies;
     }

@@ -44,6 +44,8 @@ public interface ISkillCapability {
 
     void clearSkillCooldowns();
 
+    Skill getEquippedVariation(Skill base);
+
     List<Skill> getEquippedSkills();
 
     void setEquippedSkills(List<Skill> skills);

@@ -2,7 +2,7 @@ package jackiecrazy.wardance.skill.fightingspirit;
 
 import jackiecrazy.wardance.capability.resources.CombatData;
 import jackiecrazy.wardance.event.ParryEvent;
-import jackiecrazy.wardance.skill.ProcPoint;
+import jackiecrazy.wardance.skill.SkillTags;
 import jackiecrazy.wardance.skill.SkillData;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.ai.attributes.AttributeModifier;
@@ -18,12 +18,10 @@ import java.util.Arrays;
 import java.util.HashSet;
 import java.util.UUID;
 
-import jackiecrazy.wardance.skill.Skill.STATE;
-
 public class FlameDance extends FightingSpirit {
     private static final UUID attackSpeed = UUID.fromString("67fe7ef6-a398-4c65-9bb1-42edaa80e7b4");
-    private final Tag<String> tag = Tag.getTagFromContents(new HashSet<>(Arrays.asList("chant", ProcPoint.melee, ProcPoint.on_parry, ProcPoint.on_being_hurt, ProcPoint.modify_crit, ProcPoint.countdown, ProcPoint.recharge_time, ProcPoint.recharge_sleep)));
-    private final Tag<String> no = Tag.getTagFromContents(new HashSet<>(Arrays.asList(ProcPoint.melee, ProcPoint.on_parry)));
+    private final Tag<String> tag = Tag.getTagFromContents(new HashSet<>(Arrays.asList("chant", SkillTags.melee, SkillTags.on_parry, SkillTags.on_being_hurt, SkillTags.modify_crit, SkillTags.countdown, SkillTags.recharge_time, SkillTags.recharge_sleep)));
+    private final Tag<String> no = Tag.getTagFromContents(new HashSet<>(Arrays.asList(SkillTags.melee, SkillTags.on_parry)));
 
     @Override
     public Tag<String> getTags(LivingEntity caster) {

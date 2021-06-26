@@ -3,7 +3,7 @@ package jackiecrazy.wardance.skill.fightingspirit;
 import jackiecrazy.wardance.capability.resources.CombatData;
 import jackiecrazy.wardance.capability.resources.ICombatCapability;
 import jackiecrazy.wardance.capability.skill.CasterData;
-import jackiecrazy.wardance.skill.ProcPoint;
+import jackiecrazy.wardance.skill.SkillTags;
 import jackiecrazy.wardance.skill.Skill;
 import jackiecrazy.wardance.skill.SkillData;
 import jackiecrazy.wardance.skill.WarSkills;
@@ -25,7 +25,7 @@ import java.util.UUID;
 
 public class FightingSpirit extends Skill {
     private static final AttributeModifier wrap = new AttributeModifier(UUID.fromString("67fe7ef6-a398-4c65-9bb1-42edaa80e7b1"), "bandaging wounds", -1, AttributeModifier.Operation.MULTIPLY_TOTAL);
-    private final Tag<String> tag = Tag.getTagFromContents(new HashSet<>(Arrays.asList("chant", ProcPoint.on_being_hurt, ProcPoint.countdown, ProcPoint.recharge_time, ProcPoint.recharge_sleep)));
+    private final Tag<String> tag = Tag.getTagFromContents(new HashSet<>(Arrays.asList("chant", SkillTags.on_being_hurt, SkillTags.countdown, SkillTags.recharge_time, SkillTags.recharge_sleep)));
     private final Tag<String> no = Tag.getEmptyTag();
 
     @Override

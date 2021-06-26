@@ -3,7 +3,7 @@ package jackiecrazy.wardance.skill.heavyblow;
 import jackiecrazy.wardance.capability.resources.CombatData;
 import jackiecrazy.wardance.capability.skill.CasterData;
 import jackiecrazy.wardance.event.ParryEvent;
-import jackiecrazy.wardance.skill.ProcPoint;
+import jackiecrazy.wardance.skill.SkillTags;
 import jackiecrazy.wardance.skill.Skill;
 import jackiecrazy.wardance.skill.SkillData;
 import jackiecrazy.wardance.skill.WarSkills;
@@ -17,7 +17,7 @@ import java.util.Arrays;
 import java.util.HashSet;
 
 public class HeavyBlow extends Skill {
-    private final Tag<String> tag = Tag.getTagFromContents(new HashSet<>(Arrays.asList("physical", "disableShield", ProcPoint.melee, ProcPoint.on_hurt, "boundCast", ProcPoint.normal_attack, ProcPoint.countdown, ProcPoint.modify_crit, ProcPoint.recharge_normal, ProcPoint.on_being_parried)));
+    private final Tag<String> tag = Tag.getTagFromContents(new HashSet<>(Arrays.asList("physical", "disableShield", SkillTags.melee, SkillTags.on_hurt, "boundCast", SkillTags.normal_attack, SkillTags.countdown, SkillTags.modify_crit, SkillTags.recharge_normal, SkillTags.on_being_parried)));
     private final Tag<String> no = Tag.getTagFromContents(new HashSet<>(Arrays.asList("normalAttack", "noCrit")));
 
     @Override

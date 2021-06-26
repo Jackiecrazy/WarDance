@@ -2,7 +2,7 @@ package jackiecrazy.wardance.skill.shieldbash;
 
 import jackiecrazy.wardance.capability.resources.CombatData;
 import jackiecrazy.wardance.event.ParryEvent;
-import jackiecrazy.wardance.skill.ProcPoint;
+import jackiecrazy.wardance.skill.SkillTags;
 import jackiecrazy.wardance.skill.SkillData;
 import jackiecrazy.wardance.utils.CombatUtils;
 import net.minecraft.entity.LivingEntity;
@@ -19,8 +19,8 @@ public class ArmLock extends ShieldBash{
         return Color.GREEN;
     }
 
-    private final Tag<String> tag = Tag.getTagFromContents(new HashSet<>(Arrays.asList("physical", "melee", "boundCast", "normalAttack", "countdown", ProcPoint.on_parry, ProcPoint.recharge_parry)));
-    private final Tag<String> no = Tag.getTagFromContents(new HashSet<>(Arrays.asList("normalAttack", ProcPoint.on_parry)));
+    private final Tag<String> tag = Tag.getTagFromContents(new HashSet<>(Arrays.asList("physical", "melee", "boundCast", "normalAttack", "countdown", SkillTags.on_parry, SkillTags.recharge_parry)));
+    private final Tag<String> no = Tag.getTagFromContents(new HashSet<>(Arrays.asList("normalAttack", SkillTags.on_parry)));
     @Override
     public Tag<String> getTags(LivingEntity caster) {
         return tag;

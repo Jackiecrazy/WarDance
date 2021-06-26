@@ -2,7 +2,7 @@ package jackiecrazy.wardance.skill.shieldbash;
 
 import jackiecrazy.wardance.WarDance;
 import jackiecrazy.wardance.capability.resources.CombatData;
-import jackiecrazy.wardance.skill.ProcPoint;
+import jackiecrazy.wardance.skill.SkillTags;
 import jackiecrazy.wardance.skill.SkillData;
 import jackiecrazy.wardance.utils.CombatUtils;
 import net.minecraft.entity.LivingEntity;
@@ -21,7 +21,7 @@ import java.util.Arrays;
 import java.util.HashSet;
 
 public class Overbear extends ShieldBash {
-    private final Tag<String> tag = Tag.getTagFromContents(new HashSet<>(Arrays.asList("physical", "melee", "boundCast", "normalAttack", "countdown", ProcPoint.on_hurt, ProcPoint.recharge_parry)));
+    private final Tag<String> tag = Tag.getTagFromContents(new HashSet<>(Arrays.asList("physical", "melee", "boundCast", "normalAttack", "countdown", SkillTags.on_hurt, SkillTags.recharge_parry)));
 
     @Override
     public Color getColor() {

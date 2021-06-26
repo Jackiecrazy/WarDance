@@ -163,6 +163,13 @@ public class SkillCapability implements ISkillCapability {
     }
 
     @Override
+    public Skill getEquippedVariation(Skill base) {
+        for (Skill k : equippedSkill)
+            if (k.getParentSkill() == k) return k;
+        return base;
+    }
+
+    @Override
     public List<Skill> getEquippedSkills() {
         return equippedSkill;
     }
@@ -181,7 +188,7 @@ public class SkillCapability implements ISkillCapability {
     @Override
     public boolean isSkillUsable(Skill skill) {
         if (!equippedSkill.contains(skill)) return false;
-        return skill.castingCheck(dude.get())== Skill.CastStatus.ALLOWED;
+        return skill.castingCheck(dude.get()) == Skill.CastStatus.ALLOWED;
     }
 
     @Override

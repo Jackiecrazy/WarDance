@@ -79,5 +79,6 @@ public class WarSkills {
     public static final RegistryObject<Skill> ENDLESS_MIGHT = SKILLS.register("endless_might", Execution.EndlessMight::new);
     public static final RegistryObject<Skill> FLARE = SKILLS.register("flare", Execution.Flare::new);
     public static final RegistryObject<Skill> MASTERS_LESSON = SKILLS.register("masters_lesson", Execution.MastersLesson::new);
+    public static final RegistryObject<Skill> ONSLAUGHT = SKILLS.register("onslaught", Execution.Onslaught::new);
 
 }

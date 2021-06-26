@@ -1,7 +1,7 @@
 package jackiecrazy.wardance.skill.fightingspirit;
 
 import jackiecrazy.wardance.capability.resources.CombatData;
-import jackiecrazy.wardance.skill.ProcPoint;
+import jackiecrazy.wardance.skill.SkillTags;
 import jackiecrazy.wardance.skill.SkillData;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.ai.attributes.AttributeModifier;
@@ -15,7 +15,7 @@ import java.util.HashSet;
 import java.util.UUID;
 
 public class WindScar extends FightingSpirit {
-    private final Tag<String> tag = Tag.getTagFromContents(new HashSet<>(Arrays.asList("chant", "sweep", ProcPoint.on_being_hurt, ProcPoint.countdown, ProcPoint.recharge_time, ProcPoint.recharge_sleep)));
+    private final Tag<String> tag = Tag.getTagFromContents(new HashSet<>(Arrays.asList("chant", "sweep", SkillTags.on_being_hurt, SkillTags.countdown, SkillTags.recharge_time, SkillTags.recharge_sleep)));
     private final Tag<String> no = Tag.getTagFromContents(new HashSet<>(Arrays.asList("sweep")));
     private static final AttributeModifier reach=new AttributeModifier(UUID.fromString("67fe7ef6-a398-4c65-9bb2-42edaa80e7b4"), "wind scar bonus", 1, AttributeModifier.Operation.ADDITION);
 

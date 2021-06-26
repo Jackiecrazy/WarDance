@@ -5,7 +5,7 @@ import jackiecrazy.wardance.capability.resources.CombatData;
 import jackiecrazy.wardance.capability.skill.CasterData;
 import jackiecrazy.wardance.event.AttackMightEvent;
 import jackiecrazy.wardance.potion.WarEffects;
-import jackiecrazy.wardance.skill.ProcPoint;
+import jackiecrazy.wardance.skill.SkillTags;
 import jackiecrazy.wardance.skill.Skill;
 import jackiecrazy.wardance.skill.SkillData;
 import jackiecrazy.wardance.skill.WarSkills;
@@ -52,7 +52,7 @@ elemental might: +1 burn/snowball/poison/drown damage to targets you have attack
             new AttributeModifier(MULT, "might multiplier", 0.45, AttributeModifier.Operation.MULTIPLY_BASE),
             new AttributeModifier(MULT, "might multiplier", 0.50, AttributeModifier.Operation.MULTIPLY_BASE)
     };
-    private final Tag<String> tag = Tag.getTagFromContents(new HashSet<>(Arrays.asList("passive", ProcPoint.on_hurt)));
+    private final Tag<String> tag = Tag.getTagFromContents(new HashSet<>(Arrays.asList("passive", SkillTags.on_hurt, SkillTags.change_might)));
     private final Tag<String> no = Tag.getEmptyTag();
 
     @SubscribeEvent
@@ -73,17 +73,6 @@ elemental might: +1 burn/snowball/poison/drown damage to targets you have attack
     public static void sneaky(LivingEvent.LivingVisibilityEvent e) {
         if (CasterData.getCap(e.getEntityLiving()).isSkillActive(WarSkills.HIDDEN_MIGHT.get()))
             e.modifyVisibility(0.7 + CombatData.getCap(e.getEntityLiving()).getMight() * 0.03);
-    }
-
-    @SubscribeEvent
-    public static void mighty(AttackMightEvent e) {
-        CasterData.getCap(e.getEntityLiving()).getActiveSkill(WarSkills.PRIDEFUL_MIGHT.get()).ifPresent((pd) -> {
-            pd.setArbitraryFloat(pd.getArbitraryFloat() + e.getQuantity());
-            if (pd.getArbitraryFloat() > 3) {
-                pd.setArbitraryFloat(pd.getArbitraryFloat() % 3);
-                CombatData.getCap(e.getEntityLiving()).setShatterCooldown(0);
-            }
-        });
     }
 
     @SubscribeEvent
@@ -136,12 +125,17 @@ elemental might: +1 burn/snowball/poison/drown damage to targets you have attack
         @Override
         public void onSuccessfulProc(LivingEntity caster, SkillData stats, LivingEntity target, Event procPoint) {
             super.onSuccessfulProc(caster, stats, target, procPoint);
+            if (CombatUtils.getAwareness(caster, target).equals(CombatUtils.AWARENESS.UNAWARE))
+                    CombatData.getCap(caster).addMight(1);
+        }
+
+        @Override
+        public boolean equippedTick(LivingEntity caster, STATE state) {
             int might = (int) CombatData.getCap(caster).getMight() - 1;
             caster.getAttribute(Attributes.MOVEMENT_SPEED).removeModifier(MULT);
             if (might >= 0)
                 caster.getAttribute(Attributes.MOVEMENT_SPEED).applyNonPersistentModifier(list[might]);
-            if (CombatUtils.getAwareness(caster, target).equals(CombatUtils.AWARENESS.UNAWARE))
-                CombatData.getCap(caster).addMight(1);
+            return super.equippedTick(caster, state);
         }
 
         @Override
@@ -161,6 +155,19 @@ elemental might: +1 burn/snowball/poison/drown damage to targets you have attack
         @Override
         public Color getColor() {
             return Color.ORANGE;
+        }
+
+        @Override
+        public void onSuccessfulProc(LivingEntity caster, SkillData pd, LivingEntity target, Event procPoint) {
+            super.onSuccessfulProc(caster, pd, target, procPoint);
+            if(procPoint instanceof AttackMightEvent){
+                ((AttackMightEvent) procPoint).setQuantity(((AttackMightEvent) procPoint).getQuantity()*3);
+                pd.setArbitraryFloat(pd.getArbitraryFloat()+((AttackMightEvent) procPoint).getQuantity());
+                if (pd.getArbitraryFloat() > 3) {
+                    pd.setArbitraryFloat(pd.getArbitraryFloat() % 3);
+                    CombatData.getCap(caster).setShatterCooldown(0);
+                }
+            }
         }
     }
 

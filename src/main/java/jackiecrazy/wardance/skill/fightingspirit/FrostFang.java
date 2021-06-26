@@ -1,6 +1,6 @@
 package jackiecrazy.wardance.skill.fightingspirit;
 
-import jackiecrazy.wardance.skill.ProcPoint;
+import jackiecrazy.wardance.skill.SkillTags;
 import jackiecrazy.wardance.skill.SkillData;
 import jackiecrazy.wardance.utils.CombatUtils;
 import net.minecraft.entity.LivingEntity;
@@ -18,8 +18,8 @@ import java.util.HashSet;
 import java.util.UUID;
 
 public class FrostFang extends FightingSpirit {
-    private final Tag<String> tag = Tag.getTagFromContents(new HashSet<>(Arrays.asList("chant", ProcPoint.melee, ProcPoint.on_being_hurt, ProcPoint.countdown, ProcPoint.recharge_time, ProcPoint.recharge_sleep)));
-    private final Tag<String> no = Tag.getTagFromContents(new HashSet<>(Arrays.asList(ProcPoint.melee)));
+    private final Tag<String> tag = Tag.getTagFromContents(new HashSet<>(Arrays.asList("chant", SkillTags.melee, SkillTags.on_being_hurt, SkillTags.countdown, SkillTags.recharge_time, SkillTags.recharge_sleep)));
+    private final Tag<String> no = Tag.getTagFromContents(new HashSet<>(Arrays.asList(SkillTags.melee)));
     private static final AttributeModifier luck =new AttributeModifier(UUID.fromString("67fe7ef6-a398-4c65-9bb1-42edaa80e7b4"), "frost fang bonus", 2, AttributeModifier.Operation.ADDITION);
     private static final AttributeModifier speed =new AttributeModifier(UUID.fromString("67fe7ef6-a398-4c65-9bb1-42edaa80e7b4"), "frost fang bonus", 0.4, AttributeModifier.Operation.MULTIPLY_BASE);
 

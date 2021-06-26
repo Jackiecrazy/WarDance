@@ -7,7 +7,7 @@ import jackiecrazy.wardance.capability.skill.CasterData;
 import jackiecrazy.wardance.capability.skill.ISkillCapability;
 import jackiecrazy.wardance.entity.SpiritExplosion;
 import jackiecrazy.wardance.event.ParryEvent;
-import jackiecrazy.wardance.skill.ProcPoint;
+import jackiecrazy.wardance.skill.SkillTags;
 import jackiecrazy.wardance.skill.Skill;
 import jackiecrazy.wardance.skill.SkillData;
 import jackiecrazy.wardance.skill.WarSkills;
@@ -24,7 +24,7 @@ import java.util.HashSet;
 import java.util.Set;
 
 public class CoupDeGrace extends Skill {
-    private final Tag<String> tag = Tag.getTagFromContents(new HashSet<>(Arrays.asList("physical", ProcPoint.melee, ProcPoint.on_hurt, ProcPoint.recharge_cast, ProcPoint.change_parry_result, "execution")));
+    private final Tag<String> tag = Tag.getTagFromContents(new HashSet<>(Arrays.asList("physical", SkillTags.melee, SkillTags.on_hurt, SkillTags.recharge_cast, SkillTags.change_parry_result, "execution")));
     private final Tag<String> no = Tag.getTagFromContents(new HashSet<>(Collections.singletonList("execution")));
 
     @Override
@@ -100,7 +100,7 @@ public class CoupDeGrace extends Skill {
         @Override
         protected void deathCheck(LivingEntity caster, LivingEntity target, float amount) {
             CombatData.getCap(caster).addSpirit(CombatData.getCap(target).getSpirit() / 2);
-            SpiritExplosion.spirituallyExplode(caster.world, caster, target.getPosX(), target.getPosY(), target.getPosZ(), (float) Math.sqrt(CombatData.getCap(target).getTrueMaxPosture()), new CombatDamageSource("player", caster).setProxy(target).setExplosion().setMagicDamage(), CombatData.getCap(target).getSpirit());
+            SpiritExplosion.spirituallyExplode(caster.world, caster, target.getPosX(), target.getPosY(), target.getPosZ(), (float) Math.sqrt(CombatData.getCap(target).getTrueMaxPosture()), new CombatDamageSource("player", caster).setProxy(target).setExplosion().setMagicDamage(), 2*CombatData.getCap(target).getSpirit());
         }
     }
 

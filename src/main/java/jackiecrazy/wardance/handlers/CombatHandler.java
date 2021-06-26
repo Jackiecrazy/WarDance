@@ -275,7 +275,7 @@ public class CombatHandler {
                             if (knockback > 0)
                                 ukeCap.setHandBind(parryHand, (int) (knockback * 10));
                             else
-                                ukeCap.setHandReel(parryHand, getReel(pe.getPostureConsumption()));
+                                ukeCap.setHandReel(parryHand, getReel(knockback));
                         }
                         //sword on sword is 1.4, sword on shield is 1.12
                         //normal distribution?

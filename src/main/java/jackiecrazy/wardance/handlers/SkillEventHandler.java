@@ -6,7 +6,7 @@ import jackiecrazy.wardance.capability.skill.CasterData;
 import jackiecrazy.wardance.capability.skill.ISkillCapability;
 import jackiecrazy.wardance.config.CombatConfig;
 import jackiecrazy.wardance.event.*;
-import jackiecrazy.wardance.skill.ProcPoint;
+import jackiecrazy.wardance.skill.SkillTags;
 import jackiecrazy.wardance.skill.Skill;
 import jackiecrazy.wardance.skill.SkillCooldownData;
 import jackiecrazy.wardance.skill.SkillData;
@@ -24,7 +24,7 @@ import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 
 @Mod.EventBusSubscriber(modid = WarDance.MODID)
-public class SkillEventHandler {
+public class SkillEventHandler {//TODO remove some checks on some tags so execution on means no damage whatsoever
     @SubscribeEvent(priority = EventPriority.LOWEST)
     public static void sleep(PlayerWakeUpEvent e) {
         /**
@@ -40,7 +40,7 @@ public class SkillEventHandler {
             }
             ISkillCapability isc = CasterData.getCap(e.getEntityLiving());
             for (SkillCooldownData s : isc.getSkillCooldowns().values()) {
-                if (s.getSkill().getTags(e.getEntityLiving()).contains(ProcPoint.recharge_sleep)) {
+                if (s.getSkill().getTags(e.getEntityLiving()).contains(SkillTags.recharge_sleep)) {
                     isc.coolSkill(s.getSkill());
                 }
             }
@@ -54,7 +54,7 @@ public class SkillEventHandler {
         ISkillCapability isc = CasterData.getCap(e.getEntityLiving());
         if (e.getSkill().isPassive(e.getEntityLiving()) || !e.getEntityLiving().isServerWorld()) return;
         for (Skill s : isc.getSkillCooldowns().keySet()) {
-            if (s.getTags(e.getEntityLiving()).contains(ProcPoint.recharge_cast)) {
+            if (s.getTags(e.getEntityLiving()).contains(SkillTags.recharge_cast)) {
                 isc.decrementSkillCooldown(s, 1);
             }
         }
@@ -64,7 +64,7 @@ public class SkillEventHandler {
     public static void forceCrit(CriticalHitEvent e) {
         if (!e.getEntityLiving().isServerWorld()) return;
         for (SkillData s : CasterData.getCap(e.getEntityLiving()).getActiveSkills().values()) {
-            if (s.getSkill().getTags(e.getEntityLiving()).contains(ProcPoint.modify_crit)) {
+            if (s.getSkill().getTags(e.getEntityLiving()).contains(SkillTags.modify_crit)) {
                 s.getSkill().onSuccessfulProc(e.getEntityLiving(), s, e.getEntityLiving(), e);
             }
         }
@@ -77,13 +77,13 @@ public class SkillEventHandler {
             LivingEntity attacker = (LivingEntity) e.getSource().getTrueSource();
             ISkillCapability isc = CasterData.getCap(attacker);
             for (SkillData s : isc.getActiveSkills().values()) {
-                if (s.getSkill().getTags(attacker).contains(ProcPoint.normal_attack)) {
+                if (s.getSkill().getTags(attacker).contains(SkillTags.normal_attack)) {
                     s.getSkill().onSuccessfulProc(attacker, s, e.getEntityLiving(), e);
                 }
             }
             if (CombatData.getCap(attacker).getCachedCooldown() > 0.9f)
                 for (Skill s : isc.getSkillCooldowns().keySet()) {
-                    if (s.getTags(attacker).contains(ProcPoint.recharge_normal)) {
+                    if (s.getTags(attacker).contains(SkillTags.recharge_normal)) {
                         isc.decrementSkillCooldown(s, 1);
                     }
                 }
@@ -96,7 +96,7 @@ public class SkillEventHandler {
         LivingEntity attacker = e.getAttacker();
         ISkillCapability isc = CasterData.getCap(attacker);
         for (SkillData s : isc.getActiveSkills().values()) {
-            if (s.getSkill().getTags(attacker).contains(ProcPoint.change_might)) {
+            if (s.getSkill().getTags(attacker).contains(SkillTags.change_might)) {
                 s.getSkill().onSuccessfulProc(attacker, s, e.getEntityLiving(), e);
             }
         }
@@ -109,7 +109,7 @@ public class SkillEventHandler {
             LivingEntity attacker = e.getAttacker();
             ISkillCapability isc = CasterData.getCap(attacker);
             for (SkillData s : isc.getActiveSkills().values()) {
-                if (s.getSkill().getTags(attacker).contains(ProcPoint.knockback)) {
+                if (s.getSkill().getTags(attacker).contains(SkillTags.knockback)) {
                     s.getSkill().onSuccessfulProc(attacker, s, e.getEntityLiving(), e);
                 }
             }
@@ -123,7 +123,7 @@ public class SkillEventHandler {
             LivingEntity attacker = (LivingEntity) e.getSource().getTrueSource();
             ISkillCapability isc = CasterData.getCap(attacker);
             for (SkillData s : isc.getActiveSkills().values()) {
-                if (s.getSkill().getTags(attacker).contains(ProcPoint.on_hurt) && (!s.getSkill().getTags(attacker).contains(ProcPoint.melee) || CombatUtils.isMeleeAttack(e.getSource()))) {
+                if (s.getSkill().getTags(attacker).contains(SkillTags.on_hurt) && (!s.getSkill().getTags(attacker).contains(SkillTags.melee) || CombatUtils.isMeleeAttack(e.getSource()))) {
                     s.getSkill().onSuccessfulProc(attacker, s, e.getEntityLiving(), e);
                 }
             }
@@ -131,7 +131,7 @@ public class SkillEventHandler {
         LivingEntity defender = e.getEntityLiving();
         ISkillCapability isc = CasterData.getCap(defender);
         for (SkillData s : isc.getActiveSkills().values()) {
-            if (s.getSkill().getTags(defender).contains(ProcPoint.on_being_hurt)) {
+            if (s.getSkill().getTags(defender).contains(SkillTags.on_being_hurt)) {
                 s.getSkill().onSuccessfulProc(defender, s, e.getEntityLiving(), e);
             }
         }
@@ -144,7 +144,7 @@ public class SkillEventHandler {
             LivingEntity attacker = (LivingEntity) e.getSource().getTrueSource();
             ISkillCapability isc = CasterData.getCap(attacker);
             for (SkillData s : isc.getActiveSkills().values()) {
-                if (s.getSkill().getTags(attacker).contains(ProcPoint.on_damage) && (!s.getSkill().getTags(attacker).contains(ProcPoint.melee) || CombatUtils.isMeleeAttack(e.getSource()))) {
+                if (s.getSkill().getTags(attacker).contains(SkillTags.on_damage) && (!s.getSkill().getTags(attacker).contains(SkillTags.melee) || CombatUtils.isMeleeAttack(e.getSource()))) {
                     s.getSkill().onSuccessfulProc(attacker, s, e.getEntityLiving(), e);
                 }
             }
@@ -154,24 +154,24 @@ public class SkillEventHandler {
     @SubscribeEvent
     public static void parryFlags(ParryEvent e) {
         for (SkillData s : CasterData.getCap(e.getAttacker()).getActiveSkills().values()) {
-            if (s.getSkill().getTags(e.getAttacker()).contains(ProcPoint.change_parry_result)) {
+            if (s.getSkill().getTags(e.getAttacker()).contains(SkillTags.change_parry_result)) {
                 s.getSkill().onSuccessfulProc(e.getAttacker(), s, e.getEntityLiving(), e);
             }
         }
         if (!e.getEntityLiving().isServerWorld() || !e.canParry()) return;
         for (SkillData s : CasterData.getCap(e.getAttacker()).getActiveSkills().values()) {
-            if (s.getSkill().getTags(e.getAttacker()).contains(ProcPoint.on_being_parried)) {
+            if (s.getSkill().getTags(e.getAttacker()).contains(SkillTags.on_being_parried)) {
                 s.getSkill().onSuccessfulProc(e.getAttacker(), s, e.getEntityLiving(), e);
             }
         }
         final ISkillCapability isc = CasterData.getCap(e.getEntityLiving());
         for (SkillData s : isc.getActiveSkills().values()) {
-            if (s.getSkill().getTags(e.getEntityLiving()).contains(ProcPoint.on_parry)) {
+            if (s.getSkill().getTags(e.getEntityLiving()).contains(SkillTags.on_parry)) {
                 s.getSkill().onSuccessfulProc(e.getEntityLiving(), s, e.getAttacker(), e);
             }
         }
         for (Skill s : isc.getSkillCooldowns().keySet()) {
-            if (s.getTags(e.getEntityLiving()).contains(ProcPoint.recharge_parry)) {
+            if (s.getTags(e.getEntityLiving()).contains(SkillTags.recharge_parry)) {
                 isc.decrementSkillCooldown(s, 1);
             }
         }
@@ -185,20 +185,20 @@ public class SkillEventHandler {
             Entity shooter = ((ProjectileEntity) proj).getShooter();
             if (shooter instanceof LivingEntity)
                 for (SkillData s : CasterData.getCap((LivingEntity) shooter).getActiveSkills().values()) {
-                    if (s.getSkill().getTags((LivingEntity) shooter).contains(ProcPoint.on_projectile_impact)) {
+                    if (s.getSkill().getTags((LivingEntity) shooter).contains(SkillTags.on_projectile_impact)) {
                         s.getSkill().onSuccessfulProc((LivingEntity) shooter, s, e.getEntityLiving(), e);
                     }
                 }
         }
         final ISkillCapability isc = CasterData.getCap(e.getEntityLiving());
         for (SkillData s : isc.getActiveSkills().values()) {
-            if (s.getSkill().getTags(e.getEntityLiving()).contains(ProcPoint.on_projectile_parry)) {
+            if (s.getSkill().getTags(e.getEntityLiving()).contains(SkillTags.on_projectile_parry)) {
                 s.getSkill().onSuccessfulProc(e.getEntityLiving(), s, e.getEntityLiving(), e);
             }
         }
         if (e.getOriginalPostureConsumption() != 0)
             for (Skill s : isc.getSkillCooldowns().keySet()) {
-                if (s.getTags(e.getEntityLiving()).contains(ProcPoint.recharge_parry)) {
+                if (s.getTags(e.getEntityLiving()).contains(SkillTags.recharge_parry)) {
                     isc.decrementSkillCooldown(s, 1);
                 }
             }

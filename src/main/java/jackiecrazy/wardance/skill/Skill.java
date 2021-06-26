@@ -139,7 +139,7 @@ public abstract class Skill extends ForgeRegistryEntry<Skill> {
      * @return whether the client should be updated.
      */
     public boolean activeTick(LivingEntity caster, SkillData d) {
-        if (d.getSkill().getTags(caster).contains(ProcPoint.countdown)) {
+        if (d.getSkill().getTags(caster).contains(SkillTags.countdown)) {
             d.decrementDuration();
             return true;
         }
@@ -154,7 +154,7 @@ public abstract class Skill extends ForgeRegistryEntry<Skill> {
      * @return whether the client should be updated.
      */
     public boolean coolingTick(LivingEntity caster, SkillCooldownData d) {
-        if (d.getSkill().getTags(caster).contains(ProcPoint.recharge_time)) {
+        if (d.getSkill().getTags(caster).contains(SkillTags.recharge_time)) {
             d.decrementDuration(1);
             return true;
         }

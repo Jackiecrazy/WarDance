@@ -5,11 +5,10 @@ import jackiecrazy.wardance.capability.skill.CasterData;
 import jackiecrazy.wardance.capability.skill.ISkillCapability;
 import jackiecrazy.wardance.event.AttackMightEvent;
 import jackiecrazy.wardance.event.ParryEvent;
-import jackiecrazy.wardance.skill.ProcPoint;
+import jackiecrazy.wardance.skill.SkillTags;
 import jackiecrazy.wardance.skill.Skill;
 import jackiecrazy.wardance.skill.SkillData;
 import jackiecrazy.wardance.skill.WarSkills;
-import jackiecrazy.wardance.utils.CombatUtils;
 import jackiecrazy.wardance.utils.TargetingUtils;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.player.PlayerEntity;
@@ -36,7 +35,7 @@ Onslaught: casts heavy blow before every attack (this is a lot easier)
     Flare: deals two lives' worth of damage, but causes the target to rapidly regenerate 1.4 lives afterwards
     Master's Lesson: while active, might gain is converted into posture at a 1:1 ratio; overflow posture will generate free parries
      */
-    private final Tag<String> tag = Tag.getTagFromContents(new HashSet<>(Arrays.asList("physical", ProcPoint.on_hurt, "melee", "execution")));
+    private final Tag<String> tag = Tag.getTagFromContents(new HashSet<>(Arrays.asList("physical", SkillTags.on_hurt, "melee", "execution")));
     private final Tag<String> no = Tag.getTagFromContents(new HashSet<>(Collections.singletonList("execution")));
 
     private static double getLife(LivingEntity e) {
@@ -87,15 +86,14 @@ Onslaught: casts heavy blow before every attack (this is a lot easier)
     public void onSuccessfulProc(LivingEntity caster, SkillData stats, LivingEntity target, Event procPoint) {
         if (procPoint instanceof LivingHurtEvent) {
             LivingHurtEvent e = (LivingHurtEvent) procPoint;
-            if (CombatUtils.getAttackingItemStack(e.getSource()) == null || CombatUtils.getAttackingItemStack(e.getSource()).isEmpty() || CombatUtils.isWeapon(caster, CombatUtils.getAttackingItemStack(e.getSource())))
-                if (CombatData.getCap(e.getEntityLiving()).getStaggerTime() > 0 && !CombatData.getCap(e.getEntityLiving()).isFirstStaggerStrike()) {
-                    execute(e);
-                    performEffect(caster, target, e.getAmount());
-                    markUsed(caster);
-                } else {
-                    e.setCanceled(true);
-                    CombatData.getCap(target).consumePosture(e.getAmount());
-                }
+            if (CombatData.getCap(e.getEntityLiving()).getStaggerTime() > 0 && !CombatData.getCap(e.getEntityLiving()).isFirstStaggerStrike()) {
+                execute(e);
+                performEffect(caster, target, e.getAmount());
+                markUsed(caster);
+            } else {
+                e.setCanceled(true);
+                CombatData.getCap(target).consumePosture(e.getAmount());
+            }
         }
     }
 
@@ -105,10 +103,26 @@ Onslaught: casts heavy blow before every attack (this is a lot easier)
         CombatData.getCap(e.getEntityLiving()).decrementStaggerTime(CombatData.getCap(e.getEntityLiving()).getStaggerTime());
     }
 
+    public static class Onslaught extends Execution {
+        @Override
+        public Color getColor() {
+            return Color.RED;
+        }
+
+        @Override
+        public boolean activeTick(LivingEntity caster, SkillData d) {
+            if (!CasterData.getCap(caster).isSkillActive(WarSkills.HEAVY_BLOW.get())) {
+                CasterData.getCap(caster).getEquippedVariation(WarSkills.HEAVY_BLOW.get()).onCast(caster);
+                return true;
+            }
+            return super.activeTick(caster, d);
+        }
+    }
+
     public static class EndlessMight extends Execution {
         @Override
         public Color getColor() {
-            return Color.ORANGE;
+            return Color.LIGHT_GRAY;
         }
 
         @Override
@@ -133,7 +147,7 @@ Onslaught: casts heavy blow before every attack (this is a lot easier)
     public static class Flare extends Execution {
         @Override
         public Color getColor() {
-            return Color.RED;
+            return Color.ORANGE;
         }
 
         @Override
@@ -151,7 +165,7 @@ Onslaught: casts heavy blow before every attack (this is a lot easier)
     }
 
     public static class MastersLesson extends Execution {
-        private final Tag<String> tag = Tag.getTagFromContents(new HashSet<>(Arrays.asList("physical", ProcPoint.on_hurt, "melee", "execution", ProcPoint.on_parry, ProcPoint.change_might)));
+        private final Tag<String> tag = Tag.getTagFromContents(new HashSet<>(Arrays.asList("physical", SkillTags.on_hurt, "melee", "execution", SkillTags.on_parry, SkillTags.change_might)));
         private final Tag<String> no = Tag.getTagFromContents(new HashSet<>(Collections.singletonList("execution")));
 
         @Override
