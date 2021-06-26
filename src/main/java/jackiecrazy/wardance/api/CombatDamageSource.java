@@ -2,6 +2,7 @@ package jackiecrazy.wardance.api;
 
 import jackiecrazy.wardance.skill.Skill;
 import net.minecraft.entity.Entity;
+import net.minecraft.entity.LivingEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.EntityDamageSource;
 import net.minecraft.util.Hand;
@@ -19,6 +20,10 @@ public class CombatDamageSource extends EntityDamageSource {
     private boolean crit = false;
     private float cdmg = 1.5f;
     private TYPE damageTyping = TYPE.PHYSICAL;
+
+    public static CombatDamageSource inflictSelfHarm(LivingEntity to){
+        return new CombatDamageSource("self", to);
+    }
 
     public CombatDamageSource(String damageTypeIn, @Nullable Entity damageSourceEntityIn) {
         super(damageTypeIn, damageSourceEntityIn);

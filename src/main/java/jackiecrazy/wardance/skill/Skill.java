@@ -109,6 +109,7 @@ public abstract class Skill extends ForgeRegistryEntry<Skill> {
     }
 
     public ITextComponent getDisplayName() {
+
         return new TranslationTextComponent(this.getRegistryName().toString() + ".name");
     }
 

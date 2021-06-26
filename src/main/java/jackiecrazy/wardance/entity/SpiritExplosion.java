@@ -1,8 +1,8 @@
 package jackiecrazy.wardance.entity;
 
+import jackiecrazy.wardance.utils.SkillUtils;
 import jackiecrazy.wardance.utils.TargetingUtils;
 import net.minecraft.enchantment.ProtectionEnchantment;
-import net.minecraft.entity.AreaEffectCloudEntity;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.particles.ParticleTypes;
@@ -27,18 +27,12 @@ public class SpiritExplosion extends Explosion {
 
     }
 
-    public static SpiritExplosion spirituallyExplode(World worldIn, Entity entityIn, double x, double y, double z, float size, DamageSource damageSource, float damage) {
-        SpiritExplosion explosion = new SpiritExplosion(worldIn, entityIn, x, y, z, size, damageSource, damage);
+    public static SpiritExplosion spirituallyExplode(World world, Entity entityIn, double x, double y, double z, float size, DamageSource damageSource, float damage) {
+        SpiritExplosion explosion = new SpiritExplosion(world, entityIn, x, y, z, size, damageSource, damage);
         explosion.doExplosionA();
         explosion.doExplosionB(true);
         //oh wow, yikes
-        AreaEffectCloudEntity areaeffectcloudentity = new AreaEffectCloudEntity(worldIn, x, y, z);
-        if (entityIn instanceof LivingEntity)
-            areaeffectcloudentity.setOwner((LivingEntity) entityIn);
-        areaeffectcloudentity.setParticleData(ParticleTypes.EXPLOSION);
-        areaeffectcloudentity.setRadius(size);
-        areaeffectcloudentity.setDuration(0);
-        worldIn.addEntity(areaeffectcloudentity);
+        SkillUtils.createCloud(world, entityIn, x, y, z, size*2, ParticleTypes.EXPLOSION);
         return explosion;
     }
 

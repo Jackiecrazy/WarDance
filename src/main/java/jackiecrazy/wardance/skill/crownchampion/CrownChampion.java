@@ -5,11 +5,12 @@ import jackiecrazy.wardance.capability.resources.CombatData;
 import jackiecrazy.wardance.capability.skill.CasterData;
 import jackiecrazy.wardance.event.AttackMightEvent;
 import jackiecrazy.wardance.potion.WarEffects;
-import jackiecrazy.wardance.skill.SkillTags;
 import jackiecrazy.wardance.skill.Skill;
 import jackiecrazy.wardance.skill.SkillData;
+import jackiecrazy.wardance.skill.SkillTags;
 import jackiecrazy.wardance.skill.WarSkills;
 import jackiecrazy.wardance.utils.CombatUtils;
+import jackiecrazy.wardance.utils.SkillUtils;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.ai.attributes.AttributeModifier;
@@ -40,18 +41,6 @@ prideful might: triple might gain, but clear everything on taking damage; shatte
 elemental might: +1 burn/snowball/poison/drown damage to targets you have attacked; +1 might for every mob that dies to environmental damage around you
      */
     private static final UUID MULT = UUID.fromString("67fe7ef6-a398-4c65-9bb1-42edaa80e7b1");
-    private static final AttributeModifier[] list = {
-            new AttributeModifier(MULT, "might multiplier", 0.05, AttributeModifier.Operation.MULTIPLY_BASE),
-            new AttributeModifier(MULT, "might multiplier", 0.10, AttributeModifier.Operation.MULTIPLY_BASE),
-            new AttributeModifier(MULT, "might multiplier", 0.15, AttributeModifier.Operation.MULTIPLY_BASE),
-            new AttributeModifier(MULT, "might multiplier", 0.20, AttributeModifier.Operation.MULTIPLY_BASE),
-            new AttributeModifier(MULT, "might multiplier", 0.25, AttributeModifier.Operation.MULTIPLY_BASE),
-            new AttributeModifier(MULT, "might multiplier", 0.30, AttributeModifier.Operation.MULTIPLY_BASE),
-            new AttributeModifier(MULT, "might multiplier", 0.35, AttributeModifier.Operation.MULTIPLY_BASE),
-            new AttributeModifier(MULT, "might multiplier", 0.40, AttributeModifier.Operation.MULTIPLY_BASE),
-            new AttributeModifier(MULT, "might multiplier", 0.45, AttributeModifier.Operation.MULTIPLY_BASE),
-            new AttributeModifier(MULT, "might multiplier", 0.50, AttributeModifier.Operation.MULTIPLY_BASE)
-    };
     private final Tag<String> tag = Tag.getTagFromContents(new HashSet<>(Arrays.asList("passive", SkillTags.on_hurt, SkillTags.change_might)));
     private final Tag<String> no = Tag.getEmptyTag();
 
@@ -116,9 +105,7 @@ elemental might: +1 burn/snowball/poison/drown damage to targets you have attack
     @Override
     public void onSuccessfulProc(LivingEntity caster, SkillData stats, LivingEntity target, Event procPoint) {
         int might = (int) CombatData.getCap(caster).getMight() - 1;
-        caster.getAttribute(Attributes.ATTACK_DAMAGE).removeModifier(MULT);
-        if (might >= 0)
-            caster.getAttribute(Attributes.ATTACK_DAMAGE).applyNonPersistentModifier(list[might]);
+        SkillUtils.modifyAttribute(caster, Attributes.MOVEMENT_SPEED, MULT, 0.05f*might, AttributeModifier.Operation.MULTIPLY_BASE, stats);
     }
 
     public static class HiddenMight extends CrownChampion {
@@ -126,16 +113,14 @@ elemental might: +1 burn/snowball/poison/drown damage to targets you have attack
         public void onSuccessfulProc(LivingEntity caster, SkillData stats, LivingEntity target, Event procPoint) {
             super.onSuccessfulProc(caster, stats, target, procPoint);
             if (CombatUtils.getAwareness(caster, target).equals(CombatUtils.AWARENESS.UNAWARE))
-                    CombatData.getCap(caster).addMight(1);
+                CombatData.getCap(caster).addMight(1);
         }
 
         @Override
-        public boolean equippedTick(LivingEntity caster, STATE state) {
+        public boolean activeTick(LivingEntity caster, SkillData d) {
             int might = (int) CombatData.getCap(caster).getMight() - 1;
-            caster.getAttribute(Attributes.MOVEMENT_SPEED).removeModifier(MULT);
-            if (might >= 0)
-                caster.getAttribute(Attributes.MOVEMENT_SPEED).applyNonPersistentModifier(list[might]);
-            return super.equippedTick(caster, state);
+            SkillUtils.modifyAttribute(caster, Attributes.MOVEMENT_SPEED, MULT, 0.03f*might, AttributeModifier.Operation.MULTIPLY_BASE, d);
+            return super.activeTick(caster, d);
         }
 
         @Override
@@ -160,9 +145,9 @@ elemental might: +1 burn/snowball/poison/drown damage to targets you have attack
         @Override
         public void onSuccessfulProc(LivingEntity caster, SkillData pd, LivingEntity target, Event procPoint) {
             super.onSuccessfulProc(caster, pd, target, procPoint);
-            if(procPoint instanceof AttackMightEvent){
-                ((AttackMightEvent) procPoint).setQuantity(((AttackMightEvent) procPoint).getQuantity()*3);
-                pd.setArbitraryFloat(pd.getArbitraryFloat()+((AttackMightEvent) procPoint).getQuantity());
+            if (procPoint instanceof AttackMightEvent) {
+                ((AttackMightEvent) procPoint).setQuantity(((AttackMightEvent) procPoint).getQuantity() * 3);
+                pd.setArbitraryFloat(pd.getArbitraryFloat() + ((AttackMightEvent) procPoint).getQuantity());
                 if (pd.getArbitraryFloat() > 3) {
                     pd.setArbitraryFloat(pd.getArbitraryFloat() % 3);
                     CombatData.getCap(caster).setShatterCooldown(0);

@@ -164,7 +164,7 @@ public class CombatHandler {
                 //add stats if it's the first attack this tick and cooldown is sufficient
                 if (seme.getLastAttackedEntityTime() != seme.ticksExisted) {//first hit of a potential sweep attack
                     semeCap.addCombo(0.2f);
-                    float might=CombatUtils.getAttackMight(seme, uke);
+                    float might = CombatUtils.getAttackMight(seme, uke);
                     semeCap.addMight(might);
                 }
                 boolean canParry = GeneralUtils.isFacingEntity(uke, seme, 120) && (!(uke instanceof PlayerEntity) || CombatConfig.sneakParry == 0 || (uke.isSneaking() && EntityHandler.lastSneak.get((PlayerEntity) uke) < uke.ticksExisted + CombatConfig.sneakParry));//why does everyone want this feature...
@@ -304,6 +304,7 @@ public class CombatHandler {
                 postureDamage += deviation;
             }
         } else if (postureDamage > 0) {
+            counter = 0.2f;
             postureDamage -= deviation;
             while (postureDamage > 0) {
                 ret -= counter;
@@ -383,6 +384,7 @@ public class CombatHandler {
             e.setAmount(icic.onBeingHurt(e.getSource(), uke, semeoff, e.getAmount()));
         }
         ICombatCapability cap = CombatData.getCap(uke);
+        cap.setSpiritGrace(CombatConfig.spiritCD);
         CombatUtils.AWARENESS awareness = CombatUtils.getAwareness(kek, uke);
         if (ds.getTrueSource() instanceof LivingEntity) {
             LivingEntity seme = ((LivingEntity) ds.getTrueSource());

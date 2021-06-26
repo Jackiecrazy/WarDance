@@ -12,6 +12,9 @@ import jackiecrazy.wardance.skill.grapple.Submission;
 import jackiecrazy.wardance.skill.heavyblow.*;
 import jackiecrazy.wardance.skill.ironguard.*;
 import jackiecrazy.wardance.skill.kick.*;
+import jackiecrazy.wardance.skill.mementomori.DeathDenial;
+import jackiecrazy.wardance.skill.mementomori.MementoMori;
+import jackiecrazy.wardance.skill.mementomori.PoundOfFlesh;
 import jackiecrazy.wardance.skill.shieldbash.ArmLock;
 import jackiecrazy.wardance.skill.shieldbash.Berserk;
 import jackiecrazy.wardance.skill.shieldbash.Overbear;
@@ -80,5 +83,11 @@ public class WarSkills {
     public static final RegistryObject<Skill> FLARE = SKILLS.register("flare", Execution.Flare::new);
     public static final RegistryObject<Skill> MASTERS_LESSON = SKILLS.register("masters_lesson", Execution.MastersLesson::new);
     public static final RegistryObject<Skill> ONSLAUGHT = SKILLS.register("onslaught", Execution.Onslaught::new);
+    public static final RegistryObject<Skill> MEMENTO_MORI = SKILLS.register("memento_mori", MementoMori::new);
+    public static final RegistryObject<Skill> RAPID_CLOTTING = SKILLS.register("rapid_clotting", MementoMori.RapidClotting::new);
+    public static final RegistryObject<Skill> PANIC = SKILLS.register("panic", MementoMori.Panic::new);
+    public static final RegistryObject<Skill> DEATH_DENIAL = SKILLS.register("death_denial", DeathDenial::new);
+    public static final RegistryObject<Skill> SAVING_THROW = SKILLS.register("saving_throw", MementoMori.SavingThrow::new);
+    public static final RegistryObject<Skill> POUND_OF_FLESH = SKILLS.register("pound_of_flesh", PoundOfFlesh::new);
 
 }

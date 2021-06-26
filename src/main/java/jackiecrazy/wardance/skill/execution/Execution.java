@@ -87,8 +87,7 @@ Onslaught: casts heavy blow before every attack (this is a lot easier)
         if (procPoint instanceof LivingHurtEvent) {
             LivingHurtEvent e = (LivingHurtEvent) procPoint;
             if (CombatData.getCap(e.getEntityLiving()).getStaggerTime() > 0 && !CombatData.getCap(e.getEntityLiving()).isFirstStaggerStrike()) {
-                execute(e);
-                performEffect(caster, target, e.getAmount());
+                performEffect(caster, target, execute(e));
                 markUsed(caster);
             } else {
                 e.setCanceled(true);
@@ -97,10 +96,12 @@ Onslaught: casts heavy blow before every attack (this is a lot easier)
         }
     }
 
-    protected void execute(LivingHurtEvent e) {
-        e.getEntityLiving().setHealth(e.getEntityLiving().getHealth() - (float) getLife(e.getEntityLiving()));
+    protected float execute(LivingHurtEvent e) {
+        final float life = (float) getLife(e.getEntityLiving());
+        e.getEntityLiving().setHealth(e.getEntityLiving().getHealth() - life);
         e.getSource().setDamageBypassesArmor().setDamageIsAbsolute();
         CombatData.getCap(e.getEntityLiving()).decrementStaggerTime(CombatData.getCap(e.getEntityLiving()).getStaggerTime());
+        return life + e.getAmount();
     }
 
     public static class Onslaught extends Execution {
@@ -151,11 +152,13 @@ Onslaught: casts heavy blow before every attack (this is a lot easier)
         }
 
         @Override
-        protected void execute(LivingHurtEvent e) {
-            e.getEntityLiving().setHealth(e.getEntityLiving().getHealth() - (float) getLife(e.getEntityLiving()) * 2);
+        protected float execute(LivingHurtEvent e) {
+            final float lives = (float) getLife(e.getEntityLiving()) * 2;
+            e.getEntityLiving().setHealth(e.getEntityLiving().getHealth() - lives);
             //e.setAmount(e.getAmount() + (float) getLife(e.getEntityLiving()) * 2);
             e.getSource().setDamageBypassesArmor().setDamageIsAbsolute();
             CombatData.getCap(e.getEntityLiving()).decrementStaggerTime(CombatData.getCap(e.getEntityLiving()).getStaggerTime());
+            return lives + e.getAmount();
         }
 
         @Override

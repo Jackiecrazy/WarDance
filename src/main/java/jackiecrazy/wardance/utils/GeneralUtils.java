@@ -5,6 +5,7 @@
 
 package jackiecrazy.wardance.utils;
 
+import jackiecrazy.wardance.capability.resources.CombatData;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.LivingEntity;
@@ -112,6 +113,10 @@ public class GeneralUtils {
         double me = x * x + y * y + z * z;
         double you = from.getDistanceSq(to);
         return Math.min(me, you);
+    }
+
+    public static float getMaxHealthBeforeWounding(LivingEntity of) {
+        return of.getMaxHealth() + CombatData.getCap(of).getWounding();
     }
 
     /**

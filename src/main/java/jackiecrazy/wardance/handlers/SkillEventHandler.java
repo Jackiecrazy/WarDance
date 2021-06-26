@@ -149,6 +149,13 @@ public class SkillEventHandler {//TODO remove some checks on some tags so execut
                 }
             }
         }
+        LivingEntity defender = e.getEntityLiving();
+        ISkillCapability isc = CasterData.getCap(defender);
+        for (SkillData s : isc.getActiveSkills().values()) {
+            if (s.getSkill().getTags(defender).contains(SkillTags.on_being_damaged)) {
+                s.getSkill().onSuccessfulProc(defender, s, e.getEntityLiving(), e);
+            }
+        }
     }
 
     @SubscribeEvent
