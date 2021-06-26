@@ -3,13 +3,12 @@ package jackiecrazy.wardance.handlers;
 import jackiecrazy.wardance.WarDance;
 import jackiecrazy.wardance.api.CombatDamageSource;
 import jackiecrazy.wardance.api.WarAttributes;
-import jackiecrazy.wardance.capability.weaponry.CombatManipulator;
-import jackiecrazy.wardance.capability.weaponry.ICombatItemCapability;
 import jackiecrazy.wardance.capability.resources.CombatData;
 import jackiecrazy.wardance.capability.resources.ICombatCapability;
 import jackiecrazy.wardance.capability.skill.CasterData;
+import jackiecrazy.wardance.capability.weaponry.CombatManipulator;
+import jackiecrazy.wardance.capability.weaponry.ICombatItemCapability;
 import jackiecrazy.wardance.config.CombatConfig;
-import jackiecrazy.wardance.event.AttackMightEvent;
 import jackiecrazy.wardance.event.MeleeKnockbackEvent;
 import jackiecrazy.wardance.event.ParryEvent;
 import jackiecrazy.wardance.event.ProjectileParryEvent;
@@ -165,20 +164,8 @@ public class CombatHandler {
                 //add stats if it's the first attack this tick and cooldown is sufficient
                 if (seme.getLastAttackedEntityTime() != seme.ticksExisted) {//first hit of a potential sweep attack
                     semeCap.addCombo(0.2f);
-                    final float magicNumber = 781.25f;
-                    final float scale = 1f;
-                    final float cooldownSq = semeCap.getCachedCooldown() * semeCap.getCachedCooldown();
-                    final float period = CombatUtils.getCooldownPeriod(seme, Hand.MAIN_HAND);
-                    float might = cooldownSq * period * Math.min(period, 13);//makes sure heavies don't scale forever, light ones are still puny
-                    might *= ((scale / magicNumber) + 0.2f * (1 - scale)) * (1 + (semeCap.getCombo() / 10f));//combo and weird scale number
-                    AttackMightEvent ame = new AttackMightEvent(seme, uke, might);
-                    float weakness = 1;
-                    if (seme.isPotionActive(Effects.WEAKNESS))
-                        for (int foo = 0; foo < seme.getActivePotionEffect(Effects.WEAKNESS).getAmplifier() + 1; foo++) {
-                            weakness *= CombatConfig.weakness;
-                        }
-                    MinecraftForge.EVENT_BUS.post(ame);
-                    semeCap.addMight(ame.getQuantity() * weakness);
+                    float might=CombatUtils.getAttackMight(seme, uke);
+                    semeCap.addMight(might);
                 }
                 boolean canParry = GeneralUtils.isFacingEntity(uke, seme, 120) && (!(uke instanceof PlayerEntity) || CombatConfig.sneakParry == 0 || (uke.isSneaking() && EntityHandler.lastSneak.get((PlayerEntity) uke) < uke.ticksExisted + CombatConfig.sneakParry));//why does everyone want this feature...
                 boolean useDeflect = (uke instanceof PlayerEntity || WarDance.rand.nextFloat() < CombatConfig.mobDeflectChance) && GeneralUtils.isFacingEntity(uke, seme, 120 + 2 * (int) GeneralUtils.getAttributeValueSafe(uke, WarAttributes.DEFLECTION.get())) && !canParry;

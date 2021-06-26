@@ -98,7 +98,7 @@ Onslaught: casts heavy blow before every attack (this is a lot easier)
     }
 
     protected void execute(LivingHurtEvent e) {
-        e.setAmount(e.getAmount() + (float) getLife(e.getEntityLiving()));
+        e.getEntityLiving().setHealth(e.getEntityLiving().getHealth() - (float) getLife(e.getEntityLiving()));
         e.getSource().setDamageBypassesArmor().setDamageIsAbsolute();
         CombatData.getCap(e.getEntityLiving()).decrementStaggerTime(CombatData.getCap(e.getEntityLiving()).getStaggerTime());
     }
@@ -152,7 +152,8 @@ Onslaught: casts heavy blow before every attack (this is a lot easier)
 
         @Override
         protected void execute(LivingHurtEvent e) {
-            e.setAmount(e.getAmount() + (float) getLife(e.getEntityLiving()) * 2);
+            e.getEntityLiving().setHealth(e.getEntityLiving().getHealth() - (float) getLife(e.getEntityLiving()) * 2);
+            //e.setAmount(e.getAmount() + (float) getLife(e.getEntityLiving()) * 2);
             e.getSource().setDamageBypassesArmor().setDamageIsAbsolute();
             CombatData.getCap(e.getEntityLiving()).decrementStaggerTime(CombatData.getCap(e.getEntityLiving()).getStaggerTime());
         }

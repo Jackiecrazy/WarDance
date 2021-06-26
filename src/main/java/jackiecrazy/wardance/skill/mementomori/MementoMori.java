@@ -1,5 +1,6 @@
 package jackiecrazy.wardance.skill.mementomori;
 
+import jackiecrazy.wardance.capability.resources.CombatData;
 import jackiecrazy.wardance.event.AttackMightEvent;
 import jackiecrazy.wardance.skill.SkillTags;
 import jackiecrazy.wardance.skill.Skill;
@@ -17,10 +18,12 @@ public class MementoMori extends Skill {
 rapid clotting: charm 3: gain 1 armor every point of health lost
 panic: when taking damage under 50%, consume 5 spirit to create a smoke cloud that blinds the enemy, with radius increasing as health decreases
 death denial: upon receiving fatal damage, become immune to all damage and all healing for 5 seconds
-meltdown: active skill. Consumes all your spirit and deals percentage health damage equal to your lost health, spread between all enemies
+quid pro quo: deal an extra 5% current health from both parties on attack
+torment: active skill. Consumes all your spirit and deals percentage health damage equal to your lost health, spread between all enemies and amplified by spirit consumed
      */
     private final Tag<String> tag = Tag.getTagFromContents(new HashSet<>(Arrays.asList("passive", SkillTags.change_might)));
     private final Tag<String> no = Tag.getEmptyTag();
+
     @Override
     public Tag<String> getTags(LivingEntity caster) {
         return tag;
@@ -45,8 +48,8 @@ meltdown: active skill. Consumes all your spirit and deals percentage health dam
     @Override
     public void onSuccessfulProc(LivingEntity caster, SkillData stats, LivingEntity target, Event procPoint) {
         //on attack might event, check health percentage and increment
-        if(procPoint instanceof AttackMightEvent){
-
+        if (procPoint instanceof AttackMightEvent) {
+            float healthPercentage = caster.getHealth() / (caster.getMaxHealth() + CombatData.getCap(caster).getWounding());
         }
     }
 

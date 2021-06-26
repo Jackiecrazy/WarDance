@@ -80,7 +80,8 @@ public class CoupDeGrace extends Skill {
     }
 
     protected void execute(LivingHurtEvent e) {
-        e.setAmount(e.getEntityLiving().getHealth());
+        e.getEntityLiving().setHealth(1);
+        e.setAmount(Float.MAX_VALUE);
         e.getSource().setDamageBypassesArmor().setDamageIsAbsolute();
     }
 
@@ -100,7 +101,7 @@ public class CoupDeGrace extends Skill {
         @Override
         protected void deathCheck(LivingEntity caster, LivingEntity target, float amount) {
             CombatData.getCap(caster).addSpirit(CombatData.getCap(target).getSpirit() / 2);
-            SpiritExplosion.spirituallyExplode(caster.world, caster, target.getPosX(), target.getPosY(), target.getPosZ(), (float) Math.sqrt(CombatData.getCap(target).getTrueMaxPosture()), new CombatDamageSource("player", caster).setProxy(target).setExplosion().setMagicDamage(), 2*CombatData.getCap(target).getSpirit());
+            SpiritExplosion.spirituallyExplode(caster.world, caster, target.getPosX(), target.getPosY(), target.getPosZ(), (float) Math.sqrt(CombatData.getCap(target).getTrueMaxPosture()), new CombatDamageSource("player", caster).setProxy(target).setExplosion().setMagicDamage(), 2 * CombatData.getCap(target).getSpirit());
         }
     }
 
@@ -139,13 +140,10 @@ public class CoupDeGrace extends Skill {
         public void onSuccessfulProc(LivingEntity caster, SkillData stats, LivingEntity target, Event procPoint) {
             if (procPoint instanceof LivingHurtEvent) {
                 LivingHurtEvent e = (LivingHurtEvent) procPoint;
-                if (CombatData.getCap(e.getEntityLiving()).getStaggerTime() > 0 && !CombatData.getCap(e.getEntityLiving()).isFirstStaggerStrike()) {
-                    e.setAmount(e.getAmount() * 2 + e.getEntityLiving().getMaxHealth() * 0.05f);
-                    deathCheck(caster, target, e.getAmount());
-                } else {
-                    e.setCanceled(true);
-                    CombatData.getCap(target).consumePosture(e.getAmount());
-                }
+                e.getEntityLiving().setHealth(e.getEntityLiving().getHealth() - e.getEntityLiving().getMaxHealth() * 0.05f);
+                e.setAmount(e.getAmount() * 2);
+                if (e.getEntityLiving().getHealth() - e.getAmount() <= 0)
+                    stats.flagCondition(true);
             }
             if (procPoint instanceof ParryEvent) {
                 procPoint.setResult(Event.Result.DENY);
