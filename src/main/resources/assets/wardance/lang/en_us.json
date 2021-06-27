@@ -99,7 +99,7 @@
   "wardance:foot_slam.name": "Foot Slam",
   "wardance:foot_slam.desc": " Slam the shield into the enemy's foot, slowing and distracting them for 3 seconds.",
   "wardance:berserk.name": "Berserk",
-  "wardance:berserk.desc": " Upon cast and successful attack with shield, recharge both hands and increase your attack speed by 30% for 1.5 seconds.",
+  "wardance:berserk.desc": " Upon cast and successful attack with shield, recharge both hands and increase your attack speed by 30% for 2.5 seconds.",
   "wardance:arm_lock.name": "Arm Lock",
   "wardance:arm_lock.desc": " Parrying with this skill active will bind the attacker's attacking hand for 1.5 seconds. Cooldown +1.",
   "wardance:fighting_spirit.name": "Fighting Spirit",
@@ -122,7 +122,7 @@
   "wardance:smirking_shadow.name": "Smirking Shadow",
   "wardance:smirking_shadow.desc": " Teleport 2 blocks behind the target after the attack.",
   "wardance:scorpion_sting.name": "Scorpion Sting",
-  "wardance:scorpion_sting.desc": "This attack will trigger effects that apply on damage if it is not parried.",
+  "wardance:scorpion_sting.desc": " This attack will trigger effects that apply on damage if it is not parried.",
   "wardance:last_surprise.name": "Last Surprise",
   "wardance:last_surprise.desc": " The target is distracted for 3 seconds.",
   "wardance:crown_champion.name": "Crown Champion",
@@ -164,6 +164,6 @@
   "wardance:saving_throw.name": "Saving Throw",
   "wardance:saving_throw.desc": " Additionally gain 0.1 luck per 1% lost health.",
   "wardance:pound_of_flesh.name": "Pound of Flesh",
-  "wardance:pound_of_flesh.desc": " Active skill. Consume all your spirit; when attacking, consume 5% max health to deal 5% of the target's max health, or 10% of the target's max posture if the attack was parried. Lasts until (spirit) seconds have elapsed or your spirit begins to recharge again.",
+  "wardance:pound_of_flesh.desc": " Active skill, consumes all your spirit. When attacking, consume 5% max health to deal 5% of the target's max health, or 10% of the target's max posture if the attack was parried. Lasts until (spirit) seconds have elapsed or your spirit begins to recharge again.",
   "wardance:": ""
 }
