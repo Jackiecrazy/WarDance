@@ -3,6 +3,7 @@ package jackiecrazy.wardance.skill.fightingspirit;
 import jackiecrazy.wardance.capability.resources.CombatData;
 import jackiecrazy.wardance.capability.resources.ICombatCapability;
 import jackiecrazy.wardance.capability.skill.CasterData;
+import jackiecrazy.wardance.client.screen.SkillCastScreen;
 import jackiecrazy.wardance.skill.Skill;
 import jackiecrazy.wardance.skill.SkillData;
 import jackiecrazy.wardance.skill.SkillTags;
@@ -44,9 +45,8 @@ public class FightingSpirit extends Skill {
 
     @Override
     public ITextComponent getDisplayName() {
-        TranslationTextComponent ret=new TranslationTextComponent(this.getRegistryName().toString() + ".name");
-        ret=DistExecutor.unsafeRunForDist(() -> ()->{
-            if(Minecraft.getInstance().player!=null) {
+        return DistExecutor.unsafeRunForDist(() -> ()->{
+            if(Minecraft.getInstance().player!=null&&Minecraft.getInstance().currentScreen instanceof SkillCastScreen) {
                 ICombatCapability cap = CombatData.getCap(Minecraft.getInstance().player);
                 if (cap.getMight() == 0 && cap.getPosture() == cap.getMaxPosture() && cap.getSpirit() == cap.getMaxSpirit()) {
                     return new TranslationTextComponent("wardance:fighting_spirit.sleep.name");
@@ -54,7 +54,6 @@ public class FightingSpirit extends Skill {
             }
             return new TranslationTextComponent(this.getRegistryName().toString() + ".name");
         },() -> ()-> new TranslationTextComponent(this.getRegistryName().toString() + ".name"));
-        return ret;
     }
 
     @Nullable

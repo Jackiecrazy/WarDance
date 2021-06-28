@@ -153,7 +153,7 @@
   "wardance:crowd_pleaser.name": "喝彩",
   "wardance:crowd_pleaser.desc": " 「索命」结束后10方块内的友方单位获得额外的攻击速度和伤害。",
   "wardance:crowd_pleaser.requirement": "需要8威",
-  "wardance:memento_mori.name": "背水一战",
+  "wardance:memento_mori.name": "背水",
   "wardance:memento_mori.desc": "每失去1%生命（包括伤）获得1%额外威和0.5%额外伤害。",
   "wardance:rapid_clotting.name": "血甲",
   "wardance:rapid_clotting.desc": " 获得等同于已损失生命的护甲。",
