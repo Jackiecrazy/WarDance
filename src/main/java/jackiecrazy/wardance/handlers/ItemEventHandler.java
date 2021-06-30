@@ -6,8 +6,6 @@ import jackiecrazy.wardance.utils.CombatUtils;
 import net.minecraft.entity.ai.attributes.AttributeModifier;
 import net.minecraft.inventory.EquipmentSlotType;
 import net.minecraft.item.ArmorItem;
-import net.minecraft.item.Items;
-import net.minecraftforge.common.ForgeMod;
 import net.minecraftforge.event.ItemAttributeModifierEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
@@ -21,6 +19,7 @@ public class ItemEventHandler {
             e.addModifier(WarAttributes.ABSORPTION.get(), a[0]);
             e.addModifier(WarAttributes.DEFLECTION.get(), a[1]);
             e.addModifier(WarAttributes.SHATTER.get(), a[2]);
+            e.addModifier(WarAttributes.STEALTH.get(), a[3]);
         }
     }
 

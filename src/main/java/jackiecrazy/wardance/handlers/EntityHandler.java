@@ -1,6 +1,7 @@
 package jackiecrazy.wardance.handlers;
 
 import jackiecrazy.wardance.WarDance;
+import jackiecrazy.wardance.api.WarAttributes;
 import jackiecrazy.wardance.capability.resources.CombatData;
 import jackiecrazy.wardance.capability.resources.ICombatCapability;
 import jackiecrazy.wardance.capability.skill.CasterData;
@@ -51,8 +52,6 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
-
-import net.minecraft.entity.ai.goal.Goal.Flag;
 
 @Mod.EventBusSubscriber(modid = WarDance.MODID)
 public class EntityHandler {
@@ -113,7 +112,7 @@ public class EntityHandler {
     @SubscribeEvent
     public static void tick(TickEvent.PlayerTickEvent e) {
         if (e.player.isAlive() && e.phase == TickEvent.Phase.START) {
-            if(e.side != LogicalSide.SERVER){
+            if (e.side != LogicalSide.SERVER) {
                 CombatData.getCap(e.player).clientTick();
                 return;
             }
@@ -180,14 +179,17 @@ Mobs should move into a position that is close to the player, far from allies, a
             CombatUtils.StealthData sd = CombatUtils.stealthMap.getOrDefault(watcher.getType().getRegistryName(), CombatUtils.STEALTH);
             if (sd.isVigilant()) return;
             if (watcher.getAttackingEntity() != sneaker && watcher.getRevengeTarget() != sneaker && watcher.getLastAttackedEntity() != sneaker && (!(watcher instanceof MobEntity) || ((MobEntity) watcher).getAttackTarget() != sneaker)) {
-                if (!sd.isAllSeeing() && !GeneralUtils.isFacingEntity(watcher, sneaker, Math.max(CombatConfig.baseHorizontalDetection, sneaker.getTotalArmorValue() * CombatConfig.anglePerArmor), Math.max(CombatConfig.baseVerticalDetection, sneaker.getTotalArmorValue() * sneaker.getTotalArmorValue())))
+                double stealth = GeneralUtils.getAttributeValueSafe(sneaker, WarAttributes.STEALTH.get());
+                if (stealth > 20)
+                    e.modifyVisibility(10 / stealth - 10);
+                if (!sd.isAllSeeing() && !GeneralUtils.isFacingEntity(watcher, sneaker, Math.max(CombatConfig.baseHorizontalDetection, (int) ((20 - stealth) * CombatConfig.anglePerArmor)), Math.max(CombatConfig.baseVerticalDetection, (int) ((20 - stealth) * (20 - stealth)))))
                     e.modifyVisibility(0.2);
                 if (!sd.isNightVision() && !watcher.isPotionActive(Effects.NIGHT_VISION)) {
                     World world = sneaker.world;
                     if (world.isAreaLoaded(sneaker.getPosition(), 5) && world.isAreaLoaded(watcher.getPosition(), 5)) {
                         float lightMalus = (15 - world.getLight(sneaker.getPosition())) * 0.05f;
                         if (!sd.isDeaf())
-                            lightMalus *= (1 - Math.min(sneaker.getTotalArmorValue() / 20f, 1f));
+                            lightMalus *= Math.min(stealth / 20f, 1f);
                         e.modifyVisibility(1 - lightMalus);
                     }
                 }
@@ -229,7 +231,8 @@ Mobs should move into a position that is close to the player, far from allies, a
 
     @SubscribeEvent
     public static void pray(LivingSetAttackTargetEvent e) {
-        if (e.getTarget() != null && e.getEntityLiving() != null && CombatConfig.stealthSystem && !GeneralUtils.isFacingEntity(e.getEntityLiving(), e.getTarget(), Math.max(CombatConfig.baseHorizontalDetection, e.getTarget().getTotalArmorValue() * CombatConfig.anglePerArmor), Math.max(CombatConfig.baseVerticalDetection, e.getTarget().getTotalArmorValue() * e.getTarget().getTotalArmorValue()))) {
+        int stealth = 20 - (int) GeneralUtils.getAttributeValueSafe(e.getTarget(), WarAttributes.STEALTH.get());
+        if (e.getTarget() != null && e.getEntityLiving() != null && CombatConfig.stealthSystem && !GeneralUtils.isFacingEntity(e.getEntityLiving(), e.getTarget(), Math.max(CombatConfig.baseHorizontalDetection, stealth * CombatConfig.anglePerArmor), Math.max(CombatConfig.baseVerticalDetection, stealth * stealth))) {
             CombatUtils.StealthData sd = CombatUtils.stealthMap.getOrDefault(e.getEntityLiving().getType().getRegistryName(), CombatUtils.STEALTH);
             if (sd.isVigilant() || sd.isObservant()) return;
             //outside of LoS, perform luck check. Pray to RNGesus!

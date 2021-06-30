@@ -115,11 +115,12 @@ public class CombatUtils {
         for (String s : interpretA) {
             String[] val = s.split(",");
             String name = val[0];
-            double absorption = 0, deflection = 0, shatter = 0;
+            double absorption = 0, deflection = 0, shatter = 0, stealth = 0;
             try {
                 absorption = Double.parseDouble(val[1]);
                 deflection = Double.parseDouble(val[2]);
                 shatter = Double.parseDouble(val[3]);
+                stealth = Double.parseDouble(val[4]);
             } catch (Exception ignored) {
                 WarDance.LOGGER.warn("armor data for config entry " + s + " is not properly formatted, filling in zeros.");
             }
@@ -130,11 +131,13 @@ public class CombatUtils {
                 WarDance.LOGGER.warn(name + " is not a proper item name, it will not be registered.");
             }
             if (ForgeRegistries.ITEMS.containsKey(key) && (ForgeRegistries.ITEMS.getValue(key)) instanceof ArmorItem) {
-                UUID touse = WarAttributes.MODIFIERS[((ArmorItem) (ForgeRegistries.ITEMS.getValue(key))).getEquipmentSlot().getIndex()];
-                armorStats.put(ForgeRegistries.ITEMS.getValue(key), new AttributeModifier[]{
+                final Item armor = ForgeRegistries.ITEMS.getValue(key);
+                UUID touse = WarAttributes.MODIFIERS[((ArmorItem) armor).getEquipmentSlot().getIndex()];
+                armorStats.put(armor, new AttributeModifier[]{
                         new AttributeModifier(touse, "war dance modifier", absorption, AttributeModifier.Operation.ADDITION),
                         new AttributeModifier(touse, "war dance modifier", deflection, AttributeModifier.Operation.ADDITION),
-                        new AttributeModifier(touse, "war dance modifier", shatter, AttributeModifier.Operation.ADDITION)
+                        new AttributeModifier(touse, "war dance modifier", shatter, AttributeModifier.Operation.ADDITION),
+                        new AttributeModifier(touse, "war dance modifier", stealth, AttributeModifier.Operation.ADDITION)
                 });
             }
         }
@@ -170,8 +173,17 @@ public class CombatUtils {
         for (String s : interpretS) {
             try {
                 String[] val = s.split(",");
-                CombatUtils.stealthMap.put(new ResourceLocation(val[0]), new StealthData(Boolean.parseBoolean(val[1]), Boolean.parseBoolean(val[2]), Boolean.parseBoolean(val[3]), Boolean.parseBoolean(val[4]), Boolean.parseBoolean(val[5])));
-
+                final ResourceLocation key = new ResourceLocation(val[0]);
+                String value=val[1];
+                CombatUtils.stealthMap.put(key, new StealthData(value.contains("d"), value.contains("n"), value.contains("a"), value.contains("o"), value.contains("v")));
+//                String print = val[0]+", ";
+//                StealthData sd = stealthMap.get(key);
+//                print = print.concat(sd.deaf ? "d" : "");
+//                print = print.concat(sd.nightvision ? "n" : "");
+//                print = print.concat(sd.illuminati ? "a" : "");
+//                print = print.concat(sd.atheist ? "o" : "");
+//                print = print.concat(sd.vigil ? "v" : "");
+//                System.out.println("\"" + print + "\",");
             } catch (Exception e) {
                 WarDance.LOGGER.warn("improperly formatted mob stealth definition " + s + "!");
             }
@@ -286,7 +298,7 @@ public class CombatUtils {
         return s.getTrueSource() == s.getImmediateSource() && !s.isExplosion() && !s.isFireDamage() && !s.isMagicDamage() && !s.isUnblockable() && !s.isProjectile();
     }
 
-    public static float getAttackMight(LivingEntity seme, LivingEntity uke){
+    public static float getAttackMight(LivingEntity seme, LivingEntity uke) {
         ICombatCapability semeCap = CombatData.getCap(seme);
         final float magicNumber = 781.25f;
         final float scale = 1f;
@@ -502,7 +514,7 @@ public class CombatUtils {
     }
 
     public static class StealthData {
-        private boolean deaf, nightvision, illuminati, atheist, vigil;
+        private final boolean deaf, nightvision, illuminati, atheist, vigil;
 
         public StealthData(boolean isDeaf, boolean nightVision, boolean allSeeing, boolean observant, boolean vigilant) {
             deaf = isDeaf;

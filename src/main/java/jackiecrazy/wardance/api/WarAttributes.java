@@ -21,4 +21,5 @@ public class WarAttributes {
     public static final RegistryObject<Attribute> ABSORPTION = ATTRIBUTES.register("absorption", () -> new RangedAttribute(WarDance.MODID + ".absorption", 0d, 0, Double.MAX_VALUE).setShouldWatch(true));
     public static final RegistryObject<Attribute> DEFLECTION = ATTRIBUTES.register("deflection", () -> new RangedAttribute(WarDance.MODID + ".deflection", 0d, 0, 60).setShouldWatch(true));
     public static final RegistryObject<Attribute> SHATTER = ATTRIBUTES.register("shatter", () -> new RangedAttribute(WarDance.MODID + ".shatter", 0d, 0, Double.MAX_VALUE).setShouldWatch(true));
+    public static final RegistryObject<Attribute> STEALTH = ATTRIBUTES.register("stealth", () -> new RangedAttribute(WarDance.MODID + ".stealth", 20d, 0, Double.MAX_VALUE).setShouldWatch(true));
 }
