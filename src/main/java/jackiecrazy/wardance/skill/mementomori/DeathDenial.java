@@ -1,13 +1,26 @@
 package jackiecrazy.wardance.skill.mementomori;
 
+import jackiecrazy.wardance.event.ParryEvent;
 import jackiecrazy.wardance.skill.SkillData;
+import jackiecrazy.wardance.skill.SkillTags;
 import net.minecraft.entity.LivingEntity;
+import net.minecraft.tags.Tag;
 import net.minecraftforge.event.entity.living.LivingDamageEvent;
+import net.minecraftforge.event.entity.living.LivingHealEvent;
 import net.minecraftforge.eventbus.api.Event;
 
 import java.awt.*;
+import java.util.Arrays;
+import java.util.HashSet;
 
 public class DeathDenial extends MementoMori {
+    private final Tag<String> tag = Tag.getTagFromContents(new HashSet<>(Arrays.asList("passive", SkillTags.recharge_sleep, SkillTags.change_heals, SkillTags.change_parry_result, SkillTags.on_being_damaged, SkillTags.change_might)));
+
+    @Override
+    public Tag<String> getTags(LivingEntity caster) {
+        return tag;
+    }
+
     @Override
     public boolean onCast(LivingEntity caster) {
         activate(caster, 100);
@@ -34,6 +47,14 @@ public class DeathDenial extends MementoMori {
         super.onSuccessfulProc(caster, stats, target, procPoint);
         if (procPoint instanceof LivingDamageEvent && (((LivingDamageEvent) procPoint).getAmount() > target.getHealth() || stats.isCondition())) {
             stats.flagCondition(true);
+            procPoint.setCanceled(true);
+        }
+        if(procPoint instanceof ParryEvent&&stats.isCondition()){
+            procPoint.setResult(Event.Result.ALLOW);
+            ((ParryEvent) procPoint).setPostureConsumption(0);
+        }
+        if(procPoint instanceof LivingHealEvent &&stats.isCondition()){
+            ((LivingHealEvent) procPoint).setAmount(0);
             procPoint.setCanceled(true);
         }
     }

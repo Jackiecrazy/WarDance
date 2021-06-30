@@ -16,6 +16,7 @@ import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.projectile.ProjectileEntity;
 import net.minecraftforge.event.entity.living.LivingAttackEvent;
 import net.minecraftforge.event.entity.living.LivingDamageEvent;
+import net.minecraftforge.event.entity.living.LivingHealEvent;
 import net.minecraftforge.event.entity.living.LivingHurtEvent;
 import net.minecraftforge.event.entity.player.CriticalHitEvent;
 import net.minecraftforge.event.entity.player.PlayerWakeUpEvent;
@@ -97,6 +98,18 @@ public class SkillEventHandler {//TODO remove some checks on some tags so execut
         ISkillCapability isc = CasterData.getCap(attacker);
         for (SkillData s : isc.getActiveSkills().values()) {
             if (s.getSkill().getTags(attacker).contains(SkillTags.change_might)) {
+                s.getSkill().onSuccessfulProc(attacker, s, e.getEntityLiving(), e);
+            }
+        }
+    }
+
+    @SubscribeEvent
+    public static void healFlags(LivingHealEvent e) {
+        if (!e.getEntityLiving().isServerWorld()) return;
+        LivingEntity attacker = e.getEntityLiving();
+        ISkillCapability isc = CasterData.getCap(attacker);
+        for (SkillData s : isc.getActiveSkills().values()) {
+            if (s.getSkill().getTags(attacker).contains(SkillTags.change_heals)) {
                 s.getSkill().onSuccessfulProc(attacker, s, e.getEntityLiving(), e);
             }
         }
