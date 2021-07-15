@@ -60,7 +60,7 @@ public class SkillListWidget extends ExtendedList<SkillListWidget.SkillEntry> {
 
         @Override
         public void render(MatrixStack ms, int entryIdx, int top, int left, int entryWidth, int entryHeight, int mouseX, int mouseY, boolean something, float partialTicks) {
-            ITextComponent name = s.getDisplayName();
+            ITextComponent name = s.getDisplayName(null);
             //ITextComponent version = new StringTextComponent(stripControlCodes(MavenVersionStringHelper.artifactVersionToString(modInfo.getVersion())));
             //VersionChecker.CheckResult vercheck = VersionChecker.getResult(modInfo);
             FontRenderer font = this.parent.getFontRenderer();

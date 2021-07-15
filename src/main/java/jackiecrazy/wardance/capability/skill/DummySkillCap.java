@@ -13,6 +13,16 @@ public class DummySkillCap implements ISkillCapability {
     private static final Map<Skill, SkillCooldownData> otherDummy = new HashMap<>();
     private static final List<Skill> moreDummies = new ArrayList<>();
 
+    @Override
+    public boolean isSkillSelectable(Skill s) {
+        return false;
+    }
+
+    @Override
+    public void setSkillSelectable(Skill s, boolean selectable) {
+
+    }
+
     @Nullable
     @Override
     public Optional<SkillData> getActiveSkill(Skill s) {

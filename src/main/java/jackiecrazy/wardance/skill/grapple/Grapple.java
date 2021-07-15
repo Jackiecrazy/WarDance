@@ -48,7 +48,7 @@ public class Grapple extends Skill {
     }
 
     protected void performEffect(LivingEntity caster, LivingEntity target) {
-        CombatData.getCap(target).consumePosture(10);
+        CombatData.getCap(target).consumePosture(caster, 10);
     }
 
     @Override
@@ -89,7 +89,7 @@ public class Grapple extends Skill {
             float posture = casterCap.getPosture();
             target.setMotion(caster.getMotion().add(caster.getPositionVec().subtractReverse(target.getPositionVec()).scale(-0.3)));
             target.velocityChanged = true;
-            CombatData.getCap(target).consumePosture(posture * 2, 0, true);
+            CombatData.getCap(target).consumePosture(caster, posture * 2, 0, true);
             casterCap.setPosture(0.1f);
         }
     }

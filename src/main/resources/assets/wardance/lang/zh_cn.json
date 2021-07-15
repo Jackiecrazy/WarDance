@@ -7,6 +7,7 @@
   "wardance.absorption": "吸收",
   "wardance.deflection": "偏转",
   "wardance.shatter": "碎裂",
+  "wardance.stealth": "隐蔽",
 
   "wardance.combat.on": "已启动战斗模式",
   "wardance.combat.off": "已关闭战斗模式",
@@ -132,7 +133,7 @@
   "wardance:prideful_might.name": "盛气凌人",
   "wardance:prideful_might.desc": " 获得3倍的威但受到伤害时清空所有威。每获得3层威，碎裂会立刻冷却。",
   "wardance:hidden_might.name": "深藏不露",
-  "wardance:hidden_might.desc": " 无防备偷袭目标后获得1威。侦测距离-30%，每层威将本加成的3%转化为等量速度。",
+  "wardance:hidden_might.desc": " 无防备偷袭目标后获得0.5威。侦测距离-30%，每层威将该加成的3%转化为等量速度。",
   "wardance:elemental_might.name": "打凤牢龙",
   "wardance:elemental_might.desc": " 攻击目标后使其受到的非物理伤害+1，当周围5方块内有生物死于非物理伤害时获得1威。",
   "wardance:execution.name": "索命",
@@ -164,6 +165,6 @@
   "wardance:saving_throw.name": "孤注一掷",
   "wardance:saving_throw.desc": " 每损失1%生命获得0.1幸运。",
   "wardance:pound_of_flesh.name": "以牙还牙",
-  "wardance:pound_of_flesh.desc": " 主动释放，消耗所有灵。攻击时消耗自身5%最大生命，若目标招架该次攻击则额外造成其10%最大架势的架势伤害，否则造成其最大生命5%的伤害。灵开始恢复或经过（消耗的灵）秒后结束状态。",
+  "wardance:pound_of_flesh.desc": " 主动释放，消耗所有灵。攻击时消耗自身5%最大生命，若目标招架该次攻击则额外造成其10%最大架势的架势伤害，否则造成其最大生命5%的伤害。灵开始恢复或（消耗的灵）秒后结束状态。",
   "wardance:": ""
 }

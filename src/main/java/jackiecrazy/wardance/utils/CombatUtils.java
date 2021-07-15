@@ -399,7 +399,7 @@ public class CombatUtils {
         }
     }
 
-    public static double getDamageMultiplier(AWARENESS a, ItemStack is) {
+    public static double getDamageMultiplier(Awareness a, ItemStack is) {
         if (!CombatConfig.stealthSystem || is == null) return 1;
         CombatInfo ci = combatList.getOrDefault(is.getItem(), DEFAULT);
         switch (a) {
@@ -484,18 +484,18 @@ public class CombatUtils {
         }
     }
 
-    public static AWARENESS getAwareness(LivingEntity attacker, LivingEntity target) {
+    public static Awareness getAwareness(LivingEntity attacker, LivingEntity target) {
         if (!CombatConfig.stealthSystem || target instanceof PlayerEntity || CombatUtils.stealthMap.getOrDefault(target.getType().getRegistryName(), CombatUtils.STEALTH).isVigilant())
-            return AWARENESS.ALERT;
-        AWARENESS a = AWARENESS.ALERT;
+            return Awareness.ALERT;
+        Awareness a = Awareness.ALERT;
         if (target.isPotionActive(WarEffects.SLEEP.get()) || target.isPotionActive(WarEffects.PARALYSIS.get()) || target.isPotionActive(WarEffects.PETRIFY.get()))
-            a = AWARENESS.UNAWARE;
+            a = Awareness.UNAWARE;
         else if (target.isPotionActive(WarEffects.DISTRACTION.get()) || target.isPotionActive(WarEffects.CONFUSION.get()) || target.getAir() <= 0 || inWeb(target))
-            a = AWARENESS.DISTRACTED;
+            a = Awareness.DISTRACTED;
         else if (target.getRevengeTarget() == null && (!(target instanceof MobEntity) || ((MobEntity) target).getAttackTarget() == null))
-            a = AWARENESS.UNAWARE;
+            a = Awareness.UNAWARE;
         else if (target.getRevengeTarget() != attacker && (!(target instanceof MobEntity) || ((MobEntity) target).getAttackTarget() != attacker))
-            a = AWARENESS.DISTRACTED;
+            a = Awareness.DISTRACTED;
 
         EntityAwarenessEvent eae = new EntityAwarenessEvent(target, attacker, a);
         MinecraftForge.EVENT_BUS.post(eae);
@@ -503,11 +503,12 @@ public class CombatUtils {
     }
 
     private static boolean inWeb(LivingEntity e) {
-        if (e.world.isAreaLoaded(e.getPosition(), 5)) return false;
+        if (!e.world.isAreaLoaded(e.getPosition(), 5)) return false;
+        double minX=e.getPosX()-e.getWidth()/2, minY, minZ;
         return e.world.getBlockState(e.getPosition()).getMaterial().equals(Material.WEB);//FIXME wrong!
     }
 
-    public enum AWARENESS {
+    public enum Awareness {
         UNAWARE,//cannot be parried, absorbed, shattered, or deflected
         DISTRACTED,//deals extra (posture) damage
         ALERT//normal damage and reduction

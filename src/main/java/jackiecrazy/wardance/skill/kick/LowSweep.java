@@ -25,7 +25,7 @@ public class LowSweep extends Kick {
 
     @Override
     public boolean onCast(LivingEntity caster) {
-        CombatData.getCap(caster).setForcedSweep(60);
+        CombatData.getCap(caster).setForcedSweep(90);
         return super.onCast(caster);
     }
 

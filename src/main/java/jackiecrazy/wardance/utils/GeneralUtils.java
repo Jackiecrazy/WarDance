@@ -261,6 +261,7 @@ public class GeneralUtils {
      * returns true if entity2 is within a (angle) degree sector in front of entity1
      */
     public static boolean isFacingEntity(Entity entity1, Entity entity2, int angle) {
+        if (angle >= 360) return true;//well, duh.
         if (angle < 0) return isBehindEntity(entity2, entity1, -angle);
         Vector3d posVec = entity2.getPositionVec().add(0, entity2.getEyeHeight(), 0);
         Vector3d lookVec = entity1.getLook(1.0F);
@@ -276,6 +277,7 @@ public class GeneralUtils {
      * returns true if entity is within a 90 degree sector behind the reference
      */
     public static boolean isBehindEntity(Entity entity, Entity reference, int angle) {
+        if (angle >= 360) return true;//well, duh.
         Vector3d posVec = entity.getPositionVec().add(0, entity.getEyeHeight(), 0);
         Vector3d lookVec = getBodyOrientation(reference);
         Vector3d relativePosVec = posVec.subtractReverse(reference.getPositionVec().add(0, reference.getEyeHeight(), 0)).normalize();

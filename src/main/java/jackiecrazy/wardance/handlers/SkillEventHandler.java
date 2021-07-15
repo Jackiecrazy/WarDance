@@ -53,10 +53,15 @@ public class SkillEventHandler {//TODO remove some checks on some tags so execut
     @SubscribeEvent
     public static void casting(SkillCastEvent e) {
         ISkillCapability isc = CasterData.getCap(e.getEntityLiving());
-        if (e.getSkill().isPassive(e.getEntityLiving()) || !e.getEntityLiving().isServerWorld()) return;
+        if (!e.getEntityLiving().isServerWorld()) return;
+        for (SkillData s : CasterData.getCap(e.getEntityLiving()).getActiveSkills().values()) {
+            if (s.getSkill().getTags(e.getEntityLiving()).contains(SkillTags.on_cast)) {
+                s.getSkill().onSuccessfulProc(e.getEntityLiving(), s, e.getEntityLiving(), e);
+            }
+        }
         for (Skill s : isc.getSkillCooldowns().keySet()) {
             if (s.getTags(e.getEntityLiving()).contains(SkillTags.recharge_cast)) {
-                isc.decrementSkillCooldown(s, 1);
+                s.onCooldownProc(e.getEntityLiving(), isc.getSkillCooldowns().get(s), e);
             }
         }
     }
@@ -67,6 +72,17 @@ public class SkillEventHandler {//TODO remove some checks on some tags so execut
         for (SkillData s : CasterData.getCap(e.getEntityLiving()).getActiveSkills().values()) {
             if (s.getSkill().getTags(e.getEntityLiving()).contains(SkillTags.modify_crit)) {
                 s.getSkill().onSuccessfulProc(e.getEntityLiving(), s, e.getEntityLiving(), e);
+            }
+        }
+    }
+
+    @SubscribeEvent
+    public static void stabbery(EntityAwarenessEvent e) {
+        if(e.getAttacker()==null)return;
+        if (!e.getEntityLiving().isServerWorld()) return;
+        for (SkillData s : CasterData.getCap(e.getAttacker()).getActiveSkills().values()) {
+            if (s.getSkill().getTags(e.getAttacker()).contains(SkillTags.change_awareness)) {
+                s.getSkill().onSuccessfulProc(e.getAttacker(), s, e.getEntityLiving(), e);
             }
         }
     }
@@ -85,7 +101,7 @@ public class SkillEventHandler {//TODO remove some checks on some tags so execut
             if (CombatData.getCap(attacker).getCachedCooldown() > 0.9f)
                 for (Skill s : isc.getSkillCooldowns().keySet()) {
                     if (s.getTags(attacker).contains(SkillTags.recharge_normal)) {
-                        isc.decrementSkillCooldown(s, 1);
+                        s.onCooldownProc(attacker, isc.getSkillCooldowns().get(s), e);
                     }
                 }
         }
@@ -151,6 +167,27 @@ public class SkillEventHandler {//TODO remove some checks on some tags so execut
     }
 
     @SubscribeEvent
+    public static void staggerFlags(StaggerEvent e) {
+        if (!e.getEntityLiving().isServerWorld()) return;
+        if (e.getAttacker() != null) {
+            LivingEntity attacker = e.getAttacker();
+            ISkillCapability isc = CasterData.getCap(attacker);
+            for (SkillData s : isc.getActiveSkills().values()) {
+                if (s.getSkill().getTags(attacker).contains(SkillTags.on_stagger)) {
+                    s.getSkill().onSuccessfulProc(attacker, s, e.getEntityLiving(), e);
+                }
+            }
+        }
+        LivingEntity defender = e.getEntityLiving();
+        ISkillCapability isc = CasterData.getCap(defender);
+        for (SkillData s : isc.getActiveSkills().values()) {
+            if (s.getSkill().getTags(defender).contains(SkillTags.on_being_staggered)) {
+                s.getSkill().onSuccessfulProc(defender, s, e.getEntityLiving(), e);
+            }
+        }
+    }
+
+    @SubscribeEvent
     public static void damageFlags(LivingDamageEvent e) {
         if (!e.getEntityLiving().isServerWorld()) return;
         if (e.getSource().getTrueSource() instanceof LivingEntity) {
@@ -192,7 +229,7 @@ public class SkillEventHandler {//TODO remove some checks on some tags so execut
         }
         for (Skill s : isc.getSkillCooldowns().keySet()) {
             if (s.getTags(e.getEntityLiving()).contains(SkillTags.recharge_parry)) {
-                isc.decrementSkillCooldown(s, 1);
+                s.onCooldownProc(e.getEntityLiving(), isc.getSkillCooldowns().get(s), e);
             }
         }
     }
@@ -219,7 +256,7 @@ public class SkillEventHandler {//TODO remove some checks on some tags so execut
         if (e.getOriginalPostureConsumption() != 0)
             for (Skill s : isc.getSkillCooldowns().keySet()) {
                 if (s.getTags(e.getEntityLiving()).contains(SkillTags.recharge_parry)) {
-                    isc.decrementSkillCooldown(s, 1);
+                    s.onCooldownProc(e.getEntityLiving(), isc.getSkillCooldowns().get(s), e);
                 }
             }
     }

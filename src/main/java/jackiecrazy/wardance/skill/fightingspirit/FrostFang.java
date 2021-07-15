@@ -66,7 +66,7 @@ public class FrostFang extends FightingSpirit {
     public void onSuccessfulProc(LivingEntity caster, SkillData stats, LivingEntity target, Event procPoint) {
         if(procPoint instanceof LivingAttackEvent) {
             target.addPotionEffect(new EffectInstance(Effects.SLOWNESS, 60));
-            if(CombatUtils.getAwareness(caster, target)== CombatUtils.AWARENESS.ALERT){
+            if(CombatUtils.getAwareness(caster, target)== CombatUtils.Awareness.ALERT){
                 target.addPotionEffect(new EffectInstance(Effects.BLINDNESS, 20));
             }
         }

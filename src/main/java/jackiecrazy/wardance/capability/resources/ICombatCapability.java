@@ -1,5 +1,6 @@
 package jackiecrazy.wardance.capability.resources;
 
+import net.minecraft.entity.LivingEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.util.Hand;
@@ -62,13 +63,21 @@ public interface ICombatCapability {
         return consumePosture(amount, 0);
     }
 
+    default float consumePosture(LivingEntity attacker, float amount) {
+        return consumePosture(attacker, amount, 0);
+    }
+
     default float consumePosture(float amount, float above) {
-        return consumePosture(amount, above, false);
+        return consumePosture(null, amount, above, false);
+    }
+
+    default float consumePosture(LivingEntity attacker, float amount, float above) {
+        return consumePosture(attacker, amount, above, false);
     }
 
     boolean isFirstStaggerStrike();
 
-    float consumePosture(float amount, float above, boolean force);
+    float consumePosture(LivingEntity assailant, float amount, float above, boolean force);
 
     int getPostureGrace();
 
@@ -207,9 +216,9 @@ public interface ICombatCapability {
 
     void sync();
 
-    void setTempItemStack(ItemStack is);
-
     ItemStack getTempItemStack();
+
+    void setTempItemStack(ItemStack is);
 
     void read(CompoundNBT tag);
 

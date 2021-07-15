@@ -105,15 +105,15 @@ elemental might: +1 burn/snowball/poison/drown damage to targets you have attack
     @Override
     public void onSuccessfulProc(LivingEntity caster, SkillData stats, LivingEntity target, Event procPoint) {
         int might = (int) CombatData.getCap(caster).getMight() - 1;
-        SkillUtils.modifyAttribute(caster, Attributes.MOVEMENT_SPEED, MULT, 0.05f*might, AttributeModifier.Operation.MULTIPLY_BASE, stats);
+        SkillUtils.modifyAttribute(caster, Attributes.ATTACK_DAMAGE, MULT, 0.05f*might, AttributeModifier.Operation.MULTIPLY_BASE, stats);
     }
 
     public static class HiddenMight extends CrownChampion {
         @Override
         public void onSuccessfulProc(LivingEntity caster, SkillData stats, LivingEntity target, Event procPoint) {
             super.onSuccessfulProc(caster, stats, target, procPoint);
-            if (CombatUtils.getAwareness(caster, target).equals(CombatUtils.AWARENESS.UNAWARE))
-                CombatData.getCap(caster).addMight(1);
+            if (CombatUtils.getAwareness(caster, target).equals(CombatUtils.Awareness.UNAWARE))
+                CombatData.getCap(caster).addMight(0.5f);
         }
 
         @Override
@@ -125,7 +125,7 @@ elemental might: +1 burn/snowball/poison/drown damage to targets you have attack
 
         @Override
         public Color getColor() {
-            return Color.GRAY;
+            return Color.LIGHT_GRAY;
         }
     }
 
@@ -165,7 +165,7 @@ elemental might: +1 burn/snowball/poison/drown damage to targets you have attack
 
         @Override
         public Color getColor() {
-            return Color.BLUE;
+            return Color.CYAN;
         }
     }
 

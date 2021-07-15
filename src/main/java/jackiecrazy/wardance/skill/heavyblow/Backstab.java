@@ -30,7 +30,7 @@ public class Backstab extends HeavyBlow {
     @SubscribeEvent
     public static void spooketh(CriticalHitEvent e) {
         final Skill back = WarSkills.BACKSTAB.get();
-        if (CasterData.getCap(e.getPlayer()).getEquippedSkills().contains(back) && !CasterData.getCap(e.getPlayer()).isSkillCoolingDown(back) && e.getTarget() instanceof LivingEntity && CombatUtils.getAwareness(e.getPlayer(), (LivingEntity) e.getTarget()) == CombatUtils.AWARENESS.UNAWARE) {
+        if (CasterData.getCap(e.getPlayer()).getEquippedSkills().contains(back) && !CasterData.getCap(e.getPlayer()).isSkillCoolingDown(back) && e.getTarget() instanceof LivingEntity && CombatUtils.getAwareness(e.getPlayer(), (LivingEntity) e.getTarget()) == CombatUtils.Awareness.UNAWARE) {
             back.onSuccessfulProc(e.getPlayer(), null, (LivingEntity) e.getTarget(), e);
             CasterData.getCap(e.getPlayer()).setSkillCooldown(back, 3);
         }

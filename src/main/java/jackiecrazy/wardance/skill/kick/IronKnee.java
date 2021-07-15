@@ -28,7 +28,7 @@ public class IronKnee extends Kick {
     public void onSuccessfulProc(LivingEntity caster, SkillData stats, LivingEntity target, Event procPoint) {
         super.onSuccessfulProc(caster, stats, target, procPoint);
         if (procPoint instanceof MeleeKnockbackEvent) {
-            CombatData.getCap(target).consumePosture(((MeleeKnockbackEvent) procPoint).getStrength() * 3);
+            CombatData.getCap(target).consumePosture(caster, ((MeleeKnockbackEvent) procPoint).getStrength() * 3);
             ((MeleeKnockbackEvent) procPoint).setStrength(0);
         }
     }

@@ -58,7 +58,7 @@ public class IronGuard extends Skill {
     public void onSuccessfulProc(LivingEntity caster, SkillData stats, @Nullable LivingEntity target, Event procPoint) {
         if (procPoint instanceof ParryEvent && ((ParryEvent) procPoint).getPostureConsumption() > 0) {
             if (!CasterData.getCap(((ParryEvent) procPoint).getAttacker()).isSkillActive(WarSkills.HEAVY_BLOW.get()))
-                CombatData.getCap(((ParryEvent) procPoint).getAttacker()).consumePosture(((ParryEvent) procPoint).getPostureConsumption());
+                CombatData.getCap(((ParryEvent) procPoint).getAttacker()).consumePosture(caster, ((ParryEvent) procPoint).getPostureConsumption());
             ((ParryEvent) procPoint).setPostureConsumption(0);
             markUsed(caster);
         }

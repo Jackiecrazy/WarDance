@@ -1,5 +1,6 @@
 package jackiecrazy.wardance.capability.resources;
 
+import net.minecraft.entity.LivingEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.util.Hand;
@@ -98,7 +99,7 @@ public class DummyCombatCap implements ICombatCapability {
     }
 
     @Override
-    public float consumePosture(float amount, float above, boolean force) {
+    public float consumePosture(LivingEntity assailant, float amount, float above, boolean force) {
         return 0;
     }
 

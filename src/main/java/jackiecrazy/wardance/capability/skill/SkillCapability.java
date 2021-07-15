@@ -20,13 +20,32 @@ public class SkillCapability implements ISkillCapability {
     private final Map<Skill, SkillData> activeSkills = Maps.newHashMap();
     private final Map<Skill, SkillCooldownData> coolingSkills = Maps.newHashMap();
     private final List<Skill> equippedSkill = new ArrayList<>(12);
-    //weapon bound skills are added to their NBT instead of being handled here.
-    //^not anymore. All skills are now self bound.
+    private final List<Skill> learnedSkills = new ArrayList<>();
     private final WeakReference<LivingEntity> dude;
-    private Queue<Skill> lastCast = new LinkedList<>();
+    private final Queue<Skill> lastCast = new LinkedList<>();
 
     public SkillCapability(LivingEntity attachTo) {
         dude = new WeakReference<>(attachTo);
+    }
+
+    @Override
+    public boolean isSkillSelectable(Skill s) {
+        final LivingEntity bruv = dude.get();
+        if (bruv != null) {
+            if (bruv.world.getGameRules().getBoolean(WarDance.GATED_SKILLS)) {
+                boolean ret = learnedSkills.contains(s);
+                ret &= learnedSkills.contains(s.tryGetParentSkill());
+                return ret;
+            }
+        }
+        return true;
+    }
+
+    @Override
+    public void setSkillSelectable(Skill s, boolean selectable) {
+        if (selectable)
+            learnedSkills.add(s);
+        else learnedSkills.remove(s);
     }
 
     @Override
@@ -37,7 +56,7 @@ public class SkillCapability implements ISkillCapability {
     @Override
     public void activateSkill(SkillData d) {
         if (activeSkills.containsKey(d.getSkill())) {
-            WarDance.LOGGER.warn("skill " + d + " is already active, overwriting.");
+            WarDance.LOGGER.debug("skill " + d.getSkill() + " is already active, overwriting.");
         }
         activeSkills.put(d.getSkill(), d);
         if (CombatChannel.INSTANCE != null && dude.get() instanceof ServerPlayerEntity)
@@ -121,9 +140,10 @@ public class SkillCapability implements ISkillCapability {
     public void decrementSkillCooldown(Skill s, float amount) {
         if (!coolingSkills.containsKey(s)) return;
         coolingSkills.get(s).decrementDuration(amount);
-        LivingEntity caster = dude.get();
-        if (caster instanceof ServerPlayerEntity)
-            CombatChannel.INSTANCE.send(PacketDistributor.PLAYER.with(() -> (ServerPlayerEntity) caster), new SyncSkillPacket(this.write()));
+//        LivingEntity caster = dude.get();
+//        if (caster instanceof ServerPlayerEntity)
+//            CombatChannel.INSTANCE.send(PacketDistributor.PLAYER.with(() -> (ServerPlayerEntity) caster), new SyncSkillPacket(this.write()));
+        sync=true;
     }
 
     @Override
@@ -165,7 +185,7 @@ public class SkillCapability implements ISkillCapability {
     @Override
     public Skill getEquippedVariation(Skill base) {
         for (Skill k : equippedSkill)
-            if (k.getParentSkill() == k) return k;
+            if (k != null && k.getParentSkill() == base) return k;
         return base;
     }
 
@@ -251,10 +271,9 @@ public class SkillCapability implements ISkillCapability {
         equippedSkill.clear();
         equippedSkill.addAll(Arrays.asList(als));
     }
-
+    boolean sync = false;
     @Override
     public void update() {
-        boolean sync = false;
         final LivingEntity caster = dude.get();
         Skill.STATE state = Skill.STATE.INACTIVE;
         for (Skill d : equippedSkill) {
@@ -304,6 +323,7 @@ public class SkillCapability implements ISkillCapability {
         }
         if (sync && caster instanceof ServerPlayerEntity)
             CombatChannel.INSTANCE.send(PacketDistributor.PLAYER.with(() -> (ServerPlayerEntity) caster), new SyncSkillPacket(this.write()));
+        sync=false;
     }
 
     @Override

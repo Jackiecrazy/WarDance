@@ -3,12 +3,10 @@ package jackiecrazy.wardance.skill.fightingspirit;
 import jackiecrazy.wardance.capability.resources.CombatData;
 import jackiecrazy.wardance.capability.resources.ICombatCapability;
 import jackiecrazy.wardance.capability.skill.CasterData;
-import jackiecrazy.wardance.client.screen.SkillCastScreen;
 import jackiecrazy.wardance.skill.Skill;
 import jackiecrazy.wardance.skill.SkillData;
 import jackiecrazy.wardance.skill.SkillTags;
 import jackiecrazy.wardance.skill.WarSkills;
-import net.minecraft.client.Minecraft;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.ai.attributes.AttributeModifier;
 import net.minecraft.entity.ai.attributes.Attributes;
@@ -21,7 +19,6 @@ import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraftforge.event.ForgeEventFactory;
 import net.minecraftforge.event.entity.living.LivingHurtEvent;
 import net.minecraftforge.eventbus.api.Event;
-import net.minecraftforge.fml.DistExecutor;
 
 import javax.annotation.Nullable;
 import java.util.Arrays;
@@ -44,16 +41,14 @@ public class FightingSpirit extends Skill {
     }
 
     @Override
-    public ITextComponent getDisplayName() {
-        return DistExecutor.unsafeRunForDist(() -> ()->{
-            if(Minecraft.getInstance().player!=null&&Minecraft.getInstance().currentScreen instanceof SkillCastScreen) {
-                ICombatCapability cap = CombatData.getCap(Minecraft.getInstance().player);
-                if (cap.getMight() == 0 && cap.getPosture() == cap.getMaxPosture() && cap.getSpirit() == cap.getMaxSpirit()) {
-                    return new TranslationTextComponent("wardance:fighting_spirit.sleep.name");
-                }
+    public ITextComponent getDisplayName(LivingEntity caster) {
+        if (caster != null) {
+            ICombatCapability cap = CombatData.getCap(caster);
+            if (cap.getMight() == 0 && cap.getPosture() == cap.getMaxPosture() && cap.getSpirit() == cap.getMaxSpirit()) {
+                return new TranslationTextComponent("wardance:fighting_spirit.sleep.name");
             }
-            return new TranslationTextComponent(this.getRegistryName().toString() + ".name");
-        },() -> ()-> new TranslationTextComponent(this.getRegistryName().toString() + ".name"));
+        }
+        return new TranslationTextComponent(this.getRegistryName().toString() + ".name");
     }
 
     @Nullable

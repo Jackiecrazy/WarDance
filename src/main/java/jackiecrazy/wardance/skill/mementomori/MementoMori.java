@@ -118,7 +118,7 @@ pound of flesh: active skill. Consumes all your spirit, and until your spirit re
         public void onSuccessfulProc(LivingEntity caster, SkillData stats, LivingEntity target, Event procPoint) {
             super.onSuccessfulProc(caster, stats, target, procPoint);
             final float ohno = caster.getHealth() / GeneralUtils.getMaxHealthBeforeWounding(caster);
-            if (procPoint instanceof LivingDamageEvent && ohno < 0.5) {
+            if (procPoint instanceof LivingDamageEvent && ohno < 1) {
                 float visibility = ohno * 10;
                 SkillUtils.createCloud(caster.world, caster, caster.getPosX(), caster.getPosY(), caster.getPosZ(), 13 - ohno, ParticleTypes.LARGE_SMOKE);
                 for (LivingEntity e : caster.world.getEntitiesWithinAABB(LivingEntity.class, caster.getBoundingBox().grow(11))) {

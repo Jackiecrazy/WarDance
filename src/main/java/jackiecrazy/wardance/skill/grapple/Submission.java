@@ -34,6 +34,6 @@ public class Submission extends Grapple {
 
     @Override
     protected void performEffect(LivingEntity caster, LivingEntity target) {
-        CombatData.getCap(target).consumePosture(10 + Math.max(0, target.getTotalArmorValue() - caster.getTotalArmorValue()));
+        CombatData.getCap(target).consumePosture(caster, 10 + Math.max(0, target.getTotalArmorValue() - caster.getTotalArmorValue()));
     }
 }

@@ -1,10 +1,7 @@
 package jackiecrazy.wardance.client.screen;
 
 import com.mojang.blaze3d.matrix.MatrixStack;
-import com.mojang.blaze3d.systems.RenderSystem;
 import jackiecrazy.wardance.skill.Skill;
-import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.AbstractGui;
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.gui.widget.list.ExtendedList;
 import net.minecraft.util.text.*;
@@ -61,7 +58,7 @@ public class VariationListWidget extends ExtendedList<VariationListWidget.Variat
 
         @Override
         public void render(MatrixStack ms, int entryIdx, int top, int left, int entryWidth, int entryHeight, int mouseX, int mouseY, boolean something, float partialTicks) {
-            ITextComponent name = s.getDisplayName();
+            ITextComponent name = s.getDisplayName(null);
             //ITextComponent version = new StringTextComponent(stripControlCodes(MavenVersionStringHelper.artifactVersionToString(modInfo.getVersion())));
             //VersionChecker.CheckResult vercheck = VersionChecker.getResult(modInfo);
             FontRenderer font = this.parent.getFontRenderer();

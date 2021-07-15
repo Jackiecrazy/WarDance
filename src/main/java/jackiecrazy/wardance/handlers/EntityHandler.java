@@ -47,23 +47,20 @@ import net.minecraftforge.fml.event.server.FMLServerStartingEvent;
 import net.minecraftforge.fml.event.server.FMLServerStoppingEvent;
 import net.minecraftforge.fml.network.PacketDistributor;
 
-import java.util.EnumSet;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.Map;
+import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 
 @Mod.EventBusSubscriber(modid = WarDance.MODID)
 public class EntityHandler {
-    public static HashMap<PlayerEntity, Entity> mustUpdate = new HashMap<>();
-    public static HashMap<PlayerEntity, Integer> lastSneak = new HashMap<>();
-    public static ConcurrentHashMap<Tuple<World, BlockPos>, Float> alertTracker = new ConcurrentHashMap<>();
+    public static final HashMap<PlayerEntity, Entity> mustUpdate = new HashMap<>();
+    public static final HashMap<PlayerEntity, Integer> lastSneak = new HashMap<>();
+    public static final ConcurrentHashMap<Tuple<World, BlockPos>, Float> alertTracker = new ConcurrentHashMap<>();
 
     @SubscribeEvent
     public static void start(FMLServerStartingEvent e) {
-        mustUpdate = new HashMap<>();
-        lastSneak = new HashMap<>();
-        alertTracker = new ConcurrentHashMap<>();
+        mustUpdate.clear();
+        lastSneak.clear();
+        alertTracker.clear();
     }
 
     @SubscribeEvent
@@ -176,6 +173,7 @@ Mobs should move into a position that is close to the player, far from allies, a
     public static void sneak(final LivingEvent.LivingVisibilityEvent e) {
         if (e.getLookingEntity() instanceof LivingEntity && CombatConfig.stealthSystem) {
             LivingEntity sneaker = e.getEntityLiving(), watcher = (LivingEntity) e.getLookingEntity();
+            if (sneaker.getFireTimer() > 0) return;//you're on fire and it's super obvious!
             CombatUtils.StealthData sd = CombatUtils.stealthMap.getOrDefault(watcher.getType().getRegistryName(), CombatUtils.STEALTH);
             if (sd.isVigilant()) return;
             if (watcher.getAttackingEntity() != sneaker && watcher.getRevengeTarget() != sneaker && watcher.getLastAttackedEntity() != sneaker && (!(watcher instanceof MobEntity) || ((MobEntity) watcher).getAttackTarget() != sneaker)) {
@@ -231,8 +229,9 @@ Mobs should move into a position that is close to the player, far from allies, a
 
     @SubscribeEvent
     public static void pray(LivingSetAttackTargetEvent e) {
+        if (e.getTarget() == null) return;
         int stealth = 20 - (int) GeneralUtils.getAttributeValueSafe(e.getTarget(), WarAttributes.STEALTH.get());
-        if (e.getTarget() != null && e.getEntityLiving() != null && CombatConfig.stealthSystem && !GeneralUtils.isFacingEntity(e.getEntityLiving(), e.getTarget(), Math.max(CombatConfig.baseHorizontalDetection, stealth * CombatConfig.anglePerArmor), Math.max(CombatConfig.baseVerticalDetection, stealth * stealth))) {
+        if (e.getEntityLiving() != null && CombatConfig.stealthSystem && !GeneralUtils.isFacingEntity(e.getEntityLiving(), e.getTarget(), Math.max(CombatConfig.baseHorizontalDetection, stealth * CombatConfig.anglePerArmor), Math.max(CombatConfig.baseVerticalDetection, stealth * stealth))) {
             CombatUtils.StealthData sd = CombatUtils.stealthMap.getOrDefault(e.getEntityLiving().getType().getRegistryName(), CombatUtils.STEALTH);
             if (sd.isVigilant() || sd.isObservant()) return;
             //outside of LoS, perform luck check. Pray to RNGesus!
@@ -258,7 +257,7 @@ Mobs should move into a position that is close to the player, far from allies, a
                 Map.Entry<Tuple<World, BlockPos>, Float> n = it.next();
                 if (n.getKey().getA().isAreaLoaded(n.getKey().getB(), n.getValue().intValue())) {
                     for (CreatureEntity c : (n.getKey().getA().getEntitiesWithinAABB(CreatureEntity.class, new AxisAlignedBB(n.getKey().getB()).grow(n.getValue())))) {
-                        if (CombatUtils.getAwareness(null, c) == CombatUtils.AWARENESS.UNAWARE && !CombatUtils.stealthMap.getOrDefault(c.getType().getRegistryName(), CombatUtils.STEALTH).isDeaf())
+                        if (CombatUtils.getAwareness(null, c) == CombatUtils.Awareness.UNAWARE && !CombatUtils.stealthMap.getOrDefault(c.getType().getRegistryName(), CombatUtils.STEALTH).isDeaf())
                             c.getNavigator().setPath(c.getNavigator().getPathToPos(n.getKey().getB(), (int) (n.getValue() + 3)), 1);
                     }
                 }

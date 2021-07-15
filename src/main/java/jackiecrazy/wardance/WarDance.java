@@ -3,14 +3,14 @@ package jackiecrazy.wardance;
 import jackiecrazy.wardance.api.WarAttributes;
 import jackiecrazy.wardance.capability.kits.IKitItemStack;
 import jackiecrazy.wardance.capability.kits.KitCapability;
-import jackiecrazy.wardance.capability.weaponry.DummyCombatItemCap;
-import jackiecrazy.wardance.capability.weaponry.ICombatItemCapability;
 import jackiecrazy.wardance.capability.resources.CombatStorage;
 import jackiecrazy.wardance.capability.resources.DummyCombatCap;
 import jackiecrazy.wardance.capability.resources.ICombatCapability;
 import jackiecrazy.wardance.capability.skill.DummySkillCap;
 import jackiecrazy.wardance.capability.skill.ISkillCapability;
 import jackiecrazy.wardance.capability.skill.SkillStorage;
+import jackiecrazy.wardance.capability.weaponry.DummyCombatItemCap;
+import jackiecrazy.wardance.capability.weaponry.ICombatItemCapability;
 import jackiecrazy.wardance.client.Keybinds;
 import jackiecrazy.wardance.compat.ElenaiCompat;
 import jackiecrazy.wardance.compat.WarCompat;
@@ -20,6 +20,7 @@ import jackiecrazy.wardance.networking.*;
 import jackiecrazy.wardance.potion.WarEffects;
 import jackiecrazy.wardance.skill.Skill;
 import jackiecrazy.wardance.skill.WarSkills;
+import net.minecraft.world.GameRules;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.capabilities.CapabilityManager;
 import net.minecraftforge.event.RegistryEvent;
@@ -48,6 +49,7 @@ public class WarDance {
     public static final Random rand = new Random();
 
     public static final Logger LOGGER = LogManager.getLogger();
+    public static final GameRules.RuleKey<GameRules.BooleanValue> GATED_SKILLS = GameRules.register("lockWarSkills", GameRules.Category.PLAYER, GameRules.BooleanValue.create(false)); //Blessed be the TF
 
     public WarDance() {
         // Register the setup method for modloading

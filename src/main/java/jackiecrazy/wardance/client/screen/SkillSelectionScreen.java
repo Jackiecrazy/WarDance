@@ -82,7 +82,7 @@ public class SkillSelectionScreen extends Screen {
     @Override
     public void init() {
         for (Skill mod : skills) {
-            listWidth = Math.max(listWidth, getFontRenderer().getStringWidth(mod.getDisplayName().getString()) + 10);
+            listWidth = Math.max(listWidth, getFontRenderer().getStringWidth(mod.getDisplayName(null).getString()) + 10);
         }
         listWidth = Math.max(Math.min(listWidth, width / 5), 100);
         listWidth += listWidth % numButtons != 0 ? (numButtons - listWidth % numButtons) : 0;
@@ -173,7 +173,7 @@ public class SkillSelectionScreen extends Screen {
 
     private void reloadMods() {
         this.skills = this.unsortedSkills.stream().
-                filter(mi -> StringUtils.toLowerCase(stripControlCodes(mi.getDisplayName().getString())).contains(StringUtils.toLowerCase(search.getText()))).collect(Collectors.toList());
+                filter(mi -> StringUtils.toLowerCase(stripControlCodes(mi.getDisplayName(null).getString())).contains(StringUtils.toLowerCase(search.getText()))).collect(Collectors.toList());
         lastFilterText = search.getText();
     }
 
@@ -243,7 +243,7 @@ public class SkillSelectionScreen extends Screen {
         Skill selectedSkill = this.selectedSkill.getSkill();
         List<String> lines = new ArrayList<>();
 
-        lines.add(selectedSkill.getDisplayName().getString());
+        lines.add(selectedSkill.getDisplayName(null).getString());
         lines.add(selectedSkill.description().getString());
         if (selectedVariation != null) {
             //lines.add(String.valueOf(selectedVariation.getSkill().getColor().getRGB()));
@@ -299,8 +299,8 @@ public class SkillSelectionScreen extends Screen {
 
         @Override
         public int compare(Skill o1, Skill o2) {
-            String name1 = StringUtils.toLowerCase(stripControlCodes(o1.getDisplayName().getString()));
-            String name2 = StringUtils.toLowerCase(stripControlCodes(o2.getDisplayName().getString()));
+            String name1 = StringUtils.toLowerCase(stripControlCodes(o1.getDisplayName(null).getString()));
+            String name2 = StringUtils.toLowerCase(stripControlCodes(o2.getDisplayName(null).getString()));
             return compare(name1, name2);
         }
 

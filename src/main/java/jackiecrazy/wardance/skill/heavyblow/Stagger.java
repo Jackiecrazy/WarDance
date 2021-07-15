@@ -26,7 +26,7 @@ public class Stagger extends HeavyBlow {
         super.onSuccessfulProc(caster, stats, target, procPoint);
         if (procPoint instanceof LivingAttackEvent) {
             float mightDiff = (float) MathHelper.clamp(3 / caster.getAttributeValue(Attributes.ATTACK_SPEED), 0.2, 5);// Math.max(CombatData.getCap(caster).getMight() - CombatData.getCap(target).getMight(), 0);
-            CombatData.getCap(target).consumePosture(mightDiff);
+            CombatData.getCap(target).consumePosture(caster, mightDiff);
             target.addPotionEffect(new EffectInstance(Effects.SLOWNESS, 16 + (int) (mightDiff * 2)));
         }
     }

@@ -72,7 +72,7 @@ public class Feint extends Skill {
     public static class LastSurprise extends Feint {
         @Override
         public Color getColor() {
-            return Color.GRAY;
+            return Color.LIGHT_GRAY;
         }
         @Override
         public void onSuccessfulProc(LivingEntity caster, SkillData stats, LivingEntity target, Event procPoint) {

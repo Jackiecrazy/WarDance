@@ -3,6 +3,7 @@ package jackiecrazy.wardance.capability.resources;
 import jackiecrazy.wardance.WarDance;
 import jackiecrazy.wardance.api.WarAttributes;
 import jackiecrazy.wardance.config.CombatConfig;
+import jackiecrazy.wardance.event.StaggerEvent;
 import jackiecrazy.wardance.networking.CombatChannel;
 import jackiecrazy.wardance.networking.UpdateClientPacket;
 import jackiecrazy.wardance.potion.WarEffects;
@@ -21,6 +22,7 @@ import net.minecraft.util.Hand;
 import net.minecraft.util.SoundCategory;
 import net.minecraft.util.SoundEvents;
 import net.minecraft.util.math.MathHelper;
+import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.util.FakePlayer;
 import net.minecraftforge.fml.network.PacketDistributor;
 import net.minecraftforge.registries.ForgeRegistries;
@@ -180,10 +182,13 @@ public class CombatCapability implements ICombatCapability {
     }
 
     @Override
-    public float consumePosture(float amount, float above, boolean force) {
+    public float consumePosture(LivingEntity assailant, float amount, float above, boolean force) {
         float ret = 0;
         LivingEntity elb = dude.get();
+        if (elb == null) return ret;
         if (!Float.isFinite(posture)) posture = getMaxPosture();
+        if (elb.isPotionActive(Effects.RESISTANCE)&&CombatConfig.resistance)
+            amount *= (1 - (elb.getActivePotionEffect(Effects.RESISTANCE).getAmplifier() + 1) * 0.2f);
         if (amount > getTrueMaxPosture() * CombatConfig.posCap && !force) {
             //hard cap, knock back
             ret = amount - getTrueMaxPosture() * CombatConfig.posCap;
@@ -193,12 +198,13 @@ public class CombatCapability implements ICombatCapability {
             //hard cap, set it there and do nothing else
             ret = amount - above;
             amount = posture - above;
-        }
-        else if (posture - amount < 0) {
+        } else if (posture - amount < 0) {
             posture = 0;
-            if (elb == null) return ret;
-            setStaggerCount(CombatConfig.staggerHits);
-            setStaggerTime(CombatConfig.staggerDurationMin + Math.max(0, (int) ((elb.getMaxHealth() - elb.getHealth()) / elb.getMaxHealth() * (CombatConfig.staggerDuration - CombatConfig.staggerDurationMin))));
+            StaggerEvent se = new StaggerEvent(elb, assailant, CombatConfig.staggerDurationMin + Math.max(0, (int) ((elb.getMaxHealth() - elb.getHealth()) / elb.getMaxHealth() * (CombatConfig.staggerDuration - CombatConfig.staggerDurationMin))), CombatConfig.staggerHits);
+            MinecraftForge.EVENT_BUS.post(se);
+            if (se.isCanceled()) return 0f;
+            setStaggerCount(se.getCount());
+            setStaggerTime(se.getLength());
             elb.world.playSound(null, elb.getPosX(), elb.getPosY(), elb.getPosZ(), SoundEvents.ENTITY_ZOMBIE_BREAK_WOODEN_DOOR, SoundCategory.PLAYERS, 0.3f + WarDance.rand.nextFloat() * 0.5f, 0.75f + WarDance.rand.nextFloat() * 0.5f);
             elb.getAttribute(Attributes.MOVEMENT_SPEED).removeModifier(WOUND);
             elb.getAttribute(Attributes.MOVEMENT_SPEED).applyPersistentModifier(STAGGERS);

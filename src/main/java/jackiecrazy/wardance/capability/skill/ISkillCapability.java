@@ -10,6 +10,10 @@ import java.util.Map;
 import java.util.Optional;
 
 public interface ISkillCapability {
+    boolean isSkillSelectable(Skill s);
+
+    void setSkillSelectable(Skill s, boolean selectable);
+
     Optional<SkillData> getActiveSkill(Skill s);
 
     void activateSkill(SkillData d);

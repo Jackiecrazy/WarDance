@@ -147,7 +147,7 @@ public class SkillCastScreen extends Screen {
             }
         }
         if (index >= 0 && selected != null) {
-            String print = selected.getDisplayName().getString();
+            String print = selected.getDisplayName(mc.player).getString();
             int yee = mc.fontRenderer.getStringWidth(print);
             mc.ingameGUI.getFontRenderer().drawString(matrixStack, print, (width - yee) / 2f, height / 2f - 3, selected.getColor().getRGB());
             final Skill.CastStatus castStatus = selected.castingCheck(mc.player);

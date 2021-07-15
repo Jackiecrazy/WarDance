@@ -44,6 +44,12 @@ public class CoupDeGrace extends Skill {
     }
 
     @Override
+    public CastStatus castingCheck(LivingEntity caster) {
+        if (CasterData.getCap(caster).isSkillActive(this)) return CastStatus.ALLOWED;
+        return super.castingCheck(caster);
+    }
+
+    @Override
     public boolean onCast(LivingEntity caster) {
         if (CasterData.getCap(caster).isTagActive("execution"))
             CasterData.getCap(caster).removeActiveTag("execution");
@@ -73,7 +79,7 @@ public class CoupDeGrace extends Skill {
                     //}
                 } else {
                     e.setCanceled(true);
-                    CombatData.getCap(target).consumePosture(e.getAmount());
+                    CombatData.getCap(target).consumePosture(caster, e.getAmount());
                 }
             }
         }
@@ -108,7 +114,7 @@ public class CoupDeGrace extends Skill {
     public static class DanseMacabre extends CoupDeGrace {
         @Override
         public Color getColor() {
-            return Color.GRAY;
+            return Color.LIGHT_GRAY;
         }
 
         @Override

@@ -38,7 +38,7 @@ public class Overbear extends ShieldBash {
         if (procPoint instanceof LivingAttackEvent && CombatUtils.isShield(caster, CombatUtils.getAttackingItemStack(((LivingAttackEvent) procPoint).getSource()))) {
             performEffect(caster, target);
             caster.world.playSound(null, caster.getPosX(), caster.getPosY(), caster.getPosZ(), SoundEvents.ITEM_SHIELD_BLOCK , SoundCategory.PLAYERS, 0.25f + WarDance.rand.nextFloat() * 0.5f, 0.5f+WarDance.rand.nextFloat() * 0.5f);
-            CombatData.getCap(target).consumePosture(CombatUtils.getShieldStats(CombatUtils.getAttackingItemStack(((LivingAttackEvent) procPoint).getSource())).getA() / 10f);
+            CombatData.getCap(target).consumePosture(caster, CombatUtils.getShieldStats(CombatUtils.getAttackingItemStack(((LivingAttackEvent) procPoint).getSource())).getA() / 10f);
             if(CombatData.getCap(target).getStaggerTime()==0){
                 caster.addPotionEffect(new EffectInstance(Effects.SLOWNESS, 50));
             }

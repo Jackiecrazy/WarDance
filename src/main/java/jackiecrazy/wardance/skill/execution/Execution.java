@@ -1,13 +1,14 @@
 package jackiecrazy.wardance.skill.execution;
 
+import jackiecrazy.wardance.WarDance;
 import jackiecrazy.wardance.capability.resources.CombatData;
 import jackiecrazy.wardance.capability.skill.CasterData;
-import jackiecrazy.wardance.capability.skill.ISkillCapability;
 import jackiecrazy.wardance.event.AttackMightEvent;
 import jackiecrazy.wardance.event.ParryEvent;
-import jackiecrazy.wardance.skill.SkillTags;
+import jackiecrazy.wardance.event.SkillCastEvent;
 import jackiecrazy.wardance.skill.Skill;
 import jackiecrazy.wardance.skill.SkillData;
+import jackiecrazy.wardance.skill.SkillTags;
 import jackiecrazy.wardance.skill.WarSkills;
 import jackiecrazy.wardance.utils.TargetingUtils;
 import net.minecraft.entity.LivingEntity;
@@ -35,7 +36,7 @@ Onslaught: casts heavy blow before every attack (this is a lot easier)
     Flare: deals two lives' worth of damage, but causes the target to rapidly regenerate 1.4 lives afterwards
     Master's Lesson: while active, might gain is converted into posture at a 1:1 ratio; overflow posture will generate free parries
      */
-    private final Tag<String> tag = Tag.getTagFromContents(new HashSet<>(Arrays.asList("physical", SkillTags.on_hurt, "melee", "execution")));
+    private final Tag<String> tag = Tag.getTagFromContents(new HashSet<>(Arrays.asList("physical", SkillTags.on_hurt, SkillTags.on_cast, "melee", "execution")));
     private final Tag<String> no = Tag.getTagFromContents(new HashSet<>(Collections.singletonList("execution")));
 
     private static double getLife(LivingEntity e) {
@@ -61,7 +62,11 @@ Onslaught: casts heavy blow before every attack (this is a lot easier)
 
     @Override
     public boolean onCast(LivingEntity caster) {
-        activate(caster, 100);
+        if (CasterData.getCap(caster).isSkillActive(this)) {
+            CasterData.getCap(caster).removeActiveSkill(this);
+            return true;
+        }
+        activate(caster, 1);
         CombatData.getCap(caster).consumeMight(8);
         return true;
     }
@@ -75,10 +80,16 @@ Onslaught: casts heavy blow before every attack (this is a lot easier)
 
     }
 
+    protected int getMightNeeded() {
+        return 8;
+    }
+
     @Override
     public CastStatus castingCheck(LivingEntity caster) {
+        if (CasterData.getCap(caster).isSkillActive(this)) return CastStatus.ALLOWED;
         CastStatus cs = super.castingCheck(caster);
-        if (cs == CastStatus.ALLOWED && CombatData.getCap(caster).getMight() < 8) return CastStatus.OTHER;
+        if (cs == CastStatus.ALLOWED && !CasterData.getCap(caster).isSkillActive(this) && CombatData.getCap(caster).getMight() < getMightNeeded())
+            return CastStatus.OTHER;
         return cs;
     }
 
@@ -91,17 +102,19 @@ Onslaught: casts heavy blow before every attack (this is a lot easier)
                 markUsed(caster);
             } else {
                 e.setCanceled(true);
-                CombatData.getCap(target).consumePosture(e.getAmount());
+                CombatData.getCap(target).consumePosture(caster, e.getAmount());
             }
         }
     }
 
     protected float execute(LivingHurtEvent e) {
+        WarDance.LOGGER.debug(e.getEntityLiving().getHealth());
         final float life = (float) getLife(e.getEntityLiving());
         e.getEntityLiving().setHealth(e.getEntityLiving().getHealth() - life);
         e.getSource().setDamageBypassesArmor().setDamageIsAbsolute();
         CombatData.getCap(e.getEntityLiving()).decrementStaggerTime(CombatData.getCap(e.getEntityLiving()).getStaggerTime());
-        return life + e.getAmount();
+        WarDance.LOGGER.debug(e.getEntityLiving().getHealth());
+        return e.getAmount();
     }
 
     public static class Onslaught extends Execution {
@@ -128,20 +141,18 @@ Onslaught: casts heavy blow before every attack (this is a lot easier)
 
         @Override
         public boolean onCast(LivingEntity caster) {
+            if (CasterData.getCap(caster).isSkillActive(this)) {
+                CasterData.getCap(caster).removeActiveSkill(this);
+                return true;
+            }
             activate(caster, 100);
             CombatData.getCap(caster).consumeMight(5);
             return true;
         }
 
         @Override
-        public CastStatus castingCheck(LivingEntity caster) {
-            ISkillCapability cap = CasterData.getCap(caster);
-            for (String s : getIncompatibleTags(caster).getAllElements())
-                if (cap.isTagActive(s)) return CastStatus.CONFLICT;
-            if (cap.isSkillCoolingDown(this))
-                return CastStatus.COOLDOWN;
-            if (CombatData.getCap(caster).getMight() < 5) return CastStatus.OTHER;
-            return CastStatus.ALLOWED;
+        protected int getMightNeeded() {
+            return 5;
         }
     }
 
@@ -153,12 +164,15 @@ Onslaught: casts heavy blow before every attack (this is a lot easier)
 
         @Override
         protected float execute(LivingHurtEvent e) {
+            WarDance.LOGGER.debug(e.getEntityLiving().getHealth());
             final float lives = (float) getLife(e.getEntityLiving()) * 2;
             e.getEntityLiving().setHealth(e.getEntityLiving().getHealth() - lives);
             //e.setAmount(e.getAmount() + (float) getLife(e.getEntityLiving()) * 2);
             e.getSource().setDamageBypassesArmor().setDamageIsAbsolute();
             CombatData.getCap(e.getEntityLiving()).decrementStaggerTime(CombatData.getCap(e.getEntityLiving()).getStaggerTime());
-            return lives + e.getAmount();
+            WarDance.LOGGER.debug(e.getEntityLiving().getHealth());
+            return e.getAmount();
+
         }
 
         @Override
@@ -202,17 +216,46 @@ Onslaught: casts heavy blow before every attack (this is a lot easier)
     }
 
     public static class CrowdPleaser extends Execution {
+        //TODO buff
         @Override
         public Color getColor() {
             return Color.CYAN;
         }
 
         @Override
+        public void onSuccessfulProc(LivingEntity caster, SkillData stats, LivingEntity target, Event procPoint) {
+            if (procPoint instanceof SkillCastEvent) {
+                stats.setArbitraryFloat(stats.getArbitraryFloat() + 1);
+            }
+        }
+
+        @Override
         protected void performEffect(LivingEntity caster, LivingEntity target, float amount) {
+            int buff = 0;
+            if (CasterData.getCap(caster).getActiveSkill(this).isPresent())
+                buff = Math.min((int) CasterData.getCap(caster).getActiveSkill(this).get().getArbitraryFloat() / 2, 3);
+//            Skill[] pastCasts = CasterData.getCap(caster).getPastCasts();
+//            for (Skill s : pastCasts) {
+//                boolean flag = true;
+//                for (int find = 0; find < index; find++) {
+//                    if (pastCasts[find] == s) {
+//                        flag = false;
+//                        break;
+//                    }
+//                }
+//                if (flag) buff ++;
+//                index++;
+//            }
             final List<LivingEntity> list = caster.world.getEntitiesWithinAABB(LivingEntity.class, caster.getBoundingBox().grow(10), (a) -> TargetingUtils.isAlly(a, caster));
             for (LivingEntity pet : list) {
-                pet.addPotionEffect(new EffectInstance(Effects.STRENGTH, (int) amount * 20 / list.size()));
-                pet.addPotionEffect(new EffectInstance(Effects.SPEED, (int) amount * 20 / list.size()));
+                pet.addPotionEffect(new EffectInstance(Effects.SPEED, (int) amount * 10, buff));
+                pet.addPotionEffect(new EffectInstance(Effects.STRENGTH, (int) amount * 10, buff));
+                if (buff >= 1)
+                    pet.addPotionEffect(new EffectInstance(Effects.LUCK, (int) amount * 10, buff - 1));
+                if (buff >= 2)
+                    pet.addPotionEffect(new EffectInstance(Effects.REGENERATION, (int) amount * 10, buff - 2));
+                if (buff >= 3)
+                    pet.addPotionEffect(new EffectInstance(Effects.RESISTANCE, (int) amount * 10, Math.min(buff - 3, 2)));
             }
         }
     }

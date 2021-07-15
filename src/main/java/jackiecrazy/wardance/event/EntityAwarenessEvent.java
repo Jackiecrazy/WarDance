@@ -5,17 +5,17 @@ import net.minecraft.entity.LivingEntity;
 import net.minecraftforge.event.entity.living.LivingEvent;
 
 public class EntityAwarenessEvent extends LivingEvent {
-    private final CombatUtils.AWARENESS originalStatus;
+    private final CombatUtils.Awareness originalStatus;
     private LivingEntity attacker;
-    private CombatUtils.AWARENESS status;
+    private CombatUtils.Awareness status;
 
-    public EntityAwarenessEvent(LivingEntity entity, LivingEntity attacker, CombatUtils.AWARENESS originally) {
+    public EntityAwarenessEvent(LivingEntity entity, LivingEntity attacker, CombatUtils.Awareness originally) {
         super(entity);
         this.attacker = attacker;
         originalStatus = status = originally;
     }
 
-    public CombatUtils.AWARENESS getAwareness() {
+    public CombatUtils.Awareness getAwareness() {
         return status;
     }
 
@@ -23,11 +23,11 @@ public class EntityAwarenessEvent extends LivingEvent {
         return attacker;
     }
 
-    public void setAwareness(CombatUtils.AWARENESS newAwareness) {
+    public void setAwareness(CombatUtils.Awareness newAwareness) {
         status = newAwareness;
     }
 
-    public CombatUtils.AWARENESS getOriginalAwareness() {
+    public CombatUtils.Awareness getOriginalAwareness() {
         return originalStatus;
     }
 }

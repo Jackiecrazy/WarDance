@@ -86,7 +86,7 @@ public abstract class Skill extends ForgeRegistryEntry<Skill> {
             if (cap.isTagActive(s)) return CastStatus.CONFLICT;
         if (cap.isSkillCoolingDown(this))
             return CastStatus.COOLDOWN;
-        if(getParentSkill()!=null)
+        if (getParentSkill() != null)
             return getParentSkill().castingCheck(caster);
         return CastStatus.ALLOWED;
     }
@@ -108,8 +108,10 @@ public abstract class Skill extends ForgeRegistryEntry<Skill> {
         return new TranslationTextComponent(this.getRegistryName().toString() + ".desc");
     }
 
-    public ITextComponent getDisplayName() {
-
+    /**
+     * @param caster only nonnull if it's in the casting bar!
+     */
+    public ITextComponent getDisplayName(LivingEntity caster) {
         return new TranslationTextComponent(this.getRegistryName().toString() + ".name");
     }
 
@@ -128,7 +130,7 @@ public abstract class Skill extends ForgeRegistryEntry<Skill> {
     public abstract Tag<String> getIncompatibleTags(LivingEntity caster);//uses sharp weapon, uses breath, undead using holy spell, etc
 
     public boolean checkAndCast(LivingEntity caster) {
-        if (castingCheck(caster)!=CastStatus.ALLOWED) return false;
+        if (castingCheck(caster) != CastStatus.ALLOWED) return false;
         if (MinecraftForge.EVENT_BUS.post(new SkillCastEvent(caster, this))) return false;
         caster.world.playMovingSound(null, caster, SoundEvents.ITEM_FIRECHARGE_USE, SoundCategory.AMBIENT, 0.3f + WarDance.rand.nextFloat(), 0.5f + WarDance.rand.nextFloat());
         return onCast(caster);
@@ -140,8 +142,9 @@ public abstract class Skill extends ForgeRegistryEntry<Skill> {
      * @return whether the client should be updated.
      */
     public boolean activeTick(LivingEntity caster, SkillData d) {
-        if (d.getSkill().getTags(caster).contains(SkillTags.countdown)) {
+        if (d.getSkill().getTags(caster).contains(SkillTags.countdown) && d.getDuration() > 0) {
             d.decrementDuration();
+            if (d.getDuration() <= 0) markUsed(caster);
             return true;
         }
         return false;
@@ -156,7 +159,7 @@ public abstract class Skill extends ForgeRegistryEntry<Skill> {
      */
     public boolean coolingTick(LivingEntity caster, SkillCooldownData d) {
         if (d.getSkill().getTags(caster).contains(SkillTags.recharge_time)) {
-            d.decrementDuration(1);
+            onCooldownProc(caster, d, null);
             return true;
         }
         return false;
@@ -169,12 +172,16 @@ public abstract class Skill extends ForgeRegistryEntry<Skill> {
 
     public abstract void onSuccessfulProc(LivingEntity caster, SkillData stats, LivingEntity target, Event procPoint);
 
+    public boolean onCooldownProc(LivingEntity caster, SkillCooldownData stats, Event procPoint){
+        CasterData.getCap(caster).decrementSkillCooldown(this, 1);
+        return true;
+    }
+
     protected void setCooldown(LivingEntity caster, float duration) {
         SkillCooldownEvent sce = new SkillCooldownEvent(caster, this, duration);
         MinecraftForge.EVENT_BUS.post(sce);
 //        if (getParentSkill() != null)
 //            CasterData.getCap(caster).setSkillCooldown(getParentSkill(), sce.getCooldown());
-        caster.world.playMovingSound(null, caster, SoundEvents.BLOCK_FIRE_EXTINGUISH, SoundCategory.AMBIENT, 0.3f + WarDance.rand.nextFloat() * 0.5f, 0.5f + WarDance.rand.nextFloat());
         CasterData.getCap(caster).setSkillCooldown(this, sce.getCooldown());
     }
 
@@ -185,6 +192,7 @@ public abstract class Skill extends ForgeRegistryEntry<Skill> {
     }
 
     protected void markUsed(LivingEntity caster) {
+        caster.world.playMovingSound(null, caster, SoundEvents.BLOCK_FIRE_EXTINGUISH, SoundCategory.AMBIENT, 0.3f + WarDance.rand.nextFloat() * 0.5f, 0.5f + WarDance.rand.nextFloat());
         CasterData.getCap(caster).markSkillUsed(this);
     }
 

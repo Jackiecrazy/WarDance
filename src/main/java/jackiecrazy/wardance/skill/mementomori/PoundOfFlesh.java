@@ -52,8 +52,8 @@ public class PoundOfFlesh extends MementoMori {
 
     @Override
     public boolean activeTick(LivingEntity caster, SkillData d) {
-        if (CombatData.getCap(caster).getSpiritGrace() <= 0)
-            markUsed(caster);
+//        if (CombatData.getCap(caster).getSpiritGrace() <= 0)
+//            markUsed(caster);
         d.decrementDuration();
         return super.activeTick(caster, d);
     }

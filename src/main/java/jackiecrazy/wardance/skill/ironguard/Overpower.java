@@ -24,8 +24,8 @@ public class Overpower extends IronGuard {
         if (procPoint instanceof ParryEvent) {
             if (!CasterData.getCap(((ParryEvent) procPoint).getAttacker()).isSkillActive(WarSkills.HEAVY_BLOW.get())) {
                 ((ParryEvent) procPoint).setPostureConsumption(0);
-                CombatData.getCap(((ParryEvent) procPoint).getAttacker()).consumePosture(((ParryEvent) procPoint).getPostureConsumption());
-                CombatData.getCap(((ParryEvent) procPoint).getAttacker()).consumePosture(CombatUtils.getPostureAtk(caster, target, ((ParryEvent) procPoint).getDefendingHand(), ((ParryEvent) procPoint).getPostureConsumption(), ((ParryEvent) procPoint).getDefendingStack()));
+                CombatData.getCap(((ParryEvent) procPoint).getAttacker()).consumePosture(caster, ((ParryEvent) procPoint).getPostureConsumption());
+                CombatData.getCap(((ParryEvent) procPoint).getAttacker()).consumePosture(caster, CombatUtils.getPostureAtk(caster, target, ((ParryEvent) procPoint).getDefendingHand(), ((ParryEvent) procPoint).getPostureConsumption(), ((ParryEvent) procPoint).getDefendingStack()));
             }
             markUsed(caster);
         }

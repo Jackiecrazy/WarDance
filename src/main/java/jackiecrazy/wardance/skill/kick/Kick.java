@@ -10,6 +10,7 @@ import jackiecrazy.wardance.utils.GeneralUtils;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.tags.Tag;
+import net.minecraft.util.DamageSource;
 import net.minecraft.util.SoundCategory;
 import net.minecraft.util.SoundEvents;
 import net.minecraft.util.math.vector.Vector3d;
@@ -61,11 +62,11 @@ public class Kick extends Skill {
         if (procPoint instanceof LivingAttackEvent) {
             procPoint.setCanceled(true);
             if (GeneralUtils.getDistSqCompensated(caster, target) <= distanceSq()) {
-                CombatData.getCap(target).consumePosture(6);
+                CombatData.getCap(target).consumePosture(caster, 6);
                 if(caster instanceof PlayerEntity)
                     ((PlayerEntity) caster).spawnSweepParticles();
                 caster.world.playSound(null, caster.getPosX(), caster.getPosY(), caster.getPosZ(), SoundEvents.ENTITY_ZOMBIE_ATTACK_WOODEN_DOOR , SoundCategory.PLAYERS, 0.25f + WarDance.rand.nextFloat() * 0.5f, 0.5f+WarDance.rand.nextFloat() * 0.5f);
-                //target.attackEntityFrom(DamageSource.FALLING_BLOCK, 1);
+                target.attackEntityFrom(DamageSource.FALLING_BLOCK, 1);
                 additionally(caster, target);
                 markUsed(caster);
             }
@@ -88,6 +89,7 @@ public class Kick extends Skill {
             caster.setMotion(caster.getMotion().add(noy.x, 0.4, noy.z));
             caster.velocityChanged = true;
             final ICombatCapability cap = CombatData.getCap(caster);
+            cap.addCombo(0.4f);
             cap.addPosture(0.3f * (cap.getPosture() / cap.getMaxPosture()));
         }
     }
