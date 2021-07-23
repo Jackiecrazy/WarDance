@@ -12,19 +12,18 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 public class CasterData implements ICapabilitySerializable<CompoundNBT> {
-    private static ISkillCapability OHNO=new DummySkillCap();
-
     @CapabilityInject(ISkillCapability.class)
     public static Capability<ISkillCapability> CAP = null;
-
-    public static ISkillCapability getCap(LivingEntity le) {
-        return le.getCapability(CAP).orElse(OHNO);//.orElseThrow(() -> new IllegalArgumentException("attempted to find a nonexistent capability"));
-    }
-
+    private static ISkillCapability OHNO = new DummySkillCap();
     private final LazyOptional<ISkillCapability> instance;
 
     public CasterData(LivingEntity e) {
         instance = LazyOptional.of(() -> new SkillCapability(e));
+    }
+
+    public static ISkillCapability getCap(LivingEntity le) {
+        if (le == null) return OHNO;
+        return le.getCapability(CAP).orElse(OHNO);//.orElseThrow(() -> new IllegalArgumentException("attempted to find a nonexistent capability"));
     }
 
     @Nonnull

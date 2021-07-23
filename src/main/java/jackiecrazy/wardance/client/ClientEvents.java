@@ -8,11 +8,13 @@ import jackiecrazy.wardance.WarDance;
 import jackiecrazy.wardance.capability.resources.CombatData;
 import jackiecrazy.wardance.capability.resources.ICombatCapability;
 import jackiecrazy.wardance.capability.skill.CasterData;
+import jackiecrazy.wardance.capability.skill.ISkillCapability;
 import jackiecrazy.wardance.compat.WarCompat;
 import jackiecrazy.wardance.config.ClientConfig;
 import jackiecrazy.wardance.config.CombatConfig;
 import jackiecrazy.wardance.networking.*;
 import jackiecrazy.wardance.skill.WarSkills;
+import jackiecrazy.wardance.skill.coupdegrace.CoupDeGrace;
 import jackiecrazy.wardance.utils.CombatUtils;
 import jackiecrazy.wardance.utils.GeneralUtils;
 import net.minecraft.client.GameSettings;
@@ -158,6 +160,16 @@ public class ClientEvents {
                 float height = reg && rotate.getOrDefault(ForgeRegistries.ENTITIES.getKey(e.getType()).toString(), false) ? e.getWidth() : e.getHeight();
                 event.getEntity().world.addParticle(ParticleTypes.CRIT, e.getPosX() + Math.sin(e.ticksExisted) * e.getWidth() / 2, e.getPosY() + height, e.getPosZ() + Math.cos(e.ticksExisted) * e.getWidth() / 2, 0, 0, 0);
             }
+            ClientPlayerEntity cpe = Minecraft.getInstance().player;
+            final ISkillCapability cap = CasterData.getCap(cpe);
+            if (cap.isSkillUsable(cap.getEquippedVariation(WarSkills.COUP_DE_GRACE.get()))) {
+                //render coup icon on mob
+                CoupDeGrace cdg = (CoupDeGrace) (cap.getEquippedVariation(WarSkills.COUP_DE_GRACE.get()));
+                if (cdg.isValid(cpe, e) && e.ticksExisted % 10 == 0 && Minecraft.getInstance().world != null)
+                    event.getEntity().world.addParticle(ParticleTypes.ANGRY_VILLAGER, e.getPosX() + (WarDance.rand.nextFloat() - 0.5f) * e.getWidth() * 2, e.getPosY() + e.getHeight(), e.getPosZ() + (WarDance.rand.nextFloat() - 0.5f) * e.getWidth() * 2, 0, 0, 0);
+//                    Minecraft.getInstance().world.addParticle(ParticleTypes.FALLING_LAVA, e.getPosX() + e.getWidth() * (WarDance.rand.nextFloat() * 2 - 1), e.getPosY() + WarDance.rand.nextFloat() * e.getHeight(), e.getPosZ() + e.getWidth() * (WarDance.rand.nextFloat() * 2 - 1), 0, 0, 0);
+            }
+
         }
     }
 
@@ -184,6 +196,10 @@ public class ClientEvents {
                 //flat bois become flatter bois
                 //multi bois do nothing
             }
+//            if(e.isPotionActive(WarEffects.PETRIFY.get())){
+//                event.getRenderer()
+//                Minecraft.getInstance().getTextureManager().bindTexture(AbstractGui.GUI_ICONS_LOCATION);
+//            }
         }
     }
 
@@ -385,10 +401,10 @@ public class ClientEvents {
                 }
                 //render posture bar if not full, displayed even out of combat mode because it's pretty relevant to not dying
                 if (cap.getPosture() < cap.getMaxPosture() || cap.getStaggerTime() > 0)
-                    drawPostureBarreAt(true, event.getMatrixStack(), player, width / 2 + ClientConfig.yourPostureX, height - ClientConfig.yourPostureY);
+                    drawPostureBarAt(true, event.getMatrixStack(), player, width / 2 + ClientConfig.yourPostureX, height - ClientConfig.yourPostureY);
                 Entity look = getEntityLookedAt(player, 32);
                 if (look instanceof LivingEntity && ClientConfig.displayEnemyPosture && (CombatData.getCap((LivingEntity) look).getPosture() < CombatData.getCap((LivingEntity) look).getMaxPosture() || CombatData.getCap((LivingEntity) look).getStaggerTime() > 0)) {
-                    drawPostureBarreAt(false, event.getMatrixStack(), (LivingEntity) look, width / 2 + ClientConfig.theirPostureX, ClientConfig.theirPostureY);//Math.min(HudConfig.client.enemyPosture.x, width - 64), Math.min(HudConfig.client.enemyPosture.y, height - 64));
+                    drawPostureBarAt(false, event.getMatrixStack(), (LivingEntity) look, width / 2 + ClientConfig.theirPostureX, ClientConfig.theirPostureY);//Math.min(HudConfig.client.enemyPosture.x, width - 64), Math.min(HudConfig.client.enemyPosture.y, height - 64));
                 }
             }
     }
@@ -400,7 +416,7 @@ public class ClientEvents {
      * @param atX
      * @param atY
      */
-    private static void drawPostureBarreAt(boolean you, MatrixStack ms, LivingEntity elb, int atX, int atY) {
+    private static void drawPostureBarAt(boolean you, MatrixStack ms, LivingEntity elb, int atX, int atY) {
         Minecraft mc = Minecraft.getInstance();
         mc.getTextureManager().bindTexture(hood);
         RenderSystem.defaultBlendFunc();

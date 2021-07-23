@@ -5,13 +5,15 @@ import jackiecrazy.wardance.capability.resources.CombatData;
 import jackiecrazy.wardance.capability.resources.ICombatCapability;
 import jackiecrazy.wardance.capability.skill.CasterData;
 import jackiecrazy.wardance.capability.skill.ISkillCapability;
-import jackiecrazy.wardance.entity.SpiritExplosion;
+import jackiecrazy.wardance.entity.FakeExplosion;
 import jackiecrazy.wardance.event.ParryEvent;
-import jackiecrazy.wardance.skill.SkillTags;
 import jackiecrazy.wardance.skill.Skill;
 import jackiecrazy.wardance.skill.SkillData;
+import jackiecrazy.wardance.skill.SkillTags;
 import jackiecrazy.wardance.skill.WarSkills;
+import jackiecrazy.wardance.utils.GeneralUtils;
 import net.minecraft.entity.LivingEntity;
+import net.minecraft.entity.ai.attributes.Attributes;
 import net.minecraft.tags.Tag;
 import net.minecraftforge.event.entity.living.LivingHurtEvent;
 import net.minecraftforge.eventbus.api.Event;
@@ -91,7 +93,7 @@ public class CoupDeGrace extends Skill {
         e.getSource().setDamageBypassesArmor().setDamageIsAbsolute();
     }
 
-    protected boolean isValid(LivingEntity caster, LivingEntity target) {
+    public boolean isValid(LivingEntity caster, LivingEntity target) {
         return target.getHealth() < (target.getMaxHealth() + CombatData.getCap(target).getWounding()) * 0.3;
     }
 
@@ -107,7 +109,7 @@ public class CoupDeGrace extends Skill {
         @Override
         protected void deathCheck(LivingEntity caster, LivingEntity target, float amount) {
             CombatData.getCap(caster).addSpirit(CombatData.getCap(target).getSpirit() / 2);
-            SpiritExplosion.spirituallyExplode(caster.world, caster, target.getPosX(), target.getPosY(), target.getPosZ(), (float) Math.sqrt(CombatData.getCap(target).getTrueMaxPosture()), new CombatDamageSource("player", caster).setProxy(target).setExplosion().setMagicDamage(), 2 * CombatData.getCap(target).getSpirit());
+            FakeExplosion.explode(caster.world, caster, target.getPosX(), target.getPosY(), target.getPosZ(), (float) Math.sqrt(CombatData.getCap(target).getTrueMaxPosture()), new CombatDamageSource("player", caster).setProxy(target).setExplosion().setMagicDamage(), 2 * CombatData.getCap(target).getSpirit());
         }
     }
 
@@ -118,7 +120,7 @@ public class CoupDeGrace extends Skill {
         }
 
         @Override
-        protected boolean isValid(LivingEntity caster, LivingEntity target) {
+        public boolean isValid(LivingEntity caster, LivingEntity target) {
             return target.getHealth() < (target.getMaxHealth() + CombatData.getCap(target).getWounding()) * 0.3 * (1 + CombatData.getCap(caster).getCombo() / 10);
         }
     }
@@ -136,6 +138,11 @@ public class CoupDeGrace extends Skill {
         }
 
         @Override
+        public boolean isValid(LivingEntity caster, LivingEntity target) {
+            return target.getHealth() < (GeneralUtils.getMaxHealthBeforeWounding(target) * 0.05f)+GeneralUtils.getAttributeValueSafe(caster, Attributes.ATTACK_DAMAGE);
+        }
+
+        @Override
         public void onEffectEnd(LivingEntity caster, SkillData stats) {
             if (!stats.isCondition())
                 setCooldown(caster, 5);
@@ -146,7 +153,7 @@ public class CoupDeGrace extends Skill {
         public void onSuccessfulProc(LivingEntity caster, SkillData stats, LivingEntity target, Event procPoint) {
             if (procPoint instanceof LivingHurtEvent) {
                 LivingHurtEvent e = (LivingHurtEvent) procPoint;
-                e.getEntityLiving().setHealth(e.getEntityLiving().getHealth() - e.getEntityLiving().getMaxHealth() * 0.05f);
+                e.getEntityLiving().setHealth(e.getEntityLiving().getHealth() - GeneralUtils.getMaxHealthBeforeWounding(target) * 0.05f);
                 e.setAmount(e.getAmount() * 2);
                 if (e.getEntityLiving().getHealth() - e.getAmount() <= 0)
                     stats.flagCondition(true);

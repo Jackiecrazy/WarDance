@@ -25,7 +25,7 @@ public class PoundOfFlesh extends MementoMori {
 
     @Override
     public boolean onCast(LivingEntity caster) {
-        activate(caster, CombatData.getCap(caster).getSpirit() * 20);
+        activate(caster, CombatData.getCap(caster).getSpirit() * 40);
         CombatData.getCap(caster).consumeSpirit(CombatData.getCap(caster).getSpirit());
         return true;
     }
@@ -40,20 +40,20 @@ public class PoundOfFlesh extends MementoMori {
         super.onSuccessfulProc(caster, stats, target, procPoint);
         if (procPoint instanceof ParryEvent) {
             //TODO mark all skill damage appropriately
-            caster.hurtResistantTime=0;
-            caster.attackEntityFrom(CombatDamageSource.inflictSelfHarm(null).setDamageTyping(CombatDamageSource.TYPE.TRUE).setSkillUsed(this).setDamageBypassesArmor().setDamageIsAbsolute(), GeneralUtils.getMaxHealthBeforeWounding(caster) * 0.05f);
+            caster.hurtResistantTime = 0;
+            caster.attackEntityFrom(CombatDamageSource.causeSelfDamage(null).setDamageTyping(CombatDamageSource.TYPE.TRUE).setSkillUsed(this).setDamageBypassesArmor().setDamageIsAbsolute(), GeneralUtils.getMaxHealthBeforeWounding(caster) * 0.05f);
             ((ParryEvent) procPoint).setPostureConsumption(((ParryEvent) procPoint).getPostureConsumption() + CombatData.getCap(target).getTrueMaxPosture() * 0.1f);
         } else if (procPoint instanceof LivingHurtEvent && (!(((LivingHurtEvent) procPoint).getSource() instanceof CombatDamageSource) || ((CombatDamageSource) ((LivingHurtEvent) procPoint).getSource()).getSkillUsed() != this)) {
-            caster.hurtResistantTime=0;
-            caster.attackEntityFrom(CombatDamageSource.inflictSelfHarm(null).setDamageTyping(CombatDamageSource.TYPE.TRUE).setSkillUsed(this).setDamageBypassesArmor().setDamageIsAbsolute(), GeneralUtils.getMaxHealthBeforeWounding(caster) * 0.05f);
+            caster.hurtResistantTime = 0;
+            caster.attackEntityFrom(CombatDamageSource.causeSelfDamage(null).setDamageTyping(CombatDamageSource.TYPE.TRUE).setSkillUsed(this).setDamageBypassesArmor().setDamageIsAbsolute(), GeneralUtils.getMaxHealthBeforeWounding(caster) * 0.05f);
             ((LivingHurtEvent) procPoint).setAmount(((LivingHurtEvent) procPoint).getAmount() + GeneralUtils.getMaxHealthBeforeWounding(target) * 0.05f);
         }
     }
 
     @Override
     public boolean activeTick(LivingEntity caster, SkillData d) {
-//        if (CombatData.getCap(caster).getSpiritGrace() <= 0)
-//            markUsed(caster);
+        if (CombatData.getCap(caster).getSpirit() == CombatData.getCap(caster).getMaxSpirit())
+            markUsed(caster);
         d.decrementDuration();
         return super.activeTick(caster, d);
     }

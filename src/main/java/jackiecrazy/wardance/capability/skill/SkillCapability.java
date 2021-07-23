@@ -23,6 +23,7 @@ public class SkillCapability implements ISkillCapability {
     private final List<Skill> learnedSkills = new ArrayList<>();
     private final WeakReference<LivingEntity> dude;
     private final Queue<Skill> lastCast = new LinkedList<>();
+    boolean sync = false, gatedSkills = false;
 
     public SkillCapability(LivingEntity attachTo) {
         dude = new WeakReference<>(attachTo);
@@ -32,11 +33,12 @@ public class SkillCapability implements ISkillCapability {
     public boolean isSkillSelectable(Skill s) {
         final LivingEntity bruv = dude.get();
         if (bruv != null) {
-            if (bruv.world.getGameRules().getBoolean(WarDance.GATED_SKILLS)) {
+            if (gatedSkills) {
                 boolean ret = learnedSkills.contains(s);
                 ret &= learnedSkills.contains(s.tryGetParentSkill());
                 return ret;
             }
+            return s.isSelectable(bruv);
         }
         return true;
     }
@@ -143,7 +145,7 @@ public class SkillCapability implements ISkillCapability {
 //        LivingEntity caster = dude.get();
 //        if (caster instanceof ServerPlayerEntity)
 //            CombatChannel.INSTANCE.send(PacketDistributor.PLAYER.with(() -> (ServerPlayerEntity) caster), new SyncSkillPacket(this.write()));
-        sync=true;
+        sync = true;
     }
 
     @Override
@@ -184,7 +186,7 @@ public class SkillCapability implements ISkillCapability {
 
     @Override
     public Skill getEquippedVariation(Skill base) {
-        for (Skill k : equippedSkill)
+        for (Skill k : new ArrayList<>(equippedSkill))
             if (k != null && k.getParentSkill() == base) return k;
         return base;
     }
@@ -207,6 +209,7 @@ public class SkillCapability implements ISkillCapability {
 
     @Override
     public boolean isSkillUsable(Skill skill) {
+        if (!isSkillSelectable(skill)) return false;
         if (!equippedSkill.contains(skill)) return false;
         return skill.castingCheck(dude.get()) == Skill.CastStatus.ALLOWED;
     }
@@ -214,6 +217,7 @@ public class SkillCapability implements ISkillCapability {
     @Override
     public CompoundNBT write() {
         CompoundNBT to = new CompoundNBT();
+        to.putBoolean("gamerule", gatedSkills);
         if (!this.activeSkills.isEmpty()) {
             ListNBT listnbt = new ListNBT();
 
@@ -241,6 +245,7 @@ public class SkillCapability implements ISkillCapability {
     @Override
     public void read(CompoundNBT from) {
         activeSkills.clear();
+        gatedSkills = from.getBoolean("gamerule");//it's the easy way out...
         if (from.contains("ActiveSkills", 9)) {
             ListNBT listnbt = from.getList("ActiveSkills", 10);
 
@@ -271,10 +276,13 @@ public class SkillCapability implements ISkillCapability {
         equippedSkill.clear();
         equippedSkill.addAll(Arrays.asList(als));
     }
-    boolean sync = false;
+
     @Override
     public void update() {
         final LivingEntity caster = dude.get();
+        if (caster == null) return;
+        sync = gatedSkills != caster.world.getGameRules().getBoolean(WarDance.GATED_SKILLS);
+        gatedSkills = sync != gatedSkills;
         Skill.STATE state = Skill.STATE.INACTIVE;
         for (Skill d : equippedSkill) {
             if (d == null) continue;
@@ -323,7 +331,7 @@ public class SkillCapability implements ISkillCapability {
         }
         if (sync && caster instanceof ServerPlayerEntity)
             CombatChannel.INSTANCE.send(PacketDistributor.PLAYER.with(() -> (ServerPlayerEntity) caster), new SyncSkillPacket(this.write()));
-        sync=false;
+        sync = false;
     }
 
     @Override

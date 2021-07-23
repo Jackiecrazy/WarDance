@@ -1,6 +1,5 @@
 package jackiecrazy.wardance.skill.execution;
 
-import jackiecrazy.wardance.WarDance;
 import jackiecrazy.wardance.capability.resources.CombatData;
 import jackiecrazy.wardance.capability.skill.CasterData;
 import jackiecrazy.wardance.event.AttackMightEvent;
@@ -108,13 +107,11 @@ Onslaught: casts heavy blow before every attack (this is a lot easier)
     }
 
     protected float execute(LivingHurtEvent e) {
-        WarDance.LOGGER.debug(e.getEntityLiving().getHealth());
         final float life = (float) getLife(e.getEntityLiving());
         e.getEntityLiving().setHealth(e.getEntityLiving().getHealth() - life);
         e.getSource().setDamageBypassesArmor().setDamageIsAbsolute();
         CombatData.getCap(e.getEntityLiving()).decrementStaggerTime(CombatData.getCap(e.getEntityLiving()).getStaggerTime());
-        WarDance.LOGGER.debug(e.getEntityLiving().getHealth());
-        return e.getAmount();
+        return life + e.getAmount();
     }
 
     public static class Onslaught extends Execution {
@@ -164,21 +161,25 @@ Onslaught: casts heavy blow before every attack (this is a lot easier)
 
         @Override
         protected float execute(LivingHurtEvent e) {
-            WarDance.LOGGER.debug(e.getEntityLiving().getHealth());
             final float lives = (float) getLife(e.getEntityLiving()) * 2;
             e.getEntityLiving().setHealth(e.getEntityLiving().getHealth() - lives);
             //e.setAmount(e.getAmount() + (float) getLife(e.getEntityLiving()) * 2);
             e.getSource().setDamageBypassesArmor().setDamageIsAbsolute();
             CombatData.getCap(e.getEntityLiving()).decrementStaggerTime(CombatData.getCap(e.getEntityLiving()).getStaggerTime());
-            WarDance.LOGGER.debug(e.getEntityLiving().getHealth());
-            return e.getAmount();
-
+            return lives + e.getAmount();
         }
 
         @Override
         protected void performEffect(LivingEntity caster, LivingEntity target, float amount) {
             float regen = amount * 0.7f;
-            target.addPotionEffect(new EffectInstance(Effects.REGENERATION, (int) (regen * 6), 3));
+            afflict(caster, target, 100, regen);
+        }
+
+        @Override
+        public boolean statusTick(LivingEntity caster, LivingEntity target, SkillData sd) {
+            target.heal(sd.getArbitraryFloat() / 100);
+            sd.decrementDuration();
+            return super.statusTick(caster, target, sd);
         }
     }
 

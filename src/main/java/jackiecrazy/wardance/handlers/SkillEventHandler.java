@@ -6,10 +6,10 @@ import jackiecrazy.wardance.capability.skill.CasterData;
 import jackiecrazy.wardance.capability.skill.ISkillCapability;
 import jackiecrazy.wardance.config.CombatConfig;
 import jackiecrazy.wardance.event.*;
-import jackiecrazy.wardance.skill.SkillTags;
 import jackiecrazy.wardance.skill.Skill;
 import jackiecrazy.wardance.skill.SkillCooldownData;
 import jackiecrazy.wardance.skill.SkillData;
+import jackiecrazy.wardance.skill.SkillTags;
 import jackiecrazy.wardance.utils.CombatUtils;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.LivingEntity;
@@ -26,6 +26,7 @@ import net.minecraftforge.fml.common.Mod;
 
 @Mod.EventBusSubscriber(modid = WarDance.MODID)
 public class SkillEventHandler {//TODO remove some checks on some tags so execution on means no damage whatsoever
+
     @SubscribeEvent(priority = EventPriority.LOWEST)
     public static void sleep(PlayerWakeUpEvent e) {
         /**
@@ -78,7 +79,7 @@ public class SkillEventHandler {//TODO remove some checks on some tags so execut
 
     @SubscribeEvent
     public static void stabbery(EntityAwarenessEvent e) {
-        if(e.getAttacker()==null)return;
+        if (e.getAttacker() == null) return;
         if (!e.getEntityLiving().isServerWorld()) return;
         for (SkillData s : CasterData.getCap(e.getAttacker()).getActiveSkills().values()) {
             if (s.getSkill().getTags(e.getAttacker()).contains(SkillTags.change_awareness)) {
@@ -122,11 +123,11 @@ public class SkillEventHandler {//TODO remove some checks on some tags so execut
     @SubscribeEvent
     public static void healFlags(LivingHealEvent e) {
         if (!e.getEntityLiving().isServerWorld()) return;
-        LivingEntity attacker = e.getEntityLiving();
-        ISkillCapability isc = CasterData.getCap(attacker);
+        LivingEntity entity = e.getEntityLiving();
+        ISkillCapability isc = CasterData.getCap(entity);
         for (SkillData s : isc.getActiveSkills().values()) {
-            if (s.getSkill().getTags(attacker).contains(SkillTags.change_heals)) {
-                s.getSkill().onSuccessfulProc(attacker, s, e.getEntityLiving(), e);
+            if (s.getSkill().getTags(entity).contains(SkillTags.change_heals)) {
+                s.getSkill().onSuccessfulProc(entity, s, e.getEntityLiving(), e);
             }
         }
     }

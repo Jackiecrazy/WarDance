@@ -18,7 +18,6 @@ public class CombatConfig {
     public static final CombatConfig CONFIG;
     public static final ForgeConfigSpec CONFIG_SPEC;
     private static final String[] SNEAK = {
-            //deaf, night vision, all-seeing, observant, vigilant
             "ars_nouveau:ally_vex, v",
             "ars_nouveau:carbuncle, v",
             "ars_nouveau:drygmy, v",
@@ -27,7 +26,7 @@ public class CombatConfig {
             "ars_nouveau:sylph, v",
             "ars_nouveau:whelp, v",
             "ars_nouveau:wilden_guardian, ",
-            "ars_nouveau:wilden_hunter, n",
+            "ars_nouveau:wilden_hunter, m",
             "ars_nouveau:wilden_stalker, a",
             "artifacts:mimic, v",
             "atum:assassin, v",
@@ -40,9 +39,9 @@ public class CombatConfig {
             "atum:nomad, ao",
             "atum:pharaoh, ov",
             "atum:serval, ao",
-            "atum:stoneguard, dn",
-            "atum:stoneguard_friendly, dnv",
-            "atum:stonewarden, dn",
+            "atum:stoneguard, dm",
+            "atum:stoneguard_friendly, dmv",
+            "atum:stonewarden, dm",
             "atum:stonewarden_friendly, dv",
             "atum:tarantula, n",
             "atum:wraith, no",
@@ -50,7 +49,7 @@ public class CombatConfig {
             "charm:moobloom, v",
             "doggytalents:dog, v",
             "eidolon:necromancer, no",
-            "eidolon:wraith, n",
+            "eidolon:wraith, m",
             "eidolon:zombie_brute, d",
             "endergetic:bolloom_balloon, v",
             "endergetic:booflo, v",
@@ -70,20 +69,20 @@ public class CombatConfig {
             "iceandfire:dread_thrall, do",
             "iceandfire:fire_dragon, o",
             "iceandfire:ghost, n",
-            "iceandfire:gorgon, nao",
+            "iceandfire:gorgon, mao",
             "iceandfire:hippocampus, ov",
             "iceandfire:hippogryph, o",
             "iceandfire:hydra, o",
             "iceandfire:ice_dragon, o",
             "iceandfire:lightning_dragon, o",
-            "iceandfire:myrmex_queen, n",
-            "iceandfire:myrmex_royal, n",
-            "iceandfire:myrmex_sentinel, n",
-            "iceandfire:myrmex_soldier, n",
-            "iceandfire:myrmex_swarmer, n",
-            "iceandfire:myrmex_worker, n",
+            "iceandfire:myrmex_queen, m",
+            "iceandfire:myrmex_royal, m",
+            "iceandfire:myrmex_sentinel, m",
+            "iceandfire:myrmex_soldier, m",
+            "iceandfire:myrmex_swarmer, m",
+            "iceandfire:myrmex_worker, m",
             "iceandfire:pixie, o",
-            "iceandfire:sea_serpent, n",
+            "iceandfire:sea_serpent, m",
             "iceandfire:troll, n",
             "inventorypets:anvil_pet_entity, v",
             "inventorypets:bed_pet_entity, v",
@@ -111,19 +110,19 @@ public class CombatConfig {
             "minecraft:creeper, o",
             "minecraft:dolphin, v",
             "minecraft:donkey, v",
-            "minecraft:drowned, n",
-            "minecraft:elder_guardian, na",
+            "minecraft:drowned, m",
+            "minecraft:elder_guardian, ma",
             "minecraft:ender_dragon, a",
             "minecraft:enderman, nao",
             "minecraft:endermite, ",
             "minecraft:evoker, o",
             "minecraft:fox, v",
-            "minecraft:ghast, no",
-            "minecraft:guardian, na",
+            "minecraft:ghast, mo",
+            "minecraft:guardian, ma",
             "minecraft:horse, v",
             "minecraft:husk, dn",
-            "minecraft:illusioner, no",
-            "minecraft:iron_golem, nao",
+            "minecraft:illusioner, mo",
+            "minecraft:iron_golem, mao",
             "minecraft:llama, v",
             "minecraft:mooshroom, v",
             "minecraft:mule, v",
@@ -154,9 +153,9 @@ public class CombatConfig {
             "minecraft:vex, v",
             "minecraft:villager, v",
             "minecraft:vindicator, o",
-            "minecraft:wandering_trader, nov",
+            "minecraft:wandering_trader, mov",
             "minecraft:wither, nv",
-            "minecraft:wither_skeleton, dno",
+            "minecraft:wither_skeleton, dmo",
             "minecraft:zoglin, n",
             "minecraft:zombie, dn",
             "minecraft:zombie_horse, v",
@@ -171,11 +170,11 @@ public class CombatConfig {
             "mowziesmobs:naga, a",
             "mutantbeasts:creeper_minion, v",
             "mutantbeasts:endersoul_clone, v",
-            "mutantbeasts:mutant_enderman, nao",
-            "mutantbeasts:mutant_skeleton, dno",
+            "mutantbeasts:mutant_enderman, mao",
+            "mutantbeasts:mutant_skeleton, dmo",
             "mutantbeasts:mutant_snow_golem, v",
             "mutantbeasts:mutant_zombie, n",
-            "mutantbeasts:spider_pig, n",
+            "mutantbeasts:spider_pig, m",
             "mysticalworld:beetle, v",
             "mysticalworld:deer, v",
             "mysticalworld:endermini, nao",
@@ -188,7 +187,7 @@ public class CombatConfig {
             "mysticalworld:sprout, v",
             "outer_end:chorus_squid, v",
             "outer_end:entombed, no",
-            "outer_end:purpur_golem, no",
+            "outer_end:purpur_golem, mo",
             "outer_end:spectrafly, v",
             "outer_end:stalker, n",
             "quark:crab, v",
@@ -202,7 +201,7 @@ public class CombatConfig {
             "quark:wrapped, d",
             "switchbow:entitylittleirongolem, av",
             "villagertools:guard, o",
-            "villagertools:reinforced_golem, na"
+            "villagertools:reinforced_golem, ma"
     };
     private static final String[] THANKS_DARKMEGA = {
             "example:sword, 3.5, 1.5, false, 1.25, 1.5",
@@ -2037,13 +2036,13 @@ public class CombatConfig {
         b.push("difficulty");
         _qiGrace = b.translation("wardance.config.qiG").comment("Number of ticks after gaining might during which it will not decrease").defineInRange("might grace period", 100, 1, Integer.MAX_VALUE);
         _comboGrace = b.translation("wardance.config.comboG").comment("Number of ticks after gaining combo during which it will not decrease").defineInRange("combo grace period", 100, 1, Integer.MAX_VALUE);
-        _spiritCD = b.translation("wardance.config.spiritC").comment("Number of ticks after consuming spirit during which it will not regenerate").defineInRange("spirit cooldown", 30, 1, Integer.MAX_VALUE);
+        _spiritCD = b.translation("wardance.config.spiritC").comment("Number of ticks after consuming spirit during which it will not regenerate").defineInRange("spirit cooldown", 60, 1, Integer.MAX_VALUE);
         _postureCD = b.translation("wardance.config.postureC").comment("Number of ticks after consuming posture during which it will not regenerate").defineInRange("posture cooldown", 20, 1, Integer.MAX_VALUE);
         _armorPostureCD = b.translation("wardance.config.postureA").comment("Number of ticks full diamond armor will add onto posture cooldown. This will scale linearly between nothing and diamond, so by default iron adds 15 ticks, for instance.").defineInRange("armor posture cooldown", 20, 1, Integer.MAX_VALUE);
         _mobScaler = b.translation("wardance.config.mobB").comment("posture damage from mob attacks will be scaled by this number").defineInRange("mob posture damage buff", 1.5, 0, Double.MAX_VALUE);
         _wound = b.translation("wardance.config.wound").comment("this percentage of incoming damage before armor is also added to wounding").defineInRange("wound percentage", 0.1, 0, 1d);
         _fatig = b.translation("wardance.config.fatigue").comment("this percentage of posture damage is also added to fatigue").defineInRange("fatigue percentage", 0.1, 0, 1d);
-        _burno = b.translation("wardance.config.burnout").comment("this percentage of stamina use is also added to burnout").defineInRange("burnout percentage", 0.1, 0, 1d);
+        _burno = b.translation("wardance.config.burnout").comment("this percentage of stamina use is also added to burnout").defineInRange("burnout percentage", 0.05, 0, 1d);
         _sleep = b.translation("wardance.config.sleeping").comment("whether sleeping clears wounding, fatigue, and burnout. Forced will make the act of lying on a bed, rather than waking up, the trigger, so change it to forced if it doesn't work.").defineEnum("sleeping heals decay", ThirdOption.TRUE);
         _knockbackNerf = b.translation("wardance.config.knockback").comment("knockback from all sources to everything will be multiplied by this amount").defineInRange("knockback multiplier", 1, 0, 10d);
         b.pop();
@@ -2062,7 +2061,7 @@ public class CombatConfig {
         _distract = b.translation("wardance.config.distract").comment("posture and health damage multiplier for distracted stabs").defineInRange("distracted stab multiplier", 1.5, 0, Double.MAX_VALUE);
         _unaware = b.translation("wardance.config.unaware").comment("posture and health damage multiplier for unaware stabs").defineInRange("unaware stab multiplier", 1.5, 0, Double.MAX_VALUE);
         _ignore = b.translation("wardance.config.ignore").comment("whether unaware stabs ignore parry, deflection, shatter, and absorption").define("unaware stab defense ignore", true);
-        _customDetection = b.translation("wardance.config.mobDetection").comment("Define custom detection mechanics for mobs. You may tag mobs as (d)eaf, (n)octurnal, (a)ll-seeing, (o)bservant, or (v)igilant. Deaf mobs ignore sound cues and armor reduction to stealth, nocturnal mobs ignore light level, all-seeing mobs ignore LoS modifiers, observant mobs ignore luck, vigilant mobs bypass the entire stealth and distraction system.").defineList("mob detection rules", Arrays.asList(SNEAK), String.class::isInstance);
+        _customDetection = b.translation("wardance.config.mobDetection").comment("Define custom detection mechanics for mobs. You may tag mobs as (a)ll-seeing, (d)eaf, (m)etaturnal, (n)octurnal, (o)bservant, or (v)igilant. Deaf mobs ignore sound cues and armor reduction to stealth, nocturnal mobs have the light modifier inverted, metaturnal mobs ignore light level (overriding nocturnal), all-seeing mobs ignore LoS modifiers, observant mobs ignore luck, vigilant mobs bypass the entire stealth and distraction system.").defineList("mob detection rules", Arrays.asList(SNEAK), String.class::isInstance);
         b.pop();
         b.push("lists");
         _combatItems = b.translation("wardance.config.combatItems").comment("Items eligible for parrying. Format should be name, attack posture consumption, defense multiplier, is shield. If the item is a shield, the next two numbers are their parry time and parry counter; if the item is a weapon, the next two numbers are distracted stab damage bonus and unaware stab damage bonus. Default values provided graciously by DarkMega, thank you!").defineList("combat items", Arrays.asList(THANKS_DARKMEGA), String.class::isInstance);

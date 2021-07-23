@@ -3,6 +3,7 @@ package jackiecrazy.wardance.skill;
 import jackiecrazy.wardance.WarDance;
 import jackiecrazy.wardance.capability.skill.CasterData;
 import jackiecrazy.wardance.capability.skill.ISkillCapability;
+import jackiecrazy.wardance.capability.status.StatusEffects;
 import jackiecrazy.wardance.event.SkillCastEvent;
 import jackiecrazy.wardance.event.SkillCooldownEvent;
 import net.minecraft.entity.LivingEntity;
@@ -80,14 +81,18 @@ public abstract class Skill extends ForgeRegistryEntry<Skill> {
         return getParentSkill() == null ? this : getParentSkill();
     }
 
+    public boolean isSelectable(LivingEntity caster) {
+        return true;
+    }
+
     public CastStatus castingCheck(LivingEntity caster) {
         ISkillCapability cap = CasterData.getCap(caster);
         for (String s : getIncompatibleTags(caster).getAllElements())
             if (cap.isTagActive(s)) return CastStatus.CONFLICT;
         if (cap.isSkillCoolingDown(this))
             return CastStatus.COOLDOWN;
-        if (getParentSkill() != null)
-            return getParentSkill().castingCheck(caster);
+//        if (getParentSkill() != null)
+//            return getParentSkill().castingCheck(caster);
         return CastStatus.ALLOWED;
     }
 
@@ -154,6 +159,17 @@ public abstract class Skill extends ForgeRegistryEntry<Skill> {
         return false;
     }
 
+    public boolean statusTick(LivingEntity caster, LivingEntity target, SkillData sd) {
+        if (this.getTags(caster).contains(SkillTags.afflict_tick)) {
+            sd.decrementDuration();
+        }
+        if (sd.getDuration() <= 0) {
+            StatusEffects.getCap(target).removeStatus(this);
+            return true;
+        }
+        return false;
+    }
+
     /**
      * @return whether the client should be updated.
      */
@@ -172,7 +188,7 @@ public abstract class Skill extends ForgeRegistryEntry<Skill> {
 
     public abstract void onSuccessfulProc(LivingEntity caster, SkillData stats, LivingEntity target, Event procPoint);
 
-    public boolean onCooldownProc(LivingEntity caster, SkillCooldownData stats, Event procPoint){
+    public boolean onCooldownProc(LivingEntity caster, SkillCooldownData stats, Event procPoint) {
         CasterData.getCap(caster).decrementSkillCooldown(this, 1);
         return true;
     }
@@ -194,6 +210,24 @@ public abstract class Skill extends ForgeRegistryEntry<Skill> {
     protected void markUsed(LivingEntity caster) {
         caster.world.playMovingSound(null, caster, SoundEvents.BLOCK_FIRE_EXTINGUISH, SoundCategory.AMBIENT, 0.3f + WarDance.rand.nextFloat() * 0.5f, 0.5f + WarDance.rand.nextFloat());
         CasterData.getCap(caster).markSkillUsed(this);
+    }
+
+    protected void afflict(LivingEntity caster, LivingEntity target, float duration) {
+        afflict(caster, target, duration, 0);
+    }
+
+    protected void afflict(LivingEntity caster, LivingEntity target, float duration, float arbitrary) {
+        StatusEffects.getCap(target).addStatus(new SkillData(this, duration).setCaster(caster).setArbitraryFloat(arbitrary));
+    }
+
+    public SkillData onStatusAdd(LivingEntity caster, LivingEntity target, SkillData sd, @Nullable SkillData existing) {
+        if (existing != null)
+            sd.setDuration(sd.getDuration() + existing.getDuration());
+        return sd;
+    }
+
+    public void onStatusEnd(LivingEntity caster, LivingEntity target, SkillData sd) {
+
     }
 
     public enum CastStatus {

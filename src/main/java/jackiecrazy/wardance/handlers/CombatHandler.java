@@ -47,6 +47,7 @@ import java.util.UUID;
 public class CombatHandler {
 
     private static final UUID uuid = UUID.fromString("98c361c7-de32-4f40-b129-d7752bac3712");
+    private static final UUID uuid2 = UUID.fromString("98c361c7-de32-4f40-b129-d7752bac3722");
     public static boolean downingHit = false;
 
     @SubscribeEvent
@@ -168,7 +169,7 @@ public class CombatHandler {
                     float might = CombatUtils.getAttackMight(seme, uke);
                     semeCap.addMight(might);
                 }
-                boolean canParry = GeneralUtils.isFacingEntity(uke, seme, 120) && (!(uke instanceof PlayerEntity) || CombatConfig.sneakParry == 0 || (uke.isSneaking() && EntityHandler.lastSneak.get((PlayerEntity) uke) < uke.ticksExisted + CombatConfig.sneakParry));//why does everyone want this feature...
+                boolean canParry = GeneralUtils.isFacingEntity(uke, seme, 120) && (!(uke instanceof PlayerEntity) || CombatConfig.sneakParry == 0 || (uke.isSneaking() && EntityHandler.lastSneak.getOrDefault((PlayerEntity) uke, Integer.MAX_VALUE) < uke.ticksExisted + CombatConfig.sneakParry));//why does everyone want this feature...
                 boolean useDeflect = (uke instanceof PlayerEntity || WarDance.rand.nextFloat() < CombatConfig.mobDeflectChance) && GeneralUtils.isFacingEntity(uke, seme, 120 + 2 * (int) GeneralUtils.getAttributeValueSafe(uke, WarAttributes.DEFLECTION.get())) && !canParry;
                 //staggered, no parry
                 if (ukeCap.getStaggerTime() > 0) {
@@ -218,6 +219,10 @@ public class CombatHandler {
                 float finalPostureConsumption = atkMult * defMult;
                 ParryEvent pe = new ParryEvent(uke, seme, ((canParry && defend != null) || useDeflect), attackingHand, attack, parryHand, defend, finalPostureConsumption, e.getAmount());
                 MinecraftForge.EVENT_BUS.post(pe);
+                if(pe.isCanceled()){
+                    e.setCanceled(true);
+                    return;
+                }
                 if (ukeCap.getStaggerTime() == 0) {
                     //overflow posture
                     float knockback = ukeCap.consumePosture(seme, pe.getPostureConsumption());
@@ -376,15 +381,20 @@ public class CombatHandler {
         if (ds.getImmediateSource() instanceof LivingEntity) {
             kek = (LivingEntity) ds.getImmediateSource();
         }
-        ItemStack sememain = uke.getHeldItemMainhand();
-        ItemStack semeoff = uke.getHeldItemMainhand();
-        if (uke.getHeldItemMainhand().getCapability(CombatManipulator.CAP).isPresent()) {
-            ICombatItemCapability icic = sememain.getCapability(CombatManipulator.CAP).resolve().get();
-            e.setAmount(icic.onBeingHurt(e.getSource(), uke, sememain, e.getAmount()));
+        if(ds instanceof CombatDamageSource){
+             float mult=((CombatDamageSource) ds).getArmorReductionPercentage()-1;
+            AttributeModifier armor = new AttributeModifier(uuid2, "temporary armor multiplier", mult, AttributeModifier.Operation.MULTIPLY_TOTAL);
+            uke.getAttribute(Attributes.ARMOR).applyNonPersistentModifier(armor);
         }
-        if (semeoff.getCapability(CombatManipulator.CAP).isPresent()) {
-            ICombatItemCapability icic = semeoff.getCapability(CombatManipulator.CAP).resolve().get();
-            e.setAmount(icic.onBeingHurt(e.getSource(), uke, semeoff, e.getAmount()));
+        ItemStack ukemain = uke.getHeldItemMainhand();
+        ItemStack ukeoff = uke.getHeldItemOffhand();
+        if (ukemain.getCapability(CombatManipulator.CAP).isPresent()) {
+            ICombatItemCapability icic = ukemain.getCapability(CombatManipulator.CAP).resolve().get();
+            e.setAmount(icic.onBeingHurt(e.getSource(), uke, ukemain, e.getAmount()));
+        }
+        if (ukeoff.getCapability(CombatManipulator.CAP).isPresent()) {
+            ICombatItemCapability icic = ukeoff.getCapability(CombatManipulator.CAP).resolve().get();
+            e.setAmount(icic.onBeingHurt(e.getSource(), uke, ukeoff, e.getAmount()));
         }
         ICombatCapability cap = CombatData.getCap(uke);
         cap.setSpiritGrace(CombatConfig.spiritCD);
@@ -425,6 +435,7 @@ public class CombatHandler {
     public static void tanky(LivingDamageEvent e) {
         final LivingEntity uke = e.getEntityLiving();
         uke.getAttribute(Attributes.ARMOR).removeModifier(uuid);
+        uke.getAttribute(Attributes.ARMOR).removeModifier(uuid2);
         if (e.getSource().getTrueSource() instanceof LivingEntity) {
             LivingEntity seme = ((LivingEntity) e.getSource().getTrueSource());
             if (CombatUtils.isMeleeAttack(e.getSource())) {

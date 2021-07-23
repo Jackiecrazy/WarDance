@@ -6,9 +6,11 @@ import jackiecrazy.wardance.capability.resources.CombatData;
 import jackiecrazy.wardance.capability.resources.ICombatCapability;
 import jackiecrazy.wardance.capability.skill.CasterData;
 import jackiecrazy.wardance.capability.skill.ISkillCapability;
+import jackiecrazy.wardance.capability.status.StatusEffects;
 import jackiecrazy.wardance.config.CombatConfig;
 import jackiecrazy.wardance.networking.CombatChannel;
 import jackiecrazy.wardance.networking.SyncSkillPacket;
+import jackiecrazy.wardance.potion.WarEffects;
 import jackiecrazy.wardance.utils.CombatUtils;
 import jackiecrazy.wardance.utils.GeneralUtils;
 import net.minecraft.entity.CreatureEntity;
@@ -47,7 +49,10 @@ import net.minecraftforge.fml.event.server.FMLServerStartingEvent;
 import net.minecraftforge.fml.event.server.FMLServerStoppingEvent;
 import net.minecraftforge.fml.network.PacketDistributor;
 
-import java.util.*;
+import java.util.EnumSet;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 @Mod.EventBusSubscriber(modid = WarDance.MODID)
@@ -74,6 +79,7 @@ public class EntityHandler {
     public static void caps(AttachCapabilitiesEvent<Entity> e) {
         if (e.getObject() instanceof LivingEntity) {
             e.addCapability(new ResourceLocation("wardance:combatinfo"), new CombatData((LivingEntity) e.getObject()));
+            e.addCapability(new ResourceLocation("wardance:statuseffects"), new StatusEffects((LivingEntity) e.getObject()));
             if (e.getObject() instanceof PlayerEntity)
                 e.addCapability(new ResourceLocation("wardance:casterinfo"), new CasterData((LivingEntity) e.getObject()));
         }
@@ -125,18 +131,27 @@ public class EntityHandler {
     @SubscribeEvent
     public static void tickMobs(LivingEvent.LivingUpdateEvent e) {
         LivingEntity elb = e.getEntityLiving();
-        if (!elb.world.isRemote && !(elb instanceof PlayerEntity)) {
-            if (elb instanceof MobEntity && CombatData.getCap(elb).getStaggerTime() == 0 && ((MobEntity) elb).getAttackTarget() != null) {
-                double safeSpace = (elb.getWidth()) * 2;
-                for (Entity fan : elb.world.getEntitiesWithinAABBExcludingEntity(elb, elb.getBoundingBox().grow(safeSpace))) {
-                    if (fan instanceof MonsterEntity && ((MobEntity) fan).getAttackTarget() == ((MobEntity) fan).getAttackTarget() &&
-                            GeneralUtils.getDistSqCompensated(fan, elb) < (safeSpace + 1) * safeSpace && fan != ((MobEntity) elb).getAttackTarget()) {
-                        //mobs "avoid" clumping together
-                        Vector3d diff = elb.getPositionVec().subtract(fan.getPositionVec());
-                        double targDistSq = elb.getDistanceSq(((MobEntity) elb).getAttackTarget());
-                        //targDistSq = Math.max(targDistSq, 1);
-                        //fan.addVelocity(diff.x == 0 ? 0 : -0.03 / diff.x, 0, diff.z == 0 ? 0 : -0.03 / diff.z);
-                        elb.addVelocity(diff.x == 0 ? 0 : MathHelper.clamp(0.5 / (diff.x * targDistSq), -1, 1), 0, diff.z == 0 ? 0 : MathHelper.clamp(0.5 / (diff.z * targDistSq), -1, 1));
+        if (!elb.world.isRemote ) {
+            if(elb.isPotionActive(WarEffects.PETRIFY.get())){
+                elb.rotationPitch=elb.prevRotationPitch;
+                elb.rotationYaw=elb.prevRotationYaw;
+                elb.rotationYawHead=elb.prevRotationYawHead;
+                elb.setHeadRotation(0,0);
+                elb.setMotion(0,0,0);
+            }
+            if (!(elb instanceof PlayerEntity)) {
+                StatusEffects.getCap(elb).update();
+                if (elb instanceof MobEntity && CombatData.getCap(elb).getStaggerTime() == 0 && ((MobEntity) elb).getAttackTarget() != null) {
+                    double safeSpace = (elb.getWidth()) * 2;
+                    for (Entity fan : elb.world.getEntitiesWithinAABBExcludingEntity(elb, elb.getBoundingBox().grow(safeSpace))) {
+                        if (fan instanceof MonsterEntity && ((MobEntity) fan).getAttackTarget() == ((MobEntity) fan).getAttackTarget() &&
+                                GeneralUtils.getDistSqCompensated(fan, elb) < (safeSpace + 1) * safeSpace && fan != ((MobEntity) elb).getAttackTarget()) {
+                            //mobs "avoid" clumping together
+                            Vector3d diff = elb.getPositionVec().subtract(fan.getPositionVec());
+                            double targDistSq = elb.getDistanceSq(((MobEntity) elb).getAttackTarget());
+                            //targDistSq = Math.max(targDistSq, 1);
+                            //fan.addVelocity(diff.x == 0 ? 0 : -0.03 / diff.x, 0, diff.z == 0 ? 0 : -0.03 / diff.z);
+                            elb.addVelocity(diff.x == 0 ? 0 : MathHelper.clamp(0.5 / (diff.x * targDistSq), -1, 1), 0, diff.z == 0 ? 0 : MathHelper.clamp(0.5 / (diff.z * targDistSq), -1, 1));
                         /*
                         The battle circle AI basically works like this (from an enemy's perspective):
 First, walk towards the player until I get within a "danger" radius
@@ -152,13 +167,14 @@ Of similar importance is the enemy attack rate. This is not the fastest possible
 As you would expect, a lower number increases pressure, but you should generally have this be several times higher than the real attack rate. You can make this rate a bit more unpredictable (and thus the amount of pressure slightly less predictable) by increasing attackRateFluctuation, which will increase or decrease the attack rate after each attack.
 Mobs should move into a position that is close to the player, far from allies, and close to them.
                          */
+                        }
                     }
                 }
+                //staggered mobs bypass update interval
+                ICombatCapability cap = CombatData.getCap(elb);
+                if (cap.getStaggerTime() > 0 || mustUpdate.containsValue(e.getEntity()) || elb.ticksExisted % CombatConfig.mobUpdateInterval == 0)
+                    cap.serverTick();
             }
-            //staggered mobs bypass update interval
-            ICombatCapability cap = CombatData.getCap(elb);
-            if (cap.getStaggerTime() > 0 || mustUpdate.containsValue(e.getEntity()) || elb.ticksExisted % CombatConfig.mobUpdateInterval == 0)
-                cap.serverTick();
         }
     }
 
@@ -185,7 +201,9 @@ Mobs should move into a position that is close to the player, far from allies, a
                 if (!sd.isNightVision() && !watcher.isPotionActive(Effects.NIGHT_VISION)) {
                     World world = sneaker.world;
                     if (world.isAreaLoaded(sneaker.getPosition(), 5) && world.isAreaLoaded(watcher.getPosition(), 5)) {
-                        float lightMalus = (15 - world.getLight(sneaker.getPosition())) * 0.05f;
+                        float lightMalus = world.getLight(sneaker.getPosition()) * 0.05f;
+                        if (!sd.isNocturnal())
+                            lightMalus = 1 - lightMalus;
                         if (!sd.isDeaf())
                             lightMalus *= Math.min(stealth / 20f, 1f);
                         e.modifyVisibility(1 - lightMalus);
@@ -276,7 +294,7 @@ Mobs should move into a position that is close to the player, far from allies, a
 
         @Override
         public boolean shouldExecute() {
-            return CombatData.getCap(e).isValid() && CombatData.getCap(e).getStaggerTime() > 0;
+            return (CombatData.getCap(e).isValid() && CombatData.getCap(e).getStaggerTime() > 0)||e.isPotionActive(WarEffects.PETRIFY.get())||e.isPotionActive(WarEffects.PARALYSIS.get())||e.isPotionActive(WarEffects.SLEEP.get());
         }
 
         @Override

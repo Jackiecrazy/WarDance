@@ -1,6 +1,7 @@
 package jackiecrazy.wardance.skill;
 
 public class SkillTags {
+    public static final String afflict_tick = "afflictionTick";
     public static final String change_awareness = "manipulateAwareness";
     public static final String change_heals = "manipulateHealing";
     public static final String change_might = "manipulateMight";
@@ -28,5 +29,6 @@ public class SkillTags {
     public static final String recharge_sleep = "rechargeWithSleep";
     public static final String recharge_time = "rechargeWithTime";
     public static final String state = "state";
+    public static final String unblockable = "unblockable";
 
 }

@@ -11,6 +11,7 @@ import jackiecrazy.wardance.skill.grapple.Clinch;
 import jackiecrazy.wardance.skill.grapple.Grapple;
 import jackiecrazy.wardance.skill.grapple.Submission;
 import jackiecrazy.wardance.skill.heavyblow.*;
+import jackiecrazy.wardance.skill.hex.Hex;
 import jackiecrazy.wardance.skill.ironguard.*;
 import jackiecrazy.wardance.skill.kick.*;
 import jackiecrazy.wardance.skill.mementomori.DeathDenial;
@@ -95,5 +96,11 @@ public class WarSkills {
     public static final RegistryObject<Skill> LIGHTS_OUT = SKILLS.register("lights_out", Descend.LightsOut::new);
     public static final RegistryObject<Skill> SHOCKWAVE = SKILLS.register("shockwave", Descend.Shockwave::new);
     public static final RegistryObject<Skill> TITANS_FALL = SKILLS.register("titans_fall", Descend.TitansFall::new);
+    public static final RegistryObject<Skill> HEX = SKILLS.register("hex", Hex::new);
+    public static final RegistryObject<Skill> ITCHY_CURSE = SKILLS.register("itchy_curse", Hex.ItchyCurse::new);
+    public static final RegistryObject<Skill> UNRAVEL = SKILLS.register("unravel", Hex.Unravel::new);
+    public static final RegistryObject<Skill> SNAKEBITE = SKILLS.register("snakebite", Hex.Snakebite::new);
+    public static final RegistryObject<Skill> BLACK_MARK = SKILLS.register("black_mark", Hex.BlackMark::new);
+    public static final RegistryObject<Skill> PETRIFY = SKILLS.register("petrify", Hex.Petrify::new);
 
 }

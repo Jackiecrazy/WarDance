@@ -45,7 +45,7 @@ import javax.annotation.Nullable;
 import java.util.*;
 
 public class CombatUtils {
-    public static final StealthData STEALTH = new StealthData(false, false, false, false, false);
+    public static final StealthData STEALTH = new StealthData(false, false, false, false, false, false);
     public static HashMap<ResourceLocation, Float> customPosture = new HashMap<>();
     public static HashMap<ResourceLocation, Tuple<Float, Float>> parryMap = new HashMap<>();
     public static HashMap<ResourceLocation, StealthData> stealthMap = new HashMap<>();
@@ -174,8 +174,8 @@ public class CombatUtils {
             try {
                 String[] val = s.split(",");
                 final ResourceLocation key = new ResourceLocation(val[0]);
-                String value=val[1];
-                CombatUtils.stealthMap.put(key, new StealthData(value.contains("d"), value.contains("n"), value.contains("a"), value.contains("o"), value.contains("v")));
+                String value = val[1];
+                CombatUtils.stealthMap.put(key, new StealthData(value.contains("d"), value.contains("m"), value.contains("a"), value.contains("o"), value.contains("v"), value.contains("n")));
 //                String print = val[0]+", ";
 //                StealthData sd = stealthMap.get(key);
 //                print = print.concat(sd.deaf ? "d" : "");
@@ -504,7 +504,7 @@ public class CombatUtils {
 
     private static boolean inWeb(LivingEntity e) {
         if (!e.world.isAreaLoaded(e.getPosition(), 5)) return false;
-        double minX=e.getPosX()-e.getWidth()/2, minY, minZ;
+        double minX = e.getPosX() - e.getWidth() / 2, minY, minZ;
         return e.world.getBlockState(e.getPosition()).getMaterial().equals(Material.WEB);//FIXME wrong!
     }
 
@@ -515,14 +515,15 @@ public class CombatUtils {
     }
 
     public static class StealthData {
-        private final boolean deaf, nightvision, illuminati, atheist, vigil;
+        private final boolean deaf, nightvision, illuminati, atheist, vigil, lightflip;
 
-        public StealthData(boolean isDeaf, boolean nightVision, boolean allSeeing, boolean observant, boolean vigilant) {
+        public StealthData(boolean isDeaf, boolean metaturnal, boolean allSeeing, boolean observant, boolean vigilant, boolean nocturnal) {
             deaf = isDeaf;
-            nightvision = nightVision;
+            nightvision = metaturnal;
             illuminati = allSeeing;
             atheist = observant;
             vigil = vigilant;
+            lightflip = nocturnal;
         }
 
         public boolean isDeaf() {
@@ -544,6 +545,9 @@ public class CombatUtils {
         public boolean isVigilant() {
             return vigil;
         }
+
+        public boolean isNocturnal() {return lightflip;}
+
     }
 
     private static class CombatInfo {

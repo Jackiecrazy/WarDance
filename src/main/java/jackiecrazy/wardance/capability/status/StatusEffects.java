@@ -11,7 +11,7 @@ import net.minecraftforge.common.util.LazyOptional;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
-public class StatusData implements ICapabilitySerializable<CompoundNBT> {
+public class StatusEffects implements ICapabilitySerializable<CompoundNBT> {
     private static IStatus OHNO=new DummyStatusCap();
 
     @CapabilityInject(IStatus.class)
@@ -23,7 +23,7 @@ public class StatusData implements ICapabilitySerializable<CompoundNBT> {
 
     private final LazyOptional<IStatus> instance;
 
-    public StatusData(LivingEntity e) {
+    public StatusEffects(LivingEntity e) {
         instance = LazyOptional.of(() -> new Status(e));
     }
 

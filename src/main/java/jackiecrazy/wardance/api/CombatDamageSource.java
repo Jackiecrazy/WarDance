@@ -19,9 +19,10 @@ public class CombatDamageSource extends EntityDamageSource {
     private boolean procSkillEffects = false;
     private boolean crit = false;
     private float cdmg = 1.5f;
+    private float armor = 1f;
     private TYPE damageTyping = TYPE.PHYSICAL;
 
-    public static CombatDamageSource inflictSelfHarm(LivingEntity to){
+    public static CombatDamageSource causeSelfDamage(LivingEntity to){
         return new CombatDamageSource("self", to);
     }
 
@@ -116,6 +117,15 @@ public class CombatDamageSource extends EntityDamageSource {
 
     public CombatDamageSource setProcSkillEffects(boolean procSkillEffects) {
         this.procSkillEffects = procSkillEffects;
+        return this;
+    }
+
+    public float getArmorReductionPercentage(){
+        return armor;
+    }
+
+    public CombatDamageSource setArmorReductionPercentage(float armorReductionPercentage){
+        armor=armorReductionPercentage;
         return this;
     }
 

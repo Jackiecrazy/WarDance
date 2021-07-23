@@ -21,7 +21,7 @@ public class WarEffects {
     //attacks against paralyzed targets apply the unaware bonus, paralyzed targets cannot move
     public static final RegistryObject<Effect> PARALYSIS = EFFECTS.register("paralysis", () -> new WarEffect(EffectType.HARMFUL, 0xc98fff).addAttributesModifier(Attributes.MOVEMENT_SPEED, "55FCED67-E92A-486E-9800-B47F202C4386", -1, AttributeModifier.Operation.MULTIPLY_TOTAL));
     //identical to paralysis, but adds 4 armor
-    public static final RegistryObject<Effect> PETRIFY = EFFECTS.register("petrify", () -> new WarEffect(EffectType.HARMFUL, 0xc98fff).addAttributesModifier(Attributes.MOVEMENT_SPEED, "55FCED67-E92A-486E-9800-B47F202C4386", -1, AttributeModifier.Operation.MULTIPLY_TOTAL).addAttributesModifier(Attributes.ARMOR, "55FCED67-E92A-486E-9800-B47F202C4386", 4, AttributeModifier.Operation.ADDITION));
+    public static final RegistryObject<Effect> PETRIFY = EFFECTS.register("petrify", () -> new WarEffect(EffectType.HARMFUL, 0xc98fff).addAttributesModifier(Attributes.MOVEMENT_SPEED, "55FCED67-E92A-486E-9800-B47F202C4386", -1, AttributeModifier.Operation.MULTIPLY_TOTAL).addAttributesModifier(Attributes.KNOCKBACK_RESISTANCE, "55FCED67-E92A-486E-9800-B47F202C4386", 100, AttributeModifier.Operation.ADDITION).addAttributesModifier(Attributes.ARMOR, "55FCED67-E92A-486E-9800-B47F202C4386", 4, AttributeModifier.Operation.ADDITION));
     //identical to paralysis, but only works once
     public static final RegistryObject<Effect> SLEEP = EFFECTS.register("sleep", () -> new WarEffect(EffectType.HARMFUL, 0xc98fff).addAttributesModifier(Attributes.MOVEMENT_SPEED, "55FCED67-E92A-486E-9800-B47F202C4386", -1, AttributeModifier.Operation.MULTIPLY_TOTAL));
     //increases incoming non-combat damage by potency

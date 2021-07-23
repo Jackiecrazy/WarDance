@@ -1,122 +1,51 @@
 package jackiecrazy.wardance.capability.status;
 
 import jackiecrazy.wardance.skill.Skill;
-import jackiecrazy.wardance.skill.SkillCooldownData;
 import jackiecrazy.wardance.skill.SkillData;
 import net.minecraft.nbt.CompoundNBT;
 
 import javax.annotation.Nullable;
-import java.util.*;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Optional;
 
 public class DummyStatusCap implements IStatus {
     private static final Map<Skill, SkillData> dummy = new HashMap<>();
-    private static final Map<Skill, SkillCooldownData> otherDummy = new HashMap<>();
-    private static final List<Skill> moreDummies = new ArrayList<>();
 
     @Nullable
     @Override
-    public Optional<SkillData> getActiveSkill(Skill s) {
+    public Optional<SkillData> getActiveStatus(Skill s) {
         return Optional.empty();
     }
 
     @Override
-    public void activateSkill(SkillData d) {
+    public void addStatus(SkillData d) {
 
     }
 
     @Override
-    public void removeActiveSkill(Skill s) {
+    public void removeStatus(Skill s) {
 
     }
 
     @Override
-    public Map<Skill, SkillData> getActiveSkills() {
+    public Map<Skill, SkillData> getActiveStatuses() {
         return dummy;
     }
 
     @Override
-    public void clearActiveSkills() {
+    public void clearStatuses() {
 
     }
 
     @Override
-    public boolean isSkillActive(Skill skill) {
-        return false;
-    }
-
-    @Override
-    public boolean isTagActive(String tag) {
-        return false;
-    }
-
-    @Override
-    public void removeActiveTag(String tag) {
-
-    }
-
-    @Override
-    public void markSkillUsed(Skill s) {
-
-    }
-
-    @Override
-    public void setSkillCooldown(Skill s, float amount) {
-
-    }
-
-    @Override
-    public boolean isSkillCoolingDown(Skill s) {
-        return false;
-    }
-
-    @Override
-    public void decrementSkillCooldown(Skill s, float amount) {
-
-    }
-
-    @Override
-    public void coolSkill(Skill s) {
-
-    }
-
-    @Override
-    public float getSkillCooldown(Skill s) {
-        return 0;
-    }
-
-    @Override
-    public float getMaxSkillCooldown(Skill s) {
-        return 0;
-    }
-
-    @Override
-    public Map<Skill, SkillCooldownData> getSkillCooldowns() {
-        return otherDummy;
-    }
-
-    @Override
-    public void clearSkillCooldowns() {
-
-    }
-
-    @Override
-    public List<Skill> getEquippedSkills() {
-        return moreDummies;
-    }
-
-    @Override
-    public void setEquippedSkills(List<Skill> skills) {
-
-    }
-
-    @Override
-    public boolean isSkillUsable(Skill skill) {
+    public boolean isStatusActive(Skill skill) {
         return false;
     }
 
     @Override
     public CompoundNBT write() {
-        return new CompoundNBT();
+        return null;
     }
 
     @Override
@@ -129,8 +58,5 @@ public class DummyStatusCap implements IStatus {
 
     }
 
-    @Override
-    public Skill[] getPastCasts() {
-        return new Skill[5];
-    }
+
 }

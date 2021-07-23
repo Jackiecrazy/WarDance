@@ -12,18 +12,15 @@ import net.minecraft.world.World;
 import java.util.UUID;
 
 public class SkillUtils {
-    public static void modifyAttribute(LivingEntity caster, Attribute a, UUID id, float amount, AttributeModifier.Operation op, SkillData d){
-        if (d.getArbitraryFloat() == 0 || d.getArbitraryFloat() != amount) {
-            caster.getAttribute(a).removeModifier(id);
-            if (amount > 0) {
-                AttributeModifier am=new AttributeModifier(id, "skill modifier", amount, op);
-                caster.getAttribute(a).applyNonPersistentModifier(am);
-            }
-            d.setArbitraryFloat(amount);
+    public static void modifyAttribute(LivingEntity caster, Attribute a, UUID id, float amount, AttributeModifier.Operation op, SkillData d) {
+        caster.getAttribute(a).removeModifier(id);
+        if (amount > 0) {
+            AttributeModifier am = new AttributeModifier(id, "skill modifier", amount, op);
+            caster.getAttribute(a).applyNonPersistentModifier(am);
         }
     }
 
-    public static void createCloud(World world, Entity entityIn, double x, double y, double z, float size, IParticleData type){
+    public static void createCloud(World world, Entity entityIn, double x, double y, double z, float size, IParticleData type) {
         AreaEffectCloudEntity areaeffectcloudentity = new AreaEffectCloudEntity(world, x, y, z);
         if (entityIn instanceof LivingEntity)
             areaeffectcloudentity.setOwner((LivingEntity) entityIn);

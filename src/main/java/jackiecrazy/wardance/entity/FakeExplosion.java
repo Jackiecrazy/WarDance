@@ -16,19 +16,19 @@ import net.minecraft.world.World;
 import javax.annotation.Nullable;
 import java.util.List;
 
-public class SpiritExplosion extends Explosion {
-    private float size, damage;
+public class FakeExplosion extends Explosion {
+    private float radius, damage;
     private World world;
-    public SpiritExplosion(World worldIn, @Nullable Entity entityIn, double x, double y, double z, float size, DamageSource ds, float damage) {
-        super(worldIn, entityIn, ds, null, x, y, z, size, false, Mode.NONE);
-        this.size = size * 2;
+    public FakeExplosion(World worldIn, @Nullable Entity entityIn, double x, double y, double z, float radius, DamageSource ds, float damage) {
+        super(worldIn, entityIn, ds, null, x, y, z, radius, false, Mode.NONE);
+        this.radius = radius * 2;
         world = worldIn;
         this.damage = damage;
 
     }
 
-    public static SpiritExplosion spirituallyExplode(World world, Entity entityIn, double x, double y, double z, float size, DamageSource damageSource, float damage) {
-        SpiritExplosion explosion = new SpiritExplosion(world, entityIn, x, y, z, size, damageSource, damage);
+    public static FakeExplosion explode(World world, Entity entityIn, double x, double y, double z, float size, DamageSource damageSource, float damage) {
+        FakeExplosion explosion = new FakeExplosion(world, entityIn, x, y, z, size, damageSource, damage);
         explosion.doExplosionA();
         explosion.doExplosionB(true);
         //oh wow, yikes
@@ -38,13 +38,13 @@ public class SpiritExplosion extends Explosion {
 
     public void doExplosionA() {
         if (getExploder() == null) return;
-        List<Entity> list = world.getEntitiesWithinAABBExcludingEntity(this.getExploder(), AxisAlignedBB.fromVector(getPosition()).grow(size));
-        net.minecraftforge.event.ForgeEventFactory.onExplosionDetonate(this.world, this, list, size * 2);
+        List<Entity> list = world.getEntitiesWithinAABBExcludingEntity(this.getExploder(), AxisAlignedBB.fromVector(getPosition()).grow(radius));
+        net.minecraftforge.event.ForgeEventFactory.onExplosionDetonate(this.world, this, list, radius * 2);
         Vector3d vector3d = getPosition();
 
         for (Entity entity : list) {
             if (!entity.isImmuneToExplosions() && !TargetingUtils.isAlly(entity, getExploder())) {
-                double percentage = MathHelper.sqrt(entity.getDistanceSq(vector3d)) / size;
+                double percentage = MathHelper.sqrt(entity.getDistanceSq(vector3d)) / radius;
                 if (percentage <= 1.0D) {
                     double xDiff = entity.getPosX() - vector3d.x;
                     double yDiff = entity.getPosYEye() - vector3d.y;

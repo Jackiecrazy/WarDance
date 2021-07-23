@@ -187,7 +187,7 @@ public class CombatCapability implements ICombatCapability {
         LivingEntity elb = dude.get();
         if (elb == null) return ret;
         if (!Float.isFinite(posture)) posture = getMaxPosture();
-        if (elb.isPotionActive(Effects.RESISTANCE)&&CombatConfig.resistance)
+        if (elb.isPotionActive(Effects.RESISTANCE) && CombatConfig.resistance)
             amount *= (1 - (elb.getActivePotionEffect(Effects.RESISTANCE).getAmplifier() + 1) * 0.2f);
         if (amount > getTrueMaxPosture() * CombatConfig.posCap && !force) {
             //hard cap, knock back
@@ -712,7 +712,7 @@ public class CombatCapability implements ICombatCapability {
             }
         }
         if (getSpiritGrace() == 0 && getStaggerTime() == 0 && getSpirit() < getMaxSpirit()) {
-            addSpirit(getPPT() * spExtra);
+            addSpirit(getSPT() * spExtra);
         }
         if (getMightGrace() == 0) {
             float over = qiExtra * 0.01f;
@@ -858,6 +858,20 @@ public class CombatCapability implements ICombatCapability {
 //            return getMaxPosture() * armorMod * speedMod * healthMod / (1.5f * CombatConfig.staggerDuration);
 //        }
         //0.2f
-        return (((getTrueMaxPosture() / (armorMod * 20)) * cooldownMod) + recovery) * exhaustMod * healthMod * poison;
+        return (((getMaxPosture() / (armorMod * 20)) * cooldownMod) + recovery) * exhaustMod * healthMod * poison;
+    }
+
+    private float getSPT() {
+        LivingEntity elb = dude.get();
+        if (elb == null) return 0;
+        int exp = elb.isPotionActive(Effects.POISON) ? (elb.getActivePotionEffect(Effects.POISON).getAmplifier() + 1) : 0;
+        float poison = 1;
+        for (int j = 0; j < exp; j++) {
+            poison *= CombatConfig.poison;
+        }
+        float exhaustMod = Math.max(0, elb.isPotionActive(WarEffects.EXHAUSTION.get()) ? 1 - elb.getActivePotionEffect(WarEffects.EXHAUSTION.get()).getAmplifier() * 0.2f : 1);
+        float armorMod = 5f + Math.min(elb.getTotalArmorValue(), 20) * 0.25f;
+        float healthMod = 0.25f + elb.getHealth() / elb.getMaxHealth() * 0.75f;
+        return (getMaxSpirit() / (armorMod * 20)) * exhaustMod * healthMod * poison;
     }
 }

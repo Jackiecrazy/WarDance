@@ -63,7 +63,7 @@ public class SkillSelectionScreen extends Screen {
 
     public SkillSelectionScreen() {
         super(new TranslationTextComponent("wardance.skillselection.title"));
-        this.skills = new ArrayList<>(Skill.variationMap.keySet());//hmm
+        this.skills = Skill.variationMap.keySet().stream().filter((a) -> CasterData.getCap(Minecraft.getInstance().player).isSkillSelectable(a)).collect(Collectors.toList());//hmm
         this.unsortedSkills = Collections.unmodifiableList(this.skills);
     }
 
