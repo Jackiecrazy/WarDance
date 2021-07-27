@@ -212,6 +212,7 @@ public class CombatCapability implements ICombatCapability {
             elb.getAttribute(Attributes.ARMOR).applyPersistentModifier(STAGGERA);
             elb.getAttribute(Attributes.ARMOR).removeModifier(MORE);
             elb.getAttribute(Attributes.ARMOR).applyPersistentModifier(STAGGERSA);
+            elb.dismount();
             staggerTickExisted = elb.ticksExisted;
             return -1f;
         }
@@ -732,9 +733,10 @@ public class CombatCapability implements ICombatCapability {
 
     @Override
     public void sync() {
+
         LivingEntity elb = dude.get();
         if (elb == null || elb.world.isRemote) return;
-        CombatChannel.INSTANCE.send(PacketDistributor.TRACKING_ENTITY.with(() -> elb), new UpdateClientPacket(elb.getEntityId(), write()));
+        CombatChannel.INSTANCE.send(PacketDistributor.TRACKING_ENTITY.with(() -> elb), new UpdateClientPacket(elb.getEntityId(), quickWrite()));
         if (!(elb instanceof FakePlayer) && elb instanceof ServerPlayerEntity)
             CombatChannel.INSTANCE.send(PacketDistributor.PLAYER.with(() -> (ServerPlayerEntity) elb), new UpdateClientPacket(elb.getEntityId(), write()));
 
@@ -753,22 +755,24 @@ public class CombatCapability implements ICombatCapability {
     @Override
     public void read(CompoundNBT c) {
         int temp = roll;
-        setMight(c.getFloat("qi"));
         setPosture(c.getFloat("posture"));
+        setTrueMaxPosture(c.getFloat("maxpos"));
+        setFatigue(c.getFloat("fatigue"));
+        setStaggerTime(c.getInt("staggert"));
+        lastUpdate = c.getLong("lastUpdate");
+        if(!c.contains("qi"))return;
+        setMight(c.getFloat("qi"));
         setCombo(c.getFloat("combo"));
         setSpirit(c.getFloat("spirit"));
-        setTrueMaxPosture(c.getFloat("maxpos"));
         setTrueMaxSpirit(c.getFloat("maxspi"));
         setBurnout(c.getFloat("burnout"));
         setWounding(c.getFloat("wounding"));
-        setFatigue(c.getFloat("fatigue"));
         setComboGrace(c.getInt("combocd"));
         setMightGrace(c.getInt("qicd"));
         setPostureGrace(c.getInt("posturecd"));
         setSpiritGrace(c.getInt("spiritcd"));
         setShieldTime(c.getInt("shield"));
         setStaggerCount(c.getInt("staggerc"));
-        setStaggerTime(c.getInt("staggert"));
         setOffhandCooldown(c.getInt("offhandcd"));
         setRollTime(c.getInt("roll"));
         setHandBind(Hand.MAIN_HAND, c.getInt("mainBind"));
@@ -781,7 +785,6 @@ public class CombatCapability implements ICombatCapability {
         setHandReel(Hand.MAIN_HAND, c.getFloat("mainReel"));
         setHandReel(Hand.OFF_HAND, c.getFloat("offReel"));
         recoveryTimer = c.getInt("stumble");
-        lastUpdate = c.getLong("lastUpdate");
         first = c.getBoolean("first");
         setTempItemStack(ItemStack.read(c.getCompound("temp")));
         if (dude.get() instanceof PlayerEntity) {
@@ -833,6 +836,16 @@ public class CombatCapability implements ICombatCapability {
         c.putBoolean("rolling", dude.get() instanceof PlayerEntity && ((PlayerEntity) dude.get()).getForcedPose() == Pose.SWIMMING);
         if (!tempOffhand.isEmpty())
             c.put("temp", tempOffhand.write(new CompoundNBT()));
+        return c;
+    }
+
+    public CompoundNBT quickWrite() {
+        CompoundNBT c = new CompoundNBT();
+        c.putFloat("posture", getPosture());
+        c.putFloat("maxpos", getTrueMaxPosture());
+        c.putFloat("fatigue", getFatigue());
+        c.putInt("staggert", getStaggerTime());
+        c.putLong("lastUpdate", lastUpdate);
         return c;
     }
 

@@ -46,7 +46,7 @@ public class FightingSpirit extends Skill {
             ICombatCapability cap = CombatData.getCap(caster);
             if (cap.getMight() == 0 && cap.getPosture() == cap.getMaxPosture() && cap.getSpirit() == cap.getMaxSpirit()) {
                 return new TranslationTextComponent("wardance:fighting_spirit.sleep.name");
-            }
+            }else return new TranslationTextComponent("wardance:fighting_spirit.nosleep.name");
         }
         return new TranslationTextComponent(this.getRegistryName().toString() + ".name");
     }
@@ -87,15 +87,13 @@ public class FightingSpirit extends Skill {
 
     @Override
     public boolean activeTick(LivingEntity caster, SkillData d) {
-        if (d.getDuration() == 0 && d.isCondition()) {
-            if (caster instanceof PlayerEntity)
-                ForgeEventFactory.onPlayerWakeup(((PlayerEntity) caster), false, false);
-        }
         return super.activeTick(caster, d);
     }
 
     @Override
     public void onEffectEnd(LivingEntity caster, SkillData stats) {
+        if (caster instanceof PlayerEntity && (caster.getAttribute(Attributes.MOVEMENT_SPEED).hasModifier(wrap) || stats.isCondition()))
+            ForgeEventFactory.onPlayerWakeup(((PlayerEntity) caster), false, false);
         caster.getAttribute(Attributes.MOVEMENT_SPEED).removeModifier(wrap);
         setCooldown(caster, 6000);
     }

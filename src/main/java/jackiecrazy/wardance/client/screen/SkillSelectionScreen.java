@@ -82,9 +82,9 @@ public class SkillSelectionScreen extends Screen {
     @Override
     public void init() {
         for (Skill mod : skills) {
-            listWidth = Math.max(listWidth, getFontRenderer().getStringWidth(mod.getDisplayName(null).getString()) + 10);
+            listWidth = Math.max(listWidth, getFontRenderer().getStringWidth(mod.getDisplayName(null).getString()) + 20);
         }
-        listWidth = Math.max(Math.min(listWidth, width / 5), 100);
+        listWidth = Math.max(Math.min(listWidth, width/5), 100);
         listWidth += listWidth % numButtons != 0 ? (numButtons - listWidth % numButtons) : 0;
 
         int skillCircleWidth = 150;

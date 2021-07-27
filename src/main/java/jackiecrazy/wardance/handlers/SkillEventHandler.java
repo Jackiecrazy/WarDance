@@ -32,10 +32,12 @@ public class SkillEventHandler {//TODO remove some checks on some tags so execut
         /**
          * Credit to Tamaized for figuring this out. Tamaized made AoV and TF, they're fun!
          */
-
+        //System.out.println("I really cannot replicate this, so here's some debug statements.");
         boolean flag = !e.wakeImmediately() && (!e.updateWorld() || e.getPlayer().world.isDaytime());
         if ((flag || CombatConfig.sleepingHealsDecay == CombatConfig.ThirdOption.FORCED) && e.getEntityLiving().isServerWorld()) {
+            //System.out.println("This means sleeping flags are called properly on the server.");
             if (CombatConfig.sleepingHealsDecay != CombatConfig.ThirdOption.FALSE) {
+                //System.out.println("Config option is true, resetting FBW.");
                 CombatData.getCap(e.getPlayer()).setFatigue(0);
                 CombatData.getCap(e.getPlayer()).setBurnout(0);
                 CombatData.getCap(e.getPlayer()).setWounding(0);
@@ -46,7 +48,7 @@ public class SkillEventHandler {//TODO remove some checks on some tags so execut
                     isc.coolSkill(s.getSkill());
                 }
             }
-        }
+        }else System.out.println(e.wakeImmediately() +" "+ !e.updateWorld() +" "+ e.getPlayer().world.isDaytime());
         //System.out.println("wakeImmediately: "+e.wakeImmediately()+", update world: "+e.updateWorld()+", is daytime: "+e.getPlayer().world.isDaytime()+", recharge: "+CombatConfig.sleepingHealsDecay);
 
     }
@@ -75,6 +77,7 @@ public class SkillEventHandler {//TODO remove some checks on some tags so execut
                 s.getSkill().onSuccessfulProc(e.getEntityLiving(), s, e.getEntityLiving(), e);
             }
         }
+        //System.out.println("crit "+e.isCanceled());
     }
 
     @SubscribeEvent
@@ -106,6 +109,7 @@ public class SkillEventHandler {//TODO remove some checks on some tags so execut
                     }
                 }
         }
+        //System.out.println("attack "+e.isCanceled());
     }
 
     @SubscribeEvent
@@ -118,6 +122,7 @@ public class SkillEventHandler {//TODO remove some checks on some tags so execut
                 s.getSkill().onSuccessfulProc(attacker, s, e.getEntityLiving(), e);
             }
         }
+        //System.out.println("might "+e.isCanceled());
     }
 
     @SubscribeEvent
@@ -216,6 +221,7 @@ public class SkillEventHandler {//TODO remove some checks on some tags so execut
                 s.getSkill().onSuccessfulProc(e.getAttacker(), s, e.getEntityLiving(), e);
             }
         }
+        //System.out.println("parry check "+e.isCanceled());
         if (!e.getEntityLiving().isServerWorld() || !e.canParry()) return;
         for (SkillData s : CasterData.getCap(e.getAttacker()).getActiveSkills().values()) {
             if (s.getSkill().getTags(e.getAttacker()).contains(SkillTags.on_being_parried)) {
@@ -233,6 +239,7 @@ public class SkillEventHandler {//TODO remove some checks on some tags so execut
                 s.onCooldownProc(e.getEntityLiving(), isc.getSkillCooldowns().get(s), e);
             }
         }
+        //System.out.println("parry "+e.isCanceled());
     }
 
     @SubscribeEvent

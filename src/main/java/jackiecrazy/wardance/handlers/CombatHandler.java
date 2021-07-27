@@ -47,7 +47,7 @@ import java.util.UUID;
 public class CombatHandler {
 
     private static final UUID uuid = UUID.fromString("98c361c7-de32-4f40-b129-d7752bac3712");
-    private static final UUID uuid2 = UUID.fromString("98c361c7-de32-4f40-b129-d7752bac3722");
+    private static final UUID uuid2 = UUID.fromString("98c361c8-de32-4f40-b129-d7752bac3722");
     public static boolean downingHit = false;
 
     @SubscribeEvent
@@ -83,6 +83,7 @@ public class CombatHandler {
             MinecraftForge.EVENT_BUS.post(pe);
             boolean sneaking = (!(uke instanceof PlayerEntity) || CombatConfig.sneakParry == 0 || (uke.isSneaking() && EntityHandler.lastSneak.get((PlayerEntity) uke) < uke.ticksExisted + CombatConfig.sneakParry));
             if (pe.getResult() == Event.Result.ALLOW || (defend != null && GeneralUtils.isFacingEntity(uke, projectile, 120) && sneaking && ukeCap.doConsumePosture(pe.getPostureConsumption()) && pe.getResult() == Event.Result.DEFAULT)) {
+                //System.out.println("the target has parried!");
                 e.setCanceled(true);
 //                if (projectile instanceof ProjectileEntity)
 //                    ((ProjectileEntity) projectile).setShooter(uke);//makes drowned tridents and skeleton arrows collectable, which is honestly silly
@@ -122,6 +123,7 @@ public class CombatHandler {
         if (!e.getEntityLiving().world.isRemote && e.getSource() != null && CombatUtils.isPhysicalAttack(e.getSource())) {
             LivingEntity uke = e.getEntityLiving();
             if (MovementUtils.hasInvFrames(uke)) {
+                //System.out.println("the target has inv frames.");
                 e.setCanceled(true);
             }
             ICombatCapability ukeCap = CombatData.getCap(uke);
@@ -134,10 +136,12 @@ public class CombatHandler {
                 Hand h = semeCap.isOffhandAttack() ? Hand.OFF_HAND : Hand.MAIN_HAND;
                 //hand bound or staggered, no attack
                 if (semeCap.getStaggerTime() > 0 || semeCap.getHandBind(h) > 0) {
+                    //System.out.println("the attacker's hands are bound.");
                     e.setCanceled(true);
                     return;
                 }
                 if (seme.getHeldItemMainhand().getCapability(CombatManipulator.CAP).isPresent()) {
+                    //System.out.println("the attacker's weapon is a capable weapon.");
                     e.setCanceled(seme.getHeldItemMainhand().getCapability(CombatManipulator.CAP).resolve().get().canAttack(e.getSource(), seme, uke, seme.getHeldItemMainhand(), e.getAmount()));
                 }
             }
@@ -148,7 +152,10 @@ public class CombatHandler {
     public static void parry(final LivingAttackEvent e) {
         if (!e.getEntityLiving().world.isRemote && e.getSource() != null && CombatUtils.isPhysicalAttack(e.getSource())) {
             LivingEntity uke = e.getEntityLiving();
-            if (MovementUtils.hasInvFrames(uke)) e.setCanceled(true);
+            if (MovementUtils.hasInvFrames(uke)){
+                //System.out.println("the target has inv-frames.");
+                e.setCanceled(true);
+            }
             ICombatCapability ukeCap = CombatData.getCap(uke);
             ItemStack attack = CombatUtils.getAttackingItemStack(e.getSource());
             if (CombatUtils.isMeleeAttack(e.getSource()) && e.getSource().getTrueSource() instanceof LivingEntity && attack != null && e.getAmount() > 0) {
@@ -158,6 +165,7 @@ public class CombatHandler {
                 Hand attackingHand = semeCap.isOffhandAttack() ? Hand.OFF_HAND : Hand.MAIN_HAND;
                 //hand bound or staggered, no attack
                 if (semeCap.getStaggerTime() > 0 || semeCap.getHandBind(attackingHand) > 0) {
+                    //System.out.println("the attacker is staggered or bound.");
                     e.setCanceled(true);
                     return;
                 }
@@ -220,6 +228,7 @@ public class CombatHandler {
                 ParryEvent pe = new ParryEvent(uke, seme, ((canParry && defend != null) || useDeflect), attackingHand, attack, parryHand, defend, finalPostureConsumption, e.getAmount());
                 MinecraftForge.EVENT_BUS.post(pe);
                 if(pe.isCanceled()){
+                    //System.out.println("parry has been canceled with the attack.");
                     e.setCanceled(true);
                     return;
                 }
@@ -283,7 +292,7 @@ public class CombatHandler {
                 }
 //                if (!(seme instanceof PlayerEntity))
 //                    CombatUtils.setHandCooldown(seme, Hand.MAIN_HAND, 0, false);
-            }
+            }//else System.out.println("the attack is not a melee attack, or the damage dealt was 0.");
             //shatter, at the rock bottom of the attack event, saving your protected butt.
             if (!uke.isActiveItemStackBlocking() && !e.isCanceled()) {
                 if (CombatUtils.isPhysicalAttack(e.getSource()) && CombatUtils.getAwareness(e.getSource().getImmediateSource() instanceof LivingEntity ? (LivingEntity) e.getSource().getImmediateSource() : null, uke) != CombatUtils.Awareness.UNAWARE) {
@@ -381,10 +390,14 @@ public class CombatHandler {
         if (ds.getImmediateSource() instanceof LivingEntity) {
             kek = (LivingEntity) ds.getImmediateSource();
         }
+        uke.getAttribute(Attributes.ARMOR).removeModifier(uuid);
+        uke.getAttribute(Attributes.ARMOR).removeModifier(uuid2);
         if(ds instanceof CombatDamageSource){
              float mult=((CombatDamageSource) ds).getArmorReductionPercentage()-1;
-            AttributeModifier armor = new AttributeModifier(uuid2, "temporary armor multiplier", mult, AttributeModifier.Operation.MULTIPLY_TOTAL);
-            uke.getAttribute(Attributes.ARMOR).applyNonPersistentModifier(armor);
+            if(mult!=0) {
+                AttributeModifier armor = new AttributeModifier(uuid2, "temporary armor multiplier", mult, AttributeModifier.Operation.MULTIPLY_TOTAL);
+                uke.getAttribute(Attributes.ARMOR).applyNonPersistentModifier(armor);
+            }
         }
         ItemStack ukemain = uke.getHeldItemMainhand();
         ItemStack ukeoff = uke.getHeldItemOffhand();

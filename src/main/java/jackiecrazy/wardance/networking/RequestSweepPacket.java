@@ -58,7 +58,8 @@ public class RequestSweepPacket {
                     if (!(sender.fallDistance > 0.0F && !sender.isOnLadder() && !sender.isInWater() && !sender.isPotionActive(Effects.BLINDNESS) && !sender.isPassenger()) && !sender.isSprinting() && sender.isOnGround() && d0 < (double) sender.getAIMoveSpeed())
                         CombatUtils.sweep(sender, sender.world.getEntityByID(updateClientPacket.id), h, GeneralUtils.getAttributeValueSafe(sender, ForgeMod.REACH_DISTANCE.get()));
                 }
-                CombatUtils.setHandCooldown(sender, h, 0, false);
+                if (h == Hand.OFF_HAND)
+                    CombatUtils.setHandCooldown(sender, h, 0, false);//FIXME test if this fixes terra blade
             });
             contextSupplier.get().setPacketHandled(true);
         }

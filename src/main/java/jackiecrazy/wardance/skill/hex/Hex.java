@@ -41,7 +41,7 @@ import java.util.*;
 @Mod.EventBusSubscriber(modid = WarDance.MODID)
 public class Hex extends Skill {
     private static final AttributeModifier HEX = new AttributeModifier(UUID.fromString("67fe7ef6-a398-4c62-9bb1-42edaa80e7b1"), "hex", -2, AttributeModifier.Operation.ADDITION);
-    private final Tag<String> tag = Tag.getTagFromContents(new HashSet<>(Arrays.asList("melee", "noDamage", "boundCast", SkillTags.afflict_tick, SkillTags.change_parry_result, "normalAttack", "countdown")));
+    private final Tag<String> tag = Tag.getTagFromContents(new HashSet<>(Arrays.asList("melee", "noDamage", "boundCast", SkillTags.afflict_tick, SkillTags.change_parry_result, SkillTags.recharge_time, "normalAttack", "countdown")));
     private final Tag<String> no = Tag.getTagFromContents(new HashSet<>(Arrays.asList("normalAttack")));
 
     @SubscribeEvent
@@ -125,6 +125,7 @@ public class Hex extends Skill {
 
     @Override
     public void onEffectEnd(LivingEntity caster, SkillData stats) {
+        setCooldown(caster, 300);
     }
 
     @Override
@@ -163,7 +164,7 @@ public class Hex extends Skill {
 
         @Override
         public void onSuccessfulProc(LivingEntity caster, SkillData stats, LivingEntity target, Event procPoint) {
-            if (procPoint instanceof ParryEvent && !((ParryEvent) procPoint).canParry()) {
+            if (procPoint instanceof ParryEvent && (!((ParryEvent) procPoint).canParry() || getTags(caster).contains(SkillTags.unblockable))) {
                 procPoint.setCanceled(true);
                 afflict(caster, target, 60);
                 markUsed(caster);
@@ -178,12 +179,12 @@ public class Hex extends Skill {
             }
             if (target.ticksExisted % 20 == 0)
                 sd.setArbitraryFloat(sd.getArbitraryFloat() + 1);
-            SkillUtils.modifyAttribute(target, Attributes.ARMOR, HEX.getID(), -sd.getArbitraryFloat() * 4, AttributeModifier.Operation.ADDITION, sd);
+            SkillUtils.modifyAttribute(target, Attributes.ARMOR, HEX.getID(), -sd.getArbitraryFloat() * 4, AttributeModifier.Operation.ADDITION);
             if (target.getTotalArmorValue() == 0 && sd.getArbitraryFloat() > 7) {
                 CombatData.getCap(target).setHandBind(Hand.MAIN_HAND, 60);
                 CombatData.getCap(target).setHandBind(Hand.OFF_HAND, 60);
                 sd.setDuration(60);
-                SkillUtils.modifyAttribute(target, Attributes.MOVEMENT_SPEED, HEX.getID(), -1, AttributeModifier.Operation.MULTIPLY_TOTAL, sd);
+                SkillUtils.modifyAttribute(target, Attributes.MOVEMENT_SPEED, HEX.getID(), -1, AttributeModifier.Operation.MULTIPLY_TOTAL);
             }
             if (sd.getDuration() <= 0) {
                 StatusEffects.getCap(target).removeStatus(this);
@@ -218,8 +219,8 @@ public class Hex extends Skill {
             if (target.ticksExisted % 20 == 0) {
                 sd.setArbitraryFloat(weegee + 1f);
             }
-            SkillUtils.modifyAttribute(target, Attributes.ARMOR, HEX.getID(), weegee, AttributeModifier.Operation.ADDITION, sd);
-            SkillUtils.modifyAttribute(target, Attributes.MOVEMENT_SPEED, HEX.getID(), -weegee / 10, AttributeModifier.Operation.MULTIPLY_TOTAL, sd);
+            SkillUtils.modifyAttribute(target, Attributes.ARMOR, HEX.getID(), weegee, AttributeModifier.Operation.ADDITION);
+            SkillUtils.modifyAttribute(target, Attributes.MOVEMENT_SPEED, HEX.getID(), -weegee / 10, AttributeModifier.Operation.MULTIPLY_TOTAL);
             if (sd.getDuration() == 1 && !sd.isCondition()) {
                 sd.setDuration(100);
                 sd.flagCondition(true);

@@ -217,7 +217,6 @@ Onslaught: casts heavy blow before every attack (this is a lot easier)
     }
 
     public static class CrowdPleaser extends Execution {
-        //TODO buff
         @Override
         public Color getColor() {
             return Color.CYAN;

@@ -267,6 +267,7 @@ public class CombatConfig {
             "ars_nouveau:apprentice_spell_book, 1, 2.0, true, 30, 0",
             "ars_nouveau:archmage_spell_book, 1, 2.0, true, 30, 0",
             "ars_nouveau:novice_spell_book, 1, 2.0, true, 30, 0",
+            "ars_nouveau:enchanters_shield, 3, 0.7, true, 40, 2",
             "artifacts:umbrella, 1.0, 0.8, true, 30, 2",
             "astral:phantasmal_axe, 3.2, 0.9, false, 1.1, 1.2",
             "astral:phantasmal_hoe, 0.3, 1.5, false, 1.4, 2",
@@ -1914,7 +1915,6 @@ public class CombatConfig {
     public static int staggerDurationMin;
     public static int staggerHits;
     public static float staggerDamage;
-    public static int mobUpdateInterval;
     public static int qiGrace;
     public static int comboGrace;
     public static int spiritCD;
@@ -1952,7 +1952,6 @@ public class CombatConfig {
     private final ForgeConfigSpec.IntValue _staggerDuration;
     private final ForgeConfigSpec.IntValue _staggerDurationMin;
     private final ForgeConfigSpec.IntValue _staggerHits;
-    private final ForgeConfigSpec.IntValue _mobUpdateInterval;
     private final ForgeConfigSpec.IntValue _qiGrace;
     private final ForgeConfigSpec.IntValue _comboGrace;
     private final ForgeConfigSpec.IntValue _spiritCD;
@@ -2046,7 +2045,6 @@ public class CombatConfig {
         _sleep = b.translation("wardance.config.sleeping").comment("whether sleeping clears wounding, fatigue, and burnout. Forced will make the act of lying on a bed, rather than waking up, the trigger, so change it to forced if it doesn't work.").defineEnum("sleeping heals decay", ThirdOption.TRUE);
         _knockbackNerf = b.translation("wardance.config.knockback").comment("knockback from all sources to everything will be multiplied by this amount").defineInRange("knockback multiplier", 1, 0, 10d);
         b.pop();
-        _mobUpdateInterval = b.translation("wardance.config.mobU").comment("Mobs are forced to sync to client every this number of ticks").defineInRange("forced mob update interval", 100, 1, Integer.MAX_VALUE);
         b.push("compat");
         _elenai = b.translation("wardance.config.elenaiCompat").comment("whether Elenai Dodge 2 compat is enabled. This disables sidesteps and rolls, turns dodging into a safety roll when staggered, and causes dodges to reset posture cooldown").define("enable Elenai Dodge compat", true);
         _elenaiP = b.translation("wardance.config.elenaiPosture").comment("if compat is enabled, whether posture cooldown disables feather recharging").define("feather posture", true);
@@ -2093,7 +2091,6 @@ public class CombatConfig {
         rollEndsAt = rollCooldown - CONFIG._rollThreshold.get();
         shieldThreshold = CONFIG._shieldThreshold.get();
         shieldCount = CONFIG._shieldCount.get();
-        mobUpdateInterval = CONFIG._mobUpdateInterval.get();
         qiGrace = CONFIG._qiGrace.get();
         comboGrace = CONFIG._comboGrace.get();
         spiritCD = CONFIG._spiritCD.get();

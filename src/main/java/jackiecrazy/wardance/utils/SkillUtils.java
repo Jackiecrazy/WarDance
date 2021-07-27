@@ -1,6 +1,5 @@
 package jackiecrazy.wardance.utils;
 
-import jackiecrazy.wardance.skill.SkillData;
 import net.minecraft.entity.AreaEffectCloudEntity;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.LivingEntity;
@@ -12,9 +11,9 @@ import net.minecraft.world.World;
 import java.util.UUID;
 
 public class SkillUtils {
-    public static void modifyAttribute(LivingEntity caster, Attribute a, UUID id, float amount, AttributeModifier.Operation op, SkillData d) {
+    public static void modifyAttribute(LivingEntity caster, Attribute a, UUID id, float amount, AttributeModifier.Operation op) {
         caster.getAttribute(a).removeModifier(id);
-        if (amount > 0) {
+        if (amount != 0) {
             AttributeModifier am = new AttributeModifier(id, "skill modifier", amount, op);
             caster.getAttribute(a).applyNonPersistentModifier(am);
         }

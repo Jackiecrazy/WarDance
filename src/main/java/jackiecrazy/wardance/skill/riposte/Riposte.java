@@ -1,4 +1,4 @@
-package jackiecrazy.wardance.skill.crownchampion;
+package jackiecrazy.wardance.skill.riposte;
 
 import jackiecrazy.wardance.WarDance;
 import jackiecrazy.wardance.capability.resources.CombatData;
@@ -33,12 +33,15 @@ import java.util.HashSet;
 import java.util.UUID;
 
 @Mod.EventBusSubscriber(modid = WarDance.MODID)
-public class CrownChampion extends Skill {
+public class Riposte extends Skill {
     /*
-vengeful might: 10% damage taken converted to might; highlight enemies that successfully damage you, and deal more damage to marked targets
-hidden might: +1 might on successful unaware stab; -30% detection distance at first, lose 3% per level of might and gain 3% speed
-prideful might: triple might gain, but clear everything on taking damage; shatter instantly cools down for every 3 might gained
-elemental might: +1 burn/snowball/poison/drown damage to targets you have attacked; +1 might for every mob that dies to environmental damage around you
+Riposte (passive): Parrying a foe marks them for 40 ticks. Hitting that target with any level of cooled down attack refreshes your hand you attacked with dealing the damage as if it was full and cools down defensive skills by +1. Can trigger and mark a foe every 60 ticks. (mostly for counter playing reeling).
+Upgrades
+Counter Kick: Riposte becomes a free kick, knocking the enemy back and dealing posture damage equivalent to the kick power at range 3.
+Savage Counter: Ripostes become a free stagger heavy attack requiring one might, otherwise it just acts as normal.
+Piercing Counter: Riposte attacks cannot be parried.
+Career Ender: Riposte's strike acts as if the enemy is unaware if it is not parried and ignores the parry if the damage that will be dealt is more than their current health left...
+Moment of Courage: If you parry an attack that should stagger you regardless of cooldown block the stagger and remain on nearly empty posture proccing riposte. If you manage to riposte in time gain back 50% posture and add your weapons damage to the posture damage of the attack. cooldown is tripled.
      */
     private static final UUID MULT = UUID.fromString("67fe7ef6-a398-4c65-9bb1-42edaa80e7b1");
     private final Tag<String> tag = Tag.getTagFromContents(new HashSet<>(Arrays.asList("passive", SkillTags.on_hurt, SkillTags.change_might)));
@@ -78,7 +81,7 @@ elemental might: +1 burn/snowball/poison/drown damage to targets you have attack
     @Nullable
     @Override
     public Skill getParentSkill() {
-        return this.getClass() == CrownChampion.class ? null : WarSkills.CROWN_CHAMPION.get();
+        return this.getClass() == Riposte.class ? null : WarSkills.CROWN_CHAMPION.get();
     }
 
     @Override
@@ -108,7 +111,7 @@ elemental might: +1 burn/snowball/poison/drown damage to targets you have attack
         SkillUtils.modifyAttribute(caster, Attributes.ATTACK_DAMAGE, MULT, 0.05f*might, AttributeModifier.Operation.MULTIPLY_BASE);
     }
 
-    public static class HiddenMight extends CrownChampion {
+    public static class HiddenMight extends Riposte {
         @Override
         public void onSuccessfulProc(LivingEntity caster, SkillData stats, LivingEntity target, Event procPoint) {
             super.onSuccessfulProc(caster, stats, target, procPoint);
@@ -129,14 +132,14 @@ elemental might: +1 burn/snowball/poison/drown damage to targets you have attack
         }
     }
 
-    public static class VengefulMight extends CrownChampion {
+    public static class VengefulMight extends Riposte {
         @Override
         public Color getColor() {
             return Color.RED;
         }
     }
 
-    public static class PridefulMight extends CrownChampion {
+    public static class PridefulMight extends Riposte {
         @Override
         public Color getColor() {
             return Color.ORANGE;
@@ -156,7 +159,7 @@ elemental might: +1 burn/snowball/poison/drown damage to targets you have attack
         }
     }
 
-    public static class ElementalMight extends CrownChampion {
+    public static class ElementalMight extends Riposte {
         @Override
         public void onSuccessfulProc(LivingEntity caster, SkillData stats, LivingEntity target, Event procPoint) {
             super.onSuccessfulProc(caster, stats, target, procPoint);

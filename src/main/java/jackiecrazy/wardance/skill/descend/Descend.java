@@ -71,11 +71,11 @@ app.mini1.cn,friend.mini1.cn,hostroom.mini1.cn,hwmdownload.mini1.cn,openroom.min
     @Override
     public boolean activeTick(LivingEntity caster, SkillData d) {
         //lasts until player touch ground again
-        if (d.isCondition() && caster.isOnGround()) {
+        if (d.isCondition() && caster.collidedVertically) {
             shockwave(caster, d);
             markUsed(caster);
             return true;
-        } else if (!caster.isOnGround()) d.flagCondition(true);
+        } else if (caster.collidedVertically) d.flagCondition(true);
         return super.activeTick(caster, d);
     }
 

@@ -118,8 +118,7 @@ public class EntityHandler {
             if (e.side != LogicalSide.SERVER) {
                 CombatData.getCap(e.player).clientTick();
                 return;
-            }
-            CombatData.getCap(e.player).serverTick();
+            }else CombatData.getCap(e.player).serverTick();
             CasterData.getCap(e.player).update();
             if (e.player.isSneaking()) {
                 if (!lastSneak.containsValue(e.player))
@@ -172,7 +171,7 @@ Mobs should move into a position that is close to the player, far from allies, a
                 }
                 //staggered mobs bypass update interval
                 ICombatCapability cap = CombatData.getCap(elb);
-                if (cap.getStaggerTime() > 0 || mustUpdate.containsValue(e.getEntity()) || elb.ticksExisted % CombatConfig.mobUpdateInterval == 0)
+                if (cap.getStaggerTime() > 0 || mustUpdate.containsValue(e.getEntity()))
                     cap.serverTick();
             }
         }

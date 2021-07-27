@@ -75,7 +75,7 @@ pound of flesh: active skill. Consumes all your spirit, and until your spirit re
     @Override
     public boolean activeTick(LivingEntity caster, SkillData d) {
         float health = 1 - (caster.getHealth() / GeneralUtils.getMaxHealthBeforeWounding(caster));
-        SkillUtils.modifyAttribute(caster, Attributes.ATTACK_DAMAGE, MULT, health / 2, AttributeModifier.Operation.MULTIPLY_TOTAL, d);
+        SkillUtils.modifyAttribute(caster, Attributes.ATTACK_DAMAGE, MULT, health / 2, AttributeModifier.Operation.MULTIPLY_TOTAL);
         return super.activeTick(caster, d);
     }
 
@@ -89,7 +89,7 @@ pound of flesh: active skill. Consumes all your spirit, and until your spirit re
         public boolean activeTick(LivingEntity caster, SkillData d) {
             //TODO reserve max spirit
             float lostHealth = GeneralUtils.getMaxHealthBeforeWounding(caster) - caster.getHealth();
-            SkillUtils.modifyAttribute(caster, Attributes.ARMOR, MULT, lostHealth, AttributeModifier.Operation.ADDITION, d);
+            SkillUtils.modifyAttribute(caster, Attributes.ARMOR, MULT, lostHealth, AttributeModifier.Operation.ADDITION);
             return super.activeTick(caster, d);
         }
     }
@@ -103,7 +103,7 @@ pound of flesh: active skill. Consumes all your spirit, and until your spirit re
         @Override
         public boolean activeTick(LivingEntity caster, SkillData d) {
             float lostHealth = 1 - (caster.getHealth() / GeneralUtils.getMaxHealthBeforeWounding(caster));
-            SkillUtils.modifyAttribute(caster, Attributes.LUCK, MULT, lostHealth * 10, AttributeModifier.Operation.ADDITION, d);
+            SkillUtils.modifyAttribute(caster, Attributes.LUCK, MULT, lostHealth * 10, AttributeModifier.Operation.ADDITION);
             return super.activeTick(caster, d);
         }
     }
