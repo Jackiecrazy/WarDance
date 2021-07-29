@@ -8,7 +8,10 @@ import jackiecrazy.wardance.capability.resources.ICombatCapability;
 import jackiecrazy.wardance.capability.skill.CasterData;
 import jackiecrazy.wardance.capability.weaponry.CombatManipulator;
 import jackiecrazy.wardance.capability.weaponry.ICombatItemCapability;
+import jackiecrazy.wardance.config.GeneralConfig;
 import jackiecrazy.wardance.config.CombatConfig;
+import jackiecrazy.wardance.config.ResourceConfig;
+import jackiecrazy.wardance.config.StealthConfig;
 import jackiecrazy.wardance.event.MeleeKnockbackEvent;
 import jackiecrazy.wardance.event.ParryEvent;
 import jackiecrazy.wardance.event.ProjectileParryEvent;
@@ -237,7 +240,7 @@ public class CombatHandler {
                     float knockback = ukeCap.consumePosture(seme, pe.getPostureConsumption());
                     CombatUtils.knockBack(uke, seme, Math.min(1.5f, knockback / (20f * ukeCap.getMaxPosture())), true, false);
                     //no parries if stabby
-                    if (CombatConfig.ignore && awareness == CombatUtils.Awareness.UNAWARE) return;
+                    if (StealthConfig.ignore && awareness == CombatUtils.Awareness.UNAWARE) return;
                     if (pe.canParry()) {
                         e.setCanceled(true);
                         downingHit = false;
@@ -410,7 +413,7 @@ public class CombatHandler {
             e.setAmount(icic.onBeingHurt(e.getSource(), uke, ukeoff, e.getAmount()));
         }
         ICombatCapability cap = CombatData.getCap(uke);
-        cap.setSpiritGrace(CombatConfig.spiritCD);
+        cap.setSpiritGrace(ResourceConfig.spiritCD);
         CombatUtils.Awareness awareness = CombatUtils.getAwareness(kek, uke);
         if (ds.getTrueSource() instanceof LivingEntity) {
             LivingEntity seme = ((LivingEntity) ds.getTrueSource());
@@ -428,7 +431,7 @@ public class CombatHandler {
                     cap.setCombo((float) (Math.floor(cap.getCombo()) / 2d));
             }
             double luckDiff = WarDance.rand.nextFloat() * (GeneralUtils.getAttributeValueSafe(seme, Attributes.LUCK)) - WarDance.rand.nextFloat() * (GeneralUtils.getAttributeValueSafe(uke, Attributes.LUCK));
-            e.setAmount(e.getAmount() + (float) luckDiff * CombatConfig.luck);
+            e.setAmount(e.getAmount() + (float) luckDiff * GeneralConfig.luck);
         }
         if (cap.getStaggerTime() > 0 && !cap.isFirstStaggerStrike()) {
             e.setAmount(e.getAmount() * CombatConfig.staggerDamage);
@@ -494,9 +497,9 @@ public class CombatHandler {
             cap.setFatigue(0);
             cap.setWounding(0);
             cap.setBurnout(0);
-        } else if (e.getAmount() > 0 && CombatConfig.woundWL == CombatConfig.woundList.contains(e.getSource().getDamageType()))//returns true if whitelist and included, or if blacklist and excluded
+        } else if (e.getAmount() > 0 && ResourceConfig.woundWL == ResourceConfig.woundList.contains(e.getSource().getDamageType()))//returns true if whitelist and included, or if blacklist and excluded
             //u hurt lol
-            cap.addWounding(e.getAmount() * CombatConfig.wound);
+            cap.addWounding(e.getAmount() * ResourceConfig.wound);
     }
 
     @SubscribeEvent(priority = EventPriority.LOWEST)

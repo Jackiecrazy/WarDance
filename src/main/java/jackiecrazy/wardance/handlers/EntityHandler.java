@@ -7,7 +7,8 @@ import jackiecrazy.wardance.capability.resources.ICombatCapability;
 import jackiecrazy.wardance.capability.skill.CasterData;
 import jackiecrazy.wardance.capability.skill.ISkillCapability;
 import jackiecrazy.wardance.capability.status.StatusEffects;
-import jackiecrazy.wardance.config.CombatConfig;
+import jackiecrazy.wardance.config.GeneralConfig;
+import jackiecrazy.wardance.config.StealthConfig;
 import jackiecrazy.wardance.networking.CombatChannel;
 import jackiecrazy.wardance.networking.SyncSkillPacket;
 import jackiecrazy.wardance.potion.WarEffects;
@@ -186,7 +187,7 @@ Mobs should move into a position that is close to the player, far from allies, a
 
     @SubscribeEvent
     public static void sneak(final LivingEvent.LivingVisibilityEvent e) {
-        if (e.getLookingEntity() instanceof LivingEntity && CombatConfig.stealthSystem) {
+        if (e.getLookingEntity() instanceof LivingEntity && StealthConfig.stealthSystem) {
             LivingEntity sneaker = e.getEntityLiving(), watcher = (LivingEntity) e.getLookingEntity();
             if (sneaker.getFireTimer() > 0) return;//you're on fire and it's super obvious!
             CombatUtils.StealthData sd = CombatUtils.stealthMap.getOrDefault(watcher.getType().getRegistryName(), CombatUtils.STEALTH);
@@ -195,7 +196,7 @@ Mobs should move into a position that is close to the player, far from allies, a
                 double stealth = GeneralUtils.getAttributeValueSafe(sneaker, WarAttributes.STEALTH.get());
                 if (stealth > 20)
                     e.modifyVisibility(10 / stealth - 10);
-                if (!sd.isAllSeeing() && !GeneralUtils.isFacingEntity(watcher, sneaker, Math.max(CombatConfig.baseHorizontalDetection, (int) ((20 - stealth) * CombatConfig.anglePerArmor)), Math.max(CombatConfig.baseVerticalDetection, (int) ((20 - stealth) * (20 - stealth)))))
+                if (!sd.isAllSeeing() && !GeneralUtils.isFacingEntity(watcher, sneaker, Math.max(StealthConfig.baseHorizontalDetection, (int) ((20 - stealth) * StealthConfig.anglePerArmor)), Math.max(StealthConfig.baseVerticalDetection, (int) ((20 - stealth) * (20 - stealth)))))
                     e.modifyVisibility(0.2);
                 if (!sd.isNightVision() && !watcher.isPotionActive(Effects.NIGHT_VISION)) {
                     World world = sneaker.world;
@@ -248,7 +249,7 @@ Mobs should move into a position that is close to the player, far from allies, a
     public static void pray(LivingSetAttackTargetEvent e) {
         if (e.getTarget() == null) return;
         int stealth = 20 - (int) GeneralUtils.getAttributeValueSafe(e.getTarget(), WarAttributes.STEALTH.get());
-        if (e.getEntityLiving() != null && CombatConfig.stealthSystem && !GeneralUtils.isFacingEntity(e.getEntityLiving(), e.getTarget(), Math.max(CombatConfig.baseHorizontalDetection, stealth * CombatConfig.anglePerArmor), Math.max(CombatConfig.baseVerticalDetection, stealth * stealth))) {
+        if (e.getEntityLiving() != null && StealthConfig.stealthSystem && !GeneralUtils.isFacingEntity(e.getEntityLiving(), e.getTarget(), Math.max(StealthConfig.baseHorizontalDetection, stealth * StealthConfig.anglePerArmor), Math.max(StealthConfig.baseVerticalDetection, stealth * stealth))) {
             CombatUtils.StealthData sd = CombatUtils.stealthMap.getOrDefault(e.getEntityLiving().getType().getRegistryName(), CombatUtils.STEALTH);
             if (sd.isVigilant() || sd.isObservant()) return;
             //outside of LoS, perform luck check. Pray to RNGesus!
@@ -261,7 +262,7 @@ Mobs should move into a position that is close to the player, far from allies, a
 
     @SubscribeEvent
     public static void nigerundayo(final PotionEvent.PotionAddedEvent e) {
-        if (e.getPotionEffect().getPotion() == Effects.BLINDNESS && CombatConfig.blindness && e.getEntityLiving() instanceof MobEntity)
+        if (e.getPotionEffect().getPotion() == Effects.BLINDNESS && GeneralConfig.blindness && e.getEntityLiving() instanceof MobEntity)
             ((MobEntity) e.getEntityLiving()).setAttackTarget(null);
     }
 

@@ -4,7 +4,7 @@ import jackiecrazy.wardance.WarDance;
 import jackiecrazy.wardance.capability.resources.CombatData;
 import jackiecrazy.wardance.capability.skill.CasterData;
 import jackiecrazy.wardance.capability.skill.ISkillCapability;
-import jackiecrazy.wardance.config.CombatConfig;
+import jackiecrazy.wardance.config.ResourceConfig;
 import jackiecrazy.wardance.event.*;
 import jackiecrazy.wardance.skill.Skill;
 import jackiecrazy.wardance.skill.SkillCooldownData;
@@ -34,9 +34,9 @@ public class SkillEventHandler {//TODO remove some checks on some tags so execut
          */
         //System.out.println("I really cannot replicate this, so here's some debug statements.");
         boolean flag = !e.wakeImmediately() && (!e.updateWorld() || e.getPlayer().world.isDaytime());
-        if ((flag || CombatConfig.sleepingHealsDecay == CombatConfig.ThirdOption.FORCED) && e.getEntityLiving().isServerWorld()) {
+        if ((flag || ResourceConfig.sleepingHealsDecay == ResourceConfig.ThirdOption.FORCED) && e.getEntityLiving().isServerWorld()) {
             //System.out.println("This means sleeping flags are called properly on the server.");
-            if (CombatConfig.sleepingHealsDecay != CombatConfig.ThirdOption.FALSE) {
+            if (ResourceConfig.sleepingHealsDecay != ResourceConfig.ThirdOption.FALSE) {
                 //System.out.println("Config option is true, resetting FBW.");
                 CombatData.getCap(e.getPlayer()).setFatigue(0);
                 CombatData.getCap(e.getPlayer()).setBurnout(0);

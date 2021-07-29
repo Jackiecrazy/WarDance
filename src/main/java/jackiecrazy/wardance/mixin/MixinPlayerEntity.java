@@ -3,7 +3,7 @@ package jackiecrazy.wardance.mixin;
 import jackiecrazy.wardance.api.CombatDamageSource;
 import jackiecrazy.wardance.capability.resources.CombatData;
 import jackiecrazy.wardance.capability.skill.CasterData;
-import jackiecrazy.wardance.config.CombatConfig;
+import jackiecrazy.wardance.config.GeneralConfig;
 import jackiecrazy.wardance.event.MeleeKnockbackEvent;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityType;
@@ -58,7 +58,7 @@ public abstract class MixinPlayerEntity extends LivingEntity {
     @Redirect(method = "attackTargetEntityWithCurrentItem",
             at = @At(value = "FIELD", target = "Lnet/minecraft/entity/player/PlayerEntity;distanceWalkedModified:F", opcode = Opcodes.GETFIELD))
     private float noSweep(PlayerEntity player) {
-        if (CombatConfig.betterSweep)
+        if (GeneralConfig.betterSweep)
             return Float.MAX_VALUE;
         return distanceWalkedModified;
     }

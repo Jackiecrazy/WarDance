@@ -1,6 +1,6 @@
 package jackiecrazy.wardance.mixin;
 
-import jackiecrazy.wardance.config.CombatConfig;
+import jackiecrazy.wardance.config.GeneralConfig;
 import jackiecrazy.wardance.utils.CombatUtils;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.item.ItemStack;
@@ -15,6 +15,6 @@ import java.util.function.Consumer;
 public class MixinSweepDurabilitySuppressor {
     @Inject(method = "damageItem", at = @At("HEAD"), cancellable = true)
     private void halt(int amount, LivingEntity entityIn, Consumer<LivingEntity> onBroken, CallbackInfo ci) {
-        if (!CombatConfig.sweepDurability && CombatUtils.isSweeping) ci.cancel();
+        if (!GeneralConfig.sweepDurability && CombatUtils.isSweeping) ci.cancel();
     }
 }

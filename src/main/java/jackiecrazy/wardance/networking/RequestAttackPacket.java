@@ -1,6 +1,7 @@
 package jackiecrazy.wardance.networking;
 
 import jackiecrazy.wardance.capability.resources.CombatData;
+import jackiecrazy.wardance.config.GeneralConfig;
 import jackiecrazy.wardance.utils.CombatUtils;
 import jackiecrazy.wardance.utils.GeneralUtils;
 import net.minecraft.entity.Entity;
@@ -53,7 +54,7 @@ public class RequestAttackPacket {
                 ServerPlayerEntity sender = contextSupplier.get().getSender();
                 if (sender != null) {
                     Entity e = sender.world.getEntityByID(updateClientPacket.id);
-                    if (e != null && GeneralUtils.getDistSqCompensated(sender, e) < GeneralUtils.getAttributeValueSafe(sender, ForgeMod.REACH_DISTANCE.get()) * GeneralUtils.getAttributeValueSafe(sender, ForgeMod.REACH_DISTANCE.get())) {
+                    if (e != null && (GeneralConfig.dual||updateClientPacket.main) && GeneralUtils.getDistSqCompensated(sender, e) < GeneralUtils.getAttributeValueSafe(sender, ForgeMod.REACH_DISTANCE.get()) * GeneralUtils.getAttributeValueSafe(sender, ForgeMod.REACH_DISTANCE.get())) {
                         if (!updateClientPacket.main) {
                             CombatUtils.swapHeldItems(sender);
                             CombatData.getCap(sender).setOffhandAttack(true);

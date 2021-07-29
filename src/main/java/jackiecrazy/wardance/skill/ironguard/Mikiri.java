@@ -25,7 +25,7 @@ public class Mikiri extends IronGuard {
 
     @Override
     public void onEffectEnd(LivingEntity caster, SkillData stats) {
-        setCooldown(caster, 4);
+        setCooldown(caster, 6);
     }
 
     @Override

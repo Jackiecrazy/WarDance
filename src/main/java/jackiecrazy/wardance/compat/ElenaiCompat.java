@@ -3,8 +3,7 @@ package jackiecrazy.wardance.compat;
 import com.elenai.elenaidodge2.api.DodgeEvent;
 import com.elenai.elenaidodge2.api.FeathersHelper;
 import jackiecrazy.wardance.capability.resources.CombatData;
-import jackiecrazy.wardance.config.CombatConfig;
-import jackiecrazy.wardance.utils.MovementUtils;
+import jackiecrazy.wardance.config.GeneralConfig;
 import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraftforge.eventbus.api.EventPriority;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
@@ -54,7 +53,7 @@ public class ElenaiCompat {
 
     @SubscribeEvent(priority = EventPriority.LOWEST)
     public static void dodge(DodgeEvent.ServerDodgeEvent e) {
-        if (CombatConfig.elenai && !e.isCanceled()) {
+        if (GeneralConfig.elenai && !e.isCanceled()) {
             CombatData.getCap(e.getPlayer()).consumePosture(0);
         }
     }

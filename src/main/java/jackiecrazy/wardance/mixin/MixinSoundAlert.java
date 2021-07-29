@@ -1,6 +1,6 @@
 package jackiecrazy.wardance.mixin;
 
-import jackiecrazy.wardance.config.CombatConfig;
+import jackiecrazy.wardance.config.StealthConfig;
 import jackiecrazy.wardance.handlers.EntityHandler;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.PlayerEntity;
@@ -24,7 +24,7 @@ public abstract class MixinSoundAlert {
         if (player != null && player.isSneaking()) return;
         //ServerLifecycleHooks.getCurrentServer().runAsync()
         if (category == SoundCategory.PLAYERS || category == SoundCategory.NEUTRAL)
-            EntityHandler.alertTracker.put(new Tuple<>(this.getWorld(), new BlockPos(x,y,z)), (float) (volume*CombatConfig.blockPerVolume));
+            EntityHandler.alertTracker.put(new Tuple<>(this.getWorld(), new BlockPos(x,y,z)), (float) (volume* StealthConfig.blockPerVolume));
     }
 
     @Inject(method = "playMovingSound", at = @At("TAIL"))
@@ -32,7 +32,7 @@ public abstract class MixinSoundAlert {
         if (player != null && player.isSneaking()) return;
         double x = entityIn.getPosX(), y = entityIn.getPosY(), z = entityIn.getPosZ();
         if (category == SoundCategory.PLAYERS || category == SoundCategory.NEUTRAL)
-            EntityHandler.alertTracker.put(new Tuple<>(this.getWorld(), new BlockPos(x,y,z)), (float) (volume*CombatConfig.blockPerVolume));
+            EntityHandler.alertTracker.put(new Tuple<>(this.getWorld(), new BlockPos(x,y,z)), (float) (volume*StealthConfig.blockPerVolume));
     }
 
 }

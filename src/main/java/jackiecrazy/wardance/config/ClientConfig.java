@@ -1,10 +1,14 @@
 package jackiecrazy.wardance.config;
 
+import com.google.common.collect.Lists;
 import jackiecrazy.wardance.WarDance;
+import jackiecrazy.wardance.client.ClientEvents;
 import net.minecraftforge.common.ForgeConfigSpec;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.config.ModConfig;
 import org.apache.commons.lang3.tuple.Pair;
+
+import java.util.List;
 
 public class ClientConfig {
     public static final ClientConfig CONFIG;
@@ -27,6 +31,7 @@ public class ClientConfig {
     private final ForgeConfigSpec.IntValue _yourPostureX;
     private final ForgeConfigSpec.IntValue _theirPostureY;
     private final ForgeConfigSpec.IntValue _theirPostureX;
+    private final ForgeConfigSpec.ConfigValue<List<? extends String>> _customPosture;
     public static boolean displayEnemyPosture;
     public static int mightX;
     public static int mightY;
@@ -42,25 +47,27 @@ public class ClientConfig {
     public ClientConfig(ForgeConfigSpec.Builder b) {
         _displayEnemyPosture = b.translation("wardance.config.displayPosture").comment("whether to display the posture of the entity looked at").define("displayEnemyPosture", true);
         b.push("might");
-        _qiX = b.translation("wardance.config.mightX").comment("might HUD x position from the center of the screen").defineInRange("might X", -32, -Integer.MAX_VALUE, Integer.MAX_VALUE);
-        _qiY = b.translation("wardance.config.mightY").comment("might HUD y position from the bottom of the screen").defineInRange("might Y", 0, 0, Integer.MAX_VALUE);
+        _qiX = b.translation("wardance.config.mightX").comment("might HUD x position from the left quartile of the screen").defineInRange("might X", -32, -Integer.MAX_VALUE, Integer.MAX_VALUE);
+        _qiY = b.translation("wardance.config.mightY").comment("might HUD y position from the bottom of the screen").defineInRange("might Y", 5, 0, Integer.MAX_VALUE);
         b.pop();
         b.push("spirit");
-        _spiritX = b.translation("wardance.config.spiritX").comment("spirit HUD x position from the center of the screen").defineInRange("spirit X", 0, -Integer.MAX_VALUE, Integer.MAX_VALUE);
-        _spiritY = b.translation("wardance.config.spiritY").comment("spirit HUD y position from the bottom of the screen").defineInRange("spirit Y", 0, 0, Integer.MAX_VALUE);
+        _spiritX = b.translation("wardance.config.spiritX").comment("spirit HUD x position from the right quartile of the screen").defineInRange("spirit X", 16, -Integer.MAX_VALUE, Integer.MAX_VALUE);
+        _spiritY = b.translation("wardance.config.spiritY").comment("spirit HUD y position from the bottom of the screen").defineInRange("spirit Y", 5, 0, Integer.MAX_VALUE);
         b.pop();
         b.push("combo");
-        _comboX = b.translation("wardance.config.comboX").comment("combo HUD x position from the left of the screen").defineInRange("combo X", -5, -Integer.MAX_VALUE, 0);
-        _comboY = b.translation("wardance.config.comboY").comment("combo HUD y position from the center of the screen").defineInRange("combo Y", 0, -Integer.MAX_VALUE, Integer.MAX_VALUE);
+        _comboX = b.translation("wardance.config.comboX").comment("x position of the combo HUD's center from the left of the screen").defineInRange("combo X", -40, -Integer.MAX_VALUE, 0);
+        _comboY = b.translation("wardance.config.comboY").comment("x position of the combo HUD's center the center of the screen").defineInRange("combo Y", -32, -Integer.MAX_VALUE, Integer.MAX_VALUE);
         b.pop();
         b.push("yours");
         _yourPostureX = b.translation("wardance.config.uPosX").comment("your posture bar X, defined as deviation from the center").defineInRange("yourPostureX", 0, -Integer.MAX_VALUE, Integer.MAX_VALUE);
-        _yourPostureY = b.translation("wardance.config.uPosY").comment("your posture bar Y, defined from the bottom of the screen").defineInRange("yourPostureY", 57, 0, Integer.MAX_VALUE);
+        _yourPostureY = b.translation("wardance.config.uPosY").comment("your posture bar Y, defined from the middle of the screen").defineInRange("yourPostureY", 0, -Integer.MAX_VALUE, Integer.MAX_VALUE);
         b.pop();
         b.push("theirs");
         _theirPostureX = b.translation("wardance.config.tPosX").comment("enemy posture bar X, defined as deviation from the center").defineInRange("theirPostureX", 0, -Integer.MAX_VALUE, Integer.MAX_VALUE);
         _theirPostureY = b.translation("wardance.config.tPosY").comment("enemy posture bar Y, defined from the top of the screen").defineInRange("theirPostureY", 20, 0, Integer.MAX_VALUE);
         b.pop();
+        _customPosture = b.translation("wardance.config.postureMobs").comment("whether a mob is rotated when it is staggered.").defineList("mob stagger rotation", Lists.newArrayList("example:dragon, false", "example:ghast, true"), String.class::isInstance);
+
     }
 
     public static void bake() {
@@ -75,6 +82,7 @@ public class ClientConfig {
         yourPostureY = CONFIG._yourPostureY.get();
         theirPostureX = CONFIG._theirPostureX.get();
         theirPostureY = CONFIG._theirPostureY.get();
+        ClientEvents.updateList(CONFIG._customPosture.get());
     }
 
     @SubscribeEvent

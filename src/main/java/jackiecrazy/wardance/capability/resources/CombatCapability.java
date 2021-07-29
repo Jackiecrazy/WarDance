@@ -2,7 +2,9 @@ package jackiecrazy.wardance.capability.resources;
 
 import jackiecrazy.wardance.WarDance;
 import jackiecrazy.wardance.api.WarAttributes;
+import jackiecrazy.wardance.config.GeneralConfig;
 import jackiecrazy.wardance.config.CombatConfig;
+import jackiecrazy.wardance.config.ResourceConfig;
 import jackiecrazy.wardance.event.StaggerEvent;
 import jackiecrazy.wardance.networking.CombatChannel;
 import jackiecrazy.wardance.networking.UpdateClientPacket;
@@ -79,7 +81,7 @@ public class CombatCapability implements ICombatCapability {
     public float addMight(float amount) {
         float temp = qi + amount;
         setMight(temp);
-        setMightGrace(CombatConfig.qiGrace);
+        setMightGrace(ResourceConfig.qiGrace);
         return temp % 10;
     }
 
@@ -132,8 +134,8 @@ public class CombatCapability implements ICombatCapability {
     public boolean consumeSpirit(float amount, float above) {
         if (spirit - amount < above) return false;
         spirit -= amount;
-        setBurnout(this.getBurnout() + amount * CombatConfig.burnout);
-        setSpiritGrace(CombatConfig.spiritCD);
+        setBurnout(this.getBurnout() + amount * ResourceConfig.burnout);
+        setSpiritGrace(ResourceConfig.spiritCD);
         return true;
     }
 
@@ -187,7 +189,7 @@ public class CombatCapability implements ICombatCapability {
         LivingEntity elb = dude.get();
         if (elb == null) return ret;
         if (!Float.isFinite(posture)) posture = getMaxPosture();
-        if (elb.isPotionActive(Effects.RESISTANCE) && CombatConfig.resistance)
+        if (elb.isPotionActive(Effects.RESISTANCE) && GeneralConfig.resistance)
             amount *= (1 - (elb.getActivePotionEffect(Effects.RESISTANCE).getAmplifier() + 1) * 0.2f);
         if (amount > getTrueMaxPosture() * CombatConfig.posCap && !force) {
             //hard cap, knock back
@@ -217,15 +219,15 @@ public class CombatCapability implements ICombatCapability {
             return -1f;
         }
         float weakness = 1;
-        float cooldown = CombatConfig.postureCD * weakness;
+        float cooldown = ResourceConfig.postureCD * weakness;
         if (elb != null) {
-            cooldown += CombatConfig.armorPostureCD * elb.getTotalArmorValue() / 20f;
+            cooldown += ResourceConfig.armorPostureCD * elb.getTotalArmorValue() / 20f;
             if (elb.isPotionActive(Effects.HUNGER))
                 for (int uwu = 0; uwu < elb.getActivePotionEffect(Effects.HUNGER).getAmplifier() + 1; uwu++)
-                    weakness *= CombatConfig.hunger;
+                    weakness *= GeneralConfig.hunger;
         }
         posture -= amount;
-        addFatigue(amount * CombatConfig.fatigue);
+        addFatigue(amount * ResourceConfig.fatigue);
         setPostureGrace((int) cooldown);
         recoveryTimer = (int) (cooldown * 1.5f) + CombatConfig.recovery;
         sync();
@@ -260,7 +262,7 @@ public class CombatCapability implements ICombatCapability {
 
     @Override
     public void setCombo(float amount) {
-//        if (WarCompat.elenaiDodge && dude.get() instanceof ServerPlayerEntity && CombatConfig.elenaiC) {
+//        if (WarCompat.elenaiDodge && dude.get() instanceof ServerPlayerEntity && ResourceConfig.elenaiC) {
 //            ElenaiCompat.manipulateRegenTime(dude.get(), );
 //        }
         combo = MathHelper.clamp(amount, 0, 10);
@@ -270,7 +272,7 @@ public class CombatCapability implements ICombatCapability {
     public float addCombo(float amount) {
         float overflow = Math.max(0, combo + amount - 10);
         setCombo(combo + amount);
-        setComboGrace(CombatConfig.comboGrace);
+        setComboGrace(ResourceConfig.comboGrace);
         return overflow;
     }
 
@@ -489,8 +491,8 @@ public class CombatCapability implements ICombatCapability {
     public void setWounding(float amount) {
         wounding = Math.max(0, amount);
         if (dude.get() != null) {
-            boolean reg = (ForgeRegistries.ENTITIES.getKey(dude.get().getType()) != null && CombatConfig.immortal.contains(ForgeRegistries.ENTITIES.getKey(dude.get().getType()).toString()));
-            if (!CombatConfig.immortalWL == reg) {
+            boolean reg = (ForgeRegistries.ENTITIES.getKey(dude.get().getType()) != null && ResourceConfig.immortal.contains(ForgeRegistries.ENTITIES.getKey(dude.get().getType()).toString()));
+            if (!ResourceConfig.immortalWL == reg) {
                 wounding = 0;
             }
             dude.get().getAttribute(Attributes.MAX_HEALTH).removeModifier(WOUND);
@@ -507,8 +509,8 @@ public class CombatCapability implements ICombatCapability {
     public void setFatigue(float amount) {
         fatigue = Math.max(0, amount);
         if (dude.get() != null) {
-            boolean reg = (ForgeRegistries.ENTITIES.getKey(dude.get().getType()) != null && CombatConfig.immortal.contains(ForgeRegistries.ENTITIES.getKey(dude.get().getType()).toString()));
-            if (!CombatConfig.immortalWL == reg) {
+            boolean reg = (ForgeRegistries.ENTITIES.getKey(dude.get().getType()) != null && ResourceConfig.immortal.contains(ForgeRegistries.ENTITIES.getKey(dude.get().getType()).toString()));
+            if (!ResourceConfig.immortalWL == reg) {
                 fatigue = 0;
             }
         }
@@ -523,8 +525,8 @@ public class CombatCapability implements ICombatCapability {
     public void setBurnout(float amount) {
         burnout = Math.max(0, amount);
         if (dude.get() != null) {
-            boolean reg = (ForgeRegistries.ENTITIES.getKey(dude.get().getType()) != null && CombatConfig.immortal.contains(ForgeRegistries.ENTITIES.getKey(dude.get().getType()).toString()));
-            if (!CombatConfig.immortalWL == reg) {
+            boolean reg = (ForgeRegistries.ENTITIES.getKey(dude.get().getType()) != null && ResourceConfig.immortal.contains(ForgeRegistries.ENTITIES.getKey(dude.get().getType()).toString()));
+            if (!ResourceConfig.immortalWL == reg) {
                 burnout = 0;
             }
         }
@@ -683,7 +685,7 @@ public class CombatCapability implements ICombatCapability {
         if (getPostureGrace() == 0 && getStaggerTime() == 0 && getPosture() < getMaxPosture()) {
             addPosture(getPPT() * (poExtra));
         }
-        float nausea = elb instanceof PlayerEntity || !elb.isPotionActive(Effects.NAUSEA) ? 0 : (elb.getActivePotionEffect(Effects.NAUSEA).getAmplifier() + 1) * CombatConfig.nausea;
+        float nausea = elb instanceof PlayerEntity || !elb.isPotionActive(Effects.NAUSEA) ? 0 : (elb.getActivePotionEffect(Effects.NAUSEA).getAmplifier() + 1) * GeneralConfig.nausea;
         addPosture(-nausea * ticks);
         if (shatterCD < 0) {
             shatterCD += ticks;
@@ -694,7 +696,7 @@ public class CombatCapability implements ICombatCapability {
         } else if (shattering) {
             shatterCD -= ticks;
             if (shatterCD < 0) {
-                shatterCD = -CombatConfig.shatterCooldown;
+                shatterCD = -ResourceConfig.shatterCooldown;
             }
         }
         if (elb instanceof PlayerEntity) {
@@ -855,7 +857,7 @@ public class CombatCapability implements ICombatCapability {
         int exp = elb.isPotionActive(Effects.POISON) ? (elb.getActivePotionEffect(Effects.POISON).getAmplifier() + 1) : 0;
         float poison = 1;
         for (int j = 0; j < exp; j++) {
-            poison *= CombatConfig.poison;
+            poison *= GeneralConfig.poison;
         }
         float exhaustMod = Math.max(0, elb.isPotionActive(WarEffects.EXHAUSTION.get()) ? 1 - elb.getActivePotionEffect(WarEffects.EXHAUSTION.get()).getAmplifier() * 0.2f : 1);
         float armorMod = 2.5f + Math.min(elb.getTotalArmorValue(), 20) * 0.125f;
@@ -868,7 +870,7 @@ public class CombatCapability implements ICombatCapability {
         //Vector3d spd = elb.getMotion();
         //float speedMod = (float) Math.min(1, 0.007f / (spd.x * spd.x + spd.z * spd.z));
 //        if (getStaggerTime() > 0) {
-//            return getMaxPosture() * armorMod * speedMod * healthMod / (1.5f * CombatConfig.staggerDuration);
+//            return getMaxPosture() * armorMod * speedMod * healthMod / (1.5f * ResourceConfig.staggerDuration);
 //        }
         //0.2f
         return (((getMaxPosture() / (armorMod * 20)) * cooldownMod) + recovery) * exhaustMod * healthMod * poison;
@@ -880,7 +882,7 @@ public class CombatCapability implements ICombatCapability {
         int exp = elb.isPotionActive(Effects.POISON) ? (elb.getActivePotionEffect(Effects.POISON).getAmplifier() + 1) : 0;
         float poison = 1;
         for (int j = 0; j < exp; j++) {
-            poison *= CombatConfig.poison;
+            poison *= GeneralConfig.poison;
         }
         float exhaustMod = Math.max(0, elb.isPotionActive(WarEffects.EXHAUSTION.get()) ? 1 - elb.getActivePotionEffect(WarEffects.EXHAUSTION.get()).getAmplifier() * 0.2f : 1);
         float armorMod = 5f + Math.min(elb.getTotalArmorValue(), 20) * 0.25f;

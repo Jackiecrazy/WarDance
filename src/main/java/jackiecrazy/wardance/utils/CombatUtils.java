@@ -7,8 +7,9 @@ import jackiecrazy.wardance.capability.resources.CombatData;
 import jackiecrazy.wardance.capability.resources.ICombatCapability;
 import jackiecrazy.wardance.capability.skill.CasterData;
 import jackiecrazy.wardance.capability.weaponry.CombatManipulator;
-import jackiecrazy.wardance.client.ClientEvents;
+import jackiecrazy.wardance.config.GeneralConfig;
 import jackiecrazy.wardance.config.CombatConfig;
+import jackiecrazy.wardance.config.StealthConfig;
 import jackiecrazy.wardance.event.AttackMightEvent;
 import jackiecrazy.wardance.event.EntityAwarenessEvent;
 import jackiecrazy.wardance.networking.CombatChannel;
@@ -33,10 +34,8 @@ import net.minecraft.potion.Effects;
 import net.minecraft.util.*;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.vector.Vector3d;
-import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.util.FakePlayer;
-import net.minecraftforge.fml.DistExecutor;
 import net.minecraftforge.fml.network.PacketDistributor;
 import net.minecraftforge.registries.ForgeRegistries;
 
@@ -55,8 +54,8 @@ public class CombatUtils {
     private static HashMap<Item, CombatInfo> combatList = new HashMap<>();
     private static ArrayList<Item> unarmed = new ArrayList<>();
 
-    public static void updateLists(List<? extends String> interpretC, List<? extends String> interpretP, List<? extends String> interpretA, List<? extends String> interpretM, List<? extends String> interpretU, List<? extends String> interpretS) {
-        DEFAULT = new CombatInfo(CombatConfig.defaultMultiplierPostureAttack, CombatConfig.defaultMultiplierPostureDefend, false, CombatConfig.shieldThreshold, CombatConfig.shieldCount, CombatConfig.distract, CombatConfig.unaware);
+    public static void updateLists(List<? extends String> interpretC, List<? extends String> interpretA, List<? extends String> interpretU) {
+        DEFAULT = new CombatInfo(CombatConfig.defaultMultiplierPostureAttack, CombatConfig.defaultMultiplierPostureDefend, false, CombatConfig.shieldThreshold, CombatConfig.shieldCount, StealthConfig.distract, StealthConfig.unaware);
         combatList = new HashMap<>();
         customPosture = new HashMap<>();
         armorStats = new HashMap<>();
@@ -84,7 +83,7 @@ public class CombatUtils {
             if (val.length > 3)
                 shield = Boolean.parseBoolean(val[3].trim());
             int pTime = CombatConfig.shieldThreshold, pCount = CombatConfig.shieldCount;
-            double distract = CombatConfig.distract, unaware = CombatConfig.unaware;
+            double distract = StealthConfig.distract, unaware = StealthConfig.unaware;
             if (shield) {
                 try {
                     pTime = Integer.parseInt(val[4].trim());
@@ -152,15 +151,9 @@ public class CombatUtils {
                 unarmed.add(ForgeRegistries.ITEMS.getValue(key));
             }
         }
-        for (String s : interpretP) {
-            try {
-                String[] val = s.split(",");
-                CombatUtils.customPosture.put(new ResourceLocation(val[0]), Float.parseFloat(val[1]));
+    }
 
-            } catch (Exception e) {
-                WarDance.LOGGER.warn("improperly formatted custom posture definition " + s + "!");
-            }
-        }
+    public static void updateMobParrying(List<? extends String> interpretM) {
         for (String s : interpretM) {
             try {
                 String[] val = s.split(",");
@@ -170,6 +163,9 @@ public class CombatUtils {
                 WarDance.LOGGER.warn("improperly formatted mob parrying definition " + s + "!");
             }
         }
+    }
+
+    public static void updateMobDetection(List<? extends String> interpretS) {
         for (String s : interpretS) {
             try {
                 String[] val = s.split(",");
@@ -188,14 +184,18 @@ public class CombatUtils {
                 WarDance.LOGGER.warn("improperly formatted mob stealth definition " + s + "!");
             }
         }
-        DistExecutor.safeRunWhenOn(Dist.CLIENT, () -> {
-            return new DistExecutor.SafeRunnable() {
-                @Override
-                public void run() {
-                    ClientEvents.updateList(interpretP);
-                }
-            };
-        });
+    }
+
+    public static void updateMobPosture(List<? extends String> interpretP) {
+        for (String s : interpretP) {
+            try {
+                String[] val = s.split(",");
+                CombatUtils.customPosture.put(new ResourceLocation(val[0]), Float.parseFloat(val[1]));
+
+            } catch (Exception e) {
+                WarDance.LOGGER.warn("improperly formatted custom posture definition " + s + "!");
+            }
+        }
     }
 
     public static float getCooledAttackStrength(LivingEntity e, Hand h, float adjustTicks) {
@@ -300,18 +300,19 @@ public class CombatUtils {
 
     public static float getAttackMight(LivingEntity seme, LivingEntity uke) {
         ICombatCapability semeCap = CombatData.getCap(seme);
-        final float magicNumber = 781.25f;
-        final float scale = 1f;
+        final float magicScale = 1.722f;
+        final float magicNumber = 781.25f;//magic numbers scale the modified formula to 0.2 per sword hit
         final float cooldownSq = semeCap.getCachedCooldown() * semeCap.getCachedCooldown();
-        final float period = CombatUtils.getCooldownPeriod(seme, Hand.MAIN_HAND);
-        float might = cooldownSq * period * Math.min(period, 13);//makes sure heavies don't scale forever, light ones are still puny
-        might *= ((scale / magicNumber) + 0.2f * (1 - scale)) * (1 + (semeCap.getCombo() / 10f));//combo and weird scale number
-        AttackMightEvent ame = new AttackMightEvent(seme, uke, might);
+        final double period = 1.0D / (seme.getAttribute(Attributes.ATTACK_SPEED).getValue() + 0.5d) * 20.0D;//+0.5 makes sure heavies don't scale forever, light ones are still puny
+        float might = cooldownSq * magicScale * (float) period * (float) period / magicNumber;
+        might *= (1 + (semeCap.getCombo() / 10f));//combo bonus
         float weakness = 1;
         if (seme.isPotionActive(Effects.WEAKNESS))
             for (int foo = 0; foo < seme.getActivePotionEffect(Effects.WEAKNESS).getAmplifier() + 1; foo++) {
-                weakness *= CombatConfig.weakness;
+                weakness *= GeneralConfig.weakness;
             }
+        might *= weakness;//weakness malus
+        AttackMightEvent ame = new AttackMightEvent(seme, uke, might);
         MinecraftForge.EVENT_BUS.post(ame);
         return might;
     }
@@ -400,7 +401,7 @@ public class CombatUtils {
     }
 
     public static double getDamageMultiplier(Awareness a, ItemStack is) {
-        if (!CombatConfig.stealthSystem || is == null) return 1;
+        if (!StealthConfig.stealthSystem || is == null) return 1;
         CombatInfo ci = combatList.getOrDefault(is.getItem(), DEFAULT);
         switch (a) {
             case DISTRACTED:
@@ -445,12 +446,12 @@ public class CombatUtils {
     }
 
     public static void sweep(LivingEntity e, Entity ignore, Hand h, double reach) {
-        if (!CombatConfig.betterSweep) return;
+        if (!GeneralConfig.betterSweep) return;
         if (h == Hand.OFF_HAND) {
             swapHeldItems(e);
             CombatData.getCap(e).setOffhandAttack(true);
         }
-        int angle = CombatData.getCap(e).getForcedSweep() > 0 ? CombatData.getCap(e).getForcedSweep() : EnchantmentHelper.getMaxEnchantmentLevel(Enchantments.SWEEPING, e) * CombatConfig.sweepAngle;
+        int angle = CombatData.getCap(e).getForcedSweep() > 0 ? CombatData.getCap(e).getForcedSweep() : EnchantmentHelper.getMaxEnchantmentLevel(Enchantments.SWEEPING, e) * GeneralConfig.sweepAngle;
         if (e.getHeldItemMainhand().getCapability(CombatManipulator.CAP).isPresent())
             angle = e.getHeldItemMainhand().getCapability(CombatManipulator.CAP).resolve().get().sweepArea(e, e.getHeldItemMainhand());
         float charge = Math.max(CombatUtils.getCooledAttackStrength(e, Hand.MAIN_HAND, 0.5f), CombatData.getCap(e).getCachedCooldown());
@@ -485,7 +486,7 @@ public class CombatUtils {
     }
 
     public static Awareness getAwareness(LivingEntity attacker, LivingEntity target) {
-        if (!CombatConfig.stealthSystem || target instanceof PlayerEntity || CombatUtils.stealthMap.getOrDefault(target.getType().getRegistryName(), CombatUtils.STEALTH).isVigilant())
+        if (!StealthConfig.stealthSystem || target instanceof PlayerEntity || CombatUtils.stealthMap.getOrDefault(target.getType().getRegistryName(), CombatUtils.STEALTH).isVigilant())
             return Awareness.ALERT;
         Awareness a = Awareness.ALERT;
         if (target.isPotionActive(WarEffects.SLEEP.get()) || target.isPotionActive(WarEffects.PARALYSIS.get()) || target.isPotionActive(WarEffects.PETRIFY.get()))
