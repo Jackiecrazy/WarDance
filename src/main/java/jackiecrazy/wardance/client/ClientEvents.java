@@ -164,7 +164,7 @@ public class ClientEvents {
             }
             ClientPlayerEntity cpe = Minecraft.getInstance().player;
             final ISkillCapability cap = CasterData.getCap(cpe);
-            if (cap.isSkillUsable(cap.getEquippedVariation(WarSkills.COUP_DE_GRACE.get()))) {
+            if (e != cpe && cap.isSkillUsable(cap.getEquippedVariation(WarSkills.COUP_DE_GRACE.get()))) {
                 //render coup icon on mob
                 CoupDeGrace cdg = (CoupDeGrace) (cap.getEquippedVariation(WarSkills.COUP_DE_GRACE.get()));
                 if (cdg.isValid(cpe, e) && e.ticksExisted % 10 == 0 && Minecraft.getInstance().world != null)
@@ -207,7 +207,7 @@ public class ClientEvents {
 
     @SubscribeEvent
     public static void handRaising(RenderHandEvent e) {
-        if (e.getHand().equals(Hand.MAIN_HAND)||!GeneralConfig.dual) return;
+        if (e.getHand().equals(Hand.MAIN_HAND) || !GeneralConfig.dual) return;
         AbstractClientPlayerEntity p = Minecraft.getInstance().player;
         if (p == null || (!CombatData.getCap(p).isCombatMode() && (p.swingingHand != Hand.OFF_HAND || !p.isSwingInProgress)) || !e.getItemStack().isEmpty())
             return;
@@ -417,28 +417,28 @@ public class ClientEvents {
                     stack.push();
                     int combowidth = 32;
                     int comboU = (int) (MathHelper.clamp(Math.floor(currentComboLevel), 0, 4)) * 32;
-                    int divisor=1;
-                    if(currentComboLevel>=4)
-                        divisor=2;
+                    int divisor = 1;
+                    if (currentComboLevel >= 4)
+                        divisor = 2;
                     if (currentComboLevel >= 6) {
                         combowidth = 34;
                         comboU = 158;
-                        divisor=3;
+                        divisor = 3;
                     }
                     if (currentComboLevel >= 9) {
                         combowidth = 64;
                         comboU = 194;
-                        fillHeight=32;
-                    }else if(divisor>1)
-                        fillHeight=(int)((currentComboLevel-divisor*2)/divisor*32f);
+                        fillHeight = 32;
+                    } else if (divisor > 1)
+                        fillHeight = (int) ((currentComboLevel - divisor * 2) / divisor * 32f);
                     else
-                        fillHeight=(int)((currentComboLevel-Math.floor(currentComboLevel))*32f);
+                        fillHeight = (int) ((currentComboLevel - Math.floor(currentComboLevel)) * 32f);
                     x = MathHelper.clamp(width - combowidth / 2 + ClientConfig.comboX, 0, width - combowidth);
                     y = MathHelper.clamp(height / 2 - 23 + ClientConfig.comboY, 0, height - 46);
                     mc.ingameGUI.blit(stack, x, y, comboU, 0, combowidth, 32);
                     //fancy fill percentage
 
-                    mc.ingameGUI.blit(stack, x, y+31-fillHeight, comboU, 63-fillHeight, combowidth, fillHeight);
+                    mc.ingameGUI.blit(stack, x, y + 31 - fillHeight, comboU, 63 - fillHeight, combowidth, fillHeight);
                     //TRIANGLE!
 //                    BufferBuilder bufferbuilder = Tessellator.getInstance().getBuffer();
 //                    bufferbuilder.begin(4, DefaultVertexFormats.POSITION_TEX);

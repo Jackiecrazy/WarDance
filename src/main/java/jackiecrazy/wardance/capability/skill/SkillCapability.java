@@ -94,7 +94,7 @@ public class SkillCapability implements ISkillCapability {
     public boolean isSkillActive(Skill skill) {
         if (activeSkills.containsKey(skill)) return true;
         if (skill.getParentSkill() == null)
-            for (Skill s : activeSkills.keySet()) {
+            for (Skill s : new ArrayList<>(activeSkills.keySet())) {
                 if (s.isFamily(skill)) return true;
             }
         return false;
@@ -102,8 +102,8 @@ public class SkillCapability implements ISkillCapability {
 
     @Override
     public boolean isTagActive(String tag) {
-        for (Map.Entry<Skill, SkillData> e : activeSkills.entrySet()) {
-            if (e.getKey().getTags(dude.get()).contains(tag))
+        for (Skill e : new ArrayList<>(activeSkills.keySet())) {
+            if (e.getTags(dude.get()).contains(tag))
                 return true;
         }
         return false;

@@ -48,7 +48,9 @@ public class CoupDeGrace extends Skill {
     @Override
     public CastStatus castingCheck(LivingEntity caster) {
         if (CasterData.getCap(caster).isSkillActive(this)) return CastStatus.ALLOWED;
-        return super.castingCheck(caster);
+        if (CasterData.getCap(caster).isSkillCoolingDown(this))
+            return CastStatus.COOLDOWN;
+        return CastStatus.ALLOWED;
     }
 
     @Override

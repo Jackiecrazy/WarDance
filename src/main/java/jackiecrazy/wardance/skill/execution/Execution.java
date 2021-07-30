@@ -85,11 +85,13 @@ Onslaught: casts heavy blow before every attack (this is a lot easier)
 
     @Override
     public CastStatus castingCheck(LivingEntity caster) {
-        if (CasterData.getCap(caster).isSkillActive(this)) return CastStatus.ALLOWED;
-        CastStatus cs = super.castingCheck(caster);
-        if (cs == CastStatus.ALLOWED && !CasterData.getCap(caster).isSkillActive(this) && CombatData.getCap(caster).getMight() < getMightNeeded())
+        if (CasterData.getCap(caster).isSkillActive(this))
+            return CastStatus.ALLOWED;
+        if (CasterData.getCap(caster).isSkillCoolingDown(this))
+            return CastStatus.COOLDOWN;
+        if (CombatData.getCap(caster).getMight() < getMightNeeded())
             return CastStatus.OTHER;
-        return cs;
+        return CastStatus.ALLOWED;
     }
 
     @Override

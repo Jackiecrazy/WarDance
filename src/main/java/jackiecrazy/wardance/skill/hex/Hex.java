@@ -297,7 +297,7 @@ public class Hex extends Skill {
     }
 
     public static class Unravel extends Hex {
-        private final Tag<String> tag = Tag.getTagFromContents(new HashSet<>(Arrays.asList("melee", "noDamage", "boundCast", SkillTags.unblockable, "normalAttack", "countdown")));
+        private final Tag<String> tag = Tag.getTagFromContents(new HashSet<>(Arrays.asList("melee", "noDamage", "boundCast", SkillTags.recharge_time, SkillTags.unblockable, "normalAttack", "countdown")));
 
         @Override
         public Tag<String> getTags(LivingEntity caster) {
