@@ -57,10 +57,7 @@ public class CombatUtils {
     public static void updateLists(List<? extends String> interpretC, List<? extends String> interpretA, List<? extends String> interpretU) {
         DEFAULT = new CombatInfo(CombatConfig.defaultMultiplierPostureAttack, CombatConfig.defaultMultiplierPostureDefend, false, CombatConfig.shieldThreshold, CombatConfig.shieldCount, StealthConfig.distract, StealthConfig.unaware);
         combatList = new HashMap<>();
-        customPosture = new HashMap<>();
         armorStats = new HashMap<>();
-        parryMap = new HashMap<>();
-        stealthMap = new HashMap<>();
         unarmed = new ArrayList<>();
         for (String s : interpretC) {
             String[] val = s.split(",");
@@ -154,6 +151,7 @@ public class CombatUtils {
     }
 
     public static void updateMobParrying(List<? extends String> interpretM) {
+        parryMap.clear();
         for (String s : interpretM) {
             try {
                 String[] val = s.split(",");
@@ -166,6 +164,7 @@ public class CombatUtils {
     }
 
     public static void updateMobDetection(List<? extends String> interpretS) {
+        stealthMap.clear();
         for (String s : interpretS) {
             try {
                 String[] val = s.split(",");
@@ -187,6 +186,7 @@ public class CombatUtils {
     }
 
     public static void updateMobPosture(List<? extends String> interpretP) {
+        customPosture.clear();
         for (String s : interpretP) {
             try {
                 String[] val = s.split(",");
@@ -504,9 +504,18 @@ public class CombatUtils {
     }
 
     private static boolean inWeb(LivingEntity e) {
-        if (!e.world.isAreaLoaded(e.getPosition(), 5)) return false;
-        double minX = e.getPosX() - e.getWidth() / 2, minY, minZ;
-        return e.world.getBlockState(e.getPosition()).getMaterial().equals(Material.WEB);//FIXME wrong!
+        if (!e.world.isAreaLoaded(e.getPosition(), (int) Math.ceil(e.getWidth()))) return false;
+        double minX = e.getPosX() - e.getWidth() / 2, minY = e.getPosY() - e.getHeight() / 2, minZ = e.getPosZ() - e.getWidth() / 2;
+        double maxX = e.getPosX() + e.getWidth() / 2, maxY = e.getPosY() + e.getHeight() / 2, maxZ = e.getPosZ() + e.getWidth() / 2;
+        for (double x = minX; x <= maxX; x++) {
+            for (double y = minY; y <= maxY; y++) {
+                for (double z = minZ; z <= maxZ; z++) {
+                    if(e.world.getBlockState(e.getPosition()).getMaterial().equals(Material.WEB))
+                        return true;
+                }
+            }
+        }
+        return false;
     }
 
     public enum Awareness {

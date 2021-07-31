@@ -40,6 +40,6 @@ public class Tackle extends Kick {
 
     @Override
     protected int distanceSq(){
-        return 16;
+        return 25;
     }
 }

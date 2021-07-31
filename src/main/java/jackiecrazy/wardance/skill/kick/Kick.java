@@ -74,7 +74,7 @@ public class Kick extends Skill {
     }
 
     protected int distanceSq(){
-        return 4;
+        return 9;
     }
 
     public static class Backflip extends Kick {

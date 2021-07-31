@@ -3,9 +3,9 @@ package jackiecrazy.wardance.skill.shieldbash;
 import jackiecrazy.wardance.WarDance;
 import jackiecrazy.wardance.capability.resources.CombatData;
 import jackiecrazy.wardance.potion.WarEffects;
-import jackiecrazy.wardance.skill.SkillTags;
 import jackiecrazy.wardance.skill.Skill;
 import jackiecrazy.wardance.skill.SkillData;
+import jackiecrazy.wardance.skill.SkillTags;
 import jackiecrazy.wardance.skill.WarSkills;
 import jackiecrazy.wardance.utils.CombatUtils;
 import net.minecraft.entity.LivingEntity;
@@ -75,6 +75,7 @@ public class ShieldBash extends Skill {
 
         protected void performEffect(LivingEntity caster, LivingEntity target) {
             target.addPotionEffect(new EffectInstance(Effects.NAUSEA, 40));
+            CombatUtils.knockBack(target, caster, 0.2f, true, false);
         }
     }
 

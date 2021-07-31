@@ -120,7 +120,7 @@ public class CombatConfig {
         kbNerf = CONFIG._knockbackNerf.get().floatValue();
         sneakParry = CONFIG._sneakParry.get();
         recovery = CONFIG._recovery.get();
-        CombatUtils.updateMobPosture(CONFIG._customParry.get());
+        CombatUtils.updateMobParrying(CONFIG._customParry.get());
     }
 
     @SubscribeEvent

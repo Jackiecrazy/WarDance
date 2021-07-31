@@ -638,7 +638,7 @@ public class ClientEvents {
     public static void sweepSwingOff(PlayerInteractEvent.RightClickEmpty e) {
         if (!rightClick && GeneralConfig.dual && e.getHand() == Hand.OFF_HAND && ((CombatUtils.isWeapon(e.getEntityLiving(), e.getItemStack()) || (e.getItemStack().isEmpty() && CombatData.getCap(e.getPlayer()).isCombatMode())))) {
             rightClick = true;
-            Entity n = getEntityLookedAt(e.getPlayer(), GeneralUtils.getAttributeValueSafe(e.getPlayer(), ForgeMod.REACH_DISTANCE.get()) - (e.getItemStack().isEmpty() || CombatUtils.isShield(e.getPlayer(), e.getItemStack()) ? 1 : 0));
+            Entity n = getEntityLookedAt(e.getPlayer(), GeneralUtils.getAttributeValueSafe(e.getPlayer(), ForgeMod.REACH_DISTANCE.get()) - (e.getItemStack().isEmpty() ? 1 : 0));
             e.getPlayer().swing(Hand.OFF_HAND, false);
             if (n != null)
                 CombatChannel.INSTANCE.sendToServer(new RequestAttackPacket(false, n));
@@ -660,7 +660,7 @@ public class ClientEvents {
     public static void sweepSwingOffItem(PlayerInteractEvent.RightClickItem e) {
         if (!rightClick && GeneralConfig.dual && e.getHand() == Hand.OFF_HAND && ((CombatUtils.isWeapon(e.getEntityLiving(), e.getItemStack()) || (e.getItemStack().isEmpty() && CombatData.getCap(e.getPlayer()).isCombatMode())))) {
             rightClick = true;
-            Entity n = getEntityLookedAt(e.getPlayer(), GeneralUtils.getAttributeValueSafe(e.getPlayer(), ForgeMod.REACH_DISTANCE.get()) - (e.getItemStack().isEmpty() || (CombatUtils.isShield(e.getPlayer(), e.getItemStack()) && !CasterData.getCap(e.getPlayer()).isSkillActive(WarSkills.RIM_PUNCH.get())) ? 1 : 0));
+            Entity n = getEntityLookedAt(e.getPlayer(), GeneralUtils.getAttributeValueSafe(e.getPlayer(), ForgeMod.REACH_DISTANCE.get()) - (e.getItemStack().isEmpty() ? 1 : 0));
             e.getPlayer().swing(Hand.OFF_HAND, false);
             if (n != null)
                 CombatChannel.INSTANCE.sendToServer(new RequestAttackPacket(false, n));
@@ -684,7 +684,7 @@ public class ClientEvents {
     public static void sweepSwingOffItemBlock(PlayerInteractEvent.RightClickBlock e) {
         if (!rightClick && GeneralConfig.dual && e.getHand() == Hand.OFF_HAND && ((CombatUtils.isWeapon(e.getEntityLiving(), e.getItemStack()) || (e.getItemStack().isEmpty() && CombatData.getCap(e.getPlayer()).isCombatMode())))) {
             rightClick = true;
-            Entity n = getEntityLookedAt(e.getPlayer(), GeneralUtils.getAttributeValueSafe(e.getPlayer(), ForgeMod.REACH_DISTANCE.get()) - (e.getItemStack().isEmpty() || (CombatUtils.isShield(e.getPlayer(), e.getItemStack()) && !CasterData.getCap(e.getPlayer()).isSkillActive(WarSkills.RIM_PUNCH.get())) ? 1 : 0));
+            Entity n = getEntityLookedAt(e.getPlayer(), GeneralUtils.getAttributeValueSafe(e.getPlayer(), ForgeMod.REACH_DISTANCE.get()) - (e.getItemStack().isEmpty() ? 1 : 0));
             e.getPlayer().swing(Hand.OFF_HAND, false);
             if (n != null)
                 CombatChannel.INSTANCE.sendToServer(new RequestAttackPacket(false, n));

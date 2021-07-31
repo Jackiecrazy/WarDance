@@ -19,6 +19,7 @@ import java.util.List;
 public class FakeExplosion extends Explosion {
     private float radius, damage;
     private World world;
+
     public FakeExplosion(World worldIn, @Nullable Entity entityIn, double x, double y, double z, float radius, DamageSource ds, float damage) {
         super(worldIn, entityIn, ds, null, x, y, z, radius, false, Mode.NONE);
         this.radius = radius * 2;
@@ -32,7 +33,7 @@ public class FakeExplosion extends Explosion {
         explosion.doExplosionA();
         explosion.doExplosionB(true);
         //oh wow, yikes
-        SkillUtils.createCloud(world, entityIn, x, y, z, size*2, ParticleTypes.EXPLOSION);
+        SkillUtils.createCloud(world, entityIn, x, y, z, size * 2, ParticleTypes.EXPLOSION);
         return explosion;
     }
 
@@ -61,8 +62,8 @@ public class FakeExplosion extends Explosion {
                         if (entity instanceof LivingEntity) {
                             d11 = ProtectionEnchantment.getBlastDamageReduction((LivingEntity) entity, densityReducedPerc);
                         }
-
-                        entity.setMotion(entity.getMotion().add(xDiff * d11, yDiff * d11, zDiff * d11));
+                        if (entity != getDamageSource().getTrueSource())
+                            entity.setMotion(entity.getMotion().add(xDiff * d11, yDiff * d11, zDiff * d11));
                     }
                 }
             }
