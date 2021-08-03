@@ -175,12 +175,9 @@ public class CoupDeGrace extends Skill {
 
         protected void deathCheck(LivingEntity caster, LivingEntity target, float amount) {
             final ICombatCapability cap = CombatData.getCap(caster);
-            cap.addFatigue(-amount / 10);
-            cap.addWounding(-amount / 10);
-            cap.addBurnout(-amount / 10);
-            cap.addPosture(amount / 10);
-            cap.addSpirit(amount / 10);
-            caster.heal(amount / 10);
+            cap.addFatigue(-1);
+            cap.addWounding(-1);
+            cap.addBurnout(-1);
         }
     }
 

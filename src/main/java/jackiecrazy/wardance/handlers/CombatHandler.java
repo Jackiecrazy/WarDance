@@ -84,7 +84,7 @@ public class CombatHandler {
             Entity projectile = e.getEntity();
             ProjectileParryEvent pe = new ProjectileParryEvent(uke, projectile, h, defend, free ? 0 : consume, projectile.getMotion().mul(-0.2, -0.2, -0.2));
             MinecraftForge.EVENT_BUS.post(pe);
-            boolean sneaking = (!(uke instanceof PlayerEntity) || CombatConfig.sneakParry == 0 || (uke.isSneaking() && EntityHandler.lastSneak.get((PlayerEntity) uke) < uke.ticksExisted + CombatConfig.sneakParry));
+            boolean sneaking = (!(uke instanceof PlayerEntity) || CombatConfig.sneakParry == 0 || (ukeCap.getParryingTick() < uke.ticksExisted + CombatConfig.sneakParry));
             if (pe.getResult() == Event.Result.ALLOW || (defend != null && GeneralUtils.isFacingEntity(uke, projectile, 120) && sneaking && ukeCap.doConsumePosture(pe.getPostureConsumption()) && pe.getResult() == Event.Result.DEFAULT)) {
                 //System.out.println("the target has parried!");
                 e.setCanceled(true);
@@ -155,7 +155,7 @@ public class CombatHandler {
     public static void parry(final LivingAttackEvent e) {
         if (!e.getEntityLiving().world.isRemote && e.getSource() != null && CombatUtils.isPhysicalAttack(e.getSource())) {
             LivingEntity uke = e.getEntityLiving();
-            if (MovementUtils.hasInvFrames(uke)){
+            if (MovementUtils.hasInvFrames(uke)) {
                 //System.out.println("the target has inv-frames.");
                 e.setCanceled(true);
             }
@@ -180,16 +180,21 @@ public class CombatHandler {
                     float might = CombatUtils.getAttackMight(seme, uke);
                     semeCap.addMight(might);
                 }
-                boolean canParry = GeneralUtils.isFacingEntity(uke, seme, 120) && (!(uke instanceof PlayerEntity) || CombatConfig.sneakParry == 0 || (uke.isSneaking() && EntityHandler.lastSneak.getOrDefault((PlayerEntity) uke, Integer.MAX_VALUE) < uke.ticksExisted + CombatConfig.sneakParry));//why does everyone want this feature...
-                boolean useDeflect = (uke instanceof PlayerEntity || WarDance.rand.nextFloat() < CombatConfig.mobDeflectChance) && GeneralUtils.isFacingEntity(uke, seme, 120 + 2 * (int) GeneralUtils.getAttributeValueSafe(uke, WarAttributes.DEFLECTION.get())) && !canParry;
-                //staggered, no parry
-                if (ukeCap.getStaggerTime() > 0) {
-                    downingHit = false;
-                    return;
-                }
                 //blocking, reset posture cooldown without resetting combo cooldown, bypass parry
                 if (uke.isActiveItemStackBlocking()) {
                     ukeCap.consumePosture(0);
+                    return;
+                }
+                if (uke instanceof PlayerEntity && CombatConfig.sneakParry > 0 && (ukeCap.getParryingTick() > uke.ticksExisted || ukeCap.getParryingTick() < uke.ticksExisted - CombatConfig.sneakParry)) {
+                    //manual parry toggle
+                    // why does everyone want this feature...
+                    return;
+                }
+                boolean canParry = GeneralUtils.isFacingEntity(uke, seme, 120);
+                boolean useDeflect = (uke instanceof PlayerEntity || WarDance.rand.nextFloat() < CombatConfig.mobDeflectChance) && GeneralUtils.isFacingEntity(uke, seme, 120 + 2 * (int) GeneralUtils.getAttributeValueSafe(uke, WarAttributes.DEFLECTION.get())) && !GeneralUtils.isFacingEntity(uke, seme, 120) && !canParry;
+                //staggered, no parry
+                if (ukeCap.getStaggerTime() > 0) {
+                    downingHit = false;
                     return;
                 }
                 //parry code start, grab attack multiplier
@@ -230,7 +235,7 @@ public class CombatHandler {
                 float finalPostureConsumption = atkMult * defMult;
                 ParryEvent pe = new ParryEvent(uke, seme, ((canParry && defend != null) || useDeflect), attackingHand, attack, parryHand, defend, finalPostureConsumption, e.getAmount());
                 MinecraftForge.EVENT_BUS.post(pe);
-                if(pe.isCanceled()){
+                if (pe.isCanceled()) {
                     //System.out.println("parry has been canceled with the attack.");
                     e.setCanceled(true);
                     return;
@@ -395,9 +400,9 @@ public class CombatHandler {
         }
         uke.getAttribute(Attributes.ARMOR).removeModifier(uuid);
         uke.getAttribute(Attributes.ARMOR).removeModifier(uuid2);
-        if(ds instanceof CombatDamageSource){
-             float mult=((CombatDamageSource) ds).getArmorReductionPercentage()-1;
-            if(mult!=0) {
+        if (ds instanceof CombatDamageSource) {
+            float mult = ((CombatDamageSource) ds).getArmorReductionPercentage() - 1;
+            if (mult != 0) {
                 AttributeModifier armor = new AttributeModifier(uuid2, "temporary armor multiplier", mult, AttributeModifier.Operation.MULTIPLY_TOTAL);
                 uke.getAttribute(Attributes.ARMOR).applyNonPersistentModifier(armor);
             }

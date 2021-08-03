@@ -98,6 +98,7 @@ public class WarDance {
         CombatChannel.INSTANCE.registerMessage(index++, CastSkillPacket.class, new CastSkillPacket.CombatEncoder(), new CastSkillPacket.CombatDecoder(), new CastSkillPacket.CombatHandler());
         CombatChannel.INSTANCE.registerMessage(index++, UpdateSkillSelectionPacket.class, new UpdateSkillSelectionPacket.UpdateSkillEncoder(), new UpdateSkillSelectionPacket.UpdateSkillDecoder(), new UpdateSkillSelectionPacket.UpdateSkillHandler());
         CombatChannel.INSTANCE.registerMessage(index++, SyncSkillPacket.class, new SyncSkillPacket.SyncSkillEncoder(), new SyncSkillPacket.SyncSkillDecoder(), new SyncSkillPacket.SyncSkillHandler());
+        CombatChannel.INSTANCE.registerMessage(index++, ManualParryPacket.class, new ManualParryPacket.ParryEncoder(), new ManualParryPacket.ParryDecoder(), new ManualParryPacket.ParryHandler());
     }
 
     private void doClientStuff(final FMLClientSetupEvent event) {
@@ -107,6 +108,7 @@ public class WarDance {
         ClientRegistry.registerKeyBinding(Keybinds.CAST);
         ClientRegistry.registerKeyBinding(Keybinds.SELECT);
         ClientRegistry.registerKeyBinding(Keybinds.QUICKCAST);
+        ClientRegistry.registerKeyBinding(Keybinds.PARRY);
     }
 
     private void enqueueIMC(final InterModEnqueueEvent event) {

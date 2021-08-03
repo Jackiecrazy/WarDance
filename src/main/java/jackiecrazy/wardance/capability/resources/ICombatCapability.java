@@ -222,6 +222,10 @@ public interface ICombatCapability {
 
     void read(CompoundNBT tag);
 
+    void setParryingTick(int parrying);
+
+    int getParryingTick();//hey, it's useful for future "smart" entities as well.
+
     boolean isValid();
 
     CompoundNBT write();

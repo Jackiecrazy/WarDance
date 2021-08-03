@@ -164,10 +164,14 @@ public abstract class Skill extends ForgeRegistryEntry<Skill> {
             sd.decrementDuration();
         }
         if (sd.getDuration() <= 0) {
-            StatusEffects.getCap(target).removeStatus(this);
+            endAffliction(target);
             return true;
         }
         return false;
+    }
+
+    protected void endAffliction(LivingEntity target){
+        StatusEffects.getCap(target).removeStatus(this);
     }
 
     /**

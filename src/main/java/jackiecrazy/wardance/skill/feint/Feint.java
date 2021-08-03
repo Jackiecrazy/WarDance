@@ -1,11 +1,12 @@
 package jackiecrazy.wardance.skill.feint;
 
 import jackiecrazy.wardance.capability.resources.CombatData;
+import jackiecrazy.wardance.capability.status.StatusEffects;
 import jackiecrazy.wardance.event.ParryEvent;
 import jackiecrazy.wardance.potion.WarEffects;
-import jackiecrazy.wardance.skill.SkillTags;
 import jackiecrazy.wardance.skill.Skill;
 import jackiecrazy.wardance.skill.SkillData;
+import jackiecrazy.wardance.skill.SkillTags;
 import jackiecrazy.wardance.skill.WarSkills;
 import jackiecrazy.wardance.utils.CombatUtils;
 import jackiecrazy.wardance.utils.GeneralUtils;
@@ -23,7 +24,7 @@ import java.util.Arrays;
 import java.util.HashSet;
 
 public class Feint extends Skill {
-    private final Tag<String> tag = Tag.getTagFromContents(new HashSet<>(Arrays.asList("physical", "disableShield", "noDamage", SkillTags.melee, "boundCast", SkillTags.countdown, SkillTags.recharge_normal, SkillTags.change_parry_result)));
+    private final Tag<String> tag = Tag.getTagFromContents(new HashSet<>(Arrays.asList("physical", "disableShield", "noDamage", SkillTags.melee, SkillTags.afflict_tick, "boundCast", SkillTags.countdown, SkillTags.recharge_normal, SkillTags.change_parry_result)));
     private final Tag<String> no = Tag.getTagFromContents(new HashSet<>(Arrays.asList("normalAttack")));
 
     @Override
@@ -49,7 +50,7 @@ public class Feint extends Skill {
 
     @Override
     public void onSuccessfulProc(LivingEntity caster, SkillData stats, LivingEntity target, Event procPoint) {
-        if (procPoint instanceof ParryEvent) {
+        if (procPoint instanceof ParryEvent && CombatUtils.getAwareness(caster, target) == CombatUtils.Awareness.ALERT && !StatusEffects.getCap(target).isStatusActive(this)) {
             if (((ParryEvent) procPoint).canParry()) {
                 CombatUtils.setHandCooldown(target, Hand.MAIN_HAND, 0, false);
                 CombatUtils.setHandCooldown(target, Hand.OFF_HAND, 0, false);
@@ -59,8 +60,16 @@ public class Feint extends Skill {
                 ((ParryEvent) procPoint).setPostureConsumption(0);
                 procPoint.setResult(Event.Result.ALLOW);
             }
+            afflict(caster, target, 1);
             markUsed(caster);
         }
+    }
+
+    @Override
+    public boolean statusTick(LivingEntity caster, LivingEntity target, SkillData sd) {
+        if (CombatUtils.getAwareness(caster, target) != CombatUtils.Awareness.ALERT)
+            endAffliction(target);
+        return false;
     }
 
     @Nullable
@@ -74,6 +83,7 @@ public class Feint extends Skill {
         public Color getColor() {
             return Color.LIGHT_GRAY;
         }
+
         @Override
         public void onSuccessfulProc(LivingEntity caster, SkillData stats, LivingEntity target, Event procPoint) {
             super.onSuccessfulProc(caster, stats, target, procPoint);
@@ -86,6 +96,7 @@ public class Feint extends Skill {
         public Color getColor() {
             return Color.CYAN;
         }
+
         @Override
         public void onSuccessfulProc(LivingEntity caster, SkillData stats, LivingEntity target, Event procPoint) {
             super.onSuccessfulProc(caster, stats, target, procPoint);
@@ -95,12 +106,13 @@ public class Feint extends Skill {
     }
 
     public static class ScorpionSting extends Feint {
+        private final Tag<String> tag = Tag.getTagFromContents(new HashSet<>(Arrays.asList("physical", "disableShield", "noDamage", SkillTags.melee, "boundCast", SkillTags.on_hurt, SkillTags.countdown, SkillTags.recharge_normal, SkillTags.change_parry_result)));
+        private final Tag<String> no = Tag.getTagFromContents(new HashSet<>(Arrays.asList("normalAttack")));
+
         @Override
         public Color getColor() {
             return Color.RED;
         }
-        private final Tag<String> tag = Tag.getTagFromContents(new HashSet<>(Arrays.asList("physical", "disableShield", "noDamage", SkillTags.melee, "boundCast", SkillTags.on_hurt, SkillTags.countdown, SkillTags.recharge_normal, SkillTags.change_parry_result)));
-        private final Tag<String> no = Tag.getTagFromContents(new HashSet<>(Arrays.asList("normalAttack")));
 
         @Override
         public Tag<String> getTags(LivingEntity caster) {
@@ -135,6 +147,7 @@ public class Feint extends Skill {
         public Color getColor() {
             return Color.GREEN;
         }
+
         @Override
         public void onSuccessfulProc(LivingEntity caster, SkillData stats, LivingEntity target, Event procPoint) {
             if (procPoint instanceof LivingHurtEvent) {

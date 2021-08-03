@@ -60,7 +60,7 @@ public class ClientConfig {
         b.pop();
         b.push("yours");
         _yourPostureX = b.translation("wardance.config.uPosX").comment("your posture bar X, defined as deviation from the center").defineInRange("yourPostureX", 0, -Integer.MAX_VALUE, Integer.MAX_VALUE);
-        _yourPostureY = b.translation("wardance.config.uPosY").comment("your posture bar Y, defined from the middle of the screen").defineInRange("yourPostureY", 0, -Integer.MAX_VALUE, Integer.MAX_VALUE);
+        _yourPostureY = b.translation("wardance.config.uPosY").comment("your posture bar Y, defined from the bottom of the screen").defineInRange("yourPostureY", -57, -Integer.MAX_VALUE, 0);
         b.pop();
         b.push("theirs");
         _theirPostureX = b.translation("wardance.config.tPosX").comment("enemy posture bar X, defined as deviation from the center").defineInRange("theirPostureX", 0, -Integer.MAX_VALUE, Integer.MAX_VALUE);

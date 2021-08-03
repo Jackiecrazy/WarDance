@@ -48,7 +48,7 @@ public class Grapple extends Skill {
     }
 
     protected void performEffect(LivingEntity caster, LivingEntity target) {
-        CombatData.getCap(target).consumePosture(caster, 10);
+        CombatData.getCap(target).consumePosture(caster, 10, 0, true);
     }
 
     @Override

@@ -106,7 +106,7 @@ public class CombatUtils {
                 final Item item = ForgeRegistries.ITEMS.getValue(key);
                 combatList.put(item, new CombatInfo(attack, defend, shield, pTime, pCount, distract, unaware));
             }
-            //System.out.print("\"" + name + ", " + formatter.format(attack + 1.5) + ", " + formatter.format(defend) + ", " + shield + (shield ? ", " + pTime + ", " + pCount : "") + "\", ");
+            //System.out.print("\"" + name+ "\", ");
         }
         for (String s : interpretA) {
             String[] val = s.split(",");
@@ -136,6 +136,7 @@ public class CombatUtils {
                         new AttributeModifier(touse, "war dance modifier", stealth, AttributeModifier.Operation.ADDITION)
                 });
             }
+            //System.out.print("\"" + name+ "\", ");
         }
         for (String name : interpretU) {
             ResourceLocation key = null;
@@ -304,7 +305,7 @@ public class CombatUtils {
         final float magicNumber = 781.25f;//magic numbers scale the modified formula to 0.2 per sword hit
         final float cooldownSq = semeCap.getCachedCooldown() * semeCap.getCachedCooldown();
         final double period = 1.0D / (seme.getAttribute(Attributes.ATTACK_SPEED).getValue() + 0.5d) * 20.0D;//+0.5 makes sure heavies don't scale forever, light ones are still puny
-        float might = cooldownSq * magicScale * (float) period * (float) period / magicNumber;
+        float might = cooldownSq * cooldownSq * magicScale * (float) period * (float) period / magicNumber;
         might *= (1 + (semeCap.getCombo() / 10f));//combo bonus
         float weakness = 1;
         if (seme.isPotionActive(Effects.WEAKNESS))
@@ -314,7 +315,7 @@ public class CombatUtils {
         might *= weakness;//weakness malus
         AttackMightEvent ame = new AttackMightEvent(seme, uke, might);
         MinecraftForge.EVENT_BUS.post(ame);
-        return might;
+        return ame.getQuantity();
     }
 
     public static boolean isPhysicalAttack(DamageSource s) {

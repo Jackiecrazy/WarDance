@@ -69,7 +69,7 @@ public class CombatConfig {
         _recovery = b.translation("wardance.config.recovery").comment("amount of ticks over which you'll quickly recover back to one posture cap's worth of posture if you're lower than that. This triggers after your posture cooldown elapses, plus 50% of that time. Set to 0 to disable this feature.").defineInRange("recovery speed", 15, 0, Integer.MAX_VALUE);
         b.pop();
         b.push("parrying");
-        _sneakParry = b.translation("wardance.config.sneakParry").comment("parries will only work in this many ticks after sneaking, 0 to disable. I don't know why everyone wants this option, but here it is.").defineInRange("sneak parry time", 0, 0, Integer.MAX_VALUE);
+        _sneakParry = b.translation("wardance.config.sneakParry").comment("parries will only work in this many ticks after pressing the designated key, and cannot be triggered again for the same amount of time afterwards; 0 to disable. I don't know why everyone wants this option, but here it is.").defineInRange("manual parry time", 0, 0, Integer.MAX_VALUE);
         _posturePerProjectile = b.translation("wardance.config.ppp").comment("Posture consumed per projectile parried").defineInRange("posture per projectile", 0.5, 0, Double.MAX_VALUE);
         _defaultMultiplierPostureAttack = b.translation("wardance.config.dmpa").comment("Default multiplier for any items not defined in the config, multiplied by their attack damage").defineInRange("default attack multiplier", 0.15, 0, Double.MAX_VALUE);
         _defaultMultiplierPostureDefend = b.translation("wardance.config.dmpd").comment("Default multiplier for any item not defined in the config, when used for parrying").defineInRange("default defense multiplier", 1.4, 0, Double.MAX_VALUE);

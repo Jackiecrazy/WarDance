@@ -51,6 +51,7 @@ public class CombatCapability implements ICombatCapability {
     private long lastUpdate;
     private boolean first, shattering;
     private float cache;//no need to save this because it'll be used within the span of a tick
+    private int parrying;
     private long staggerTickExisted;
     private int recoveryTimer;
     private ItemStack tempOffhand = ItemStack.EMPTY;
@@ -762,7 +763,7 @@ public class CombatCapability implements ICombatCapability {
         setFatigue(c.getFloat("fatigue"));
         setStaggerTime(c.getInt("staggert"));
         lastUpdate = c.getLong("lastUpdate");
-        if(!c.contains("qi"))return;
+        if (!c.contains("qi")) return;
         setMight(c.getFloat("qi"));
         setCombo(c.getFloat("combo"));
         setSpirit(c.getFloat("spirit"));
@@ -788,6 +789,7 @@ public class CombatCapability implements ICombatCapability {
         setHandReel(Hand.OFF_HAND, c.getFloat("offReel"));
         recoveryTimer = c.getInt("stumble");
         first = c.getBoolean("first");
+        parrying = c.getInt("parrying");
         setTempItemStack(ItemStack.read(c.getCompound("temp")));
         if (dude.get() instanceof PlayerEntity) {
             if (getRollTime() > CombatConfig.rollEndsAt && c.getBoolean("rolling"))
@@ -795,6 +797,16 @@ public class CombatCapability implements ICombatCapability {
             else if (temp == (CombatConfig.rollEndsAt))
                 ((PlayerEntity) dude.get()).setForcedPose(null);
         }
+    }
+
+    @Override
+    public int getParryingTick() {
+        return parrying;
+    }
+
+    @Override
+    public void setParryingTick(int parrying) {
+        this.parrying = parrying;
     }
 
     @Override
@@ -832,6 +844,7 @@ public class CombatCapability implements ICombatCapability {
         c.putLong("lastUpdate", lastUpdate);
         c.putInt("shieldC", sc);
         c.putBoolean("first", first);
+        c.putInt("parrying", parrying);
         c.putInt("shattercd", getShatterCooldown());
         c.putInt("sweep", getForcedSweep());
         c.putInt("stumble", recoveryTimer);

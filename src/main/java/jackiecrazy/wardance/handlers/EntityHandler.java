@@ -59,20 +59,17 @@ import java.util.concurrent.ConcurrentHashMap;
 @Mod.EventBusSubscriber(modid = WarDance.MODID)
 public class EntityHandler {
     public static final HashMap<PlayerEntity, Entity> mustUpdate = new HashMap<>();
-    public static final HashMap<PlayerEntity, Integer> lastSneak = new HashMap<>();
     public static final ConcurrentHashMap<Tuple<World, BlockPos>, Float> alertTracker = new ConcurrentHashMap<>();
 
     @SubscribeEvent
     public static void start(FMLServerStartingEvent e) {
         mustUpdate.clear();
-        lastSneak.clear();
         alertTracker.clear();
     }
 
     @SubscribeEvent
     public static void stop(FMLServerStoppingEvent e) {
         mustUpdate.clear();
-        lastSneak.clear();
         alertTracker.clear();
     }
 
@@ -121,10 +118,6 @@ public class EntityHandler {
                 return;
             }else CombatData.getCap(e.player).serverTick();
             CasterData.getCap(e.player).update();
-            if (e.player.isSneaking()) {
-                if (!lastSneak.containsValue(e.player))
-                    lastSneak.put(e.player, e.player.ticksExisted);
-            } else lastSneak.remove(e.player);
         }
     }
 

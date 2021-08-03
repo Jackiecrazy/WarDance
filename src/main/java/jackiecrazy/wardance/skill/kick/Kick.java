@@ -62,7 +62,7 @@ public class Kick extends Skill {
         if (procPoint instanceof LivingAttackEvent) {
             procPoint.setCanceled(true);
             if (GeneralUtils.getDistSqCompensated(caster, target) <= distanceSq()) {
-                CombatData.getCap(target).consumePosture(caster, 6);
+                CombatData.getCap(target).consumePosture(caster, 5);
                 if(caster instanceof PlayerEntity)
                     ((PlayerEntity) caster).spawnSweepParticles();
                 caster.world.playSound(null, caster.getPosX(), caster.getPosY(), caster.getPosZ(), SoundEvents.ENTITY_ZOMBIE_ATTACK_WOODEN_DOOR , SoundCategory.PLAYERS, 0.25f + WarDance.rand.nextFloat() * 0.5f, 0.5f+WarDance.rand.nextFloat() * 0.5f);

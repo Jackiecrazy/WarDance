@@ -67,6 +67,8 @@ public class ClientEvents {
     private static final long[] lastTap = {0, 0, 0, 0};
     private static final boolean[] tapped = {false, false, false, false};
     private static final DecimalFormat formatter = new DecimalFormat("#.#");
+    static boolean lastTickParry;
+    static boolean weird = false;
     private static HashMap<String, Boolean> rotate;
     private static boolean sneak = false;
     private static float currentMightLevel = 0;
@@ -381,8 +383,9 @@ public class ClientEvents {
                     stack.push();
                     mc.ingameGUI.blit(stack, x, y + 32 - fillHeight, 64, 128 - fillHeight, 32, fillHeight);
                     stack.pop();
-//                    mc.fontRenderer.drawStringWithShadow(event.getMatrixStack(), display, x - 2, y + 14, 16711937);
-//                    mc.fontRenderer.drawStringWithShadow(event.getMatrixStack(), formatter.format(currentMightLevel) + "/" + formatter.format(10), tempx - 2, tempy + 14, 16711937);
+                    mc.fontRenderer.drawStringWithShadow(event.getMatrixStack(), display, x + 16 - mc.fontRenderer.getStringWidth(display) / 2f, y + 14, 16711937);
+                    display = formatter.format(currentMightLevel) + "/10";
+                    mc.fontRenderer.drawStringWithShadow(event.getMatrixStack(), display, tempx + 16 - mc.fontRenderer.getStringWidth(display) / 2f, tempy + 14, 16711937);
                     stack.pop();
 
                     RenderSystem.disableAlphaTest();
@@ -415,6 +418,7 @@ public class ClientEvents {
 //                    mc.ingameGUI.blit(event.getMatrixStack(), width - 7 + ClientConfig.comboX, Math.min(height / 2 - barHeight / 2 + ClientConfig.comboY, height - barHeight) + 38 + emptyPerc, 220, 95 + emptyPerc, 4, barHeight - emptyPerc);
 //                    event.getMatrixStack().pop();
                     stack.push();
+                    mc.getTextureManager().bindTexture(goodhud);
                     int combowidth = 32;
                     int comboU = (int) (MathHelper.clamp(Math.floor(currentComboLevel), 0, 4)) * 32;
                     int divisor = 1;
@@ -456,9 +460,10 @@ public class ClientEvents {
                     //String combo = formatter.format(1 + Math.floor(currentComboLevel) / 10) + "X";
                     //mc.fontRenderer.drawString(event.getMatrixStack(), combo, width - 28 + ClientConfig.comboX, Math.min(height / 2 - barHeight / 2 + ClientConfig.comboY, height - barHeight) + 60, 0);
                 }
+                mc.getTextureManager().bindTexture(hud);
                 //render posture bar if not full, displayed even out of combat mode because it's pretty relevant to not dying
                 if (cap.getPosture() < cap.getMaxPosture() || cap.getStaggerTime() > 0)
-                    drawPostureBarAt(true, stack, player, width / 2 + ClientConfig.yourPostureX, height - ClientConfig.yourPostureY);
+                    drawPostureBarAt(true, stack, player, width / 2 + ClientConfig.yourPostureX, height + ClientConfig.yourPostureY);
                 Entity look = getEntityLookedAt(player, 32);
                 if (look instanceof LivingEntity && ClientConfig.displayEnemyPosture && (CombatData.getCap((LivingEntity) look).getPosture() < CombatData.getCap((LivingEntity) look).getMaxPosture() || CombatData.getCap((LivingEntity) look).getStaggerTime() > 0)) {
                     drawPostureBarAt(false, stack, (LivingEntity) look, width / 2 + ClientConfig.theirPostureX, ClientConfig.theirPostureY);//Math.min(HudConfig.client.enemyPosture.x, width - 64), Math.min(HudConfig.client.enemyPosture.y, height - 64));
@@ -607,7 +612,8 @@ public class ClientEvents {
                     else
                         CombatChannel.INSTANCE.sendToServer(new RequestUpdatePacket(-1));
                 }
-
+                if (!Keybinds.PARRY.isKeyDown())
+                    lastTickParry = false;
             } else {
                 if (!mc.gameSettings.keyBindUseItem.isKeyDown())
                     rightClick = false;
@@ -623,6 +629,16 @@ public class ClientEvents {
                     }
                 }
             }
+        }
+    }
+
+    @SubscribeEvent(priority = EventPriority.HIGHEST)
+    public static void handleInputEvent(InputEvent event) {
+        Minecraft mc = Minecraft.getInstance();
+        if (mc.player == null) return;
+        if (Keybinds.PARRY.getKeyConflictContext().isActive() && !lastTickParry && CombatConfig.sneakParry > 0 && Keybinds.PARRY.isPressed() && mc.player.isAlive()) {
+            CombatChannel.INSTANCE.sendToServer(new ManualParryPacket());
+            lastTickParry = true;
         }
     }
 
@@ -736,23 +752,31 @@ public class ClientEvents {
 
     @SubscribeEvent
     public static void zTarget(TickEvent.RenderTickEvent event) {
-        if (event.phase == TickEvent.Phase.END) {
-            Minecraft mc = Minecraft.getInstance();
-            if (mc.player == null) return;
-            double range = GeneralUtils.getAttributeValueSafe(mc.player, ForgeMod.REACH_DISTANCE.get()) - (mc.player.getHeldItemMainhand().isEmpty() ? 1 : 0);
-            Vector3d look = mc.player.getLook(1);
-            if (mc.pointedEntity != null) {
-                if (GeneralUtils.getDistSqCompensated(mc.pointedEntity, mc.player) > range * range) {
-                    mc.pointedEntity = null;
-                    Vector3d miss = mc.player.getPositionVec().add(look.scale(range));
-                    mc.objectMouseOver = BlockRayTraceResult.createMiss(miss, Direction.getFacingFromVector(look.x, look.y, look.z), new BlockPos(miss));
+        //FIXME WTF
+        if (!weird)
+            try {
+                if (event.phase == TickEvent.Phase.END) {
+                    Minecraft mc = Minecraft.getInstance();
+                    if (mc.player == null) return;
+                    double range = GeneralUtils.getAttributeValueSafe(mc.player, ForgeMod.REACH_DISTANCE.get()) - (mc.player.getHeldItemMainhand().isEmpty() ? 1 : 0);
+                    Vector3d look = mc.player.getLook(1);
+                    if (mc.pointedEntity != null) {
+                        if (GeneralUtils.getDistSqCompensated(mc.pointedEntity, mc.player) > range * range) {
+                            mc.pointedEntity = null;
+                            Vector3d miss = mc.player.getPositionVec().add(look.scale(range));
+                            mc.objectMouseOver = BlockRayTraceResult.createMiss(miss, Direction.getFacingFromVector(look.x, look.y, look.z), new BlockPos(miss));
+                        }
+                    } else if (getEntityLookedAt(mc.player, range) != null) {
+                        Entity e = getEntityLookedAt(mc.player, range);
+                        mc.objectMouseOver = new EntityRayTraceResult(e, e.getPositionVec());
+                        mc.pointedEntity = e;
+                    }
                 }
-            } else if (getEntityLookedAt(mc.player, range) != null) {
-                Entity e = getEntityLookedAt(mc.player, range);
-                mc.objectMouseOver = new EntityRayTraceResult(e, e.getPositionVec());
-                mc.pointedEntity = e;
+            } catch (NullPointerException e) {
+                weird = true;
+                WarDance.LOGGER.fatal("you have encountered the mysterious z-targeting bug. Relevant code has been disabled and the occurrence has been logged. This will not appear again. You may continue to play without issues.");
+                e.printStackTrace();
             }
-        }
     }
 
     private static float updateValue(float f, float to) {

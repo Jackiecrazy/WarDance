@@ -173,7 +173,7 @@ public class Hex extends Skill {
         public boolean statusTick(LivingEntity caster, LivingEntity target, SkillData sd) {
             //heal block, removed with poison
             if (!target.isPotionActive(Effects.POISON)) {
-                StatusEffects.getCap(target).removeStatus(this);
+                endAffliction(target);
                 return true;
             }
             return false;

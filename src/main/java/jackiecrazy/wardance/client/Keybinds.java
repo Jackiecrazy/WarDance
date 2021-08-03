@@ -41,6 +41,7 @@ public class Keybinds {
     public static final KeyBinding CAST = new KeyBinding("wardance.skill", IN_COMBAT, InputMappings.Type.KEYSYM, 82, "key.categories.gameplay");
     public static final KeyBinding QUICKCAST = new KeyBinding("wardance.quickSkill", IN_COMBAT, InputMappings.Type.MOUSE, 2, "key.categories.gameplay");
     public static final KeyBinding SELECT = new KeyBinding("wardance.selectSkill", KeyConflictContext.IN_GAME, InputMappings.Type.KEYSYM, 86, "key.categories.gameplay");
+    public static final KeyBinding PARRY = new KeyBinding("wardance.parry", KeyConflictContext.IN_GAME, InputMappings.Type.KEYSYM, 16, "key.categories.gameplay");
     public static Skill quick = null;
 
     @SubscribeEvent(priority = EventPriority.HIGHEST)

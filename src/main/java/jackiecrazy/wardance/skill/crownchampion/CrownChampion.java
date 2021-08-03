@@ -49,7 +49,7 @@ elemental might: +1 burn/snowball/poison/drown damage to targets you have attack
         Entity seme = e.getSource().getTrueSource();
         LivingEntity uke = e.getEntityLiving();
         if (CasterData.getCap(uke).isSkillActive(WarSkills.VENGEFUL_MIGHT.get())) {
-            CombatData.getCap(uke).addMight(e.getAmount() / 10);
+            CombatData.getCap(uke).addMight(e.getAmount() / 20);
             if (seme instanceof LivingEntity)
                 ((LivingEntity) seme).addPotionEffect(new EffectInstance(Effects.GLOWING, 100));
         }

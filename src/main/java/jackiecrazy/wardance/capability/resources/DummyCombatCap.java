@@ -424,6 +424,16 @@ public class DummyCombatCap implements ICombatCapability {
     }
 
     @Override
+    public void setParryingTick(int parrying) {
+
+    }
+
+    @Override
+    public int getParryingTick() {
+        return 0;
+    }
+
+    @Override
     public boolean isValid() {
         return false;
     }
