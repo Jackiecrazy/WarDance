@@ -19,6 +19,7 @@ import net.minecraftforge.event.entity.living.LivingDamageEvent;
 import net.minecraftforge.event.entity.living.LivingHealEvent;
 import net.minecraftforge.event.entity.living.LivingHurtEvent;
 import net.minecraftforge.event.entity.player.CriticalHitEvent;
+import net.minecraftforge.event.entity.player.PlayerSleepInBedEvent;
 import net.minecraftforge.event.entity.player.PlayerWakeUpEvent;
 import net.minecraftforge.eventbus.api.EventPriority;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
@@ -27,13 +28,17 @@ import net.minecraftforge.fml.common.Mod;
 @Mod.EventBusSubscriber(modid = WarDance.MODID)
 public class SkillEventHandler {//TODO remove some checks on some tags so execution on means no damage whatsoever
 
+    private static boolean sleepies;
+
+    @SubscribeEvent(priority = EventPriority.LOWEST)
+    public static void taggo(PlayerSleepInBedEvent e) {
+        sleepies = e.getPlayer().getEntityWorld().isNightTime();
+    }
+
     @SubscribeEvent(priority = EventPriority.LOWEST)
     public static void sleep(PlayerWakeUpEvent e) {
-        /**
-         * Credit to Tamaized for figuring this out. Tamaized made AoV and TF, they're fun!
-         */
         //System.out.println("I really cannot replicate this, so here's some debug statements.");
-        boolean flag = !e.wakeImmediately() && (!e.updateWorld() || e.getPlayer().world.isDaytime());
+        boolean flag = e.getPlayer().world.isDaytime() && sleepies;
         if ((flag || ResourceConfig.sleepingHealsDecay == ResourceConfig.ThirdOption.FORCED) && e.getEntityLiving().isServerWorld()) {
             //System.out.println("This means sleeping flags are called properly on the server.");
             if (ResourceConfig.sleepingHealsDecay != ResourceConfig.ThirdOption.FALSE) {
@@ -44,11 +49,9 @@ public class SkillEventHandler {//TODO remove some checks on some tags so execut
             }
             ISkillCapability isc = CasterData.getCap(e.getEntityLiving());
             for (SkillCooldownData s : isc.getSkillCooldowns().values()) {
-                if (s.getSkill().getTags(e.getEntityLiving()).contains(SkillTags.recharge_sleep)) {
-                    isc.coolSkill(s.getSkill());
-                }
+                isc.coolSkill(s.getSkill());
             }
-        }else System.out.println(e.wakeImmediately() +" "+ !e.updateWorld() +" "+ e.getPlayer().world.isDaytime());
+        } else System.out.println(e.wakeImmediately() + " " + !e.updateWorld() + " " + e.getPlayer().world.isDaytime());
         //System.out.println("wakeImmediately: "+e.wakeImmediately()+", update world: "+e.updateWorld()+", is daytime: "+e.getPlayer().world.isDaytime()+", recharge: "+CombatConfig.sleepingHealsDecay);
 
     }

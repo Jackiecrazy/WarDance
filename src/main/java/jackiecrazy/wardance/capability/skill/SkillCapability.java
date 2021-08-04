@@ -181,7 +181,9 @@ public class SkillCapability implements ISkillCapability {
 
     @Override
     public void clearSkillCooldowns() {
-        coolingSkills.clear();
+        for (Skill s : getSkillCooldowns().keySet()) {
+            coolSkill(s);
+        }
     }
 
     @Override
