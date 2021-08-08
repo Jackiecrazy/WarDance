@@ -1,8 +1,9 @@
 package jackiecrazy.wardance.skill.fightingspirit;
 
 import jackiecrazy.wardance.WarDance;
+import jackiecrazy.wardance.capability.resources.CombatData;
 import jackiecrazy.wardance.capability.skill.CasterData;
-import jackiecrazy.wardance.event.ParryEvent;
+import jackiecrazy.wardance.event.AttackMightEvent;
 import jackiecrazy.wardance.skill.SkillData;
 import jackiecrazy.wardance.skill.SkillTags;
 import jackiecrazy.wardance.skill.WarSkills;
@@ -23,6 +24,13 @@ import java.util.HashSet;
 public class Timberfall extends WarCry {
     private final Tag<String> tag = Tag.getTagFromContents(new HashSet<>(Arrays.asList("chant", SkillTags.melee, SkillTags.modify_crit, SkillTags.on_hurt, SkillTags.attack_might, SkillTags.on_being_hurt, SkillTags.countdown, SkillTags.recharge_time, SkillTags.recharge_sleep)));
     private final Tag<String> no = Tag.getEmptyTag();//.getTagFromContents(new HashSet<>(Collections.emptyList()));
+
+    @SubscribeEvent
+    public static void timberfall(AttackMightEvent e) {
+        if (e.getAttacker() != null && !CasterData.getCap(e.getAttacker()).isSkillCoolingDown(WarSkills.TIMBERFALL.get())) {
+            CombatData.getCap(e.getEntityLiving()).consumePosture(e.getQuantity() * 4);
+        }
+    }
 
     @Override
     public Tag<String> getTags(LivingEntity caster) {
@@ -57,13 +65,5 @@ public class Timberfall extends WarCry {
     @Override
     public Color getColor() {
         return Color.orange;
-    }
-
-    @SubscribeEvent
-    public static void timberfall(ParryEvent e) {
-        if (e.getAttacker() != null && !CasterData.getCap(e.getAttacker()).isSkillCoolingDown(WarSkills.TIMBERFALL.get())) {
-            LivingEntity seme = e.getAttacker();
-            e.setPostureConsumption(e.getPostureConsumption() + CombatUtils.getAttackMight(seme, e.getEntityLiving())*5);
-        }
     }
 }

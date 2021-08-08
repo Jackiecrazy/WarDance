@@ -58,9 +58,9 @@ public class WarCry extends Skill {
             ICombatCapability cap = CombatData.getCap(caster);
             if (cap.getMight() == 0 && cap.getPosture() == cap.getMaxPosture() && cap.getSpirit() == cap.getMaxSpirit()) {
                 return new TranslationTextComponent("wardance:war_cry.sleep.name");
-            } else return new TranslationTextComponent("wardance:war_cry.nosleep.name");
+            } else return new TranslationTextComponent(getRegistryName().toString() + ".name");
         }
-        return new TranslationTextComponent(this.getRegistryName().toString() + ".name");
+        return new TranslationTextComponent(getRegistryName().toString() + ".name");
     }
 
     @Nullable
@@ -71,8 +71,8 @@ public class WarCry extends Skill {
 
     @Override
     public CastStatus castingCheck(LivingEntity caster) {
-        return CasterData.getCap(caster).isSkillCoolingDown(this) ? CastStatus.COOLDOWN : CastStatus.ALLOWED;
-    }
+        return super.castingCheck(caster) == CastStatus.OTHER ? CastStatus.ALLOWED : super.castingCheck(caster);
+    } //why did I do this? Weird.
 
     @Override
     public boolean onCast(LivingEntity caster) {
@@ -93,7 +93,7 @@ public class WarCry extends Skill {
     }
 
     protected void evoke(LivingEntity caster) {
-        if(getParentSkill()==null) {
+        if (getParentSkill() == null) {
             caster.addPotionEffect(new EffectInstance(Effects.REGENERATION, getDuration()));
             caster.addPotionEffect(new EffectInstance(Effects.RESISTANCE, getDuration()));
         }
@@ -114,7 +114,7 @@ public class WarCry extends Skill {
 
     @Override
     public void onSuccessfulProc(LivingEntity caster, SkillData stats, LivingEntity target, Event procPoint) {
-        if (procPoint instanceof LivingHurtEvent) {
+        if (procPoint instanceof LivingHurtEvent && ((LivingHurtEvent) procPoint).getEntityLiving() == caster) {
             markUsed(caster);
         }
     }

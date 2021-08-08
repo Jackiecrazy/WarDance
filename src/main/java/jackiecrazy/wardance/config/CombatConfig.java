@@ -28,6 +28,7 @@ public class CombatConfig {
     public static float staggerDamage;
     public static int sneakParry;
     public static int recovery;
+    public static int foodCool;
     public static float mobParryChanceWeapon, mobParryChanceShield, mobDeflectChance, mobScaler, kenshiroScaler;
     public static float posCap;
     public static boolean dodge;
@@ -52,6 +53,7 @@ public class CombatConfig {
     private final ForgeConfigSpec.IntValue _recovery;
     private final ForgeConfigSpec.BooleanValue _dodge;
     private final ForgeConfigSpec.IntValue _sneakParry;
+    private final ForgeConfigSpec.IntValue _foodCool;
     private final ForgeConfigSpec.DoubleValue _mobParryChanceWeapon;
     private final ForgeConfigSpec.DoubleValue _mobParryChanceShield;
     private final ForgeConfigSpec.DoubleValue _mobDeflectChance;
@@ -96,6 +98,9 @@ public class CombatConfig {
         _mobScaler = b.translation("wardance.config.mobB").comment("posture damage from mob attacks will be scaled by this number").defineInRange("mob posture damage buff", 1.5, 0, Double.MAX_VALUE);
         _knockbackNerf = b.translation("wardance.config.knockback").comment("knockback from all sources to everything will be multiplied by this amount").defineInRange("knockback multiplier", 1, 0, 10d);
         b.pop();
+        b.push("misc");
+        _foodCool = b.translation("wardance.config.foodCool").comment("number of ticks to disable a certain food item for after taking physical damage while eating it. Set to 0 to just interrupt eating, and -1 to disable this feature.").defineInRange("food disable time", 20, -1, Integer.MAX_VALUE);
+        b.pop();
     }
 
     private static void bake() {
@@ -120,6 +125,7 @@ public class CombatConfig {
         kbNerf = CONFIG._knockbackNerf.get().floatValue();
         sneakParry = CONFIG._sneakParry.get();
         recovery = CONFIG._recovery.get();
+        foodCool = CONFIG._foodCool.get();
         CombatUtils.updateMobParrying(CONFIG._customParry.get());
     }
 

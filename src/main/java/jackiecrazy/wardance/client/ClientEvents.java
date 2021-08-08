@@ -81,6 +81,7 @@ public class ClientEvents {
     static {
         formatter.setRoundingMode(RoundingMode.DOWN);
         formatter.setMinimumFractionDigits(1);
+        formatter.setMaximumFractionDigits(1);
     }
 
     public static void updateList(List<? extends String> pos) {
@@ -383,9 +384,9 @@ public class ClientEvents {
                     stack.push();
                     mc.ingameGUI.blit(stack, x, y + 32 - fillHeight, 64, 128 - fillHeight, 32, fillHeight);
                     stack.pop();
-                    mc.fontRenderer.drawStringWithShadow(event.getMatrixStack(), display, x + 16 - mc.fontRenderer.getStringWidth(display) / 2f, y + 14, 16711937);
+                    mc.fontRenderer.drawStringWithShadow(event.getMatrixStack(), display, width * (3 / 4f) + ClientConfig.spiritNumberX - mc.fontRenderer.getStringWidth(display) / 2f, height - ClientConfig.spiritNumberY, ClientConfig.spiritColor);
                     display = formatter.format(currentMightLevel) + "/10";
-                    mc.fontRenderer.drawStringWithShadow(event.getMatrixStack(), display, tempx + 16 - mc.fontRenderer.getStringWidth(display) / 2f, tempy + 14, 16711937);
+                    mc.fontRenderer.drawStringWithShadow(event.getMatrixStack(), display, width / 4f + ClientConfig.mightNumberX - mc.fontRenderer.getStringWidth(display) / 2f, height - ClientConfig.mightNumberY, ClientConfig.mightColor);
                     stack.pop();
 
                     RenderSystem.disableAlphaTest();
@@ -782,12 +783,13 @@ public class ClientEvents {
     private static float updateValue(float f, float to) {
         if (f == -1) return to;
         boolean close = true;
+        float temp = f;
         if (to > f) {
-            f += Math.max(0.1, (to - f) / 20);
+            f += MathHelper.clamp((to - temp) / 20, 0.01, 0.1);
             close = false;
         }
         if (to < f) {
-            f -= Math.max(0.1, (f - to) / 20);
+            f += MathHelper.clamp((to - temp) / 20, -0.1, -0.01);
             close = !close;
         }
         if (close)

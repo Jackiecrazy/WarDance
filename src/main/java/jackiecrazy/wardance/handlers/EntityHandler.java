@@ -116,7 +116,7 @@ public class EntityHandler {
             if (e.side != LogicalSide.SERVER) {
                 CombatData.getCap(e.player).clientTick();
                 return;
-            }else CombatData.getCap(e.player).serverTick();
+            } else CombatData.getCap(e.player).serverTick();
             CasterData.getCap(e.player).update();
         }
     }
@@ -124,13 +124,13 @@ public class EntityHandler {
     @SubscribeEvent
     public static void tickMobs(LivingEvent.LivingUpdateEvent e) {
         LivingEntity elb = e.getEntityLiving();
-        if (!elb.world.isRemote ) {
-            if(elb.isPotionActive(WarEffects.PETRIFY.get())){
-                elb.rotationPitch=elb.prevRotationPitch;
-                elb.rotationYaw=elb.prevRotationYaw;
-                elb.rotationYawHead=elb.prevRotationYawHead;
-                elb.setHeadRotation(0,0);
-                elb.setMotion(0,0,0);
+        if (!elb.world.isRemote) {
+            if (elb.isPotionActive(WarEffects.PETRIFY.get())) {
+                elb.rotationPitch = elb.prevRotationPitch;
+                elb.rotationYaw = elb.prevRotationYaw;
+                elb.rotationYawHead = elb.prevRotationYawHead;
+                elb.setHeadRotation(0, 0);
+                elb.setMotion(0, 0, 0);
             }
             if (!(elb instanceof PlayerEntity)) {
                 StatusEffects.getCap(elb).update();
@@ -268,8 +268,10 @@ Mobs should move into a position that is close to the player, far from allies, a
                 Map.Entry<Tuple<World, BlockPos>, Float> n = it.next();
                 if (n.getKey().getA().isAreaLoaded(n.getKey().getB(), n.getValue().intValue())) {
                     for (CreatureEntity c : (n.getKey().getA().getEntitiesWithinAABB(CreatureEntity.class, new AxisAlignedBB(n.getKey().getB()).grow(n.getValue())))) {
-                        if (CombatUtils.getAwareness(null, c) == CombatUtils.Awareness.UNAWARE && !CombatUtils.stealthMap.getOrDefault(c.getType().getRegistryName(), CombatUtils.STEALTH).isDeaf())
+                        if (CombatUtils.getAwareness(null, c) == CombatUtils.Awareness.UNAWARE && !CombatUtils.stealthMap.getOrDefault(c.getType().getRegistryName(), CombatUtils.STEALTH).isDeaf()) {
+                            c.getNavigator().clearPath();
                             c.getNavigator().setPath(c.getNavigator().getPathToPos(n.getKey().getB(), (int) (n.getValue() + 3)), 1);
+                        }
                     }
                 }
             }
@@ -287,7 +289,7 @@ Mobs should move into a position that is close to the player, far from allies, a
 
         @Override
         public boolean shouldExecute() {
-            return (CombatData.getCap(e).isValid() && CombatData.getCap(e).getStaggerTime() > 0)||e.isPotionActive(WarEffects.PETRIFY.get())||e.isPotionActive(WarEffects.PARALYSIS.get())||e.isPotionActive(WarEffects.SLEEP.get());
+            return (CombatData.getCap(e).isValid() && CombatData.getCap(e).getStaggerTime() > 0) || e.isPotionActive(WarEffects.PETRIFY.get()) || e.isPotionActive(WarEffects.PARALYSIS.get()) || e.isPotionActive(WarEffects.SLEEP.get());
         }
 
         @Override

@@ -62,7 +62,7 @@ public class FakeExplosion extends Explosion {
                         if (entity instanceof LivingEntity) {
                             d11 = ProtectionEnchantment.getBlastDamageReduction((LivingEntity) entity, densityReducedPerc);
                         }
-                        if (entity != getDamageSource().getTrueSource())
+                        if (entity != getDamageSource().getTrueSource()&&entity != getDamageSource().getImmediateSource())
                             entity.setMotion(entity.getMotion().add(xDiff * d11, yDiff * d11, zDiff * d11));
                     }
                 }

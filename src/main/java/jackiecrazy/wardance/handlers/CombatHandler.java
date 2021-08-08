@@ -27,6 +27,7 @@ import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.projectile.AbstractArrowEntity;
 import net.minecraft.entity.projectile.ProjectileEntity;
 import net.minecraft.item.ItemStack;
+import net.minecraft.item.UseAction;
 import net.minecraft.particles.ParticleTypes;
 import net.minecraft.potion.Effects;
 import net.minecraft.util.*;
@@ -436,7 +437,7 @@ public class CombatHandler {
                 if (awareness != CombatUtils.Awareness.ALERT) {
                     e.setAmount((float) (e.getAmount() * CombatUtils.getDamageMultiplier(awareness, CombatUtils.getAttackingItemStack(ds))));
                 }
-                    cap.setCombo((float) (Math.floor(cap.getCombo()) / 2d));
+                cap.setCombo((float) (Math.floor(cap.getCombo()) / 2d));
             }
             double luckDiff = WarDance.rand.nextFloat() * (GeneralUtils.getAttributeValueSafe(seme, Attributes.LUCK)) - WarDance.rand.nextFloat() * (GeneralUtils.getAttributeValueSafe(uke, Attributes.LUCK));
             e.setAmount(e.getAmount() + (float) luckDiff * GeneralConfig.luck);
@@ -460,6 +461,14 @@ public class CombatHandler {
         final LivingEntity uke = e.getEntityLiving();
         uke.getAttribute(Attributes.ARMOR).removeModifier(uuid);
         uke.getAttribute(Attributes.ARMOR).removeModifier(uuid2);
+        //no food!
+        ItemStack active = uke.getHeldItem(uke.getActiveHand());
+        if (CombatUtils.isPhysicalAttack(e.getSource())&&CombatConfig.foodCool >= 0 && (active.getItem().getUseAction(active) == UseAction.EAT || active.getItem().getUseAction(active) == UseAction.DRINK) && uke.isHandActive()) {
+            uke.stopActiveHand();
+            if (uke instanceof PlayerEntity && CombatConfig.foodCool > 0) {
+                ((PlayerEntity) uke).getCooldownTracker().setCooldown(active.getItem(), CombatConfig.foodCool);
+            }
+        }
         if (e.getSource().getTrueSource() instanceof LivingEntity) {
             LivingEntity seme = ((LivingEntity) e.getSource().getTrueSource());
             if (CombatUtils.isMeleeAttack(e.getSource())) {

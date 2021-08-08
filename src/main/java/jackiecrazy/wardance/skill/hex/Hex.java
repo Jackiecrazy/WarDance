@@ -36,7 +36,7 @@ import java.util.*;
 @Mod.EventBusSubscriber(modid = WarDance.MODID)
 public class Hex extends Skill {
     static final AttributeModifier HEX = new AttributeModifier(UUID.fromString("67fe7ef6-a398-4c62-9bb1-42edaa80e7b1"), "hex", -2, AttributeModifier.Operation.ADDITION);
-    private final Tag<String> tag = Tag.getTagFromContents(new HashSet<>(Arrays.asList("melee", "noDamage", "boundCast", SkillTags.afflict_tick, SkillTags.change_parry_result, SkillTags.recharge_time, "normalAttack", "countdown")));
+    private final Tag<String> tag = Tag.getTagFromContents(new HashSet<>(Arrays.asList("melee", "noDamage", "boundCast", SkillTags.afflict_tick, SkillTags.change_parry_result, SkillTags.recharge_time, "normalAttack", "chant", "countdown")));
     private final Tag<String> no = Tag.getTagFromContents(new HashSet<>(Arrays.asList("normalAttack")));
 
     @SubscribeEvent

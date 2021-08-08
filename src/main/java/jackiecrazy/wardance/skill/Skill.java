@@ -96,6 +96,7 @@ public abstract class Skill extends ForgeRegistryEntry<Skill> {
         if (cap.isSkillActive(this)) return CastStatus.ACTIVE;
         for (String s : getIncompatibleTags(caster).getAllElements())
             if (cap.isTagActive(s)) return CastStatus.CONFLICT;
+        if (caster.isSilent() && getTags(caster).contains("chant")) return CastStatus.SILENCE;
         if (cap.isSkillCoolingDown(this))
             return CastStatus.COOLDOWN;
 //        if (getParentSkill() != null)
@@ -207,10 +208,11 @@ public abstract class Skill extends ForgeRegistryEntry<Skill> {
      */
     public abstract void onEffectEnd(LivingEntity caster, SkillData stats);
 
-    public void onAdded(LivingEntity caster, SkillData stats){
+    public void onAdded(LivingEntity caster, SkillData stats) {
         onEffectEnd(caster, stats);
     }
-    public void onRemoved(LivingEntity caster, SkillData stats){
+
+    public void onRemoved(LivingEntity caster, SkillData stats) {
         onEffectEnd(caster, stats);
     }
 
@@ -282,6 +284,7 @@ public abstract class Skill extends ForgeRegistryEntry<Skill> {
         CONFLICT,
         SPIRIT,
         MIGHT,
+        SILENCE,
         ACTIVE,
         OTHER
     }
