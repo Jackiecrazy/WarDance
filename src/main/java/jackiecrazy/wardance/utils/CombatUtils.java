@@ -36,6 +36,8 @@ import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.vector.Vector3d;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.util.FakePlayer;
+import net.minecraftforge.event.entity.player.CriticalHitEvent;
+import net.minecraftforge.eventbus.api.Event;
 import net.minecraftforge.fml.network.PacketDistributor;
 import net.minecraftforge.registries.ForgeRegistries;
 
@@ -511,12 +513,16 @@ public class CombatUtils {
         for (double x = minX; x <= maxX; x++) {
             for (double y = minY; y <= maxY; y++) {
                 for (double z = minZ; z <= maxZ; z++) {
-                    if(e.world.getBlockState(e.getPosition()).getMaterial().equals(Material.WEB))
+                    if (e.world.getBlockState(e.getPosition()).getMaterial().equals(Material.WEB))
                         return true;
                 }
             }
         }
         return false;
+    }
+
+    public static boolean isCrit(CriticalHitEvent e) {
+        return e.getResult() == Event.Result.ALLOW || (e.getResult() == Event.Result.DEFAULT && e.isVanillaCritical());
     }
 
     public enum Awareness {

@@ -39,22 +39,28 @@ public class Kick extends Skill {
     @Override
     public boolean onCast(LivingEntity caster) {
         activate(caster, 40);
+        CombatData.getCap(caster).consumeSpirit(4);
         return true;
+    }
+
+    @Override
+    public CastStatus castingCheck(LivingEntity caster) {
+        return CombatData.getCap(caster).getSpirit() < 4 ? CastStatus.SPIRIT : super.castingCheck(caster);
     }
 
     @Nullable
     @Override
     public Skill getParentSkill() {
-        return this.getClass()==Kick.class ? null : WarSkills.KICK.get();
+        return this.getClass() == Kick.class ? null : WarSkills.KICK.get();
     }
 
     @Override
     public void onEffectEnd(LivingEntity caster, SkillData stats) {
-        setCooldown(caster, 5);
+        setCooldown(caster, 4);
     }
 
     protected void additionally(LivingEntity caster, LivingEntity target) {
-
+        target.attackEntityFrom(DamageSource.FALLING_BLOCK, 3);
     }
 
     @Override
@@ -62,18 +68,17 @@ public class Kick extends Skill {
         if (procPoint instanceof LivingAttackEvent) {
             procPoint.setCanceled(true);
             if (GeneralUtils.getDistSqCompensated(caster, target) <= distanceSq()) {
-                CombatData.getCap(target).consumePosture(caster, 5);
-                if(caster instanceof PlayerEntity)
+                CombatData.getCap(target).consumePosture(caster, 4);
+                if (caster instanceof PlayerEntity)
                     ((PlayerEntity) caster).spawnSweepParticles();
-                caster.world.playSound(null, caster.getPosX(), caster.getPosY(), caster.getPosZ(), SoundEvents.ENTITY_ZOMBIE_ATTACK_WOODEN_DOOR , SoundCategory.PLAYERS, 0.25f + WarDance.rand.nextFloat() * 0.5f, 0.5f+WarDance.rand.nextFloat() * 0.5f);
-                target.attackEntityFrom(DamageSource.FALLING_BLOCK, 1);
+                caster.world.playSound(null, caster.getPosX(), caster.getPosY(), caster.getPosZ(), SoundEvents.ENTITY_ZOMBIE_ATTACK_WOODEN_DOOR, SoundCategory.PLAYERS, 0.25f + WarDance.rand.nextFloat() * 0.5f, 0.5f + WarDance.rand.nextFloat() * 0.5f);
                 additionally(caster, target);
                 markUsed(caster);
             }
         }
     }
 
-    protected int distanceSq(){
+    protected int distanceSq() {
         return 9;
     }
 

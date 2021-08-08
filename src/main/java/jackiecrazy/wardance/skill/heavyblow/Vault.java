@@ -12,7 +12,7 @@ import java.util.Optional;
 import java.util.UUID;
 
 public class Vault extends HeavyBlow {
-    private static final AttributeModifier reach = new AttributeModifier(UUID.fromString("67fe7ef7-a398-4c65-9bb1-42edaa80e7b1"), "lunge bonus", 2, AttributeModifier.Operation.ADDITION);
+    private static final AttributeModifier reach = new AttributeModifier(UUID.fromString("ba041dcb-f787-4597-83ad-7ec6100eeb40"), "lunge bonus", 2, AttributeModifier.Operation.ADDITION);
 
     @Override
     public boolean onCast(LivingEntity caster) {

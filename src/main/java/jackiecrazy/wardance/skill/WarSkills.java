@@ -4,6 +4,7 @@ import jackiecrazy.wardance.WarDance;
 import jackiecrazy.wardance.skill.coupdegrace.CoupDeGrace;
 import jackiecrazy.wardance.skill.crownchampion.CrownChampion;
 import jackiecrazy.wardance.skill.descend.Descend;
+import jackiecrazy.wardance.skill.descend.HawkDive;
 import jackiecrazy.wardance.skill.execution.Execution;
 import jackiecrazy.wardance.skill.feint.Feint;
 import jackiecrazy.wardance.skill.fightingspirit.*;
@@ -19,6 +20,7 @@ import jackiecrazy.wardance.skill.kick.*;
 import jackiecrazy.wardance.skill.mementomori.DeathDenial;
 import jackiecrazy.wardance.skill.mementomori.MementoMori;
 import jackiecrazy.wardance.skill.mementomori.PoundOfFlesh;
+import jackiecrazy.wardance.skill.regenspirit.*;
 import jackiecrazy.wardance.skill.shieldbash.ArmLock;
 import jackiecrazy.wardance.skill.shieldbash.Berserk;
 import jackiecrazy.wardance.skill.shieldbash.Overbear;
@@ -65,7 +67,7 @@ public class WarSkills {
     public static final RegistryObject<Skill> FOOT_SLAM = SKILLS.register("foot_slam", ShieldBash.FootSlam::new);
     public static final RegistryObject<Skill> OVERBEAR = SKILLS.register("overbear", Overbear::new);
     public static final RegistryObject<Skill> BERSERK = SKILLS.register("berserk", Berserk::new);
-    public static final RegistryObject<Skill> FIGHTING_SPIRIT = SKILLS.register("fighting_spirit", FightingSpirit::new);
+    public static final RegistryObject<Skill> WAR_CRY = SKILLS.register("war_cry", WarCry::new);
     public static final RegistryObject<Skill> BOULDER_BRACE = SKILLS.register("boulder_brace", BoulderBrace::new);
     public static final RegistryObject<Skill> WIND_SCAR = SKILLS.register("wind_scar", WindScar::new);
     public static final RegistryObject<Skill> FLAME_DANCE = SKILLS.register("flame_dance", FlameDance::new);
@@ -81,9 +83,10 @@ public class WarSkills {
     public static final RegistryObject<Skill> SMIRKING_SHADOW = SKILLS.register("smirking_shadow", Feint.SmirkingShadow::new);
     public static final RegistryObject<Skill> SCORPION_STING = SKILLS.register("scorpion_sting", Feint.ScorpionSting::new);
     public static final RegistryObject<Skill> UPPER_HAND = SKILLS.register("upper_hand", Feint.UpperHand::new);
+    public static final RegistryObject<Skill> CAPRICIOUS_STRIKE = SKILLS.register("capricious_strike", Feint.CapriciousStrike::new);
     public static final RegistryObject<Skill> EXECUTION = SKILLS.register("execution", Execution::new);
     public static final RegistryObject<Skill> CROWD_PLEASER = SKILLS.register("crowd_pleaser", Execution.CrowdPleaser::new);
-    public static final RegistryObject<Skill> ENDLESS_MIGHT = SKILLS.register("endless_might", Execution.EndlessMight::new);
+    public static final RegistryObject<Skill> LICHTENBERG_SCAR = SKILLS.register("lichtenberg_scar", Execution.LichtenbergScar::new);
     public static final RegistryObject<Skill> FLARE = SKILLS.register("flare", Execution.Flare::new);
     public static final RegistryObject<Skill> MASTERS_LESSON = SKILLS.register("masters_lesson", Execution.MastersLesson::new);
     public static final RegistryObject<Skill> ONSLAUGHT = SKILLS.register("onslaught", Execution.Onslaught::new);
@@ -94,7 +97,7 @@ public class WarSkills {
     public static final RegistryObject<Skill> SAVING_THROW = SKILLS.register("saving_throw", MementoMori.SavingThrow::new);
     public static final RegistryObject<Skill> POUND_OF_FLESH = SKILLS.register("pound_of_flesh", PoundOfFlesh::new);
     public static final RegistryObject<Skill> DESCEND = SKILLS.register("descend", Descend::new);
-    public static final RegistryObject<Skill> HAWK_DIVE = SKILLS.register("hawk_dive", Descend.HawkDive::new);
+    public static final RegistryObject<Skill> HAWK_DIVE = SKILLS.register("hawk_dive", HawkDive::new);
     public static final RegistryObject<Skill> LIGHTS_OUT = SKILLS.register("lights_out", Descend.LightsOut::new);
     public static final RegistryObject<Skill> SHOCKWAVE = SKILLS.register("shockwave", Descend.Shockwave::new);
     public static final RegistryObject<Skill> TITANS_FALL = SKILLS.register("titans_fall", Descend.TitansFall::new);
@@ -104,5 +107,11 @@ public class WarSkills {
     public static final RegistryObject<Skill> SNAKEBITE = SKILLS.register("snakebite", Hex.Snakebite::new);
     public static final RegistryObject<Skill> BLACK_MARK = SKILLS.register("black_mark", Hex.BlackMark::new);
     public static final RegistryObject<Skill> PETRIFY = SKILLS.register("petrify", Petrify::new);
+    public static final RegistryObject<Skill> MORALE = SKILLS.register("morale", Morale::new);
+    public static final RegistryObject<Skill> ARCHERS_PARADOX = SKILLS.register("archers_paradox", ArchersParadox::new);
+    public static final RegistryObject<Skill> APATHY = SKILLS.register("apathy", Apathy::new);
+    public static final RegistryObject<Skill> LADY_LUCK = SKILLS.register("lady_luck", LadyLuck::new);
+    public static final RegistryObject<Skill> NATURAL_SPRINTER = SKILLS.register("natural_sprinter", NaturalSprinter::new);
+    public static final RegistryObject<Skill> SPEED_DEMON = SKILLS.register("speed_demon", SpeedDemon::new);
 
 }

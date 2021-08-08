@@ -67,7 +67,7 @@ public class CoupDeGrace extends Skill {
     }
 
     protected void deathCheck(LivingEntity caster, LivingEntity target, float amount) {
-        CombatData.getCap(caster).addMight(1);
+        CombatData.getCap(caster).addMight(2);
     }
 
     @Override

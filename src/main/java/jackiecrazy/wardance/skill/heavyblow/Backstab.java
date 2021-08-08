@@ -23,6 +23,11 @@ public class Backstab extends HeavyBlow {
     }
 
     @Override
+    public boolean isPassive(LivingEntity caster) {
+        return true;
+    }
+
+    @Override
     public void onSuccessfulProc(LivingEntity caster, SkillData stats, LivingEntity target, Event procPoint) {
         super.onSuccessfulProc(caster, stats, target, procPoint);
     }
@@ -30,7 +35,7 @@ public class Backstab extends HeavyBlow {
     @SubscribeEvent
     public static void spooketh(CriticalHitEvent e) {
         final Skill back = WarSkills.BACKSTAB.get();
-        if (CasterData.getCap(e.getPlayer()).getEquippedSkills().contains(back) && !CasterData.getCap(e.getPlayer()).isSkillCoolingDown(back) && e.getTarget() instanceof LivingEntity && CombatUtils.getAwareness(e.getPlayer(), (LivingEntity) e.getTarget()) == CombatUtils.Awareness.UNAWARE) {
+        if (CasterData.getCap(e.getPlayer()).getEquippedSkills().contains(back) && !CasterData.getCap(e.getPlayer()).isSkillCoolingDown(back) && e.getTarget() instanceof LivingEntity && CombatUtils.getAwareness(e.getPlayer(), (LivingEntity) e.getTarget()) != CombatUtils.Awareness.ALERT) {
             back.onSuccessfulProc(e.getPlayer(), null, (LivingEntity) e.getTarget(), e);
             CasterData.getCap(e.getPlayer()).setSkillCooldown(back, 3);
         }

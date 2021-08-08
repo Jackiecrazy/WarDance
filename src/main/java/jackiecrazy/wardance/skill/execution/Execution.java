@@ -1,8 +1,9 @@
 package jackiecrazy.wardance.skill.execution;
 
+import jackiecrazy.wardance.api.CombatDamageSource;
 import jackiecrazy.wardance.capability.resources.CombatData;
 import jackiecrazy.wardance.capability.skill.CasterData;
-import jackiecrazy.wardance.event.AttackMightEvent;
+import jackiecrazy.wardance.event.GainMightEvent;
 import jackiecrazy.wardance.event.ParryEvent;
 import jackiecrazy.wardance.event.SkillCastEvent;
 import jackiecrazy.wardance.skill.Skill;
@@ -10,7 +11,9 @@ import jackiecrazy.wardance.skill.SkillData;
 import jackiecrazy.wardance.skill.SkillTags;
 import jackiecrazy.wardance.skill.WarSkills;
 import jackiecrazy.wardance.utils.TargetingUtils;
+import net.minecraft.entity.EntityType;
 import net.minecraft.entity.LivingEntity;
+import net.minecraft.entity.effect.LightningBoltEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.potion.EffectInstance;
 import net.minecraft.potion.Effects;
@@ -35,7 +38,7 @@ Onslaught: casts heavy blow before every attack (this is a lot easier)
     Flare: deals two lives' worth of damage, but causes the target to rapidly regenerate 1.4 lives afterwards
     Master's Lesson: while active, might gain is converted into posture at a 1:1 ratio; overflow posture will generate free parries
      */
-    private final Tag<String> tag = Tag.getTagFromContents(new HashSet<>(Arrays.asList("physical", SkillTags.on_hurt, SkillTags.on_cast, "melee", "execution")));
+    private final Tag<String> tag = Tag.getTagFromContents(new HashSet<>(Arrays.asList("physical", SkillTags.on_hurt, SkillTags.change_might, SkillTags.on_cast, "melee", "execution")));
     private final Tag<String> no = Tag.getTagFromContents(new HashSet<>(Collections.singletonList("execution")));
 
     private static double getLife(LivingEntity e) {
@@ -66,7 +69,7 @@ Onslaught: casts heavy blow before every attack (this is a lot easier)
             return true;
         }
         activate(caster, 1);
-        CombatData.getCap(caster).consumeMight(8);
+        CombatData.getCap(caster).consumeMight(getMightNeeded());
         return true;
     }
 
@@ -75,12 +78,12 @@ Onslaught: casts heavy blow before every attack (this is a lot easier)
 
     }
 
-    protected void performEffect(LivingEntity caster, LivingEntity target, float amount) {
+    protected void performEffect(LivingEntity caster, LivingEntity target, float amount, SkillData s) {
 
     }
 
     protected int getMightNeeded() {
-        return 8;
+        return getParentSkill() == null ? 5 : 8;
     }
 
     @Override
@@ -90,7 +93,7 @@ Onslaught: casts heavy blow before every attack (this is a lot easier)
         if (CasterData.getCap(caster).isSkillCoolingDown(this))
             return CastStatus.COOLDOWN;
         if (CombatData.getCap(caster).getMight() < getMightNeeded())
-            return CastStatus.OTHER;
+            return CastStatus.MIGHT;
         return CastStatus.ALLOWED;
     }
 
@@ -99,13 +102,21 @@ Onslaught: casts heavy blow before every attack (this is a lot easier)
         if (procPoint instanceof LivingHurtEvent) {
             LivingHurtEvent e = (LivingHurtEvent) procPoint;
             if (CombatData.getCap(e.getEntityLiving()).getStaggerTime() > 0 && !CombatData.getCap(e.getEntityLiving()).isFirstStaggerStrike()) {
-                performEffect(caster, target, execute(e));
+                performEffect(caster, target, execute(e), stats);
                 markUsed(caster);
             } else {
                 e.setCanceled(true);
+                absorbDamage(stats, e.getAmount());
                 CombatData.getCap(target).consumePosture(caster, e.getAmount());
             }
+        } else if (procPoint instanceof GainMightEvent) {
+            stats.setArbitraryFloat(stats.getArbitraryFloat() + ((GainMightEvent) procPoint).getQuantity());
+            ((GainMightEvent) procPoint).setQuantity(0);
         }
+    }
+
+    protected void absorbDamage(SkillData s, float a) {
+
     }
 
     protected float execute(LivingHurtEvent e) {
@@ -124,6 +135,7 @@ Onslaught: casts heavy blow before every attack (this is a lot easier)
 
         @Override
         public boolean activeTick(LivingEntity caster, SkillData d) {
+
             if (!CasterData.getCap(caster).isSkillActive(WarSkills.HEAVY_BLOW.get())) {
                 CasterData.getCap(caster).getEquippedVariation(WarSkills.HEAVY_BLOW.get()).onCast(caster);
                 return true;
@@ -132,26 +144,43 @@ Onslaught: casts heavy blow before every attack (this is a lot easier)
         }
     }
 
-    public static class EndlessMight extends Execution {
+    public static class LichtenbergScar extends Execution {
         @Override
         public Color getColor() {
-            return Color.LIGHT_GRAY;
+            return Color.CYAN;
         }
 
         @Override
-        public boolean onCast(LivingEntity caster) {
-            if (CasterData.getCap(caster).isSkillActive(this)) {
-                CasterData.getCap(caster).removeActiveSkill(this);
-                return true;
+        public void onSuccessfulProc(LivingEntity caster, SkillData stats, LivingEntity target, Event procPoint) {
+            if (procPoint instanceof GainMightEvent) {
+                ((GainMightEvent) procPoint).setQuantity(0);
+            } else super.onSuccessfulProc(caster, stats, target, procPoint);
+        }
+
+        protected void absorbDamage(SkillData s, float a) {
+            s.setArbitraryFloat(s.getArbitraryFloat() + a);
+        }
+
+        @Override
+        protected void performEffect(LivingEntity caster, LivingEntity target, float amount, SkillData s) {
+            CombatDamageSource cds = new CombatDamageSource("lightningBolt", caster).setProxy(target);
+            final List<LivingEntity> list = caster.world.getEntitiesWithinAABB(LivingEntity.class, caster.getBoundingBox().grow(10), (a) -> !TargetingUtils.isAlly(a, caster));
+            float damage = s.getArbitraryFloat() * (1 + CombatData.getCap(caster).getSpirit());
+            CombatData.getCap(caster).setSpirit(0);
+            for (LivingEntity baddie : list) {
+                baddie.attackEntityFrom(cds, damage / list.size());
+                LightningBoltEntity lightningboltentity = EntityType.LIGHTNING_BOLT.create(target.world);
+                lightningboltentity.moveForced(baddie.getPosX(), baddie.getPosY(), baddie.getPosZ());
+                lightningboltentity.setEffectOnly(true);
+                target.world.addEntity(lightningboltentity);
             }
-            activate(caster, 100);
-            CombatData.getCap(caster).consumeMight(5);
-            return true;
+            super.performEffect(caster, target, amount, s);
         }
 
         @Override
-        protected int getMightNeeded() {
-            return 5;
+        public boolean activeTick(LivingEntity caster, SkillData d) {
+            if (!CombatData.getCap(caster).consumeSpirit(0.05f)) markUsed(caster);
+            return super.activeTick(caster, d);
         }
     }
 
@@ -172,7 +201,7 @@ Onslaught: casts heavy blow before every attack (this is a lot easier)
         }
 
         @Override
-        protected void performEffect(LivingEntity caster, LivingEntity target, float amount) {
+        protected void performEffect(LivingEntity caster, LivingEntity target, float amount, SkillData s) {
             float regen = amount * 0.7f;
             afflict(caster, target, 100, regen);
         }
@@ -186,7 +215,7 @@ Onslaught: casts heavy blow before every attack (this is a lot easier)
     }
 
     public static class MastersLesson extends Execution {
-        private final Tag<String> tag = Tag.getTagFromContents(new HashSet<>(Arrays.asList("physical", SkillTags.on_hurt, "melee", "execution", SkillTags.on_parry, SkillTags.change_might)));
+        private final Tag<String> tag = Tag.getTagFromContents(new HashSet<>(Arrays.asList("physical", SkillTags.on_hurt, "melee", "execution", SkillTags.on_parry, SkillTags.attack_might)));
         private final Tag<String> no = Tag.getTagFromContents(new HashSet<>(Collections.singletonList("execution")));
 
         @Override
@@ -207,13 +236,9 @@ Onslaught: casts heavy blow before every attack (this is a lot easier)
         @Override
         public void onSuccessfulProc(LivingEntity caster, SkillData stats, LivingEntity target, Event procPoint) {
             super.onSuccessfulProc(caster, stats, target, procPoint);
-            if (procPoint instanceof ParryEvent && ((ParryEvent) procPoint).canParry() && ((ParryEvent) procPoint).getPostureConsumption() > 0 && stats.getArbitraryFloat() > 1) {
-                stats.setArbitraryFloat(stats.getArbitraryFloat() - 1);
+            if (procPoint instanceof ParryEvent && ((ParryEvent) procPoint).canParry() && ((ParryEvent) procPoint).getPostureConsumption() > 0 && stats.getArbitraryFloat() > 0.5) {
+                stats.setArbitraryFloat(stats.getArbitraryFloat() - 0.5f);
                 ((ParryEvent) procPoint).setPostureConsumption(0);
-            }
-            if (procPoint instanceof AttackMightEvent) {
-                stats.setArbitraryFloat(stats.getArbitraryFloat() + ((AttackMightEvent) procPoint).getQuantity());
-                ((AttackMightEvent) procPoint).setQuantity(0);
             }
         }
     }
@@ -221,7 +246,7 @@ Onslaught: casts heavy blow before every attack (this is a lot easier)
     public static class CrowdPleaser extends Execution {
         @Override
         public Color getColor() {
-            return Color.CYAN;
+            return Color.MAGENTA;
         }
 
         @Override
@@ -232,7 +257,7 @@ Onslaught: casts heavy blow before every attack (this is a lot easier)
         }
 
         @Override
-        protected void performEffect(LivingEntity caster, LivingEntity target, float amount) {
+        protected void performEffect(LivingEntity caster, LivingEntity target, float amount, SkillData s) {
             int buff = 0;
             if (CasterData.getCap(caster).getActiveSkill(this).isPresent())
                 buff = Math.min((int) CasterData.getCap(caster).getActiveSkill(this).get().getArbitraryFloat() / 2, 3);

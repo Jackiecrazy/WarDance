@@ -5,6 +5,7 @@ import net.minecraft.entity.Entity;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.ai.attributes.Attribute;
 import net.minecraft.entity.ai.attributes.AttributeModifier;
+import net.minecraft.entity.ai.attributes.ModifiableAttributeInstance;
 import net.minecraft.particles.IParticleData;
 import net.minecraft.world.World;
 
@@ -12,10 +13,16 @@ import java.util.UUID;
 
 public class SkillUtils {
     public static void modifyAttribute(LivingEntity caster, Attribute a, UUID id, float amount, AttributeModifier.Operation op) {
-        caster.getAttribute(a).removeModifier(id);
+        final ModifiableAttributeInstance atr = caster.getAttribute(a);
+        if (atr == null) return;
+        if (atr.getModifier(id) != null) {
+            if (atr.getModifier(id).getAmount() == amount && atr.getModifier(id).getOperation() == op)
+                return;//I think this is a bit more efficient.
+        }
+        atr.removeModifier(id);
         if (amount != 0) {
             AttributeModifier am = new AttributeModifier(id, "skill modifier", amount, op);
-            caster.getAttribute(a).applyNonPersistentModifier(am);
+            atr.applyNonPersistentModifier(am);
         }
     }
 

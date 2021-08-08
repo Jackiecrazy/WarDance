@@ -24,6 +24,9 @@ public class IronKnee extends Kick {
         return Color.RED;
     }
 
+    protected void additionally(LivingEntity caster, LivingEntity target) {
+    }
+
     @Override
     public void onSuccessfulProc(LivingEntity caster, SkillData stats, LivingEntity target, Event procPoint) {
         super.onSuccessfulProc(caster, stats, target, procPoint);

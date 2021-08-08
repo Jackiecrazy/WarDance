@@ -4,11 +4,13 @@ import jackiecrazy.wardance.capability.resources.CombatData;
 import jackiecrazy.wardance.capability.resources.ICombatCapability;
 import jackiecrazy.wardance.compat.WarCompat;
 import jackiecrazy.wardance.config.CombatConfig;
+import jackiecrazy.wardance.event.DodgeEvent;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.Pose;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.vector.Vector3d;
+import net.minecraftforge.common.MinecraftForge;
 
 public class MovementUtils {
 
@@ -198,9 +200,12 @@ public class MovementUtils {
         if (!elb.isOnGround()) return false;
         ICombatCapability itsc = CombatData.getCap(elb);
         if (!itsc.isCombatMode()) return false;
+        DodgeEvent e = new DodgeEvent(elb, DodgeEvent.Direction.FORWARD, 1.5);
+        MinecraftForge.EVENT_BUS.post(e);
+        if (e.isCanceled()) return false;
+        Vector3d v = elb.getLookVec().subtract(0, elb.getLookVec().y, 0).normalize().scale(e.getForce());
         itsc.consumePosture(0);
         itsc.setRollTime(CombatConfig.rollCooldown);
-        Vector3d v = elb.getLookVec().subtract(0, elb.getLookVec().y, 0).normalize().scale(1.5);
         if (elb instanceof PlayerEntity)
             ((PlayerEntity) elb).setForcedPose(Pose.SWIMMING);
         elb.setSprinting(false);
@@ -233,27 +238,34 @@ public class MovementUtils {
 //                adjustment = GeneralUtils.deg(acos) / 2f;
 //            }
             double x = 0, y = 0.3, z = 0;
+            DodgeEvent.Direction d = DodgeEvent.Direction.FORWARD;
             switch (side) {
                 case 0://left
                     x = MathHelper.cos(GeneralUtils.rad(elb.rotationYaw));//+adjustment
                     z = MathHelper.sin(GeneralUtils.rad(elb.rotationYaw));
+                    d = DodgeEvent.Direction.LEFT;
                     break;
                 case 1://back
                     x = MathHelper.cos(GeneralUtils.rad(elb.rotationYaw - 90));
                     z = MathHelper.sin(GeneralUtils.rad(elb.rotationYaw - 90));
+                    d = DodgeEvent.Direction.BACK;
                     break;
                 case 2://right
                     x = MathHelper.cos(GeneralUtils.rad(elb.rotationYaw - 180));//-adjustment
                     z = MathHelper.sin(GeneralUtils.rad(elb.rotationYaw - 180));
+                    d = DodgeEvent.Direction.RIGHT;
                     break;
                 case 3://forward
                     x = MathHelper.cos(GeneralUtils.rad(elb.rotationYaw + 90));
                     z = MathHelper.sin(GeneralUtils.rad(elb.rotationYaw + 90));
+                    d = DodgeEvent.Direction.FORWARD;
                     break;
             }
-            float multiplier = 2.5f;
-            x *= 0.6 * multiplier;
-            z *= 0.6 * multiplier;
+            DodgeEvent e = new DodgeEvent(elb, d, 1.5);
+            MinecraftForge.EVENT_BUS.post(e);
+            if (e.isCanceled()) return false;
+            x *= e.getForce();
+            z *= e.getForce();
 
             //NeedyLittleThings.setSize(elb, min, min);
             elb.addVelocity(x, y, z);

@@ -17,11 +17,11 @@ import java.util.Arrays;
 import java.util.HashSet;
 import java.util.UUID;
 
-public class FrostFang extends FightingSpirit {
+public class FrostFang extends WarCry {
     private final Tag<String> tag = Tag.getTagFromContents(new HashSet<>(Arrays.asList("chant", SkillTags.melee, SkillTags.on_being_hurt, SkillTags.countdown, SkillTags.recharge_time, SkillTags.recharge_sleep)));
     private final Tag<String> no = Tag.getTagFromContents(new HashSet<>(Arrays.asList(SkillTags.melee)));
-    private static final AttributeModifier luck =new AttributeModifier(UUID.fromString("67fe7ef6-a398-4c65-9bb1-42edaa80e7b4"), "frost fang bonus", 2, AttributeModifier.Operation.ADDITION);
-    private static final AttributeModifier speed =new AttributeModifier(UUID.fromString("67fe7ef6-a398-4c65-9bb1-42edaa80e7b4"), "frost fang bonus", 0.4, AttributeModifier.Operation.MULTIPLY_BASE);
+    private static final AttributeModifier luck =new AttributeModifier(UUID.fromString("77723885-afb9-4937-9c02-612ee5b6135a"), "frost fang bonus", 2, AttributeModifier.Operation.ADDITION);
+    private static final AttributeModifier speed =new AttributeModifier(UUID.fromString("07430131-9baa-47b4-a51c-9a6f48d564f4"), "frost fang bonus", 0.4, AttributeModifier.Operation.MULTIPLY_BASE);
 
     @Override
     public Tag<String> getTags(LivingEntity caster) {

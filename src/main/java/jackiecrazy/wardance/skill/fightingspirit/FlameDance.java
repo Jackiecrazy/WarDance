@@ -18,8 +18,8 @@ import java.util.Arrays;
 import java.util.HashSet;
 import java.util.UUID;
 
-public class FlameDance extends FightingSpirit {
-    private static final UUID attackSpeed = UUID.fromString("67fe7ef6-a398-4c65-9bb1-42edaa80e7b4");
+public class FlameDance extends WarCry {
+    private static final UUID attackSpeed = UUID.fromString("338a5b6f-46c2-44b6-913f-f15c5e59cd48");
     private final Tag<String> tag = Tag.getTagFromContents(new HashSet<>(Arrays.asList("chant", SkillTags.melee, SkillTags.on_parry, SkillTags.on_being_hurt, SkillTags.modify_crit, SkillTags.countdown, SkillTags.recharge_time, SkillTags.recharge_sleep)));
     private final Tag<String> no = Tag.getTagFromContents(new HashSet<>(Arrays.asList(SkillTags.melee, SkillTags.on_parry)));
 

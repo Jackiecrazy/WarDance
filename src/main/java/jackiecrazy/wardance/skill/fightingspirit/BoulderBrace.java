@@ -6,9 +6,7 @@ import net.minecraft.entity.LivingEntity;
 
 import java.awt.*;
 
-import jackiecrazy.wardance.skill.Skill.STATE;
-
-public class BoulderBrace extends FightingSpirit {
+public class BoulderBrace extends WarCry {
     @Override
     protected void evoke(LivingEntity caster) {
         CombatData.getCap(caster).setPosture(CombatData.getCap(caster).getMaxPosture());

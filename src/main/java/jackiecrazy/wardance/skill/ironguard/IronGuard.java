@@ -2,6 +2,7 @@ package jackiecrazy.wardance.skill.ironguard;
 
 import jackiecrazy.wardance.capability.resources.CombatData;
 import jackiecrazy.wardance.capability.skill.CasterData;
+import jackiecrazy.wardance.config.CombatConfig;
 import jackiecrazy.wardance.event.ParryEvent;
 import jackiecrazy.wardance.event.ProjectileParryEvent;
 import jackiecrazy.wardance.skill.SkillTags;
@@ -43,6 +44,14 @@ public class IronGuard extends Skill {
     }
 
     @Override
+    public boolean activeTick(LivingEntity caster, SkillData d) {
+        if (CombatConfig.sneakParry == 0) {
+            return super.activeTick(caster, d);
+        }
+        return false;
+    }
+
+    @Override
     public void onCooledDown(LivingEntity caster, float overflow) {
         if (CasterData.getCap(caster).isSkillUsable(WarSkills.MIKIRI.get()))
             WarSkills.MIKIRI.get().onCast(caster);
@@ -62,7 +71,7 @@ public class IronGuard extends Skill {
             ((ParryEvent) procPoint).setPostureConsumption(0);
             markUsed(caster);
         }
-        if (procPoint instanceof ProjectileParryEvent) {
+        if (procPoint instanceof ProjectileParryEvent && getParentSkill() == null) {
             ((ProjectileParryEvent) procPoint).setReturnVec(((ProjectileParryEvent) procPoint).getProjectile().getMotion().inverse());
             ((ProjectileParryEvent) procPoint).setPostureConsumption(0);
             markUsed(caster);

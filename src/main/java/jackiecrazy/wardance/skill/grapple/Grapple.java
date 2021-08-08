@@ -32,6 +32,11 @@ public class Grapple extends Skill {
     }
 
     @Override
+    public float spiritConsumption(LivingEntity caster) {
+        return 3;
+    }
+
+    @Override
     public Tag<String> getIncompatibleTags(LivingEntity caster) {
         return no;
     }
@@ -39,6 +44,7 @@ public class Grapple extends Skill {
     @Override
     public boolean onCast(LivingEntity caster) {
         activate(caster, 60);
+        CombatData.getCap(caster).consumeSpirit(3);
         return true;
     }
 
@@ -48,7 +54,8 @@ public class Grapple extends Skill {
     }
 
     protected void performEffect(LivingEntity caster, LivingEntity target) {
-        CombatData.getCap(target).consumePosture(caster, 10, 0, true);
+        if (getParentSkill() == null) CombatData.getCap(target).consumePosture(caster, 11, 0, true);
+        else CombatData.getCap(target).consumePosture(caster, 8, 0, true);
     }
 
     @Override
@@ -57,8 +64,7 @@ public class Grapple extends Skill {
             if (stats.isCondition() && caster.getLastAttackedEntity() == target) {
                 performEffect(caster, target);
                 markUsed(caster);
-            }
-            else stats.flagCondition(true);
+            } else stats.flagCondition(true);
         }
     }
 

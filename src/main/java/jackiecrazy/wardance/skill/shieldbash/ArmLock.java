@@ -32,16 +32,10 @@ public class ArmLock extends ShieldBash{
     }
 
     @Override
-    public void onEffectEnd(LivingEntity caster, SkillData stats) {
-        setCooldown(caster, 5);
-    }
-
-    @Override
     public void onSuccessfulProc(LivingEntity caster, SkillData stats, LivingEntity target, Event procPoint) {
         super.onSuccessfulProc(caster, stats, target, procPoint);
         if (procPoint instanceof ParryEvent && (CombatUtils.isShield(caster, caster.getHeldItemMainhand()) || CombatUtils.isShield(caster, caster.getHeldItemOffhand()))) {
             CombatData.getCap(((ParryEvent) procPoint).getAttacker()).setHandBind(((ParryEvent) procPoint).getAttackingHand(), 30);
-            markUsed(caster);
         }
     }
 }

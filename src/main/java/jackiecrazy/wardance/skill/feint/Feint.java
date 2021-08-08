@@ -40,26 +40,38 @@ public class Feint extends Skill {
     @Override
     public boolean onCast(LivingEntity caster) {
         activate(caster, 50);
+        CombatData.getCap(caster).consumeSpirit(5);
         return true;
+    }
+
+    @Override
+    public float spiritConsumption(LivingEntity caster) {
+        return 5;
     }
 
     @Override
     public void onEffectEnd(LivingEntity caster, SkillData stats) {
         setCooldown(caster, 3);
+        if (stats.getDuration() > 0 && getParentSkill() == null) {
+            CombatUtils.setHandCooldown(caster, stats.isCondition() ? Hand.MAIN_HAND : Hand.OFF_HAND, 1, true);
+        }
     }
 
     @Override
     public void onSuccessfulProc(LivingEntity caster, SkillData stats, LivingEntity target, Event procPoint) {
         if (procPoint instanceof ParryEvent && CombatUtils.getAwareness(caster, target) == CombatUtils.Awareness.ALERT && !StatusEffects.getCap(target).isStatusActive(this)) {
+            Hand h = ((ParryEvent) procPoint).getAttackingHand();
             if (((ParryEvent) procPoint).canParry()) {
                 CombatUtils.setHandCooldown(target, Hand.MAIN_HAND, 0, false);
                 CombatUtils.setHandCooldown(target, Hand.OFF_HAND, 0, false);
             } else {
-                CombatData.getCap(target).consumePosture(((ParryEvent) procPoint).getAttackDamage(), 0.1f);
-                CombatData.getCap(target).consumePosture(((ParryEvent) procPoint).getPostureConsumption(), 0.1f);
+                float above = getParentSkill() == null ? 0 : 0.1f;
+                CombatData.getCap(target).consumePosture(((ParryEvent) procPoint).getAttackDamage(), above);
+                CombatData.getCap(target).consumePosture(((ParryEvent) procPoint).getPostureConsumption(), above);
                 ((ParryEvent) procPoint).setPostureConsumption(0);
                 procPoint.setResult(Event.Result.ALLOW);
             }
+            stats.flagCondition(h == Hand.MAIN_HAND);
             afflict(caster, target, 1);
             markUsed(caster);
         }
@@ -103,6 +115,24 @@ public class Feint extends Skill {
             Vector3d tp = GeneralUtils.getPointInFrontOf(target, caster, -2);
             caster.setPositionAndRotation(tp.x, tp.y, tp.z, -caster.rotationYaw, -caster.rotationPitch);
         }
+    }
+
+    public static class CapriciousStrike extends Feint {
+        @Override
+        public Color getColor() {
+            return Color.orange;
+        }
+
+        @Override
+        protected void afflict(LivingEntity caster, LivingEntity target, float duration) {
+            //no affliction, keep doing it!
+        }
+
+        @Override
+        public void onEffectEnd(LivingEntity caster, SkillData stats) {
+            setCooldown(caster, 6);
+        }
+
     }
 
     public static class ScorpionSting extends Feint {

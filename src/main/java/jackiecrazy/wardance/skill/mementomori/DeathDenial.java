@@ -14,7 +14,7 @@ import java.util.Arrays;
 import java.util.HashSet;
 
 public class DeathDenial extends MementoMori {
-    private final Tag<String> tag = Tag.getTagFromContents(new HashSet<>(Arrays.asList("passive", SkillTags.recharge_sleep, SkillTags.change_heals, SkillTags.change_parry_result, SkillTags.on_being_damaged, SkillTags.change_might)));
+    private final Tag<String> tag = Tag.getTagFromContents(new HashSet<>(Arrays.asList("passive", SkillTags.recharge_sleep, SkillTags.change_heals, SkillTags.change_parry_result, SkillTags.on_being_damaged)));
 
     @Override
     public Tag<String> getTags(LivingEntity caster) {

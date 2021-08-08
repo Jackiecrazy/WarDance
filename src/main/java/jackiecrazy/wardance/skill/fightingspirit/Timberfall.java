@@ -20,8 +20,8 @@ import java.util.Arrays;
 import java.util.HashSet;
 
 @Mod.EventBusSubscriber(modid = WarDance.MODID)
-public class Timberfall extends FightingSpirit {
-    private final Tag<String> tag = Tag.getTagFromContents(new HashSet<>(Arrays.asList("chant", SkillTags.melee, SkillTags.modify_crit, SkillTags.on_hurt, SkillTags.change_might, SkillTags.on_being_hurt, SkillTags.countdown, SkillTags.recharge_time, SkillTags.recharge_sleep)));
+public class Timberfall extends WarCry {
+    private final Tag<String> tag = Tag.getTagFromContents(new HashSet<>(Arrays.asList("chant", SkillTags.melee, SkillTags.modify_crit, SkillTags.on_hurt, SkillTags.attack_might, SkillTags.on_being_hurt, SkillTags.countdown, SkillTags.recharge_time, SkillTags.recharge_sleep)));
     private final Tag<String> no = Tag.getEmptyTag();//.getTagFromContents(new HashSet<>(Collections.emptyList()));
 
     @Override
@@ -61,7 +61,7 @@ public class Timberfall extends FightingSpirit {
 
     @SubscribeEvent
     public static void timberfall(ParryEvent e) {
-        if (e.getAttacker() != null && CasterData.getCap(e.getAttacker()).isSkillUsable(WarSkills.TIMBERFALL.get())) {
+        if (e.getAttacker() != null && !CasterData.getCap(e.getAttacker()).isSkillCoolingDown(WarSkills.TIMBERFALL.get())) {
             LivingEntity seme = e.getAttacker();
             e.setPostureConsumption(e.getPostureConsumption() + CombatUtils.getAttackMight(seme, e.getEntityLiving())*5);
         }

@@ -19,9 +19,9 @@ import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.potion.EffectInstance;
 import net.minecraft.potion.Effects;
 import net.minecraft.tags.Tag;
+import net.minecraftforge.event.entity.living.LivingDamageEvent;
 import net.minecraftforge.event.entity.living.LivingDeathEvent;
 import net.minecraftforge.event.entity.living.LivingEvent;
-import net.minecraftforge.event.entity.living.LivingHurtEvent;
 import net.minecraftforge.eventbus.api.Event;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
@@ -40,16 +40,16 @@ hidden might: +1 might on successful unaware stab; -30% detection distance at fi
 prideful might: triple might gain, but clear everything on taking damage; shatter instantly cools down for every 3 might gained
 elemental might: +1 burn/snowball/poison/drown damage to targets you have attacked; +1 might for every mob that dies to environmental damage around you
      */
-    private static final UUID MULT = UUID.fromString("67fe7ef6-a398-4c65-9bb1-42edaa80e7b1");
-    private final Tag<String> tag = Tag.getTagFromContents(new HashSet<>(Arrays.asList("passive", SkillTags.on_hurt, SkillTags.change_might)));
+    private static final UUID MULT = UUID.fromString("abb2e130-36af-4fbb-bf66-0f4be905dc24");
+    private final Tag<String> tag = Tag.getTagFromContents(new HashSet<>(Arrays.asList("passive", SkillTags.change_might)));
     private final Tag<String> no = Tag.getEmptyTag();
 
     @SubscribeEvent
-    public static void hurt(LivingHurtEvent e) {
+    public static void hurt(LivingDamageEvent e) {
         Entity seme = e.getSource().getTrueSource();
         LivingEntity uke = e.getEntityLiving();
         if (CasterData.getCap(uke).isSkillActive(WarSkills.VENGEFUL_MIGHT.get())) {
-            CombatData.getCap(uke).addMight(e.getAmount() / 20);
+            CombatData.getCap(uke).addMight(e.getAmount() / 2);
             if (seme instanceof LivingEntity)
                 ((LivingEntity) seme).addPotionEffect(new EffectInstance(Effects.GLOWING, 100));
         }
@@ -99,13 +99,17 @@ elemental might: +1 burn/snowball/poison/drown damage to targets you have attack
 
     @Override
     public void onEffectEnd(LivingEntity caster, SkillData stats) {
-        activate(caster, 0);
+        if(!activate(caster, 0)) {
+            caster.getAttribute(Attributes.ATTACK_DAMAGE).removeModifier(MULT);
+            caster.getAttribute(Attributes.MOVEMENT_SPEED).removeModifier(MULT);
+        }
     }
 
     @Override
     public void onSuccessfulProc(LivingEntity caster, SkillData stats, LivingEntity target, Event procPoint) {
+        if (this.getParentSkill() != null) return;
         int might = (int) CombatData.getCap(caster).getMight() - 1;
-        SkillUtils.modifyAttribute(caster, Attributes.ATTACK_DAMAGE, MULT, 0.05f*might, AttributeModifier.Operation.MULTIPLY_BASE);
+        SkillUtils.modifyAttribute(caster, Attributes.ATTACK_DAMAGE, MULT, 0.05f * might, AttributeModifier.Operation.MULTIPLY_BASE);
     }
 
     public static class HiddenMight extends CrownChampion {
@@ -119,7 +123,7 @@ elemental might: +1 burn/snowball/poison/drown damage to targets you have attack
         @Override
         public boolean activeTick(LivingEntity caster, SkillData d) {
             int might = (int) CombatData.getCap(caster).getMight() - 1;
-            SkillUtils.modifyAttribute(caster, Attributes.MOVEMENT_SPEED, MULT, 0.03f*might, AttributeModifier.Operation.MULTIPLY_BASE);
+            SkillUtils.modifyAttribute(caster, Attributes.MOVEMENT_SPEED, MULT, 0.03f * might, AttributeModifier.Operation.MULTIPLY_BASE);
             return super.activeTick(caster, d);
         }
 

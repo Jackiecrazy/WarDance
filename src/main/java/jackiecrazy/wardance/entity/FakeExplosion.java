@@ -28,12 +28,12 @@ public class FakeExplosion extends Explosion {
 
     }
 
-    public static FakeExplosion explode(World world, Entity entityIn, double x, double y, double z, float size, DamageSource damageSource, float damage) {
-        FakeExplosion explosion = new FakeExplosion(world, entityIn, x, y, z, size, damageSource, damage);
+    public static FakeExplosion explode(World world, Entity entityIn, double x, double y, double z, float radius, DamageSource damageSource, float damage) {
+        FakeExplosion explosion = new FakeExplosion(world, entityIn, x, y, z, radius, damageSource, damage);
         explosion.doExplosionA();
         explosion.doExplosionB(true);
         //oh wow, yikes
-        SkillUtils.createCloud(world, entityIn, x, y, z, size * 2, ParticleTypes.EXPLOSION);
+        SkillUtils.createCloud(world, entityIn, x, y, z, radius * 2, ParticleTypes.EXPLOSION);
         return explosion;
     }
 

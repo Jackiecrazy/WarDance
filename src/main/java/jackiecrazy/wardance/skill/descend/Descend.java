@@ -1,25 +1,29 @@
 package jackiecrazy.wardance.skill.descend;
 
+import jackiecrazy.wardance.WarDance;
 import jackiecrazy.wardance.capability.resources.CombatData;
-import jackiecrazy.wardance.event.EntityAwarenessEvent;
+import jackiecrazy.wardance.capability.skill.CasterData;
 import jackiecrazy.wardance.event.ParryEvent;
 import jackiecrazy.wardance.event.StaggerEvent;
-import jackiecrazy.wardance.potion.WarEffects;
 import jackiecrazy.wardance.skill.*;
 import jackiecrazy.wardance.utils.CombatUtils;
 import net.minecraft.entity.LivingEntity;
-import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.potion.EffectInstance;
 import net.minecraft.potion.Effects;
 import net.minecraft.tags.Tag;
+import net.minecraft.util.DamageSource;
 import net.minecraftforge.event.entity.living.LivingAttackEvent;
+import net.minecraftforge.event.entity.living.LivingFallEvent;
 import net.minecraftforge.eventbus.api.Event;
+import net.minecraftforge.eventbus.api.SubscribeEvent;
+import net.minecraftforge.fml.common.Mod;
 
 import javax.annotation.Nullable;
 import java.awt.*;
 import java.util.Arrays;
 import java.util.HashSet;
 
+@Mod.EventBusSubscriber(modid = WarDance.MODID)
 public class Descend extends Skill {
     /*
     Descend
@@ -36,6 +40,13 @@ app.mini1.cn,friend.mini1.cn,hostroom.mini1.cn,hwmdownload.mini1.cn,openroom.min
     private final Tag<String> tag = Tag.getTagFromContents(new HashSet<>(Arrays.asList("physical", SkillTags.melee, SkillTags.on_stagger, SkillTags.change_awareness, "boundCast", SkillTags.normal_attack, SkillTags.recharge_normal, SkillTags.change_parry_result)));
     private final Tag<String> no = Tag.getTagFromContents(new HashSet<>(Arrays.asList("normalAttack")));
 
+    @SubscribeEvent
+    public static void noFall(LivingFallEvent e) {
+        CasterData.getCap(e.getEntityLiving()).getActiveSkill(CasterData.getCap(e.getEntityLiving()).getEquippedVariation(WarSkills.DESCEND.get())).ifPresent((d) -> {
+            e.setCanceled(d.isCondition());
+        });
+    }
+
     @Override
     public Tag<String> getTags(LivingEntity caster) {
         return tag;
@@ -50,6 +61,12 @@ app.mini1.cn,friend.mini1.cn,hostroom.mini1.cn,hwmdownload.mini1.cn,openroom.min
     @Override
     public Skill getParentSkill() {
         return this.getClass() == Descend.class ? null : WarSkills.DESCEND.get();
+    }
+
+
+    @Override
+    public float spiritConsumption(LivingEntity caster) {
+        return 5;
     }
 
     @Override
@@ -93,6 +110,7 @@ app.mini1.cn,friend.mini1.cn,hostroom.mini1.cn,hwmdownload.mini1.cn,openroom.min
         double posDiff = stats.getDuration() - caster.getPosY();
         if (posDiff > 0 && procPoint instanceof ParryEvent) {
             spooketh(caster, target, (float) posDiff);
+            stats.flagCondition(true);
             markUsed(caster);
         }
 
@@ -114,50 +132,7 @@ app.mini1.cn,friend.mini1.cn,hostroom.mini1.cn,hwmdownload.mini1.cn,openroom.min
 
     protected void spooketh(LivingEntity caster, LivingEntity target, float posDiff) {
         CombatData.getCap(target).consumePosture(caster, posDiff * 2, 0, true);
-    }
-
-    public static class HawkDive extends Descend {
-        @Override
-        public Color getColor() {
-            return Color.LIGHT_GRAY;
-        }
-
-        @Override
-        protected boolean canCast(LivingEntity caster) {
-            return true;
-        }
-
-        @Override
-        public boolean onCast(LivingEntity caster) {
-            if (caster instanceof PlayerEntity && caster.isElytraFlying())
-                ((PlayerEntity) caster).stopFallFlying();
-            return super.onCast(caster);
-        }
-
-        @Override
-        public void onSuccessfulProc(LivingEntity caster, SkillData stats, LivingEntity target, Event procPoint) {
-            if (procPoint instanceof EntityAwarenessEvent) {
-                CombatUtils.Awareness awareness = ((EntityAwarenessEvent) procPoint).getAwareness();
-                double posDiff = stats.getDuration() - caster.getPosY();
-                int length = 0;
-                while (posDiff > 0) {
-                    switch (awareness) {
-                        case ALERT:
-                            awareness = CombatUtils.Awareness.DISTRACTED;
-                            break;
-                        case DISTRACTED:
-                            awareness = CombatUtils.Awareness.UNAWARE;
-                            break;
-                        case UNAWARE:
-                            length += 60;
-                    }
-                    posDiff -= 10;
-                }
-                if (length > 0) target.addPotionEffect(new EffectInstance(WarEffects.PARALYSIS.get(), length));
-                ((EntityAwarenessEvent) procPoint).setAwareness(awareness);
-            }
-            super.onSuccessfulProc(caster, stats, target, procPoint);
-        }
+        if (getParentSkill() == null) target.attackEntityFrom(DamageSource.FALLING_BLOCK, posDiff);
     }
 
     public static class LightsOut extends Descend {
@@ -181,6 +156,18 @@ app.mini1.cn,friend.mini1.cn,hostroom.mini1.cn,hwmdownload.mini1.cn,openroom.min
         @Override
         public Color getColor() {
             return Color.ORANGE;
+        }
+
+
+        @Override
+        public boolean onCast(LivingEntity caster) {
+            activate(caster, (float) caster.getPosY(), true);
+            return true;
+        }
+
+        @Override
+        public void onSuccessfulProc(LivingEntity caster, SkillData stats, LivingEntity target, Event procPoint) {
+
         }
 
         protected void shockwave(LivingEntity caster, SkillData d) {

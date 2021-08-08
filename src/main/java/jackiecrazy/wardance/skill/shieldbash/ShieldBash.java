@@ -12,6 +12,7 @@ import net.minecraft.entity.LivingEntity;
 import net.minecraft.potion.EffectInstance;
 import net.minecraft.potion.Effects;
 import net.minecraft.tags.Tag;
+import net.minecraft.util.Hand;
 import net.minecraft.util.SoundCategory;
 import net.minecraft.util.SoundEvents;
 import net.minecraftforge.event.entity.living.LivingAttackEvent;
@@ -43,8 +44,20 @@ public class ShieldBash extends Skill {
     }
 
     @Override
+    public float spiritConsumption(LivingEntity caster) {
+        return 3;
+    }
+
+    @Override
     public boolean onCast(LivingEntity caster) {
         activate(caster, 40);
+        CombatData.getCap(caster).consumeSpirit(3);
+        if (getParentSkill() == null) {
+            if (CombatUtils.isShield(caster, caster.getHeldItemMainhand()))
+                CombatData.getCap(caster).setHandBind(Hand.MAIN_HAND, 0);
+            if (CombatUtils.isShield(caster, caster.getHeldItemOffhand()))
+                CombatData.getCap(caster).setHandBind(Hand.OFF_HAND, 0);
+        }
         return true;
     }
 
@@ -61,7 +74,7 @@ public class ShieldBash extends Skill {
     public void onSuccessfulProc(LivingEntity caster, SkillData stats, LivingEntity target, Event procPoint) {
         if (procPoint instanceof LivingAttackEvent && CombatUtils.isShield(caster, CombatUtils.getAttackingItemStack(((LivingAttackEvent) procPoint).getSource()))) {
             performEffect(caster, target);
-            caster.world.playSound(null, caster.getPosX(), caster.getPosY(), caster.getPosZ(), SoundEvents.ENTITY_ZOMBIE_ATTACK_IRON_DOOR , SoundCategory.PLAYERS, 0.25f + WarDance.rand.nextFloat() * 0.5f, 0.5f+WarDance.rand.nextFloat() * 0.5f);
+            caster.world.playSound(null, caster.getPosX(), caster.getPosY(), caster.getPosZ(), SoundEvents.ENTITY_ZOMBIE_ATTACK_IRON_DOOR, SoundCategory.PLAYERS, 0.25f + WarDance.rand.nextFloat() * 0.5f, 0.5f + WarDance.rand.nextFloat() * 0.5f);
             CombatData.getCap(target).consumePosture(caster, CombatUtils.getShieldStats(CombatUtils.getAttackingItemStack(((LivingAttackEvent) procPoint).getSource())).getA() / 20f);
             markUsed(caster);
         }

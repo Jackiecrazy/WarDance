@@ -8,15 +8,14 @@ import jackiecrazy.wardance.capability.resources.ICombatCapability;
 import jackiecrazy.wardance.capability.skill.CasterData;
 import jackiecrazy.wardance.capability.weaponry.CombatManipulator;
 import jackiecrazy.wardance.capability.weaponry.ICombatItemCapability;
-import jackiecrazy.wardance.config.GeneralConfig;
 import jackiecrazy.wardance.config.CombatConfig;
+import jackiecrazy.wardance.config.GeneralConfig;
 import jackiecrazy.wardance.config.ResourceConfig;
 import jackiecrazy.wardance.config.StealthConfig;
 import jackiecrazy.wardance.event.MeleeKnockbackEvent;
 import jackiecrazy.wardance.event.ParryEvent;
 import jackiecrazy.wardance.event.ProjectileParryEvent;
 import jackiecrazy.wardance.potion.WarEffects;
-import jackiecrazy.wardance.skill.WarSkills;
 import jackiecrazy.wardance.utils.CombatUtils;
 import jackiecrazy.wardance.utils.GeneralUtils;
 import jackiecrazy.wardance.utils.MovementUtils;
@@ -71,6 +70,11 @@ public class CombatHandler {
                 return;
             float consume = CombatConfig.posturePerProjectile;
             ICombatCapability ukeCap = CombatData.getCap(uke);
+            if (uke instanceof PlayerEntity && CombatConfig.sneakParry > 0 && (ukeCap.getParryingTick() > uke.ticksExisted || ukeCap.getParryingTick() < uke.ticksExisted - CombatConfig.sneakParry)) {
+                //manual parry toggle
+                // why does everyone want this feature...
+                return;
+            }
             boolean free = ukeCap.getShieldTime() > 0;
             ItemStack defend = null;
             Hand h = null;
@@ -82,10 +86,9 @@ public class CombatHandler {
                 h = Hand.MAIN_HAND;
             }
             Entity projectile = e.getEntity();
-            ProjectileParryEvent pe = new ProjectileParryEvent(uke, projectile, h, defend, free ? 0 : consume, projectile.getMotion().mul(-0.2, -0.2, -0.2));
+            ProjectileParryEvent pe = new ProjectileParryEvent(uke, projectile, h, defend, free ? 0 : consume, projectile.getMotion().normalize().scale(-1));
             MinecraftForge.EVENT_BUS.post(pe);
-            boolean sneaking = (!(uke instanceof PlayerEntity) || CombatConfig.sneakParry == 0 || (ukeCap.getParryingTick() < uke.ticksExisted + CombatConfig.sneakParry));
-            if (pe.getResult() == Event.Result.ALLOW || (defend != null && GeneralUtils.isFacingEntity(uke, projectile, 120) && sneaking && ukeCap.doConsumePosture(pe.getPostureConsumption()) && pe.getResult() == Event.Result.DEFAULT)) {
+            if (pe.getResult() == Event.Result.ALLOW || (defend != null && GeneralUtils.isFacingEntity(uke, projectile, 120) && ukeCap.doConsumePosture(pe.getPostureConsumption()) && pe.getResult() == Event.Result.DEFAULT)) {
                 //System.out.println("the target has parried!");
                 e.setCanceled(true);
 //                if (projectile instanceof ProjectileEntity)
@@ -106,6 +109,7 @@ public class CombatHandler {
                     double power = pe.getReturnVec().x / pe.getReturnVec().normalize().x;
                     ((ProjectileEntity) projectile).shoot(pe.getReturnVec().x, pe.getReturnVec().y, pe.getReturnVec().z, (float) power, 0);
                 }
+                CombatUtils.knockBack(uke, projectile, 0.01f, true, false);
                 return;
             }
             //deflection
@@ -432,7 +436,6 @@ public class CombatHandler {
                 if (awareness != CombatUtils.Awareness.ALERT) {
                     e.setAmount((float) (e.getAmount() * CombatUtils.getDamageMultiplier(awareness, CombatUtils.getAttackingItemStack(ds))));
                 }
-                if (!CasterData.getCap(uke).isSkillActive(WarSkills.VENGEFUL_MIGHT.get()))
                     cap.setCombo((float) (Math.floor(cap.getCombo()) / 2d));
             }
             double luckDiff = WarDance.rand.nextFloat() * (GeneralUtils.getAttributeValueSafe(seme, Attributes.LUCK)) - WarDance.rand.nextFloat() * (GeneralUtils.getAttributeValueSafe(uke, Attributes.LUCK));
@@ -486,8 +489,6 @@ public class CombatHandler {
             e.setAmount(Math.max(0, amount));
         }
         if (e.getAmount() <= 0) e.setCanceled(true);
-        else if (CasterData.getCap(uke).isSkillActive(WarSkills.VENGEFUL_MIGHT.get()))
-            CombatData.getCap(uke).setCombo((float) (Math.floor(CombatData.getCap(uke).getCombo()) / 2d));
     }
 
     @SubscribeEvent(priority = EventPriority.LOWEST, receiveCanceled = true)

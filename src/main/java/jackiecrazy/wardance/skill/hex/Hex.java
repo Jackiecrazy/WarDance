@@ -99,16 +99,14 @@ public class Hex extends Skill {
     }
 
     @Override
-    public CastStatus castingCheck(LivingEntity caster) {
-        CastStatus s = super.castingCheck(caster);
-        if (s == CastStatus.ALLOWED && CombatData.getCap(caster).getSpirit() < 4) return CastStatus.OTHER;
-        return s;
+    public float spiritConsumption(LivingEntity caster) {
+        return 5;
     }
 
     @Override
     public boolean onCast(LivingEntity caster) {
         activate(caster, 60);
-        CombatData.getCap(caster).consumeSpirit(4);
+        CombatData.getCap(caster).consumeSpirit(5);
         return true;
     }
 
@@ -135,7 +133,7 @@ public class Hex extends Skill {
     @Override
     public SkillData onStatusAdd(LivingEntity caster, LivingEntity target, SkillData sd, @Nullable SkillData existing) {
         final ModifiableAttributeInstance luck = target.getAttribute(Attributes.LUCK);
-        if (luck != null) {
+        if (luck != null && getParentSkill() == null) {
             luck.removeModifier(HEX);
             luck.applyNonPersistentModifier(HEX);
         }

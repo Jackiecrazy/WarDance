@@ -43,8 +43,8 @@ Piercing Counter: Riposte attacks cannot be parried.
 Career Ender: Riposte's strike acts as if the enemy is unaware if it is not parried and ignores the parry if the damage that will be dealt is more than their current health left...
 Moment of Courage: If you parry an attack that should stagger you regardless of cooldown block the stagger and remain on nearly empty posture proccing riposte. If you manage to riposte in time gain back 50% posture and add your weapons damage to the posture damage of the attack. cooldown is tripled.
      */
-    private static final UUID MULT = UUID.fromString("67fe7ef6-a398-4c65-9bb1-42edaa80e7b1");
-    private final Tag<String> tag = Tag.getTagFromContents(new HashSet<>(Arrays.asList("passive", SkillTags.on_hurt, SkillTags.change_might)));
+    private static final UUID MULT = UUID.fromString("0041b6f7-6589-4013-b5c5-9b20b1344a12");
+    private final Tag<String> tag = Tag.getTagFromContents(new HashSet<>(Arrays.asList("passive", SkillTags.on_hurt, SkillTags.attack_might)));
     private final Tag<String> no = Tag.getEmptyTag();
 
     @SubscribeEvent

@@ -84,7 +84,7 @@ public class SkillSelectionScreen extends Screen {
         for (Skill mod : skills) {
             listWidth = Math.max(listWidth, getFontRenderer().getStringWidth(mod.getDisplayName(null).getString()) + 20);
         }
-        listWidth = Math.max(Math.min(listWidth, width/5), 100);
+        listWidth = Math.max(Math.min(listWidth, width / 5), 100);
         listWidth += listWidth % numButtons != 0 ? (numButtons - listWidth % numButtons) : 0;
 
         int skillCircleWidth = 150;
@@ -238,13 +238,18 @@ public class SkillSelectionScreen extends Screen {
     private void updateCache() {
         if (selectedSkill == null) {
             this.modInfo.clearInfo();
+            List<String> lines = new ArrayList<>();
+            lines.add(new TranslationTextComponent("wardance:skills_general").getString() + "\n");
+            lines.add(new TranslationTextComponent("wardance:skills_colors").getString() + "\n");
+            lines.add(new TranslationTextComponent("wardance:skills_terms").getString() + "\n");
+            modInfo.setInfo(lines, null);
             return;
         }
         Skill selectedSkill = this.selectedSkill.getSkill();
         List<String> lines = new ArrayList<>();
 
         lines.add(selectedSkill.getDisplayName(null).getString());
-        lines.add(selectedSkill.description().getString());
+        lines.add(selectedSkill.baseDescription().getString());
         if (selectedVariation != null) {
             //lines.add(String.valueOf(selectedVariation.getSkill().getColor().getRGB()));
             lines.add("\n");

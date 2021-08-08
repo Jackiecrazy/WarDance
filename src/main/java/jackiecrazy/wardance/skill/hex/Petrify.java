@@ -13,8 +13,8 @@ import java.awt.*;
 import java.util.UUID;
 
 public class Petrify extends Hex {
-    private static final AttributeModifier NOPE = new AttributeModifier(UUID.fromString("67fe7ef6-a398-4c62-9bb1-42edaa80e7b1"), "hex", -1, AttributeModifier.Operation.MULTIPLY_TOTAL);
-    private static final AttributeModifier ARMOR = new AttributeModifier(UUID.fromString("67fe7ef6-a398-4c62-9bb1-42edaa80e7b1"), "hex", -0.3, AttributeModifier.Operation.MULTIPLY_TOTAL);
+    private static final AttributeModifier NOPE = new AttributeModifier(UUID.fromString("d6bf16c6-b548-4235-a00c-2361d243bdb4"), "hex", -1, AttributeModifier.Operation.MULTIPLY_TOTAL);
+    private static final AttributeModifier ARMOR = new AttributeModifier(UUID.fromString("d6bf16c6-b548-4253-a00c-2361d243bdb4"), "hex", -0.3, AttributeModifier.Operation.MULTIPLY_TOTAL);
 
     @Override
     public Color getColor() {

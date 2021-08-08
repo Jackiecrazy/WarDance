@@ -13,6 +13,7 @@ import java.util.HashSet;
 public class LowSweep extends Kick {
     private final Tag<String> tag = Tag.getTagFromContents(new HashSet<>(Arrays.asList("physical", "melee", "sweep", "boundCast", "normalAttack", "countdown", "rechargeWithAttack")));
     private final Tag<String> no = Tag.getTagFromContents(new HashSet<>(Arrays.asList("normalAttack", "sweep")));
+
     @Override
     public Tag<String> getTags(LivingEntity caster) {
         return tag;
@@ -27,6 +28,9 @@ public class LowSweep extends Kick {
     public boolean onCast(LivingEntity caster) {
         CombatData.getCap(caster).setForcedSweep(90);
         return super.onCast(caster);
+    }
+
+    protected void additionally(LivingEntity caster, LivingEntity target) {
     }
 
     @Override

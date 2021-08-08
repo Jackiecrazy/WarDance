@@ -363,7 +363,7 @@ public class ClientEvents {
 
                     x = Math.max(3 * width / 4 + ClientConfig.spiritX - 16, 0);
                     y = Math.min(height - ClientConfig.spiritY, height - 32);
-                    fillHeight = (int) (currentSpiritLevel / cap.getMaxSpirit() * 32);
+                    fillHeight = (int) (Math.min(1, currentSpiritLevel / cap.getMaxSpirit()) * 32);
                     String display = formatter.format(currentSpiritLevel) + "/" + formatter.format(cap.getMaxSpirit());
                     //spirit circle
                     stack.push();
@@ -783,11 +783,11 @@ public class ClientEvents {
         if (f == -1) return to;
         boolean close = true;
         if (to > f) {
-            f += Math.min(0.1, (to - f) / 20);
+            f += Math.max(0.1, (to - f) / 20);
             close = false;
         }
         if (to < f) {
-            f += Math.min(0.1, (to - f) / 20);
+            f -= Math.max(0.1, (f - to) / 20);
             close = !close;
         }
         if (close)

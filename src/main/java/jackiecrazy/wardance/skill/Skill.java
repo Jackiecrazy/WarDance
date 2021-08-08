@@ -1,6 +1,7 @@
 package jackiecrazy.wardance.skill;
 
 import jackiecrazy.wardance.WarDance;
+import jackiecrazy.wardance.capability.resources.CombatData;
 import jackiecrazy.wardance.capability.skill.CasterData;
 import jackiecrazy.wardance.capability.skill.ISkillCapability;
 import jackiecrazy.wardance.capability.status.StatusEffects;
@@ -39,10 +40,15 @@ public abstract class Skill extends ForgeRegistryEntry<Skill> {
 
     public Skill() {
         if (this.getParentSkill() == null && !variationMap.containsKey(this)) {
-            variationMap.put(this, new ArrayList<>());
+            List<Skill> toadd = new ArrayList<>();
+            toadd.add(this);
+            variationMap.put(this, toadd);
         } else if (this.getParentSkill() != null) {
             List<Skill> insert = variationMap.get(getParentSkill());
-            if (insert == null) insert = new ArrayList<>();
+            if (insert == null) {
+                insert = new ArrayList<>();
+                insert.add(getParentSkill());
+            }
             insert.add(this);
             variationMap.put(this.getParentSkill(), insert);
         }
@@ -87,13 +93,20 @@ public abstract class Skill extends ForgeRegistryEntry<Skill> {
 
     public CastStatus castingCheck(LivingEntity caster) {
         ISkillCapability cap = CasterData.getCap(caster);
+        if (cap.isSkillActive(this)) return CastStatus.ACTIVE;
         for (String s : getIncompatibleTags(caster).getAllElements())
             if (cap.isTagActive(s)) return CastStatus.CONFLICT;
         if (cap.isSkillCoolingDown(this))
             return CastStatus.COOLDOWN;
 //        if (getParentSkill() != null)
 //            return getParentSkill().castingCheck(caster);
+        if (CombatData.getCap(caster).getSpirit() < spiritConsumption(caster))
+            return CastStatus.SPIRIT;
         return CastStatus.ALLOWED;
+    }
+
+    public float spiritConsumption(LivingEntity caster) {
+        return 0;
     }
 
     public boolean isCompatibleWith(Skill s, LivingEntity caster) {
@@ -111,6 +124,10 @@ public abstract class Skill extends ForgeRegistryEntry<Skill> {
 
     public ITextComponent description() {
         return new TranslationTextComponent(this.getRegistryName().toString() + ".desc");
+    }
+
+    public ITextComponent baseDescription() {
+        return new TranslationTextComponent(this.getRegistryName().toString() + ".base");
     }
 
     /**
@@ -136,7 +153,7 @@ public abstract class Skill extends ForgeRegistryEntry<Skill> {
 
     public boolean checkAndCast(LivingEntity caster) {
         if (castingCheck(caster) != CastStatus.ALLOWED) return false;
-        if (MinecraftForge.EVENT_BUS.post(new SkillCastEvent(caster, this))) return false;
+        if (!isPassive(caster) && MinecraftForge.EVENT_BUS.post(new SkillCastEvent(caster, this))) return false;
         caster.world.playMovingSound(null, caster, SoundEvents.ITEM_FIRECHARGE_USE, SoundCategory.AMBIENT, 0.3f + WarDance.rand.nextFloat(), 0.5f + WarDance.rand.nextFloat());
         return onCast(caster);
     }
@@ -170,7 +187,7 @@ public abstract class Skill extends ForgeRegistryEntry<Skill> {
         return false;
     }
 
-    protected void endAffliction(LivingEntity target){
+    protected void endAffliction(LivingEntity target) {
         StatusEffects.getCap(target).removeStatus(this);
     }
 
@@ -190,6 +207,13 @@ public abstract class Skill extends ForgeRegistryEntry<Skill> {
      */
     public abstract void onEffectEnd(LivingEntity caster, SkillData stats);
 
+    public void onAdded(LivingEntity caster, SkillData stats){
+        onEffectEnd(caster, stats);
+    }
+    public void onRemoved(LivingEntity caster, SkillData stats){
+        onEffectEnd(caster, stats);
+    }
+
     public abstract void onSuccessfulProc(LivingEntity caster, SkillData stats, LivingEntity target, Event procPoint);
 
     public boolean onCooldownProc(LivingEntity caster, SkillCooldownData stats, Event procPoint) {
@@ -205,10 +229,28 @@ public abstract class Skill extends ForgeRegistryEntry<Skill> {
         CasterData.getCap(caster).setSkillCooldown(this, sce.getCooldown());
     }
 
-    protected void activate(LivingEntity caster, float duration) {
+    protected boolean activate(LivingEntity caster, float duration) {
+        return activate(caster, duration, false, 0);
+    }
+
+    protected boolean activate(LivingEntity caster, float duration, boolean flag) {
+        return activate(caster, duration, flag, 0);
+    }
+
+    protected boolean activate(LivingEntity caster, float duration, float something) {
+        return activate(caster, duration, false, something);
+    }
+
+    /**
+     * @return whether the skill was successfully cast
+     */
+    protected boolean activate(LivingEntity caster, float duration, boolean flag, float something) {
         //System.out.println("enabling for " + duration);
-        if (CasterData.getCap(caster).isSkillUsable(this))
-            CasterData.getCap(caster).activateSkill(new SkillData(this, duration));
+        if (CasterData.getCap(caster).isSkillUsable(this)) {
+            CasterData.getCap(caster).activateSkill(new SkillData(this, duration).flagCondition(flag).setArbitraryFloat(something));
+            return true;
+        }
+        return false;
     }
 
     protected void markUsed(LivingEntity caster) {
@@ -238,6 +280,9 @@ public abstract class Skill extends ForgeRegistryEntry<Skill> {
         ALLOWED,
         COOLDOWN,
         CONFLICT,
+        SPIRIT,
+        MIGHT,
+        ACTIVE,
         OTHER
     }
 

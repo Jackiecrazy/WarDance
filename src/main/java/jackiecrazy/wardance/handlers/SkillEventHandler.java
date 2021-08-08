@@ -14,12 +14,8 @@ import jackiecrazy.wardance.utils.CombatUtils;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.projectile.ProjectileEntity;
-import net.minecraftforge.event.entity.living.LivingAttackEvent;
-import net.minecraftforge.event.entity.living.LivingDamageEvent;
-import net.minecraftforge.event.entity.living.LivingHealEvent;
-import net.minecraftforge.event.entity.living.LivingHurtEvent;
+import net.minecraftforge.event.entity.living.*;
 import net.minecraftforge.event.entity.player.CriticalHitEvent;
-import net.minecraftforge.event.entity.player.PlayerSleepInBedEvent;
 import net.minecraftforge.event.entity.player.PlayerWakeUpEvent;
 import net.minecraftforge.eventbus.api.EventPriority;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
@@ -28,17 +24,10 @@ import net.minecraftforge.fml.common.Mod;
 @Mod.EventBusSubscriber(modid = WarDance.MODID)
 public class SkillEventHandler {//TODO remove some checks on some tags so execution on means no damage whatsoever
 
-    private static boolean sleepies;
-
-    @SubscribeEvent(priority = EventPriority.LOWEST)
-    public static void taggo(PlayerSleepInBedEvent e) {
-        sleepies = e.getPlayer().getEntityWorld().isNightTime();
-    }
-
     @SubscribeEvent(priority = EventPriority.LOWEST)
     public static void sleep(PlayerWakeUpEvent e) {
         //System.out.println("I really cannot replicate this, so here's some debug statements.");
-        boolean flag = e.getPlayer().world.isDaytime() && sleepies;
+        boolean flag = !e.wakeImmediately() && (!e.updateWorld() || e.getPlayer().world.isDaytime());
         if ((flag || ResourceConfig.sleepingHealsDecay == ResourceConfig.ThirdOption.FORCED) && e.getEntityLiving().isServerWorld()) {
             //System.out.println("This means sleeping flags are called properly on the server.");
             if (ResourceConfig.sleepingHealsDecay != ResourceConfig.ThirdOption.FALSE) {
@@ -70,6 +59,17 @@ public class SkillEventHandler {//TODO remove some checks on some tags so execut
                 s.onCooldownProc(e.getEntityLiving(), isc.getSkillCooldowns().get(s), e);
             }
         }
+    }
+
+    @SubscribeEvent
+    public static void dodge(DodgeEvent e) {
+        if (!e.getEntityLiving().isServerWorld()) return;
+        for (SkillData s : CasterData.getCap(e.getEntityLiving()).getActiveSkills().values()) {
+            if (s.getSkill().getTags(e.getEntityLiving()).contains(SkillTags.on_dodge)) {
+                s.getSkill().onSuccessfulProc(e.getEntityLiving(), s, e.getEntityLiving(), e);
+            }
+        }
+        //System.out.println("crit "+e.isCanceled());
     }
 
     @SubscribeEvent
@@ -121,7 +121,7 @@ public class SkillEventHandler {//TODO remove some checks on some tags so execut
         LivingEntity attacker = e.getAttacker();
         ISkillCapability isc = CasterData.getCap(attacker);
         for (SkillData s : isc.getActiveSkills().values()) {
-            if (s.getSkill().getTags(attacker).contains(SkillTags.change_might)) {
+            if (s.getSkill().getTags(attacker).contains(SkillTags.attack_might)) {
                 s.getSkill().onSuccessfulProc(attacker, s, e.getEntityLiving(), e);
             }
         }
@@ -135,6 +135,30 @@ public class SkillEventHandler {//TODO remove some checks on some tags so execut
         ISkillCapability isc = CasterData.getCap(entity);
         for (SkillData s : isc.getActiveSkills().values()) {
             if (s.getSkill().getTags(entity).contains(SkillTags.change_heals)) {
+                s.getSkill().onSuccessfulProc(entity, s, e.getEntityLiving(), e);
+            }
+        }
+    }
+
+    @SubscribeEvent
+    public static void postureFlags(GainPostureEvent e) {
+        if (!e.getEntityLiving().isServerWorld()) return;
+        LivingEntity entity = e.getEntityLiving();
+        ISkillCapability isc = CasterData.getCap(entity);
+        for (SkillData s : isc.getActiveSkills().values()) {
+            if (s.getSkill().getTags(entity).contains(SkillTags.change_posture)) {
+                s.getSkill().onSuccessfulProc(entity, s, e.getEntityLiving(), e);
+            }
+        }
+    }
+
+    @SubscribeEvent
+    public static void spiritFlags(RegenSpiritEvent e) {
+        if (!e.getEntityLiving().isServerWorld()) return;
+        LivingEntity entity = e.getEntityLiving();
+        ISkillCapability isc = CasterData.getCap(entity);
+        for (SkillData s : isc.getActiveSkills().values()) {
+            if (s.getSkill().getTags(entity).contains(SkillTags.change_spirit)) {
                 s.getSkill().onSuccessfulProc(entity, s, e.getEntityLiving(), e);
             }
         }
@@ -212,6 +236,27 @@ public class SkillEventHandler {//TODO remove some checks on some tags so execut
         ISkillCapability isc = CasterData.getCap(defender);
         for (SkillData s : isc.getActiveSkills().values()) {
             if (s.getSkill().getTags(defender).contains(SkillTags.on_being_damaged)) {
+                s.getSkill().onSuccessfulProc(defender, s, e.getEntityLiving(), e);
+            }
+        }
+    }
+
+    @SubscribeEvent
+    public static void deathFlag(LivingDeathEvent e) {
+        if (!e.getEntityLiving().isServerWorld()) return;
+        if (e.getSource().getTrueSource() instanceof LivingEntity) {
+            LivingEntity attacker = (LivingEntity) e.getSource().getTrueSource();
+            ISkillCapability isc = CasterData.getCap(attacker);
+            for (SkillData s : isc.getActiveSkills().values()) {
+                if (s.getSkill().getTags(attacker).contains(SkillTags.on_kill)) {
+                    s.getSkill().onSuccessfulProc(attacker, s, e.getEntityLiving(), e);
+                }
+            }
+        }
+        LivingEntity defender = e.getEntityLiving();
+        ISkillCapability isc = CasterData.getCap(defender);
+        for (SkillData s : isc.getActiveSkills().values()) {
+            if (s.getSkill().getTags(defender).contains(SkillTags.on_death)) {
                 s.getSkill().onSuccessfulProc(defender, s, e.getEntityLiving(), e);
             }
         }

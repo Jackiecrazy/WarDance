@@ -25,6 +25,9 @@ public class Trip extends Kick {
         return !caster.isOnGround() ? CastStatus.OTHER : super.castingCheck(caster);
     }
 
+    protected void additionally(LivingEntity caster, LivingEntity target) {
+    }
+
     @Override
     public void onSuccessfulProc(LivingEntity caster, SkillData stats, LivingEntity target, Event procPoint) {
         if (target.isOnGround()) {

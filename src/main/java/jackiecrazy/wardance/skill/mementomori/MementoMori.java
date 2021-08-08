@@ -24,7 +24,7 @@ import java.util.HashSet;
 import java.util.UUID;
 
 public class MementoMori extends Skill {
-    private static final UUID MULT = UUID.fromString("67ff7ef6-a398-4c65-9bb1-42edaa80e7b1");
+    private static final UUID MULT = UUID.fromString("c2b95d0d-b52a-45c7-b2d6-4ea669aa848e");
     /*
     memento mori: your might generation speed and attack damage scales proportionally with lost health (including wounding)
 rapid clotting: charm 3: gain 1 armor every point of health lost
@@ -33,7 +33,7 @@ death denial: upon receiving fatal damage, become immune to all damage and all h
 saving throw: your luck scales very strongly with lost health
 pound of flesh: active skill. Consumes all your spirit, and until your spirit regenerates or (spirit) seconds have elapsed take 5% max health damage per attack to deal 10% max posture damage if parried, or 5% max health damage if connected
      */
-    private final Tag<String> tag = Tag.getTagFromContents(new HashSet<>(Arrays.asList("passive", SkillTags.recharge_sleep, SkillTags.on_being_damaged, SkillTags.change_might)));
+    private final Tag<String> tag = Tag.getTagFromContents(new HashSet<>(Arrays.asList("passive", SkillTags.recharge_sleep, SkillTags.on_being_damaged, SkillTags.attack_might)));
     private final Tag<String> no = Tag.getEmptyTag();
 
     @Nullable
@@ -60,13 +60,17 @@ pound of flesh: active skill. Consumes all your spirit, and until your spirit re
 
     @Override
     public void onEffectEnd(LivingEntity caster, SkillData stats) {
-        activate(caster, 0);
+        if(!activate(caster, 0)) {
+            caster.getAttribute(Attributes.ATTACK_DAMAGE).removeModifier(MULT);
+            caster.getAttribute(Attributes.ARMOR).removeModifier(MULT);
+            caster.getAttribute(Attributes.LUCK).removeModifier(MULT);
+        }
     }
 
     @Override
     public void onSuccessfulProc(LivingEntity caster, SkillData stats, LivingEntity target, Event procPoint) {
         //on attack might event, check health percentage and increment
-        if (procPoint instanceof AttackMightEvent) {
+        if (procPoint instanceof AttackMightEvent && getParentSkill() == null) {
             float healthPercentage = caster.getHealth() / GeneralUtils.getMaxHealthBeforeWounding(caster);
             ((AttackMightEvent) procPoint).setQuantity(((AttackMightEvent) procPoint).getQuantity() * (2 - healthPercentage));
         }
@@ -74,6 +78,7 @@ pound of flesh: active skill. Consumes all your spirit, and until your spirit re
 
     @Override
     public boolean activeTick(LivingEntity caster, SkillData d) {
+        if (getClass() != MementoMori.class) return false;
         float health = 1 - (caster.getHealth() / GeneralUtils.getMaxHealthBeforeWounding(caster));
         SkillUtils.modifyAttribute(caster, Attributes.ATTACK_DAMAGE, MULT, health / 2, AttributeModifier.Operation.MULTIPLY_TOTAL);
         return super.activeTick(caster, d);

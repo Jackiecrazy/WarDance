@@ -2,9 +2,12 @@ package jackiecrazy.wardance.capability.resources;
 
 import jackiecrazy.wardance.WarDance;
 import jackiecrazy.wardance.api.WarAttributes;
-import jackiecrazy.wardance.config.GeneralConfig;
 import jackiecrazy.wardance.config.CombatConfig;
+import jackiecrazy.wardance.config.GeneralConfig;
 import jackiecrazy.wardance.config.ResourceConfig;
+import jackiecrazy.wardance.event.GainMightEvent;
+import jackiecrazy.wardance.event.GainPostureEvent;
+import jackiecrazy.wardance.event.RegenSpiritEvent;
 import jackiecrazy.wardance.event.StaggerEvent;
 import jackiecrazy.wardance.networking.CombatChannel;
 import jackiecrazy.wardance.networking.UpdateClientPacket;
@@ -43,7 +46,7 @@ public class CombatCapability implements ICombatCapability {
 
     private final WeakReference<LivingEntity> dude;
     private ItemStack prev;
-    private float qi, spirit, posture, combo, mpos, mspi, wounding, burnout, fatigue, mainReel, offReel;
+    private float qi, spirit, posture, combo, mpos, mspi, wounding, burnout, fatigue, mainReel, offReel, walkTemp;
     private int shatterCD;
     private int qcd, scd, pcd, ccd, mBind, oBind;
     private int staggert, staggerc, ocd, shield, sc, roll, sweep;
@@ -59,13 +62,16 @@ public class CombatCapability implements ICombatCapability {
 
     public CombatCapability(LivingEntity e) {
         dude = new WeakReference<>(e);
-        setTrueMaxSpirit(10);
+        setTrueMaxSpirit((float) GeneralUtils.getAttributeValueSafe(e, WarAttributes.MAX_SPIRIT.get()));
     }
 
     private static float getMPos(LivingEntity elb) {
+        float ret=0;
         if (GeneralUtils.getResourceLocationFromEntity(elb) != null && CombatUtils.customPosture.containsKey(GeneralUtils.getResourceLocationFromEntity(elb)))
-            return CombatUtils.customPosture.get(GeneralUtils.getResourceLocationFromEntity(elb));
-        return (float) (Math.ceil(10 / 1.09 * elb.getWidth() * elb.getHeight()) + elb.getTotalArmorValue() / 2d);
+            ret= CombatUtils.customPosture.get(GeneralUtils.getResourceLocationFromEntity(elb));
+        else ret= (float) (Math.ceil(10 / 1.09 * elb.getWidth() * elb.getHeight()) + elb.getTotalArmorValue() / 2d);
+        ret+=GeneralUtils.getAttributeValueSafe(elb, WarAttributes.MAX_POSTURE.get());
+        return ret;
     }
 
     @Override
@@ -80,6 +86,9 @@ public class CombatCapability implements ICombatCapability {
 
     @Override
     public float addMight(float amount) {
+        GainMightEvent gme = new GainMightEvent(dude.get(), amount);
+        MinecraftForge.EVENT_BUS.post(gme);
+        amount = gme.getQuantity();
         float temp = qi + amount;
         setMight(temp);
         setMightGrace(ResourceConfig.qiGrace);
@@ -211,6 +220,10 @@ public class CombatCapability implements ICombatCapability {
             elb.world.playSound(null, elb.getPosX(), elb.getPosY(), elb.getPosZ(), SoundEvents.ENTITY_ZOMBIE_BREAK_WOODEN_DOOR, SoundCategory.PLAYERS, 0.3f + WarDance.rand.nextFloat() * 0.5f, 0.75f + WarDance.rand.nextFloat() * 0.5f);
             elb.getAttribute(Attributes.MOVEMENT_SPEED).removeModifier(WOUND);
             elb.getAttribute(Attributes.MOVEMENT_SPEED).applyPersistentModifier(STAGGERS);
+            if (elb instanceof PlayerEntity) {
+                walkTemp = ((PlayerEntity) elb).abilities.getWalkSpeed();
+                ((PlayerEntity) elb).abilities.setWalkSpeed(0);
+            }
             elb.getAttribute(Attributes.ARMOR).removeModifier(WOUND);
             elb.getAttribute(Attributes.ARMOR).applyPersistentModifier(STAGGERA);
             elb.getAttribute(Attributes.ARMOR).removeModifier(MORE);
@@ -338,13 +351,17 @@ public class CombatCapability implements ICombatCapability {
 
     @Override
     public void setStaggerTime(int amount) {
-        staggert = amount;
-        if (amount == 0 && dude.get() != null) {
+        if (amount == 0 && staggert > 0 && dude.get() != null) {
             LivingEntity elb = dude.get();
+            if (elb instanceof PlayerEntity && walkTemp > 0) {
+                ((PlayerEntity) elb).abilities.setWalkSpeed(walkTemp);
+                walkTemp = 0;
+            }
             elb.getAttribute(Attributes.MOVEMENT_SPEED).removeModifier(WOUND);
             elb.getAttribute(Attributes.ARMOR).removeModifier(WOUND);
             elb.getAttribute(Attributes.ARMOR).removeModifier(MORE);
         }
+        staggert = amount;
     }
 
     @Override
@@ -354,6 +371,10 @@ public class CombatCapability implements ICombatCapability {
         else {
             LivingEntity elb = dude.get();
             if (staggert > 0 && elb != null) {
+                if (elb instanceof PlayerEntity && walkTemp > 0) {
+                    ((PlayerEntity) elb).abilities.setWalkSpeed(walkTemp);
+                    walkTemp = 0;
+                }
                 elb.getAttribute(Attributes.MOVEMENT_SPEED).removeModifier(WOUND);
                 elb.getAttribute(Attributes.ARMOR).removeModifier(WOUND);
                 elb.getAttribute(Attributes.ARMOR).removeModifier(MORE);
@@ -667,6 +688,7 @@ public class CombatCapability implements ICombatCapability {
         int ticks = (int) (elb.world.getGameTime() - lastUpdate);
         if (ticks < 1) return;//sometimes time runs backwards
         setTrueMaxPosture(getMPos(elb));
+        setTrueMaxSpirit((float) dude.get().getAttribute(WarAttributes.MAX_SPIRIT.get()).getValue());
         if (first)
             setPosture(getMaxPosture());
         decrementComboGrace(ticks);
@@ -688,8 +710,8 @@ public class CombatCapability implements ICombatCapability {
         }
         float nausea = elb instanceof PlayerEntity || !elb.isPotionActive(Effects.NAUSEA) ? 0 : (elb.getActivePotionEffect(Effects.NAUSEA).getAmplifier() + 1) * GeneralConfig.nausea;
         addPosture(-nausea * ticks);
-        if(shatterCD>GeneralUtils.getAttributeValueSafe(elb, WarAttributes.SHATTER.get()))
-            shatterCD=(int)GeneralUtils.getAttributeValueSafe(elb, WarAttributes.SHATTER.get());
+        if (shatterCD > GeneralUtils.getAttributeValueSafe(elb, WarAttributes.SHATTER.get()))
+            shatterCD = (int) GeneralUtils.getAttributeValueSafe(elb, WarAttributes.SHATTER.get());
         if (shatterCD < 0) {
             shatterCD += ticks;
             if (shatterCD >= 0) {
@@ -792,6 +814,7 @@ public class CombatCapability implements ICombatCapability {
         recoveryTimer = c.getInt("stumble");
         first = c.getBoolean("first");
         parrying = c.getInt("parrying");
+        walkTemp = c.getFloat("walkTemp");
         setTempItemStack(ItemStack.read(c.getCompound("temp")));
         if (dude.get() instanceof PlayerEntity) {
             if (getRollTime() > CombatConfig.rollEndsAt && c.getBoolean("rolling"))
@@ -850,6 +873,7 @@ public class CombatCapability implements ICombatCapability {
         c.putInt("shattercd", getShatterCooldown());
         c.putInt("sweep", getForcedSweep());
         c.putInt("stumble", recoveryTimer);
+        c.putFloat("walkTemp", walkTemp);
         c.putBoolean("rolling", dude.get() instanceof PlayerEntity && ((PlayerEntity) dude.get()).getForcedPose() == Pose.SWIMMING);
         if (!tempOffhand.isEmpty())
             c.put("temp", tempOffhand.write(new CompoundNBT()));
@@ -888,7 +912,10 @@ public class CombatCapability implements ICombatCapability {
 //            return getMaxPosture() * armorMod * speedMod * healthMod / (1.5f * ResourceConfig.staggerDuration);
 //        }
         //0.2f
-        return (((getMaxPosture() / (armorMod * 20)) * cooldownMod) + recovery) * exhaustMod * healthMod * poison;
+        final float ret = (((getMaxPosture() / (armorMod * 20)) * cooldownMod) + recovery) * exhaustMod * healthMod * poison;
+        GainPostureEvent ev=new GainPostureEvent(elb, ret);
+        MinecraftForge.EVENT_BUS.post(ev);
+        return ev.getQuantity();
     }
 
     private float getSPT() {
@@ -902,6 +929,9 @@ public class CombatCapability implements ICombatCapability {
         float exhaustMod = Math.max(0, elb.isPotionActive(WarEffects.EXHAUSTION.get()) ? 1 - elb.getActivePotionEffect(WarEffects.EXHAUSTION.get()).getAmplifier() * 0.2f : 1);
         float armorMod = 5f + Math.min(elb.getTotalArmorValue(), 20) * 0.25f;
         float healthMod = 0.25f + elb.getHealth() / elb.getMaxHealth() * 0.75f;
-        return (getMaxSpirit() / (armorMod * 20)) * exhaustMod * healthMod * poison;
+        final float ret= (getMaxSpirit() / (armorMod * 20)) * exhaustMod * healthMod * poison;
+        RegenSpiritEvent ev=new RegenSpiritEvent(elb, ret);
+        MinecraftForge.EVENT_BUS.post(ev);
+        return ev.getQuantity();
     }
 }
