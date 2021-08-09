@@ -66,11 +66,11 @@ public class CombatCapability implements ICombatCapability {
     }
 
     private static float getMPos(LivingEntity elb) {
-        float ret=0;
+        float ret = 0;
         if (GeneralUtils.getResourceLocationFromEntity(elb) != null && CombatUtils.customPosture.containsKey(GeneralUtils.getResourceLocationFromEntity(elb)))
-            ret= CombatUtils.customPosture.get(GeneralUtils.getResourceLocationFromEntity(elb));
-        else ret= (float) (Math.ceil(10 / 1.09 * elb.getWidth() * elb.getHeight()) + elb.getTotalArmorValue() / 2d);
-        ret+=GeneralUtils.getAttributeValueSafe(elb, WarAttributes.MAX_POSTURE.get());
+            ret = CombatUtils.customPosture.get(GeneralUtils.getResourceLocationFromEntity(elb));
+        else ret = (float) (Math.ceil(10 / 1.09 * elb.getWidth() * elb.getHeight()) + elb.getTotalArmorValue() / 2d);
+        ret += GeneralUtils.getAttributeValueSafe(elb, WarAttributes.MAX_POSTURE.get());
         return ret;
     }
 
@@ -198,6 +198,7 @@ public class CombatCapability implements ICombatCapability {
         float ret = 0;
         LivingEntity elb = dude.get();
         if (elb == null) return ret;
+        if (staggert > 0) return amount;
         if (!Float.isFinite(posture)) posture = getMaxPosture();
         if (elb.isPotionActive(Effects.RESISTANCE) && GeneralConfig.resistance)
             amount *= (1 - (elb.getActivePotionEffect(Effects.RESISTANCE).getAmplifier() + 1) * 0.2f);
@@ -913,7 +914,7 @@ public class CombatCapability implements ICombatCapability {
 //        }
         //0.2f
         final float ret = (((getMaxPosture() / (armorMod * 20)) * cooldownMod) + recovery) * exhaustMod * healthMod * poison;
-        GainPostureEvent ev=new GainPostureEvent(elb, ret);
+        GainPostureEvent ev = new GainPostureEvent(elb, ret);
         MinecraftForge.EVENT_BUS.post(ev);
         return ev.getQuantity();
     }
@@ -929,8 +930,8 @@ public class CombatCapability implements ICombatCapability {
         float exhaustMod = Math.max(0, elb.isPotionActive(WarEffects.EXHAUSTION.get()) ? 1 - elb.getActivePotionEffect(WarEffects.EXHAUSTION.get()).getAmplifier() * 0.2f : 1);
         float armorMod = 5f + Math.min(elb.getTotalArmorValue(), 20) * 0.25f;
         float healthMod = 0.25f + elb.getHealth() / elb.getMaxHealth() * 0.75f;
-        final float ret= (getMaxSpirit() / (armorMod * 20)) * exhaustMod * healthMod * poison;
-        RegenSpiritEvent ev=new RegenSpiritEvent(elb, ret);
+        final float ret = (getMaxSpirit() / (armorMod * 20)) * exhaustMod * healthMod * poison;
+        RegenSpiritEvent ev = new RegenSpiritEvent(elb, ret);
         MinecraftForge.EVENT_BUS.post(ev);
         return ev.getQuantity();
     }

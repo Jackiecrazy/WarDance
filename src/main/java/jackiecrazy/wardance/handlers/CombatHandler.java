@@ -478,7 +478,7 @@ public class CombatHandler {
                     e.setAmount(icic.damageStart(e.getSource(), seme, uke, sememain, e.getAmount()));
                 }
                 ItemStack ukemain = uke.getHeldItemMainhand();
-                ItemStack ukeoff = uke.getHeldItemMainhand();
+                ItemStack ukeoff = uke.getHeldItemOffhand();
                 if (ukemain.getCapability(CombatManipulator.CAP).isPresent()) {
                     ICombatItemCapability icic = ukemain.getCapability(CombatManipulator.CAP).resolve().get();
                     e.setAmount(icic.onBeingDamaged(e.getSource(), uke, ukemain, e.getAmount()));

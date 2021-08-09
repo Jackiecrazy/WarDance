@@ -215,7 +215,7 @@ Onslaught: casts heavy blow before every attack (this is a lot easier)
     }
 
     public static class MastersLesson extends Execution {
-        private final Tag<String> tag = Tag.getTagFromContents(new HashSet<>(Arrays.asList("physical", SkillTags.on_hurt, "melee", "execution", SkillTags.on_parry, SkillTags.attack_might)));
+        private final Tag<String> tag = Tag.getTagFromContents(new HashSet<>(Arrays.asList("physical", SkillTags.on_hurt, "melee", "execution", SkillTags.on_parry, SkillTags.change_might)));
         private final Tag<String> no = Tag.getTagFromContents(new HashSet<>(Collections.singletonList("execution")));
 
         @Override
@@ -253,7 +253,7 @@ Onslaught: casts heavy blow before every attack (this is a lot easier)
         public void onSuccessfulProc(LivingEntity caster, SkillData stats, LivingEntity target, Event procPoint) {
             if (procPoint instanceof SkillCastEvent) {
                 stats.setArbitraryFloat(stats.getArbitraryFloat() + 1);
-            }
+            } else super.onSuccessfulProc(caster, stats, target, procPoint);
         }
 
         @Override
@@ -276,13 +276,14 @@ Onslaught: casts heavy blow before every attack (this is a lot easier)
             final List<LivingEntity> list = caster.world.getEntitiesWithinAABB(LivingEntity.class, caster.getBoundingBox().grow(10), (a) -> TargetingUtils.isAlly(a, caster));
             for (LivingEntity pet : list) {
                 pet.addPotionEffect(new EffectInstance(Effects.SPEED, (int) amount * 10, buff));
-                pet.addPotionEffect(new EffectInstance(Effects.STRENGTH, (int) amount * 10, buff));
                 if (buff >= 1)
                     pet.addPotionEffect(new EffectInstance(Effects.LUCK, (int) amount * 10, buff - 1));
                 if (buff >= 2)
-                    pet.addPotionEffect(new EffectInstance(Effects.REGENERATION, (int) amount * 10, buff - 2));
+                    pet.addPotionEffect(new EffectInstance(Effects.STRENGTH, (int) amount * 10, buff - 2));
                 if (buff >= 3)
-                    pet.addPotionEffect(new EffectInstance(Effects.RESISTANCE, (int) amount * 10, Math.min(buff - 3, 2)));
+                    pet.addPotionEffect(new EffectInstance(Effects.REGENERATION, (int) amount * 10, buff - 3));
+                if (buff >= 4)
+                    pet.addPotionEffect(new EffectInstance(Effects.RESISTANCE, (int) amount * 10, Math.min(buff - 4, 2)));
             }
         }
     }

@@ -129,6 +129,19 @@ public class SkillEventHandler {//TODO remove some checks on some tags so execut
     }
 
     @SubscribeEvent
+    public static void gainMightFlags(GainMightEvent e) {
+        if (!e.getEntityLiving().isServerWorld()) return;
+        LivingEntity attacker = e.getEntityLiving();
+        ISkillCapability isc = CasterData.getCap(attacker);
+        for (SkillData s : isc.getActiveSkills().values()) {
+            if (s.getSkill().getTags(attacker).contains(SkillTags.change_might)) {
+                s.getSkill().onSuccessfulProc(attacker, s, e.getEntityLiving(), e);
+            }
+        }
+        //System.out.println("might "+e.isCanceled());
+    }
+
+    @SubscribeEvent
     public static void healFlags(LivingHealEvent e) {
         if (!e.getEntityLiving().isServerWorld()) return;
         LivingEntity entity = e.getEntityLiving();

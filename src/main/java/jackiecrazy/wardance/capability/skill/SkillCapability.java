@@ -288,10 +288,10 @@ public class SkillCapability implements ISkillCapability {
         Skill.STATE state = Skill.STATE.INACTIVE;
         for (Skill d : equippedSkill) {
             if (d == null) continue;
-            if (isSkillActive(d) && d.activeTick(caster, getActiveSkill(d).get())) {
+            if (getActiveSkill(d).isPresent() && d.activeTick(caster, activeSkills.get(d))) {
                 state = Skill.STATE.ACTIVE;
                 sync = true;
-            } else if (isSkillCoolingDown(d) && d.coolingTick(caster, coolingSkills.get(d))) {
+            } else if (coolingSkills.containsKey(d) && d.coolingTick(caster, coolingSkills.get(d))) {
                 state = Skill.STATE.COOLING;
                 sync = true;
             }
