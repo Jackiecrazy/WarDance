@@ -33,7 +33,7 @@ public class Grapple extends Skill {
 
     @Override
     public float spiritConsumption(LivingEntity caster) {
-        return 3;
+        return 2;
     }
 
     @Override
@@ -44,7 +44,7 @@ public class Grapple extends Skill {
     @Override
     public boolean onCast(LivingEntity caster) {
         activate(caster, 60);
-        CombatData.getCap(caster).consumeSpirit(3);
+        CombatData.getCap(caster).consumeSpirit(spiritConsumption(caster));
         return true;
     }
 

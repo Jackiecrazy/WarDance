@@ -5,7 +5,6 @@ import com.mojang.blaze3d.matrix.MatrixStack;
 import com.mojang.blaze3d.platform.GlStateManager;
 import com.mojang.blaze3d.systems.RenderSystem;
 import jackiecrazy.wardance.WarDance;
-import jackiecrazy.wardance.capability.resources.CombatCapability;
 import jackiecrazy.wardance.capability.resources.CombatData;
 import jackiecrazy.wardance.capability.resources.ICombatCapability;
 import jackiecrazy.wardance.capability.skill.CasterData;
@@ -43,6 +42,7 @@ import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.client.event.*;
 import net.minecraftforge.common.ForgeMod;
 import net.minecraftforge.event.TickEvent;
+import net.minecraftforge.event.entity.living.LivingAttackEvent;
 import net.minecraftforge.event.entity.living.LivingEvent;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 import net.minecraftforge.eventbus.api.EventPriority;
@@ -77,6 +77,7 @@ public class ClientEvents {
     private static double dodgeDecimal;
     private static Entity lastTickLookAt;
     private static boolean rightClick = false;
+    public static int combatTicks = Integer.MAX_VALUE;
 
     static {
         formatter.setRoundingMode(RoundingMode.DOWN);
@@ -157,6 +158,17 @@ public class ClientEvents {
     }
 
     @SubscribeEvent
+    public static void alert(LivingAttackEvent e) {
+        if (Minecraft.getInstance().player == null) return;
+        if (e.getEntityLiving() == Minecraft.getInstance().player || e.getSource().getTrueSource() == Minecraft.getInstance().player) {
+            if (!CombatData.getCap(Minecraft.getInstance().player).isCombatMode() && ClientConfig.autoCombat > 0) {
+                CombatChannel.INSTANCE.sendToServer(new CombatModePacket());
+            }
+            combatTicks = Minecraft.getInstance().player.ticksExisted;
+        }
+    }
+
+    @SubscribeEvent
     public static void downTick(LivingEvent.LivingUpdateEvent event) {
         final LivingEntity e = event.getEntityLiving();
         if (e.isAlive()) {
@@ -168,7 +180,7 @@ public class ClientEvents {
             ClientPlayerEntity cpe = Minecraft.getInstance().player;
             final ISkillCapability cap = CasterData.getCap(cpe);
             if (e != cpe && cap.isSkillUsable(cap.getEquippedVariation(WarSkills.COUP_DE_GRACE.get()))) {
-                //render coup icon on mob
+                //TODO render coup icon on mob
                 CoupDeGrace cdg = (CoupDeGrace) (cap.getEquippedVariation(WarSkills.COUP_DE_GRACE.get()));
                 if (cdg.isValid(cpe, e) && e.ticksExisted % 10 == 0 && Minecraft.getInstance().world != null)
                     event.getEntity().world.addParticle(ParticleTypes.ANGRY_VILLAGER, e.getPosX() + (WarDance.rand.nextFloat() - 0.5f) * e.getWidth() * 2, e.getPosY() + e.getHeight(), e.getPosZ() + (WarDance.rand.nextFloat() - 0.5f) * e.getWidth() * 2, 0, 0, 0);
@@ -337,7 +349,7 @@ public class ClientEvents {
 //                        }
                     int x = Math.max(width / 4 + ClientConfig.mightX - 16, 0);
                     int y = Math.min(height - ClientConfig.mightY, height - 32);
-                    int fillHeight = (int) (currentMightLevel / CombatCapability.MAXQI * 32);
+                    int fillHeight = (int) Math.min(1, currentMightLevel / cap.getMaxMight() * 32);
                     //might circle
                     RenderSystem.color4f(1, 1, 1, 1);
                     stack.push();
@@ -385,7 +397,7 @@ public class ClientEvents {
                     mc.ingameGUI.blit(stack, x, y + 32 - fillHeight, 64, 128 - fillHeight, 32, fillHeight);
                     stack.pop();
                     mc.fontRenderer.drawStringWithShadow(event.getMatrixStack(), display, width * (3 / 4f) + ClientConfig.spiritNumberX - mc.fontRenderer.getStringWidth(display) / 2f, height - ClientConfig.spiritNumberY, ClientConfig.spiritColor);
-                    display = formatter.format(currentMightLevel) + "/10";
+                    display = formatter.format(currentMightLevel) + "/" + formatter.format(cap.getMaxMight());
                     mc.fontRenderer.drawStringWithShadow(event.getMatrixStack(), display, width / 4f + ClientConfig.mightNumberX - mc.fontRenderer.getStringWidth(display) / 2f, height - ClientConfig.mightNumberY, ClientConfig.mightColor);
                     stack.pop();
 
@@ -612,6 +624,9 @@ public class ClientEvents {
                         CombatChannel.INSTANCE.sendToServer(new RequestUpdatePacket(look.getEntityId()));
                     else
                         CombatChannel.INSTANCE.sendToServer(new RequestUpdatePacket(-1));
+                }
+                if (combatTicks + ClientConfig.autoCombat == p.ticksExisted && CombatData.getCap(p).isCombatMode()) {
+                    CombatChannel.INSTANCE.sendToServer(new CombatModePacket());
                 }
                 if (!Keybinds.PARRY.isKeyDown())
                     lastTickParry = false;

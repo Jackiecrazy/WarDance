@@ -34,7 +34,7 @@ public class Poise extends HeavyBlow {
     @Override
     public boolean onCast(LivingEntity caster) {
         CombatData.getCap(caster).consumeMight(1);
-        CombatData.getCap(caster).consumeSpirit(2);
+        CombatData.getCap(caster).consumeSpirit(spiritConsumption(caster));
         activate(caster, 60);
         return true;
     }

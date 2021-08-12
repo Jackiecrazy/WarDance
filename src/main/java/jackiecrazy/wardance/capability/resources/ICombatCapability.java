@@ -105,6 +105,10 @@ public interface ICombatCapability {
 
     void setTrueMaxSpirit(float amount);
 
+    float getMaxMight();
+
+    void setMaxMight(float amount);
+
     default float getMaxPosture() {
         return Math.max(0.1f, getTrueMaxPosture() - getFatigue());
     }

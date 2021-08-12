@@ -23,11 +23,7 @@ import net.minecraft.entity.ai.goal.Goal;
 import net.minecraft.entity.monster.MonsterEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.ServerPlayerEntity;
-import net.minecraft.inventory.EquipmentSlotType;
-import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.potion.Effects;
-import net.minecraft.util.Hand;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.Tuple;
 import net.minecraft.util.math.AxisAlignedBB;
@@ -38,7 +34,6 @@ import net.minecraft.world.World;
 import net.minecraftforge.event.AttachCapabilitiesEvent;
 import net.minecraftforge.event.TickEvent;
 import net.minecraftforge.event.entity.EntityJoinWorldEvent;
-import net.minecraftforge.event.entity.living.LivingEquipmentChangeEvent;
 import net.minecraftforge.event.entity.living.LivingEvent;
 import net.minecraftforge.event.entity.living.LivingSetAttackTargetEvent;
 import net.minecraftforge.event.entity.living.PotionEvent;
@@ -208,35 +203,35 @@ Mobs should move into a position that is close to the player, far from allies, a
         }
     }
 
-    @SubscribeEvent
-    public static void kitCheck(LivingEvent.LivingUpdateEvent e) {
-        final LivingEntity le = e.getEntityLiving();
-        if (le instanceof PlayerEntity) {
-            if (GeneralUtils.isKitMain(le.getHeldItemMainhand())) {
-                ItemStack is = le.getHeldItemMainhand();
-                is.getOrCreateTag().put("kitItem", le.getHeldItemOffhand().write(new CompoundNBT()));
-                //this is called before kitUp, so this quickly overrides the latter
-            }
-        }
-    }
+//    @SubscribeEvent
+//    public static void kitCheck(LivingEvent.LivingUpdateEvent e) {
+//        final LivingEntity le = e.getEntityLiving();
+//        if (le instanceof PlayerEntity) {
+//            if (GeneralUtils.isKitMain(le.getHeldItemMainhand())) {
+//                ItemStack is = le.getHeldItemMainhand();
+//                is.getOrCreateTag().put("kitItem", le.getHeldItemOffhand().write(new CompoundNBT()));
+//                //this is called before kitUp, so this quickly overrides the latter
+//            }
+//        }
+//    }
 
-    @SubscribeEvent
-    public static void kitUp(LivingEquipmentChangeEvent e) {
-        if (e.getSlot() == EquipmentSlotType.MAINHAND && !ItemStack.areItemsEqual(e.getFrom(), e.getTo())) {
-            ItemStack from = e.getFrom(), to = e.getTo();
-            final LivingEntity elb = e.getEntityLiving();
-            if (GeneralUtils.isKitMain(from)) {
-                //interesting, it's being written, then removed immediately.
-                e.getFrom().getOrCreateTag().put("kitItem", elb.getHeldItemOffhand().write(new CompoundNBT()));
-                elb.setHeldItem(Hand.OFF_HAND, CombatData.getCap(elb).getTempItemStack());
-            }
-            if (GeneralUtils.isKitMain(to)) {
-                CombatData.getCap(elb).setTempItemStack(elb.getHeldItemOffhand());
-                ItemStack replace = ItemStack.read(to.getOrCreateTag().getCompound("kitItem"));
-                elb.setHeldItem(Hand.OFF_HAND, replace);
-            }
-        }
-    }
+//    @SubscribeEvent
+//    public static void kitUp(LivingEquipmentChangeEvent e) {
+//        if (e.getSlot() == EquipmentSlotType.MAINHAND && !ItemStack.areItemsEqual(e.getFrom(), e.getTo())) {
+//            ItemStack from = e.getFrom(), to = e.getTo();
+//            final LivingEntity elb = e.getEntityLiving();
+//            if (GeneralUtils.isKitMain(from)) {
+//                //interesting, it's being written, then removed immediately.
+//                e.getFrom().getOrCreateTag().put("kitItem", elb.getHeldItemOffhand().write(new CompoundNBT()));
+//                elb.setHeldItem(Hand.OFF_HAND, CombatData.getCap(elb).getTempItemStack());
+//            }
+//            if (GeneralUtils.isKitMain(to)) {
+//                CombatData.getCap(elb).setTempItemStack(elb.getHeldItemOffhand());
+//                ItemStack replace = ItemStack.read(to.getOrCreateTag().getCompound("kitItem"));
+//                elb.setHeldItem(Hand.OFF_HAND, replace);
+//            }
+//        }
+//    }
 
     @SubscribeEvent
     public static void pray(LivingSetAttackTargetEvent e) {

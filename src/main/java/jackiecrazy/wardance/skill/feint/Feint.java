@@ -40,13 +40,13 @@ public class Feint extends Skill {
     @Override
     public boolean onCast(LivingEntity caster) {
         activate(caster, 50);
-        CombatData.getCap(caster).consumeSpirit(5);
+        CombatData.getCap(caster).consumeSpirit(spiritConsumption(caster));
         return true;
     }
 
     @Override
     public float spiritConsumption(LivingEntity caster) {
-        return 5;
+        return 4;
     }
 
     @Override

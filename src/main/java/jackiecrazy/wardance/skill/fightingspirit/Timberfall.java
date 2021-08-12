@@ -28,7 +28,7 @@ public class Timberfall extends WarCry {
     @SubscribeEvent
     public static void timberfall(AttackMightEvent e) {
         if (e.getAttacker() != null && !CasterData.getCap(e.getAttacker()).isSkillCoolingDown(WarSkills.TIMBERFALL.get())) {
-            CombatData.getCap(e.getEntityLiving()).consumePosture(e.getQuantity() * 4);
+            CombatData.getCap(e.getEntityLiving()).consumePosture(e.getQuantity() * 5);
         }
     }
 

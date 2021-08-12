@@ -39,8 +39,13 @@ public class Kick extends Skill {
     @Override
     public boolean onCast(LivingEntity caster) {
         activate(caster, 40);
-        CombatData.getCap(caster).consumeSpirit(4);
+        CombatData.getCap(caster).consumeSpirit(spiritConsumption(caster));
         return true;
+    }
+
+    @Override
+    public float spiritConsumption(LivingEntity caster) {
+        return 3;
     }
 
     @Override

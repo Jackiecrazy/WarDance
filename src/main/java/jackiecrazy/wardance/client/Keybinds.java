@@ -50,6 +50,7 @@ public class Keybinds {
         if (mc.player == null) return;
         ICombatCapability itsc = CombatData.getCap(mc.player);
         if (COMBAT.getKeyConflictContext().isActive() && COMBAT.isPressed()) {
+            ClientEvents.combatTicks = Integer.MAX_VALUE;
             mc.player.sendStatusMessage(new TranslationTextComponent("wardance.combat." + (itsc.isCombatMode() ? "off" : "on")), true);
             CombatChannel.INSTANCE.sendToServer(new CombatModePacket());
         }

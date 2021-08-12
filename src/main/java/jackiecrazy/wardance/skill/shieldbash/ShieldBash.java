@@ -45,13 +45,13 @@ public class ShieldBash extends Skill {
 
     @Override
     public float spiritConsumption(LivingEntity caster) {
-        return 3;
+        return 2;
     }
 
     @Override
     public boolean onCast(LivingEntity caster) {
         activate(caster, 40);
-        CombatData.getCap(caster).consumeSpirit(3);
+        CombatData.getCap(caster).consumeSpirit(spiritConsumption(caster));
         if (getParentSkill() == null) {
             if (CombatUtils.isShield(caster, caster.getHeldItemMainhand()))
                 CombatData.getCap(caster).setHandBind(Hand.MAIN_HAND, 0);

@@ -101,6 +101,7 @@ Onslaught: casts heavy blow before every attack (this is a lot easier)
     public void onSuccessfulProc(LivingEntity caster, SkillData stats, LivingEntity target, Event procPoint) {
         if (procPoint instanceof LivingHurtEvent) {
             LivingHurtEvent e = (LivingHurtEvent) procPoint;
+            if (e.getEntityLiving() == caster) return;
             if (CombatData.getCap(e.getEntityLiving()).getStaggerTime() > 0 && !CombatData.getCap(e.getEntityLiving()).isFirstStaggerStrike()) {
                 performEffect(caster, target, execute(e), stats);
                 markUsed(caster);

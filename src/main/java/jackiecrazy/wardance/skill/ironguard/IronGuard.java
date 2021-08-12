@@ -38,8 +38,14 @@ public class IronGuard extends Skill {
     }
 
     @Override
+    public float spiritConsumption(LivingEntity caster) {
+        return 1;
+    }
+
+    @Override
     public boolean onCast(LivingEntity caster) {
         activate(caster, 30);
+        CombatData.getCap(caster).consumeSpirit(spiritConsumption(caster));
         return true;
     }
 

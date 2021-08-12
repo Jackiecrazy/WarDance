@@ -159,6 +159,16 @@ public class DummyCombatCap implements ICombatCapability {
     }
 
     @Override
+    public float getMaxMight() {
+        return 0;
+    }
+
+    @Override
+    public void setMaxMight(float amount) {
+
+    }
+
+    @Override
     public int getComboGrace() {
         return 0;
     }

@@ -74,7 +74,7 @@ public class CoupDeGrace extends Skill {
     public void onSuccessfulProc(LivingEntity caster, SkillData stats, LivingEntity target, Event procPoint) {
         if (procPoint instanceof LivingHurtEvent) {
             LivingHurtEvent e = (LivingHurtEvent) procPoint;
-            if (isValid(caster, target)) {
+            if (e.getEntityLiving() != caster && isValid(caster, target)) {
                 if (CombatData.getCap(e.getEntityLiving()).getStaggerTime() > 0 && !CombatData.getCap(e.getEntityLiving()).isFirstStaggerStrike()) {
                     execute(e);
 //                        CombatData.getCap(target).decrementStaggerTime(CombatData.getCap(target).getStaggerTime());
@@ -90,8 +90,8 @@ public class CoupDeGrace extends Skill {
     }
 
     protected void execute(LivingHurtEvent e) {
+        e.setAmount(e.getEntityLiving().getHealth() + 10);
         e.getEntityLiving().setHealth(1);
-        e.setAmount(Float.MAX_VALUE);
         e.getSource().setDamageBypassesArmor().setDamageIsAbsolute();
     }
 
@@ -141,7 +141,7 @@ public class CoupDeGrace extends Skill {
 
         @Override
         public boolean isValid(LivingEntity caster, LivingEntity target) {
-            return target.getHealth() < (GeneralUtils.getMaxHealthBeforeWounding(target) * 0.05f)+GeneralUtils.getAttributeValueSafe(caster, Attributes.ATTACK_DAMAGE);
+            return target.getHealth() < (GeneralUtils.getMaxHealthBeforeWounding(target) * 0.05f) + GeneralUtils.getAttributeValueSafe(caster, Attributes.ATTACK_DAMAGE);
         }
 
         @Override
@@ -155,6 +155,7 @@ public class CoupDeGrace extends Skill {
         public void onSuccessfulProc(LivingEntity caster, SkillData stats, LivingEntity target, Event procPoint) {
             if (procPoint instanceof LivingHurtEvent) {
                 LivingHurtEvent e = (LivingHurtEvent) procPoint;
+                if (e.getEntityLiving() == caster) return;
                 e.getEntityLiving().setHealth(e.getEntityLiving().getHealth() - GeneralUtils.getMaxHealthBeforeWounding(target) * 0.05f);
                 e.setAmount(e.getAmount() * 2);
                 if (e.getEntityLiving().getHealth() - e.getAmount() <= 0)

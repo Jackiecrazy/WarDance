@@ -46,7 +46,7 @@ public class CombatCapability implements ICombatCapability {
 
     private final WeakReference<LivingEntity> dude;
     private ItemStack prev;
-    private float qi, spirit, posture, combo, mpos, mspi, wounding, burnout, fatigue, mainReel, offReel, walkTemp;
+    private float qi, spirit, posture, combo, mpos, mspi, wounding, burnout, fatigue, mainReel, offReel, walkTemp, maxMight;
     private int shatterCD;
     private int qcd, scd, pcd, ccd, mBind, oBind;
     private int staggert, staggerc, ocd, shield, sc, roll, sweep;
@@ -81,7 +81,8 @@ public class CombatCapability implements ICombatCapability {
 
     @Override
     public void setMight(float amount) {
-        qi = MathHelper.clamp(amount, 0, MAXQI);
+        float cap = dude.get() == null ? MAXQI : (float) GeneralUtils.getAttributeValueSafe(dude.get(), WarAttributes.MAX_MIGHT.get());
+        qi = MathHelper.clamp(amount, 0, cap);
     }
 
     @Override
@@ -235,12 +236,10 @@ public class CombatCapability implements ICombatCapability {
         }
         float weakness = 1;
         float cooldown = ResourceConfig.postureCD * weakness;
-        if (elb != null) {
-            cooldown += ResourceConfig.armorPostureCD * elb.getTotalArmorValue() / 20f;
-            if (elb.isPotionActive(Effects.HUNGER))
-                for (int uwu = 0; uwu < elb.getActivePotionEffect(Effects.HUNGER).getAmplifier() + 1; uwu++)
-                    weakness *= GeneralConfig.hunger;
-        }
+        cooldown += ResourceConfig.armorPostureCD * elb.getTotalArmorValue() / 20f;
+        if (elb.isPotionActive(Effects.HUNGER))
+            for (int uwu = 0; uwu < elb.getActivePotionEffect(Effects.HUNGER).getAmplifier() + 1; uwu++)
+                weakness *= GeneralConfig.hunger;
         posture -= amount;
         addFatigue(amount * ResourceConfig.fatigue);
         setPostureGrace((int) cooldown);
@@ -322,6 +321,16 @@ public class CombatCapability implements ICombatCapability {
     @Override
     public void setTrueMaxSpirit(float amount) {
         mspi = amount;
+    }
+
+    @Override
+    public float getMaxMight() {
+        return maxMight;
+    }
+
+    @Override
+    public void setMaxMight(float amount) {
+        maxMight = amount;
     }
 
     @Override
@@ -690,6 +699,7 @@ public class CombatCapability implements ICombatCapability {
         if (ticks < 1) return;//sometimes time runs backwards
         setTrueMaxPosture(getMPos(elb));
         setTrueMaxSpirit((float) dude.get().getAttribute(WarAttributes.MAX_SPIRIT.get()).getValue());
+        setTrueMaxSpirit((float) dude.get().getAttribute(WarAttributes.MAX_MIGHT.get()).getValue());
         if (first)
             setPosture(getMaxPosture());
         decrementComboGrace(ticks);
@@ -793,6 +803,7 @@ public class CombatCapability implements ICombatCapability {
         setCombo(c.getFloat("combo"));
         setSpirit(c.getFloat("spirit"));
         setTrueMaxSpirit(c.getFloat("maxspi"));
+        setMaxMight(c.getFloat("maxmight"));
         setBurnout(c.getFloat("burnout"));
         setWounding(c.getFloat("wounding"));
         setComboGrace(c.getInt("combocd"));
@@ -852,6 +863,7 @@ public class CombatCapability implements ICombatCapability {
         c.putFloat("burnout", getBurnout());
         c.putFloat("fatigue", getFatigue());
         c.putFloat("wounding", getWounding());
+        c.putFloat("maxmight", getMaxMight());
         c.putInt("combocd", getComboGrace());
         c.putInt("qicd", getMightGrace());
         c.putInt("posturecd", getPostureGrace());

@@ -256,6 +256,7 @@ public abstract class Skill extends ForgeRegistryEntry<Skill> {
     }
 
     protected void markUsed(LivingEntity caster) {
+        WarDance.LOGGER.debug(this.getRegistryName()+" has ended");
         caster.world.playMovingSound(null, caster, SoundEvents.BLOCK_FIRE_EXTINGUISH, SoundCategory.AMBIENT, 0.3f + WarDance.rand.nextFloat() * 0.5f, 0.5f + WarDance.rand.nextFloat());
         CasterData.getCap(caster).markSkillUsed(this);
     }

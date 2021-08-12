@@ -39,14 +39,14 @@ public class HeavyBlow extends Skill {
     @Override
     public boolean onCast(LivingEntity caster) {
         CombatData.getCap(caster).consumeMight(1);
-        CombatData.getCap(caster).consumeSpirit(2);
+        CombatData.getCap(caster).consumeSpirit(spiritConsumption(caster));
         activate(caster, 40);
         return true;
     }
 
     @Override
     public float spiritConsumption(LivingEntity caster) {
-        return 2;
+        return 1;
     }
 
     @Override

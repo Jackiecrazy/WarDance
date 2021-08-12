@@ -30,6 +30,7 @@ public class ClientConfig {
     public static int yourPostureY;
     public static int theirPostureX;
     public static int theirPostureY;
+    public static int autoCombat;
 
     static {
         final Pair<ClientConfig, ForgeConfigSpec> specPair = new ForgeConfigSpec.Builder().configure(ClientConfig::new);
@@ -38,6 +39,7 @@ public class ClientConfig {
     }
 
     private final ForgeConfigSpec.BooleanValue _displayEnemyPosture;
+    private final ForgeConfigSpec.IntValue _autoCombat;
     private final ForgeConfigSpec.IntValue _qiX;
     private final ForgeConfigSpec.IntValue _qiY;
     private final ForgeConfigSpec.IntValue _comboX;
@@ -57,7 +59,9 @@ public class ClientConfig {
     private final ForgeConfigSpec.ConfigValue<List<? extends String>> _customPosture;
 
     public ClientConfig(ForgeConfigSpec.Builder b) {
-        _displayEnemyPosture = b.translation("wardance.config.displayPosture").comment("whether to display the posture of the entity looked at").define("displayEnemyPosture", true);
+        b.push("convenience");
+        _autoCombat = b.translation("wardance.config.autoCombat").comment("combat mode will be automatically engaged once you attack or get attacked by an entity if it is not already on, for this number of ticks before turning itself off. Set to 0 to disable this feature.").defineInRange("auto combat mode", 260, 0, Integer.MAX_VALUE);
+        b.pop();
         b.push("might");
         _qiX = b.translation("wardance.config.mightX").comment("might HUD x position from the left quartile of the screen").defineInRange("might X", -32, -Integer.MAX_VALUE, Integer.MAX_VALUE);
         _qiY = b.translation("wardance.config.mightY").comment("might HUD y position from the bottom of the screen").defineInRange("might Y", 32, 0, Integer.MAX_VALUE);
@@ -76,16 +80,16 @@ public class ClientConfig {
         _comboX = b.translation("wardance.config.comboX").comment("x position of the combo HUD's center from the left of the screen").defineInRange("combo X", -40, -Integer.MAX_VALUE, 0);
         _comboY = b.translation("wardance.config.comboY").comment("x position of the combo HUD's center the center of the screen").defineInRange("combo Y", -32, -Integer.MAX_VALUE, Integer.MAX_VALUE);
         b.pop();
-        b.push("yours");
+        b.push("player posture");
         _yourPostureX = b.translation("wardance.config.uPosX").comment("your posture bar X, defined as deviation from the center").defineInRange("yourPostureX", 0, -Integer.MAX_VALUE, Integer.MAX_VALUE);
         _yourPostureY = b.translation("wardance.config.uPosY").comment("your posture bar Y, defined from the bottom of the screen").defineInRange("yourPostureY", -57, -Integer.MAX_VALUE, 0);
         b.pop();
-        b.push("theirs");
+        b.push("enemy posture");
+        _displayEnemyPosture = b.translation("wardance.config.displayPosture").comment("whether to display the posture of the entity looked at").define("displayEnemyPosture", true);
         _theirPostureX = b.translation("wardance.config.tPosX").comment("enemy posture bar X, defined as deviation from the center").defineInRange("theirPostureX", 0, -Integer.MAX_VALUE, Integer.MAX_VALUE);
         _theirPostureY = b.translation("wardance.config.tPosY").comment("enemy posture bar Y, defined from the top of the screen").defineInRange("theirPostureY", 20, 0, Integer.MAX_VALUE);
         b.pop();
         _customPosture = b.translation("wardance.config.postureMobs").comment("whether a mob is rotated when it is staggered.").defineList("mob stagger rotation", Lists.newArrayList("example:dragon, false", "example:ghast, true"), String.class::isInstance);
-
     }
 
     public static void bake() {
@@ -104,8 +108,9 @@ public class ClientConfig {
         yourPostureY = CONFIG._yourPostureY.get();
         theirPostureX = CONFIG._theirPostureX.get();
         theirPostureY = CONFIG._theirPostureY.get();
-        spiritColor=Integer.parseInt(CONFIG._spiritColor.get(), 16);
-        mightColor=Integer.parseInt(CONFIG._mightColor.get(), 16);
+        spiritColor = Integer.parseInt(CONFIG._spiritColor.get(), 16);
+        mightColor = Integer.parseInt(CONFIG._mightColor.get(), 16);
+        autoCombat = CONFIG._autoCombat.get();
         ClientEvents.updateList(CONFIG._customPosture.get());
     }
 
