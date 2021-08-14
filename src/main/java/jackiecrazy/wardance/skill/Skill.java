@@ -4,7 +4,7 @@ import jackiecrazy.wardance.WarDance;
 import jackiecrazy.wardance.capability.resources.CombatData;
 import jackiecrazy.wardance.capability.skill.CasterData;
 import jackiecrazy.wardance.capability.skill.ISkillCapability;
-import jackiecrazy.wardance.capability.status.StatusEffects;
+import jackiecrazy.wardance.capability.status.Afflictions;
 import jackiecrazy.wardance.event.SkillCastEvent;
 import jackiecrazy.wardance.event.SkillCooldownEvent;
 import net.minecraft.entity.LivingEntity;
@@ -80,7 +80,7 @@ public abstract class Skill extends ForgeRegistryEntry<Skill> {
     @Nullable
     public Skill getParentSkill() {
         return null;
-    }
+    }//TODO move this to a SkillCategory class so base skills can have different names
 
     @Nonnull
     public final Skill tryGetParentSkill() {
@@ -189,7 +189,7 @@ public abstract class Skill extends ForgeRegistryEntry<Skill> {
     }
 
     protected void endAffliction(LivingEntity target) {
-        StatusEffects.getCap(target).removeStatus(this);
+        Afflictions.getCap(target).removeStatus(this);
     }
 
     /**
@@ -266,7 +266,7 @@ public abstract class Skill extends ForgeRegistryEntry<Skill> {
     }
 
     protected void afflict(LivingEntity caster, LivingEntity target, float duration, float arbitrary) {
-        StatusEffects.getCap(target).addStatus(new SkillData(this, duration).setCaster(caster).setArbitraryFloat(arbitrary));
+        Afflictions.getCap(target).addStatus(new SkillData(this, duration).setCaster(caster).setArbitraryFloat(arbitrary));
     }
 
     public SkillData onStatusAdd(LivingEntity caster, LivingEntity target, SkillData sd, @Nullable SkillData existing) {

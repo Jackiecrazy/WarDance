@@ -50,7 +50,6 @@ public class FlameDance extends WarCry {
     @Override
     public void onEffectEnd(LivingEntity caster, SkillData stats) {
         caster.getAttribute(Attributes.ATTACK_SPEED).removeModifier(attackSpeed);
-        CombatData.getCap(caster).setForcedSweep(-1);
         super.onEffectEnd(caster, stats);
     }
 

@@ -17,9 +17,16 @@ public class Recovery extends IronGuard {
 
     @Override
     public void onSuccessfulProc(LivingEntity caster, SkillData stats, @Nullable LivingEntity target, Event procPoint) {
-        super.onSuccessfulProc(caster,stats, target, procPoint);
-        ICombatCapability icc=CombatData.getCap(caster);
+        super.onSuccessfulProc(caster, stats, target, procPoint);
+        ICombatCapability icc = CombatData.getCap(caster);
+        stats.flagCondition(true);
         icc.setSpiritGrace(0);
         icc.setPostureGrace(0);
+    }
+
+    @Override
+    public void onEffectEnd(LivingEntity caster, SkillData stats) {
+        super.onEffectEnd(caster, stats);
+        if (stats.isCondition()) CombatData.getCap(caster).setPostureGrace(0);
     }
 }

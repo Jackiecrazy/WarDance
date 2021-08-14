@@ -463,7 +463,7 @@ public class CombatHandler {
         uke.getAttribute(Attributes.ARMOR).removeModifier(uuid2);
         //no food!
         ItemStack active = uke.getHeldItem(uke.getActiveHand());
-        if (CombatUtils.isPhysicalAttack(e.getSource())&&CombatConfig.foodCool >= 0 && (active.getItem().getUseAction(active) == UseAction.EAT || active.getItem().getUseAction(active) == UseAction.DRINK) && uke.isHandActive()) {
+        if (CombatUtils.isPhysicalAttack(e.getSource()) && CombatConfig.foodCool >= 0 && (active.getItem().getUseAction(active) == UseAction.EAT || active.getItem().getUseAction(active) == UseAction.DRINK) && uke.isHandActive()) {
             uke.stopActiveHand();
             if (uke instanceof PlayerEntity && CombatConfig.foodCool > 0) {
                 ((PlayerEntity) uke).getCooldownTracker().setCooldown(active.getItem(), CombatConfig.foodCool);

@@ -2,8 +2,10 @@ package jackiecrazy.wardance.capability.status;
 
 import com.google.common.collect.Maps;
 import jackiecrazy.wardance.WarDance;
+import jackiecrazy.wardance.handlers.EntityHandler;
 import jackiecrazy.wardance.networking.CombatChannel;
 import jackiecrazy.wardance.networking.SyncSkillPacket;
+import jackiecrazy.wardance.networking.UpdateAfflictionPacket;
 import jackiecrazy.wardance.skill.Skill;
 import jackiecrazy.wardance.skill.SkillData;
 import net.minecraft.entity.LivingEntity;
@@ -17,9 +19,8 @@ import java.util.*;
 
 public class Status implements IStatus {
     private final Map<Skill, SkillData> statuus = Maps.newHashMap();
-    //weapon bound skills are added to their NBT instead of being handled here.
-    //^not anymore. All skills are now self bound.
     private final WeakReference<LivingEntity> dude;
+    boolean sync = false;
 
     public Status(LivingEntity attachTo) {
         dude = new WeakReference<>(attachTo);
@@ -38,8 +39,7 @@ public class Status implements IStatus {
         }
         SkillData sd = d.getSkill().onStatusAdd(d.getCaster(dude.get().world), dude.get(), d, statuus.get(d.getSkill()));
         statuus.put(d.getSkill(), sd);
-        if (CombatChannel.INSTANCE != null && dude.get() instanceof ServerPlayerEntity)
-            CombatChannel.INSTANCE.send(PacketDistributor.PLAYER.with(() -> (ServerPlayerEntity) dude.get()), new SyncSkillPacket(this.write()));
+        sync = true;
     }
 
     @Override
@@ -49,6 +49,7 @@ public class Status implements IStatus {
         if (sd != null && victim != null) {
             sd.getSkill().onStatusEnd(sd.getCaster(victim.world), victim, sd);
         }
+        sync = true;
         statuus.remove(s);
     }
 
@@ -84,7 +85,7 @@ public class Status implements IStatus {
                 listnbt.add(effectinstance.write(new CompoundNBT()));
             }
 
-            to.put("ActiveSkills", listnbt);
+            to.put("ActiveAfflictions", listnbt);
         }
         return to;
     }
@@ -92,8 +93,8 @@ public class Status implements IStatus {
     @Override
     public void read(CompoundNBT from) {
         statuus.clear();
-        if (from.contains("ActiveSkills", 9)) {
-            ListNBT listnbt = from.getList("ActiveSkills", 10);
+        if (from.contains("ActiveAfflictions", 9)) {
+            ListNBT listnbt = from.getList("ActiveAfflictions", 10);
 
             for (int i = 0; i < listnbt.size(); ++i) {
                 CompoundNBT compoundnbt = listnbt.getCompound(i);
@@ -107,7 +108,6 @@ public class Status implements IStatus {
 
     @Override
     public void update() {
-        boolean sync = false;
         final LivingEntity ticker = dude.get();
         if (ticker == null) return;
         final Collection<SkillData> active = new ArrayList<>(getActiveStatuses().values());
@@ -116,5 +116,8 @@ public class Status implements IStatus {
         }
         if (sync && ticker instanceof ServerPlayerEntity)
             CombatChannel.INSTANCE.send(PacketDistributor.PLAYER.with(() -> (ServerPlayerEntity) ticker), new SyncSkillPacket(this.write()));
+        if (sync && EntityHandler.mustUpdate.containsValue(ticker))
+            CombatChannel.INSTANCE.send(PacketDistributor.TRACKING_ENTITY_AND_SELF.with(() -> ticker), new UpdateAfflictionPacket(ticker.getEntityId(), this.write()));
+        sync = false;
     }
 }

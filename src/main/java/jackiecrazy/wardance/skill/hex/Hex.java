@@ -3,7 +3,7 @@ package jackiecrazy.wardance.skill.hex;
 import jackiecrazy.wardance.WarDance;
 import jackiecrazy.wardance.capability.resources.CombatData;
 import jackiecrazy.wardance.capability.resources.ICombatCapability;
-import jackiecrazy.wardance.capability.status.StatusEffects;
+import jackiecrazy.wardance.capability.status.Afflictions;
 import jackiecrazy.wardance.entity.FakeExplosion;
 import jackiecrazy.wardance.event.ParryEvent;
 import jackiecrazy.wardance.skill.Skill;
@@ -44,7 +44,7 @@ public class Hex extends Skill {
         if (!e.getEntityLiving().isServerWorld()) return;
         LivingEntity entity = e.getEntityLiving();
         //snakebite nullifies healing
-        if (StatusEffects.getCap(entity).isStatusActive(WarSkills.SNAKEBITE.get()))
+        if (Afflictions.getCap(entity).isStatusActive(WarSkills.SNAKEBITE.get()))
             e.setCanceled(true);
     }
 
@@ -53,7 +53,7 @@ public class Hex extends Skill {
         if (!e.getEntityLiving().isServerWorld()) return;
         LivingEntity target = e.getEntityLiving();
         //black mark stealing health/posture/spirit
-        if (e.getAmount() > 0 && CombatUtils.isMeleeAttack(e.getSource()) && StatusEffects.getCap(target).isStatusActive(WarSkills.BLACK_MARK.get())) {
+        if (e.getAmount() > 0 && CombatUtils.isMeleeAttack(e.getSource()) && Afflictions.getCap(target).isStatusActive(WarSkills.BLACK_MARK.get())) {
             Entity source = e.getSource().getTrueSource();
             if (source instanceof LivingEntity) {
                 LivingEntity le = (LivingEntity) source;

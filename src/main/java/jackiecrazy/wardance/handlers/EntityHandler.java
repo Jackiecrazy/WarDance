@@ -6,7 +6,7 @@ import jackiecrazy.wardance.capability.resources.CombatData;
 import jackiecrazy.wardance.capability.resources.ICombatCapability;
 import jackiecrazy.wardance.capability.skill.CasterData;
 import jackiecrazy.wardance.capability.skill.ISkillCapability;
-import jackiecrazy.wardance.capability.status.StatusEffects;
+import jackiecrazy.wardance.capability.status.Afflictions;
 import jackiecrazy.wardance.config.GeneralConfig;
 import jackiecrazy.wardance.config.StealthConfig;
 import jackiecrazy.wardance.networking.CombatChannel;
@@ -72,7 +72,7 @@ public class EntityHandler {
     public static void caps(AttachCapabilitiesEvent<Entity> e) {
         if (e.getObject() instanceof LivingEntity) {
             e.addCapability(new ResourceLocation("wardance:combatinfo"), new CombatData((LivingEntity) e.getObject()));
-            e.addCapability(new ResourceLocation("wardance:statuseffects"), new StatusEffects((LivingEntity) e.getObject()));
+            e.addCapability(new ResourceLocation("wardance:statuseffects"), new Afflictions((LivingEntity) e.getObject()));
             if (e.getObject() instanceof PlayerEntity)
                 e.addCapability(new ResourceLocation("wardance:casterinfo"), new CasterData((LivingEntity) e.getObject()));
         }
@@ -124,11 +124,10 @@ public class EntityHandler {
                 elb.rotationPitch = elb.prevRotationPitch;
                 elb.rotationYaw = elb.prevRotationYaw;
                 elb.rotationYawHead = elb.prevRotationYawHead;
-                elb.setHeadRotation(0, 0);
                 elb.setMotion(0, 0, 0);
             }
             if (!(elb instanceof PlayerEntity)) {
-                StatusEffects.getCap(elb).update();
+                Afflictions.getCap(elb).update();
                 if (elb instanceof MobEntity && CombatData.getCap(elb).getStaggerTime() == 0 && ((MobEntity) elb).getAttackTarget() != null) {
                     double safeSpace = (elb.getWidth()) * 2;
                     for (Entity fan : elb.world.getEntitiesWithinAABBExcludingEntity(elb, elb.getBoundingBox().grow(safeSpace))) {

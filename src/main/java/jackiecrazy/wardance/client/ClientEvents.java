@@ -4,16 +4,19 @@ import com.elenai.elenaidodge2.event.ClientTickEventListener;
 import com.mojang.blaze3d.matrix.MatrixStack;
 import com.mojang.blaze3d.platform.GlStateManager;
 import com.mojang.blaze3d.systems.RenderSystem;
+import com.mojang.datafixers.util.Pair;
 import jackiecrazy.wardance.WarDance;
 import jackiecrazy.wardance.capability.resources.CombatData;
 import jackiecrazy.wardance.capability.resources.ICombatCapability;
 import jackiecrazy.wardance.capability.skill.CasterData;
 import jackiecrazy.wardance.capability.skill.ISkillCapability;
+import jackiecrazy.wardance.capability.status.Afflictions;
 import jackiecrazy.wardance.compat.WarCompat;
 import jackiecrazy.wardance.config.ClientConfig;
 import jackiecrazy.wardance.config.CombatConfig;
 import jackiecrazy.wardance.config.GeneralConfig;
 import jackiecrazy.wardance.networking.*;
+import jackiecrazy.wardance.skill.Skill;
 import jackiecrazy.wardance.skill.WarSkills;
 import jackiecrazy.wardance.skill.coupdegrace.CoupDeGrace;
 import jackiecrazy.wardance.utils.CombatUtils;
@@ -50,8 +53,10 @@ import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.registries.ForgeRegistries;
 
+import java.awt.*;
 import java.math.RoundingMode;
 import java.text.DecimalFormat;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Optional;
@@ -67,6 +72,7 @@ public class ClientEvents {
     private static final long[] lastTap = {0, 0, 0, 0};
     private static final boolean[] tapped = {false, false, false, false};
     private static final DecimalFormat formatter = new DecimalFormat("#.#");
+    public static int combatTicks = Integer.MAX_VALUE;
     static boolean lastTickParry;
     static boolean weird = false;
     private static HashMap<String, Boolean> rotate;
@@ -77,7 +83,6 @@ public class ClientEvents {
     private static double dodgeDecimal;
     private static Entity lastTickLookAt;
     private static boolean rightClick = false;
-    public static int combatTicks = Integer.MAX_VALUE;
 
     static {
         formatter.setRoundingMode(RoundingMode.DOWN);
@@ -177,15 +182,7 @@ public class ClientEvents {
                 float height = reg && rotate.getOrDefault(ForgeRegistries.ENTITIES.getKey(e.getType()).toString(), false) ? e.getWidth() : e.getHeight();
                 event.getEntity().world.addParticle(ParticleTypes.CRIT, e.getPosX() + Math.sin(e.ticksExisted) * e.getWidth() / 2, e.getPosY() + height, e.getPosZ() + Math.cos(e.ticksExisted) * e.getWidth() / 2, 0, 0, 0);
             }
-            ClientPlayerEntity cpe = Minecraft.getInstance().player;
-            final ISkillCapability cap = CasterData.getCap(cpe);
-            if (e != cpe && cap.isSkillUsable(cap.getEquippedVariation(WarSkills.COUP_DE_GRACE.get()))) {
-                //TODO render coup icon on mob
-                CoupDeGrace cdg = (CoupDeGrace) (cap.getEquippedVariation(WarSkills.COUP_DE_GRACE.get()));
-                if (cdg.isValid(cpe, e) && e.ticksExisted % 10 == 0 && Minecraft.getInstance().world != null)
-                    event.getEntity().world.addParticle(ParticleTypes.ANGRY_VILLAGER, e.getPosX() + (WarDance.rand.nextFloat() - 0.5f) * e.getWidth() * 2, e.getPosY() + e.getHeight(), e.getPosZ() + (WarDance.rand.nextFloat() - 0.5f) * e.getWidth() * 2, 0, 0, 0);
-//                    Minecraft.getInstance().world.addParticle(ParticleTypes.FALLING_LAVA, e.getPosX() + e.getWidth() * (WarDance.rand.nextFloat() * 2 - 1), e.getPosY() + WarDance.rand.nextFloat() * e.getHeight(), e.getPosZ() + e.getWidth() * (WarDance.rand.nextFloat() * 2 - 1), 0, 0, 0);
-            }
+
 
         }
     }
@@ -347,58 +344,66 @@ public class ClientEvents {
 //                            mc.ingameGUI.blit(event.getMatrixStack(), Math.min(ClientConfig.mightX, width - 64), Math.min(ClientConfig.mightY, height - 64), (qi * 64) % 256, Math.floorDiv(qi, 4) * 64, 64, 64);
 //                            event.getMatrixStack().pop();
 //                        }
-                    int x = Math.max(width / 4 + ClientConfig.mightX - 16, 0);
-                    int y = Math.min(height - ClientConfig.mightY, height - 32);
+                    Pair<Integer, Integer> pair = translateCoords(ClientConfig.CONFIG.might, width, height);
+                    int x = Math.max(pair.getFirst() - 16, 0);
+                    int y = Math.min(pair.getSecond() - 16, height - 32);
                     int fillHeight = (int) Math.min(1, currentMightLevel / cap.getMaxMight() * 32);
-                    //might circle
-                    RenderSystem.color4f(1, 1, 1, 1);
-                    stack.push();
-                    stack.push();
-                    mc.ingameGUI.blit(stack, x, y, 0, 128, 32, 32);
-                    stack.pop();
-                    //might circle filling
-                    stack.push();
-                    mc.ingameGUI.blit(stack, x, y + 32 - fillHeight, 0, 96 - fillHeight, 32, fillHeight);
-                    stack.pop();
-                    fillHeight += 3;
-                    //might base
-                    stack.push();
-                    mc.ingameGUI.blit(stack, x, y, 32, 64, 32, 32);
-                    stack.pop();
-                    //might illumination
-                    stack.push();
-                    mc.ingameGUI.blit(stack, x, y + 32 - fillHeight, 64, 96 - fillHeight, 32, fillHeight);
-                    stack.pop();
-                    //multiplier
-                    //mc.fontRenderer.drawStringWithShadow(event.getMatrixStack(), display, x + 1, y + 14, 16711937);
-                    stack.pop();
-                    int tempx = x, tempy = y;
-
-                    x = Math.max(3 * width / 4 + ClientConfig.spiritX - 16, 0);
-                    y = Math.min(height - ClientConfig.spiritY, height - 32);
+                    if (ClientConfig.CONFIG.might.enabled) {
+                        //might circle
+                        RenderSystem.color4f(1, 1, 1, 1);
+                        stack.push();
+                        stack.push();
+                        mc.ingameGUI.blit(stack, x, y, 0, 128, 32, 32);
+                        stack.pop();
+                        //might circle filling
+                        stack.push();
+                        mc.ingameGUI.blit(stack, x, y + 32 - fillHeight, 0, 96 - fillHeight, 32, fillHeight);
+                        stack.pop();
+                        fillHeight += 3;
+                        //might base
+                        stack.push();
+                        mc.ingameGUI.blit(stack, x, y, 32, 64, 32, 32);
+                        stack.pop();
+                        //might illumination
+                        stack.push();
+                        mc.ingameGUI.blit(stack, x, y + 32 - fillHeight, 64, 96 - fillHeight, 32, fillHeight);
+                        stack.pop();
+                        stack.pop();
+                    }
+                    pair = translateCoords(ClientConfig.CONFIG.spirit, width, height);
+                    x = MathHelper.clamp(pair.getFirst() - 16, 0, width - 32);
+                    y = MathHelper.clamp(pair.getSecond() - 16, 0, height - 32);
                     fillHeight = (int) (Math.min(1, currentSpiritLevel / cap.getMaxSpirit()) * 32);
                     String display = formatter.format(currentSpiritLevel) + "/" + formatter.format(cap.getMaxSpirit());
                     //spirit circle
                     stack.push();
-                    stack.push();
-                    mc.ingameGUI.blit(stack, x, y, 0, 128, 32, 32);
-                    stack.pop();
-                    //spirit circle filling
-                    stack.push();
-                    mc.ingameGUI.blit(stack, x, y + 32 - fillHeight, 0, 128 - fillHeight, 32, fillHeight);
-                    stack.pop();
-                    fillHeight += 3;
-                    //spirit base
-                    stack.push();
-                    mc.ingameGUI.blit(stack, x, y, 32, 96, 32, 32);
-                    stack.pop();
-                    //spirit illumination
-                    stack.push();
-                    mc.ingameGUI.blit(stack, x, y + 32 - fillHeight, 64, 128 - fillHeight, 32, fillHeight);
-                    stack.pop();
-                    mc.fontRenderer.drawStringWithShadow(event.getMatrixStack(), display, width * (3 / 4f) + ClientConfig.spiritNumberX - mc.fontRenderer.getStringWidth(display) / 2f, height - ClientConfig.spiritNumberY, ClientConfig.spiritColor);
-                    display = formatter.format(currentMightLevel) + "/" + formatter.format(cap.getMaxMight());
-                    mc.fontRenderer.drawStringWithShadow(event.getMatrixStack(), display, width / 4f + ClientConfig.mightNumberX - mc.fontRenderer.getStringWidth(display) / 2f, height - ClientConfig.mightNumberY, ClientConfig.mightColor);
+                    if (ClientConfig.CONFIG.spirit.enabled) {
+                        stack.push();
+                        mc.ingameGUI.blit(stack, x, y, 0, 128, 32, 32);
+                        stack.pop();
+                        //spirit circle filling
+                        stack.push();
+                        mc.ingameGUI.blit(stack, x, y + 32 - fillHeight, 0, 128 - fillHeight, 32, fillHeight);
+                        stack.pop();
+                        fillHeight += 3;
+                        //spirit base
+                        stack.push();
+                        mc.ingameGUI.blit(stack, x, y, 32, 96, 32, 32);
+                        stack.pop();
+                        //spirit illumination
+                        stack.push();
+                        mc.ingameGUI.blit(stack, x, y + 32 - fillHeight, 64, 128 - fillHeight, 32, fillHeight);
+                        stack.pop();
+                    }
+                    if (ClientConfig.CONFIG.spiritNumber.enabled) {
+                        pair = translateCoords(ClientConfig.CONFIG.spiritNumber, width, height);
+                        mc.fontRenderer.drawStringWithShadow(event.getMatrixStack(), display, pair.getFirst() - mc.fontRenderer.getStringWidth(display) / 2f, pair.getSecond() - 2, ClientConfig.spiritColor);
+                    }
+                    if (ClientConfig.CONFIG.mightNumber.enabled) {
+                        pair = translateCoords(ClientConfig.CONFIG.mightNumber, width, height);
+                        display = formatter.format(currentMightLevel) + "/" + formatter.format(cap.getMaxMight());
+                        mc.fontRenderer.drawStringWithShadow(event.getMatrixStack(), display, pair.getFirst() - mc.fontRenderer.getStringWidth(display) / 2f, pair.getSecond() - 2, ClientConfig.mightColor);
+                    }
                     stack.pop();
 
                     RenderSystem.disableAlphaTest();
@@ -431,32 +436,33 @@ public class ClientEvents {
 //                    mc.ingameGUI.blit(event.getMatrixStack(), width - 7 + ClientConfig.comboX, Math.min(height / 2 - barHeight / 2 + ClientConfig.comboY, height - barHeight) + 38 + emptyPerc, 220, 95 + emptyPerc, 4, barHeight - emptyPerc);
 //                    event.getMatrixStack().pop();
                     stack.push();
-                    mc.getTextureManager().bindTexture(goodhud);
-                    int combowidth = 32;
-                    int comboU = (int) (MathHelper.clamp(Math.floor(currentComboLevel), 0, 4)) * 32;
-                    int divisor = 1;
-                    if (currentComboLevel >= 4)
-                        divisor = 2;
-                    if (currentComboLevel >= 6) {
-                        combowidth = 34;
-                        comboU = 158;
-                        divisor = 3;
-                    }
-                    if (currentComboLevel >= 9) {
-                        combowidth = 64;
-                        comboU = 194;
-                        fillHeight = 32;
-                    } else if (divisor > 1)
-                        fillHeight = (int) ((currentComboLevel - divisor * 2) / divisor * 32f);
-                    else
-                        fillHeight = (int) ((currentComboLevel - Math.floor(currentComboLevel)) * 32f);
-                    x = MathHelper.clamp(width - combowidth / 2 + ClientConfig.comboX, 0, width - combowidth);
-                    y = MathHelper.clamp(height / 2 - 23 + ClientConfig.comboY, 0, height - 46);
-                    mc.ingameGUI.blit(stack, x, y, comboU, 0, combowidth, 32);
-                    //fancy fill percentage
-
-                    mc.ingameGUI.blit(stack, x, y + 31 - fillHeight, comboU, 63 - fillHeight, combowidth, fillHeight);
-                    //TRIANGLE!
+                    if (ClientConfig.CONFIG.combo.enabled) {
+                        mc.getTextureManager().bindTexture(goodhud);
+                        int combowidth = 32;
+                        int comboU = (int) (MathHelper.clamp(Math.floor(currentComboLevel), 0, 4)) * 32;
+                        int divisor = 1;
+                        if (currentComboLevel >= 4)
+                            divisor = 2;
+                        if (currentComboLevel >= 6) {
+                            combowidth = 34;
+                            comboU = 158;
+                            divisor = 3;
+                        }
+                        if (currentComboLevel >= 9) {
+                            combowidth = 64;
+                            comboU = 194;
+                            fillHeight = 32;
+                        } else if (divisor > 1)
+                            fillHeight = (int) ((currentComboLevel - divisor * 2) / divisor * 32f);
+                        else
+                            fillHeight = (int) ((currentComboLevel - Math.floor(currentComboLevel)) * 32f);
+                        pair = translateCoords(ClientConfig.CONFIG.combo, width, height);
+                        x = MathHelper.clamp(pair.getFirst() - combowidth / 2, 0, width - combowidth);
+                        y = MathHelper.clamp(pair.getSecond() - 23, 0, height - 46);
+                        mc.ingameGUI.blit(stack, x, y, comboU, 0, combowidth, 32);
+                        //fancy fill percentage
+                        mc.ingameGUI.blit(stack, x, y + 31 - fillHeight, comboU, 63 - fillHeight, combowidth, fillHeight);
+                        //TRIANGLE!
 //                    BufferBuilder bufferbuilder = Tessellator.getInstance().getBuffer();
 //                    bufferbuilder.begin(4, DefaultVertexFormats.POSITION_TEX);
 //                    bufferbuilder.pos(stack.getLast().getMatrix(), (float)x+combowidth, (float)y+46, (float)mc.ingameGUI.getBlitOffset()).tex(minU, maxV).endVertex();
@@ -465,7 +471,8 @@ public class ClientEvents {
 //                    bufferbuilder.finishDrawing();
 //                    RenderSystem.enableAlphaTest();
 //                    WorldVertexBufferUploader.draw(bufferbuilder);
-                    //NO TRIANGLE YET!
+                        //NO TRIANGLE YET!
+                    }
 
                     stack.pop();
                     RenderSystem.disableBlend();
@@ -476,22 +483,41 @@ public class ClientEvents {
                 mc.getTextureManager().bindTexture(hud);
                 //render posture bar if not full, displayed even out of combat mode because it's pretty relevant to not dying
                 if (cap.getPosture() < cap.getMaxPosture() || cap.getStaggerTime() > 0)
-                    drawPostureBarAt(true, stack, player, width / 2 + ClientConfig.yourPostureX, height + ClientConfig.yourPostureY);
+                    drawPostureBarAt(true, stack, player, width, height);
                 Entity look = getEntityLookedAt(player, 32);
-                if (look instanceof LivingEntity && ClientConfig.displayEnemyPosture && (CombatData.getCap((LivingEntity) look).getPosture() < CombatData.getCap((LivingEntity) look).getMaxPosture() || CombatData.getCap((LivingEntity) look).getStaggerTime() > 0)) {
-                    drawPostureBarAt(false, stack, (LivingEntity) look, width / 2 + ClientConfig.theirPostureX, ClientConfig.theirPostureY);//Math.min(HudConfig.client.enemyPosture.x, width - 64), Math.min(HudConfig.client.enemyPosture.y, height - 64));
+                if (look instanceof LivingEntity) {
+                    LivingEntity looked = (LivingEntity) look;
+                    List<Skill> afflict = new ArrayList<>();
+                    final ISkillCapability skill = CasterData.getCap(player);
+                    if (look != player && skill.isSkillUsable(skill.getEquippedVariation(WarSkills.COUP_DE_GRACE.get()))) {
+                        CoupDeGrace cdg = (CoupDeGrace) (skill.getEquippedVariation(WarSkills.COUP_DE_GRACE.get()));
+                        if (cdg.isValid(player, looked)) {
+                            afflict.add(cdg);
+                        }
+                    }
+                    afflict.addAll(Afflictions.getCap(looked).getActiveStatuses().keySet());
+                    Pair<Integer, Integer> pair = translateCoords(ClientConfig.CONFIG.enemyAfflict, width, height);
+                    for (int index = 0; index < afflict.size(); index++) {
+                        Skill s = afflict.get(index);
+                        mc.getTextureManager().bindTexture(s.icon());
+                        Color c = s.getColor();
+                        RenderSystem.color4f(c.getRed() / 255f, c.getGreen() / 255f, c.getBlue() / 255f, 1);
+                        mc.ingameGUI.blit(stack, pair.getFirst() - (afflict.size() - 1 - index) * 16 + (afflict.size() - 1) * 8 - 8, pair.getSecond(), 0, 0, 16, 16, 16, 16);
+                    }
+                    RenderSystem.color4f(1, 1, 1, 1);
+                    if (ClientConfig.CONFIG.enemyPosture.enabled && (CombatData.getCap((LivingEntity) look).getPosture() < CombatData.getCap((LivingEntity) look).getMaxPosture() || CombatData.getCap((LivingEntity) look).getStaggerTime() > 0))
+                        drawPostureBarAt(false, stack, looked, width, height);//Math.min(HudConfig.client.enemyPosture.x, width - 64), Math.min(HudConfig.client.enemyPosture.y, height - 64));
                 }
             }
     }
 
     /**
      * Draws it with the coord as its center
-     *
-     * @param elb
-     * @param atX
-     * @param atY
      */
-    private static void drawPostureBarAt(boolean you, MatrixStack ms, LivingEntity elb, int atX, int atY) {
+    private static void drawPostureBarAt(boolean you, MatrixStack ms, LivingEntity elb, int width, int height) {
+        Pair<Integer, Integer> pair = you ? translateCoords(ClientConfig.CONFIG.playerPosture, width, height) : translateCoords(ClientConfig.CONFIG.enemyPosture, width, height);
+        int atX = pair.getFirst();
+        int atY = pair.getSecond();
         Minecraft mc = Minecraft.getInstance();
         mc.getTextureManager().bindTexture(hud);
         RenderSystem.defaultBlendFunc();
@@ -810,6 +836,57 @@ public class ClientEvents {
         if (close)
             f = to;
         return f;
+    }
+
+    private static Pair<Integer, Integer> translateCoords(ClientConfig.DisplayData dd, int width, int height) {
+        return translateCoords(dd.anchorPoint, dd.numberX, dd.numberY, width, height);
+    }
+
+    private static Pair<Integer, Integer> translateCoords(ClientConfig.AnchorPoint ap, int x, int y, int width, int height) {
+        int retx, rety;
+        switch (ap) {
+            case TOPLEFT:
+                retx = 0;
+                rety = 0;
+                break;
+            case TOPRIGHT:
+                retx = 0;
+                rety = width;
+                break;
+            case CROSSHAIR:
+                retx = width / 2;
+                rety = height / 2;
+                break;
+            case TOPCENTER:
+                retx = width / 2;
+                rety = 0;
+                break;
+            case BOTTOMLEFT:
+                retx = 0;
+                rety = height;
+                break;
+            case MIDDLELEFT:
+                retx = 0;
+                rety = height / 2;
+                break;
+            case BOTTOMRIGHT:
+                retx = width;
+                rety = height;
+                break;
+            case MIDDLERIGHT:
+                retx = width;
+                rety = height / 2;
+                break;
+            case BOTTOMCENTER:
+                retx = width / 2;
+                rety = height;
+                break;
+            default:
+                retx = rety = 0;
+        }
+        retx = MathHelper.clamp(retx + x, 0, width);
+        rety = MathHelper.clamp(rety + y, 0, height);
+        return Pair.of(retx, rety);
     }
 
 }

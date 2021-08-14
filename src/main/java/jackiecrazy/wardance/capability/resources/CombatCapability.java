@@ -330,7 +330,7 @@ public class CombatCapability implements ICombatCapability {
 
     @Override
     public void setMaxMight(float amount) {
-        maxMight = amount;
+        maxMight=amount;
     }
 
     @Override
@@ -699,7 +699,6 @@ public class CombatCapability implements ICombatCapability {
         if (ticks < 1) return;//sometimes time runs backwards
         setTrueMaxPosture(getMPos(elb));
         setTrueMaxSpirit((float) dude.get().getAttribute(WarAttributes.MAX_SPIRIT.get()).getValue());
-        setTrueMaxSpirit((float) dude.get().getAttribute(WarAttributes.MAX_MIGHT.get()).getValue());
         if (first)
             setPosture(getMaxPosture());
         decrementComboGrace(ticks);

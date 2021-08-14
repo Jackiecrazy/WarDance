@@ -1,7 +1,7 @@
 package jackiecrazy.wardance.skill.hex;
 
 import jackiecrazy.wardance.capability.resources.CombatData;
-import jackiecrazy.wardance.capability.status.StatusEffects;
+import jackiecrazy.wardance.capability.status.Afflictions;
 import jackiecrazy.wardance.event.ParryEvent;
 import jackiecrazy.wardance.skill.SkillData;
 import jackiecrazy.wardance.skill.SkillTags;
@@ -55,7 +55,7 @@ public class ItchyCurse extends Hex {
 //                SkillUtils.modifyAttribute(target, Attributes.MOVEMENT_SPEED, HEX.getID(), -1, AttributeModifier.Operation.MULTIPLY_TOTAL);
 //            }
         if (sd.getDuration() <= 0) {
-            StatusEffects.getCap(target).removeStatus(this);
+            Afflictions.getCap(target).removeStatus(this);
             return true;
         }
         return false;

@@ -23,6 +23,7 @@ import net.minecraftforge.event.entity.living.LivingDamageEvent;
 import net.minecraftforge.event.entity.living.LivingDeathEvent;
 import net.minecraftforge.event.entity.living.LivingEvent;
 import net.minecraftforge.eventbus.api.Event;
+import net.minecraftforge.eventbus.api.EventPriority;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 
@@ -44,7 +45,7 @@ elemental might: +1 burn/snowball/poison/drown damage to targets you have attack
     private final Tag<String> tag = Tag.getTagFromContents(new HashSet<>(Arrays.asList("passive", SkillTags.change_might)));
     private final Tag<String> no = Tag.getEmptyTag();
 
-    @SubscribeEvent
+    @SubscribeEvent(priority = EventPriority.HIGHEST)
     public static void hurt(LivingDamageEvent e) {
         Entity seme = e.getSource().getTrueSource();
         LivingEntity uke = e.getEntityLiving();
@@ -53,6 +54,12 @@ elemental might: +1 burn/snowball/poison/drown damage to targets you have attack
             if (seme instanceof LivingEntity)
                 ((LivingEntity) seme).addPotionEffect(new EffectInstance(Effects.GLOWING, 100));
         }
+    }
+
+    @SubscribeEvent(priority = EventPriority.LOWEST)
+    public static void oops(LivingDamageEvent e) {
+        Entity seme = e.getSource().getTrueSource();
+        LivingEntity uke = e.getEntityLiving();
         if (CasterData.getCap(uke).isSkillActive(WarSkills.PRIDEFUL_MIGHT.get())) {
             CombatData.getCap(uke).setMight(0);
         }

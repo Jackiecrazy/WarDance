@@ -37,7 +37,7 @@ public class WarCry extends Skill {
 
     @SubscribeEvent
     public static void fightingspirit(LivingHealEvent e) {
-        if (e.getEntityLiving() != null && !CasterData.getCap(e.getEntityLiving()).isSkillCoolingDown(WarSkills.WAR_CRY.get())) {
+        if (e.getEntityLiving() != null && CasterData.getCap(e.getEntityLiving()).isSkillUsable(WarSkills.WAR_CRY.get()) && !CasterData.getCap(e.getEntityLiving()).isSkillCoolingDown(WarSkills.WAR_CRY.get())) {
             e.setAmount(e.getAmount() * 1.5f);
         }
     }
@@ -71,7 +71,7 @@ public class WarCry extends Skill {
 
     @Override
     public CastStatus castingCheck(LivingEntity caster) {
-        return super.castingCheck(caster) == CastStatus.OTHER ? CastStatus.ALLOWED : super.castingCheck(caster);
+        return super.castingCheck(caster);
     } //why did I do this? Weird.
 
     @Override
