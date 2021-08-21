@@ -68,14 +68,14 @@ Onslaught: casts heavy blow before every attack (this is a lot easier)
             CasterData.getCap(caster).removeActiveSkill(this);
             return true;
         }
-        activate(caster, 1);
-        CombatData.getCap(caster).consumeMight(getMightNeeded());
+        activate(caster, getMightNeeded());
         return true;
     }
 
     @Override
     public void onEffectEnd(LivingEntity caster, SkillData stats) {
-
+        if (stats.getDuration() > 0)
+            CombatData.getCap(caster).consumeMight(stats.getDuration());
     }
 
     protected void performEffect(LivingEntity caster, LivingEntity target, float amount, SkillData s) {
@@ -113,6 +113,7 @@ Onslaught: casts heavy blow before every attack (this is a lot easier)
         } else if (procPoint instanceof GainMightEvent) {
             stats.setArbitraryFloat(stats.getArbitraryFloat() + ((GainMightEvent) procPoint).getQuantity());
             ((GainMightEvent) procPoint).setQuantity(0);
+            stats.decrementDuration();
         }
     }
 

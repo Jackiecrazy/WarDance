@@ -16,6 +16,8 @@ public class SkillData {
     private LivingEntity caster;
     private UUID casterID;
 
+    //TODO allow skills to store custom data
+
     public SkillData(Skill skill, float arbitraryDuration) {
         s = skill;
         duration = arbitraryDuration;

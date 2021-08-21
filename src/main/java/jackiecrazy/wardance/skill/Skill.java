@@ -39,6 +39,7 @@ public abstract class Skill extends ForgeRegistryEntry<Skill> {
     public static final HashMap<Skill, List<Skill>> variationMap = new HashMap<>();
 
     public Skill() {
+        //SkillCategory
         if (this.getParentSkill() == null && !variationMap.containsKey(this)) {
             List<Skill> toadd = new ArrayList<>();
             toadd.add(this);
@@ -249,7 +250,7 @@ public abstract class Skill extends ForgeRegistryEntry<Skill> {
     protected boolean activate(LivingEntity caster, float duration, boolean flag, float something) {
         //System.out.println("enabling for " + duration);
         if (CasterData.getCap(caster).isSkillUsable(this)) {
-            CasterData.getCap(caster).activateSkill(new SkillData(this, duration).flagCondition(flag).setArbitraryFloat(something));
+            CasterData.getCap(caster).activateSkill(new SkillData(this, duration).flagCondition(flag).setArbitraryFloat(something).setCaster(caster));
             return true;
         }
         return false;

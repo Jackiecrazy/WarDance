@@ -1,17 +1,35 @@
 package jackiecrazy.wardance.utils;
 
+import jackiecrazy.wardance.skill.Skill;
 import net.minecraft.entity.AreaEffectCloudEntity;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.ai.attributes.Attribute;
 import net.minecraft.entity.ai.attributes.AttributeModifier;
 import net.minecraft.entity.ai.attributes.ModifiableAttributeInstance;
+import net.minecraft.network.PacketBuffer;
+import net.minecraft.network.datasync.IDataSerializer;
 import net.minecraft.particles.IParticleData;
 import net.minecraft.world.World;
 
 import java.util.UUID;
 
 public class SkillUtils {
+
+    public static final IDataSerializer<Skill> SKILLSERIALIZER = new IDataSerializer<Skill>() {
+        public void write(PacketBuffer buf, Skill value) {
+            buf.writeResourceLocation(value.getRegistryName());
+        }
+
+        public Skill read(PacketBuffer buf) {
+            return Skill.getSkill(buf.readResourceLocation());
+        }
+
+        public Skill copyValue(Skill value) {
+            return value;
+        }
+    };
+
     public static void modifyAttribute(LivingEntity caster, Attribute a, UUID id, float amount, AttributeModifier.Operation op) {
         final ModifiableAttributeInstance atr = caster.getAttribute(a);
         if (atr == null) return;

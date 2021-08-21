@@ -39,7 +39,10 @@ public class ManualParryPacket {
             contextSupplier.get().enqueueWork(() -> {
                 final ServerPlayerEntity le = Objects.requireNonNull(contextSupplier.get().getSender());
                 ICombatCapability cap = CombatData.getCap(le);
-                if (cap.getParryingTick() < le.ticksExisted + CombatConfig.sneakParry * 2)
+                if (CombatConfig.sneakParry < 0) {
+                    cap.setParryingTick(cap.getParryingTick()==-1?0:-1);
+                }
+                else if (cap.getParryingTick() < le.ticksExisted + CombatConfig.sneakParry * 2)
                     cap.setParryingTick(le.ticksExisted);
             });
             contextSupplier.get().setPacketHandled(true);

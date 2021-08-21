@@ -174,6 +174,9 @@ Assassinate: Stab rank increased by 1 for this attack, instantly stagger a distr
                 for (LivingEntity e : caster.world.getEntitiesWithinAABB(LivingEntity.class, caster.getBoundingBox().grow(5))) {
                     if (e != caster) {
                         CombatData.getCap(e).consumePosture((float) posDiff);
+                        e.attackEntityFrom(DamageSource.FALLING_BLOCK, 1);
+                        e.addVelocity(0, 0.5, 0);
+                        e.velocityChanged = true;
                         e.addPotionEffect(new EffectInstance(WarEffects.EXHAUSTION.get(), 40 + ResourceConfig.postureCD, 1));
                     }
                 }

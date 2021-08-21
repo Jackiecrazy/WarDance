@@ -104,6 +104,7 @@ public class CombatUtils {
             } catch (Exception e) {
                 WarDance.LOGGER.warn(name + " is not a proper item name, it will not be registered.");
             }
+            //System.out.print("\""+key+"\",\n");
             if (ForgeRegistries.ITEMS.containsKey(key)) {
                 final Item item = ForgeRegistries.ITEMS.getValue(key);
                 combatList.put(item, new CombatInfo(attack, defend, shield, pTime, pCount, distract, unaware));
@@ -207,8 +208,8 @@ public class CombatUtils {
         return MathHelper.clamp(((float) (h == Hand.MAIN_HAND ? e.ticksSinceLastSwing : CombatData.getCap(e).getOffhandCooldown()) + adjustTicks) / getCooldownPeriod(e, h), 0.0F, 1.0F);
     }
 
-    public static float getCooldownPeriod(LivingEntity e, Hand h) {
-        return (float) (1.0D / GeneralUtils.getAttributeValueHandSensitive(e, Attributes.ATTACK_SPEED, h) * 20.0D);
+    public static int getCooldownPeriod(LivingEntity e, Hand h) {
+        return (int) (1.0D / GeneralUtils.getAttributeValueHandSensitive(e, Attributes.ATTACK_SPEED, h) * 20.0D);
     }
 
     public static boolean isShield(LivingEntity e, ItemStack stack) {

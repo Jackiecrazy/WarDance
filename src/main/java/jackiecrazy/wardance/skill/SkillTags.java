@@ -2,13 +2,13 @@ package jackiecrazy.wardance.skill;
 
 public class SkillTags {
     public static final String afflict_tick = "afflictionTick";
+    public static final String attack_might = "manipulateMight";
     public static final String change_awareness = "manipulateAwareness";
     public static final String change_heals = "manipulateHealing";
-    public static final String attack_might = "manipulateMight";
     public static final String change_might = "manipulateMightGain";
     public static final String change_parry_result = "manipulateParry";
-    public static final String change_spirit = "manipulateSpirit";
     public static final String change_posture = "manipulatePosture";
+    public static final String change_spirit = "manipulateSpirit";
     public static final String countdown = "countdown";
     public static final String knockback = "knockback";
     public static final String melee = "melee";
@@ -22,12 +22,13 @@ public class SkillTags {
     public static final String on_damage = "afterArmor";
     public static final String on_death = "onDeath";
     public static final String on_dodge = "onDodge";
-    public static final String on_kill = "onKill";
     public static final String on_hurt = "beforeArmor";
+    public static final String on_kill = "onKill";
     public static final String on_parry = "onParry";
     public static final String on_projectile_impact = "onProjectileImpact";
     public static final String on_projectile_parry = "onProjectileParry";
     public static final String on_stagger = "onStagger";
+    public static final String on_swing = "onSwing";
     public static final String recharge_cast = "rechargeWithCast";
     public static final String recharge_normal = "rechargeWithAttack";
     public static final String recharge_parry = "rechargeWithParry";

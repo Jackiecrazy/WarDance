@@ -71,7 +71,9 @@ public class CombatHandler {
                 return;
             float consume = CombatConfig.posturePerProjectile;
             ICombatCapability ukeCap = CombatData.getCap(uke);
-            if (uke instanceof PlayerEntity && CombatConfig.sneakParry > 0 && (ukeCap.getParryingTick() > uke.ticksExisted || ukeCap.getParryingTick() < uke.ticksExisted - CombatConfig.sneakParry)) {
+            final boolean failManualParry = CombatConfig.sneakParry > 0 && (ukeCap.getParryingTick() > uke.ticksExisted || ukeCap.getParryingTick() < uke.ticksExisted - CombatConfig.sneakParry);
+            final boolean toggleParry = CombatConfig.sneakParry < 0 && ukeCap.getParryingTick() == -1;
+            if (uke instanceof PlayerEntity && (failManualParry || toggleParry)) {
                 //manual parry toggle
                 // why does everyone want this feature...
                 return;
@@ -190,7 +192,9 @@ public class CombatHandler {
                     ukeCap.consumePosture(0);
                     return;
                 }
-                if (uke instanceof PlayerEntity && CombatConfig.sneakParry > 0 && (ukeCap.getParryingTick() > uke.ticksExisted || ukeCap.getParryingTick() < uke.ticksExisted - CombatConfig.sneakParry)) {
+                final boolean failManualParry = CombatConfig.sneakParry > 0 && (ukeCap.getParryingTick() > uke.ticksExisted || ukeCap.getParryingTick() < uke.ticksExisted - CombatConfig.sneakParry);
+                final boolean toggleParry = CombatConfig.sneakParry < 0 && ukeCap.getParryingTick() == -1;
+                if (uke instanceof PlayerEntity && (failManualParry || toggleParry)) {
                     //manual parry toggle
                     // why does everyone want this feature...
                     return;
@@ -288,11 +292,12 @@ public class CombatHandler {
                         uke.world.playSound(null, uke.getPosX(), uke.getPosY(), uke.getPosZ(), disshield ? SoundEvents.ITEM_SHIELD_BLOCK : SoundEvents.BLOCK_ANVIL_PLACE, SoundCategory.PLAYERS, 0.25f + WarDance.rand.nextFloat() * 0.5f, (1 - (ukeCap.getPosture() / ukeCap.getMaxPosture())) + WarDance.rand.nextFloat() * 0.5f);
                         //reset cooldown
                         if (defMult != 0) {//shield time
-                            CombatUtils.setHandCooldown(uke, parryHand, 0f, true);
-                            if (knockback > 0)
-                                ukeCap.setHandBind(parryHand, (int) (knockback * 10));
+                            float cd = CombatUtils.getCooldownPeriod(uke, parryHand);//attack cooldown ticks
+                            cd = (cd - pe.getPostureConsumption()) / cd;//5*(1+posture damage) cooldown
+                            if (cd > 0)
+                                CombatUtils.setHandCooldown(uke, parryHand, cd, true);
                             else
-                                ukeCap.setHandReel(parryHand, getReel(knockback));
+                                ukeCap.setHandBind(parryHand, (int) -cd);
                         }
                         //sword on sword is 1.4, sword on shield is 1.12
                         //normal distribution?
@@ -318,31 +323,6 @@ public class CombatHandler {
             }
         }
 
-    }
-
-    private static float getReel(double postureDamage) {
-        if (postureDamage == 0) return 0;
-        float ret = 0;
-        float counter = 0.4f;
-        postureDamage -= 1.4;
-        final double deviation = 0.5;
-        if (postureDamage < 0) {
-            postureDamage += deviation;
-            while (postureDamage < 0) {
-                ret += counter;
-                counter /= 2;
-                postureDamage += deviation;
-            }
-        } else if (postureDamage > 0) {
-            counter = 0.2f;
-            postureDamage -= deviation;
-            while (postureDamage > 0) {
-                ret -= counter;
-                counter /= 2;
-                postureDamage -= deviation;
-            }
-        }
-        return ret;
     }
 
     @SubscribeEvent

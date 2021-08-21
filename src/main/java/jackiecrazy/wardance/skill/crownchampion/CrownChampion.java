@@ -19,6 +19,7 @@ import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.potion.EffectInstance;
 import net.minecraft.potion.Effects;
 import net.minecraft.tags.Tag;
+import net.minecraftforge.event.entity.living.LivingAttackEvent;
 import net.minecraftforge.event.entity.living.LivingDamageEvent;
 import net.minecraftforge.event.entity.living.LivingDeathEvent;
 import net.minecraftforge.event.entity.living.LivingEvent;
@@ -58,7 +59,6 @@ elemental might: +1 burn/snowball/poison/drown damage to targets you have attack
 
     @SubscribeEvent(priority = EventPriority.LOWEST)
     public static void oops(LivingDamageEvent e) {
-        Entity seme = e.getSource().getTrueSource();
         LivingEntity uke = e.getEntityLiving();
         if (CasterData.getCap(uke).isSkillActive(WarSkills.PRIDEFUL_MIGHT.get())) {
             CombatData.getCap(uke).setMight(0);
@@ -114,15 +114,16 @@ elemental might: +1 burn/snowball/poison/drown damage to targets you have attack
 
     @Override
     public void onSuccessfulProc(LivingEntity caster, SkillData stats, LivingEntity target, Event procPoint) {
-        if (this.getParentSkill() != null) return;
-        int might = (int) CombatData.getCap(caster).getMight() - 1;
-        SkillUtils.modifyAttribute(caster, Attributes.ATTACK_DAMAGE, MULT, 0.05f * might, AttributeModifier.Operation.MULTIPLY_BASE);
+        if(procPoint instanceof LivingAttackEvent) {
+            if (this.getParentSkill() != null) return;
+            int might = (int) CombatData.getCap(caster).getMight() - 1;
+            SkillUtils.modifyAttribute(caster, Attributes.ATTACK_DAMAGE, MULT, 0.05f * might, AttributeModifier.Operation.MULTIPLY_BASE);
+        }
     }
 
     public static class HiddenMight extends CrownChampion {
         @Override
         public void onSuccessfulProc(LivingEntity caster, SkillData stats, LivingEntity target, Event procPoint) {
-            super.onSuccessfulProc(caster, stats, target, procPoint);
             if (CombatUtils.getAwareness(caster, target).equals(CombatUtils.Awareness.UNAWARE))
                 CombatData.getCap(caster).addMight(0.5f);
         }
@@ -155,7 +156,6 @@ elemental might: +1 burn/snowball/poison/drown damage to targets you have attack
 
         @Override
         public void onSuccessfulProc(LivingEntity caster, SkillData pd, LivingEntity target, Event procPoint) {
-            super.onSuccessfulProc(caster, pd, target, procPoint);
             if (procPoint instanceof AttackMightEvent) {
                 ((AttackMightEvent) procPoint).setQuantity(((AttackMightEvent) procPoint).getQuantity() * 3);
                 pd.setArbitraryFloat(pd.getArbitraryFloat() + ((AttackMightEvent) procPoint).getQuantity());
@@ -170,8 +170,8 @@ elemental might: +1 burn/snowball/poison/drown damage to targets you have attack
     public static class ElementalMight extends CrownChampion {
         @Override
         public void onSuccessfulProc(LivingEntity caster, SkillData stats, LivingEntity target, Event procPoint) {
-            super.onSuccessfulProc(caster, stats, target, procPoint);
-            target.addPotionEffect(new EffectInstance(WarEffects.VULNERABLE.get(), (int) (CombatData.getCap(caster).getMight() * 20)));
+            if(procPoint instanceof LivingAttackEvent)
+            ((LivingAttackEvent) procPoint).getEntityLiving().addPotionEffect(new EffectInstance(WarEffects.VULNERABLE.get(), (int) (CombatData.getCap(caster).getMight() * 20)));
         }
 
         @Override

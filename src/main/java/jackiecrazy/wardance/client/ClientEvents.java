@@ -6,6 +6,7 @@ import com.mojang.blaze3d.platform.GlStateManager;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.datafixers.util.Pair;
 import jackiecrazy.wardance.WarDance;
+import jackiecrazy.wardance.api.WarAttributes;
 import jackiecrazy.wardance.capability.resources.CombatData;
 import jackiecrazy.wardance.capability.resources.ICombatCapability;
 import jackiecrazy.wardance.capability.skill.CasterData;
@@ -15,6 +16,7 @@ import jackiecrazy.wardance.compat.WarCompat;
 import jackiecrazy.wardance.config.ClientConfig;
 import jackiecrazy.wardance.config.CombatConfig;
 import jackiecrazy.wardance.config.GeneralConfig;
+import jackiecrazy.wardance.config.ResourceConfig;
 import jackiecrazy.wardance.networking.*;
 import jackiecrazy.wardance.skill.Skill;
 import jackiecrazy.wardance.skill.WarSkills;
@@ -41,6 +43,7 @@ import net.minecraft.util.*;
 import net.minecraft.util.math.*;
 import net.minecraft.util.math.vector.Vector3d;
 import net.minecraft.util.math.vector.Vector3f;
+import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.client.event.*;
 import net.minecraftforge.common.ForgeMod;
@@ -165,11 +168,11 @@ public class ClientEvents {
     @SubscribeEvent
     public static void alert(LivingAttackEvent e) {
         if (Minecraft.getInstance().player == null) return;
-        if (e.getEntityLiving() == Minecraft.getInstance().player || e.getSource().getTrueSource() == Minecraft.getInstance().player) {
+        if ((e.getEntityLiving() == Minecraft.getInstance().player && e.getSource().getTrueSource() instanceof LivingEntity) || e.getSource().getTrueSource() == Minecraft.getInstance().player) {
             if (!CombatData.getCap(Minecraft.getInstance().player).isCombatMode() && ClientConfig.autoCombat > 0) {
                 CombatChannel.INSTANCE.sendToServer(new CombatModePacket());
+                combatTicks = Minecraft.getInstance().player.ticksExisted;
             }
-            combatTicks = Minecraft.getInstance().player.ticksExisted;
         }
     }
 
@@ -482,7 +485,7 @@ public class ClientEvents {
                 }
                 mc.getTextureManager().bindTexture(hud);
                 //render posture bar if not full, displayed even out of combat mode because it's pretty relevant to not dying
-                if (cap.getPosture() < cap.getMaxPosture() || cap.getStaggerTime() > 0)
+                if (cap.getPosture() < cap.getMaxPosture() || cap.getStaggerTime() > 0 || cap.getShatterCooldown() < Math.floor(GeneralUtils.getAttributeValueSafe(player, WarAttributes.SHATTER.get())))
                     drawPostureBarAt(true, stack, player, width, height);
                 Entity look = getEntityLookedAt(player, 32);
                 if (look instanceof LivingEntity) {
@@ -505,7 +508,7 @@ public class ClientEvents {
                         mc.ingameGUI.blit(stack, pair.getFirst() - (afflict.size() - 1 - index) * 16 + (afflict.size() - 1) * 8 - 8, pair.getSecond(), 0, 0, 16, 16, 16, 16);
                     }
                     RenderSystem.color4f(1, 1, 1, 1);
-                    if (ClientConfig.CONFIG.enemyPosture.enabled && (CombatData.getCap((LivingEntity) look).getPosture() < CombatData.getCap((LivingEntity) look).getMaxPosture() || CombatData.getCap((LivingEntity) look).getStaggerTime() > 0))
+                    if (ClientConfig.CONFIG.enemyPosture.enabled && (CombatData.getCap((LivingEntity) look).getPosture() < CombatData.getCap((LivingEntity) look).getMaxPosture() || CombatData.getCap((LivingEntity) look).getStaggerTime() > 0 || cap.getShatterCooldown() < GeneralUtils.getAttributeValueSafe(player, WarAttributes.SHATTER.get())))
                         drawPostureBarAt(false, stack, looked, width, height);//Math.min(HudConfig.client.enemyPosture.x, width - 64), Math.min(HudConfig.client.enemyPosture.y, height - 64));
                 }
             }
@@ -525,18 +528,26 @@ public class ClientEvents {
         ICombatCapability itsc = CombatData.getCap(elb);
         mc.getProfiler().startSection("postureBar");
         float cap = itsc.getMaxPosture();
-        int left = atX - 91;
+        short barWidth = 182;
+        int left = atX - (barWidth / 2);
         float posture = itsc.getPosture();
         final float trueMaxPosture = Float.isFinite(itsc.getTrueMaxPosture()) ? itsc.getTrueMaxPosture() : 1f;
         float posPerc = posture / Math.max(0.1f, trueMaxPosture);
         posPerc = Float.isFinite(posPerc) ? posPerc : 0;
         posPerc = MathHelper.clamp(posPerc, 0, 1);
+        double shatter = itsc.getShatterCooldown() / Math.floor(GeneralUtils.getAttributeValueSafe(elb, WarAttributes.SHATTER.get()));
         if (cap > 0) {
-            short barWidth = 182;
-            int filled = (int) (posPerc * (float) (barWidth));
-            //int invulTime = (int) ((float) itsc.getPosInvulTime() / (float) CombatConfig.ssptime * (float) (barWidth));
+            //shatter ticks
+            if (shatter <= 0) {
+                shatter = (double) (ResourceConfig.shatterCooldown + itsc.getShatterCooldown()) / ResourceConfig.shatterCooldown;
+                RenderSystem.color3f(0, 0, 0);
+            }
+            int filled = (int) (shatter * (barWidth + 2));
+            mc.ingameGUI.blit(ms, left - 1, atY - 1, 0, 74, filled, 7);
+            RenderSystem.color3f(1, 1, 1);
             //base
             mc.ingameGUI.blit(ms, left, atY, 0, 64, barWidth, 5);
+            filled = (int) (posPerc * (float) (barWidth));
             RenderSystem.color3f(1 - posPerc, posPerc, 30f / 255);
             //bar on top
             mc.ingameGUI.blit(ms, left, atY, 0, 69, filled, 5);
@@ -674,13 +685,24 @@ public class ClientEvents {
         }
     }
 
+    @SubscribeEvent
+    public static void noFovChange(FOVUpdateEvent e){
+        if(CombatData.getCap(e.getEntity()).getStaggerTime()>0)
+            e.setNewfov(0.7f);
+    }
+
     @SubscribeEvent(priority = EventPriority.HIGHEST)
     public static void handleInputEvent(InputEvent event) {
         Minecraft mc = Minecraft.getInstance();
         if (mc.player == null) return;
-        if (Keybinds.PARRY.getKeyConflictContext().isActive() && !lastTickParry && CombatConfig.sneakParry > 0 && Keybinds.PARRY.isPressed() && mc.player.isAlive()) {
+        if (Keybinds.PARRY.getKeyConflictContext().isActive() && !lastTickParry && CombatConfig.sneakParry != 0 && Keybinds.PARRY.isPressed() && mc.player.isAlive()) {
+            if (CombatConfig.sneakParry < 0) {
+                mc.player.sendStatusMessage(new TranslationTextComponent("wardance.toggleparry." + (CombatData.getCap(mc.player).getParryingTick() == -1 ? "on" : "off")), true);
+
+            }
             CombatChannel.INSTANCE.sendToServer(new ManualParryPacket());
             lastTickParry = true;
+
         }
     }
 
@@ -795,30 +817,23 @@ public class ClientEvents {
     @SubscribeEvent
     public static void zTarget(TickEvent.RenderTickEvent event) {
         //FIXME WTF
-        if (!weird)
-            try {
-                if (event.phase == TickEvent.Phase.END) {
-                    Minecraft mc = Minecraft.getInstance();
-                    if (mc.player == null) return;
-                    double range = GeneralUtils.getAttributeValueSafe(mc.player, ForgeMod.REACH_DISTANCE.get()) - (mc.player.getHeldItemMainhand().isEmpty() ? 1 : 0);
-                    Vector3d look = mc.player.getLook(1);
-                    if (mc.pointedEntity != null) {
-                        if (GeneralUtils.getDistSqCompensated(mc.pointedEntity, mc.player) > range * range) {
-                            mc.pointedEntity = null;
-                            Vector3d miss = mc.player.getPositionVec().add(look.scale(range));
-                            mc.objectMouseOver = BlockRayTraceResult.createMiss(miss, Direction.getFacingFromVector(look.x, look.y, look.z), new BlockPos(miss));
-                        }
-                    } else if (getEntityLookedAt(mc.player, range) != null) {
-                        Entity e = getEntityLookedAt(mc.player, range);
-                        mc.objectMouseOver = new EntityRayTraceResult(e, e.getPositionVec());
-                        mc.pointedEntity = e;
-                    }
+        if (event.phase == TickEvent.Phase.END) {
+            Minecraft mc = Minecraft.getInstance();
+            if (mc.player == null) return;
+            double range = GeneralUtils.getAttributeValueSafe(mc.player, ForgeMod.REACH_DISTANCE.get()) - (mc.player.getHeldItemMainhand().isEmpty() ? 1 : 0);
+            Vector3d look = mc.player.getLook(1);
+            if (mc.pointedEntity != null) {
+                if (GeneralUtils.getDistSqCompensated(mc.pointedEntity, mc.player) > range * range) {
+                    mc.pointedEntity = null;
+                    Vector3d miss = mc.player.getPositionVec().add(look.scale(range));
+                    mc.objectMouseOver = BlockRayTraceResult.createMiss(miss, Direction.getFacingFromVector(look.x, look.y, look.z), new BlockPos(miss));
                 }
-            } catch (NullPointerException e) {
-                weird = true;
-                WarDance.LOGGER.fatal("you have encountered the mysterious z-targeting bug. Relevant code has been disabled and the occurrence has been logged. This will not appear again. You may continue to play without issues.");
-                e.printStackTrace();
+            } else if (getEntityLookedAt(mc.player, range) != null) {
+                Entity e = getEntityLookedAt(mc.player, range);
+                mc.objectMouseOver = new EntityRayTraceResult(e, e.getPositionVec());
+                mc.pointedEntity = e;
             }
+        }
     }
 
     private static float updateValue(float f, float to) {

@@ -60,6 +60,17 @@ public class SkillEventHandler {//TODO remove some checks on some tags so execut
             }
         }
     }
+//
+//
+//    @SubscribeEvent
+//    public static void everything(LivingEvent e) {
+//        if(e instanceof LivingEvent.LivingUpdateEvent)return;//no update events to reduce lag
+//        if (!e.getEntityLiving().isServerWorld()) return;//STOPSHIP yee
+//        for (SkillData s : CasterData.getCap(e.getEntityLiving()).getActiveSkills().values()) {
+//            s.getSkill().onSuccessfulProc(e.getEntityLiving(), s, e.getEntityLiving(), e);
+//        }
+//        //System.out.println("crit "+e.isCanceled());
+//    }
 
     @SubscribeEvent
     public static void dodge(DodgeEvent e) {

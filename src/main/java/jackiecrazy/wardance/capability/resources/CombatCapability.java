@@ -46,7 +46,7 @@ public class CombatCapability implements ICombatCapability {
 
     private final WeakReference<LivingEntity> dude;
     private ItemStack prev;
-    private float qi, spirit, posture, combo, mpos, mspi, wounding, burnout, fatigue, mainReel, offReel, walkTemp, maxMight;
+    private float qi, spirit, posture, combo, mpos, mspi, wounding, burnout, fatigue, mainReel, offReel, maxMight;
     private int shatterCD;
     private int qcd, scd, pcd, ccd, mBind, oBind;
     private int staggert, staggerc, ocd, shield, sc, roll, sweep;
@@ -81,7 +81,7 @@ public class CombatCapability implements ICombatCapability {
 
     @Override
     public void setMight(float amount) {
-        float cap = dude.get() == null ? MAXQI : (float) GeneralUtils.getAttributeValueSafe(dude.get(), WarAttributes.MAX_MIGHT.get());
+        float cap = maxMight;
         qi = MathHelper.clamp(amount, 0, cap);
     }
 
@@ -222,10 +222,6 @@ public class CombatCapability implements ICombatCapability {
             elb.world.playSound(null, elb.getPosX(), elb.getPosY(), elb.getPosZ(), SoundEvents.ENTITY_ZOMBIE_BREAK_WOODEN_DOOR, SoundCategory.PLAYERS, 0.3f + WarDance.rand.nextFloat() * 0.5f, 0.75f + WarDance.rand.nextFloat() * 0.5f);
             elb.getAttribute(Attributes.MOVEMENT_SPEED).removeModifier(WOUND);
             elb.getAttribute(Attributes.MOVEMENT_SPEED).applyPersistentModifier(STAGGERS);
-            if (elb instanceof PlayerEntity) {
-                walkTemp = ((PlayerEntity) elb).abilities.getWalkSpeed();
-                ((PlayerEntity) elb).abilities.setWalkSpeed(0);
-            }
             elb.getAttribute(Attributes.ARMOR).removeModifier(WOUND);
             elb.getAttribute(Attributes.ARMOR).applyPersistentModifier(STAGGERA);
             elb.getAttribute(Attributes.ARMOR).removeModifier(MORE);
@@ -330,7 +326,7 @@ public class CombatCapability implements ICombatCapability {
 
     @Override
     public void setMaxMight(float amount) {
-        maxMight=amount;
+        maxMight = amount;
     }
 
     @Override
@@ -363,10 +359,6 @@ public class CombatCapability implements ICombatCapability {
     public void setStaggerTime(int amount) {
         if (amount == 0 && staggert > 0 && dude.get() != null) {
             LivingEntity elb = dude.get();
-            if (elb instanceof PlayerEntity && walkTemp > 0) {
-                ((PlayerEntity) elb).abilities.setWalkSpeed(walkTemp);
-                walkTemp = 0;
-            }
             elb.getAttribute(Attributes.MOVEMENT_SPEED).removeModifier(WOUND);
             elb.getAttribute(Attributes.ARMOR).removeModifier(WOUND);
             elb.getAttribute(Attributes.ARMOR).removeModifier(MORE);
@@ -381,10 +373,6 @@ public class CombatCapability implements ICombatCapability {
         else {
             LivingEntity elb = dude.get();
             if (staggert > 0 && elb != null) {
-                if (elb instanceof PlayerEntity && walkTemp > 0) {
-                    ((PlayerEntity) elb).abilities.setWalkSpeed(walkTemp);
-                    walkTemp = 0;
-                }
                 elb.getAttribute(Attributes.MOVEMENT_SPEED).removeModifier(WOUND);
                 elb.getAttribute(Attributes.ARMOR).removeModifier(WOUND);
                 elb.getAttribute(Attributes.ARMOR).removeModifier(MORE);
@@ -698,7 +686,8 @@ public class CombatCapability implements ICombatCapability {
         int ticks = (int) (elb.world.getGameTime() - lastUpdate);
         if (ticks < 1) return;//sometimes time runs backwards
         setTrueMaxPosture(getMPos(elb));
-        setTrueMaxSpirit((float) dude.get().getAttribute(WarAttributes.MAX_SPIRIT.get()).getValue());
+        setTrueMaxSpirit((float) elb.getAttribute(WarAttributes.MAX_SPIRIT.get()).getValue());
+        setMaxMight((float) elb.getAttribute(WarAttributes.MAX_MIGHT.get()).getValue());
         if (first)
             setPosture(getMaxPosture());
         decrementComboGrace(ticks);
@@ -720,9 +709,7 @@ public class CombatCapability implements ICombatCapability {
         }
         float nausea = elb instanceof PlayerEntity || !elb.isPotionActive(Effects.NAUSEA) ? 0 : (elb.getActivePotionEffect(Effects.NAUSEA).getAmplifier() + 1) * GeneralConfig.nausea;
         addPosture(-nausea * ticks);
-        if (shatterCD > GeneralUtils.getAttributeValueSafe(elb, WarAttributes.SHATTER.get()))
-            shatterCD = (int) GeneralUtils.getAttributeValueSafe(elb, WarAttributes.SHATTER.get());
-        if (shatterCD < 0) {
+        if (shatterCD <= 0) {
             shatterCD += ticks;
             if (shatterCD >= 0) {
                 shattering = false;
@@ -730,10 +717,10 @@ public class CombatCapability implements ICombatCapability {
             }
         } else if (shattering) {
             shatterCD -= ticks;
-            if (shatterCD < 0) {
+            if (shatterCD <= 0) {
                 shatterCD = -ResourceConfig.shatterCooldown;
             }
-        }
+        } else shatterCD = (int) GeneralUtils.getAttributeValueSafe(elb, WarAttributes.SHATTER.get());
         if (elb instanceof PlayerEntity) {
             mainReelCounter += mainReel * ticks;
             offReelCounter += offReel * ticks;
@@ -797,6 +784,7 @@ public class CombatCapability implements ICombatCapability {
         setFatigue(c.getFloat("fatigue"));
         setStaggerTime(c.getInt("staggert"));
         lastUpdate = c.getLong("lastUpdate");
+        setShatterCooldown(c.getInt("shattercd"));
         if (!c.contains("qi")) return;
         setMight(c.getFloat("qi"));
         setCombo(c.getFloat("combo"));
@@ -810,7 +798,8 @@ public class CombatCapability implements ICombatCapability {
         setPostureGrace(c.getInt("posturecd"));
         setSpiritGrace(c.getInt("spiritcd"));
         setShieldTime(c.getInt("shield"));
-        setStaggerCount(c.getInt("staggerc"));
+        int count = c.getInt("staggerc");
+        setStaggerCount(staggerc);
         setOffhandCooldown(c.getInt("offhandcd"));
         setRollTime(c.getInt("roll"));
         setHandBind(Hand.MAIN_HAND, c.getInt("mainBind"));
@@ -818,14 +807,12 @@ public class CombatCapability implements ICombatCapability {
         setOffhandAttack(c.getBoolean("offhand"));
         toggleCombatMode(c.getBoolean("combat"));
         setShieldCount(c.getInt("shieldC"));
-        setShatterCooldown(c.getInt("shattercd"));
         setForcedSweep(c.getInt("sweep"));
         setHandReel(Hand.MAIN_HAND, c.getFloat("mainReel"));
         setHandReel(Hand.OFF_HAND, c.getFloat("offReel"));
         recoveryTimer = c.getInt("stumble");
         first = c.getBoolean("first");
         parrying = c.getInt("parrying");
-        walkTemp = c.getFloat("walkTemp");
         setTempItemStack(ItemStack.read(c.getCompound("temp")));
         if (dude.get() instanceof PlayerEntity) {
             if (getRollTime() > CombatConfig.rollEndsAt && c.getBoolean("rolling"))
@@ -885,7 +872,6 @@ public class CombatCapability implements ICombatCapability {
         c.putInt("shattercd", getShatterCooldown());
         c.putInt("sweep", getForcedSweep());
         c.putInt("stumble", recoveryTimer);
-        c.putFloat("walkTemp", walkTemp);
         c.putBoolean("rolling", dude.get() instanceof PlayerEntity && ((PlayerEntity) dude.get()).getForcedPose() == Pose.SWIMMING);
         if (!tempOffhand.isEmpty())
             c.put("temp", tempOffhand.write(new CompoundNBT()));
@@ -899,6 +885,7 @@ public class CombatCapability implements ICombatCapability {
         c.putFloat("fatigue", getFatigue());
         c.putInt("staggert", getStaggerTime());
         c.putLong("lastUpdate", lastUpdate);
+        c.putInt("shattercd", getShatterCooldown());
         return c;
     }
 

@@ -113,5 +113,6 @@ public class WarSkills {
     public static final RegistryObject<Skill> LADY_LUCK = SKILLS.register("lady_luck", LadyLuck::new);
     public static final RegistryObject<Skill> NATURAL_SPRINTER = SKILLS.register("natural_sprinter", NaturalSprinter::new);
     public static final RegistryObject<Skill> SPEED_DEMON = SKILLS.register("speed_demon", SpeedDemon::new);
+    //public static final RegistryObject<Skill> WEAPON_THROW = SKILLS.register("weapon_throw", HeavyBlow::new);
 
 }
