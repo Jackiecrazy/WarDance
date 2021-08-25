@@ -86,4 +86,10 @@ public class Silencer extends HeavyBlow {
         target.setSilent(sd.isCondition());
         super.onStatusEnd(caster, target, sd);
     }
+
+    @Override
+    public boolean onCast(LivingEntity caster) {
+        activate(caster, 40);
+        return true;
+    }
 }

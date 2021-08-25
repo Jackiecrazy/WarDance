@@ -13,7 +13,7 @@ import net.minecraftforge.fml.common.Mod;
 public class ItemTooltipHandler {
     @SubscribeEvent()
     public static void tooltip(ItemTooltipEvent e) {
-        if (CombatUtils.isWeapon(null, e.getItemStack()) || CombatUtils.isShield(null, e.getItemStack())) {
+        if (CombatUtils.isWeapon(e.getEntityLiving(), e.getItemStack()) || CombatUtils.isShield(e.getEntityLiving(), e.getItemStack())) {
             e.getToolTip().add(new TranslationTextComponent("wardance.tooltip.postureAttack", CombatUtils.getPostureAtk(null, null, null, 0, e.getItemStack())));
             e.getToolTip().add(new TranslationTextComponent("wardance.tooltip.postureDefend", CombatUtils.getPostureDef(null, null, e.getItemStack(), 0)));
             if (CombatUtils.isShield(null, e.getItemStack())) {
@@ -22,6 +22,9 @@ public class ItemTooltipHandler {
             } else if (CombatUtils.isWeapon(null, e.getItemStack())) {
                 e.getToolTip().add(new TranslationTextComponent("wardance.tooltip.attack", CombatUtils.getDamageMultiplier(CombatUtils.Awareness.DISTRACTED, e.getItemStack()) + "x", CombatUtils.getDamageMultiplier(CombatUtils.Awareness.UNAWARE, e.getItemStack()) + "x"));
             }
+        }
+        if(CombatUtils.isUnarmed(e.getItemStack(), e.getEntityLiving())){
+            e.getToolTip().add(new TranslationTextComponent("wardance.tooltip.unarmed"));
         }
     }
 }

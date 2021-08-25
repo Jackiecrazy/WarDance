@@ -350,7 +350,7 @@ public class ClientEvents {
                     Pair<Integer, Integer> pair = translateCoords(ClientConfig.CONFIG.might, width, height);
                     int x = Math.max(pair.getFirst() - 16, 0);
                     int y = Math.min(pair.getSecond() - 16, height - 32);
-                    int fillHeight = (int) Math.min(1, currentMightLevel / cap.getMaxMight() * 32);
+                    int fillHeight = (int) (Math.min(1, currentMightLevel / cap.getMaxMight()) * 32);
                     if (ClientConfig.CONFIG.might.enabled) {
                         //might circle
                         RenderSystem.color4f(1, 1, 1, 1);
@@ -686,8 +686,8 @@ public class ClientEvents {
     }
 
     @SubscribeEvent
-    public static void noFovChange(FOVUpdateEvent e){
-        if(CombatData.getCap(e.getEntity()).getStaggerTime()>0)
+    public static void noFovChange(FOVUpdateEvent e) {
+        if (CombatData.getCap(e.getEntity()).getStaggerTime() > 0)
             e.setNewfov(0.7f);
     }
 

@@ -248,7 +248,7 @@ public class SkillSelectionScreen extends Screen {
         Skill selectedSkill = this.selectedSkill.getSkill();
         List<String> lines = new ArrayList<>();
 
-        lines.add(selectedSkill.getDisplayName(null).getString());
+        lines.add(selectedSkill.baseName().getString());
         lines.add(selectedSkill.baseDescription().getString());
         if (selectedVariation != null) {
             //lines.add(String.valueOf(selectedVariation.getSkill().getColor().getRGB()));

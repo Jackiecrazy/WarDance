@@ -31,6 +31,6 @@ public class WeaponThrow extends Skill {
 
     @Override
     public void onSuccessfulProc(LivingEntity caster, SkillData stats, LivingEntity target, Event procPoint) {
-
+        //procs on projectileimpactevent, deals (attack damage) to prevent more bad stuff happening
     }
 }

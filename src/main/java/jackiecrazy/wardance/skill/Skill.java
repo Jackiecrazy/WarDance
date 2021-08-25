@@ -104,10 +104,16 @@ public abstract class Skill extends ForgeRegistryEntry<Skill> {
 //            return getParentSkill().castingCheck(caster);
         if (CombatData.getCap(caster).getSpirit() < spiritConsumption(caster))
             return CastStatus.SPIRIT;
+        if (CombatData.getCap(caster).getSpirit() < mightConsumption(caster))
+            return CastStatus.MIGHT;
         return CastStatus.ALLOWED;
     }
 
     public float spiritConsumption(LivingEntity caster) {
+        return 0;
+    }
+
+    public float mightConsumption(LivingEntity caster) {
         return 0;
     }
 
@@ -126,6 +132,10 @@ public abstract class Skill extends ForgeRegistryEntry<Skill> {
 
     public ITextComponent description() {
         return new TranslationTextComponent(this.getRegistryName().toString() + ".desc");
+    }
+
+    public ITextComponent baseName() {
+        return new TranslationTextComponent(this.getRegistryName().toString() + ".parent");
     }
 
     public ITextComponent baseDescription() {

@@ -4,8 +4,8 @@ import jackiecrazy.wardance.api.CombatDamageSource;
 import jackiecrazy.wardance.capability.resources.CombatData;
 import jackiecrazy.wardance.capability.skill.CasterData;
 import jackiecrazy.wardance.event.GainMightEvent;
-import jackiecrazy.wardance.event.ParryEvent;
 import jackiecrazy.wardance.event.SkillCastEvent;
+import jackiecrazy.wardance.event.StaggerEvent;
 import jackiecrazy.wardance.skill.Skill;
 import jackiecrazy.wardance.skill.SkillData;
 import jackiecrazy.wardance.skill.SkillTags;
@@ -18,6 +18,7 @@ import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.potion.EffectInstance;
 import net.minecraft.potion.Effects;
 import net.minecraft.tags.Tag;
+import net.minecraftforge.event.entity.living.LivingAttackEvent;
 import net.minecraftforge.event.entity.living.LivingHurtEvent;
 import net.minecraftforge.eventbus.api.Event;
 
@@ -38,7 +39,7 @@ Onslaught: casts heavy blow before every attack (this is a lot easier)
     Flare: deals two lives' worth of damage, but causes the target to rapidly regenerate 1.4 lives afterwards
     Master's Lesson: while active, might gain is converted into posture at a 1:1 ratio; overflow posture will generate free parries
      */
-    private final Tag<String> tag = Tag.getTagFromContents(new HashSet<>(Arrays.asList("physical", SkillTags.on_hurt, SkillTags.change_might, SkillTags.on_cast, "melee", "execution")));
+    private final Tag<String> tag = Tag.getTagFromContents(new HashSet<>(Arrays.asList("physical", SkillTags.on_hurt, SkillTags.normal_attack, SkillTags.on_stagger, SkillTags.change_might, SkillTags.on_cast, "melee", "execution")));
     private final Tag<String> no = Tag.getTagFromContents(new HashSet<>(Collections.singletonList("execution")));
 
     private static double getLife(LivingEntity e) {
@@ -68,21 +69,21 @@ Onslaught: casts heavy blow before every attack (this is a lot easier)
             CasterData.getCap(caster).removeActiveSkill(this);
             return true;
         }
-        activate(caster, getMightNeeded());
+        activate(caster, mightConsumption(caster));
         return true;
     }
 
     @Override
     public void onEffectEnd(LivingEntity caster, SkillData stats) {
-        if (stats.getDuration() > 0)
-            CombatData.getCap(caster).consumeMight(stats.getDuration());
+        CombatData.getCap(caster).setMight(0);
     }
 
     protected void performEffect(LivingEntity caster, LivingEntity target, float amount, SkillData s) {
 
     }
 
-    protected int getMightNeeded() {
+
+    public float mightConsumption(LivingEntity caster) {
         return getParentSkill() == null ? 5 : 8;
     }
 
@@ -92,9 +93,16 @@ Onslaught: casts heavy blow before every attack (this is a lot easier)
             return CastStatus.ALLOWED;
         if (CasterData.getCap(caster).isSkillCoolingDown(this))
             return CastStatus.COOLDOWN;
-        if (CombatData.getCap(caster).getMight() < getMightNeeded())
+        if (CombatData.getCap(caster).getMight() < mightConsumption(caster))
             return CastStatus.MIGHT;
         return CastStatus.ALLOWED;
+    }
+
+    @Override
+    public boolean activeTick(LivingEntity caster, SkillData d) {
+        if (!CombatData.getCap(caster).consumeMight(0.05f))
+            markUsed(caster);
+        return super.activeTick(caster, d);
     }
 
     @Override
@@ -112,8 +120,7 @@ Onslaught: casts heavy blow before every attack (this is a lot easier)
             }
         } else if (procPoint instanceof GainMightEvent) {
             stats.setArbitraryFloat(stats.getArbitraryFloat() + ((GainMightEvent) procPoint).getQuantity());
-            ((GainMightEvent) procPoint).setQuantity(0);
-            stats.decrementDuration();
+            //((GainMightEvent) procPoint).setQuantity(0);
         }
     }
 
@@ -137,12 +144,19 @@ Onslaught: casts heavy blow before every attack (this is a lot easier)
 
         @Override
         public boolean activeTick(LivingEntity caster, SkillData d) {
-
             if (!CasterData.getCap(caster).isSkillActive(WarSkills.HEAVY_BLOW.get())) {
-                CasterData.getCap(caster).getEquippedVariation(WarSkills.HEAVY_BLOW.get()).onCast(caster);
+                Skill s = CasterData.getCap(caster).getEquippedVariation(WarSkills.HEAVY_BLOW.get());
+                s.onCast(caster);
                 return true;
             }
-            return super.activeTick(caster, d);
+            return false;
+        }
+
+        @Override
+        public void onSuccessfulProc(LivingEntity caster, SkillData stats, LivingEntity target, Event procPoint) {
+            if (procPoint instanceof SkillCastEvent)
+                CombatData.getCap(caster).addSpirit(((SkillCastEvent) procPoint).getSkill().spiritConsumption(caster));
+            super.onSuccessfulProc(caster, stats, target, procPoint);
         }
     }
 
@@ -169,22 +183,18 @@ Onslaught: casts heavy blow before every attack (this is a lot easier)
             final float radius = 2 + s.getArbitraryFloat() / 5;
             final List<LivingEntity> list = caster.world.getEntitiesWithinAABB(LivingEntity.class, caster.getBoundingBox().grow(radius), (a) -> !TargetingUtils.isAlly(a, caster));
             //float damage = s.getArbitraryFloat() * (1 + CombatData.getCap(caster).getSpirit());
+            float damage = s.getArbitraryFloat() * CombatData.getCap(caster).getSpirit();
+            float numberOfTargets = list.size();
             CombatData.getCap(caster).setSpirit(0);
             for (LivingEntity baddie : list) {
                 if (baddie == target) continue;
-                baddie.attackEntityFrom(cds, (float) (Execution.getLife(baddie) / 2) * (target.getDistance(baddie) / radius));
+                baddie.attackEntityFrom(cds, damage / numberOfTargets);
                 LightningBoltEntity lightningboltentity = EntityType.LIGHTNING_BOLT.create(target.world);
                 lightningboltentity.moveForced(baddie.getPosX(), baddie.getPosY(), baddie.getPosZ());
                 lightningboltentity.setEffectOnly(true);
                 target.world.addEntity(lightningboltentity);
             }
             super.performEffect(caster, target, amount, s);
-        }
-
-        @Override
-        public boolean activeTick(LivingEntity caster, SkillData d) {
-            if (!CombatData.getCap(caster).consumeSpirit(0.05f)) markUsed(caster);
-            return super.activeTick(caster, d);
         }
     }
 
@@ -239,11 +249,13 @@ Onslaught: casts heavy blow before every attack (this is a lot easier)
 
         @Override
         public void onSuccessfulProc(LivingEntity caster, SkillData stats, LivingEntity target, Event procPoint) {
-            super.onSuccessfulProc(caster, stats, target, procPoint);
-            if (procPoint instanceof ParryEvent && ((ParryEvent) procPoint).canParry() && ((ParryEvent) procPoint).getPostureConsumption() > 0 && stats.getArbitraryFloat() > 0.5) {
+            if (procPoint instanceof StaggerEvent && !procPoint.isCanceled()) {
                 stats.setArbitraryFloat(stats.getArbitraryFloat() - 0.5f);
-                ((ParryEvent) procPoint).setPostureConsumption(0);
-            }
+                ((StaggerEvent) procPoint).setCount(1);
+                ((StaggerEvent) procPoint).setLength(200);
+            } else if (procPoint instanceof LivingAttackEvent && CombatData.getCap(target).getStaggerTime() > 0) {
+                procPoint.setCanceled(true);
+            } else super.onSuccessfulProc(caster, stats, target, procPoint);
         }
     }
 
@@ -264,7 +276,7 @@ Onslaught: casts heavy blow before every attack (this is a lot easier)
         protected void performEffect(LivingEntity caster, LivingEntity target, float amount, SkillData s) {
             int buff = 0;
             if (CasterData.getCap(caster).getActiveSkill(this).isPresent())
-                buff = Math.min((int) CasterData.getCap(caster).getActiveSkill(this).get().getArbitraryFloat() / 2, 3);
+                buff = (int) CasterData.getCap(caster).getActiveSkill(this).get().getArbitraryFloat();
 //            Skill[] pastCasts = CasterData.getCap(caster).getPastCasts();
 //            for (Skill s : pastCasts) {
 //                boolean flag = true;

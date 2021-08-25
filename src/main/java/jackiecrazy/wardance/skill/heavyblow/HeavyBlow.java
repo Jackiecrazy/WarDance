@@ -50,9 +50,8 @@ public class HeavyBlow extends Skill {
     }
 
     @Override
-    public CastStatus castingCheck(LivingEntity caster) {
-        if (CombatData.getCap(caster).getMight() < 1) return CastStatus.MIGHT;
-        return super.castingCheck(caster);
+    public float mightConsumption(LivingEntity caster) {
+        return 1;
     }
 
     @Override

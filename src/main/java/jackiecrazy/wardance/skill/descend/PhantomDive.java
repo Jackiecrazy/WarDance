@@ -5,13 +5,12 @@ import jackiecrazy.wardance.potion.WarEffects;
 import jackiecrazy.wardance.skill.SkillData;
 import jackiecrazy.wardance.utils.CombatUtils;
 import net.minecraft.entity.LivingEntity;
-import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.potion.EffectInstance;
 import net.minecraftforge.eventbus.api.Event;
 
 import java.awt.*;
 
-public class HawkDive extends Descend {
+public class PhantomDive extends Descend {
     @Override
     public Color getColor() {
         return Color.LIGHT_GRAY;
@@ -20,13 +19,6 @@ public class HawkDive extends Descend {
     @Override
     protected boolean canCast(LivingEntity caster) {
         return true;
-    }
-
-    @Override
-    public boolean onCast(LivingEntity caster) {
-        if (caster instanceof PlayerEntity && caster.isElytraFlying())
-            ((PlayerEntity) caster).stopFallFlying();
-        return super.onCast(caster);
     }
 
     @Override
@@ -46,7 +38,7 @@ public class HawkDive extends Descend {
                     case UNAWARE:
                         length += 60;
                 }
-                posDiff -= 10;
+                posDiff -= 7;
             }
             if (length > 0) target.addPotionEffect(new EffectInstance(WarEffects.PARALYSIS.get(), length));
             ((EntityAwarenessEvent) procPoint).setAwareness(awareness);

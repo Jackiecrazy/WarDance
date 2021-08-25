@@ -3,7 +3,7 @@ package jackiecrazy.wardance.entity;
 import com.google.common.collect.Lists;
 import it.unimi.dsi.fastutil.ints.IntOpenHashSet;
 import jackiecrazy.wardance.skill.Skill;
-import jackiecrazy.wardance.utils.SkillUtils;
+import jackiecrazy.wardance.skill.WarSkills;
 import mcp.MethodsReturnNonnullByDefault;
 import net.minecraft.advancements.CriteriaTriggers;
 import net.minecraft.enchantment.EnchantmentHelper;
@@ -15,8 +15,6 @@ import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.entity.projectile.AbstractArrowEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundNBT;
-import net.minecraft.network.datasync.DataParameter;
-import net.minecraft.network.datasync.EntityDataManager;
 import net.minecraft.network.play.server.SChangeGameStatePacket;
 import net.minecraft.util.DamageSource;
 import net.minecraft.util.Hand;
@@ -39,9 +37,11 @@ manifold assault: channel for 0.6 seconds and consume 3 spirit to launch a phant
 end him rightly: keep the weapon in your hand and throw the pommel instead, distracting the target for 1 second. Following up with the weapon itself deals 2.5x critical damage, and might is refunded if the target dies.
      */
 
-    private static final DataParameter<Skill> SKILL = EntityDataManager.createKey(ThrownWeaponEntity.class, SkillUtils.SKILLSERIALIZER);
+    //data parameters are used to sync data!
+    //private static final DataParameter<Skill> SKILL = EntityDataManager.createKey(ThrownWeaponEntity.class, SkillUtils.SKILLSERIALIZER);
     Hand hand = Hand.MAIN_HAND;
     ItemStack stack = ItemStack.EMPTY;
+    private Skill s= WarSkills.SHOCKWAVE.get();
 
     public ThrownWeaponEntity(EntityType<? extends ThrownWeaponEntity> type, World worldIn) {
         super(type, worldIn);

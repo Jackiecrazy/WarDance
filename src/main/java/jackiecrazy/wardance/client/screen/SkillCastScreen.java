@@ -166,7 +166,7 @@ public class SkillCastScreen extends Screen {
                         print = new TranslationTextComponent("wardance.skill.spirit", selected.spiritConsumption(mc.player)).getString();
                         break;
                     case MIGHT:
-                        print = new TranslationTextComponent("wardance.skill.might").getString();
+                        print = new TranslationTextComponent("wardance.skill.might", selected.mightConsumption(mc.player)).getString();
                         break;
                     default:
                         print = new TranslationTextComponent(elements[index].getRegistryName().toString() + ".requirement").getString();

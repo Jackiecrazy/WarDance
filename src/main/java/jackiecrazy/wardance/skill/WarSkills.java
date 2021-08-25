@@ -4,7 +4,7 @@ import jackiecrazy.wardance.WarDance;
 import jackiecrazy.wardance.skill.coupdegrace.CoupDeGrace;
 import jackiecrazy.wardance.skill.crownchampion.CrownChampion;
 import jackiecrazy.wardance.skill.descend.Descend;
-import jackiecrazy.wardance.skill.descend.HawkDive;
+import jackiecrazy.wardance.skill.descend.PhantomDive;
 import jackiecrazy.wardance.skill.execution.Execution;
 import jackiecrazy.wardance.skill.feint.Feint;
 import jackiecrazy.wardance.skill.fightingspirit.*;
@@ -97,7 +97,7 @@ public class WarSkills {
     public static final RegistryObject<Skill> SAVING_THROW = SKILLS.register("saving_throw", MementoMori.SavingThrow::new);
     public static final RegistryObject<Skill> POUND_OF_FLESH = SKILLS.register("pound_of_flesh", PoundOfFlesh::new);
     public static final RegistryObject<Skill> DESCEND = SKILLS.register("descend", Descend::new);
-    public static final RegistryObject<Skill> HAWK_DIVE = SKILLS.register("hawk_dive", HawkDive::new);
+    public static final RegistryObject<Skill> HAWK_DIVE = SKILLS.register("hawk_dive", PhantomDive::new);
     public static final RegistryObject<Skill> LIGHTS_OUT = SKILLS.register("lights_out", Descend.LightsOut::new);
     public static final RegistryObject<Skill> SHOCKWAVE = SKILLS.register("shockwave", Descend.Shockwave::new);
     public static final RegistryObject<Skill> TITANS_FALL = SKILLS.register("titans_fall", Descend.TitansFall::new);
