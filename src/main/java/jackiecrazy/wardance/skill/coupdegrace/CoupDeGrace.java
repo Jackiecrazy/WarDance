@@ -161,7 +161,7 @@ public class CoupDeGrace extends Skill {
                 if (e.getEntityLiving().getHealth() - e.getAmount() <= 0)
                     stats.flagCondition(true);
             }
-            if (procPoint instanceof ParryEvent) {
+            if (procPoint instanceof ParryEvent && ((ParryEvent) procPoint).getAttacker() == caster) {
                 procPoint.setResult(Event.Result.DENY);
                 markUsed(caster);
             }

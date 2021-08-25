@@ -178,7 +178,7 @@
   "wardance:execution.desc": "Only requires 5 might to activate.",
   "wardance:execution.requirement": "requires 5 might",
   "wardance:onslaught.name": "Onslaught",
-  "wardance:onslaught.desc": " No might drain over time. Your equipped variation of heavy blow (defaulting to the base variation if it is not equipped) will continuously be cast without cooldown, and all skills will refund their spirit costs on cast.",
+  "wardance:onslaught.desc": " No might drain over time, but might decay has no cooldown. Your variation of heavy blow (if one is equipped) will continuously be cooled and cast, and all skills will refund their spirit costs on cast. Execution ends when you are under 1 might.",
   "wardance:onslaught.requirement": "requires 8 might",
   "wardance:masters_lesson.name": "Master's Lesson",
   "wardance:masters_lesson.desc": " Cannot deal damage to staggered targets. Stagger is lengthened to 10 seconds, but stagger count is reduced to 1.",

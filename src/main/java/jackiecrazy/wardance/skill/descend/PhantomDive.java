@@ -23,7 +23,7 @@ public class PhantomDive extends Descend {
 
     @Override
     public void onSuccessfulProc(LivingEntity caster, SkillData stats, LivingEntity target, Event procPoint) {
-        if (procPoint instanceof EntityAwarenessEvent) {
+        if (procPoint instanceof EntityAwarenessEvent && ((EntityAwarenessEvent) procPoint).getAttacker() == caster) {
             CombatUtils.Awareness awareness = ((EntityAwarenessEvent) procPoint).getAwareness();
             double posDiff = stats.getDuration() - caster.getPosY();
             int length = 0;

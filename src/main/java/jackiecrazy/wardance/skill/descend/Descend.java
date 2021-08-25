@@ -110,7 +110,7 @@ Assassinate: Stab rank increased by 1 for this attack, instantly stagger a distr
     @Override
     public void onSuccessfulProc(LivingEntity caster, SkillData stats, LivingEntity target, Event procPoint) {
         double posDiff = stats.getDuration() - caster.getPosY();
-        if (posDiff > 0 && procPoint instanceof ParryEvent) {
+        if (posDiff > 0 && procPoint instanceof ParryEvent && caster != ((ParryEvent) procPoint).getEntityLiving()) {
             spooketh(caster, target, (float) posDiff);
             caster.fallDistance = 0;
             stats.flagCondition(true);
@@ -146,7 +146,7 @@ Assassinate: Stab rank increased by 1 for this attack, instantly stagger a distr
 
         @Override
         public void onSuccessfulProc(LivingEntity caster, SkillData stats, LivingEntity target, Event procPoint) {
-            if (procPoint instanceof StaggerEvent && !procPoint.isCanceled()) {
+            if (procPoint instanceof StaggerEvent && caster != ((StaggerEvent) procPoint).getEntityLiving() && !procPoint.isCanceled()) {
                 ((StaggerEvent) procPoint).setLength(200);
                 ((StaggerEvent) procPoint).setCount(1);
                 target.addPotionEffect(new EffectInstance(Effects.BLINDNESS, 200));

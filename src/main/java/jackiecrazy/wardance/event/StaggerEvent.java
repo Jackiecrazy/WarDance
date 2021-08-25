@@ -6,13 +6,14 @@ import net.minecraftforge.eventbus.api.Cancelable;
 
 @Cancelable
 public class StaggerEvent extends LivingEvent {
-    private LivingEntity attacker;
+    private final LivingEntity attacker;
     private int length, count;
 
     public StaggerEvent(LivingEntity entity, LivingEntity attacker, int staggerTime, int staggerCount) {
         super(entity);
         length = staggerTime;
         count = staggerCount;
+        this.attacker = attacker;
     }
 
     public int getLength() {

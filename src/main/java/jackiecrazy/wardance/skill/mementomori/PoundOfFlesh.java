@@ -37,7 +37,6 @@ public class PoundOfFlesh extends MementoMori {
 
     @Override
     public void onSuccessfulProc(LivingEntity caster, SkillData stats, LivingEntity target, Event procPoint) {
-        super.onSuccessfulProc(caster, stats, target, procPoint);
         if (procPoint instanceof ParryEvent) {
             //TODO mark all skill damage appropriately
             caster.hurtResistantTime = 0;

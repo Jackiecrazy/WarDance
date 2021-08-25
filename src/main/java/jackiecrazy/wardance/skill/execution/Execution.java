@@ -18,6 +18,7 @@ import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.potion.EffectInstance;
 import net.minecraft.potion.Effects;
 import net.minecraft.tags.Tag;
+import net.minecraft.world.server.ServerWorld;
 import net.minecraftforge.event.entity.living.LivingAttackEvent;
 import net.minecraftforge.event.entity.living.LivingHurtEvent;
 import net.minecraftforge.eventbus.api.Event;
@@ -39,7 +40,7 @@ Onslaught: casts heavy blow before every attack (this is a lot easier)
     Flare: deals two lives' worth of damage, but causes the target to rapidly regenerate 1.4 lives afterwards
     Master's Lesson: while active, might gain is converted into posture at a 1:1 ratio; overflow posture will generate free parries
      */
-    private final Tag<String> tag = Tag.getTagFromContents(new HashSet<>(Arrays.asList("physical", SkillTags.on_hurt, SkillTags.normal_attack, SkillTags.on_stagger, SkillTags.change_might, SkillTags.on_cast, "melee", "execution")));
+    private final Tag<String> tag = Tag.getTagFromContents(new HashSet<>(Arrays.asList("physical", SkillTags.on_hurt, SkillTags.on_stagger, SkillTags.change_might, SkillTags.on_cast, "melee", "execution")));
     private final Tag<String> no = Tag.getTagFromContents(new HashSet<>(Collections.singletonList("execution")));
 
     private static double getLife(LivingEntity e) {
@@ -144,9 +145,12 @@ Onslaught: casts heavy blow before every attack (this is a lot easier)
 
         @Override
         public boolean activeTick(LivingEntity caster, SkillData d) {
-            if (!CasterData.getCap(caster).isSkillActive(WarSkills.HEAVY_BLOW.get())) {
-                Skill s = CasterData.getCap(caster).getEquippedVariation(WarSkills.HEAVY_BLOW.get());
-                s.onCast(caster);
+            Skill s = CasterData.getCap(caster).getEquippedVariation(WarSkills.HEAVY_BLOW.get());
+            CombatData.getCap(caster).setMightGrace(0);
+            if (CombatData.getCap(caster).getMight() < s.mightConsumption(caster)) markUsed(caster);
+            if (!CasterData.getCap(caster).isSkillActive(s)) {
+                CasterData.getCap(caster).coolSkill(s);
+                s.checkAndCast(caster);
                 return true;
             }
             return false;
@@ -156,7 +160,7 @@ Onslaught: casts heavy blow before every attack (this is a lot easier)
         public void onSuccessfulProc(LivingEntity caster, SkillData stats, LivingEntity target, Event procPoint) {
             if (procPoint instanceof SkillCastEvent)
                 CombatData.getCap(caster).addSpirit(((SkillCastEvent) procPoint).getSkill().spiritConsumption(caster));
-            super.onSuccessfulProc(caster, stats, target, procPoint);
+            else super.onSuccessfulProc(caster, stats, target, procPoint);
         }
     }
 
@@ -183,16 +187,17 @@ Onslaught: casts heavy blow before every attack (this is a lot easier)
             final float radius = 2 + s.getArbitraryFloat() / 5;
             final List<LivingEntity> list = caster.world.getEntitiesWithinAABB(LivingEntity.class, caster.getBoundingBox().grow(radius), (a) -> !TargetingUtils.isAlly(a, caster));
             //float damage = s.getArbitraryFloat() * (1 + CombatData.getCap(caster).getSpirit());
-            float damage = s.getArbitraryFloat() * CombatData.getCap(caster).getSpirit();
-            float numberOfTargets = list.size();
+            float damage = 5 + s.getArbitraryFloat() * CombatData.getCap(caster).getSpirit() / list.size();
             CombatData.getCap(caster).setSpirit(0);
             for (LivingEntity baddie : list) {
                 if (baddie == target) continue;
-                baddie.attackEntityFrom(cds, damage / numberOfTargets);
+                baddie.attackEntityFrom(cds, damage);
                 LightningBoltEntity lightningboltentity = EntityType.LIGHTNING_BOLT.create(target.world);
                 lightningboltentity.moveForced(baddie.getPosX(), baddie.getPosY(), baddie.getPosZ());
                 lightningboltentity.setEffectOnly(true);
                 target.world.addEntity(lightningboltentity);
+                if (!net.minecraftforge.event.ForgeEventFactory.onEntityStruckByLightning(baddie, lightningboltentity))
+                    baddie.causeLightningStrike((ServerWorld) baddie.world, lightningboltentity);
             }
             super.performEffect(caster, target, amount, s);
         }
@@ -229,7 +234,7 @@ Onslaught: casts heavy blow before every attack (this is a lot easier)
     }
 
     public static class MastersLesson extends Execution {
-        private final Tag<String> tag = Tag.getTagFromContents(new HashSet<>(Arrays.asList("physical", SkillTags.on_hurt, "melee", "execution", SkillTags.on_parry, SkillTags.change_might)));
+        private final Tag<String> tag = Tag.getTagFromContents(new HashSet<>(Arrays.asList("physical", SkillTags.on_hurt, SkillTags.normal_attack, SkillTags.on_stagger, SkillTags.change_might, SkillTags.on_cast, "melee", "execution")));
         private final Tag<String> no = Tag.getTagFromContents(new HashSet<>(Collections.singletonList("execution")));
 
         @Override
@@ -250,7 +255,6 @@ Onslaught: casts heavy blow before every attack (this is a lot easier)
         @Override
         public void onSuccessfulProc(LivingEntity caster, SkillData stats, LivingEntity target, Event procPoint) {
             if (procPoint instanceof StaggerEvent && !procPoint.isCanceled()) {
-                stats.setArbitraryFloat(stats.getArbitraryFloat() - 0.5f);
                 ((StaggerEvent) procPoint).setCount(1);
                 ((StaggerEvent) procPoint).setLength(200);
             } else if (procPoint instanceof LivingAttackEvent && CombatData.getCap(target).getStaggerTime() > 0) {

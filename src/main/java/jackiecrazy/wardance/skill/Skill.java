@@ -104,7 +104,7 @@ public abstract class Skill extends ForgeRegistryEntry<Skill> {
 //            return getParentSkill().castingCheck(caster);
         if (CombatData.getCap(caster).getSpirit() < spiritConsumption(caster))
             return CastStatus.SPIRIT;
-        if (CombatData.getCap(caster).getSpirit() < mightConsumption(caster))
+        if (CombatData.getCap(caster).getMight() < mightConsumption(caster))
             return CastStatus.MIGHT;
         return CastStatus.ALLOWED;
     }

@@ -307,7 +307,7 @@ public class CombatUtils {
         final float magicScale = 1.722f;
         final float magicNumber = 781.25f;//magic numbers scale the modified formula to 0.2 per sword hit
         final float cooldownSq = semeCap.getCachedCooldown() * semeCap.getCachedCooldown();
-        final double period = 1.0D / (seme.getAttribute(Attributes.ATTACK_SPEED).getValue() + 0.5d) * 20.0D;//+0.5 makes sure heavies don't scale forever, light ones are still puny
+        final double period = 20.0D / (seme.getAttribute(Attributes.ATTACK_SPEED).getValue() + 0.5d);//+0.5 makes sure heavies don't scale forever, light ones are still puny
         float might = cooldownSq * cooldownSq * magicScale * (float) period * (float) period / magicNumber;
         might *= (1 + (semeCap.getCombo() / 10f));//combo bonus
         float weakness = 1;

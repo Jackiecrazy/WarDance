@@ -74,8 +74,9 @@ public class FlameDance extends WarCry {
         }else if(procPoint instanceof CriticalHitEvent&&stats.getArbitraryFloat()>=1){
             procPoint.setResult(Event.Result.ALLOW);
             ((CriticalHitEvent) procPoint).setDamageModifier(((CriticalHitEvent) procPoint).getDamageModifier()*1.5f);
+            stats.setArbitraryFloat(stats.getArbitraryFloat()%1);
         }
-        else if (procPoint instanceof ParryEvent && ((ParryEvent) procPoint).getEntityLiving() ==caster && stats.getArbitraryFloat() >= 1 && ((ParryEvent) procPoint).getPostureConsumption() > 0) {
+        else if (procPoint instanceof ParryEvent && ((ParryEvent) procPoint).getEntityLiving() ==caster && stats.getArbitraryFloat() > 0 && ((ParryEvent) procPoint).getPostureConsumption() > 0) {
             ((ParryEvent) procPoint).setPostureConsumption(0);
             stats.setArbitraryFloat(0);
         }
