@@ -58,6 +58,20 @@ public class CombatHandler {
         CombatData.getCap(e.getPlayer()).setCachedCooldown(e.getPlayer().getCooledAttackStrength(0.5f));
     }
 
+    /**
+     * bound entities cannot use that specific hand
+     */
+    @SubscribeEvent
+    public static void mudamudamuda(LivingEntityUseItemEvent e) {
+        Hand h = e.getEntityLiving().getHeldItemMainhand() == e.getItem() ? Hand.MAIN_HAND : e.getEntityLiving().getHeldItemOffhand() == e.getItem() ? Hand.OFF_HAND : null;
+        if (h != null && CombatData.getCap(e.getEntityLiving()).getHandBind(h) > 0) {
+            if(e.isCancelable())
+            e.setCanceled(true);
+            e.setDuration(-1);
+        }
+
+    }
+
     @SubscribeEvent
     public static void projectileParry(final ProjectileImpactEvent e) {
         if (e.getRayTraceResult().getType() == RayTraceResult.Type.ENTITY && e.getRayTraceResult() instanceof EntityRayTraceResult && ((EntityRayTraceResult) e.getRayTraceResult()).getEntity() instanceof LivingEntity) {
