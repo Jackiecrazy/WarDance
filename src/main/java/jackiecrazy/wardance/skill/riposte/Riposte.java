@@ -70,7 +70,7 @@ Moment of Courage: If you parry an attack that should stagger you regardless of 
     @SubscribeEvent
     public static void deady(LivingDeathEvent e) {
         if (!CombatUtils.isPhysicalAttack(e.getSource())) {
-            for (PlayerEntity pe : e.getEntityLiving().world.getEntitiesWithinAABB(PlayerEntity.class, e.getEntity().getBoundingBox().grow(5))) {
+            for (PlayerEntity pe : e.getEntityLiving().world.getLoadedEntitiesWithinAABB(PlayerEntity.class, e.getEntity().getBoundingBox().grow(5))) {
                 if (CasterData.getCap(pe).isSkillActive(WarSkills.ELEMENTAL_MIGHT.get())) {
                     CombatData.getCap(pe).addMight(1);
                 }

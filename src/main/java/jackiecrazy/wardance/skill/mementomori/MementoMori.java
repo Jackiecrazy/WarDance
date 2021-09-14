@@ -127,7 +127,7 @@ pound of flesh: active skill. Consumes all your spirit, and until your spirit re
             if (procPoint instanceof LivingDamageEvent && ohno < 1) {
                 float visibility = ohno * 10;
                 SkillUtils.createCloud(caster.world, caster, caster.getPosX(), caster.getPosY(), caster.getPosZ(), 13 - ohno, ParticleTypes.LARGE_SMOKE);
-                for (LivingEntity e : caster.world.getEntitiesWithinAABB(LivingEntity.class, caster.getBoundingBox().grow(11))) {
+                for (LivingEntity e : caster.world.getLoadedEntitiesWithinAABB(LivingEntity.class, caster.getBoundingBox().grow(11))) {
                     if (e.getDistanceSq(caster) > visibility * visibility) {
                         e.addPotionEffect(new EffectInstance(Effects.BLINDNESS, 100));
                     }

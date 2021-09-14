@@ -185,7 +185,7 @@ Onslaught: casts heavy blow before every attack (this is a lot easier)
         protected void performEffect(LivingEntity caster, LivingEntity target, float amount, SkillData s) {
             CombatDamageSource cds = new CombatDamageSource("lightningBolt", caster).setProxy(target);
             final float radius = 2 + s.getArbitraryFloat() / 5;
-            final List<LivingEntity> list = caster.world.getEntitiesWithinAABB(LivingEntity.class, caster.getBoundingBox().grow(radius), (a) -> !TargetingUtils.isAlly(a, caster));
+            final List<LivingEntity> list = caster.world.getLoadedEntitiesWithinAABB(LivingEntity.class, caster.getBoundingBox().grow(radius), (a) -> !TargetingUtils.isAlly(a, caster));
             //float damage = s.getArbitraryFloat() * (1 + CombatData.getCap(caster).getSpirit());
             float damage = 5 + s.getArbitraryFloat() * CombatData.getCap(caster).getSpirit() / list.size();
             CombatData.getCap(caster).setSpirit(0);
@@ -293,7 +293,7 @@ Onslaught: casts heavy blow before every attack (this is a lot easier)
 //                if (flag) buff ++;
 //                index++;
 //            }
-            final List<LivingEntity> list = caster.world.getEntitiesWithinAABB(LivingEntity.class, caster.getBoundingBox().grow(10), (a) -> TargetingUtils.isAlly(a, caster));
+            final List<LivingEntity> list = caster.world.getLoadedEntitiesWithinAABB(LivingEntity.class, caster.getBoundingBox().grow(10), (a) -> TargetingUtils.isAlly(a, caster));
             for (LivingEntity pet : list) {
                 pet.addPotionEffect(new EffectInstance(Effects.SPEED, (int) amount * 10, buff));
                 if (buff >= 1)

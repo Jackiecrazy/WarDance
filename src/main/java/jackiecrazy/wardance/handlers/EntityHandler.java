@@ -261,7 +261,7 @@ Mobs should move into a position that is close to the player, far from allies, a
             while (it.hasNext()) {
                 Map.Entry<Tuple<World, BlockPos>, Float> n = it.next();
                 if (n.getKey().getA().isAreaLoaded(n.getKey().getB(), n.getValue().intValue())) {
-                    for (CreatureEntity c : (n.getKey().getA().getEntitiesWithinAABB(CreatureEntity.class, new AxisAlignedBB(n.getKey().getB()).grow(n.getValue())))) {
+                    for (CreatureEntity c : (n.getKey().getA().getLoadedEntitiesWithinAABB(CreatureEntity.class, new AxisAlignedBB(n.getKey().getB()).grow(n.getValue())))) {
                         if (CombatUtils.getAwareness(null, c) == CombatUtils.Awareness.UNAWARE && !CombatUtils.stealthMap.getOrDefault(c.getType().getRegistryName(), CombatUtils.STEALTH).isDeaf()) {
                             c.getNavigator().clearPath();
                             c.getNavigator().setPath(c.getNavigator().getPathToPos(n.getKey().getB(), (int) (n.getValue() + 3)), 1);

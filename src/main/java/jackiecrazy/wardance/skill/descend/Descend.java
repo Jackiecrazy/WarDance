@@ -171,7 +171,7 @@ Assassinate: Stab rank increased by 1 for this attack, instantly stagger a distr
         public void onSuccessfulProc(LivingEntity caster, SkillData stats, LivingEntity target, Event procPoint) {
             if (procPoint == null) {
                 double posDiff = stats.getDuration() - caster.getPosY();
-                for (LivingEntity e : caster.world.getEntitiesWithinAABB(LivingEntity.class, caster.getBoundingBox().grow(5))) {
+                for (LivingEntity e : caster.world.getLoadedEntitiesWithinAABB(LivingEntity.class, caster.getBoundingBox().grow(5))) {
                     if (e != caster) {
                         CombatData.getCap(e).consumePosture((float) posDiff);
                         e.attackEntityFrom(DamageSource.FALLING_BLOCK, 1);
