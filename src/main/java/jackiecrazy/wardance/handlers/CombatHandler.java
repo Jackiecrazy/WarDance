@@ -308,12 +308,12 @@ public class CombatHandler {
                         uke.world.playSound(null, uke.getPosX(), uke.getPosY(), uke.getPosZ(), disshield ? SoundEvents.ITEM_SHIELD_BLOCK : SoundEvents.BLOCK_ANVIL_PLACE, SoundCategory.PLAYERS, 0.25f + WarDance.rand.nextFloat() * 0.5f, (1 - (ukeCap.getPosture() / ukeCap.getMaxPosture())) + WarDance.rand.nextFloat() * 0.5f);
                         //reset cooldown
                         if (defMult != 0) {//shield time
+                            int ticks = (int) ((pe.getPostureConsumption() + 1) * 5);//(posture consumption+1)*5 ticks of cooldown
                             float cd = CombatUtils.getCooldownPeriod(uke, parryHand);//attack cooldown ticks
-                            cd = (cd - pe.getPostureConsumption()) / cd;//5*(1+posture damage) cooldown
-                            if (cd > 0)
-                                CombatUtils.setHandCooldown(uke, parryHand, cd, true);
-                            else
-                                ukeCap.setHandBind(parryHand, (int) -cd);
+                            if (cd > ticks)//if attack speed is lower, refund partial cooldown
+                                CombatUtils.setHandCooldownDirect(uke, parryHand, ticks, true);
+                            else//otherwise bind hand
+                                ukeCap.setHandBind(parryHand, (ticks - (int) cd));
                         }
                         //sword on sword is 1.4, sword on shield is 1.12
                         //normal distribution?

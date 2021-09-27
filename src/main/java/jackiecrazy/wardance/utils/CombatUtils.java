@@ -404,6 +404,20 @@ public class CombatUtils {
         }
     }
 
+    public static void setHandCooldownDirect(LivingEntity e, Hand h, int amount, boolean sync) {
+        switch (h) {
+            case MAIN_HAND:
+                if (!(e instanceof PlayerEntity)) return;
+                e.ticksSinceLastSwing = amount;
+                if (!(e instanceof FakePlayer) && e instanceof ServerPlayerEntity && sync)
+                    CombatChannel.INSTANCE.send(PacketDistributor.PLAYER.with(() -> (ServerPlayerEntity) e), new UpdateAttackPacket(e.getEntityId(), amount));
+                break;
+            case OFF_HAND:
+                CombatData.getCap(e).setOffhandCooldown(amount);
+                break;
+        }
+    }
+
     public static double getDamageMultiplier(Awareness a, ItemStack is) {
         if (!StealthConfig.stealthSystem || is == null) return 1;
         CombatInfo ci = combatList.getOrDefault(is.getItem(), DEFAULT);

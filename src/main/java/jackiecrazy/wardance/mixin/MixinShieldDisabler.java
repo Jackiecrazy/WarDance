@@ -6,14 +6,22 @@ import net.minecraft.entity.LivingEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.common.extensions.IForgeItemStack;
 import org.spongepowered.asm.mixin.Mixin;
-import org.spongepowered.asm.mixin.injection.At;
-import org.spongepowered.asm.mixin.injection.Inject;
-import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
+import org.spongepowered.asm.mixin.Overwrite;
+import org.spongepowered.asm.mixin.Shadow;
 
-@Mixin(IForgeItemStack.class)
-public class MixinShieldDisabler {
-    @Inject(method = "canDisableShield", at = @At("HEAD"), cancellable = true)
-    private void halt(ItemStack shield, LivingEntity entity, LivingEntity attacker, CallbackInfoReturnable<Boolean> cir) {
-        if (CasterData.getCap(attacker).isTagActive(SkillTags.disable_shield)) cir.setReturnValue(true);
+@Mixin(value = IForgeItemStack.class, remap = false)
+public interface MixinShieldDisabler {
+    @Shadow
+    ItemStack getStack();
+
+    /**
+     * Mixins don't allow injecting interfaces, so here we are
+     *
+     * @author Jackiecrazy
+     */
+    @Overwrite
+    default boolean canDisableShield(ItemStack shield, LivingEntity entity, LivingEntity attacker) {
+        if (CasterData.getCap(attacker).isTagActive(SkillTags.disable_shield)) return true;
+        return getStack().getItem().canDisableShield(getStack(), shield, entity, attacker);
     }
 }
