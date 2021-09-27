@@ -27,16 +27,6 @@ public class Silencer extends HeavyBlow {
     private final Tag<String> tag = Tag.getTagFromContents(new HashSet<>(Arrays.asList("physical", SkillTags.melee, SkillTags.on_death, SkillTags.afflict_tick, "boundCast", SkillTags.normal_attack, SkillTags.modify_crit, SkillTags.recharge_normal, SkillTags.on_being_parried)));
     private final Tag<String> no = Tag.getEmptyTag();
 
-    @Override
-    public Tag<String> getTags(LivingEntity caster) {
-        return tag;
-    }
-
-    @Override
-    public Tag<String> getIncompatibleTags(LivingEntity caster) {
-        return no;
-    }
-
     @SubscribeEvent
     public static void spooketh(CriticalHitEvent e) {
         final Skill back = WarSkills.BACKSTAB.get();
@@ -48,10 +38,20 @@ public class Silencer extends HeavyBlow {
 
     @SubscribeEvent
     public static void silenced(LivingDeathEvent e) {
-        if(e.getSource().getTrueSource() instanceof LivingEntity){
-            LivingEntity elb=(LivingEntity) e.getSource().getTrueSource();
+        if (e.getSource().getTrueSource() instanceof LivingEntity) {
+            LivingEntity elb = (LivingEntity) e.getSource().getTrueSource();
             CasterData.getCap(elb).coolSkill(WarSkills.BACKSTAB.get());
         }
+    }
+
+    @Override
+    public Tag<String> getTags(LivingEntity caster) {
+        return tag;
+    }
+
+    @Override
+    public Tag<String> getIncompatibleTags(LivingEntity caster) {
+        return no;
     }
 
     @Override
@@ -66,7 +66,7 @@ public class Silencer extends HeavyBlow {
 
     @Override
     public void onSuccessfulProc(LivingEntity caster, SkillData stats, LivingEntity target, Event procPoint) {
-        if(caster.world.isRemote())return;
+        if (caster.world.isRemote()) return;
         CombatData.getCap(target).setHandBind(Hand.MAIN_HAND, 30);
         CombatData.getCap(target).setHandBind(Hand.OFF_HAND, 30);
         procPoint.setResult(Event.Result.ALLOW);
@@ -75,7 +75,7 @@ public class Silencer extends HeavyBlow {
 
     @Override
     public SkillData onStatusAdd(LivingEntity caster, LivingEntity target, SkillData sd, @Nullable SkillData existing) {
-        sd.flagCondition(target.isSilent());
+        sd.flagCondition(existing == null ? target.isSilent() : existing.isCondition());
         target.setSilent(true);
         System.out.println("target has been silenced!");
         return super.onStatusAdd(caster, target, sd, existing);

@@ -10,6 +10,7 @@ public class SkillTags {
     public static final String change_posture = "manipulatePosture";
     public static final String change_spirit = "manipulateSpirit";
     public static final String countdown = "countdown";
+    public static final String disable_shield="disableShield";
     public static final String knockback = "knockback";
     public static final String melee = "melee";
     public static final String modify_crit = "modifyCrit";

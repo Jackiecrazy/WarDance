@@ -40,7 +40,7 @@
   "wardance:skills_colors": "You can only equip one variation of one skill at a time, the currently equipped variation will be highlighted in red. Some skills cannot be simultaneously cast, and skills that cannot be cast at the same time as the skill you have selected will be highlighted in orange.",
   "wardance:skills_terms": "Certain terminology are used consistently in these descriptions:\n§lTaken§r damage is damage before armor, and §lreceived§r damage is damage after armor.\nAn §lAffliction§r is applied to the target, and can be viewed by keeping your crosshair over the entity, like posture.",
   "wardance:heavy_blow.parent": "Heavy Blow",
-  "wardance:heavy_blow.base": "The next attack in 2 seconds launches a vicious strike, guaranteeing a critical hit. If the target parries the blow, their parrying hand will be disabled for 1.5 seconds. Recharges after 3 attacks, costs 1 might and 2 spirit.\nOffensive bonuses are not applied if the target has Iron Guard active.",
+  "wardance:heavy_blow.base": "The next attack in 2 seconds launches a vicious strike, guaranteeing a critical hit. If the target parries the blow, their parrying hand will be disabled for 1.5 seconds; if the target blocks the blow, their shield will be disabled for 3 seconds. Recharges after 3 attacks, costs 1 might and 2 spirit.\nOffensive bonuses are not applied if the target has Iron Guard active.",
   "wardance:heavy_blow.name": "Vital Strike",
   "wardance:heavy_blow.desc": " This attack's crit damage is increased by 40%.",
   "wardance:heavy_blow.requirement": "requires 1 might and 2 spirit",

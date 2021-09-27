@@ -9,6 +9,7 @@
     "MixinMobSound",
     "MixinNewSweepAttack",
     "MixinPlayerEntity",
+    "MixinShieldDisabler",
     "MixinSoundAlert",
     "MixinSweepDurabilitySuppressor"
   ],

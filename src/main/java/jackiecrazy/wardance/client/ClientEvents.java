@@ -169,8 +169,9 @@ public class ClientEvents {
     public static void alert(LivingAttackEvent e) {
         if (Minecraft.getInstance().player == null) return;
         if ((e.getEntityLiving() == Minecraft.getInstance().player && e.getSource().getTrueSource() instanceof LivingEntity) || e.getSource().getTrueSource() == Minecraft.getInstance().player) {
-            if (!CombatData.getCap(Minecraft.getInstance().player).isCombatMode() && ClientConfig.autoCombat > 0) {
-                CombatChannel.INSTANCE.sendToServer(new CombatModePacket());
+            if (ClientConfig.autoCombat > 0) {
+                if (!CombatData.getCap(Minecraft.getInstance().player).isCombatMode())
+                    CombatChannel.INSTANCE.sendToServer(new CombatModePacket());
                 combatTicks = Minecraft.getInstance().player.ticksExisted;
             }
         }
@@ -708,7 +709,7 @@ public class ClientEvents {
 
     @SubscribeEvent
     public static void sweepSwing(PlayerInteractEvent.LeftClickEmpty e) {
-        Entity n = getEntityLookedAt(e.getPlayer(), GeneralUtils.getAttributeValueSafe(e.getPlayer(), ForgeMod.REACH_DISTANCE.get()) - (e.getItemStack().isEmpty() ? 1 : 0));
+        Entity n = getEntityLookedAt(e.getPlayer(), GeneralUtils.getAttributeValueHandSensitive(e.getPlayer(), ForgeMod.REACH_DISTANCE.get(), Hand.MAIN_HAND) - (e.getItemStack().isEmpty() ? 1 : 0));
         if (n != null)
             CombatChannel.INSTANCE.sendToServer(new RequestAttackPacket(true, n));
         CombatChannel.INSTANCE.sendToServer(new RequestSweepPacket(true, n));
@@ -718,7 +719,7 @@ public class ClientEvents {
     public static void sweepSwingOff(PlayerInteractEvent.RightClickEmpty e) {
         if (!rightClick && GeneralConfig.dual && e.getHand() == Hand.OFF_HAND && ((CombatUtils.isWeapon(e.getEntityLiving(), e.getItemStack()) || (e.getItemStack().isEmpty() && CombatData.getCap(e.getPlayer()).isCombatMode())))) {
             rightClick = true;
-            Entity n = getEntityLookedAt(e.getPlayer(), GeneralUtils.getAttributeValueSafe(e.getPlayer(), ForgeMod.REACH_DISTANCE.get()) - (e.getItemStack().isEmpty() ? 1 : 0));
+            Entity n = getEntityLookedAt(e.getPlayer(), GeneralUtils.getAttributeValueHandSensitive(e.getPlayer(), ForgeMod.REACH_DISTANCE.get(), Hand.OFF_HAND) - (e.getItemStack().isEmpty() ? 1 : 0));
             e.getPlayer().swing(Hand.OFF_HAND, false);
             if (n != null)
                 CombatChannel.INSTANCE.sendToServer(new RequestAttackPacket(false, n));
@@ -730,7 +731,7 @@ public class ClientEvents {
     public static void sweepSwingBlock(PlayerInteractEvent.LeftClickBlock e) {
         if (Minecraft.getInstance().playerController.getIsHittingBlock()) return;
         float temp = CombatUtils.getCooledAttackStrength(e.getPlayer(), Hand.MAIN_HAND, 0.5f);
-        Entity n = getEntityLookedAt(e.getPlayer(), GeneralUtils.getAttributeValueSafe(e.getPlayer(), ForgeMod.REACH_DISTANCE.get()) - (e.getItemStack().isEmpty() ? 1 : 0));
+        Entity n = getEntityLookedAt(e.getPlayer(), GeneralUtils.getAttributeValueHandSensitive(e.getPlayer(), ForgeMod.REACH_DISTANCE.get(), Hand.MAIN_HAND) - (e.getItemStack().isEmpty() ? 1 : 0));
         if (n != null)
             CombatChannel.INSTANCE.sendToServer(new RequestAttackPacket(true, n));
         CombatChannel.INSTANCE.sendToServer(new RequestSweepPacket(true, n));
@@ -740,7 +741,7 @@ public class ClientEvents {
     public static void sweepSwingOffItem(PlayerInteractEvent.RightClickItem e) {
         if (!rightClick && GeneralConfig.dual && e.getHand() == Hand.OFF_HAND && ((CombatUtils.isWeapon(e.getEntityLiving(), e.getItemStack()) || (e.getItemStack().isEmpty() && CombatData.getCap(e.getPlayer()).isCombatMode())))) {
             rightClick = true;
-            Entity n = getEntityLookedAt(e.getPlayer(), GeneralUtils.getAttributeValueSafe(e.getPlayer(), ForgeMod.REACH_DISTANCE.get()) - (e.getItemStack().isEmpty() ? 1 : 0));
+            Entity n = getEntityLookedAt(e.getPlayer(), GeneralUtils.getAttributeValueHandSensitive(e.getPlayer(), ForgeMod.REACH_DISTANCE.get(), Hand.OFF_HAND) - (e.getItemStack().isEmpty() ? 1 : 0));
             e.getPlayer().swing(Hand.OFF_HAND, false);
             if (n != null)
                 CombatChannel.INSTANCE.sendToServer(new RequestAttackPacket(false, n));
@@ -752,7 +753,7 @@ public class ClientEvents {
     public static void punchy(PlayerInteractEvent.EntityInteract e) {
         if (!rightClick && GeneralConfig.dual && e.getHand() == Hand.OFF_HAND && (e.getItemStack().isEmpty() && CombatData.getCap(e.getPlayer()).isCombatMode())) {
             rightClick = true;
-            Entity n = getEntityLookedAt(e.getPlayer(), GeneralUtils.getAttributeValueSafe(e.getPlayer(), ForgeMod.REACH_DISTANCE.get()) - (e.getItemStack().isEmpty() ? 1 : 0));
+            Entity n = getEntityLookedAt(e.getPlayer(), GeneralUtils.getAttributeValueHandSensitive(e.getPlayer(), ForgeMod.REACH_DISTANCE.get(), Hand.OFF_HAND) - (e.getItemStack().isEmpty() ? 1 : 0));
             e.getPlayer().swing(Hand.OFF_HAND, false);
             if (n != null)
                 CombatChannel.INSTANCE.sendToServer(new RequestAttackPacket(false, n));
@@ -764,7 +765,7 @@ public class ClientEvents {
     public static void sweepSwingOffItemBlock(PlayerInteractEvent.RightClickBlock e) {
         if (!rightClick && GeneralConfig.dual && e.getHand() == Hand.OFF_HAND && ((CombatUtils.isWeapon(e.getEntityLiving(), e.getItemStack()) || (e.getItemStack().isEmpty() && CombatData.getCap(e.getPlayer()).isCombatMode())))) {
             rightClick = true;
-            Entity n = getEntityLookedAt(e.getPlayer(), GeneralUtils.getAttributeValueSafe(e.getPlayer(), ForgeMod.REACH_DISTANCE.get()) - (e.getItemStack().isEmpty() ? 1 : 0));
+            Entity n = getEntityLookedAt(e.getPlayer(), GeneralUtils.getAttributeValueHandSensitive(e.getPlayer(), ForgeMod.REACH_DISTANCE.get(), Hand.OFF_HAND) - (e.getItemStack().isEmpty() ? 1 : 0));
             e.getPlayer().swing(Hand.OFF_HAND, false);
             if (n != null)
                 CombatChannel.INSTANCE.sendToServer(new RequestAttackPacket(false, n));

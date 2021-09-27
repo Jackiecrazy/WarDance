@@ -16,6 +16,7 @@ import jackiecrazy.wardance.event.MeleeKnockbackEvent;
 import jackiecrazy.wardance.event.ParryEvent;
 import jackiecrazy.wardance.event.ProjectileParryEvent;
 import jackiecrazy.wardance.potion.WarEffects;
+import jackiecrazy.wardance.skill.SkillTags;
 import jackiecrazy.wardance.utils.CombatUtils;
 import jackiecrazy.wardance.utils.GeneralUtils;
 import jackiecrazy.wardance.utils.MovementUtils;
@@ -65,8 +66,8 @@ public class CombatHandler {
     public static void mudamudamuda(LivingEntityUseItemEvent e) {
         Hand h = e.getEntityLiving().getHeldItemMainhand() == e.getItem() ? Hand.MAIN_HAND : e.getEntityLiving().getHeldItemOffhand() == e.getItem() ? Hand.OFF_HAND : null;
         if (h != null && CombatData.getCap(e.getEntityLiving()).getHandBind(h) > 0) {
-            if(e.isCancelable())
-            e.setCanceled(true);
+            if (e.isCancelable())
+                e.setCanceled(true);
             e.setDuration(-1);
         }
 
@@ -85,13 +86,11 @@ public class CombatHandler {
                 return;
             float consume = CombatConfig.posturePerProjectile;
             ICombatCapability ukeCap = CombatData.getCap(uke);
-            final boolean failManualParry = CombatConfig.sneakParry > 0 && (ukeCap.getParryingTick() > uke.ticksExisted || ukeCap.getParryingTick() < uke.ticksExisted - CombatConfig.sneakParry);
-            final boolean toggleParry = CombatConfig.sneakParry < 0 && ukeCap.getParryingTick() == -1;
-            if (uke instanceof PlayerEntity && (failManualParry || toggleParry)) {
-                //manual parry toggle
-                // why does everyone want this feature...
-                return;
-            }
+            //manual parry toggle
+            // why does everyone want this feature...
+            boolean failManualParry = CombatConfig.sneakParry > 0 && (ukeCap.getParryingTick() > uke.ticksExisted || ukeCap.getParryingTick() < uke.ticksExisted - CombatConfig.sneakParry);
+            failManualParry |= CombatConfig.sneakParry < 0 && ukeCap.getParryingTick() == -1;
+            failManualParry &= uke instanceof PlayerEntity;
             boolean free = ukeCap.getShieldTime() > 0;
             ItemStack defend = null;
             Hand h = null;
@@ -104,6 +103,8 @@ public class CombatHandler {
             }
             Entity projectile = e.getEntity();
             ProjectileParryEvent pe = new ProjectileParryEvent(uke, projectile, h, defend, free ? 0 : consume, projectile.getMotion().normalize().scale(-1));
+            if (failManualParry)
+                pe.setResult(Event.Result.DENY);
             MinecraftForge.EVENT_BUS.post(pe);
             if (pe.getResult() == Event.Result.ALLOW || (defend != null && GeneralUtils.isFacingEntity(uke, projectile, 120) && ukeCap.doConsumePosture(pe.getPostureConsumption()) && pe.getResult() == Event.Result.DEFAULT)) {
                 //System.out.println("the target has parried!");
@@ -206,13 +207,11 @@ public class CombatHandler {
                     ukeCap.consumePosture(0);
                     return;
                 }
-                final boolean failManualParry = CombatConfig.sneakParry > 0 && (ukeCap.getParryingTick() > uke.ticksExisted || ukeCap.getParryingTick() < uke.ticksExisted - CombatConfig.sneakParry);
-                final boolean toggleParry = CombatConfig.sneakParry < 0 && ukeCap.getParryingTick() == -1;
-                if (uke instanceof PlayerEntity && (failManualParry || toggleParry)) {
-                    //manual parry toggle
-                    // why does everyone want this feature...
-                    return;
-                }
+                //manual parry toggle
+                // why does everyone want this feature...
+                boolean failManualParry = CombatConfig.sneakParry > 0 && (ukeCap.getParryingTick() > uke.ticksExisted || ukeCap.getParryingTick() < uke.ticksExisted - CombatConfig.sneakParry);
+                failManualParry |= CombatConfig.sneakParry < 0 && ukeCap.getParryingTick() == -1;
+                failManualParry &= uke instanceof PlayerEntity;
                 boolean canParry = GeneralUtils.isFacingEntity(uke, seme, 120);
                 boolean useDeflect = (uke instanceof PlayerEntity || WarDance.rand.nextFloat() < CombatConfig.mobDeflectChance) && GeneralUtils.isFacingEntity(uke, seme, 120 + 2 * (int) GeneralUtils.getAttributeValueSafe(uke, WarAttributes.DEFLECTION.get())) && !GeneralUtils.isFacingEntity(uke, seme, 120) && !canParry;
                 //staggered, no parry
@@ -257,6 +256,9 @@ public class CombatHandler {
                 }
                 float finalPostureConsumption = atkMult * defMult;
                 ParryEvent pe = new ParryEvent(uke, seme, ((canParry && defend != null) || useDeflect), attackingHand, attack, parryHand, defend, finalPostureConsumption, e.getAmount());
+                if (failManualParry)
+                    pe.setResult(Event.Result.DENY);
+                //FIXME observe whether this implementation will work unexpectedly
                 MinecraftForge.EVENT_BUS.post(pe);
                 if (pe.isCanceled()) {
                     //System.out.println("parry has been canceled with the attack.");
@@ -285,7 +287,7 @@ public class CombatHandler {
                         boolean disshield = false;
                         parryHand = uke.getHeldItemOffhand() == defend ? Hand.OFF_HAND : Hand.MAIN_HAND;
                         if (CombatUtils.isShield(uke, defend)) {
-                            if (CasterData.getCap(seme).isTagActive("disableShield") || attack.getItem().canDisableShield(attack, defend, uke, seme)) {
+                            if (CasterData.getCap(seme).isTagActive(SkillTags.disable_shield) || attack.getItem().canDisableShield(attack, defend, uke, seme)) {
                                 //shield is disabled
                                 if (uke instanceof PlayerEntity) {
                                     ukeCap.setHandBind(parryHand, 60);

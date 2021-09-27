@@ -2,7 +2,6 @@ package jackiecrazy.wardance.mixin;
 
 import jackiecrazy.wardance.api.CombatDamageSource;
 import jackiecrazy.wardance.capability.resources.CombatData;
-import jackiecrazy.wardance.capability.skill.CasterData;
 import jackiecrazy.wardance.config.GeneralConfig;
 import jackiecrazy.wardance.event.MeleeKnockbackEvent;
 import net.minecraft.entity.Entity;
@@ -40,6 +39,8 @@ public abstract class MixinPlayerEntity extends LivingEntity {
 //        CombatData.getCap(this).setCachedCooldown(f2);
 //    } //Mohist why
 
+
+
     @Inject(method = "attackTargetEntityWithCurrentItem", locals = LocalCapture.CAPTURE_FAILSOFT,
             at = @At(value = "INVOKE", target = "Lnet/minecraft/entity/Entity;attackEntityFrom(Lnet/minecraft/util/DamageSource;F)Z"))
     private void store(Entity targetEntity, CallbackInfo ci, float f, float f1, float f2, boolean flag, boolean flag1, float i, boolean flag2, CriticalHitEvent hitResult, boolean flag3, double d0, float f4, boolean flag4, int j, Vector3d vector3d) {
@@ -69,14 +70,6 @@ public abstract class MixinPlayerEntity extends LivingEntity {
         targetEntity.hurtResistantTime = 0;
         if (targetEntity instanceof LivingEntity) {
             ((LivingEntity) targetEntity).hurtTime = ((LivingEntity) targetEntity).maxHurtTime = 0;
-        }
-    }
-
-    @Inject(method = "blockUsingShield",
-            at = @At("TAIL"))
-    private void block(LivingEntity entityIn, CallbackInfo ci) {
-        if(CasterData.getCap(entityIn).isTagActive("disableShield")){
-            ((PlayerEntity)(Object)this).disableShield(true);
         }
     }
 

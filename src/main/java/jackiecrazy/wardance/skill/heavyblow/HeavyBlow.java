@@ -17,7 +17,7 @@ import java.util.Arrays;
 import java.util.HashSet;
 
 public class HeavyBlow extends Skill {
-    private final Tag<String> tag = Tag.getTagFromContents(new HashSet<>(Arrays.asList("physical", "disableShield", SkillTags.melee, SkillTags.on_hurt, "boundCast", SkillTags.normal_attack, SkillTags.countdown, SkillTags.modify_crit, SkillTags.recharge_normal, SkillTags.on_being_parried)));
+    private final Tag<String> tag = Tag.getTagFromContents(new HashSet<>(Arrays.asList("physical", SkillTags.disable_shield, SkillTags.melee, SkillTags.on_hurt, "boundCast", SkillTags.normal_attack, SkillTags.countdown, SkillTags.modify_crit, SkillTags.recharge_normal, SkillTags.on_being_parried)));
     private final Tag<String> no = Tag.getTagFromContents(new HashSet<>(Arrays.asList("normalAttack", "noCrit")));
 
     @Override
