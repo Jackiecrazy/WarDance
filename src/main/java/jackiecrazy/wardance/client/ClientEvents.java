@@ -495,7 +495,7 @@ public class ClientEvents {
                     final ISkillCapability skill = CasterData.getCap(player);
                     if (look != player && skill.isSkillUsable(skill.getEquippedVariation(WarSkills.COUP_DE_GRACE.get()))) {
                         CoupDeGrace cdg = (CoupDeGrace) (skill.getEquippedVariation(WarSkills.COUP_DE_GRACE.get()));
-                        if (cdg.isValid(player, looked)) {
+                        if (cdg.willKillOnCast(player, looked)) {
                             afflict.add(cdg);
                         }
                     }

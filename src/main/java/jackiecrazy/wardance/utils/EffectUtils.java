@@ -1,6 +1,10 @@
 package jackiecrazy.wardance.utils;
 
+import jackiecrazy.wardance.entity.FearEntity;
+import jackiecrazy.wardance.entity.WarEntities;
+import jackiecrazy.wardance.potion.WarEffects;
 import net.minecraft.entity.LivingEntity;
+import net.minecraft.entity.MobEntity;
 import net.minecraft.entity.ai.attributes.Attribute;
 import net.minecraft.entity.ai.attributes.AttributeModifier;
 import net.minecraft.entity.ai.attributes.ModifiableAttributeInstance;
@@ -90,6 +94,21 @@ public class EffectUtils {
         if (elb.getActivePotionEffect(p) != null)
             return elb.getActivePotionEffect(p).getAmplifier() + 1;
         return 0;
+    }
+
+    public static void causeFear(LivingEntity elb, LivingEntity applier, int duration) {
+        attemptAddPot(elb, new EffectInstance(WarEffects.FEAR.get(), duration, 0), false);
+        if (elb instanceof MobEntity) {
+            MobEntity el = (MobEntity) elb;
+            el.getNavigator().clearPath();
+            el.setAttackTarget(null);
+        }
+        if (!elb.world.isRemote) {
+            FearEntity f = new FearEntity(WarEntities.fear, elb.world);
+            f.setFearSource(applier);
+            f.setPositionAndUpdate(elb.getPosX(), elb.getPosY(), elb.getPosZ());
+            elb.world.addEntity(f);
+        }
     }
 
     public enum StackingMethod {

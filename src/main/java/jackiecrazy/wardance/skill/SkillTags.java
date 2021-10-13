@@ -7,7 +7,7 @@ public class SkillTags {
     public static final String change_heals = "manipulateHealing";
     public static final String change_might = "manipulateMightGain";
     public static final String change_parry_result = "manipulateParry";
-    public static final String change_posture = "manipulatePosture";
+    public static final String change_posture_regeneration = "manipulatePosture";
     public static final String change_spirit = "manipulateSpirit";
     public static final String countdown = "countdown";
     public static final String disable_shield="disableShield";

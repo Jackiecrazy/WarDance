@@ -235,6 +235,8 @@ Mobs should move into a position that is close to the player, far from allies, a
     @SubscribeEvent
     public static void pray(LivingSetAttackTargetEvent e) {
         if (e.getTarget() == null) return;
+        if (e.getEntityLiving().isPotionActive(WarEffects.FEAR.get()) || e.getEntityLiving().isPotionActive(WarEffects.CONFUSION.get()) || e.getEntityLiving().isPotionActive(WarEffects.SLEEP.get()))
+            ((MobEntity) e.getEntityLiving()).setAttackTarget(null);
         int stealth = 20 - (int) GeneralUtils.getAttributeValueSafe(e.getTarget(), WarAttributes.STEALTH.get());
         if (e.getEntityLiving() != null && StealthConfig.stealthSystem && !GeneralUtils.isFacingEntity(e.getEntityLiving(), e.getTarget(), Math.max(StealthConfig.baseHorizontalDetection, stealth * StealthConfig.anglePerArmor), Math.max(StealthConfig.baseVerticalDetection, stealth * stealth))) {
             CombatUtils.StealthData sd = CombatUtils.stealthMap.getOrDefault(e.getEntityLiving().getType().getRegistryName(), CombatUtils.STEALTH);

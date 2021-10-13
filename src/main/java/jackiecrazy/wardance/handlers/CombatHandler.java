@@ -391,6 +391,7 @@ public class CombatHandler {
         WarDance.LOGGER.debug("damage from " + e.getSource() + " received with amount " + e.getAmount());
         LivingEntity uke = e.getEntityLiving();
         uke.removePotionEffect(WarEffects.DISTRACTION.get());
+        uke.removePotionEffect(WarEffects.FEAR.get());
         uke.removePotionEffect(WarEffects.SLEEP.get());
         LivingEntity kek = null;
         DamageSource ds = e.getSource();

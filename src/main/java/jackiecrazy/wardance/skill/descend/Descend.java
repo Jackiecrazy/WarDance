@@ -180,6 +180,7 @@ Assassinate: Stab rank increased by 1 for this attack, instantly stagger a distr
                         e.addPotionEffect(new EffectInstance(WarEffects.EXHAUSTION.get(), 40 + ResourceConfig.postureCD, 1));
                     }
                 }
+                markUsed(caster);
             }
         }
 

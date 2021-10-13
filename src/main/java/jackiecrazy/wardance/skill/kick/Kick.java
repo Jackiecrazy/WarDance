@@ -65,7 +65,8 @@ public class Kick extends Skill {
     }
 
     protected void additionally(LivingEntity caster, LivingEntity target) {
-        target.attackEntityFrom(DamageSource.FALLING_BLOCK, 3);
+        if (this == WarSkills.KICK.get())
+            target.attackEntityFrom(DamageSource.FALLING_BLOCK, 3);
     }
 
     @Override

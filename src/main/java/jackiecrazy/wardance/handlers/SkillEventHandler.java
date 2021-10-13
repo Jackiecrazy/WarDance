@@ -170,7 +170,7 @@ public class SkillEventHandler {//TODO remove some checks on some tags so execut
         LivingEntity entity = e.getEntityLiving();
         ISkillCapability isc = CasterData.getCap(entity);
         for (SkillData s : isc.getActiveSkills().values()) {
-            if (s.getSkill().getTags(entity).contains(SkillTags.change_posture)) {
+            if (s.getSkill().getTags(entity).contains(SkillTags.change_posture_regeneration)) {
                 s.getSkill().onSuccessfulProc(entity, s, e.getEntityLiving(), e);
             }
         }

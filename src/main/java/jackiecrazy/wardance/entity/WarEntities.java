@@ -13,6 +13,8 @@ import net.minecraftforge.registries.ObjectHolder;
 public class WarEntities {
     @ObjectHolder("thrown_weapon")
     public static EntityType<ThrownWeaponEntity> weapon = null;
+    @ObjectHolder("fear")
+    public static EntityType<FearEntity> fear = null;
 
     @SubscribeEvent
     public static void registerEntities(final RegistryEvent.Register<EntityType<?>> event) {
@@ -21,8 +23,13 @@ public class WarEntities {
                 .size(0.8F, 0.8F)
                 .build("thrown_weapon");
         weapon.setRegistryName(WarDance.MODID, "thrown_weapon");
+        fear = EntityType.Builder
+                .create(FearEntity::new, EntityClassification.MISC)
+                .size(0.5F, 0.5F)
+                .build("fear");
+        fear.setRegistryName(WarDance.MODID, "fear");
         event.getRegistry().registerAll(
-                weapon
+                weapon, fear
         );
     } //registerEntities()
 

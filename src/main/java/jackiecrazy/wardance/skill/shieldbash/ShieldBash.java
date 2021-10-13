@@ -100,7 +100,7 @@ public class ShieldBash extends Skill {
 
         protected void performEffect(LivingEntity caster, LivingEntity target) {
             target.addPotionEffect(new EffectInstance(Effects.SLOWNESS, 60));
-            target.addPotionEffect(new EffectInstance(WarEffects.CONFUSION.get(), 60));
+            target.addPotionEffect(new EffectInstance(WarEffects.DISTRACTION.get(), 60));
         }
     }
 }
