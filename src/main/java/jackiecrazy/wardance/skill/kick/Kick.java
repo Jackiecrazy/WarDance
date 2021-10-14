@@ -3,6 +3,7 @@ package jackiecrazy.wardance.skill.kick;
 import jackiecrazy.wardance.WarDance;
 import jackiecrazy.wardance.capability.resources.CombatData;
 import jackiecrazy.wardance.capability.resources.ICombatCapability;
+import jackiecrazy.wardance.config.CombatConfig;
 import jackiecrazy.wardance.skill.Skill;
 import jackiecrazy.wardance.skill.SkillData;
 import jackiecrazy.wardance.skill.WarSkills;
@@ -65,8 +66,11 @@ public class Kick extends Skill {
     }
 
     protected void additionally(LivingEntity caster, LivingEntity target) {
-        if (this == WarSkills.KICK.get())
-            target.attackEntityFrom(DamageSource.FALLING_BLOCK, 3);
+        final ICombatCapability cap = CombatData.getCap(target);
+        if(cap.getStaggerTime()>0){
+            cap.setStaggerTime(cap.getStaggerTime()+ CombatConfig.staggerDurationMin);
+            cap.setStaggerCount(cap.getStaggerCount()+CombatConfig.staggerHits);
+        }
     }
 
     @Override
@@ -77,6 +81,7 @@ public class Kick extends Skill {
                 CombatData.getCap(target).consumePosture(caster, 4);
                 if (caster instanceof PlayerEntity)
                     ((PlayerEntity) caster).spawnSweepParticles();
+                target.attackEntityFrom(DamageSource.FALLING_BLOCK, 2);
                 caster.world.playSound(null, caster.getPosX(), caster.getPosY(), caster.getPosZ(), SoundEvents.ENTITY_ZOMBIE_ATTACK_WOODEN_DOOR, SoundCategory.PLAYERS, 0.25f + WarDance.rand.nextFloat() * 0.5f, 0.5f + WarDance.rand.nextFloat() * 0.5f);
                 additionally(caster, target);
                 markUsed(caster);

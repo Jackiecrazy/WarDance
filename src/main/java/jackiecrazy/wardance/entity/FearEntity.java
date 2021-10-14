@@ -1,5 +1,6 @@
 package jackiecrazy.wardance.entity;
 
+import jackiecrazy.wardance.WarDance;
 import jackiecrazy.wardance.api.ITetherAnchor;
 import jackiecrazy.wardance.potion.WarEffects;
 import jackiecrazy.wardance.utils.GeneralUtils;
@@ -10,13 +11,13 @@ import net.minecraft.entity.MoverType;
 import net.minecraft.entity.ai.attributes.Attributes;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.network.IPacket;
+import net.minecraft.network.play.server.SSpawnObjectPacket;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.vector.Vector3d;
 import net.minecraft.world.World;
 import net.minecraft.world.server.ServerWorld;
 
 import javax.annotation.Nullable;
-import java.util.Objects;
 
 public class FearEntity extends Entity implements ITetherAnchor {
 
@@ -35,8 +36,8 @@ public class FearEntity extends Entity implements ITetherAnchor {
 
     @Override
     public void setTetheringEntity(Entity to) {
-        if(to instanceof LivingEntity)
-        wuss= (LivingEntity) to;
+        if (to instanceof LivingEntity)
+            wuss = (LivingEntity) to;
     }
 
     @Nullable
@@ -56,8 +57,8 @@ public class FearEntity extends Entity implements ITetherAnchor {
         //do nothing
     }
 
-    public void setFearSource(Entity source){
-        feared=source;
+    public void setFearSource(Entity source) {
+        feared = source;
     }
 
     @Override
@@ -77,30 +78,27 @@ public class FearEntity extends Entity implements ITetherAnchor {
             if (feared != null && wuss != null) {
                 double x = getPosX() - feared.getPosX();
                 double z = getPosZ() - feared.getPosZ();
-                int pos = x > 0 ? 1 : -1;
-                x = x == 0 ? pos : 40 * wuss.getAttributeValue(Attributes.MOVEMENT_SPEED) / x;
+                x = x == 0 ? 0 : 40 * wuss.getAttributeValue(Attributes.MOVEMENT_SPEED) / x;
                 double y = wuss.isOnGround() ? 0 : 0.02;
-                pos = z > 0 ? 1 : -1;
-                z = z == 0 ? pos : 40 * wuss.getAttributeValue(Attributes.MOVEMENT_SPEED) / z;
-                move(MoverType.SELF, new Vector3d(x * 0.05, y * 0.05, z * 0.05));
+                z = z == 0 ? 0 : 40 * wuss.getAttributeValue(Attributes.MOVEMENT_SPEED) / z;
+                move(MoverType.SELF, new Vector3d((x + WarDance.rand.nextFloat() - 0.5) * 0.05, (y + WarDance.rand.nextFloat() - 0.5) * 0.05, (z + WarDance.rand.nextFloat() - 0.5) * 0.05));
                 markVelocityChanged();
                 float rotate = GeneralUtils.deg((float) MathHelper.atan2(x, z));
                 if (!wuss.isPotionActive(WarEffects.FEAR.get()))
                     setDead();
                 rotationYaw = wuss.rotationYaw = -rotate;
+                updateTetheringVelocity();
             } else setDead();
-            updateTetheringVelocity();
         }
     }
 
     @Override
-    public void read(CompoundNBT compound) {
-        super.read(compound);
-        if (world instanceof ServerWorld) {
-            feared = ((ServerWorld) world).getEntityByUuid(Objects.requireNonNull(compound.getUniqueId("cthulhu")));
+    protected void readAdditional(CompoundNBT compound) {
+        if (compound.hasUniqueId("cthulhu") && world instanceof ServerWorld) {
+            feared = ((ServerWorld) world).getEntityByUuid(compound.getUniqueId("cthulhu"));
         } else feared = world.getEntityByID(compound.getInt("yogsothoth"));
-        if (world instanceof ServerWorld) {
-            Entity potWuss = ((ServerWorld) world).getEntityByUuid(Objects.requireNonNull(compound.getUniqueId("lovecraft")));
+        if (compound.hasUniqueId("lovecraft") && world instanceof ServerWorld) {
+            Entity potWuss = ((ServerWorld) world).getEntityByUuid(compound.getUniqueId("lovecraft"));
             if (potWuss instanceof LivingEntity)
                 wuss = (LivingEntity) potWuss;
         } else {
@@ -111,22 +109,7 @@ public class FearEntity extends Entity implements ITetherAnchor {
     }
 
     @Override
-    protected void readAdditional(CompoundNBT compound) {
-
-    }
-
-    @Override
     protected void writeAdditional(CompoundNBT compound) {
-
-    }
-
-    @Override
-    public IPacket<?> createSpawnPacket() {
-        return null;
-    }
-
-    @Override
-    public CompoundNBT writeWithoutTypeId(CompoundNBT compound) {
         if (feared != null) {
             compound.putUniqueId("cthulhu", feared.getUniqueID());
             compound.putInt("yogsothoth", feared.getEntityId());
@@ -135,6 +118,10 @@ public class FearEntity extends Entity implements ITetherAnchor {
             compound.putUniqueId("lovecraft", wuss.getUniqueID());
             compound.putInt("bruh", wuss.getEntityId());
         }
-        return compound;
+    }
+
+    @Override
+    public IPacket<?> createSpawnPacket() {
+        return new SSpawnObjectPacket(this);
     }
 }

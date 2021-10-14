@@ -32,7 +32,7 @@ public class CoupDeGrace extends Skill {
     private final Tag<String> no = Tag.getTagFromContents(new HashSet<>(Collections.singletonList("execution")));
 
     protected float getDamage(LivingEntity caster, LivingEntity target) {
-        return GeneralUtils.getMaxHealthBeforeWounding(target) * (1 - (target.getHealth() / GeneralUtils.getMaxHealthBeforeWounding(target))) * 0.2f;
+        return (GeneralUtils.getMaxHealthBeforeWounding(target) - target.getHealth()) * 0.2f;
     }
 
     @Override
@@ -100,7 +100,7 @@ public class CoupDeGrace extends Skill {
                     deathCheck(caster, target, e.getAmount());
                     markUsed(caster);
                     //}
-                } else {
+                } else if (target.getHealth() < getDamage(caster, target)) {
                     e.setCanceled(true);
                     CombatData.getCap(target).consumePosture(caster, e.getAmount());
                 }

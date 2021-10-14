@@ -27,7 +27,7 @@ public class SkillData {
 
     @Nullable
     public static SkillData read(CompoundNBT from) {
-        if (!from.contains("skill") || from.getFloat("duration") == 0) return null;
+        if (!from.contains("skill") || !from.contains("duration")) return null;
         if (Skill.getSkill(from.getString("skill")) == null)
             return null;
         SkillData ret = new SkillData(Skill.getSkill(from.getString("skill")), from.getFloat("duration")).flagCondition(from.getBoolean("condition")).setArbitraryFloat(from.getFloat("something"));

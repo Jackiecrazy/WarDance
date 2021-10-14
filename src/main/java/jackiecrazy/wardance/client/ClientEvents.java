@@ -169,7 +169,7 @@ public class ClientEvents {
     public static void alert(LivingAttackEvent e) {
         if (Minecraft.getInstance().player == null) return;
         if ((e.getEntityLiving() == Minecraft.getInstance().player && e.getSource().getTrueSource() instanceof LivingEntity) || e.getSource().getTrueSource() == Minecraft.getInstance().player) {
-            if (ClientConfig.autoCombat > 0) {
+            if (ClientConfig.autoCombat > 0 && combatTicks != Integer.MAX_VALUE) {
                 if (!CombatData.getCap(Minecraft.getInstance().player).isCombatMode())
                     CombatChannel.INSTANCE.sendToServer(new CombatModePacket());
                 combatTicks = Minecraft.getInstance().player.ticksExisted;
@@ -663,7 +663,7 @@ public class ClientEvents {
                     else
                         CombatChannel.INSTANCE.sendToServer(new RequestUpdatePacket(-1));
                 }
-                if (combatTicks + ClientConfig.autoCombat == p.ticksExisted && CombatData.getCap(p).isCombatMode()) {
+                if (combatTicks != Integer.MAX_VALUE && combatTicks + ClientConfig.autoCombat == p.ticksExisted && CombatData.getCap(p).isCombatMode()) {
                     CombatChannel.INSTANCE.sendToServer(new CombatModePacket());
                 }
                 if (!Keybinds.PARRY.isKeyDown())

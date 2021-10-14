@@ -5,6 +5,7 @@ import jackiecrazy.wardance.potion.WarEffects;
 import jackiecrazy.wardance.skill.SkillData;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.potion.EffectInstance;
+import net.minecraft.potion.Effects;
 import net.minecraftforge.eventbus.api.Event;
 
 import java.awt.*;
@@ -33,6 +34,7 @@ public class Trip extends Kick {
         if (target.isOnGround()) {
             super.onSuccessfulProc(caster, stats, target, procPoint);
             target.addPotionEffect(new EffectInstance(WarEffects.EXHAUSTION.get(), CombatData.getCap(target).getPostureGrace() * 2, 2));
+            target.addPotionEffect(new EffectInstance(Effects.SLOWNESS, CombatData.getCap(target).getPostureGrace() * 2, 0));
         }
     }
 }

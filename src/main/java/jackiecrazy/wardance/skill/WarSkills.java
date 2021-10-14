@@ -51,7 +51,7 @@ public class WarSkills {
     public static final RegistryObject<Skill> REAPING = SKILLS.register("reaping", CoupDeGrace.Reaping::new);
     public static final RegistryObject<Skill> RUPTURE = SKILLS.register("rupture", CoupDeGrace.Rupture::new);
     public static final RegistryObject<Skill> KICK = SKILLS.register("kick", Kick::new);
-    public static final RegistryObject<Skill> IRON_KNEE = SKILLS.register("iron_knee", IronKnee::new);
+    public static final RegistryObject<Skill> IRON_KNEE = SKILLS.register("iron_knee", SabatonSmash::new);
     public static final RegistryObject<Skill> TACKLE = SKILLS.register("tackle", Tackle::new);
     public static final RegistryObject<Skill> BACKFLIP = SKILLS.register("backflip", Kick.Backflip::new);
     public static final RegistryObject<Skill> LOW_SWEEP = SKILLS.register("low_sweep", LowSweep::new);

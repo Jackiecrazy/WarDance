@@ -104,8 +104,10 @@ public class EffectUtils {
             el.setAttackTarget(null);
         }
         if (!elb.world.isRemote) {
+            //PigEntity f=new PigEntity(EntityType.PIG, elb.world);
             FearEntity f = new FearEntity(WarEntities.fear, elb.world);
             f.setFearSource(applier);
+            f.setTetheringEntity(elb);
             f.setPositionAndUpdate(elb.getPosX(), elb.getPosY(), elb.getPosZ());
             elb.world.addEntity(f);
         }

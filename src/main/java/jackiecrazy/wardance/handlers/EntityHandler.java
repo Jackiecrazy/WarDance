@@ -12,6 +12,8 @@ import jackiecrazy.wardance.config.StealthConfig;
 import jackiecrazy.wardance.networking.CombatChannel;
 import jackiecrazy.wardance.networking.SyncSkillPacket;
 import jackiecrazy.wardance.potion.WarEffects;
+import jackiecrazy.wardance.skill.Skill;
+import jackiecrazy.wardance.skill.SkillData;
 import jackiecrazy.wardance.utils.CombatUtils;
 import jackiecrazy.wardance.utils.GeneralUtils;
 import net.minecraft.entity.CreatureEntity;
@@ -95,6 +97,7 @@ public class EntityHandler {
         if (!e.isWasDeath()) {
             final ICombatCapability icc = CombatData.getCap(e.getPlayer());
             icc.read(CombatData.getCap(e.getOriginal()).write());
+
             icc.setFatigue(0);
             icc.setBurnout(0);
             icc.setWounding(0);
@@ -103,6 +106,14 @@ public class EntityHandler {
             isc.clearActiveSkills();
             isc.clearSkillCooldowns();
         }
+        //CasterData.getCap(e.getPlayer()).read(CasterData.getCap(e.getOriginal()).write());
+        ISkillCapability cap=CasterData.getCap(e.getPlayer());
+        cap.clearActiveSkills();
+        cap.setEquippedSkills(CasterData.getCap(e.getOriginal()).getEquippedSkills());
+        for (Skill s : cap.getEquippedSkills())
+            if (s != null) {
+                s.onAdded(e.getPlayer(), new SkillData(s, 0).setCaster(e.getPlayer()));
+            }
     }
 
     @SubscribeEvent
@@ -113,6 +124,7 @@ public class EntityHandler {
                 return;
             } else CombatData.getCap(e.player).serverTick();
             CasterData.getCap(e.player).update();
+            Afflictions.getCap(e.player).update();
         }
     }
 

@@ -24,6 +24,7 @@ public interface ISkillCapability {
 
     void clearActiveSkills();
 
+    //TODO isCategoryActive
     boolean isSkillActive(Skill skill);
 
     boolean isTagActive(String tag);

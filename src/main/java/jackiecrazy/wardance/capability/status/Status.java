@@ -114,10 +114,13 @@ public class Status implements IStatus {
         for (SkillData cd : active) {
             if (cd.getSkill().statusTick(cd.getCaster(ticker.world), ticker, cd)) sync = true;
         }
-        if (sync && ticker instanceof ServerPlayerEntity)
+        if (sync && ticker instanceof ServerPlayerEntity) {
             CombatChannel.INSTANCE.send(PacketDistributor.PLAYER.with(() -> (ServerPlayerEntity) ticker), new SyncSkillPacket(this.write()));
-        if (sync && EntityHandler.mustUpdate.containsValue(ticker))
+            sync=false;
+        }
+        if (sync && EntityHandler.mustUpdate.containsValue(ticker)) {
             CombatChannel.INSTANCE.send(PacketDistributor.TRACKING_ENTITY_AND_SELF.with(() -> ticker), new UpdateAfflictionPacket(ticker.getEntityId(), this.write()));
-        sync = false;
+            sync = false;
+        }
     }
 }

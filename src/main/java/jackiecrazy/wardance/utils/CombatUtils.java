@@ -214,7 +214,7 @@ public class CombatUtils {
 
     public static boolean isShield(LivingEntity e, ItemStack stack) {
         if (stack == null) return false;
-        return combatList.containsKey(stack.getItem()) && combatList.getOrDefault(stack.getItem(), DEFAULT).isShield;//stack.isShield(e);
+        return combatList.containsKey(stack.getItem()) && (combatList.getOrDefault(stack.getItem(), DEFAULT).isShield || CasterData.getCap(e).getActiveSkill(WarSkills.IRON_GUARD.get()).isPresent());//stack.isShield(e);
     }
 
     public static boolean isWeapon(@Nullable LivingEntity e, ItemStack stack) {
@@ -515,7 +515,6 @@ public class CombatUtils {
             a = Awareness.UNAWARE;
         else if (target.getRevengeTarget() != attacker && (!(target instanceof MobEntity) || ((MobEntity) target).getAttackTarget() != attacker))
             a = Awareness.DISTRACTED;
-
         EntityAwarenessEvent eae = new EntityAwarenessEvent(target, attacker, a);
         MinecraftForge.EVENT_BUS.post(eae);
         return eae.getAwareness();

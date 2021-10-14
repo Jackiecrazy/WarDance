@@ -27,7 +27,7 @@ public class Shatter extends HeavyBlow {
             markUsed(caster);
         } else if (procPoint instanceof CriticalHitEvent) {
             procPoint.setResult(Event.Result.ALLOW);
-            ((CriticalHitEvent) procPoint).setDamageModifier(((CriticalHitEvent) procPoint).getDamageModifier() * buff);
+            //((CriticalHitEvent) procPoint).setDamageModifier(((CriticalHitEvent) procPoint).getDamageModifier() * buff);
             markUsed(caster);
         }
     }

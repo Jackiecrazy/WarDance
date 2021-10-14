@@ -17,7 +17,6 @@ import net.minecraft.entity.EntityType;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.MobEntity;
 import net.minecraft.entity.effect.LightningBoltEntity;
-import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.particles.ParticleTypes;
 import net.minecraft.potion.EffectInstance;
 import net.minecraft.potion.Effects;
@@ -47,11 +46,6 @@ Onslaught: casts heavy blow before every attack (this is a lot easier)
      */
     private final Tag<String> tag = Tag.getTagFromContents(new HashSet<>(Arrays.asList("physical", SkillTags.on_hurt, SkillTags.on_stagger, SkillTags.change_posture_regeneration, SkillTags.on_cast, SkillTags.recharge_cast, "melee", "execution")));
     private final Tag<String> no = Tag.getTagFromContents(new HashSet<>(Collections.singletonList("execution")));
-
-    private static double getLife(LivingEntity e) {
-        if (e instanceof PlayerEntity) return 3;
-        return e.getMaxHealth() / Math.max(1, Math.floor(Math.log(e.getMaxHealth())) - 1);
-    }
 
     @Override
     public Tag<String> getTags(LivingEntity caster) {
@@ -136,8 +130,8 @@ Onslaught: casts heavy blow before every attack (this is a lot easier)
 
     protected float execute(LivingHurtEvent e) {
         final float life = e.getEntityLiving().getHealth() / 5;
-        if(this!=WarSkills.GUILLOTINE.get())
-        e.getEntityLiving().setHealth(e.getEntityLiving().getHealth() - life);
+        if (this != WarSkills.GUILLOTINE.get())
+            e.getEntityLiving().setHealth(e.getEntityLiving().getHealth() - life);
         e.getSource().setDamageBypassesArmor().setDamageIsAbsolute();
         CombatData.getCap(e.getEntityLiving()).decrementStaggerTime(CombatData.getCap(e.getEntityLiving()).getStaggerTime());
         return life + e.getAmount();
@@ -208,10 +202,10 @@ Onslaught: casts heavy blow before every attack (this is a lot easier)
 
         @Override
         public boolean activeTick(LivingEntity caster, SkillData d) {
-            if (d.getDuration() % 10 == 0) {
+            if (caster.ticksExisted % 10 == 0) {
                 final List<LivingEntity> list = caster.world.getLoadedEntitiesWithinAABB(LivingEntity.class, caster.getBoundingBox().grow(7), (a) -> !TargetingUtils.isAlly(a, caster) && !Afflictions.getCap(a).isStatusActive(this));
                 for (LivingEntity enemy : list) {
-                    if (CombatUtils.getAwareness(caster, enemy) != CombatUtils.Awareness.ALERT || Afflictions.getCap(enemy).isStatusActive(this))
+                    if (Afflictions.getCap(enemy).isStatusActive(this))
                         continue;
                     enemy.addPotionEffect(new EffectInstance(WarEffects.DISTRACTION.get(), 140));
                     afflict(caster, enemy, 10);
@@ -225,6 +219,7 @@ Onslaught: casts heavy blow before every attack (this is a lot easier)
         protected void performEffect(LivingEntity caster, LivingEntity target, float amount, SkillData s) {
             SkillUtils.createCloud(caster.world, caster, caster.getPosX(), caster.getPosY(), caster.getPosZ(), 15, ParticleTypes.LARGE_SMOKE);
             final List<LivingEntity> list = caster.world.getLoadedEntitiesWithinAABB(LivingEntity.class, caster.getBoundingBox().grow(14), (a) -> !TargetingUtils.isAlly(a, caster));
+            Afflictions.getCap(target).removeStatus(this);
             for (int i = 0; i < list.size(); i++) {
                 LivingEntity enemy = list.get(i);
                 if (GeneralUtils.getDistSqCompensated(caster, enemy) < 49)

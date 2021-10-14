@@ -2,7 +2,6 @@ package jackiecrazy.wardance.skill.regenspirit;
 
 import jackiecrazy.wardance.api.WarAttributes;
 import jackiecrazy.wardance.capability.resources.CombatData;
-import jackiecrazy.wardance.event.RegenSpiritEvent;
 import jackiecrazy.wardance.skill.Skill;
 import jackiecrazy.wardance.skill.SkillData;
 import jackiecrazy.wardance.skill.SkillTags;
@@ -10,7 +9,6 @@ import jackiecrazy.wardance.skill.WarSkills;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.ai.attributes.AttributeModifier;
 import net.minecraft.tags.Tag;
-import net.minecraftforge.event.entity.living.LivingDeathEvent;
 import net.minecraftforge.eventbus.api.Event;
 
 import javax.annotation.Nullable;
@@ -65,10 +63,6 @@ apathy: your max spirit is 4, your spirit instantly refills after cooldown, you 
 
     @Override
     public void onEffectEnd(LivingEntity caster, SkillData stats) {
-        caster.getAttribute(WarAttributes.MAX_SPIRIT.get()).removeModifier(sprint);
-        if (stats.isCondition())
-            CombatData.getCap(caster).setBurnout(stats.getArbitraryFloat());
-        activate(caster, 0);
     }
 
     @Override
@@ -96,10 +90,6 @@ apathy: your max spirit is 4, your spirit instantly refills after cooldown, you 
 
     @Override
     public void onSuccessfulProc(LivingEntity caster, SkillData stats, LivingEntity target, Event procPoint) {
-        if (procPoint instanceof LivingDeathEvent) {
-            CombatData.getCap(caster).addSpirit(3);
-        } else if (procPoint instanceof RegenSpiritEvent) {
-            ((RegenSpiritEvent) procPoint).setQuantity(((RegenSpiritEvent) procPoint).getQuantity() / 3);
-        }
+
     }
 }

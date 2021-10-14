@@ -9,7 +9,7 @@ import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.registries.ObjectHolder;
 
 @ObjectHolder(WarDance.MODID)
-@Mod.EventBusSubscriber(modid = WarDance.MODID)
+@Mod.EventBusSubscriber(modid = WarDance.MODID, bus= Mod.EventBusSubscriber.Bus.MOD)
 public class WarEntities {
     @ObjectHolder("thrown_weapon")
     public static EntityType<ThrownWeaponEntity> weapon = null;

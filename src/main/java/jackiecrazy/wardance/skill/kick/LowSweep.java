@@ -2,7 +2,6 @@ package jackiecrazy.wardance.skill.kick;
 
 import jackiecrazy.wardance.capability.resources.CombatData;
 import jackiecrazy.wardance.skill.SkillData;
-import jackiecrazy.wardance.utils.CombatUtils;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.tags.Tag;
 import net.minecraftforge.eventbus.api.Event;
@@ -32,7 +31,7 @@ public class LowSweep extends Kick {
     }
 
     protected void additionally(LivingEntity caster, LivingEntity target) {
-        CombatUtils.knockBack(target, caster, 0.1f, true, false);
+
     }
 
     @Override
@@ -48,7 +47,7 @@ public class LowSweep extends Kick {
 
     @Override
     public void onSuccessfulProc(LivingEntity caster, SkillData stats, LivingEntity target, Event procPoint) {
-        if(!target.isOnGround())procPoint.setCanceled(true);
+        //if(!target.isOnGround())procPoint.setCanceled(true);
         super.onSuccessfulProc(caster, stats, target, procPoint);
     }
 }

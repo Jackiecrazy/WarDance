@@ -66,8 +66,6 @@ apathy: your max spirit is 4, your spirit instantly refills after cooldown, you 
 
     @Override
     public void onEffectEnd(LivingEntity caster, SkillData stats) {
-        caster.getAttribute(WarAttributes.MAX_SPIRIT.get()).removeModifier(sprint);
-        onCast(caster);
     }
 
     @Override
@@ -79,7 +77,6 @@ apathy: your max spirit is 4, your spirit instantly refills after cooldown, you 
     @Override
     public void onRemoved(LivingEntity caster, SkillData stats) {
         caster.getAttribute(WarAttributes.MAX_SPIRIT.get()).removeModifier(sprint);
-        CombatData.getCap(caster).setBurnout(stats.getArbitraryFloat());
     }
 
     @Override
