@@ -207,7 +207,7 @@ public class MovementUtils {
         itsc.consumePosture(0);
         itsc.setRollTime(CombatConfig.rollCooldown);
         if (elb instanceof PlayerEntity)
-            ((PlayerEntity) elb).setForcedPose(Pose.SWIMMING);
+            ((PlayerEntity) elb).setForcedPose(Pose.SLEEPING);
         elb.setSprinting(false);
         elb.setMotion(v.x, 0, v.z);
         elb.velocityChanged = true;

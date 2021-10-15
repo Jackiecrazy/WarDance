@@ -22,7 +22,6 @@ import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.MobEntity;
 import net.minecraft.entity.ai.attributes.Attributes;
 import net.minecraft.entity.ai.goal.Goal;
-import net.minecraft.entity.monster.MonsterEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.potion.Effects;
@@ -30,8 +29,6 @@ import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.Tuple;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.MathHelper;
-import net.minecraft.util.math.vector.Vector3d;
 import net.minecraft.world.World;
 import net.minecraftforge.event.AttachCapabilitiesEvent;
 import net.minecraftforge.event.TickEvent;
@@ -140,35 +137,35 @@ public class EntityHandler {
             }
             if (!(elb instanceof PlayerEntity)) {
                 Afflictions.getCap(elb).update();
-                if (elb instanceof MobEntity && CombatData.getCap(elb).getStaggerTime() == 0 && ((MobEntity) elb).getAttackTarget() != null) {
-                    double safeSpace = (elb.getWidth()) * 2;
-                    for (Entity fan : elb.world.getEntitiesWithinAABBExcludingEntity(elb, elb.getBoundingBox().grow(safeSpace))) {
-                        if (fan instanceof MonsterEntity && ((MobEntity) fan).getAttackTarget() == ((MobEntity) fan).getAttackTarget() &&
-                                GeneralUtils.getDistSqCompensated(fan, elb) < (safeSpace + 1) * safeSpace && fan != ((MobEntity) elb).getAttackTarget()) {
-                            //mobs "avoid" clumping together
-                            Vector3d diff = elb.getPositionVec().subtract(fan.getPositionVec());
-                            double targDistSq = elb.getDistanceSq(((MobEntity) elb).getAttackTarget());
-                            //targDistSq = Math.max(targDistSq, 1);
-                            //fan.addVelocity(diff.x == 0 ? 0 : -0.03 / diff.x, 0, diff.z == 0 ? 0 : -0.03 / diff.z);
-                            elb.addVelocity(diff.x == 0 ? 0 : MathHelper.clamp(0.5 / (diff.x * targDistSq), -1, 1), 0, diff.z == 0 ? 0 : MathHelper.clamp(0.5 / (diff.z * targDistSq), -1, 1));
-                        /*
-                        The battle circle AI basically works like this (from an enemy's perspective):
-First, walk towards the player until I get within a "danger" radius
-While in "danger" mode, don't get too close to another enemy, unless I am given permission to attack the player.
-Also while in "danger" mode, try to approach the player. If there are too many enemies in my way, I will effectively not be able to reach the player until the enemies move or the player moves.
-When the player is in my "attack" radius (roughly the maximum range of my attack) ask the player if I'm allowed to attack. If so, add me to the list of current attackers on the player object.
-If there are already the maximum allowed number of attackers on the list, I'm denied permission.
-If I'm denied permission, try strafing for a second or two in a random direction until I'm given permission.
-If the player moves out of attack range—even if I'm attacking—remove me from the attacker list.
-If I die, or am stunned or otherwise unable to attack, remove me from the attacker list.
-The maximum allowed number of simultaneous attackers is critical in balancing your battle circle. A higher number causes an exponential increase in pressure. In the example demo I have it set at 2; less twitchy and more "cinematic" games set it at 1. If you put this number too high, you defeat the purpose of the circle, because large groups of enemies become unassailable or can only be defeated with uninteresting poke-and-run tactics.
-Of similar importance is the enemy attack rate. This is not the fastest possible attack rate of the enemy, but how often they will choose to attack when given permission.
-As you would expect, a lower number increases pressure, but you should generally have this be several times higher than the real attack rate. You can make this rate a bit more unpredictable (and thus the amount of pressure slightly less predictable) by increasing attackRateFluctuation, which will increase or decrease the attack rate after each attack.
-Mobs should move into a position that is close to the player, far from allies, and close to them.
-                         */
-                        }
-                    }
-                }
+//                if (elb instanceof MobEntity && CombatData.getCap(elb).getStaggerTime() == 0 && ((MobEntity) elb).getAttackTarget() != null) {
+//                    double safeSpace = (elb.getWidth()) * 2;
+//                    for (Entity fan : elb.world.getEntitiesWithinAABBExcludingEntity(elb, elb.getBoundingBox().grow(safeSpace))) {
+//                        if (fan instanceof MonsterEntity && ((MobEntity) fan).getAttackTarget() == ((MobEntity) fan).getAttackTarget() &&
+//                                GeneralUtils.getDistSqCompensated(fan, elb) < (safeSpace + 1) * safeSpace && fan != ((MobEntity) elb).getAttackTarget()) {
+//                            //mobs "avoid" clumping together
+//                            Vector3d diff = elb.getPositionVec().subtract(fan.getPositionVec());
+//                            double targDistSq = elb.getDistanceSq(((MobEntity) elb).getAttackTarget());
+//                            //targDistSq = Math.max(targDistSq, 1);
+//                            //fan.addVelocity(diff.x == 0 ? 0 : -0.03 / diff.x, 0, diff.z == 0 ? 0 : -0.03 / diff.z);
+//                            elb.addVelocity(diff.x == 0 ? 0 : MathHelper.clamp(0.5 / (diff.x * targDistSq), -1, 1), 0, diff.z == 0 ? 0 : MathHelper.clamp(0.5 / (diff.z * targDistSq), -1, 1));
+//                        /*
+//                        The battle circle AI basically works like this (from an enemy's perspective):
+//First, walk towards the player until I get within a "danger" radius
+//While in "danger" mode, don't get too close to another enemy, unless I am given permission to attack the player.
+//Also while in "danger" mode, try to approach the player. If there are too many enemies in my way, I will effectively not be able to reach the player until the enemies move or the player moves.
+//When the player is in my "attack" radius (roughly the maximum range of my attack) ask the player if I'm allowed to attack. If so, add me to the list of current attackers on the player object.
+//If there are already the maximum allowed number of attackers on the list, I'm denied permission.
+//If I'm denied permission, try strafing for a second or two in a random direction until I'm given permission.
+//If the player moves out of attack range—even if I'm attacking—remove me from the attacker list.
+//If I die, or am stunned or otherwise unable to attack, remove me from the attacker list.
+//The maximum allowed number of simultaneous attackers is critical in balancing your battle circle. A higher number causes an exponential increase in pressure. In the example demo I have it set at 2; less twitchy and more "cinematic" games set it at 1. If you put this number too high, you defeat the purpose of the circle, because large groups of enemies become unassailable or can only be defeated with uninteresting poke-and-run tactics.
+//Of similar importance is the enemy attack rate. This is not the fastest possible attack rate of the enemy, but how often they will choose to attack when given permission.
+//As you would expect, a lower number increases pressure, but you should generally have this be several times higher than the real attack rate. You can make this rate a bit more unpredictable (and thus the amount of pressure slightly less predictable) by increasing attackRateFluctuation, which will increase or decrease the attack rate after each attack.
+//Mobs should move into a position that is close to the player, far from allies, and close to them.
+//                         */
+//                        }
+//                    }
+//                }
                 //staggered mobs bypass update interval
                 ICombatCapability cap = CombatData.getCap(elb);
                 if (cap.getStaggerTime() > 0 || mustUpdate.containsValue(e.getEntity()))

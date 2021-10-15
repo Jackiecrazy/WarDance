@@ -207,6 +207,7 @@ public class SkillCapability implements ISkillCapability {
                 s.checkAndCast(dude.get());
             }
         }
+        sync=true;
     }
 
     @Override

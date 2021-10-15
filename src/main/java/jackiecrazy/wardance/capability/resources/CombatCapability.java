@@ -473,7 +473,7 @@ public class CombatCapability implements ICombatCapability {
             roll += amount;
         else if (roll - amount > 0)
             roll -= amount;
-        else {
+        else if(roll!=0) {
             if (dude.get() instanceof PlayerEntity) {
                 PlayerEntity p = (PlayerEntity) dude.get();
                 p.setForcedPose(null);
@@ -816,7 +816,7 @@ public class CombatCapability implements ICombatCapability {
         setTempItemStack(ItemStack.read(c.getCompound("temp")));
         if (dude.get() instanceof PlayerEntity) {
             if (getRollTime() > CombatConfig.rollEndsAt && c.getBoolean("rolling"))
-                ((PlayerEntity) dude.get()).setForcedPose(Pose.SWIMMING);
+                ((PlayerEntity) dude.get()).setForcedPose(Pose.SLEEPING);
             else if (temp == (CombatConfig.rollEndsAt))
                 ((PlayerEntity) dude.get()).setForcedPose(null);
         }
@@ -872,7 +872,7 @@ public class CombatCapability implements ICombatCapability {
         c.putInt("shattercd", getShatterCooldown());
         c.putInt("sweep", getForcedSweep());
         c.putInt("stumble", recoveryTimer);
-        c.putBoolean("rolling", dude.get() instanceof PlayerEntity && ((PlayerEntity) dude.get()).getForcedPose() == Pose.SWIMMING);
+        c.putBoolean("rolling", dude.get() instanceof PlayerEntity && ((PlayerEntity) dude.get()).getForcedPose() == Pose.SLEEPING);
         if (!tempOffhand.isEmpty())
             c.put("temp", tempOffhand.write(new CompoundNBT()));
         return c;
