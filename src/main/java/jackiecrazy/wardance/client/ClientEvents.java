@@ -35,6 +35,7 @@ import net.minecraft.client.settings.KeyBinding;
 import net.minecraft.client.settings.PointOfView;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.LivingEntity;
+import net.minecraft.entity.Pose;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.projectile.ProjectileHelper;
 import net.minecraft.item.ItemStack;
@@ -213,6 +214,12 @@ public class ClientEvents {
                 //cube bois become side bois
                 //flat bois become flatter bois
                 //multi bois do nothing
+            }
+            if(CombatData.getCap(e).getRollTime()!=0&&e.getPose()== Pose.SLEEPING){
+                MatrixStack ms=event.getMatrixStack();
+                ms.rotate(Vector3f.YN.rotationDegrees(e.rotationYaw-e.getBedDirection().getHorizontalAngle()));
+//                ms.rotate(Vector3f.ZP.rotationDegrees(-e.renderYawOffset));
+//                ms.rotate(Vector3f.YP.rotationDegrees(e.renderYawOffset));
             }
 //            if(e.isPotionActive(WarEffects.PETRIFY.get())){
 //                event.getRenderer()

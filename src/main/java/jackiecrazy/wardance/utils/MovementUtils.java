@@ -226,8 +226,8 @@ public class MovementUtils {
         ICombatCapability itsc = CombatData.getCap(elb);
         if (!CombatConfig.dodge) return false;
         if (!itsc.isCombatMode() && (!WarCompat.elenaiDodge || itsc.getStaggerTime() == 0)) return false;
-        if (side == 99) return attemptSlide(elb);
         if (itsc.getRollTime() == 0) {//
+            if (side == 99) return attemptSlide(elb);
             itsc.setRollTime(CombatConfig.rollCooldown);
 //            Entity target = GeneralUtils.raytraceEntity(elb.world, elb, 32);
 //            float adjustment = 0;

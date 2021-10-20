@@ -73,7 +73,7 @@ public class CoupDeGrace extends Skill {
             CasterData.getCap(caster).removeActiveTag("execution");
         else {
             activate(caster, 1);
-            CombatData.getCap(caster).consumeMight(3);
+            CombatData.getCap(caster).consumeMight(mightConsumption(caster));
         }
         return true;
     }
@@ -162,8 +162,13 @@ public class CoupDeGrace extends Skill {
         }
 
         @Override
+        public float mightConsumption(LivingEntity caster) {
+            return 0;
+        }
+
+        @Override
         public boolean willKillOnCast(LivingEntity caster, LivingEntity target) {
-            return target.getHealth() < (GeneralUtils.getMaxHealthBeforeWounding(target) * 0.05f) + GeneralUtils.getAttributeValueSafe(caster, Attributes.ATTACK_DAMAGE);
+            return target.getHealth() < (GeneralUtils.getMaxHealthBeforeWounding(target) * 0.10f) + GeneralUtils.getAttributeValueSafe(caster, Attributes.ATTACK_DAMAGE);
         }
 
         @Override
@@ -178,8 +183,7 @@ public class CoupDeGrace extends Skill {
             if (procPoint instanceof LivingHurtEvent) {
                 LivingHurtEvent e = (LivingHurtEvent) procPoint;
                 if (e.getEntityLiving() == caster) return;
-                e.getEntityLiving().setHealth(e.getEntityLiving().getHealth() - GeneralUtils.getMaxHealthBeforeWounding(target) * 0.05f);
-                e.setAmount(e.getAmount() * 2);
+                e.getEntityLiving().setHealth(e.getEntityLiving().getHealth() - GeneralUtils.getMaxHealthBeforeWounding(target) * 0.10f);
                 if (e.getEntityLiving().getHealth() - e.getAmount() <= 0)
                     stats.flagCondition(true);
             }
