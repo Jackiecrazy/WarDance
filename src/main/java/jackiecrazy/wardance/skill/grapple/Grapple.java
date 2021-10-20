@@ -1,5 +1,6 @@
 package jackiecrazy.wardance.skill.grapple;
 
+import jackiecrazy.wardance.WarDance;
 import jackiecrazy.wardance.capability.resources.CombatData;
 import jackiecrazy.wardance.capability.resources.ICombatCapability;
 import jackiecrazy.wardance.skill.Skill;
@@ -8,6 +9,8 @@ import jackiecrazy.wardance.skill.WarSkills;
 import jackiecrazy.wardance.utils.CombatUtils;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.tags.Tag;
+import net.minecraft.util.SoundCategory;
+import net.minecraft.util.SoundEvents;
 import net.minecraftforge.event.entity.living.LivingAttackEvent;
 import net.minecraftforge.eventbus.api.Event;
 
@@ -54,8 +57,10 @@ public class Grapple extends Skill {
     }
 
     protected void performEffect(LivingEntity caster, LivingEntity target) {
+        caster.world.playSound(null, target.getPosX(), target.getPosY(), target.getPosZ(), SoundEvents.ENTITY_ZOMBIE_ATTACK_WOODEN_DOOR, SoundCategory.PLAYERS, 0.3f + WarDance.rand.nextFloat() * 0.5f, 0.75f + WarDance.rand.nextFloat() * 0.5f);
         if (getParentSkill() == null) CombatData.getCap(target).consumePosture(caster, 11, 0, true);
         else CombatData.getCap(target).consumePosture(caster, 8, 0, true);
+
     }
 
     @Override
@@ -91,6 +96,7 @@ public class Grapple extends Skill {
         }
 
         protected void performEffect(LivingEntity caster, LivingEntity target) {
+            caster.world.playSound(null, target.getPosX(), target.getPosY(), target.getPosZ(), SoundEvents.ENTITY_ZOMBIE_ATTACK_IRON_DOOR, SoundCategory.PLAYERS, 0.3f + WarDance.rand.nextFloat() * 0.5f, 0.75f + WarDance.rand.nextFloat() * 0.5f);
             final ICombatCapability casterCap = CombatData.getCap(caster);
             float posture = casterCap.getPosture();
             target.setMotion(caster.getMotion().add(caster.getPositionVec().subtractReverse(target.getPositionVec()).scale(-0.3)));
