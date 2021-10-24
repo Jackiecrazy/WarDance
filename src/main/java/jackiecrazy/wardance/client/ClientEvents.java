@@ -11,7 +11,7 @@ import jackiecrazy.wardance.capability.resources.CombatData;
 import jackiecrazy.wardance.capability.resources.ICombatCapability;
 import jackiecrazy.wardance.capability.skill.CasterData;
 import jackiecrazy.wardance.capability.skill.ISkillCapability;
-import jackiecrazy.wardance.capability.status.Afflictions;
+import jackiecrazy.wardance.capability.status.Marks;
 import jackiecrazy.wardance.compat.WarCompat;
 import jackiecrazy.wardance.config.ClientConfig;
 import jackiecrazy.wardance.config.CombatConfig;
@@ -149,7 +149,7 @@ public class ClientEvents {
 //            }
 //            tapped[3] = mi.forwardKeyDown;
             }
-            if (mc.player.isSprinting() && mi.sneaking && !sneak) {
+            if (mc.player.isSprinting()&&mc.gameSettings.keyBindSprint.isKeyDown() && mi.sneaking && !sneak) {
                 //if(mc.world.getTotalWorldTime()-lastSneak<=ALLOWANCE){
                 dir = 99;
                 //}
@@ -506,7 +506,7 @@ public class ClientEvents {
                             afflict.add(cdg);
                         }
                     }
-                    afflict.addAll(Afflictions.getCap(looked).getActiveStatuses().keySet());
+                    afflict.addAll(Marks.getCap(looked).getActiveMarks().keySet());
                     Pair<Integer, Integer> pair = translateCoords(ClientConfig.CONFIG.enemyAfflict, width, height);
                     for (int index = 0; index < afflict.size(); index++) {
                         Skill s = afflict.get(index);

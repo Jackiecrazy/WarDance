@@ -325,11 +325,13 @@ public class SkillSelectionScreen extends Screen {
         void setInfo(List<String> lines, ResourceLocation logoPath) {
             this.logoPath = logoPath;
             this.lines = resizeContent(lines);
+            scrollDistance=0;
         }
 
         void clearInfo() {
             this.logoPath = null;
             this.lines = Collections.emptyList();
+            scrollDistance=0;
         }
 
         private List<IReorderingProcessor> resizeContent(List<String> lines) {

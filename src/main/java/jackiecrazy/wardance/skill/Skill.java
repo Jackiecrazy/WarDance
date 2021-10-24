@@ -4,7 +4,7 @@ import jackiecrazy.wardance.WarDance;
 import jackiecrazy.wardance.capability.resources.CombatData;
 import jackiecrazy.wardance.capability.skill.CasterData;
 import jackiecrazy.wardance.capability.skill.ISkillCapability;
-import jackiecrazy.wardance.capability.status.Afflictions;
+import jackiecrazy.wardance.capability.status.Marks;
 import jackiecrazy.wardance.event.SkillCastEvent;
 import jackiecrazy.wardance.event.SkillCooldownEvent;
 import net.minecraft.entity.LivingEntity;
@@ -188,19 +188,19 @@ public abstract class Skill extends ForgeRegistryEntry<Skill> {
         return false;
     }
 
-    public boolean statusTick(LivingEntity caster, LivingEntity target, SkillData sd) {
+    public boolean markTick(LivingEntity caster, LivingEntity target, SkillData sd) {
         if (this.getTags(caster).contains(SkillTags.afflict_tick)) {
             sd.decrementDuration();
         }
         if (sd.getDuration() <= 0) {
-            endAffliction(target);
+            removeMark(target);
             return true;
         }
         return false;
     }
 
-    protected void endAffliction(LivingEntity target) {
-        Afflictions.getCap(target).removeStatus(this);
+    protected void removeMark(LivingEntity target) {
+        Marks.getCap(target).removeMark(this);
     }
 
     /**
@@ -272,21 +272,21 @@ public abstract class Skill extends ForgeRegistryEntry<Skill> {
         CasterData.getCap(caster).markSkillUsed(this);
     }
 
-    protected void afflict(LivingEntity caster, LivingEntity target, float duration) {
-        afflict(caster, target, duration, 0);
+    protected void mark(LivingEntity caster, LivingEntity target, float duration) {
+        mark(caster, target, duration, 0);
     }
 
-    protected void afflict(LivingEntity caster, LivingEntity target, float duration, float arbitrary) {
-        Afflictions.getCap(target).addStatus(new SkillData(this, duration).setCaster(caster).setArbitraryFloat(arbitrary));
+    protected void mark(LivingEntity caster, LivingEntity target, float duration, float arbitrary) {
+        Marks.getCap(target).mark(new SkillData(this, duration).setCaster(caster).setArbitraryFloat(arbitrary));
     }
 
-    public SkillData onStatusAdd(LivingEntity caster, LivingEntity target, SkillData sd, @Nullable SkillData existing) {
+    public SkillData onMarked(LivingEntity caster, LivingEntity target, SkillData sd, @Nullable SkillData existing) {
         if (existing != null)
             sd.setDuration(sd.getDuration() + existing.getDuration());
         return sd;
     }
 
-    public void onStatusEnd(LivingEntity caster, LivingEntity target, SkillData sd) {
+    public void onMarkEnd(LivingEntity caster, LivingEntity target, SkillData sd) {
 
     }
 

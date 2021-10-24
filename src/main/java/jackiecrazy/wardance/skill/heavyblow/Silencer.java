@@ -70,21 +70,21 @@ public class Silencer extends HeavyBlow {
         CombatData.getCap(target).setHandBind(Hand.MAIN_HAND, 30);
         CombatData.getCap(target).setHandBind(Hand.OFF_HAND, 30);
         procPoint.setResult(Event.Result.ALLOW);
-        afflict(caster, target, 80);
+        mark(caster, target, 80);
     }
 
     @Override
-    public SkillData onStatusAdd(LivingEntity caster, LivingEntity target, SkillData sd, @Nullable SkillData existing) {
+    public SkillData onMarked(LivingEntity caster, LivingEntity target, SkillData sd, @Nullable SkillData existing) {
         sd.flagCondition(existing == null ? target.isSilent() : existing.isCondition());
         target.setSilent(true);
         System.out.println("target has been silenced!");
-        return super.onStatusAdd(caster, target, sd, existing);
+        return super.onMarked(caster, target, sd, existing);
     }
 
     @Override
-    public void onStatusEnd(LivingEntity caster, LivingEntity target, SkillData sd) {
+    public void onMarkEnd(LivingEntity caster, LivingEntity target, SkillData sd) {
         target.setSilent(sd.isCondition());
-        super.onStatusEnd(caster, target, sd);
+        super.onMarkEnd(caster, target, sd);
     }
 
     @Override

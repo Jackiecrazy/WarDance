@@ -3,6 +3,7 @@ package jackiecrazy.wardance.utils;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.passive.TameableEntity;
+import net.minecraft.entity.player.PlayerEntity;
 
 public class TargetingUtils {
     public static boolean isAlly(Entity entity, Entity of) {
@@ -12,6 +13,8 @@ public class TargetingUtils {
         if (of instanceof TameableEntity && entity instanceof LivingEntity && ((TameableEntity) of).isOwner((LivingEntity) entity))
             return true;
         if (entity.isOnSameTeam(of)) return true;
+        if (entity instanceof PlayerEntity && of instanceof PlayerEntity && entity.getServer() != null && entity.getServer().isPVPEnabled())
+            return true;
         return false;
     }
 }

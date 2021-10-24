@@ -1,7 +1,7 @@
 package jackiecrazy.wardance.skill.feint;
 
 import jackiecrazy.wardance.capability.resources.CombatData;
-import jackiecrazy.wardance.capability.status.Afflictions;
+import jackiecrazy.wardance.capability.status.Marks;
 import jackiecrazy.wardance.event.ParryEvent;
 import jackiecrazy.wardance.potion.WarEffects;
 import jackiecrazy.wardance.skill.Skill;
@@ -59,7 +59,7 @@ public class Feint extends Skill {
 
     @Override
     public void onSuccessfulProc(LivingEntity caster, SkillData stats, LivingEntity target, Event procPoint) {
-        if (procPoint instanceof ParryEvent && ((ParryEvent) procPoint).getAttacker() == caster && CombatUtils.getAwareness(caster, target) == CombatUtils.Awareness.ALERT && !Afflictions.getCap(target).isStatusActive(this)) {
+        if (procPoint instanceof ParryEvent && ((ParryEvent) procPoint).getAttacker() == caster && CombatUtils.getAwareness(caster, target) == CombatUtils.Awareness.ALERT && !Marks.getCap(target).isMarked(this)) {
             Hand h = ((ParryEvent) procPoint).getAttackingHand();
             if (((ParryEvent) procPoint).canParry()) {
                 CombatUtils.setHandCooldown(target, Hand.MAIN_HAND, 0, false);
@@ -72,15 +72,15 @@ public class Feint extends Skill {
                 procPoint.setResult(Event.Result.ALLOW);
             }
             stats.flagCondition(h == Hand.MAIN_HAND);
-            afflict(caster, target, 1);
+            mark(caster, target, 1);
             markUsed(caster);
         }
     }
 
     @Override
-    public boolean statusTick(LivingEntity caster, LivingEntity target, SkillData sd) {
+    public boolean markTick(LivingEntity caster, LivingEntity target, SkillData sd) {
         if (CombatUtils.getAwareness(caster, target) != CombatUtils.Awareness.ALERT)
-            endAffliction(target);
+            removeMark(target);
         return false;
     }
 
@@ -124,7 +124,7 @@ public class Feint extends Skill {
         }
 
         @Override
-        protected void afflict(LivingEntity caster, LivingEntity target, float duration) {
+        protected void mark(LivingEntity caster, LivingEntity target, float duration) {
             //no affliction, keep doing it!
         }
 

@@ -1,6 +1,6 @@
 package jackiecrazy.wardance.networking;
 
-import jackiecrazy.wardance.capability.status.Afflictions;
+import jackiecrazy.wardance.capability.status.Marks;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.world.ClientWorld;
 import net.minecraft.entity.Entity;
@@ -50,7 +50,7 @@ public class UpdateAfflictionPacket {
                 if (world != null) {
                     Entity entity = world.getEntityByID(updateClientPacket.e);
                     if (entity instanceof LivingEntity){
-                        Afflictions.getCap((LivingEntity) entity).read(updateClientPacket.icc);
+                        Marks.getCap((LivingEntity) entity).read(updateClientPacket.icc);
                     }
                 }
             }));

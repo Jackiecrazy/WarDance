@@ -6,7 +6,7 @@ import jackiecrazy.wardance.capability.resources.CombatData;
 import jackiecrazy.wardance.capability.resources.ICombatCapability;
 import jackiecrazy.wardance.capability.skill.CasterData;
 import jackiecrazy.wardance.capability.skill.ISkillCapability;
-import jackiecrazy.wardance.capability.status.Afflictions;
+import jackiecrazy.wardance.capability.status.Marks;
 import jackiecrazy.wardance.config.GeneralConfig;
 import jackiecrazy.wardance.config.StealthConfig;
 import jackiecrazy.wardance.networking.CombatChannel;
@@ -71,7 +71,7 @@ public class EntityHandler {
     public static void caps(AttachCapabilitiesEvent<Entity> e) {
         if (e.getObject() instanceof LivingEntity) {
             e.addCapability(new ResourceLocation("wardance:combatinfo"), new CombatData((LivingEntity) e.getObject()));
-            e.addCapability(new ResourceLocation("wardance:statuseffects"), new Afflictions((LivingEntity) e.getObject()));
+            e.addCapability(new ResourceLocation("wardance:statuseffects"), new Marks((LivingEntity) e.getObject()));
             if (e.getObject() instanceof PlayerEntity)
                 e.addCapability(new ResourceLocation("wardance:casterinfo"), new CasterData((LivingEntity) e.getObject()));
         }
@@ -121,7 +121,7 @@ public class EntityHandler {
                 return;
             } else CombatData.getCap(e.player).serverTick();
             CasterData.getCap(e.player).update();
-            Afflictions.getCap(e.player).update();
+            Marks.getCap(e.player).update();
         }
     }
 
@@ -136,7 +136,7 @@ public class EntityHandler {
                 elb.setMotion(0, 0, 0);
             }
             if (!(elb instanceof PlayerEntity)) {
-                Afflictions.getCap(elb).update();
+                Marks.getCap(elb).update();
 //                if (elb instanceof MobEntity && CombatData.getCap(elb).getStaggerTime() == 0 && ((MobEntity) elb).getAttackTarget() != null) {
 //                    double safeSpace = (elb.getWidth()) * 2;
 //                    for (Entity fan : elb.world.getEntitiesWithinAABBExcludingEntity(elb, elb.getBoundingBox().grow(safeSpace))) {

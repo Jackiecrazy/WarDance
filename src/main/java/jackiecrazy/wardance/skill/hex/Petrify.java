@@ -22,7 +22,7 @@ public class Petrify extends Hex {
     }
 
     @Override
-    public void onStatusEnd(LivingEntity caster, LivingEntity target, SkillData sd) {
+    public void onMarkEnd(LivingEntity caster, LivingEntity target, SkillData sd) {
         final ModifiableAttributeInstance absorption = target.getAttribute(WarAttributes.ABSORPTION.get());
         if (absorption != null) {
             absorption.removeModifier(NOPE);
@@ -35,11 +35,11 @@ public class Petrify extends Hex {
         if (armor != null) {
             armor.removeModifier(ARMOR);
         }
-        super.onStatusEnd(caster, target, sd);
+        super.onMarkEnd(caster, target, sd);
     }
 
     @Override
-    public SkillData onStatusAdd(LivingEntity caster, LivingEntity target, SkillData sd, @Nullable SkillData existing) {
+    public SkillData onMarked(LivingEntity caster, LivingEntity target, SkillData sd, @Nullable SkillData existing) {
         final ModifiableAttributeInstance absorption = target.getAttribute(WarAttributes.ABSORPTION.get());
         final ModifiableAttributeInstance deflection = target.getAttribute(WarAttributes.DEFLECTION.get());
         final ModifiableAttributeInstance armor = target.getAttribute(Attributes.ARMOR);
@@ -60,6 +60,6 @@ public class Petrify extends Hex {
             shatter += armor.getValue();
         }
         CombatData.getCap(target).setShatterCooldown((int) shatter);
-        return super.onStatusAdd(caster, target, sd, existing);
+        return super.onMarked(caster, target, sd, existing);
     }
 }

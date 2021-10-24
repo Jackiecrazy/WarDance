@@ -3,7 +3,7 @@ package jackiecrazy.wardance.skill.execution;
 import jackiecrazy.wardance.api.CombatDamageSource;
 import jackiecrazy.wardance.capability.resources.CombatData;
 import jackiecrazy.wardance.capability.skill.CasterData;
-import jackiecrazy.wardance.capability.status.Afflictions;
+import jackiecrazy.wardance.capability.status.Marks;
 import jackiecrazy.wardance.event.GainMightEvent;
 import jackiecrazy.wardance.event.SkillCastEvent;
 import jackiecrazy.wardance.event.StaggerEvent;
@@ -203,12 +203,12 @@ Onslaught: casts heavy blow before every attack (this is a lot easier)
         @Override
         public boolean activeTick(LivingEntity caster, SkillData d) {
             if (caster.ticksExisted % 10 == 0) {
-                final List<LivingEntity> list = caster.world.getLoadedEntitiesWithinAABB(LivingEntity.class, caster.getBoundingBox().grow(7), (a) -> !TargetingUtils.isAlly(a, caster) && !Afflictions.getCap(a).isStatusActive(this));
+                final List<LivingEntity> list = caster.world.getLoadedEntitiesWithinAABB(LivingEntity.class, caster.getBoundingBox().grow(7), (a) -> !TargetingUtils.isAlly(a, caster) && !Marks.getCap(a).isMarked(this));
                 for (LivingEntity enemy : list) {
-                    if (Afflictions.getCap(enemy).isStatusActive(this))
+                    if (Marks.getCap(enemy).isMarked(this))
                         continue;
                     enemy.addPotionEffect(new EffectInstance(WarEffects.DISTRACTION.get(), 140));
-                    afflict(caster, enemy, 10);
+                    mark(caster, enemy, 10);
                     break;
                 }
             }
@@ -219,18 +219,18 @@ Onslaught: casts heavy blow before every attack (this is a lot easier)
         protected void performEffect(LivingEntity caster, LivingEntity target, float amount, SkillData s) {
             SkillUtils.createCloud(caster.world, caster, caster.getPosX(), caster.getPosY(), caster.getPosZ(), 15, ParticleTypes.LARGE_SMOKE);
             final List<LivingEntity> list = caster.world.getLoadedEntitiesWithinAABB(LivingEntity.class, caster.getBoundingBox().grow(14), (a) -> !TargetingUtils.isAlly(a, caster));
-            Afflictions.getCap(target).removeStatus(this);
+            Marks.getCap(target).removeMark(this);
             for (int i = 0; i < list.size(); i++) {
                 LivingEntity enemy = list.get(i);
                 if (GeneralUtils.getDistSqCompensated(caster, enemy) < 49)
                     enemy.addPotionEffect(new EffectInstance(Effects.BLINDNESS, 140));
                 if (list.size() <= 1) return;
-                if (!Afflictions.getCap(enemy).isStatusActive(this) || enemy == target) continue;
+                if (!Marks.getCap(enemy).isMarked(this) || enemy == target) continue;
                 int shift = (i * (list.size() - 1) + 1) % list.size();
                 enemy.setRevengeTarget(list.get(shift));
                 if (enemy instanceof MobEntity)
                     ((MobEntity) enemy).setAttackTarget(list.get(shift));
-                Afflictions.getCap(enemy).removeStatus(this);
+                Marks.getCap(enemy).removeMark(this);
             }
         }
     }

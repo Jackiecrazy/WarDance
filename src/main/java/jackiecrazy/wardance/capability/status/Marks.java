@@ -11,20 +11,20 @@ import net.minecraftforge.common.util.LazyOptional;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
-public class Afflictions implements ICapabilitySerializable<CompoundNBT> {
-    private static IStatus OHNO=new DummyStatusCap();
+public class Marks implements ICapabilitySerializable<CompoundNBT> {
+    private static IMark OHNO=new DummyMarkCap();
 
-    @CapabilityInject(IStatus.class)
-    public static Capability<IStatus> CAP = null;
+    @CapabilityInject(IMark.class)
+    public static Capability<IMark> CAP = null;
 
-    public static IStatus getCap(LivingEntity le) {
+    public static IMark getCap(LivingEntity le) {
         return le.getCapability(CAP).orElse(OHNO);//.orElseThrow(() -> new IllegalArgumentException("attempted to find a nonexistent capability"));
     }
 
-    private final LazyOptional<IStatus> instance;
+    private final LazyOptional<IMark> instance;
 
-    public Afflictions(LivingEntity e) {
-        instance = LazyOptional.of(() -> new Status(e));
+    public Marks(LivingEntity e) {
+        instance = LazyOptional.of(() -> new Mark(e));
     }
 
     @Nonnull

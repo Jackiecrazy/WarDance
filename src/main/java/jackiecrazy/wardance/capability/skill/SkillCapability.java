@@ -207,7 +207,7 @@ public class SkillCapability implements ISkillCapability {
                 s.checkAndCast(dude.get());
             }
         }
-        sync=true;
+        sync = true;
     }
 
     @Override
@@ -289,12 +289,12 @@ public class SkillCapability implements ISkillCapability {
         Skill.STATE state = Skill.STATE.INACTIVE;
         for (Skill d : equippedSkill) {
             if (d == null) continue;
-            if (getActiveSkill(d).isPresent() && d.activeTick(caster, activeSkills.get(d))) {
+            if (getActiveSkill(d).isPresent()) {
                 state = Skill.STATE.ACTIVE;
-                sync = true;
-            } else if (coolingSkills.containsKey(d) && d.coolingTick(caster, coolingSkills.get(d))) {
+                sync = d.activeTick(caster, activeSkills.get(d));
+            } else if (coolingSkills.containsKey(d)) {
                 state = Skill.STATE.COOLING;
-                sync = true;
+                sync = d.coolingTick(caster, coolingSkills.get(d));
             }
             if (d.equippedTick(caster, state)) {
                 sync = true;

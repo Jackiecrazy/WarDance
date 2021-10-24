@@ -17,17 +17,17 @@ public class SabatonSmash extends Kick {
     protected void additionally(LivingEntity caster, LivingEntity target) {
         CombatData.getCap(caster).consumePosture(1);
         CombatUtils.knockBack(target, caster, 1.6f, true, false);
-        afflict(caster, target, 30);
+        mark(caster, target, 30);
     }
 
     @Override
-    public boolean statusTick(LivingEntity caster, LivingEntity target, SkillData sd) {
+    public boolean markTick(LivingEntity caster, LivingEntity target, SkillData sd) {
         sd.decrementDuration();
         if (target.collidedHorizontally) {
-            endAffliction(target);
+            removeMark(target);
             CombatData.getCap(target).consumePosture(caster.getTotalArmorValue() / 4f);
             target.attackEntityFrom(DamageSource.FALLING_BLOCK, caster.getTotalArmorValue() / 4f);
         }
-        return super.statusTick(caster, target, sd);
+        return super.markTick(caster, target, sd);
     }
 }

@@ -9,37 +9,37 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
 
-public class DummyStatusCap implements IStatus {
+public class DummyMarkCap implements IMark {
     private static final Map<Skill, SkillData> dummy = new HashMap<>();
 
     @Nullable
     @Override
-    public Optional<SkillData> getActiveStatus(Skill s) {
+    public Optional<SkillData> getActiveMark(Skill s) {
         return Optional.empty();
     }
 
     @Override
-    public void addStatus(SkillData d) {
+    public void mark(SkillData d) {
 
     }
 
     @Override
-    public void removeStatus(Skill s) {
+    public void removeMark(Skill s) {
 
     }
 
     @Override
-    public Map<Skill, SkillData> getActiveStatuses() {
+    public Map<Skill, SkillData> getActiveMarks() {
         return dummy;
     }
 
     @Override
-    public void clearStatuses() {
+    public void clearMarks() {
 
     }
 
     @Override
-    public boolean isStatusActive(Skill skill) {
+    public boolean isMarked(Skill skill) {
         return false;
     }
 

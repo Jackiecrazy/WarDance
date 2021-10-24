@@ -1,7 +1,7 @@
 package jackiecrazy.wardance.skill.hex;
 
 import jackiecrazy.wardance.capability.resources.CombatData;
-import jackiecrazy.wardance.capability.status.Afflictions;
+import jackiecrazy.wardance.capability.status.Marks;
 import jackiecrazy.wardance.event.ParryEvent;
 import jackiecrazy.wardance.skill.SkillData;
 import jackiecrazy.wardance.skill.SkillTags;
@@ -25,13 +25,13 @@ public class ItchyCurse extends Hex {
     public void onSuccessfulProc(LivingEntity caster, SkillData stats, LivingEntity target, Event procPoint) {
         if (procPoint instanceof ParryEvent && (!((ParryEvent) procPoint).canParry() || getTags(caster).contains(SkillTags.unblockable))) {
             procPoint.setCanceled(true);
-            afflict(caster, target, 60);
+            mark(caster, target, 60);
             markUsed(caster);
         }
     }
 
     @Override
-    public boolean statusTick(LivingEntity caster, LivingEntity target, SkillData sd) {
+    public boolean markTick(LivingEntity caster, LivingEntity target, SkillData sd) {
         boolean stationary = target.moveForward == 0 && target.moveStrafing == 0 && target.moveVertical == 0;
         if (stationary) {
             sd.decrementDuration();
@@ -55,18 +55,18 @@ public class ItchyCurse extends Hex {
 //                SkillUtils.modifyAttribute(target, Attributes.MOVEMENT_SPEED, HEX.getID(), -1, AttributeModifier.Operation.MULTIPLY_TOTAL);
 //            }
         if (sd.getDuration() <= 0) {
-            Afflictions.getCap(target).removeStatus(this);
+            Marks.getCap(target).removeMark(this);
             return true;
         }
         return false;
     }
 
     @Override
-    public void onStatusEnd(LivingEntity caster, LivingEntity target, SkillData sd) {
+    public void onMarkEnd(LivingEntity caster, LivingEntity target, SkillData sd) {
         final ModifiableAttributeInstance speed = target.getAttribute(Attributes.MOVEMENT_SPEED);
         if (speed != null) {
             speed.removeModifier(HEX.getID());
         }
-        super.onStatusEnd(caster, target, sd);
+        super.onMarkEnd(caster, target, sd);
     }
 }

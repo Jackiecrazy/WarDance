@@ -7,18 +7,18 @@ import net.minecraft.nbt.CompoundNBT;
 import java.util.Map;
 import java.util.Optional;
 
-public interface IStatus {
-    Optional<SkillData> getActiveStatus(Skill s);
+public interface IMark {
+    Optional<SkillData> getActiveMark(Skill s);
 
-    void addStatus(SkillData d);
+    void mark(SkillData d);
 
-    void removeStatus(Skill s);
+    void removeMark(Skill s);
 
-    Map<Skill, SkillData> getActiveStatuses();
+    Map<Skill, SkillData> getActiveMarks();
 
-    void clearStatuses();
+    void clearMarks();
 
-    boolean isStatusActive(Skill skill);
+    boolean isMarked(Skill skill);
 
     CompoundNBT write();
 
