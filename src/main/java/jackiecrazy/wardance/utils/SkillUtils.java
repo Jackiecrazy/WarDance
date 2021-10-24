@@ -30,7 +30,7 @@ public class SkillUtils {
         }
     };
 
-    public static void modifyAttribute(LivingEntity caster, Attribute a, UUID id, float amount, AttributeModifier.Operation op) {
+    public static void modifyAttribute(LivingEntity caster, Attribute a, UUID id, double amount, AttributeModifier.Operation op) {
         final ModifiableAttributeInstance atr = caster.getAttribute(a);
         if (atr == null) return;
         if (atr.getModifier(id) != null) {

@@ -25,4 +25,7 @@ public class WarAttributes {
     public static final RegistryObject<Attribute> MAX_POSTURE = ATTRIBUTES.register("max_posture", () -> new RangedAttribute(WarDance.MODID + ".maxPosture", 0d, 0, Double.MAX_VALUE).setShouldWatch(true));
     public static final RegistryObject<Attribute> MAX_SPIRIT = ATTRIBUTES.register("max_spirit", () -> new RangedAttribute(WarDance.MODID + ".maxSpirit", 10d, 0, Double.MAX_VALUE).setShouldWatch(true));
     public static final RegistryObject<Attribute> MAX_MIGHT = ATTRIBUTES.register("max_might", () -> new RangedAttribute(WarDance.MODID + ".maxMight", 10d, 0, Double.MAX_VALUE).setShouldWatch(true));
+    public static final RegistryObject<Attribute> POSTURE_REGEN = ATTRIBUTES.register("posture_regen", () -> new RangedAttribute(WarDance.MODID + ".postureGen", 0d, Double.MIN_VALUE, Double.MAX_VALUE).setShouldWatch(true));
+    public static final RegistryObject<Attribute> SPIRIT_REGEN = ATTRIBUTES.register("spirit_regen", () -> new RangedAttribute(WarDance.MODID + ".spiritGen", 10d, Double.MIN_VALUE, Double.MAX_VALUE).setShouldWatch(true));
+    public static final RegistryObject<Attribute> MIGHT_GEN = ATTRIBUTES.register("might_gen", () -> new RangedAttribute(WarDance.MODID + ".mightGen", 10d, Double.MIN_VALUE, Double.MAX_VALUE).setShouldWatch(true));
 }
