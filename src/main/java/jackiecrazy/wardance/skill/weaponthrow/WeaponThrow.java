@@ -10,6 +10,11 @@ public class WeaponThrow extends Skill {
 
 
     @Override
+    public Tag<String> getProcPoints(LivingEntity caster) {
+        return null;
+    }
+
+    @Override
     public Tag<String> getTags(LivingEntity caster) {
         return null;
     }

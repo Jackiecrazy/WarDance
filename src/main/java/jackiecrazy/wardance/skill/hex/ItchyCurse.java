@@ -4,7 +4,7 @@ import jackiecrazy.wardance.capability.resources.CombatData;
 import jackiecrazy.wardance.capability.status.Marks;
 import jackiecrazy.wardance.event.ParryEvent;
 import jackiecrazy.wardance.skill.SkillData;
-import jackiecrazy.wardance.skill.SkillTags;
+import jackiecrazy.wardance.skill.ProcPoints;
 import jackiecrazy.wardance.utils.SkillUtils;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.ai.attributes.AttributeModifier;
@@ -23,7 +23,7 @@ public class ItchyCurse extends Hex {
 
     @Override
     public void onSuccessfulProc(LivingEntity caster, SkillData stats, LivingEntity target, Event procPoint) {
-        if (procPoint instanceof ParryEvent && (!((ParryEvent) procPoint).canParry() || getTags(caster).contains(SkillTags.unblockable))) {
+        if (procPoint instanceof ParryEvent && (!((ParryEvent) procPoint).canParry() || getTags(caster).contains(ProcPoints.unblockable))) {
             procPoint.setCanceled(true);
             mark(caster, target, 60);
             markUsed(caster);

@@ -5,7 +5,7 @@ import jackiecrazy.wardance.capability.resources.CombatData;
 import jackiecrazy.wardance.event.SkillCastEvent;
 import jackiecrazy.wardance.skill.Skill;
 import jackiecrazy.wardance.skill.SkillData;
-import jackiecrazy.wardance.skill.SkillTags;
+import jackiecrazy.wardance.skill.ProcPoints;
 import jackiecrazy.wardance.skill.WarSkills;
 import jackiecrazy.wardance.utils.GeneralUtils;
 import net.minecraft.entity.LivingEntity;
@@ -28,7 +28,7 @@ lady luck: after casting a skill, have a 1+luck/5+luck chance to recover the spi
 apathy: your max spirit is 4, your spirit instantly refills after cooldown, you are immune to burnout.
      */
 
-    private final Tag<String> tag = Tag.getTagFromContents(new HashSet<>(Arrays.asList("passive", SkillTags.on_cast)));
+    private final Tag<String> tag = Tag.getTagFromContents(new HashSet<>(Arrays.asList("passive", ProcPoints.on_cast)));
     private final Tag<String> no = Tag.getEmptyTag();
 
     @Override
@@ -44,12 +44,18 @@ apathy: your max spirit is 4, your spirit instantly refills after cooldown, you 
 
     @Override
     public Tag<String> getTags(LivingEntity caster) {
-        return tag;
+        return passive;
     }
 
     @Override
     public Tag<String> getIncompatibleTags(LivingEntity caster) {
-        return no;
+        return empty;
+    }
+
+
+    @Override
+    public Tag<String> getProcPoints(LivingEntity caster) {
+        return tag;
     }
 
     @Override

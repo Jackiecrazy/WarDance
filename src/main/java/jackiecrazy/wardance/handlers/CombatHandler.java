@@ -16,7 +16,7 @@ import jackiecrazy.wardance.event.MeleeKnockbackEvent;
 import jackiecrazy.wardance.event.ParryEvent;
 import jackiecrazy.wardance.event.ProjectileParryEvent;
 import jackiecrazy.wardance.potion.WarEffects;
-import jackiecrazy.wardance.skill.SkillTags;
+import jackiecrazy.wardance.skill.ProcPoints;
 import jackiecrazy.wardance.utils.CombatUtils;
 import jackiecrazy.wardance.utils.GeneralUtils;
 import jackiecrazy.wardance.utils.MovementUtils;
@@ -287,7 +287,7 @@ public class CombatHandler {
                         boolean disshield = false;
                         parryHand = uke.getHeldItemOffhand() == defend ? Hand.OFF_HAND : Hand.MAIN_HAND;
                         if (CombatUtils.isShield(uke, defend)) {
-                            if (CasterData.getCap(seme).isTagActive(SkillTags.disable_shield) || attack.getItem().canDisableShield(attack, defend, uke, seme)) {
+                            if (CasterData.getCap(seme).isTagActive(ProcPoints.disable_shield) || attack.getItem().canDisableShield(attack, defend, uke, seme)) {
                                 //shield is disabled
                                 if (uke instanceof PlayerEntity) {
                                     ukeCap.setHandBind(parryHand, 60);

@@ -291,10 +291,10 @@ public class SkillCapability implements ISkillCapability {
             if (d == null) continue;
             if (getActiveSkill(d).isPresent()) {
                 state = Skill.STATE.ACTIVE;
-                sync = d.activeTick(caster, activeSkills.get(d));
+                sync |= d.activeTick(caster, activeSkills.get(d));
             } else if (coolingSkills.containsKey(d)) {
                 state = Skill.STATE.COOLING;
-                sync = d.coolingTick(caster, coolingSkills.get(d));
+                sync |= d.coolingTick(caster, coolingSkills.get(d));
             }
             if (d.equippedTick(caster, state)) {
                 sync = true;

@@ -9,10 +9,7 @@ import jackiecrazy.wardance.capability.skill.ISkillCapability;
 import jackiecrazy.wardance.entity.FakeExplosion;
 import jackiecrazy.wardance.event.EntityAwarenessEvent;
 import jackiecrazy.wardance.event.ParryEvent;
-import jackiecrazy.wardance.skill.Skill;
-import jackiecrazy.wardance.skill.SkillData;
-import jackiecrazy.wardance.skill.SkillTags;
-import jackiecrazy.wardance.skill.WarSkills;
+import jackiecrazy.wardance.skill.*;
 import jackiecrazy.wardance.utils.CombatUtils;
 import jackiecrazy.wardance.utils.GeneralUtils;
 import net.minecraft.entity.LivingEntity;
@@ -26,26 +23,29 @@ import net.minecraftforge.eventbus.api.Event;
 import javax.annotation.Nullable;
 import java.awt.*;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
 
 public class CoupDeGrace extends Skill {
-    private final Tag<String> tag = Tag.getTagFromContents(new HashSet<>(Arrays.asList("physical", SkillTags.melee, SkillTags.on_hurt, SkillTags.recharge_cast, SkillTags.change_parry_result, "execution")));
-    private final Tag<String> no = Tag.getTagFromContents(new HashSet<>(Collections.singletonList("execution")));
+    private final Tag<String> tag = Tag.getTagFromContents(new HashSet<>(Arrays.asList("physical", ProcPoints.melee, ProcPoints.on_hurt, ProcPoints.recharge_cast, ProcPoints.change_parry_result, "execution")));
 
     protected float getDamage(LivingEntity caster, LivingEntity target) {
         return (GeneralUtils.getMaxHealthBeforeWounding(target) - target.getHealth()) * 0.2f;
     }
 
     @Override
-    public Tag<String> getTags(LivingEntity caster) {
+    public Tag<String> getProcPoints(LivingEntity caster) {
         return tag;
     }
 
     @Override
+    public Tag<String> getTags(LivingEntity caster) {
+        return special;
+    }
+
+    @Override
     public Tag<String> getIncompatibleTags(LivingEntity caster) {
-        return no;
+        return special;
     }
 
     @Nullable
@@ -58,11 +58,7 @@ public class CoupDeGrace extends Skill {
     public CastStatus castingCheck(LivingEntity caster) {
         if (CasterData.getCap(caster).isSkillActive(this))
             return CastStatus.ALLOWED;
-        if (CasterData.getCap(caster).isSkillCoolingDown(this))
-            return CastStatus.COOLDOWN;
-        if (CombatData.getCap(caster).getMight() < mightConsumption(caster))
-            return CastStatus.MIGHT;
-        return CastStatus.ALLOWED;
+        return super.castingCheck(caster);
     }
 
     @Override
@@ -72,8 +68,8 @@ public class CoupDeGrace extends Skill {
 
     @Override
     public boolean onCast(LivingEntity caster) {
-        if (CasterData.getCap(caster).isTagActive("execution"))
-            CasterData.getCap(caster).removeActiveTag("execution");
+        if (CasterData.getCap(caster).isTagActive("special"))
+            CasterData.getCap(caster).removeActiveTag("special");
         else {
             activate(caster, 1);
             CombatData.getCap(caster).consumeMight(mightConsumption(caster));
@@ -146,10 +142,16 @@ public class CoupDeGrace extends Skill {
     }
 
     public static class Reaping extends CoupDeGrace {
-        private final Tag<String> tag = Tag.getTagFromContents(new HashSet<>(Arrays.asList("physical", SkillTags.melee, SkillTags.change_awareness, SkillTags.on_hurt, SkillTags.recharge_cast, SkillTags.change_parry_result, "execution")));
+        private final Tag<String> tag = Tag.getTagFromContents(new HashSet<>(Arrays.asList("physical", ProcPoints.melee, ProcPoints.change_awareness, ProcPoints.on_hurt, ProcPoints.recharge_cast, ProcPoints.change_parry_result, "execution")));
+        private final Tag<String> tague = Tag.getTagFromContents(new HashSet<>(Arrays.asList(SkillTags.special, SkillTags.offensive)));
 
         @Override
         public Tag<String> getTags(LivingEntity caster) {
+            return tague;
+        }
+
+        @Override
+        public Tag<String> getProcPoints(LivingEntity caster) {
             return tag;
         }
 
@@ -225,7 +227,7 @@ public class CoupDeGrace extends Skill {
             ISkillCapability isc = CasterData.getCap(caster);
             final Set<Skill> skills = new HashSet<>(isc.getSkillCooldowns().keySet());
             for (Skill s : skills) {
-                if (s.getTags(caster).contains("physical"))
+                if (s.getProcPoints(caster).contains("physical"))
                     isc.coolSkill(s);
             }
         }

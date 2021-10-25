@@ -38,7 +38,7 @@ Crush: Converts own posture into extra posture damage applied increased with hea
 Assassinate: Stab rank increased by 1 for this attack, instantly stagger a distracted or unaware enemy.
      */
 
-    private final Tag<String> tag = Tag.getTagFromContents(new HashSet<>(Arrays.asList("physical", SkillTags.melee, SkillTags.on_stagger, SkillTags.change_awareness, "boundCast", SkillTags.normal_attack, SkillTags.recharge_normal, SkillTags.change_parry_result)));
+    private final Tag<String> tag = Tag.getTagFromContents(new HashSet<>(Arrays.asList("physical", ProcPoints.melee, ProcPoints.on_stagger, ProcPoints.change_awareness, "boundCast", ProcPoints.normal_attack, ProcPoints.recharge_normal, ProcPoints.change_parry_result)));
     private final Tag<String> no = Tag.getTagFromContents(new HashSet<>(Arrays.asList("normalAttack")));
 
     @SubscribeEvent
@@ -52,13 +52,18 @@ Assassinate: Stab rank increased by 1 for this attack, instantly stagger a distr
     }
 
     @Override
-    public Tag<String> getTags(LivingEntity caster) {
+    public Tag<String> getProcPoints(LivingEntity caster) {
         return tag;
     }
 
     @Override
+    public Tag<String> getTags(LivingEntity caster) {
+        return offensivePhysical;
+    }
+
+    @Override
     public Tag<String> getIncompatibleTags(LivingEntity caster) {
-        return no;
+        return offensive;
     }
 
     @Nullable

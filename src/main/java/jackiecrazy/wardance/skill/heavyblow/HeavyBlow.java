@@ -3,10 +3,7 @@ package jackiecrazy.wardance.skill.heavyblow;
 import jackiecrazy.wardance.capability.resources.CombatData;
 import jackiecrazy.wardance.capability.skill.CasterData;
 import jackiecrazy.wardance.event.ParryEvent;
-import jackiecrazy.wardance.skill.SkillTags;
-import jackiecrazy.wardance.skill.Skill;
-import jackiecrazy.wardance.skill.SkillData;
-import jackiecrazy.wardance.skill.WarSkills;
+import jackiecrazy.wardance.skill.*;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.tags.Tag;
 import net.minecraftforge.event.entity.player.CriticalHitEvent;
@@ -17,17 +14,22 @@ import java.util.Arrays;
 import java.util.HashSet;
 
 public class HeavyBlow extends Skill {
-    private final Tag<String> tag = Tag.getTagFromContents(new HashSet<>(Arrays.asList("physical", SkillTags.disable_shield, SkillTags.melee, SkillTags.on_hurt, "boundCast", SkillTags.normal_attack, SkillTags.countdown, SkillTags.modify_crit, SkillTags.recharge_normal, SkillTags.on_being_parried)));
-    private final Tag<String> no = Tag.getTagFromContents(new HashSet<>(Arrays.asList("normalAttack", "noCrit")));
+    private final Tag<String> tag = Tag.getTagFromContents(new HashSet<>(Arrays.asList("physical", ProcPoints.disable_shield, ProcPoints.melee, ProcPoints.on_hurt, "boundCast", ProcPoints.normal_attack, ProcPoints.countdown, ProcPoints.modify_crit, ProcPoints.recharge_normal, ProcPoints.on_being_parried)));
+    private final Tag<String> no = makeTag(SkillTags.physical, SkillTags.forced_crit, SkillTags.offensive, SkillTags.disable_shield);
 
     @Override
-    public Tag<String> getTags(LivingEntity caster) {
+    public Tag<String> getProcPoints(LivingEntity caster) {
         return tag;
     }
 
     @Override
-    public Tag<String> getIncompatibleTags(LivingEntity caster) {
+    public Tag<String> getTags(LivingEntity caster) {
         return no;
+    }
+
+    @Override
+    public Tag<String> getIncompatibleTags(LivingEntity caster) {
+        return offensive;
     }
 
     @Nullable
@@ -38,7 +40,7 @@ public class HeavyBlow extends Skill {
 
     @Override
     public boolean onCast(LivingEntity caster) {
-        if(activate(caster, 40)) {
+        if (activate(caster, 40)) {
             CombatData.getCap(caster).consumeMight(mightConsumption(caster));
             CombatData.getCap(caster).consumeSpirit(spiritConsumption(caster));
         }

@@ -4,10 +4,7 @@ import jackiecrazy.wardance.WarDance;
 import jackiecrazy.wardance.capability.resources.CombatData;
 import jackiecrazy.wardance.capability.resources.ICombatCapability;
 import jackiecrazy.wardance.capability.skill.CasterData;
-import jackiecrazy.wardance.skill.Skill;
-import jackiecrazy.wardance.skill.SkillData;
-import jackiecrazy.wardance.skill.SkillTags;
-import jackiecrazy.wardance.skill.WarSkills;
+import jackiecrazy.wardance.skill.*;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.ai.attributes.AttributeModifier;
 import net.minecraft.entity.ai.attributes.Attributes;
@@ -32,8 +29,8 @@ import java.util.UUID;
 @Mod.EventBusSubscriber(modid = WarDance.MODID)
 public class WarCry extends Skill {
     private static final AttributeModifier wrap = new AttributeModifier(UUID.fromString("4b342542-fcfb-47a8-8da8-4f57588f7003"), "bandaging wounds", -1, AttributeModifier.Operation.MULTIPLY_TOTAL);
-    private final Tag<String> tag = Tag.getTagFromContents(new HashSet<>(Arrays.asList("chant", SkillTags.on_being_hurt, SkillTags.countdown, SkillTags.recharge_time, SkillTags.recharge_sleep)));
-    private final Tag<String> no = Tag.getEmptyTag();
+    private final Tag<String> procs = Tag.getTagFromContents(new HashSet<>(Arrays.asList("chant", ProcPoints.on_being_hurt, ProcPoints.countdown, ProcPoints.recharge_time, ProcPoints.recharge_sleep)));
+    private final Tag<String> tag = Tag.getTagFromContents(new HashSet<>(Arrays.asList(SkillTags.chant, SkillTags.melee, SkillTags.state)));
 
     @SubscribeEvent
     public static void fightingspirit(LivingHealEvent e) {
@@ -43,13 +40,18 @@ public class WarCry extends Skill {
     }
 
     @Override
+    public Tag<String> getProcPoints(LivingEntity caster) {
+        return procs;
+    }
+
+    @Override
     public Tag<String> getTags(LivingEntity caster) {
         return tag;
     }
 
     @Override
     public Tag<String> getIncompatibleTags(LivingEntity caster) {
-        return no;
+        return state;
     }
 
     @Override
@@ -109,7 +111,14 @@ public class WarCry extends Skill {
         if (caster instanceof PlayerEntity && (caster.getAttribute(Attributes.MOVEMENT_SPEED).hasModifier(wrap) || stats.isCondition()))
             ForgeEventFactory.onPlayerWakeup(((PlayerEntity) caster), false, false);
         caster.getAttribute(Attributes.MOVEMENT_SPEED).removeModifier(wrap);
-        setCooldown(caster, 6000);
+        setCooldown(caster, 300);
+    }
+
+    @Override
+    public boolean onCooldownProc(LivingEntity caster, SkillCooldownData stats, Event procPoint) {
+        stats.decrementDuration(0.05f);
+        int round = (int) (stats.getDuration() * 20);
+        return stats.getDuration() < 5 || round % 20 == 0;
     }
 
     @Override

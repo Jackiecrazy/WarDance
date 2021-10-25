@@ -5,6 +5,7 @@ import jackiecrazy.wardance.capability.resources.CombatData;
 import jackiecrazy.wardance.capability.resources.ICombatCapability;
 import jackiecrazy.wardance.skill.Skill;
 import jackiecrazy.wardance.skill.SkillData;
+import jackiecrazy.wardance.skill.SkillTags;
 import jackiecrazy.wardance.skill.WarSkills;
 import jackiecrazy.wardance.utils.CombatUtils;
 import net.minecraft.entity.LivingEntity;
@@ -21,7 +22,7 @@ import java.util.HashSet;
 
 public class Grapple extends Skill {
     private final Tag<String> tag = Tag.getTagFromContents(new HashSet<>(Arrays.asList("physical", "boundCast", "melee", "normalAttack", "countdown", "unarmed", "rechargeWithAttack")));
-    private final Tag<String> no = Tag.getTagFromContents(new HashSet<>(Arrays.asList("normalAttack", "unarmed")));
+    private final Tag<String> unarm = makeTag(SkillTags.offensive, SkillTags.physical, SkillTags.unarmed);
 
     @Nullable
     @Override
@@ -30,18 +31,23 @@ public class Grapple extends Skill {
     }
 
     @Override
-    public Tag<String> getTags(LivingEntity caster) {
+    public Tag<String> getProcPoints(LivingEntity caster) {
         return tag;
+    }
+
+    @Override
+    public Tag<String> getTags(LivingEntity caster) {
+        return unarm;
+    }
+
+    @Override
+    public Tag<String> getIncompatibleTags(LivingEntity caster) {
+        return offensive;
     }
 
     @Override
     public float spiritConsumption(LivingEntity caster) {
         return 2;
-    }
-
-    @Override
-    public Tag<String> getIncompatibleTags(LivingEntity caster) {
-        return no;
     }
 
     @Override

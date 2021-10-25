@@ -15,13 +15,8 @@ public class LowSweep extends Kick {
     private final Tag<String> no = Tag.getTagFromContents(new HashSet<>(Arrays.asList("normalAttack", "sweep")));
 
     @Override
-    public Tag<String> getTags(LivingEntity caster) {
+    public Tag<String> getProcPoints(LivingEntity caster) {
         return tag;
-    }
-
-    @Override
-    public Tag<String> getIncompatibleTags(LivingEntity caster) {
-        return no;
     }
 
     @Override

@@ -4,10 +4,7 @@ import jackiecrazy.wardance.capability.resources.CombatData;
 import jackiecrazy.wardance.capability.status.Marks;
 import jackiecrazy.wardance.event.ParryEvent;
 import jackiecrazy.wardance.potion.WarEffects;
-import jackiecrazy.wardance.skill.Skill;
-import jackiecrazy.wardance.skill.SkillData;
-import jackiecrazy.wardance.skill.SkillTags;
-import jackiecrazy.wardance.skill.WarSkills;
+import jackiecrazy.wardance.skill.*;
 import jackiecrazy.wardance.utils.CombatUtils;
 import jackiecrazy.wardance.utils.GeneralUtils;
 import net.minecraft.entity.LivingEntity;
@@ -24,8 +21,13 @@ import java.util.Arrays;
 import java.util.HashSet;
 
 public class Feint extends Skill {
-    private final Tag<String> tag = Tag.getTagFromContents(new HashSet<>(Arrays.asList("physical", "disableShield", "noDamage", SkillTags.melee, SkillTags.afflict_tick, "boundCast", SkillTags.countdown, SkillTags.recharge_normal, SkillTags.change_parry_result)));
-    private final Tag<String> no = Tag.getTagFromContents(new HashSet<>(Arrays.asList("normalAttack")));
+    private final Tag<String> proc = Tag.getTagFromContents(new HashSet<>(Arrays.asList("physical", "disableShield", "noDamage", ProcPoints.melee, ProcPoints.afflict_tick, "boundCast", ProcPoints.countdown, ProcPoints.recharge_normal, ProcPoints.change_parry_result)));
+    private final Tag<String> tag = Tag.getTagFromContents(new HashSet<>(Arrays.asList(SkillTags.physical, SkillTags.offensive, "disableShield", "noDamage")));
+
+    @Override
+    public Tag<String> getProcPoints(LivingEntity caster) {
+        return proc;
+    }
 
     @Override
     public Tag<String> getTags(LivingEntity caster) {
@@ -34,7 +36,7 @@ public class Feint extends Skill {
 
     @Override
     public Tag<String> getIncompatibleTags(LivingEntity caster) {
-        return no;
+        return offensive;
     }
 
     @Override
@@ -136,7 +138,7 @@ public class Feint extends Skill {
     }
 
     public static class ScorpionSting extends Feint {
-        private final Tag<String> tag = Tag.getTagFromContents(new HashSet<>(Arrays.asList("physical", "disableShield", "noDamage", SkillTags.melee, "boundCast", SkillTags.on_hurt, SkillTags.countdown, SkillTags.recharge_normal, SkillTags.change_parry_result)));
+        private final Tag<String> tag = Tag.getTagFromContents(new HashSet<>(Arrays.asList("physical", "disableShield", "noDamage", ProcPoints.melee, "boundCast", ProcPoints.on_hurt, ProcPoints.countdown, ProcPoints.recharge_normal, ProcPoints.change_parry_result)));
         private final Tag<String> no = Tag.getTagFromContents(new HashSet<>(Arrays.asList("normalAttack")));
 
         @Override
@@ -145,13 +147,8 @@ public class Feint extends Skill {
         }
 
         @Override
-        public Tag<String> getTags(LivingEntity caster) {
+        public Tag<String> getProcPoints(LivingEntity caster) {
             return tag;
-        }
-
-        @Override
-        public Tag<String> getIncompatibleTags(LivingEntity caster) {
-            return no;
         }
 
         @Override

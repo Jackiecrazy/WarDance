@@ -49,7 +49,7 @@ public class CombatCapability implements ICombatCapability {
     private float qi, spirit, posture, combo, mpos, mspi, wounding, burnout, fatigue, mainReel, offReel, maxMight;
     private int shatterCD;
     private int qcd, scd, pcd, ccd, mBind, oBind;
-    private int staggert, staggerc, ocd, shield, sc, roll, sweep;
+    private int staggert, staggerc, ocd, shield, sc, roll, sweep=-1;
     private boolean offhand, combat;
     private long lastUpdate;
     private boolean first, shattering;

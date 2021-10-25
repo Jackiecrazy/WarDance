@@ -5,7 +5,7 @@ import jackiecrazy.wardance.capability.resources.CombatData;
 import jackiecrazy.wardance.potion.WarEffects;
 import jackiecrazy.wardance.skill.Skill;
 import jackiecrazy.wardance.skill.SkillData;
-import jackiecrazy.wardance.skill.SkillTags;
+import jackiecrazy.wardance.skill.ProcPoints;
 import jackiecrazy.wardance.skill.WarSkills;
 import jackiecrazy.wardance.utils.CombatUtils;
 import net.minecraft.entity.LivingEntity;
@@ -24,23 +24,28 @@ import java.util.Arrays;
 import java.util.HashSet;
 
 public class ShieldBash extends Skill {
-    private final Tag<String> tag = Tag.getTagFromContents(new HashSet<>(Arrays.asList("physical", "melee", "boundCast", "normalAttack", "countdown", SkillTags.recharge_parry)));
+    private final Tag<String> tag = Tag.getTagFromContents(new HashSet<>(Arrays.asList("physical", "melee", "boundCast", "normalAttack", "countdown", ProcPoints.recharge_parry)));
     private final Tag<String> no = Tag.getTagFromContents(new HashSet<>(Arrays.asList("normalAttack")));
 
     @Override
-    public Tag<String> getTags(LivingEntity caster) {
+    public Tag<String> getProcPoints(LivingEntity caster) {
         return tag;
+    }
+
+    @Override
+    public Tag<String> getTags(LivingEntity caster) {
+        return offensivePhysical;
+    }
+
+    @Override
+    public Tag<String> getIncompatibleTags(LivingEntity caster) {
+        return offensive;
     }
 
     @Nullable
     @Override
     public Skill getParentSkill() {
         return this.getClass() == ShieldBash.class ? null : WarSkills.SHIELD_BASH.get();
-    }
-
-    @Override
-    public Tag<String> getIncompatibleTags(LivingEntity caster) {
-        return no;
     }
 
     @Override

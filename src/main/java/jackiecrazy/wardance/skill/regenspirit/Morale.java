@@ -4,7 +4,7 @@ import jackiecrazy.wardance.capability.resources.CombatData;
 import jackiecrazy.wardance.event.ParryEvent;
 import jackiecrazy.wardance.skill.Skill;
 import jackiecrazy.wardance.skill.SkillData;
-import jackiecrazy.wardance.skill.SkillTags;
+import jackiecrazy.wardance.skill.ProcPoints;
 import jackiecrazy.wardance.utils.CombatUtils;
 import jackiecrazy.wardance.utils.GeneralUtils;
 import net.minecraft.entity.LivingEntity;
@@ -27,17 +27,22 @@ lady luck: after casting a skill, have a 1+luck/5+luck chance to negate spirit c
 apathy: your max spirit is 4, your spirit instantly refills after cooldown, you are immune to burnout.
      */
 
-    private final Tag<String> tag = Tag.getTagFromContents(new HashSet<>(Arrays.asList("passive", SkillTags.on_parry, SkillTags.modify_crit)));
+    private final Tag<String> tag = Tag.getTagFromContents(new HashSet<>(Arrays.asList("passive", ProcPoints.on_parry, ProcPoints.modify_crit)));
     private final Tag<String> no = Tag.getEmptyTag();
 
     @Override
-    public Tag<String> getTags(LivingEntity caster) {
+    public Tag<String> getProcPoints(LivingEntity caster) {
         return tag;
     }
 
     @Override
+    public Tag<String> getTags(LivingEntity caster) {
+        return passive;
+    }
+
+    @Override
     public Tag<String> getIncompatibleTags(LivingEntity caster) {
-        return no;
+        return empty;
     }
 
     @Override

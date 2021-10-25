@@ -3,7 +3,7 @@ package jackiecrazy.wardance.skill.heavyblow;
 import jackiecrazy.wardance.capability.resources.CombatData;
 import jackiecrazy.wardance.event.ParryEvent;
 import jackiecrazy.wardance.skill.SkillData;
-import jackiecrazy.wardance.skill.SkillTags;
+import jackiecrazy.wardance.skill.ProcPoints;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.tags.Tag;
 import net.minecraftforge.eventbus.api.Event;
@@ -13,17 +13,12 @@ import java.util.Arrays;
 import java.util.HashSet;
 
 public class Poise extends HeavyBlow {
-    private final Tag<String> tag = Tag.getTagFromContents(new HashSet<>(Arrays.asList("physical", "disableShield", SkillTags.melee, SkillTags.on_hurt, "boundCast", SkillTags.normal_attack, SkillTags.countdown, SkillTags.modify_crit, SkillTags.recharge_normal, SkillTags.on_being_parried, SkillTags.on_parry)));
+    private final Tag<String> tag = Tag.getTagFromContents(new HashSet<>(Arrays.asList("physical", "disableShield", ProcPoints.melee, ProcPoints.on_hurt, "boundCast", ProcPoints.normal_attack, ProcPoints.countdown, ProcPoints.modify_crit, ProcPoints.recharge_normal, ProcPoints.on_being_parried, ProcPoints.on_parry)));
     private final Tag<String> no = Tag.getTagFromContents(new HashSet<>(Arrays.asList("normalAttack", "noCrit")));
 
     @Override
-    public Tag<String> getTags(LivingEntity caster) {
+    public Tag<String> getProcPoints(LivingEntity caster) {
         return tag;
-    }
-
-    @Override
-    public Tag<String> getIncompatibleTags(LivingEntity caster) {
-        return no;
     }
 
     @Override

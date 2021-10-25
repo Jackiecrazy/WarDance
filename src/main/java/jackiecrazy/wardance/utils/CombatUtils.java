@@ -465,6 +465,10 @@ public class CombatUtils {
 
     public static void sweep(LivingEntity e, Entity ignore, Hand h, double reach) {
         if (!GeneralConfig.betterSweep) return;
+        if (CombatData.getCap(e).getForcedSweep() == 0){
+            CombatData.getCap(e).setForcedSweep(-1);
+            return;
+        }
         if (h == Hand.OFF_HAND) {
             swapHeldItems(e);
             CombatData.getCap(e).setOffhandAttack(true);
@@ -501,6 +505,7 @@ public class CombatUtils {
             swapHeldItems(e);
             CombatData.getCap(e).setOffhandAttack(false);
         }
+        CombatData.getCap(e).setForcedSweep(-1);
     }
 
     public static Awareness getAwareness(LivingEntity attacker, LivingEntity target) {

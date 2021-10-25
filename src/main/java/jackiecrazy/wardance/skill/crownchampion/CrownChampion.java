@@ -7,7 +7,7 @@ import jackiecrazy.wardance.event.AttackMightEvent;
 import jackiecrazy.wardance.potion.WarEffects;
 import jackiecrazy.wardance.skill.Skill;
 import jackiecrazy.wardance.skill.SkillData;
-import jackiecrazy.wardance.skill.SkillTags;
+import jackiecrazy.wardance.skill.ProcPoints;
 import jackiecrazy.wardance.skill.WarSkills;
 import jackiecrazy.wardance.utils.CombatUtils;
 import jackiecrazy.wardance.utils.SkillUtils;
@@ -43,8 +43,7 @@ prideful might: triple might gain, but clear everything on taking damage; shatte
 elemental might: +1 burn/snowball/poison/drown damage to targets you have attacked; +1 might for every mob that dies to environmental damage around you
      */
     private static final UUID MULT = UUID.fromString("abb2e130-36af-4fbb-bf66-0f4be905dc24");
-    private final Tag<String> tag = Tag.getTagFromContents(new HashSet<>(Arrays.asList("passive", SkillTags.change_might)));
-    private final Tag<String> no = Tag.getEmptyTag();
+    private final Tag<String> tag = Tag.getTagFromContents(new HashSet<>(Arrays.asList("passive", ProcPoints.change_might)));
 
     @SubscribeEvent(priority = EventPriority.HIGHEST)
     public static void hurt(LivingDamageEvent e) {
@@ -89,13 +88,18 @@ elemental might: +1 burn/snowball/poison/drown damage to targets you have attack
     }
 
     @Override
-    public Tag<String> getTags(LivingEntity caster) {
+    public Tag<String> getProcPoints(LivingEntity caster) {
         return tag;
     }
 
     @Override
+    public Tag<String> getTags(LivingEntity caster) {
+        return passive;
+    }
+
+    @Override
     public Tag<String> getIncompatibleTags(LivingEntity caster) {
-        return no;
+        return empty;
     }
 
     @Override

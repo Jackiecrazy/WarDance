@@ -8,11 +8,14 @@ import jackiecrazy.wardance.event.GainMightEvent;
 import jackiecrazy.wardance.event.SkillCastEvent;
 import jackiecrazy.wardance.event.StaggerEvent;
 import jackiecrazy.wardance.potion.WarEffects;
+import jackiecrazy.wardance.skill.ProcPoints;
 import jackiecrazy.wardance.skill.Skill;
 import jackiecrazy.wardance.skill.SkillData;
-import jackiecrazy.wardance.skill.SkillTags;
 import jackiecrazy.wardance.skill.WarSkills;
-import jackiecrazy.wardance.utils.*;
+import jackiecrazy.wardance.utils.EffectUtils;
+import jackiecrazy.wardance.utils.GeneralUtils;
+import jackiecrazy.wardance.utils.SkillUtils;
+import jackiecrazy.wardance.utils.TargetingUtils;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.MobEntity;
@@ -29,7 +32,6 @@ import net.minecraftforge.eventbus.api.Event;
 import javax.annotation.Nullable;
 import java.awt.*;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 
@@ -44,17 +46,21 @@ Onslaught: casts heavy blow before every attack (this is a lot easier)
     Flare: deals two lives' worth of damage, but causes the target to rapidly regenerate 1.4 lives afterwards
     Master's Lesson: while active, might gain is converted into posture at a 1:1 ratio; overflow posture will generate free parries
      */
-    private final Tag<String> tag = Tag.getTagFromContents(new HashSet<>(Arrays.asList("physical", SkillTags.on_hurt, SkillTags.on_stagger, SkillTags.change_posture_regeneration, SkillTags.on_cast, SkillTags.recharge_cast, "melee", "execution")));
-    private final Tag<String> no = Tag.getTagFromContents(new HashSet<>(Collections.singletonList("execution")));
+    private final Tag<String> tag = Tag.getTagFromContents(new HashSet<>(Arrays.asList("physical", ProcPoints.on_hurt, ProcPoints.on_stagger, ProcPoints.change_posture_regeneration, ProcPoints.on_cast, ProcPoints.recharge_cast, "melee", "execution")));
 
     @Override
-    public Tag<String> getTags(LivingEntity caster) {
+    public Tag<String> getProcPoints(LivingEntity caster) {
         return tag;
     }
 
     @Override
+    public Tag<String> getTags(LivingEntity caster) {
+        return special;
+    }
+
+    @Override
     public Tag<String> getIncompatibleTags(LivingEntity caster) {
-        return no;
+        return special;
     }
 
     @Nullable
@@ -75,27 +81,18 @@ Onslaught: casts heavy blow before every attack (this is a lot easier)
 
     @Override
     public void onEffectEnd(LivingEntity caster, SkillData stats) {
-        CombatData.getCap(caster).setMight(0);
+
     }
 
     protected void performEffect(LivingEntity caster, LivingEntity target, float amount, SkillData s) {
         CombatData.getCap(target).addWounding(amount);
     }
 
-
-    public float mightConsumption(LivingEntity caster) {
-        return getParentSkill() == null ? 5 : 8;
-    }
-
     @Override
     public CastStatus castingCheck(LivingEntity caster) {
         if (CasterData.getCap(caster).isSkillActive(this))
             return CastStatus.ALLOWED;
-        if (CasterData.getCap(caster).isSkillCoolingDown(this))
-            return CastStatus.COOLDOWN;
-        if (CombatData.getCap(caster).getSpirit() < CombatData.getCap(caster).getMaxSpirit())
-            return CastStatus.OTHER;
-        return CastStatus.ALLOWED;
+        return super.castingCheck(caster);
     }
 
     @Override
@@ -236,17 +233,11 @@ Onslaught: casts heavy blow before every attack (this is a lot easier)
     }
 
     public static class MastersLesson extends Guillotine {
-        private final Tag<String> tag = Tag.getTagFromContents(new HashSet<>(Arrays.asList("physical", SkillTags.on_hurt, SkillTags.normal_attack, SkillTags.on_stagger, SkillTags.change_might, SkillTags.on_cast, "melee", "execution")));
-        private final Tag<String> no = Tag.getTagFromContents(new HashSet<>(Collections.singletonList("execution")));
+        private final Tag<String> tag = Tag.getTagFromContents(new HashSet<>(Arrays.asList("physical", ProcPoints.on_hurt, ProcPoints.normal_attack, ProcPoints.on_stagger, ProcPoints.change_might, ProcPoints.on_cast, "melee", "execution")));
 
         @Override
-        public Tag<String> getTags(LivingEntity caster) {
+        public Tag<String> getProcPoints(LivingEntity caster) {
             return tag;
-        }
-
-        @Override
-        public Tag<String> getIncompatibleTags(LivingEntity caster) {
-            return no;
         }
 
         @Override

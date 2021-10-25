@@ -3,7 +3,7 @@ package jackiecrazy.wardance.skill.mementomori;
 import jackiecrazy.wardance.event.AttackMightEvent;
 import jackiecrazy.wardance.skill.Skill;
 import jackiecrazy.wardance.skill.SkillData;
-import jackiecrazy.wardance.skill.SkillTags;
+import jackiecrazy.wardance.skill.ProcPoints;
 import jackiecrazy.wardance.skill.WarSkills;
 import jackiecrazy.wardance.utils.GeneralUtils;
 import jackiecrazy.wardance.utils.SkillUtils;
@@ -33,7 +33,7 @@ death denial: upon receiving fatal damage, become immune to all damage and all h
 saving throw: your luck scales very strongly with lost health
 pound of flesh: active skill. Consumes all your spirit, and until your spirit regenerates or (spirit) seconds have elapsed take 5% max health damage per attack to deal 10% max posture damage if parried, or 5% max health damage if connected
      */
-    private final Tag<String> tag = Tag.getTagFromContents(new HashSet<>(Arrays.asList("passive", SkillTags.recharge_sleep, SkillTags.on_being_damaged, SkillTags.attack_might)));
+    private final Tag<String> tag = Tag.getTagFromContents(new HashSet<>(Arrays.asList("passive", ProcPoints.recharge_sleep, ProcPoints.on_being_damaged, ProcPoints.attack_might)));
     private final Tag<String> no = Tag.getEmptyTag();
 
     @Nullable
@@ -43,13 +43,18 @@ pound of flesh: active skill. Consumes all your spirit, and until your spirit re
     }
 
     @Override
-    public Tag<String> getTags(LivingEntity caster) {
+    public Tag<String> getProcPoints(LivingEntity caster) {
         return tag;
     }
 
     @Override
+    public Tag<String> getTags(LivingEntity caster) {
+        return passive;
+    }
+
+    @Override
     public Tag<String> getIncompatibleTags(LivingEntity caster) {
-        return no;
+        return empty;
     }
 
     @Override

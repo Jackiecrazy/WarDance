@@ -1,7 +1,7 @@
 package jackiecrazy.wardance.mixin;
 
 import jackiecrazy.wardance.capability.skill.CasterData;
-import jackiecrazy.wardance.skill.SkillTags;
+import jackiecrazy.wardance.skill.ProcPoints;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.common.extensions.IForgeItemStack;
@@ -21,7 +21,7 @@ public interface MixinShieldDisabler {
      */
     @Overwrite
     default boolean canDisableShield(ItemStack shield, LivingEntity entity, LivingEntity attacker) {
-        if (CasterData.getCap(attacker).isTagActive(SkillTags.disable_shield)) return true;
+        if (CasterData.getCap(attacker).isTagActive(ProcPoints.disable_shield)) return true;
         return getStack().getItem().canDisableShield(getStack(), shield, entity, attacker);
     }
 }

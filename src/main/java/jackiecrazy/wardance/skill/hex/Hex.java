@@ -6,10 +6,7 @@ import jackiecrazy.wardance.capability.resources.ICombatCapability;
 import jackiecrazy.wardance.capability.status.Marks;
 import jackiecrazy.wardance.entity.FakeExplosion;
 import jackiecrazy.wardance.event.ParryEvent;
-import jackiecrazy.wardance.skill.Skill;
-import jackiecrazy.wardance.skill.SkillData;
-import jackiecrazy.wardance.skill.SkillTags;
-import jackiecrazy.wardance.skill.WarSkills;
+import jackiecrazy.wardance.skill.*;
 import jackiecrazy.wardance.utils.CombatUtils;
 import jackiecrazy.wardance.utils.EffectUtils;
 import net.minecraft.entity.Entity;
@@ -36,8 +33,8 @@ import java.util.*;
 @Mod.EventBusSubscriber(modid = WarDance.MODID)
 public class Hex extends Skill {
     static final AttributeModifier HEX = new AttributeModifier(UUID.fromString("67fe7ef6-a398-4c62-9bb1-42edaa80e7b1"), "hex", -2, AttributeModifier.Operation.ADDITION);
-    private final Tag<String> tag = Tag.getTagFromContents(new HashSet<>(Arrays.asList("melee", "noDamage", "boundCast", SkillTags.afflict_tick, SkillTags.change_parry_result, SkillTags.recharge_time, "normalAttack", "chant", "countdown")));
-    private final Tag<String> no = Tag.getTagFromContents(new HashSet<>(Arrays.asList("normalAttack")));
+    private final Tag<String> tag = makeTag("melee", "noDamage", "boundCast", ProcPoints.afflict_tick, ProcPoints.change_parry_result, ProcPoints.recharge_time, "normalAttack", "chant", "countdown");
+    private final Tag<String> thing = makeTag(SkillTags.offensive, SkillTags.magical);
 
     @SubscribeEvent
     public static void snakebite(LivingHealEvent e) {
@@ -89,13 +86,18 @@ public class Hex extends Skill {
 //    }
 
     @Override
-    public Tag<String> getTags(LivingEntity caster) {
+    public Tag<String> getProcPoints(LivingEntity caster) {
         return tag;
     }
 
     @Override
+    public Tag<String> getTags(LivingEntity caster) {
+        return thing;
+    }
+
+    @Override
     public Tag<String> getIncompatibleTags(LivingEntity caster) {
-        return no;
+        return offensive;
     }
 
     @Override
@@ -123,7 +125,7 @@ public class Hex extends Skill {
 
     @Override
     public void onSuccessfulProc(LivingEntity caster, SkillData stats, LivingEntity target, Event procPoint) {
-        if (procPoint instanceof ParryEvent && (!((ParryEvent) procPoint).canParry() || getTags(caster).contains(SkillTags.unblockable))) {
+        if (procPoint instanceof ParryEvent && (!((ParryEvent) procPoint).canParry() || getTags(caster).contains(ProcPoints.unblockable))) {
             procPoint.setCanceled(true);
             mark(caster, target, 200);
             markUsed(caster);
@@ -186,10 +188,10 @@ public class Hex extends Skill {
     }
 
     public static class Unravel extends Hex {
-        private final Tag<String> tag = Tag.getTagFromContents(new HashSet<>(Arrays.asList("melee", "noDamage", "boundCast", SkillTags.change_parry_result, SkillTags.recharge_time, SkillTags.unblockable, "normalAttack", "countdown")));
+        private final Tag<String> tag = Tag.getTagFromContents(new HashSet<>(Arrays.asList("melee", "noDamage", "boundCast", ProcPoints.change_parry_result, ProcPoints.recharge_time, ProcPoints.unblockable, "normalAttack", "countdown")));
 
         @Override
-        public Tag<String> getTags(LivingEntity caster) {
+        public Tag<String> getProcPoints(LivingEntity caster) {
             return tag;
         }
 

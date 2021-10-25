@@ -22,8 +22,7 @@ import net.minecraftforge.registries.ForgeRegistryEntry;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.awt.*;
-import java.util.ArrayList;
-import java.util.HashMap;
+import java.util.*;
 import java.util.List;
 
 /*
@@ -36,7 +35,19 @@ import java.util.List;
  * There are no grandchildren. If you make a grandchild, it won't show up.
  */
 public abstract class Skill extends ForgeRegistryEntry<Skill> {
+    protected static final Tag<String> empty=Tag.getEmptyTag();
+    protected static final Tag<String> offensivePhysical=makeTag(SkillTags.offensive, SkillTags.physical);
+    protected static final Tag<String> defensivePhysical=makeTag(SkillTags.defensive, SkillTags.physical);
+    protected static final Tag<String> offensive=makeTag(SkillTags.offensive);
+    protected static final Tag<String> defensive=makeTag(SkillTags.defensive);
+    protected static final Tag<String> passive=makeTag(SkillTags.passive);
+    protected static final Tag<String> special=makeTag(SkillTags.special);
+    protected static final Tag<String> state=makeTag(SkillTags.state);
     public static final HashMap<Skill, List<Skill>> variationMap = new HashMap<>();
+
+    protected static Tag<String> makeTag(String... stuff){
+        return Tag.getTagFromContents(new HashSet<>(Arrays.asList(stuff)));
+    }
 
     public Skill() {
         //SkillCategory
@@ -75,7 +86,7 @@ public abstract class Skill extends ForgeRegistryEntry<Skill> {
     }
 
     public boolean isPassive(LivingEntity caster) {
-        return getTags(caster).contains("passive");
+        return getProcPoints(caster).contains("passive");
     }
 
     @Nullable
@@ -96,7 +107,8 @@ public abstract class Skill extends ForgeRegistryEntry<Skill> {
         ISkillCapability cap = CasterData.getCap(caster);
         if (cap.isSkillActive(this)) return CastStatus.ACTIVE;
         for (String s : getIncompatibleTags(caster).getAllElements())
-            if (cap.isTagActive(s)) return CastStatus.CONFLICT;
+            if (cap.isTagActive(s))
+                return CastStatus.CONFLICT;
         if (caster.isSilent() && getTags(caster).contains("chant")) return CastStatus.SILENCE;
         if (cap.isSkillCoolingDown(this))
             return CastStatus.COOLDOWN;
@@ -159,9 +171,11 @@ public abstract class Skill extends ForgeRegistryEntry<Skill> {
         return Color.WHITE;
     }
 
-    public abstract Tag<String> getTags(LivingEntity caster);//requires breath, debuffing, healing, aoe, etc. Also determines proc time (parry, attack, etc)
+    public abstract Tag<String> getProcPoints(LivingEntity caster);
 
-    public abstract Tag<String> getIncompatibleTags(LivingEntity caster);//uses sharp weapon, uses breath, undead using holy spell, etc
+    public abstract Tag<String> getTags(LivingEntity caster);//requires breath, debuffing, healing, aoe, etc.
+
+    public abstract Tag<String> getIncompatibleTags(LivingEntity caster);
 
     public boolean checkAndCast(LivingEntity caster) {
         if (castingCheck(caster) != CastStatus.ALLOWED) return false;
@@ -176,7 +190,7 @@ public abstract class Skill extends ForgeRegistryEntry<Skill> {
      * @return whether the client should be updated.
      */
     public boolean activeTick(LivingEntity caster, SkillData d) {
-        if (d.getSkill().getTags(caster).contains(SkillTags.countdown) && d.getDuration() > 0) {
+        if (d.getSkill().getProcPoints(caster).contains(ProcPoints.countdown) && d.getDuration() > 0) {
             d.decrementDuration();
             if (d.getDuration() <= 0) markUsed(caster);
             return true;
@@ -189,7 +203,7 @@ public abstract class Skill extends ForgeRegistryEntry<Skill> {
     }
 
     public boolean markTick(LivingEntity caster, LivingEntity target, SkillData sd) {
-        if (this.getTags(caster).contains(SkillTags.afflict_tick)) {
+        if (this.getProcPoints(caster).contains(ProcPoints.afflict_tick)) {
             sd.decrementDuration();
         }
         if (sd.getDuration() <= 0) {
@@ -207,9 +221,8 @@ public abstract class Skill extends ForgeRegistryEntry<Skill> {
      * @return whether the client should be updated.
      */
     public boolean coolingTick(LivingEntity caster, SkillCooldownData d) {
-        if (d.getSkill().getTags(caster).contains(SkillTags.recharge_time)) {
-            onCooldownProc(caster, d, null);
-            return true;
+        if (d.getSkill().getProcPoints(caster).contains(ProcPoints.recharge_time)) {
+            return onCooldownProc(caster, d, null);
         }
         return false;
     }
