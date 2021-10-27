@@ -686,8 +686,8 @@ public class CombatCapability implements ICombatCapability {
         int ticks = (int) (elb.world.getGameTime() - lastUpdate);
         if (ticks < 1) return;//sometimes time runs backwards
         setTrueMaxPosture(getMPos(elb));
-        setTrueMaxSpirit((float) elb.getAttribute(WarAttributes.MAX_SPIRIT.get()).getValue());
-        setMaxMight((float) elb.getAttribute(WarAttributes.MAX_MIGHT.get()).getValue());
+        setTrueMaxSpirit((float) elb.getAttributeValue(WarAttributes.MAX_SPIRIT.get()));
+        setMaxMight((float) elb.getAttributeValue(WarAttributes.MAX_MIGHT.get()));
         if (first)
             setPosture(getMaxPosture());
         decrementComboGrace(ticks);
