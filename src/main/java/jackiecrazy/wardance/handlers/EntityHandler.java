@@ -194,7 +194,7 @@ public class EntityHandler {
                     e.modifyVisibility(10 / stealth - 10);
                 if (!sd.isAllSeeing() && !GeneralUtils.isFacingEntity(watcher, sneaker, Math.max(StealthConfig.baseHorizontalDetection, (int) ((20 - stealth) * StealthConfig.anglePerArmor)), Math.max(StealthConfig.baseVerticalDetection, (int) ((20 - stealth) * (20 - stealth)))))
                     e.modifyVisibility(0.2);
-                if (!sd.isNightVision() && !watcher.isPotionActive(Effects.NIGHT_VISION)) {
+                if (!sd.isMetaturnal() && !watcher.isPotionActive(Effects.NIGHT_VISION)) {
                     World world = sneaker.world;
                     if (world.isAreaLoaded(sneaker.getPosition(), 5) && world.isAreaLoaded(watcher.getPosition(), 5)) {
                         float lightMalus = world.getLight(sneaker.getPosition()) * 0.05f;

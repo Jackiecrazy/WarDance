@@ -566,7 +566,7 @@ public class CombatUtils {
             return deaf;
         }
 
-        public boolean isNightVision() {
+        public boolean isMetaturnal() {
             return nightvision;
         }
 

@@ -22,13 +22,19 @@ import jackiecrazy.wardance.networking.*;
 import jackiecrazy.wardance.potion.WarEffects;
 import jackiecrazy.wardance.skill.Skill;
 import jackiecrazy.wardance.skill.WarSkills;
+import net.minecraft.entity.EntityType;
+import net.minecraft.entity.LivingEntity;
+import net.minecraft.entity.ai.attributes.Attribute;
+import net.minecraft.entity.ai.attributes.Attributes;
 import net.minecraft.world.GameRules;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.capabilities.CapabilityManager;
 import net.minecraftforge.event.RegistryEvent;
+import net.minecraftforge.event.entity.EntityAttributeModificationEvent;
 import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.ModLoadingContext;
+import net.minecraftforge.fml.RegistryObject;
 import net.minecraftforge.fml.client.registry.ClientRegistry;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.config.ModConfig;
@@ -67,17 +73,17 @@ public class WarDance {
         // Register ourselves for server and other game events we are interested in
         MinecraftForge.EVENT_BUS.register(this);
         FMLPaths.getOrCreateGameRelativePath(FMLPaths.CONFIGDIR.get().resolve(MODID), MODID);
-        ModLoadingContext.get().registerConfig(ModConfig.Type.COMMON, GeneralConfig.CONFIG_SPEC, MODID+"/general.toml");
-        ModLoadingContext.get().registerConfig(ModConfig.Type.COMMON, StealthConfig.CONFIG_SPEC, MODID+"/stealth.toml");
-        ModLoadingContext.get().registerConfig(ModConfig.Type.COMMON, CombatConfig.CONFIG_SPEC, MODID+"/combat.toml");
-        ModLoadingContext.get().registerConfig(ModConfig.Type.COMMON, ItemConfig.CONFIG_SPEC, MODID+"/items.toml");
-        ModLoadingContext.get().registerConfig(ModConfig.Type.COMMON, ResourceConfig.CONFIG_SPEC, MODID+"/resources.toml");
-        ModLoadingContext.get().registerConfig(ModConfig.Type.CLIENT, ClientConfig.CONFIG_SPEC, MODID+"/client.toml");
+        ModLoadingContext.get().registerConfig(ModConfig.Type.COMMON, GeneralConfig.CONFIG_SPEC, MODID + "/general.toml");
+        ModLoadingContext.get().registerConfig(ModConfig.Type.COMMON, StealthConfig.CONFIG_SPEC, MODID + "/stealth.toml");
+        ModLoadingContext.get().registerConfig(ModConfig.Type.COMMON, CombatConfig.CONFIG_SPEC, MODID + "/combat.toml");
+        ModLoadingContext.get().registerConfig(ModConfig.Type.COMMON, ItemConfig.CONFIG_SPEC, MODID + "/items.toml");
+        ModLoadingContext.get().registerConfig(ModConfig.Type.COMMON, ResourceConfig.CONFIG_SPEC, MODID + "/resources.toml");
+        ModLoadingContext.get().registerConfig(ModConfig.Type.CLIENT, ClientConfig.CONFIG_SPEC, MODID + "/client.toml");
         IEventBus bus = FMLJavaModLoadingContext.get().getModEventBus();
         WarAttributes.ATTRIBUTES.register(bus);
         WarSkills.SKILLS.makeRegistry("skills", RegistryBuilder::new);
         WarSkills.SKILLS.register(bus);
-        WarEffects.EFFECTS.register(FMLJavaModLoadingContext.get().getModEventBus());
+        WarEffects.EFFECTS.register(bus);
     }
 
     private void setup(final FMLCommonSetupEvent event) {
@@ -141,6 +147,17 @@ public class WarDance {
         @SubscribeEvent()
         public void skillRegistry(RegistryEvent.NewRegistry event) {
             //WarSkills.SKILLS=new RegistryBuilder<Skill>().setName(new ResourceLocation(MODID, "skills")).setType(Skill.class).create();
+        }
+
+        @SubscribeEvent
+        public static void attributes(EntityAttributeModificationEvent event) {
+            for (EntityType<? extends LivingEntity> t : event.getTypes()) {
+                if (!event.has(t, Attributes.ATTACK_SPEED)) event.add(t, Attributes.ATTACK_SPEED, 4);
+                for (RegistryObject<Attribute> a : WarAttributes.ATTRIBUTES.getEntries()) {
+                    //if (!event.has(t, a.get()))
+                    event.add(t, a.get());
+                }
+            }
         }
 
 
