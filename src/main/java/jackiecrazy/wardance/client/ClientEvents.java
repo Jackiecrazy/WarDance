@@ -149,7 +149,7 @@ public class ClientEvents {
 //            }
 //            tapped[3] = mi.forwardKeyDown;
             }
-            if (mc.player.isSprinting()&&mc.gameSettings.keyBindSprint.isKeyDown() && mi.sneaking && !sneak) {
+            if (mc.player.isSprinting() && mc.gameSettings.keyBindSprint.isKeyDown() && mi.sneaking && !sneak) {
                 //if(mc.world.getTotalWorldTime()-lastSneak<=ALLOWANCE){
                 dir = 99;
                 //}
@@ -197,6 +197,25 @@ public class ClientEvents {
         final LivingEntity e = event.getEntity();
         float width = e.getWidth();
         float height = e.getHeight();
+        PlayerEntity p = Minecraft.getInstance().player;
+//        if (p != null) {//TODO config
+//            double chunk = Minecraft.getInstance().gameSettings.renderDistanceChunks * 16;
+//            double visibilityMult = e.getVisibilityMultiplier(p);
+//            double visible = chunk * visibilityMult;
+//            if (e.getDistanceSq(p) > visible * visible) {
+//                GlStateManager.enableBlend();
+//                GlStateManager.blendFunc(GlStateManager.SourceFactor.SRC_ALPHA.param, GlStateManager.DestFactor.ONE_MINUS_SRC_ALPHA.param);
+//
+//                RenderSystem.enableCull();
+//                //GlStateManager.(GlStateManager.CullFace.BACK);
+//
+//
+//                //Color c = RenderSystem.clearCurrentColor();
+//                //c.alpha *= (float) (min + (1d - min) * visibility);
+//                GL11.glColor4f(1, 1, 1, (float) visibilityMult);
+//            }
+//            return;
+//        }
         if (e.isAlive()) {
             if (CombatData.getCap(event.getEntity()).getStaggerTime() > 0) {
                 //System.out.println("yes");
@@ -215,9 +234,9 @@ public class ClientEvents {
                 //flat bois become flatter bois
                 //multi bois do nothing
             }
-            if(CombatData.getCap(e).getRollTime()!=0&&e.getPose()== Pose.SLEEPING){
-                MatrixStack ms=event.getMatrixStack();
-                ms.rotate(Vector3f.YN.rotationDegrees(e.rotationYaw-e.getBedDirection().getHorizontalAngle()));
+            if (CombatData.getCap(e).getRollTime() != 0 && e.getPose() == Pose.SLEEPING) {
+                MatrixStack ms = event.getMatrixStack();
+                ms.rotate(Vector3f.YN.rotationDegrees(e.rotationYaw - e.getBedDirection().getHorizontalAngle()));
 //                ms.rotate(Vector3f.ZP.rotationDegrees(-e.renderYawOffset));
 //                ms.rotate(Vector3f.YP.rotationDegrees(e.renderYawOffset));
             }
@@ -824,7 +843,6 @@ public class ClientEvents {
 
     @SubscribeEvent
     public static void zTarget(TickEvent.RenderTickEvent event) {
-        //FIXME WTF
         if (event.phase == TickEvent.Phase.END) {
             Minecraft mc = Minecraft.getInstance();
             if (mc.player == null) return;

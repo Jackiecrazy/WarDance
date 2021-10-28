@@ -4,6 +4,7 @@ import net.minecraft.entity.LivingEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.util.Hand;
+import net.minecraft.util.math.vector.Vector3d;
 
 public interface ICombatCapability {
     //might, spirit, posture, combo
@@ -231,6 +232,8 @@ public interface ICombatCapability {
     int getParryingTick();//hey, it's useful for future "smart" entities as well.
 
     boolean isValid();
+
+    Vector3d getMotionConsistently();//I can't believe I have to do this.
 
     CompoundNBT write();
 }

@@ -102,7 +102,7 @@ public class CombatHandler {
                 h = Hand.MAIN_HAND;
             }
             Entity projectile = e.getEntity();
-            ProjectileParryEvent pe = new ProjectileParryEvent(uke, projectile, h, defend, free ? 0 : consume, projectile.getMotion().normalize().scale(-1));
+            ProjectileParryEvent pe = new ProjectileParryEvent(uke, projectile, h, defend, free ? 0 : consume, projectile.getMotion().normalize().scale(-0.2));
             if (failManualParry)
                 pe.setResult(Event.Result.DENY);
             MinecraftForge.EVENT_BUS.post(pe);
@@ -185,6 +185,7 @@ public class CombatHandler {
             ItemStack attack = CombatUtils.getAttackingItemStack(e.getSource());
             if (CombatUtils.isMeleeAttack(e.getSource()) && e.getSource().getTrueSource() instanceof LivingEntity && attack != null && e.getAmount() > 0) {
                 LivingEntity seme = (LivingEntity) e.getSource().getTrueSource();
+                if(StealthConfig.inv)
                 seme.removePotionEffect(Effects.INVISIBILITY);
                 ICombatCapability semeCap = CombatData.getCap(seme);
                 Hand attackingHand = semeCap.isOffhandAttack() ? Hand.OFF_HAND : Hand.MAIN_HAND;
@@ -268,7 +269,7 @@ public class CombatHandler {
                 if (ukeCap.getStaggerTime() == 0) {
                     //overflow posture
                     float knockback = ukeCap.consumePosture(seme, pe.getPostureConsumption());
-                    CombatUtils.knockBack(uke, seme, Math.min(1.5f, knockback / (20f * ukeCap.getMaxPosture())), true, false);
+                    //CombatUtils.knockBack(uke, seme, Math.min(1.5f, knockback / (20f * ukeCap.getMaxPosture())), true, false);
                     //no parries if stabby
                     if (StealthConfig.ignore && awareness == CombatUtils.Awareness.UNAWARE) return;
                     if (pe.canParry()) {
@@ -276,8 +277,12 @@ public class CombatHandler {
                         downingHit = false;
                         ukeCap.addCombo(0);
                         //knockback based on posture consumed
-                        CombatUtils.knockBack(uke, seme, Math.min(1f, pe.getPostureConsumption() * 3 / ukeCap.getMaxPosture()), true, false);
-                        CombatUtils.knockBack(seme, uke, Math.min(1f, pe.getPostureConsumption() * 3 / semeCap.getMaxPosture()), true, false);
+                        double kb = Math.sqrt(atkMult) - 0.18 - (1 / Math.max(defMult, 0.1)); //this will return negative if the defmult is greater, and positive if the atkmult is greater. Larger abs val=larger difference
+                        //sigmoid curve again!
+                        kb = 1d / (1d + Math.exp(-kb));//this is the knockback to be applied to the defender
+                        CombatUtils.knockBack(uke, seme, Math.min(uke instanceof PlayerEntity ? 1.6f : 1.3f, 0.2f + (pe.getPostureConsumption() + knockback) * (float) kb * 4 / ukeCap.getMaxPosture()), true, false);
+                        kb = 1 - kb;
+                        CombatUtils.knockBack(seme, uke, Math.min(uke instanceof PlayerEntity ? 1.6f : 1.3f, 0.1f + pe.getPostureConsumption() * (float) kb * 2 / semeCap.getMaxPosture()), true, false);
                         if (defend == null) {
                             //deflect
                             uke.world.playSound(null, uke.getPosX(), uke.getPosY(), uke.getPosZ(), SoundEvents.BLOCK_IRON_TRAPDOOR_OPEN, SoundCategory.PLAYERS, 0.75f + WarDance.rand.nextFloat() * 0.5f, (1 - (ukeCap.getPosture() / ukeCap.getMaxPosture())) + WarDance.rand.nextFloat() * 0.5f);

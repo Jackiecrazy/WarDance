@@ -16,6 +16,7 @@ import jackiecrazy.wardance.skill.Skill;
 import jackiecrazy.wardance.skill.SkillData;
 import jackiecrazy.wardance.utils.CombatUtils;
 import jackiecrazy.wardance.utils.GeneralUtils;
+import net.minecraft.command.arguments.EntityAnchorArgument;
 import net.minecraft.entity.CreatureEntity;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.LivingEntity;
@@ -29,6 +30,8 @@ import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.Tuple;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.MathHelper;
+import net.minecraft.util.math.vector.Vector3d;
 import net.minecraft.world.World;
 import net.minecraftforge.event.AttachCapabilitiesEvent;
 import net.minecraftforge.event.TickEvent;
@@ -104,7 +107,7 @@ public class EntityHandler {
             isc.clearSkillCooldowns();
         }
         //CasterData.getCap(e.getPlayer()).read(CasterData.getCap(e.getOriginal()).write());
-        ISkillCapability cap=CasterData.getCap(e.getPlayer());
+        ISkillCapability cap = CasterData.getCap(e.getPlayer());
         cap.clearActiveSkills();
         cap.setEquippedSkills(CasterData.getCap(e.getOriginal()).getEquippedSkills());
         for (Skill s : cap.getEquippedSkills())
@@ -190,24 +193,29 @@ public class EntityHandler {
             if (sd.isVigilant()) return;
             if (watcher.getAttackingEntity() != sneaker && watcher.getRevengeTarget() != sneaker && watcher.getLastAttackedEntity() != sneaker && (!(watcher instanceof MobEntity) || ((MobEntity) watcher).getAttackTarget() != sneaker)) {
                 double stealth = GeneralUtils.getAttributeValueSafe(sneaker, WarAttributes.STEALTH.get());
+                if (watcher.isPotionActive(Effects.BLINDNESS))
+                    e.modifyVisibility(1f / (watcher.getActivePotionEffect(Effects.BLINDNESS).getAmplifier() + 3));
                 if (stealth > 20)
-                    e.modifyVisibility(10 / stealth - 10);
+                    e.modifyVisibility(10 / (stealth - 10));
                 if (!sd.isAllSeeing() && !GeneralUtils.isFacingEntity(watcher, sneaker, Math.max(StealthConfig.baseHorizontalDetection, (int) ((20 - stealth) * StealthConfig.anglePerArmor)), Math.max(StealthConfig.baseVerticalDetection, (int) ((20 - stealth) * (20 - stealth)))))
-                    e.modifyVisibility(0.2);
-                if (!sd.isMetaturnal() && !watcher.isPotionActive(Effects.NIGHT_VISION)) {
+                    e.modifyVisibility(0.3);
+                if (!sd.isOlfactory()) {
+                    final double speedSq = GeneralUtils.getSpeedSq(sneaker);
+                    e.modifyVisibility(0.5 + MathHelper.sqrt(speedSq) * 2);
+                }
+                if (!sd.isNightVision() && !watcher.isPotionActive(Effects.NIGHT_VISION) && !sneaker.isPotionActive(Effects.GLOWING)) {
                     World world = sneaker.world;
                     if (world.isAreaLoaded(sneaker.getPosition(), 5) && world.isAreaLoaded(watcher.getPosition(), 5)) {
-                        float lightMalus = world.getLight(sneaker.getPosition()) * 0.05f;
-                        if (!sd.isNocturnal())
-                            lightMalus = 1 - lightMalus;
+                        final int light = world.getLight(sneaker.getPosition());
+                        float lightMalus = MathHelper.clamp(light * 0.1f, 0, 1);
                         if (!sd.isDeaf())
                             lightMalus *= Math.min(stealth / 20f, 1f);
                         e.modifyVisibility(1 - lightMalus);
                     }
                 }
             }
-            if (!sd.isAllSeeing())
-                e.modifyVisibility(sneaker.isSprinting() ? 1.1 : watcher.canEntityBeSeen(sneaker) ? 0.4 : 1);
+            if (!sd.isAllSeeing() && !watcher.canEntityBeSeen(sneaker))
+                e.modifyVisibility(0.4);
         }
     }
 
@@ -244,16 +252,18 @@ public class EntityHandler {
     @SubscribeEvent
     public static void pray(LivingSetAttackTargetEvent e) {
         if (e.getTarget() == null) return;
-        if (e.getEntityLiving().isPotionActive(WarEffects.FEAR.get()) || e.getEntityLiving().isPotionActive(WarEffects.CONFUSION.get()) || e.getEntityLiving().isPotionActive(WarEffects.SLEEP.get()))
-            ((MobEntity) e.getEntityLiving()).setAttackTarget(null);
-        int stealth = 20 - (int) GeneralUtils.getAttributeValueSafe(e.getTarget(), WarAttributes.STEALTH.get());
-        if (e.getEntityLiving() != null && StealthConfig.stealthSystem && !GeneralUtils.isFacingEntity(e.getEntityLiving(), e.getTarget(), Math.max(StealthConfig.baseHorizontalDetection, stealth * StealthConfig.anglePerArmor), Math.max(StealthConfig.baseVerticalDetection, stealth * stealth))) {
-            CombatUtils.StealthData sd = CombatUtils.stealthMap.getOrDefault(e.getEntityLiving().getType().getRegistryName(), CombatUtils.STEALTH);
-            if (sd.isVigilant() || sd.isObservant()) return;
+        if (!(e.getEntityLiving() instanceof MobEntity)) return;
+        final MobEntity mob = (MobEntity) e.getEntityLiving();
+        if (mob.isPotionActive(WarEffects.FEAR.get()) || mob.isPotionActive(WarEffects.CONFUSION.get()) || mob.isPotionActive(WarEffects.SLEEP.get()))
+            mob.setAttackTarget(null);
+        if (mob.getRevengeTarget() != e.getTarget() && StealthConfig.stealthSystem && !GeneralUtils.isFacingEntity(mob, e.getTarget(), StealthConfig.baseHorizontalDetection, StealthConfig.baseVerticalDetection)) {
+            CombatUtils.StealthData sd = CombatUtils.stealthMap.getOrDefault(mob.getType().getRegistryName(), CombatUtils.STEALTH);
+            if (sd.isVigilant() || sd.isPerceptive()) return;
             //outside of LoS, perform luck check. Pray to RNGesus!
-            double luckDiff = GeneralUtils.getAttributeValueSafe(e.getTarget(), Attributes.LUCK) - GeneralUtils.getAttributeValueSafe(e.getEntityLiving(), Attributes.LUCK);
-            if (luckDiff > 0 && WarDance.rand.nextFloat() < (luckDiff / (2 + luckDiff))) {
-                ((MobEntity) e.getEntityLiving()).setAttackTarget(null);
+            double luckDiff = GeneralUtils.getAttributeValueSafe(e.getTarget(), Attributes.LUCK) - GeneralUtils.getAttributeValueSafe(mob, Attributes.LUCK);
+            mob.setAttackTarget(null);
+            if (luckDiff <= 0 || WarDance.rand.nextFloat() > (luckDiff / (2 + luckDiff))) {
+                mob.lookAt(EntityAnchorArgument.Type.EYES, e.getTarget().getPositionVec());//.getLookController().setLookPositionWithEntity(e.getTarget(), 0, 0);
             }
         }
     }
@@ -276,6 +286,8 @@ public class EntityHandler {
                         if (CombatUtils.getAwareness(null, c) == CombatUtils.Awareness.UNAWARE && !CombatUtils.stealthMap.getOrDefault(c.getType().getRegistryName(), CombatUtils.STEALTH).isDeaf()) {
                             c.getNavigator().clearPath();
                             c.getNavigator().setPath(c.getNavigator().getPathToPos(n.getKey().getB(), (int) (n.getValue() + 3)), 1);
+                            BlockPos vec = n.getKey().getB();
+                            c.lookAt(EntityAnchorArgument.Type.EYES, new Vector3d(vec.getX(), vec.getY(), vec.getZ()));
                         }
                     }
                 }

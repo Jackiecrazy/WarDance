@@ -95,7 +95,7 @@ public class CombatConfig {
         _mobDeflectChance = b.translation("wardance.config.mobD").comment("chance that a mob deflects with armor out of 1").defineInRange("mob deflect chance", 0.6, 0, 1);
         _customParry = b.translation("wardance.config.parryMobs").comment("Define mobs that are automatically capable of parrying. Entity settings override weapon settings. Format is name, defense posture multiplier, parry chance. Hands are individually calculated for chance. Filling in 0 for parry chance will disable parrying for that mob, regardless of weaponry.").defineList("auto parry mobs", Lists.newArrayList("example:golem, 0.9, 0.5", "example:fish, 1, 0"), String.class::isInstance);
         _kenshiroScaler = b.translation("wardance.config.kenB").comment("posture damage from empty fists will be scaled by this number. Notice many mobs, such as endermen and ravagers, technically are empty-handed!").defineInRange("unarmed buff", 1.6, 0, Double.MAX_VALUE);
-        _mobScaler = b.translation("wardance.config.mobB").comment("posture damage from mob attacks will be scaled by this number").defineInRange("mob posture damage buff", 1.5, 0, Double.MAX_VALUE);
+        _mobScaler = b.translation("wardance.config.mobB").comment("posture damage from empty-handed mob attacks will be scaled by this number. It used to apply to weapons, but then vindicators got too busted.").defineInRange("mob posture damage buff", 1.5, 0, Double.MAX_VALUE);
         _knockbackNerf = b.translation("wardance.config.knockback").comment("knockback from all sources to everything will be multiplied by this amount").defineInRange("knockback multiplier", 1, 0, 10d);
         b.pop();
         b.push("misc");

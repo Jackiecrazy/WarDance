@@ -22,7 +22,7 @@ import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 
 @Mod.EventBusSubscriber(modid = WarDance.MODID)
-public class SkillEventHandler {//TODO remove some checks on some tags so execution on means no damage whatsoever
+public class SkillEventHandler {
 
     @SubscribeEvent(priority = EventPriority.LOWEST)
     public static void sleep(PlayerWakeUpEvent e) {

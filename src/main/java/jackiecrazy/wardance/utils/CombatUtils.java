@@ -46,7 +46,7 @@ import javax.annotation.Nullable;
 import java.util.*;
 
 public class CombatUtils {
-    public static final StealthData STEALTH = new StealthData(false, false, false, false, false, false);
+    public static final StealthData STEALTH = new StealthData("");
     public static HashMap<ResourceLocation, Float> customPosture = new HashMap<>();
     public static HashMap<ResourceLocation, Tuple<Float, Float>> parryMap = new HashMap<>();
     public static HashMap<ResourceLocation, StealthData> stealthMap = new HashMap<>();
@@ -174,7 +174,7 @@ public class CombatUtils {
                 String[] val = s.split(",");
                 final ResourceLocation key = new ResourceLocation(val[0]);
                 String value = val[1];
-                CombatUtils.stealthMap.put(key, new StealthData(value.contains("d"), value.contains("m"), value.contains("a"), value.contains("o"), value.contains("v"), value.contains("n")));
+                CombatUtils.stealthMap.put(key, new StealthData(value.toLowerCase(Locale.ROOT)));
 //                String print = val[0]+", ";
 //                StealthData sd = stealthMap.get(key);
 //                print = print.concat(sd.deaf ? "d" : "");
@@ -271,7 +271,9 @@ public class CombatUtils {
 
     public static float getPostureAtk(@Nullable LivingEntity attacker, @Nullable LivingEntity defender, @Nullable Hand h, float amount, ItemStack stack) {
         float base = amount * (float) DEFAULT.attackPostureMultiplier;
+        float scaler=CombatConfig.mobScaler;
         if (stack != null && !stack.isEmpty()) {
+            scaler=1;
             if (stack.getCapability(CombatManipulator.CAP).isPresent()) {
                 base = stack.getCapability(CombatManipulator.CAP).resolve().get().postureDealtBase(attacker, defender, stack, amount);
             } else if (combatList.containsKey(stack.getItem()))
@@ -281,7 +283,7 @@ public class CombatUtils {
             base *= CombatConfig.kenshiroScaler;
         }
         if (attacker == null || h == null) return base;
-        return base * (attacker instanceof PlayerEntity ? Math.max(CombatData.getCap(attacker).getCachedCooldown(), ((PlayerEntity) attacker).getCooledAttackStrength(0.5f)) : CombatConfig.mobScaler);
+        return base * (attacker instanceof PlayerEntity ? Math.max(CombatData.getCap(attacker).getCachedCooldown(), ((PlayerEntity) attacker).getCooledAttackStrength(0.5f)) : scaler);
     }
 
     public static float getPostureDef(@Nullable LivingEntity attacker, @Nullable LivingEntity defender, ItemStack stack, float amount) {
@@ -465,7 +467,7 @@ public class CombatUtils {
 
     public static void sweep(LivingEntity e, Entity ignore, Hand h, double reach) {
         if (!GeneralConfig.betterSweep) return;
-        if (CombatData.getCap(e).getForcedSweep() == 0){
+        if (CombatData.getCap(e).getForcedSweep() == 0) {
             CombatData.getCap(e).setForcedSweep(-1);
             return;
         }
@@ -551,38 +553,38 @@ public class CombatUtils {
     }
 
     public static class StealthData {
-        private final boolean deaf, nightvision, illuminati, atheist, vigil, lightflip;
+        private final boolean deaf, nightvision, allSeeing, perceptive, vigil, olfactory;
 
-        public StealthData(boolean isDeaf, boolean metaturnal, boolean allSeeing, boolean observant, boolean vigilant, boolean nocturnal) {
-            deaf = isDeaf;
-            nightvision = metaturnal;
-            illuminati = allSeeing;
-            atheist = observant;
-            vigil = vigilant;
-            lightflip = nocturnal;
+        public StealthData(String value) {
+            allSeeing = value.contains("a");
+            deaf = value.contains("d");
+            nightvision = value.contains("n");
+            olfactory = value.contains("o");
+            perceptive = value.contains("p");
+            vigil = value.contains("v");
         }
 
         public boolean isDeaf() {
             return deaf;
         }
 
-        public boolean isMetaturnal() {
+        public boolean isNightVision() {
             return nightvision;
         }
 
         public boolean isAllSeeing() {
-            return illuminati;
+            return allSeeing;
         }
 
-        public boolean isObservant() {
-            return atheist;
+        public boolean isPerceptive() {
+            return perceptive;
         }
 
         public boolean isVigilant() {
             return vigil;
         }
 
-        public boolean isNocturnal() {return lightflip;}
+        public boolean isOlfactory() {return olfactory;}
 
     }
 

@@ -27,6 +27,7 @@ import net.minecraft.util.Hand;
 import net.minecraft.util.SoundCategory;
 import net.minecraft.util.SoundEvents;
 import net.minecraft.util.math.MathHelper;
+import net.minecraft.util.math.vector.Vector3d;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.util.FakePlayer;
 import net.minecraftforge.fml.network.PacketDistributor;
@@ -49,7 +50,7 @@ public class CombatCapability implements ICombatCapability {
     private float qi, spirit, posture, combo, mpos, mspi, wounding, burnout, fatigue, mainReel, offReel, maxMight;
     private int shatterCD;
     private int qcd, scd, pcd, ccd, mBind, oBind;
-    private int staggert, staggerc, ocd, shield, sc, roll, sweep=-1;
+    private int staggert, staggerc, ocd, shield, sc, roll, sweep = -1;
     private boolean offhand, combat;
     private long lastUpdate;
     private boolean first, shattering;
@@ -59,6 +60,7 @@ public class CombatCapability implements ICombatCapability {
     private int recoveryTimer;
     private ItemStack tempOffhand = ItemStack.EMPTY;
     private float mainReelCounter = 0, offReelCounter = 0;
+    private Vector3d motion;
 
     public CombatCapability(LivingEntity e) {
         dude = new WeakReference<>(e);
@@ -473,7 +475,7 @@ public class CombatCapability implements ICombatCapability {
             roll += amount;
         else if (roll - amount > 0)
             roll -= amount;
-        else if(roll!=0) {
+        else if (roll != 0) {
             if (dude.get() instanceof PlayerEntity) {
                 PlayerEntity p = (PlayerEntity) dude.get();
                 p.setForcedPose(null);
@@ -692,6 +694,8 @@ public class CombatCapability implements ICombatCapability {
             setPosture(getMaxPosture());
         decrementComboGrace(ticks);
         recoveryTimer -= ticks;
+        if (elb.ticksExisted % 5 == 0)
+            motion = elb.getPositionVec();
         int qiExtra = decrementMightGrace(ticks);
         int spExtra = decrementSpiritGrace(ticks);
         int poExtra = decrementPostureGrace(ticks);
@@ -835,6 +839,12 @@ public class CombatCapability implements ICombatCapability {
     @Override
     public boolean isValid() {
         return true;
+    }
+
+    @Override
+    public Vector3d getMotionConsistently() {
+        if (dude.get() == null || motion == null) return Vector3d.ZERO;
+        return dude.get().getPositionVec().subtract(motion).scale(0.25);
     }
 
     @Override

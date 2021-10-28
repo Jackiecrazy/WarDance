@@ -41,7 +41,11 @@ import java.util.Optional;
 public class GeneralUtils {
     public static double getSpeedSq(Entity e) {
         if (e.getRidingEntity() != null)
-            return e.getLowestRidingEntity().getMotion().lengthSquared();
+            if(e.getLowestRidingEntity() instanceof LivingEntity)
+                return CombatData.getCap((LivingEntity) e.getLowestRidingEntity()).getMotionConsistently().lengthSquared();
+            else return e.getLowestRidingEntity().getMotion().lengthSquared();
+        if(e instanceof LivingEntity)
+            return CombatData.getCap((LivingEntity) e).getMotionConsistently().lengthSquared();
         return e.getMotion().lengthSquared();
     }
 

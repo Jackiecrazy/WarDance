@@ -4,6 +4,7 @@ import net.minecraft.entity.LivingEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.util.Hand;
+import net.minecraft.util.math.vector.Vector3d;
 
 public class DummyCombatCap implements ICombatCapability {
 
@@ -446,6 +447,11 @@ public class DummyCombatCap implements ICombatCapability {
     @Override
     public boolean isValid() {
         return false;
+    }
+
+    @Override
+    public Vector3d getMotionConsistently() {
+        return Vector3d.ZERO;
     }
 
     @Override

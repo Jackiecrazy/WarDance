@@ -26,19 +26,19 @@ public class StealthConfig {
             "minecraft:creeper, o",
             "minecraft:dolphin, v",
             "minecraft:donkey, v",
-            "minecraft:drowned, m",
-            "minecraft:elder_guardian, ma",
+            "minecraft:drowned, n",
+            "minecraft:elder_guardian, na",
             "minecraft:ender_dragon, a",
             "minecraft:enderman, nao",
             "minecraft:endermite, ",
             "minecraft:evoker, o",
             "minecraft:fox, v",
-            "minecraft:ghast, mo",
-            "minecraft:guardian, ma",
+            "minecraft:ghast, no",
+            "minecraft:guardian, na",
             "minecraft:horse, v",
             "minecraft:husk, dn",
-            "minecraft:illusioner, mo",
-            "minecraft:iron_golem, mao",
+            "minecraft:illusioner, no",
+            "minecraft:iron_golem, nao",
             "minecraft:llama, v",
             "minecraft:mooshroom, v",
             "minecraft:mule, v",
@@ -69,9 +69,9 @@ public class StealthConfig {
             "minecraft:vex, v",
             "minecraft:villager, v",
             "minecraft:vindicator, o",
-            "minecraft:wandering_trader, mov",
+            "minecraft:wandering_trader, nov",
             "minecraft:wither, nv",
-            "minecraft:wither_skeleton, dmo",
+            "minecraft:wither_skeleton, dno",
             "minecraft:zoglin, n",
             "minecraft:zombie, dn",
             "minecraft:zombie_horse, v",
@@ -84,7 +84,7 @@ public class StealthConfig {
             "ars_nouveau:sylph, v",
             "ars_nouveau:whelp, v",
             "ars_nouveau:wilden_guardian, ",
-            "ars_nouveau:wilden_hunter, m",
+            "ars_nouveau:wilden_hunter, n",
             "ars_nouveau:wilden_stalker, a",
             "artifacts:mimic, v",
             "atum:assassin, v",
@@ -97,9 +97,9 @@ public class StealthConfig {
             "atum:nomad, ao",
             "atum:pharaoh, ov",
             "atum:serval, ao",
-            "atum:stoneguard, dm",
-            "atum:stoneguard_friendly, dmv",
-            "atum:stonewarden, dm",
+            "atum:stoneguard, dn",
+            "atum:stoneguard_friendly, dnv",
+            "atum:stonewarden, dn",
             "atum:stonewarden_friendly, dv",
             "atum:tarantula, n",
             "atum:wraith, no",
@@ -107,7 +107,7 @@ public class StealthConfig {
             "charm:moobloom, v",
             "doggytalents:dog, v",
             "eidolon:necromancer, no",
-            "eidolon:wraith, m",
+            "eidolon:wraith, n",
             "eidolon:zombie_brute, d",
             "endergetic:bolloom_balloon, v",
             "endergetic:booflo, v",
@@ -127,20 +127,20 @@ public class StealthConfig {
             "iceandfire:dread_thrall, do",
             "iceandfire:fire_dragon, o",
             "iceandfire:ghost, n",
-            "iceandfire:gorgon, mao",
+            "iceandfire:gorgon, nao",
             "iceandfire:hippocampus, ov",
             "iceandfire:hippogryph, o",
             "iceandfire:hydra, o",
             "iceandfire:ice_dragon, o",
             "iceandfire:lightning_dragon, o",
-            "iceandfire:myrmex_queen, m",
-            "iceandfire:myrmex_royal, m",
-            "iceandfire:myrmex_sentinel, m",
-            "iceandfire:myrmex_soldier, m",
-            "iceandfire:myrmex_swarmer, m",
-            "iceandfire:myrmex_worker, m",
+            "iceandfire:myrmex_queen, n",
+            "iceandfire:myrmex_royal, n",
+            "iceandfire:myrmex_sentinel, n",
+            "iceandfire:myrmex_soldier, n",
+            "iceandfire:myrmex_swarmer, n",
+            "iceandfire:myrmex_worker, n",
             "iceandfire:pixie, o",
-            "iceandfire:sea_serpent, m",
+            "iceandfire:sea_serpent, n",
             "iceandfire:troll, n",
             "inventorypets:anvil_pet_entity, v",
             "inventorypets:bed_pet_entity, v",
@@ -168,8 +168,8 @@ public class StealthConfig {
             "mowziesmobs:naga, a",
             "mutantbeasts:creeper_minion, v",
             "mutantbeasts:endersoul_clone, v",
-            "mutantbeasts:mutant_enderman, mao",
-            "mutantbeasts:mutant_skeleton, dmo",
+            "mutantbeasts:mutant_enderman, nao",
+            "mutantbeasts:mutant_skeleton, dno",
             "mutantbeasts:mutant_snow_golem, v",
             "mutantbeasts:mutant_zombie, n",
             "mutantbeasts:spider_pig, m",
@@ -185,7 +185,7 @@ public class StealthConfig {
             "mysticalworld:sprout, v",
             "outer_end:chorus_squid, v",
             "outer_end:entombed, no",
-            "outer_end:purpur_golem, mo",
+            "outer_end:purpur_golem, no",
             "outer_end:spectrafly, v",
             "outer_end:stalker, n",
             "quark:crab, v",
@@ -199,10 +199,10 @@ public class StealthConfig {
             "quark:wrapped, d",
             "switchbow:entitylittleirongolem, av",
             "villagertools:guard, o",
-            "villagertools:reinforced_golem, ma"
+            "villagertools:reinforced_golem, na"
     };
     public static float distract, unaware;
-    public static boolean stealthSystem, ignore;
+    public static boolean stealthSystem, ignore, inv;
     public static int baseHorizontalDetection, baseVerticalDetection, anglePerArmor;
     public static double blockPerVolume;
 
@@ -214,6 +214,7 @@ public class StealthConfig {
 
     private final ForgeConfigSpec.ConfigValue<List<? extends String>> _customDetection;
     private final ForgeConfigSpec.BooleanValue _stab;
+    private final ForgeConfigSpec.BooleanValue _removeInv;
     private final ForgeConfigSpec.DoubleValue _distract;
     private final ForgeConfigSpec.DoubleValue _unaware;
     private final ForgeConfigSpec.BooleanValue _ignore;
@@ -225,6 +226,7 @@ public class StealthConfig {
     public StealthConfig(ForgeConfigSpec.Builder b) {
         //feature toggle, resource, defense, compat, stealth, lists
         _stab = b.translation("wardance.config.stabby").comment("enable or disable the entire system").define("enable stabbing", true);
+        _removeInv = b.translation("wardance.config.removeInvis").comment("whether invisibility will be removed on attack").define("attacking dispels invisibility", true);
         _baseDetectionHorizontal = b.translation("wardance.config.detectH").comment("mobs start out with this FoV of full detection on the xz plane").defineInRange("default mob horizontal FoV", 120, 0, 360);
         _baseDetectionVertical = b.translation("wardance.config.detectV").comment("mobs start out with this FoV of full detection on the y axis").defineInRange("default mob vertical FoV", 60, 0, 360);
         _anglePerArmor = b.translation("wardance.config.perarmor").comment("your stealth attribute is multiplied by this to generate a new FoV for the purpose of detection by mobs, if it is greater than the default").defineInRange("armor stealth debuff", 18, 0, 360);
@@ -232,7 +234,7 @@ public class StealthConfig {
         _distract = b.translation("wardance.config.distract").comment("posture and health damage multiplier for distracted stabs").defineInRange("distracted stab multiplier", 1.5, 0, Double.MAX_VALUE);
         _unaware = b.translation("wardance.config.unaware").comment("posture and health damage multiplier for unaware stabs").defineInRange("unaware stab multiplier", 1.5, 0, Double.MAX_VALUE);
         _ignore = b.translation("wardance.config.ignore").comment("whether unaware stabs ignore parry, deflection, shatter, and absorption").define("unaware stab defense ignore", true);
-        _customDetection = b.translation("wardance.config.mobDetection").comment("Define custom detection mechanics for mobs. You may tag mobs as (a)ll-seeing, (d)eaf, (m)etaturnal, (n)octurnal, (o)bservant, or (v)igilant. Deaf mobs ignore sound cues and armor reduction to stealth, nocturnal mobs have the light modifier inverted, metaturnal mobs ignore light level (overriding nocturnal), all-seeing mobs ignore LoS modifiers, observant mobs ignore luck, vigilant mobs bypass the entire stealth and distraction system.").defineList("mob detection rules", Arrays.asList(SNEAK), String.class::isInstance);
+        _customDetection = b.translation("wardance.config.mobDetection").comment("Define custom detection mechanics for mobs by tagging them as one of the following: \n(a)ll-seeing mobs ignore LoS modifiers. \n(d)eaf mobs ignore sound cues and do not factor in the armor debuff assigned to darkness-induced stealth. \n(n)octurnal mobs ignore light level. \n(o)lfactory mobs ignore luck. \n(p)erceptive mobs ignore motion multipliers. \n(v)igilant mobs bypass the entire stealth and distraction system.").defineList("mob detection rules", Arrays.asList(SNEAK), String.class::isInstance);
     }
 
     private static void bake() {
@@ -244,6 +246,7 @@ public class StealthConfig {
         baseHorizontalDetection = CONFIG._baseDetectionHorizontal.get();
         baseVerticalDetection = CONFIG._baseDetectionVertical.get();
         blockPerVolume = CONFIG._blockPerVolume.get();
+        inv= CONFIG._removeInv.get();
         CombatUtils.updateMobDetection(CONFIG._customDetection.get());
     }
 
