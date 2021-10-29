@@ -258,7 +258,7 @@ public class EntityHandler {
             mob.setAttackTarget(null);
         if (mob.getRevengeTarget() != e.getTarget() && StealthConfig.stealthSystem && !GeneralUtils.isFacingEntity(mob, e.getTarget(), StealthConfig.baseHorizontalDetection, StealthConfig.baseVerticalDetection)) {
             CombatUtils.StealthData sd = CombatUtils.stealthMap.getOrDefault(mob.getType().getRegistryName(), CombatUtils.STEALTH);
-            if (sd.isVigilant() || sd.isPerceptive()) return;
+            if (sd.isVigilant() || sd.isAllSeeing() || sd.isOlfactory()) return;
             //outside of LoS, perform luck check. Pray to RNGesus!
             double luckDiff = GeneralUtils.getAttributeValueSafe(e.getTarget(), Attributes.LUCK) - GeneralUtils.getAttributeValueSafe(mob, Attributes.LUCK);
             mob.setAttackTarget(null);

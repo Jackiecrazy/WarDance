@@ -144,20 +144,23 @@ public class WarDance {
         public static void skills(final RegistryEvent.Register<Skill> e) {
         }
 
-        @SubscribeEvent()
-        public void skillRegistry(RegistryEvent.NewRegistry event) {
-            //WarSkills.SKILLS=new RegistryBuilder<Skill>().setName(new ResourceLocation(MODID, "skills")).setType(Skill.class).create();
-        }
-
         @SubscribeEvent
         public static void attributes(EntityAttributeModificationEvent event) {
             for (EntityType<? extends LivingEntity> t : event.getTypes()) {
                 if (!event.has(t, Attributes.ATTACK_SPEED)) event.add(t, Attributes.ATTACK_SPEED, 4);
+                if (!event.has(t, Attributes.LUCK)) event.add(t, Attributes.LUCK, 4);
                 for (RegistryObject<Attribute> a : WarAttributes.ATTRIBUTES.getEntries()) {
-                    //if (!event.has(t, a.get()))
-                    event.add(t, a.get());
+                    if (!event.has(t, a.get())) {
+                        LOGGER.debug("civilly registering " + a.getId() + " to " + a.getId());
+                        event.add(t, a.get());
+                    }
                 }
             }
+        }
+
+        @SubscribeEvent()
+        public void skillRegistry(RegistryEvent.NewRegistry event) {
+            //WarSkills.SKILLS=new RegistryBuilder<Skill>().setName(new ResourceLocation(MODID, "skills")).setType(Skill.class).create();
         }
 
 
