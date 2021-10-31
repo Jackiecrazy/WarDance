@@ -11,6 +11,7 @@ import net.minecraft.entity.ai.attributes.Attributes;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.potion.EffectInstance;
 import net.minecraft.potion.Effects;
+import net.minecraft.stats.Stats;
 import net.minecraft.tags.Tag;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.TranslationTextComponent;
@@ -108,8 +109,10 @@ public class WarCry extends Skill {
 
     @Override
     public void onEffectEnd(LivingEntity caster, SkillData stats) {
-        if (caster instanceof PlayerEntity && (caster.getAttribute(Attributes.MOVEMENT_SPEED).hasModifier(wrap) || stats.isCondition()))
+        if (caster instanceof PlayerEntity && (caster.getAttribute(Attributes.MOVEMENT_SPEED).hasModifier(wrap) || stats.isCondition())) {
             ForgeEventFactory.onPlayerWakeup(((PlayerEntity) caster), false, false);
+            ((PlayerEntity) caster).takeStat(Stats.CUSTOM.get(Stats.TIME_SINCE_REST));
+        }
         caster.getAttribute(Attributes.MOVEMENT_SPEED).removeModifier(wrap);
         setCooldown(caster, 300);
     }
