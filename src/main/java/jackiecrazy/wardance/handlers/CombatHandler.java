@@ -273,11 +273,14 @@ public class CombatHandler {
                 float defMult = CombatUtils.getPostureDef(seme, uke, defend, e.getAmount());
                 if (CombatUtils.parryMap.containsKey(GeneralUtils.getResourceLocationFromEntity(uke))) {
                     Tuple<Float, Float> stats = CombatUtils.parryMap.get(GeneralUtils.getResourceLocationFromEntity(uke));
-                    defMult = Math.min(stats.getA(), defMult);
-                    if (!canParry) {
-                        parryHand = CombatUtils.getCooledAttackStrength(uke, Hand.MAIN_HAND, 0.5f) > CombatUtils.getCooledAttackStrength(uke, Hand.OFF_HAND, 0.5f) ? Hand.MAIN_HAND : Hand.OFF_HAND;
+                    if (WarDance.rand.nextFloat() < stats.getB()) {
+                        if (stats.getA() < 0) return;//cannot parry
+                        if (!canParry) {
+                            parryHand = CombatUtils.getCooledAttackStrength(uke, Hand.MAIN_HAND, 0.5f) > CombatUtils.getCooledAttackStrength(uke, Hand.OFF_HAND, 0.5f) ? Hand.MAIN_HAND : Hand.OFF_HAND;
+                        }
+                        defMult = Math.min(stats.getA(), defMult);
+                        canParry = true;
                     }
-                    canParry |= WarDance.rand.nextFloat() < stats.getB();
                 }
                 atkMult = Math.abs(atkMult);//accounting for negative posture damage, used to mark an item as ignoring parries
                 float finalPostureConsumption = atkMult * defMult;
