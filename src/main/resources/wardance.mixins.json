@@ -11,7 +11,8 @@
     "MixinPlayerEntity",
     "MixinShieldDisabler",
     "MixinSoundAlert",
-    "MixinSweepDurabilitySuppressor"
+    "MixinSweepDurabilitySuppressor",
+    "ProjectileImpactMixin"
   ],
   "client": [
     "MixinEquipProgress"

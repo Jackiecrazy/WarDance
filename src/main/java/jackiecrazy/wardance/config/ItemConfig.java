@@ -1788,13 +1788,13 @@ public class ItemConfig {
 
     public ItemConfig(ForgeConfigSpec.Builder b) {
         //feature toggle, resource, defense, compat, stealth, lists
-        _combatItems = b.translation("wardance.config.combatItems").comment("Items eligible for parrying. Format should be name, attack posture consumption, defense multiplier, is shield. If the item is a shield, the next two numbers are their parry time and parry counter; if the item is a weapon, the next two numbers are distracted stab damage bonus and unaware stab damage bonus. Default values provided graciously by DarkMega, thank you!").defineList("combat items", Arrays.asList(THANKS_DARKMEGA), String.class::isInstance);
+        _combatItems = b.translation("wardance.config.combatItems").comment("Items eligible for parrying. Format should be name, attack posture consumption, defense multiplier, is shield. If the item is a shield, the next two numbers are their parry time and parry counter; if the item is a weapon, the next two numbers are distracted stab damage bonus and unaware stab damage bonus. Set defense multiplier to a negative value to disable parrying with that item, and attack posture to a negative value to have it deal that posture while ignoring parries. Default values provided graciously by DarkMega, thank you!").defineList("combat items", Arrays.asList(THANKS_DARKMEGA), String.class::isInstance);
         _customArmor = b.translation("wardance.config.armorItems").comment("define protective stats of armor here. Format is item, absorption, deflection, shatter, stealth (generally negative).").defineList("custom protection attributes", Lists.newArrayList(ARMOR), String.class::isInstance);
         _unarmed = b.translation("wardance.config.unarmedItems").comment("Items added to this list will count as unarmed for combat purposes.").defineList("unarmed items", Lists.newArrayList(UNARMED), String.class::isInstance);
     }
 
     private static void bake() {
-        CombatUtils.updateLists(CONFIG._combatItems.get(), CONFIG._customArmor.get(), CONFIG._unarmed.get());
+        CombatUtils.updateItems(CONFIG._combatItems.get(), CONFIG._customArmor.get(), CONFIG._unarmed.get());
     }
 
     @SubscribeEvent

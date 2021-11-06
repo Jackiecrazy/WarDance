@@ -54,7 +54,7 @@ public class Feint extends Skill {
     @Override
     public void onEffectEnd(LivingEntity caster, SkillData stats) {
         setCooldown(caster, 3);
-        if (stats.getDuration() > 0 && getParentSkill() == null) {
+        if (getParentSkill() == null) {
             CombatUtils.setHandCooldown(caster, stats.isCondition() ? Hand.MAIN_HAND : Hand.OFF_HAND, 1, true);
         }
     }

@@ -14,8 +14,17 @@ public class ItemTooltipHandler {
     @SubscribeEvent()
     public static void tooltip(ItemTooltipEvent e) {
         if (CombatUtils.isWeapon(e.getEntityLiving(), e.getItemStack()) || CombatUtils.isShield(e.getEntityLiving(), e.getItemStack())) {
-            e.getToolTip().add(new TranslationTextComponent("wardance.tooltip.postureAttack", CombatUtils.getPostureAtk(null, null, null, 0, e.getItemStack())));
-            e.getToolTip().add(new TranslationTextComponent("wardance.tooltip.postureDefend", CombatUtils.getPostureDef(null, null, e.getItemStack(), 0)));
+            float atk = CombatUtils.getPostureAtk(null, null, null, 0, e.getItemStack());
+            if(atk<0){
+                e.getToolTip().add(new TranslationTextComponent("wardance.tooltip.ignoreParry"));
+                atk=-atk;
+            }
+            e.getToolTip().add(new TranslationTextComponent("wardance.tooltip.postureAttack", atk));
+            final float def = CombatUtils.getPostureDef(null, null, e.getItemStack(), 0);
+            if(def<0)
+                e.getToolTip().add(new TranslationTextComponent("wardance.tooltip.noParry"));
+            else
+                e.getToolTip().add(new TranslationTextComponent("wardance.tooltip.postureDefend", def));
             if (CombatUtils.isShield(null, e.getItemStack())) {
                 Tuple<Integer, Integer> rerorero = CombatUtils.getShieldStats(e.getItemStack());
                 e.getToolTip().add(new TranslationTextComponent("wardance.tooltip.parry", rerorero.getB() + 1, rerorero.getA() / 20f));

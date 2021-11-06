@@ -101,8 +101,10 @@ apathy: your max spirit is 4, your spirit instantly refills after cooldown, you 
 
     @Override
     public boolean equippedTick(LivingEntity caster, STATE state) {
-        if (state == STATE.INACTIVE)
+        if (state != STATE.ACTIVE) {
             activate(caster, 0);
+            return true;
+        }
         return super.equippedTick(caster, state);
     }
 }

@@ -18,7 +18,7 @@ import java.util.Arrays;
 import java.util.HashSet;
 
 public class IronGuard extends Skill {
-    private final Tag<String> tag = Tag.getTagFromContents(new HashSet<>(Arrays.asList("physical", "quickCast", "onParry", "countdown", ProcPoints.recharge_parry)));
+    private final Tag<String> tag = Tag.getTagFromContents(new HashSet<>(Arrays.asList("physical", "quickCast", ProcPoints.on_parry, ProcPoints.on_projectile_parry, "countdown", ProcPoints.recharge_parry)));
 
     @Override
     public Tag<String> getProcPoints(LivingEntity caster) {

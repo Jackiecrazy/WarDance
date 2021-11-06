@@ -243,6 +243,7 @@ public abstract class Skill extends ForgeRegistryEntry<Skill> {
     public abstract void onSuccessfulProc(LivingEntity caster, SkillData stats, LivingEntity target, Event procPoint);
 
     public boolean onCooldownProc(LivingEntity caster, SkillCooldownData stats, Event procPoint) {
+
         CasterData.getCap(caster).decrementSkillCooldown(this, 1);
         return true;
     }

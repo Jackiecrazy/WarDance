@@ -75,13 +75,13 @@ Onslaught: casts heavy blow before every attack (this is a lot easier)
             CasterData.getCap(caster).removeActiveSkill(this);
             return true;
         }
-        activate(caster, mightConsumption(caster));
+        activate(caster, 1);
         return true;
     }
 
     @Override
     public void onEffectEnd(LivingEntity caster, SkillData stats) {
-
+        CombatData.getCap(caster).addBurnout(CombatData.getCap(caster).getMaxSpirit() / 5);
     }
 
     protected void performEffect(LivingEntity caster, LivingEntity target, float amount, SkillData s) {
@@ -92,6 +92,7 @@ Onslaught: casts heavy blow before every attack (this is a lot easier)
     public CastStatus castingCheck(LivingEntity caster) {
         if (CasterData.getCap(caster).isSkillActive(this))
             return CastStatus.ALLOWED;
+        if (CombatData.getCap(caster).getSpirit() != CombatData.getCap(caster).getMaxSpirit()) return CastStatus.OTHER;
         return super.castingCheck(caster);
     }
 

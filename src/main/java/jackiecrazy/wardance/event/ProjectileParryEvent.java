@@ -1,5 +1,6 @@
 package jackiecrazy.wardance.event;
 
+import jackiecrazy.wardance.utils.CombatUtils;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.item.ItemStack;
@@ -16,15 +17,29 @@ public class ProjectileParryEvent extends LivingEvent {
     private final float originalPostureConsumption;
     private final Vector3d originalReturnVec;
     private float postureConsumption;
+    private int shieldCount;
+    private boolean trigger;
+    /**
+     * null to delete.
+     */
     private Vector3d returnVec;
 
-    public ProjectileParryEvent(LivingEntity entity, Entity seme, Hand dhand, ItemStack d, float posture, Vector3d returnVec) {
+    public ProjectileParryEvent(LivingEntity entity, Entity seme, Hand dhand, ItemStack d) {
         super(entity);
         projectile = seme;
         defendingHand = dhand;
         defendingStack = d;
-        originalPostureConsumption = postureConsumption = posture;
-        originalReturnVec = this.returnVec = returnVec;
+        CombatUtils.initializePPE(this);
+        originalPostureConsumption = postureConsumption;
+        originalReturnVec = returnVec;
+    }
+
+    public boolean doesTrigger() {
+        return trigger;
+    }
+
+    public void setTrigger(boolean trigger) {
+        this.trigger = trigger;
     }
 
     public Entity getProjectile() {
@@ -56,4 +71,14 @@ public class ProjectileParryEvent extends LivingEvent {
     public Vector3d getReturnVec() {return returnVec;}
 
     public void setReturnVec(Vector3d vec) {returnVec = vec;}
+
+    public int getShieldCount() {
+        return shieldCount;
+    }
+
+    public void setShieldCount(int shieldCount) {
+        this.shieldCount = shieldCount;
+    }
+
+
 }

@@ -231,6 +231,10 @@ public interface ICombatCapability {
 
     int getParryingTick();//hey, it's useful for future "smart" entities as well.
 
+    void setSweepTick(int tick);
+
+    int getSweepTick();
+
     boolean isValid();
 
     Vector3d getMotionConsistently();//I can't believe I have to do this.

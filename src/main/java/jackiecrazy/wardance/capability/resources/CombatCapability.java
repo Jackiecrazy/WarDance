@@ -50,16 +50,15 @@ public class CombatCapability implements ICombatCapability {
     private float qi, spirit, posture, combo, mpos, mspi, wounding, burnout, fatigue, mainReel, offReel, maxMight;
     private int shatterCD;
     private int qcd, scd, pcd, ccd, mBind, oBind;
-    private int staggert, staggerc, ocd, shield, sc, roll, sweep = -1;
+    private int staggert, staggerc, ocd, shield, sc, roll, sweepAngle = -1;
     private boolean offhand, combat;
     private long lastUpdate;
     private boolean first, shattering;
     private float cache;//no need to save this because it'll be used within the span of a tick
     private int parrying;
     private long staggerTickExisted;
-    private int recoveryTimer;
+    private int recoveryTimer, sweeping;
     private ItemStack tempOffhand = ItemStack.EMPTY;
-    private float mainReelCounter = 0, offReelCounter = 0;
     private Vector3d motion;
 
     public CombatCapability(LivingEntity e) {
@@ -72,6 +71,7 @@ public class CombatCapability implements ICombatCapability {
         if (GeneralUtils.getResourceLocationFromEntity(elb) != null && CombatUtils.customPosture.containsKey(GeneralUtils.getResourceLocationFromEntity(elb)))
             ret = CombatUtils.customPosture.get(GeneralUtils.getResourceLocationFromEntity(elb));
         else ret = (float) (Math.ceil(10 / 1.09 * elb.getWidth() * elb.getHeight()) + elb.getTotalArmorValue() / 2d);
+        if (elb instanceof PlayerEntity) ret *= 2;
         ret += GeneralUtils.getAttributeValueSafe(elb, WarAttributes.MAX_POSTURE.get());
         return ret;
     }
@@ -651,30 +651,18 @@ public class CombatCapability implements ICombatCapability {
 
     @Override
     public int getForcedSweep() {
-        return sweep;
+        return sweepAngle;
     }
 
     @Override
     public void setForcedSweep(int angle) {
-        sweep = angle;
+        sweepAngle = angle;
     }
 
     @Override
     public void clientTick() {
         LivingEntity elb = dude.get();
         if (elb == null) return;
-        if (elb instanceof PlayerEntity) {
-            mainReelCounter += mainReel;
-            offReelCounter += offReel;
-            if (Math.abs(mainReelCounter) > 1) {
-                elb.ticksSinceLastSwing += (int) mainReelCounter;
-                mainReelCounter %= 1;
-            }
-            if (Math.abs(offReelCounter) > 1) {
-                ocd += (int) offReelCounter;
-                offReelCounter %= 1;
-            }
-        }
         if (prev == null || !ItemStack.areItemStacksEqual(elb.getHeldItemOffhand(), prev)) {
             prev = elb.getHeldItemOffhand();
             ocd = 0;
@@ -701,7 +689,8 @@ public class CombatCapability implements ICombatCapability {
         int poExtra = decrementPostureGrace(ticks);
         for (Hand h : Hand.values()) {
             decrementHandBind(h, ticks);
-            if (getHandBind(h) != 0) CombatUtils.setHandCooldown(elb, h, 0, true);
+            if (getHandBind(h) != 0)
+                CombatUtils.setHandCooldown(elb, h, 0, true);
         }
         addOffhandCooldown(ticks);
         decrementRollTime(ticks);
@@ -725,21 +714,6 @@ public class CombatCapability implements ICombatCapability {
                 shatterCD = -ResourceConfig.shatterCooldown;
             }
         } else shatterCD = (int) GeneralUtils.getAttributeValueSafe(elb, WarAttributes.SHATTER.get());
-        if (elb instanceof PlayerEntity) {
-            mainReelCounter += mainReel * ticks;
-            offReelCounter += offReel * ticks;
-            //System.out.println(elb.ticksSinceLastSwing);
-            if (Math.abs(mainReelCounter) > 1) {
-                elb.ticksSinceLastSwing += (int) mainReelCounter;
-                mainReelCounter %= 1;
-                if (CombatUtils.getCooledAttackStrength(elb, Hand.MAIN_HAND, 0.5f) == 1) mainReel = 0;
-            }
-            if (Math.abs(offReelCounter) > 1) {
-                ocd += (int) offReelCounter;
-                offReelCounter %= 1;
-                if (CombatUtils.getCooledAttackStrength(elb, Hand.OFF_HAND, 0.5f) == 1) offReel = 0;
-            }
-        }
         if (getSpiritGrace() == 0 && getStaggerTime() == 0 && getSpirit() < getMaxSpirit()) {
             addSpirit(getSPT() * spExtra);
         }
@@ -829,6 +803,16 @@ public class CombatCapability implements ICombatCapability {
     @Override
     public int getParryingTick() {
         return parrying;
+    }
+
+    @Override
+    public void setSweepTick(int tick) {
+        sweeping=tick;
+    }
+
+    @Override
+    public int getSweepTick() {
+        return sweeping;
     }
 
     @Override

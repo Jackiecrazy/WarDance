@@ -284,8 +284,9 @@ public class SkillCapability implements ISkillCapability {
     public void update() {
         final LivingEntity caster = dude.get();
         if (caster == null) return;
-        sync = gatedSkills != caster.world.getGameRules().getBoolean(WarDance.GATED_SKILLS);
-        gatedSkills = sync != gatedSkills;
+        final boolean gate = caster.world.getGameRules().getBoolean(WarDance.GATED_SKILLS);
+        sync |= gatedSkills != gate;
+        gatedSkills = gate;
         Skill.STATE state = Skill.STATE.INACTIVE;
         for (Skill d : equippedSkill) {
             if (d == null) continue;

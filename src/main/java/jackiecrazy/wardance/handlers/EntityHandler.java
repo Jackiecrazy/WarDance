@@ -207,7 +207,7 @@ public class EntityHandler {
                     World world = sneaker.world;
                     if (world.isAreaLoaded(sneaker.getPosition(), 5) && world.isAreaLoaded(watcher.getPosition(), 5)) {
                         final int light = world.getLight(sneaker.getPosition());
-                        float lightMalus = MathHelper.clamp(light * 0.1f, 0, 1);
+                        float lightMalus = MathHelper.clamp((13-light) * 0.1f, 0, 1);
                         if (!sd.isDeaf())
                             lightMalus *= Math.min(stealth / 20f, 1f);
                         e.modifyVisibility(1 - lightMalus);
@@ -263,7 +263,8 @@ public class EntityHandler {
             double luckDiff = GeneralUtils.getAttributeValueSafe(e.getTarget(), Attributes.LUCK) - GeneralUtils.getAttributeValueSafe(mob, Attributes.LUCK);
             mob.setAttackTarget(null);
             if (luckDiff <= 0 || WarDance.rand.nextFloat() > (luckDiff / (2 + luckDiff))) {
-                mob.lookAt(EntityAnchorArgument.Type.EYES, e.getTarget().getPositionVec());//.getLookController().setLookPositionWithEntity(e.getTarget(), 0, 0);
+                //mob.rotateTowards();
+                mob.lookAt(EntityAnchorArgument.Type.FEET, e.getTarget().getPositionVec());//.getLookController().setLookPositionWithEntity(e.getTarget(), 0, 0);
             }
         }
     }

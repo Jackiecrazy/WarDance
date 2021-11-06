@@ -9,10 +9,245 @@ import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.config.ModConfig;
 import org.apache.commons.lang3.tuple.Pair;
 
+import java.util.Arrays;
 import java.util.List;
 
 @Mod.EventBusSubscriber(modid = WarDance.MODID, bus = Mod.EventBusSubscriber.Bus.MOD)
 public class CombatConfig {
+    private static final String[] PROJECTILES = {
+            "minecraft:arrow, 2.0, 1",
+            "minecraft:dragon_fireball, 5.0, 3, t",
+            "minecraft:egg, 1.0, 1, t",
+            "minecraft:ender_pearl, 5.0, 3, t",
+            "minecraft:experience_bottle, -1, 1",
+            "minecraft:fireball, 4.0, 2",
+            "minecraft:firework_rocket, 3.0, 2, t",
+            "minecraft:fishing_bobber, -1, 1",
+            "minecraft:lightning_bolt, -1, 1",
+            "minecraft:llama_spit, 1.0, 1",
+            "minecraft:potion, 1.0, 1, t",
+            "minecraft:shulker_bullet, 4.0, 2, d",
+            "minecraft:small_fireball, 2.0, 1, d",
+            "minecraft:snowball, 1.0, 1, d",
+            "minecraft:spectral_arrow, 3.0, 2",
+            "minecraft:trident, 6.0, 3",
+            "minecraft:wither_skull, 4.0, 2",
+            "apotheosis:bh_arrow_entity, 3.0, 2, d",
+            "apotheosis:ex_arrow_entity, 2.0, 2, t",
+            "apotheosis:mn_arrow_entity, -1, 0",
+            "apotheosis:ob_arrow_entity, 2.5, 2",
+            "archers_paradox:blaze_arrow, 2.0, 1, d",
+            "archers_paradox:challenge_arrow, 3.0, 2, t",
+            "archers_paradox:diamond_arrow, -1, 3",
+            "archers_paradox:displacement_arrow, 3.0, 1, t",
+            "archers_paradox:ender_arrow, 5.0, 1, t",
+            "archers_paradox:explosive_arrow, 5.0, 3, t",
+            "archers_paradox:frost_arrow, 2.0, 1, t",
+            "archers_paradox:glowstone_arrow, 2.0, 1, t",
+            "archers_paradox:lightning_arrow, 2.0, 1, t",
+            "archers_paradox:phantasmal_arrow, -1, 1",
+            "archers_paradox:prismarine_arrow, 2.0, 1",
+            "archers_paradox:quartz_arrow, 2.5, 1, t",
+            "archers_paradox:redstone_arrow, 1.0, 1, t",
+            "archers_paradox:shulker_arrow, 1.5, 2",
+            "archers_paradox:slime_arrow, 3.0, 1, t",
+            "archers_paradox:spore_arrow, 2.0, 1, t",
+            "archers_paradox:training_arrow, 3.0, 1, t",
+            "archers_paradox:verdant_arrow, 1.0, 1, t",
+            "ars_nouveau:an_lightning, -1, 1",
+            "ars_nouveau:fangs, -1, 1",
+            "ars_nouveau:flying_item, 2.0, 1",
+            "ars_nouveau:follow_proj, 1.5, 1",
+            "ars_nouveau:linger, 2.0, 1",
+            "ars_nouveau:spell_arrow, 2.0, 1, t",
+            "ars_nouveau:spell_proj, 2.0, 1, d",
+            "ars_nouveau:spike, 3.0, 2, d",
+            "atmospheric:passionfruit_seed, 0.5, 1, d",
+            "atum:arrow_double, 2.0, 1, d",
+            "atum:arrow_explosive, 5.0, 3, t",
+            "atum:arrow_fire, 2.0, 1, t",
+            "atum:arrow_poison, 2.0, 1, t",
+            "atum:arrow_quickdraw, 2.0, 1, d",
+            "atum:arrow_rain, 2.5, 1, d",
+            "atum:arrow_slowness, 2.0, 1, d",
+            "atum:arrow_straight, 2.0, 1, d",
+            "atum:pharaoh_orb, 4.0, 2, d",
+            "atum:quail_egg, 1.0, 1, t",
+            "atum:small_bone, 1.0, 1",
+            "atum:tefnuts_call, -1, 3",
+            "bloodmagic:throwing_dagger, 2.0, 1, d",
+            "bloodmagic:throwing_dagger_syringe, 2.0, 1, d",
+            "bloodmagic:soulsnare, 5.0, 1, d",
+            "champions:arctic_bullet, 3.0, 1, d",
+            "champions:enkindling_bullet, 3.0, 1, d",
+            "charm:glowball, 1.0, 1, t",
+            "conjurer_illager:throwing_card, 1.0, 1, d",
+            "conjurer_illager:bouncing_ball, 2.0, 1",
+            "cyclic:boomerang_carry, 1.0, 1",
+            "cyclic:boomerang_damage, 3.0, 1",
+            "cyclic:boomerang_stun, 5.0, 2",
+            "cyclic:fire_bolt, 2.0, 1, d",
+            "cyclic:lightning_bolt, 1.0, 1, t",
+            "cyclic:snow_bolt, 1.0, 1, d",
+            "cyclic:stone_bolt, 2.0, 2",
+            "cyclic:torch_bolt, 2.0, 2, t",
+            "doggytalents:dog_beam, -1, 1",
+            "dungeons_gear:ice_cloud, -1, 1",
+            "dungeons_mobs:cobweb_projectile, -1, 1",
+            "dungeons_mobs:cobweb_trap, -1, 1",
+            "dungeons_mobs:geomancer_bomb, -1, 1",
+            "dungeons_mobs:geomancer_wall, -1, 1",
+            "dungeons_mobs:ice_cloud, -1, 1",
+            "dungeons_mobs:laser_orb, 3.0, 1",
+            "dungeons_mobs:redstone_mine, -1, 1",
+            "dungeons_mobs:slimeball, 1.0, 1, d",
+            "dungeons_mobs:tornado, -1, 1",
+            "dungeons_mobs:wraith_fireball, 3.0, 1",
+            "dungeons_mobs:blue_nethershroom, 2.0, 1, t",
+            "eidolon:bonechill_projectile, 2.0, 1",
+            "eidolon:soulfire_projectile, 2.0, 1",
+            "enigmaticlegacy:enigmatic_potion_entity, 2, 1, t",
+            "enigmaticlegacy:ultimate_wither_skull_entity, 4.0, 2",
+            "environmental:duck_egg, 1.0, 1, t",
+            "environmental:mud_ball, 0.5, 1, t",
+            "grapplemod:grapplehook, -1, 1",
+            "gunswithoutroses:bullet, 1.0, 1",
+            "iceandfire:amphithere_arrow, 2.0, 1",
+            "iceandfire:cockatrice_egg, 2.0, 1, t",
+            "iceandfire:dragon_arrow, 4.0, 2",
+            "iceandfire:dread_lich_skull, 3.0, 2, t",
+            "iceandfire:fire_dragon_charge, 8.0, 3",
+            "iceandfire:ghost_sword, 2.0, 1",
+            "iceandfire:hydra_arrow, 3.0, 2",
+            "iceandfire:hydra_breath, 1.0, 1, d",
+            "iceandfire:ice_dragon_charge, 8.0, 3",
+            "iceandfire:lightning_dragon_charge, 8.0, 3",
+            "iceandfire:pixie_charge, -1, 1",
+            "iceandfire:sea_serpent_arrow, 3.5, 1",
+            "iceandfire:stymphalian_arrow, 4.0, 1",
+            "iceandfire:stymphalian_feather, 3.0, 1, d",
+            "iceandfire:tide_trident, -1, 1",
+            "immersiveengineering:chemthrower_shot, 2.0, 1, d",
+            "immersiveengineering:railgun_shot, -1, 20",
+            "immersiveengineering:revolver_shot_flare, 2.0, 2, t",
+            "immersiveengineering:revolver_shot_homing, 2.0, 2, d",
+            "immersiveengineering:revolver_shot_wolfpack, 2.0, 2, d",
+            "immersiveengineering:revolvershot, 2.0, 2, d",
+            "immersiveengineering:sawblade, 8.0, 3",
+            "inventorypets:apple_entity, 4.0, 1, d",
+            "inventorypets:banana_entity, 3.0, 1, d",
+            "inventorypets:golden_apple_entity, -1, 1",
+            "meetyourfight:projectile_line, 2.0, 1",
+            "meetyourfight:swamp_mine, 2.0, 1",
+            "mowziesmobs:axe_attack, 6.0, 3",
+            "mowziesmobs:boulder_huge, 20.0, 5, t",
+            "mowziesmobs:boulder_large, 15.0, 4, t",
+            "mowziesmobs:boulder_medium, 10.0, 3, t",
+            "mowziesmobs:boulder_small, 5.0, 2, t",
+            "mowziesmobs:dart, 1.0, 1, d",
+            "mowziesmobs:ice_ball, 10.0, 2, d",
+            "mowziesmobs:poison_ball, 2.0, 1",
+            "mutantbeasts:chemical_x, 1.0, 1, t",
+            "mutantbeasts:throwable_block, 5.0, 2, t",
+            "mutantmore:rodling_fireball, 1.0, 1, d",
+            "mutantmore:seismic_wave, 8.0, 4",
+            "mutantmore:thrown_block, 5.0, 2, t",
+            "projecte:fire_projectile, 3.0, 1",
+            "psi:spell_charge, 2.0, 1, t",
+            "psi:spell_grenade, 4.0, 1, t",
+            "psi:spell_projectile, 2.0, 1, t",
+            "quark:pickarang, 6.0, 2",
+            "relics:shadow_glaive, 5, 2, t",
+            "relics:space_dissector, 5, 2, t",
+            "relics:stellar_catalyst_projectile, 8.0, 3, t",
+            "savageandravage:ice_chunk, 8.0, 3",
+            "savageandravage:mischief_arrow, 2.0, 1, t",
+            "savageandravage:spore_bomb, 2.0, 1, t",
+            "securitycraft:bouncingbetty, 15, 3, t",
+            "securitycraft:bullet, 2.0, 1, d",
+            "securitycraft:imsbomb, 5.0, 3, t",
+            "spartanweaponry:arrow, 4.0, 2",
+            "spartanweaponry:arrow_explosive, 5.0, 3, t",
+            "spartanweaponry:bolt, 5.0, 3",
+            "spartanweaponry:bolt_spectral, 6.0, 3",
+            "spartanweaponry:boomerang, 6.0, 2, 2",
+            "spartanweaponry:dynamite, 5.0, 2, t",
+            "spartanweaponry:javelin, 6.0, 3",
+            "spartanweaponry:throwing_weapon, 4.0, 2",
+            "spartanweaponry:tomahawk, 4.0, 2",
+            "switchbow:entityarrowair, 2.0, 1",
+            "switchbow:entityarrowairupgrade, 3.0, 1",
+            "switchbow:entityarrowbone, 3.0, 1",
+            "switchbow:entityarrowboneaoe, 3.0, 1",
+            "switchbow:entityarrowbouncy, 3.0, 2, t",
+            "switchbow:entityarrowburial, 3.0, 2, t",
+            "switchbow:entityarrowburialaoe, 3.0, 2, t",
+            "switchbow:entityarrowchorus, 5.0, 2, t",
+            "switchbow:entityarrowdiamond, 6.0, 3",
+            "switchbow:entityarrowdragonbreath, 3.0, 1, t",
+            "switchbow:entityarrowenderperle, 3.0, 2, t",
+            "switchbow:entityarrowfire, 3.0, 2, t",
+            "switchbow:entityarrowfireupgrade, 2.0, 3, t",
+            "switchbow:entityarrowflytomoon, 20.0, 4, t",
+            "switchbow:entityarrowfrost, 3.0, 2, t",
+            "switchbow:entityarrowknockback, 5.0, 3, t",
+            "switchbow:entityarrowlightningbolt, 3.0, 1, t",
+            "switchbow:entityarrowlightningboltstorm, 3.0, 1, t",
+            "switchbow:entityarrowlove, 2.0, 1, t",
+            "switchbow:entityarrowluck, 2.0, 1",
+            "switchbow:entityarrowluckupgrade, 2.0, 1",
+            "switchbow:entityarrowofthesearcher, 3.0, 1, d",
+            "switchbow:entityarrowpiercing, 4.0, 3, t",
+            "switchbow:entityarrowprotector, 4.0, 2, t",
+            "switchbow:entityarrowredstone, 3.0, 1, t",
+            "switchbow:entityarrowsplit, 3.0, 1, d",
+            "switchbow:entityarrowsplitlove, 2.0, 1",
+            "switchbow:entityarrowsplitloveupgrade, 2.0, 1",
+            "switchbow:entityarrowsplitupgrade, 2.0, 1",
+            "switchbow:entityarrowsprinkler, 2.0, 1",
+            "switchbow:entityarrowtnt, 5.0, 3, t",
+            "switchbow:entityarrowtorch, 3.0, 1",
+            "switchbow:entityarrowtriple, 2.0, 1",
+            "switchbow:entityarrowunderwater, 3.0, 1",
+            "switchbow:entityarrowvampier, 3.0, 1",
+            "switchbow:entityarrowwither, 3.0, 1",
+            "thermal:basalz_projectile, 4.0, 2",
+            "thermal:blitz_projectile, 3.0, 1",
+            "thermal:blizz_projectile, 3.0, 1",
+            "thermal:earth_grenade, 5.0, 3, t",
+            "thermal:ender_grenade, 5.0, 3, t",
+            "thermal:fire_grenade, 5.0, 3, t",
+            "thermal:glowstone_grenade, 5.0, 3, t",
+            "thermal:grenade, 5.0, 3, t",
+            "thermal:ice_grenade, 5.0, 3, t",
+            "thermal:lightning_grenade, 5.0, 3, t",
+            "thermal:nuke_grenade, 5.0, 3, t",
+            "thermal:phyto_grenade, 5.0, 3, t",
+            "thermal:redstone_grenade, 5.0, 3, t",
+            "thermal:slime_grenade, 5.0, 3, t",
+            "vanillatweaks:dynamite, 5.0, 2, t",
+            "wardance:thrown_weapon, 5.0, 2, t",
+            "weaponthrow:weaponthrow, 5.0, 2, t",
+            "xreliquary:aphrodite_potion, -1, 1",
+            "xreliquary:blaze_shot, 4.0, 2",
+            "xreliquary:buster_shot, 4.0, 2, t",
+            "xreliquary:concussive_shot, 4.0, 2, t",
+            "xreliquary:ender_shot, 4.0, 2, t",
+            "xreliquary:exorcism_shot, 4.0, 2",
+            "xreliquary:fertile_potion, -1, 1",
+            "xreliquary:glowing_water, -1, 1",
+            "xreliquary:holy_hand_grenade, 8, 5, t",
+            "xreliquary:kraken_slime, 1.0, 1, t",
+            "xreliquary:lyssa_hook, 3.0, 1, t",
+            "xreliquary:neutral_shot, 4.0, 2",
+            "xreliquary:sand_shot, 4.0, 2, t",
+            "xreliquary:seeker_shot, 4.0, 2",
+            "xreliquary:special_snowball, 1.0, 1",
+            "xreliquary:storm_shot, 4.0, 2, t",
+            "xreliquary:thrown_potion, 2.0, 1, t",
+            "xreliquary:tipped_arrow, 3.0, 2, t"
+    };
+
     public static final CombatConfig CONFIG;
     public static final ForgeConfigSpec CONFIG_SPEC;
     public static float posturePerProjectile;
@@ -26,6 +261,7 @@ public class CombatConfig {
     public static int staggerDurationMin;
     public static int staggerHits;
     public static float staggerDamage;
+    public static float unStaggerDamage;
     public static int sneakParry;
     public static int recovery;
     public static int foodCool;
@@ -62,7 +298,9 @@ public class CombatConfig {
     private final ForgeConfigSpec.DoubleValue _kenshiroScaler;
     private final ForgeConfigSpec.DoubleValue _posCap;
     private final ForgeConfigSpec.DoubleValue _stagger;
+    private final ForgeConfigSpec.DoubleValue _unstagger;
     private final ForgeConfigSpec.DoubleValue _knockbackNerf;
+    private final ForgeConfigSpec.ConfigValue<List<? extends String>> _customProjectile;
 
     public CombatConfig(ForgeConfigSpec.Builder b) {
         //feature toggle, resource, defense, compat, stealth, lists
@@ -77,6 +315,7 @@ public class CombatConfig {
         _defaultMultiplierPostureDefend = b.translation("wardance.config.dmpd").comment("Default multiplier for any item not defined in the config, when used for parrying").defineInRange("default defense multiplier", 1.4, 0, Double.MAX_VALUE);
         _shieldThreshold = b.translation("wardance.config.shieldT").comment("Within this number of ticks after a shield parry, parrying is free").defineInRange("default shield time", 16, 0, Integer.MAX_VALUE);
         _shieldCount = b.translation("wardance.config.shieldT").comment("This many parries are free after a parry that cost posture").defineInRange("default shield count", 1, 0, Integer.MAX_VALUE);
+        _customProjectile = b.translation("wardance.config.projectilePosture").comment("Define custom projectile parrying behavior. Default list provided courtesy of DarkMega. Format is name, posture cost (negative to disable parrying this projectile), shield count cost, and a list of tags:\nProjectiles may be (d)estroyed upon parry.\nThey may also be allowed to (t)rigger their non-damage effects.").defineList("projectile parry rules", Arrays.asList(PROJECTILES), String.class::isInstance);
         b.pop();
         b.push("dodging");
         _dodge = b.translation("wardance.config.dodge").define("enable dodges", true);
@@ -87,7 +326,8 @@ public class CombatConfig {
         _staggerDuration = b.translation("wardance.config.staggerD").comment("Maximum number of ticks an entity should be staggered for when its posture reaches 0. The actual length of a given stagger is scaled by HP between the min and max values").defineInRange("max stagger duration", 100, 1, Integer.MAX_VALUE);
         _staggerDurationMin = b.translation("wardance.config.staggerM").comment("Minimum number of ticks an entity should be staggered for when its posture reaches 0. The actual length of a given stagger is scaled by HP between the min and max values").defineInRange("min stagger duration", 40, 1, Integer.MAX_VALUE);
         _staggerHits = b.translation("wardance.config.staggerH").comment("Number of hits a staggered entity will take before stagger is automatically canceled").defineInRange("stagger hits", 3, 1, Integer.MAX_VALUE);
-        _stagger = b.translation("wardance.config.stagger").comment("Extra damage taken by a staggered entity").defineInRange("stagger damage multiplier", 1.5, 1, Double.MAX_VALUE);
+        _stagger = b.translation("wardance.config.stagger").comment("Extra damage taken by a staggered entity").defineInRange("stagger damage multiplier", 1.5, 0, Double.MAX_VALUE);
+        _unstagger = b.translation("wardance.config.unstagger").comment("Damage taken by a non-staggered entity. Added out of curiosity.").defineInRange("normal damage multiplier", 1, 0, Double.MAX_VALUE);
         b.pop();
         b.push("difficulty");
         _mobParryChanceWeapon = b.translation("wardance.config.mobPW").comment("chance that a mob parries with a weapon out of 1. Hands are individually calculated.").defineInRange("mob weapon parry chance", 0.3, 0, 1);
@@ -115,6 +355,7 @@ public class CombatConfig {
         staggerDurationMin = CONFIG._staggerDurationMin.get();
         staggerHits = CONFIG._staggerHits.get();
         staggerDamage = CONFIG._stagger.get().floatValue();
+        unStaggerDamage = CONFIG._unstagger.get().floatValue();
         mobParryChanceWeapon = CONFIG._mobParryChanceWeapon.get().floatValue();
         mobParryChanceShield = CONFIG._mobParryChanceShield.get().floatValue();
         mobDeflectChance = CONFIG._mobDeflectChance.get().floatValue();
@@ -127,6 +368,7 @@ public class CombatConfig {
         recovery = CONFIG._recovery.get();
         foodCool = CONFIG._foodCool.get();
         CombatUtils.updateMobParrying(CONFIG._customParry.get());
+        CombatUtils.updateProjectiles(CONFIG._customProjectile.get());
     }
 
     @SubscribeEvent

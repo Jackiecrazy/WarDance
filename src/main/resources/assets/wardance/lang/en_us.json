@@ -4,6 +4,8 @@
   "wardance.tooltip.parry": "Parries up to %s times per %.2d seconds",
   "wardance.tooltip.attack": "Ambushes distracted targets for %s damage and unaware targets for %s damage",
   "wardance.tooltip.unarmed": "Attacks are treated as unarmed strikes",
+  "wardance.tooltip.noParry": "Cannot be used to parry",
+  "wardance.tooltip.ignoreParry": "Ignores parries",
 
   "wardance.absorption": "Absorption",
   "wardance.deflection": "Deflection Angle",

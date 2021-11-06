@@ -12,9 +12,12 @@ import jackiecrazy.wardance.config.CombatConfig;
 import jackiecrazy.wardance.config.GeneralConfig;
 import jackiecrazy.wardance.config.ResourceConfig;
 import jackiecrazy.wardance.config.StealthConfig;
+import jackiecrazy.wardance.entity.FearEntity;
+import jackiecrazy.wardance.entity.WarEntities;
 import jackiecrazy.wardance.event.MeleeKnockbackEvent;
 import jackiecrazy.wardance.event.ParryEvent;
 import jackiecrazy.wardance.event.ProjectileParryEvent;
+import jackiecrazy.wardance.mixin.ProjectileImpactMixin;
 import jackiecrazy.wardance.potion.WarEffects;
 import jackiecrazy.wardance.skill.ProcPoints;
 import jackiecrazy.wardance.utils.CombatUtils;
@@ -102,7 +105,7 @@ public class CombatHandler {
                 h = Hand.MAIN_HAND;
             }
             Entity projectile = e.getEntity();
-            ProjectileParryEvent pe = new ProjectileParryEvent(uke, projectile, h, defend, free ? 0 : consume, projectile.getMotion().normalize().scale(-0.2));
+            ProjectileParryEvent pe = new ProjectileParryEvent(uke, projectile, h, defend);
             if (failManualParry)
                 pe.setResult(Event.Result.DENY);
             MinecraftForge.EVENT_BUS.post(pe);
@@ -114,19 +117,34 @@ public class CombatHandler {
                 if (!free) {
                     Tuple<Integer, Integer> stat = CombatUtils.getShieldStats(defend);
                     ukeCap.setShieldTime(stat.getA());
-                    ukeCap.setShieldCount(stat.getB());
+                    ukeCap.setShieldCount(stat.getB() - (pe.getShieldCount() - 1));
                 } else {
-                    ukeCap.decrementShieldCount(1);
-                    if (ukeCap.getShieldCount() <= 0) {
-                        ukeCap.setHandBind(h, ukeCap.getShieldTime());
+                    ukeCap.decrementShieldCount(pe.getShieldCount());
+                }
+                if (ukeCap.getShieldCount() <= 0) {
+                    if (uke instanceof PlayerEntity && h != null) {
+                        ((PlayerEntity) uke).getCooldownTracker().setCooldown(uke.getHeldItem(h).getItem(), 60);
                     }
+                    ukeCap.setHandBind(h, ukeCap.getShieldTime());
                 }
                 uke.world.playSound(null, uke.getPosX(), uke.getPosY(), uke.getPosZ(), free ? SoundEvents.BLOCK_WOODEN_TRAPDOOR_OPEN : SoundEvents.BLOCK_WOODEN_TRAPDOOR_CLOSE, SoundCategory.PLAYERS, 0.75f + WarDance.rand.nextFloat() * 0.5f, (1 - (ukeCap.getPosture() / ukeCap.getMaxPosture())) + WarDance.rand.nextFloat() * 0.5f);
-                projectile.setMotion(pe.getReturnVec().x, pe.getReturnVec().y, pe.getReturnVec().z);
-                if (projectile instanceof ProjectileEntity) {
-                    double power = pe.getReturnVec().x / pe.getReturnVec().normalize().x;
-                    ((ProjectileEntity) projectile).shoot(pe.getReturnVec().x, pe.getReturnVec().y, pe.getReturnVec().z, (float) power, 0);
-                }
+                if (pe.doesTrigger()) {
+                    if (uke.isServerWorld()) {
+                        FearEntity dummy = new FearEntity(WarEntities.fear, uke.world);
+                        dummy.setPositionAndUpdate(projectile.getPosX(), projectile.getPosY(), projectile.getPosZ());
+                        uke.world.addEntity(dummy);
+                        if (projectile instanceof ProjectileEntity) {
+                            RayTraceResult rtr = new EntityRayTraceResult(dummy);
+                            ((ProjectileImpactMixin) projectile).callOnImpact(rtr);
+                        }
+                    }
+                } else if (pe.getReturnVec() != null) {
+                    projectile.setMotion(pe.getReturnVec().x, pe.getReturnVec().y, pe.getReturnVec().z);
+                    if (projectile instanceof ProjectileEntity) {
+                        double power = pe.getReturnVec().x / pe.getReturnVec().normalize().x;
+                        ((ProjectileEntity) projectile).shoot(pe.getReturnVec().x, pe.getReturnVec().y, pe.getReturnVec().z, (float) power, 0);
+                    }
+                } else projectile.remove();
                 CombatUtils.knockBack(uke, projectile, 0.01f, true, false);
                 return;
             }
@@ -134,11 +152,13 @@ public class CombatHandler {
             if ((uke instanceof PlayerEntity || WarDance.rand.nextFloat() > CombatConfig.mobDeflectChance) && GeneralUtils.isFacingEntity(uke, projectile, 120 + 2 * (int) GeneralUtils.getAttributeValueSafe(uke, WarAttributes.DEFLECTION.get())) && !GeneralUtils.isFacingEntity(uke, projectile, 120) && ukeCap.doConsumePosture(consume)) {
                 e.setCanceled(true);
                 uke.world.playSound(null, uke.getPosX(), uke.getPosY(), uke.getPosZ(), SoundEvents.BLOCK_IRON_TRAPDOOR_OPEN, SoundCategory.PLAYERS, 0.75f + WarDance.rand.nextFloat() * 0.5f, (1 - (ukeCap.getPosture() / ukeCap.getMaxPosture())) + WarDance.rand.nextFloat() * 0.5f);
-                projectile.setMotion(pe.getReturnVec().x, pe.getReturnVec().y, pe.getReturnVec().z);
-                if (projectile instanceof ProjectileEntity) {
-                    double power = pe.getReturnVec().x / pe.getReturnVec().normalize().x;
-                    ((ProjectileEntity) projectile).shoot(pe.getReturnVec().x, pe.getReturnVec().y, pe.getReturnVec().z, (float) power, 0);
-                }
+                if (pe.getReturnVec() != null) {
+                    projectile.setMotion(pe.getReturnVec().x, pe.getReturnVec().y, pe.getReturnVec().z);
+                    if (projectile instanceof ProjectileEntity) {
+                        double power = pe.getReturnVec().x / pe.getReturnVec().normalize().x;
+                        ((ProjectileEntity) projectile).shoot(pe.getReturnVec().x, pe.getReturnVec().y, pe.getReturnVec().z, (float) power, 0);
+                    }
+                } else projectile.remove();
             }
         }
     }
@@ -185,8 +205,8 @@ public class CombatHandler {
             ItemStack attack = CombatUtils.getAttackingItemStack(e.getSource());
             if (CombatUtils.isMeleeAttack(e.getSource()) && e.getSource().getTrueSource() instanceof LivingEntity && attack != null && e.getAmount() > 0) {
                 LivingEntity seme = (LivingEntity) e.getSource().getTrueSource();
-                if(StealthConfig.inv)
-                seme.removePotionEffect(Effects.INVISIBILITY);
+                if (StealthConfig.inv)
+                    seme.removePotionEffect(Effects.INVISIBILITY);
                 ICombatCapability semeCap = CombatData.getCap(seme);
                 Hand attackingHand = semeCap.isOffhandAttack() ? Hand.OFF_HAND : Hand.MAIN_HAND;
                 //hand bound or staggered, no attack
@@ -195,13 +215,17 @@ public class CombatHandler {
                     e.setCanceled(true);
                     return;
                 }
+                boolean sweeping = false;
                 //capability handler
                 seme.getHeldItemMainhand().getCapability(CombatManipulator.CAP).ifPresent((i) -> i.attackStart(e.getSource(), seme, uke, seme.getHeldItemMainhand(), e.getAmount()));
                 //add stats if it's the first attack this tick and cooldown is sufficient
-                if (seme.getLastAttackedEntityTime() != seme.ticksExisted) {//first hit of a potential sweep attack
+                if (semeCap.getSweepTick() != seme.ticksExisted) {//first hit of a potential sweep attack
                     semeCap.addCombo(0.2f);
                     float might = CombatUtils.getAttackMight(seme, uke);
                     semeCap.addMight(might);
+                    semeCap.setSweepTick(seme.ticksExisted);
+                } else {//hitting twice in a sweep attack, disqualified from parry refund
+                    sweeping = true;
                 }
                 //blocking, reset posture cooldown without resetting combo cooldown, bypass parry
                 if (uke.isActiveItemStackBlocking()) {
@@ -235,13 +259,13 @@ public class CombatHandler {
                 if (canParry) {
                     float posMod = 1337;
                     boolean isShield = false;
-                    if (CombatUtils.canParry(uke, seme, uke.getHeldItemOffhand(), e.getAmount())) {
+                    if (CombatUtils.canParry(uke, seme, uke.getHeldItemOffhand(), atkMult)) {
                         defend = uke.getHeldItemOffhand();
                         posMod = CombatUtils.getPostureDef(seme, uke, uke.getHeldItemOffhand(), e.getAmount());
                         isShield = CombatUtils.isShield(uke, uke.getHeldItemOffhand());
                         parryHand = Hand.OFF_HAND;
                     }
-                    if (!isShield && CombatUtils.canParry(uke, seme, uke.getHeldItemMainhand(), e.getAmount()) && CombatUtils.getPostureDef(seme, uke, uke.getHeldItemMainhand(), e.getAmount()) < posMod) {
+                    if (!isShield && CombatUtils.canParry(uke, seme, uke.getHeldItemMainhand(), atkMult) && CombatUtils.getPostureDef(seme, uke, uke.getHeldItemMainhand(), e.getAmount()) < posMod) {
                         defend = uke.getHeldItemMainhand();
                         parryHand = Hand.MAIN_HAND;
                     }
@@ -249,12 +273,13 @@ public class CombatHandler {
                 float defMult = CombatUtils.getPostureDef(seme, uke, defend, e.getAmount());
                 if (CombatUtils.parryMap.containsKey(GeneralUtils.getResourceLocationFromEntity(uke))) {
                     Tuple<Float, Float> stats = CombatUtils.parryMap.get(GeneralUtils.getResourceLocationFromEntity(uke));
-                    defMult = stats.getA();
-                    canParry = WarDance.rand.nextFloat() < stats.getB();
-                    if (canParry) {
+                    defMult = Math.min(stats.getA(), defMult);
+                    if (!canParry) {
                         parryHand = CombatUtils.getCooledAttackStrength(uke, Hand.MAIN_HAND, 0.5f) > CombatUtils.getCooledAttackStrength(uke, Hand.OFF_HAND, 0.5f) ? Hand.MAIN_HAND : Hand.OFF_HAND;
                     }
+                    canParry |= WarDance.rand.nextFloat() < stats.getB();
                 }
+                atkMult = Math.abs(atkMult);//accounting for negative posture damage, used to mark an item as ignoring parries
                 float finalPostureConsumption = atkMult * defMult;
                 ParryEvent pe = new ParryEvent(uke, seme, ((canParry && defend != null) || useDeflect), attackingHand, attack, parryHand, defend, finalPostureConsumption, e.getAmount());
                 if (failManualParry)
@@ -280,9 +305,9 @@ public class CombatHandler {
                         double kb = Math.sqrt(atkMult) - 0.18 - (1 / Math.max(defMult, 0.1)); //this will return negative if the defmult is greater, and positive if the atkmult is greater. Larger abs val=larger difference
                         //sigmoid curve again!
                         kb = 1d / (1d + Math.exp(-kb));//this is the knockback to be applied to the defender
-                        CombatUtils.knockBack(uke, seme, Math.min(uke instanceof PlayerEntity ? 1.6f : 1.3f, 0.2f + (pe.getPostureConsumption() + knockback) * (float) kb * 4 / ukeCap.getMaxPosture()), true, false);
+                        CombatUtils.knockBack(uke, seme, Math.min(uke instanceof PlayerEntity ? 1.6f : 1.3f, 0.2f + (pe.getPostureConsumption() + knockback) * (float) kb * (uke instanceof PlayerEntity ? 6 : 4) / ukeCap.getMaxPosture()), true, false);
                         kb = 1 - kb;
-                        CombatUtils.knockBack(seme, uke, Math.min(uke instanceof PlayerEntity ? 1.6f : 1.3f, 0.1f + pe.getPostureConsumption() * (float) kb * 2 / semeCap.getMaxPosture()), true, false);
+                        CombatUtils.knockBack(seme, uke, Math.min(uke instanceof PlayerEntity ? 1.6f : 1.3f, 0.1f + pe.getPostureConsumption() * (float) kb * (seme instanceof PlayerEntity ? 3 : 2) / semeCap.getMaxPosture()), true, false);
                         if (defend == null) {
                             //deflect
                             uke.world.playSound(null, uke.getPosX(), uke.getPosY(), uke.getPosZ(), SoundEvents.BLOCK_IRON_TRAPDOOR_OPEN, SoundCategory.PLAYERS, 0.75f + WarDance.rand.nextFloat() * 0.5f, (1 - (ukeCap.getPosture() / ukeCap.getMaxPosture())) + WarDance.rand.nextFloat() * 0.5f);
@@ -295,7 +320,7 @@ public class CombatHandler {
                             if (CasterData.getCap(seme).isTagActive(ProcPoints.disable_shield) || attack.getItem().canDisableShield(attack, defend, uke, seme)) {
                                 //shield is disabled
                                 if (uke instanceof PlayerEntity) {
-                                    ukeCap.setHandBind(parryHand, 60);
+                                    ((PlayerEntity) uke).getCooldownTracker().setCooldown(defend.getItem(), 60);
                                 }
                                 ukeCap.setHandBind(parryHand, 60);
                                 disshield = true;
@@ -306,6 +331,9 @@ public class CombatHandler {
                             } else {
                                 ukeCap.decrementShieldCount(1);
                                 if (ukeCap.getShieldCount() <= 0) {
+                                    if (uke instanceof PlayerEntity) {
+                                        ((PlayerEntity) uke).getCooldownTracker().setCooldown(defend.getItem(), 60);
+                                    }
                                     ukeCap.setHandBind(parryHand, ukeCap.getShieldTime());
                                 }
                             }
@@ -320,8 +348,10 @@ public class CombatHandler {
                             else//otherwise bind hand
                                 ukeCap.setHandBind(parryHand, (ticks - (int) cd));
                         }
+                        if (sweeping) {
+                            CombatUtils.setHandCooldown(seme, attackingHand, 0, true);
+                        } else CombatUtils.setHandCooldown(seme, attackingHand, (float) (1 - kb), true);
                         //sword on sword is 1.4, sword on shield is 1.12
-                        //normal distribution?
                         ItemStack finalDefend = defend;
                         defend.getCapability(CombatManipulator.CAP).ifPresent((i) -> i.onParry(seme, uke, finalDefend, e.getAmount()));
                         Hand other = uke.getHeldItemMainhand() == defend ? Hand.OFF_HAND : Hand.MAIN_HAND;
@@ -408,7 +438,7 @@ public class CombatHandler {
         uke.getAttribute(Attributes.ARMOR).removeModifier(uuid);
         uke.getAttribute(Attributes.ARMOR).removeModifier(uuid2);
         if (ds instanceof CombatDamageSource) {
-            float mult = ((CombatDamageSource) ds).getArmorReductionPercentage() - 1;
+            float mult = -((CombatDamageSource) ds).getArmorReductionPercentage();
             if (mult != 0) {
                 AttributeModifier armor = new AttributeModifier(uuid2, "temporary armor multiplier", mult, AttributeModifier.Operation.MULTIPLY_TOTAL);
                 uke.getAttribute(Attributes.ARMOR).applyNonPersistentModifier(armor);
@@ -454,6 +484,9 @@ public class CombatHandler {
                 }
                 seme.world.playSound(null, uke.getPosX(), uke.getPosY(), uke.getPosZ(), SoundEvents.ENTITY_GENERIC_BIG_FALL, SoundCategory.PLAYERS, 0.25f + WarDance.rand.nextFloat() * 0.5f, 0.75f + WarDance.rand.nextFloat() * 0.5f);
             }
+        } else {
+            //unfatality!
+            e.setAmount(e.getAmount() * CombatConfig.unStaggerDamage);
         }
 
     }

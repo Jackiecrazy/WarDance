@@ -445,6 +445,16 @@ public class DummyCombatCap implements ICombatCapability {
     }
 
     @Override
+    public void setSweepTick(int tick) {
+
+    }
+
+    @Override
+    public int getSweepTick() {
+        return 0;
+    }
+
+    @Override
     public boolean isValid() {
         return false;
     }

@@ -12,6 +12,7 @@ import jackiecrazy.wardance.config.GeneralConfig;
 import jackiecrazy.wardance.config.StealthConfig;
 import jackiecrazy.wardance.event.AttackMightEvent;
 import jackiecrazy.wardance.event.EntityAwarenessEvent;
+import jackiecrazy.wardance.event.ProjectileParryEvent;
 import jackiecrazy.wardance.networking.CombatChannel;
 import jackiecrazy.wardance.networking.UpdateAttackPacket;
 import jackiecrazy.wardance.potion.WarEffects;
@@ -20,6 +21,7 @@ import net.minecraft.block.material.Material;
 import net.minecraft.enchantment.EnchantmentHelper;
 import net.minecraft.enchantment.Enchantments;
 import net.minecraft.entity.Entity;
+import net.minecraft.entity.EntityType;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.MobEntity;
 import net.minecraft.entity.ai.attributes.AttributeModifier;
@@ -52,12 +54,14 @@ public class CombatUtils {
     public static HashMap<ResourceLocation, StealthData> stealthMap = new HashMap<>();
     public static HashMap<Item, AttributeModifier[]> armorStats = new HashMap<>();
     public static boolean isSweeping = false;
-    private static CombatInfo DEFAULT = new CombatInfo(1, 1, false, 0, 0, 1, 1);
-    private static HashMap<Item, CombatInfo> combatList = new HashMap<>();
+    private static MeleeInfo DEFAULTMELEE = new MeleeInfo(1, 1, false, 0, 0, 1, 1);
+    private static ProjectileInfo DEFAULTRANGED = new ProjectileInfo(0.1, 1, false, false);
+    private static HashMap<Item, MeleeInfo> combatList = new HashMap<>();
+    private static HashMap<EntityType, ProjectileInfo> projectileMap = new HashMap<>();
     private static ArrayList<Item> unarmed = new ArrayList<>();
 
-    public static void updateLists(List<? extends String> interpretC, List<? extends String> interpretA, List<? extends String> interpretU) {
-        DEFAULT = new CombatInfo(CombatConfig.defaultMultiplierPostureAttack, CombatConfig.defaultMultiplierPostureDefend, false, CombatConfig.shieldThreshold, CombatConfig.shieldCount, StealthConfig.distract, StealthConfig.unaware);
+    public static void updateItems(List<? extends String> interpretC, List<? extends String> interpretA, List<? extends String> interpretU) {
+        DEFAULTMELEE = new MeleeInfo(CombatConfig.defaultMultiplierPostureAttack, CombatConfig.defaultMultiplierPostureDefend, false, CombatConfig.shieldThreshold, CombatConfig.shieldCount, StealthConfig.distract, StealthConfig.unaware);
         combatList = new HashMap<>();
         armorStats = new HashMap<>();
         unarmed = new ArrayList<>();
@@ -107,7 +111,7 @@ public class CombatUtils {
             //System.out.print("\""+key+"\",\n");
             if (ForgeRegistries.ITEMS.containsKey(key)) {
                 final Item item = ForgeRegistries.ITEMS.getValue(key);
-                combatList.put(item, new CombatInfo(attack, defend, shield, pTime, pCount, distract, unaware));
+                combatList.put(item, new MeleeInfo(attack, defend, shield, pTime, pCount, distract, unaware));
             }
             //System.out.print("\"" + name+ "\", ");
         }
@@ -152,6 +156,29 @@ public class CombatUtils {
                 unarmed.add(ForgeRegistries.ITEMS.getValue(key));
             }
         }
+    }
+
+    public static void updateProjectiles(List<? extends String> interpretP) {
+        projectileMap.clear();
+        DEFAULTRANGED = new ProjectileInfo(CombatConfig.posturePerProjectile, 1, false, false);
+        for (String s : interpretP)
+            try {
+                String[] val = s.split(",");
+                final ResourceLocation key = new ResourceLocation(val[0].trim());
+                double posture = Double.parseDouble(val[1].trim());
+                int count = Integer.parseInt(val[2].trim());
+                boolean destroy = false, trigger = false;
+                if (val.length > 3) {
+                    String tags = val[3];
+                    destroy = tags.contains("d");
+                    trigger = tags.contains("t");
+                }
+                EntityType<?> type = ForgeRegistries.ENTITIES.getValue(key);
+                if (type != null)
+                    projectileMap.put(type, new ProjectileInfo(posture, count, destroy, trigger));
+            } catch (Exception e) {
+                WarDance.LOGGER.warn("improperly formatted projectile parry definition " + s + "!");
+            }
     }
 
     public static void updateMobParrying(List<? extends String> interpretM) {
@@ -214,29 +241,32 @@ public class CombatUtils {
 
     public static boolean isShield(LivingEntity e, ItemStack stack) {
         if (stack == null) return false;
-        return combatList.containsKey(stack.getItem()) && (combatList.getOrDefault(stack.getItem(), DEFAULT).isShield || CasterData.getCap(e).getActiveSkill(WarSkills.IRON_GUARD.get()).isPresent());//stack.isShield(e);
+        return combatList.containsKey(stack.getItem()) && (combatList.getOrDefault(stack.getItem(), DEFAULTMELEE).isShield || CasterData.getCap(e).getActiveSkill(WarSkills.IRON_GUARD.get()).isPresent());//stack.isShield(e);
     }
 
     public static boolean isWeapon(@Nullable LivingEntity e, ItemStack stack) {
         if (stack == null) return false;
         if (e != null && CasterData.getCap(e).isSkillActive(WarSkills.SHIELD_BASH.get()))
             return combatList.containsKey(stack.getItem());
-        return combatList.containsKey(stack.getItem()) && !combatList.getOrDefault(stack.getItem(), DEFAULT).isShield;//stack.getItem() instanceof SwordItem || stack.getItem() instanceof AxeItem;
+        return combatList.containsKey(stack.getItem()) && !combatList.getOrDefault(stack.getItem(), DEFAULTMELEE).isShield;//stack.getItem() instanceof SwordItem || stack.getItem() instanceof AxeItem;
     }
 
     public static boolean isUnarmed(ItemStack is, LivingEntity e) {
         return is.isEmpty() || unarmed.contains(is.getItem());
     }
 
-    public static boolean canParry(LivingEntity defender, Entity attacker, @Nonnull ItemStack i, float damage) {
+    public static boolean canParry(LivingEntity defender, Entity attacker, @Nonnull ItemStack i, float postureDamage) {
         Hand h = defender.getHeldItemOffhand() == i ? Hand.OFF_HAND : Hand.MAIN_HAND;
-        if (attacker instanceof LivingEntity && getPostureDef((LivingEntity) attacker, defender, i, damage) < 0)
+        if (postureDamage < 0) return false;
+        if (attacker instanceof LivingEntity && getPostureDef((LivingEntity) attacker, defender, i, postureDamage) < 0)
+            return false;
+        if (defender instanceof PlayerEntity && ((PlayerEntity) defender).getCooldownTracker().hasCooldown(i.getItem()))
             return false;
         float rand = WarDance.rand.nextFloat();
         boolean recharge = getCooledAttackStrength(defender, h, 0.5f) > 0.9f && CombatData.getCap(defender).getHandBind(h) == 0;
-        recharge &= (!(defender instanceof PlayerEntity) || ((PlayerEntity) defender).getCooldownTracker().getCooldown(defender.getHeldItemOffhand().getItem(), 0) == 0);
-        if (defender.getHeldItemMainhand().getCapability(CombatManipulator.CAP).isPresent() && attacker instanceof LivingEntity) {
-            return defender.getHeldItemMainhand().getCapability(CombatManipulator.CAP).resolve().get().canBlock(defender, attacker, i, recharge, damage);
+        recharge &= (!(defender instanceof PlayerEntity) || ((PlayerEntity) defender).getCooldownTracker().getCooldown(defender.getHeldItem(h).getItem(), 0) == 0);
+        if (i.getCapability(CombatManipulator.CAP).isPresent() && attacker instanceof LivingEntity) {
+            return i.getCapability(CombatManipulator.CAP).resolve().get().canBlock(defender, attacker, i, recharge, postureDamage);
         }
         if (isShield(defender, i)) {
             boolean canShield = (defender instanceof PlayerEntity || rand < CombatConfig.mobParryChanceShield + CombatData.getCap(defender).getHandReel(h));
@@ -270,10 +300,10 @@ public class CombatUtils {
     }
 
     public static float getPostureAtk(@Nullable LivingEntity attacker, @Nullable LivingEntity defender, @Nullable Hand h, float amount, ItemStack stack) {
-        float base = amount * (float) DEFAULT.attackPostureMultiplier;
-        float scaler=CombatConfig.mobScaler;
+        float base = amount * (float) DEFAULTMELEE.attackPostureMultiplier;
+        float scaler = CombatConfig.mobScaler;
         if (stack != null && !stack.isEmpty()) {
-            scaler=1;
+            scaler = 1;
             if (stack.getCapability(CombatManipulator.CAP).isPresent()) {
                 base = stack.getCapability(CombatManipulator.CAP).resolve().get().postureDealtBase(attacker, defender, stack, amount);
             } else if (combatList.containsKey(stack.getItem()))
@@ -287,7 +317,7 @@ public class CombatUtils {
     }
 
     public static float getPostureDef(@Nullable LivingEntity attacker, @Nullable LivingEntity defender, ItemStack stack, float amount) {
-        if (stack == null) return (float) DEFAULT.defensePostureMultiplier;
+        if (stack == null) return (float) DEFAULTMELEE.defensePostureMultiplier;
         if (defender != null && isShield(defender, stack) && CombatData.getCap(defender).getShieldTime() > 0 && CombatData.getCap(defender).getShieldCount() > 0) {
             return 0;
         }
@@ -297,7 +327,7 @@ public class CombatUtils {
         if (combatList.containsKey(stack.getItem())) {
             return (float) combatList.get(stack.getItem()).defensePostureMultiplier;
         }
-        return (float) DEFAULT.defensePostureMultiplier;
+        return (float) DEFAULTMELEE.defensePostureMultiplier;
     }
 
     public static boolean isMeleeAttack(DamageSource s) {
@@ -422,7 +452,7 @@ public class CombatUtils {
 
     public static double getDamageMultiplier(Awareness a, ItemStack is) {
         if (!StealthConfig.stealthSystem || is == null) return 1;
-        CombatInfo ci = combatList.getOrDefault(is.getItem(), DEFAULT);
+        MeleeInfo ci = combatList.getOrDefault(is.getItem(), DEFAULTMELEE);
         switch (a) {
             case DISTRACTED:
                 return ci.distractDamageBonus;
@@ -546,6 +576,14 @@ public class CombatUtils {
         return e.getResult() == Event.Result.ALLOW || (e.getResult() == Event.Result.DEFAULT && e.isVanillaCritical());
     }
 
+    public static void initializePPE(ProjectileParryEvent ppe) {
+        ProjectileInfo pi = projectileMap.getOrDefault(ppe.getProjectile().getType(), DEFAULTRANGED);
+        ppe.setReturnVec(pi.destroy ? null : ppe.getProjectile().getMotion().normalize().scale(-0.1));
+        ppe.setPostureConsumption((float) pi.posture);
+        ppe.setShieldCount(pi.count);
+        ppe.setTrigger(pi.trigger);
+    }
+
     public enum Awareness {
         UNAWARE,//cannot be parried, absorbed, shattered, or deflected
         DISTRACTED,//deals extra (posture) damage
@@ -588,13 +626,13 @@ public class CombatUtils {
 
     }
 
-    private static class CombatInfo {
+    private static class MeleeInfo {
         private final double attackPostureMultiplier, defensePostureMultiplier;
         private final double distractDamageBonus, unawareDamageBonus;
         private final int parryTime, parryCount;
         private final boolean isShield;
 
-        private CombatInfo(double attack, double defend, boolean shield, int pTime, int pCount, double distract, double unaware) {
+        private MeleeInfo(double attack, double defend, boolean shield, int pTime, int pCount, double distract, double unaware) {
             attackPostureMultiplier = attack;
             defensePostureMultiplier = defend;
             isShield = shield;
@@ -602,6 +640,19 @@ public class CombatUtils {
             parryTime = pTime;
             distractDamageBonus = distract;
             unawareDamageBonus = unaware;
+        }
+    }
+
+    private static class ProjectileInfo {
+        private final double posture;
+        private final int count;
+        private final boolean destroy, trigger;
+
+        private ProjectileInfo(double p, int c, boolean d, boolean t) {
+            posture = p;
+            count = c;
+            destroy = d;
+            trigger = t;
         }
     }
 }

@@ -17,6 +17,7 @@ import net.minecraft.entity.ai.attributes.Attributes;
 import net.minecraft.tags.Tag;
 import net.minecraft.util.SoundCategory;
 import net.minecraft.util.SoundEvents;
+import net.minecraftforge.event.entity.living.LivingAttackEvent;
 import net.minecraftforge.event.entity.living.LivingHurtEvent;
 import net.minecraftforge.eventbus.api.Event;
 
@@ -27,7 +28,7 @@ import java.util.HashSet;
 import java.util.Set;
 
 public class CoupDeGrace extends Skill {
-    private final Tag<String> tag = Tag.getTagFromContents(new HashSet<>(Arrays.asList("physical", ProcPoints.melee, ProcPoints.on_hurt, ProcPoints.recharge_cast, ProcPoints.change_parry_result, "execution")));
+    private final Tag<String> tag = Tag.getTagFromContents(new HashSet<>(Arrays.asList("physical", ProcPoints.melee, ProcPoints.normal_attack, ProcPoints.on_hurt, ProcPoints.recharge_cast, ProcPoints.change_parry_result, "execution")));
 
     protected float getDamage(LivingEntity caster, LivingEntity target) {
         return (GeneralUtils.getMaxHealthBeforeWounding(target) - target.getHealth()) * 0.2f;
@@ -199,6 +200,9 @@ public class CoupDeGrace extends Skill {
                 procPoint.setResult(Event.Result.DENY);
                 target.setLastAttackedEntity(caster);
                 markUsed(caster);
+            }
+            if (procPoint instanceof LivingAttackEvent && ((LivingAttackEvent) procPoint).getEntityLiving() == target) {
+                ((LivingAttackEvent) procPoint).getSource().setDamageIsAbsolute();
             }
         }
     }
