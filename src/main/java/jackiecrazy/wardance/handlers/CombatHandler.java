@@ -80,11 +80,11 @@ public class CombatHandler {
     public static void projectileParry(final ProjectileImpactEvent e) {
         if (e.getRayTraceResult().getType() == RayTraceResult.Type.ENTITY && e.getRayTraceResult() instanceof EntityRayTraceResult && ((EntityRayTraceResult) e.getRayTraceResult()).getEntity() instanceof LivingEntity) {
             LivingEntity uke = (LivingEntity) ((EntityRayTraceResult) e.getRayTraceResult()).getEntity();
-            if (uke.isActiveItemStackBlocking()) return;
             if (CombatUtils.getAwareness(null, uke) != CombatUtils.Awareness.ALERT) {
                 return;
             }
             if (MovementUtils.hasInvFrames(uke)) e.setCanceled(true);
+            if (uke.isActiveItemStackBlocking()) return;
             if (e.getEntity() instanceof AbstractArrowEntity && ((AbstractArrowEntity) e.getEntity()).getPierceLevel() > 0)
                 return;
             float consume = CombatConfig.posturePerProjectile;
@@ -123,9 +123,9 @@ public class CombatHandler {
                 }
                 if (ukeCap.getShieldCount() <= 0) {
                     if (uke instanceof PlayerEntity && h != null) {
-                        ((PlayerEntity) uke).getCooldownTracker().setCooldown(uke.getHeldItem(h).getItem(), 60);
+                        ((PlayerEntity) uke).getCooldownTracker().setCooldown(uke.getHeldItem(h).getItem(), ukeCap.getShieldTime());
                     }
-                    ukeCap.setHandBind(h, ukeCap.getShieldTime());
+                    ukeCap.setHandBind(pe.getDefendingHand(), ukeCap.getShieldTime());
                 }
                 uke.world.playSound(null, uke.getPosX(), uke.getPosY(), uke.getPosZ(), free ? SoundEvents.BLOCK_WOODEN_TRAPDOOR_OPEN : SoundEvents.BLOCK_WOODEN_TRAPDOOR_CLOSE, SoundCategory.PLAYERS, 0.75f + WarDance.rand.nextFloat() * 0.5f, (1 - (ukeCap.getPosture() / ukeCap.getMaxPosture())) + WarDance.rand.nextFloat() * 0.5f);
                 if (pe.doesTrigger()) {
@@ -335,7 +335,7 @@ public class CombatHandler {
                                 ukeCap.decrementShieldCount(1);
                                 if (ukeCap.getShieldCount() <= 0) {
                                     if (uke instanceof PlayerEntity) {
-                                        ((PlayerEntity) uke).getCooldownTracker().setCooldown(defend.getItem(), 60);
+                                        ((PlayerEntity) uke).getCooldownTracker().setCooldown(defend.getItem(), ukeCap.getShieldTime());
                                     }
                                     ukeCap.setHandBind(parryHand, ukeCap.getShieldTime());
                                 }
