@@ -271,23 +271,27 @@ public class CombatHandler {
                     }
                 }
                 float defMult = CombatUtils.getPostureDef(seme, uke, defend, e.getAmount());
-                if (CombatUtils.parryMap.containsKey(GeneralUtils.getResourceLocationFromEntity(uke))) {
+                if (awareness != CombatUtils.Awareness.UNAWARE && CombatUtils.parryMap.containsKey(GeneralUtils.getResourceLocationFromEntity(uke))) {
                     Tuple<Float, Float> stats = CombatUtils.parryMap.get(GeneralUtils.getResourceLocationFromEntity(uke));
                     if (WarDance.rand.nextFloat() < stats.getB()) {
-                        if (stats.getA() < 0) return;//cannot parry
-                        if (!canParry) {
-                            parryHand = CombatUtils.getCooledAttackStrength(uke, Hand.MAIN_HAND, 0.5f) > CombatUtils.getCooledAttackStrength(uke, Hand.OFF_HAND, 0.5f) ? Hand.MAIN_HAND : Hand.OFF_HAND;
+                        if (stats.getA() < 0) {//cannot parry
+                            defend = null;
+                            canParry = false;
+                            defMult = -stats.getA();
+                        } else {
+                            if (!canParry) {
+                                parryHand = CombatUtils.getCooledAttackStrength(uke, Hand.MAIN_HAND, 0.5f) > CombatUtils.getCooledAttackStrength(uke, Hand.OFF_HAND, 0.5f) ? Hand.MAIN_HAND : Hand.OFF_HAND;
+                            }
+                            defend = ItemStack.EMPTY;
+                            defMult = Math.min(stats.getA(), defMult);
+                            canParry = true;
                         }
-                        defMult = Math.min(stats.getA(), defMult);
-                        canParry = true;
                     }
                 }
-                atkMult = Math.abs(atkMult);//accounting for negative posture damage, used to mark an item as ignoring parries
-                float finalPostureConsumption = atkMult * defMult;
+                float finalPostureConsumption = Math.abs(atkMult * defMult);//accounting for negative posture damage, used to mark an item as ignoring parries
                 ParryEvent pe = new ParryEvent(uke, seme, ((canParry && defend != null) || useDeflect), attackingHand, attack, parryHand, defend, finalPostureConsumption, e.getAmount());
                 if (failManualParry)
                     pe.setResult(Event.Result.DENY);
-                //FIXME observe whether this implementation will work unexpectedly
                 MinecraftForge.EVENT_BUS.post(pe);
                 if (pe.isCanceled()) {
                     //System.out.println("parry has been canceled with the attack.");
@@ -362,8 +366,9 @@ public class CombatHandler {
                         defend.getCapability(CombatManipulator.CAP).ifPresent((i) -> i.onOtherHandParry(seme, uke, finalDefend1, e.getAmount()));
                     }
                 }
-//                if (!(seme instanceof PlayerEntity))
-//                    CombatUtils.setHandCooldown(seme, Hand.MAIN_HAND, 0, false);
+                if (!(seme instanceof PlayerEntity)){
+                    semeCap.setHandBind(attackingHand, CombatUtils.getCooldownPeriod(seme, attackingHand));
+                }
             }//else System.out.println("the attack is not a melee attack, or the damage dealt was 0.");
             //shatter, at the rock bottom of the attack event, saving your protected butt.
             if (!uke.isActiveItemStackBlocking() && !e.isCanceled()) {

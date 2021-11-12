@@ -541,6 +541,8 @@ public class CombatUtils {
     }
 
     public static Awareness getAwareness(LivingEntity attacker, LivingEntity target) {
+        if (attacker == target)
+            return Awareness.ALERT;//first, you're hitting yourself; second, you're aware of yourself.
         if (!StealthConfig.stealthSystem || target instanceof PlayerEntity || CombatUtils.stealthMap.getOrDefault(target.getType().getRegistryName(), CombatUtils.STEALTH).isVigilant())
             return Awareness.ALERT;
         Awareness a = Awareness.ALERT;

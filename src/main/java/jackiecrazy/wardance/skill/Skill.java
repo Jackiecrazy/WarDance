@@ -178,7 +178,11 @@ public abstract class Skill extends ForgeRegistryEntry<Skill> {
     public abstract Tag<String> getIncompatibleTags(LivingEntity caster);
 
     public boolean checkAndCast(LivingEntity caster) {
-        if (castingCheck(caster) != CastStatus.ALLOWED) return false;
+        final CastStatus status = castingCheck(caster);
+        if (status != CastStatus.ALLOWED){
+            WarDance.LOGGER.debug(this.getRegistryName()+" returned "+status+" when attempting to cast, aborting");
+            return false;
+        }
         if (!isPassive(caster) && MinecraftForge.EVENT_BUS.post(new SkillCastEvent(caster, this))) return false;
         caster.world.playMovingSound(null, caster, SoundEvents.ITEM_FIRECHARGE_USE, SoundCategory.AMBIENT, 0.3f + WarDance.rand.nextFloat(), 0.5f + WarDance.rand.nextFloat());
         return onCast(caster);
@@ -240,7 +244,7 @@ public abstract class Skill extends ForgeRegistryEntry<Skill> {
         onEffectEnd(caster, stats);
     }
 
-    public abstract void onSuccessfulProc(LivingEntity caster, SkillData stats, LivingEntity target, Event procPoint);
+    public abstract void onSuccessfulProc(LivingEntity caster, SkillData stats, @Nullable LivingEntity target, Event procPoint);
 
     public boolean onCooldownProc(LivingEntity caster, SkillCooldownData stats, Event procPoint) {
 

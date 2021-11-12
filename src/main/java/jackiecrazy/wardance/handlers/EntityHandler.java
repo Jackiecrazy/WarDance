@@ -199,7 +199,7 @@ public class EntityHandler {
                     e.modifyVisibility(10 / (stealth - 10));
                 if (!sd.isAllSeeing() && !GeneralUtils.isFacingEntity(watcher, sneaker, Math.max(StealthConfig.baseHorizontalDetection, (int) ((20 - stealth) * StealthConfig.anglePerArmor)), Math.max(StealthConfig.baseVerticalDetection, (int) ((20 - stealth) * (20 - stealth)))))
                     e.modifyVisibility(0.3);
-                if (!sd.isOlfactory()) {
+                if (!sd.isPerceptive()) {
                     final double speedSq = GeneralUtils.getSpeedSq(sneaker);
                     e.modifyVisibility(0.5 + MathHelper.sqrt(speedSq) * 2);
                 }

@@ -3,11 +3,11 @@ package jackiecrazy.wardance.skill.crownchampion;
 import jackiecrazy.wardance.WarDance;
 import jackiecrazy.wardance.capability.resources.CombatData;
 import jackiecrazy.wardance.capability.skill.CasterData;
-import jackiecrazy.wardance.event.AttackMightEvent;
+import jackiecrazy.wardance.event.GainMightEvent;
 import jackiecrazy.wardance.potion.WarEffects;
+import jackiecrazy.wardance.skill.ProcPoints;
 import jackiecrazy.wardance.skill.Skill;
 import jackiecrazy.wardance.skill.SkillData;
-import jackiecrazy.wardance.skill.ProcPoints;
 import jackiecrazy.wardance.skill.WarSkills;
 import jackiecrazy.wardance.utils.CombatUtils;
 import jackiecrazy.wardance.utils.SkillUtils;
@@ -160,9 +160,9 @@ elemental might: +1 burn/snowball/poison/drown damage to targets you have attack
 
         @Override
         public void onSuccessfulProc(LivingEntity caster, SkillData pd, LivingEntity target, Event procPoint) {
-            if (procPoint instanceof AttackMightEvent) {
-                ((AttackMightEvent) procPoint).setQuantity(((AttackMightEvent) procPoint).getQuantity() * 3);
-                pd.setArbitraryFloat(pd.getArbitraryFloat() + ((AttackMightEvent) procPoint).getQuantity());
+            if (procPoint instanceof GainMightEvent) {
+                ((GainMightEvent) procPoint).setQuantity(((GainMightEvent) procPoint).getQuantity() * 3);
+                pd.setArbitraryFloat(pd.getArbitraryFloat() + ((GainMightEvent) procPoint).getQuantity());
                 if (pd.getArbitraryFloat() > 3) {
                     pd.setArbitraryFloat(pd.getArbitraryFloat() % 3);
                     CombatData.getCap(caster).setShatterCooldown(0);

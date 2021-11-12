@@ -4,7 +4,6 @@ import jackiecrazy.wardance.api.CombatDamageSource;
 import jackiecrazy.wardance.capability.resources.CombatData;
 import jackiecrazy.wardance.capability.skill.CasterData;
 import jackiecrazy.wardance.capability.status.Marks;
-import jackiecrazy.wardance.event.GainMightEvent;
 import jackiecrazy.wardance.event.SkillCastEvent;
 import jackiecrazy.wardance.event.StaggerEvent;
 import jackiecrazy.wardance.potion.WarEffects;
@@ -46,7 +45,7 @@ Onslaught: casts heavy blow before every attack (this is a lot easier)
     Flare: deals two lives' worth of damage, but causes the target to rapidly regenerate 1.4 lives afterwards
     Master's Lesson: while active, might gain is converted into posture at a 1:1 ratio; overflow posture will generate free parries
      */
-    private final Tag<String> tag = Tag.getTagFromContents(new HashSet<>(Arrays.asList("physical", ProcPoints.on_hurt, ProcPoints.on_stagger, ProcPoints.change_posture_regeneration, ProcPoints.on_cast, ProcPoints.recharge_cast, "melee", "execution")));
+    private final Tag<String> tag = Tag.getTagFromContents(new HashSet<>(Arrays.asList("physical", ProcPoints.on_hurt, ProcPoints.on_stagger, ProcPoints.on_cast, ProcPoints.recharge_cast, "melee")));
 
     @Override
     public Tag<String> getProcPoints(LivingEntity caster) {
@@ -92,7 +91,7 @@ Onslaught: casts heavy blow before every attack (this is a lot easier)
     public CastStatus castingCheck(LivingEntity caster) {
         if (CasterData.getCap(caster).isSkillActive(this))
             return CastStatus.ALLOWED;
-        if (CombatData.getCap(caster).getSpirit() != CombatData.getCap(caster).getMaxSpirit()) return CastStatus.OTHER;
+        if (CombatData.getCap(caster).getSpirit() < CombatData.getCap(caster).getMaxSpirit()) return CastStatus.OTHER;
         return super.castingCheck(caster);
     }
 
@@ -116,9 +115,6 @@ Onslaught: casts heavy blow before every attack (this is a lot easier)
                 absorbDamage(stats, e.getAmount());
                 CombatData.getCap(target).consumePosture(caster, e.getAmount());
             }
-        } else if (procPoint instanceof GainMightEvent) {
-            stats.setArbitraryFloat(stats.getArbitraryFloat() + ((GainMightEvent) procPoint).getQuantity());
-            //((GainMightEvent) procPoint).setQuantity(0);
         }
     }
 
@@ -158,13 +154,6 @@ Onslaught: casts heavy blow before every attack (this is a lot easier)
         @Override
         public Color getColor() {
             return Color.CYAN;
-        }
-
-        @Override
-        public void onSuccessfulProc(LivingEntity caster, SkillData stats, LivingEntity target, Event procPoint) {
-            if (procPoint instanceof GainMightEvent) {
-                ((GainMightEvent) procPoint).setQuantity(0);
-            } else super.onSuccessfulProc(caster, stats, target, procPoint);
         }
 
         protected void absorbDamage(SkillData s, float a) {
@@ -234,7 +223,7 @@ Onslaught: casts heavy blow before every attack (this is a lot easier)
     }
 
     public static class MastersLesson extends Guillotine {
-        private final Tag<String> tag = Tag.getTagFromContents(new HashSet<>(Arrays.asList("physical", ProcPoints.on_hurt, ProcPoints.normal_attack, ProcPoints.on_stagger, ProcPoints.change_might, ProcPoints.on_cast, "melee", "execution")));
+        private final Tag<String> tag = Tag.getTagFromContents(new HashSet<>(Arrays.asList("physical", ProcPoints.on_hurt, ProcPoints.normal_attack, ProcPoints.on_stagger, ProcPoints.on_cast, "melee", "execution")));
 
         @Override
         public Tag<String> getProcPoints(LivingEntity caster) {

@@ -77,7 +77,7 @@ public class SkillEventHandler {
         if (!e.getEntityLiving().isServerWorld()) return;
         for (SkillData s : CasterData.getCap(e.getEntityLiving()).getActiveSkills().values()) {
             if (s.getSkill().getProcPoints(e.getEntityLiving()).contains(ProcPoints.on_dodge)) {
-                s.getSkill().onSuccessfulProc(e.getEntityLiving(), s, e.getEntityLiving(), e);
+                s.getSkill().onSuccessfulProc(e.getEntityLiving(), s, null, e);
             }
         }
         //System.out.println("crit "+e.isCanceled());
@@ -85,10 +85,10 @@ public class SkillEventHandler {
 
     @SubscribeEvent
     public static void forceCrit(CriticalHitEvent e) {
-        if (!e.getEntityLiving().isServerWorld()) return;
+        if (!e.getEntityLiving().isServerWorld()||!(e.getTarget() instanceof LivingEntity)) return;
         for (SkillData s : CasterData.getCap(e.getEntityLiving()).getActiveSkills().values()) {
             if (s.getSkill().getProcPoints(e.getEntityLiving()).contains(ProcPoints.modify_crit)) {
-                s.getSkill().onSuccessfulProc(e.getEntityLiving(), s, e.getEntityLiving(), e);
+                s.getSkill().onSuccessfulProc(e.getEntityLiving(), s, (LivingEntity) e.getTarget(), e);
             }
         }
         //System.out.println("crit "+e.isCanceled());
@@ -146,7 +146,7 @@ public class SkillEventHandler {
         ISkillCapability isc = CasterData.getCap(attacker);
         for (SkillData s : isc.getActiveSkills().values()) {
             if (s.getSkill().getProcPoints(attacker).contains(ProcPoints.change_might)) {
-                s.getSkill().onSuccessfulProc(attacker, s, e.getEntityLiving(), e);
+                s.getSkill().onSuccessfulProc(attacker, s, null, e);
             }
         }
         //System.out.println("might "+e.isCanceled());
@@ -159,7 +159,7 @@ public class SkillEventHandler {
         ISkillCapability isc = CasterData.getCap(entity);
         for (SkillData s : isc.getActiveSkills().values()) {
             if (s.getSkill().getProcPoints(entity).contains(ProcPoints.change_heals)) {
-                s.getSkill().onSuccessfulProc(entity, s, e.getEntityLiving(), e);
+                s.getSkill().onSuccessfulProc(entity, s, null, e);
             }
         }
     }
@@ -171,7 +171,7 @@ public class SkillEventHandler {
         ISkillCapability isc = CasterData.getCap(entity);
         for (SkillData s : isc.getActiveSkills().values()) {
             if (s.getSkill().getProcPoints(entity).contains(ProcPoints.change_posture_regeneration)) {
-                s.getSkill().onSuccessfulProc(entity, s, e.getEntityLiving(), e);
+                s.getSkill().onSuccessfulProc(entity, s, null, e);
             }
         }
     }
@@ -183,7 +183,7 @@ public class SkillEventHandler {
         ISkillCapability isc = CasterData.getCap(entity);
         for (SkillData s : isc.getActiveSkills().values()) {
             if (s.getSkill().getProcPoints(entity).contains(ProcPoints.change_spirit)) {
-                s.getSkill().onSuccessfulProc(entity, s, e.getEntityLiving(), e);
+                s.getSkill().onSuccessfulProc(entity, s, null, e);
             }
         }
     }
@@ -213,12 +213,12 @@ public class SkillEventHandler {
                     s.getSkill().onSuccessfulProc(attacker, s, e.getEntityLiving(), e);
                 }
             }
-        }
-        LivingEntity defender = e.getEntityLiving();
-        ISkillCapability isc = CasterData.getCap(defender);
-        for (SkillData s : isc.getActiveSkills().values()) {
-            if (s.getSkill().getProcPoints(defender).contains(ProcPoints.on_being_hurt)) {
-                s.getSkill().onSuccessfulProc(defender, s, e.getEntityLiving(), e);
+            LivingEntity defender = e.getEntityLiving();
+            isc = CasterData.getCap(defender);
+            for (SkillData s : isc.getActiveSkills().values()) {
+                if (s.getSkill().getProcPoints(defender).contains(ProcPoints.on_being_hurt)) {
+                    s.getSkill().onSuccessfulProc(defender, s, attacker, e);
+                }
             }
         }
     }
@@ -234,12 +234,12 @@ public class SkillEventHandler {
                     s.getSkill().onSuccessfulProc(attacker, s, e.getEntityLiving(), e);
                 }
             }
-        }
-        LivingEntity defender = e.getEntityLiving();
-        ISkillCapability isc = CasterData.getCap(defender);
-        for (SkillData s : isc.getActiveSkills().values()) {
-            if (s.getSkill().getProcPoints(defender).contains(ProcPoints.on_being_staggered)) {
-                s.getSkill().onSuccessfulProc(defender, s, e.getEntityLiving(), e);
+            LivingEntity defender = e.getEntityLiving();
+            isc = CasterData.getCap(defender);
+            for (SkillData s : isc.getActiveSkills().values()) {
+                if (s.getSkill().getProcPoints(defender).contains(ProcPoints.on_being_staggered)) {
+                    s.getSkill().onSuccessfulProc(defender, s, attacker, e);
+                }
             }
         }
     }
@@ -255,12 +255,12 @@ public class SkillEventHandler {
                     s.getSkill().onSuccessfulProc(attacker, s, e.getEntityLiving(), e);
                 }
             }
-        }
-        LivingEntity defender = e.getEntityLiving();
-        ISkillCapability isc = CasterData.getCap(defender);
-        for (SkillData s : isc.getActiveSkills().values()) {
-            if (s.getSkill().getProcPoints(defender).contains(ProcPoints.on_being_damaged)) {
-                s.getSkill().onSuccessfulProc(defender, s, e.getEntityLiving(), e);
+            LivingEntity defender = e.getEntityLiving();
+            isc = CasterData.getCap(defender);
+            for (SkillData s : isc.getActiveSkills().values()) {
+                if (s.getSkill().getProcPoints(defender).contains(ProcPoints.on_being_damaged)) {
+                    s.getSkill().onSuccessfulProc(defender, s, attacker, e);
+                }
             }
         }
     }
@@ -276,12 +276,12 @@ public class SkillEventHandler {
                     s.getSkill().onSuccessfulProc(attacker, s, e.getEntityLiving(), e);
                 }
             }
-        }
-        LivingEntity defender = e.getEntityLiving();
-        ISkillCapability isc = CasterData.getCap(defender);
-        for (SkillData s : isc.getActiveSkills().values()) {
-            if (s.getSkill().getProcPoints(defender).contains(ProcPoints.on_death)) {
-                s.getSkill().onSuccessfulProc(defender, s, e.getEntityLiving(), e);
+            LivingEntity defender = e.getEntityLiving();
+            isc = CasterData.getCap(defender);
+            for (SkillData s : isc.getActiveSkills().values()) {
+                if (s.getSkill().getProcPoints(defender).contains(ProcPoints.on_death)) {
+                    s.getSkill().onSuccessfulProc(defender, s, attacker, e);
+                }
             }
         }
     }

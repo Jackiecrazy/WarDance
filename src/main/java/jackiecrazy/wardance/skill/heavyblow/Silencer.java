@@ -3,6 +3,7 @@ package jackiecrazy.wardance.skill.heavyblow;
 import jackiecrazy.wardance.WarDance;
 import jackiecrazy.wardance.capability.resources.CombatData;
 import jackiecrazy.wardance.capability.skill.CasterData;
+import jackiecrazy.wardance.capability.status.Marks;
 import jackiecrazy.wardance.skill.Skill;
 import jackiecrazy.wardance.skill.SkillData;
 import jackiecrazy.wardance.skill.ProcPoints;
@@ -24,7 +25,7 @@ import java.util.HashSet;
 
 @Mod.EventBusSubscriber(modid = WarDance.MODID)
 public class Silencer extends HeavyBlow {
-    private final Tag<String> tag = Tag.getTagFromContents(new HashSet<>(Arrays.asList("physical", ProcPoints.melee, ProcPoints.on_death, ProcPoints.afflict_tick, "boundCast", ProcPoints.normal_attack, ProcPoints.modify_crit, ProcPoints.recharge_normal, ProcPoints.on_being_parried)));
+    private final Tag<String> tag = Tag.getTagFromContents(new HashSet<>(Arrays.asList(ProcPoints.afflict_tick)));
     private final Tag<String> no = Tag.getEmptyTag();
 
     @SubscribeEvent
@@ -38,7 +39,7 @@ public class Silencer extends HeavyBlow {
 
     @SubscribeEvent
     public static void silenced(LivingDeathEvent e) {
-        if (e.getSource().getTrueSource() instanceof LivingEntity) {
+        if (e.getSource().getTrueSource() instanceof LivingEntity && Marks.getCap(e.getEntityLiving()).isMarked(WarSkills.BACKSTAB.get())) {
             LivingEntity elb = (LivingEntity) e.getSource().getTrueSource();
             CasterData.getCap(elb).coolSkill(WarSkills.BACKSTAB.get());
         }
@@ -61,18 +62,17 @@ public class Silencer extends HeavyBlow {
 
     @Override
     public void onSuccessfulProc(LivingEntity caster, SkillData stats, LivingEntity target, Event procPoint) {
-        if (caster.world.isRemote()) return;
-        CombatData.getCap(target).setHandBind(Hand.MAIN_HAND, 30);
-        CombatData.getCap(target).setHandBind(Hand.OFF_HAND, 30);
+        if (caster.world.isRemote() || caster == target) return;
+        CombatData.getCap(target).setHandBind(Hand.MAIN_HAND, 60);
+        CombatData.getCap(target).setHandBind(Hand.OFF_HAND, 60);
         procPoint.setResult(Event.Result.ALLOW);
-        mark(caster, target, 80);
+        mark(caster, target, 60);
     }
 
     @Override
     public SkillData onMarked(LivingEntity caster, LivingEntity target, SkillData sd, @Nullable SkillData existing) {
         sd.flagCondition(existing == null ? target.isSilent() : existing.isCondition());
         target.setSilent(true);
-        System.out.println("target has been silenced!");
         return super.onMarked(caster, target, sd, existing);
     }
 
@@ -84,7 +84,6 @@ public class Silencer extends HeavyBlow {
 
     @Override
     public boolean onCast(LivingEntity caster) {
-        activate(caster, 40);
         return true;
     }
 }

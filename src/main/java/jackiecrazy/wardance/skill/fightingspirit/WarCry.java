@@ -1,9 +1,7 @@
 package jackiecrazy.wardance.skill.fightingspirit;
 
-import jackiecrazy.wardance.WarDance;
 import jackiecrazy.wardance.capability.resources.CombatData;
 import jackiecrazy.wardance.capability.resources.ICombatCapability;
-import jackiecrazy.wardance.capability.skill.CasterData;
 import jackiecrazy.wardance.skill.*;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.ai.attributes.AttributeModifier;
@@ -19,26 +17,16 @@ import net.minecraftforge.event.ForgeEventFactory;
 import net.minecraftforge.event.entity.living.LivingHealEvent;
 import net.minecraftforge.event.entity.living.LivingHurtEvent;
 import net.minecraftforge.eventbus.api.Event;
-import net.minecraftforge.eventbus.api.SubscribeEvent;
-import net.minecraftforge.fml.common.Mod;
 
 import javax.annotation.Nullable;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.UUID;
 
-@Mod.EventBusSubscriber(modid = WarDance.MODID)
 public class WarCry extends Skill {
     private static final AttributeModifier wrap = new AttributeModifier(UUID.fromString("4b342542-fcfb-47a8-8da8-4f57588f7003"), "bandaging wounds", -1, AttributeModifier.Operation.MULTIPLY_TOTAL);
     private final Tag<String> procs = Tag.getTagFromContents(new HashSet<>(Arrays.asList("chant", ProcPoints.on_being_hurt, ProcPoints.countdown, ProcPoints.recharge_time, ProcPoints.recharge_sleep)));
     private final Tag<String> tag = Tag.getTagFromContents(new HashSet<>(Arrays.asList(SkillTags.chant, SkillTags.melee, SkillTags.state)));
-
-    @SubscribeEvent
-    public static void fightingspirit(LivingHealEvent e) {
-        if (e.getEntityLiving() != null && CasterData.getCap(e.getEntityLiving()).isSkillUsable(WarSkills.WAR_CRY.get()) && !CasterData.getCap(e.getEntityLiving()).isSkillCoolingDown(WarSkills.WAR_CRY.get())) {
-            e.setAmount(e.getAmount() * 1.5f);
-        }
-    }
 
     @Override
     public Tag<String> getProcPoints(LivingEntity caster) {
@@ -81,8 +69,7 @@ public class WarCry extends Skill {
     public boolean onCast(LivingEntity caster) {
         final ICombatCapability cap = CombatData.getCap(caster);
         if (cap.getMight() == 0 && cap.getPosture() == cap.getMaxPosture() && cap.getSpirit() == cap.getMaxSpirit()) {
-            activate(caster, 100);
-            CasterData.getCap(caster).getActiveSkill(this).ifPresent((a) -> a.flagCondition(true));
+            activate(caster, 100, true);
             caster.getAttribute(Attributes.MOVEMENT_SPEED).applyNonPersistentModifier(wrap);
         } else {
             evoke(caster);
@@ -126,8 +113,11 @@ public class WarCry extends Skill {
 
     @Override
     public void onSuccessfulProc(LivingEntity caster, SkillData stats, LivingEntity target, Event procPoint) {
-        if (procPoint instanceof LivingHurtEvent && ((LivingHurtEvent) procPoint).getEntityLiving() == caster) {
+        if (procPoint instanceof LivingHurtEvent && stats.isCondition() && ((LivingHurtEvent) procPoint).getEntityLiving() == caster) {
             markUsed(caster);
+        }
+        if (procPoint instanceof LivingHealEvent) {
+            ((LivingHealEvent) procPoint).setAmount(((LivingHealEvent) procPoint).getAmount() * 1.5f);
         }
     }
 }

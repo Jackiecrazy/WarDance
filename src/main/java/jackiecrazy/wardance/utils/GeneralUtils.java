@@ -65,8 +65,11 @@ public class GeneralUtils {
 
     @Nullable
     public static ResourceLocation getResourceLocationFromEntity(Entity et) {
-        if (ForgeRegistries.ENTITIES.containsValue(et.getType()))
-            return ForgeRegistries.ENTITIES.getKey(et.getType());
+        final EntityType<?> type = et.getType();
+        if (ForgeRegistries.ENTITIES.containsValue(type)) {
+            final ResourceLocation key = ForgeRegistries.ENTITIES.getKey(type);
+            return key;
+        }
         return null;
     }
 
