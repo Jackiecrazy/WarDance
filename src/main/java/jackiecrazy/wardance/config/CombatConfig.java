@@ -503,7 +503,17 @@ public class CombatConfig {
         _mobParryChanceWeapon = b.translation("wardance.config.mobPW").comment("chance that a mob parries with a weapon out of 1. Hands are individually calculated.").defineInRange("mob weapon parry chance", 0.3, 0, 1);
         _mobParryChanceShield = b.translation("wardance.config.mobPS").comment("chance that a mob parries with a shield out of 1. Hands are individually calculated.").defineInRange("mob shield parry chance", 0.9, 0, 1);
         _mobDeflectChance = b.translation("wardance.config.mobD").comment("chance that a mob deflects with armor out of 1").defineInRange("mob deflect chance", 0.6, 0, 1);
-        _customParry = b.translation("wardance.config.parryMobs").comment("Define mobs that are automatically capable of parrying. If the entity is simultaneously armed and capable of parry, the lowest multiplier will be chosen when the chance test passes. Format is name, defense posture multiplier, parry chance. Hands are individually calculated for chance. Filling in a negative parry multiplier will disable parrying regardless of weaponry with the defined chance, causing the damage to be multiplied by the negated parry multiplier.\nExamples:\n1, 0.3 has a 30% chance to parry with a multiplier of 1, independently of hand parrying, and will replace hand multiplier if it's better. \n-1, -0.3 will have a 30% chance to fail a parry regardless of hand behavior, taking normal posture damage.\n0, 1 will always parry for free. \n-0, 1 can never parry nor take posture damage.").defineList("auto parry mobs", Arrays.asList(MOBS), String.class::isInstance);
+        _customParry = b.translation("wardance.config.parryMobs").comment("Define mobs that are automatically capable of parrying. If the entity is simultaneously armed and capable of parry, the lowest multiplier will be chosen when the chance test passes. " +
+                "Format is name, defense posture multiplier, parry chance. Hands are individually calculated for chance. " +
+                "Filling in a negative parry multiplier will disable parrying regardless of weaponry with the defined chance, causing the damage to be multiplied by the negated parry multiplier.\n" +
+                "Examples:\n" +
+                "1, 0.3 has a 30% chance to parry with a multiplier of 1, independently of hand parrying, and will replace hand multiplier if it's better. \n" +
+                "-1, -0.3 will have a 30% chance to fail a parry regardless of hand behavior, taking normal posture damage.\n" +
+                "0, 1 will always parry for free. \n" +
+                "-0, 1 can never parry nor take posture damage.\n" +
+                "Additionally, you may tag mobs as (o)mnidirectional and/or (s)hielded.\n" +
+                "Omnidirectional mobs can parry from any orientation\n" +
+                "Shielded mobs can parry projectiles innately.").defineList("auto parry mobs", Arrays.asList(MOBS), String.class::isInstance);
         _kenshiroScaler = b.translation("wardance.config.kenB").comment("posture damage from empty fists will be scaled by this number. Notice many mobs, such as endermen and ravagers, technically are empty-handed!").defineInRange("unarmed buff", 1.6, 0, Double.MAX_VALUE);
         _mobScaler = b.translation("wardance.config.mobB").comment("posture damage from empty-handed mob attacks will be scaled by this number. It used to apply to weapons, but then vindicators got too busted.").defineInRange("mob posture damage buff", 1.5, 0, Double.MAX_VALUE);
         _knockbackNerf = b.translation("wardance.config.knockback").comment("knockback from all sources to everything will be multiplied by this amount").defineInRange("knockback multiplier", 1, 0, 10d);

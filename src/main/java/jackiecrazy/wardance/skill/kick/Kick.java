@@ -72,7 +72,7 @@ public class Kick extends Skill {
 
     protected void additionally(LivingEntity caster, LivingEntity target) {
         final ICombatCapability cap = CombatData.getCap(target);
-        if(cap.getStaggerTime()>0){
+        if(cap.getStaggerCount()>0){
             cap.setStaggerTime(cap.getStaggerTime()+ CombatConfig.staggerDurationMin);
             cap.setStaggerCount(cap.getStaggerCount()+CombatConfig.staggerHits);
         }

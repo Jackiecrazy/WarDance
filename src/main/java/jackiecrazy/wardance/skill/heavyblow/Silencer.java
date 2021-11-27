@@ -4,16 +4,14 @@ import jackiecrazy.wardance.WarDance;
 import jackiecrazy.wardance.capability.resources.CombatData;
 import jackiecrazy.wardance.capability.skill.CasterData;
 import jackiecrazy.wardance.capability.status.Marks;
-import jackiecrazy.wardance.skill.Skill;
-import jackiecrazy.wardance.skill.SkillData;
 import jackiecrazy.wardance.skill.ProcPoints;
+import jackiecrazy.wardance.skill.SkillData;
 import jackiecrazy.wardance.skill.WarSkills;
 import jackiecrazy.wardance.utils.CombatUtils;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.tags.Tag;
 import net.minecraft.util.Hand;
 import net.minecraftforge.event.entity.living.LivingDeathEvent;
-import net.minecraftforge.event.entity.player.CriticalHitEvent;
 import net.minecraftforge.eventbus.api.Event;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
@@ -25,16 +23,16 @@ import java.util.HashSet;
 
 @Mod.EventBusSubscriber(modid = WarDance.MODID)
 public class Silencer extends HeavyBlow {
-    private final Tag<String> tag = Tag.getTagFromContents(new HashSet<>(Arrays.asList(ProcPoints.afflict_tick)));
-    private final Tag<String> no = Tag.getEmptyTag();
+    private final Tag<String> tag = Tag.getTagFromContents(new HashSet<>(Arrays.asList("physical", ProcPoints.disable_shield, ProcPoints.melee, ProcPoints.normal_attack, ProcPoints.modify_crit, ProcPoints.recharge_normal, ProcPoints.afflict_tick)));
 
-    @SubscribeEvent
-    public static void spooketh(CriticalHitEvent e) {
-        final Skill back = WarSkills.BACKSTAB.get();
-        if (CasterData.getCap(e.getPlayer()).getEquippedSkills().contains(back) && !CasterData.getCap(e.getPlayer()).isSkillCoolingDown(back) && e.getTarget() instanceof LivingEntity && CombatUtils.getAwareness(e.getPlayer(), (LivingEntity) e.getTarget()) == CombatUtils.Awareness.UNAWARE) {
-            back.onSuccessfulProc(e.getPlayer(), null, (LivingEntity) e.getTarget(), e);
-            CasterData.getCap(e.getPlayer()).setSkillCooldown(back, 5);
-        }
+    @Override
+    public Tag<String> getTags(LivingEntity caster) {
+        return passive;
+    }
+
+    @Override
+    public Tag<String> getProcPoints(LivingEntity caster) {
+        return tag;
     }
 
     @SubscribeEvent
@@ -43,11 +41,6 @@ public class Silencer extends HeavyBlow {
             LivingEntity elb = (LivingEntity) e.getSource().getTrueSource();
             CasterData.getCap(elb).coolSkill(WarSkills.BACKSTAB.get());
         }
-    }
-
-    @Override
-    public Tag<String> getProcPoints(LivingEntity caster) {
-        return tag;
     }
 
     @Override
@@ -63,9 +56,11 @@ public class Silencer extends HeavyBlow {
     @Override
     public void onSuccessfulProc(LivingEntity caster, SkillData stats, LivingEntity target, Event procPoint) {
         if (caster.world.isRemote() || caster == target) return;
+        if (CombatUtils.getAwareness(caster, target) != CombatUtils.Awareness.UNAWARE) return;
         CombatData.getCap(target).setHandBind(Hand.MAIN_HAND, 60);
         CombatData.getCap(target).setHandBind(Hand.OFF_HAND, 60);
         procPoint.setResult(Event.Result.ALLOW);
+        markUsed(caster);
         mark(caster, target, 60);
     }
 
@@ -83,7 +78,16 @@ public class Silencer extends HeavyBlow {
     }
 
     @Override
-    public boolean onCast(LivingEntity caster) {
-        return true;
+    public void onEffectEnd(LivingEntity caster, SkillData stats) {
+        setCooldown(caster, 5);
+    }
+
+    @Override
+    public boolean equippedTick(LivingEntity caster, STATE state) {
+        if(state==STATE.INACTIVE) {
+            onCast(caster);
+            return true;
+        }
+        return super.equippedTick(caster, state);
     }
 }

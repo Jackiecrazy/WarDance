@@ -3,6 +3,8 @@ package jackiecrazy.wardance.skill.crownchampion;
 import jackiecrazy.wardance.WarDance;
 import jackiecrazy.wardance.capability.resources.CombatData;
 import jackiecrazy.wardance.capability.skill.CasterData;
+import jackiecrazy.wardance.capability.status.Marks;
+import jackiecrazy.wardance.event.AttackMightEvent;
 import jackiecrazy.wardance.event.GainMightEvent;
 import jackiecrazy.wardance.potion.WarEffects;
 import jackiecrazy.wardance.skill.ProcPoints;
@@ -11,6 +13,7 @@ import jackiecrazy.wardance.skill.SkillData;
 import jackiecrazy.wardance.skill.WarSkills;
 import jackiecrazy.wardance.utils.CombatUtils;
 import jackiecrazy.wardance.utils.SkillUtils;
+import jackiecrazy.wardance.utils.TargetingUtils;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.ai.attributes.AttributeModifier;
@@ -49,10 +52,23 @@ elemental might: +1 burn/snowball/poison/drown damage to targets you have attack
     public static void hurt(LivingDamageEvent e) {
         Entity seme = e.getSource().getTrueSource();
         LivingEntity uke = e.getEntityLiving();
-        if (CasterData.getCap(uke).isSkillActive(WarSkills.VENGEFUL_MIGHT.get())) {
-            CombatData.getCap(uke).addMight(e.getAmount() / 2);
-            if (seme instanceof LivingEntity)
-                ((LivingEntity) seme).addPotionEffect(new EffectInstance(Effects.GLOWING, 100));
+        if (seme instanceof LivingEntity) {
+            final Skill venge = WarSkills.VENGEFUL_MIGHT.get();
+            for (PlayerEntity p : uke.world.getPlayers())
+                if (TargetingUtils.isAlly(p, uke) && CasterData.getCap(p).isSkillActive(venge)) {
+                    ((LivingEntity) seme).addPotionEffect(new EffectInstance(Effects.GLOWING, 100));
+                    SkillData apply = Marks.getCap((LivingEntity) seme).getActiveMark(venge).orElse(new SkillData(venge, 0));
+                    apply.setArbitraryFloat(apply.getArbitraryFloat() + e.getAmount());
+                    Marks.getCap((LivingEntity) seme).mark(apply);
+                }
+            if (Marks.getCap(uke).isMarked(venge) && CasterData.getCap((LivingEntity) seme).isSkillActive(venge)) {
+                Marks.getCap(uke).getActiveMark(venge).ifPresent(a -> {
+                    final float amnt = Math.min(e.getAmount(), a.getArbitraryFloat());
+                    CombatData.getCap((LivingEntity) seme).addMight(amnt);
+                    e.setAmount(e.getAmount() + amnt);
+                    a.setArbitraryFloat(a.getArbitraryFloat() - e.getAmount());
+                });
+            }
         }
     }
 
@@ -110,7 +126,7 @@ elemental might: +1 burn/snowball/poison/drown damage to targets you have attack
 
     @Override
     public void onEffectEnd(LivingEntity caster, SkillData stats) {
-        if(!activate(caster, 0)) {
+        if (!activate(caster, 0)) {
             caster.getAttribute(Attributes.ATTACK_DAMAGE).removeModifier(MULT);
             caster.getAttribute(Attributes.MOVEMENT_SPEED).removeModifier(MULT);
         }
@@ -118,7 +134,7 @@ elemental might: +1 burn/snowball/poison/drown damage to targets you have attack
 
     @Override
     public void onSuccessfulProc(LivingEntity caster, SkillData stats, LivingEntity target, Event procPoint) {
-        if(procPoint instanceof LivingAttackEvent) {
+        if (procPoint instanceof LivingAttackEvent) {
             if (this.getParentSkill() != null) return;
             int might = (int) CombatData.getCap(caster).getMight() - 1;
             SkillUtils.modifyAttribute(caster, Attributes.ATTACK_DAMAGE, MULT, 0.05f * might, AttributeModifier.Operation.MULTIPLY_BASE);
@@ -126,10 +142,18 @@ elemental might: +1 burn/snowball/poison/drown damage to targets you have attack
     }
 
     public static class HiddenMight extends CrownChampion {
+
+        private final Tag<String> tag = Tag.getTagFromContents(new HashSet<>(Arrays.asList("passive", ProcPoints.attack_might)));
+
+        @Override
+        public Tag<String> getProcPoints(LivingEntity caster) {
+            return tag;
+        }
+
         @Override
         public void onSuccessfulProc(LivingEntity caster, SkillData stats, LivingEntity target, Event procPoint) {
-            if (CombatUtils.getAwareness(caster, target).equals(CombatUtils.Awareness.UNAWARE))
-                CombatData.getCap(caster).addMight(0.5f);
+            if (procPoint instanceof AttackMightEvent && CombatUtils.getAwareness(caster, target).equals(CombatUtils.Awareness.UNAWARE))
+                ((AttackMightEvent) procPoint).setQuantity(((AttackMightEvent) procPoint).getQuantity() + 0.5f);
         }
 
         @Override
@@ -174,8 +198,8 @@ elemental might: +1 burn/snowball/poison/drown damage to targets you have attack
     public static class ElementalMight extends CrownChampion {
         @Override
         public void onSuccessfulProc(LivingEntity caster, SkillData stats, LivingEntity target, Event procPoint) {
-            if(procPoint instanceof LivingAttackEvent)
-            ((LivingAttackEvent) procPoint).getEntityLiving().addPotionEffect(new EffectInstance(WarEffects.VULNERABLE.get(), (int) (CombatData.getCap(caster).getMight() * 20)));
+            if (procPoint instanceof LivingAttackEvent)
+                ((LivingAttackEvent) procPoint).getEntityLiving().addPotionEffect(new EffectInstance(WarEffects.VULNERABLE.get(), (int) (CombatData.getCap(caster).getMight() * 20)));
         }
 
         @Override

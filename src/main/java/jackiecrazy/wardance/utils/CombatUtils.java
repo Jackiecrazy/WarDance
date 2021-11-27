@@ -50,7 +50,7 @@ import java.util.*;
 public class CombatUtils {
     public static final StealthData STEALTH = new StealthData("");
     public static HashMap<ResourceLocation, Float> customPosture = new HashMap<>();
-    public static HashMap<ResourceLocation, Tuple<Float, Float>> parryMap = new HashMap<>();
+    public static HashMap<ResourceLocation, MobInfo> parryMap = new HashMap<>();
     public static HashMap<ResourceLocation, StealthData> stealthMap = new HashMap<>();
     public static HashMap<Item, AttributeModifier[]> armorStats = new HashMap<>();
     public static boolean isSweeping = false;
@@ -186,7 +186,10 @@ public class CombatUtils {
         for (String s : interpretM) {
             try {
                 String[] val = s.split(",");
-                CombatUtils.parryMap.put(new ResourceLocation(val[0]), new Tuple<>(Float.parseFloat(val[1]), Float.parseFloat(val[2])));
+                if (val.length < 4)
+                    CombatUtils.parryMap.put(new ResourceLocation(val[0]), new MobInfo(Float.parseFloat(val[1]), Float.parseFloat(val[2]), false, false));
+                else
+                    CombatUtils.parryMap.put(new ResourceLocation(val[0]), new MobInfo(Float.parseFloat(val[1]), Float.parseFloat(val[2]), val[3].contains("o"), val[3].contains("s")));
 
             } catch (Exception e) {
                 WarDance.LOGGER.warn("improperly formatted mob parrying definition " + s + "!");
@@ -511,7 +514,8 @@ public class CombatUtils {
         float charge = Math.max(CombatUtils.getCooledAttackStrength(e, Hand.MAIN_HAND, 0.5f), CombatData.getCap(e).getCachedCooldown());
         boolean hit = false;
         isSweeping = ignore != null;
-        for (Entity target : e.world.getEntitiesWithinAABBExcludingEntity(e, e.getBoundingBox().grow(reach + 3))) {//TEST: fixed range 3 attacks
+        double modRange = Math.min(GeneralConfig.maxRange, GeneralConfig.baseRange + (reach - 3) * GeneralConfig.rangeMult);
+        for (Entity target : e.world.getEntitiesWithinAABBExcludingEntity(e, e.getBoundingBox().grow(modRange + 3))) {
             if (target == ignore) {
                 if (angle > 0)
                     hit = true;
@@ -519,7 +523,6 @@ public class CombatUtils {
             }
             if (!GeneralUtils.isFacingEntity(e, target, angle)) continue;
             if (!e.canEntityBeSeen(target)) continue;
-            double modRange = reach > 3 ? (reach - 3) / 2d + 3 : reach;
             if (GeneralUtils.getDistSqCompensated(e, target) > modRange * modRange) continue;
             CombatUtils.setHandCooldown(e, Hand.MAIN_HAND, charge, false);
             hit = true;
@@ -541,8 +544,8 @@ public class CombatUtils {
     }
 
     public static Awareness getAwareness(LivingEntity attacker, LivingEntity target) {
-        if (attacker == target)
-            return Awareness.ALERT;//first, you're hitting yourself; second, you're aware of yourself.
+        if (attacker == null || target == null || attacker == target)
+            return Awareness.ALERT;//the cases that don't make sense.
         if (!StealthConfig.stealthSystem || target instanceof PlayerEntity || CombatUtils.stealthMap.getOrDefault(target.getType().getRegistryName(), CombatUtils.STEALTH).isVigilant())
             return Awareness.ALERT;
         Awareness a = Awareness.ALERT;
@@ -578,10 +581,10 @@ public class CombatUtils {
         return e.getResult() == Event.Result.ALLOW || (e.getResult() == Event.Result.DEFAULT && e.isVanillaCritical());
     }
 
-    public static void initializePPE(ProjectileParryEvent ppe) {
+    public static void initializePPE(ProjectileParryEvent ppe, float mult) {
         ProjectileInfo pi = projectileMap.getOrDefault(ppe.getProjectile().getType(), DEFAULTRANGED);
         ppe.setReturnVec(pi.destroy ? null : ppe.getProjectile().getMotion().normalize().scale(-0.1));
-        ppe.setPostureConsumption((float) pi.posture);
+        ppe.setPostureConsumption((float) pi.posture * mult);
         ppe.setShieldCount(pi.count);
         ppe.setTrigger(pi.trigger);
     }
@@ -655,6 +658,19 @@ public class CombatUtils {
             count = c;
             destroy = d;
             trigger = t;
+        }
+    }
+
+    public static class MobInfo {
+        public final double mult;
+        public final double chance;
+        public final boolean omnidirectional, shield;
+
+        private MobInfo(double m, double c, boolean o, boolean s) {
+            mult = m;
+            chance = c;
+            omnidirectional = o;
+            shield = s;
         }
     }
 }

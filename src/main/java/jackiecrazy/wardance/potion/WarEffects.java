@@ -18,8 +18,10 @@ public class WarEffects {
     public static final RegistryObject<Effect> DISTRACTION = EFFECTS.register("distraction", () -> new WarEffect(EffectType.HARMFUL, 0xc98fff));
     //identical to distraction, but not removed on attack
     public static final RegistryObject<Effect> CONFUSION = EFFECTS.register("confusion", () -> new WarEffect(EffectType.HARMFUL, 0x7833b0));
-    //identical to distraction, the target will attempt to run away, invoke with EffectUtils.causeFear()
+    //identical to distraction, the target will attempt to run away, invoke with EffectUtils.causeFear() for a specific target, or invoke terror and let it handle the rest.
     public static final RegistryObject<Effect> FEAR = EFFECTS.register("fear", () -> new WarEffect(EffectType.HARMFUL, 0xfcfc00));
+    //use this to quickly give fear to a target entity.
+    public static final RegistryObject<Effect> TERROR = EFFECTS.register("terror", TerrorEffect::new);
     //attacks against paralyzed targets apply the unaware bonus, paralyzed targets cannot move
     public static final RegistryObject<Effect> PARALYSIS = EFFECTS.register("paralysis", () -> new WarEffect(EffectType.HARMFUL, 0x2c2c2c).addAttributesModifier(Attributes.MOVEMENT_SPEED, "55FCED67-E92A-486E-9800-B47F202C4386", -1, AttributeModifier.Operation.MULTIPLY_TOTAL));
     //identical to paralysis, but adds 4 armor

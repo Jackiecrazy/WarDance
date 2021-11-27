@@ -90,7 +90,7 @@ public class EffectUtils {
         return new EffectInstance(p, length, potency, pe.isAmbient(), pe.doesShowParticles(), pe.isShowIcon());
     }
 
-    public static double getEffectiveLevel(LivingEntity elb, Effect p, Attribute workOff) {
+    public static int getEffectiveLevel(LivingEntity elb, Effect p) {
         if (elb.getActivePotionEffect(p) != null)
             return elb.getActivePotionEffect(p).getAmplifier() + 1;
         return 0;

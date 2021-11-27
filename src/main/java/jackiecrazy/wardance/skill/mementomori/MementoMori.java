@@ -25,6 +25,7 @@ import java.util.UUID;
 
 public class MementoMori extends Skill {
     private static final UUID MULT = UUID.fromString("c2b95d0d-b52a-45c7-b2d6-4ea669aa848e");
+    private static final UUID LUCK = UUID.fromString("c2b95d0d-b52a-45c7-b2d6-4ea660aa848e");
     /*
     memento mori: your might generation speed and attack damage scales proportionally with lost health (including wounding)
 rapid clotting: charm 3: gain 1 armor every point of health lost
@@ -65,7 +66,7 @@ pound of flesh: active skill. Consumes all your spirit, and until your spirit re
 
     @Override
     public void onEffectEnd(LivingEntity caster, SkillData stats) {
-        if(!activate(caster, 0)) {
+        if (!activate(caster, 0)) {
             caster.getAttribute(Attributes.ATTACK_DAMAGE).removeModifier(MULT);
             caster.getAttribute(Attributes.ARMOR).removeModifier(MULT);
             caster.getAttribute(Attributes.LUCK).removeModifier(MULT);
@@ -77,7 +78,7 @@ pound of flesh: active skill. Consumes all your spirit, and until your spirit re
         //on attack might event, check health percentage and increment
         if (procPoint instanceof AttackMightEvent && getParentSkill() == null) {
             float healthPercentage = caster.getHealth() / GeneralUtils.getMaxHealthBeforeWounding(caster);
-            ((AttackMightEvent) procPoint).setQuantity(((AttackMightEvent) procPoint).getQuantity() * (2 - healthPercentage));
+            ((AttackMightEvent) procPoint).setQuantity(((AttackMightEvent) procPoint).getQuantity() * (3 - 2 * healthPercentage));
         }
     }
 
@@ -85,7 +86,7 @@ pound of flesh: active skill. Consumes all your spirit, and until your spirit re
     public boolean activeTick(LivingEntity caster, SkillData d) {
         if (getClass() != MementoMori.class) return false;
         float health = 1 - (caster.getHealth() / GeneralUtils.getMaxHealthBeforeWounding(caster));
-        SkillUtils.modifyAttribute(caster, Attributes.ATTACK_DAMAGE, MULT, health / 2, AttributeModifier.Operation.MULTIPLY_TOTAL);
+        SkillUtils.modifyAttribute(caster, Attributes.ATTACK_DAMAGE, MULT, health, AttributeModifier.Operation.MULTIPLY_TOTAL);
         return super.activeTick(caster, d);
     }
 
@@ -113,8 +114,14 @@ pound of flesh: active skill. Consumes all your spirit, and until your spirit re
 
         @Override
         public boolean activeTick(LivingEntity caster, SkillData d) {
-            float lostHealth = 1 - (caster.getHealth() / GeneralUtils.getMaxHealthBeforeWounding(caster));
+            double lostHealth = 1 - (caster.getHealth() / GeneralUtils.getMaxHealthBeforeWounding(caster));
             SkillUtils.modifyAttribute(caster, Attributes.LUCK, MULT, lostHealth * 10, AttributeModifier.Operation.ADDITION);
+            double mult=1;
+            while(lostHealth>0){
+                mult*=1.1;
+                lostHealth-=0.1;
+            }
+            SkillUtils.modifyAttribute(caster, Attributes.LUCK, LUCK, mult-1, AttributeModifier.Operation.MULTIPLY_TOTAL);
             return super.activeTick(caster, d);
         }
     }

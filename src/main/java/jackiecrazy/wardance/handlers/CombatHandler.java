@@ -97,19 +97,47 @@ public class CombatHandler {
             boolean free = ukeCap.getShieldTime() > 0;
             ItemStack defend = null;
             Hand h = null;
+            float defMult = 0;
             if (CombatUtils.isShield(uke, uke.getHeldItemOffhand()) && CombatUtils.canParry(uke, e.getEntity(), uke.getHeldItemOffhand(), 0)) {
                 defend = uke.getHeldItemOffhand();
+                defMult = CombatUtils.getPostureDef(null, uke, defend, 0);
                 h = Hand.OFF_HAND;
             } else if (CombatUtils.isShield(uke, uke.getHeldItemMainhand()) && CombatUtils.canParry(uke, e.getEntity(), uke.getHeldItemMainhand(), 0)) {
                 defend = uke.getHeldItemMainhand();
+                defMult = CombatUtils.getPostureDef(null, uke, defend, 0);
                 h = Hand.MAIN_HAND;
             }
             Entity projectile = e.getEntity();
-            ProjectileParryEvent pe = new ProjectileParryEvent(uke, projectile, h, defend);
+            CombatUtils.Awareness a = CombatUtils.Awareness.ALERT;
+            if (projectile instanceof ProjectileEntity && ((ProjectileEntity) projectile).getShooter() instanceof LivingEntity)
+                a = CombatUtils.getAwareness((LivingEntity) ((ProjectileEntity) projectile).getShooter(), uke);
+            boolean canParry = GeneralUtils.isFacingEntity(uke, projectile, 120);
+            boolean force = false;
+            if (a != CombatUtils.Awareness.UNAWARE && CombatUtils.parryMap.containsKey(GeneralUtils.getResourceLocationFromEntity(uke))) {
+                CombatUtils.MobInfo stats = CombatUtils.parryMap.get(GeneralUtils.getResourceLocationFromEntity(uke));
+                if (stats.shield && WarDance.rand.nextFloat() < stats.chance) {
+                    if (stats.mult < 0) {//cannot parry
+                        defend = null;
+                        canParry = false;
+                        defMult = (float) -stats.mult;
+                    } else if (stats.omnidirectional || canParry) {
+                        if (!canParry) {
+                            h = CombatUtils.getCooledAttackStrength(uke, Hand.MAIN_HAND, 0.5f) > CombatUtils.getCooledAttackStrength(uke, Hand.OFF_HAND, 0.5f) ? Hand.MAIN_HAND : Hand.OFF_HAND;
+                        }
+                        defend = ItemStack.EMPTY;
+                        defMult = (float) Math.min(stats.mult, defMult);
+                        canParry = true;
+                        force = true;
+                    }
+                }
+            }
+            ProjectileParryEvent pe = new ProjectileParryEvent(uke, projectile, h, defend, defMult);
             if (failManualParry)
                 pe.setResult(Event.Result.DENY);
+            if (force)
+                pe.setResult(Event.Result.ALLOW);
             MinecraftForge.EVENT_BUS.post(pe);
-            if (pe.getResult() == Event.Result.ALLOW || (defend != null && GeneralUtils.isFacingEntity(uke, projectile, 120) && ukeCap.doConsumePosture(pe.getPostureConsumption()) && pe.getResult() == Event.Result.DEFAULT)) {
+            if (pe.getResult() == Event.Result.ALLOW || (defend != null && canParry && ukeCap.doConsumePosture(pe.getPostureConsumption()) && pe.getResult() == Event.Result.DEFAULT)) {
                 //System.out.println("the target has parried!");
                 e.setCanceled(true);
 //                if (projectile instanceof ProjectileEntity)
@@ -133,6 +161,7 @@ public class CombatHandler {
                         FearEntity dummy = new FearEntity(WarEntities.fear, uke.world);
                         dummy.setPositionAndUpdate(projectile.getPosX(), projectile.getPosY(), projectile.getPosZ());
                         uke.world.addEntity(dummy);
+                        //I am not proud of this.
                         if (projectile instanceof ProjectileEntity) {
                             RayTraceResult rtr = new EntityRayTraceResult(dummy);
                             ((ProjectileImpactMixin) projectile).callOnImpact(rtr);
@@ -149,7 +178,7 @@ public class CombatHandler {
                 return;
             }
             //deflection
-            if ((uke instanceof PlayerEntity || WarDance.rand.nextFloat() > CombatConfig.mobDeflectChance) && GeneralUtils.isFacingEntity(uke, projectile, 120 + 2 * (int) GeneralUtils.getAttributeValueSafe(uke, WarAttributes.DEFLECTION.get())) && !GeneralUtils.isFacingEntity(uke, projectile, 120) && ukeCap.doConsumePosture(consume)) {
+            if ((uke instanceof PlayerEntity || WarDance.rand.nextFloat() > CombatConfig.mobDeflectChance) && GeneralUtils.isFacingEntity(uke, projectile, 120 + 2 * (int) GeneralUtils.getAttributeValueSafe(uke, WarAttributes.DEFLECTION.get())) && !canParry && ukeCap.doConsumePosture(consume)) {
                 e.setCanceled(true);
                 uke.world.playSound(null, uke.getPosX(), uke.getPosY(), uke.getPosZ(), SoundEvents.BLOCK_IRON_TRAPDOOR_OPEN, SoundCategory.PLAYERS, 0.75f + WarDance.rand.nextFloat() * 0.5f, (1 - (ukeCap.getPosture() / ukeCap.getMaxPosture())) + WarDance.rand.nextFloat() * 0.5f);
                 if (pe.getReturnVec() != null) {
@@ -272,18 +301,18 @@ public class CombatHandler {
                 }
                 float defMult = CombatUtils.getPostureDef(seme, uke, defend, e.getAmount());
                 if (awareness != CombatUtils.Awareness.UNAWARE && CombatUtils.parryMap.containsKey(GeneralUtils.getResourceLocationFromEntity(uke))) {
-                    Tuple<Float, Float> stats = CombatUtils.parryMap.get(GeneralUtils.getResourceLocationFromEntity(uke));
-                    if (WarDance.rand.nextFloat() < stats.getB()) {
-                        if (stats.getA() < 0) {//cannot parry
+                    CombatUtils.MobInfo stats = CombatUtils.parryMap.get(GeneralUtils.getResourceLocationFromEntity(uke));
+                    if (WarDance.rand.nextFloat() < stats.chance) {
+                        if (stats.mult < 0) {//cannot parry
                             defend = null;
                             canParry = false;
-                            defMult = -stats.getA();
-                        } else {
+                            defMult = (float) -stats.mult;
+                        } else if (stats.omnidirectional || canParry) {
                             if (!canParry) {
                                 parryHand = CombatUtils.getCooledAttackStrength(uke, Hand.MAIN_HAND, 0.5f) > CombatUtils.getCooledAttackStrength(uke, Hand.OFF_HAND, 0.5f) ? Hand.MAIN_HAND : Hand.OFF_HAND;
                             }
                             defend = ItemStack.EMPTY;
-                            defMult = Math.min(stats.getA(), defMult);
+                            defMult = (float) Math.min(stats.mult, defMult);
                             canParry = true;
                         }
                     }
@@ -366,7 +395,7 @@ public class CombatHandler {
                         defend.getCapability(CombatManipulator.CAP).ifPresent((i) -> i.onOtherHandParry(seme, uke, finalDefend1, e.getAmount()));
                     }
                 }
-                if (!(seme instanceof PlayerEntity)){
+                if (!(seme instanceof PlayerEntity)) {
                     semeCap.setHandBind(attackingHand, CombatUtils.getCooldownPeriod(seme, attackingHand));
                 }
             }//else System.out.println("the attack is not a melee attack, or the damage dealt was 0.");
@@ -478,7 +507,7 @@ public class CombatHandler {
                     e.setAmount((float) (e.getAmount() * CombatUtils.getDamageMultiplier(awareness, CombatUtils.getAttackingItemStack(ds))));
                 }
                 cap.setCombo((float) (Math.floor(cap.getCombo()) / 2d));
-            }
+            } else cap.setCombo((float) (Math.floor(cap.getCombo())));
             double luckDiff = WarDance.rand.nextFloat() * (GeneralUtils.getAttributeValueSafe(seme, Attributes.LUCK)) - WarDance.rand.nextFloat() * (GeneralUtils.getAttributeValueSafe(uke, Attributes.LUCK));
             e.setAmount(e.getAmount() + (float) luckDiff * GeneralConfig.luck);
         }

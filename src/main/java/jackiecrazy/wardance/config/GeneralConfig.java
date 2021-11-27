@@ -12,9 +12,14 @@ public class GeneralConfig {
     public static final GeneralConfig CONFIG;
     public static final ForgeConfigSpec CONFIG_SPEC;
     public static boolean elenai, elenaiP, elenaiC, blindness;
-    public static float weakness, hunger, poison, luck, nausea;
+    public static float weakness;
+    public static float hunger;
+    public static float poison;
+    public static float luck;
+    public static float nausea;
+    public static double rangeMult;
     public static boolean betterSweep, sweepDurability, resistance, dual;
-    public static int sweepAngle;
+    public static int sweepAngle, maxRange, baseRange;
 
     static {
         final Pair<GeneralConfig, ForgeConfigSpec> specPair = new ForgeConfigSpec.Builder().configure(GeneralConfig::new);
@@ -25,6 +30,9 @@ public class GeneralConfig {
     private final ForgeConfigSpec.BooleanValue _betterSweep;
     private final ForgeConfigSpec.BooleanValue _sweepDurability;
     private final ForgeConfigSpec.IntValue _sweepPerSE;
+    private final ForgeConfigSpec.DoubleValue _sweepRangeMult;
+    private final ForgeConfigSpec.IntValue _sweepRangeMax;
+    private final ForgeConfigSpec.IntValue _sweepRangeMin;
     private final ForgeConfigSpec.BooleanValue _elenai;
     private final ForgeConfigSpec.BooleanValue _elenaiP;
     private final ForgeConfigSpec.BooleanValue _elenaiC;
@@ -46,6 +54,9 @@ public class GeneralConfig {
         _betterSweep = b.translation("wardance.config.sweep").comment("overrides vanilla sweep with a version hits all affected entities for full damage and effects and works regardless of aim, with sweeping edge determining the angle which is swept. Sweeps will be completely suppressed if you don't have the enchantment.").define("enable better sweep", true);
         _sweepDurability = b.translation("wardance.config.sweepD").comment("whether better sweep deals durability damage for each mob hit").define("durability damage per hit mob", false);
         _sweepPerSE = b.translation("wardance.config.sweepE").comment("every level of sweeping edge gives this much extra angles when using better sweep").defineInRange("sweeping edge angle per level", 40, 0, Integer.MAX_VALUE);
+        _sweepRangeMult = b.translation("wardance.config.sweepR").comment("percentage of block reach used to determine sweeping radius.").defineInRange("sweeping edge reach scaling", 0.6, 0, Double.MAX_VALUE);
+        _sweepRangeMax = b.translation("wardance.config.sweepM").comment("the maximum radius for sweeping edge, if insane reach buffs aren't your thing.").defineInRange("sweeping edge max reach", 10, 0, Integer.MAX_VALUE);
+        _sweepRangeMin = b.translation("wardance.config.sweepB").comment("the minimum radius for sweeping edge, so you can have it start in a smaller area.").defineInRange("sweeping edge min reach", 3, 0, Integer.MAX_VALUE);
         b.pop();
         b.push("compat");
         _elenai = b.translation("wardance.config.elenaiCompat").comment("whether Elenai Dodge 2 compat is enabled. This disables sidesteps and rolls, turns dodging into a safety roll when staggered, and causes dodges to reset posture cooldown").define("enable Elenai Dodge compat", true);
@@ -78,6 +89,9 @@ public class GeneralConfig {
         sweepAngle = CONFIG._sweepPerSE.get();
         sweepDurability = CONFIG._sweepDurability.get();
         dual = CONFIG._dual.get();
+        rangeMult=CONFIG._sweepRangeMult.get();
+        maxRange=CONFIG._sweepRangeMax.get();
+        baseRange=CONFIG._sweepRangeMin.get();
     }
 
     @SubscribeEvent

@@ -120,7 +120,7 @@ public class Hex extends Skill {
 
     @Override
     public void onEffectEnd(LivingEntity caster, SkillData stats) {
-        setCooldown(caster, 300);
+        setCooldown(caster, 15);
     }
 
     @Override
@@ -130,6 +130,13 @@ public class Hex extends Skill {
             mark(caster, target, 200);
             markUsed(caster);
         }
+    }
+
+    @Override
+    public boolean onCooldownProc(LivingEntity caster, SkillCooldownData stats, Event procPoint) {
+        stats.decrementDuration(0.05f);
+        int round = (int) (stats.getDuration() * 20);
+        return stats.getDuration() < 3 || round % 20 == 0;
     }
 
     @Override
@@ -205,27 +212,20 @@ public class Hex extends Skill {
             ItemStack milk = new ItemStack(Items.MILK_BUCKET);
             final Collection<EffectInstance> potions = new ArrayList<>(target.getActivePotionEffects());
             target.curePotionEffects(milk);
-            float size = 0, damage = 0;
-            int effectCount = 1;
+            float size = 8, damage = 6;
+            boolean proc = false;
             for (EffectInstance ei : potions) {
-                effectCount++;
-                EffectInstance drop = new EffectInstance(ei.getPotion(), 0, -2);
+                proc = true;
+                EffectInstance drop = new EffectInstance(ei.getPotion(), 0, -1);
                 drop = EffectUtils.stackPot(caster, drop, EffectUtils.StackingMethod.MAXDURATION);
                 if (drop.getAmplifier() >= 0) {
-                    if (target.addPotionEffect(drop)) {//potion was wiped by milk
-                        size += ei.getDuration();
-                        damage += ei.getAmplifier() + 1;
-                    } else {//mob is immune (!?!?) or potion was not wiped
-                        size += ei.getDuration();
-                        damage += (ei.getAmplifier() + 1) / 2f;
-                    }
-                } else {
-                    size += drop.getDuration();
-                    damage++;
+                    target.addPotionEffect(drop);
                 }
             }
-            size = Math.min(size / (100 * effectCount), 10);
-            FakeExplosion.explode(caster.world, caster, target.getPosX(), target.getPosY() + target.getHeight() * 1.1f, target.getPosZ(), size, DamageSource.causeExplosionDamage(target), damage * 4);
+            if (proc)
+                FakeExplosion.explode(caster.world, caster, target.getPosX(), target.getPosY() + target.getHeight() * 1.1f, target.getPosZ(), size, DamageSource.causeExplosionDamage(caster).setMagicDamage(), damage);
         }
     }
+
+
 }

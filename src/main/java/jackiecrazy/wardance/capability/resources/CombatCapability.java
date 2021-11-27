@@ -2,6 +2,7 @@ package jackiecrazy.wardance.capability.resources;
 
 import jackiecrazy.wardance.WarDance;
 import jackiecrazy.wardance.api.WarAttributes;
+import jackiecrazy.wardance.capability.skill.CasterData;
 import jackiecrazy.wardance.config.CombatConfig;
 import jackiecrazy.wardance.config.GeneralConfig;
 import jackiecrazy.wardance.config.ResourceConfig;
@@ -12,6 +13,7 @@ import jackiecrazy.wardance.event.StaggerEvent;
 import jackiecrazy.wardance.networking.CombatChannel;
 import jackiecrazy.wardance.networking.UpdateClientPacket;
 import jackiecrazy.wardance.potion.WarEffects;
+import jackiecrazy.wardance.skill.WarSkills;
 import jackiecrazy.wardance.utils.CombatUtils;
 import jackiecrazy.wardance.utils.GeneralUtils;
 import net.minecraft.entity.LivingEntity;
@@ -722,7 +724,11 @@ public class CombatCapability implements ICombatCapability {
             setMight(getMight() - over);
         }
         if (getComboGrace() == 0) {
-            setCombo((float) Math.floor(getCombo()));
+            int floor = (int) Math.floor(getCombo());//0-1 D, 1-2 C, 2-3 B, 3-4 A, 4-6 S, 6-9 SS, 9+ SSS
+            if (combo > 9) floor = 9;
+            else if (combo > 6) floor = 6;
+            else if (combo > 4) floor = 4;
+            setCombo(floor-0.01f);
         }
         if (prev == null || !ItemStack.areItemStacksEqual(elb.getHeldItemOffhand(), prev)) {
             prev = elb.getHeldItemOffhand();
@@ -806,8 +812,8 @@ public class CombatCapability implements ICombatCapability {
     }
 
     @Override
-    public void setSweepTick(int tick) {
-        sweeping=tick;
+    public void setParryingTick(int parrying) {
+        this.parrying = parrying;
     }
 
     @Override
@@ -816,8 +822,8 @@ public class CombatCapability implements ICombatCapability {
     }
 
     @Override
-    public void setParryingTick(int parrying) {
-        this.parrying = parrying;
+    public void setSweepTick(int tick) {
+        sweeping = tick;
     }
 
     @Override
@@ -895,6 +901,10 @@ public class CombatCapability implements ICombatCapability {
         float armorMod = 2.5f + Math.min(elb.getTotalArmorValue(), 20) * 0.125f;
         float cooldownMod = Math.min(CombatUtils.getCooledAttackStrength(elb, Hand.MAIN_HAND, 0.5f), CombatUtils.getCooledAttackStrength(elb, Hand.MAIN_HAND, 0.5f));
         float healthMod = 0.25f + elb.getHealth() / elb.getMaxHealth() * 0.75f;
+        if(CasterData.getCap(elb).isSkillUsable(WarSkills.BOULDER_BRACE.get())){
+            armorMod=2.5f;
+            healthMod=1;
+        }
         float recovery = 0;
         if (recoveryTimer <= CombatConfig.recovery && recoveryTimer > 0 && posture < getMaxPosture() * CombatConfig.posCap) {
             recovery = (getMaxPosture() * CombatConfig.posCap) / CombatConfig.recovery;

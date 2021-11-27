@@ -80,7 +80,7 @@ Onslaught: casts heavy blow before every attack (this is a lot easier)
 
     @Override
     public void onEffectEnd(LivingEntity caster, SkillData stats) {
-        CombatData.getCap(caster).addBurnout(CombatData.getCap(caster).getMaxSpirit() / 5);
+        CombatData.getCap(caster).addBurnout(CombatData.getCap(caster).getMaxSpirit() / 10);
     }
 
     protected void performEffect(LivingEntity caster, LivingEntity target, float amount, SkillData s) {
@@ -163,13 +163,12 @@ Onslaught: casts heavy blow before every attack (this is a lot easier)
         @Override
         protected void performEffect(LivingEntity caster, LivingEntity target, float amount, SkillData s) {
             CombatDamageSource cds = new CombatDamageSource("lightningBolt", caster).setProxy(target);
-            final float radius = 2 + s.getArbitraryFloat() / 5;
+            final float radius = 7;
             final List<LivingEntity> list = caster.world.getLoadedEntitiesWithinAABB(LivingEntity.class, caster.getBoundingBox().grow(radius), (a) -> !TargetingUtils.isAlly(a, caster));
             //float damage = s.getArbitraryFloat() * (1 + CombatData.getCap(caster).getSpirit());
-            float damage = 5 + s.getArbitraryFloat() * CombatData.getCap(caster).getSpirit() / list.size();
+            float damage = (4 * CombatData.getCap(caster).getSpirit()) / list.size();
             CombatData.getCap(caster).setSpirit(0);
             for (LivingEntity baddie : list) {
-                if (baddie == target) continue;
                 baddie.attackEntityFrom(cds, damage);
                 LightningBoltEntity lightningboltentity = EntityType.LIGHTNING_BOLT.create(target.world);
                 lightningboltentity.moveForced(baddie.getPosX(), baddie.getPosY(), baddie.getPosZ());
@@ -256,12 +255,14 @@ Onslaught: casts heavy blow before every attack (this is a lot easier)
         public void onSuccessfulProc(LivingEntity caster, SkillData stats, LivingEntity target, Event procPoint) {
             if (procPoint instanceof SkillCastEvent) {
                 stats.setArbitraryFloat(stats.getArbitraryFloat() + 1);
+                CombatData.getCap(caster).addSpirit(5);
             } else super.onSuccessfulProc(caster, stats, target, procPoint);
         }
 
         @Override
         protected void performEffect(LivingEntity caster, LivingEntity target, float amount, SkillData s) {
             int buff = 0;
+            amount = 50f;
             if (CasterData.getCap(caster).getActiveSkill(this).isPresent())
                 buff = (int) CasterData.getCap(caster).getActiveSkill(this).get().getArbitraryFloat();
 //            Skill[] pastCasts = CasterData.getCap(caster).getPastCasts();

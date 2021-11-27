@@ -24,12 +24,12 @@ public class ProjectileParryEvent extends LivingEvent {
      */
     private Vector3d returnVec;
 
-    public ProjectileParryEvent(LivingEntity entity, Entity seme, Hand dhand, ItemStack d) {
+    public ProjectileParryEvent(LivingEntity entity, Entity seme, Hand dhand, ItemStack d, float mult) {
         super(entity);
         projectile = seme;
         defendingHand = dhand;
         defendingStack = d;
-        CombatUtils.initializePPE(this);
+        CombatUtils.initializePPE(this, mult);
         originalPostureConsumption = postureConsumption;
         originalReturnVec = returnVec;
     }

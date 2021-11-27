@@ -135,7 +135,7 @@ public class SkillCapability implements ISkillCapability {
 
     @Override
     public boolean isSkillCoolingDown(Skill s) {
-        return coolingSkills.containsKey(s);
+        return coolingSkills.containsKey(s) && coolingSkills.get(s).getDuration() > 0;
     }
 
     @Override
@@ -214,7 +214,7 @@ public class SkillCapability implements ISkillCapability {
     public boolean isSkillUsable(Skill skill) {
         if (!isSkillSelectable(skill)) return false;
         if (!equippedSkill.contains(skill)) return false;
-        return skill.castingCheck(dude.get()) == Skill.CastStatus.ALLOWED;
+        return skill.castingCheck(dude.get()) == Skill.CastStatus.ALLOWED || skill.castingCheck(dude.get()) == Skill.CastStatus.ACTIVE;
     }
 
     @Override

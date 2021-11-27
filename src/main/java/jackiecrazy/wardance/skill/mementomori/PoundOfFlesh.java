@@ -31,20 +31,25 @@ public class PoundOfFlesh extends MementoMori {
     }
 
     @Override
+    public Tag<String> getTags(LivingEntity caster) {
+        return special;
+    }
+
+    @Override
     public Tag<String> getProcPoints(LivingEntity caster) {
         return tag;
     }
 
     @Override
     public void onSuccessfulProc(LivingEntity caster, SkillData stats, LivingEntity target, Event procPoint) {
-        if (procPoint instanceof ParryEvent) {
+        if (procPoint instanceof ParryEvent&&((ParryEvent) procPoint).canParry()) {
             //TODO mark all skill damage appropriately
             caster.hurtResistantTime = 0;
-            caster.attackEntityFrom(CombatDamageSource.causeSelfDamage(null).setDamageTyping(CombatDamageSource.TYPE.TRUE).setSkillUsed(this).setDamageBypassesArmor().setDamageIsAbsolute(), GeneralUtils.getMaxHealthBeforeWounding(caster) * 0.05f);
+            caster.attackEntityFrom(CombatDamageSource.causeSelfDamage(caster).setDamageTyping(CombatDamageSource.TYPE.TRUE).setSkillUsed(this).setDamageBypassesArmor().setDamageIsAbsolute(), GeneralUtils.getMaxHealthBeforeWounding(caster) * 0.05f);
             ((ParryEvent) procPoint).setPostureConsumption(((ParryEvent) procPoint).getPostureConsumption() + CombatData.getCap(target).getTrueMaxPosture() * 0.1f);
         } else if (procPoint instanceof LivingHurtEvent && (!(((LivingHurtEvent) procPoint).getSource() instanceof CombatDamageSource) || ((CombatDamageSource) ((LivingHurtEvent) procPoint).getSource()).getSkillUsed() != this)) {
             caster.hurtResistantTime = 0;
-            caster.attackEntityFrom(CombatDamageSource.causeSelfDamage(null).setDamageTyping(CombatDamageSource.TYPE.TRUE).setSkillUsed(this).setDamageBypassesArmor().setDamageIsAbsolute(), GeneralUtils.getMaxHealthBeforeWounding(caster) * 0.05f);
+            caster.attackEntityFrom(CombatDamageSource.causeSelfDamage(caster).setDamageTyping(CombatDamageSource.TYPE.TRUE).setSkillUsed(this).setDamageBypassesArmor().setDamageIsAbsolute(), GeneralUtils.getMaxHealthBeforeWounding(caster) * 0.05f);
             ((LivingHurtEvent) procPoint).setAmount(((LivingHurtEvent) procPoint).getAmount() + GeneralUtils.getMaxHealthBeforeWounding(target) * 0.05f);
         }
     }
