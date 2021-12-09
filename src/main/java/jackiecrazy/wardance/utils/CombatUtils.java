@@ -304,6 +304,10 @@ public class CombatUtils {
 
     public static float getPostureAtk(@Nullable LivingEntity attacker, @Nullable LivingEntity defender, @Nullable Hand h, float amount, ItemStack stack) {
         float base = amount * (float) DEFAULTMELEE.attackPostureMultiplier;
+        //Spartan Shields compat
+        if (attacker != null && attacker.isActiveItemStackBlocking()) {
+            h = attacker.getActiveHand();
+        }
         float scaler = CombatConfig.mobScaler;
         if (stack != null && !stack.isEmpty()) {
             scaler = 1;

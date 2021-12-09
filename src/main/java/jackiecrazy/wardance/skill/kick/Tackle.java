@@ -35,7 +35,7 @@ public class Tackle extends Kick {
 
     @Override
     public Color getColor() {
-        return Color.LIGHT_GRAY;
+        return Color.GREEN;
     }
 
     @Override

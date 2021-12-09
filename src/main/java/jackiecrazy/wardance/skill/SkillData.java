@@ -11,7 +11,7 @@ import java.util.UUID;
 public class SkillData {
     private final Skill s;
     private Hand h;
-    private float duration, var;
+    private float duration, max, var;
     private boolean condition;
     private LivingEntity caster;
     private UUID casterID;
@@ -21,6 +21,7 @@ public class SkillData {
     public SkillData(Skill skill, float arbitraryDuration) {
         s = skill;
         duration = arbitraryDuration;
+        max = duration;
         var = 0;
         condition = false;
     }
@@ -31,6 +32,7 @@ public class SkillData {
         if (Skill.getSkill(from.getString("skill")) == null)
             return null;
         SkillData ret = new SkillData(Skill.getSkill(from.getString("skill")), from.getFloat("duration")).flagCondition(from.getBoolean("condition")).setArbitraryFloat(from.getFloat("something"));
+        ret.max=from.getFloat("max");
         if (from.contains("caster"))
             ret.casterID = from.getUniqueId("caster");
         return ret;
@@ -58,6 +60,7 @@ public class SkillData {
 
     public SkillData setDuration(float duration) {
         this.duration = duration;
+        if (duration > max) max = duration;
         return this;
     }
 
@@ -79,6 +82,10 @@ public class SkillData {
         return this;
     }
 
+    public float getMaxDuration() {
+        return max;
+    }
+
     public void decrementDuration() {
         duration--;
     }
@@ -90,6 +97,7 @@ public class SkillData {
     public CompoundNBT write(CompoundNBT to) {
         to.putString("skill", s.getRegistryName().toString());
         to.putFloat("duration", duration);
+        to.putFloat("max", max);
         to.putFloat("something", var);
         to.putBoolean("condition", condition);
         if (casterID != null)

@@ -14,6 +14,7 @@ import jackiecrazy.wardance.config.ResourceConfig;
 import jackiecrazy.wardance.config.StealthConfig;
 import jackiecrazy.wardance.entity.FearEntity;
 import jackiecrazy.wardance.entity.WarEntities;
+import jackiecrazy.wardance.event.DamageKnockbackEvent;
 import jackiecrazy.wardance.event.MeleeKnockbackEvent;
 import jackiecrazy.wardance.event.ParryEvent;
 import jackiecrazy.wardance.event.ProjectileParryEvent;
@@ -300,7 +301,7 @@ public class CombatHandler {
                     }
                 }
                 float defMult = CombatUtils.getPostureDef(seme, uke, defend, e.getAmount());
-                if (awareness != CombatUtils.Awareness.UNAWARE && CombatUtils.parryMap.containsKey(GeneralUtils.getResourceLocationFromEntity(uke))) {
+                if (atkMult >= 0 && awareness != CombatUtils.Awareness.UNAWARE && CombatUtils.parryMap.containsKey(GeneralUtils.getResourceLocationFromEntity(uke))) {
                     CombatUtils.MobInfo stats = CombatUtils.parryMap.get(GeneralUtils.getResourceLocationFromEntity(uke));
                     if (WarDance.rand.nextFloat() < stats.chance) {
                         if (stats.mult < 0) {//cannot parry
@@ -434,6 +435,14 @@ public class CombatHandler {
             uke.getHeldItemMainhand().getCapability(CombatManipulator.CAP).ifPresent((i) -> i.onBeingKnockedBack(seme, uke, seme.getHeldItemMainhand(), e.getOriginalStrength()));
             uke.getHeldItemOffhand().getCapability(CombatManipulator.CAP).ifPresent((i) -> i.onBeingKnockedBack(seme, uke, seme.getHeldItemOffhand(), e.getOriginalStrength()));
 
+        }
+    }
+
+    @SubscribeEvent
+    public static void otherKnockbackHooks(DamageKnockbackEvent e) {
+        if (e.getDamageSource() instanceof CombatDamageSource) {
+            CombatDamageSource cds= (CombatDamageSource) e.getDamageSource();
+            e.setStrength(e.getStrength()*cds.getKnockbackPercentage());
         }
     }
 

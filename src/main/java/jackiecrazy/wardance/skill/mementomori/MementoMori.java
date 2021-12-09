@@ -1,12 +1,14 @@
 package jackiecrazy.wardance.skill.mementomori;
 
+import jackiecrazy.wardance.api.CombatDamageSource;
 import jackiecrazy.wardance.event.AttackMightEvent;
+import jackiecrazy.wardance.skill.ProcPoints;
 import jackiecrazy.wardance.skill.Skill;
 import jackiecrazy.wardance.skill.SkillData;
-import jackiecrazy.wardance.skill.ProcPoints;
 import jackiecrazy.wardance.skill.WarSkills;
 import jackiecrazy.wardance.utils.GeneralUtils;
 import jackiecrazy.wardance.utils.SkillUtils;
+import jackiecrazy.wardance.utils.TargetingUtils;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.ai.attributes.AttributeModifier;
 import net.minecraft.entity.ai.attributes.Attributes;
@@ -15,6 +17,7 @@ import net.minecraft.potion.EffectInstance;
 import net.minecraft.potion.Effects;
 import net.minecraft.tags.Tag;
 import net.minecraftforge.event.entity.living.LivingDamageEvent;
+import net.minecraftforge.event.entity.living.LivingHealEvent;
 import net.minecraftforge.eventbus.api.Event;
 
 import javax.annotation.Nullable;
@@ -34,7 +37,7 @@ death denial: upon receiving fatal damage, become immune to all damage and all h
 saving throw: your luck scales very strongly with lost health
 pound of flesh: active skill. Consumes all your spirit, and until your spirit regenerates or (spirit) seconds have elapsed take 5% max health damage per attack to deal 10% max posture damage if parried, or 5% max health damage if connected
      */
-    private final Tag<String> tag = Tag.getTagFromContents(new HashSet<>(Arrays.asList("passive", ProcPoints.recharge_sleep, ProcPoints.on_being_damaged, ProcPoints.attack_might)));
+    private final Tag<String> tag = Tag.getTagFromContents(new HashSet<>(Arrays.asList("passive", ProcPoints.recharge_sleep, ProcPoints.change_heals, ProcPoints.on_being_damaged, ProcPoints.attack_might)));
     private final Tag<String> no = Tag.getEmptyTag();
 
     @Nullable
@@ -93,7 +96,7 @@ pound of flesh: active skill. Consumes all your spirit, and until your spirit re
     public static class RapidClotting extends MementoMori {
         @Override
         public Color getColor() {
-            return Color.PINK;
+            return Color.GREEN;
         }
 
         @Override
@@ -106,23 +109,24 @@ pound of flesh: active skill. Consumes all your spirit, and until your spirit re
         }
     }
 
-    public static class SavingThrow extends MementoMori {
+    public static class HealShock extends MementoMori {
         @Override
         public Color getColor() {
-            return Color.GREEN;
+            return Color.CYAN;
         }
 
         @Override
-        public boolean activeTick(LivingEntity caster, SkillData d) {
-            double lostHealth = 1 - (caster.getHealth() / GeneralUtils.getMaxHealthBeforeWounding(caster));
-            SkillUtils.modifyAttribute(caster, Attributes.LUCK, MULT, lostHealth * 10, AttributeModifier.Operation.ADDITION);
-            double mult=1;
-            while(lostHealth>0){
-                mult*=1.1;
-                lostHealth-=0.1;
+        public void onSuccessfulProc(LivingEntity caster, SkillData stats, LivingEntity target, Event procPoint) {
+            final float lostHealthPerc = caster.getHealth() / GeneralUtils.getMaxHealthBeforeWounding(caster);
+            if (procPoint instanceof LivingHealEvent && lostHealthPerc < 1 && ((LivingHealEvent) procPoint).getAmount() > 0) {
+                int hitSize = 1 + (int) (lostHealthPerc * 10);
+                for (LivingEntity e : caster.world.getLoadedEntitiesWithinAABB(LivingEntity.class, caster.getBoundingBox().grow(7))) {
+                    if (!TargetingUtils.isAlly(e, caster) && e.attackEntityFrom(new CombatDamageSource("lightningBolt", caster).setDamageTyping(CombatDamageSource.TYPE.MAGICAL).setProcSkillEffects(true).setKnockbackPercentage(0).setAttackingHand(null).setSkillUsed(this).setMagicDamage(), (float) 3)) {
+                        hitSize--;
+                    }
+                    if (hitSize < 0) break;
+                }
             }
-            SkillUtils.modifyAttribute(caster, Attributes.LUCK, LUCK, mult-1, AttributeModifier.Operation.MULTIPLY_TOTAL);
-            return super.activeTick(caster, d);
         }
     }
 
@@ -134,7 +138,6 @@ pound of flesh: active skill. Consumes all your spirit, and until your spirit re
 
         @Override
         public void onSuccessfulProc(LivingEntity caster, SkillData stats, LivingEntity target, Event procPoint) {
-            super.onSuccessfulProc(caster, stats, target, procPoint);
             final float ohno = caster.getHealth() / GeneralUtils.getMaxHealthBeforeWounding(caster);
             if (procPoint instanceof LivingDamageEvent && ohno < 1) {
                 float visibility = ohno * 10;

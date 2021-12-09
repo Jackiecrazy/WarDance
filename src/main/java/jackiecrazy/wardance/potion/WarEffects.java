@@ -36,5 +36,11 @@ public class WarEffects {
     public static final RegistryObject<Effect> FORTIFICATION = EFFECTS.register("fortification", () -> new WarEffect(EffectType.BENEFICIAL, 0x0eb00c).addAttributesModifier(Attributes.ARMOR, "55FCED67-E92A-486E-9800-B47F202C4386", 2, AttributeModifier.Operation.ADDITION));
     //increases posture damage by 20% per level
     public static final RegistryObject<Effect> ENFEEBLE = EFFECTS.register("enfeeble", () -> new WarEffect(EffectType.HARMFUL, 0x5c452f));
+    //reduces (potency) wounding per second
+    public static final RegistryObject<Effect> RESTORATION = EFFECTS.register("restoration", () -> new WarEffect(EffectType.BENEFICIAL, 0x5c452f));
+//reduces (potency) fatigue per second
+    public static final RegistryObject<Effect> REFRESHMENT = EFFECTS.register("refreshment", () -> new WarEffect(EffectType.BENEFICIAL, 0x5c452f));
+//reduces (potency) burnout per second
+    public static final RegistryObject<Effect> REENERGIZATION = EFFECTS.register("reenergization", () -> new WarEffect(EffectType.BENEFICIAL, 0x5c452f));
 
 }

@@ -99,7 +99,7 @@ public class ClientEvents {
         for (String s : pos) {
             try {
                 String[] val = s.split(",");
-                rotate.put(val[0], Boolean.parseBoolean(val[2]));
+                rotate.put(val[0], Boolean.parseBoolean(val[1]));
             } catch (Exception e) {
                 WarDance.LOGGER.warn("improperly formatted custom rotation definition " + s + "!");
             }
@@ -349,7 +349,7 @@ public class ClientEvents {
                 mc.getTextureManager().bindTexture(goodhud);
                 currentSpiritLevel = updateValue(currentSpiritLevel, cap.getSpirit());
                 currentMightLevel = updateValue(currentMightLevel, cap.getMight());
-                currentComboLevel = cap.getCombo() > currentComboLevel ? updateValue(currentComboLevel, cap.getCombo()) : cap.getCombo();
+                ClientEvents.currentComboLevel = cap.getCombo() > currentComboLevel ? updateValue(currentComboLevel, cap.getCombo()) : cap.getCombo();
                 //yourCurrentPostureLevel = updateValue(yourCurrentPostureLevel, cap.getPosture());
                 if (cap.isCombatMode()) {
                     stack.push();
@@ -469,23 +469,24 @@ public class ClientEvents {
                     if (ClientConfig.CONFIG.combo.enabled) {
                         mc.getTextureManager().bindTexture(goodhud);
                         int combowidth = 32;
-                        int comboU = (int) (MathHelper.clamp(Math.floor(currentComboLevel), 0, 4)) * 32;
+                        float workingCombo=currentComboLevel;
+                        int comboU = (int) (MathHelper.clamp(Math.floor(workingCombo), 0, 4)) * 32;
                         int divisor = 1;
-                        if (currentComboLevel >= 4)
+                        if (workingCombo >= 4)
                             divisor = 2;
-                        if (currentComboLevel >= 6) {
+                        if (workingCombo >= 6) {
                             combowidth = 34;
                             comboU = 158;
                             divisor = 3;
                         }
-                        if (currentComboLevel >= 9) {
+                        if (workingCombo >= 9) {
                             combowidth = 64;
                             comboU = 194;
                             fillHeight = 32;
                         } else if (divisor > 1)
-                            fillHeight = (int) ((currentComboLevel - divisor * 2) / divisor * 32f);
+                            fillHeight = (int) ((workingCombo - divisor * 2) / divisor * 32f);
                         else
-                            fillHeight = (int) ((currentComboLevel - Math.floor(currentComboLevel)) * 32f);
+                            fillHeight = (int) ((workingCombo - Math.floor(workingCombo)) * 32f);
                         pair = translateCoords(ClientConfig.CONFIG.combo, width, height);
                         x = MathHelper.clamp(pair.getFirst() - combowidth / 2, 0, width - combowidth);
                         y = MathHelper.clamp(pair.getSecond() - 23, 0, height - 46);

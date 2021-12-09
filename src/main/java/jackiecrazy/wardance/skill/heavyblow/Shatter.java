@@ -26,7 +26,7 @@ public class Shatter extends HeavyBlow {
             LivingEntity seme = (LivingEntity) e.getSource().getTrueSource();
             LivingEntity uke = e.getEntityLiving();
             if (CasterData.getCap(seme).isSkillUsable(WarSkills.SHATTER.get()))
-                EffectUtils.attemptAddPot(uke, EffectUtils.stackPot(uke, new EffectInstance(Effects.MINING_FATIGUE, (int) CombatData.getCap(seme).getCombo()), EffectUtils.StackingMethod.MAXDURATION), false);
+                EffectUtils.attemptAddPot(uke, EffectUtils.stackPot(uke, new EffectInstance(Effects.MINING_FATIGUE, (int) (CombatData.getCap(seme).getCombo()*10)), EffectUtils.StackingMethod.MAXDURATION), false);
         }
     }
 

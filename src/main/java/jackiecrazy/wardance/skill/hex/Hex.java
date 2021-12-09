@@ -216,7 +216,7 @@ public class Hex extends Skill {
             boolean proc = false;
             for (EffectInstance ei : potions) {
                 proc = true;
-                EffectInstance drop = new EffectInstance(ei.getPotion(), 0, -1);
+                EffectInstance drop = new EffectInstance(ei.getPotion(), 0, -2);
                 drop = EffectUtils.stackPot(caster, drop, EffectUtils.StackingMethod.MAXDURATION);
                 if (drop.getAmplifier() >= 0) {
                     target.addPotionEffect(drop);

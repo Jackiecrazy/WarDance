@@ -22,8 +22,8 @@ public class Trip extends Kick {
     }
 
     @Override
-    public CastStatus castingCheck(LivingEntity caster) {
-        return !caster.isOnGround() ? CastStatus.OTHER : super.castingCheck(caster);
+    public float spiritConsumption(LivingEntity caster) {
+        return 2;
     }
 
     protected void additionally(LivingEntity caster, LivingEntity target) {

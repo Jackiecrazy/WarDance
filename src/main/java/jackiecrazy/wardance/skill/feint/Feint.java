@@ -164,6 +164,7 @@ public class Feint extends Skill {
                 } else {
                     CombatData.getCap(target).consumePosture(((ParryEvent) procPoint).getAttackDamage(), 0.1f);
                 }
+                procPoint.setResult(Event.Result.DENY);
                 markUsed(caster);
             }
         }

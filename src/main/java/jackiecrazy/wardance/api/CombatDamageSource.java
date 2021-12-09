@@ -19,7 +19,7 @@ public class CombatDamageSource extends EntityDamageSource {
     private boolean procSkillEffects = false;
     private boolean crit = false;
     private float cdmg = 1.5f;
-    private float armor = 1f;
+    private float armor = 1f, knockback=1f;
     private TYPE damageTyping = TYPE.PHYSICAL;
 
     public static CombatDamageSource causeSelfDamage(LivingEntity to){
@@ -66,6 +66,7 @@ public class CombatDamageSource extends EntityDamageSource {
         return this;
     }
 
+    @Nullable
     public Hand getAttackingHand() {
         return attackingHand;
     }
@@ -126,6 +127,15 @@ public class CombatDamageSource extends EntityDamageSource {
 
     public CombatDamageSource setArmorReductionPercentage(float armorReductionPercentage){
         armor=armorReductionPercentage;
+        return this;
+    }
+
+    public float getKnockbackPercentage(){
+        return knockback;
+    }
+
+    public CombatDamageSource setKnockbackPercentage(float perc){
+        knockback=perc;
         return this;
     }
 

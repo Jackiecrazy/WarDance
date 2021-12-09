@@ -1,4 +1,4 @@
-package jackiecrazy.wardance.skill.fightingspirit;
+package jackiecrazy.wardance.skill.warcry;
 
 import jackiecrazy.wardance.capability.resources.CombatData;
 import jackiecrazy.wardance.capability.resources.ICombatCapability;
@@ -73,25 +73,34 @@ public class WarCry extends Skill {
             caster.getAttribute(Attributes.MOVEMENT_SPEED).applyNonPersistentModifier(wrap);
         } else {
             evoke(caster);
-            activate(caster, getDuration());
+            activate(caster, getDuration(CombatData.getCap(caster).getMight()));
         }
         return true;
     }
 
-    protected int getDuration() {
-        return 200;
+    protected int getDuration(float might) {
+        return 60 + (int) (might * 20);
     }
 
     protected void evoke(LivingEntity caster) {
         if (getParentSkill() == null) {
-            caster.addPotionEffect(new EffectInstance(Effects.REGENERATION, getDuration()));
-            caster.addPotionEffect(new EffectInstance(Effects.RESISTANCE, getDuration()));
+            final float might = CombatData.getCap(caster).getMight();
+            caster.addPotionEffect(new EffectInstance(Effects.REGENERATION, getDuration(might)));
+            if (might > 5) {
+                caster.addPotionEffect(new EffectInstance(Effects.RESISTANCE, getDuration(might)));
+                caster.addPotionEffect(new EffectInstance(Effects.ABSORPTION, getDuration(might), 1));
+            } else caster.addPotionEffect(new EffectInstance(Effects.ABSORPTION, getDuration(might)));
         }
     }
 
     @Override
     public boolean activeTick(LivingEntity caster, SkillData d) {
-        return super.activeTick(caster, d);
+        if (d.isCondition() && d.getDuration() > 0) {
+            d.decrementDuration();
+            if (d.getDuration() <= 0) markUsed(caster);
+            return true;
+        }
+        return false;
     }
 
     @Override
@@ -99,9 +108,9 @@ public class WarCry extends Skill {
         if (caster instanceof PlayerEntity && (caster.getAttribute(Attributes.MOVEMENT_SPEED).hasModifier(wrap) || stats.isCondition())) {
             ForgeEventFactory.onPlayerWakeup(((PlayerEntity) caster), false, false);
             ((PlayerEntity) caster).takeStat(Stats.CUSTOM.get(Stats.TIME_SINCE_REST));
-        }
+            setCooldown(caster, 300);
+        } else setCooldown(caster, 60);
         caster.getAttribute(Attributes.MOVEMENT_SPEED).removeModifier(wrap);
-        setCooldown(caster, 300);
     }
 
     @Override

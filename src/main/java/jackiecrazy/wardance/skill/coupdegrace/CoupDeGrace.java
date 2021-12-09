@@ -13,7 +13,6 @@ import jackiecrazy.wardance.skill.*;
 import jackiecrazy.wardance.utils.CombatUtils;
 import jackiecrazy.wardance.utils.GeneralUtils;
 import net.minecraft.entity.LivingEntity;
-import net.minecraft.entity.ai.attributes.Attributes;
 import net.minecraft.tags.Tag;
 import net.minecraft.util.SoundCategory;
 import net.minecraft.util.SoundEvents;
@@ -85,7 +84,7 @@ public class CoupDeGrace extends Skill {
 
     protected void deathCheck(LivingEntity caster, LivingEntity target, float amount) {
         if (amount > target.getHealth())
-            CombatData.getCap(caster).addMight(3);
+            CombatData.getCap(caster).addMight(6);
     }
 
     @Override
@@ -175,7 +174,7 @@ public class CoupDeGrace extends Skill {
 
         @Override
         public boolean willKillOnCast(LivingEntity caster, LivingEntity target) {
-            return target.getHealth() < (GeneralUtils.getMaxHealthBeforeWounding(target) * 0.10f) + GeneralUtils.getAttributeValueSafe(caster, Attributes.ATTACK_DAMAGE);
+            return target.getHealth() < (GeneralUtils.getMaxHealthBeforeWounding(target) * 0.10f);
         }
 
         @Override
@@ -190,9 +189,11 @@ public class CoupDeGrace extends Skill {
             if (procPoint instanceof LivingHurtEvent) {
                 LivingHurtEvent e = (LivingHurtEvent) procPoint;
                 if (e.getEntityLiving() == caster) return;
-                e.getEntityLiving().setHealth(e.getEntityLiving().getHealth() - GeneralUtils.getMaxHealthBeforeWounding(target) * 0.10f);
-                if (e.getEntityLiving().getHealth() - e.getAmount() <= 0)
+                if (e.getEntityLiving().getHealth() < GeneralUtils.getMaxHealthBeforeWounding(target) * 0.10f+e.getAmount()) {
                     stats.flagCondition(true);
+                    e.getSource().setDamageIsAbsolute().setDamageBypassesArmor();
+                }
+                e.setAmount(e.getAmount()+GeneralUtils.getMaxHealthBeforeWounding(target) * 0.10f);
             }
             if (procPoint instanceof EntityAwarenessEvent)
                 ((EntityAwarenessEvent) procPoint).setAwareness(CombatUtils.Awareness.ALERT);

@@ -1,4 +1,4 @@
-package jackiecrazy.wardance.skill.fightingspirit;
+package jackiecrazy.wardance.skill.warcry;
 
 import jackiecrazy.wardance.skill.ProcPoints;
 import jackiecrazy.wardance.skill.SkillData;
@@ -17,10 +17,10 @@ import java.awt.*;
 import java.util.UUID;
 
 public class FrostFang extends WarCry {
+    private static final AttributeModifier luck = new AttributeModifier(UUID.fromString("77723885-afb9-4937-9c02-612ee5b6135a"), "frost fang bonus", 2, AttributeModifier.Operation.ADDITION);
+    private static final AttributeModifier speed = new AttributeModifier(UUID.fromString("07430131-9baa-47b4-a51c-9a6f48d564f4"), "frost fang bonus", 0.4, AttributeModifier.Operation.MULTIPLY_BASE);
     private final Tag<String> tag = makeTag("chant", ProcPoints.melee, ProcPoints.on_being_hurt, ProcPoints.countdown, ProcPoints.recharge_time, ProcPoints.recharge_sleep);
     private final Tag<String> chant = makeTag(SkillTags.chant, SkillTags.melee, SkillTags.state);
-    private static final AttributeModifier luck =new AttributeModifier(UUID.fromString("77723885-afb9-4937-9c02-612ee5b6135a"), "frost fang bonus", 2, AttributeModifier.Operation.ADDITION);
-    private static final AttributeModifier speed =new AttributeModifier(UUID.fromString("07430131-9baa-47b4-a51c-9a6f48d564f4"), "frost fang bonus", 0.4, AttributeModifier.Operation.MULTIPLY_BASE);
 
     @Override
     public Tag<String> getProcPoints(LivingEntity caster) {
@@ -33,8 +33,9 @@ public class FrostFang extends WarCry {
         caster.getAttribute(Attributes.MOVEMENT_SPEED).applyNonPersistentModifier(speed);
     }
 
-    protected int getDuration() {
-        return 400;
+    @Override
+    protected int getDuration(float might) {
+        return 100 + (int) (might * 30);
     }
 
     @Override
@@ -58,9 +59,9 @@ public class FrostFang extends WarCry {
 
     @Override
     public void onSuccessfulProc(LivingEntity caster, SkillData stats, LivingEntity target, Event procPoint) {
-        if(procPoint instanceof LivingAttackEvent) {
+        if (procPoint instanceof LivingAttackEvent) {
             target.addPotionEffect(new EffectInstance(Effects.SLOWNESS, 60));
-            if(CombatUtils.getAwareness(caster, target)== CombatUtils.Awareness.ALERT){
+            if (CombatUtils.getAwareness(caster, target) == CombatUtils.Awareness.ALERT) {
                 target.addPotionEffect(new EffectInstance(Effects.BLINDNESS, 20));
             }
         }

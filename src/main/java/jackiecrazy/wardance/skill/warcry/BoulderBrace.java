@@ -1,4 +1,4 @@
-package jackiecrazy.wardance.skill.fightingspirit;
+package jackiecrazy.wardance.skill.warcry;
 
 import jackiecrazy.wardance.capability.resources.CombatData;
 import jackiecrazy.wardance.skill.SkillData;
@@ -13,12 +13,6 @@ public class BoulderBrace extends WarCry {
     }
 
     @Override
-    public boolean equippedTick(LivingEntity caster, STATE state) {
-        CombatData.getCap(caster).decrementPostureGrace(1);
-        return super.equippedTick(caster, state);
-    }
-
-    @Override
     public boolean activeTick(LivingEntity caster, SkillData d) {
         CombatData.getCap(caster).addPosture(0.05f);
         return super.activeTick(caster, d);
@@ -28,4 +22,6 @@ public class BoulderBrace extends WarCry {
     public Color getColor() {
         return Color.LIGHT_GRAY;
     }
+
+
 }

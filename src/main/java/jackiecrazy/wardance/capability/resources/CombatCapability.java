@@ -724,11 +724,8 @@ public class CombatCapability implements ICombatCapability {
             setMight(getMight() - over);
         }
         if (getComboGrace() == 0) {
-            int floor = (int) Math.floor(getCombo());//0-1 D, 1-2 C, 2-3 B, 3-4 A, 4-6 S, 6-9 SS, 9+ SSS
-            if (combo > 9) floor = 9;
-            else if (combo > 6) floor = 6;
-            else if (combo > 4) floor = 4;
-            setCombo(floor-0.01f);
+            if (combo >= 9) combo = 9;
+            if (combo >= 4.08) combo -= 0.05;
         }
         if (prev == null || !ItemStack.areItemStacksEqual(elb.getHeldItemOffhand(), prev)) {
             prev = elb.getHeldItemOffhand();

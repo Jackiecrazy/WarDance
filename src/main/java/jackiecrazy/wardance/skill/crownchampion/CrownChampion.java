@@ -174,6 +174,12 @@ elemental might: +1 burn/snowball/poison/drown damage to targets you have attack
         public Color getColor() {
             return Color.RED;
         }
+
+        @Override
+        public boolean markTick(LivingEntity caster, LivingEntity target, SkillData sd) {
+            target.addPotionEffect(new EffectInstance(Effects.GLOWING, 60));
+            return super.markTick(caster, target, sd);
+        }
     }
 
     public static class PridefulMight extends CrownChampion {

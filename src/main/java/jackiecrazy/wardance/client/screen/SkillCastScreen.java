@@ -142,6 +142,28 @@ public class SkillCastScreen extends Screen {
                     mc.fontRenderer.drawString(matrixStack, num, x + iconX[a] + 16 - mc.fontRenderer.getStringWidth(num) / 2f, y + iconY[a] + 12, 0xFFFFFF);
                     matrixStack.pop();
                     matrixStack.pop();
+                } else if (CasterData.getCap(mc.player).isSkillActive(s)) {
+                    matrixStack.push();
+                    int finalA = a;
+                    CasterData.getCap(mc.player).getActiveSkill(s).ifPresent((sd)->{
+                        float cdPerc = sd.getDuration() / sd.getMaxDuration();
+                        mc.textureManager.bindTexture(cooldown);
+                        float cd=sd.getDuration();
+                        RenderSystem.color4f(0.4f, 0.7f, 0.4f, 1);
+                        drawCooldownCircle(matrixStack, x + iconX[finalA], y + iconY[finalA], cdPerc);
+
+                        //active number
+                        String num = String.valueOf((int) cd);
+                        if (Math.ceil(cd) != cd)
+                            num = formatter.format(cd);
+                        matrixStack.push();
+                        mc.textureManager.bindTexture(cooldown);
+                        RenderSystem.color4f(1.0F, 1.0F, 1.0F, 0.6F);
+                        //AbstractGui.blit(matrixStack, x + iconX[a], y + iconY[a], 0, 0, 32, 32, 32, 32);
+                        mc.fontRenderer.drawString(matrixStack, num, x + iconX[finalA] + 16 - mc.fontRenderer.getStringWidth(num) / 2f, y + iconY[finalA] + 12, 0xFFFFFF);
+                    });
+                    matrixStack.pop();
+                    matrixStack.pop();
                 }
 
             }
@@ -240,7 +262,7 @@ public class SkillCastScreen extends Screen {
             } else {
                 this.minecraft
                         .player.movementInput.tickMovement(this.minecraft
-                        .player.isForcedDown()); //shouldRenderSneaking
+                                .player.isForcedDown()); //shouldRenderSneaking
             }
         }
     }
