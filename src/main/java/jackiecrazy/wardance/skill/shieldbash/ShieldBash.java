@@ -72,7 +72,7 @@ public class ShieldBash extends Skill {
     }
 
     protected void performEffect(LivingEntity caster, LivingEntity target) {
-
+        CombatData.getCap(target).consumePosture(caster, CombatUtils.getShieldStats(caster.getHeldItemMainhand()).getA() / 20f);
     }
 
     @Override
@@ -80,7 +80,6 @@ public class ShieldBash extends Skill {
         if (procPoint instanceof LivingAttackEvent && CombatUtils.isShield(caster, CombatUtils.getAttackingItemStack(((LivingAttackEvent) procPoint).getSource()))) {
             performEffect(caster, target);
             caster.world.playSound(null, caster.getPosX(), caster.getPosY(), caster.getPosZ(), SoundEvents.ENTITY_ZOMBIE_ATTACK_IRON_DOOR, SoundCategory.PLAYERS, 0.25f + WarDance.rand.nextFloat() * 0.5f, 0.5f + WarDance.rand.nextFloat() * 0.5f);
-            CombatData.getCap(target).consumePosture(caster, CombatUtils.getShieldStats(CombatUtils.getAttackingItemStack(((LivingAttackEvent) procPoint).getSource())).getA() / 20f);
             markUsed(caster);
         }
     }
@@ -92,7 +91,7 @@ public class ShieldBash extends Skill {
         }
 
         protected void performEffect(LivingEntity caster, LivingEntity target) {
-            target.addPotionEffect(new EffectInstance(Effects.NAUSEA, 40));
+            target.addPotionEffect(new EffectInstance(Effects.NAUSEA, 60));
             CombatUtils.knockBack(target, caster, 0.2f, true, false);
         }
     }
@@ -104,6 +103,7 @@ public class ShieldBash extends Skill {
         }
 
         protected void performEffect(LivingEntity caster, LivingEntity target) {
+            super.performEffect(caster, target);
             target.addPotionEffect(new EffectInstance(Effects.SLOWNESS, 60));
             target.addPotionEffect(new EffectInstance(WarEffects.DISTRACTION.get(), 60));
         }

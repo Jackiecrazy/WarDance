@@ -81,7 +81,7 @@ public class Feint extends Skill {
 
     @Override
     public boolean markTick(LivingEntity caster, LivingEntity target, SkillData sd) {
-        if (CombatUtils.getAwareness(caster, target) != CombatUtils.Awareness.ALERT)
+        if (CombatUtils.getAwareness(caster, target) == CombatUtils.Awareness.UNAWARE)
             removeMark(target);
         return false;
     }

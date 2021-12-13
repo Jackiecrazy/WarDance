@@ -75,7 +75,8 @@ apathy: your max spirit is 4, your spirit instantly refills after cooldown, you 
             CombatData.getCap(caster).setSpiritGrace(CombatData.getCap(caster).getSpiritGrace() / 2);
         } else if (procPoint instanceof AttackMightEvent) {
             double spdiff = MathHelper.sqrt(GeneralUtils.getSpeedSq(caster)) - MathHelper.sqrt(GeneralUtils.getSpeedSq(target));
-            CombatData.getCap(caster).addSpirit((float) Math.min(1.5, Math.sqrt(spdiff)));
+            if (spdiff < 0 || !Double.isFinite(spdiff)) spdiff = 0;
+            CombatData.getCap(caster).addSpirit((float) Math.min(1, Math.sqrt(spdiff)));
         }
     }
 }

@@ -6,9 +6,10 @@ import jackiecrazy.wardance.skill.ProcPoints;
 import jackiecrazy.wardance.skill.SkillData;
 import jackiecrazy.wardance.utils.CombatUtils;
 import net.minecraft.entity.LivingEntity;
-import net.minecraft.potion.EffectInstance;
-import net.minecraft.potion.Effects;
+import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.item.ItemStack;
 import net.minecraft.tags.Tag;
+import net.minecraft.util.Hand;
 import net.minecraft.util.SoundCategory;
 import net.minecraft.util.SoundEvents;
 import net.minecraft.util.Tuple;
@@ -35,14 +36,21 @@ public class Overbear extends ShieldBash {
 
     @Override
     public void onSuccessfulProc(LivingEntity caster, SkillData stats, LivingEntity target, Event procPoint) {
-        if (procPoint instanceof LivingAttackEvent && CombatUtils.isShield(caster, CombatUtils.getAttackingItemStack(((LivingAttackEvent) procPoint).getSource()))) {
-            performEffect(caster, target);
-            caster.world.playSound(null, caster.getPosX(), caster.getPosY(), caster.getPosZ(), SoundEvents.ITEM_SHIELD_BLOCK , SoundCategory.PLAYERS, 0.25f + WarDance.rand.nextFloat() * 0.5f, 0.5f+WarDance.rand.nextFloat() * 0.5f);
-            CombatData.getCap(target).consumePosture(caster, CombatUtils.getShieldStats(CombatUtils.getAttackingItemStack(((LivingAttackEvent) procPoint).getSource())).getA() / 10f);
-            if(CombatData.getCap(target).getStaggerTime()==0){
-                caster.addPotionEffect(new EffectInstance(Effects.SLOWNESS, 30));
+        if (procPoint instanceof LivingAttackEvent) {
+            final ItemStack stack = CombatUtils.getAttackingItemStack(((LivingAttackEvent) procPoint).getSource());
+            if (CombatUtils.isShield(caster, stack)) {
+                performEffect(caster, target);
+                caster.world.playSound(null, caster.getPosX(), caster.getPosY(), caster.getPosZ(), SoundEvents.ITEM_SHIELD_BLOCK, SoundCategory.PLAYERS, 0.25f + WarDance.rand.nextFloat() * 0.5f, 0.5f + WarDance.rand.nextFloat() * 0.5f);
+                final int shieldTime = CombatUtils.getShieldStats(stack).getA();
+                CombatData.getCap(target).consumePosture(caster, shieldTime / 10f, 0, true);
+                if (CombatData.getCap(target).getStaggerTime() == 0) {
+                    CombatData.getCap(caster).setHandBind(CombatData.getCap(caster).isOffhandAttack() ? Hand.OFF_HAND : Hand.MAIN_HAND, shieldTime);
+                    if (caster instanceof PlayerEntity) {
+                        ((PlayerEntity) caster).getCooldownTracker().setCooldown(stack.getItem(), shieldTime);
+                    }
+                }
+                markUsed(caster);
             }
-            markUsed(caster);
         }
         if (procPoint instanceof LivingHurtEvent && (CombatUtils.isShield(caster, CombatUtils.getAttackingItemStack(((LivingHurtEvent) procPoint).getSource())))) {
             Tuple<Integer, Integer> stat = CombatUtils.getShieldStats(CombatUtils.getAttackingItemStack(((LivingHurtEvent) procPoint).getSource()));

@@ -194,7 +194,7 @@ public class EntityHandler {
             if (watcher.getAttackingEntity() != sneaker && watcher.getRevengeTarget() != sneaker && watcher.getLastAttackedEntity() != sneaker && (!(watcher instanceof MobEntity) || ((MobEntity) watcher).getAttackTarget() != sneaker)) {
                 double stealth = GeneralUtils.getAttributeValueSafe(sneaker, WarAttributes.STEALTH.get());
                 if (watcher.isPotionActive(Effects.BLINDNESS))
-                    e.modifyVisibility(1f / (watcher.getActivePotionEffect(Effects.BLINDNESS).getAmplifier() + 3));
+                    e.modifyVisibility(1f / (watcher.getActivePotionEffect(Effects.BLINDNESS).getAmplifier() + 4));
                 if (stealth > 20)
                     e.modifyVisibility(10 / (stealth - 10));
                 if (!sd.isAllSeeing() && !GeneralUtils.isFacingEntity(watcher, sneaker, Math.max(StealthConfig.baseHorizontalDetection, (int) ((20 - stealth) * StealthConfig.anglePerArmor)), Math.max(StealthConfig.baseVerticalDetection, (int) ((20 - stealth) * (20 - stealth)))))
@@ -271,8 +271,11 @@ public class EntityHandler {
 
     @SubscribeEvent
     public static void nigerundayo(final PotionEvent.PotionAddedEvent e) {
-        if (e.getPotionEffect().getPotion() == Effects.BLINDNESS && GeneralConfig.blindness && e.getEntityLiving() instanceof MobEntity)
+        if (e.getPotionEffect().getPotion() == Effects.BLINDNESS && GeneralConfig.blindness) {
+            if(e.getEntityLiving() instanceof MobEntity)
             ((MobEntity) e.getEntityLiving()).setAttackTarget(null);
+            e.getEntityLiving().setRevengeTarget(null);
+        }
     }
 
     @SubscribeEvent

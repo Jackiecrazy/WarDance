@@ -55,7 +55,7 @@ elemental might: +1 burn/snowball/poison/drown damage to targets you have attack
         if (seme instanceof LivingEntity) {
             final Skill venge = WarSkills.VENGEFUL_MIGHT.get();
             for (PlayerEntity p : uke.world.getPlayers())
-                if (TargetingUtils.isAlly(p, uke) && CasterData.getCap(p).isSkillActive(venge)) {
+                if (TargetingUtils.isAlly(p, uke) && p.getDistanceSq(uke) < 100 && CasterData.getCap(p).isSkillActive(venge)) {
                     ((LivingEntity) seme).addPotionEffect(new EffectInstance(Effects.GLOWING, 100));
                     SkillData apply = Marks.getCap((LivingEntity) seme).getActiveMark(venge).orElse(new SkillData(venge, 0));
                     apply.setArbitraryFloat(apply.getArbitraryFloat() + e.getAmount());
@@ -134,10 +134,13 @@ elemental might: +1 burn/snowball/poison/drown damage to targets you have attack
 
     @Override
     public void onSuccessfulProc(LivingEntity caster, SkillData stats, LivingEntity target, Event procPoint) {
+        if (this.getParentSkill() != null) return;
+        int might = (int) CombatData.getCap(caster).getMight() - 1;
         if (procPoint instanceof LivingAttackEvent) {
-            if (this.getParentSkill() != null) return;
-            int might = (int) CombatData.getCap(caster).getMight() - 1;
             SkillUtils.modifyAttribute(caster, Attributes.ATTACK_DAMAGE, MULT, 0.05f * might, AttributeModifier.Operation.MULTIPLY_BASE);
+        }
+        if (procPoint instanceof GainMightEvent) {
+            ((GainMightEvent) procPoint).setQuantity(((GainMightEvent) procPoint).getQuantity() * (15 - might / 2f) / 10f);
         }
     }
 

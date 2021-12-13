@@ -8,6 +8,7 @@ import jackiecrazy.wardance.skill.SkillData;
 import jackiecrazy.wardance.skill.SkillTags;
 import jackiecrazy.wardance.skill.WarSkills;
 import jackiecrazy.wardance.utils.CombatUtils;
+import net.minecraft.entity.Entity;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.tags.Tag;
 import net.minecraft.util.SoundCategory;
@@ -63,7 +64,7 @@ public class Grapple extends Skill {
     }
 
     protected void performEffect(LivingEntity caster, LivingEntity target) {
-        caster.world.playSound(null, target.getPosX(), target.getPosY(), target.getPosZ(), SoundEvents.ENTITY_ZOMBIE_ATTACK_WOODEN_DOOR, SoundCategory.PLAYERS, 0.3f + WarDance.rand.nextFloat() * 0.5f, 0.75f + WarDance.rand.nextFloat() * 0.5f);
+        caster.world.playSound(null, target.getPosX(), target.getPosY(), target.getPosZ(), SoundEvents.BLOCK_BARREL_OPEN, SoundCategory.PLAYERS, 0.3f + WarDance.rand.nextFloat() * 0.5f, 0.75f + WarDance.rand.nextFloat() * 0.5f);
         if (getParentSkill() == null) CombatData.getCap(target).consumePosture(caster, 11, 0, true);
         else CombatData.getCap(target).consumePosture(caster, 8, 0, true);
 
@@ -85,13 +86,24 @@ public class Grapple extends Skill {
             return Color.LIGHT_GRAY;
         }
 
-        protected void performEffect(LivingEntity caster, LivingEntity target) {
-            final ICombatCapability casterCap = CombatData.getCap(caster);
-            float casterPerc = casterCap.getPosture() / casterCap.getMaxPosture();
-            final ICombatCapability targetCap = CombatData.getCap(target);
-            float targetPerc = targetCap.getPosture() / targetCap.getMaxPosture();
-            casterCap.setPosture(targetPerc * casterCap.getMaxPosture());
-            targetCap.setPosture(casterPerc * targetCap.getMaxPosture());
+        @Override
+        public void onSuccessfulProc(LivingEntity caster, SkillData stats, LivingEntity target, Event procPoint) {
+            if (procPoint instanceof LivingAttackEvent && CombatUtils.isUnarmed(caster.getHeldItemMainhand(), caster)) {
+                if (stats.isCondition()) {
+                    Entity prev=target.world.getEntityByID((int) stats.getArbitraryFloat());
+                    if(!(prev instanceof LivingEntity) || prev == target)prev=caster;
+                    final ICombatCapability casterCap = CombatData.getCap((LivingEntity) prev);
+                    float casterPerc = casterCap.getPosture() / casterCap.getMaxPosture();
+                    final ICombatCapability targetCap = CombatData.getCap(target);
+                    float targetPerc = targetCap.getPosture() / targetCap.getMaxPosture();
+                    casterCap.setPosture(targetPerc * casterCap.getMaxPosture());
+                    targetCap.setPosture(casterPerc * targetCap.getMaxPosture());
+                    markUsed(caster);
+                } else{
+                    stats.flagCondition(true);
+                    stats.setArbitraryFloat(target.getEntityId());
+                }
+            }
         }
     }
 

@@ -91,7 +91,7 @@ Onslaught: casts heavy blow before every attack (this is a lot easier)
     public CastStatus castingCheck(LivingEntity caster) {
         if (CasterData.getCap(caster).isSkillActive(this))
             return CastStatus.ALLOWED;
-        if (CombatData.getCap(caster).getSpirit() < CombatData.getCap(caster).getMaxSpirit()) return CastStatus.OTHER;
+        if (CombatData.getCap(caster).getSpirit() < CombatData.getCap(caster).getMaxSpirit()-0.1) return CastStatus.OTHER;
         return super.castingCheck(caster);
     }
 
@@ -139,7 +139,7 @@ Onslaught: casts heavy blow before every attack (this is a lot easier)
 
         @Override
         protected void performEffect(LivingEntity caster, LivingEntity target, float amount, SkillData s) {
-            final List<LivingEntity> list = caster.world.getLoadedEntitiesWithinAABB(LivingEntity.class, caster.getBoundingBox().grow(10), (a) -> !TargetingUtils.isAlly(a, caster));
+            final List<LivingEntity> list = caster.world.getLoadedEntitiesWithinAABB(LivingEntity.class, caster.getBoundingBox().grow(10), (a) -> TargetingUtils.isHostile(a, caster));
             for (LivingEntity enemy : list) {
                 enemy.addPotionEffect(new EffectInstance(WarEffects.ENFEEBLE.get(), 200));
                 if (amount > enemy.getMaxHealth())
@@ -164,7 +164,7 @@ Onslaught: casts heavy blow before every attack (this is a lot easier)
         protected void performEffect(LivingEntity caster, LivingEntity target, float amount, SkillData s) {
             CombatDamageSource cds = new CombatDamageSource("lightningBolt", caster).setProxy(target);
             final float radius = 7;
-            final List<LivingEntity> list = caster.world.getLoadedEntitiesWithinAABB(LivingEntity.class, caster.getBoundingBox().grow(radius), (a) -> !TargetingUtils.isAlly(a, caster));
+            final List<LivingEntity> list = caster.world.getLoadedEntitiesWithinAABB(LivingEntity.class, caster.getBoundingBox().grow(radius), (a) -> TargetingUtils.isHostile(a, caster));
             //float damage = s.getArbitraryFloat() * (1 + CombatData.getCap(caster).getSpirit());
             float damage = (4 * CombatData.getCap(caster).getSpirit()) / list.size();
             CombatData.getCap(caster).setSpirit(0);
@@ -183,7 +183,7 @@ Onslaught: casts heavy blow before every attack (this is a lot easier)
     public static class FeverDream extends Guillotine {
         @Override
         public Color getColor() {
-            return Color.GRAY;
+            return Color.LIGHT_GRAY;
         }
 
         @Override
@@ -204,7 +204,7 @@ Onslaught: casts heavy blow before every attack (this is a lot easier)
         @Override
         protected void performEffect(LivingEntity caster, LivingEntity target, float amount, SkillData s) {
             SkillUtils.createCloud(caster.world, caster, caster.getPosX(), caster.getPosY(), caster.getPosZ(), 15, ParticleTypes.LARGE_SMOKE);
-            final List<LivingEntity> list = caster.world.getLoadedEntitiesWithinAABB(LivingEntity.class, caster.getBoundingBox().grow(14), (a) -> !TargetingUtils.isAlly(a, caster));
+            final List<LivingEntity> list = caster.world.getLoadedEntitiesWithinAABB(LivingEntity.class, caster.getBoundingBox().grow(14), (a) -> TargetingUtils.isHostile(a, caster));
             Marks.getCap(target).removeMark(this);
             for (int i = 0; i < list.size(); i++) {
                 LivingEntity enemy = list.get(i);

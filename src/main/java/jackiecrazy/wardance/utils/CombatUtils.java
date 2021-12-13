@@ -307,6 +307,7 @@ public class CombatUtils {
         //Spartan Shields compat
         if (attacker != null && attacker.isActiveItemStackBlocking()) {
             h = attacker.getActiveHand();
+            stack = attacker.getHeldItem(h);
         }
         float scaler = CombatConfig.mobScaler;
         if (stack != null && !stack.isEmpty()) {
@@ -338,6 +339,9 @@ public class CombatUtils {
     }
 
     public static boolean isMeleeAttack(DamageSource s) {
+        if (s instanceof CombatDamageSource) {
+            return ((CombatDamageSource) s).canProcAutoEffects();
+        }
         return s.getTrueSource() == s.getImmediateSource() && !s.isExplosion() && !s.isFireDamage() && !s.isMagicDamage() && !s.isUnblockable() && !s.isProjectile();
     }
 

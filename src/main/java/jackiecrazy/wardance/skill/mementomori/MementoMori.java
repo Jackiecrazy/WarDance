@@ -120,8 +120,9 @@ pound of flesh: active skill. Consumes all your spirit, and until your spirit re
             final float lostHealthPerc = caster.getHealth() / GeneralUtils.getMaxHealthBeforeWounding(caster);
             if (procPoint instanceof LivingHealEvent && lostHealthPerc < 1 && ((LivingHealEvent) procPoint).getAmount() > 0) {
                 int hitSize = 1 + (int) (lostHealthPerc * 10);
+                final float amnt = ((LivingHealEvent) procPoint).getAmount();
                 for (LivingEntity e : caster.world.getLoadedEntitiesWithinAABB(LivingEntity.class, caster.getBoundingBox().grow(7))) {
-                    if (!TargetingUtils.isAlly(e, caster) && e.attackEntityFrom(new CombatDamageSource("lightningBolt", caster).setDamageTyping(CombatDamageSource.TYPE.MAGICAL).setProcSkillEffects(true).setKnockbackPercentage(0).setAttackingHand(null).setSkillUsed(this).setMagicDamage(), (float) 3)) {
+                    if (TargetingUtils.isHostile(e, caster) && e.attackEntityFrom(new CombatDamageSource("lightningBolt", caster).setDamageTyping(CombatDamageSource.TYPE.MAGICAL).setProcSkillEffects(true).setKnockbackPercentage(0).setAttackingHand(null).setSkillUsed(this).setMagicDamage(), amnt)) {
                         hitSize--;
                     }
                     if (hitSize < 0) break;
@@ -141,8 +142,8 @@ pound of flesh: active skill. Consumes all your spirit, and until your spirit re
             final float ohno = caster.getHealth() / GeneralUtils.getMaxHealthBeforeWounding(caster);
             if (procPoint instanceof LivingDamageEvent && ohno < 1) {
                 float visibility = ohno * 10;
-                SkillUtils.createCloud(caster.world, caster, caster.getPosX(), caster.getPosY(), caster.getPosZ(), 13 - ohno, ParticleTypes.LARGE_SMOKE);
-                for (LivingEntity e : caster.world.getLoadedEntitiesWithinAABB(LivingEntity.class, caster.getBoundingBox().grow(11))) {
+                SkillUtils.createCloud(caster.world, caster, caster.getPosX(), caster.getPosY(), caster.getPosZ(), visibility, ParticleTypes.LARGE_SMOKE);
+                for (LivingEntity e : caster.world.getLoadedEntitiesWithinAABB(LivingEntity.class, caster.getBoundingBox().grow(40), (a) -> TargetingUtils.isHostile(a, caster))) {
                     if (e.getDistanceSq(caster) > visibility * visibility) {
                         e.addPotionEffect(new EffectInstance(Effects.BLINDNESS, 100));
                     }

@@ -1,10 +1,10 @@
 package jackiecrazy.wardance.skill.kick;
 
+import jackiecrazy.wardance.api.CombatDamageSource;
 import jackiecrazy.wardance.capability.resources.CombatData;
 import jackiecrazy.wardance.skill.SkillData;
 import jackiecrazy.wardance.utils.CombatUtils;
 import net.minecraft.entity.LivingEntity;
-import net.minecraft.util.DamageSource;
 
 import java.awt.*;
 
@@ -26,7 +26,7 @@ public class SabatonSmash extends Kick {
         if (target.collidedHorizontally) {
             removeMark(target);
             CombatData.getCap(target).consumePosture(caster.getTotalArmorValue() / 4f);
-            target.attackEntityFrom(DamageSource.FALLING_BLOCK, caster.getTotalArmorValue() / 4f);
+            target.attackEntityFrom(new CombatDamageSource("fallingBlock",caster).setDamageTyping(CombatDamageSource.TYPE.PHYSICAL).setProcSkillEffects(true).setProcAttackEffects(true), caster.getTotalArmorValue() / 4f);
         }
         return super.markTick(caster, target, sd);
     }

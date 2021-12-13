@@ -1,6 +1,7 @@
 package jackiecrazy.wardance.skill.descend;
 
 import jackiecrazy.wardance.WarDance;
+import jackiecrazy.wardance.api.CombatDamageSource;
 import jackiecrazy.wardance.capability.resources.CombatData;
 import jackiecrazy.wardance.capability.skill.CasterData;
 import jackiecrazy.wardance.config.ResourceConfig;
@@ -13,7 +14,6 @@ import net.minecraft.entity.LivingEntity;
 import net.minecraft.potion.EffectInstance;
 import net.minecraft.potion.Effects;
 import net.minecraft.tags.Tag;
-import net.minecraft.util.DamageSource;
 import net.minecraftforge.event.entity.living.LivingAttackEvent;
 import net.minecraftforge.event.entity.living.LivingFallEvent;
 import net.minecraftforge.eventbus.api.Event;
@@ -140,7 +140,7 @@ Assassinate: Stab rank increased by 1 for this attack, instantly stagger a distr
 
     protected void spooketh(LivingEntity caster, LivingEntity target, float posDiff) {
         CombatData.getCap(target).consumePosture(caster, posDiff * 2, 0, true);
-        if (getParentSkill() == null) target.attackEntityFrom(DamageSource.FALLING_BLOCK, posDiff);
+        if (getParentSkill() == null) target.attackEntityFrom(new CombatDamageSource("fallingBlock",caster).setDamageTyping(CombatDamageSource.TYPE.PHYSICAL).setProcSkillEffects(true).setProcAttackEffects(true), posDiff);
     }
 
     public static class LightsOut extends Descend {
@@ -179,7 +179,7 @@ Assassinate: Stab rank increased by 1 for this attack, instantly stagger a distr
                 for (LivingEntity e : caster.world.getLoadedEntitiesWithinAABB(LivingEntity.class, caster.getBoundingBox().grow(5))) {
                     if (e != caster) {
                         CombatData.getCap(e).consumePosture((float) posDiff);
-                        e.attackEntityFrom(DamageSource.FALLING_BLOCK, 1);
+                        e.attackEntityFrom(new CombatDamageSource("fallingBlock",caster).setDamageTyping(CombatDamageSource.TYPE.PHYSICAL).setProcSkillEffects(true).setProcAttackEffects(true), 1);
                         e.addVelocity(0, 0.5, 0);
                         e.velocityChanged = true;
                         e.addPotionEffect(new EffectInstance(WarEffects.EXHAUSTION.get(), 40 + ResourceConfig.postureCD, 1));

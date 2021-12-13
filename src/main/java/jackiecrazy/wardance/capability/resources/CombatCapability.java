@@ -86,7 +86,8 @@ public class CombatCapability implements ICombatCapability {
     @Override
     public void setMight(float amount) {
         float cap = maxMight;
-        qi = MathHelper.clamp(amount, 0, cap);
+        if (!Float.isFinite(qi)) qi = 0;
+        else qi = MathHelper.clamp(amount, 0, cap);
     }
 
     @Override
@@ -135,7 +136,8 @@ public class CombatCapability implements ICombatCapability {
 
     @Override
     public void setSpirit(float amount) {
-        spirit = MathHelper.clamp(amount, 0, getMaxSpirit());
+        if (!Float.isFinite(spirit)) spirit = 0;
+        else spirit = MathHelper.clamp(amount, 0, getMaxSpirit());
     }
 
     @Override
@@ -182,7 +184,8 @@ public class CombatCapability implements ICombatCapability {
 
     @Override
     public void setPosture(float amount) {
-        posture = MathHelper.clamp(amount, 0, getMaxPosture());
+        if (!Float.isFinite(posture)) posture = 0;
+        else posture = MathHelper.clamp(amount, 0, getMaxPosture());
     }
 
     @Override
@@ -279,7 +282,8 @@ public class CombatCapability implements ICombatCapability {
 //        if (WarCompat.elenaiDodge && dude.get() instanceof ServerPlayerEntity && ResourceConfig.elenaiC) {
 //            ElenaiCompat.manipulateRegenTime(dude.get(), );
 //        }
-        combo = MathHelper.clamp(amount, 0, 10);
+        if (!Float.isFinite(combo)) combo = 0;
+        else combo = MathHelper.clamp(amount, 0, 10);
     }
 
     @Override
@@ -722,6 +726,10 @@ public class CombatCapability implements ICombatCapability {
         if (getMightGrace() == 0) {
             float over = qiExtra * 0.01f;
             setMight(getMight() - over);
+            final float heal = over * -0.05f * (getMight()+2)/2;
+            addWounding(heal);
+            addFatigue(heal);
+            addBurnout(heal);
         }
         if (getComboGrace() == 0) {
             if (combo >= 9) combo = 9;
@@ -898,9 +906,9 @@ public class CombatCapability implements ICombatCapability {
         float armorMod = 2.5f + Math.min(elb.getTotalArmorValue(), 20) * 0.125f;
         float cooldownMod = Math.min(CombatUtils.getCooledAttackStrength(elb, Hand.MAIN_HAND, 0.5f), CombatUtils.getCooledAttackStrength(elb, Hand.MAIN_HAND, 0.5f));
         float healthMod = 0.25f + elb.getHealth() / elb.getMaxHealth() * 0.75f;
-        if(CasterData.getCap(elb).isSkillUsable(WarSkills.BOULDER_BRACE.get())){
-            armorMod=2.5f;
-            healthMod=1;
+        if (CasterData.getCap(elb).isSkillUsable(WarSkills.BOULDER_BRACE.get())) {
+            armorMod = 2.5f;
+            healthMod = 1;
         }
         float recovery = 0;
         if (recoveryTimer <= CombatConfig.recovery && recoveryTimer > 0 && posture < getMaxPosture() * CombatConfig.posCap) {

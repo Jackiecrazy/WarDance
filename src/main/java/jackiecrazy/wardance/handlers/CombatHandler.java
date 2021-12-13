@@ -309,12 +309,14 @@ public class CombatHandler {
                             canParry = false;
                             defMult = (float) -stats.mult;
                         } else if (stats.omnidirectional || canParry) {
-                            if (!canParry) {
-                                parryHand = CombatUtils.getCooledAttackStrength(uke, Hand.MAIN_HAND, 0.5f) > CombatUtils.getCooledAttackStrength(uke, Hand.OFF_HAND, 0.5f) ? Hand.MAIN_HAND : Hand.OFF_HAND;
+                            if(defMult>stats.mult) {
+                                if (!canParry) {
+                                    parryHand = CombatUtils.getCooledAttackStrength(uke, Hand.MAIN_HAND, 0.5f) > CombatUtils.getCooledAttackStrength(uke, Hand.OFF_HAND, 0.5f) ? Hand.MAIN_HAND : Hand.OFF_HAND;
+                                }
+                                defend = ItemStack.EMPTY;
+                                defMult = (float) Math.min(stats.mult, defMult);
+                                canParry = true;
                             }
-                            defend = ItemStack.EMPTY;
-                            defMult = (float) Math.min(stats.mult, defMult);
-                            canParry = true;
                         }
                     }
                 }

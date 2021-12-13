@@ -2,6 +2,7 @@ package jackiecrazy.wardance.skill.ironguard;
 
 import jackiecrazy.wardance.capability.resources.CombatData;
 import jackiecrazy.wardance.capability.resources.ICombatCapability;
+import jackiecrazy.wardance.event.ParryEvent;
 import jackiecrazy.wardance.skill.SkillData;
 import net.minecraft.entity.LivingEntity;
 import net.minecraftforge.eventbus.api.Event;
@@ -17,16 +18,11 @@ public class Recovery extends IronGuard {
 
     @Override
     public void onSuccessfulProc(LivingEntity caster, SkillData stats, @Nullable LivingEntity target, Event procPoint) {
-        super.onSuccessfulProc(caster, stats, target, procPoint);
+        if (procPoint instanceof ParryEvent && ((ParryEvent) procPoint).getPostureConsumption() > 0) {
+            CombatData.getCap(caster).addPosture(((ParryEvent) procPoint).getPostureConsumption());
+            markUsed(caster);
+        }
         ICombatCapability icc = CombatData.getCap(caster);
-        stats.flagCondition(true);
         icc.setSpiritGrace(0);
-        icc.setPostureGrace(0);
-    }
-
-    @Override
-    public void onEffectEnd(LivingEntity caster, SkillData stats) {
-        super.onEffectEnd(caster, stats);
-        if (stats.isCondition()) CombatData.getCap(caster).setPostureGrace(0);
     }
 }

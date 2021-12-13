@@ -125,7 +125,7 @@ public class Hex extends Skill {
 
     @Override
     public void onSuccessfulProc(LivingEntity caster, SkillData stats, LivingEntity target, Event procPoint) {
-        if (procPoint instanceof ParryEvent && (!((ParryEvent) procPoint).canParry() || getTags(caster).contains(ProcPoints.unblockable))) {
+        if (procPoint instanceof ParryEvent && (!((ParryEvent) procPoint).canParry() || getProcPoints(caster).contains(ProcPoints.unblockable))) {
             procPoint.setCanceled(true);
             mark(caster, target, 200);
             markUsed(caster);
@@ -195,7 +195,7 @@ public class Hex extends Skill {
     }
 
     public static class Unravel extends Hex {
-        private final Tag<String> tag = Tag.getTagFromContents(new HashSet<>(Arrays.asList("melee", "noDamage", "boundCast", ProcPoints.change_parry_result, ProcPoints.recharge_time, ProcPoints.unblockable, "normalAttack", "countdown")));
+        private final Tag<String> tag = Tag.getTagFromContents(new HashSet<>(Arrays.asList("melee", "noDamage", "boundCast", ProcPoints.change_parry_result, ProcPoints.recharge_time, "chant", ProcPoints.unblockable, "normalAttack", "countdown")));
 
         @Override
         public Tag<String> getProcPoints(LivingEntity caster) {
