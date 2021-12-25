@@ -471,6 +471,7 @@ public class CombatHandler {
 
     @SubscribeEvent(priority = EventPriority.HIGHEST)
     public static void pain(LivingHurtEvent e) {
+        if(GeneralConfig.debug)
         WarDance.LOGGER.debug("damage from " + e.getSource() + " received with amount " + e.getAmount());
         LivingEntity uke = e.getEntityLiving();
         uke.removePotionEffect(WarEffects.DISTRACTION.get());
@@ -585,6 +586,7 @@ public class CombatHandler {
 
     @SubscribeEvent(priority = EventPriority.LOWEST, receiveCanceled = true)
     public static void udedlol(LivingDamageEvent e) {
+        if(GeneralConfig.debug)
         WarDance.LOGGER.debug("damage from " + e.getSource() + " finalized with amount " + e.getAmount());
         final ICombatCapability cap = CombatData.getCap(e.getEntityLiving());
         if (cap.getStaggerTime() > 0 && !cap.isFirstStaggerStrike()) {

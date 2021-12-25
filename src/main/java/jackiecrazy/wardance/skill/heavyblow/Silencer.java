@@ -25,6 +25,15 @@ import java.util.HashSet;
 public class Silencer extends HeavyBlow {
     private final Tag<String> tag = Tag.getTagFromContents(new HashSet<>(Arrays.asList("physical", ProcPoints.disable_shield, ProcPoints.melee, ProcPoints.normal_attack, ProcPoints.modify_crit, ProcPoints.recharge_normal, ProcPoints.afflict_tick)));
 
+    @SubscribeEvent
+    public static void silenced(LivingDeathEvent e) {
+        if (e.getSource().getTrueSource() instanceof LivingEntity && Marks.getCap(e.getEntityLiving()).isMarked(WarSkills.SILENCER.get())) {
+            LivingEntity elb = (LivingEntity) e.getSource().getTrueSource();
+            CasterData.getCap(elb).coolSkill(WarSkills.SILENCER.get());
+            CasterData.getCap(elb).getActiveSkill(WarSkills.SILENCER.get()).ifPresent((a) -> a.flagCondition(true));
+        }
+    }
+
     @Override
     public Tag<String> getTags(LivingEntity caster) {
         return passive;
@@ -33,14 +42,6 @@ public class Silencer extends HeavyBlow {
     @Override
     public Tag<String> getProcPoints(LivingEntity caster) {
         return tag;
-    }
-
-    @SubscribeEvent
-    public static void silenced(LivingDeathEvent e) {
-        if (e.getSource().getTrueSource() instanceof LivingEntity && Marks.getCap(e.getEntityLiving()).isMarked(WarSkills.BACKSTAB.get())) {
-            LivingEntity elb = (LivingEntity) e.getSource().getTrueSource();
-            CasterData.getCap(elb).coolSkill(WarSkills.BACKSTAB.get());
-        }
     }
 
     @Override
@@ -79,15 +80,26 @@ public class Silencer extends HeavyBlow {
 
     @Override
     public void onEffectEnd(LivingEntity caster, SkillData stats) {
-        setCooldown(caster, 5);
+        if (!stats.isCondition())
+            setCooldown(caster, 5);
     }
 
     @Override
     public boolean equippedTick(LivingEntity caster, STATE state) {
-        if(state==STATE.INACTIVE) {
-            onCast(caster);
+        if (state == STATE.INACTIVE) {
+            activate(caster, 40);
             return true;
         }
         return super.equippedTick(caster, state);
+    }
+
+    @Override
+    public float spiritConsumption(LivingEntity caster) {
+        return 0;
+    }
+
+    @Override
+    public float mightConsumption(LivingEntity caster) {
+        return 0;
     }
 }

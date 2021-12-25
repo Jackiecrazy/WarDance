@@ -91,6 +91,7 @@ public class ResourceConfig {
     @SubscribeEvent
     public static void loadConfig(ModConfig.ModConfigEvent e) {
         if (e.getConfig().getSpec() == CONFIG_SPEC) {
+            if(GeneralConfig.debug)
             WarDance.LOGGER.debug("loading combat config!");
             bake();
         }

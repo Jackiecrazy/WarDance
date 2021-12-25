@@ -48,7 +48,7 @@ public class WarCry extends Skill {
         if (caster != null) {
             ICombatCapability cap = CombatData.getCap(caster);
             if (cap.getMight() == 0 && cap.getPosture() == cap.getMaxPosture() && cap.getSpirit() == cap.getMaxSpirit()) {
-                return new TranslationTextComponent("wardance:war_cry.sleep.name");
+                return new TranslationTextComponent("wardance:war_cry.sleep.name", ((int)(CombatData.getCap(caster).getResolve()*10))/10f);
             } else return new TranslationTextComponent(getRegistryName().toString() + ".name");
         }
         return new TranslationTextComponent(getRegistryName().toString() + ".name");
@@ -95,7 +95,7 @@ public class WarCry extends Skill {
 
     @Override
     public boolean activeTick(LivingEntity caster, SkillData d) {
-        if (d.isCondition() && d.getDuration() > 0) {
+        if (d.getDuration() > 0) {
             d.decrementDuration();
             if (d.getDuration() <= 0) markUsed(caster);
             return true;
@@ -106,9 +106,10 @@ public class WarCry extends Skill {
     @Override
     public void onEffectEnd(LivingEntity caster, SkillData stats) {
         if (caster instanceof PlayerEntity && (caster.getAttribute(Attributes.MOVEMENT_SPEED).hasModifier(wrap) || stats.isCondition())) {
+            //TODO remove when flattening
             ForgeEventFactory.onPlayerWakeup(((PlayerEntity) caster), false, false);
             ((PlayerEntity) caster).takeStat(Stats.CUSTOM.get(Stats.TIME_SINCE_REST));
-            setCooldown(caster, 300);
+            setCooldown(caster, 60);
         } else setCooldown(caster, 60);
         caster.getAttribute(Attributes.MOVEMENT_SPEED).removeModifier(wrap);
     }

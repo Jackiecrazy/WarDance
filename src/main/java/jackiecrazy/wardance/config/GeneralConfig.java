@@ -18,7 +18,7 @@ public class GeneralConfig {
     public static float luck;
     public static float nausea;
     public static double rangeMult;
-    public static boolean betterSweep, sweepDurability, resistance, dual;
+    public static boolean betterSweep, sweepDurability, resistance, dual, debug;
     public static int sweepAngle, maxRange, baseRange;
 
     static {
@@ -44,9 +44,13 @@ public class GeneralConfig {
     private final ForgeConfigSpec.DoubleValue _luck;
     private final ForgeConfigSpec.BooleanValue _resistance;
     private final ForgeConfigSpec.BooleanValue _dual;
+    private final ForgeConfigSpec.BooleanValue _debug;
 
     public GeneralConfig(ForgeConfigSpec.Builder b) {
         //feature toggle, resource, defense, compat, stealth, lists
+        b.push("general");
+        _debug = b.translation("wardance.config.debug").comment("primarily tells you how much damage was applied before and after armor. These will only appear in debug.log.").define("enable debug messages", false);
+        b.pop();
         b.push("dual wielding");
         _dual = b.translation("wardance.config.dualwield").comment("added per request. Shield bash will not work from the offhand when this is off, and clients will not render their offhand.").define("enable dual wielding", true);
         b.pop();
@@ -75,6 +79,7 @@ public class GeneralConfig {
     }
 
     private static void bake() {
+        debug = CONFIG._debug.get();
         elenai = CONFIG._elenai.get();
         elenaiC = CONFIG._elenaiC.get();
         elenaiP = CONFIG._elenaiP.get();
@@ -89,14 +94,15 @@ public class GeneralConfig {
         sweepAngle = CONFIG._sweepPerSE.get();
         sweepDurability = CONFIG._sweepDurability.get();
         dual = CONFIG._dual.get();
-        rangeMult=CONFIG._sweepRangeMult.get();
-        maxRange=CONFIG._sweepRangeMax.get();
-        baseRange=CONFIG._sweepRangeMin.get();
+        rangeMult = CONFIG._sweepRangeMult.get();
+        maxRange = CONFIG._sweepRangeMax.get();
+        baseRange = CONFIG._sweepRangeMin.get();
     }
 
     @SubscribeEvent
     public static void loadConfig(ModConfig.ModConfigEvent e) {
         if (e.getConfig().getSpec() == CONFIG_SPEC) {
+            if(GeneralConfig.debug)
             WarDance.LOGGER.debug("loading general config!");
             bake();
         }

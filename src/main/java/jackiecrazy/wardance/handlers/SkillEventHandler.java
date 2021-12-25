@@ -2,6 +2,7 @@ package jackiecrazy.wardance.handlers;
 
 import jackiecrazy.wardance.WarDance;
 import jackiecrazy.wardance.capability.resources.CombatData;
+import jackiecrazy.wardance.capability.resources.ICombatCapability;
 import jackiecrazy.wardance.capability.skill.CasterData;
 import jackiecrazy.wardance.capability.skill.ISkillCapability;
 import jackiecrazy.wardance.config.ResourceConfig;
@@ -11,6 +12,7 @@ import jackiecrazy.wardance.skill.SkillCooldownData;
 import jackiecrazy.wardance.skill.SkillData;
 import jackiecrazy.wardance.skill.ProcPoints;
 import jackiecrazy.wardance.utils.CombatUtils;
+import jackiecrazy.wardance.utils.GeneralUtils;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.projectile.ProjectileEntity;
@@ -32,9 +34,12 @@ public class SkillEventHandler {
             //System.out.println("This means sleeping flags are called properly on the server.");
             if (ResourceConfig.sleepingHealsDecay != ResourceConfig.ThirdOption.FALSE) {
                 //System.out.println("Config option is true, resetting FBW.");
-                CombatData.getCap(e.getPlayer()).setFatigue(0);
-                CombatData.getCap(e.getPlayer()).setBurnout(0);
-                CombatData.getCap(e.getPlayer()).setWounding(0);
+                final ICombatCapability cap = CombatData.getCap(e.getPlayer());
+                float res = cap.getResolve() + 1 ;
+                cap.addFatigue(-res * cap.getTrueMaxPosture() / 10);
+                cap.addBurnout(-res * cap.getTrueMaxSpirit() / 10);
+                cap.addWounding(-res * GeneralUtils.getMaxHealthBeforeWounding(e.getPlayer()) / 10);
+                cap.setResolve(0);
             }
             ISkillCapability isc = CasterData.getCap(e.getEntityLiving());
             for (SkillCooldownData s : isc.getSkillCooldowns().values()) {
@@ -85,7 +90,7 @@ public class SkillEventHandler {
 
     @SubscribeEvent
     public static void forceCrit(CriticalHitEvent e) {
-        if (!e.getEntityLiving().isServerWorld()||!(e.getTarget() instanceof LivingEntity)) return;
+        if (!e.getEntityLiving().isServerWorld() || !(e.getTarget() instanceof LivingEntity)) return;
         for (SkillData s : CasterData.getCap(e.getEntityLiving()).getActiveSkills().values()) {
             if (s.getSkill().getProcPoints(e.getEntityLiving()).contains(ProcPoints.modify_crit)) {
                 s.getSkill().onSuccessfulProc(e.getEntityLiving(), s, (LivingEntity) e.getTarget(), e);

@@ -5,6 +5,7 @@ import jackiecrazy.wardance.capability.resources.CombatData;
 import jackiecrazy.wardance.capability.skill.CasterData;
 import jackiecrazy.wardance.capability.skill.ISkillCapability;
 import jackiecrazy.wardance.capability.status.Marks;
+import jackiecrazy.wardance.config.GeneralConfig;
 import jackiecrazy.wardance.event.SkillCastEvent;
 import jackiecrazy.wardance.event.SkillCooldownEvent;
 import net.minecraft.entity.LivingEntity;
@@ -22,8 +23,8 @@ import net.minecraftforge.registries.ForgeRegistryEntry;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.awt.*;
-import java.util.*;
 import java.util.List;
+import java.util.*;
 
 /*
  * for chanting, make a dummy skill which does nothing but play a sound, if even that. This is the one that'll be displayed to players.
@@ -180,6 +181,7 @@ public abstract class Skill extends ForgeRegistryEntry<Skill> {
     public boolean checkAndCast(LivingEntity caster) {
         final CastStatus status = castingCheck(caster);
         if (status != CastStatus.ALLOWED){
+            if(GeneralConfig.debug)
             WarDance.LOGGER.debug(this.getRegistryName()+" returned "+status+" when attempting to cast, aborting");
             return false;
         }
@@ -285,6 +287,7 @@ public abstract class Skill extends ForgeRegistryEntry<Skill> {
     }
 
     protected void markUsed(LivingEntity caster) {
+        if(GeneralConfig.debug)
         WarDance.LOGGER.debug(this.getRegistryName()+" has ended");
         caster.world.playMovingSound(null, caster, SoundEvents.BLOCK_FIRE_EXTINGUISH, SoundCategory.AMBIENT, 0.3f + WarDance.rand.nextFloat() * 0.5f, 0.5f + WarDance.rand.nextFloat());
         CasterData.getCap(caster).markSkillUsed(this);

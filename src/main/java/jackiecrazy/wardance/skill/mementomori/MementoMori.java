@@ -118,7 +118,7 @@ pound of flesh: active skill. Consumes all your spirit, and until your spirit re
         @Override
         public void onSuccessfulProc(LivingEntity caster, SkillData stats, LivingEntity target, Event procPoint) {
             final float lostHealthPerc = caster.getHealth() / GeneralUtils.getMaxHealthBeforeWounding(caster);
-            if (procPoint instanceof LivingHealEvent && lostHealthPerc < 1 && ((LivingHealEvent) procPoint).getAmount() > 0) {
+            if (procPoint instanceof LivingHealEvent && caster.getHealth() != caster.getMaxHealth() && ((LivingHealEvent) procPoint).getAmount() > 0) {
                 int hitSize = 1 + (int) (lostHealthPerc * 10);
                 final float amnt = ((LivingHealEvent) procPoint).getAmount();
                 for (LivingEntity e : caster.world.getLoadedEntitiesWithinAABB(LivingEntity.class, caster.getBoundingBox().grow(7))) {

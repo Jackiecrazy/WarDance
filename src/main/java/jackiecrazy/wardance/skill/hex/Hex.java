@@ -125,7 +125,7 @@ public class Hex extends Skill {
 
     @Override
     public void onSuccessfulProc(LivingEntity caster, SkillData stats, LivingEntity target, Event procPoint) {
-        if (procPoint instanceof ParryEvent && (!((ParryEvent) procPoint).canParry() || getProcPoints(caster).contains(ProcPoints.unblockable))) {
+        if (procPoint instanceof ParryEvent) {
             procPoint.setCanceled(true);
             mark(caster, target, 200);
             markUsed(caster);

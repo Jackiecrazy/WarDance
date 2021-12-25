@@ -1836,6 +1836,7 @@ public class ItemConfig {
     @SubscribeEvent
     public static void loadConfig(ModConfig.ModConfigEvent e) {
         if (e.getConfig().getSpec() == CONFIG_SPEC) {
+            if(GeneralConfig.debug)
             WarDance.LOGGER.debug("loading item config!");
             bake();
         }

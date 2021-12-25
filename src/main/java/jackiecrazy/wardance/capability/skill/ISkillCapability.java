@@ -14,6 +14,8 @@ public interface ISkillCapability {
 
     void setSkillSelectable(Skill s, boolean selectable);
 
+    List<Skill> getSelectableList();
+
     Optional<SkillData> getActiveSkill(Skill s);
 
     void activateSkill(SkillData d);

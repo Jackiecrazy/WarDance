@@ -101,6 +101,7 @@ public class ClientEvents {
                 String[] val = s.split(",");
                 rotate.put(val[0], Boolean.parseBoolean(val[1]));
             } catch (Exception e) {
+                if(GeneralConfig.debug)
                 WarDance.LOGGER.warn("improperly formatted custom rotation definition " + s + "!");
             }
         }

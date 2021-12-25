@@ -62,12 +62,19 @@ public class SkillSelectionScreen extends Screen {
     private SortType sortType = SortType.NORMAL;
 
     public SkillSelectionScreen() {
-        super(new TranslationTextComponent("wardance.skillselection.title"));
-        this.skills = Skill.variationMap.keySet().stream().filter((a) -> CasterData.getCap(Minecraft.getInstance().player).isSkillSelectable(a)).collect(Collectors.toList());//hmm
+        super(new TranslationTextComponent("wardance.skillselection.title"));//
+        this.skills = Skill.variationMap.keySet().stream().filter(this::selectable).collect(Collectors.toList());//hmm
+
         this.unsortedSkills = Collections.unmodifiableList(this.skills);
     }
 
-    private static String stripControlCodes(String value) { return net.minecraft.util.StringUtils.stripControlCodes(value); }
+    private static String stripControlCodes(String value) {return net.minecraft.util.StringUtils.stripControlCodes(value);}
+
+    private boolean selectable(Skill s) {
+        for (Skill sub : Skill.variationMap.get(s))
+            if (CasterData.getCap(Minecraft.getInstance().player).isSkillSelectable(sub)) return true;
+        return CasterData.getCap(Minecraft.getInstance().player).isSkillSelectable(s);
+    }
     //private SkillSelectionScreen.SortType sortType = SkillSelectionScreen.SortType.NORMAL;
     /*
     there needs to be a skill list widget that lists all castable skills, composed of skill entries, on the very very left, and maybe a search bar as well
@@ -168,12 +175,15 @@ public class SkillSelectionScreen extends Screen {
     }
 
     public <T extends ExtendedList.AbstractListEntry<T>> void buildVariationList(Skill s, Consumer<T> modListViewConsumer, Function<Skill, T> newEntry) {
-        Skill.variationMap.get(s).forEach(mod -> modListViewConsumer.accept(newEntry.apply(mod)));
+        Skill.variationMap.get(s).forEach(mod -> {
+            if (CasterData.getCap(Minecraft.getInstance().player).isSkillSelectable(mod))
+                modListViewConsumer.accept(newEntry.apply(mod));
+        });
     }
 
     private void reloadMods() {
         this.skills = this.unsortedSkills.stream().
-                filter(mi -> StringUtils.toLowerCase(stripControlCodes(mi.getDisplayName(null).getString())).contains(StringUtils.toLowerCase(search.getText()))).collect(Collectors.toList());
+                filter(mi -> StringUtils.toLowerCase(stripControlCodes(mi.baseName().getString())).contains(StringUtils.toLowerCase(search.getText()))).collect(Collectors.toList());
         lastFilterText = search.getText();
     }
 
@@ -182,7 +192,7 @@ public class SkillSelectionScreen extends Screen {
             if (ssb.getSkill() != null && ssb.getSkill().isFamily(insert)) return false;
         for (SkillSelectionButton ssb : passives)
             if (ssb.getSkill() != null && ssb.getSkill().isFamily(insert)) return false;
-        return true;
+        return CasterData.getCap(Minecraft.getInstance().player).isSkillSelectable(insert);
     }
 
     private void resortMods(SkillSelectionScreen.SortType newSort) {
@@ -291,16 +301,16 @@ public class SkillSelectionScreen extends Screen {
         NORMAL,
         A_TO_Z {
             @Override
-            protected int compare(String name1, String name2) { return name1.compareTo(name2); }
+            protected int compare(String name1, String name2) {return name1.compareTo(name2);}
         },
         Z_TO_A {
             @Override
-            protected int compare(String name1, String name2) { return name2.compareTo(name1); }
+            protected int compare(String name1, String name2) {return name2.compareTo(name1);}
         };
 
         Button button;
 
-        protected int compare(String name1, String name2) { return 0; }
+        protected int compare(String name1, String name2) {return 0;}
 
         @Override
         public int compare(Skill o1, Skill o2) {
@@ -325,13 +335,13 @@ public class SkillSelectionScreen extends Screen {
         void setInfo(List<String> lines, ResourceLocation logoPath) {
             this.logoPath = logoPath;
             this.lines = resizeContent(lines);
-            scrollDistance=0;
+            scrollDistance = 0;
         }
 
         void clearInfo() {
             this.logoPath = null;
             this.lines = Collections.emptyList();
-            scrollDistance=0;
+            scrollDistance = 0;
         }
 
         private List<IReorderingProcessor> resizeContent(List<String> lines) {

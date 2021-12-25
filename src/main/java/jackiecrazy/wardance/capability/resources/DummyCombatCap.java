@@ -10,6 +10,16 @@ public class DummyCombatCap implements ICombatCapability {
 
 
     @Override
+    public float getResolve() {
+        return 0;
+    }
+
+    @Override
+    public void setResolve(float amount) {
+
+    }
+
+    @Override
     public float getMight() {
         return 0;
     }

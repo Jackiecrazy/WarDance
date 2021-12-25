@@ -37,7 +37,7 @@ public class WindScar extends WarCry {
 
     @Override
     public boolean activeTick(LivingEntity caster, SkillData d) {
-        return super.activeTick(caster, d);
+        return false;
     }
 
     @Override

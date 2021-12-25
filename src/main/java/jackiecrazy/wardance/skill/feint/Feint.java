@@ -68,8 +68,8 @@ public class Feint extends Skill {
                 CombatUtils.setHandCooldown(target, Hand.OFF_HAND, 0, false);
             } else {
                 float above = getParentSkill() == null ? 0 : 0.1f;
-                CombatData.getCap(target).consumePosture(((ParryEvent) procPoint).getAttackDamage(), above);
-                CombatData.getCap(target).consumePosture(((ParryEvent) procPoint).getPostureConsumption(), above);
+                CombatData.getCap(target).consumePosture(caster, ((ParryEvent) procPoint).getAttackDamage(), above);
+                CombatData.getCap(target).consumePosture(caster, ((ParryEvent) procPoint).getPostureConsumption(), above);
                 ((ParryEvent) procPoint).setPostureConsumption(0);
                 procPoint.setResult(Event.Result.ALLOW);
             }
@@ -162,7 +162,7 @@ public class Feint extends Skill {
                     CombatUtils.setHandCooldown(target, Hand.MAIN_HAND, 0, false);
                     CombatUtils.setHandCooldown(target, Hand.OFF_HAND, 0, false);
                 } else {
-                    CombatData.getCap(target).consumePosture(((ParryEvent) procPoint).getAttackDamage(), 0.1f);
+                    CombatData.getCap(target).consumePosture(caster, ((ParryEvent) procPoint).getAttackDamage(), 0.1f);
                 }
                 procPoint.setResult(Event.Result.DENY);
                 markUsed(caster);

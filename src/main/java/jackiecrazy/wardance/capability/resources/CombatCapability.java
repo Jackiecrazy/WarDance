@@ -6,10 +6,7 @@ import jackiecrazy.wardance.capability.skill.CasterData;
 import jackiecrazy.wardance.config.CombatConfig;
 import jackiecrazy.wardance.config.GeneralConfig;
 import jackiecrazy.wardance.config.ResourceConfig;
-import jackiecrazy.wardance.event.GainMightEvent;
-import jackiecrazy.wardance.event.GainPostureEvent;
-import jackiecrazy.wardance.event.RegenSpiritEvent;
-import jackiecrazy.wardance.event.StaggerEvent;
+import jackiecrazy.wardance.event.*;
 import jackiecrazy.wardance.networking.CombatChannel;
 import jackiecrazy.wardance.networking.UpdateClientPacket;
 import jackiecrazy.wardance.potion.WarEffects;
@@ -32,6 +29,7 @@ import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.vector.Vector3d;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.util.FakePlayer;
+import net.minecraftforge.eventbus.api.Event;
 import net.minecraftforge.fml.network.PacketDistributor;
 import net.minecraftforge.registries.ForgeRegistries;
 
@@ -49,7 +47,7 @@ public class CombatCapability implements ICombatCapability {
 
     private final WeakReference<LivingEntity> dude;
     private ItemStack prev;
-    private float qi, spirit, posture, combo, mpos, mspi, wounding, burnout, fatigue, mainReel, offReel, maxMight;
+    private float qi, spirit, posture, combo, mpos, mspi, wounding, burnout, fatigue, mainReel, offReel, maxMight, resolve;
     private int shatterCD;
     private int qcd, scd, pcd, ccd, mBind, oBind;
     private int staggert, staggerc, ocd, shield, sc, roll, sweepAngle = -1;
@@ -73,9 +71,19 @@ public class CombatCapability implements ICombatCapability {
         if (GeneralUtils.getResourceLocationFromEntity(elb) != null && CombatUtils.customPosture.containsKey(GeneralUtils.getResourceLocationFromEntity(elb)))
             ret = CombatUtils.customPosture.get(GeneralUtils.getResourceLocationFromEntity(elb));
         else ret = (float) (Math.ceil(10 / 1.09 * elb.getWidth() * elb.getHeight()) + elb.getTotalArmorValue() / 2d);
-        if (elb instanceof PlayerEntity) ret *= 2;
+        if (elb instanceof PlayerEntity) ret *= 1.5;
         ret += GeneralUtils.getAttributeValueSafe(elb, WarAttributes.MAX_POSTURE.get());
         return ret;
+    }
+
+    @Override
+    public float getResolve() {
+        return resolve;
+    }
+
+    @Override
+    public void setResolve(float amount) {
+        resolve = amount;
     }
 
     @Override
@@ -103,9 +111,18 @@ public class CombatCapability implements ICombatCapability {
 
     @Override
     public boolean consumeMight(float amount, float above) {
-        if (qi - amount < above) return false;
+        ConsumeMightEvent cse = new ConsumeMightEvent(dude.get(), amount, above);
+        MinecraftForge.EVENT_BUS.post(cse);
+        amount = cse.getAmount();
+        final boolean lacking = qi - amount < above;
+        if (cse.isCanceled()) {
+            return cse.getResult() == Event.Result.ALLOW || (cse.getResult() != Event.Result.DENY && !lacking);
+        }
+
+        if (cse.getResult() == Event.Result.DEFAULT && lacking) return false;
+        amount = Math.min(amount, qi - above);
         qi -= amount;
-        return true;
+        return cse.getResult() != Event.Result.DENY;
     }
 
     @Override
@@ -149,11 +166,20 @@ public class CombatCapability implements ICombatCapability {
 
     @Override
     public boolean consumeSpirit(float amount, float above) {
-        if (spirit - amount < above) return false;
+        ConsumeSpiritEvent cse = new ConsumeSpiritEvent(dude.get(), amount, above);
+        MinecraftForge.EVENT_BUS.post(cse);
+        amount = cse.getAmount();
+        final boolean lacking = spirit - amount < above;
+        if (cse.isCanceled()) {
+            return cse.getResult() == Event.Result.ALLOW || (cse.getResult() != Event.Result.DENY && !lacking);
+        }
+
+        if (cse.getResult() == Event.Result.DEFAULT && lacking) return false;
+        amount = Math.min(amount, spirit - above);
         spirit -= amount;
         setBurnout(this.getBurnout() + amount * ResourceConfig.burnout);
         setSpiritGrace(ResourceConfig.spiritCD);
-        return true;
+        return cse.getResult() != Event.Result.DENY;
     }
 
     @Override
@@ -208,15 +234,22 @@ public class CombatCapability implements ICombatCapability {
         if (elb == null) return ret;
         if (staggert > 0) return amount;
         if (!Float.isFinite(posture)) posture = getMaxPosture();
-        if (elb.isPotionActive(Effects.RESISTANCE) && GeneralConfig.resistance)
-            amount *= (1 - (elb.getActivePotionEffect(Effects.RESISTANCE).getAmplifier() + 1) * 0.2f);
-        if (amount > getTrueMaxPosture() * CombatConfig.posCap && !force) {
-            //hard cap, knock back
+        //event for oodles of compat
+        ConsumePostureEvent cpe = new ConsumePostureEvent(elb, assailant, amount, above);
+        MinecraftForge.EVENT_BUS.post(cpe);
+        //cancel consumption if... canceled
+        if (cpe.isCanceled()) return 0;
+        amount = cpe.getAmount();
+        //test if posture forced to breach cap
+        if (cpe.getResult() != Event.Result.ALLOW && amount > getTrueMaxPosture() * CombatConfig.posCap && !force) {
+            //hard cap per attack, knock back
             ret = amount - getTrueMaxPosture() * CombatConfig.posCap;
             amount = getTrueMaxPosture() * CombatConfig.posCap;
         }
+        if (elb.isPotionActive(Effects.RESISTANCE) && GeneralConfig.resistance)
+            amount *= (1 - (elb.getActivePotionEffect(Effects.RESISTANCE).getAmplifier() + 1) * 0.2f);
         if (above > 0 && posture - amount < above) {
-            //hard cap, set it there and do nothing else
+            //posture floor, set and bypass stagger test
             ret = amount - above;
             amount = posture - above;
         } else if (posture - amount < 0) {
@@ -227,12 +260,6 @@ public class CombatCapability implements ICombatCapability {
             setStaggerCount(se.getCount());
             setStaggerTime(se.getLength());
             elb.world.playSound(null, elb.getPosX(), elb.getPosY(), elb.getPosZ(), SoundEvents.ENTITY_ZOMBIE_BREAK_WOODEN_DOOR, SoundCategory.PLAYERS, 0.3f + WarDance.rand.nextFloat() * 0.5f, 0.75f + WarDance.rand.nextFloat() * 0.5f);
-            elb.getAttribute(Attributes.MOVEMENT_SPEED).removeModifier(WOUND);
-            elb.getAttribute(Attributes.MOVEMENT_SPEED).applyPersistentModifier(STAGGERS);
-            elb.getAttribute(Attributes.ARMOR).removeModifier(WOUND);
-            elb.getAttribute(Attributes.ARMOR).applyPersistentModifier(STAGGERA);
-            elb.getAttribute(Attributes.ARMOR).removeModifier(MORE);
-            elb.getAttribute(Attributes.ARMOR).applyPersistentModifier(STAGGERSA);
             elb.dismount();
             staggerTickExisted = elb.ticksExisted;
             return -1f;
@@ -370,6 +397,14 @@ public class CombatCapability implements ICombatCapability {
             elb.getAttribute(Attributes.MOVEMENT_SPEED).removeModifier(WOUND);
             elb.getAttribute(Attributes.ARMOR).removeModifier(WOUND);
             elb.getAttribute(Attributes.ARMOR).removeModifier(MORE);
+        } else if (dude.get() != null && amount > 0 && staggert == 0) {
+            LivingEntity elb = dude.get();
+            elb.getAttribute(Attributes.MOVEMENT_SPEED).removeModifier(WOUND);
+            elb.getAttribute(Attributes.MOVEMENT_SPEED).applyPersistentModifier(STAGGERS);
+            elb.getAttribute(Attributes.ARMOR).removeModifier(WOUND);
+            elb.getAttribute(Attributes.ARMOR).applyPersistentModifier(STAGGERA);
+            elb.getAttribute(Attributes.ARMOR).removeModifier(MORE);
+            elb.getAttribute(Attributes.ARMOR).applyPersistentModifier(STAGGERSA);
         }
         staggert = amount;
     }
@@ -524,7 +559,7 @@ public class CombatCapability implements ICombatCapability {
                 wounding = 0;
             }
             dude.get().getAttribute(Attributes.MAX_HEALTH).removeModifier(WOUND);
-            dude.get().getAttribute(Attributes.MAX_HEALTH).applyNonPersistentModifier(new AttributeModifier(WOUND, "wounding", -amount, AttributeModifier.Operation.ADDITION));
+            dude.get().getAttribute(Attributes.MAX_HEALTH).applyNonPersistentModifier(new AttributeModifier(WOUND, "wounding", -wounding, AttributeModifier.Operation.ADDITION));
         }
     }
 
@@ -725,11 +760,14 @@ public class CombatCapability implements ICombatCapability {
         }
         if (getMightGrace() == 0) {
             float over = qiExtra * 0.01f;
+            float decay = getMight();
             setMight(getMight() - over);
-            final float heal = over * -0.05f * (getMight()+2)/2;
-            addWounding(heal);
-            addFatigue(heal);
-            addBurnout(heal);
+            decay -= getMight();
+            setResolve(resolve + decay);
+//            final float heal = over * -0.05f * (getMight()+2)/2;
+//            addWounding(heal);
+//            addFatigue(heal);
+//            addBurnout(heal);
         }
         if (getComboGrace() == 0) {
             if (combo >= 9) combo = 9;
@@ -776,6 +814,7 @@ public class CombatCapability implements ICombatCapability {
         setShatterCooldown(c.getInt("shattercd"));
         if (!c.contains("qi")) return;
         setMight(c.getFloat("qi"));
+        setResolve(c.getFloat("resolve"));
         setCombo(c.getFloat("combo"));
         setSpirit(c.getFloat("spirit"));
         setTrueMaxSpirit(c.getFloat("maxspi"));
@@ -846,6 +885,7 @@ public class CombatCapability implements ICombatCapability {
     public CompoundNBT write() {
         CompoundNBT c = new CompoundNBT();
         c.putFloat("qi", getMight());
+        c.putFloat("resolve", getResolve());
         c.putFloat("posture", getPosture());
         c.putFloat("combo", getCombo());
         c.putFloat("spirit", getSpirit());

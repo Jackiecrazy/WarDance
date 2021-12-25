@@ -68,4 +68,9 @@ public class Timberfall extends WarCry {
     protected int getDuration(float might) {
         return 5+(int)might;
     }
+
+    @Override
+    public boolean activeTick(LivingEntity caster, SkillData d) {
+        return false;
+    }
 }

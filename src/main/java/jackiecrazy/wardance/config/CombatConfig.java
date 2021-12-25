@@ -423,6 +423,7 @@ public class CombatConfig {
     public static float posturePerProjectile;
     public static float defaultMultiplierPostureDefend;
     public static float defaultMultiplierPostureAttack;
+    public static float defaultMultiplierPostureMob;
     public static int rollEndsAt;
     public static int rollCooldown;
     public static int shieldThreshold;
@@ -435,7 +436,7 @@ public class CombatConfig {
     public static int sneakParry;
     public static int recovery;
     public static int foodCool;
-    public static float mobParryChanceWeapon, mobParryChanceShield, mobDeflectChance, mobScaler, kenshiroScaler;
+    public static float mobParryChanceWeapon, mobParryChanceShield, mobDeflectChance, mobScaler;
     public static float posCap;
     public static boolean dodge;
     public static float kbNerf;
@@ -447,6 +448,7 @@ public class CombatConfig {
     }
 
     private final ForgeConfigSpec.DoubleValue _posturePerProjectile;
+    private final ForgeConfigSpec.DoubleValue _defaultMultiplierPostureMob;
     private final ForgeConfigSpec.DoubleValue _defaultMultiplierPostureDefend;
     private final ForgeConfigSpec.DoubleValue _defaultMultiplierPostureAttack;
     private final ForgeConfigSpec.IntValue _rollThreshold;
@@ -465,7 +467,6 @@ public class CombatConfig {
     private final ForgeConfigSpec.DoubleValue _mobDeflectChance;
     private final ForgeConfigSpec.DoubleValue _mobScaler;
     private final ForgeConfigSpec.ConfigValue<List<? extends String>> _customParry;
-    private final ForgeConfigSpec.DoubleValue _kenshiroScaler;
     private final ForgeConfigSpec.DoubleValue _posCap;
     private final ForgeConfigSpec.DoubleValue _stagger;
     private final ForgeConfigSpec.DoubleValue _unstagger;
@@ -500,6 +501,7 @@ public class CombatConfig {
         _unstagger = b.translation("wardance.config.unstagger").comment("Damage taken by a non-staggered entity. Added out of curiosity.").defineInRange("normal damage multiplier", 1, 0, Double.MAX_VALUE);
         b.pop();
         b.push("difficulty");
+        _defaultMultiplierPostureMob = b.translation("wardance.config.dmpm").comment("Default multiplier for mob attack posture, multiplied by their max posture. This is used when the mob is not wielding a weapon.").defineInRange("default mob multiplier", 0.2, 0, Double.MAX_VALUE);
         _mobParryChanceWeapon = b.translation("wardance.config.mobPW").comment("chance that a mob parries with a weapon out of 1. Hands are individually calculated.").defineInRange("mob weapon parry chance", 0.3, 0, 1);
         _mobParryChanceShield = b.translation("wardance.config.mobPS").comment("chance that a mob parries with a shield out of 1. Hands are individually calculated.").defineInRange("mob shield parry chance", 0.9, 0, 1);
         _mobDeflectChance = b.translation("wardance.config.mobD").comment("chance that a mob deflects with armor out of 1").defineInRange("mob deflect chance", 0.6, 0, 1);
@@ -514,8 +516,7 @@ public class CombatConfig {
                 "Additionally, you may tag mobs as (o)mnidirectional and/or (s)hielded.\n" +
                 "Omnidirectional mobs can parry from any orientation\n" +
                 "Shielded mobs can parry projectiles innately.").defineList("auto parry mobs", Arrays.asList(MOBS), String.class::isInstance);
-        _kenshiroScaler = b.translation("wardance.config.kenB").comment("posture damage from empty fists will be scaled by this number. Notice many mobs, such as endermen and ravagers, technically are empty-handed!").defineInRange("unarmed buff", 1.6, 0, Double.MAX_VALUE);
-        _mobScaler = b.translation("wardance.config.mobB").comment("posture damage from empty-handed mob attacks will be scaled by this number. It used to apply to weapons, but then vindicators got too busted.").defineInRange("mob posture damage buff", 1.5, 0, Double.MAX_VALUE);
+        _mobScaler = b.translation("wardance.config.mobB").comment("posture damage from mob attacks will be scaled by this number.").defineInRange("mob posture damage buff", 1, 0, Double.MAX_VALUE);
         _knockbackNerf = b.translation("wardance.config.knockback").comment("knockback from all sources to everything will be multiplied by this amount").defineInRange("knockback multiplier", 1, 0, 10d);
         b.pop();
         b.push("misc");
@@ -527,6 +528,7 @@ public class CombatConfig {
         posturePerProjectile = CONFIG._posturePerProjectile.get().floatValue();
         defaultMultiplierPostureDefend = CONFIG._defaultMultiplierPostureDefend.get().floatValue();
         defaultMultiplierPostureAttack = CONFIG._defaultMultiplierPostureAttack.get().floatValue();
+        defaultMultiplierPostureMob = CONFIG._defaultMultiplierPostureMob.get().floatValue();
         rollCooldown = CONFIG._rollCooldown.get();
         rollEndsAt = rollCooldown - CONFIG._rollThreshold.get();
         shieldThreshold = CONFIG._shieldThreshold.get();
@@ -540,7 +542,6 @@ public class CombatConfig {
         mobParryChanceShield = CONFIG._mobParryChanceShield.get().floatValue();
         mobDeflectChance = CONFIG._mobDeflectChance.get().floatValue();
         mobScaler = CONFIG._mobScaler.get().floatValue();
-        kenshiroScaler = CONFIG._kenshiroScaler.get().floatValue();
         posCap = CONFIG._posCap.get().floatValue();
         dodge = CONFIG._dodge.get();
         kbNerf = CONFIG._knockbackNerf.get().floatValue();
@@ -554,6 +555,7 @@ public class CombatConfig {
     @SubscribeEvent
     public static void loadConfig(ModConfig.ModConfigEvent e) {
         if (e.getConfig().getSpec() == CONFIG_SPEC) {
+            if(GeneralConfig.debug)
             WarDance.LOGGER.debug("loading combat config!");
             bake();
         }

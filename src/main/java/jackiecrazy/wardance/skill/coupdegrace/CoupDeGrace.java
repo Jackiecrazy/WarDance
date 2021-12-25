@@ -122,10 +122,8 @@ public class CoupDeGrace extends Skill {
 
         @Override
         protected void deathCheck(LivingEntity caster, LivingEntity target, float amount) {
-            if (amount > target.getHealth())
-                CombatData.getCap(caster).addSpirit(CombatData.getCap(target).getSpirit() / 2);
             CombatData.getCap(target).consumeSpirit(CombatData.getCap(target).getSpirit() / 2);
-            FakeExplosion.explode(caster.world, caster, target.getPosX(), target.getPosY(), target.getPosZ(), (float) Math.sqrt(CombatData.getCap(target).getTrueMaxPosture()), new CombatDamageSource("player", caster).setProxy(target).setExplosion().setMagicDamage(), 2 * CombatData.getCap(target).getSpirit());
+            FakeExplosion.explode(caster.world, caster, target.getPosX(), target.getPosY(), target.getPosZ(), (float) Math.sqrt(CombatData.getCap(target).getTrueMaxPosture()), new CombatDamageSource("explosion.player", caster).setProxy(target).setDamageTyping(CombatDamageSource.TYPE.PHYSICAL).setProcSkillEffects(true).setExplosion().setMagicDamage(), 4 * CombatData.getCap(target).getSpirit());
         }
     }
 

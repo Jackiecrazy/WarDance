@@ -11,7 +11,7 @@ import java.util.*;
 public class DummySkillCap implements ISkillCapability {
     private static final Map<Skill, SkillData> dummy = new HashMap<>();
     private static final Map<Skill, SkillCooldownData> otherDummy = new HashMap<>();
-    private static final List<Skill> moreDummies = new ArrayList<>();
+    private static final List<Skill> moreDummies = new ArrayList<>(), anotherDummy=new ArrayList<>();
 
     @Override
     public boolean isSkillSelectable(Skill s) {
@@ -21,6 +21,11 @@ public class DummySkillCap implements ISkillCapability {
     @Override
     public void setSkillSelectable(Skill s, boolean selectable) {
 
+    }
+
+    @Override
+    public List<Skill> getSelectableList() {
+        return anotherDummy;
     }
 
     @Nullable

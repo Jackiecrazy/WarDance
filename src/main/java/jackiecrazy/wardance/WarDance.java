@@ -15,6 +15,7 @@ import jackiecrazy.wardance.capability.status.StatusStorage;
 import jackiecrazy.wardance.capability.weaponry.DummyCombatItemCap;
 import jackiecrazy.wardance.capability.weaponry.ICombatItemCapability;
 import jackiecrazy.wardance.client.Keybinds;
+import jackiecrazy.wardance.command.WarDanceCommand;
 import jackiecrazy.wardance.compat.ElenaiCompat;
 import jackiecrazy.wardance.compat.WarCompat;
 import jackiecrazy.wardance.config.*;
@@ -29,6 +30,7 @@ import net.minecraft.entity.ai.attributes.Attributes;
 import net.minecraft.world.GameRules;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.capabilities.CapabilityManager;
+import net.minecraftforge.event.RegisterCommandsEvent;
 import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.event.entity.EntityAttributeModificationEvent;
 import net.minecraftforge.eventbus.api.IEventBus;
@@ -84,6 +86,7 @@ public class WarDance {
         WarSkills.SKILLS.makeRegistry("skills", RegistryBuilder::new);
         WarSkills.SKILLS.register(bus);
         WarEffects.EFFECTS.register(bus);
+        MinecraftForge.EVENT_BUS.addListener(this::commands);
     }
 
     private void setup(final FMLCommonSetupEvent event) {
@@ -136,6 +139,10 @@ public class WarDance {
         // do something when the server starts
     }
 
+    private void commands(final RegisterCommandsEvent event) {
+        WarDanceCommand.register(event.getDispatcher());
+    }
+
     // You can use EventBusSubscriber to automatically subscribe events on the contained class (this is subscribing to the MOD
     // Event bus for receiving Registry Events)
     @Mod.EventBusSubscriber(bus = Mod.EventBusSubscriber.Bus.MOD)
@@ -151,18 +158,12 @@ public class WarDance {
                 if (!event.has(t, Attributes.LUCK)) event.add(t, Attributes.LUCK, 4);
                 for (RegistryObject<Attribute> a : WarAttributes.ATTRIBUTES.getEntries()) {
                     if (!event.has(t, a.get())) {
+                        if(GeneralConfig.debug)
                         LOGGER.debug("civilly registering " + a.getId() + " to " + a.getId());
                         event.add(t, a.get());
                     }
                 }
             }
         }
-
-        @SubscribeEvent()
-        public void skillRegistry(RegistryEvent.NewRegistry event) {
-            //WarSkills.SKILLS=new RegistryBuilder<Skill>().setName(new ResourceLocation(MODID, "skills")).setType(Skill.class).create();
-        }
-
-
     }
 }

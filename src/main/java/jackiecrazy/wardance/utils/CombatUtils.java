@@ -304,7 +304,7 @@ public class CombatUtils {
 
     public static float getPostureAtk(@Nullable LivingEntity attacker, @Nullable LivingEntity defender, @Nullable Hand h, float amount, ItemStack stack) {
         float base = amount * (float) DEFAULTMELEE.attackPostureMultiplier;
-        //Spartan Shields compat
+        //Spartan Shields compat, doesn't seem to work.
         if (attacker != null && attacker.isActiveItemStackBlocking()) {
             h = attacker.getActiveHand();
             stack = attacker.getHeldItem(h);
@@ -318,10 +318,12 @@ public class CombatUtils {
                 base = (float) combatList.get(stack.getItem()).attackPostureMultiplier;
 
         } else {
-            base *= CombatConfig.kenshiroScaler;
+            if (!(attacker instanceof PlayerEntity))
+                base = CombatData.getCap(attacker).getMaxPosture() * CombatConfig.defaultMultiplierPostureMob;
         }
         if (attacker == null || h == null) return base;
-        return base * (attacker instanceof PlayerEntity ? Math.max(CombatData.getCap(attacker).getCachedCooldown(), ((PlayerEntity) attacker).getCooledAttackStrength(0.5f)) : scaler);
+        final float fin = attacker instanceof PlayerEntity ? Math.max(CombatData.getCap(attacker).getCachedCooldown(), ((PlayerEntity) attacker).getCooledAttackStrength(0.5f)) : scaler;
+        return base * fin;
     }
 
     public static float getPostureDef(@Nullable LivingEntity attacker, @Nullable LivingEntity defender, ItemStack stack, float amount) {

@@ -2,6 +2,7 @@ package jackiecrazy.wardance.capability.skill;
 
 import com.google.common.collect.Maps;
 import jackiecrazy.wardance.WarDance;
+import jackiecrazy.wardance.config.GeneralConfig;
 import jackiecrazy.wardance.networking.CombatChannel;
 import jackiecrazy.wardance.networking.SyncSkillPacket;
 import jackiecrazy.wardance.skill.Skill;
@@ -11,6 +12,8 @@ import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.nbt.ListNBT;
+import net.minecraft.nbt.StringNBT;
+import net.minecraftforge.common.util.Constants;
 import net.minecraftforge.fml.network.PacketDistributor;
 
 import java.lang.ref.WeakReference;
@@ -20,7 +23,7 @@ public class SkillCapability implements ISkillCapability {
     private final Map<Skill, SkillData> activeSkills = Maps.newHashMap();
     private final Map<Skill, SkillCooldownData> coolingSkills = Maps.newHashMap();
     private final List<Skill> equippedSkill = new ArrayList<>(12);
-    private final List<Skill> learnedSkills = new ArrayList<>();
+    private final List<Skill> skillList = new ArrayList<>();
     private final WeakReference<LivingEntity> dude;
     private final Queue<Skill> lastCast = new LinkedList<>();
     boolean sync = false, gatedSkills = false;
@@ -33,21 +36,24 @@ public class SkillCapability implements ISkillCapability {
     public boolean isSkillSelectable(Skill s) {
         final LivingEntity bruv = dude.get();
         if (bruv != null) {
-            if (gatedSkills) {
-                boolean ret = learnedSkills.contains(s);
-                ret &= learnedSkills.contains(s.tryGetParentSkill());
-                return ret;
-            }
-            return s.isSelectable(bruv);
+            if (!s.isSelectable(bruv)) return false;
+            return skillList.contains(s) == gatedSkills;
         }
         return true;
     }
 
     @Override
     public void setSkillSelectable(Skill s, boolean selectable) {
-        if (selectable)
-            learnedSkills.add(s);
-        else learnedSkills.remove(s);
+        if (selectable == gatedSkills) {
+            if (!skillList.contains(s))
+                skillList.add(s);
+        } else skillList.remove(s);
+        sync = true;
+    }
+
+    @Override
+    public List<Skill> getSelectableList() {
+        return skillList;
     }
 
     @Override
@@ -58,7 +64,8 @@ public class SkillCapability implements ISkillCapability {
     @Override
     public void activateSkill(SkillData d) {
         if (activeSkills.containsKey(d.getSkill())) {
-            WarDance.LOGGER.debug("skill " + d.getSkill() + " is already active, overwriting.");
+            if (GeneralConfig.debug)
+                WarDance.LOGGER.debug("skill " + d.getSkill() + " is already active, overwriting.");
         }
         activeSkills.put(d.getSkill(), d);
         if (CombatChannel.INSTANCE != null && dude.get() instanceof ServerPlayerEntity)
@@ -242,6 +249,11 @@ public class SkillCapability implements ISkillCapability {
         for (int a = 0; a < equippedSkill.size(); a++)
             if (equippedSkill.get(a) != null)
                 to.putString("equippedSkill" + a, equippedSkill.get(a).getRegistryName().toString());
+        ListNBT str = new ListNBT();
+        for (Skill add : skillList) {
+            str.add(StringNBT.valueOf(add.getRegistryName().toString()));
+        }
+        to.put("randomList", str);
         return to;
     }
 
@@ -276,6 +288,16 @@ public class SkillCapability implements ISkillCapability {
         for (int a = 0; a < als.length; a++)
             if (from.contains("equippedSkill" + a))
                 als[a] = (Skill.getSkill(from.getString("equippedSkill" + a)));
+        //if (from.getBoolean("skillListDirty")) {
+        skillList.clear();
+        if (from.contains("randomList", Constants.NBT.TAG_LIST)) {
+            ListNBT list = from.getList("randomList", Constants.NBT.TAG_STRING);
+            for (Object s : list.toArray()) {
+                if (s instanceof StringNBT && Skill.getSkill(((StringNBT) s).getString()) != null)
+                    skillList.add(Skill.getSkill(((StringNBT) s).getString()));
+            }
+        }
+        //}
         equippedSkill.clear();
         equippedSkill.addAll(Arrays.asList(als));
     }
@@ -300,6 +322,7 @@ public class SkillCapability implements ISkillCapability {
             if (d.equippedTick(caster, state)) {
                 sync = true;
             }
+            state = Skill.STATE.INACTIVE;
         }
 //        for (SkillData d : activeSkills.values()) {
 //            if (d.getSkill().activeTick(caster, d)) {
