@@ -3,10 +3,7 @@ package jackiecrazy.wardance.skill.grapple;
 import jackiecrazy.wardance.WarDance;
 import jackiecrazy.wardance.capability.resources.CombatData;
 import jackiecrazy.wardance.capability.resources.ICombatCapability;
-import jackiecrazy.wardance.skill.Skill;
-import jackiecrazy.wardance.skill.SkillData;
-import jackiecrazy.wardance.skill.SkillTags;
-import jackiecrazy.wardance.skill.WarSkills;
+import jackiecrazy.wardance.skill.*;
 import jackiecrazy.wardance.utils.CombatUtils;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.LivingEntity;
@@ -16,6 +13,7 @@ import net.minecraft.util.SoundEvents;
 import net.minecraftforge.event.entity.living.LivingAttackEvent;
 import net.minecraftforge.eventbus.api.Event;
 
+import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.awt.*;
 import java.util.Arrays;
@@ -25,10 +23,10 @@ public class Grapple extends Skill {
     private final Tag<String> tag = Tag.getTagFromContents(new HashSet<>(Arrays.asList("physical", "boundCast", "melee", "normalAttack", "countdown", "unarmed", "rechargeWithAttack")));
     private final Tag<String> unarm = makeTag(SkillTags.offensive, SkillTags.physical, SkillTags.unarmed);
 
-    @Nullable
+    @Nonnull
     @Override
-    public Skill getParentSkill() {
-        return this.getClass() == Grapple.class ? null : WarSkills.GRAPPLE.get();
+    public SkillCategory getParentSkill() {
+        return SkillCategories.grapple;
     }
 
     @Override

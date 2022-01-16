@@ -20,7 +20,7 @@ import net.minecraftforge.eventbus.api.Event;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 
-import javax.annotation.Nullable;
+import javax.annotation.Nonnull;
 import java.awt.*;
 import java.util.Arrays;
 import java.util.HashSet;
@@ -43,7 +43,7 @@ Assassinate: Stab rank increased by 1 for this attack, instantly stagger a distr
 
     @SubscribeEvent
     public static void noFall(LivingFallEvent e) {
-        CasterData.getCap(e.getEntityLiving()).getActiveSkill(CasterData.getCap(e.getEntityLiving()).getEquippedVariation(WarSkills.DESCEND.get())).ifPresent((d) -> {
+        CasterData.getCap(e.getEntityLiving()).getActiveSkill(CasterData.getCap(e.getEntityLiving()).getEquippedVariation(SkillCategories.descend)).ifPresent((d) -> {
             if (CasterData.getCap(e.getEntityLiving()).isSkillActive(WarSkills.SHOCKWAVE.get())) {
                 WarSkills.SHOCKWAVE.get().onSuccessfulProc(e.getEntityLiving(), CasterData.getCap(e.getEntityLiving()).getActiveSkill(WarSkills.SHOCKWAVE.get()).get(), null, null);
             }
@@ -66,10 +66,10 @@ Assassinate: Stab rank increased by 1 for this attack, instantly stagger a distr
         return offensive;
     }
 
-    @Nullable
+    @Nonnull
     @Override
-    public Skill getParentSkill() {
-        return this.getClass() == Descend.class ? null : WarSkills.DESCEND.get();
+    public SkillCategory getParentSkill() {
+        return SkillCategories.descend;
     }
 
 

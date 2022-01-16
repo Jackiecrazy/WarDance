@@ -9,7 +9,7 @@ import net.minecraft.tags.Tag;
 import net.minecraftforge.event.entity.player.CriticalHitEvent;
 import net.minecraftforge.eventbus.api.Event;
 
-import javax.annotation.Nullable;
+import javax.annotation.Nonnull;
 import java.util.Arrays;
 import java.util.HashSet;
 
@@ -32,10 +32,10 @@ public class HeavyBlow extends Skill {
         return offensive;
     }
 
-    @Nullable
+    @Nonnull
     @Override
-    public Skill getParentSkill() {
-        return this.getClass() == HeavyBlow.class ? null : WarSkills.HEAVY_BLOW.get();
+    public SkillCategory getParentSkill() {
+        return SkillCategories.heavy_blow;
     }
 
     @Override
@@ -65,7 +65,7 @@ public class HeavyBlow extends Skill {
     @Override
     public void onSuccessfulProc(LivingEntity caster, SkillData stats, LivingEntity target, Event procPoint) {
         if (procPoint instanceof ParryEvent && ((ParryEvent) procPoint).getDefendingHand() != null && ((ParryEvent) procPoint).getAttacker() == caster) {
-            if (CasterData.getCap(target).isSkillActive(WarSkills.IRON_GUARD.get())) return;
+            if (CasterData.getCap(target).isCategoryActive(SkillCategories.iron_guard)) return;
             CombatData.getCap(target).setHandBind(((ParryEvent) procPoint).getDefendingHand(), 30);
             markUsed(caster);
         } else if (procPoint instanceof CriticalHitEvent) {

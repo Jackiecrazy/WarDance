@@ -2,9 +2,7 @@ package jackiecrazy.wardance.skill.regenspirit;
 
 import jackiecrazy.wardance.capability.resources.CombatData;
 import jackiecrazy.wardance.event.ParryEvent;
-import jackiecrazy.wardance.skill.Skill;
-import jackiecrazy.wardance.skill.SkillData;
-import jackiecrazy.wardance.skill.ProcPoints;
+import jackiecrazy.wardance.skill.*;
 import jackiecrazy.wardance.utils.CombatUtils;
 import jackiecrazy.wardance.utils.GeneralUtils;
 import net.minecraft.entity.LivingEntity;
@@ -14,6 +12,7 @@ import net.minecraft.util.Hand;
 import net.minecraftforge.event.entity.player.CriticalHitEvent;
 import net.minecraftforge.eventbus.api.Event;
 
+import javax.annotation.Nonnull;
 import java.util.Arrays;
 import java.util.HashSet;
 
@@ -38,6 +37,12 @@ apathy: your max spirit is 4, your spirit instantly refills after cooldown, you 
     @Override
     public Tag<String> getTags(LivingEntity caster) {
         return passive;
+    }
+
+    @Nonnull
+    @Override
+    public SkillCategory getParentSkill() {
+        return SkillCategories.morale;
     }
 
     @Override

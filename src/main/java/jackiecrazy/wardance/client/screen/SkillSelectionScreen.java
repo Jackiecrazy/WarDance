@@ -7,6 +7,7 @@ import jackiecrazy.wardance.capability.skill.CasterData;
 import jackiecrazy.wardance.networking.CombatChannel;
 import jackiecrazy.wardance.networking.UpdateSkillSelectionPacket;
 import jackiecrazy.wardance.skill.Skill;
+import jackiecrazy.wardance.skill.SkillCategory;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.gui.screen.Screen;
@@ -36,23 +37,23 @@ import java.util.stream.Collectors;
 public class SkillSelectionScreen extends Screen {
     private static final ResourceLocation radial = new ResourceLocation(WarDance.MODID, "textures/skill/radialhud.png");
     private static final int[] fixedU = {
-            150, 300, 0, 150, 300, 0, 150, 300
+            150, 0, 150, 300, 300
     };
     private static final int[] fixedV = {
-            0, 0, 150, 150, 150, 300, 300, 300
+            0, 150, 150, 150, 0
     };
     private static final int PADDING = 6;
-    private final List<Skill> unsortedSkills;
-    private final SkillSliceButton[] skillPie = new SkillSliceButton[8];
-    private final PassiveButton[] passives = new PassiveButton[4];
+    private final List<SkillCategory> unsortedBases;
+    private final SkillSliceButton[] skillPie = new SkillSliceButton[5];
+    private final PassiveButton[] passives = new PassiveButton[5];
     private final int numButtons = SkillSelectionScreen.SortType.values().length;
-    public SkillListWidget.SkillEntry selectedSkill = null;
+    public SkillListWidget.CategoryEntry selectedSkill = null;
     public VariationListWidget.VariationEntry selectedVariation = null;
     private SkillListWidget skillList;
     private VariationListWidget variationList;
     private SkillSelectionScreen.InfoPanel modInfo;
     private int listWidth;
-    private List<Skill> skills;
+    private List<SkillCategory> bases;
     private int buttonMargin = 1;
     private String lastFilterText = "";
 
@@ -63,17 +64,17 @@ public class SkillSelectionScreen extends Screen {
 
     public SkillSelectionScreen() {
         super(new TranslationTextComponent("wardance.skillselection.title"));//
-        this.skills = Skill.variationMap.keySet().stream().filter(this::selectable).collect(Collectors.toList());//hmm
+        this.bases = Skill.variationMap.keySet().stream().filter(this::selectable).collect(Collectors.toList());//hmm
 
-        this.unsortedSkills = Collections.unmodifiableList(this.skills);
+        this.unsortedBases = Collections.unmodifiableList(this.bases);
     }
 
     private static String stripControlCodes(String value) {return net.minecraft.util.StringUtils.stripControlCodes(value);}
 
-    private boolean selectable(Skill s) {
+    private boolean selectable(SkillCategory s) {
         for (Skill sub : Skill.variationMap.get(s))
             if (CasterData.getCap(Minecraft.getInstance().player).isSkillSelectable(sub)) return true;
-        return CasterData.getCap(Minecraft.getInstance().player).isSkillSelectable(s);
+        return false;
     }
     //private SkillSelectionScreen.SortType sortType = SkillSelectionScreen.SortType.NORMAL;
     /*
@@ -88,8 +89,8 @@ public class SkillSelectionScreen extends Screen {
 
     @Override
     public void init() {
-        for (Skill mod : skills) {
-            listWidth = Math.max(listWidth, getFontRenderer().getStringWidth(mod.getDisplayName(null).getString()) + 20);
+        for (SkillCategory mod : bases) {
+            listWidth = Math.max(listWidth, getFontRenderer().getStringWidth(mod.name().getString()) + 20);
         }
         listWidth = Math.max(Math.min(listWidth, width / 5), 100);
         listWidth += listWidth % numButtons != 0 ? (numButtons - listWidth % numButtons) : 0;
@@ -122,7 +123,7 @@ public class SkillSelectionScreen extends Screen {
         }
 
         for (int d = 0; d < passives.length; d++) {
-            passives[d] = new PassiveButton(this, width - skillCircleWidth + d * (32 + PADDING), PADDING + skillCircleWidth, 23, d);
+            passives[d] = new PassiveButton(this, width - skillCircleWidth + d * (31 ), PADDING + skillCircleWidth, 23, d);
             passives[d].setSkill(oldList.get(d + skillPie.length));
             children.add(passives[d]);
         }
@@ -159,22 +160,22 @@ public class SkillSelectionScreen extends Screen {
 
         if (!sorted) {
             reloadMods();
-            skills.sort(sortType);
+            bases.sort(sortType);
             skillList.refreshList();
             variationList.refreshList();
             if (selectedSkill != null) {
-                selectedSkill = skillList.getEventListeners().stream().filter(e -> e.getSkill() == selectedSkill.getSkill()).findFirst().orElse(null);
+                selectedSkill = skillList.getEventListeners().stream().filter(e -> e.getCategory() == selectedSkill.getCategory()).findFirst().orElse(null);
                 updateCache();
             }
             sorted = true;
         }
     }
 
-    public <T extends ExtendedList.AbstractListEntry<T>> void buildSkillList(Consumer<T> modListViewConsumer, Function<Skill, T> newEntry) {
-        skills.forEach(mod -> modListViewConsumer.accept(newEntry.apply(mod)));
+    public <T extends ExtendedList.AbstractListEntry<T>> void buildSkillList(Consumer<T> modListViewConsumer, Function<SkillCategory, T> newEntry) {
+        bases.forEach(mod -> modListViewConsumer.accept(newEntry.apply(mod)));
     }
 
-    public <T extends ExtendedList.AbstractListEntry<T>> void buildVariationList(Skill s, Consumer<T> modListViewConsumer, Function<Skill, T> newEntry) {
+    public <T extends ExtendedList.AbstractListEntry<T>> void buildVariationList(SkillCategory s, Consumer<T> modListViewConsumer, Function<Skill, T> newEntry) {
         Skill.variationMap.get(s).forEach(mod -> {
             if (CasterData.getCap(Minecraft.getInstance().player).isSkillSelectable(mod))
                 modListViewConsumer.accept(newEntry.apply(mod));
@@ -182,8 +183,8 @@ public class SkillSelectionScreen extends Screen {
     }
 
     private void reloadMods() {
-        this.skills = this.unsortedSkills.stream().
-                filter(mi -> StringUtils.toLowerCase(stripControlCodes(mi.baseName().getString())).contains(StringUtils.toLowerCase(search.getText()))).collect(Collectors.toList());
+        this.bases = this.unsortedBases.stream().
+                filter(mi -> StringUtils.toLowerCase(stripControlCodes(mi.name().getString())).contains(StringUtils.toLowerCase(search.getText()))).collect(Collectors.toList());
         lastFilterText = search.getText();
     }
 
@@ -233,7 +234,7 @@ public class SkillSelectionScreen extends Screen {
         return font;
     }
 
-    public void setSelectedSkill(SkillListWidget.SkillEntry entry) {
+    public void setSelectedSkill(SkillListWidget.CategoryEntry entry) {
         this.selectedSkill = entry == this.selectedSkill ? null : entry;
         selectedVariation = null;
         variationList.refreshList();
@@ -255,11 +256,11 @@ public class SkillSelectionScreen extends Screen {
             modInfo.setInfo(lines, null);
             return;
         }
-        Skill selectedSkill = this.selectedSkill.getSkill();
+        SkillCategory selectedSkill = this.selectedSkill.getCategory();
         List<String> lines = new ArrayList<>();
 
-        lines.add(selectedSkill.baseName().getString());
-        lines.add(selectedSkill.baseDescription().getString());
+        lines.add(selectedSkill.name().getString());
+        lines.add(selectedSkill.description().getString());
         if (selectedVariation != null) {
             //lines.add(String.valueOf(selectedVariation.getSkill().getColor().getRGB()));
             lines.add("\n");
@@ -274,7 +275,7 @@ public class SkillSelectionScreen extends Screen {
     public void resize(Minecraft mc, int width, int height) {
         String s = this.search.getText();
         SkillSelectionScreen.SortType sort = this.sortType;
-        SkillListWidget.SkillEntry selected = this.selectedSkill;
+        SkillListWidget.CategoryEntry selected = this.selectedSkill;
         this.init(mc, width, height);
         this.search.setText(s);
         this.selectedSkill = selected;
@@ -297,7 +298,7 @@ public class SkillSelectionScreen extends Screen {
         this.minecraft.displayGuiScreen(null);
     }
 
-    private enum SortType implements Comparator<Skill> {
+    private enum SortType implements Comparator<SkillCategory> {
         NORMAL,
         A_TO_Z {
             @Override
@@ -313,9 +314,9 @@ public class SkillSelectionScreen extends Screen {
         protected int compare(String name1, String name2) {return 0;}
 
         @Override
-        public int compare(Skill o1, Skill o2) {
-            String name1 = StringUtils.toLowerCase(stripControlCodes(o1.getDisplayName(null).getString()));
-            String name2 = StringUtils.toLowerCase(stripControlCodes(o2.getDisplayName(null).getString()));
+        public int compare(SkillCategory o1, SkillCategory o2) {
+            String name1 = StringUtils.toLowerCase(stripControlCodes(o1.name().getString()));
+            String name2 = StringUtils.toLowerCase(stripControlCodes(o2.name().getString()));
             return compare(name1, name2);
         }
 

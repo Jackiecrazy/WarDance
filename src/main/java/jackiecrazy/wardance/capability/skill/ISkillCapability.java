@@ -1,10 +1,12 @@
 package jackiecrazy.wardance.capability.skill;
 
 import jackiecrazy.wardance.skill.Skill;
+import jackiecrazy.wardance.skill.SkillCategory;
 import jackiecrazy.wardance.skill.SkillCooldownData;
 import jackiecrazy.wardance.skill.SkillData;
 import net.minecraft.nbt.CompoundNBT;
 
+import javax.annotation.Nullable;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -26,8 +28,9 @@ public interface ISkillCapability {
 
     void clearActiveSkills();
 
-    //TODO isCategoryActive
     boolean isSkillActive(Skill skill);
+
+    boolean isCategoryActive(SkillCategory s);
 
     boolean isTagActive(String tag);
 
@@ -51,7 +54,8 @@ public interface ISkillCapability {
 
     void clearSkillCooldowns();
 
-    Skill getEquippedVariation(Skill base);
+    @Nullable
+    Skill getEquippedVariation(SkillCategory base);
 
     List<Skill> getEquippedSkills();
 

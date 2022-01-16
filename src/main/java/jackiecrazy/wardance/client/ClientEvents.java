@@ -19,7 +19,7 @@ import jackiecrazy.wardance.config.GeneralConfig;
 import jackiecrazy.wardance.config.ResourceConfig;
 import jackiecrazy.wardance.networking.*;
 import jackiecrazy.wardance.skill.Skill;
-import jackiecrazy.wardance.skill.WarSkills;
+import jackiecrazy.wardance.skill.SkillCategories;
 import jackiecrazy.wardance.skill.coupdegrace.CoupDeGrace;
 import jackiecrazy.wardance.utils.CombatUtils;
 import jackiecrazy.wardance.utils.GeneralUtils;
@@ -521,8 +521,9 @@ public class ClientEvents {
                     LivingEntity looked = (LivingEntity) look;
                     List<Skill> afflict = new ArrayList<>();
                     final ISkillCapability skill = CasterData.getCap(player);
-                    if (look != player && skill.isSkillUsable(skill.getEquippedVariation(WarSkills.COUP_DE_GRACE.get()))) {
-                        CoupDeGrace cdg = (CoupDeGrace) (skill.getEquippedVariation(WarSkills.COUP_DE_GRACE.get()));
+                    final Skill variant = skill.getEquippedVariation(SkillCategories.coup_de_grace);
+                    if (look != player && skill.isSkillUsable(variant)) {
+                        CoupDeGrace cdg = (CoupDeGrace) variant;
                         if (cdg.willKillOnCast(player, looked)) {
                             afflict.add(cdg);
                         }

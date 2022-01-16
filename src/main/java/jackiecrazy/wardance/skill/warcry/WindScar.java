@@ -37,6 +37,11 @@ public class WindScar extends WarCry {
 
     @Override
     public boolean activeTick(LivingEntity caster, SkillData d) {
+        if (d.isCondition() && d.getDuration() > 0) {
+            d.decrementDuration();
+            if (d.getDuration() <= 0) markUsed(caster);
+            return true;
+        }
         return false;
     }
 
@@ -58,7 +63,7 @@ public class WindScar extends WarCry {
 
     @Override
     protected int getDuration(float might) {
-        return (int)(3*might);
+        return (int) (3 * might);
     }
 
     @Override

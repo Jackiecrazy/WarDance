@@ -4,6 +4,7 @@ import jackiecrazy.wardance.WarDance;
 import jackiecrazy.wardance.capability.resources.CombatData;
 import jackiecrazy.wardance.capability.skill.CasterData;
 import jackiecrazy.wardance.event.ParryEvent;
+import jackiecrazy.wardance.skill.SkillCategories;
 import jackiecrazy.wardance.skill.SkillData;
 import jackiecrazy.wardance.skill.WarSkills;
 import jackiecrazy.wardance.utils.EffectUtils;
@@ -39,7 +40,7 @@ public class Shatter extends HeavyBlow {
     public void onSuccessfulProc(LivingEntity caster, SkillData stats, LivingEntity target, Event procPoint) {
         int buff = EffectUtils.getEffectiveLevel(target, Effects.MINING_FATIGUE);
         if (procPoint instanceof ParryEvent && ((ParryEvent) procPoint).getDefendingHand() != null && ((ParryEvent) procPoint).getAttacker() == caster) {
-            if (CasterData.getCap(target).isSkillActive(WarSkills.IRON_GUARD.get())) return;
+            if (CasterData.getCap(target).isCategoryActive(SkillCategories.iron_guard)) return;
             CombatData.getCap(target).setHandBind(((ParryEvent) procPoint).getDefendingHand(), 30 + (20 * buff));
             target.removePotionEffect(Effects.MINING_FATIGUE);
             markUsed(caster);

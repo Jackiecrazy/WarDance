@@ -18,7 +18,7 @@ import net.minecraftforge.event.entity.living.LivingHealEvent;
 import net.minecraftforge.event.entity.living.LivingHurtEvent;
 import net.minecraftforge.eventbus.api.Event;
 
-import javax.annotation.Nullable;
+import javax.annotation.Nonnull;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.UUID;
@@ -54,10 +54,10 @@ public class WarCry extends Skill {
         return new TranslationTextComponent(getRegistryName().toString() + ".name");
     }
 
-    @Nullable
+    @Nonnull
     @Override
-    public Skill getParentSkill() {
-        return this.getClass() == WarCry.class ? null : WarSkills.WAR_CRY.get();
+    public SkillCategory getParentSkill() {
+        return SkillCategories.war_cry;
     }
 
     @Override

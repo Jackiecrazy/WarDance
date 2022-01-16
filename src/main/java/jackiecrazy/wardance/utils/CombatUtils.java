@@ -477,15 +477,17 @@ public class CombatUtils {
         }
     }
 
+    public static boolean suppress=false;
+
     public static void swapHeldItems(LivingEntity e) {
         //attributes = new ArrayList<>();
         ItemStack main = e.getHeldItemMainhand(), off = e.getHeldItemOffhand();
         int tssl = e.ticksSinceLastSwing;
-        boolean silent = e.isSilent();
-        e.setSilent(true);
+        suppress=true;
         ICombatCapability cap = CombatData.getCap(e);
         e.setHeldItem(Hand.MAIN_HAND, e.getHeldItemOffhand());
         e.setHeldItem(Hand.OFF_HAND, main);
+        suppress=false;
 //        attributes.addAll(main.getAttributeModifiers(EquipmentSlotType.MAINHAND).keys());
 //        attributes.addAll(main.getAttributeModifiers(EquipmentSlotType.OFFHAND).keys());
 //        attributes.addAll(off.getAttributeModifiers(EquipmentSlotType.MAINHAND).keys());
@@ -505,7 +507,6 @@ public class CombatUtils {
         });
         e.ticksSinceLastSwing = cap.getOffhandCooldown();
         cap.setOffhandCooldown(tssl);
-        e.setSilent(silent);
     }
 
     public static void sweep(LivingEntity e, Entity ignore, Hand h, double reach) {

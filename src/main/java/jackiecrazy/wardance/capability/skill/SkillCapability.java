@@ -5,9 +5,7 @@ import jackiecrazy.wardance.WarDance;
 import jackiecrazy.wardance.config.GeneralConfig;
 import jackiecrazy.wardance.networking.CombatChannel;
 import jackiecrazy.wardance.networking.SyncSkillPacket;
-import jackiecrazy.wardance.skill.Skill;
-import jackiecrazy.wardance.skill.SkillCooldownData;
-import jackiecrazy.wardance.skill.SkillData;
+import jackiecrazy.wardance.skill.*;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.nbt.CompoundNBT;
@@ -99,11 +97,14 @@ public class SkillCapability implements ISkillCapability {
 
     @Override
     public boolean isSkillActive(Skill skill) {
-        if (activeSkills.containsKey(skill)) return true;
-        if (skill.getParentSkill() == null)
-            for (Skill s : new ArrayList<>(activeSkills.keySet())) {
-                if (s.isFamily(skill)) return true;
-            }
+        return activeSkills.containsKey(skill);
+    }
+
+    @Override
+    public boolean isCategoryActive(SkillCategory skill) {
+        for (Skill s : new ArrayList<>(activeSkills.keySet())) {
+            if (s.getParentSkill().equals(skill)) return true;
+        }
         return false;
     }
 
@@ -194,10 +195,10 @@ public class SkillCapability implements ISkillCapability {
     }
 
     @Override
-    public Skill getEquippedVariation(Skill base) {
+    public Skill getEquippedVariation(SkillCategory other) {
         for (Skill k : new ArrayList<>(equippedSkill))
-            if (k != null && k.getParentSkill() == base) return k;
-        return base;
+            if (k != null && k.getParentSkill() == other) return k;
+        return null;
     }
 
     @Override
@@ -219,6 +220,7 @@ public class SkillCapability implements ISkillCapability {
 
     @Override
     public boolean isSkillUsable(Skill skill) {
+        if (skill == null) return false;
         if (!isSkillSelectable(skill)) return false;
         if (!equippedSkill.contains(skill)) return false;
         return skill.castingCheck(dude.get()) == Skill.CastStatus.ALLOWED || skill.castingCheck(dude.get()) == Skill.CastStatus.ACTIVE;

@@ -3,10 +3,7 @@ package jackiecrazy.wardance.skill.shieldbash;
 import jackiecrazy.wardance.WarDance;
 import jackiecrazy.wardance.capability.resources.CombatData;
 import jackiecrazy.wardance.potion.WarEffects;
-import jackiecrazy.wardance.skill.Skill;
-import jackiecrazy.wardance.skill.SkillData;
-import jackiecrazy.wardance.skill.ProcPoints;
-import jackiecrazy.wardance.skill.WarSkills;
+import jackiecrazy.wardance.skill.*;
 import jackiecrazy.wardance.utils.CombatUtils;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.potion.EffectInstance;
@@ -18,6 +15,7 @@ import net.minecraft.util.SoundEvents;
 import net.minecraftforge.event.entity.living.LivingAttackEvent;
 import net.minecraftforge.eventbus.api.Event;
 
+import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.awt.*;
 import java.util.Arrays;
@@ -42,10 +40,10 @@ public class ShieldBash extends Skill {
         return offensive;
     }
 
-    @Nullable
+    @Nonnull
     @Override
-    public Skill getParentSkill() {
-        return this.getClass() == ShieldBash.class ? null : WarSkills.SHIELD_BASH.get();
+    public SkillCategory getParentSkill() {
+        return SkillCategories.shield_bash;
     }
 
     @Override

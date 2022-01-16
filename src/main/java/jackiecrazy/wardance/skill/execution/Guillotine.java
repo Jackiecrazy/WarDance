@@ -7,10 +7,7 @@ import jackiecrazy.wardance.capability.status.Marks;
 import jackiecrazy.wardance.event.SkillCastEvent;
 import jackiecrazy.wardance.event.StaggerEvent;
 import jackiecrazy.wardance.potion.WarEffects;
-import jackiecrazy.wardance.skill.ProcPoints;
-import jackiecrazy.wardance.skill.Skill;
-import jackiecrazy.wardance.skill.SkillData;
-import jackiecrazy.wardance.skill.WarSkills;
+import jackiecrazy.wardance.skill.*;
 import jackiecrazy.wardance.utils.EffectUtils;
 import jackiecrazy.wardance.utils.GeneralUtils;
 import jackiecrazy.wardance.utils.SkillUtils;
@@ -28,6 +25,7 @@ import net.minecraftforge.event.entity.living.LivingAttackEvent;
 import net.minecraftforge.event.entity.living.LivingHurtEvent;
 import net.minecraftforge.eventbus.api.Event;
 
+import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.awt.*;
 import java.util.Arrays;
@@ -62,10 +60,10 @@ Onslaught: casts heavy blow before every attack (this is a lot easier)
         return special;
     }
 
-    @Nullable
+    @Nonnull
     @Override
-    public Skill getParentSkill() {
-        return this.getClass() == Guillotine.class ? null : WarSkills.GUILLOTINE.get();
+    public SkillCategory getParentSkill() {
+        return SkillCategories.guillotine;
     }
 
     @Override

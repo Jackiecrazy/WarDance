@@ -36,35 +36,28 @@ import java.util.*;
  * There are no grandchildren. If you make a grandchild, it won't show up.
  */
 public abstract class Skill extends ForgeRegistryEntry<Skill> {
-    protected static final Tag<String> empty=Tag.getEmptyTag();
-    protected static final Tag<String> offensivePhysical=makeTag(SkillTags.offensive, SkillTags.physical);
-    protected static final Tag<String> defensivePhysical=makeTag(SkillTags.defensive, SkillTags.physical);
-    protected static final Tag<String> offensive=makeTag(SkillTags.offensive);
-    protected static final Tag<String> defensive=makeTag(SkillTags.defensive);
-    protected static final Tag<String> passive=makeTag(SkillTags.passive);
-    protected static final Tag<String> special=makeTag(SkillTags.special);
-    protected static final Tag<String> state=makeTag(SkillTags.state);
-    public static final HashMap<Skill, List<Skill>> variationMap = new HashMap<>();
-
-    protected static Tag<String> makeTag(String... stuff){
-        return Tag.getTagFromContents(new HashSet<>(Arrays.asList(stuff)));
-    }
+    public static final HashMap<SkillCategory, List<Skill>> variationMap = new HashMap<>();
+    protected static final Tag<String> empty = Tag.getEmptyTag();
+    protected static final Tag<String> offensivePhysical = makeTag(SkillTags.offensive, SkillTags.physical);
+    protected static final Tag<String> defensivePhysical = makeTag(SkillTags.defensive, SkillTags.physical);
+    protected static final Tag<String> offensive = makeTag(SkillTags.offensive);
+    protected static final Tag<String> defensive = makeTag(SkillTags.defensive);
+    protected static final Tag<String> passive = makeTag(SkillTags.passive);
+    protected static final Tag<String> special = makeTag(SkillTags.special);
+    protected static final Tag<String> state = makeTag(SkillTags.state);
 
     public Skill() {
         //SkillCategory
-        if (this.getParentSkill() == null && !variationMap.containsKey(this)) {
-            List<Skill> toadd = new ArrayList<>();
-            toadd.add(this);
-            variationMap.put(this, toadd);
-        } else if (this.getParentSkill() != null) {
-            List<Skill> insert = variationMap.get(getParentSkill());
-            if (insert == null) {
-                insert = new ArrayList<>();
-                insert.add(getParentSkill());
-            }
-            insert.add(this);
-            variationMap.put(this.getParentSkill(), insert);
+        List<Skill> insert = variationMap.get(getParentSkill());
+        if (insert == null) {
+            insert = new ArrayList<>();
         }
+        insert.add(this);
+        variationMap.put(this.getParentSkill(), insert);
+    }
+
+    protected static Tag<String> makeTag(String... stuff) {
+        return Tag.getTagFromContents(new HashSet<>(Arrays.asList(stuff)));
     }
 
     @Nullable
@@ -79,25 +72,16 @@ public abstract class Skill extends ForgeRegistryEntry<Skill> {
 
     public boolean isFamily(Skill s) {
         if (s == null) return false;
-        if (s.getParentSkill() != null && (s.getParentSkill() == this || s.getParentSkill() == this.getParentSkill()))
-            return true;
-        else if (tryGetParentSkill() == s.tryGetParentSkill())
-            return true;
-        return false;
+        return getParentSkill().equals(s.getParentSkill());
     }
 
     public boolean isPassive(LivingEntity caster) {
         return getProcPoints(caster).contains("passive");
     }
 
-    @Nullable
-    public Skill getParentSkill() {
-        return null;
-    }//TODO move this to a SkillCategory class so base skills can have different names
-
     @Nonnull
-    public final Skill tryGetParentSkill() {
-        return getParentSkill() == null ? this : getParentSkill();
+    public SkillCategory getParentSkill() {
+        return SkillCategories.none;
     }
 
     public boolean isSelectable(LivingEntity caster) {
@@ -163,9 +147,7 @@ public abstract class Skill extends ForgeRegistryEntry<Skill> {
     }
 
     public ResourceLocation icon() {
-        ResourceLocation rl = getRegistryName();
-        if (getParentSkill() != null) rl = getParentSkill().getRegistryName();
-        return new ResourceLocation(rl.getNamespace() + ":" + "textures/skill/" + rl.getPath() + ".png");
+        return getParentSkill().icon();
     }
 
     public Color getColor() {
@@ -180,9 +162,9 @@ public abstract class Skill extends ForgeRegistryEntry<Skill> {
 
     public boolean checkAndCast(LivingEntity caster) {
         final CastStatus status = castingCheck(caster);
-        if (status != CastStatus.ALLOWED){
-            if(GeneralConfig.debug)
-            WarDance.LOGGER.debug(this.getRegistryName()+" returned "+status+" when attempting to cast, aborting");
+        if (status != CastStatus.ALLOWED) {
+            if (GeneralConfig.debug)
+                WarDance.LOGGER.debug(this.getRegistryName() + " returned " + status + " when attempting to cast, aborting");
             return false;
         }
         if (!isPassive(caster) && MinecraftForge.EVENT_BUS.post(new SkillCastEvent(caster, this))) return false;
@@ -287,8 +269,8 @@ public abstract class Skill extends ForgeRegistryEntry<Skill> {
     }
 
     protected void markUsed(LivingEntity caster) {
-        if(GeneralConfig.debug)
-        WarDance.LOGGER.debug(this.getRegistryName()+" has ended");
+        if (GeneralConfig.debug)
+            WarDance.LOGGER.debug(this.getRegistryName() + " has ended");
         caster.world.playMovingSound(null, caster, SoundEvents.BLOCK_FIRE_EXTINGUISH, SoundCategory.AMBIENT, 0.3f + WarDance.rand.nextFloat() * 0.5f, 0.5f + WarDance.rand.nextFloat());
         CasterData.getCap(caster).markSkillUsed(this);
     }

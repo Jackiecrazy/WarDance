@@ -26,6 +26,7 @@ import net.minecraftforge.eventbus.api.Event;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 
+import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.awt.*;
 import java.util.*;
@@ -112,10 +113,10 @@ public class Hex extends Skill {
         return true;
     }
 
-    @Nullable
+    @Nonnull
     @Override
-    public Skill getParentSkill() {
-        return this.getClass() == Hex.class ? null : WarSkills.HEX.get();
+    public SkillCategory getParentSkill() {
+        return SkillCategories.hex;
     }
 
     @Override

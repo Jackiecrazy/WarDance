@@ -6,8 +6,9 @@ import jackiecrazy.wardance.capability.resources.CombatData;
 import jackiecrazy.wardance.capability.resources.ICombatCapability;
 import jackiecrazy.wardance.config.CombatConfig;
 import jackiecrazy.wardance.skill.Skill;
+import jackiecrazy.wardance.skill.SkillCategories;
+import jackiecrazy.wardance.skill.SkillCategory;
 import jackiecrazy.wardance.skill.SkillData;
-import jackiecrazy.wardance.skill.WarSkills;
 import jackiecrazy.wardance.utils.GeneralUtils;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.player.PlayerEntity;
@@ -18,7 +19,7 @@ import net.minecraft.util.math.vector.Vector3d;
 import net.minecraftforge.event.entity.living.LivingAttackEvent;
 import net.minecraftforge.eventbus.api.Event;
 
-import javax.annotation.Nullable;
+import javax.annotation.Nonnull;
 import java.awt.*;
 import java.util.Arrays;
 import java.util.HashSet;
@@ -59,10 +60,10 @@ public class Kick extends Skill {
         return CombatData.getCap(caster).getSpirit() < 4 ? CastStatus.SPIRIT : super.castingCheck(caster);
     }
 
-    @Nullable
+    @Nonnull
     @Override
-    public Skill getParentSkill() {
-        return this.getClass() == Kick.class ? null : WarSkills.KICK.get();
+    public SkillCategory getParentSkill() {
+        return SkillCategories.kick;
     }
 
     @Override
@@ -73,7 +74,7 @@ public class Kick extends Skill {
     protected void additionally(LivingEntity caster, LivingEntity target) {
         final ICombatCapability cap = CombatData.getCap(target);
         if (cap.getStaggerCount() > 0) {
-            cap.setStaggerTime(cap.getStaggerTime() + CombatConfig.staggerDurationMin);
+            cap.setStaggerTime(cap.getStaggerTime() + CombatConfig.staggerDuration);
             cap.setStaggerCount(cap.getStaggerCount() + CombatConfig.staggerHits);
         }
     }

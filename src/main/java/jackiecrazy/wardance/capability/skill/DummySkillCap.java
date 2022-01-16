@@ -1,6 +1,7 @@
 package jackiecrazy.wardance.capability.skill;
 
 import jackiecrazy.wardance.skill.Skill;
+import jackiecrazy.wardance.skill.SkillCategory;
 import jackiecrazy.wardance.skill.SkillCooldownData;
 import jackiecrazy.wardance.skill.SkillData;
 import net.minecraft.nbt.CompoundNBT;
@@ -60,6 +61,11 @@ public class DummySkillCap implements ISkillCapability {
     }
 
     @Override
+    public boolean isCategoryActive(SkillCategory s) {
+        return false;
+    }
+
+    @Override
     public boolean isTagActive(String tag) {
         return false;
     }
@@ -115,8 +121,8 @@ public class DummySkillCap implements ISkillCapability {
     }
 
     @Override
-    public Skill getEquippedVariation(Skill base) {
-        return base;
+    public Skill getEquippedVariation(SkillCategory base) {
+        return null;
     }
 
     @Override

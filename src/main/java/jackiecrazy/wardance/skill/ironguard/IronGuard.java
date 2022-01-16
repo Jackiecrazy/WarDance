@@ -5,14 +5,12 @@ import jackiecrazy.wardance.capability.skill.CasterData;
 import jackiecrazy.wardance.config.CombatConfig;
 import jackiecrazy.wardance.event.ParryEvent;
 import jackiecrazy.wardance.event.ProjectileParryEvent;
-import jackiecrazy.wardance.skill.ProcPoints;
-import jackiecrazy.wardance.skill.Skill;
-import jackiecrazy.wardance.skill.SkillData;
-import jackiecrazy.wardance.skill.WarSkills;
+import jackiecrazy.wardance.skill.*;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.tags.Tag;
 import net.minecraftforge.eventbus.api.Event;
 
+import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.Arrays;
 import java.util.HashSet;
@@ -35,10 +33,10 @@ public class IronGuard extends Skill {
         return defensive;
     }
 
-    @Nullable
+    @Nonnull
     @Override
-    public Skill getParentSkill() {
-        return this.getClass() == IronGuard.class ? null : WarSkills.IRON_GUARD.get();
+    public SkillCategory getParentSkill() {
+        return SkillCategories.iron_guard;
     }
 
     @Override
@@ -76,7 +74,7 @@ public class IronGuard extends Skill {
     @Override
     public void onSuccessfulProc(LivingEntity caster, SkillData stats, @Nullable LivingEntity target, Event procPoint) {
         if (procPoint instanceof ParryEvent && ((ParryEvent) procPoint).canParry() && ((ParryEvent) procPoint).getPostureConsumption() > 0) {
-            if (!CasterData.getCap(((ParryEvent) procPoint).getAttacker()).isSkillActive(WarSkills.HEAVY_BLOW.get()))
+            if (!CasterData.getCap(((ParryEvent) procPoint).getAttacker()).isCategoryActive(SkillCategories.heavy_blow))
                 CombatData.getCap(((ParryEvent) procPoint).getAttacker()).consumePosture(caster, ((ParryEvent) procPoint).getPostureConsumption());
             ((ParryEvent) procPoint).setPostureConsumption(0);
             markUsed(caster);

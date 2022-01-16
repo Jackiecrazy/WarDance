@@ -15,6 +15,7 @@ import net.minecraft.util.math.vector.Vector3d;
 import net.minecraftforge.event.entity.living.LivingHurtEvent;
 import net.minecraftforge.eventbus.api.Event;
 
+import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.awt.*;
 import java.util.Arrays;
@@ -86,10 +87,10 @@ public class Feint extends Skill {
         return false;
     }
 
-    @Nullable
+    @Nonnull
     @Override
-    public Skill getParentSkill() {
-        return this.getClass() == Feint.class ? null : WarSkills.FEINT.get();
+    public SkillCategory getParentSkill() {
+        return SkillCategories.feint;
     }
 
     public static class LastSurprise extends Feint {

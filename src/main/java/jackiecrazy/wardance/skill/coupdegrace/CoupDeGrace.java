@@ -20,7 +20,7 @@ import net.minecraftforge.event.entity.living.LivingAttackEvent;
 import net.minecraftforge.event.entity.living.LivingHurtEvent;
 import net.minecraftforge.eventbus.api.Event;
 
-import javax.annotation.Nullable;
+import javax.annotation.Nonnull;
 import java.awt.*;
 import java.util.Arrays;
 import java.util.HashSet;
@@ -48,10 +48,10 @@ public class CoupDeGrace extends Skill {
         return special;
     }
 
-    @Nullable
+    @Nonnull
     @Override
-    public Skill getParentSkill() {
-        return this.getClass() == CoupDeGrace.class ? null : WarSkills.COUP_DE_GRACE.get();
+    public SkillCategory getParentSkill() {
+        return SkillCategories.coup_de_grace;
     }
 
     @Override

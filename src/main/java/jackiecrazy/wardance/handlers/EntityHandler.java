@@ -187,6 +187,7 @@ public class EntityHandler {
     @SubscribeEvent
     public static void sneak(final LivingEvent.LivingVisibilityEvent e) {
         if (e.getLookingEntity() instanceof LivingEntity && StealthConfig.stealthSystem) {
+            double mult = 1;
             LivingEntity sneaker = e.getEntityLiving(), watcher = (LivingEntity) e.getLookingEntity();
             if (sneaker.getFireTimer() > 0) return;//you're on fire and it's super obvious!
             CombatUtils.StealthData sd = CombatUtils.stealthMap.getOrDefault(watcher.getType().getRegistryName(), CombatUtils.STEALTH);
@@ -194,28 +195,29 @@ public class EntityHandler {
             if (watcher.getAttackingEntity() != sneaker && watcher.getRevengeTarget() != sneaker && watcher.getLastAttackedEntity() != sneaker && (!(watcher instanceof MobEntity) || ((MobEntity) watcher).getAttackTarget() != sneaker)) {
                 double stealth = GeneralUtils.getAttributeValueSafe(sneaker, WarAttributes.STEALTH.get());
                 if (watcher.isPotionActive(Effects.BLINDNESS))
-                    e.modifyVisibility(1f / (watcher.getActivePotionEffect(Effects.BLINDNESS).getAmplifier() + 4));
+                    mult *= (1f / (watcher.getActivePotionEffect(Effects.BLINDNESS).getAmplifier() + 4));
                 if (stealth > 20)
-                    e.modifyVisibility(10 / (stealth - 10));
+                    mult *= (10 / (stealth - 10));
                 if (!sd.isAllSeeing() && !GeneralUtils.isFacingEntity(watcher, sneaker, Math.max(StealthConfig.baseHorizontalDetection, (int) ((20 - stealth) * StealthConfig.anglePerArmor)), Math.max(StealthConfig.baseVerticalDetection, (int) ((20 - stealth) * (20 - stealth)))))
-                    e.modifyVisibility(0.3);
+                    mult *= (0.3);
                 if (!sd.isPerceptive()) {
                     final double speedSq = GeneralUtils.getSpeedSq(sneaker);
-                    e.modifyVisibility(0.5 + MathHelper.sqrt(speedSq) * 2);
+                    mult *= (0.5 + MathHelper.sqrt(speedSq) * 2);
                 }
                 if (!sd.isNightVision() && !watcher.isPotionActive(Effects.NIGHT_VISION) && !sneaker.isPotionActive(Effects.GLOWING)) {
                     World world = sneaker.world;
                     if (world.isAreaLoaded(sneaker.getPosition(), 5) && world.isAreaLoaded(watcher.getPosition(), 5)) {
                         final int light = world.getLight(sneaker.getPosition());
-                        float lightMalus = MathHelper.clamp((13-light) * 0.1f, 0, 1);
+                        float lightMalus = MathHelper.clamp((13 - light) * 0.1f, 0, 1);
                         if (!sd.isDeaf())
                             lightMalus *= Math.min(stealth / 20f, 1f);
-                        e.modifyVisibility(1 - lightMalus);
+                        mult *= (1 - lightMalus);
                     }
                 }
             }
             if (!sd.isAllSeeing() && !watcher.canEntityBeSeen(sneaker))
-                e.modifyVisibility(0.4);
+                mult *= (0.4);
+            e.modifyVisibility(Math.min(mult, 1));
         }
     }
 
@@ -272,8 +274,8 @@ public class EntityHandler {
     @SubscribeEvent
     public static void nigerundayo(final PotionEvent.PotionAddedEvent e) {
         if (e.getPotionEffect().getPotion() == Effects.BLINDNESS && GeneralConfig.blindness) {
-            if(e.getEntityLiving() instanceof MobEntity)
-            ((MobEntity) e.getEntityLiving()).setAttackTarget(null);
+            if (e.getEntityLiving() instanceof MobEntity)
+                ((MobEntity) e.getEntityLiving()).setAttackTarget(null);
             e.getEntityLiving().setRevengeTarget(null);
         }
     }

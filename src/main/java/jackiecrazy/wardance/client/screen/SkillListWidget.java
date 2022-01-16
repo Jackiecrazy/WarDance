@@ -2,14 +2,16 @@ package jackiecrazy.wardance.client.screen;
 
 import com.mojang.blaze3d.matrix.MatrixStack;
 import com.mojang.blaze3d.systems.RenderSystem;
-import jackiecrazy.wardance.skill.Skill;
+import jackiecrazy.wardance.skill.SkillCategory;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.AbstractGui;
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.gui.widget.list.ExtendedList;
-import net.minecraft.util.text.*;
+import net.minecraft.util.text.ITextComponent;
+import net.minecraft.util.text.ITextProperties;
+import net.minecraft.util.text.LanguageMap;
 
-public class SkillListWidget extends ExtendedList<SkillListWidget.SkillEntry> {
+public class SkillListWidget extends ExtendedList<SkillListWidget.CategoryEntry> {
     private final int listWidth;
     private SkillSelectionScreen parent;
 
@@ -37,7 +39,7 @@ public class SkillListWidget extends ExtendedList<SkillListWidget.SkillEntry> {
 
     public void refreshList() {
         this.clearEntries();
-        parent.buildSkillList(this::addEntry, mod -> new SkillEntry(mod, this.parent));
+        parent.buildSkillList(this::addEntry, mod -> new CategoryEntry(mod, this.parent));
     }
 
     @Override
@@ -45,22 +47,22 @@ public class SkillListWidget extends ExtendedList<SkillListWidget.SkillEntry> {
         this.parent.renderBackground(mStack);
     }
 
-    public class SkillEntry extends ExtendedList.AbstractListEntry<SkillEntry> {
-        private final Skill s;
+    public class CategoryEntry extends ExtendedList.AbstractListEntry<CategoryEntry> {
+        private final SkillCategory s;
         private SkillSelectionScreen parent;
 
-        public SkillEntry(Skill skill, SkillSelectionScreen sss) {
+        public CategoryEntry(SkillCategory skill, SkillSelectionScreen sss) {
             s = skill;
             parent = sss;
         }
 
-        public Skill getSkill() {
+        public SkillCategory getCategory() {
             return s;
         }
 
         @Override
         public void render(MatrixStack ms, int entryIdx, int top, int left, int entryWidth, int entryHeight, int mouseX, int mouseY, boolean something, float partialTicks) {
-            ITextComponent name = s.baseName();
+            ITextComponent name = s.name();
             //ITextComponent version = new StringTextComponent(stripControlCodes(MavenVersionStringHelper.artifactVersionToString(modInfo.getVersion())));
             //VersionChecker.CheckResult vercheck = VersionChecker.getResult(modInfo);
             FontRenderer font = this.parent.getFontRenderer();

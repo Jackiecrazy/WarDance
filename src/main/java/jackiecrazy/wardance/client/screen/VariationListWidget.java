@@ -35,7 +35,7 @@ public class VariationListWidget extends ExtendedList<VariationListWidget.Variat
     public void refreshList() {
         this.clearEntries();
         if (parent.selectedSkill != null)
-            parent.buildVariationList(parent.selectedSkill.getSkill(), this::addEntry, mod -> new VariationEntry(mod, this.parent));
+            parent.buildVariationList(parent.selectedSkill.getCategory(), this::addEntry, mod -> new VariationEntry(mod, this.parent));
     }
 
     @Override

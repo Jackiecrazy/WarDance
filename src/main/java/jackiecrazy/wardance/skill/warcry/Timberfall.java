@@ -71,6 +71,11 @@ public class Timberfall extends WarCry {
 
     @Override
     public boolean activeTick(LivingEntity caster, SkillData d) {
+        if (d.isCondition()&&d.getDuration() > 0) {
+            d.decrementDuration();
+            if (d.getDuration() <= 0) markUsed(caster);
+            return true;
+        }
         return false;
     }
 }

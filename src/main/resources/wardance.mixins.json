@@ -11,6 +11,7 @@
     "MixinPlayerEntity",
     "MixinShieldDisabler",
     "MixinSoundAlert",
+    "MixinSuppressSwapSound",
     "MixinSweepDurabilitySuppressor",
     "ProjectileImpactMixin"
   ],

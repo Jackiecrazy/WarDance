@@ -2,10 +2,7 @@ package jackiecrazy.wardance.skill.mementomori;
 
 import jackiecrazy.wardance.api.CombatDamageSource;
 import jackiecrazy.wardance.event.AttackMightEvent;
-import jackiecrazy.wardance.skill.ProcPoints;
-import jackiecrazy.wardance.skill.Skill;
-import jackiecrazy.wardance.skill.SkillData;
-import jackiecrazy.wardance.skill.WarSkills;
+import jackiecrazy.wardance.skill.*;
 import jackiecrazy.wardance.utils.GeneralUtils;
 import jackiecrazy.wardance.utils.SkillUtils;
 import jackiecrazy.wardance.utils.TargetingUtils;
@@ -20,6 +17,7 @@ import net.minecraftforge.event.entity.living.LivingDamageEvent;
 import net.minecraftforge.event.entity.living.LivingHealEvent;
 import net.minecraftforge.eventbus.api.Event;
 
+import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.awt.*;
 import java.util.Arrays;
@@ -40,10 +38,10 @@ pound of flesh: active skill. Consumes all your spirit, and until your spirit re
     private final Tag<String> tag = Tag.getTagFromContents(new HashSet<>(Arrays.asList("passive", ProcPoints.recharge_sleep, ProcPoints.change_heals, ProcPoints.on_being_damaged, ProcPoints.attack_might)));
     private final Tag<String> no = Tag.getEmptyTag();
 
-    @Nullable
+    @Nonnull
     @Override
-    public Skill getParentSkill() {
-        return this.getClass() == MementoMori.class ? null : WarSkills.MEMENTO_MORI.get();
+    public SkillCategory getParentSkill() {
+        return SkillCategories.memento_mori;
     }
 
     @Override

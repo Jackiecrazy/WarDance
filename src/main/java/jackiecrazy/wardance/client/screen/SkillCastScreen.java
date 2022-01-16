@@ -31,30 +31,24 @@ public class SkillCastScreen extends Screen {
     private static final ResourceLocation radial = new ResourceLocation(WarDance.MODID, "textures/skill/radialhud.png");
     private static final ResourceLocation cooldown = new ResourceLocation(WarDance.MODID, "textures/skill/blank.png");
     private static final int[] fixedU = {
-            200, 400, 0, 200, 400, 0, 200, 400
+            200, 0, 200, 400, 400
     };
     private static final int[] fixedV = {
-            0, 0, 200, 200, 200, 400, 400, 400
+            0, 200, 200, 200, 0
     };
     private static final int[] iconX = {
-            80,
-            135,
-            156,
-            135,
-            80,
-            35,
-            15,
-            35
+            84,
+            117,
+            117,
+            52,
+            52
     };
     private static final int[] iconY = {
-            15,
-            35,
-            79,
-            132,
-            156,
-            133,
-            79,
-            35
+            84,
+            52,
+            117,
+            117,
+            52
     };
     private static final DecimalFormat formatter = new DecimalFormat("#.#");
     protected final Skill[] elements;
@@ -81,11 +75,16 @@ public class SkillCastScreen extends Screen {
         //get distance
         float centeredx = mouseX - width / 2f;
         float centeredy = mouseY - height / 2f;
-        boolean distance = centeredy * centeredy + centeredx * centeredx > 1100;
-        //get direction
         double angle = Math.toDegrees(MathHelper.atan2(centeredx, -centeredy));
-        if (angle < 0) angle += 360;
-        int index = distance ? (int) Math.floor(((angle + 22.5) / 45) % 8) : -1;
+        if (angle < 45) angle += 720;
+        //at 45/135/215/305 deg, the distance cutoff should be 430, otherwise 700
+        double cutoffy = centeredx > 0 ? 37 - centeredx : centeredx + 37;
+        boolean distance = centeredy > cutoffy;
+        if (centeredy < 0) {
+            cutoffy = centeredx < 0 ? -37 - centeredx : centeredx - 37;
+            distance = cutoffy > centeredy;
+        }
+        int index = distance ? (int) Math.floor((angle / 90) % 4) + 1 : 0;
         matrixStack.push();
         RenderSystem.enableAlphaTest();
         RenderSystem.enableBlend();
@@ -122,13 +121,15 @@ public class SkillCastScreen extends Screen {
                 RenderSystem.color4f(1, 1, 1, 1);
                 matrixStack.pop();
 
-                //cooldown overlay
+                //cooldown overlay TODO mask
                 if (CasterData.getCap(mc.player).isSkillCoolingDown(s)) {
                     matrixStack.push();
+                    //RenderSystem.color4f(1.0F, 1.0F, 1.0F, 1.0F);
+                    //RenderSystem.blendFuncSeparate(GlStateManager.SourceFactor.ZERO, GlStateManager.DestFactor.ONE, GlStateManager.SourceFactor.SRC_COLOR, GlStateManager.DestFactor.ZERO);
+                    //AbstractGui.blit(matrixStack, x + iconX[a], y + iconY[a], 0, 0, 32, 32, 32, 32);
                     float cd = CasterData.getCap(mc.player).getSkillCooldown(s);
                     float cdPerc = cd / CasterData.getCap(mc.player).getMaxSkillCooldown(s);
                     mc.textureManager.bindTexture(cooldown);
-                    RenderSystem.color4f(1.0F, 1.0F, 1.0F, 1.0F);
                     drawCooldownCircle(matrixStack, x + iconX[a], y + iconY[a], cdPerc);
 
                     //cooldown number
@@ -145,10 +146,10 @@ public class SkillCastScreen extends Screen {
                 } else if (CasterData.getCap(mc.player).isSkillActive(s)) {
                     matrixStack.push();
                     int finalA = a;
-                    CasterData.getCap(mc.player).getActiveSkill(s).ifPresent((sd)->{
+                    CasterData.getCap(mc.player).getActiveSkill(s).ifPresent((sd) -> {
                         float cdPerc = sd.getDuration() / sd.getMaxDuration();
                         mc.textureManager.bindTexture(cooldown);
-                        float cd=sd.getDuration();
+                        float cd = sd.getDuration();
                         RenderSystem.color4f(0.4f, 0.7f, 0.4f, 1);
                         drawCooldownCircle(matrixStack, x + iconX[finalA], y + iconY[finalA], cdPerc);
 
@@ -171,7 +172,7 @@ public class SkillCastScreen extends Screen {
         if (index >= 0 && selected != null) {
             String print = selected.getDisplayName(mc.player).getString();
             int yee = mc.fontRenderer.getStringWidth(print);
-            mc.ingameGUI.getFontRenderer().drawString(matrixStack, print, (width - yee) / 2f, height / 2f - 3, selected.getColor().getRGB());
+            //mc.ingameGUI.getFontRenderer().drawString(matrixStack, print, (width - yee) / 2f, height / 2f - 3, selected.getColor().getRGB());
             final Skill.CastStatus castStatus = selected.castingCheck(mc.player);
             if (castStatus != Skill.CastStatus.ALLOWED) {
                 switch (castStatus) {
@@ -195,7 +196,7 @@ public class SkillCastScreen extends Screen {
                         break;
                 }
                 yee = mc.fontRenderer.getStringWidth(print);
-                mc.ingameGUI.getFontRenderer().drawString(matrixStack, print, (width - yee) / 2f, height / 2f + 3, Color.RED.getRGB());
+                //mc.ingameGUI.getFontRenderer().drawString(matrixStack, print, (width - yee) / 2f, height / 2f + 3, Color.RED.getRGB());//TODO reenable?
             }
 
         }
@@ -209,6 +210,7 @@ public class SkillCastScreen extends Screen {
         ms.push();
         RenderSystem.enableAlphaTest();
         RenderSystem.enableBlend();
+        //RenderSystem.blendFunc(GlStateManager.SourceFactor.DST_ALPHA, GlStateManager.DestFactor.ONE_MINUS_DST_ALPHA);
         Minecraft.getInstance().textureManager.bindTexture(cooldown);
         if (v <= 0) return; // nothing to be drawn
         int x2 = x + 32, y2 = y + 32; // bottom-right corner

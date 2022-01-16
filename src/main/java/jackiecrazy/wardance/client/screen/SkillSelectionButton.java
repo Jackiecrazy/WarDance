@@ -31,17 +31,13 @@ public abstract class SkillSelectionButton extends ImageButton {
 
     protected void applySlotTint() {
         if (getParentSelection() != null) {
-            if (getParentSelection() == getSkill())
+            if (getParentSelection() == getSkill())//is the skill, highlight
                 RenderSystem.color4f(173 / 255f, 216 / 255f, 230 / 255f, 1);
-            else if (getParentSelection().isFamily(s))
+            else if (getParentSelection().isFamily(s))//is family, cannot equip
                 RenderSystem.color4f(220 / 255f, 20 / 255f, 60 / 255f, 1);
-            else if (getParentSelection().isPassive(Minecraft.getInstance().player) != isPassive)
+            else if (getParentSelection().isPassive(Minecraft.getInstance().player) != isPassive)//passive/active slot mixup
                 RenderSystem.color4f(230 / 255f, 110 / 255f, 0 / 255f, 1);
-//            else if (getParentSelection().getParentSkill() != null && getSkill() != null && (getParentSelection().getParentSkill() == getSkill() || getParentSelection().getParentSkill() == getSkill().getParentSkill()))
-//                RenderSystem.color4f(220 / 255f, 20 / 255f, 60 / 255f, 1);
-//            else if (getSkill() != null && getSkill().getParentSkill() != null && (getSkill().getParentSkill() == getParentSelection() || getSkill().getParentSkill() == getParentSelection().getParentSkill()))
-//                RenderSystem.color4f(220 / 255f, 20 / 255f, 60 / 255f, 1);
-            else if (!getParentSelection().isCompatibleWith(s, Minecraft.getInstance().player))
+            else if (!getParentSelection().isCompatibleWith(s, Minecraft.getInstance().player))//incompatibility
                 RenderSystem.color4f(200 / 255f, 160 / 255f, 0 / 255f, 1);
         }
     }
