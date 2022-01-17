@@ -115,7 +115,7 @@ public class Hex extends Skill {
 
     @Nonnull
     @Override
-    public SkillCategory getParentSkill() {
+    public SkillCategory getParentCategory() {
         return SkillCategories.hex;
     }
 
@@ -143,7 +143,7 @@ public class Hex extends Skill {
     @Override
     public SkillData onMarked(LivingEntity caster, LivingEntity target, SkillData sd, @Nullable SkillData existing) {
         final ModifiableAttributeInstance luck = target.getAttribute(Attributes.LUCK);
-        if (luck != null && getParentSkill() == null) {
+        if (luck != null && getParentCategory() == null) {
             luck.removeModifier(HEX);
             luck.applyNonPersistentModifier(HEX);
         }

@@ -56,7 +56,7 @@ public class WarCry extends Skill {
 
     @Nonnull
     @Override
-    public SkillCategory getParentSkill() {
+    public SkillCategory getParentCategory() {
         return SkillCategories.war_cry;
     }
 
@@ -83,7 +83,7 @@ public class WarCry extends Skill {
     }
 
     protected void evoke(LivingEntity caster) {
-        if (getParentSkill() == null) {
+        if (getParentCategory() == null) {
             final float might = CombatData.getCap(caster).getMight();
             caster.addPotionEffect(new EffectInstance(Effects.REGENERATION, getDuration(might)));
             if (might > 5) {

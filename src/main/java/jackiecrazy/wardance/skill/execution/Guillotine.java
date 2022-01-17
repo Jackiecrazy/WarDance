@@ -26,7 +26,6 @@ import net.minecraftforge.event.entity.living.LivingHurtEvent;
 import net.minecraftforge.eventbus.api.Event;
 
 import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 import java.awt.*;
 import java.util.Arrays;
 import java.util.HashSet;
@@ -62,7 +61,7 @@ Onslaught: casts heavy blow before every attack (this is a lot easier)
 
     @Nonnull
     @Override
-    public SkillCategory getParentSkill() {
+    public SkillCategory getParentCategory() {
         return SkillCategories.guillotine;
     }
 
@@ -122,7 +121,7 @@ Onslaught: casts heavy blow before every attack (this is a lot easier)
 
     protected float execute(LivingHurtEvent e) {
         final float life = e.getEntityLiving().getHealth() / 5;
-        if (this != WarSkills.GUILLOTINE.get())
+        if (this != WarSkills.AMPUTATION.get())
             e.getEntityLiving().setHealth(e.getEntityLiving().getHealth() - life);
         e.getSource().setDamageBypassesArmor().setDamageIsAbsolute();
         CombatData.getCap(e.getEntityLiving()).decrementStaggerTime(CombatData.getCap(e.getEntityLiving()).getStaggerTime());

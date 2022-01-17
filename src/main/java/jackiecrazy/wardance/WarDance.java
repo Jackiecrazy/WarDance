@@ -117,7 +117,7 @@ public class WarDance {
         ClientRegistry.registerKeyBinding(Keybinds.COMBAT);
         ClientRegistry.registerKeyBinding(Keybinds.CAST);
         ClientRegistry.registerKeyBinding(Keybinds.SELECT);
-        ClientRegistry.registerKeyBinding(Keybinds.QUICKCAST);
+        ClientRegistry.registerKeyBinding(Keybinds.BINDCAST);
         ClientRegistry.registerKeyBinding(Keybinds.PARRY);
     }
 

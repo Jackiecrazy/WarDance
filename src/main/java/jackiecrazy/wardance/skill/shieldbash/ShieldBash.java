@@ -16,7 +16,6 @@ import net.minecraftforge.event.entity.living.LivingAttackEvent;
 import net.minecraftforge.eventbus.api.Event;
 
 import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 import java.awt.*;
 import java.util.Arrays;
 import java.util.HashSet;
@@ -42,7 +41,7 @@ public class ShieldBash extends Skill {
 
     @Nonnull
     @Override
-    public SkillCategory getParentSkill() {
+    public SkillCategory getParentCategory() {
         return SkillCategories.shield_bash;
     }
 
@@ -55,7 +54,7 @@ public class ShieldBash extends Skill {
     public boolean onCast(LivingEntity caster) {
         activate(caster, 40);
         CombatData.getCap(caster).consumeSpirit(spiritConsumption(caster));
-        if (getParentSkill() == null) {
+        if (getParentCategory() == null) {
             if (CombatUtils.isShield(caster, caster.getHeldItemMainhand()))
                 CombatData.getCap(caster).setHandBind(Hand.MAIN_HAND, 0);
             if (CombatUtils.isShield(caster, caster.getHeldItemOffhand()))

@@ -50,7 +50,7 @@ public class CoupDeGrace extends Skill {
 
     @Nonnull
     @Override
-    public SkillCategory getParentSkill() {
+    public SkillCategory getParentCategory() {
         return SkillCategories.coup_de_grace;
     }
 

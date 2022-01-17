@@ -35,7 +35,7 @@ public class IronGuard extends Skill {
 
     @Nonnull
     @Override
-    public SkillCategory getParentSkill() {
+    public SkillCategory getParentCategory() {
         return SkillCategories.iron_guard;
     }
 
@@ -79,7 +79,7 @@ public class IronGuard extends Skill {
             ((ParryEvent) procPoint).setPostureConsumption(0);
             markUsed(caster);
         }
-        if (procPoint instanceof ProjectileParryEvent && getParentSkill() == null) {
+        if (procPoint instanceof ProjectileParryEvent && getParentCategory() == null) {
             ((ProjectileParryEvent) procPoint).setReturnVec(((ProjectileParryEvent) procPoint).getProjectile().getMotion().inverse());
             ((ProjectileParryEvent) procPoint).setPostureConsumption(0);
             markUsed(caster);

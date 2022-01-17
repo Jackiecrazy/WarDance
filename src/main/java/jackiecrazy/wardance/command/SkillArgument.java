@@ -32,7 +32,7 @@ public class SkillArgument implements ArgumentType<Skill> {
                             GameRegistry.findRegistry(Skill.class).getValues().stream(),
                             builder, Skill::getRegistryName, (type) -> new TranslationTextComponent(
                                     Util.makeTranslationKey("skill", type.getRegistryName()))));
-    private static final Collection<String> EXAMPLES = Stream.of(WarSkills.IRON_GUARD.get(), WarSkills.HEAVY_BLOW.get()).map((worldKey) -> worldKey.getRegistryName().toString()).collect(Collectors.toList());
+    private static final Collection<String> EXAMPLES = Stream.of(WarSkills.RETURN_TO_SENDER.get(), WarSkills.VITAL_STRIKE.get()).map((worldKey) -> worldKey.getRegistryName().toString()).collect(Collectors.toList());
     private static final DynamicCommandExceptionType INVALID_SKILL_EXCEPTION = new DynamicCommandExceptionType((worldKey) -> new TranslationTextComponent("argument.skill.invalid", worldKey));
 
     public static SkillArgument skill() {

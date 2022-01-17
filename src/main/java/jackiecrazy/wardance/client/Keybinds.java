@@ -22,6 +22,7 @@ import net.minecraftforge.client.settings.KeyModifier;
 import net.minecraftforge.eventbus.api.EventPriority;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
+import org.lwjgl.glfw.GLFW;
 
 @Mod.EventBusSubscriber(value = Dist.CLIENT, modid = WarDance.MODID)
 public class Keybinds {
@@ -29,7 +30,7 @@ public class Keybinds {
 
         @Override
         public boolean isActive() {
-            return CombatData.getCap(Minecraft.getInstance().player).isCombatMode() && !KeyConflictContext.GUI.isActive();
+            return Minecraft.getInstance().player != null && CombatData.getCap(Minecraft.getInstance().player).isCombatMode() && !KeyConflictContext.GUI.isActive();
         }
 
         @Override
@@ -37,11 +38,11 @@ public class Keybinds {
             return other != KeyConflictContext.GUI;
         }
     };
-    public static final KeyBinding COMBAT = new KeyBinding("wardance.combat", KeyConflictContext.IN_GAME, KeyModifier.SHIFT, InputMappings.Type.KEYSYM, 82, "key.categories.gameplay");
-    public static final KeyBinding CAST = new KeyBinding("wardance.skill", IN_COMBAT, InputMappings.Type.KEYSYM, 82, "key.categories.gameplay");
-    public static final KeyBinding QUICKCAST = new KeyBinding("wardance.quickSkill", IN_COMBAT, InputMappings.Type.MOUSE, 2, "key.categories.gameplay");
-    public static final KeyBinding SELECT = new KeyBinding("wardance.selectSkill", KeyConflictContext.IN_GAME, InputMappings.Type.KEYSYM, 86, "key.categories.gameplay");
-    public static final KeyBinding PARRY = new KeyBinding("wardance.parry", KeyConflictContext.IN_GAME, InputMappings.Type.KEYSYM, 18, "key.categories.gameplay");
+    public static final KeyBinding COMBAT = new KeyBinding("wardance.combat", KeyConflictContext.IN_GAME, KeyModifier.SHIFT, InputMappings.Type.KEYSYM, GLFW.GLFW_KEY_R, "key.categories.gameplay");
+    public static final KeyBinding CAST = new KeyBinding("wardance.skill", IN_COMBAT, InputMappings.Type.KEYSYM, GLFW.GLFW_KEY_R, "key.categories.gameplay");
+    public static final KeyBinding BINDCAST = new KeyBinding("wardance.bindCast", IN_COMBAT, InputMappings.Type.MOUSE, GLFW.GLFW_MOUSE_BUTTON_MIDDLE, "key.categories.gameplay");
+    public static final KeyBinding SELECT = new KeyBinding("wardance.selectSkill", KeyConflictContext.IN_GAME, InputMappings.Type.KEYSYM, GLFW.GLFW_KEY_V, "key.categories.gameplay");
+    public static final KeyBinding PARRY = new KeyBinding("wardance.parry", KeyConflictContext.IN_GAME, InputMappings.Type.KEYSYM, GLFW.GLFW_KEY_LEFT_ALT, "key.categories.gameplay");
     public static Skill quick = null;
 
     @SubscribeEvent(priority = EventPriority.HIGHEST)
@@ -60,7 +61,7 @@ public class Keybinds {
         if (SELECT.getKeyConflictContext().isActive() && SELECT.isPressed() && mc.player.isAlive()) {
             mc.displayGuiScreen(new SkillSelectionScreen());
         }
-        if (quick != null && QUICKCAST.getKeyConflictContext().isActive() && QUICKCAST.isPressed() && mc.player.isAlive()) {
+        if (BINDCAST.getKeyConflictContext().isActive() && BINDCAST.isPressed() && mc.player.isAlive()) {
             CombatChannel.INSTANCE.sendToServer(new CastSkillPacket(quick.getRegistryName()));
         }
     }

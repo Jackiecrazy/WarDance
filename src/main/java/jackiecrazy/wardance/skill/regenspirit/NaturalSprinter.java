@@ -51,7 +51,7 @@ apathy: your max spirit is 4, your spirit instantly refills after cooldown, you 
 
     @Nonnull
     @Override
-    public SkillCategory getParentSkill() {
+    public SkillCategory getParentCategory() {
         return SkillCategories.morale;
     }
 

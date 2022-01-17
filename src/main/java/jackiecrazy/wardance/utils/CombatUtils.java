@@ -244,12 +244,12 @@ public class CombatUtils {
 
     public static boolean isShield(LivingEntity e, ItemStack stack) {
         if (stack == null) return false;
-        return combatList.containsKey(stack.getItem()) && (combatList.getOrDefault(stack.getItem(), DEFAULTMELEE).isShield || CasterData.getCap(e).getActiveSkill(WarSkills.IRON_GUARD.get()).isPresent());//stack.isShield(e);
+        return combatList.containsKey(stack.getItem()) && (combatList.getOrDefault(stack.getItem(), DEFAULTMELEE).isShield || CasterData.getCap(e).getActiveSkill(WarSkills.RETURN_TO_SENDER.get()).isPresent());//stack.isShield(e);
     }
 
     public static boolean isWeapon(@Nullable LivingEntity e, ItemStack stack) {
         if (stack == null) return false;
-        if (e != null && CasterData.getCap(e).isSkillActive(WarSkills.SHIELD_BASH.get()))
+        if (e != null && CasterData.getCap(e).isSkillActive(WarSkills.DETERMINATION.get()))
             return combatList.containsKey(stack.getItem());
         return combatList.containsKey(stack.getItem()) && !combatList.getOrDefault(stack.getItem(), DEFAULTMELEE).isShield;//stack.getItem() instanceof SwordItem || stack.getItem() instanceof AxeItem;
     }
@@ -354,7 +354,7 @@ public class CombatUtils {
         final float cooldownSq = semeCap.getCachedCooldown() * semeCap.getCachedCooldown();
         final double period = 20.0D / (seme.getAttribute(Attributes.ATTACK_SPEED).getValue() + 0.5d);//+0.5 makes sure heavies don't scale forever, light ones are still puny
         float might = cooldownSq * cooldownSq * magicScale * (float) period * (float) period / magicNumber;
-        might *= (1 + (semeCap.getCombo() / 10f));//combo bonus
+        might *= (0.5 + (semeCap.getCombo() / 10f));//combo bonus
         float weakness = 1;
         if (seme.isPotionActive(Effects.WEAKNESS))
             for (int foo = 0; foo < seme.getActivePotionEffect(Effects.WEAKNESS).getAmplifier() + 1; foo++) {

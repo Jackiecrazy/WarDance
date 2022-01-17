@@ -16,7 +16,6 @@ import net.minecraftforge.event.entity.living.LivingHurtEvent;
 import net.minecraftforge.eventbus.api.Event;
 
 import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 import java.awt.*;
 import java.util.Arrays;
 import java.util.HashSet;
@@ -55,7 +54,7 @@ public class Feint extends Skill {
     @Override
     public void onEffectEnd(LivingEntity caster, SkillData stats) {
         setCooldown(caster, 3);
-        if (getParentSkill() == null) {
+        if (getParentCategory() == null) {
             CombatUtils.setHandCooldown(caster, stats.isCondition() ? Hand.MAIN_HAND : Hand.OFF_HAND, 1, true);
         }
     }
@@ -68,7 +67,7 @@ public class Feint extends Skill {
                 CombatUtils.setHandCooldown(target, Hand.MAIN_HAND, 0, false);
                 CombatUtils.setHandCooldown(target, Hand.OFF_HAND, 0, false);
             } else {
-                float above = getParentSkill() == null ? 0 : 0.1f;
+                float above = getParentCategory() == null ? 0 : 0.1f;
                 CombatData.getCap(target).consumePosture(caster, ((ParryEvent) procPoint).getAttackDamage(), above);
                 CombatData.getCap(target).consumePosture(caster, ((ParryEvent) procPoint).getPostureConsumption(), above);
                 ((ParryEvent) procPoint).setPostureConsumption(0);
@@ -89,7 +88,7 @@ public class Feint extends Skill {
 
     @Nonnull
     @Override
-    public SkillCategory getParentSkill() {
+    public SkillCategory getParentCategory() {
         return SkillCategories.feint;
     }
 

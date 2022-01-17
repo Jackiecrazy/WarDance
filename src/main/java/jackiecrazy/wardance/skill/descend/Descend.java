@@ -68,7 +68,7 @@ Assassinate: Stab rank increased by 1 for this attack, instantly stagger a distr
 
     @Nonnull
     @Override
-    public SkillCategory getParentSkill() {
+    public SkillCategory getParentCategory() {
         return SkillCategories.descend;
     }
 
@@ -140,7 +140,7 @@ Assassinate: Stab rank increased by 1 for this attack, instantly stagger a distr
 
     protected void spooketh(LivingEntity caster, LivingEntity target, float posDiff) {
         CombatData.getCap(target).consumePosture(caster, posDiff * 2, 0, true);
-        if (getParentSkill() == null) target.attackEntityFrom(new CombatDamageSource("fallingBlock",caster).setDamageTyping(CombatDamageSource.TYPE.PHYSICAL).setProcSkillEffects(true).setProcAttackEffects(true), posDiff);
+        if (getParentCategory() == null) target.attackEntityFrom(new CombatDamageSource("fallingBlock",caster).setDamageTyping(CombatDamageSource.TYPE.PHYSICAL).setProcSkillEffects(true).setProcAttackEffects(true), posDiff);
     }
 
     public static class LightsOut extends Descend {

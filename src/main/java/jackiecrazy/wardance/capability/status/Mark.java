@@ -69,7 +69,7 @@ public class Mark implements IMark {
     @Override
     public boolean isMarked(Skill skill) {
         if (statuus.containsKey(skill)) return true;
-        if (skill.getParentSkill() == null)
+        if (skill.getParentCategory() == null)
             for (Skill s : statuus.keySet()) {
                 if (s.isFamily(skill)) return true;
             }

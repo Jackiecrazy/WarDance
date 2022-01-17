@@ -14,7 +14,6 @@ import net.minecraftforge.event.entity.living.LivingAttackEvent;
 import net.minecraftforge.eventbus.api.Event;
 
 import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 import java.awt.*;
 import java.util.Arrays;
 import java.util.HashSet;
@@ -25,7 +24,7 @@ public class Grapple extends Skill {
 
     @Nonnull
     @Override
-    public SkillCategory getParentSkill() {
+    public SkillCategory getParentCategory() {
         return SkillCategories.grapple;
     }
 
@@ -63,7 +62,7 @@ public class Grapple extends Skill {
 
     protected void performEffect(LivingEntity caster, LivingEntity target) {
         caster.world.playSound(null, target.getPosX(), target.getPosY(), target.getPosZ(), SoundEvents.BLOCK_BARREL_OPEN, SoundCategory.PLAYERS, 0.3f + WarDance.rand.nextFloat() * 0.5f, 0.75f + WarDance.rand.nextFloat() * 0.5f);
-        if (getParentSkill() == null) CombatData.getCap(target).consumePosture(caster, 11, 0, true);
+        if (getParentCategory() == null) CombatData.getCap(target).consumePosture(caster, 11, 0, true);
         else CombatData.getCap(target).consumePosture(caster, 8, 0, true);
 
     }

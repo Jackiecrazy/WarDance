@@ -1,11 +1,14 @@
 package jackiecrazy.wardance.skill.heavyblow;
 
 import jackiecrazy.wardance.capability.resources.CombatData;
+import jackiecrazy.wardance.capability.skill.CasterData;
 import jackiecrazy.wardance.event.ParryEvent;
-import jackiecrazy.wardance.skill.SkillData;
 import jackiecrazy.wardance.skill.ProcPoints;
+import jackiecrazy.wardance.skill.SkillCategories;
+import jackiecrazy.wardance.skill.SkillData;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.tags.Tag;
+import net.minecraftforge.event.entity.player.CriticalHitEvent;
 import net.minecraftforge.eventbus.api.Event;
 
 import java.awt.*;
@@ -36,9 +39,15 @@ public class Poise extends HeavyBlow {
 
     @Override
     public void onSuccessfulProc(LivingEntity caster, SkillData stats, LivingEntity target, Event procPoint) {
-        super.onSuccessfulProc(caster, stats, target, procPoint);
-        if (procPoint instanceof ParryEvent && ((ParryEvent) procPoint).getDefendingHand()!=null && ((ParryEvent) procPoint).getEntityLiving() == caster) {
-            ((ParryEvent) procPoint).setPostureConsumption(0);
+        if (procPoint instanceof ParryEvent && stats.isCondition() && ((ParryEvent) procPoint).getDefendingHand() != null && ((ParryEvent) procPoint).getAttacker() == caster) {
+            if (CasterData.getCap(target).isCategoryActive(SkillCategories.iron_guard)) return;
+            CombatData.getCap(target).setHandBind(((ParryEvent) procPoint).getDefendingHand(), 30);
+            markUsed(caster);
+        } else if (procPoint instanceof CriticalHitEvent && ((CriticalHitEvent) procPoint).isVanillaCritical() && CombatData.getCap(caster).consumeMight(mightConsumption(caster))) {
+            stats.flagCondition(true);
+            ((CriticalHitEvent) procPoint).setDamageModifier(1 + 0.7f * CombatData.getCap(caster).getPosture() / CombatData.getCap(caster).getMaxPosture());
+            CombatData.getCap(caster).setPostureGrace(0);
+            markUsed(caster);
         }
     }
 }

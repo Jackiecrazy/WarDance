@@ -103,7 +103,7 @@ public class SkillCapability implements ISkillCapability {
     @Override
     public boolean isCategoryActive(SkillCategory skill) {
         for (Skill s : new ArrayList<>(activeSkills.keySet())) {
-            if (s.getParentSkill().equals(skill)) return true;
+            if (s.getParentCategory().equals(skill)) return true;
         }
         return false;
     }
@@ -197,7 +197,7 @@ public class SkillCapability implements ISkillCapability {
     @Override
     public Skill getEquippedVariation(SkillCategory other) {
         for (Skill k : new ArrayList<>(equippedSkill))
-            if (k != null && k.getParentSkill() == other) return k;
+            if (k != null && k.getParentCategory() == other) return k;
         return null;
     }
 

@@ -1,6 +1,7 @@
 package jackiecrazy.wardance.client.screen;
 
 import com.mojang.blaze3d.matrix.MatrixStack;
+import com.mojang.blaze3d.platform.GlStateManager;
 import com.mojang.blaze3d.systems.RenderSystem;
 import jackiecrazy.wardance.WarDance;
 import jackiecrazy.wardance.capability.skill.CasterData;
@@ -96,7 +97,7 @@ public class SkillCastScreen extends Screen {
         RenderSystem.color4f(0.6f, 0.6f, 0.6f, 1);
         blit(matrixStack, x, y, 0, 0, 200, 200, 600, 600);
         RenderSystem.color4f(1, 1, 1, 1);
-        for (int a = 0; a < 8; a++) {
+        for (int a = 0; a < 5; a++) {
             if (elements[a] != null) {
                 Skill s = elements[a];
 
@@ -121,16 +122,19 @@ public class SkillCastScreen extends Screen {
                 RenderSystem.color4f(1, 1, 1, 1);
                 matrixStack.pop();
 
-                //cooldown overlay TODO mask
+                //cooldown overlay and mask
                 if (CasterData.getCap(mc.player).isSkillCoolingDown(s)) {
                     matrixStack.push();
-                    //RenderSystem.color4f(1.0F, 1.0F, 1.0F, 1.0F);
-                    //RenderSystem.blendFuncSeparate(GlStateManager.SourceFactor.ZERO, GlStateManager.DestFactor.ONE, GlStateManager.SourceFactor.SRC_COLOR, GlStateManager.DestFactor.ZERO);
-                    //AbstractGui.blit(matrixStack, x + iconX[a], y + iconY[a], 0, 0, 32, 32, 32, 32);
+                    //overlay mask
+                    RenderSystem.enableBlend();
+                    RenderSystem.blendFuncSeparate(GlStateManager.SourceFactor.ZERO, GlStateManager.DestFactor.ONE, GlStateManager.SourceFactor.ONE_MINUS_SRC_ALPHA, GlStateManager.DestFactor.ZERO);
+                    AbstractGui.blit(matrixStack, x + iconX[a], y + iconY[a], 0, 0, 32, 32, 32, 32);
+                    //cooldown spinny
                     float cd = CasterData.getCap(mc.player).getSkillCooldown(s);
                     float cdPerc = cd / CasterData.getCap(mc.player).getMaxSkillCooldown(s);
                     mc.textureManager.bindTexture(cooldown);
                     drawCooldownCircle(matrixStack, x + iconX[a], y + iconY[a], cdPerc);
+                    RenderSystem.disableBlend();
 
                     //cooldown number
                     String num = String.valueOf((int) cd);
@@ -147,6 +151,11 @@ public class SkillCastScreen extends Screen {
                     matrixStack.push();
                     int finalA = a;
                     CasterData.getCap(mc.player).getActiveSkill(s).ifPresent((sd) -> {
+                        RenderSystem.enableBlend();
+                        //active mask
+                        RenderSystem.blendFuncSeparate(GlStateManager.SourceFactor.ZERO, GlStateManager.DestFactor.ONE, GlStateManager.SourceFactor.ONE_MINUS_SRC_ALPHA, GlStateManager.DestFactor.ZERO);
+                        AbstractGui.blit(matrixStack, x + iconX[finalA], y + iconY[finalA], 0, 0, 32, 32, 32, 32);
+                        //active spinny
                         float cdPerc = sd.getDuration() / sd.getMaxDuration();
                         mc.textureManager.bindTexture(cooldown);
                         float cd = sd.getDuration();
@@ -210,7 +219,7 @@ public class SkillCastScreen extends Screen {
         ms.push();
         RenderSystem.enableAlphaTest();
         RenderSystem.enableBlend();
-        //RenderSystem.blendFunc(GlStateManager.SourceFactor.DST_ALPHA, GlStateManager.DestFactor.ONE_MINUS_DST_ALPHA);
+        RenderSystem.blendFunc(GlStateManager.SourceFactor.ONE_MINUS_SRC_ALPHA, GlStateManager.DestFactor.DST_ALPHA);
         Minecraft.getInstance().textureManager.bindTexture(cooldown);
         if (v <= 0) return; // nothing to be drawn
         int x2 = x + 32, y2 = y + 32; // bottom-right corner

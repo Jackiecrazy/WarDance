@@ -35,11 +35,6 @@ public class Silencer extends HeavyBlow {
     }
 
     @Override
-    public Tag<String> getTags(LivingEntity caster) {
-        return passive;
-    }
-
-    @Override
     public Tag<String> getProcPoints(LivingEntity caster) {
         return tag;
     }
@@ -82,15 +77,6 @@ public class Silencer extends HeavyBlow {
     public void onEffectEnd(LivingEntity caster, SkillData stats) {
         if (!stats.isCondition())
             setCooldown(caster, 5);
-    }
-
-    @Override
-    public boolean equippedTick(LivingEntity caster, STATE state) {
-        if (state == STATE.INACTIVE) {
-            activate(caster, 40);
-            return true;
-        }
-        return super.equippedTick(caster, state);
     }
 
     @Override

@@ -62,7 +62,7 @@ public class Kick extends Skill {
 
     @Nonnull
     @Override
-    public SkillCategory getParentSkill() {
+    public SkillCategory getParentCategory() {
         return SkillCategories.kick;
     }
 

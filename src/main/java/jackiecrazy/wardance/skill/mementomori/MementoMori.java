@@ -18,7 +18,6 @@ import net.minecraftforge.event.entity.living.LivingHealEvent;
 import net.minecraftforge.eventbus.api.Event;
 
 import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 import java.awt.*;
 import java.util.Arrays;
 import java.util.HashSet;
@@ -40,7 +39,7 @@ pound of flesh: active skill. Consumes all your spirit, and until your spirit re
 
     @Nonnull
     @Override
-    public SkillCategory getParentSkill() {
+    public SkillCategory getParentCategory() {
         return SkillCategories.memento_mori;
     }
 
@@ -77,7 +76,7 @@ pound of flesh: active skill. Consumes all your spirit, and until your spirit re
     @Override
     public void onSuccessfulProc(LivingEntity caster, SkillData stats, LivingEntity target, Event procPoint) {
         //on attack might event, check health percentage and increment
-        if (procPoint instanceof AttackMightEvent && getParentSkill() == null) {
+        if (procPoint instanceof AttackMightEvent && getParentCategory() == null) {
             float healthPercentage = caster.getHealth() / GeneralUtils.getMaxHealthBeforeWounding(caster);
             ((AttackMightEvent) procPoint).setQuantity(((AttackMightEvent) procPoint).getQuantity() * (3 - 2 * healthPercentage));
         }

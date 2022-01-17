@@ -14,8 +14,8 @@ import java.util.Arrays;
 import java.util.HashSet;
 
 public class HeavyBlow extends Skill {
-    private final Tag<String> tag = Tag.getTagFromContents(new HashSet<>(Arrays.asList("physical", ProcPoints.disable_shield, ProcPoints.melee, ProcPoints.on_hurt, "boundCast", ProcPoints.normal_attack, ProcPoints.countdown, ProcPoints.modify_crit, ProcPoints.recharge_normal, ProcPoints.on_being_parried)));
-    private final Tag<String> no = makeTag(SkillTags.physical, SkillTags.forced_crit, SkillTags.offensive, SkillTags.disable_shield);
+    private final Tag<String> tag = Tag.getTagFromContents(new HashSet<>(Arrays.asList("physical", ProcPoints.disable_shield, ProcPoints.melee, ProcPoints.on_hurt, "boundCast", ProcPoints.normal_attack, ProcPoints.modify_crit, ProcPoints.recharge_normal, ProcPoints.on_being_parried)));
+    private final Tag<String> tags = makeTag(SkillTags.physical, SkillTags.forced_crit, SkillTags.passive, SkillTags.offensive, SkillTags.disable_shield);
 
     @Override
     public Tag<String> getProcPoints(LivingEntity caster) {
@@ -24,7 +24,7 @@ public class HeavyBlow extends Skill {
 
     @Override
     public Tag<String> getTags(LivingEntity caster) {
-        return no;
+        return passive;
     }
 
     @Override
@@ -34,16 +34,12 @@ public class HeavyBlow extends Skill {
 
     @Nonnull
     @Override
-    public SkillCategory getParentSkill() {
+    public SkillCategory getParentCategory() {
         return SkillCategories.heavy_blow;
     }
 
     @Override
     public boolean onCast(LivingEntity caster) {
-        if (activate(caster, 40)) {
-            CombatData.getCap(caster).consumeMight(mightConsumption(caster));
-            CombatData.getCap(caster).consumeSpirit(spiritConsumption(caster));
-        }
         return true;
     }
 
@@ -64,15 +60,24 @@ public class HeavyBlow extends Skill {
 
     @Override
     public void onSuccessfulProc(LivingEntity caster, SkillData stats, LivingEntity target, Event procPoint) {
-        if (procPoint instanceof ParryEvent && ((ParryEvent) procPoint).getDefendingHand() != null && ((ParryEvent) procPoint).getAttacker() == caster) {
+        if (procPoint instanceof ParryEvent && stats.isCondition() && ((ParryEvent) procPoint).getDefendingHand() != null && ((ParryEvent) procPoint).getAttacker() == caster) {
             if (CasterData.getCap(target).isCategoryActive(SkillCategories.iron_guard)) return;
             CombatData.getCap(target).setHandBind(((ParryEvent) procPoint).getDefendingHand(), 30);
             markUsed(caster);
-        } else if (procPoint instanceof CriticalHitEvent) {
-            procPoint.setResult(Event.Result.ALLOW);
-            if (getParentSkill() == null)
+        } else if (procPoint instanceof CriticalHitEvent && ((CriticalHitEvent) procPoint).isVanillaCritical() && CombatData.getCap(caster).consumeMight(mightConsumption(caster))) {
+            stats.flagCondition(true);
+            if (this == WarSkills.VITAL_STRIKE.get())
                 ((CriticalHitEvent) procPoint).setDamageModifier(((CriticalHitEvent) procPoint).getDamageModifier() * 1.4f);
             markUsed(caster);
         }
+    }
+
+    @Override
+    public boolean equippedTick(LivingEntity caster, STATE state) {
+        if (state == STATE.INACTIVE) {
+            activate(caster, 40);
+            return true;
+        }
+        return super.equippedTick(caster, state);
     }
 }

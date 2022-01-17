@@ -48,12 +48,12 @@ public abstract class Skill extends ForgeRegistryEntry<Skill> {
 
     public Skill() {
         //SkillCategory
-        List<Skill> insert = variationMap.get(getParentSkill());
+        List<Skill> insert = variationMap.get(getParentCategory());
         if (insert == null) {
             insert = new ArrayList<>();
         }
         insert.add(this);
-        variationMap.put(this.getParentSkill(), insert);
+        variationMap.put(this.getParentCategory(), insert);
     }
 
     protected static Tag<String> makeTag(String... stuff) {
@@ -72,7 +72,7 @@ public abstract class Skill extends ForgeRegistryEntry<Skill> {
 
     public boolean isFamily(Skill s) {
         if (s == null) return false;
-        return getParentSkill().equals(s.getParentSkill());
+        return getParentCategory().equals(s.getParentCategory());
     }
 
     public boolean isPassive(LivingEntity caster) {
@@ -80,7 +80,7 @@ public abstract class Skill extends ForgeRegistryEntry<Skill> {
     }
 
     @Nonnull
-    public SkillCategory getParentSkill() {
+    public SkillCategory getParentCategory() {
         return SkillCategories.none;
     }
 
@@ -147,7 +147,7 @@ public abstract class Skill extends ForgeRegistryEntry<Skill> {
     }
 
     public ResourceLocation icon() {
-        return getParentSkill().icon();
+        return getParentCategory().icon();
     }
 
     public Color getColor() {
