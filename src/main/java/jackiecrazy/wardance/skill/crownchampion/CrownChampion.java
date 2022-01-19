@@ -130,7 +130,7 @@ elemental might: +1 burn/snowball/poison/drown damage to targets you have attack
     }
 
     @Override
-    public void onSuccessfulProc(LivingEntity caster, SkillData stats, LivingEntity target, Event procPoint) {
+    public void onProc(LivingEntity caster, Event procPoint, STATE state, SkillData stats, Entity target) {
         if (this.getParentCategory() != null) return;
         int might = (int) CombatData.getCap(caster).getMight() - 1;
         if (procPoint instanceof LivingAttackEvent) {
@@ -151,7 +151,7 @@ elemental might: +1 burn/snowball/poison/drown damage to targets you have attack
         }
 
         @Override
-        public void onSuccessfulProc(LivingEntity caster, SkillData stats, LivingEntity target, Event procPoint) {
+        public void onProc(LivingEntity caster, Event procPoint, STATE state, SkillData stats, Entity target) {
             if (procPoint instanceof AttackMightEvent && CombatUtils.getAwareness(caster, target).equals(CombatUtils.Awareness.UNAWARE))
                 ((AttackMightEvent) procPoint).setQuantity(((AttackMightEvent) procPoint).getQuantity() + 0.5f);
         }
@@ -189,7 +189,7 @@ elemental might: +1 burn/snowball/poison/drown damage to targets you have attack
         }
 
         @Override
-        public void onSuccessfulProc(LivingEntity caster, SkillData pd, LivingEntity target, Event procPoint) {
+        public void onProc(LivingEntity caster, Event procPoint, STATE state, SkillData pd, Entity target) {
             if (procPoint instanceof GainMightEvent) {
                 ((GainMightEvent) procPoint).setQuantity(((GainMightEvent) procPoint).getQuantity() * 3);
                 pd.setArbitraryFloat(pd.getArbitraryFloat() + ((GainMightEvent) procPoint).getQuantity());
@@ -203,7 +203,7 @@ elemental might: +1 burn/snowball/poison/drown damage to targets you have attack
 
     public static class ElementalMight extends CrownChampion {
         @Override
-        public void onSuccessfulProc(LivingEntity caster, SkillData stats, LivingEntity target, Event procPoint) {
+        public void onProc(LivingEntity caster, Event procPoint, STATE state, SkillData stats, Entity target) {
             if (procPoint instanceof LivingAttackEvent)
                 ((LivingAttackEvent) procPoint).getEntityLiving().addPotionEffect(new EffectInstance(WarEffects.VULNERABLE.get(), (int) (CombatData.getCap(caster).getMight() * 20)));
         }

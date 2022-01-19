@@ -5,6 +5,7 @@ import jackiecrazy.wardance.event.ParryEvent;
 import jackiecrazy.wardance.skill.*;
 import jackiecrazy.wardance.utils.CombatUtils;
 import jackiecrazy.wardance.utils.GeneralUtils;
+import net.minecraft.entity.Entity;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.ai.attributes.Attributes;
 import net.minecraft.tags.Tag;
@@ -62,7 +63,7 @@ apathy: your max spirit is 4, your spirit instantly refills after cooldown, you 
     }
 
     @Override
-    public void onSuccessfulProc(LivingEntity caster, SkillData stats, LivingEntity target, Event procPoint) {
+    public void onProc(LivingEntity caster, Event procPoint, STATE state, SkillData stats, Entity target) {
         if (procPoint instanceof CriticalHitEvent) {
             if (CombatUtils.isCrit((CriticalHitEvent) procPoint))
                 CombatData.getCap(caster).addSpirit(1 / (float) GeneralUtils.getAttributeValueHandSensitive(caster, Attributes.ATTACK_SPEED, CombatData.getCap(caster).isOffhandAttack() ? Hand.OFF_HAND : Hand.MAIN_HAND));

@@ -36,7 +36,7 @@ public class WarSkills {
     public static final RegistryObject<Skill> SHATTER = SKILLS.register("shatter", Shatter::new);
     public static final RegistryObject<Skill> STAGGER = SKILLS.register("stagger", Stagger::new);
     public static final RegistryObject<Skill> POISE = SKILLS.register("poise", Poise::new);
-    public static final RegistryObject<Skill> VAULT = SKILLS.register("vault", Vault::new);
+    public static final RegistryObject<Skill> VAULT = SKILLS.register("vault", Leverage::new);
     public static final RegistryObject<Skill> SILENCER = SKILLS.register("silencer", Silencer::new);
     public static final RegistryObject<Skill> RETURN_TO_SENDER = SKILLS.register("return_to_sender", IronGuard::new);
     public static final RegistryObject<Skill> AFTERIMAGE = SKILLS.register("afterimage", Afterimage::new);

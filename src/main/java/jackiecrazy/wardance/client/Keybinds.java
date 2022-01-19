@@ -6,7 +6,7 @@ import jackiecrazy.wardance.capability.resources.ICombatCapability;
 import jackiecrazy.wardance.capability.skill.CasterData;
 import jackiecrazy.wardance.client.screen.SkillCastScreen;
 import jackiecrazy.wardance.client.screen.SkillSelectionScreen;
-import jackiecrazy.wardance.networking.CastSkillPacket;
+import jackiecrazy.wardance.networking.SelectSkillPacket;
 import jackiecrazy.wardance.networking.CombatChannel;
 import jackiecrazy.wardance.networking.CombatModePacket;
 import jackiecrazy.wardance.skill.Skill;
@@ -62,7 +62,7 @@ public class Keybinds {
             mc.displayGuiScreen(new SkillSelectionScreen());
         }
         if (BINDCAST.getKeyConflictContext().isActive() && BINDCAST.isPressed() && mc.player.isAlive()) {
-            CombatChannel.INSTANCE.sendToServer(new CastSkillPacket(quick.getRegistryName()));
+            CombatChannel.INSTANCE.sendToServer(new SelectSkillPacket(quick.getRegistryName()));
         }
     }
 }

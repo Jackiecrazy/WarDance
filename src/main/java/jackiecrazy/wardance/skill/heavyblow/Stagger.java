@@ -5,6 +5,7 @@ import jackiecrazy.wardance.capability.skill.CasterData;
 import jackiecrazy.wardance.event.ParryEvent;
 import jackiecrazy.wardance.skill.SkillCategories;
 import jackiecrazy.wardance.skill.SkillData;
+import net.minecraft.entity.Entity;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.util.Hand;
 import net.minecraftforge.event.entity.player.CriticalHitEvent;
@@ -19,7 +20,7 @@ public class Stagger extends HeavyBlow {
     }
 
     @Override
-    public void onSuccessfulProc(LivingEntity caster, SkillData stats, LivingEntity target, Event procPoint) {
+    public void onProc(LivingEntity caster, Event procPoint, STATE state, SkillData stats, Entity target) {
         if (CasterData.getCap(target).isCategoryActive(SkillCategories.iron_guard)) return;
         if (procPoint instanceof ParryEvent && stats.isCondition() && ((ParryEvent) procPoint).getDefendingHand() != null && ((ParryEvent) procPoint).getAttacker() == caster) {
             if (CasterData.getCap(target).isCategoryActive(SkillCategories.iron_guard)) return;

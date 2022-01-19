@@ -12,6 +12,7 @@ import jackiecrazy.wardance.utils.EffectUtils;
 import jackiecrazy.wardance.utils.GeneralUtils;
 import jackiecrazy.wardance.utils.SkillUtils;
 import jackiecrazy.wardance.utils.TargetingUtils;
+import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.MobEntity;
@@ -100,7 +101,7 @@ Onslaught: casts heavy blow before every attack (this is a lot easier)
     }
 
     @Override
-    public void onSuccessfulProc(LivingEntity caster, SkillData stats, LivingEntity target, Event procPoint) {
+    public void onProc(LivingEntity caster, Event procPoint, STATE state, SkillData stats, Entity target) {
         if (procPoint instanceof LivingHurtEvent) {
             LivingHurtEvent e = (LivingHurtEvent) procPoint;
             if (e.getEntityLiving() == caster) return;
@@ -232,13 +233,13 @@ Onslaught: casts heavy blow before every attack (this is a lot easier)
         }
 
         @Override
-        public void onSuccessfulProc(LivingEntity caster, SkillData stats, LivingEntity target, Event procPoint) {
+        public void onProc(LivingEntity caster, Event procPoint, STATE state, SkillData stats, Entity target) {
             if (procPoint instanceof StaggerEvent && !procPoint.isCanceled()) {
                 ((StaggerEvent) procPoint).setCount(1);
                 ((StaggerEvent) procPoint).setLength(200);
             } else if (procPoint instanceof LivingAttackEvent && CombatData.getCap(target).getStaggerTime() > 0) {
                 procPoint.setCanceled(true);
-            } else super.onSuccessfulProc(caster, stats, target, procPoint);
+            } else super.onProc(caster, procPoint, state, stats, target);
         }
     }
 
@@ -249,19 +250,19 @@ Onslaught: casts heavy blow before every attack (this is a lot easier)
         }
 
         @Override
-        public void onSuccessfulProc(LivingEntity caster, SkillData stats, LivingEntity target, Event procPoint) {
+        public void onProc(LivingEntity caster, Event procPoint, STATE state, SkillData stats, Entity target) {
             if (procPoint instanceof SkillCastEvent) {
                 stats.setArbitraryFloat(stats.getArbitraryFloat() + 1);
                 CombatData.getCap(caster).addSpirit(5);
-            } else super.onSuccessfulProc(caster, stats, target, procPoint);
+            } else super.onProc(caster, procPoint, state, stats, target);
         }
 
         @Override
         protected void performEffect(LivingEntity caster, LivingEntity target, float amount, SkillData s) {
             int buff = 0;
             amount = 50f;
-            if (CasterData.getCap(caster).getActiveSkill(this).isPresent())
-                buff = (int) CasterData.getCap(caster).getActiveSkill(this).get().getArbitraryFloat();
+            if (CasterData.getCap(caster).getSkillData(this).isPresent())
+                buff = (int) CasterData.getCap(caster).getSkillData(this).get().getArbitraryFloat();
 //            Skill[] pastCasts = CasterData.getCap(caster).getPastCasts();
 //            for (Skill s : pastCasts) {
 //                boolean flag = true;

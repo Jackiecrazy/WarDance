@@ -4,6 +4,7 @@ import jackiecrazy.wardance.skill.ProcPoints;
 import jackiecrazy.wardance.skill.SkillData;
 import jackiecrazy.wardance.skill.SkillTags;
 import jackiecrazy.wardance.utils.CombatUtils;
+import net.minecraft.entity.Entity;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.ai.attributes.AttributeModifier;
 import net.minecraft.entity.ai.attributes.Attributes;
@@ -58,13 +59,13 @@ public class FrostFang extends WarCry {
     }
 
     @Override
-    public void onSuccessfulProc(LivingEntity caster, SkillData stats, LivingEntity target, Event procPoint) {
+    public void onProc(LivingEntity caster, Event procPoint, STATE state, SkillData stats, Entity target) {
         if (procPoint instanceof LivingAttackEvent) {
             target.addPotionEffect(new EffectInstance(Effects.SLOWNESS, 60));
             if (CombatUtils.getAwareness(caster, target) == CombatUtils.Awareness.ALERT) {
                 target.addPotionEffect(new EffectInstance(Effects.BLINDNESS, 20));
             }
         }
-        super.onSuccessfulProc(caster, stats, target, procPoint);
+        super.onProc(caster, procPoint, state, stats, target);
     }
 }

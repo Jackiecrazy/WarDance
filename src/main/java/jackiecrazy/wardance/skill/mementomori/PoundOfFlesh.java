@@ -6,6 +6,7 @@ import jackiecrazy.wardance.event.ParryEvent;
 import jackiecrazy.wardance.skill.SkillData;
 import jackiecrazy.wardance.skill.ProcPoints;
 import jackiecrazy.wardance.utils.GeneralUtils;
+import net.minecraft.entity.Entity;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.tags.Tag;
 import net.minecraftforge.event.entity.living.LivingHurtEvent;
@@ -41,7 +42,7 @@ public class PoundOfFlesh extends MementoMori {
     }
 
     @Override
-    public void onSuccessfulProc(LivingEntity caster, SkillData stats, LivingEntity target, Event procPoint) {
+    public void onProc(LivingEntity caster, Event procPoint, STATE state, SkillData stats, Entity target) {
         if (procPoint instanceof ParryEvent&&((ParryEvent) procPoint).canParry()) {
             //TODO mark all skill damage appropriately
             caster.hurtResistantTime = 0;

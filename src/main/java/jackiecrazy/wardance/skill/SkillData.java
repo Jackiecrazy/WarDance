@@ -2,7 +2,6 @@ package jackiecrazy.wardance.skill;
 
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.nbt.CompoundNBT;
-import net.minecraft.util.Hand;
 import net.minecraft.world.World;
 
 import javax.annotation.Nullable;
@@ -10,20 +9,25 @@ import java.util.UUID;
 
 public class SkillData {
     private final Skill s;
-    private Hand h;
     private float duration, max, var;
     private boolean condition;
+    private Skill.STATE state= Skill.STATE.INACTIVE;
     private LivingEntity caster;
     private UUID casterID;
 
     //TODO allow skills to store custom data
 
-    public SkillData(Skill skill, float arbitraryDuration) {
+    public SkillData(Skill skill, float arbitraryDuration, float max) {
         s = skill;
         duration = arbitraryDuration;
-        max = duration;
+        this.max = max;
         var = 0;
         condition = false;
+    }
+
+    public SkillData(Skill skill, float arbitraryDuration) {
+        this(skill, arbitraryDuration, arbitraryDuration);
+        state= Skill.STATE.ACTIVE;
     }
 
     @Nullable
@@ -90,6 +94,10 @@ public class SkillData {
         duration--;
     }
 
+    public void decrementDuration(float amount) {
+        duration-=amount;
+    }
+
     public Skill getSkill() {
         return s;
     }
@@ -103,5 +111,14 @@ public class SkillData {
         if (casterID != null)
             to.putUniqueId("caster", casterID);
         return to;
+    }
+
+    public Skill.STATE getState() {
+        return state;
+    }
+
+    public SkillData setState(Skill.STATE state) {
+        this.state = state;
+        return this;
     }
 }

@@ -9,6 +9,7 @@ import jackiecrazy.wardance.skill.ProcPoints;
 import jackiecrazy.wardance.skill.SkillData;
 import jackiecrazy.wardance.skill.WarSkills;
 import jackiecrazy.wardance.utils.EffectUtils;
+import net.minecraft.entity.Entity;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.potion.EffectInstance;
 import net.minecraft.tags.Tag;
@@ -61,7 +62,7 @@ public class FlameDance extends WarCry {
     }
 
     @Override
-    public void onSuccessfulProc(LivingEntity caster, SkillData stats, LivingEntity target, Event procPoint) {
+    public void onProc(LivingEntity caster, Event procPoint, STATE state, SkillData stats, Entity target) {
         if (procPoint instanceof LivingAttackEvent) {
             stats.setArbitraryFloat(stats.getArbitraryFloat() + 0.34f);
             if (((LivingAttackEvent) procPoint).getEntityLiving() == target && ((LivingAttackEvent) procPoint).getSource() instanceof CombatDamageSource) {
@@ -74,6 +75,6 @@ public class FlameDance extends WarCry {
             ((CriticalHitEvent) procPoint).setDamageModifier(((CriticalHitEvent) procPoint).getDamageModifier() * 1.5f);
             stats.setArbitraryFloat(0);
         }
-        super.onSuccessfulProc(caster, stats, target, procPoint);
+        super.onProc(caster, procPoint, state, stats, target);
     }
 }

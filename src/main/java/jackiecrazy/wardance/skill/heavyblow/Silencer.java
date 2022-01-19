@@ -8,6 +8,7 @@ import jackiecrazy.wardance.skill.ProcPoints;
 import jackiecrazy.wardance.skill.SkillData;
 import jackiecrazy.wardance.skill.WarSkills;
 import jackiecrazy.wardance.utils.CombatUtils;
+import net.minecraft.entity.Entity;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.tags.Tag;
 import net.minecraft.util.Hand;
@@ -30,7 +31,7 @@ public class Silencer extends HeavyBlow {
         if (e.getSource().getTrueSource() instanceof LivingEntity && Marks.getCap(e.getEntityLiving()).isMarked(WarSkills.SILENCER.get())) {
             LivingEntity elb = (LivingEntity) e.getSource().getTrueSource();
             CasterData.getCap(elb).coolSkill(WarSkills.SILENCER.get());
-            CasterData.getCap(elb).getActiveSkill(WarSkills.SILENCER.get()).ifPresent((a) -> a.flagCondition(true));
+            CasterData.getCap(elb).getSkillData(WarSkills.SILENCER.get()).ifPresent((a) -> a.flagCondition(true));
         }
     }
 
@@ -50,7 +51,7 @@ public class Silencer extends HeavyBlow {
     }
 
     @Override
-    public void onSuccessfulProc(LivingEntity caster, SkillData stats, LivingEntity target, Event procPoint) {
+    public void onProc(LivingEntity caster, Event procPoint, STATE state, SkillData stats, Entity target) {
         if (caster.world.isRemote() || caster == target) return;
         if (CombatUtils.getAwareness(caster, target) != CombatUtils.Awareness.UNAWARE) return;
         CombatData.getCap(target).setHandBind(Hand.MAIN_HAND, 60);

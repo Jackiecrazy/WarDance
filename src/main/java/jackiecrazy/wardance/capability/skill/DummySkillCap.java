@@ -1,9 +1,6 @@
 package jackiecrazy.wardance.capability.skill;
 
-import jackiecrazy.wardance.skill.Skill;
-import jackiecrazy.wardance.skill.SkillCategory;
-import jackiecrazy.wardance.skill.SkillCooldownData;
-import jackiecrazy.wardance.skill.SkillData;
+import jackiecrazy.wardance.skill.*;
 import net.minecraft.nbt.CompoundNBT;
 
 import javax.annotation.Nullable;
@@ -11,8 +8,8 @@ import java.util.*;
 
 public class DummySkillCap implements ISkillCapability {
     private static final Map<Skill, SkillData> dummy = new HashMap<>();
-    private static final Map<Skill, SkillCooldownData> otherDummy = new HashMap<>();
-    private static final List<Skill> moreDummies = new ArrayList<>(), anotherDummy=new ArrayList<>();
+    private static final List<Skill> otherDummy = new ArrayList<>();
+
 
     @Override
     public boolean isSkillSelectable(Skill s) {
@@ -26,43 +23,48 @@ public class DummySkillCap implements ISkillCapability {
 
     @Override
     public List<Skill> getSelectableList() {
-        return anotherDummy;
+        return otherDummy;
     }
 
-    @Nullable
     @Override
-    public Optional<SkillData> getActiveSkill(Skill s) {
+    public Optional<SkillData> getSkillData(Skill s) {
         return Optional.empty();
     }
 
     @Override
-    public void activateSkill(SkillData d) {
+    public Skill getHolsteredSkill() {
+        return null;
+    }
+
+    @Override
+    public void holsterSkill(int index) {
 
     }
 
     @Override
-    public void removeActiveSkill(Skill s) {
+    public void changeSkillState(Skill d, Skill.STATE to) {
 
     }
 
     @Override
-    public Map<Skill, SkillData> getActiveSkills() {
+    public Map<Skill, SkillData> getAllSkillData() {
         return dummy;
     }
 
     @Override
-    public void clearActiveSkills() {
-
+    public Skill.STATE getSkillState(Skill skill) {
+        return Skill.STATE.INACTIVE;
     }
 
     @Override
-    public boolean isSkillActive(Skill skill) {
-        return false;
+    public Skill.STATE getCategoryState(SkillCategory s) {
+        return Skill.STATE.INACTIVE;
     }
 
+    @Nullable
     @Override
-    public boolean isCategoryActive(SkillCategory s) {
-        return false;
+    public Skill getEquippedVariation(SkillCategory base) {
+        return null;
     }
 
     @Override
@@ -76,58 +78,8 @@ public class DummySkillCap implements ISkillCapability {
     }
 
     @Override
-    public void markSkillUsed(Skill s) {
-
-    }
-
-    @Override
-    public void setSkillCooldown(Skill s, float amount) {
-
-    }
-
-    @Override
-    public boolean isSkillCoolingDown(Skill s) {
-        return false;
-    }
-
-    @Override
-    public void decrementSkillCooldown(Skill s, float amount) {
-
-    }
-
-    @Override
-    public void coolSkill(Skill s) {
-
-    }
-
-    @Override
-    public float getSkillCooldown(Skill s) {
-        return 0;
-    }
-
-    @Override
-    public float getMaxSkillCooldown(Skill s) {
-        return 0;
-    }
-
-    @Override
-    public Map<Skill, SkillCooldownData> getSkillCooldowns() {
-        return otherDummy;
-    }
-
-    @Override
-    public void clearSkillCooldowns() {
-
-    }
-
-    @Override
-    public Skill getEquippedVariation(SkillCategory base) {
-        return null;
-    }
-
-    @Override
     public List<Skill> getEquippedSkills() {
-        return moreDummies;
+        return otherDummy;
     }
 
     @Override

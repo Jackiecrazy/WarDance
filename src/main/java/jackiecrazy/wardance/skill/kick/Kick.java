@@ -5,11 +5,9 @@ import jackiecrazy.wardance.api.CombatDamageSource;
 import jackiecrazy.wardance.capability.resources.CombatData;
 import jackiecrazy.wardance.capability.resources.ICombatCapability;
 import jackiecrazy.wardance.config.CombatConfig;
-import jackiecrazy.wardance.skill.Skill;
-import jackiecrazy.wardance.skill.SkillCategories;
-import jackiecrazy.wardance.skill.SkillCategory;
-import jackiecrazy.wardance.skill.SkillData;
+import jackiecrazy.wardance.skill.*;
 import jackiecrazy.wardance.utils.GeneralUtils;
+import net.minecraft.entity.Entity;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.tags.Tag;
@@ -80,7 +78,7 @@ public class Kick extends Skill {
     }
 
     @Override
-    public void onSuccessfulProc(LivingEntity caster, SkillData stats, LivingEntity target, Event procPoint) {
+    public void onProc(LivingEntity caster, Event procPoint, STATE state, SkillData stats, Entity target) {
         if (procPoint instanceof LivingAttackEvent) {
             procPoint.setCanceled(true);
             if (GeneralUtils.getDistSqCompensated(caster, target) <= distanceSq()) {

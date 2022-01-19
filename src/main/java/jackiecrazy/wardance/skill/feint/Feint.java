@@ -7,6 +7,7 @@ import jackiecrazy.wardance.potion.WarEffects;
 import jackiecrazy.wardance.skill.*;
 import jackiecrazy.wardance.utils.CombatUtils;
 import jackiecrazy.wardance.utils.GeneralUtils;
+import net.minecraft.entity.Entity;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.potion.EffectInstance;
 import net.minecraft.tags.Tag;
@@ -60,7 +61,7 @@ public class Feint extends Skill {
     }
 
     @Override
-    public void onSuccessfulProc(LivingEntity caster, SkillData stats, LivingEntity target, Event procPoint) {
+    public void onProc(LivingEntity caster, Event procPoint, STATE state, SkillData stats, Entity target) {
         if (procPoint instanceof ParryEvent && ((ParryEvent) procPoint).getAttacker() == caster && CombatUtils.getAwareness(caster, target) == CombatUtils.Awareness.ALERT && !Marks.getCap(target).isMarked(this)) {
             Hand h = ((ParryEvent) procPoint).getAttackingHand();
             if (((ParryEvent) procPoint).canParry()) {
@@ -99,8 +100,8 @@ public class Feint extends Skill {
         }
 
         @Override
-        public void onSuccessfulProc(LivingEntity caster, SkillData stats, LivingEntity target, Event procPoint) {
-            super.onSuccessfulProc(caster, stats, target, procPoint);
+        public void onProc(LivingEntity caster, Event procPoint, STATE state, SkillData stats, Entity target) {
+            super.onProc(caster, procPoint, state, stats, target);
             target.addPotionEffect(new EffectInstance(WarEffects.DISTRACTION.get(), 60));
         }
     }
@@ -112,8 +113,8 @@ public class Feint extends Skill {
         }
 
         @Override
-        public void onSuccessfulProc(LivingEntity caster, SkillData stats, LivingEntity target, Event procPoint) {
-            super.onSuccessfulProc(caster, stats, target, procPoint);
+        public void onProc(LivingEntity caster, Event procPoint, STATE state, SkillData stats, Entity target) {
+            super.onProc(caster, procPoint, state, stats, target);
             Vector3d tp = GeneralUtils.getPointInFrontOf(target, caster, -2);
             caster.setPositionAndRotation(tp.x, tp.y, tp.z, -caster.rotationYaw, -caster.rotationPitch);
         }
@@ -152,7 +153,7 @@ public class Feint extends Skill {
         }
 
         @Override
-        public void onSuccessfulProc(LivingEntity caster, SkillData stats, LivingEntity target, Event procPoint) {
+        public void onProc(LivingEntity caster, Event procPoint, STATE state, SkillData stats, Entity target) {
             if (procPoint instanceof LivingHurtEvent) {
                 ((LivingHurtEvent) procPoint).setAmount(0);
                 markUsed(caster);
@@ -177,11 +178,11 @@ public class Feint extends Skill {
         }
 
         @Override
-        public void onSuccessfulProc(LivingEntity caster, SkillData stats, LivingEntity target, Event procPoint) {
+        public void onProc(LivingEntity caster, Event procPoint, STATE state, SkillData stats, Entity target) {
             if (procPoint instanceof LivingHurtEvent) {
                 CombatData.getCap(caster).addPosture(((LivingHurtEvent) procPoint).getAmount());
             }
-            super.onSuccessfulProc(caster, stats, target, procPoint);
+            super.onProc(caster, procPoint, state, stats, target);
         }
     }
 }

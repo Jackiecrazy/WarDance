@@ -1,9 +1,6 @@
 package jackiecrazy.wardance.capability.skill;
 
-import jackiecrazy.wardance.skill.Skill;
-import jackiecrazy.wardance.skill.SkillCategory;
-import jackiecrazy.wardance.skill.SkillCooldownData;
-import jackiecrazy.wardance.skill.SkillData;
+import jackiecrazy.wardance.skill.*;
 import net.minecraft.nbt.CompoundNBT;
 
 import javax.annotation.Nullable;
@@ -18,44 +15,26 @@ public interface ISkillCapability {
 
     List<Skill> getSelectableList();
 
-    Optional<SkillData> getActiveSkill(Skill s);
+    Optional<SkillData> getSkillData(Skill s);
 
-    void activateSkill(SkillData d);
+    Skill getHolsteredSkill();
 
-    void removeActiveSkill(Skill s);
+    void holsterSkill(int index);
 
-    Map<Skill, SkillData> getActiveSkills();
+    void changeSkillState(Skill d, Skill.STATE to);
 
-    void clearActiveSkills();
+    Map<Skill, SkillData> getAllSkillData();
 
-    boolean isSkillActive(Skill skill);
+    Skill.STATE getSkillState(Skill skill);
 
-    boolean isCategoryActive(SkillCategory s);
+    Skill.STATE getCategoryState(SkillCategory s);
+
+    @Nullable
+    Skill getEquippedVariation(SkillCategory base);
 
     boolean isTagActive(String tag);
 
     void removeActiveTag(String tag);
-
-    void markSkillUsed(Skill s);
-
-    void setSkillCooldown(Skill s, float amount);
-
-    boolean isSkillCoolingDown(Skill s);
-
-    void decrementSkillCooldown(Skill s, float amount);
-
-    void coolSkill(Skill s);
-
-    float getSkillCooldown(Skill s);
-
-    float getMaxSkillCooldown(Skill s);
-
-    Map<Skill, SkillCooldownData> getSkillCooldowns();
-
-    void clearSkillCooldowns();
-
-    @Nullable
-    Skill getEquippedVariation(SkillCategory base);
 
     List<Skill> getEquippedSkills();
 

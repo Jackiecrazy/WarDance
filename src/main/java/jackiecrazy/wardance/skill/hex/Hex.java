@@ -125,7 +125,7 @@ public class Hex extends Skill {
     }
 
     @Override
-    public void onSuccessfulProc(LivingEntity caster, SkillData stats, LivingEntity target, Event procPoint) {
+    public void onProc(LivingEntity caster, Event procPoint, STATE state, SkillData stats, Entity target) {
         if (procPoint instanceof ParryEvent) {
             procPoint.setCanceled(true);
             mark(caster, target, 200);
@@ -134,7 +134,7 @@ public class Hex extends Skill {
     }
 
     @Override
-    public boolean onCooldownProc(LivingEntity caster, SkillCooldownData stats, Event procPoint) {
+    public boolean onCooldownProc(LivingEntity caster, SkillData stats, Event procPoint) {
         stats.decrementDuration(0.05f);
         int round = (int) (stats.getDuration() * 20);
         return stats.getDuration() < 3 || round % 20 == 0;

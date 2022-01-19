@@ -2,6 +2,7 @@ package jackiecrazy.wardance.skill.kick;
 
 import jackiecrazy.wardance.capability.resources.CombatData;
 import jackiecrazy.wardance.skill.SkillData;
+import net.minecraft.entity.Entity;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.ai.attributes.AttributeModifier;
 import net.minecraftforge.common.ForgeMod;
@@ -39,8 +40,8 @@ public class Tackle extends Kick {
     }
 
     @Override
-    public void onSuccessfulProc(LivingEntity caster, SkillData stats, LivingEntity target, Event procPoint) {
-        super.onSuccessfulProc(caster, stats, target, procPoint);
+    public void onProc(LivingEntity caster, Event procPoint, STATE state, SkillData stats, Entity target) {
+        super.onProc(caster, procPoint, state, stats, target);
         caster.setMotion(caster.getMotion().add(caster.getPositionVec().subtractReverse(target.getPositionVec()).scale(0.18)));
         CombatData.getCap(caster).setRollTime(-10);
         caster.velocityChanged = true;

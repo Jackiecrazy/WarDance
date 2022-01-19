@@ -70,13 +70,13 @@ public class UpdateSkillSelectionPacket {
                     if (!prev.equals(now)) {
                         for (Skill s : cap.getEquippedSkills())
                             if (s != null) {
-                                s.onRemoved(sender, new SkillData(s, 0).setCaster(sender));
+                                s.onUnequip(sender, new SkillData(s, 0).setCaster(sender));
                             }
                         cap.clearActiveSkills();
                         cap.setEquippedSkills(updateSkillPacket.l);
                         for (Skill s : cap.getEquippedSkills())
                             if (s != null) {
-                                s.onAdded(sender, new SkillData(s, 0).setCaster(sender));
+                                s.onEquip(sender);
                             }
                     } else
                         cap.setEquippedSkills(updateSkillPacket.l);

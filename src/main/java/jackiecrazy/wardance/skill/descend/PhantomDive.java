@@ -4,6 +4,7 @@ import jackiecrazy.wardance.event.EntityAwarenessEvent;
 import jackiecrazy.wardance.potion.WarEffects;
 import jackiecrazy.wardance.skill.SkillData;
 import jackiecrazy.wardance.utils.CombatUtils;
+import net.minecraft.entity.Entity;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.potion.EffectInstance;
 import net.minecraftforge.eventbus.api.Event;
@@ -22,7 +23,7 @@ public class PhantomDive extends Descend {
     }
 
     @Override
-    public void onSuccessfulProc(LivingEntity caster, SkillData stats, LivingEntity target, Event procPoint) {
+    public void onProc(LivingEntity caster, Event procPoint, STATE state, SkillData stats, Entity target) {
         if (procPoint instanceof EntityAwarenessEvent && ((EntityAwarenessEvent) procPoint).getAttacker() == caster) {
             CombatUtils.Awareness awareness = ((EntityAwarenessEvent) procPoint).getAwareness();
             double posDiff = stats.getDuration() - caster.getPosY();
@@ -43,6 +44,6 @@ public class PhantomDive extends Descend {
             if (length > 0) target.addPotionEffect(new EffectInstance(WarEffects.PARALYSIS.get(), length));
             ((EntityAwarenessEvent) procPoint).setAwareness(awareness);
         }
-        super.onSuccessfulProc(caster, stats, target, procPoint);
+        super.onProc(caster, procPoint, state, stats, target);
     }
 }

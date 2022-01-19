@@ -3,6 +3,7 @@ package jackiecrazy.wardance.skill.ironguard;
 import jackiecrazy.wardance.event.ParryEvent;
 import jackiecrazy.wardance.skill.SkillData;
 import jackiecrazy.wardance.utils.SkillUtils;
+import net.minecraft.entity.Entity;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.particles.ParticleTypes;
 import net.minecraft.potion.EffectInstance;
@@ -19,7 +20,7 @@ public class Afterimage extends IronGuard {
     }
 
     @Override
-    public void onSuccessfulProc(LivingEntity caster, SkillData stats, @Nullable LivingEntity target, Event procPoint) {
+    public void onProc(LivingEntity caster, Event procPoint, STATE state, SkillData stats, @Nullable Entity target) {
         if (procPoint instanceof ParryEvent) {
             final float cost = ((ParryEvent) procPoint).getPostureConsumption();
             SkillUtils.createCloud(caster.world, caster, caster.getPosX(), caster.getPosY(), caster.getPosZ(), cost, ParticleTypes.LARGE_SMOKE);

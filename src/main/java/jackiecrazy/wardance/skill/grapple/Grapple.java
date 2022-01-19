@@ -68,7 +68,7 @@ public class Grapple extends Skill {
     }
 
     @Override
-    public void onSuccessfulProc(LivingEntity caster, SkillData stats, LivingEntity target, Event procPoint) {
+    public void onProc(LivingEntity caster, Event procPoint, STATE state, SkillData stats, Entity target) {
         if (procPoint instanceof LivingAttackEvent && CombatUtils.isUnarmed(caster.getHeldItemMainhand(), caster)) {
             if (stats.isCondition() && caster.getLastAttackedEntity() == target) {
                 performEffect(caster, target);
@@ -84,7 +84,7 @@ public class Grapple extends Skill {
         }
 
         @Override
-        public void onSuccessfulProc(LivingEntity caster, SkillData stats, LivingEntity target, Event procPoint) {
+        public void onProc(LivingEntity caster, Event procPoint, STATE state, SkillData stats, Entity target) {
             if (procPoint instanceof LivingAttackEvent && CombatUtils.isUnarmed(caster.getHeldItemMainhand(), caster)) {
                 if (stats.isCondition()) {
                     Entity prev=target.world.getEntityByID((int) stats.getArbitraryFloat());

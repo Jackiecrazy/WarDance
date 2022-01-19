@@ -4,6 +4,7 @@ import jackiecrazy.wardance.WarDance;
 import jackiecrazy.wardance.event.ParryEvent;
 import jackiecrazy.wardance.skill.ProcPoints;
 import jackiecrazy.wardance.skill.SkillData;
+import net.minecraft.entity.Entity;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.tags.Tag;
 import net.minecraft.util.SoundCategory;
@@ -46,8 +47,8 @@ public class DeathDenial extends MementoMori {
     }
 
     @Override
-    public void onSuccessfulProc(LivingEntity caster, SkillData stats, LivingEntity target, Event procPoint) {
-        super.onSuccessfulProc(caster, stats, target, procPoint);
+    public void onProc(LivingEntity caster, Event procPoint, STATE state, SkillData stats, Entity target) {
+        super.onProc(caster, procPoint, state, stats, target);
         if (procPoint instanceof LivingDamageEvent && (((LivingDamageEvent) procPoint).getAmount() > target.getHealth() || stats.isCondition())) {
             if(!stats.isCondition())
                 caster.world.playSound(null, caster.getPosX(), caster.getPosY(), caster.getPosZ(), SoundEvents.BLOCK_BELL_USE, SoundCategory.PLAYERS, 0.25f + WarDance.rand.nextFloat() * 0.5f, 0.5f + WarDance.rand.nextFloat() * 0.5f);

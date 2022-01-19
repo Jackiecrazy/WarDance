@@ -4,6 +4,7 @@ import jackiecrazy.wardance.capability.resources.CombatData;
 import jackiecrazy.wardance.skill.ProcPoints;
 import jackiecrazy.wardance.skill.SkillData;
 import jackiecrazy.wardance.utils.GeneralUtils;
+import net.minecraft.entity.Entity;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.ai.attributes.AttributeModifier;
 import net.minecraft.entity.ai.attributes.ModifiableAttributeInstance;
@@ -67,7 +68,7 @@ public class WindScar extends WarCry {
     }
 
     @Override
-    public void onSuccessfulProc(LivingEntity caster, SkillData stats, LivingEntity target, Event procPoint) {
+    public void onProc(LivingEntity caster, Event procPoint, STATE state, SkillData stats, Entity target) {
         if (procPoint instanceof LivingAttackEvent) {
             double realReach = caster.getAttributeValue(ForgeMod.REACH_DISTANCE.get()) - 10;
             if (((LivingAttackEvent) procPoint).getEntityLiving() == target) {
@@ -76,7 +77,7 @@ public class WindScar extends WarCry {
                     stats.setDuration((float) (dist - realReach));
             }
         }
-        super.onSuccessfulProc(caster, stats, target, procPoint);
+        super.onProc(caster, procPoint, state, stats, target);
     }
 
     @Override

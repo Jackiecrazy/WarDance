@@ -244,7 +244,7 @@ public class CombatUtils {
 
     public static boolean isShield(LivingEntity e, ItemStack stack) {
         if (stack == null) return false;
-        return combatList.containsKey(stack.getItem()) && (combatList.getOrDefault(stack.getItem(), DEFAULTMELEE).isShield || CasterData.getCap(e).getActiveSkill(WarSkills.RETURN_TO_SENDER.get()).isPresent());//stack.isShield(e);
+        return combatList.containsKey(stack.getItem()) && (combatList.getOrDefault(stack.getItem(), DEFAULTMELEE).isShield || CasterData.getCap(e).getSkillData(WarSkills.RETURN_TO_SENDER.get()).isPresent());//stack.isShield(e);
     }
 
     public static boolean isWeapon(@Nullable LivingEntity e, ItemStack stack) {

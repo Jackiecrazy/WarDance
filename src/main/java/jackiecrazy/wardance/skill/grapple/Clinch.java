@@ -3,6 +3,7 @@ package jackiecrazy.wardance.skill.grapple;
 import jackiecrazy.wardance.capability.resources.CombatData;
 import jackiecrazy.wardance.skill.SkillData;
 import jackiecrazy.wardance.utils.CombatUtils;
+import net.minecraft.entity.Entity;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.util.Hand;
 import net.minecraftforge.event.entity.living.LivingAttackEvent;
@@ -17,7 +18,7 @@ public class Clinch extends Grapple {
     }
 
     @Override
-    public void onSuccessfulProc(LivingEntity caster, SkillData stats, LivingEntity target, Event procPoint) {
+    public void onProc(LivingEntity caster, Event procPoint, STATE state, SkillData stats, Entity target) {
         if (procPoint instanceof LivingAttackEvent) {
             if (stats.isCondition() && CombatUtils.isUnarmed(caster.getHeldItemMainhand(), caster) && caster.getLastAttackedEntity() == target) {
                 performEffect(caster, target);

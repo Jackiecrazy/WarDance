@@ -454,7 +454,7 @@ public class CraftCompat {
     @ZenCodeType.Method
     public float getSkillCooldown(LivingEntity entity, String s) {
         if (Skill.getSkill(s) == null) return 0;
-        return CasterData.getCap(entity).getSkillCooldown(Skill.getSkill(s));
+        return CasterData.getCap(entity).getSkillCooldown(Skill.getSkill(s)).getDuration();
     }
 
     @ZenCodeType.Method

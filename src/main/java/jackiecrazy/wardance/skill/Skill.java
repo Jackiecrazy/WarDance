@@ -8,6 +8,7 @@ import jackiecrazy.wardance.capability.status.Marks;
 import jackiecrazy.wardance.config.GeneralConfig;
 import jackiecrazy.wardance.event.SkillCastEvent;
 import jackiecrazy.wardance.event.SkillCooldownEvent;
+import net.minecraft.entity.Entity;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.tags.Tag;
 import net.minecraft.util.ResourceLocation;
@@ -90,15 +91,17 @@ public abstract class Skill extends ForgeRegistryEntry<Skill> {
 
     public CastStatus castingCheck(LivingEntity caster) {
         ISkillCapability cap = CasterData.getCap(caster);
-        if (cap.isSkillActive(this)) return CastStatus.ACTIVE;
+        if (cap.getSkillData(this).isPresent())
+            switch (cap.getSkillData(this).get().getState()) {
+                case ACTIVE:
+                    return CastStatus.ACTIVE;
+                case COOLING:
+                    return CastStatus.COOLDOWN;
+            }
         for (String s : getIncompatibleTags(caster).getAllElements())
             if (cap.isTagActive(s))
                 return CastStatus.CONFLICT;
         if (caster.isSilent() && getTags(caster).contains("chant")) return CastStatus.SILENCE;
-        if (cap.isSkillCoolingDown(this))
-            return CastStatus.COOLDOWN;
-//        if (getParentSkill() != null)
-//            return getParentSkill().castingCheck(caster);
         if (CombatData.getCap(caster).getSpirit() < spiritConsumption(caster))
             return CastStatus.SPIRIT;
         if (CombatData.getCap(caster).getMight() < mightConsumption(caster))
@@ -156,9 +159,19 @@ public abstract class Skill extends ForgeRegistryEntry<Skill> {
 
     public abstract Tag<String> getProcPoints(LivingEntity caster);
 
-    public abstract Tag<String> getTags(LivingEntity caster);//requires breath, debuffing, healing, aoe, etc.
+    public abstract Tag<String> getTags(LivingEntity caster);//requires breath, bound, debuffing, healing, aoe, etc.
 
     public abstract Tag<String> getIncompatibleTags(LivingEntity caster);
+
+    //onEquippedProc, onHolsteredProc, onActiveProc, onCooldownProc
+    //orrrr we just use a single unified onProc() that accepts a status enum
+
+    /**
+     * override this for bound cast behavior.
+     */
+    public boolean onSelected(LivingEntity caster) {
+        return checkAndCast(caster);
+    }
 
     public boolean checkAndCast(LivingEntity caster) {
         final CastStatus status = castingCheck(caster);
@@ -172,7 +185,9 @@ public abstract class Skill extends ForgeRegistryEntry<Skill> {
         return onCast(caster);
     }
 
-    public abstract boolean onCast(LivingEntity caster);
+    public boolean onCast(LivingEntity caster) {
+        return true;
+    }
 
     /**
      * @return whether the client should be updated.
@@ -208,7 +223,7 @@ public abstract class Skill extends ForgeRegistryEntry<Skill> {
     /**
      * @return whether the client should be updated.
      */
-    public boolean coolingTick(LivingEntity caster, SkillCooldownData d) {
+    public boolean coolingTick(LivingEntity caster, SkillData d) {
         if (d.getSkill().getProcPoints(caster).contains(ProcPoints.recharge_time)) {
             return onCooldownProc(caster, d, null);
         }
@@ -216,32 +231,52 @@ public abstract class Skill extends ForgeRegistryEntry<Skill> {
     }
 
     /**
-     * responsible for setting the cooldown as well.
+     * responsible for setting the state as well.
      */
-    public abstract void onEffectEnd(LivingEntity caster, SkillData stats);
+    public void onEffectEnd(LivingEntity caster, SkillData stats) {
 
-    public void onAdded(LivingEntity caster, SkillData stats) {
+    }
+
+    public void onEquip(LivingEntity caster) {
+        onEffectEnd(caster, new SkillData(this, 0));
+    }
+
+    public void onUnequip(LivingEntity caster, SkillData stats) {
         onEffectEnd(caster, stats);
     }
 
-    public void onRemoved(LivingEntity caster, SkillData stats) {
-        onEffectEnd(caster, stats);
-    }
+    public abstract void onProc(LivingEntity caster, Event procPoint, STATE state, SkillData stats, @Nullable Entity target);
 
-    public abstract void onSuccessfulProc(LivingEntity caster, SkillData stats, @Nullable LivingEntity target, Event procPoint);
+    public abstract boolean onStateChange(LivingEntity caster, SkillData prev, STATE from, STATE to);
 
-    public boolean onCooldownProc(LivingEntity caster, SkillCooldownData stats, Event procPoint) {
-
-        CasterData.getCap(caster).decrementSkillCooldown(this, 1);
+    public boolean onCooldownProc(LivingEntity caster, SkillData stats, Event procPoint) {
+        stats.decrementDuration(1);
         return true;
     }
+
+    public SkillData onMarked(LivingEntity caster, LivingEntity target, SkillData sd, @Nullable SkillData existing) {
+        if (existing != null)
+            sd.setDuration(sd.getDuration() + existing.getDuration());
+        return sd;
+    }
+
+    public void onMarkEnd(LivingEntity caster, LivingEntity target, SkillData sd) {
+
+    }
+
+    //***************************************//
+    //   convenience functions start here    //
+    //***************************************//
 
     protected void setCooldown(LivingEntity caster, float duration) {
         SkillCooldownEvent sce = new SkillCooldownEvent(caster, this, duration);
         MinecraftForge.EVENT_BUS.post(sce);
 //        if (getParentSkill() != null)
 //            CasterData.getCap(caster).setSkillCooldown(getParentSkill(), sce.getCooldown());
-        CasterData.getCap(caster).setSkillCooldown(this, sce.getCooldown());
+        CasterData.getCap(caster).getSkillData(this).ifPresent(a -> {
+            a.setState(STATE.COOLING);
+            a.setDuration(sce.getCooldown());
+        });
     }
 
     protected boolean activate(LivingEntity caster, float duration) {
@@ -262,7 +297,13 @@ public abstract class Skill extends ForgeRegistryEntry<Skill> {
     protected boolean activate(LivingEntity caster, float duration, boolean flag, float something) {
         //System.out.println("enabling for " + duration);
         if (CasterData.getCap(caster).isSkillUsable(this)) {
-            CasterData.getCap(caster).activateSkill(new SkillData(this, duration).flagCondition(flag).setArbitraryFloat(something).setCaster(caster));
+            CasterData.getCap(caster).changeSkillState(this, STATE.ACTIVE);
+            final Optional<SkillData> data = CasterData.getCap(caster).getSkillData(this);
+            data.ifPresent(a -> {
+                a.setDuration(duration);
+                a.flagCondition(flag);
+                a.setArbitraryFloat(something);
+            });
             return true;
         }
         return false;
@@ -272,7 +313,7 @@ public abstract class Skill extends ForgeRegistryEntry<Skill> {
         if (GeneralConfig.debug)
             WarDance.LOGGER.debug(this.getRegistryName() + " has ended");
         caster.world.playMovingSound(null, caster, SoundEvents.BLOCK_FIRE_EXTINGUISH, SoundCategory.AMBIENT, 0.3f + WarDance.rand.nextFloat() * 0.5f, 0.5f + WarDance.rand.nextFloat());
-        CasterData.getCap(caster).markSkillUsed(this);
+        CasterData.getCap(caster).changeSkillState(this, STATE.COOLING);
     }
 
     protected void mark(LivingEntity caster, LivingEntity target, float duration) {
@@ -281,16 +322,6 @@ public abstract class Skill extends ForgeRegistryEntry<Skill> {
 
     protected void mark(LivingEntity caster, LivingEntity target, float duration, float arbitrary) {
         Marks.getCap(target).mark(new SkillData(this, duration).setCaster(caster).setArbitraryFloat(arbitrary));
-    }
-
-    public SkillData onMarked(LivingEntity caster, LivingEntity target, SkillData sd, @Nullable SkillData existing) {
-        if (existing != null)
-            sd.setDuration(sd.getDuration() + existing.getDuration());
-        return sd;
-    }
-
-    public void onMarkEnd(LivingEntity caster, LivingEntity target, SkillData sd) {
-
     }
 
     public enum CastStatus {
@@ -306,6 +337,7 @@ public abstract class Skill extends ForgeRegistryEntry<Skill> {
 
     public enum STATE {
         INACTIVE,
+        HOLSTERED,
         ACTIVE,
         COOLING
     }

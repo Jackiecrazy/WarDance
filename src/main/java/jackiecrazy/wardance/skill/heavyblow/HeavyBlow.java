@@ -1,12 +1,9 @@
 package jackiecrazy.wardance.skill.heavyblow;
 
-import jackiecrazy.wardance.capability.resources.CombatData;
-import jackiecrazy.wardance.capability.skill.CasterData;
-import jackiecrazy.wardance.event.ParryEvent;
 import jackiecrazy.wardance.skill.*;
+import net.minecraft.entity.Entity;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.tags.Tag;
-import net.minecraftforge.event.entity.player.CriticalHitEvent;
 import net.minecraftforge.eventbus.api.Event;
 
 import javax.annotation.Nonnull;
@@ -59,17 +56,8 @@ public class HeavyBlow extends Skill {
     }
 
     @Override
-    public void onSuccessfulProc(LivingEntity caster, SkillData stats, LivingEntity target, Event procPoint) {
-        if (procPoint instanceof ParryEvent && stats.isCondition() && ((ParryEvent) procPoint).getDefendingHand() != null && ((ParryEvent) procPoint).getAttacker() == caster) {
-            if (CasterData.getCap(target).isCategoryActive(SkillCategories.iron_guard)) return;
-            CombatData.getCap(target).setHandBind(((ParryEvent) procPoint).getDefendingHand(), 30);
-            markUsed(caster);
-        } else if (procPoint instanceof CriticalHitEvent && ((CriticalHitEvent) procPoint).isVanillaCritical() && CombatData.getCap(caster).consumeMight(mightConsumption(caster))) {
-            stats.flagCondition(true);
-            if (this == WarSkills.VITAL_STRIKE.get())
-                ((CriticalHitEvent) procPoint).setDamageModifier(((CriticalHitEvent) procPoint).getDamageModifier() * 1.4f);
-            markUsed(caster);
-        }
+    public void onProc(LivingEntity caster, Event procPoint, STATE state, SkillData stats, Entity target) {
+
     }
 
     @Override

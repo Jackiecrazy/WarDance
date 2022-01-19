@@ -3,6 +3,7 @@ package jackiecrazy.wardance.skill.warcry;
 import jackiecrazy.wardance.capability.resources.CombatData;
 import jackiecrazy.wardance.capability.resources.ICombatCapability;
 import jackiecrazy.wardance.skill.*;
+import net.minecraft.entity.Entity;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.ai.attributes.AttributeModifier;
 import net.minecraft.entity.ai.attributes.Attributes;
@@ -115,14 +116,14 @@ public class WarCry extends Skill {
     }
 
     @Override
-    public boolean onCooldownProc(LivingEntity caster, SkillCooldownData stats, Event procPoint) {
+    public boolean onCooldownProc(LivingEntity caster, SkillData stats, Event procPoint) {
         stats.decrementDuration(0.05f);
         int round = (int) (stats.getDuration() * 20);
         return stats.getDuration() < 5 || round % 20 == 0;
     }
 
     @Override
-    public void onSuccessfulProc(LivingEntity caster, SkillData stats, LivingEntity target, Event procPoint) {
+    public void onProc(LivingEntity caster, Event procPoint, STATE state, SkillData stats, Entity target) {
         if (procPoint instanceof LivingHurtEvent && stats.isCondition() && ((LivingHurtEvent) procPoint).getEntityLiving() == caster) {
             markUsed(caster);
         }

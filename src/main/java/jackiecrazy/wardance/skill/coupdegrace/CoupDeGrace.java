@@ -12,6 +12,7 @@ import jackiecrazy.wardance.event.ParryEvent;
 import jackiecrazy.wardance.skill.*;
 import jackiecrazy.wardance.utils.CombatUtils;
 import jackiecrazy.wardance.utils.GeneralUtils;
+import net.minecraft.entity.Entity;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.tags.Tag;
 import net.minecraft.util.SoundCategory;
@@ -88,7 +89,7 @@ public class CoupDeGrace extends Skill {
     }
 
     @Override
-    public void onSuccessfulProc(LivingEntity caster, SkillData stats, LivingEntity target, Event procPoint) {
+    public void onProc(LivingEntity caster, Event procPoint, STATE state, SkillData stats, Entity target) {
         if (procPoint instanceof LivingHurtEvent) {
             LivingHurtEvent e = (LivingHurtEvent) procPoint;
             if (e.getEntityLiving() != caster) {
@@ -183,7 +184,7 @@ public class CoupDeGrace extends Skill {
         }
 
         @Override
-        public void onSuccessfulProc(LivingEntity caster, SkillData stats, LivingEntity target, Event procPoint) {
+        public void onProc(LivingEntity caster, Event procPoint, STATE state, SkillData stats, Entity target) {
             if (procPoint instanceof LivingHurtEvent) {
                 LivingHurtEvent e = (LivingHurtEvent) procPoint;
                 if (e.getEntityLiving() == caster) return;

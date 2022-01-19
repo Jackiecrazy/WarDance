@@ -6,6 +6,7 @@ import jackiecrazy.wardance.skill.*;
 import jackiecrazy.wardance.utils.GeneralUtils;
 import jackiecrazy.wardance.utils.SkillUtils;
 import jackiecrazy.wardance.utils.TargetingUtils;
+import net.minecraft.entity.Entity;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.ai.attributes.AttributeModifier;
 import net.minecraft.entity.ai.attributes.Attributes;
@@ -74,7 +75,7 @@ pound of flesh: active skill. Consumes all your spirit, and until your spirit re
     }
 
     @Override
-    public void onSuccessfulProc(LivingEntity caster, SkillData stats, LivingEntity target, Event procPoint) {
+    public void onProc(LivingEntity caster, Event procPoint, STATE state, SkillData stats, Entity target) {
         //on attack might event, check health percentage and increment
         if (procPoint instanceof AttackMightEvent && getParentCategory() == null) {
             float healthPercentage = caster.getHealth() / GeneralUtils.getMaxHealthBeforeWounding(caster);
@@ -113,7 +114,7 @@ pound of flesh: active skill. Consumes all your spirit, and until your spirit re
         }
 
         @Override
-        public void onSuccessfulProc(LivingEntity caster, SkillData stats, LivingEntity target, Event procPoint) {
+        public void onProc(LivingEntity caster, Event procPoint, STATE state, SkillData stats, Entity target) {
             final float lostHealthPerc = caster.getHealth() / GeneralUtils.getMaxHealthBeforeWounding(caster);
             if (procPoint instanceof LivingHealEvent && caster.getHealth() != caster.getMaxHealth() && ((LivingHealEvent) procPoint).getAmount() > 0) {
                 int hitSize = 1 + (int) (lostHealthPerc * 10);
@@ -135,7 +136,7 @@ pound of flesh: active skill. Consumes all your spirit, and until your spirit re
         }
 
         @Override
-        public void onSuccessfulProc(LivingEntity caster, SkillData stats, LivingEntity target, Event procPoint) {
+        public void onProc(LivingEntity caster, Event procPoint, STATE state, SkillData stats, Entity target) {
             final float ohno = caster.getHealth() / GeneralUtils.getMaxHealthBeforeWounding(caster);
             if (procPoint instanceof LivingDamageEvent && ohno < 1) {
                 float visibility = ohno * 10;

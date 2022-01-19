@@ -6,7 +6,7 @@ import com.mojang.blaze3d.systems.RenderSystem;
 import jackiecrazy.wardance.WarDance;
 import jackiecrazy.wardance.capability.skill.CasterData;
 import jackiecrazy.wardance.client.Keybinds;
-import jackiecrazy.wardance.networking.CastSkillPacket;
+import jackiecrazy.wardance.networking.SelectSkillPacket;
 import jackiecrazy.wardance.networking.CombatChannel;
 import jackiecrazy.wardance.skill.Skill;
 import net.minecraft.client.Minecraft;
@@ -130,7 +130,7 @@ public class SkillCastScreen extends Screen {
                     RenderSystem.blendFuncSeparate(GlStateManager.SourceFactor.ZERO, GlStateManager.DestFactor.ONE, GlStateManager.SourceFactor.ONE_MINUS_SRC_ALPHA, GlStateManager.DestFactor.ZERO);
                     AbstractGui.blit(matrixStack, x + iconX[a], y + iconY[a], 0, 0, 32, 32, 32, 32);
                     //cooldown spinny
-                    float cd = CasterData.getCap(mc.player).getSkillCooldown(s);
+                    float cd = CasterData.getCap(mc.player).getSkillCooldown(s).getDuration();
                     float cdPerc = cd / CasterData.getCap(mc.player).getMaxSkillCooldown(s);
                     mc.textureManager.bindTexture(cooldown);
                     drawCooldownCircle(matrixStack, x + iconX[a], y + iconY[a], cdPerc);
@@ -150,7 +150,7 @@ public class SkillCastScreen extends Screen {
                 } else if (CasterData.getCap(mc.player).isSkillActive(s)) {
                     matrixStack.push();
                     int finalA = a;
-                    CasterData.getCap(mc.player).getActiveSkill(s).ifPresent((sd) -> {
+                    CasterData.getCap(mc.player).getSkillData(s).ifPresent((sd) -> {
                         RenderSystem.enableBlend();
                         //active mask
                         RenderSystem.blendFuncSeparate(GlStateManager.SourceFactor.ZERO, GlStateManager.DestFactor.ONE, GlStateManager.SourceFactor.ONE_MINUS_SRC_ALPHA, GlStateManager.DestFactor.ZERO);
@@ -333,7 +333,7 @@ public class SkillCastScreen extends Screen {
         closeScreen();
         if (selected != null) {
             Keybinds.quick = selected;
-            CombatChannel.INSTANCE.sendToServer(new CastSkillPacket(selected.getRegistryName()));
+            CombatChannel.INSTANCE.sendToServer(new SelectSkillPacket(selected.getRegistryName()));
         }
     }
 }

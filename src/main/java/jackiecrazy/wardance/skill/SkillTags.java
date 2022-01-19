@@ -11,6 +11,7 @@ public class SkillTags {
     public static final String unblockable = "unblockable";
     public static final String disable_shield = "disableShield";
     public static final String chant = "chant";
+    public static final String bound = "bound";
     public static final String physical = "physical";
     public static final String magical = "magical";
     public static final String unarmed = "unarmed";

@@ -4,13 +4,13 @@ import jackiecrazy.wardance.capability.resources.CombatData;
 import jackiecrazy.wardance.event.EntityAwarenessEvent;
 import jackiecrazy.wardance.skill.*;
 import jackiecrazy.wardance.utils.CombatUtils;
+import net.minecraft.entity.Entity;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.tags.Tag;
 import net.minecraftforge.event.entity.ProjectileImpactEvent;
 import net.minecraftforge.eventbus.api.Event;
 
 import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 import java.awt.*;
 import java.util.Arrays;
 import java.util.HashSet;
@@ -78,7 +78,7 @@ apathy: your max spirit is 4, your spirit instantly refills after cooldown, you 
     }
 
     @Override
-    public void onSuccessfulProc(LivingEntity caster, SkillData stats, LivingEntity target, Event procPoint) {
+    public void onProc(LivingEntity caster, Event procPoint, STATE state, SkillData stats, Entity target) {
         if(stats.isCondition())return;
         if (procPoint instanceof ProjectileImpactEvent) {
             CombatData.getCap(caster).addSpirit(1);

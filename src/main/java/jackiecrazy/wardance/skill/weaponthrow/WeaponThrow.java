@@ -2,6 +2,7 @@ package jackiecrazy.wardance.skill.weaponthrow;
 
 import jackiecrazy.wardance.skill.Skill;
 import jackiecrazy.wardance.skill.SkillData;
+import net.minecraft.entity.Entity;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.tags.Tag;
 import net.minecraftforge.eventbus.api.Event;
@@ -35,7 +36,7 @@ public class WeaponThrow extends Skill {
     }
 
     @Override
-    public void onSuccessfulProc(LivingEntity caster, SkillData stats, LivingEntity target, Event procPoint) {
+    public void onProc(LivingEntity caster, Event procPoint, STATE state, SkillData stats, Entity target) {
         //procs on projectileimpactevent, deals (attack damage) to prevent more bad stuff happening
     }
 }

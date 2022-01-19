@@ -10,6 +10,7 @@ import jackiecrazy.wardance.event.StaggerEvent;
 import jackiecrazy.wardance.potion.WarEffects;
 import jackiecrazy.wardance.skill.*;
 import jackiecrazy.wardance.utils.CombatUtils;
+import net.minecraft.entity.Entity;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.potion.EffectInstance;
 import net.minecraft.potion.Effects;
@@ -43,9 +44,9 @@ Assassinate: Stab rank increased by 1 for this attack, instantly stagger a distr
 
     @SubscribeEvent
     public static void noFall(LivingFallEvent e) {
-        CasterData.getCap(e.getEntityLiving()).getActiveSkill(CasterData.getCap(e.getEntityLiving()).getEquippedVariation(SkillCategories.descend)).ifPresent((d) -> {
+        CasterData.getCap(e.getEntityLiving()).getSkillData(CasterData.getCap(e.getEntityLiving()).getEquippedVariation(SkillCategories.descend)).ifPresent((d) -> {
             if (CasterData.getCap(e.getEntityLiving()).isSkillActive(WarSkills.SHOCKWAVE.get())) {
-                WarSkills.SHOCKWAVE.get().onSuccessfulProc(e.getEntityLiving(), CasterData.getCap(e.getEntityLiving()).getActiveSkill(WarSkills.SHOCKWAVE.get()).get(), null, null);
+                WarSkills.SHOCKWAVE.get().onProc(e.getEntityLiving(), null, , null, CasterData.getCap(e.getEntityLiving()).getSkillData(WarSkills.SHOCKWAVE.get()).get(), );
             }
             e.setCanceled(d.isCondition());
         });
@@ -99,7 +100,7 @@ Assassinate: Stab rank increased by 1 for this attack, instantly stagger a distr
     public boolean activeTick(LivingEntity caster, SkillData d) {
         //lasts until player touch ground again
         if (d.isCondition() && d.getDuration() > caster.getPosY() && caster.isOnGround()) {
-            onSuccessfulProc(caster, d, null, null);
+            onProc(caster, null, , null, d, );
             markUsed(caster);
             return true;
         } else if (!caster.isOnGround())
@@ -113,7 +114,7 @@ Assassinate: Stab rank increased by 1 for this attack, instantly stagger a distr
     }
 
     @Override
-    public void onSuccessfulProc(LivingEntity caster, SkillData stats, LivingEntity target, Event procPoint) {
+    public void onProc(LivingEntity caster, Event procPoint, STATE state, SkillData stats, Entity target) {
         double posDiff = stats.getDuration() - caster.getPosY();
         if (posDiff > 0 && procPoint instanceof ParryEvent && caster != ((ParryEvent) procPoint).getEntityLiving()) {
             spooketh(caster, target, (float) posDiff);
@@ -125,7 +126,7 @@ Assassinate: Stab rank increased by 1 for this attack, instantly stagger a distr
     }
 
     @Override
-    public boolean onCooldownProc(LivingEntity caster, SkillCooldownData stats, Event procPoint) {
+    public boolean onCooldownProc(LivingEntity caster, SkillData stats, Event procPoint) {
         if (procPoint instanceof LivingAttackEvent) {
             int recharge = 1;
             if (CombatUtils.getAwareness(caster, ((LivingAttackEvent) procPoint).getEntityLiving()) != CombatUtils.Awareness.ALERT)
@@ -150,13 +151,13 @@ Assassinate: Stab rank increased by 1 for this attack, instantly stagger a distr
         }
 
         @Override
-        public void onSuccessfulProc(LivingEntity caster, SkillData stats, LivingEntity target, Event procPoint) {
+        public void onProc(LivingEntity caster, Event procPoint, STATE state, SkillData stats, Entity target) {
             if (procPoint instanceof StaggerEvent && caster != ((StaggerEvent) procPoint).getEntityLiving() && !procPoint.isCanceled()) {
                 ((StaggerEvent) procPoint).setLength(200);
                 ((StaggerEvent) procPoint).setCount(1);
                 target.addPotionEffect(new EffectInstance(Effects.BLINDNESS, 200));
             }
-            super.onSuccessfulProc(caster, stats, target, procPoint);
+            super.onProc(caster, procPoint, state, stats, target);
         }
     }
 
@@ -173,7 +174,7 @@ Assassinate: Stab rank increased by 1 for this attack, instantly stagger a distr
         }
 
         @Override
-        public void onSuccessfulProc(LivingEntity caster, SkillData stats, LivingEntity target, Event procPoint) {
+        public void onProc(LivingEntity caster, Event procPoint, STATE state, SkillData stats, Entity target) {
             if (procPoint == null) {
                 double posDiff = stats.getDuration() - caster.getPosY();
                 for (LivingEntity e : caster.world.getLoadedEntitiesWithinAABB(LivingEntity.class, caster.getBoundingBox().grow(5))) {
