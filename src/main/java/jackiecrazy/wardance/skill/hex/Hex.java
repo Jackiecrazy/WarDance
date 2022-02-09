@@ -5,10 +5,10 @@ import jackiecrazy.wardance.capability.resources.CombatData;
 import jackiecrazy.wardance.capability.resources.ICombatCapability;
 import jackiecrazy.wardance.capability.status.Marks;
 import jackiecrazy.wardance.entity.FakeExplosion;
-import jackiecrazy.wardance.event.ParryEvent;
 import jackiecrazy.wardance.skill.*;
 import jackiecrazy.wardance.utils.CombatUtils;
 import jackiecrazy.wardance.utils.EffectUtils;
+import jackiecrazy.wardance.utils.SkillUtils;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.ai.attributes.AttributeModifier;
@@ -87,17 +87,12 @@ public class Hex extends Skill {
 //    }
 
     @Override
-    public Tag<String> getProcPoints(LivingEntity caster) {
-        return tag;
-    }
-
-    @Override
     public Tag<String> getTags(LivingEntity caster) {
         return thing;
     }
 
     @Override
-    public Tag<String> getIncompatibleTags(LivingEntity caster) {
+    public Tag<String> getSoftIncompatibility(LivingEntity caster) {
         return offensive;
     }
 
@@ -106,44 +101,50 @@ public class Hex extends Skill {
         return 4;
     }
 
-    @Override
-    public boolean onCast(LivingEntity caster) {
-        activate(caster, 60);
-        CombatData.getCap(caster).consumeSpirit(spiritConsumption(caster));
-        return true;
-    }
-
     @Nonnull
     @Override
     public SkillCategory getParentCategory() {
         return SkillCategories.hex;
     }
 
-    @Override
-    public void onEffectEnd(LivingEntity caster, SkillData stats) {
-        setCooldown(caster, 15);
-    }
 
     @Override
-    public void onProc(LivingEntity caster, Event procPoint, STATE state, SkillData stats, Entity target) {
-        if (procPoint instanceof ParryEvent) {
-            procPoint.setCanceled(true);
-            mark(caster, target, 200);
-            markUsed(caster);
+    public boolean onStateChange(LivingEntity caster, SkillData prev, STATE from, STATE to) {
+        if (to == STATE.ACTIVE) {
+            LivingEntity e = SkillUtils.aimLiving(caster);
+            if (e != null) {
+                mark(caster, e, 200);
+                markUsed(caster);
+            }
         }
+        if(to==STATE.COOLING)
+            setCooldown(caster,15);
+        return boundCast(prev, from, to);
     }
 
     @Override
-    public boolean onCooldownProc(LivingEntity caster, SkillData stats, Event procPoint) {
-        stats.decrementDuration(0.05f);
-        int round = (int) (stats.getDuration() * 20);
-        return stats.getDuration() < 3 || round % 20 == 0;
+    public boolean markTick(LivingEntity caster, LivingEntity target, SkillData sd) {
+        sd.decrementDuration();
+        return true;
+    }
+
+    @Override
+    public void onProc(LivingEntity caster, Event procPoint, STATE state, SkillData stats, LivingEntity target) {
+
+    }
+
+    @Override
+    public boolean equippedTick(LivingEntity caster, SkillData stats) {
+        if (cooldownTick(stats)) {
+            return true;
+        }
+        return super.equippedTick(caster, stats);
     }
 
     @Override
     public SkillData onMarked(LivingEntity caster, LivingEntity target, SkillData sd, @Nullable SkillData existing) {
         final ModifiableAttributeInstance luck = target.getAttribute(Attributes.LUCK);
-        if (luck != null && getParentCategory() == null) {
+        if (luck != null && this == WarSkills.CURSE_OF_MISFORTUNE.get()) {
             luck.removeModifier(HEX);
             luck.applyNonPersistentModifier(HEX);
         }
@@ -197,11 +198,6 @@ public class Hex extends Skill {
 
     public static class Unravel extends Hex {
         private final Tag<String> tag = Tag.getTagFromContents(new HashSet<>(Arrays.asList("melee", "noDamage", "boundCast", ProcPoints.change_parry_result, ProcPoints.recharge_time, "chant", ProcPoints.unblockable, "normalAttack", "countdown")));
-
-        @Override
-        public Tag<String> getProcPoints(LivingEntity caster) {
-            return tag;
-        }
 
         @Override
         public Color getColor() {

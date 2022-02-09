@@ -72,7 +72,7 @@ public class UpdateSkillSelectionPacket {
                             if (s != null) {
                                 s.onUnequip(sender, new SkillData(s, 0).setCaster(sender));
                             }
-                        cap.clearActiveSkills();
+                        cap.getAllSkillData().clear();
                         cap.setEquippedSkills(updateSkillPacket.l);
                         for (Skill s : cap.getEquippedSkills())
                             if (s != null) {

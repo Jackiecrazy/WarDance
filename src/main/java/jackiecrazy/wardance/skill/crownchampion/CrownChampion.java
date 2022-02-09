@@ -52,13 +52,13 @@ elemental might: +1 burn/snowball/poison/drown damage to targets you have attack
         if (seme instanceof LivingEntity) {
             final Skill venge = WarSkills.VENGEFUL_MIGHT.get();
             for (PlayerEntity p : uke.world.getPlayers())
-                if (TargetingUtils.isAlly(p, uke) && p.getDistanceSq(uke) < 100 && CasterData.getCap(p).isSkillActive(venge)) {
+                if (TargetingUtils.isAlly(p, uke) && p.getDistanceSq(uke) < 100 && CasterData.getCap(p).getEquippedSkills().contains(venge)) {
                     ((LivingEntity) seme).addPotionEffect(new EffectInstance(Effects.GLOWING, 100));
                     SkillData apply = Marks.getCap((LivingEntity) seme).getActiveMark(venge).orElse(new SkillData(venge, 0));
                     apply.setArbitraryFloat(apply.getArbitraryFloat() + e.getAmount());
                     Marks.getCap((LivingEntity) seme).mark(apply);
                 }
-            if (Marks.getCap(uke).isMarked(venge) && CasterData.getCap((LivingEntity) seme).isSkillActive(venge)) {
+            if (Marks.getCap(uke).isMarked(venge) && CasterData.getCap((LivingEntity) seme).getEquippedSkills().contains(venge)) {
                 Marks.getCap(uke).getActiveMark(venge).ifPresent(a -> {
                     final float amnt = Math.min(e.getAmount(), a.getArbitraryFloat());
                     CombatData.getCap((LivingEntity) seme).addMight(amnt);
@@ -72,14 +72,14 @@ elemental might: +1 burn/snowball/poison/drown damage to targets you have attack
     @SubscribeEvent(priority = EventPriority.LOWEST)
     public static void oops(LivingDamageEvent e) {
         LivingEntity uke = e.getEntityLiving();
-        if (CasterData.getCap(uke).isSkillActive(WarSkills.PRIDEFUL_MIGHT.get())) {
+        if (CasterData.getCap(uke).getEquippedSkills().contains(WarSkills.PRIDEFUL_MIGHT.get())) {
             CombatData.getCap(uke).setMight(0);
         }
     }
 
     @SubscribeEvent
     public static void sneaky(LivingEvent.LivingVisibilityEvent e) {
-        if (CasterData.getCap(e.getEntityLiving()).isSkillActive(WarSkills.HIDDEN_MIGHT.get()))
+        if (CasterData.getCap(e.getEntityLiving()).getEquippedSkills().contains(WarSkills.HIDDEN_MIGHT.get()))
             e.modifyVisibility(0.7 + CombatData.getCap(e.getEntityLiving()).getMight() * 0.03);
     }
 
@@ -87,7 +87,7 @@ elemental might: +1 burn/snowball/poison/drown damage to targets you have attack
     public static void deady(LivingDeathEvent e) {
         if (!CombatUtils.isPhysicalAttack(e.getSource())) {
             for (PlayerEntity pe : e.getEntityLiving().world.getLoadedEntitiesWithinAABB(PlayerEntity.class, e.getEntity().getBoundingBox().grow(5))) {
-                if (CasterData.getCap(pe).isSkillActive(WarSkills.ELEMENTAL_MIGHT.get())) {
+                if (CasterData.getCap(pe).getEquippedSkills().contains(WarSkills.ELEMENTAL_MIGHT.get())) {
                     CombatData.getCap(pe).addMight(1);
                 }
             }
@@ -101,28 +101,22 @@ elemental might: +1 burn/snowball/poison/drown damage to targets you have attack
     }
 
     @Override
-    public Tag<String> getProcPoints(LivingEntity caster) {
-        return tag;
-    }
-
-    @Override
     public Tag<String> getTags(LivingEntity caster) {
         return passive;
     }
 
     @Override
-    public Tag<String> getIncompatibleTags(LivingEntity caster) {
-        return empty;
+    public Tag<String> getSoftIncompatibility(LivingEntity caster) {
+        return none;
     }
 
     @Override
-    public boolean onCast(LivingEntity caster) {
-        activate(caster, 0);
-        return true;
+    public void onEquip(LivingEntity caster) {
+        super.onEquip(caster);
     }
 
     @Override
-    public void onEffectEnd(LivingEntity caster, SkillData stats) {
+    public void onUnequip(LivingEntity caster, SkillData stats) {
         if (!activate(caster, 0)) {
             caster.getAttribute(Attributes.ATTACK_DAMAGE).removeModifier(MULT);
             caster.getAttribute(Attributes.MOVEMENT_SPEED).removeModifier(MULT);
@@ -130,15 +124,20 @@ elemental might: +1 burn/snowball/poison/drown damage to targets you have attack
     }
 
     @Override
-    public void onProc(LivingEntity caster, Event procPoint, STATE state, SkillData stats, Entity target) {
-        if (this.getParentCategory() != null) return;
+    public void onProc(LivingEntity caster, Event procPoint, STATE state, SkillData stats, LivingEntity target) {
         int might = (int) CombatData.getCap(caster).getMight() - 1;
-        if (procPoint instanceof LivingAttackEvent) {
+        if (procPoint instanceof LivingAttackEvent && procPoint.getPhase() == EventPriority.HIGHEST) {
             SkillUtils.modifyAttribute(caster, Attributes.ATTACK_DAMAGE, MULT, 0.05f * might, AttributeModifier.Operation.MULTIPLY_BASE);
         }
-        if (procPoint instanceof GainMightEvent) {
+        if (procPoint instanceof GainMightEvent && procPoint.getPhase() == EventPriority.HIGHEST) {
             ((GainMightEvent) procPoint).setQuantity(((GainMightEvent) procPoint).getQuantity() * (15 - might / 2f) / 10f);
         }
+    }
+
+    @Override
+    public boolean onStateChange(LivingEntity caster, SkillData prev, STATE from, STATE to) {
+        //pure passive, no state changes possible.
+        return false;
     }
 
     public static class HiddenMight extends CrownChampion {
@@ -146,21 +145,16 @@ elemental might: +1 burn/snowball/poison/drown damage to targets you have attack
         private final Tag<String> tag = Tag.getTagFromContents(new HashSet<>(Arrays.asList("passive", ProcPoints.attack_might)));
 
         @Override
-        public Tag<String> getProcPoints(LivingEntity caster) {
-            return tag;
-        }
-
-        @Override
-        public void onProc(LivingEntity caster, Event procPoint, STATE state, SkillData stats, Entity target) {
-            if (procPoint instanceof AttackMightEvent && CombatUtils.getAwareness(caster, target).equals(CombatUtils.Awareness.UNAWARE))
+        public void onProc(LivingEntity caster, Event procPoint, STATE state, SkillData stats, LivingEntity target) {
+            if (procPoint instanceof AttackMightEvent && procPoint.getPhase() == EventPriority.HIGHEST && CombatUtils.getAwareness(caster, target).equals(CombatUtils.Awareness.UNAWARE))
                 ((AttackMightEvent) procPoint).setQuantity(((AttackMightEvent) procPoint).getQuantity() + 0.5f);
         }
 
         @Override
-        public boolean activeTick(LivingEntity caster, SkillData d) {
+        public boolean equippedTick(LivingEntity caster, SkillData stats) {
             int might = (int) CombatData.getCap(caster).getMight() - 1;
             SkillUtils.modifyAttribute(caster, Attributes.MOVEMENT_SPEED, MULT, 0.03f * might, AttributeModifier.Operation.MULTIPLY_BASE);
-            return super.activeTick(caster, d);
+            return super.equippedTick(caster, stats);
         }
 
         @Override
@@ -176,9 +170,18 @@ elemental might: +1 burn/snowball/poison/drown damage to targets you have attack
         }
 
         @Override
+        public void onProc(LivingEntity caster, Event procPoint, STATE state, SkillData stats, LivingEntity target) {
+
+        }
+
+        @Override
         public boolean markTick(LivingEntity caster, LivingEntity target, SkillData sd) {
-            target.addPotionEffect(new EffectInstance(Effects.GLOWING, 60));
-            return super.markTick(caster, target, sd);
+            target.addPotionEffect(new EffectInstance(Effects.GLOWING, 10));
+            if (sd.getDuration() < 0) {
+                removeMark(target);
+                return true;
+            }
+            return false;
         }
     }
 
@@ -189,8 +192,8 @@ elemental might: +1 burn/snowball/poison/drown damage to targets you have attack
         }
 
         @Override
-        public void onProc(LivingEntity caster, Event procPoint, STATE state, SkillData pd, Entity target) {
-            if (procPoint instanceof GainMightEvent) {
+        public void onProc(LivingEntity caster, Event procPoint, STATE state, SkillData pd, LivingEntity target) {
+            if (procPoint instanceof GainMightEvent && procPoint.getPhase() == EventPriority.LOWEST) {
                 ((GainMightEvent) procPoint).setQuantity(((GainMightEvent) procPoint).getQuantity() * 3);
                 pd.setArbitraryFloat(pd.getArbitraryFloat() + ((GainMightEvent) procPoint).getQuantity());
                 if (pd.getArbitraryFloat() > 3) {
@@ -203,7 +206,7 @@ elemental might: +1 burn/snowball/poison/drown damage to targets you have attack
 
     public static class ElementalMight extends CrownChampion {
         @Override
-        public void onProc(LivingEntity caster, Event procPoint, STATE state, SkillData stats, Entity target) {
+        public void onProc(LivingEntity caster, Event procPoint, STATE state, SkillData stats, LivingEntity target) {
             if (procPoint instanceof LivingAttackEvent)
                 ((LivingAttackEvent) procPoint).getEntityLiving().addPotionEffect(new EffectInstance(WarEffects.VULNERABLE.get(), (int) (CombatData.getCap(caster).getMight() * 20)));
         }

@@ -69,7 +69,7 @@ import java.util.Optional;
 public class ClientEvents {
     private static final int ALLOWANCE = 7;
     private static final ResourceLocation hud = new ResourceLocation(WarDance.MODID, "textures/hud/icons.png");
-    private static final ResourceLocation goodhud = new ResourceLocation(WarDance.MODID, "textures/hud/thanksamo.png");
+    private static final ResourceLocation goodhud = new ResourceLocation(WarDance.MODID, "textures/hud/thanksrai.png");
     /**
      * left, back, right
      */
@@ -350,7 +350,7 @@ public class ClientEvents {
                 mc.getTextureManager().bindTexture(goodhud);
                 currentSpiritLevel = updateValue(currentSpiritLevel, cap.getSpirit());
                 currentMightLevel = updateValue(currentMightLevel, cap.getMight());
-                ClientEvents.currentComboLevel = cap.getCombo() > currentComboLevel ? updateValue(currentComboLevel, cap.getCombo()) : cap.getCombo();
+                ClientEvents.currentComboLevel = cap.getRank() > currentComboLevel ? updateValue(currentComboLevel, cap.getRank()) : cap.getRank();
                 //yourCurrentPostureLevel = updateValue(yourCurrentPostureLevel, cap.getPosture());
                 if (cap.isCombatMode()) {
                     stack.push();
@@ -443,29 +443,6 @@ public class ClientEvents {
                     //combo bar at 224,20 to 229, 121. Grace at 222,95 to 224, 121
                     //initial bar
                     RenderSystem.enableBlend();
-                    //mc.getTextureManager().bindTexture(hud);
-//                    int barHeight = 103;
-//                    event.getMatrixStack().push();
-//                    RenderSystem.defaultBlendFunc();
-//                    mc.ingameGUI.blit(event.getMatrixStack(), width - 8 + ClientConfig.comboX, Math.min(height / 2 - barHeight / 2 + ClientConfig.comboY, height - barHeight), 220, 20, 10, barHeight);
-//                    event.getMatrixStack().pop();
-//                    //combo
-//                    int emptyPerc = (int) ((Math.ceil(currentComboLevel) - currentComboLevel) * barHeight);
-//                    if (emptyPerc != 0) {
-//                        event.getMatrixStack().push();
-//                        RenderSystem.defaultBlendFunc();
-//                        RenderSystem.color3f(0.15f, 0.2f, 1f);
-//                        mc.ingameGUI.blit(event.getMatrixStack(), width - 3 + ClientConfig.comboX, Math.min(height / 2 - barHeight / 2 + ClientConfig.comboY, height - barHeight) + emptyPerc, 224, 20 + emptyPerc, 9, barHeight - emptyPerc);
-//                        event.getMatrixStack().pop();
-//                    }
-//                    //grace
-//                    barHeight = 26;
-//                    event.getMatrixStack().push();
-//                    RenderSystem.defaultBlendFunc();
-//                    RenderSystem.color3f(1 - cap.getComboGrace() / (float) ResourceConfig.comboGrace, cap.getComboGrace() / (float) ResourceConfig.comboGrace, 0);
-//                    emptyPerc = (int) ((ResourceConfig.comboGrace - cap.getComboGrace()) / (float) ResourceConfig.comboGrace * barHeight);
-//                    mc.ingameGUI.blit(event.getMatrixStack(), width - 7 + ClientConfig.comboX, Math.min(height / 2 - barHeight / 2 + ClientConfig.comboY, height - barHeight) + 38 + emptyPerc, 220, 95 + emptyPerc, 4, barHeight - emptyPerc);
-//                    event.getMatrixStack().pop();
                     stack.push();
                     if (ClientConfig.CONFIG.combo.enabled) {
                         mc.getTextureManager().bindTexture(goodhud);
@@ -483,7 +460,7 @@ public class ClientEvents {
                         if (workingCombo >= 9) {
                             combowidth = 64;
                             comboU = 194;
-                            fillHeight = 32;
+                            fillHeight = (int) ((workingCombo - 9) * 32f);
                         } else if (divisor > 1)
                             fillHeight = (int) ((workingCombo - divisor * 2) / divisor * 32f);
                         else
@@ -493,7 +470,7 @@ public class ClientEvents {
                         y = MathHelper.clamp(pair.getSecond() - 23, 0, height - 46);
                         mc.ingameGUI.blit(stack, x, y, comboU, 0, combowidth, 32);
                         //fancy fill percentage
-                        mc.ingameGUI.blit(stack, x, y + 31 - fillHeight, comboU, 63 - fillHeight, combowidth, fillHeight);
+                        mc.ingameGUI.blit(stack, x, y + 33 - fillHeight, comboU, 65 - fillHeight, combowidth, fillHeight);
                         //TRIANGLE!
 //                    BufferBuilder bufferbuilder = Tessellator.getInstance().getBuffer();
 //                    bufferbuilder.begin(4, DefaultVertexFormats.POSITION_TEX);
@@ -704,7 +681,7 @@ public class ClientEvents {
                     if (GeneralConfig.elenaiP && CombatData.getCap(p).getPostureGrace() > 0) {
                         ClientTickEventListener.regen++;
                     } else if (GeneralConfig.elenaiC) {
-                        dodgeDecimal += Math.floor(CombatData.getCap(p).getCombo()) / 10;
+                        dodgeDecimal += Math.floor(CombatData.getCap(p).getRank()) / 10;
                         if (dodgeDecimal > 1) {
                             dodgeDecimal--;
                             ClientTickEventListener.regen--;

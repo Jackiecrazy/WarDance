@@ -18,7 +18,7 @@ public class ResourceConfig {
     public static final ForgeConfigSpec CONFIG_SPEC;
     public static int shatterCooldown;
     public static int qiGrace;
-    public static int comboGrace;
+    public static int rankGrace;
     public static int spiritCD;
     public static int postureCD;
     public static int armorPostureCD;
@@ -37,7 +37,6 @@ public class ResourceConfig {
 
     private final ForgeConfigSpec.IntValue _shatterCooldown;
     private final ForgeConfigSpec.IntValue _qiGrace;
-    private final ForgeConfigSpec.IntValue _comboGrace;
     private final ForgeConfigSpec.IntValue _spiritCD;
     private final ForgeConfigSpec.IntValue _postureCD;
     private final ForgeConfigSpec.IntValue _armorPostureCD;
@@ -55,7 +54,6 @@ public class ResourceConfig {
         //master, resources, compat, stealth, items, misc
         _shatterCooldown = b.translation("wardance.config.shatterCD").comment("Ticks after a hit for which shatter will not be replenished").defineInRange("shatter cooldown", 200, 1, Integer.MAX_VALUE);
         _qiGrace = b.translation("wardance.config.qiG").comment("Number of ticks after gaining might during which it will not decrease").defineInRange("might grace period", 100, 1, Integer.MAX_VALUE);
-        _comboGrace = b.translation("wardance.config.comboG").comment("Number of ticks after gaining combo during which it will not decrease").defineInRange("combo grace period", 100, 1, Integer.MAX_VALUE);
         _spiritCD = b.translation("wardance.config.spiritC").comment("Number of ticks after consuming spirit during which it will not regenerate").defineInRange("spirit cooldown", 80, 1, Integer.MAX_VALUE);
         _postureCD = b.translation("wardance.config.postureC").comment("Number of ticks after consuming posture during which it will not regenerate").defineInRange("posture cooldown", 20, 1, Integer.MAX_VALUE);
         _armorPostureCD = b.translation("wardance.config.postureA").comment("Number of ticks full diamond armor will add onto posture cooldown. This will scale linearly between nothing and diamond, so by default iron adds 15 ticks, for instance.").defineInRange("armor posture cooldown", 20, 1, Integer.MAX_VALUE);
@@ -72,7 +70,6 @@ public class ResourceConfig {
 
     private static void bake() {
         qiGrace = CONFIG._qiGrace.get();
-        comboGrace = CONFIG._comboGrace.get();
         spiritCD = CONFIG._spiritCD.get();
         postureCD = CONFIG._postureCD.get();
         shatterCooldown = CONFIG._shatterCooldown.get();

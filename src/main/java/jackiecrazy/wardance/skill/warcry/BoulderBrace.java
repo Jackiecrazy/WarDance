@@ -10,12 +10,16 @@ public class BoulderBrace extends WarCry {
     @Override
     protected void evoke(LivingEntity caster) {
         CombatData.getCap(caster).setPosture(CombatData.getCap(caster).getMaxPosture());
+        super.evoke(caster);
     }
 
     @Override
-    public boolean activeTick(LivingEntity caster, SkillData d) {
-        CombatData.getCap(caster).addPosture(0.05f);
-        return super.activeTick(caster, d);
+    public boolean equippedTick(LivingEntity caster, SkillData stats) {
+        if(stats.getState()==STATE.ACTIVE){
+            CombatData.getCap(caster).addPosture(0.05f);
+            return activeTick(stats);
+        }
+        return super.equippedTick(caster, stats);
     }
 
     @Override

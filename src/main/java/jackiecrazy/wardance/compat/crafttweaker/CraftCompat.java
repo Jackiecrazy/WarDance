@@ -133,22 +133,22 @@ public class CraftCompat {
 
     @ZenCodeType.Method
     public float getCombo(LivingEntity entity) {
-        return CombatData.getCap(entity).getCombo();
+        return CombatData.getCap(entity).getRank();
     }
 
     @ZenCodeType.Method
     public void setCombo(LivingEntity entity, float amount) {
-        CombatData.getCap(entity).setCombo(amount);
+        CombatData.getCap(entity).setRank(amount);
     }
 
     @ZenCodeType.Method
     public float addCombo(LivingEntity entity, float amount) {
-        return CombatData.getCap(entity).addCombo(amount);
+        return CombatData.getCap(entity).addRank(amount);
     }
 
     @ZenCodeType.Method
     public boolean consumeCombo(LivingEntity entity, float amount, float above) {
-        return CombatData.getCap(entity).consumeCombo(amount, above);
+        return CombatData.getCap(entity).consumeRank(amount, above);
     }
 
     @ZenCodeType.Method
@@ -179,21 +179,6 @@ public class CraftCompat {
     @ZenCodeType.Method
     public void setMaxMight(LivingEntity entity, float amount) {
         CombatData.getCap(entity).setMaxMight(amount);
-    }
-
-    @ZenCodeType.Method
-    public int getComboGrace(LivingEntity entity) {
-        return CombatData.getCap(entity).getComboGrace();
-    }
-
-    @ZenCodeType.Method
-    public void setComboGrace(LivingEntity entity, int amount) {
-        CombatData.getCap(entity).setComboGrace(amount);
-    }
-
-    @ZenCodeType.Method
-    public int decrementComboGrace(LivingEntity entity, int amount) {
-        return CombatData.getCap(entity).decrementComboGrace(amount);
     }
 
     @ZenCodeType.Method
@@ -391,74 +376,5 @@ public class CraftCompat {
     public void setSkillSelectable(LivingEntity entity, String s, boolean selectable) {
         if (Skill.getSkill(s) != null)
             CasterData.getCap(entity).setSkillSelectable(Skill.getSkill(s), selectable);
-    }
-
-    @ZenCodeType.Method
-    public void removeActiveSkill(LivingEntity entity, String s) {
-        if (Skill.getSkill(s) != null)
-            CasterData.getCap(entity).removeActiveSkill(Skill.getSkill(s));
-    }
-
-    @ZenCodeType.Method
-    public void clearActiveSkills(LivingEntity entity) {
-        CasterData.getCap(entity).clearActiveSkills();
-    }
-
-    @ZenCodeType.Method
-    public boolean isSkillActive(LivingEntity entity, String s) {
-        if (Skill.getSkill(s) == null) return false;
-        return CasterData.getCap(entity).isSkillActive(Skill.getSkill(s));
-    }
-
-    @ZenCodeType.Method
-    public boolean isTagActive(LivingEntity entity, String s) {
-        if (Skill.getSkill(s) == null) return false;
-        return CasterData.getCap(entity).isSkillSelectable(Skill.getSkill(s));
-    }
-
-    @ZenCodeType.Method
-    public void removeActiveTag(LivingEntity entity, String s) {
-        CasterData.getCap(entity).removeActiveTag(s);
-    }
-
-    @ZenCodeType.Method
-    public void markSkillUsed(LivingEntity e, String s) {
-        if (Skill.getSkill(s) != null)
-            CasterData.getCap(e).markSkillUsed(Skill.getSkill(s));
-    }
-
-    @ZenCodeType.Method
-    public void setSkillCooldown(LivingEntity entity, String s, float amount) {
-        if (Skill.getSkill(s) != null)
-            CasterData.getCap(entity).setSkillCooldown(Skill.getSkill(s), amount);
-    }
-
-    @ZenCodeType.Method
-    public boolean isSkillCoolingDown(LivingEntity entity, String s) {
-        if (Skill.getSkill(s) == null) return false;
-        return CasterData.getCap(entity).isSkillCoolingDown(Skill.getSkill(s));
-    }
-
-    @ZenCodeType.Method
-    public void decrementSkillCooldown(LivingEntity entity, String s, float amount) {
-        if (Skill.getSkill(s) != null)
-            CasterData.getCap(entity).decrementSkillCooldown(Skill.getSkill(s), amount);
-    }
-
-    @ZenCodeType.Method
-    public void coolSkill(LivingEntity entity, String s) {
-        if (Skill.getSkill(s) != null)
-            CasterData.getCap(entity).coolSkill(Skill.getSkill(s));
-    }
-
-    @ZenCodeType.Method
-    public float getSkillCooldown(LivingEntity entity, String s) {
-        if (Skill.getSkill(s) == null) return 0;
-        return CasterData.getCap(entity).getSkillCooldown(Skill.getSkill(s)).getDuration();
-    }
-
-    @ZenCodeType.Method
-    public void clearSkillCooldowns(LivingEntity entity) {
-        CasterData.getCap(entity).clearSkillCooldowns();
     }
 }

@@ -106,6 +106,7 @@ public class WarDance {
         CombatChannel.INSTANCE.registerMessage(index++, RequestSweepPacket.class, new RequestSweepPacket.RequestSweepEncoder(), new RequestSweepPacket.RequestSweepDecoder(), new RequestSweepPacket.RequestSweepHandler());
         CombatChannel.INSTANCE.registerMessage(index++, RequestAttackPacket.class, new RequestAttackPacket.RequestAttackEncoder(), new RequestAttackPacket.RequestAttackDecoder(), new RequestAttackPacket.RequestAttackHandler());
         CombatChannel.INSTANCE.registerMessage(index++, SelectSkillPacket.class, new SelectSkillPacket.CombatEncoder(), new SelectSkillPacket.CombatDecoder(), new SelectSkillPacket.CombatHandler());
+        CombatChannel.INSTANCE.registerMessage(index++, EvokeSkillPacket.class, new EvokeSkillPacket.EvokeEncoder(), new EvokeSkillPacket.EvokeDecoder(), new EvokeSkillPacket.EvokeHandler());
         CombatChannel.INSTANCE.registerMessage(index++, UpdateSkillSelectionPacket.class, new UpdateSkillSelectionPacket.UpdateSkillEncoder(), new UpdateSkillSelectionPacket.UpdateSkillDecoder(), new UpdateSkillSelectionPacket.UpdateSkillHandler());
         CombatChannel.INSTANCE.registerMessage(index++, SyncSkillPacket.class, new SyncSkillPacket.SyncSkillEncoder(), new SyncSkillPacket.SyncSkillDecoder(), new SyncSkillPacket.SyncSkillHandler());
         CombatChannel.INSTANCE.registerMessage(index++, ManualParryPacket.class, new ManualParryPacket.ParryEncoder(), new ManualParryPacket.ParryDecoder(), new ManualParryPacket.ParryHandler());
@@ -158,8 +159,8 @@ public class WarDance {
                 if (!event.has(t, Attributes.LUCK)) event.add(t, Attributes.LUCK, 4);
                 for (RegistryObject<Attribute> a : WarAttributes.ATTRIBUTES.getEntries()) {
                     if (!event.has(t, a.get())) {
-                        if(GeneralConfig.debug)
-                        LOGGER.debug("civilly registering " + a.getId() + " to " + a.getId());
+                        if (GeneralConfig.debug)
+                            LOGGER.debug("civilly registering " + a.getId() + " to " + a.getId());
                         event.add(t, a.get());
                     }
                 }

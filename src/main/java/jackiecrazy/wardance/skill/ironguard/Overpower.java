@@ -1,16 +1,11 @@
 package jackiecrazy.wardance.skill.ironguard;
 
 import jackiecrazy.wardance.capability.resources.CombatData;
-import jackiecrazy.wardance.capability.skill.CasterData;
 import jackiecrazy.wardance.event.ParryEvent;
-import jackiecrazy.wardance.skill.SkillCategories;
 import jackiecrazy.wardance.skill.SkillData;
 import jackiecrazy.wardance.utils.CombatUtils;
-import net.minecraft.entity.Entity;
 import net.minecraft.entity.LivingEntity;
-import net.minecraftforge.eventbus.api.Event;
 
-import javax.annotation.Nullable;
 import java.awt.*;
 
 public class Overpower extends IronGuard {
@@ -20,14 +15,19 @@ public class Overpower extends IronGuard {
     }
 
     @Override
-    public void onProc(LivingEntity caster, Event procPoint, STATE state, SkillData stats, @Nullable Entity target) {
-        if (procPoint instanceof ParryEvent) {
-            if (!CasterData.getCap(((ParryEvent) procPoint).getAttacker()).isCategoryActive(SkillCategories.heavy_blow)) {
-                CombatData.getCap(((ParryEvent) procPoint).getAttacker()).consumePosture(caster, ((ParryEvent) procPoint).getPostureConsumption());
-                CombatData.getCap(((ParryEvent) procPoint).getAttacker()).consumePosture(caster, CombatUtils.getPostureAtk(caster, target, ((ParryEvent) procPoint).getDefendingHand(), ((ParryEvent) procPoint).getAttackDamage(), ((ParryEvent) procPoint).getDefendingStack()));
-                ((ParryEvent) procPoint).setPostureConsumption(0);
-            }
-            markUsed(caster);
-        }
+    protected void parry(LivingEntity caster, ParryEvent procPoint, SkillData stats, LivingEntity target) {
+        if(stats.getState()==STATE.COOLING)return;
+        CombatData.getCap(procPoint.getAttacker()).consumePosture(caster, procPoint.getPostureConsumption());
+        CombatData.getCap(procPoint.getAttacker()).consumePosture(caster, CombatUtils.getPostureAtk(caster, target, procPoint.getDefendingHand(), procPoint.getAttackDamage(), procPoint.getDefendingStack()));
+        procPoint.setPostureConsumption(0);
+        markUsed(caster);
+    }
+
+
+    @Override
+    public boolean equippedTick(LivingEntity caster, SkillData stats) {
+        if (stats.getDuration() > 0.5 || CombatData.getCap(caster).getPosture() == CombatData.getCap(caster).getMaxPosture())
+            return cooldownTick(stats);
+        return false;
     }
 }

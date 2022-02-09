@@ -15,14 +15,6 @@ public class Berserk extends ShieldBash {
     }
 
     @Override
-    public boolean onCast(LivingEntity caster) {
-        CombatUtils.setHandCooldown(caster, Hand.MAIN_HAND, 1, true);
-        CombatUtils.setHandCooldown(caster, Hand.OFF_HAND, 1, false);
-        caster.addPotionEffect(new EffectInstance(Effects.HASTE, 50, 2));
-        return super.onCast(caster);
-    }
-
-    @Override
     public void performEffect(LivingEntity caster, LivingEntity target) {
         super.performEffect(caster, target);
         CombatUtils.setHandCooldown(caster, Hand.MAIN_HAND, 1, true);

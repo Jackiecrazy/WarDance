@@ -27,16 +27,17 @@ public class SkillCapability implements ISkillCapability {
     private final Queue<Skill> lastCast = new LinkedList<>();
     boolean sync = false, gatedSkills = false;
     int index = -1;
-
-    private SkillData nonNullGet(Skill s){
-        //if data doesn't have the skill tag, re-initialize the skill data. TODO onEquip should ship with a default SkillData addition
-        if(!data.containsKey(s))
-            s.onEquip(dude.get());
-        return data.get(s);
-    }
+    List<Skill> toSync = new ArrayList<>();
 
     public SkillCapability(LivingEntity attachTo) {
         dude = new WeakReference<>(attachTo);
+    }
+
+    private SkillData nonNullGet(Skill s) {
+        //if data doesn't have the skill tag, re-initialize the skill data. TODO onEquip should ship with a default SkillData addition
+        if (!data.containsKey(s))
+            s.onEquip(dude.get());
+        return data.get(s);
     }
 
     @Override
@@ -65,7 +66,7 @@ public class SkillCapability implements ISkillCapability {
 
     @Override
     public Optional<SkillData> getSkillData(Skill s) {
-        return Optional.of(data.get(s));
+        return Optional.ofNullable(data.get(s));
     }
 
     @Override
@@ -83,21 +84,32 @@ public class SkillCapability implements ISkillCapability {
 
     @Override
     public void holsterSkill(int index) {
+        Skill from = getHolsteredSkill();
+        if (from != null)
+            changeSkillState(from, Skill.STATE.INACTIVE);
         this.index = index;
+        from = getHolsteredSkill();
+        if (from != null)
+            changeSkillState(from, Skill.STATE.HOLSTERED);
         sync = true;
     }
 
     @Override
-    public void changeSkillState(Skill d, Skill.STATE to) {
-        final SkillData data = this.data.get(d);
-        if(data==null)
-        if (data.getState()== Skill.STATE.ACTIVE) {
-            if (GeneralConfig.debug)
-                WarDance.LOGGER.debug("skill " + d + " is already active, overwriting.");
+    public boolean changeSkillState(Skill d, Skill.STATE to) {
+        SkillData data = this.data.get(d);
+        if (data == null) {
+            this.data.put(d, new SkillData(d, 0, 0));
+            data = this.data.get(d);
         }
-        d.onStateChange(dude.get(), data, data.getState(), to);
-        data.setState(to);
+        if (data != null)
+            if (data.getState() == Skill.STATE.ACTIVE) {
+                if (GeneralConfig.debug)
+                    WarDance.LOGGER.debug("skill " + d + " is already active, overwriting.");
+            }
+        boolean update = d.onStateChange(dude.get(), data, data.getState(), to);
+        toSync.add(d);
         sync = true;
+        return update;
     }
 
     @Override
@@ -115,8 +127,8 @@ public class SkillCapability implements ISkillCapability {
 
     @Override
     public boolean isTagActive(String tag) {
-        for (Skill e : new ArrayList<>(data.keySet())) {
-            if (e.getTags(dude.get()).contains(tag))
+        for (SkillData e : new ArrayList<>(data.values())) {
+            if (e.getState() == Skill.STATE.ACTIVE && e.getSkill().getTags(dude.get()).contains(tag))
                 return true;
         }
         return false;
@@ -229,18 +241,17 @@ public class SkillCapability implements ISkillCapability {
         gatedSkills = gate;
         for (SkillData d : data.values()) {
             if (d == null) continue;
-            if (d.getSkill().equippedTick(caster, d.getState())) {
+            if (d.getSkill().equippedTick(caster, d)) {
                 sync = true;
             }
         }
-        HashSet<SkillData> finish = new HashSet(getAllSkillData().values());
-        for (SkillData s : finish) {
+        for (SkillData s : getAllSkillData().values()) {
             if (s.getDuration() <= 0) {
                 switch (s.getState()) {
                     //active ends. Add to cast history and forward to skill for individual handling.
                     case ACTIVE:
                         lastCast.add(s.getSkill());
-                        while(lastCast.size()>5)
+                        while (lastCast.size() > 5)
                             lastCast.remove();
                         changeSkillState(s.getSkill(), Skill.STATE.COOLING);
                         break;
@@ -248,11 +259,11 @@ public class SkillCapability implements ISkillCapability {
                     case COOLING:
                         changeSkillState(s.getSkill(), Skill.STATE.INACTIVE);
                         break;
-                        //the other two cases shouldn't be necessary...?
+                    //the other two cases shouldn't be necessary...?
                 }
             }
+            if (s._isDirty()) sync = true;
         }
-        finish.clear();
         if (sync && caster instanceof ServerPlayerEntity)
             CombatChannel.INSTANCE.send(PacketDistributor.PLAYER.with(() -> (ServerPlayerEntity) caster), new SyncSkillPacket(this.write()));
         sync = false;

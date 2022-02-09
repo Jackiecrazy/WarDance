@@ -37,6 +37,7 @@ import net.minecraft.particles.ParticleTypes;
 import net.minecraft.potion.Effects;
 import net.minecraft.util.*;
 import net.minecraft.util.math.EntityRayTraceResult;
+import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.RayTraceResult;
 import net.minecraft.world.server.ServerWorld;
 import net.minecraftforge.common.MinecraftForge;
@@ -84,8 +85,20 @@ public class CombatHandler {
             if (CombatUtils.getAwareness(null, uke) != CombatUtils.Awareness.ALERT) {
                 return;
             }
+            //dodged
             if (MovementUtils.hasInvFrames(uke)) e.setCanceled(true);
+            Entity projectile = e.getEntity();
+            //add might with internal timer
+            //0.01 per tick, up to 0.3 per shot from last attack
+            if (projectile instanceof ProjectileEntity && ((ProjectileEntity) projectile).getShooter() instanceof LivingEntity) {
+                final LivingEntity shooter = (LivingEntity) ((ProjectileEntity) projectile).getShooter();
+                CombatData.getCap(shooter).addMight(MathHelper.clamp((shooter.ticksExisted - shooter.getLastAttackedEntityTime()) * 0.01f, 0, 0.3f));
+                //TODO see if this is bad
+                shooter.setLastAttackedEntity(uke);
+            }
+            //defer to vanilla
             if (uke.isActiveItemStackBlocking()) return;
+            //refuse to handle piercing arrows to prevent oddity
             if (e.getEntity() instanceof AbstractArrowEntity && ((AbstractArrowEntity) e.getEntity()).getPierceLevel() > 0)
                 return;
             float consume = CombatConfig.posturePerProjectile;
@@ -108,7 +121,6 @@ public class CombatHandler {
                 defMult = CombatUtils.getPostureDef(null, uke, defend, 0);
                 h = Hand.MAIN_HAND;
             }
-            Entity projectile = e.getEntity();
             CombatUtils.Awareness a = CombatUtils.Awareness.ALERT;
             if (projectile instanceof ProjectileEntity && ((ProjectileEntity) projectile).getShooter() instanceof LivingEntity)
                 a = CombatUtils.getAwareness((LivingEntity) ((ProjectileEntity) projectile).getShooter(), uke);
@@ -238,7 +250,7 @@ public class CombatHandler {
                 if (StealthConfig.inv)
                     seme.removePotionEffect(Effects.INVISIBILITY);
                 ICombatCapability semeCap = CombatData.getCap(seme);
-                Hand attackingHand = semeCap.isOffhandAttack() ? Hand.OFF_HAND : Hand.MAIN_HAND;
+                Hand attackingHand = semeCap.isOffhandAttack() ? Hand.OFF_HAND : Hand.MAIN_HAND;//FIXME WHAT?
                 //hand bound or staggered, no attack
                 if (semeCap.getStaggerTime() > 0 || semeCap.getHandBind(attackingHand) > 0) {
                     //System.out.println("the attacker is staggered or bound.");
@@ -250,7 +262,7 @@ public class CombatHandler {
                 seme.getHeldItemMainhand().getCapability(CombatManipulator.CAP).ifPresent((i) -> i.attackStart(e.getSource(), seme, uke, seme.getHeldItemMainhand(), e.getAmount()));
                 //add stats if it's the first attack this tick and cooldown is sufficient
                 if (semeCap.getSweepTick() != seme.ticksExisted) {//first hit of a potential sweep attack
-                    semeCap.addCombo(0.2f);
+                    semeCap.addRank(0.2f);
                     float might = CombatUtils.getAttackMight(seme, uke);
                     semeCap.addMight(might);
                     semeCap.setSweepTick(seme.ticksExisted);
@@ -276,6 +288,8 @@ public class CombatHandler {
                 }
                 //parry code start, grab attack multiplier
                 float atkMult = CombatUtils.getPostureAtk(seme, seme, attackingHand, e.getAmount(), attack);
+                //store atkMult at this stage for event
+                float original = atkMult;
                 downingHit = true;
                 //stabby bonus
                 CombatUtils.Awareness awareness = CombatUtils.getAwareness(seme, uke);
@@ -301,6 +315,7 @@ public class CombatHandler {
                     }
                 }
                 float defMult = CombatUtils.getPostureDef(seme, uke, defend, e.getAmount());
+                //special mob parry overrides
                 if (atkMult >= 0 && awareness != CombatUtils.Awareness.UNAWARE && CombatUtils.parryMap.containsKey(GeneralUtils.getResourceLocationFromEntity(uke))) {
                     CombatUtils.MobInfo stats = CombatUtils.parryMap.get(GeneralUtils.getResourceLocationFromEntity(uke));
                     if (WarDance.rand.nextFloat() < stats.chance) {
@@ -309,7 +324,7 @@ public class CombatHandler {
                             canParry = false;
                             defMult = (float) -stats.mult;
                         } else if (stats.omnidirectional || canParry) {
-                            if(defMult>stats.mult) {
+                            if (defMult > stats.mult) {
                                 if (!canParry) {
                                     parryHand = CombatUtils.getCooledAttackStrength(uke, Hand.MAIN_HAND, 0.5f) > CombatUtils.getCooledAttackStrength(uke, Hand.OFF_HAND, 0.5f) ? Hand.MAIN_HAND : Hand.OFF_HAND;
                                 }
@@ -321,7 +336,8 @@ public class CombatHandler {
                     }
                 }
                 float finalPostureConsumption = Math.abs(atkMult * defMult);//accounting for negative posture damage, used to mark an item as ignoring parries
-                ParryEvent pe = new ParryEvent(uke, seme, ((canParry && defend != null) || useDeflect), attackingHand, attack, parryHand, defend, finalPostureConsumption, e.getAmount());
+                float originalPostureConsumption = Math.abs(original * defMult);//updating this quickly, it's basically the above without crit and stab multipliers, which were necessary for calculating canParry so they couldn't be eliminated cleanly...
+                ParryEvent pe = new ParryEvent(uke, seme, ((canParry && defend != null) || useDeflect), attackingHand, attack, parryHand, defend, finalPostureConsumption, originalPostureConsumption, e.getAmount());
                 if (failManualParry)
                     pe.setResult(Event.Result.DENY);
                 MinecraftForge.EVENT_BUS.post(pe);
@@ -339,7 +355,7 @@ public class CombatHandler {
                     if (pe.canParry()) {
                         e.setCanceled(true);
                         downingHit = false;
-                        ukeCap.addCombo(0);
+                        ukeCap.addRank(0);
                         //knockback based on posture consumed
                         double kb = Math.sqrt(atkMult) - 0.18 - (1 / Math.max(defMult, 0.1)); //this will return negative if the defmult is greater, and positive if the atkmult is greater. Larger abs val=larger difference
                         //sigmoid curve again!
@@ -443,8 +459,8 @@ public class CombatHandler {
     @SubscribeEvent
     public static void otherKnockbackHooks(DamageKnockbackEvent e) {
         if (e.getDamageSource() instanceof CombatDamageSource) {
-            CombatDamageSource cds= (CombatDamageSource) e.getDamageSource();
-            e.setStrength(e.getStrength()*cds.getKnockbackPercentage());
+            CombatDamageSource cds = (CombatDamageSource) e.getDamageSource();
+            e.setStrength(e.getStrength() * cds.getKnockbackPercentage());
         }
     }
 
@@ -471,8 +487,8 @@ public class CombatHandler {
 
     @SubscribeEvent(priority = EventPriority.HIGHEST)
     public static void pain(LivingHurtEvent e) {
-        if(GeneralConfig.debug)
-        WarDance.LOGGER.debug("damage from " + e.getSource() + " received with amount " + e.getAmount());
+        if (GeneralConfig.debug)
+            WarDance.LOGGER.debug("damage from " + e.getSource() + " received with amount " + e.getAmount());
         LivingEntity uke = e.getEntityLiving();
         uke.removePotionEffect(WarEffects.DISTRACTION.get());
         uke.removePotionEffect(WarEffects.FEAR.get());
@@ -514,12 +530,12 @@ public class CombatHandler {
                 AttributeModifier armor = new AttributeModifier(uuid, "temporary armor removal", -icic.armorIgnoreAmount(e.getSource(), seme, uke, seme.getHeldItemMainhand(), e.getAmount()), AttributeModifier.Operation.ADDITION);
                 uke.getAttribute(Attributes.ARMOR).applyNonPersistentModifier(armor);
             }
-            if (CombatUtils.isMeleeAttack(e.getSource())) {
+            if (CombatUtils.isPhysicalAttack(e.getSource())) {
                 if (awareness != CombatUtils.Awareness.ALERT) {
                     e.setAmount((float) (e.getAmount() * CombatUtils.getDamageMultiplier(awareness, CombatUtils.getAttackingItemStack(ds))));
                 }
-                cap.setCombo((float) (Math.floor(cap.getCombo()) / 2d));
-            } else cap.setCombo((float) (Math.floor(cap.getCombo())));
+                cap.setMightGrace(0);
+            }
             double luckDiff = WarDance.rand.nextFloat() * (GeneralUtils.getAttributeValueSafe(seme, Attributes.LUCK)) - WarDance.rand.nextFloat() * (GeneralUtils.getAttributeValueSafe(uke, Attributes.LUCK));
             e.setAmount(e.getAmount() + (float) luckDiff * GeneralConfig.luck);
         }
@@ -586,8 +602,8 @@ public class CombatHandler {
 
     @SubscribeEvent(priority = EventPriority.LOWEST, receiveCanceled = true)
     public static void udedlol(LivingDamageEvent e) {
-        if(GeneralConfig.debug)
-        WarDance.LOGGER.debug("damage from " + e.getSource() + " finalized with amount " + e.getAmount());
+        if (GeneralConfig.debug)
+            WarDance.LOGGER.debug("damage from " + e.getSource() + " finalized with amount " + e.getAmount());
         final ICombatCapability cap = CombatData.getCap(e.getEntityLiving());
         if (cap.getStaggerTime() > 0 && !cap.isFirstStaggerStrike()) {
             cap.decrementStaggerCount(1);

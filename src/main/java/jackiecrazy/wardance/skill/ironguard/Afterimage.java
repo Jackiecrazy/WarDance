@@ -3,14 +3,11 @@ package jackiecrazy.wardance.skill.ironguard;
 import jackiecrazy.wardance.event.ParryEvent;
 import jackiecrazy.wardance.skill.SkillData;
 import jackiecrazy.wardance.utils.SkillUtils;
-import net.minecraft.entity.Entity;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.particles.ParticleTypes;
 import net.minecraft.potion.EffectInstance;
 import net.minecraft.potion.Effects;
-import net.minecraftforge.eventbus.api.Event;
 
-import javax.annotation.Nullable;
 import java.awt.*;
 
 public class Afterimage extends IronGuard {
@@ -20,19 +17,24 @@ public class Afterimage extends IronGuard {
     }
 
     @Override
-    public void onProc(LivingEntity caster, Event procPoint, STATE state, SkillData stats, @Nullable Entity target) {
-        if (procPoint instanceof ParryEvent) {
-            final float cost = ((ParryEvent) procPoint).getPostureConsumption();
-            SkillUtils.createCloud(caster.world, caster, caster.getPosX(), caster.getPosY(), caster.getPosZ(), cost, ParticleTypes.LARGE_SMOKE);
-            for (LivingEntity e : caster.world.getLoadedEntitiesWithinAABB(LivingEntity.class, caster.getBoundingBox().grow(cost))) {
-                if (e.getDistanceSq(caster) > cost * cost) {
-                    e.addPotionEffect(new EffectInstance(Effects.BLINDNESS, 100));
-                }
-            }
-            caster.addPotionEffect(new EffectInstance(Effects.INVISIBILITY, 20));
-            markUsed(caster);
-            ((ParryEvent) procPoint).setPostureConsumption(0);
-        }
+    public boolean onStateChange(LivingEntity caster, SkillData prev, STATE from, STATE to) {
+        if (to == STATE.COOLING)
+            setCooldown(caster, 10);
+        return passive(prev, from, to);
+    }
 
+    @Override
+    protected void parry(LivingEntity caster, ParryEvent procPoint, SkillData stats, LivingEntity target) {
+        if (!caster.isSneaking()||stats.getState()==STATE.COOLING) return;
+        final float cost = ((ParryEvent) procPoint).getPostureConsumption();
+        SkillUtils.createCloud(caster.world, caster, caster.getPosX(), caster.getPosY(), caster.getPosZ(), cost, ParticleTypes.LARGE_SMOKE);
+        for (LivingEntity e : caster.world.getLoadedEntitiesWithinAABB(LivingEntity.class, caster.getBoundingBox().grow(cost))) {
+            if (e.getDistanceSq(caster) > cost * cost) {
+                e.addPotionEffect(new EffectInstance(Effects.BLINDNESS, 100));
+            }
+        }
+        caster.addPotionEffect(new EffectInstance(Effects.INVISIBILITY, 20));
+        markUsed(caster);
+        ((ParryEvent) procPoint).setPostureConsumption(0);
     }
 }

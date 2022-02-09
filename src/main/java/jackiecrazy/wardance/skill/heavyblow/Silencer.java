@@ -8,11 +8,11 @@ import jackiecrazy.wardance.skill.ProcPoints;
 import jackiecrazy.wardance.skill.SkillData;
 import jackiecrazy.wardance.skill.WarSkills;
 import jackiecrazy.wardance.utils.CombatUtils;
-import net.minecraft.entity.Entity;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.tags.Tag;
 import net.minecraft.util.Hand;
 import net.minecraftforge.event.entity.living.LivingDeathEvent;
+import net.minecraftforge.event.entity.player.CriticalHitEvent;
 import net.minecraftforge.eventbus.api.Event;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
@@ -30,14 +30,8 @@ public class Silencer extends HeavyBlow {
     public static void silenced(LivingDeathEvent e) {
         if (e.getSource().getTrueSource() instanceof LivingEntity && Marks.getCap(e.getEntityLiving()).isMarked(WarSkills.SILENCER.get())) {
             LivingEntity elb = (LivingEntity) e.getSource().getTrueSource();
-            CasterData.getCap(elb).coolSkill(WarSkills.SILENCER.get());
-            CasterData.getCap(elb).getSkillData(WarSkills.SILENCER.get()).ifPresent((a) -> a.flagCondition(true));
+            CasterData.getCap(elb).changeSkillState(WarSkills.SILENCER.get(), STATE.INACTIVE);
         }
-    }
-
-    @Override
-    public Tag<String> getProcPoints(LivingEntity caster) {
-        return tag;
     }
 
     @Override
@@ -51,14 +45,16 @@ public class Silencer extends HeavyBlow {
     }
 
     @Override
-    public void onProc(LivingEntity caster, Event procPoint, STATE state, SkillData stats, Entity target) {
-        if (caster.world.isRemote() || caster == target) return;
-        if (CombatUtils.getAwareness(caster, target) != CombatUtils.Awareness.UNAWARE) return;
-        CombatData.getCap(target).setHandBind(Hand.MAIN_HAND, 60);
-        CombatData.getCap(target).setHandBind(Hand.OFF_HAND, 60);
-        procPoint.setResult(Event.Result.ALLOW);
-        markUsed(caster);
-        mark(caster, target, 60);
+    public void onProc(LivingEntity caster, Event procPoint, STATE state, SkillData stats, LivingEntity target) {
+        if (procPoint instanceof CriticalHitEvent && ((CriticalHitEvent) procPoint).getTarget() == target && state == STATE.INACTIVE) {
+            if (caster.world.isRemote() || caster == target) return;
+            if (CombatUtils.getAwareness(caster, target) != CombatUtils.Awareness.UNAWARE) return;
+            CombatData.getCap(target).setHandBind(Hand.MAIN_HAND, 60);
+            CombatData.getCap(target).setHandBind(Hand.OFF_HAND, 60);
+            procPoint.setResult(Event.Result.ALLOW);
+            markUsed(caster);
+            mark(caster, target, 60);
+        } else if (state == STATE.COOLING) stats.decrementDuration();
     }
 
     @Override
@@ -75,18 +71,10 @@ public class Silencer extends HeavyBlow {
     }
 
     @Override
-    public void onEffectEnd(LivingEntity caster, SkillData stats) {
-        if (!stats.isCondition())
-            setCooldown(caster, 5);
-    }
-
-    @Override
-    public float spiritConsumption(LivingEntity caster) {
-        return 0;
-    }
-
-    @Override
-    public float mightConsumption(LivingEntity caster) {
-        return 0;
+    public boolean onStateChange(LivingEntity caster, SkillData prev, STATE from, STATE to) {
+        if (to == STATE.COOLING) {
+            setCooldown(caster, 3);
+        }
+        return super.onStateChange(caster, prev, from, to);
     }
 }

@@ -8,7 +8,6 @@ import jackiecrazy.wardance.capability.status.Marks;
 import jackiecrazy.wardance.config.GeneralConfig;
 import jackiecrazy.wardance.event.SkillCastEvent;
 import jackiecrazy.wardance.event.SkillCooldownEvent;
-import net.minecraft.entity.Entity;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.tags.Tag;
 import net.minecraft.util.ResourceLocation;
@@ -17,7 +16,9 @@ import net.minecraft.util.SoundEvents;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.event.entity.living.LivingAttackEvent;
 import net.minecraftforge.eventbus.api.Event;
+import net.minecraftforge.eventbus.api.EventPriority;
 import net.minecraftforge.fml.common.registry.GameRegistry;
 import net.minecraftforge.registries.ForgeRegistryEntry;
 
@@ -38,7 +39,7 @@ import java.util.*;
  */
 public abstract class Skill extends ForgeRegistryEntry<Skill> {
     public static final HashMap<SkillCategory, List<Skill>> variationMap = new HashMap<>();
-    protected static final Tag<String> empty = Tag.getEmptyTag();
+    protected static final Tag<String> none = Tag.getEmptyTag();
     protected static final Tag<String> offensivePhysical = makeTag(SkillTags.offensive, SkillTags.physical);
     protected static final Tag<String> defensivePhysical = makeTag(SkillTags.defensive, SkillTags.physical);
     protected static final Tag<String> offensive = makeTag(SkillTags.offensive);
@@ -77,7 +78,7 @@ public abstract class Skill extends ForgeRegistryEntry<Skill> {
     }
 
     public boolean isPassive(LivingEntity caster) {
-        return getProcPoints(caster).contains("passive");
+        return getTags(caster).contains("passive");
     }
 
     @Nonnull
@@ -91,15 +92,14 @@ public abstract class Skill extends ForgeRegistryEntry<Skill> {
 
     public CastStatus castingCheck(LivingEntity caster) {
         ISkillCapability cap = CasterData.getCap(caster);
-        if (cap.getSkillData(this).isPresent())
-            switch (cap.getSkillData(this).get().getState()) {
-                case ACTIVE:
-                    return CastStatus.ACTIVE;
-                case COOLING:
-                    return CastStatus.COOLDOWN;
-            }
-        for (String s : getIncompatibleTags(caster).getAllElements())
-            if (cap.isTagActive(s))
+        switch (cap.getSkillState(this)) {
+            case ACTIVE:
+                return CastStatus.ACTIVE;
+            case COOLING:
+                return CastStatus.COOLDOWN;
+        }
+        for (String s : getSoftIncompatibility(caster).getAllElements())
+            if (cap.getSkillState(this) != STATE.HOLSTERED && cap.isTagActive(s))
                 return CastStatus.CONFLICT;
         if (caster.isSilent() && getTags(caster).contains("chant")) return CastStatus.SILENCE;
         if (CombatData.getCap(caster).getSpirit() < spiritConsumption(caster))
@@ -120,9 +120,9 @@ public abstract class Skill extends ForgeRegistryEntry<Skill> {
     public boolean isCompatibleWith(Skill s, LivingEntity caster) {
         if (s == null) return true;
         for (String tag : this.getTags(caster).getAllElements())
-            if (s.getIncompatibleTags(caster).contains(tag)) return false;
+            if (s.getSoftIncompatibility(caster).contains(tag)) return false;
         for (String tag : s.getTags(caster).getAllElements())
-            if (this.getIncompatibleTags(caster).contains(tag)) return false;
+            if (this.getSoftIncompatibility(caster).contains(tag)) return false;
         return true;
     }
 
@@ -132,14 +132,6 @@ public abstract class Skill extends ForgeRegistryEntry<Skill> {
 
     public ITextComponent description() {
         return new TranslationTextComponent(this.getRegistryName().toString() + ".desc");
-    }
-
-    public ITextComponent baseName() {
-        return new TranslationTextComponent(this.getRegistryName().toString() + ".parent");
-    }
-
-    public ITextComponent baseDescription() {
-        return new TranslationTextComponent(this.getRegistryName().toString() + ".base");
     }
 
     /**
@@ -157,20 +149,12 @@ public abstract class Skill extends ForgeRegistryEntry<Skill> {
         return Color.WHITE;
     }
 
-    public abstract Tag<String> getProcPoints(LivingEntity caster);
-
     public abstract Tag<String> getTags(LivingEntity caster);//requires breath, bound, debuffing, healing, aoe, etc.
 
-    public abstract Tag<String> getIncompatibleTags(LivingEntity caster);
+    public abstract Tag<String> getSoftIncompatibility(LivingEntity caster);
 
-    //onEquippedProc, onHolsteredProc, onActiveProc, onCooldownProc
-    //orrrr we just use a single unified onProc() that accepts a status enum
-
-    /**
-     * override this for bound cast behavior.
-     */
-    public boolean onSelected(LivingEntity caster) {
-        return checkAndCast(caster);
+    public Tag<String> getHardIncompatibility(LivingEntity caster) {//TODO implement
+        return none;
     }
 
     public boolean checkAndCast(LivingEntity caster) {
@@ -185,6 +169,7 @@ public abstract class Skill extends ForgeRegistryEntry<Skill> {
         return onCast(caster);
     }
 
+    @Deprecated
     public boolean onCast(LivingEntity caster) {
         return true;
     }
@@ -192,23 +177,16 @@ public abstract class Skill extends ForgeRegistryEntry<Skill> {
     /**
      * @return whether the client should be updated.
      */
+    @Deprecated
     public boolean activeTick(LivingEntity caster, SkillData d) {
-        if (d.getSkill().getProcPoints(caster).contains(ProcPoints.countdown) && d.getDuration() > 0) {
-            d.decrementDuration();
-            if (d.getDuration() <= 0) markUsed(caster);
-            return true;
-        }
         return false;
     }
 
-    public boolean equippedTick(LivingEntity caster, STATE state) {
+    public boolean equippedTick(LivingEntity caster, SkillData stats) {
         return false;
     }
 
     public boolean markTick(LivingEntity caster, LivingEntity target, SkillData sd) {
-        if (this.getProcPoints(caster).contains(ProcPoints.afflict_tick)) {
-            sd.decrementDuration();
-        }
         if (sd.getDuration() <= 0) {
             removeMark(target);
             return true;
@@ -220,39 +198,20 @@ public abstract class Skill extends ForgeRegistryEntry<Skill> {
         Marks.getCap(target).removeMark(this);
     }
 
-    /**
-     * @return whether the client should be updated.
-     */
-    public boolean coolingTick(LivingEntity caster, SkillData d) {
-        if (d.getSkill().getProcPoints(caster).contains(ProcPoints.recharge_time)) {
-            return onCooldownProc(caster, d, null);
-        }
-        return false;
-    }
-
-    /**
-     * responsible for setting the state as well.
-     */
-    public void onEffectEnd(LivingEntity caster, SkillData stats) {
-
-    }
-
     public void onEquip(LivingEntity caster) {
-        onEffectEnd(caster, new SkillData(this, 0));
+        SkillData put=new SkillData(this, 0);
+        onStateChange(caster, put, STATE.INACTIVE, STATE.COOLING);
+        CasterData.getCap(caster).getAllSkillData().put(this, put);
     }
 
     public void onUnequip(LivingEntity caster, SkillData stats) {
-        onEffectEnd(caster, stats);
     }
 
-    public abstract void onProc(LivingEntity caster, Event procPoint, STATE state, SkillData stats, @Nullable Entity target);
+    public void onProc(LivingEntity caster, Event procPoint, STATE state, SkillData stats, @Nullable LivingEntity target) {
+
+    }
 
     public abstract boolean onStateChange(LivingEntity caster, SkillData prev, STATE from, STATE to);
-
-    public boolean onCooldownProc(LivingEntity caster, SkillData stats, Event procPoint) {
-        stats.decrementDuration(1);
-        return true;
-    }
 
     public SkillData onMarked(LivingEntity caster, LivingEntity target, SkillData sd, @Nullable SkillData existing) {
         if (existing != null)
@@ -268,12 +227,96 @@ public abstract class Skill extends ForgeRegistryEntry<Skill> {
     //   convenience functions start here    //
     //***************************************//
 
+    /**
+     * returns true if it does something expected, in which case this will just toggle the state.
+     */
+    protected boolean instantCast(SkillData mod, STATE from, STATE to) {
+        //what
+        if (from == to) {
+            return true;
+        }
+        //switching between inactive and active
+        if (to == STATE.HOLSTERED) {
+            mod.setState(STATE.ACTIVE);
+            return true;
+        }
+        //switching between cooling and inactive
+        if (to == STATE.INACTIVE && from == STATE.COOLING) {
+            mod.setState(STATE.INACTIVE);
+            return true;
+        }
+        return false;
+    }
+
+    /**
+     * returns true if it does something expected, in which case this will just toggle the state.
+     */
+    protected boolean passive(SkillData mod, STATE from, STATE to) {
+        //what
+        if (from == to) {
+            return true;
+        }
+        //switching between cooling and inactive
+        if (to == STATE.INACTIVE && from == STATE.COOLING) {
+            mod.setState(STATE.INACTIVE);
+            return true;
+        }
+        return false;
+    }
+
+    /**
+     * returns true if it does something expected, in which case this will just toggle the state.
+     */
+    protected boolean boundCast(SkillData mod, STATE from, STATE to) {
+        //what
+        if (from == to) {
+            return true;
+        }
+        //switching between inactive and holstered
+        if ((from == STATE.INACTIVE && to == STATE.HOLSTERED) || (from == STATE.HOLSTERED && to == STATE.INACTIVE)) {
+            mod.setState(to);
+            return true;
+        }
+        //switching between cooling and inactive
+        if (to == STATE.INACTIVE && from == STATE.COOLING) {
+            mod.setState(STATE.INACTIVE);
+            return true;
+        }
+        return false;
+    }
+
+    protected void attackCooldown(Event e, LivingEntity caster, SkillData stats) {
+        if (e instanceof LivingAttackEvent && ((LivingAttackEvent) e).getEntityLiving() != caster && stats.getState() == STATE.COOLING && e.getPhase() == EventPriority.HIGHEST) {
+            stats.decrementDuration();
+        }
+    }
+
+    protected boolean cooldownTick(SkillData stats) {
+        if (stats.getState() == STATE.COOLING) {
+            stats.decrementDuration(0.05f);
+            int round = (int) (stats.getDuration() * 20);
+            return stats.getDuration() < 3 || round % 20 == 0;
+        }
+        return false;
+    }
+
+    protected boolean activeTick(SkillData stats) {
+        if (stats.getState() == STATE.ACTIVE) {
+            stats.decrementDuration(0.05f);
+            int round = (int) (stats.getDuration() * 20);
+            return stats.getDuration() < 3 || round % 20 == 0;
+        }
+        return false;
+    }
+
     protected void setCooldown(LivingEntity caster, float duration) {
         SkillCooldownEvent sce = new SkillCooldownEvent(caster, this, duration);
         MinecraftForge.EVENT_BUS.post(sce);
 //        if (getParentSkill() != null)
 //            CasterData.getCap(caster).setSkillCooldown(getParentSkill(), sce.getCooldown());
         CasterData.getCap(caster).getSkillData(this).ifPresent(a -> {
+            a.flagCondition(false);
+            a.setArbitraryFloat(0);
             a.setState(STATE.COOLING);
             a.setDuration(sce.getCooldown());
         });
@@ -313,7 +356,10 @@ public abstract class Skill extends ForgeRegistryEntry<Skill> {
         if (GeneralConfig.debug)
             WarDance.LOGGER.debug(this.getRegistryName() + " has ended");
         caster.world.playMovingSound(null, caster, SoundEvents.BLOCK_FIRE_EXTINGUISH, SoundCategory.AMBIENT, 0.3f + WarDance.rand.nextFloat() * 0.5f, 0.5f + WarDance.rand.nextFloat());
-        CasterData.getCap(caster).changeSkillState(this, STATE.COOLING);
+        CasterData.getCap(caster).getSkillData(this).ifPresent(a -> {
+            a.setDuration(-1);
+            a.setState(STATE.ACTIVE);
+        });
     }
 
     protected void mark(LivingEntity caster, LivingEntity target, float duration) {

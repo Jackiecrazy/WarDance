@@ -1,17 +1,15 @@
 package jackiecrazy.wardance.skill.warcry;
 
-import jackiecrazy.wardance.capability.resources.CombatData;
 import jackiecrazy.wardance.skill.ProcPoints;
 import jackiecrazy.wardance.skill.SkillData;
 import jackiecrazy.wardance.utils.GeneralUtils;
-import net.minecraft.entity.Entity;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.ai.attributes.AttributeModifier;
-import net.minecraft.entity.ai.attributes.ModifiableAttributeInstance;
 import net.minecraft.tags.Tag;
 import net.minecraftforge.common.ForgeMod;
 import net.minecraftforge.event.entity.living.LivingAttackEvent;
 import net.minecraftforge.eventbus.api.Event;
+import net.minecraftforge.eventbus.api.EventPriority;
 
 import java.awt.*;
 import java.util.Arrays;
@@ -25,41 +23,23 @@ public class WindScar extends WarCry {
     private final Tag<String> no = Tag.getTagFromContents(new HashSet<>(Arrays.asList("sweep")));
 
     @Override
-    public Tag<String> getProcPoints(LivingEntity caster) {
-        return tag;
-    }
-
-    @Override
     protected void evoke(LivingEntity caster) {
         caster.getAttribute(ForgeMod.REACH_DISTANCE.get()).removeModifier(bigReach);
         caster.getAttribute(ForgeMod.REACH_DISTANCE.get()).applyNonPersistentModifier(bigReach);
-
+        super.evoke(caster);
     }
 
     @Override
-    public boolean activeTick(LivingEntity caster, SkillData d) {
-        if (d.isCondition() && d.getDuration() > 0) {
-            d.decrementDuration();
-            if (d.getDuration() <= 0) markUsed(caster);
-            return true;
-        }
-        return false;
+    public void onEquip(LivingEntity caster) {
+        caster.getAttribute(ForgeMod.REACH_DISTANCE.get()).applyPersistentModifier(reach);
+        super.onEquip(caster);
     }
 
     @Override
-    public void onEffectEnd(LivingEntity caster, SkillData stats) {
+    public void onUnequip(LivingEntity caster, SkillData stats) {
         caster.getAttribute(ForgeMod.REACH_DISTANCE.get()).removeModifier(reach);
         caster.getAttribute(ForgeMod.REACH_DISTANCE.get()).removeModifier(bigReach);
-        CombatData.getCap(caster).setForcedSweep(-1);
-        super.onEffectEnd(caster, stats);
-    }
-
-    @Override
-    public void onCooledDown(LivingEntity caster, float overflow) {
-        final ModifiableAttributeInstance instance = caster.getAttribute(ForgeMod.REACH_DISTANCE.get());
-        instance.removeModifier(reach);
-        instance.applyPersistentModifier(reach);
-        super.onCooledDown(caster, overflow);
+        super.onUnequip(caster, stats);
     }
 
     @Override
@@ -68,13 +48,13 @@ public class WindScar extends WarCry {
     }
 
     @Override
-    public void onProc(LivingEntity caster, Event procPoint, STATE state, SkillData stats, Entity target) {
-        if (procPoint instanceof LivingAttackEvent) {
+    public void onProc(LivingEntity caster, Event procPoint, STATE state, SkillData stats, LivingEntity target) {
+        if (procPoint instanceof LivingAttackEvent && procPoint.getPhase() == EventPriority.HIGHEST && state == STATE.ACTIVE && ((LivingAttackEvent) procPoint).getEntityLiving() == target) {
             double realReach = caster.getAttributeValue(ForgeMod.REACH_DISTANCE.get()) - 10;
             if (((LivingAttackEvent) procPoint).getEntityLiving() == target) {
                 double dist = Math.sqrt(GeneralUtils.getDistSqCompensated(caster, target));
                 if (dist > realReach)
-                    stats.setDuration((float) (dist - realReach));
+                    stats.decrementDuration((float) (dist - realReach));
             }
         }
         super.onProc(caster, procPoint, state, stats, target);

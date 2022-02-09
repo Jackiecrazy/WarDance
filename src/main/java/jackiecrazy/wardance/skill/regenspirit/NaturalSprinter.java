@@ -4,13 +4,12 @@ import jackiecrazy.wardance.api.WarAttributes;
 import jackiecrazy.wardance.capability.resources.CombatData;
 import jackiecrazy.wardance.event.RegenSpiritEvent;
 import jackiecrazy.wardance.skill.*;
-import net.minecraft.entity.Entity;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.ai.attributes.AttributeModifier;
-import net.minecraft.entity.ai.attributes.ModifiableAttributeInstance;
 import net.minecraft.tags.Tag;
 import net.minecraftforge.event.entity.living.LivingDeathEvent;
 import net.minecraftforge.eventbus.api.Event;
+import net.minecraftforge.eventbus.api.EventPriority;
 
 import javax.annotation.Nonnull;
 import java.awt.*;
@@ -27,7 +26,7 @@ natural sprinter: max spirit doubled, but regeneration speed reduced to a third;
 ranged support: gain 1 spirit when you perform a distracted attack or when your projectile hits; 1s cooldown.
 speed demon: halve spirit cooldown on dodge, recover spirit on attack depending on relative speed.
 lady luck: after casting a skill, have a 1+luck/5+luck chance to recover the spirit cost, stacking chance until it triggers.
-apathy: your max spirit is 4, your spirit instantly refills after cooldown, you are immune to burnout.
+confidence: your spirit regeneration speed scales proportionally with how much spirit you have left, from 200% at full to 50% at empty
      */
 
     private final Tag<String> tag = Tag.getTagFromContents(new HashSet<>(Arrays.asList("passive", ProcPoints.on_kill, ProcPoints.change_spirit)));
@@ -44,10 +43,9 @@ apathy: your max spirit is 4, your spirit instantly refills after cooldown, you 
     }
 
     @Override
-    public Tag<String> getIncompatibleTags(LivingEntity caster) {
-        return empty;
+    public Tag<String> getSoftIncompatibility(LivingEntity caster) {
+        return none;
     }
-
 
     @Nonnull
     @Override
@@ -56,26 +54,10 @@ apathy: your max spirit is 4, your spirit instantly refills after cooldown, you 
     }
 
     @Override
-    public Tag<String> getProcPoints(LivingEntity caster) {
-        return tag;
-    }
-
-    @Override
-    public boolean onCast(LivingEntity caster) {
-        final ModifiableAttributeInstance beep = caster.getAttribute(WarAttributes.MAX_SPIRIT.get());
-        beep.removeModifier(sprint);
-        beep.applyPersistentModifier(sprint);
-        return true;
-    }
-
-    @Override
-    public void onEffectEnd(LivingEntity caster, SkillData stats) {
-    }
-
-    @Override
     public void onEquip(LivingEntity caster) {
         caster.getAttribute(WarAttributes.MAX_SPIRIT.get()).removeModifier(sprint);
         caster.getAttribute(WarAttributes.MAX_SPIRIT.get()).applyPersistentModifier(sprint);
+        super.onEquip(caster);
     }
 
     @Override
@@ -84,16 +66,16 @@ apathy: your max spirit is 4, your spirit instantly refills after cooldown, you 
     }
 
     @Override
-    public boolean activeTick(LivingEntity caster, SkillData d) {
-        return super.activeTick(caster, d);
+    public void onProc(LivingEntity caster, Event procPoint, STATE state, SkillData stats, LivingEntity target) {
+        if (procPoint instanceof LivingDeathEvent && procPoint.getPhase() == EventPriority.HIGHEST) {
+            CombatData.getCap(caster).addSpirit(3);
+        } else if (procPoint instanceof RegenSpiritEvent && procPoint.getPhase() == EventPriority.HIGHEST) {
+            ((RegenSpiritEvent) procPoint).setQuantity(((RegenSpiritEvent) procPoint).getQuantity() / 3);
+        }
     }
 
     @Override
-    public void onProc(LivingEntity caster, Event procPoint, STATE state, SkillData stats, Entity target) {
-        if (procPoint instanceof LivingDeathEvent) {
-            CombatData.getCap(caster).addSpirit(3);
-        } else if (procPoint instanceof RegenSpiritEvent) {
-            ((RegenSpiritEvent) procPoint).setQuantity(((RegenSpiritEvent) procPoint).getQuantity() / 3);
-        }
+    public boolean onStateChange(LivingEntity caster, SkillData prev, STATE from, STATE to) {
+        return false;
     }
 }

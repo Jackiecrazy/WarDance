@@ -1,12 +1,15 @@
 package jackiecrazy.wardance.skill.shieldbash;
 
 import jackiecrazy.wardance.WarDance;
+import jackiecrazy.wardance.api.CombatDamageSource;
 import jackiecrazy.wardance.capability.resources.CombatData;
+import jackiecrazy.wardance.event.ParryEvent;
 import jackiecrazy.wardance.potion.WarEffects;
 import jackiecrazy.wardance.skill.*;
 import jackiecrazy.wardance.utils.CombatUtils;
-import net.minecraft.entity.Entity;
+import jackiecrazy.wardance.utils.SkillUtils;
 import net.minecraft.entity.LivingEntity;
+import net.minecraft.item.ItemStack;
 import net.minecraft.potion.EffectInstance;
 import net.minecraft.potion.Effects;
 import net.minecraft.tags.Tag;
@@ -15,6 +18,7 @@ import net.minecraft.util.SoundCategory;
 import net.minecraft.util.SoundEvents;
 import net.minecraftforge.event.entity.living.LivingAttackEvent;
 import net.minecraftforge.eventbus.api.Event;
+import net.minecraftforge.eventbus.api.EventPriority;
 
 import javax.annotation.Nonnull;
 import java.awt.*;
@@ -26,17 +30,12 @@ public class ShieldBash extends Skill {
     private final Tag<String> no = Tag.getTagFromContents(new HashSet<>(Arrays.asList("normalAttack")));
 
     @Override
-    public Tag<String> getProcPoints(LivingEntity caster) {
-        return tag;
-    }
-
-    @Override
     public Tag<String> getTags(LivingEntity caster) {
         return offensivePhysical;
     }
 
     @Override
-    public Tag<String> getIncompatibleTags(LivingEntity caster) {
+    public Tag<String> getSoftIncompatibility(LivingEntity caster) {
         return offensive;
     }
 
@@ -52,34 +51,38 @@ public class ShieldBash extends Skill {
     }
 
     @Override
-    public boolean onCast(LivingEntity caster) {
-        activate(caster, 40);
-        CombatData.getCap(caster).consumeSpirit(spiritConsumption(caster));
-        if (getParentCategory() == null) {
-            if (CombatUtils.isShield(caster, caster.getHeldItemMainhand()))
-                CombatData.getCap(caster).setHandBind(Hand.MAIN_HAND, 0);
-            if (CombatUtils.isShield(caster, caster.getHeldItemOffhand()))
-                CombatData.getCap(caster).setHandBind(Hand.OFF_HAND, 0);
-        }
-        return true;
-    }
-
-    @Override
-    public void onEffectEnd(LivingEntity caster, SkillData stats) {
-        setCooldown(caster, 4);
+    public boolean isPassive(LivingEntity caster) {
+        return this == WarSkills.PUMMEL.get();
     }
 
     protected void performEffect(LivingEntity caster, LivingEntity target) {
-        CombatData.getCap(target).consumePosture(caster, CombatUtils.getShieldStats(caster.getHeldItemMainhand()).getA() / 20f);
+        final ItemStack off = caster.getHeldItemOffhand();
+        if (CombatUtils.isShield(caster, off)) {
+            SkillUtils.auxAttack(caster, target, new CombatDamageSource("player", caster).setProcNormalEffects(false).setProcAttackEffects(true).setProcSkillEffects(true).setAttackingHand(Hand.OFF_HAND).setDamageTyping(CombatDamageSource.TYPE.PHYSICAL).setDamageDealer(off), 0, CombatUtils.getShieldStats(off).getA() / 20f);
+        }
     }
 
     @Override
-    public void onProc(LivingEntity caster, Event procPoint, STATE state, SkillData stats, Entity target) {
-        if (procPoint instanceof LivingAttackEvent && CombatUtils.isShield(caster, CombatUtils.getAttackingItemStack(((LivingAttackEvent) procPoint).getSource()))) {
-            performEffect(caster, target);
-            caster.world.playSound(null, caster.getPosX(), caster.getPosY(), caster.getPosZ(), SoundEvents.ENTITY_ZOMBIE_ATTACK_IRON_DOOR, SoundCategory.PLAYERS, 0.25f + WarDance.rand.nextFloat() * 0.5f, 0.5f + WarDance.rand.nextFloat() * 0.5f);
-            markUsed(caster);
+    public void onProc(LivingEntity caster, Event procPoint, STATE state, SkillData stats, LivingEntity target) {
+        if (procPoint instanceof LivingAttackEvent && procPoint.getPhase() == EventPriority.HIGHEST) {
+            final boolean base = isPassive(caster) && state != STATE.COOLING;
+            final boolean otherwise = state == STATE.HOLSTERED && CombatUtils.isShield(caster, CombatUtils.getAttackingItemStack(((LivingAttackEvent) procPoint).getSource())) && CombatData.getCap(caster).consumeSpirit(spiritConsumption(caster));
+            if (base || otherwise) {
+                performEffect(caster, target);
+                caster.world.playSound(null, caster.getPosX(), caster.getPosY(), caster.getPosZ(), SoundEvents.ENTITY_ZOMBIE_ATTACK_IRON_DOOR, SoundCategory.PLAYERS, 0.25f + WarDance.rand.nextFloat() * 0.5f, 0.5f + WarDance.rand.nextFloat() * 0.5f);
+                markUsed(caster);
+            }
         }
+        if (procPoint instanceof ParryEvent && procPoint.getPhase() == EventPriority.HIGHEST && state == STATE.COOLING && ((ParryEvent) procPoint).getEntityLiving() == caster) {
+            stats.decrementDuration();
+        }
+    }
+
+    @Override
+    public boolean onStateChange(LivingEntity caster, SkillData prev, STATE from, STATE to) {
+        if (to == STATE.COOLING)
+            setCooldown(caster, 4);
+        return boundCast(prev, from, to);
     }
 
     public static class RimPunch extends ShieldBash {

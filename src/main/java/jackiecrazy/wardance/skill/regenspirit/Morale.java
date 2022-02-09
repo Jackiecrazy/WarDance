@@ -5,13 +5,13 @@ import jackiecrazy.wardance.event.ParryEvent;
 import jackiecrazy.wardance.skill.*;
 import jackiecrazy.wardance.utils.CombatUtils;
 import jackiecrazy.wardance.utils.GeneralUtils;
-import net.minecraft.entity.Entity;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.ai.attributes.Attributes;
 import net.minecraft.tags.Tag;
 import net.minecraft.util.Hand;
 import net.minecraftforge.event.entity.player.CriticalHitEvent;
 import net.minecraftforge.eventbus.api.Event;
+import net.minecraftforge.eventbus.api.EventPriority;
 
 import javax.annotation.Nonnull;
 import java.util.Arrays;
@@ -31,11 +31,6 @@ apathy: your max spirit is 4, your spirit instantly refills after cooldown, you 
     private final Tag<String> no = Tag.getEmptyTag();
 
     @Override
-    public Tag<String> getProcPoints(LivingEntity caster) {
-        return tag;
-    }
-
-    @Override
     public Tag<String> getTags(LivingEntity caster) {
         return passive;
     }
@@ -47,29 +42,23 @@ apathy: your max spirit is 4, your spirit instantly refills after cooldown, you 
     }
 
     @Override
-    public Tag<String> getIncompatibleTags(LivingEntity caster) {
-        return empty;
+    public Tag<String> getSoftIncompatibility(LivingEntity caster) {
+        return none;
     }
 
     @Override
-    public boolean onCast(LivingEntity caster) {
-        activate(caster, 0);
-        return true;
-    }
-
-    @Override
-    public void onEffectEnd(LivingEntity caster, SkillData stats) {
-        activate(caster, 0);
-    }
-
-    @Override
-    public void onProc(LivingEntity caster, Event procPoint, STATE state, SkillData stats, Entity target) {
-        if (procPoint instanceof CriticalHitEvent) {
+    public void onProc(LivingEntity caster, Event procPoint, STATE state, SkillData stats, LivingEntity target) {
+        if (procPoint instanceof CriticalHitEvent&&procPoint.getPhase()== EventPriority.HIGHEST && ((CriticalHitEvent) procPoint).getEntityLiving() == caster) {
             if (CombatUtils.isCrit((CriticalHitEvent) procPoint))
                 CombatData.getCap(caster).addSpirit(1 / (float) GeneralUtils.getAttributeValueHandSensitive(caster, Attributes.ATTACK_SPEED, CombatData.getCap(caster).isOffhandAttack() ? Hand.OFF_HAND : Hand.MAIN_HAND));
-        } else if (procPoint instanceof ParryEvent) {
+        } else if (procPoint instanceof ParryEvent&&procPoint.getPhase()== EventPriority.HIGHEST && ((ParryEvent) procPoint).getEntityLiving() == caster) {
             if (((ParryEvent) procPoint).canParry())
                 CombatData.getCap(caster).addSpirit(1 / (float) GeneralUtils.getAttributeValueHandSensitive(caster, Attributes.ATTACK_SPEED, ((ParryEvent) procPoint).getDefendingHand()));
         }
+    }
+
+    @Override
+    public boolean onStateChange(LivingEntity caster, SkillData prev, STATE from, STATE to) {
+        return false;
     }
 }

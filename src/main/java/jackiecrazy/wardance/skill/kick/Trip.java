@@ -3,7 +3,6 @@ package jackiecrazy.wardance.skill.kick;
 import jackiecrazy.wardance.capability.resources.CombatData;
 import jackiecrazy.wardance.potion.WarEffects;
 import jackiecrazy.wardance.skill.SkillData;
-import net.minecraft.entity.Entity;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.potion.EffectInstance;
 import net.minecraft.potion.Effects;
@@ -12,10 +11,6 @@ import net.minecraftforge.eventbus.api.Event;
 import java.awt.*;
 
 public class Trip extends Kick {
-    @Override
-    public void onEffectEnd(LivingEntity caster, SkillData stats) {
-        setCooldown(caster, 3);
-    }
 
     @Override
     public Color getColor() {
@@ -31,7 +26,7 @@ public class Trip extends Kick {
     }
 
     @Override
-    public void onProc(LivingEntity caster, Event procPoint, STATE state, SkillData stats, Entity target) {
+    public void onProc(LivingEntity caster, Event procPoint, STATE state, SkillData stats, LivingEntity target) {
         if (target.isOnGround()) {
             super.onProc(caster, procPoint, state, stats, target);
             target.addPotionEffect(new EffectInstance(WarEffects.EXHAUSTION.get(), CombatData.getCap(target).getPostureGrace() * 2, 2));

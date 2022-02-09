@@ -90,17 +90,32 @@ public interface ICombatCapability {
 
     int decrementPostureGrace(int amount);
 
-    float getCombo();
+    float getRank();
 
-    void setCombo(float amount);
+    void setRank(float amount);
 
-    float addCombo(float amount);
-
-    default boolean consumeCombo(float amount) {
-        return consumeCombo(amount, 0);
+    default int getComboRank() {
+        float workingCombo = getRank();
+        if (workingCombo >= 9)
+            return 7;//SSStylish!
+        if (workingCombo >= 6) {
+            return 6;//SShowtime!
+        }
+        if (workingCombo >= 4) {
+            return 5;//Sweet!
+        }
+        return (int) workingCombo;//all other ranks
     }
 
-    boolean consumeCombo(float amount, float above);
+    void setAdrenalineCooldown(int amount);
+
+    float addRank(float amount);
+
+    default boolean consumeRank(float amount) {
+        return consumeRank(amount, 0);
+    }
+
+    boolean consumeRank(float amount, float above);
 
     float getTrueMaxPosture();
 
@@ -121,12 +136,6 @@ public interface ICombatCapability {
     default float getMaxSpirit() {
         return Math.max(0.1f, getTrueMaxSpirit() - getBurnout());
     }
-
-    int getComboGrace();
-
-    void setComboGrace(int amount);
-
-    int decrementComboGrace(int amount);
 
     int getStaggerTime();
 
@@ -231,13 +240,13 @@ public interface ICombatCapability {
 
     void read(CompoundNBT tag);
 
-    void setParryingTick(int parrying);
-
     int getParryingTick();//hey, it's useful for future "smart" entities as well.
 
-    void setSweepTick(int tick);
+    void setParryingTick(int parrying);
 
     int getSweepTick();
+
+    void setSweepTick(int tick);
 
     boolean isValid();
 

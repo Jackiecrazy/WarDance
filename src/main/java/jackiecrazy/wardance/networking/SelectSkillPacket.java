@@ -1,10 +1,7 @@
 package jackiecrazy.wardance.networking;
 
-import jackiecrazy.wardance.WarDance;
-import jackiecrazy.wardance.skill.Skill;
+import jackiecrazy.wardance.capability.skill.CasterData;
 import net.minecraft.network.PacketBuffer;
-import net.minecraft.util.ResourceLocation;
-import net.minecraftforge.fml.common.registry.GameRegistry;
 import net.minecraftforge.fml.network.NetworkEvent;
 
 import java.util.function.BiConsumer;
@@ -12,17 +9,17 @@ import java.util.function.Function;
 import java.util.function.Supplier;
 
 public class SelectSkillPacket {
-    private final ResourceLocation sk;
+    private final int sk;
 
-    public SelectSkillPacket(ResourceLocation skill) {
-        sk = skill;
+    public SelectSkillPacket(int index) {
+        sk = index;
     }
 
     public static class CombatEncoder implements BiConsumer<SelectSkillPacket, PacketBuffer> {
 
         @Override
         public void accept(SelectSkillPacket updateClientPacket, PacketBuffer packetBuffer) {
-            packetBuffer.writeResourceLocation(updateClientPacket.sk);
+            packetBuffer.writeInt(updateClientPacket.sk);
         }
     }
 
@@ -30,7 +27,7 @@ public class SelectSkillPacket {
 
         @Override
         public SelectSkillPacket apply(PacketBuffer packetBuffer) {
-            return new SelectSkillPacket(packetBuffer.readResourceLocation());
+            return new SelectSkillPacket(packetBuffer.readInt());
         }
     }
 
@@ -39,11 +36,7 @@ public class SelectSkillPacket {
         @Override
         public void accept(SelectSkillPacket updateClientPacket, Supplier<NetworkEvent.Context> contextSupplier) {
             contextSupplier.get().enqueueWork(() -> {
-                Skill s = GameRegistry.findRegistry(Skill.class).getValue(updateClientPacket.sk);
-                if (s != null)
-                    if (s.onSelected(contextSupplier.get().getSender()))
-                        WarDance.LOGGER.debug("successfully selected " + updateClientPacket.sk);
-                    else WarDance.LOGGER.debug("failed to select " + updateClientPacket.sk);
+                CasterData.getCap(contextSupplier.get().getSender()).holsterSkill(updateClientPacket.sk);
             });
             contextSupplier.get().setPacketHandled(true);
         }

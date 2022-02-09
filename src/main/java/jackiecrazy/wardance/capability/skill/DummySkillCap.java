@@ -42,8 +42,8 @@ public class DummySkillCap implements ISkillCapability {
     }
 
     @Override
-    public void changeSkillState(Skill d, Skill.STATE to) {
-
+    public boolean changeSkillState(Skill d, Skill.STATE to) {
+        return false;
     }
 
     @Override

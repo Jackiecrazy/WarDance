@@ -27,7 +27,7 @@ public class Petrify extends Hex {
         if (absorption != null) {
             absorption.removeModifier(NOPE);
         }
-        final ModifiableAttributeInstance deflection = target.getAttribute(WarAttributes.ABSORPTION.get());
+        final ModifiableAttributeInstance deflection = target.getAttribute(WarAttributes.DEFLECTION.get());
         if (deflection != null) {
             deflection.removeModifier(NOPE);
         }

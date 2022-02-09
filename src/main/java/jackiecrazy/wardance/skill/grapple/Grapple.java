@@ -12,6 +12,7 @@ import net.minecraft.util.SoundCategory;
 import net.minecraft.util.SoundEvents;
 import net.minecraftforge.event.entity.living.LivingAttackEvent;
 import net.minecraftforge.eventbus.api.Event;
+import net.minecraftforge.eventbus.api.EventPriority;
 
 import javax.annotation.Nonnull;
 import java.awt.*;
@@ -29,35 +30,18 @@ public class Grapple extends Skill {
     }
 
     @Override
-    public Tag<String> getProcPoints(LivingEntity caster) {
-        return tag;
-    }
-
-    @Override
     public Tag<String> getTags(LivingEntity caster) {
         return unarm;
     }
 
     @Override
-    public Tag<String> getIncompatibleTags(LivingEntity caster) {
+    public Tag<String> getSoftIncompatibility(LivingEntity caster) {
         return offensive;
     }
 
     @Override
     public float spiritConsumption(LivingEntity caster) {
-        return 2;
-    }
-
-    @Override
-    public boolean onCast(LivingEntity caster) {
-        activate(caster, 60);
-        CombatData.getCap(caster).consumeSpirit(spiritConsumption(caster));
-        return true;
-    }
-
-    @Override
-    public void onEffectEnd(LivingEntity caster, SkillData stats) {
-        setCooldown(caster, 7);
+        return 1;
     }
 
     protected void performEffect(LivingEntity caster, LivingEntity target) {
@@ -68,13 +52,25 @@ public class Grapple extends Skill {
     }
 
     @Override
-    public void onProc(LivingEntity caster, Event procPoint, STATE state, SkillData stats, Entity target) {
-        if (procPoint instanceof LivingAttackEvent && CombatUtils.isUnarmed(caster.getHeldItemMainhand(), caster)) {
-            if (stats.isCondition() && caster.getLastAttackedEntity() == target) {
-                performEffect(caster, target);
-                markUsed(caster);
-            } else stats.flagCondition(true);
+    public void onProc(LivingEntity caster, Event procPoint, STATE state, SkillData stats, LivingEntity target) {
+        if (procPoint instanceof LivingAttackEvent && ((LivingAttackEvent) procPoint).getEntityLiving() == target && procPoint.getPhase() == EventPriority.HIGHEST) {
+            if (state == STATE.HOLSTERED && CombatData.getCap(caster).consumeSpirit(spiritConsumption(caster)) && CombatUtils.isUnarmed(caster.getHeldItemMainhand(), caster)) {
+                if (stats.isCondition() && caster.getLastAttackedEntity() == target) {
+                    performEffect(caster, target);
+                    markUsed(caster);
+                } else stats.flagCondition(true);
+            }
         }
+        attackCooldown(procPoint, caster, stats);
+    }
+
+    @Override
+    public boolean onStateChange(LivingEntity caster, SkillData prev, STATE from, STATE to) {
+        if (to == STATE.COOLING) {
+            setCooldown(caster, 7);
+        }
+        prev.flagCondition(false);
+        return boundCast(prev, from, to);
     }
 
     public static class Reversal extends Grapple {
@@ -84,22 +80,24 @@ public class Grapple extends Skill {
         }
 
         @Override
-        public void onProc(LivingEntity caster, Event procPoint, STATE state, SkillData stats, Entity target) {
-            if (procPoint instanceof LivingAttackEvent && CombatUtils.isUnarmed(caster.getHeldItemMainhand(), caster)) {
-                if (stats.isCondition()) {
-                    Entity prev=target.world.getEntityByID((int) stats.getArbitraryFloat());
-                    if(!(prev instanceof LivingEntity) || prev == target)prev=caster;
-                    final ICombatCapability casterCap = CombatData.getCap((LivingEntity) prev);
-                    float casterPerc = casterCap.getPosture() / casterCap.getMaxPosture();
-                    final ICombatCapability targetCap = CombatData.getCap(target);
-                    float targetPerc = targetCap.getPosture() / targetCap.getMaxPosture();
-                    casterCap.setPosture(targetPerc * casterCap.getMaxPosture());
-                    targetCap.setPosture(casterPerc * targetCap.getMaxPosture());
-                    markUsed(caster);
-                } else{
-                    stats.flagCondition(true);
-                    stats.setArbitraryFloat(target.getEntityId());
-                }
+        public void onProc(LivingEntity caster, Event procPoint, STATE state, SkillData stats, LivingEntity target) {
+            if (procPoint instanceof LivingAttackEvent && ((LivingAttackEvent) procPoint).getEntityLiving() == target && procPoint.getPhase() == EventPriority.HIGHEST) {
+                if (state == STATE.HOLSTERED && CombatData.getCap(caster).consumeSpirit(spiritConsumption(caster)) && CombatUtils.isUnarmed(caster.getHeldItemMainhand(), caster)) {
+                    if (stats.isCondition()) {
+                        Entity prev = target.world.getEntityByID((int) stats.getArbitraryFloat());
+                        if (!(prev instanceof LivingEntity) || prev == target) prev = caster;
+                        final ICombatCapability casterCap = CombatData.getCap((LivingEntity) prev);
+                        float casterPerc = casterCap.getPosture() / casterCap.getMaxPosture();
+                        final ICombatCapability targetCap = CombatData.getCap(target);
+                        float targetPerc = targetCap.getPosture() / targetCap.getMaxPosture();
+                        casterCap.setPosture(targetPerc * casterCap.getMaxPosture());
+                        targetCap.setPosture(casterPerc * targetCap.getMaxPosture());
+                        markUsed(caster);
+                    } else {
+                        stats.flagCondition(true);
+                        stats.setArbitraryFloat(target.getEntityId());
+                    }
+                } else if (state == STATE.COOLING) stats.decrementDuration();
             }
         }
     }

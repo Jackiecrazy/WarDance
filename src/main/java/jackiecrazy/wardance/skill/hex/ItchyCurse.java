@@ -2,17 +2,13 @@ package jackiecrazy.wardance.skill.hex;
 
 import jackiecrazy.wardance.capability.resources.CombatData;
 import jackiecrazy.wardance.capability.status.Marks;
-import jackiecrazy.wardance.event.ParryEvent;
 import jackiecrazy.wardance.skill.SkillData;
-import jackiecrazy.wardance.skill.ProcPoints;
 import jackiecrazy.wardance.utils.SkillUtils;
-import net.minecraft.entity.Entity;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.ai.attributes.AttributeModifier;
 import net.minecraft.entity.ai.attributes.Attributes;
 import net.minecraft.entity.ai.attributes.ModifiableAttributeInstance;
 import net.minecraft.util.Hand;
-import net.minecraftforge.eventbus.api.Event;
 
 import java.awt.*;
 
@@ -20,15 +16,6 @@ public class ItchyCurse extends Hex {
     @Override
     public Color getColor() {
         return Color.CYAN;
-    }
-
-    @Override
-    public void onProc(LivingEntity caster, Event procPoint, STATE state, SkillData stats, Entity target) {
-        if (procPoint instanceof ParryEvent && (!((ParryEvent) procPoint).canParry() || getTags(caster).contains(ProcPoints.unblockable))) {
-            procPoint.setCanceled(true);
-            mark(caster, target, 60);
-            markUsed(caster);
-        }
     }
 
     @Override
@@ -69,5 +56,19 @@ public class ItchyCurse extends Hex {
             speed.removeModifier(HEX.getID());
         }
         super.onMarkEnd(caster, target, sd);
+    }
+
+    @Override
+    public boolean onStateChange(LivingEntity caster, SkillData prev, STATE from, STATE to) {
+        if (to == STATE.ACTIVE) {
+            LivingEntity e = SkillUtils.aimLiving(caster);
+            if (e != null) {
+                mark(caster, e, 60);
+                markUsed(caster);
+            }
+        }
+        if(to==STATE.COOLING)
+            setCooldown(caster,15);
+        return boundCast(prev, from, to);
     }
 }

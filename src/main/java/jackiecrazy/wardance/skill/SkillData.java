@@ -8,10 +8,11 @@ import javax.annotation.Nullable;
 import java.util.UUID;
 
 public class SkillData {
+    public static final SkillData DUMMY = new SkillData(WarSkills.VITAL_STRIKE.get(), 0);
     private final Skill s;
     private float duration, max, var;
-    private boolean condition;
-    private Skill.STATE state= Skill.STATE.INACTIVE;
+    private boolean condition, dirty;
+    private Skill.STATE state = Skill.STATE.INACTIVE;
     private LivingEntity caster;
     private UUID casterID;
 
@@ -27,7 +28,7 @@ public class SkillData {
 
     public SkillData(Skill skill, float arbitraryDuration) {
         this(skill, arbitraryDuration, arbitraryDuration);
-        state= Skill.STATE.ACTIVE;
+        state = Skill.STATE.ACTIVE;
     }
 
     @Nullable
@@ -36,7 +37,8 @@ public class SkillData {
         if (Skill.getSkill(from.getString("skill")) == null)
             return null;
         SkillData ret = new SkillData(Skill.getSkill(from.getString("skill")), from.getFloat("duration")).flagCondition(from.getBoolean("condition")).setArbitraryFloat(from.getFloat("something"));
-        ret.max=from.getFloat("max");
+        ret.max = from.getFloat("max");
+        ret.state= Skill.STATE.values()[from.getInt("state")];
         if (from.contains("caster"))
             ret.casterID = from.getUniqueId("caster");
         return ret;
@@ -86,16 +88,32 @@ public class SkillData {
         return this;
     }
 
+    /**
+     * This should only be used by the skill capability.
+     */
+    public boolean _isDirty() {
+        if (dirty) {
+            dirty = false;
+            return true;
+        }
+        return false;
+    }
+
+    public void markDirty(){
+        dirty=true;
+    }
+
     public float getMaxDuration() {
         return max;
     }
 
     public void decrementDuration() {
         duration--;
+        markDirty();
     }
 
     public void decrementDuration(float amount) {
-        duration-=amount;
+        duration -= amount;
     }
 
     public Skill getSkill() {
@@ -104,6 +122,7 @@ public class SkillData {
 
     public CompoundNBT write(CompoundNBT to) {
         to.putString("skill", s.getRegistryName().toString());
+        to.putInt("state", state.ordinal());
         to.putFloat("duration", duration);
         to.putFloat("max", max);
         to.putFloat("something", var);

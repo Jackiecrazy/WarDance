@@ -41,7 +41,7 @@ end him rightly: keep the weapon in your hand and throw the pommel instead, dist
     //private static final DataParameter<Skill> SKILL = EntityDataManager.createKey(ThrownWeaponEntity.class, SkillUtils.SKILLSERIALIZER);
     Hand hand = Hand.MAIN_HAND;
     ItemStack stack = ItemStack.EMPTY;
-    private Skill s= WarSkills.SHOCKWAVE.get();
+    private Skill s= WarSkills.VITAL_STRIKE.get();
 
     public ThrownWeaponEntity(EntityType<? extends ThrownWeaponEntity> type, World worldIn) {
         super(type, worldIn);

@@ -1,29 +1,54 @@
 package jackiecrazy.wardance.skill.ironguard;
 
 import jackiecrazy.wardance.capability.resources.CombatData;
-import jackiecrazy.wardance.capability.resources.ICombatCapability;
-import jackiecrazy.wardance.event.ParryEvent;
+import jackiecrazy.wardance.config.ResourceConfig;
+import jackiecrazy.wardance.event.ConsumePostureEvent;
+import jackiecrazy.wardance.skill.Skill;
+import jackiecrazy.wardance.skill.SkillCategories;
+import jackiecrazy.wardance.skill.SkillCategory;
 import jackiecrazy.wardance.skill.SkillData;
-import net.minecraft.entity.Entity;
 import net.minecraft.entity.LivingEntity;
+import net.minecraft.tags.Tag;
 import net.minecraftforge.eventbus.api.Event;
+import net.minecraftforge.eventbus.api.EventPriority;
 
+import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.awt.*;
 
-public class Recovery extends IronGuard {
+public class Recovery extends Skill {
     @Override
     public Color getColor() {
         return Color.GREEN;
     }
 
     @Override
-    public void onProc(LivingEntity caster, Event procPoint, STATE state, SkillData stats, @Nullable Entity target) {
-        if (procPoint instanceof ParryEvent && ((ParryEvent) procPoint).getPostureConsumption() > 0) {
-            CombatData.getCap(caster).addPosture(((ParryEvent) procPoint).getPostureConsumption());
-            markUsed(caster);
+    public Tag<String> getTags(LivingEntity caster) {
+        return passive;
+    }
+
+    @Override
+    public Tag<String> getSoftIncompatibility(LivingEntity caster) {
+        return none;
+    }
+
+    @Nonnull
+    @Override
+    public SkillCategory getParentCategory() {
+        return SkillCategories.iron_guard;
+    }
+
+    @Override
+    public void onProc(LivingEntity caster, Event procPoint, STATE state, SkillData stats, @Nullable LivingEntity target) {
+        if (procPoint instanceof ConsumePostureEvent && procPoint.getPhase() == EventPriority.HIGHEST) {
+            if (CombatData.getCap(caster).getPosture() < CombatData.getCap(caster).getMaxPosture() / 2)
+                ((ConsumePostureEvent) procPoint).setResetCooldown(false);
+            CombatData.getCap(caster).setMightGrace(ResourceConfig.qiGrace);
         }
-        ICombatCapability icc = CombatData.getCap(caster);
-        icc.setSpiritGrace(0);
+    }
+
+    @Override
+    public boolean onStateChange(LivingEntity caster, SkillData prev, STATE from, STATE to) {
+        return false;
     }
 }

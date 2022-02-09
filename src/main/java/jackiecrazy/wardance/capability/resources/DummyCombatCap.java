@@ -130,22 +130,27 @@ public class DummyCombatCap implements ICombatCapability {
     }
 
     @Override
-    public float getCombo() {
+    public float getRank() {
         return 0;
     }
 
     @Override
-    public void setCombo(float amount) {
+    public void setRank(float amount) {
 
     }
 
     @Override
-    public float addCombo(float amount) {
+    public void setAdrenalineCooldown(int amount) {
+
+    }
+
+    @Override
+    public float addRank(float amount) {
         return 0;
     }
 
     @Override
-    public boolean consumeCombo(float amount, float above) {
+    public boolean consumeRank(float amount, float above) {
         return false;
     }
 
@@ -179,18 +184,15 @@ public class DummyCombatCap implements ICombatCapability {
 
     }
 
-    @Override
-    public int getComboGrace() {
+    private int getComboGrace() {
         return 0;
     }
 
-    @Override
-    public void setComboGrace(int amount) {
+    private void setComboGrace(int amount) {
 
     }
 
-    @Override
-    public int decrementComboGrace(int amount) {
+    private int decrementComboGrace(int amount) {
         return 0;
     }
 

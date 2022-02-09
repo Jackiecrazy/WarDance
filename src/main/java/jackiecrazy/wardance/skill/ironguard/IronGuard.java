@@ -1,37 +1,27 @@
 package jackiecrazy.wardance.skill.ironguard;
 
-import jackiecrazy.wardance.capability.resources.CombatData;
-import jackiecrazy.wardance.capability.skill.CasterData;
-import jackiecrazy.wardance.config.CombatConfig;
 import jackiecrazy.wardance.event.ParryEvent;
-import jackiecrazy.wardance.event.ProjectileParryEvent;
-import jackiecrazy.wardance.skill.*;
-import net.minecraft.entity.Entity;
+import jackiecrazy.wardance.skill.Skill;
+import jackiecrazy.wardance.skill.SkillCategories;
+import jackiecrazy.wardance.skill.SkillCategory;
+import jackiecrazy.wardance.skill.SkillData;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.tags.Tag;
 import net.minecraftforge.eventbus.api.Event;
+import net.minecraftforge.eventbus.api.EventPriority;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import java.util.Arrays;
-import java.util.HashSet;
 
-public class IronGuard extends Skill {
-    private final Tag<String> tag = Tag.getTagFromContents(new HashSet<>(Arrays.asList("physical", "quickCast", ProcPoints.on_parry, ProcPoints.on_projectile_parry, "countdown", ProcPoints.recharge_parry)));
-
-    @Override
-    public Tag<String> getProcPoints(LivingEntity caster) {
-        return tag;
-    }
-
+public abstract class IronGuard extends Skill {
     @Override
     public Tag<String> getTags(LivingEntity caster) {
-        return defensivePhysical;
+        return passive;
     }
 
     @Override
-    public Tag<String> getIncompatibleTags(LivingEntity caster) {
-        return defensive;
+    public Tag<String> getSoftIncompatibility(LivingEntity caster) {
+        return none;
     }
 
     @Nonnull
@@ -41,49 +31,23 @@ public class IronGuard extends Skill {
     }
 
     @Override
-    public float spiritConsumption(LivingEntity caster) {
-        return 1;
-    }
-
-    @Override
-    public boolean onCast(LivingEntity caster) {
-        activate(caster, 30);
-        CombatData.getCap(caster).consumeSpirit(spiritConsumption(caster));
-        return true;
-    }
-
-    @Override
-    public boolean activeTick(LivingEntity caster, SkillData d) {
-        if (CombatConfig.sneakParry == 0) {
-            return super.activeTick(caster, d);
+    public void onProc(LivingEntity caster, Event procPoint, STATE state, SkillData stats, @Nullable LivingEntity target) {
+        if (procPoint instanceof ParryEvent && procPoint.getPhase() == EventPriority.HIGHEST && ((ParryEvent) procPoint).getEntityLiving() == caster && ((ParryEvent) procPoint).canParry() && ((ParryEvent) procPoint).getPostureConsumption() > 0) {
+            parry(caster, (ParryEvent) procPoint, stats, target);
         }
-        return false;
+    }
+
+    protected abstract void parry(LivingEntity caster, ParryEvent procPoint, SkillData stats, LivingEntity target);
+
+    @Override
+    public boolean onStateChange(LivingEntity caster, SkillData prev, STATE from, STATE to) {
+        if (to == STATE.COOLING)
+            setCooldown(caster, 4);
+        return passive(prev, from, to);
     }
 
     @Override
-    public void onCooledDown(LivingEntity caster, float overflow) {
-        if (CasterData.getCap(caster).isSkillUsable(WarSkills.MIKIRI.get()))
-            WarSkills.MIKIRI.get().onCast(caster);
-        super.onCooledDown(caster, overflow);
-    }
-
-    @Override
-    public void onEffectEnd(LivingEntity caster, SkillData stats) {
-        setCooldown(caster, 5);
-    }
-
-    @Override
-    public void onProc(LivingEntity caster, Event procPoint, STATE state, SkillData stats, @Nullable Entity target) {
-        if (procPoint instanceof ParryEvent && ((ParryEvent) procPoint).canParry() && ((ParryEvent) procPoint).getPostureConsumption() > 0) {
-            if (!CasterData.getCap(((ParryEvent) procPoint).getAttacker()).isCategoryActive(SkillCategories.heavy_blow))
-                CombatData.getCap(((ParryEvent) procPoint).getAttacker()).consumePosture(caster, ((ParryEvent) procPoint).getPostureConsumption());
-            ((ParryEvent) procPoint).setPostureConsumption(0);
-            markUsed(caster);
-        }
-        if (procPoint instanceof ProjectileParryEvent && getParentCategory() == null) {
-            ((ProjectileParryEvent) procPoint).setReturnVec(((ProjectileParryEvent) procPoint).getProjectile().getMotion().inverse());
-            ((ProjectileParryEvent) procPoint).setPostureConsumption(0);
-            markUsed(caster);
-        }
+    public boolean equippedTick(LivingEntity caster, SkillData stats) {
+        return cooldownTick(stats);
     }
 }

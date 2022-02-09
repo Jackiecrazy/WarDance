@@ -9,13 +9,13 @@ import jackiecrazy.wardance.skill.ProcPoints;
 import jackiecrazy.wardance.skill.SkillData;
 import jackiecrazy.wardance.skill.WarSkills;
 import jackiecrazy.wardance.utils.EffectUtils;
-import net.minecraft.entity.Entity;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.potion.EffectInstance;
 import net.minecraft.tags.Tag;
 import net.minecraftforge.event.entity.living.LivingAttackEvent;
 import net.minecraftforge.event.entity.player.CriticalHitEvent;
 import net.minecraftforge.eventbus.api.Event;
+import net.minecraftforge.eventbus.api.EventPriority;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 
@@ -36,19 +36,14 @@ public class FlameDance extends WarCry {
             LivingEntity seme = (LivingEntity) e.getSource().getTrueSource();
             LivingEntity uke = e.getEntityLiving();
             if (CasterData.getCap(seme).isSkillUsable(WarSkills.FLAME_DANCE.get())) {
-                EffectUtils.attemptAddPot(uke, EffectUtils.stackPot(uke, new EffectInstance(WarEffects.CORROSION.get(), (int) CombatData.getCap(seme).getCombo(), EffectUtils.getEffectiveLevel(uke, WarEffects.CORROSION.get()) < 4 ? 0 : -1), EffectUtils.StackingMethod.MAXDURATION), false);
+                EffectUtils.attemptAddPot(uke, EffectUtils.stackPot(uke, new EffectInstance(WarEffects.CORROSION.get(), (int) CombatData.getCap(seme).getRank(), EffectUtils.getEffectiveLevel(uke, WarEffects.CORROSION.get()) < 4 ? 0 : -1), EffectUtils.StackingMethod.MAXDURATION), false);
             }
         }
     }
 
     @Override
-    public Tag<String> getProcPoints(LivingEntity caster) {
-        return tag;
-    }
-
-    @Override
     protected int getDuration(float might) {
-        return (int) (might*40);
+        return (int) (might * 2);
     }
 
     @Override
@@ -57,20 +52,23 @@ public class FlameDance extends WarCry {
     }
 
     @Override
-    public void onCooledDown(LivingEntity caster, float overflow) {
-        super.onCooledDown(caster, overflow);
+    public boolean equippedTick(LivingEntity caster, SkillData stats) {
+        if (stats.getState() == STATE.ACTIVE) {
+            return activeTick(stats);
+        }
+        return super.equippedTick(caster, stats);
     }
 
     @Override
-    public void onProc(LivingEntity caster, Event procPoint, STATE state, SkillData stats, Entity target) {
-        if (procPoint instanceof LivingAttackEvent) {
+    public void onProc(LivingEntity caster, Event procPoint, STATE state, SkillData stats, LivingEntity target) {
+        if (procPoint instanceof LivingAttackEvent && state == STATE.ACTIVE && procPoint.getPhase() == EventPriority.HIGHEST && ((LivingAttackEvent) procPoint).getEntityLiving() == target) {
             stats.setArbitraryFloat(stats.getArbitraryFloat() + 0.34f);
             if (((LivingAttackEvent) procPoint).getEntityLiving() == target && ((LivingAttackEvent) procPoint).getSource() instanceof CombatDamageSource) {
-                if(stats.getArbitraryFloat() >= 1&&target.getFireTimer()>0)
-                ((CombatDamageSource) ((LivingAttackEvent) procPoint).getSource()).setArmorReductionPercentage(0.5f);
-                target.forceFireTicks((int) (CombatData.getCap(caster).getCombo()/2));
+                if (stats.getArbitraryFloat() >= 1 && target.getFireTimer() > 0)
+                    ((CombatDamageSource) ((LivingAttackEvent) procPoint).getSource()).setArmorReductionPercentage(0.5f);
+                target.forceFireTicks((int) (CombatData.getCap(caster).getRank() / 2));
             }
-        } else if (procPoint instanceof CriticalHitEvent && stats.getArbitraryFloat() >= 1) {
+        } else if (procPoint instanceof CriticalHitEvent && state == STATE.ACTIVE && procPoint.getPhase() == EventPriority.HIGHEST && ((CriticalHitEvent) procPoint).getEntityLiving() == caster && stats.getArbitraryFloat() >= 1) {
             procPoint.setResult(Event.Result.ALLOW);
             ((CriticalHitEvent) procPoint).setDamageModifier(((CriticalHitEvent) procPoint).getDamageModifier() * 1.5f);
             stats.setArbitraryFloat(0);

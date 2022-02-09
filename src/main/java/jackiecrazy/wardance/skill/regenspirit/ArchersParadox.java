@@ -2,18 +2,19 @@ package jackiecrazy.wardance.skill.regenspirit;
 
 import jackiecrazy.wardance.capability.resources.CombatData;
 import jackiecrazy.wardance.event.EntityAwarenessEvent;
-import jackiecrazy.wardance.skill.*;
+import jackiecrazy.wardance.skill.Skill;
+import jackiecrazy.wardance.skill.SkillCategories;
+import jackiecrazy.wardance.skill.SkillCategory;
+import jackiecrazy.wardance.skill.SkillData;
 import jackiecrazy.wardance.utils.CombatUtils;
-import net.minecraft.entity.Entity;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.tags.Tag;
 import net.minecraftforge.event.entity.ProjectileImpactEvent;
 import net.minecraftforge.eventbus.api.Event;
+import net.minecraftforge.eventbus.api.EventPriority;
 
 import javax.annotation.Nonnull;
 import java.awt.*;
-import java.util.Arrays;
-import java.util.HashSet;
 
 public class ArchersParadox extends Skill {
     /*
@@ -25,12 +26,9 @@ lady luck: after casting a skill, have a 1+luck/5+luck chance to recover the spi
 apathy: your max spirit is 4, your spirit instantly refills after cooldown, you are immune to burnout.
      */
 
-    private final Tag<String> tag = Tag.getTagFromContents(new HashSet<>(Arrays.asList("passive", ProcPoints.on_projectile_impact, ProcPoints.change_awareness)));
-    private final Tag<String> no = Tag.getEmptyTag();
-
     @Override
     public Color getColor() {
-        return Color.YELLOW;
+        return Color.CYAN;
     }
 
     @Override
@@ -39,8 +37,8 @@ apathy: your max spirit is 4, your spirit instantly refills after cooldown, you 
     }
 
     @Override
-    public Tag<String> getIncompatibleTags(LivingEntity caster) {
-        return empty;
+    public Tag<String> getSoftIncompatibility(LivingEntity caster) {
+        return none;
     }
 
 
@@ -51,26 +49,10 @@ apathy: your max spirit is 4, your spirit instantly refills after cooldown, you 
     }
 
     @Override
-    public Tag<String> getProcPoints(LivingEntity caster) {
-        return tag;
-    }
-
-    @Override
-    public boolean onCast(LivingEntity caster) {
-        activate(caster, 30);
-        return true;
-    }
-
-    @Override
-    public void onEffectEnd(LivingEntity caster, SkillData stats) {
-        activate(caster, 30);
-    }
-
-    @Override
-    public boolean activeTick(LivingEntity caster, SkillData d) {
-        if(d.isCondition())
+    public boolean equippedTick(LivingEntity caster, SkillData d) {
+        if (d.isCondition())
             d.decrementDuration();
-        if(d.getDuration()==0){
+        if (d.getDuration() <= 0) {
             d.flagCondition(false);
             d.setDuration(30);
         }
@@ -78,16 +60,21 @@ apathy: your max spirit is 4, your spirit instantly refills after cooldown, you 
     }
 
     @Override
-    public void onProc(LivingEntity caster, Event procPoint, STATE state, SkillData stats, Entity target) {
-        if(stats.isCondition())return;
-        if (procPoint instanceof ProjectileImpactEvent) {
+    public void onProc(LivingEntity caster, Event procPoint, STATE state, SkillData stats, LivingEntity target) {
+        if (stats.isCondition()) return;
+        if (procPoint instanceof ProjectileImpactEvent&&procPoint.getPhase()== EventPriority.HIGHEST) {
             CombatData.getCap(caster).addSpirit(1);
             stats.flagCondition(true);
-        } else if (procPoint instanceof EntityAwarenessEvent) {
-            if(((EntityAwarenessEvent) procPoint).getAwareness()!= CombatUtils.Awareness.ALERT) {
+        } else if (procPoint instanceof EntityAwarenessEvent&&((EntityAwarenessEvent) procPoint).getAttacker()==caster&&procPoint.getPhase()== EventPriority.HIGHEST) {
+            if (((EntityAwarenessEvent) procPoint).getAwareness() != CombatUtils.Awareness.ALERT) {
                 CombatData.getCap(caster).addSpirit(1);
                 stats.flagCondition(true);
             }
         }
+    }
+
+    @Override
+    public boolean onStateChange(LivingEntity caster, SkillData prev, STATE from, STATE to) {
+        return false;
     }
 }

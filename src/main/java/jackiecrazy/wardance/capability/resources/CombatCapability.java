@@ -13,6 +13,7 @@ import jackiecrazy.wardance.potion.WarEffects;
 import jackiecrazy.wardance.skill.WarSkills;
 import jackiecrazy.wardance.utils.CombatUtils;
 import jackiecrazy.wardance.utils.GeneralUtils;
+import net.minecraft.entity.Entity;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.Pose;
 import net.minecraft.entity.ai.attributes.AttributeModifier;
@@ -47,7 +48,7 @@ public class CombatCapability implements ICombatCapability {
 
     private final WeakReference<LivingEntity> dude;
     private ItemStack prev;
-    private float qi, spirit, posture, combo, mpos, mspi, wounding, burnout, fatigue, mainReel, offReel, maxMight, resolve;
+    private float might, spirit, posture, rank, mpos, mspi, wounding, burnout, fatigue, mainReel, offReel, maxMight, resolve;
     private int shatterCD;
     private int qcd, scd, pcd, ccd, mBind, oBind;
     private int staggert, staggerc, ocd, shield, sc, roll, sweepAngle = -1;
@@ -57,7 +58,7 @@ public class CombatCapability implements ICombatCapability {
     private float cache;//no need to save this because it'll be used within the span of a tick
     private int parrying;
     private long staggerTickExisted;
-    private int recoveryTimer, sweeping;
+    private int recoveryTimer, sweeping, adrenaline;
     private ItemStack tempOffhand = ItemStack.EMPTY;
     private Vector3d motion;
 
@@ -88,14 +89,14 @@ public class CombatCapability implements ICombatCapability {
 
     @Override
     public float getMight() {
-        return qi;
+        return might;
     }
 
     @Override
     public void setMight(float amount) {
         float cap = maxMight;
-        if (!Float.isFinite(qi)) qi = 0;
-        else qi = MathHelper.clamp(amount, 0, cap);
+        if (!Float.isFinite(might)) might = 0;
+        else might = MathHelper.clamp(amount, 0, cap);
     }
 
     @Override
@@ -103,9 +104,10 @@ public class CombatCapability implements ICombatCapability {
         GainMightEvent gme = new GainMightEvent(dude.get(), amount);
         MinecraftForge.EVENT_BUS.post(gme);
         amount = gme.getQuantity();
-        float temp = qi + amount;
+        float temp = might + amount;
         setMight(temp);
         setMightGrace(ResourceConfig.qiGrace);
+        addRank(amount);
         return temp % 10;
     }
 
@@ -114,14 +116,14 @@ public class CombatCapability implements ICombatCapability {
         ConsumeMightEvent cse = new ConsumeMightEvent(dude.get(), amount, above);
         MinecraftForge.EVENT_BUS.post(cse);
         amount = cse.getAmount();
-        final boolean lacking = qi - amount < above;
+        final boolean lacking = might - amount < above;
         if (cse.isCanceled()) {
             return cse.getResult() == Event.Result.ALLOW || (cse.getResult() != Event.Result.DENY && !lacking);
         }
 
         if (cse.getResult() == Event.Result.DEFAULT && lacking) return false;
-        amount = Math.min(amount, qi - above);
-        qi -= amount;
+        amount = Math.min(amount, might - above);
+        might -= amount;
         return cse.getResult() != Event.Result.DENY;
     }
 
@@ -261,6 +263,8 @@ public class CombatCapability implements ICombatCapability {
             setStaggerTime(se.getLength());
             elb.world.playSound(null, elb.getPosX(), elb.getPosY(), elb.getPosZ(), SoundEvents.ENTITY_ZOMBIE_BREAK_WOODEN_DOOR, SoundCategory.PLAYERS, 0.3f + WarDance.rand.nextFloat() * 0.5f, 0.75f + WarDance.rand.nextFloat() * 0.5f);
             elb.dismount();
+            for (Entity rider : elb.getPassengers())
+                rider.dismount();
             staggerTickExisted = elb.ticksExisted;
             return -1f;
         }
@@ -300,31 +304,35 @@ public class CombatCapability implements ICombatCapability {
     }
 
     @Override
-    public float getCombo() {
-        return combo;
+    public float getRank() {
+        return rank;
     }
 
     @Override
-    public void setCombo(float amount) {
+    public void setRank(float amount) {
 //        if (WarCompat.elenaiDodge && dude.get() instanceof ServerPlayerEntity && ResourceConfig.elenaiC) {
 //            ElenaiCompat.manipulateRegenTime(dude.get(), );
 //        }
-        if (!Float.isFinite(combo)) combo = 0;
-        else combo = MathHelper.clamp(amount, 0, 10);
+        if (!Float.isFinite(rank)) rank = 0;
+        else rank = MathHelper.clamp(amount, 0, 10);
     }
 
     @Override
-    public float addCombo(float amount) {
-        float overflow = Math.max(0, combo + amount - 10);
-        setCombo(combo + amount);
-        setComboGrace(ResourceConfig.comboGrace);
+    public void setAdrenalineCooldown(int amount) {
+        adrenaline = amount;
+    }
+
+    @Override
+    public float addRank(float amount) {
+        float overflow = Math.max(0, rank + amount - 10);
+        setRank(rank + amount);
         return overflow;
     }
 
     @Override
-    public boolean consumeCombo(float amount, float above) {
-        if (combo - amount < above) return false;
-        combo -= amount;
+    public boolean consumeRank(float amount, float above) {
+        if (rank - amount < above) return false;
+        rank -= amount;
         return true;
     }
 
@@ -364,18 +372,11 @@ public class CombatCapability implements ICombatCapability {
         maxMight = amount;
     }
 
-    @Override
-    public int getComboGrace() {
-        return ccd;
-    }
-
-    @Override
-    public void setComboGrace(int amount) {
+    private void setComboGrace(int amount) {
         ccd = amount;
     }
 
-    @Override
-    public int decrementComboGrace(int amount) {
+    private int decrementComboGrace(int amount) {
         ccd -= amount;
         if (ccd < 0) {
             int temp = ccd;
@@ -716,15 +717,20 @@ public class CombatCapability implements ICombatCapability {
         if (elb == null) return;
         int ticks = (int) (elb.world.getGameTime() - lastUpdate);
         if (ticks < 1) return;//sometimes time runs backwards
+        //max values
         setTrueMaxPosture(getMPos(elb));
         setTrueMaxSpirit((float) elb.getAttributeValue(WarAttributes.MAX_SPIRIT.get()));
         setMaxMight((float) elb.getAttributeValue(WarAttributes.MAX_MIGHT.get()));
+        //initialize posture
         if (first)
             setPosture(getMaxPosture());
-        decrementComboGrace(ticks);
-        recoveryTimer -= ticks;
+        //store motion for further use
         if (elb.ticksExisted % 5 == 0)
             motion = elb.getPositionVec();
+        //tick down everything
+        recoveryTimer -= ticks;
+        if (adrenaline > 0)
+            adrenaline -= Math.min(adrenaline, ticks);
         int qiExtra = decrementMightGrace(ticks);
         int spExtra = decrementSpiritGrace(ticks);
         int poExtra = decrementPostureGrace(ticks);
@@ -769,9 +775,15 @@ public class CombatCapability implements ICombatCapability {
 //            addFatigue(heal);
 //            addBurnout(heal);
         }
-        if (getComboGrace() == 0) {
-            if (combo >= 9) combo = 9;
-            if (combo >= 4.08) combo -= 0.05;
+        //reduce rank
+        if (might == 0) {
+            float decay = 0.01f;
+            if (getComboRank() == 6)
+                decay = 0.02f;
+            if (getComboRank() == 7)
+                decay = 0.03f;
+            rank -= decay;
+            if (rank < 0) rank = 0;
         }
         if (prev == null || !ItemStack.areItemStacksEqual(elb.getHeldItemOffhand(), prev)) {
             prev = elb.getHeldItemOffhand();
@@ -815,13 +827,12 @@ public class CombatCapability implements ICombatCapability {
         if (!c.contains("qi")) return;
         setMight(c.getFloat("qi"));
         setResolve(c.getFloat("resolve"));
-        setCombo(c.getFloat("combo"));
+        setRank(c.getFloat("combo"));
         setSpirit(c.getFloat("spirit"));
         setTrueMaxSpirit(c.getFloat("maxspi"));
         setMaxMight(c.getFloat("maxmight"));
         setBurnout(c.getFloat("burnout"));
         setWounding(c.getFloat("wounding"));
-        setComboGrace(c.getInt("combocd"));
         setMightGrace(c.getInt("qicd"));
         setPostureGrace(c.getInt("posturecd"));
         setSpiritGrace(c.getInt("spiritcd"));
@@ -840,6 +851,7 @@ public class CombatCapability implements ICombatCapability {
         setHandReel(Hand.OFF_HAND, c.getFloat("offReel"));
         recoveryTimer = c.getInt("stumble");
         first = c.getBoolean("first");
+        adrenaline = c.getInt("adrenaline");
         parrying = c.getInt("parrying");
         setTempItemStack(ItemStack.read(c.getCompound("temp")));
         if (dude.get() instanceof PlayerEntity) {
@@ -887,7 +899,7 @@ public class CombatCapability implements ICombatCapability {
         c.putFloat("qi", getMight());
         c.putFloat("resolve", getResolve());
         c.putFloat("posture", getPosture());
-        c.putFloat("combo", getCombo());
+        c.putFloat("combo", getRank());
         c.putFloat("spirit", getSpirit());
         c.putFloat("maxpos", getTrueMaxPosture());
         c.putFloat("maxspi", getTrueMaxSpirit());
@@ -895,7 +907,6 @@ public class CombatCapability implements ICombatCapability {
         c.putFloat("fatigue", getFatigue());
         c.putFloat("wounding", getWounding());
         c.putFloat("maxmight", getMaxMight());
-        c.putInt("combocd", getComboGrace());
         c.putInt("qicd", getMightGrace());
         c.putInt("posturecd", getPostureGrace());
         c.putInt("spiritcd", getSpiritGrace());
@@ -914,6 +925,7 @@ public class CombatCapability implements ICombatCapability {
         c.putInt("shieldC", sc);
         c.putBoolean("first", first);
         c.putInt("parrying", parrying);
+        c.putInt("adrenaline", adrenaline);
         c.putInt("shattercd", getShatterCooldown());
         c.putInt("sweep", getForcedSweep());
         c.putInt("stumble", recoveryTimer);

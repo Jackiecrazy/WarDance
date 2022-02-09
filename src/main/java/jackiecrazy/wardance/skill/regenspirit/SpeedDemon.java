@@ -3,18 +3,19 @@ package jackiecrazy.wardance.skill.regenspirit;
 import jackiecrazy.wardance.capability.resources.CombatData;
 import jackiecrazy.wardance.event.AttackMightEvent;
 import jackiecrazy.wardance.event.DodgeEvent;
-import jackiecrazy.wardance.skill.*;
+import jackiecrazy.wardance.skill.Skill;
+import jackiecrazy.wardance.skill.SkillCategories;
+import jackiecrazy.wardance.skill.SkillCategory;
+import jackiecrazy.wardance.skill.SkillData;
 import jackiecrazy.wardance.utils.GeneralUtils;
-import net.minecraft.entity.Entity;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.tags.Tag;
 import net.minecraft.util.math.MathHelper;
 import net.minecraftforge.eventbus.api.Event;
+import net.minecraftforge.eventbus.api.EventPriority;
 
 import javax.annotation.Nonnull;
 import java.awt.*;
-import java.util.Arrays;
-import java.util.HashSet;
 
 public class SpeedDemon extends Skill {
     /*
@@ -26,12 +27,9 @@ lady luck: after casting a skill, have a 1+luck/5+luck chance to recover the spi
 apathy: your max spirit is 4, your spirit instantly refills after cooldown, you are immune to burnout.
      */
 
-    private final Tag<String> tag = Tag.getTagFromContents(new HashSet<>(Arrays.asList("passive", ProcPoints.on_dodge, ProcPoints.attack_might)));
-    private final Tag<String> no = Tag.getEmptyTag();
-
     @Override
     public Color getColor() {
-        return Color.CYAN;
+        return Color.LIGHT_GRAY;
     }
 
     @Override
@@ -40,8 +38,8 @@ apathy: your max spirit is 4, your spirit instantly refills after cooldown, you 
     }
 
     @Override
-    public Tag<String> getIncompatibleTags(LivingEntity caster) {
-        return empty;
+    public Tag<String> getSoftIncompatibility(LivingEntity caster) {
+        return none;
     }
 
 
@@ -50,31 +48,19 @@ apathy: your max spirit is 4, your spirit instantly refills after cooldown, you 
     public SkillCategory getParentCategory() {
         return SkillCategories.morale;
     }
-
     @Override
-    public Tag<String> getProcPoints(LivingEntity caster) {
-        return tag;
-    }
-
-    @Override
-    public boolean onCast(LivingEntity caster) {
-        activate(caster, 0);
-        return true;
-    }
-
-    @Override
-    public void onEffectEnd(LivingEntity caster, SkillData stats) {
-        activate(caster, 0);
-    }
-
-    @Override
-    public void onProc(LivingEntity caster, Event procPoint, STATE state, SkillData stats, Entity target) {
-        if (procPoint instanceof DodgeEvent) {
+    public void onProc(LivingEntity caster, Event procPoint, STATE state, SkillData stats, LivingEntity target) {
+        if (procPoint instanceof DodgeEvent&&procPoint.getPhase()== EventPriority.HIGHEST) {
             CombatData.getCap(caster).setSpiritGrace(CombatData.getCap(caster).getSpiritGrace() / 2);
-        } else if (procPoint instanceof AttackMightEvent) {
+        } else if (procPoint instanceof AttackMightEvent&&procPoint.getPhase()== EventPriority.HIGHEST) {
             double spdiff = MathHelper.sqrt(GeneralUtils.getSpeedSq(caster)) - MathHelper.sqrt(GeneralUtils.getSpeedSq(target));
             if (spdiff < 0 || !Double.isFinite(spdiff)) spdiff = 0;
             CombatData.getCap(caster).addSpirit((float) Math.min(1, Math.sqrt(spdiff)));
         }
+    }
+
+    @Override
+    public boolean onStateChange(LivingEntity caster, SkillData prev, STATE from, STATE to) {
+        return false;
     }
 }

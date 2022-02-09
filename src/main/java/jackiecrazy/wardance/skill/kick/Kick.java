@@ -5,19 +5,21 @@ import jackiecrazy.wardance.api.CombatDamageSource;
 import jackiecrazy.wardance.capability.resources.CombatData;
 import jackiecrazy.wardance.capability.resources.ICombatCapability;
 import jackiecrazy.wardance.config.CombatConfig;
-import jackiecrazy.wardance.skill.*;
+import jackiecrazy.wardance.skill.Skill;
+import jackiecrazy.wardance.skill.SkillCategories;
+import jackiecrazy.wardance.skill.SkillCategory;
+import jackiecrazy.wardance.skill.SkillData;
 import jackiecrazy.wardance.utils.GeneralUtils;
-import net.minecraft.entity.Entity;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.tags.Tag;
 import net.minecraft.util.SoundCategory;
 import net.minecraft.util.SoundEvents;
 import net.minecraft.util.math.vector.Vector3d;
-import net.minecraftforge.event.entity.living.LivingAttackEvent;
 import net.minecraftforge.eventbus.api.Event;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.awt.*;
 import java.util.Arrays;
 import java.util.HashSet;
@@ -27,25 +29,13 @@ public class Kick extends Skill {
     private final Tag<String> no = Tag.getTagFromContents(new HashSet<>(Arrays.asList("normalAttack")));
 
     @Override
-    public Tag<String> getProcPoints(LivingEntity caster) {
-        return tag;
-    }
-
-    @Override
     public Tag<String> getTags(LivingEntity caster) {
         return offensivePhysical;
     }
 
     @Override
-    public Tag<String> getIncompatibleTags(LivingEntity caster) {
+    public Tag<String> getSoftIncompatibility(LivingEntity caster) {
         return offensive;
-    }
-
-    @Override
-    public boolean onCast(LivingEntity caster) {
-        activate(caster, 40);
-        CombatData.getCap(caster).consumeSpirit(spiritConsumption(caster));
-        return true;
     }
 
     @Override
@@ -55,18 +45,13 @@ public class Kick extends Skill {
 
     @Override
     public CastStatus castingCheck(LivingEntity caster) {
-        return CombatData.getCap(caster).getSpirit() < 4 ? CastStatus.SPIRIT : super.castingCheck(caster);
+        return CombatData.getCap(caster).getSpirit() < spiritConsumption(caster) ? CastStatus.SPIRIT : super.castingCheck(caster);
     }
 
     @Nonnull
     @Override
     public SkillCategory getParentCategory() {
         return SkillCategories.kick;
-    }
-
-    @Override
-    public void onEffectEnd(LivingEntity caster, SkillData stats) {
-        setCooldown(caster, 4);
     }
 
     protected void additionally(LivingEntity caster, LivingEntity target) {
@@ -78,14 +63,19 @@ public class Kick extends Skill {
     }
 
     @Override
-    public void onProc(LivingEntity caster, Event procPoint, STATE state, SkillData stats, Entity target) {
-        if (procPoint instanceof LivingAttackEvent) {
-            procPoint.setCanceled(true);
-            if (GeneralUtils.getDistSqCompensated(caster, target) <= distanceSq()) {
+    public void onProc(LivingEntity caster, Event procPoint, STATE state, SkillData stats, @Nullable LivingEntity target) {
+        attackCooldown(procPoint, caster, stats);
+    }
+
+    @Override
+    public boolean onStateChange(LivingEntity caster, SkillData prev, STATE from, STATE to) {
+        if (from == STATE.HOLSTERED && to == STATE.ACTIVE) {
+            LivingEntity target = GeneralUtils.raytraceLiving(caster, distance());
+            if (target != null && CombatData.getCap(caster).consumeSpirit(spiritConsumption(caster))) {
                 CombatData.getCap(target).consumePosture(caster, 4);
                 if (caster instanceof PlayerEntity)
                     ((PlayerEntity) caster).spawnSweepParticles();
-                target.attackEntityFrom(new CombatDamageSource("fallingBlock",caster).setDamageTyping(CombatDamageSource.TYPE.PHYSICAL).setProcSkillEffects(true).setProcAttackEffects(true), 2);
+                target.attackEntityFrom(new CombatDamageSource("fallingBlock", caster).setDamageTyping(CombatDamageSource.TYPE.PHYSICAL).setProcSkillEffects(true).setProcAttackEffects(true), 2);
                 if (target.getRevengeTarget() == null)
                     target.setRevengeTarget(caster);
                 caster.world.playSound(null, caster.getPosX(), caster.getPosY(), caster.getPosZ(), SoundEvents.ENTITY_ZOMBIE_ATTACK_WOODEN_DOOR, SoundCategory.PLAYERS, 0.25f + WarDance.rand.nextFloat() * 0.5f, 0.5f + WarDance.rand.nextFloat() * 0.5f);
@@ -93,10 +83,15 @@ public class Kick extends Skill {
                 markUsed(caster);
             }
         }
+        if (to == STATE.COOLING) {
+            setCooldown(caster, 4);
+            return true;
+        }
+        return boundCast(prev, from, to);
     }
 
-    protected int distanceSq() {
-        return 9;
+    protected int distance() {
+        return 3;
     }
 
     public static class Backflip extends Kick {
@@ -111,7 +106,7 @@ public class Kick extends Skill {
             caster.setMotion(caster.getMotion().add(noy.x, 0.4, noy.z));
             caster.velocityChanged = true;
             final ICombatCapability cap = CombatData.getCap(caster);
-            cap.addCombo(0.4f);
+            cap.addRank(0.4f);
             cap.addPosture(0.3f * (cap.getPosture() / cap.getMaxPosture()));
         }
     }

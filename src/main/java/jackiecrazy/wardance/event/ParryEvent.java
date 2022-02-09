@@ -23,7 +23,7 @@ public class ParryEvent extends LivingEvent {
     private final float originalPostureConsumption, attackDamage;
     private float postureConsumption;
 
-    public ParryEvent(LivingEntity entity, LivingEntity seme, boolean canParry, Hand hand, ItemStack a, Hand dhand, ItemStack d, float posture, float damage) {
+    public ParryEvent(LivingEntity entity, LivingEntity seme, boolean canParry, Hand hand, ItemStack a, Hand dhand, ItemStack d, float posture, float orig, float damage) {
         super(entity);
         originally = canParry;
         attacker = seme;
@@ -31,7 +31,8 @@ public class ParryEvent extends LivingEvent {
         attackingStack = a;
         defendingHand = dhand;
         defendingStack = d;
-        originalPostureConsumption = postureConsumption = posture;
+        originalPostureConsumption = orig;
+        postureConsumption = posture;
         attackDamage = damage;
     }
 

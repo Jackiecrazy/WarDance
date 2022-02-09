@@ -7,11 +7,11 @@ import jackiecrazy.wardance.event.AttackMightEvent;
 import jackiecrazy.wardance.skill.ProcPoints;
 import jackiecrazy.wardance.skill.SkillData;
 import jackiecrazy.wardance.skill.WarSkills;
-import net.minecraft.entity.Entity;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.tags.Tag;
 import net.minecraftforge.event.entity.player.CriticalHitEvent;
 import net.minecraftforge.eventbus.api.Event;
+import net.minecraftforge.eventbus.api.EventPriority;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 
@@ -26,35 +26,16 @@ public class Timberfall extends WarCry {
 
     @SubscribeEvent
     public static void timberfall(AttackMightEvent e) {
-        //FIXME due to no countdown, meditate broken
-        //TODO remove meditate; sneak middle click on block underneath you in combat mode and no drain to start meditating. Pick a stat to restore, then over 5 seconds the stat is reset as screen goes to white, and finally gain a series of buffs depending on what is nearby
-        //TODO change saving throw
-
-        if (e.getAttacker() != null &&CasterData.getCap(e.getAttacker()).isSkillUsable(WarSkills.TIMBERFALL.get())) {
+        if (e.getAttacker() != null && CasterData.getCap(e.getAttacker()).isSkillUsable(WarSkills.TIMBERFALL.get())) {
             CombatData.getCap(e.getEntityLiving()).consumePosture(e.getQuantity() * 5);
         }
     }
 
     @Override
-    public Tag<String> getProcPoints(LivingEntity caster) {
-        return tag;
-    }
-
-    @Override
-    public void onEffectEnd(LivingEntity caster, SkillData stats) {
-        super.onEffectEnd(caster, stats);
-    }
-
-    @Override
-    public void onCooledDown(LivingEntity caster, float overflow) {
-        super.onCooledDown(caster, overflow);
-    }
-
-    @Override
-    public void onProc(LivingEntity caster, Event procPoint, STATE state, SkillData stats, Entity target) {
-        if (procPoint instanceof CriticalHitEvent) {
+    public void onProc(LivingEntity caster, Event procPoint, STATE state, SkillData stats, LivingEntity target) {
+        if (procPoint instanceof CriticalHitEvent && state == STATE.ACTIVE && procPoint.getPhase() == EventPriority.HIGHEST && ((CriticalHitEvent) procPoint).getEntityLiving() == caster) {
             procPoint.setResult(Event.Result.ALLOW);
-            ((CriticalHitEvent) procPoint).setDamageModifier(((CriticalHitEvent) procPoint).getDamageModifier()*1.4f);
+            ((CriticalHitEvent) procPoint).setDamageModifier(((CriticalHitEvent) procPoint).getDamageModifier() * 1.4f);
             stats.decrementDuration();
         }
         super.onProc(caster, procPoint, state, stats, target);
@@ -67,16 +48,6 @@ public class Timberfall extends WarCry {
 
     @Override
     protected int getDuration(float might) {
-        return 5+(int)might;
-    }
-
-    @Override
-    public boolean activeTick(LivingEntity caster, SkillData d) {
-        if (d.isCondition()&&d.getDuration() > 0) {
-            d.decrementDuration();
-            if (d.getDuration() <= 0) markUsed(caster);
-            return true;
-        }
-        return false;
+        return (int) might*2;
     }
 }

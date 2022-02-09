@@ -7,6 +7,7 @@ import net.minecraft.entity.passive.TameableEntity;
 import net.minecraft.entity.player.PlayerEntity;
 
 public class TargetingUtils {
+
     public static boolean isAlly(Entity entity, Entity of) {
         if (of == entity) return true;
         if (entity instanceof TameableEntity && of instanceof LivingEntity && ((TameableEntity) entity).isOwner((LivingEntity) of))

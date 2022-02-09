@@ -21,7 +21,7 @@ public interface ISkillCapability {
 
     void holsterSkill(int index);
 
-    void changeSkillState(Skill d, Skill.STATE to);
+    boolean changeSkillState(Skill d, Skill.STATE to);
 
     Map<Skill, SkillData> getAllSkillData();
 

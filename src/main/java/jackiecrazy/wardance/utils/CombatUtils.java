@@ -16,6 +16,8 @@ import jackiecrazy.wardance.event.ProjectileParryEvent;
 import jackiecrazy.wardance.networking.CombatChannel;
 import jackiecrazy.wardance.networking.UpdateAttackPacket;
 import jackiecrazy.wardance.potion.WarEffects;
+import jackiecrazy.wardance.skill.Skill;
+import jackiecrazy.wardance.skill.SkillCategories;
 import jackiecrazy.wardance.skill.WarSkills;
 import net.minecraft.block.material.Material;
 import net.minecraft.enchantment.EnchantmentHelper;
@@ -54,6 +56,7 @@ public class CombatUtils {
     public static HashMap<ResourceLocation, StealthData> stealthMap = new HashMap<>();
     public static HashMap<Item, AttributeModifier[]> armorStats = new HashMap<>();
     public static boolean isSweeping = false;
+    public static boolean suppress = false;
     private static MeleeInfo DEFAULTMELEE = new MeleeInfo(1, 1, false, 0, 0, 1, 1);
     private static ProjectileInfo DEFAULTRANGED = new ProjectileInfo(0.1, 1, false, false);
     private static HashMap<Item, MeleeInfo> combatList = new HashMap<>();
@@ -249,7 +252,7 @@ public class CombatUtils {
 
     public static boolean isWeapon(@Nullable LivingEntity e, ItemStack stack) {
         if (stack == null) return false;
-        if (e != null && CasterData.getCap(e).isSkillActive(WarSkills.DETERMINATION.get()))
+        if (e != null && CasterData.getCap(e).getCategoryState(SkillCategories.shield_bash) == Skill.STATE.HOLSTERED)
             return combatList.containsKey(stack.getItem());
         return combatList.containsKey(stack.getItem()) && !combatList.getOrDefault(stack.getItem(), DEFAULTMELEE).isShield;//stack.getItem() instanceof SwordItem || stack.getItem() instanceof AxeItem;
     }
@@ -354,7 +357,7 @@ public class CombatUtils {
         final float cooldownSq = semeCap.getCachedCooldown() * semeCap.getCachedCooldown();
         final double period = 20.0D / (seme.getAttribute(Attributes.ATTACK_SPEED).getValue() + 0.5d);//+0.5 makes sure heavies don't scale forever, light ones are still puny
         float might = cooldownSq * cooldownSq * magicScale * (float) period * (float) period / magicNumber;
-        might *= (0.5 + (semeCap.getCombo() / 10f));//combo bonus
+        might *= (1f + (semeCap.getRank() / 20f));//combo bonus
         float weakness = 1;
         if (seme.isPotionActive(Effects.WEAKNESS))
             for (int foo = 0; foo < seme.getActivePotionEffect(Effects.WEAKNESS).getAmplifier() + 1; foo++) {
@@ -477,17 +480,15 @@ public class CombatUtils {
         }
     }
 
-    public static boolean suppress=false;
-
     public static void swapHeldItems(LivingEntity e) {
         //attributes = new ArrayList<>();
         ItemStack main = e.getHeldItemMainhand(), off = e.getHeldItemOffhand();
         int tssl = e.ticksSinceLastSwing;
-        suppress=true;
+        suppress = true;
         ICombatCapability cap = CombatData.getCap(e);
         e.setHeldItem(Hand.MAIN_HAND, e.getHeldItemOffhand());
         e.setHeldItem(Hand.OFF_HAND, main);
-        suppress=false;
+        suppress = false;
 //        attributes.addAll(main.getAttributeModifiers(EquipmentSlotType.MAINHAND).keys());
 //        attributes.addAll(main.getAttributeModifiers(EquipmentSlotType.OFFHAND).keys());
 //        attributes.addAll(off.getAttributeModifiers(EquipmentSlotType.MAINHAND).keys());

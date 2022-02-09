@@ -179,6 +179,35 @@ public class GeneralUtils {
         return entity;
     }
 
+    public static LivingEntity raytraceLiving(LivingEntity attacker, double range) {
+        return raytraceLiving(attacker.world, attacker, range);
+    }
+
+    public static LivingEntity raytraceLiving(World world, LivingEntity attacker, double range) {
+        Vector3d start = attacker.getEyePosition(0.5f);
+        Vector3d look = attacker.getLookVec().scale(range + 2);
+        Vector3d end = start.add(look);
+        LivingEntity entity = null;
+        List<LivingEntity> list = world.getEntitiesWithinAABB(LivingEntity.class, attacker.getBoundingBox().expand(look.x, look.y, look.z).grow(1.0D), null);
+        double d0 = -1.0D;//necessary to prevent small derps
+
+        for (LivingEntity entity1 : list) {
+            if (entity1 != attacker) {
+                AxisAlignedBB axisalignedbb = entity1.getBoundingBox();
+                Optional<Vector3d> raytraceresult = axisalignedbb.rayTrace(start, end);
+                if (raytraceresult.isPresent()) {
+                    double d1 = getDistSqCompensated(entity1, attacker);
+
+                    if ((d1 < d0 || d0 == -1.0D) && d1 < range * range) {
+                        entity = entity1;
+                        d0 = d1;
+                    }
+                }
+            }
+        }
+        return entity;
+    }
+
     public static List<Entity> raytraceEntities(World world, LivingEntity attacker, double range) {
         Vector3d start = attacker.getEyePosition(0.5f);
         Vector3d look = attacker.getLookVec().scale(range + 2);
