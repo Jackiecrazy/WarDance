@@ -47,7 +47,7 @@ public class DeathDenial extends MementoMori {
     @Override
     public boolean onStateChange(LivingEntity caster, SkillData prev, STATE from, STATE to) {
         if (to == STATE.COOLING) {
-            setCooldown(caster, 10);
+            setCooldown(caster, prev, 10);
             return true;
         }
         if (from != STATE.ACTIVE && to == STATE.ACTIVE) {

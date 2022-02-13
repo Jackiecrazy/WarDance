@@ -19,11 +19,6 @@ public class WeaponThrow extends Skill {
         return null;
     }
 
-    @Override
-    public boolean onCast(LivingEntity caster) {
-        return false;
-    }
-
 
     @Override
     public void onProc(LivingEntity caster, Event procPoint, STATE state, SkillData stats, LivingEntity target) {

@@ -45,7 +45,7 @@ public class LowSweep extends Kick {
             }
         }
         if (to == STATE.COOLING) {
-            setCooldown(caster, 4);
+            setCooldown(caster, prev, 4);
             return true;
         }
         return boundCast(prev, from, to);

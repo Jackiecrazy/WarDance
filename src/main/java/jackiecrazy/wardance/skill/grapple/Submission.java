@@ -30,7 +30,7 @@ public class Submission extends Grapple {
     @Override
     public boolean onStateChange(LivingEntity caster, SkillData prev, STATE from, STATE to) {
         if (to == STATE.COOLING) {
-            setCooldown(caster, prev.isCondition() ? 4 : 7);
+            setCooldown(caster, prev, prev.isCondition() ? 4 : 7);
         }
         prev.flagCondition(false);
         return boundCast(prev, from, to);

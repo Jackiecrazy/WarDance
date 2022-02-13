@@ -262,7 +262,7 @@ public class CombatHandler {
                 seme.getHeldItemMainhand().getCapability(CombatManipulator.CAP).ifPresent((i) -> i.attackStart(e.getSource(), seme, uke, seme.getHeldItemMainhand(), e.getAmount()));
                 //add stats if it's the first attack this tick and cooldown is sufficient
                 if (semeCap.getSweepTick() != seme.ticksExisted) {//first hit of a potential sweep attack
-                    semeCap.addRank(0.2f);
+                    semeCap.addRank(0.1f);
                     float might = CombatUtils.getAttackMight(seme, uke);
                     semeCap.addMight(might);
                     semeCap.setSweepTick(seme.ticksExisted);

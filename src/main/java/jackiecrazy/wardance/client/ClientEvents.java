@@ -101,8 +101,8 @@ public class ClientEvents {
                 String[] val = s.split(",");
                 rotate.put(val[0], Boolean.parseBoolean(val[1]));
             } catch (Exception e) {
-                if(GeneralConfig.debug)
-                WarDance.LOGGER.warn("improperly formatted custom rotation definition " + s + "!");
+                if (GeneralConfig.debug)
+                    WarDance.LOGGER.warn("improperly formatted custom rotation definition " + s + "!");
             }
         }
     }
@@ -390,7 +390,8 @@ public class ClientEvents {
                         stack.push();
                         mc.ingameGUI.blit(stack, x, y + 32 - fillHeight, 0, 96 - fillHeight, 32, fillHeight);
                         stack.pop();
-                        fillHeight += 3;
+                        fillHeight += Math.min(fillHeight, 3);
+                        fillHeight = Math.min(fillHeight, 32);
                         //might base
                         stack.push();
                         mc.ingameGUI.blit(stack, x, y, 32, 64, 32, 32);
@@ -416,7 +417,8 @@ public class ClientEvents {
                         stack.push();
                         mc.ingameGUI.blit(stack, x, y + 32 - fillHeight, 0, 128 - fillHeight, 32, fillHeight);
                         stack.pop();
-                        fillHeight += 3;
+                        fillHeight += Math.min(fillHeight, 3);
+                        fillHeight = Math.min(fillHeight, 32);
                         //spirit base
                         stack.push();
                         mc.ingameGUI.blit(stack, x, y, 32, 96, 32, 32);
@@ -447,19 +449,19 @@ public class ClientEvents {
                     if (ClientConfig.CONFIG.combo.enabled) {
                         mc.getTextureManager().bindTexture(goodhud);
                         int combowidth = 32;
-                        float workingCombo=currentComboLevel;
+                        float workingCombo = currentComboLevel;
                         int comboU = (int) (MathHelper.clamp(Math.floor(workingCombo), 0, 4)) * 32;
                         int divisor = 1;
-                        if (workingCombo >= 4)
+                        if (workingCombo >= 4)//S
                             divisor = 2;
-                        if (workingCombo >= 6) {
-                            combowidth = 34;
-                            comboU = 158;
+                        if (workingCombo >= 6) {//SS
+                            combowidth = 33;
+                            comboU = 159;
                             divisor = 3;
                         }
-                        if (workingCombo >= 9) {
+                        if (workingCombo >= 9) {//SSS
                             combowidth = 64;
-                            comboU = 194;
+                            comboU = 192;
                             fillHeight = (int) ((workingCombo - 9) * 32f);
                         } else if (divisor > 1)
                             fillHeight = (int) ((workingCombo - divisor * 2) / divisor * 32f);
@@ -470,7 +472,7 @@ public class ClientEvents {
                         y = MathHelper.clamp(pair.getSecond() - 23, 0, height - 46);
                         mc.ingameGUI.blit(stack, x, y, comboU, 0, combowidth, 32);
                         //fancy fill percentage
-                        mc.ingameGUI.blit(stack, x, y + 33 - fillHeight, comboU, 65 - fillHeight, combowidth, fillHeight);
+                        mc.ingameGUI.blit(stack, x, y + 33 - fillHeight, comboU, 65 - fillHeight, combowidth, fillHeight - 2);
                         //TRIANGLE!
 //                    BufferBuilder bufferbuilder = Tessellator.getInstance().getBuffer();
 //                    bufferbuilder.begin(4, DefaultVertexFormats.POSITION_TEX);

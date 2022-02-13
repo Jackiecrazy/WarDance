@@ -53,7 +53,7 @@ public class HeavyBlow extends Skill {
     @Override
     public boolean onStateChange(LivingEntity caster, SkillData prev, STATE from, STATE to) {
         if (to == STATE.COOLING) {
-            setCooldown(caster, 3);
+            setCooldown(caster, prev, 3);
         }
         return passive(prev, from, to);
     }

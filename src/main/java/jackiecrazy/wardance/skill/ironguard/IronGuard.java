@@ -42,7 +42,7 @@ public abstract class IronGuard extends Skill {
     @Override
     public boolean onStateChange(LivingEntity caster, SkillData prev, STATE from, STATE to) {
         if (to == STATE.COOLING)
-            setCooldown(caster, 4);
+            setCooldown(caster, prev, 4);
         return passive(prev, from, to);
     }
 

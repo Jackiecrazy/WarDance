@@ -108,9 +108,9 @@ public class SkillCastScreen extends Screen {
                 //holstered is green
                 if (CasterData.getCap(mc.player).getSkillState(elements[a]) == Skill.STATE.HOLSTERED)
                     RenderSystem.color4f(0.4f, 0.7f, 0.4f, 1);
-                    //active is yellow
+                    //active is blue
                 else if (CasterData.getCap(mc.player).getSkillState(elements[a]) == Skill.STATE.ACTIVE)
-                    RenderSystem.color4f(0.7f, 0.7f, 0.4f, 1);
+                    RenderSystem.color4f(0.4f, 0.4f, 0.9f, 1);
                     //not allowed is dark gray
                 else if (s.castingCheck(mc.player) != Skill.CastStatus.ALLOWED)
                     RenderSystem.color4f(0.4f, 0.4f, 0.4f, 1);
@@ -189,9 +189,9 @@ public class SkillCastScreen extends Screen {
             Skill selected = elements[index];
             String print = selected.getDisplayName(mc.player).getString();
             int yee = mc.fontRenderer.getStringWidth(print);
-            mc.ingameGUI.getFontRenderer().drawString(matrixStack, print, (width - yee) / 2f, height / 2f - 3, selected.getColor().getRGB());
+            mc.ingameGUI.getFontRenderer().drawString(matrixStack, print, (width - yee) / 2f, 4, selected.getColor().getRGB());
             final Skill.CastStatus castStatus = selected.castingCheck(mc.player);
-            if (castStatus != Skill.CastStatus.ALLOWED) {
+            if (castStatus != Skill.CastStatus.ALLOWED&&castStatus != Skill.CastStatus.HOLSTERED&&castStatus != Skill.CastStatus.ACTIVE) {
                 switch (castStatus) {
                     case COOLDOWN:
                         print = new TranslationTextComponent("wardance.skill.cooldown").getString();
@@ -208,12 +208,12 @@ public class SkillCastScreen extends Screen {
                     case MIGHT:
                         print = new TranslationTextComponent("wardance.skill.might", selected.mightConsumption(mc.player)).getString();
                         break;
-                    default:
+                    case OTHER:
                         print = new TranslationTextComponent(elements[index].getRegistryName().toString() + ".requirement").getString();
                         break;
                 }
                 yee = mc.fontRenderer.getStringWidth(print);
-                mc.ingameGUI.getFontRenderer().drawString(matrixStack, print, (width - yee) / 2f, height / 2f + 3, Color.RED.getRGB());//TODO reenable?
+                mc.ingameGUI.getFontRenderer().drawString(matrixStack, print, (width - yee) / 2f, 12, Color.RED.getRGB());//TODO reenable?
             }
 
         }
@@ -339,7 +339,7 @@ public class SkillCastScreen extends Screen {
 
     protected void selectAndClose() {
         closeScreen();
-        if(elements[exIndex]!=null)
-        CombatChannel.INSTANCE.sendToServer(new SelectSkillPacket(exIndex));
+        if (exIndex >= 0 && elements[exIndex] != null)
+            CombatChannel.INSTANCE.sendToServer(new SelectSkillPacket(exIndex));
     }
 }

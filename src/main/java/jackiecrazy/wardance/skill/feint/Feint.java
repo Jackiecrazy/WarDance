@@ -65,7 +65,7 @@ public class Feint extends Skill {
     @Override
     public boolean onStateChange(LivingEntity caster, SkillData prev, STATE from, STATE to) {
         if (to == STATE.COOLING) {
-            setCooldown(caster, 3);
+            setCooldown(caster, prev, 3);
             if (this == WarSkills.FOLLOWUP.get()) {
                 CombatUtils.setHandCooldown(caster, prev.isCondition() ? Hand.MAIN_HAND : Hand.OFF_HAND, 1, true);
             }
@@ -127,7 +127,7 @@ public class Feint extends Skill {
         @Override
         public boolean onStateChange(LivingEntity caster, SkillData prev, STATE from, STATE to) {
             if (to == STATE.COOLING) {
-                setCooldown(caster, 6);
+                setCooldown(caster, prev, 6);
             }
             return boundCast(prev, from, to);
         }

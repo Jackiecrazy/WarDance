@@ -58,13 +58,13 @@ public class Guillotine extends Skill {
 
     @Override
     public CastStatus castingCheck(LivingEntity caster) {
-        if (CasterData.getCap(caster).isSkillUsable(this))
-            return CastStatus.ALLOWED;
-        return super.castingCheck(caster);
+        final CastStatus supes = super.castingCheck(caster);
+        return supes == CastStatus.ACTIVE | supes == CastStatus.HOLSTERED ? CastStatus.ALLOWED : supes;
     }
 
     @Override
     public boolean equippedTick(LivingEntity caster, SkillData stats) {
+        if (stats.getState() == STATE.ACTIVE && CombatData.getCap(caster).getRank() == 0) markUsed(caster);
         return cooldownTick(stats);
     }
 
@@ -79,17 +79,17 @@ public class Guillotine extends Skill {
             CombatData.getCap(caster).consumeMight(mightConsumption(caster));
         }
         if (to == STATE.COOLING)
-            setCooldown(caster, 10);
+            setCooldown(caster, prev, 10);
         return instantCast(prev, from, to);
     }
 
     @Override
     public void onProc(LivingEntity caster, Event procPoint, STATE state, SkillData stats, LivingEntity target) {
-        if (procPoint instanceof GainMightEvent && procPoint.getPhase() == EventPriority.HIGHEST) {
-            stats.setArbitraryFloat(stats.getArbitraryFloat() + ((GainMightEvent) procPoint).getQuantity());
+        if (procPoint instanceof GainMightEvent && procPoint.getPhase() == EventPriority.LOWEST && state == STATE.ACTIVE) {
+            stats.setDuration(stats.getDuration() + ((GainMightEvent) procPoint).getQuantity());
             ((GainMightEvent) procPoint).setQuantity(0);
         }
-        if (procPoint instanceof LivingAttackEvent && procPoint.getPhase() == EventPriority.HIGHEST && ((LivingAttackEvent) procPoint).getEntityLiving() == target && stats.getArbitraryFloat() > 10) {
+        if (procPoint instanceof LivingAttackEvent && state == STATE.ACTIVE && procPoint.getPhase() == EventPriority.HIGHEST && ((LivingAttackEvent) procPoint).getEntityLiving() == target && stats.getDuration() > 10) {
             performEffect(caster, target, execute((LivingAttackEvent) procPoint), stats);
             markUsed(caster);
         }
@@ -155,8 +155,8 @@ public class Guillotine extends Skill {
         }
 
         @Override
-        public boolean activeTick(LivingEntity caster, SkillData d) {
-            if (caster.ticksExisted % 10 == 0) {
+        public boolean equippedTick(LivingEntity caster, SkillData d) {
+            if (d.getState() == STATE.ACTIVE && caster.ticksExisted % 10 == 0) {
                 final List<LivingEntity> list = caster.world.getLoadedEntitiesWithinAABB(LivingEntity.class, caster.getBoundingBox().grow(7), (a) -> !TargetingUtils.isAlly(a, caster) && !Marks.getCap(a).isMarked(this));
                 for (LivingEntity enemy : list) {
                     if (Marks.getCap(enemy).isMarked(this))
@@ -166,7 +166,7 @@ public class Guillotine extends Skill {
                     break;
                 }
             }
-            return super.activeTick(caster, d);
+            return super.equippedTick(caster, d);
         }
 
         @Override
@@ -199,7 +199,7 @@ public class Guillotine extends Skill {
 
         @Override
         public void onProc(LivingEntity caster, Event procPoint, STATE state, SkillData stats, LivingEntity target) {
-            if (procPoint instanceof StaggerEvent && !procPoint.isCanceled()) {
+            if (procPoint instanceof StaggerEvent && state == STATE.ACTIVE && !procPoint.isCanceled()) {
                 ((StaggerEvent) procPoint).setCount(1);
                 ((StaggerEvent) procPoint).setLength(200);
             } else if (procPoint instanceof LivingAttackEvent && CombatData.getCap(target).getStaggerTime() > 0) {
@@ -216,9 +216,8 @@ public class Guillotine extends Skill {
 
         @Override
         public void onProc(LivingEntity caster, Event procPoint, STATE state, SkillData stats, LivingEntity target) {
-            if (procPoint instanceof SkillCastEvent) {
+            if (procPoint instanceof SkillCastEvent && state == STATE.ACTIVE && procPoint.getPhase() == EventPriority.HIGHEST) {
                 stats.setArbitraryFloat(stats.getArbitraryFloat() + 1);
-                CombatData.getCap(caster).addSpirit(5);
             } else super.onProc(caster, procPoint, state, stats, target);
         }
 

@@ -37,7 +37,7 @@ public class Mikiri extends IronGuard {
     @Override
     public boolean onStateChange(LivingEntity caster, SkillData prev, STATE from, STATE to) {
         if (to == STATE.COOLING)
-            setCooldown(caster, 7);
+            setCooldown(caster, prev, 7);
         return passive(prev, from, to);
     }
 }

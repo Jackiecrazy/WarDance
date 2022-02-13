@@ -97,9 +97,11 @@ public abstract class Skill extends ForgeRegistryEntry<Skill> {
                 return CastStatus.ACTIVE;
             case COOLING:
                 return CastStatus.COOLDOWN;
+            case HOLSTERED:
+                return CastStatus.HOLSTERED;
         }
         for (String s : getSoftIncompatibility(caster).getAllElements())
-            if (cap.getSkillState(this) != STATE.HOLSTERED && cap.isTagActive(s))
+            if (cap.isTagActive(s))
                 return CastStatus.CONFLICT;
         if (caster.isSilent() && getTags(caster).contains("chant")) return CastStatus.SILENCE;
         if (CombatData.getCap(caster).getSpirit() < spiritConsumption(caster))
@@ -199,8 +201,9 @@ public abstract class Skill extends ForgeRegistryEntry<Skill> {
     }
 
     public void onEquip(LivingEntity caster) {
-        SkillData put=new SkillData(this, 0);
+        SkillData put = new SkillData(this, 0).setState(STATE.INACTIVE).setCaster(caster);
         onStateChange(caster, put, STATE.INACTIVE, STATE.COOLING);
+        put.markDirty();
         CasterData.getCap(caster).getAllSkillData().put(this, put);
     }
 
@@ -240,8 +243,8 @@ public abstract class Skill extends ForgeRegistryEntry<Skill> {
             mod.setState(STATE.ACTIVE);
             return true;
         }
-        //switching between cooling and inactive
-        if (to == STATE.INACTIVE && from == STATE.COOLING) {
+        //switching between cooling and inactive, duration test to prevent modification by holstering
+        if (to == STATE.INACTIVE && from == STATE.COOLING && mod.getDuration() <= 0) {
             mod.setState(STATE.INACTIVE);
             return true;
         }
@@ -256,8 +259,8 @@ public abstract class Skill extends ForgeRegistryEntry<Skill> {
         if (from == to) {
             return true;
         }
-        //switching between cooling and inactive
-        if (to == STATE.INACTIVE && from == STATE.COOLING) {
+        //switching between cooling and inactive, duration test to prevent modification by holstering
+        if (to == STATE.INACTIVE && from == STATE.COOLING && mod.getDuration() <= 0) {
             mod.setState(STATE.INACTIVE);
             return true;
         }
@@ -277,8 +280,8 @@ public abstract class Skill extends ForgeRegistryEntry<Skill> {
             mod.setState(to);
             return true;
         }
-        //switching between cooling and inactive
-        if (to == STATE.INACTIVE && from == STATE.COOLING) {
+        //switching between cooling and inactive, duration test to prevent modification by holstering
+        if (to == STATE.INACTIVE && from == STATE.COOLING && mod.getDuration() <= 0) {
             mod.setState(STATE.INACTIVE);
             return true;
         }
@@ -309,17 +312,15 @@ public abstract class Skill extends ForgeRegistryEntry<Skill> {
         return false;
     }
 
-    protected void setCooldown(LivingEntity caster, float duration) {
+    protected void setCooldown(LivingEntity caster, SkillData a, float duration) {
         SkillCooldownEvent sce = new SkillCooldownEvent(caster, this, duration);
         MinecraftForge.EVENT_BUS.post(sce);
 //        if (getParentSkill() != null)
 //            CasterData.getCap(caster).setSkillCooldown(getParentSkill(), sce.getCooldown());
-        CasterData.getCap(caster).getSkillData(this).ifPresent(a -> {
-            a.flagCondition(false);
-            a.setArbitraryFloat(0);
-            a.setState(STATE.COOLING);
-            a.setDuration(sce.getCooldown());
-        });
+        a.flagCondition(false);
+        a.setArbitraryFloat(0);
+        a.setState(STATE.COOLING);
+        a.setDuration(CasterData.getCap(caster).getSkillData(this).isPresent() ? sce.getCooldown() : duration);
     }
 
     protected boolean activate(LivingEntity caster, float duration) {
@@ -339,17 +340,13 @@ public abstract class Skill extends ForgeRegistryEntry<Skill> {
      */
     protected boolean activate(LivingEntity caster, float duration, boolean flag, float something) {
         //System.out.println("enabling for " + duration);
-        if (CasterData.getCap(caster).isSkillUsable(this)) {
-            CasterData.getCap(caster).changeSkillState(this, STATE.ACTIVE);
-            final Optional<SkillData> data = CasterData.getCap(caster).getSkillData(this);
-            data.ifPresent(a -> {
-                a.setDuration(duration);
-                a.flagCondition(flag);
-                a.setArbitraryFloat(something);
-            });
-            return true;
-        }
-        return false;
+        CasterData.getCap(caster).getSkillData(this).ifPresent(a -> {
+            a.setDuration(duration);
+            a.flagCondition(flag);
+            a.setArbitraryFloat(something);
+            a.setState(STATE.ACTIVE);
+        });
+        return true;
     }
 
     protected void markUsed(LivingEntity caster) {
@@ -357,7 +354,7 @@ public abstract class Skill extends ForgeRegistryEntry<Skill> {
             WarDance.LOGGER.debug(this.getRegistryName() + " has ended");
         caster.world.playMovingSound(null, caster, SoundEvents.BLOCK_FIRE_EXTINGUISH, SoundCategory.AMBIENT, 0.3f + WarDance.rand.nextFloat() * 0.5f, 0.5f + WarDance.rand.nextFloat());
         CasterData.getCap(caster).getSkillData(this).ifPresent(a -> {
-            a.setDuration(-1);
+            a.setDuration(-100);
             a.setState(STATE.ACTIVE);
         });
     }
@@ -374,6 +371,7 @@ public abstract class Skill extends ForgeRegistryEntry<Skill> {
         ALLOWED,
         COOLDOWN,
         CONFLICT,
+        HOLSTERED,
         SPIRIT,
         MIGHT,
         SILENCE,

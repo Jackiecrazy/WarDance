@@ -52,7 +52,8 @@ public class CoupDeGrace extends Skill {
 
     @Override
     public CastStatus castingCheck(LivingEntity caster) {
-        return super.castingCheck(caster) == CastStatus.ACTIVE ? CastStatus.ALLOWED : super.castingCheck(caster);
+        final CastStatus supes = super.castingCheck(caster);
+        return supes == CastStatus.ACTIVE | supes == CastStatus.HOLSTERED ? CastStatus.ALLOWED : supes;
     }
 
     @Override
@@ -76,7 +77,6 @@ public class CoupDeGrace extends Skill {
                     CombatData.getCap(target).decrementStaggerTime(CombatData.getCap(target).getStaggerTime());
                     deathCheck(caster, target, e.getAmount());
                     markUsed(caster);
-                    //}
                 } else if (target.getHealth() < getDamage(caster, target)) {
                     e.setCanceled(true);
                     CombatData.getCap(target).consumePosture(caster, e.getAmount());
@@ -98,7 +98,7 @@ public class CoupDeGrace extends Skill {
             CombatData.getCap(caster).consumeMight(mightConsumption(caster));
         }
         if (to == STATE.COOLING)
-            setCooldown(caster, 2);
+            setCooldown(caster, prev, 2);
         return instantCast(prev, from, to);
     }
 
@@ -140,7 +140,7 @@ public class CoupDeGrace extends Skill {
 
         @Override
         public Tag<String> getTags(LivingEntity caster) {
-            return tague;
+            return special;
         }
 
         @Override
@@ -180,7 +180,7 @@ public class CoupDeGrace extends Skill {
             if (to == STATE.COOLING)
                 if (prev.isCondition())
                     prev.setState(STATE.INACTIVE);
-                else setCooldown(caster, 5);
+                else setCooldown(caster, prev, 5);
             boundCast(prev, from, to);
             return from != prev.getState();
         }

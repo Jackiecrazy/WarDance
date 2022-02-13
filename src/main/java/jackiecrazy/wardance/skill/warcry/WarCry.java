@@ -72,6 +72,10 @@ public class WarCry extends Skill {
     public boolean onStateChange(LivingEntity caster, SkillData prev, STATE from, STATE to) {
         if (to == STATE.HOLSTERED)
             evoke(caster);
+        if(to==STATE.COOLING) {
+            prev.setState(STATE.INACTIVE);
+            prev.setDuration(0);
+        }
         return instantCast(prev, from, to);
     }
 }

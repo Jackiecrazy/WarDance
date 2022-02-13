@@ -25,19 +25,21 @@ public class SkillCapability implements ISkillCapability {
     private final List<Skill> skillList = new ArrayList<>();
     private final WeakReference<LivingEntity> dude;
     private final Queue<Skill> lastCast = new LinkedList<>();
-    boolean sync = false, gatedSkills = false;
+    boolean sync = false, fastSync = false, gatedSkills = false;
     int index = -1;
-    List<Skill> toSync = new ArrayList<>();
 
     public SkillCapability(LivingEntity attachTo) {
         dude = new WeakReference<>(attachTo);
     }
 
-    private SkillData nonNullGet(Skill s) {
+    private SkillData nonNullGet(Skill d) {
         //if data doesn't have the skill tag, re-initialize the skill data. TODO onEquip should ship with a default SkillData addition
-        if (!data.containsKey(s))
-            s.onEquip(dude.get());
-        return data.get(s);
+        SkillData data = this.data.get(d);
+        if (data == null) {
+            this.data.put(d, new SkillData(d, 0, 0));
+            data = this.data.get(d);
+        }
+        return data;
     }
 
     @Override
@@ -84,31 +86,32 @@ public class SkillCapability implements ISkillCapability {
 
     @Override
     public void holsterSkill(int index) {
-        Skill from = getHolsteredSkill();
-        if (from != null)
-            changeSkillState(from, Skill.STATE.INACTIVE);
+        Skill to = getHolsteredSkill();
+        if (to != null) {
+            changeSkillState(to, Skill.STATE.INACTIVE);
+            nonNullGet(to).markDirty();
+            fastSync = true;
+        }
         this.index = index;
-        from = getHolsteredSkill();
-        if (from != null)
-            changeSkillState(from, Skill.STATE.HOLSTERED);
-        sync = true;
+        to = getHolsteredSkill();
+        if (to != null) {
+            changeSkillState(to, Skill.STATE.HOLSTERED);
+            nonNullGet(to).markDirty();
+            fastSync = true;
+        }
     }
 
     @Override
     public boolean changeSkillState(Skill d, Skill.STATE to) {
-        SkillData data = this.data.get(d);
-        if (data == null) {
-            this.data.put(d, new SkillData(d, 0, 0));
-            data = this.data.get(d);
-        }
+        SkillData data = nonNullGet(d);
         if (data != null)
             if (data.getState() == Skill.STATE.ACTIVE) {
                 if (GeneralConfig.debug)
                     WarDance.LOGGER.debug("skill " + d + " is already active, overwriting.");
             }
         boolean update = d.onStateChange(dude.get(), data, data.getState(), to);
-        toSync.add(d);
-        sync = true;
+        data.markDirty();
+        fastSync = true;
         return update;
     }
 
@@ -120,7 +123,7 @@ public class SkillCapability implements ISkillCapability {
     @Override
     public Skill.STATE getCategoryState(SkillCategory skill) {
         for (Skill s : new ArrayList<>(data.keySet())) {
-            if (s.getParentCategory().equals(skill)) return getSkillState(s);
+            if (s != null && s.getParentCategory().equals(skill)) return getSkillState(s);
         }
         return Skill.STATE.INACTIVE;
     }
@@ -158,11 +161,6 @@ public class SkillCapability implements ISkillCapability {
     public void setEquippedSkills(List<Skill> skills) {
         equippedSkill.clear();
         equippedSkill.addAll(skills);
-        for (Skill s : skills) {
-            if (s != null && s.isPassive(dude.get())) {
-                s.checkAndCast(dude.get());
-            }
-        }
         sync = true;
     }
 
@@ -201,9 +199,27 @@ public class SkillCapability implements ISkillCapability {
 
     @Override
     public void read(CompoundNBT from) {
-        data.clear();
-        index = from.getInt("holster");
-        gatedSkills = from.getBoolean("gamerule");//it's the easy way out...
+        if (!from.getBoolean("fast")) {
+            data.clear();
+            index = from.getInt("holster");
+            gatedSkills = from.getBoolean("gamerule");//it's the easy way out...
+            Skill[] als = new Skill[10];
+            for (int a = 0; a < als.length; a++)
+                if (from.contains("equippedSkill" + a))
+                    als[a] = (Skill.getSkill(from.getString("equippedSkill" + a)));
+            //if (from.getBoolean("skillListDirty")) {
+            skillList.clear();
+            if (from.contains("randomList", Constants.NBT.TAG_LIST)) {
+                ListNBT list = from.getList("randomList", Constants.NBT.TAG_STRING);
+                for (Object s : list.toArray()) {
+                    if (s instanceof StringNBT && Skill.getSkill(((StringNBT) s).getString()) != null)
+                        skillList.add(Skill.getSkill(((StringNBT) s).getString()));
+                }
+            }
+            //}
+            equippedSkill.clear();
+            equippedSkill.addAll(Arrays.asList(als));
+        }
         if (from.contains("skillData", 9)) {
             ListNBT listnbt = from.getList("skillData", 10);
             for (int i = 0; i < listnbt.size(); ++i) {
@@ -214,22 +230,23 @@ public class SkillCapability implements ISkillCapability {
                 }
             }
         }
-        Skill[] als = new Skill[10];
-        for (int a = 0; a < als.length; a++)
-            if (from.contains("equippedSkill" + a))
-                als[a] = (Skill.getSkill(from.getString("equippedSkill" + a)));
-        //if (from.getBoolean("skillListDirty")) {
-        skillList.clear();
-        if (from.contains("randomList", Constants.NBT.TAG_LIST)) {
-            ListNBT list = from.getList("randomList", Constants.NBT.TAG_STRING);
-            for (Object s : list.toArray()) {
-                if (s instanceof StringNBT && Skill.getSkill(((StringNBT) s).getString()) != null)
-                    skillList.add(Skill.getSkill(((StringNBT) s).getString()));
+    }
+
+    private CompoundNBT fastWrite() {
+        CompoundNBT to = new CompoundNBT();
+        if (!this.data.isEmpty()) {
+            ListNBT listnbt = new ListNBT();
+            for (SkillData effectinstance : this.data.values()) {
+                if (effectinstance._isDirty()) {
+                    listnbt.add(effectinstance.write(new CompoundNBT()));
+                }
+            }
+            if (!listnbt.isEmpty()) {
+                to.put("skillData", listnbt);
+                to.putBoolean("fast", true);
             }
         }
-        //}
-        equippedSkill.clear();
-        equippedSkill.addAll(Arrays.asList(als));
+        return to;
     }
 
     @Override
@@ -242,30 +259,30 @@ public class SkillCapability implements ISkillCapability {
         for (SkillData d : data.values()) {
             if (d == null) continue;
             if (d.getSkill().equippedTick(caster, d)) {
-                sync = true;
+                d.markDirty();
+                fastSync = true;
             }
         }
         for (SkillData s : getAllSkillData().values()) {
-            if (s.getDuration() <= 0) {
-                switch (s.getState()) {
-                    //active ends. Add to cast history and forward to skill for individual handling.
-                    case ACTIVE:
-                        lastCast.add(s.getSkill());
-                        while (lastCast.size() > 5)
-                            lastCast.remove();
-                        changeSkillState(s.getSkill(), Skill.STATE.COOLING);
-                        break;
-                    //cooldown ends. Forward to skill for individual handling.
-                    case COOLING:
-                        changeSkillState(s.getSkill(), Skill.STATE.INACTIVE);
-                        break;
-                    //the other two cases shouldn't be necessary...?
-                }
+            //active ends. Add to cast history and forward to skill for individual handling.
+            if (s.getDuration() < 0 && s.getState() == Skill.STATE.ACTIVE) {
+                lastCast.add(s.getSkill());
+                while (lastCast.size() > 5)
+                    lastCast.remove();
+                changeSkillState(s.getSkill(), Skill.STATE.COOLING);
+                //cooldown ends. Forward to skill for individual handling.
+            } else if (s.getDuration() <= 0 && s.getState() == Skill.STATE.COOLING) {
+                changeSkillState(s.getSkill(), Skill.STATE.INACTIVE);
+
             }
-            if (s._isDirty()) sync = true;
         }
         if (sync && caster instanceof ServerPlayerEntity)
             CombatChannel.INSTANCE.send(PacketDistributor.PLAYER.with(() -> (ServerPlayerEntity) caster), new SyncSkillPacket(this.write()));
+        else if (caster instanceof ServerPlayerEntity) {
+            CompoundNBT written = fastWrite();
+            if (!written.isEmpty())
+                CombatChannel.INSTANCE.send(PacketDistributor.PLAYER.with(() -> (ServerPlayerEntity) caster), new SyncSkillPacket(written));
+        }
         sync = false;
     }
 

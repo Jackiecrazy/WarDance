@@ -19,7 +19,7 @@ public class Afterimage extends IronGuard {
     @Override
     public boolean onStateChange(LivingEntity caster, SkillData prev, STATE from, STATE to) {
         if (to == STATE.COOLING)
-            setCooldown(caster, 10);
+            setCooldown(caster, prev, 10);
         return passive(prev, from, to);
     }
 

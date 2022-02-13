@@ -118,7 +118,7 @@ public class Hex extends Skill {
             }
         }
         if(to==STATE.COOLING)
-            setCooldown(caster,15);
+            setCooldown(caster, prev,15);
         return boundCast(prev, from, to);
     }
 

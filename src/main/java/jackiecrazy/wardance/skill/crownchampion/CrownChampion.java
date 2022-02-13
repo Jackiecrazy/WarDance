@@ -117,10 +117,8 @@ elemental might: +1 burn/snowball/poison/drown damage to targets you have attack
 
     @Override
     public void onUnequip(LivingEntity caster, SkillData stats) {
-        if (!activate(caster, 0)) {
-            caster.getAttribute(Attributes.ATTACK_DAMAGE).removeModifier(MULT);
+        caster.getAttribute(Attributes.ATTACK_DAMAGE).removeModifier(MULT);
             caster.getAttribute(Attributes.MOVEMENT_SPEED).removeModifier(MULT);
-        }
     }
 
     @Override
@@ -137,6 +135,7 @@ elemental might: +1 burn/snowball/poison/drown damage to targets you have attack
     @Override
     public boolean onStateChange(LivingEntity caster, SkillData prev, STATE from, STATE to) {
         //pure passive, no state changes possible.
+        prev.setState(STATE.INACTIVE);
         return false;
     }
 
@@ -193,7 +192,7 @@ elemental might: +1 burn/snowball/poison/drown damage to targets you have attack
 
         @Override
         public void onProc(LivingEntity caster, Event procPoint, STATE state, SkillData pd, LivingEntity target) {
-            if (procPoint instanceof GainMightEvent && procPoint.getPhase() == EventPriority.LOWEST) {
+            if (procPoint instanceof GainMightEvent && procPoint.getPhase() == EventPriority.HIGHEST) {
                 ((GainMightEvent) procPoint).setQuantity(((GainMightEvent) procPoint).getQuantity() * 3);
                 pd.setArbitraryFloat(pd.getArbitraryFloat() + ((GainMightEvent) procPoint).getQuantity());
                 if (pd.getArbitraryFloat() > 3) {

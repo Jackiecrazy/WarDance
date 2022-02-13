@@ -47,7 +47,7 @@ public class Grapple extends Skill {
     protected void performEffect(LivingEntity caster, LivingEntity target) {
         caster.world.playSound(null, target.getPosX(), target.getPosY(), target.getPosZ(), SoundEvents.BLOCK_BARREL_OPEN, SoundCategory.PLAYERS, 0.3f + WarDance.rand.nextFloat() * 0.5f, 0.75f + WarDance.rand.nextFloat() * 0.5f);
         if (getParentCategory() == null) CombatData.getCap(target).consumePosture(caster, 11, 0, true);
-        else CombatData.getCap(target).consumePosture(caster, 8, 0, true);
+        else CombatData.getCap(target).consumePosture(caster, 7, 0, true);
 
     }
 
@@ -67,7 +67,7 @@ public class Grapple extends Skill {
     @Override
     public boolean onStateChange(LivingEntity caster, SkillData prev, STATE from, STATE to) {
         if (to == STATE.COOLING) {
-            setCooldown(caster, 7);
+            setCooldown(caster, prev, 7);
         }
         prev.flagCondition(false);
         return boundCast(prev, from, to);

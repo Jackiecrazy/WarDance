@@ -36,8 +36,8 @@ public class WarSkills {
     public static final RegistryObject<Skill> POISE = SKILLS.register("poise", Poise::new);
     public static final RegistryObject<Skill> LEVERAGE = SKILLS.register("leverage", HeavyBlow.Leverage::new);
     public static final RegistryObject<Skill> SILENCER = SKILLS.register("silencer", Silencer::new);
-    public static final RegistryObject<Skill> MIKIRI = SKILLS.register("mikiri", ReturnToSender::new);
-    public static final RegistryObject<Skill> RETURN_TO_SENDER = SKILLS.register("return_to_sender", Mikiri::new);
+    public static final RegistryObject<Skill> MIKIRI = SKILLS.register("mikiri", Mikiri::new);
+    public static final RegistryObject<Skill> RETURN_TO_SENDER = SKILLS.register("return_to_sender", ReturnToSender::new);
     public static final RegistryObject<Skill> AFTERIMAGE = SKILLS.register("afterimage", Afterimage::new);
     public static final RegistryObject<Skill> BACKPEDAL = SKILLS.register("backpedal", Backpedal::new);
     public static final RegistryObject<Skill> OVERPOWER = SKILLS.register("overpower", Overpower::new);
@@ -53,7 +53,7 @@ public class WarSkills {
     public static final RegistryObject<Skill> TACKLE = SKILLS.register("tackle", Tackle::new);
     public static final RegistryObject<Skill> BACKFLIP = SKILLS.register("backflip", Kick.Backflip::new);
     public static final RegistryObject<Skill> TORNADO = SKILLS.register("tornado", LowSweep::new);
-    public static final RegistryObject<Skill> TRIP = SKILLS.register("trip", Trip::new);
+    public static final RegistryObject<Skill> SHADOWLESS_KICK = SKILLS.register("shadowless_kick", ShadowlessKick::new);
     public static final RegistryObject<Skill> THROW = SKILLS.register("throw", Grapple::new);
     public static final RegistryObject<Skill> CLINCH = SKILLS.register("clinch", Clinch::new);
     public static final RegistryObject<Skill> REVERSAL = SKILLS.register("reversal", Grapple.Reversal::new);
@@ -92,7 +92,7 @@ public class WarSkills {
     public static final RegistryObject<Skill> RAPID_CLOTTING = SKILLS.register("rapid_clotting", MementoMori.RapidClotting::new);
     public static final RegistryObject<Skill> PANIC = SKILLS.register("panic", MementoMori.Panic::new);
     public static final RegistryObject<Skill> DEATH_DENIAL = SKILLS.register("death_denial", DeathDenial::new);
-    public static final RegistryObject<Skill> STATIC_DISCHARGE = SKILLS.register("staic_discharge", MementoMori.StaticDischarge::new);
+    public static final RegistryObject<Skill> STATIC_DISCHARGE = SKILLS.register("static_discharge", MementoMori.StaticDischarge::new);
     public static final RegistryObject<Skill> POUND_OF_FLESH = SKILLS.register("pound_of_flesh", PoundOfFlesh::new);
     public static final RegistryObject<Skill> CURSE_OF_MISFORTUNE = SKILLS.register("curse_of_misfortune", Hex::new);
     public static final RegistryObject<Skill> ITCHY_CURSE = SKILLS.register("itchy_curse", ItchyCurse::new);

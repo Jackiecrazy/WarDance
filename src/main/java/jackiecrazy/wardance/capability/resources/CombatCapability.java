@@ -107,7 +107,7 @@ public class CombatCapability implements ICombatCapability {
         float temp = might + amount;
         setMight(temp);
         setMightGrace(ResourceConfig.qiGrace);
-        addRank(amount);
+        addRank(amount * 0.1f);
         return temp % 10;
     }
 
@@ -234,6 +234,7 @@ public class CombatCapability implements ICombatCapability {
         float ret = 0;
         LivingEntity elb = dude.get();
         if (elb == null) return ret;
+        //staggered already, no more posture damage
         if (staggert > 0) return amount;
         if (!Float.isFinite(posture)) posture = getMaxPosture();
         //event for oodles of compat

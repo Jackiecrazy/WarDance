@@ -24,12 +24,20 @@ public class PoundOfFlesh extends MementoMori {
         return Color.RED;
     }
 
+
     @Override
-    public boolean onCast(LivingEntity caster) {
-        activate(caster, CombatData.getCap(caster).getSpirit() * 40);
-        CombatData.getCap(caster).consumeSpirit(CombatData.getCap(caster).getSpirit());
-        return true;
+    public boolean onStateChange(LivingEntity caster, SkillData prev, STATE from, STATE to) {
+        if (to == STATE.COOLING) {
+            prev.setState(STATE.INACTIVE);
+            prev.setDuration(0);
+        }
+        if (to == STATE.HOLSTERED) {
+            activate(caster, CombatData.getCap(caster).getSpirit() * 40);
+            CombatData.getCap(caster).setSpirit(0);
+        }
+        return instantCast(prev, from, to);
     }
+
 
     @Override
     public Tag<String> getTags(LivingEntity caster) {
@@ -44,7 +52,7 @@ public class PoundOfFlesh extends MementoMori {
                 caster.hurtResistantTime = 0;
                 caster.attackEntityFrom(CombatDamageSource.causeSelfDamage(caster).setDamageTyping(CombatDamageSource.TYPE.TRUE).setSkillUsed(this).setDamageBypassesArmor().setDamageIsAbsolute(), GeneralUtils.getMaxHealthBeforeWounding(caster) * 0.05f);
                 ((ParryEvent) procPoint).setPostureConsumption(((ParryEvent) procPoint).getPostureConsumption() + CombatData.getCap(target).getTrueMaxPosture() * 0.1f);
-            } else if (procPoint instanceof LivingHurtEvent && procPoint.getPhase() == EventPriority.HIGHEST && (!(((LivingHurtEvent) procPoint).getSource() instanceof CombatDamageSource) || ((CombatDamageSource) ((LivingHurtEvent) procPoint).getSource()).getSkillUsed() != this)) {
+            } else if (procPoint instanceof LivingHurtEvent && procPoint.getPhase() == EventPriority.HIGHEST && ((LivingHurtEvent) procPoint).getEntityLiving() == target && (!(((LivingHurtEvent) procPoint).getSource() instanceof CombatDamageSource) || ((CombatDamageSource) ((LivingHurtEvent) procPoint).getSource()).getSkillUsed() != this)) {
                 caster.hurtResistantTime = 0;
                 caster.attackEntityFrom(CombatDamageSource.causeSelfDamage(caster).setDamageTyping(CombatDamageSource.TYPE.TRUE).setSkillUsed(this).setDamageBypassesArmor().setDamageIsAbsolute(), GeneralUtils.getMaxHealthBeforeWounding(caster) * 0.05f);
                 ((LivingHurtEvent) procPoint).setAmount(((LivingHurtEvent) procPoint).getAmount() + GeneralUtils.getMaxHealthBeforeWounding(target) * 0.05f);
