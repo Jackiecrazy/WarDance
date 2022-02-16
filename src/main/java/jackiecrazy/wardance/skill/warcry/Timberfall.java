@@ -48,6 +48,6 @@ public class Timberfall extends WarCry {
 
     @Override
     protected int getDuration(float might) {
-        return (int) might*2;
+        return (int) might*2-2;
     }
 }

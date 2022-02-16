@@ -17,10 +17,7 @@ import net.minecraft.client.gui.widget.list.ExtendedList;
 import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.util.IReorderingProcessor;
 import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.text.ITextComponent;
-import net.minecraft.util.text.LanguageMap;
-import net.minecraft.util.text.Style;
-import net.minecraft.util.text.TranslationTextComponent;
+import net.minecraft.util.text.*;
 import net.minecraftforge.client.gui.ScrollPanel;
 import net.minecraftforge.common.ForgeHooks;
 import net.minecraftforge.fml.client.gui.GuiUtils;
@@ -46,7 +43,7 @@ public class SkillSelectionScreen extends Screen {
     private final List<SkillCategory> unsortedBases;
     private final SkillSliceButton[] skillPie = new SkillSliceButton[5];
     private final PassiveButton[] passives = new PassiveButton[5];
-    private final int numButtons = SkillSelectionScreen.SortType.values().length;
+    private final int numButtons = 3;//1 for tag toggling, 1 for stat toggling
     public SkillListWidget.CategoryEntry selectedSkill = null;
     public VariationListWidget.VariationEntry selectedVariation = null;
     private SkillListWidget skillList;
@@ -60,7 +57,7 @@ public class SkillSelectionScreen extends Screen {
     private TextFieldWidget search;
 
     private boolean sorted = false;
-    private SortType sortType = SortType.NORMAL;
+    private AdvancedData advancedData = AdvancedData.NORMAL;
 
     public SkillSelectionScreen() {
         super(new TranslationTextComponent("wardance.skillselection.title"));//
@@ -123,7 +120,7 @@ public class SkillSelectionScreen extends Screen {
         }
 
         for (int d = 0; d < passives.length; d++) {
-            passives[d] = new PassiveButton(this, width - skillCircleWidth + d * (31 ), PADDING + skillCircleWidth, 23, d);
+            passives[d] = new PassiveButton(this, width - skillCircleWidth + d * (31), PADDING + skillCircleWidth, 23, d);
             passives[d].setSkill(oldList.get(d + skillPie.length));
             children.add(passives[d]);
         }
@@ -137,12 +134,12 @@ public class SkillSelectionScreen extends Screen {
 
         final int width = listWidth / numButtons;
         int x = PADDING;
-        addButton(SkillSelectionScreen.SortType.NORMAL.button = new Button(x, PADDING, width - buttonMargin, 20, SkillSelectionScreen.SortType.NORMAL.getButtonText(), b -> resortMods(SkillSelectionScreen.SortType.NORMAL)));
+        addButton(AdvancedData.NORMAL.button = new Button(x, PADDING, width - buttonMargin, 20, AdvancedData.NORMAL.getButtonText(), b -> resortMods(AdvancedData.NORMAL)));
         x += width + buttonMargin;
-        addButton(SkillSelectionScreen.SortType.A_TO_Z.button = new Button(x, PADDING, width - buttonMargin, 20, SkillSelectionScreen.SortType.A_TO_Z.getButtonText(), b -> resortMods(SkillSelectionScreen.SortType.A_TO_Z)));
+        addButton(AdvancedData.A_TO_Z.button = new Button(x, PADDING, width - buttonMargin, 20, AdvancedData.A_TO_Z.getButtonText(), b -> resortMods(AdvancedData.A_TO_Z)));
         x += width + buttonMargin;
-        addButton(SkillSelectionScreen.SortType.Z_TO_A.button = new Button(x, PADDING, width - buttonMargin, 20, SkillSelectionScreen.SortType.Z_TO_A.getButtonText(), b -> resortMods(SkillSelectionScreen.SortType.Z_TO_A)));
-        resortMods(SkillSelectionScreen.SortType.NORMAL);
+        addButton(AdvancedData.Z_TO_A.button = new Button(x, PADDING, width - buttonMargin, 20, AdvancedData.Z_TO_A.getButtonText(), b -> resortMods(AdvancedData.Z_TO_A)));
+        resortMods(AdvancedData.NORMAL);
         updateCache();
         setFocusedDefault(skillList);
     }
@@ -160,7 +157,7 @@ public class SkillSelectionScreen extends Screen {
 
         if (!sorted) {
             reloadMods();
-            bases.sort(sortType);
+            bases.sort(advancedData);
             skillList.refreshList();
             variationList.refreshList();
             if (selectedSkill != null) {
@@ -196,22 +193,25 @@ public class SkillSelectionScreen extends Screen {
         return CasterData.getCap(Minecraft.getInstance().player).isSkillSelectable(insert);
     }
 
-    private void resortMods(SkillSelectionScreen.SortType newSort) {
-        this.sortType = newSort;
+    private void resortMods(AdvancedData newSort) {
+        this.advancedData = newSort;
 
-        for (SkillSelectionScreen.SortType sort : SkillSelectionScreen.SortType.values()) {
+        for (AdvancedData sort : AdvancedData.values()) {
             if (sort.button != null)
-                sort.button.active = sortType != sort;
+                sort.button.active = advancedData != sort;
         }
         sorted = false;
     }
 
     @Override
     public void render(MatrixStack mStack, int mouseX, int mouseY, float partialTicks) {
+        this.renderBackground(mStack);
         this.skillList.render(mStack, mouseX, mouseY, partialTicks);
         this.variationList.render(mStack, mouseX, mouseY, partialTicks);
-        if (this.modInfo != null)
+        if (this.modInfo != null) {
             this.modInfo.render(mStack, mouseX, mouseY, partialTicks);
+            RenderSystem.disableScissor();
+        }
         for (SkillSliceButton ssb : skillPie) {
             ssb.render(mStack, mouseX, mouseY, partialTicks);
         }
@@ -265,23 +265,28 @@ public class SkillSelectionScreen extends Screen {
             //lines.add(String.valueOf(selectedVariation.getSkill().getColor().getRGB()));
             lines.add("\n");
             lines.add(selectedVariation.getSkill().description().getString());
+            if (minecraft != null && minecraft.gameSettings.showDebugInfo) {
+                lines.add("\n");
+                lines.add(TextFormatting.DARK_GRAY+new TranslationTextComponent("wardance:skill_tag").getString() + selectedVariation.getSkill().getTags(minecraft.player).getAllElements()+"\n");
+                lines.add(TextFormatting.DARK_GRAY+new TranslationTextComponent("wardance:skill_soft_incompat").getString() + selectedVariation.getSkill().getSoftIncompatibility(minecraft.player).getAllElements()+"\n");
+                lines.add(TextFormatting.DARK_GRAY+new TranslationTextComponent("wardance:skill_hard_incompat").getString() + selectedVariation.getSkill().getHardIncompatibility(minecraft.player).getAllElements()+TextFormatting.RESET);
+            }
         }
         lines.add("\n");
-        //TODO add keywords
         modInfo.setInfo(lines, selectedSkill.icon());
     }
 
     @Override
     public void resize(Minecraft mc, int width, int height) {
         String s = this.search.getText();
-        SkillSelectionScreen.SortType sort = this.sortType;
+        AdvancedData sort = this.advancedData;
         SkillListWidget.CategoryEntry selected = this.selectedSkill;
         this.init(mc, width, height);
         this.search.setText(s);
         this.selectedSkill = selected;
         if (!this.search.getText().isEmpty())
             reloadMods();
-        if (sort != SkillSelectionScreen.SortType.NORMAL)
+        if (sort != AdvancedData.NORMAL)
             resortMods(sort);
         updateCache();
     }
@@ -298,7 +303,7 @@ public class SkillSelectionScreen extends Screen {
         this.minecraft.displayGuiScreen(null);
     }
 
-    private enum SortType implements Comparator<SkillCategory> {
+    private enum AdvancedData implements Comparator<SkillCategory> {
         NORMAL,
         A_TO_Z {
             @Override

@@ -1,10 +1,14 @@
 package jackiecrazy.wardance.client.screen;
 
 import com.mojang.blaze3d.matrix.MatrixStack;
+import com.mojang.blaze3d.systems.RenderSystem;
 import jackiecrazy.wardance.skill.Skill;
+import net.minecraft.client.gui.AbstractGui;
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.gui.widget.list.ExtendedList;
-import net.minecraft.util.text.*;
+import net.minecraft.util.text.ITextComponent;
+import net.minecraft.util.text.ITextProperties;
+import net.minecraft.util.text.LanguageMap;
 
 public class VariationListWidget extends ExtendedList<VariationListWidget.VariationEntry> {
     private final int listWidth;
@@ -20,11 +24,11 @@ public class VariationListWidget extends ExtendedList<VariationListWidget.Variat
         //this.refreshList();
     }
 
-    private static String stripControlCodes(String value) { return net.minecraft.util.StringUtils.stripControlCodes(value); }
+    private static String stripControlCodes(String value) {return net.minecraft.util.StringUtils.stripControlCodes(value);}
 
     @Override
     protected int getScrollbarPosition() {
-        return this.listWidth + x0 - 7;
+        return this.listWidth + x0 + 3;
     }
 
     @Override
@@ -36,6 +40,19 @@ public class VariationListWidget extends ExtendedList<VariationListWidget.Variat
         this.clearEntries();
         if (parent.selectedSkill != null)
             parent.buildVariationList(parent.selectedSkill.getCategory(), this::addEntry, mod -> new VariationEntry(mod, this.parent));
+    }
+
+    @Override
+    public void render(MatrixStack matrixStack, int mouseX, int mouseY, float partialTicks) {
+        AbstractGui.fill(matrixStack, 0, 0, width, height, 0xffffff);
+        double d0 = this.minecraft.getMainWindow().getGuiScaleFactor();
+        RenderSystem.enableScissor((int) ((double) this.getRowLeft() * d0), (int) ((double) (this.height - this.y1) * d0), (int) ((double) (this.getScrollbarPosition() + 6) * d0), (int) ((double) (this.height - (this.height - this.y1) - this.y0 - 4) * d0));
+        super.render(matrixStack, mouseX, mouseY, partialTicks);
+        RenderSystem.disableScissor();
+    }
+
+    @Override
+    protected void renderDecorations(MatrixStack matrixStack, int mouseX, int mouseY) {
     }
 
     @Override

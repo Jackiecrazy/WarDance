@@ -480,4 +480,9 @@ public class DummyCombatCap implements ICombatCapability {
     public CompoundNBT write() {
         return null;
     }
+
+    @Override
+    public void addRangedMight(boolean pass) {
+
+    }
 }

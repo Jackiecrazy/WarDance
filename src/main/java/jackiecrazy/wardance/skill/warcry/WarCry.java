@@ -1,5 +1,6 @@
 package jackiecrazy.wardance.skill.warcry;
 
+import jackiecrazy.wardance.WarDance;
 import jackiecrazy.wardance.capability.resources.CombatData;
 import jackiecrazy.wardance.capability.skill.CasterData;
 import jackiecrazy.wardance.skill.*;
@@ -8,6 +9,8 @@ import net.minecraft.entity.ai.attributes.AttributeModifier;
 import net.minecraft.potion.EffectInstance;
 import net.minecraft.potion.Effects;
 import net.minecraft.tags.Tag;
+import net.minecraft.util.SoundCategory;
+import net.minecraft.util.SoundEvents;
 import net.minecraftforge.event.entity.living.LivingHealEvent;
 import net.minecraftforge.eventbus.api.Event;
 import net.minecraftforge.eventbus.api.EventPriority;
@@ -44,14 +47,15 @@ public class WarCry extends Skill {
     }
 
     protected int getDuration(float might) {
-        return 60 + (int) (might * 20);
+        return Math.max(0, (int) (might * 20)-40);
     }
 
     protected void evoke(LivingEntity caster) {
+        caster.world.playMovingSound(null, caster, SoundEvents.BLOCK_FIRE_EXTINGUISH, SoundCategory.AMBIENT, 0.3f + WarDance.rand.nextFloat() * 0.5f, 0.5f + WarDance.rand.nextFloat());
         if (this == WarSkills.REJUVENATE.get()) {
             final float might = CombatData.getCap(caster).getMight();
             caster.addPotionEffect(new EffectInstance(Effects.REGENERATION, getDuration(might)));
-            if (might > 5) {
+            if (might > 7) {
                 caster.addPotionEffect(new EffectInstance(Effects.RESISTANCE, getDuration(might)));
                 caster.addPotionEffect(new EffectInstance(Effects.ABSORPTION, getDuration(might), 1));
             } else caster.addPotionEffect(new EffectInstance(Effects.ABSORPTION, getDuration(might)));

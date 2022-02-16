@@ -64,7 +64,7 @@ public class ShieldBash extends Skill {
 
     @Override
     public void onProc(LivingEntity caster, Event procPoint, STATE state, SkillData stats, LivingEntity target) {
-        if (procPoint instanceof LivingAttackEvent && procPoint.getPhase() == EventPriority.HIGHEST) {
+        if (procPoint instanceof LivingAttackEvent && ((LivingAttackEvent) procPoint).getEntityLiving() == target && procPoint.getPhase() == EventPriority.HIGHEST) {
             final boolean base = isPassive(caster) && state != STATE.COOLING;
             final boolean otherwise = state == STATE.HOLSTERED && CombatUtils.isShield(caster, CombatUtils.getAttackingItemStack(((LivingAttackEvent) procPoint).getSource())) && CombatData.getCap(caster).consumeSpirit(spiritConsumption(caster));
             if (base || otherwise) {
@@ -76,6 +76,12 @@ public class ShieldBash extends Skill {
         if (procPoint instanceof ParryEvent && procPoint.getPhase() == EventPriority.HIGHEST && state == STATE.COOLING && ((ParryEvent) procPoint).getEntityLiving() == caster) {
             stats.decrementDuration();
         }
+    }
+
+    @Override
+    public boolean equippedTick(LivingEntity caster, SkillData stats) {
+        if (isPassive(caster)) return cooldownTick(stats);
+        return super.equippedTick(caster, stats);
     }
 
     @Override

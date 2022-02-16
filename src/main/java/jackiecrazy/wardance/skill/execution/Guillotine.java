@@ -58,13 +58,15 @@ public class Guillotine extends Skill {
 
     @Override
     public CastStatus castingCheck(LivingEntity caster) {
+        if (CombatData.getCap(caster).getComboRank() < 5)
+            return CastStatus.OTHER;
         final CastStatus supes = super.castingCheck(caster);
         return supes == CastStatus.ACTIVE | supes == CastStatus.HOLSTERED ? CastStatus.ALLOWED : supes;
     }
 
     @Override
     public boolean equippedTick(LivingEntity caster, SkillData stats) {
-        if (stats.getState() == STATE.ACTIVE && CombatData.getCap(caster).getRank() == 0) markUsed(caster);
+        if (stats.getState() == STATE.ACTIVE && CombatData.getCap(caster).getComboRank() < 5) markUsed(caster);
         return cooldownTick(stats);
     }
 
@@ -75,22 +77,20 @@ public class Guillotine extends Skill {
         }
         if (from == STATE.INACTIVE && to == STATE.HOLSTERED) {
             CasterData.getCap(caster).removeActiveTag(SkillTags.special);
-            activate(caster, 1);
-            CombatData.getCap(caster).consumeMight(mightConsumption(caster));
+            activate(caster, 1, CombatData.getCap(caster).getMight());
+            prev.setMaxDuration(0);
+            CombatData.getCap(caster).setMight(0);
         }
         if (to == STATE.COOLING)
-            setCooldown(caster, prev, 10);
+            setCooldown(caster, prev, 20);
         return instantCast(prev, from, to);
     }
 
     @Override
     public void onProc(LivingEntity caster, Event procPoint, STATE state, SkillData stats, LivingEntity target) {
-        if (procPoint instanceof GainMightEvent && procPoint.getPhase() == EventPriority.LOWEST && state == STATE.ACTIVE) {
-            stats.setDuration(stats.getDuration() + ((GainMightEvent) procPoint).getQuantity());
-            ((GainMightEvent) procPoint).setQuantity(0);
-        }
-        if (procPoint instanceof LivingAttackEvent && state == STATE.ACTIVE && procPoint.getPhase() == EventPriority.HIGHEST && ((LivingAttackEvent) procPoint).getEntityLiving() == target && stats.getDuration() > 10) {
+        if (procPoint instanceof LivingAttackEvent && state == STATE.ACTIVE && procPoint.getPhase() == EventPriority.HIGHEST && ((LivingAttackEvent) procPoint).getEntityLiving() == target && CombatData.getCap(caster).getMight() > 9.8) {
             performEffect(caster, target, execute((LivingAttackEvent) procPoint), stats);
+            CombatData.getCap(caster).setMight(stats.getArbitraryFloat());
             markUsed(caster);
         }
     }
@@ -198,13 +198,46 @@ public class Guillotine extends Skill {
         }
 
         @Override
+        public boolean onStateChange(LivingEntity caster, SkillData prev, STATE from, STATE to) {
+            if (from == STATE.ACTIVE && to == STATE.HOLSTERED) {
+                CasterData.getCap(caster).removeActiveTag(SkillTags.special);
+            }
+            if (from == STATE.INACTIVE && to == STATE.HOLSTERED) {
+                CasterData.getCap(caster).removeActiveTag(SkillTags.special);
+                activate(caster, 1);
+                CombatData.getCap(caster).setMight(0);
+            }
+            if (to == STATE.COOLING)
+                setCooldown(caster, prev, 10);
+            return instantCast(prev, from, to);
+        }
+
+        @Override
         public void onProc(LivingEntity caster, Event procPoint, STATE state, SkillData stats, LivingEntity target) {
-            if (procPoint instanceof StaggerEvent && state == STATE.ACTIVE && !procPoint.isCanceled()) {
-                ((StaggerEvent) procPoint).setCount(1);
-                ((StaggerEvent) procPoint).setLength(200);
-            } else if (procPoint instanceof LivingAttackEvent && CombatData.getCap(target).getStaggerTime() > 0) {
-                procPoint.setCanceled(true);
-            } else super.onProc(caster, procPoint, state, stats, target);
+            if (state == STATE.ACTIVE) {
+                if (procPoint instanceof StaggerEvent && ((StaggerEvent) procPoint).getEntityLiving() == target) {
+                    ((StaggerEvent) procPoint).setCount(1);
+                    ((StaggerEvent) procPoint).setLength(200);
+                } else if (procPoint instanceof LivingAttackEvent && ((LivingAttackEvent) procPoint).getEntityLiving() == target) {
+                    if (CombatData.getCap(target).getStaggerTime() > 0)
+                        procPoint.setCanceled(true);
+                    else if (procPoint.getPhase() == EventPriority.LOWEST) {
+                        CombatData.getCap(target).consumePosture(((LivingAttackEvent) procPoint).getAmount());
+                        procPoint.setCanceled(true);
+                    }
+                } else if (procPoint instanceof GainMightEvent) {
+                    procPoint.setCanceled(true);
+                }
+            }
+//            else if (procPoint instanceof LivingHurtEvent && ((LivingHurtEvent) procPoint).getEntityLiving() == target && state == STATE.ACTIVE) {
+//
+//            }
+        }
+
+        @Override
+        public boolean equippedTick(LivingEntity caster, SkillData stats) {
+            if (stats.getState() == STATE.ACTIVE && !CombatData.getCap(caster).consumeMight(0.05f)) markUsed(caster);
+            return super.equippedTick(caster, stats);
         }
     }
 

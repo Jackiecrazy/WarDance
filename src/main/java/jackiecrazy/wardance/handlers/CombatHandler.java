@@ -5,7 +5,6 @@ import jackiecrazy.wardance.api.CombatDamageSource;
 import jackiecrazy.wardance.api.WarAttributes;
 import jackiecrazy.wardance.capability.resources.CombatData;
 import jackiecrazy.wardance.capability.resources.ICombatCapability;
-import jackiecrazy.wardance.capability.skill.CasterData;
 import jackiecrazy.wardance.capability.weaponry.CombatManipulator;
 import jackiecrazy.wardance.capability.weaponry.ICombatItemCapability;
 import jackiecrazy.wardance.config.CombatConfig;
@@ -20,7 +19,6 @@ import jackiecrazy.wardance.event.ParryEvent;
 import jackiecrazy.wardance.event.ProjectileParryEvent;
 import jackiecrazy.wardance.mixin.ProjectileImpactMixin;
 import jackiecrazy.wardance.potion.WarEffects;
-import jackiecrazy.wardance.skill.ProcPoints;
 import jackiecrazy.wardance.utils.CombatUtils;
 import jackiecrazy.wardance.utils.GeneralUtils;
 import jackiecrazy.wardance.utils.MovementUtils;
@@ -37,7 +35,6 @@ import net.minecraft.particles.ParticleTypes;
 import net.minecraft.potion.Effects;
 import net.minecraft.util.*;
 import net.minecraft.util.math.EntityRayTraceResult;
-import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.RayTraceResult;
 import net.minecraft.world.server.ServerWorld;
 import net.minecraftforge.common.MinecraftForge;
@@ -80,6 +77,13 @@ public class CombatHandler {
 
     @SubscribeEvent
     public static void projectileParry(final ProjectileImpactEvent e) {
+        Entity projectile = e.getEntity();
+        //add might with internal timer
+        //0.01 per tick, up to 0.3 per shot from last attack
+        if (projectile instanceof ProjectileEntity && ((ProjectileEntity) projectile).getShooter() instanceof LivingEntity) {
+            final LivingEntity shooter = (LivingEntity) ((ProjectileEntity) projectile).getShooter();
+            CombatData.getCap(shooter).addRangedMight(e.getRayTraceResult().getType() == RayTraceResult.Type.ENTITY);
+        }
         if (e.getRayTraceResult().getType() == RayTraceResult.Type.ENTITY && e.getRayTraceResult() instanceof EntityRayTraceResult && ((EntityRayTraceResult) e.getRayTraceResult()).getEntity() instanceof LivingEntity) {
             LivingEntity uke = (LivingEntity) ((EntityRayTraceResult) e.getRayTraceResult()).getEntity();
             if (CombatUtils.getAwareness(null, uke) != CombatUtils.Awareness.ALERT) {
@@ -87,15 +91,6 @@ public class CombatHandler {
             }
             //dodged
             if (MovementUtils.hasInvFrames(uke)) e.setCanceled(true);
-            Entity projectile = e.getEntity();
-            //add might with internal timer
-            //0.01 per tick, up to 0.3 per shot from last attack
-            if (projectile instanceof ProjectileEntity && ((ProjectileEntity) projectile).getShooter() instanceof LivingEntity) {
-                final LivingEntity shooter = (LivingEntity) ((ProjectileEntity) projectile).getShooter();
-                CombatData.getCap(shooter).addMight(MathHelper.clamp((shooter.ticksExisted - shooter.getLastAttackedEntityTime()) * 0.01f, 0, 0.3f));
-                //TODO see if this is bad
-                shooter.setLastAttackedEntity(uke);
-            }
             //defer to vanilla
             if (uke.isActiveItemStackBlocking()) return;
             //refuse to handle piercing arrows to prevent oddity
@@ -250,7 +245,7 @@ public class CombatHandler {
                 if (StealthConfig.inv)
                     seme.removePotionEffect(Effects.INVISIBILITY);
                 ICombatCapability semeCap = CombatData.getCap(seme);
-                Hand attackingHand = semeCap.isOffhandAttack() ? Hand.OFF_HAND : Hand.MAIN_HAND;//FIXME WHAT?
+                Hand attackingHand = semeCap.isOffhandAttack() ? Hand.OFF_HAND : Hand.MAIN_HAND;
                 //hand bound or staggered, no attack
                 if (semeCap.getStaggerTime() > 0 || semeCap.getHandBind(attackingHand) > 0) {
                     //System.out.println("the attacker is staggered or bound.");
@@ -372,7 +367,7 @@ public class CombatHandler {
                         boolean disshield = false;
                         parryHand = uke.getHeldItemOffhand() == defend ? Hand.OFF_HAND : Hand.MAIN_HAND;
                         if (CombatUtils.isShield(uke, defend)) {
-                            if (CasterData.getCap(seme).isTagActive(ProcPoints.disable_shield) || attack.getItem().canDisableShield(attack, defend, uke, seme)) {
+                            if (attack.canDisableShield(defend, uke, seme)) {
                                 //shield is disabled
                                 if (uke instanceof PlayerEntity) {
                                     ((PlayerEntity) uke).getCooldownTracker().setCooldown(defend.getItem(), 60);

@@ -64,6 +64,11 @@ public class SkillData {
         return duration;
     }
 
+    public SkillData setMaxDuration(float max){
+        this.max=max;
+        return this;
+    }
+
     public SkillData setDuration(float duration) {
         this.duration = duration;
         if (duration > max) max = duration;

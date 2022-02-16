@@ -253,4 +253,6 @@ public interface ICombatCapability {
     Vector3d getMotionConsistently();//I can't believe I have to do this.
 
     CompoundNBT write();
+
+    void addRangedMight(boolean pass);
 }

@@ -92,10 +92,9 @@ public class CoupDeGrace extends Skill {
         if (from == STATE.ACTIVE && to == STATE.HOLSTERED) {
             CasterData.getCap(caster).removeActiveTag(SkillTags.special);
         }
-        if (from == STATE.INACTIVE && to == STATE.HOLSTERED) {
+        if (from == STATE.INACTIVE && to == STATE.HOLSTERED && cast(caster, 1)) {
             CasterData.getCap(caster).removeActiveTag(SkillTags.special);
-            activate(caster, 1);
-            CombatData.getCap(caster).consumeMight(mightConsumption(caster));
+            prev.setMaxDuration(0);
         }
         if (to == STATE.COOLING)
             setCooldown(caster, prev, 2);
@@ -164,7 +163,7 @@ public class CoupDeGrace extends Skill {
                 caster.world.playSound(null, caster.getPosX(), caster.getPosY(), caster.getPosZ(), SoundEvents.ENTITY_RAVAGER_CELEBRATE, SoundCategory.PLAYERS, 0.8f + WarDance.rand.nextFloat() * 0.5f, 0.75f + WarDance.rand.nextFloat() * 0.5f);
                 prev.setState(STATE.HOLSTERED);
             }
-            if (to == STATE.ACTIVE) {
+            if (to == STATE.ACTIVE && cast(caster, -999)) {
                 //DIE!
                 for (Entity e : caster.world.getEntitiesInAABBexcluding(caster, caster.getBoundingBox().grow(caster.getAttributeValue(ForgeMod.REACH_DISTANCE.get())), (a -> !TargetingUtils.isAlly(a, caster)))) {
                     if (!(e instanceof LivingEntity) || !caster.canEntityBeSeen(e)) continue;
@@ -175,7 +174,6 @@ public class CoupDeGrace extends Skill {
                     }
                     e.attackEntityFrom(die, GeneralUtils.getMaxHealthBeforeWounding((LivingEntity) e) * 0.1f + (float) caster.getAttributeValue(Attributes.ATTACK_DAMAGE));
                 }
-                markUsed(caster);
             }
             if (to == STATE.COOLING)
                 if (prev.isCondition())

@@ -199,7 +199,7 @@ public class ClientEvents {
         float width = e.getWidth();
         float height = e.getHeight();
         PlayerEntity p = Minecraft.getInstance().player;
-//        if (p != null) {//TODO config
+//        if (p != null) {//TODO player senses config, fade out?
 //            double chunk = Minecraft.getInstance().gameSettings.renderDistanceChunks * 16;
 //            double visibilityMult = e.getVisibilityMultiplier(p);
 //            double visible = chunk * visibilityMult;

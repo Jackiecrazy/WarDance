@@ -33,7 +33,7 @@ public class SkillCapability implements ISkillCapability {
     }
 
     private SkillData nonNullGet(Skill d) {
-        //if data doesn't have the skill tag, re-initialize the skill data. TODO onEquip should ship with a default SkillData addition
+        //if data doesn't have the skill tag, re-initialize the skill data.
         SkillData data = this.data.get(d);
         if (data == null) {
             this.data.put(d, new SkillData(d, 0, 0));

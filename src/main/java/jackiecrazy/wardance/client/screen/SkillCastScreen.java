@@ -136,23 +136,25 @@ public class SkillCastScreen extends Screen {
                     RenderSystem.enableBlend();
                     RenderSystem.blendFuncSeparate(GlStateManager.SourceFactor.ZERO, GlStateManager.DestFactor.ONE, GlStateManager.SourceFactor.ONE_MINUS_SRC_ALPHA, GlStateManager.DestFactor.ZERO);
                     AbstractGui.blit(matrixStack, x + iconX[a], y + iconY[a], 0, 0, 32, 32, 32, 32);
-                    //cooldown spinny
-                    float cd = CasterData.getCap(mc.player).getSkillData(s).orElse(SkillData.DUMMY).getDuration();
-                    float cdPerc = cd / CasterData.getCap(mc.player).getSkillData(s).orElse(SkillData.DUMMY).getMaxDuration();
-                    mc.textureManager.bindTexture(cooldown);
-                    drawCooldownCircle(matrixStack, x + iconX[a], y + iconY[a], cdPerc);
-                    RenderSystem.disableBlend();
+                    if (CasterData.getCap(mc.player).getSkillData(s).orElse(SkillData.DUMMY).getMaxDuration() != 0) {
+                        //cooldown spinny
+                        float cd = CasterData.getCap(mc.player).getSkillData(s).orElse(SkillData.DUMMY).getDuration();
+                        float cdPerc = cd / CasterData.getCap(mc.player).getSkillData(s).orElse(SkillData.DUMMY).getMaxDuration();
+                        mc.textureManager.bindTexture(cooldown);
+                        drawCooldownCircle(matrixStack, x + iconX[a], y + iconY[a], cdPerc);
+                        RenderSystem.disableBlend();
 
-                    //cooldown number
-                    String num = String.valueOf((int) cd);
-                    if (Math.ceil(cd) != cd)
-                        num = formatter.format(cd);
-                    matrixStack.push();
-                    mc.textureManager.bindTexture(cooldown);
-                    RenderSystem.color4f(1.0F, 1.0F, 1.0F, 0.6F);
-                    //AbstractGui.blit(matrixStack, x + iconX[a], y + iconY[a], 0, 0, 32, 32, 32, 32);
-                    mc.fontRenderer.drawString(matrixStack, num, x + iconX[a] + 16 - mc.fontRenderer.getStringWidth(num) / 2f, y + iconY[a] + 12, 0xFFFFFF);
-                    matrixStack.pop();
+                        //cooldown number
+                        String num = String.valueOf((int) cd);
+                        if (Math.ceil(cd) != cd)
+                            num = formatter.format(cd);
+                        matrixStack.push();
+                        mc.textureManager.bindTexture(cooldown);
+                        RenderSystem.color4f(1.0F, 1.0F, 1.0F, 0.6F);
+                        //AbstractGui.blit(matrixStack, x + iconX[a], y + iconY[a], 0, 0, 32, 32, 32, 32);
+                        mc.fontRenderer.drawString(matrixStack, num, x + iconX[a] + 16 - mc.fontRenderer.getStringWidth(num) / 2f, y + iconY[a] + 12, 0xFFFFFF);
+                        matrixStack.pop();
+                    }
                     matrixStack.pop();
                 } else if (CasterData.getCap(mc.player).getSkillState(s) == Skill.STATE.ACTIVE) {
                     matrixStack.push();
@@ -162,27 +164,28 @@ public class SkillCastScreen extends Screen {
                         //active mask
                         RenderSystem.blendFuncSeparate(GlStateManager.SourceFactor.ZERO, GlStateManager.DestFactor.ONE, GlStateManager.SourceFactor.ONE_MINUS_SRC_ALPHA, GlStateManager.DestFactor.ZERO);
                         AbstractGui.blit(matrixStack, x + iconX[finalA], y + iconY[finalA], 0, 0, 32, 32, 32, 32);
-                        //active spinny
-                        float cdPerc = sd.getDuration() / sd.getMaxDuration();
-                        mc.textureManager.bindTexture(cooldown);
-                        float cd = sd.getDuration();
-                        RenderSystem.color4f(0.4f, 0.7f, 0.4f, 1);
-                        drawCooldownCircle(matrixStack, x + iconX[finalA], y + iconY[finalA], cdPerc);
+                        if (sd.getMaxDuration() != 0) {
+                            //active spinny
+                            float cdPerc = sd.getDuration() / sd.getMaxDuration();
+                            mc.textureManager.bindTexture(cooldown);
+                            float cd = sd.getDuration();
+                            RenderSystem.color4f(0.4f, 0.7f, 0.4f, 1);
+                            drawCooldownCircle(matrixStack, x + iconX[finalA], y + iconY[finalA], cdPerc);
 
-                        //active number
-                        String num = String.valueOf((int) cd);
-                        if (Math.ceil(cd) != cd)
-                            num = formatter.format(cd);
-                        matrixStack.push();
-                        mc.textureManager.bindTexture(cooldown);
-                        RenderSystem.color4f(1.0F, 1.0F, 1.0F, 0.6F);
-                        //AbstractGui.blit(matrixStack, x + iconX[a], y + iconY[a], 0, 0, 32, 32, 32, 32);
-                        mc.fontRenderer.drawString(matrixStack, num, x + iconX[finalA] + 16 - mc.fontRenderer.getStringWidth(num) / 2f, y + iconY[finalA] + 12, 0xFFFFFF);
+                            //active number
+                            String num = String.valueOf((int) cd);
+                            if (Math.ceil(cd) != cd)
+                                num = formatter.format(cd);
+                            matrixStack.push();
+                            mc.textureManager.bindTexture(cooldown);
+                            RenderSystem.color4f(1.0F, 1.0F, 1.0F, 0.6F);
+                            //AbstractGui.blit(matrixStack, x + iconX[a], y + iconY[a], 0, 0, 32, 32, 32, 32);
+                            mc.fontRenderer.drawString(matrixStack, num, x + iconX[finalA] + 16 - mc.fontRenderer.getStringWidth(num) / 2f, y + iconY[finalA] + 12, 0xFFFFFF);
+                            matrixStack.pop();
+                        }
                     });
                     matrixStack.pop();
-                    matrixStack.pop();
                 }
-
             }
         }
         if (index >= 0 && elements[index] != null) {
@@ -191,7 +194,7 @@ public class SkillCastScreen extends Screen {
             int yee = mc.fontRenderer.getStringWidth(print);
             mc.ingameGUI.getFontRenderer().drawString(matrixStack, print, (width - yee) / 2f, 4, selected.getColor().getRGB());
             final Skill.CastStatus castStatus = selected.castingCheck(mc.player);
-            if (castStatus != Skill.CastStatus.ALLOWED&&castStatus != Skill.CastStatus.HOLSTERED&&castStatus != Skill.CastStatus.ACTIVE) {
+            if (castStatus != Skill.CastStatus.ALLOWED && castStatus != Skill.CastStatus.HOLSTERED && castStatus != Skill.CastStatus.ACTIVE) {
                 switch (castStatus) {
                     case COOLDOWN:
                         print = new TranslationTextComponent("wardance.skill.cooldown").getString();
@@ -213,7 +216,7 @@ public class SkillCastScreen extends Screen {
                         break;
                 }
                 yee = mc.fontRenderer.getStringWidth(print);
-                mc.ingameGUI.getFontRenderer().drawString(matrixStack, print, (width - yee) / 2f, 12, Color.RED.getRGB());//TODO reenable?
+                mc.ingameGUI.getFontRenderer().drawString(matrixStack, print, (width - yee) / 2f, 12, Color.RED.getRGB());
             }
 
         }

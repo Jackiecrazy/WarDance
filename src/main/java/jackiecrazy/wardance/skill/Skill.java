@@ -8,6 +8,7 @@ import jackiecrazy.wardance.capability.status.Marks;
 import jackiecrazy.wardance.config.GeneralConfig;
 import jackiecrazy.wardance.event.SkillCastEvent;
 import jackiecrazy.wardance.event.SkillCooldownEvent;
+import jackiecrazy.wardance.event.SkillResourceEvent;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.tags.Tag;
 import net.minecraft.util.ResourceLocation;
@@ -159,31 +160,6 @@ public abstract class Skill extends ForgeRegistryEntry<Skill> {
         return none;
     }
 
-    public boolean checkAndCast(LivingEntity caster) {
-        final CastStatus status = castingCheck(caster);
-        if (status != CastStatus.ALLOWED) {
-            if (GeneralConfig.debug)
-                WarDance.LOGGER.debug(this.getRegistryName() + " returned " + status + " when attempting to cast, aborting");
-            return false;
-        }
-        if (!isPassive(caster) && MinecraftForge.EVENT_BUS.post(new SkillCastEvent(caster, this))) return false;
-        caster.world.playMovingSound(null, caster, SoundEvents.ITEM_FIRECHARGE_USE, SoundCategory.AMBIENT, 0.3f + WarDance.rand.nextFloat(), 0.5f + WarDance.rand.nextFloat());
-        return onCast(caster);
-    }
-
-    @Deprecated
-    public boolean onCast(LivingEntity caster) {
-        return true;
-    }
-
-    /**
-     * @return whether the client should be updated.
-     */
-    @Deprecated
-    public boolean activeTick(LivingEntity caster, SkillData d) {
-        return false;
-    }
-
     public boolean equippedTick(LivingEntity caster, SkillData stats) {
         return false;
     }
@@ -282,6 +258,7 @@ public abstract class Skill extends ForgeRegistryEntry<Skill> {
         }
         //switching between cooling and inactive, duration test to prevent modification by holstering
         if (to == STATE.INACTIVE && from == STATE.COOLING && mod.getDuration() <= 0) {
+            //caster.world.playMovingSound(null, caster, SoundEvents.ENTITY_EXPERIENCE_ORB_PICKUP, SoundCategory.AMBIENT, 0.3f + WarDance.rand.nextFloat(), 0.5f + WarDance.rand.nextFloat());
             mod.setState(STATE.INACTIVE);
             return true;
         }
@@ -312,6 +289,32 @@ public abstract class Skill extends ForgeRegistryEntry<Skill> {
         return false;
     }
 
+    protected boolean cast(LivingEntity caster, float duration) {
+        return cast(caster, duration, false, 0);
+    }
+
+    protected boolean cast(LivingEntity caster, float duration, float arbitrary) {
+        return cast(caster, duration, false, arbitrary);
+    }
+
+    protected boolean cast(LivingEntity caster, float duration, boolean flag) {
+        return cast(caster, duration, flag, 0);
+    }
+
+    protected boolean cast(LivingEntity caster, float duration, boolean flag, float arbitrary) {
+        SkillResourceEvent sre = new SkillResourceEvent(caster, this);
+        MinecraftForge.EVENT_BUS.post(sre);
+        if (!sre.isCanceled() && CombatData.getCap(caster).getMight() > sre.getMight() && CombatData.getCap(caster).getSpirit() > sre.getSpirit()) {
+            SkillCastEvent sce = new SkillCastEvent(caster, this, sre.getMight(), sre.getSpirit(), duration, flag, arbitrary);
+            MinecraftForge.EVENT_BUS.post(sce);
+            CombatData.getCap(caster).consumeMight(sce.getMight());
+            CombatData.getCap(caster).consumeSpirit(sce.getSpirit());
+            activate(caster, sce.getDuration(), sce.isFlag(), sce.getArbitrary());
+            return true;
+        }
+        return false;
+    }
+
     protected void setCooldown(LivingEntity caster, SkillData a, float duration) {
         SkillCooldownEvent sce = new SkillCooldownEvent(caster, this, duration);
         MinecraftForge.EVENT_BUS.post(sce);
@@ -320,7 +323,9 @@ public abstract class Skill extends ForgeRegistryEntry<Skill> {
         a.flagCondition(false);
         a.setArbitraryFloat(0);
         a.setState(STATE.COOLING);
-        a.setDuration(CasterData.getCap(caster).getSkillData(this).isPresent() ? sce.getCooldown() : duration);
+        final float dur = CasterData.getCap(caster).getSkillData(this).isPresent() ? sce.getCooldown() : duration;
+        a.setMaxDuration(dur);
+        a.setDuration(dur);
     }
 
     protected boolean activate(LivingEntity caster, float duration) {
@@ -340,8 +345,10 @@ public abstract class Skill extends ForgeRegistryEntry<Skill> {
      */
     protected boolean activate(LivingEntity caster, float duration, boolean flag, float something) {
         //System.out.println("enabling for " + duration);
+        caster.world.playMovingSound(null, caster, SoundEvents.ITEM_FIRECHARGE_USE, SoundCategory.AMBIENT, 0.3f + WarDance.rand.nextFloat(), 0.5f + WarDance.rand.nextFloat());
         CasterData.getCap(caster).getSkillData(this).ifPresent(a -> {
             a.setDuration(duration);
+            a.setMaxDuration(duration);
             a.flagCondition(flag);
             a.setArbitraryFloat(something);
             a.setState(STATE.ACTIVE);
@@ -354,7 +361,7 @@ public abstract class Skill extends ForgeRegistryEntry<Skill> {
             WarDance.LOGGER.debug(this.getRegistryName() + " has ended");
         caster.world.playMovingSound(null, caster, SoundEvents.BLOCK_FIRE_EXTINGUISH, SoundCategory.AMBIENT, 0.3f + WarDance.rand.nextFloat() * 0.5f, 0.5f + WarDance.rand.nextFloat());
         CasterData.getCap(caster).getSkillData(this).ifPresent(a -> {
-            a.setDuration(-100);
+            a.setDuration(-Float.MAX_VALUE / 2);
             a.setState(STATE.ACTIVE);
         });
     }

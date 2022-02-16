@@ -47,6 +47,19 @@ public class SkillListWidget extends ExtendedList<SkillListWidget.CategoryEntry>
         this.parent.renderBackground(mStack);
     }
 
+    @Override
+    public void render(MatrixStack matrixStack, int mouseX, int mouseY, float partialTicks) {
+        double d0 = this.minecraft.getMainWindow().getGuiScaleFactor();
+        RenderSystem.enableScissor((int)((double)this.getRowLeft() * d0), (int)((double)(this.height - this.y1) * d0), (int)((double)(this.getScrollbarPosition() + 6) * d0), (int)((double)(this.height - (this.height - this.y1) - this.y0 - 4) * d0));
+        super.render(matrixStack, mouseX, mouseY, partialTicks);
+        RenderSystem.disableScissor();
+    }
+
+    @Override
+    protected void renderDecorations(MatrixStack matrixStack, int mouseX, int mouseY) {
+        this.fillGradient(matrixStack, -1, -1, this.width+1, this.height+1, 0xffffff, 0xffffff);
+    }
+
     public class CategoryEntry extends ExtendedList.AbstractListEntry<CategoryEntry> {
         private final SkillCategory s;
         private SkillSelectionScreen parent;

@@ -53,13 +53,13 @@ public class ShadowlessKick extends Kick {
                 double d1 = (double) MathHelper.cos(caster.rotationYaw * ((float) Math.PI / 180F));
                 ((ServerWorld) caster.world).spawnParticle(ParticleTypes.EXPLOSION, caster.getPosX() + d0, caster.getPosYHeight(0.5D), caster.getPosZ() + d1, 0, d0, 0.0D, d1, 0.0D);
             }
-            target.attackEntityFrom(new CombatDamageSource("fallingBlock", caster).setDamageTyping(CombatDamageSource.TYPE.PHYSICAL).setProcSkillEffects(true).setProcAttackEffects(true).setKnockbackPercentage(0.7f), 1);
+            target.attackEntityFrom(new CombatDamageSource("fallingBlock", caster).setDamageTyping(CombatDamageSource.TYPE.PHYSICAL).setProcSkillEffects(true).setProcNormalEffects(false).setProcAttackEffects(true).setKnockbackPercentage(0.7f), 1);
             if (target.getRevengeTarget() == null)
                 target.setRevengeTarget(caster);
             stats.setArbitraryFloat(stats.getArbitraryFloat() + 1);
             if (stats.getArbitraryFloat() >= 6) {
                 markUsed(caster);
-                caster.world.playSound(null, caster.getPosX(), caster.getPosY(), caster.getPosZ(), SoundEvents.ENTITY_ZOMBIE_BREAK_WOODEN_DOOR, SoundCategory.PLAYERS, 0.5f + WarDance.rand.nextFloat() * 0.5f, 0.5f + WarDance.rand.nextFloat() * 0.5f);
+                caster.world.playSound(null, caster.getPosX(), caster.getPosY(), caster.getPosZ(), SoundEvents.ENTITY_DRAGON_FIREBALL_EXPLODE, SoundCategory.PLAYERS, 0.5f + WarDance.rand.nextFloat() * 0.5f, 0.5f + WarDance.rand.nextFloat() * 0.5f);
                 return false;
             }
             caster.world.playSound(null, caster.getPosX(), caster.getPosY(), caster.getPosZ(), SoundEvents.ENTITY_ZOMBIE_ATTACK_WOODEN_DOOR, SoundCategory.PLAYERS, 0.25f + WarDance.rand.nextFloat() * 0.5f, 0.5f + WarDance.rand.nextFloat() * 0.5f);

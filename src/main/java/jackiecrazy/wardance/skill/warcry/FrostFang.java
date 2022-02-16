@@ -32,7 +32,7 @@ public class FrostFang extends WarCry {
 
     @Override
     protected int getDuration(float might) {
-        return 100 + (int) (might * 30);
+        return (int) (might * 40);
     }
 
     @Override

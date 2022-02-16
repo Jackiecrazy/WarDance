@@ -47,6 +47,7 @@ public class CombatCapability implements ICombatCapability {
     private static final AttributeModifier STAGGERS = new AttributeModifier(WOUND, "stagger speed debuff", -1, AttributeModifier.Operation.MULTIPLY_TOTAL);
 
     private final WeakReference<LivingEntity> dude;
+    int lastRangeTick = 0;
     private ItemStack prev;
     private float might, spirit, posture, rank, mpos, mspi, wounding, burnout, fatigue, mainReel, offReel, maxMight, resolve;
     private int shatterCD;
@@ -103,6 +104,7 @@ public class CombatCapability implements ICombatCapability {
     public float addMight(float amount) {
         GainMightEvent gme = new GainMightEvent(dude.get(), amount);
         MinecraftForge.EVENT_BUS.post(gme);
+        if (gme.isCanceled()) return -1;
         amount = gme.getQuantity();
         float temp = might + amount;
         setMight(temp);
@@ -716,7 +718,7 @@ public class CombatCapability implements ICombatCapability {
     public void serverTick() {
         LivingEntity elb = dude.get();
         if (elb == null) return;
-        int ticks = (int) (elb.world.getGameTime() - lastUpdate);
+        final int ticks = (int) (elb.world.getGameTime() - lastUpdate);
         if (ticks < 1) return;//sometimes time runs backwards
         //max values
         setTrueMaxPosture(getMPos(elb));
@@ -780,11 +782,17 @@ public class CombatCapability implements ICombatCapability {
         if (might == 0) {
             float decay = 0.01f;
             if (getComboRank() == 6)
-                decay = 0.02f;
+                decay = 0.025f;
             if (getComboRank() == 7)
-                decay = 0.03f;
+                decay = 0.05f;
+            decay *= ticks;
             rank -= decay;
-            if (rank < 0) rank = 0;
+            if (rank < 0) {
+                rank = 0;
+                wounding -= Math.min(wounding, decay);
+                fatigue -= Math.min(fatigue, decay);
+                burnout -= Math.min(burnout, decay);
+            }
         }
         if (prev == null || !ItemStack.areItemStacksEqual(elb.getHeldItemOffhand(), prev)) {
             prev = elb.getHeldItemOffhand();
@@ -934,6 +942,15 @@ public class CombatCapability implements ICombatCapability {
         if (!tempOffhand.isEmpty())
             c.put("temp", tempOffhand.write(new CompoundNBT()));
         return c;
+    }
+
+    @Override
+    public void addRangedMight(boolean pass) {
+        LivingEntity shooter = dude.get();
+        if (shooter == null) return;
+        if (pass)
+            addMight(MathHelper.clamp((shooter.ticksExisted - lastRangeTick) * 0.01f, 0, 0.3f));
+        lastRangeTick = shooter.ticksExisted;
     }
 
     public CompoundNBT quickWrite() {
