@@ -3,7 +3,7 @@ package jackiecrazy.wardance.skill;
 import jackiecrazy.wardance.WarDance;
 import jackiecrazy.wardance.skill.coupdegrace.CoupDeGrace;
 import jackiecrazy.wardance.skill.crownchampion.CrownChampion;
-import jackiecrazy.wardance.skill.execution.Guillotine;
+import jackiecrazy.wardance.skill.guillotine.Guillotine;
 import jackiecrazy.wardance.skill.feint.Feint;
 import jackiecrazy.wardance.skill.grapple.Clinch;
 import jackiecrazy.wardance.skill.grapple.Grapple;
@@ -56,7 +56,7 @@ public class WarSkills {
     public static final RegistryObject<Skill> SHADOWLESS_KICK = SKILLS.register("shadowless_kick", ShadowlessKick::new);
     public static final RegistryObject<Skill> THROW = SKILLS.register("throw", Grapple::new);
     public static final RegistryObject<Skill> CLINCH = SKILLS.register("clinch", Clinch::new);
-    public static final RegistryObject<Skill> REVERSAL = SKILLS.register("reversal", Grapple.Reversal::new);
+    public static final RegistryObject<Skill> REVERSAL = SKILLS.register("reverse_grip", Grapple.ReverseGrip::new);
     public static final RegistryObject<Skill> SUBMISSION = SKILLS.register("submission", Submission::new);
     public static final RegistryObject<Skill> SUPLEX = SKILLS.register("suplex", Grapple.Suplex::new);
     public static final RegistryObject<Skill> PUMMEL = SKILLS.register("pummel", ShieldBash::new);

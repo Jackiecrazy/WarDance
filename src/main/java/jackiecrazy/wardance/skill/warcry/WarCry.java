@@ -2,7 +2,6 @@ package jackiecrazy.wardance.skill.warcry;
 
 import jackiecrazy.wardance.WarDance;
 import jackiecrazy.wardance.capability.resources.CombatData;
-import jackiecrazy.wardance.capability.skill.CasterData;
 import jackiecrazy.wardance.skill.*;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.ai.attributes.AttributeModifier;
@@ -47,7 +46,7 @@ public class WarCry extends Skill {
     }
 
     protected int getDuration(float might) {
-        return Math.max(0, (int) (might * 20)-40);
+        return Math.max(0, (int) (might * 20) - 40);
     }
 
     protected void evoke(LivingEntity caster) {
@@ -59,8 +58,6 @@ public class WarCry extends Skill {
                 caster.addPotionEffect(new EffectInstance(Effects.RESISTANCE, getDuration(might)));
                 caster.addPotionEffect(new EffectInstance(Effects.ABSORPTION, getDuration(might), 1));
             } else caster.addPotionEffect(new EffectInstance(Effects.ABSORPTION, getDuration(might)));
-        }else{
-            CasterData.getCap(caster).getSkillData(this).ifPresent((a) -> a.setDuration(getDuration(CombatData.getCap(caster).getMight())));
         }
         CombatData.getCap(caster).setMight(0);
     }
@@ -74,9 +71,9 @@ public class WarCry extends Skill {
 
     @Override
     public boolean onStateChange(LivingEntity caster, SkillData prev, STATE from, STATE to) {
-        if (to == STATE.HOLSTERED)
+        if (to == STATE.HOLSTERED && cast(caster, getDuration(CombatData.getCap(caster).getMight())))
             evoke(caster);
-        if(to==STATE.COOLING) {
+        if (to == STATE.COOLING) {
             prev.setState(STATE.INACTIVE);
             prev.setDuration(0);
         }

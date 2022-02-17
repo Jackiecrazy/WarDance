@@ -1,8 +1,7 @@
 package jackiecrazy.wardance.skill.regenspirit;
 
 import jackiecrazy.wardance.WarDance;
-import jackiecrazy.wardance.capability.resources.CombatData;
-import jackiecrazy.wardance.event.SkillCastEvent;
+import jackiecrazy.wardance.event.SkillResourceEvent;
 import jackiecrazy.wardance.skill.Skill;
 import jackiecrazy.wardance.skill.SkillCategories;
 import jackiecrazy.wardance.skill.SkillCategory;
@@ -50,11 +49,11 @@ apathy: your max spirit is 4, your spirit instantly refills after cooldown, you 
 
     @Override
     public void onProc(LivingEntity caster, Event procPoint, STATE state, SkillData stats, LivingEntity target) {
-        if (procPoint instanceof SkillCastEvent&&procPoint.getPhase()== EventPriority.HIGHEST) {
+        if (procPoint instanceof SkillResourceEvent && procPoint.getPhase() == EventPriority.HIGHEST) {
             float luck = (float) Math.max(0, GeneralUtils.getAttributeValueSafe(caster, Attributes.LUCK));
             stats.setArbitraryFloat(stats.getArbitraryFloat() + ((1 + luck) / (5 + luck)));
             if (WarDance.rand.nextFloat() < stats.getArbitraryFloat()) {
-                CombatData.getCap(caster).addSpirit(((SkillCastEvent) procPoint).getSkill().spiritConsumption(caster));
+                ((SkillResourceEvent) procPoint).setSpirit(0);
                 stats.setArbitraryFloat(0);
             }
         }

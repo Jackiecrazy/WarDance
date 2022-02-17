@@ -31,8 +31,7 @@ public class PoundOfFlesh extends MementoMori {
             prev.setState(STATE.INACTIVE);
             prev.setDuration(0);
         }
-        if (to == STATE.HOLSTERED) {
-            activate(caster, CombatData.getCap(caster).getSpirit() * 40);
+        if (to == STATE.HOLSTERED&& cast(caster, CombatData.getCap(caster).getSpirit() * 40)) {
             CombatData.getCap(caster).setSpirit(0);
         }
         return instantCast(prev, from, to);

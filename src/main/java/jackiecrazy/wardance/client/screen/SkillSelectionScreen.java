@@ -259,7 +259,7 @@ public class SkillSelectionScreen extends Screen {
         SkillCategory selectedSkill = this.selectedSkill.getCategory();
         List<String> lines = new ArrayList<>();
 
-        lines.add(selectedSkill.name().getString());
+        lines.add(TextFormatting.BOLD+""+TextFormatting.UNDERLINE+selectedSkill.name().getString()+TextFormatting.RESET);
         lines.add(selectedSkill.description().getString());
         if (selectedVariation != null) {
             //lines.add(String.valueOf(selectedVariation.getSkill().getColor().getRGB()));
@@ -273,7 +273,7 @@ public class SkillSelectionScreen extends Screen {
             }
         }
         lines.add("\n");
-        modInfo.setInfo(lines, selectedSkill.icon());
+        modInfo.setInfo(lines, null);
     }
 
     @Override

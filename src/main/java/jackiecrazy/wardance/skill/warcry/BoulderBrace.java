@@ -9,8 +9,8 @@ import java.awt.*;
 public class BoulderBrace extends WarCry {
     @Override
     protected void evoke(LivingEntity caster) {
-        CombatData.getCap(caster).setPosture(CombatData.getCap(caster).getMaxPosture());
         super.evoke(caster);
+        CombatData.getCap(caster).setPosture(CombatData.getCap(caster).getMaxPosture());
     }
 
     @Override

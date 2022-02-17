@@ -42,7 +42,7 @@ public class Feint extends Skill {
 
     @Override
     public void onProc(LivingEntity caster, Event procPoint, STATE state, SkillData stats, LivingEntity target) {
-        if (procPoint instanceof ParryEvent && procPoint.getPhase() == EventPriority.HIGHEST && state == STATE.HOLSTERED && CombatData.getCap(caster).consumeSpirit(spiritConsumption(caster)) && ((ParryEvent) procPoint).getAttacker() == caster && CombatUtils.getAwareness(caster, target) == CombatUtils.Awareness.ALERT && !Marks.getCap(target).isMarked(this)) {
+        if (procPoint instanceof ParryEvent && procPoint.getPhase() == EventPriority.HIGHEST && state == STATE.HOLSTERED && CombatUtils.getAwareness(caster, target) == CombatUtils.Awareness.ALERT && !Marks.getCap(target).isMarked(this) && ((ParryEvent) procPoint).getAttacker() == caster && cast(caster, -999)) {
             Hand h = ((ParryEvent) procPoint).getAttackingHand();
             if (((ParryEvent) procPoint).canParry()) {
                 CombatUtils.setHandCooldown(target, Hand.MAIN_HAND, 0, false);

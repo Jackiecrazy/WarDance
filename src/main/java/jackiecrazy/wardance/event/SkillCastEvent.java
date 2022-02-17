@@ -3,9 +3,7 @@ package jackiecrazy.wardance.event;
 import jackiecrazy.wardance.skill.Skill;
 import net.minecraft.entity.LivingEntity;
 import net.minecraftforge.event.entity.living.LivingEvent;
-import net.minecraftforge.eventbus.api.Cancelable;
 
-@Cancelable
 public class SkillCastEvent extends LivingEvent {
     private final Skill s;
     private final float might;

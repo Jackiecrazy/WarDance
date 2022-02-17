@@ -1,4 +1,4 @@
-package jackiecrazy.wardance.skill.execution;
+package jackiecrazy.wardance.skill.guillotine;
 
 import jackiecrazy.wardance.api.CombatDamageSource;
 import jackiecrazy.wardance.capability.resources.CombatData;
@@ -75,7 +75,7 @@ public class Guillotine extends Skill {
         if (from == STATE.ACTIVE && to == STATE.HOLSTERED) {
             CasterData.getCap(caster).removeActiveTag(SkillTags.special);
         }
-        if (from == STATE.INACTIVE && to == STATE.HOLSTERED) {
+        if (from == STATE.INACTIVE && to == STATE.HOLSTERED && cast(caster, 1, CombatData.getCap(caster).getMight())) {//FIXME update
             CasterData.getCap(caster).removeActiveTag(SkillTags.special);
             activate(caster, 1, CombatData.getCap(caster).getMight());
             prev.setMaxDuration(0);

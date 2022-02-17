@@ -787,7 +787,7 @@ public class CombatCapability implements ICombatCapability {
                 decay = 0.05f;
             decay *= ticks;
             rank -= decay;
-            if (rank < 0) {
+            if (rank < 0&&elb instanceof PlayerEntity) {
                 rank = 0;
                 wounding -= Math.min(wounding, decay);
                 fatigue -= Math.min(fatigue, decay);
@@ -827,8 +827,8 @@ public class CombatCapability implements ICombatCapability {
     @Override
     public void read(CompoundNBT c) {
         int temp = roll;
-        setPosture(c.getFloat("posture"));
         setTrueMaxPosture(c.getFloat("maxpos"));
+        setPosture(c.getFloat("posture"));
         setFatigue(c.getFloat("fatigue"));
         setStaggerTime(c.getInt("staggert"));
         lastUpdate = c.getLong("lastUpdate");

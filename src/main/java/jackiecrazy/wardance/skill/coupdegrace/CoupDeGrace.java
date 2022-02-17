@@ -185,7 +185,9 @@ public class CoupDeGrace extends Skill {
 
         @Override
         public void onProc(LivingEntity caster, Event procPoint, STATE state, SkillData stats, LivingEntity target) {
-
+            if (procPoint instanceof SkillCastEvent && procPoint.getPhase() == EventPriority.HIGHEST && state == STATE.COOLING) {
+                stats.decrementDuration();
+            }
         }
     }
 

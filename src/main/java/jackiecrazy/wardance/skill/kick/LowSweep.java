@@ -27,8 +27,7 @@ public class LowSweep extends Kick {
 
     @Override
     public boolean onStateChange(LivingEntity caster, SkillData prev, STATE from, STATE to) {
-        if (from == STATE.HOLSTERED && to == STATE.ACTIVE) {
-            if (CombatData.getCap(caster).consumeSpirit(spiritConsumption(caster))) {
+        if (from == STATE.HOLSTERED && to == STATE.ACTIVE&& cast(caster, -999)) {
                 for (Entity t : caster.world.getEntitiesInAABBexcluding(caster, caster.getBoundingBox().grow(caster.getAttributeValue(ForgeMod.REACH_DISTANCE.get())), (a -> !TargetingUtils.isAlly(a, caster))))
                     if (t instanceof LivingEntity) {
                         LivingEntity target = (LivingEntity) t;
@@ -41,8 +40,6 @@ public class LowSweep extends Kick {
                         caster.world.playSound(null, caster.getPosX(), caster.getPosY(), caster.getPosZ(), SoundEvents.ENTITY_ZOMBIE_ATTACK_WOODEN_DOOR, SoundCategory.PLAYERS, 0.25f + WarDance.rand.nextFloat() * 0.5f, 0.5f + WarDance.rand.nextFloat() * 0.5f);
                         additionally(caster, target);
                     }
-                markUsed(caster);
-            }
         }
         if (to == STATE.COOLING) {
             setCooldown(caster, prev, 4);

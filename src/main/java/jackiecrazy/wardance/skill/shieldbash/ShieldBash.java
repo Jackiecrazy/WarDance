@@ -2,7 +2,6 @@ package jackiecrazy.wardance.skill.shieldbash;
 
 import jackiecrazy.wardance.WarDance;
 import jackiecrazy.wardance.api.CombatDamageSource;
-import jackiecrazy.wardance.capability.resources.CombatData;
 import jackiecrazy.wardance.event.ParryEvent;
 import jackiecrazy.wardance.potion.WarEffects;
 import jackiecrazy.wardance.skill.*;
@@ -47,7 +46,7 @@ public class ShieldBash extends Skill {
 
     @Override
     public float spiritConsumption(LivingEntity caster) {
-        return 2;
+        return isPassive(caster)?0:2;
     }
 
     @Override
@@ -66,8 +65,8 @@ public class ShieldBash extends Skill {
     public void onProc(LivingEntity caster, Event procPoint, STATE state, SkillData stats, LivingEntity target) {
         if (procPoint instanceof LivingAttackEvent && ((LivingAttackEvent) procPoint).getEntityLiving() == target && procPoint.getPhase() == EventPriority.HIGHEST) {
             final boolean base = isPassive(caster) && state != STATE.COOLING;
-            final boolean otherwise = state == STATE.HOLSTERED && CombatUtils.isShield(caster, CombatUtils.getAttackingItemStack(((LivingAttackEvent) procPoint).getSource())) && CombatData.getCap(caster).consumeSpirit(spiritConsumption(caster));
-            if (base || otherwise) {
+            final boolean otherwise = state == STATE.HOLSTERED && CombatUtils.isShield(caster, CombatUtils.getAttackingItemStack(((LivingAttackEvent) procPoint).getSource()));
+            if ((base || otherwise)&& cast(caster, -999)) {
                 performEffect(caster, target);
                 caster.world.playSound(null, caster.getPosX(), caster.getPosY(), caster.getPosZ(), SoundEvents.ENTITY_ZOMBIE_ATTACK_IRON_DOOR, SoundCategory.PLAYERS, 0.25f + WarDance.rand.nextFloat() * 0.5f, 0.5f + WarDance.rand.nextFloat() * 0.5f);
                 markUsed(caster);

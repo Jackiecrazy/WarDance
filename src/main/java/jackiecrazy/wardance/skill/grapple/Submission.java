@@ -1,6 +1,5 @@
 package jackiecrazy.wardance.skill.grapple;
 
-import jackiecrazy.wardance.capability.resources.CombatData;
 import jackiecrazy.wardance.skill.SkillData;
 import jackiecrazy.wardance.utils.CombatUtils;
 import net.minecraft.entity.LivingEntity;
@@ -19,10 +18,9 @@ public class Submission extends Grapple {
     @Override
     public void onProc(LivingEntity caster, Event procPoint, STATE state, SkillData stats, LivingEntity target) {
         if (procPoint instanceof LivingAttackEvent && ((LivingAttackEvent) procPoint).getEntityLiving() == target && procPoint.getPhase() == EventPriority.HIGHEST) {
-            if (state == STATE.HOLSTERED && CombatData.getCap(caster).consumeSpirit(spiritConsumption(caster)) && (caster.ticksExisted - caster.getLastAttackedEntityTime() < 60 - stats.getDuration() || caster.getTotalArmorValue() > target.getTotalArmorValue()) && CombatUtils.isUnarmed(caster.getHeldItemMainhand(), caster) && caster.getLastAttackedEntity() == target) {
+            if (state == STATE.HOLSTERED && (caster.ticksExisted - caster.getLastAttackedEntityTime() < 40 || caster.getTotalArmorValue() > target.getTotalArmorValue()) && CombatUtils.isUnarmed(caster.getHeldItemMainhand(), caster) && caster.getLastAttackedEntity() == target && cast(caster, -999)) {
                 performEffect(caster, target);
                 stats.flagCondition(caster.getTotalArmorValue() > target.getTotalArmorValue());
-                markUsed(caster);
             } else if (state == STATE.COOLING) stats.decrementDuration();
         }
     }

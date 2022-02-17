@@ -479,4 +479,24 @@ public class SkillEventHandler {
             isc.getSkillData(s).ifPresent(d -> s.onProc(e.getEntityLiving(), e, d.getState(), d, null));
         }
     }
+
+
+    @SubscribeEvent(priority = EventPriority.LOWEST)
+    public static void resourcE(SkillResourceEvent e) {
+        final ISkillCapability cap = CasterData.getCap(e.getEntityLiving());
+        if (!e.getEntityLiving().isServerWorld()) return;
+        for (Skill s : cap.getEquippedSkills()) {
+            cap.getSkillData(s).ifPresent(d -> s.onProc(e.getEntityLiving(), e, d.getState(), d, e.getEntityLiving()));
+        }
+    }
+
+
+    @SubscribeEvent(priority = EventPriority.HIGHEST)
+    public static void resource(SkillResourceEvent e) {
+        final ISkillCapability cap = CasterData.getCap(e.getEntityLiving());
+        if (!e.getEntityLiving().isServerWorld()) return;
+        for (Skill s : cap.getEquippedSkills()) {
+            cap.getSkillData(s).ifPresent(d -> s.onProc(e.getEntityLiving(), e, d.getState(), d, e.getEntityLiving()));
+        }
+    }
 }

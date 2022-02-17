@@ -37,9 +37,8 @@ public class HeavyBlow extends Skill {
     @Override
     public void onProc(LivingEntity caster, Event procPoint, STATE state, SkillData stats, LivingEntity target) {
         if (procPoint instanceof CriticalHitEvent && procPoint.getPhase() == EventPriority.HIGHEST) {
-            if (((CriticalHitEvent) procPoint).isVanillaCritical() && state == STATE.INACTIVE) {
+            if (((CriticalHitEvent) procPoint).isVanillaCritical() && state == STATE.INACTIVE&& cast(caster, -999)) {
                 onCrit((CriticalHitEvent) procPoint, stats, caster, target);
-                markUsed(caster);
             } else if (state == STATE.COOLING) {
                 stats.decrementDuration();
             }

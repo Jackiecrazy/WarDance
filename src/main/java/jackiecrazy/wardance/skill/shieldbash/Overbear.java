@@ -33,7 +33,7 @@ public class Overbear extends ShieldBash {
     public void onProc(LivingEntity caster, Event procPoint, STATE state, SkillData stats, LivingEntity target) {
         if (procPoint instanceof LivingAttackEvent) {
             final ItemStack stack = CombatUtils.getAttackingItemStack(((LivingAttackEvent) procPoint).getSource());
-            if (CombatUtils.isShield(caster, stack)) {
+            if (CombatUtils.isShield(caster, stack)&& cast(caster, -999)) {
                 performEffect(caster, target);
                 caster.world.playSound(null, caster.getPosX(), caster.getPosY(), caster.getPosZ(), SoundEvents.ITEM_SHIELD_BLOCK, SoundCategory.PLAYERS, 0.25f + WarDance.rand.nextFloat() * 0.5f, 0.5f + WarDance.rand.nextFloat() * 0.5f);
                 final int shieldTime = CombatUtils.getShieldStats(stack).getA();

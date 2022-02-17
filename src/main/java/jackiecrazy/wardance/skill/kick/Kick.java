@@ -43,11 +43,6 @@ public class Kick extends Skill {
         return 3;
     }
 
-    @Override
-    public CastStatus castingCheck(LivingEntity caster) {
-        return CombatData.getCap(caster).getSpirit() < spiritConsumption(caster) ? CastStatus.SPIRIT : super.castingCheck(caster);
-    }
-
     @Nonnull
     @Override
     public SkillCategory getParentCategory() {
@@ -69,9 +64,8 @@ public class Kick extends Skill {
 
     @Override
     public boolean onStateChange(LivingEntity caster, SkillData prev, STATE from, STATE to) {
-        if (from == STATE.HOLSTERED && to == STATE.ACTIVE) {
+        if (from == STATE.HOLSTERED && to == STATE.ACTIVE&& cast(caster, -999)) {
             LivingEntity target = GeneralUtils.raytraceLiving(caster, distance());
-            if (target != null && CombatData.getCap(caster).consumeSpirit(spiritConsumption(caster))) {
                 CombatData.getCap(target).consumePosture(caster, 4);
                 if (caster instanceof PlayerEntity)
                     ((PlayerEntity) caster).spawnSweepParticles();
@@ -80,8 +74,6 @@ public class Kick extends Skill {
                 if (target.getRevengeTarget() == null)
                     target.setRevengeTarget(caster);
                 caster.world.playSound(null, caster.getPosX(), caster.getPosY(), caster.getPosZ(), SoundEvents.ENTITY_ZOMBIE_ATTACK_WOODEN_DOOR, SoundCategory.PLAYERS, 0.25f + WarDance.rand.nextFloat() * 0.5f, 0.5f + WarDance.rand.nextFloat() * 0.5f);
-                markUsed(caster);
-            }
         }
         if (to == STATE.COOLING) {
             setCooldown(caster, prev, 4);
