@@ -1,29 +1,95 @@
 package jackiecrazy.wardance.skill.feint;
 
+import jackiecrazy.wardance.WarDance;
+import jackiecrazy.wardance.api.CombatDamageSource;
 import jackiecrazy.wardance.capability.resources.CombatData;
+import jackiecrazy.wardance.capability.skill.CasterData;
+import jackiecrazy.wardance.capability.skill.ISkillCapability;
 import jackiecrazy.wardance.capability.status.Marks;
+import jackiecrazy.wardance.event.EntityAwarenessEvent;
 import jackiecrazy.wardance.event.ParryEvent;
 import jackiecrazy.wardance.potion.WarEffects;
 import jackiecrazy.wardance.skill.*;
 import jackiecrazy.wardance.utils.CombatUtils;
-import jackiecrazy.wardance.utils.GeneralUtils;
+import jackiecrazy.wardance.utils.EffectUtils;
+import jackiecrazy.wardance.utils.SkillUtils;
+import jackiecrazy.wardance.utils.WarColors;
+import net.minecraft.entity.Entity;
 import net.minecraft.entity.LivingEntity;
+import net.minecraft.entity.ai.attributes.AttributeModifier;
+import net.minecraft.entity.ai.attributes.Attributes;
 import net.minecraft.potion.EffectInstance;
+import net.minecraft.potion.Effects;
 import net.minecraft.tags.Tag;
 import net.minecraft.util.Hand;
-import net.minecraft.util.math.vector.Vector3d;
+import net.minecraftforge.event.entity.living.LivingAttackEvent;
 import net.minecraftforge.event.entity.living.LivingHurtEvent;
 import net.minecraftforge.eventbus.api.Event;
 import net.minecraftforge.eventbus.api.EventPriority;
+import net.minecraftforge.eventbus.api.SubscribeEvent;
+import net.minecraftforge.fml.common.Mod;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.awt.*;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
+import java.util.UUID;
 
+@Mod.EventBusSubscriber(modid = WarDance.MODID)
 public class Feint extends Skill {
     private final Tag<String> proc = Tag.getTagFromContents(new HashSet<>(Arrays.asList("physical", "disableShield", "noDamage", ProcPoints.melee, ProcPoints.afflict_tick, "boundCast", ProcPoints.countdown, ProcPoints.recharge_normal, ProcPoints.change_parry_result)));
-    private final Tag<String> tag = Tag.getTagFromContents(new HashSet<>(Arrays.asList(SkillTags.physical, SkillTags.offensive, "disableShield", "noDamage")));
+    private final Tag<String> tag = Tag.getTagFromContents(new HashSet<>(Arrays.asList(SkillTags.physical, SkillTags.offensive, "noDamage")));
+
+    @SubscribeEvent()
+    public static void hurt(LivingAttackEvent e) {
+        Entity seme = e.getSource().getTrueSource();
+        LivingEntity uke = e.getEntityLiving();
+        //reduce mark "cooldown", trigger capricious strike
+        if (seme instanceof LivingEntity) {
+            final LivingEntity caster = (LivingEntity) seme;
+            final ISkillCapability cap = CasterData.getCap(caster);
+            final Skill venge = cap.getEquippedVariation(SkillCategories.feint);
+            if (Marks.getCap(uke).isMarked(venge) && cap.getEquippedSkills().contains(venge)) {
+                Marks.getCap(uke).getActiveMark(venge).ifPresent(a -> a.setArbitraryFloat(a.getArbitraryFloat() - 1));
+                for (Skill s : cap.getEquippedSkills())
+                    if (s.getTags(caster).contains(SkillTags.physical) && cap.getSkillState(s) == STATE.COOLING)
+                        cap.getSkillData(s).ifPresent(SkillData::decrementDuration);
+            }
+        }
+        //spirit bomb damage amplification
+        Marks.getCap(uke).getActiveMark(WarSkills.SPIRIT_BOMB.get()).ifPresent((a) -> {
+            if (a.getDuration() <= 0.1 && e.getSource() instanceof CombatDamageSource && ((CombatDamageSource) e.getSource()).canProcSkillEffects()) {
+                a.flagCondition(true);
+                a.setArbitraryFloat(a.getArbitraryFloat() - 1);
+                a.setDuration(1.1f);
+                CombatData.getCap(uke).consumePosture(2);
+            }
+        });
+    }
+
+    @SubscribeEvent()
+    public static void spiritBomb(LivingHurtEvent e) {
+        LivingEntity uke = e.getEntityLiving();
+        Marks.getCap(uke).getActiveMark(WarSkills.SPIRIT_BOMB.get()).ifPresent((a) -> {
+            if (a.isCondition() && e.getSource() instanceof CombatDamageSource && ((CombatDamageSource) e.getSource()).canProcSkillEffects()) {
+                e.setAmount(e.getAmount() + 2);
+            }
+            a.flagCondition(false);
+        });
+    }
+
+    @SubscribeEvent()
+    public static void aware(EntityAwarenessEvent e) {
+        LivingEntity seme = e.getAttacker();
+        LivingEntity uke = e.getEntityLiving();
+        if (seme != null) {
+            if (Marks.getCap(uke).isMarked(WarSkills.SMIRKING_SHADOW.get()) && Marks.getCap(uke).getActiveMark(WarSkills.SMIRKING_SHADOW.get()).get().getDuration() > 0.1 && CasterData.getCap(seme).getEquippedSkills().contains(WarSkills.SMIRKING_SHADOW.get())) {
+                e.setAwareness(CombatUtils.Awareness.UNAWARE);
+            }
+        }
+    }
 
     @Override
     public Tag<String> getTags(LivingEntity caster) {
@@ -37,7 +103,7 @@ public class Feint extends Skill {
 
     @Override
     public float spiritConsumption(LivingEntity caster) {
-        return 4;
+        return 3;
     }
 
     @Override
@@ -48,17 +114,24 @@ public class Feint extends Skill {
             if (Marks.getCap(target).isMarked(this)) {
                 SkillData a = Marks.getCap(target).getActiveMark(this).get();
                 dur -= a.getArbitraryFloat();
-                a.setArbitraryFloat(a.getArbitraryFloat() + 6);
-                a.setDuration(dur);
             }
-            else mark(caster, target, dur, 6);
             CombatData.getCap(target).setHandBind(Hand.MAIN_HAND, dur);
             CombatData.getCap(target).setHandBind(Hand.OFF_HAND, dur);
             stats.flagCondition(h == Hand.MAIN_HAND);
-            mark(caster, target, 1);
+            mark(caster, target, dur / 20f + 0.1f);
             markUsed(caster);
         }
-        attackCooldown(procPoint, caster, stats);
+        if (procPoint instanceof LivingAttackEvent && this == WarSkills.FOLLOWUP.get() && procPoint.getPhase() == EventPriority.LOWEST && ((LivingAttackEvent) procPoint).getEntityLiving() == target &&
+                CombatData.getCap(target).getHandBind(Hand.MAIN_HAND) > 0 && CombatData.getCap(target).getHandBind(Hand.OFF_HAND) > 0) {
+            CombatUtils.setHandCooldown(caster, Hand.MAIN_HAND, 0.5f, true);
+        }
+    }
+
+    @Override
+    public SkillData onMarked(LivingEntity caster, LivingEntity target, SkillData sd, @Nullable SkillData existing) {
+        if (existing != null)
+            sd.setArbitraryFloat(sd.getArbitraryFloat() + existing.getArbitraryFloat());
+        return sd;
     }
 
     //ignores all attempt to activate it
@@ -68,15 +141,17 @@ public class Feint extends Skill {
             prev.setState(STATE.INACTIVE);
             if (this == WarSkills.FOLLOWUP.get()) {
                 CombatUtils.setHandCooldown(caster, prev.isCondition() ? Hand.MAIN_HAND : Hand.OFF_HAND, 1, true);
-            }
+            } else CombatUtils.setHandCooldown(caster, prev.isCondition() ? Hand.MAIN_HAND : Hand.OFF_HAND, 0.5f, true);
         }
         return boundCast(prev, from, to);
     }
 
     @Override
     public boolean markTick(LivingEntity caster, LivingEntity target, SkillData sd) {
-        if (CombatUtils.getAwareness(caster, target) == CombatUtils.Awareness.UNAWARE)
-            removeMark(target);
+        if (sd.getDuration() > 0.1 || sd.getArbitraryFloat() <= 0) {
+            sd.decrementDuration(0.05f);
+            return true;
+        }
         return false;
     }
 
@@ -86,30 +161,18 @@ public class Feint extends Skill {
         return SkillCategories.feint;
     }
 
-    public static class LastSurprise extends Feint {
-        @Override
-        public Color getColor() {
-            return Color.LIGHT_GRAY;
-        }
-
-        @Override
-        public void onProc(LivingEntity caster, Event procPoint, STATE state, SkillData stats, LivingEntity target) {
-            super.onProc(caster, procPoint, state, stats, target);
-            target.addPotionEffect(new EffectInstance(WarEffects.DISTRACTION.get(), 60));
-        }
-    }
-
-    public static class SmirkingShadow extends Feint {
+    public static class SpiritBomb extends Feint {
         @Override
         public Color getColor() {
             return Color.CYAN;
         }
 
+    }
+
+    public static class SmirkingShadow extends Feint {
         @Override
-        public void onProc(LivingEntity caster, Event procPoint, STATE state, SkillData stats, LivingEntity target) {
-            super.onProc(caster, procPoint, state, stats, target);
-            Vector3d tp = GeneralUtils.getPointInFrontOf(target, caster, -2);
-            caster.setPositionAndRotation(tp.x, tp.y, tp.z, -caster.rotationYaw, -caster.rotationPitch);
+        public Color getColor() {
+            return Color.LIGHT_GRAY;
         }
     }
 
@@ -117,19 +180,6 @@ public class Feint extends Skill {
         @Override
         public Color getColor() {
             return Color.orange;
-        }
-
-        @Override
-        protected void mark(LivingEntity caster, LivingEntity target, float duration) {
-            //no affliction, keep doing it!
-        }
-
-        @Override
-        public boolean onStateChange(LivingEntity caster, SkillData prev, STATE from, STATE to) {
-            if (to == STATE.COOLING) {
-                setCooldown(caster, prev, 6);
-            }
-            return boundCast(prev, from, to);
         }
 
     }
@@ -140,40 +190,56 @@ public class Feint extends Skill {
 
         @Override
         public Color getColor() {
-            return Color.RED;
+            return WarColors.VIOLET;
         }
 
         @Override
-        public void onProc(LivingEntity caster, Event procPoint, STATE state, SkillData stats, LivingEntity target) {
-            if (procPoint instanceof LivingHurtEvent) {
-                ((LivingHurtEvent) procPoint).setAmount(0);
-                markUsed(caster);
+        public SkillData onMarked(LivingEntity caster, LivingEntity target, SkillData sd, @Nullable SkillData existing) {
+            target.addPotionEffect(new EffectInstance(Effects.POISON, 200));
+            for (EffectInstance ei : new ArrayList<>(target.getActivePotionEffects())) {
+                EffectInstance override = new EffectInstance(ei.getPotion(), ei.getDuration(), ei.getAmplifier() + 1, ei.isAmbient(), ei.doesShowParticles(), ei.isShowIcon());
+                EffectUtils.stackPot(target, override, EffectUtils.StackingMethod.NONE);
             }
-            if (procPoint instanceof ParryEvent) {
-                if (((ParryEvent) procPoint).canParry()) {
-                    CombatUtils.setHandCooldown(target, Hand.MAIN_HAND, 0, false);
-                    CombatUtils.setHandCooldown(target, Hand.OFF_HAND, 0, false);
-                } else {
-                    CombatData.getCap(target).consumePosture(caster, ((ParryEvent) procPoint).getAttackDamage(), 0.1f);
-                }
-                procPoint.setResult(Event.Result.DENY);
-                markUsed(caster);
-            }
+            return super.onMarked(caster, target, sd, existing);
         }
     }
 
     public static class UpperHand extends Feint {
+        static final UUID UPPER = UUID.fromString("67fe7ef6-a398-4c62-9fb1-42edaa80e7c1");
+
         @Override
         public Color getColor() {
             return Color.GREEN;
         }
 
+
         @Override
-        public void onProc(LivingEntity caster, Event procPoint, STATE state, SkillData stats, LivingEntity target) {
-            if (procPoint instanceof LivingHurtEvent) {
-                CombatData.getCap(caster).addPosture(((LivingHurtEvent) procPoint).getAmount());
+        public boolean markTick(LivingEntity caster, LivingEntity target, SkillData sd) {
+            if (caster == target) {
+                sd.decrementDuration();
+                return true;
             }
-            super.onProc(caster, procPoint, state, stats, target);
+            return super.markTick(caster, target, sd);
+        }
+
+        @Override
+        public SkillData onMarked(LivingEntity caster, LivingEntity target, SkillData sd, @Nullable SkillData existing) {
+            if (existing != null) {
+                sd.setDuration(200);
+                sd.setArbitraryFloat(sd.getArbitraryFloat() + existing.getArbitraryFloat());
+                if (caster == target) {
+                    SkillUtils.modifyAttribute(caster, Attributes.ARMOR, UPPER, sd.getArbitraryFloat() * 2, AttributeModifier.Operation.ADDITION);
+                } else {
+                    target.addPotionEffect(new EffectInstance(WarEffects.CORROSION.get(), 200));
+                }
+            }
+            return super.onMarked(caster, target, sd, existing);
+        }
+
+        @Override
+        public void onMarkEnd(LivingEntity caster, LivingEntity target, SkillData sd) {
+            caster.getAttribute(Attributes.ARMOR).removeModifier(UPPER);
+            super.onMarkEnd(caster, target, sd);
         }
     }
 }

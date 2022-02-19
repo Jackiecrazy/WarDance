@@ -9,6 +9,7 @@ import jackiecrazy.wardance.skill.*;
 import jackiecrazy.wardance.utils.CombatUtils;
 import jackiecrazy.wardance.utils.EffectUtils;
 import jackiecrazy.wardance.utils.SkillUtils;
+import jackiecrazy.wardance.utils.WarColors;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.ai.attributes.AttributeModifier;
@@ -163,7 +164,7 @@ public class Hex extends Skill {
     public static class Snakebite extends Hex {
         @Override
         public Color getColor() {
-            return Color.GREEN;
+            return WarColors.VIOLET;
         }
 
         @Override

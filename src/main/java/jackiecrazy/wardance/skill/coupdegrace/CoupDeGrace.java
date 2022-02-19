@@ -14,11 +14,16 @@ import jackiecrazy.wardance.utils.TargetingUtils;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.ai.attributes.Attributes;
+import net.minecraft.entity.item.ItemEntity;
+import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.item.ItemStack;
 import net.minecraft.tags.Tag;
 import net.minecraft.util.SoundCategory;
 import net.minecraft.util.SoundEvents;
 import net.minecraftforge.common.ForgeMod;
+import net.minecraftforge.event.entity.living.LivingDropsEvent;
 import net.minecraftforge.event.entity.living.LivingHurtEvent;
+import net.minecraftforge.event.entity.living.LootingLevelEvent;
 import net.minecraftforge.eventbus.api.Event;
 import net.minecraftforge.eventbus.api.EventPriority;
 
@@ -62,8 +67,6 @@ public class CoupDeGrace extends Skill {
     }
 
     protected void deathCheck(LivingEntity caster, LivingEntity target, float amount) {
-        if (amount > target.getHealth())
-            CombatData.getCap(caster).addMight(6);
     }
 
     @Override
@@ -84,6 +87,23 @@ public class CoupDeGrace extends Skill {
             }
         } else if (procPoint instanceof SkillCastEvent && procPoint.getPhase() == EventPriority.HIGHEST && state == STATE.COOLING) {
             stats.decrementDuration();
+        }
+        if (state == STATE.ACTIVE && this == WarSkills.DECAPITATE.get() && procPoint.getPhase() == EventPriority.LOWEST) {
+            if (procPoint instanceof LivingDropsEvent && ((LivingDropsEvent) procPoint).getEntityLiving() == target && ((LivingDropsEvent) procPoint).isRecentlyHit()) {
+                ItemStack drop = GeneralUtils.dropSkull(target);
+                for (ItemEntity i : ((LivingDropsEvent) procPoint).getDrops()) {
+                    if (i.getItem().getItem() == drop.getItem() && (!(target instanceof PlayerEntity) || i.getItem().getTag().getString("SkullOwner").equalsIgnoreCase(drop.getTag().getString("SkullOwner"))))
+                        return;
+                }
+                if (drop == null) return;
+                ItemEntity forceSkull = new ItemEntity(target.world, target.getPosX(), target.getPosY(), target.getPosZ(), drop);
+                forceSkull.setDefaultPickupDelay();
+                ((LivingDropsEvent) procPoint).getDrops().add(forceSkull);
+            }
+
+            if (procPoint instanceof LootingLevelEvent && ((LootingLevelEvent) procPoint).getEntityLiving() == target && GeneralUtils.dropSkull(target) == null) {
+                ((LootingLevelEvent) procPoint).setLootingLevel(((LootingLevelEvent) procPoint).getLootingLevel() + 3);
+            }
         }
     }
 

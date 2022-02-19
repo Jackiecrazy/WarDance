@@ -1,5 +1,6 @@
 package jackiecrazy.wardance.skill.guillotine;
 
+import jackiecrazy.wardance.WarDance;
 import jackiecrazy.wardance.api.CombatDamageSource;
 import jackiecrazy.wardance.capability.resources.CombatData;
 import jackiecrazy.wardance.capability.skill.CasterData;
@@ -21,12 +22,15 @@ import net.minecraft.particles.ParticleTypes;
 import net.minecraft.potion.EffectInstance;
 import net.minecraft.potion.Effects;
 import net.minecraft.tags.Tag;
+import net.minecraft.util.SoundCategory;
+import net.minecraft.util.SoundEvents;
 import net.minecraft.world.server.ServerWorld;
 import net.minecraftforge.event.entity.living.LivingAttackEvent;
 import net.minecraftforge.eventbus.api.Event;
 import net.minecraftforge.eventbus.api.EventPriority;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.awt.*;
 import java.util.Arrays;
 import java.util.HashSet;
@@ -72,18 +76,37 @@ public class Guillotine extends Skill {
 
     @Override
     public boolean onStateChange(LivingEntity caster, SkillData prev, STATE from, STATE to) {
-        if (from == STATE.ACTIVE && to == STATE.HOLSTERED) {
-            CasterData.getCap(caster).removeActiveTag(SkillTags.special);
+        if (from == STATE.HOLSTERED && to == STATE.ACTIVE && cast(caster, -999)) {
+            LivingEntity target = SkillUtils.aimLiving(caster);
+            Marks.getCap(target).getActiveMark(this).ifPresent((a) -> {
+                if (a.getArbitraryFloat() >= 2) {//detonate
+                    target.attackEntityFrom(new CombatDamageSource("player", caster).setDamageTyping(CombatDamageSource.TYPE.PHYSICAL).setProcSkillEffects(true).setProcAttackEffects(true).setDamageTyping(CombatDamageSource.TYPE.TRUE).setDamageBypassesArmor().setDamageIsAbsolute(), target.getHealth() * 0.15f);
+                    caster.world.playSound(null, caster.getPosX(), caster.getPosY(), caster.getPosZ(), SoundEvents.ENTITY_EVOKER_FANGS_ATTACK, SoundCategory.PLAYERS, 0.25f + WarDance.rand.nextFloat() * 0.5f, 0.5f + WarDance.rand.nextFloat() * 0.5f);
+                    prev.flagCondition(true);
+                }
+            });
+            target.attackEntityFrom(new CombatDamageSource("player", caster).setDamageTyping(CombatDamageSource.TYPE.PHYSICAL).setProcSkillEffects(true).setProcAttackEffects(true).setDamageTyping(CombatDamageSource.TYPE.TRUE).setDamageBypassesArmor().setDamageIsAbsolute(), target.getHealth() * 0.03f);
+            caster.world.playSound(null, caster.getPosX(), caster.getPosY(), caster.getPosZ(), SoundEvents.ENTITY_RAVAGER_STEP, SoundCategory.PLAYERS, 0.25f + WarDance.rand.nextFloat() * 0.5f, 0.5f + WarDance.rand.nextFloat() * 0.5f);
         }
-        if (from == STATE.INACTIVE && to == STATE.HOLSTERED && cast(caster, 1, CombatData.getCap(caster).getMight())) {//FIXME update
-            CasterData.getCap(caster).removeActiveTag(SkillTags.special);
-            activate(caster, 1, CombatData.getCap(caster).getMight());
-            prev.setMaxDuration(0);
-            CombatData.getCap(caster).setMight(0);
+        if (to == STATE.COOLING) {
+            float arb = prev.getArbitraryFloat();
+            if (prev.isCondition())
+                setCooldown(caster, prev, 20);
+            else setCooldown(caster, prev, 4);
+            prev.setArbitraryFloat(arb);
+            return true;
         }
-        if (to == STATE.COOLING)
-            setCooldown(caster, prev, 20);
+        if (to == STATE.HOLSTERED)
+            caster.world.playSound(null, caster.getPosX(), caster.getPosY(), caster.getPosZ(), SoundEvents.BLOCK_GRINDSTONE_USE, SoundCategory.PLAYERS, 0.25f + WarDance.rand.nextFloat() * 0.5f, 0.5f + WarDance.rand.nextFloat() * 0.5f);
         return instantCast(prev, from, to);
+    }
+
+    @Override
+    public SkillData onMarked(LivingEntity caster, LivingEntity target, SkillData sd, @Nullable SkillData existing) {
+        if (existing != null) {
+            sd.setArbitraryFloat(sd.getArbitraryFloat() + existing.getArbitraryFloat());
+        }
+        return super.onMarked(caster, target, sd, existing);
     }
 
     @Override

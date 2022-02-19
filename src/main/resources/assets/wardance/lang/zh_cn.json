@@ -171,7 +171,7 @@
   "category.war_cry.desc": "瞬发技能。将威重置为0，根据消耗的威获得一系列增益效果。",
   "wardance:war_cry.sleep.name": "冥想",
   "wardance:war_cry.nosleep.name": "战吼",
-  "wardance:rejuvenate.name": "再生",
+  "wardance:rejuvenate.name": "妙手回春",
   "wardance:rejuvenate.desc": " §l被动：§r +50% 治疗。 \n§l 主动：§r 获得（威-2）秒的恢复和吸收效果。7威以上时，额外获得抗性和吸收II。",
   "wardance:wind_scar.name": "秋风扫叶",
   "wardance:wind_scar.desc": " §被动：§r +1距离。 \n§l 主动：§r 获得+10距离和（3*威）点「风袭」。攻击自然距离外的目标会消耗等同于该距离差的「风袭」。",

@@ -499,4 +499,68 @@ public class SkillEventHandler {
             cap.getSkillData(s).ifPresent(d -> s.onProc(e.getEntityLiving(), e, d.getState(), d, e.getEntityLiving()));
         }
     }
+
+    @SubscribeEvent(priority = EventPriority.HIGHEST)
+    public static void drops(LivingDropsEvent e) {
+        if (!e.getEntityLiving().isServerWorld()) return;
+        if (e.getSource().getTrueSource() instanceof LivingEntity) {
+            LivingEntity attacker = (LivingEntity) e.getSource().getTrueSource();
+            ISkillCapability isc = CasterData.getCap(attacker);
+            for (Skill s : isc.getEquippedSkills()) {
+                isc.getSkillData(s).ifPresent(d -> s.onProc(attacker, e, d.getState(), d, e.getEntityLiving()));
+            }
+        }
+        ISkillCapability isc = CasterData.getCap(e.getEntityLiving());
+        for (Skill s : isc.getEquippedSkills()) {
+            isc.getSkillData(s).ifPresent(d -> s.onProc(e.getEntityLiving(), e, d.getState(), d, null));
+        }
+    }
+
+    @SubscribeEvent(priority = EventPriority.HIGHEST)
+    public static void dropse(LivingDropsEvent e) {
+        if (!e.getEntityLiving().isServerWorld()) return;
+        if (e.getSource().getTrueSource() instanceof LivingEntity) {
+            LivingEntity attacker = (LivingEntity) e.getSource().getTrueSource();
+            ISkillCapability isc = CasterData.getCap(attacker);
+            for (Skill s : isc.getEquippedSkills()) {
+                isc.getSkillData(s).ifPresent(d -> s.onProc(attacker, e, d.getState(), d, e.getEntityLiving()));
+            }
+        }
+        ISkillCapability isc = CasterData.getCap(e.getEntityLiving());
+        for (Skill s : isc.getEquippedSkills()) {
+            isc.getSkillData(s).ifPresent(d -> s.onProc(e.getEntityLiving(), e, d.getState(), d, null));
+        }
+    }
+
+    @SubscribeEvent(priority = EventPriority.HIGHEST)
+    public static void drops(LootingLevelEvent e) {
+        if (!e.getEntityLiving().isServerWorld()) return;
+        if (e.getDamageSource().getTrueSource() instanceof LivingEntity) {
+            LivingEntity attacker = (LivingEntity) e.getDamageSource().getTrueSource();
+            ISkillCapability isc = CasterData.getCap(attacker);
+            for (Skill s : isc.getEquippedSkills()) {
+                isc.getSkillData(s).ifPresent(d -> s.onProc(attacker, e, d.getState(), d, e.getEntityLiving()));
+            }
+        }
+        ISkillCapability isc = CasterData.getCap(e.getEntityLiving());
+        for (Skill s : isc.getEquippedSkills()) {
+            isc.getSkillData(s).ifPresent(d -> s.onProc(e.getEntityLiving(), e, d.getState(), d, null));
+        }
+    }
+
+    @SubscribeEvent(priority = EventPriority.HIGHEST)
+    public static void dropse(LootingLevelEvent e) {
+        if (!e.getEntityLiving().isServerWorld()) return;
+        if (e.getDamageSource().getTrueSource() instanceof LivingEntity) {
+            LivingEntity attacker = (LivingEntity) e.getDamageSource().getTrueSource();
+            ISkillCapability isc = CasterData.getCap(attacker);
+            for (Skill s : isc.getEquippedSkills()) {
+                isc.getSkillData(s).ifPresent(d -> s.onProc(attacker, e, d.getState(), d, e.getEntityLiving()));
+            }
+        }
+        ISkillCapability isc = CasterData.getCap(e.getEntityLiving());
+        for (Skill s : isc.getEquippedSkills()) {
+            isc.getSkillData(s).ifPresent(d -> s.onProc(e.getEntityLiving(), e, d.getState(), d, null));
+        }
+    }
 }
