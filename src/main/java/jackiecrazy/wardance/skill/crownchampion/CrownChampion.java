@@ -54,12 +54,12 @@ elemental might: +1 burn/snowball/poison/drown damage to targets you have attack
             for (PlayerEntity p : uke.world.getPlayers())
                 if (TargetingUtils.isAlly(p, uke) && p.getDistanceSq(uke) < 100 && CasterData.getCap(p).getEquippedSkills().contains(venge)) {
                     ((LivingEntity) seme).addPotionEffect(new EffectInstance(Effects.GLOWING, 100));
-                    SkillData apply = Marks.getCap((LivingEntity) seme).getActiveMark(venge).orElse(new SkillData(venge, 0));
+                    SkillData apply = Marks.getCap((LivingEntity) seme).getActiveMark((LivingEntity) seme, venge).orElse(new SkillData(venge, 0));
                     apply.setArbitraryFloat(apply.getArbitraryFloat() + e.getAmount());
                     Marks.getCap((LivingEntity) seme).mark(apply);
                 }
             if (Marks.getCap(uke).isMarked(venge) && CasterData.getCap((LivingEntity) seme).getEquippedSkills().contains(venge)) {
-                Marks.getCap(uke).getActiveMark(venge).ifPresent(a -> {
+                Marks.getCap(uke).getActiveMark((LivingEntity) seme, venge).ifPresent(a -> {
                     final float amnt = Math.min(e.getAmount(), a.getArbitraryFloat());
                     CombatData.getCap((LivingEntity) seme).addMight(amnt);
                     e.setAmount(e.getAmount() + amnt);

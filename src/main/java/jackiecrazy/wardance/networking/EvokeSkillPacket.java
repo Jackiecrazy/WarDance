@@ -36,7 +36,7 @@ public class EvokeSkillPacket {
         public void accept(EvokeSkillPacket updateClientPacket, Supplier<NetworkEvent.Context> contextSupplier) {
             contextSupplier.get().enqueueWork(() -> {
                 final ISkillCapability cap = CasterData.getCap(contextSupplier.get().getSender());
-                if (cap.getHolsteredSkill() != null)
+                if (cap.getHolsteredSkill() != null && cap.getSkillState(cap.getHolsteredSkill()) == Skill.STATE.HOLSTERED)
                     cap.changeSkillState(cap.getHolsteredSkill(), Skill.STATE.ACTIVE);
             });
             contextSupplier.get().setPacketHandled(true);

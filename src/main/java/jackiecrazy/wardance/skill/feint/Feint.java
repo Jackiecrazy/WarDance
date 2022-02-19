@@ -42,18 +42,18 @@ public class Feint extends Skill {
 
     @Override
     public void onProc(LivingEntity caster, Event procPoint, STATE state, SkillData stats, LivingEntity target) {
-        if (procPoint instanceof ParryEvent && procPoint.getPhase() == EventPriority.HIGHEST && state == STATE.HOLSTERED && CombatUtils.getAwareness(caster, target) == CombatUtils.Awareness.ALERT && !Marks.getCap(target).isMarked(this) && ((ParryEvent) procPoint).getAttacker() == caster && cast(caster, -999)) {
+        if (procPoint instanceof ParryEvent && procPoint.getPhase() == EventPriority.HIGHEST && state == STATE.HOLSTERED && ((ParryEvent) procPoint).getAttacker() == caster && cast(caster, -999)) {
             Hand h = ((ParryEvent) procPoint).getAttackingHand();
-            if (((ParryEvent) procPoint).canParry()) {
-                CombatUtils.setHandCooldown(target, Hand.MAIN_HAND, 0, false);
-                CombatUtils.setHandCooldown(target, Hand.OFF_HAND, 0, false);
-            } else {
-                float above = this == WarSkills.FOLLOWUP.get() ? 0 : 0.1f;
-                CombatData.getCap(target).consumePosture(caster, ((ParryEvent) procPoint).getAttackDamage(), above);
-                CombatData.getCap(target).consumePosture(caster, ((ParryEvent) procPoint).getPostureConsumption(), above);
-                ((ParryEvent) procPoint).setPostureConsumption(0);
-                procPoint.setResult(Event.Result.ALLOW);
+            int dur = 20;
+            if (Marks.getCap(target).isMarked(this)) {
+                SkillData a = Marks.getCap(target).getActiveMark(this).get();
+                dur -= a.getArbitraryFloat();
+                a.setArbitraryFloat(a.getArbitraryFloat() + 6);
+                a.setDuration(dur);
             }
+            else mark(caster, target, dur, 6);
+            CombatData.getCap(target).setHandBind(Hand.MAIN_HAND, dur);
+            CombatData.getCap(target).setHandBind(Hand.OFF_HAND, dur);
             stats.flagCondition(h == Hand.MAIN_HAND);
             mark(caster, target, 1);
             markUsed(caster);
@@ -65,7 +65,7 @@ public class Feint extends Skill {
     @Override
     public boolean onStateChange(LivingEntity caster, SkillData prev, STATE from, STATE to) {
         if (to == STATE.COOLING) {
-            setCooldown(caster, prev, 3);
+            prev.setState(STATE.INACTIVE);
             if (this == WarSkills.FOLLOWUP.get()) {
                 CombatUtils.setHandCooldown(caster, prev.isCondition() ? Hand.MAIN_HAND : Hand.OFF_HAND, 1, true);
             }

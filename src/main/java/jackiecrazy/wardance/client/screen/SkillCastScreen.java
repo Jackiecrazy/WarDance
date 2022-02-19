@@ -106,7 +106,7 @@ public class SkillCastScreen extends Screen {
                 matrixStack.push();
                 mc.textureManager.bindTexture(radial);
                 //holstered is green
-                if (CasterData.getCap(mc.player).getSkillState(elements[a]) == Skill.STATE.HOLSTERED)
+                if (CasterData.getCap(mc.player).getHolsteredSkill() == elements[a])
                     RenderSystem.color4f(0.4f, 0.7f, 0.4f, 1);
                     //active is blue
                 else if (CasterData.getCap(mc.player).getSkillState(elements[a]) == Skill.STATE.ACTIVE)

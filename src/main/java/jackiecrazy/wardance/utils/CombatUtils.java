@@ -268,6 +268,8 @@ public class CombatUtils {
             return false;
         if (defender instanceof PlayerEntity && ((PlayerEntity) defender).getCooldownTracker().hasCooldown(i.getItem()))
             return false;
+        if(CombatData.getCap(defender).getHandBind(h)>0)
+            return false;
         float rand = WarDance.rand.nextFloat();
         boolean recharge = getCooledAttackStrength(defender, h, 0.5f) > 0.9f && CombatData.getCap(defender).getHandBind(h) == 0;
         recharge &= (!(defender instanceof PlayerEntity) || ((PlayerEntity) defender).getCooldownTracker().getCooldown(defender.getHeldItem(h).getItem(), 0) == 0);
