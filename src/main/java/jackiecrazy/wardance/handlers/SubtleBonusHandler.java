@@ -32,8 +32,8 @@ public class SubtleBonusHandler {
     @SubscribeEvent
     public static void tank(LivingEvent.LivingUpdateEvent e) {
         if (e.getEntityLiving().ticksExisted % 60 == 0) {
-            SkillUtils.modifyAttribute(e.getEntityLiving(), Attributes.MOVEMENT_SPEED, u, 0.02 * CombatData.getCap(e.getEntityLiving()).getComboRank(), AttributeModifier.Operation.ADDITION);
-            SkillUtils.modifyAttribute(e.getEntityLiving(), Attributes.ATTACK_SPEED, u, 0.02 * CombatData.getCap(e.getEntityLiving()).getComboRank(), AttributeModifier.Operation.ADDITION);
+            SkillUtils.modifyAttribute(e.getEntityLiving(), Attributes.MOVEMENT_SPEED, u, 0.02 * CombatData.getCap(e.getEntityLiving()).getComboRank(), AttributeModifier.Operation.MULTIPLY_BASE);
+            SkillUtils.modifyAttribute(e.getEntityLiving(), Attributes.ATTACK_SPEED, u, 0.02 * CombatData.getCap(e.getEntityLiving()).getComboRank(), AttributeModifier.Operation.MULTIPLY_TOTAL);
         }
     }
 

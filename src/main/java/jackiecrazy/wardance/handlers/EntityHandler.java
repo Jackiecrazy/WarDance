@@ -166,7 +166,7 @@ Mobs should move into a position that is close to the player, far from allies, a
 
     @SubscribeEvent
     public static void sneak(final LivingEvent.LivingVisibilityEvent e) {
-        if (e.getLookingEntity() instanceof LivingEntity && StealthConfig.stealthSystem) {
+        if (e.getLookingEntity() != e.getEntityLiving() && e.getLookingEntity() instanceof LivingEntity && StealthConfig.stealthSystem) {
             double mult = 1;
             LivingEntity sneaker = e.getEntityLiving(), watcher = (LivingEntity) e.getLookingEntity();
             if (sneaker.getFireTimer() > 0) return;//you're on fire and it's super obvious!

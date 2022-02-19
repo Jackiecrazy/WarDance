@@ -26,6 +26,7 @@ import net.minecraft.util.SoundCategory;
 import net.minecraft.util.SoundEvents;
 import net.minecraft.world.server.ServerWorld;
 import net.minecraftforge.event.entity.living.LivingAttackEvent;
+import net.minecraftforge.event.entity.living.LivingDeathEvent;
 import net.minecraftforge.eventbus.api.Event;
 import net.minecraftforge.eventbus.api.EventPriority;
 
@@ -69,8 +70,16 @@ public class Guillotine extends Skill {
     }
 
     @Override
+    public float mightConsumption(LivingEntity caster) {
+        return 3;
+    }
+
+    @Override
     public boolean equippedTick(LivingEntity caster, SkillData stats) {
-        if (stats.getState() == STATE.ACTIVE && CombatData.getCap(caster).getComboRank() < 5) markUsed(caster);
+        if (stats.getState() == STATE.ACTIVE && CombatData.getCap(caster).getComboRank() < 5) {
+            stats.flagCondition(true);
+            markUsed(caster);
+        }
         return cooldownTick(stats);
     }
 
@@ -80,11 +89,16 @@ public class Guillotine extends Skill {
             LivingEntity target = SkillUtils.aimLiving(caster);
             Marks.getCap(target).getActiveMark(this).ifPresent((a) -> {
                 if (a.getArbitraryFloat() >= 2) {//detonate
-                    target.attackEntityFrom(new CombatDamageSource("player", caster).setDamageTyping(CombatDamageSource.TYPE.PHYSICAL).setProcSkillEffects(true).setProcAttackEffects(true).setDamageTyping(CombatDamageSource.TYPE.TRUE).setDamageBypassesArmor().setDamageIsAbsolute(), target.getHealth() * 0.15f);
-                    caster.world.playSound(null, caster.getPosX(), caster.getPosY(), caster.getPosZ(), SoundEvents.ENTITY_EVOKER_FANGS_ATTACK, SoundCategory.PLAYERS, 0.25f + WarDance.rand.nextFloat() * 0.5f, 0.5f + WarDance.rand.nextFloat() * 0.5f);
+                    final float life = target.getHealth() * 0.15f;
+                    if (this != WarSkills.AMPUTATION.get())
+                        target.attackEntityFrom(new CombatDamageSource("player", caster).setDamageTyping(CombatDamageSource.TYPE.PHYSICAL).setProcSkillEffects(true).setProcAttackEffects(true).setDamageTyping(CombatDamageSource.TYPE.TRUE).setDamageBypassesArmor().setDamageIsAbsolute(), life);
+                    performEffect(caster, target, life, prev);
+                    caster.world.playSound(null, caster.getPosX(), caster.getPosY(), caster.getPosZ(), SoundEvents.ENTITY_DRAGON_FIREBALL_EXPLODE, SoundCategory.PLAYERS, 0.25f + WarDance.rand.nextFloat() * 0.5f, 0.5f + WarDance.rand.nextFloat() * 0.5f);
                     prev.flagCondition(true);
+                    removeMark(target);
                 }
             });
+            mark(caster, target, 10, 1);
             target.attackEntityFrom(new CombatDamageSource("player", caster).setDamageTyping(CombatDamageSource.TYPE.PHYSICAL).setProcSkillEffects(true).setProcAttackEffects(true).setDamageTyping(CombatDamageSource.TYPE.TRUE).setDamageBypassesArmor().setDamageIsAbsolute(), target.getHealth() * 0.03f);
             caster.world.playSound(null, caster.getPosX(), caster.getPosY(), caster.getPosZ(), SoundEvents.ENTITY_RAVAGER_STEP, SoundCategory.PLAYERS, 0.25f + WarDance.rand.nextFloat() * 0.5f, 0.5f + WarDance.rand.nextFloat() * 0.5f);
         }
@@ -92,13 +106,13 @@ public class Guillotine extends Skill {
             float arb = prev.getArbitraryFloat();
             if (prev.isCondition())
                 setCooldown(caster, prev, 20);
-            else setCooldown(caster, prev, 4);
+            else setCooldown(caster, prev, 3);
             prev.setArbitraryFloat(arb);
             return true;
         }
-        if (to == STATE.HOLSTERED)
+        if (from != STATE.COOLING && to == STATE.HOLSTERED)
             caster.world.playSound(null, caster.getPosX(), caster.getPosY(), caster.getPosZ(), SoundEvents.BLOCK_GRINDSTONE_USE, SoundCategory.PLAYERS, 0.25f + WarDance.rand.nextFloat() * 0.5f, 0.5f + WarDance.rand.nextFloat() * 0.5f);
-        return instantCast(prev, from, to);
+        return boundCast(prev, from, to);
     }
 
     @Override
@@ -106,24 +120,20 @@ public class Guillotine extends Skill {
         if (existing != null) {
             sd.setArbitraryFloat(sd.getArbitraryFloat() + existing.getArbitraryFloat());
         }
-        return super.onMarked(caster, target, sd, existing);
+        return sd;
     }
 
     @Override
-    public void onProc(LivingEntity caster, Event procPoint, STATE state, SkillData stats, LivingEntity target) {
-        if (procPoint instanceof LivingAttackEvent && state == STATE.ACTIVE && procPoint.getPhase() == EventPriority.HIGHEST && ((LivingAttackEvent) procPoint).getEntityLiving() == target && CombatData.getCap(caster).getMight() > 9.8) {
-            performEffect(caster, target, execute((LivingAttackEvent) procPoint), stats);
-            CombatData.getCap(caster).setMight(stats.getArbitraryFloat());
-            markUsed(caster);
-        }
+    public boolean markTick(LivingEntity caster, LivingEntity target, SkillData sd) {
+        sd.decrementDuration(0.05f);
+        return false;
     }
 
-    protected float execute(LivingAttackEvent e) {
-        final float life = e.getEntityLiving().getHealth() / 5;
-        if (this != WarSkills.AMPUTATION.get())
-            e.getEntityLiving().setHealth(e.getEntityLiving().getHealth() - life);
-        e.getSource().setDamageBypassesArmor().setDamageIsAbsolute();
-        return life + e.getAmount();
+    @Override
+    public void onProc(LivingEntity caster, Event procPoint, STATE state, SkillData stats, @Nullable LivingEntity target) {
+        if (procPoint instanceof LivingDeathEvent && procPoint.getPhase() == EventPriority.HIGHEST && ((LivingDeathEvent) procPoint).getEntityLiving() == target) {
+            Marks.getCap(target).getActiveMark(this).ifPresent((a) -> CombatData.getCap(caster).addMight(a.getArbitraryFloat() * mightConsumption(caster) * 1.5f));
+        }
     }
 
     public static class Brutalize extends Guillotine {

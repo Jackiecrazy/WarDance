@@ -81,21 +81,26 @@ public class SkillCapability implements ISkillCapability {
     @Nullable
     public Skill getHolsteredSkill() {
         if (index < 0) return null;
-        return equippedSkill.get(index % equippedSkill.size());
+        Skill ret= equippedSkill.get(index % equippedSkill.size());
+        if(getSkillState(ret)!= Skill.STATE.HOLSTERED){
+            ret=null;
+        }
+        return ret;
     }
 
     @Override
     public void holsterSkill(int index) {
-        for (Skill s : skillList)
+        for (Skill s : equippedSkill)
             if (s != null && getSkillState(s) == Skill.STATE.HOLSTERED)
                 changeSkillState(s, Skill.STATE.INACTIVE);
         this.index = index;
-        Skill to = getHolsteredSkill();
+        Skill to = equippedSkill.get(index % equippedSkill.size());
         if (to != null) {
             changeSkillState(to, Skill.STATE.HOLSTERED);
             nonNullGet(to).markDirty();
             fastSync = true;
         }
+        sync=true;
     }
 
     @Override

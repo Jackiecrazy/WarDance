@@ -51,11 +51,12 @@ public class Feint extends Skill {
             final LivingEntity caster = (LivingEntity) seme;
             final ISkillCapability cap = CasterData.getCap(caster);
             final Skill venge = cap.getEquippedVariation(SkillCategories.feint);
-            if (Marks.getCap(uke).isMarked(venge) && cap.getEquippedSkills().contains(venge)) {
+            if (venge != null && Marks.getCap(uke).isMarked(SkillCategories.feint)) {
                 Marks.getCap(uke).getActiveMark(venge).ifPresent(a -> a.setArbitraryFloat(a.getArbitraryFloat() - 1));
-                for (Skill s : cap.getEquippedSkills())
-                    if (s.getTags(caster).contains(SkillTags.physical) && cap.getSkillState(s) == STATE.COOLING)
-                        cap.getSkillData(s).ifPresent(SkillData::decrementDuration);
+                if (cap.getEquippedSkills().contains(WarSkills.CAPRICIOUS_STRIKE.get()))
+                    for (Skill s : cap.getEquippedSkills())
+                        if (s != null && s.getTags(caster).contains(SkillTags.physical) && cap.getSkillState(s) == STATE.COOLING)
+                            cap.getSkillData(s).ifPresent(SkillData::decrementDuration);
             }
         }
         //spirit bomb damage amplification
@@ -150,9 +151,8 @@ public class Feint extends Skill {
     public boolean markTick(LivingEntity caster, LivingEntity target, SkillData sd) {
         if (sd.getDuration() > 0.1 || sd.getArbitraryFloat() <= 0) {
             sd.decrementDuration(0.05f);
-            return true;
         }
-        return false;
+        return super.markTick(caster, target, sd);
     }
 
     @Nonnull

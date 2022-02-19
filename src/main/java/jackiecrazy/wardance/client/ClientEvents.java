@@ -200,22 +200,12 @@ public class ClientEvents {
         float height = e.getHeight();
         PlayerEntity p = Minecraft.getInstance().player;
 //        if (p != null) {//TODO player senses config, fade out?
-//            double chunk = Minecraft.getInstance().gameSettings.renderDistanceChunks * 16;
-//            double visibilityMult = e.getVisibilityMultiplier(p);
-//            double visible = chunk * visibilityMult;
-//            if (e.getDistanceSq(p) > visible * visible) {
-//                GlStateManager.enableBlend();
-//                GlStateManager.blendFunc(GlStateManager.SourceFactor.SRC_ALPHA.param, GlStateManager.DestFactor.ONE_MINUS_SRC_ALPHA.param);
-//
-//                RenderSystem.enableCull();
-//                //GlStateManager.(GlStateManager.CullFace.BACK);
-//
-//
-//                //Color c = RenderSystem.clearCurrentColor();
-//                //c.alpha *= (float) (min + (1d - min) * visibility);
-//                GL11.glColor4f(1, 1, 1, (float) visibilityMult);
-//            }
-//            return;
+////            double chunk = Minecraft.getInstance().gameSettings.renderDistanceChunks * 16;
+////            double visibilityMult = e.getVisibilityMultiplier(p);
+////            double visible = chunk * visibilityMult;
+////            if (e.getDistanceSq(p) > visible * visible) {
+////                event.setCanceled(true);
+////            }
 //        }
         if (e.isAlive()) {
             if (CombatData.getCap(event.getEntity()).getStaggerTime() > 0) {

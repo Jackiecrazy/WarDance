@@ -1,6 +1,7 @@
 package jackiecrazy.wardance.capability.status;
 
 import jackiecrazy.wardance.skill.Skill;
+import jackiecrazy.wardance.skill.SkillCategory;
 import jackiecrazy.wardance.skill.SkillData;
 import net.minecraft.nbt.CompoundNBT;
 
@@ -40,6 +41,11 @@ public class DummyMarkCap implements IMark {
 
     @Override
     public boolean isMarked(Skill skill) {
+        return false;
+    }
+
+    @Override
+    public boolean isMarked(SkillCategory skill) {
         return false;
     }
 

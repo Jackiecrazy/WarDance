@@ -7,6 +7,7 @@ import jackiecrazy.wardance.handlers.EntityHandler;
 import jackiecrazy.wardance.networking.CombatChannel;
 import jackiecrazy.wardance.networking.UpdateAfflictionPacket;
 import jackiecrazy.wardance.skill.Skill;
+import jackiecrazy.wardance.skill.SkillCategory;
 import jackiecrazy.wardance.skill.SkillData;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.player.ServerPlayerEntity;
@@ -35,8 +36,8 @@ public class Mark implements IMark {
     public void mark(SkillData d) {
         if (dude.get() == null) return;
         if (statuus.containsKey(d.getSkill())) {
-            if(GeneralConfig.debug)
-            WarDance.LOGGER.warn("status " + d + " is already active, merging according to rules.");
+            if (GeneralConfig.debug)
+                WarDance.LOGGER.warn("status " + d + " is already active, merging according to rules.");
         }
         SkillData sd = d.getSkill().onMarked(d.getCaster(dude.get().world), dude.get(), d, statuus.get(d.getSkill()));
         statuus.put(d.getSkill(), sd);
@@ -68,11 +69,13 @@ public class Mark implements IMark {
 
     @Override
     public boolean isMarked(Skill skill) {
-        if (statuus.containsKey(skill)) return true;
-        if (skill.getParentCategory() == null)
-            for (Skill s : statuus.keySet()) {
-                if (s.isFamily(skill)) return true;
-            }
+        return statuus.containsKey(skill);
+    }
+
+    @Override
+    public boolean isMarked(SkillCategory skill) {
+        for (Skill s : statuus.keySet())
+            if (s != null && s.getParentCategory() == skill) return true;
         return false;
     }
 
@@ -117,7 +120,7 @@ public class Mark implements IMark {
         }
         if (sync && ticker instanceof ServerPlayerEntity) {
             CombatChannel.INSTANCE.send(PacketDistributor.PLAYER.with(() -> (ServerPlayerEntity) ticker), new UpdateAfflictionPacket(ticker.getEntityId(), this.write()));
-            sync=false;
+            sync = false;
         }
         if (sync && EntityHandler.mustUpdate.containsValue(ticker)) {
             CombatChannel.INSTANCE.send(PacketDistributor.TRACKING_ENTITY_AND_SELF.with(() -> ticker), new UpdateAfflictionPacket(ticker.getEntityId(), this.write()));

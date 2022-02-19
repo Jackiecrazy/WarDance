@@ -827,6 +827,10 @@ public class CombatCapability implements ICombatCapability {
     @Override
     public void read(CompoundNBT c) {
         int temp = roll;
+        setTrueMaxSpirit(c.getFloat("maxspi"));
+        setMaxMight(c.getFloat("maxmight"));
+        setBurnout(c.getFloat("burnout"));
+        setWounding(c.getFloat("wounding"));
         setTrueMaxPosture(c.getFloat("maxpos"));
         setPosture(c.getFloat("posture"));
         setFatigue(c.getFloat("fatigue"));
@@ -838,10 +842,6 @@ public class CombatCapability implements ICombatCapability {
         setResolve(c.getFloat("resolve"));
         setRank(c.getFloat("combo"));
         setSpirit(c.getFloat("spirit"));
-        setTrueMaxSpirit(c.getFloat("maxspi"));
-        setMaxMight(c.getFloat("maxmight"));
-        setBurnout(c.getFloat("burnout"));
-        setWounding(c.getFloat("wounding"));
         setMightGrace(c.getInt("qicd"));
         setPostureGrace(c.getInt("posturecd"));
         setSpiritGrace(c.getInt("spiritcd"));
