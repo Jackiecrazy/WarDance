@@ -10,9 +10,6 @@ import jackiecrazy.wardance.utils.TargetingUtils;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.ai.attributes.AttributeModifier;
 import net.minecraft.entity.ai.attributes.Attributes;
-import net.minecraft.particles.ParticleTypes;
-import net.minecraft.potion.EffectInstance;
-import net.minecraft.potion.Effects;
 import net.minecraft.tags.Tag;
 import net.minecraftforge.event.entity.living.LivingAttackEvent;
 import net.minecraftforge.event.entity.living.LivingDamageEvent;
@@ -111,13 +108,13 @@ pound of flesh: active skill. Consumes all your spirit, and until your spirit re
 
         @Override
         public void onProc(LivingEntity caster, Event procPoint, STATE state, SkillData stats, LivingEntity target) {
-            if (procPoint instanceof LivingDamageEvent&&procPoint.getPhase()== EventPriority.HIGHEST && ((LivingDamageEvent) procPoint).getEntityLiving() == caster) {
+            if (procPoint instanceof LivingDamageEvent && procPoint.getPhase() == EventPriority.HIGHEST && ((LivingDamageEvent) procPoint).getEntityLiving() == caster) {
                 float stat = stats.getArbitraryFloat();
                 stat += ((LivingDamageEvent) procPoint).getAmount();
                 stat = Math.min(stat, GeneralUtils.getMaxHealthBeforeWounding(caster) / 5);
                 stats.setArbitraryFloat(stat);
             }
-            if (procPoint instanceof LivingAttackEvent&&procPoint.getPhase()== EventPriority.HIGHEST && ((LivingAttackEvent) procPoint).getEntityLiving() == target) {
+            if (procPoint instanceof LivingAttackEvent && procPoint.getPhase() == EventPriority.HIGHEST && ((LivingAttackEvent) procPoint).getEntityLiving() == target) {
                 float stat = stats.getArbitraryFloat();
                 if (stat > 1) {
                     //EXPLOOOOSION
@@ -128,27 +125,6 @@ pound of flesh: active skill. Consumes all your spirit, and until your spirit re
                         }
                     }
                     stats.setArbitraryFloat(0);
-                }
-            }
-        }
-    }
-
-    public static class Panic extends MementoMori {
-        @Override
-        public Color getColor() {
-            return Color.LIGHT_GRAY;
-        }
-
-        @Override
-        public void onProc(LivingEntity caster, Event procPoint, STATE state, SkillData stats, LivingEntity target) {
-            final float ohno = caster.getHealth() / GeneralUtils.getMaxHealthBeforeWounding(caster);
-            if (procPoint instanceof LivingDamageEvent&&procPoint.getPhase()== EventPriority.HIGHEST && ohno < 1) {
-                float visibility = ohno * 10;
-                SkillUtils.createCloud(caster.world, caster, caster.getPosX(), caster.getPosY(), caster.getPosZ(), visibility, ParticleTypes.LARGE_SMOKE);
-                for (LivingEntity e : caster.world.getLoadedEntitiesWithinAABB(LivingEntity.class, caster.getBoundingBox().grow(40), (a) -> TargetingUtils.isHostile(a, caster))) {
-                    if (e.getDistanceSq(caster) > visibility * visibility) {
-                        e.addPotionEffect(new EffectInstance(Effects.BLINDNESS, 100));
-                    }
                 }
             }
         }

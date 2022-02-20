@@ -430,7 +430,7 @@ public class CombatConfig {
     public static int shieldCount;
     public static int staggerDuration;
     public static int staggerDurationMin;
-    public static int staggerHits;
+    public static int staggerHits, adrenaline;
     public static float staggerDamage;
     public static float unStaggerDamage;
     public static int sneakParry;
@@ -462,6 +462,7 @@ public class CombatConfig {
     private final ForgeConfigSpec.BooleanValue _dodge;
     private final ForgeConfigSpec.IntValue _sneakParry;
     private final ForgeConfigSpec.IntValue _foodCool;
+    private final ForgeConfigSpec.IntValue _adrenaline;
     private final ForgeConfigSpec.DoubleValue _mobParryChanceWeapon;
     private final ForgeConfigSpec.DoubleValue _mobParryChanceShield;
     private final ForgeConfigSpec.DoubleValue _mobDeflectChance;
@@ -521,6 +522,7 @@ public class CombatConfig {
         b.pop();
         b.push("misc");
         _foodCool = b.translation("wardance.config.foodCool").comment("number of ticks to disable a certain food item for after taking physical damage while eating it. Set to 0 to just interrupt eating, and -1 to disable this feature.").defineInRange("food disable time", 20, -1, Integer.MAX_VALUE);
+        _adrenaline = b.translation("wardance.config.adrenaline").comment("number of ticks to halve adrenaline bonus after getting hit. Set to -1 to disable adrenaline altogether.").defineInRange("food disable time", 100, -1, Integer.MAX_VALUE);
         b.pop();
     }
 
@@ -548,6 +550,7 @@ public class CombatConfig {
         sneakParry = CONFIG._sneakParry.get();
         recovery = CONFIG._recovery.get();
         foodCool = CONFIG._foodCool.get();
+        adrenaline = CONFIG._adrenaline.get();
         CombatUtils.updateMobParrying(CONFIG._customParry.get());
         CombatUtils.updateProjectiles(CONFIG._customProjectile.get());
     }

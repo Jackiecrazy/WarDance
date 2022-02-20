@@ -145,6 +145,11 @@ public class DummyCombatCap implements ICombatCapability {
     }
 
     @Override
+    public boolean halvedAdrenaline() {
+        return false;
+    }
+
+    @Override
     public float addRank(float amount) {
         return 0;
     }

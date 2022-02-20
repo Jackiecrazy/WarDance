@@ -108,6 +108,7 @@ public interface ICombatCapability {
     }
 
     void setAdrenalineCooldown(int amount);
+    boolean halvedAdrenaline();
 
     float addRank(float amount);
 

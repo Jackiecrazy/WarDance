@@ -208,6 +208,27 @@ public class GeneralUtils {
         return entity;
     }
 
+    /**
+     * Checks the +x, -x, +y, -y, +z, -z, in that order
+     *
+     * @param elb
+     * @return
+     */
+    public static Entity collidingEntity(Entity elb) {
+        AxisAlignedBB aabb = elb.getBoundingBox();
+        Vector3d motion=elb.getMotion().normalize().scale(0.5);
+        List<Entity> entities = elb.world.getEntitiesInAABBexcluding(elb, aabb.expand(motion.x, motion.y, motion.z), EntityPredicates.IS_ALIVE);
+        double dist = 0;
+        Entity pick = null;
+        for (Entity e : entities) {
+            if (e.getDistanceSq(elb) < dist || dist == 0) {
+                pick = e;
+                dist = e.getDistanceSq(elb);
+            }
+        }
+        return pick;
+    }
+
     public static List<Entity> raytraceEntities(World world, LivingEntity attacker, double range) {
         Vector3d start = attacker.getEyePosition(0.5f);
         Vector3d look = attacker.getLookVec().scale(range + 2);

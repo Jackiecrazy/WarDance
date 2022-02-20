@@ -326,6 +326,11 @@ public class CombatCapability implements ICombatCapability {
     }
 
     @Override
+    public boolean halvedAdrenaline(){
+        return adrenaline!=0;
+    }
+
+    @Override
     public float addRank(float amount) {
         float overflow = Math.max(0, rank + amount - 10);
         setRank(rank + amount);

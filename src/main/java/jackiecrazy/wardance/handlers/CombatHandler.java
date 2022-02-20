@@ -516,6 +516,8 @@ public class CombatHandler {
         }
         ICombatCapability cap = CombatData.getCap(uke);
         cap.setSpiritGrace(ResourceConfig.spiritCD);
+        cap.setAdrenalineCooldown(CombatConfig.adrenaline);
+        SubtleBonusHandler.update=true;
         CombatUtils.Awareness awareness = CombatUtils.getAwareness(kek, uke);
         if (ds.getTrueSource() instanceof LivingEntity) {
             LivingEntity seme = ((LivingEntity) ds.getTrueSource());
