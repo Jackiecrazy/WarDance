@@ -10,7 +10,7 @@ public class SkillCategories {
             war_cry = new SkillCategory("war_cry"),
             feint = new SkillCategory("feint"),
             prowess = new SkillCategory("prowess"),
-            guillotine = new SkillCategory("guillotine"),
+            judgment = new SkillCategory("judgment"),
             memento_mori = new SkillCategory("memento_mori"),
             descend = new SkillCategory("descend"),
             hex = new SkillCategory("hex"),
