@@ -13,7 +13,7 @@ import net.minecraftforge.eventbus.api.EventPriority;
 import java.awt.*;
 import java.util.List;
 
-public class CrowdPleaser extends Guillotine {
+public class CrowdPleaser extends Judgment {
     @Override
     public Color getColor() {
         return Color.MAGENTA;

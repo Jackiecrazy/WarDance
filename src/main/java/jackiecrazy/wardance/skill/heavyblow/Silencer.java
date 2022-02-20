@@ -46,9 +46,10 @@ public class Silencer extends HeavyBlow {
 
     @Override
     public void onProc(LivingEntity caster, Event procPoint, STATE state, SkillData stats, LivingEntity target) {
-        if (procPoint instanceof CriticalHitEvent && ((CriticalHitEvent) procPoint).getTarget() == target && state == STATE.INACTIVE&& cast(caster, -999)) {
+        if (procPoint instanceof CriticalHitEvent && ((CriticalHitEvent) procPoint).getTarget() == target && state == STATE.INACTIVE) {
             if (caster.world.isRemote() || caster == target) return;
-            if (CombatUtils.getAwareness(caster, target) != CombatUtils.Awareness.UNAWARE) return;
+            if (CombatUtils.getAwareness(caster, target) != CombatUtils.Awareness.UNAWARE || !cast(caster, -999))
+                return;
             CombatData.getCap(target).setHandBind(Hand.MAIN_HAND, 60);
             CombatData.getCap(target).setHandBind(Hand.OFF_HAND, 60);
             procPoint.setResult(Event.Result.ALLOW);

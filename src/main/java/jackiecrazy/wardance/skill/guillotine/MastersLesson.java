@@ -15,7 +15,7 @@ import java.awt.*;
 import java.util.Arrays;
 import java.util.HashSet;
 
-public class MastersLesson extends Guillotine {
+public class MastersLesson extends Judgment {
     private final Tag<String> tag = Tag.getTagFromContents(new HashSet<>(Arrays.asList("physical", ProcPoints.on_hurt, ProcPoints.normal_attack, ProcPoints.on_stagger, ProcPoints.on_cast, "melee", "execution")));
 
     @Override

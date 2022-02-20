@@ -4,27 +4,23 @@ import jackiecrazy.wardance.WarDance;
 import jackiecrazy.wardance.api.CombatDamageSource;
 import jackiecrazy.wardance.capability.resources.CombatData;
 import jackiecrazy.wardance.capability.status.Marks;
-import jackiecrazy.wardance.event.StaggerEvent;
-import jackiecrazy.wardance.potion.WarEffects;
 import jackiecrazy.wardance.skill.*;
-import jackiecrazy.wardance.utils.EffectUtils;
+import jackiecrazy.wardance.utils.CombatUtils;
 import jackiecrazy.wardance.utils.SkillUtils;
-import jackiecrazy.wardance.utils.TargetingUtils;
 import net.minecraft.entity.LivingEntity;
-import net.minecraft.potion.EffectInstance;
 import net.minecraft.tags.Tag;
+import net.minecraft.util.Hand;
 import net.minecraft.util.SoundCategory;
 import net.minecraft.util.SoundEvents;
+import net.minecraftforge.event.entity.living.LivingAttackEvent;
 import net.minecraftforge.event.entity.living.LivingDeathEvent;
 import net.minecraftforge.eventbus.api.Event;
 import net.minecraftforge.eventbus.api.EventPriority;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import java.awt.*;
-import java.util.List;
 
-public class Guillotine extends Skill {
+public class Judgment extends Skill {
     /*
     Redirects all might gain to another bar temporarily. Gaining 10 might in this manner will cause your next attack to deal 20% of the target's current health in damage. 10 second cooldown.
     */
@@ -66,16 +62,22 @@ public class Guillotine extends Skill {
 
     @Override
     public boolean equippedTick(LivingEntity caster, SkillData stats) {
-        if (stats.getState() == STATE.ACTIVE && CombatData.getCap(caster).getComboRank() < 5) {
-            markUsed(caster);
+        if (stats.getState() == STATE.ACTIVE && stats.getDuration() > 0) {
+            boolean stat = stats.getDuration() > 0;
+            activeTick(stats);
+            if (stats.getDuration() < 0 && stat) {
+                onStateChange(caster, stats, STATE.INACTIVE, STATE.HOLSTERED);
+                stats.setDuration(0);
+            }
+            return true;
         }
         return cooldownTick(stats);
     }
 
     @Override
     public boolean onStateChange(LivingEntity caster, SkillData prev, STATE from, STATE to) {
-        if (from == STATE.HOLSTERED && to == STATE.ACTIVE && cast(caster, -999)) {
-            LivingEntity target = SkillUtils.aimLiving(caster);
+        LivingEntity target = SkillUtils.aimLiving(caster);
+        if (from == STATE.HOLSTERED && to == STATE.ACTIVE && target != null && cast(caster, -999)) {
             int stack = 1;
             float arb = Marks.getCap(target).getActiveMark(this).orElse(SkillData.DUMMY).getArbitraryFloat();
             if (arb >= 2) {//detonate
@@ -83,13 +85,17 @@ public class Guillotine extends Skill {
                 removeMark(target);
             } else prev.flagCondition(true);
             stack += arb;
+            boolean offhand = stack == 2;
+            CombatUtils.attack(caster, target, offhand);
+            caster.swing(offhand ? Hand.OFF_HAND : Hand.MAIN_HAND, true);
+            target.hurtResistantTime = 0;
             performEffect(caster, target, stack);
             mark(caster, target, 6, 1);
             caster.world.playSound(null, caster.getPosX(), caster.getPosY(), caster.getPosZ(), SoundEvents.ENTITY_RAVAGER_STEP, SoundCategory.PLAYERS, 0.25f + WarDance.rand.nextFloat() * 0.5f, 0.5f + WarDance.rand.nextFloat() * 0.5f);
         }
         if (to == STATE.COOLING) {
             if (prev.isCondition())
-                setCooldown(caster, prev, 2);
+                prev.setDuration(2);
             else setCooldown(caster, prev, 20);
             return true;
         }
@@ -110,13 +116,16 @@ public class Guillotine extends Skill {
     @Override
     public boolean markTick(LivingEntity caster, LivingEntity target, SkillData sd) {
         sd.decrementDuration(0.05f);
-        return false;
+        return super.markTick(caster, target, sd);
     }
 
     @Override
     public void onProc(LivingEntity caster, Event procPoint, STATE state, SkillData stats, @Nullable LivingEntity target) {
         if (procPoint instanceof LivingDeathEvent && procPoint.getPhase() == EventPriority.HIGHEST && ((LivingDeathEvent) procPoint).getEntityLiving() == target) {
             Marks.getCap(target).getActiveMark(this).ifPresent((a) -> CombatData.getCap(caster).addMight(a.getArbitraryFloat() * mightConsumption(caster) * 1.4f));
+        }
+        if (procPoint instanceof LivingAttackEvent && ((LivingAttackEvent) procPoint).getEntityLiving() == target && state == STATE.ACTIVE) {
+            ((LivingAttackEvent) procPoint).getSource().setDamageBypassesArmor().setDamageIsAbsolute();
         }
     }
 

@@ -13,7 +13,7 @@ import net.minecraft.potion.Effects;
 import java.awt.*;
 import java.util.List;
 
-public class FeverDream extends Guillotine {
+public class FeverDream extends Judgment {
     @Override
     public Color getColor() {
         return Color.LIGHT_GRAY;

@@ -235,6 +235,22 @@ public class CombatUtils {
         }
     }
 
+    public static void attack(LivingEntity from, Entity to, boolean offhand){
+        if (offhand) {
+            swapHeldItems(from);
+            CombatData.getCap(from).setOffhandAttack(true);
+        }
+        if (from.ticksSinceLastSwing > 0) {
+            int temp = from.ticksSinceLastSwing;
+            if(from instanceof PlayerEntity)((PlayerEntity) from).attackTargetEntityWithCurrentItem(to);
+            else from.attackEntityAsMob(to);
+            from.ticksSinceLastSwing = temp;
+        } if (offhand) {
+            CombatUtils.swapHeldItems(from);
+            CombatData.getCap(from).setOffhandAttack(false);
+        }
+    }
+
     public static float getCooledAttackStrength(LivingEntity e, Hand h, float adjustTicks) {
         if (!(e instanceof PlayerEntity) && h == Hand.MAIN_HAND) return 1;
         //if (h == Hand.OFF_HAND && adjustTicks == 1) System.out.println(getCooldownPeriod(e, h));

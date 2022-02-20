@@ -15,7 +15,7 @@ import javax.annotation.Nullable;
 import java.awt.*;
 import java.util.List;
 
-public class Brutalize extends Guillotine {
+public class Brutalize extends Judgment {
     @Override
     public Color getColor() {
         return Color.RED;

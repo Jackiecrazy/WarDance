@@ -83,7 +83,7 @@ public class WarSkills {
     public static final RegistryObject<Skill> SCORPION_STING = SKILLS.register("scorpion_sting", Feint.ScorpionSting::new);
     public static final RegistryObject<Skill> UPPER_HAND = SKILLS.register("upper_hand", Feint.UpperHand::new);
     public static final RegistryObject<Skill> CAPRICIOUS_STRIKE = SKILLS.register("capricious_strike", Feint.CapriciousStrike::new);
-    public static final RegistryObject<Skill> AMPUTATION = SKILLS.register("amputation", Guillotine::new);
+    public static final RegistryObject<Skill> AMPUTATION = SKILLS.register("amputation", Judgment::new);
     public static final RegistryObject<Skill> CROWD_PLEASER = SKILLS.register("crowd_pleaser", CrowdPleaser::new);
     public static final RegistryObject<Skill> LICHTENBERG_SCAR = SKILLS.register("lichtenberg_scar", LichtenbergScar::new);
     public static final RegistryObject<Skill> FEVER_DREAM = SKILLS.register("fever_dream", FeverDream::new);
