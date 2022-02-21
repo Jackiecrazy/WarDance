@@ -27,8 +27,8 @@ public class CrowdPleaser extends Judgment {
     }
 
     @Override
-    protected void performEffect(LivingEntity caster, LivingEntity target, int stack) {
-        super.performEffect(caster, target, stack);
+    protected void performEffect(LivingEntity caster, LivingEntity target, int stack, SkillData sd) {
+        super.performEffect(caster, target, stack, sd);
         int buff = 0;
         if (CasterData.getCap(caster).getSkillData(this).isPresent())
             buff = (int) CasterData.getCap(caster).getSkillData(this).get().getArbitraryFloat();

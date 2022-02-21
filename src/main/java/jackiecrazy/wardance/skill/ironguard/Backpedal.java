@@ -13,8 +13,8 @@ public class Backpedal extends IronGuard {
     }
 
     @Override
-    protected void parry(LivingEntity caster, ParryEvent procPoint, SkillData stats, LivingEntity target) {
-        if (!caster.isOnGround()&&stats.getState()!=STATE.COOLING) {
+    protected void parry(LivingEntity caster, ParryEvent procPoint, SkillData stats, LivingEntity target, STATE state) {
+        if (!caster.isOnGround()&&state!=STATE.COOLING) {
             float str = -procPoint.getPostureConsumption() / 8;
             caster.setMotion(caster.getMotion().add(caster.getPositionVec().subtractReverse(target.getPositionVec()).scale(str)));
             caster.velocityChanged = true;

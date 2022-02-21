@@ -106,8 +106,7 @@ public class Feint extends Skill {
 
     @Override
     public void onProc(LivingEntity caster, Event procPoint, STATE state, SkillData stats, LivingEntity target) {
-        if (procPoint instanceof ParryEvent && procPoint.getPhase() == EventPriority.HIGHEST && state == STATE.HOLSTERED && ((ParryEvent) procPoint).getAttacker() == caster && cast(caster, -999)) {
-            Hand h = ((ParryEvent) procPoint).getAttackingHand();
+        if (procPoint instanceof LivingAttackEvent && procPoint.getPhase() == EventPriority.HIGHEST && state == STATE.HOLSTERED && ((ParryEvent) procPoint).getAttacker() == caster && cast(caster, -999)) {
             int dur = 20;
             if (Marks.getCap(target).isMarked(this)) {
                 SkillData a = Marks.getCap(target).getActiveMark(this).get();
@@ -115,7 +114,7 @@ public class Feint extends Skill {
             }
             CombatData.getCap(target).setHandBind(Hand.MAIN_HAND, dur);
             CombatData.getCap(target).setHandBind(Hand.OFF_HAND, dur);
-            stats.flagCondition(h == Hand.MAIN_HAND);
+            CombatUtils.setHandCooldown(caster, Hand.MAIN_HAND, this == WarSkills.FOLLOWUP.get() ? 1 : 0.5f, true);
             mark(caster, target, dur / 20f + 0.1f);
             procPoint.setCanceled(true);
             markUsed(caster);
@@ -138,9 +137,6 @@ public class Feint extends Skill {
     public boolean onStateChange(LivingEntity caster, SkillData prev, STATE from, STATE to) {
         if (to == STATE.COOLING) {
             prev.setState(STATE.INACTIVE);
-            if (this == WarSkills.FOLLOWUP.get()) {
-                CombatUtils.setHandCooldown(caster, prev.isCondition() ? Hand.MAIN_HAND : Hand.OFF_HAND, 1, true);
-            } else CombatUtils.setHandCooldown(caster, prev.isCondition() ? Hand.MAIN_HAND : Hand.OFF_HAND, 0.5f, true);
         }
         return boundCast(prev, from, to);
     }

@@ -20,7 +20,7 @@ public class ReturnToSender extends IronGuard {
     }
 
     @Override
-    protected void parry(LivingEntity caster, ParryEvent procPoint, SkillData stats, LivingEntity target) {
+    protected void parry(LivingEntity caster, ParryEvent procPoint, SkillData stats, LivingEntity target, STATE state) {
 
     }
 }

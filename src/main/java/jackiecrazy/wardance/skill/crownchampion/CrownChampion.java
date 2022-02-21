@@ -122,7 +122,7 @@ elemental might: +1 burn/snowball/poison/drown damage to targets you have attack
     @Override
     public void onProc(LivingEntity caster, Event procPoint, STATE state, SkillData stats, LivingEntity target) {
         int might = (int) CombatData.getCap(caster).getMight() - 1;
-        if (procPoint instanceof LivingAttackEvent && procPoint.getPhase() == EventPriority.HIGHEST) {
+        if (procPoint instanceof LivingAttackEvent && procPoint.getPhase() == EventPriority.LOWEST) {
             SkillUtils.modifyAttribute(caster, Attributes.ATTACK_DAMAGE, MULT, 0.05f * might, AttributeModifier.Operation.MULTIPLY_BASE);
         }
         if (procPoint instanceof GainMightEvent && procPoint.getPhase() == EventPriority.HIGHEST) {

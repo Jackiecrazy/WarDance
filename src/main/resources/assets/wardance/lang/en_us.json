@@ -108,7 +108,7 @@
   "wardance:mikiri.name": "Mikiri",
   "wardance:mikiri.desc": " Negate posture damage. Cooldown lengthened to 7 seconds, every attack or parry decreases cooldown by 1 second.",
   "wardance:overpower.name": "Overpower",
-  "wardance:overpower.desc": " Reflect posture damage and consume posture from the attacker as if they were attacked by the parrying item. In addition to cooldown, this ability only recharges once you regain max posture.",
+  "wardance:overpower.desc": " Consume posture from the attacker as if they were attacked by the parrying item. In addition to cooldown, this ability only recharges once you regain max posture.",
   "wardance:recovery.name": "Recovery",
   "wardance:recovery.desc": " Parrying below 50% posture will not incur a posture regeneration cooldown, and will refresh the might grace period.",
   "category.coup_de_grace.name": "Coup de Grace",

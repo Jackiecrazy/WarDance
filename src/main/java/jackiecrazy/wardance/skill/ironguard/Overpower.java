@@ -15,18 +15,16 @@ public class Overpower extends IronGuard {
     }
 
     @Override
-    protected void parry(LivingEntity caster, ParryEvent procPoint, SkillData stats, LivingEntity target) {
-        if(stats.getState()==STATE.COOLING)return;
-        CombatData.getCap(procPoint.getAttacker()).consumePosture(caster, procPoint.getPostureConsumption());
+    protected void parry(LivingEntity caster, ParryEvent procPoint, SkillData stats, LivingEntity target, STATE state) {
+        if (state == STATE.COOLING) return;
         CombatData.getCap(procPoint.getAttacker()).consumePosture(caster, CombatUtils.getPostureAtk(caster, target, procPoint.getDefendingHand(), procPoint.getAttackDamage(), procPoint.getDefendingStack()));
-        procPoint.setPostureConsumption(0);
         markUsed(caster);
     }
 
 
     @Override
     public boolean equippedTick(LivingEntity caster, SkillData stats) {
-        if (stats.getDuration() > 0.5 || CombatData.getCap(caster).getPosture() == CombatData.getCap(caster).getMaxPosture())
+        if (stats.getDuration() > 0.1 || CombatData.getCap(caster).getPosture() == CombatData.getCap(caster).getMaxPosture())
             return cooldownTick(stats);
         return false;
     }

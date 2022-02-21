@@ -25,8 +25,8 @@ public class Mikiri extends IronGuard {
     }
 
     @Override
-    protected void parry(LivingEntity caster, ParryEvent procPoint, SkillData stats, LivingEntity target) {
-        if (stats.getState() == STATE.COOLING) {
+    protected void parry(LivingEntity caster, ParryEvent procPoint, SkillData stats, LivingEntity target, STATE state) {
+        if (state == STATE.COOLING) {
             stats.decrementDuration();
         } else {
             procPoint.setPostureConsumption(0);

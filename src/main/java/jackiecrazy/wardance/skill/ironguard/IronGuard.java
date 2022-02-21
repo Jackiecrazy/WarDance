@@ -32,12 +32,12 @@ public abstract class IronGuard extends Skill {
 
     @Override
     public void onProc(LivingEntity caster, Event procPoint, STATE state, SkillData stats, @Nullable LivingEntity target) {
-        if (procPoint instanceof ParryEvent && procPoint.getPhase() == EventPriority.HIGHEST && ((ParryEvent) procPoint).getEntityLiving() == caster && ((ParryEvent) procPoint).canParry() && ((ParryEvent) procPoint).getPostureConsumption() > 0&& cast(caster, -999)) {
-            parry(caster, (ParryEvent) procPoint, stats, target);
+        if (procPoint instanceof ParryEvent && procPoint.getPhase() == EventPriority.HIGHEST && ((ParryEvent) procPoint).getEntityLiving() == caster && ((ParryEvent) procPoint).canParry() && ((ParryEvent) procPoint).getPostureConsumption() > 0 && cast(caster, -999)) {
+            parry(caster, (ParryEvent) procPoint, stats, target, state);
         }
     }
 
-    protected abstract void parry(LivingEntity caster, ParryEvent procPoint, SkillData stats, LivingEntity target);
+    protected abstract void parry(LivingEntity caster, ParryEvent procPoint, SkillData stats, LivingEntity target, STATE state);
 
     @Override
     public boolean onStateChange(LivingEntity caster, SkillData prev, STATE from, STATE to) {

@@ -1,6 +1,7 @@
 package jackiecrazy.wardance.skill.guillotine;
 
 import jackiecrazy.wardance.capability.status.Marks;
+import jackiecrazy.wardance.skill.SkillData;
 import jackiecrazy.wardance.utils.GeneralUtils;
 import jackiecrazy.wardance.utils.SkillUtils;
 import jackiecrazy.wardance.utils.TargetingUtils;
@@ -20,8 +21,8 @@ public class FeverDream extends Judgment {
     }
 
     @Override
-    protected void performEffect(LivingEntity caster, LivingEntity target, int stack) {
-        super.performEffect(caster, target, stack);
+    protected void performEffect(LivingEntity caster, LivingEntity target, int stack, SkillData sd) {
+        super.performEffect(caster, target, stack, sd);
         if (stack != 3) return;
         hallucinate(caster, target, 3);
     }

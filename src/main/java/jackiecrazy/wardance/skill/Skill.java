@@ -272,7 +272,7 @@ public abstract class Skill extends ForgeRegistryEntry<Skill> {
     }
 
     protected boolean cooldownTick(SkillData stats) {
-        if (stats.getState() == STATE.COOLING) {
+        if (stats.getState() == STATE.COOLING&&stats.getDuration()>0) {
             stats.decrementDuration(0.05f);
             int round = (int) (stats.getDuration() * 20);
             return stats.getDuration() < 3 || round % 20 == 0;
@@ -304,7 +304,7 @@ public abstract class Skill extends ForgeRegistryEntry<Skill> {
     protected boolean cast(LivingEntity caster, float duration, boolean flag, float arbitrary) {
         SkillResourceEvent sre = new SkillResourceEvent(caster, this);
         MinecraftForge.EVENT_BUS.post(sre);
-        if (!sre.isCanceled() && CombatData.getCap(caster).getMight() > sre.getMight() && CombatData.getCap(caster).getSpirit() > sre.getSpirit()) {
+        if (!sre.isCanceled() && CombatData.getCap(caster).getMight() >= sre.getMight() && CombatData.getCap(caster).getSpirit() >= sre.getSpirit()) {
             SkillCastEvent sce = new SkillCastEvent(caster, this, sre.getMight(), sre.getSpirit(), duration, flag, arbitrary);
             MinecraftForge.EVENT_BUS.post(sce);
             CombatData.getCap(caster).consumeMight(sce.getMight());

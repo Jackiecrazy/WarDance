@@ -24,8 +24,8 @@ public class Afterimage extends IronGuard {
     }
 
     @Override
-    protected void parry(LivingEntity caster, ParryEvent procPoint, SkillData stats, LivingEntity target) {
-        if (!caster.isSneaking()||stats.getState()==STATE.COOLING) return;
+    protected void parry(LivingEntity caster, ParryEvent procPoint, SkillData stats, LivingEntity target, STATE state) {
+        if (!caster.isSneaking()||state==STATE.COOLING) return;
         final float cost = ((ParryEvent) procPoint).getPostureConsumption();
         SkillUtils.createCloud(caster.world, caster, caster.getPosX(), caster.getPosY(), caster.getPosZ(), cost, ParticleTypes.LARGE_SMOKE);
         for (LivingEntity e : caster.world.getLoadedEntitiesWithinAABB(LivingEntity.class, caster.getBoundingBox().grow(cost))) {
