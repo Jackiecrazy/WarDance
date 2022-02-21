@@ -11,21 +11,17 @@ import jackiecrazy.wardance.config.CombatConfig;
 import jackiecrazy.wardance.config.GeneralConfig;
 import jackiecrazy.wardance.config.StealthConfig;
 import jackiecrazy.wardance.event.AttackMightEvent;
-import jackiecrazy.wardance.event.EntityAwarenessEvent;
 import jackiecrazy.wardance.event.ProjectileParryEvent;
 import jackiecrazy.wardance.networking.CombatChannel;
 import jackiecrazy.wardance.networking.UpdateAttackPacket;
-import jackiecrazy.wardance.potion.WarEffects;
 import jackiecrazy.wardance.skill.Skill;
 import jackiecrazy.wardance.skill.SkillCategories;
 import jackiecrazy.wardance.skill.WarSkills;
-import net.minecraft.block.material.Material;
 import net.minecraft.enchantment.EnchantmentHelper;
 import net.minecraft.enchantment.Enchantments;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.LivingEntity;
-import net.minecraft.entity.MobEntity;
 import net.minecraft.entity.ai.attributes.AttributeModifier;
 import net.minecraft.entity.ai.attributes.Attributes;
 import net.minecraft.entity.player.PlayerEntity;
@@ -50,10 +46,8 @@ import javax.annotation.Nullable;
 import java.util.*;
 
 public class CombatUtils {
-    public static final StealthData STEALTH = new StealthData("");
     public static HashMap<ResourceLocation, Float> customPosture = new HashMap<>();
     public static HashMap<ResourceLocation, MobInfo> parryMap = new HashMap<>();
-    public static HashMap<ResourceLocation, StealthData> stealthMap = new HashMap<>();
     public static HashMap<Item, AttributeModifier[]> armorStats = new HashMap<>();
     public static boolean isSweeping = false;
     public static boolean suppress = false;
@@ -196,28 +190,6 @@ public class CombatUtils {
 
             } catch (Exception e) {
                 WarDance.LOGGER.warn("improperly formatted mob parrying definition " + s + "!");
-            }
-        }
-    }
-
-    public static void updateMobDetection(List<? extends String> interpretS) {
-        stealthMap.clear();
-        for (String s : interpretS) {
-            try {
-                String[] val = s.split(",");
-                final ResourceLocation key = new ResourceLocation(val[0]);
-                String value = val[1];
-                CombatUtils.stealthMap.put(key, new StealthData(value.toLowerCase(Locale.ROOT)));
-//                String print = val[0]+", ";
-//                StealthData sd = stealthMap.get(key);
-//                print = print.concat(sd.deaf ? "d" : "");
-//                print = print.concat(sd.nightvision ? "n" : "");
-//                print = print.concat(sd.illuminati ? "a" : "");
-//                print = print.concat(sd.atheist ? "o" : "");
-//                print = print.concat(sd.vigil ? "v" : "");
-//                System.out.println("\"" + print + "\",");
-            } catch (Exception e) {
-                WarDance.LOGGER.warn("improperly formatted mob stealth definition " + s + "!");
             }
         }
     }
@@ -484,7 +456,7 @@ public class CombatUtils {
         }
     }
 
-    public static double getDamageMultiplier(Awareness a, ItemStack is) {
+    public static double getDamageMultiplier(StealthUtils.Awareness a, ItemStack is) {
         if (!StealthConfig.stealthSystem || is == null) return 1;
         MeleeInfo ci = combatList.getOrDefault(is.getItem(), DEFAULTMELEE);
         switch (a) {
@@ -573,40 +545,6 @@ public class CombatUtils {
         CombatData.getCap(e).setForcedSweep(-1);
     }
 
-    public static Awareness getAwareness(LivingEntity attacker, LivingEntity target) {
-        if (attacker == null || target == null || attacker == target)
-            return Awareness.ALERT;//the cases that don't make sense.
-        if (!StealthConfig.stealthSystem || target instanceof PlayerEntity || CombatUtils.stealthMap.getOrDefault(target.getType().getRegistryName(), CombatUtils.STEALTH).isVigilant())
-            return Awareness.ALERT;
-        Awareness a = Awareness.ALERT;
-        if (target.isPotionActive(WarEffects.SLEEP.get()) || target.isPotionActive(WarEffects.PARALYSIS.get()) || target.isPotionActive(WarEffects.PETRIFY.get()))
-            a = Awareness.UNAWARE;
-        else if (target.isPotionActive(WarEffects.DISTRACTION.get()) || target.isPotionActive(WarEffects.CONFUSION.get()) || target.getAir() <= 0 || inWeb(target))
-            a = Awareness.DISTRACTED;
-        else if (target.getRevengeTarget() == null && (!(target instanceof MobEntity) || ((MobEntity) target).getAttackTarget() == null))
-            a = Awareness.UNAWARE;
-        else if (target.getRevengeTarget() != attacker && (!(target instanceof MobEntity) || ((MobEntity) target).getAttackTarget() != attacker))
-            a = Awareness.DISTRACTED;
-        EntityAwarenessEvent eae = new EntityAwarenessEvent(target, attacker, a);
-        MinecraftForge.EVENT_BUS.post(eae);
-        return eae.getAwareness();
-    }
-
-    private static boolean inWeb(LivingEntity e) {
-        if (!e.world.isAreaLoaded(e.getPosition(), (int) Math.ceil(e.getWidth()))) return false;
-        double minX = e.getPosX() - e.getWidth() / 2, minY = e.getPosY() - e.getHeight() / 2, minZ = e.getPosZ() - e.getWidth() / 2;
-        double maxX = e.getPosX() + e.getWidth() / 2, maxY = e.getPosY() + e.getHeight() / 2, maxZ = e.getPosZ() + e.getWidth() / 2;
-        for (double x = minX; x <= maxX; x++) {
-            for (double y = minY; y <= maxY; y++) {
-                for (double z = minZ; z <= maxZ; z++) {
-                    if (e.world.getBlockState(e.getPosition()).getMaterial().equals(Material.WEB))
-                        return true;
-                }
-            }
-        }
-        return false;
-    }
-
     public static boolean isCrit(CriticalHitEvent e) {
         return e.getResult() == Event.Result.ALLOW || (e.getResult() == Event.Result.DEFAULT && e.isVanillaCritical());
     }
@@ -617,48 +555,6 @@ public class CombatUtils {
         ppe.setPostureConsumption((float) pi.posture * mult);
         ppe.setShieldCount(pi.count);
         ppe.setTrigger(pi.trigger);
-    }
-
-    public enum Awareness {
-        UNAWARE,//cannot be parried, absorbed, shattered, or deflected
-        DISTRACTED,//deals extra (posture) damage
-        ALERT//normal damage and reduction
-    }
-
-    public static class StealthData {
-        private final boolean deaf, nightvision, allSeeing, perceptive, vigil, olfactory;
-
-        public StealthData(String value) {
-            allSeeing = value.contains("a");
-            deaf = value.contains("d");
-            nightvision = value.contains("n");
-            olfactory = value.contains("o");
-            perceptive = value.contains("p");
-            vigil = value.contains("v");
-        }
-
-        public boolean isDeaf() {
-            return deaf;
-        }
-
-        public boolean isNightVision() {
-            return nightvision;
-        }
-
-        public boolean isAllSeeing() {
-            return allSeeing;
-        }
-
-        public boolean isPerceptive() {
-            return perceptive;
-        }
-
-        public boolean isVigilant() {
-            return vigil;
-        }
-
-        public boolean isOlfactory() {return olfactory;}
-
     }
 
     private static class MeleeInfo {

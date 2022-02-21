@@ -184,7 +184,7 @@
   "wardance:boulder_brace.name": "Boulder Brace",
   "wardance:boulder_brace.desc": " §lPassive:§r your posture regeneration is not affected by armor or health. \n§l Active:§r restore all posture; for (might) seconds, regenerate 1 posture per second regardless of cooldown.",
   "category.feint.name": "Feint",
-  "category.feint.desc": "Holster cast. The next attack binds both of the target's hands for 1 second instead of dealing damage, then §lmarks§r the target with 6 stacks and refunds half hand cooldown. Bind time is reduced by 0.1 seconds for every existing stack; 1 stack is removed every normal attack on the target. Costs 3 spirit and unbinds itself after use.",
+  "category.feint.desc": "Holster cast. The next attack does not hit, binds both of the target's hands for 1 second, §lmarks§r the target with 6 stacks, and refunds half hand cooldown. Bind time is reduced by 0.1 seconds for every existing stack; 1 stack is removed every normal attack on the target. Costs 3 spirit and unbinds itself after use.",
   "wardance:followup.name": "Followup",
   "wardance:followup.desc": " Refunds all cooldown. Passive: attacking a target with both hands bound refunds half cooldown.",
   "wardance:upper_hand.name": "Upper Hand",

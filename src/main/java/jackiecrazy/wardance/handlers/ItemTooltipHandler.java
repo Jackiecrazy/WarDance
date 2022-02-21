@@ -2,6 +2,7 @@ package jackiecrazy.wardance.handlers;
 
 import jackiecrazy.wardance.WarDance;
 import jackiecrazy.wardance.utils.CombatUtils;
+import jackiecrazy.wardance.utils.StealthUtils;
 import net.minecraft.util.Tuple;
 import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraftforge.api.distmarker.Dist;
@@ -29,7 +30,7 @@ public class ItemTooltipHandler {
                 Tuple<Integer, Integer> rerorero = CombatUtils.getShieldStats(e.getItemStack());
                 e.getToolTip().add(new TranslationTextComponent("wardance.tooltip.parry", rerorero.getB() + 1, rerorero.getA() / 20f));
             } else if (CombatUtils.isWeapon(null, e.getItemStack())) {
-                e.getToolTip().add(new TranslationTextComponent("wardance.tooltip.attack", CombatUtils.getDamageMultiplier(CombatUtils.Awareness.DISTRACTED, e.getItemStack()) + "x", CombatUtils.getDamageMultiplier(CombatUtils.Awareness.UNAWARE, e.getItemStack()) + "x"));
+                e.getToolTip().add(new TranslationTextComponent("wardance.tooltip.attack", CombatUtils.getDamageMultiplier(StealthUtils.Awareness.DISTRACTED, e.getItemStack()) + "x", CombatUtils.getDamageMultiplier(StealthUtils.Awareness.UNAWARE, e.getItemStack()) + "x"));
             }
         }
         if(CombatUtils.isUnarmed(e.getItemStack(), e.getEntityLiving())){

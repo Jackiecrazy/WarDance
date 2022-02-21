@@ -3,7 +3,7 @@ package jackiecrazy.wardance.skill.warcry;
 import jackiecrazy.wardance.skill.ProcPoints;
 import jackiecrazy.wardance.skill.SkillData;
 import jackiecrazy.wardance.skill.SkillTags;
-import jackiecrazy.wardance.utils.CombatUtils;
+import jackiecrazy.wardance.utils.StealthUtils;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.ai.attributes.AttributeModifier;
 import net.minecraft.entity.ai.attributes.Attributes;
@@ -58,7 +58,7 @@ public class FrostFang extends WarCry {
     public void onProc(LivingEntity caster, Event procPoint, STATE state, SkillData stats, LivingEntity target) {
         if (procPoint instanceof LivingAttackEvent && state == STATE.ACTIVE && procPoint.getPhase() == EventPriority.HIGHEST && ((LivingAttackEvent) procPoint).getEntityLiving() == target) {
             target.addPotionEffect(new EffectInstance(Effects.SLOWNESS, 60));
-            if (CombatUtils.getAwareness(caster, target) == CombatUtils.Awareness.ALERT) {
+            if (StealthUtils.getAwareness(caster, target) == StealthUtils.Awareness.ALERT) {
                 target.addPotionEffect(new EffectInstance(Effects.BLINDNESS, 20));
             }
         }

@@ -6,7 +6,7 @@ import jackiecrazy.wardance.skill.Skill;
 import jackiecrazy.wardance.skill.SkillCategories;
 import jackiecrazy.wardance.skill.SkillCategory;
 import jackiecrazy.wardance.skill.SkillData;
-import jackiecrazy.wardance.utils.CombatUtils;
+import jackiecrazy.wardance.utils.StealthUtils;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.tags.Tag;
 import net.minecraftforge.event.entity.ProjectileImpactEvent;
@@ -66,7 +66,7 @@ apathy: your max spirit is 4, your spirit instantly refills after cooldown, you 
             CombatData.getCap(caster).addSpirit(1);
             stats.flagCondition(true);
         } else if (procPoint instanceof EntityAwarenessEvent&&((EntityAwarenessEvent) procPoint).getAttacker()==caster&&procPoint.getPhase()== EventPriority.HIGHEST) {
-            if (((EntityAwarenessEvent) procPoint).getAwareness() != CombatUtils.Awareness.ALERT) {
+            if (((EntityAwarenessEvent) procPoint).getAwareness() != StealthUtils.Awareness.ALERT) {
                 CombatData.getCap(caster).addSpirit(1);
                 stats.flagCondition(true);
             }

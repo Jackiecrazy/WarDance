@@ -13,8 +13,8 @@ import jackiecrazy.wardance.networking.CombatChannel;
 import jackiecrazy.wardance.networking.SyncSkillPacket;
 import jackiecrazy.wardance.potion.WarEffects;
 import jackiecrazy.wardance.skill.Skill;
-import jackiecrazy.wardance.utils.CombatUtils;
 import jackiecrazy.wardance.utils.GeneralUtils;
+import jackiecrazy.wardance.utils.StealthUtils;
 import net.minecraft.command.arguments.EntityAnchorArgument;
 import net.minecraft.entity.CreatureEntity;
 import net.minecraft.entity.Entity;
@@ -170,7 +170,7 @@ Mobs should move into a position that is close to the player, far from allies, a
             double mult = 1;
             LivingEntity sneaker = e.getEntityLiving(), watcher = (LivingEntity) e.getLookingEntity();
             if (sneaker.getFireTimer() > 0) return;//you're on fire and it's super obvious!
-            CombatUtils.StealthData sd = CombatUtils.stealthMap.getOrDefault(watcher.getType().getRegistryName(), CombatUtils.STEALTH);
+            StealthUtils.StealthData sd = StealthUtils.stealthMap.getOrDefault(watcher.getType().getRegistryName(), StealthUtils.STEALTH);
             if (sd.isVigilant()) return;
             if (watcher.getAttackingEntity() != sneaker && watcher.getRevengeTarget() != sneaker && watcher.getLastAttackedEntity() != sneaker && (!(watcher instanceof MobEntity) || ((MobEntity) watcher).getAttackTarget() != sneaker)) {
                 double stealth = GeneralUtils.getAttributeValueSafe(sneaker, WarAttributes.STEALTH.get());
@@ -239,7 +239,7 @@ Mobs should move into a position that is close to the player, far from allies, a
         if (mob.isPotionActive(WarEffects.FEAR.get()) || mob.isPotionActive(WarEffects.CONFUSION.get()) || mob.isPotionActive(WarEffects.SLEEP.get()))
             mob.setAttackTarget(null);
         if (mob.getRevengeTarget() != e.getTarget() && StealthConfig.stealthSystem && !GeneralUtils.isFacingEntity(mob, e.getTarget(), StealthConfig.baseHorizontalDetection, StealthConfig.baseVerticalDetection)) {
-            CombatUtils.StealthData sd = CombatUtils.stealthMap.getOrDefault(mob.getType().getRegistryName(), CombatUtils.STEALTH);
+            StealthUtils.StealthData sd = StealthUtils.stealthMap.getOrDefault(mob.getType().getRegistryName(), StealthUtils.STEALTH);
             if (sd.isVigilant() || sd.isAllSeeing() || sd.isOlfactory()) return;
             //outside of LoS, perform luck check. Pray to RNGesus!
             double luckDiff = GeneralUtils.getAttributeValueSafe(e.getTarget(), Attributes.LUCK) - GeneralUtils.getAttributeValueSafe(mob, Attributes.LUCK);
@@ -269,7 +269,7 @@ Mobs should move into a position that is close to the player, far from allies, a
                 Map.Entry<Tuple<World, BlockPos>, Float> n = it.next();
                 if (n.getKey().getA().isAreaLoaded(n.getKey().getB(), n.getValue().intValue())) {
                     for (CreatureEntity c : (n.getKey().getA().getLoadedEntitiesWithinAABB(CreatureEntity.class, new AxisAlignedBB(n.getKey().getB()).grow(n.getValue())))) {
-                        if (CombatUtils.getAwareness(null, c) == CombatUtils.Awareness.UNAWARE && !CombatUtils.stealthMap.getOrDefault(c.getType().getRegistryName(), CombatUtils.STEALTH).isDeaf()) {
+                        if (StealthUtils.getAwareness(null, c) == StealthUtils.Awareness.UNAWARE && !StealthUtils.stealthMap.getOrDefault(c.getType().getRegistryName(), StealthUtils.STEALTH).isDeaf()) {
                             c.getNavigator().clearPath();
                             c.getNavigator().setPath(c.getNavigator().getPathToPos(n.getKey().getB(), (int) (n.getValue() + 3)), 1);
                             BlockPos vec = n.getKey().getB();

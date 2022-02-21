@@ -198,15 +198,7 @@ public class ClientEvents {
         final LivingEntity e = event.getEntity();
         float width = e.getWidth();
         float height = e.getHeight();
-        PlayerEntity p = Minecraft.getInstance().player;
-//        if (p != null) {//TODO player senses config, fade out?
-////            double chunk = Minecraft.getInstance().gameSettings.renderDistanceChunks * 16;
-////            double visibilityMult = e.getVisibilityMultiplier(p);
-////            double visible = chunk * visibilityMult;
-////            if (e.getDistanceSq(p) > visible * visible) {
-////                event.setCanceled(true);
-////            }
-//        }
+
         if (e.isAlive()) {
             if (CombatData.getCap(event.getEntity()).getStaggerTime() > 0) {
                 //System.out.println("yes");

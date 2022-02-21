@@ -10,10 +10,7 @@ import jackiecrazy.wardance.event.EntityAwarenessEvent;
 import jackiecrazy.wardance.event.ParryEvent;
 import jackiecrazy.wardance.potion.WarEffects;
 import jackiecrazy.wardance.skill.*;
-import jackiecrazy.wardance.utils.CombatUtils;
-import jackiecrazy.wardance.utils.EffectUtils;
-import jackiecrazy.wardance.utils.SkillUtils;
-import jackiecrazy.wardance.utils.WarColors;
+import jackiecrazy.wardance.utils.*;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.ai.attributes.AttributeModifier;
@@ -87,7 +84,7 @@ public class Feint extends Skill {
         LivingEntity uke = e.getEntityLiving();
         if (seme != null) {
             if (Marks.getCap(uke).isMarked(WarSkills.SMIRKING_SHADOW.get()) && Marks.getCap(uke).getActiveMark(WarSkills.SMIRKING_SHADOW.get()).get().getDuration() > 0.1 && CasterData.getCap(seme).getEquippedSkills().contains(WarSkills.SMIRKING_SHADOW.get())) {
-                e.setAwareness(CombatUtils.Awareness.UNAWARE);
+                e.setAwareness(StealthUtils.Awareness.UNAWARE);
             }
         }
     }
@@ -120,6 +117,7 @@ public class Feint extends Skill {
             CombatData.getCap(target).setHandBind(Hand.OFF_HAND, dur);
             stats.flagCondition(h == Hand.MAIN_HAND);
             mark(caster, target, dur / 20f + 0.1f);
+            procPoint.setCanceled(true);
             markUsed(caster);
         }
         if (procPoint instanceof LivingAttackEvent && this == WarSkills.FOLLOWUP.get() && procPoint.getPhase() == EventPriority.LOWEST && ((LivingAttackEvent) procPoint).getEntityLiving() == target &&

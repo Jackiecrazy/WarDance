@@ -20,6 +20,8 @@ public class MixinAttackSpeed {
 
     @Inject(at = @At("RETURN"), method = "registerAttributes()Lnet/minecraft/entity/ai/attributes/AttributeModifierMap$MutableAttribute;")
     private static void registerAttributes(CallbackInfoReturnable<AttributeModifierMap.MutableAttribute> cb) {//TODO remove in 1.17
+        if(!cb.getReturnValue().hasAttribute(Attributes.FOLLOW_RANGE))
+            cb.getReturnValue().createMutableAttribute(Attributes.FOLLOW_RANGE, 32);
         cb.getReturnValue().createMutableAttribute(Attributes.ATTACK_SPEED, 4).createMutableAttribute(Attributes.LUCK, 0).createMutableAttribute(WarAttributes.STEALTH.get()).createMutableAttribute(WarAttributes.DEFLECTION.get()).createMutableAttribute(WarAttributes.ABSORPTION.get()).createMutableAttribute(WarAttributes.SHATTER.get()).createMutableAttribute(WarAttributes.MAX_SPIRIT.get()).createMutableAttribute(WarAttributes.MAX_MIGHT.get()).createMutableAttribute(WarAttributes.MAX_POSTURE.get()).createMutableAttribute(WarAttributes.POSTURE_REGEN.get()).createMutableAttribute(WarAttributes.SPIRIT_REGEN.get()).createMutableAttribute(WarAttributes.MIGHT_GEN.get());
     }
 

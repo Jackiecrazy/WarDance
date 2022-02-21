@@ -7,7 +7,7 @@ import jackiecrazy.wardance.capability.status.Marks;
 import jackiecrazy.wardance.skill.ProcPoints;
 import jackiecrazy.wardance.skill.SkillData;
 import jackiecrazy.wardance.skill.WarSkills;
-import jackiecrazy.wardance.utils.CombatUtils;
+import jackiecrazy.wardance.utils.StealthUtils;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.tags.Tag;
 import net.minecraft.util.Hand;
@@ -48,7 +48,7 @@ public class Silencer extends HeavyBlow {
     public void onProc(LivingEntity caster, Event procPoint, STATE state, SkillData stats, LivingEntity target) {
         if (procPoint instanceof CriticalHitEvent && ((CriticalHitEvent) procPoint).getTarget() == target && state == STATE.INACTIVE) {
             if (caster.world.isRemote() || caster == target) return;
-            if (CombatUtils.getAwareness(caster, target) != CombatUtils.Awareness.UNAWARE || !cast(caster, -999))
+            if (StealthUtils.getAwareness(caster, target) != StealthUtils.Awareness.UNAWARE || !cast(caster, -999))
                 return;
             CombatData.getCap(target).setHandBind(Hand.MAIN_HAND, 60);
             CombatData.getCap(target).setHandBind(Hand.OFF_HAND, 60);

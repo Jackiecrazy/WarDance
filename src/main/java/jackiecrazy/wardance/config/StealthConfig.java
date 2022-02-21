@@ -1,7 +1,7 @@
 package jackiecrazy.wardance.config;
 
 import jackiecrazy.wardance.WarDance;
-import jackiecrazy.wardance.utils.CombatUtils;
+import jackiecrazy.wardance.utils.StealthUtils;
 import net.minecraftforge.common.ForgeConfigSpec;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
@@ -275,7 +275,7 @@ public class StealthConfig {
             "thermal:blizz, no"
     };
     public static float distract, unaware;
-    public static boolean stealthSystem, ignore, inv;
+    public static boolean stealthSystem, ignore, inv, playerStealth;
     public static int baseHorizontalDetection, baseVerticalDetection, anglePerArmor;
     public static double blockPerVolume;
 
@@ -288,6 +288,7 @@ public class StealthConfig {
     private final ForgeConfigSpec.ConfigValue<List<? extends String>> _customDetection;
     private final ForgeConfigSpec.BooleanValue _stab;
     private final ForgeConfigSpec.BooleanValue _removeInv;
+    private final ForgeConfigSpec.BooleanValue _player;
     private final ForgeConfigSpec.DoubleValue _distract;
     private final ForgeConfigSpec.DoubleValue _unaware;
     private final ForgeConfigSpec.BooleanValue _ignore;
@@ -300,6 +301,7 @@ public class StealthConfig {
         //feature toggle, resource, defense, compat, stealth, lists
         _stab = b.translation("wardance.config.stabby").comment("enable or disable the entire system").define("enable stabbing", true);
         _removeInv = b.translation("wardance.config.removeInvis").comment("whether invisibility will be removed on attack").define("attacking dispels invisibility", true);
+        _player = b.translation("wardance.config.player").comment("whether you must pass stealth checks to perceive a mob. Currently rather incomplete. I am not responsible for ragequits caused by this option.").define("use player senses", false);
         _baseDetectionHorizontal = b.translation("wardance.config.detectH").comment("mobs start out with this FoV of full detection on the xz plane").defineInRange("default mob horizontal FoV", 120, 0, 360);
         _baseDetectionVertical = b.translation("wardance.config.detectV").comment("mobs start out with this FoV of full detection on the y axis").defineInRange("default mob vertical FoV", 60, 0, 360);
         _anglePerArmor = b.translation("wardance.config.perarmor").comment("your stealth attribute is multiplied by this to generate a new FoV for the purpose of detection by mobs, if it is greater than the default").defineInRange("armor stealth debuff", 18, 0, 360);
@@ -320,7 +322,8 @@ public class StealthConfig {
         baseVerticalDetection = CONFIG._baseDetectionVertical.get();
         blockPerVolume = CONFIG._blockPerVolume.get();
         inv = CONFIG._removeInv.get();
-        CombatUtils.updateMobDetection(CONFIG._customDetection.get());
+        playerStealth=CONFIG._player.get();
+        StealthUtils.updateMobDetection(CONFIG._customDetection.get());
     }
 
     @SubscribeEvent

@@ -16,7 +16,8 @@
     "ProjectileImpactMixin"
   ],
   "client": [
-    "MixinEquipProgress"
+    "MixinEquipProgress",
+    "MixinMobStealth"
   ],
   "injectors": {
     "defaultRequire": 0

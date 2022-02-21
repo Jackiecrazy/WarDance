@@ -22,6 +22,7 @@ import jackiecrazy.wardance.potion.WarEffects;
 import jackiecrazy.wardance.utils.CombatUtils;
 import jackiecrazy.wardance.utils.GeneralUtils;
 import jackiecrazy.wardance.utils.MovementUtils;
+import jackiecrazy.wardance.utils.StealthUtils;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.ai.attributes.AttributeModifier;
@@ -86,7 +87,7 @@ public class CombatHandler {
         }
         if (e.getRayTraceResult().getType() == RayTraceResult.Type.ENTITY && e.getRayTraceResult() instanceof EntityRayTraceResult && ((EntityRayTraceResult) e.getRayTraceResult()).getEntity() instanceof LivingEntity) {
             LivingEntity uke = (LivingEntity) ((EntityRayTraceResult) e.getRayTraceResult()).getEntity();
-            if (CombatUtils.getAwareness(null, uke) != CombatUtils.Awareness.ALERT) {
+            if (StealthUtils.getAwareness(null, uke) != StealthUtils.Awareness.ALERT) {
                 return;
             }
             //dodged
@@ -116,12 +117,12 @@ public class CombatHandler {
                 defMult = CombatUtils.getPostureDef(null, uke, defend, 0);
                 h = Hand.MAIN_HAND;
             }
-            CombatUtils.Awareness a = CombatUtils.Awareness.ALERT;
+            StealthUtils.Awareness a = StealthUtils.Awareness.ALERT;
             if (projectile instanceof ProjectileEntity && ((ProjectileEntity) projectile).getShooter() instanceof LivingEntity)
-                a = CombatUtils.getAwareness((LivingEntity) ((ProjectileEntity) projectile).getShooter(), uke);
+                a = StealthUtils.getAwareness((LivingEntity) ((ProjectileEntity) projectile).getShooter(), uke);
             boolean canParry = GeneralUtils.isFacingEntity(uke, projectile, 120);
             boolean force = false;
-            if (a != CombatUtils.Awareness.UNAWARE && CombatUtils.parryMap.containsKey(GeneralUtils.getResourceLocationFromEntity(uke))) {
+            if (a != StealthUtils.Awareness.UNAWARE && CombatUtils.parryMap.containsKey(GeneralUtils.getResourceLocationFromEntity(uke))) {
                 CombatUtils.MobInfo stats = CombatUtils.parryMap.get(GeneralUtils.getResourceLocationFromEntity(uke));
                 if (stats.shield && WarDance.rand.nextFloat() < stats.chance) {
                     if (stats.mult < 0) {//cannot parry
@@ -287,7 +288,7 @@ public class CombatHandler {
                 float original = atkMult;
                 downingHit = true;
                 //stabby bonus
-                CombatUtils.Awareness awareness = CombatUtils.getAwareness(seme, uke);
+                StealthUtils.Awareness awareness = StealthUtils.getAwareness(seme, uke);
                 atkMult *= CombatUtils.getDamageMultiplier(awareness, attack);
                 //crit bonus
                 if (e.getSource() instanceof CombatDamageSource && ((CombatDamageSource) e.getSource()).isCrit())
@@ -311,7 +312,7 @@ public class CombatHandler {
                 }
                 float defMult = CombatUtils.getPostureDef(seme, uke, defend, e.getAmount());
                 //special mob parry overrides
-                if (atkMult >= 0 && awareness != CombatUtils.Awareness.UNAWARE && CombatUtils.parryMap.containsKey(GeneralUtils.getResourceLocationFromEntity(uke))) {
+                if (atkMult >= 0 && awareness != StealthUtils.Awareness.UNAWARE && CombatUtils.parryMap.containsKey(GeneralUtils.getResourceLocationFromEntity(uke))) {
                     CombatUtils.MobInfo stats = CombatUtils.parryMap.get(GeneralUtils.getResourceLocationFromEntity(uke));
                     if (WarDance.rand.nextFloat() < stats.chance) {
                         if (stats.mult < 0) {//cannot parry
@@ -346,7 +347,7 @@ public class CombatHandler {
                     float knockback = ukeCap.consumePosture(seme, pe.getPostureConsumption());
                     //CombatUtils.knockBack(uke, seme, Math.min(1.5f, knockback / (20f * ukeCap.getMaxPosture())), true, false);
                     //no parries if stabby
-                    if (StealthConfig.ignore && awareness == CombatUtils.Awareness.UNAWARE) return;
+                    if (StealthConfig.ignore && awareness == StealthUtils.Awareness.UNAWARE) return;
                     if (pe.canParry()) {
                         e.setCanceled(true);
                         downingHit = false;
@@ -415,7 +416,7 @@ public class CombatHandler {
             }//else System.out.println("the attack is not a melee attack, or the damage dealt was 0.");
             //shatter, at the rock bottom of the attack event, saving your protected butt.
             if (!uke.isActiveItemStackBlocking() && !e.isCanceled()) {
-                if (CombatUtils.isPhysicalAttack(e.getSource()) && CombatUtils.getAwareness(e.getSource().getImmediateSource() instanceof LivingEntity ? (LivingEntity) e.getSource().getImmediateSource() : null, uke) != CombatUtils.Awareness.UNAWARE) {
+                if (CombatUtils.isPhysicalAttack(e.getSource()) && StealthUtils.getAwareness(e.getSource().getImmediateSource() instanceof LivingEntity ? (LivingEntity) e.getSource().getImmediateSource() : null, uke) != StealthUtils.Awareness.UNAWARE) {
                     if (CombatData.getCap(uke).consumeShatter(e.getAmount())) {
                         e.setCanceled(true);
                         uke.world.playSound(null, uke.getPosX(), uke.getPosY(), uke.getPosZ(), SoundEvents.BLOCK_GLASS_BREAK, SoundCategory.PLAYERS, 0.25f + WarDance.rand.nextFloat() * 0.5f, 0.75f + WarDance.rand.nextFloat() * 0.5f);
@@ -518,7 +519,7 @@ public class CombatHandler {
         cap.setSpiritGrace(ResourceConfig.spiritCD);
         cap.setAdrenalineCooldown(CombatConfig.adrenaline);
         SubtleBonusHandler.update=true;
-        CombatUtils.Awareness awareness = CombatUtils.getAwareness(kek, uke);
+        StealthUtils.Awareness awareness = StealthUtils.getAwareness(kek, uke);
         if (ds.getTrueSource() instanceof LivingEntity) {
             LivingEntity seme = ((LivingEntity) ds.getTrueSource());
             if (seme.getHeldItemMainhand().getCapability(CombatManipulator.CAP).isPresent()) {
@@ -528,7 +529,7 @@ public class CombatHandler {
                 uke.getAttribute(Attributes.ARMOR).applyNonPersistentModifier(armor);
             }
             if (CombatUtils.isPhysicalAttack(e.getSource())) {
-                if (awareness != CombatUtils.Awareness.ALERT) {
+                if (awareness != StealthUtils.Awareness.ALERT) {
                     e.setAmount((float) (e.getAmount() * CombatUtils.getDamageMultiplier(awareness, CombatUtils.getAttackingItemStack(ds))));
                 }
                 cap.setMightGrace(0);
@@ -587,7 +588,7 @@ public class CombatHandler {
             }
         }
         if (CombatData.getCap(uke).getStaggerTime() == 0 && CombatUtils.isPhysicalAttack(e.getSource())) {
-            if (e.getSource().getTrueSource() instanceof LivingEntity && CombatUtils.getAwareness((LivingEntity) e.getSource().getTrueSource(), uke) == CombatUtils.Awareness.UNAWARE)
+            if (e.getSource().getTrueSource() instanceof LivingEntity && StealthUtils.getAwareness((LivingEntity) e.getSource().getTrueSource(), uke) == StealthUtils.Awareness.UNAWARE)
                 return;
             float amount = e.getAmount();
             //absorption

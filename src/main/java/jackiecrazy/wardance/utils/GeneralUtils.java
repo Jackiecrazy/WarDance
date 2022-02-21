@@ -45,7 +45,7 @@ public class GeneralUtils {
                 return CombatData.getCap((LivingEntity) e.getLowestRidingEntity()).getMotionConsistently().lengthSquared();
             else return e.getLowestRidingEntity().getMotion().lengthSquared();
         if(e instanceof LivingEntity)
-            return CombatData.getCap((LivingEntity) e).getMotionConsistently().lengthSquared();
+            return Math.max(CombatData.getCap((LivingEntity) e).getMotionConsistently().lengthSquared(), e.getMotion().lengthSquared());
         return e.getMotion().lengthSquared();
     }
 

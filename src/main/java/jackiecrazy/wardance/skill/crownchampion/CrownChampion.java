@@ -8,10 +8,7 @@ import jackiecrazy.wardance.event.AttackMightEvent;
 import jackiecrazy.wardance.event.GainMightEvent;
 import jackiecrazy.wardance.potion.WarEffects;
 import jackiecrazy.wardance.skill.*;
-import jackiecrazy.wardance.utils.CombatUtils;
-import jackiecrazy.wardance.utils.SkillUtils;
-import jackiecrazy.wardance.utils.TargetingUtils;
-import jackiecrazy.wardance.utils.WarColors;
+import jackiecrazy.wardance.utils.*;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.ai.attributes.AttributeModifier;
@@ -146,7 +143,7 @@ elemental might: +1 burn/snowball/poison/drown damage to targets you have attack
 
         @Override
         public void onProc(LivingEntity caster, Event procPoint, STATE state, SkillData stats, LivingEntity target) {
-            if (procPoint instanceof AttackMightEvent && procPoint.getPhase() == EventPriority.HIGHEST && CombatUtils.getAwareness(caster, target).equals(CombatUtils.Awareness.UNAWARE))
+            if (procPoint instanceof AttackMightEvent && procPoint.getPhase() == EventPriority.HIGHEST && StealthUtils.getAwareness(caster, target).equals(StealthUtils.Awareness.UNAWARE))
                 ((AttackMightEvent) procPoint).setQuantity(((AttackMightEvent) procPoint).getQuantity() + 0.5f);
         }
 
