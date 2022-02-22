@@ -124,8 +124,10 @@ public class Judgment extends Skill {
         if (procPoint instanceof LivingDeathEvent && procPoint.getPhase() == EventPriority.HIGHEST && ((LivingDeathEvent) procPoint).getEntityLiving() == target) {
             Marks.getCap(target).getActiveMark(this).ifPresent((a) -> CombatData.getCap(caster).addMight(a.getArbitraryFloat() * mightConsumption(caster) * 1.4f));
         }
-        if (procPoint instanceof LivingAttackEvent && ((LivingAttackEvent) procPoint).getEntityLiving() == target && state == STATE.ACTIVE) {
-            ((LivingAttackEvent) procPoint).getSource().setDamageBypassesArmor().setDamageIsAbsolute();
+        if (procPoint instanceof LivingAttackEvent && ((LivingAttackEvent) procPoint).getEntityLiving() == target) {
+            if (state == STATE.ACTIVE)
+                ((LivingAttackEvent) procPoint).getSource().setDamageBypassesArmor().setDamageIsAbsolute();
+            Marks.getCap(target).getActiveMark(this).ifPresent((a) -> a.setDuration(a.getArbitraryFloat() == 1 ? 6 : 12));
         }
     }
 

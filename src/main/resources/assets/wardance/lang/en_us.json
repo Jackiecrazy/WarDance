@@ -210,7 +210,7 @@
   "wardance:elemental_might.name": "Elemental Might",
   "wardance:elemental_might.desc": " Attacking a target causes it to take 1 more damage from non-physical sources for the next 5 seconds; gain 1 might when an entity in 5 blocks dies from non-physical damage.",
   "category.judgment.name": "Judgment",
-  "category.judgment.desc": "Bound cast. Consume 3 might to attack with your main hand, additionally dealing 3% of target's current health as true damage and §lmarking§r them for 6 seconds. Killing a §lmarked§r target refunds 140% of the might used to make the §lmark§r. The §lmark§r may be stacked; the second rank lasts 12 seconds and attacks with your offhand, the third rank will detonate to deal 15% of the target's current health as true damage. 20 second cooldown on detonation and 2 second cooldown otherwise, requires S rank or above to cast.",
+  "category.judgment.desc": "Bound cast. Consume 3 might to attack with your main hand, additionally dealing 3% of target's current health as true damage and §lmarking§r them for 6 seconds. The §lmark§r is refreshed on attack, and refunds 140% of the might used to make the §lmark§r if the target dies. The §lmark§r may be stacked; the second rank lasts 12 seconds and attacks with your offhand, the third rank will detonate to deal 15% of the target's current health as true damage. 20 second cooldown on detonation and 2 second cooldown otherwise, requires S rank or above to cast.",
   "wardance:amputation.name": "Amputation",
   "wardance:amputation.desc": " Instead of dealing damage, add to target wounding by an equal amount.",
   "wardance:amputation.requirement": "must reach S rank first",
