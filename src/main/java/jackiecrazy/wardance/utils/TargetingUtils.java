@@ -9,6 +9,7 @@ import net.minecraft.entity.player.PlayerEntity;
 public class TargetingUtils {
 
     public static boolean isAlly(Entity entity, Entity of) {
+        if (entity == null || of == null) return false;
         if (of == entity) return true;
         if (entity instanceof TameableEntity && of instanceof LivingEntity && ((TameableEntity) entity).isOwner((LivingEntity) of))
             return true;
@@ -20,15 +21,16 @@ public class TargetingUtils {
         return false;
     }
 
-    public static boolean isHostile(Entity entity, Entity to){
-        if(isAlly(entity, to))return false;
-        if(entity instanceof LivingEntity){
-            if(((LivingEntity) entity).getRevengeTarget()!=null){
-                LivingEntity revenge=((LivingEntity) entity).getRevengeTarget();
-                if(isAlly(revenge, to))return true;
+    public static boolean isHostile(Entity entity, Entity to) {
+        if (entity == null || to == null) return false;
+        if (isAlly(entity, to)) return false;
+        if (entity instanceof LivingEntity) {
+            if (((LivingEntity) entity).getRevengeTarget() != null) {
+                LivingEntity revenge = ((LivingEntity) entity).getRevengeTarget();
+                if (isAlly(revenge, to)) return true;
             }
-            if(entity instanceof MobEntity&& ((MobEntity) entity).getAttackTarget()!=null){
-                LivingEntity attack=((MobEntity) entity).getAttackTarget();
+            if (entity instanceof MobEntity && ((MobEntity) entity).getAttackTarget() != null) {
+                LivingEntity attack = ((MobEntity) entity).getAttackTarget();
                 return isAlly(attack, to);
             }
         }

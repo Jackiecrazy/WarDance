@@ -1,4 +1,4 @@
-package jackiecrazy.wardance.skill.guillotine;
+package jackiecrazy.wardance.skill.judgment;
 
 import jackiecrazy.wardance.api.CombatDamageSource;
 import jackiecrazy.wardance.capability.status.Marks;
@@ -25,7 +25,7 @@ public class LichtenbergScar extends Judgment {
 
     @Override
     protected void performEffect(LivingEntity caster, LivingEntity target, int stack, SkillData sd) {
-        DamageSource cds = new CombatDamageSource("lightningBolt", caster).setDamageTyping(CombatDamageSource.TYPE.MAGICAL).setSkillUsed(this).setProcSkillEffects(true).setProxy(target).setDamageBypassesArmor().setDamageIsAbsolute();
+        DamageSource cds = new CombatDamageSource("lightningBolt", caster).setDamageTyping(CombatDamageSource.TYPE.MAGICAL).setSkillUsed(this).setProcSkillEffects(true).setProxy(target).setDamageBypassesArmor();
         if (stack != 3) {
             target.attackEntityFrom(cds, 0);
             return;

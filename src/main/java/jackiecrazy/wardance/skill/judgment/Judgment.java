@@ -1,4 +1,4 @@
-package jackiecrazy.wardance.skill.guillotine;
+package jackiecrazy.wardance.skill.judgment;
 
 import jackiecrazy.wardance.WarDance;
 import jackiecrazy.wardance.api.CombatDamageSource;

@@ -1,4 +1,4 @@
-package jackiecrazy.wardance.skill.guillotine;
+package jackiecrazy.wardance.skill.judgment;
 
 import jackiecrazy.wardance.capability.status.Marks;
 import jackiecrazy.wardance.skill.SkillData;

@@ -3,7 +3,7 @@ package jackiecrazy.wardance.skill;
 import jackiecrazy.wardance.WarDance;
 import jackiecrazy.wardance.skill.coupdegrace.CoupDeGrace;
 import jackiecrazy.wardance.skill.crownchampion.CrownChampion;
-import jackiecrazy.wardance.skill.guillotine.*;
+import jackiecrazy.wardance.skill.judgment.*;
 import jackiecrazy.wardance.skill.feint.Feint;
 import jackiecrazy.wardance.skill.grapple.Clinch;
 import jackiecrazy.wardance.skill.grapple.Grapple;
@@ -87,7 +87,7 @@ public class WarSkills {
     public static final RegistryObject<Skill> CROWD_PLEASER = SKILLS.register("crowd_pleaser", CrowdPleaser::new);
     public static final RegistryObject<Skill> LICHTENBERG_SCAR = SKILLS.register("lichtenberg_scar", LichtenbergScar::new);
     public static final RegistryObject<Skill> FEVER_DREAM = SKILLS.register("fever_dream", FeverDream::new);
-    public static final RegistryObject<Skill> MASTERS_LESSON = SKILLS.register("masters_lesson", MastersLesson::new);
+    public static final RegistryObject<Skill> VIRAL_DECAY = SKILLS.register("viral_decay", ViralDecay::new);
     public static final RegistryObject<Skill> BRUTALIZE = SKILLS.register("brutalize", Brutalize::new);
     public static final RegistryObject<Skill> BLOODLUST = SKILLS.register("bloodlust", MementoMori::new);
     public static final RegistryObject<Skill> RAPID_CLOTTING = SKILLS.register("rapid_clotting", MementoMori.RapidClotting::new);

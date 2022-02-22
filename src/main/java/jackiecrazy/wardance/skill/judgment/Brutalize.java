@@ -1,4 +1,4 @@
-package jackiecrazy.wardance.skill.guillotine;
+package jackiecrazy.wardance.skill.judgment;
 
 import jackiecrazy.wardance.capability.resources.CombatData;
 import jackiecrazy.wardance.event.StaggerEvent;
