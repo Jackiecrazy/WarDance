@@ -78,7 +78,7 @@ public class WarSkills {
     public static final RegistryObject<Skill> PRIDEFUL_MIGHT = SKILLS.register("prideful_might", CrownChampion.PridefulMight::new);
     public static final RegistryObject<Skill> ELEMENTAL_MIGHT = SKILLS.register("elemental_might", CrownChampion.ElementalMight::new);
     public static final RegistryObject<Skill> FOLLOWUP = SKILLS.register("followup", Feint::new);
-    public static final RegistryObject<Skill> SPIRIT_BOMB = SKILLS.register("spirit_bomb", Feint.SpiritBomb::new);
+    public static final RegistryObject<Skill> SPIRIT_RESONANCE = SKILLS.register("spirit_resonance", Feint.SpiritBomb::new);
     public static final RegistryObject<Skill> SMIRKING_SHADOW = SKILLS.register("smirking_shadow", Feint.SmirkingShadow::new);
     public static final RegistryObject<Skill> SCORPION_STING = SKILLS.register("scorpion_sting", Feint.ScorpionSting::new);
     public static final RegistryObject<Skill> UPPER_HAND = SKILLS.register("upper_hand", Feint.UpperHand::new);

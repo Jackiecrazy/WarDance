@@ -57,7 +57,7 @@ public class Feint extends Skill {
             }
         }
         //spirit bomb damage amplification
-        Marks.getCap(uke).getActiveMark(WarSkills.SPIRIT_BOMB.get()).ifPresent((a) -> {
+        Marks.getCap(uke).getActiveMark(WarSkills.SPIRIT_RESONANCE.get()).ifPresent((a) -> {
             if (a.getDuration() <= 0.1 && e.getSource() instanceof CombatDamageSource && ((CombatDamageSource) e.getSource()).canProcSkillEffects()) {
                 a.flagCondition(true);
                 a.setArbitraryFloat(a.getArbitraryFloat() - 1);
@@ -70,7 +70,7 @@ public class Feint extends Skill {
     @SubscribeEvent()
     public static void spiritBomb(LivingHurtEvent e) {
         LivingEntity uke = e.getEntityLiving();
-        Marks.getCap(uke).getActiveMark(WarSkills.SPIRIT_BOMB.get()).ifPresent((a) -> {
+        Marks.getCap(uke).getActiveMark(WarSkills.SPIRIT_RESONANCE.get()).ifPresent((a) -> {
             if (a.isCondition() && e.getSource() instanceof CombatDamageSource && ((CombatDamageSource) e.getSource()).canProcSkillEffects()) {
                 e.setAmount(e.getAmount() + 2);
             }
