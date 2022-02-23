@@ -2,12 +2,13 @@ package jackiecrazy.wardance.skill.judgment;
 
 import jackiecrazy.wardance.WarDance;
 import jackiecrazy.wardance.capability.status.Marks;
-import jackiecrazy.wardance.entity.FakeExplosion;
 import jackiecrazy.wardance.skill.SkillData;
 import jackiecrazy.wardance.skill.WarSkills;
+import jackiecrazy.wardance.utils.SkillUtils;
 import jackiecrazy.wardance.utils.TargetingUtils;
 import jackiecrazy.wardance.utils.WarColors;
 import net.minecraft.entity.LivingEntity;
+import net.minecraft.particles.ParticleTypes;
 import net.minecraft.util.DamageSource;
 import net.minecraftforge.event.entity.living.LivingDeathEvent;
 import net.minecraftforge.eventbus.api.Event;
@@ -28,9 +29,10 @@ public class ViralDecay extends Judgment {
     }
 
     private static void detonate(LivingEntity target, LivingEntity caster) {
-        FakeExplosion.explode(target.world, caster, target.getPosX(), target.getPosY(), target.getPosZ(), 3, VIRUS, 2);
+        SkillUtils.createCloud(target.world, caster, target.getPosX(), target.getPosY(), target.getPosZ(), 3, ParticleTypes.EXPLOSION);
         final List<LivingEntity> list = target.world.getLoadedEntitiesWithinAABB(LivingEntity.class, target.getBoundingBox().grow(3), (b) -> !TargetingUtils.isAlly(b, caster));
         for (LivingEntity enemy : list) {
+            enemy.attackEntityFrom(VIRUS, 2);
             Marks.getCap(enemy).mark(new SkillData(WarSkills.VIRAL_DECAY.get(), 6).setArbitraryFloat(1).setCaster(caster));
         }
     }
@@ -43,8 +45,10 @@ public class ViralDecay extends Judgment {
     @Override
     protected void performEffect(LivingEntity caster, LivingEntity target, int stack, SkillData sd) {
         super.performEffect(caster, target, stack, sd);
-        if (stack >= 3)
+        if (stack >= 3) {
             detonate(target, caster);
+            removeMark(target);
+        }
     }
 
     @Override

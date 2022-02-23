@@ -69,7 +69,7 @@ import java.util.Optional;
 public class ClientEvents {
     private static final int ALLOWANCE = 7;
     private static final ResourceLocation hud = new ResourceLocation(WarDance.MODID, "textures/hud/icons.png");
-    private static final ResourceLocation goodhud = new ResourceLocation(WarDance.MODID, "textures/hud/thanksrai.png");
+    private static final ResourceLocation goodhud = new ResourceLocation(WarDance.MODID, "textures/hud/thanksraitest.png");
     /**
      * left, back, right
      */
@@ -403,11 +403,11 @@ public class ClientEvents {
                         fillHeight = Math.min(fillHeight, 32);
                         //spirit base
                         stack.push();
-                        mc.ingameGUI.blit(stack, x, y, 32, 96, 32, 32);
+                        mc.ingameGUI.blit(stack, x, y+1, 32, 96, 32, 32);
                         stack.pop();
                         //spirit illumination
                         stack.push();
-                        mc.ingameGUI.blit(stack, x, y + 32 - fillHeight, 64, 128 - fillHeight, 32, fillHeight);
+                        mc.ingameGUI.blit(stack, x, y + 33 - fillHeight, 64, 128 - fillHeight, 32, fillHeight);
                         stack.pop();
                     }
                     if (ClientConfig.CONFIG.spiritNumber.enabled) {

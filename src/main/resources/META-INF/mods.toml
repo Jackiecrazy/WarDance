@@ -27,14 +27,14 @@ displayName="Project: War Dance" #mandatory
 # A URL for the "homepage" for this mod, displayed in the mod UI
 #displayURL="http://example.com/" #optional
 # A file name (in the root of the mod JAR) containing a logo for display
-#logoFile="examplemod.png" #optional
+logoFile="pwd.png" #optional
 # A text field displayed in the mod UI
 credits="Swirtz, Forge guys, Darkmega, Darkhax, everyone on the discord server!" #optional
 # A text field displayed in the mod UI
 authors="Jackiecrazy" #optional
 # The description text for the mod (multi line!) (#mandatory)
 description='''
-A mod about in-combat resources. Dodge, roll, stagger, and dual-wield your way to victory.
+A mod about in-combat resources. Dodge, kick, stagger, and dual-wield your way to victory.
 '''
 # A dependency - use the . to indicate dependency for a specific modid. Dependencies are optional.
 [[dependencies.wardance]] #optional

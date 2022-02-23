@@ -7,7 +7,6 @@ import jackiecrazy.wardance.capability.skill.CasterData;
 import jackiecrazy.wardance.capability.skill.ISkillCapability;
 import jackiecrazy.wardance.capability.status.Marks;
 import jackiecrazy.wardance.event.EntityAwarenessEvent;
-import jackiecrazy.wardance.event.ParryEvent;
 import jackiecrazy.wardance.potion.WarEffects;
 import jackiecrazy.wardance.skill.*;
 import jackiecrazy.wardance.utils.*;
@@ -106,7 +105,7 @@ public class Feint extends Skill {
 
     @Override
     public void onProc(LivingEntity caster, Event procPoint, STATE state, SkillData stats, LivingEntity target) {
-        if (procPoint instanceof LivingAttackEvent && procPoint.getPhase() == EventPriority.HIGHEST && state == STATE.HOLSTERED && ((ParryEvent) procPoint).getAttacker() == caster && cast(caster, -999)) {
+        if (procPoint instanceof LivingAttackEvent && procPoint.getPhase() == EventPriority.HIGHEST && state == STATE.HOLSTERED && ((LivingAttackEvent) procPoint).getEntityLiving() == target && cast(caster, -999)) {
             int dur = 20;
             if (Marks.getCap(target).isMarked(this)) {
                 SkillData a = Marks.getCap(target).getActiveMark(this).get();

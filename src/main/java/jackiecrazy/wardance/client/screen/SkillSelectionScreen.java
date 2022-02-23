@@ -43,12 +43,12 @@ public class SkillSelectionScreen extends Screen {
     private final List<SkillCategory> unsortedBases;
     private final SkillSliceButton[] skillPie = new SkillSliceButton[5];
     private final PassiveButton[] passives = new PassiveButton[5];
-    private final int numButtons = 3;//1 for tag toggling, 1 for stat toggling
+    private final int numButtons = 2;//1 for tag toggling, 1 for stat toggling
     public SkillListWidget.CategoryEntry selectedSkill = null;
     public VariationListWidget.VariationEntry selectedVariation = null;
     private SkillListWidget skillList;
     private VariationListWidget variationList;
-    private SkillSelectionScreen.InfoPanel modInfo;
+    private SkillSelectionScreen.InfoPanel skillInfo;
     private int listWidth;
     private List<SkillCategory> bases;
     private int buttonMargin = 1;
@@ -104,11 +104,11 @@ public class SkillSelectionScreen extends Screen {
         search = new TextFieldWidget(getFontRenderer(), PADDING + 1, y, listWidth - 2, 14, new TranslationTextComponent("fml.menu.mods.search"));
 
         int fullButtonHeight = PADDING + 20 + PADDING;
-        this.skillList = new SkillListWidget(this, listWidth, fullButtonHeight, search.y - getFontRenderer().FONT_HEIGHT - PADDING);
+        this.skillList = new SkillListWidget(this, listWidth, PADDING, search.y - getFontRenderer().FONT_HEIGHT - PADDING);
         this.skillList.setLeftPos(PADDING);
 
         int split = (this.height - PADDING * 2 - fullButtonHeight) * 2 / 3;
-        this.modInfo = new InfoPanel(this.minecraft, infoWidth, split, PADDING);
+        this.skillInfo = new InfoPanel(this.minecraft, infoWidth, split, PADDING);
         this.variationList = new VariationListWidget(this, infoWidth - 9, split + PADDING * 2, search.y - getFontRenderer().FONT_HEIGHT - PADDING);
         this.variationList.setLeftPos(PADDING * 2 + listWidth);
 
@@ -128,17 +128,17 @@ public class SkillSelectionScreen extends Screen {
         children.add(search);
         children.add(skillList);
         children.add(variationList);
-        children.add(modInfo);
+        children.add(skillInfo);
         search.setFocused2(false);
         search.setCanLoseFocus(true);
 
-        final int width = listWidth / numButtons;
-        int x = PADDING;
-        addButton(AdvancedData.NORMAL.button = new Button(x, PADDING, width - buttonMargin, 20, AdvancedData.NORMAL.getButtonText(), b -> resortMods(AdvancedData.NORMAL)));
-        x += width + buttonMargin;
-        addButton(AdvancedData.A_TO_Z.button = new Button(x, PADDING, width - buttonMargin, 20, AdvancedData.A_TO_Z.getButtonText(), b -> resortMods(AdvancedData.A_TO_Z)));
-        x += width + buttonMargin;
-        addButton(AdvancedData.Z_TO_A.button = new Button(x, PADDING, width - buttonMargin, 20, AdvancedData.Z_TO_A.getButtonText(), b -> resortMods(AdvancedData.Z_TO_A)));
+        //final int width = listWidth / numButtons;
+//        int x = PADDING;
+//        addButton(AdvancedData.NORMAL.button = new Button(x, PADDING, width - buttonMargin, 20, AdvancedData.NORMAL.getButtonText(), b -> resortMods(AdvancedData.NORMAL)));
+//        x += width + buttonMargin;
+//        addButton(AdvancedData.A_TO_Z.button = new Button(x, PADDING, width - buttonMargin, 20, AdvancedData.A_TO_Z.getButtonText(), b -> resortMods(AdvancedData.A_TO_Z)));
+//        x += width + buttonMargin;
+//        addButton(AdvancedData.Z_TO_A.button = new Button(x, PADDING, width - buttonMargin, 20, AdvancedData.Z_TO_A.getButtonText(), b -> resortMods(AdvancedData.Z_TO_A)));
         resortMods(AdvancedData.NORMAL);
         updateCache();
         setFocusedDefault(skillList);
@@ -208,8 +208,8 @@ public class SkillSelectionScreen extends Screen {
         this.renderBackground(mStack);
         this.skillList.render(mStack, mouseX, mouseY, partialTicks);
         this.variationList.render(mStack, mouseX, mouseY, partialTicks);
-        if (this.modInfo != null) {
-            this.modInfo.render(mStack, mouseX, mouseY, partialTicks);
+        if (this.skillInfo != null) {
+            this.skillInfo.render(mStack, mouseX, mouseY, partialTicks);
             RenderSystem.disableScissor();
         }
         for (SkillSliceButton ssb : skillPie) {
@@ -248,18 +248,18 @@ public class SkillSelectionScreen extends Screen {
 
     private void updateCache() {
         if (selectedSkill == null) {
-            this.modInfo.clearInfo();
+            this.skillInfo.clearInfo();
             List<String> lines = new ArrayList<>();
             lines.add(new TranslationTextComponent("wardance:skills_general").getString() + "\n");
             lines.add(new TranslationTextComponent("wardance:skills_colors").getString() + "\n");
             lines.add(new TranslationTextComponent("wardance:skills_terms").getString() + "\n");
-            modInfo.setInfo(lines, null);
+            skillInfo.setInfo(lines, null);
             return;
         }
         SkillCategory selectedSkill = this.selectedSkill.getCategory();
         List<String> lines = new ArrayList<>();
 
-        lines.add(TextFormatting.BOLD+""+TextFormatting.UNDERLINE+selectedSkill.name().getString()+TextFormatting.RESET);
+        lines.add(TextFormatting.BOLD+""+TextFormatting.UNDERLINE+selectedSkill.name().getString()+TextFormatting.RESET+"\n");
         lines.add(selectedSkill.description().getString());
         if (selectedVariation != null) {
             //lines.add(String.valueOf(selectedVariation.getSkill().getColor().getRGB()));
@@ -273,7 +273,7 @@ public class SkillSelectionScreen extends Screen {
             }
         }
         lines.add("\n");
-        modInfo.setInfo(lines, null);
+        skillInfo.setInfo(lines, null);
     }
 
     @Override
@@ -369,7 +369,7 @@ public class SkillSelectionScreen extends Screen {
 
         @Override
         public int getContentHeight() {
-            int height = 50;
+            int height = 0;
             height += (lines.size() * font.FONT_HEIGHT);
             if (height < this.bottom - this.top - 8)
                 height = this.bottom - this.top - 8;
@@ -440,6 +440,8 @@ public class SkillSelectionScreen extends Screen {
 
         @Override
         protected void drawBackground() {
+            //this.drawGradientRect(, this.left, this.top, this.right, this.bottom, 0xC0101010, 0xD0101010);
+
         }
     }
 }

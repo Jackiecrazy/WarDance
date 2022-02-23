@@ -111,15 +111,15 @@ public class Hex extends Skill {
 
     @Override
     public boolean onStateChange(LivingEntity caster, SkillData prev, STATE from, STATE to) {
-        if (to == STATE.ACTIVE) {
+        if (to == STATE.ACTIVE && cast(caster, -999)) {
             LivingEntity e = SkillUtils.aimLiving(caster);
             if (e != null) {
                 mark(caster, e, 200);
                 markUsed(caster);
             }
         }
-        if(to==STATE.COOLING)
-            setCooldown(caster, prev,15);
+        if (to == STATE.COOLING)
+            setCooldown(caster, prev, 15);
         return boundCast(prev, from, to);
     }
 

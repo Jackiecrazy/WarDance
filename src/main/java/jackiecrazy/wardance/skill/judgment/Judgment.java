@@ -85,12 +85,12 @@ public class Judgment extends Skill {
                 removeMark(target);
             } else prev.flagCondition(true);
             stack += arb;
-            boolean offhand = stack == 2;
-            CombatUtils.attack(caster, target, offhand);
-            caster.swing(offhand ? Hand.OFF_HAND : Hand.MAIN_HAND, true);
             target.hurtResistantTime = 0;
             performEffect(caster, target, stack, prev);
             mark(caster, target, 6, 1);
+            boolean offhand = stack == 2;
+            CombatUtils.attack(caster, target, offhand);
+            caster.swing(offhand ? Hand.OFF_HAND : Hand.MAIN_HAND, true);
             caster.world.playSound(null, caster.getPosX(), caster.getPosY(), caster.getPosZ(), SoundEvents.ENTITY_RAVAGER_STEP, SoundCategory.PLAYERS, 0.25f + WarDance.rand.nextFloat() * 0.5f, 0.5f + WarDance.rand.nextFloat() * 0.5f);
         }
         if (to == STATE.COOLING) {

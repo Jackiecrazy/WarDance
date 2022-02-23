@@ -188,7 +188,7 @@ public class GeneralUtils {
         Vector3d look = attacker.getLookVec().scale(range + 2);
         Vector3d end = start.add(look);
         LivingEntity entity = null;
-        List<LivingEntity> list = world.getEntitiesWithinAABB(LivingEntity.class, attacker.getBoundingBox().expand(look.x, look.y, look.z).grow(1.0D), null);
+        List<LivingEntity> list = world.getEntitiesWithinAABB(LivingEntity.class, attacker.getBoundingBox().expand(look.x, look.y, look.z).grow(1.5D), null);
         double d0 = -1.0D;//necessary to prevent small derps
 
         for (LivingEntity entity1 : list) {
