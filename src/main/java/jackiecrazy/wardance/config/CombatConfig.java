@@ -427,7 +427,7 @@ public class CombatConfig {
     public static int rollEndsAt;
     public static int rollCooldown;
     public static int shieldThreshold;
-    public static int shieldCount;
+    public static float shieldCount;
     public static int staggerDuration;
     public static int staggerDurationMin;
     public static int staggerHits, adrenaline;

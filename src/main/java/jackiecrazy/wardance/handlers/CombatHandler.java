@@ -152,13 +152,13 @@ public class CombatHandler {
 //                if (projectile instanceof ProjectileEntity)
 //                    ((ProjectileEntity) projectile).setShooter(uke);//makes drowned tridents and skeleton arrows collectable, which is honestly silly
                 if (!free) {
-                    Tuple<Integer, Integer> stat = CombatUtils.getShieldStats(defend);
+                    Tuple<Integer, Float> stat = CombatUtils.getShieldStats(defend);
                     ukeCap.setShieldTime(stat.getA());
-                    ukeCap.setShieldCount(stat.getB() - (pe.getShieldCount() - 1));
+                    ukeCap.setShieldBarrier(stat.getB() - (pe.getBreach()));
                 } else {
-                    ukeCap.decrementShieldCount(pe.getShieldCount());
+                    ukeCap.decrementShieldBarrier(pe.getBreach());
                 }
-                if (ukeCap.getShieldCount() <= 0) {
+                if (ukeCap.getShieldBarrier() <= 0) {
                     if (uke instanceof PlayerEntity && h != null) {
                         ((PlayerEntity) uke).getCooldownTracker().setCooldown(uke.getHeldItem(h).getItem(), ukeCap.getShieldTime());
                     }
@@ -333,7 +333,11 @@ public class CombatHandler {
                 }
                 float finalPostureConsumption = Math.abs(atkMult * defMult);//accounting for negative posture damage, used to mark an item as ignoring parries
                 float originalPostureConsumption = Math.abs(original * defMult);//updating this quickly, it's basically the above without crit and stab multipliers, which were necessary for calculating canParry so they couldn't be eliminated cleanly...
-                ParryEvent pe = new ParryEvent(uke, seme, ((canParry && defend != null) || useDeflect), attackingHand, attack, parryHand, defend, finalPostureConsumption, originalPostureConsumption, e.getAmount());
+                //the following two variables are only used for shields, but they're calculated anyway.
+                defMult=1-defMult;
+                float finalBarrierDamage = Math.abs(atkMult * defMult);//accounting for negative posture damage, used to mark an item as ignoring parries
+                float originalBarrierDamage = Math.abs(original * defMult);//updating this quickly, it's basically the above without crit and stab multipliers, which were necessary for calculating canParry so they couldn't be eliminated cleanly...
+                ParryEvent pe = new ParryEvent(uke, seme, ((canParry && defend != null) || useDeflect), attackingHand, attack, parryHand, defend, finalPostureConsumption, originalPostureConsumption, finalBarrierDamage, originalBarrierDamage, e.getAmount());
                 if (failManualParry)
                     pe.setResult(Event.Result.DENY);
                 MinecraftForge.EVENT_BUS.post(pe);
@@ -368,20 +372,21 @@ public class CombatHandler {
                         boolean disshield = false;
                         parryHand = uke.getHeldItemOffhand() == defend ? Hand.OFF_HAND : Hand.MAIN_HAND;
                         if (CombatUtils.isShield(uke, defend)) {
+                            Tuple<Integer, Float> stat = CombatUtils.getShieldStats(defend);
+                            //this is the only point that calls barrier damage
                             if (attack.canDisableShield(defend, uke, seme)) {
                                 //shield is disabled
                                 if (uke instanceof PlayerEntity) {
-                                    ((PlayerEntity) uke).getCooldownTracker().setCooldown(defend.getItem(), 60);
+                                    ((PlayerEntity) uke).getCooldownTracker().setCooldown(defend.getItem(), stat.getA());
                                 }
-                                ukeCap.setHandBind(parryHand, 60);
+                                ukeCap.setHandBind(parryHand, stat.getA());
                                 disshield = true;
                             } else if (ukeCap.getShieldTime() == 0) {
-                                Tuple<Integer, Integer> stat = CombatUtils.getShieldStats(defend);
                                 ukeCap.setShieldTime(stat.getA());
-                                ukeCap.setShieldCount(stat.getB());
+                                ukeCap.setShieldBarrier(stat.getB() - pe.getBarrierDamage());
                             } else {
-                                ukeCap.decrementShieldCount(1);
-                                if (ukeCap.getShieldCount() <= 0) {
+                                ukeCap.decrementShieldBarrier(pe.getBarrierDamage());
+                                if (ukeCap.getShieldBarrier() <= 0) {
                                     if (uke instanceof PlayerEntity) {
                                         ((PlayerEntity) uke).getCooldownTracker().setCooldown(defend.getItem(), ukeCap.getShieldTime());
                                     }
@@ -518,7 +523,7 @@ public class CombatHandler {
         ICombatCapability cap = CombatData.getCap(uke);
         cap.setSpiritGrace(ResourceConfig.spiritCD);
         cap.setAdrenalineCooldown(CombatConfig.adrenaline);
-        SubtleBonusHandler.update=true;
+        SubtleBonusHandler.update = true;
         StealthUtils.Awareness awareness = StealthUtils.getAwareness(kek, uke);
         if (ds.getTrueSource() instanceof LivingEntity) {
             LivingEntity seme = ((LivingEntity) ds.getTrueSource());

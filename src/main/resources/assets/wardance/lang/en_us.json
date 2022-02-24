@@ -35,7 +35,7 @@
 
   "wardance.tooltip.postureAttack": "Posture per attack: %.2d",
   "wardance.tooltip.postureDefend": "Defense posture multiplier: %.2d",
-  "wardance.tooltip.parry": "Parries up to %s times per %.2d seconds",
+  "wardance.tooltip.parry": "Parries up to %s posture damage per %.2d seconds",
   "wardance.tooltip.attack": "Ambushes distracted targets for %s damage and unaware targets for %s damage",
   "wardance.tooltip.unarmed": "Attacks are treated as unarmed strikes",
   "wardance.tooltip.noParry": "Cannot be used to parry",
@@ -156,7 +156,7 @@
   "category.shield_bash.name": "Shield Bash",
   "category.shield_bash.desc": "If holstered, your shield will behave as a range 3 blunt weapon once, dealing additional posture damage equivalent to its shield time. Recharge in 4 parries, costs 2 spirit.",
   "wardance:pummel.name": "Pummel",
-  "wardance:pummel.desc": " Passive. Gain a 4/0/(shield time) §lauxiliary attack§r when holding a shield in your offhand.",
+  "wardance:pummel.desc": " Passive. Gain a 6/0/(shield time) §lauxiliary attack§r when holding a shield in your offhand.",
   "wardance:rim_punch.name": "Rim Punch",
   "wardance:rim_punch.desc": " Deal no additional posture damage. Smash the shield's rim into the target, nauseating them for 3 seconds and inflicting additional knockback.",
   "wardance:overbear.name": "Overbear",

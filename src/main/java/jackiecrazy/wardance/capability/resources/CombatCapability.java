@@ -49,10 +49,10 @@ public class CombatCapability implements ICombatCapability {
     private final WeakReference<LivingEntity> dude;
     int lastRangeTick = 0;
     private ItemStack prev;
-    private float might, spirit, posture, rank, mpos, mspi, wounding, burnout, fatigue, mainReel, offReel, maxMight, resolve;
+    private float might, spirit, posture, rank, mpos, mspi, wounding, burnout, fatigue, mainReel, offReel, maxMight, resolve, sc;
     private int shatterCD;
     private int qcd, scd, pcd, ccd, mBind, oBind;
-    private int staggert, staggerc, ocd, shield, sc, roll, sweepAngle = -1;
+    private int staggert, staggerc, ocd, shield, roll, sweepAngle = -1;
     private boolean offhand, combat;
     private long lastUpdate;
     private boolean first, shattering;
@@ -326,8 +326,8 @@ public class CombatCapability implements ICombatCapability {
     }
 
     @Override
-    public boolean halvedAdrenaline(){
-        return adrenaline!=0;
+    public boolean halvedAdrenaline() {
+        return adrenaline != 0;
     }
 
     @Override
@@ -475,23 +475,28 @@ public class CombatCapability implements ICombatCapability {
             shield -= amount;
         else {
             shield = 0;
-            setShieldCount(0);
+            setShieldBarrier(0);
         }
     }
 
     @Override
-    public int getShieldCount() {
+    public float getShieldBarrier() {
         return sc;
     }
 
     @Override
-    public void setShieldCount(int amount) {
+    public void setShieldBarrier(float amount) {
         sc = amount;
     }
 
     @Override
-    public void decrementShieldCount(int amount) {
-        sc -= Math.min(sc, amount);
+    public void decrementShieldBarrier(float amount) {
+        if (sc - amount > 0)
+            sc -= amount;
+        else {
+            sc = 0;
+            setShieldTime(0);
+        }
     }
 
     @Override
@@ -792,7 +797,7 @@ public class CombatCapability implements ICombatCapability {
                 decay = 0.05f;
             decay *= ticks;
             rank -= decay;
-            if (rank < 0&&elb instanceof PlayerEntity) {
+            if (rank < 0 && elb instanceof PlayerEntity) {
                 rank = 0;
                 wounding -= Math.min(wounding, decay);
                 fatigue -= Math.min(fatigue, decay);
@@ -859,7 +864,7 @@ public class CombatCapability implements ICombatCapability {
         setHandBind(Hand.OFF_HAND, c.getInt("offBind"));
         setOffhandAttack(c.getBoolean("offhand"));
         toggleCombatMode(c.getBoolean("combat"));
-        setShieldCount(c.getInt("shieldC"));
+        setShieldBarrier(c.getFloat("shieldC"));
         setForcedSweep(c.getInt("sweep"));
         setHandReel(Hand.MAIN_HAND, c.getFloat("mainReel"));
         setHandReel(Hand.OFF_HAND, c.getFloat("offReel"));
@@ -936,7 +941,7 @@ public class CombatCapability implements ICombatCapability {
         c.putBoolean("offhand", isOffhandAttack());
         c.putBoolean("combat", isCombatMode());
         c.putLong("lastUpdate", lastUpdate);
-        c.putInt("shieldC", sc);
+        c.putFloat("shieldC", sc);
         c.putBoolean("first", first);
         c.putInt("parrying", parrying);
         c.putInt("adrenaline", adrenaline);
@@ -1011,8 +1016,8 @@ public class CombatCapability implements ICombatCapability {
         }
         float exhaustMod = Math.max(0, elb.isPotionActive(WarEffects.EXHAUSTION.get()) ? 1 - elb.getActivePotionEffect(WarEffects.EXHAUSTION.get()).getAmplifier() * 0.2f : 1);
         float armorMod = 5f + Math.min(elb.getTotalArmorValue(), 20) * 0.25f;
-        float healthMod = 0.25f + elb.getHealth() / elb.getMaxHealth() * 0.75f;
-        final float ret = (getMaxSpirit() / (armorMod * 20)) * exhaustMod * healthMod * poison;
+        //float healthMod = 0.25f + elb.getHealth() / elb.getMaxHealth() * 0.75f;
+        final float ret = (getMaxSpirit() / (armorMod * 20)) * exhaustMod * poison;
         RegenSpiritEvent ev = new RegenSpiritEvent(elb, ret);
         MinecraftForge.EVENT_BUS.post(ev);
         return ev.getQuantity();

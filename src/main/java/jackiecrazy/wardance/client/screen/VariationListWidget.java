@@ -52,11 +52,11 @@ public class VariationListWidget extends ExtendedList<VariationListWidget.Variat
         BufferBuilder bufferbuilder = tessellator.getBuffer();
         RenderSystem.color4f(1.0F, 1.0F, 1.0F, 1.0F);
         bufferbuilder.begin(7, DefaultVertexFormats.POSITION_TEX_COLOR);
-        final int color = this.isFocused()?255:160;
-        bufferbuilder.pos((double)this.x0+1, (double)this.y1+1, 0.0D).tex((float)this.x0 / 32.0F, (float)(this.y1 + (int)this.getScrollAmount()) / 32.0F).color(color, color, color, 255).endVertex();
-        bufferbuilder.pos((double)this.x1-2, (double)this.y1+1, 0.0D).tex((float)this.x1 / 32.0F, (float)(this.y1 + (int)this.getScrollAmount()) / 32.0F).color(color, color, color, 255).endVertex();
-        bufferbuilder.pos((double)this.x1-2, (double)this.y0+3, 0.0D).tex((float)this.x1 / 32.0F, (float)(this.y0 + (int)this.getScrollAmount()) / 32.0F).color(color, color, color, 255).endVertex();
-        bufferbuilder.pos((double)this.x0+1, (double)this.y0+3, 0.0D).tex((float)this.x0 / 32.0F, (float)(this.y0 + (int)this.getScrollAmount()) / 32.0F).color(color, color, color, 255).endVertex();
+        final int color = this.isFocused() ? 255 : 160;
+        bufferbuilder.pos((double) this.x0 + 1, (double) this.y1 + 1, 0.0D).tex((float) this.x0 / 32.0F, (float) (this.y1 + (int) this.getScrollAmount()) / 32.0F).color(color, color, color, 255).endVertex();
+        bufferbuilder.pos((double) this.x1 - 2, (double) this.y1 + 1, 0.0D).tex((float) this.x1 / 32.0F, (float) (this.y1 + (int) this.getScrollAmount()) / 32.0F).color(color, color, color, 255).endVertex();
+        bufferbuilder.pos((double) this.x1 - 2, (double) this.y0 + 3, 0.0D).tex((float) this.x1 / 32.0F, (float) (this.y0 + (int) this.getScrollAmount()) / 32.0F).color(color, color, color, 255).endVertex();
+        bufferbuilder.pos((double) this.x0 + 1, (double) this.y0 + 3, 0.0D).tex((float) this.x0 / 32.0F, (float) (this.y0 + (int) this.getScrollAmount()) / 32.0F).color(color, color, color, 255).endVertex();
         tessellator.draw();
         RenderSystem.enableTexture();
         double d0 = this.minecraft.getMainWindow().getGuiScaleFactor();
@@ -76,10 +76,10 @@ public class VariationListWidget extends ExtendedList<VariationListWidget.Variat
         BufferBuilder bufferbuilder = tessellator.getBuffer();
         RenderSystem.color4f(1.0F, 1.0F, 1.0F, 1.0F);
         bufferbuilder.begin(7, DefaultVertexFormats.POSITION_TEX_COLOR);
-        bufferbuilder.pos((double)this.x0, (double)this.y1, 0.0D).tex((float)this.x0 / 32.0F, (float)(this.y1 + (int)this.getScrollAmount()) / 32.0F).color(20, 20, 20, 255).endVertex();
-        bufferbuilder.pos((double)this.x1, (double)this.y1, 0.0D).tex((float)this.x1 / 32.0F, (float)(this.y1 + (int)this.getScrollAmount()) / 32.0F).color(20, 20, 20, 255).endVertex();
-        bufferbuilder.pos((double)this.x1, (double)this.y0+3, 0.0D).tex((float)this.x1 / 32.0F, (float)(this.y0 + (int)this.getScrollAmount()) / 32.0F).color(20, 20, 20, 255).endVertex();
-        bufferbuilder.pos((double)this.x0, (double)this.y0+3, 0.0D).tex((float)this.x0 / 32.0F, (float)(this.y0 + (int)this.getScrollAmount()) / 32.0F).color(20, 20, 20, 255).endVertex();
+        bufferbuilder.pos((double) this.x0, (double) this.y1, 0.0D).tex((float) this.x0 / 32.0F, (float) (this.y1 + (int) this.getScrollAmount()) / 32.0F).color(20, 20, 20, 255).endVertex();
+        bufferbuilder.pos((double) this.x1, (double) this.y1, 0.0D).tex((float) this.x1 / 32.0F, (float) (this.y1 + (int) this.getScrollAmount()) / 32.0F).color(20, 20, 20, 255).endVertex();
+        bufferbuilder.pos((double) this.x1, (double) this.y0 + 3, 0.0D).tex((float) this.x1 / 32.0F, (float) (this.y0 + (int) this.getScrollAmount()) / 32.0F).color(20, 20, 20, 255).endVertex();
+        bufferbuilder.pos((double) this.x0, (double) this.y0 + 3, 0.0D).tex((float) this.x0 / 32.0F, (float) (this.y0 + (int) this.getScrollAmount()) / 32.0F).color(20, 20, 20, 255).endVertex();
         tessellator.draw();
         RenderSystem.enableTexture();
     }

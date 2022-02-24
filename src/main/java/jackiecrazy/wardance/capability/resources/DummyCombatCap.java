@@ -247,17 +247,17 @@ public class DummyCombatCap implements ICombatCapability {
     }
 
     @Override
-    public int getShieldCount() {
+    public float getShieldBarrier() {
         return 0;
     }
 
     @Override
-    public void setShieldCount(int amount) {
+    public void setShieldBarrier(float amount) {
 
     }
 
     @Override
-    public void decrementShieldCount(int amount) {
+    public void decrementShieldBarrier(float amount) {
 
     }
 

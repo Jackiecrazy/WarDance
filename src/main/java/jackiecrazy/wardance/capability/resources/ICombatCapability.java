@@ -156,11 +156,11 @@ public interface ICombatCapability {
 
     void decrementShieldTime(int amount);
 
-    int getShieldCount();
+    float getShieldBarrier();
 
-    void setShieldCount(int amount);
+    void setShieldBarrier(float amount);
 
-    void decrementShieldCount(int amount);
+    void decrementShieldBarrier(float amount);
 
     int getOffhandCooldown();
 

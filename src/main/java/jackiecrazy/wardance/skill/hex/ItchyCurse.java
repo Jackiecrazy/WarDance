@@ -60,15 +60,15 @@ public class ItchyCurse extends Hex {
 
     @Override
     public boolean onStateChange(LivingEntity caster, SkillData prev, STATE from, STATE to) {
-        if (to == STATE.ACTIVE&& cast(caster, -999)) {
+        if (to == STATE.ACTIVE && cast(caster, -999)) {
             LivingEntity e = SkillUtils.aimLiving(caster);
             if (e != null) {
                 mark(caster, e, 60);
                 markUsed(caster);
             }
         }
-        if(to==STATE.COOLING)
-            setCooldown(caster, prev,15);
+        if (to == STATE.COOLING)
+            setCooldown(caster, prev, 15);
         return boundCast(prev, from, to);
     }
 }

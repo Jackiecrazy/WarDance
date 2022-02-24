@@ -227,18 +227,18 @@ public class CraftCompat {
     }
 
     @ZenCodeType.Method
-    public int getShieldCount(LivingEntity entity) {
-        return CombatData.getCap(entity).getShieldCount();
+    public float getShieldCount(LivingEntity entity) {
+        return CombatData.getCap(entity).getShieldBarrier();
     }
 
     @ZenCodeType.Method
     public void setShieldCount(LivingEntity entity, int amount) {
-        CombatData.getCap(entity).setShieldCount(amount);
+        CombatData.getCap(entity).setShieldBarrier(amount);
     }
 
     @ZenCodeType.Method
     public void decrementShieldCount(LivingEntity entity, int amount) {
-        CombatData.getCap(entity).decrementShieldCount(amount);
+        CombatData.getCap(entity).decrementShieldBarrier(amount);
     }
 
     @ZenCodeType.Method

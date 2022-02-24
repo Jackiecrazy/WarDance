@@ -69,7 +69,7 @@ import java.util.Optional;
 public class ClientEvents {
     private static final int ALLOWANCE = 7;
     private static final ResourceLocation hud = new ResourceLocation(WarDance.MODID, "textures/hud/icons.png");
-    private static final ResourceLocation goodhud = new ResourceLocation(WarDance.MODID, "textures/hud/thanksraitest.png");
+    private static final ResourceLocation goodhud = new ResourceLocation(WarDance.MODID, "textures/hud/thanksrai.png");
     /**
      * left, back, right
      */
@@ -366,7 +366,7 @@ public class ClientEvents {
                         RenderSystem.color4f(1, 1, 1, 1);
                         stack.push();
                         stack.push();
-                        mc.ingameGUI.blit(stack, x, y, 0, 128, 32, 32);
+                        mc.ingameGUI.blit(stack, x, y, 0, 64, 32, 32);
                         stack.pop();
                         //might circle filling
                         stack.push();
@@ -393,7 +393,7 @@ public class ClientEvents {
                     stack.push();
                     if (ClientConfig.CONFIG.spirit.enabled) {
                         stack.push();
-                        mc.ingameGUI.blit(stack, x, y, 0, 128, 32, 32);
+                        mc.ingameGUI.blit(stack, x, y, 0, 96, 32, 32);
                         stack.pop();
                         //spirit circle filling
                         stack.push();

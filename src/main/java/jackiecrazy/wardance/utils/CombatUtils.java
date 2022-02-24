@@ -82,12 +82,13 @@ public class CombatUtils {
                 }
             if (val.length > 3)
                 shield = Boolean.parseBoolean(val[3].trim());
-            int pTime = CombatConfig.shieldThreshold, pCount = CombatConfig.shieldCount;
+            int pTime = CombatConfig.shieldThreshold;
+            float pCount = CombatConfig.shieldCount;
             double distract = StealthConfig.distract, unaware = StealthConfig.unaware;
             if (shield) {
                 try {
                     pTime = Integer.parseInt(val[4].trim());
-                    pCount = Integer.parseInt(val[5].trim());
+                    pCount = Float.parseFloat(val[5].trim());
                 } catch (Exception e) {
                     WarDance.LOGGER.warn("additional data for shield config entry " + s + " is not properly formatted, replacing with default values.");
                 }
@@ -163,7 +164,7 @@ public class CombatUtils {
                 String[] val = s.split(",");
                 final ResourceLocation key = new ResourceLocation(val[0].trim());
                 double posture = Double.parseDouble(val[1].trim());
-                int count = Integer.parseInt(val[2].trim());
+                double count = Double.parseDouble(val[2].trim());
                 boolean destroy = false, trigger = false;
                 if (val.length > 3) {
                     String tags = val[3];
@@ -207,17 +208,18 @@ public class CombatUtils {
         }
     }
 
-    public static void attack(LivingEntity from, Entity to, boolean offhand){
+    public static void attack(LivingEntity from, Entity to, boolean offhand) {
         if (offhand) {
             swapHeldItems(from);
             CombatData.getCap(from).setOffhandAttack(true);
         }
         if (from.ticksSinceLastSwing > 0) {
             int temp = from.ticksSinceLastSwing;
-            if(from instanceof PlayerEntity)((PlayerEntity) from).attackTargetEntityWithCurrentItem(to);
+            if (from instanceof PlayerEntity) ((PlayerEntity) from).attackTargetEntityWithCurrentItem(to);
             else from.attackEntityAsMob(to);
             from.ticksSinceLastSwing = temp;
-        } if (offhand) {
+        }
+        if (offhand) {
             CombatUtils.swapHeldItems(from);
             CombatData.getCap(from).setOffhandAttack(false);
         }
@@ -256,7 +258,7 @@ public class CombatUtils {
             return false;
         if (defender instanceof PlayerEntity && ((PlayerEntity) defender).getCooldownTracker().hasCooldown(i.getItem()))
             return false;
-        if(CombatData.getCap(defender).getHandBind(h)>0)
+        if (CombatData.getCap(defender).getHandBind(h) > 0)
             return false;
         float rand = WarDance.rand.nextFloat();
         boolean recharge = getCooledAttackStrength(defender, h, 0.5f) > 0.9f && CombatData.getCap(defender).getHandBind(h) == 0;
@@ -266,7 +268,7 @@ public class CombatUtils {
         }
         if (isShield(defender, i)) {
             boolean canShield = (defender instanceof PlayerEntity || rand < CombatConfig.mobParryChanceShield + CombatData.getCap(defender).getHandReel(h));
-            boolean canParry = CombatData.getCap(defender).getShieldTime() == 0 || CombatData.getCap(defender).getShieldCount() > 0;
+            boolean canParry = CombatData.getCap(defender).getShieldTime() == 0 || CombatData.getCap(defender).getShieldBarrier() > 0;
             return recharge & canParry & canShield;
         } else if (isWeapon(defender, i)) {
             boolean canWeapon = (defender instanceof PlayerEntity || rand < CombatConfig.mobParryChanceWeapon + CombatData.getCap(defender).getHandReel(h));
@@ -287,8 +289,9 @@ public class CombatUtils {
 
     /**
      * first is threshold, second is count
+     * @return
      */
-    public static Tuple<Integer, Integer> getShieldStats(ItemStack stack) {
+    public static Tuple<Integer, Float> getShieldStats(ItemStack stack) {
         if (stack != null && combatList.containsKey(stack.getItem())) {
             return new Tuple<>(combatList.get(stack.getItem()).parryTime, combatList.get(stack.getItem()).parryCount);
         }
@@ -321,7 +324,7 @@ public class CombatUtils {
 
     public static float getPostureDef(@Nullable LivingEntity attacker, @Nullable LivingEntity defender, ItemStack stack, float amount) {
         if (stack == null) return (float) DEFAULTMELEE.defensePostureMultiplier;
-        if (defender != null && isShield(defender, stack) && CombatData.getCap(defender).getShieldTime() > 0 && CombatData.getCap(defender).getShieldCount() > 0) {
+        if (defender != null && isShield(defender, stack) && CombatData.getCap(defender).getShieldTime() > 0 && CombatData.getCap(defender).getShieldBarrier() > 0) {
             return 0;
         }
         if (stack.getCapability(CombatManipulator.CAP).isPresent()) {
@@ -553,17 +556,18 @@ public class CombatUtils {
         ProjectileInfo pi = projectileMap.getOrDefault(ppe.getProjectile().getType(), DEFAULTRANGED);
         ppe.setReturnVec(pi.destroy ? null : ppe.getProjectile().getMotion().normalize().scale(-0.1));
         ppe.setPostureConsumption((float) pi.posture * mult);
-        ppe.setShieldCount(pi.count);
+        ppe.setBreach((float) pi.count);
         ppe.setTrigger(pi.trigger);
     }
 
     private static class MeleeInfo {
         private final double attackPostureMultiplier, defensePostureMultiplier;
         private final double distractDamageBonus, unawareDamageBonus;
-        private final int parryTime, parryCount;
+        private final int parryTime;
+        private final float parryCount;
         private final boolean isShield;
 
-        private MeleeInfo(double attack, double defend, boolean shield, int pTime, int pCount, double distract, double unaware) {
+        private MeleeInfo(double attack, double defend, boolean shield, int pTime, float pCount, double distract, double unaware) {
             attackPostureMultiplier = attack;
             defensePostureMultiplier = defend;
             isShield = shield;
@@ -576,10 +580,10 @@ public class CombatUtils {
 
     private static class ProjectileInfo {
         private final double posture;
-        private final int count;
+        private final double count;
         private final boolean destroy, trigger;
 
-        private ProjectileInfo(double p, int c, boolean d, boolean t) {
+        private ProjectileInfo(double p, double c, boolean d, boolean t) {
             posture = p;
             count = c;
             destroy = d;

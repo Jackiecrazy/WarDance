@@ -46,7 +46,7 @@ public class ShieldBash extends Skill {
 
     @Override
     public float spiritConsumption(LivingEntity caster) {
-        return isPassive(caster)?0:2;
+        return isPassive(caster) ? 0 : 2;
     }
 
     @Override
@@ -57,16 +57,16 @@ public class ShieldBash extends Skill {
     protected void performEffect(LivingEntity caster, LivingEntity target) {
         final ItemStack off = caster.getHeldItemOffhand();
         if (CombatUtils.isShield(caster, off)) {
-            SkillUtils.auxAttack(caster, target, new CombatDamageSource("player", caster).setProcNormalEffects(false).setProcAttackEffects(true).setProcSkillEffects(true).setAttackingHand(Hand.OFF_HAND).setDamageTyping(CombatDamageSource.TYPE.PHYSICAL).setDamageDealer(off), 0, CombatUtils.getShieldStats(off).getA() / 20f);
+            SkillUtils.auxAttack(caster, target, new CombatDamageSource("player", caster).setProcNormalEffects(false).setProcAttackEffects(true).setProcSkillEffects(true).setAttackingHand(Hand.OFF_HAND).setDamageTyping(CombatDamageSource.TYPE.PHYSICAL).setDamageDealer(off), 0, CombatUtils.getShieldStats(off).getA() / (isPassive(caster) ? 40f : 20f));
         }
     }
 
     @Override
     public void onProc(LivingEntity caster, Event procPoint, STATE state, SkillData stats, LivingEntity target) {
-        if (procPoint instanceof LivingAttackEvent && ((LivingAttackEvent) procPoint).getEntityLiving() == target && procPoint.getPhase() == EventPriority.HIGHEST) {
+        if (procPoint instanceof LivingAttackEvent && ((LivingAttackEvent) procPoint).getEntityLiving() == target && CombatUtils.isMeleeAttack(((LivingAttackEvent) procPoint).getSource()) && procPoint.getPhase() == EventPriority.HIGHEST) {
             final boolean base = isPassive(caster) && state != STATE.COOLING;
             final boolean otherwise = state == STATE.HOLSTERED && CombatUtils.isShield(caster, CombatUtils.getAttackingItemStack(((LivingAttackEvent) procPoint).getSource()));
-            if ((base || otherwise)&& cast(caster, -999)) {
+            if ((base || otherwise) && cast(caster, -999)) {
                 performEffect(caster, target);
                 caster.world.playSound(null, caster.getPosX(), caster.getPosY(), caster.getPosZ(), SoundEvents.ENTITY_ZOMBIE_ATTACK_IRON_DOOR, SoundCategory.PLAYERS, 0.25f + WarDance.rand.nextFloat() * 0.5f, 0.5f + WarDance.rand.nextFloat() * 0.5f);
                 markUsed(caster);
@@ -86,7 +86,7 @@ public class ShieldBash extends Skill {
     @Override
     public boolean onStateChange(LivingEntity caster, SkillData prev, STATE from, STATE to) {
         if (to == STATE.COOLING)
-            setCooldown(caster, prev, 4);
+            setCooldown(caster, prev, isPassive(caster) ? 6 : 4);
         return boundCast(prev, from, to);
     }
 
