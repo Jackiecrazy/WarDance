@@ -556,7 +556,6 @@ public class CombatUtils {
         ProjectileInfo pi = projectileMap.getOrDefault(ppe.getProjectile().getType(), DEFAULTRANGED);
         ppe.setReturnVec(pi.destroy ? null : ppe.getProjectile().getMotion().normalize().scale(-0.1));
         ppe.setPostureConsumption((float) pi.posture * mult);
-        ppe.setBreach((float) pi.count);
         ppe.setTrigger(pi.trigger);
     }
 

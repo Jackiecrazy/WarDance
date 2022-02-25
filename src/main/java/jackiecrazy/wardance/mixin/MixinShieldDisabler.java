@@ -15,7 +15,7 @@ public interface MixinShieldDisabler {
     ItemStack getStack();
 
     /**
-     * Mixins don't allow injecting interfaces, so here we are
+     * @reason Mixins don't allow injecting interfaces, so here we are
      *
      * @author Jackiecrazy
      */

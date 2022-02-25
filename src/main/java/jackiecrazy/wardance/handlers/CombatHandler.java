@@ -154,9 +154,9 @@ public class CombatHandler {
                 if (!free) {
                     Tuple<Integer, Float> stat = CombatUtils.getShieldStats(defend);
                     ukeCap.setShieldTime(stat.getA());
-                    ukeCap.setShieldBarrier(stat.getB() - (pe.getBreach()));
+                    ukeCap.setShieldBarrier(stat.getB() - (pe.getPostureConsumption()));
                 } else {
-                    ukeCap.decrementShieldBarrier(pe.getBreach());
+                    ukeCap.decrementShieldBarrier(pe.getPostureConsumption());
                 }
                 if (ukeCap.getShieldBarrier() <= 0) {
                     if (uke instanceof PlayerEntity && h != null) {
@@ -333,11 +333,7 @@ public class CombatHandler {
                 }
                 float finalPostureConsumption = Math.abs(atkMult * defMult);//accounting for negative posture damage, used to mark an item as ignoring parries
                 float originalPostureConsumption = Math.abs(original * defMult);//updating this quickly, it's basically the above without crit and stab multipliers, which were necessary for calculating canParry so they couldn't be eliminated cleanly...
-                //the following two variables are only used for shields, but they're calculated anyway.
-                defMult=1-defMult;
-                float finalBarrierDamage = Math.abs(atkMult * defMult);//accounting for negative posture damage, used to mark an item as ignoring parries
-                float originalBarrierDamage = Math.abs(original * defMult);//updating this quickly, it's basically the above without crit and stab multipliers, which were necessary for calculating canParry so they couldn't be eliminated cleanly...
-                ParryEvent pe = new ParryEvent(uke, seme, ((canParry && defend != null) || useDeflect), attackingHand, attack, parryHand, defend, finalPostureConsumption, originalPostureConsumption, finalBarrierDamage, originalBarrierDamage, e.getAmount());
+                ParryEvent pe = new ParryEvent(uke, seme, ((canParry && defend != null) || useDeflect), attackingHand, attack, parryHand, defend, finalPostureConsumption, originalPostureConsumption, e.getAmount());
                 if (failManualParry)
                     pe.setResult(Event.Result.DENY);
                 MinecraftForge.EVENT_BUS.post(pe);
@@ -383,15 +379,15 @@ public class CombatHandler {
                                 disshield = true;
                             } else if (ukeCap.getShieldTime() == 0) {
                                 ukeCap.setShieldTime(stat.getA());
-                                ukeCap.setShieldBarrier(stat.getB() - pe.getBarrierDamage());
+                                ukeCap.setShieldBarrier(stat.getB() - pe.getPostureConsumption());
                             } else {
-                                ukeCap.decrementShieldBarrier(pe.getBarrierDamage());
-                                if (ukeCap.getShieldBarrier() <= 0) {
-                                    if (uke instanceof PlayerEntity) {
-                                        ((PlayerEntity) uke).getCooldownTracker().setCooldown(defend.getItem(), ukeCap.getShieldTime());
-                                    }
-                                    ukeCap.setHandBind(parryHand, ukeCap.getShieldTime());
+                                ukeCap.decrementShieldBarrier(pe.getPostureConsumption());
+                            }
+                            if (ukeCap.getShieldBarrier() <= 0) {
+                                if (uke instanceof PlayerEntity) {
+                                    ((PlayerEntity) uke).getCooldownTracker().setCooldown(defend.getItem(), ukeCap.getShieldTime());
                                 }
+                                ukeCap.setHandBind(parryHand, ukeCap.getShieldTime());
                             }
                         }
                         uke.world.playSound(null, uke.getPosX(), uke.getPosY(), uke.getPosZ(), disshield ? SoundEvents.ITEM_SHIELD_BLOCK : SoundEvents.BLOCK_ANVIL_PLACE, SoundCategory.PLAYERS, 0.25f + WarDance.rand.nextFloat() * 0.5f, (1 - (ukeCap.getPosture() / ukeCap.getMaxPosture())) + WarDance.rand.nextFloat() * 0.5f);

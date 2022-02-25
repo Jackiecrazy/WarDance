@@ -20,10 +20,10 @@ public class ParryEvent extends LivingEvent {
     private final Hand attackingHand, defendingHand;
     private final ItemStack attackingStack;
     private final ItemStack defendingStack;
-    private final float originalPostureConsumption, originalBarrierDamage, attackDamage;
-    private float postureConsumption, barrierDamage;
+    private final float originalPostureConsumption, attackDamage;
+    private float postureConsumption;
 
-    public ParryEvent(LivingEntity entity, LivingEntity seme, boolean canParry, Hand hand, ItemStack a, Hand dhand, ItemStack d, float posture, float orig, float barrier, float origBarrier, float damage) {
+    public ParryEvent(LivingEntity entity, LivingEntity seme, boolean canParry, Hand hand, ItemStack a, Hand dhand, ItemStack d, float posture, float orig, float damage) {
         super(entity);
         originally = canParry;
         attacker = seme;
@@ -32,9 +32,7 @@ public class ParryEvent extends LivingEvent {
         defendingHand = dhand;
         defendingStack = d;
         originalPostureConsumption = orig;
-        originalBarrierDamage = origBarrier;
         postureConsumption = posture;
-        barrierDamage=barrier;
         attackDamage = damage;
     }
 
@@ -74,18 +72,5 @@ public class ParryEvent extends LivingEvent {
 
     public boolean canParry() {
         return getResult() == Event.Result.ALLOW || (originally && getResult() == Event.Result.DEFAULT);
-    }
-
-    public float getBarrierDamage() {
-        return barrierDamage;
-    }
-
-    public ParryEvent setBarrierDamage(float barrierDamage) {
-        this.barrierDamage = barrierDamage;
-        return this;
-    }
-
-    public float getOriginalBarrierDamage() {
-        return originalBarrierDamage;
     }
 }

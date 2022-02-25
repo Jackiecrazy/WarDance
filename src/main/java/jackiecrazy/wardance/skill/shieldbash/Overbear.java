@@ -48,7 +48,7 @@ public class Overbear extends ShieldBash {
             }
         }
         if (procPoint instanceof LivingHurtEvent && (CombatUtils.isShield(caster, CombatUtils.getAttackingItemStack(((LivingHurtEvent) procPoint).getSource())))) {
-            Tuple<Integer, Integer> stat = CombatUtils.getShieldStats(CombatUtils.getAttackingItemStack(((LivingHurtEvent) procPoint).getSource()));
+            Tuple<Integer, Float> stat = CombatUtils.getShieldStats(CombatUtils.getAttackingItemStack(((LivingHurtEvent) procPoint).getSource()));
             ((LivingHurtEvent) procPoint).setAmount(((LivingHurtEvent) procPoint).getAmount() + stat.getA() / 10f);
             markUsed(caster);
         }

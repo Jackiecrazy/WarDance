@@ -15,10 +15,8 @@ public class ProjectileParryEvent extends LivingEvent {
     private final Hand defendingHand;
     private final ItemStack defendingStack;
     private final float originalPostureConsumption;
-    private final float originalBreach;
     private final Vector3d originalReturnVec;
     private float postureConsumption;
-    private float breach;
     private boolean trigger;
     /**
      * null to delete.
@@ -33,7 +31,6 @@ public class ProjectileParryEvent extends LivingEvent {
         CombatUtils.initializePPE(this, mult);
         originalPostureConsumption = postureConsumption;
         originalReturnVec = returnVec;
-        originalBreach= breach;
     }
 
     public boolean doesTrigger() {
@@ -73,17 +70,4 @@ public class ProjectileParryEvent extends LivingEvent {
     public Vector3d getReturnVec() {return returnVec;}
 
     public void setReturnVec(Vector3d vec) {returnVec = vec;}
-
-    public float getBreach() {
-        return breach;
-    }
-
-    public void setBreach(float shieldCount) {
-        this.breach = shieldCount;
-    }
-
-
-    public float getOriginalBreach() {
-        return originalBreach;
-    }
 }
