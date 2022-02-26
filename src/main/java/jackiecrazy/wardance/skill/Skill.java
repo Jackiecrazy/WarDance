@@ -192,6 +192,7 @@ public abstract class Skill extends ForgeRegistryEntry<Skill> {
 
     public abstract boolean onStateChange(LivingEntity caster, SkillData prev, STATE from, STATE to);
 
+    @Nullable
     public SkillData onMarked(LivingEntity caster, LivingEntity target, SkillData sd, @Nullable SkillData existing) {
         if (existing != null)
             sd.setDuration(sd.getDuration() + existing.getDuration());

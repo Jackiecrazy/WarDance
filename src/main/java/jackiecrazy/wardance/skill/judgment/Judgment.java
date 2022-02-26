@@ -83,11 +83,13 @@ public class Judgment extends Skill {
             if (arb >= 2) {//detonate
                 caster.world.playSound(null, caster.getPosX(), caster.getPosY(), caster.getPosZ(), SoundEvents.ENTITY_DRAGON_FIREBALL_EXPLODE, SoundCategory.PLAYERS, 0.25f + WarDance.rand.nextFloat() * 0.5f, 0.5f + WarDance.rand.nextFloat() * 0.5f);
                 removeMark(target);
-            } else prev.flagCondition(true);
+            } else {
+                prev.flagCondition(true);
+                mark(caster, target, 6, 1);
+            }
             stack += arb;
-            target.hurtResistantTime = 0;
             performEffect(caster, target, stack, prev);
-            mark(caster, target, 6, 1);
+            target.hurtResistantTime = 0;
             boolean offhand = stack == 2;
             CombatUtils.attack(caster, target, offhand);
             caster.swing(offhand ? Hand.OFF_HAND : Hand.MAIN_HAND, true);
@@ -107,6 +109,7 @@ public class Judgment extends Skill {
     @Override
     public SkillData onMarked(LivingEntity caster, LivingEntity target, SkillData sd, @Nullable SkillData existing) {
         if (existing != null) {
+            if (existing.getDuration() < 0) return null;
             sd.setArbitraryFloat(sd.getArbitraryFloat() + existing.getArbitraryFloat());
             sd.setDuration(12);
         }

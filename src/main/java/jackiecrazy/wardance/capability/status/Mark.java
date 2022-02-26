@@ -40,6 +40,7 @@ public class Mark implements IMark {
                 WarDance.LOGGER.warn("status " + d + " is already active, merging according to rules.");
         }
         SkillData sd = d.getSkill().onMarked(d.getCaster(dude.get().world), dude.get(), d, statuus.get(d.getSkill()));
+        if(sd!=null)
         statuus.put(d.getSkill(), sd);
         sync = true;
     }

@@ -856,8 +856,7 @@ public class CombatCapability implements ICombatCapability {
         setPostureGrace(c.getInt("posturecd"));
         setSpiritGrace(c.getInt("spiritcd"));
         setShieldTime(c.getInt("shield"));
-        int count = c.getInt("staggerc");
-        setStaggerCount(staggerc);
+        setStaggerCount(c.getInt("staggerc"));
         setOffhandCooldown(c.getInt("offhandcd"));
         setRollTime(c.getInt("roll"));
         setHandBind(Hand.MAIN_HAND, c.getInt("mainBind"));

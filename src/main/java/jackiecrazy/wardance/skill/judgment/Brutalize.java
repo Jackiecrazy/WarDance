@@ -30,7 +30,6 @@ public class Brutalize extends Judgment {
     protected void performEffect(LivingEntity caster, LivingEntity target, int stack, SkillData sd) {
         super.performEffect(caster, target, stack, sd);
         if (stack == 3) {
-            sd.flagCondition(true);
             CombatData.getCap(target).consumePosture(caster, Float.MAX_VALUE, 0, true);
         }
         final List<LivingEntity> list = caster.world.getLoadedEntitiesWithinAABB(LivingEntity.class, caster.getBoundingBox().grow(10), (a) -> TargetingUtils.isHostile(a, caster));
@@ -44,7 +43,7 @@ public class Brutalize extends Judgment {
     @Override
     public void onProc(LivingEntity caster, Event procPoint, STATE state, SkillData stats, @Nullable LivingEntity target) {
         super.onProc(caster, procPoint, state, stats, target);
-        if (procPoint instanceof StaggerEvent && state == STATE.ACTIVE && stats.isCondition() && procPoint.getPhase() == EventPriority.HIGHEST && ((StaggerEvent) procPoint).getAttacker() == caster) {
+        if (procPoint instanceof StaggerEvent && state == STATE.ACTIVE && !stats.isCondition() && procPoint.getPhase() == EventPriority.HIGHEST && ((StaggerEvent) procPoint).getAttacker() == caster) {
             ((StaggerEvent) procPoint).setCount(((StaggerEvent) procPoint).getCount() * 2);
             ((StaggerEvent) procPoint).setLength(((StaggerEvent) procPoint).getLength() * 2);
         }

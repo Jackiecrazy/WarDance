@@ -1,6 +1,7 @@
 package jackiecrazy.wardance.skill.judgment;
 
 import jackiecrazy.wardance.WarDance;
+import jackiecrazy.wardance.api.CombatDamageSource;
 import jackiecrazy.wardance.capability.status.Marks;
 import jackiecrazy.wardance.skill.SkillData;
 import jackiecrazy.wardance.skill.WarSkills;
@@ -29,6 +30,7 @@ public class ViralDecay extends Judgment {
     }
 
     private static void detonate(LivingEntity target, LivingEntity caster) {
+        target.attackEntityFrom(new CombatDamageSource("player", caster).setDamageTyping(CombatDamageSource.TYPE.PHYSICAL).setProcSkillEffects(true).setProcAttackEffects(true).setDamageTyping(CombatDamageSource.TYPE.TRUE).setDamageBypassesArmor().setDamageIsAbsolute(), target.getHealth() / 10);
         SkillUtils.createCloud(target.world, caster, target.getPosX(), target.getPosY(), target.getPosZ(), 3, ParticleTypes.EXPLOSION);
         final List<LivingEntity> list = target.world.getLoadedEntitiesWithinAABB(LivingEntity.class, target.getBoundingBox().grow(3), (b) -> !TargetingUtils.isAlly(b, caster));
         for (LivingEntity enemy : list) {
@@ -43,12 +45,18 @@ public class ViralDecay extends Judgment {
     }
 
     @Override
-    protected void performEffect(LivingEntity caster, LivingEntity target, int stack, SkillData sd) {
-        super.performEffect(caster, target, stack, sd);
-        if (stack >= 3) {
-            detonate(target, caster);
-            removeMark(target);
+    public SkillData onMarked(LivingEntity caster, LivingEntity target, SkillData sd, @Nullable SkillData existing) {
+        if (existing != null) {
+            if (existing.getArbitraryFloat() >= 2) {
+                detonate(target, caster);
+                return null;
+            }
         }
+        return super.onMarked(caster, target, sd, existing);
+    }
+
+    @Override
+    protected void performEffect(LivingEntity caster, LivingEntity target, int stack, SkillData sd) {
     }
 
     @Override
