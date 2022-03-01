@@ -260,7 +260,9 @@ public class SkillCapability implements ISkillCapability {
         sync |= gatedSkills != gate;
         gatedSkills = gate;
         for (SkillData d : data.values()) {
-            if (d == null) continue;
+            if (d == null || d.getSkill() == null){
+                continue;
+            }
             if (d.getSkill().equippedTick(caster, d)) {
                 d.markDirty();
                 fastSync = true;

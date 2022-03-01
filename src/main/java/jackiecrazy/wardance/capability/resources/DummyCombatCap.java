@@ -232,32 +232,47 @@ public class DummyCombatCap implements ICombatCapability {
     }
 
     @Override
-    public int getShieldTime() {
+    public int getBarrierCooldown() {
         return 0;
     }
 
     @Override
-    public void setShieldTime(int amount) {
+    public void setBarrierCooldown(int amount) {
 
     }
 
     @Override
-    public void decrementShieldTime(int amount) {
+    public void decrementBarrierCooldown(int amount) {
 
     }
 
     @Override
-    public float getShieldBarrier() {
+    public float getMaxBarrier() {
         return 0;
     }
 
     @Override
-    public void setShieldBarrier(float amount) {
+    public void setMaxBarrier(float amount) {
 
     }
 
     @Override
-    public void decrementShieldBarrier(float amount) {
+    public float getBarrier() {
+        return 0;
+    }
+
+    @Override
+    public void setBarrier(float amount) {
+
+    }
+
+    @Override
+    public float consumeBarrier(float amount) {
+        return 0;
+    }
+
+    @Override
+    public void addBarrier(float amount) {
 
     }
 

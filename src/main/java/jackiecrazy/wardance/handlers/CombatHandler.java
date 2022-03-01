@@ -104,7 +104,7 @@ public class CombatHandler {
             boolean failManualParry = CombatConfig.sneakParry > 0 && (ukeCap.getParryingTick() > uke.ticksExisted || ukeCap.getParryingTick() < uke.ticksExisted - CombatConfig.sneakParry);
             failManualParry |= CombatConfig.sneakParry < 0 && ukeCap.getParryingTick() == -1;
             failManualParry &= uke instanceof PlayerEntity;
-            boolean free = ukeCap.getShieldTime() > 0;
+            boolean free = ukeCap.getBarrierCooldown() > 0;
             ItemStack defend = null;
             Hand h = null;
             float defMult = 0;
@@ -146,24 +146,9 @@ public class CombatHandler {
             if (force)
                 pe.setResult(Event.Result.ALLOW);
             MinecraftForge.EVENT_BUS.post(pe);
-            if (pe.getResult() == Event.Result.ALLOW || (defend != null && canParry && ukeCap.doConsumePosture(pe.getPostureConsumption()) && pe.getResult() == Event.Result.DEFAULT)) {
-                //System.out.println("the target has parried!");
+            if (pe.getResult() == Event.Result.ALLOW || (defend != null && canParry && pe.getResult() == Event.Result.DEFAULT && ukeCap.consumePosture(ukeCap.consumeBarrier(pe.getPostureConsumption()), 0.1f)==0)) {
                 e.setCanceled(true);
-//                if (projectile instanceof ProjectileEntity)
-//                    ((ProjectileEntity) projectile).setShooter(uke);//makes drowned tridents and skeleton arrows collectable, which is honestly silly
-                if (!free) {
-                    Tuple<Integer, Float> stat = CombatUtils.getShieldStats(defend);
-                    ukeCap.setShieldTime(stat.getA());
-                    ukeCap.setShieldBarrier(stat.getB() - (pe.getPostureConsumption()));
-                } else {
-                    ukeCap.decrementShieldBarrier(pe.getPostureConsumption());
-                }
-                if (ukeCap.getShieldBarrier() <= 0) {
-                    if (uke instanceof PlayerEntity && h != null) {
-                        ((PlayerEntity) uke).getCooldownTracker().setCooldown(uke.getHeldItem(h).getItem(), ukeCap.getShieldTime());
-                    }
-                    ukeCap.setHandBind(pe.getDefendingHand(), ukeCap.getShieldTime());
-                }
+                //do not change shooter! It makes drowned tridents and skeleton arrows collectable, which is honestly silly
                 uke.world.playSound(null, uke.getPosX(), uke.getPosY(), uke.getPosZ(), free ? SoundEvents.BLOCK_WOODEN_TRAPDOOR_OPEN : SoundEvents.BLOCK_WOODEN_TRAPDOOR_CLOSE, SoundCategory.PLAYERS, 0.75f + WarDance.rand.nextFloat() * 0.5f, (1 - (ukeCap.getPosture() / ukeCap.getMaxPosture())) + WarDance.rand.nextFloat() * 0.5f);
                 if (pe.doesTrigger()) {
                     if (uke.isServerWorld()) {
@@ -206,7 +191,6 @@ public class CombatHandler {
         if (!e.getEntityLiving().world.isRemote && e.getSource() != null && CombatUtils.isPhysicalAttack(e.getSource())) {
             LivingEntity uke = e.getEntityLiving();
             if (MovementUtils.hasInvFrames(uke)) {
-                //System.out.println("the target has inv frames.");
                 e.setCanceled(true);
             }
             ICombatCapability ukeCap = CombatData.getCap(uke);
@@ -219,12 +203,10 @@ public class CombatHandler {
                 Hand h = semeCap.isOffhandAttack() ? Hand.OFF_HAND : Hand.MAIN_HAND;
                 //hand bound or staggered, no attack
                 if (semeCap.getStaggerTime() > 0 || semeCap.getHandBind(h) > 0) {
-                    //System.out.println("the attacker's hands are bound.");
                     e.setCanceled(true);
                     return;
                 }
                 if (seme.getHeldItemMainhand().getCapability(CombatManipulator.CAP).isPresent()) {
-                    //System.out.println("the attacker's weapon is a capable weapon.");
                     e.setCanceled(seme.getHeldItemMainhand().getCapability(CombatManipulator.CAP).resolve().get().canAttack(e.getSource(), seme, uke, seme.getHeldItemMainhand(), e.getAmount()));
                 }
             }
@@ -236,7 +218,6 @@ public class CombatHandler {
         if (!e.getEntityLiving().world.isRemote && e.getSource() != null && CombatUtils.isPhysicalAttack(e.getSource())) {
             LivingEntity uke = e.getEntityLiving();
             if (MovementUtils.hasInvFrames(uke)) {
-                //System.out.println("the target has inv-frames.");
                 e.setCanceled(true);
             }
             ICombatCapability ukeCap = CombatData.getCap(uke);
@@ -249,7 +230,6 @@ public class CombatHandler {
                 Hand attackingHand = semeCap.isOffhandAttack() ? Hand.OFF_HAND : Hand.MAIN_HAND;
                 //hand bound or staggered, no attack
                 if (semeCap.getStaggerTime() > 0 || semeCap.getHandBind(attackingHand) > 0) {
-                    //System.out.println("the attacker is staggered or bound.");
                     e.setCanceled(true);
                     return;
                 }
@@ -331,35 +311,41 @@ public class CombatHandler {
                         }
                     }
                 }
-                float finalPostureConsumption = Math.abs(atkMult * defMult);//accounting for negative posture damage, used to mark an item as ignoring parries
-                float originalPostureConsumption = Math.abs(original * defMult);//updating this quickly, it's basically the above without crit and stab multipliers, which were necessary for calculating canParry so they couldn't be eliminated cleanly...
+                //accounting for negative posture damage, used to mark an item as ignoring parries
+                float finalPostureConsumption = Math.abs(atkMult * defMult);
+                //updating this quickly, it's basically the above without crit and stab multipliers, which were necessary for calculating canParry so they couldn't be eliminated cleanly...
+                float originalPostureConsumption = Math.abs(original * defMult);
                 ParryEvent pe = new ParryEvent(uke, seme, ((canParry && defend != null) || useDeflect), attackingHand, attack, parryHand, defend, finalPostureConsumption, originalPostureConsumption, e.getAmount());
                 if (failManualParry)
                     pe.setResult(Event.Result.DENY);
                 MinecraftForge.EVENT_BUS.post(pe);
                 if (pe.isCanceled()) {
-                    //System.out.println("parry has been canceled with the attack.");
                     e.setCanceled(true);
                     return;
                 }
                 if (ukeCap.getStaggerTime() == 0) {
                     //overflow posture
-                    float knockback = ukeCap.consumePosture(seme, pe.getPostureConsumption());
-                    //CombatUtils.knockBack(uke, seme, Math.min(1.5f, knockback / (20f * ukeCap.getMaxPosture())), true, false);
+                    float consumption = pe.getPostureConsumption();
+                    /*
+                    barrier reduction if appropriate
+                    this is so ugly oh my god
+                     */
+                    if (pe.canParry() && !useDeflect && CombatUtils.isShield(uke, defend)) {
+                        consumption -= ukeCap.consumeBarrier(consumption);
+                    }
+                    /*
+                    end ugliness
+                     */
+                    float knockback = ukeCap.consumePosture(seme, consumption);
                     //no parries if stabby
-                    if (StealthConfig.ignore && awareness == StealthUtils.Awareness.UNAWARE) return;
+                    if (StealthConfig.ignore && awareness == StealthUtils.Awareness.UNAWARE) {
+                        return;
+                    }
                     if (pe.canParry()) {
                         e.setCanceled(true);
                         downingHit = false;
                         ukeCap.addRank(0);
-                        //knockback based on posture consumed
-                        double kb = Math.sqrt(atkMult) - 0.18 - (1 / Math.max(defMult, 0.1)); //this will return negative if the defmult is greater, and positive if the atkmult is greater. Larger abs val=larger difference
-                        //sigmoid curve again!
-                        kb = 1d / (1d + Math.exp(-kb));//this is the knockback to be applied to the defender
-                        CombatUtils.knockBack(uke, seme, Math.min(uke instanceof PlayerEntity ? 1.6f : 1.3f, 0.2f + (pe.getPostureConsumption() + knockback) * (float) kb * (uke instanceof PlayerEntity ? 6 : 4) / ukeCap.getMaxPosture()), true, false);
-                        kb = 1 - kb;
-                        CombatUtils.knockBack(seme, uke, Math.min(uke instanceof PlayerEntity ? 1.6f : 1.3f, 0.1f + pe.getPostureConsumption() * (float) kb * (seme instanceof PlayerEntity ? 3 : 2) / semeCap.getMaxPosture()), true, false);
-                        if (defend == null) {
+                        if (useDeflect) {
                             //deflect
                             uke.world.playSound(null, uke.getPosX(), uke.getPosY(), uke.getPosZ(), SoundEvents.BLOCK_IRON_TRAPDOOR_OPEN, SoundCategory.PLAYERS, 0.75f + WarDance.rand.nextFloat() * 0.5f, (1 - (ukeCap.getPosture() / ukeCap.getMaxPosture())) + WarDance.rand.nextFloat() * 0.5f);
                             return;
@@ -367,33 +353,28 @@ public class CombatHandler {
                         //shield disabling
                         boolean disshield = false;
                         parryHand = uke.getHeldItemOffhand() == defend ? Hand.OFF_HAND : Hand.MAIN_HAND;
+                        //barrier has already been handled. Subsequent binding and cooldown are handled by the capability.
                         if (CombatUtils.isShield(uke, defend)) {
                             Tuple<Integer, Float> stat = CombatUtils.getShieldStats(defend);
-                            //this is the only point that calls barrier damage
                             if (attack.canDisableShield(defend, uke, seme)) {
                                 //shield is disabled
                                 if (uke instanceof PlayerEntity) {
                                     ((PlayerEntity) uke).getCooldownTracker().setCooldown(defend.getItem(), stat.getA());
-                                }
-                                ukeCap.setHandBind(parryHand, stat.getA());
+                                } else ukeCap.setHandBind(parryHand, stat.getA());
                                 disshield = true;
-                            } else if (ukeCap.getShieldTime() == 0) {
-                                ukeCap.setShieldTime(stat.getA());
-                                ukeCap.setShieldBarrier(stat.getB() - pe.getPostureConsumption());
-                            } else {
-                                ukeCap.decrementShieldBarrier(pe.getPostureConsumption());
-                            }
-                            if (ukeCap.getShieldBarrier() <= 0) {
-                                if (uke instanceof PlayerEntity) {
-                                    ((PlayerEntity) uke).getCooldownTracker().setCooldown(defend.getItem(), ukeCap.getShieldTime());
-                                }
-                                ukeCap.setHandBind(parryHand, ukeCap.getShieldTime());
                             }
                         }
+                        //knockback based on posture consumed
+                        double kb = Math.sqrt(atkMult) - 0.18 - (1 / Math.max(defMult, 0.1)); //this will return negative if the defmult is greater, and positive if the atkmult is greater. Larger abs val=larger difference
+                        //sigmoid curve again!
+                        kb = 1d / (1d + Math.exp(-kb));//this is the knockback to be applied to the defender
+                        CombatUtils.knockBack(uke, seme, Math.min(uke instanceof PlayerEntity ? 1.6f : 1.3f, 0.2f + (pe.getPostureConsumption() + knockback) * (float) kb * (uke instanceof PlayerEntity ? 6 : 4) / ukeCap.getMaxPosture()), true, false);
+                        kb = 1 - kb;
+                        CombatUtils.knockBack(seme, uke, Math.min(uke instanceof PlayerEntity ? 1.6f : 1.3f, 0.1f + pe.getPostureConsumption() * (float) kb * (seme instanceof PlayerEntity ? 3 : 2) / semeCap.getMaxPosture()), true, false);
                         uke.world.playSound(null, uke.getPosX(), uke.getPosY(), uke.getPosZ(), disshield ? SoundEvents.ITEM_SHIELD_BLOCK : SoundEvents.BLOCK_ANVIL_PLACE, SoundCategory.PLAYERS, 0.25f + WarDance.rand.nextFloat() * 0.5f, (1 - (ukeCap.getPosture() / ukeCap.getMaxPosture())) + WarDance.rand.nextFloat() * 0.5f);
                         //reset cooldown
                         if (defMult != 0) {//shield time
-                            int ticks = (int) ((pe.getPostureConsumption() + 1) * 5);//(posture consumption+1)*5 ticks of cooldown
+                            int ticks = (int) ((consumption + 1) * 5);//(posture consumption+1)*5 ticks of cooldown
                             float cd = CombatUtils.getCooldownPeriod(uke, parryHand);//attack cooldown ticks
                             if (cd > ticks)//if attack speed is lower, refund partial cooldown
                                 CombatUtils.setHandCooldownDirect(uke, parryHand, ticks, true);
@@ -414,7 +395,7 @@ public class CombatHandler {
                 if (!(seme instanceof PlayerEntity)) {
                     semeCap.setHandBind(attackingHand, CombatUtils.getCooldownPeriod(seme, attackingHand));
                 }
-            }//else System.out.println("the attack is not a melee attack, or the damage dealt was 0.");
+            }
             //shatter, at the rock bottom of the attack event, saving your protected butt.
             if (!uke.isActiveItemStackBlocking() && !e.isCanceled()) {
                 if (CombatUtils.isPhysicalAttack(e.getSource()) && StealthUtils.getAwareness(e.getSource().getImmediateSource() instanceof LivingEntity ? (LivingEntity) e.getSource().getImmediateSource() : null, uke) != StealthUtils.Awareness.UNAWARE) {
@@ -479,7 +460,6 @@ public class CombatHandler {
             }
         }
         e.setStrength(e.getStrength() * CombatConfig.kbNerf);
-        //if (e.getStrength() == 0) e.setCanceled(true);
     }
 
     @SubscribeEvent(priority = EventPriority.HIGHEST)

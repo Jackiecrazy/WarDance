@@ -46,9 +46,12 @@ import javax.annotation.Nullable;
 import java.util.*;
 
 public class CombatUtils {
+    public static final UUID off = UUID.fromString("8c8028c8-da69-49a2-99cd-f92d7ad22534");
+    private static final UUID main = UUID.fromString("8c8028c8-da67-49a2-99cd-f92d7ad22534");
     public static HashMap<ResourceLocation, Float> customPosture = new HashMap<>();
     public static HashMap<ResourceLocation, MobInfo> parryMap = new HashMap<>();
     public static HashMap<Item, AttributeModifier[]> armorStats = new HashMap<>();
+    public static HashMap<Item, AttributeModifier[]> shieldStat = new HashMap<>();
     public static boolean isSweeping = false;
     public static boolean suppress = false;
     private static MeleeInfo DEFAULTMELEE = new MeleeInfo(1, 1, false, 0, 0, 1, 1);
@@ -58,9 +61,10 @@ public class CombatUtils {
     private static ArrayList<Item> unarmed = new ArrayList<>();
 
     public static void updateItems(List<? extends String> interpretC, List<? extends String> interpretA, List<? extends String> interpretU) {
-        DEFAULTMELEE = new MeleeInfo(CombatConfig.defaultMultiplierPostureAttack, CombatConfig.defaultMultiplierPostureDefend, false, CombatConfig.shieldThreshold, CombatConfig.shieldCount, StealthConfig.distract, StealthConfig.unaware);
+        DEFAULTMELEE = new MeleeInfo(CombatConfig.defaultMultiplierPostureAttack, CombatConfig.defaultMultiplierPostureDefend, false, CombatConfig.shieldCooldown, CombatConfig.barrierSize, StealthConfig.distract, StealthConfig.unaware);
         combatList = new HashMap<>();
         armorStats = new HashMap<>();
+        shieldStat = new HashMap<>();
         unarmed = new ArrayList<>();
         for (String s : interpretC) {
             String[] val = s.split(",");
@@ -82,8 +86,8 @@ public class CombatUtils {
                 }
             if (val.length > 3)
                 shield = Boolean.parseBoolean(val[3].trim());
-            int pTime = CombatConfig.shieldThreshold;
-            float pCount = CombatConfig.shieldCount;
+            int pTime = CombatConfig.shieldCooldown;
+            float pCount = CombatConfig.barrierSize;
             double distract = StealthConfig.distract, unaware = StealthConfig.unaware;
             if (shield) {
                 try {
@@ -110,6 +114,13 @@ public class CombatUtils {
             if (ForgeRegistries.ITEMS.containsKey(key)) {
                 final Item item = ForgeRegistries.ITEMS.getValue(key);
                 combatList.put(item, new MeleeInfo(attack, defend, shield, pTime, pCount, distract, unaware));
+                if (shield) {
+                    final AttributeModifier downtimeM = new AttributeModifier(main, "extra downtime", pTime, AttributeModifier.Operation.ADDITION);
+                    final AttributeModifier barrierM = new AttributeModifier(main, "barrier bonus", pCount, AttributeModifier.Operation.ADDITION);
+                    final AttributeModifier downtimeO = new AttributeModifier(off, "extra downtime", pTime, AttributeModifier.Operation.ADDITION);
+                    final AttributeModifier barrierO = new AttributeModifier(off, "barrier bonus", pCount, AttributeModifier.Operation.ADDITION);
+                    shieldStat.put(item, new AttributeModifier[]{downtimeM, barrierM, downtimeO, barrierO});
+                }
             }
             //System.out.print("\"" + name+ "\", ");
         }
@@ -268,7 +279,7 @@ public class CombatUtils {
         }
         if (isShield(defender, i)) {
             boolean canShield = (defender instanceof PlayerEntity || rand < CombatConfig.mobParryChanceShield + CombatData.getCap(defender).getHandReel(h));
-            boolean canParry = CombatData.getCap(defender).getShieldTime() == 0 || CombatData.getCap(defender).getShieldBarrier() > 0;
+            boolean canParry = true;//CombatData.getCap(defender).getBarrierCooldown() == 0 || CombatData.getCap(defender).getBarrier() > 0;
             return recharge & canParry & canShield;
         } else if (isWeapon(defender, i)) {
             boolean canWeapon = (defender instanceof PlayerEntity || rand < CombatConfig.mobParryChanceWeapon + CombatData.getCap(defender).getHandReel(h));
@@ -289,13 +300,14 @@ public class CombatUtils {
 
     /**
      * first is threshold, second is count
+     *
      * @return
      */
     public static Tuple<Integer, Float> getShieldStats(ItemStack stack) {
         if (stack != null && combatList.containsKey(stack.getItem())) {
             return new Tuple<>(combatList.get(stack.getItem()).parryTime, combatList.get(stack.getItem()).parryCount);
         }
-        return new Tuple<>(CombatConfig.shieldThreshold, CombatConfig.shieldCount);
+        return new Tuple<>(CombatConfig.shieldCooldown, CombatConfig.barrierSize);
     }
 
     public static float getPostureAtk(@Nullable LivingEntity attacker, @Nullable LivingEntity defender, @Nullable Hand h, float amount, ItemStack stack) {
@@ -324,9 +336,9 @@ public class CombatUtils {
 
     public static float getPostureDef(@Nullable LivingEntity attacker, @Nullable LivingEntity defender, ItemStack stack, float amount) {
         if (stack == null) return (float) DEFAULTMELEE.defensePostureMultiplier;
-        if (defender != null && isShield(defender, stack) && CombatData.getCap(defender).getShieldTime() > 0 && CombatData.getCap(defender).getShieldBarrier() > 0) {
-            return 0;
-        }
+//        if (defender != null && isShield(defender, stack) && CombatData.getCap(defender).getBarrierCooldown() > 0 && CombatData.getCap(defender).getBarrier() > 0) {
+//            return 0;
+//        }
         if (stack.getCapability(CombatManipulator.CAP).isPresent()) {
             return stack.getCapability(CombatManipulator.CAP).resolve().get().postureMultiplierDefend(attacker, defender, stack, amount);
         }

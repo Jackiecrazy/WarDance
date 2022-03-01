@@ -51,12 +51,10 @@ public class WindScar extends WarCry {
     @Override
     public void onProc(LivingEntity caster, Event procPoint, STATE state, SkillData stats, LivingEntity target) {
         if (procPoint instanceof LivingAttackEvent && procPoint.getPhase() == EventPriority.HIGHEST && state == STATE.ACTIVE && ((LivingAttackEvent) procPoint).getEntityLiving() == target) {
-            double realReach = caster.getAttributeValue(ForgeMod.REACH_DISTANCE.get()) - 10;
-            if (((LivingAttackEvent) procPoint).getEntityLiving() == target) {
-                double dist = Math.sqrt(GeneralUtils.getDistSqCompensated(caster, target));
-                if (dist > realReach)
-                    stats.decrementDuration((float) (dist - realReach));
-            }
+            double realReach = caster.getAttributeValue(ForgeMod.REACH_DISTANCE.get()) - stats.getArbitraryFloat();
+            double dist = Math.sqrt(GeneralUtils.getDistSqCompensated(caster, target));
+            if (dist > realReach)
+                stats.decrementDuration((float) (dist - realReach));
         }
         super.onProc(caster, procPoint, state, stats, target);
     }
@@ -64,5 +62,17 @@ public class WindScar extends WarCry {
     @Override
     public Color getColor() {
         return Color.GREEN;
+    }
+
+    protected boolean cast(LivingEntity caster, float duration) {
+        return cast(caster, duration, false, CombatData.getCap(caster).getMight());
+    }
+
+    @Override
+    public boolean onStateChange(LivingEntity caster, SkillData prev, STATE from, STATE to) {
+        if (to == STATE.COOLING) {
+            caster.getAttribute(ForgeMod.REACH_DISTANCE.get()).removeModifier(bigReach);
+        }
+        return super.onStateChange(caster, prev, from, to);
     }
 }

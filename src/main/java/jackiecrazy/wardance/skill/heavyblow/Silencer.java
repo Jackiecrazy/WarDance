@@ -64,6 +64,11 @@ public class Silencer extends HeavyBlow {
         return super.onMarked(caster, target, sd, existing);
     }
 
+    public boolean markTick(LivingEntity caster, LivingEntity target, SkillData sd) {
+        sd.decrementDuration();
+        return super.markTick(caster, target, sd);
+    }
+
     @Override
     public void onMarkEnd(LivingEntity caster, LivingEntity target, SkillData sd) {
         target.setSilent(sd.isCondition());

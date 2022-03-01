@@ -28,4 +28,6 @@ public class WarAttributes {
     public static final RegistryObject<Attribute> POSTURE_REGEN = ATTRIBUTES.register("posture_regen", () -> new RangedAttribute(WarDance.MODID + ".postureGen", 0d, -Double.MAX_VALUE, Double.MAX_VALUE).setShouldWatch(true));
     public static final RegistryObject<Attribute> SPIRIT_REGEN = ATTRIBUTES.register("spirit_regen", () -> new RangedAttribute(WarDance.MODID + ".spiritGen", 10d, -Double.MAX_VALUE, Double.MAX_VALUE).setShouldWatch(true));
     public static final RegistryObject<Attribute> MIGHT_GEN = ATTRIBUTES.register("might_gen", () -> new RangedAttribute(WarDance.MODID + ".mightGen", 10d, -Double.MAX_VALUE, Double.MAX_VALUE).setShouldWatch(true));
+    public static final RegistryObject<Attribute> BARRIER = ATTRIBUTES.register("barrier", () -> new RangedAttribute(WarDance.MODID + ".barrier", 0.0d, 0, 1).setShouldWatch(true));
+    public static final RegistryObject<Attribute> BARRIER_COOLDOWN = ATTRIBUTES.register("barrier_cooldown", () -> new RangedAttribute(WarDance.MODID + ".barrierCooldown", 0d, 0, Integer.MAX_VALUE).setShouldWatch(true));
 }

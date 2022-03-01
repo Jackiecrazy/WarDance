@@ -68,7 +68,7 @@ import java.util.Optional;
 @Mod.EventBusSubscriber(value = Dist.CLIENT, modid = WarDance.MODID)
 public class ClientEvents {
     private static final int ALLOWANCE = 7;
-    private static final ResourceLocation hud = new ResourceLocation(WarDance.MODID, "textures/hud/icons.png");
+    private static final ResourceLocation posture = new ResourceLocation(WarDance.MODID, "textures/hud/bars.png");
     private static final ResourceLocation goodhud = new ResourceLocation(WarDance.MODID, "textures/hud/thanksrai.png");
     /**
      * left, back, right
@@ -473,9 +473,9 @@ public class ClientEvents {
                     //String combo = formatter.format(1 + Math.floor(currentComboLevel) / 10) + "X";
                     //mc.fontRenderer.drawString(event.getMatrixStack(), combo, width - 28 + ClientConfig.comboX, Math.min(height / 2 - barHeight / 2 + ClientConfig.comboY, height - barHeight) + 60, 0);
                 }
-                mc.getTextureManager().bindTexture(hud);
+                mc.getTextureManager().bindTexture(posture);
                 //render posture bar if not full, displayed even out of combat mode because it's pretty relevant to not dying
-                if (cap.getPosture() < cap.getMaxPosture() || cap.getStaggerTime() > 0 || cap.getShatterCooldown() < Math.floor(GeneralUtils.getAttributeValueSafe(player, WarAttributes.SHATTER.get())))
+                if (cap.getPosture() < cap.getMaxPosture() || cap.getStaggerTime() > 0 || cap.getShatterCooldown() < Math.floor(GeneralUtils.getAttributeValueSafe(player, WarAttributes.SHATTER.get())) || cap.getBarrier() < cap.getMaxBarrier())
                     drawPostureBarAt(true, stack, player, width, height);
                 Entity look = getEntityLookedAt(player, 32);
                 if (look instanceof LivingEntity) {
@@ -499,7 +499,7 @@ public class ClientEvents {
                         mc.ingameGUI.blit(stack, pair.getFirst() - (afflict.size() - 1 - index) * 16 + (afflict.size() - 1) * 8 - 8, pair.getSecond(), 0, 0, 16, 16, 16, 16);
                     }
                     RenderSystem.color4f(1, 1, 1, 1);
-                    if (ClientConfig.CONFIG.enemyPosture.enabled && (CombatData.getCap((LivingEntity) look).getPosture() < CombatData.getCap((LivingEntity) look).getMaxPosture() || CombatData.getCap((LivingEntity) look).getStaggerTime() > 0 || cap.getShatterCooldown() < GeneralUtils.getAttributeValueSafe(player, WarAttributes.SHATTER.get())))
+                    if (ClientConfig.CONFIG.enemyPosture.enabled && (CombatData.getCap((LivingEntity) look).getPosture() < CombatData.getCap((LivingEntity) look).getMaxPosture() || CombatData.getCap((LivingEntity) look).getStaggerTime() > 0 || cap.getShatterCooldown() < GeneralUtils.getAttributeValueSafe(player, WarAttributes.SHATTER.get()) || cap.getBarrier() < cap.getMaxBarrier()))
                         drawPostureBarAt(false, stack, looked, width, height);//Math.min(HudConfig.client.enemyPosture.x, width - 64), Math.min(HudConfig.client.enemyPosture.y, height - 64));
                 }
             }
@@ -513,7 +513,7 @@ public class ClientEvents {
         int atX = pair.getFirst();
         int atY = pair.getSecond();
         Minecraft mc = Minecraft.getInstance();
-        mc.getTextureManager().bindTexture(hud);
+        mc.getTextureManager().bindTexture(posture);
         RenderSystem.defaultBlendFunc();
         RenderSystem.enableBlend();
         ICombatCapability itsc = CombatData.getCap(elb);
@@ -526,7 +526,7 @@ public class ClientEvents {
         float posPerc = posture / Math.max(0.1f, trueMaxPosture);
         posPerc = Float.isFinite(posPerc) ? posPerc : 0;
         posPerc = MathHelper.clamp(posPerc, 0, 1);
-        double shatter = itsc.getShatterCooldown() / Math.floor(GeneralUtils.getAttributeValueSafe(elb, WarAttributes.SHATTER.get()));
+        double shatter = MathHelper.clamp(itsc.getBarrier() / itsc.getMaxBarrier(), 0, 1);
         if (cap > 0) {
             //shatter ticks
             if (shatter <= 0) {

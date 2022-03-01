@@ -56,7 +56,10 @@ public class Grapple extends Skill {
             if (state == STATE.HOLSTERED && isUnarmed(caster)) {
                 if (stats.isCondition() && caster.getLastAttackedEntity() == target && caster.ticksExisted-caster.getLastAttackedEntityTime()<40 && cast(caster, -999)) {
                     performEffect(caster, target);
-                } else stats.flagCondition(true);
+                } else{
+                    stats.flagCondition(true);
+                    caster.setLastAttackedEntity(target);
+                }
             }
         }
         attackCooldown(procPoint, caster, stats);

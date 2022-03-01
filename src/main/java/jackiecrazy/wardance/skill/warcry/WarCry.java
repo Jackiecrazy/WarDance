@@ -46,10 +46,11 @@ public class WarCry extends Skill {
     }
 
     protected int getDuration(float might) {
-        return Math.max(0, (int) (might * 20) - 40);
+        return Math.max(0, (int) (might * 30));
     }
 
     protected void evoke(LivingEntity caster) {
+        CombatData.getCap(caster).addMight(mightConsumption(caster));
         caster.world.playMovingSound(null, caster, SoundEvents.BLOCK_FIRE_EXTINGUISH, SoundCategory.AMBIENT, 0.3f + WarDance.rand.nextFloat() * 0.5f, 0.5f + WarDance.rand.nextFloat());
         if (this == WarSkills.REJUVENATE.get()) {
             final float might = CombatData.getCap(caster).getMight();
@@ -58,6 +59,7 @@ public class WarCry extends Skill {
                 caster.addPotionEffect(new EffectInstance(Effects.RESISTANCE, getDuration(might)));
                 caster.addPotionEffect(new EffectInstance(Effects.ABSORPTION, getDuration(might), 1));
             } else caster.addPotionEffect(new EffectInstance(Effects.ABSORPTION, getDuration(might)));
+            markUsed(caster);
         }
         CombatData.getCap(caster).setMight(0);
     }

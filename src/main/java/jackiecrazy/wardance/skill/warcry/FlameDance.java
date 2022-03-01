@@ -66,7 +66,7 @@ public class FlameDance extends WarCry {
             if (((LivingAttackEvent) procPoint).getEntityLiving() == target && ((LivingAttackEvent) procPoint).getSource() instanceof CombatDamageSource) {
                 if (stats.getArbitraryFloat() >= 1 && target.getFireTimer() > 0)
                     ((CombatDamageSource) ((LivingAttackEvent) procPoint).getSource()).setArmorReductionPercentage(0.5f);
-                target.forceFireTicks((int) (CombatData.getCap(caster).getRank() / 2));
+                target.setFire((int) (CombatData.getCap(caster).getRank() / 2));
             }
         } else if (procPoint instanceof CriticalHitEvent && state == STATE.ACTIVE && procPoint.getPhase() == EventPriority.HIGHEST && ((CriticalHitEvent) procPoint).getEntityLiving() == caster && stats.getArbitraryFloat() >= 1) {
             procPoint.setResult(Event.Result.ALLOW);

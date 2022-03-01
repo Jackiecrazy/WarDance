@@ -30,10 +30,12 @@ public class ViralDecay extends Judgment {
     }
 
     private static void detonate(LivingEntity target, LivingEntity caster) {
+        Marks.getCap(target).removeMark(WarSkills.VIRAL_DECAY.get());
         target.attackEntityFrom(new CombatDamageSource("player", caster).setDamageTyping(CombatDamageSource.TYPE.PHYSICAL).setProcSkillEffects(true).setProcAttackEffects(true).setDamageTyping(CombatDamageSource.TYPE.TRUE).setDamageBypassesArmor().setDamageIsAbsolute(), target.getHealth() / 10);
         SkillUtils.createCloud(target.world, caster, target.getPosX(), target.getPosY(), target.getPosZ(), 3, ParticleTypes.EXPLOSION);
         final List<LivingEntity> list = target.world.getLoadedEntitiesWithinAABB(LivingEntity.class, target.getBoundingBox().grow(3), (b) -> !TargetingUtils.isAlly(b, caster));
         for (LivingEntity enemy : list) {
+            if (enemy == target) continue;
             enemy.attackEntityFrom(VIRUS, 2);
             Marks.getCap(enemy).mark(new SkillData(WarSkills.VIRAL_DECAY.get(), 6).setArbitraryFloat(1).setCaster(caster));
         }
@@ -47,6 +49,7 @@ public class ViralDecay extends Judgment {
     @Override
     public SkillData onMarked(LivingEntity caster, LivingEntity target, SkillData sd, @Nullable SkillData existing) {
         if (existing != null) {
+            if (existing.getDuration() < 0) return null;
             if (existing.getArbitraryFloat() >= 2) {
                 detonate(target, caster);
                 return null;

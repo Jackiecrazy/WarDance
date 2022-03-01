@@ -19,6 +19,9 @@ public class Mikiri extends IronGuard {
     @Override
     public void onProc(LivingEntity caster, Event procPoint, STATE state, SkillData stats, @Nullable LivingEntity target) {
         super.onProc(caster, procPoint, state, stats, target);
+        if (procPoint instanceof ParryEvent && procPoint.getPhase() == EventPriority.HIGHEST && ((ParryEvent) procPoint).getEntityLiving() == caster && ((ParryEvent) procPoint).canParry() && state == STATE.COOLING) {
+            parry(caster, (ParryEvent) procPoint, stats, target, state);
+        }
         if (procPoint instanceof LivingAttackEvent && caster.getLastAttackedEntityTime() != caster.ticksExisted && ((LivingAttackEvent) procPoint).getEntityLiving() == target && procPoint.getPhase() == EventPriority.HIGHEST && state == STATE.COOLING) {
             stats.decrementDuration();
         }

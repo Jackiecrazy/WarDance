@@ -14,7 +14,6 @@ public class ClientConfig {
     public static final ClientConfig CONFIG;
     public static final ForgeConfigSpec CONFIG_SPEC;
     public final DisplayData might, mightNumber, spirit, spiritNumber, combo, playerPosture, enemyPosture, playerAfflict, enemyAfflict;
-    public static boolean displayEnemyPosture;
     public static int spiritColor;
     public static int mightColor;
     public static int autoCombat;

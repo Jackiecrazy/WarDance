@@ -48,6 +48,8 @@
   "wardance.maxPosture": "Max Posture",
   "wardance.maxSpirit": "Max Spirit",
   "wardance.maxMight": "Max Might",
+  "wardance.barrier": "Barrier",
+  "wardance.barrierCooldown": "Barrier Cooldown Ticks",
 
   "wardance.combat.on": "Combat Mode Activated",
   "wardance.combat.off": "Combat Mode Deactivated",
@@ -172,7 +174,7 @@
   "wardance:war_cry.sleep.name": "Meditate: %d",
   "wardance:war_cry.nosleep.name": "War Cry",
   "wardance:rejuvenate.name": "Rejuvenate",
-  "wardance:rejuvenate.desc": " §lPassive:§r +50% healing. \n§l Active:§r gain regeneration and absorption for (might-2) seconds. Above 7 might, also gain resistance and absorption 2.",
+  "wardance:rejuvenate.desc": " §lPassive:§r +50% healing. \n§l Active:§r gain regeneration and absorption for (might*1.5) seconds. Above 7 might, also gain resistance and absorption 2.",
   "wardance:wind_scar.name": "Wind Scar",
   "wardance:wind_scar.desc": " §lPassive:§r +1 block reach. \n§l Active:§r gain +(might) block reach and (3*might) charges. Every attack made beyond your natural attack range will consume an equivalent amount of charge, ending once charge falls below 0.",
   "wardance:timberfall.name": "Timberfall",

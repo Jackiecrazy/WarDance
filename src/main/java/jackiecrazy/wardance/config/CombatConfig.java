@@ -426,8 +426,8 @@ public class CombatConfig {
     public static float defaultMultiplierPostureMob;
     public static int rollEndsAt;
     public static int rollCooldown;
-    public static int shieldThreshold;
-    public static float shieldCount;
+    public static int shieldCooldown;
+    public static float barrierSize;
     public static int staggerDuration;
     public static int staggerDurationMin;
     public static int staggerHits, adrenaline;
@@ -522,7 +522,7 @@ public class CombatConfig {
         b.pop();
         b.push("misc");
         _foodCool = b.translation("wardance.config.foodCool").comment("number of ticks to disable a certain food item for after taking physical damage while eating it. Set to 0 to just interrupt eating, and -1 to disable this feature.").defineInRange("food disable time", 20, -1, Integer.MAX_VALUE);
-        _adrenaline = b.translation("wardance.config.adrenaline").comment("number of ticks to halve adrenaline bonus after getting hit. Set to -1 to disable adrenaline altogether.").defineInRange("food disable time", 100, -1, Integer.MAX_VALUE);
+        _adrenaline = b.translation("wardance.config.adrenaline").comment("number of ticks to halve adrenaline bonus after getting hit. Set to -1 to disable adrenaline altogether.").defineInRange("adrenaline downtime", 100, -1, Integer.MAX_VALUE);
         b.pop();
     }
 
@@ -533,8 +533,8 @@ public class CombatConfig {
         defaultMultiplierPostureMob = CONFIG._defaultMultiplierPostureMob.get().floatValue();
         rollCooldown = CONFIG._rollCooldown.get();
         rollEndsAt = rollCooldown - CONFIG._rollThreshold.get();
-        shieldThreshold = CONFIG._shieldThreshold.get();
-        shieldCount = CONFIG._shieldCount.get();
+        shieldCooldown = CONFIG._shieldThreshold.get();
+        barrierSize = CONFIG._shieldCount.get();
         staggerDuration = CONFIG._staggerDuration.get();
         staggerDurationMin = CONFIG._staggerDurationMin.get();
         staggerHits = CONFIG._staggerHits.get();

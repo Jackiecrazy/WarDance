@@ -150,17 +150,23 @@ public interface ICombatCapability {
 
     void decrementStaggerCount(int amount);
 
-    int getShieldTime();
+    int getBarrierCooldown();
 
-    void setShieldTime(int amount);
+    void setBarrierCooldown(int amount);
 
-    void decrementShieldTime(int amount);
+    void decrementBarrierCooldown(int amount);
 
-    float getShieldBarrier();
+    float getMaxBarrier();
 
-    void setShieldBarrier(float amount);
+    void setMaxBarrier(float amount);
 
-    void decrementShieldBarrier(float amount);
+    float getBarrier();
+
+    void setBarrier(float amount);
+
+    float consumeBarrier(float amount);
+
+    void addBarrier(float amount);
 
     int getOffhandCooldown();
 
