@@ -138,11 +138,15 @@ public interface ICombatCapability {
         return Math.max(0.1f, getTrueMaxSpirit() - getBurnout());
     }
 
+    int getMaxStaggerTime();
+
     int getStaggerTime();
 
     void setStaggerTime(int amount);
 
     int decrementStaggerTime(int amount);
+
+    int getMaxStaggerCount();
 
     int getStaggerCount();
 

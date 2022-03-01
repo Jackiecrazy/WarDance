@@ -189,6 +189,11 @@ public class DummyCombatCap implements ICombatCapability {
 
     }
 
+    @Override
+    public int getMaxStaggerTime() {
+        return 0;
+    }
+
     private int getComboGrace() {
         return 0;
     }
@@ -213,6 +218,11 @@ public class DummyCombatCap implements ICombatCapability {
 
     @Override
     public int decrementStaggerTime(int amount) {
+        return 0;
+    }
+
+    @Override
+    public int getMaxStaggerCount() {
         return 0;
     }
 

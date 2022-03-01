@@ -403,7 +403,7 @@ public class ClientEvents {
                         fillHeight = Math.min(fillHeight, 32);
                         //spirit base
                         stack.push();
-                        mc.ingameGUI.blit(stack, x, y+1, 32, 96, 32, 32);
+                        mc.ingameGUI.blit(stack, x, y + 1, 32, 96, 32, 32);
                         stack.pop();
                         //spirit illumination
                         stack.push();
@@ -476,7 +476,7 @@ public class ClientEvents {
                 mc.getTextureManager().bindTexture(posture);
                 //render posture bar if not full, displayed even out of combat mode because it's pretty relevant to not dying
                 if (cap.getPosture() < cap.getMaxPosture() || cap.getStaggerTime() > 0 || cap.getShatterCooldown() < Math.floor(GeneralUtils.getAttributeValueSafe(player, WarAttributes.SHATTER.get())) || cap.getBarrier() < cap.getMaxBarrier())
-                    drawPostureBarAt(true, stack, player, width, height);
+                    drawNewPostureBarAt(true, stack, player, width, height);
                 Entity look = getEntityLookedAt(player, 32);
                 if (look instanceof LivingEntity) {
                     LivingEntity looked = (LivingEntity) look;
@@ -500,7 +500,7 @@ public class ClientEvents {
                     }
                     RenderSystem.color4f(1, 1, 1, 1);
                     if (ClientConfig.CONFIG.enemyPosture.enabled && (CombatData.getCap((LivingEntity) look).getPosture() < CombatData.getCap((LivingEntity) look).getMaxPosture() || CombatData.getCap((LivingEntity) look).getStaggerTime() > 0 || cap.getShatterCooldown() < GeneralUtils.getAttributeValueSafe(player, WarAttributes.SHATTER.get()) || cap.getBarrier() < cap.getMaxBarrier()))
-                        drawPostureBarAt(false, stack, looked, width, height);//Math.min(HudConfig.client.enemyPosture.x, width - 64), Math.min(HudConfig.client.enemyPosture.y, height - 64));
+                        drawNewPostureBarAt(false, stack, looked, width, height);//Math.min(HudConfig.client.enemyPosture.x, width - 64), Math.min(HudConfig.client.enemyPosture.y, height - 64));
                 }
             }
     }
@@ -571,6 +571,112 @@ public class ClientEvents {
         RenderSystem.disableBlend();
         RenderSystem.color3f(1, 1, 1);
         //RenderSystem.enableLighting();
+    }
+
+
+    /**
+     * Draws it with the coord as its center
+     */
+    private static void drawNewPostureBarAt(boolean you, MatrixStack ms, LivingEntity elb, int width, int height) {
+        Pair<Integer, Integer> pair = you ? translateCoords(ClientConfig.CONFIG.playerPosture, width, height) : translateCoords(ClientConfig.CONFIG.enemyPosture, width, height);
+        int atX = pair.getFirst();
+        int atY = pair.getSecond();
+        Minecraft mc = Minecraft.getInstance();
+        mc.getTextureManager().bindTexture(posture);
+        RenderSystem.defaultBlendFunc();
+        RenderSystem.enableBlend();
+        ICombatCapability itsc = CombatData.getCap(elb);
+        mc.getProfiler().startSection("postureBar");
+        float cap = itsc.getMaxPosture();
+        //182
+        //so we want the full size to be 240, 25 to be 125, and every 5 max posture changes this by 20 pixels
+        int halfBarWidth = Math.min(240, (int) (Math.sqrt(itsc.getTrueMaxPosture()) * 25)) / 2;
+        //divvy by 2 for two-pronged approach
+        int flexBarWidth = halfBarWidth;
+        final int barHeight = 7;
+        //double shatter = MathHelper.clamp(itsc.getBarrier() / itsc.getMaxBarrier(), 0, 1);
+        if (cap > 0) {
+            //take a two-way approach to draw this:
+            //first draw the ending bracket
+            mc.ingameGUI.blit(ms, atX + flexBarWidth, atY - 1, 235, 0, 5, barHeight);
+            //reduce length by fatigue and draw working bracket
+            flexBarWidth -= (itsc.getFatigue() * halfBarWidth / itsc.getTrueMaxPosture());
+            mc.ingameGUI.blit(ms, atX + flexBarWidth, atY - 1, 235, 40, 5, barHeight);
+            //grayscale and change width if staggered
+            if (itsc.getStaggerTime() > 0) {
+                flexBarWidth = (int) ((itsc.getMaxStaggerTime() - itsc.getStaggerTime()) * flexBarWidth / (float) itsc.getMaxStaggerTime())+3;
+                mc.ingameGUI.blit(ms, atX, atY, 238 - flexBarWidth, 13, flexBarWidth, barHeight-1);
+            } else {
+                //reduce length by posture percentage
+                flexBarWidth = (int) (itsc.getPosture() * halfBarWidth / itsc.getTrueMaxPosture())+4;
+                //determine bar color by shatter
+                int voff=7;
+                // draw posture
+                mc.ingameGUI.blit(ms, atX, atY, 238 - flexBarWidth, voff, flexBarWidth, barHeight - 1);
+                // draw shatter if eligible
+                flexBarWidth+=1;
+                final int shatter = itsc.getShatterCooldown();
+                final int mshatter = (int) GeneralUtils.getAttributeValueSafe(elb, WarAttributes.SHATTER.get());
+                 float color = (float) shatter / mshatter;
+                if (shatter != 0 && shatter == mshatter)
+                    mc.ingameGUI.blit(ms, atX, atY - 1, 239 - flexBarWidth, 19, flexBarWidth+1, barHeight);
+                //blue
+                else if (shatter > 0) {
+                    RenderSystem.color4f(1, 1, 1, color);
+                    mc.ingameGUI.blit(ms, atX, atY - 1, 239 - flexBarWidth, 26, flexBarWidth+1, barHeight);
+                    //gold
+                } else if (shatter < 0) {
+                    color=-shatter/(float)ResourceConfig.shatterCooldown;
+                    RenderSystem.color4f(1, 1, 1, 1-color);
+                    mc.ingameGUI.blit(ms, atX, atY - 1, 239 - flexBarWidth, 19, flexBarWidth+1, barHeight);
+                    //dark translucent blue
+                }
+                RenderSystem.color4f(1, 1, 1, 1);
+                //otherwise draw nothing
+            }
+            //flip and do this on the other side, reset flexBarWidth
+            flexBarWidth=halfBarWidth;
+            //first draw the starting bracket
+            mc.ingameGUI.blit(ms, atX - flexBarWidth-5, atY - 1, 0, 0, 5, barHeight);
+            //reduce length by fatigue and draw working bracket
+            flexBarWidth -= (itsc.getFatigue() * halfBarWidth / itsc.getTrueMaxPosture());
+            mc.ingameGUI.blit(ms, atX - flexBarWidth-5, atY - 1, 0, 40, 5, barHeight);
+            //grayscale and change width if staggered
+            if (itsc.getStaggerTime() > 0) {
+                flexBarWidth = (int) ((itsc.getMaxStaggerTime() - itsc.getStaggerTime()) * flexBarWidth / (float) itsc.getMaxStaggerTime())+5;
+                mc.ingameGUI.blit(ms, atX-flexBarWidth, atY, 0, 13, flexBarWidth, barHeight-1);
+            } else {
+                //reduce length by posture percentage
+                flexBarWidth = (int) (itsc.getPosture() * halfBarWidth / itsc.getTrueMaxPosture())+5;
+                mc.ingameGUI.blit(ms, atX-flexBarWidth-1, atY, 0, 7, flexBarWidth+1, barHeight - 1);
+                // draw posture
+                // draw shatter if eligible
+                flexBarWidth+=1;
+                final int shatter = itsc.getShatterCooldown();
+                final int mshatter = (int) GeneralUtils.getAttributeValueSafe(elb, WarAttributes.SHATTER.get());
+                float color = (float) shatter / mshatter;
+                if (shatter != 0 && shatter == mshatter)
+                    mc.ingameGUI.blit(ms, atX-flexBarWidth, atY - 1, 0, 19, flexBarWidth+1, barHeight);
+                    //blue
+                else if (shatter > 0) {
+                    RenderSystem.color4f(1, 1, 1, color);
+                    mc.ingameGUI.blit(ms, atX-flexBarWidth, atY - 1, 0, 26, flexBarWidth+1, barHeight);
+                    //gold
+                } else if (shatter < 0) {
+                    color=-shatter/(float)ResourceConfig.shatterCooldown;
+                    RenderSystem.color4f(1, 1, 1, 1-color);
+                    mc.ingameGUI.blit(ms, atX-flexBarWidth, atY - 1, 0, 19, flexBarWidth+1, barHeight);
+                    //dark translucent blue
+                }
+                //otherwise draw nothing
+                RenderSystem.color4f(1, 1, 1, 1);
+            }
+            //draw the center bar as the last step
+        }
+        mc.getProfiler().endSection();
+        mc.getTextureManager().bindTexture(AbstractGui.GUI_ICONS_LOCATION);
+        RenderSystem.disableBlend();
+        RenderSystem.color3f(1, 1, 1);
     }
 
     /**

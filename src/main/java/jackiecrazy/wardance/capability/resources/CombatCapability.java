@@ -54,7 +54,7 @@ public class CombatCapability implements ICombatCapability {
     private int qcd, scd, pcd, ccd;
     private int mBind;
     private int oBind;
-    private int staggert, staggerc, offhandcd, barriercd, roll, sweepAngle = -1;
+    private int staggert, mstaggert, mstaggerc, staggerc, offhandcd, barriercd, roll, sweepAngle = -1;
     private boolean offhand, combat;
     private long lastUpdate;
     private boolean first, shattering, shieldDown;
@@ -382,6 +382,11 @@ public class CombatCapability implements ICombatCapability {
         maxMight = amount;
     }
 
+    @Override
+    public int getMaxStaggerTime() {
+        return mstaggert;
+    }
+
     private void setComboGrace(int amount) {
         ccd = amount;
     }
@@ -408,6 +413,7 @@ public class CombatCapability implements ICombatCapability {
             elb.getAttribute(Attributes.MOVEMENT_SPEED).removeModifier(WOUND);
             elb.getAttribute(Attributes.ARMOR).removeModifier(WOUND);
             elb.getAttribute(Attributes.ARMOR).removeModifier(MORE);
+            mstaggert = 0;
         } else if (dude.get() != null && amount > 0 && staggert == 0) {
             LivingEntity elb = dude.get();
             elb.getAttribute(Attributes.MOVEMENT_SPEED).removeModifier(WOUND);
@@ -417,6 +423,7 @@ public class CombatCapability implements ICombatCapability {
             elb.getAttribute(Attributes.ARMOR).removeModifier(MORE);
             elb.getAttribute(Attributes.ARMOR).applyPersistentModifier(STAGGERSA);
         }
+        mstaggert = Math.max(mstaggert, amount);
         staggert = amount;
     }
 
@@ -434,10 +441,15 @@ public class CombatCapability implements ICombatCapability {
                 staggerc = 0;
             }
             int temp = staggert;
-            staggert = 0;
+            staggert = mstaggert = 0;
             return -temp;
         }
         return 0;
+    }
+
+    @Override
+    public int getMaxStaggerCount() {
+        return mstaggerc;
     }
 
     @Override
@@ -447,6 +459,7 @@ public class CombatCapability implements ICombatCapability {
 
     @Override
     public void setStaggerCount(int amount) {
+        mstaggerc = Math.max(mstaggerc, amount);
         staggerc = amount;
     }
 
@@ -458,6 +471,7 @@ public class CombatCapability implements ICombatCapability {
             setStaggerTime(0);
             setPosture(getMaxPosture());
             staggerc = 0;
+            mstaggerc = 0;
         }
     }
 
@@ -506,11 +520,10 @@ public class CombatCapability implements ICombatCapability {
         if (shieldDown) return 0;
         float prev;
         if (barrier - amount > 0) {
-            prev=amount;
+            prev = amount;
             barrier -= amount;
-        }
-        else {
-            prev=barrier;
+        } else {
+            prev = barrier;
             barrier = 0;
             shieldDown = true;
         }
@@ -899,6 +912,8 @@ public class CombatCapability implements ICombatCapability {
         setShatterCooldown(c.getInt("shattercd"));
         setMaxBarrier(c.getFloat("maxBarrier"));
         setBarrier(c.getFloat("barrier"));
+        mstaggerc=c.getInt("mstaggerc");
+        mstaggert=c.getInt("mstaggert");
         if (!c.contains("qi")) return;
         setMight(c.getFloat("qi"));
         setResolve(c.getFloat("resolve"));
@@ -981,6 +996,8 @@ public class CombatCapability implements ICombatCapability {
         c.putInt("posturecd", getPostureGrace());
         c.putInt("spiritcd", getSpiritGrace());
         c.putInt("shield", getBarrierCooldown());
+        c.putInt("mstaggerc", getMaxStaggerCount());
+        c.putInt("mstaggert", getMaxStaggerTime());
         c.putInt("staggerc", getStaggerCount());
         c.putInt("staggert", getStaggerTime());
         c.putInt("offhandcd", getOffhandCooldown());
@@ -1022,6 +1039,9 @@ public class CombatCapability implements ICombatCapability {
         c.putFloat("maxpos", getTrueMaxPosture());
         c.putFloat("fatigue", getFatigue());
         c.putInt("staggert", getStaggerTime());
+        c.putInt("mstaggert", getMaxStaggerTime());
+        c.putInt("staggerc", getStaggerCount());
+        c.putInt("mstaggerc", getMaxStaggerCount());
         c.putLong("lastUpdate", lastUpdate);
         c.putInt("shattercd", getShatterCooldown());
         c.putFloat("maxBarrier", mbar);
@@ -1086,7 +1106,7 @@ public class CombatCapability implements ICombatCapability {
 //            return getMaxPosture() * armorMod * speedMod * healthMod / (1.5f * ResourceConfig.staggerDuration);
 //        }
         //0.2f
-        final float ret = (((getMaxPosture() / (armorMod * 20)) ) + recovery) * exhaustMod * healthMod * poison;
+        final float ret = (((getMaxPosture() / (armorMod * 20))) + recovery) * exhaustMod * healthMod * poison;
         GainBarrierEvent ev = new GainBarrierEvent(elb, ret);
         MinecraftForge.EVENT_BUS.post(ev);
         return ev.getQuantity();

@@ -75,6 +75,8 @@ public class CoupDeGrace extends Skill {
             LivingHurtEvent e = (LivingHurtEvent) procPoint;
             if (e.getEntityLiving() != caster) {
                 if (CombatData.getCap(e.getEntityLiving()).getStaggerTime() > 0 && !CombatData.getCap(e.getEntityLiving()).isFirstStaggerStrike()) {
+                    if (willKillOnCast(caster, target))
+                        target.setHealth(1);
                     e.setAmount(e.getAmount() + getDamage(caster, target));
                     e.getSource().setDamageBypassesArmor().setDamageIsAbsolute();
                     CombatData.getCap(target).decrementStaggerTime(CombatData.getCap(target).getStaggerTime());
