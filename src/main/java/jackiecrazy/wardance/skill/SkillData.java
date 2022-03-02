@@ -38,7 +38,7 @@ public class SkillData {
             return null;
         SkillData ret = new SkillData(Skill.getSkill(from.getString("skill")), from.getFloat("duration")).flagCondition(from.getBoolean("condition")).setArbitraryFloat(from.getFloat("something"));
         ret.max = from.getFloat("max");
-        ret.state= Skill.STATE.values()[from.getInt("state")];
+        ret.state = Skill.STATE.values()[from.getInt("state")];
         if (from.contains("caster"))
             ret.casterID = from.getUniqueId("caster");
         return ret;
@@ -62,11 +62,6 @@ public class SkillData {
 
     public float getDuration() {
         return duration;
-    }
-
-    public SkillData setMaxDuration(float max){
-        this.max=max;
-        return this;
     }
 
     public SkillData setDuration(float duration) {
@@ -104,12 +99,17 @@ public class SkillData {
         return false;
     }
 
-    public void markDirty(){
-        dirty=true;
+    public void markDirty() {
+        dirty = true;
     }
 
     public float getMaxDuration() {
         return max;
+    }
+
+    public SkillData setMaxDuration(float max) {
+        this.max = max;
+        return this;
     }
 
     public void decrementDuration() {
@@ -126,6 +126,7 @@ public class SkillData {
     }
 
     public CompoundNBT write(CompoundNBT to) {
+        if (s == null) return to;
         to.putString("skill", s.getRegistryName().toString());
         to.putInt("state", state.ordinal());
         to.putFloat("duration", duration);
