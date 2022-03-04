@@ -42,6 +42,7 @@ public class Mark implements IMark {
         SkillData sd = d.getSkill().onMarked(d.getCaster(dude.get().world), dude.get(), d, statuus.get(d.getSkill()));
         if(sd!=null)
         statuus.put(d.getSkill(), sd);
+        else statuus.remove(d.getSkill());
         sync = true;
     }
 

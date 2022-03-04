@@ -222,7 +222,7 @@
   "wardance:brutalize.desc": " Intimidate hostile targets in a 10 block radius on every cast, causing them to take 20% more posture damage from you for 10 seconds. Successfully judging a target staggers it for double the usual time, nearby enemies with less health than the judged target are compelled to flee in fear.",
   "wardance:brutalize.requirement": "must reach S rank first",
   "wardance:viral_decay.name": "Viral Decay",
-  "wardance:viral_decay.desc": " The §lmark§r cannot be extended by attacking, but deals (stack) wither damage every second. Detonation or dying while §lmarked§r creates an explosion instead of refunding might, dealing 2 true damage and §lmarking§r non-ally targets in a 3 block radius.",
+  "wardance:viral_decay.desc": " The §lmark§r cannot be extended by attacking, but deals (stack) wither damage every second. Manual detonation or death while §lmarked§r creates an explosion instead of refunding might, dealing 2 true damage and §lmarking§r non-ally targets in a 3 block radius.",
   "wardance:viral_decay.requirement": "must reach S rank first",
   "wardance:fever_dream.name": "Fever Dream",
   "wardance:fever_dream.desc": " Upon successfully judging a target, compel entities in a 7 block radius to attack each other randomly. If this affects another §lmarked§r entity, they will repeat this effect. The effect can be chained up to 3 times.",

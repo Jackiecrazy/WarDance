@@ -35,7 +35,7 @@ public class LichtenbergScar extends Judgment {
         list.add(target);
         //float damage = s.getArbitraryFloat() * (1 + CombatData.getCap(caster).getSpirit());
         for (LivingEntity baddie : list) {
-            if(baddie==target)
+            if (baddie == target)
                 target.attackEntityFrom(cds, target.getHealth() / 5);
             else baddie.attackEntityFrom(cds, baddie.getHealth() / 10);
             LightningBoltEntity lightningboltentity = EntityType.LIGHTNING_BOLT.create(target.world);
@@ -45,5 +45,13 @@ public class LichtenbergScar extends Judgment {
             if (!net.minecraftforge.event.ForgeEventFactory.onEntityStruckByLightning(baddie, lightningboltentity))
                 baddie.causeLightningStrike((ServerWorld) baddie.world, lightningboltentity);
         }
+    }
+
+    @Override
+    public boolean onStateChange(LivingEntity caster, SkillData prev, STATE from, STATE to) {
+        if (to == STATE.COOLING && prev.isCondition()) {
+            prev.setDuration(1);
+            return true;
+        } else return super.onStateChange(caster, prev, from, to);
     }
 }

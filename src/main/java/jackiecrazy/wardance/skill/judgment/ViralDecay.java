@@ -47,19 +47,10 @@ public class ViralDecay extends Judgment {
     }
 
     @Override
-    public SkillData onMarked(LivingEntity caster, LivingEntity target, SkillData sd, @Nullable SkillData existing) {
-        if (existing != null) {
-            if (existing.getDuration() < 0) return null;
-            if (existing.getArbitraryFloat() >= 2) {
-                detonate(target, caster);
-                return null;
-            }
-        }
-        return super.onMarked(caster, target, sd, existing);
-    }
-
-    @Override
     protected void performEffect(LivingEntity caster, LivingEntity target, int stack, SkillData sd) {
+        super.performEffect(caster, target, stack, sd);
+        if(stack==3)
+            detonate(target, caster);
     }
 
     @Override

@@ -78,7 +78,7 @@ public class Silencer extends HeavyBlow {
     @Override
     public boolean onStateChange(LivingEntity caster, SkillData prev, STATE from, STATE to) {
         if (to == STATE.COOLING) {
-            setCooldown(caster, prev, 3);
+            setCooldown(caster, prev, 5);
         }
         return super.onStateChange(caster, prev, from, to);
     }
