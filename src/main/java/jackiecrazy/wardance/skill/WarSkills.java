@@ -62,7 +62,7 @@ public class WarSkills {
     public static final RegistryObject<Skill> SUPLEX = SKILLS.register("suplex", Grapple.Suplex::new);
     public static final RegistryObject<Skill> PUMMEL = SKILLS.register("pummel", ShieldBash::new);
     public static final RegistryObject<Skill> RIM_PUNCH = SKILLS.register("rim_punch", ShieldBash.RimPunch::new);
-    public static final RegistryObject<Skill> ARM_LOCK = SKILLS.register("arm_lock", ArmLock::new);
+    public static final RegistryObject<Skill> ARM_LOCK = SKILLS.register("lockdown", ArmLock::new);
     public static final RegistryObject<Skill> FOOT_SLAM = SKILLS.register("foot_slam", ShieldBash.FootSlam::new);
     public static final RegistryObject<Skill> OVERBEAR = SKILLS.register("overbear", Overbear::new);
     public static final RegistryObject<Skill> BERSERK = SKILLS.register("berserk", Berserk::new);

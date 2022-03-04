@@ -13,7 +13,8 @@ import java.util.List;
 public class ClientConfig {
     public static final ClientConfig CONFIG;
     public static final ForgeConfigSpec CONFIG_SPEC;
-    public final DisplayData might, mightNumber, spirit, spiritNumber, combo, playerPosture, enemyPosture, playerAfflict, enemyAfflict;
+    public final DisplayData might, mightNumber, spirit, spiritNumber, combo, playerAfflict, enemyAfflict;
+    public final PostureData playerPosture, enemyPosture;
     public static int spiritColor;
     public static int mightColor;
     public static int autoCombat;
@@ -47,10 +48,10 @@ public class ClientConfig {
         combo = new DisplayData(b, "combo", AnchorPoint.MIDDLERIGHT, -40, -32);
         b.pop();
         b.push("player posture");
-        playerPosture = new DisplayData(b, "player posture", AnchorPoint.BOTTOMCENTER, 0, -57);
+        playerPosture = new PostureData(b, "player posture", AnchorPoint.BOTTOMCENTER, 0, -57);
         b.pop();
         b.push("enemy posture");
-        enemyPosture = new DisplayData(b, "target posture", AnchorPoint.TOPCENTER, 0, 20);
+        enemyPosture = new PostureData(b, "target posture", AnchorPoint.TOPCENTER, 0, 20);
         b.pop();
         b.push("your afflictions");
         playerAfflict = new DisplayData(b, "your afflictions", AnchorPoint.CROSSHAIR, 0, 18);
@@ -115,11 +116,32 @@ public class ClientConfig {
             _numberY = b.translation("wardance.config." + s + "Y").comment("where the center of the HUD element should be in relation to the anchor point").defineInRange(s + " y offset", defY, -Integer.MAX_VALUE, Integer.MAX_VALUE);
         }
 
-        private void bake() {
+        protected void bake() {
             anchorPoint = _anchor.get();
             numberX = _numberX.get();
             numberY = _numberY.get();
             enabled = _display.get();
         }
+    }
+
+    public static class PostureData extends DisplayData{
+        public BarType bar;
+        private final ForgeConfigSpec.EnumValue<BarType> _bar;
+        private PostureData(ForgeConfigSpec.Builder b, String s, AnchorPoint ap, int defX, int defY) {
+            super(b, s, ap, defX, defY);
+            _bar=b.translation("wardance.config."+s+"Type").comment("Determine which type of posture bar will be rendered. Valid values are 'classic' (ugly), 'amo' (minimalist), and 'darkmega' (default).").defineEnum(s+" style", BarType.DARKMEGA);
+        }
+
+        @Override
+        protected void bake() {
+            super.bake();
+            bar=_bar.get();
+        }
+    }
+
+    public static enum BarType{
+        CLASSIC,
+        AMO,
+        DARKMEGA
     }
 }

@@ -2,13 +2,15 @@ package jackiecrazy.wardance.skill.shieldbash;
 
 import jackiecrazy.wardance.WarDance;
 import jackiecrazy.wardance.api.CombatDamageSource;
+import jackiecrazy.wardance.api.WarAttributes;
+import jackiecrazy.wardance.capability.resources.CombatData;
+import jackiecrazy.wardance.capability.resources.ICombatCapability;
 import jackiecrazy.wardance.event.ParryEvent;
 import jackiecrazy.wardance.potion.WarEffects;
 import jackiecrazy.wardance.skill.*;
 import jackiecrazy.wardance.utils.CombatUtils;
 import jackiecrazy.wardance.utils.SkillUtils;
 import net.minecraft.entity.LivingEntity;
-import net.minecraft.item.ItemStack;
 import net.minecraft.potion.EffectInstance;
 import net.minecraft.potion.Effects;
 import net.minecraft.tags.Tag;
@@ -55,9 +57,13 @@ public class ShieldBash extends Skill {
     }
 
     protected void performEffect(LivingEntity caster, LivingEntity target) {
-        final ItemStack off = caster.getHeldItemOffhand();
-        if (CombatUtils.isShield(caster, off)) {
-            SkillUtils.auxAttack(caster, target, new CombatDamageSource("player", caster).setProcNormalEffects(false).setProcAttackEffects(true).setProcSkillEffects(true).setAttackingHand(Hand.OFF_HAND).setDamageTyping(CombatDamageSource.TYPE.PHYSICAL).setDamageDealer(off), 0, CombatUtils.getShieldStats(off).getA() / (isPassive(caster) ? 40f : 20f));
+        final ICombatCapability cap = CombatData.getCap(caster);
+        if (isPassive(caster)) {
+            if (CombatUtils.isShield(caster, caster.getHeldItemOffhand()))
+                SkillUtils.auxAttack(caster, target, new CombatDamageSource("player", caster).setProcNormalEffects(false).setProcAttackEffects(true).setProcSkillEffects(true).setAttackingHand(Hand.OFF_HAND).setDamageTyping(CombatDamageSource.TYPE.PHYSICAL).setDamageDealer(caster.getHeldItemOffhand()), 0, cap.getBarrier());
+        } else {
+            SkillUtils.auxAttack(caster, target, new CombatDamageSource("player", caster).setProcNormalEffects(false).setProcAttackEffects(true).setProcSkillEffects(true).setAttackingHand(Hand.OFF_HAND).setDamageTyping(CombatDamageSource.TYPE.PHYSICAL).setDamageDealer(caster.getHeldItemMainhand()), 0, cap.consumeBarrier(cap.getBarrier()));
+            cap.setBarrierCooldown(cap.getBarrierCooldown() / 2);
         }
     }
 
@@ -85,8 +91,8 @@ public class ShieldBash extends Skill {
 
     @Override
     public boolean onStateChange(LivingEntity caster, SkillData prev, STATE from, STATE to) {
-        if (to == STATE.COOLING)
-            setCooldown(caster, prev, isPassive(caster) ? 6 : 4);
+        if (to == STATE.COOLING)//no need for cooldown because it basically cools down with shield anyway
+            prev.setState(STATE.INACTIVE);
         return boundCast(prev, from, to);
     }
 
@@ -98,7 +104,9 @@ public class ShieldBash extends Skill {
 
         protected void performEffect(LivingEntity caster, LivingEntity target) {
             target.addPotionEffect(new EffectInstance(Effects.NAUSEA, 60));
-            CombatUtils.knockBack(target, caster, 0.2f, true, false);
+            CombatUtils.knockBack(target, caster, (float) caster.getAttributeValue(WarAttributes.BARRIER.get()), true, false);
+            CombatData.getCap(caster).consumeBarrier(CombatData.getCap(caster).getBarrier());
+            CombatData.getCap(caster).setBarrierCooldown(CombatData.getCap(caster).getBarrierCooldown() / 2);
         }
     }
 
@@ -110,8 +118,9 @@ public class ShieldBash extends Skill {
 
         protected void performEffect(LivingEntity caster, LivingEntity target) {
             super.performEffect(caster, target);
-            target.addPotionEffect(new EffectInstance(Effects.SLOWNESS, 60));
-            target.addPotionEffect(new EffectInstance(WarEffects.DISTRACTION.get(), 60));
+            final int time = CombatData.getCap(caster).getBarrierCooldown();
+            target.addPotionEffect(new EffectInstance(Effects.SLOWNESS, time * 2));
+            target.addPotionEffect(new EffectInstance(WarEffects.DISTRACTION.get(), time * 2));
         }
     }
 }

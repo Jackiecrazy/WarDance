@@ -68,7 +68,7 @@ import java.util.Optional;
 @Mod.EventBusSubscriber(value = Dist.CLIENT, modid = WarDance.MODID)
 public class ClientEvents {
     private static final int ALLOWANCE = 7;
-    private static final ResourceLocation posture = new ResourceLocation(WarDance.MODID, "textures/hud/bars.png");
+    private static final ResourceLocation posture = new ResourceLocation(WarDance.MODID, "textures/hud/amo.png");
     private static final ResourceLocation darkmega = new ResourceLocation(WarDance.MODID, "textures/hud/dark.png");
     private static final ResourceLocation goodhud = new ResourceLocation(WarDance.MODID, "textures/hud/thanksrai.png");
     /**
@@ -478,7 +478,7 @@ public class ClientEvents {
                 mc.getTextureManager().bindTexture(posture);
                 //render posture bar if not full, displayed even out of combat mode because it's pretty relevant to not dying
                 if (cap.getPosture() < cap.getMaxPosture() || cap.getStaggerTime() > 0 || cap.getShatterCooldown() < Math.floor(GeneralUtils.getAttributeValueSafe(player, WarAttributes.SHATTER.get())) || cap.getBarrier() < cap.getMaxBarrier())
-                    drawDarkPostureBarAt(true, stack, player, width, height);
+                    drawPostureBarAt(true, stack, player, width, height);
                 Entity look = getEntityLookedAt(player, 32);
                 if (look instanceof LivingEntity) {
                     LivingEntity looked = (LivingEntity) look;
@@ -502,15 +502,33 @@ public class ClientEvents {
                     }
                     RenderSystem.color4f(1, 1, 1, 1);
                     if (ClientConfig.CONFIG.enemyPosture.enabled && (CombatData.getCap((LivingEntity) look).getPosture() < CombatData.getCap((LivingEntity) look).getMaxPosture() || CombatData.getCap((LivingEntity) look).getStaggerTime() > 0 || cap.getShatterCooldown() < GeneralUtils.getAttributeValueSafe(player, WarAttributes.SHATTER.get()) || cap.getBarrier() < cap.getMaxBarrier()))
-                        drawDarkPostureBarAt(false, stack, looked, width, height);//Math.min(HudConfig.client.enemyPosture.x, width - 64), Math.min(HudConfig.client.enemyPosture.y, height - 64));
+                        drawPostureBarAt(false, stack, looked, width, height);//Math.min(HudConfig.client.enemyPosture.x, width - 64), Math.min(HudConfig.client.enemyPosture.y, height - 64));
                 }
             }
+    }
+
+    private static void drawPostureBarAt(boolean you, MatrixStack ms, LivingEntity elb, int width, int height) {
+        ClientConfig.BarType b = ClientConfig.CONFIG.enemyPosture.bar;
+        if (you) {
+            b = ClientConfig.CONFIG.playerPosture.bar;
+        }
+        switch (b) {
+            case AMO:
+                drawAmoPostureBarAt(you, ms, elb, width, height);
+                break;
+            case DARKMEGA:
+                drawDarkPostureBarAt(you, ms, elb, width, height);
+                break;
+            case CLASSIC:
+                drawOldPostureBarAt(you, ms, elb, width, height);
+                break;
+        }
     }
 
     /**
      * Draws it with the coord as its center
      */
-    private static void drawPostureBarAt(boolean you, MatrixStack ms, LivingEntity elb, int width, int height) {
+    private static void drawOldPostureBarAt(boolean you, MatrixStack ms, LivingEntity elb, int width, int height) {
         Pair<Integer, Integer> pair = you ? translateCoords(ClientConfig.CONFIG.playerPosture, width, height) : translateCoords(ClientConfig.CONFIG.enemyPosture, width, height);
         int atX = pair.getFirst();
         int atY = pair.getSecond();
@@ -578,7 +596,7 @@ public class ClientEvents {
     /**
      * Draws it with the coord as its center
      */
-    private static void drawNewPostureBarAt(boolean you, MatrixStack ms, LivingEntity elb, int width, int height) {
+    private static void drawAmoPostureBarAt(boolean you, MatrixStack ms, LivingEntity elb, int width, int height) {
         Pair<Integer, Integer> pair = you ? translateCoords(ClientConfig.CONFIG.playerPosture, width, height) : translateCoords(ClientConfig.CONFIG.enemyPosture, width, height);
         int atX = pair.getFirst();
         int atY = pair.getSecond();
@@ -600,66 +618,36 @@ public class ClientEvents {
             final int shatter = itsc.getShatterCooldown();
             final int mshatter = (int) GeneralUtils.getAttributeValueSafe(elb, WarAttributes.SHATTER.get());
             //take a two-way approach to draw this:
-            //first draw the ending bracket
+            //first draw the cap brackets
             mc.ingameGUI.blit(ms, atX + flexBarWidth, atY - 1, 235, 0, 5, barHeight);
+            mc.ingameGUI.blit(ms, atX - flexBarWidth - 5, atY - 1, 0, 0, 5, barHeight);
             //reduce length by fatigue and draw working bracket
             flexBarWidth -= (itsc.getFatigue() * halfBarWidth / itsc.getTrueMaxPosture());
             mc.ingameGUI.blit(ms, atX + flexBarWidth, atY - 1, 235, 40, 5, barHeight);
+            mc.ingameGUI.blit(ms, atX - flexBarWidth - 5, atY - 1, 0, 40, 5, barHeight);
             //grayscale and change width if staggered
             if (itsc.getStaggerTime() > 0) {
                 flexBarWidth = (int) ((itsc.getMaxStaggerTime() - itsc.getStaggerTime()) * flexBarWidth / (float) itsc.getMaxStaggerTime()) + 3;
                 mc.ingameGUI.blit(ms, atX, atY, 238 - flexBarWidth, 13, flexBarWidth, barHeight - 1);
-            } else {
-                //reduce length by posture percentage
-                flexBarWidth = (int) (itsc.getPosture() * halfBarWidth / itsc.getTrueMaxPosture()) + 4;
-                mc.ingameGUI.blit(ms, atX, atY, 238 - flexBarWidth, 7, flexBarWidth, barHeight - 1);
-                //determine bar color by shatter
-                if (shatter > 0 && shatter != mshatter) {//gold that rapidly fades
-                    RenderSystem.color4f(1, 1, 1, (float) shatter / mshatter);
-                    mc.ingameGUI.blit(ms, atX, atY, 238 - flexBarWidth, 54, flexBarWidth, barHeight - 1);
-                    RenderSystem.color4f(1, 1, 1, 1);
-                }
-                // draw barrier if eligible
-                final float barrier = itsc.getBarrier();
-                flexBarWidth = (int) (barrier * halfBarWidth / itsc.getTrueMaxPosture()) + 5;
-                //barrier active, blue
-                if (itsc.consumeBarrier(0.001f) != 0)
-                    mc.ingameGUI.blit(ms, atX, atY - 1, 239 - flexBarWidth, 19, flexBarWidth + 1, barHeight);
-                    //barrier cooling, gray
-                else
-                    mc.ingameGUI.blit(ms, atX, atY - 1, 239 - flexBarWidth, 26, flexBarWidth + 1, barHeight);
-                //otherwise draw nothing
-            }
-            //flip and do this on the other side, reset flexBarWidth
-            flexBarWidth = halfBarWidth;
-            //first draw the starting bracket
-            mc.ingameGUI.blit(ms, atX - flexBarWidth - 5, atY - 1, 0, 0, 5, barHeight);
-            //reduce length by fatigue and draw working bracket
-            flexBarWidth -= (itsc.getFatigue() * halfBarWidth / itsc.getTrueMaxPosture());
-            mc.ingameGUI.blit(ms, atX - flexBarWidth - 5, atY - 1, 0, 40, 5, barHeight);
-            //grayscale and change width if staggered
-            if (itsc.getStaggerTime() > 0) {
-                flexBarWidth = (int) ((itsc.getMaxStaggerTime() - itsc.getStaggerTime()) * flexBarWidth / (float) itsc.getMaxStaggerTime()) + 5;
                 mc.ingameGUI.blit(ms, atX - flexBarWidth, atY, 0, 13, flexBarWidth, barHeight - 1);
             } else {
                 //reduce length by posture percentage
                 flexBarWidth = (int) (itsc.getPosture() * halfBarWidth / itsc.getTrueMaxPosture()) + 4;
+                mc.ingameGUI.blit(ms, atX, atY, 238 - flexBarWidth, 7, flexBarWidth, barHeight - 1);
                 mc.ingameGUI.blit(ms, atX - flexBarWidth - 1, atY, 0, 7, flexBarWidth + 1, barHeight - 1);
                 //determine bar color by shatter
                 if (shatter > 0 && shatter != mshatter) {//gold that rapidly fades
                     RenderSystem.color4f(1, 1, 1, (float) shatter / mshatter);
+                    mc.ingameGUI.blit(ms, atX, atY, 238 - flexBarWidth, 54, flexBarWidth, barHeight - 1);
                     mc.ingameGUI.blit(ms, atX - flexBarWidth - 1, atY, 0, 54, flexBarWidth + 1, barHeight - 1);
                     RenderSystem.color4f(1, 1, 1, 1);
                 }
                 // draw barrier if eligible
                 final float barrier = itsc.getBarrier();
                 flexBarWidth = (int) (barrier * halfBarWidth / itsc.getTrueMaxPosture()) + 5;
-                //barrier active, blue
-                if (itsc.consumeBarrier(0.001f) != 0)
-                    mc.ingameGUI.blit(ms, atX - flexBarWidth, atY - 1, 0, 19, flexBarWidth + 1, barHeight);
-                    //barrier cooling, gray
-                else
-                    mc.ingameGUI.blit(ms, atX - flexBarWidth, atY - 1, 0, 26, flexBarWidth + 1, barHeight);
+                int vOff = itsc.consumeBarrier(flip ? -.0001f : 0.0001f) == 0 ? 26 : 19;
+                mc.ingameGUI.blit(ms, atX, atY - 1, 239 - flexBarWidth, vOff, flexBarWidth + 1, barHeight);
+                mc.ingameGUI.blit(ms, atX - flexBarWidth, atY - 1, 0, vOff, flexBarWidth + 1, barHeight);
                 //otherwise draw nothing
             }
             //draw the center bar as the last step

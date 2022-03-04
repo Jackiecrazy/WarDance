@@ -15,7 +15,10 @@ public class ArmLock extends ShieldBash{
 
     @Override
     protected void performEffect(LivingEntity caster, LivingEntity target) {
-        CombatData.getCap(target).setHandBind(Hand.MAIN_HAND, 40);
-        CombatData.getCap(target).setHandBind(Hand.OFF_HAND, 40);
+        CombatData.getCap(caster).setBarrier(Float.MAX_VALUE);
+        final int time = CombatData.getCap(caster).getBarrierCooldown()/2;
+        CombatData.getCap(caster).setBarrierCooldown(time);
+        CombatData.getCap(target).setHandBind(Hand.MAIN_HAND, time);
+        CombatData.getCap(target).setHandBind(Hand.OFF_HAND, time);
     }
 }

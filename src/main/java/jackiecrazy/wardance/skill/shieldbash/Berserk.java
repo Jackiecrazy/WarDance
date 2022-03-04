@@ -1,5 +1,6 @@
 package jackiecrazy.wardance.skill.shieldbash;
 
+import jackiecrazy.wardance.capability.resources.CombatData;
 import jackiecrazy.wardance.utils.CombatUtils;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.potion.EffectInstance;
@@ -19,6 +20,6 @@ public class Berserk extends ShieldBash {
         super.performEffect(caster, target);
         CombatUtils.setHandCooldown(caster, Hand.MAIN_HAND, 1, true);
         CombatUtils.setHandCooldown(caster, Hand.OFF_HAND, 1, false);
-        caster.addPotionEffect(new EffectInstance(Effects.HASTE, 50, 2));
+        caster.addPotionEffect(new EffectInstance(Effects.HASTE, CombatData.getCap(caster).getBarrierCooldown(), 2));
     }
 }

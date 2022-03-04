@@ -503,7 +503,7 @@ public class SkillEventHandler {
 
     @SubscribeEvent(priority = EventPriority.HIGHEST)
     public static void drops(LivingDropsEvent e) {
-        if (!e.getEntityLiving().isServerWorld()) return;
+        if (e.getEntityLiving()!=null&&!e.getEntityLiving().isServerWorld()) return;
         if (e.getSource().getTrueSource() instanceof LivingEntity) {
             LivingEntity attacker = (LivingEntity) e.getSource().getTrueSource();
             ISkillCapability isc = CasterData.getCap(attacker);
@@ -517,9 +517,9 @@ public class SkillEventHandler {
         }
     }
 
-    @SubscribeEvent(priority = EventPriority.HIGHEST)
+    @SubscribeEvent(priority = EventPriority.LOWEST)
     public static void dropse(LivingDropsEvent e) {
-        if (!e.getEntityLiving().isServerWorld()) return;
+        if (e.getEntityLiving()!=null&&!e.getEntityLiving().isServerWorld()) return;
         if (e.getSource().getTrueSource() instanceof LivingEntity) {
             LivingEntity attacker = (LivingEntity) e.getSource().getTrueSource();
             ISkillCapability isc = CasterData.getCap(attacker);
@@ -535,7 +535,7 @@ public class SkillEventHandler {
 
     @SubscribeEvent(priority = EventPriority.HIGHEST)
     public static void drops(LootingLevelEvent e) {
-        if (!e.getEntityLiving().isServerWorld()) return;
+        if (e.getEntityLiving()!=null&&!e.getEntityLiving().isServerWorld()) return;
         if (e.getDamageSource().getTrueSource() instanceof LivingEntity) {
             LivingEntity attacker = (LivingEntity) e.getDamageSource().getTrueSource();
             ISkillCapability isc = CasterData.getCap(attacker);
@@ -549,9 +549,9 @@ public class SkillEventHandler {
         }
     }
 
-    @SubscribeEvent(priority = EventPriority.HIGHEST)
+    @SubscribeEvent(priority = EventPriority.LOWEST)
     public static void dropse(LootingLevelEvent e) {
-        if (!e.getEntityLiving().isServerWorld()) return;
+        if (e.getEntityLiving()!=null&&!e.getEntityLiving().isServerWorld()) return;
         if (e.getDamageSource().getTrueSource() instanceof LivingEntity) {
             LivingEntity attacker = (LivingEntity) e.getDamageSource().getTrueSource();
             ISkillCapability isc = CasterData.getCap(attacker);
