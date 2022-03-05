@@ -32,7 +32,7 @@ public class FrostFang extends WarCry {
 
     @Override
     protected int getDuration(float might) {
-        return (int) (might * 40);
+        return (int) (might * 20);
     }
 
     @Override
@@ -63,5 +63,13 @@ public class FrostFang extends WarCry {
             }
         }
         super.onProc(caster, procPoint, state, stats, target);
+    }
+
+    @Override
+    public boolean equippedTick(LivingEntity caster, SkillData stats) {
+        if (stats.getState() == STATE.ACTIVE) {
+            return activeTick(stats);
+        }
+        return super.equippedTick(caster, stats);
     }
 }
