@@ -30,6 +30,7 @@ public class Brutalize extends Judgment {
     protected void performEffect(LivingEntity caster, LivingEntity target, int stack, SkillData sd) {
         super.performEffect(caster, target, stack, sd);
         if (stack == 3) {
+            CombatData.getCap(target).setStaggerTime(0);
             CombatData.getCap(target).consumePosture(caster, Float.MAX_VALUE, 0, true);
         }
         final List<LivingEntity> list = caster.world.getLoadedEntitiesWithinAABB(LivingEntity.class, caster.getBoundingBox().grow(10), (a) -> TargetingUtils.isHostile(a, caster));

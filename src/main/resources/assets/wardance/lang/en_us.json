@@ -228,7 +228,7 @@
   "wardance:fever_dream.desc": " Upon successfully judging a target, compel entities in a 7 block radius to attack each other randomly. If this affects another §lmarked§r entity, they will repeat this effect. The effect can be chained up to 3 times.",
   "wardance:fever_dream.requirement": "must reach S rank first",
   "wardance:lichtenberg_scar.name": "Lichtenberg Scar",
-  "wardance:lichtenberg_scar.desc": " Each cast deals no extra damage but only costs 1 might. Successfully judging a target deals 20% current health electric damage and summons lightning above all other §lmarked§r targets in a 30 block radius, dealing 10% current health as electric damage.",
+  "wardance:lichtenberg_scar.desc": " Each cast deals no extra damage but only costs 1 might and 1 second of cooldown. Successfully judging a target deals 20% current health electric damage and summons lightning above all other §lmarked§r targets in a 30 block radius, dealing 10% current health as electric damage.",
   "wardance:lichtenberg_scar.requirement": "must reach S rank first",
   "wardance:crowd_pleaser.name": "Crowd Pleaser",
   "wardance:crowd_pleaser.desc": " Successful casts grant 3 second buffs to allies within 10 blocks. For every skill cast between two casts of judgment, each buff is extended by 2 seconds. The first §lmark§r grants speed and luck, the second strength and haste, and the third resistance and regeneration.",

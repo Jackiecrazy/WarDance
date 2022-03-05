@@ -914,6 +914,7 @@ public class CombatCapability implements ICombatCapability {
         setBarrier(c.getFloat("barrier"));
         mstaggerc=c.getInt("mstaggerc");
         mstaggert=c.getInt("mstaggert");
+        setStaggerCount(c.getInt("staggerc"));
         if (!c.contains("qi")) return;
         setMight(c.getFloat("qi"));
         setResolve(c.getFloat("resolve"));
@@ -923,7 +924,6 @@ public class CombatCapability implements ICombatCapability {
         setPostureGrace(c.getInt("posturecd"));
         setSpiritGrace(c.getInt("spiritcd"));
         setBarrierCooldown(c.getInt("shield"));
-        setStaggerCount(c.getInt("staggerc"));
         setOffhandCooldown(c.getInt("offhandcd"));
         setRollTime(c.getInt("roll"));
         setHandBind(Hand.MAIN_HAND, c.getInt("mainBind"));

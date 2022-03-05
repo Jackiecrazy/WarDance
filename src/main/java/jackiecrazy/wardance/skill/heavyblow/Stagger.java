@@ -25,7 +25,7 @@ public class Stagger extends HeavyBlow {
             ((ParryEvent) procPoint).setPostureConsumption(((ParryEvent) procPoint).getPostureConsumption() * stats.getArbitraryFloat());
             markUsed(caster);
         } else if (procPoint instanceof CriticalHitEvent) {
-            if (((CriticalHitEvent) procPoint).isVanillaCritical() && state != STATE.COOLING && procPoint.getPhase() == EventPriority.LOWEST) {
+            if (isCrit((CriticalHitEvent) procPoint) && state != STATE.COOLING && procPoint.getPhase() == EventPriority.LOWEST) {
                 onCrit((CriticalHitEvent) procPoint, stats, caster, target);
             } else if (state == STATE.COOLING && procPoint.getPhase() == EventPriority.HIGHEST) {
                 stats.decrementDuration();

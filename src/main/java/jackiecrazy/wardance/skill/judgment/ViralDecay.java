@@ -49,7 +49,7 @@ public class ViralDecay extends Judgment {
     @Override
     protected void performEffect(LivingEntity caster, LivingEntity target, int stack, SkillData sd) {
         super.performEffect(caster, target, stack, sd);
-        if(stack==3)
+        if(stack>=3)
             detonate(target, caster);
     }
 

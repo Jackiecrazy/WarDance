@@ -477,7 +477,7 @@ public class ClientEvents {
                 }
                 mc.getTextureManager().bindTexture(posture);
                 //render posture bar if not full, displayed even out of combat mode because it's pretty relevant to not dying
-                if (cap.getPosture() < cap.getMaxPosture() || cap.getStaggerTime() > 0 || cap.getShatterCooldown() < Math.floor(GeneralUtils.getAttributeValueSafe(player, WarAttributes.SHATTER.get())) || cap.getBarrier() < cap.getMaxBarrier())
+                if (cap.isCombatMode() || cap.getPosture() < cap.getMaxPosture() || cap.getStaggerTime() > 0 || cap.getShatterCooldown() < Math.floor(GeneralUtils.getAttributeValueSafe(player, WarAttributes.SHATTER.get())) || cap.getBarrier() < cap.getMaxBarrier())
                     drawPostureBarAt(true, stack, player, width, height);
                 Entity look = getEntityLookedAt(player, 32);
                 if (look instanceof LivingEntity) {
@@ -501,7 +501,7 @@ public class ClientEvents {
                         mc.ingameGUI.blit(stack, pair.getFirst() - (afflict.size() - 1 - index) * 16 + (afflict.size() - 1) * 8 - 8, pair.getSecond(), 0, 0, 16, 16, 16, 16);
                     }
                     RenderSystem.color4f(1, 1, 1, 1);
-                    if (ClientConfig.CONFIG.enemyPosture.enabled && (CombatData.getCap((LivingEntity) look).getPosture() < CombatData.getCap((LivingEntity) look).getMaxPosture() || CombatData.getCap((LivingEntity) look).getStaggerTime() > 0 || cap.getShatterCooldown() < GeneralUtils.getAttributeValueSafe(player, WarAttributes.SHATTER.get()) || cap.getBarrier() < cap.getMaxBarrier()))
+                    if (ClientConfig.CONFIG.enemyPosture.enabled && (cap.isCombatMode() || CombatData.getCap((LivingEntity) look).getPosture() < CombatData.getCap((LivingEntity) look).getMaxPosture() || CombatData.getCap((LivingEntity) look).getStaggerTime() > 0 || cap.getShatterCooldown() < GeneralUtils.getAttributeValueSafe(player, WarAttributes.SHATTER.get()) || cap.getBarrier() < cap.getMaxBarrier()))
                         drawPostureBarAt(false, stack, looked, width, height);//Math.min(HudConfig.client.enemyPosture.x, width - 64), Math.min(HudConfig.client.enemyPosture.y, height - 64));
                 }
             }
@@ -627,7 +627,9 @@ public class ClientEvents {
             mc.ingameGUI.blit(ms, atX - flexBarWidth - 5, atY - 1, 0, 40, 5, barHeight);
             //grayscale and change width if staggered
             if (itsc.getStaggerTime() > 0) {
-                flexBarWidth = (int) ((itsc.getMaxStaggerTime() - itsc.getStaggerTime()) * flexBarWidth / (float) itsc.getMaxStaggerTime()) + 3;
+                int count = (int) ((itsc.getMaxStaggerCount() - itsc.getStaggerCount()) * flexBarWidth / (float) itsc.getMaxStaggerCount()) + 3;
+                int time = (int) ((itsc.getMaxStaggerTime() - itsc.getStaggerTime()) * flexBarWidth / (float) itsc.getMaxStaggerTime()) + 3;
+                flexBarWidth = Math.max(count, time);
                 mc.ingameGUI.blit(ms, atX, atY, 238 - flexBarWidth, 13, flexBarWidth, barHeight - 1);
                 mc.ingameGUI.blit(ms, atX - flexBarWidth, atY, 0, 13, flexBarWidth, barHeight - 1);
             } else {
@@ -694,7 +696,9 @@ public class ClientEvents {
             mc.ingameGUI.blit(ms, atX - flexBarWidth - 9, atY - 2, 0, 50, 12, barHeight);
             //grayscale and change width if staggered
             if (itsc.getStaggerTime() > 0) {
-                flexBarWidth = (int) ((itsc.getMaxStaggerTime() - itsc.getStaggerTime()) * flexBarWidth / (float) itsc.getMaxStaggerTime()) + 3;
+                int count = (int) ((itsc.getMaxStaggerCount() - itsc.getStaggerCount()) * flexBarWidth / (float) itsc.getMaxStaggerCount()) + 3;
+                int time = (int) ((itsc.getMaxStaggerTime() - itsc.getStaggerTime()) * flexBarWidth / (float) itsc.getMaxStaggerTime()) + 3;
+                flexBarWidth = Math.max(count, time);
                 mc.ingameGUI.blit(ms, atX, atY - 2, 238 - flexBarWidth, 20, flexBarWidth, barHeight);
                 mc.ingameGUI.blit(ms, atX - flexBarWidth, atY - 2, 0, 20, flexBarWidth, barHeight);
             } else {

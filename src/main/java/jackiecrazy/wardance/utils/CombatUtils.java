@@ -16,7 +16,6 @@ import jackiecrazy.wardance.networking.CombatChannel;
 import jackiecrazy.wardance.networking.UpdateAttackPacket;
 import jackiecrazy.wardance.skill.Skill;
 import jackiecrazy.wardance.skill.SkillCategories;
-import jackiecrazy.wardance.skill.WarSkills;
 import net.minecraft.enchantment.EnchantmentHelper;
 import net.minecraft.enchantment.Enchantments;
 import net.minecraft.entity.Entity;
@@ -248,7 +247,7 @@ public class CombatUtils {
 
     public static boolean isShield(LivingEntity e, ItemStack stack) {
         if (stack == null) return false;
-        return combatList.containsKey(stack.getItem()) && (combatList.getOrDefault(stack.getItem(), DEFAULTMELEE).isShield || CasterData.getCap(e).getSkillData(WarSkills.RETURN_TO_SENDER.get()).isPresent());//stack.isShield(e);
+        return combatList.containsKey(stack.getItem()) && (combatList.getOrDefault(stack.getItem(), DEFAULTMELEE).isShield);//stack.isShield(e);
     }
 
     public static boolean isWeapon(@Nullable LivingEntity e, ItemStack stack) {

@@ -23,10 +23,10 @@ public class Momentum extends HeavyBlow {
 
     @Override
     public void onProc(LivingEntity caster, Event procPoint, STATE state, SkillData stats, LivingEntity target) {
-        if (procPoint instanceof ParryEvent && ((ParryEvent) procPoint).getDefendingHand() != null &&procPoint.getPhase()== EventPriority.HIGHEST && ((ParryEvent) procPoint).getAttacker() == caster) {
+        if (procPoint instanceof ParryEvent && ((ParryEvent) procPoint).getDefendingHand() != null && procPoint.getPhase() == EventPriority.HIGHEST && ((ParryEvent) procPoint).getAttacker() == caster) {
             if (CasterData.getCap(target).getCategoryState(SkillCategories.iron_guard) == STATE.ACTIVE) return;
             ((ParryEvent) procPoint).setPostureConsumption(((ParryEvent) procPoint).getPostureConsumption() + power(0.01f, CombatData.getCap(caster).getComboRank()));
-        } else if (procPoint instanceof CriticalHitEvent&&procPoint.getPhase()==EventPriority.HIGHEST) {
+        } else if (procPoint instanceof CriticalHitEvent && procPoint.getPhase() == EventPriority.HIGHEST) {
             float combo = stats.getArbitraryFloat() + 1;
             combo %= 8 - CombatData.getCap(caster).getComboRank();
             if (combo == 0) {
