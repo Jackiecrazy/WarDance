@@ -7,7 +7,9 @@ import jackiecrazy.wardance.skill.SkillData;
 import jackiecrazy.wardance.utils.EffectUtils;
 import jackiecrazy.wardance.utils.TargetingUtils;
 import net.minecraft.entity.LivingEntity;
+import net.minecraft.particles.ParticleTypes;
 import net.minecraft.potion.EffectInstance;
+import net.minecraft.world.server.ServerWorld;
 import net.minecraftforge.eventbus.api.Event;
 import net.minecraftforge.eventbus.api.EventPriority;
 
@@ -30,6 +32,8 @@ public class Brutalize extends Judgment {
     protected void performEffect(LivingEntity caster, LivingEntity target, int stack, SkillData sd) {
         super.performEffect(caster, target, stack, sd);
         if (stack == 3) {
+            if(target.world instanceof ServerWorld)
+            ((ServerWorld) target.world).spawnParticle(ParticleTypes.SOUL_FIRE_FLAME, target.getPosX(), target.getPosY() + target.getHeight() / 2, target.getPosZ(), 20, target.getWidth() / 4, target.getHeight() / 4, target.getWidth() / 4, 0.5f);
             CombatData.getCap(target).setStaggerTime(0);
             CombatData.getCap(target).consumePosture(caster, Float.MAX_VALUE, 0, true);
         }

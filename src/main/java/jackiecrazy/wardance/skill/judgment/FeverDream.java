@@ -1,5 +1,6 @@
 package jackiecrazy.wardance.skill.judgment;
 
+import jackiecrazy.wardance.WarDance;
 import jackiecrazy.wardance.capability.status.Marks;
 import jackiecrazy.wardance.skill.SkillData;
 import jackiecrazy.wardance.utils.GeneralUtils;
@@ -37,7 +38,7 @@ public class FeverDream extends Judgment {
             if (GeneralUtils.getDistSqCompensated(target, enemy) < 49)
                 enemy.addPotionEffect(new EffectInstance(Effects.BLINDNESS, 140));
             if (list.size() <= 1) return;
-            int shift = (i * (list.size() - 1) + 1) % list.size();
+            int shift = WarDance.rand.nextInt(list.size());
             enemy.setRevengeTarget(list.get(shift));
             if (enemy instanceof MobEntity)
                 ((MobEntity) enemy).setAttackTarget(list.get(shift));

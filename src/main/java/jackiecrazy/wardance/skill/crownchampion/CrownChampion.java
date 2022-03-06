@@ -57,11 +57,12 @@ elemental might: +1 burn/snowball/poison/drown damage to targets you have attack
                     Marks.getCap((LivingEntity) seme).mark(apply);
                 }
             if (Marks.getCap(uke).isMarked(venge) && CasterData.getCap((LivingEntity) seme).getEquippedSkills().contains(venge)) {
-                Marks.getCap(uke).getActiveMark( venge).ifPresent(a -> {
+                Marks.getCap(uke).getActiveMark(venge).ifPresent(a -> {
                     final float amnt = Math.min(e.getAmount(), a.getArbitraryFloat());
                     CombatData.getCap((LivingEntity) seme).addMight(amnt);
                     e.setAmount(e.getAmount() + amnt);
                     a.setArbitraryFloat(a.getArbitraryFloat() - e.getAmount());
+                    if (a.getArbitraryFloat() < 0) a.setDuration(-10);
                 });
             }
         }
@@ -116,7 +117,7 @@ elemental might: +1 burn/snowball/poison/drown damage to targets you have attack
     @Override
     public void onUnequip(LivingEntity caster, SkillData stats) {
         caster.getAttribute(Attributes.ATTACK_DAMAGE).removeModifier(MULT);
-            caster.getAttribute(Attributes.MOVEMENT_SPEED).removeModifier(MULT);
+        caster.getAttribute(Attributes.MOVEMENT_SPEED).removeModifier(MULT);
     }
 
     @Override

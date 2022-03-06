@@ -90,14 +90,14 @@ public class CoupDeGrace extends Skill {
         } else if (procPoint instanceof SkillCastEvent && procPoint.getPhase() == EventPriority.HIGHEST && state == STATE.COOLING) {
             stats.decrementDuration();
         }
-        if (state == STATE.ACTIVE && this == WarSkills.DECAPITATE.get() && procPoint.getPhase() == EventPriority.LOWEST) {
-            if (procPoint instanceof LivingDropsEvent && ((LivingDropsEvent) procPoint).getEntityLiving() == target && ((LivingDropsEvent) procPoint).isRecentlyHit()) {
+        if (state == STATE.ACTIVE && stats.getDuration() < 0 && this == WarSkills.DECAPITATE.get() && procPoint.getPhase() == EventPriority.LOWEST) {
+            if (procPoint instanceof LivingDropsEvent && ((LivingDropsEvent) procPoint).getEntityLiving() == target) {
                 ItemStack drop = GeneralUtils.dropSkull(target);
+                if (drop == null) return;
                 for (ItemEntity i : ((LivingDropsEvent) procPoint).getDrops()) {
-                    if (i.getItem().getItem() == drop.getItem() && (!(target instanceof PlayerEntity) || i.getItem().getTag().getString("SkullOwner").equalsIgnoreCase(drop.getTag().getString("SkullOwner"))))
+                    if (i.getItem().getItem() == drop.getItem() && (!(target instanceof PlayerEntity) || i.getItem().getOrCreateTag().getString("SkullOwner").equalsIgnoreCase(drop.getTag().getString("SkullOwner"))))
                         return;
                 }
-                if (drop == null) return;
                 ItemEntity forceSkull = new ItemEntity(target.world, target.getPosX(), target.getPosY(), target.getPosZ(), drop);
                 forceSkull.setDefaultPickupDelay();
                 ((LivingDropsEvent) procPoint).getDrops().add(forceSkull);

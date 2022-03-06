@@ -22,7 +22,7 @@ public class SubtleBonusHandler {
     @SubscribeEvent
     public static void thief(LootingLevelEvent e) {
         if (e.getDamageSource().getTrueSource() instanceof LivingEntity)
-            e.setLootingLevel(e.getLootingLevel() + Math.max(0, (CombatData.getCap((LivingEntity) e.getDamageSource().getTrueSource()).getComboRank() - 3) / (CombatData.getCap((LivingEntity) e.getDamageSource().getTrueSource()).halvedAdrenaline()?4:2)));
+            e.setLootingLevel(e.getLootingLevel() + Math.max(0, (CombatData.getCap((LivingEntity) e.getDamageSource().getTrueSource()).getComboRank() - 3) / (CombatData.getCap((LivingEntity) e.getDamageSource().getTrueSource()).halvedAdrenaline()?2:1)));
     }
 
     @SubscribeEvent

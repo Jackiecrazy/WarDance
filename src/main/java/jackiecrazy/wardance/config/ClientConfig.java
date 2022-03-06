@@ -36,12 +36,12 @@ public class ClientConfig {
         b.pop();
         b.push("might");
         might = new DisplayData(b, "might", AnchorPoint.BOTTOMLEFT, 64, -16);
-        mightNumber = new DisplayData(b, "might number", AnchorPoint.BOTTOMLEFT, 64, -16);
+        mightNumber = new DisplayData(b, "might number", AnchorPoint.BOTTOMLEFT, 64, -38);
         _mightColor = b.translation("wardance.config.mightC").comment("might color in hexadecimal").define("might color", "ccac00");
         b.pop();
         b.push("spirit");
         spirit = new DisplayData(b, "spirit", AnchorPoint.BOTTOMRIGHT, -64, -16);
-        spiritNumber = new DisplayData(b, "spirit number", AnchorPoint.BOTTOMRIGHT, -64, -16);
+        spiritNumber = new DisplayData(b, "spirit number", AnchorPoint.BOTTOMRIGHT, -64, -38);
         _spiritColor = b.translation("wardance.config.spiritC").comment("spirit color in hexadecimal").define("spirit color", "00e3e3");
         b.pop();
         b.push("combo");

@@ -48,23 +48,14 @@ public class ShieldBash extends Skill {
 
     @Override
     public float spiritConsumption(LivingEntity caster) {
-        return isPassive(caster) ? 0 : 2;
+        return 2;
     }
 
-    @Override
-    public boolean isPassive(LivingEntity caster) {
-        return this == WarSkills.PUMMEL.get();
-    }
 
     protected void performEffect(LivingEntity caster, LivingEntity target) {
         final ICombatCapability cap = CombatData.getCap(caster);
-        if (isPassive(caster)) {
-            if (CombatUtils.isShield(caster, caster.getHeldItemOffhand()))
-                SkillUtils.auxAttack(caster, target, new CombatDamageSource("player", caster).setProcNormalEffects(false).setProcAttackEffects(true).setProcSkillEffects(true).setAttackingHand(Hand.OFF_HAND).setDamageTyping(CombatDamageSource.TYPE.PHYSICAL).setDamageDealer(caster.getHeldItemOffhand()), 0, cap.getBarrier());
-        } else {
-            SkillUtils.auxAttack(caster, target, new CombatDamageSource("player", caster).setProcNormalEffects(false).setProcAttackEffects(true).setProcSkillEffects(true).setAttackingHand(Hand.OFF_HAND).setDamageTyping(CombatDamageSource.TYPE.PHYSICAL).setDamageDealer(caster.getHeldItemMainhand()), 0, cap.consumeBarrier(cap.getBarrier()));
+        SkillUtils.auxAttack(caster, target, new CombatDamageSource("player", caster).setProcNormalEffects(false).setProcAttackEffects(true).setProcSkillEffects(true).setAttackingHand(Hand.OFF_HAND).setDamageTyping(CombatDamageSource.TYPE.PHYSICAL).setDamageDealer(caster.getHeldItemMainhand()), 0, cap.consumeBarrier(cap.getBarrier()));
             cap.setBarrierCooldown(cap.getBarrierCooldown() / 2);
-        }
     }
 
     @Override
@@ -85,7 +76,6 @@ public class ShieldBash extends Skill {
 
     @Override
     public boolean equippedTick(LivingEntity caster, SkillData stats) {
-        if (isPassive(caster)) return cooldownTick(stats);
         return super.equippedTick(caster, stats);
     }
 
