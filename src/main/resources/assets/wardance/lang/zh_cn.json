@@ -228,7 +228,7 @@
   "wardance:fever_dream.desc": " 「审判」成功后令7方块内所有敌人随机对其他敌人发起攻击，若影响到其他拥有§l标记§r的目标，重复该效果。最多可以触发三层连锁反应。",
   "wardance:fever_dream.requirement": "需要S级评分",
   "wardance:lichtenberg_scar.name": "天雷",
-  "wardance:lichtenberg_scar.desc": " 每次施放只需要1威但不造成伤害。「审判」成功后在30方块内拥有§l标记§r的目标上召唤闪电。闪电对主目标造成当前生命20%的伤害，对其他目标造成当前生命10%的伤害。",
+  "wardance:lichtenberg_scar.desc": " 每次施放只需要1威和1秒冷却但不造成伤害。「审判」成功后在30方块内拥有§l标记§r的目标上召唤闪电。闪电对主目标造成当前生命20%的伤害，对其他目标造成当前生命10%的伤害。",
   "wardance:lichtenberg_scar.requirement": "需要S级评分",
   "wardance:crowd_pleaser.name": "喝彩",
   "wardance:crowd_pleaser.desc": " 每次施放为10方块内的友方单位添加3秒增益效果，两次施放期间使用的每一个技能使该增益时间增加2秒。第一次§l标记§r赋予速度和幸运、第二次赋予力量和攻速加成、第三次赋予再生和抗性。",

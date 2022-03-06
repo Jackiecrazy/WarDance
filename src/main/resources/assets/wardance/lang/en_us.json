@@ -116,7 +116,7 @@
   "category.coup_de_grace.name": "Coup de Grace",
   "category.coup_de_grace.desc": "When toggled, an attack on a staggered target will deal 20% of their lost health (including wounding) as true damage. If the target would die from a successful coup de grace, it is marked with an icon (unlike other skills, this is not a real §lmark§r), and all damage dealt to it is converted to equivalent posture damage. Cast when active to end this skill. Recharge after 3 skill casts, costs 3 might.",
   "wardance:decapitate.name": "Decapitate",
-  "wardance:decapitate.desc": " This kill is guaranteed to drop a head, or have its fortune level increased by 3 if the target lacks a harvestable head.",
+  "wardance:decapitate.desc": " This kill is guaranteed to drop a head, or have its looting level increased by 3 if the target lacks a harvestable head.",
   "wardance:rupture.name":"Rupture",
   "wardance:rupture.desc": " Drain half of the target's spirit to create a large explosion. The size of the explosion increases with the target's max posture, and its damage increases with the target's spirit.\n[stats]\nExplosion radius: sqrt(max posture)\nExplosion damage: (spirit before drain) *2",
   "wardance:reinvigorate.name": "Reinvigorate",

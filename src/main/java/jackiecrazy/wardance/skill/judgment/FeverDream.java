@@ -40,8 +40,9 @@ public class FeverDream extends Judgment {
             if (list.size() <= 1) return;
             int shift = WarDance.rand.nextInt(list.size());
             enemy.setRevengeTarget(list.get(shift));
-            if (enemy instanceof MobEntity)
+            if (enemy instanceof MobEntity) {
                 ((MobEntity) enemy).setAttackTarget(list.get(shift));
+            }
             if (Marks.getCap(enemy).isMarked(this)) {
                 hallucinate(caster, enemy, iterate - 1);
                 removeMark(enemy);

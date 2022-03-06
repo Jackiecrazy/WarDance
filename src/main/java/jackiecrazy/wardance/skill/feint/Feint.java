@@ -46,9 +46,9 @@ public class Feint extends Skill {
         if (seme instanceof LivingEntity) {
             final LivingEntity caster = (LivingEntity) seme;
             final ISkillCapability cap = CasterData.getCap(caster);
-            final Skill venge = cap.getEquippedVariation(SkillCategories.feint);
-            if (venge != null && Marks.getCap(uke).isMarked(SkillCategories.feint)) {
-                Marks.getCap(uke).getActiveMark(venge).ifPresent(a -> a.setArbitraryFloat(a.getArbitraryFloat() - 1));
+            final Skill feint = cap.getEquippedVariation(SkillCategories.feint);
+            if (feint != null && Marks.getCap(uke).isMarked(SkillCategories.feint)) {
+                Marks.getCap(uke).getActiveMark(feint).ifPresent(a -> a.setArbitraryFloat(a.getArbitraryFloat() - 1));
                 if (cap.getEquippedSkills().contains(WarSkills.CAPRICIOUS_STRIKE.get()))
                     for (Skill s : cap.getEquippedSkills())
                         if (s != null && s.getTags(caster).contains(SkillTags.physical) && cap.getSkillState(s) == STATE.COOLING)

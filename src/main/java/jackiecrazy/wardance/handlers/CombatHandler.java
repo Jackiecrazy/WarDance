@@ -383,11 +383,13 @@ public class CombatHandler {
                             CombatUtils.setHandCooldown(seme, attackingHand, 0, true);
                         } else CombatUtils.setHandCooldown(seme, attackingHand, (float) (1 - kb), true);
                         //sword on sword is 1.4, sword on shield is 1.12
-                        ItemStack finalDefend = defend;
-                        defend.getCapability(CombatManipulator.CAP).ifPresent((i) -> i.onParry(seme, uke, finalDefend, e.getAmount()));
-                        Hand other = uke.getHeldItemMainhand() == defend ? Hand.OFF_HAND : Hand.MAIN_HAND;
-                        ItemStack finalDefend1 = uke.getHeldItem(other);
-                        defend.getCapability(CombatManipulator.CAP).ifPresent((i) -> i.onOtherHandParry(seme, uke, finalDefend1, e.getAmount()));
+                        if(defend!=null) {
+                            ItemStack finalDefend = defend;
+                            defend.getCapability(CombatManipulator.CAP).ifPresent((i) -> i.onParry(seme, uke, finalDefend, e.getAmount()));
+                            Hand other = uke.getHeldItemMainhand() == defend ? Hand.OFF_HAND : Hand.MAIN_HAND;
+                            ItemStack finalDefend1 = uke.getHeldItem(other);
+                            finalDefend1.getCapability(CombatManipulator.CAP).ifPresent((i) -> i.onOtherHandParry(seme, uke, finalDefend1, e.getAmount()));
+                        }
                     }
                 }
                 if (!(seme instanceof PlayerEntity)) {

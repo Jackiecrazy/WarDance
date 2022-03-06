@@ -28,7 +28,7 @@ public class DeathDenial extends MementoMori {
     @Override
     public void onProc(LivingEntity caster, Event procPoint, STATE state, SkillData stats, LivingEntity target) {
         super.onProc(caster, procPoint, state, stats, target);
-        if (procPoint instanceof LivingDamageEvent && (((LivingDamageEvent) procPoint).getAmount() > target.getHealth() || stats.isCondition())) {
+        if (procPoint instanceof LivingDamageEvent && ((LivingDamageEvent) procPoint).getEntityLiving() == caster && (((LivingDamageEvent) procPoint).getAmount() > caster.getHealth() || stats.isCondition())) {
             if (!stats.isCondition())
                 caster.world.playSound(null, caster.getPosX(), caster.getPosY(), caster.getPosZ(), SoundEvents.BLOCK_BELL_USE, SoundCategory.PLAYERS, 0.25f + WarDance.rand.nextFloat() * 0.5f, 0.5f + WarDance.rand.nextFloat() * 0.5f);
             onStateChange(caster, stats, stats.getState(), STATE.ACTIVE);
