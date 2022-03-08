@@ -1,6 +1,8 @@
 package jackiecrazy.wardance.client;
 
 import com.elenai.elenaidodge2.event.ClientTickEventListener;
+import com.google.common.cache.Cache;
+import com.google.common.cache.CacheBuilder;
 import com.mojang.blaze3d.matrix.MatrixStack;
 import com.mojang.blaze3d.platform.GlStateManager;
 import com.mojang.blaze3d.systems.RenderSystem;
@@ -36,6 +38,7 @@ import net.minecraft.client.settings.PointOfView;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.Pose;
+import net.minecraft.entity.ai.attributes.Attributes;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.projectile.ProjectileHelper;
 import net.minecraft.item.ItemStack;
@@ -64,13 +67,16 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Optional;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.TimeUnit;
 
 @Mod.EventBusSubscriber(value = Dist.CLIENT, modid = WarDance.MODID)
 public class ClientEvents {
+    private static final Cache<LivingEntity, Double> cache = CacheBuilder.newBuilder().weakKeys().expireAfterWrite(1, TimeUnit.SECONDS).build();
     private static final int ALLOWANCE = 7;
-    private static final ResourceLocation posture = new ResourceLocation(WarDance.MODID, "textures/hud/amo.png");
+    private static final ResourceLocation amo = new ResourceLocation(WarDance.MODID, "textures/hud/amo.png");
     private static final ResourceLocation darkmega = new ResourceLocation(WarDance.MODID, "textures/hud/dark.png");
-    private static final ResourceLocation goodhud = new ResourceLocation(WarDance.MODID, "textures/hud/thanksrai.png");
+    private static final ResourceLocation raihud = new ResourceLocation(WarDance.MODID, "textures/hud/thanksrai.png");
     /**
      * left, back, right
      */
@@ -331,7 +337,7 @@ public class ClientEvents {
                 ICombatCapability cap = CombatData.getCap(player);
                 int width = sr.getGuiScaledWidth();
                 int height = sr.getGuiScaledHeight();
-                mc.getTextureManager().bind(goodhud);
+                mc.getTextureManager().bind(raihud);
                 currentSpiritLevel = updateValue(currentSpiritLevel, cap.getSpirit());
                 currentMightLevel = updateValue(currentMightLevel, cap.getMight());
                 ClientEvents.currentComboLevel = cap.getRank() > currentComboLevel ? updateValue(currentComboLevel, cap.getRank()) : cap.getRank();
@@ -431,7 +437,7 @@ public class ClientEvents {
                     RenderSystem.enableBlend();
                     stack.pushPose();
                     if (ClientConfig.CONFIG.combo.enabled) {
-                        mc.getTextureManager().bind(goodhud);
+                        mc.getTextureManager().bind(raihud);
                         int combowidth = 32;
                         float workingCombo = currentComboLevel;
                         int comboU = (int) (MathHelper.clamp(Math.floor(workingCombo), 0, 4)) * 32;
@@ -475,7 +481,7 @@ public class ClientEvents {
                     //String combo = formatter.format(1 + Math.floor(currentComboLevel) / 10) + "X";
                     //mc.fontRenderer.drawString(event.getMatrixStack(), combo, width - 28 + ClientConfig.comboX, Math.min(height / 2 - barHeight / 2 + ClientConfig.comboY, height - barHeight) + 60, 0);
                 }
-                mc.getTextureManager().bind(posture);
+                mc.getTextureManager().bind(amo);
                 //render posture bar if not full, displayed even out of combat mode because it's pretty relevant to not dying
                 if (cap.isCombatMode() || cap.getPosture() < cap.getMaxPosture() || cap.getStaggerTime() > 0 || cap.getShatterCooldown() < Math.floor(GeneralUtils.getAttributeValueSafe(player, WarAttributes.SHATTER.get())) || cap.getBarrier() < cap.getMaxBarrier())
                     drawPostureBarAt(true, stack, player, width, height);
@@ -484,6 +490,7 @@ public class ClientEvents {
                     LivingEntity looked = (LivingEntity) look;
                     List<Skill> afflict = new ArrayList<>();
                     final ISkillCapability skill = CasterData.getCap(player);
+                    //coup de grace
                     final Skill variant = skill.getEquippedVariation(SkillCategories.coup_de_grace);
                     if (look != player && skill.isSkillUsable(variant)) {
                         CoupDeGrace cdg = (CoupDeGrace) variant;
@@ -491,6 +498,7 @@ public class ClientEvents {
                             afflict.add(cdg);
                         }
                     }
+                    //marks
                     afflict.addAll(Marks.getCap(looked).getActiveMarks().keySet());
                     Pair<Integer, Integer> pair = translateCoords(ClientConfig.CONFIG.enemyAfflict, width, height);
                     for (int index = 0; index < afflict.size(); index++) {
@@ -500,6 +508,12 @@ public class ClientEvents {
                         RenderSystem.color4f(c.getRed() / 255f, c.getGreen() / 255f, c.getBlue() / 255f, 1);
                         mc.gui.blit(stack, pair.getFirst() - (afflict.size() - 1 - index) * 16 + (afflict.size() - 1) * 8 - 8, pair.getSecond(), 0, 0, 16, 16, 16, 16);
                     }
+                    //stealth, TODO this is dumb
+                    final double dist = visibleDistance(looked);
+                    String display = formatter.format(dist);
+                    int color = 58339;
+                    if (looked.distanceToSqr(player) < dist * dist) color = Color.RED.getRGB();
+                    mc.font.drawShadow(event.getMatrixStack(), display, width / 2f - mc.font.width(display) / 2f, height / 2f+4, color);
                     RenderSystem.color4f(1, 1, 1, 1);
                     if (ClientConfig.CONFIG.enemyPosture.enabled && (cap.isCombatMode() || CombatData.getCap((LivingEntity) look).getPosture() < CombatData.getCap((LivingEntity) look).getMaxPosture() || CombatData.getCap((LivingEntity) look).getStaggerTime() > 0 || cap.getShatterCooldown() < GeneralUtils.getAttributeValueSafe(player, WarAttributes.SHATTER.get()) || cap.getBarrier() < cap.getMaxBarrier()))
                         drawPostureBarAt(false, stack, looked, width, height);//Math.min(HudConfig.client.enemyPosture.x, width - 64), Math.min(HudConfig.client.enemyPosture.y, height - 64));
@@ -533,7 +547,7 @@ public class ClientEvents {
         int atX = pair.getFirst();
         int atY = pair.getSecond();
         Minecraft mc = Minecraft.getInstance();
-        mc.getTextureManager().bind(posture);
+        mc.getTextureManager().bind(amo);
         RenderSystem.defaultBlendFunc();
         RenderSystem.enableBlend();
         ICombatCapability itsc = CombatData.getCap(elb);
@@ -601,7 +615,7 @@ public class ClientEvents {
         int atX = pair.getFirst();
         int atY = pair.getSecond();
         Minecraft mc = Minecraft.getInstance();
-        mc.getTextureManager().bind(posture);
+        mc.getTextureManager().bind(amo);
         RenderSystem.defaultBlendFunc();
         RenderSystem.enableBlend();
         ICombatCapability itsc = CombatData.getCap(elb);
@@ -1014,6 +1028,18 @@ public class ClientEvents {
         if (close)
             f = to;
         return f;
+    }
+
+    private static double visibleDistance(LivingEntity at) {
+        try {
+            return cache.get(at, () -> {
+                double mult = Minecraft.getInstance().player.getVisibilityPercent(at);
+                return (mult * at.getAttributeValue(Attributes.FOLLOW_RANGE));
+            });
+        } catch (ExecutionException e) {
+            e.printStackTrace();
+        }
+        return 1;
     }
 
     private static Pair<Integer, Integer> translateCoords(ClientConfig.DisplayData dd, int width, int height) {

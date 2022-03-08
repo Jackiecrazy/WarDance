@@ -9,6 +9,10 @@ import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.MobEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.MathHelper;
+import net.minecraft.world.LightType;
+import net.minecraft.world.World;
 import net.minecraftforge.common.MinecraftForge;
 
 import java.util.HashMap;
@@ -75,6 +79,23 @@ public class StealthUtils {
         return false;
     }
 
+    public static int getActualLightLevel(World world, BlockPos pos) {
+        int i = 0;
+        if (world.dimensionType().hasSkyLight()) {
+            i = world.getBrightness(LightType.SKY, pos) - world.getSkyDarken();
+            float f = world.getSunAngle(1.0F);
+            if (i > 0) {
+                //FIXME this is all manners of wrong
+                float f1 = ((float) Math.PI * 2F);
+                f = f + (f1 - f) * 0.2F;
+                i = Math.round((float) i * MathHelper.cos(f));
+            }
+        }
+
+        i = MathHelper.clamp(Math.max(world.getBrightness(LightType.BLOCK, pos), i), 0, 15);
+        return i;
+    }
+
     public enum Awareness {
         UNAWARE,//cannot be parried, absorbed, shattered, or deflected
         DISTRACTED,//deals extra (posture) damage
@@ -82,13 +103,14 @@ public class StealthUtils {
     }
 
     public static class StealthData {
-        private final boolean deaf, nightvision, allSeeing, perceptive, vigil, olfactory;
+        private final boolean deaf, nightvision, allSeeing, perceptive, vigil, olfactory, silent;
 
         public StealthData(String value) {
             allSeeing = value.contains("a");
             deaf = value.contains("d");
             nightvision = value.contains("n");
-            olfactory = value.contains("o");
+            olfactory = value.contains("w");
+            silent = value.contains("s");
             perceptive = value.contains("p");
             vigil = value.contains("v");
         }
@@ -115,5 +137,8 @@ public class StealthUtils {
 
         public boolean isOlfactory() {return olfactory;}
 
+        public boolean isSilent() {return silent;}
+
     }
+
 }

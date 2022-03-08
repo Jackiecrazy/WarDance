@@ -309,7 +309,14 @@ public class StealthConfig {
         _distract = b.translation("wardance.config.distract").comment("posture and health damage multiplier for distracted stabs").defineInRange("distracted stab multiplier", 1.5, 0, Double.MAX_VALUE);
         _unaware = b.translation("wardance.config.unaware").comment("posture and health damage multiplier for unaware stabs").defineInRange("unaware stab multiplier", 1.5, 0, Double.MAX_VALUE);
         _ignore = b.translation("wardance.config.ignore").comment("whether unaware stabs ignore parry, deflection, shatter, and absorption").define("unaware stab defense ignore", true);
-        _customDetection = b.translation("wardance.config.mobDetection").comment("Define custom detection mechanics for mobs by tagging them as one of the following: \n(a)ll-seeing mobs ignore LoS modifiers. \n(d)eaf mobs ignore sound cues and do not factor in the armor debuff assigned to darkness-induced stealth. \n(n)octurnal mobs ignore light level. \n(w)ary mobs ignore luck. \n(p)erceptive mobs ignore motion multipliers. \n(v)igilant mobs bypass the entire stealth and distraction system.").defineList("mob detection rules", Arrays.asList(SNEAK), String.class::isInstance);
+        _customDetection = b.translation("wardance.config.mobDetection").comment("Define custom detection mechanics for mobs by tagging them as one of the following: " +
+                "\n(a)ll-seeing mobs ignore LoS modifiers. " +
+                "\n(d)eaf mobs ignore sound cues. " +
+                "\n(n)octurnal mobs ignore light level. " +
+                "\n(p)erceptive mobs ignore motion multipliers. " +
+                "\n(s)ilent mobs do not broadcast sound cues, even if they do make sounds. " +
+                "\n(w)ary mobs ignore luck. " +
+                "\n(v)igilant mobs bypass the entire stealth and distraction system.").defineList("mob detection rules", Arrays.asList(SNEAK), String.class::isInstance);
     }
 
     private static void bake() {

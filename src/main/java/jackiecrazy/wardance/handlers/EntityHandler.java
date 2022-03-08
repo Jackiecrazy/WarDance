@@ -182,29 +182,27 @@ Mobs should move into a position that is close to the player, far from allies, a
             if (sd.isVigilant()) return;
             if (watcher.getKillCredit() != sneaker && watcher.getLastHurtByMob() != sneaker && watcher.getLastHurtMob() != sneaker && (!(watcher instanceof MobEntity) || ((MobEntity) watcher).getTarget() != sneaker)) {
                 double stealth = GeneralUtils.getAttributeValueSafe(sneaker, WarAttributes.STEALTH.get());
-                double multiplier = 0.25 * Math.exp(0.07 * stealth);
+                double multiplier = 0.24 * Math.exp(0.07 * stealth);
                 if (watcher.hasEffect(Effects.BLINDNESS))
                     mult *= (1f / (watcher.getEffect(Effects.BLINDNESS).getAmplifier() + 4));
                 if (!sd.isAllSeeing() && !GeneralUtils.isFacingEntity(watcher, sneaker, StealthConfig.baseHorizontalDetection, StealthConfig.baseVerticalDetection))
-                    mult *= 1-(0.7*multiplier);
+                    mult *= 1 - (0.8 * multiplier);
                 if (!sd.isPerceptive()) {
                     final double speedSq = GeneralUtils.getSpeedSq(sneaker);
-                    mult *= (1-(0.5 - MathHelper.sqrt(speedSq) * 2)*multiplier);
+                    mult *= (1 - (0.6 - MathHelper.sqrt(speedSq) * 2) * multiplier);
                 }
-                if (!sd.isNightVision() && !watcher.hasEffect(Effects.NIGHT_VISION) && !sneaker.hasEffect(Effects.GLOWING) && sneaker.getRemainingFireTicks() == 0) {
+                if (!sd.isNightVision() && !watcher.hasEffect(Effects.NIGHT_VISION) && !sneaker.hasEffect(Effects.GLOWING) && sneaker.getRemainingFireTicks() <= 0) {
                     World world = sneaker.level;
                     if (world.isAreaLoaded(sneaker.blockPosition(), 5) && world.isAreaLoaded(watcher.blockPosition(), 5)) {
-                        final int light = world.getMaxLocalRawBrightness(sneaker.blockPosition());
-                        float lightMalus = MathHelper.clamp((13 - light) * 0.1f, 0.2f, 1);
-                        if (!sd.isDeaf())
-                            lightMalus *= multiplier;
+                        final int light = StealthUtils.getActualLightLevel(world, sneaker.blockPosition());
+                        float lightMalus = MathHelper.clamp((13 - light) * 0.1f * (float) multiplier, 0f, 0.9f);
                         mult *= (1 - lightMalus);
                     }
                 }
             }
-            if (!sd.isAllSeeing() && !watcher.canSee(sneaker))
+            if (!sd.isAllSeeing() && GeneralUtils.viewBlocked(watcher, sneaker))
                 mult *= (0.4);
-            e.modifyVisibility(Math.min(mult, 1));
+            e.modifyVisibility(MathHelper.clamp(mult, 0.001, 1));
         }
     }
 
@@ -241,7 +239,6 @@ Mobs should move into a position that is close to the player, far from allies, a
     public static void lure(TickEvent.ServerTickEvent e) {
         Iterator<Map.Entry<Tuple<World, BlockPos>, Float>> it = alertTracker.entrySet().iterator();
         {
-            //how does a concurrenthashmap throw CME?
             while (it.hasNext()) {
                 Map.Entry<Tuple<World, BlockPos>, Float> n = it.next();
                 if (n.getKey().getA().isAreaLoaded(n.getKey().getB(), n.getValue().intValue())) {

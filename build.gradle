@@ -42,7 +42,8 @@ minecraft {
         client {
             workingDirectory project.file('run')
             arg "-mixin.config=wardance.mixins.json"
-            //property 'mixin.env.disableRefMap', 'true'
+            property 'mixin.env.remapRefMap', 'true'
+            property 'mixin.env.refMapRemappingFile', "${buildDir}/createSrgToMcp/output.srg"
 
             // Recommended logging data for a userdev environment
             //property 'forge.logging.markers', 'SCAN,REGISTRIES,REGISTRYDUMP'
@@ -114,7 +115,7 @@ dependencies {
     minecraft 'net.minecraftforge:forge:1.16.5-36.2.22'
     compile fg.deobf("curse.maven:elenaidodge2-442962:3221492")
     compileOnly fg.deobf("com.blamejared.crafttweaker:CraftTweaker-1.16.4:7.1.0.84")
-    annotationProcessor 'org.spongepowered:mixin:0.8.4:processor'
+    annotationProcessor 'org.spongepowered:mixin:0.8.5:processor'
     //compile fg.deobf("curse.maven:offhandcombat-417112:3203449")
 }
 
