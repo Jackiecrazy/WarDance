@@ -7,6 +7,9 @@ import net.minecraft.client.gui.widget.button.ImageButton;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.text.ITextComponent;
 
+import net.minecraft.client.gui.widget.button.Button.IPressable;
+import net.minecraft.client.gui.widget.button.Button.ITooltip;
+
 public abstract class SkillSelectionButton extends ImageButton {
     protected SkillSelectionScreen parent;
     protected int index;

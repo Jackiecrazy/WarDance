@@ -9,6 +9,8 @@ import net.minecraft.entity.LivingEntity;
 
 import java.awt.*;
 
+import jackiecrazy.wardance.skill.Skill.STATE;
+
 public class Overpower extends IronGuard {
     @Override
     public Color getColor() {

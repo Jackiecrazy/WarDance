@@ -32,6 +32,8 @@ import javax.annotation.Nullable;
 import java.awt.*;
 import java.util.*;
 
+import jackiecrazy.wardance.skill.Skill.STATE;
+
 @Mod.EventBusSubscriber(modid = WarDance.MODID)
 public class Hex extends Skill {
     static final AttributeModifier HEX = new AttributeModifier(UUID.fromString("67fe7ef6-a398-4c62-9bb1-42edaa80e7b1"), "hex", -2, AttributeModifier.Operation.ADDITION);
@@ -40,7 +42,7 @@ public class Hex extends Skill {
 
     @SubscribeEvent
     public static void snakebite(LivingHealEvent e) {
-        if (!e.getEntityLiving().isServerWorld()) return;
+        if (!e.getEntityLiving().isEffectiveAi()) return;
         LivingEntity entity = e.getEntityLiving();
         //snakebite nullifies healing
         if (Marks.getCap(entity).isMarked(WarSkills.SNAKEBITE.get()))
@@ -49,11 +51,11 @@ public class Hex extends Skill {
 
     @SubscribeEvent
     public static void blackmark(LivingDamageEvent e) {
-        if (!e.getEntityLiving().isServerWorld()) return;
+        if (!e.getEntityLiving().isEffectiveAi()) return;
         LivingEntity target = e.getEntityLiving();
         //black mark stealing health/posture/spirit
         if (e.getAmount() > 0 && CombatUtils.isMeleeAttack(e.getSource()) && Marks.getCap(target).isMarked(WarSkills.BLACK_MARK.get())) {
-            Entity source = e.getSource().getTrueSource();
+            Entity source = e.getSource().getEntity();
             if (source instanceof LivingEntity) {
                 LivingEntity le = (LivingEntity) source;
                 final ICombatCapability cap = CombatData.getCap(le);
@@ -147,7 +149,7 @@ public class Hex extends Skill {
         final ModifiableAttributeInstance luck = target.getAttribute(Attributes.LUCK);
         if (luck != null && this == WarSkills.CURSE_OF_MISFORTUNE.get()) {
             luck.removeModifier(HEX);
-            luck.applyNonPersistentModifier(HEX);
+            luck.addTransientModifier(HEX);
         }
         return super.onMarked(caster, target, sd, existing);
     }
@@ -170,19 +172,19 @@ public class Hex extends Skill {
         @Override
         public SkillData onMarked(LivingEntity caster, LivingEntity target, SkillData sd, @Nullable SkillData existing) {
             EffectInstance poison = new EffectInstance(Effects.POISON, 200, 1);
-            if (target.isPotionActive(Effects.POISON)) {
-                poison = new EffectInstance(Effects.POISON, Math.max(target.getActivePotionEffect(Effects.POISON).getDuration(), 200), Math.max(target.getActivePotionEffect(Effects.POISON).getAmplifier(), 1));
+            if (target.hasEffect(Effects.POISON)) {
+                poison = new EffectInstance(Effects.POISON, Math.max(target.getEffect(Effects.POISON).getDuration(), 200), Math.max(target.getEffect(Effects.POISON).getAmplifier(), 1));
             }
             poison.setCurativeItems(Collections.emptyList());
-            target.removePotionEffect(Effects.POISON);
-            target.addPotionEffect(poison);
+            target.removeEffect(Effects.POISON);
+            target.addEffect(poison);
             return super.onMarked(caster, target, sd, existing);
         }
 
         @Override
         public boolean markTick(LivingEntity caster, LivingEntity target, SkillData sd) {
             //heal block, removed with poison
-            if (!target.isPotionActive(Effects.POISON)) {
+            if (!target.hasEffect(Effects.POISON)) {
                 removeMark(target);
                 return true;
             }
@@ -198,7 +200,7 @@ public class Hex extends Skill {
     }
 
     public static class Unravel extends Hex {
-        private final Tag<String> tag = Tag.getTagFromContents(new HashSet<>(Arrays.asList("melee", "noDamage", "boundCast", ProcPoints.change_parry_result, ProcPoints.recharge_time, "chant", ProcPoints.unblockable, "normalAttack", "countdown")));
+        private final Tag<String> tag = Tag.create(new HashSet<>(Arrays.asList("melee", "noDamage", "boundCast", ProcPoints.change_parry_result, ProcPoints.recharge_time, "chant", ProcPoints.unblockable, "normalAttack", "countdown")));
 
         @Override
         public Color getColor() {
@@ -208,20 +210,20 @@ public class Hex extends Skill {
         @Override
         protected void mark(LivingEntity caster, LivingEntity target, float duration) {
             ItemStack milk = new ItemStack(Items.MILK_BUCKET);
-            final Collection<EffectInstance> potions = new ArrayList<>(target.getActivePotionEffects());
+            final Collection<EffectInstance> potions = new ArrayList<>(target.getActiveEffects());
             target.curePotionEffects(milk);
             float size = 8, damage = 6;
             boolean proc = false;
             for (EffectInstance ei : potions) {
                 proc = true;
-                EffectInstance drop = new EffectInstance(ei.getPotion(), 0, -2);
+                EffectInstance drop = new EffectInstance(ei.getEffect(), 0, -2);
                 drop = EffectUtils.stackPot(caster, drop, EffectUtils.StackingMethod.MAXDURATION);
                 if (drop.getAmplifier() >= 0) {
-                    target.addPotionEffect(drop);
+                    target.addEffect(drop);
                 }
             }
             if (proc)
-                FakeExplosion.explode(caster.world, caster, target.getPosX(), target.getPosY() + target.getHeight() * 1.1f, target.getPosZ(), size, DamageSource.causeExplosionDamage(caster).setMagicDamage(), damage);
+                FakeExplosion.explode(caster.level, caster, target.getX(), target.getY() + target.getBbHeight() * 1.1f, target.getZ(), size, DamageSource.explosion(caster).setMagic(), damage);
         }
     }
 

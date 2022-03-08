@@ -40,11 +40,11 @@ public abstract class MixinMobStealth<T extends LivingEntity, M extends EntityMo
             })
     private float invisible(float constant) {
         if (!StealthConfig.playerStealth || Minecraft.getInstance().player == null) return constant;
-        if (mob.ticksExisted == lastcalculation) return cache;
-        lastcalculation = mob.ticksExisted;
-        double visible = Minecraft.getInstance().player.getAttributeValue(Attributes.FOLLOW_RANGE) * mob.getVisibilityMultiplier(Minecraft.getInstance().player);
+        if (mob.tickCount == lastcalculation) return cache;
+        lastcalculation = mob.tickCount;
+        double visible = Minecraft.getInstance().player.getAttributeValue(Attributes.FOLLOW_RANGE) * mob.getVisibilityPercent(Minecraft.getInstance().player);
         visible *= visible;
-        double distsq = Minecraft.getInstance().player.getDistanceSq(mob);
+        double distsq = Minecraft.getInstance().player.distanceToSqr(mob);
         float ret;
         if (distsq > visible) ret = 0;
         else ret = (float) ((visible - distsq) / visible);
@@ -55,6 +55,6 @@ public abstract class MixinMobStealth<T extends LivingEntity, M extends EntityMo
     @ModifyVariable(method = "render(Lnet/minecraft/entity/LivingEntity;FFLcom/mojang/blaze3d/matrix/MatrixStack;Lnet/minecraft/client/renderer/IRenderTypeBuffer;I)V", at = @At(value = "STORE"), ordinal = 0)
     private RenderType rt(RenderType former) {
         if (!StealthConfig.playerStealth || cache >= 0.9) return former;
-        return RenderType.getItemEntityTranslucentCull(getEntityTexture(mob));
+        return RenderType.itemEntityTranslucentCull(getTextureLocation(mob));
     }
 }

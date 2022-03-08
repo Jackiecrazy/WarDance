@@ -15,8 +15,10 @@ import java.awt.*;
 import java.util.Arrays;
 import java.util.HashSet;
 
+import jackiecrazy.wardance.skill.Skill.STATE;
+
 public class MastersLesson extends Judgment {
-    private final Tag<String> tag = Tag.getTagFromContents(new HashSet<>(Arrays.asList("physical", ProcPoints.on_hurt, ProcPoints.normal_attack, ProcPoints.on_stagger, ProcPoints.on_cast, "melee", "execution")));
+    private final Tag<String> tag = Tag.create(new HashSet<>(Arrays.asList("physical", ProcPoints.on_hurt, ProcPoints.normal_attack, ProcPoints.on_stagger, ProcPoints.on_cast, "melee", "execution")));
 
     @Override
     public Color getColor() {

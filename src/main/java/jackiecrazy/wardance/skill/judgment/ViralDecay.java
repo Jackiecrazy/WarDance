@@ -20,23 +20,25 @@ import javax.annotation.Nullable;
 import java.awt.*;
 import java.util.List;
 
+import jackiecrazy.wardance.skill.Skill.STATE;
+
 @Mod.EventBusSubscriber(modid = WarDance.MODID)
 public class ViralDecay extends Judgment {
-    public static final DamageSource VIRUS = (new DamageSource("decay")).setDamageBypassesArmor();
+    public static final DamageSource VIRUS = (new DamageSource("decay")).bypassArmor();
 
     @SubscribeEvent
     public static void virus(LivingDeathEvent e) {
-        Marks.getCap(e.getEntityLiving()).getActiveMark(WarSkills.VIRAL_DECAY.get()).ifPresent((a) -> detonate(e.getEntityLiving(), a.getCaster(e.getEntityLiving().world)));
+        Marks.getCap(e.getEntityLiving()).getActiveMark(WarSkills.VIRAL_DECAY.get()).ifPresent((a) -> detonate(e.getEntityLiving(), a.getCaster(e.getEntityLiving().level)));
     }
 
     private static void detonate(LivingEntity target, LivingEntity caster) {
         Marks.getCap(target).removeMark(WarSkills.VIRAL_DECAY.get());
-        target.attackEntityFrom(new CombatDamageSource("player", caster).setDamageTyping(CombatDamageSource.TYPE.PHYSICAL).setProcSkillEffects(true).setProcAttackEffects(true).setDamageTyping(CombatDamageSource.TYPE.TRUE).setDamageBypassesArmor().setDamageIsAbsolute(), target.getHealth() / 10);
-        SkillUtils.createCloud(target.world, caster, target.getPosX(), target.getPosY(), target.getPosZ(), 3, ParticleTypes.EXPLOSION);
-        final List<LivingEntity> list = target.world.getLoadedEntitiesWithinAABB(LivingEntity.class, target.getBoundingBox().grow(3), (b) -> !TargetingUtils.isAlly(b, caster));
+        target.hurt(new CombatDamageSource("player", caster).setDamageTyping(CombatDamageSource.TYPE.PHYSICAL).setProcSkillEffects(true).setProcAttackEffects(true).setDamageTyping(CombatDamageSource.TYPE.TRUE).bypassArmor().bypassMagic(), target.getHealth() / 10);
+        SkillUtils.createCloud(target.level, caster, target.getX(), target.getY(), target.getZ(), 3, ParticleTypes.EXPLOSION);
+        final List<LivingEntity> list = target.level.getLoadedEntitiesOfClass(LivingEntity.class, target.getBoundingBox().inflate(3), (b) -> !TargetingUtils.isAlly(b, caster));
         for (LivingEntity enemy : list) {
             if (enemy == target) continue;
-            enemy.attackEntityFrom(VIRUS, 2);
+            enemy.hurt(VIRUS, 2);
             Marks.getCap(enemy).mark(new SkillData(WarSkills.VIRAL_DECAY.get(), 6).setArbitraryFloat(1).setCaster(caster));
         }
     }
@@ -55,8 +57,8 @@ public class ViralDecay extends Judgment {
 
     @Override
     public boolean markTick(LivingEntity caster, LivingEntity target, SkillData sd) {
-        if (target.ticksExisted % 20 == 0)
-            target.attackEntityFrom(VIRUS, sd.getArbitraryFloat() / 2);
+        if (target.tickCount % 20 == 0)
+            target.hurt(VIRUS, sd.getArbitraryFloat() / 2);
         return super.markTick(caster, target, sd);
     }
 

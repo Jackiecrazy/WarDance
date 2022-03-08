@@ -17,22 +17,23 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 @Mixin(ServerWorld.class)
 public abstract class MixinSoundAlert {
-    @Shadow public abstract ServerWorld getWorld();
 
-    @Inject(method = "playSound", at = @At("TAIL"))
+    @Shadow public abstract ServerWorld getLevel();
+
+    @Inject(method = "playSound(Lnet/minecraft/entity/player/PlayerEntity;DDDLnet/minecraft/util/SoundEvent;Lnet/minecraft/util/SoundCategory;FF)V", at = @At("TAIL"))
     private void alert(PlayerEntity player, double x, double y, double z, SoundEvent soundIn, SoundCategory category, float volume, float pitch, CallbackInfo ci) {
-        if (player != null && player.isSneaking()) return;
+        if (player != null && player.isShiftKeyDown()) return;
         //ServerLifecycleHooks.getCurrentServer().runAsync()
         if (category == SoundCategory.PLAYERS || category == SoundCategory.NEUTRAL)
-            EntityHandler.alertTracker.put(new Tuple<>(this.getWorld(), new BlockPos(x,y,z)), (float) (volume* StealthConfig.blockPerVolume));
+            EntityHandler.alertTracker.put(new Tuple<>(this.getLevel(), new BlockPos(x,y,z)), (float) (volume* StealthConfig.blockPerVolume));
     }
 
-    @Inject(method = "playMovingSound", at = @At("TAIL"))
+    @Inject(method = "playSound(Lnet/minecraft/entity/player/PlayerEntity;Lnet/minecraft/entity/Entity;Lnet/minecraft/util/SoundEvent;Lnet/minecraft/util/SoundCategory;FF)V", at = @At("TAIL"))
     private void alertMoving(PlayerEntity player, Entity entityIn, SoundEvent eventIn, SoundCategory category, float volume, float pitch, CallbackInfo ci) {
-        if (player != null && player.isSneaking()) return;
-        double x = entityIn.getPosX(), y = entityIn.getPosY(), z = entityIn.getPosZ();
+        if (player != null && player.isShiftKeyDown()) return;
+        double x = entityIn.getX(), y = entityIn.getY(), z = entityIn.getZ();
         if (category == SoundCategory.PLAYERS || category == SoundCategory.NEUTRAL)
-            EntityHandler.alertTracker.put(new Tuple<>(this.getWorld(), new BlockPos(x,y,z)), (float) (volume*StealthConfig.blockPerVolume));
+            EntityHandler.alertTracker.put(new Tuple<>(this.getLevel(), new BlockPos(x,y,z)), (float) (volume*StealthConfig.blockPerVolume));
     }
 
 }

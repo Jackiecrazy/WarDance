@@ -10,6 +10,8 @@ import net.minecraft.potion.Effects;
 
 import java.awt.*;
 
+import jackiecrazy.wardance.skill.Skill.STATE;
+
 public class Afterimage extends IronGuard {
     @Override
     public Color getColor() {
@@ -25,15 +27,15 @@ public class Afterimage extends IronGuard {
 
     @Override
     protected void parry(LivingEntity caster, ParryEvent procPoint, SkillData stats, LivingEntity target, STATE state) {
-        if (!caster.isSneaking()||state==STATE.COOLING) return;
+        if (!caster.isShiftKeyDown()||state==STATE.COOLING) return;
         final float cost = ((ParryEvent) procPoint).getPostureConsumption();
-        SkillUtils.createCloud(caster.world, caster, caster.getPosX(), caster.getPosY(), caster.getPosZ(), cost, ParticleTypes.LARGE_SMOKE);
-        for (LivingEntity e : caster.world.getLoadedEntitiesWithinAABB(LivingEntity.class, caster.getBoundingBox().grow(cost))) {
-            if (e.getDistanceSq(caster) > cost * cost) {
-                e.addPotionEffect(new EffectInstance(Effects.BLINDNESS, 100));
+        SkillUtils.createCloud(caster.level, caster, caster.getX(), caster.getY(), caster.getZ(), cost, ParticleTypes.LARGE_SMOKE);
+        for (LivingEntity e : caster.level.getLoadedEntitiesOfClass(LivingEntity.class, caster.getBoundingBox().inflate(cost))) {
+            if (e.distanceToSqr(caster) > cost * cost) {
+                e.addEffect(new EffectInstance(Effects.BLINDNESS, 100));
             }
         }
-        caster.addPotionEffect(new EffectInstance(Effects.INVISIBILITY, 20));
+        caster.addEffect(new EffectInstance(Effects.INVISIBILITY, 20));
         markUsed(caster);
         ((ParryEvent) procPoint).setPostureConsumption(0);
     }

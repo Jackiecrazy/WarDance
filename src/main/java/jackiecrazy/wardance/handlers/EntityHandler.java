@@ -125,12 +125,12 @@ public class EntityHandler {
     @SubscribeEvent
     public static void tickMobs(LivingEvent.LivingUpdateEvent e) {
         LivingEntity elb = e.getEntityLiving();
-        if (!elb.world.isRemote) {
-            if (elb.isPotionActive(WarEffects.PETRIFY.get())) {
-                elb.rotationPitch = elb.prevRotationPitch;
-                elb.rotationYaw = elb.prevRotationYaw;
-                elb.rotationYawHead = elb.prevRotationYawHead;
-                elb.setMotion(0, 0, 0);
+        if (!elb.level.isClientSide) {
+            if (elb.hasEffect(WarEffects.PETRIFY.get())) {
+                elb.xRot = elb.xRotO;
+                elb.yRot = elb.yRotO;
+                elb.yHeadRot = elb.yHeadRotO;
+                elb.setDeltaMovement(0, 0, 0);
             }
             if (!(elb instanceof PlayerEntity)) {
                 Marks.getCap(elb).update();
@@ -160,103 +160,80 @@ Mobs should move into a position that is close to the player, far from allies, a
     @SubscribeEvent
     public static void noJump(LivingEvent.LivingJumpEvent e) {
         if (!(e.getEntityLiving() instanceof PlayerEntity) && CombatData.getCap(e.getEntityLiving()).getStaggerTime() > 0) {
-            e.getEntityLiving().setMotion(0, 0, 0);
+            e.getEntityLiving().setDeltaMovement(0, 0, 0);
         }
     }
 
     @SubscribeEvent
     public static void sneak(final LivingEvent.LivingVisibilityEvent e) {
+        /*
+        out of LoS, reduce by 70%
+        light, reduce by 70%
+        speed, reduce by 50%
+        can't see, reduce by 90%
+        each stat scaled by stealth logarithmically. 10 stealth=halved bonus
+        max is 0.045 in absolute darkness standing still behind
+        min is 0.595 in above conditions but full armor
+         */
         if (e.getLookingEntity() != e.getEntityLiving() && e.getLookingEntity() instanceof LivingEntity && StealthConfig.stealthSystem) {
             double mult = 1;
             LivingEntity sneaker = e.getEntityLiving(), watcher = (LivingEntity) e.getLookingEntity();
-            if (sneaker.getFireTimer() > 0) return;//you're on fire and it's super obvious!
             StealthUtils.StealthData sd = StealthUtils.stealthMap.getOrDefault(watcher.getType().getRegistryName(), StealthUtils.STEALTH);
             if (sd.isVigilant()) return;
-            if (watcher.getAttackingEntity() != sneaker && watcher.getRevengeTarget() != sneaker && watcher.getLastAttackedEntity() != sneaker && (!(watcher instanceof MobEntity) || ((MobEntity) watcher).getAttackTarget() != sneaker)) {
+            if (watcher.getKillCredit() != sneaker && watcher.getLastHurtByMob() != sneaker && watcher.getLastHurtMob() != sneaker && (!(watcher instanceof MobEntity) || ((MobEntity) watcher).getTarget() != sneaker)) {
                 double stealth = GeneralUtils.getAttributeValueSafe(sneaker, WarAttributes.STEALTH.get());
-                if (watcher.isPotionActive(Effects.BLINDNESS))
-                    mult *= (1f / (watcher.getActivePotionEffect(Effects.BLINDNESS).getAmplifier() + 4));
-                if (stealth > 20)
-                    mult *= (10 / (stealth - 10));
-                if (!sd.isAllSeeing() && !GeneralUtils.isFacingEntity(watcher, sneaker, Math.max(StealthConfig.baseHorizontalDetection, (int) ((20 - stealth) * StealthConfig.anglePerArmor)), Math.max(StealthConfig.baseVerticalDetection, (int) ((20 - stealth) * (20 - stealth)))))
-                    mult *= (0.3);
+                double multiplier = 0.25 * Math.exp(0.07 * stealth);
+                if (watcher.hasEffect(Effects.BLINDNESS))
+                    mult *= (1f / (watcher.getEffect(Effects.BLINDNESS).getAmplifier() + 4));
+                if (!sd.isAllSeeing() && !GeneralUtils.isFacingEntity(watcher, sneaker, StealthConfig.baseHorizontalDetection, StealthConfig.baseVerticalDetection))
+                    mult *= 1-(0.7*multiplier);
                 if (!sd.isPerceptive()) {
                     final double speedSq = GeneralUtils.getSpeedSq(sneaker);
-                    mult *= (0.5 + MathHelper.sqrt(speedSq) * 2);
+                    mult *= (1-(0.5 - MathHelper.sqrt(speedSq) * 2)*multiplier);
                 }
-                if (!sd.isNightVision() && !watcher.isPotionActive(Effects.NIGHT_VISION) && !sneaker.isPotionActive(Effects.GLOWING)) {
-                    World world = sneaker.world;
-                    if (world.isAreaLoaded(sneaker.getPosition(), 5) && world.isAreaLoaded(watcher.getPosition(), 5)) {
-                        final int light = world.getLight(sneaker.getPosition());
-                        float lightMalus = MathHelper.clamp((13 - light) * 0.1f, 0, 1);
+                if (!sd.isNightVision() && !watcher.hasEffect(Effects.NIGHT_VISION) && !sneaker.hasEffect(Effects.GLOWING) && sneaker.getRemainingFireTicks() == 0) {
+                    World world = sneaker.level;
+                    if (world.isAreaLoaded(sneaker.blockPosition(), 5) && world.isAreaLoaded(watcher.blockPosition(), 5)) {
+                        final int light = world.getMaxLocalRawBrightness(sneaker.blockPosition());
+                        float lightMalus = MathHelper.clamp((13 - light) * 0.1f, 0.2f, 1);
                         if (!sd.isDeaf())
-                            lightMalus *= Math.min(stealth / 20f, 1f);
+                            lightMalus *= multiplier;
                         mult *= (1 - lightMalus);
                     }
                 }
             }
-            if (!sd.isAllSeeing() && !watcher.canEntityBeSeen(sneaker))
+            if (!sd.isAllSeeing() && !watcher.canSee(sneaker))
                 mult *= (0.4);
             e.modifyVisibility(Math.min(mult, 1));
         }
     }
-
-//    @SubscribeEvent
-//    public static void kitCheck(LivingEvent.LivingUpdateEvent e) {
-//        final LivingEntity le = e.getEntityLiving();
-//        if (le instanceof PlayerEntity) {
-//            if (GeneralUtils.isKitMain(le.getHeldItemMainhand())) {
-//                ItemStack is = le.getHeldItemMainhand();
-//                is.getOrCreateTag().put("kitItem", le.getHeldItemOffhand().write(new CompoundNBT()));
-//                //this is called before kitUp, so this quickly overrides the latter
-//            }
-//        }
-//    }
-
-//    @SubscribeEvent
-//    public static void kitUp(LivingEquipmentChangeEvent e) {
-//        if (e.getSlot() == EquipmentSlotType.MAINHAND && !ItemStack.areItemsEqual(e.getFrom(), e.getTo())) {
-//            ItemStack from = e.getFrom(), to = e.getTo();
-//            final LivingEntity elb = e.getEntityLiving();
-//            if (GeneralUtils.isKitMain(from)) {
-//                //interesting, it's being written, then removed immediately.
-//                e.getFrom().getOrCreateTag().put("kitItem", elb.getHeldItemOffhand().write(new CompoundNBT()));
-//                elb.setHeldItem(Hand.OFF_HAND, CombatData.getCap(elb).getTempItemStack());
-//            }
-//            if (GeneralUtils.isKitMain(to)) {
-//                CombatData.getCap(elb).setTempItemStack(elb.getHeldItemOffhand());
-//                ItemStack replace = ItemStack.read(to.getOrCreateTag().getCompound("kitItem"));
-//                elb.setHeldItem(Hand.OFF_HAND, replace);
-//            }
-//        }
-//    }
 
     @SubscribeEvent
     public static void pray(LivingSetAttackTargetEvent e) {
         if (e.getTarget() == null) return;
         if (!(e.getEntityLiving() instanceof MobEntity)) return;
         final MobEntity mob = (MobEntity) e.getEntityLiving();
-        if (mob.isPotionActive(WarEffects.FEAR.get()) || mob.isPotionActive(WarEffects.CONFUSION.get()) || mob.isPotionActive(WarEffects.SLEEP.get()))
-            mob.setAttackTarget(null);
-        if (mob.getRevengeTarget() != e.getTarget() && StealthConfig.stealthSystem && !GeneralUtils.isFacingEntity(mob, e.getTarget(), StealthConfig.baseHorizontalDetection, StealthConfig.baseVerticalDetection)) {
+        if (mob.hasEffect(WarEffects.FEAR.get()) || mob.hasEffect(WarEffects.CONFUSION.get()) || mob.hasEffect(WarEffects.SLEEP.get()))
+            mob.setTarget(null);
+        if (mob.getLastHurtByMob() != e.getTarget() && StealthConfig.stealthSystem && !GeneralUtils.isFacingEntity(mob, e.getTarget(), StealthConfig.baseHorizontalDetection, StealthConfig.baseVerticalDetection)) {
             StealthUtils.StealthData sd = StealthUtils.stealthMap.getOrDefault(mob.getType().getRegistryName(), StealthUtils.STEALTH);
             if (sd.isVigilant() || sd.isAllSeeing() || sd.isOlfactory()) return;
             //outside of LoS, perform luck check. Pray to RNGesus!
             double luckDiff = GeneralUtils.getAttributeValueSafe(e.getTarget(), Attributes.LUCK) - GeneralUtils.getAttributeValueSafe(mob, Attributes.LUCK);
-            mob.setAttackTarget(null);
+            mob.setTarget(null);
             if (luckDiff <= 0 || WarDance.rand.nextFloat() > (luckDiff / (2 + luckDiff))) {
                 //mob.rotateTowards();
-                mob.lookAt(EntityAnchorArgument.Type.FEET, e.getTarget().getPositionVec());//.getLookController().setLookPositionWithEntity(e.getTarget(), 0, 0);
+                mob.lookAt(EntityAnchorArgument.Type.FEET, e.getTarget().position());//.getLookController().setLookPositionWithEntity(e.getTarget(), 0, 0);
             }
         }
     }
 
     @SubscribeEvent
     public static void nigerundayo(final PotionEvent.PotionAddedEvent e) {
-        if (e.getPotionEffect().getPotion() == Effects.BLINDNESS && GeneralConfig.blindness) {
+        if (e.getPotionEffect().getEffect() == Effects.BLINDNESS && GeneralConfig.blindness) {
             if (e.getEntityLiving() instanceof MobEntity)
-                ((MobEntity) e.getEntityLiving()).setAttackTarget(null);
-            e.getEntityLiving().setRevengeTarget(null);
+                ((MobEntity) e.getEntityLiving()).setTarget(null);
+            e.getEntityLiving().setLastHurtByMob(null);
         }
     }
 
@@ -268,10 +245,10 @@ Mobs should move into a position that is close to the player, far from allies, a
             while (it.hasNext()) {
                 Map.Entry<Tuple<World, BlockPos>, Float> n = it.next();
                 if (n.getKey().getA().isAreaLoaded(n.getKey().getB(), n.getValue().intValue())) {
-                    for (CreatureEntity c : (n.getKey().getA().getLoadedEntitiesWithinAABB(CreatureEntity.class, new AxisAlignedBB(n.getKey().getB()).grow(n.getValue())))) {
+                    for (CreatureEntity c : (n.getKey().getA().getLoadedEntitiesOfClass(CreatureEntity.class, new AxisAlignedBB(n.getKey().getB()).inflate(n.getValue())))) {
                         if (StealthUtils.getAwareness(null, c) == StealthUtils.Awareness.UNAWARE && !StealthUtils.stealthMap.getOrDefault(c.getType().getRegistryName(), StealthUtils.STEALTH).isDeaf()) {
-                            c.getNavigator().clearPath();
-                            c.getNavigator().setPath(c.getNavigator().getPathToPos(n.getKey().getB(), (int) (n.getValue() + 3)), 1);
+                            c.getNavigation().stop();
+                            c.getNavigation().moveTo(c.getNavigation().createPath(n.getKey().getB(), (int) (n.getValue() + 3)), 1);
                             BlockPos vec = n.getKey().getB();
                             c.lookAt(EntityAnchorArgument.Type.EYES, new Vector3d(vec.getX(), vec.getY(), vec.getZ()));
                         }
@@ -291,17 +268,17 @@ Mobs should move into a position that is close to the player, far from allies, a
         }
 
         @Override
-        public boolean shouldExecute() {
-            return (CombatData.getCap(e).isValid() && CombatData.getCap(e).getStaggerTime() > 0) || e.isPotionActive(WarEffects.PETRIFY.get()) || e.isPotionActive(WarEffects.PARALYSIS.get()) || e.isPotionActive(WarEffects.SLEEP.get());
+        public boolean canUse() {
+            return (CombatData.getCap(e).isValid() && CombatData.getCap(e).getStaggerTime() > 0) || e.hasEffect(WarEffects.PETRIFY.get()) || e.hasEffect(WarEffects.PARALYSIS.get()) || e.hasEffect(WarEffects.SLEEP.get());
         }
 
         @Override
-        public boolean isPreemptible() {
+        public boolean isInterruptable() {
             return false;
         }
 
         @Override
-        public EnumSet<Flag> getMutexFlags() {
+        public EnumSet<Flag> getFlags() {
             return mutex;
         }
     }

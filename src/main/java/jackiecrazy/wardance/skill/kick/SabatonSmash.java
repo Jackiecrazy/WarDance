@@ -23,10 +23,10 @@ public class SabatonSmash extends Kick {
     @Override
     public boolean markTick(LivingEntity caster, LivingEntity target, SkillData sd) {
         sd.decrementDuration();
-        if (target.collidedHorizontally) {
+        if (target.horizontalCollision) {
             removeMark(target);
-            CombatData.getCap(target).consumePosture(caster.getTotalArmorValue() / 4f);
-            target.attackEntityFrom(new CombatDamageSource("fallingBlock",caster).setDamageTyping(CombatDamageSource.TYPE.PHYSICAL).setProcSkillEffects(true).setProcAttackEffects(true), caster.getTotalArmorValue() / 4f);
+            CombatData.getCap(target).consumePosture(caster.getArmorValue() / 4f);
+            target.hurt(new CombatDamageSource("fallingBlock",caster).setDamageTyping(CombatDamageSource.TYPE.PHYSICAL).setProcSkillEffects(true).setProcAttackEffects(true), caster.getArmorValue() / 4f);
         }
         return super.markTick(caster, target, sd);
     }

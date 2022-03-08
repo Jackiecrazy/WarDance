@@ -73,7 +73,7 @@ public class SkillCastScreen extends Screen {
         //highlight a slice based on distance from center (to allow cancel leeway) and direction
         //listen to key release to send cast message to server
         Minecraft mc = Minecraft.getInstance();
-        int width = mc.getMainWindow().getScaledWidth(), height = mc.getMainWindow().getScaledHeight();
+        int width = mc.getWindow().getGuiScaledWidth(), height = mc.getWindow().getGuiScaledHeight();
         //get distance
         float centeredx = mouseX - width / 2f;
         float centeredy = mouseY - height / 2f;
@@ -87,10 +87,10 @@ public class SkillCastScreen extends Screen {
             distance = cutoffy > centeredy;
         }
         int index = distance ? (int) Math.floor((angle / 90) % 4) + 1 : 0;
-        matrixStack.push();
+        matrixStack.pushPose();
         RenderSystem.enableAlphaTest();
         RenderSystem.enableBlend();
-        mc.getTextureManager().bindTexture(radial);
+        mc.getTextureManager().bind(radial);
         this.exIndex = index;
         //mc.player.sendStatusMessage(new StringTextComponent(selected == null ? "none" : selected.getRegistryName().toString()), true);
         int x = width / 2 - 100;
@@ -103,8 +103,8 @@ public class SkillCastScreen extends Screen {
                 Skill s = elements[a];
 
                 //radial slice for highlighting
-                matrixStack.push();
-                mc.textureManager.bindTexture(radial);
+                matrixStack.pushPose();
+                mc.textureManager.bind(radial);
                 //holstered is green
                 if (CasterData.getCap(mc.player).getHolsteredSkill() == elements[a])
                     RenderSystem.color4f(0.4f, 0.7f, 0.4f, 1);
@@ -118,20 +118,20 @@ public class SkillCastScreen extends Screen {
                 else if (a != index)
                     RenderSystem.color4f(0.6f, 0.6f, 0.6f, 1);
                 blit(matrixStack, x, y, fixedU[a], fixedV[a], 200, 200, 600, 600);
-                matrixStack.pop();
+                matrixStack.popPose();
 
                 //skill icon
-                matrixStack.push();
-                mc.textureManager.bindTexture(s.icon());
+                matrixStack.pushPose();
+                mc.textureManager.bind(s.icon());
                 Color c = s.getColor();
                 RenderSystem.color4f(c.getRed() / 255f, c.getGreen() / 255f, c.getBlue() / 255f, 1);
                 AbstractGui.blit(matrixStack, x + iconX[a], y + iconY[a], 0, 0, 32, 32, 32, 32);
                 RenderSystem.color4f(1, 1, 1, 1);
-                matrixStack.pop();
+                matrixStack.popPose();
 
                 //cooldown overlay and mask
                 if (CasterData.getCap(mc.player).getSkillState(s) == Skill.STATE.COOLING) {
-                    matrixStack.push();
+                    matrixStack.pushPose();
                     //overlay mask
                     RenderSystem.enableBlend();
                     RenderSystem.blendFuncSeparate(GlStateManager.SourceFactor.ZERO, GlStateManager.DestFactor.ONE, GlStateManager.SourceFactor.ONE_MINUS_SRC_ALPHA, GlStateManager.DestFactor.ZERO);
@@ -140,7 +140,7 @@ public class SkillCastScreen extends Screen {
                         //cooldown spinny
                         float cd = CasterData.getCap(mc.player).getSkillData(s).orElse(SkillData.DUMMY).getDuration();
                         float cdPerc = cd / CasterData.getCap(mc.player).getSkillData(s).orElse(SkillData.DUMMY).getMaxDuration();
-                        mc.textureManager.bindTexture(cooldown);
+                        mc.textureManager.bind(cooldown);
                         drawCooldownCircle(matrixStack, x + iconX[a], y + iconY[a], cdPerc);
                         RenderSystem.disableBlend();
 
@@ -148,16 +148,16 @@ public class SkillCastScreen extends Screen {
                         String num = String.valueOf((int) cd);
                         if (Math.ceil(cd) != cd)
                             num = formatter.format(cd);
-                        matrixStack.push();
-                        mc.textureManager.bindTexture(cooldown);
+                        matrixStack.pushPose();
+                        mc.textureManager.bind(cooldown);
                         RenderSystem.color4f(1.0F, 1.0F, 1.0F, 0.6F);
                         //AbstractGui.blit(matrixStack, x + iconX[a], y + iconY[a], 0, 0, 32, 32, 32, 32);
-                        mc.fontRenderer.drawString(matrixStack, num, x + iconX[a] + 16 - mc.fontRenderer.getStringWidth(num) / 2f, y + iconY[a] + 12, 0xFFFFFF);
-                        matrixStack.pop();
+                        mc.font.draw(matrixStack, num, x + iconX[a] + 16 - mc.font.width(num) / 2f, y + iconY[a] + 12, 0xFFFFFF);
+                        matrixStack.popPose();
                     }
-                    matrixStack.pop();
+                    matrixStack.popPose();
                 } else if (CasterData.getCap(mc.player).getSkillState(s) == Skill.STATE.ACTIVE) {
-                    matrixStack.push();
+                    matrixStack.pushPose();
                     int finalA = a;
                     CasterData.getCap(mc.player).getSkillData(s).ifPresent((sd) -> {
                         RenderSystem.enableBlend();
@@ -167,7 +167,7 @@ public class SkillCastScreen extends Screen {
                         if (sd.getMaxDuration() != 0) {
                             //active spinny
                             float cdPerc = sd.getDuration() / sd.getMaxDuration();
-                            mc.textureManager.bindTexture(cooldown);
+                            mc.textureManager.bind(cooldown);
                             float cd = sd.getDuration();
                             RenderSystem.color4f(0.4f, 0.7f, 0.4f, 1);
                             drawCooldownCircle(matrixStack, x + iconX[finalA], y + iconY[finalA], cdPerc);
@@ -176,23 +176,23 @@ public class SkillCastScreen extends Screen {
                             String num = String.valueOf((int) cd);
                             if (Math.ceil(cd) != cd)
                                 num = formatter.format(cd);
-                            matrixStack.push();
-                            mc.textureManager.bindTexture(cooldown);
+                            matrixStack.pushPose();
+                            mc.textureManager.bind(cooldown);
                             RenderSystem.color4f(1.0F, 1.0F, 1.0F, 0.6F);
                             //AbstractGui.blit(matrixStack, x + iconX[a], y + iconY[a], 0, 0, 32, 32, 32, 32);
-                            mc.fontRenderer.drawString(matrixStack, num, x + iconX[finalA] + 16 - mc.fontRenderer.getStringWidth(num) / 2f, y + iconY[finalA] + 12, 0xFFFFFF);
-                            matrixStack.pop();
+                            mc.font.draw(matrixStack, num, x + iconX[finalA] + 16 - mc.font.width(num) / 2f, y + iconY[finalA] + 12, 0xFFFFFF);
+                            matrixStack.popPose();
                         }
                     });
-                    matrixStack.pop();
+                    matrixStack.popPose();
                 }
             }
         }
         if (index >= 0 && elements[index] != null) {
             Skill selected = elements[index];
             String print = selected.getDisplayName(mc.player).getString();
-            int yee = mc.fontRenderer.getStringWidth(print);
-            mc.ingameGUI.getFontRenderer().drawString(matrixStack, print, (width - yee) / 2f, 4, selected.getColor().getRGB());
+            int yee = mc.font.width(print);
+            mc.gui.getFont().draw(matrixStack, print, (width - yee) / 2f, 4, selected.getColor().getRGB());
             final Skill.CastStatus castStatus = selected.castingCheck(mc.player);
             if (castStatus != Skill.CastStatus.ALLOWED && castStatus != Skill.CastStatus.HOLSTERED && castStatus != Skill.CastStatus.ACTIVE) {
                 switch (castStatus) {
@@ -215,34 +215,34 @@ public class SkillCastScreen extends Screen {
                         print = new TranslationTextComponent(elements[index].getRegistryName().toString() + ".requirement").getString();
                         break;
                 }
-                yee = mc.fontRenderer.getStringWidth(print);
-                mc.ingameGUI.getFontRenderer().drawString(matrixStack, print, (width - yee) / 2f, 12, Color.RED.getRGB());
+                yee = mc.font.width(print);
+                mc.gui.getFont().draw(matrixStack, print, (width - yee) / 2f, 12, Color.RED.getRGB());
             }
 
         }
         RenderSystem.disableAlphaTest();
         RenderSystem.disableBlend();
-        matrixStack.pop();
+        matrixStack.popPose();
 
     }
 
     private void drawCooldownCircle(MatrixStack ms, int x, int y, float v) {
-        ms.push();
+        ms.pushPose();
         RenderSystem.enableAlphaTest();
         RenderSystem.enableBlend();
         RenderSystem.blendFunc(GlStateManager.SourceFactor.ONE_MINUS_SRC_ALPHA, GlStateManager.DestFactor.DST_ALPHA);
-        Minecraft.getInstance().textureManager.bindTexture(cooldown);
+        Minecraft.getInstance().textureManager.bind(cooldown);
         if (v <= 0) return; // nothing to be drawn
         int x2 = x + 32, y2 = y + 32; // bottom-right corner
         if (v >= 1) {
             RenderSystem.color4f(0.125F, 0.125F, 0.125F, 0.6F);
             AbstractGui.blit(ms, x, y, 0, 0, 32, 32, 32, 32);
-            ms.pop();
+            ms.popPose();
             // entirely filled
             return;
         }
         int xm = (x + x2) / 2, ym = (y + y2) / 2; // middle point
-        BufferBuilder bufferbuilder = Tessellator.getInstance().getBuffer();
+        BufferBuilder bufferbuilder = Tessellator.getInstance().getBuilder();
         bufferbuilder.begin(9, DefaultVertexFormats.POSITION_TEX_COLOR);
         drawVertex(bufferbuilder, xm, ym);
         drawVertex(bufferbuilder, xm, y);
@@ -262,13 +262,13 @@ public class SkillCastScreen extends Screen {
             vy /= vl;
         }
         drawVertex(bufferbuilder, (int) (xm + vx * (x2 - x) / 2), (int) (ym + vy * (y2 - y) / 2));
-        Tessellator.getInstance().draw();
+        Tessellator.getInstance().end();
         RenderSystem.color4f(1.0F, 1.0F, 1.0F, 1F);
-        ms.pop();
+        ms.popPose();
     }
 
     private void drawVertex(BufferBuilder bufferbuilder, int x, int y) {
-        bufferbuilder.pos(x, y, 0.0D).tex(0, 0).color(32, 32, 32, 205).endVertex();
+        bufferbuilder.vertex(x, y, 0.0D).uv(0, 0).color(32, 32, 32, 205).endVertex();
     }
 
     @Override
@@ -280,11 +280,11 @@ public class SkillCastScreen extends Screen {
             if (!this.minecraft
                     .player.isAlive()) {
                 this.minecraft
-                        .player.closeScreen();
+                        .player.closeContainer();
             } else {
                 this.minecraft
-                        .player.movementInput.tickMovement(this.minecraft
-                                .player.isForcedDown()); //shouldRenderSneaking
+                        .player.input.tick(this.minecraft
+                                .player.isMovingSlowly()); //shouldRenderSneaking
             }
         }
     }
@@ -319,15 +319,15 @@ public class SkillCastScreen extends Screen {
     }
 
     @Override
-    public void onClose() {
-        super.onClose();
+    public void removed() {
+        super.removed();
         //GLFW.glfwSetInputMode(Minecraft.getInstance().getMainWindow().getHandle(), GLFW.GLFW_CURSOR, GLFW.GLFW_CURSOR_NORMAL);
         ForgeIngameGui.renderCrosshairs = true;
     }
 
     @Override
-    public void closeScreen() {
-        super.closeScreen();
+    public void onClose() {
+        super.onClose();
         ForgeIngameGui.renderCrosshairs = true;
     }
 
@@ -337,11 +337,11 @@ public class SkillCastScreen extends Screen {
     }
 
     protected boolean isKeyBindingStillPressed() {
-        return Keybinds.CAST.isKeyDown();
+        return Keybinds.CAST.isDown();
     }
 
     protected void selectAndClose() {
-        closeScreen();
+        onClose();
         if (exIndex >= 0 && elements[exIndex] != null)
             CombatChannel.INSTANCE.sendToServer(new SelectSkillPacket(exIndex));
     }

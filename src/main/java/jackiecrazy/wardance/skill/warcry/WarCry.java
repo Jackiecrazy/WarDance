@@ -19,10 +19,12 @@ import java.util.Arrays;
 import java.util.HashSet;
 import java.util.UUID;
 
+import jackiecrazy.wardance.skill.Skill.STATE;
+
 public class WarCry extends Skill {
     private static final AttributeModifier wrap = new AttributeModifier(UUID.fromString("4b342542-fcfb-47a8-8da8-4f57588f7003"), "bandaging wounds", -1, AttributeModifier.Operation.MULTIPLY_TOTAL);
-    private final Tag<String> procs = Tag.getTagFromContents(new HashSet<>(Arrays.asList("chant", ProcPoints.on_being_hurt, ProcPoints.countdown, ProcPoints.recharge_time, ProcPoints.recharge_sleep)));
-    private final Tag<String> tag = Tag.getTagFromContents(new HashSet<>(Arrays.asList(SkillTags.chant, SkillTags.melee, SkillTags.state)));
+    private final Tag<String> procs = Tag.create(new HashSet<>(Arrays.asList("chant", ProcPoints.on_being_hurt, ProcPoints.countdown, ProcPoints.recharge_time, ProcPoints.recharge_sleep)));
+    private final Tag<String> tag = Tag.create(new HashSet<>(Arrays.asList(SkillTags.chant, SkillTags.melee, SkillTags.state)));
 
     @Override
     public Tag<String> getTags(LivingEntity caster) {
@@ -51,15 +53,15 @@ public class WarCry extends Skill {
 
     protected void evoke(LivingEntity caster) {
         CombatData.getCap(caster).addMight(mightConsumption(caster));
-        caster.world.playMovingSound(null, caster, SoundEvents.BLOCK_FIRE_EXTINGUISH, SoundCategory.AMBIENT, 0.3f + WarDance.rand.nextFloat() * 0.5f, 0.5f + WarDance.rand.nextFloat());
+        caster.level.playSound(null, caster, SoundEvents.FIRE_EXTINGUISH, SoundCategory.AMBIENT, 0.3f + WarDance.rand.nextFloat() * 0.5f, 0.5f + WarDance.rand.nextFloat());
         if (this == WarSkills.REJUVENATE.get()) {
             final float might = CombatData.getCap(caster).getMight();
             final int duration = getDuration(might) * 20;
-            caster.addPotionEffect(new EffectInstance(Effects.REGENERATION, duration));
+            caster.addEffect(new EffectInstance(Effects.REGENERATION, duration));
             if (might > 7) {
-                caster.addPotionEffect(new EffectInstance(Effects.RESISTANCE, duration));
-                caster.addPotionEffect(new EffectInstance(Effects.ABSORPTION, duration, 1));
-            } else caster.addPotionEffect(new EffectInstance(Effects.ABSORPTION, duration));
+                caster.addEffect(new EffectInstance(Effects.DAMAGE_RESISTANCE, duration));
+                caster.addEffect(new EffectInstance(Effects.ABSORPTION, duration, 1));
+            } else caster.addEffect(new EffectInstance(Effects.ABSORPTION, duration));
             markUsed(caster);
         }
         CombatData.getCap(caster).setMight(0);

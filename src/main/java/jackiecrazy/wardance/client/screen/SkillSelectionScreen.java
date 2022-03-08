@@ -66,7 +66,7 @@ public class SkillSelectionScreen extends Screen {
         this.unsortedBases = Collections.unmodifiableList(this.bases);
     }
 
-    private static String stripControlCodes(String value) {return net.minecraft.util.StringUtils.stripControlCodes(value);}
+    private static String stripControlCodes(String value) {return net.minecraft.util.StringUtils.stripColor(value);}
 
     private boolean selectable(SkillCategory s) {
         for (Skill sub : Skill.variationMap.get(s))
@@ -87,7 +87,7 @@ public class SkillSelectionScreen extends Screen {
     @Override
     public void init() {
         for (SkillCategory mod : bases) {
-            listWidth = Math.max(listWidth, getFontRenderer().getStringWidth(mod.name().getString()) + 20);
+            listWidth = Math.max(listWidth, getFontRenderer().width(mod.name().getString()) + 20);
         }
         listWidth = Math.max(Math.min(listWidth, width / 5), 100);
         listWidth += listWidth % numButtons != 0 ? (numButtons - listWidth % numButtons) : 0;
@@ -97,19 +97,19 @@ public class SkillSelectionScreen extends Screen {
         int doneButtonWidth = Math.min(infoWidth, 200);
         int y = this.height - 20 - PADDING;
         this.addButton(new Button(((listWidth + PADDING + this.width - doneButtonWidth) / 2), y, doneButtonWidth, 20,
-                new TranslationTextComponent("gui.done"), b -> SkillSelectionScreen.this.closeScreen()));
+                new TranslationTextComponent("gui.done"), b -> SkillSelectionScreen.this.onClose()));
         //y -= 20 + PADDING;
 
         //y -= 14 + PADDING + 1;
         search = new TextFieldWidget(getFontRenderer(), PADDING + 1, y, listWidth - 2, 14, new TranslationTextComponent("fml.menu.mods.search"));
 
         int fullButtonHeight = PADDING + 20 + PADDING;
-        this.skillList = new SkillListWidget(this, listWidth, PADDING, search.y - getFontRenderer().FONT_HEIGHT - PADDING);
+        this.skillList = new SkillListWidget(this, listWidth, PADDING, search.y - getFontRenderer().lineHeight - PADDING);
         this.skillList.setLeftPos(PADDING);
 
         int split = (this.height - PADDING * 2 - fullButtonHeight) * 2 / 3;
         this.skillInfo = new InfoPanel(this.minecraft, infoWidth, split, PADDING);
-        this.variationList = new VariationListWidget(this, infoWidth - 9, split + PADDING * 2, search.y - getFontRenderer().FONT_HEIGHT - PADDING);
+        this.variationList = new VariationListWidget(this, infoWidth - 9, split + PADDING * 2, search.y - getFontRenderer().lineHeight - PADDING);
         this.variationList.setLeftPos(PADDING * 2 + listWidth);
 
         List<Skill> oldList = CasterData.getCap(Minecraft.getInstance().player).getEquippedSkills();
@@ -129,7 +129,7 @@ public class SkillSelectionScreen extends Screen {
         children.add(skillList);
         children.add(variationList);
         children.add(skillInfo);
-        search.setFocused2(false);
+        search.setFocus(false);
         search.setCanLoseFocus(true);
 
         //final int width = listWidth / numButtons;
@@ -141,7 +141,7 @@ public class SkillSelectionScreen extends Screen {
 //        addButton(AdvancedData.Z_TO_A.button = new Button(x, PADDING, width - buttonMargin, 20, AdvancedData.Z_TO_A.getButtonText(), b -> resortMods(AdvancedData.Z_TO_A)));
         resortMods(AdvancedData.NORMAL);
         updateCache();
-        setFocusedDefault(skillList);
+        setInitialFocus(skillList);
     }
 
     @Override
@@ -150,7 +150,7 @@ public class SkillSelectionScreen extends Screen {
         skillList.setSelected(selectedSkill);
         variationList.setSelected(selectedVariation);
 
-        if (!search.getText().equals(lastFilterText)) {
+        if (!search.getValue().equals(lastFilterText)) {
             reloadMods();
             sorted = false;
         }
@@ -161,7 +161,7 @@ public class SkillSelectionScreen extends Screen {
             skillList.refreshList();
             variationList.refreshList();
             if (selectedSkill != null) {
-                selectedSkill = skillList.getEventListeners().stream().filter(e -> e.getCategory() == selectedSkill.getCategory()).findFirst().orElse(null);
+                selectedSkill = skillList.children().stream().filter(e -> e.getCategory() == selectedSkill.getCategory()).findFirst().orElse(null);
                 updateCache();
             }
             sorted = true;
@@ -181,8 +181,8 @@ public class SkillSelectionScreen extends Screen {
 
     private void reloadMods() {
         this.bases = this.unsortedBases.stream().
-                filter(mi -> StringUtils.toLowerCase(stripControlCodes(mi.name().getString())).contains(StringUtils.toLowerCase(search.getText()))).collect(Collectors.toList());
-        lastFilterText = search.getText();
+                filter(mi -> StringUtils.toLowerCase(stripControlCodes(mi.name().getString())).contains(StringUtils.toLowerCase(search.getValue()))).collect(Collectors.toList());
+        lastFilterText = search.getValue();
     }
 
     boolean isValidInsertion(Skill insert) {
@@ -220,8 +220,8 @@ public class SkillSelectionScreen extends Screen {
         }
 
         ITextComponent text = new TranslationTextComponent("fml.menu.mods.search");
-        int x = skillList.getLeft() + ((skillList.getRight() - skillList.getLeft()) / 2) - (getFontRenderer().getStringPropertyWidth(text) / 2);
-        getFontRenderer().func_238422_b_(mStack, text.func_241878_f(), x, search.y - getFontRenderer().FONT_HEIGHT, 0xFFFFFF);
+        int x = skillList.getLeft() + ((skillList.getRight() - skillList.getLeft()) / 2) - (getFontRenderer().width(text) / 2);
+        getFontRenderer().draw(mStack, text.getVisualOrderText(), x, search.y - getFontRenderer().lineHeight, 0xFFFFFF);
         this.search.render(mStack, mouseX, mouseY, partialTicks);
         super.render(mStack, mouseX, mouseY, partialTicks);
     }
@@ -265,11 +265,11 @@ public class SkillSelectionScreen extends Screen {
             //lines.add(String.valueOf(selectedVariation.getSkill().getColor().getRGB()));
             lines.add("\n");
             lines.add(selectedVariation.getSkill().description().getString());
-            if (minecraft != null && minecraft.gameSettings.showDebugInfo) {
+            if (minecraft != null && minecraft.options.renderDebug) {
                 lines.add("\n");
-                lines.add(TextFormatting.DARK_GRAY+new TranslationTextComponent("wardance:skill_tag").getString() + selectedVariation.getSkill().getTags(minecraft.player).getAllElements()+"\n");
-                lines.add(TextFormatting.DARK_GRAY+new TranslationTextComponent("wardance:skill_soft_incompat").getString() + selectedVariation.getSkill().getSoftIncompatibility(minecraft.player).getAllElements()+"\n");
-                lines.add(TextFormatting.DARK_GRAY+new TranslationTextComponent("wardance:skill_hard_incompat").getString() + selectedVariation.getSkill().getHardIncompatibility(minecraft.player).getAllElements()+TextFormatting.RESET);
+                lines.add(TextFormatting.DARK_GRAY+new TranslationTextComponent("wardance:skill_tag").getString() + selectedVariation.getSkill().getTags(minecraft.player).getValues()+"\n");
+                lines.add(TextFormatting.DARK_GRAY+new TranslationTextComponent("wardance:skill_soft_incompat").getString() + selectedVariation.getSkill().getSoftIncompatibility(minecraft.player).getValues()+"\n");
+                lines.add(TextFormatting.DARK_GRAY+new TranslationTextComponent("wardance:skill_hard_incompat").getString() + selectedVariation.getSkill().getHardIncompatibility(minecraft.player).getValues()+TextFormatting.RESET);
             }
         }
         lines.add("\n");
@@ -278,13 +278,13 @@ public class SkillSelectionScreen extends Screen {
 
     @Override
     public void resize(Minecraft mc, int width, int height) {
-        String s = this.search.getText();
+        String s = this.search.getValue();
         AdvancedData sort = this.advancedData;
         SkillListWidget.CategoryEntry selected = this.selectedSkill;
         this.init(mc, width, height);
-        this.search.setText(s);
+        this.search.setValue(s);
         this.selectedSkill = selected;
-        if (!this.search.getText().isEmpty())
+        if (!this.search.getValue().isEmpty())
             reloadMods();
         if (sort != AdvancedData.NORMAL)
             resortMods(sort);
@@ -292,7 +292,7 @@ public class SkillSelectionScreen extends Screen {
     }
 
     @Override
-    public void closeScreen() {
+    public void onClose() {
         List<Skill> newSkills = new ArrayList<>();
         for (SkillSliceButton ssb : skillPie)
             newSkills.add(ssb.getSkill());
@@ -300,7 +300,7 @@ public class SkillSelectionScreen extends Screen {
             newSkills.add(pb.getSkill());
         CasterData.getCap(Minecraft.getInstance().player).setEquippedSkills(newSkills);
         CombatChannel.INSTANCE.sendToServer(new UpdateSkillSelectionPacket(newSkills));
-        this.minecraft.displayGuiScreen(null);
+        this.minecraft.setScreen(null);
     }
 
     private enum AdvancedData implements Comparator<SkillCategory> {
@@ -361,7 +361,7 @@ public class SkillSelectionScreen extends Screen {
                 ITextComponent chat = ForgeHooks.newChatWithLinks(line, false);
                 int maxTextLength = this.width - 12;
                 if (maxTextLength >= 0) {
-                    ret.addAll(LanguageMap.getInstance().func_244260_a(font.getCharacterManager().func_238362_b_(chat, maxTextLength, Style.EMPTY)));
+                    ret.addAll(LanguageMap.getInstance().getVisualOrder(font.getSplitter().splitLines(chat, maxTextLength, Style.EMPTY)));
                 }
             }
             return ret;
@@ -370,7 +370,7 @@ public class SkillSelectionScreen extends Screen {
         @Override
         public int getContentHeight() {
             int height = 0;
-            height += (lines.size() * font.FONT_HEIGHT);
+            height += (lines.size() * font.lineHeight);
             if (height < this.bottom - this.top - 8)
                 height = this.bottom - this.top - 8;
             return height;
@@ -378,13 +378,13 @@ public class SkillSelectionScreen extends Screen {
 
         @Override
         protected int getScrollAmount() {
-            return font.FONT_HEIGHT * 3;
+            return font.lineHeight * 3;
         }
 
         @Override
         protected void drawPanel(MatrixStack mStack, int entryRight, int relativeY, Tessellator tess, int mouseX, int mouseY) {
             if (logoPath != null) {
-                Minecraft.getInstance().getTextureManager().bindTexture(logoPath);
+                Minecraft.getInstance().getTextureManager().bind(logoPath);
                 RenderSystem.enableBlend();
                 RenderSystem.color4f(1.0F, 1.0F, 1.0F, 1.0F);
                 // Draw the logo image inscribed in a rectangle with width entryWidth (minus some padding) and height 50
@@ -396,11 +396,11 @@ public class SkillSelectionScreen extends Screen {
             for (IReorderingProcessor line : lines) {
                 if (line != null) {
                     RenderSystem.enableBlend();
-                    SkillSelectionScreen.this.font.drawTextWithShadow(mStack, line, left + PADDING, relativeY, 0xFFFFFF);
+                    SkillSelectionScreen.this.font.drawShadow(mStack, line, left + PADDING, relativeY, 0xFFFFFF);
                     RenderSystem.disableAlphaTest();
                     RenderSystem.disableBlend();
                 }
-                relativeY += font.FONT_HEIGHT;
+                relativeY += font.lineHeight;
             }
 
             final Style component = findTextLine(mouseX, mouseY);
@@ -417,13 +417,13 @@ public class SkillSelectionScreen extends Screen {
             if (offset <= 0)
                 return null;
 
-            int lineIdx = (int) (offset / font.FONT_HEIGHT);
+            int lineIdx = (int) (offset / font.lineHeight);
             if (lineIdx >= lines.size() || lineIdx < 1)
                 return null;
 
             IReorderingProcessor line = lines.get(lineIdx - 1);
             if (line != null) {
-                return font.getCharacterManager().func_243239_a(line, mouseX);
+                return font.getSplitter().componentStyleAtWidth(line, mouseX);
             }
             return null;
         }

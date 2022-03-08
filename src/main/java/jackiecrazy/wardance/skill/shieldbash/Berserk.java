@@ -20,6 +20,6 @@ public class Berserk extends ShieldBash {
         super.performEffect(caster, target);
         CombatUtils.setHandCooldown(caster, Hand.MAIN_HAND, 1, true);
         CombatUtils.setHandCooldown(caster, Hand.OFF_HAND, 1, false);
-        caster.addPotionEffect(new EffectInstance(Effects.HASTE, CombatData.getCap(caster).getBarrierCooldown(), 2));
+        caster.addEffect(new EffectInstance(Effects.DIG_SPEED, CombatData.getCap(caster).getBarrierCooldown(), 2));
     }
 }

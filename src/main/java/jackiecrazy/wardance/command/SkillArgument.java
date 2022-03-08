@@ -28,10 +28,10 @@ public class SkillArgument implements ArgumentType<Skill> {
 
     public static final SuggestionProvider<CommandSource> SKILLS = SuggestionProviders
             .register(new ResourceLocation(WarDance.MODID, "skills"),
-                    (context, builder) -> ISuggestionProvider.func_201725_a(
+                    (context, builder) -> ISuggestionProvider.suggestResource(
                             GameRegistry.findRegistry(Skill.class).getValues().stream(),
                             builder, Skill::getRegistryName, (type) -> new TranslationTextComponent(
-                                    Util.makeTranslationKey("skill", type.getRegistryName()))));
+                                    Util.makeDescriptionId("skill", type.getRegistryName()))));
     private static final Collection<String> EXAMPLES = Stream.of(WarSkills.RETURN_TO_SENDER.get(), WarSkills.VITAL_STRIKE.get()).map((worldKey) -> worldKey.getRegistryName().toString()).collect(Collectors.toList());
     private static final DynamicCommandExceptionType INVALID_SKILL_EXCEPTION = new DynamicCommandExceptionType((worldKey) -> new TranslationTextComponent("argument.skill.invalid", worldKey));
 
@@ -53,7 +53,7 @@ public class SkillArgument implements ArgumentType<Skill> {
 
     @Override
     public <S> CompletableFuture<Suggestions> listSuggestions(CommandContext<S> p_listSuggestions_1_, SuggestionsBuilder p_listSuggestions_2_) {
-        return ISuggestionProvider.suggestIterable(GameRegistry.findRegistry(Skill.class).getKeys(), p_listSuggestions_2_);
+        return ISuggestionProvider.suggestResource(GameRegistry.findRegistry(Skill.class).getKeys(), p_listSuggestions_2_);
     }
 
     @Override

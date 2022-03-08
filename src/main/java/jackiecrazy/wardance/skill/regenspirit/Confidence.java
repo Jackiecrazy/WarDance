@@ -16,6 +16,8 @@ import javax.annotation.Nonnull;
 import java.awt.*;
 import java.util.UUID;
 
+import jackiecrazy.wardance.skill.Skill.STATE;
+
 public class Confidence extends Skill {
     private static final AttributeModifier sprint = new AttributeModifier(UUID.fromString("0683fe69-5348-4a83-95d5-81a2eeb2cca0"), "gimli moment", 10, AttributeModifier.Operation.ADDITION);
 

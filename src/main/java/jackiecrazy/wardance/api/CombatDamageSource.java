@@ -19,6 +19,7 @@ public class CombatDamageSource extends EntityDamageSource {
     private boolean procSkillEffects = false;
     private boolean crit = false;
     private float cdmg = 1.5f;
+    private float postureDamage = -1;
     private float armor = 1f, knockback=1f;
     private TYPE damageTyping = TYPE.PHYSICAL;
 
@@ -136,6 +137,15 @@ public class CombatDamageSource extends EntityDamageSource {
 
     public CombatDamageSource setKnockbackPercentage(float perc){
         knockback=perc;
+        return this;
+    }
+
+    public float getPostureDamage() {
+        return postureDamage;
+    }
+
+    public CombatDamageSource setPostureDamage(float postureDamage) {
+        this.postureDamage = postureDamage;
         return this;
     }
 

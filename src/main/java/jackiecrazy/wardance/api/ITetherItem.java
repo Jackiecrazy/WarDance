@@ -24,33 +24,33 @@ public interface ITetherItem {
                     distsq = GeneralUtils.getDistSqCompensated(toBeMoved, offset);
                     point = offset;
                     if (moveTowards != null) {
-                        distsq = toBeMoved.getDistanceSq(moveTowards);
-                        point = moveTowards.getPositionVec().add(offset);
+                        distsq = toBeMoved.distanceToSqr(moveTowards);
+                        point = moveTowards.position().add(offset);
                     }
                 }else if (moveTowards != null) {
-                    distsq = toBeMoved.getDistanceSq(moveTowards);
-                    point = moveTowards.getPositionVec();
+                    distsq = toBeMoved.distanceToSqr(moveTowards);
+                    point = moveTowards.position();
                 }
                 //update the entity's relative position to the point
                 //if the distance is below tether length, do nothing
                 //if the distance is above tether length, apply centripetal force to the point
                 if (getTetherLength(stack) * getTetherLength(stack) < distsq && point != null) {
-                    toBeMoved.addVelocity((point.x - toBeMoved.getPosX()) * 0.01, (point.y - toBeMoved.getPosY()) * 0.01, (point.z - toBeMoved.getPosZ()) * 0.01);
+                    toBeMoved.push((point.x - toBeMoved.getX()) * 0.01, (point.y - toBeMoved.getY()) * 0.01, (point.z - toBeMoved.getZ()) * 0.01);
                 }
                 if (shouldRepel(stack) && getTetherLength(stack) * getTetherLength(stack) > distsq*2 && point != null) {
-                    toBeMoved.addVelocity((point.x - toBeMoved.getPosX()) * -0.01, (point.y - toBeMoved.getPosY()) * -0.01, (point.z - toBeMoved.getPosZ()) * -0.01);
+                    toBeMoved.push((point.x - toBeMoved.getX()) * -0.01, (point.y - toBeMoved.getY()) * -0.01, (point.z - toBeMoved.getZ()) * -0.01);
                 }
                 if (getTetherLength(stack) == 0 && moveTowards != null) {//special case to help with catching up to entities
                     //System.out.println(target.getDistanceSq(e));
                     //if(NeedyLittleThings.getDistSqCompensated(moveTowards, toBeMoved)>8){
-                    toBeMoved.setPosition(moveTowards.getPosX(), moveTowards.getPosY(), moveTowards.getPosZ());
+                    toBeMoved.setPos(moveTowards.getX(), moveTowards.getY(), moveTowards.getZ());
                     //}
-                    Vector3d vec = moveTowards.getMotion();
-                    toBeMoved.setMotion(moveTowards.getMotion());
+                    Vector3d vec = moveTowards.getDeltaMovement();
+                    toBeMoved.setDeltaMovement(moveTowards.getDeltaMovement());
                     if (!moveTowards.isOnGround())
-                        toBeMoved.setVelocity(vec.x, moveTowards.isOnGround() ? 0 : vec.y, vec.z);
+                        toBeMoved.lerpMotion(vec.x, moveTowards.isOnGround() ? 0 : vec.y, vec.z);
                 }//else e.motionZ=e.motionX=e.motionY=0;
-                toBeMoved.velocityChanged = true;
+                toBeMoved.hurtMarked = true;
             }
         }
     }

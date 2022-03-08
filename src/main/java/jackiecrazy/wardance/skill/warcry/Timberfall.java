@@ -19,10 +19,12 @@ import java.awt.*;
 import java.util.Arrays;
 import java.util.HashSet;
 
+import jackiecrazy.wardance.skill.Skill.STATE;
+
 @Mod.EventBusSubscriber(modid = WarDance.MODID)
 public class Timberfall extends WarCry {
-    private final Tag<String> tag = Tag.getTagFromContents(new HashSet<>(Arrays.asList("chant", ProcPoints.melee, ProcPoints.modify_crit, ProcPoints.on_hurt, ProcPoints.attack_might, ProcPoints.on_being_hurt, ProcPoints.recharge_time, ProcPoints.recharge_sleep)));
-    private final Tag<String> no = Tag.getEmptyTag();//.getTagFromContents(new HashSet<>(Collections.emptyList()));
+    private final Tag<String> tag = Tag.create(new HashSet<>(Arrays.asList("chant", ProcPoints.melee, ProcPoints.modify_crit, ProcPoints.on_hurt, ProcPoints.attack_might, ProcPoints.on_being_hurt, ProcPoints.recharge_time, ProcPoints.recharge_sleep)));
+    private final Tag<String> no = Tag.empty();//.getTagFromContents(new HashSet<>(Collections.emptyList()));
 
     @SubscribeEvent
     public static void timberfall(AttackMightEvent e) {

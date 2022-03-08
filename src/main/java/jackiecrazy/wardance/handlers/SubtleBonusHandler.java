@@ -21,8 +21,8 @@ public class SubtleBonusHandler {
 
     @SubscribeEvent
     public static void thief(LootingLevelEvent e) {
-        if (e.getDamageSource().getTrueSource() instanceof LivingEntity)
-            e.setLootingLevel(e.getLootingLevel() + Math.max(0, (CombatData.getCap((LivingEntity) e.getDamageSource().getTrueSource()).getComboRank() - 3) / (CombatData.getCap((LivingEntity) e.getDamageSource().getTrueSource()).halvedAdrenaline()?2:1)));
+        if (e.getDamageSource().getEntity() instanceof LivingEntity)
+            e.setLootingLevel(e.getLootingLevel() + Math.max(0, (CombatData.getCap((LivingEntity) e.getDamageSource().getEntity()).getComboRank() - 3) / (CombatData.getCap((LivingEntity) e.getDamageSource().getEntity()).halvedAdrenaline()?2:1)));
     }
 
     @SubscribeEvent
@@ -32,7 +32,7 @@ public class SubtleBonusHandler {
 
     @SubscribeEvent
     public static void tank(TickEvent.PlayerTickEvent e) {
-        if (e.player.ticksExisted % 60 == 0 || update) {
+        if (e.player.tickCount % 60 == 0 || update) {
             SkillUtils.modifyAttribute(e.player, Attributes.MOVEMENT_SPEED, u, 0.02 * CombatData.getCap(e.player).getComboRank() * (CombatData.getCap(e.player).halvedAdrenaline() ? 0.5 : 1), AttributeModifier.Operation.MULTIPLY_BASE);
             SkillUtils.modifyAttribute(e.player, Attributes.ATTACK_SPEED, u, 0.02 * CombatData.getCap(e.player).getComboRank() * (CombatData.getCap(e.player).halvedAdrenaline() ? 0.5 : 1), AttributeModifier.Operation.MULTIPLY_TOTAL);
             update = false;

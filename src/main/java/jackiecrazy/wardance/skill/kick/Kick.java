@@ -25,8 +25,8 @@ import java.util.Arrays;
 import java.util.HashSet;
 
 public class Kick extends Skill {
-    private final Tag<String> tag = Tag.getTagFromContents(new HashSet<>(Arrays.asList("physical", "melee", "noDamage", "boundCast", "normalAttack", "countdown", "rechargeWithAttack")));
-    private final Tag<String> no = Tag.getTagFromContents(new HashSet<>(Arrays.asList("normalAttack")));
+    private final Tag<String> tag = Tag.create(new HashSet<>(Arrays.asList("physical", "melee", "noDamage", "boundCast", "normalAttack", "countdown", "rechargeWithAttack")));
+    private final Tag<String> no = Tag.create(new HashSet<>(Arrays.asList("normalAttack")));
 
     @Override
     public Tag<String> getTags(LivingEntity caster) {
@@ -64,16 +64,16 @@ public class Kick extends Skill {
 
     @Override
     public boolean onStateChange(LivingEntity caster, SkillData prev, STATE from, STATE to) {
-        if (from == STATE.HOLSTERED && to == STATE.ACTIVE&& cast(caster, -999)) {
-            LivingEntity target = GeneralUtils.raytraceLiving(caster, distance());
+        LivingEntity target = GeneralUtils.raytraceLiving(caster, distance());
+        if (from == STATE.HOLSTERED && to == STATE.ACTIVE && target!=null&& cast(caster, -999)) {
                 CombatData.getCap(target).consumePosture(caster, 4);
                 if (caster instanceof PlayerEntity)
-                    ((PlayerEntity) caster).spawnSweepParticles();
+                    ((PlayerEntity) caster).sweepAttack();
                 additionally(caster, target);
-                target.attackEntityFrom(new CombatDamageSource("fallingBlock", caster).setDamageTyping(CombatDamageSource.TYPE.PHYSICAL).setProcSkillEffects(true).setProcAttackEffects(true), 2);
-                if (target.getRevengeTarget() == null)
-                    target.setRevengeTarget(caster);
-                caster.world.playSound(null, caster.getPosX(), caster.getPosY(), caster.getPosZ(), SoundEvents.ENTITY_ZOMBIE_ATTACK_WOODEN_DOOR, SoundCategory.PLAYERS, 0.25f + WarDance.rand.nextFloat() * 0.5f, 0.5f + WarDance.rand.nextFloat() * 0.5f);
+                target.hurt(new CombatDamageSource("fallingBlock", caster).setDamageTyping(CombatDamageSource.TYPE.PHYSICAL).setProcSkillEffects(true).setProcAttackEffects(true), 2);
+                if (target.getLastHurtByMob() == null)
+                    target.setLastHurtByMob(caster);
+                caster.level.playSound(null, caster.getX(), caster.getY(), caster.getZ(), SoundEvents.ZOMBIE_ATTACK_WOODEN_DOOR, SoundCategory.PLAYERS, 0.25f + WarDance.rand.nextFloat() * 0.5f, 0.5f + WarDance.rand.nextFloat() * 0.5f);
         }
         if (to == STATE.COOLING) {
             setCooldown(caster, prev, 4);
@@ -93,10 +93,10 @@ public class Kick extends Skill {
         }
 
         protected void additionally(LivingEntity caster, LivingEntity target) {
-            final Vector3d vec = caster.getPositionVec().subtractReverse(target.getPositionVec());
+            final Vector3d vec = caster.position().vectorTo(target.position());
             final Vector3d noy = new Vector3d(vec.x, 0, vec.z).normalize().scale(-1);
-            caster.setMotion(caster.getMotion().add(noy.x, 0.4, noy.z));
-            caster.velocityChanged = true;
+            caster.setDeltaMovement(caster.getDeltaMovement().add(noy.x, 0.4, noy.z));
+            caster.hurtMarked = true;
             final ICombatCapability cap = CombatData.getCap(caster);
             cap.addRank(0.4f);
             cap.addPosture(0.3f * (cap.getPosture() / cap.getMaxPosture()));

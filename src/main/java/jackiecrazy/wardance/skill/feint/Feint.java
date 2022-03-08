@@ -33,14 +33,16 @@ import java.util.Arrays;
 import java.util.HashSet;
 import java.util.UUID;
 
+import jackiecrazy.wardance.skill.Skill.STATE;
+
 @Mod.EventBusSubscriber(modid = WarDance.MODID)
 public class Feint extends Skill {
-    private final Tag<String> proc = Tag.getTagFromContents(new HashSet<>(Arrays.asList("physical", "disableShield", "noDamage", ProcPoints.melee, ProcPoints.afflict_tick, "boundCast", ProcPoints.countdown, ProcPoints.recharge_normal, ProcPoints.change_parry_result)));
-    private final Tag<String> tag = Tag.getTagFromContents(new HashSet<>(Arrays.asList(SkillTags.physical, SkillTags.offensive, "noDamage")));
+    private final Tag<String> proc = Tag.create(new HashSet<>(Arrays.asList("physical", "disableShield", "noDamage", ProcPoints.melee, ProcPoints.afflict_tick, "boundCast", ProcPoints.countdown, ProcPoints.recharge_normal, ProcPoints.change_parry_result)));
+    private final Tag<String> tag = Tag.create(new HashSet<>(Arrays.asList(SkillTags.physical, SkillTags.offensive, "noDamage")));
 
     @SubscribeEvent()
     public static void hurt(LivingAttackEvent e) {
-        Entity seme = e.getSource().getTrueSource();
+        Entity seme = e.getSource().getEntity();
         LivingEntity uke = e.getEntityLiving();
         //reduce mark "cooldown", trigger capricious strike
         if (seme instanceof LivingEntity) {
@@ -178,8 +180,8 @@ public class Feint extends Skill {
     }
 
     public static class ScorpionSting extends Feint {
-        private final Tag<String> tag = Tag.getTagFromContents(new HashSet<>(Arrays.asList("physical", "disableShield", "noDamage", ProcPoints.melee, "boundCast", ProcPoints.on_hurt, ProcPoints.countdown, ProcPoints.recharge_normal, ProcPoints.change_parry_result)));
-        private final Tag<String> no = Tag.getTagFromContents(new HashSet<>(Arrays.asList("normalAttack")));
+        private final Tag<String> tag = Tag.create(new HashSet<>(Arrays.asList("physical", "disableShield", "noDamage", ProcPoints.melee, "boundCast", ProcPoints.on_hurt, ProcPoints.countdown, ProcPoints.recharge_normal, ProcPoints.change_parry_result)));
+        private final Tag<String> no = Tag.create(new HashSet<>(Arrays.asList("normalAttack")));
 
         @Override
         public Color getColor() {
@@ -188,9 +190,9 @@ public class Feint extends Skill {
 
         @Override
         public SkillData onMarked(LivingEntity caster, LivingEntity target, SkillData sd, @Nullable SkillData existing) {
-            target.addPotionEffect(new EffectInstance(Effects.POISON, 200));
-            for (EffectInstance ei : new ArrayList<>(target.getActivePotionEffects())) {
-                EffectInstance override = new EffectInstance(ei.getPotion(), ei.getDuration(), ei.getAmplifier() + 1, ei.isAmbient(), ei.doesShowParticles(), ei.isShowIcon());
+            target.addEffect(new EffectInstance(Effects.POISON, 200));
+            for (EffectInstance ei : new ArrayList<>(target.getActiveEffects())) {
+                EffectInstance override = new EffectInstance(ei.getEffect(), ei.getDuration(), ei.getAmplifier() + 1, ei.isAmbient(), ei.isVisible(), ei.showIcon());
                 EffectUtils.stackPot(target, override, EffectUtils.StackingMethod.NONE);
             }
             return super.onMarked(caster, target, sd, existing);
@@ -223,7 +225,7 @@ public class Feint extends Skill {
                 if (caster == target) {
                     SkillUtils.modifyAttribute(caster, Attributes.ARMOR, UPPER, sd.getArbitraryFloat() * 2, AttributeModifier.Operation.ADDITION);
                 } else {
-                    target.addPotionEffect(new EffectInstance(WarEffects.CORROSION.get(), 200));
+                    target.addEffect(new EffectInstance(WarEffects.CORROSION.get(), 200));
                 }
             }
             return super.onMarked(caster, target, sd, existing);

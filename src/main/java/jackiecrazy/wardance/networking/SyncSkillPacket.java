@@ -24,7 +24,7 @@ public class SyncSkillPacket {
 
         @Override
         public void accept(SyncSkillPacket SyncSkillPacket, PacketBuffer packetBuffer) {
-            packetBuffer.writeCompoundTag(SyncSkillPacket.icc);
+            packetBuffer.writeNbt(SyncSkillPacket.icc);
         }
     }
 
@@ -32,7 +32,7 @@ public class SyncSkillPacket {
 
         @Override
         public SyncSkillPacket apply(PacketBuffer packetBuffer) {
-            return new SyncSkillPacket(packetBuffer.readCompoundTag());
+            return new SyncSkillPacket(packetBuffer.readNbt());
         }
     }
 

@@ -46,17 +46,17 @@ public class Petrify extends Hex {
         double shatter = 0;
         if (absorption != null) {
             absorption.removeModifier(NOPE);
-            absorption.applyPersistentModifier(NOPE);
+            absorption.addPermanentModifier(NOPE);
             shatter += absorption.getValue();
         }
         if (deflection != null) {
             deflection.removeModifier(NOPE);
-            deflection.applyPersistentModifier(NOPE);
+            deflection.addPermanentModifier(NOPE);
             shatter += deflection.getValue();
         }
         if (armor != null) {
             armor.removeModifier(ARMOR);
-            armor.applyPersistentModifier(ARMOR);
+            armor.addPermanentModifier(ARMOR);
             shatter += armor.getValue();
         }
         CombatData.getCap(target).setShatterCooldown((int) shatter);

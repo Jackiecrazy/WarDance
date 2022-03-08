@@ -10,6 +10,8 @@ import net.minecraftforge.eventbus.api.EventPriority;
 import javax.annotation.Nullable;
 import java.awt.*;
 
+import jackiecrazy.wardance.skill.Skill.STATE;
+
 public class Mikiri extends IronGuard {
     @Override
     public Color getColor() {
@@ -22,7 +24,7 @@ public class Mikiri extends IronGuard {
         if (procPoint instanceof ParryEvent && procPoint.getPhase() == EventPriority.HIGHEST && ((ParryEvent) procPoint).getEntityLiving() == caster && ((ParryEvent) procPoint).canParry() && state == STATE.COOLING) {
             parry(caster, (ParryEvent) procPoint, stats, target, state);
         }
-        if (procPoint instanceof LivingAttackEvent && caster.getLastAttackedEntityTime() != caster.ticksExisted && ((LivingAttackEvent) procPoint).getEntityLiving() == target && procPoint.getPhase() == EventPriority.HIGHEST && state == STATE.COOLING) {
+        if (procPoint instanceof LivingAttackEvent && caster.getLastHurtMobTimestamp() != caster.tickCount && ((LivingAttackEvent) procPoint).getEntityLiving() == target && procPoint.getPhase() == EventPriority.HIGHEST && state == STATE.COOLING) {
             stats.decrementDuration();
         }
     }

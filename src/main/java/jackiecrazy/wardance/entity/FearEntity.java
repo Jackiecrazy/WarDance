@@ -67,61 +67,61 @@ public class FearEntity extends Entity implements ITetherAnchor {
     }
 
     @Override
-    protected void registerData() {
+    protected void defineSynchedData() {
 
     }
 
     @Override
     public void baseTick() {
         super.baseTick();
-        if (!world.isRemote) {
+        if (!level.isClientSide) {
             if (feared != null && wuss != null) {
-                double x = getPosX() - feared.getPosX();
-                double z = getPosZ() - feared.getPosZ();
+                double x = getX() - feared.getX();
+                double z = getZ() - feared.getZ();
                 x = x == 0 ? 0 : 40 * wuss.getAttributeValue(Attributes.MOVEMENT_SPEED) / x;
                 double y = wuss.isOnGround() ? 0 : 0.02;
                 z = z == 0 ? 0 : 40 * wuss.getAttributeValue(Attributes.MOVEMENT_SPEED) / z;
                 move(MoverType.SELF, new Vector3d((x + WarDance.rand.nextFloat() - 0.5) * 0.05, (y + WarDance.rand.nextFloat() - 0.5) * 0.05, (z + WarDance.rand.nextFloat() - 0.5) * 0.05));
-                markVelocityChanged();
+                markHurt();
                 float rotate = GeneralUtils.deg((float) MathHelper.atan2(x, z));
-                if (!wuss.isPotionActive(WarEffects.FEAR.get()))
-                    setDead();
-                rotationYaw = wuss.rotationYaw = -rotate;
+                if (!wuss.hasEffect(WarEffects.FEAR.get()))
+                    removeAfterChangingDimensions();
+                yRot = wuss.yRot = -rotate;
                 updateTetheringVelocity();
-            } else setDead();
+            } else removeAfterChangingDimensions();
         }
     }
 
     @Override
-    protected void readAdditional(CompoundNBT compound) {
-        if (compound.hasUniqueId("cthulhu") && world instanceof ServerWorld) {
-            feared = ((ServerWorld) world).getEntityByUuid(compound.getUniqueId("cthulhu"));
-        } else feared = world.getEntityByID(compound.getInt("yogsothoth"));
-        if (compound.hasUniqueId("lovecraft") && world instanceof ServerWorld) {
-            Entity potWuss = ((ServerWorld) world).getEntityByUuid(compound.getUniqueId("lovecraft"));
+    protected void readAdditionalSaveData(CompoundNBT compound) {
+        if (compound.hasUUID("cthulhu") && level instanceof ServerWorld) {
+            feared = ((ServerWorld) level).getEntity(compound.getUUID("cthulhu"));
+        } else feared = level.getEntity(compound.getInt("yogsothoth"));
+        if (compound.hasUUID("lovecraft") && level instanceof ServerWorld) {
+            Entity potWuss = ((ServerWorld) level).getEntity(compound.getUUID("lovecraft"));
             if (potWuss instanceof LivingEntity)
                 wuss = (LivingEntity) potWuss;
         } else {
-            Entity potWuss = world.getEntityByID(compound.getInt("bruh"));
+            Entity potWuss = level.getEntity(compound.getInt("bruh"));
             if (potWuss instanceof LivingEntity)
                 wuss = (LivingEntity) potWuss;
         }
     }
 
     @Override
-    protected void writeAdditional(CompoundNBT compound) {
+    protected void addAdditionalSaveData(CompoundNBT compound) {
         if (feared != null) {
-            compound.putUniqueId("cthulhu", feared.getUniqueID());
-            compound.putInt("yogsothoth", feared.getEntityId());
+            compound.putUUID("cthulhu", feared.getUUID());
+            compound.putInt("yogsothoth", feared.getId());
         }
         if (wuss != null) {
-            compound.putUniqueId("lovecraft", wuss.getUniqueID());
-            compound.putInt("bruh", wuss.getEntityId());
+            compound.putUUID("lovecraft", wuss.getUUID());
+            compound.putInt("bruh", wuss.getId());
         }
     }
 
     @Override
-    public IPacket<?> createSpawnPacket() {
+    public IPacket<?> getAddEntityPacket() {
         return new SSpawnObjectPacket(this);
     }
 }

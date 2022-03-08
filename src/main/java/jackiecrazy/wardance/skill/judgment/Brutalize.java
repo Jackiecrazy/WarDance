@@ -17,6 +17,8 @@ import javax.annotation.Nullable;
 import java.awt.*;
 import java.util.List;
 
+import jackiecrazy.wardance.skill.Skill.STATE;
+
 public class Brutalize extends Judgment {
     @Override
     public Color getColor() {
@@ -32,14 +34,14 @@ public class Brutalize extends Judgment {
     protected void performEffect(LivingEntity caster, LivingEntity target, int stack, SkillData sd) {
         super.performEffect(caster, target, stack, sd);
         if (stack == 3) {
-            if(target.world instanceof ServerWorld)
-            ((ServerWorld) target.world).spawnParticle(ParticleTypes.SOUL_FIRE_FLAME, target.getPosX(), target.getPosY() + target.getHeight() / 2, target.getPosZ(), 20, target.getWidth() / 4, target.getHeight() / 4, target.getWidth() / 4, 0.5f);
+            if(target.level instanceof ServerWorld)
+            ((ServerWorld) target.level).sendParticles(ParticleTypes.SOUL_FIRE_FLAME, target.getX(), target.getY() + target.getBbHeight() / 2, target.getZ(), 20, target.getBbWidth() / 4, target.getBbHeight() / 4, target.getBbWidth() / 4, 0.5f);
             CombatData.getCap(target).setStaggerTime(0);
             CombatData.getCap(target).consumePosture(caster, Float.MAX_VALUE, 0, true);
         }
-        final List<LivingEntity> list = caster.world.getLoadedEntitiesWithinAABB(LivingEntity.class, caster.getBoundingBox().grow(10), (a) -> TargetingUtils.isHostile(a, caster));
+        final List<LivingEntity> list = caster.level.getLoadedEntitiesOfClass(LivingEntity.class, caster.getBoundingBox().inflate(10), (a) -> TargetingUtils.isHostile(a, caster));
         for (LivingEntity enemy : list) {
-            enemy.addPotionEffect(new EffectInstance(WarEffects.ENFEEBLE.get(), 200));
+            enemy.addEffect(new EffectInstance(WarEffects.ENFEEBLE.get(), 200));
             if (stack == 3 && target.getMaxHealth() > enemy.getMaxHealth())
                 EffectUtils.causeFear(enemy, caster, 200);
         }

@@ -10,7 +10,7 @@ import java.util.Arrays;
 import java.util.HashSet;
 
 public class Overbear extends ShieldBash {
-    private final Tag<String> tag = Tag.getTagFromContents(new HashSet<>(Arrays.asList("physical", "melee", "boundCast", "normalAttack", "countdown", ProcPoints.on_hurt, ProcPoints.recharge_parry)));
+    private final Tag<String> tag = Tag.create(new HashSet<>(Arrays.asList("physical", "melee", "boundCast", "normalAttack", "countdown", ProcPoints.on_hurt, ProcPoints.recharge_parry)));
 
     @Override
     public Color getColor() {

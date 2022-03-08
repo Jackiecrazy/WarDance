@@ -20,16 +20,16 @@ public class SkillListWidget extends ExtendedList<SkillListWidget.CategoryEntry>
 
 
     public SkillListWidget(SkillSelectionScreen parent, int listWidth, int top, int bottom) {
-        super(parent.getMinecraftInstance(), listWidth, parent.height, top, bottom, parent.getFontRenderer().FONT_HEIGHT + 8);
-        this.func_244605_b(false);
+        super(parent.getMinecraftInstance(), listWidth, parent.height, top, bottom, parent.getFontRenderer().lineHeight + 8);
+        this.setRenderBackground(false);
         this.parent = parent;
         this.listWidth = listWidth;
-        this.func_244606_c(false);
-        //this.func_244605_b(false);
+        this.setRenderTopAndBottom(false);
+        //this.setRenderBackground(false);
         //this.refreshList();
     }
 
-    private static String stripControlCodes(String value) {return net.minecraft.util.StringUtils.stripControlCodes(value);}
+    private static String stripControlCodes(String value) {return net.minecraft.util.StringUtils.stripColor(value);}
 
     @Override
     protected int getScrollbarPosition() {
@@ -50,14 +50,14 @@ public class SkillListWidget extends ExtendedList<SkillListWidget.CategoryEntry>
     protected void renderBackground(MatrixStack mStack) {
         RenderSystem.disableTexture();
         Tessellator tessellator = Tessellator.getInstance();
-        BufferBuilder bufferbuilder = tessellator.getBuffer();
+        BufferBuilder bufferbuilder = tessellator.getBuilder();
         RenderSystem.color4f(1.0F, 1.0F, 1.0F, 1.0F);
         bufferbuilder.begin(7, DefaultVertexFormats.POSITION_TEX_COLOR);
-        bufferbuilder.pos((double)this.x0, (double)this.y1, 0.0D).tex((float)this.x0 / 32.0F, (float)(this.y1 + (int)this.getScrollAmount()) / 32.0F).color(20, 20, 20, 255).endVertex();
-        bufferbuilder.pos((double)this.x1, (double)this.y1, 0.0D).tex((float)this.x1 / 32.0F, (float)(this.y1 + (int)this.getScrollAmount()) / 32.0F).color(20, 20, 20, 255).endVertex();
-        bufferbuilder.pos((double)this.x1, (double)this.y0+3, 0.0D).tex((float)this.x1 / 32.0F, (float)(this.y0 + (int)this.getScrollAmount()) / 32.0F).color(20, 20, 20, 255).endVertex();
-        bufferbuilder.pos((double)this.x0, (double)this.y0+3, 0.0D).tex((float)this.x0 / 32.0F, (float)(this.y0 + (int)this.getScrollAmount()) / 32.0F).color(20, 20, 20, 255).endVertex();
-        tessellator.draw();
+        bufferbuilder.vertex((double)this.x0, (double)this.y1, 0.0D).uv((float)this.x0 / 32.0F, (float)(this.y1 + (int)this.getScrollAmount()) / 32.0F).color(20, 20, 20, 255).endVertex();
+        bufferbuilder.vertex((double)this.x1, (double)this.y1, 0.0D).uv((float)this.x1 / 32.0F, (float)(this.y1 + (int)this.getScrollAmount()) / 32.0F).color(20, 20, 20, 255).endVertex();
+        bufferbuilder.vertex((double)this.x1, (double)this.y0+3, 0.0D).uv((float)this.x1 / 32.0F, (float)(this.y0 + (int)this.getScrollAmount()) / 32.0F).color(20, 20, 20, 255).endVertex();
+        bufferbuilder.vertex((double)this.x0, (double)this.y0+3, 0.0D).uv((float)this.x0 / 32.0F, (float)(this.y0 + (int)this.getScrollAmount()) / 32.0F).color(20, 20, 20, 255).endVertex();
+        tessellator.end();
         RenderSystem.enableTexture();
     }
 
@@ -65,18 +65,18 @@ public class SkillListWidget extends ExtendedList<SkillListWidget.CategoryEntry>
     public void render(MatrixStack matrixStack, int mouseX, int mouseY, float partialTicks) {
         RenderSystem.disableTexture();
         Tessellator tessellator = Tessellator.getInstance();
-        BufferBuilder bufferbuilder = tessellator.getBuffer();
-        this.minecraft.getTextureManager().bindTexture(AbstractGui.BACKGROUND_LOCATION);
+        BufferBuilder bufferbuilder = tessellator.getBuilder();
+        this.minecraft.getTextureManager().bind(AbstractGui.BACKGROUND_LOCATION);
         RenderSystem.color4f(1.0F, 1.0F, 1.0F, 1.0F);
         bufferbuilder.begin(7, DefaultVertexFormats.POSITION_TEX_COLOR);
         int color=this.isFocused()?255:160;
-        bufferbuilder.pos((double)this.x0+1, (double)this.y1+1, 0.0D).tex((float)this.x0 / 32.0F, (float)(this.y1 + (int)this.getScrollAmount()) / 32.0F).color(color, color, color, 255).endVertex();
-        bufferbuilder.pos((double)this.x1, (double)this.y1+1, 0.0D).tex((float)this.x1 / 32.0F, (float)(this.y1 + (int)this.getScrollAmount()) / 32.0F).color(color, color, color, 255).endVertex();
-        bufferbuilder.pos((double)this.x1, (double)this.y0+3, 0.0D).tex((float)this.x1 / 32.0F, (float)(this.y0 + (int)this.getScrollAmount()) / 32.0F).color(color, color, color, 255).endVertex();
-        bufferbuilder.pos((double)this.x0+1, (double)this.y0+3, 0.0D).tex((float)this.x0 / 32.0F, (float)(this.y0 + (int)this.getScrollAmount()) / 32.0F).color(color, color, color, 255).endVertex();
-        tessellator.draw();
+        bufferbuilder.vertex((double)this.x0+1, (double)this.y1+1, 0.0D).uv((float)this.x0 / 32.0F, (float)(this.y1 + (int)this.getScrollAmount()) / 32.0F).color(color, color, color, 255).endVertex();
+        bufferbuilder.vertex((double)this.x1, (double)this.y1+1, 0.0D).uv((float)this.x1 / 32.0F, (float)(this.y1 + (int)this.getScrollAmount()) / 32.0F).color(color, color, color, 255).endVertex();
+        bufferbuilder.vertex((double)this.x1, (double)this.y0+3, 0.0D).uv((float)this.x1 / 32.0F, (float)(this.y0 + (int)this.getScrollAmount()) / 32.0F).color(color, color, color, 255).endVertex();
+        bufferbuilder.vertex((double)this.x0+1, (double)this.y0+3, 0.0D).uv((float)this.x0 / 32.0F, (float)(this.y0 + (int)this.getScrollAmount()) / 32.0F).color(color, color, color, 255).endVertex();
+        tessellator.end();
         RenderSystem.enableTexture();
-        double d0 = this.minecraft.getMainWindow().getGuiScaleFactor();
+        double d0 = this.minecraft.getWindow().getGuiScale();
         RenderSystem.enableScissor((int) ((double) (this.getRowLeft()) * d0), (int) ((double) (this.height - this.y1) * d0), (int) ((double) (this.getScrollbarPosition() - 10) * d0), (int) ((double) (this.height - (this.height - this.y1) - this.y0 - 4) * d0));
         super.render(matrixStack, mouseX, mouseY, partialTicks);
         RenderSystem.disableScissor();
@@ -106,10 +106,10 @@ public class SkillListWidget extends ExtendedList<SkillListWidget.CategoryEntry>
             //ITextComponent version = new StringTextComponent(stripControlCodes(MavenVersionStringHelper.artifactVersionToString(modInfo.getVersion())));
             //VersionChecker.CheckResult vercheck = VersionChecker.getResult(modInfo);
             FontRenderer font = this.parent.getFontRenderer();
-            font.func_238422_b_(ms, LanguageMap.getInstance().func_241870_a(ITextProperties.func_240655_a_(font.func_238417_a_(name, listWidth))), left + 3, top + 2, 0xFFFFFF);
-            //font.func_238422_b_(ms, LanguageMap.getInstance().func_241870_a(ITextProperties.func_240655_a_(font.func_238417_a_(version, listWidth))), left + 3, top + 2 + font.FONT_HEIGHT, 0xCCCCCC);
+            font.draw(ms, LanguageMap.getInstance().getVisualOrder(ITextProperties.composite(font.substrByWidth(name, listWidth))), left + 3, top + 2, 0xFFFFFF);
+            //font.draw(ms, LanguageMap.getInstance().getVisualOrder(ITextProperties.composite(font.substrByWidth(version, listWidth))), left + 3, top + 2 + font.FONT_HEIGHT, 0xCCCCCC);
             //lil' skill icon
-            Minecraft.getInstance().getTextureManager().bindTexture(s.icon());
+            Minecraft.getInstance().getTextureManager().bind(s.icon());
             RenderSystem.color4f(1, 1, 1, 1);
             RenderSystem.pushMatrix();
             AbstractGui.blit(ms, getLeft() + width - 12, top + entryHeight / 4, 0, 0, 8, 8, 8, 8);

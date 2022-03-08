@@ -11,6 +11,8 @@ import net.minecraftforge.eventbus.api.EventPriority;
 
 import java.awt.*;
 
+import jackiecrazy.wardance.skill.Skill.STATE;
+
 public class Clinch extends Grapple {
     @Override
     public Color getColor() {
@@ -21,14 +23,14 @@ public class Clinch extends Grapple {
     public void onProc(LivingEntity caster, Event procPoint, STATE state, SkillData stats, LivingEntity target) {
         if (procPoint instanceof LivingAttackEvent && procPoint.getPhase() == EventPriority.HIGHEST && ((LivingAttackEvent) procPoint).getEntityLiving() == target) {
             if (state == STATE.HOLSTERED) {
-                if (stats.isCondition() && CombatUtils.isUnarmed(caster.getHeldItemMainhand(), caster) && caster.ticksExisted - caster.getLastAttackedEntityTime() < 40 && caster.getLastAttackedEntity() == target && cast(caster, -999)) {
+                if (stats.isCondition() && CombatUtils.isUnarmed(caster.getMainHandItem(), caster) && caster.tickCount - caster.getLastHurtMobTimestamp() < 40 && caster.getLastHurtMob() == target && cast(caster, -999)) {
                     performEffect(caster, target);
                     markUsed(caster);
                 } else {
                     stats.flagCondition(true);
                     final boolean offhand = CombatData.getCap(caster).isOffhandAttack();
                     CombatData.getCap(target).setHandBind(offhand ? Hand.OFF_HAND : Hand.MAIN_HAND, 40);
-                    if (CombatUtils.isUnarmed(caster.getHeldItemOffhand(), caster))
+                    if (CombatUtils.isUnarmed(caster.getOffhandItem(), caster))
                         CombatData.getCap(target).setHandBind(offhand ? Hand.MAIN_HAND : Hand.OFF_HAND, 40);
                 }
             } else if (state == STATE.COOLING) stats.decrementDuration();

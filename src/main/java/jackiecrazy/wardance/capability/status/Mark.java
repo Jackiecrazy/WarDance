@@ -39,7 +39,7 @@ public class Mark implements IMark {
             if (GeneralConfig.debug)
                 WarDance.LOGGER.warn("status " + d + " is already active, merging according to rules.");
         }
-        SkillData sd = d.getSkill().onMarked(d.getCaster(dude.get().world), dude.get(), d, statuus.get(d.getSkill()));
+        SkillData sd = d.getSkill().onMarked(d.getCaster(dude.get().level), dude.get(), d, statuus.get(d.getSkill()));
         if(sd!=null)
         statuus.put(d.getSkill(), sd);
         else statuus.remove(d.getSkill());
@@ -51,7 +51,7 @@ public class Mark implements IMark {
         SkillData sd = statuus.get(s);
         LivingEntity victim = dude.get();
         if (sd != null && victim != null) {
-            sd.getSkill().onMarkEnd(sd.getCaster(victim.world), victim, sd);
+            sd.getSkill().onMarkEnd(sd.getCaster(victim.level), victim, sd);
         }
         sync = true;
         statuus.remove(s);
@@ -118,14 +118,14 @@ public class Mark implements IMark {
         if (ticker == null) return;
         final Collection<SkillData> active = new ArrayList<>(getActiveMarks().values());
         for (SkillData cd : active) {
-            if (cd.getSkill().markTick(cd.getCaster(ticker.world), ticker, cd)) sync = true;
+            if (cd.getSkill().markTick(cd.getCaster(ticker.level), ticker, cd)) sync = true;
         }
         if (sync && ticker instanceof ServerPlayerEntity) {
-            CombatChannel.INSTANCE.send(PacketDistributor.PLAYER.with(() -> (ServerPlayerEntity) ticker), new UpdateAfflictionPacket(ticker.getEntityId(), this.write()));
+            CombatChannel.INSTANCE.send(PacketDistributor.PLAYER.with(() -> (ServerPlayerEntity) ticker), new UpdateAfflictionPacket(ticker.getId(), this.write()));
             sync = false;
         }
         if (sync && EntityHandler.mustUpdate.containsValue(ticker)) {
-            CombatChannel.INSTANCE.send(PacketDistributor.TRACKING_ENTITY_AND_SELF.with(() -> ticker), new UpdateAfflictionPacket(ticker.getEntityId(), this.write()));
+            CombatChannel.INSTANCE.send(PacketDistributor.TRACKING_ENTITY_AND_SELF.with(() -> ticker), new UpdateAfflictionPacket(ticker.getId(), this.write()));
             sync = false;
         }
     }

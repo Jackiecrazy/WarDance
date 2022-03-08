@@ -13,7 +13,7 @@ class WarEffect extends Effect {
     }
 
     @Override
-    public void performEffect(LivingEntity l, int amplifier) {
+    public void applyEffectTick(LivingEntity l, int amplifier) {
         if (this == WarEffects.RESTORATION.get()) {
             CombatData.getCap(l).addWounding(-amplifier);
         }
@@ -23,13 +23,13 @@ class WarEffect extends Effect {
         if (this == WarEffects.REFRESHMENT.get()) {
             CombatData.getCap(l).addFatigue(-amplifier);
         }
-        if (this == WarEffects.FEAR.get() && l.world instanceof ServerWorld) {
-            ((ServerWorld) l.world).spawnParticle(ParticleTypes.DRIPPING_WATER, l.getPosX(), l.getPosY() + l.getHeight() / 2, l.getPosZ(), 5, l.getWidth() / 4, l.getHeight() / 4, l.getWidth() / 4, 0.5f);
+        if (this == WarEffects.FEAR.get() && l.level instanceof ServerWorld) {
+            ((ServerWorld) l.level).sendParticles(ParticleTypes.DRIPPING_WATER, l.getX(), l.getY() + l.getBbHeight() / 2, l.getZ(), 5, l.getBbWidth() / 4, l.getBbHeight() / 4, l.getBbWidth() / 4, 0.5f);
         }
     }
 
     @Override
-    public boolean isReady(int duration, int amplifier) {
+    public boolean isDurationEffectTick(int duration, int amplifier) {
         return duration % 20 == 1;
     }
 }

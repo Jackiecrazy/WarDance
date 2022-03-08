@@ -40,9 +40,9 @@ public class RequestUpdatePacket {
         public void accept(RequestUpdatePacket updateClientPacket, Supplier<NetworkEvent.Context> contextSupplier) {
             contextSupplier.get().enqueueWork(() -> {
                 ServerPlayerEntity sender = contextSupplier.get().getSender();
-                if (sender != null && sender.world.getEntityByID(updateClientPacket.e) instanceof LivingEntity) {
-                    EntityHandler.mustUpdate.put(sender, sender.world.getEntityByID(updateClientPacket.e));
-                    CombatData.getCap(((LivingEntity) (sender.world.getEntityByID(updateClientPacket.e)))).serverTick();
+                if (sender != null && sender.level.getEntity(updateClientPacket.e) instanceof LivingEntity) {
+                    EntityHandler.mustUpdate.put(sender, sender.level.getEntity(updateClientPacket.e));
+                    CombatData.getCap(((LivingEntity) (sender.level.getEntity(updateClientPacket.e)))).serverTick();
                 } else EntityHandler.mustUpdate.put(sender, null);
             });
             contextSupplier.get().setPacketHandled(true);

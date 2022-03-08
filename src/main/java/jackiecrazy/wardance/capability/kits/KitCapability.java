@@ -27,13 +27,13 @@ public class KitCapability implements IKitItemStack {
         @Override
         public INBT writeNBT(Capability<IKitItemStack> capability, IKitItemStack instance, Direction side) {
             CompoundNBT ret= new CompoundNBT();
-            ret.put("stack", instance.getKitItem().write(new CompoundNBT()));
+            ret.put("stack", instance.getKitItem().save(new CompoundNBT()));
             return ret;
         }
 
         @Override
         public void readNBT(Capability<IKitItemStack> capability, IKitItemStack instance, Direction side, INBT nbt) {
-            instance.setKitItem(ItemStack.read(((CompoundNBT)nbt).getCompound("stack")));
+            instance.setKitItem(ItemStack.of(((CompoundNBT)nbt).getCompound("stack")));
         }
     }
 }

@@ -44,7 +44,7 @@ public class NewSkillSelectionScreen extends Screen {
     }
 
     @Override
-    public void closeScreen() {
+    public void onClose() {
         //finalize skill selection and send packet to server
     }
 }

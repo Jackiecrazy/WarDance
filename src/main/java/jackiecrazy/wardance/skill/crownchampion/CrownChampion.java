@@ -32,6 +32,8 @@ import java.util.Arrays;
 import java.util.HashSet;
 import java.util.UUID;
 
+import jackiecrazy.wardance.skill.Skill.STATE;
+
 @Mod.EventBusSubscriber(modid = WarDance.MODID)
 public class CrownChampion extends Skill {
     /*
@@ -41,17 +43,17 @@ prideful might: triple might gain, but clear everything on taking damage; shatte
 elemental might: +1 burn/snowball/poison/drown damage to targets you have attacked; +1 might for every mob that dies to environmental damage around you
      */
     private static final UUID MULT = UUID.fromString("abb2e130-36af-4fbb-bf66-0f4be905dc24");
-    private final Tag<String> tag = Tag.getTagFromContents(new HashSet<>(Arrays.asList("passive", ProcPoints.change_might)));
+    private final Tag<String> tag = Tag.create(new HashSet<>(Arrays.asList("passive", ProcPoints.change_might)));
 
     @SubscribeEvent(priority = EventPriority.HIGHEST)
     public static void hurt(LivingDamageEvent e) {
-        Entity seme = e.getSource().getTrueSource();
+        Entity seme = e.getSource().getEntity();
         LivingEntity uke = e.getEntityLiving();
         if (seme instanceof LivingEntity) {
             final Skill venge = WarSkills.VENGEFUL_MIGHT.get();
-            for (PlayerEntity p : uke.world.getPlayers())
-                if (TargetingUtils.isAlly(p, uke) && p.getDistanceSq(uke) < 100 && CasterData.getCap(p).getEquippedSkills().contains(venge)) {
-                    ((LivingEntity) seme).addPotionEffect(new EffectInstance(Effects.GLOWING, 100));
+            for (PlayerEntity p : uke.level.players())
+                if (TargetingUtils.isAlly(p, uke) && p.distanceToSqr(uke) < 100 && CasterData.getCap(p).getEquippedSkills().contains(venge)) {
+                    ((LivingEntity) seme).addEffect(new EffectInstance(Effects.GLOWING, 100));
                     SkillData apply = Marks.getCap((LivingEntity) seme).getActiveMark(venge).orElse(new SkillData(venge, 0));
                     apply.setArbitraryFloat(apply.getArbitraryFloat() + e.getAmount());
                     Marks.getCap((LivingEntity) seme).mark(apply);
@@ -85,7 +87,7 @@ elemental might: +1 burn/snowball/poison/drown damage to targets you have attack
     @SubscribeEvent
     public static void deady(LivingDeathEvent e) {
         if (!CombatUtils.isPhysicalAttack(e.getSource())) {
-            for (PlayerEntity pe : e.getEntityLiving().world.getLoadedEntitiesWithinAABB(PlayerEntity.class, e.getEntity().getBoundingBox().grow(5))) {
+            for (PlayerEntity pe : e.getEntityLiving().level.getLoadedEntitiesOfClass(PlayerEntity.class, e.getEntity().getBoundingBox().inflate(5))) {
                 if (CasterData.getCap(pe).getEquippedSkills().contains(WarSkills.ELEMENTAL_MIGHT.get())) {
                     CombatData.getCap(pe).addMight(1);
                 }
@@ -140,7 +142,7 @@ elemental might: +1 burn/snowball/poison/drown damage to targets you have attack
 
     public static class HiddenMight extends CrownChampion {
 
-        private final Tag<String> tag = Tag.getTagFromContents(new HashSet<>(Arrays.asList("passive", ProcPoints.attack_might)));
+        private final Tag<String> tag = Tag.create(new HashSet<>(Arrays.asList("passive", ProcPoints.attack_might)));
 
         @Override
         public void onProc(LivingEntity caster, Event procPoint, STATE state, SkillData stats, LivingEntity target) {
@@ -174,7 +176,7 @@ elemental might: +1 burn/snowball/poison/drown damage to targets you have attack
 
         @Override
         public boolean markTick(LivingEntity caster, LivingEntity target, SkillData sd) {
-            target.addPotionEffect(new EffectInstance(Effects.GLOWING, 10));
+            target.addEffect(new EffectInstance(Effects.GLOWING, 10));
             if (sd.getDuration() < 0) {
                 removeMark(target);
                 return true;
@@ -206,7 +208,7 @@ elemental might: +1 burn/snowball/poison/drown damage to targets you have attack
         @Override
         public void onProc(LivingEntity caster, Event procPoint, STATE state, SkillData stats, LivingEntity target) {
             if (procPoint instanceof LivingAttackEvent)
-                ((LivingAttackEvent) procPoint).getEntityLiving().addPotionEffect(new EffectInstance(WarEffects.VULNERABLE.get(), (int) (CombatData.getCap(caster).getMight() * 20)));
+                ((LivingAttackEvent) procPoint).getEntityLiving().addEffect(new EffectInstance(WarEffects.VULNERABLE.get(), (int) (CombatData.getCap(caster).getMight() * 20)));
         }
 
         @Override

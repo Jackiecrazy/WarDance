@@ -12,6 +12,8 @@ import net.minecraft.util.Hand;
 
 import java.awt.*;
 
+import jackiecrazy.wardance.skill.Skill.STATE;
+
 public class ItchyCurse extends Hex {
     @Override
     public Color getColor() {
@@ -20,19 +22,19 @@ public class ItchyCurse extends Hex {
 
     @Override
     public boolean markTick(LivingEntity caster, LivingEntity target, SkillData sd) {
-        boolean stationary = target.moveForward == 0 && target.moveStrafing == 0 && target.moveVertical == 0;
+        boolean stationary = target.zza == 0 && target.xxa == 0 && target.yya == 0;
         if (stationary) {
             sd.decrementDuration();
         }
-        if (target.ticksExisted % 20 == 0) {
+        if (target.tickCount % 20 == 0) {
             sd.setArbitraryFloat(sd.getArbitraryFloat() + 1);
             if (sd.getArbitraryFloat() >= 3) {
-                SkillUtils.modifyAttribute(target, Attributes.MOVEMENT_SPEED, HEX.getID(), -1, AttributeModifier.Operation.MULTIPLY_TOTAL);
+                SkillUtils.modifyAttribute(target, Attributes.MOVEMENT_SPEED, HEX.getId(), -1, AttributeModifier.Operation.MULTIPLY_TOTAL);
                 CombatData.getCap(target).setHandBind(Hand.MAIN_HAND, 20);
                 CombatData.getCap(target).setHandBind(Hand.OFF_HAND, 20);
                 sd.setArbitraryFloat(-1);
             } else if (sd.getArbitraryFloat() == 0) {
-                SkillUtils.modifyAttribute(target, Attributes.MOVEMENT_SPEED, HEX.getID(), 0, AttributeModifier.Operation.MULTIPLY_TOTAL);
+                SkillUtils.modifyAttribute(target, Attributes.MOVEMENT_SPEED, HEX.getId(), 0, AttributeModifier.Operation.MULTIPLY_TOTAL);
             }
         }
         //SkillUtils.modifyAttribute(target, Attributes.ARMOR, HEX.getID(), -sd.getArbitraryFloat() * 2, AttributeModifier.Operation.ADDITION);
@@ -53,7 +55,7 @@ public class ItchyCurse extends Hex {
     public void onMarkEnd(LivingEntity caster, LivingEntity target, SkillData sd) {
         final ModifiableAttributeInstance speed = target.getAttribute(Attributes.MOVEMENT_SPEED);
         if (speed != null) {
-            speed.removeModifier(HEX.getID());
+            speed.removeModifier(HEX.getId());
         }
         super.onMarkEnd(caster, target, sd);
     }

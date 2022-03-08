@@ -16,6 +16,8 @@ import net.minecraftforge.eventbus.api.EventPriority;
 
 import java.awt.*;
 
+import jackiecrazy.wardance.skill.Skill.STATE;
+
 public class ShadowDive extends MementoMori {
     @Override
     public Color getColor() {
@@ -26,9 +28,9 @@ public class ShadowDive extends MementoMori {
     public void onProc(LivingEntity caster, Event procPoint, STATE state, SkillData stats, LivingEntity target) {
         if (procPoint instanceof LivingDamageEvent && state == STATE.INACTIVE && ((LivingDamageEvent) procPoint).getEntityLiving() == caster && procPoint.getPhase() == EventPriority.HIGHEST && ((LivingDamageEvent) procPoint).getAmount() > caster.getHealth()) {
             activate(caster, 160);
-            caster.addPotionEffect(new EffectInstance(Effects.INVISIBILITY, 160));
-            caster.addPotionEffect(new EffectInstance(Effects.SPEED, 160));
-            SkillUtils.createCloud(caster.world, caster, caster.getPosX(), caster.getPosY(), caster.getPosZ(), 7, ParticleTypes.LARGE_SMOKE);
+            caster.addEffect(new EffectInstance(Effects.INVISIBILITY, 160));
+            caster.addEffect(new EffectInstance(Effects.MOVEMENT_SPEED, 160));
+            SkillUtils.createCloud(caster.level, caster, caster.getX(), caster.getY(), caster.getZ(), 7, ParticleTypes.LARGE_SMOKE);
 
         }
     }
@@ -54,11 +56,11 @@ public class ShadowDive extends MementoMori {
             Entity tar = GeneralUtils.collidingEntity(caster);
             if (tar instanceof LivingEntity && !d.isCondition()) {
                 d.flagCondition(true);
-                SkillUtils.createCloud(caster.world, caster, caster.getPosX(), caster.getPosY(), caster.getPosZ(), 7, ParticleTypes.ANGRY_VILLAGER);
-                for (LivingEntity e : caster.world.getLoadedEntitiesWithinAABB(LivingEntity.class, caster.getBoundingBox().grow(40), (a) -> TargetingUtils.isHostile(a, caster))) {
-                    e.setRevengeTarget((LivingEntity) tar);
+                SkillUtils.createCloud(caster.level, caster, caster.getX(), caster.getY(), caster.getZ(), 7, ParticleTypes.ANGRY_VILLAGER);
+                for (LivingEntity e : caster.level.getLoadedEntitiesOfClass(LivingEntity.class, caster.getBoundingBox().inflate(40), (a) -> TargetingUtils.isHostile(a, caster))) {
+                    e.setLastHurtByMob((LivingEntity) tar);
                     if (e instanceof MobEntity)
-                        ((MobEntity) e).setAttackTarget((LivingEntity) tar);
+                        ((MobEntity) e).setTarget((LivingEntity) tar);
 
                 }
             }

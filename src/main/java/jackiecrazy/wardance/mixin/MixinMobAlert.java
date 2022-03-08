@@ -18,7 +18,7 @@ public abstract class MixinMobAlert {
     private void alert(DamageSource source, CallbackInfo ci) {
         MobEntity me = ((MobEntity) (Object) this);
         float volume = ((MixinMobSound) me).callGetSoundVolume();
-        EntityHandler.alertTracker.put(new Tuple<>(me.world, new BlockPos(me.getPosX(), me.getPosY(), me.getPosZ())), (float) (volume * StealthConfig.blockPerVolume));
+        EntityHandler.alertTracker.put(new Tuple<>(me.level, new BlockPos(me.getX(), me.getY(), me.getZ())), (float) (volume * StealthConfig.blockPerVolume));
     }
 
 }

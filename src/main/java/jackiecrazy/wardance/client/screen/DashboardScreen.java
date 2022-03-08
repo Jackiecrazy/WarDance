@@ -28,11 +28,11 @@ public class DashboardScreen extends Screen {
 
     protected void drawGuiContainerBackgroundLayer(MatrixStack matrixStack, float partialTicks, int x, int y) {
         RenderSystem.color4f(1.0F, 1.0F, 1.0F, 1.0F);
-        this.minecraft.getTextureManager().bindTexture(INVENTORY_BACKGROUND);
+        this.minecraft.getTextureManager().bind(INVENTORY_BACKGROUND);
         int i = width / 2 - 90;
         int j = height / 2 - 83;
         this.blit(matrixStack, i, j, 0, 0, 180, 166);
-        InventoryScreen.drawEntityOnScreen(i + 51, j + 75, 30, (float) (i + 51) - this.oldMouseX, (float) (j + 75 - 50) - this.oldMouseY, p);
+        InventoryScreen.renderEntityInInventory(i + 51, j + 75, 30, (float) (i + 51) - this.oldMouseX, (float) (j + 75 - 50) - this.oldMouseY, p);
     }
 
     public void render(MatrixStack matrixStack, int mouseX, int mouseY, float partialTicks) {

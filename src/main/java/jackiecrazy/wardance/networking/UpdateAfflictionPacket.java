@@ -29,7 +29,7 @@ public class UpdateAfflictionPacket {
         @Override
         public void accept(UpdateAfflictionPacket updateClientPacket, PacketBuffer packetBuffer) {
             packetBuffer.writeInt(updateClientPacket.e);
-            packetBuffer.writeCompoundTag(updateClientPacket.icc);
+            packetBuffer.writeNbt(updateClientPacket.icc);
         }
     }
 
@@ -37,7 +37,7 @@ public class UpdateAfflictionPacket {
 
         @Override
         public UpdateAfflictionPacket apply(PacketBuffer packetBuffer) {
-            return new UpdateAfflictionPacket(packetBuffer.readInt(), packetBuffer.readCompoundTag());
+            return new UpdateAfflictionPacket(packetBuffer.readInt(), packetBuffer.readNbt());
         }
     }
 
@@ -46,9 +46,9 @@ public class UpdateAfflictionPacket {
         @Override
         public void accept(UpdateAfflictionPacket updateClientPacket, Supplier<NetworkEvent.Context> contextSupplier) {
             contextSupplier.get().enqueueWork(() -> DistExecutor.unsafeRunWhenOn(Dist.CLIENT, () -> () -> {
-                ClientWorld world = Minecraft.getInstance().world;
+                ClientWorld world = Minecraft.getInstance().level;
                 if (world != null) {
-                    Entity entity = world.getEntityByID(updateClientPacket.e);
+                    Entity entity = world.getEntity(updateClientPacket.e);
                     if (entity instanceof LivingEntity){
                         Marks.getCap((LivingEntity) entity).read(updateClientPacket.icc);
                     }

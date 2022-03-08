@@ -9,5 +9,5 @@ public interface MixinMobSound {
     @Invoker
     float callGetSoundVolume();
     @Invoker
-    float callGetSoundPitch();
+    float callGetVoicePitch();
 }

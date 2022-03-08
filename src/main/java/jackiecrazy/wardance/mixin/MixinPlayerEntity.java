@@ -33,7 +33,7 @@ public abstract class MixinPlayerEntity extends LivingEntity {
         super(type, worldIn);
     }
 
-//    @Inject(method = "attackTargetEntityWithCurrentItem", locals = LocalCapture.CAPTURE_FAILSOFT,
+//    @Inject(method = "attack", locals = LocalCapture.CAPTURE_FAILSOFT,
 //            at = @At(value = "INVOKE", shift = At.Shift.BEFORE, target = "Lnet/minecraft/entity/player/PlayerEntity;resetCooldown()V"))
 //    private void noReset(Entity targetEntity, CallbackInfo ci, float f, float f1, float f2) {
 //        CombatData.getCap(this).setCachedCooldown(f2);
@@ -41,43 +41,43 @@ public abstract class MixinPlayerEntity extends LivingEntity {
 
 
 
-    @Inject(method = "attackTargetEntityWithCurrentItem", locals = LocalCapture.CAPTURE_FAILSOFT,
-            at = @At(value = "INVOKE", target = "Lnet/minecraft/entity/Entity;attackEntityFrom(Lnet/minecraft/util/DamageSource;F)Z"))
+    @Inject(method = "attack", locals = LocalCapture.CAPTURE_FAILSOFT,
+            at = @At(value = "INVOKE", target = "Lnet/minecraft/entity/Entity;hurt(Lnet/minecraft/util/DamageSource;F)Z"))
     private void store(Entity targetEntity, CallbackInfo ci, float f, float f1, float f2, boolean flag, boolean flag1, float i, boolean flag2, CriticalHitEvent hitResult, boolean flag3, double d0, float f4, boolean flag4, int j, Vector3d vector3d) {
         tempCrit = flag2;
         tempCdmg = hitResult == null ? 1 : hitResult.getDamageModifier();
     }
 
-    @Redirect(method = "attackTargetEntityWithCurrentItem",
-            at = @At(value = "INVOKE", target = "Lnet/minecraft/util/DamageSource;causePlayerDamage(Lnet/minecraft/entity/player/PlayerEntity;)Lnet/minecraft/util/DamageSource;"))
+    @Redirect(method = "attack",
+            at = @At(value = "INVOKE", target = "Lnet/minecraft/util/DamageSource;playerAttack(Lnet/minecraft/entity/player/PlayerEntity;)Lnet/minecraft/util/DamageSource;"))
     private DamageSource customDamageSource(PlayerEntity player) {
-        CombatDamageSource d = new CombatDamageSource("player", player).setDamageDealer(player.getHeldItemMainhand()).setAttackingHand(CombatData.getCap(player).isOffhandAttack() ? Hand.OFF_HAND : Hand.MAIN_HAND).setProcAttackEffects(true).setProcNormalEffects(true).setCrit(tempCrit).setCritDamage(tempCdmg).setDamageTyping(CombatDamageSource.TYPE.PHYSICAL);
+        CombatDamageSource d = new CombatDamageSource("player", player).setDamageDealer(player.getMainHandItem()).setAttackingHand(CombatData.getCap(player).isOffhandAttack() ? Hand.OFF_HAND : Hand.MAIN_HAND).setProcAttackEffects(true).setProcNormalEffects(true).setCrit(tempCrit).setCritDamage(tempCdmg).setDamageTyping(CombatDamageSource.TYPE.PHYSICAL);
         ds = d;
         return d;
     }
 
-    @Redirect(method = "attackTargetEntityWithCurrentItem",
-            at = @At(value = "FIELD", target = "Lnet/minecraft/entity/player/PlayerEntity;distanceWalkedModified:F", opcode = Opcodes.GETFIELD))
+    @Redirect(method = "attack",
+            at = @At(value = "FIELD", target = "Lnet/minecraft/entity/player/PlayerEntity;walkDist:F", opcode = Opcodes.GETFIELD))
     private float noSweep(PlayerEntity player) {
         if (GeneralConfig.betterSweep)
             return Float.MAX_VALUE;
-        return distanceWalkedModified;
+        return walkDist;
     }
 
-    @Inject(method = "attackTargetEntityWithCurrentItem",
-            at = @At(value = "INVOKE", target = "Lnet/minecraft/entity/Entity;attackEntityFrom(Lnet/minecraft/util/DamageSource;F)Z"))
+    @Inject(method = "attack",
+            at = @At(value = "INVOKE", target = "Lnet/minecraft/entity/Entity;hurt(Lnet/minecraft/util/DamageSource;F)Z"))
     private void stats(Entity targetEntity, CallbackInfo ci) {
-        targetEntity.hurtResistantTime = 0;
+        targetEntity.invulnerableTime = 0;
         if (targetEntity instanceof LivingEntity) {
-            ((LivingEntity) targetEntity).hurtTime = ((LivingEntity) targetEntity).maxHurtTime = 0;
+            ((LivingEntity) targetEntity).hurtTime = ((LivingEntity) targetEntity).hurtDuration = 0;
         }
     }
 
-    @Redirect(method = "attackTargetEntityWithCurrentItem",
-            at = @At(value = "INVOKE", ordinal = 0, target = "Lnet/minecraft/entity/LivingEntity;applyKnockback(FDD)V"))
+    @Redirect(method = "attack",
+            at = @At(value = "INVOKE", ordinal = 0, target = "Lnet/minecraft/entity/LivingEntity;knockback(FDD)V"))
     private void mark(LivingEntity livingEntity, float strength, double ratioX, double ratioZ) {
         MeleeKnockbackEvent mke = new MeleeKnockbackEvent(this, ds, livingEntity, strength, ratioX, ratioZ);
         MinecraftForge.EVENT_BUS.post(mke);
-        livingEntity.applyKnockback(mke.getStrength(), mke.getRatioX(), mke.getRatioZ());
+        livingEntity.knockback(mke.getStrength(), mke.getRatioX(), mke.getRatioZ());
     }
 }

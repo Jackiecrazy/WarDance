@@ -13,7 +13,7 @@ import java.util.function.Consumer;
 
 @Mixin(ItemStack.class)
 public class MixinSweepDurabilitySuppressor {
-    @Inject(method = "damageItem", at = @At("HEAD"), cancellable = true)
+    @Inject(method = "hurtAndBreak", at = @At("HEAD"), cancellable = true)
     private void halt(int amount, LivingEntity entityIn, Consumer<LivingEntity> onBroken, CallbackInfo ci) {
         if (!GeneralConfig.sweepDurability && CombatUtils.isSweeping) ci.cancel();
     }

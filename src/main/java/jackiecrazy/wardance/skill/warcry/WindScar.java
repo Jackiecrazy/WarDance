@@ -17,22 +17,24 @@ import java.util.Arrays;
 import java.util.HashSet;
 import java.util.UUID;
 
+import jackiecrazy.wardance.skill.Skill.STATE;
+
 public class WindScar extends WarCry {
     private static final AttributeModifier reach = new AttributeModifier(UUID.fromString("abe24c38-73e3-4551-9df4-e06e117699c1"), "wind scar bonus", 1, AttributeModifier.Operation.ADDITION);
     private static final UUID bigReach = UUID.fromString("abe24c38-73e3-4551-9df4-e06e117699c3");
-    private final Tag<String> tag = Tag.getTagFromContents(new HashSet<>(Arrays.asList("chant", ProcPoints.on_being_hurt, ProcPoints.melee, ProcPoints.recharge_time, ProcPoints.recharge_sleep)));
-    private final Tag<String> no = Tag.getTagFromContents(new HashSet<>(Arrays.asList("sweep")));
+    private final Tag<String> tag = Tag.create(new HashSet<>(Arrays.asList("chant", ProcPoints.on_being_hurt, ProcPoints.melee, ProcPoints.recharge_time, ProcPoints.recharge_sleep)));
+    private final Tag<String> no = Tag.create(new HashSet<>(Arrays.asList("sweep")));
 
     @Override
     protected void evoke(LivingEntity caster) {
         caster.getAttribute(ForgeMod.REACH_DISTANCE.get()).removeModifier(bigReach);
-        caster.getAttribute(ForgeMod.REACH_DISTANCE.get()).applyNonPersistentModifier(new AttributeModifier(bigReach, "wind scar active bonus", CombatData.getCap(caster).getMight(), AttributeModifier.Operation.ADDITION));
+        caster.getAttribute(ForgeMod.REACH_DISTANCE.get()).addTransientModifier(new AttributeModifier(bigReach, "wind scar active bonus", CombatData.getCap(caster).getMight(), AttributeModifier.Operation.ADDITION));
         super.evoke(caster);
     }
 
     @Override
     public void onEquip(LivingEntity caster) {
-        caster.getAttribute(ForgeMod.REACH_DISTANCE.get()).applyPersistentModifier(reach);
+        caster.getAttribute(ForgeMod.REACH_DISTANCE.get()).addPermanentModifier(reach);
         super.onEquip(caster);
     }
 

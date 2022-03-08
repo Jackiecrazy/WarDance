@@ -16,8 +16,10 @@ import java.awt.*;
 import java.util.Arrays;
 import java.util.HashSet;
 
+import jackiecrazy.wardance.skill.Skill.STATE;
+
 public class DeathDenial extends MementoMori {
-    private final Tag<String> tag = Tag.getTagFromContents(new HashSet<>(Arrays.asList("passive", ProcPoints.recharge_sleep, ProcPoints.change_heals, ProcPoints.change_parry_result, ProcPoints.on_being_damaged)));
+    private final Tag<String> tag = Tag.create(new HashSet<>(Arrays.asList("passive", ProcPoints.recharge_sleep, ProcPoints.change_heals, ProcPoints.change_parry_result, ProcPoints.on_being_damaged)));
 
 
     @Override
@@ -30,7 +32,7 @@ public class DeathDenial extends MementoMori {
         super.onProc(caster, procPoint, state, stats, target);
         if (procPoint instanceof LivingDamageEvent && ((LivingDamageEvent) procPoint).getEntityLiving() == caster && (((LivingDamageEvent) procPoint).getAmount() > caster.getHealth() || stats.isCondition())) {
             if (!stats.isCondition())
-                caster.world.playSound(null, caster.getPosX(), caster.getPosY(), caster.getPosZ(), SoundEvents.BLOCK_BELL_USE, SoundCategory.PLAYERS, 0.25f + WarDance.rand.nextFloat() * 0.5f, 0.5f + WarDance.rand.nextFloat() * 0.5f);
+                caster.level.playSound(null, caster.getX(), caster.getY(), caster.getZ(), SoundEvents.BELL_BLOCK, SoundCategory.PLAYERS, 0.25f + WarDance.rand.nextFloat() * 0.5f, 0.5f + WarDance.rand.nextFloat() * 0.5f);
             onStateChange(caster, stats, stats.getState(), STATE.ACTIVE);
             procPoint.setCanceled(true);
         }

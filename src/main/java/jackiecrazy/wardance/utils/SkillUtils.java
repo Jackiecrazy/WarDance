@@ -28,7 +28,7 @@ public class SkillUtils {
             return Skill.getSkill(buf.readResourceLocation());
         }
 
-        public Skill copyValue(Skill value) {
+        public Skill copy(Skill value) {
             return value;
         }
     };
@@ -43,7 +43,7 @@ public class SkillUtils {
         atr.removeModifier(id);
         if (amount != 0) {
             AttributeModifier am = new AttributeModifier(id, "skill modifier", amount, op);
-            atr.applyNonPersistentModifier(am);
+            atr.addTransientModifier(am);
         }
     }
 
@@ -51,25 +51,25 @@ public class SkillUtils {
         AreaEffectCloudEntity areaeffectcloudentity = new AreaEffectCloudEntity(world, x, y, z);
         if (entityIn instanceof LivingEntity)
             areaeffectcloudentity.setOwner((LivingEntity) entityIn);
-        areaeffectcloudentity.setParticleData(type);
+        areaeffectcloudentity.setParticle(type);
         areaeffectcloudentity.setRadius(size);
         areaeffectcloudentity.setDuration(0);
-        world.addEntity(areaeffectcloudentity);
+        world.addFreshEntity(areaeffectcloudentity);
     }
 
     public static Entity aimEntity(LivingEntity caster) {
-        return GeneralUtils.raytraceEntity(caster.world, caster, caster.getAttributeValue(ForgeMod.REACH_DISTANCE.get()));
+        return GeneralUtils.raytraceEntity(caster.level, caster, caster.getAttributeValue(ForgeMod.REACH_DISTANCE.get()));
     }
 
     public static LivingEntity aimLiving(LivingEntity caster) {
-        return GeneralUtils.raytraceLiving(caster.world, caster, caster.getAttributeValue(ForgeMod.REACH_DISTANCE.get()));
+        return GeneralUtils.raytraceLiving(caster.level, caster, caster.getAttributeValue(ForgeMod.REACH_DISTANCE.get()));
     }
 
     public static boolean auxAttack(LivingEntity caster, LivingEntity target, DamageSource s, float dmg, float posdmg, Runnable onHit, Runnable onDamage) {
         CombatData.getCap(target).consumePosture(posdmg);
         onHit.run();
         if (dmg > 0) {
-            if (target.attackEntityFrom(s, dmg))
+            if (target.hurt(s, dmg))
                 onDamage.run();
             return true;
         }

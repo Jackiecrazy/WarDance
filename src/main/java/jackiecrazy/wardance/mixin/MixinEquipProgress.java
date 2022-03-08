@@ -14,8 +14,8 @@ import org.spongepowered.asm.mixin.injection.Redirect;
 
 @Mixin(FirstPersonRenderer.class)
 public abstract class MixinEquipProgress {
-    @Shadow
-    private float equippedProgressOffHand;
+
+    @Shadow private float offHandHeight;
 
     @Redirect(method = "tick", require = 0,
             at = @At(value = "INVOKE",
@@ -23,9 +23,9 @@ public abstract class MixinEquipProgress {
                     ordinal = 3))
     private float modifyEquipProgress(float num, float min, float max) {
         if (!GeneralConfig.dual || Minecraft.getInstance().player == null) return MathHelper.clamp(num, min, max);
-        boolean requip = num + equippedProgressOffHand == 0 || CombatData.getCap(Minecraft.getInstance().player).getHandBind(Hand.OFF_HAND) > 0;
+        boolean requip = num + offHandHeight == 0 || CombatData.getCap(Minecraft.getInstance().player).getHandBind(Hand.OFF_HAND) > 0;
         float f = CombatUtils.getCooledAttackStrength(Minecraft.getInstance().player, Hand.OFF_HAND, 1f);
-        return MathHelper.clamp((!requip ? f * f * f : 0.0F) - equippedProgressOffHand, min, max);
+        return MathHelper.clamp((!requip ? f * f * f : 0.0F) - offHandHeight, min, max);
         //return MathHelper.clamp((float)(!requip ? 1 : 0) - this.equippedProgressOffHand, min, max);
         //return 0;
     }

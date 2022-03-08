@@ -6,6 +6,8 @@ import net.minecraft.entity.LivingEntity;
 import net.minecraft.tags.Tag;
 import net.minecraftforge.eventbus.api.Event;
 
+import jackiecrazy.wardance.skill.Skill.STATE;
+
 public class WeaponThrow extends Skill {
 
 

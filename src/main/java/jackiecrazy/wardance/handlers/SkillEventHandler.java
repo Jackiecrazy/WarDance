@@ -25,8 +25,8 @@ public class SkillEventHandler {
 
     @SubscribeEvent(priority = EventPriority.LOWEST)
     public static void sleep(PlayerWakeUpEvent e) {
-        boolean flag = !e.wakeImmediately() && (!e.updateWorld() || e.getPlayer().world.isDaytime());
-        if ((flag || ResourceConfig.sleepingHealsDecay == ResourceConfig.ThirdOption.FORCED) && e.getEntityLiving().isServerWorld()) {
+        boolean flag = !e.wakeImmediately() && (!e.updateWorld() || e.getPlayer().level.isDay());
+        if ((flag || ResourceConfig.sleepingHealsDecay == ResourceConfig.ThirdOption.FORCED) && e.getEntityLiving().isEffectiveAi()) {
             if (ResourceConfig.sleepingHealsDecay != ResourceConfig.ThirdOption.FALSE) {
                 final ICombatCapability cap = CombatData.getCap(e.getPlayer());
                 float res = cap.getResolve() + 1;
@@ -46,7 +46,7 @@ public class SkillEventHandler {
     @SubscribeEvent(priority = EventPriority.HIGHEST)
     public static void casting(SkillCastEvent e) {
         final ISkillCapability cap = CasterData.getCap(e.getEntityLiving());
-        if (!e.getEntityLiving().isServerWorld()) return;
+        if (!e.getEntityLiving().isEffectiveAi()) return;
         for (Skill s : cap.getEquippedSkills()) {
             cap.getSkillData(s).ifPresent(d -> s.onProc(e.getEntityLiving(), e, d.getState(), d, e.getEntityLiving()));
         }
@@ -54,7 +54,7 @@ public class SkillEventHandler {
 
     @SubscribeEvent(priority = EventPriority.HIGHEST)
     public static void dodge(DodgeEvent e) {
-        if (!e.getEntityLiving().isServerWorld()) return;
+        if (!e.getEntityLiving().isEffectiveAi()) return;
         final ISkillCapability cap = CasterData.getCap(e.getEntityLiving());
         for (Skill s : cap.getEquippedSkills()) {
             cap.getSkillData(s).ifPresent(d -> s.onProc(e.getEntityLiving(), e, d.getState(), d, null));
@@ -63,7 +63,7 @@ public class SkillEventHandler {
 
     @SubscribeEvent(priority = EventPriority.HIGHEST)
     public static void forceCrit(CriticalHitEvent e) {
-        if (!e.getEntityLiving().isServerWorld() || !(e.getTarget() instanceof LivingEntity)) return;
+        if (!e.getEntityLiving().isEffectiveAi() || !(e.getTarget() instanceof LivingEntity)) return;
         final ISkillCapability cap = CasterData.getCap(e.getEntityLiving());
         for (Skill s : cap.getEquippedSkills()) {
             cap.getSkillData(s).ifPresent(d -> s.onProc(e.getEntityLiving(), e, d.getState(), d, (LivingEntity) e.getTarget()));
@@ -73,7 +73,7 @@ public class SkillEventHandler {
     @SubscribeEvent(priority = EventPriority.HIGHEST)
     public static void stabbery(EntityAwarenessEvent e) {
         if (e.getAttacker() == null) return;
-        if (!e.getEntityLiving().isServerWorld()) return;
+        if (!e.getEntityLiving().isEffectiveAi()) return;
         final ISkillCapability cap = CasterData.getCap(e.getAttacker());
         for (Skill s : cap.getEquippedSkills()) {
             cap.getSkillData(s).ifPresent(d -> s.onProc(e.getAttacker(), e, d.getState(), d, e.getEntityLiving()));
@@ -82,9 +82,9 @@ public class SkillEventHandler {
 
     @SubscribeEvent(priority = EventPriority.HIGHEST)
     public static void attackFlags(LivingAttackEvent e) {
-        if (!e.getEntityLiving().isServerWorld()) return;
-        if (e.getSource().getTrueSource() instanceof LivingEntity) {
-            final LivingEntity trueSource = (LivingEntity) e.getSource().getTrueSource();
+        if (!e.getEntityLiving().isEffectiveAi()) return;
+        if (e.getSource().getEntity() instanceof LivingEntity) {
+            final LivingEntity trueSource = (LivingEntity) e.getSource().getEntity();
             final ISkillCapability cap = CasterData.getCap(trueSource);
             for (Skill s : cap.getEquippedSkills()) {
                 cap.getSkillData(s).ifPresent(d -> s.onProc(trueSource, e, d.getState(), d, e.getEntityLiving()));
@@ -95,7 +95,7 @@ public class SkillEventHandler {
 
     @SubscribeEvent(priority = EventPriority.HIGHEST)
     public static void mightFlags(AttackMightEvent e) {
-        if (!e.getEntityLiving().isServerWorld()) return;
+        if (!e.getEntityLiving().isEffectiveAi()) return;
         final ISkillCapability cap = CasterData.getCap(e.getAttacker());
         for (Skill s : cap.getEquippedSkills()) {
             cap.getSkillData(s).ifPresent(d -> s.onProc(e.getAttacker(), e, d.getState(), d, e.getEntityLiving()));
@@ -105,7 +105,7 @@ public class SkillEventHandler {
 
     @SubscribeEvent(priority = EventPriority.HIGHEST)
     public static void gainMightFlags(GainMightEvent e) {
-        if (!e.getEntityLiving().isServerWorld()) return;
+        if (!e.getEntityLiving().isEffectiveAi()) return;
         LivingEntity attacker = e.getEntityLiving();
         final ISkillCapability cap = CasterData.getCap(e.getEntityLiving());
         for (Skill s : cap.getEquippedSkills()) {
@@ -116,7 +116,7 @@ public class SkillEventHandler {
 
     @SubscribeEvent(priority = EventPriority.HIGHEST)
     public static void healFlags(LivingHealEvent e) {
-        if (!e.getEntityLiving().isServerWorld()) return;
+        if (!e.getEntityLiving().isEffectiveAi()) return;
         final ISkillCapability cap = CasterData.getCap(e.getEntityLiving());
         for (Skill s : cap.getEquippedSkills()) {
             cap.getSkillData(s).ifPresent(d -> s.onProc(e.getEntityLiving(), e, d.getState(), d, null));
@@ -125,7 +125,7 @@ public class SkillEventHandler {
 
     @SubscribeEvent(priority = EventPriority.HIGHEST)
     public static void postureFlags(GainPostureEvent e) {
-        if (!e.getEntityLiving().isServerWorld()) return;
+        if (!e.getEntityLiving().isEffectiveAi()) return;
         final ISkillCapability cap = CasterData.getCap(e.getEntityLiving());
         for (Skill s : cap.getEquippedSkills()) {
             cap.getSkillData(s).ifPresent(d -> s.onProc(e.getEntityLiving(), e, d.getState(), d, null));
@@ -134,7 +134,7 @@ public class SkillEventHandler {
 
     @SubscribeEvent(priority = EventPriority.HIGHEST)
     public static void spiritFlags(RegenSpiritEvent e) {
-        if (!e.getEntityLiving().isServerWorld()) return;
+        if (!e.getEntityLiving().isEffectiveAi()) return;
         final ISkillCapability cap = CasterData.getCap(e.getEntityLiving());
         for (Skill s : cap.getEquippedSkills()) {
             cap.getSkillData(s).ifPresent(d -> s.onProc(e.getEntityLiving(), e, d.getState(), d, null));
@@ -143,7 +143,7 @@ public class SkillEventHandler {
 
     @SubscribeEvent(priority = EventPriority.HIGHEST)
     public static void knockbackFlags(MeleeKnockbackEvent e) {
-        if (!e.getEntityLiving().isServerWorld()) return;
+        if (!e.getEntityLiving().isEffectiveAi()) return;
         if (e.getAttacker() != null) {
             LivingEntity attacker = e.getAttacker();
             ISkillCapability isc = CasterData.getCap(attacker);
@@ -159,9 +159,9 @@ public class SkillEventHandler {
 
     @SubscribeEvent(priority = EventPriority.HIGHEST)
     public static void hurtFlags(LivingHurtEvent e) {
-        if (!e.getEntityLiving().isServerWorld()) return;
-        if (e.getSource().getTrueSource() instanceof LivingEntity) {
-            LivingEntity attacker = (LivingEntity) e.getSource().getTrueSource();
+        if (!e.getEntityLiving().isEffectiveAi()) return;
+        if (e.getSource().getEntity() instanceof LivingEntity) {
+            LivingEntity attacker = (LivingEntity) e.getSource().getEntity();
             ISkillCapability isc = CasterData.getCap(attacker);
             for (Skill s : isc.getEquippedSkills()) {
                 isc.getSkillData(s).ifPresent(d -> s.onProc(attacker, e, d.getState(), d, e.getEntityLiving()));
@@ -175,7 +175,7 @@ public class SkillEventHandler {
 
     @SubscribeEvent(priority = EventPriority.HIGHEST)
     public static void staggerFlags(StaggerEvent e) {
-        if (!e.getEntityLiving().isServerWorld()) return;
+        if (!e.getEntityLiving().isEffectiveAi()) return;
         if (e.getAttacker() != null) {
             LivingEntity attacker = e.getAttacker();
             ISkillCapability isc = CasterData.getCap(attacker);
@@ -191,9 +191,9 @@ public class SkillEventHandler {
 
     @SubscribeEvent(priority = EventPriority.HIGHEST)
     public static void damageFlags(LivingDamageEvent e) {
-        if (!e.getEntityLiving().isServerWorld()) return;
-        if (e.getSource().getTrueSource() instanceof LivingEntity) {
-            LivingEntity attacker = (LivingEntity) e.getSource().getTrueSource();
+        if (!e.getEntityLiving().isEffectiveAi()) return;
+        if (e.getSource().getEntity() instanceof LivingEntity) {
+            LivingEntity attacker = (LivingEntity) e.getSource().getEntity();
             ISkillCapability isc = CasterData.getCap(attacker);
             for (Skill s : isc.getEquippedSkills()) {
                 isc.getSkillData(s).ifPresent(d -> s.onProc(attacker, e, d.getState(), d, e.getEntityLiving()));
@@ -207,9 +207,9 @@ public class SkillEventHandler {
 
     @SubscribeEvent(priority = EventPriority.HIGHEST)
     public static void deathFlag(LivingDeathEvent e) {
-        if (!e.getEntityLiving().isServerWorld()) return;
-        if (e.getSource().getTrueSource() instanceof LivingEntity) {
-            LivingEntity attacker = (LivingEntity) e.getSource().getTrueSource();
+        if (!e.getEntityLiving().isEffectiveAi()) return;
+        if (e.getSource().getEntity() instanceof LivingEntity) {
+            LivingEntity attacker = (LivingEntity) e.getSource().getEntity();
             ISkillCapability isc = CasterData.getCap(attacker);
             for (Skill s : isc.getEquippedSkills()) {
                 isc.getSkillData(s).ifPresent(d -> s.onProc(attacker, e, d.getState(), d, e.getEntityLiving()));
@@ -223,7 +223,7 @@ public class SkillEventHandler {
 
     @SubscribeEvent(priority = EventPriority.HIGHEST)
     public static void parryFlags(ParryEvent e) {
-        if (!e.getEntityLiving().isServerWorld()) return;
+        if (!e.getEntityLiving().isEffectiveAi()) return;
         if (e.getAttacker() != null) {
             LivingEntity attacker = e.getAttacker();
             ISkillCapability isc = CasterData.getCap(attacker);
@@ -239,10 +239,10 @@ public class SkillEventHandler {
 
     @SubscribeEvent(priority = EventPriority.HIGHEST)
     public static void projectileImpact(ProjectileImpactEvent e) {
-        if (e.getEntity().world.isRemote) return;
+        if (e.getEntity().level.isClientSide) return;
         Entity proj = e.getEntity();
         if (proj instanceof ProjectileEntity) {
-            Entity shooter = ((ProjectileEntity) proj).getShooter();
+            Entity shooter = ((ProjectileEntity) proj).getOwner();
             if (shooter instanceof LivingEntity) {
                 ISkillCapability isc = CasterData.getCap((LivingEntity) shooter);
                 for (Skill s : isc.getEquippedSkills()) {
@@ -255,7 +255,7 @@ public class SkillEventHandler {
 
     @SubscribeEvent(priority = EventPriority.HIGHEST)
     public static void parryFlags(ProjectileParryEvent e) {
-        if (!e.getEntityLiving().isServerWorld()) return;
+        if (!e.getEntityLiving().isEffectiveAi()) return;
         final ISkillCapability isc = CasterData.getCap(e.getEntityLiving());
         for (Skill s : isc.getEquippedSkills()) {
             isc.getSkillData(s).ifPresent(d -> s.onProc(e.getEntityLiving(), e, d.getState(), d, null));
@@ -265,7 +265,7 @@ public class SkillEventHandler {
     @SubscribeEvent(priority = EventPriority.LOWEST)
     public static void castingE(SkillCastEvent e) {
         final ISkillCapability cap = CasterData.getCap(e.getEntityLiving());
-        if (!e.getEntityLiving().isServerWorld()) return;
+        if (!e.getEntityLiving().isEffectiveAi()) return;
         for (Skill s : cap.getEquippedSkills()) {
             cap.getSkillData(s).ifPresent(d -> s.onProc(e.getEntityLiving(), e, d.getState(), d, e.getEntityLiving()));
         }
@@ -273,7 +273,7 @@ public class SkillEventHandler {
 
     @SubscribeEvent(priority = EventPriority.LOWEST)
     public static void dodgE(DodgeEvent e) {
-        if (!e.getEntityLiving().isServerWorld()) return;
+        if (!e.getEntityLiving().isEffectiveAi()) return;
         final ISkillCapability cap = CasterData.getCap(e.getEntityLiving());
         for (Skill s : cap.getEquippedSkills()) {
             cap.getSkillData(s).ifPresent(d -> s.onProc(e.getEntityLiving(), e, d.getState(), d, null));
@@ -282,7 +282,7 @@ public class SkillEventHandler {
 
     @SubscribeEvent(priority = EventPriority.LOWEST)
     public static void forceCriT(CriticalHitEvent e) {
-        if (!e.getEntityLiving().isServerWorld() || !(e.getTarget() instanceof LivingEntity)) return;
+        if (!e.getEntityLiving().isEffectiveAi() || !(e.getTarget() instanceof LivingEntity)) return;
         final ISkillCapability cap = CasterData.getCap(e.getEntityLiving());
         for (Skill s : cap.getEquippedSkills()) {
             cap.getSkillData(s).ifPresent(d -> s.onProc(e.getEntityLiving(), e, d.getState(), d, (LivingEntity) e.getTarget()));
@@ -292,7 +292,7 @@ public class SkillEventHandler {
     @SubscribeEvent(priority = EventPriority.LOWEST)
     public static void stabberY(EntityAwarenessEvent e) {
         if (e.getAttacker() == null) return;
-        if (!e.getEntityLiving().isServerWorld()) return;
+        if (!e.getEntityLiving().isEffectiveAi()) return;
         final ISkillCapability cap = CasterData.getCap(e.getAttacker());
         for (Skill s : cap.getEquippedSkills()) {
             cap.getSkillData(s).ifPresent(d -> s.onProc(e.getAttacker(), e, d.getState(), d, e.getEntityLiving()));
@@ -301,9 +301,9 @@ public class SkillEventHandler {
 
     @SubscribeEvent(priority = EventPriority.LOWEST)
     public static void attackFlagS(LivingAttackEvent e) {
-        if (!e.getEntityLiving().isServerWorld()) return;
-        if (e.getSource().getTrueSource() instanceof LivingEntity) {
-            final LivingEntity trueSource = (LivingEntity) e.getSource().getTrueSource();
+        if (!e.getEntityLiving().isEffectiveAi()) return;
+        if (e.getSource().getEntity() instanceof LivingEntity) {
+            final LivingEntity trueSource = (LivingEntity) e.getSource().getEntity();
             final ISkillCapability cap = CasterData.getCap(trueSource);
             for (Skill s : cap.getEquippedSkills()) {
                 cap.getSkillData(s).ifPresent(d -> s.onProc(trueSource, e, d.getState(), d, e.getEntityLiving()));
@@ -314,7 +314,7 @@ public class SkillEventHandler {
 
     @SubscribeEvent(priority = EventPriority.LOWEST)
     public static void mightFlagS(AttackMightEvent e) {
-        if (!e.getEntityLiving().isServerWorld()) return;
+        if (!e.getEntityLiving().isEffectiveAi()) return;
         final ISkillCapability cap = CasterData.getCap(e.getAttacker());
         for (Skill s : cap.getEquippedSkills()) {
             cap.getSkillData(s).ifPresent(d -> s.onProc(e.getAttacker(), e, d.getState(), d, e.getEntityLiving()));
@@ -324,7 +324,7 @@ public class SkillEventHandler {
 
     @SubscribeEvent(priority = EventPriority.LOWEST)
     public static void gainMightFlagS(GainMightEvent e) {
-        if (!e.getEntityLiving().isServerWorld()) return;
+        if (!e.getEntityLiving().isEffectiveAi()) return;
         LivingEntity attacker = e.getEntityLiving();
         final ISkillCapability cap = CasterData.getCap(e.getEntityLiving());
         for (Skill s : cap.getEquippedSkills()) {
@@ -335,7 +335,7 @@ public class SkillEventHandler {
 
     @SubscribeEvent(priority = EventPriority.LOWEST)
     public static void healFlagS(LivingHealEvent e) {
-        if (!e.getEntityLiving().isServerWorld()) return;
+        if (!e.getEntityLiving().isEffectiveAi()) return;
         final ISkillCapability cap = CasterData.getCap(e.getEntityLiving());
         for (Skill s : cap.getEquippedSkills()) {
             cap.getSkillData(s).ifPresent(d -> s.onProc(e.getEntityLiving(), e, d.getState(), d, null));
@@ -344,7 +344,7 @@ public class SkillEventHandler {
 
     @SubscribeEvent(priority = EventPriority.LOWEST)
     public static void postureFlagS(GainPostureEvent e) {
-        if (!e.getEntityLiving().isServerWorld()) return;
+        if (!e.getEntityLiving().isEffectiveAi()) return;
         final ISkillCapability cap = CasterData.getCap(e.getEntityLiving());
         for (Skill s : cap.getEquippedSkills()) {
             cap.getSkillData(s).ifPresent(d -> s.onProc(e.getEntityLiving(), e, d.getState(), d, null));
@@ -353,7 +353,7 @@ public class SkillEventHandler {
 
     @SubscribeEvent(priority = EventPriority.LOWEST)
     public static void spiritFlagS(RegenSpiritEvent e) {
-        if (!e.getEntityLiving().isServerWorld()) return;
+        if (!e.getEntityLiving().isEffectiveAi()) return;
         final ISkillCapability cap = CasterData.getCap(e.getEntityLiving());
         for (Skill s : cap.getEquippedSkills()) {
             cap.getSkillData(s).ifPresent(d -> s.onProc(e.getEntityLiving(), e, d.getState(), d, null));
@@ -362,7 +362,7 @@ public class SkillEventHandler {
 
     @SubscribeEvent(priority = EventPriority.LOWEST)
     public static void knockbackFlagS(MeleeKnockbackEvent e) {
-        if (!e.getEntityLiving().isServerWorld()) return;
+        if (!e.getEntityLiving().isEffectiveAi()) return;
         if (e.getAttacker() != null) {
             LivingEntity attacker = e.getAttacker();
             ISkillCapability isc = CasterData.getCap(attacker);
@@ -378,9 +378,9 @@ public class SkillEventHandler {
 
     @SubscribeEvent(priority = EventPriority.LOWEST)
     public static void hurtFlagS(LivingHurtEvent e) {
-        if (!e.getEntityLiving().isServerWorld()) return;
-        if (e.getSource().getTrueSource() instanceof LivingEntity) {
-            LivingEntity attacker = (LivingEntity) e.getSource().getTrueSource();
+        if (!e.getEntityLiving().isEffectiveAi()) return;
+        if (e.getSource().getEntity() instanceof LivingEntity) {
+            LivingEntity attacker = (LivingEntity) e.getSource().getEntity();
             ISkillCapability isc = CasterData.getCap(attacker);
             for (Skill s : isc.getEquippedSkills()) {
                 isc.getSkillData(s).ifPresent(d -> s.onProc(attacker, e, d.getState(), d, e.getEntityLiving()));
@@ -394,7 +394,7 @@ public class SkillEventHandler {
 
     @SubscribeEvent(priority = EventPriority.LOWEST)
     public static void staggerFlagS(StaggerEvent e) {
-        if (!e.getEntityLiving().isServerWorld()) return;
+        if (!e.getEntityLiving().isEffectiveAi()) return;
         if (e.getAttacker() != null) {
             LivingEntity attacker = e.getAttacker();
             ISkillCapability isc = CasterData.getCap(attacker);
@@ -410,9 +410,9 @@ public class SkillEventHandler {
 
     @SubscribeEvent(priority = EventPriority.LOWEST)
     public static void damageFlagS(LivingDamageEvent e) {
-        if (!e.getEntityLiving().isServerWorld()) return;
-        if (e.getSource().getTrueSource() instanceof LivingEntity) {
-            LivingEntity attacker = (LivingEntity) e.getSource().getTrueSource();
+        if (!e.getEntityLiving().isEffectiveAi()) return;
+        if (e.getSource().getEntity() instanceof LivingEntity) {
+            LivingEntity attacker = (LivingEntity) e.getSource().getEntity();
             ISkillCapability isc = CasterData.getCap(attacker);
             for (Skill s : isc.getEquippedSkills()) {
                 isc.getSkillData(s).ifPresent(d -> s.onProc(attacker, e, d.getState(), d, e.getEntityLiving()));
@@ -426,9 +426,9 @@ public class SkillEventHandler {
 
     @SubscribeEvent(priority = EventPriority.LOWEST)
     public static void deathFlagS(LivingDeathEvent e) {
-        if (!e.getEntityLiving().isServerWorld()) return;
-        if (e.getSource().getTrueSource() instanceof LivingEntity) {
-            LivingEntity attacker = (LivingEntity) e.getSource().getTrueSource();
+        if (!e.getEntityLiving().isEffectiveAi()) return;
+        if (e.getSource().getEntity() instanceof LivingEntity) {
+            LivingEntity attacker = (LivingEntity) e.getSource().getEntity();
             ISkillCapability isc = CasterData.getCap(attacker);
             for (Skill s : isc.getEquippedSkills()) {
                 isc.getSkillData(s).ifPresent(d -> s.onProc(attacker, e, d.getState(), d, e.getEntityLiving()));
@@ -442,7 +442,7 @@ public class SkillEventHandler {
 
     @SubscribeEvent(priority = EventPriority.LOWEST)
     public static void parryFlagS(ParryEvent e) {
-        if (!e.getEntityLiving().isServerWorld()) return;
+        if (!e.getEntityLiving().isEffectiveAi()) return;
         if (e.getAttacker() != null) {
             LivingEntity attacker = e.getAttacker();
             ISkillCapability isc = CasterData.getCap(attacker);
@@ -458,10 +458,10 @@ public class SkillEventHandler {
 
     @SubscribeEvent(priority = EventPriority.LOWEST)
     public static void projectileImpacT(ProjectileImpactEvent e) {
-        if (e.getEntity().world.isRemote) return;
+        if (e.getEntity().level.isClientSide) return;
         Entity proj = e.getEntity();
         if (proj instanceof ProjectileEntity) {
-            Entity shooter = ((ProjectileEntity) proj).getShooter();
+            Entity shooter = ((ProjectileEntity) proj).getOwner();
             if (shooter instanceof LivingEntity) {
                 ISkillCapability isc = CasterData.getCap((LivingEntity) shooter);
                 for (Skill s : isc.getEquippedSkills()) {
@@ -474,7 +474,7 @@ public class SkillEventHandler {
 
     @SubscribeEvent(priority = EventPriority.LOWEST)
     public static void parryFlagS(ProjectileParryEvent e) {
-        if (!e.getEntityLiving().isServerWorld()) return;
+        if (!e.getEntityLiving().isEffectiveAi()) return;
         final ISkillCapability isc = CasterData.getCap(e.getEntityLiving());
         for (Skill s : isc.getEquippedSkills()) {
             isc.getSkillData(s).ifPresent(d -> s.onProc(e.getEntityLiving(), e, d.getState(), d, null));
@@ -485,7 +485,7 @@ public class SkillEventHandler {
     @SubscribeEvent(priority = EventPriority.LOWEST)
     public static void resourcE(SkillResourceEvent e) {
         final ISkillCapability cap = CasterData.getCap(e.getEntityLiving());
-        if (!e.getEntityLiving().isServerWorld()) return;
+        if (!e.getEntityLiving().isEffectiveAi()) return;
         for (Skill s : cap.getEquippedSkills()) {
             cap.getSkillData(s).ifPresent(d -> s.onProc(e.getEntityLiving(), e, d.getState(), d, e.getEntityLiving()));
         }
@@ -495,7 +495,7 @@ public class SkillEventHandler {
     @SubscribeEvent(priority = EventPriority.HIGHEST)
     public static void resource(SkillResourceEvent e) {
         final ISkillCapability cap = CasterData.getCap(e.getEntityLiving());
-        if (!e.getEntityLiving().isServerWorld()) return;
+        if (!e.getEntityLiving().isEffectiveAi()) return;
         for (Skill s : cap.getEquippedSkills()) {
             cap.getSkillData(s).ifPresent(d -> s.onProc(e.getEntityLiving(), e, d.getState(), d, e.getEntityLiving()));
         }
@@ -503,9 +503,9 @@ public class SkillEventHandler {
 
     @SubscribeEvent(priority = EventPriority.HIGHEST)
     public static void drops(LivingDropsEvent e) {
-        if (e.getEntityLiving()!=null&&!e.getEntityLiving().isServerWorld()) return;
-        if (e.getSource().getTrueSource() instanceof LivingEntity) {
-            LivingEntity attacker = (LivingEntity) e.getSource().getTrueSource();
+        if (e.getEntityLiving()!=null&&!e.getEntityLiving().isEffectiveAi()) return;
+        if (e.getSource().getEntity() instanceof LivingEntity) {
+            LivingEntity attacker = (LivingEntity) e.getSource().getEntity();
             ISkillCapability isc = CasterData.getCap(attacker);
             for (Skill s : isc.getEquippedSkills()) {
                 isc.getSkillData(s).ifPresent(d -> s.onProc(attacker, e, d.getState(), d, e.getEntityLiving()));
@@ -519,9 +519,9 @@ public class SkillEventHandler {
 
     @SubscribeEvent(priority = EventPriority.LOWEST)
     public static void dropse(LivingDropsEvent e) {
-        if (e.getEntityLiving()!=null&&!e.getEntityLiving().isServerWorld()) return;
-        if (e.getSource().getTrueSource() instanceof LivingEntity) {
-            LivingEntity attacker = (LivingEntity) e.getSource().getTrueSource();
+        if (e.getEntityLiving()!=null&&!e.getEntityLiving().isEffectiveAi()) return;
+        if (e.getSource().getEntity() instanceof LivingEntity) {
+            LivingEntity attacker = (LivingEntity) e.getSource().getEntity();
             ISkillCapability isc = CasterData.getCap(attacker);
             for (Skill s : isc.getEquippedSkills()) {
                 isc.getSkillData(s).ifPresent(d -> s.onProc(attacker, e, d.getState(), d, e.getEntityLiving()));
@@ -535,9 +535,9 @@ public class SkillEventHandler {
 
     @SubscribeEvent(priority = EventPriority.HIGHEST)
     public static void drops(LootingLevelEvent e) {
-        if (e.getEntityLiving()!=null&&!e.getEntityLiving().isServerWorld()) return;
-        if (e.getDamageSource().getTrueSource() instanceof LivingEntity) {
-            LivingEntity attacker = (LivingEntity) e.getDamageSource().getTrueSource();
+        if (e.getEntityLiving()!=null&&!e.getEntityLiving().isEffectiveAi()) return;
+        if (e.getDamageSource().getEntity() instanceof LivingEntity) {
+            LivingEntity attacker = (LivingEntity) e.getDamageSource().getEntity();
             ISkillCapability isc = CasterData.getCap(attacker);
             for (Skill s : isc.getEquippedSkills()) {
                 isc.getSkillData(s).ifPresent(d -> s.onProc(attacker, e, d.getState(), d, e.getEntityLiving()));
@@ -551,9 +551,9 @@ public class SkillEventHandler {
 
     @SubscribeEvent(priority = EventPriority.LOWEST)
     public static void dropse(LootingLevelEvent e) {
-        if (e.getEntityLiving()!=null&&!e.getEntityLiving().isServerWorld()) return;
-        if (e.getDamageSource().getTrueSource() instanceof LivingEntity) {
-            LivingEntity attacker = (LivingEntity) e.getDamageSource().getTrueSource();
+        if (e.getEntityLiving()!=null&&!e.getEntityLiving().isEffectiveAi()) return;
+        if (e.getDamageSource().getEntity() instanceof LivingEntity) {
+            LivingEntity attacker = (LivingEntity) e.getDamageSource().getEntity();
             ISkillCapability isc = CasterData.getCap(attacker);
             for (Skill s : isc.getEquippedSkills()) {
                 isc.getSkillData(s).ifPresent(d -> s.onProc(attacker, e, d.getState(), d, e.getEntityLiving()));

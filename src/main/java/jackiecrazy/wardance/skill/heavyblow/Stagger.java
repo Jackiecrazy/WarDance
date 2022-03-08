@@ -11,6 +11,8 @@ import net.minecraftforge.eventbus.api.EventPriority;
 
 import java.awt.*;
 
+import jackiecrazy.wardance.skill.Skill.STATE;
+
 public class Stagger extends HeavyBlow {
     @Override
     public Color getColor() {

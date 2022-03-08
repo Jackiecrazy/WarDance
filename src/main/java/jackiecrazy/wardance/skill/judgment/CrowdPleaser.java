@@ -13,6 +13,8 @@ import net.minecraftforge.eventbus.api.EventPriority;
 import java.awt.*;
 import java.util.List;
 
+import jackiecrazy.wardance.skill.Skill.STATE;
+
 public class CrowdPleaser extends Judgment {
     @Override
     public Color getColor() {
@@ -32,17 +34,17 @@ public class CrowdPleaser extends Judgment {
         int buff = 0;
         if (CasterData.getCap(caster).getSkillData(this).isPresent())
             buff = (int) CasterData.getCap(caster).getSkillData(this).get().getArbitraryFloat();
-        final List<LivingEntity> list = caster.world.getLoadedEntitiesWithinAABB(LivingEntity.class, caster.getBoundingBox().grow(10), (a) -> TargetingUtils.isAlly(a, caster));
+        final List<LivingEntity> list = caster.level.getLoadedEntitiesOfClass(LivingEntity.class, caster.getBoundingBox().inflate(10), (a) -> TargetingUtils.isAlly(a, caster));
         for (LivingEntity pet : list) {
             if (stack == 1) {
-                pet.addPotionEffect(new EffectInstance(Effects.SPEED, buff * 40 + 60));
-                pet.addPotionEffect(new EffectInstance(Effects.LUCK, buff * 40 + 60));
+                pet.addEffect(new EffectInstance(Effects.MOVEMENT_SPEED, buff * 40 + 60));
+                pet.addEffect(new EffectInstance(Effects.LUCK, buff * 40 + 60));
             } else if (stack == 2) {
-                pet.addPotionEffect(new EffectInstance(Effects.STRENGTH, buff * 40 + 60));
-                pet.addPotionEffect(new EffectInstance(Effects.HASTE, buff * 40 + 60));
+                pet.addEffect(new EffectInstance(Effects.DAMAGE_BOOST, buff * 40 + 60));
+                pet.addEffect(new EffectInstance(Effects.DIG_SPEED, buff * 40 + 60));
             } else {
-                pet.addPotionEffect(new EffectInstance(Effects.REGENERATION, buff * 40 + 60));
-                pet.addPotionEffect(new EffectInstance(Effects.RESISTANCE, buff * 40 + 60));
+                pet.addEffect(new EffectInstance(Effects.REGENERATION, buff * 40 + 60));
+                pet.addEffect(new EffectInstance(Effects.DAMAGE_RESISTANCE, buff * 40 + 60));
             }
         }
     }

@@ -48,18 +48,18 @@ public class Keybinds {
         Minecraft mc = Minecraft.getInstance();
         if (mc.player == null) return;
         ICombatCapability itsc = CombatData.getCap(mc.player);
-        if (COMBAT.getKeyConflictContext().isActive() && COMBAT.isPressed()) {
+        if (COMBAT.getKeyConflictContext().isActive() && COMBAT.consumeClick()) {
             ClientEvents.combatTicks = Integer.MAX_VALUE;
-            mc.player.sendStatusMessage(new TranslationTextComponent("wardance.combat." + (itsc.isCombatMode() ? "off" : "on")), true);
+            mc.player.displayClientMessage(new TranslationTextComponent("wardance.combat." + (itsc.isCombatMode() ? "off" : "on")), true);
             CombatChannel.INSTANCE.sendToServer(new CombatModePacket());
         }
-        if (CAST.getKeyConflictContext().isActive() && CAST.isPressed() && mc.player.isAlive()) {
-            mc.displayGuiScreen(new SkillCastScreen(CasterData.getCap(mc.player).getEquippedSkills()));
+        if (CAST.getKeyConflictContext().isActive() && CAST.consumeClick() && mc.player.isAlive()) {
+            mc.setScreen(new SkillCastScreen(CasterData.getCap(mc.player).getEquippedSkills()));
         }
-        if (SELECT.getKeyConflictContext().isActive() && SELECT.isPressed() && mc.player.isAlive()) {
-            mc.displayGuiScreen(new SkillSelectionScreen());
+        if (SELECT.getKeyConflictContext().isActive() && SELECT.consumeClick() && mc.player.isAlive()) {
+            mc.setScreen(new SkillSelectionScreen());
         }
-        if (BINDCAST.getKeyConflictContext().isActive() && BINDCAST.isPressed() && mc.player.isAlive()) {
+        if (BINDCAST.getKeyConflictContext().isActive() && BINDCAST.consumeClick() && mc.player.isAlive()) {
             CombatChannel.INSTANCE.sendToServer(new EvokeSkillPacket());
         }
     }

@@ -34,7 +34,7 @@ public class PassiveButton extends SkillSelectionButton {
         if (this.active && this.visible) {
             if (this.clicked(mouseX, mouseY)) {
                 if (button == 0) {
-                    this.playDownSound(Minecraft.getInstance().getSoundHandler());
+                    this.playDownSound(Minecraft.getInstance().getSoundManager());
                     this.onClick(mouseX, mouseY);
                     return true;
                 } else if (button == 1) {
@@ -48,15 +48,15 @@ public class PassiveButton extends SkillSelectionButton {
         }
     }
 
-    public void renderWidget(MatrixStack matrixStack, int mouseX, int mouseY, float partialTicks) {
-        Minecraft.getInstance().getTextureManager().bindTexture(passive);
+    public void renderButton(MatrixStack matrixStack, int mouseX, int mouseY, float partialTicks) {
+        Minecraft.getInstance().getTextureManager().bind(passive);
         if (!this.isHovered) {
             RenderSystem.color4f(0.6f, 0.6f, 0.6f, 1);
         }
         applySlotTint();
         blit(matrixStack, this.x, this.y, 0, 0, this.width, this.height, width, height);
         if (s != null) {
-            Minecraft.getInstance().getTextureManager().bindTexture(s.icon());
+            Minecraft.getInstance().getTextureManager().bind(s.icon());
             Color c = s.getColor();
             RenderSystem.color4f(c.getRed() / 255f, c.getGreen() / 255f, c.getBlue() / 255f, 1);
             blit(matrixStack, this.x, this.y, 0, 0, this.width, this.height, width, height);

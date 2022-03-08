@@ -27,8 +27,8 @@ import java.util.Arrays;
 import java.util.HashSet;
 
 public class ShieldBash extends Skill {
-    private final Tag<String> tag = Tag.getTagFromContents(new HashSet<>(Arrays.asList("physical", "melee", "boundCast", "normalAttack", "countdown", ProcPoints.recharge_parry)));
-    private final Tag<String> no = Tag.getTagFromContents(new HashSet<>(Arrays.asList("normalAttack")));
+    private final Tag<String> tag = Tag.create(new HashSet<>(Arrays.asList("physical", "melee", "boundCast", "normalAttack", "countdown", ProcPoints.recharge_parry)));
+    private final Tag<String> no = Tag.create(new HashSet<>(Arrays.asList("normalAttack")));
 
     @Override
     public Tag<String> getTags(LivingEntity caster) {
@@ -54,7 +54,7 @@ public class ShieldBash extends Skill {
 
     protected void performEffect(LivingEntity caster, LivingEntity target) {
         final ICombatCapability cap = CombatData.getCap(caster);
-        SkillUtils.auxAttack(caster, target, new CombatDamageSource("player", caster).setProcNormalEffects(false).setProcAttackEffects(true).setProcSkillEffects(true).setAttackingHand(Hand.OFF_HAND).setDamageTyping(CombatDamageSource.TYPE.PHYSICAL).setDamageDealer(caster.getHeldItemMainhand()), 0, cap.consumeBarrier(cap.getBarrier()));
+        SkillUtils.auxAttack(caster, target, new CombatDamageSource("player", caster).setProcNormalEffects(false).setProcAttackEffects(true).setProcSkillEffects(true).setAttackingHand(Hand.OFF_HAND).setDamageTyping(CombatDamageSource.TYPE.PHYSICAL).setDamageDealer(caster.getMainHandItem()), 0, cap.consumeBarrier(cap.getBarrier()));
             cap.setBarrierCooldown(cap.getBarrierCooldown() / 2);
     }
 
@@ -65,7 +65,7 @@ public class ShieldBash extends Skill {
             final boolean otherwise = state == STATE.HOLSTERED && CombatUtils.isShield(caster, CombatUtils.getAttackingItemStack(((LivingAttackEvent) procPoint).getSource()));
             if ((base || otherwise) && cast(caster, -999)) {
                 performEffect(caster, target);
-                caster.world.playSound(null, caster.getPosX(), caster.getPosY(), caster.getPosZ(), SoundEvents.ENTITY_ZOMBIE_ATTACK_IRON_DOOR, SoundCategory.PLAYERS, 0.25f + WarDance.rand.nextFloat() * 0.5f, 0.5f + WarDance.rand.nextFloat() * 0.5f);
+                caster.level.playSound(null, caster.getX(), caster.getY(), caster.getZ(), SoundEvents.ZOMBIE_ATTACK_IRON_DOOR, SoundCategory.PLAYERS, 0.25f + WarDance.rand.nextFloat() * 0.5f, 0.5f + WarDance.rand.nextFloat() * 0.5f);
                 markUsed(caster);
             }
         }
@@ -93,7 +93,7 @@ public class ShieldBash extends Skill {
         }
 
         protected void performEffect(LivingEntity caster, LivingEntity target) {
-            target.addPotionEffect(new EffectInstance(Effects.NAUSEA, 60));
+            target.addEffect(new EffectInstance(Effects.CONFUSION, 60));
             CombatUtils.knockBack(target, caster, (float) caster.getAttributeValue(WarAttributes.BARRIER.get()), true, false);
             CombatData.getCap(caster).consumeBarrier(CombatData.getCap(caster).getBarrier());
             CombatData.getCap(caster).setBarrierCooldown(CombatData.getCap(caster).getBarrierCooldown() / 2);
@@ -109,8 +109,8 @@ public class ShieldBash extends Skill {
         protected void performEffect(LivingEntity caster, LivingEntity target) {
             super.performEffect(caster, target);
             final int time = CombatData.getCap(caster).getBarrierCooldown();
-            target.addPotionEffect(new EffectInstance(Effects.SLOWNESS, time * 2));
-            target.addPotionEffect(new EffectInstance(WarEffects.DISTRACTION.get(), time * 2));
+            target.addEffect(new EffectInstance(Effects.MOVEMENT_SLOWDOWN, time * 2));
+            target.addEffect(new EffectInstance(WarEffects.DISTRACTION.get(), time * 2));
         }
     }
 }

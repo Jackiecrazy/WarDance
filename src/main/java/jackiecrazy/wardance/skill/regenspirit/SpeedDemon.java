@@ -17,6 +17,8 @@ import net.minecraftforge.eventbus.api.EventPriority;
 import javax.annotation.Nonnull;
 import java.awt.*;
 
+import jackiecrazy.wardance.skill.Skill.STATE;
+
 public class SpeedDemon extends Skill {
     /*
     back and forth: recover (1/attack speed) spirit when parrying or landing a critical hit.

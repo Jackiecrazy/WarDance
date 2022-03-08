@@ -19,13 +19,13 @@ public class WarEntities {
     @SubscribeEvent
     public static void registerEntities(final RegistryEvent.Register<EntityType<?>> event) {
         weapon = EntityType.Builder
-                .create(ThrownWeaponEntity::new, EntityClassification.MISC)
-                .size(0.8F, 0.8F)
+                .of(ThrownWeaponEntity::new, EntityClassification.MISC)
+                .sized(0.8F, 0.8F)
                 .build("thrown_weapon");
         weapon.setRegistryName(WarDance.MODID, "thrown_weapon");
         fear = EntityType.Builder
-                .create(FearEntity::new, EntityClassification.MISC)
-                .size(0.5F, 0.5F)
+                .of(FearEntity::new, EntityClassification.MISC)
+                .sized(0.5F, 0.5F)
                 .build("fear");
         fear.setRegistryName(WarDance.MODID, "fear");
         event.getRegistry().registerAll(

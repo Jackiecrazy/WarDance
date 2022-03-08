@@ -53,23 +53,23 @@ end him rightly: keep the weapon in your hand and throw the pommel instead, dist
     }
 
     @Override
-    protected ItemStack getArrowStack() {
+    protected ItemStack getPickupItem() {
         return stack;
     }
 
-    protected void registerData() {
-        super.registerData();
+    protected void defineSynchedData() {
+        super.defineSynchedData();
         //this.dataManager.register(SKILL, WarSkills.WEAPON_THROW.get());
     }
 
     @Override
-    public void writeAdditional(CompoundNBT compound) {
-        super.writeAdditional(compound);
+    public void addAdditionalSaveData(CompoundNBT compound) {
+        super.addAdditionalSaveData(compound);
     }
 
     @Override
-    public void readAdditional(CompoundNBT compound) {
-        super.read(compound);
+    public void readAdditionalSaveData(CompoundNBT compound) {
+        super.load(compound);
     }
 
     @Override
@@ -78,103 +78,103 @@ end him rightly: keep the weapon in your hand and throw the pommel instead, dist
     }
 
     @Override
-    protected void onEntityHit(EntityRayTraceResult result) {
+    protected void onHitEntity(EntityRayTraceResult result) {
         Entity entity = result.getEntity();
-        float f = (float)this.getMotion().length();
-        int i = MathHelper.ceil(MathHelper.clamp((double)f * this.getDamage(), 0.0D, 2.147483647E9D));
+        float f = (float)this.getDeltaMovement().length();
+        int i = MathHelper.ceil(MathHelper.clamp((double)f * this.getBaseDamage(), 0.0D, 2.147483647E9D));
         if (this.getPierceLevel() > 0) {
-            if (this.piercedEntities == null) {
-                this.piercedEntities = new IntOpenHashSet(5);
+            if (this.piercingIgnoreEntityIds == null) {
+                this.piercingIgnoreEntityIds = new IntOpenHashSet(5);
             }
 
-            if (this.hitEntities == null) {
-                this.hitEntities = Lists.newArrayListWithCapacity(5);
+            if (this.piercedAndKilledEntities == null) {
+                this.piercedAndKilledEntities = Lists.newArrayListWithCapacity(5);
             }
 
-            if (this.piercedEntities.size() >= this.getPierceLevel() + 1) {
+            if (this.piercingIgnoreEntityIds.size() >= this.getPierceLevel() + 1) {
                 this.remove();
                 return;
             }
 
-            this.piercedEntities.add(entity.getEntityId());
+            this.piercingIgnoreEntityIds.add(entity.getId());
         }
 
-        if (this.getIsCritical()) {
-            long j = (long)this.rand.nextInt(i / 2 + 2);
+        if (this.isCritArrow()) {
+            long j = (long)this.random.nextInt(i / 2 + 2);
             i = (int)Math.min(j + (long)i, 2147483647L);
         }
 
-        Entity entity1 = this.getShooter();
+        Entity entity1 = this.getOwner();
         DamageSource damagesource;
         if (entity1 == null) {
-            damagesource = DamageSource.causeArrowDamage(this, this);
+            damagesource = DamageSource.arrow(this, this);
         } else {
-            damagesource = DamageSource.causeArrowDamage(this, entity1);
+            damagesource = DamageSource.arrow(this, entity1);
             if (entity1 instanceof LivingEntity) {
-                ((LivingEntity)entity1).setLastAttackedEntity(entity);
+                ((LivingEntity)entity1).setLastHurtMob(entity);
             }
         }
 
         boolean flag = entity.getType() == EntityType.ENDERMAN;
-        int k = entity.getFireTimer();
-        if (this.isBurning() && !flag) {
-            entity.setFire(5);
+        int k = entity.getRemainingFireTicks();
+        if (this.isOnFire() && !flag) {
+            entity.setSecondsOnFire(5);
         }
 
-        if (entity.attackEntityFrom(damagesource, (float)i)) {
+        if (entity.hurt(damagesource, (float)i)) {
             if (flag) {
                 return;
             }
 
             if (entity instanceof LivingEntity) {
                 LivingEntity livingentity = (LivingEntity)entity;
-                if (!this.world.isRemote && this.getPierceLevel() <= 0) {
-                    livingentity.setArrowCountInEntity(livingentity.getArrowCountInEntity() + 1);
+                if (!this.level.isClientSide && this.getPierceLevel() <= 0) {
+                    livingentity.setArrowCount(livingentity.getArrowCount() + 1);
                 }
 
-                if (this.knockbackStrength > 0) {
-                    Vector3d vector3d = this.getMotion().mul(1.0D, 0.0D, 1.0D).normalize().scale((double)this.knockbackStrength * 0.6D);
-                    if (vector3d.lengthSquared() > 0.0D) {
-                        livingentity.addVelocity(vector3d.x, 0.1D, vector3d.z);
+                if (this.knockback > 0) {
+                    Vector3d vector3d = this.getDeltaMovement().multiply(1.0D, 0.0D, 1.0D).normalize().scale((double)this.knockback * 0.6D);
+                    if (vector3d.lengthSqr() > 0.0D) {
+                        livingentity.push(vector3d.x, 0.1D, vector3d.z);
                     }
                 }
 
-                if (!this.world.isRemote && entity1 instanceof LivingEntity) {
-                    EnchantmentHelper.applyThornEnchantments(livingentity, entity1);
-                    EnchantmentHelper.applyArthropodEnchantments((LivingEntity)entity1, livingentity);
+                if (!this.level.isClientSide && entity1 instanceof LivingEntity) {
+                    EnchantmentHelper.doPostHurtEffects(livingentity, entity1);
+                    EnchantmentHelper.doPostDamageEffects((LivingEntity)entity1, livingentity);
                 }
 
-                this.arrowHit(livingentity);
+                this.doPostHurtEffects(livingentity);
                 if (livingentity != entity1 && livingentity instanceof PlayerEntity && entity1 instanceof ServerPlayerEntity && !this.isSilent()) {
-                    ((ServerPlayerEntity)entity1).connection.sendPacket(new SChangeGameStatePacket(SChangeGameStatePacket.HIT_PLAYER_ARROW, 0.0F));
+                    ((ServerPlayerEntity)entity1).connection.send(new SChangeGameStatePacket(SChangeGameStatePacket.ARROW_HIT_PLAYER, 0.0F));
                 }
 
-                if (!entity.isAlive() && this.hitEntities != null) {
-                    this.hitEntities.add(livingentity);
+                if (!entity.isAlive() && this.piercedAndKilledEntities != null) {
+                    this.piercedAndKilledEntities.add(livingentity);
                 }
 
-                if (!this.world.isRemote && entity1 instanceof ServerPlayerEntity) {
+                if (!this.level.isClientSide && entity1 instanceof ServerPlayerEntity) {
                     ServerPlayerEntity serverplayerentity = (ServerPlayerEntity)entity1;
-                    if (this.hitEntities != null && this.getShotFromCrossbow()) {
-                        CriteriaTriggers.KILLED_BY_CROSSBOW.test(serverplayerentity, this.hitEntities);
-                    } else if (!entity.isAlive() && this.getShotFromCrossbow()) {
-                        CriteriaTriggers.KILLED_BY_CROSSBOW.test(serverplayerentity, Arrays.asList(entity));
+                    if (this.piercedAndKilledEntities != null && this.shotFromCrossbow()) {
+                        CriteriaTriggers.KILLED_BY_CROSSBOW.trigger(serverplayerentity, this.piercedAndKilledEntities);
+                    } else if (!entity.isAlive() && this.shotFromCrossbow()) {
+                        CriteriaTriggers.KILLED_BY_CROSSBOW.trigger(serverplayerentity, Arrays.asList(entity));
                     }
                 }
             }
 
-            this.playSound(this.getHitEntitySound(), 1.0F, 1.2F / (this.rand.nextFloat() * 0.2F + 0.9F));
+            this.playSound(this.getDefaultHitGroundSoundEvent(), 1.0F, 1.2F / (this.random.nextFloat() * 0.2F + 0.9F));
             if (this.getPierceLevel() <= 0) {
                 this.remove();
             }
         } else {
-            entity.forceFireTicks(k);
-            this.setMotion(this.getMotion().scale(-0.1D));
-            this.rotationYaw += 180.0F;
-            this.prevRotationYaw += 180.0F;
-            if (!this.world.isRemote && this.getMotion().lengthSquared() < 1.0E-7D) {
-                if (this.pickupStatus == AbstractArrowEntity.PickupStatus.ALLOWED) {
-                    this.entityDropItem(this.getArrowStack(), 0.1F);
+            entity.setRemainingFireTicks(k);
+            this.setDeltaMovement(this.getDeltaMovement().scale(-0.1D));
+            this.yRot += 180.0F;
+            this.yRotO += 180.0F;
+            if (!this.level.isClientSide && this.getDeltaMovement().lengthSqr() < 1.0E-7D) {
+                if (this.pickup == AbstractArrowEntity.PickupStatus.ALLOWED) {
+                    this.spawnAtLocation(this.getPickupItem(), 0.1F);
                 }
 
                 this.remove();

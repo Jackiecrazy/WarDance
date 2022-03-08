@@ -13,6 +13,8 @@ import net.minecraftforge.eventbus.api.EventPriority;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
+import jackiecrazy.wardance.skill.Skill.STATE;
+
 public abstract class IronGuard extends Skill {
     @Override
     public Tag<String> getTags(LivingEntity caster) {

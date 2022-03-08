@@ -74,7 +74,7 @@ public class CombatCapability implements ICombatCapability {
         float ret = 0;
         if (GeneralUtils.getResourceLocationFromEntity(elb) != null && CombatUtils.customPosture.containsKey(GeneralUtils.getResourceLocationFromEntity(elb)))
             ret = CombatUtils.customPosture.get(GeneralUtils.getResourceLocationFromEntity(elb));
-        else ret = (float) (Math.ceil(10 / 1.09 * elb.getWidth() * elb.getHeight()) + elb.getTotalArmorValue() / 2d);
+        else ret = (float) (Math.ceil(10 / 1.09 * elb.getBbWidth() * elb.getBbHeight()) + elb.getArmorValue() / 2d);
         if (elb instanceof PlayerEntity) ret *= 1.5;
         ret += GeneralUtils.getAttributeValueSafe(elb, WarAttributes.MAX_POSTURE.get());
         return ret;
@@ -230,7 +230,7 @@ public class CombatCapability implements ICombatCapability {
     @Override
     public boolean isFirstStaggerStrike() {
         if (dude.get() == null) return false;
-        return dude.get().ticksExisted == staggerTickExisted;
+        return dude.get().tickCount == staggerTickExisted;
     }
 
     @Override
@@ -253,8 +253,8 @@ public class CombatCapability implements ICombatCapability {
             ret = amount - getTrueMaxPosture() * CombatConfig.posCap;
             amount = getTrueMaxPosture() * CombatConfig.posCap;
         }
-        if (elb.isPotionActive(Effects.RESISTANCE) && GeneralConfig.resistance)
-            amount *= (1 - (elb.getActivePotionEffect(Effects.RESISTANCE).getAmplifier() + 1) * 0.2f);
+        if (elb.hasEffect(Effects.DAMAGE_RESISTANCE) && GeneralConfig.resistance)
+            amount *= (1 - (elb.getEffect(Effects.DAMAGE_RESISTANCE).getAmplifier() + 1) * 0.2f);
         if (above > 0 && posture - amount < above) {
             //posture floor, set and bypass stagger test
             ret = amount - above;
@@ -266,19 +266,19 @@ public class CombatCapability implements ICombatCapability {
             if (se.isCanceled()) return 0f;
             setStaggerCount(se.getCount());
             setStaggerTime(se.getLength());
-            elb.world.playSound(null, elb.getPosX(), elb.getPosY(), elb.getPosZ(), SoundEvents.ENTITY_ZOMBIE_BREAK_WOODEN_DOOR, SoundCategory.PLAYERS, 0.3f + WarDance.rand.nextFloat() * 0.5f, 0.75f + WarDance.rand.nextFloat() * 0.5f);
-            elb.dismount();
+            elb.level.playSound(null, elb.getX(), elb.getY(), elb.getZ(), SoundEvents.ZOMBIE_BREAK_WOODEN_DOOR, SoundCategory.PLAYERS, 0.3f + WarDance.rand.nextFloat() * 0.5f, 0.75f + WarDance.rand.nextFloat() * 0.5f);
+            elb.removeVehicle();
             for (Entity rider : elb.getPassengers())
-                rider.dismount();
-            staggerTickExisted = elb.ticksExisted;
+                rider.removeVehicle();
+            staggerTickExisted = elb.tickCount;
             return -1f;
         }
         float weakness = 1;
-        if (elb.isPotionActive(Effects.HUNGER))
-            for (int uwu = 0; uwu < elb.getActivePotionEffect(Effects.HUNGER).getAmplifier() + 1; uwu++)
+        if (elb.hasEffect(Effects.HUNGER))
+            for (int uwu = 0; uwu < elb.getEffect(Effects.HUNGER).getAmplifier() + 1; uwu++)
                 weakness *= GeneralConfig.hunger;
         float cooldown = ResourceConfig.postureCD * weakness;
-        cooldown += ResourceConfig.armorPostureCD * elb.getTotalArmorValue() / 20f;
+        cooldown += ResourceConfig.armorPostureCD * elb.getArmorValue() / 20f;
         posture -= amount;
         addFatigue(amount * ResourceConfig.fatigue);
         setPostureGrace((int) cooldown);
@@ -417,11 +417,11 @@ public class CombatCapability implements ICombatCapability {
         } else if (dude.get() != null && amount > 0 && staggert == 0) {
             LivingEntity elb = dude.get();
             elb.getAttribute(Attributes.MOVEMENT_SPEED).removeModifier(WOUND);
-            elb.getAttribute(Attributes.MOVEMENT_SPEED).applyPersistentModifier(STAGGERS);
+            elb.getAttribute(Attributes.MOVEMENT_SPEED).addPermanentModifier(STAGGERS);
             elb.getAttribute(Attributes.ARMOR).removeModifier(WOUND);
-            elb.getAttribute(Attributes.ARMOR).applyPersistentModifier(STAGGERA);
+            elb.getAttribute(Attributes.ARMOR).addPermanentModifier(STAGGERA);
             elb.getAttribute(Attributes.ARMOR).removeModifier(MORE);
-            elb.getAttribute(Attributes.ARMOR).applyPersistentModifier(STAGGERSA);
+            elb.getAttribute(Attributes.ARMOR).addPermanentModifier(STAGGERSA);
         }
         mstaggert = Math.max(mstaggert, amount);
         staggert = amount;
@@ -615,7 +615,7 @@ public class CombatCapability implements ICombatCapability {
                 wounding = 0;
             }
             dude.get().getAttribute(Attributes.MAX_HEALTH).removeModifier(WOUND);
-            dude.get().getAttribute(Attributes.MAX_HEALTH).applyNonPersistentModifier(new AttributeModifier(WOUND, "wounding", -wounding, AttributeModifier.Operation.ADDITION));
+            dude.get().getAttribute(Attributes.MAX_HEALTH).addTransientModifier(new AttributeModifier(WOUND, "wounding", -wounding, AttributeModifier.Operation.ADDITION));
         }
     }
 
@@ -764,8 +764,8 @@ public class CombatCapability implements ICombatCapability {
     public void clientTick() {
         LivingEntity elb = dude.get();
         if (elb == null) return;
-        if (prev == null || !ItemStack.areItemStacksEqual(elb.getHeldItemOffhand(), prev)) {
-            prev = elb.getHeldItemOffhand();
+        if (prev == null || !ItemStack.matches(elb.getOffhandItem(), prev)) {
+            prev = elb.getOffhandItem();
             offhandcd = 0;
         }
     }
@@ -774,7 +774,7 @@ public class CombatCapability implements ICombatCapability {
     public void serverTick() {
         LivingEntity elb = dude.get();
         if (elb == null) return;
-        final int ticks = (int) (elb.world.getGameTime() - lastUpdate);
+        final int ticks = (int) (elb.level.getGameTime() - lastUpdate);
         if (ticks < 1) return;//sometimes time runs backwards
         //max values
         setTrueMaxPosture(getMPos(elb));
@@ -785,8 +785,8 @@ public class CombatCapability implements ICombatCapability {
         if (first)
             setPosture(getMaxPosture());
         //store motion for further use
-        if (elb.ticksExisted % 5 == 0)
-            motion = elb.getPositionVec();
+        if (elb.tickCount % 5 == 0)
+            motion = elb.position();
         //tick down everything
         recoveryTimer -= ticks;
         if (adrenaline > 0)
@@ -816,12 +816,12 @@ public class CombatCapability implements ICombatCapability {
         //disable shields if barrier still down
         if (shieldDown) {
             for (Hand h : Hand.values()) {
-                if (CombatUtils.isShield(elb, elb.getHeldItem(h)) && getHandBind(h) < 5) {
+                if (CombatUtils.isShield(elb, elb.getItemInHand(h)) && getHandBind(h) < 5) {
                     setHandBind(h, 7);
                 }
             }
         }
-        float nausea = elb instanceof PlayerEntity || !elb.isPotionActive(Effects.NAUSEA) ? 0 : (elb.getActivePotionEffect(Effects.NAUSEA).getAmplifier() + 1) * GeneralConfig.nausea;
+        float nausea = elb instanceof PlayerEntity || !elb.hasEffect(Effects.CONFUSION) ? 0 : (elb.getEffect(Effects.CONFUSION).getAmplifier() + 1) * GeneralConfig.nausea;
         addPosture(-nausea * ticks);
         //shatter handling
         if (shatterCD <= 0) {
@@ -867,11 +867,11 @@ public class CombatCapability implements ICombatCapability {
                 addBurnout(-decay);
             }
         }
-        if (prev == null || !ItemStack.areItemStacksEqual(elb.getHeldItemOffhand(), prev)) {
-            prev = elb.getHeldItemOffhand();
+        if (prev == null || !ItemStack.matches(elb.getOffhandItem(), prev)) {
+            prev = elb.getOffhandItem();
             setOffhandCooldown(0);
         }
-        lastUpdate = elb.world.getGameTime();
+        lastUpdate = elb.level.getGameTime();
         first = false;
         sync();
     }
@@ -880,10 +880,10 @@ public class CombatCapability implements ICombatCapability {
     public void sync() {
 
         LivingEntity elb = dude.get();
-        if (elb == null || elb.world.isRemote) return;
-        CombatChannel.INSTANCE.send(PacketDistributor.TRACKING_ENTITY.with(() -> elb), new UpdateClientPacket(elb.getEntityId(), quickWrite()));
+        if (elb == null || elb.level.isClientSide) return;
+        CombatChannel.INSTANCE.send(PacketDistributor.TRACKING_ENTITY.with(() -> elb), new UpdateClientPacket(elb.getId(), quickWrite()));
         if (!(elb instanceof FakePlayer) && elb instanceof ServerPlayerEntity)
-            CombatChannel.INSTANCE.send(PacketDistributor.PLAYER.with(() -> (ServerPlayerEntity) elb), new UpdateClientPacket(elb.getEntityId(), write()));
+            CombatChannel.INSTANCE.send(PacketDistributor.PLAYER.with(() -> (ServerPlayerEntity) elb), new UpdateClientPacket(elb.getId(), write()));
 
     }
 
@@ -937,7 +937,7 @@ public class CombatCapability implements ICombatCapability {
         first = c.getBoolean("first");
         adrenaline = c.getInt("adrenaline");
         parrying = c.getInt("parrying");
-        setTempItemStack(ItemStack.read(c.getCompound("temp")));
+        setTempItemStack(ItemStack.of(c.getCompound("temp")));
         shieldDown = c.getBoolean("shieldDown");
         if (dude.get() instanceof PlayerEntity) {
             if (getRollTime() > CombatConfig.rollEndsAt && c.getBoolean("rolling"))
@@ -975,7 +975,7 @@ public class CombatCapability implements ICombatCapability {
     @Override
     public Vector3d getMotionConsistently() {
         if (dude.get() == null || motion == null) return Vector3d.ZERO;
-        return dude.get().getPositionVec().subtract(motion).scale(0.25);
+        return dude.get().position().subtract(motion).scale(0.25);
     }
 
     @Override
@@ -1020,7 +1020,7 @@ public class CombatCapability implements ICombatCapability {
         c.putBoolean("rolling", dude.get() instanceof PlayerEntity && ((PlayerEntity) dude.get()).getForcedPose() == Pose.SLEEPING);
         c.putBoolean("shieldDown", shieldDown);
         if (!tempOffhand.isEmpty())
-            c.put("temp", tempOffhand.write(new CompoundNBT()));
+            c.put("temp", tempOffhand.save(new CompoundNBT()));
         return c;
     }
 
@@ -1029,8 +1029,8 @@ public class CombatCapability implements ICombatCapability {
         LivingEntity shooter = dude.get();
         if (shooter == null) return;
         if (pass)
-            addMight(MathHelper.clamp((shooter.ticksExisted - lastRangeTick) * 0.01f, 0, 0.3f));
-        lastRangeTick = shooter.ticksExisted;
+            addMight(MathHelper.clamp((shooter.tickCount - lastRangeTick) * 0.01f, 0, 0.3f));
+        lastRangeTick = shooter.tickCount;
     }
 
     public CompoundNBT quickWrite() {
@@ -1052,13 +1052,13 @@ public class CombatCapability implements ICombatCapability {
     private float getPPT() {
         LivingEntity elb = dude.get();
         if (elb == null) return 0;
-        int exp = elb.isPotionActive(Effects.POISON) ? (elb.getActivePotionEffect(Effects.POISON).getAmplifier() + 1) : 0;
+        int exp = elb.hasEffect(Effects.POISON) ? (elb.getEffect(Effects.POISON).getAmplifier() + 1) : 0;
         float poison = 1;
         for (int j = 0; j < exp; j++) {
             poison *= GeneralConfig.poison;
         }
-        float exhaustMod = Math.max(0, elb.isPotionActive(WarEffects.EXHAUSTION.get()) ? 1 - elb.getActivePotionEffect(WarEffects.EXHAUSTION.get()).getAmplifier() * 0.2f : 1);
-        float armorMod = 2.5f + Math.min(elb.getTotalArmorValue(), 20) * 0.125f;
+        float exhaustMod = Math.max(0, elb.hasEffect(WarEffects.EXHAUSTION.get()) ? 1 - elb.getEffect(WarEffects.EXHAUSTION.get()).getAmplifier() * 0.2f : 1);
+        float armorMod = 2.5f + Math.min(elb.getArmorValue(), 20) * 0.125f;
         float cooldownMod = Math.min(CombatUtils.getCooledAttackStrength(elb, Hand.MAIN_HAND, 0.5f), CombatUtils.getCooledAttackStrength(elb, Hand.MAIN_HAND, 0.5f));
         float healthMod = 0.25f + elb.getHealth() / elb.getMaxHealth() * 0.75f;
         if (CasterData.getCap(elb).isSkillUsable(WarSkills.BOULDER_BRACE.get())) {
@@ -1084,13 +1084,13 @@ public class CombatCapability implements ICombatCapability {
     private float getBPT() {
         LivingEntity elb = dude.get();
         if (elb == null) return 0;
-        int exp = elb.isPotionActive(Effects.POISON) ? (elb.getActivePotionEffect(Effects.POISON).getAmplifier() + 1) : 0;
+        int exp = elb.hasEffect(Effects.POISON) ? (elb.getEffect(Effects.POISON).getAmplifier() + 1) : 0;
         float poison = 1;
         for (int j = 0; j < exp; j++) {
             poison *= GeneralConfig.poison;
         }
-        float exhaustMod = Math.max(0, elb.isPotionActive(WarEffects.EXHAUSTION.get()) ? 1 - elb.getActivePotionEffect(WarEffects.EXHAUSTION.get()).getAmplifier() * 0.2f : 1);
-        float armorMod = 2.5f + Math.min(elb.getTotalArmorValue(), 20) * 0.125f;
+        float exhaustMod = Math.max(0, elb.hasEffect(WarEffects.EXHAUSTION.get()) ? 1 - elb.getEffect(WarEffects.EXHAUSTION.get()).getAmplifier() * 0.2f : 1);
+        float armorMod = 2.5f + Math.min(elb.getArmorValue(), 20) * 0.125f;
         float healthMod = 0.25f + elb.getHealth() / elb.getMaxHealth() * 0.75f;
         if (CasterData.getCap(elb).isSkillUsable(WarSkills.BOULDER_BRACE.get())) {
             armorMod = 2.5f;
@@ -1115,13 +1115,13 @@ public class CombatCapability implements ICombatCapability {
     private float getSPT() {
         LivingEntity elb = dude.get();
         if (elb == null) return 0;
-        int exp = elb.isPotionActive(Effects.POISON) ? (elb.getActivePotionEffect(Effects.POISON).getAmplifier() + 1) : 0;
+        int exp = elb.hasEffect(Effects.POISON) ? (elb.getEffect(Effects.POISON).getAmplifier() + 1) : 0;
         float poison = 1;
         for (int j = 0; j < exp; j++) {
             poison *= GeneralConfig.poison;
         }
-        float exhaustMod = Math.max(0, elb.isPotionActive(WarEffects.EXHAUSTION.get()) ? 1 - elb.getActivePotionEffect(WarEffects.EXHAUSTION.get()).getAmplifier() * 0.2f : 1);
-        float armorMod = 5f + Math.min(elb.getTotalArmorValue(), 20) * 0.25f;
+        float exhaustMod = Math.max(0, elb.hasEffect(WarEffects.EXHAUSTION.get()) ? 1 - elb.getEffect(WarEffects.EXHAUSTION.get()).getAmplifier() * 0.2f : 1);
+        float armorMod = 5f + Math.min(elb.getArmorValue(), 20) * 0.25f;
         //float healthMod = 0.25f + elb.getHealth() / elb.getMaxHealth() * 0.75f;
         final float ret = (getMaxSpirit() / (armorMod * 20)) * exhaustMod * poison;
         RegenSpiritEvent ev = new RegenSpiritEvent(elb, ret);

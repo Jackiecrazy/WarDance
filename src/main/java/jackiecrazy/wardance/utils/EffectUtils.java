@@ -21,30 +21,30 @@ public class EffectUtils {
      * Take that, wither!
      */
     public static boolean attemptAddPot(LivingEntity elb, EffectInstance pot, boolean stackWhenFailed) {
-        Effect p = pot.getPotion();
-        elb.addPotionEffect(pot);
-        if (!elb.isPotionActive(p)) {
+        Effect p = pot.getEffect();
+        elb.addEffect(pot);
+        if (!elb.hasEffect(p)) {
             //I'm gonna do it anyways, take that.
-            for (Map.Entry<Attribute, AttributeModifier> e : p.getAttributeModifierMap().entrySet()) {
+            for (Map.Entry<Attribute, AttributeModifier> e : p.getAttributeModifiers().entrySet()) {
                 final ModifiableAttributeInstance attribute = elb.getAttribute(e.getKey());
                 if (attribute != null) {
                     if (stackWhenFailed) {
-                        AttributeModifier am = attribute.getModifier(e.getValue().getID());
+                        AttributeModifier am = attribute.getModifier(e.getValue().getId());
                         if (am != null && am.getOperation() == e.getValue().getOperation()) {
-                            AttributeModifier apply = new AttributeModifier(e.getValue().getID(), e.getValue().getName(), am.getAmount() + e.getValue().getAmount(), am.getOperation());
-                            attribute.removeModifier(e.getValue().getID());
-                            attribute.applyNonPersistentModifier(apply);
-                        } else attribute.applyNonPersistentModifier(e.getValue());
+                            AttributeModifier apply = new AttributeModifier(e.getValue().getId(), e.getValue().getName(), am.getAmount() + e.getValue().getAmount(), am.getOperation());
+                            attribute.removeModifier(e.getValue().getId());
+                            attribute.addTransientModifier(apply);
+                        } else attribute.addTransientModifier(e.getValue());
                     } else {
-                        attribute.removeModifier(e.getValue().getID());
-                        attribute.applyNonPersistentModifier(e.getValue());
+                        attribute.removeModifier(e.getValue().getId());
+                        attribute.addTransientModifier(e.getValue());
                     }
                 }
             }
-            elb.getActivePotionMap().put(pot.getPotion(), pot);
+            elb.getActiveEffectsMap().put(pot.getEffect(), pot);
             return false;
         } else {
-            elb.getActivePotionEffect(pot.getPotion()).combine(pot);
+            elb.getEffect(pot.getEffect()).update(pot);
         }
         return true;
     }
@@ -53,8 +53,8 @@ public class EffectUtils {
      * increases the potion amplifier on the entity, with options on the duration
      */
     public static EffectInstance stackPot(LivingEntity elb, EffectInstance toAdd, StackingMethod method) {
-        Effect p = toAdd.getPotion();
-        EffectInstance pe = elb.getActivePotionEffect(p);
+        Effect p = toAdd.getEffect();
+        EffectInstance pe = elb.getEffect(p);
         if (pe == null || method == StackingMethod.NONE) {
             //System.out.println("beep1");
             return toAdd;
@@ -87,12 +87,12 @@ public class EffectUtils {
                 break;
         }
         //System.out.println(ret);
-        return new EffectInstance(p, length, potency, pe.isAmbient(), pe.doesShowParticles(), pe.isShowIcon());
+        return new EffectInstance(p, length, potency, pe.isAmbient(), pe.isVisible(), pe.showIcon());
     }
 
     public static int getEffectiveLevel(LivingEntity elb, Effect p) {
-        if (elb.getActivePotionEffect(p) != null)
-            return elb.getActivePotionEffect(p).getAmplifier() + 1;
+        if (elb.getEffect(p) != null)
+            return elb.getEffect(p).getAmplifier() + 1;
         return 0;
     }
 
@@ -100,16 +100,16 @@ public class EffectUtils {
         attemptAddPot(elb, new EffectInstance(WarEffects.FEAR.get(), duration, 0), false);
         if (elb instanceof MobEntity) {
             MobEntity el = (MobEntity) elb;
-            el.getNavigator().clearPath();
-            el.setAttackTarget(null);
+            el.getNavigation().stop();
+            el.setTarget(null);
         }
-        if (!elb.world.isRemote) {
+        if (!elb.level.isClientSide) {
             //PigEntity f=new PigEntity(EntityType.PIG, elb.world);
-            FearEntity f = new FearEntity(WarEntities.fear, elb.world);
+            FearEntity f = new FearEntity(WarEntities.fear, elb.level);
             f.setFearSource(applier);
             f.setTetheringEntity(elb);
-            f.setPositionAndUpdate(elb.getPosX(), elb.getPosY(), elb.getPosZ());
-            elb.world.addEntity(f);
+            f.teleportTo(elb.getX(), elb.getY(), elb.getZ());
+            elb.level.addFreshEntity(f);
         }
     }
 

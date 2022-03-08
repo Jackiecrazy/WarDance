@@ -14,8 +14,10 @@ import java.awt.*;
 import java.util.Arrays;
 import java.util.HashSet;
 
+import jackiecrazy.wardance.skill.Skill.STATE;
+
 public class HeavyBlow extends Skill {
-    private final Tag<String> tag = Tag.getTagFromContents(new HashSet<>(Arrays.asList("physical", ProcPoints.disable_shield, ProcPoints.melee, ProcPoints.on_hurt, "boundCast", ProcPoints.normal_attack, ProcPoints.modify_crit, ProcPoints.recharge_normal, ProcPoints.on_being_parried)));
+    private final Tag<String> tag = Tag.create(new HashSet<>(Arrays.asList("physical", ProcPoints.disable_shield, ProcPoints.melee, ProcPoints.on_hurt, "boundCast", ProcPoints.normal_attack, ProcPoints.modify_crit, ProcPoints.recharge_normal, ProcPoints.on_being_parried)));
     private final Tag<String> tags = makeTag(SkillTags.physical, SkillTags.forced_crit, SkillTags.passive, SkillTags.offensive, SkillTags.disable_shield);
 
     @Override
@@ -25,7 +27,7 @@ public class HeavyBlow extends Skill {
 
     @Override
     public Tag<String> getSoftIncompatibility(LivingEntity caster) {
-        return Tag.getEmptyTag();
+        return Tag.empty();
     }
 
     @Nonnull
@@ -72,10 +74,10 @@ public class HeavyBlow extends Skill {
         @Override
         protected void onCrit(CriticalHitEvent proc, SkillData stats, LivingEntity caster, LivingEntity target) {
             proc.setDamageModifier(1 + (float) Math.max(2, Math.sqrt(GeneralUtils.getDistSqCompensated(caster, target)) / 4f));
-            Vector3d extra = caster.getPositionVec().subtractReverse(target.getPositionVec()).scale(-1);
-            if (extra.lengthSquared() > 1) extra = extra.normalize();
-            caster.setMotion(caster.getMotion().add(extra));
-            caster.velocityChanged = true;
+            Vector3d extra = caster.position().vectorTo(target.position()).scale(-1);
+            if (extra.lengthSqr() > 1) extra = extra.normalize();
+            caster.setDeltaMovement(caster.getDeltaMovement().add(extra));
+            caster.hurtMarked = true;
         }
     }
 }

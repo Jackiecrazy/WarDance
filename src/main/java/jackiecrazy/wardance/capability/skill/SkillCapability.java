@@ -215,8 +215,8 @@ public class SkillCapability implements ISkillCapability {
             if (from.contains("randomList", Constants.NBT.TAG_LIST)) {
                 ListNBT list = from.getList("randomList", Constants.NBT.TAG_STRING);
                 for (Object s : list.toArray()) {
-                    if (s instanceof StringNBT && Skill.getSkill(((StringNBT) s).getString()) != null)
-                        skillList.add(Skill.getSkill(((StringNBT) s).getString()));
+                    if (s instanceof StringNBT && Skill.getSkill(((StringNBT) s).getAsString()) != null)
+                        skillList.add(Skill.getSkill(((StringNBT) s).getAsString()));
                 }
             }
             //}
@@ -256,7 +256,7 @@ public class SkillCapability implements ISkillCapability {
     public void update() {
         final LivingEntity caster = dude.get();
         if (caster == null) return;
-        final boolean gate = caster.world.getGameRules().getBoolean(WarDance.GATED_SKILLS);
+        final boolean gate = caster.level.getGameRules().getBoolean(WarDance.GATED_SKILLS);
         sync |= gatedSkills != gate;
         gatedSkills = gate;
         for (SkillData d : data.values()) {

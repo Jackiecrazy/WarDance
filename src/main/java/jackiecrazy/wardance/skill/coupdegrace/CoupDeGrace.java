@@ -33,7 +33,7 @@ import java.util.Arrays;
 import java.util.HashSet;
 
 public class CoupDeGrace extends Skill {
-    private final Tag<String> tag = Tag.getTagFromContents(new HashSet<>(Arrays.asList("physical", ProcPoints.melee, ProcPoints.normal_attack, ProcPoints.on_hurt, ProcPoints.recharge_cast, ProcPoints.change_parry_result, "execution")));
+    private final Tag<String> tag = Tag.create(new HashSet<>(Arrays.asList("physical", ProcPoints.melee, ProcPoints.normal_attack, ProcPoints.on_hurt, ProcPoints.recharge_cast, ProcPoints.change_parry_result, "execution")));
 
     protected float getDamage(LivingEntity caster, LivingEntity target) {
         return (GeneralUtils.getMaxHealthBeforeWounding(target) - target.getHealth()) * 0.2f;
@@ -78,7 +78,7 @@ public class CoupDeGrace extends Skill {
                     if (willKillOnCast(caster, target))
                         target.setHealth(1);
                     e.setAmount(e.getAmount() + getDamage(caster, target));
-                    e.getSource().setDamageBypassesArmor().setDamageIsAbsolute();
+                    e.getSource().bypassArmor().bypassMagic();
                     CombatData.getCap(target).decrementStaggerTime(CombatData.getCap(target).getStaggerTime());
                     deathCheck(caster, target, e.getAmount());
                     markUsed(caster);
@@ -98,8 +98,8 @@ public class CoupDeGrace extends Skill {
                     if (i.getItem().getItem() == drop.getItem() && (!(target instanceof PlayerEntity) || i.getItem().getOrCreateTag().getString("SkullOwner").equalsIgnoreCase(drop.getTag().getString("SkullOwner"))))
                         return;
                 }
-                ItemEntity forceSkull = new ItemEntity(target.world, target.getPosX(), target.getPosY(), target.getPosZ(), drop);
-                forceSkull.setDefaultPickupDelay();
+                ItemEntity forceSkull = new ItemEntity(target.level, target.getX(), target.getY(), target.getZ(), drop);
+                forceSkull.setDefaultPickUpDelay();
                 ((LivingDropsEvent) procPoint).getDrops().add(forceSkull);
             }
 
@@ -139,7 +139,7 @@ public class CoupDeGrace extends Skill {
         @Override
         protected void deathCheck(LivingEntity caster, LivingEntity target, float amount) {
             CombatData.getCap(target).consumeSpirit(CombatData.getCap(target).getSpirit() / 2);
-            FakeExplosion.explode(caster.world, caster, target.getPosX(), target.getPosY(), target.getPosZ(), (float) Math.sqrt(CombatData.getCap(target).getTrueMaxPosture()), new CombatDamageSource("explosion.player", caster).setProxy(target).setDamageTyping(CombatDamageSource.TYPE.PHYSICAL).setProcSkillEffects(true).setExplosion().setMagicDamage(), 4 * CombatData.getCap(target).getSpirit());
+            FakeExplosion.explode(caster.level, caster, target.getX(), target.getY(), target.getZ(), (float) Math.sqrt(CombatData.getCap(target).getTrueMaxPosture()), new CombatDamageSource("explosion.player", caster).setProxy(target).setDamageTyping(CombatDamageSource.TYPE.PHYSICAL).setProcSkillEffects(true).setExplosion().setMagic(), 4 * CombatData.getCap(target).getSpirit());
         }
     }
 
@@ -155,9 +155,9 @@ public class CoupDeGrace extends Skill {
         }
     }
 
-    public static class Reaping extends CoupDeGrace {
-        private final Tag<String> tag = Tag.getTagFromContents(new HashSet<>(Arrays.asList("physical", ProcPoints.melee, ProcPoints.change_awareness, ProcPoints.on_hurt, ProcPoints.recharge_cast, ProcPoints.change_parry_result, "execution")));
-        private final Tag<String> tague = Tag.getTagFromContents(new HashSet<>(Arrays.asList(SkillTags.special, SkillTags.offensive)));
+    public static class ReapersLaugh extends CoupDeGrace {
+        private final Tag<String> tag = Tag.create(new HashSet<>(Arrays.asList("physical", ProcPoints.melee, ProcPoints.change_awareness, ProcPoints.on_hurt, ProcPoints.recharge_cast, ProcPoints.change_parry_result, "execution")));
+        private final Tag<String> tague = Tag.create(new HashSet<>(Arrays.asList(SkillTags.special, SkillTags.offensive)));
 
         @Override
         public Tag<String> getTags(LivingEntity caster) {
@@ -182,19 +182,19 @@ public class CoupDeGrace extends Skill {
         @Override
         public boolean onStateChange(LivingEntity caster, SkillData prev, STATE from, STATE to) {
             if (from == STATE.INACTIVE && to == STATE.HOLSTERED) {
-                caster.world.playSound(null, caster.getPosX(), caster.getPosY(), caster.getPosZ(), SoundEvents.ENTITY_RAVAGER_CELEBRATE, SoundCategory.PLAYERS, 0.8f + WarDance.rand.nextFloat() * 0.5f, 0.75f + WarDance.rand.nextFloat() * 0.5f);
+                caster.level.playSound(null, caster.getX(), caster.getY(), caster.getZ(), SoundEvents.RAVAGER_CELEBRATE, SoundCategory.PLAYERS, 0.8f + WarDance.rand.nextFloat() * 0.5f, 0.75f + WarDance.rand.nextFloat() * 0.5f);
                 prev.setState(STATE.HOLSTERED);
             }
             if (to == STATE.ACTIVE && cast(caster, -999)) {
                 //DIE!
-                for (Entity e : caster.world.getEntitiesInAABBexcluding(caster, caster.getBoundingBox().grow(caster.getAttributeValue(ForgeMod.REACH_DISTANCE.get())), (a -> !TargetingUtils.isAlly(a, caster)))) {
-                    if (!(e instanceof LivingEntity) || !caster.canEntityBeSeen(e)) continue;
+                for (Entity e : caster.level.getEntities(caster, caster.getBoundingBox().inflate(caster.getAttributeValue(ForgeMod.REACH_DISTANCE.get())), (a -> !TargetingUtils.isAlly(a, caster)))) {
+                    if (!(e instanceof LivingEntity) || !caster.canSee(e)) continue;
                     final CombatDamageSource die = new CombatDamageSource("player", caster).setDamageTyping(CombatDamageSource.TYPE.PHYSICAL).setProcSkillEffects(true).setSkillUsed(this).setKnockbackPercentage(0);
                     if (willKillOnCast(caster, (LivingEntity) e)) {
                         prev.flagCondition(true);
-                        die.setCrit(true).setDamageTyping(CombatDamageSource.TYPE.TRUE).setDamageBypassesArmor().setDamageIsAbsolute();
+                        die.setCrit(true).setDamageTyping(CombatDamageSource.TYPE.TRUE).bypassArmor().bypassMagic();
                     }
-                    e.attackEntityFrom(die, GeneralUtils.getMaxHealthBeforeWounding((LivingEntity) e) * 0.1f + (float) caster.getAttributeValue(Attributes.ATTACK_DAMAGE));
+                    e.hurt(die, GeneralUtils.getMaxHealthBeforeWounding((LivingEntity) e) * 0.1f + (float) caster.getAttributeValue(Attributes.ATTACK_DAMAGE));
                 }
             }
             if (to == STATE.COOLING)

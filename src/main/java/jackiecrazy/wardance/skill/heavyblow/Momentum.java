@@ -14,6 +14,8 @@ import net.minecraftforge.fml.common.Mod;
 
 import java.awt.*;
 
+import jackiecrazy.wardance.skill.Skill.STATE;
+
 @Mod.EventBusSubscriber(modid = WarDance.MODID)
 public class Momentum extends HeavyBlow {
     @Override

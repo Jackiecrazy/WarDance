@@ -119,31 +119,31 @@ public class ClientEvents {
 //            KeyBinding.unPressAllKeys();
 //            return;
 //        }
-        if (itsc.isCombatMode() && mc.world != null) {
-            final boolean onSprint = mc.gameSettings.keyBindSprint.isPressed();
+        if (itsc.isCombatMode() && mc.level != null) {
+            final boolean onSprint = mc.options.keySprint.consumeClick();
             int dir = -1;
             if (!WarCompat.elenaiDodge) {
-                if (mi.leftKeyDown && (!tapped[0] || onSprint)) {
-                    if (mc.world.getGameTime() - lastTap[0] <= ALLOWANCE || onSprint) {
+                if (mi.left && (!tapped[0] || onSprint)) {
+                    if (mc.level.getGameTime() - lastTap[0] <= ALLOWANCE || onSprint) {
                         dir = 0;
                     }
-                    lastTap[0] = mc.world.getGameTime();
+                    lastTap[0] = mc.level.getGameTime();
                 }
-                tapped[0] = mi.leftKeyDown;
-                if (mi.backKeyDown && (!tapped[1] || onSprint)) {
-                    if (mc.world.getGameTime() - lastTap[1] <= ALLOWANCE || onSprint) {
+                tapped[0] = mi.left;
+                if (mi.down && (!tapped[1] || onSprint)) {
+                    if (mc.level.getGameTime() - lastTap[1] <= ALLOWANCE || onSprint) {
                         dir = 1;
                     }
-                    lastTap[1] = mc.world.getGameTime();
+                    lastTap[1] = mc.level.getGameTime();
                 }
-                tapped[1] = mi.backKeyDown;
-                if (mi.rightKeyDown && (!tapped[2] || onSprint)) {
-                    if (mc.world.getGameTime() - lastTap[2] <= ALLOWANCE || onSprint) {
+                tapped[1] = mi.down;
+                if (mi.right && (!tapped[2] || onSprint)) {
+                    if (mc.level.getGameTime() - lastTap[2] <= ALLOWANCE || onSprint) {
                         dir = 2;
                     }
-                    lastTap[2] = mc.world.getGameTime();
+                    lastTap[2] = mc.level.getGameTime();
                 }
-                tapped[2] = mi.rightKeyDown;
+                tapped[2] = mi.right;
 //            if (mi.forwardKeyDown && (!tapped[3] || onSprint)) {
 //                if (mc.world.getGameTime() - lastTap[3] <= ALLOWANCE || onSprint) {
 //                    dir = 3;
@@ -152,19 +152,19 @@ public class ClientEvents {
 //            }
 //            tapped[3] = mi.forwardKeyDown;
             }
-            if (mc.player.isSprinting() && mc.gameSettings.keyBindSprint.isKeyDown() && mi.sneaking && !sneak) {
+            if (mc.player.isSprinting() && mc.options.keySprint.isDown() && mi.shiftKeyDown && !sneak) {
                 //if(mc.world.getTotalWorldTime()-lastSneak<=ALLOWANCE){
                 dir = 99;
                 //}
             }
-            sneak = mi.sneaking;
+            sneak = mi.shiftKeyDown;
             if (dir != -1)
-                CombatChannel.INSTANCE.sendToServer(new DodgePacket(dir, mi.sneaking));
+                CombatChannel.INSTANCE.sendToServer(new DodgePacket(dir, mi.shiftKeyDown));
         }
 
         if (itsc.getStaggerTime() > 0) {
             //no moving while you're down! (except for a safety roll)
-            KeyBinding.unPressAllKeys();
+            KeyBinding.releaseAll();
             return;
         }
     }
@@ -172,11 +172,11 @@ public class ClientEvents {
     @SubscribeEvent
     public static void alert(LivingAttackEvent e) {
         if (Minecraft.getInstance().player == null) return;
-        if ((e.getEntityLiving() == Minecraft.getInstance().player && e.getSource().getTrueSource() instanceof LivingEntity) || e.getSource().getTrueSource() == Minecraft.getInstance().player) {
+        if ((e.getEntityLiving() == Minecraft.getInstance().player && e.getSource().getEntity() instanceof LivingEntity) || e.getSource().getEntity() == Minecraft.getInstance().player) {
             if (ClientConfig.autoCombat > 0 && combatTicks != Integer.MAX_VALUE) {
                 if (!CombatData.getCap(Minecraft.getInstance().player).isCombatMode())
                     CombatChannel.INSTANCE.sendToServer(new CombatModePacket());
-                combatTicks = Minecraft.getInstance().player.ticksExisted;
+                combatTicks = Minecraft.getInstance().player.tickCount;
             }
         }
     }
@@ -187,8 +187,8 @@ public class ClientEvents {
         if (e.isAlive()) {
             if (CombatData.getCap(e).getStaggerTime() > 0) {
                 boolean reg = (ForgeRegistries.ENTITIES.getKey(e.getType()) != null && rotate.containsKey(ForgeRegistries.ENTITIES.getKey(e.getType()).toString()));
-                float height = reg && rotate.getOrDefault(ForgeRegistries.ENTITIES.getKey(e.getType()).toString(), false) ? e.getWidth() : e.getHeight();
-                event.getEntity().world.addParticle(ParticleTypes.CRIT, e.getPosX() + Math.sin(e.ticksExisted) * e.getWidth() / 2, e.getPosY() + height, e.getPosZ() + Math.cos(e.ticksExisted) * e.getWidth() / 2, 0, 0, 0);
+                float height = reg && rotate.getOrDefault(ForgeRegistries.ENTITIES.getKey(e.getType()).toString(), false) ? e.getBbWidth() : e.getBbHeight();
+                event.getEntity().level.addParticle(ParticleTypes.CRIT, e.getX() + Math.sin(e.tickCount) * e.getBbWidth() / 2, e.getY() + height, e.getZ() + Math.cos(e.tickCount) * e.getBbWidth() / 2, 0, 0, 0);
             }
 
 
@@ -198,8 +198,8 @@ public class ClientEvents {
     @SubscribeEvent
     public static void down(RenderLivingEvent.Pre event) {
         final LivingEntity e = event.getEntity();
-        float width = e.getWidth();
-        float height = e.getHeight();
+        float width = e.getBbWidth();
+        float height = e.getBbHeight();
 
         if (e.isAlive()) {
             if (CombatData.getCap(event.getEntity()).getStaggerTime() > 0) {
@@ -210,10 +210,10 @@ public class ClientEvents {
                 boolean reg = (ForgeRegistries.ENTITIES.getKey(e.getType()) != null && rotate.containsKey(ForgeRegistries.ENTITIES.getKey(e.getType()).toString()));
                 boolean rot = reg ? rotate.getOrDefault(ForgeRegistries.ENTITIES.getKey(e.getType()).toString(), false) : width < height;
                 if (rot) {
-                    ms.rotate(Vector3f.XN.rotationDegrees(90));
-                    ms.rotate(Vector3f.ZP.rotationDegrees(-e.renderYawOffset));
-                    ms.rotate(Vector3f.YP.rotationDegrees(e.renderYawOffset));
-                    ms.translate(0, -e.getHeight() / 2, 0);
+                    ms.mulPose(Vector3f.XN.rotationDegrees(90));
+                    ms.mulPose(Vector3f.ZP.rotationDegrees(-e.yBodyRot));
+                    ms.mulPose(Vector3f.YP.rotationDegrees(e.yBodyRot));
+                    ms.translate(0, -e.getBbHeight() / 2, 0);
                 }
                 //cube bois become side bois
                 //flat bois become flatter bois
@@ -221,7 +221,7 @@ public class ClientEvents {
             }
             if (CombatData.getCap(e).getRollTime() != 0 && e.getPose() == Pose.SLEEPING) {
                 MatrixStack ms = event.getMatrixStack();
-                ms.rotate(Vector3f.YN.rotationDegrees(e.rotationYaw - e.getBedDirection().getHorizontalAngle()));
+                ms.mulPose(Vector3f.YN.rotationDegrees(e.yRot - e.getBedOrientation().toYRot()));
 //                ms.rotate(Vector3f.ZP.rotationDegrees(-e.renderYawOffset));
 //                ms.rotate(Vector3f.YP.rotationDegrees(e.renderYawOffset));
             }
@@ -236,12 +236,12 @@ public class ClientEvents {
     public static void handRaising(RenderHandEvent e) {
         if (e.getHand().equals(Hand.MAIN_HAND) || !GeneralConfig.dual) return;
         AbstractClientPlayerEntity p = Minecraft.getInstance().player;
-        if (p == null || (!CombatData.getCap(p).isCombatMode() && (p.swingingHand != Hand.OFF_HAND || !p.isSwingInProgress)) || !e.getItemStack().isEmpty())
+        if (p == null || (!CombatData.getCap(p).isCombatMode() && (p.swingingArm != Hand.OFF_HAND || !p.swinging)) || !e.getItemStack().isEmpty())
             return;
         e.setCanceled(true);
         float cd = CombatUtils.getCooledAttackStrength(p, Hand.OFF_HAND, e.getPartialTicks());
         float f6 = 1 - (cd * cd * cd);
-        Minecraft.getInstance().getFirstPersonRenderer().renderArmFirstPerson(e.getMatrixStack(), e.getBuffers(), e.getLight(), f6, e.getSwingProgress(), p.getPrimaryHand() == HandSide.RIGHT ? HandSide.LEFT : HandSide.RIGHT);
+        Minecraft.getInstance().getItemInHandRenderer().renderPlayerArm(e.getMatrixStack(), e.getBuffers(), e.getLight(), f6, e.getSwingProgress(), p.getMainArm() == HandSide.RIGHT ? HandSide.LEFT : HandSide.RIGHT);
     }
 
     @SubscribeEvent
@@ -253,18 +253,18 @@ public class ClientEvents {
             if (event.getType().equals(RenderGameOverlayEvent.ElementType.CROSSHAIRS)) {
                 //draw offhand cooldown, crosshair type
                 {
-                    GameSettings gamesettings = mc.gameSettings;
+                    GameSettings gamesettings = mc.options;
 
-                    if (gamesettings.getPointOfView() == PointOfView.FIRST_PERSON) {
+                    if (gamesettings.getCameraType() == PointOfView.FIRST_PERSON) {
 
-                        int width = sr.getScaledWidth();
-                        int height = sr.getScaledHeight();
+                        int width = sr.getGuiScaledWidth();
+                        int height = sr.getGuiScaledHeight();
 
                         ClientPlayerEntity player = mc.player;
                         if (player == null) return;
-                        if (!gamesettings.showDebugInfo || gamesettings.hideGUI || player.hasReducedDebug() || gamesettings.reducedDebugInfo) {
-                            if (mc.gameSettings.attackIndicator == AttackIndicatorStatus.CROSSHAIR) {
-                                GlStateManager.enableAlphaTest();
+                        if (!gamesettings.renderDebug || gamesettings.hideGui || player.isReducedDebugInfo() || gamesettings.reducedDebugInfo) {
+                            if (mc.options.attackIndicator == AttackIndicatorStatus.CROSSHAIR) {
+                                GlStateManager._enableAlphaTest();
                                 float cooldown = CombatUtils.getCooledAttackStrength(player, Hand.OFF_HAND, 0f);
                                 boolean hyperspeed = false;
 
@@ -277,11 +277,11 @@ public class ClientEvents {
                                 int x = width / 2 - 8;
 
                                 if (hyperspeed) {
-                                    mc.ingameGUI.blit(stack, x, y, 68, 94, 16, 16);
+                                    mc.gui.blit(stack, x, y, 68, 94, 16, 16);
                                 } else if (cooldown < 1.0F) {
                                     int k = (int) (cooldown * 17.0F);
-                                    mc.ingameGUI.blit(stack, x, y, 36, 94, 16, 4);
-                                    mc.ingameGUI.blit(stack, x, y, 52, 94, k, 4);
+                                    mc.gui.blit(stack, x, y, 36, 94, 16, 4);
+                                    mc.gui.blit(stack, x, y, 52, 94, k, 4);
                                 }
                             }
                         }
@@ -290,54 +290,54 @@ public class ClientEvents {
             }
             if (event.getType().equals(RenderGameOverlayEvent.ElementType.HOTBAR)) {
                 //draw offhand cooldown, hotbar type
-                if (mc.getRenderViewEntity() instanceof PlayerEntity) {
-                    GlStateManager.clearColor(1.0F, 1.0F, 1.0F, 1.0F);
-                    PlayerEntity p = (PlayerEntity) mc.getRenderViewEntity();
-                    ItemStack itemstack = p.getHeldItemOffhand();
-                    HandSide oppositeHand = p.getPrimaryHand().opposite();
-                    int halfOfScreen = sr.getScaledWidth() / 2;
+                if (mc.getCameraEntity() instanceof PlayerEntity) {
+                    GlStateManager._clearColor(1.0F, 1.0F, 1.0F, 1.0F);
+                    PlayerEntity p = (PlayerEntity) mc.getCameraEntity();
+                    ItemStack itemstack = p.getOffhandItem();
+                    HandSide oppositeHand = p.getMainArm().getOpposite();
+                    int halfOfScreen = sr.getGuiScaledWidth() / 2;
 
-                    GlStateManager.enableRescaleNormal();
+                    GlStateManager._enableRescaleNormal();
                     RenderSystem.enableBlend();
                     RenderSystem.defaultBlendFunc();
-                    RenderHelper.enableStandardItemLighting();
+                    RenderHelper.turnBackOn();
 
-                    if (mc.gameSettings.attackIndicator == AttackIndicatorStatus.HOTBAR) {
+                    if (mc.options.attackIndicator == AttackIndicatorStatus.HOTBAR) {
                         float strength = CombatUtils.getCooledAttackStrength(p, Hand.OFF_HAND, 0);
                         if (strength < 1.0F) {
-                            int y = sr.getScaledHeight() - 20;
+                            int y = sr.getGuiScaledHeight() - 20;
                             int x = halfOfScreen + 91 + 6;
                             if (oppositeHand == HandSide.LEFT) {
                                 x = halfOfScreen - 91 - 22;
                             }
 
-                            mc.getTextureManager().bindTexture(AbstractGui.GUI_ICONS_LOCATION);
+                            mc.getTextureManager().bind(AbstractGui.GUI_ICONS_LOCATION);
                             int modStrength = (int) (strength * 19.0F);
                             RenderSystem.color4f(1.0F, 1.0F, 1.0F, 1.0F);
-                            mc.ingameGUI.blit(stack, x + 18, y, 0, 94, 18, 18);
-                            mc.ingameGUI.blit(stack, x + 18, y + 18 - modStrength, 18, 112 - modStrength, 18, modStrength);
+                            mc.gui.blit(stack, x + 18, y, 0, 94, 18, 18);
+                            mc.gui.blit(stack, x + 18, y + 18 - modStrength, 18, 112 - modStrength, 18, modStrength);
                         }
                     }
 
-                    RenderHelper.disableStandardItemLighting();
+                    RenderHelper.turnOff();
                     RenderSystem.disableBlend();
                 }
             }
         }
 
         if (event.getType().equals(RenderGameOverlayEvent.ElementType.ALL))
-            if (mc.getRenderViewEntity() instanceof PlayerEntity) {
+            if (mc.getCameraEntity() instanceof PlayerEntity) {
                 ClientPlayerEntity player = mc.player;
                 ICombatCapability cap = CombatData.getCap(player);
-                int width = sr.getScaledWidth();
-                int height = sr.getScaledHeight();
-                mc.getTextureManager().bindTexture(goodhud);
+                int width = sr.getGuiScaledWidth();
+                int height = sr.getGuiScaledHeight();
+                mc.getTextureManager().bind(goodhud);
                 currentSpiritLevel = updateValue(currentSpiritLevel, cap.getSpirit());
                 currentMightLevel = updateValue(currentMightLevel, cap.getMight());
                 ClientEvents.currentComboLevel = cap.getRank() > currentComboLevel ? updateValue(currentComboLevel, cap.getRank()) : cap.getRank();
                 //yourCurrentPostureLevel = updateValue(yourCurrentPostureLevel, cap.getPosture());
                 if (cap.isCombatMode()) {
-                    stack.push();
+                    stack.pushPose();
                     RenderSystem.enableBlend();
                     RenderSystem.enableAlphaTest();
                     //bar
@@ -366,25 +366,25 @@ public class ClientEvents {
                     if (ClientConfig.CONFIG.might.enabled) {
                         //might circle
                         RenderSystem.color4f(1, 1, 1, 1);
-                        stack.push();
-                        stack.push();
-                        mc.ingameGUI.blit(stack, x, y, 0, 64, 32, 32);
-                        stack.pop();
+                        stack.pushPose();
+                        stack.pushPose();
+                        mc.gui.blit(stack, x, y, 0, 64, 32, 32);
+                        stack.popPose();
                         //might circle filling
-                        stack.push();
-                        mc.ingameGUI.blit(stack, x, y + 32 - fillHeight, 0, 96 - fillHeight, 32, fillHeight);
-                        stack.pop();
+                        stack.pushPose();
+                        mc.gui.blit(stack, x, y + 32 - fillHeight, 0, 96 - fillHeight, 32, fillHeight);
+                        stack.popPose();
                         fillHeight += Math.min(fillHeight, 3);
                         fillHeight = Math.min(fillHeight, 32);
                         //might base
-                        stack.push();
-                        mc.ingameGUI.blit(stack, x, y, 32, 64, 32, 32);
-                        stack.pop();
+                        stack.pushPose();
+                        mc.gui.blit(stack, x, y, 32, 64, 32, 32);
+                        stack.popPose();
                         //might illumination
-                        stack.push();
-                        mc.ingameGUI.blit(stack, x, y + 32 - fillHeight, 64, 96 - fillHeight, 32, fillHeight);
-                        stack.pop();
-                        stack.pop();
+                        stack.pushPose();
+                        mc.gui.blit(stack, x, y + 32 - fillHeight, 64, 96 - fillHeight, 32, fillHeight);
+                        stack.popPose();
+                        stack.popPose();
                     }
                     pair = translateCoords(ClientConfig.CONFIG.spirit, width, height);
                     x = MathHelper.clamp(pair.getFirst() - 16, 0, width - 32);
@@ -392,46 +392,46 @@ public class ClientEvents {
                     fillHeight = (int) (Math.min(1, currentSpiritLevel / cap.getMaxSpirit()) * 32);
                     String display = formatter.format(currentSpiritLevel) + "/" + formatter.format(cap.getMaxSpirit());
                     //spirit circle
-                    stack.push();
+                    stack.pushPose();
                     if (ClientConfig.CONFIG.spirit.enabled) {
-                        stack.push();
-                        mc.ingameGUI.blit(stack, x, y, 0, 96, 32, 32);
-                        stack.pop();
+                        stack.pushPose();
+                        mc.gui.blit(stack, x, y, 0, 96, 32, 32);
+                        stack.popPose();
                         //spirit circle filling
-                        stack.push();
-                        mc.ingameGUI.blit(stack, x, y + 32 - fillHeight, 0, 128 - fillHeight, 32, fillHeight);
-                        stack.pop();
+                        stack.pushPose();
+                        mc.gui.blit(stack, x, y + 32 - fillHeight, 0, 128 - fillHeight, 32, fillHeight);
+                        stack.popPose();
                         fillHeight += Math.min(fillHeight, 3);
                         fillHeight = Math.min(fillHeight, 32);
                         //spirit base
-                        stack.push();
-                        mc.ingameGUI.blit(stack, x, y + 1, 32, 96, 32, 32);
-                        stack.pop();
+                        stack.pushPose();
+                        mc.gui.blit(stack, x, y + 1, 32, 96, 32, 32);
+                        stack.popPose();
                         //spirit illumination
-                        stack.push();
-                        mc.ingameGUI.blit(stack, x, y + 33 - fillHeight, 64, 128 - fillHeight, 32, fillHeight);
-                        stack.pop();
+                        stack.pushPose();
+                        mc.gui.blit(stack, x, y + 33 - fillHeight, 64, 128 - fillHeight, 32, fillHeight);
+                        stack.popPose();
                     }
                     if (ClientConfig.CONFIG.spiritNumber.enabled) {
                         pair = translateCoords(ClientConfig.CONFIG.spiritNumber, width, height);
-                        mc.fontRenderer.drawStringWithShadow(event.getMatrixStack(), display, pair.getFirst() - mc.fontRenderer.getStringWidth(display) / 2f, pair.getSecond() - 2, ClientConfig.spiritColor);
+                        mc.font.drawShadow(event.getMatrixStack(), display, pair.getFirst() - mc.font.width(display) / 2f, pair.getSecond() - 2, ClientConfig.spiritColor);
                     }
                     if (ClientConfig.CONFIG.mightNumber.enabled) {
                         pair = translateCoords(ClientConfig.CONFIG.mightNumber, width, height);
                         display = formatter.format(currentMightLevel) + "/" + formatter.format(cap.getMaxMight());
-                        mc.fontRenderer.drawStringWithShadow(event.getMatrixStack(), display, pair.getFirst() - mc.fontRenderer.getStringWidth(display) / 2f, pair.getSecond() - 2, ClientConfig.mightColor);
+                        mc.font.drawShadow(event.getMatrixStack(), display, pair.getFirst() - mc.font.width(display) / 2f, pair.getSecond() - 2, ClientConfig.mightColor);
                     }
-                    stack.pop();
+                    stack.popPose();
 
                     RenderSystem.disableAlphaTest();
                     RenderSystem.disableBlend();
-                    stack.pop();
+                    stack.popPose();
                     //combo bar at 224,20 to 229, 121. Grace at 222,95 to 224, 121
                     //initial bar
                     RenderSystem.enableBlend();
-                    stack.push();
+                    stack.pushPose();
                     if (ClientConfig.CONFIG.combo.enabled) {
-                        mc.getTextureManager().bindTexture(goodhud);
+                        mc.getTextureManager().bind(goodhud);
                         int combowidth = 32;
                         float workingCombo = currentComboLevel;
                         int comboU = (int) (MathHelper.clamp(Math.floor(workingCombo), 0, 4)) * 32;
@@ -454,9 +454,9 @@ public class ClientEvents {
                         pair = translateCoords(ClientConfig.CONFIG.combo, width, height);
                         x = MathHelper.clamp(pair.getFirst() - combowidth / 2, 0, width - combowidth);
                         y = MathHelper.clamp(pair.getSecond() - 23, 0, height - 46);
-                        mc.ingameGUI.blit(stack, x, y, comboU, 0, combowidth, 32);
+                        mc.gui.blit(stack, x, y, comboU, 0, combowidth, 32);
                         //fancy fill percentage
-                        mc.ingameGUI.blit(stack, x, y + 33 - fillHeight, comboU, 65 - fillHeight, combowidth, fillHeight - 2);
+                        mc.gui.blit(stack, x, y + 33 - fillHeight, comboU, 65 - fillHeight, combowidth, fillHeight - 2);
                         //TRIANGLE!
 //                    BufferBuilder bufferbuilder = Tessellator.getInstance().getBuffer();
 //                    bufferbuilder.begin(4, DefaultVertexFormats.POSITION_TEX);
@@ -469,13 +469,13 @@ public class ClientEvents {
                         //NO TRIANGLE YET!
                     }
 
-                    stack.pop();
+                    stack.popPose();
                     RenderSystem.disableBlend();
                     //multiplier
                     //String combo = formatter.format(1 + Math.floor(currentComboLevel) / 10) + "X";
                     //mc.fontRenderer.drawString(event.getMatrixStack(), combo, width - 28 + ClientConfig.comboX, Math.min(height / 2 - barHeight / 2 + ClientConfig.comboY, height - barHeight) + 60, 0);
                 }
-                mc.getTextureManager().bindTexture(posture);
+                mc.getTextureManager().bind(posture);
                 //render posture bar if not full, displayed even out of combat mode because it's pretty relevant to not dying
                 if (cap.isCombatMode() || cap.getPosture() < cap.getMaxPosture() || cap.getStaggerTime() > 0 || cap.getShatterCooldown() < Math.floor(GeneralUtils.getAttributeValueSafe(player, WarAttributes.SHATTER.get())) || cap.getBarrier() < cap.getMaxBarrier())
                     drawPostureBarAt(true, stack, player, width, height);
@@ -495,10 +495,10 @@ public class ClientEvents {
                     Pair<Integer, Integer> pair = translateCoords(ClientConfig.CONFIG.enemyAfflict, width, height);
                     for (int index = 0; index < afflict.size(); index++) {
                         Skill s = afflict.get(index);
-                        mc.getTextureManager().bindTexture(s.icon());
+                        mc.getTextureManager().bind(s.icon());
                         Color c = s.getColor();
                         RenderSystem.color4f(c.getRed() / 255f, c.getGreen() / 255f, c.getBlue() / 255f, 1);
-                        mc.ingameGUI.blit(stack, pair.getFirst() - (afflict.size() - 1 - index) * 16 + (afflict.size() - 1) * 8 - 8, pair.getSecond(), 0, 0, 16, 16, 16, 16);
+                        mc.gui.blit(stack, pair.getFirst() - (afflict.size() - 1 - index) * 16 + (afflict.size() - 1) * 8 - 8, pair.getSecond(), 0, 0, 16, 16, 16, 16);
                     }
                     RenderSystem.color4f(1, 1, 1, 1);
                     if (ClientConfig.CONFIG.enemyPosture.enabled && (cap.isCombatMode() || CombatData.getCap((LivingEntity) look).getPosture() < CombatData.getCap((LivingEntity) look).getMaxPosture() || CombatData.getCap((LivingEntity) look).getStaggerTime() > 0 || cap.getShatterCooldown() < GeneralUtils.getAttributeValueSafe(player, WarAttributes.SHATTER.get()) || cap.getBarrier() < cap.getMaxBarrier()))
@@ -533,11 +533,11 @@ public class ClientEvents {
         int atX = pair.getFirst();
         int atY = pair.getSecond();
         Minecraft mc = Minecraft.getInstance();
-        mc.getTextureManager().bindTexture(posture);
+        mc.getTextureManager().bind(posture);
         RenderSystem.defaultBlendFunc();
         RenderSystem.enableBlend();
         ICombatCapability itsc = CombatData.getCap(elb);
-        mc.getProfiler().startSection("postureBar");
+        mc.getProfiler().push("postureBar");
         float cap = itsc.getMaxPosture();
         short barWidth = 182;
         int left = atX - (barWidth / 2);
@@ -554,28 +554,28 @@ public class ClientEvents {
                 RenderSystem.color3f(0, 0, 0);
             }
             int filled = (int) (shatter * (barWidth + 2));
-            mc.ingameGUI.blit(ms, left - 1, atY - 1, 0, 74, filled, 7);
+            mc.gui.blit(ms, left - 1, atY - 1, 0, 74, filled, 7);
             RenderSystem.color3f(1, 1, 1);
             //base
-            mc.ingameGUI.blit(ms, left, atY, 0, 64, barWidth, 5);
+            mc.gui.blit(ms, left, atY, 0, 64, barWidth, 5);
             filled = (int) (posPerc * (float) (barWidth));
             RenderSystem.color3f(1 - posPerc, posPerc, 30f / 255);
             //bar on top
-            mc.ingameGUI.blit(ms, left, atY, 0, 69, filled, 5);
+            mc.gui.blit(ms, left, atY, 0, 69, filled, 5);
             //fatigue
             float fatigue = itsc.getMaxPosture() / trueMaxPosture;
             fatigue = Float.isFinite(fatigue) ? fatigue : 0;
             filled = (int) (fatigue * (float) (barWidth));
             RenderSystem.color3f(1, 0.1f, 0.1f);
-            mc.ingameGUI.blit(ms, left + filled, atY, filled, 69, barWidth - filled, 5);
+            mc.gui.blit(ms, left + filled, atY, filled, 69, barWidth - filled, 5);
             if (itsc.getStaggerTime() > 0) {
                 int invulTime = (int) (MathHelper.clamp((float) itsc.getStaggerTime() / (float) CombatConfig.staggerDuration, 0, 1) * (float) (barWidth));//apparently this is synced to the client?
                 RenderSystem.color3f(0, 0, 0);//, ((float) itsc.getPosInvulTime()) / (float) CombatConfig.ssptime);
-                mc.ingameGUI.blit(ms, left, atY, 0, 69, invulTime, 5);
+                mc.gui.blit(ms, left, atY, 0, 69, invulTime, 5);
             }
 
         }
-        mc.getProfiler().endSection();
+        mc.getProfiler().pop();
 //        mc.mcProfiler.startSection("postureNumber");
 //        float postureNumber = ((int) (itsc.getPosture() * 100)) / 100f;
 //        String text = "" + postureNumber;
@@ -587,7 +587,7 @@ public class ClientEvents {
 //        mc.fontRenderer.drawString(text, x, y - 1, 0);
 //        mc.fontRenderer.drawString(text, x, y, c.getRGB());
 //        mc.mcProfiler.endSection();
-        mc.getTextureManager().bindTexture(AbstractGui.GUI_ICONS_LOCATION);
+        mc.getTextureManager().bind(AbstractGui.GUI_ICONS_LOCATION);
         RenderSystem.disableBlend();
         RenderSystem.color3f(1, 1, 1);
         //RenderSystem.enableLighting();
@@ -601,11 +601,11 @@ public class ClientEvents {
         int atX = pair.getFirst();
         int atY = pair.getSecond();
         Minecraft mc = Minecraft.getInstance();
-        mc.getTextureManager().bindTexture(posture);
+        mc.getTextureManager().bind(posture);
         RenderSystem.defaultBlendFunc();
         RenderSystem.enableBlend();
         ICombatCapability itsc = CombatData.getCap(elb);
-        mc.getProfiler().startSection("postureBar");
+        mc.getProfiler().push("postureBar");
         float cap = itsc.getMaxPosture();
         //182
         //so we want the full size to be 240, 25 to be 125, and every 5 max posture changes this by 20 pixels
@@ -619,43 +619,43 @@ public class ClientEvents {
             final int mshatter = (int) GeneralUtils.getAttributeValueSafe(elb, WarAttributes.SHATTER.get());
             //take a two-way approach to draw this:
             //first draw the cap brackets
-            mc.ingameGUI.blit(ms, atX + flexBarWidth, atY - 1, 235, 0, 5, barHeight);
-            mc.ingameGUI.blit(ms, atX - flexBarWidth - 5, atY - 1, 0, 0, 5, barHeight);
+            mc.gui.blit(ms, atX + flexBarWidth, atY - 1, 235, 0, 5, barHeight);
+            mc.gui.blit(ms, atX - flexBarWidth - 5, atY - 1, 0, 0, 5, barHeight);
             //reduce length by fatigue and draw working bracket
             flexBarWidth -= (itsc.getFatigue() * halfBarWidth / itsc.getTrueMaxPosture());
-            mc.ingameGUI.blit(ms, atX + flexBarWidth, atY - 1, 235, 40, 5, barHeight);
-            mc.ingameGUI.blit(ms, atX - flexBarWidth - 5, atY - 1, 0, 40, 5, barHeight);
+            mc.gui.blit(ms, atX + flexBarWidth, atY - 1, 235, 40, 5, barHeight);
+            mc.gui.blit(ms, atX - flexBarWidth - 5, atY - 1, 0, 40, 5, barHeight);
             //grayscale and change width if staggered
             if (itsc.getStaggerTime() > 0) {
                 int count = (int) ((itsc.getMaxStaggerCount() - itsc.getStaggerCount()) * flexBarWidth / (float) itsc.getMaxStaggerCount()) + 3;
                 int time = (int) ((itsc.getMaxStaggerTime() - itsc.getStaggerTime()) * flexBarWidth / (float) itsc.getMaxStaggerTime()) + 3;
                 flexBarWidth = Math.max(count, time);
-                mc.ingameGUI.blit(ms, atX, atY, 238 - flexBarWidth, 13, flexBarWidth, barHeight - 1);
-                mc.ingameGUI.blit(ms, atX - flexBarWidth, atY, 0, 13, flexBarWidth, barHeight - 1);
+                mc.gui.blit(ms, atX, atY, 238 - flexBarWidth, 13, flexBarWidth, barHeight - 1);
+                mc.gui.blit(ms, atX - flexBarWidth, atY, 0, 13, flexBarWidth, barHeight - 1);
             } else {
                 //reduce length by posture percentage
                 flexBarWidth = (int) (itsc.getPosture() * halfBarWidth / itsc.getTrueMaxPosture()) + 4;
-                mc.ingameGUI.blit(ms, atX, atY, 238 - flexBarWidth, 7, flexBarWidth, barHeight - 1);
-                mc.ingameGUI.blit(ms, atX - flexBarWidth - 1, atY, 0, 7, flexBarWidth + 1, barHeight - 1);
+                mc.gui.blit(ms, atX, atY, 238 - flexBarWidth, 7, flexBarWidth, barHeight - 1);
+                mc.gui.blit(ms, atX - flexBarWidth - 1, atY, 0, 7, flexBarWidth + 1, barHeight - 1);
                 //determine bar color by shatter
                 if (shatter > 0 && shatter != mshatter) {//gold that rapidly fades
                     RenderSystem.color4f(1, 1, 1, (float) shatter / mshatter);
-                    mc.ingameGUI.blit(ms, atX, atY, 238 - flexBarWidth, 54, flexBarWidth, barHeight - 1);
-                    mc.ingameGUI.blit(ms, atX - flexBarWidth - 1, atY, 0, 54, flexBarWidth + 1, barHeight - 1);
+                    mc.gui.blit(ms, atX, atY, 238 - flexBarWidth, 54, flexBarWidth, barHeight - 1);
+                    mc.gui.blit(ms, atX - flexBarWidth - 1, atY, 0, 54, flexBarWidth + 1, barHeight - 1);
                     RenderSystem.color4f(1, 1, 1, 1);
                 }
                 // draw barrier if eligible
                 final float barrier = itsc.getBarrier();
                 flexBarWidth = (int) (barrier * halfBarWidth / itsc.getTrueMaxPosture()) + 5;
                 int vOff = itsc.consumeBarrier(flip ? -.0001f : 0.0001f) == 0 ? 26 : 19;
-                mc.ingameGUI.blit(ms, atX, atY - 1, 239 - flexBarWidth, vOff, flexBarWidth + 1, barHeight);
-                mc.ingameGUI.blit(ms, atX - flexBarWidth, atY - 1, 0, vOff, flexBarWidth + 1, barHeight);
+                mc.gui.blit(ms, atX, atY - 1, 239 - flexBarWidth, vOff, flexBarWidth + 1, barHeight);
+                mc.gui.blit(ms, atX - flexBarWidth, atY - 1, 0, vOff, flexBarWidth + 1, barHeight);
                 //otherwise draw nothing
             }
             //draw the center bar as the last step
         }
-        mc.getProfiler().endSection();
-        mc.getTextureManager().bindTexture(AbstractGui.GUI_ICONS_LOCATION);
+        mc.getProfiler().pop();
+        mc.getTextureManager().bind(AbstractGui.GUI_ICONS_LOCATION);
         RenderSystem.disableBlend();
         RenderSystem.color3f(1, 1, 1);
     }
@@ -668,11 +668,11 @@ public class ClientEvents {
         int atX = pair.getFirst();
         int atY = pair.getSecond();
         Minecraft mc = Minecraft.getInstance();
-        mc.getTextureManager().bindTexture(darkmega);
+        mc.getTextureManager().bind(darkmega);
         RenderSystem.defaultBlendFunc();
         RenderSystem.enableBlend();
         ICombatCapability itsc = CombatData.getCap(elb);
-        mc.getProfiler().startSection("postureBar");
+        mc.getProfiler().push("postureBar");
         float cap = itsc.getMaxPosture();
         //182
         //so we want the full size to be 240, 25 to be 125, and every 5 max posture changes this by 20 pixels
@@ -687,32 +687,32 @@ public class ClientEvents {
             //take a two-way approach to draw this:
 
             //first draw the ending brackets
-            mc.ingameGUI.blit(ms, atX, atY - 2, 240 - flexBarWidth - 10, 0, flexBarWidth + 10, barHeight);
-            mc.ingameGUI.blit(ms, atX - flexBarWidth - 10, atY - 2, 0, 0, flexBarWidth + 10, barHeight);
+            mc.gui.blit(ms, atX, atY - 2, 240 - flexBarWidth - 10, 0, flexBarWidth + 10, barHeight);
+            mc.gui.blit(ms, atX - flexBarWidth - 10, atY - 2, 0, 0, flexBarWidth + 10, barHeight);
             //reduce length by fatigue and draw working bracket
             flexBarWidth -= (itsc.getFatigue() * halfBarWidth / itsc.getTrueMaxPosture());
             int temp = flexBarWidth;
-            mc.ingameGUI.blit(ms, atX + flexBarWidth, atY - 2, 232, 50, 10, barHeight);
-            mc.ingameGUI.blit(ms, atX - flexBarWidth - 9, atY - 2, 0, 50, 12, barHeight);
+            mc.gui.blit(ms, atX + flexBarWidth, atY - 2, 232, 50, 10, barHeight);
+            mc.gui.blit(ms, atX - flexBarWidth - 9, atY - 2, 0, 50, 12, barHeight);
             //grayscale and change width if staggered
             if (itsc.getStaggerTime() > 0) {
                 int count = (int) ((itsc.getMaxStaggerCount() - itsc.getStaggerCount()) * flexBarWidth / (float) itsc.getMaxStaggerCount()) + 3;
                 int time = (int) ((itsc.getMaxStaggerTime() - itsc.getStaggerTime()) * flexBarWidth / (float) itsc.getMaxStaggerTime()) + 3;
                 flexBarWidth = Math.max(count, time);
-                mc.ingameGUI.blit(ms, atX, atY - 2, 238 - flexBarWidth, 20, flexBarWidth, barHeight);
-                mc.ingameGUI.blit(ms, atX - flexBarWidth, atY - 2, 0, 20, flexBarWidth, barHeight);
+                mc.gui.blit(ms, atX, atY - 2, 238 - flexBarWidth, 20, flexBarWidth, barHeight);
+                mc.gui.blit(ms, atX - flexBarWidth, atY - 2, 0, 20, flexBarWidth, barHeight);
             } else {
                 //reduce length by posture percentage
                 flexBarWidth = (int) (itsc.getPosture() * halfBarWidth / itsc.getTrueMaxPosture()) + 4;
-                mc.ingameGUI.blit(ms, atX, atY - 2, 238 - flexBarWidth, 10, flexBarWidth, barHeight);
-                mc.ingameGUI.blit(ms, atX - flexBarWidth, atY - 2, 2, 10, flexBarWidth, barHeight);
+                mc.gui.blit(ms, atX, atY - 2, 238 - flexBarWidth, 10, flexBarWidth, barHeight);
+                mc.gui.blit(ms, atX - flexBarWidth, atY - 2, 2, 10, flexBarWidth, barHeight);
                 // draw barrier if eligible
                 flexBarWidth = (int) (itsc.getBarrier() * halfBarWidth / itsc.getTrueMaxPosture()) + 5;
                 // hacky flip for usage
                 flip = !flip;
                 final int vOffset = itsc.consumeBarrier(flip ? -0.001f : 0.001f) == 0 ? 40 : 30;
-                mc.ingameGUI.blit(ms, atX - flexBarWidth, atY - 2, 0, vOffset, flexBarWidth + 1, barHeight);
-                mc.ingameGUI.blit(ms, atX, atY - 2, 239 - flexBarWidth, vOffset, flexBarWidth + 1, barHeight);
+                mc.gui.blit(ms, atX - flexBarWidth, atY - 2, 0, vOffset, flexBarWidth + 1, barHeight);
+                mc.gui.blit(ms, atX, atY - 2, 239 - flexBarWidth, vOffset, flexBarWidth + 1, barHeight);
                 // render shatter overlay if present
                 if (shatter > 0) {
                     int insigniaU = 115, insigniaV = 80, insigniaW = 11;
@@ -725,23 +725,23 @@ public class ClientEvents {
                         }
                         int fini = (int) (otemp * temp);
                         //gold that stretches out to the edges before disappearing
-                        mc.ingameGUI.blit(ms, atX, atY - 2, 240 - fini - 10, 70, fini + 10, barHeight);
-                        mc.ingameGUI.blit(ms, atX - fini - 9, atY - 2, 0, 70, fini + 10, barHeight);
+                        mc.gui.blit(ms, atX, atY - 2, 240 - fini - 10, 70, fini + 10, barHeight);
+                        mc.gui.blit(ms, atX - fini - 9, atY - 2, 0, 70, fini + 10, barHeight);
                         RenderSystem.color4f(1, 1, 1, -(otemp - 2));
                         RenderSystem.color4f(1, 1, 1, 1);
                         insigniaV = 90;
                     }
                     //insignia
-                    mc.ingameGUI.blit(ms, atX - insigniaW / 2, atY - 2, insigniaU, insigniaV, insigniaW, barHeight - 1);
+                    mc.gui.blit(ms, atX - insigniaW / 2, atY - 2, insigniaU, insigniaV, insigniaW, barHeight - 1);
                     //shatter bracket
-                    mc.ingameGUI.blit(ms, atX - temp - 8, atY - 2, 0, 80, 10, barHeight);
+                    mc.gui.blit(ms, atX - temp - 8, atY - 2, 0, 80, 10, barHeight);
                     //shatter bracket
-                    mc.ingameGUI.blit(ms, atX + temp, atY - 2, 232, 80, 10, barHeight);
+                    mc.gui.blit(ms, atX + temp, atY - 2, 232, 80, 10, barHeight);
                 }
             }
         }
-        mc.getProfiler().endSection();
-        mc.getTextureManager().bindTexture(AbstractGui.GUI_ICONS_LOCATION);
+        mc.getProfiler().pop();
+        mc.getTextureManager().bind(AbstractGui.GUI_ICONS_LOCATION);
         RenderSystem.disableBlend();
         RenderSystem.color3f(1, 1, 1);
     }
@@ -753,25 +753,25 @@ public class ClientEvents {
         Entity foundEntity = null;
         double distance = finalDistance;
         RayTraceResult pos = raycast(e, finalDistance);
-        Vector3d positionVector = e.getPositionVec();
+        Vector3d positionVector = e.position();
 
         if (e instanceof PlayerEntity)
             positionVector = positionVector.add(0, e.getEyeHeight(e.getPose()), 0);
 
         if (pos != null)
-            distance = pos.getHitVec().distanceTo(positionVector);
+            distance = pos.getLocation().distanceTo(positionVector);
 
-        Vector3d lookVector = e.getLookVec();
+        Vector3d lookVector = e.getLookAngle();
         Vector3d reachVector = positionVector.add(lookVector.x * finalDistance, lookVector.y * finalDistance, lookVector.z * finalDistance);
 
         Entity lookedEntity = null;
-        List<Entity> entitiesInBoundingBox = e.getEntityWorld().getEntitiesWithinAABBExcludingEntity(e, e.getBoundingBox().grow(lookVector.x * finalDistance, lookVector.y * finalDistance, lookVector.z * finalDistance).expand(1F, 1F, 1F));
+        List<Entity> entitiesInBoundingBox = e.getCommandSenderWorld().getEntities(e, e.getBoundingBox().inflate(lookVector.x * finalDistance, lookVector.y * finalDistance, lookVector.z * finalDistance).expandTowards(1F, 1F, 1F));
         double minDistance = distance;
 
         for (Entity entity : entitiesInBoundingBox) {
-            if (entity.canBeCollidedWith()) {
-                AxisAlignedBB collisionBox = entity.getRenderBoundingBox();
-                Optional<Vector3d> interceptPosition = collisionBox.rayTrace(positionVector, reachVector);
+            if (entity.isPickable()) {
+                AxisAlignedBB collisionBox = entity.getBoundingBoxForCulling();
+                Optional<Vector3d> interceptPosition = collisionBox.clip(positionVector, reachVector);
 
                 if (collisionBox.contains(positionVector)) {
                     if (0.0D < minDistance || minDistance == 0.0D) {
@@ -796,11 +796,11 @@ public class ClientEvents {
     }
 
     public static RayTraceResult raycast(Entity e, double len) {
-        Vector3d vec = new Vector3d(e.getPosX(), e.getPosY(), e.getPosZ());
+        Vector3d vec = new Vector3d(e.getX(), e.getY(), e.getZ());
         if (e instanceof PlayerEntity)
             vec = vec.add(new Vector3d(0, e.getEyeHeight(e.getPose()), 0));
 
-        Vector3d look = e.getLookVec();
+        Vector3d look = e.getLookAngle();
         if (look == null)
             return null;
 
@@ -809,30 +809,30 @@ public class ClientEvents {
 
     public static RayTraceResult raycast(Vector3d origin, Vector3d ray, Entity e, double len) {
         Vector3d next = origin.add(ray.normalize().scale(len));
-        return e.world.rayTraceBlocks(new RayTraceContext(origin, next, RayTraceContext.BlockMode.OUTLINE, RayTraceContext.FluidMode.NONE, e));
+        return e.level.clip(new RayTraceContext(origin, next, RayTraceContext.BlockMode.OUTLINE, RayTraceContext.FluidMode.NONE, e));
     }
 
     @SubscribeEvent
     public static void tickPlayer(TickEvent.ClientTickEvent e) {
         Minecraft mc = Minecraft.getInstance();
         PlayerEntity p = mc.player;
-        if (p != null && !mc.isGamePaused()) {
+        if (p != null && !mc.isPaused()) {
             if (e.phase == TickEvent.Phase.START) {
                 Entity look = getEntityLookedAt(p, 32);
                 if (look != lastTickLookAt) {
                     lastTickLookAt = look;
                     if (look instanceof LivingEntity && look.isAlive())
-                        CombatChannel.INSTANCE.sendToServer(new RequestUpdatePacket(look.getEntityId()));
+                        CombatChannel.INSTANCE.sendToServer(new RequestUpdatePacket(look.getId()));
                     else
                         CombatChannel.INSTANCE.sendToServer(new RequestUpdatePacket(-1));
                 }
-                if (combatTicks != Integer.MAX_VALUE && combatTicks + ClientConfig.autoCombat == p.ticksExisted && CombatData.getCap(p).isCombatMode()) {
+                if (combatTicks != Integer.MAX_VALUE && combatTicks + ClientConfig.autoCombat == p.tickCount && CombatData.getCap(p).isCombatMode()) {
                     CombatChannel.INSTANCE.sendToServer(new CombatModePacket());
                 }
-                if (!Keybinds.PARRY.isKeyDown())
+                if (!Keybinds.PARRY.isDown())
                     lastTickParry = false;
             } else {
-                if (!mc.gameSettings.keyBindUseItem.isKeyDown())
+                if (!mc.options.keyUse.isDown())
                     rightClick = false;
                 if (WarCompat.elenaiDodge) {
                     if (GeneralConfig.elenaiP && CombatData.getCap(p).getPostureGrace() > 0) {
@@ -859,9 +859,9 @@ public class ClientEvents {
     public static void handleInputEvent(InputEvent event) {
         Minecraft mc = Minecraft.getInstance();
         if (mc.player == null) return;
-        if (Keybinds.PARRY.getKeyConflictContext().isActive() && !lastTickParry && CombatConfig.sneakParry != 0 && Keybinds.PARRY.isPressed() && mc.player.isAlive()) {
+        if (Keybinds.PARRY.getKeyConflictContext().isActive() && !lastTickParry && CombatConfig.sneakParry != 0 && Keybinds.PARRY.consumeClick() && mc.player.isAlive()) {
             if (CombatConfig.sneakParry < 0) {
-                mc.player.sendStatusMessage(new TranslationTextComponent("wardance.toggleparry." + (CombatData.getCap(mc.player).getParryingTick() == -1 ? "on" : "off")), true);
+                mc.player.displayClientMessage(new TranslationTextComponent("wardance.toggleparry." + (CombatData.getCap(mc.player).getParryingTick() == -1 ? "on" : "off")), true);
 
             }
             CombatChannel.INSTANCE.sendToServer(new ManualParryPacket());
@@ -892,7 +892,7 @@ public class ClientEvents {
 
     @SubscribeEvent
     public static void sweepSwingBlock(PlayerInteractEvent.LeftClickBlock e) {
-        if (Minecraft.getInstance().playerController.getIsHittingBlock()) return;
+        if (Minecraft.getInstance().gameMode.isDestroying()) return;
         float temp = CombatUtils.getCooledAttackStrength(e.getPlayer(), Hand.MAIN_HAND, 0.5f);
         Entity n = getEntityLookedAt(e.getPlayer(), GeneralUtils.getAttributeValueHandSensitive(e.getPlayer(), ForgeMod.REACH_DISTANCE.get(), Hand.MAIN_HAND) - (e.getItemStack().isEmpty() ? 1 : 0));
         if (n != null)
@@ -940,19 +940,19 @@ public class ClientEvents {
     public static void noHit(InputEvent.KeyInputEvent e) {
         Minecraft mc = Minecraft.getInstance();
         if (mc.player == null) return;
-        double range = GeneralUtils.getAttributeValueSafe(mc.player, ForgeMod.REACH_DISTANCE.get()) - (mc.player.getHeldItemMainhand().isEmpty() ? 1 : 0);
-        Vector3d look = mc.player.getLook(1);
-        if (mc.pointedEntity != null) {
-            if (GeneralUtils.getDistSqCompensated(mc.pointedEntity, mc.player) > range * range) {
-                mc.pointedEntity = null;
-                Vector3d miss = mc.player.getPositionVec().add(look.scale(range));
-                mc.objectMouseOver = BlockRayTraceResult.createMiss(miss, Direction.getFacingFromVector(look.x, look.y, look.z), new BlockPos(miss));
+        double range = GeneralUtils.getAttributeValueSafe(mc.player, ForgeMod.REACH_DISTANCE.get()) - (mc.player.getMainHandItem().isEmpty() ? 1 : 0);
+        Vector3d look = mc.player.getViewVector(1);
+        if (mc.crosshairPickEntity != null) {
+            if (GeneralUtils.getDistSqCompensated(mc.crosshairPickEntity, mc.player) > range * range) {
+                mc.crosshairPickEntity = null;
+                Vector3d miss = mc.player.position().add(look.scale(range));
+                mc.hitResult = BlockRayTraceResult.miss(miss, Direction.getNearest(look.x, look.y, look.z), new BlockPos(miss));
             }
         } else if (getEntityLookedAt(mc.player, range) != null) {
-            EntityRayTraceResult ertr = ProjectileHelper.rayTraceEntities(mc.player, mc.player.getEyePosition(0.5f), mc.player.getEyePosition(0.5f).add(look.scale(range)), mc.player.getBoundingBox().expand(look.scale(range)).grow(1.0D, 1.0D, 1.0D), (p_215312_0_) -> !p_215312_0_.isSpectator() && p_215312_0_.canBeCollidedWith(), range);
+            EntityRayTraceResult ertr = ProjectileHelper.getEntityHitResult(mc.player, mc.player.getEyePosition(0.5f), mc.player.getEyePosition(0.5f).add(look.scale(range)), mc.player.getBoundingBox().expandTowards(look.scale(range)).inflate(1.0D, 1.0D, 1.0D), (p_215312_0_) -> !p_215312_0_.isSpectator() && p_215312_0_.isPickable(), range);
             if (ertr != null) {
-                mc.objectMouseOver = ertr;
-                mc.pointedEntity = ertr.getEntity();
+                mc.hitResult = ertr;
+                mc.crosshairPickEntity = ertr.getEntity();
             }
         }
     }
@@ -961,19 +961,19 @@ public class ClientEvents {
     public static void noHitMouse(InputEvent.MouseInputEvent e) {
         Minecraft mc = Minecraft.getInstance();
         if (mc.player == null) return;
-        double range = GeneralUtils.getAttributeValueSafe(mc.player, ForgeMod.REACH_DISTANCE.get()) - (mc.player.getHeldItemMainhand().isEmpty() ? 1 : 0);
-        Vector3d look = mc.player.getLook(1);
-        if (mc.pointedEntity != null) {
-            if (GeneralUtils.getDistSqCompensated(mc.pointedEntity, mc.player) > range * range) {
-                mc.pointedEntity = null;
-                Vector3d miss = mc.player.getPositionVec().add(look.scale(range));
-                mc.objectMouseOver = BlockRayTraceResult.createMiss(miss, Direction.getFacingFromVector(look.x, look.y, look.z), new BlockPos(miss));
+        double range = GeneralUtils.getAttributeValueSafe(mc.player, ForgeMod.REACH_DISTANCE.get()) - (mc.player.getMainHandItem().isEmpty() ? 1 : 0);
+        Vector3d look = mc.player.getViewVector(1);
+        if (mc.crosshairPickEntity != null) {
+            if (GeneralUtils.getDistSqCompensated(mc.crosshairPickEntity, mc.player) > range * range) {
+                mc.crosshairPickEntity = null;
+                Vector3d miss = mc.player.position().add(look.scale(range));
+                mc.hitResult = BlockRayTraceResult.miss(miss, Direction.getNearest(look.x, look.y, look.z), new BlockPos(miss));
             }
         } else if (getEntityLookedAt(mc.player, range) != null) {
-            EntityRayTraceResult ertr = ProjectileHelper.rayTraceEntities(mc.player, mc.player.getEyePosition(0.5f), mc.player.getEyePosition(0.5f).add(look.scale(range)), mc.player.getBoundingBox().expand(look.scale(range)).grow(1.0D, 1.0D, 1.0D), (p_215312_0_) -> !p_215312_0_.isSpectator() && p_215312_0_.canBeCollidedWith(), range);
+            EntityRayTraceResult ertr = ProjectileHelper.getEntityHitResult(mc.player, mc.player.getEyePosition(0.5f), mc.player.getEyePosition(0.5f).add(look.scale(range)), mc.player.getBoundingBox().expandTowards(look.scale(range)).inflate(1.0D, 1.0D, 1.0D), (p_215312_0_) -> !p_215312_0_.isSpectator() && p_215312_0_.isPickable(), range);
             if (ertr != null) {
-                mc.objectMouseOver = ertr;
-                mc.pointedEntity = ertr.getEntity();
+                mc.hitResult = ertr;
+                mc.crosshairPickEntity = ertr.getEntity();
             }
         }
     }
@@ -983,18 +983,18 @@ public class ClientEvents {
         if (event.phase == TickEvent.Phase.END) {
             Minecraft mc = Minecraft.getInstance();
             if (mc.player == null) return;
-            double range = GeneralUtils.getAttributeValueSafe(mc.player, ForgeMod.REACH_DISTANCE.get()) - (mc.player.getHeldItemMainhand().isEmpty() ? 1 : 0);
-            Vector3d look = mc.player.getLook(1);
-            if (mc.pointedEntity != null) {
-                if (GeneralUtils.getDistSqCompensated(mc.pointedEntity, mc.player) > range * range) {
-                    mc.pointedEntity = null;
-                    Vector3d miss = mc.player.getPositionVec().add(look.scale(range));
-                    mc.objectMouseOver = BlockRayTraceResult.createMiss(miss, Direction.getFacingFromVector(look.x, look.y, look.z), new BlockPos(miss));
+            double range = GeneralUtils.getAttributeValueSafe(mc.player, ForgeMod.REACH_DISTANCE.get()) - (mc.player.getMainHandItem().isEmpty() ? 1 : 0);
+            Vector3d look = mc.player.getViewVector(1);
+            if (mc.crosshairPickEntity != null) {
+                if (GeneralUtils.getDistSqCompensated(mc.crosshairPickEntity, mc.player) > range * range) {
+                    mc.crosshairPickEntity = null;
+                    Vector3d miss = mc.player.position().add(look.scale(range));
+                    mc.hitResult = BlockRayTraceResult.miss(miss, Direction.getNearest(look.x, look.y, look.z), new BlockPos(miss));
                 }
             } else if (getEntityLookedAt(mc.player, range) != null) {
                 Entity e = getEntityLookedAt(mc.player, range);
-                mc.objectMouseOver = new EntityRayTraceResult(e, e.getPositionVec());
-                mc.pointedEntity = e;
+                mc.hitResult = new EntityRayTraceResult(e, e.position());
+                mc.crosshairPickEntity = e;
             }
         }
     }

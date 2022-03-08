@@ -13,14 +13,14 @@ public class TerrorEffect extends WarEffect{
     }
 
     @Override
-    public void affectEntity(@Nullable Entity source, @Nullable Entity indirectSource, LivingEntity entityLivingBaseIn, int amplifier, double health) {
+    public void applyInstantenousEffect(@Nullable Entity source, @Nullable Entity indirectSource, LivingEntity entityLivingBaseIn, int amplifier, double health) {
         if(source instanceof LivingEntity)
         EffectUtils.causeFear(entityLivingBaseIn, (LivingEntity) source, amplifier);
-        else EffectUtils.causeFear(entityLivingBaseIn, entityLivingBaseIn.getAttackingEntity(), amplifier);
+        else EffectUtils.causeFear(entityLivingBaseIn, entityLivingBaseIn.getKillCredit(), amplifier);
     }
 
     @Override
-    public boolean isInstant() {
+    public boolean isInstantenous() {
         return true;
     }
 }

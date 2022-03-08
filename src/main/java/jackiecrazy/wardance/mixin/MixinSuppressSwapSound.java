@@ -17,7 +17,7 @@ public abstract class MixinSuppressSwapSound extends LivingEntity {
         super(type, worldIn);
     }
 
-    @Redirect(method = "setItemStackToSlot", require = 0,
+    @Redirect(method = "setItemSlot", require = 0,
             at = @At(value = "INVOKE",
                     target = "Lnet/minecraft/entity/player/PlayerEntity;playEquipSound(Lnet/minecraft/item/ItemStack;)V"))
     private void alert(PlayerEntity instance, ItemStack itemStack) {

@@ -11,12 +11,12 @@ public class TargetingUtils {
     public static boolean isAlly(Entity entity, Entity of) {
         if (entity == null || of == null) return false;
         if (of == entity) return true;
-        if (entity instanceof TameableEntity && of instanceof LivingEntity && ((TameableEntity) entity).isOwner((LivingEntity) of))
+        if (entity instanceof TameableEntity && of instanceof LivingEntity && ((TameableEntity) entity).isOwnedBy((LivingEntity) of))
             return true;
-        if (of instanceof TameableEntity && entity instanceof LivingEntity && ((TameableEntity) of).isOwner((LivingEntity) entity))
+        if (of instanceof TameableEntity && entity instanceof LivingEntity && ((TameableEntity) of).isOwnedBy((LivingEntity) entity))
             return true;
-        if (entity.isOnSameTeam(of)) return true;
-        if (entity instanceof PlayerEntity && of instanceof PlayerEntity && entity.getServer() != null && entity.getServer().isPVPEnabled())
+        if (entity.isAlliedTo(of)) return true;
+        if (entity instanceof PlayerEntity && of instanceof PlayerEntity && entity.getServer() != null && entity.getServer().isPvpAllowed())
             return true;
         return false;
     }
@@ -25,12 +25,12 @@ public class TargetingUtils {
         if (entity == null || to == null) return false;
         if (isAlly(entity, to)) return false;
         if (entity instanceof LivingEntity) {
-            if (((LivingEntity) entity).getRevengeTarget() != null) {
-                LivingEntity revenge = ((LivingEntity) entity).getRevengeTarget();
+            if (((LivingEntity) entity).getLastHurtByMob() != null) {
+                LivingEntity revenge = ((LivingEntity) entity).getLastHurtByMob();
                 if (isAlly(revenge, to)) return true;
             }
-            if (entity instanceof MobEntity && ((MobEntity) entity).getAttackTarget() != null) {
-                LivingEntity attack = ((MobEntity) entity).getAttackTarget();
+            if (entity instanceof MobEntity && ((MobEntity) entity).getTarget() != null) {
+                LivingEntity attack = ((MobEntity) entity).getTarget();
                 return isAlly(attack, to);
             }
         }

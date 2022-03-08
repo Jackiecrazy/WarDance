@@ -20,6 +20,9 @@ import net.minecraftforge.eventbus.api.EventPriority;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
+import jackiecrazy.wardance.skill.Skill.CastStatus;
+import jackiecrazy.wardance.skill.Skill.STATE;
+
 public class Judgment extends Skill {
     /*
     Redirects all might gain to another bar temporarily. Gaining 10 might in this manner will cause your next attack to deal 20% of the target's current health in damage. 10 second cooldown.
@@ -45,7 +48,7 @@ public class Judgment extends Skill {
         if (this == WarSkills.AMPUTATION.get())
             CombatData.getCap(target).addWounding(amount);
         else
-            target.attackEntityFrom(new CombatDamageSource("player", caster).setDamageTyping(CombatDamageSource.TYPE.PHYSICAL).setProcSkillEffects(true).setProcAttackEffects(true).setDamageTyping(CombatDamageSource.TYPE.TRUE).setDamageBypassesArmor().setDamageIsAbsolute(), amount);
+            target.hurt(new CombatDamageSource("player", caster).setDamageTyping(CombatDamageSource.TYPE.PHYSICAL).setProcSkillEffects(true).setProcAttackEffects(true).setDamageTyping(CombatDamageSource.TYPE.TRUE).bypassArmor().bypassMagic(), amount);
     }
 
     @Override
@@ -81,7 +84,7 @@ public class Judgment extends Skill {
             int stack = 1;
             float arb = Marks.getCap(target).getActiveMark(this).orElse(SkillData.DUMMY).getArbitraryFloat();
             if (arb >= 2) {//detonate
-                caster.world.playSound(null, caster.getPosX(), caster.getPosY(), caster.getPosZ(), SoundEvents.ENTITY_DRAGON_FIREBALL_EXPLODE, SoundCategory.PLAYERS, 0.25f + WarDance.rand.nextFloat() * 0.5f, 0.5f + WarDance.rand.nextFloat() * 0.5f);
+                caster.level.playSound(null, caster.getX(), caster.getY(), caster.getZ(), SoundEvents.DRAGON_FIREBALL_EXPLODE, SoundCategory.PLAYERS, 0.25f + WarDance.rand.nextFloat() * 0.5f, 0.5f + WarDance.rand.nextFloat() * 0.5f);
                 removeMark(target);
             } else {
                 prev.flagCondition(true);
@@ -89,11 +92,11 @@ public class Judgment extends Skill {
             }
             stack += arb;
             performEffect(caster, target, stack, prev);
-            target.hurtResistantTime = 0;
+            target.invulnerableTime = 0;
             boolean offhand = stack == 2;
             CombatUtils.attack(caster, target, offhand);
             caster.swing(offhand ? Hand.OFF_HAND : Hand.MAIN_HAND, true);
-            caster.world.playSound(null, caster.getPosX(), caster.getPosY(), caster.getPosZ(), SoundEvents.ENTITY_RAVAGER_STEP, SoundCategory.PLAYERS, 0.25f + WarDance.rand.nextFloat() * 0.5f, 0.5f + WarDance.rand.nextFloat() * 0.5f);
+            caster.level.playSound(null, caster.getX(), caster.getY(), caster.getZ(), SoundEvents.RAVAGER_STEP, SoundCategory.PLAYERS, 0.25f + WarDance.rand.nextFloat() * 0.5f, 0.5f + WarDance.rand.nextFloat() * 0.5f);
         }
         if (to == STATE.COOLING) {
             if (prev.isCondition())
@@ -102,7 +105,7 @@ public class Judgment extends Skill {
             return true;
         }
         if (from != STATE.COOLING && to == STATE.HOLSTERED)
-            caster.world.playSound(null, caster.getPosX(), caster.getPosY(), caster.getPosZ(), SoundEvents.BLOCK_GRINDSTONE_USE, SoundCategory.PLAYERS, 0.25f + WarDance.rand.nextFloat() * 0.5f, 0.5f + WarDance.rand.nextFloat() * 0.5f);
+            caster.level.playSound(null, caster.getX(), caster.getY(), caster.getZ(), SoundEvents.GRINDSTONE_USE, SoundCategory.PLAYERS, 0.25f + WarDance.rand.nextFloat() * 0.5f, 0.5f + WarDance.rand.nextFloat() * 0.5f);
         return boundCast(prev, from, to);
     }
 
@@ -129,7 +132,7 @@ public class Judgment extends Skill {
         }
         if (procPoint instanceof LivingAttackEvent && ((LivingAttackEvent) procPoint).getEntityLiving() == target) {
             if (state == STATE.ACTIVE)
-                ((LivingAttackEvent) procPoint).getSource().setDamageBypassesArmor().setDamageIsAbsolute();
+                ((LivingAttackEvent) procPoint).getSource().bypassArmor().bypassMagic();
             Marks.getCap(target).getActiveMark(this).ifPresent((a) -> a.setDuration(a.getArbitraryFloat() == 1 ? 6 : 12));
         }
     }

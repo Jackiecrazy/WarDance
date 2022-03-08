@@ -47,13 +47,13 @@ public class StealthUtils {
         if (!StealthConfig.stealthSystem || target instanceof PlayerEntity || stealthMap.getOrDefault(target.getType().getRegistryName(), STEALTH).isVigilant())
             return Awareness.ALERT;
         Awareness a = Awareness.ALERT;
-        if (target.isPotionActive(WarEffects.SLEEP.get()) || target.isPotionActive(WarEffects.PARALYSIS.get()) || target.isPotionActive(WarEffects.PETRIFY.get()))
+        if (target.hasEffect(WarEffects.SLEEP.get()) || target.hasEffect(WarEffects.PARALYSIS.get()) || target.hasEffect(WarEffects.PETRIFY.get()))
             a = Awareness.UNAWARE;
-        else if (target.isPotionActive(WarEffects.DISTRACTION.get()) || target.isPotionActive(WarEffects.CONFUSION.get()) || target.getAir() <= 0 || inWeb(target))
+        else if (target.hasEffect(WarEffects.DISTRACTION.get()) || target.hasEffect(WarEffects.CONFUSION.get()) || target.getAirSupply() <= 0 || inWeb(target))
             a = Awareness.DISTRACTED;
-        else if (target.getRevengeTarget() == null && (!(target instanceof MobEntity) || ((MobEntity) target).getAttackTarget() == null))
+        else if (target.getLastHurtByMob() == null && (!(target instanceof MobEntity) || ((MobEntity) target).getTarget() == null))
             a = Awareness.UNAWARE;
-        else if (target.getRevengeTarget() != attacker && (!(target instanceof MobEntity) || ((MobEntity) target).getAttackTarget() != attacker))
+        else if (target.getLastHurtByMob() != attacker && (!(target instanceof MobEntity) || ((MobEntity) target).getTarget() != attacker))
             a = Awareness.DISTRACTED;
         EntityAwarenessEvent eae = new EntityAwarenessEvent(target, attacker, a);
         MinecraftForge.EVENT_BUS.post(eae);
@@ -61,13 +61,13 @@ public class StealthUtils {
     }
 
     private static boolean inWeb(LivingEntity e) {
-        if (!e.world.isAreaLoaded(e.getPosition(), (int) Math.ceil(e.getWidth()))) return false;
-        double minX = e.getPosX() - e.getWidth() / 2, minY = e.getPosY() - e.getHeight() / 2, minZ = e.getPosZ() - e.getWidth() / 2;
-        double maxX = e.getPosX() + e.getWidth() / 2, maxY = e.getPosY() + e.getHeight() / 2, maxZ = e.getPosZ() + e.getWidth() / 2;
+        if (!e.level.isAreaLoaded(e.blockPosition(), (int) Math.ceil(e.getBbWidth()))) return false;
+        double minX = e.getX() - e.getBbWidth() / 2, minY = e.getY() - e.getBbHeight() / 2, minZ = e.getZ() - e.getBbWidth() / 2;
+        double maxX = e.getX() + e.getBbWidth() / 2, maxY = e.getY() + e.getBbHeight() / 2, maxZ = e.getZ() + e.getBbWidth() / 2;
         for (double x = minX; x <= maxX; x++) {
             for (double y = minY; y <= maxY; y++) {
                 for (double z = minZ; z <= maxZ; z++) {
-                    if (e.world.getBlockState(e.getPosition()).getMaterial().equals(Material.WEB))
+                    if (e.level.getBlockState(e.blockPosition()).getMaterial().equals(Material.WEB))
                         return true;
                 }
             }

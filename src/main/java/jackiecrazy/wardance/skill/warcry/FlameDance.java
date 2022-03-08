@@ -24,16 +24,18 @@ import java.util.Arrays;
 import java.util.HashSet;
 import java.util.UUID;
 
+import jackiecrazy.wardance.skill.Skill.STATE;
+
 @Mod.EventBusSubscriber(modid = WarDance.MODID)
 public class FlameDance extends WarCry {
     private static final UUID attackSpeed = UUID.fromString("338a5b6f-46c2-44b6-913f-f15c5e59cd48");
-    private final Tag<String> tag = Tag.getTagFromContents(new HashSet<>(Arrays.asList("chant", ProcPoints.melee, ProcPoints.on_being_hurt, ProcPoints.modify_crit, ProcPoints.countdown, ProcPoints.recharge_time, ProcPoints.recharge_sleep)));
-    private final Tag<String> no = Tag.getTagFromContents(new HashSet<>(Arrays.asList(ProcPoints.melee, ProcPoints.on_parry)));
+    private final Tag<String> tag = Tag.create(new HashSet<>(Arrays.asList("chant", ProcPoints.melee, ProcPoints.on_being_hurt, ProcPoints.modify_crit, ProcPoints.countdown, ProcPoints.recharge_time, ProcPoints.recharge_sleep)));
+    private final Tag<String> no = Tag.create(new HashSet<>(Arrays.asList(ProcPoints.melee, ProcPoints.on_parry)));
 
     @SubscribeEvent
     public static void flames(LivingAttackEvent e) {
-        if (e.getSource().getTrueSource() instanceof LivingEntity) {
-            LivingEntity seme = (LivingEntity) e.getSource().getTrueSource();
+        if (e.getSource().getEntity() instanceof LivingEntity) {
+            LivingEntity seme = (LivingEntity) e.getSource().getEntity();
             LivingEntity uke = e.getEntityLiving();
             if (CasterData.getCap(seme).isSkillUsable(WarSkills.FLAME_DANCE.get())) {
                 EffectUtils.attemptAddPot(uke, EffectUtils.stackPot(uke, new EffectInstance(WarEffects.CORROSION.get(), (int) CombatData.getCap(seme).getRank(), EffectUtils.getEffectiveLevel(uke, WarEffects.CORROSION.get()) < 4 ? 0 : -1), EffectUtils.StackingMethod.MAXDURATION), false);
@@ -64,9 +66,9 @@ public class FlameDance extends WarCry {
         if (procPoint instanceof LivingAttackEvent && state == STATE.ACTIVE && procPoint.getPhase() == EventPriority.HIGHEST && ((LivingAttackEvent) procPoint).getEntityLiving() == target) {
             stats.setArbitraryFloat(stats.getArbitraryFloat() + 0.34f);
             if (((LivingAttackEvent) procPoint).getEntityLiving() == target && ((LivingAttackEvent) procPoint).getSource() instanceof CombatDamageSource) {
-                if (stats.getArbitraryFloat() >= 1 && target.getFireTimer() > 0)
+                if (stats.getArbitraryFloat() >= 1 && target.getRemainingFireTicks() > 0)
                     ((CombatDamageSource) ((LivingAttackEvent) procPoint).getSource()).setArmorReductionPercentage(0.5f);
-                target.setFire((int) (CombatData.getCap(caster).getRank() / 2));
+                target.setSecondsOnFire((int) (CombatData.getCap(caster).getRank() / 2));
             }
         } else if (procPoint instanceof CriticalHitEvent && state == STATE.ACTIVE && procPoint.getPhase() == EventPriority.HIGHEST && ((CriticalHitEvent) procPoint).getEntityLiving() == caster && stats.getArbitraryFloat() >= 1) {
             procPoint.setResult(Event.Result.ALLOW);

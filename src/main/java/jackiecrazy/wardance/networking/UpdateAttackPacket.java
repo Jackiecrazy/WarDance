@@ -43,8 +43,8 @@ public class UpdateAttackPacket {
         public void accept(UpdateAttackPacket updateClientPacket, Supplier<NetworkEvent.Context> contextSupplier) {
             contextSupplier.get().enqueueWork(() -> {
                 DistExecutor.unsafeRunWhenOn(Dist.CLIENT, () -> () -> {
-                    if (Minecraft.getInstance().world != null && Minecraft.getInstance().world.getEntityByID(updateClientPacket.e) instanceof LivingEntity)
-                        ((LivingEntity) (Minecraft.getInstance().world.getEntityByID(updateClientPacket.e))).ticksSinceLastSwing = updateClientPacket.icc;
+                    if (Minecraft.getInstance().level != null && Minecraft.getInstance().level.getEntity(updateClientPacket.e) instanceof LivingEntity)
+                        ((LivingEntity) (Minecraft.getInstance().level.getEntity(updateClientPacket.e))).attackStrengthTicker = updateClientPacket.icc;
                 });
             });
             contextSupplier.get().setPacketHandled(true);

@@ -42,8 +42,8 @@ public class ManualParryPacket {
                 if (CombatConfig.sneakParry < 0) {
                     cap.setParryingTick(cap.getParryingTick()==-1?0:-1);
                 }
-                else if (cap.getParryingTick() < le.ticksExisted + CombatConfig.sneakParry * 2)
-                    cap.setParryingTick(le.ticksExisted);
+                else if (cap.getParryingTick() < le.tickCount + CombatConfig.sneakParry * 2)
+                    cap.setParryingTick(le.tickCount);
             });
             contextSupplier.get().setPacketHandled(true);
         }

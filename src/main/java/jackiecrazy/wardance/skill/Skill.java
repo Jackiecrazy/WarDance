@@ -40,7 +40,7 @@ import java.util.*;
  */
 public abstract class Skill extends ForgeRegistryEntry<Skill> {
     public static final HashMap<SkillCategory, List<Skill>> variationMap = new HashMap<>();
-    protected static final Tag<String> none = Tag.getEmptyTag();
+    protected static final Tag<String> none = Tag.empty();
     protected static final Tag<String> offensivePhysical = makeTag(SkillTags.offensive, SkillTags.physical);
     protected static final Tag<String> defensivePhysical = makeTag(SkillTags.defensive, SkillTags.physical);
     protected static final Tag<String> offensive = makeTag(SkillTags.offensive);
@@ -60,7 +60,7 @@ public abstract class Skill extends ForgeRegistryEntry<Skill> {
     }
 
     protected static Tag<String> makeTag(String... stuff) {
-        return Tag.getTagFromContents(new HashSet<>(Arrays.asList(stuff)));
+        return Tag.create(new HashSet<>(Arrays.asList(stuff)));
     }
 
     @Nullable
@@ -101,7 +101,7 @@ public abstract class Skill extends ForgeRegistryEntry<Skill> {
             case HOLSTERED:
                 return CastStatus.HOLSTERED;
         }
-        for (String s : getSoftIncompatibility(caster).getAllElements())
+        for (String s : getSoftIncompatibility(caster).getValues())
             if (cap.isTagActive(s))
                 return CastStatus.CONFLICT;
         if (caster.isSilent() && getTags(caster).contains("chant")) return CastStatus.SILENCE;
@@ -122,15 +122,15 @@ public abstract class Skill extends ForgeRegistryEntry<Skill> {
 
     public boolean isCompatibleWith(Skill s, LivingEntity caster) {
         if (s == null) return true;
-        for (String tag : this.getTags(caster).getAllElements())
+        for (String tag : this.getTags(caster).getValues())
             if (s.getSoftIncompatibility(caster).contains(tag)) return false;
-        for (String tag : s.getTags(caster).getAllElements())
+        for (String tag : s.getTags(caster).getValues())
             if (this.getSoftIncompatibility(caster).contains(tag)) return false;
         return true;
     }
 
     public void onCooledDown(LivingEntity caster, float overflow) {
-        caster.world.playMovingSound(null, caster, SoundEvents.ENTITY_EXPERIENCE_ORB_PICKUP, SoundCategory.AMBIENT, 0.3f + WarDance.rand.nextFloat(), 0.5f + WarDance.rand.nextFloat());
+        caster.level.playSound(null, caster, SoundEvents.EXPERIENCE_ORB_PICKUP, SoundCategory.AMBIENT, 0.3f + WarDance.rand.nextFloat(), 0.5f + WarDance.rand.nextFloat());
     }
 
     public ITextComponent description() {
@@ -346,7 +346,7 @@ public abstract class Skill extends ForgeRegistryEntry<Skill> {
      */
     protected boolean activate(LivingEntity caster, float duration, boolean flag, float something) {
         //System.out.println("enabling for " + duration);
-        caster.world.playMovingSound(null, caster, SoundEvents.ITEM_FIRECHARGE_USE, SoundCategory.AMBIENT, 0.3f + WarDance.rand.nextFloat(), 0.5f + WarDance.rand.nextFloat());
+        caster.level.playSound(null, caster, SoundEvents.FIRECHARGE_USE, SoundCategory.AMBIENT, 0.3f + WarDance.rand.nextFloat(), 0.5f + WarDance.rand.nextFloat());
         CasterData.getCap(caster).getSkillData(this).ifPresent(a -> {
             a.setDuration(duration);
             a.setMaxDuration(duration);
@@ -360,7 +360,7 @@ public abstract class Skill extends ForgeRegistryEntry<Skill> {
     protected void markUsed(LivingEntity caster) {
         if (GeneralConfig.debug)
             WarDance.LOGGER.debug(this.getRegistryName() + " has ended");
-        caster.world.playMovingSound(null, caster, SoundEvents.BLOCK_FIRE_EXTINGUISH, SoundCategory.AMBIENT, 0.3f + WarDance.rand.nextFloat() * 0.5f, 0.5f + WarDance.rand.nextFloat());
+        caster.level.playSound(null, caster, SoundEvents.FIRE_EXTINGUISH, SoundCategory.AMBIENT, 0.3f + WarDance.rand.nextFloat() * 0.5f, 0.5f + WarDance.rand.nextFloat());
         CasterData.getCap(caster).getSkillData(this).ifPresent(a -> {
             a.setDuration(-Float.MAX_VALUE / 2);
             a.setState(STATE.ACTIVE);

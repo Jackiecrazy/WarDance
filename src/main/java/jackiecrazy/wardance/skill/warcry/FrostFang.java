@@ -17,6 +17,8 @@ import net.minecraftforge.eventbus.api.EventPriority;
 import java.awt.*;
 import java.util.UUID;
 
+import jackiecrazy.wardance.skill.Skill.STATE;
+
 public class FrostFang extends WarCry {
     private static final AttributeModifier luck = new AttributeModifier(UUID.fromString("77723885-afb9-4937-9c02-612ee5b6135a"), "frost fang bonus", 2, AttributeModifier.Operation.ADDITION);
     private static final AttributeModifier speed = new AttributeModifier(UUID.fromString("07430131-9baa-47b4-a51c-9a6f48d564f4"), "frost fang bonus", 0.4, AttributeModifier.Operation.MULTIPLY_BASE);
@@ -26,7 +28,7 @@ public class FrostFang extends WarCry {
     @Override
     protected void evoke(LivingEntity caster) {
         caster.getAttribute(Attributes.MOVEMENT_SPEED).removeModifier(speed);
-        caster.getAttribute(Attributes.MOVEMENT_SPEED).applyNonPersistentModifier(speed);
+        caster.getAttribute(Attributes.MOVEMENT_SPEED).addTransientModifier(speed);
         super.evoke(caster);
     }
 
@@ -42,8 +44,8 @@ public class FrostFang extends WarCry {
 
     @Override
     public void onEquip(LivingEntity caster) {
-        caster.getAttribute(Attributes.LUCK).removeModifier(luck.getID());
-        caster.getAttribute(Attributes.LUCK).applyPersistentModifier(luck);
+        caster.getAttribute(Attributes.LUCK).removeModifier(luck.getId());
+        caster.getAttribute(Attributes.LUCK).addPermanentModifier(luck);
         super.onEquip(caster);
     }
 
@@ -57,9 +59,9 @@ public class FrostFang extends WarCry {
     @Override
     public void onProc(LivingEntity caster, Event procPoint, STATE state, SkillData stats, LivingEntity target) {
         if (procPoint instanceof LivingAttackEvent && state == STATE.ACTIVE && procPoint.getPhase() == EventPriority.HIGHEST && ((LivingAttackEvent) procPoint).getEntityLiving() == target) {
-            target.addPotionEffect(new EffectInstance(Effects.SLOWNESS, 60));
+            target.addEffect(new EffectInstance(Effects.MOVEMENT_SLOWDOWN, 60));
             if (StealthUtils.getAwareness(caster, target) == StealthUtils.Awareness.ALERT) {
-                target.addPotionEffect(new EffectInstance(Effects.BLINDNESS, 20));
+                target.addEffect(new EffectInstance(Effects.BLINDNESS, 20));
             }
         }
         super.onProc(caster, procPoint, state, stats, target);

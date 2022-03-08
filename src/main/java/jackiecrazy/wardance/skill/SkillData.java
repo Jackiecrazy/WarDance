@@ -40,7 +40,7 @@ public class SkillData {
         ret.max = from.getFloat("max");
         ret.state = Skill.STATE.values()[from.getInt("state")];
         if (from.contains("caster"))
-            ret.casterID = from.getUniqueId("caster");
+            ret.casterID = from.getUUID("caster");
         return ret;
     }
 
@@ -48,14 +48,14 @@ public class SkillData {
     public LivingEntity getCaster(World world) {
         if (casterID == null) return null;
         if (caster != null) return caster;
-        if (world.getPlayerByUuid(casterID) != null) {
-            caster = world.getPlayerByUuid(casterID);
+        if (world.getPlayerByUUID(casterID) != null) {
+            caster = world.getPlayerByUUID(casterID);
         }
         return caster;
     }
 
     public SkillData setCaster(LivingEntity caster) {
-        casterID = caster.getUniqueID();
+        casterID = caster.getUUID();
         this.caster = caster;
         return this;
     }
@@ -134,7 +134,7 @@ public class SkillData {
         to.putFloat("something", var);
         to.putBoolean("condition", condition);
         if (casterID != null)
-            to.putUniqueId("caster", casterID);
+            to.putUUID("caster", casterID);
         return to;
     }
 

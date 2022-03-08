@@ -17,9 +17,9 @@ public class Tackle extends Kick {
 
     @Override
     public void additionally(LivingEntity caster, LivingEntity target) {
-        caster.setMotion(caster.getMotion().add(caster.getPositionVec().subtractReverse(target.getPositionVec()).scale(0.18)));
+        caster.setDeltaMovement(caster.getDeltaMovement().add(caster.position().vectorTo(target.position()).scale(0.18)));
         CombatData.getCap(caster).setRollTime(-10);
-        caster.velocityChanged = true;
+        caster.hurtMarked = true;
     }
 
     @Override

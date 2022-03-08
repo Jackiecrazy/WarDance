@@ -48,21 +48,21 @@ public class ShadowlessKick extends Kick {
         LivingEntity target = GeneralUtils.raytraceLiving(caster, distance());
         if (target != null) {
             CombatData.getCap(target).consumePosture(caster, 2);
-            if (caster instanceof PlayerEntity && caster.world instanceof ServerWorld) {
-                double d0 = (double) (-MathHelper.sin(caster.rotationYaw * ((float) Math.PI / 180F)));
-                double d1 = (double) MathHelper.cos(caster.rotationYaw * ((float) Math.PI / 180F));
-                ((ServerWorld) caster.world).spawnParticle(ParticleTypes.EXPLOSION, caster.getPosX() + d0, caster.getPosYHeight(0.5D), caster.getPosZ() + d1, 0, d0, 0.0D, d1, 0.0D);
+            if (caster instanceof PlayerEntity && caster.level instanceof ServerWorld) {
+                double d0 = (double) (-MathHelper.sin(caster.yRot * ((float) Math.PI / 180F)));
+                double d1 = (double) MathHelper.cos(caster.yRot * ((float) Math.PI / 180F));
+                ((ServerWorld) caster.level).sendParticles(ParticleTypes.EXPLOSION, caster.getX() + d0, caster.getY(0.5D), caster.getZ() + d1, 0, d0, 0.0D, d1, 0.0D);
             }
-            target.attackEntityFrom(new CombatDamageSource("fallingBlock", caster).setDamageTyping(CombatDamageSource.TYPE.PHYSICAL).setProcSkillEffects(true).setProcNormalEffects(false).setProcAttackEffects(true).setKnockbackPercentage(0.7f), 1);
-            if (target.getRevengeTarget() == null)
-                target.setRevengeTarget(caster);
+            target.hurt(new CombatDamageSource("fallingBlock", caster).setDamageTyping(CombatDamageSource.TYPE.PHYSICAL).setProcSkillEffects(true).setProcNormalEffects(false).setProcAttackEffects(true).setKnockbackPercentage(0.7f), 1);
+            if (target.getLastHurtByMob() == null)
+                target.setLastHurtByMob(caster);
             stats.setArbitraryFloat(stats.getArbitraryFloat() + 1);
             if (stats.getArbitraryFloat() >= 6) {
                 markUsed(caster);
-                caster.world.playSound(null, caster.getPosX(), caster.getPosY(), caster.getPosZ(), SoundEvents.ENTITY_DRAGON_FIREBALL_EXPLODE, SoundCategory.PLAYERS, 0.5f + WarDance.rand.nextFloat() * 0.5f, 0.5f + WarDance.rand.nextFloat() * 0.5f);
+                caster.level.playSound(null, caster.getX(), caster.getY(), caster.getZ(), SoundEvents.DRAGON_FIREBALL_EXPLODE, SoundCategory.PLAYERS, 0.5f + WarDance.rand.nextFloat() * 0.5f, 0.5f + WarDance.rand.nextFloat() * 0.5f);
                 return false;
             }
-            caster.world.playSound(null, caster.getPosX(), caster.getPosY(), caster.getPosZ(), SoundEvents.ENTITY_ZOMBIE_ATTACK_WOODEN_DOOR, SoundCategory.PLAYERS, 0.25f + WarDance.rand.nextFloat() * 0.5f, 0.5f + WarDance.rand.nextFloat() * 0.5f);
+            caster.level.playSound(null, caster.getX(), caster.getY(), caster.getZ(), SoundEvents.ZOMBIE_ATTACK_WOODEN_DOOR, SoundCategory.PLAYERS, 0.25f + WarDance.rand.nextFloat() * 0.5f, 0.5f + WarDance.rand.nextFloat() * 0.5f);
             return true;
         }
         return false;

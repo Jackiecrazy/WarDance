@@ -8,5 +8,5 @@ import org.spongepowered.asm.mixin.gen.Invoker;
 @Mixin(ProjectileEntity.class)
 public interface ProjectileImpactMixin {
     @Invoker
-    public void callOnImpact(RayTraceResult rtr);
+    public void callOnHit(RayTraceResult rtr);
 }

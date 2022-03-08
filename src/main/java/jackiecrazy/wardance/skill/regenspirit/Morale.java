@@ -17,6 +17,8 @@ import javax.annotation.Nonnull;
 import java.util.Arrays;
 import java.util.HashSet;
 
+import jackiecrazy.wardance.skill.Skill.STATE;
+
 public class Morale extends Skill {
     /*
     back and forth: recover (1/attack speed) spirit when parrying or landing a critical hit.
@@ -27,8 +29,8 @@ lady luck: after casting a skill, have a 1+luck/5+luck chance to negate spirit c
 apathy: your max spirit is 4, your spirit instantly refills after cooldown, you are immune to burnout.
      */
 
-    private final Tag<String> tag = Tag.getTagFromContents(new HashSet<>(Arrays.asList("passive", ProcPoints.on_parry, ProcPoints.modify_crit)));
-    private final Tag<String> no = Tag.getEmptyTag();
+    private final Tag<String> tag = Tag.create(new HashSet<>(Arrays.asList("passive", ProcPoints.on_parry, ProcPoints.modify_crit)));
+    private final Tag<String> no = Tag.empty();
 
     @Override
     public Tag<String> getTags(LivingEntity caster) {

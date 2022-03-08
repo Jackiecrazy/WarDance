@@ -27,7 +27,7 @@ public class RequestSweepPacket {
     public RequestSweepPacket(boolean isMainHand, Entity ignore) {
         main = isMainHand;
         if (ignore == null) id = -1;
-        else id = ignore.getEntityId();
+        else id = ignore.getId();
     }
 
     public static class RequestSweepEncoder implements BiConsumer<RequestSweepPacket, PacketBuffer> {
@@ -56,9 +56,9 @@ public class RequestSweepPacket {
                 Hand h = updateClientPacket.main ? Hand.MAIN_HAND : Hand.OFF_HAND;
                 if (sender != null && (GeneralConfig.dual || updateClientPacket.main) && CombatUtils.getCooledAttackStrength(sender, h, 1f) >= 0.9f) {
                     //TODO throw weapon
-                    double d0 = sender.distanceWalkedModified - sender.prevDistanceWalkedModified;
-                    if (!(sender.fallDistance > 0.0F && !sender.isOnLadder() && !sender.isInWater() && !sender.isPotionActive(Effects.BLINDNESS) && !sender.isPassenger()) && !sender.isSprinting() && sender.isOnGround() && d0 < (double) sender.getAIMoveSpeed())
-                        CombatUtils.sweep(sender, sender.world.getEntityByID(updateClientPacket.id), h, GeneralUtils.getAttributeValueSafe(sender, ForgeMod.REACH_DISTANCE.get()));
+                    double d0 = sender.walkDist - sender.walkDistO;
+                    if (!(sender.fallDistance > 0.0F && !sender.onClimbable() && !sender.isInWater() && !sender.hasEffect(Effects.BLINDNESS) && !sender.isPassenger()) && !sender.isSprinting() && sender.isOnGround() && d0 < (double) sender.getSpeed())
+                        CombatUtils.sweep(sender, sender.level.getEntity(updateClientPacket.id), h, GeneralUtils.getAttributeValueSafe(sender, ForgeMod.REACH_DISTANCE.get()));
                 }
                 if (h == Hand.OFF_HAND)
                     CombatUtils.setHandCooldown(sender, h, 0, false);

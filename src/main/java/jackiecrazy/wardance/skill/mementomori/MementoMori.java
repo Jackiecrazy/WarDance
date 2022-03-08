@@ -33,8 +33,8 @@ death denial: upon receiving fatal damage, become immune to all damage and all h
 saving throw: your luck scales very strongly with lost health
 pound of flesh: active skill. Consumes all your spirit, and until your spirit regenerates or (spirit) seconds have elapsed take 5% max health damage per attack to deal 10% max posture damage if parried, or 5% max health damage if connected
      */
-    private final Tag<String> tag = Tag.getTagFromContents(new HashSet<>(Arrays.asList("passive", ProcPoints.recharge_sleep, ProcPoints.change_heals, ProcPoints.on_being_damaged, ProcPoints.attack_might)));
-    private final Tag<String> no = Tag.getEmptyTag();
+    private final Tag<String> tag = Tag.create(new HashSet<>(Arrays.asList("passive", ProcPoints.recharge_sleep, ProcPoints.change_heals, ProcPoints.on_being_damaged, ProcPoints.attack_might)));
+    private final Tag<String> no = Tag.empty();
 
     @Nonnull
     @Override
@@ -118,9 +118,9 @@ pound of flesh: active skill. Consumes all your spirit, and until your spirit re
                 float stat = stats.getArbitraryFloat();
                 if (stat > 1) {
                     //EXPLOOOOSION
-                    for (LivingEntity e : caster.world.getLoadedEntitiesWithinAABB(LivingEntity.class, caster.getBoundingBox().grow(5))) {
+                    for (LivingEntity e : caster.level.getLoadedEntitiesOfClass(LivingEntity.class, caster.getBoundingBox().inflate(5))) {
                         if (TargetingUtils.isHostile(e, caster)) {
-                            e.attackEntityFrom(new CombatDamageSource("lightningBolt", caster).setDamageTyping(CombatDamageSource.TYPE.MAGICAL).setProcSkillEffects(true).setKnockbackPercentage(0).setAttackingHand(null).setSkillUsed(this).setMagicDamage(), stat);
+                            e.hurt(new CombatDamageSource("lightningBolt", caster).setDamageTyping(CombatDamageSource.TYPE.MAGICAL).setProcSkillEffects(true).setKnockbackPercentage(0).setAttackingHand(null).setSkillUsed(this).setMagic(), stat);
                             CombatUtils.knockBack(e, caster, stat / 4, true, false);
                         }
                     }

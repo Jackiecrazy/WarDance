@@ -22,14 +22,16 @@ import java.awt.*;
 import java.util.Arrays;
 import java.util.HashSet;
 
+import jackiecrazy.wardance.skill.Skill.STATE;
+
 @Mod.EventBusSubscriber(modid = WarDance.MODID)
 public class Silencer extends HeavyBlow {
-    private final Tag<String> tag = Tag.getTagFromContents(new HashSet<>(Arrays.asList("physical", ProcPoints.disable_shield, ProcPoints.melee, ProcPoints.normal_attack, ProcPoints.modify_crit, ProcPoints.recharge_normal, ProcPoints.afflict_tick)));
+    private final Tag<String> tag = Tag.create(new HashSet<>(Arrays.asList("physical", ProcPoints.disable_shield, ProcPoints.melee, ProcPoints.normal_attack, ProcPoints.modify_crit, ProcPoints.recharge_normal, ProcPoints.afflict_tick)));
 
     @SubscribeEvent
     public static void silenced(LivingDeathEvent e) {
-        if (e.getSource().getTrueSource() instanceof LivingEntity && Marks.getCap(e.getEntityLiving()).isMarked(WarSkills.SILENCER.get())) {
-            LivingEntity elb = (LivingEntity) e.getSource().getTrueSource();
+        if (e.getSource().getEntity() instanceof LivingEntity && Marks.getCap(e.getEntityLiving()).isMarked(WarSkills.SILENCER.get())) {
+            LivingEntity elb = (LivingEntity) e.getSource().getEntity();
             CasterData.getCap(elb).changeSkillState(WarSkills.SILENCER.get(), STATE.INACTIVE);
         }
     }
@@ -47,7 +49,7 @@ public class Silencer extends HeavyBlow {
     @Override
     public void onProc(LivingEntity caster, Event procPoint, STATE state, SkillData stats, LivingEntity target) {
         if (procPoint instanceof CriticalHitEvent && ((CriticalHitEvent) procPoint).getTarget() == target && state == STATE.INACTIVE) {
-            if (caster.world.isRemote() || caster == target) return;
+            if (caster.level.isClientSide() || caster == target) return;
             if (StealthUtils.getAwareness(caster, target) != StealthUtils.Awareness.UNAWARE || !cast(caster, -999))
                 return;
             CombatData.getCap(target).setHandBind(Hand.MAIN_HAND, 60);
