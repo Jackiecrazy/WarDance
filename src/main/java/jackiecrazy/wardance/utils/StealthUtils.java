@@ -93,7 +93,6 @@ public class StealthUtils {
     public static int getActualLightLevel(World world, BlockPos pos) {
         int i = 0;
         if (world.dimensionType().hasSkyLight()) {
-            //TODO does this work properly underground?
             if (lastUpdate < world.getGameTime()) {
                 world.updateSkyBrightness();
                 lastUpdate = world.getGameTime();

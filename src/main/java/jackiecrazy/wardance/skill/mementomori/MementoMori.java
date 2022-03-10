@@ -89,7 +89,6 @@ pound of flesh: active skill. Consumes all your spirit, and until your spirit re
 
         @Override
         public boolean equippedTick(LivingEntity caster, SkillData d) {
-            //TODO reserve max spirit
             float lostHealth = GeneralUtils.getMaxHealthBeforeWounding(caster) - caster.getHealth();
             lostHealth /= GeneralUtils.getMaxHealthBeforeWounding(caster);
             SkillUtils.modifyAttribute(caster, Attributes.ARMOR, MULT, lostHealth * 20, AttributeModifier.Operation.ADDITION);
