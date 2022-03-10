@@ -25,6 +25,7 @@ import jackiecrazy.wardance.skill.SkillCategories;
 import jackiecrazy.wardance.skill.coupdegrace.CoupDeGrace;
 import jackiecrazy.wardance.utils.CombatUtils;
 import jackiecrazy.wardance.utils.GeneralUtils;
+import jackiecrazy.wardance.utils.StealthUtils;
 import net.minecraft.client.GameSettings;
 import net.minecraft.client.MainWindow;
 import net.minecraft.client.Minecraft;
@@ -72,11 +73,12 @@ import java.util.concurrent.TimeUnit;
 
 @Mod.EventBusSubscriber(value = Dist.CLIENT, modid = WarDance.MODID)
 public class ClientEvents {
-    private static final Cache<LivingEntity, Double> cache = CacheBuilder.newBuilder().weakKeys().expireAfterWrite(1, TimeUnit.SECONDS).build();
+    private static final Cache<LivingEntity, Tuple<StealthUtils.Awareness, Double>> cache = CacheBuilder.newBuilder().weakKeys().expireAfterWrite(1, TimeUnit.SECONDS).build();
     private static final int ALLOWANCE = 7;
     private static final ResourceLocation amo = new ResourceLocation(WarDance.MODID, "textures/hud/amo.png");
     private static final ResourceLocation darkmega = new ResourceLocation(WarDance.MODID, "textures/hud/dark.png");
     private static final ResourceLocation raihud = new ResourceLocation(WarDance.MODID, "textures/hud/thanksrai.png");
+    private static final ResourceLocation stealth = new ResourceLocation(WarDance.MODID, "textures/hud/stealth.png");
     /**
      * left, back, right
      */
@@ -463,23 +465,10 @@ public class ClientEvents {
                         mc.gui.blit(stack, x, y, comboU, 0, combowidth, 32);
                         //fancy fill percentage
                         mc.gui.blit(stack, x, y + 33 - fillHeight, comboU, 65 - fillHeight, combowidth, fillHeight - 2);
-                        //TRIANGLE!
-//                    BufferBuilder bufferbuilder = Tessellator.getInstance().getBuffer();
-//                    bufferbuilder.begin(4, DefaultVertexFormats.POSITION_TEX);
-//                    bufferbuilder.pos(stack.getLast().getMatrix(), (float)x+combowidth, (float)y+46, (float)mc.ingameGUI.getBlitOffset()).tex(minU, maxV).endVertex();
-//                    bufferbuilder.pos(stack.getLast().getMatrix(), (float)x, (float)y, (float)mc.ingameGUI.getBlitOffset()).tex(maxU, maxV).endVertex();
-//                    bufferbuilder.pos(stack.getLast().getMatrix(), (float)x+combowidth, (float)y+46, (float)mc.ingameGUI.getBlitOffset()).tex(maxU, minV).endVertex();
-//                    bufferbuilder.finishDrawing();
-//                    RenderSystem.enableAlphaTest();
-//                    WorldVertexBufferUploader.draw(bufferbuilder);
-                        //NO TRIANGLE YET!
                     }
 
                     stack.popPose();
                     RenderSystem.disableBlend();
-                    //multiplier
-                    //String combo = formatter.format(1 + Math.floor(currentComboLevel) / 10) + "X";
-                    //mc.fontRenderer.drawString(event.getMatrixStack(), combo, width - 28 + ClientConfig.comboX, Math.min(height / 2 - barHeight / 2 + ClientConfig.comboY, height - barHeight) + 60, 0);
                 }
                 mc.getTextureManager().bind(amo);
                 //render posture bar if not full, displayed even out of combat mode because it's pretty relevant to not dying
@@ -490,30 +479,45 @@ public class ClientEvents {
                     LivingEntity looked = (LivingEntity) look;
                     List<Skill> afflict = new ArrayList<>();
                     final ISkillCapability skill = CasterData.getCap(player);
-                    //coup de grace
-                    final Skill variant = skill.getEquippedVariation(SkillCategories.coup_de_grace);
-                    if (look != player && skill.isSkillUsable(variant)) {
-                        CoupDeGrace cdg = (CoupDeGrace) variant;
-                        if (cdg.willKillOnCast(player, looked)) {
-                            afflict.add(cdg);
+                    if (ClientConfig.CONFIG.enemyAfflict.enabled) {
+                        //coup de grace
+                        final Skill variant = skill.getEquippedVariation(SkillCategories.coup_de_grace);
+                        if (look != player && skill.isSkillUsable(variant)) {
+                            CoupDeGrace cdg = (CoupDeGrace) variant;
+                            if (cdg.willKillOnCast(player, looked)) {
+                                afflict.add(cdg);
+                            }
+                        }
+                        //marks
+                        afflict.addAll(Marks.getCap(looked).getActiveMarks().keySet());
+                        Pair<Integer, Integer> pair = translateCoords(ClientConfig.CONFIG.enemyAfflict, width, height);
+                        for (int index = 0; index < afflict.size(); index++) {
+                            Skill s = afflict.get(index);
+                            mc.getTextureManager().bind(s.icon());
+                            Color c = s.getColor();
+                            RenderSystem.color4f(c.getRed() / 255f, c.getGreen() / 255f, c.getBlue() / 255f, 1);
+                            AbstractGui.blit(stack, pair.getFirst() - (afflict.size() - 1 - index) * 16 + (afflict.size() - 1) * 8 - 8, pair.getSecond(), 0, 0, 16, 16, 16, 16);
                         }
                     }
-                    //marks
-                    afflict.addAll(Marks.getCap(looked).getActiveMarks().keySet());
-                    Pair<Integer, Integer> pair = translateCoords(ClientConfig.CONFIG.enemyAfflict, width, height);
-                    for (int index = 0; index < afflict.size(); index++) {
-                        Skill s = afflict.get(index);
-                        mc.getTextureManager().bind(s.icon());
-                        Color c = s.getColor();
-                        RenderSystem.color4f(c.getRed() / 255f, c.getGreen() / 255f, c.getBlue() / 255f, 1);
-                        mc.gui.blit(stack, pair.getFirst() - (afflict.size() - 1 - index) * 16 + (afflict.size() - 1) * 8 - 8, pair.getSecond(), 0, 0, 16, 16, 16, 16);
+                    if (ClientConfig.CONFIG.stealth.enabled && cap.isCombatMode()) {
+                        Pair<Integer, Integer> pair = translateCoords(ClientConfig.CONFIG.stealth, width, height);
+                        final Tuple<StealthUtils.Awareness, Double> info = stealthInfo(looked);
+                        double dist = info.getB();
+                        int shift = 0;
+                        switch (info.getA()) {
+                            case ALERT:
+                                shift = 0;
+                                break;
+                            case DISTRACTED:
+                                shift = 1;
+                                break;
+                            case UNAWARE:
+                                shift = looked.distanceToSqr(player) < dist * dist ? 2 : 3;
+                                break;
+                        }
+                        mc.getTextureManager().bind(stealth);
+                        AbstractGui.blit(stack, pair.getFirst() - 16, pair.getSecond() - 8, 0, shift * 16, 32, 16, 64, 64);
                     }
-                    //stealth, TODO this is dumb
-                    final double dist = visibleDistance(looked);
-                    String display = formatter.format(dist);
-                    int color = 58339;
-                    if (looked.distanceToSqr(player) < dist * dist) color = Color.RED.getRGB();
-                    mc.font.drawShadow(event.getMatrixStack(), display, width / 2f - mc.font.width(display) / 2f, height / 2f+4, color);
                     RenderSystem.color4f(1, 1, 1, 1);
                     if (ClientConfig.CONFIG.enemyPosture.enabled && (cap.isCombatMode() || CombatData.getCap((LivingEntity) look).getPosture() < CombatData.getCap((LivingEntity) look).getMaxPosture() || CombatData.getCap((LivingEntity) look).getStaggerTime() > 0 || cap.getShatterCooldown() < GeneralUtils.getAttributeValueSafe(player, WarAttributes.SHATTER.get()) || cap.getBarrier() < cap.getMaxBarrier()))
                         drawPostureBarAt(false, stack, looked, width, height);//Math.min(HudConfig.client.enemyPosture.x, width - 64), Math.min(HudConfig.client.enemyPosture.y, height - 64));
@@ -823,7 +827,7 @@ public class ClientEvents {
 
     public static RayTraceResult raycast(Vector3d origin, Vector3d ray, Entity e, double len) {
         Vector3d next = origin.add(ray.normalize().scale(len));
-        return e.level.clip(new RayTraceContext(origin, next, RayTraceContext.BlockMode.OUTLINE, RayTraceContext.FluidMode.NONE, e));
+        return e.level.clip(new RayTraceContext(origin, next, RayTraceContext.BlockMode.COLLIDER, RayTraceContext.FluidMode.NONE, e));
     }
 
     @SubscribeEvent
@@ -1030,16 +1034,17 @@ public class ClientEvents {
         return f;
     }
 
-    private static double visibleDistance(LivingEntity at) {
+    private static Tuple<StealthUtils.Awareness, Double> stealthInfo(LivingEntity at) {
         try {
             return cache.get(at, () -> {
+                StealthUtils.Awareness a = StealthUtils.getAwareness(Minecraft.getInstance().player, at);
                 double mult = Minecraft.getInstance().player.getVisibilityPercent(at);
-                return (mult * at.getAttributeValue(Attributes.FOLLOW_RANGE));
+                return new Tuple<>(a, mult * at.getAttributeValue(Attributes.FOLLOW_RANGE));
             });
         } catch (ExecutionException e) {
             e.printStackTrace();
         }
-        return 1;
+        return new Tuple<>(StealthUtils.Awareness.ALERT, 1d);
     }
 
     private static Pair<Integer, Integer> translateCoords(ClientConfig.DisplayData dd, int width, int height) {

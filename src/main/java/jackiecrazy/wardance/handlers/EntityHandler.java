@@ -11,6 +11,7 @@ import jackiecrazy.wardance.config.GeneralConfig;
 import jackiecrazy.wardance.config.StealthConfig;
 import jackiecrazy.wardance.networking.CombatChannel;
 import jackiecrazy.wardance.networking.SyncSkillPacket;
+import jackiecrazy.wardance.networking.UpdateTargetPacket;
 import jackiecrazy.wardance.potion.WarEffects;
 import jackiecrazy.wardance.skill.Skill;
 import jackiecrazy.wardance.utils.GeneralUtils;
@@ -39,6 +40,7 @@ import net.minecraftforge.event.entity.living.LivingEvent;
 import net.minecraftforge.event.entity.living.LivingSetAttackTargetEvent;
 import net.minecraftforge.event.entity.living.PotionEvent;
 import net.minecraftforge.event.entity.player.PlayerEvent;
+import net.minecraftforge.eventbus.api.EventPriority;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.LogicalSide;
 import net.minecraftforge.fml.common.Mod;
@@ -182,24 +184,40 @@ Mobs should move into a position that is close to the player, far from allies, a
             if (sd.isVigilant()) return;
             if (watcher.getKillCredit() != sneaker && watcher.getLastHurtByMob() != sneaker && watcher.getLastHurtMob() != sneaker && (!(watcher instanceof MobEntity) || ((MobEntity) watcher).getTarget() != sneaker)) {
                 double stealth = GeneralUtils.getAttributeValueSafe(sneaker, WarAttributes.STEALTH.get());
-                double multiplier = 0.24 * Math.exp(0.07 * stealth);
+                double negMult = 1;
+                double posMult = 1;
+                //each level of negative stealth multiplies effectiveness by 0.93
+                while (stealth < 0) {
+                    negMult *= 0.95;
+                    stealth++;
+                }
+                //each level of positive stealth multiplies ineffectiveness by 0.93
+                while (stealth > 0) {
+                    posMult *= 0.933;
+                    stealth--;
+                }
+                //blinded mobs cannot see
                 if (watcher.hasEffect(Effects.BLINDNESS))
-                    mult *= (1f / (watcher.getEffect(Effects.BLINDNESS).getAmplifier() + 4));
+                    mult /= 8;
+                //mobs that can't see behind their backs get a hefty debuff
                 if (!sd.isAllSeeing() && !GeneralUtils.isFacingEntity(watcher, sneaker, StealthConfig.baseHorizontalDetection, StealthConfig.baseVerticalDetection))
-                    mult *= 1 - (0.8 * multiplier);
+                    mult *= (1 - (0.8 * negMult)) * posMult;
+                //slow is smooth, smooth is fast
                 if (!sd.isPerceptive()) {
                     final double speedSq = GeneralUtils.getSpeedSq(sneaker);
-                    mult *= (1 - (0.6 - MathHelper.sqrt(speedSq) * 2) * multiplier);
+                    mult *= (1 - (0.6 - MathHelper.sqrt(speedSq) * 2 * posMult) * negMult);
                 }
+                //stay dark, stay dank
                 if (!sd.isNightVision() && !watcher.hasEffect(Effects.NIGHT_VISION) && !sneaker.hasEffect(Effects.GLOWING) && sneaker.getRemainingFireTicks() <= 0) {
                     World world = sneaker.level;
                     if (world.isAreaLoaded(sneaker.blockPosition(), 5) && world.isAreaLoaded(watcher.blockPosition(), 5)) {
                         final int light = StealthUtils.getActualLightLevel(world, sneaker.blockPosition());
-                        float lightMalus = MathHelper.clamp((13 - light) * 0.1f * (float) multiplier, 0f, 0.9f);
-                        mult *= (1 - lightMalus);
+                        float lightMalus = MathHelper.clamp((13 - light) * 0.1f, 0f, 0.9f);
+                        mult *= (1 - (lightMalus * negMult)) * posMult;
                     }
                 }
             }
+            //is this LoS?
             if (!sd.isAllSeeing() && GeneralUtils.viewBlocked(watcher, sneaker))
                 mult *= (0.4);
             e.modifyVisibility(MathHelper.clamp(mult, 0.001, 1));
@@ -215,7 +233,7 @@ Mobs should move into a position that is close to the player, far from allies, a
             mob.setTarget(null);
         if (mob.getLastHurtByMob() != e.getTarget() && StealthConfig.stealthSystem && !GeneralUtils.isFacingEntity(mob, e.getTarget(), StealthConfig.baseHorizontalDetection, StealthConfig.baseVerticalDetection)) {
             StealthUtils.StealthData sd = StealthUtils.stealthMap.getOrDefault(mob.getType().getRegistryName(), StealthUtils.STEALTH);
-            if (sd.isVigilant() || sd.isAllSeeing() || sd.isOlfactory()) return;
+            if (sd.isVigilant() || sd.isAllSeeing() || sd.isWary()) return;
             //outside of LoS, perform luck check. Pray to RNGesus!
             double luckDiff = GeneralUtils.getAttributeValueSafe(e.getTarget(), Attributes.LUCK) - GeneralUtils.getAttributeValueSafe(mob, Attributes.LUCK);
             mob.setTarget(null);
@@ -224,6 +242,12 @@ Mobs should move into a position that is close to the player, far from allies, a
                 mob.lookAt(EntityAnchorArgument.Type.FEET, e.getTarget().position());//.getLookController().setLookPositionWithEntity(e.getTarget(), 0, 0);
             }
         }
+    }
+
+    @SubscribeEvent(priority = EventPriority.LOWEST)
+    public static void sync(LivingSetAttackTargetEvent e) {
+        if(!e.getEntityLiving().level.isClientSide())
+        CombatChannel.INSTANCE.send(PacketDistributor.TRACKING_ENTITY.with(e::getEntityLiving), new UpdateTargetPacket(e.getEntityLiving().getId(), e.getTarget() == null ? -1 : e.getTarget().getId()));
     }
 
     @SubscribeEvent

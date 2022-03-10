@@ -305,18 +305,25 @@ public class StealthConfig {
         _baseDetectionHorizontal = b.translation("wardance.config.detectH").comment("mobs start out with this FoV of full detection on the xz plane").defineInRange("default mob horizontal FoV", 120, 0, 360);
         _baseDetectionVertical = b.translation("wardance.config.detectV").comment("mobs start out with this FoV of full detection on the y axis").defineInRange("default mob vertical FoV", 60, 0, 360);
         _anglePerArmor = b.translation("wardance.config.perarmor").comment("your stealth attribute is multiplied by this to generate a new FoV for the purpose of detection by mobs, if it is greater than the default").defineInRange("armor stealth debuff", 18, 0, 360);
-        _blockPerVolume = b.translation("wardance.config.volume").comment("this value is multiplied by the volume of a sound to determine how far it'll alert mobs to investigate from. Large values will GREATLY impact performance, you have been warned.").defineInRange("alert volume multiplier", 8, 0, Double.MAX_VALUE);
+        _blockPerVolume = b.translation("wardance.config.volume").comment("this value is multiplied by the volume of a sound to determine how far it'll alert mobs to investigate from. Extremely large values will GREATLY impact performance, you have been warned.").defineInRange("alert volume multiplier", 16, 0, Double.MAX_VALUE);
         _distract = b.translation("wardance.config.distract").comment("posture and health damage multiplier for distracted stabs").defineInRange("distracted stab multiplier", 1.5, 0, Double.MAX_VALUE);
         _unaware = b.translation("wardance.config.unaware").comment("posture and health damage multiplier for unaware stabs").defineInRange("unaware stab multiplier", 1.5, 0, Double.MAX_VALUE);
         _ignore = b.translation("wardance.config.ignore").comment("whether unaware stabs ignore parry, deflection, shatter, and absorption").define("unaware stab defense ignore", true);
         _customDetection = b.translation("wardance.config.mobDetection").comment("Define custom detection mechanics for mobs by tagging them as one of the following: " +
                 "\n(a)ll-seeing mobs ignore LoS modifiers. " +
+                "\n(b)lind mobs treat light level as 0. " +
+                "\n(c)lumsy mobs have no stealth of their own. " +
                 "\n(d)eaf mobs ignore sound cues. " +
+                "\n(e)yeless mobs cannot be blinded further. " +
+                "\n(l)azy mobs do not turn around to search for you. " +
+                "\n(m)indful mobs cannot be distracted. " +
                 "\n(n)octurnal mobs ignore light level. " +
                 "\n(p)erceptive mobs ignore motion multipliers. " +
-                "\n(s)ilent mobs do not broadcast sound cues, even if they do make sounds. " +
-                "\n(w)ary mobs ignore luck. " +
-                "\n(v)igilant mobs bypass the entire stealth and distraction system.").defineList("mob detection rules", Arrays.asList(SNEAK), String.class::isInstance);
+                "\n(q)uiet mobs do not broadcast sound cues, even if they do make sounds. " +
+                "\n(s)keptical mobs will always turn around before beginning to attack, even if you fail your luck check. " +
+                "\n(v)igilant mobs cannot be caught unaware, but may be distracted."+
+                "\n(w)ary mobs ignore luck. "
+        ).defineList("mob detection rules", Arrays.asList(SNEAK), String.class::isInstance);
     }
 
     private static void bake() {

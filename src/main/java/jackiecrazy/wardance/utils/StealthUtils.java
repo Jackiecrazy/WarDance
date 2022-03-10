@@ -22,6 +22,7 @@ import java.util.Locale;
 public class StealthUtils {
     public static final StealthData STEALTH = new StealthData("");
     public static HashMap<ResourceLocation, StealthData> stealthMap = new HashMap<>();
+    private static long lastUpdate;
 
     public static void updateMobDetection(List<? extends String> interpretS) {
         stealthMap.clear();
@@ -82,14 +83,13 @@ public class StealthUtils {
     public static int getActualLightLevel(World world, BlockPos pos) {
         int i = 0;
         if (world.dimensionType().hasSkyLight()) {
-            i = world.getBrightness(LightType.SKY, pos) - world.getSkyDarken();
-            float f = world.getSunAngle(1.0F);
-            if (i > 0) {
-                //FIXME this is all manners of wrong
-                float f1 = ((float) Math.PI * 2F);
-                f = f + (f1 - f) * 0.2F;
-                i = Math.round((float) i * MathHelper.cos(f));
+            //TODO does this work properly underground?
+            if (lastUpdate < world.getGameTime()) {
+                world.updateSkyBrightness();
+                lastUpdate = world.getGameTime();
             }
+            int dark = world.getSkyDarken();
+            i = world.getBrightness(LightType.SKY, pos) - dark;
         }
 
         i = MathHelper.clamp(Math.max(world.getBrightness(LightType.BLOCK, pos), i), 0, 15);
@@ -135,7 +135,7 @@ public class StealthUtils {
             return vigil;
         }
 
-        public boolean isOlfactory() {return olfactory;}
+        public boolean isWary() {return olfactory;}
 
         public boolean isSilent() {return silent;}
 

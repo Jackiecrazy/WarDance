@@ -13,7 +13,7 @@ import java.util.List;
 public class ClientConfig {
     public static final ClientConfig CONFIG;
     public static final ForgeConfigSpec CONFIG_SPEC;
-    public final DisplayData might, mightNumber, spirit, spiritNumber, combo, playerAfflict, enemyAfflict;
+    public final DisplayData might, mightNumber, spirit, spiritNumber, combo, playerAfflict, enemyAfflict, stealth;
     public final PostureData playerPosture, enemyPosture;
     public static int spiritColor;
     public static int mightColor;
@@ -54,10 +54,13 @@ public class ClientConfig {
         enemyPosture = new PostureData(b, "target posture", AnchorPoint.TOPCENTER, 0, 20);
         b.pop();
         b.push("your afflictions");
-        playerAfflict = new DisplayData(b, "your afflictions", AnchorPoint.CROSSHAIR, 0, 18);
+        playerAfflict = new DisplayData(b, "your marks", AnchorPoint.CROSSHAIR, 0, 18);
         b.pop();
         b.push("target afflictions");
-        enemyAfflict = new DisplayData(b, "target afflictions", AnchorPoint.CROSSHAIR, 0, -18);
+        enemyAfflict = new DisplayData(b, "target marks", AnchorPoint.CROSSHAIR, 0, -18);
+        b.pop();
+        b.push("stealth");
+        stealth = new DisplayData(b, "stealth", AnchorPoint.CROSSHAIR, 0, 0);
         b.pop();
         _customPosture = b.translation("wardance.config.postureMobs").comment("whether a mob is rotated when it is staggered.").defineList("mob stagger rotation", Lists.newArrayList("example:dragon, false", "example:ghast, true"), String.class::isInstance);
     }
@@ -72,6 +75,7 @@ public class ClientConfig {
         CONFIG.enemyAfflict.bake();
         CONFIG.enemyPosture.bake();
         CONFIG.playerAfflict.bake();
+        CONFIG.stealth.bake();
         spiritColor = Integer.parseInt(CONFIG._spiritColor.get(), 16);
         mightColor = Integer.parseInt(CONFIG._mightColor.get(), 16);
         autoCombat = CONFIG._autoCombat.get();

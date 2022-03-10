@@ -95,8 +95,10 @@ public class CombatHandler {
             //defer to vanilla
             if (uke.isBlocking()) return;
             //refuse to handle piercing arrows to prevent oddity
-            if (e.getEntity() instanceof AbstractArrowEntity && ((AbstractArrowEntity) e.getEntity()).getPierceLevel() > 0)
-                return;
+            if (e.getEntity() instanceof AbstractArrowEntity) {
+                if (((AbstractArrowEntity) e.getEntity()).getPierceLevel() > 0)
+                    return;
+            }
             float consume = CombatConfig.posturePerProjectile;
             ICombatCapability ukeCap = CombatData.getCap(uke);
             //manual parry toggle
@@ -118,8 +120,11 @@ public class CombatHandler {
                 h = Hand.MAIN_HAND;
             }
             StealthUtils.Awareness a = StealthUtils.Awareness.ALERT;
-            if (projectile instanceof ProjectileEntity && ((ProjectileEntity) projectile).getOwner() instanceof LivingEntity)
+            if (projectile instanceof ProjectileEntity && ((ProjectileEntity) projectile).getOwner() instanceof LivingEntity) {
+                //don't parry yourself
+                if (((ProjectileEntity) projectile).getOwner() == uke) return;
                 a = StealthUtils.getAwareness((LivingEntity) ((ProjectileEntity) projectile).getOwner(), uke);
+            }
             boolean canParry = GeneralUtils.isFacingEntity(uke, projectile, 120);
             boolean force = false;
             if (a != StealthUtils.Awareness.UNAWARE && CombatUtils.parryMap.containsKey(GeneralUtils.getResourceLocationFromEntity(uke))) {
@@ -383,7 +388,7 @@ public class CombatHandler {
                             CombatUtils.setHandCooldown(seme, attackingHand, 0, true);
                         } else CombatUtils.setHandCooldown(seme, attackingHand, (float) (1 - kb), true);
                         //sword on sword is 1.4, sword on shield is 1.12
-                        if(defend!=null) {
+                        if (defend != null) {
                             ItemStack finalDefend = defend;
                             defend.getCapability(CombatManipulator.CAP).ifPresent((i) -> i.onParry(seme, uke, finalDefend, e.getAmount()));
                             Hand other = uke.getMainHandItem() == defend ? Hand.OFF_HAND : Hand.MAIN_HAND;
