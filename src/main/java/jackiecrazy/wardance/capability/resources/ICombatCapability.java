@@ -266,4 +266,6 @@ public interface ICombatCapability {
     CompoundNBT write();
 
     void addRangedMight(boolean pass);
+
+    int getRetina();
 }

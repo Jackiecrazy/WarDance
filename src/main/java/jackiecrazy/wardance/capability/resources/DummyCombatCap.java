@@ -515,4 +515,9 @@ public class DummyCombatCap implements ICombatCapability {
     public void addRangedMight(boolean pass) {
 
     }
+
+    @Override
+    public int getRetina() {
+        return 0;
+    }
 }

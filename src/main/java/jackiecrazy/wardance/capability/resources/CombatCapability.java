@@ -13,6 +13,7 @@ import jackiecrazy.wardance.potion.WarEffects;
 import jackiecrazy.wardance.skill.WarSkills;
 import jackiecrazy.wardance.utils.CombatUtils;
 import jackiecrazy.wardance.utils.GeneralUtils;
+import jackiecrazy.wardance.utils.StealthUtils;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.Pose;
@@ -54,6 +55,7 @@ public class CombatCapability implements ICombatCapability {
     private int qcd, scd, pcd, ccd;
     private int mBind;
     private int oBind;
+    private int retina;
     private int staggert, mstaggert, mstaggerc, staggerc, offhandcd, barriercd, roll, sweepAngle = -1;
     private boolean offhand, combat;
     private long lastUpdate;
@@ -776,16 +778,26 @@ public class CombatCapability implements ICombatCapability {
         if (elb == null) return;
         final int ticks = (int) (elb.level.getGameTime() - lastUpdate);
         if (ticks < 1) return;//sometimes time runs backwards
-        //max values
+        //update max values
         setTrueMaxPosture(getMPos(elb));
         setTrueMaxSpirit((float) elb.getAttributeValue(WarAttributes.MAX_SPIRIT.get()));
         setMaxMight((float) elb.getAttributeValue(WarAttributes.MAX_MIGHT.get()));
         setMaxBarrier((float) (elb.getAttributeValue(WarAttributes.BARRIER.get()) * getMaxPosture()));
+        //update internal retina values
+        int light = StealthUtils.getActualLightLevel(elb.level, elb.blockPosition());
+        for (long x = lastUpdate + ticks; x > lastUpdate; x--) {
+            if (x % 3 == 0) {
+                if (light > retina)
+                    retina++;
+                if (light < retina)
+                    retina--;
+            }
+        }
         //initialize posture
         if (first)
             setPosture(getMaxPosture());
         //store motion for further use
-        if (elb.tickCount % 5 == 0)
+        if (ticks > 5 || (lastUpdate + ticks) % 5 != lastUpdate % 5)
             motion = elb.position();
         //tick down everything
         recoveryTimer -= ticks;
@@ -912,8 +924,8 @@ public class CombatCapability implements ICombatCapability {
         setShatterCooldown(c.getInt("shattercd"));
         setMaxBarrier(c.getFloat("maxBarrier"));
         setBarrier(c.getFloat("barrier"));
-        mstaggerc=c.getInt("mstaggerc");
-        mstaggert=c.getInt("mstaggert");
+        mstaggerc = c.getInt("mstaggerc");
+        mstaggert = c.getInt("mstaggert");
         setStaggerCount(c.getInt("staggerc"));
         if (!c.contains("qi")) return;
         setMight(c.getFloat("qi"));
@@ -1031,6 +1043,11 @@ public class CombatCapability implements ICombatCapability {
         if (pass)
             addMight(MathHelper.clamp((shooter.tickCount - lastRangeTick) * 0.01f, 0, 0.3f));
         lastRangeTick = shooter.tickCount;
+    }
+
+    @Override
+    public int getRetina() {
+        return retina;
     }
 
     public CompoundNBT quickWrite() {

@@ -18,7 +18,7 @@ public abstract class MixinMobAlert {
     @Inject(method = "playHurtSound", at = @At("TAIL"))
     private void alert(DamageSource source, CallbackInfo ci) {
         MobEntity me = ((MobEntity) (Object) this);
-        if (StealthUtils.stealthMap.getOrDefault(me.getType().getRegistryName(), StealthUtils.STEALTH).isSilent())
+        if (StealthUtils.stealthMap.getOrDefault(me.getType().getRegistryName(), StealthUtils.STEALTH).isQuiet())
             return;
         float volume = ((MixinMobSound) me).callGetSoundVolume();
         EntityHandler.alertTracker.put(new Tuple<>(me.level, new BlockPos(me.getX(), me.getY(), me.getZ())), (float) (volume * StealthConfig.blockPerVolume));

@@ -169,8 +169,8 @@ Mobs should move into a position that is close to the player, far from allies, a
     @SubscribeEvent
     public static void sneak(final LivingEvent.LivingVisibilityEvent e) {
         /*
-        out of LoS, reduce by 70%
-        light, reduce by 70%
+        out of LoS, reduce by 80%
+        light, reduce by 80%
         speed, reduce by 50%
         can't see, reduce by 90%
         each stat scaled by stealth logarithmically. 10 stealth=halved bonus
@@ -181,12 +181,13 @@ Mobs should move into a position that is close to the player, far from allies, a
             double mult = 1;
             LivingEntity sneaker = e.getEntityLiving(), watcher = (LivingEntity) e.getLookingEntity();
             StealthUtils.StealthData sd = StealthUtils.stealthMap.getOrDefault(watcher.getType().getRegistryName(), StealthUtils.STEALTH);
-            if (sd.isVigilant()) return;
+            if (StealthUtils.stealthMap.getOrDefault(sneaker.getType().getRegistryName(), StealthUtils.STEALTH).isCheliceric())
+                return;
             if (watcher.getKillCredit() != sneaker && watcher.getLastHurtByMob() != sneaker && watcher.getLastHurtMob() != sneaker && (!(watcher instanceof MobEntity) || ((MobEntity) watcher).getTarget() != sneaker)) {
                 double stealth = GeneralUtils.getAttributeValueSafe(sneaker, WarAttributes.STEALTH.get());
                 double negMult = 1;
                 double posMult = 1;
-                //each level of negative stealth multiplies effectiveness by 0.93
+                //each level of negative stealth multiplies effectiveness by 0.95
                 while (stealth < 0) {
                     negMult *= 0.95;
                     stealth++;
@@ -197,7 +198,7 @@ Mobs should move into a position that is close to the player, far from allies, a
                     stealth--;
                 }
                 //blinded mobs cannot see
-                if (watcher.hasEffect(Effects.BLINDNESS))
+                if (watcher.hasEffect(Effects.BLINDNESS) && !sd.isEyeless())
                     mult /= 8;
                 //mobs that can't see behind their backs get a hefty debuff
                 if (!sd.isAllSeeing() && !GeneralUtils.isFacingEntity(watcher, sneaker, StealthConfig.baseHorizontalDetection, StealthConfig.baseVerticalDetection))
@@ -211,14 +212,16 @@ Mobs should move into a position that is close to the player, far from allies, a
                 if (!sd.isNightVision() && !watcher.hasEffect(Effects.NIGHT_VISION) && !sneaker.hasEffect(Effects.GLOWING) && sneaker.getRemainingFireTicks() <= 0) {
                     World world = sneaker.level;
                     if (world.isAreaLoaded(sneaker.blockPosition(), 5) && world.isAreaLoaded(watcher.blockPosition(), 5)) {
-                        final int light = StealthUtils.getActualLightLevel(world, sneaker.blockPosition());
-                        float lightMalus = MathHelper.clamp((13 - light) * 0.1f, 0f, 0.9f);
+                        final int slight = StealthUtils.getActualLightLevel(world, sneaker.blockPosition());
+                        final int wlight = CombatData.getCap(watcher).getRetina();
+                        float m = (1 + (slight - wlight) / 15f) * (slight) / 15f;//ugly, but welp.
+                        float lightMalus = MathHelper.clamp(1 - m, 0f, 0.8f);
                         mult *= (1 - (lightMalus * negMult)) * posMult;
                     }
                 }
             }
             //is this LoS?
-            if (!sd.isAllSeeing() && GeneralUtils.viewBlocked(watcher, sneaker))
+            if (!sd.isHeatSeeking() && GeneralUtils.viewBlocked(watcher, sneaker, true))
                 mult *= (0.4);
             e.modifyVisibility(MathHelper.clamp(mult, 0.001, 1));
         }
@@ -233,21 +236,28 @@ Mobs should move into a position that is close to the player, far from allies, a
             mob.setTarget(null);
         if (mob.getLastHurtByMob() != e.getTarget() && StealthConfig.stealthSystem && !GeneralUtils.isFacingEntity(mob, e.getTarget(), StealthConfig.baseHorizontalDetection, StealthConfig.baseVerticalDetection)) {
             StealthUtils.StealthData sd = StealthUtils.stealthMap.getOrDefault(mob.getType().getRegistryName(), StealthUtils.STEALTH);
-            if (sd.isVigilant() || sd.isAllSeeing() || sd.isWary()) return;
+            if (sd.isAllSeeing() || sd.isWary()) return;
             //outside of LoS, perform luck check. Pray to RNGesus!
             double luckDiff = GeneralUtils.getAttributeValueSafe(e.getTarget(), Attributes.LUCK) - GeneralUtils.getAttributeValueSafe(mob, Attributes.LUCK);
-            mob.setTarget(null);
             if (luckDiff <= 0 || WarDance.rand.nextFloat() > (luckDiff / (2 + luckDiff))) {
-                //mob.rotateTowards();
-                mob.lookAt(EntityAnchorArgument.Type.FEET, e.getTarget().position());//.getLookController().setLookPositionWithEntity(e.getTarget(), 0, 0);
+                //you failed!
+                if (sd.isSkeptical()) {
+                    mob.setTarget(null);
+                    mob.lookAt(EntityAnchorArgument.Type.FEET, e.getTarget().position());//.getLookController().setLookPositionWithEntity(e.getTarget(), 0, 0);
+                }
+            } else {
+                //success!
+                mob.setTarget(null);
+                if (!sd.isLazy())
+                    mob.lookAt(EntityAnchorArgument.Type.FEET, e.getTarget().position());//.getLookController().setLookPositionWithEntity(e.getTarget(), 0, 0);
             }
         }
     }
 
     @SubscribeEvent(priority = EventPriority.LOWEST)
     public static void sync(LivingSetAttackTargetEvent e) {
-        if(!e.getEntityLiving().level.isClientSide())
-        CombatChannel.INSTANCE.send(PacketDistributor.TRACKING_ENTITY.with(e::getEntityLiving), new UpdateTargetPacket(e.getEntityLiving().getId(), e.getTarget() == null ? -1 : e.getTarget().getId()));
+        if (!e.getEntityLiving().level.isClientSide())
+            CombatChannel.INSTANCE.send(PacketDistributor.TRACKING_ENTITY.with(e::getEntityLiving), new UpdateTargetPacket(e.getEntityLiving().getId(), e.getTarget() == null ? -1 : e.getTarget().getId()));
     }
 
     @SubscribeEvent

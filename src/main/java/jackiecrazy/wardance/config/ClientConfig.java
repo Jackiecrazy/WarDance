@@ -13,11 +13,10 @@ import java.util.List;
 public class ClientConfig {
     public static final ClientConfig CONFIG;
     public static final ForgeConfigSpec CONFIG_SPEC;
-    public final DisplayData might, mightNumber, spirit, spiritNumber, combo, playerAfflict, enemyAfflict, stealth;
-    public final PostureData playerPosture, enemyPosture;
     public static int spiritColor;
     public static int mightColor;
     public static int autoCombat;
+    public static boolean dodomeki;
 
     static {
         final Pair<ClientConfig, ForgeConfigSpec> specPair = new ForgeConfigSpec.Builder().configure(ClientConfig::new);
@@ -25,9 +24,12 @@ public class ClientConfig {
         CONFIG_SPEC = specPair.getRight();
     }
 
+    public final DisplayData might, mightNumber, spirit, spiritNumber, combo, playerAfflict, enemyAfflict, stealth;
+    public final PostureData playerPosture, enemyPosture;
     private final ForgeConfigSpec.IntValue _autoCombat;
     private final ForgeConfigSpec.ConfigValue<String> _mightColor;
     private final ForgeConfigSpec.ConfigValue<String> _spiritColor;
+    private final ForgeConfigSpec.BooleanValue _displayEyes;
     private final ForgeConfigSpec.ConfigValue<List<? extends String>> _customPosture;
 
     public ClientConfig(ForgeConfigSpec.Builder b) {
@@ -61,6 +63,7 @@ public class ClientConfig {
         b.pop();
         b.push("stealth");
         stealth = new DisplayData(b, "stealth", AnchorPoint.CROSSHAIR, 0, 0);
+        _displayEyes = b.translation("wardance.config.allStealth").comment("Renders the stealth eye above every mob that can be seen. If this is enabled with the mouseover stealth eye render, the mouseover eye will replace the overhead stealth eye when you are looking directly at an entity.").define("all stealth", true);
         b.pop();
         _customPosture = b.translation("wardance.config.postureMobs").comment("whether a mob is rotated when it is staggered.").defineList("mob stagger rotation", Lists.newArrayList("example:dragon, false", "example:ghast, true"), String.class::isInstance);
     }
@@ -79,14 +82,15 @@ public class ClientConfig {
         spiritColor = Integer.parseInt(CONFIG._spiritColor.get(), 16);
         mightColor = Integer.parseInt(CONFIG._mightColor.get(), 16);
         autoCombat = CONFIG._autoCombat.get();
+        dodomeki = CONFIG._displayEyes.get();
         ClientEvents.updateList(CONFIG._customPosture.get());
     }
 
     @SubscribeEvent
     public static void loadConfig(ModConfig.ModConfigEvent e) {
         if (e.getConfig().getSpec() == CONFIG_SPEC) {
-            if(GeneralConfig.debug)
-            WarDance.LOGGER.debug("loading client config!");
+            if (GeneralConfig.debug)
+                WarDance.LOGGER.debug("loading client config!");
             bake();
         }
     }
@@ -101,6 +105,12 @@ public class ClientConfig {
         BOTTOMLEFT,
         BOTTOMCENTER,
         BOTTOMRIGHT
+    }
+
+    public static enum BarType {
+        CLASSIC,
+        AMO,
+        DARKMEGA
     }
 
     public static class DisplayData {
@@ -128,24 +138,19 @@ public class ClientConfig {
         }
     }
 
-    public static class PostureData extends DisplayData{
-        public BarType bar;
+    public static class PostureData extends DisplayData {
         private final ForgeConfigSpec.EnumValue<BarType> _bar;
+        public BarType bar;
+
         private PostureData(ForgeConfigSpec.Builder b, String s, AnchorPoint ap, int defX, int defY) {
             super(b, s, ap, defX, defY);
-            _bar=b.translation("wardance.config."+s+"Type").comment("Determine which type of posture bar will be rendered. Valid values are 'classic' (ugly), 'amo' (minimalist), and 'darkmega' (default).").defineEnum(s+" style", BarType.DARKMEGA);
+            _bar = b.translation("wardance.config." + s + "Type").comment("Determine which type of posture bar will be rendered. Valid values are 'classic' (ugly), 'amo' (minimalist), and 'darkmega' (default).").defineEnum(s + " style", BarType.DARKMEGA);
         }
 
         @Override
         protected void bake() {
             super.bake();
-            bar=_bar.get();
+            bar = _bar.get();
         }
-    }
-
-    public static enum BarType{
-        CLASSIC,
-        AMO,
-        DARKMEGA
     }
 }

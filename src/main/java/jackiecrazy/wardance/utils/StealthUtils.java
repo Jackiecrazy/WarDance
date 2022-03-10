@@ -49,17 +49,27 @@ public class StealthUtils {
     public static Awareness getAwareness(LivingEntity attacker, LivingEntity target) {
         if (attacker == null || target == null || attacker == target)
             return Awareness.ALERT;//the cases that don't make sense.
-        if (!StealthConfig.stealthSystem || target instanceof PlayerEntity || stealthMap.getOrDefault(target.getType().getRegistryName(), STEALTH).isVigilant())
+        //players are alert because being jumped with 2.5x daggers feel bad, and obviously nothing else applies if stealth is turned off
+        if (!StealthConfig.stealthSystem || target instanceof PlayerEntity)
             return Awareness.ALERT;
+        StealthData sd = stealthMap.getOrDefault(target.getType().getRegistryName(), STEALTH);
         Awareness a = Awareness.ALERT;
+        //sleep, paralysis, and petrify take highest priority
         if (target.hasEffect(WarEffects.SLEEP.get()) || target.hasEffect(WarEffects.PARALYSIS.get()) || target.hasEffect(WarEffects.PETRIFY.get()))
             a = Awareness.UNAWARE;
-        else if (target.hasEffect(WarEffects.DISTRACTION.get()) || target.hasEffect(WarEffects.CONFUSION.get()) || target.getAirSupply() <= 0 || inWeb(target))
-            a = Awareness.DISTRACTED;
-        else if (target.getLastHurtByMob() == null && (!(target instanceof MobEntity) || ((MobEntity) target).getTarget() == null))
+            //idle and not vigilant
+        else if (!sd.isVigilant() && target.getLastHurtByMob() == null && (!(target instanceof MobEntity) || ((MobEntity) target).getTarget() == null))
             a = Awareness.UNAWARE;
-        else if (target.getLastHurtByMob() != attacker && (!(target instanceof MobEntity) || ((MobEntity) target).getTarget() != attacker))
+            //distraction, confusion, and choking take top priority in inferior tier
+        else if (target.hasEffect(WarEffects.DISTRACTION.get()) || target.hasEffect(WarEffects.CONFUSION.get()) || target.getAirSupply() <= 0)
             a = Awareness.DISTRACTED;
+            //webbed and not a spider
+        else if (inWeb(target) && !sd.isCheliceric())
+            a = Awareness.DISTRACTED;
+            //hurt by something else
+        else if (!sd.isMindful() && target.getLastHurtByMob() != attacker && (!(target instanceof MobEntity) || ((MobEntity) target).getTarget() != attacker))
+            a = Awareness.DISTRACTED;
+        //event for more compat
         EntityAwarenessEvent eae = new EntityAwarenessEvent(target, attacker, a);
         MinecraftForge.EVENT_BUS.post(eae);
         return eae.getAwareness();
@@ -103,16 +113,51 @@ public class StealthUtils {
     }
 
     public static class StealthData {
-        private final boolean deaf, nightvision, allSeeing, perceptive, vigil, olfactory, silent;
+        private final boolean allSeeing, blind, cheliceric, deaf, eyeless, heatSeeking, lazy, mindful, nightvision, perceptive, skeptical, quiet, vigil, wary;
 
         public StealthData(String value) {
             allSeeing = value.contains("a");
+            blind = value.contains("b");
+            cheliceric = value.contains("c");
             deaf = value.contains("d");
+            eyeless = value.contains("e");
+            heatSeeking = value.contains("h");
+            lazy = value.contains("l");
+            mindful = value.contains("m");
             nightvision = value.contains("n");
-            olfactory = value.contains("w");
-            silent = value.contains("s");
             perceptive = value.contains("p");
+            skeptical = value.contains("s");
+            quiet = value.contains("s");
             vigil = value.contains("v");
+            wary = value.contains("w");
+        }
+
+        public boolean isBlind() {
+            return blind;
+        }
+
+        public boolean isCheliceric() {
+            return cheliceric;
+        }
+
+        public boolean isEyeless() {
+            return eyeless;
+        }
+
+        public boolean isLazy() {
+            return lazy;
+        }
+
+        public boolean isMindful() {
+            return mindful;
+        }
+
+        public boolean isSkeptical() {
+            return skeptical;
+        }
+
+        public boolean isVigilant() {
+            return vigil;
         }
 
         public boolean isDeaf() {
@@ -131,14 +176,13 @@ public class StealthUtils {
             return perceptive;
         }
 
-        public boolean isVigilant() {
-            return vigil;
+        public boolean isWary() {return wary;}
+
+        public boolean isQuiet() {return quiet;}
+
+        public boolean isHeatSeeking() {
+            return heatSeeking;
         }
-
-        public boolean isWary() {return olfactory;}
-
-        public boolean isSilent() {return silent;}
-
     }
 
 }

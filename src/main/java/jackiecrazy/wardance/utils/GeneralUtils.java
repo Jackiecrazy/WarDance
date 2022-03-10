@@ -315,7 +315,7 @@ public class GeneralUtils {
     /**
      * @author Suff/Swirtzly
      */
-    public static boolean viewBlocked(LivingEntity viewer, LivingEntity viewed) {
+    public static boolean viewBlocked(LivingEntity viewer, LivingEntity viewed, boolean flimsy) {
         if (viewer.distanceToSqr(viewed) > 1000) return true;//what
         AxisAlignedBB viewerBoundBox = viewer.getBoundingBox();
         AxisAlignedBB angelBoundingBox = viewed.getBoundingBox();
@@ -338,12 +338,12 @@ public class GeneralUtils {
                 new Vector3d(angelBoundingBox.maxX, angelBoundingBox.minY, angelBoundingBox.minZ),};
 
         for (int i = 0; i < viewerPoints.length; i++) {
-            if (viewer.level.clip(new RayTraceContext(viewerPoints[i], angelPoints[i], RayTraceContext.BlockMode.COLLIDER, RayTraceContext.FluidMode.NONE, viewer)).getType() == RayTraceResult.Type.MISS) {
+            if (viewer.level.clip(new RayTraceContext(viewerPoints[i], angelPoints[i], flimsy ? RayTraceContext.BlockMode.OUTLINE : RayTraceContext.BlockMode.COLLIDER, RayTraceContext.FluidMode.NONE, viewer)).getType() == RayTraceResult.Type.MISS) {
                 return false;
             }
             if (rayTraceBlocks(viewer, viewer.level, viewerPoints[i], angelPoints[i], pos -> {
                 BlockState state = viewer.level.getBlockState(pos);
-                return !canSeeThrough(state, viewer.level, pos);
+                return flimsy ? !state.getMaterial().isLiquid() : !canSeeThrough(state, viewer.level, pos);
             }) == null) return false;
         }
 
