@@ -398,7 +398,7 @@ public class CombatHandler {
                     }
                 }
                 if (!(seme instanceof PlayerEntity)) {
-                    semeCap.setHandBind(attackingHand, CombatUtils.getCooldownPeriod(seme, attackingHand));
+                    semeCap.setHandBind(attackingHand, CombatUtils.getCooldownPeriod(seme, attackingHand) + 7);
                 }
             }
             //shatter, at the rock bottom of the attack event, saving your protected butt.
