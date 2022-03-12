@@ -37,7 +37,6 @@ import net.minecraft.client.settings.PointOfView;
 import net.minecraft.client.world.ClientWorld;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.LivingEntity;
-import net.minecraft.entity.ai.attributes.Attributes;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.Hand;
@@ -333,6 +332,7 @@ public class RenderEvents {
                             AbstractGui.blit(stack, pair.getFirst() - (afflict.size() - 1 - index) * 16 + (afflict.size() - 1) * 8 - 8, pair.getSecond(), 0, 0, 16, 16, 16, 16);
                         }
                     }
+                    stealth:
                     if (ClientConfig.CONFIG.stealth.enabled && cap.isCombatMode()) {
                         Pair<Integer, Integer> pair = translateCoords(ClientConfig.CONFIG.stealth, width, height);
                         final Tuple<StealthUtils.Awareness, Double> info = stealthInfo(looked);
@@ -340,8 +340,7 @@ public class RenderEvents {
                         int shift = 0;
                         switch (info.getA()) {
                             case ALERT:
-                                shift = 0;
-                                break;
+                                break stealth;
                             case DISTRACTED:
                                 shift = 1;
                                 break;
@@ -676,7 +675,7 @@ public class RenderEvents {
             return cache.get(at, () -> {
                 StealthUtils.Awareness a = StealthUtils.getAwareness(Minecraft.getInstance().player, at);
                 double mult = Minecraft.getInstance().player.getVisibilityPercent(at);
-                return new Tuple<>(a, mult * at.getAttributeValue(Attributes.FOLLOW_RANGE));
+                return new Tuple<>(a, mult * CombatData.getCap(at).visionRange());
             });
         } catch (ExecutionException e) {
             e.printStackTrace();
@@ -694,8 +693,7 @@ public class RenderEvents {
         int shift = 0;
         switch (info.getA()) {
             case ALERT:
-                shift = 0;
-                break;
+                return;
             case DISTRACTED:
                 shift = 1;
                 break;

@@ -189,7 +189,7 @@ Mobs should move into a position that is close to the player, far from allies, a
                 double posMult = 1;
                 //each level of negative stealth multiplies effectiveness by 0.95
                 while (stealth < 0) {
-                    negMult *= 0.95;
+                    negMult -= 0.05;
                     stealth++;
                 }
                 //each level of positive stealth multiplies ineffectiveness by 0.93
@@ -202,11 +202,11 @@ Mobs should move into a position that is close to the player, far from allies, a
                     mult /= 8;
                 //mobs that can't see behind their backs get a hefty debuff
                 if (!sd.isAllSeeing() && !GeneralUtils.isFacingEntity(watcher, sneaker, StealthConfig.baseHorizontalDetection, StealthConfig.baseVerticalDetection))
-                    mult *= (1 - (0.8 * negMult)) * posMult;
+                    mult *= (1 - (0.7 * negMult)) * posMult;
                 //slow is smooth, smooth is fast
                 if (!sd.isPerceptive()) {
                     final double speedSq = GeneralUtils.getSpeedSq(sneaker);
-                    mult *= (1 - (0.6 - MathHelper.sqrt(speedSq) * 2 * posMult) * negMult);
+                    mult *= (1 - (0.5 - MathHelper.sqrt(speedSq) * 2 * posMult) * negMult);
                 }
                 //stay dark, stay dank
                 if (!sd.isNightVision() && !watcher.hasEffect(Effects.NIGHT_VISION) && !sneaker.hasEffect(Effects.GLOWING) && sneaker.getRemainingFireTicks() <= 0) {
@@ -214,8 +214,8 @@ Mobs should move into a position that is close to the player, far from allies, a
                     if (world.isAreaLoaded(sneaker.blockPosition(), 5) && world.isAreaLoaded(watcher.blockPosition(), 5)) {
                         final int slight = StealthUtils.getActualLightLevel(world, sneaker.blockPosition());
                         final int wlight = CombatData.getCap(watcher).getRetina();
-                        float m = (1 + (slight - wlight) / 15f) * (slight) / 15f;//ugly, but welp.
-                        float lightMalus = MathHelper.clamp(1 - m, 0f, 0.8f);
+                        float m = (1 + (slight - wlight) / 15f) * (slight + 3) / 15f;//ugly, but welp.
+                        float lightMalus = MathHelper.clamp(1 - m, 0f, 0.7f);
                         mult *= (1 - (lightMalus * negMult)) * posMult;
                     }
                 }

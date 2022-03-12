@@ -1,6 +1,7 @@
 package jackiecrazy.wardance.mixin;
 
 import com.mojang.blaze3d.matrix.MatrixStack;
+import jackiecrazy.wardance.capability.resources.CombatData;
 import jackiecrazy.wardance.config.StealthConfig;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.IRenderTypeBuffer;
@@ -11,7 +12,6 @@ import net.minecraft.client.renderer.entity.IEntityRenderer;
 import net.minecraft.client.renderer.entity.LivingRenderer;
 import net.minecraft.client.renderer.entity.model.EntityModel;
 import net.minecraft.entity.LivingEntity;
-import net.minecraft.entity.ai.attributes.Attributes;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.*;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
@@ -42,7 +42,7 @@ public abstract class MixinMobStealth<T extends LivingEntity, M extends EntityMo
         if (!StealthConfig.playerStealth || Minecraft.getInstance().player == null) return constant;
         if (mob.tickCount == lastcalculation) return cache;
         lastcalculation = mob.tickCount;
-        double visible = Minecraft.getInstance().player.getAttributeValue(Attributes.FOLLOW_RANGE) * mob.getVisibilityPercent(Minecraft.getInstance().player);
+        double visible = CombatData.getCap(Minecraft.getInstance().player).visionRange() * mob.getVisibilityPercent(Minecraft.getInstance().player);
         visible *= visible;
         double distsq = Minecraft.getInstance().player.distanceToSqr(mob);
         float ret;

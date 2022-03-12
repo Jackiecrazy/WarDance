@@ -268,4 +268,6 @@ public interface ICombatCapability {
     void addRangedMight(boolean pass);
 
     int getRetina();
+
+    float visionRange();
 }

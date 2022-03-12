@@ -50,7 +50,7 @@ public class CombatCapability implements ICombatCapability {
     private final WeakReference<LivingEntity> dude;
     int lastRangeTick = 0;
     private ItemStack prev;
-    private float might, spirit, posture, rank, mpos, mspi, wounding, burnout, fatigue, mainReel, offReel, maxMight, resolve, barrier, mbar;
+    private float might, spirit, posture, rank, mpos, mspi, wounding, burnout, fatigue, mainReel, offReel, maxMight, resolve, barrier, mbar, vision;
     private int shatterCD;
     private int qcd, scd, pcd, ccd;
     private int mBind;
@@ -779,6 +779,7 @@ public class CombatCapability implements ICombatCapability {
         final int ticks = (int) (elb.level.getGameTime() - lastUpdate);
         if (ticks < 1) return;//sometimes time runs backwards
         //update max values
+        vision=(float)elb.getAttributeValue(Attributes.FOLLOW_RANGE);
         setTrueMaxPosture(getMPos(elb));
         setTrueMaxSpirit((float) elb.getAttributeValue(WarAttributes.MAX_SPIRIT.get()));
         setMaxMight((float) elb.getAttributeValue(WarAttributes.MAX_MIGHT.get()));
@@ -927,6 +928,8 @@ public class CombatCapability implements ICombatCapability {
         mstaggerc = c.getInt("mstaggerc");
         mstaggert = c.getInt("mstaggert");
         setStaggerCount(c.getInt("staggerc"));
+        retina = c.getInt("retina");
+        vision=c.getFloat("vision");
         if (!c.contains("qi")) return;
         setMight(c.getFloat("qi"));
         setResolve(c.getFloat("resolve"));
@@ -993,6 +996,8 @@ public class CombatCapability implements ICombatCapability {
     @Override
     public CompoundNBT write() {
         CompoundNBT c = new CompoundNBT();
+        c.putInt("retina", getRetina());
+        c.putFloat("vision", visionRange());
         c.putFloat("qi", getMight());
         c.putFloat("resolve", getResolve());
         c.putFloat("posture", getPosture());
@@ -1050,6 +1055,11 @@ public class CombatCapability implements ICombatCapability {
         return retina;
     }
 
+    @Override
+    public float visionRange() {
+        return vision;
+    }
+
     public CompoundNBT quickWrite() {
         CompoundNBT c = new CompoundNBT();
         c.putFloat("posture", getPosture());
@@ -1063,6 +1073,8 @@ public class CombatCapability implements ICombatCapability {
         c.putInt("shattercd", getShatterCooldown());
         c.putFloat("maxBarrier", mbar);
         c.putFloat("barrier", barrier);
+        c.putInt("retina", retina);
+        c.putFloat("vision", vision);
         return c;
     }
 

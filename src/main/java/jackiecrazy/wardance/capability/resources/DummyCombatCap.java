@@ -520,4 +520,9 @@ public class DummyCombatCap implements ICombatCapability {
     public int getRetina() {
         return 0;
     }
+
+    @Override
+    public float visionRange() {
+        return 0;
+    }
 }
