@@ -3,6 +3,7 @@ package jackiecrazy.wardance.config;
 import com.google.common.collect.Lists;
 import jackiecrazy.wardance.WarDance;
 import jackiecrazy.wardance.client.ClientEvents;
+import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.common.ForgeConfigSpec;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.config.ModConfig;
@@ -17,6 +18,7 @@ public class ClientConfig {
     public static int mightColor;
     public static int autoCombat;
     public static boolean dodomeki;
+    public static ResourceLocation shout;
 
     static {
         final Pair<ClientConfig, ForgeConfigSpec> specPair = new ForgeConfigSpec.Builder().configure(ClientConfig::new);
@@ -30,6 +32,7 @@ public class ClientConfig {
     private final ForgeConfigSpec.ConfigValue<String> _mightColor;
     private final ForgeConfigSpec.ConfigValue<String> _spiritColor;
     private final ForgeConfigSpec.BooleanValue _displayEyes;
+    private final ForgeConfigSpec.ConfigValue<String> _shout;
     private final ForgeConfigSpec.ConfigValue<List<? extends String>> _customPosture;
 
     public ClientConfig(ForgeConfigSpec.Builder b) {
@@ -66,6 +69,7 @@ public class ClientConfig {
         _displayEyes = b.translation("wardance.config.allStealth").comment("Renders the stealth eye above every mob that can be seen. If this is enabled with the mouseover stealth eye render, the mouseover eye will replace the overhead stealth eye when you are looking directly at an entity.").define("all stealth", true);
         b.pop();
         _customPosture = b.translation("wardance.config.postureMobs").comment("whether a mob is rotated when it is staggered.").defineList("mob stagger rotation", Lists.newArrayList("example:dragon, false", "example:ghast, true"), String.class::isInstance);
+        _shout = b.translation("wardance.config.postureMobs").comment("Change what sound you make when you shout. This is purely cosmetic and the sound will always be of volume 2.").define("shout sound", "minecraft:entity.villager.ambient", (a) -> (a instanceof String && ResourceLocation.isValidResourceLocation((String) a)));
     }
 
     public static void bake() {
@@ -83,6 +87,7 @@ public class ClientConfig {
         mightColor = Integer.parseInt(CONFIG._mightColor.get(), 16);
         autoCombat = CONFIG._autoCombat.get();
         dodomeki = CONFIG._displayEyes.get();
+        shout = new ResourceLocation(CONFIG._shout.get());
         ClientEvents.updateList(CONFIG._customPosture.get());
     }
 

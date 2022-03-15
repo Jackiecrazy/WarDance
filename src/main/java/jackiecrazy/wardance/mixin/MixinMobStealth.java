@@ -52,7 +52,7 @@ public abstract class MixinMobStealth<T extends LivingEntity, M extends EntityMo
         return ret;
     }
 
-    @ModifyVariable(method = "render(Lnet/minecraft/entity/LivingEntity;FFLcom/mojang/blaze3d/matrix/MatrixStack;Lnet/minecraft/client/renderer/IRenderTypeBuffer;I)V", at = @At(value = "STORE"), ordinal = 0)
+    @ModifyVariable(method = "render(Lnet/minecraft/entity/LivingEntity;FFLcom/mojang/blaze3d/matrix/MatrixStack;Lnet/minecraft/client/renderer/IRenderTypeBuffer;I)V", at = @At(value = "STORE"), ordinal = 0, require = 0)
     private RenderType rt(RenderType former) {
         if (!StealthConfig.playerStealth || cache >= 0.9) return former;
         return RenderType.itemEntityTranslucentCull(getTextureLocation(mob));

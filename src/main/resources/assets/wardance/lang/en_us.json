@@ -57,6 +57,7 @@
   "wardance.selectSkill": "Open Skill Selection GUI",
   "wardance.skill": "Casting Menu (Combat Mode only)",
   "wardance.bindCast": "Cast Bound Skill (Combat Mode only)",
+  "wardance.shout": "Shout (Combat Mode only)",
   "wardance.parry": "Manual Parry (Requires Config Option)",
   "wardance.toggleparry.on": "Parrying Toggled On",
   "wardance.toggleparry.off": "Parrying Toggled Off",

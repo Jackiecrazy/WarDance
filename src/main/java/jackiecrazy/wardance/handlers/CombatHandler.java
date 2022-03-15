@@ -151,7 +151,7 @@ public class CombatHandler {
             if (force)
                 pe.setResult(Event.Result.ALLOW);
             MinecraftForge.EVENT_BUS.post(pe);
-            if (pe.getResult() == Event.Result.ALLOW || (defend != null && canParry && pe.getResult() == Event.Result.DEFAULT && ukeCap.consumePosture(ukeCap.consumeBarrier(pe.getPostureConsumption()), 0.1f) == 0)) {
+            if (pe.getResult() == Event.Result.ALLOW || (defend != null && canParry && pe.getResult() == Event.Result.DEFAULT && ukeCap.consumeBarrier(pe.getPostureConsumption()) != 0)) {
                 e.setCanceled(true);
                 //do not change shooter! It makes drowned tridents and skeleton arrows collectable, which is honestly silly
                 uke.level.playSound(null, uke.getX(), uke.getY(), uke.getZ(), free ? SoundEvents.WOODEN_TRAPDOOR_OPEN : SoundEvents.WOODEN_TRAPDOOR_CLOSE, SoundCategory.PLAYERS, 0.75f + WarDance.rand.nextFloat() * 0.5f, (1 - (ukeCap.getPosture() / ukeCap.getMaxPosture())) + WarDance.rand.nextFloat() * 0.5f);

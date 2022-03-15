@@ -21,8 +21,13 @@ import net.minecraft.entity.Pose;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.projectile.ProjectileHelper;
 import net.minecraft.particles.ParticleTypes;
-import net.minecraft.util.*;
-import net.minecraft.util.math.*;
+import net.minecraft.util.Direction;
+import net.minecraft.util.Hand;
+import net.minecraft.util.HandSide;
+import net.minecraft.util.MovementInput;
+import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.BlockRayTraceResult;
+import net.minecraft.util.math.EntityRayTraceResult;
 import net.minecraft.util.math.vector.Vector3d;
 import net.minecraft.util.math.vector.Vector3f;
 import net.minecraft.util.text.TranslationTextComponent;
@@ -379,8 +384,35 @@ public class ClientEvents {
         }
     }
 
+    /**
+     * @Author coolAlias
+     */
     @SubscribeEvent
     public static void zTarget(TickEvent.RenderTickEvent event) {
+//        if (event.phase == TickEvent.Phase.START) {
+//            ClientPlayerEntity player = Minecraft.getInstance().player;
+//            if (player == null) return;
+//            ITaoStatCapability cap = TaoCasterData.getTaoCap(player);
+//            if (cap.getForcedLookAt() != null) {
+//                Entity e = cap.getForcedLookAt();
+//                Vector3d
+//                double dx = player.posi- e.posX;
+//                double dz = player.posZ - e.posZ;
+//                double angle = Math.atan2(dz, dx) * 180 / Math.PI;
+//                double pitch = Math.atan2((player.posY + player.getEyeHeight()) - (e.posY + (e.height / 2f)), Math.sqrt(dx * dx + dz * dz)) * 180 / Math.PI;
+//                double distance = player.getDistance(e);
+//                float rYaw = (float) (angle - player.rotationYaw);
+//                while (rYaw > 180) {
+//                    rYaw -= 360;
+//                }
+//                while (rYaw < -180) {
+//                    rYaw += 360;
+//                }
+//                rYaw += 90F;
+//                float rPitch = (float) pitch - (float) (10.0F / Math.sqrt(distance)) + (float) (distance * Math.PI / 90);
+//                player.turn(rYaw, -(rPitch - player.rotationPitch));
+//            }
+//        }
         if (event.phase == TickEvent.Phase.END) {
             Minecraft mc = Minecraft.getInstance();
             if (mc.player == null) return;

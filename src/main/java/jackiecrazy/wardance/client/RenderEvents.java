@@ -333,24 +333,25 @@ public class RenderEvents {
                         }
                     }
                     stealth:
-                    if (ClientConfig.CONFIG.stealth.enabled && cap.isCombatMode()) {
-                        Pair<Integer, Integer> pair = translateCoords(ClientConfig.CONFIG.stealth, width, height);
-                        final Tuple<StealthUtils.Awareness, Double> info = stealthInfo(looked);
-                        double dist = info.getB();
-                        int shift = 0;
-                        switch (info.getA()) {
-                            case ALERT:
-                                break stealth;
-                            case DISTRACTED:
-                                shift = 1;
-                                break;
-                            case UNAWARE:
-                                shift = looked.distanceToSqr(player) < dist * dist ? 2 : 3;
-                                break;
+                    {
+                        if (ClientConfig.CONFIG.stealth.enabled && cap.isCombatMode()) {
+                            Pair<Integer, Integer> pair = translateCoords(ClientConfig.CONFIG.stealth, width, height);
+                            final Tuple<StealthUtils.Awareness, Double> info = stealthInfo(looked);
+                            double dist = info.getB();
+                            int shift = 0;
+                            switch (info.getA()) {
+                                case ALERT:
+                                    break stealth;
+                                case DISTRACTED:
+                                    shift = 1;
+                                    break;
+                                case UNAWARE:
+                                    shift = looked.distanceToSqr(player) < dist * dist ? 2 : 3;
+                                    break;
+                            }
+                            mc.getTextureManager().bind(stealth);
+                            AbstractGui.blit(stack, pair.getFirst() - 16, pair.getSecond() - 8, 0, shift * 16, 32, 16, 64, 64);
                         }
-                        renderEye(looked, event.getPartialTicks(), stack);
-                        mc.getTextureManager().bind(stealth);
-                        AbstractGui.blit(stack, pair.getFirst() - 16, pair.getSecond() - 8, 0, shift * 16, 32, 16, 64, 64);
                     }
                     RenderSystem.color4f(1, 1, 1, 1);
                     if (ClientConfig.CONFIG.enemyPosture.enabled && (cap.isCombatMode() || CombatData.getCap((LivingEntity) look).getPosture() < CombatData.getCap((LivingEntity) look).getMaxPosture() || CombatData.getCap((LivingEntity) look).getStaggerTime() > 0 || cap.getShatterCooldown() < GeneralUtils.getAttributeValueSafe(player, WarAttributes.SHATTER.get()) || cap.getBarrier() < cap.getMaxBarrier()))

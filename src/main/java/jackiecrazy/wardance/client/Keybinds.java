@@ -6,9 +6,11 @@ import jackiecrazy.wardance.capability.resources.ICombatCapability;
 import jackiecrazy.wardance.capability.skill.CasterData;
 import jackiecrazy.wardance.client.screen.SkillCastScreen;
 import jackiecrazy.wardance.client.screen.SkillSelectionScreen;
+import jackiecrazy.wardance.config.ClientConfig;
 import jackiecrazy.wardance.networking.CombatChannel;
 import jackiecrazy.wardance.networking.CombatModePacket;
 import jackiecrazy.wardance.networking.EvokeSkillPacket;
+import jackiecrazy.wardance.networking.ShoutPacket;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.settings.KeyBinding;
 import net.minecraft.client.util.InputMappings;
@@ -42,6 +44,7 @@ public class Keybinds {
     public static final KeyBinding BINDCAST = new KeyBinding("wardance.bindCast", IN_COMBAT, InputMappings.Type.MOUSE, GLFW.GLFW_MOUSE_BUTTON_MIDDLE, "key.categories.gameplay");
     public static final KeyBinding SELECT = new KeyBinding("wardance.selectSkill", KeyConflictContext.IN_GAME, InputMappings.Type.KEYSYM, GLFW.GLFW_KEY_V, "key.categories.gameplay");
     public static final KeyBinding PARRY = new KeyBinding("wardance.parry", KeyConflictContext.IN_GAME, InputMappings.Type.KEYSYM, GLFW.GLFW_KEY_LEFT_ALT, "key.categories.gameplay");
+    public static final KeyBinding SHOUT = new KeyBinding("wardance.shout", IN_COMBAT, InputMappings.Type.KEYSYM, GLFW.GLFW_KEY_T, "key.categories.gameplay");
 
     @SubscribeEvent(priority = EventPriority.HIGHEST)
     public static void handleInputEvent(InputEvent event) {
@@ -61,6 +64,9 @@ public class Keybinds {
         }
         if (BINDCAST.getKeyConflictContext().isActive() && BINDCAST.consumeClick() && mc.player.isAlive()) {
             CombatChannel.INSTANCE.sendToServer(new EvokeSkillPacket());
+        }
+        if (SHOUT.getKeyConflictContext().isActive() && SHOUT.consumeClick() && mc.player.isAlive()) {
+            CombatChannel.INSTANCE.sendToServer(new ShoutPacket(ClientConfig.shout));
         }
     }
 }

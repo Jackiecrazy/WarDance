@@ -113,7 +113,7 @@ pound of flesh: active skill. Consumes all your spirit, and until your spirit re
                 stat = Math.min(stat, GeneralUtils.getMaxHealthBeforeWounding(caster) / 5);
                 stats.setArbitraryFloat(stat);
             }
-            if (procPoint instanceof LivingAttackEvent && procPoint.getPhase() == EventPriority.HIGHEST && ((LivingAttackEvent) procPoint).getEntityLiving() == target) {
+            if (procPoint instanceof LivingAttackEvent && procPoint.getPhase() == EventPriority.HIGHEST && CombatUtils.isMeleeAttack(((LivingAttackEvent) procPoint).getSource()) && ((LivingAttackEvent) procPoint).getEntityLiving() == target) {
                 float stat = stats.getArbitraryFloat();
                 if (stat > 1) {
                     //EXPLOOOOSION

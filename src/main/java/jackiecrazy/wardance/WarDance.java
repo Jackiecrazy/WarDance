@@ -1,6 +1,8 @@
 package jackiecrazy.wardance;
 
 import jackiecrazy.wardance.api.WarAttributes;
+import jackiecrazy.wardance.capability.goal.GoalCapability;
+import jackiecrazy.wardance.capability.goal.IGoalHelper;
 import jackiecrazy.wardance.capability.kits.IKitItemStack;
 import jackiecrazy.wardance.capability.kits.KitCapability;
 import jackiecrazy.wardance.capability.resources.CombatStorage;
@@ -95,6 +97,7 @@ public class WarDance {
         CapabilityManager.INSTANCE.register(ICombatItemCapability.class, new DummyCombatItemCap.Storage(), DummyCombatItemCap::new);
         CapabilityManager.INSTANCE.register(IKitItemStack.class, new KitCapability.Storage(), KitCapability::new);
         CapabilityManager.INSTANCE.register(IMark.class, new StatusStorage(), DummyMarkCap::new);
+        CapabilityManager.INSTANCE.register(IGoalHelper.class, new GoalCapability.Storage(), GoalCapability::new);
         // some preinit code
         int index = 0;
         CombatChannel.INSTANCE.registerMessage(index++, UpdateClientPacket.class, new UpdateClientPacket.UpdateClientEncoder(), new UpdateClientPacket.UpdateClientDecoder(), new UpdateClientPacket.UpdateClientHandler());
@@ -111,6 +114,7 @@ public class WarDance {
         CombatChannel.INSTANCE.registerMessage(index++, SyncSkillPacket.class, new SyncSkillPacket.SyncSkillEncoder(), new SyncSkillPacket.SyncSkillDecoder(), new SyncSkillPacket.SyncSkillHandler());
         CombatChannel.INSTANCE.registerMessage(index++, ManualParryPacket.class, new ManualParryPacket.ParryEncoder(), new ManualParryPacket.ParryDecoder(), new ManualParryPacket.ParryHandler());
         CombatChannel.INSTANCE.registerMessage(index++, UpdateTargetPacket.class, new UpdateTargetPacket.UpdateTargetEncoder(), new UpdateTargetPacket.UpdateTargetDecoder(), new UpdateTargetPacket.UpdateTargetHandler());
+        CombatChannel.INSTANCE.registerMessage(index++, ShoutPacket.class, new ShoutPacket.ShoutEncoder(), new ShoutPacket.ShoutDecoder(), new ShoutPacket.ShoutHandler());
     }
 
     private void doClientStuff(final FMLClientSetupEvent event) {
@@ -121,6 +125,7 @@ public class WarDance {
         ClientRegistry.registerKeyBinding(Keybinds.SELECT);
         ClientRegistry.registerKeyBinding(Keybinds.BINDCAST);
         ClientRegistry.registerKeyBinding(Keybinds.PARRY);
+        ClientRegistry.registerKeyBinding(Keybinds.SHOUT);
     }
 
     private void enqueueIMC(final InterModEnqueueEvent event) {

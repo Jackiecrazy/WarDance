@@ -2,6 +2,7 @@ package jackiecrazy.wardance.handlers;
 
 import jackiecrazy.wardance.WarDance;
 import jackiecrazy.wardance.api.WarAttributes;
+import jackiecrazy.wardance.capability.goal.GoalCapabilityProvider;
 import jackiecrazy.wardance.capability.resources.CombatData;
 import jackiecrazy.wardance.capability.resources.ICombatCapability;
 import jackiecrazy.wardance.capability.skill.CasterData;
@@ -9,6 +10,8 @@ import jackiecrazy.wardance.capability.skill.ISkillCapability;
 import jackiecrazy.wardance.capability.status.Marks;
 import jackiecrazy.wardance.config.GeneralConfig;
 import jackiecrazy.wardance.config.StealthConfig;
+import jackiecrazy.wardance.entity.ai.InvestigateSoundGoal;
+import jackiecrazy.wardance.entity.ai.NoGoal;
 import jackiecrazy.wardance.networking.CombatChannel;
 import jackiecrazy.wardance.networking.SyncSkillPacket;
 import jackiecrazy.wardance.networking.UpdateTargetPacket;
@@ -22,7 +25,6 @@ import net.minecraft.entity.Entity;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.MobEntity;
 import net.minecraft.entity.ai.attributes.Attributes;
-import net.minecraft.entity.ai.goal.Goal;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.potion.Effects;
@@ -48,7 +50,6 @@ import net.minecraftforge.fml.event.server.FMLServerStartingEvent;
 import net.minecraftforge.fml.event.server.FMLServerStoppingEvent;
 import net.minecraftforge.fml.network.PacketDistributor;
 
-import java.util.EnumSet;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
@@ -78,6 +79,8 @@ public class EntityHandler {
             e.addCapability(new ResourceLocation("wardance:statuseffects"), new Marks((LivingEntity) e.getObject()));
             if (e.getObject() instanceof PlayerEntity)
                 e.addCapability(new ResourceLocation("wardance:casterinfo"), new CasterData((LivingEntity) e.getObject()));
+            else if (e.getObject() instanceof MobEntity)
+                e.addCapability(new ResourceLocation("wardance:targeting"), new GoalCapabilityProvider());
         }
     }
 
@@ -87,6 +90,11 @@ public class EntityHandler {
             MobEntity mob = (MobEntity) e.getEntity();
             mob.goalSelector.addGoal(-1, new NoGoal(mob));
             mob.targetSelector.addGoal(-1, new NoGoal(mob));
+            if (e.getEntity() instanceof CreatureEntity) {
+                CreatureEntity creature = (CreatureEntity) e.getEntity();
+                if (!StealthUtils.stealthMap.getOrDefault(creature.getType().getRegistryName(), StealthUtils.STEALTH).isDeaf())
+                    mob.goalSelector.addGoal(0, new InvestigateSoundGoal(creature));
+            }
         } else if (e.getEntity() instanceof ServerPlayerEntity) {
             CombatChannel.INSTANCE.send(PacketDistributor.PLAYER.with(() -> (ServerPlayerEntity) e.getEntity()), new SyncSkillPacket(CasterData.getCap((LivingEntity) e.getEntity()).write()));
         }
@@ -278,6 +286,7 @@ Mobs should move into a position that is close to the player, far from allies, a
                 if (n.getKey().getA().isAreaLoaded(n.getKey().getB(), n.getValue().intValue())) {
                     for (CreatureEntity c : (n.getKey().getA().getLoadedEntitiesOfClass(CreatureEntity.class, new AxisAlignedBB(n.getKey().getB()).inflate(n.getValue())))) {
                         if (StealthUtils.getAwareness(null, c) == StealthUtils.Awareness.UNAWARE && !StealthUtils.stealthMap.getOrDefault(c.getType().getRegistryName(), StealthUtils.STEALTH).isDeaf()) {
+
                             c.getNavigation().stop();
                             c.getNavigation().moveTo(c.getNavigation().createPath(n.getKey().getB(), (int) (n.getValue() + 3)), 1);
                             BlockPos vec = n.getKey().getB();
@@ -290,27 +299,4 @@ Mobs should move into a position that is close to the player, far from allies, a
         alertTracker.clear();
     }
 
-    private static class NoGoal extends Goal {
-        static final EnumSet<Flag> mutex = EnumSet.allOf(Flag.class);
-        LivingEntity e;
-
-        NoGoal(LivingEntity bind) {
-            e = bind;
-        }
-
-        @Override
-        public boolean canUse() {
-            return (CombatData.getCap(e).isValid() && CombatData.getCap(e).getStaggerTime() > 0) || e.hasEffect(WarEffects.PETRIFY.get()) || e.hasEffect(WarEffects.PARALYSIS.get()) || e.hasEffect(WarEffects.SLEEP.get());
-        }
-
-        @Override
-        public boolean isInterruptable() {
-            return false;
-        }
-
-        @Override
-        public EnumSet<Flag> getFlags() {
-            return mutex;
-        }
-    }
 }
