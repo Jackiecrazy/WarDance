@@ -59,7 +59,7 @@ public class StealthUtils {
                         if (se.getRegistryName().toString().contains(contain))
                             soundMap.put(se, Integer.parseInt(val[1].trim()));
                     }
-                }else {
+                } else {
                     final ResourceLocation key = new ResourceLocation(val[0]);
                     if (ForgeRegistries.SOUND_EVENTS.getValue(key) != null) {
                         Integer value = Integer.parseInt(val[1].trim());
@@ -88,6 +88,9 @@ public class StealthUtils {
             a = Awareness.UNAWARE;
             //distraction, confusion, and choking take top priority in inferior tier
         else if (target.hasEffect(WarEffects.DISTRACTION.get()) || target.hasEffect(WarEffects.CONFUSION.get()) || target.getAirSupply() <= 0)
+            a = Awareness.DISTRACTED;
+            //looking around for you, but cannot see
+        else if (attacker.isInvisible() && !sd.isObservant())
             a = Awareness.DISTRACTED;
             //webbed and not a spider
         else if (inWeb(target) && !sd.isCheliceric())
@@ -135,7 +138,7 @@ public class StealthUtils {
     }
 
     public static class StealthData {
-        private final boolean allSeeing, blind, cheliceric, deaf, eyeless, heatSeeking, lazy, mindful, nightvision, perceptive, skeptical, quiet, vigil, wary;
+        private final boolean allSeeing, blind, cheliceric, deaf, eyeless, heatSeeking, lazy, mindful, nightvision, observant, perceptive, skeptical, quiet, vigil, wary;
 
         public StealthData(String value) {
             allSeeing = value.contains("a");
@@ -147,6 +150,7 @@ public class StealthUtils {
             lazy = value.contains("l");
             mindful = value.contains("m");
             nightvision = value.contains("n");
+            observant = value.contains("o");
             perceptive = value.contains("p");
             skeptical = value.contains("s");
             quiet = value.contains("s");
@@ -192,6 +196,10 @@ public class StealthUtils {
 
         public boolean isAllSeeing() {
             return allSeeing;
+        }
+
+        public boolean isObservant() {
+            return observant;
         }
 
         public boolean isPerceptive() {

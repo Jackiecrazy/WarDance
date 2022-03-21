@@ -44,7 +44,7 @@ public class Keybinds {
     public static final KeyBinding BINDCAST = new KeyBinding("wardance.bindCast", IN_COMBAT, InputMappings.Type.MOUSE, GLFW.GLFW_MOUSE_BUTTON_MIDDLE, "key.categories.gameplay");
     public static final KeyBinding SELECT = new KeyBinding("wardance.selectSkill", KeyConflictContext.IN_GAME, InputMappings.Type.KEYSYM, GLFW.GLFW_KEY_V, "key.categories.gameplay");
     public static final KeyBinding PARRY = new KeyBinding("wardance.parry", KeyConflictContext.IN_GAME, InputMappings.Type.KEYSYM, GLFW.GLFW_KEY_LEFT_ALT, "key.categories.gameplay");
-    public static final KeyBinding SHOUT = new KeyBinding("wardance.shout", IN_COMBAT, InputMappings.Type.KEYSYM, GLFW.GLFW_KEY_T, "key.categories.gameplay");
+    public static final KeyBinding SHOUT = new KeyBinding("wardance.shout", IN_COMBAT, KeyModifier.SHIFT, InputMappings.Type.KEYSYM, GLFW.GLFW_KEY_T, "key.categories.gameplay");
 
     @SubscribeEvent(priority = EventPriority.HIGHEST)
     public static void handleInputEvent(InputEvent event) {

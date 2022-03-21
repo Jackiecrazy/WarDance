@@ -134,7 +134,7 @@
   "wardance:trample.desc": " If the target is staggered, increase their stagger time and count as if they were staggered again.",
   "wardance:trample.requirement": "requires 4 spirit",
   "wardance:shadowless_kick.name": "Shadowless Kick",
-  "wardance:shadowless_kick.desc": "0.25 seconds after a kick, perform another kick if possible; this can repeat up to 7 times. Damage per kick reduced to 2 posture damage and 1 falling block damage. Cost increased to 4 spirit and cooldown lengthened to 6 attacks.",
+  "wardance:shadowless_kick.desc": "0.25 seconds after a kick, kick again if possible; this can repeat up to 7 times. Damage per kick reduced to 2 posture damage and 1 falling block damage. Cost increased to 4 spirit and cooldown lengthened to 6 attacks.",
   "wardance:shadowless_kick.requirement": "must be standing",
   "wardance:tackle.name": "Tackle",
   "wardance:tackle.desc": " +2 range on kick and dash forward, gaining half a second of invulnerability.",

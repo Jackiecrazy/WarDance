@@ -20,7 +20,7 @@ import java.awt.*;
 import java.util.UUID;
 
 public class Petrify extends Hex {
-    private static final AttributeModifier ARMOR = new AttributeModifier(UUID.fromString("d6bf16c6-b548-4253-a00c-2361d243bdb4"), "hex", -0.3, AttributeModifier.Operation.MULTIPLY_TOTAL);
+    private static final AttributeModifier SPEED = new AttributeModifier(UUID.fromString("d6bf16c6-b548-4253-a00c-2361d243bdb4"), "hex", -0.3, AttributeModifier.Operation.MULTIPLY_TOTAL);
 
     @Override
     public Color getColor() {
@@ -34,9 +34,9 @@ public class Petrify extends Hex {
 
     @Override
     public void onMarkEnd(LivingEntity caster, LivingEntity target, SkillData sd) {
-        final ModifiableAttributeInstance armor = target.getAttribute(Attributes.MOVEMENT_SPEED);
-        if (armor != null) {
-            armor.removeModifier(ARMOR);
+        final ModifiableAttributeInstance speed = target.getAttribute(Attributes.MOVEMENT_SPEED);
+        if (speed != null) {
+            speed.removeModifier(SPEED);
         }
         target.addEffect(new EffectInstance(WarEffects.PETRIFY.get(), 60));
         super.onMarkEnd(caster, target, sd);
@@ -44,10 +44,10 @@ public class Petrify extends Hex {
 
     @Override
     public SkillData onMarked(LivingEntity caster, LivingEntity target, SkillData sd, @Nullable SkillData existing) {
-        final ModifiableAttributeInstance armor = target.getAttribute(Attributes.MOVEMENT_SPEED);
-        if (armor != null) {
-            armor.removeModifier(ARMOR);
-            armor.addPermanentModifier(ARMOR);
+        final ModifiableAttributeInstance speed = target.getAttribute(Attributes.MOVEMENT_SPEED);
+        if (speed != null) {
+            speed.removeModifier(SPEED);
+            speed.addPermanentModifier(SPEED);
         }
         return super.onMarked(caster, target, sd, existing);
     }
