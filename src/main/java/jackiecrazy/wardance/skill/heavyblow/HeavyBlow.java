@@ -4,7 +4,6 @@ import jackiecrazy.wardance.skill.*;
 import jackiecrazy.wardance.utils.GeneralUtils;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.tags.Tag;
-import net.minecraft.util.math.vector.Vector3d;
 import net.minecraftforge.event.entity.player.CriticalHitEvent;
 import net.minecraftforge.eventbus.api.Event;
 import net.minecraftforge.eventbus.api.EventPriority;
@@ -13,8 +12,6 @@ import javax.annotation.Nonnull;
 import java.awt.*;
 import java.util.Arrays;
 import java.util.HashSet;
-
-import jackiecrazy.wardance.skill.Skill.STATE;
 
 public class HeavyBlow extends Skill {
     private final Tag<String> tag = Tag.create(new HashSet<>(Arrays.asList("physical", ProcPoints.disable_shield, ProcPoints.melee, ProcPoints.on_hurt, "boundCast", ProcPoints.normal_attack, ProcPoints.modify_crit, ProcPoints.recharge_normal, ProcPoints.on_being_parried)));
@@ -39,7 +36,7 @@ public class HeavyBlow extends Skill {
     @Override
     public void onProc(LivingEntity caster, Event procPoint, STATE state, SkillData stats, LivingEntity target) {
         if (procPoint instanceof CriticalHitEvent && procPoint.getPhase() == EventPriority.HIGHEST) {
-            if (isCrit((CriticalHitEvent) procPoint) && state == STATE.INACTIVE && cast(caster, -999)) {
+            if (isCrit((CriticalHitEvent) procPoint) && state == STATE.INACTIVE && cast(caster, target, -999)) {
                 onCrit((CriticalHitEvent) procPoint, stats, caster, target);
             } else if (state == STATE.COOLING) {
                 stats.decrementDuration();
@@ -74,10 +71,10 @@ public class HeavyBlow extends Skill {
         @Override
         protected void onCrit(CriticalHitEvent proc, SkillData stats, LivingEntity caster, LivingEntity target) {
             proc.setDamageModifier(1 + (float) Math.max(2, Math.sqrt(GeneralUtils.getDistSqCompensated(caster, target)) / 4f));
-            Vector3d extra = caster.position().vectorTo(target.position()).scale(-1);
-            if (extra.lengthSqr() > 1) extra = extra.normalize();
-            caster.setDeltaMovement(caster.getDeltaMovement().add(extra));
-            caster.hurtMarked = true;
+//            Vector3d extra = caster.position().vectorTo(target.position()).scale(-1);
+//            if (extra.lengthSqr() > 1) extra = extra.normalize();
+//            caster.setDeltaMovement(caster.getDeltaMovement().add(extra));
+//            caster.hurtMarked = true;
         }
     }
 }

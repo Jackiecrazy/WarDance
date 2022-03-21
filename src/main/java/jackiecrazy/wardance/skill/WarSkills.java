@@ -81,7 +81,7 @@ public class WarSkills {
     public static final RegistryObject<Skill> UPPER_HAND = SKILLS.register("upper_hand", Feint.UpperHand::new);
     public static final RegistryObject<Skill> CAPRICIOUS_STRIKE = SKILLS.register("capricious_strike", Feint.CapriciousStrike::new);
     public static final RegistryObject<Skill> AMPUTATION = SKILLS.register("amputation", Judgment::new);
-    public static final RegistryObject<Skill> CROWD_PLEASER = SKILLS.register("crowd_pleaser", CrowdPleaser::new);
+    public static final RegistryObject<Skill> CROWD_PLEASER = SKILLS.register("combo_breaker", ComboBreaker::new);
     public static final RegistryObject<Skill> LICHTENBERG_SCAR = SKILLS.register("lichtenberg_scar", LichtenbergScar::new);
     public static final RegistryObject<Skill> FEVER_DREAM = SKILLS.register("fever_dream", FeverDream::new);
     public static final RegistryObject<Skill> VIRAL_DECAY = SKILLS.register("viral_decay", ViralDecay::new);
@@ -93,9 +93,10 @@ public class WarSkills {
     public static final RegistryObject<Skill> STATIC_DISCHARGE = SKILLS.register("static_discharge", MementoMori.StaticDischarge::new);
     public static final RegistryObject<Skill> POUND_OF_FLESH = SKILLS.register("pound_of_flesh", PoundOfFlesh::new);
     public static final RegistryObject<Skill> CURSE_OF_MISFORTUNE = SKILLS.register("curse_of_misfortune", Hex::new);
+    public static final RegistryObject<Skill> CURSE_OF_ECHOES = SKILLS.register("curse_of_echoes", Hex.CurseOfEchoes::new);
     public static final RegistryObject<Skill> ITCHY_CURSE = SKILLS.register("itchy_curse", ItchyCurse::new);
     public static final RegistryObject<Skill> UNRAVEL = SKILLS.register("unravel", Hex.Unravel::new);
-    public static final RegistryObject<Skill> SNAKEBITE = SKILLS.register("snakebite", Hex.Snakebite::new);
+    public static final RegistryObject<Skill> GANGRENE = SKILLS.register("gangrene", Hex.Gangrene::new);
     public static final RegistryObject<Skill> BLACK_MARK = SKILLS.register("black_mark", Hex.BlackMark::new);
     public static final RegistryObject<Skill> PETRIFY = SKILLS.register("petrify", Petrify::new);
     public static final RegistryObject<Skill> BACK_AND_FORTH = SKILLS.register("back_and_forth", Morale::new);

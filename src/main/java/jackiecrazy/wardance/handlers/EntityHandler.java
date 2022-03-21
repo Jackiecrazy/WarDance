@@ -10,6 +10,7 @@ import jackiecrazy.wardance.capability.skill.ISkillCapability;
 import jackiecrazy.wardance.capability.status.Marks;
 import jackiecrazy.wardance.config.GeneralConfig;
 import jackiecrazy.wardance.config.StealthConfig;
+import jackiecrazy.wardance.entity.ai.CompelledVengeanceGoal;
 import jackiecrazy.wardance.entity.ai.InvestigateSoundGoal;
 import jackiecrazy.wardance.entity.ai.NoGoal;
 import jackiecrazy.wardance.networking.CombatChannel;
@@ -25,6 +26,7 @@ import net.minecraft.entity.Entity;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.MobEntity;
 import net.minecraft.entity.ai.attributes.Attributes;
+import net.minecraft.entity.ai.goal.Goal;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.potion.Effects;
@@ -94,6 +96,7 @@ public class EntityHandler {
                 CreatureEntity creature = (CreatureEntity) e.getEntity();
                 if (!StealthUtils.stealthMap.getOrDefault(creature.getType().getRegistryName(), StealthUtils.STEALTH).isDeaf())
                     mob.goalSelector.addGoal(0, new InvestigateSoundGoal(creature));
+                mob.targetSelector.addGoal(0, new CompelledVengeanceGoal(creature));
             }
         } else if (e.getEntity() instanceof ServerPlayerEntity) {
             CombatChannel.INSTANCE.send(PacketDistributor.PLAYER.with(() -> (ServerPlayerEntity) e.getEntity()), new SyncSkillPacket(CasterData.getCap((LivingEntity) e.getEntity()).write()));
@@ -286,11 +289,12 @@ Mobs should move into a position that is close to the player, far from allies, a
                 if (n.getKey().getA().isAreaLoaded(n.getKey().getB(), n.getValue().intValue())) {
                     for (CreatureEntity c : (n.getKey().getA().getLoadedEntitiesOfClass(CreatureEntity.class, new AxisAlignedBB(n.getKey().getB()).inflate(n.getValue())))) {
                         if (StealthUtils.getAwareness(null, c) == StealthUtils.Awareness.UNAWARE && !StealthUtils.stealthMap.getOrDefault(c.getType().getRegistryName(), StealthUtils.STEALTH).isDeaf()) {
-
+                            c.goalSelector.disableControlFlag(Goal.Flag.MOVE);
                             c.getNavigation().stop();
                             c.getNavigation().moveTo(c.getNavigation().createPath(n.getKey().getB(), (int) (n.getValue() + 3)), 1);
                             BlockPos vec = n.getKey().getB();
                             c.lookAt(EntityAnchorArgument.Type.EYES, new Vector3d(vec.getX(), vec.getY(), vec.getZ()));
+                            c.getCapability(GoalCapabilityProvider.CAP).ifPresent(a -> a.setSoundLocation(n.getKey().getB()));
                         }
                     }
                 }

@@ -12,8 +12,6 @@ import net.minecraft.util.Hand;
 
 import java.awt.*;
 
-import jackiecrazy.wardance.skill.Skill.STATE;
-
 public class ItchyCurse extends Hex {
     @Override
     public Color getColor() {
@@ -62,12 +60,10 @@ public class ItchyCurse extends Hex {
 
     @Override
     public boolean onStateChange(LivingEntity caster, SkillData prev, STATE from, STATE to) {
-        if (to == STATE.ACTIVE && cast(caster, -999)) {
-            LivingEntity e = SkillUtils.aimLiving(caster);
-            if (e != null) {
-                mark(caster, e, 60);
-                markUsed(caster);
-            }
+        LivingEntity e = SkillUtils.aimLiving(caster);
+        if (to == STATE.ACTIVE && e != null && cast(caster, e, -999)) {
+            mark(caster, e, 60);
+            markUsed(caster);
         }
         if (to == STATE.COOLING)
             setCooldown(caster, prev, 15);

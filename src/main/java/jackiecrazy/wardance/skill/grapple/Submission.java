@@ -9,8 +9,6 @@ import net.minecraftforge.eventbus.api.EventPriority;
 
 import java.awt.*;
 
-import jackiecrazy.wardance.skill.Skill.STATE;
-
 public class Submission extends Grapple {
     @Override
     public Color getColor() {
@@ -20,7 +18,7 @@ public class Submission extends Grapple {
     @Override
     public void onProc(LivingEntity caster, Event procPoint, STATE state, SkillData stats, LivingEntity target) {
         if (procPoint instanceof LivingAttackEvent && ((LivingAttackEvent) procPoint).getEntityLiving() == target && procPoint.getPhase() == EventPriority.HIGHEST) {
-            if (state == STATE.HOLSTERED && (caster.tickCount - caster.getLastHurtMobTimestamp() < 40 || caster.getArmorValue() > target.getArmorValue()) && CombatUtils.isUnarmed(caster.getMainHandItem(), caster) && caster.getLastHurtMob() == target && cast(caster, -999)) {
+            if (state == STATE.HOLSTERED && (caster.tickCount - caster.getLastHurtMobTimestamp() < 40 || caster.getArmorValue() > target.getArmorValue()) && CombatUtils.isUnarmed(caster.getMainHandItem(), caster) && caster.getLastHurtMob() == target && cast(caster, target, -999)) {
                 performEffect(caster, target);
                 stats.flagCondition(caster.getArmorValue() > target.getArmorValue());
             } else if (state == STATE.COOLING) stats.decrementDuration();

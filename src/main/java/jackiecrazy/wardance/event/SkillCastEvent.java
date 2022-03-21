@@ -11,8 +11,9 @@ public class SkillCastEvent extends LivingEvent {
     private float duration;
     private float arbitrary;
     private boolean flag;
+    private final LivingEntity target;
 
-    public SkillCastEvent(LivingEntity entity, Skill skill, float mig, float spi, float dur, boolean fla, float arb) {
+    public SkillCastEvent(LivingEntity entity, LivingEntity t, Skill skill, float mig, float spi, float dur, boolean fla, float arb) {
         super(entity);
         s = skill;
         duration = dur;
@@ -20,6 +21,7 @@ public class SkillCastEvent extends LivingEvent {
         flag = fla;
         might = mig;
         spirit = spi;
+        target=t;
     }
 
     public float getMight() {
@@ -59,5 +61,9 @@ public class SkillCastEvent extends LivingEvent {
 
     public Skill getSkill() {
         return s;
+    }
+
+    public LivingEntity getTarget() {
+        return target;
     }
 }

@@ -73,7 +73,7 @@ public class ShadowlessKick extends Kick {
     public boolean onStateChange(LivingEntity caster, SkillData prev, STATE from, STATE to) {
         if (from == STATE.HOLSTERED && to == STATE.ACTIVE && kick(caster, prev)) {
             LivingEntity target = GeneralUtils.raytraceLiving(caster, distance());
-            if (target != null && cast(caster, 5)) {
+            if (target != null && cast(caster, target, 5)) {
                 kick(caster, prev);
             }
         }

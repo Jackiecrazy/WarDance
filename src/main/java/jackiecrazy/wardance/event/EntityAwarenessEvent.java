@@ -4,6 +4,8 @@ import jackiecrazy.wardance.utils.StealthUtils;
 import net.minecraft.entity.LivingEntity;
 import net.minecraftforge.event.entity.living.LivingEvent;
 
+import javax.annotation.Nullable;
+
 public class EntityAwarenessEvent extends LivingEvent {
     private final StealthUtils.Awareness originalStatus;
     private LivingEntity attacker;
@@ -19,6 +21,7 @@ public class EntityAwarenessEvent extends LivingEvent {
         return status;
     }
 
+    @Nullable
     public LivingEntity getAttacker() {
         return attacker;
     }

@@ -1,6 +1,7 @@
 package jackiecrazy.wardance.potion;
 
 import jackiecrazy.wardance.WarDance;
+import jackiecrazy.wardance.api.WarAttributes;
 import net.minecraft.entity.ai.attributes.AttributeModifier;
 import net.minecraft.entity.ai.attributes.Attributes;
 import net.minecraft.potion.Effect;
@@ -25,7 +26,7 @@ public class WarEffects {
     //attacks against paralyzed targets apply the unaware bonus, paralyzed targets cannot move
     public static final RegistryObject<Effect> PARALYSIS = EFFECTS.register("paralysis", () -> new WarEffect(EffectType.HARMFUL, 0x2c2c2c).addAttributeModifier(Attributes.MOVEMENT_SPEED, "55FCED67-E92A-486E-9800-B47F202C4386", -1, AttributeModifier.Operation.MULTIPLY_TOTAL));
     //identical to paralysis, but adds 4 armor
-    public static final RegistryObject<Effect> PETRIFY = EFFECTS.register("petrify", () -> new WarEffect(EffectType.HARMFUL, 0x949494).addAttributeModifier(Attributes.MOVEMENT_SPEED, "55FCED67-E92A-486E-9800-B47F202C4386", -1, AttributeModifier.Operation.MULTIPLY_TOTAL).addAttributeModifier(Attributes.KNOCKBACK_RESISTANCE, "55FCED67-E92A-486E-9800-B47F202C4386", 100, AttributeModifier.Operation.ADDITION).addAttributeModifier(Attributes.ARMOR, "55FCED67-E92A-486E-9800-B47F202C4386", 4, AttributeModifier.Operation.ADDITION));
+    public static final RegistryObject<Effect> PETRIFY = EFFECTS.register("petrify", () -> new WarEffect(EffectType.HARMFUL, 0x949494).addAttributeModifier(Attributes.MOVEMENT_SPEED, "55FCED67-E92A-486E-9800-B47F202C4386", -1, AttributeModifier.Operation.MULTIPLY_TOTAL).addAttributeModifier(WarAttributes.ABSORPTION.get(), "55FCED67-E92A-486E-9800-B47F202C4386", -1, AttributeModifier.Operation.MULTIPLY_TOTAL).addAttributeModifier(Attributes.KNOCKBACK_RESISTANCE, "55FCED67-E92A-486E-9800-B47F202C4386", 100, AttributeModifier.Operation.ADDITION).addAttributeModifier(Attributes.ARMOR, "55FCED67-E92A-486E-9800-B47F202C4386", 4, AttributeModifier.Operation.ADDITION));
     //identical to paralysis, but only works once
     public static final RegistryObject<Effect> SLEEP = EFFECTS.register("sleep", () -> new WarEffect(EffectType.HARMFUL, 0xc0c0d3e).addAttributeModifier(Attributes.MOVEMENT_SPEED, "55FCED67-E92A-486E-9800-B47F202C4386", -1, AttributeModifier.Operation.MULTIPLY_TOTAL));
     //increases incoming non-combat damage by potency

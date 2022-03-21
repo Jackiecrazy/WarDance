@@ -1,6 +1,7 @@
 package jackiecrazy.wardance.skill.judgment;
 
 import jackiecrazy.wardance.WarDance;
+import jackiecrazy.wardance.capability.goal.GoalCapabilityProvider;
 import jackiecrazy.wardance.capability.status.Marks;
 import jackiecrazy.wardance.skill.SkillData;
 import jackiecrazy.wardance.utils.GeneralUtils;
@@ -39,9 +40,11 @@ public class FeverDream extends Judgment {
                 enemy.addEffect(new EffectInstance(Effects.BLINDNESS, 140));
             if (list.size() <= 1) return;
             int shift = WarDance.rand.nextInt(list.size());
-            enemy.setLastHurtByMob(list.get(shift));
+            final LivingEntity confuse = list.get(shift);
+            enemy.setLastHurtByMob(confuse);
             if (enemy instanceof MobEntity) {
-                ((MobEntity) enemy).setTarget(list.get(shift));
+                ((MobEntity) enemy).setTarget(confuse);
+                GoalCapabilityProvider.getCap(enemy).ifPresent(a->a.setForcedTarget(confuse));
             }
             if (Marks.getCap(enemy).isMarked(this)) {
                 hallucinate(caster, enemy, iterate - 1);

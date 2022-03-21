@@ -69,7 +69,7 @@ public class ClientConfig {
         _displayEyes = b.translation("wardance.config.allStealth").comment("Renders the stealth eye above every mob that can be seen. If this is enabled with the mouseover stealth eye render, the mouseover eye will replace the overhead stealth eye when you are looking directly at an entity.").define("all stealth", true);
         b.pop();
         _customPosture = b.translation("wardance.config.postureMobs").comment("whether a mob is rotated when it is staggered.").defineList("mob stagger rotation", Lists.newArrayList("example:dragon, false", "example:ghast, true"), String.class::isInstance);
-        _shout = b.translation("wardance.config.postureMobs").comment("Change what sound you make when you shout. This is purely cosmetic and the sound will always be of volume 2.").define("shout sound", "minecraft:entity.villager.ambient", (a) -> (a instanceof String && ResourceLocation.isValidResourceLocation((String) a)));
+        _shout = b.translation("wardance.config.shout").comment("Change what sound you make when you shout. This is purely cosmetic and the sound will always be of volume 2.").define("shout sound", "minecraft:entity.pillager.ambient", (a) -> (a instanceof String && ResourceLocation.isValidResourceLocation((String) a)));
     }
 
     public static void bake() {

@@ -22,8 +22,6 @@ import java.awt.*;
 import java.util.Arrays;
 import java.util.HashSet;
 
-import jackiecrazy.wardance.skill.Skill.STATE;
-
 @Mod.EventBusSubscriber(modid = WarDance.MODID)
 public class Silencer extends HeavyBlow {
     private final Tag<String> tag = Tag.create(new HashSet<>(Arrays.asList("physical", ProcPoints.disable_shield, ProcPoints.melee, ProcPoints.normal_attack, ProcPoints.modify_crit, ProcPoints.recharge_normal, ProcPoints.afflict_tick)));
@@ -50,7 +48,7 @@ public class Silencer extends HeavyBlow {
     public void onProc(LivingEntity caster, Event procPoint, STATE state, SkillData stats, LivingEntity target) {
         if (procPoint instanceof CriticalHitEvent && ((CriticalHitEvent) procPoint).getTarget() == target && state == STATE.INACTIVE) {
             if (caster.level.isClientSide() || caster == target) return;
-            if (StealthUtils.getAwareness(caster, target) != StealthUtils.Awareness.UNAWARE || !cast(caster, -999))
+            if (StealthUtils.getAwareness(caster, target) != StealthUtils.Awareness.UNAWARE || !cast(caster, target, -999))
                 return;
             CombatData.getCap(target).setHandBind(Hand.MAIN_HAND, 60);
             CombatData.getCap(target).setHandBind(Hand.OFF_HAND, 60);

@@ -1,5 +1,6 @@
 package jackiecrazy.wardance.skill.mementomori;
 
+import jackiecrazy.wardance.capability.goal.GoalCapabilityProvider;
 import jackiecrazy.wardance.skill.SkillData;
 import jackiecrazy.wardance.utils.GeneralUtils;
 import jackiecrazy.wardance.utils.SkillUtils;
@@ -15,8 +16,6 @@ import net.minecraftforge.eventbus.api.Event;
 import net.minecraftforge.eventbus.api.EventPriority;
 
 import java.awt.*;
-
-import jackiecrazy.wardance.skill.Skill.STATE;
 
 public class ShadowDive extends MementoMori {
     @Override
@@ -59,8 +58,10 @@ public class ShadowDive extends MementoMori {
                 SkillUtils.createCloud(caster.level, caster, caster.getX(), caster.getY(), caster.getZ(), 7, ParticleTypes.ANGRY_VILLAGER);
                 for (LivingEntity e : caster.level.getLoadedEntitiesOfClass(LivingEntity.class, caster.getBoundingBox().inflate(40), (a) -> TargetingUtils.isHostile(a, caster))) {
                     e.setLastHurtByMob((LivingEntity) tar);
-                    if (e instanceof MobEntity)
+                    if (e instanceof MobEntity) {
                         ((MobEntity) e).setTarget((LivingEntity) tar);
+                        GoalCapabilityProvider.getCap(e).ifPresent(a->a.setForcedTarget((LivingEntity) tar));
+                    }
 
                 }
             }

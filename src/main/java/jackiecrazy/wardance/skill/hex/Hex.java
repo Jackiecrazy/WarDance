@@ -1,6 +1,7 @@
 package jackiecrazy.wardance.skill.hex;
 
 import jackiecrazy.wardance.WarDance;
+import jackiecrazy.wardance.api.CombatDamageSource;
 import jackiecrazy.wardance.capability.resources.CombatData;
 import jackiecrazy.wardance.capability.resources.ICombatCapability;
 import jackiecrazy.wardance.capability.status.Marks;
@@ -18,11 +19,11 @@ import net.minecraft.entity.ai.attributes.ModifiableAttributeInstance;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
 import net.minecraft.potion.EffectInstance;
-import net.minecraft.potion.Effects;
 import net.minecraft.tags.Tag;
 import net.minecraft.util.DamageSource;
 import net.minecraftforge.event.entity.living.LivingDamageEvent;
 import net.minecraftforge.event.entity.living.LivingHealEvent;
+import net.minecraftforge.event.entity.living.LivingHurtEvent;
 import net.minecraftforge.eventbus.api.Event;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
@@ -31,8 +32,6 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.awt.*;
 import java.util.*;
-
-import jackiecrazy.wardance.skill.Skill.STATE;
 
 @Mod.EventBusSubscriber(modid = WarDance.MODID)
 public class Hex extends Skill {
@@ -45,8 +44,19 @@ public class Hex extends Skill {
         if (!e.getEntityLiving().isEffectiveAi()) return;
         LivingEntity entity = e.getEntityLiving();
         //snakebite nullifies healing
-        if (Marks.getCap(entity).isMarked(WarSkills.SNAKEBITE.get()))
-            e.setCanceled(true);
+        Marks.getCap(entity).getActiveMark(WarSkills.GANGRENE.get()).ifPresent(a -> e.setCanceled(a.getArbitraryFloat() > 0));
+    }
+
+    @SubscribeEvent
+    public static void echoes(LivingHurtEvent e) {
+        LivingEntity target = e.getEntityLiving();
+        Marks.getCap(target).getActiveMark(WarSkills.CURSE_OF_ECHOES.get()).ifPresent(a -> {
+            if (a.getArbitraryFloat() < 0 && CombatUtils.isMeleeAttack(e.getSource())) {
+                target.invulnerableTime = 0;
+                target.hurt(new CombatDamageSource("echo", a.getCaster(target.level)).setDamageTyping(CombatDamageSource.TYPE.TRUE).setSkillUsed(WarSkills.CURSE_OF_ECHOES.get()).bypassArmor().bypassMagic(), e.getAmount() * 0.4f);
+                a.setArbitraryFloat(20);
+            }
+        });
     }
 
     @SubscribeEvent
@@ -70,8 +80,9 @@ public class Hex extends Skill {
                 }
                 le.heal(e.getAmount() / 3);
             }
-
         }
+        if (!CombatUtils.isPhysicalAttack(e.getSource()))
+            Marks.getCap(e.getEntityLiving()).getActiveMark(WarSkills.GANGRENE.get()).ifPresent(g -> g.setArbitraryFloat(40));
     }
 
 //    @SubscribeEvent
@@ -113,16 +124,18 @@ public class Hex extends Skill {
 
     @Override
     public boolean onStateChange(LivingEntity caster, SkillData prev, STATE from, STATE to) {
-        if (to == STATE.ACTIVE && cast(caster, -999)) {
-            LivingEntity e = SkillUtils.aimLiving(caster);
-            if (e != null) {
-                mark(caster, e, 200);
-                markUsed(caster);
-            }
+        LivingEntity e = SkillUtils.aimLiving(caster);
+        if (to == STATE.ACTIVE && e != null && cast(caster, e, -999)) {
+            mark(caster, e, duration());
+            markUsed(caster);
         }
         if (to == STATE.COOLING)
             setCooldown(caster, prev, 15);
         return boundCast(prev, from, to);
+    }
+
+    protected int duration() {
+        return 200;
     }
 
     @Override
@@ -163,32 +176,21 @@ public class Hex extends Skill {
         super.onMarkEnd(caster, target, sd);
     }
 
-    public static class Snakebite extends Hex {
+    public static class Gangrene extends Hex {
         @Override
         public Color getColor() {
             return WarColors.VIOLET;
         }
 
         @Override
-        public SkillData onMarked(LivingEntity caster, LivingEntity target, SkillData sd, @Nullable SkillData existing) {
-            EffectInstance poison = new EffectInstance(Effects.POISON, 200, 1);
-            if (target.hasEffect(Effects.POISON)) {
-                poison = new EffectInstance(Effects.POISON, Math.max(target.getEffect(Effects.POISON).getDuration(), 200), Math.max(target.getEffect(Effects.POISON).getAmplifier(), 1));
-            }
-            poison.setCurativeItems(Collections.emptyList());
-            target.removeEffect(Effects.POISON);
-            target.addEffect(poison);
-            return super.onMarked(caster, target, sd, existing);
+        public boolean markTick(LivingEntity caster, LivingEntity target, SkillData sd) {
+            sd.setArbitraryFloat(sd.getArbitraryFloat() - 1);
+            return super.markTick(caster, target, sd);
         }
 
         @Override
-        public boolean markTick(LivingEntity caster, LivingEntity target, SkillData sd) {
-            //heal block, removed with poison
-            if (!target.hasEffect(Effects.POISON)) {
-                removeMark(target);
-                return true;
-            }
-            return false;
+        protected int duration() {
+            return 160;
         }
     }
 
@@ -199,8 +201,20 @@ public class Hex extends Skill {
         }
     }
 
+    public static class CurseOfEchoes extends Hex {
+        @Override
+        public Color getColor() {
+            return Color.RED;
+        }
+
+        @Override
+        public boolean markTick(LivingEntity caster, LivingEntity target, SkillData sd) {
+            sd.setArbitraryFloat(sd.getArbitraryFloat() - 1);
+            return super.markTick(caster, target, sd);
+        }
+    }
+
     public static class Unravel extends Hex {
-        private final Tag<String> tag = Tag.create(new HashSet<>(Arrays.asList("melee", "noDamage", "boundCast", ProcPoints.change_parry_result, ProcPoints.recharge_time, "chant", ProcPoints.unblockable, "normalAttack", "countdown")));
 
         @Override
         public Color getColor() {

@@ -276,9 +276,32 @@ public class StealthConfig {
             "thermal:blitz, p",
             "thermal:blizz, p"
     };
+    private static final String[] SOUND = {
+            "*armor.equip, 4",
+            "*arrow, 4",
+            "*scream, 16",
+            "*door.open, 4",
+            "*door.close, 4",
+            "*.break, 4",
+            "*.place, 4",
+            "*music_disc, 8",
+            "*note_block, 8",
+            "*angry, 8",
+            "*click_off, 4",
+            "*click_on, 4",
+            "entity.bee.loop_aggressive, 4",
+            "item.crossbow.shoot, 4",
+            "entity.generic.eat, 4",
+            "entity.generic.drink, 4",
+            "entity.minecart.riding, 4",
+            "entity.generic.explode, 16",
+            "entity.player.big_fall, 8",
+            "entity.player.burp, 6",
+            "entity.ravager.roar, 16"
+    };
     public static float distract, unaware;
     public static boolean stealthSystem, ignore, inv, playerStealth;
-    public static int baseHorizontalDetection, baseVerticalDetection, anglePerArmor;
+    public static int baseHorizontalDetection, baseVerticalDetection, shout;
     public static double blockPerVolume;
 
     static {
@@ -288,6 +311,7 @@ public class StealthConfig {
     }
 
     private final ForgeConfigSpec.ConfigValue<List<? extends String>> _customDetection;
+    private final ForgeConfigSpec.ConfigValue<List<? extends String>> _sounds;
     private final ForgeConfigSpec.BooleanValue _stab;
     private final ForgeConfigSpec.BooleanValue _removeInv;
     private final ForgeConfigSpec.BooleanValue _player;
@@ -296,18 +320,16 @@ public class StealthConfig {
     private final ForgeConfigSpec.BooleanValue _ignore;
     private final ForgeConfigSpec.IntValue _baseDetectionHorizontal;
     private final ForgeConfigSpec.IntValue _baseDetectionVertical;
-    private final ForgeConfigSpec.IntValue _anglePerArmor;
-    private final ForgeConfigSpec.DoubleValue _blockPerVolume;
+    private final ForgeConfigSpec.IntValue _shoutSize;
 
     public StealthConfig(ForgeConfigSpec.Builder b) {
         //feature toggle, resource, defense, compat, stealth, lists
         _stab = b.translation("wardance.config.stabby").comment("enable or disable the entire system").define("enable stabbing", true);
         _removeInv = b.translation("wardance.config.removeInvis").comment("whether invisibility will be removed on attack").define("attacking dispels invisibility", true);
         _player = b.translation("wardance.config.player").comment("whether you must pass stealth checks to perceive a mob. Currently rather incomplete. I am not responsible for ragequits caused by this option. This physically ceases to work with Optifine installed.").define("use player senses", false);
-        _baseDetectionHorizontal = b.translation("wardance.config.detectH").comment("mobs start out with this FoV of full detection on the xz plane").defineInRange("default mob horizontal FoV", 120, 0, 360);
-        _baseDetectionVertical = b.translation("wardance.config.detectV").comment("mobs start out with this FoV of full detection on the y axis").defineInRange("default mob vertical FoV", 60, 0, 360);
-        _anglePerArmor = b.translation("wardance.config.perarmor").comment("your stealth attribute is multiplied by this to generate a new FoV for the purpose of detection by mobs, if it is greater than the default").defineInRange("armor stealth debuff", 18, 0, 360);
-        _blockPerVolume = b.translation("wardance.config.volume").comment("this value is multiplied by the volume of a sound to determine how far it'll alert mobs to investigate from. Extremely large values will GREATLY impact performance, you have been warned.").defineInRange("alert volume multiplier", 16, 0, Double.MAX_VALUE);
+        _baseDetectionHorizontal = b.translation("wardance.config.detectH").comment("angle of detection on the xz plane").defineInRange("default mob horizontal FoV", 120, 0, 360);
+        _baseDetectionVertical = b.translation("wardance.config.detectV").comment("angle of detection on the y axis").defineInRange("default mob vertical FoV", 60, 0, 360);
+        _shoutSize = b.translation("wardance.config.shoutSize").comment("how far a shout travels, in blocks").defineInRange("shouting sound size", 16, 0, Integer.MAX_VALUE);
         _distract = b.translation("wardance.config.distract").comment("posture and health damage multiplier for distracted stabs").defineInRange("distracted stab multiplier", 1.5, 0, Double.MAX_VALUE);
         _unaware = b.translation("wardance.config.unaware").comment("posture and health damage multiplier for unaware stabs").defineInRange("unaware stab multiplier", 1.5, 0, Double.MAX_VALUE);
         _ignore = b.translation("wardance.config.ignore").comment("whether unaware stabs ignore parry, deflection, shatter, and absorption").define("unaware stab defense ignore", true);
@@ -327,6 +349,7 @@ public class StealthConfig {
                 "\n(v)igilant mobs are treated as alert even without an attack or revenge target."+
                 "\n(w)ary mobs ignore luck. "
         ).defineList("mob detection rules", Arrays.asList(SNEAK), String.class::isInstance);
+        _sounds = b.translation("wardance.config.sound").comment("Define which sounds generate cues for mobs to detect, followed by their size. Use *snippet to select all sounds that include the snippet in their full name. The list is processed top-down, so putting *tags first will allow you to override specific ones later. Shouting disregards this and always generates a sound cue of the defined radius, regardless of which sound clients have it set as.").defineList("sound cue list", Arrays.asList(SOUND), String.class::isInstance);
     }
 
     private static void bake() {
@@ -334,13 +357,13 @@ public class StealthConfig {
         distract = stealthSystem ? CONFIG._distract.get().floatValue() : 1;
         unaware = stealthSystem ? CONFIG._unaware.get().floatValue() : 1;
         ignore = stealthSystem & CONFIG._ignore.get();
-        anglePerArmor = CONFIG._anglePerArmor.get();
+        shout = CONFIG._shoutSize.get();
         baseHorizontalDetection = CONFIG._baseDetectionHorizontal.get();
         baseVerticalDetection = CONFIG._baseDetectionVertical.get();
-        blockPerVolume = CONFIG._blockPerVolume.get();
         inv = CONFIG._removeInv.get();
         playerStealth=CONFIG._player.get();
         StealthUtils.updateMobDetection(CONFIG._customDetection.get());
+        StealthUtils.updateSound(CONFIG._sounds.get());
     }
 
     @SubscribeEvent

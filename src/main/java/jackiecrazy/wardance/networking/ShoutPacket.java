@@ -1,12 +1,12 @@
 package jackiecrazy.wardance.networking;
 
 import jackiecrazy.wardance.WarDance;
+import jackiecrazy.wardance.config.StealthConfig;
+import jackiecrazy.wardance.handlers.EntityHandler;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.network.PacketBuffer;
-import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.SoundCategory;
-import net.minecraft.util.SoundEvent;
-import net.minecraft.util.SoundEvents;
+import net.minecraft.util.*;
+import net.minecraft.util.math.BlockPos;
 import net.minecraftforge.fml.network.NetworkEvent;
 import net.minecraftforge.registries.ForgeRegistries;
 
@@ -45,8 +45,9 @@ public class ShoutPacket {
                 PlayerEntity uke = contextSupplier.get().getSender();
                 SoundEvent se = ForgeRegistries.SOUND_EVENTS.getValue(updateClientPacket.voice);
                 if (uke == null) return;
-                if (se == null) se = SoundEvents.VILLAGER_AMBIENT;
+                if (se == null) se = SoundEvents.PILLAGER_AMBIENT;
                 uke.level.playSound(null, uke.getX(), uke.getY(), uke.getZ(), se, SoundCategory.PLAYERS, 0.75f + WarDance.rand.nextFloat() * 0.5f, 0.75f + WarDance.rand.nextFloat() * 0.5f);
+                EntityHandler.alertTracker.put(new Tuple<>(uke.level, new BlockPos(uke.getX(), uke.getY(), uke.getZ())), (float) StealthConfig.shout);
             });
             contextSupplier.get().setPacketHandled(true);
         }

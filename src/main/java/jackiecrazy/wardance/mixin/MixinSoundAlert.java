@@ -1,7 +1,7 @@
 package jackiecrazy.wardance.mixin;
 
-import jackiecrazy.wardance.config.StealthConfig;
 import jackiecrazy.wardance.handlers.EntityHandler;
+import jackiecrazy.wardance.utils.StealthUtils;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.util.SoundCategory;
@@ -23,15 +23,15 @@ public abstract class MixinSoundAlert {
 
     @Inject(method = "playSound(Lnet/minecraft/entity/player/PlayerEntity;DDDLnet/minecraft/util/SoundEvent;Lnet/minecraft/util/SoundCategory;FF)V", at = @At("TAIL"))
     private void alert(PlayerEntity player, double x, double y, double z, SoundEvent soundIn, SoundCategory category, float volume, float pitch, CallbackInfo ci) {
-        if (category == SoundCategory.PLAYERS || category == SoundCategory.NEUTRAL)
-            EntityHandler.alertTracker.put(new Tuple<>(this.getLevel(), new BlockPos(x, y, z)), (float) (volume * StealthConfig.blockPerVolume));
+        if (StealthUtils.soundMap.containsKey(soundIn))
+            EntityHandler.alertTracker.put(new Tuple<>(this.getLevel(), new BlockPos(x, y, z)), (float) (StealthUtils.soundMap.get(soundIn)));
     }
 
     @Inject(method = "playSound(Lnet/minecraft/entity/player/PlayerEntity;Lnet/minecraft/entity/Entity;Lnet/minecraft/util/SoundEvent;Lnet/minecraft/util/SoundCategory;FF)V", at = @At("TAIL"))
     private void alertMoving(PlayerEntity player, Entity entityIn, SoundEvent eventIn, SoundCategory category, float volume, float pitch, CallbackInfo ci) {
         double x = entityIn.getX(), y = entityIn.getY(), z = entityIn.getZ();
-        if (category == SoundCategory.PLAYERS || category == SoundCategory.NEUTRAL)
-            EntityHandler.alertTracker.put(new Tuple<>(this.getLevel(), new BlockPos(x, y, z)), (float) (volume * StealthConfig.blockPerVolume));
+        if (StealthUtils.soundMap.containsKey(eventIn))
+            EntityHandler.alertTracker.put(new Tuple<>(this.getLevel(), new BlockPos(x, y, z)), (float) (StealthUtils.soundMap.get(eventIn)));
     }
 
 }

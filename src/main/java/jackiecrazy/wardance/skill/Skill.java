@@ -273,7 +273,7 @@ public abstract class Skill extends ForgeRegistryEntry<Skill> {
     }
 
     protected boolean cooldownTick(SkillData stats) {
-        if (stats.getState() == STATE.COOLING&&stats.getDuration()>0) {
+        if (stats.getState() == STATE.COOLING && stats.getDuration() > 0) {
             stats.decrementDuration(0.05f);
             int round = (int) (stats.getDuration() * 20);
             return stats.getDuration() < 3 || round % 20 == 0;
@@ -291,22 +291,18 @@ public abstract class Skill extends ForgeRegistryEntry<Skill> {
     }
 
     protected boolean cast(LivingEntity caster, float duration) {
-        return cast(caster, duration, false, 0);
+        return cast(caster, null, duration);
     }
 
-    protected boolean cast(LivingEntity caster, float duration, float arbitrary) {
-        return cast(caster, duration, false, arbitrary);
+    protected boolean cast(LivingEntity caster, LivingEntity target, float duration) {
+        return cast(caster, target, duration, false, 0);
     }
 
-    protected boolean cast(LivingEntity caster, float duration, boolean flag) {
-        return cast(caster, duration, flag, 0);
-    }
-
-    protected boolean cast(LivingEntity caster, float duration, boolean flag, float arbitrary) {
-        SkillResourceEvent sre = new SkillResourceEvent(caster, this);
+    protected boolean cast(LivingEntity caster, @Nullable LivingEntity target, float duration, boolean flag, float arbitrary) {
+        SkillResourceEvent sre = new SkillResourceEvent(caster, target, this);
         MinecraftForge.EVENT_BUS.post(sre);
         if (!sre.isCanceled() && CombatData.getCap(caster).getMight() >= sre.getMight() && CombatData.getCap(caster).getSpirit() >= sre.getSpirit()) {
-            SkillCastEvent sce = new SkillCastEvent(caster, this, sre.getMight(), sre.getSpirit(), duration, flag, arbitrary);
+            SkillCastEvent sce = new SkillCastEvent(caster, target, this, sre.getMight(), sre.getSpirit(), duration, flag, arbitrary);
             MinecraftForge.EVENT_BUS.post(sce);
             CombatData.getCap(caster).consumeMight(sce.getMight());
             CombatData.getCap(caster).consumeSpirit(sce.getSpirit());
@@ -373,6 +369,10 @@ public abstract class Skill extends ForgeRegistryEntry<Skill> {
 
     protected void mark(LivingEntity caster, LivingEntity target, float duration, float arbitrary) {
         Marks.getCap(target).mark(new SkillData(this, duration).setCaster(caster).setArbitraryFloat(arbitrary));
+    }
+
+    protected boolean hasMark(LivingEntity target){
+        return Marks.getCap(target).getActiveMark(this).isPresent();
     }
 
     public enum CastStatus {

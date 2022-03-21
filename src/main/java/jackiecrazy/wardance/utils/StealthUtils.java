@@ -9,11 +9,13 @@ import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.MobEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.SoundEvent;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.world.LightType;
 import net.minecraft.world.World;
 import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.registries.ForgeRegistries;
 
 import java.util.HashMap;
 import java.util.List;
@@ -22,7 +24,7 @@ import java.util.Locale;
 public class StealthUtils {
     public static final StealthData STEALTH = new StealthData("");
     public static HashMap<ResourceLocation, StealthData> stealthMap = new HashMap<>();
-    private static long lastUpdate;
+    public static HashMap<SoundEvent, Integer> soundMap = new HashMap<>();
 
     public static void updateMobDetection(List<? extends String> interpretS) {
         stealthMap.clear();
@@ -46,8 +48,32 @@ public class StealthUtils {
         }
     }
 
+    public static void updateSound(List<? extends String> interpretS) {
+        soundMap.clear();
+        for (String s : interpretS) {
+            try {
+                String[] val = s.split(",");
+                if (s.startsWith("*")) {
+                    String contain = val[0].substring(1);
+                    for (SoundEvent se : ForgeRegistries.SOUND_EVENTS) {
+                        if (se.getRegistryName().toString().contains(contain))
+                            soundMap.put(se, Integer.parseInt(val[1].trim()));
+                    }
+                }else {
+                    final ResourceLocation key = new ResourceLocation(val[0]);
+                    if (ForgeRegistries.SOUND_EVENTS.getValue(key) != null) {
+                        Integer value = Integer.parseInt(val[1].trim());
+                        soundMap.put(ForgeRegistries.SOUND_EVENTS.getValue(key), value);
+                    }
+                }
+            } catch (Exception e) {
+                WarDance.LOGGER.warn("improperly formatted sound definition " + s + "!");
+            }
+        }
+    }
+
     public static Awareness getAwareness(LivingEntity attacker, LivingEntity target) {
-        if (attacker == null || target == null || attacker == target)
+        if (target == null || attacker == target)
             return Awareness.ALERT;//the cases that don't make sense.
         //players are alert because being jumped with 2.5x daggers feel bad, and obviously nothing else applies if stealth is turned off
         if (!StealthConfig.stealthSystem || target instanceof PlayerEntity)
@@ -93,10 +119,7 @@ public class StealthUtils {
     public static int getActualLightLevel(World world, BlockPos pos) {
         int i = 0;
         if (world.dimensionType().hasSkyLight()) {
-            if (lastUpdate < world.getGameTime()) {
-                world.updateSkyBrightness();
-                lastUpdate = world.getGameTime();
-            }
+            world.updateSkyBrightness();
             int dark = world.getSkyDarken();
             i = world.getBrightness(LightType.SKY, pos) - dark;
         }

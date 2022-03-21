@@ -20,9 +20,6 @@ import net.minecraftforge.eventbus.api.EventPriority;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
-import jackiecrazy.wardance.skill.Skill.CastStatus;
-import jackiecrazy.wardance.skill.Skill.STATE;
-
 public class Judgment extends Skill {
     /*
     Redirects all might gain to another bar temporarily. Gaining 10 might in this manner will cause your next attack to deal 20% of the target's current health in damage. 10 second cooldown.
@@ -44,10 +41,14 @@ public class Judgment extends Skill {
     }
 
     protected void performEffect(LivingEntity caster, LivingEntity target, int stack, SkillData sd) {
-        final float amount = stack == 3 ? target.getHealth() * 0.15f : target.getHealth() * 0.03f;
-        if (this == WarSkills.AMPUTATION.get())
+        float amount = stack == 3 ? target.getHealth() * 0.15f : target.getHealth() * 0.03f;
+        if (this == WarSkills.AMPUTATION.get()) {
+            if (stack == 3) {
+                float healthDiff = target.getMaxHealth() - target.getHealth();
+                amount += healthDiff;
+            }
             CombatData.getCap(target).addWounding(amount);
-        else
+        } else
             target.hurt(new CombatDamageSource("player", caster).setDamageTyping(CombatDamageSource.TYPE.PHYSICAL).setProcSkillEffects(true).setProcAttackEffects(true).setDamageTyping(CombatDamageSource.TYPE.TRUE).bypassArmor().bypassMagic(), amount);
     }
 
@@ -80,7 +81,7 @@ public class Judgment extends Skill {
     @Override
     public boolean onStateChange(LivingEntity caster, SkillData prev, STATE from, STATE to) {
         LivingEntity target = SkillUtils.aimLiving(caster);
-        if (from == STATE.HOLSTERED && to == STATE.ACTIVE && target != null && cast(caster, -999)) {
+        if (from == STATE.HOLSTERED && to == STATE.ACTIVE && target != null && cast(caster, target, -999)) {
             int stack = 1;
             float arb = Marks.getCap(target).getActiveMark(this).orElse(SkillData.DUMMY).getArbitraryFloat();
             if (arb >= 2) {//detonate

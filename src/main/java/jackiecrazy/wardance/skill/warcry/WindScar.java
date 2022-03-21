@@ -17,8 +17,6 @@ import java.util.Arrays;
 import java.util.HashSet;
 import java.util.UUID;
 
-import jackiecrazy.wardance.skill.Skill.STATE;
-
 public class WindScar extends WarCry {
     private static final AttributeModifier reach = new AttributeModifier(UUID.fromString("abe24c38-73e3-4551-9df4-e06e117699c1"), "wind scar bonus", 1, AttributeModifier.Operation.ADDITION);
     private static final UUID bigReach = UUID.fromString("abe24c38-73e3-4551-9df4-e06e117699c3");
@@ -67,7 +65,7 @@ public class WindScar extends WarCry {
     }
 
     protected boolean cast(LivingEntity caster, float duration) {
-        return cast(caster, duration, false, CombatData.getCap(caster).getMight());
+        return cast(caster, null, duration, false, CombatData.getCap(caster).getMight());
     }
 
     @Override

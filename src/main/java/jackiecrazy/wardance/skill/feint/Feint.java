@@ -33,8 +33,6 @@ import java.util.Arrays;
 import java.util.HashSet;
 import java.util.UUID;
 
-import jackiecrazy.wardance.skill.Skill.STATE;
-
 @Mod.EventBusSubscriber(modid = WarDance.MODID)
 public class Feint extends Skill {
     private final Tag<String> proc = Tag.create(new HashSet<>(Arrays.asList("physical", "disableShield", "noDamage", ProcPoints.melee, ProcPoints.afflict_tick, "boundCast", ProcPoints.countdown, ProcPoints.recharge_normal, ProcPoints.change_parry_result)));
@@ -107,7 +105,7 @@ public class Feint extends Skill {
 
     @Override
     public void onProc(LivingEntity caster, Event procPoint, STATE state, SkillData stats, LivingEntity target) {
-        if (procPoint instanceof LivingAttackEvent && procPoint.getPhase() == EventPriority.HIGHEST && state == STATE.HOLSTERED && ((LivingAttackEvent) procPoint).getEntityLiving() == target && cast(caster, -999)) {
+        if (procPoint instanceof LivingAttackEvent && procPoint.getPhase() == EventPriority.HIGHEST && state == STATE.HOLSTERED && ((LivingAttackEvent) procPoint).getEntityLiving() == target && cast(caster, target, -999)) {
             int dur = 20;
             if (Marks.getCap(target).isMarked(this)) {
                 SkillData a = Marks.getCap(target).getActiveMark(this).get();
@@ -116,7 +114,7 @@ public class Feint extends Skill {
             CombatData.getCap(target).setHandBind(Hand.MAIN_HAND, dur);
             CombatData.getCap(target).setHandBind(Hand.OFF_HAND, dur);
             CombatUtils.setHandCooldown(caster, Hand.MAIN_HAND, this == WarSkills.FOLLOWUP.get() ? 1 : 0.5f, true);
-            mark(caster, target, dur / 20f + 0.1f);
+            mark(caster, target, dur / 20f + 0.1f, 6);
             procPoint.setCanceled(true);
             markUsed(caster);
         }

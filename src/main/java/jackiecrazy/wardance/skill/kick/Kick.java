@@ -65,7 +65,7 @@ public class Kick extends Skill {
     @Override
     public boolean onStateChange(LivingEntity caster, SkillData prev, STATE from, STATE to) {
         LivingEntity target = GeneralUtils.raytraceLiving(caster, distance());
-        if (from == STATE.HOLSTERED && to == STATE.ACTIVE && target!=null&& cast(caster, -999)) {
+        if (from == STATE.HOLSTERED && to == STATE.ACTIVE && target!=null&& cast(caster, target, -999)) {
                 CombatData.getCap(target).consumePosture(caster, 4);
                 if (caster instanceof PlayerEntity)
                     ((PlayerEntity) caster).sweepAttack();

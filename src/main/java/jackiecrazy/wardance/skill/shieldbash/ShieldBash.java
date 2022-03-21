@@ -63,7 +63,7 @@ public class ShieldBash extends Skill {
         if (procPoint instanceof LivingAttackEvent && ((LivingAttackEvent) procPoint).getEntityLiving() == target && CombatUtils.isMeleeAttack(((LivingAttackEvent) procPoint).getSource()) && procPoint.getPhase() == EventPriority.HIGHEST) {
             final boolean base = isPassive(caster) && state != STATE.COOLING;
             final boolean otherwise = state == STATE.HOLSTERED && CombatUtils.isShield(caster, CombatUtils.getAttackingItemStack(((LivingAttackEvent) procPoint).getSource()));
-            if ((base || otherwise) && cast(caster, -999)) {
+            if ((base || otherwise) && cast(caster, target, -999)) {
                 performEffect(caster, target);
                 caster.level.playSound(null, caster.getX(), caster.getY(), caster.getZ(), SoundEvents.ZOMBIE_ATTACK_IRON_DOOR, SoundCategory.PLAYERS, 0.25f + WarDance.rand.nextFloat() * 0.5f, 0.5f + WarDance.rand.nextFloat() * 0.5f);
                 markUsed(caster);

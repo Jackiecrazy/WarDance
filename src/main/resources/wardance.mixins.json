@@ -6,7 +6,6 @@
   "mixins": [
     "MixinArmorStealth",
     "MixinAttackSpeed",
-    "MixinMobAlert",
     "MixinMobSound",
     "MixinNewSweepAttack",
     "MixinPlayerEntity",
