@@ -1,12 +1,12 @@
 package jackiecrazy.wardance.skill.regenspirit;
 
-import jackiecrazy.wardance.WarDance;
 import jackiecrazy.wardance.event.SkillResourceEvent;
 import jackiecrazy.wardance.skill.Skill;
 import jackiecrazy.wardance.skill.SkillCategories;
 import jackiecrazy.wardance.skill.SkillCategory;
 import jackiecrazy.wardance.skill.SkillData;
 import jackiecrazy.wardance.utils.GeneralUtils;
+import jackiecrazy.wardance.utils.LuckUtils;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.ai.attributes.Attributes;
 import net.minecraft.tags.Tag;
@@ -15,8 +15,6 @@ import net.minecraftforge.eventbus.api.EventPriority;
 
 import javax.annotation.Nonnull;
 import java.awt.*;
-
-import jackiecrazy.wardance.skill.Skill.STATE;
 
 public class LadyLuck extends Skill {
     /*
@@ -54,7 +52,7 @@ apathy: your max spirit is 4, your spirit instantly refills after cooldown, you 
         if (procPoint instanceof SkillResourceEvent && procPoint.getPhase() == EventPriority.HIGHEST) {
             float luck = (float) Math.max(0, GeneralUtils.getAttributeValueSafe(caster, Attributes.LUCK));
             stats.setArbitraryFloat(stats.getArbitraryFloat() + ((1 + luck) / (5 + luck)));
-            if (WarDance.rand.nextFloat() < stats.getArbitraryFloat()) {
+            if (LuckUtils.luckRoll(caster, stats.getArbitraryFloat())) {
                 ((SkillResourceEvent) procPoint).setSpirit(0);
                 stats.setArbitraryFloat(0);
             }

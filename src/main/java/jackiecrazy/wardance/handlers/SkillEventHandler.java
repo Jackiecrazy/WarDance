@@ -360,6 +360,24 @@ public class SkillEventHandler {
         }
     }
 
+   @SubscribeEvent(priority = EventPriority.HIGHEST)
+    public static void luckFlagH(LuckEvent e) {
+        if (!e.getEntityLiving().isEffectiveAi()) return;
+        final ISkillCapability cap = CasterData.getCap(e.getEntityLiving());
+        for (Skill s : cap.getEquippedSkills()) {
+            cap.getSkillData(s).ifPresent(d -> s.onProc(e.getEntityLiving(), e, d.getState(), d, null));
+        }
+    }
+
+    @SubscribeEvent(priority = EventPriority.LOWEST)
+    public static void luckFlagL(LuckEvent e) {
+        if (!e.getEntityLiving().isEffectiveAi()) return;
+        final ISkillCapability cap = CasterData.getCap(e.getEntityLiving());
+        for (Skill s : cap.getEquippedSkills()) {
+            cap.getSkillData(s).ifPresent(d -> s.onProc(e.getEntityLiving(), e, d.getState(), d, null));
+        }
+    }
+
     @SubscribeEvent(priority = EventPriority.LOWEST)
     public static void knockbackFlagS(MeleeKnockbackEvent e) {
         if (!e.getEntityLiving().isEffectiveAi()) return;

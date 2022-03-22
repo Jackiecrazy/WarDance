@@ -27,12 +27,12 @@ public class ItchyCurse extends Hex {
         if (target.tickCount % 20 == 0) {
             sd.setArbitraryFloat(sd.getArbitraryFloat() + 1);
             if (sd.getArbitraryFloat() >= 3) {
-                SkillUtils.modifyAttribute(target, Attributes.MOVEMENT_SPEED, HEX.getId(), -1, AttributeModifier.Operation.MULTIPLY_TOTAL);
+                SkillUtils.modifyAttribute(target, Attributes.MOVEMENT_SPEED, HEX, -1, AttributeModifier.Operation.MULTIPLY_TOTAL);
                 CombatData.getCap(target).setHandBind(Hand.MAIN_HAND, 20);
                 CombatData.getCap(target).setHandBind(Hand.OFF_HAND, 20);
                 sd.setArbitraryFloat(-1);
             } else if (sd.getArbitraryFloat() == 0) {
-                SkillUtils.modifyAttribute(target, Attributes.MOVEMENT_SPEED, HEX.getId(), 0, AttributeModifier.Operation.MULTIPLY_TOTAL);
+                SkillUtils.modifyAttribute(target, Attributes.MOVEMENT_SPEED, HEX, 0, AttributeModifier.Operation.MULTIPLY_TOTAL);
             }
         }
         //SkillUtils.modifyAttribute(target, Attributes.ARMOR, HEX.getID(), -sd.getArbitraryFloat() * 2, AttributeModifier.Operation.ADDITION);
@@ -53,7 +53,7 @@ public class ItchyCurse extends Hex {
     public void onMarkEnd(LivingEntity caster, LivingEntity target, SkillData sd) {
         final ModifiableAttributeInstance speed = target.getAttribute(Attributes.MOVEMENT_SPEED);
         if (speed != null) {
-            speed.removeModifier(HEX.getId());
+            speed.removeModifier(HEX);
         }
         super.onMarkEnd(caster, target, sd);
     }

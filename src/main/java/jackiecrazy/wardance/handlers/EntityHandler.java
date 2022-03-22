@@ -19,6 +19,7 @@ import jackiecrazy.wardance.networking.UpdateTargetPacket;
 import jackiecrazy.wardance.potion.WarEffects;
 import jackiecrazy.wardance.skill.Skill;
 import jackiecrazy.wardance.utils.GeneralUtils;
+import jackiecrazy.wardance.utils.LuckUtils;
 import jackiecrazy.wardance.utils.StealthUtils;
 import net.minecraft.command.arguments.EntityAnchorArgument;
 import net.minecraft.entity.CreatureEntity;
@@ -250,7 +251,7 @@ Mobs should move into a position that is close to the player, far from allies, a
             if (sd.isAllSeeing() || sd.isWary()) return;
             //outside of LoS, perform luck check. Pray to RNGesus!
             double luckDiff = GeneralUtils.getAttributeValueSafe(e.getTarget(), Attributes.LUCK) - GeneralUtils.getAttributeValueSafe(mob, Attributes.LUCK);
-            if (luckDiff <= 0 || WarDance.rand.nextFloat() > (luckDiff / (2 + luckDiff))) {
+            if (luckDiff <= 0 || !LuckUtils.luckRoll(e.getTarget(), (float) (luckDiff / (2 + luckDiff)))) {
                 //you failed!
                 if (sd.isSkeptical()) {
                     mob.setTarget(null);

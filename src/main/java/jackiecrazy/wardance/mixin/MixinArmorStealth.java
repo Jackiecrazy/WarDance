@@ -5,8 +5,6 @@ import jackiecrazy.wardance.utils.StealthUtils;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.LivingEntity;
-import net.minecraft.nbt.CompoundNBT;
-import net.minecraft.network.IPacket;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.world.World;
 import org.spongepowered.asm.mixin.Mixin;
@@ -14,7 +12,7 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Redirect;
 
 @Mixin(LivingEntity.class)
-public class MixinArmorStealth extends Entity {
+public abstract class MixinArmorStealth extends Entity {
 
     public MixinArmorStealth(EntityType<?> p_i48580_1_, World p_i48580_2_) {
         super(p_i48580_1_, p_i48580_2_);
@@ -35,25 +33,5 @@ public class MixinArmorStealth extends Entity {
             if (StealthUtils.stealthMap.getOrDefault(e.getType().getRegistryName(), StealthUtils.STEALTH).isObservant())
                 return false;
         return isInvisible();
-    }
-
-    @Override
-    protected void defineSynchedData() {
-
-    }
-
-    @Override
-    protected void readAdditionalSaveData(CompoundNBT p_70037_1_) {
-
-    }
-
-    @Override
-    protected void addAdditionalSaveData(CompoundNBT p_213281_1_) {
-
-    }
-
-    @Override
-    public IPacket<?> getAddEntityPacket() {
-        return null;
     }
 }

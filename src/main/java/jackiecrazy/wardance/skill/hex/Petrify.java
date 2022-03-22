@@ -5,7 +5,6 @@ import jackiecrazy.wardance.potion.WarEffects;
 import jackiecrazy.wardance.skill.SkillData;
 import jackiecrazy.wardance.utils.SkillUtils;
 import jackiecrazy.wardance.utils.TargetingUtils;
-import net.minecraft.entity.Entity;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.ai.attributes.AttributeModifier;
 import net.minecraft.entity.ai.attributes.Attributes;
@@ -57,9 +56,9 @@ public class Petrify extends Hex {
         if (procPoint instanceof LivingDamageEvent && ((LivingDamageEvent) procPoint).getEntityLiving() == target && target.hasEffect(WarEffects.PETRIFY.get())) {
             //create dust cloud and end petrify
             SkillUtils.createCloud(caster.level, caster, target.getX(), target.getY(), target.getZ(), 7, ParticleTypes.LARGE_SMOKE);
-            for (Entity entity : target.level.getEntities(caster, target.getBoundingBoxForCulling().inflate(7), a->TargetingUtils.isAlly(a, caster))) {
-                if(entity instanceof LivingEntity)
-                    CombatData.getCap((LivingEntity) entity).consumePosture(5);
+            for (LivingEntity entity : target.level.getEntitiesOfClass(LivingEntity.class, target.getBoundingBoxForCulling().inflate(7), a->!TargetingUtils.isAlly(a, caster))) {
+                CombatData.getCap(entity).consumePosture(5);
+                target.addEffect(new EffectInstance(WarEffects.ENFEEBLE.get(), 60));
             }
             target.removeEffect(WarEffects.PETRIFY.get());
         }

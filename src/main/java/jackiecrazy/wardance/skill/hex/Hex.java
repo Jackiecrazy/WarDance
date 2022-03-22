@@ -6,6 +6,7 @@ import jackiecrazy.wardance.capability.resources.CombatData;
 import jackiecrazy.wardance.capability.resources.ICombatCapability;
 import jackiecrazy.wardance.capability.status.Marks;
 import jackiecrazy.wardance.entity.FakeExplosion;
+import jackiecrazy.wardance.event.LuckEvent;
 import jackiecrazy.wardance.skill.*;
 import jackiecrazy.wardance.utils.CombatUtils;
 import jackiecrazy.wardance.utils.EffectUtils;
@@ -35,7 +36,7 @@ import java.util.*;
 
 @Mod.EventBusSubscriber(modid = WarDance.MODID)
 public class Hex extends Skill {
-    static final AttributeModifier HEX = new AttributeModifier(UUID.fromString("67fe7ef6-a398-4c62-9bb1-42edaa80e7b1"), "hex", -2, AttributeModifier.Operation.ADDITION);
+    static final UUID HEX = UUID.fromString("67fe7ef6-a398-4c62-9bb1-42edaa80e7b1");
     private final Tag<String> tag = makeTag("melee", "noDamage", "boundCast", ProcPoints.afflict_tick, ProcPoints.change_parry_result, ProcPoints.recharge_time, "normalAttack", "chant", "countdown");
     private final Tag<String> thing = makeTag(SkillTags.offensive, SkillTags.magical);
 
@@ -126,7 +127,8 @@ public class Hex extends Skill {
     public boolean onStateChange(LivingEntity caster, SkillData prev, STATE from, STATE to) {
         LivingEntity e = SkillUtils.aimLiving(caster);
         if (to == STATE.ACTIVE && e != null && cast(caster, e, -999)) {
-            mark(caster, e, duration());
+            mark(caster, e, duration(), prev.getArbitraryFloat());
+            prev.setArbitraryFloat(0);
             markUsed(caster);
         }
         if (to == STATE.COOLING)
@@ -141,12 +143,14 @@ public class Hex extends Skill {
     @Override
     public boolean markTick(LivingEntity caster, LivingEntity target, SkillData sd) {
         sd.decrementDuration();
-        return true;
+        return super.markTick(caster, target, sd);
     }
 
     @Override
     public void onProc(LivingEntity caster, Event procPoint, STATE state, SkillData stats, LivingEntity target) {
-
+        if (this == WarSkills.CURSE_OF_MISFORTUNE.get() && procPoint instanceof LuckEvent.Post && state != STATE.COOLING) {
+            stats.setArbitraryFloat(Math.min(11, stats.getArbitraryFloat() + 1));
+        }
     }
 
     @Override
@@ -162,7 +166,9 @@ public class Hex extends Skill {
         final ModifiableAttributeInstance luck = target.getAttribute(Attributes.LUCK);
         if (luck != null && this == WarSkills.CURSE_OF_MISFORTUNE.get()) {
             luck.removeModifier(HEX);
-            luck.addTransientModifier(HEX);
+            AttributeModifier am = new AttributeModifier(HEX, "hex", -2 - sd.getArbitraryFloat(), AttributeModifier.Operation.ADDITION);
+            sd.setArbitraryFloat(0);
+            luck.addTransientModifier(am);
         }
         return super.onMarked(caster, target, sd, existing);
     }

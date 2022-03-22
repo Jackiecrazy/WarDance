@@ -63,7 +63,8 @@ public class CombatCapability implements ICombatCapability {
     private float cache;//no need to save this because it'll be used within the span of a tick
     private int parrying;
     private long staggerTickExisted;
-    private int recoveryTimer, sweeping, adrenaline;
+    private int sweeping;
+    private int adrenaline;
     private ItemStack tempOffhand = ItemStack.EMPTY;
     private Vector3d motion;
 
@@ -284,7 +285,6 @@ public class CombatCapability implements ICombatCapability {
         posture -= amount;
         addFatigue(amount * ResourceConfig.fatigue);
         setPostureGrace((int) cooldown);
-        recoveryTimer = (int) (cooldown * 1.5f) + CombatConfig.recovery;
         sync();
         return ret;
     }
@@ -779,7 +779,9 @@ public class CombatCapability implements ICombatCapability {
         final int ticks = (int) (elb.level.getGameTime() - lastUpdate);
         if (ticks < 1) return;//sometimes time runs backwards
         //update max values
-        vision=(float)elb.getAttributeValue(Attributes.FOLLOW_RANGE);
+        vision = (float) elb.getAttributeValue(Attributes.FOLLOW_RANGE);
+        if (elb.hasEffect(WarEffects.SLEEP.get()) || elb.hasEffect(WarEffects.PARALYSIS.get()) || elb.hasEffect(WarEffects.PETRIFY.get()))
+            vision = -1;
         setTrueMaxPosture(getMPos(elb));
         setTrueMaxSpirit((float) elb.getAttributeValue(WarAttributes.MAX_SPIRIT.get()));
         setMaxMight((float) elb.getAttributeValue(WarAttributes.MAX_MIGHT.get()));
@@ -801,7 +803,6 @@ public class CombatCapability implements ICombatCapability {
         if (ticks > 5 || (lastUpdate + ticks) % 5 != lastUpdate % 5)
             motion = elb.position();
         //tick down everything
-        recoveryTimer -= ticks;
         if (adrenaline > 0)
             adrenaline -= Math.min(adrenaline, ticks);
         int qiExtra = decrementMightGrace(ticks);
@@ -929,7 +930,7 @@ public class CombatCapability implements ICombatCapability {
         mstaggert = c.getInt("mstaggert");
         setStaggerCount(c.getInt("staggerc"));
         retina = c.getInt("retina");
-        vision=c.getFloat("vision");
+        vision = c.getFloat("vision");
         if (!c.contains("qi")) return;
         setMight(c.getFloat("qi"));
         setResolve(c.getFloat("resolve"));
@@ -948,7 +949,6 @@ public class CombatCapability implements ICombatCapability {
         setForcedSweep(c.getInt("sweep"));
         setHandReel(Hand.MAIN_HAND, c.getFloat("mainReel"));
         setHandReel(Hand.OFF_HAND, c.getFloat("offReel"));
-        recoveryTimer = c.getInt("stumble");
         first = c.getBoolean("first");
         adrenaline = c.getInt("adrenaline");
         parrying = c.getInt("parrying");
@@ -1033,7 +1033,6 @@ public class CombatCapability implements ICombatCapability {
         c.putInt("adrenaline", adrenaline);
         c.putInt("shattercd", getShatterCooldown());
         c.putInt("sweep", getForcedSweep());
-        c.putInt("stumble", recoveryTimer);
         c.putBoolean("rolling", dude.get() instanceof PlayerEntity && ((PlayerEntity) dude.get()).getForcedPose() == Pose.SLEEPING);
         c.putBoolean("shieldDown", shieldDown);
         if (!tempOffhand.isEmpty())
@@ -1094,17 +1093,13 @@ public class CombatCapability implements ICombatCapability {
             armorMod = 2.5f;
             healthMod = 1;
         }
-        float recovery = 0;
-        if (recoveryTimer <= CombatConfig.recovery && recoveryTimer > 0 && posture < getMaxPosture() * CombatConfig.posCap) {
-            recovery = (getMaxPosture() * CombatConfig.posCap) / CombatConfig.recovery;
-        }
         //Vector3d spd = elb.getMotion();
         //float speedMod = (float) Math.min(1, 0.007f / (spd.x * spd.x + spd.z * spd.z));
 //        if (getStaggerTime() > 0) {
 //            return getMaxPosture() * armorMod * speedMod * healthMod / (1.5f * ResourceConfig.staggerDuration);
 //        }
         //0.2f
-        final float ret = (((getMaxPosture() / (armorMod * 20)) * cooldownMod) + recovery) * exhaustMod * healthMod * poison;
+        final float ret = (((getMaxPosture() / (armorMod * 20)) * cooldownMod)) * exhaustMod * healthMod * poison;
         GainPostureEvent ev = new GainPostureEvent(elb, ret);
         MinecraftForge.EVENT_BUS.post(ev);
         return ev.getQuantity();
@@ -1125,17 +1120,13 @@ public class CombatCapability implements ICombatCapability {
             armorMod = 2.5f;
             healthMod = 1;
         }
-        float recovery = 0;
-        if (recoveryTimer <= CombatConfig.recovery && recoveryTimer > 0 && posture < getMaxPosture() * CombatConfig.posCap) {
-            recovery = (float) ((getMaxBarrier() * CombatConfig.posCap) / CombatConfig.recovery);
-        }
         //Vector3d spd = elb.getMotion();
         //float speedMod = (float) Math.min(1, 0.007f / (spd.x * spd.x + spd.z * spd.z));
 //        if (getStaggerTime() > 0) {
 //            return getMaxPosture() * armorMod * speedMod * healthMod / (1.5f * ResourceConfig.staggerDuration);
 //        }
         //0.2f
-        final float ret = (((getMaxPosture() / (armorMod * 20))) + recovery) * exhaustMod * healthMod * poison;
+        final float ret = (((getMaxPosture() / (armorMod * 20)))) * exhaustMod * healthMod * poison;
         GainBarrierEvent ev = new GainBarrierEvent(elb, ret);
         MinecraftForge.EVENT_BUS.post(ev);
         return ev.getQuantity();

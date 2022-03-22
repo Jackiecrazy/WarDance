@@ -90,7 +90,7 @@ public class StealthUtils {
         else if (target.hasEffect(WarEffects.DISTRACTION.get()) || target.hasEffect(WarEffects.CONFUSION.get()) || target.getAirSupply() <= 0)
             a = Awareness.DISTRACTED;
             //looking around for you, but cannot see
-        else if (attacker.isInvisible() && !sd.isObservant())
+        else if (attacker != null && attacker.isInvisible() && !sd.isObservant())
             a = Awareness.DISTRACTED;
             //webbed and not a spider
         else if (inWeb(target) && !sd.isCheliceric())

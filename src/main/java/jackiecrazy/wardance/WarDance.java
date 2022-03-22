@@ -162,7 +162,7 @@ public class WarDance {
         public static void attributes(EntityAttributeModificationEvent event) {
             for (EntityType<? extends LivingEntity> t : event.getTypes()) {
                 if (!event.has(t, Attributes.ATTACK_SPEED)) event.add(t, Attributes.ATTACK_SPEED, 4);
-                if (!event.has(t, Attributes.LUCK)) event.add(t, Attributes.LUCK, 4);
+                if (!event.has(t, Attributes.LUCK)) event.add(t, Attributes.LUCK, 0);
                 for (RegistryObject<Attribute> a : WarAttributes.ATTRIBUTES.getEntries()) {
                     if (!event.has(t, a.get())) {
                         if (GeneralConfig.debug)

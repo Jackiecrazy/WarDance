@@ -332,6 +332,7 @@ public class RenderEvents {
                             AbstractGui.blit(stack, pair.getFirst() - (afflict.size() - 1 - index) * 16 + (afflict.size() - 1) * 8 - 8, pair.getSecond(), 0, 0, 16, 16, 16, 16);
                         }
                     }
+                    RenderSystem.color4f(1, 1, 1, 1);
                     stealth:
                     {
                         if (ClientConfig.CONFIG.stealth.enabled && cap.isCombatMode()) {
@@ -346,14 +347,16 @@ public class RenderEvents {
                                     shift = 1;
                                     break;
                                 case UNAWARE:
-                                    shift = looked.distanceToSqr(player) < dist * dist ? 2 : 3;
+                                    if (Minecraft.getInstance().player != null)
+                                        shift = looked.distanceToSqr(Minecraft.getInstance().player) < dist * dist ? 2 : 3;
                                     break;
                             }
+                            if (info.getB()<0)
+                                shift = 0;
                             mc.getTextureManager().bind(stealth);
                             AbstractGui.blit(stack, pair.getFirst() - 16, pair.getSecond() - 8, 0, shift * 16, 32, 16, 64, 64);
                         }
                     }
-                    RenderSystem.color4f(1, 1, 1, 1);
                     if (ClientConfig.CONFIG.enemyPosture.enabled && (cap.isCombatMode() || CombatData.getCap((LivingEntity) look).getPosture() < CombatData.getCap((LivingEntity) look).getMaxPosture() || CombatData.getCap((LivingEntity) look).getStaggerTime() > 0 || cap.getShatterCooldown() < GeneralUtils.getAttributeValueSafe(player, WarAttributes.SHATTER.get()) || cap.getBarrier() < cap.getMaxBarrier()))
                         drawPostureBarAt(false, stack, looked, width, height);//Math.min(HudConfig.client.enemyPosture.x, width - 64), Math.min(HudConfig.client.enemyPosture.y, height - 64));
                 }
@@ -694,14 +697,17 @@ public class RenderEvents {
         int shift = 0;
         switch (info.getA()) {
             case ALERT:
-                return;
+                break;
             case DISTRACTED:
                 shift = 1;
                 break;
             case UNAWARE:
-                shift = passedEntity.distanceToSqr(Minecraft.getInstance().player) < dist * dist ? 2 : 3;
+                if (Minecraft.getInstance().player != null)
+                    shift = passedEntity.distanceToSqr(Minecraft.getInstance().player) < dist * dist ? 2 : 3;
                 break;
         }
+        if(info.getB()<0)
+            shift = 0;
         double x = passedEntity.xo + (passedEntity.getX() - passedEntity.xo) * partialTicks;
         double y = passedEntity.yo + (passedEntity.getY() - passedEntity.yo) * partialTicks;
         double z = passedEntity.zo + (passedEntity.getZ() - passedEntity.zo) * partialTicks;
@@ -714,7 +720,7 @@ public class RenderEvents {
         Minecraft.getInstance().getTextureManager().bind(stealth);
         poseStack.translate(0.0D, (double) 0.5, 0.0D);
         poseStack.mulPose(Minecraft.getInstance().getEntityRenderDispatcher().cameraOrientation());
-        final float size = Math.max(0.002F * CombatData.getCap(passedEntity).getTrueMaxPosture(), 0.015f);
+        final float size = MathHelper.clamp(0.002F * CombatData.getCap(passedEntity).getTrueMaxPosture(), 0.015f, 0.1f);
         poseStack.scale(-size, -size, size);
         AbstractGui.blit(poseStack, -16, -8, 0, shift * 16, 32, 16, 64, 64);
         poseStack.popPose();
