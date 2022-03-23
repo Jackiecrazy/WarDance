@@ -697,7 +697,7 @@ public class RenderEvents {
         int shift = 0;
         switch (info.getA()) {
             case ALERT:
-                break;
+                return;
             case DISTRACTED:
                 shift = 1;
                 break;
