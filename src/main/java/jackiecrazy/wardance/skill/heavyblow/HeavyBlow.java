@@ -22,6 +22,7 @@ public class HeavyBlow extends Skill {
         return passive;
     }
 
+    @Nonnull
     @Override
     public Tag<String> getSoftIncompatibility(LivingEntity caster) {
         return Tag.empty();

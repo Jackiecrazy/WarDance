@@ -1,6 +1,7 @@
 package jackiecrazy.wardance.skill;
 
 import jackiecrazy.wardance.WarDance;
+import jackiecrazy.wardance.skill.coupdegrace.BiteTheDust;
 import jackiecrazy.wardance.skill.coupdegrace.CoupDeGrace;
 import jackiecrazy.wardance.skill.crownchampion.CrownChampion;
 import jackiecrazy.wardance.skill.judgment.*;
@@ -41,7 +42,7 @@ public class WarSkills {
     public static final RegistryObject<Skill> OVERPOWER = SKILLS.register("overpower", Overpower::new);
     public static final RegistryObject<Skill> RECOVERY = SKILLS.register("recovery", Recovery::new);
     public static final RegistryObject<Skill> DECAPITATE = SKILLS.register("decapitate", CoupDeGrace::new);
-    public static final RegistryObject<Skill> REINVIGORATE = SKILLS.register("reinvigorate", CoupDeGrace.Reinvigorate::new);
+    public static final RegistryObject<Skill> REINVIGORATE = SKILLS.register("reinvigorate", BiteTheDust::new);
     public static final RegistryObject<Skill> DANSE_MACABRE = SKILLS.register("danse_macabre", CoupDeGrace.DanseMacabre::new);
     public static final RegistryObject<Skill> FRENZY = SKILLS.register("frenzy", CoupDeGrace.Frenzy::new);
     public static final RegistryObject<Skill> REAPING = SKILLS.register("reaping", CoupDeGrace.ReapersLaugh::new);

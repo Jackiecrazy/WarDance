@@ -19,6 +19,7 @@ public abstract class IronGuard extends Skill {
         return passive;
     }
 
+    @Nonnull
     @Override
     public Tag<String> getSoftIncompatibility(LivingEntity caster) {
         return none;

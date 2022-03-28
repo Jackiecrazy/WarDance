@@ -1,7 +1,6 @@
 package jackiecrazy.wardance.utils;
 
-import jackiecrazy.wardance.entity.FearEntity;
-import jackiecrazy.wardance.entity.WarEntities;
+import jackiecrazy.wardance.capability.goal.GoalCapabilityProvider;
 import jackiecrazy.wardance.potion.WarEffects;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.MobEntity;
@@ -102,15 +101,16 @@ public class EffectUtils {
             MobEntity el = (MobEntity) elb;
             el.getNavigation().stop();
             el.setTarget(null);
+            GoalCapabilityProvider.getCap(elb).ifPresent(a->a.setFearSource(applier));
         }
-        if (!elb.level.isClientSide) {
-            //PigEntity f=new PigEntity(EntityType.PIG, elb.world);
-            FearEntity f = new FearEntity(WarEntities.fear, elb.level);
-            f.setFearSource(applier);
-            f.setTetheringEntity(elb);
-            f.teleportTo(elb.getX(), elb.getY(), elb.getZ());
-            elb.level.addFreshEntity(f);
-        }
+//        if (!elb.level.isClientSide) {
+//            //PigEntity f=new PigEntity(EntityType.PIG, elb.world);
+//            FearEntity f = new FearEntity(WarEntities.fear, elb.level);
+//            f.setFearSource(applier);
+//            f.setTetheringEntity(elb);
+//            f.teleportTo(elb.getX(), elb.getY(), elb.getZ());
+//            elb.level.addFreshEntity(f);
+//        }
     }
 
     public enum StackingMethod {

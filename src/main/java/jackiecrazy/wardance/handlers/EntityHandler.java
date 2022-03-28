@@ -11,6 +11,7 @@ import jackiecrazy.wardance.capability.status.Marks;
 import jackiecrazy.wardance.config.GeneralConfig;
 import jackiecrazy.wardance.config.StealthConfig;
 import jackiecrazy.wardance.entity.ai.CompelledVengeanceGoal;
+import jackiecrazy.wardance.entity.ai.FearGoal;
 import jackiecrazy.wardance.entity.ai.InvestigateSoundGoal;
 import jackiecrazy.wardance.entity.ai.NoGoal;
 import jackiecrazy.wardance.networking.CombatChannel;
@@ -98,6 +99,7 @@ public class EntityHandler {
                 if (!StealthUtils.stealthMap.getOrDefault(creature.getType().getRegistryName(), StealthUtils.STEALTH).isDeaf())
                     mob.goalSelector.addGoal(0, new InvestigateSoundGoal(creature));
                 mob.targetSelector.addGoal(0, new CompelledVengeanceGoal(creature));
+                mob.targetSelector.addGoal(0, new FearGoal(creature));
             }
         } else if (e.getEntity() instanceof ServerPlayerEntity) {
             CombatChannel.INSTANCE.send(PacketDistributor.PLAYER.with(() -> (ServerPlayerEntity) e.getEntity()), new SyncSkillPacket(CasterData.getCap((LivingEntity) e.getEntity()).write()));

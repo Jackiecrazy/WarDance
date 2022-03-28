@@ -8,6 +8,8 @@ import net.minecraftforge.eventbus.api.Event;
 
 import jackiecrazy.wardance.skill.Skill.STATE;
 
+import javax.annotation.Nonnull;
+
 public class WeaponThrow extends Skill {
 
 
@@ -16,6 +18,7 @@ public class WeaponThrow extends Skill {
         return null;
     }
 
+    @Nonnull
     @Override
     public Tag<String> getSoftIncompatibility(LivingEntity caster) {
         return null;

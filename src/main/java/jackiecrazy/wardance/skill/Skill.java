@@ -154,6 +154,7 @@ public abstract class Skill extends ForgeRegistryEntry<Skill> {
 
     public abstract Tag<String> getTags(LivingEntity caster);//requires breath, bound, debuffing, healing, aoe, etc.
 
+    @Nonnull
     public abstract Tag<String> getSoftIncompatibility(LivingEntity caster);
 
     public Tag<String> getHardIncompatibility(LivingEntity caster) {//TODO implement
@@ -369,6 +370,10 @@ public abstract class Skill extends ForgeRegistryEntry<Skill> {
 
     protected void mark(LivingEntity caster, LivingEntity target, float duration, float arbitrary) {
         Marks.getCap(target).mark(new SkillData(this, duration).setCaster(caster).setArbitraryFloat(arbitrary));
+    }
+
+    protected SkillData getExistingMark(LivingEntity target) {
+        return Marks.getCap(target).getActiveMark(this).orElse(SkillData.DUMMY);
     }
 
     protected boolean hasMark(LivingEntity target){

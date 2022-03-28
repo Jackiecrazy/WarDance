@@ -93,6 +93,7 @@ public class Feint extends Skill {
         return tag;
     }
 
+    @Nonnull
     @Override
     public Tag<String> getSoftIncompatibility(LivingEntity caster) {
         return offensive;

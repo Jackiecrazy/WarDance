@@ -29,6 +29,7 @@ public class Recovery extends Skill {
         return passive;
     }
 
+    @Nonnull
     @Override
     public Tag<String> getSoftIncompatibility(LivingEntity caster) {
         return none;

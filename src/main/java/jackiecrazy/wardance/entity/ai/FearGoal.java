@@ -1,21 +1,38 @@
 package jackiecrazy.wardance.entity.ai;
 
+import jackiecrazy.wardance.capability.goal.GoalCapabilityProvider;
+import jackiecrazy.wardance.capability.goal.IGoalHelper;
+import jackiecrazy.wardance.potion.WarEffects;
 import net.minecraft.entity.CreatureEntity;
 import net.minecraft.entity.LivingEntity;
+import net.minecraft.entity.ai.RandomPositionGenerator;
 import net.minecraft.entity.ai.goal.AvoidEntityGoal;
+import net.minecraft.util.math.vector.Vector3d;
 
-import java.util.function.Predicate;
+import java.util.Optional;
 
-public class FearGoal<T extends LivingEntity> extends AvoidEntityGoal<T> {
-    public FearGoal(CreatureEntity entityIn, Class<T> classToAvoidIn, float avoidDistanceIn, double farSpeedIn, double nearSpeedIn) {
-        super(entityIn, classToAvoidIn, avoidDistanceIn, farSpeedIn, nearSpeedIn);
+public class FearGoal extends AvoidEntityGoal<LivingEntity> {
+    public FearGoal(CreatureEntity entityIn) {
+        super(entityIn, LivingEntity.class, 16, 1.3, 1.6);
     }
 
-    public FearGoal(CreatureEntity entityIn, Class<T> avoidClass, Predicate<LivingEntity> targetPredicate, float distance, double nearSpeedIn, double farSpeedIn, Predicate<LivingEntity> p_i48859_9_) {
-        super(entityIn, avoidClass, targetPredicate, distance, nearSpeedIn, farSpeedIn, p_i48859_9_);
-    }
-
-    public FearGoal(CreatureEntity entityIn, Class<T> avoidClass, float distance, double nearSpeedIn, double farSpeedIn, Predicate<LivingEntity> targetPredicate) {
-        super(entityIn, avoidClass, distance, nearSpeedIn, farSpeedIn, targetPredicate);
+    public boolean canUse() {
+        if (!mob.hasEffect(WarEffects.FEAR.get())) return false;
+        this.toAvoid = mob.getKillCredit();
+        final Optional<IGoalHelper> goal = GoalCapabilityProvider.getCap(mob).resolve();
+        goal.ifPresent(iGoalHelper -> toAvoid = iGoalHelper.getFearSource());
+        if (this.toAvoid == null) {
+            return false;
+        } else {
+            Vector3d vector3d = RandomPositionGenerator.getPosAvoid(this.mob, 16, 7, this.toAvoid.position());
+            if (vector3d == null) {
+                return false;
+            } else if (this.toAvoid.distanceToSqr(vector3d.x, vector3d.y, vector3d.z) < this.toAvoid.distanceToSqr(this.mob)) {
+                return false;
+            } else {
+                this.path = this.pathNav.createPath(vector3d.x, vector3d.y, vector3d.z, 0);
+                return this.path != null;
+            }
+        }
     }
 }

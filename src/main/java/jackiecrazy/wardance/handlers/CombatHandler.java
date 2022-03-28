@@ -211,7 +211,7 @@ public class CombatHandler {
                     e.setCanceled(true);
                     return;
                 }
-                if (seme.getMainHandItem().getCapability(CombatManipulator.CAP).isPresent()) {
+                if (seme.getMainHandItem().getCapability(CombatManipulator.CAP).resolve().isPresent()) {
                     e.setCanceled(seme.getMainHandItem().getCapability(CombatManipulator.CAP).resolve().get().canAttack(e.getSource(), seme, uke, seme.getMainHandItem(), e.getAmount()));
                 }
             }
@@ -523,6 +523,7 @@ public class CombatHandler {
             double luckDiff = WarDance.rand.nextFloat() * (GeneralUtils.getAttributeValueSafe(seme, Attributes.LUCK)) - WarDance.rand.nextFloat() * (GeneralUtils.getAttributeValueSafe(uke, Attributes.LUCK));
             e.setAmount(e.getAmount() + (float) luckDiff * GeneralConfig.luck);
         }
+        e.setAmount(e.getAmount()*(1+cap.getFatigue()/cap.getTrueMaxPosture()));
         if (cap.getStaggerTime() > 0 && !cap.isFirstStaggerStrike()) {
             e.setAmount(e.getAmount() * CombatConfig.staggerDamage);
             //fatality!

@@ -44,6 +44,7 @@ public class CoupDeGrace extends Skill {
         return special;
     }
 
+    @Nonnull
     @Override
     public Tag<String> getSoftIncompatibility(LivingEntity caster) {
         return special;

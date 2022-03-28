@@ -47,6 +47,7 @@ pound of flesh: active skill. Consumes all your spirit, and until your spirit re
         return passive;
     }
 
+    @Nonnull
     @Override
     public Tag<String> getSoftIncompatibility(LivingEntity caster) {
         return none;

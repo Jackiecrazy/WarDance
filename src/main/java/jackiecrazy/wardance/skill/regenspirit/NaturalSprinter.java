@@ -44,6 +44,7 @@ confidence: your spirit regeneration speed scales proportionally with how much s
         return passive;
     }
 
+    @Nonnull
     @Override
     public Tag<String> getSoftIncompatibility(LivingEntity caster) {
         return none;

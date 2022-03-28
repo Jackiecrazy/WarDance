@@ -346,7 +346,7 @@ public class StealthConfig {
                 "\n(o)bservant mobs ignore invisibility. " +
                 "\n(p)erceptive mobs ignore motion multipliers. " +
                 "\n(q)uiet mobs do not broadcast sound cues, even if they do make sounds. " +
-                "\n(s)keptical mobs will always turn around before beginning to attack, even if you fail your luck check. " +
+                "\n(s)keptical mobs will turn around before beginning to attack if you fail your luck check. " +
                 "\n(v)igilant mobs are treated as alert even without an attack or revenge target."+
                 "\n(w)ary mobs ignore luck. "
         ).defineList("mob detection rules", Arrays.asList(SNEAK), String.class::isInstance);

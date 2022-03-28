@@ -43,6 +43,7 @@ apathy: your max spirit is 4, your spirit instantly refills after cooldown, you 
         return SkillCategories.morale;
     }
 
+    @Nonnull
     @Override
     public Tag<String> getSoftIncompatibility(LivingEntity caster) {
         return none;

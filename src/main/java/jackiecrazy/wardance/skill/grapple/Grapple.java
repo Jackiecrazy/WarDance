@@ -33,6 +33,7 @@ public class Grapple extends Skill {
         return unarm;
     }
 
+    @Nonnull
     @Override
     public Tag<String> getSoftIncompatibility(LivingEntity caster) {
         return offensive;

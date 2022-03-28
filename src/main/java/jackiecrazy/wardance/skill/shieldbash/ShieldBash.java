@@ -35,6 +35,7 @@ public class ShieldBash extends Skill {
         return offensivePhysical;
     }
 
+    @Nonnull
     @Override
     public Tag<String> getSoftIncompatibility(LivingEntity caster) {
         return offensive;

@@ -106,6 +106,7 @@ public class Hex extends Skill {
         return thing;
     }
 
+    @Nonnull
     @Override
     public Tag<String> getSoftIncompatibility(LivingEntity caster) {
         return offensive;
@@ -228,7 +229,7 @@ public class Hex extends Skill {
         }
 
         @Override
-        protected void mark(LivingEntity caster, LivingEntity target, float duration) {
+        protected void mark(LivingEntity caster, LivingEntity target, float duration, float arbitrary) {
             ItemStack milk = new ItemStack(Items.MILK_BUCKET);
             final Collection<EffectInstance> potions = new ArrayList<>(target.getActiveEffects());
             target.curePotionEffects(milk);

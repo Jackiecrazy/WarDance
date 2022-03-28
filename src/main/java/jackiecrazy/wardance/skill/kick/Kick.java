@@ -33,6 +33,7 @@ public class Kick extends Skill {
         return offensivePhysical;
     }
 
+    @Nonnull
     @Override
     public Tag<String> getSoftIncompatibility(LivingEntity caster) {
         return offensive;

@@ -29,6 +29,7 @@ public class Judgment extends Skill {
         return special;
     }
 
+    @Nonnull
     @Override
     public Tag<String> getSoftIncompatibility(LivingEntity caster) {
         return special;

@@ -12,6 +12,7 @@ import javax.annotation.Nullable;
 public class GoalCapability implements IGoalHelper {
     private BlockPos p = BlockPos.ZERO.below(100);
     private LivingEntity target;
+    private LivingEntity fear;
 
     public GoalCapability() {}
 
@@ -26,13 +27,24 @@ public class GoalCapability implements IGoalHelper {
     }
 
     @Override
+    public LivingEntity getFearSource() {
+        if (fear != null && fear.isDeadOrDying()) fear = null;
+        return fear;
+    }
+
+    @Override
+    public void setFearSource(LivingEntity e) {
+        fear = e;
+    }
+
+    @Override
     public BlockPos getSoundLocation() {
         return p;
     }
 
     @Override
     public void setSoundLocation(BlockPos pos) {
-        p=pos;
+        p = pos;
     }
 
     public static class Storage implements Capability.IStorage<IGoalHelper> {
