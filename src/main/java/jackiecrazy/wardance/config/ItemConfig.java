@@ -59,12 +59,16 @@ public class ItemConfig {
             "minecraft:wooden_pickaxe, 1.3, 1, false, 1.4, 2",
             "minecraft:wooden_shovel, 2, 0.9, false, 1.4, 2",
             "minecraft:wooden_sword, 1.2, 1, false, 1.25, 1.5",
+
             "adhooks:pudge_launcher, 2.0, 1.0, false, 1.1, 1.2",
             "adhooks:spear_launcher, 2.0, 1.0, false, 1.4, 2.0",
             "adhooks:web_launcher, 1.5, 1.0, false, 1.1, 1.2",
+
             "akashictome:tome, 1, 2, true, 20, 0.1",
+
             "alexsmobs:falconry_glove, 1.0, 1.5, false, 1.0, 1.0",
             "alexsmobs:shield_of_the_deep, 3.0, 0.5, true, 60, 0.4",
+
             "aquaculture:diamond_fillet_knife, 0.7, 1.3, false, 1.5, 2.5",
             "aquaculture:gold_fillet_knife, 0.6, 1.4, false, 1.5, 2.5",
             "aquaculture:iron_fillet_knife, 0.6, 1.3, false, 1.5, 2.5",
@@ -77,6 +81,7 @@ public class ItemConfig {
             "aquaculture:neptunium_sword, 1.8, 1, false, 1.25, 1.5",
             "aquaculture:stone_fillet_knife, 0.5, 1.4, false, 1.5, 2.5",
             "aquaculture:wooden_fillet_knife, 0.5, 1.4, false, 1.5, 2.5",
+
             "ars_nouveau:apprentice_spell_book, 1.3, 2.0, true, 30, 0.1",
             "ars_nouveau:archmage_spell_book, 1.6, 2.0, true, 20, 0.15",
             "ars_nouveau:caster_tome, 1, 2.0, true, 30, 0.1",
@@ -88,6 +93,7 @@ public class ItemConfig {
             "ars_nouveau:spell_bow, 1.5, 1.5, false, 1.0, 1.0",
             "ars_nouveau:wand, 1.8, 1.2, false, 1.2, 1.4",
             "ars_nouveau:wilden_spike, 0.5, 1.5, false, 1.5, 2.5",
+
             "arsenal_core:diamond_ancient_sword,1.3,1.0,false,1.4,1.8",
             "arsenal_core:diamond_arming_sword,1.8,0.9,false,1.25,1.5",
             "arsenal_core:diamond_chinese_sword,1.3,1.0,false,1.4,1.8",
@@ -125,12 +131,15 @@ public class ItemConfig {
             "arsenal_core:wooden_rapier,0.5,1.2,false,1.6,2.4",
             "arsenal_core:wooden_smallsword,0.5,1.2,false,1.6,2.4",
             "arsenal_core:xuanyuanjian,2.5,0.7,false,1.5,2.0",
+
             "artifacts:umbrella, 1.0, 0.8, true, 40, 0.3",
+
             "astral:phantasmal_axe, 3.2, 0.9, false, 1.1, 1.2",
             "astral:phantasmal_hoe, 0.3, 1.5, false, 1.4, 2",
             "astral:phantasmal_pickaxe, 1.4, 1, false, 1.4, 2",
             "astral:phantasmal_shovel, 2.4, 0.9, false, 1.1, 1.2",
             "astral:phantasmal_sword, 1.6, 1, false, 1.25, 1.5",
+
             "atum:anputs_hunger, 1.0, 1, false, 2, 2.5",
             "atum:anubis_wrath, 1.2, 1, false, 1.5, 2",
             "atum:atems_protection, 2.5, 0.4, true, 50, 0.4",
@@ -157,6 +166,7 @@ public class ItemConfig {
             "atum:stoneguard_shield, 2.7, 0.7, true, 60, 0.5",
             "atum:stoneguard_sword, 1.6, 1, false, 1.25, 1.5",
             "atum:tefnuts_call, 1.2, 1.6, false, 1.2, 1.4",
+
             "betterendforge:aeternium_axe, 3.8, 0.8, false, 1.1, 1.2",
             "betterendforge:aeternium_hammer, 4.0, 1.0, false, 1.1, 1.2",
             "betterendforge:aeternium_hoe, 0.5, 1.4, false, 1.4, 2.0",
@@ -179,6 +189,7 @@ public class ItemConfig {
             "betterendforge:thallasium_pickaxe, 1.4, 1.0, false, 1.4, 2.0",
             "betterendforge:thallasium_shovel, 2.4, 0.9, false, 1.1, 1.2",
             "betterendforge:thallasium_sword, 1.4, 1.0, false, 1.25, 1.5",
+
             "betternether:cincinnasite_axe, 3.4, 0.8, false, 1.1, 1.2",
             "betternether:cincinnasite_axe_diamond, 3.4, 0.8, false, 1.1, 1.2",
             "betternether:cincinnasite_hoe, 0.3, 1.4, false, 1.4, 2",
@@ -194,7 +205,9 @@ public class ItemConfig {
             "betternether:nether_ruby_pickaxe, 1.6, 1, false, 1.4, 2",
             "betternether:nether_ruby_shovel, 2.6, 0.9, false, 1.1, 1.2",
             "betternether:nether_ruby_sword, 1.5, 1, false, 1.25, 1.5",
+
             "bigbrain:buckler, 1, 0.8, true, 20, 0.2",
+
             "biomancy:boomling_hive_gun, 2.2, 1.5, false, 1.0, 1.0",
             "biomancy:fleshborn_axe, 3.4, 0.8, false, 1.1, 1.2",
             "biomancy:fleshborn_guan_dao, 1.7, 1.3, false, 1.2, 1.4",
@@ -206,11 +219,13 @@ public class ItemConfig {
             "biomancy:sharp_bone, 0.5, 2.1, false, 1.5, 2.5",
             "biomancy:tooth_gun, 2.2, 1.5, false, 1.0, 1.0",
             "biomancy:withershot, 2.2, 1.5, false, 1.0, 1.0",
+
             "bloodmagic:soulaxe, 4.0, 0.8, false, 1.1, 1.2",
             "bloodmagic:soulpickaxe, 1.5, 1, false, 1.4, 2",
             "bloodmagic:soulscythe, 1.5, 1.4, false, 1.4, 2",
             "bloodmagic:soulshovel, 2.4, 0.9, false, 1.1, 1.2",
             "bloodmagic:soulsword, 2.7, 1, false, 1.25, 1.5",
+
             "blue_skies:alchemy_scroll, 1, 2.0, true, 20, 0.1",
             "blue_skies:aquite_axe, 3.4, 0.8, false, 1.1, 1.2",
             "blue_skies:aquite_hoe, 0.4, 1.4, false, 1.25, 1.5",
@@ -297,24 +312,29 @@ public class ItemConfig {
             "blue_skies:turquoise_stone_shovel,2.2,0.9,false,1.1,1.2",
             "blue_skies:turquoise_stone_sword,1.3,1.0,false,1.25,1.5",
             "blue_skies:zeal_lighter,0.5,2.0,false,1.25,1.5",
+
             "bountifulbaubles:shield_ankh,3.5,0.5,true,60,0.4",
             "bountifulbaubles:shield_cobalt,3.5,0.5,true,60,0.4",
             "bountifulbaubles:shield_obsidian,3.5,0.5,true,60,0.4",
+
             "byg:pendorite_axe,4.3,0.8,false,1.1,1.2",
             "byg:pendorite_battleaxe,5.0,0.9,false,1.1,1.2",
             "byg:pendorite_hoe,0.5,1.4,false,1.4,2",
             "byg:pendorite_pickaxe,1.7,1,false,1.4,2",
             "byg:pendorite_shovel,3.0,0.9,false,1.1,1.2",
             "byg:pendorite_sword,1.9,1,false,1.25,1.5",
+
             "coldsclaws:diamond_claw,1.2,1.4,false,1.5,2.0",
             "coldsclaws:golden_claw,1.0,1.5,false,1.5,2.0",
             "coldsclaws:iron_claw,1.1,1.5,false,1.5,2.0",
             "coldsclaws:netherite_claw,1.3,1.4,false,1.5,2.0",
             "coldsclaws:stone_claw,1.0,1.6,false,1.5,2.0",
             "coldsclaws:wooden_claw,0.9,1.6,false,1.5,2.0",
+
             "comfortable_nether:axe_of_rectitude,3.8,0.8,false,1.1,1.2",
             "comfortable_nether:crystalline_saber,1.6,1,false,1.25,1.5",
             "comfortable_nether:pummeler_club,3.5,1.2,false,1.2,1.4",
+
             "consecration:fire_stick,2,1.2,false,1.1,1.2",
             "create:deforester,5.3,0.8,false,1.1,1.2",
             "cyclic:crystal_axe,4,1,false,1.1,1.2",
@@ -337,6 +357,7 @@ public class ItemConfig {
             "cyclic:sandstone_pickaxe,1.4,1,false,1.4,2",
             "cyclic:sandstone_shovel,2.2,1,false,1.1,1.2",
             "cyclic:sandstone_sword,1.3,1,false,1.25,1.5",
+
             "druidcraft:bone_axe,3.6,0.8,false,1.1,1.2",
             "druidcraft:bone_hoe,0.45,1.4,false,1.4,2",
             "druidcraft:bone_pickaxe,1.4,1.0,false,1.4,2",
@@ -350,6 +371,7 @@ public class ItemConfig {
             "druidcraft:moonstone_shield,2.0,0.7,true,70,0.4",
             "druidcraft:moonstone_shovel,2.6,0.9,false,1.1,1.2",
             "druidcraft:moonstone_sword,1.3,1.0,false,1.25,1.5",
+
             "dungeons_gear:anchor,5,0.9,false,1.1,1.2",
             "dungeons_gear:ancient_bow,1.2,1.6,false,1.0,1.0",
             "dungeons_gear:auto_crossbow,2.0,1.5,true,20,0.1",
@@ -472,15 +494,18 @@ public class ItemConfig {
             "dungeons_gear:whirlwind,4.2,0.8,false,1.1,1.2",
             "dungeons_gear:whispering_spear,1.1,1.6,false,1.2,1.4",
             "dungeons_gear:winters_touch,1.2,1.6,false,1.0,1.0",
+
             "eidolon:cleaving_axe,4.0,0.8,false,1.1,1.2",
             "eidolon:reaper_scythe,1.5,1.4,false,1.4,2",
             "eidolon:reversal_pick,1.5,1,false,1.4,2",
             "eidolon:sapping_sword,1.8,1,false,1.25,1.5",
+
             "endrem:end_crystal_axe,3.6,0.8,false,1.1,1.2",
             "endrem:end_crystal_hoe,0.35,1.4,false,1.4,2",
             "endrem:end_crystal_pickaxe,1.6,1,false,1.4,2",
             "endrem:end_crystal_shovel,2.6,0.9,false,1.1,1.2",
             "endrem:end_crystal_sword,1.5,1,false,1.25,1.5",
+
             "enigmaticlegacy:astral_breaker,4.5,0.8,false,1.1,1.2",
             "enigmaticlegacy:etherium_axe,4.3,0.8,false,1.1,1.2",
             "enigmaticlegacy:etherium_pickaxe,1.7,1,false,1.4,2",
@@ -490,23 +515,28 @@ public class ItemConfig {
             "enigmaticlegacy:forbidden_axe,2.7,1,false,1.1,1.2",
             "enigmaticlegacy:the_acknowledgment,1,2,true,20,0.15",
             "enigmaticlegacy:the_twist,2,2.0,true,20,0.3",
+
             "epicfight:diamond_spear,1.2,1.5,false,1.1,1.2",
             "epicfight:gold_spear,1,1.7,false,1.1,1.2",
             "epicfight:greatsword,4,1,false,1.1,1.2",
             "epicfight:iron_spear,1.1,1.6,false,1.1,1.2",
             "epicfight:katana,1.7,1.1,false,1.25,1.5",
             "epicfight:stone_spear,1,1.7,false,1.1,1.2",
+
             "evilcraft:mace_of_destruction,5.0,0.9,false,1.1,1.2",
             "evilcraft:mace_of_distortion,5.0,0.9,false,1.1,1.2",
             "evilcraft:vein_sword,1.8,1,false,1.25,1.5",
             "evilcraft:vengeance_pickaxe,1.9,1.3,false,1.4,2",
+
             "farmersdelight:diamond_knife,0.7,2.0,false,1.5,2.5",
             "farmersdelight:flint_knife,0.5,2.0,false,1.5,2.5",
             "farmersdelight:golden_knife,0.5,2.0,false,1.5,2.5",
             "farmersdelight:iron_knife,0.6,2.0,false,1.5,2.5",
             "farmersdelight:netherite_knife,0.8,2.0,false,1.5,2.5",
+
             "fins:red_claw_gauntlet,1.2,1.5,false,1.2,1.4",
             "fins:white_claw_gauntlet,1.0,1.4,false,1.2,1.4",
+
             "greekfantasy:bident,1.5,1.6,false,1.2,1.4",
             "greekfantasy:flint_knife,0.5,2.1,false,1.5,2.5",
             "greekfantasy:iron_club,13,0.5,true,60,0.3",
@@ -516,11 +546,13 @@ public class ItemConfig {
             "greekfantasy:stone_spear,1,1.6,false,1.2,1.4",
             "greekfantasy:wooden_club,10,0.6,true,60,0.2",
             "greekfantasy:wooden_spear,0.9,1.6,false,1.2,1.4",
+
             "gunswithoutroses:diamond_gatling,2.2,1.5,false,1.0,1.0",
             "gunswithoutroses:diamond_shotgun,2.2,1.5,false,1.0,1.0",
             "gunswithoutroses:diamond_sniper,2.2,1.5,false,1.0,1.0",
             "gunswithoutroses:gold_gun,1.8,1.5,false,1.0,1.0",
             "gunswithoutroses:iron_gun,1.8,1.5,false,1.0,1.0",
+
             "iceandfire:amphithere_macuahuitl,4.0,1.1,false,1.1,1.2",
             "iceandfire:copper_axe,3.2,0.9,false,1.1,1.2",
             "iceandfire:copper_hoe,0.3,1.5,false,1.4,2",
@@ -585,6 +617,7 @@ public class ItemConfig {
             "iceandfire:troll_weapon_hammer,11,0.5,true,60,0.3",
             "iceandfire:troll_weapon_trunk,11,0.5,true,60,0.3",
             "iceandfire:troll_weapon_trunk_frost,11,0.5,true,60,0.3",
+
             "immersiveengineering:axe_steel,3.4,1,false,1.1,1.2",
             "immersiveengineering:hoe_steel,0.3,1.4,false,1.4,2",
             "immersiveengineering:pickaxe_steel,1.6,1,false,1.4,2",
@@ -592,11 +625,13 @@ public class ItemConfig {
             "immersiveengineering:shield,3,0.5,true,70,0.3",
             "immersiveengineering:shovel_steel,2.4,1,false,1.1,1.2",
             "immersiveengineering:sword_steel,2.7,1,false,1.25,1.5",
+
             "kobolds:kobold_axe,3.4,0.8,false,1.1,1.2",
             "kobolds:kobold_netherite_sword,1.6,1,false,1.25,1.5",
             "kobolds:kobold_pickaxe,1.5,1,false,1.4,2",
             "kobolds:kobold_shovel,2.4,0.9,false,1.1,1.2",
             "kobolds:kobold_sword,1.4,1,false,1.25,1.5",
+
             "magistuarmory:barbedclub, 4.5, 1.2, false, 1.3, 1.6",
             "magistuarmory:blacksmith_hammer, 3.5, 1.0, false, 1.1, 1.2",
             "magistuarmory:bronze_ahlspiess, 1.7, 1.4, false, 1.2, 1.4",
@@ -900,6 +935,7 @@ public class ItemConfig {
             "magistuarmory:wood_target, 1.0, 1.2, true, 20, 0.1",
             "magistuarmory:wood_tartsche, 2.5, 0.9, true, 50, 0.25",
             "magistuarmory:wood_zweihander, 2.8, 0.8, false, 1.1, 1.2",
+
             "mahoutsukai:caliburn,2.0,1,false,1.25,1.5",
             "mahoutsukai:clarent,2.0,1,false,1.25,1.5",
             "mahoutsukai:dagger,0.5,1.3,false,1.5,2.5",
@@ -907,22 +943,28 @@ public class ItemConfig {
             "mahoutsukai:proximity_projection_keys,2,1.3,false,1.5,2.0",
             "mahoutsukai:theripper,1.5,1.3,false,1.5,2.5",
             "mahoutsukai:weapon_projectile_bow,1.5,1.7,false,1.0,1.0",
+
             "majruszs_difficulty:end_axe,3.8,0.8,false,1.1,1.2",
             "majruszs_difficulty:end_hoe,0.5,1.4,false,1.4,2.0",
             "majruszs_difficulty:end_pickaxe,1.7,1.0,false,1.4,2.0",
             "majruszs_difficulty:end_shovel,2.8,0.9,false,1.1,1.2",
             "majruszs_difficulty:end_sword,1.6,1.0,false,1.25,1.5",
+
             "meetyourfight:cocktail_cutlass,1.7,1.1,false,1.25,1.5",
             "meetyourfight:cocktail_shotgun,2.2,1.5,false,1.0,1.0",
             "meetyourfight:depth_star,4.5,1.1,false,1.1,1.2",
             "meetyourfight:phantasmal_rifle,2.2,1.5,false,1.0,1.0",
+
             "mowziesmobs:naga_fang_dagger,1.0,1.5,false,2.0,4.0",
             "mowziesmobs:spear,1.0,1.6,false,1.25,1.5",
             "mowziesmobs:wrought_axe,4.4,0.7,false,1.2,1.4",
+
             "mutantbeasts:creeper_shard,1.0,1.6,false,1.75,3.0",
             "mutantbeasts:endersoul_hand,1.2,1.4,false,1.5,2.5",
             "mutantbeasts:hulk_hammer,4.0,0.8,false,1.2,1.4",
+
             "mutantmore:withered_claymore,3.8,0.8,false,1.25,1.5",
+
             "mysticalworld:sapphire_axe,3.6,0.8,false,1.1,1.2",
             "mysticalworld:sapphire_hoe,0.45,1.4,false,1.4,2.0",
             "mysticalworld:sapphire_knife,0.7,2.0,false,1.5,2.5",
@@ -986,11 +1028,14 @@ public class ItemConfig {
             "mysticalworld:tin_sword,1.4,1,false,1.25,1.5",
             "mysticalworld:wood_knife,0.4,2.0,false,1.5,2.5",
             "mysticalworld:wood_spear,0.8,1.6,false,1.2,1.4",
+
             "pamhc2foodcore:rolleritem,1.5,1.3,false,1.0,1.0",
             "pamhc2foodcore:saucepanitem,1.5,1.6,false,1.0,1.0",
             "pamhc2foodcore:skilletitem,2.0,1.5,false,1.0,1.0",
+
             "pandoras_creatures:arachnon_hammer,3.0,0.8,false,1.2,1.4",
             "pandoras_creatures:arachnon_hammer,4.5,0.8,false,1.1,1.2",
+
             "pyromancer:blazing_journal,2.0,1,true,20,0.1",
             "pyromancer:diamond_mace,5.1,1.0,false,1.1,1.2",
             "pyromancer:firelink,1.5,1,false,1.25,1.5",
@@ -1038,6 +1083,7 @@ public class ItemConfig {
             "silentgear:sickle,1.3,1.6,false,1.1,1.2",
             "silentgear:spear,1.2,1.5,false,1.25,1.5",
             "silentgear:sword,1.5,1,false,1.25,1.5",
+
             "spartanshields:shield_basic_bronze,2.0,0.8,true,40,0.3",
             "spartanshields:shield_basic_constantan,2.0,0.8,true,40,0.3",
             "spartanshields:shield_basic_copper,2.0,0.9,true,40,0.3",
@@ -1081,6 +1127,7 @@ public class ItemConfig {
             "spartanshields:shield_tower_stone,3,0.8,true,60,0.4",
             "spartanshields:shield_tower_tin,2.5,0.9,true,60,0.4",
             "spartanshields:shield_tower_wood,2.5,0.9,true,60,0.4",
+
             "spartanweaponry:battleaxe_bronze,5.9,0.9,false,1.1,1.2",
             "spartanweaponry:battleaxe_copper,5.7,0.9,false,1.1,1.2",
             "spartanweaponry:battleaxe_diamond,6.1,0.9,false,1.1,1.2",
@@ -1309,6 +1356,22 @@ public class ItemConfig {
             "spartanweaponry:longsword_stone,2.3,0.9,false,1.25,1.5",
             "spartanweaponry:longsword_tin,2.3,0.9,false,1.25,1.5",
             "spartanweaponry:longsword_wood,2.2,0.9,false,1.25,1.5",
+            "spartanweaponry:parrying_dagger_bronze, 0.9, 1.5, false, 1.5, 2.5",
+            "spartanweaponry:parrying_dagger_copper, 0.8, 1.5, false, 1.5, 2.5",
+            "spartanweaponry:parrying_dagger_diamond, 1.0, 1.5, false, 1.5, 2.5",
+            "spartanweaponry:parrying_dagger_electrum, 0.8, 1.5, false, 1.5, 2.5",
+            "spartanweaponry:parrying_dagger_gold, 0.8, 1.5, false, 1.5, 2.5",
+            "spartanweaponry:parrying_dagger_invar, 0.9, 1.5, false, 1.5, 2.5",
+            "spartanweaponry:parrying_dagger_iron, 0.9, 1.5, false, 1.5, 2.5",
+            "spartanweaponry:parrying_dagger_lead, 1.3, 1.4, false, 1.5, 2.5",
+            "spartanweaponry:parrying_dagger_netherite, 1.1, 1.5, false, 1.5, 2.5",
+            "spartanweaponry:parrying_dagger_nickel, 0.9, 1.5, false, 1.5, 2.5",
+            "spartanweaponry:parrying_dagger_platinum, 1.0, 1.5, false, 1.5, 2.5",
+            "spartanweaponry:parrying_dagger_silver, 0.8, 1.5, false, 1.5, 2.5",
+            "spartanweaponry:parrying_dagger_steel, 0.9, 1.5, false, 1.5, 2.5",
+            "spartanweaponry:parrying_dagger_stone, 0.8, 1.5, false, 1.5, 2.5",
+            "spartanweaponry:parrying_dagger_tin, 0.8, 1.5, false, 1.5, 2.5",
+            "spartanweaponry:parrying_dagger_wood, 0.7, 1.5, false, 1.5, 2.5",
             "spartanweaponry:pike_bronze,1.1,1.6,false,1.2,1.4",
             "spartanweaponry:pike_copper,1,1.6,false,1.2,1.4",
             "spartanweaponry:pike_diamond,1.2,1.6,false,1.2,1.4",
@@ -1373,6 +1436,22 @@ public class ItemConfig {
             "spartanweaponry:saber_stone,1.6,0.9,false,1.25,1.5",
             "spartanweaponry:saber_tin,1.5,0.9,false,1.25,1.5",
             "spartanweaponry:saber_wood,1.5,0.9,false,1.25,1.5",
+            "spartanweaponry:scythe_bronze, 1.7, 1.2, false, 1.4, 1.8",
+            "spartanweaponry:scythe_copper, 1.55, 1.2, false, 1.4, 1.8",
+            "spartanweaponry:scythe_diamond, 1.7, 1.2, false, 1.4, 1.8",
+            "spartanweaponry:scythe_electrum, 1.55, 1.2, false, 1.4, 1.8",
+            "spartanweaponry:scythe_gold, 1.55, 1.2, false, 1.4, 1.8",
+            "spartanweaponry:scythe_invar, 1.7, 1.2, false, 1.4, 1.8",
+            "spartanweaponry:scythe_iron, 1.7, 1.2, false, 1.4, 1.8",
+            "spartanweaponry:scythe_lead, 2.15, 1.2, false, 1.4, 1.8",
+            "spartanweaponry:scythe_netherite, 1.85, 1.2, false, 1.4, 1.8",
+            "spartanweaponry:scythe_nickel, 1.7, 1.2, false, 1.4, 1.8",
+            "spartanweaponry:scythe_platinum, 1.7, 1.2, false, 1.4, 1.8",
+            "spartanweaponry:scythe_silver, 1.55, 1.2, false, 1.4, 1.8",
+            "spartanweaponry:scythe_steel, 1.7, 1.2, false, 1.4, 1.8",
+            "spartanweaponry:scythe_stone, 1.55, 1.2, false, 1.4, 1.8",
+            "spartanweaponry:scythe_tin, 1.55, 1.2, false, 1.4, 1.8",
+            "spartanweaponry:scythe_wood, 1.4, 1.2, false, 1.4, 1.8",
             "spartanweaponry:spear_bronze,1.1,1.6,false,1.2,1.4",
             "spartanweaponry:spear_copper,1,1.6,false,1.2,1.4",
             "spartanweaponry:spear_diamond,1.2,1.6,false,1.2,1.4",
@@ -1437,7 +1516,10 @@ public class ItemConfig {
             "spartanweaponry:warhammer_stone,6.7,1.2,false,1.1,1.2",
             "spartanweaponry:warhammer_tin,6.7,1.2,false,1.1,1.2",
             "spartanweaponry:warhammer_wood,6.5,1.2,false,1.1,1.2",
+
             "switchbow:switchcrossbow,1.0,1.0,false,1.1,1.2",
+            "switchbow:switchbow,1.0,1.0,false,1.1,1.2",
+
             "twilightforest:block_and_chain,4.0,1.4,false,1.1,1.2",
             "twilightforest:ender_bow,1.5,1.7,false,1.0,1.0",
             "twilightforest:fiery_pickaxe,1.6,1.0,false,1.4,2.0",

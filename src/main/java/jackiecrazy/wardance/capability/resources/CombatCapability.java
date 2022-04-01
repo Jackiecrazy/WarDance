@@ -74,7 +74,8 @@ public class CombatCapability implements ICombatCapability {
     }
 
     private static float getMPos(LivingEntity elb) {
-        float ret = 0;
+        float ret = 1;
+        if (elb == null) return ret;
         if (GeneralUtils.getResourceLocationFromEntity(elb) != null && CombatUtils.customPosture.containsKey(GeneralUtils.getResourceLocationFromEntity(elb)))
             ret = CombatUtils.customPosture.get(GeneralUtils.getResourceLocationFromEntity(elb));
         else ret = (float) (Math.ceil(10 / 1.09 * elb.getBbWidth() * elb.getBbHeight()) + elb.getArmorValue() / 2d);
@@ -350,6 +351,7 @@ public class CombatCapability implements ICombatCapability {
 
     @Override
     public float getTrueMaxPosture() {
+        if (mpos == 0) mpos = getMPos(dude.get());
         return mpos;
     }
 
@@ -366,6 +368,7 @@ public class CombatCapability implements ICombatCapability {
 
     @Override
     public float getTrueMaxSpirit() {
+        if (mspi == 0) return 10;
         return mspi;
     }
 

@@ -17,6 +17,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 public class MixinAttackSpeed {
 
     DamageSource tempDS = null;
+    DamageKnockbackEvent dke=null;
 
     @Inject(at = @At("RETURN"), method = "createLivingAttributes()Lnet/minecraft/entity/ai/attributes/AttributeModifierMap$MutableAttribute;")
     private static void registerAttributes(CallbackInfoReturnable<AttributeModifierMap.MutableAttribute> cb) {//TODO remove in 1.17

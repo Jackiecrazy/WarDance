@@ -4,7 +4,6 @@ import jackiecrazy.wardance.api.CombatDamageSource;
 import jackiecrazy.wardance.event.SkillCastEvent;
 import jackiecrazy.wardance.skill.SkillData;
 import net.minecraft.entity.LivingEntity;
-import net.minecraftforge.event.entity.living.LivingAttackEvent;
 import net.minecraftforge.eventbus.api.Event;
 import net.minecraftforge.eventbus.api.EventPriority;
 
@@ -14,14 +13,13 @@ import java.awt.*;
 public class ComboBreaker extends Judgment {
     @Override
     public Color getColor() {
-        return Color.MAGENTA;
+        return Color.ORANGE;
     }
 
     @Override
     public void onProc(LivingEntity caster, Event procPoint, STATE state, SkillData stats, LivingEntity target) {
         if (procPoint instanceof SkillCastEvent && hasMark(target) && target == ((SkillCastEvent) procPoint).getTarget() && procPoint.getPhase() == EventPriority.HIGHEST) {
             mark(caster, target, 5, 1);
-        } else if(procPoint instanceof LivingAttackEvent) {
         }
         else super.onProc(caster, procPoint, state, stats, target);
     }
@@ -49,7 +47,7 @@ public class ComboBreaker extends Judgment {
         if (existing != null) {
             if (existing.getDuration() < 0) return null;
             sd.setArbitraryFloat(sd.getArbitraryFloat() + existing.getArbitraryFloat());
-            if (sd.getArbitraryFloat() > 20) {
+            if (sd.getArbitraryFloat() > 10) {
                 removeMark(target);
             }
         }

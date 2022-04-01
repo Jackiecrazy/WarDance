@@ -211,7 +211,7 @@
   "wardance:hidden_might.name": "深藏不露",
   "wardance:hidden_might.desc": " 偷袭无防备目标后获得0.5威。侦测距离-30%，每层威将该加成的3%转化为等量速度。",
   "wardance:elemental_might.name": "打凤牢龙",
-  "wardance:elemental_might.desc": " 攻击目标后使其受到的非物理伤害+1，当周围5方块内有生物死于非物理伤害时获得1威。",
+  "wardance:elemental_might.desc": " 攻击目标后使其受到的非物理伤害+（威/3），当周围5方块内有生物死于非物理伤害时获得1威。",
   "wardance:masters_might.name": "大师风范",
   "wardance:masters_might.desc": " When attacking a target without knockback immunity, slow others nearby for half a second and render the hit target immune to knockback for 5 seconds, gaining 1 might. Cannot attack staggered targets, but greatly knocks back on stagger ignoring immunity. Upon dealing fatal damage, cancel the damage and stagger the target for 6 seconds instead. After recovering, the target will run away, dropping triple the normal exp and no loot.",
   "category.judgment.name": "审判",

@@ -523,8 +523,8 @@ public class CombatHandler {
             double luckDiff = WarDance.rand.nextFloat() * (GeneralUtils.getAttributeValueSafe(seme, Attributes.LUCK)) - WarDance.rand.nextFloat() * (GeneralUtils.getAttributeValueSafe(uke, Attributes.LUCK));
             e.setAmount(e.getAmount() + (float) luckDiff * GeneralConfig.luck);
         }
-        e.setAmount(e.getAmount()*(1+cap.getFatigue()/cap.getTrueMaxPosture()));
         if (cap.getStaggerTime() > 0 && !cap.isFirstStaggerStrike()) {
+            e.setAmount(e.getAmount() * (1 + cap.getFatigue() * 2 / Math.max(cap.getTrueMaxPosture(), 1)));
             e.setAmount(e.getAmount() * CombatConfig.staggerDamage);
             //fatality!
             if (ds.getEntity() instanceof LivingEntity) {
@@ -538,7 +538,6 @@ public class CombatHandler {
             //unfatality!
             e.setAmount(e.getAmount() * CombatConfig.unStaggerDamage);
         }
-
     }
 
     @SubscribeEvent(priority = EventPriority.HIGHEST)
@@ -589,8 +588,10 @@ public class CombatHandler {
     public static void udedlol(LivingDamageEvent e) {
         if (GeneralConfig.debug)
             WarDance.LOGGER.debug("damage from " + e.getSource() + " finalized with amount " + e.getAmount());
+        if (!Float.isFinite(e.getAmount()))
+            e.setAmount(0);
         final ICombatCapability cap = CombatData.getCap(e.getEntityLiving());
-        if (cap.getStaggerTime() > 0 && !cap.isFirstStaggerStrike()) {
+        if (!e.isCanceled() && cap.getStaggerTime() > 0 && CombatUtils.isMeleeAttack(e.getSource()) && !cap.isFirstStaggerStrike()) {
             cap.decrementStaggerCount(1);
         }
         if (e.getAmount() > e.getEntityLiving().getHealth() + e.getEntityLiving().getAbsorptionAmount()) {

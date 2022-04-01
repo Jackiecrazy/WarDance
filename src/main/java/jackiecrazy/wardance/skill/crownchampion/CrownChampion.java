@@ -32,8 +32,6 @@ import java.util.Arrays;
 import java.util.HashSet;
 import java.util.UUID;
 
-import jackiecrazy.wardance.skill.Skill.STATE;
-
 @Mod.EventBusSubscriber(modid = WarDance.MODID)
 public class CrownChampion extends Skill {
     /*
@@ -209,7 +207,7 @@ elemental might: +1 burn/snowball/poison/drown damage to targets you have attack
         @Override
         public void onProc(LivingEntity caster, Event procPoint, STATE state, SkillData stats, LivingEntity target) {
             if (procPoint instanceof LivingAttackEvent)
-                ((LivingAttackEvent) procPoint).getEntityLiving().addEffect(new EffectInstance(WarEffects.VULNERABLE.get(), (int) (CombatData.getCap(caster).getMight() * 20)));
+                ((LivingAttackEvent) procPoint).getEntityLiving().addEffect(new EffectInstance(WarEffects.VULNERABLE.get(), 100, (int) (CombatData.getCap(caster).getMight() / 3)));
         }
 
         @Override

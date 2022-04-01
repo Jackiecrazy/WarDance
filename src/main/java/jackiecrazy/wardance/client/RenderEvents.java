@@ -19,6 +19,7 @@ import jackiecrazy.wardance.config.GeneralConfig;
 import jackiecrazy.wardance.config.ResourceConfig;
 import jackiecrazy.wardance.skill.Skill;
 import jackiecrazy.wardance.skill.SkillCategories;
+import jackiecrazy.wardance.skill.SkillData;
 import jackiecrazy.wardance.skill.coupdegrace.CoupDeGrace;
 import jackiecrazy.wardance.utils.CombatUtils;
 import jackiecrazy.wardance.utils.GeneralUtils;
@@ -62,6 +63,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
+import java.util.stream.Collectors;
 
 @Mod.EventBusSubscriber(value = Dist.CLIENT, modid = WarDance.MODID)
 public class RenderEvents {
@@ -310,26 +312,31 @@ public class RenderEvents {
                 Entity look = getEntityLookedAt(player, 32);
                 if (look instanceof LivingEntity) {
                     LivingEntity looked = (LivingEntity) look;
-                    List<Skill> afflict = new ArrayList<>();
+                    List<SkillData> afflict = new ArrayList<>();
                     final ISkillCapability skill = CasterData.getCap(player);
                     if (ClientConfig.CONFIG.enemyAfflict.enabled) {
                         //coup de grace
                         final Skill variant = skill.getEquippedVariation(SkillCategories.coup_de_grace);
-                        if (look != player && skill.isSkillUsable(variant)) {
+                        if (look != player && variant instanceof CoupDeGrace && skill.isSkillUsable(variant)) {
                             CoupDeGrace cdg = (CoupDeGrace) variant;
                             if (cdg.willKillOnCast(player, looked)) {
-                                afflict.add(cdg);
+                                afflict.add(new SkillData(cdg, 0, 0));
                             }
                         }
                         //marks
-                        afflict.addAll(Marks.getCap(looked).getActiveMarks().keySet());
+                        afflict.addAll(Marks.getCap(looked).getActiveMarks().values().stream().filter(a->a.getSkill().showsMark(a, looked)).collect(Collectors.toList()));
                         Pair<Integer, Integer> pair = translateCoords(ClientConfig.CONFIG.enemyAfflict, width, height);
                         for (int index = 0; index < afflict.size(); index++) {
-                            Skill s = afflict.get(index);
-                            mc.getTextureManager().bind(s.icon());
-                            Color c = s.getColor();
+                            SkillData s = afflict.get(index);
+                            mc.getTextureManager().bind(s.getSkill().icon());
+                            Color c = s.getSkill().getColor();
                             RenderSystem.color4f(c.getRed() / 255f, c.getGreen() / 255f, c.getBlue() / 255f, 1);
                             AbstractGui.blit(stack, pair.getFirst() - (afflict.size() - 1 - index) * 16 + (afflict.size() - 1) * 8 - 8, pair.getSecond(), 0, 0, 16, 16, 16, 16);
+                            if(s.getMaxDuration()!=0) {
+                                String display = formatter.format(s.getDuration());
+                                mc.font.drawShadow(event.getMatrixStack(), display, pair.getFirst() - (afflict.size() - 1 - index) * 16 + (afflict.size() - 1) * 8 - 8, pair.getSecond() - 2, 0);
+                            }
+
                         }
                     }
                     RenderSystem.color4f(1, 1, 1, 1);

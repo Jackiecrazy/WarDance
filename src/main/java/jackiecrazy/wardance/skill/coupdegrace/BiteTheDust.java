@@ -2,7 +2,6 @@ package jackiecrazy.wardance.skill.coupdegrace;
 
 import jackiecrazy.wardance.api.CombatDamageSource;
 import jackiecrazy.wardance.event.StaggerEvent;
-import jackiecrazy.wardance.skill.Skill;
 import jackiecrazy.wardance.skill.SkillCategories;
 import jackiecrazy.wardance.skill.SkillCategory;
 import jackiecrazy.wardance.skill.SkillData;
@@ -12,8 +11,9 @@ import net.minecraftforge.eventbus.api.Event;
 import net.minecraftforge.eventbus.api.EventPriority;
 
 import javax.annotation.Nonnull;
+import java.awt.*;
 
-public class BiteTheDust extends Skill {
+public class BiteTheDust extends CoupDeGrace {
     @Override
     public Tag<String> getTags(LivingEntity caster) {
         return passive;
@@ -25,6 +25,11 @@ public class BiteTheDust extends Skill {
         return none;
     }
 
+    @Override
+    public Color getColor() {
+        return Color.GREEN;
+    }
+
     @Nonnull
     @Override
     public SkillCategory getParentCategory() {
@@ -32,21 +37,44 @@ public class BiteTheDust extends Skill {
     }
 
     @Override
+    public boolean willKillOnCast(LivingEntity caster, LivingEntity target) {
+        float damage = 2;
+        float currentMark = getExistingMark(target).getDuration();
+        while (currentMark > 0) {
+            damage *= 2;
+            currentMark--;
+        }
+        return damage > target.getHealth();
+    }
+
+    public boolean showsMark(SkillData mark, LivingEntity target){
+        return false;
+    }
+
+    @Override
     public void onProc(LivingEntity caster, Event procPoint, STATE state, SkillData stats, LivingEntity target) {
-        if (procPoint instanceof StaggerEvent && ((StaggerEvent) procPoint).getAttacker() == caster && procPoint.getPhase() == EventPriority.HIGHEST && state == STATE.ACTIVE) {
+        if (procPoint instanceof StaggerEvent && ((StaggerEvent) procPoint).getAttacker() == caster && procPoint.getPhase() == EventPriority.HIGHEST && cast(caster, target, -999)) {
             float damage = 2;
             float currentMark = getExistingMark(target).getDuration();
             while (currentMark > 0) {
                 damage *= 2;
                 currentMark--;
             }
+            target.hurtTime = target.hurtDuration = target.invulnerableTime = 0;
+            System.out.println("start!");
             target.hurt(new CombatDamageSource("player", caster).setDamageTyping(CombatDamageSource.TYPE.TRUE).setSkillUsed(this).setKnockbackPercentage(0).bypassArmor().bypassMagic(), damage);
             mark(caster, target, 1);
         }
     }
 
     @Override
+    public float mightConsumption(LivingEntity caster) {
+        return 0;
+    }
+
+    @Override
     public boolean onStateChange(LivingEntity caster, SkillData prev, STATE from, STATE to) {
+        prev.setState(STATE.INACTIVE);
         return false;
     }
 }

@@ -173,6 +173,10 @@ public abstract class Skill extends ForgeRegistryEntry<Skill> {
         return false;
     }
 
+    public boolean showsMark(SkillData mark, LivingEntity target){
+        return true;
+    }
+
     protected void removeMark(LivingEntity target) {
         Marks.getCap(target).removeMark(this);
     }
@@ -195,8 +199,10 @@ public abstract class Skill extends ForgeRegistryEntry<Skill> {
 
     @Nullable
     public SkillData onMarked(LivingEntity caster, LivingEntity target, SkillData sd, @Nullable SkillData existing) {
-        if (existing != null)
+        if (existing != null) {
             sd.setDuration(sd.getDuration() + existing.getDuration());
+            sd.setMaxDuration(sd.getDuration());
+        }
         return sd;
     }
 
