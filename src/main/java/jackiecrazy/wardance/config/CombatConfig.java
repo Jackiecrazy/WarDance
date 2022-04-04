@@ -454,7 +454,7 @@ public class CombatConfig {
     private final ForgeConfigSpec.IntValue _rollThreshold;
     private final ForgeConfigSpec.IntValue _rollCooldown;
     private final ForgeConfigSpec.IntValue _shieldThreshold;
-    private final ForgeConfigSpec.IntValue _shieldCount;
+    private final ForgeConfigSpec.DoubleValue _shieldCount;
     private final ForgeConfigSpec.IntValue _staggerDuration;
     private final ForgeConfigSpec.IntValue _staggerDurationMin;
     private final ForgeConfigSpec.IntValue _staggerHits;
@@ -485,8 +485,8 @@ public class CombatConfig {
         _posturePerProjectile = b.translation("wardance.config.ppp").comment("Posture consumed per projectile parried").defineInRange("posture per projectile", 0.5, 0, Double.MAX_VALUE);
         _defaultMultiplierPostureAttack = b.translation("wardance.config.dmpa").comment("Default multiplier for any items not defined in the config, multiplied by their attack damage").defineInRange("default attack multiplier", 0.15, 0, Double.MAX_VALUE);
         _defaultMultiplierPostureDefend = b.translation("wardance.config.dmpd").comment("Default multiplier for any item not defined in the config, when used for parrying").defineInRange("default defense multiplier", 1.4, 0, Double.MAX_VALUE);
-        _shieldThreshold = b.translation("wardance.config.shieldT").comment("Within this number of ticks after a shield parry, parrying is free").defineInRange("default shield time", 16, 0, Integer.MAX_VALUE);
-        _shieldCount = b.translation("wardance.config.shieldT").comment("This many parries are free after a parry that cost posture").defineInRange("default shield count", 1, 0, Integer.MAX_VALUE);
+        _shieldThreshold = b.translation("wardance.config.shieldT").comment("Within this number of ticks after a shield parry, parrying is free").defineInRange("default barrier cooldown", 16, 0, Integer.MAX_VALUE);
+        _shieldCount = b.translation("wardance.config.shieldT").comment("This many parries are free after a parry that cost posture").defineInRange("default barrier size", 0.2, 0, Float.MAX_VALUE);
         _customProjectile = b.translation("wardance.config.projectilePosture").comment("Define custom projectile parrying behavior. Default list provided courtesy of DarkMega. Format is name, posture cost (negative to disable parrying this projectile), shield count cost, and a list of tags:\nProjectiles may be (d)estroyed upon parry.\nThey may also be allowed to (t)rigger their non-damage effects.").defineList("projectile parry rules", Arrays.asList(PROJECTILES), String.class::isInstance);
         b.pop();
         b.push("dodging");
@@ -534,7 +534,7 @@ public class CombatConfig {
         rollCooldown = CONFIG._rollCooldown.get();
         rollEndsAt = rollCooldown - CONFIG._rollThreshold.get();
         shieldCooldown = CONFIG._shieldThreshold.get();
-        barrierSize = CONFIG._shieldCount.get();
+        barrierSize = CONFIG._shieldCount.get().floatValue();
         staggerDuration = CONFIG._staggerDuration.get();
         staggerDurationMin = CONFIG._staggerDurationMin.get();
         staggerHits = CONFIG._staggerHits.get();

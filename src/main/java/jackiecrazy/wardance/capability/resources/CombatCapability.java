@@ -934,6 +934,7 @@ public class CombatCapability implements ICombatCapability {
         setStaggerCount(c.getInt("staggerc"));
         retina = c.getInt("retina");
         vision = c.getFloat("vision");
+        shieldDown=c.getBoolean("shieldDown");
         if (!c.contains("qi")) return;
         setMight(c.getFloat("qi"));
         setResolve(c.getFloat("resolve"));
@@ -956,7 +957,6 @@ public class CombatCapability implements ICombatCapability {
         adrenaline = c.getInt("adrenaline");
         parrying = c.getInt("parrying");
         setTempItemStack(ItemStack.of(c.getCompound("temp")));
-        shieldDown = c.getBoolean("shieldDown");
         if (dude.get() instanceof PlayerEntity) {
             if (getRollTime() > CombatConfig.rollEndsAt && c.getBoolean("rolling"))
                 ((PlayerEntity) dude.get()).setForcedPose(Pose.SLEEPING);

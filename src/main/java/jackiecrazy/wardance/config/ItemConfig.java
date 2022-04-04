@@ -1043,6 +1043,7 @@ public class ItemConfig {
             "pyromancer:iron_mace,4.9,1.0,false,1.1,1.2",
             "pyromancer:netherite_mace,5.1,1.0,false,1.1,1.2",
             "pyromancyer:hogwhip,1.4,1.6,false,1.1,1.2",
+
             "rats:feral_bagh_nakhs,0.25,1.4,false,1.25,1.5",
             "rats:ghost_pirat_cutlass,1.2,1.0,false,1.5,2.0",
             "rats:pirat_cutlass,1.2,1.0,false,1.25,1.5",
@@ -1053,7 +1054,9 @@ public class ItemConfig {
             "rats:ratlantis_pickaxe,1.4,1.0,false,1.4,2.0",
             "rats:ratlantis_shovel,2.8,1.0,false,1.1,1.2",
             "rats:ratlantis_sword,1.2,1.0,false,1.25,1.5",
+
             "rising_uppercut:gauntlet,1.0,1.5,false,1.2,1.4",
+
             "rootsclassic:bark_knife,0.5,1.8,false,1.5,2.5",
             "rootsclassic:crystal_staff,2.5,0.8,false,1.2,1.4",
             "rootsclassic:engraved_blade,3.4,0.8,false,1.1,1.2",
@@ -1063,6 +1066,7 @@ public class ItemConfig {
             "rootsclassic:living_shovel,2.4,0.9,false,1.1,1.2",
             "rootsclassic:living_sword,1.4,1,false,1.25,1.5",
             "rootsclassic:staff,2.5,0.8,false,1.2,1.4",
+
             "savageandravage:cleaver_of_beheading,3.5,0.8,false,1.25,1.5",
             "silentgear:axe,3.3,0.8,false,1.1,1.2",
             "silentgear:bow,1.5,1.6,false,1.0,1.0",
@@ -1548,6 +1552,7 @@ public class ItemConfig {
             "twilightforest:steeleaf_shovel,2.6,0.9,false,1.1,1.2",
             "twilightforest:steeleaf_sword,1.5,1.0,false,1.25,1.5",
             "twilightforest:triple_bow,1.5,1.7,false,1.0,1.0",
+
             "vampirism:heart_seeker_enhanced,2.8,1,false,1.25,1.5",
             "vampirism:heart_seeker_normal,2.7,1.1,false,1.2,1.4",
             "vampirism:heart_seeker_ultimate,2.9,1,false,1.3,1.6",
@@ -1559,8 +1564,10 @@ public class ItemConfig {
             "vampirism:hunter_axe_ultimate,6,0.7,false,1.1,1.2",
             "vampirism:pitchfork,2.5,1.6,false,1.1,1.2",
             "vampirism:stake,2.5,1.6,false,1.5,2",
+
             "vanillafoodpantry:flint_butcher_axe,5.0,1.0,false,1.2,1.4",
             "vanillafoodpantry:rolling_pin,1.5,1.3,false,1.0,1.0",
+
             "wyrmroost:blue_geode_axe,3.8,0.8,false,1.1,1.2",
             "wyrmroost:blue_geode_hoe,0.35,1.4,false,1.4,2",
             "wyrmroost:blue_geode_pickaxe,1.5,1,false,1.4,2",
@@ -1581,10 +1588,12 @@ public class ItemConfig {
             "wyrmroost:red_geode_pickaxe,1.6,1,false,1.4,2",
             "wyrmroost:red_geode_shovel,3.2,0.9,false,1.1,1.2",
             "wyrmroost:red_geode_sword,1.8,1,false,1.25,1.5",
+
             "xreliquary:handgun,1.8,1.5,false,1.0,1.0",
             "xreliquary:magicbane,1.0,1.6,false,1.6,2.8",
             "xreliquary:mercy_cross,8.0,0.6,false,1.5,2.0",
             "xreliquary:sojourner_staff,1.0,1.2,false,1.1,1.2",
+
             "minecraft:oak_trapdoor,0.7,0.9,false,1.0,1.0",
             "minecraft:spruce_trapdoor,0.7,0.9,true,40,0.2",
             "minecraft:birch_trapdoor,0.7,0.9,true,40,0.2",

@@ -50,7 +50,7 @@ elemental might: +1 burn/snowball/poison/drown damage to targets you have attack
         if (seme instanceof LivingEntity) {
             final Skill venge = WarSkills.VENGEFUL_MIGHT.get();
             for (PlayerEntity p : uke.level.players())
-                if (TargetingUtils.isAlly(p, uke) && p.distanceToSqr(uke) < 100 && CasterData.getCap(p).getEquippedSkills().contains(venge)) {
+                if (TargetingUtils.isAlly(p, uke) && !TargetingUtils.isAlly(p, seme) && p.distanceToSqr(uke) < 100 && CasterData.getCap(p).getEquippedSkills().contains(venge)) {
                     ((LivingEntity) seme).addEffect(new EffectInstance(Effects.GLOWING, 100));
                     SkillData apply = Marks.getCap((LivingEntity) seme).getActiveMark(venge).orElse(new SkillData(venge, 0));
                     apply.setArbitraryFloat(apply.getArbitraryFloat() + e.getAmount());
