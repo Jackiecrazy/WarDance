@@ -106,8 +106,8 @@ public class StealthUtils {
 
     private static boolean inWeb(LivingEntity e) {
         if (!e.level.isAreaLoaded(e.blockPosition(), (int) Math.ceil(e.getBbWidth()))) return false;
-        double minX = e.getX() - e.getBbWidth() / 2, minY = e.getY() - e.getBbHeight() / 2, minZ = e.getZ() - e.getBbWidth() / 2;
-        double maxX = e.getX() + e.getBbWidth() / 2, maxY = e.getY() + e.getBbHeight() / 2, maxZ = e.getZ() + e.getBbWidth() / 2;
+        double minX = e.getX() - e.getBbWidth() / 2, minY = e.getY(), minZ = e.getZ() - e.getBbWidth() / 2;
+        double maxX = e.getX() + e.getBbWidth() / 2, maxY = e.getY() + e.getBbHeight(), maxZ = e.getZ() + e.getBbWidth() / 2;
         for (double x = minX; x <= maxX; x++) {
             for (double y = minY; y <= maxY; y++) {
                 for (double z = minZ; z <= maxZ; z++) {

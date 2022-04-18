@@ -29,15 +29,6 @@ import java.awt.*;
 import java.util.List;
 import java.util.*;
 
-/*
- * for chanting, make a dummy skill which does nothing but play a sound, if even that. This is the one that'll be displayed to players.
- * at the end of that skill, onCast is properly called, ignoring canCast() because that'll be set to false for the actual skill.
- * if it's a discrete and immediate effect, of course, you can just proc it when the effect ends.
- *
- * Every "skill upgrade" is actually a different skill. This means you can override getParentSkill() and get upgrades to show up.
- * A list of skills are compiled at world load. First the skills with no parent skill are loaded, then their children.
- * There are no grandchildren. If you make a grandchild, it won't show up.
- */
 public abstract class Skill extends ForgeRegistryEntry<Skill> {
     public static final HashMap<SkillCategory, List<Skill>> variationMap = new HashMap<>();
     protected static final Tag<String> none = Tag.empty();

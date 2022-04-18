@@ -18,7 +18,7 @@ apply plugin: 'com.matthewprenger.cursegradle'
 apply plugin: 'maven-publish'
 apply plugin: 'org.spongepowered.mixin'
 
-version = '0.8.7.0'
+version = '0.8.7.1'
 group = 'jackiecrazy.wardance' // http://maven.apache.org/guides/mini/guide-naming-conventions.html
 archivesBaseName = 'wardance'
 
@@ -113,6 +113,7 @@ dependencies {
     // that the dep is a ForgeGradle 'patcher' dependency. And it's patches will be applied.
     // The userdev artifact is a special name and will get all sorts of transformations applied to it.
     minecraft 'net.minecraftforge:forge:1.16.5-36.2.22'
+    compile fg.deobf("curse.maven:footwork-608407:3742224")
     compile fg.deobf("curse.maven:elenaidodge2-442962:3221492")
     compileOnly fg.deobf("com.blamejared.crafttweaker:CraftTweaker-1.16.4:7.1.0.84")
     annotationProcessor 'org.spongepowered:mixin:0.8.5:processor'

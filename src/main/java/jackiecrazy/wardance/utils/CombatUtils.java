@@ -516,6 +516,7 @@ public class CombatUtils {
 
     public static void sweep(LivingEntity e, Entity ignore, Hand h, double reach) {
         if (!GeneralConfig.betterSweep) return;
+        if (!CombatData.getCap(e).isCombatMode()) return;
         if (CombatData.getCap(e).getForcedSweep() == 0) {
             CombatData.getCap(e).setForcedSweep(-1);
             return;
