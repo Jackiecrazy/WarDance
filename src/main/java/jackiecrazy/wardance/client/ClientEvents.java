@@ -3,8 +3,6 @@ package jackiecrazy.wardance.client;
 import com.elenai.elenaidodge2.event.ClientTickEventListener;
 import com.mojang.blaze3d.matrix.MatrixStack;
 import jackiecrazy.wardance.WarDance;
-import jackiecrazy.wardance.capability.resources.CombatData;
-import jackiecrazy.wardance.capability.resources.ICombatCapability;
 import jackiecrazy.wardance.compat.WarCompat;
 import jackiecrazy.wardance.config.ClientConfig;
 import jackiecrazy.wardance.config.CombatConfig;

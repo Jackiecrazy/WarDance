@@ -1,6 +1,5 @@
 package jackiecrazy.wardance.skill.judgment;
 
-import jackiecrazy.wardance.capability.resources.CombatData;
 import jackiecrazy.wardance.capability.status.Marks;
 import jackiecrazy.wardance.event.StaggerEvent;
 import jackiecrazy.wardance.skill.ProcPoints;
@@ -14,8 +13,6 @@ import net.minecraftforge.eventbus.api.EventPriority;
 import java.awt.*;
 import java.util.Arrays;
 import java.util.HashSet;
-
-import jackiecrazy.wardance.skill.Skill.STATE;
 
 public class MastersLesson extends Judgment {
     private final Tag<String> tag = Tag.create(new HashSet<>(Arrays.asList("physical", ProcPoints.on_hurt, ProcPoints.normal_attack, ProcPoints.on_stagger, ProcPoints.on_cast, "melee", "execution")));

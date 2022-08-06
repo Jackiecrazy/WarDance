@@ -1,6 +1,5 @@
 package jackiecrazy.wardance.skill.ironguard;
 
-import jackiecrazy.wardance.capability.resources.CombatData;
 import jackiecrazy.wardance.config.ResourceConfig;
 import jackiecrazy.wardance.event.ConsumePostureEvent;
 import jackiecrazy.wardance.skill.Skill;
@@ -15,8 +14,6 @@ import net.minecraftforge.eventbus.api.EventPriority;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.awt.*;
-
-import jackiecrazy.wardance.skill.Skill.STATE;
 
 public class Recovery extends Skill {
     @Override

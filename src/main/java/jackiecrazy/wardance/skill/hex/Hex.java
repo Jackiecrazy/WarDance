@@ -2,8 +2,6 @@ package jackiecrazy.wardance.skill.hex;
 
 import jackiecrazy.wardance.WarDance;
 import jackiecrazy.wardance.api.CombatDamageSource;
-import jackiecrazy.wardance.capability.resources.CombatData;
-import jackiecrazy.wardance.capability.resources.ICombatCapability;
 import jackiecrazy.wardance.capability.status.Marks;
 import jackiecrazy.wardance.entity.FakeExplosion;
 import jackiecrazy.wardance.event.LuckEvent;

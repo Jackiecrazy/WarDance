@@ -1,6 +1,6 @@
 package jackiecrazy.wardance.skill.warcry;
 
-import jackiecrazy.wardance.capability.resources.CombatData;
+import jackiecrazy.footwork.capability.resources.CombatData;
 import jackiecrazy.wardance.skill.ProcPoints;
 import jackiecrazy.wardance.skill.SkillData;
 import jackiecrazy.wardance.utils.GeneralUtils;

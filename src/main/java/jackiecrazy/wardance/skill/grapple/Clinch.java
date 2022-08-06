@@ -1,6 +1,5 @@
 package jackiecrazy.wardance.skill.grapple;
 
-import jackiecrazy.wardance.capability.resources.CombatData;
 import jackiecrazy.wardance.skill.SkillData;
 import jackiecrazy.wardance.utils.CombatUtils;
 import net.minecraft.entity.LivingEntity;

@@ -1,7 +1,7 @@
 package jackiecrazy.wardance.compat.crafttweaker;
 
 import com.blamejared.crafttweaker.api.annotations.ZenRegister;
-import jackiecrazy.wardance.capability.resources.CombatData;
+import jackiecrazy.footwork.capability.resources.CombatData;
 import jackiecrazy.wardance.capability.skill.CasterData;
 import jackiecrazy.wardance.skill.Skill;
 import net.minecraft.entity.LivingEntity;

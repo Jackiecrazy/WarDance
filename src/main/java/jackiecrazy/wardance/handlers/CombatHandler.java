@@ -1,12 +1,12 @@
 package jackiecrazy.wardance.handlers;
 
+import jackiecrazy.footwork.capability.resources.CombatData;
+import jackiecrazy.footwork.capability.resources.ICombatCapability;
+import jackiecrazy.footwork.capability.weaponry.CombatManipulator;
+import jackiecrazy.footwork.capability.weaponry.ICombatItemCapability;
 import jackiecrazy.wardance.WarDance;
 import jackiecrazy.wardance.api.CombatDamageSource;
 import jackiecrazy.wardance.api.WarAttributes;
-import jackiecrazy.wardance.capability.resources.CombatData;
-import jackiecrazy.wardance.capability.resources.ICombatCapability;
-import jackiecrazy.wardance.capability.weaponry.CombatManipulator;
-import jackiecrazy.wardance.capability.weaponry.ICombatItemCapability;
 import jackiecrazy.wardance.config.CombatConfig;
 import jackiecrazy.wardance.config.GeneralConfig;
 import jackiecrazy.wardance.config.ResourceConfig;
@@ -418,7 +418,7 @@ public class CombatHandler {
     @SubscribeEvent
     public static void critHooks(CriticalHitEvent e) {
         if (!e.getEntityLiving().level.isClientSide) {
-            LivingEntity uke = e.getEntityLiving();
+            LivingEntity uke = e.getEntityLiving();//FIXME wrong!
             LivingEntity seme = e.getPlayer();
             if (seme.getMainHandItem().getCapability(CombatManipulator.CAP).isPresent()) {
                 e.setResult(seme.getMainHandItem().getCapability(CombatManipulator.CAP).resolve().get().critCheck(seme, uke, seme.getMainHandItem(), e.getOldDamageModifier(), e.isVanillaCritical()));

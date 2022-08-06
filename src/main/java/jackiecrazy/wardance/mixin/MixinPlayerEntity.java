@@ -1,7 +1,6 @@
 package jackiecrazy.wardance.mixin;
 
 import jackiecrazy.wardance.api.CombatDamageSource;
-import jackiecrazy.wardance.capability.resources.CombatData;
 import jackiecrazy.wardance.config.GeneralConfig;
 import jackiecrazy.wardance.event.MeleeKnockbackEvent;
 import net.minecraft.entity.Entity;

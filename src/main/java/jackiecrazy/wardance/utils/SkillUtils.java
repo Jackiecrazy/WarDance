@@ -1,6 +1,5 @@
 package jackiecrazy.wardance.utils;
 
-import jackiecrazy.wardance.capability.resources.CombatData;
 import jackiecrazy.wardance.skill.Skill;
 import net.minecraft.entity.AreaEffectCloudEntity;
 import net.minecraft.entity.Entity;

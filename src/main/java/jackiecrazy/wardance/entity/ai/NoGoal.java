@@ -1,6 +1,5 @@
 package jackiecrazy.wardance.entity.ai;
 
-import jackiecrazy.wardance.capability.resources.CombatData;
 import jackiecrazy.wardance.potion.WarEffects;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.ai.goal.Goal;

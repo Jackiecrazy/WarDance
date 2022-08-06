@@ -1,6 +1,5 @@
 package jackiecrazy.wardance.potion;
 
-import jackiecrazy.wardance.capability.resources.CombatData;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.particles.ParticleTypes;
 import net.minecraft.potion.Effect;

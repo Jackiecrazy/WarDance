@@ -1,6 +1,5 @@
 package jackiecrazy.wardance.networking;
 
-import jackiecrazy.wardance.capability.resources.CombatData;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.world.ClientWorld;
 import net.minecraft.entity.Entity;

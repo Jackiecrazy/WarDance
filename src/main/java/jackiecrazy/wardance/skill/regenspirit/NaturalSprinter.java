@@ -1,7 +1,6 @@
 package jackiecrazy.wardance.skill.regenspirit;
 
 import jackiecrazy.wardance.api.WarAttributes;
-import jackiecrazy.wardance.capability.resources.CombatData;
 import jackiecrazy.wardance.event.RegenSpiritEvent;
 import jackiecrazy.wardance.skill.*;
 import net.minecraft.entity.LivingEntity;
@@ -16,8 +15,6 @@ import java.awt.*;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.UUID;
-
-import jackiecrazy.wardance.skill.Skill.STATE;
 
 public class NaturalSprinter extends Skill {
     private static final AttributeModifier sprint = new AttributeModifier(UUID.fromString("0683fe69-5348-4a83-95d5-81a2eeb2cca0"), "gimli moment", 10, AttributeModifier.Operation.ADDITION);

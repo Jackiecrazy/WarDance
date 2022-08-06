@@ -1,7 +1,6 @@
 package jackiecrazy.wardance.skill.mementomori;
 
 import jackiecrazy.wardance.api.CombatDamageSource;
-import jackiecrazy.wardance.capability.resources.CombatData;
 import jackiecrazy.wardance.event.ParryEvent;
 import jackiecrazy.wardance.skill.ProcPoints;
 import jackiecrazy.wardance.skill.SkillData;

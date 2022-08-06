@@ -1,6 +1,5 @@
 package jackiecrazy.wardance.skill.heavyblow;
 
-import jackiecrazy.wardance.capability.resources.CombatData;
 import jackiecrazy.wardance.event.ParryEvent;
 import jackiecrazy.wardance.skill.SkillData;
 import net.minecraft.entity.LivingEntity;

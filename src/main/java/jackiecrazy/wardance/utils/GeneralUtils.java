@@ -5,7 +5,6 @@
 
 package jackiecrazy.wardance.utils;
 
-import jackiecrazy.wardance.capability.resources.CombatData;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.DoorBlock;

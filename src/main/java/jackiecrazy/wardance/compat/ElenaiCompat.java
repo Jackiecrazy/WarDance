@@ -2,7 +2,6 @@ package jackiecrazy.wardance.compat;
 
 import com.elenai.elenaidodge2.api.DodgeEvent;
 import com.elenai.elenaidodge2.api.FeathersHelper;
-import jackiecrazy.wardance.capability.resources.CombatData;
 import jackiecrazy.wardance.config.GeneralConfig;
 import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraftforge.common.MinecraftForge;

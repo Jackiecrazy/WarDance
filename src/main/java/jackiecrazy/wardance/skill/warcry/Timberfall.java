@@ -1,7 +1,6 @@
 package jackiecrazy.wardance.skill.warcry;
 
 import jackiecrazy.wardance.WarDance;
-import jackiecrazy.wardance.capability.resources.CombatData;
 import jackiecrazy.wardance.capability.skill.CasterData;
 import jackiecrazy.wardance.event.AttackMightEvent;
 import jackiecrazy.wardance.skill.ProcPoints;
@@ -18,8 +17,6 @@ import net.minecraftforge.fml.common.Mod;
 import java.awt.*;
 import java.util.Arrays;
 import java.util.HashSet;
-
-import jackiecrazy.wardance.skill.Skill.STATE;
 
 @Mod.EventBusSubscriber(modid = WarDance.MODID)
 public class Timberfall extends WarCry {

@@ -1,6 +1,5 @@
 package jackiecrazy.wardance.skill.heavyblow;
 
-import jackiecrazy.wardance.capability.resources.CombatData;
 import jackiecrazy.wardance.event.ParryEvent;
 import jackiecrazy.wardance.skill.ProcPoints;
 import jackiecrazy.wardance.skill.SkillData;
@@ -13,8 +12,6 @@ import net.minecraftforge.eventbus.api.EventPriority;
 import java.awt.*;
 import java.util.Arrays;
 import java.util.HashSet;
-
-import jackiecrazy.wardance.skill.Skill.STATE;
 
 public class Poise extends HeavyBlow {
     private final Tag<String> tag = Tag.create(new HashSet<>(Arrays.asList("physical", "disableShield", ProcPoints.melee, ProcPoints.on_hurt, "boundCast", ProcPoints.normal_attack, ProcPoints.countdown, ProcPoints.modify_crit, ProcPoints.recharge_normal, ProcPoints.on_being_parried, ProcPoints.on_parry)));

@@ -2,7 +2,6 @@ package jackiecrazy.wardance.skill.warcry;
 
 import jackiecrazy.wardance.WarDance;
 import jackiecrazy.wardance.api.CombatDamageSource;
-import jackiecrazy.wardance.capability.resources.CombatData;
 import jackiecrazy.wardance.capability.skill.CasterData;
 import jackiecrazy.wardance.potion.WarEffects;
 import jackiecrazy.wardance.skill.ProcPoints;
@@ -23,8 +22,6 @@ import java.awt.*;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.UUID;
-
-import jackiecrazy.wardance.skill.Skill.STATE;
 
 @Mod.EventBusSubscriber(modid = WarDance.MODID)
 public class FlameDance extends WarCry {

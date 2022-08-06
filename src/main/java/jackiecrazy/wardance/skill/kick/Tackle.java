@@ -1,6 +1,5 @@
 package jackiecrazy.wardance.skill.kick;
 
-import jackiecrazy.wardance.capability.resources.CombatData;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.ai.attributes.AttributeModifier;
 

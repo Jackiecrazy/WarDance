@@ -1,7 +1,6 @@
 package jackiecrazy.wardance.mixin;
 
 import com.mojang.blaze3d.matrix.MatrixStack;
-import jackiecrazy.wardance.capability.resources.CombatData;
 import jackiecrazy.wardance.config.StealthConfig;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.IRenderTypeBuffer;

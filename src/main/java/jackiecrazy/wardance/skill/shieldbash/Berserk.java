@@ -1,6 +1,5 @@
 package jackiecrazy.wardance.skill.shieldbash;
 
-import jackiecrazy.wardance.capability.resources.CombatData;
 import jackiecrazy.wardance.utils.CombatUtils;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.potion.EffectInstance;

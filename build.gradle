@@ -8,7 +8,7 @@ buildscript {
         mavenCentral()
     }
     dependencies {
-        classpath group: 'net.minecraftforge.gradle', name: 'ForgeGradle', version: '4.1.+', changing: true
+        classpath group: 'net.minecraftforge.gradle', name: 'ForgeGradle', version: '5.1.+', changing: true
         classpath 'gradle.plugin.com.matthewprenger:CurseGradle:1.4.0'
         classpath group: 'org.spongepowered', name: 'mixingradle', version: '0.7-SNAPSHOT'
     }
@@ -106,6 +106,9 @@ repositories {
     maven {
         url "https://www.cursemaven.com"
     }
+    flatDir {
+        dir 'libs'
+    }
 }
 
 dependencies {
@@ -113,10 +116,11 @@ dependencies {
     // that the dep is a ForgeGradle 'patcher' dependency. And it's patches will be applied.
     // The userdev artifact is a special name and will get all sorts of transformations applied to it.
     minecraft 'net.minecraftforge:forge:1.16.5-36.2.22'
-    compile fg.deobf("curse.maven:footwork-608407:3742224")
-    compile fg.deobf("curse.maven:elenaidodge2-442962:3221492")
+    compileOnly fg.deobf("curse.maven:elenaidodge2-442962:3221492")
     compileOnly fg.deobf("com.blamejared.crafttweaker:CraftTweaker-1.16.4:7.1.0.84")
     annotationProcessor 'org.spongepowered:mixin:0.8.5:processor'
+    implementation fg.deobf("jackiecrazy.footwork:footwork-1.1:1.16.5")
+    implementation fg.deobf("jackiecrazy.cloakanddagger:cloakanddagger-0.2:1.16.5")
     //compile fg.deobf("curse.maven:offhandcombat-417112:3203449")
 }
 

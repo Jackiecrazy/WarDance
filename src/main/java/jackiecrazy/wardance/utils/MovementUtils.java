@@ -1,7 +1,5 @@
 package jackiecrazy.wardance.utils;
 
-import jackiecrazy.wardance.capability.resources.CombatData;
-import jackiecrazy.wardance.capability.resources.ICombatCapability;
 import jackiecrazy.wardance.compat.WarCompat;
 import jackiecrazy.wardance.config.CombatConfig;
 import jackiecrazy.wardance.event.DodgeEvent;

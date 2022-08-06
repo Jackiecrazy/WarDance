@@ -1,6 +1,5 @@
 package jackiecrazy.wardance.skill.shieldbash;
 
-import jackiecrazy.wardance.capability.resources.CombatData;
 import jackiecrazy.wardance.skill.ProcPoints;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.tags.Tag;

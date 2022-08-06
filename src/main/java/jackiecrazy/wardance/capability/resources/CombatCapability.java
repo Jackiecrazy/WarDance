@@ -1,5 +1,6 @@
 package jackiecrazy.wardance.capability.resources;
 
+import jackiecrazy.footwork.capability.resources.ICombatCapability;
 import jackiecrazy.wardance.WarDance;
 import jackiecrazy.wardance.api.WarAttributes;
 import jackiecrazy.wardance.capability.skill.CasterData;

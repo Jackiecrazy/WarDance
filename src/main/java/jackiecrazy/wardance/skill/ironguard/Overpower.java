@@ -1,15 +1,11 @@
 package jackiecrazy.wardance.skill.ironguard;
 
-import jackiecrazy.wardance.capability.resources.CombatData;
-import jackiecrazy.wardance.capability.resources.ICombatCapability;
 import jackiecrazy.wardance.event.ParryEvent;
 import jackiecrazy.wardance.skill.SkillData;
 import jackiecrazy.wardance.utils.CombatUtils;
 import net.minecraft.entity.LivingEntity;
 
 import java.awt.*;
-
-import jackiecrazy.wardance.skill.Skill.STATE;
 
 public class Overpower extends IronGuard {
     @Override

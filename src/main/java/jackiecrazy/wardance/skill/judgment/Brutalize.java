@@ -1,6 +1,5 @@
 package jackiecrazy.wardance.skill.judgment;
 
-import jackiecrazy.wardance.capability.resources.CombatData;
 import jackiecrazy.wardance.event.StaggerEvent;
 import jackiecrazy.wardance.potion.WarEffects;
 import jackiecrazy.wardance.skill.SkillData;
@@ -16,8 +15,6 @@ import net.minecraftforge.eventbus.api.EventPriority;
 import javax.annotation.Nullable;
 import java.awt.*;
 import java.util.List;
-
-import jackiecrazy.wardance.skill.Skill.STATE;
 
 public class Brutalize extends Judgment {
     @Override
