@@ -1,6 +1,6 @@
 package jackiecrazy.wardance.api;
 
-import jackiecrazy.wardance.utils.GeneralUtils;
+import jackiecrazy.footwork.utils.GeneralUtils;
 import net.minecraft.entity.Entity;
 import net.minecraft.util.math.vector.Vector3d;
 

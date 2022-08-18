@@ -1,41 +1,27 @@
 package jackiecrazy.wardance;
 
-import jackiecrazy.wardance.api.WarAttributes;
-import jackiecrazy.wardance.capability.goal.GoalCapability;
-import jackiecrazy.wardance.capability.goal.IGoalHelper;
-import jackiecrazy.wardance.capability.kits.IKitItemStack;
-import jackiecrazy.wardance.capability.kits.KitCapability;
 import jackiecrazy.wardance.capability.skill.DummySkillCap;
 import jackiecrazy.wardance.capability.skill.ISkillCapability;
 import jackiecrazy.wardance.capability.skill.SkillStorage;
 import jackiecrazy.wardance.capability.status.DummyMarkCap;
 import jackiecrazy.wardance.capability.status.IMark;
 import jackiecrazy.wardance.capability.status.StatusStorage;
-import jackiecrazy.wardance.capability.weaponry.DummyCombatItemCap;
-import jackiecrazy.wardance.capability.weaponry.ICombatItemCapability;
 import jackiecrazy.wardance.client.Keybinds;
 import jackiecrazy.wardance.command.WarDanceCommand;
 import jackiecrazy.wardance.compat.ElenaiCompat;
 import jackiecrazy.wardance.compat.WarCompat;
 import jackiecrazy.wardance.config.*;
 import jackiecrazy.wardance.networking.*;
-import jackiecrazy.wardance.potion.WarEffects;
 import jackiecrazy.wardance.skill.Skill;
 import jackiecrazy.wardance.skill.WarSkills;
-import net.minecraft.entity.EntityType;
-import net.minecraft.entity.LivingEntity;
-import net.minecraft.entity.ai.attributes.Attribute;
-import net.minecraft.entity.ai.attributes.Attributes;
 import net.minecraft.world.GameRules;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.capabilities.CapabilityManager;
 import net.minecraftforge.event.RegisterCommandsEvent;
 import net.minecraftforge.event.RegistryEvent;
-import net.minecraftforge.event.entity.EntityAttributeModificationEvent;
 import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.ModLoadingContext;
-import net.minecraftforge.fml.RegistryObject;
 import net.minecraftforge.fml.client.registry.ClientRegistry;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.config.ModConfig;
@@ -81,20 +67,14 @@ public class WarDance {
         ModLoadingContext.get().registerConfig(ModConfig.Type.COMMON, ResourceConfig.CONFIG_SPEC, MODID + "/resources.toml");
         ModLoadingContext.get().registerConfig(ModConfig.Type.CLIENT, ClientConfig.CONFIG_SPEC, MODID + "/client.toml");
         IEventBus bus = FMLJavaModLoadingContext.get().getModEventBus();
-        WarAttributes.ATTRIBUTES.register(bus);
         WarSkills.SKILLS.makeRegistry("skills", RegistryBuilder::new);
         WarSkills.SKILLS.register(bus);
-        WarEffects.EFFECTS.register(bus);
         MinecraftForge.EVENT_BUS.addListener(this::commands);
     }
 
     private void setup(final FMLCommonSetupEvent event) {
-        CapabilityManager.INSTANCE.register(ICombatCapability.class, new CombatStorage(), DummyCombatCap::new);
         CapabilityManager.INSTANCE.register(ISkillCapability.class, new SkillStorage(), DummySkillCap::new);
-        CapabilityManager.INSTANCE.register(ICombatItemCapability.class, new DummyCombatItemCap.Storage(), DummyCombatItemCap::new);
-        CapabilityManager.INSTANCE.register(IKitItemStack.class, new KitCapability.Storage(), KitCapability::new);
         CapabilityManager.INSTANCE.register(IMark.class, new StatusStorage(), DummyMarkCap::new);
-        CapabilityManager.INSTANCE.register(IGoalHelper.class, new GoalCapability.Storage(), GoalCapability::new);
         // some preinit code
         int index = 0;
         CombatChannel.INSTANCE.registerMessage(index++, UpdateClientPacket.class, new UpdateClientPacket.UpdateClientEncoder(), new UpdateClientPacket.UpdateClientDecoder(), new UpdateClientPacket.UpdateClientHandler());
@@ -153,21 +133,6 @@ public class WarDance {
     public static class RegistryEvents {
         @SubscribeEvent
         public static void skills(final RegistryEvent.Register<Skill> e) {
-        }
-
-        @SubscribeEvent
-        public static void attributes(EntityAttributeModificationEvent event) {
-            for (EntityType<? extends LivingEntity> t : event.getTypes()) {
-                if (!event.has(t, Attributes.ATTACK_SPEED)) event.add(t, Attributes.ATTACK_SPEED, 4);
-                if (!event.has(t, Attributes.LUCK)) event.add(t, Attributes.LUCK, 0);
-                for (RegistryObject<Attribute> a : WarAttributes.ATTRIBUTES.getEntries()) {
-                    if (!event.has(t, a.get())) {
-                        if (GeneralConfig.debug)
-                            LOGGER.debug("civilly registering " + a.getId() + " to " + a.getId());
-                        event.add(t, a.get());
-                    }
-                }
-            }
         }
     }
 }

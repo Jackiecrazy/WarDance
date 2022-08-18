@@ -1,28 +1,28 @@
 package jackiecrazy.wardance.handlers;
 
+import jackiecrazy.footwork.api.WarAttributes;
 import jackiecrazy.footwork.capability.resources.CombatData;
 import jackiecrazy.footwork.capability.resources.ICombatCapability;
 import jackiecrazy.footwork.capability.weaponry.CombatManipulator;
 import jackiecrazy.footwork.capability.weaponry.ICombatItemCapability;
+import jackiecrazy.footwork.event.DamageKnockbackEvent;
+import jackiecrazy.footwork.event.MeleeKnockbackEvent;
+import jackiecrazy.footwork.potion.FootworkEffects;
+import jackiecrazy.footwork.utils.GeneralUtils;
+import jackiecrazy.footwork.utils.StealthUtils;
 import jackiecrazy.wardance.WarDance;
 import jackiecrazy.wardance.api.CombatDamageSource;
-import jackiecrazy.wardance.api.WarAttributes;
 import jackiecrazy.wardance.config.CombatConfig;
 import jackiecrazy.wardance.config.GeneralConfig;
 import jackiecrazy.wardance.config.ResourceConfig;
 import jackiecrazy.wardance.config.StealthConfig;
 import jackiecrazy.wardance.entity.FearEntity;
 import jackiecrazy.wardance.entity.WarEntities;
-import jackiecrazy.wardance.event.DamageKnockbackEvent;
-import jackiecrazy.wardance.event.MeleeKnockbackEvent;
 import jackiecrazy.wardance.event.ParryEvent;
 import jackiecrazy.wardance.event.ProjectileParryEvent;
 import jackiecrazy.wardance.mixin.ProjectileImpactMixin;
-import jackiecrazy.wardance.potion.WarEffects;
 import jackiecrazy.wardance.utils.CombatUtils;
-import jackiecrazy.wardance.utils.GeneralUtils;
 import jackiecrazy.wardance.utils.MovementUtils;
-import jackiecrazy.wardance.utils.StealthUtils;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.ai.attributes.AttributeModifier;
@@ -33,7 +33,6 @@ import net.minecraft.entity.projectile.ProjectileEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.UseAction;
 import net.minecraft.particles.ParticleTypes;
-import net.minecraft.potion.Effects;
 import net.minecraft.util.*;
 import net.minecraft.util.math.EntityRayTraceResult;
 import net.minecraft.util.math.RayTraceResult;
@@ -87,7 +86,7 @@ public class CombatHandler {
         }
         if (e.getRayTraceResult().getType() == RayTraceResult.Type.ENTITY && e.getRayTraceResult() instanceof EntityRayTraceResult && ((EntityRayTraceResult) e.getRayTraceResult()).getEntity() instanceof LivingEntity) {
             LivingEntity uke = (LivingEntity) ((EntityRayTraceResult) e.getRayTraceResult()).getEntity();
-            if (StealthUtils.getAwareness(null, uke) != StealthUtils.Awareness.ALERT) {
+            if (StealthUtils.INSTANCE.getAwareness(null, uke) != StealthUtils.Awareness.ALERT) {
                 return;
             }
             //dodged
@@ -123,7 +122,7 @@ public class CombatHandler {
             if (projectile instanceof ProjectileEntity && ((ProjectileEntity) projectile).getOwner() instanceof LivingEntity) {
                 //don't parry yourself
                 if (((ProjectileEntity) projectile).getOwner() == uke) return;
-                a = StealthUtils.getAwareness((LivingEntity) ((ProjectileEntity) projectile).getOwner(), uke);
+                a = StealthUtils.INSTANCE.getAwareness((LivingEntity) ((ProjectileEntity) projectile).getOwner(), uke);
             }
             boolean canParry = GeneralUtils.isFacingEntity(uke, projectile, 120);
             boolean force = false;
@@ -229,8 +228,6 @@ public class CombatHandler {
             ItemStack attack = CombatUtils.getAttackingItemStack(e.getSource());
             if (CombatUtils.isMeleeAttack(e.getSource()) && e.getSource().getEntity() instanceof LivingEntity && attack != null && e.getAmount() > 0) {
                 LivingEntity seme = (LivingEntity) e.getSource().getEntity();
-                if (StealthConfig.inv)
-                    seme.removeEffect(Effects.INVISIBILITY);
                 ICombatCapability semeCap = CombatData.getCap(seme);
                 Hand attackingHand = semeCap.isOffhandAttack() ? Hand.OFF_HAND : Hand.MAIN_HAND;
                 //hand bound or staggered, no attack
@@ -273,7 +270,7 @@ public class CombatHandler {
                 float original = atkMult;
                 downingHit = true;
                 //stabby bonus
-                StealthUtils.Awareness awareness = StealthUtils.getAwareness(seme, uke);
+                StealthUtils.Awareness awareness = StealthUtils.INSTANCE.getAwareness(seme, uke);
                 atkMult *= CombatUtils.getDamageMultiplier(awareness, attack);
                 //crit bonus
                 if (e.getSource() instanceof CombatDamageSource && ((CombatDamageSource) e.getSource()).isCrit())
@@ -403,7 +400,7 @@ public class CombatHandler {
             }
             //shatter, at the rock bottom of the attack event, saving your protected butt.
             if (!uke.isBlocking() && !e.isCanceled()) {
-                if (CombatUtils.isPhysicalAttack(e.getSource()) && StealthUtils.getAwareness(e.getSource().getDirectEntity() instanceof LivingEntity ? (LivingEntity) e.getSource().getDirectEntity() : null, uke) != StealthUtils.Awareness.UNAWARE) {
+                if (CombatUtils.isPhysicalAttack(e.getSource()) && StealthUtils.INSTANCE.getAwareness(e.getSource().getDirectEntity() instanceof LivingEntity ? (LivingEntity) e.getSource().getDirectEntity() : null, uke) != StealthUtils.Awareness.UNAWARE) {
                     if (CombatData.getCap(uke).consumeShatter(e.getAmount())) {
                         e.setCanceled(true);
                         uke.level.playSound(null, uke.getX(), uke.getY(), uke.getZ(), SoundEvents.GLASS_BREAK, SoundCategory.PLAYERS, 0.25f + WarDance.rand.nextFloat() * 0.5f, 0.75f + WarDance.rand.nextFloat() * 0.5f);
@@ -472,13 +469,13 @@ public class CombatHandler {
         if (GeneralConfig.debug)
             WarDance.LOGGER.debug("damage from " + e.getSource() + " received with amount " + e.getAmount());
         LivingEntity uke = e.getEntityLiving();
-        uke.removeEffect(WarEffects.DISTRACTION.get());
-        uke.removeEffect(WarEffects.FEAR.get());
-        uke.removeEffect(WarEffects.SLEEP.get());
+        uke.removeEffect(FootworkEffects.DISTRACTION.get());
+        uke.removeEffect(FootworkEffects.FEAR.get());
+        uke.removeEffect(FootworkEffects.SLEEP.get());
         LivingEntity kek = null;
         DamageSource ds = e.getSource();
-        if (uke.hasEffect(WarEffects.VULNERABLE.get()) && !CombatUtils.isPhysicalAttack(ds))
-            e.setAmount(e.getAmount() + uke.getEffect(WarEffects.VULNERABLE.get()).getAmplifier() + 1);
+        if (uke.hasEffect(FootworkEffects.VULNERABLE.get()) && !CombatUtils.isPhysicalAttack(ds))
+            e.setAmount(e.getAmount() + uke.getEffect(FootworkEffects.VULNERABLE.get()).getAmplifier() + 1);
         if (ds.getDirectEntity() instanceof LivingEntity) {
             kek = (LivingEntity) ds.getDirectEntity();
         }
@@ -505,7 +502,7 @@ public class CombatHandler {
         cap.setSpiritGrace(ResourceConfig.spiritCD);
         cap.setAdrenalineCooldown(CombatConfig.adrenaline);
         SubtleBonusHandler.update = true;
-        StealthUtils.Awareness awareness = StealthUtils.getAwareness(kek, uke);
+        StealthUtils.Awareness awareness = StealthUtils.INSTANCE.getAwareness(kek, uke);
         if (ds.getEntity() instanceof LivingEntity) {
             LivingEntity seme = ((LivingEntity) ds.getEntity());
             if (seme.getMainHandItem().getCapability(CombatManipulator.CAP).isPresent()) {
@@ -574,7 +571,7 @@ public class CombatHandler {
             }
         }
         if (CombatData.getCap(uke).getStaggerTime() == 0 && CombatUtils.isPhysicalAttack(e.getSource())) {
-            if (e.getSource().getEntity() instanceof LivingEntity && StealthUtils.getAwareness((LivingEntity) e.getSource().getEntity(), uke) == StealthUtils.Awareness.UNAWARE)
+            if (e.getSource().getEntity() instanceof LivingEntity && StealthUtils.INSTANCE.getAwareness((LivingEntity) e.getSource().getEntity(), uke) == StealthUtils.Awareness.UNAWARE)
                 return;
             float amount = e.getAmount();
             //absorption

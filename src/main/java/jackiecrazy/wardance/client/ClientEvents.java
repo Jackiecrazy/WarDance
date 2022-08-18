@@ -2,6 +2,9 @@ package jackiecrazy.wardance.client;
 
 import com.elenai.elenaidodge2.event.ClientTickEventListener;
 import com.mojang.blaze3d.matrix.MatrixStack;
+import jackiecrazy.footwork.capability.resources.CombatData;
+import jackiecrazy.footwork.capability.resources.ICombatCapability;
+import jackiecrazy.footwork.utils.GeneralUtils;
 import jackiecrazy.wardance.WarDance;
 import jackiecrazy.wardance.compat.WarCompat;
 import jackiecrazy.wardance.config.ClientConfig;
@@ -9,7 +12,6 @@ import jackiecrazy.wardance.config.CombatConfig;
 import jackiecrazy.wardance.config.GeneralConfig;
 import jackiecrazy.wardance.networking.*;
 import jackiecrazy.wardance.utils.CombatUtils;
-import jackiecrazy.wardance.utils.GeneralUtils;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.entity.player.AbstractClientPlayerEntity;
 import net.minecraft.client.settings.KeyBinding;
@@ -197,7 +199,7 @@ public class ClientEvents {
 //                ms.rotate(Vector3f.ZP.rotationDegrees(-e.renderYawOffset));
 //                ms.rotate(Vector3f.YP.rotationDegrees(e.renderYawOffset));
             }
-//            if(e.isPotionActive(WarEffects.PETRIFY.get())){
+//            if(e.isPotionActive(FootworkEffects.PETRIFY.get())){
 //                event.getRenderer()
 //                Minecraft.getInstance().getTextureManager().bindTexture(AbstractGui.GUI_ICONS_LOCATION);
 //            }

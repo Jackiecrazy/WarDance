@@ -1,10 +1,11 @@
 package jackiecrazy.wardance.skill.judgment;
 
-import jackiecrazy.wardance.event.StaggerEvent;
-import jackiecrazy.wardance.potion.WarEffects;
+import jackiecrazy.footwork.capability.resources.CombatData;
+import jackiecrazy.footwork.event.StaggerEvent;
+import jackiecrazy.footwork.potion.FootworkEffects;
+import jackiecrazy.footwork.utils.EffectUtils;
+import jackiecrazy.footwork.utils.TargetingUtils;
 import jackiecrazy.wardance.skill.SkillData;
-import jackiecrazy.wardance.utils.EffectUtils;
-import jackiecrazy.wardance.utils.TargetingUtils;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.particles.ParticleTypes;
 import net.minecraft.potion.EffectInstance;
@@ -38,7 +39,7 @@ public class Brutalize extends Judgment {
         }
         final List<LivingEntity> list = caster.level.getLoadedEntitiesOfClass(LivingEntity.class, caster.getBoundingBox().inflate(10), (a) -> TargetingUtils.isHostile(a, caster));
         for (LivingEntity enemy : list) {
-            enemy.addEffect(new EffectInstance(WarEffects.ENFEEBLE.get(), 200));
+            enemy.addEffect(new EffectInstance(FootworkEffects.ENFEEBLE.get(), 200));
             if (stack == 3 && target.getMaxHealth() > enemy.getMaxHealth())
                 EffectUtils.causeFear(enemy, caster, 200);
         }

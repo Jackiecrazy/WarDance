@@ -1,13 +1,14 @@
 package jackiecrazy.wardance.skill.warcry;
 
+import jackiecrazy.footwork.capability.resources.CombatData;
+import jackiecrazy.footwork.potion.FootworkEffects;
+import jackiecrazy.footwork.utils.EffectUtils;
 import jackiecrazy.wardance.WarDance;
 import jackiecrazy.wardance.api.CombatDamageSource;
 import jackiecrazy.wardance.capability.skill.CasterData;
-import jackiecrazy.wardance.potion.WarEffects;
 import jackiecrazy.wardance.skill.ProcPoints;
 import jackiecrazy.wardance.skill.SkillData;
 import jackiecrazy.wardance.skill.WarSkills;
-import jackiecrazy.wardance.utils.EffectUtils;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.potion.EffectInstance;
 import net.minecraft.tags.Tag;
@@ -35,7 +36,7 @@ public class FlameDance extends WarCry {
             LivingEntity seme = (LivingEntity) e.getSource().getEntity();
             LivingEntity uke = e.getEntityLiving();
             if (CasterData.getCap(seme).isSkillUsable(WarSkills.FLAME_DANCE.get())) {
-                EffectUtils.attemptAddPot(uke, EffectUtils.stackPot(uke, new EffectInstance(WarEffects.CORROSION.get(), (int) CombatData.getCap(seme).getRank(), EffectUtils.getEffectiveLevel(uke, WarEffects.CORROSION.get()) < 4 ? 0 : -1), EffectUtils.StackingMethod.MAXDURATION), false);
+                EffectUtils.attemptAddPot(uke, EffectUtils.stackPot(uke, new EffectInstance(FootworkEffects.CORROSION.get(), (int) CombatData.getCap(seme).getRank(), EffectUtils.getEffectiveLevel(uke, FootworkEffects.CORROSION.get()) < 4 ? 0 : -1), EffectUtils.StackingMethod.MAXDURATION), false);
             }
         }
     }

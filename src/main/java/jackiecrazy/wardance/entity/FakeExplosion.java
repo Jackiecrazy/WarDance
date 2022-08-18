@@ -1,7 +1,7 @@
 package jackiecrazy.wardance.entity;
 
+import jackiecrazy.footwork.utils.TargetingUtils;
 import jackiecrazy.wardance.utils.SkillUtils;
-import jackiecrazy.wardance.utils.TargetingUtils;
 import net.minecraft.enchantment.ProtectionEnchantment;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.LivingEntity;
@@ -15,8 +15,6 @@ import net.minecraft.world.World;
 
 import javax.annotation.Nullable;
 import java.util.List;
-
-import net.minecraft.world.Explosion.Mode;
 
 public class FakeExplosion extends Explosion {
     private float radius, damage;

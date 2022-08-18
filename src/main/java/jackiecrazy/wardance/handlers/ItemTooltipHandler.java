@@ -2,7 +2,6 @@ package jackiecrazy.wardance.handlers;
 
 import jackiecrazy.wardance.WarDance;
 import jackiecrazy.wardance.utils.CombatUtils;
-import jackiecrazy.wardance.utils.StealthUtils;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraftforge.api.distmarker.Dist;
@@ -26,9 +25,6 @@ public class ItemTooltipHandler {
                 e.getToolTip().add(new TranslationTextComponent("wardance.tooltip.noParry").withStyle(TextFormatting.DARK_RED));
             else
                 e.getToolTip().add(new TranslationTextComponent("wardance.tooltip.postureDefend", def));
-            if (CombatUtils.isWeapon(null, e.getItemStack())) {
-                e.getToolTip().add(new TranslationTextComponent("wardance.tooltip.attack", CombatUtils.getDamageMultiplier(StealthUtils.Awareness.DISTRACTED, e.getItemStack()) + "x", CombatUtils.getDamageMultiplier(StealthUtils.Awareness.UNAWARE, e.getItemStack()) + "x").withStyle(TextFormatting.GRAY));
-            }
         }
         if(CombatUtils.isUnarmed(e.getItemStack(), e.getEntityLiving())){
             e.getToolTip().add(new TranslationTextComponent("wardance.tooltip.unarmed"));

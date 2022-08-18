@@ -1,5 +1,9 @@
 package jackiecrazy.wardance.skill.coupdegrace;
 
+import jackiecrazy.footwork.capability.resources.CombatData;
+import jackiecrazy.footwork.capability.resources.ICombatCapability;
+import jackiecrazy.footwork.utils.GeneralUtils;
+import jackiecrazy.footwork.utils.TargetingUtils;
 import jackiecrazy.wardance.WarDance;
 import jackiecrazy.wardance.api.CombatDamageSource;
 import jackiecrazy.wardance.capability.skill.CasterData;
@@ -7,8 +11,6 @@ import jackiecrazy.wardance.capability.skill.ISkillCapability;
 import jackiecrazy.wardance.entity.FakeExplosion;
 import jackiecrazy.wardance.event.SkillCastEvent;
 import jackiecrazy.wardance.skill.*;
-import jackiecrazy.wardance.utils.GeneralUtils;
-import jackiecrazy.wardance.utils.TargetingUtils;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.ai.attributes.Attributes;

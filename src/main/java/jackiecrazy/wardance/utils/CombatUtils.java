@@ -1,16 +1,18 @@
 package jackiecrazy.wardance.utils;
 
+import jackiecrazy.footwork.api.WarAttributes;
 import jackiecrazy.footwork.capability.resources.CombatData;
 import jackiecrazy.footwork.capability.resources.ICombatCapability;
 import jackiecrazy.footwork.capability.weaponry.CombatManipulator;
+import jackiecrazy.footwork.event.AttackMightEvent;
+import jackiecrazy.footwork.utils.GeneralUtils;
+import jackiecrazy.footwork.utils.StealthUtils;
 import jackiecrazy.wardance.WarDance;
 import jackiecrazy.wardance.api.CombatDamageSource;
-import jackiecrazy.wardance.api.WarAttributes;
 import jackiecrazy.wardance.capability.skill.CasterData;
 import jackiecrazy.wardance.config.CombatConfig;
 import jackiecrazy.wardance.config.GeneralConfig;
 import jackiecrazy.wardance.config.StealthConfig;
-import jackiecrazy.wardance.event.AttackMightEvent;
 import jackiecrazy.wardance.event.ProjectileParryEvent;
 import jackiecrazy.wardance.networking.CombatChannel;
 import jackiecrazy.wardance.networking.UpdateAttackPacket;

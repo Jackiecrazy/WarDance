@@ -1,13 +1,15 @@
 package jackiecrazy.wardance.skill.hex;
 
+import jackiecrazy.footwork.capability.resources.CombatData;
+import jackiecrazy.footwork.capability.resources.ICombatCapability;
+import jackiecrazy.footwork.event.LuckEvent;
+import jackiecrazy.footwork.utils.EffectUtils;
 import jackiecrazy.wardance.WarDance;
 import jackiecrazy.wardance.api.CombatDamageSource;
 import jackiecrazy.wardance.capability.status.Marks;
 import jackiecrazy.wardance.entity.FakeExplosion;
-import jackiecrazy.wardance.event.LuckEvent;
 import jackiecrazy.wardance.skill.*;
 import jackiecrazy.wardance.utils.CombatUtils;
-import jackiecrazy.wardance.utils.EffectUtils;
 import jackiecrazy.wardance.utils.SkillUtils;
 import jackiecrazy.wardance.utils.WarColors;
 import net.minecraft.entity.Entity;
@@ -30,7 +32,9 @@ import net.minecraftforge.fml.common.Mod;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.awt.*;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.UUID;
 
 @Mod.EventBusSubscriber(modid = WarDance.MODID)
 public class Hex extends Skill {

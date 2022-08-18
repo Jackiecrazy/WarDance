@@ -1,10 +1,12 @@
 package jackiecrazy.wardance.skill.shieldbash;
 
+import jackiecrazy.footwork.api.WarAttributes;
+import jackiecrazy.footwork.capability.resources.CombatData;
+import jackiecrazy.footwork.capability.resources.ICombatCapability;
+import jackiecrazy.footwork.potion.FootworkEffects;
 import jackiecrazy.wardance.WarDance;
 import jackiecrazy.wardance.api.CombatDamageSource;
-import jackiecrazy.wardance.api.WarAttributes;
 import jackiecrazy.wardance.event.ParryEvent;
-import jackiecrazy.wardance.potion.WarEffects;
 import jackiecrazy.wardance.skill.*;
 import jackiecrazy.wardance.utils.CombatUtils;
 import jackiecrazy.wardance.utils.SkillUtils;
@@ -109,7 +111,7 @@ public class ShieldBash extends Skill {
             super.performEffect(caster, target);
             final int time = CombatData.getCap(caster).getBarrierCooldown();
             target.addEffect(new EffectInstance(Effects.MOVEMENT_SLOWDOWN, time * 2));
-            target.addEffect(new EffectInstance(WarEffects.DISTRACTION.get(), time * 2));
+            target.addEffect(new EffectInstance(FootworkEffects.DISTRACTION.get(), time * 2));
         }
     }
 }

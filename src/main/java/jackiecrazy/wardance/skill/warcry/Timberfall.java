@@ -1,8 +1,9 @@
 package jackiecrazy.wardance.skill.warcry;
 
+import jackiecrazy.footwork.capability.resources.CombatData;
+import jackiecrazy.footwork.event.AttackMightEvent;
 import jackiecrazy.wardance.WarDance;
 import jackiecrazy.wardance.capability.skill.CasterData;
-import jackiecrazy.wardance.event.AttackMightEvent;
 import jackiecrazy.wardance.skill.ProcPoints;
 import jackiecrazy.wardance.skill.SkillData;
 import jackiecrazy.wardance.skill.WarSkills;

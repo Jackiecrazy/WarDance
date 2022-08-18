@@ -1,7 +1,7 @@
 package jackiecrazy.wardance.skill.heavyblow;
 
+import jackiecrazy.footwork.utils.GeneralUtils;
 import jackiecrazy.wardance.skill.*;
-import jackiecrazy.wardance.utils.GeneralUtils;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.tags.Tag;
 import net.minecraftforge.event.entity.player.CriticalHitEvent;

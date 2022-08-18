@@ -1,8 +1,11 @@
 package jackiecrazy.wardance.utils;
 
+import jackiecrazy.footwork.capability.resources.CombatData;
+import jackiecrazy.footwork.capability.resources.ICombatCapability;
+import jackiecrazy.footwork.event.DodgeEvent;
+import jackiecrazy.footwork.utils.GeneralUtils;
 import jackiecrazy.wardance.compat.WarCompat;
 import jackiecrazy.wardance.config.CombatConfig;
-import jackiecrazy.wardance.event.DodgeEvent;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.Pose;
 import net.minecraft.entity.player.PlayerEntity;

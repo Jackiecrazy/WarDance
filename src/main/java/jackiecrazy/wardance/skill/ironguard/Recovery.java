@@ -1,7 +1,8 @@
 package jackiecrazy.wardance.skill.ironguard;
 
+import jackiecrazy.footwork.capability.resources.CombatData;
+import jackiecrazy.footwork.event.ConsumePostureEvent;
 import jackiecrazy.wardance.config.ResourceConfig;
-import jackiecrazy.wardance.event.ConsumePostureEvent;
 import jackiecrazy.wardance.skill.Skill;
 import jackiecrazy.wardance.skill.SkillCategories;
 import jackiecrazy.wardance.skill.SkillCategory;

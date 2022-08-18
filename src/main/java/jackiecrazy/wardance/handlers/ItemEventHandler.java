@@ -1,7 +1,7 @@
 package jackiecrazy.wardance.handlers;
 
+import jackiecrazy.footwork.api.WarAttributes;
 import jackiecrazy.wardance.WarDance;
-import jackiecrazy.wardance.api.WarAttributes;
 import jackiecrazy.wardance.utils.CombatUtils;
 import net.minecraft.entity.ai.attributes.AttributeModifier;
 import net.minecraft.inventory.EquipmentSlotType;

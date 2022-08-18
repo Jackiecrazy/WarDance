@@ -6,10 +6,13 @@ import com.mojang.blaze3d.matrix.MatrixStack;
 import com.mojang.blaze3d.platform.GlStateManager;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.datafixers.util.Pair;
+import jackiecrazy.footwork.api.WarAttributes;
 import jackiecrazy.footwork.capability.resources.CombatData;
 import jackiecrazy.footwork.capability.resources.ICombatCapability;
+import jackiecrazy.footwork.config.DisplayConfigUtils;
+import jackiecrazy.footwork.utils.GeneralUtils;
+import jackiecrazy.footwork.utils.StealthUtils;
 import jackiecrazy.wardance.WarDance;
-import jackiecrazy.wardance.api.WarAttributes;
 import jackiecrazy.wardance.capability.skill.CasterData;
 import jackiecrazy.wardance.capability.skill.ISkillCapability;
 import jackiecrazy.wardance.capability.status.Marks;
@@ -22,8 +25,6 @@ import jackiecrazy.wardance.skill.SkillCategories;
 import jackiecrazy.wardance.skill.SkillData;
 import jackiecrazy.wardance.skill.coupdegrace.CoupDeGrace;
 import jackiecrazy.wardance.utils.CombatUtils;
-import jackiecrazy.wardance.utils.GeneralUtils;
-import jackiecrazy.wardance.utils.StealthUtils;
 import net.minecraft.client.GameSettings;
 import net.minecraft.client.MainWindow;
 import net.minecraft.client.Minecraft;
@@ -684,7 +685,7 @@ public class RenderEvents {
     private static Tuple<StealthUtils.Awareness, Double> stealthInfo(LivingEntity at) {
         try {
             return cache.get(at, () -> {
-                StealthUtils.Awareness a = StealthUtils.getAwareness(Minecraft.getInstance().player, at);
+                StealthUtils.Awareness a = StealthUtils.INSTANCE.getAwareness(Minecraft.getInstance().player, at);
                 double mult = Minecraft.getInstance().player.getVisibilityPercent(at);
                 return new Tuple<>(a, mult * CombatData.getCap(at).visionRange());
             });
@@ -694,7 +695,7 @@ public class RenderEvents {
         return new Tuple<>(StealthUtils.Awareness.ALERT, 1d);
     }
 
-    private static Pair<Integer, Integer> translateCoords(ClientConfig.DisplayData dd, int width, int height) {
+    private static Pair<Integer, Integer> translateCoords(DisplayConfigUtils.DisplayData dd, int width, int height) {
         return translateCoords(dd.anchorPoint, dd.numberX, dd.numberY, width, height);
     }
 
@@ -735,7 +736,7 @@ public class RenderEvents {
         //poseStack.translate(0.0D, -(NeatConfig.backgroundHeight + NeatConfig.barHeight + NeatConfig.backgroundPadding), 0.0D);
     }
 
-    private static Pair<Integer, Integer> translateCoords(ClientConfig.AnchorPoint ap, int x, int y, int width, int height) {
+    private static Pair<Integer, Integer> translateCoords(DisplayConfigUtils.AnchorPoint ap, int x, int y, int width, int height) {
         int retx, rety;
         switch (ap) {
             case TOPLEFT:

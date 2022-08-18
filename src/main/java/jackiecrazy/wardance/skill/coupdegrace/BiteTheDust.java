@@ -1,7 +1,7 @@
 package jackiecrazy.wardance.skill.coupdegrace;
 
+import jackiecrazy.footwork.event.StaggerEvent;
 import jackiecrazy.wardance.api.CombatDamageSource;
-import jackiecrazy.wardance.event.StaggerEvent;
 import jackiecrazy.wardance.skill.SkillCategories;
 import jackiecrazy.wardance.skill.SkillCategory;
 import jackiecrazy.wardance.skill.SkillData;

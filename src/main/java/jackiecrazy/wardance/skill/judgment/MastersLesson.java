@@ -1,7 +1,8 @@
 package jackiecrazy.wardance.skill.judgment;
 
+import jackiecrazy.footwork.capability.resources.CombatData;
+import jackiecrazy.footwork.event.StaggerEvent;
 import jackiecrazy.wardance.capability.status.Marks;
-import jackiecrazy.wardance.event.StaggerEvent;
 import jackiecrazy.wardance.skill.ProcPoints;
 import jackiecrazy.wardance.skill.SkillData;
 import net.minecraft.entity.LivingEntity;

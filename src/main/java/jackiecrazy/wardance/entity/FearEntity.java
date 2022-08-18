@@ -1,9 +1,9 @@
 package jackiecrazy.wardance.entity;
 
+import jackiecrazy.footwork.potion.FootworkEffects;
+import jackiecrazy.footwork.utils.GeneralUtils;
 import jackiecrazy.wardance.WarDance;
 import jackiecrazy.wardance.api.ITetherAnchor;
-import jackiecrazy.wardance.potion.WarEffects;
-import jackiecrazy.wardance.utils.GeneralUtils;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.LivingEntity;
@@ -84,7 +84,7 @@ public class FearEntity extends Entity implements ITetherAnchor {
                 move(MoverType.SELF, new Vector3d((x + WarDance.rand.nextFloat() - 0.5) * 0.05, (y + WarDance.rand.nextFloat() - 0.5) * 0.05, (z + WarDance.rand.nextFloat() - 0.5) * 0.05));
                 markHurt();
                 float rotate = GeneralUtils.deg((float) MathHelper.atan2(x, z));
-                if (!wuss.hasEffect(WarEffects.FEAR.get()))
+                if (!wuss.hasEffect(FootworkEffects.FEAR.get()))
                     removeAfterChangingDimensions();
                 yRot = wuss.yRot = -rotate;
                 updateTetheringVelocity();

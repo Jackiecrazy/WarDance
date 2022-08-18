@@ -1,10 +1,10 @@
 package jackiecrazy.wardance.api;
 
-import net.minecraft.util.math.vector.Vector3d;
-import jackiecrazy.wardance.utils.GeneralUtils;
+import jackiecrazy.footwork.utils.GeneralUtils;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.item.ItemStack;
+import net.minecraft.util.math.vector.Vector3d;
 
 import javax.annotation.Nullable;
 

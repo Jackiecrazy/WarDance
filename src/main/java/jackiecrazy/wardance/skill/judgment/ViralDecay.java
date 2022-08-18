@@ -1,12 +1,12 @@
 package jackiecrazy.wardance.skill.judgment;
 
+import jackiecrazy.footwork.utils.TargetingUtils;
 import jackiecrazy.wardance.WarDance;
 import jackiecrazy.wardance.api.CombatDamageSource;
 import jackiecrazy.wardance.capability.status.Marks;
 import jackiecrazy.wardance.skill.SkillData;
 import jackiecrazy.wardance.skill.WarSkills;
 import jackiecrazy.wardance.utils.SkillUtils;
-import jackiecrazy.wardance.utils.TargetingUtils;
 import jackiecrazy.wardance.utils.WarColors;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.particles.ParticleTypes;
@@ -19,8 +19,6 @@ import net.minecraftforge.fml.common.Mod;
 import javax.annotation.Nullable;
 import java.awt.*;
 import java.util.List;
-
-import jackiecrazy.wardance.skill.Skill.STATE;
 
 @Mod.EventBusSubscriber(modid = WarDance.MODID)
 public class ViralDecay extends Judgment {

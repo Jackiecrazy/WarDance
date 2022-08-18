@@ -1,20 +1,20 @@
 package jackiecrazy.wardance.capability.resources;
 
+import jackiecrazy.footwork.api.WarAttributes;
 import jackiecrazy.footwork.capability.resources.ICombatCapability;
+import jackiecrazy.footwork.event.*;
+import jackiecrazy.footwork.potion.FootworkEffects;
+import jackiecrazy.footwork.utils.GeneralUtils;
+import jackiecrazy.footwork.utils.StealthUtils;
 import jackiecrazy.wardance.WarDance;
-import jackiecrazy.wardance.api.WarAttributes;
 import jackiecrazy.wardance.capability.skill.CasterData;
 import jackiecrazy.wardance.config.CombatConfig;
 import jackiecrazy.wardance.config.GeneralConfig;
 import jackiecrazy.wardance.config.ResourceConfig;
-import jackiecrazy.wardance.event.*;
 import jackiecrazy.wardance.networking.CombatChannel;
 import jackiecrazy.wardance.networking.UpdateClientPacket;
-import jackiecrazy.wardance.potion.WarEffects;
 import jackiecrazy.wardance.skill.WarSkills;
 import jackiecrazy.wardance.utils.CombatUtils;
-import jackiecrazy.wardance.utils.GeneralUtils;
-import jackiecrazy.wardance.utils.StealthUtils;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.Pose;
@@ -784,7 +784,7 @@ public class CombatCapability implements ICombatCapability {
         if (ticks < 1) return;//sometimes time runs backwards
         //update max values
         vision = (float) elb.getAttributeValue(Attributes.FOLLOW_RANGE);
-        if (elb.hasEffect(WarEffects.SLEEP.get()) || elb.hasEffect(WarEffects.PARALYSIS.get()) || elb.hasEffect(WarEffects.PETRIFY.get()))
+        if (elb.hasEffect(FootworkEffects.SLEEP.get()) || elb.hasEffect(FootworkEffects.PARALYSIS.get()) || elb.hasEffect(FootworkEffects.PETRIFY.get()))
             vision = -1;
         setTrueMaxPosture(getMPos(elb));
         setTrueMaxSpirit((float) elb.getAttributeValue(WarAttributes.MAX_SPIRIT.get()));
@@ -1089,7 +1089,7 @@ public class CombatCapability implements ICombatCapability {
         for (int j = 0; j < exp; j++) {
             poison *= GeneralConfig.poison;
         }
-        float exhaustMod = Math.max(0, elb.hasEffect(WarEffects.EXHAUSTION.get()) ? 1 - elb.getEffect(WarEffects.EXHAUSTION.get()).getAmplifier() * 0.2f : 1);
+        float exhaustMod = Math.max(0, elb.hasEffect(FootworkEffects.EXHAUSTION.get()) ? 1 - elb.getEffect(FootworkEffects.EXHAUSTION.get()).getAmplifier() * 0.2f : 1);
         float armorMod = 2.5f + Math.min(elb.getArmorValue(), 20) * 0.125f;
         float cooldownMod = Math.min(CombatUtils.getCooledAttackStrength(elb, Hand.MAIN_HAND, 0.5f), CombatUtils.getCooledAttackStrength(elb, Hand.MAIN_HAND, 0.5f));
         float healthMod = 0.25f + elb.getHealth() / elb.getMaxHealth() * 0.75f;
@@ -1117,7 +1117,7 @@ public class CombatCapability implements ICombatCapability {
         for (int j = 0; j < exp; j++) {
             poison *= GeneralConfig.poison;
         }
-        float exhaustMod = Math.max(0, elb.hasEffect(WarEffects.EXHAUSTION.get()) ? 1 - elb.getEffect(WarEffects.EXHAUSTION.get()).getAmplifier() * 0.2f : 1);
+        float exhaustMod = Math.max(0, elb.hasEffect(FootworkEffects.EXHAUSTION.get()) ? 1 - elb.getEffect(FootworkEffects.EXHAUSTION.get()).getAmplifier() * 0.2f : 1);
         float armorMod = 2.5f + Math.min(elb.getArmorValue(), 20) * 0.125f;
         float healthMod = 0.25f + elb.getHealth() / elb.getMaxHealth() * 0.75f;
         if (CasterData.getCap(elb).isSkillUsable(WarSkills.BOULDER_BRACE.get())) {
@@ -1144,7 +1144,7 @@ public class CombatCapability implements ICombatCapability {
         for (int j = 0; j < exp; j++) {
             poison *= GeneralConfig.poison;
         }
-        float exhaustMod = Math.max(0, elb.hasEffect(WarEffects.EXHAUSTION.get()) ? 1 - elb.getEffect(WarEffects.EXHAUSTION.get()).getAmplifier() * 0.2f : 1);
+        float exhaustMod = Math.max(0, elb.hasEffect(FootworkEffects.EXHAUSTION.get()) ? 1 - elb.getEffect(FootworkEffects.EXHAUSTION.get()).getAmplifier() * 0.2f : 1);
         float armorMod = 5f + Math.min(elb.getArmorValue(), 20) * 0.25f;
         //float healthMod = 0.25f + elb.getHealth() / elb.getMaxHealth() * 0.75f;
         final float ret = (getMaxSpirit() / (armorMod * 20)) * exhaustMod * poison;

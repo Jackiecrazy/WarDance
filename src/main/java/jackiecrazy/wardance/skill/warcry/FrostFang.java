@@ -1,9 +1,9 @@
 package jackiecrazy.wardance.skill.warcry;
 
+import jackiecrazy.footwork.utils.StealthUtils;
 import jackiecrazy.wardance.skill.ProcPoints;
 import jackiecrazy.wardance.skill.SkillData;
 import jackiecrazy.wardance.skill.SkillTags;
-import jackiecrazy.wardance.utils.StealthUtils;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.ai.attributes.AttributeModifier;
 import net.minecraft.entity.ai.attributes.Attributes;
@@ -16,8 +16,6 @@ import net.minecraftforge.eventbus.api.EventPriority;
 
 import java.awt.*;
 import java.util.UUID;
-
-import jackiecrazy.wardance.skill.Skill.STATE;
 
 public class FrostFang extends WarCry {
     private static final AttributeModifier luck = new AttributeModifier(UUID.fromString("77723885-afb9-4937-9c02-612ee5b6135a"), "frost fang bonus", 2, AttributeModifier.Operation.ADDITION);
@@ -60,7 +58,7 @@ public class FrostFang extends WarCry {
     public void onProc(LivingEntity caster, Event procPoint, STATE state, SkillData stats, LivingEntity target) {
         if (procPoint instanceof LivingAttackEvent && state == STATE.ACTIVE && procPoint.getPhase() == EventPriority.HIGHEST && ((LivingAttackEvent) procPoint).getEntityLiving() == target) {
             target.addEffect(new EffectInstance(Effects.MOVEMENT_SLOWDOWN, 60));
-            if (StealthUtils.getAwareness(caster, target) == StealthUtils.Awareness.ALERT) {
+            if (StealthUtils.INSTANCE.getAwareness(caster, target) == StealthUtils.Awareness.ALERT) {
                 target.addEffect(new EffectInstance(Effects.BLINDNESS, 20));
             }
         }

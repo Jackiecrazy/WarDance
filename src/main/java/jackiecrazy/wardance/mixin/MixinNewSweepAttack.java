@@ -1,7 +1,7 @@
 package jackiecrazy.wardance.mixin;
 
+import jackiecrazy.footwork.utils.GeneralUtils;
 import jackiecrazy.wardance.utils.CombatUtils;
-import jackiecrazy.wardance.utils.GeneralUtils;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.item.ItemStack;

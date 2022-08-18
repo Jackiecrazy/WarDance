@@ -1,14 +1,19 @@
 package jackiecrazy.wardance.skill.feint;
 
+import jackiecrazy.footwork.capability.resources.CombatData;
+import jackiecrazy.footwork.event.EntityAwarenessEvent;
+import jackiecrazy.footwork.potion.FootworkEffects;
+import jackiecrazy.footwork.utils.EffectUtils;
+import jackiecrazy.footwork.utils.StealthUtils;
 import jackiecrazy.wardance.WarDance;
 import jackiecrazy.wardance.api.CombatDamageSource;
 import jackiecrazy.wardance.capability.skill.CasterData;
 import jackiecrazy.wardance.capability.skill.ISkillCapability;
 import jackiecrazy.wardance.capability.status.Marks;
-import jackiecrazy.wardance.event.EntityAwarenessEvent;
-import jackiecrazy.wardance.potion.WarEffects;
 import jackiecrazy.wardance.skill.*;
-import jackiecrazy.wardance.utils.*;
+import jackiecrazy.wardance.utils.CombatUtils;
+import jackiecrazy.wardance.utils.SkillUtils;
+import jackiecrazy.wardance.utils.WarColors;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.ai.attributes.AttributeModifier;
@@ -223,7 +228,7 @@ public class Feint extends Skill {
                 if (caster == target) {
                     SkillUtils.modifyAttribute(caster, Attributes.ARMOR, UPPER, sd.getArbitraryFloat() * 2, AttributeModifier.Operation.ADDITION);
                 } else {
-                    target.addEffect(new EffectInstance(WarEffects.CORROSION.get(), 200));
+                    target.addEffect(new EffectInstance(FootworkEffects.CORROSION.get(), 200));
                 }
             }
             return super.onMarked(caster, target, sd, existing);

@@ -1,14 +1,18 @@
 package jackiecrazy.wardance.skill.crownchampion;
 
 import jackiecrazy.footwork.capability.resources.CombatData;
+import jackiecrazy.footwork.event.AttackMightEvent;
+import jackiecrazy.footwork.event.GainMightEvent;
+import jackiecrazy.footwork.potion.FootworkEffects;
+import jackiecrazy.footwork.utils.StealthUtils;
+import jackiecrazy.footwork.utils.TargetingUtils;
 import jackiecrazy.wardance.WarDance;
 import jackiecrazy.wardance.capability.skill.CasterData;
 import jackiecrazy.wardance.capability.status.Marks;
-import jackiecrazy.wardance.event.AttackMightEvent;
-import jackiecrazy.wardance.event.GainMightEvent;
-import jackiecrazy.wardance.potion.WarEffects;
 import jackiecrazy.wardance.skill.*;
-import jackiecrazy.wardance.utils.*;
+import jackiecrazy.wardance.utils.CombatUtils;
+import jackiecrazy.wardance.utils.SkillUtils;
+import jackiecrazy.wardance.utils.WarColors;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.ai.attributes.AttributeModifier;
@@ -145,7 +149,7 @@ elemental might: +1 burn/snowball/poison/drown damage to targets you have attack
 
         @Override
         public void onProc(LivingEntity caster, Event procPoint, STATE state, SkillData stats, LivingEntity target) {
-            if (procPoint instanceof AttackMightEvent && procPoint.getPhase() == EventPriority.HIGHEST && StealthUtils.getAwareness(caster, target).equals(StealthUtils.Awareness.UNAWARE))
+            if (procPoint instanceof AttackMightEvent && procPoint.getPhase() == EventPriority.HIGHEST && StealthUtils.INSTANCE.getAwareness(caster, target).equals(StealthUtils.Awareness.UNAWARE))
                 ((AttackMightEvent) procPoint).setQuantity(((AttackMightEvent) procPoint).getQuantity() + 0.5f);
         }
 
@@ -207,7 +211,7 @@ elemental might: +1 burn/snowball/poison/drown damage to targets you have attack
         @Override
         public void onProc(LivingEntity caster, Event procPoint, STATE state, SkillData stats, LivingEntity target) {
             if (procPoint instanceof LivingAttackEvent)
-                ((LivingAttackEvent) procPoint).getEntityLiving().addEffect(new EffectInstance(WarEffects.VULNERABLE.get(), 100, (int) (CombatData.getCap(caster).getMight() / 3)));
+                ((LivingAttackEvent) procPoint).getEntityLiving().addEffect(new EffectInstance(FootworkEffects.VULNERABLE.get(), 100, (int) (CombatData.getCap(caster).getMight() / 3)));
         }
 
         @Override

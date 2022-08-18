@@ -1,12 +1,12 @@
 package jackiecrazy.wardance.skill.judgment;
 
+import jackiecrazy.footwork.capability.goal.GoalCapabilityProvider;
+import jackiecrazy.footwork.utils.GeneralUtils;
+import jackiecrazy.footwork.utils.TargetingUtils;
 import jackiecrazy.wardance.WarDance;
-import jackiecrazy.wardance.capability.goal.GoalCapabilityProvider;
 import jackiecrazy.wardance.capability.status.Marks;
 import jackiecrazy.wardance.skill.SkillData;
-import jackiecrazy.wardance.utils.GeneralUtils;
 import jackiecrazy.wardance.utils.SkillUtils;
-import jackiecrazy.wardance.utils.TargetingUtils;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.MobEntity;
 import net.minecraft.particles.ParticleTypes;
