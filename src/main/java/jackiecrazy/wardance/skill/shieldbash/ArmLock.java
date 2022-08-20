@@ -1,5 +1,6 @@
 package jackiecrazy.wardance.skill.shieldbash;
 
+import jackiecrazy.footwork.capability.resources.CombatData;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.util.Hand;
 

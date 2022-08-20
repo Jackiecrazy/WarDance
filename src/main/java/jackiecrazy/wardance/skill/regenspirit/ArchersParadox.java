@@ -1,11 +1,12 @@
 package jackiecrazy.wardance.skill.regenspirit;
 
-import jackiecrazy.wardance.event.EntityAwarenessEvent;
+import jackiecrazy.footwork.capability.resources.CombatData;
+import jackiecrazy.footwork.event.EntityAwarenessEvent;
+import jackiecrazy.footwork.utils.StealthUtils;
 import jackiecrazy.wardance.skill.Skill;
 import jackiecrazy.wardance.skill.SkillCategories;
 import jackiecrazy.wardance.skill.SkillCategory;
 import jackiecrazy.wardance.skill.SkillData;
-import jackiecrazy.wardance.utils.StealthUtils;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.tags.Tag;
 import net.minecraftforge.event.entity.ProjectileImpactEvent;

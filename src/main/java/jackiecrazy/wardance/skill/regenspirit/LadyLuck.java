@@ -1,12 +1,12 @@
 package jackiecrazy.wardance.skill.regenspirit;
 
+import jackiecrazy.footwork.utils.GeneralUtils;
+import jackiecrazy.footwork.utils.LuckUtils;
 import jackiecrazy.wardance.event.SkillResourceEvent;
 import jackiecrazy.wardance.skill.Skill;
 import jackiecrazy.wardance.skill.SkillCategories;
 import jackiecrazy.wardance.skill.SkillCategory;
 import jackiecrazy.wardance.skill.SkillData;
-import jackiecrazy.wardance.utils.GeneralUtils;
-import jackiecrazy.wardance.utils.LuckUtils;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.ai.attributes.Attributes;
 import net.minecraft.tags.Tag;

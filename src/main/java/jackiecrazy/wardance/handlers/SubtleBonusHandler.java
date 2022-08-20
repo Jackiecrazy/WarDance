@@ -1,5 +1,6 @@
 package jackiecrazy.wardance.handlers;
 
+import jackiecrazy.footwork.capability.resources.CombatData;
 import jackiecrazy.wardance.WarDance;
 import jackiecrazy.wardance.utils.SkillUtils;
 import net.minecraft.entity.LivingEntity;

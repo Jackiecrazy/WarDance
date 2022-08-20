@@ -1,5 +1,6 @@
 package jackiecrazy.wardance;
 
+import jackiecrazy.cloakanddagger.networking.ShoutPacket;
 import jackiecrazy.wardance.capability.skill.DummySkillCap;
 import jackiecrazy.wardance.capability.skill.ISkillCapability;
 import jackiecrazy.wardance.capability.skill.SkillStorage;
@@ -90,8 +91,7 @@ public class WarDance {
         CombatChannel.INSTANCE.registerMessage(index++, UpdateSkillSelectionPacket.class, new UpdateSkillSelectionPacket.UpdateSkillEncoder(), new UpdateSkillSelectionPacket.UpdateSkillDecoder(), new UpdateSkillSelectionPacket.UpdateSkillHandler());
         CombatChannel.INSTANCE.registerMessage(index++, SyncSkillPacket.class, new SyncSkillPacket.SyncSkillEncoder(), new SyncSkillPacket.SyncSkillDecoder(), new SyncSkillPacket.SyncSkillHandler());
         CombatChannel.INSTANCE.registerMessage(index++, ManualParryPacket.class, new ManualParryPacket.ParryEncoder(), new ManualParryPacket.ParryDecoder(), new ManualParryPacket.ParryHandler());
-        CombatChannel.INSTANCE.registerMessage(index++, UpdateTargetPacket.class, new UpdateTargetPacket.UpdateTargetEncoder(), new UpdateTargetPacket.UpdateTargetDecoder(), new UpdateTargetPacket.UpdateTargetHandler());
-        CombatChannel.INSTANCE.registerMessage(index++, ShoutPacket.class, new ShoutPacket.ShoutEncoder(), new ShoutPacket.ShoutDecoder(), new ShoutPacket.ShoutHandler());
+        CombatChannel.INSTANCE.registerMessage(index++, UpdateTargetPacket.class, new UpdateTargetPacket.UpdateTargetEncoder(), new UpdateTargetPacket.UpdateTargetDecoder(), new UpdateTargetPacket.UpdateTargetHandler());CombatChannel.INSTANCE.registerMessage(index++, ShoutPacket.class, new ShoutPacket.ShoutEncoder(), new ShoutPacket.ShoutDecoder(), new ShoutPacket.ShoutHandler());
     }
 
     private void doClientStuff(final FMLClientSetupEvent event) {
@@ -102,7 +102,6 @@ public class WarDance {
         ClientRegistry.registerKeyBinding(Keybinds.SELECT);
         ClientRegistry.registerKeyBinding(Keybinds.BINDCAST);
         ClientRegistry.registerKeyBinding(Keybinds.PARRY);
-        ClientRegistry.registerKeyBinding(Keybinds.SHOUT);
     }
 
     private void enqueueIMC(final InterModEnqueueEvent event) {

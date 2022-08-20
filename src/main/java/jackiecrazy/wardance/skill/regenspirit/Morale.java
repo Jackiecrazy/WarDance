@@ -1,9 +1,10 @@
 package jackiecrazy.wardance.skill.regenspirit;
 
+import jackiecrazy.footwork.capability.resources.CombatData;
+import jackiecrazy.footwork.utils.GeneralUtils;
 import jackiecrazy.wardance.event.ParryEvent;
 import jackiecrazy.wardance.skill.*;
 import jackiecrazy.wardance.utils.CombatUtils;
-import jackiecrazy.wardance.utils.GeneralUtils;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.ai.attributes.Attributes;
 import net.minecraft.tags.Tag;

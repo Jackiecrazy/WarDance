@@ -1,5 +1,6 @@
 package jackiecrazy.wardance.skill.heavyblow;
 
+import jackiecrazy.footwork.capability.resources.CombatData;
 import jackiecrazy.wardance.WarDance;
 import jackiecrazy.wardance.capability.skill.CasterData;
 import jackiecrazy.wardance.event.ParryEvent;

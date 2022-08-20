@@ -1,5 +1,6 @@
 package jackiecrazy.wardance.mixin;
 
+import jackiecrazy.footwork.capability.resources.CombatData;
 import jackiecrazy.wardance.config.GeneralConfig;
 import jackiecrazy.wardance.utils.CombatUtils;
 import net.minecraft.client.Minecraft;

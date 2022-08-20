@@ -1,12 +1,13 @@
 package jackiecrazy.wardance.skill.regenspirit;
 
-import jackiecrazy.wardance.event.AttackMightEvent;
-import jackiecrazy.wardance.event.DodgeEvent;
+import jackiecrazy.footwork.capability.resources.CombatData;
+import jackiecrazy.footwork.event.AttackMightEvent;
+import jackiecrazy.footwork.event.DodgeEvent;
+import jackiecrazy.footwork.utils.GeneralUtils;
 import jackiecrazy.wardance.skill.Skill;
 import jackiecrazy.wardance.skill.SkillCategories;
 import jackiecrazy.wardance.skill.SkillCategory;
 import jackiecrazy.wardance.skill.SkillData;
-import jackiecrazy.wardance.utils.GeneralUtils;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.tags.Tag;
 import net.minecraft.util.math.MathHelper;
@@ -50,9 +51,9 @@ apathy: your max spirit is 4, your spirit instantly refills after cooldown, you 
     }
     @Override
     public void onProc(LivingEntity caster, Event procPoint, STATE state, SkillData stats, LivingEntity target) {
-        if (procPoint instanceof DodgeEvent&&procPoint.getPhase()== EventPriority.HIGHEST) {
+        if (procPoint instanceof DodgeEvent &&procPoint.getPhase()== EventPriority.HIGHEST) {
             CombatData.getCap(caster).setSpiritGrace(CombatData.getCap(caster).getSpiritGrace() / 2);
-        } else if (procPoint instanceof AttackMightEvent&&procPoint.getPhase()== EventPriority.HIGHEST) {
+        } else if (procPoint instanceof AttackMightEvent &&procPoint.getPhase()== EventPriority.HIGHEST) {
             double spdiff = MathHelper.sqrt(GeneralUtils.getSpeedSq(caster)) - MathHelper.sqrt(GeneralUtils.getSpeedSq(target));
             if (spdiff < 0 || !Double.isFinite(spdiff)) spdiff = 0;
             CombatData.getCap(caster).addSpirit((float) Math.min(1, Math.sqrt(spdiff)));

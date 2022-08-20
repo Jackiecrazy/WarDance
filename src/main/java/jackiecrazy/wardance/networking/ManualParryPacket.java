@@ -1,5 +1,7 @@
 package jackiecrazy.wardance.networking;
 
+import jackiecrazy.footwork.capability.resources.CombatData;
+import jackiecrazy.footwork.capability.resources.ICombatCapability;
 import jackiecrazy.wardance.config.CombatConfig;
 import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.network.PacketBuffer;

@@ -1,7 +1,8 @@
 package jackiecrazy.wardance.skill.regenspirit;
 
-import jackiecrazy.wardance.api.WarAttributes;
-import jackiecrazy.wardance.event.RegenSpiritEvent;
+import jackiecrazy.footwork.api.WarAttributes;
+import jackiecrazy.footwork.capability.resources.CombatData;
+import jackiecrazy.footwork.event.RegenSpiritEvent;
 import jackiecrazy.wardance.skill.*;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.ai.attributes.AttributeModifier;

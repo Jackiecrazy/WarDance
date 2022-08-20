@@ -1,5 +1,6 @@
 package jackiecrazy.wardance.skill.warcry;
 
+import jackiecrazy.footwork.capability.resources.CombatData;
 import jackiecrazy.wardance.skill.SkillData;
 import net.minecraft.entity.LivingEntity;
 

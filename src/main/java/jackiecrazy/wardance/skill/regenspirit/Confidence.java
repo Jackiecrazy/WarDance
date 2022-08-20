@@ -1,6 +1,7 @@
 package jackiecrazy.wardance.skill.regenspirit;
 
-import jackiecrazy.wardance.event.RegenSpiritEvent;
+import jackiecrazy.footwork.capability.resources.CombatData;
+import jackiecrazy.footwork.event.RegenSpiritEvent;
 import jackiecrazy.wardance.skill.Skill;
 import jackiecrazy.wardance.skill.SkillCategories;
 import jackiecrazy.wardance.skill.SkillCategory;

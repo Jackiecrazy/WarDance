@@ -1,5 +1,6 @@
 package jackiecrazy.wardance.skill.hex;
 
+import jackiecrazy.footwork.capability.resources.CombatData;
 import jackiecrazy.wardance.capability.status.Marks;
 import jackiecrazy.wardance.skill.SkillData;
 import jackiecrazy.wardance.utils.SkillUtils;

@@ -2,6 +2,7 @@ package jackiecrazy.wardance.compat;
 
 import com.elenai.elenaidodge2.api.DodgeEvent;
 import com.elenai.elenaidodge2.api.FeathersHelper;
+import jackiecrazy.footwork.capability.resources.CombatData;
 import jackiecrazy.wardance.config.GeneralConfig;
 import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraftforge.common.MinecraftForge;
@@ -54,7 +55,7 @@ public class ElenaiCompat {
     @SubscribeEvent(priority = EventPriority.LOWEST)
     public static void dodge(DodgeEvent.ServerDodgeEvent e) {
         if (GeneralConfig.elenai && !e.isCanceled()) {
-            jackiecrazy.wardance.event.DodgeEvent v = new jackiecrazy.wardance.event.DodgeEvent(e.getPlayer(), jackiecrazy.wardance.event.DodgeEvent.Direction.values()[e.getDirection().ordinal()], e.getForce());
+            jackiecrazy.footwork.event.DodgeEvent v = new jackiecrazy.footwork.event.DodgeEvent(e.getPlayer(), jackiecrazy.footwork.event.DodgeEvent.Direction.values()[e.getDirection().ordinal()], e.getForce());
             MinecraftForge.EVENT_BUS.post(v);
             if (e.isCanceled()) e.setCanceled(true);
             else {

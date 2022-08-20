@@ -6,13 +6,11 @@ import jackiecrazy.footwork.capability.resources.ICombatCapability;
 import jackiecrazy.footwork.capability.weaponry.CombatManipulator;
 import jackiecrazy.footwork.event.AttackMightEvent;
 import jackiecrazy.footwork.utils.GeneralUtils;
-import jackiecrazy.footwork.utils.StealthUtils;
 import jackiecrazy.wardance.WarDance;
 import jackiecrazy.wardance.api.CombatDamageSource;
 import jackiecrazy.wardance.capability.skill.CasterData;
 import jackiecrazy.wardance.config.CombatConfig;
 import jackiecrazy.wardance.config.GeneralConfig;
-import jackiecrazy.wardance.config.StealthConfig;
 import jackiecrazy.wardance.event.ProjectileParryEvent;
 import jackiecrazy.wardance.networking.CombatChannel;
 import jackiecrazy.wardance.networking.UpdateAttackPacket;
@@ -55,14 +53,14 @@ public class CombatUtils {
     public static HashMap<Item, AttributeModifier[]> shieldStat = new HashMap<>();
     public static boolean isSweeping = false;
     public static boolean suppress = false;
-    private static MeleeInfo DEFAULTMELEE = new MeleeInfo(1, 1, false, 0, 0, 1, 1);
+    private static MeleeInfo DEFAULTMELEE = new MeleeInfo(1, 1, false, 0, 0);
     private static ProjectileInfo DEFAULTRANGED = new ProjectileInfo(0.1, 1, false, false);
     private static HashMap<Item, MeleeInfo> combatList = new HashMap<>();
     private static HashMap<EntityType, ProjectileInfo> projectileMap = new HashMap<>();
     private static ArrayList<Item> unarmed = new ArrayList<>();
 
     public static void updateItems(List<? extends String> interpretC, List<? extends String> interpretA, List<? extends String> interpretU) {
-        DEFAULTMELEE = new MeleeInfo(CombatConfig.defaultMultiplierPostureAttack, CombatConfig.defaultMultiplierPostureDefend, false, CombatConfig.shieldCooldown, CombatConfig.barrierSize, StealthConfig.distract, StealthConfig.unaware);
+        DEFAULTMELEE = new MeleeInfo(CombatConfig.defaultMultiplierPostureAttack, CombatConfig.defaultMultiplierPostureDefend, false, CombatConfig.shieldCooldown, CombatConfig.barrierSize);
         combatList = new HashMap<>();
         armorStats = new HashMap<>();
         shieldStat = new HashMap<>();
@@ -89,20 +87,12 @@ public class CombatUtils {
                 shield = Boolean.parseBoolean(val[3].trim());
             int pTime = CombatConfig.shieldCooldown;
             float pCount = CombatConfig.barrierSize;
-            double distract = StealthConfig.distract, unaware = StealthConfig.unaware;
             if (shield) {
                 try {
                     pTime = Integer.parseInt(val[4].trim());
                     pCount = Float.parseFloat(val[5].trim());
                 } catch (Exception e) {
                     WarDance.LOGGER.warn("additional data for shield config entry " + s + " is not properly formatted, replacing with default values.");
-                }
-            } else {
-                try {
-                    distract = Double.parseDouble(val[4].trim());
-                    unaware = Double.parseDouble(val[5].trim());
-                } catch (Exception e) {
-                    WarDance.LOGGER.warn("additional data for weapon config entry " + s + " is not properly formatted, replacing with default values.");
                 }
             }
             ResourceLocation key = null;
@@ -114,7 +104,7 @@ public class CombatUtils {
             //System.out.print("\""+key+"\",\n");
             if (ForgeRegistries.ITEMS.containsKey(key)) {
                 final Item item = ForgeRegistries.ITEMS.getValue(key);
-                combatList.put(item, new MeleeInfo(attack, defend, shield, pTime, pCount, distract, unaware));
+                combatList.put(item, new MeleeInfo(attack, defend, shield, pTime, pCount));
                 if (shield) {
                     final AttributeModifier downtimeM = new AttributeModifier(main, "extra downtime", pTime, AttributeModifier.Operation.ADDITION);
                     final AttributeModifier barrierM = new AttributeModifier(main, "barrier bonus", pCount, AttributeModifier.Operation.ADDITION);
@@ -472,20 +462,6 @@ public class CombatUtils {
         }
     }
 
-    public static double getDamageMultiplier(StealthUtils.Awareness a, ItemStack is) {
-        if (!StealthConfig.stealthSystem || is == null) return 1;
-        MeleeInfo ci = combatList.getOrDefault(is.getItem(), DEFAULTMELEE);
-        switch (a) {
-            case DISTRACTED:
-                return ci.distractDamageBonus;
-            case UNAWARE:
-                return ci.unawareDamageBonus;
-            default:
-                return 1;
-
-        }
-    }
-
     public static void swapHeldItems(LivingEntity e) {
         //attributes = new ArrayList<>();
         ItemStack main = e.getMainHandItem(), off = e.getOffhandItem();
@@ -575,19 +551,16 @@ public class CombatUtils {
 
     private static class MeleeInfo {
         private final double attackPostureMultiplier, defensePostureMultiplier;
-        private final double distractDamageBonus, unawareDamageBonus;
         private final int parryTime;
         private final float parryCount;
         private final boolean isShield;
 
-        private MeleeInfo(double attack, double defend, boolean shield, int pTime, float pCount, double distract, double unaware) {
+        private MeleeInfo(double attack, double defend, boolean shield, int pTime, float pCount) {
             attackPostureMultiplier = attack;
             defensePostureMultiplier = defend;
             isShield = shield;
             parryCount = pCount;
             parryTime = pTime;
-            distractDamageBonus = distract;
-            unawareDamageBonus = unaware;
         }
     }
 

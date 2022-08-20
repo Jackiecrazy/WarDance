@@ -1,10 +1,10 @@
 package jackiecrazy.wardance.skill.mementomori;
 
-import jackiecrazy.wardance.capability.goal.GoalCapabilityProvider;
+import jackiecrazy.footwork.capability.goal.GoalCapabilityProvider;
+import jackiecrazy.footwork.utils.GeneralUtils;
+import jackiecrazy.footwork.utils.TargetingUtils;
 import jackiecrazy.wardance.skill.SkillData;
-import jackiecrazy.wardance.utils.GeneralUtils;
 import jackiecrazy.wardance.utils.SkillUtils;
-import jackiecrazy.wardance.utils.TargetingUtils;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.MobEntity;

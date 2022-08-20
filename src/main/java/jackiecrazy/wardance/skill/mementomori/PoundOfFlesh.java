@@ -1,10 +1,11 @@
 package jackiecrazy.wardance.skill.mementomori;
 
+import jackiecrazy.footwork.capability.resources.CombatData;
+import jackiecrazy.footwork.utils.GeneralUtils;
 import jackiecrazy.wardance.api.CombatDamageSource;
 import jackiecrazy.wardance.event.ParryEvent;
 import jackiecrazy.wardance.skill.ProcPoints;
 import jackiecrazy.wardance.skill.SkillData;
-import jackiecrazy.wardance.utils.GeneralUtils;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.tags.Tag;
 import net.minecraftforge.event.entity.living.LivingHurtEvent;

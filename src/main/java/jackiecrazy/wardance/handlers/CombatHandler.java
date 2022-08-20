@@ -271,7 +271,6 @@ public class CombatHandler {
                 downingHit = true;
                 //stabby bonus
                 StealthUtils.Awareness awareness = StealthUtils.INSTANCE.getAwareness(seme, uke);
-                atkMult *= CombatUtils.getDamageMultiplier(awareness, attack);
                 //crit bonus
                 if (e.getSource() instanceof CombatDamageSource && ((CombatDamageSource) e.getSource()).isCrit())
                     atkMult *= ((CombatDamageSource) e.getSource()).getCritDamage();
@@ -512,9 +511,6 @@ public class CombatHandler {
                 uke.getAttribute(Attributes.ARMOR).addTransientModifier(armor);
             }
             if (CombatUtils.isPhysicalAttack(e.getSource())) {
-                if (awareness != StealthUtils.Awareness.ALERT) {
-                    e.setAmount((float) (e.getAmount() * CombatUtils.getDamageMultiplier(awareness, CombatUtils.getAttackingItemStack(ds))));
-                }
                 cap.setMightGrace(0);
             }
             double luckDiff = WarDance.rand.nextFloat() * (GeneralUtils.getAttributeValueSafe(seme, Attributes.LUCK)) - WarDance.rand.nextFloat() * (GeneralUtils.getAttributeValueSafe(uke, Attributes.LUCK));

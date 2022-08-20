@@ -1,5 +1,6 @@
 package jackiecrazy.wardance.networking;
 
+import jackiecrazy.footwork.capability.resources.CombatData;
 import jackiecrazy.wardance.handlers.EntityHandler;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.player.ServerPlayerEntity;
