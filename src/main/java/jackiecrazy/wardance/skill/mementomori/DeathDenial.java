@@ -1,7 +1,7 @@
 package jackiecrazy.wardance.skill.mementomori;
 
+import jackiecrazy.footwork.event.ConsumePostureEvent;
 import jackiecrazy.wardance.WarDance;
-import jackiecrazy.wardance.event.ParryEvent;
 import jackiecrazy.wardance.skill.ProcPoints;
 import jackiecrazy.wardance.skill.SkillData;
 import net.minecraft.entity.LivingEntity;
@@ -16,8 +16,6 @@ import java.awt.*;
 import java.util.Arrays;
 import java.util.HashSet;
 
-import jackiecrazy.wardance.skill.Skill.STATE;
-
 public class DeathDenial extends MementoMori {
     private final Tag<String> tag = Tag.create(new HashSet<>(Arrays.asList("passive", ProcPoints.recharge_sleep, ProcPoints.change_heals, ProcPoints.change_parry_result, ProcPoints.on_being_damaged)));
 
@@ -30,15 +28,17 @@ public class DeathDenial extends MementoMori {
     @Override
     public void onProc(LivingEntity caster, Event procPoint, STATE state, SkillData stats, LivingEntity target) {
         super.onProc(caster, procPoint, state, stats, target);
-        if (procPoint instanceof LivingDamageEvent && ((LivingDamageEvent) procPoint).getEntityLiving() == caster && (((LivingDamageEvent) procPoint).getAmount() > caster.getHealth() || stats.isCondition())) {
+        if (procPoint instanceof LivingDamageEvent && ((LivingDamageEvent) procPoint).getEntityLiving() == caster && state!=STATE.COOLING && (((LivingDamageEvent) procPoint).getAmount() > caster.getHealth() || stats.isCondition())) {
             if (!stats.isCondition())
                 caster.level.playSound(null, caster.getX(), caster.getY(), caster.getZ(), SoundEvents.BELL_BLOCK, SoundCategory.PLAYERS, 0.25f + WarDance.rand.nextFloat() * 0.5f, 0.5f + WarDance.rand.nextFloat() * 0.5f);
             onStateChange(caster, stats, stats.getState(), STATE.ACTIVE);
             procPoint.setCanceled(true);
         }
-        if (procPoint instanceof ParryEvent && state == STATE.ACTIVE) {
+        if (procPoint instanceof ConsumePostureEvent && state == STATE.ACTIVE) {
             procPoint.setResult(Event.Result.ALLOW);
-            ((ParryEvent) procPoint).setPostureConsumption(0);
+            procPoint.setCanceled(true);
+            ((ConsumePostureEvent) procPoint).setAmount(0);
+            ((ConsumePostureEvent) procPoint).setResetCooldown(false);
         }
         if (procPoint instanceof LivingHealEvent && state == STATE.ACTIVE) {
             ((LivingHealEvent) procPoint).setAmount(0);

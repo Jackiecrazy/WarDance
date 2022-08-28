@@ -373,6 +373,14 @@ public class CombatUtils {
         return !s.isExplosion() && !s.isFire() && !s.isMagic() && !s.isBypassArmor();
     }
 
+    public static boolean isTrueDamage(DamageSource s) {
+        if (s instanceof CombatDamageSource) {
+            CombatDamageSource cds = (CombatDamageSource) s;
+            return cds.getDamageTyping() == CombatDamageSource.TYPE.TRUE;
+        }
+        return s.isBypassInvul() || (s.isBypassMagic() && s.isBypassArmor());
+    }
+
     /**
      * knocks the target back, with regards to the attacker's relative angle to the target, and adding y knockback
      */

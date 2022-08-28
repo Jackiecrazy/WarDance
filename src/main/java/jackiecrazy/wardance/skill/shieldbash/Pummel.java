@@ -13,7 +13,7 @@ public class Pummel extends ShieldBash{
     protected void performEffect(LivingEntity caster, LivingEntity target) {
         final ICombatCapability cap = CombatData.getCap(caster);
         if (CombatUtils.isShield(caster, caster.getOffhandItem()))
-                SkillUtils.auxAttack(caster, target, new CombatDamageSource("player", caster).setProcNormalEffects(false).setProcAttackEffects(true).setProcSkillEffects(true).setAttackingHand(Hand.OFF_HAND).setDamageTyping(CombatDamageSource.TYPE.PHYSICAL).setDamageDealer(caster.getOffhandItem()), 0, cap.getBarrier());
+                SkillUtils.auxAttack(caster, target, new CombatDamageSource("player", caster).setProcNormalEffects(false).setProcAttackEffects(true).setProcSkillEffects(true).setAttackingHand(Hand.OFF_HAND).setDamageTyping(CombatDamageSource.TYPE.PHYSICAL).setDamageDealer(caster.getOffhandItem()), 0, cap.getBarrier()/4);
 
     }
 

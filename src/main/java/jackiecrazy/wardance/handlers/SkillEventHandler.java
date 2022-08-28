@@ -41,8 +41,10 @@ public class SkillEventHandler {
             }
             ISkillCapability isc = CasterData.getCap(e.getEntityLiving());
             for (Skill s : isc.getEquippedSkills()) {
-                if (s != null)
+                if (s != null) {
+                    isc.getSkillData(s).ifPresent(a->a.setDuration(-1));
                     isc.changeSkillState(s, Skill.STATE.INACTIVE);
+                }
             }
         }
     }

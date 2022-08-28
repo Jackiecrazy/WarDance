@@ -18,7 +18,7 @@ apply plugin: 'com.matthewprenger.cursegradle'
 apply plugin: 'maven-publish'
 apply plugin: 'org.spongepowered.mixin'
 
-version = '0.8.7.1'
+version = '0.8.9'
 group = 'jackiecrazy.wardance' // http://maven.apache.org/guides/mini/guide-naming-conventions.html
 archivesBaseName = 'wardance'
 
@@ -119,8 +119,8 @@ dependencies {
     compileOnly fg.deobf("curse.maven:elenaidodge2-442962:3221492")
     compileOnly fg.deobf("com.blamejared.crafttweaker:CraftTweaker-1.16.4:7.1.0.84")
     annotationProcessor 'org.spongepowered:mixin:0.8.5:processor'
-    implementation fg.deobf("jackiecrazy.footwork:footwork-1.1:1.16.5")
-    implementation fg.deobf("jackiecrazy.cloakanddagger:cloakanddagger-0.2:1.16.5")
+    implementation fg.deobf("jackiecrazy.footwork:footwork-1.2:1.16.5")
+    implementation fg.deobf("jackiecrazy.cloakanddagger:cloakanddagger-0.3:1.16.5")
     //compile fg.deobf("curse.maven:offhandcombat-417112:3203449")
 }
 

@@ -1,6 +1,5 @@
 package jackiecrazy.wardance.handlers;
 
-import jackiecrazy.footwork.capability.goal.GoalCapabilityProvider;
 import jackiecrazy.footwork.capability.resources.CombatData;
 import jackiecrazy.footwork.capability.resources.ICombatCapability;
 import jackiecrazy.wardance.WarDance;
@@ -13,7 +12,6 @@ import jackiecrazy.wardance.networking.SyncSkillPacket;
 import jackiecrazy.wardance.skill.Skill;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.LivingEntity;
-import net.minecraft.entity.MobEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.util.ResourceLocation;
@@ -59,8 +57,6 @@ public class EntityHandler {
             e.addCapability(new ResourceLocation("wardance:statuseffects"), new Marks((LivingEntity) e.getObject()));
             if (e.getObject() instanceof PlayerEntity)
                 e.addCapability(new ResourceLocation("wardance:casterinfo"), new CasterData((LivingEntity) e.getObject()));
-            else if (e.getObject() instanceof MobEntity)
-                e.addCapability(new ResourceLocation("wardance:targeting"), new GoalCapabilityProvider());
         }
     }
 

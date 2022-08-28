@@ -19,7 +19,7 @@ public class Overbear extends ShieldBash {
 
     @Override
     protected void performEffect(LivingEntity caster, LivingEntity target) {
-        final float barrier = CombatData.getCap(caster).consumeBarrier(Float.MAX_VALUE) * 2;
+        final float barrier = CombatData.getCap(caster).consumeBarrier(Float.MAX_VALUE)/2;
         if (CombatData.getCap(target).consumePosture(caster, barrier, 0, true) < 0) {
             //successful stagger, refund cooldown
             CombatData.getCap(caster).setBarrierCooldown(CombatData.getCap(caster).getBarrierCooldown() / 2);

@@ -55,8 +55,8 @@ public class ShieldBash extends Skill {
 
     protected void performEffect(LivingEntity caster, LivingEntity target) {
         final ICombatCapability cap = CombatData.getCap(caster);
-        SkillUtils.auxAttack(caster, target, new CombatDamageSource("player", caster).setProcNormalEffects(false).setProcAttackEffects(true).setProcSkillEffects(true).setAttackingHand(Hand.OFF_HAND).setDamageTyping(CombatDamageSource.TYPE.PHYSICAL).setDamageDealer(caster.getMainHandItem()), 0, cap.consumeBarrier(cap.getBarrier()));
-            cap.setBarrierCooldown(cap.getBarrierCooldown() / 2);
+        SkillUtils.auxAttack(caster, target, new CombatDamageSource("player", caster).setProcNormalEffects(false).setProcAttackEffects(true).setProcSkillEffects(true).setAttackingHand(Hand.OFF_HAND).setDamageTyping(CombatDamageSource.TYPE.PHYSICAL).setDamageDealer(caster.getMainHandItem()), 0, cap.consumeBarrier(cap.getBarrier()/4));
+        cap.setBarrierCooldown(cap.getBarrierCooldown() / 2);
     }
 
     @Override

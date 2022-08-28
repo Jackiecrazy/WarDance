@@ -56,3 +56,15 @@ A mod about in-combat resources. Dodge, kick, stagger, and dual-wield your way t
     versionRange="[1.16.4,1.17)"
     ordering="NONE"
     side="BOTH"
+[[dependencies.wardance]]
+    modId="footwork"
+    mandatory=true
+    versionRange="[1.0,)"
+    ordering="AFTER"
+    side="BOTH"
+[[dependencies.wardance]]
+    modId="cloakanddagger"
+    mandatory=false
+    ordering="AFTER"
+    versionRange="[0.0,)"
+    side="BOTH"

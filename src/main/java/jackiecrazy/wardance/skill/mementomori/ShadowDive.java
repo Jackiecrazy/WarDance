@@ -53,6 +53,7 @@ public class ShadowDive extends MementoMori {
             d.decrementDuration();
             //marking and sweeping is automatically done by the capability. Thanks, me!
             Entity tar = GeneralUtils.collidingEntity(caster);
+            //collide entity, transfer aggression
             if (tar instanceof LivingEntity && !d.isCondition()) {
                 d.flagCondition(true);
                 SkillUtils.createCloud(caster.level, caster, caster.getX(), caster.getY(), caster.getZ(), 7, ParticleTypes.ANGRY_VILLAGER);

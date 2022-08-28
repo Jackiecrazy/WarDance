@@ -96,14 +96,6 @@ public class RenderEvents {
         frustum.prepare(cameraPos.x(), cameraPos.y(), cameraPos.z());
 
         ClientWorld client = mc.level;
-        if (client != null && ClientConfig.dodomeki) {
-            Entity look = getEntityLookedAt(Minecraft.getInstance().player, 32);
-            for (Entity entity : client.entitiesForRendering()) {
-                if (entity != null && (entity != look || !ClientConfig.CONFIG.stealth.enabled || !CombatData.getCap(mc.player).isCombatMode()) && entity instanceof LivingEntity && entity != cameraEntity && entity.isAlive() && !entity.getIndirectPassengers().iterator().hasNext() && entity.shouldRender(cameraPos.x(), cameraPos.y(), cameraPos.z()) && (entity.noCulling || frustum.isVisible(entity.getBoundingBox()))) {
-                    renderEye((LivingEntity) entity, partialTicks, poseStack);
-                }
-            }
-        }
 
     }
 

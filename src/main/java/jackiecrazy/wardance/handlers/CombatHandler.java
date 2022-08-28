@@ -516,7 +516,8 @@ public class CombatHandler {
             double luckDiff = WarDance.rand.nextFloat() * (GeneralUtils.getAttributeValueSafe(seme, Attributes.LUCK)) - WarDance.rand.nextFloat() * (GeneralUtils.getAttributeValueSafe(uke, Attributes.LUCK));
             e.setAmount(e.getAmount() + (float) luckDiff * GeneralConfig.luck);
         }
-        if (cap.getStaggerTime() > 0 && !cap.isFirstStaggerStrike()) {
+        //stagger tests for non-silly quantities of physical damage
+        if (cap.getStaggerTime() > 0 && !cap.isFirstStaggerStrike() && e.getAmount() > 1 && CombatUtils.isPhysicalAttack(ds)) {
             e.setAmount(e.getAmount() * (1 + cap.getFatigue() * 2 / Math.max(cap.getTrueMaxPosture(), 1)));
             e.setAmount(e.getAmount() * CombatConfig.staggerDamage);
             //fatality!
