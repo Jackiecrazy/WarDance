@@ -41,6 +41,17 @@ import java.util.UUID;
 
 public class CombatCapability implements ICombatCapability {
 
+    /*
+    posture is a long bar that is almost guaranteed to be lethal when broken. It recharges at a steady pace after not being consumed for a few moments. When staggered your posture will rapidly regenerate until full again, though stagger will immediately break after 1 attack
+    breach is a small bar on the posture bar that records posture damage from the last few seconds, decaying constantly. If it exceeds a threshold, the entity is stunned and bound for a brief moment, which is also broken by attacks, and until breach finishes cannot be breached again
+    greatly reduce attack knockback to encourage use of breach, but chaff mobs can be breached easily
+    remove rank, decay, stagger count, barrier, and armor association with max posture
+    rank effects rolled into base might/fury functionality, skill note: default max behavior can be overridden to auto-casting buff or manual (i.e. core style can be active or passive)
+    spirit is a line of symbols, 3-5, which are consumed in increments of 1 to cast certain skills
+    might/fury is a bar that charges up to twice, and can either be automatically consumed by certain passives or manually expended to cast powerful skills
+
+     */
+
     public static final float MAXQI = 10;
     public static final UUID WOUND = UUID.fromString("982bbbb2-bbd0-4166-801a-560d1a4149c8");
     public static final UUID MORE = UUID.fromString("982bbbb2-bbd0-4166-801a-560d1a4149c9");
@@ -51,7 +62,7 @@ public class CombatCapability implements ICombatCapability {
     private final WeakReference<LivingEntity> dude;
     int lastRangeTick = 0;
     private ItemStack prev;
-    private float might, spirit, posture, rank, mpos, mspi, wounding, burnout, fatigue, mainReel, offReel, maxMight, resolve, barrier, mbar, vision;
+    private float might, spirit, posture, rank, mpos, mspi, maxMight, vision;
     private int shatterCD;
     private int qcd, scd, pcd, ccd;
     private int mBind;
@@ -454,100 +465,6 @@ public class CombatCapability implements ICombatCapability {
     }
 
     @Override
-    public int getMaxStaggerCount() {
-        return mstaggerc;
-    }
-
-    @Override
-    public int getStaggerCount() {
-        return staggerc;
-    }
-
-    @Override
-    public void setStaggerCount(int amount) {
-        mstaggerc = Math.max(mstaggerc, amount);
-        staggerc = amount;
-    }
-
-    @Override
-    public void decrementStaggerCount(int amount) {
-        if (staggerc - amount > 0)
-            staggerc -= amount;
-        else {
-            setStaggerTime(0);
-            setPosture(getMaxPosture());
-            staggerc = 0;
-            mstaggerc = 0;
-        }
-    }
-
-    @Override
-    public float getMaxBarrier() {
-        return mbar;
-    }
-
-    @Override
-    public void setMaxBarrier(float amount) {
-        mbar = amount;
-    }
-
-    @Override
-    public int getBarrierCooldown() {
-        return barriercd;
-    }
-
-    @Override
-    public void setBarrierCooldown(int amount) {
-        barriercd = amount;
-    }
-
-    @Override
-    public void decrementBarrierCooldown(int amount) {
-        if (barriercd - amount > 0)
-            barriercd -= amount;
-        else {
-            barriercd = 0;
-            //setBarrier(0);
-        }
-    }
-
-    @Override
-    public float getBarrier() {
-        return barrier;
-    }
-
-    @Override
-    public void setBarrier(float amount) {
-        barrier = amount;
-    }
-
-    @Override
-    public float consumeBarrier(float amount) {
-        if (shieldDown) return 0;
-        float prev;
-        if (barrier - amount > 0) {
-            prev = amount;
-            barrier -= amount;
-        } else {
-            prev = barrier;
-            barrier = 0;
-            shieldDown = true;
-        }
-        setBarrierCooldown((int) (dude.get().getAttributeValue(WarAttributes.BARRIER_COOLDOWN.get())));
-        return prev;
-    }
-
-    @Override
-    public void addBarrier(float amount) {
-        barrier += amount;
-        final float max = getMaxBarrier();
-        if (barrier > max) {
-            barrier = max;
-            shieldDown = max == 0;
-        }
-    }
-
-    @Override
     public int getOffhandCooldown() {
         return offhandcd;
     }
@@ -605,71 +522,6 @@ public class CombatCapability implements ICombatCapability {
     @Override
     public void toggleCombatMode(boolean on) {
         combat = on;
-    }
-
-    @Override
-    public float getWounding() {
-        return wounding;
-    }
-
-    @Override
-    public void setWounding(float amount) {
-        wounding = Math.max(0, amount);
-        if (dude.get() != null) {
-            boolean reg = (ForgeRegistries.ENTITIES.getKey(dude.get().getType()) != null && ResourceConfig.immortal.contains(ForgeRegistries.ENTITIES.getKey(dude.get().getType()).toString()));
-            if (!ResourceConfig.immortalWL == reg) {
-                wounding = 0;
-            }
-            dude.get().getAttribute(Attributes.MAX_HEALTH).removeModifier(WOUND);
-            dude.get().getAttribute(Attributes.MAX_HEALTH).addTransientModifier(new AttributeModifier(WOUND, "wounding", -wounding, AttributeModifier.Operation.ADDITION));
-        }
-    }
-
-    @Override
-    public float getFatigue() {
-        return fatigue;
-    }
-
-    @Override
-    public void setFatigue(float amount) {
-        fatigue = Math.max(0, amount);
-        if (dude.get() != null) {
-            boolean reg = (ForgeRegistries.ENTITIES.getKey(dude.get().getType()) != null && ResourceConfig.immortal.contains(ForgeRegistries.ENTITIES.getKey(dude.get().getType()).toString()));
-            if (!ResourceConfig.immortalWL == reg) {
-                fatigue = 0;
-            }
-        }
-    }
-
-    @Override
-    public float getBurnout() {
-        return burnout;
-    }
-
-    @Override
-    public void setBurnout(float amount) {
-        burnout = Math.max(0, amount);
-        if (dude.get() != null) {
-            boolean reg = (ForgeRegistries.ENTITIES.getKey(dude.get().getType()) != null && ResourceConfig.immortal.contains(ForgeRegistries.ENTITIES.getKey(dude.get().getType()).toString()));
-            if (!ResourceConfig.immortalWL == reg) {
-                burnout = 0;
-            }
-        }
-    }
-
-    @Override
-    public void addWounding(float amount) {
-        setWounding(wounding + amount);
-    }
-
-    @Override
-    public void addFatigue(float amount) {
-        setFatigue(fatigue + amount);
-    }
-
-    @Override
-    public void addBurnout(float amount) {
-        setBurnout(burnout + amount);
     }
 
     @Override

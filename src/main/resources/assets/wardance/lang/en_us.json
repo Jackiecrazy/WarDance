@@ -288,7 +288,7 @@
   "wardance:archers_paradox.name": "Archer's Paradox",
   "wardance:archers_paradox.desc": " Regain 1 spirit when your projectile hits a target or when you attack a non-alert target. This ability has a 1.5 second cooldown.",
   "wardance:confidence.name": "Confidence",
-  "wardance:confidence.desc": " The more spirit you have, the faster your spirit regeneration, to a limit 200% speed at max spirit and 50% speed at none.",
+  "wardance:confidence.desc": " The more spirit you have, the faster your spirit regeneration, to a limit of 200% speed at max spirit and 50% speed at none.",
   "wardance:natural_sprinter.name": "Spirit Surge",
   "wardance:natural_sprinter.desc": " You are very dangerous over short distances. Your max spirit is doubled, but its regeneration speed is reduced to a third; you recover 3 spirit on a kill.",
   "wardance:speed_demon.name": "Speed Demon",

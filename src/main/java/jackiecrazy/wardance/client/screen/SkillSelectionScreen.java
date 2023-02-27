@@ -75,13 +75,50 @@ public class SkillSelectionScreen extends Screen {
     }
     //private SkillSelectionScreen.SortType sortType = SkillSelectionScreen.SortType.NORMAL;
     /*
-    there needs to be a skill list widget that lists all castable skills, composed of skill entries, on the very very left, and maybe a search bar as well
+    when you first enter you are greeted with an identical screen with a single slot on the right for your stance/art/style.
+    The center info screen gives a welcome message and basic instructions on how to pick a style, and the styles are listed on the left
+    after you pick a style, the slot moves into the top right corner and the skill screen comes out.
+    you can return to the style screen by clicking that slot again, but picking another style will void your current selection.
+    rough filter of number of colors you can pick would be useful, as well as color-specific styles?
+    (info before picking a style and changing styles should be different to reflect this)
+    on the top left, a filter bar for colors. Selecting skills from a color puts that color at the forefront, and reaching your color cap will gray out all other colors
+    this means each color needs some kind of distinguishable icon that's shaded over!
+    extra tooltips on mousing over colors: name, short description
+    red: dominance. You are mighty. Crush your foes.
+    green: resolution. Never give in, be the last standing.
+    gray: subterfuge. The deadliest strike is the one unseen.
+    orange: relentlessness. Implacable, unstoppable. Win with style.
+    cyan: perception. See all, reach all. None can escape your grasp.
+    violet: decay. All shall be dust.
+    1 color styles: major bonus
+    Survivor: active to gain (might*2) absorption hearts
+    Specialist: +40% effectiveness on all skills, 60% at max fury
+    Dance of Destruction: each time you cast a skill, follow up with "stomp"; amplify stomp size at max fury
+    Berserker Blood: can only use red skills. Fury gain is massively improved, use at max to emit a damaging scream
+    2 color styles: decent bonus
+    Boulder Brace, Flame Dance, Wind Scar, Timberfall, Frost Fang: you know what we are
+    3 color styles: mini playstyle tweak
+    Sapper: you cannot use conventional weapons, but have 1.2x skill effectiveness
+    Nothing Personal: after using a skill, teleport behind the target relative to your current location
+    Walk of Dionysus: fall down drunk when stunned, creating a shockwave and extending stun immunity after recovering. Fury is consumed to aoe stun at max
+    Ippon-datara: max posture -50%, restore half of lost posture after landing from a jump
+    Serenade of Pain: all damage -40%. projectile and melee damage leave marks that cause the other to deal +40% damage by consuming said mark. Each bar of fury reduces damage penalty
+    4 color styles: disadvantage that can be exploited
+    Unstable Spirit: each time you use a skill, create a non-griefing and indiscriminate explosion. Explosion damage reduced by 30% per bar of fury
+    Blood Tax: all skills that cost might or spirit instead cost half the amount in health. Consume other resources to heal at max fury
+    Gambler's Whimsy: only certain skills are castable. The selection increases with fury and rerolls after every cast
+    5+ color styles: major disadvantage that has to be worked around
+    Nature's Equilibrium: 5 colors, cannot use the same color twice in a row
+    Sifu: any color, can only deal posture damage to non-staggered targets (special: instead of dying, mobs will run away, leaving drops and exp as usual)
+
+    a skill list widget that lists all castable skills, composed of skill entries, on the very very left
     a skill entry is made from the main skill icon, the name, and a smaller assortment of icons representing available variations. They can be kind of generic across every skill
     clicking a skill highlights it and will call the main screen to display text down the middle to describe the skill
     A little panel at the bottom is reserved for displaying variation descriptions, to show the base and variation effects in a single screen.
     On the right is the skill octagon and four slots to click skills into
     these slots can be tinted blue if it is selected, grey if it's selectable, orange if it's not selectable, yellow if they share a parent skill, and red if the two skills are incompatible (such as breathing fire while chanting a spell).
     Upon closing, the octagon is sent to the server, double checked, and finalized.
+    skill "effectiveness"/"proc coefficient" attribute that determines certain attributes
      */
 
     @Override
