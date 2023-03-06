@@ -102,8 +102,8 @@ public class CombatHandler {
             ICombatCapability ukeCap = CombatData.getCap(uke);
             //manual parry toggle
             // why does everyone want this feature...
-            boolean failManualParry = CombatConfig.sneakParry > 0 && (ukeCap.getParryingTick() > uke.tickCount || ukeCap.getParryingTick() < uke.tickCount - CombatConfig.sneakParry);
-            failManualParry |= CombatConfig.sneakParry < 0 && ukeCap.getParryingTick() == -1;
+            boolean failManualParry = CombatConfig.parryTime > 0 && (ukeCap.getParryingTick() > uke.tickCount || ukeCap.getParryingTick() < uke.tickCount - CombatConfig.parryTime);
+            failManualParry |= CombatConfig.parryTime < 0 && ukeCap.getParryingTick() == -1;
             failManualParry &= uke instanceof PlayerEntity;
             boolean free = ukeCap.getBarrierCooldown() > 0;
             ItemStack defend = null;
@@ -210,6 +210,7 @@ public class CombatHandler {
                     e.setCanceled(true);
                     return;
                 }
+                //footwork code for combat manipulation
                 if (seme.getMainHandItem().getCapability(CombatManipulator.CAP).resolve().isPresent()) {
                     e.setCanceled(seme.getMainHandItem().getCapability(CombatManipulator.CAP).resolve().get().canAttack(e.getSource(), seme, uke, seme.getMainHandItem(), e.getAmount()));
                 }
@@ -219,13 +220,16 @@ public class CombatHandler {
 
     @SubscribeEvent(priority = EventPriority.LOWEST)//because compat with BHT...
     public static void parry(final LivingAttackEvent e) {
+        //if physical attack with source
         if (!e.getEntityLiving().level.isClientSide && e.getSource() != null && CombatUtils.isPhysicalAttack(e.getSource())) {
             LivingEntity uke = e.getEntityLiving();
             if (MovementUtils.hasInvFrames(uke)) {
+                //iframe cancel
                 e.setCanceled(true);
             }
             ICombatCapability ukeCap = CombatData.getCap(uke);
             ItemStack attack = CombatUtils.getAttackingItemStack(e.getSource());
+            //melee attack from an entity source over 0
             if (CombatUtils.isMeleeAttack(e.getSource()) && e.getSource().getEntity() instanceof LivingEntity && attack != null && e.getAmount() > 0) {
                 LivingEntity seme = (LivingEntity) e.getSource().getEntity();
                 ICombatCapability semeCap = CombatData.getCap(seme);
@@ -254,8 +258,8 @@ public class CombatHandler {
                 }
                 //manual parry toggle
                 // why does everyone want this feature...
-                boolean failManualParry = CombatConfig.sneakParry > 0 && (ukeCap.getParryingTick() > uke.tickCount || ukeCap.getParryingTick() < uke.tickCount - CombatConfig.sneakParry);
-                failManualParry |= CombatConfig.sneakParry < 0 && ukeCap.getParryingTick() == -1;
+                boolean failManualParry = CombatConfig.parryTime > 0 && (ukeCap.getParryingTick() > uke.tickCount || ukeCap.getParryingTick() < uke.tickCount - CombatConfig.parryTime);
+                failManualParry |= CombatConfig.parryTime < 0 && ukeCap.getParryingTick() == -1;
                 failManualParry &= uke instanceof PlayerEntity;
                 boolean canParry = GeneralUtils.isFacingEntity(uke, seme, 120);
                 boolean useDeflect = (uke instanceof PlayerEntity || WarDance.rand.nextFloat() < CombatConfig.mobDeflectChance) && GeneralUtils.isFacingEntity(uke, seme, 120 + 2 * (int) GeneralUtils.getAttributeValueSafe(uke, WarAttributes.DEFLECTION.get())) && !GeneralUtils.isFacingEntity(uke, seme, 120) && !canParry;
@@ -393,6 +397,7 @@ public class CombatHandler {
                         }
                     }
                 }
+                //internally enforced hand bind to bypass slimes
                 if (!(seme instanceof PlayerEntity)) {
                     semeCap.setHandBind(attackingHand, CombatUtils.getCooldownPeriod(seme, attackingHand) + 7);
                 }

@@ -448,7 +448,7 @@ public class CombatConfig {
     public static int staggerHits, adrenaline;
     public static float staggerDamage;
     public static float unStaggerDamage;
-    public static int sneakParry;
+    public static int parryTime;
     public static int recovery;
     public static int foodCool;
     public static float mobParryChanceWeapon, mobParryChanceShield, mobDeflectChance, mobScaler;
@@ -562,7 +562,7 @@ public class CombatConfig {
         posCap = CONFIG._posCap.get().floatValue();
         dodge = CONFIG._dodge.get();
         kbNerf = CONFIG._knockbackNerf.get().floatValue();
-        sneakParry = CONFIG._sneakParry.get();
+        parryTime = CONFIG._sneakParry.get();
         recovery = CONFIG._recovery.get();
         foodCool = CONFIG._foodCool.get();
         adrenaline = CONFIG._adrenaline.get();

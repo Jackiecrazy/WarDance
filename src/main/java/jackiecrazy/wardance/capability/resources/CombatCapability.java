@@ -46,7 +46,7 @@ public class CombatCapability implements ICombatCapability {
     breach is a small bar on the posture bar that records posture damage from the last few seconds, decaying constantly. If it exceeds a threshold, the entity is stunned and bound for a brief moment, which is also broken by attacks, and until breach finishes cannot be breached again
     greatly reduce attack knockback to encourage use of breach, but chaff mobs can be breached easily
     remove rank, decay, stagger count, barrier, and armor association with max posture
-    rank effects rolled into base might/fury functionality, skill note: default max behavior can be overridden to auto-casting buff or manual (i.e. core style can be active or passive)
+    rank effects rolled into base might/fury functionality, skill note: max fury can auto-cast buff or manual (i.e. core style can be active or passive)
     spirit is a line of symbols, 3-5, which are consumed in increments of 1 to cast certain skills
     might/fury is a bar that charges up to twice, and can either be automatically consumed by certain passives or manually expended to cast powerful skills
 

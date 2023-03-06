@@ -265,8 +265,8 @@ public class ClientEvents {
     public static void handleInputEvent(InputEvent event) {
         Minecraft mc = Minecraft.getInstance();
         if (mc.player == null) return;
-        if (Keybinds.PARRY.getKeyConflictContext().isActive() && !lastTickParry && CombatConfig.sneakParry != 0 && Keybinds.PARRY.consumeClick() && mc.player.isAlive()) {
-            if (CombatConfig.sneakParry < 0) {
+        if (Keybinds.PARRY.getKeyConflictContext().isActive() && !lastTickParry && CombatConfig.parryTime != 0 && Keybinds.PARRY.consumeClick() && mc.player.isAlive()) {
+            if (CombatConfig.parryTime < 0) {
                 mc.player.displayClientMessage(new TranslationTextComponent("wardance.toggleparry." + (CombatData.getCap(mc.player).getParryingTick() == -1 ? "on" : "off")), true);
 
             }
