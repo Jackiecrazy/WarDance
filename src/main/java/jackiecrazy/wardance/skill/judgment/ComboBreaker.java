@@ -3,12 +3,14 @@ package jackiecrazy.wardance.skill.judgment;
 import jackiecrazy.wardance.api.CombatDamageSource;
 import jackiecrazy.wardance.event.SkillCastEvent;
 import jackiecrazy.wardance.skill.SkillData;
-import net.minecraft.entity.LivingEntity;
+import net.minecraft.world.entity.LivingEntity;
 import net.minecraftforge.eventbus.api.Event;
 import net.minecraftforge.eventbus.api.EventPriority;
 
 import javax.annotation.Nullable;
 import java.awt.*;
+
+import jackiecrazy.wardance.skill.Skill.STATE;
 
 public class ComboBreaker extends Judgment {
     @Override

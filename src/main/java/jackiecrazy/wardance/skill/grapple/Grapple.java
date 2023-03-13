@@ -5,10 +5,10 @@ import jackiecrazy.footwork.capability.resources.ICombatCapability;
 import jackiecrazy.wardance.WarDance;
 import jackiecrazy.wardance.skill.*;
 import jackiecrazy.wardance.utils.CombatUtils;
-import net.minecraft.entity.LivingEntity;
-import net.minecraft.tags.Tag;
-import net.minecraft.util.SoundCategory;
-import net.minecraft.util.SoundEvents;
+import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.tags.SetTag;
+import net.minecraft.sounds.SoundSource;
+import net.minecraft.sounds.SoundEvents;
 import net.minecraftforge.event.entity.living.LivingAttackEvent;
 import net.minecraftforge.eventbus.api.Event;
 import net.minecraftforge.eventbus.api.EventPriority;
@@ -18,9 +18,11 @@ import java.awt.*;
 import java.util.Arrays;
 import java.util.HashSet;
 
+import jackiecrazy.wardance.skill.Skill.STATE;
+
 public class Grapple extends Skill {
-    private final Tag<String> tag = Tag.create(new HashSet<>(Arrays.asList("physical", "boundCast", "melee", "normalAttack", "countdown", "unarmed", "rechargeWithAttack")));
-    private final Tag<String> unarm = makeTag(SkillTags.offensive, SkillTags.physical, SkillTags.unarmed);
+    private final SetTag<String> tag = SetTag.create(new HashSet<>(Arrays.asList("physical", "boundCast", "melee", "normalAttack", "countdown", "unarmed", "rechargeWithAttack")));
+    private final SetTag<String> unarm = makeTag(SkillTags.offensive, SkillTags.physical, SkillTags.unarmed);
 
     @Nonnull
     @Override
@@ -29,13 +31,13 @@ public class Grapple extends Skill {
     }
 
     @Override
-    public Tag<String> getTags(LivingEntity caster) {
+    public SetTag<String> getTags(LivingEntity caster) {
         return unarm;
     }
 
     @Nonnull
     @Override
-    public Tag<String> getSoftIncompatibility(LivingEntity caster) {
+    public SetTag<String> getSoftIncompatibility(LivingEntity caster) {
         return offensive;
     }
 
@@ -45,7 +47,7 @@ public class Grapple extends Skill {
     }
 
     protected void performEffect(LivingEntity caster, LivingEntity target) {
-        caster.level.playSound(null, target.getX(), target.getY(), target.getZ(), SoundEvents.BARREL_OPEN, SoundCategory.PLAYERS, 0.3f + WarDance.rand.nextFloat() * 0.5f, 0.75f + WarDance.rand.nextFloat() * 0.5f);
+        caster.level.playSound(null, target.getX(), target.getY(), target.getZ(), SoundEvents.BARREL_OPEN, SoundSource.PLAYERS, 0.3f + WarDance.rand.nextFloat() * 0.5f, 0.75f + WarDance.rand.nextFloat() * 0.5f);
         if (this==WarSkills.THROW.get()) CombatData.getCap(target).consumePosture(caster, 11, 0, true);
         else CombatData.getCap(target).consumePosture(caster, 7, 0, true);
 
@@ -107,7 +109,7 @@ public class Grapple extends Skill {
         }
 
         protected void performEffect(LivingEntity caster, LivingEntity target) {
-            caster.level.playSound(null, target.getX(), target.getY(), target.getZ(), SoundEvents.ZOMBIE_ATTACK_IRON_DOOR, SoundCategory.PLAYERS, 0.3f + WarDance.rand.nextFloat() * 0.5f, 0.75f + WarDance.rand.nextFloat() * 0.5f);
+            caster.level.playSound(null, target.getX(), target.getY(), target.getZ(), SoundEvents.ZOMBIE_ATTACK_IRON_DOOR, SoundSource.PLAYERS, 0.3f + WarDance.rand.nextFloat() * 0.5f, 0.75f + WarDance.rand.nextFloat() * 0.5f);
             final ICombatCapability casterCap = CombatData.getCap(caster);
             float posture = casterCap.getPosture();
             target.setDeltaMovement(caster.getDeltaMovement().add(caster.position().vectorTo(target.position()).scale(-0.3)));

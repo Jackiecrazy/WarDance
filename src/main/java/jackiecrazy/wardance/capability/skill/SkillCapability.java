@@ -7,11 +7,11 @@ import jackiecrazy.wardance.networking.SyncSkillPacket;
 import jackiecrazy.wardance.skill.Skill;
 import jackiecrazy.wardance.skill.SkillCategory;
 import jackiecrazy.wardance.skill.SkillData;
-import net.minecraft.entity.LivingEntity;
-import net.minecraft.entity.player.ServerPlayerEntity;
-import net.minecraft.nbt.CompoundNBT;
-import net.minecraft.nbt.ListNBT;
-import net.minecraft.nbt.StringNBT;
+import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.ListTag;
+import net.minecraft.nbt.StringTag;
 import net.minecraftforge.common.util.Constants;
 import net.minecraftforge.fml.network.PacketDistributor;
 
@@ -176,15 +176,15 @@ public class SkillCapability implements ISkillCapability {
     }
 
     @Override
-    public CompoundNBT write() {
-        CompoundNBT to = new CompoundNBT();
+    public CompoundTag write() {
+        CompoundTag to = new CompoundTag();
         to.putInt("holster", index);
         to.putBoolean("gamerule", gatedSkills);
         if (!this.data.isEmpty()) {
-            ListNBT listnbt = new ListNBT();
+            ListTag listnbt = new ListTag();
 
             for (SkillData effectinstance : this.data.values()) {
-                listnbt.add(effectinstance.write(new CompoundNBT()));
+                listnbt.add(effectinstance.write(new CompoundTag()));
             }
 
             to.put("skillData", listnbt);
@@ -192,16 +192,16 @@ public class SkillCapability implements ISkillCapability {
         for (int a = 0; a < equippedSkill.size(); a++)
             if (equippedSkill.get(a) != null)
                 to.putString("equippedSkill" + a, equippedSkill.get(a).getRegistryName().toString());
-        ListNBT str = new ListNBT();
+        ListTag str = new ListTag();
         for (Skill add : skillList) {
-            str.add(StringNBT.valueOf(add.getRegistryName().toString()));
+            str.add(StringTag.valueOf(add.getRegistryName().toString()));
         }
         to.put("randomList", str);
         return to;
     }
 
     @Override
-    public void read(CompoundNBT from) {
+    public void read(CompoundTag from) {
         if (!from.getBoolean("fast")) {
             data.clear();
             index = from.getInt("holster");
@@ -213,10 +213,10 @@ public class SkillCapability implements ISkillCapability {
             //if (from.getBoolean("skillListDirty")) {
             skillList.clear();
             if (from.contains("randomList", Constants.NBT.TAG_LIST)) {
-                ListNBT list = from.getList("randomList", Constants.NBT.TAG_STRING);
+                ListTag list = from.getList("randomList", Constants.NBT.TAG_STRING);
                 for (Object s : list.toArray()) {
-                    if (s instanceof StringNBT && Skill.getSkill(((StringNBT) s).getAsString()) != null)
-                        skillList.add(Skill.getSkill(((StringNBT) s).getAsString()));
+                    if (s instanceof StringTag && Skill.getSkill(((StringTag) s).getAsString()) != null)
+                        skillList.add(Skill.getSkill(((StringTag) s).getAsString()));
                 }
             }
             //}
@@ -224,9 +224,9 @@ public class SkillCapability implements ISkillCapability {
             equippedSkill.addAll(Arrays.asList(als));
         }
         if (from.contains("skillData", 9)) {
-            ListNBT listnbt = from.getList("skillData", 10);
+            ListTag listnbt = from.getList("skillData", 10);
             for (int i = 0; i < listnbt.size(); ++i) {
-                CompoundNBT compoundnbt = listnbt.getCompound(i);
+                CompoundTag compoundnbt = listnbt.getCompound(i);
                 SkillData data = SkillData.read(compoundnbt);
                 if (data != null) {
                     this.data.put(data.getSkill(), data);
@@ -235,13 +235,13 @@ public class SkillCapability implements ISkillCapability {
         }
     }
 
-    private CompoundNBT fastWrite() {
-        CompoundNBT to = new CompoundNBT();
+    private CompoundTag fastWrite() {
+        CompoundTag to = new CompoundTag();
         if (!this.data.isEmpty()) {
-            ListNBT listnbt = new ListNBT();
+            ListTag listnbt = new ListTag();
             for (SkillData effectinstance : this.data.values()) {
                 if (effectinstance._isDirty()) {
-                    listnbt.add(effectinstance.write(new CompoundNBT()));
+                    listnbt.add(effectinstance.write(new CompoundTag()));
                 }
             }
             if (!listnbt.isEmpty()) {
@@ -281,12 +281,12 @@ public class SkillCapability implements ISkillCapability {
 
             }
         }
-        if (sync && caster instanceof ServerPlayerEntity)
-            CombatChannel.INSTANCE.send(PacketDistributor.PLAYER.with(() -> (ServerPlayerEntity) caster), new SyncSkillPacket(this.write()));
-        else if (caster instanceof ServerPlayerEntity) {
-            CompoundNBT written = fastWrite();
+        if (sync && caster instanceof ServerPlayer)
+            CombatChannel.INSTANCE.send(PacketDistributor.PLAYER.with(() -> (ServerPlayer) caster), new SyncSkillPacket(this.write()));
+        else if (caster instanceof ServerPlayer) {
+            CompoundTag written = fastWrite();
             if (!written.isEmpty())
-                CombatChannel.INSTANCE.send(PacketDistributor.PLAYER.with(() -> (ServerPlayerEntity) caster), new SyncSkillPacket(written));
+                CombatChannel.INSTANCE.send(PacketDistributor.PLAYER.with(() -> (ServerPlayer) caster), new SyncSkillPacket(written));
         }
         sync = false;
     }

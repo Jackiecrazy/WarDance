@@ -4,8 +4,8 @@ import com.blamejared.crafttweaker.api.annotations.ZenRegister;
 import jackiecrazy.footwork.capability.resources.CombatData;
 import jackiecrazy.wardance.capability.skill.CasterData;
 import jackiecrazy.wardance.skill.Skill;
-import net.minecraft.entity.LivingEntity;
-import net.minecraft.util.Hand;
+import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.InteractionHand;
 import org.openzen.zencode.java.ZenCodeType;
 
 @ZenRegister
@@ -327,27 +327,27 @@ public class CraftCompat {
     }
 
     @ZenCodeType.Method
-    public int getHandBind(LivingEntity entity, Hand h) {
+    public int getHandBind(LivingEntity entity, InteractionHand h) {
         return CombatData.getCap(entity).getHandBind(h);
     }
 
     @ZenCodeType.Method
-    public void setHandBind(LivingEntity entity, Hand h, int amount) {
+    public void setHandBind(LivingEntity entity, InteractionHand h, int amount) {
         CombatData.getCap(entity).setHandBind(h, amount);
     }
 
     @ZenCodeType.Method
-    public void decrementHandBind(LivingEntity entity, Hand h, int amount) {
+    public void decrementHandBind(LivingEntity entity, InteractionHand h, int amount) {
         CombatData.getCap(entity).decrementHandBind(h, amount);
     }
 
     @ZenCodeType.Method
-    public float getHandReel(LivingEntity entity, Hand hand) {
+    public float getHandReel(LivingEntity entity, InteractionHand hand) {
         return CombatData.getCap(entity).getHandReel(hand);
     }
 
     @ZenCodeType.Method
-    public void setHandReel(LivingEntity entity, Hand hand, float value) {
+    public void setHandReel(LivingEntity entity, InteractionHand hand, float value) {
         CombatData.getCap(entity).setHandReel(hand, value);
     }
 

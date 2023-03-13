@@ -7,8 +7,8 @@ import jackiecrazy.wardance.capability.skill.CasterData;
 import jackiecrazy.wardance.skill.ProcPoints;
 import jackiecrazy.wardance.skill.SkillData;
 import jackiecrazy.wardance.skill.WarSkills;
-import net.minecraft.entity.LivingEntity;
-import net.minecraft.tags.Tag;
+import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.tags.SetTag;
 import net.minecraftforge.event.entity.player.CriticalHitEvent;
 import net.minecraftforge.eventbus.api.Event;
 import net.minecraftforge.eventbus.api.EventPriority;
@@ -19,10 +19,12 @@ import java.awt.*;
 import java.util.Arrays;
 import java.util.HashSet;
 
+import jackiecrazy.wardance.skill.Skill.STATE;
+
 @Mod.EventBusSubscriber(modid = WarDance.MODID)
 public class Timberfall extends WarCry {
-    private final Tag<String> tag = Tag.create(new HashSet<>(Arrays.asList("chant", ProcPoints.melee, ProcPoints.modify_crit, ProcPoints.on_hurt, ProcPoints.attack_might, ProcPoints.on_being_hurt, ProcPoints.recharge_time, ProcPoints.recharge_sleep)));
-    private final Tag<String> no = Tag.empty();//.getTagFromContents(new HashSet<>(Collections.emptyList()));
+    private final SetTag<String> tag = SetTag.create(new HashSet<>(Arrays.asList("chant", ProcPoints.melee, ProcPoints.modify_crit, ProcPoints.on_hurt, ProcPoints.attack_might, ProcPoints.on_being_hurt, ProcPoints.recharge_time, ProcPoints.recharge_sleep)));
+    private final SetTag<String> no = SetTag.empty();//.getTagFromContents(new HashSet<>(Collections.emptyList()));
 
     @SubscribeEvent
     public static void timberfall(AttackMightEvent e) {

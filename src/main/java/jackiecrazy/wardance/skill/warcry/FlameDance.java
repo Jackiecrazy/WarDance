@@ -9,9 +9,9 @@ import jackiecrazy.wardance.capability.skill.CasterData;
 import jackiecrazy.wardance.skill.ProcPoints;
 import jackiecrazy.wardance.skill.SkillData;
 import jackiecrazy.wardance.skill.WarSkills;
-import net.minecraft.entity.LivingEntity;
-import net.minecraft.potion.EffectInstance;
-import net.minecraft.tags.Tag;
+import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.effect.MobEffectInstance;
+import net.minecraft.tags.SetTag;
 import net.minecraftforge.event.entity.living.LivingAttackEvent;
 import net.minecraftforge.event.entity.player.CriticalHitEvent;
 import net.minecraftforge.eventbus.api.Event;
@@ -24,11 +24,13 @@ import java.util.Arrays;
 import java.util.HashSet;
 import java.util.UUID;
 
+import jackiecrazy.wardance.skill.Skill.STATE;
+
 @Mod.EventBusSubscriber(modid = WarDance.MODID)
 public class FlameDance extends WarCry {
     private static final UUID attackSpeed = UUID.fromString("338a5b6f-46c2-44b6-913f-f15c5e59cd48");
-    private final Tag<String> tag = Tag.create(new HashSet<>(Arrays.asList("chant", ProcPoints.melee, ProcPoints.on_being_hurt, ProcPoints.modify_crit, ProcPoints.countdown, ProcPoints.recharge_time, ProcPoints.recharge_sleep)));
-    private final Tag<String> no = Tag.create(new HashSet<>(Arrays.asList(ProcPoints.melee, ProcPoints.on_parry)));
+    private final SetTag<String> tag = SetTag.create(new HashSet<>(Arrays.asList("chant", ProcPoints.melee, ProcPoints.on_being_hurt, ProcPoints.modify_crit, ProcPoints.countdown, ProcPoints.recharge_time, ProcPoints.recharge_sleep)));
+    private final SetTag<String> no = SetTag.create(new HashSet<>(Arrays.asList(ProcPoints.melee, ProcPoints.on_parry)));
 
     @SubscribeEvent
     public static void flames(LivingAttackEvent e) {
@@ -36,7 +38,7 @@ public class FlameDance extends WarCry {
             LivingEntity seme = (LivingEntity) e.getSource().getEntity();
             LivingEntity uke = e.getEntityLiving();
             if (CasterData.getCap(seme).isSkillUsable(WarSkills.FLAME_DANCE.get())) {
-                EffectUtils.attemptAddPot(uke, EffectUtils.stackPot(uke, new EffectInstance(FootworkEffects.CORROSION.get(), (int) CombatData.getCap(seme).getRank(), EffectUtils.getEffectiveLevel(uke, FootworkEffects.CORROSION.get()) < 4 ? 0 : -1), EffectUtils.StackingMethod.MAXDURATION), false);
+                EffectUtils.attemptAddPot(uke, EffectUtils.stackPot(uke, new MobEffectInstance(FootworkEffects.CORROSION.get(), (int) CombatData.getCap(seme).getRank(), EffectUtils.getEffectiveLevel(uke, FootworkEffects.CORROSION.get()) < 4 ? 0 : -1), EffectUtils.StackingMethod.MAXDURATION), false);
             }
         }
     }

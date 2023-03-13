@@ -2,9 +2,11 @@ package jackiecrazy.wardance.skill.warcry;
 
 import jackiecrazy.footwork.capability.resources.CombatData;
 import jackiecrazy.wardance.skill.SkillData;
-import net.minecraft.entity.LivingEntity;
+import net.minecraft.world.entity.LivingEntity;
 
 import java.awt.*;
+
+import jackiecrazy.wardance.skill.Skill.STATE;
 
 public class BoulderBrace extends WarCry {
     @Override

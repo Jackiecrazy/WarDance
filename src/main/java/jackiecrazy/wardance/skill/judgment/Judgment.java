@@ -7,11 +7,11 @@ import jackiecrazy.wardance.capability.status.Marks;
 import jackiecrazy.wardance.skill.*;
 import jackiecrazy.wardance.utils.CombatUtils;
 import jackiecrazy.wardance.utils.SkillUtils;
-import net.minecraft.entity.LivingEntity;
-import net.minecraft.tags.Tag;
-import net.minecraft.util.Hand;
-import net.minecraft.util.SoundCategory;
-import net.minecraft.util.SoundEvents;
+import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.tags.SetTag;
+import net.minecraft.world.InteractionHand;
+import net.minecraft.sounds.SoundSource;
+import net.minecraft.sounds.SoundEvents;
 import net.minecraftforge.event.entity.living.LivingAttackEvent;
 import net.minecraftforge.event.entity.living.LivingDeathEvent;
 import net.minecraftforge.eventbus.api.Event;
@@ -20,18 +20,21 @@ import net.minecraftforge.eventbus.api.EventPriority;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
+import jackiecrazy.wardance.skill.Skill.CastStatus;
+import jackiecrazy.wardance.skill.Skill.STATE;
+
 public class Judgment extends Skill {
     /*
     Redirects all might gain to another bar temporarily. Gaining 10 might in this manner will cause your next attack to deal 20% of the target's current health in damage. 10 second cooldown.
     */
     @Override
-    public Tag<String> getTags(LivingEntity caster) {
+    public SetTag<String> getTags(LivingEntity caster) {
         return special;
     }
 
     @Nonnull
     @Override
-    public Tag<String> getSoftIncompatibility(LivingEntity caster) {
+    public SetTag<String> getSoftIncompatibility(LivingEntity caster) {
         return special;
     }
 
@@ -86,7 +89,7 @@ public class Judgment extends Skill {
             int stack = 1;
             float arb = Marks.getCap(target).getActiveMark(this).orElse(SkillData.DUMMY).getArbitraryFloat();
             if (arb >= 2) {//detonate
-                caster.level.playSound(null, caster.getX(), caster.getY(), caster.getZ(), SoundEvents.DRAGON_FIREBALL_EXPLODE, SoundCategory.PLAYERS, 0.25f + WarDance.rand.nextFloat() * 0.5f, 0.5f + WarDance.rand.nextFloat() * 0.5f);
+                caster.level.playSound(null, caster.getX(), caster.getY(), caster.getZ(), SoundEvents.DRAGON_FIREBALL_EXPLODE, SoundSource.PLAYERS, 0.25f + WarDance.rand.nextFloat() * 0.5f, 0.5f + WarDance.rand.nextFloat() * 0.5f);
                 removeMark(target);
             } else {
                 prev.flagCondition(true);
@@ -97,8 +100,8 @@ public class Judgment extends Skill {
             target.invulnerableTime = 0;
             boolean offhand = stack == 2;
             CombatUtils.attack(caster, target, offhand);
-            caster.swing(offhand ? Hand.OFF_HAND : Hand.MAIN_HAND, true);
-            caster.level.playSound(null, caster.getX(), caster.getY(), caster.getZ(), SoundEvents.RAVAGER_STEP, SoundCategory.PLAYERS, 0.25f + WarDance.rand.nextFloat() * 0.5f, 0.5f + WarDance.rand.nextFloat() * 0.5f);
+            caster.swing(offhand ? InteractionHand.OFF_HAND : InteractionHand.MAIN_HAND, true);
+            caster.level.playSound(null, caster.getX(), caster.getY(), caster.getZ(), SoundEvents.RAVAGER_STEP, SoundSource.PLAYERS, 0.25f + WarDance.rand.nextFloat() * 0.5f, 0.5f + WarDance.rand.nextFloat() * 0.5f);
         }
         if (to == STATE.COOLING) {
             if (prev.isCondition())
@@ -107,7 +110,7 @@ public class Judgment extends Skill {
             return true;
         }
         if (from != STATE.COOLING && to == STATE.HOLSTERED)
-            caster.level.playSound(null, caster.getX(), caster.getY(), caster.getZ(), SoundEvents.GRINDSTONE_USE, SoundCategory.PLAYERS, 0.25f + WarDance.rand.nextFloat() * 0.5f, 0.5f + WarDance.rand.nextFloat() * 0.5f);
+            caster.level.playSound(null, caster.getX(), caster.getY(), caster.getZ(), SoundEvents.GRINDSTONE_USE, SoundSource.PLAYERS, 0.25f + WarDance.rand.nextFloat() * 0.5f, 0.5f + WarDance.rand.nextFloat() * 0.5f);
         return boundCast(prev, from, to);
     }
 

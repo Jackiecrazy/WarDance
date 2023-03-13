@@ -2,8 +2,8 @@ package jackiecrazy.wardance.skill.heavyblow;
 
 import jackiecrazy.footwork.utils.GeneralUtils;
 import jackiecrazy.wardance.skill.*;
-import net.minecraft.entity.LivingEntity;
-import net.minecraft.tags.Tag;
+import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.tags.SetTag;
 import net.minecraftforge.event.entity.player.CriticalHitEvent;
 import net.minecraftforge.eventbus.api.Event;
 import net.minecraftforge.eventbus.api.EventPriority;
@@ -13,19 +13,21 @@ import java.awt.*;
 import java.util.Arrays;
 import java.util.HashSet;
 
+import jackiecrazy.wardance.skill.Skill.STATE;
+
 public class HeavyBlow extends Skill {
-    private final Tag<String> tag = Tag.create(new HashSet<>(Arrays.asList("physical", ProcPoints.disable_shield, ProcPoints.melee, ProcPoints.on_hurt, "boundCast", ProcPoints.normal_attack, ProcPoints.modify_crit, ProcPoints.recharge_normal, ProcPoints.on_being_parried)));
-    private final Tag<String> tags = makeTag(SkillTags.physical, SkillTags.forced_crit, SkillTags.passive, SkillTags.offensive, SkillTags.disable_shield);
+    private final SetTag<String> tag = SetTag.create(new HashSet<>(Arrays.asList("physical", ProcPoints.disable_shield, ProcPoints.melee, ProcPoints.on_hurt, "boundCast", ProcPoints.normal_attack, ProcPoints.modify_crit, ProcPoints.recharge_normal, ProcPoints.on_being_parried)));
+    private final SetTag<String> tags = makeTag(SkillTags.physical, SkillTags.forced_crit, SkillTags.passive, SkillTags.offensive, SkillTags.disable_shield);
 
     @Override
-    public Tag<String> getTags(LivingEntity caster) {
+    public SetTag<String> getTags(LivingEntity caster) {
         return passive;
     }
 
     @Nonnull
     @Override
-    public Tag<String> getSoftIncompatibility(LivingEntity caster) {
-        return Tag.empty();
+    public SetTag<String> getSoftIncompatibility(LivingEntity caster) {
+        return SetTag.empty();
     }
 
     @Nonnull

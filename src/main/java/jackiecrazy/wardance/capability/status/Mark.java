@@ -9,10 +9,10 @@ import jackiecrazy.wardance.networking.UpdateAfflictionPacket;
 import jackiecrazy.wardance.skill.Skill;
 import jackiecrazy.wardance.skill.SkillCategory;
 import jackiecrazy.wardance.skill.SkillData;
-import net.minecraft.entity.LivingEntity;
-import net.minecraft.entity.player.ServerPlayerEntity;
-import net.minecraft.nbt.CompoundNBT;
-import net.minecraft.nbt.ListNBT;
+import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.ListTag;
 import net.minecraftforge.fml.network.PacketDistributor;
 
 import java.lang.ref.WeakReference;
@@ -82,13 +82,13 @@ public class Mark implements IMark {
     }
 
     @Override
-    public CompoundNBT write() {
-        CompoundNBT to = new CompoundNBT();
+    public CompoundTag write() {
+        CompoundTag to = new CompoundTag();
         if (!this.statuus.isEmpty()) {
-            ListNBT listnbt = new ListNBT();
+            ListTag listnbt = new ListTag();
 
             for (SkillData effectinstance : this.statuus.values()) {
-                listnbt.add(effectinstance.write(new CompoundNBT()));
+                listnbt.add(effectinstance.write(new CompoundTag()));
             }
 
             to.put("ActiveAfflictions", listnbt);
@@ -97,13 +97,13 @@ public class Mark implements IMark {
     }
 
     @Override
-    public void read(CompoundNBT from) {
+    public void read(CompoundTag from) {
         statuus.clear();
         if (from.contains("ActiveAfflictions", 9)) {
-            ListNBT listnbt = from.getList("ActiveAfflictions", 10);
+            ListTag listnbt = from.getList("ActiveAfflictions", 10);
 
             for (int i = 0; i < listnbt.size(); ++i) {
-                CompoundNBT compoundnbt = listnbt.getCompound(i);
+                CompoundTag compoundnbt = listnbt.getCompound(i);
                 SkillData effectinstance = SkillData.read(compoundnbt);
                 if (effectinstance != null) {
                     this.statuus.put(effectinstance.getSkill(), effectinstance);
@@ -120,8 +120,8 @@ public class Mark implements IMark {
         for (SkillData cd : active) {
             if (cd.getSkill().markTick(cd.getCaster(ticker.level), ticker, cd)) sync = true;
         }
-        if (sync && ticker instanceof ServerPlayerEntity) {
-            CombatChannel.INSTANCE.send(PacketDistributor.PLAYER.with(() -> (ServerPlayerEntity) ticker), new UpdateAfflictionPacket(ticker.getId(), this.write()));
+        if (sync && ticker instanceof ServerPlayer) {
+            CombatChannel.INSTANCE.send(PacketDistributor.PLAYER.with(() -> (ServerPlayer) ticker), new UpdateAfflictionPacket(ticker.getId(), this.write()));
             sync = false;
         }
         if (sync && EntityHandler.mustUpdate.containsValue(ticker)) {

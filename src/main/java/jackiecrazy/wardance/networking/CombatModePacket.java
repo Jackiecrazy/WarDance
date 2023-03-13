@@ -2,7 +2,7 @@ package jackiecrazy.wardance.networking;
 
 import jackiecrazy.footwork.capability.resources.CombatData;
 import jackiecrazy.footwork.capability.resources.ICombatCapability;
-import net.minecraft.network.PacketBuffer;
+import net.minecraft.network.FriendlyByteBuf;
 import net.minecraftforge.fml.network.NetworkEvent;
 
 import java.util.Objects;
@@ -14,17 +14,17 @@ public class CombatModePacket {
     public CombatModePacket() {
     }
 
-    public static class CombatEncoder implements BiConsumer<CombatModePacket, PacketBuffer> {
+    public static class CombatEncoder implements BiConsumer<CombatModePacket, FriendlyByteBuf> {
 
         @Override
-        public void accept(CombatModePacket updateClientPacket, PacketBuffer packetBuffer) {
+        public void accept(CombatModePacket updateClientPacket, FriendlyByteBuf packetBuffer) {
         }
     }
 
-    public static class CombatDecoder implements Function<PacketBuffer, CombatModePacket> {
+    public static class CombatDecoder implements Function<FriendlyByteBuf, CombatModePacket> {
 
         @Override
-        public CombatModePacket apply(PacketBuffer packetBuffer) {
+        public CombatModePacket apply(FriendlyByteBuf packetBuffer) {
             return new CombatModePacket();
         }
     }

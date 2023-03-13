@@ -1,12 +1,12 @@
 package jackiecrazy.wardance.client.screen;
 
-import com.mojang.blaze3d.matrix.MatrixStack;
+import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.screen.Screen;
-import net.minecraft.util.text.ITextComponent;
+import net.minecraft.client.gui.screens.Screen;
+import net.minecraft.network.chat.Component;
 
 public class NewSkillSelectionScreen extends Screen {
-    protected NewSkillSelectionScreen(ITextComponent titleIn) {
+    protected NewSkillSelectionScreen(Component titleIn) {
         super(titleIn);
     }
 
@@ -23,7 +23,7 @@ public class NewSkillSelectionScreen extends Screen {
 
     //all rectangles should have a white trim
     @Override
-    public void render(MatrixStack mStack, int mouseX, int mouseY, float partialTicks) {
+    public void render(PoseStack mStack, int mouseX, int mouseY, float partialTicks) {
         //draw base rectangle. Translucent dark and cover the left half of the screen with some padding
         //draw category rectangle. Opaque dark and cover the left of the base
         //fill category rectangle with octagons. Render their category icons

@@ -6,8 +6,8 @@ import jackiecrazy.wardance.api.CombatDamageSource;
 import jackiecrazy.wardance.event.ParryEvent;
 import jackiecrazy.wardance.skill.ProcPoints;
 import jackiecrazy.wardance.skill.SkillData;
-import net.minecraft.entity.LivingEntity;
-import net.minecraft.tags.Tag;
+import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.tags.SetTag;
 import net.minecraftforge.event.entity.living.LivingHurtEvent;
 import net.minecraftforge.eventbus.api.Event;
 import net.minecraftforge.eventbus.api.EventPriority;
@@ -16,8 +16,10 @@ import java.awt.*;
 import java.util.Arrays;
 import java.util.HashSet;
 
+import jackiecrazy.wardance.skill.Skill.STATE;
+
 public class PoundOfFlesh extends MementoMori {
-    private final Tag<String> tag = Tag.create(new HashSet<>(Arrays.asList(ProcPoints.melee, ProcPoints.on_hurt, ProcPoints.state, ProcPoints.on_being_parried)));
+    private final SetTag<String> tag = SetTag.create(new HashSet<>(Arrays.asList(ProcPoints.melee, ProcPoints.on_hurt, ProcPoints.state, ProcPoints.on_being_parried)));
 
     @Override
     public Color getColor() {
@@ -39,7 +41,7 @@ public class PoundOfFlesh extends MementoMori {
 
 
     @Override
-    public Tag<String> getTags(LivingEntity caster) {
+    public SetTag<String> getTags(LivingEntity caster) {
         return special;
     }
 

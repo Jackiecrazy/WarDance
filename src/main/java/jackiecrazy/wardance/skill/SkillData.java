@@ -1,8 +1,8 @@
 package jackiecrazy.wardance.skill;
 
-import net.minecraft.entity.LivingEntity;
-import net.minecraft.nbt.CompoundNBT;
-import net.minecraft.world.World;
+import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.world.level.Level;
 
 import javax.annotation.Nullable;
 import java.util.UUID;
@@ -32,7 +32,7 @@ public class SkillData {
     }
 
     @Nullable
-    public static SkillData read(CompoundNBT from) {
+    public static SkillData read(CompoundTag from) {
         if (!from.contains("skill") || !from.contains("duration")) return null;
         if (Skill.getSkill(from.getString("skill")) == null)
             return null;
@@ -45,7 +45,7 @@ public class SkillData {
     }
 
     @Nullable
-    public LivingEntity getCaster(World world) {
+    public LivingEntity getCaster(Level world) {
         if (casterID == null) return null;
         if (caster != null) return caster;
         if (world.getPlayerByUUID(casterID) != null) {
@@ -125,7 +125,7 @@ public class SkillData {
         return s;
     }
 
-    public CompoundNBT write(CompoundNBT to) {
+    public CompoundTag write(CompoundTag to) {
         if (s == null) return to;
         to.putString("skill", s.getRegistryName().toString());
         to.putInt("state", state.ordinal());

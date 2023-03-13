@@ -1,7 +1,7 @@
 package jackiecrazy.wardance.event;
 
 import jackiecrazy.wardance.skill.Skill;
-import net.minecraft.entity.LivingEntity;
+import net.minecraft.world.entity.LivingEntity;
 import net.minecraftforge.event.entity.living.LivingEvent;
 
 public class SkillCastEvent extends LivingEvent {

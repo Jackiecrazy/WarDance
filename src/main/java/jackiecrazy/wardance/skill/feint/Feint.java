@@ -14,14 +14,14 @@ import jackiecrazy.wardance.skill.*;
 import jackiecrazy.wardance.utils.CombatUtils;
 import jackiecrazy.wardance.utils.SkillUtils;
 import jackiecrazy.wardance.utils.WarColors;
-import net.minecraft.entity.Entity;
-import net.minecraft.entity.LivingEntity;
-import net.minecraft.entity.ai.attributes.AttributeModifier;
-import net.minecraft.entity.ai.attributes.Attributes;
-import net.minecraft.potion.EffectInstance;
-import net.minecraft.potion.Effects;
-import net.minecraft.tags.Tag;
-import net.minecraft.util.Hand;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.ai.attributes.AttributeModifier;
+import net.minecraft.world.entity.ai.attributes.Attributes;
+import net.minecraft.world.effect.MobEffectInstance;
+import net.minecraft.world.effect.MobEffects;
+import net.minecraft.tags.SetTag;
+import net.minecraft.world.InteractionHand;
 import net.minecraftforge.event.entity.living.LivingAttackEvent;
 import net.minecraftforge.event.entity.living.LivingHurtEvent;
 import net.minecraftforge.eventbus.api.Event;
@@ -37,10 +37,12 @@ import java.util.Arrays;
 import java.util.HashSet;
 import java.util.UUID;
 
+import jackiecrazy.wardance.skill.Skill.STATE;
+
 @Mod.EventBusSubscriber(modid = WarDance.MODID)
 public class Feint extends Skill {
-    private final Tag<String> proc = Tag.create(new HashSet<>(Arrays.asList("physical", "disableShield", "noDamage", ProcPoints.melee, ProcPoints.afflict_tick, "boundCast", ProcPoints.countdown, ProcPoints.recharge_normal, ProcPoints.change_parry_result)));
-    private final Tag<String> tag = Tag.create(new HashSet<>(Arrays.asList(SkillTags.physical, SkillTags.offensive, "noDamage")));
+    private final SetTag<String> proc = SetTag.create(new HashSet<>(Arrays.asList("physical", "disableShield", "noDamage", ProcPoints.melee, ProcPoints.afflict_tick, "boundCast", ProcPoints.countdown, ProcPoints.recharge_normal, ProcPoints.change_parry_result)));
+    private final SetTag<String> tag = SetTag.create(new HashSet<>(Arrays.asList(SkillTags.physical, SkillTags.offensive, "noDamage")));
 
     @SubscribeEvent()
     public static void hurt(LivingAttackEvent e) {
@@ -93,13 +95,13 @@ public class Feint extends Skill {
     }
 
     @Override
-    public Tag<String> getTags(LivingEntity caster) {
+    public SetTag<String> getTags(LivingEntity caster) {
         return tag;
     }
 
     @Nonnull
     @Override
-    public Tag<String> getSoftIncompatibility(LivingEntity caster) {
+    public SetTag<String> getSoftIncompatibility(LivingEntity caster) {
         return offensive;
     }
 
@@ -116,16 +118,16 @@ public class Feint extends Skill {
                 SkillData a = Marks.getCap(target).getActiveMark(this).get();
                 dur -= a.getArbitraryFloat();
             }
-            CombatData.getCap(target).setHandBind(Hand.MAIN_HAND, dur);
-            CombatData.getCap(target).setHandBind(Hand.OFF_HAND, dur);
-            CombatUtils.setHandCooldown(caster, Hand.MAIN_HAND, this == WarSkills.FOLLOWUP.get() ? 1 : 0.5f, true);
+            CombatData.getCap(target).setHandBind(InteractionHand.MAIN_HAND, dur);
+            CombatData.getCap(target).setHandBind(InteractionHand.OFF_HAND, dur);
+            CombatUtils.setHandCooldown(caster, InteractionHand.MAIN_HAND, this == WarSkills.FOLLOWUP.get() ? 1 : 0.5f, true);
             mark(caster, target, dur / 20f + 0.1f, 6);
             procPoint.setCanceled(true);
             markUsed(caster);
         }
         if (procPoint instanceof LivingAttackEvent && this == WarSkills.FOLLOWUP.get() && procPoint.getPhase() == EventPriority.LOWEST && ((LivingAttackEvent) procPoint).getEntityLiving() == target &&
-                CombatData.getCap(target).getHandBind(Hand.MAIN_HAND) > 0 && CombatData.getCap(target).getHandBind(Hand.OFF_HAND) > 0) {
-            CombatUtils.setHandCooldown(caster, Hand.MAIN_HAND, 0.5f, true);
+                CombatData.getCap(target).getHandBind(InteractionHand.MAIN_HAND) > 0 && CombatData.getCap(target).getHandBind(InteractionHand.OFF_HAND) > 0) {
+            CombatUtils.setHandCooldown(caster, InteractionHand.MAIN_HAND, 0.5f, true);
         }
     }
 
@@ -183,8 +185,8 @@ public class Feint extends Skill {
     }
 
     public static class ScorpionSting extends Feint {
-        private final Tag<String> tag = Tag.create(new HashSet<>(Arrays.asList("physical", "disableShield", "noDamage", ProcPoints.melee, "boundCast", ProcPoints.on_hurt, ProcPoints.countdown, ProcPoints.recharge_normal, ProcPoints.change_parry_result)));
-        private final Tag<String> no = Tag.create(new HashSet<>(Arrays.asList("normalAttack")));
+        private final SetTag<String> tag = SetTag.create(new HashSet<>(Arrays.asList("physical", "disableShield", "noDamage", ProcPoints.melee, "boundCast", ProcPoints.on_hurt, ProcPoints.countdown, ProcPoints.recharge_normal, ProcPoints.change_parry_result)));
+        private final SetTag<String> no = SetTag.create(new HashSet<>(Arrays.asList("normalAttack")));
 
         @Override
         public Color getColor() {
@@ -193,9 +195,9 @@ public class Feint extends Skill {
 
         @Override
         public SkillData onMarked(LivingEntity caster, LivingEntity target, SkillData sd, @Nullable SkillData existing) {
-            target.addEffect(new EffectInstance(Effects.POISON, 200));
-            for (EffectInstance ei : new ArrayList<>(target.getActiveEffects())) {
-                EffectInstance override = new EffectInstance(ei.getEffect(), ei.getDuration(), ei.getAmplifier() + 1, ei.isAmbient(), ei.isVisible(), ei.showIcon());
+            target.addEffect(new MobEffectInstance(MobEffects.POISON, 200));
+            for (MobEffectInstance ei : new ArrayList<>(target.getActiveEffects())) {
+                MobEffectInstance override = new MobEffectInstance(ei.getEffect(), ei.getDuration(), ei.getAmplifier() + 1, ei.isAmbient(), ei.isVisible(), ei.showIcon());
                 EffectUtils.stackPot(target, override, EffectUtils.StackingMethod.NONE);
             }
             return super.onMarked(caster, target, sd, existing);
@@ -228,7 +230,7 @@ public class Feint extends Skill {
                 if (caster == target) {
                     SkillUtils.modifyAttribute(caster, Attributes.ARMOR, UPPER, sd.getArbitraryFloat() * 2, AttributeModifier.Operation.ADDITION);
                 } else {
-                    target.addEffect(new EffectInstance(FootworkEffects.CORROSION.get(), 200));
+                    target.addEffect(new MobEffectInstance(FootworkEffects.CORROSION.get(), 200));
                 }
             }
             return super.onMarked(caster, target, sd, existing);

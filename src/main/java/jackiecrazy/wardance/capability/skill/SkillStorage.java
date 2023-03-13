@@ -1,8 +1,8 @@
 package jackiecrazy.wardance.capability.skill;
 
-import net.minecraft.nbt.CompoundNBT;
-import net.minecraft.nbt.INBT;
-import net.minecraft.util.Direction;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.Tag;
+import net.minecraft.core.Direction;
 import net.minecraftforge.common.capabilities.Capability;
 
 
@@ -11,14 +11,14 @@ import javax.annotation.Nullable;
 public class SkillStorage implements Capability.IStorage<ISkillCapability> {
     @Nullable
     @Override
-    public INBT writeNBT(Capability<ISkillCapability> capability, ISkillCapability ISkillCapability, Direction direction) {
+    public Tag writeNBT(Capability<ISkillCapability> capability, ISkillCapability ISkillCapability, Direction direction) {
         return ISkillCapability.write();
     }
 
     @Override
-    public void readNBT(Capability<ISkillCapability> capability, ISkillCapability ISkillCapability, Direction direction, INBT inbt) {
-        if(inbt instanceof CompoundNBT) {
-            ISkillCapability.read((CompoundNBT) inbt);
+    public void readNBT(Capability<ISkillCapability> capability, ISkillCapability ISkillCapability, Direction direction, Tag inbt) {
+        if(inbt instanceof CompoundTag) {
+            ISkillCapability.read((CompoundTag) inbt);
         }
     }
 }

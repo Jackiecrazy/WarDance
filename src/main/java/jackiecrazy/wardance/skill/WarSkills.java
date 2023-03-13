@@ -4,7 +4,6 @@ import jackiecrazy.wardance.WarDance;
 import jackiecrazy.wardance.skill.coupdegrace.BiteTheDust;
 import jackiecrazy.wardance.skill.coupdegrace.CoupDeGrace;
 import jackiecrazy.wardance.skill.crownchampion.CrownChampion;
-import jackiecrazy.wardance.skill.judgment.*;
 import jackiecrazy.wardance.skill.feint.Feint;
 import jackiecrazy.wardance.skill.grapple.Clinch;
 import jackiecrazy.wardance.skill.grapple.Grapple;
@@ -14,6 +13,7 @@ import jackiecrazy.wardance.skill.hex.Hex;
 import jackiecrazy.wardance.skill.hex.ItchyCurse;
 import jackiecrazy.wardance.skill.hex.Petrify;
 import jackiecrazy.wardance.skill.ironguard.*;
+import jackiecrazy.wardance.skill.judgment.*;
 import jackiecrazy.wardance.skill.kick.*;
 import jackiecrazy.wardance.skill.mementomori.DeathDenial;
 import jackiecrazy.wardance.skill.mementomori.MementoMori;
@@ -22,12 +22,12 @@ import jackiecrazy.wardance.skill.mementomori.ShadowDive;
 import jackiecrazy.wardance.skill.regenspirit.*;
 import jackiecrazy.wardance.skill.shieldbash.*;
 import jackiecrazy.wardance.skill.warcry.*;
-import net.minecraftforge.fml.RegistryObject;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraftforge.registries.DeferredRegister;
+import net.minecraftforge.registries.RegistryObject;
 
 public class WarSkills {
-    public static DeferredRegister<Skill> SKILLS = DeferredRegister
-            .create(Skill.class, WarDance.MODID);
+    public static DeferredRegister<Skill> SKILLS = DeferredRegister.create(new ResourceLocation(WarDance.MODID,"skills"), WarDance.MODID);
 
     public static final RegistryObject<Skill> VITAL_STRIKE = SKILLS.register("vital_strike", HeavyBlow::new);
     public static final RegistryObject<Skill> MOMENTUM = SKILLS.register("momentum", Momentum::new);

@@ -3,8 +3,8 @@ package jackiecrazy.wardance.networking;
 import jackiecrazy.footwork.capability.resources.CombatData;
 import jackiecrazy.footwork.capability.resources.ICombatCapability;
 import jackiecrazy.wardance.config.CombatConfig;
-import net.minecraft.entity.player.ServerPlayerEntity;
-import net.minecraft.network.PacketBuffer;
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.network.FriendlyByteBuf;
 import net.minecraftforge.fml.network.NetworkEvent;
 
 import java.util.Objects;
@@ -17,17 +17,17 @@ public class ManualParryPacket {
     public ManualParryPacket() {
     }
 
-    public static class ParryEncoder implements BiConsumer<ManualParryPacket, PacketBuffer> {
+    public static class ParryEncoder implements BiConsumer<ManualParryPacket, FriendlyByteBuf> {
 
         @Override
-        public void accept(ManualParryPacket updateClientPacket, PacketBuffer packetBuffer) {
+        public void accept(ManualParryPacket updateClientPacket, FriendlyByteBuf packetBuffer) {
         }
     }
 
-    public static class ParryDecoder implements Function<PacketBuffer, ManualParryPacket> {
+    public static class ParryDecoder implements Function<FriendlyByteBuf, ManualParryPacket> {
 
         @Override
-        public ManualParryPacket apply(PacketBuffer packetBuffer) {
+        public ManualParryPacket apply(FriendlyByteBuf packetBuffer) {
             return new ManualParryPacket();
         }
     }
@@ -37,7 +37,7 @@ public class ManualParryPacket {
         @Override
         public void accept(ManualParryPacket updateClientPacket, Supplier<NetworkEvent.Context> contextSupplier) {
             contextSupplier.get().enqueueWork(() -> {
-                final ServerPlayerEntity le = Objects.requireNonNull(contextSupplier.get().getSender());
+                final ServerPlayer le = Objects.requireNonNull(contextSupplier.get().getSender());
                 ICombatCapability cap = CombatData.getCap(le);
                 if (CombatConfig.parryTime < 0) {
                     cap.setParryingTick(cap.getParryingTick()==-1?0:-1);

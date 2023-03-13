@@ -7,11 +7,11 @@ import jackiecrazy.wardance.WarDance;
 import jackiecrazy.wardance.capability.status.Marks;
 import jackiecrazy.wardance.skill.SkillData;
 import jackiecrazy.wardance.utils.SkillUtils;
-import net.minecraft.entity.LivingEntity;
-import net.minecraft.entity.MobEntity;
-import net.minecraft.particles.ParticleTypes;
-import net.minecraft.potion.EffectInstance;
-import net.minecraft.potion.Effects;
+import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.Mob;
+import net.minecraft.core.particles.ParticleTypes;
+import net.minecraft.world.effect.MobEffectInstance;
+import net.minecraft.world.effect.MobEffects;
 
 import java.awt.*;
 import java.util.List;
@@ -37,13 +37,13 @@ public class FeverDream extends Judgment {
         for (int i = 0; i < list.size(); i++) {
             LivingEntity enemy = list.get(i);
             if (GeneralUtils.getDistSqCompensated(target, enemy) < 49)
-                enemy.addEffect(new EffectInstance(Effects.BLINDNESS, 140));
+                enemy.addEffect(new MobEffectInstance(MobEffects.BLINDNESS, 140));
             if (list.size() <= 1) return;
             int shift = WarDance.rand.nextInt(list.size());
             final LivingEntity confuse = list.get(shift);
             enemy.setLastHurtByMob(confuse);
-            if (enemy instanceof MobEntity) {
-                ((MobEntity) enemy).setTarget(confuse);
+            if (enemy instanceof Mob) {
+                ((Mob) enemy).setTarget(confuse);
                 GoalCapabilityProvider.getCap(enemy).ifPresent(a->a.setForcedTarget(confuse));
             }
             if (Marks.getCap(enemy).isMarked(this)) {

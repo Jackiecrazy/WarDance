@@ -3,7 +3,7 @@ package jackiecrazy.wardance.capability.status;
 import jackiecrazy.wardance.skill.Skill;
 import jackiecrazy.wardance.skill.SkillCategory;
 import jackiecrazy.wardance.skill.SkillData;
-import net.minecraft.nbt.CompoundNBT;
+import net.minecraft.nbt.CompoundTag;
 
 import javax.annotation.Nullable;
 import java.util.HashMap;
@@ -50,12 +50,12 @@ public class DummyMarkCap implements IMark {
     }
 
     @Override
-    public CompoundNBT write() {
+    public CompoundTag write() {
         return null;
     }
 
     @Override
-    public void read(CompoundNBT from) {
+    public void read(CompoundTag from) {
 
     }
 

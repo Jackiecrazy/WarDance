@@ -10,12 +10,12 @@ import jackiecrazy.wardance.skill.Skill;
 import jackiecrazy.wardance.skill.SkillCategories;
 import jackiecrazy.wardance.skill.SkillCategory;
 import jackiecrazy.wardance.skill.SkillData;
-import net.minecraft.entity.LivingEntity;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.tags.Tag;
-import net.minecraft.util.SoundCategory;
-import net.minecraft.util.SoundEvents;
-import net.minecraft.util.math.vector.Vector3d;
+import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.tags.SetTag;
+import net.minecraft.sounds.SoundSource;
+import net.minecraft.sounds.SoundEvents;
+import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.eventbus.api.Event;
 
 import javax.annotation.Nonnull;
@@ -24,18 +24,20 @@ import java.awt.*;
 import java.util.Arrays;
 import java.util.HashSet;
 
+import jackiecrazy.wardance.skill.Skill.STATE;
+
 public class Kick extends Skill {
-    private final Tag<String> tag = Tag.create(new HashSet<>(Arrays.asList("physical", "melee", "noDamage", "boundCast", "normalAttack", "countdown", "rechargeWithAttack")));
-    private final Tag<String> no = Tag.create(new HashSet<>(Arrays.asList("normalAttack")));
+    private final SetTag<String> tag = SetTag.create(new HashSet<>(Arrays.asList("physical", "melee", "noDamage", "boundCast", "normalAttack", "countdown", "rechargeWithAttack")));
+    private final SetTag<String> no = SetTag.create(new HashSet<>(Arrays.asList("normalAttack")));
 
     @Override
-    public Tag<String> getTags(LivingEntity caster) {
+    public SetTag<String> getTags(LivingEntity caster) {
         return offensivePhysical;
     }
 
     @Nonnull
     @Override
-    public Tag<String> getSoftIncompatibility(LivingEntity caster) {
+    public SetTag<String> getSoftIncompatibility(LivingEntity caster) {
         return offensive;
     }
 
@@ -68,13 +70,13 @@ public class Kick extends Skill {
         LivingEntity target = GeneralUtils.raytraceLiving(caster, distance());
         if (from == STATE.HOLSTERED && to == STATE.ACTIVE && target!=null&& cast(caster, target, -999)) {
                 CombatData.getCap(target).consumePosture(caster, 4);
-                if (caster instanceof PlayerEntity)
-                    ((PlayerEntity) caster).sweepAttack();
+                if (caster instanceof Player)
+                    ((Player) caster).sweepAttack();
                 additionally(caster, target);
                 target.hurt(new CombatDamageSource("fallingBlock", caster).setDamageTyping(CombatDamageSource.TYPE.PHYSICAL).setProcSkillEffects(true).setProcAttackEffects(true), 2);
                 if (target.getLastHurtByMob() == null)
                     target.setLastHurtByMob(caster);
-                caster.level.playSound(null, caster.getX(), caster.getY(), caster.getZ(), SoundEvents.ZOMBIE_ATTACK_WOODEN_DOOR, SoundCategory.PLAYERS, 0.25f + WarDance.rand.nextFloat() * 0.5f, 0.5f + WarDance.rand.nextFloat() * 0.5f);
+                caster.level.playSound(null, caster.getX(), caster.getY(), caster.getZ(), SoundEvents.ZOMBIE_ATTACK_WOODEN_DOOR, SoundSource.PLAYERS, 0.25f + WarDance.rand.nextFloat() * 0.5f, 0.5f + WarDance.rand.nextFloat() * 0.5f);
         }
         if (to == STATE.COOLING) {
             setCooldown(caster, prev, 4);
@@ -94,8 +96,8 @@ public class Kick extends Skill {
         }
 
         protected void additionally(LivingEntity caster, LivingEntity target) {
-            final Vector3d vec = caster.position().vectorTo(target.position());
-            final Vector3d noy = new Vector3d(vec.x, 0, vec.z).normalize().scale(-1);
+            final Vec3 vec = caster.position().vectorTo(target.position());
+            final Vec3 noy = new Vec3(vec.x, 0, vec.z).normalize().scale(-1);
             caster.setDeltaMovement(caster.getDeltaMovement().add(noy.x, 0.4, noy.z));
             caster.hurtMarked = true;
             final ICombatCapability cap = CombatData.getCap(caster);

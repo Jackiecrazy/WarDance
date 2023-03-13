@@ -12,16 +12,16 @@ import jackiecrazy.wardance.skill.*;
 import jackiecrazy.wardance.utils.CombatUtils;
 import jackiecrazy.wardance.utils.SkillUtils;
 import jackiecrazy.wardance.utils.WarColors;
-import net.minecraft.entity.Entity;
-import net.minecraft.entity.LivingEntity;
-import net.minecraft.entity.ai.attributes.AttributeModifier;
-import net.minecraft.entity.ai.attributes.Attributes;
-import net.minecraft.entity.ai.attributes.ModifiableAttributeInstance;
-import net.minecraft.item.ItemStack;
-import net.minecraft.item.Items;
-import net.minecraft.potion.EffectInstance;
-import net.minecraft.tags.Tag;
-import net.minecraft.util.DamageSource;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.ai.attributes.AttributeModifier;
+import net.minecraft.world.entity.ai.attributes.Attributes;
+import net.minecraft.world.entity.ai.attributes.AttributeInstance;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.Items;
+import net.minecraft.world.effect.MobEffectInstance;
+import net.minecraft.tags.SetTag;
+import net.minecraft.world.damagesource.DamageSource;
 import net.minecraftforge.event.entity.living.LivingDamageEvent;
 import net.minecraftforge.event.entity.living.LivingHealEvent;
 import net.minecraftforge.event.entity.living.LivingHurtEvent;
@@ -36,11 +36,13 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.UUID;
 
+import jackiecrazy.wardance.skill.Skill.STATE;
+
 @Mod.EventBusSubscriber(modid = WarDance.MODID)
 public class Hex extends Skill {
     static final UUID HEX = UUID.fromString("67fe7ef6-a398-4c62-9bb1-42edaa80e7b1");
-    private final Tag<String> tag = makeTag("melee", "noDamage", "boundCast", ProcPoints.afflict_tick, ProcPoints.change_parry_result, ProcPoints.recharge_time, "normalAttack", "chant", "countdown");
-    private final Tag<String> thing = makeTag(SkillTags.offensive, SkillTags.magical);
+    private final SetTag<String> tag = makeTag("melee", "noDamage", "boundCast", ProcPoints.afflict_tick, ProcPoints.change_parry_result, ProcPoints.recharge_time, "normalAttack", "chant", "countdown");
+    private final SetTag<String> thing = makeTag(SkillTags.offensive, SkillTags.magical);
 
     @SubscribeEvent
     public static void snakebite(LivingHealEvent e) {
@@ -104,13 +106,13 @@ public class Hex extends Skill {
 //    }
 
     @Override
-    public Tag<String> getTags(LivingEntity caster) {
+    public SetTag<String> getTags(LivingEntity caster) {
         return thing;
     }
 
     @Nonnull
     @Override
-    public Tag<String> getSoftIncompatibility(LivingEntity caster) {
+    public SetTag<String> getSoftIncompatibility(LivingEntity caster) {
         return offensive;
     }
 
@@ -166,7 +168,7 @@ public class Hex extends Skill {
 
     @Override
     public SkillData onMarked(LivingEntity caster, LivingEntity target, SkillData sd, @Nullable SkillData existing) {
-        final ModifiableAttributeInstance luck = target.getAttribute(Attributes.LUCK);
+        final AttributeInstance luck = target.getAttribute(Attributes.LUCK);
         if (luck != null && this == WarSkills.CURSE_OF_MISFORTUNE.get()) {
             luck.removeModifier(HEX);
             AttributeModifier am = new AttributeModifier(HEX, "hex", -2 - sd.getArbitraryFloat(), AttributeModifier.Operation.ADDITION);
@@ -178,7 +180,7 @@ public class Hex extends Skill {
 
     @Override
     public void onMarkEnd(LivingEntity caster, LivingEntity target, SkillData sd) {
-        final ModifiableAttributeInstance luck = target.getAttribute(Attributes.LUCK);
+        final AttributeInstance luck = target.getAttribute(Attributes.LUCK);
         if (luck != null) {
             luck.removeModifier(HEX);
         }
@@ -233,13 +235,13 @@ public class Hex extends Skill {
         @Override
         protected void mark(LivingEntity caster, LivingEntity target, float duration, float arbitrary) {
             ItemStack milk = new ItemStack(Items.MILK_BUCKET);
-            final Collection<EffectInstance> potions = new ArrayList<>(target.getActiveEffects());
+            final Collection<MobEffectInstance> potions = new ArrayList<>(target.getActiveEffects());
             target.curePotionEffects(milk);
             float size = 8, damage = 6;
             boolean proc = false;
-            for (EffectInstance ei : potions) {
+            for (MobEffectInstance ei : potions) {
                 proc = true;
-                EffectInstance drop = new EffectInstance(ei.getEffect(), 0, -2);
+                MobEffectInstance drop = new MobEffectInstance(ei.getEffect(), 0, -2);
                 drop = EffectUtils.stackPot(caster, drop, EffectUtils.StackingMethod.MAXDURATION);
                 if (drop.getAmplifier() >= 0) {
                     target.addEffect(drop);

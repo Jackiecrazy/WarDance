@@ -2,8 +2,8 @@ package jackiecrazy.wardance.skill.weaponthrow;
 
 import jackiecrazy.wardance.skill.Skill;
 import jackiecrazy.wardance.skill.SkillData;
-import net.minecraft.entity.LivingEntity;
-import net.minecraft.tags.Tag;
+import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.tags.SetTag;
 import net.minecraftforge.eventbus.api.Event;
 
 import jackiecrazy.wardance.skill.Skill.STATE;
@@ -14,13 +14,13 @@ public class WeaponThrow extends Skill {
 
 
     @Override
-    public Tag<String> getTags(LivingEntity caster) {
+    public SetTag<String> getTags(LivingEntity caster) {
         return null;
     }
 
     @Nonnull
     @Override
-    public Tag<String> getSoftIncompatibility(LivingEntity caster) {
+    public SetTag<String> getSoftIncompatibility(LivingEntity caster) {
         return null;
     }
 

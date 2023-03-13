@@ -1,11 +1,11 @@
 package jackiecrazy.wardance.client.screen;
 
-import com.mojang.blaze3d.matrix.MatrixStack;
+import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.systems.RenderSystem;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.AbstractGui;
-import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.math.MathHelper;
+import net.minecraft.client.gui.GuiComponent;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.util.Mth;
 
 import java.awt.*;
 
@@ -54,11 +54,11 @@ public class SkillSliceButton extends SkillSelectionButton {
         return false;
     }
 
-    public void render(MatrixStack matrixStack, int mouseX, int mouseY, float partialTicks) {
+    public void render(PoseStack matrixStack, int mouseX, int mouseY, float partialTicks) {
         if (this.visible) {
             int centeredx = mouseX - x - width / 2, centeredy = mouseY - y - height / 2;
             //get direction
-            double angle = Math.toDegrees(MathHelper.atan2(centeredx, -centeredy));
+            double angle = Math.toDegrees(Mth.atan2(centeredx, -centeredy));
             if (angle < 45) angle += 720;
             //at 45/135/215/305 deg, the distance cutoff should be 430, otherwise 700
             double cutoffy = centeredx > 0 ? 26 - centeredx : centeredx + 26;
@@ -93,7 +93,7 @@ public class SkillSliceButton extends SkillSelectionButton {
                     Minecraft.getInstance().textureManager.bind(s.icon());
                     Color c = s.getColor();
                     RenderSystem.color4f(c.getRed() / 255f, c.getGreen() / 255f, c.getBlue() / 255f, 1);
-                    AbstractGui.blit(matrixStack, x + iconX[index], y + iconY[index], 0, 0, 24, 24, 24, 24);
+                    GuiComponent.blit(matrixStack, x + iconX[index], y + iconY[index], 0, 0, 24, 24, 24, 24);
                 }
                 RenderSystem.color4f(1f, 1f, 1f, 1);
                 matrixStack.popPose();

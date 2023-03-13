@@ -6,11 +6,11 @@ import jackiecrazy.footwork.event.DodgeEvent;
 import jackiecrazy.footwork.utils.GeneralUtils;
 import jackiecrazy.wardance.compat.WarCompat;
 import jackiecrazy.wardance.config.CombatConfig;
-import net.minecraft.entity.LivingEntity;
-import net.minecraft.entity.Pose;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.util.math.MathHelper;
-import net.minecraft.util.math.vector.Vector3d;
+import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.Pose;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.util.Mth;
+import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.common.MinecraftForge;
 
 public class MovementUtils {
@@ -204,11 +204,11 @@ public class MovementUtils {
         DodgeEvent e = new DodgeEvent(elb, DodgeEvent.Direction.FORWARD, 1.5);
         MinecraftForge.EVENT_BUS.post(e);
         if (e.isCanceled()) return false;
-        Vector3d v = elb.getLookAngle().subtract(0, elb.getLookAngle().y, 0).normalize().scale(e.getForce());
+        Vec3 v = elb.getLookAngle().subtract(0, elb.getLookAngle().y, 0).normalize().scale(e.getForce());
         itsc.consumePosture(0);
         itsc.setRollTime(CombatConfig.rollCooldown);
-        if (elb instanceof PlayerEntity)
-            ((PlayerEntity) elb).setForcedPose(Pose.SLEEPING);
+        if (elb instanceof Player)
+            ((Player) elb).setForcedPose(Pose.SLEEPING);
         elb.setSprinting(false);
         elb.setDeltaMovement(v.x, 0, v.z);
         elb.hurtMarked = true;
@@ -242,23 +242,23 @@ public class MovementUtils {
             DodgeEvent.Direction d = DodgeEvent.Direction.FORWARD;
             switch (side) {
                 case 0://left
-                    x = MathHelper.cos(GeneralUtils.rad(elb.yRot));//+adjustment
-                    z = MathHelper.sin(GeneralUtils.rad(elb.yRot));
+                    x = Mth.cos(GeneralUtils.rad(elb.yRot));//+adjustment
+                    z = Mth.sin(GeneralUtils.rad(elb.yRot));
                     d = DodgeEvent.Direction.LEFT;
                     break;
                 case 1://back
-                    x = MathHelper.cos(GeneralUtils.rad(elb.yRot - 90));
-                    z = MathHelper.sin(GeneralUtils.rad(elb.yRot - 90));
+                    x = Mth.cos(GeneralUtils.rad(elb.yRot - 90));
+                    z = Mth.sin(GeneralUtils.rad(elb.yRot - 90));
                     d = DodgeEvent.Direction.BACK;
                     break;
                 case 2://right
-                    x = MathHelper.cos(GeneralUtils.rad(elb.yRot - 180));//-adjustment
-                    z = MathHelper.sin(GeneralUtils.rad(elb.yRot - 180));
+                    x = Mth.cos(GeneralUtils.rad(elb.yRot - 180));//-adjustment
+                    z = Mth.sin(GeneralUtils.rad(elb.yRot - 180));
                     d = DodgeEvent.Direction.RIGHT;
                     break;
                 case 3://forward
-                    x = MathHelper.cos(GeneralUtils.rad(elb.yRot + 90));
-                    z = MathHelper.sin(GeneralUtils.rad(elb.yRot + 90));
+                    x = Mth.cos(GeneralUtils.rad(elb.yRot + 90));
+                    z = Mth.sin(GeneralUtils.rad(elb.yRot + 90));
                     d = DodgeEvent.Direction.FORWARD;
                     break;
             }

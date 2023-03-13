@@ -13,9 +13,9 @@ import jackiecrazy.wardance.event.ProjectileParryEvent;
 import jackiecrazy.wardance.event.SkillCastEvent;
 import jackiecrazy.wardance.event.SkillResourceEvent;
 import jackiecrazy.wardance.skill.Skill;
-import net.minecraft.entity.Entity;
-import net.minecraft.entity.LivingEntity;
-import net.minecraft.entity.projectile.ProjectileEntity;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.projectile.Projectile;
 import net.minecraftforge.event.entity.ProjectileImpactEvent;
 import net.minecraftforge.event.entity.living.*;
 import net.minecraftforge.event.entity.player.CriticalHitEvent;
@@ -247,8 +247,8 @@ public class SkillEventHandler {
     public static void projectileImpact(ProjectileImpactEvent e) {
         if (e.getEntity().level.isClientSide) return;
         Entity proj = e.getEntity();
-        if (proj instanceof ProjectileEntity) {
-            Entity shooter = ((ProjectileEntity) proj).getOwner();
+        if (proj instanceof Projectile) {
+            Entity shooter = ((Projectile) proj).getOwner();
             if (shooter instanceof LivingEntity) {
                 ISkillCapability isc = CasterData.getCap((LivingEntity) shooter);
                 for (Skill s : isc.getEquippedSkills()) {
@@ -484,8 +484,8 @@ public class SkillEventHandler {
     public static void projectileImpacT(ProjectileImpactEvent e) {
         if (e.getEntity().level.isClientSide) return;
         Entity proj = e.getEntity();
-        if (proj instanceof ProjectileEntity) {
-            Entity shooter = ((ProjectileEntity) proj).getOwner();
+        if (proj instanceof Projectile) {
+            Entity shooter = ((Projectile) proj).getOwner();
             if (shooter instanceof LivingEntity) {
                 ISkillCapability isc = CasterData.getCap((LivingEntity) shooter);
                 for (Skill s : isc.getEquippedSkills()) {

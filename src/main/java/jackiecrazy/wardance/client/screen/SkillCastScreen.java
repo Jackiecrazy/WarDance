@@ -1,6 +1,6 @@
 package jackiecrazy.wardance.client.screen;
 
-import com.mojang.blaze3d.matrix.MatrixStack;
+import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.platform.GlStateManager;
 import com.mojang.blaze3d.systems.RenderSystem;
 import jackiecrazy.wardance.WarDance;
@@ -11,15 +11,15 @@ import jackiecrazy.wardance.networking.CombatChannel;
 import jackiecrazy.wardance.skill.Skill;
 import jackiecrazy.wardance.skill.SkillData;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.AbstractGui;
-import net.minecraft.client.gui.screen.Screen;
-import net.minecraft.client.renderer.BufferBuilder;
-import net.minecraft.client.renderer.Tessellator;
-import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
-import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.math.MathHelper;
-import net.minecraft.util.text.StringTextComponent;
-import net.minecraft.util.text.TranslationTextComponent;
+import net.minecraft.client.gui.GuiComponent;
+import net.minecraft.client.gui.screens.Screen;
+import com.mojang.blaze3d.vertex.BufferBuilder;
+import com.mojang.blaze3d.vertex.Tesselator;
+import com.mojang.blaze3d.vertex.DefaultVertexFormat;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.util.Mth;
+import net.minecraft.network.chat.TextComponent;
+import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.client.gui.ForgeIngameGui;
@@ -57,7 +57,7 @@ public class SkillCastScreen extends Screen {
     protected int exIndex = -1;
 
     public SkillCastScreen(List<Skill> skills) {
-        super(new StringTextComponent("yeet"));
+        super(new TextComponent("yeet"));
         this.passEvents = true;
         this.elements = new Skill[5];
         for (int a = 0; a < elements.length; a++) {
@@ -66,7 +66,7 @@ public class SkillCastScreen extends Screen {
     }
 
     @Override
-    public void render(MatrixStack matrixStack, int mouseX, int mouseY, float partialTicks) {
+    public void render(PoseStack matrixStack, int mouseX, int mouseY, float partialTicks) {
         super.render(matrixStack, mouseX, mouseY, partialTicks);
         //draw background, then slice, then each skill at determined points
         //don't draw slices that cannot be used (so they appear to be greyed out)
@@ -77,7 +77,7 @@ public class SkillCastScreen extends Screen {
         //get distance
         float centeredx = mouseX - width / 2f;
         float centeredy = mouseY - height / 2f;
-        double angle = Math.toDegrees(MathHelper.atan2(centeredx, -centeredy));
+        double angle = Math.toDegrees(Mth.atan2(centeredx, -centeredy));
         if (angle < 45) angle += 720;
         //at 45/135/215/305 deg, the distance cutoff should be 430, otherwise 700
         double cutoffy = centeredx > 0 ? 37 - centeredx : centeredx + 37;
@@ -125,7 +125,7 @@ public class SkillCastScreen extends Screen {
                 mc.textureManager.bind(s.icon());
                 Color c = s.getColor();
                 RenderSystem.color4f(c.getRed() / 255f, c.getGreen() / 255f, c.getBlue() / 255f, 1);
-                AbstractGui.blit(matrixStack, x + iconX[a], y + iconY[a], 0, 0, 32, 32, 32, 32);
+                GuiComponent.blit(matrixStack, x + iconX[a], y + iconY[a], 0, 0, 32, 32, 32, 32);
                 RenderSystem.color4f(1, 1, 1, 1);
                 matrixStack.popPose();
 
@@ -135,7 +135,7 @@ public class SkillCastScreen extends Screen {
                     //overlay mask
                     RenderSystem.enableBlend();
                     RenderSystem.blendFuncSeparate(GlStateManager.SourceFactor.ZERO, GlStateManager.DestFactor.ONE, GlStateManager.SourceFactor.ONE_MINUS_SRC_ALPHA, GlStateManager.DestFactor.ZERO);
-                    AbstractGui.blit(matrixStack, x + iconX[a], y + iconY[a], 0, 0, 32, 32, 32, 32);
+                    GuiComponent.blit(matrixStack, x + iconX[a], y + iconY[a], 0, 0, 32, 32, 32, 32);
                     if (CasterData.getCap(mc.player).getSkillData(s).orElse(SkillData.DUMMY).getMaxDuration() != 0) {
                         //cooldown spinny
                         float cd = CasterData.getCap(mc.player).getSkillData(s).orElse(SkillData.DUMMY).getDuration();
@@ -163,7 +163,7 @@ public class SkillCastScreen extends Screen {
                         RenderSystem.enableBlend();
                         //active mask
                         RenderSystem.blendFuncSeparate(GlStateManager.SourceFactor.ZERO, GlStateManager.DestFactor.ONE, GlStateManager.SourceFactor.ONE_MINUS_SRC_ALPHA, GlStateManager.DestFactor.ZERO);
-                        AbstractGui.blit(matrixStack, x + iconX[finalA], y + iconY[finalA], 0, 0, 32, 32, 32, 32);
+                        GuiComponent.blit(matrixStack, x + iconX[finalA], y + iconY[finalA], 0, 0, 32, 32, 32, 32);
                         if (sd.getMaxDuration() != 0) {
                             //active spinny
                             float cdPerc = sd.getDuration() / sd.getMaxDuration();
@@ -197,22 +197,22 @@ public class SkillCastScreen extends Screen {
             if (castStatus != Skill.CastStatus.ALLOWED && castStatus != Skill.CastStatus.HOLSTERED && castStatus != Skill.CastStatus.ACTIVE) {
                 switch (castStatus) {
                     case COOLDOWN:
-                        print = new TranslationTextComponent("wardance.skill.cooldown").getString();
+                        print = new TranslatableComponent("wardance.skill.cooldown").getString();
                         break;
                     case CONFLICT:
-                        print = new TranslationTextComponent("wardance.skill.conflict").getString();
+                        print = new TranslatableComponent("wardance.skill.conflict").getString();
                         break;
                     case SILENCE:
-                        print = new TranslationTextComponent("wardance.skill.silence").getString();
+                        print = new TranslatableComponent("wardance.skill.silence").getString();
                         break;
                     case SPIRIT:
-                        print = new TranslationTextComponent("wardance.skill.spirit", selected.spiritConsumption(mc.player)).getString();
+                        print = new TranslatableComponent("wardance.skill.spirit", selected.spiritConsumption(mc.player)).getString();
                         break;
                     case MIGHT:
-                        print = new TranslationTextComponent("wardance.skill.might", selected.mightConsumption(mc.player)).getString();
+                        print = new TranslatableComponent("wardance.skill.might", selected.mightConsumption(mc.player)).getString();
                         break;
                     case OTHER:
-                        print = new TranslationTextComponent(elements[index].getRegistryName().toString() + ".requirement").getString();
+                        print = new TranslatableComponent(elements[index].getRegistryName().toString() + ".requirement").getString();
                         break;
                 }
                 yee = mc.font.width(print);
@@ -226,7 +226,7 @@ public class SkillCastScreen extends Screen {
 
     }
 
-    private void drawCooldownCircle(MatrixStack ms, int x, int y, float v) {
+    private void drawCooldownCircle(PoseStack ms, int x, int y, float v) {
         ms.pushPose();
         RenderSystem.enableAlphaTest();
         RenderSystem.enableBlend();
@@ -236,14 +236,14 @@ public class SkillCastScreen extends Screen {
         int x2 = x + 32, y2 = y + 32; // bottom-right corner
         if (v >= 1) {
             RenderSystem.color4f(0.125F, 0.125F, 0.125F, 0.6F);
-            AbstractGui.blit(ms, x, y, 0, 0, 32, 32, 32, 32);
+            GuiComponent.blit(ms, x, y, 0, 0, 32, 32, 32, 32);
             ms.popPose();
             // entirely filled
             return;
         }
         int xm = (x + x2) / 2, ym = (y + y2) / 2; // middle point
-        BufferBuilder bufferbuilder = Tessellator.getInstance().getBuilder();
-        bufferbuilder.begin(9, DefaultVertexFormats.POSITION_TEX_COLOR);
+        BufferBuilder bufferbuilder = Tesselator.getInstance().getBuilder();
+        bufferbuilder.begin(9, DefaultVertexFormat.POSITION_TEX_COLOR);
         drawVertex(bufferbuilder, xm, ym);
         drawVertex(bufferbuilder, xm, y);
 // draw corners:
@@ -262,7 +262,7 @@ public class SkillCastScreen extends Screen {
             vy /= vl;
         }
         drawVertex(bufferbuilder, (int) (xm + vx * (x2 - x) / 2), (int) (ym + vy * (y2 - y) / 2));
-        Tessellator.getInstance().end();
+        Tesselator.getInstance().end();
         RenderSystem.color4f(1.0F, 1.0F, 1.0F, 1F);
         ms.popPose();
     }

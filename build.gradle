@@ -17,13 +17,13 @@ apply plugin: 'net.minecraftforge.gradle'
 apply plugin: 'com.matthewprenger.cursegradle'
 apply plugin: 'maven-publish'
 apply plugin: 'org.spongepowered.mixin'
+apply from: 'https://raw.githubusercontent.com/SizableShrimp/Forge-Class-Remapper/main/classremapper.gradle'
 
-version = '0.8.9'
+version = "${mod_version}"
 group = 'jackiecrazy.wardance' // http://maven.apache.org/guides/mini/guide-naming-conventions.html
 archivesBaseName = 'wardance'
 
-sourceCompatibility = targetCompatibility = compileJava.sourceCompatibility = compileJava.targetCompatibility = '1.8' // Need this here so eclipse task generates correctly.
-
+java.toolchain.languageVersion = JavaLanguageVersion.of(17)
 println('Java: ' + System.getProperty('java.version') + ' JVM: ' + System.getProperty('java.vm.version') + '(' + System.getProperty('java.vendor') + ') Arch: ' + System.getProperty('os.arch'))
 minecraft {
     // The mappings can be changed at any time, and must be in the following format.
@@ -31,7 +31,7 @@ minecraft {
     // stable_#            Stables are built at the discretion of the MCP team.
     // Use non-default mappings at your own risk. they may not always work.
     // Simply re-run your setup task after changing the mappings to update your workspace.
-    mappings channel: 'official', version: '1.16.5'
+    mappings channel: 'official', version: "${mc_version}"
     // makeObfSourceJar = false // an Srg named sources jar is made by default. uncomment this to disable.
     
     accessTransformer = file('src/main/resources/META-INF/accesstransformer.cfg')
@@ -115,12 +115,12 @@ dependencies {
     // Specify the version of Minecraft to use, If this is any group other then 'net.minecraft' it is assumed
     // that the dep is a ForgeGradle 'patcher' dependency. And it's patches will be applied.
     // The userdev artifact is a special name and will get all sorts of transformations applied to it.
-    minecraft 'net.minecraftforge:forge:1.16.5-36.2.22'
-    compileOnly fg.deobf("curse.maven:elenaidodge2-442962:3221492")
-    compileOnly fg.deobf("com.blamejared.crafttweaker:CraftTweaker-1.16.4:7.1.0.84")
+    minecraft "net.minecraftforge:forge:${mc_version}-${forge_version}"
+    //compileOnly fg.deobf("curse.maven:elenaidodge2-442962:3221492")
+    //compileOnly fg.deobf("com.blamejared.crafttweaker:CraftTweaker-1.18.2-9.1.205")
     annotationProcessor 'org.spongepowered:mixin:0.8.5:processor'
-    implementation fg.deobf("jackiecrazy.footwork:footwork-1.2:1.16.5")
-    implementation fg.deobf("jackiecrazy.cloakanddagger:cloakanddagger-0.3:1.16.5")
+    implementation fg.deobf("jackiecrazy.footwork:footwork-${footwork_version}:${mc_version}")
+    implementation fg.deobf("jackiecrazy.cloakanddagger:cloakanddagger-${cd_version}:${mc_version}")
     //compile fg.deobf("curse.maven:offhandcombat-417112:3203449")
 }
 
@@ -161,4 +161,6 @@ publishing {
 
 mixin {
     add sourceSets.main, "wardance.refmap.json"
+    config "wardance.mixins.json"
+    debug.verbose = true
 }

@@ -11,15 +11,15 @@ import jackiecrazy.wardance.capability.skill.ISkillCapability;
 import jackiecrazy.wardance.entity.FakeExplosion;
 import jackiecrazy.wardance.event.SkillCastEvent;
 import jackiecrazy.wardance.skill.*;
-import net.minecraft.entity.Entity;
-import net.minecraft.entity.LivingEntity;
-import net.minecraft.entity.ai.attributes.Attributes;
-import net.minecraft.entity.item.ItemEntity;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.item.ItemStack;
-import net.minecraft.tags.Tag;
-import net.minecraft.util.SoundCategory;
-import net.minecraft.util.SoundEvents;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.ai.attributes.Attributes;
+import net.minecraft.world.entity.item.ItemEntity;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.tags.SetTag;
+import net.minecraft.sounds.SoundSource;
+import net.minecraft.sounds.SoundEvents;
 import net.minecraftforge.common.ForgeMod;
 import net.minecraftforge.event.entity.living.LivingDropsEvent;
 import net.minecraftforge.event.entity.living.LivingHurtEvent;
@@ -32,21 +32,24 @@ import java.awt.*;
 import java.util.Arrays;
 import java.util.HashSet;
 
+import jackiecrazy.wardance.skill.Skill.CastStatus;
+import jackiecrazy.wardance.skill.Skill.STATE;
+
 public class CoupDeGrace extends Skill {
-    private final Tag<String> tag = Tag.create(new HashSet<>(Arrays.asList("physical", ProcPoints.melee, ProcPoints.normal_attack, ProcPoints.on_hurt, ProcPoints.recharge_cast, ProcPoints.change_parry_result, "execution")));
+    private final SetTag<String> tag = SetTag.create(new HashSet<>(Arrays.asList("physical", ProcPoints.melee, ProcPoints.normal_attack, ProcPoints.on_hurt, ProcPoints.recharge_cast, ProcPoints.change_parry_result, "execution")));
 
     protected float getDamage(LivingEntity caster, LivingEntity target) {
         return (GeneralUtils.getMaxHealthBeforeWounding(target) - target.getHealth()) * 0.2f;
     }
 
     @Override
-    public Tag<String> getTags(LivingEntity caster) {
+    public SetTag<String> getTags(LivingEntity caster) {
         return special;
     }
 
     @Nonnull
     @Override
-    public Tag<String> getSoftIncompatibility(LivingEntity caster) {
+    public SetTag<String> getSoftIncompatibility(LivingEntity caster) {
         return special;
     }
 
@@ -96,7 +99,7 @@ public class CoupDeGrace extends Skill {
                 ItemStack drop = GeneralUtils.dropSkull(target);
                 if (drop == null) return;
                 for (ItemEntity i : ((LivingDropsEvent) procPoint).getDrops()) {
-                    if (i.getItem().getItem() == drop.getItem() && (!(target instanceof PlayerEntity) || i.getItem().getOrCreateTag().getString("SkullOwner").equalsIgnoreCase(drop.getTag().getString("SkullOwner"))))
+                    if (i.getItem().getItem() == drop.getItem() && (!(target instanceof Player) || i.getItem().getOrCreateTag().getString("SkullOwner").equalsIgnoreCase(drop.getTag().getString("SkullOwner"))))
                         return;
                 }
                 ItemEntity forceSkull = new ItemEntity(target.level, target.getX(), target.getY(), target.getZ(), drop);
@@ -157,11 +160,11 @@ public class CoupDeGrace extends Skill {
     }
 
     public static class ReapersLaugh extends CoupDeGrace {
-        private final Tag<String> tag = Tag.create(new HashSet<>(Arrays.asList("physical", ProcPoints.melee, ProcPoints.change_awareness, ProcPoints.on_hurt, ProcPoints.recharge_cast, ProcPoints.change_parry_result, "execution")));
-        private final Tag<String> tague = Tag.create(new HashSet<>(Arrays.asList(SkillTags.special, SkillTags.offensive)));
+        private final SetTag<String> tag = SetTag.create(new HashSet<>(Arrays.asList("physical", ProcPoints.melee, ProcPoints.change_awareness, ProcPoints.on_hurt, ProcPoints.recharge_cast, ProcPoints.change_parry_result, "execution")));
+        private final SetTag<String> tague = SetTag.create(new HashSet<>(Arrays.asList(SkillTags.special, SkillTags.offensive)));
 
         @Override
-        public Tag<String> getTags(LivingEntity caster) {
+        public SetTag<String> getTags(LivingEntity caster) {
             return special;
         }
 
@@ -183,7 +186,7 @@ public class CoupDeGrace extends Skill {
         @Override
         public boolean onStateChange(LivingEntity caster, SkillData prev, STATE from, STATE to) {
             if (from == STATE.INACTIVE && to == STATE.HOLSTERED) {
-                caster.level.playSound(null, caster.getX(), caster.getY(), caster.getZ(), SoundEvents.RAVAGER_CELEBRATE, SoundCategory.PLAYERS, 0.8f + WarDance.rand.nextFloat() * 0.5f, 0.75f + WarDance.rand.nextFloat() * 0.5f);
+                caster.level.playSound(null, caster.getX(), caster.getY(), caster.getZ(), SoundEvents.RAVAGER_CELEBRATE, SoundSource.PLAYERS, 0.8f + WarDance.rand.nextFloat() * 0.5f, 0.75f + WarDance.rand.nextFloat() * 0.5f);
                 prev.setState(STATE.HOLSTERED);
             }
             if (to == STATE.ACTIVE && cast(caster, -999)) {

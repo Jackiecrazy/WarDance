@@ -2,8 +2,8 @@ package jackiecrazy.wardance.mixin;
 
 import jackiecrazy.wardance.capability.skill.CasterData;
 import jackiecrazy.wardance.skill.ProcPoints;
-import net.minecraft.entity.LivingEntity;
-import net.minecraft.item.ItemStack;
+import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.common.extensions.IForgeItemStack;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Overwrite;

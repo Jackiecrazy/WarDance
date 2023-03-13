@@ -4,9 +4,9 @@ import jackiecrazy.footwork.api.WarAttributes;
 import jackiecrazy.footwork.capability.resources.CombatData;
 import jackiecrazy.footwork.event.RegenSpiritEvent;
 import jackiecrazy.wardance.skill.*;
-import net.minecraft.entity.LivingEntity;
-import net.minecraft.entity.ai.attributes.AttributeModifier;
-import net.minecraft.tags.Tag;
+import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.ai.attributes.AttributeModifier;
+import net.minecraft.tags.SetTag;
 import net.minecraftforge.event.entity.living.LivingDeathEvent;
 import net.minecraftforge.eventbus.api.Event;
 import net.minecraftforge.eventbus.api.EventPriority;
@@ -16,6 +16,8 @@ import java.awt.*;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.UUID;
+
+import jackiecrazy.wardance.skill.Skill.STATE;
 
 public class NaturalSprinter extends Skill {
     private static final AttributeModifier sprint = new AttributeModifier(UUID.fromString("0683fe69-5348-4a83-95d5-81a2eeb2cca0"), "gimli moment", 10, AttributeModifier.Operation.ADDITION);
@@ -29,8 +31,8 @@ lady luck: after casting a skill, have a 1+luck/5+luck chance to recover the spi
 confidence: your spirit regeneration speed scales proportionally with how much spirit you have left, from 200% at full to 50% at empty
      */
 
-    private final Tag<String> tag = Tag.create(new HashSet<>(Arrays.asList("passive", ProcPoints.on_kill, ProcPoints.change_spirit)));
-    private final Tag<String> no = Tag.empty();
+    private final SetTag<String> tag = SetTag.create(new HashSet<>(Arrays.asList("passive", ProcPoints.on_kill, ProcPoints.change_spirit)));
+    private final SetTag<String> no = SetTag.empty();
 
     @Override
     public Color getColor() {
@@ -38,13 +40,13 @@ confidence: your spirit regeneration speed scales proportionally with how much s
     }
 
     @Override
-    public Tag<String> getTags(LivingEntity caster) {
+    public SetTag<String> getTags(LivingEntity caster) {
         return passive;
     }
 
     @Nonnull
     @Override
-    public Tag<String> getSoftIncompatibility(LivingEntity caster) {
+    public SetTag<String> getSoftIncompatibility(LivingEntity caster) {
         return none;
     }
 

@@ -14,7 +14,7 @@ import jackiecrazy.wardance.config.*;
 import jackiecrazy.wardance.networking.*;
 import jackiecrazy.wardance.skill.Skill;
 import jackiecrazy.wardance.skill.WarSkills;
-import net.minecraft.world.GameRules;
+import net.minecraft.world.level.GameRules;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.capabilities.CapabilityManager;
 import net.minecraftforge.event.RegisterCommandsEvent;
@@ -45,7 +45,7 @@ public class WarDance {
     public static final Random rand = new Random();
 
     public static final Logger LOGGER = LogManager.getLogger();
-    public static final GameRules.RuleKey<GameRules.BooleanValue> GATED_SKILLS = GameRules.register("lockWarSkills", GameRules.Category.PLAYER, GameRules.BooleanValue.create(false)); //Blessed be the TF
+    public static final GameRules.Key<GameRules.BooleanValue> GATED_SKILLS = GameRules.register("lockWarSkills", GameRules.Category.PLAYER, GameRules.BooleanValue.create(false)); //Blessed be the TF
 
     public WarDance() {
         // Register the setup method for modloading
@@ -67,7 +67,7 @@ public class WarDance {
         ModLoadingContext.get().registerConfig(ModConfig.Type.COMMON, ResourceConfig.CONFIG_SPEC, MODID + "/resources.toml");
         ModLoadingContext.get().registerConfig(ModConfig.Type.CLIENT, ClientConfig.CONFIG_SPEC, MODID + "/client.toml");
         IEventBus bus = FMLJavaModLoadingContext.get().getModEventBus();
-        WarSkills.SKILLS.makeRegistry("skills", RegistryBuilder::new);
+        WarSkills.SKILLS.makeRegistry(RegistryBuilder::new);
         WarSkills.SKILLS.register(bus);
         MinecraftForge.EVENT_BUS.addListener(this::commands);
     }
@@ -130,7 +130,7 @@ public class WarDance {
     @Mod.EventBusSubscriber(bus = Mod.EventBusSubscriber.Bus.MOD)
     public static class RegistryEvents {
         @SubscribeEvent
-        public static void skills(final RegistryEvent.Register<Skill> e) {
+        public static void skills(final RegistEven<Skill> e) {
         }
     }
 }

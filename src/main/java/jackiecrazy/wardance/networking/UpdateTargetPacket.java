@@ -1,11 +1,11 @@
 package jackiecrazy.wardance.networking;
 
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.world.ClientWorld;
-import net.minecraft.entity.Entity;
-import net.minecraft.entity.LivingEntity;
-import net.minecraft.entity.MobEntity;
-import net.minecraft.network.PacketBuffer;
+import net.minecraft.client.multiplayer.ClientLevel;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.Mob;
+import net.minecraft.network.FriendlyByteBuf;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.fml.DistExecutor;
 import net.minecraftforge.fml.network.NetworkEvent;
@@ -22,19 +22,19 @@ public class UpdateTargetPacket {
         t = target;
     }
 
-    public static class UpdateTargetEncoder implements BiConsumer<UpdateTargetPacket, PacketBuffer> {
+    public static class UpdateTargetEncoder implements BiConsumer<UpdateTargetPacket, FriendlyByteBuf> {
 
         @Override
-        public void accept(UpdateTargetPacket updateClientPacket, PacketBuffer packetBuffer) {
+        public void accept(UpdateTargetPacket updateClientPacket, FriendlyByteBuf packetBuffer) {
             packetBuffer.writeInt(updateClientPacket.m);
             packetBuffer.writeInt(updateClientPacket.t);
         }
     }
 
-    public static class UpdateTargetDecoder implements Function<PacketBuffer, UpdateTargetPacket> {
+    public static class UpdateTargetDecoder implements Function<FriendlyByteBuf, UpdateTargetPacket> {
 
         @Override
-        public UpdateTargetPacket apply(PacketBuffer packetBuffer) {
+        public UpdateTargetPacket apply(FriendlyByteBuf packetBuffer) {
             return new UpdateTargetPacket(packetBuffer.readInt(), packetBuffer.readInt());
         }
     }
@@ -44,15 +44,15 @@ public class UpdateTargetPacket {
         @Override
         public void accept(UpdateTargetPacket updateClientPacket, Supplier<NetworkEvent.Context> contextSupplier) {
             contextSupplier.get().enqueueWork(() -> DistExecutor.unsafeRunWhenOn(Dist.CLIENT, () -> () -> {
-                ClientWorld world = Minecraft.getInstance().level;
+                ClientLevel world = Minecraft.getInstance().level;
                 if (world != null) {
                     Entity mob = world.getEntity(updateClientPacket.m);
                     Entity target = world.getEntity(updateClientPacket.t);
-                    if (mob instanceof MobEntity) {
+                    if (mob instanceof Mob) {
                         if (target instanceof LivingEntity)
-                            ((MobEntity) mob).setTarget((LivingEntity) target);
+                            ((Mob) mob).setTarget((LivingEntity) target);
                         else if(updateClientPacket.t==-1)
-                            ((MobEntity) mob).setTarget(null);
+                            ((Mob) mob).setTarget(null);
                     }
                 }
             }));

@@ -4,9 +4,9 @@ import jackiecrazy.wardance.capability.skill.CasterData;
 import jackiecrazy.wardance.capability.skill.ISkillCapability;
 import jackiecrazy.wardance.skill.Skill;
 import jackiecrazy.wardance.skill.SkillData;
-import net.minecraft.entity.player.ServerPlayerEntity;
-import net.minecraft.network.PacketBuffer;
-import net.minecraft.util.ResourceLocation;
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraftforge.fml.network.NetworkEvent;
 
 import java.util.ArrayList;
@@ -30,10 +30,10 @@ public class UpdateSkillSelectionPacket {
         l = list;
     }
 
-    public static class UpdateSkillEncoder implements BiConsumer<UpdateSkillSelectionPacket, PacketBuffer> {
+    public static class UpdateSkillEncoder implements BiConsumer<UpdateSkillSelectionPacket, FriendlyByteBuf> {
 
         @Override
-        public void accept(UpdateSkillSelectionPacket updateSkillPacket, PacketBuffer packetBuffer) {
+        public void accept(UpdateSkillSelectionPacket updateSkillPacket, FriendlyByteBuf packetBuffer) {
             packetBuffer.writeInt(updateSkillPacket.l.size());
             for (Skill s : updateSkillPacket.l)
                 if (s != null)
@@ -42,10 +42,10 @@ public class UpdateSkillSelectionPacket {
         }
     }
 
-    public static class UpdateSkillDecoder implements Function<PacketBuffer, UpdateSkillSelectionPacket> {
+    public static class UpdateSkillDecoder implements Function<FriendlyByteBuf, UpdateSkillSelectionPacket> {
 
         @Override
-        public UpdateSkillSelectionPacket apply(PacketBuffer packetBuffer) {
+        public UpdateSkillSelectionPacket apply(FriendlyByteBuf packetBuffer) {
             int size = packetBuffer.readInt();
             List<Skill> read = new ArrayList<>(size);
             for (int a = 0; a < size; a++) {
@@ -60,7 +60,7 @@ public class UpdateSkillSelectionPacket {
         @Override
         public void accept(UpdateSkillSelectionPacket updateSkillPacket, Supplier<NetworkEvent.Context> contextSupplier) {
             contextSupplier.get().enqueueWork(() -> {
-                ServerPlayerEntity sender = contextSupplier.get().getSender();
+                ServerPlayer sender = contextSupplier.get().getSender();
                 if (sender != null) {
                     final ISkillCapability cap = CasterData.getCap(sender);
                     List<Skill> prev = cap.getEquippedSkills();

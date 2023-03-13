@@ -1,8 +1,8 @@
 package jackiecrazy.wardance.event;
 
-import net.minecraft.entity.LivingEntity;
-import net.minecraft.item.ItemStack;
-import net.minecraft.util.Hand;
+import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.InteractionHand;
 import net.minecraftforge.event.entity.living.LivingEvent;
 import net.minecraftforge.eventbus.api.Cancelable;
 import net.minecraftforge.eventbus.api.Event;
@@ -17,13 +17,13 @@ import net.minecraftforge.eventbus.api.Event;
 public class ParryEvent extends LivingEvent {
     private final boolean originally;
     private final LivingEntity attacker;
-    private final Hand attackingHand, defendingHand;
+    private final InteractionHand attackingHand, defendingHand;
     private final ItemStack attackingStack;
     private final ItemStack defendingStack;
     private final float originalPostureConsumption, attackDamage;
     private float postureConsumption;
 
-    public ParryEvent(LivingEntity entity, LivingEntity seme, boolean canParry, Hand hand, ItemStack a, Hand dhand, ItemStack d, float posture, float orig, float damage) {
+    public ParryEvent(LivingEntity entity, LivingEntity seme, boolean canParry, InteractionHand hand, ItemStack a, InteractionHand dhand, ItemStack d, float posture, float orig, float damage) {
         super(entity);
         originally = canParry;
         attacker = seme;
@@ -40,11 +40,11 @@ public class ParryEvent extends LivingEvent {
         return attacker;
     }
 
-    public Hand getAttackingHand() {
+    public InteractionHand getAttackingHand() {
         return attackingHand;
     }
 
-    public Hand getDefendingHand() {
+    public InteractionHand getDefendingHand() {
         return defendingHand;
     }
 

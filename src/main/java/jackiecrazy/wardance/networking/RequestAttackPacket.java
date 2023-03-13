@@ -4,9 +4,9 @@ import jackiecrazy.footwork.capability.resources.CombatData;
 import jackiecrazy.footwork.utils.GeneralUtils;
 import jackiecrazy.wardance.config.GeneralConfig;
 import jackiecrazy.wardance.utils.CombatUtils;
-import net.minecraft.entity.Entity;
-import net.minecraft.entity.player.ServerPlayerEntity;
-import net.minecraft.network.PacketBuffer;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.network.FriendlyByteBuf;
 import net.minecraftforge.common.ForgeMod;
 import net.minecraftforge.fml.network.NetworkEvent;
 
@@ -29,19 +29,19 @@ public class RequestAttackPacket {
         else id = entity.getId();
     }
 
-    public static class RequestAttackEncoder implements BiConsumer<RequestAttackPacket, PacketBuffer> {
+    public static class RequestAttackEncoder implements BiConsumer<RequestAttackPacket, FriendlyByteBuf> {
 
         @Override
-        public void accept(RequestAttackPacket updateClientPacket, PacketBuffer packetBuffer) {
+        public void accept(RequestAttackPacket updateClientPacket, FriendlyByteBuf packetBuffer) {
             packetBuffer.writeBoolean(updateClientPacket.main);
             packetBuffer.writeInt(updateClientPacket.id);
         }
     }
 
-    public static class RequestAttackDecoder implements Function<PacketBuffer, RequestAttackPacket> {
+    public static class RequestAttackDecoder implements Function<FriendlyByteBuf, RequestAttackPacket> {
 
         @Override
-        public RequestAttackPacket apply(PacketBuffer packetBuffer) {
+        public RequestAttackPacket apply(FriendlyByteBuf packetBuffer) {
             return new RequestAttackPacket(packetBuffer.readBoolean(), packetBuffer.readInt());
         }
     }
@@ -51,7 +51,7 @@ public class RequestAttackPacket {
         @Override
         public void accept(RequestAttackPacket updateClientPacket, Supplier<NetworkEvent.Context> contextSupplier) {
             contextSupplier.get().enqueueWork(() -> {
-                ServerPlayerEntity sender = contextSupplier.get().getSender();
+                ServerPlayer sender = contextSupplier.get().getSender();
                 if (sender != null) {
                     Entity e = sender.level.getEntity(updateClientPacket.id);
                     if (e != null && (GeneralConfig.dual||updateClientPacket.main) && GeneralUtils.getDistSqCompensated(sender, e) < GeneralUtils.getAttributeValueSafe(sender, ForgeMod.REACH_DISTANCE.get()) * GeneralUtils.getAttributeValueSafe(sender, ForgeMod.REACH_DISTANCE.get())) {

@@ -2,13 +2,13 @@ package jackiecrazy.wardance.handlers;
 
 import jackiecrazy.wardance.WarDance;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.settings.KeyBinding;
-import net.minecraft.entity.Entity;
-import net.minecraft.entity.EntityPredicate;
-import net.minecraft.entity.LivingEntity;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.util.math.MathHelper;
-import net.minecraft.util.math.vector.Vector3d;
+import net.minecraft.client.KeyMapping;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.ai.targeting.TargetingConditions;
+import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.util.Mth;
+import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.TickEvent;
 import net.minecraftforge.fml.client.registry.ClientRegistry;
@@ -20,16 +20,16 @@ import java.util.List;
 import java.util.function.Predicate;
 
 public class ZTargetHandler {
-    public static KeyBinding LOCK_ON;
-    public static KeyBinding TAB;
+    public static KeyMapping LOCK_ON;
+    public static KeyMapping TAB;
 
     public static List<LivingEntity> list = new ArrayList<>();
 
     private static final Minecraft mc = Minecraft.getInstance();
 
     public static void client(FMLClientSetupEvent e) {//TODO register
-        LOCK_ON = new KeyBinding("key." + WarDance.MODID + ".lock_on", GLFW.GLFW_KEY_O, "key.categories." + WarDance.MODID);
-        TAB = new KeyBinding("key." + WarDance.MODID + ".tab", GLFW.GLFW_KEY_TAB, "key.categories." + WarDance.MODID);
+        LOCK_ON = new KeyMapping("key." + WarDance.MODID + ".lock_on", GLFW.GLFW_KEY_O, "key.categories." + WarDance.MODID);
+        TAB = new KeyMapping("key." + WarDance.MODID + ".tab", GLFW.GLFW_KEY_TAB, "key.categories." + WarDance.MODID);
         ClientRegistry.registerKeyBinding(LOCK_ON);
         ClientRegistry.registerKeyBinding(TAB);
         MinecraftForge.EVENT_BUS.addListener(ZTargetHandler::handleKeyPress);
@@ -39,7 +39,7 @@ public class ZTargetHandler {
     private static Entity targetted;
 
     private static void handleKeyPress(TickEvent.RenderTickEvent e) {
-        PlayerEntity player = mc.player;
+        Player player = mc.player;
         if (e.phase == TickEvent.Phase.START && mc.player != null && !mc.isPaused()) {
             tickLockedOn();
             while (LOCK_ON.consumeClick()) {
@@ -55,8 +55,8 @@ public class ZTargetHandler {
             }
 
             if (targetted != null) {
-                Vector3d targetPos = targetted.position();
-                Vector3d directionVec = targetPos.subtract(mc.player.position()).normalize();
+                Vec3 targetPos = targetted.position();
+                Vec3 directionVec = targetPos.subtract(mc.player.position()).normalize();
                 double angle = Math.atan2(-directionVec.x, directionVec.z) * 180 / Math.PI;
 
                 float adjustedPrevYaw = mc.player.yRotO;
@@ -68,7 +68,7 @@ public class ZTargetHandler {
                     }
                 }
 
-                double newDelta = MathHelper.lerp(e.renderTickTime, adjustedPrevYaw, angle);
+                double newDelta = Mth.lerp(e.renderTickTime, adjustedPrevYaw, angle);
                 if (newDelta > 180) {
                     newDelta -= 360;
                 }
@@ -80,7 +80,7 @@ public class ZTargetHandler {
         }
     }
 
-    private static void attemptEnterLockOn(PlayerEntity player) {
+    private static void attemptEnterLockOn(Player player) {
         tabToNextEnemy(player);
         if (targetted != null) {
             lockedOn = true;
@@ -96,11 +96,11 @@ public class ZTargetHandler {
     }
 
     private static final Predicate<LivingEntity> ENTITY_PREDICATE = entity -> entity.isAlive() && entity.attackable();
-    private static final EntityPredicate ENEMY_CONDITION = new EntityPredicate().range(20.0D).selector(ENTITY_PREDICATE);
+    private static final TargetingConditions ENEMY_CONDITION = new TargetingConditions().range(20.0D).selector(ENTITY_PREDICATE);
 
     private static int cycle = -1;
 
-    public static Entity findNearby(PlayerEntity player) {
+    public static Entity findNearby(Player player) {
         List<LivingEntity> entities = player.level.getNearbyEntities(LivingEntity.class, ENEMY_CONDITION, player, player.getBoundingBox().inflate(10.0D, 2.0D, 10.0D));
         if (lockedOn) {
             cycle++;
@@ -127,7 +127,7 @@ public class ZTargetHandler {
         }
     }
 
-    private static void tabToNextEnemy(PlayerEntity player) {
+    private static void tabToNextEnemy(Player player) {
         targetted = findNearby(player);
     }
 

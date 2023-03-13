@@ -2,7 +2,7 @@ package jackiecrazy.wardance.client;
 
 import com.google.common.cache.Cache;
 import com.google.common.cache.CacheBuilder;
-import com.mojang.blaze3d.matrix.MatrixStack;
+import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.platform.GlStateManager;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.datafixers.util.Pair;
@@ -25,31 +25,31 @@ import jackiecrazy.wardance.skill.SkillCategories;
 import jackiecrazy.wardance.skill.SkillData;
 import jackiecrazy.wardance.skill.coupdegrace.CoupDeGrace;
 import jackiecrazy.wardance.utils.CombatUtils;
-import net.minecraft.client.GameSettings;
-import net.minecraft.client.MainWindow;
+import net.minecraft.client.Options;
+import com.mojang.blaze3d.platform.Window;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.entity.player.ClientPlayerEntity;
-import net.minecraft.client.gui.AbstractGui;
-import net.minecraft.client.renderer.ActiveRenderInfo;
-import net.minecraft.client.renderer.RenderHelper;
-import net.minecraft.client.renderer.culling.ClippingHelper;
-import net.minecraft.client.renderer.entity.EntityRendererManager;
-import net.minecraft.client.settings.AttackIndicatorStatus;
-import net.minecraft.client.settings.PointOfView;
-import net.minecraft.client.world.ClientWorld;
-import net.minecraft.entity.Entity;
-import net.minecraft.entity.LivingEntity;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.item.ItemStack;
-import net.minecraft.util.Hand;
-import net.minecraft.util.HandSide;
-import net.minecraft.util.ResourceLocation;
+import net.minecraft.client.player.LocalPlayer;
+import net.minecraft.client.gui.GuiComponent;
+import net.minecraft.client.Camera;
+import com.mojang.blaze3d.platform.Lighting;
+import net.minecraft.client.renderer.culling.Frustum;
+import net.minecraft.client.renderer.entity.EntityRenderDispatcher;
+import net.minecraft.client.AttackIndicatorStatus;
+import net.minecraft.client.CameraType;
+import net.minecraft.client.multiplayer.ClientLevel;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.InteractionHand;
+import net.minecraft.world.entity.HumanoidArm;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.Tuple;
-import net.minecraft.util.math.AxisAlignedBB;
-import net.minecraft.util.math.MathHelper;
-import net.minecraft.util.math.RayTraceContext;
-import net.minecraft.util.math.RayTraceResult;
-import net.minecraft.util.math.vector.Vector3d;
+import net.minecraft.world.phys.AABB;
+import net.minecraft.util.Mth;
+import net.minecraft.world.level.ClipContext;
+import net.minecraft.world.phys.HitResult;
+import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.client.event.RenderGameOverlayEvent;
 import net.minecraftforge.client.event.RenderWorldLastEvent;
@@ -86,46 +86,46 @@ public class RenderEvents {
     public static void down(RenderWorldLastEvent event) {
         Minecraft mc = Minecraft.getInstance();
 
-        ActiveRenderInfo camera = mc.gameRenderer.getMainCamera();
-        MatrixStack poseStack = event.getMatrixStack();
+        Camera camera = mc.gameRenderer.getMainCamera();
+        PoseStack poseStack = event.getMatrixStack();
         float partialTicks = event.getPartialTicks();
         Entity cameraEntity = camera.getEntity() != null ? camera.getEntity() : mc.player;
 
-        Vector3d cameraPos = camera.getPosition();
-        final ClippingHelper frustum = new ClippingHelper(poseStack.last().pose(), event.getProjectionMatrix());
+        Vec3 cameraPos = camera.getPosition();
+        final Frustum frustum = new Frustum(poseStack.last().pose(), event.getProjectionMatrix());
         frustum.prepare(cameraPos.x(), cameraPos.y(), cameraPos.z());
 
-        ClientWorld client = mc.level;
+        ClientLevel client = mc.level;
 
     }
 
     @SubscribeEvent
     public static void displayCoolie(RenderGameOverlayEvent.Post event) {
-        MainWindow sr = event.getWindow();
+        Window sr = event.getWindow();
         final Minecraft mc = Minecraft.getInstance();
-        final MatrixStack stack = event.getMatrixStack();
+        final PoseStack stack = event.getMatrixStack();
         if (GeneralConfig.dual) {
             if (event.getType().equals(RenderGameOverlayEvent.ElementType.CROSSHAIRS)) {
                 //draw offhand cooldown, crosshair type
                 {
-                    GameSettings gamesettings = mc.options;
+                    Options gamesettings = mc.options;
 
-                    if (gamesettings.getCameraType() == PointOfView.FIRST_PERSON) {
+                    if (gamesettings.getCameraType() == CameraType.FIRST_PERSON) {
 
                         int width = sr.getGuiScaledWidth();
                         int height = sr.getGuiScaledHeight();
 
-                        ClientPlayerEntity player = mc.player;
+                        LocalPlayer player = mc.player;
                         if (player == null) return;
                         if (!gamesettings.renderDebug || gamesettings.hideGui || player.isReducedDebugInfo() || gamesettings.reducedDebugInfo) {
                             if (mc.options.attackIndicator == AttackIndicatorStatus.CROSSHAIR) {
                                 GlStateManager._enableAlphaTest();
-                                float cooldown = CombatUtils.getCooledAttackStrength(player, Hand.OFF_HAND, 0f);
+                                float cooldown = CombatUtils.getCooledAttackStrength(player, InteractionHand.OFF_HAND, 0f);
                                 boolean hyperspeed = false;
 
-                                if (getEntityLookedAt(player, GeneralUtils.getAttributeValueHandSensitive(player, ForgeMod.REACH_DISTANCE.get(), Hand.OFF_HAND)) != null && cooldown >= 1.0F) {
-                                    hyperspeed = CombatUtils.getCooldownPeriod(player, Hand.OFF_HAND) > 5.0F;
-                                    hyperspeed = hyperspeed & (getEntityLookedAt(player, GeneralUtils.getAttributeValueHandSensitive(player, ForgeMod.REACH_DISTANCE.get(), Hand.OFF_HAND))).isAlive();
+                                if (getEntityLookedAt(player, GeneralUtils.getAttributeValueHandSensitive(player, ForgeMod.REACH_DISTANCE.get(), InteractionHand.OFF_HAND)) != null && cooldown >= 1.0F) {
+                                    hyperspeed = CombatUtils.getCooldownPeriod(player, InteractionHand.OFF_HAND) > 5.0F;
+                                    hyperspeed = hyperspeed & (getEntityLookedAt(player, GeneralUtils.getAttributeValueHandSensitive(player, ForgeMod.REACH_DISTANCE.get(), InteractionHand.OFF_HAND))).isAlive();
                                 }
 
                                 int y = height / 2 - 7 - 7;
@@ -145,28 +145,28 @@ public class RenderEvents {
             }
             if (event.getType().equals(RenderGameOverlayEvent.ElementType.HOTBAR)) {
                 //draw offhand cooldown, hotbar type
-                if (mc.getCameraEntity() instanceof PlayerEntity) {
+                if (mc.getCameraEntity() instanceof Player) {
                     GlStateManager._clearColor(1.0F, 1.0F, 1.0F, 1.0F);
-                    PlayerEntity p = (PlayerEntity) mc.getCameraEntity();
+                    Player p = (Player) mc.getCameraEntity();
                     ItemStack itemstack = p.getOffhandItem();
-                    HandSide oppositeHand = p.getMainArm().getOpposite();
+                    HumanoidArm oppositeHand = p.getMainArm().getOpposite();
                     int halfOfScreen = sr.getGuiScaledWidth() / 2;
 
                     GlStateManager._enableRescaleNormal();
                     RenderSystem.enableBlend();
                     RenderSystem.defaultBlendFunc();
-                    RenderHelper.turnBackOn();
+                    Lighting.turnBackOn();
 
                     if (mc.options.attackIndicator == AttackIndicatorStatus.HOTBAR) {
-                        float strength = CombatUtils.getCooledAttackStrength(p, Hand.OFF_HAND, 0);
+                        float strength = CombatUtils.getCooledAttackStrength(p, InteractionHand.OFF_HAND, 0);
                         if (strength < 1.0F) {
                             int y = sr.getGuiScaledHeight() - 20;
                             int x = halfOfScreen + 91 + 6;
-                            if (oppositeHand == HandSide.LEFT) {
+                            if (oppositeHand == HumanoidArm.LEFT) {
                                 x = halfOfScreen - 91 - 22;
                             }
 
-                            mc.getTextureManager().bind(AbstractGui.GUI_ICONS_LOCATION);
+                            mc.getTextureManager().bind(GuiComponent.GUI_ICONS_LOCATION);
                             int modStrength = (int) (strength * 19.0F);
                             RenderSystem.color4f(1.0F, 1.0F, 1.0F, 1.0F);
                             mc.gui.blit(stack, x + 18, y, 0, 94, 18, 18);
@@ -174,15 +174,15 @@ public class RenderEvents {
                         }
                     }
 
-                    RenderHelper.turnOff();
+                    Lighting.turnOff();
                     RenderSystem.disableBlend();
                 }
             }
         }
 
         if (event.getType().equals(RenderGameOverlayEvent.ElementType.ALL))
-            if (mc.getCameraEntity() instanceof PlayerEntity) {
-                ClientPlayerEntity player = mc.player;
+            if (mc.getCameraEntity() instanceof Player) {
+                LocalPlayer player = mc.player;
                 ICombatCapability cap = CombatData.getCap(player);
                 int width = sr.getGuiScaledWidth();
                 int height = sr.getGuiScaledHeight();
@@ -223,8 +223,8 @@ public class RenderEvents {
                         stack.popPose();
                     }
                     pair = translateCoords(ClientConfig.CONFIG.spirit, width, height);
-                    x = MathHelper.clamp(pair.getFirst() - 16, 0, width - 32);
-                    y = MathHelper.clamp(pair.getSecond() - 16, 0, height - 32);
+                    x = Mth.clamp(pair.getFirst() - 16, 0, width - 32);
+                    y = Mth.clamp(pair.getSecond() - 16, 0, height - 32);
                     fillHeight = (int) (Math.min(1, currentSpiritLevel / cap.getMaxSpirit()) * 32);
                     String display = formatter.format(currentSpiritLevel) + "/" + formatter.format(cap.getMaxSpirit());
                     //spirit circle
@@ -270,7 +270,7 @@ public class RenderEvents {
                         mc.getTextureManager().bind(raihud);
                         int combowidth = 32;
                         float workingCombo = currentComboLevel;
-                        int comboU = (int) (MathHelper.clamp(Math.floor(workingCombo), 0, 4)) * 32;
+                        int comboU = (int) (Mth.clamp(Math.floor(workingCombo), 0, 4)) * 32;
                         int divisor = 1;
                         if (workingCombo >= 4)//S
                             divisor = 2;
@@ -288,8 +288,8 @@ public class RenderEvents {
                         else
                             fillHeight = (int) ((workingCombo - Math.floor(workingCombo)) * 32f);
                         pair = translateCoords(ClientConfig.CONFIG.combo, width, height);
-                        x = MathHelper.clamp(pair.getFirst() - combowidth / 2, 0, width - combowidth);
-                        y = MathHelper.clamp(pair.getSecond() - 23, 0, height - 46);
+                        x = Mth.clamp(pair.getFirst() - combowidth / 2, 0, width - combowidth);
+                        y = Mth.clamp(pair.getSecond() - 23, 0, height - 46);
                         mc.gui.blit(stack, x, y, comboU, 0, combowidth, 32);
                         //fancy fill percentage
                         mc.gui.blit(stack, x, y + 33 - fillHeight, comboU, 65 - fillHeight, combowidth, fillHeight - 2);
@@ -324,7 +324,7 @@ public class RenderEvents {
                             mc.getTextureManager().bind(s.getSkill().icon());
                             Color c = s.getSkill().getColor();
                             RenderSystem.color4f(c.getRed() / 255f, c.getGreen() / 255f, c.getBlue() / 255f, 1);
-                            AbstractGui.blit(stack, pair.getFirst() - (afflict.size() - 1 - index) * 16 + (afflict.size() - 1) * 8 - 8, pair.getSecond(), 0, 0, 16, 16, 16, 16);
+                            GuiComponent.blit(stack, pair.getFirst() - (afflict.size() - 1 - index) * 16 + (afflict.size() - 1) * 8 - 8, pair.getSecond(), 0, 0, 16, 16, 16, 16);
                             if(s.getMaxDuration()!=0) {
                                 String display = formatter.format(s.getDuration());
                                 mc.font.drawShadow(event.getMatrixStack(), display, pair.getFirst() - (afflict.size() - 1 - index) * 16 + (afflict.size() - 1) * 8 - 8, pair.getSecond() - 2, 0);
@@ -354,7 +354,7 @@ public class RenderEvents {
                             if (info.getB()<0)
                                 shift = 0;
                             mc.getTextureManager().bind(stealth);
-                            AbstractGui.blit(stack, pair.getFirst() - 16, pair.getSecond() - 8, 0, shift * 16, 32, 16, 64, 64);
+                            GuiComponent.blit(stack, pair.getFirst() - 16, pair.getSecond() - 8, 0, shift * 16, 32, 16, 64, 64);
                         }
                     }
                     if (ClientConfig.CONFIG.enemyPosture.enabled && (cap.isCombatMode() || CombatData.getCap((LivingEntity) look).getPosture() < CombatData.getCap((LivingEntity) look).getMaxPosture() || CombatData.getCap((LivingEntity) look).getStaggerTime() > 0 || cap.getShatterCooldown() < GeneralUtils.getAttributeValueSafe(player, WarAttributes.SHATTER.get()) || cap.getBarrier() < cap.getMaxBarrier()))
@@ -363,7 +363,7 @@ public class RenderEvents {
             }
     }
 
-    private static void drawPostureBarAt(boolean you, MatrixStack ms, LivingEntity elb, int width, int height) {
+    private static void drawPostureBarAt(boolean you, PoseStack ms, LivingEntity elb, int width, int height) {
         ClientConfig.BarType b = ClientConfig.CONFIG.enemyPosture.bar;
         if (you) {
             b = ClientConfig.CONFIG.playerPosture.bar;
@@ -384,7 +384,7 @@ public class RenderEvents {
     /**
      * Draws it with the coord as its center
      */
-    private static void drawOldPostureBarAt(boolean you, MatrixStack ms, LivingEntity elb, int width, int height) {
+    private static void drawOldPostureBarAt(boolean you, PoseStack ms, LivingEntity elb, int width, int height) {
         Pair<Integer, Integer> pair = you ? translateCoords(ClientConfig.CONFIG.playerPosture, width, height) : translateCoords(ClientConfig.CONFIG.enemyPosture, width, height);
         int atX = pair.getFirst();
         int atY = pair.getSecond();
@@ -401,8 +401,8 @@ public class RenderEvents {
         final float trueMaxPosture = Float.isFinite(itsc.getTrueMaxPosture()) ? itsc.getTrueMaxPosture() : 1f;
         float posPerc = posture / Math.max(0.1f, trueMaxPosture);
         posPerc = Float.isFinite(posPerc) ? posPerc : 0;
-        posPerc = MathHelper.clamp(posPerc, 0, 1);
-        double shatter = MathHelper.clamp(itsc.getBarrier() / itsc.getMaxBarrier(), 0, 1);
+        posPerc = Mth.clamp(posPerc, 0, 1);
+        double shatter = Mth.clamp(itsc.getBarrier() / itsc.getMaxBarrier(), 0, 1);
         if (cap > 0) {
             //shatter ticks
             if (shatter <= 0) {
@@ -425,14 +425,14 @@ public class RenderEvents {
             RenderSystem.color3f(1, 0.1f, 0.1f);
             mc.gui.blit(ms, left + filled, atY, filled, 69, barWidth - filled, 5);
             if (itsc.getStaggerTime() > 0) {
-                int invulTime = (int) (MathHelper.clamp((float) itsc.getStaggerTime() / (float) CombatConfig.staggerDuration, 0, 1) * (float) (barWidth));//apparently this is synced to the client?
+                int invulTime = (int) (Mth.clamp((float) itsc.getStaggerTime() / (float) CombatConfig.staggerDuration, 0, 1) * (float) (barWidth));//apparently this is synced to the client?
                 RenderSystem.color3f(0, 0, 0);//, ((float) itsc.getPosInvulTime()) / (float) CombatConfig.ssptime);
                 mc.gui.blit(ms, left, atY, 0, 69, invulTime, 5);
             }
 
         }
         mc.getProfiler().pop();
-        mc.getTextureManager().bind(AbstractGui.GUI_ICONS_LOCATION);
+        mc.getTextureManager().bind(GuiComponent.GUI_ICONS_LOCATION);
         RenderSystem.disableBlend();
         RenderSystem.color3f(1, 1, 1);
         //RenderSystem.enableLighting();
@@ -441,7 +441,7 @@ public class RenderEvents {
     /**
      * Draws it with the coord as its center
      */
-    private static void drawAmoPostureBarAt(boolean you, MatrixStack ms, LivingEntity elb, int width, int height) {
+    private static void drawAmoPostureBarAt(boolean you, PoseStack ms, LivingEntity elb, int width, int height) {
         Pair<Integer, Integer> pair = you ? translateCoords(ClientConfig.CONFIG.playerPosture, width, height) : translateCoords(ClientConfig.CONFIG.enemyPosture, width, height);
         int atX = pair.getFirst();
         int atY = pair.getSecond();
@@ -500,7 +500,7 @@ public class RenderEvents {
             //draw the center bar as the last step
         }
         mc.getProfiler().pop();
-        mc.getTextureManager().bind(AbstractGui.GUI_ICONS_LOCATION);
+        mc.getTextureManager().bind(GuiComponent.GUI_ICONS_LOCATION);
         RenderSystem.disableBlend();
         RenderSystem.color3f(1, 1, 1);
     }
@@ -508,7 +508,7 @@ public class RenderEvents {
     /**
      * Draws it with the coord as its center
      */
-    private static void drawDarkPostureBarAt(boolean you, MatrixStack ms, LivingEntity elb, int width, int height) {
+    private static void drawDarkPostureBarAt(boolean you, PoseStack ms, LivingEntity elb, int width, int height) {
         Pair<Integer, Integer> pair = you ? translateCoords(ClientConfig.CONFIG.playerPosture, width, height) : translateCoords(ClientConfig.CONFIG.enemyPosture, width, height);
         int atX = pair.getFirst();
         int atY = pair.getSecond();
@@ -586,7 +586,7 @@ public class RenderEvents {
             }
         }
         mc.getProfiler().pop();
-        mc.getTextureManager().bind(AbstractGui.GUI_ICONS_LOCATION);
+        mc.getTextureManager().bind(GuiComponent.GUI_ICONS_LOCATION);
         RenderSystem.disableBlend();
         RenderSystem.color3f(1, 1, 1);
     }
@@ -597,17 +597,17 @@ public class RenderEvents {
     public static Entity getEntityLookedAt(Entity e, double finalDistance) {
         Entity foundEntity = null;
         double distance = finalDistance;
-        RayTraceResult pos = raycast(e, finalDistance);
-        Vector3d positionVector = e.position();
+        HitResult pos = raycast(e, finalDistance);
+        Vec3 positionVector = e.position();
 
-        if (e instanceof PlayerEntity)
+        if (e instanceof Player)
             positionVector = positionVector.add(0, e.getEyeHeight(e.getPose()), 0);
 
         if (pos != null)
             distance = pos.getLocation().distanceTo(positionVector);
 
-        Vector3d lookVector = e.getLookAngle();
-        Vector3d reachVector = positionVector.add(lookVector.x * finalDistance, lookVector.y * finalDistance, lookVector.z * finalDistance);
+        Vec3 lookVector = e.getLookAngle();
+        Vec3 reachVector = positionVector.add(lookVector.x * finalDistance, lookVector.y * finalDistance, lookVector.z * finalDistance);
 
         Entity lookedEntity = null;
         List<Entity> entitiesInBoundingBox = e.getCommandSenderWorld().getEntities(e, e.getBoundingBox().inflate(lookVector.x * finalDistance, lookVector.y * finalDistance, lookVector.z * finalDistance).expandTowards(1F, 1F, 1F));
@@ -615,8 +615,8 @@ public class RenderEvents {
 
         for (Entity entity : entitiesInBoundingBox) {
             if (entity.isPickable()) {
-                AxisAlignedBB collisionBox = entity.getBoundingBoxForCulling();
-                Optional<Vector3d> interceptPosition = collisionBox.clip(positionVector, reachVector);
+                AABB collisionBox = entity.getBoundingBoxForCulling();
+                Optional<Vec3> interceptPosition = collisionBox.clip(positionVector, reachVector);
 
                 if (collisionBox.contains(positionVector)) {
                     if (0.0D < minDistance || minDistance == 0.0D) {
@@ -640,21 +640,21 @@ public class RenderEvents {
         return foundEntity;
     }
 
-    public static RayTraceResult raycast(Entity e, double len) {
-        Vector3d vec = new Vector3d(e.getX(), e.getY(), e.getZ());
-        if (e instanceof PlayerEntity)
-            vec = vec.add(new Vector3d(0, e.getEyeHeight(e.getPose()), 0));
+    public static HitResult raycast(Entity e, double len) {
+        Vec3 vec = new Vec3(e.getX(), e.getY(), e.getZ());
+        if (e instanceof Player)
+            vec = vec.add(new Vec3(0, e.getEyeHeight(e.getPose()), 0));
 
-        Vector3d look = e.getLookAngle();
+        Vec3 look = e.getLookAngle();
         if (look == null)
             return null;
 
         return raycast(vec, look, e, len);
     }
 
-    public static RayTraceResult raycast(Vector3d origin, Vector3d ray, Entity e, double len) {
-        Vector3d next = origin.add(ray.normalize().scale(len));
-        return e.level.clip(new RayTraceContext(origin, next, RayTraceContext.BlockMode.COLLIDER, RayTraceContext.FluidMode.NONE, e));
+    public static HitResult raycast(Vec3 origin, Vec3 ray, Entity e, double len) {
+        Vec3 next = origin.add(ray.normalize().scale(len));
+        return e.level.clip(new ClipContext(origin, next, ClipContext.Block.COLLIDER, ClipContext.Fluid.NONE, e));
     }
 
     private static float updateValue(float f, float to) {
@@ -662,11 +662,11 @@ public class RenderEvents {
         boolean close = true;
         float temp = f;
         if (to > f) {
-            f += MathHelper.clamp((to - temp) / 20, 0.01, 0.1);
+            f += Mth.clamp((to - temp) / 20, 0.01, 0.1);
             close = false;
         }
         if (to < f) {
-            f += MathHelper.clamp((to - temp) / 20, -0.1, -0.01);
+            f += Mth.clamp((to - temp) / 20, -0.1, -0.01);
             close = !close;
         }
         if (close)
@@ -691,7 +691,7 @@ public class RenderEvents {
         return translateCoords(dd.anchorPoint, dd.numberX, dd.numberY, width, height);
     }
 
-    private static void renderEye(LivingEntity passedEntity, float partialTicks, MatrixStack poseStack) {
+    private static void renderEye(LivingEntity passedEntity, float partialTicks, PoseStack poseStack) {
         final Tuple<StealthUtils.Awareness, Double> info = stealthInfo(passedEntity);
         double dist = info.getB();
         int shift = 0;
@@ -712,17 +712,17 @@ public class RenderEvents {
         double y = passedEntity.yo + (passedEntity.getY() - passedEntity.yo) * partialTicks;
         double z = passedEntity.zo + (passedEntity.getZ() - passedEntity.zo) * partialTicks;
 
-        EntityRendererManager renderDispatcher = Minecraft.getInstance().getEntityRenderDispatcher();
-        Vector3d renderPos = renderDispatcher.camera.getPosition();
+        EntityRenderDispatcher renderDispatcher = Minecraft.getInstance().getEntityRenderDispatcher();
+        Vec3 renderPos = renderDispatcher.camera.getPosition();
 
         poseStack.pushPose();
         poseStack.translate((float) (x - renderPos.x()), (float) (y - renderPos.y() + passedEntity.getBbHeight()), (float) (z - renderPos.z()));
         Minecraft.getInstance().getTextureManager().bind(stealth);
         poseStack.translate(0.0D, (double) 0.5, 0.0D);
         poseStack.mulPose(Minecraft.getInstance().getEntityRenderDispatcher().cameraOrientation());
-        final float size = MathHelper.clamp(0.002F * CombatData.getCap(passedEntity).getTrueMaxPosture(), 0.015f, 0.1f);
+        final float size = Mth.clamp(0.002F * CombatData.getCap(passedEntity).getTrueMaxPosture(), 0.015f, 0.1f);
         poseStack.scale(-size, -size, size);
-        AbstractGui.blit(poseStack, -16, -8, 0, shift * 16, 32, 16, 64, 64);
+        GuiComponent.blit(poseStack, -16, -8, 0, shift * 16, 32, 16, 64, 64);
         poseStack.popPose();
 
         //poseStack.translate(0.0D, -(NeatConfig.backgroundHeight + NeatConfig.barHeight + NeatConfig.backgroundPadding), 0.0D);
@@ -770,8 +770,8 @@ public class RenderEvents {
             default:
                 retx = rety = 0;
         }
-        retx = MathHelper.clamp(retx + x, 0, width);
-        rety = MathHelper.clamp(rety + y, 0, height);
+        retx = Mth.clamp(retx + x, 0, width);
+        rety = Mth.clamp(rety + y, 0, height);
         return Pair.of(retx, rety);
     }
 }

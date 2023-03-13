@@ -1,7 +1,7 @@
 package jackiecrazy.wardance.networking;
 
 import jackiecrazy.wardance.capability.skill.CasterData;
-import net.minecraft.network.PacketBuffer;
+import net.minecraft.network.FriendlyByteBuf;
 import net.minecraftforge.fml.network.NetworkEvent;
 
 import java.util.function.BiConsumer;
@@ -15,18 +15,18 @@ public class SelectSkillPacket {
         sk = index;
     }
 
-    public static class CombatEncoder implements BiConsumer<SelectSkillPacket, PacketBuffer> {
+    public static class CombatEncoder implements BiConsumer<SelectSkillPacket, FriendlyByteBuf> {
 
         @Override
-        public void accept(SelectSkillPacket updateClientPacket, PacketBuffer packetBuffer) {
+        public void accept(SelectSkillPacket updateClientPacket, FriendlyByteBuf packetBuffer) {
             packetBuffer.writeInt(updateClientPacket.sk);
         }
     }
 
-    public static class CombatDecoder implements Function<PacketBuffer, SelectSkillPacket> {
+    public static class CombatDecoder implements Function<FriendlyByteBuf, SelectSkillPacket> {
 
         @Override
-        public SelectSkillPacket apply(PacketBuffer packetBuffer) {
+        public SelectSkillPacket apply(FriendlyByteBuf packetBuffer) {
             return new SelectSkillPacket(packetBuffer.readInt());
         }
     }

@@ -3,11 +3,11 @@ package jackiecrazy.wardance.skill.judgment;
 import jackiecrazy.wardance.api.CombatDamageSource;
 import jackiecrazy.wardance.capability.status.Marks;
 import jackiecrazy.wardance.skill.SkillData;
-import net.minecraft.entity.EntityType;
-import net.minecraft.entity.LivingEntity;
-import net.minecraft.entity.effect.LightningBoltEntity;
-import net.minecraft.util.DamageSource;
-import net.minecraft.world.server.ServerWorld;
+import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.LightningBolt;
+import net.minecraft.world.damagesource.DamageSource;
+import net.minecraft.server.level.ServerLevel;
 
 import java.awt.*;
 import java.util.List;
@@ -40,12 +40,12 @@ public class LichtenbergScar extends Judgment {
             if (baddie == target)
                 target.hurt(cds, target.getHealth() / 5);
             else baddie.hurt(cds, baddie.getHealth() / 10);
-            LightningBoltEntity lightningboltentity = EntityType.LIGHTNING_BOLT.create(target.level);
+            LightningBolt lightningboltentity = EntityType.LIGHTNING_BOLT.create(target.level);
             lightningboltentity.moveTo(baddie.getX(), baddie.getY(), baddie.getZ());
             lightningboltentity.setVisualOnly(true);
             target.level.addFreshEntity(lightningboltentity);
             if (!net.minecraftforge.event.ForgeEventFactory.onEntityStruckByLightning(baddie, lightningboltentity))
-                baddie.thunderHit((ServerWorld) baddie.level, lightningboltentity);
+                baddie.thunderHit((ServerLevel) baddie.level, lightningboltentity);
         }
     }
 

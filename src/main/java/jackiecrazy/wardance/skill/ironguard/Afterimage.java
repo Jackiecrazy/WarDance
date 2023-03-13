@@ -3,10 +3,10 @@ package jackiecrazy.wardance.skill.ironguard;
 import jackiecrazy.wardance.event.ParryEvent;
 import jackiecrazy.wardance.skill.SkillData;
 import jackiecrazy.wardance.utils.SkillUtils;
-import net.minecraft.entity.LivingEntity;
-import net.minecraft.particles.ParticleTypes;
-import net.minecraft.potion.EffectInstance;
-import net.minecraft.potion.Effects;
+import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.core.particles.ParticleTypes;
+import net.minecraft.world.effect.MobEffectInstance;
+import net.minecraft.world.effect.MobEffects;
 
 import java.awt.*;
 
@@ -32,10 +32,10 @@ public class Afterimage extends IronGuard {
         SkillUtils.createCloud(caster.level, caster, caster.getX(), caster.getY(), caster.getZ(), cost, ParticleTypes.LARGE_SMOKE);
         for (LivingEntity e : caster.level.getLoadedEntitiesOfClass(LivingEntity.class, caster.getBoundingBox().inflate(cost))) {
             if (e.distanceToSqr(caster) > cost * cost) {
-                e.addEffect(new EffectInstance(Effects.BLINDNESS, 100));
+                e.addEffect(new MobEffectInstance(MobEffects.BLINDNESS, 100));
             }
         }
-        caster.addEffect(new EffectInstance(Effects.INVISIBILITY, 20));
+        caster.addEffect(new MobEffectInstance(MobEffects.INVISIBILITY, 20));
         markUsed(caster);
         ((ParryEvent) procPoint).setPostureConsumption(0);
     }

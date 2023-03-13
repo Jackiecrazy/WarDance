@@ -1,10 +1,10 @@
 package jackiecrazy.wardance.api;
 
 import jackiecrazy.footwork.utils.GeneralUtils;
-import net.minecraft.entity.Entity;
-import net.minecraft.entity.LivingEntity;
-import net.minecraft.item.ItemStack;
-import net.minecraft.util.math.vector.Vector3d;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.phys.Vec3;
 
 import javax.annotation.Nullable;
 
@@ -14,12 +14,12 @@ public interface ITetherItem {
      */
     default void updateTetheringVelocity(ItemStack stack, LivingEntity wielder) {
         if (getTetheringEntity(stack, wielder) != null) {
-            Vector3d offset = getTetheredOffset(stack, wielder);
+            Vec3 offset = getTetheredOffset(stack, wielder);
             Entity toBeMoved = getTetheringEntity(stack, wielder);
             Entity moveTowards = getTetheredEntity(stack, wielder);
             if (toBeMoved != null) {
                 double distsq = 0;
-                Vector3d point = null;
+                Vec3 point = null;
                 if (offset != null) {
                     distsq = GeneralUtils.getDistSqCompensated(toBeMoved, offset);
                     point = offset;
@@ -45,7 +45,7 @@ public interface ITetherItem {
                     //if(NeedyLittleThings.getDistSqCompensated(moveTowards, toBeMoved)>8){
                     toBeMoved.setPos(moveTowards.getX(), moveTowards.getY(), moveTowards.getZ());
                     //}
-                    Vector3d vec = moveTowards.getDeltaMovement();
+                    Vec3 vec = moveTowards.getDeltaMovement();
                     toBeMoved.setDeltaMovement(moveTowards.getDeltaMovement());
                     if (!moveTowards.isOnGround())
                         toBeMoved.lerpMotion(vec.x, moveTowards.isOnGround() ? 0 : vec.y, vec.z);
@@ -58,7 +58,7 @@ public interface ITetherItem {
     Entity getTetheringEntity(ItemStack stack, LivingEntity wielder);
 
     @Nullable
-    Vector3d getTetheredOffset(ItemStack stack, LivingEntity wielder);
+    Vec3 getTetheredOffset(ItemStack stack, LivingEntity wielder);
 
     @Nullable
     Entity getTetheredEntity(ItemStack stack, LivingEntity wielder);

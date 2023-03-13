@@ -1,8 +1,8 @@
 package jackiecrazy.wardance.skill;
 
-import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.text.ITextComponent;
-import net.minecraft.util.text.TranslationTextComponent;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.TranslatableComponent;
 
 public class SkillCategory {
     private final String category;
@@ -16,12 +16,12 @@ public class SkillCategory {
         return obj instanceof SkillCategory && ((SkillCategory) obj).category.equals(category);
     }
 
-    public ITextComponent name() {
-        return new TranslationTextComponent("category." + category + ".name");
+    public Component name() {
+        return new TranslatableComponent("category." + category + ".name");
     }
 
-    public ITextComponent description() {
-        return new TranslationTextComponent("category." + category + ".desc");
+    public Component description() {
+        return new TranslatableComponent("category." + category + ".desc");
     }
 
     public ResourceLocation icon() {

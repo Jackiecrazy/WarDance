@@ -3,7 +3,7 @@ package jackiecrazy.wardance.capability.status;
 import jackiecrazy.wardance.skill.Skill;
 import jackiecrazy.wardance.skill.SkillCategory;
 import jackiecrazy.wardance.skill.SkillData;
-import net.minecraft.nbt.CompoundNBT;
+import net.minecraft.nbt.CompoundTag;
 
 import java.util.Map;
 import java.util.Optional;
@@ -23,9 +23,9 @@ public interface IMark {
 
     boolean isMarked(SkillCategory skill);
 
-    CompoundNBT write();
+    CompoundTag write();
 
-    void read(CompoundNBT from);
+    void read(CompoundTag from);
 
     void update();
 }

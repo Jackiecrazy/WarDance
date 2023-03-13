@@ -1,7 +1,7 @@
 package jackiecrazy.wardance.networking;
 
 import jackiecrazy.wardance.utils.MovementUtils;
-import net.minecraft.network.PacketBuffer;
+import net.minecraft.network.FriendlyByteBuf;
 import net.minecraftforge.fml.network.NetworkEvent;
 
 import java.util.Objects;
@@ -18,19 +18,19 @@ public class DodgePacket {
         isRoll = roll;
     }
 
-    public static class DodgeEncoder implements BiConsumer<DodgePacket, PacketBuffer> {
+    public static class DodgeEncoder implements BiConsumer<DodgePacket, FriendlyByteBuf> {
 
         @Override
-        public void accept(DodgePacket updateClientPacket, PacketBuffer packetBuffer) {
+        public void accept(DodgePacket updateClientPacket, FriendlyByteBuf packetBuffer) {
             packetBuffer.writeInt(updateClientPacket.direction);
             packetBuffer.writeBoolean(updateClientPacket.isRoll);
         }
     }
 
-    public static class DodgeDecoder implements Function<PacketBuffer, DodgePacket> {
+    public static class DodgeDecoder implements Function<FriendlyByteBuf, DodgePacket> {
 
         @Override
-        public DodgePacket apply(PacketBuffer packetBuffer) {
+        public DodgePacket apply(FriendlyByteBuf packetBuffer) {
             return new DodgePacket(packetBuffer.readInt(), packetBuffer.readBoolean());
         }
     }

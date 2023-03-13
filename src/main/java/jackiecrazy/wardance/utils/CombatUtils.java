@@ -16,23 +16,23 @@ import jackiecrazy.wardance.networking.CombatChannel;
 import jackiecrazy.wardance.networking.UpdateAttackPacket;
 import jackiecrazy.wardance.skill.Skill;
 import jackiecrazy.wardance.skill.SkillCategories;
-import net.minecraft.enchantment.EnchantmentHelper;
-import net.minecraft.enchantment.Enchantments;
-import net.minecraft.entity.Entity;
-import net.minecraft.entity.EntityType;
-import net.minecraft.entity.LivingEntity;
-import net.minecraft.entity.ai.attributes.AttributeModifier;
-import net.minecraft.entity.ai.attributes.Attributes;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.entity.player.ServerPlayerEntity;
-import net.minecraft.inventory.EquipmentSlotType;
-import net.minecraft.item.ArmorItem;
-import net.minecraft.item.Item;
-import net.minecraft.item.ItemStack;
-import net.minecraft.potion.Effects;
+import net.minecraft.world.item.enchantment.EnchantmentHelper;
+import net.minecraft.world.item.enchantment.Enchantments;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.ai.attributes.AttributeModifier;
+import net.minecraft.world.entity.ai.attributes.Attributes;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.entity.EquipmentSlot;
+import net.minecraft.world.item.ArmorItem;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.effect.MobEffects;
 import net.minecraft.util.*;
 import net.minecraft.util.math.MathHelper;
-import net.minecraft.util.math.vector.Vector3d;
+import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.util.FakePlayer;
 import net.minecraftforge.event.entity.player.CriticalHitEvent;
@@ -43,6 +43,11 @@ import net.minecraftforge.registries.ForgeRegistries;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.*;
+
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.sounds.SoundEvents;
+import net.minecraft.world.InteractionHand;
+import net.minecraft.world.damagesource.DamageSource;
 
 public class CombatUtils {
     public static final UUID off = UUID.fromString("8c8028c8-da69-49a2-99cd-f92d7ad22534");
@@ -217,7 +222,7 @@ public class CombatUtils {
         }
         if (from.attackStrengthTicker > 0) {
             int temp = from.attackStrengthTicker;
-            if (from instanceof PlayerEntity) ((PlayerEntity) from).attack(to);
+            if (from instanceof Player) ((Player) from).attack(to);
             else from.doHurtTarget(to);
             from.attackStrengthTicker = temp;
         }
@@ -227,13 +232,13 @@ public class CombatUtils {
         }
     }
 
-    public static float getCooledAttackStrength(LivingEntity e, Hand h, float adjustTicks) {
-        if (!(e instanceof PlayerEntity) && h == Hand.MAIN_HAND) return 1;
+    public static float getCooledAttackStrength(LivingEntity e, InteractionHand h, float adjustTicks) {
+        if (!(e instanceof Player) && h == InteractionHand.MAIN_HAND) return 1;
         //if (h == Hand.OFF_HAND && adjustTicks == 1) System.out.println(getCooldownPeriod(e, h));
-        return MathHelper.clamp(((float) (h == Hand.MAIN_HAND ? e.attackStrengthTicker : CombatData.getCap(e).getOffhandCooldown()) + adjustTicks) / getCooldownPeriod(e, h), 0.0F, 1.0F);
+        return Mth.clamp(((float) (h == InteractionHand.MAIN_HAND ? e.attackStrengthTicker : CombatData.getCap(e).getOffhandCooldown()) + adjustTicks) / getCooldownPeriod(e, h), 0.0F, 1.0F);
     }
 
-    public static int getCooldownPeriod(LivingEntity e, Hand h) {
+    public static int getCooldownPeriod(LivingEntity e, InteractionHand h) {
         return (int) (1.0D / GeneralUtils.getAttributeValueHandSensitive(e, Attributes.ATTACK_SPEED, h) * 20.0D);
     }
 
@@ -254,26 +259,26 @@ public class CombatUtils {
     }
 
     public static boolean canParry(LivingEntity defender, Entity attacker, @Nonnull ItemStack i, float postureDamage) {
-        Hand h = defender.getOffhandItem() == i ? Hand.OFF_HAND : Hand.MAIN_HAND;
+        InteractionHand h = defender.getOffhandItem() == i ? InteractionHand.OFF_HAND : InteractionHand.MAIN_HAND;
         if (postureDamage < 0) return false;
         if (attacker instanceof LivingEntity && getPostureDef((LivingEntity) attacker, defender, i, postureDamage) < 0)
             return false;
-        if (defender instanceof PlayerEntity && ((PlayerEntity) defender).getCooldowns().isOnCooldown(i.getItem()))
+        if (defender instanceof Player && ((Player) defender).getCooldowns().isOnCooldown(i.getItem()))
             return false;
         if (CombatData.getCap(defender).getHandBind(h) > 0)
             return false;
         float rand = WarDance.rand.nextFloat();
         boolean recharge = getCooledAttackStrength(defender, h, 0.5f) > 0.9f && CombatData.getCap(defender).getHandBind(h) == 0;
-        recharge &= (!(defender instanceof PlayerEntity) || ((PlayerEntity) defender).getCooldowns().getCooldownPercent(defender.getItemInHand(h).getItem(), 0) == 0);
+        recharge &= (!(defender instanceof Player) || ((Player) defender).getCooldowns().getCooldownPercent(defender.getItemInHand(h).getItem(), 0) == 0);
         if (i.getCapability(CombatManipulator.CAP).isPresent() && attacker instanceof LivingEntity) {
             return i.getCapability(CombatManipulator.CAP).resolve().get().canBlock(defender, attacker, i, recharge, postureDamage);
         }
         if (isShield(defender, i)) {
-            boolean canShield = (defender instanceof PlayerEntity || rand < CombatConfig.mobParryChanceShield + CombatData.getCap(defender).getHandReel(h));
+            boolean canShield = (defender instanceof Player || rand < CombatConfig.mobParryChanceShield + CombatData.getCap(defender).getHandReel(h));
             boolean canParry = true;//CombatData.getCap(defender).getBarrierCooldown() == 0 || CombatData.getCap(defender).getBarrier() > 0;
             return recharge & canParry & canShield;
         } else if (isWeapon(defender, i)) {
-            boolean canWeapon = (defender instanceof PlayerEntity || rand < CombatConfig.mobParryChanceWeapon + CombatData.getCap(defender).getHandReel(h));
+            boolean canWeapon = (defender instanceof Player || rand < CombatConfig.mobParryChanceWeapon + CombatData.getCap(defender).getHandReel(h));
             return recharge & canWeapon;
         } else return false;
     }
@@ -301,7 +306,7 @@ public class CombatUtils {
         return new Tuple<>(CombatConfig.shieldCooldown, CombatConfig.barrierSize);
     }
 
-    public static float getPostureAtk(@Nullable LivingEntity attacker, @Nullable LivingEntity defender, @Nullable Hand h, float amount, ItemStack stack) {
+    public static float getPostureAtk(@Nullable LivingEntity attacker, @Nullable LivingEntity defender, @Nullable InteractionHand h, float amount, ItemStack stack) {
         float base = amount * (float) DEFAULTMELEE.attackPostureMultiplier;
         //Spartan Shields compat, doesn't seem to work.
         if (attacker != null && attacker.isBlocking()) {
@@ -317,11 +322,11 @@ public class CombatUtils {
                 base = (float) combatList.get(stack.getItem()).attackPostureMultiplier;
 
         } else {
-            if (!(attacker instanceof PlayerEntity))
+            if (!(attacker instanceof Player))
                 base = CombatData.getCap(attacker).getMaxPosture() * CombatConfig.defaultMultiplierPostureMob;
         }
         if (attacker == null || h == null) return base;
-        final float fin = attacker instanceof PlayerEntity ? Math.max(CombatData.getCap(attacker).getCachedCooldown(), ((PlayerEntity) attacker).getAttackStrengthScale(0.5f)) : scaler;
+        final float fin = attacker instanceof Player ? Math.max(CombatData.getCap(attacker).getCachedCooldown(), ((Player) attacker).getAttackStrengthScale(0.5f)) : scaler;
         return base * fin;
     }
 
@@ -355,8 +360,8 @@ public class CombatUtils {
         float might = cooldownSq * cooldownSq * magicScale * (float) period * (float) period / magicNumber;
         might *= (1f + (semeCap.getRank() / 20f));//combo bonus
         float weakness = 1;
-        if (seme.hasEffect(Effects.WEAKNESS))
-            for (int foo = 0; foo < seme.getEffect(Effects.WEAKNESS).getAmplifier() + 1; foo++) {
+        if (seme.hasEffect(MobEffects.WEAKNESS))
+            for (int foo = 0; foo < seme.getEffect(MobEffects.WEAKNESS).getAmplifier() + 1; foo++) {
                 weakness *= GeneralConfig.weakness;
             }
         might *= weakness;//weakness malus
@@ -385,18 +390,18 @@ public class CombatUtils {
      * knocks the target back, with regards to the attacker's relative angle to the target, and adding y knockback
      */
     public static void knockBack(Entity to, Entity from, float strength, boolean considerRelativeAngle, boolean bypassAllChecks) {
-        Vector3d distVec = to.position().add(0, to.getBbHeight() / 2, 0).vectorTo(from.position().add(0, from.getBbHeight() / 2, 0)).multiply(1, 0.5, 1).normalize();
+        Vec3 distVec = to.position().add(0, to.getBbHeight() / 2, 0).vectorTo(from.position().add(0, from.getBbHeight() / 2, 0)).multiply(1, 0.5, 1).normalize();
         if (to instanceof LivingEntity && !bypassAllChecks) {
             if (considerRelativeAngle)
                 knockBack((LivingEntity) to, from, strength, distVec.x, distVec.y, distVec.z, false);
             else
-                knockBack(((LivingEntity) to), from, (float) strength * 0.5F, (double) MathHelper.sin(from.yRot * 0.017453292F), 0, (double) (-MathHelper.cos(from.yRot * 0.017453292F)), false);
+                knockBack(((LivingEntity) to), from, (float) strength * 0.5F, (double) Mth.sin(from.yRot * 0.017453292F), 0, (double) (-Mth.cos(from.yRot * 0.017453292F)), false);
         } else {
             //eh
             if (considerRelativeAngle) {
                 to.lerpMotion(distVec.x * -strength, to.verticalCollision ? 0.1 : distVec.y * -strength, distVec.z * -strength);
             } else {
-                to.push(-MathHelper.sin(-from.yRot * 0.017453292F - (float) Math.PI) * 0.5, 0.1, -MathHelper.cos(-from.yRot * 0.017453292F - (float) Math.PI) * 0.5);
+                to.push(-Mth.sin(-from.yRot * 0.017453292F - (float) Math.PI) * 0.5, 0.1, -Mth.cos(-from.yRot * 0.017453292F - (float) Math.PI) * 0.5);
             }
             to.hurtMarked = true;
         }
@@ -415,10 +420,10 @@ public class CombatUtils {
         }
         strength *= (float) Math.max(0, 1 - GeneralUtils.getAttributeValueSafe(to, Attributes.KNOCKBACK_RESISTANCE));
         if (strength != 0f) {
-            Vector3d vec = to.getDeltaMovement();
+            Vec3 vec = to.getDeltaMovement();
             double motionX = vec.x, motionY = vec.y, motionZ = vec.z;
             to.hasImpulse = true;
-            float pythagora = MathHelper.sqrt(xRatio * xRatio + zRatio * zRatio);
+            float pythagora = Mth.sqrt(xRatio * xRatio + zRatio * zRatio);
             if (to.isOnGround()) {
                 motionY /= 2.0D;
                 motionY += strength;
@@ -427,7 +432,7 @@ public class CombatUtils {
                     motionY = 0.4000000059604645D;
                 }
             } else if (yRatio != 0) {
-                pythagora = MathHelper.sqrt(xRatio * xRatio + zRatio * zRatio + yRatio * yRatio);
+                pythagora = Mth.sqrt(xRatio * xRatio + zRatio * zRatio + yRatio * yRatio);
                 motionY /= 2.0D;
                 motionY -= yRatio / (double) pythagora * (double) strength;
             }
@@ -440,15 +445,15 @@ public class CombatUtils {
         }
     }
 
-    public static void setHandCooldown(LivingEntity e, Hand h, float percent, boolean sync) {
+    public static void setHandCooldown(LivingEntity e, InteractionHand h, float percent, boolean sync) {
         //special case for quick maths
         int real = percent == 0 ? 0 : (int) (percent * getCooldownPeriod(e, h));
         switch (h) {
             case MAIN_HAND:
-                if (!(e instanceof PlayerEntity)) return;
+                if (!(e instanceof Player)) return;
                 e.attackStrengthTicker = real;
-                if (!(e instanceof FakePlayer) && e instanceof ServerPlayerEntity && sync)
-                    CombatChannel.INSTANCE.send(PacketDistributor.PLAYER.with(() -> (ServerPlayerEntity) e), new UpdateAttackPacket(e.getId(), real));
+                if (!(e instanceof FakePlayer) && e instanceof ServerPlayer && sync)
+                    CombatChannel.INSTANCE.send(PacketDistributor.PLAYER.with(() -> (ServerPlayer) e), new UpdateAttackPacket(e.getId(), real));
                 break;
             case OFF_HAND:
                 CombatData.getCap(e).setOffhandCooldown(real);
@@ -456,13 +461,13 @@ public class CombatUtils {
         }
     }
 
-    public static void setHandCooldownDirect(LivingEntity e, Hand h, int amount, boolean sync) {
+    public static void setHandCooldownDirect(LivingEntity e, InteractionHand h, int amount, boolean sync) {
         switch (h) {
             case MAIN_HAND:
-                if (!(e instanceof PlayerEntity)) return;
+                if (!(e instanceof Player)) return;
                 e.attackStrengthTicker = amount;
-                if (!(e instanceof FakePlayer) && e instanceof ServerPlayerEntity && sync)
-                    CombatChannel.INSTANCE.send(PacketDistributor.PLAYER.with(() -> (ServerPlayerEntity) e), new UpdateAttackPacket(e.getId(), amount));
+                if (!(e instanceof FakePlayer) && e instanceof ServerPlayer && sync)
+                    CombatChannel.INSTANCE.send(PacketDistributor.PLAYER.with(() -> (ServerPlayer) e), new UpdateAttackPacket(e.getId(), amount));
                 break;
             case OFF_HAND:
                 CombatData.getCap(e).setOffhandCooldown(amount);
@@ -476,45 +481,45 @@ public class CombatUtils {
         int tssl = e.attackStrengthTicker;
         suppress = true;
         ICombatCapability cap = CombatData.getCap(e);
-        e.setItemInHand(Hand.MAIN_HAND, e.getOffhandItem());
-        e.setItemInHand(Hand.OFF_HAND, main);
+        e.setItemInHand(InteractionHand.MAIN_HAND, e.getOffhandItem());
+        e.setItemInHand(InteractionHand.OFF_HAND, main);
         suppress = false;
 //        attributes.addAll(main.getAttributeModifiers(EquipmentSlotType.MAINHAND).keys());
 //        attributes.addAll(main.getAttributeModifiers(EquipmentSlotType.OFFHAND).keys());
 //        attributes.addAll(off.getAttributeModifiers(EquipmentSlotType.MAINHAND).keys());
 //        attributes.addAll(off.getAttributeModifiers(EquipmentSlotType.OFFHAND).keys());
 //        attributes.forEach((att)->{Optional.ofNullable(e.getAttribute(att)).ifPresent(ModifiableAttributeInstance::compute);});
-        main.getAttributeModifiers(EquipmentSlotType.MAINHAND).forEach((att, mod) -> {
+        main.getAttributeModifiers(EquipmentSlot.MAINHAND).forEach((att, mod) -> {
             Optional.ofNullable(e.getAttribute(att)).ifPresent((mai) -> {mai.removeModifier(mod);});
         });
-        off.getAttributeModifiers(EquipmentSlotType.OFFHAND).forEach((att, mod) -> {
+        off.getAttributeModifiers(EquipmentSlot.OFFHAND).forEach((att, mod) -> {
             Optional.ofNullable(e.getAttribute(att)).ifPresent((mai) -> {mai.removeModifier(mod);});
         });
-        main.getAttributeModifiers(EquipmentSlotType.OFFHAND).forEach((att, mod) -> {
+        main.getAttributeModifiers(EquipmentSlot.OFFHAND).forEach((att, mod) -> {
             Optional.ofNullable(e.getAttribute(att)).ifPresent((mai) -> {mai.addTransientModifier(mod);});
         });
-        off.getAttributeModifiers(EquipmentSlotType.MAINHAND).forEach((att, mod) -> {
+        off.getAttributeModifiers(EquipmentSlot.MAINHAND).forEach((att, mod) -> {
             Optional.ofNullable(e.getAttribute(att)).ifPresent((mai) -> {mai.addTransientModifier(mod);});
         });
         e.attackStrengthTicker = cap.getOffhandCooldown();
         cap.setOffhandCooldown(tssl);
     }
 
-    public static void sweep(LivingEntity e, Entity ignore, Hand h, double reach) {
+    public static void sweep(LivingEntity e, Entity ignore, InteractionHand h, double reach) {
         if (!GeneralConfig.betterSweep) return;
         if (!CombatData.getCap(e).isCombatMode()) return;
         if (CombatData.getCap(e).getForcedSweep() == 0) {
             CombatData.getCap(e).setForcedSweep(-1);
             return;
         }
-        if (h == Hand.OFF_HAND) {
+        if (h == InteractionHand.OFF_HAND) {
             swapHeldItems(e);
             CombatData.getCap(e).setOffhandAttack(true);
         }
         int angle = CombatData.getCap(e).getForcedSweep() > 0 ? CombatData.getCap(e).getForcedSweep() : EnchantmentHelper.getEnchantmentLevel(Enchantments.SWEEPING_EDGE, e) * GeneralConfig.sweepAngle;
         if (e.getMainHandItem().getCapability(CombatManipulator.CAP).isPresent())
             angle = e.getMainHandItem().getCapability(CombatManipulator.CAP).resolve().get().sweepArea(e, e.getMainHandItem());
-        float charge = Math.max(CombatUtils.getCooledAttackStrength(e, Hand.MAIN_HAND, 0.5f), CombatData.getCap(e).getCachedCooldown());
+        float charge = Math.max(CombatUtils.getCooledAttackStrength(e, InteractionHand.MAIN_HAND, 0.5f), CombatData.getCap(e).getCachedCooldown());
         boolean hit = false;
         isSweeping = ignore != null;
         double modRange = Math.min(GeneralConfig.maxRange, GeneralConfig.baseRange + (reach - 3) * GeneralConfig.rangeMult);
@@ -527,19 +532,19 @@ public class CombatUtils {
             if (!GeneralUtils.isFacingEntity(e, target, angle)) continue;
             if (!e.canSee(target)) continue;
             if (GeneralUtils.getDistSqCompensated(e, target) > modRange * modRange) continue;
-            CombatUtils.setHandCooldown(e, Hand.MAIN_HAND, charge, false);
+            CombatUtils.setHandCooldown(e, InteractionHand.MAIN_HAND, charge, false);
             hit = true;
-            if (e instanceof PlayerEntity)
-                ((PlayerEntity) e).attack(target);
+            if (e instanceof Player)
+                ((Player) e).attack(target);
             else e.doHurtTarget(target);
             isSweeping = true;
         }
-        if (e instanceof PlayerEntity && hit) {
-            ((PlayerEntity) e).sweepAttack();
+        if (e instanceof Player && hit) {
+            ((Player) e).sweepAttack();
             e.level.playSound(null, e.getX(), e.getY(), e.getZ(), SoundEvents.PLAYER_ATTACK_SWEEP, e.getSoundSource(), 1.0F, 1.0F);
         }
         isSweeping = false;
-        if (h == Hand.OFF_HAND) {
+        if (h == InteractionHand.OFF_HAND) {
             swapHeldItems(e);
             CombatData.getCap(e).setOffhandAttack(false);
         }

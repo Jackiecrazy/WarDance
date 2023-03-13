@@ -1,7 +1,7 @@
 package jackiecrazy.wardance.capability.skill;
 
 import jackiecrazy.wardance.skill.*;
-import net.minecraft.nbt.CompoundNBT;
+import net.minecraft.nbt.CompoundTag;
 
 import javax.annotation.Nullable;
 import java.util.List;
@@ -42,9 +42,9 @@ public interface ISkillCapability {
 
     boolean isSkillUsable(Skill skill);
 
-    CompoundNBT write();
+    CompoundTag write();
 
-    void read(CompoundNBT from);
+    void read(CompoundTag from);
 
     void update();
 

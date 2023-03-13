@@ -1,7 +1,7 @@
 package jackiecrazy.wardance.client;
 
 import com.elenai.elenaidodge2.event.ClientTickEventListener;
-import com.mojang.blaze3d.matrix.MatrixStack;
+import com.mojang.blaze3d.vertex.PoseStack;
 import jackiecrazy.footwork.capability.resources.CombatData;
 import jackiecrazy.footwork.capability.resources.ICombatCapability;
 import jackiecrazy.footwork.utils.GeneralUtils;
@@ -13,24 +13,24 @@ import jackiecrazy.wardance.config.GeneralConfig;
 import jackiecrazy.wardance.networking.*;
 import jackiecrazy.wardance.utils.CombatUtils;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.entity.player.AbstractClientPlayerEntity;
-import net.minecraft.client.settings.KeyBinding;
-import net.minecraft.entity.Entity;
-import net.minecraft.entity.LivingEntity;
-import net.minecraft.entity.Pose;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.entity.projectile.ProjectileHelper;
-import net.minecraft.particles.ParticleTypes;
-import net.minecraft.util.Direction;
-import net.minecraft.util.Hand;
-import net.minecraft.util.HandSide;
-import net.minecraft.util.MovementInput;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.BlockRayTraceResult;
-import net.minecraft.util.math.EntityRayTraceResult;
-import net.minecraft.util.math.vector.Vector3d;
-import net.minecraft.util.math.vector.Vector3f;
-import net.minecraft.util.text.TranslationTextComponent;
+import net.minecraft.client.player.AbstractClientPlayer;
+import net.minecraft.client.KeyMapping;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.Pose;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.entity.projectile.ProjectileUtil;
+import net.minecraft.core.particles.ParticleTypes;
+import net.minecraft.core.Direction;
+import net.minecraft.world.InteractionHand;
+import net.minecraft.world.entity.HumanoidArm;
+import net.minecraft.client.player.Input;
+import net.minecraft.core.BlockPos;
+import net.minecraft.world.phys.BlockHitResult;
+import net.minecraft.world.phys.EntityHitResult;
+import net.minecraft.world.phys.Vec3;
+import com.mojang.math.Vector3f;
+import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.client.event.*;
 import net.minecraftforge.common.ForgeMod;
@@ -86,7 +86,7 @@ public class ClientEvents {
     @SubscribeEvent(priority = EventPriority.HIGHEST)
     public static void dodge(InputUpdateEvent e) {
         Minecraft mc = Minecraft.getInstance();
-        MovementInput mi = e.getMovementInput();
+        Input mi = e.getMovementInput();
         final ICombatCapability itsc = CombatData.getCap(mc.player);
 //        if (itsc.getStaggerTime() > 0) {
 //            //no moving while you're rooted!
@@ -138,7 +138,7 @@ public class ClientEvents {
 
         if (itsc.getStaggerTime() > 0) {
             //no moving while you're down! (except for a safety roll)
-            KeyBinding.releaseAll();
+            KeyMapping.releaseAll();
             return;
         }
     }
@@ -178,7 +178,7 @@ public class ClientEvents {
         if (e.isAlive()) {
             if (CombatData.getCap(event.getEntity()).getStaggerTime() > 0) {
                 //System.out.println("yes");
-                MatrixStack ms = event.getMatrixStack();
+                PoseStack ms = event.getMatrixStack();
                 //ms.push();
                 //tall bois become flat bois
                 boolean reg = (ForgeRegistries.ENTITIES.getKey(e.getType()) != null && rotate.containsKey(ForgeRegistries.ENTITIES.getKey(e.getType()).toString()));
@@ -194,7 +194,7 @@ public class ClientEvents {
                 //multi bois do nothing
             }
             if (CombatData.getCap(e).getRollTime() != 0 && e.getPose() == Pose.SLEEPING) {
-                MatrixStack ms = event.getMatrixStack();
+                PoseStack ms = event.getMatrixStack();
                 ms.mulPose(Vector3f.YN.rotationDegrees(e.yRot - e.getBedOrientation().toYRot()));
 //                ms.rotate(Vector3f.ZP.rotationDegrees(-e.renderYawOffset));
 //                ms.rotate(Vector3f.YP.rotationDegrees(e.renderYawOffset));
@@ -208,20 +208,20 @@ public class ClientEvents {
 
     @SubscribeEvent
     public static void handRaising(RenderHandEvent e) {
-        if (e.getHand().equals(Hand.MAIN_HAND) || !GeneralConfig.dual) return;
-        AbstractClientPlayerEntity p = Minecraft.getInstance().player;
-        if (p == null || (!CombatData.getCap(p).isCombatMode() && (p.swingingArm != Hand.OFF_HAND || !p.swinging)) || !e.getItemStack().isEmpty())
+        if (e.getHand().equals(InteractionHand.MAIN_HAND) || !GeneralConfig.dual) return;
+        AbstractClientPlayer p = Minecraft.getInstance().player;
+        if (p == null || (!CombatData.getCap(p).isCombatMode() && (p.swingingArm != InteractionHand.OFF_HAND || !p.swinging)) || !e.getItemStack().isEmpty())
             return;
         e.setCanceled(true);
-        float cd = CombatUtils.getCooledAttackStrength(p, Hand.OFF_HAND, e.getPartialTicks());
+        float cd = CombatUtils.getCooledAttackStrength(p, InteractionHand.OFF_HAND, e.getPartialTicks());
         float f6 = 1 - (cd * cd * cd);
-        Minecraft.getInstance().getItemInHandRenderer().renderPlayerArm(e.getMatrixStack(), e.getBuffers(), e.getLight(), f6, e.getSwingProgress(), p.getMainArm() == HandSide.RIGHT ? HandSide.LEFT : HandSide.RIGHT);
+        Minecraft.getInstance().getItemInHandRenderer().renderPlayerArm(e.getMatrixStack(), e.getBuffers(), e.getLight(), f6, e.getSwingProgress(), p.getMainArm() == HumanoidArm.RIGHT ? HumanoidArm.LEFT : HumanoidArm.RIGHT);
     }
 
     @SubscribeEvent
     public static void tickPlayer(TickEvent.ClientTickEvent e) {
         Minecraft mc = Minecraft.getInstance();
-        PlayerEntity p = mc.player;
+        Player p = mc.player;
         if (p != null && !mc.isPaused()) {
             if (e.phase == TickEvent.Phase.START) {
                 Entity look = RenderEvents.getEntityLookedAt(p, 32);
@@ -267,7 +267,7 @@ public class ClientEvents {
         if (mc.player == null) return;
         if (Keybinds.PARRY.getKeyConflictContext().isActive() && !lastTickParry && CombatConfig.parryTime != 0 && Keybinds.PARRY.consumeClick() && mc.player.isAlive()) {
             if (CombatConfig.parryTime < 0) {
-                mc.player.displayClientMessage(new TranslationTextComponent("wardance.toggleparry." + (CombatData.getCap(mc.player).getParryingTick() == -1 ? "on" : "off")), true);
+                mc.player.displayClientMessage(new TranslatableComponent("wardance.toggleparry." + (CombatData.getCap(mc.player).getParryingTick() == -1 ? "on" : "off")), true);
 
             }
             CombatChannel.INSTANCE.sendToServer(new ManualParryPacket());
@@ -278,7 +278,7 @@ public class ClientEvents {
 
     @SubscribeEvent
     public static void sweepSwing(PlayerInteractEvent.LeftClickEmpty e) {
-        Entity n = RenderEvents.getEntityLookedAt(e.getPlayer(), GeneralUtils.getAttributeValueHandSensitive(e.getPlayer(), ForgeMod.REACH_DISTANCE.get(), Hand.MAIN_HAND) - (e.getItemStack().isEmpty() ? 1 : 0));
+        Entity n = RenderEvents.getEntityLookedAt(e.getPlayer(), GeneralUtils.getAttributeValueHandSensitive(e.getPlayer(), ForgeMod.REACH_DISTANCE.get(), InteractionHand.MAIN_HAND) - (e.getItemStack().isEmpty() ? 1 : 0));
         if (n != null)
             CombatChannel.INSTANCE.sendToServer(new RequestAttackPacket(true, n));
         CombatChannel.INSTANCE.sendToServer(new RequestSweepPacket(true, n));
@@ -286,10 +286,10 @@ public class ClientEvents {
 
     @SubscribeEvent
     public static void sweepSwingOff(PlayerInteractEvent.RightClickEmpty e) {
-        if (!rightClick && GeneralConfig.dual && e.getHand() == Hand.OFF_HAND && ((CombatUtils.isWeapon(e.getEntityLiving(), e.getItemStack()) || (e.getItemStack().isEmpty() && CombatData.getCap(e.getPlayer()).isCombatMode())))) {
+        if (!rightClick && GeneralConfig.dual && e.getHand() == InteractionHand.OFF_HAND && ((CombatUtils.isWeapon(e.getEntityLiving(), e.getItemStack()) || (e.getItemStack().isEmpty() && CombatData.getCap(e.getPlayer()).isCombatMode())))) {
             rightClick = true;
-            Entity n = RenderEvents.getEntityLookedAt(e.getPlayer(), GeneralUtils.getAttributeValueHandSensitive(e.getPlayer(), ForgeMod.REACH_DISTANCE.get(), Hand.OFF_HAND) - (e.getItemStack().isEmpty() ? 1 : 0));
-            e.getPlayer().swing(Hand.OFF_HAND, false);
+            Entity n = RenderEvents.getEntityLookedAt(e.getPlayer(), GeneralUtils.getAttributeValueHandSensitive(e.getPlayer(), ForgeMod.REACH_DISTANCE.get(), InteractionHand.OFF_HAND) - (e.getItemStack().isEmpty() ? 1 : 0));
+            e.getPlayer().swing(InteractionHand.OFF_HAND, false);
             if (n != null)
                 CombatChannel.INSTANCE.sendToServer(new RequestAttackPacket(false, n));
             CombatChannel.INSTANCE.sendToServer(new RequestSweepPacket(false, n));
@@ -299,8 +299,8 @@ public class ClientEvents {
     @SubscribeEvent
     public static void sweepSwingBlock(PlayerInteractEvent.LeftClickBlock e) {
         if (Minecraft.getInstance().gameMode.isDestroying()) return;
-        float temp = CombatUtils.getCooledAttackStrength(e.getPlayer(), Hand.MAIN_HAND, 0.5f);
-        Entity n = RenderEvents.getEntityLookedAt(e.getPlayer(), GeneralUtils.getAttributeValueHandSensitive(e.getPlayer(), ForgeMod.REACH_DISTANCE.get(), Hand.MAIN_HAND) - (e.getItemStack().isEmpty() ? 1 : 0));
+        float temp = CombatUtils.getCooledAttackStrength(e.getPlayer(), InteractionHand.MAIN_HAND, 0.5f);
+        Entity n = RenderEvents.getEntityLookedAt(e.getPlayer(), GeneralUtils.getAttributeValueHandSensitive(e.getPlayer(), ForgeMod.REACH_DISTANCE.get(), InteractionHand.MAIN_HAND) - (e.getItemStack().isEmpty() ? 1 : 0));
         if (n != null)
             CombatChannel.INSTANCE.sendToServer(new RequestAttackPacket(true, n));
         CombatChannel.INSTANCE.sendToServer(new RequestSweepPacket(true, n));
@@ -308,10 +308,10 @@ public class ClientEvents {
 
     @SubscribeEvent
     public static void sweepSwingOffItem(PlayerInteractEvent.RightClickItem e) {
-        if (!rightClick && GeneralConfig.dual && e.getHand() == Hand.OFF_HAND && ((CombatUtils.isWeapon(e.getEntityLiving(), e.getItemStack()) || (e.getItemStack().isEmpty() && CombatData.getCap(e.getPlayer()).isCombatMode())))) {
+        if (!rightClick && GeneralConfig.dual && e.getHand() == InteractionHand.OFF_HAND && ((CombatUtils.isWeapon(e.getEntityLiving(), e.getItemStack()) || (e.getItemStack().isEmpty() && CombatData.getCap(e.getPlayer()).isCombatMode())))) {
             rightClick = true;
-            Entity n = RenderEvents.getEntityLookedAt(e.getPlayer(), GeneralUtils.getAttributeValueHandSensitive(e.getPlayer(), ForgeMod.REACH_DISTANCE.get(), Hand.OFF_HAND) - (e.getItemStack().isEmpty() ? 1 : 0));
-            e.getPlayer().swing(Hand.OFF_HAND, false);
+            Entity n = RenderEvents.getEntityLookedAt(e.getPlayer(), GeneralUtils.getAttributeValueHandSensitive(e.getPlayer(), ForgeMod.REACH_DISTANCE.get(), InteractionHand.OFF_HAND) - (e.getItemStack().isEmpty() ? 1 : 0));
+            e.getPlayer().swing(InteractionHand.OFF_HAND, false);
             if (n != null)
                 CombatChannel.INSTANCE.sendToServer(new RequestAttackPacket(false, n));
             CombatChannel.INSTANCE.sendToServer(new RequestSweepPacket(false, n));
@@ -320,10 +320,10 @@ public class ClientEvents {
 
     @SubscribeEvent
     public static void punchy(PlayerInteractEvent.EntityInteract e) {
-        if (!rightClick && GeneralConfig.dual && e.getHand() == Hand.OFF_HAND && (e.getItemStack().isEmpty() && CombatData.getCap(e.getPlayer()).isCombatMode())) {
+        if (!rightClick && GeneralConfig.dual && e.getHand() == InteractionHand.OFF_HAND && (e.getItemStack().isEmpty() && CombatData.getCap(e.getPlayer()).isCombatMode())) {
             rightClick = true;
-            Entity n = RenderEvents.getEntityLookedAt(e.getPlayer(), GeneralUtils.getAttributeValueHandSensitive(e.getPlayer(), ForgeMod.REACH_DISTANCE.get(), Hand.OFF_HAND) - (e.getItemStack().isEmpty() ? 1 : 0));
-            e.getPlayer().swing(Hand.OFF_HAND, false);
+            Entity n = RenderEvents.getEntityLookedAt(e.getPlayer(), GeneralUtils.getAttributeValueHandSensitive(e.getPlayer(), ForgeMod.REACH_DISTANCE.get(), InteractionHand.OFF_HAND) - (e.getItemStack().isEmpty() ? 1 : 0));
+            e.getPlayer().swing(InteractionHand.OFF_HAND, false);
             if (n != null)
                 CombatChannel.INSTANCE.sendToServer(new RequestAttackPacket(false, n));
             CombatChannel.INSTANCE.sendToServer(new RequestSweepPacket(false, n));
@@ -332,10 +332,10 @@ public class ClientEvents {
 
     @SubscribeEvent
     public static void sweepSwingOffItemBlock(PlayerInteractEvent.RightClickBlock e) {
-        if (!rightClick && GeneralConfig.dual && e.getHand() == Hand.OFF_HAND && ((CombatUtils.isWeapon(e.getEntityLiving(), e.getItemStack()) || (e.getItemStack().isEmpty() && CombatData.getCap(e.getPlayer()).isCombatMode())))) {
+        if (!rightClick && GeneralConfig.dual && e.getHand() == InteractionHand.OFF_HAND && ((CombatUtils.isWeapon(e.getEntityLiving(), e.getItemStack()) || (e.getItemStack().isEmpty() && CombatData.getCap(e.getPlayer()).isCombatMode())))) {
             rightClick = true;
-            Entity n = RenderEvents.getEntityLookedAt(e.getPlayer(), GeneralUtils.getAttributeValueHandSensitive(e.getPlayer(), ForgeMod.REACH_DISTANCE.get(), Hand.OFF_HAND) - (e.getItemStack().isEmpty() ? 1 : 0));
-            e.getPlayer().swing(Hand.OFF_HAND, false);
+            Entity n = RenderEvents.getEntityLookedAt(e.getPlayer(), GeneralUtils.getAttributeValueHandSensitive(e.getPlayer(), ForgeMod.REACH_DISTANCE.get(), InteractionHand.OFF_HAND) - (e.getItemStack().isEmpty() ? 1 : 0));
+            e.getPlayer().swing(InteractionHand.OFF_HAND, false);
             if (n != null)
                 CombatChannel.INSTANCE.sendToServer(new RequestAttackPacket(false, n));
             CombatChannel.INSTANCE.sendToServer(new RequestSweepPacket(false, n));
@@ -347,15 +347,15 @@ public class ClientEvents {
         Minecraft mc = Minecraft.getInstance();
         if (mc.player == null) return;
         double range = GeneralUtils.getAttributeValueSafe(mc.player, ForgeMod.REACH_DISTANCE.get()) - (mc.player.getMainHandItem().isEmpty() ? 1 : 0);
-        Vector3d look = mc.player.getViewVector(1);
+        Vec3 look = mc.player.getViewVector(1);
         if (mc.crosshairPickEntity != null) {
             if (GeneralUtils.getDistSqCompensated(mc.crosshairPickEntity, mc.player) > range * range) {
                 mc.crosshairPickEntity = null;
-                Vector3d miss = mc.player.position().add(look.scale(range));
-                mc.hitResult = BlockRayTraceResult.miss(miss, Direction.getNearest(look.x, look.y, look.z), new BlockPos(miss));
+                Vec3 miss = mc.player.position().add(look.scale(range));
+                mc.hitResult = BlockHitResult.miss(miss, Direction.getNearest(look.x, look.y, look.z), new BlockPos(miss));
             }
         } else if (RenderEvents.getEntityLookedAt(mc.player, range) != null) {
-            EntityRayTraceResult ertr = ProjectileHelper.getEntityHitResult(mc.player, mc.player.getEyePosition(0.5f), mc.player.getEyePosition(0.5f).add(look.scale(range)), mc.player.getBoundingBox().expandTowards(look.scale(range)).inflate(1.0D, 1.0D, 1.0D), (p_215312_0_) -> !p_215312_0_.isSpectator() && p_215312_0_.isPickable(), range);
+            EntityHitResult ertr = ProjectileUtil.getEntityHitResult(mc.player, mc.player.getEyePosition(0.5f), mc.player.getEyePosition(0.5f).add(look.scale(range)), mc.player.getBoundingBox().expandTowards(look.scale(range)).inflate(1.0D, 1.0D, 1.0D), (p_215312_0_) -> !p_215312_0_.isSpectator() && p_215312_0_.isPickable(), range);
             if (ertr != null) {
                 mc.hitResult = ertr;
                 mc.crosshairPickEntity = ertr.getEntity();
@@ -368,15 +368,15 @@ public class ClientEvents {
         Minecraft mc = Minecraft.getInstance();
         if (mc.player == null) return;
         double range = GeneralUtils.getAttributeValueSafe(mc.player, ForgeMod.REACH_DISTANCE.get()) - (mc.player.getMainHandItem().isEmpty() ? 1 : 0);
-        Vector3d look = mc.player.getViewVector(1);
+        Vec3 look = mc.player.getViewVector(1);
         if (mc.crosshairPickEntity != null) {
             if (GeneralUtils.getDistSqCompensated(mc.crosshairPickEntity, mc.player) > range * range) {
                 mc.crosshairPickEntity = null;
-                Vector3d miss = mc.player.position().add(look.scale(range));
-                mc.hitResult = BlockRayTraceResult.miss(miss, Direction.getNearest(look.x, look.y, look.z), new BlockPos(miss));
+                Vec3 miss = mc.player.position().add(look.scale(range));
+                mc.hitResult = BlockHitResult.miss(miss, Direction.getNearest(look.x, look.y, look.z), new BlockPos(miss));
             }
         } else if (RenderEvents.getEntityLookedAt(mc.player, range) != null) {
-            EntityRayTraceResult ertr = ProjectileHelper.getEntityHitResult(mc.player, mc.player.getEyePosition(0.5f), mc.player.getEyePosition(0.5f).add(look.scale(range)), mc.player.getBoundingBox().expandTowards(look.scale(range)).inflate(1.0D, 1.0D, 1.0D), (p_215312_0_) -> !p_215312_0_.isSpectator() && p_215312_0_.isPickable(), range);
+            EntityHitResult ertr = ProjectileUtil.getEntityHitResult(mc.player, mc.player.getEyePosition(0.5f), mc.player.getEyePosition(0.5f).add(look.scale(range)), mc.player.getBoundingBox().expandTowards(look.scale(range)).inflate(1.0D, 1.0D, 1.0D), (p_215312_0_) -> !p_215312_0_.isSpectator() && p_215312_0_.isPickable(), range);
             if (ertr != null) {
                 mc.hitResult = ertr;
                 mc.crosshairPickEntity = ertr.getEntity();
@@ -390,16 +390,16 @@ public class ClientEvents {
             Minecraft mc = Minecraft.getInstance();
             if (mc.player == null) return;
             double range = GeneralUtils.getAttributeValueSafe(mc.player, ForgeMod.REACH_DISTANCE.get()) - (mc.player.getMainHandItem().isEmpty() ? 1 : 0);
-            Vector3d look = mc.player.getViewVector(1);
+            Vec3 look = mc.player.getViewVector(1);
             if (mc.crosshairPickEntity != null) {
                 if (GeneralUtils.getDistSqCompensated(mc.crosshairPickEntity, mc.player) > range * range) {
                     mc.crosshairPickEntity = null;
-                    Vector3d miss = mc.player.position().add(look.scale(range));
-                    mc.hitResult = BlockRayTraceResult.miss(miss, Direction.getNearest(look.x, look.y, look.z), new BlockPos(miss));
+                    Vec3 miss = mc.player.position().add(look.scale(range));
+                    mc.hitResult = BlockHitResult.miss(miss, Direction.getNearest(look.x, look.y, look.z), new BlockPos(miss));
                 }
             } else if (RenderEvents.getEntityLookedAt(mc.player, range) != null) {
                 Entity e = RenderEvents.getEntityLookedAt(mc.player, range);
-                mc.hitResult = new EntityRayTraceResult(e, e.position());
+                mc.hitResult = new EntityHitResult(e, e.position());
                 mc.crosshairPickEntity = e;
             }
         }

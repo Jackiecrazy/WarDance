@@ -1,29 +1,29 @@
 package jackiecrazy.wardance.event;
 
 import jackiecrazy.wardance.utils.CombatUtils;
-import net.minecraft.entity.Entity;
-import net.minecraft.entity.LivingEntity;
-import net.minecraft.item.ItemStack;
-import net.minecraft.util.Hand;
-import net.minecraft.util.math.vector.Vector3d;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.InteractionHand;
+import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.event.entity.living.LivingEvent;
 import net.minecraftforge.eventbus.api.Event;
 
 @Event.HasResult
 public class ProjectileParryEvent extends LivingEvent {
     private final Entity projectile;
-    private final Hand defendingHand;
+    private final InteractionHand defendingHand;
     private final ItemStack defendingStack;
     private final float originalPostureConsumption;
-    private final Vector3d originalReturnVec;
+    private final Vec3 originalReturnVec;
     private float postureConsumption;
     private boolean trigger;
     /**
      * null to delete.
      */
-    private Vector3d returnVec;
+    private Vec3 returnVec;
 
-    public ProjectileParryEvent(LivingEntity entity, Entity seme, Hand dhand, ItemStack d, float mult) {
+    public ProjectileParryEvent(LivingEntity entity, Entity seme, InteractionHand dhand, ItemStack d, float mult) {
         super(entity);
         projectile = seme;
         defendingHand = dhand;
@@ -45,7 +45,7 @@ public class ProjectileParryEvent extends LivingEvent {
         return projectile;
     }
 
-    public Hand getDefendingHand() {
+    public InteractionHand getDefendingHand() {
         return defendingHand;
     }
 
@@ -65,9 +65,9 @@ public class ProjectileParryEvent extends LivingEvent {
         postureConsumption = amount;
     }
 
-    public Vector3d getOriginalReturnVec() {return originalReturnVec;}
+    public Vec3 getOriginalReturnVec() {return originalReturnVec;}
 
-    public Vector3d getReturnVec() {return returnVec;}
+    public Vec3 getReturnVec() {return returnVec;}
 
-    public void setReturnVec(Vector3d vec) {returnVec = vec;}
+    public void setReturnVec(Vec3 vec) {returnVec = vec;}
 }

@@ -5,21 +5,23 @@ import jackiecrazy.footwork.utils.TargetingUtils;
 import jackiecrazy.wardance.WarDance;
 import jackiecrazy.wardance.api.CombatDamageSource;
 import jackiecrazy.wardance.skill.SkillData;
-import net.minecraft.entity.Entity;
-import net.minecraft.entity.LivingEntity;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.tags.Tag;
-import net.minecraft.util.SoundCategory;
-import net.minecraft.util.SoundEvents;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.tags.SetTag;
+import net.minecraft.sounds.SoundSource;
+import net.minecraft.sounds.SoundEvents;
 import net.minecraftforge.common.ForgeMod;
 
 import java.awt.*;
 import java.util.Arrays;
 import java.util.HashSet;
 
+import jackiecrazy.wardance.skill.Skill.STATE;
+
 public class Tornado extends Kick {
-    private final Tag<String> tag = Tag.create(new HashSet<>(Arrays.asList("physical", "melee", "sweep", "boundCast", "normalAttack", "countdown", "rechargeWithAttack")));
-    private final Tag<String> no = Tag.create(new HashSet<>(Arrays.asList("normalAttack", "sweep")));
+    private final SetTag<String> tag = SetTag.create(new HashSet<>(Arrays.asList("physical", "melee", "sweep", "boundCast", "normalAttack", "countdown", "rechargeWithAttack")));
+    private final SetTag<String> no = SetTag.create(new HashSet<>(Arrays.asList("normalAttack", "sweep")));
 
     protected void additionally(LivingEntity caster, LivingEntity target) {
 
@@ -32,12 +34,12 @@ public class Tornado extends Kick {
                     if (t instanceof LivingEntity) {
                         LivingEntity target = (LivingEntity) t;
                         CombatData.getCap(target).consumePosture(caster, 4);
-                        if (caster instanceof PlayerEntity)
-                            ((PlayerEntity) caster).sweepAttack();
+                        if (caster instanceof Player)
+                            ((Player) caster).sweepAttack();
                         target.hurt(new CombatDamageSource("fallingBlock", caster).setDamageTyping(CombatDamageSource.TYPE.PHYSICAL).setProcSkillEffects(true).setProcAttackEffects(true), 2);
                         if (target.getLastHurtByMob() == null)
                             target.setLastHurtByMob(caster);
-                        caster.level.playSound(null, caster.getX(), caster.getY(), caster.getZ(), SoundEvents.ZOMBIE_ATTACK_WOODEN_DOOR, SoundCategory.PLAYERS, 0.25f + WarDance.rand.nextFloat() * 0.5f, 0.5f + WarDance.rand.nextFloat() * 0.5f);
+                        caster.level.playSound(null, caster.getX(), caster.getY(), caster.getZ(), SoundEvents.ZOMBIE_ATTACK_WOODEN_DOOR, SoundSource.PLAYERS, 0.25f + WarDance.rand.nextFloat() * 0.5f, 0.5f + WarDance.rand.nextFloat() * 0.5f);
                         additionally(caster, target);
                     }
         }

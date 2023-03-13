@@ -3,7 +3,7 @@ package jackiecrazy.wardance.networking;
 import jackiecrazy.wardance.capability.skill.CasterData;
 import jackiecrazy.wardance.capability.skill.ISkillCapability;
 import jackiecrazy.wardance.skill.Skill;
-import net.minecraft.network.PacketBuffer;
+import net.minecraft.network.FriendlyByteBuf;
 import net.minecraftforge.fml.network.NetworkEvent;
 
 import java.util.function.BiConsumer;
@@ -15,17 +15,17 @@ public class EvokeSkillPacket {
     public EvokeSkillPacket() {
     }
 
-    public static class EvokeEncoder implements BiConsumer<EvokeSkillPacket, PacketBuffer> {
+    public static class EvokeEncoder implements BiConsumer<EvokeSkillPacket, FriendlyByteBuf> {
 
         @Override
-        public void accept(EvokeSkillPacket updateClientPacket, PacketBuffer packetBuffer) {
+        public void accept(EvokeSkillPacket updateClientPacket, FriendlyByteBuf packetBuffer) {
         }
     }
 
-    public static class EvokeDecoder implements Function<PacketBuffer, EvokeSkillPacket> {
+    public static class EvokeDecoder implements Function<FriendlyByteBuf, EvokeSkillPacket> {
 
         @Override
-        public EvokeSkillPacket apply(PacketBuffer packetBuffer) {
+        public EvokeSkillPacket apply(FriendlyByteBuf packetBuffer) {
             return new EvokeSkillPacket();
         }
     }

@@ -9,19 +9,19 @@ import jackiecrazy.wardance.config.GeneralConfig;
 import jackiecrazy.wardance.event.SkillCastEvent;
 import jackiecrazy.wardance.event.SkillCooldownEvent;
 import jackiecrazy.wardance.event.SkillResourceEvent;
-import net.minecraft.entity.LivingEntity;
-import net.minecraft.tags.Tag;
-import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.SoundCategory;
-import net.minecraft.util.SoundEvents;
-import net.minecraft.util.text.ITextComponent;
-import net.minecraft.util.text.TranslationTextComponent;
+import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.tags.SetTag;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.sounds.SoundSource;
+import net.minecraft.sounds.SoundEvents;
+import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.entity.living.LivingAttackEvent;
 import net.minecraftforge.eventbus.api.Event;
 import net.minecraftforge.eventbus.api.EventPriority;
-import net.minecraftforge.fml.common.registry.GameRegistry;
-import net.minecraftforge.registries.ForgeRegistryEntry;
+import net.minecraftforge.registries.IForgeRegistry;
+import net.minecraftforge.registries.RegistryObject;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -29,16 +29,16 @@ import java.awt.*;
 import java.util.List;
 import java.util.*;
 
-public abstract class Skill extends ForgeRegistryEntry<Skill> {
+public abstract class Skill extends IForgeRegistry<Skill> {
     public static final HashMap<SkillCategory, List<Skill>> variationMap = new HashMap<>();
-    protected static final Tag<String> none = Tag.empty();
-    protected static final Tag<String> offensivePhysical = makeTag(SkillTags.offensive, SkillTags.physical);
-    protected static final Tag<String> defensivePhysical = makeTag(SkillTags.defensive, SkillTags.physical);
-    protected static final Tag<String> offensive = makeTag(SkillTags.offensive);
-    protected static final Tag<String> defensive = makeTag(SkillTags.defensive);
-    protected static final Tag<String> passive = makeTag(SkillTags.passive);
-    protected static final Tag<String> special = makeTag(SkillTags.special);
-    protected static final Tag<String> state = makeTag(SkillTags.state);
+    protected static final SetTag<String> none = SetTag.empty();
+    protected static final SetTag<String> offensivePhysical = makeTag(SkillTags.offensive, SkillTags.physical);
+    protected static final SetTag<String> defensivePhysical = makeTag(SkillTags.defensive, SkillTags.physical);
+    protected static final SetTag<String> offensive = makeTag(SkillTags.offensive);
+    protected static final SetTag<String> defensive = makeTag(SkillTags.defensive);
+    protected static final SetTag<String> passive = makeTag(SkillTags.passive);
+    protected static final SetTag<String> special = makeTag(SkillTags.special);
+    protected static final SetTag<String> state = makeTag(SkillTags.state);
 
     public Skill() {
         //SkillCategory
@@ -50,8 +50,8 @@ public abstract class Skill extends ForgeRegistryEntry<Skill> {
         variationMap.put(this.getParentCategory(), insert);
     }
 
-    protected static Tag<String> makeTag(String... stuff) {
-        return Tag.create(new HashSet<>(Arrays.asList(stuff)));
+    protected static SetTag<String> makeTag(String... stuff) {
+        return SetTag.create(new HashSet<>(Arrays.asList(stuff)));
     }
 
     @Nullable
@@ -61,7 +61,7 @@ public abstract class Skill extends ForgeRegistryEntry<Skill> {
 
     @Nullable
     public static Skill getSkill(ResourceLocation name) {
-        return GameRegistry.findRegistry(Skill.class).getValue(name);
+        return .findRegistry(Skill.class).getValue(name);
     }
 
     public boolean isFamily(Skill s) {
@@ -121,18 +121,18 @@ public abstract class Skill extends ForgeRegistryEntry<Skill> {
     }
 
     public void onCooledDown(LivingEntity caster, float overflow) {
-        caster.level.playSound(null, caster, SoundEvents.EXPERIENCE_ORB_PICKUP, SoundCategory.AMBIENT, 0.3f + WarDance.rand.nextFloat(), 0.5f + WarDance.rand.nextFloat());
+        caster.level.playSound(null, caster, SoundEvents.EXPERIENCE_ORB_PICKUP, SoundSource.AMBIENT, 0.3f + WarDance.rand.nextFloat(), 0.5f + WarDance.rand.nextFloat());
     }
 
-    public ITextComponent description() {
-        return new TranslationTextComponent(this.getRegistryName().toString() + ".desc");
+    public Component description() {
+        return new TranslatableComponent(this.getRegistryName().toString() + ".desc");
     }
 
     /**
      * @param caster only nonnull if it's in the casting bar!
      */
-    public ITextComponent getDisplayName(LivingEntity caster) {
-        return new TranslationTextComponent(this.getRegistryName().toString() + ".name");
+    public Component getDisplayName(LivingEntity caster) {
+        return new TranslatableComponent(this.getRegistryName().toString() + ".name");
     }
 
     public ResourceLocation icon() {
@@ -143,12 +143,12 @@ public abstract class Skill extends ForgeRegistryEntry<Skill> {
         return Color.WHITE;
     }
 
-    public abstract Tag<String> getTags(LivingEntity caster);//requires breath, bound, debuffing, healing, aoe, etc.
+    public abstract SetTag<String> getTags(LivingEntity caster);//requires breath, bound, debuffing, healing, aoe, etc.
 
     @Nonnull
-    public abstract Tag<String> getSoftIncompatibility(LivingEntity caster);
+    public abstract SetTag<String> getSoftIncompatibility(LivingEntity caster);
 
-    public Tag<String> getHardIncompatibility(LivingEntity caster) {//TODO implement
+    public SetTag<String> getHardIncompatibility(LivingEntity caster) {//TODO implement
         return none;
     }
 
@@ -340,7 +340,7 @@ public abstract class Skill extends ForgeRegistryEntry<Skill> {
      */
     protected boolean activate(LivingEntity caster, float duration, boolean flag, float something) {
         //System.out.println("enabling for " + duration);
-        caster.level.playSound(null, caster, SoundEvents.FIRECHARGE_USE, SoundCategory.AMBIENT, 0.3f + WarDance.rand.nextFloat(), 0.5f + WarDance.rand.nextFloat());
+        caster.level.playSound(null, caster, SoundEvents.FIRECHARGE_USE, SoundSource.AMBIENT, 0.3f + WarDance.rand.nextFloat(), 0.5f + WarDance.rand.nextFloat());
         CasterData.getCap(caster).getSkillData(this).ifPresent(a -> {
             a.setDuration(duration);
             a.setMaxDuration(duration);
@@ -354,7 +354,7 @@ public abstract class Skill extends ForgeRegistryEntry<Skill> {
     protected void markUsed(LivingEntity caster) {
         if (GeneralConfig.debug)
             WarDance.LOGGER.debug(this.getRegistryName() + " has ended");
-        caster.level.playSound(null, caster, SoundEvents.FIRE_EXTINGUISH, SoundCategory.AMBIENT, 0.3f + WarDance.rand.nextFloat() * 0.5f, 0.5f + WarDance.rand.nextFloat());
+        caster.level.playSound(null, caster, SoundEvents.FIRE_EXTINGUISH, SoundSource.AMBIENT, 0.3f + WarDance.rand.nextFloat() * 0.5f, 0.5f + WarDance.rand.nextFloat());
         CasterData.getCap(caster).getSkillData(this).ifPresent(a -> {
             a.setDuration(-Float.MAX_VALUE / 2);
             a.setState(STATE.ACTIVE);

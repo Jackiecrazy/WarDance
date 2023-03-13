@@ -1,8 +1,8 @@
 package jackiecrazy.wardance.networking;
 
 import net.minecraft.client.Minecraft;
-import net.minecraft.entity.LivingEntity;
-import net.minecraft.network.PacketBuffer;
+import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.network.FriendlyByteBuf;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.fml.DistExecutor;
 import net.minecraftforge.fml.network.NetworkEvent;
@@ -20,19 +20,19 @@ public class UpdateAttackPacket {
         icc = c;
     }
 
-    public static class UpdateAttackEncoder implements BiConsumer<UpdateAttackPacket, PacketBuffer> {
+    public static class UpdateAttackEncoder implements BiConsumer<UpdateAttackPacket, FriendlyByteBuf> {
 
         @Override
-        public void accept(UpdateAttackPacket updateClientPacket, PacketBuffer packetBuffer) {
+        public void accept(UpdateAttackPacket updateClientPacket, FriendlyByteBuf packetBuffer) {
             packetBuffer.writeInt(updateClientPacket.e);
             packetBuffer.writeInt(updateClientPacket.icc);
         }
     }
 
-    public static class UpdateAttackDecoder implements Function<PacketBuffer, UpdateAttackPacket> {
+    public static class UpdateAttackDecoder implements Function<FriendlyByteBuf, UpdateAttackPacket> {
 
         @Override
-        public UpdateAttackPacket apply(PacketBuffer packetBuffer) {
+        public UpdateAttackPacket apply(FriendlyByteBuf packetBuffer) {
             return new UpdateAttackPacket(packetBuffer.readInt(), packetBuffer.readInt());
         }
     }

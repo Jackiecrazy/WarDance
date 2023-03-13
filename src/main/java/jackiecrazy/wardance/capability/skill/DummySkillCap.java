@@ -1,7 +1,7 @@
 package jackiecrazy.wardance.capability.skill;
 
 import jackiecrazy.wardance.skill.*;
-import net.minecraft.nbt.CompoundNBT;
+import net.minecraft.nbt.CompoundTag;
 
 import javax.annotation.Nullable;
 import java.util.*;
@@ -93,12 +93,12 @@ public class DummySkillCap implements ISkillCapability {
     }
 
     @Override
-    public CompoundNBT write() {
-        return new CompoundNBT();
+    public CompoundTag write() {
+        return new CompoundTag();
     }
 
     @Override
-    public void read(CompoundNBT from) {
+    public void read(CompoundTag from) {
 
     }
 

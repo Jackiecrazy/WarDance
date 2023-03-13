@@ -10,14 +10,14 @@ import jackiecrazy.wardance.capability.status.Marks;
 import jackiecrazy.wardance.networking.CombatChannel;
 import jackiecrazy.wardance.networking.SyncSkillPacket;
 import jackiecrazy.wardance.skill.Skill;
-import net.minecraft.entity.Entity;
-import net.minecraft.entity.LivingEntity;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.entity.player.ServerPlayerEntity;
-import net.minecraft.util.ResourceLocation;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.Tuple;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.World;
+import net.minecraft.core.BlockPos;
+import net.minecraft.world.level.Level;
 import net.minecraftforge.event.AttachCapabilitiesEvent;
 import net.minecraftforge.event.TickEvent;
 import net.minecraftforge.event.entity.EntityJoinWorldEvent;
@@ -35,8 +35,8 @@ import java.util.concurrent.ConcurrentHashMap;
 
 @Mod.EventBusSubscriber(modid = WarDance.MODID)
 public class EntityHandler {
-    public static final HashMap<PlayerEntity, Entity> mustUpdate = new HashMap<>();
-    public static final ConcurrentHashMap<Tuple<World, BlockPos>, Float> alertTracker = new ConcurrentHashMap<>();
+    public static final HashMap<Player, Entity> mustUpdate = new HashMap<>();
+    public static final ConcurrentHashMap<Tuple<Level, BlockPos>, Float> alertTracker = new ConcurrentHashMap<>();
 
     @SubscribeEvent
     public static void start(FMLServerStartingEvent e) {
@@ -55,15 +55,15 @@ public class EntityHandler {
         if (e.getObject() instanceof LivingEntity) {
             e.addCapability(new ResourceLocation("wardance:combatinfo"), new CombatDataOverride((LivingEntity) e.getObject()));
             e.addCapability(new ResourceLocation("wardance:statuseffects"), new Marks((LivingEntity) e.getObject()));
-            if (e.getObject() instanceof PlayerEntity)
+            if (e.getObject() instanceof Player)
                 e.addCapability(new ResourceLocation("wardance:casterinfo"), new CasterData((LivingEntity) e.getObject()));
         }
     }
 
     @SubscribeEvent
     public static void takeThis(EntityJoinWorldEvent e) {
-        if (e.getEntity() instanceof ServerPlayerEntity) {
-            CombatChannel.INSTANCE.send(PacketDistributor.PLAYER.with(() -> (ServerPlayerEntity) e.getEntity()), new SyncSkillPacket(CasterData.getCap((LivingEntity) e.getEntity()).write()));
+        if (e.getEntity() instanceof ServerPlayer) {
+            CombatChannel.INSTANCE.send(PacketDistributor.PLAYER.with(() -> (ServerPlayer) e.getEntity()), new SyncSkillPacket(CasterData.getCap((LivingEntity) e.getEntity()).write()));
         }
     }
 
@@ -103,7 +103,7 @@ public class EntityHandler {
     public static void tickMobs(LivingEvent.LivingUpdateEvent e) {
         LivingEntity elb = e.getEntityLiving();
         if (!elb.level.isClientSide) {
-            if (!(elb instanceof PlayerEntity)) {
+            if (!(elb instanceof Player)) {
                 Marks.getCap(elb).update();
                         /*
                         The battle circle AI basically works like this (from an enemy's perspective):

@@ -4,7 +4,7 @@ import com.elenai.elenaidodge2.api.DodgeEvent;
 import com.elenai.elenaidodge2.api.FeathersHelper;
 import jackiecrazy.footwork.capability.resources.CombatData;
 import jackiecrazy.wardance.config.GeneralConfig;
-import net.minecraft.entity.player.ServerPlayerEntity;
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.eventbus.api.EventPriority;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
@@ -17,13 +17,13 @@ public class ElenaiCompat {
         return (FeathersHelper) handler;
     }
 
-    public static void manipulateFeather(ServerPlayerEntity e, int amount) {
+    public static void manipulateFeather(ServerPlayer e, int amount) {
         if (amount > 0)
             getFeatherHandler().increaseFeathers(e, amount);
         else getFeatherHandler().decreaseFeathers(e, -amount);
     }
 
-    public static void manipulateRegenTime(ServerPlayerEntity e, int amount) {
+    public static void manipulateRegenTime(ServerPlayer e, int amount) {
         if (amount > 0)
             getFeatherHandler().increaseRegenModifier(e, amount);
         else getFeatherHandler().decreaseRegenModifier(e, -amount);

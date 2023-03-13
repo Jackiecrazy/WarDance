@@ -2,11 +2,11 @@ package jackiecrazy.wardance.networking;
 
 import jackiecrazy.wardance.capability.status.Marks;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.world.ClientWorld;
-import net.minecraft.entity.Entity;
-import net.minecraft.entity.LivingEntity;
-import net.minecraft.nbt.CompoundNBT;
-import net.minecraft.network.PacketBuffer;
+import net.minecraft.client.multiplayer.ClientLevel;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.network.FriendlyByteBuf;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.fml.DistExecutor;
 import net.minecraftforge.fml.network.NetworkEvent;
@@ -17,26 +17,26 @@ import java.util.function.Supplier;
 
 public class UpdateAfflictionPacket {
     int e;
-    CompoundNBT icc;
+    CompoundTag icc;
 
-    public UpdateAfflictionPacket(int ent, CompoundNBT c) {
+    public UpdateAfflictionPacket(int ent, CompoundTag c) {
         e = ent;
         icc = c;
     }
 
-    public static class UpdateClientEncoder implements BiConsumer<UpdateAfflictionPacket, PacketBuffer> {
+    public static class UpdateClientEncoder implements BiConsumer<UpdateAfflictionPacket, FriendlyByteBuf> {
 
         @Override
-        public void accept(UpdateAfflictionPacket updateClientPacket, PacketBuffer packetBuffer) {
+        public void accept(UpdateAfflictionPacket updateClientPacket, FriendlyByteBuf packetBuffer) {
             packetBuffer.writeInt(updateClientPacket.e);
             packetBuffer.writeNbt(updateClientPacket.icc);
         }
     }
 
-    public static class UpdateClientDecoder implements Function<PacketBuffer, UpdateAfflictionPacket> {
+    public static class UpdateClientDecoder implements Function<FriendlyByteBuf, UpdateAfflictionPacket> {
 
         @Override
-        public UpdateAfflictionPacket apply(PacketBuffer packetBuffer) {
+        public UpdateAfflictionPacket apply(FriendlyByteBuf packetBuffer) {
             return new UpdateAfflictionPacket(packetBuffer.readInt(), packetBuffer.readNbt());
         }
     }
@@ -46,7 +46,7 @@ public class UpdateAfflictionPacket {
         @Override
         public void accept(UpdateAfflictionPacket updateClientPacket, Supplier<NetworkEvent.Context> contextSupplier) {
             contextSupplier.get().enqueueWork(() -> DistExecutor.unsafeRunWhenOn(Dist.CLIENT, () -> () -> {
-                ClientWorld world = Minecraft.getInstance().level;
+                ClientLevel world = Minecraft.getInstance().level;
                 if (world != null) {
                     Entity entity = world.getEntity(updateClientPacket.e);
                     if (entity instanceof LivingEntity){

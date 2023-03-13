@@ -4,10 +4,10 @@ import com.google.common.collect.Lists;
 import jackiecrazy.footwork.config.DisplayConfigUtils;
 import jackiecrazy.wardance.WarDance;
 import jackiecrazy.wardance.client.ClientEvents;
-import net.minecraft.util.ResourceLocation;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraftforge.common.ForgeConfigSpec;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
-import net.minecraftforge.fml.config.ModConfig;
+import net.minecraftforge.fml.event.config.ModConfigEvent;
 import org.apache.commons.lang3.tuple.Pair;
 
 import java.util.List;
@@ -86,7 +86,7 @@ public class ClientConfig {
     }
 
     @SubscribeEvent
-    public static void loadConfig(ModConfig.ModConfigEvent e) {
+    public static void loadConfig(ModConfigEvent e) {
         if (e.getConfig().getSpec() == CONFIG_SPEC) {
             if (GeneralConfig.debug)
                 WarDance.LOGGER.debug("loading client config!");

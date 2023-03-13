@@ -4,13 +4,15 @@ import jackiecrazy.footwork.capability.resources.CombatData;
 import jackiecrazy.wardance.capability.status.Marks;
 import jackiecrazy.wardance.skill.SkillData;
 import jackiecrazy.wardance.utils.SkillUtils;
-import net.minecraft.entity.LivingEntity;
-import net.minecraft.entity.ai.attributes.AttributeModifier;
-import net.minecraft.entity.ai.attributes.Attributes;
-import net.minecraft.entity.ai.attributes.ModifiableAttributeInstance;
-import net.minecraft.util.Hand;
+import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.ai.attributes.AttributeModifier;
+import net.minecraft.world.entity.ai.attributes.Attributes;
+import net.minecraft.world.entity.ai.attributes.AttributeInstance;
+import net.minecraft.world.InteractionHand;
 
 import java.awt.*;
+
+import jackiecrazy.wardance.skill.Skill.STATE;
 
 public class ItchyCurse extends Hex {
     @Override
@@ -28,8 +30,8 @@ public class ItchyCurse extends Hex {
             sd.setArbitraryFloat(sd.getArbitraryFloat() + 1);
             if (sd.getArbitraryFloat() >= 3) {
                 SkillUtils.modifyAttribute(target, Attributes.MOVEMENT_SPEED, HEX, -1, AttributeModifier.Operation.MULTIPLY_TOTAL);
-                CombatData.getCap(target).setHandBind(Hand.MAIN_HAND, 20);
-                CombatData.getCap(target).setHandBind(Hand.OFF_HAND, 20);
+                CombatData.getCap(target).setHandBind(InteractionHand.MAIN_HAND, 20);
+                CombatData.getCap(target).setHandBind(InteractionHand.OFF_HAND, 20);
                 sd.setArbitraryFloat(-1);
             } else if (sd.getArbitraryFloat() == 0) {
                 SkillUtils.modifyAttribute(target, Attributes.MOVEMENT_SPEED, HEX, 0, AttributeModifier.Operation.MULTIPLY_TOTAL);
@@ -51,7 +53,7 @@ public class ItchyCurse extends Hex {
 
     @Override
     public void onMarkEnd(LivingEntity caster, LivingEntity target, SkillData sd) {
-        final ModifiableAttributeInstance speed = target.getAttribute(Attributes.MOVEMENT_SPEED);
+        final AttributeInstance speed = target.getAttribute(Attributes.MOVEMENT_SPEED);
         if (speed != null) {
             speed.removeModifier(HEX);
         }
