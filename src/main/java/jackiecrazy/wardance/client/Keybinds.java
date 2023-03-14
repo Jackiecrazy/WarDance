@@ -1,5 +1,6 @@
 package jackiecrazy.wardance.client;
 
+import com.mojang.blaze3d.platform.InputConstants;
 import jackiecrazy.footwork.capability.resources.CombatData;
 import jackiecrazy.footwork.capability.resources.ICombatCapability;
 import jackiecrazy.wardance.WarDance;
@@ -9,10 +10,9 @@ import jackiecrazy.wardance.client.screen.SkillSelectionScreen;
 import jackiecrazy.wardance.networking.CombatChannel;
 import jackiecrazy.wardance.networking.CombatModePacket;
 import jackiecrazy.wardance.networking.EvokeSkillPacket;
-import net.minecraft.client.Minecraft;
 import net.minecraft.client.KeyMapping;
-import com.mojang.blaze3d.platform.InputConstants;
-import net.minecraft.network.chat.TranslatableComponent;
+import net.minecraft.client.Minecraft;
+import net.minecraft.network.chat.Component;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.client.event.InputEvent;
 import net.minecraftforge.client.settings.IKeyConflictContext;
@@ -50,7 +50,7 @@ public class Keybinds {
         ICombatCapability itsc = CombatData.getCap(mc.player);
         if (COMBAT.getKeyConflictContext().isActive() && COMBAT.consumeClick()) {
             ClientEvents.combatTicks = Integer.MAX_VALUE;
-            mc.player.displayClientMessage(new TranslatableComponent("wardance.combat." + (itsc.isCombatMode() ? "off" : "on")), true);
+            mc.player.displayClientMessage(Component.translatable("wardance.combat." + (itsc.isCombatMode() ? "off" : "on")), true);
             CombatChannel.INSTANCE.sendToServer(new CombatModePacket());
         }
         if (CAST.getKeyConflictContext().isActive() && CAST.consumeClick() && mc.player.isAlive()) {

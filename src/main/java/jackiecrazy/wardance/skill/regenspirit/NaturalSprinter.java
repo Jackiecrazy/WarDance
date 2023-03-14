@@ -17,8 +17,6 @@ import java.util.Arrays;
 import java.util.HashSet;
 import java.util.UUID;
 
-import jackiecrazy.wardance.skill.Skill.STATE;
-
 public class NaturalSprinter extends Skill {
     private static final AttributeModifier sprint = new AttributeModifier(UUID.fromString("0683fe69-5348-4a83-95d5-81a2eeb2cca0"), "gimli moment", 10, AttributeModifier.Operation.ADDITION);
 
@@ -40,13 +38,13 @@ confidence: your spirit regeneration speed scales proportionally with how much s
     }
 
     @Override
-    public SetTag<String> getTags(LivingEntity caster) {
+    public HashSet<String> getTags(LivingEntity caster) {
         return passive;
     }
 
     @Nonnull
     @Override
-    public SetTag<String> getSoftIncompatibility(LivingEntity caster) {
+    public HashSet<String> getSoftIncompatibility(LivingEntity caster) {
         return none;
     }
 

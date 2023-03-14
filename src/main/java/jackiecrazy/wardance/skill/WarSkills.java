@@ -24,10 +24,18 @@ import jackiecrazy.wardance.skill.shieldbash.*;
 import jackiecrazy.wardance.skill.warcry.*;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraftforge.registries.DeferredRegister;
+import net.minecraftforge.registries.IForgeRegistry;
 import net.minecraftforge.registries.RegistryObject;
 
+import java.util.function.Supplier;
+
 public class WarSkills {
-    public static DeferredRegister<Skill> SKILLS = DeferredRegister.create(new ResourceLocation(WarDance.MODID,"skills"), WarDance.MODID);
+
+    public static ResourceLocation REGISTRY_NAME = new ResourceLocation(WarDance.MODID, "skills");
+
+    public static Supplier<IForgeRegistry<Skill>> SUPPLIER;
+
+    public static DeferredRegister<Skill> SKILLS = DeferredRegister.create(REGISTRY_NAME, WarDance.MODID);
 
     public static final RegistryObject<Skill> VITAL_STRIKE = SKILLS.register("vital_strike", HeavyBlow::new);
     public static final RegistryObject<Skill> MOMENTUM = SKILLS.register("momentum", Momentum::new);

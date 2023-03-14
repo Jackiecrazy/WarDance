@@ -66,7 +66,7 @@ public class SkillSelectionScreen extends Screen {
     private AdvancedData advancedData = AdvancedData.NORMAL;
 
     public SkillSelectionScreen() {
-        super(new TranslatableComponent("wardance.skillselection.title"));//
+        super(Component.translatable("wardance.skillselection.title"));//
         this.bases = Skill.variationMap.keySet().stream().filter(this::selectable).collect(Collectors.toList());//hmm
 
         this.unsortedBases = Collections.unmodifiableList(this.bases);
@@ -142,11 +142,11 @@ public class SkillSelectionScreen extends Screen {
         int doneButtonWidth = Math.min(infoWidth, 200);
         int y = this.height - 20 - PADDING;
         this.addButton(new Button(((listWidth + PADDING + this.width - doneButtonWidth) / 2), y, doneButtonWidth, 20,
-                new TranslatableComponent("gui.done"), b -> SkillSelectionScreen.this.onClose()));
+                Component.translatable("gui.done"), b -> SkillSelectionScreen.this.onClose()));
         //y -= 20 + PADDING;
 
         //y -= 14 + PADDING + 1;
-        search = new EditBox(getFontRenderer(), PADDING + 1, y, listWidth - 2, 14, new TranslatableComponent("fml.menu.mods.search"));
+        search = new EditBox(getFontRenderer(), PADDING + 1, y, listWidth - 2, 14, Component.translatable("fml.menu.mods.search"));
 
         int fullButtonHeight = PADDING + 20 + PADDING;
         this.skillList = new SkillListWidget(this, listWidth, PADDING, search.y - getFontRenderer().lineHeight - PADDING);
@@ -264,7 +264,7 @@ public class SkillSelectionScreen extends Screen {
             pb.render(mStack, mouseX, mouseY, partialTicks);
         }
 
-        Component text = new TranslatableComponent("fml.menu.mods.search");
+        Component text = Component.translatable("fml.menu.mods.search");
         int x = skillList.getLeft() + ((skillList.getRight() - skillList.getLeft()) / 2) - (getFontRenderer().width(text) / 2);
         getFontRenderer().draw(mStack, text.getVisualOrderText(), x, search.y - getFontRenderer().lineHeight, 0xFFFFFF);
         this.search.render(mStack, mouseX, mouseY, partialTicks);
@@ -295,16 +295,16 @@ public class SkillSelectionScreen extends Screen {
         if (selectedSkill == null) {
             this.skillInfo.clearInfo();
             List<String> lines = new ArrayList<>();
-            lines.add(new TranslatableComponent("wardance:skills_general").getString() + "\n");
-            lines.add(new TranslatableComponent("wardance:skills_colors").getString() + "\n");
-            lines.add(new TranslatableComponent("wardance:skills_terms").getString() + "\n");
+            lines.add(Component.translatable("wardance:skills_general").getString() + "\n");
+            lines.add(Component.translatable("wardance:skills_colors").getString() + "\n");
+            lines.add(Component.translatable("wardance:skills_terms").getString() + "\n");
             skillInfo.setInfo(lines, null);
             return;
         }
         SkillCategory selectedSkill = this.selectedSkill.getCategory();
         List<String> lines = new ArrayList<>();
 
-        lines.add(ChatFormatting.BOLD+""+ChatFormatting.UNDERLINE+selectedSkill.name().getString()+ChatFormatting.RESET+"\n");
+        lines.add(ChatFormatting.BOLD + "" + ChatFormatting.UNDERLINE + selectedSkill.name().getString() + ChatFormatting.RESET + "\n");
         lines.add(selectedSkill.description().getString());
         if (selectedVariation != null) {
             //lines.add(String.valueOf(selectedVariation.getSkill().getColor().getRGB()));
@@ -312,9 +312,9 @@ public class SkillSelectionScreen extends Screen {
             lines.add(selectedVariation.getSkill().description().getString());
             if (minecraft != null && minecraft.options.renderDebug) {
                 lines.add("\n");
-                lines.add(ChatFormatting.DARK_GRAY+new TranslatableComponent("wardance:skill_tag").getString() + selectedVariation.getSkill().getTags(minecraft.player).getValues()+"\n");
-                lines.add(ChatFormatting.DARK_GRAY+new TranslatableComponent("wardance:skill_soft_incompat").getString() + selectedVariation.getSkill().getSoftIncompatibility(minecraft.player).getValues()+"\n");
-                lines.add(ChatFormatting.DARK_GRAY+new TranslatableComponent("wardance:skill_hard_incompat").getString() + selectedVariation.getSkill().getHardIncompatibility(minecraft.player).getValues()+ChatFormatting.RESET);
+                lines.add(ChatFormatting.DARK_GRAY + Component.translatable("wardance:skill_tag").getString() + selectedVariation.getSkill().getTags(minecraft.player).getValues() + "\n");
+                lines.add(ChatFormatting.DARK_GRAY + Component.translatable("wardance:skill_soft_incompat").getString() + selectedVariation.getSkill().getSoftIncompatibility(minecraft.player).getValues() + "\n");
+                lines.add(ChatFormatting.DARK_GRAY + Component.translatable("wardance:skill_hard_incompat").getString() + selectedVariation.getSkill().getHardIncompatibility(minecraft.player).getValues() + ChatFormatting.RESET);
             }
         }
         lines.add("\n");
@@ -371,7 +371,7 @@ public class SkillSelectionScreen extends Screen {
         }
 
         Component getButtonText() {
-            return new TranslatableComponent("fml.menu.mods." + StringUtils.toLowerCase(name()));
+            return Component.translatable("fml.menu.mods." + StringUtils.toLowerCase(name()));
         }
     }
 

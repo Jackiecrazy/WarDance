@@ -17,11 +17,11 @@ public class SkillCategory {
     }
 
     public Component name() {
-        return new TranslatableComponent("category." + category + ".name");
+        return Component.translatable("category." + category + ".name");
     }
 
     public Component description() {
-        return new TranslatableComponent("category." + category + ".desc");
+        return Component.translatable("category." + category + ".desc");
     }
 
     public ResourceLocation icon() {

@@ -17,8 +17,6 @@ import javax.annotation.Nonnull;
 import java.util.Arrays;
 import java.util.HashSet;
 
-import jackiecrazy.wardance.skill.Skill.STATE;
-
 public class Morale extends Skill {
     /*
     back and forth: recover (1/attack speed) spirit when parrying or landing a critical hit.
@@ -33,7 +31,7 @@ apathy: your max spirit is 4, your spirit instantly refills after cooldown, you 
     private final SetTag<String> no = SetTag.empty();
 
     @Override
-    public SetTag<String> getTags(LivingEntity caster) {
+    public HashSet<String> getTags(LivingEntity caster) {
         return passive;
     }
 
@@ -45,7 +43,7 @@ apathy: your max spirit is 4, your spirit instantly refills after cooldown, you 
 
     @Nonnull
     @Override
-    public SetTag<String> getSoftIncompatibility(LivingEntity caster) {
+    public HashSet<String> getSoftIncompatibility(LivingEntity caster) {
         return none;
     }
 

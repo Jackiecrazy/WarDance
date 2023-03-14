@@ -30,10 +30,10 @@ public class SkillArgument implements ArgumentType<Skill> {
             .register(new ResourceLocation(WarDance.MODID, "skills"),
                     (context, builder) -> SharedSuggestionProvider.suggestResource(
                             GameRegistry.findRegistry(Skill.class).getValues().stream(),
-                            builder, Skill::getRegistryName, (type) -> new TranslatableComponent(
+                            builder, Skill::getRegistryName, (type) -> Component.translatable(
                                     Util.makeDescriptionId("skill", type.getRegistryName()))));
     private static final Collection<String> EXAMPLES = Stream.of(WarSkills.RETURN_TO_SENDER.get(), WarSkills.VITAL_STRIKE.get()).map((worldKey) -> worldKey.getRegistryName().toString()).collect(Collectors.toList());
-    private static final DynamicCommandExceptionType INVALID_SKILL_EXCEPTION = new DynamicCommandExceptionType((worldKey) -> new TranslatableComponent("argument.skill.invalid", worldKey));
+    private static final DynamicCommandExceptionType INVALID_SKILL_EXCEPTION = new DynamicCommandExceptionType((worldKey) -> Component.translatable("argument.skill.invalid", worldKey));
 
     public static SkillArgument skill() {
         return new SkillArgument();

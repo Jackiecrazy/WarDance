@@ -12,18 +12,17 @@ import net.minecraftforge.eventbus.api.EventPriority;
 
 import javax.annotation.Nonnull;
 import java.awt.*;
-
-import jackiecrazy.wardance.skill.Skill.STATE;
+import java.util.HashSet;
 
 public class BiteTheDust extends CoupDeGrace {
     @Override
-    public SetTag<String> getTags(LivingEntity caster) {
+    public HashSet<String> getTags(LivingEntity caster) {
         return passive;
     }
 
     @Nonnull
     @Override
-    public SetTag<String> getSoftIncompatibility(LivingEntity caster) {
+    public HashSet<String> getSoftIncompatibility(LivingEntity caster) {
         return none;
     }
 

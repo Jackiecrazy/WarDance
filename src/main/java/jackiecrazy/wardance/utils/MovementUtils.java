@@ -242,23 +242,23 @@ public class MovementUtils {
             DodgeEvent.Direction d = DodgeEvent.Direction.FORWARD;
             switch (side) {
                 case 0://left
-                    x = Mth.cos(GeneralUtils.rad(elb.yRot));//+adjustment
-                    z = Mth.sin(GeneralUtils.rad(elb.yRot));
+                    x = Mth.cos(GeneralUtils.rad(elb.getYRot()));//+adjustment
+                    z = Mth.sin(GeneralUtils.rad(elb.getYRot()));
                     d = DodgeEvent.Direction.LEFT;
                     break;
                 case 1://back
-                    x = Mth.cos(GeneralUtils.rad(elb.yRot - 90));
-                    z = Mth.sin(GeneralUtils.rad(elb.yRot - 90));
+                    x = Mth.cos(GeneralUtils.rad(elb.getYRot() - 90));
+                    z = Mth.sin(GeneralUtils.rad(elb.getYRot() - 90));
                     d = DodgeEvent.Direction.BACK;
                     break;
                 case 2://right
-                    x = Mth.cos(GeneralUtils.rad(elb.yRot - 180));//-adjustment
-                    z = Mth.sin(GeneralUtils.rad(elb.yRot - 180));
+                    x = Mth.cos(GeneralUtils.rad(elb.getYRot() - 180));//-adjustment
+                    z = Mth.sin(GeneralUtils.rad(elb.getYRot() - 180));
                     d = DodgeEvent.Direction.RIGHT;
                     break;
                 case 3://forward
-                    x = Mth.cos(GeneralUtils.rad(elb.yRot + 90));
-                    z = Mth.sin(GeneralUtils.rad(elb.yRot + 90));
+                    x = Mth.cos(GeneralUtils.rad(elb.getYRot() + 90));
+                    z = Mth.sin(GeneralUtils.rad(elb.getYRot() + 90));
                     d = DodgeEvent.Direction.FORWARD;
                     break;
             }

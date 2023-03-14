@@ -37,8 +37,6 @@ import java.util.Arrays;
 import java.util.HashSet;
 import java.util.UUID;
 
-import jackiecrazy.wardance.skill.Skill.STATE;
-
 @Mod.EventBusSubscriber(modid = WarDance.MODID)
 public class Feint extends Skill {
     private final SetTag<String> proc = SetTag.create(new HashSet<>(Arrays.asList("physical", "disableShield", "noDamage", ProcPoints.melee, ProcPoints.afflict_tick, "boundCast", ProcPoints.countdown, ProcPoints.recharge_normal, ProcPoints.change_parry_result)));
@@ -95,13 +93,13 @@ public class Feint extends Skill {
     }
 
     @Override
-    public SetTag<String> getTags(LivingEntity caster) {
+    public HashSet<String> getTags(LivingEntity caster) {
         return tag;
     }
 
     @Nonnull
     @Override
-    public SetTag<String> getSoftIncompatibility(LivingEntity caster) {
+    public HashSet<String> getSoftIncompatibility(LivingEntity caster) {
         return offensive;
     }
 

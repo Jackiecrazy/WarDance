@@ -24,7 +24,7 @@ import net.minecraft.network.chat.TranslatableComponent;
 
 public class WarDanceCommand {
 
-    public static final SimpleCommandExceptionType MISSING_ARGUMENT = new SimpleCommandExceptionType(new TranslatableComponent("wardance.command.missing"));
+    public static final SimpleCommandExceptionType MISSING_ARGUMENT = new SimpleCommandExceptionType(Component.translatable("wardance.command.missing"));
 
     public static int missingArgument(CommandContext<CommandSourceStack> ctx) throws CommandSyntaxException {
         throw MISSING_ARGUMENT.create();
@@ -134,7 +134,7 @@ public class WarDanceCommand {
         int count = IntegerArgumentType.getInteger(ctx, "count");
         CombatData.getCap((LivingEntity) player).setStaggerTime(time);
         CombatData.getCap((LivingEntity) player).setStaggerCount(count);
-        ctx.getSource().sendSuccess(new TranslatableComponent("wardance.command.command.stagger", player.getDisplayName(), time, count), false);
+        ctx.getSource().sendSuccess(Component.translatable("wardance.command.command.stagger", player.getDisplayName(), time, count), false);
         return Command.SINGLE_SUCCESS;
     }
 
@@ -144,7 +144,7 @@ public class WarDanceCommand {
         int time = IntegerArgumentType.getInteger(ctx, "time");
         CombatData.getCap((LivingEntity) player).setStaggerTime(time);
         CombatData.getCap((LivingEntity) player).setStaggerCount(0);
-        ctx.getSource().sendSuccess(new TranslatableComponent("wardance.command.staggerDefault", player.getDisplayName(), time), false);
+        ctx.getSource().sendSuccess(Component.translatable("wardance.command.staggerDefault", player.getDisplayName(), time), false);
         return Command.SINGLE_SUCCESS;
     }
 
@@ -153,7 +153,7 @@ public class WarDanceCommand {
         if (!(player instanceof LivingEntity)) throw EntitySelectorOptions.ERROR_INAPPLICABLE_OPTION.create(player);
         float i = FloatArgumentType.getFloat(ctx, "amount");
         CombatData.getCap((LivingEntity) player).setMight(i);
-        ctx.getSource().sendSuccess(new TranslatableComponent("wardance.command.setMight", player.getDisplayName(), i), false);
+        ctx.getSource().sendSuccess(Component.translatable("wardance.command.setMight", player.getDisplayName(), i), false);
         return Command.SINGLE_SUCCESS;
     }
 
@@ -162,7 +162,7 @@ public class WarDanceCommand {
         if (!(player instanceof LivingEntity)) throw EntitySelectorOptions.ERROR_INAPPLICABLE_OPTION.create(player);
         float i = FloatArgumentType.getFloat(ctx, "amount");
         CombatData.getCap((LivingEntity) player).consumeMight(i);
-        ctx.getSource().sendSuccess(new TranslatableComponent("wardance.command.conMight", player.getDisplayName(), i), false);
+        ctx.getSource().sendSuccess(Component.translatable("wardance.command.conMight", player.getDisplayName(), i), false);
         return Command.SINGLE_SUCCESS;
     }
 
@@ -171,7 +171,7 @@ public class WarDanceCommand {
         if (!(player instanceof LivingEntity)) throw EntitySelectorOptions.ERROR_INAPPLICABLE_OPTION.create(player);
         float i = FloatArgumentType.getFloat(ctx, "amount");
         CombatData.getCap((LivingEntity) player).addMight(i);
-        ctx.getSource().sendSuccess(new TranslatableComponent("wardance.command.addMight", player.getDisplayName(), i), false);
+        ctx.getSource().sendSuccess(Component.translatable("wardance.command.addMight", player.getDisplayName(), i), false);
         return Command.SINGLE_SUCCESS;
     }
 
@@ -179,7 +179,7 @@ public class WarDanceCommand {
         Entity player = EntityArgument.getEntity(ctx, "entity");
         if (!(player instanceof LivingEntity)) throw EntitySelectorOptions.ERROR_INAPPLICABLE_OPTION.create(player);
         float might = CombatData.getCap((LivingEntity) player).getMight();
-        ctx.getSource().sendSuccess(new TranslatableComponent("wardance.command.getMight", player.getDisplayName(), might), false);
+        ctx.getSource().sendSuccess(Component.translatable("wardance.command.getMight", player.getDisplayName(), might), false);
         return Math.round(might);
     }
 
@@ -188,7 +188,7 @@ public class WarDanceCommand {
         if (!(player instanceof LivingEntity)) throw EntitySelectorOptions.ERROR_INAPPLICABLE_OPTION.create(player);
         float i = FloatArgumentType.getFloat(ctx, "amount");
         CombatData.getCap((LivingEntity) player).setSpirit(i);
-        ctx.getSource().sendSuccess(new TranslatableComponent("wardance.command.setSpirit", player.getDisplayName(), i), false);
+        ctx.getSource().sendSuccess(Component.translatable("wardance.command.setSpirit", player.getDisplayName(), i), false);
         return Command.SINGLE_SUCCESS;
     }
 
@@ -197,7 +197,7 @@ public class WarDanceCommand {
         if (!(player instanceof LivingEntity)) throw EntitySelectorOptions.ERROR_INAPPLICABLE_OPTION.create(player);
         float i = FloatArgumentType.getFloat(ctx, "amount");
         CombatData.getCap((LivingEntity) player).consumeSpirit(i);
-        ctx.getSource().sendSuccess(new TranslatableComponent("wardance.command.conSpirit", player.getDisplayName(), i), false);
+        ctx.getSource().sendSuccess(Component.translatable("wardance.command.conSpirit", player.getDisplayName(), i), false);
         return Command.SINGLE_SUCCESS;
     }
 
@@ -206,7 +206,7 @@ public class WarDanceCommand {
         if (!(player instanceof LivingEntity)) throw EntitySelectorOptions.ERROR_INAPPLICABLE_OPTION.create(player);
         float i = FloatArgumentType.getFloat(ctx, "amount");
         CombatData.getCap((LivingEntity) player).addSpirit(i);
-        ctx.getSource().sendSuccess(new TranslatableComponent("wardance.command.addSpirit", player.getDisplayName(), i), false);
+        ctx.getSource().sendSuccess(Component.translatable("wardance.command.addSpirit", player.getDisplayName(), i), false);
         return Command.SINGLE_SUCCESS;
     }
 
@@ -214,7 +214,7 @@ public class WarDanceCommand {
         Entity player = EntityArgument.getEntity(ctx, "entity");
         if (!(player instanceof LivingEntity)) throw EntitySelectorOptions.ERROR_INAPPLICABLE_OPTION.create(player);
         float spirit = CombatData.getCap((LivingEntity) player).getSpirit();
-        ctx.getSource().sendSuccess(new TranslatableComponent("wardance.command.getSpirit", player.getDisplayName(), spirit), false);
+        ctx.getSource().sendSuccess(Component.translatable("wardance.command.getSpirit", player.getDisplayName(), spirit), false);
         return Math.round(spirit);
     }
 
@@ -223,7 +223,7 @@ public class WarDanceCommand {
         if (!(player instanceof LivingEntity)) throw EntitySelectorOptions.ERROR_INAPPLICABLE_OPTION.create(player);
         float i = FloatArgumentType.getFloat(ctx, "amount");
         CombatData.getCap((LivingEntity) player).setPosture(i);
-        ctx.getSource().sendSuccess(new TranslatableComponent("wardance.command.setPosture", player.getDisplayName(), i), false);
+        ctx.getSource().sendSuccess(Component.translatable("wardance.command.setPosture", player.getDisplayName(), i), false);
         return Command.SINGLE_SUCCESS;
     }
 
@@ -232,7 +232,7 @@ public class WarDanceCommand {
         if (!(player instanceof LivingEntity)) throw EntitySelectorOptions.ERROR_INAPPLICABLE_OPTION.create(player);
         float i = FloatArgumentType.getFloat(ctx, "amount");
         CombatData.getCap((LivingEntity) player).consumePosture(i);
-        ctx.getSource().sendSuccess(new TranslatableComponent("wardance.command.conPosture", player.getDisplayName(), i), false);
+        ctx.getSource().sendSuccess(Component.translatable("wardance.command.conPosture", player.getDisplayName(), i), false);
         return Command.SINGLE_SUCCESS;
     }
 
@@ -241,7 +241,7 @@ public class WarDanceCommand {
         if (!(player instanceof LivingEntity)) throw EntitySelectorOptions.ERROR_INAPPLICABLE_OPTION.create(player);
         float i = FloatArgumentType.getFloat(ctx, "amount");
         CombatData.getCap((LivingEntity) player).addPosture(i);
-        ctx.getSource().sendSuccess(new TranslatableComponent("wardance.command.addPosture", player.getDisplayName(), i), false);
+        ctx.getSource().sendSuccess(Component.translatable("wardance.command.addPosture", player.getDisplayName(), i), false);
         return Command.SINGLE_SUCCESS;
     }
 
@@ -249,7 +249,7 @@ public class WarDanceCommand {
         Entity player = EntityArgument.getEntity(ctx, "entity");
         if (!(player instanceof LivingEntity)) throw EntitySelectorOptions.ERROR_INAPPLICABLE_OPTION.create(player);
         float posture = CombatData.getCap((LivingEntity) player).getPosture();
-        ctx.getSource().sendSuccess(new TranslatableComponent("wardance.command.getPosture", player.getDisplayName(), posture), false);
+        ctx.getSource().sendSuccess(Component.translatable("wardance.command.getPosture", player.getDisplayName(), posture), false);
         return Math.round(posture);
     }
 
@@ -258,7 +258,7 @@ public class WarDanceCommand {
         if (!(player instanceof LivingEntity)) throw EntitySelectorOptions.ERROR_INAPPLICABLE_OPTION.create(player);
         float i = FloatArgumentType.getFloat(ctx, "amount");
         CombatData.getCap((LivingEntity) player).setWounding(i);
-        ctx.getSource().sendSuccess(new TranslatableComponent("wardance.command.setWounding", player.getDisplayName(), i), false);
+        ctx.getSource().sendSuccess(Component.translatable("wardance.command.setWounding", player.getDisplayName(), i), false);
         return Command.SINGLE_SUCCESS;
     }
 
@@ -267,7 +267,7 @@ public class WarDanceCommand {
         if (!(player instanceof LivingEntity)) throw EntitySelectorOptions.ERROR_INAPPLICABLE_OPTION.create(player);
         float i = FloatArgumentType.getFloat(ctx, "amount");
         CombatData.getCap((LivingEntity) player).addWounding(-i);
-        ctx.getSource().sendSuccess(new TranslatableComponent("wardance.command.conWounding", player.getDisplayName(), i), false);
+        ctx.getSource().sendSuccess(Component.translatable("wardance.command.conWounding", player.getDisplayName(), i), false);
         return Command.SINGLE_SUCCESS;
     }
 
@@ -276,7 +276,7 @@ public class WarDanceCommand {
         if (!(player instanceof LivingEntity)) throw EntitySelectorOptions.ERROR_INAPPLICABLE_OPTION.create(player);
         float i = FloatArgumentType.getFloat(ctx, "amount");
         CombatData.getCap((LivingEntity) player).addWounding(i);
-        ctx.getSource().sendSuccess(new TranslatableComponent("wardance.command.addWounding", player.getDisplayName(), i), false);
+        ctx.getSource().sendSuccess(Component.translatable("wardance.command.addWounding", player.getDisplayName(), i), false);
         return Command.SINGLE_SUCCESS;
     }
 
@@ -284,7 +284,7 @@ public class WarDanceCommand {
         Entity player = EntityArgument.getEntity(ctx, "entity");
         if (!(player instanceof LivingEntity)) throw EntitySelectorOptions.ERROR_INAPPLICABLE_OPTION.create(player);
         float wounding = CombatData.getCap((LivingEntity) player).getWounding();
-        ctx.getSource().sendSuccess(new TranslatableComponent("wardance.command.getWounding", player.getDisplayName(), wounding), false);
+        ctx.getSource().sendSuccess(Component.translatable("wardance.command.getWounding", player.getDisplayName(), wounding), false);
         return Math.round(wounding);
     }
 
@@ -293,7 +293,7 @@ public class WarDanceCommand {
         if (!(player instanceof LivingEntity)) throw EntitySelectorOptions.ERROR_INAPPLICABLE_OPTION.create(player);
         float i = FloatArgumentType.getFloat(ctx, "amount");
         CombatData.getCap((LivingEntity) player).setFatigue(i);
-        ctx.getSource().sendSuccess(new TranslatableComponent("wardance.command.setFatigue", player.getDisplayName(), i), false);
+        ctx.getSource().sendSuccess(Component.translatable("wardance.command.setFatigue", player.getDisplayName(), i), false);
         return Command.SINGLE_SUCCESS;
     }
 
@@ -302,7 +302,7 @@ public class WarDanceCommand {
         if (!(player instanceof LivingEntity)) throw EntitySelectorOptions.ERROR_INAPPLICABLE_OPTION.create(player);
         float i = FloatArgumentType.getFloat(ctx, "amount");
         CombatData.getCap((LivingEntity) player).addFatigue(-i);
-        ctx.getSource().sendSuccess(new TranslatableComponent("wardance.command.conFatigue", player.getDisplayName(), i), false);
+        ctx.getSource().sendSuccess(Component.translatable("wardance.command.conFatigue", player.getDisplayName(), i), false);
         return Command.SINGLE_SUCCESS;
     }
 
@@ -311,7 +311,7 @@ public class WarDanceCommand {
         if (!(player instanceof LivingEntity)) throw EntitySelectorOptions.ERROR_INAPPLICABLE_OPTION.create(player);
         float i = FloatArgumentType.getFloat(ctx, "amount");
         CombatData.getCap((LivingEntity) player).addFatigue(i);
-        ctx.getSource().sendSuccess(new TranslatableComponent("wardance.command.addFatigue", player.getDisplayName(), i), false);
+        ctx.getSource().sendSuccess(Component.translatable("wardance.command.addFatigue", player.getDisplayName(), i), false);
         return Command.SINGLE_SUCCESS;
     }
 
@@ -319,7 +319,7 @@ public class WarDanceCommand {
         Entity player = EntityArgument.getEntity(ctx, "entity");
         if (!(player instanceof LivingEntity)) throw EntitySelectorOptions.ERROR_INAPPLICABLE_OPTION.create(player);
         float fatigue = CombatData.getCap((LivingEntity) player).getFatigue();
-        ctx.getSource().sendSuccess(new TranslatableComponent("wardance.command.getFatigue", player.getDisplayName(), fatigue), false);
+        ctx.getSource().sendSuccess(Component.translatable("wardance.command.getFatigue", player.getDisplayName(), fatigue), false);
         return Math.round(fatigue);
     }
 
@@ -328,7 +328,7 @@ public class WarDanceCommand {
         if (!(player instanceof LivingEntity)) throw EntitySelectorOptions.ERROR_INAPPLICABLE_OPTION.create(player);
         float i = FloatArgumentType.getFloat(ctx, "amount");
         CombatData.getCap((LivingEntity) player).setBurnout(i);
-        ctx.getSource().sendSuccess(new TranslatableComponent("wardance.command.setBurnout", player.getDisplayName(), i), false);
+        ctx.getSource().sendSuccess(Component.translatable("wardance.command.setBurnout", player.getDisplayName(), i), false);
         return Command.SINGLE_SUCCESS;
     }
 
@@ -337,7 +337,7 @@ public class WarDanceCommand {
         if (!(player instanceof LivingEntity)) throw EntitySelectorOptions.ERROR_INAPPLICABLE_OPTION.create(player);
         float i = FloatArgumentType.getFloat(ctx, "amount");
         CombatData.getCap((LivingEntity) player).addBurnout(-i);
-        ctx.getSource().sendSuccess(new TranslatableComponent("wardance.command.conBurnout", player.getDisplayName(), i), false);
+        ctx.getSource().sendSuccess(Component.translatable("wardance.command.conBurnout", player.getDisplayName(), i), false);
         return Command.SINGLE_SUCCESS;
     }
 
@@ -346,7 +346,7 @@ public class WarDanceCommand {
         if (!(player instanceof LivingEntity)) throw EntitySelectorOptions.ERROR_INAPPLICABLE_OPTION.create(player);
         float i = FloatArgumentType.getFloat(ctx, "amount");
         CombatData.getCap((LivingEntity) player).addBurnout(i);
-        ctx.getSource().sendSuccess(new TranslatableComponent("wardance.command.addBurnout", player.getDisplayName(), i), false);
+        ctx.getSource().sendSuccess(Component.translatable("wardance.command.addBurnout", player.getDisplayName(), i), false);
         return Command.SINGLE_SUCCESS;
     }
 
@@ -354,7 +354,7 @@ public class WarDanceCommand {
         Entity player = EntityArgument.getEntity(ctx, "entity");
         if (!(player instanceof LivingEntity)) throw EntitySelectorOptions.ERROR_INAPPLICABLE_OPTION.create(player);
         float burnout = CombatData.getCap((LivingEntity) player).getBurnout();
-        ctx.getSource().sendSuccess(new TranslatableComponent("wardance.command.getBurnout", player.getDisplayName(), burnout), false);
+        ctx.getSource().sendSuccess(Component.translatable("wardance.command.getBurnout", player.getDisplayName(), burnout), false);
         return Math.round(burnout);
     }
 
@@ -363,7 +363,7 @@ public class WarDanceCommand {
         final Skill skill = ctx.getArgument("skill", Skill.class);
         final boolean enabled = BoolArgumentType.getBool(ctx, "enabled");
         CasterData.getCap(player).setSkillSelectable(skill, enabled);
-        ctx.getSource().sendSuccess(new TranslatableComponent("wardance.command.setSkill"+(CasterData.getCap(player).isSkillSelectable(skill)), player.getDisplayName(), skill.getDisplayName(null)), false);
+        ctx.getSource().sendSuccess(Component.translatable("wardance.command.setSkill"+(CasterData.getCap(player).isSkillSelectable(skill)), player.getDisplayName(), skill.getDisplayName(null)), false);
         return Command.SINGLE_SUCCESS;
     }
 
@@ -371,14 +371,14 @@ public class WarDanceCommand {
         Player player = EntityArgument.getPlayer(ctx, "player");
         final Skill skill = ctx.getArgument("skill", Skill.class);
         final boolean enabled = CasterData.getCap(player).isSkillSelectable(skill);
-        ctx.getSource().sendSuccess(new TranslatableComponent("wardance.command.getSkill"+(CasterData.getCap(player).isSkillSelectable(skill)), player.getDisplayName(), skill.getDisplayName(null)), false);
+        ctx.getSource().sendSuccess(Component.translatable("wardance.command.getSkill"+(CasterData.getCap(player).isSkillSelectable(skill)), player.getDisplayName(), skill.getDisplayName(null)), false);
         return enabled ? 1 : 0;
     }
 
     private static int resetSkills(CommandContext<CommandSourceStack> ctx) throws CommandSyntaxException {
         Player player = EntityArgument.getPlayer(ctx, "player");
         CasterData.getCap(player).getSelectableList().clear();
-        ctx.getSource().sendSuccess(new TranslatableComponent("wardance.command.clearSkill"+(player.level.getGameRules().getBoolean(WarDance.GATED_SKILLS)), player.getDisplayName()), false);
+        ctx.getSource().sendSuccess(Component.translatable("wardance.command.clearSkill"+(player.level.getGameRules().getBoolean(WarDance.GATED_SKILLS)), player.getDisplayName()), false);
         return Command.SINGLE_SUCCESS;
     }
 

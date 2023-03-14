@@ -7,13 +7,13 @@ import jackiecrazy.wardance.networking.SyncSkillPacket;
 import jackiecrazy.wardance.skill.Skill;
 import jackiecrazy.wardance.skill.SkillCategory;
 import jackiecrazy.wardance.skill.SkillData;
-import net.minecraft.world.entity.LivingEntity;
-import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
 import net.minecraft.nbt.StringTag;
-import net.minecraftforge.common.util.Constants;
-import net.minecraftforge.fml.network.PacketDistributor;
+import net.minecraft.nbt.Tag;
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.entity.LivingEntity;
+import net.minecraftforge.network.PacketDistributor;
 
 import javax.annotation.Nullable;
 import java.lang.ref.WeakReference;
@@ -212,8 +212,8 @@ public class SkillCapability implements ISkillCapability {
                     als[a] = (Skill.getSkill(from.getString("equippedSkill" + a)));
             //if (from.getBoolean("skillListDirty")) {
             skillList.clear();
-            if (from.contains("randomList", Constants.NBT.TAG_LIST)) {
-                ListTag list = from.getList("randomList", Constants.NBT.TAG_STRING);
+            if (from.contains("randomList", Tag.TAG_LIST)) {
+                ListTag list = from.getList("randomList", Tag.TAG_STRING);
                 for (Object s : list.toArray()) {
                     if (s instanceof StringTag && Skill.getSkill(((StringTag) s).getAsString()) != null)
                         skillList.add(Skill.getSkill(((StringTag) s).getAsString()));

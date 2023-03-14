@@ -34,9 +34,8 @@ import javax.annotation.Nullable;
 import java.awt.*;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashSet;
 import java.util.UUID;
-
-import jackiecrazy.wardance.skill.Skill.STATE;
 
 @Mod.EventBusSubscriber(modid = WarDance.MODID)
 public class Hex extends Skill {
@@ -106,13 +105,13 @@ public class Hex extends Skill {
 //    }
 
     @Override
-    public SetTag<String> getTags(LivingEntity caster) {
+    public HashSet<String> getTags(LivingEntity caster) {
         return thing;
     }
 
     @Nonnull
     @Override
-    public SetTag<String> getSoftIncompatibility(LivingEntity caster) {
+    public HashSet<String> getSoftIncompatibility(LivingEntity caster) {
         return offensive;
     }
 

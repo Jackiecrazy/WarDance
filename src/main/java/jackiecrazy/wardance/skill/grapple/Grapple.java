@@ -18,8 +18,6 @@ import java.awt.*;
 import java.util.Arrays;
 import java.util.HashSet;
 
-import jackiecrazy.wardance.skill.Skill.STATE;
-
 public class Grapple extends Skill {
     private final SetTag<String> tag = SetTag.create(new HashSet<>(Arrays.asList("physical", "boundCast", "melee", "normalAttack", "countdown", "unarmed", "rechargeWithAttack")));
     private final SetTag<String> unarm = makeTag(SkillTags.offensive, SkillTags.physical, SkillTags.unarmed);
@@ -31,13 +29,13 @@ public class Grapple extends Skill {
     }
 
     @Override
-    public SetTag<String> getTags(LivingEntity caster) {
+    public HashSet<String> getTags(LivingEntity caster) {
         return unarm;
     }
 
     @Nonnull
     @Override
-    public SetTag<String> getSoftIncompatibility(LivingEntity caster) {
+    public HashSet<String> getSoftIncompatibility(LivingEntity caster) {
         return offensive;
     }
 

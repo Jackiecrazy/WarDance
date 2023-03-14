@@ -32,9 +32,6 @@ import java.awt.*;
 import java.util.Arrays;
 import java.util.HashSet;
 
-import jackiecrazy.wardance.skill.Skill.CastStatus;
-import jackiecrazy.wardance.skill.Skill.STATE;
-
 public class CoupDeGrace extends Skill {
     private final SetTag<String> tag = SetTag.create(new HashSet<>(Arrays.asList("physical", ProcPoints.melee, ProcPoints.normal_attack, ProcPoints.on_hurt, ProcPoints.recharge_cast, ProcPoints.change_parry_result, "execution")));
 
@@ -43,13 +40,13 @@ public class CoupDeGrace extends Skill {
     }
 
     @Override
-    public SetTag<String> getTags(LivingEntity caster) {
+    public HashSet<String> getTags(LivingEntity caster) {
         return special;
     }
 
     @Nonnull
     @Override
-    public SetTag<String> getSoftIncompatibility(LivingEntity caster) {
+    public HashSet<String> getSoftIncompatibility(LivingEntity caster) {
         return special;
     }
 
@@ -164,7 +161,7 @@ public class CoupDeGrace extends Skill {
         private final SetTag<String> tague = SetTag.create(new HashSet<>(Arrays.asList(SkillTags.special, SkillTags.offensive)));
 
         @Override
-        public SetTag<String> getTags(LivingEntity caster) {
+        public HashSet<String> getTags(LivingEntity caster) {
             return special;
         }
 

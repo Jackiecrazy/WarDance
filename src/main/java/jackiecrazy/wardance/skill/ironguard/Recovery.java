@@ -15,8 +15,7 @@ import net.minecraftforge.eventbus.api.EventPriority;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.awt.*;
-
-import jackiecrazy.wardance.skill.Skill.STATE;
+import java.util.HashSet;
 
 public class Recovery extends Skill {
     @Override
@@ -25,13 +24,13 @@ public class Recovery extends Skill {
     }
 
     @Override
-    public SetTag<String> getTags(LivingEntity caster) {
+    public HashSet<String> getTags(LivingEntity caster) {
         return passive;
     }
 
     @Nonnull
     @Override
-    public SetTag<String> getSoftIncompatibility(LivingEntity caster) {
+    public HashSet<String> getSoftIncompatibility(LivingEntity caster) {
         return none;
     }
 

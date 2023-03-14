@@ -197,22 +197,22 @@ public class SkillCastScreen extends Screen {
             if (castStatus != Skill.CastStatus.ALLOWED && castStatus != Skill.CastStatus.HOLSTERED && castStatus != Skill.CastStatus.ACTIVE) {
                 switch (castStatus) {
                     case COOLDOWN:
-                        print = new TranslatableComponent("wardance.skill.cooldown").getString();
+                        print = Component.translatable("wardance.skill.cooldown").getString();
                         break;
                     case CONFLICT:
-                        print = new TranslatableComponent("wardance.skill.conflict").getString();
+                        print = Component.translatable("wardance.skill.conflict").getString();
                         break;
                     case SILENCE:
-                        print = new TranslatableComponent("wardance.skill.silence").getString();
+                        print = Component.translatable("wardance.skill.silence").getString();
                         break;
                     case SPIRIT:
-                        print = new TranslatableComponent("wardance.skill.spirit", selected.spiritConsumption(mc.player)).getString();
+                        print = Component.translatable("wardance.skill.spirit", selected.spiritConsumption(mc.player)).getString();
                         break;
                     case MIGHT:
-                        print = new TranslatableComponent("wardance.skill.might", selected.mightConsumption(mc.player)).getString();
+                        print = Component.translatable("wardance.skill.might", selected.mightConsumption(mc.player)).getString();
                         break;
                     case OTHER:
-                        print = new TranslatableComponent(elements[index].getRegistryName().toString() + ".requirement").getString();
+                        print = Component.translatable(elements[index].getRegistryName().toString() + ".requirement").getString();
                         break;
                 }
                 yee = mc.font.width(print);

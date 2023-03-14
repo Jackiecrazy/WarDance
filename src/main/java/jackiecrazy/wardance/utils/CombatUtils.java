@@ -268,17 +268,17 @@ public class CombatUtils {
         if (CombatData.getCap(defender).getHandBind(h) > 0)
             return false;
         float rand = WarDance.rand.nextFloat();
-        boolean recharge = getCooledAttackStrength(defender, h, 0.5f) > 0.9f && CombatData.getCap(defender).getHandBind(h) == 0;
+        boolean recharge = true;//getCooledAttackStrength(defender, h, 0.5f) > 0.9f && CombatData.getCap(defender).getHandBind(h) == 0;
         recharge &= (!(defender instanceof Player) || ((Player) defender).getCooldowns().getCooldownPercent(defender.getItemInHand(h).getItem(), 0) == 0);
         if (i.getCapability(CombatManipulator.CAP).isPresent() && attacker instanceof LivingEntity) {
             return i.getCapability(CombatManipulator.CAP).resolve().get().canBlock(defender, attacker, i, recharge, postureDamage);
         }
         if (isShield(defender, i)) {
-            boolean canShield = (defender instanceof Player || rand < CombatConfig.mobParryChanceShield + CombatData.getCap(defender).getHandReel(h));
+            boolean canShield = (defender instanceof Player || rand < CombatConfig.mobParryChanceShield);
             boolean canParry = true;//CombatData.getCap(defender).getBarrierCooldown() == 0 || CombatData.getCap(defender).getBarrier() > 0;
             return recharge & canParry & canShield;
         } else if (isWeapon(defender, i)) {
-            boolean canWeapon = (defender instanceof Player || rand < CombatConfig.mobParryChanceWeapon + CombatData.getCap(defender).getHandReel(h));
+            boolean canWeapon = (defender instanceof Player || rand < CombatConfig.mobParryChanceWeapon);
             return recharge & canWeapon;
         } else return false;
     }
@@ -348,7 +348,8 @@ public class CombatUtils {
         if (s instanceof CombatDamageSource) {
             return ((CombatDamageSource) s).canProcAutoEffects();
         }
-        return s.getEntity() == s.getDirectEntity() && !s.isExplosion() && !s.isFire() && !s.isMagic() && !s.isBypassArmor() && !s.isProjectile();
+        //TODO does this break anything?
+        return s.getEntity() != null && s.getEntity() == s.getDirectEntity() && !s.isExplosion() && !s.isProjectile();//!s.isFire() && !s.isMagic() &&
     }
 
     public static float getAttackMight(LivingEntity seme, LivingEntity uke) {

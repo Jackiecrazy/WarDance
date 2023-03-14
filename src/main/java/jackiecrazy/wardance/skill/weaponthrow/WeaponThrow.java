@@ -6,21 +6,20 @@ import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.tags.SetTag;
 import net.minecraftforge.eventbus.api.Event;
 
-import jackiecrazy.wardance.skill.Skill.STATE;
-
 import javax.annotation.Nonnull;
+import java.util.HashSet;
 
 public class WeaponThrow extends Skill {
 
 
     @Override
-    public SetTag<String> getTags(LivingEntity caster) {
+    public HashSet<String> getTags(LivingEntity caster) {
         return null;
     }
 
     @Nonnull
     @Override
-    public SetTag<String> getSoftIncompatibility(LivingEntity caster) {
+    public HashSet<String> getSoftIncompatibility(LivingEntity caster) {
         return null;
     }
 

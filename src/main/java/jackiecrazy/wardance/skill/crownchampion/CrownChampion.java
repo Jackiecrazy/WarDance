@@ -36,8 +36,6 @@ import java.util.Arrays;
 import java.util.HashSet;
 import java.util.UUID;
 
-import jackiecrazy.wardance.skill.Skill.STATE;
-
 @Mod.EventBusSubscriber(modid = WarDance.MODID)
 public class CrownChampion extends Skill {
     /*
@@ -106,13 +104,13 @@ elemental might: +1 burn/snowball/poison/drown damage to targets you have attack
     }
 
     @Override
-    public SetTag<String> getTags(LivingEntity caster) {
+    public HashSet<String> getTags(LivingEntity caster) {
         return passive;
     }
 
     @Nonnull
     @Override
-    public SetTag<String> getSoftIncompatibility(LivingEntity caster) {
+    public HashSet<String> getSoftIncompatibility(LivingEntity caster) {
         return none;
     }
 

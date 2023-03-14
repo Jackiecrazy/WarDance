@@ -16,8 +16,6 @@ import java.awt.*;
 import java.util.Arrays;
 import java.util.HashSet;
 
-import jackiecrazy.wardance.skill.Skill.STATE;
-
 public class PoundOfFlesh extends MementoMori {
     private final SetTag<String> tag = SetTag.create(new HashSet<>(Arrays.asList(ProcPoints.melee, ProcPoints.on_hurt, ProcPoints.state, ProcPoints.on_being_parried)));
 
@@ -41,7 +39,7 @@ public class PoundOfFlesh extends MementoMori {
 
 
     @Override
-    public SetTag<String> getTags(LivingEntity caster) {
+    public HashSet<String> getTags(LivingEntity caster) {
         return special;
     }
 

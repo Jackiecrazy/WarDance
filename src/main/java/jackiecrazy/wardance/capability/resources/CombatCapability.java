@@ -1,6 +1,5 @@
 package jackiecrazy.wardance.capability.resources;
 
-import com.mojang.math.Vector3d;
 import jackiecrazy.footwork.api.WarAttributes;
 import jackiecrazy.footwork.capability.resources.ICombatCapability;
 import jackiecrazy.footwork.event.*;
@@ -16,20 +15,11 @@ import jackiecrazy.wardance.networking.CombatChannel;
 import jackiecrazy.wardance.networking.UpdateClientPacket;
 import jackiecrazy.wardance.skill.WarSkills;
 import jackiecrazy.wardance.utils.CombatUtils;
-import net.minecraft.entity.Entity;
-import net.minecraft.entity.Pose;
-import net.minecraft.entity.ai.attributes.Attributes;
-import net.minecraft.entity.player.ServerPlayerEntity;
-import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.nbt.CompoundTag;
-import net.minecraft.potion.Effects;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
-import net.minecraft.util.Hand;
-import net.minecraft.util.SoundCategory;
-import net.minecraft.util.SoundEvents;
-import net.minecraft.util.math.MathHelper;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.Entity;
@@ -43,12 +33,12 @@ import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.util.FakePlayer;
 import net.minecraftforge.eventbus.api.Event;
-import net.minecraftforge.fml.network.PacketDistributor;
 import net.minecraftforge.network.PacketDistributor;
 import org.jetbrains.annotations.Nullable;
 import org.joml.Math;
 
 import java.lang.ref.WeakReference;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Objects;
 import java.util.UUID;
@@ -69,23 +59,22 @@ public class CombatCapability implements ICombatCapability {
     public static final float MAXQI = 10;
     public static final UUID WOUND = UUID.fromString("982bbbb2-bbd0-4166-801a-560d1a4149c8");
     public static final UUID MORE = UUID.fromString("982bbbb2-bbd0-4166-801a-560d1a4149c9");
-    private static final AttributeModifier STAGGERA = new AttributeModifier(WOUND, "stagger armor debuff", -7, AttributeModifier.Operation.ADDITION);
-    private static final AttributeModifier STAGGERSA = new AttributeModifier(MORE, "additional stagger armor penalty", -0.5, AttributeModifier.Operation.MULTIPLY_TOTAL);
-    private static final AttributeModifier STAGGERS = new AttributeModifier(WOUND, "stagger speed debuff", -1, AttributeModifier.Operation.MULTIPLY_TOTAL);
+    private static final AttributeModifier EXPOSEA = new AttributeModifier(WOUND, "expose penalty", -1, AttributeModifier.Operation.MULTIPLY_TOTAL);
+    private static final AttributeModifier STAGGER = new AttributeModifier(WOUND, "stagger penalty", -0.5, AttributeModifier.Operation.MULTIPLY_TOTAL);
 
     private final WeakReference<LivingEntity> dude;
     int lastRangeTick = 0;
     private ItemStack prev;
-    private float might, spirit, posture, rank, mpos, mspi, maxMight, vision;
+    private float might, spirit, posture, rank, vision;
     private int shatterCD;
     private int qcd, scd, pcd, ccd;
     private int mBind;
     private int oBind;
     private int retina;
-    private int staggert, mstaggert, offhandcd, roll, sweepAngle = -1;
+    private int staggert, mstaggert, offhandcd, roll, expose, mexpose, sweepAngle = -1;
     private boolean offhand, combat;
     private long lastUpdate;
-    private boolean first, shattering, shieldDown;
+    private boolean first, shattering, posInvul;
     private float cache;//no need to save this because it'll be used within the span of a tick
     private int parrying;
     private long staggerTickExisted;
@@ -94,7 +83,11 @@ public class CombatCapability implements ICombatCapability {
     private ItemStack tempOffhand = ItemStack.EMPTY;
     private Vec3 motion;
 
-    HashMap<UUID, Integer>
+    HashMap<UUID, Integer> fractures = new HashMap<>();
+    /**
+     * only used on the client
+     */
+    ArrayList<LivingEntity> fractureQueue = new ArrayList<>();
 
     public CombatCapability(LivingEntity e) {
         dude = new WeakReference<>(e);
@@ -118,7 +111,7 @@ public class CombatCapability implements ICombatCapability {
 
     @Override
     public void setMight(float amount) {
-        float cap = maxMight;
+        float cap = getMaxMight();
         if (!Float.isFinite(might)) might = 0;
         else might = Math.clamp(amount, 0, cap);
     }
@@ -175,7 +168,8 @@ public class CombatCapability implements ICombatCapability {
 
     @Override
     public float getMaxSpirit() {
-        return 0;
+        final LivingEntity e = dude.get();
+        return e == null ? 1 : (float) e.getAttributeValue(WarAttributes.MAX_SPIRIT.get());
     }
 
     @Override
@@ -191,7 +185,7 @@ public class CombatCapability implements ICombatCapability {
 
     @Override
     public float addSpirit(float amount) {
-        float overflow = Math.max(0, spirit + amount - mspi);
+        float overflow = Math.max(0, spirit + amount - getMaxSpirit());
         setSpirit(spirit + amount);
         return overflow;
     }
@@ -226,7 +220,7 @@ public class CombatCapability implements ICombatCapability {
     @Override
     public float getMaxPosture() {
         final LivingEntity e = dude.get();
-        return e ==null? 1: (float) e.getAttributeValue(WarAttributes.MAX_POSTURE.get());
+        return e == null ? 1 : (float) e.getAttributeValue(WarAttributes.MAX_POSTURE.get());
     }
 
     @Override
@@ -270,7 +264,7 @@ public class CombatCapability implements ICombatCapability {
         LivingEntity elb = dude.get();
         if (elb == null) return ret;
         //staggered already, no more posture damage
-        if (staggert > 0) return amount;
+        if (posInvul) return amount;
         if (!Float.isFinite(posture)) posture = getMaxPosture();
         //event for oodles of compat
         ConsumePostureEvent cpe = new ConsumePostureEvent(elb, assailant, amount, above);
@@ -292,11 +286,14 @@ public class CombatCapability implements ICombatCapability {
             amount = posture - above;
         } else if (posture - amount < 0) {
             posture = 0;
-            StaggerEvent se = new StaggerEvent(elb, assailant, CombatConfig.staggerDurationMin + Math.max(0, (int) ((elb.getMaxHealth() - elb.getHealth()) / elb.getMaxHealth() * (CombatConfig.staggerDuration - CombatConfig.staggerDurationMin))), CombatConfig.staggerHits);
-            MinecraftForge.EVENT_BUS.post(se);
-            if (se.isCanceled()) return 0f;
-            stagger(se.getLength());
-            elb.level.playSound(null, elb.getX(), elb.getY(), elb.getZ(), SoundEvents.ZOMBIE_BREAK_WOODEN_DOOR, SoundSource.PLAYERS, 0.3f + WarDance.rand.nextFloat() * 0.5f, 0.75f + WarDance.rand.nextFloat() * 0.5f);
+            posInvul = true;
+            if (addFracture(assailant, 1)) {
+                StaggerEvent se = new StaggerEvent(elb, assailant, CombatConfig.staggerDurationMin + Math.max(0, (int) ((elb.getMaxHealth() - elb.getHealth()) / elb.getMaxHealth() * (CombatConfig.staggerDuration - CombatConfig.staggerDurationMin))));
+                MinecraftForge.EVENT_BUS.post(se);
+                if (se.isCanceled()) return 0f;
+                stagger(se.getLength());
+                elb.level.playSound(null, elb.getX(), elb.getY(), elb.getZ(), SoundEvents.ZOMBIE_ATTACK_WOODEN_DOOR, SoundSource.PLAYERS, 0.3f + WarDance.rand.nextFloat() * 0.5f, 0.75f + WarDance.rand.nextFloat() * 0.5f);
+            }
             elb.removeVehicle();
             for (Entity rider : elb.getPassengers())
                 rider.removeVehicle();
@@ -377,7 +374,7 @@ public class CombatCapability implements ICombatCapability {
     @Override
     public float getMaxMight() {
         final LivingEntity e = dude.get();
-        return e ==null? 1: (float) e.getAttributeValue(WarAttributes.MAX_POSTURE.get());
+        return e == null ? 1 : (float) e.getAttributeValue(WarAttributes.MAX_POSTURE.get());
     }
 
     @Override
@@ -396,17 +393,11 @@ public class CombatCapability implements ICombatCapability {
         final LivingEntity e = dude.get();
         if (time == 0 && staggert > 0 && e != null) {
             e.getAttribute(Attributes.MOVEMENT_SPEED).removeModifier(WOUND);
-            e.getAttribute(Attributes.ARMOR).removeModifier(WOUND);
-            e.getAttribute(Attributes.ARMOR).removeModifier(MORE);
             mstaggert = 0;
         }//entering stagger
         else if (e != null && time > 0 && staggert == 0) {
             e.getAttribute(Attributes.MOVEMENT_SPEED).removeModifier(WOUND);
-            e.getAttribute(Attributes.MOVEMENT_SPEED).addPermanentModifier(STAGGERS);
-            e.getAttribute(Attributes.ARMOR).removeModifier(WOUND);
-            e.getAttribute(Attributes.ARMOR).addPermanentModifier(STAGGERA);
-            e.getAttribute(Attributes.ARMOR).removeModifier(MORE);
-            e.getAttribute(Attributes.ARMOR).addPermanentModifier(STAGGERSA);
+            e.getAttribute(Attributes.MOVEMENT_SPEED).addPermanentModifier(STAGGER);
         }
         mstaggert = Math.max(mstaggert, time);
         staggert = time;
@@ -417,16 +408,11 @@ public class CombatCapability implements ICombatCapability {
         if (staggert - amount > 0)
             staggert -= amount;
         else {
-            LivingEntity elb = dude.get();
-            if (staggert > 0 && elb != null) {
-                elb.getAttribute(Attributes.MOVEMENT_SPEED).removeModifier(WOUND);
-                elb.getAttribute(Attributes.ARMOR).removeModifier(WOUND);
-                elb.getAttribute(Attributes.ARMOR).removeModifier(MORE);
-                setPosture(getMaxPosture());
-                staggerc = 0;
-            }
             int temp = staggert;
-            staggert = mstaggert = 0;
+            //handled here instead of in stagger because of invulnerability frames
+            posInvul = staggert - amount > 0 && expose > 0;
+            //resets attributes and (max) stagger time
+            stagger(0);
             return -temp;
         }
         return 0;
@@ -434,51 +420,108 @@ public class CombatCapability implements ICombatCapability {
 
     @Override
     public int getFractureCount() {
-        return 0;
+        int ret = 0;
+        for (Integer i : fractures.values())
+            ret += i;
+        return ret;
     }
 
     @Override
     public int getFractureCount(LivingEntity livingEntity) {
-        return 0;
+        return fractures.getOrDefault(livingEntity.getUUID(), 0);
     }
 
     @Override
     public HashMap<UUID, Integer> getFractureList() {
-        return null;
+        return fractures;
     }
 
     @Override
-    public void addFracture(@Nullable LivingEntity livingEntity, int i) {
-
+    public boolean addFracture(@Nullable LivingEntity livingEntity, int i) {
+        if (getFractureCount() + i >= getMaxFracture()) {
+            ExposeEvent se = new ExposeEvent(dude.get(), livingEntity, 100); //magic number
+            MinecraftForge.EVENT_BUS.post(se);
+            if (se.isCanceled()) return false;
+            expose(se.getLength());
+            clearFracture(null, false);
+            return false;
+        }
+        if (livingEntity == null)
+            fractures.merge(WOUND, i, Integer::sum);
+        else fractures.merge(livingEntity.getUUID(), i, Integer::sum);
+        return true;
     }
 
     @Override
-    public void clearFracture(@Nullable LivingEntity livingEntity, boolean b) {
-
+    public void clearFracture(@Nullable LivingEntity of, boolean clearInvalid) {
+        if (clearInvalid) {
+            final LivingEntity e = dude.get();
+            if (e != null && e.level instanceof ServerLevel server)
+                fractures.entrySet().removeIf((id) -> server.getEntity(id.getKey()) == null);
+            else fractures.clear();
+        }
+        if (of != null)
+            fractures.remove(of.getUUID());
+        else fractures.clear();
     }
 
     @Override
     public float getMaxFracture() {
-        return 0;
+        final LivingEntity e = dude.get();
+        return e == null ? 1 : (float) e.getAttributeValue(WarAttributes.MAX_FRACTURE.get());
     }
 
     @Override
     public int getMaxExposeTime() {
-        return 0;
+        return mexpose;
     }
 
     @Override
     public int getExposeTime() {
-        return 0;
+        return expose;
     }
 
     @Override
-    public void expose(int i) {
-
+    public void expose(int time) {
+        final LivingEntity e = dude.get();
+        //leaving expose
+        if (time == 0 && expose > 0 && e != null) {
+            e.getAttribute(Attributes.MOVEMENT_SPEED).removeModifier(WOUND);
+            e.getAttribute(Attributes.ARMOR).removeModifier(WOUND);
+            e.getAttribute(WarAttributes.ABSORPTION.get()).removeModifier(WOUND);
+            e.getAttribute(WarAttributes.DEFLECTION.get()).removeModifier(WOUND);
+            e.getAttribute(WarAttributes.SHATTER.get()).removeModifier(WOUND);
+            mexpose = 0;
+        }//entering expose
+        else if (e != null && time > 0 && expose == 0) {
+            e.level.playSound(null, e.getX(), e.getY(), e.getZ(), SoundEvents.ZOMBIE_BREAK_WOODEN_DOOR, SoundSource.PLAYERS, 0.3f + WarDance.rand.nextFloat() * 0.5f, 0.75f + WarDance.rand.nextFloat() * 0.5f);
+            e.getAttribute(Attributes.MOVEMENT_SPEED).removeModifier(WOUND);
+            e.getAttribute(Attributes.MOVEMENT_SPEED).addPermanentModifier(EXPOSEA);
+            e.getAttribute(Attributes.ARMOR).removeModifier(WOUND);
+            e.getAttribute(Attributes.ARMOR).addPermanentModifier(EXPOSEA);
+            e.getAttribute(WarAttributes.ABSORPTION.get()).removeModifier(WOUND);
+            e.getAttribute(WarAttributes.ABSORPTION.get()).addPermanentModifier(EXPOSEA);
+            e.getAttribute(WarAttributes.DEFLECTION.get()).removeModifier(WOUND);
+            e.getAttribute(WarAttributes.DEFLECTION.get()).addPermanentModifier(EXPOSEA);
+            e.getAttribute(WarAttributes.SHATTER.get()).removeModifier(WOUND);
+            e.getAttribute(WarAttributes.SHATTER.get()).addPermanentModifier(EXPOSEA);
+        }
+        mexpose = Math.max(mexpose, time);
+        expose = time;
     }
 
     @Override
-    public int decrementExposeTime(int i) {
+    public int decrementExposeTime(int amount) {
+        if (staggert - amount > 0)
+            staggert -= amount;
+        else {
+            int temp = staggert;
+            //handled here instead of in stagger because of invulnerability frames
+            posInvul = staggert > 0 && expose - amount > 0;
+            //resets attributes and (max) expose time
+            expose(0);
+            return -temp;
+        }
         return 0;
     }
 
@@ -543,6 +586,7 @@ public class CombatCapability implements ICombatCapability {
 
     @Override
     public int getHandBind(InteractionHand h) {
+        if (staggert > 0 || expose > 0) return Math.max(staggert, expose);
         if (h == InteractionHand.OFF_HAND) {
             return oBind;
         }
@@ -759,13 +803,14 @@ public class CombatCapability implements ICombatCapability {
     public void read(CompoundTag c) {
         int temp = roll;
         setPosture(c.getFloat("posture"));
-        stagger(c.getInt("staggert"));
+        staggert = (c.getInt("staggert"));
+        expose = (c.getInt("expose"));
         lastUpdate = c.getLong("lastUpdate");
         setShatterCooldown(c.getInt("shattercd"));
         mstaggert = c.getInt("mstaggert");
+        mexpose = c.getInt("mexpose");
         retina = c.getInt("retina");
         vision = c.getFloat("vision");
-        shieldDown=c.getBoolean("shieldDown");
         if (!c.contains("qi")) return;
         setMight(c.getFloat("qi"));
         setRank(c.getFloat("combo"));
@@ -838,6 +883,8 @@ public class CombatCapability implements ICombatCapability {
         c.putInt("spiritcd", getSpiritGrace());
         c.putInt("mstaggert", getMaxStaggerTime());
         c.putInt("staggert", getStaggerTime());
+        c.putInt("expose", getExposeTime());
+        c.putInt("mexpose", getMaxExposeTime());
         c.putInt("offhandcd", getOffhandCooldown());
         c.putInt("roll", getRollTime());
         c.putInt("mainBind", getHandBind(InteractionHand.MAIN_HAND));
@@ -851,7 +898,6 @@ public class CombatCapability implements ICombatCapability {
         c.putInt("shattercd", getShatterCooldown());
         c.putInt("sweep", getForcedSweep());
         c.putBoolean("rolling", dude.get() instanceof Player p && p.getForcedPose() == Pose.SLEEPING);
-        c.putBoolean("shieldDown", shieldDown);
         if (!tempOffhand.isEmpty())
             c.put("temp", tempOffhand.save(new CompoundTag()));
         return c;
@@ -881,6 +927,8 @@ public class CombatCapability implements ICombatCapability {
         c.putFloat("posture", getPosture());
         c.putInt("staggert", getStaggerTime());
         c.putInt("mstaggert", getMaxStaggerTime());
+        c.putInt("expose", getExposeTime());
+        c.putInt("mexpose", getMaxExposeTime());
         c.putLong("lastUpdate", lastUpdate);
         c.putInt("shattercd", getShatterCooldown());
         c.putInt("retina", retina);
@@ -898,7 +946,7 @@ public class CombatCapability implements ICombatCapability {
         }
         float exhaustMod = Math.max(0, elb.hasEffect(FootworkEffects.EXHAUSTION.get()) ? 1 - elb.getEffect(FootworkEffects.EXHAUSTION.get()).getAmplifier() * 0.2f : 1);
         float armorMod = 2.5f + Math.min(elb.getArmorValue(), 20) * 0.125f;
-        float cooldownMod = Math.min(CombatUtils.getCooledAttackStrength(elb, InteractionHand.MAIN_HAND, 0.5f), CombatUtils.getCooledAttackStrength(elb, Hand.MAIN_HAND, 0.5f));
+        float cooldownMod = Math.min(CombatUtils.getCooledAttackStrength(elb, InteractionHand.MAIN_HAND, 0.5f), CombatUtils.getCooledAttackStrength(elb, InteractionHand.MAIN_HAND, 0.5f));
         float healthMod = 0.25f + elb.getHealth() / elb.getMaxHealth() * 0.75f;
         if (CasterData.getCap(elb).isSkillUsable(WarSkills.BOULDER_BRACE.get())) {
             armorMod = 2.5f;

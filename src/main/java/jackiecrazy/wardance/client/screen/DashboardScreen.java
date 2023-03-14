@@ -21,7 +21,7 @@ public class DashboardScreen extends Screen {
     private Player p;
 
     public DashboardScreen(Player player) {
-        super(new TranslatableComponent("wardance.gui.dashboard"));
+        super(Component.translatable("wardance.gui.dashboard"));
         p = player;
         this.passEvents = true;
     }

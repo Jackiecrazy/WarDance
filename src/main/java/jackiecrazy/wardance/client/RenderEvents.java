@@ -52,6 +52,7 @@ import net.minecraft.world.phys.HitResult;
 import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.client.event.RenderGameOverlayEvent;
+import net.minecraftforge.client.event.RenderLevelStageEvent;
 import net.minecraftforge.client.event.RenderWorldLastEvent;
 import net.minecraftforge.common.ForgeMod;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
@@ -83,12 +84,12 @@ public class RenderEvents {
      * @Author Vazkii
      */
     @SubscribeEvent
-    public static void down(RenderWorldLastEvent event) {
+    public static void down(RenderLevelStageEvent event) {
         Minecraft mc = Minecraft.getInstance();
 
         Camera camera = mc.gameRenderer.getMainCamera();
-        PoseStack poseStack = event.getMatrixStack();
-        float partialTicks = event.getPartialTicks();
+        PoseStack poseStack = event.getPoseStack();
+        float partialTicks = event.getPartialTick();
         Entity cameraEntity = camera.getEntity() != null ? camera.getEntity() : mc.player;
 
         Vec3 cameraPos = camera.getPosition();
@@ -179,7 +180,7 @@ public class RenderEvents {
                 }
             }
         }
-
+        //TODO update in accordance with new might
         if (event.getType().equals(RenderGameOverlayEvent.ElementType.ALL))
             if (mc.getCameraEntity() instanceof Player) {
                 LocalPlayer player = mc.player;

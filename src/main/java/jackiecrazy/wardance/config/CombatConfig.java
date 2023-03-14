@@ -5,7 +5,7 @@ import jackiecrazy.wardance.utils.CombatUtils;
 import net.minecraftforge.common.ForgeConfigSpec;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
-import net.minecraftforge.fml.config.ModConfig;
+import net.minecraftforge.fml.event.config.ModConfigEvent;
 import org.apache.commons.lang3.tuple.Pair;
 
 import java.util.Arrays;
@@ -468,11 +468,6 @@ public class CombatConfig {
     private final ForgeConfigSpec.DoubleValue _defaultMultiplierPostureAttack;
     private final ForgeConfigSpec.IntValue _rollThreshold;
     private final ForgeConfigSpec.IntValue _rollCooldown;
-    private final ForgeConfigSpec.IntValue _shieldThreshold;
-    private final ForgeConfigSpec.DoubleValue _shieldCount;
-    private final ForgeConfigSpec.IntValue _staggerDuration;
-    private final ForgeConfigSpec.IntValue _staggerDurationMin;
-    private final ForgeConfigSpec.IntValue _staggerHits;
     private final ForgeConfigSpec.IntValue _recovery;
     private final ForgeConfigSpec.BooleanValue _dodge;
     private final ForgeConfigSpec.IntValue _sneakParry;
@@ -500,21 +495,16 @@ public class CombatConfig {
         _posturePerProjectile = b.translation("wardance.config.ppp").comment("Posture consumed per projectile parried").defineInRange("posture per projectile", 0.5, 0, Double.MAX_VALUE);
         _defaultMultiplierPostureAttack = b.translation("wardance.config.dmpa").comment("Default multiplier for any items not defined in the config, multiplied by their attack damage").defineInRange("default attack multiplier", 0.15, 0, Double.MAX_VALUE);
         _defaultMultiplierPostureDefend = b.translation("wardance.config.dmpd").comment("Default multiplier for any item not defined in the config, when used for parrying").defineInRange("default defense multiplier", 1.4, 0, Double.MAX_VALUE);
-        _shieldThreshold = b.translation("wardance.config.shieldT").comment("Within this number of ticks after a shield parry, parrying is free").defineInRange("default barrier cooldown", 16, 0, Integer.MAX_VALUE);
-        _shieldCount = b.translation("wardance.config.shieldT").comment("This many parries are free after a parry that cost posture").defineInRange("default barrier size", 0.2, 0, Float.MAX_VALUE);
-        _customProjectile = b.translation("wardance.config.projectilePosture").comment("Define custom projectile parrying behavior. Default list provided courtesy of DarkMega. Format is name, posture cost (negative to disable parrying this projectile), shield count cost, and a list of tags:\nProjectiles may be (d)estroyed upon parry.\nThey may also be allowed to (t)rigger their non-damage effects.").defineList("projectile parry rules", Arrays.asList(PROJECTILES), String.class::isInstance);
+        _customProjectile = b.translation("wardance.config.projectilePosture").comment("Define custom projectile parrying behavior. Default list provided courtesy of DarkMega. Format is name, posture cost (negative to disable parrying this projectile), and a list of tags:\nProjectiles may be (d)estroyed upon parry.\nThey may also be allowed to (t)rigger their non-damage effects.").defineList("projectile parry rules", Arrays.asList(PROJECTILES), String.class::isInstance);
         b.pop();
         b.push("dodging");
         _dodge = b.translation("wardance.config.dodge").define("enable dodges", true);
         _rollThreshold = b.translation("wardance.config.rollT").comment("Within this number of ticks after rolling the entity is considered invulnerable.").defineInRange("roll time", 10, 0, Integer.MAX_VALUE);
         _rollCooldown = b.translation("wardance.config.rollC").comment("Within this number of ticks after dodging the entity cannot dodge again").defineInRange("roll cooldown", 20, 0, Integer.MAX_VALUE);
         b.pop();
-        b.push("stagger");
-        _staggerDuration = b.translation("wardance.config.staggerD").comment("Maximum number of ticks an entity should be staggered for when its posture reaches 0. The actual length of a given stagger is scaled by HP between the min and max values").defineInRange("max stagger duration", 100, 1, Integer.MAX_VALUE);
-        _staggerDurationMin = b.translation("wardance.config.staggerM").comment("Minimum number of ticks an entity should be staggered for when its posture reaches 0. The actual length of a given stagger is scaled by HP between the min and max values").defineInRange("min stagger duration", 40, 1, Integer.MAX_VALUE);
-        _staggerHits = b.translation("wardance.config.staggerH").comment("Number of hits a staggered entity will take before stagger is automatically canceled").defineInRange("stagger hits", 3, 1, Integer.MAX_VALUE);
-        _stagger = b.translation("wardance.config.stagger").comment("Extra damage taken by a staggered entity").defineInRange("stagger damage multiplier", 1.5, 0, Double.MAX_VALUE);
-        _unstagger = b.translation("wardance.config.unstagger").comment("Damage taken by a non-staggered entity. Added out of curiosity.").defineInRange("normal damage multiplier", 1, 0, Double.MAX_VALUE);
+        b.push("expose");
+        _stagger = b.translation("wardance.config.stagger").comment("Extra damage taken by an exposed entity. Defaults to 1 because expose already nullifies all protection.").defineInRange("stagger damage multiplier", 1, 0, Double.MAX_VALUE);
+        _unstagger = b.translation("wardance.config.unstagger").comment("Damage taken by a non-exposed entity. Added out of curiosity.").defineInRange("normal damage multiplier", 1, 0, Double.MAX_VALUE);
         b.pop();
         b.push("difficulty");
         _defaultMultiplierPostureMob = b.translation("wardance.config.dmpm").comment("Default multiplier for mob attack posture, multiplied by their max posture. This is used when the mob is not wielding a weapon.").defineInRange("default mob multiplier", 0.2, 0, Double.MAX_VALUE);
@@ -548,11 +538,6 @@ public class CombatConfig {
         defaultMultiplierPostureMob = CONFIG._defaultMultiplierPostureMob.get().floatValue();
         rollCooldown = CONFIG._rollCooldown.get();
         rollEndsAt = rollCooldown - CONFIG._rollThreshold.get();
-        shieldCooldown = CONFIG._shieldThreshold.get();
-        barrierSize = CONFIG._shieldCount.get().floatValue();
-        staggerDuration = CONFIG._staggerDuration.get();
-        staggerDurationMin = CONFIG._staggerDurationMin.get();
-        staggerHits = CONFIG._staggerHits.get();
         staggerDamage = CONFIG._stagger.get().floatValue();
         unStaggerDamage = CONFIG._unstagger.get().floatValue();
         mobParryChanceWeapon = CONFIG._mobParryChanceWeapon.get().floatValue();
@@ -571,7 +556,7 @@ public class CombatConfig {
     }
 
     @SubscribeEvent
-    public static void loadConfig(ModConfig.ModConfigEvent e) {
+    public static void loadConfig(ModConfigEvent e) {
         if (e.getConfig().getSpec() == CONFIG_SPEC) {
             if(GeneralConfig.debug)
             WarDance.LOGGER.debug("loading combat config!");

@@ -1,5 +1,8 @@
 package jackiecrazy.wardance;
 
+import jackiecrazy.footwork.capability.goal.IGoalHelper;
+import jackiecrazy.footwork.capability.resources.ICombatCapability;
+import jackiecrazy.footwork.capability.weaponry.ICombatItemCapability;
 import jackiecrazy.wardance.capability.skill.DummySkillCap;
 import jackiecrazy.wardance.capability.skill.ISkillCapability;
 import jackiecrazy.wardance.capability.skill.SkillStorage;
@@ -15,8 +18,10 @@ import jackiecrazy.wardance.networking.*;
 import jackiecrazy.wardance.skill.Skill;
 import jackiecrazy.wardance.skill.WarSkills;
 import net.minecraft.world.level.GameRules;
+import net.minecraftforge.client.event.RegisterKeyMappingsEvent;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.capabilities.CapabilityManager;
+import net.minecraftforge.common.capabilities.RegisterCapabilitiesEvent;
 import net.minecraftforge.event.RegisterCommandsEvent;
 import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.eventbus.api.IEventBus;
@@ -50,12 +55,14 @@ public class WarDance {
     public WarDance() {
         // Register the setup method for modloading
         FMLJavaModLoadingContext.get().getModEventBus().addListener(this::setup);
+        FMLJavaModLoadingContext.get().getModEventBus().addListener(this::caps);
         // Register the enqueueIMC method for modloading
         FMLJavaModLoadingContext.get().getModEventBus().addListener(this::enqueueIMC);
         // Register the processIMC method for modloading
         FMLJavaModLoadingContext.get().getModEventBus().addListener(this::processIMC);
         // Register the doClientStuff method for modloading
         FMLJavaModLoadingContext.get().getModEventBus().addListener(this::doClientStuff);
+        FMLJavaModLoadingContext.get().getModEventBus().addListener(this::keys);
 
         // Register ourselves for server and other game events we are interested in
         MinecraftForge.EVENT_BUS.register(this);
@@ -67,14 +74,12 @@ public class WarDance {
         ModLoadingContext.get().registerConfig(ModConfig.Type.COMMON, ResourceConfig.CONFIG_SPEC, MODID + "/resources.toml");
         ModLoadingContext.get().registerConfig(ModConfig.Type.CLIENT, ClientConfig.CONFIG_SPEC, MODID + "/client.toml");
         IEventBus bus = FMLJavaModLoadingContext.get().getModEventBus();
-        WarSkills.SKILLS.makeRegistry(RegistryBuilder::new);
+        WarSkills.SUPPLIER = WarSkills.SKILLS.makeRegistry(RegistryBuilder::new);
         WarSkills.SKILLS.register(bus);
         MinecraftForge.EVENT_BUS.addListener(this::commands);
     }
 
     private void setup(final FMLCommonSetupEvent event) {
-        CapabilityManager.INSTANCE.register(ISkillCapability.class, new SkillStorage(), DummySkillCap::new);
-        CapabilityManager.INSTANCE.register(IMark.class, new StatusStorage(), DummyMarkCap::new);
         // some preinit code
         int index = 0;
         CombatChannel.INSTANCE.registerMessage(index++, UpdateClientPacket.class, new UpdateClientPacket.UpdateClientEncoder(), new UpdateClientPacket.UpdateClientDecoder(), new UpdateClientPacket.UpdateClientHandler());
@@ -96,11 +101,19 @@ public class WarDance {
     private void doClientStuff(final FMLClientSetupEvent event) {
         // do something that can only be done on the client
         ClientConfig.bake();
-        ClientRegistry.registerKeyBinding(Keybinds.COMBAT);
-        ClientRegistry.registerKeyBinding(Keybinds.CAST);
-        ClientRegistry.registerKeyBinding(Keybinds.SELECT);
-        ClientRegistry.registerKeyBinding(Keybinds.BINDCAST);
-        ClientRegistry.registerKeyBinding(Keybinds.PARRY);
+    }
+
+    private void keys(final RegisterKeyMappingsEvent event) {
+        event.register(Keybinds.COMBAT);
+        event.register(Keybinds.CAST);
+        event.register(Keybinds.SELECT);
+        event.register(Keybinds.BINDCAST);
+        event.register(Keybinds.PARRY);
+    }
+
+    private void caps(final RegisterCapabilitiesEvent event) {
+        event.register(IMark.class);
+        event.register(ISkillCapability.class);
     }
 
     private void enqueueIMC(final InterModEnqueueEvent event) {
@@ -115,22 +128,7 @@ public class WarDance {
             MinecraftForge.EVENT_BUS.register(ElenaiCompat.class);
     }
 
-    // You can use SubscribeEvent and let the Event Bus discover methods to call
-    @SubscribeEvent
-    public void onServerStarting(FMLServerStartingEvent event) {
-        // do something when the server starts
-    }
-
     private void commands(final RegisterCommandsEvent event) {
         WarDanceCommand.register(event.getDispatcher());
-    }
-
-    // You can use EventBusSubscriber to automatically subscribe events on the contained class (this is subscribing to the MOD
-    // Event bus for receiving Registry Events)
-    @Mod.EventBusSubscriber(bus = Mod.EventBusSubscriber.Bus.MOD)
-    public static class RegistryEvents {
-        @SubscribeEvent
-        public static void skills(final RegistEven<Skill> e) {
-        }
     }
 }

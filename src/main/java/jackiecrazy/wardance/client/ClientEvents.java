@@ -2,6 +2,7 @@ package jackiecrazy.wardance.client;
 
 import com.elenai.elenaidodge2.event.ClientTickEventListener;
 import com.mojang.blaze3d.vertex.PoseStack;
+import com.mojang.math.Vector3f;
 import jackiecrazy.footwork.capability.resources.CombatData;
 import jackiecrazy.footwork.capability.resources.ICombatCapability;
 import jackiecrazy.footwork.utils.GeneralUtils;
@@ -12,27 +13,26 @@ import jackiecrazy.wardance.config.CombatConfig;
 import jackiecrazy.wardance.config.GeneralConfig;
 import jackiecrazy.wardance.networking.*;
 import jackiecrazy.wardance.utils.CombatUtils;
+import net.minecraft.client.KeyMapping;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.player.AbstractClientPlayer;
-import net.minecraft.client.KeyMapping;
-import net.minecraft.world.entity.Entity;
-import net.minecraft.world.entity.LivingEntity;
-import net.minecraft.world.entity.Pose;
-import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.entity.projectile.ProjectileUtil;
-import net.minecraft.core.particles.ParticleTypes;
-import net.minecraft.core.Direction;
-import net.minecraft.world.InteractionHand;
-import net.minecraft.world.entity.HumanoidArm;
 import net.minecraft.client.player.Input;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
+import net.minecraft.core.particles.ParticleTypes;
+import net.minecraft.network.chat.Component;
+import net.minecraft.world.InteractionHand;
+import net.minecraft.world.entity.*;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.entity.projectile.ProjectileUtil;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.EntityHitResult;
 import net.minecraft.world.phys.Vec3;
-import com.mojang.math.Vector3f;
-import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.client.event.*;
+import net.minecraftforge.client.event.InputEvent;
+import net.minecraftforge.client.event.MovementInputUpdateEvent;
+import net.minecraftforge.client.event.RenderHandEvent;
+import net.minecraftforge.client.event.RenderLivingEvent;
 import net.minecraftforge.common.ForgeMod;
 import net.minecraftforge.event.TickEvent;
 import net.minecraftforge.event.entity.living.LivingAttackEvent;
@@ -84,9 +84,9 @@ public class ClientEvents {
     }
 
     @SubscribeEvent(priority = EventPriority.HIGHEST)
-    public static void dodge(InputUpdateEvent e) {
+    public static void dodge(MovementInputUpdateEvent e) {
         Minecraft mc = Minecraft.getInstance();
-        Input mi = e.getMovementInput();
+        Input mi = e.getInput();
         final ICombatCapability itsc = CombatData.getCap(mc.player);
 //        if (itsc.getStaggerTime() > 0) {
 //            //no moving while you're rooted!
@@ -136,7 +136,7 @@ public class ClientEvents {
                 CombatChannel.INSTANCE.sendToServer(new DodgePacket(dir, mi.shiftKeyDown));
         }
 
-        if (itsc.getStaggerTime() > 0) {
+        if (itsc.getExposeTime() > 0) {
             //no moving while you're down! (except for a safety roll)
             KeyMapping.releaseAll();
             return;
@@ -146,7 +146,7 @@ public class ClientEvents {
     @SubscribeEvent
     public static void alert(LivingAttackEvent e) {
         if (Minecraft.getInstance().player == null) return;
-        if ((e.getEntityLiving() == Minecraft.getInstance().player && e.getSource().getEntity() instanceof LivingEntity) || e.getSource().getEntity() == Minecraft.getInstance().player) {
+        if ((e.getEntity() == Minecraft.getInstance().player && e.getSource().getEntity() instanceof LivingEntity) || e.getSource().getEntity() == Minecraft.getInstance().player) {
             if (ClientConfig.autoCombat > 0 && combatTicks != Integer.MAX_VALUE) {
                 if (!CombatData.getCap(Minecraft.getInstance().player).isCombatMode())
                     CombatChannel.INSTANCE.sendToServer(new CombatModePacket());
@@ -156,12 +156,12 @@ public class ClientEvents {
     }
 
     @SubscribeEvent
-    public static void downTick(LivingEvent.LivingUpdateEvent event) {
-        final LivingEntity e = event.getEntityLiving();
+    public static void downTick(LivingEvent.LivingTickEvent event) {
+        final LivingEntity e = event.getEntity();
         if (e.isAlive()) {
             if (CombatData.getCap(e).getStaggerTime() > 0) {
-                boolean reg = (ForgeRegistries.ENTITIES.getKey(e.getType()) != null && rotate.containsKey(ForgeRegistries.ENTITIES.getKey(e.getType()).toString()));
-                float height = reg && rotate.getOrDefault(ForgeRegistries.ENTITIES.getKey(e.getType()).toString(), false) ? e.getBbWidth() : e.getBbHeight();
+                boolean reg = (rotate.containsKey(EntityType.getKey(e.getType()).toString()));
+                float height = reg && rotate.getOrDefault(EntityType.getKey(e.getType()).toString(), false) ? e.getBbWidth() : e.getBbHeight();
                 event.getEntity().level.addParticle(ParticleTypes.CRIT, e.getX() + Math.sin(e.tickCount) * e.getBbWidth() / 2, e.getY() + height, e.getZ() + Math.cos(e.tickCount) * e.getBbWidth() / 2, 0, 0, 0);
             }
 
@@ -267,7 +267,7 @@ public class ClientEvents {
         if (mc.player == null) return;
         if (Keybinds.PARRY.getKeyConflictContext().isActive() && !lastTickParry && CombatConfig.parryTime != 0 && Keybinds.PARRY.consumeClick() && mc.player.isAlive()) {
             if (CombatConfig.parryTime < 0) {
-                mc.player.displayClientMessage(new TranslatableComponent("wardance.toggleparry." + (CombatData.getCap(mc.player).getParryingTick() == -1 ? "on" : "off")), true);
+                mc.player.displayClientMessage(Component.translatable("wardance.toggleparry." + (CombatData.getCap(mc.player).getParryingTick() == -1 ? "on" : "off")), true);
 
             }
             CombatChannel.INSTANCE.sendToServer(new ManualParryPacket());

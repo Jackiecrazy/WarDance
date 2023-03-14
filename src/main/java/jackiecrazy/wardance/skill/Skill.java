@@ -9,19 +9,16 @@ import jackiecrazy.wardance.config.GeneralConfig;
 import jackiecrazy.wardance.event.SkillCastEvent;
 import jackiecrazy.wardance.event.SkillCooldownEvent;
 import jackiecrazy.wardance.event.SkillResourceEvent;
-import net.minecraft.world.entity.LivingEntity;
-import net.minecraft.tags.SetTag;
-import net.minecraft.resources.ResourceLocation;
-import net.minecraft.sounds.SoundSource;
-import net.minecraft.sounds.SoundEvents;
 import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.TranslatableComponent;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.sounds.SoundEvents;
+import net.minecraft.sounds.SoundSource;
+import net.minecraft.world.entity.LivingEntity;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.entity.living.LivingAttackEvent;
 import net.minecraftforge.eventbus.api.Event;
 import net.minecraftforge.eventbus.api.EventPriority;
 import net.minecraftforge.registries.IForgeRegistry;
-import net.minecraftforge.registries.RegistryObject;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -29,16 +26,16 @@ import java.awt.*;
 import java.util.List;
 import java.util.*;
 
-public abstract class Skill extends IForgeRegistry<Skill> {
+public abstract class Skill implements IForgeRegistry<Skill> {
     public static final HashMap<SkillCategory, List<Skill>> variationMap = new HashMap<>();
-    protected static final SetTag<String> none = SetTag.empty();
-    protected static final SetTag<String> offensivePhysical = makeTag(SkillTags.offensive, SkillTags.physical);
-    protected static final SetTag<String> defensivePhysical = makeTag(SkillTags.defensive, SkillTags.physical);
-    protected static final SetTag<String> offensive = makeTag(SkillTags.offensive);
-    protected static final SetTag<String> defensive = makeTag(SkillTags.defensive);
-    protected static final SetTag<String> passive = makeTag(SkillTags.passive);
-    protected static final SetTag<String> special = makeTag(SkillTags.special);
-    protected static final SetTag<String> state = makeTag(SkillTags.state);
+    protected static final HashSet<String> none = new HashSet<>();
+    protected static final HashSet<String> offensivePhysical = makeTag(SkillTags.offensive, SkillTags.physical);
+    protected static final HashSet<String> defensivePhysical = makeTag(SkillTags.defensive, SkillTags.physical);
+    protected static final HashSet<String> offensive = makeTag(SkillTags.offensive);
+    protected static final HashSet<String> defensive = makeTag(SkillTags.defensive);
+    protected static final HashSet<String> passive = makeTag(SkillTags.passive);
+    protected static final HashSet<String> special = makeTag(SkillTags.special);
+    protected static final HashSet<String> state = makeTag(SkillTags.state);
 
     public Skill() {
         //SkillCategory
@@ -50,8 +47,8 @@ public abstract class Skill extends IForgeRegistry<Skill> {
         variationMap.put(this.getParentCategory(), insert);
     }
 
-    protected static SetTag<String> makeTag(String... stuff) {
-        return SetTag.create(new HashSet<>(Arrays.asList(stuff)));
+    protected static HashSet<String> makeTag(String... stuff) {
+        return new HashSet<>(Arrays.asList(stuff));
     }
 
     @Nullable
@@ -61,7 +58,7 @@ public abstract class Skill extends IForgeRegistry<Skill> {
 
     @Nullable
     public static Skill getSkill(ResourceLocation name) {
-        return .findRegistry(Skill.class).getValue(name);
+        return WarSkills.SUPPLIER.get().getValue(name);
     }
 
     public boolean isFamily(Skill s) {
@@ -92,7 +89,7 @@ public abstract class Skill extends IForgeRegistry<Skill> {
             case HOLSTERED:
                 return CastStatus.HOLSTERED;
         }
-        for (String s : getSoftIncompatibility(caster).getValues())
+        for (String s : getSoftIncompatibility(caster))
             if (cap.isTagActive(s))
                 return CastStatus.CONFLICT;
         if (caster.isSilent() && getTags(caster).contains("chant")) return CastStatus.SILENCE;
@@ -113,9 +110,9 @@ public abstract class Skill extends IForgeRegistry<Skill> {
 
     public boolean isCompatibleWith(Skill s, LivingEntity caster) {
         if (s == null) return true;
-        for (String tag : this.getTags(caster).getValues())
+        for (String tag : this.getTags(caster))
             if (s.getSoftIncompatibility(caster).contains(tag)) return false;
-        for (String tag : s.getTags(caster).getValues())
+        for (String tag : s.getTags(caster))
             if (this.getSoftIncompatibility(caster).contains(tag)) return false;
         return true;
     }
@@ -125,14 +122,14 @@ public abstract class Skill extends IForgeRegistry<Skill> {
     }
 
     public Component description() {
-        return new TranslatableComponent(this.getRegistryName().toString() + ".desc");
+        return Component.translatable(this.getRegistryName().toString() + ".desc");
     }
 
     /**
      * @param caster only nonnull if it's in the casting bar!
      */
     public Component getDisplayName(LivingEntity caster) {
-        return new TranslatableComponent(this.getRegistryName().toString() + ".name");
+        return Component.translatable(this.getRegistryName().toString() + ".name");
     }
 
     public ResourceLocation icon() {
@@ -143,15 +140,18 @@ public abstract class Skill extends IForgeRegistry<Skill> {
         return Color.WHITE;
     }
 
-    public abstract SetTag<String> getTags(LivingEntity caster);//requires breath, bound, debuffing, healing, aoe, etc.
+    public abstract HashSet<String> getTags(LivingEntity caster);//requires breath, bound, debuffing, healing, aoe, etc.
 
     @Nonnull
-    public abstract SetTag<String> getSoftIncompatibility(LivingEntity caster);
+    public abstract HashSet<String> getSoftIncompatibility(LivingEntity caster);
 
-    public SetTag<String> getHardIncompatibility(LivingEntity caster) {//TODO implement
+    public HashSet<String> getHardIncompatibility(LivingEntity caster) {//TODO implement
         return none;
     }
 
+    /**
+     * @return true to mark the skill (and thus capability) as dirty
+     */
     public boolean equippedTick(LivingEntity caster, SkillData stats) {
         return false;
     }
@@ -265,7 +265,7 @@ public abstract class Skill extends IForgeRegistry<Skill> {
     }
 
     protected void attackCooldown(Event e, LivingEntity caster, SkillData stats) {
-        if (e instanceof LivingAttackEvent && ((LivingAttackEvent) e).getEntityLiving() != caster && stats.getState() == STATE.COOLING && e.getPhase() == EventPriority.HIGHEST) {
+        if (e instanceof LivingAttackEvent && ((LivingAttackEvent) e).getEntity() != caster && stats.getState() == STATE.COOLING && e.getPhase() == EventPriority.HIGHEST) {
             stats.decrementDuration();
         }
     }
