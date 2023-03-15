@@ -56,6 +56,8 @@ public class SkillSliceButton extends SkillSelectionButton {
 
     public void render(PoseStack matrixStack, int mouseX, int mouseY, float partialTicks) {
         if (this.visible) {
+            final int x = this.getX();
+            final int y = this.getY();
             int centeredx = mouseX - x - width / 2, centeredy = mouseY - y - height / 2;
             //get direction
             double angle = Math.toDegrees(Mth.atan2(centeredx, -centeredy));
@@ -68,18 +70,18 @@ public class SkillSliceButton extends SkillSelectionButton {
                 distance = cutoffy > centeredy;
             }
             int hoverIndex = distance ? (int) Math.floor((angle / 90) % 4) + 1 : 0;
-            this.isHovered = mouseX >= this.x && mouseY >= this.y && mouseX < this.x + this.width && mouseY < this.y + this.height && index == hoverIndex;
-            if (this.wasHovered != this.isHovered()) {
-                if (this.isHovered()) {
-                    if (this.isFocused()) {
-                        this.queueNarration(200);
-                    } else {
-                        this.queueNarration(750);
-                    }
-                } else {
-                    this.nextNarration = Long.MAX_VALUE;
-                }
-            }
+            this.isHovered = mouseX >= x && mouseY >= y && mouseX < x + this.width && mouseY < y + this.height && index == hoverIndex;
+//            if (this.wasHovered != this.isHovered) {
+//                if (this.isHovered) {
+//                    if (this.isFocused()) {
+//                        this.queueNarration(200);
+//                    } else {
+//                        this.queueNarration(750);
+//                    }
+//                } else {
+//                    this.nextNarration = Long.MAX_VALUE;
+//                }
+//            }
 
             if (this.visible) {
                 matrixStack.pushPose();
@@ -90,7 +92,7 @@ public class SkillSliceButton extends SkillSelectionButton {
                 applySlotTint();
                 this.renderButton(matrixStack, mouseX, mouseY, partialTicks);
                 if (s != null) {
-                    Minecraft.getInstance().textureManager.bind(s.icon());
+                    RenderSystem.setShaderTexture(0, s.icon());
                     Color c = s.getColor();
                     RenderSystem.setShaderColor(c.getRed() / 255f, c.getGreen() / 255f, c.getBlue() / 255f, 1);
                     GuiComponent.blit(matrixStack, x + iconX[index], y + iconY[index], 0, 0, 24, 24, 24, 24);
@@ -99,8 +101,8 @@ public class SkillSliceButton extends SkillSelectionButton {
                 matrixStack.popPose();
             }
 
-            this.narrate();
-            this.wasHovered = this.isHovered();
+            //this.narrate();
+            this.wasHovered = this.isHovered;
         }
     }
 }

@@ -8,9 +8,9 @@ import jackiecrazy.wardance.skill.SkillData;
 import jackiecrazy.wardance.skill.WarSkills;
 import jackiecrazy.wardance.utils.SkillUtils;
 import jackiecrazy.wardance.utils.WarColors;
-import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.world.damagesource.DamageSource;
+import net.minecraft.world.entity.LivingEntity;
 import net.minecraftforge.event.entity.living.LivingDeathEvent;
 import net.minecraftforge.eventbus.api.Event;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
@@ -19,8 +19,6 @@ import net.minecraftforge.fml.common.Mod;
 import javax.annotation.Nullable;
 import java.awt.*;
 import java.util.List;
-
-import jackiecrazy.wardance.skill.Skill.STATE;
 
 @Mod.EventBusSubscriber(modid = WarDance.MODID)
 public class ViralDecay extends Judgment {
@@ -35,7 +33,7 @@ public class ViralDecay extends Judgment {
         Marks.getCap(target).removeMark(WarSkills.VIRAL_DECAY.get());
         target.hurt(new CombatDamageSource("player", caster).setDamageTyping(CombatDamageSource.TYPE.PHYSICAL).setProcSkillEffects(true).setProcAttackEffects(true).setDamageTyping(CombatDamageSource.TYPE.TRUE).bypassArmor().bypassMagic(), target.getHealth() / 10);
         SkillUtils.createCloud(target.level, caster, target.getX(), target.getY(), target.getZ(), 3, ParticleTypes.EXPLOSION);
-        final List<LivingEntity> list = target.level.getLoadedEntitiesOfClass(LivingEntity.class, target.getBoundingBox().inflate(3), (b) -> !TargetingUtils.isAlly(b, caster));
+        final List<LivingEntity> list = target.level.getEntitiesOfClass(LivingEntity.class, target.getBoundingBox().inflate(3), (b) -> !TargetingUtils.isAlly(b, caster));
         for (LivingEntity enemy : list) {
             if (enemy == target) continue;
             enemy.hurt(VIRUS, 2);

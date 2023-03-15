@@ -7,6 +7,7 @@ import jackiecrazy.wardance.command.WarDanceCommand;
 import jackiecrazy.wardance.compat.ElenaiCompat;
 import jackiecrazy.wardance.compat.WarCompat;
 import jackiecrazy.wardance.config.*;
+import jackiecrazy.wardance.entity.WarEntities;
 import jackiecrazy.wardance.networking.*;
 import jackiecrazy.wardance.skill.WarSkills;
 import net.minecraft.world.level.GameRules;
@@ -63,6 +64,7 @@ public class WarDance {
         IEventBus bus = FMLJavaModLoadingContext.get().getModEventBus();
         WarSkills.SUPPLIER = WarSkills.SKILLS.makeRegistry(RegistryBuilder::new);
         WarSkills.SKILLS.register(bus);
+        WarEntities.ENTITIES.register(bus);
         MinecraftForge.EVENT_BUS.addListener(this::commands);
     }
 

@@ -32,7 +32,7 @@ public class FeverDream extends Judgment {
     private void hallucinate(LivingEntity caster, LivingEntity target, int iterate) {
         if (iterate < 0) return;
         SkillUtils.createCloud(caster.level, caster, caster.getX(), caster.getY(), caster.getZ(), 15, ParticleTypes.LARGE_SMOKE);
-        final List<LivingEntity> list = caster.level.getLoadedEntitiesOfClass(LivingEntity.class, caster.getBoundingBox().inflate(7), (a) -> TargetingUtils.isHostile(a, caster));
+        final List<LivingEntity> list = caster.level.getEntitiesOfClass(LivingEntity.class, caster.getBoundingBox().inflate(7), (a) -> TargetingUtils.isHostile(a, caster));
         Marks.getCap(target).removeMark(this);
         for (int i = 0; i < list.size(); i++) {
             LivingEntity enemy = list.get(i);

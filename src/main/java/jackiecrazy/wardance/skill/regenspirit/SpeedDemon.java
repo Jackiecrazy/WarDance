@@ -8,9 +8,8 @@ import jackiecrazy.wardance.skill.Skill;
 import jackiecrazy.wardance.skill.SkillCategories;
 import jackiecrazy.wardance.skill.SkillCategory;
 import jackiecrazy.wardance.skill.SkillData;
-import net.minecraft.world.entity.LivingEntity;
-import net.minecraft.tags.HashSet;
 import net.minecraft.util.Mth;
+import net.minecraft.world.entity.LivingEntity;
 import net.minecraftforge.eventbus.api.Event;
 import net.minecraftforge.eventbus.api.EventPriority;
 
@@ -55,7 +54,7 @@ apathy: your max spirit is 4, your spirit instantly refills after cooldown, you 
         if (procPoint instanceof DodgeEvent &&procPoint.getPhase()== EventPriority.HIGHEST) {
             CombatData.getCap(caster).setSpiritGrace(CombatData.getCap(caster).getSpiritGrace() / 2);
         } else if (procPoint instanceof AttackMightEvent &&procPoint.getPhase()== EventPriority.HIGHEST) {
-            double spdiff = Mth.sqrt(GeneralUtils.getSpeedSq(caster)) - Mth.sqrt(GeneralUtils.getSpeedSq(target));
+            double spdiff = Math.sqrt(GeneralUtils.getSpeedSq(caster)) - Math.sqrt(GeneralUtils.getSpeedSq(target));
             if (spdiff < 0 || !Double.isFinite(spdiff)) spdiff = 0;
             CombatData.getCap(caster).addSpirit((float) Math.min(1, Math.sqrt(spdiff)));
         }

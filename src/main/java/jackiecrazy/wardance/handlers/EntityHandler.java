@@ -6,6 +6,8 @@ import jackiecrazy.wardance.WarDance;
 import jackiecrazy.wardance.capability.resources.CombatDataOverride;
 import jackiecrazy.wardance.capability.skill.CasterData;
 import jackiecrazy.wardance.capability.skill.ISkillCapability;
+import jackiecrazy.wardance.capability.skill.SkillCapability;
+import jackiecrazy.wardance.capability.status.Mark;
 import jackiecrazy.wardance.capability.status.Marks;
 import jackiecrazy.wardance.networking.CombatChannel;
 import jackiecrazy.wardance.networking.SyncSkillPacket;
@@ -21,7 +23,6 @@ import net.minecraft.world.level.Level;
 import net.minecraftforge.event.AttachCapabilitiesEvent;
 import net.minecraftforge.event.TickEvent;
 import net.minecraftforge.event.entity.EntityJoinLevelEvent;
-import net.minecraftforge.event.entity.EntityJoinWorldEvent;
 import net.minecraftforge.event.entity.living.LivingEvent;
 import net.minecraftforge.event.entity.player.PlayerEvent;
 import net.minecraftforge.event.server.ServerStartingEvent;
@@ -29,7 +30,6 @@ import net.minecraftforge.event.server.ServerStoppingEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.LogicalSide;
 import net.minecraftforge.fml.common.Mod;
-import net.minecraftforge.fml.network.PacketDistributor;
 import net.minecraftforge.network.PacketDistributor;
 
 import java.util.HashMap;
@@ -54,11 +54,11 @@ public class EntityHandler {
 
     @SubscribeEvent
     public static void caps(AttachCapabilitiesEvent<Entity> e) {
-        if (e.getObject() instanceof LivingEntity) {
-            e.addCapability(new ResourceLocation("wardance:combatinfo"), new CombatDataOverride((LivingEntity) e.getObject()));
-            e.addCapability(new ResourceLocation("wardance:statuseffects"), new Marks((LivingEntity) e.getObject()));
-            if (e.getObject() instanceof Player)
-                e.addCapability(new ResourceLocation("wardance:casterinfo"), new CasterData((LivingEntity) e.getObject()));
+        if (e.getObject() instanceof LivingEntity lb) {
+            e.addCapability(new ResourceLocation("wardance:combatinfo"), new CombatDataOverride(lb));
+            e.addCapability(new ResourceLocation("wardance:statuseffects"), new Marks(new Mark(lb)));
+            if (lb instanceof Player)
+                e.addCapability(new ResourceLocation("wardance:casterinfo"), new CasterData(new SkillCapability(lb)));
         }
     }
 

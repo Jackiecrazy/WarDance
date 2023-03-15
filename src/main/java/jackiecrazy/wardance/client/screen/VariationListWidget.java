@@ -1,16 +1,15 @@
 package jackiecrazy.wardance.client.screen;
 
-import com.mojang.blaze3d.vertex.PoseStack;
+import com.mojang.blaze3d.vertex.*;
 import com.mojang.blaze3d.systems.RenderSystem;
 import jackiecrazy.wardance.skill.Skill;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.components.ObjectSelectionList;
-import com.mojang.blaze3d.vertex.BufferBuilder;
-import com.mojang.blaze3d.vertex.Tesselator;
-import com.mojang.blaze3d.vertex.DefaultVertexFormat;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.FormattedText;
 import net.minecraft.locale.Language;
+
+import javax.annotation.Nonnull;
 
 public class VariationListWidget extends ObjectSelectionList<VariationListWidget.VariationEntry> {
     private final int listWidth;
@@ -51,7 +50,7 @@ public class VariationListWidget extends ObjectSelectionList<VariationListWidget
         Tesselator tessellator = Tesselator.getInstance();
         BufferBuilder bufferbuilder = tessellator.getBuilder();
         RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, 1.0F);
-        bufferbuilder.begin(7, DefaultVertexFormat.POSITION_TEX_COLOR);
+        bufferbuilder.begin(VertexFormat.Mode.QUADS, DefaultVertexFormat.POSITION_TEX_COLOR);
         final int color = this.isFocused() ? 255 : 160;
         bufferbuilder.vertex((double) this.x0 + 1, (double) this.y1 + 1, 0.0D).uv((float) this.x0 / 32.0F, (float) (this.y1 + (int) this.getScrollAmount()) / 32.0F).color(color, color, color, 255).endVertex();
         bufferbuilder.vertex((double) this.x1 - 2, (double) this.y1 + 1, 0.0D).uv((float) this.x1 / 32.0F, (float) (this.y1 + (int) this.getScrollAmount()) / 32.0F).color(color, color, color, 255).endVertex();
@@ -75,7 +74,7 @@ public class VariationListWidget extends ObjectSelectionList<VariationListWidget
         Tesselator tessellator = Tesselator.getInstance();
         BufferBuilder bufferbuilder = tessellator.getBuilder();
         RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, 1.0F);
-        bufferbuilder.begin(7, DefaultVertexFormat.POSITION_TEX_COLOR);
+        bufferbuilder.begin(VertexFormat.Mode.QUADS, DefaultVertexFormat.POSITION_TEX_COLOR);
         bufferbuilder.vertex((double) this.x0, (double) this.y1, 0.0D).uv((float) this.x0 / 32.0F, (float) (this.y1 + (int) this.getScrollAmount()) / 32.0F).color(20, 20, 20, 255).endVertex();
         bufferbuilder.vertex((double) this.x1, (double) this.y1, 0.0D).uv((float) this.x1 / 32.0F, (float) (this.y1 + (int) this.getScrollAmount()) / 32.0F).color(20, 20, 20, 255).endVertex();
         bufferbuilder.vertex((double) this.x1, (double) this.y0 + 3, 0.0D).uv((float) this.x1 / 32.0F, (float) (this.y0 + (int) this.getScrollAmount()) / 32.0F).color(20, 20, 20, 255).endVertex();
@@ -118,6 +117,12 @@ public class VariationListWidget extends ObjectSelectionList<VariationListWidget
             parent.setSelectedVariation(this);
             VariationListWidget.this.setSelected(this);
             return false;
+        }
+
+        @Nonnull
+        @Override
+        public Component getNarration() {
+            return Component.translatable("narrator.select", s.getDisplayName(null));
         }
     }
 }

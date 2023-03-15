@@ -238,7 +238,7 @@ public class SkillCastScreen extends Screen {
         }
         int xm = (x + x2) / 2, ym = (y + y2) / 2; // middle point
         BufferBuilder bufferbuilder = Tesselator.getInstance().getBuilder();
-        bufferbuilder.begin(VertexFormat.Mode.QUADS, DefaultVertexFormat.POSITION_TEX_COLOR);//TODO quads?
+        bufferbuilder.begin(VertexFormat.Mode.TRIANGLE_FAN, DefaultVertexFormat.POSITION_TEX_COLOR);//TODO quads?
         drawVertex(bufferbuilder, xm, ym);
         drawVertex(bufferbuilder, xm, y);
 // draw corners:

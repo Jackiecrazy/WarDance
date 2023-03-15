@@ -33,7 +33,7 @@ public class LichtenbergScar extends Judgment {
             return;
         }
         final float radius = 30;
-        final List<LivingEntity> list = caster.level.getLoadedEntitiesOfClass(LivingEntity.class, caster.getBoundingBox().inflate(radius), (a) -> Marks.getCap(a).isMarked(this));
+        final List<LivingEntity> list = caster.level.getEntitiesOfClass(LivingEntity.class, caster.getBoundingBox().inflate(radius), (a) -> Marks.getCap(a).isMarked(this));
         list.add(target);
         //float damage = s.getArbitraryFloat() * (1 + CombatData.getCap(caster).getSpirit());
         for (LivingEntity baddie : list) {

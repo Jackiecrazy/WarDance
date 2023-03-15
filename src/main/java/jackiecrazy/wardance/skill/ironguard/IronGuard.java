@@ -6,13 +6,11 @@ import jackiecrazy.wardance.skill.SkillCategories;
 import jackiecrazy.wardance.skill.SkillCategory;
 import jackiecrazy.wardance.skill.SkillData;
 import net.minecraft.world.entity.LivingEntity;
-import net.minecraft.tags.HashSet;
 import net.minecraftforge.eventbus.api.Event;
 import net.minecraftforge.eventbus.api.EventPriority;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-
 import java.util.HashSet;
 
 public abstract class IronGuard extends Skill {

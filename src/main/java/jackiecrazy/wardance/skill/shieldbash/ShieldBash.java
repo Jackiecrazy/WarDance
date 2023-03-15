@@ -1,29 +1,22 @@
 package jackiecrazy.wardance.skill.shieldbash;
 
-import jackiecrazy.footwork.api.WarAttributes;
 import jackiecrazy.footwork.capability.resources.CombatData;
 import jackiecrazy.footwork.capability.resources.ICombatCapability;
-import jackiecrazy.footwork.potion.FootworkEffects;
 import jackiecrazy.wardance.WarDance;
-import jackiecrazy.wardance.api.CombatDamageSource;
 import jackiecrazy.wardance.event.ParryEvent;
 import jackiecrazy.wardance.skill.*;
 import jackiecrazy.wardance.utils.CombatUtils;
-import jackiecrazy.wardance.utils.SkillUtils;
-import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.sounds.SoundEvents;
+import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.effect.MobEffects;
-import net.minecraft.tags.HashSet;
-import net.minecraft.world.InteractionHand;
-import net.minecraft.sounds.SoundSource;
-import net.minecraft.sounds.SoundEvents;
+import net.minecraft.world.entity.LivingEntity;
 import net.minecraftforge.event.entity.living.LivingAttackEvent;
 import net.minecraftforge.eventbus.api.Event;
 import net.minecraftforge.eventbus.api.EventPriority;
 
 import javax.annotation.Nonnull;
 import java.awt.*;
-import java.util.Arrays;
 import java.util.HashSet;
 
 public class ShieldBash extends Skill {
@@ -55,8 +48,8 @@ public class ShieldBash extends Skill {
 
     protected void performEffect(LivingEntity caster, LivingEntity target) {
         final ICombatCapability cap = CombatData.getCap(caster);
-        SkillUtils.auxAttack(caster, target, new CombatDamageSource("player", caster).setProcNormalEffects(false).setProcAttackEffects(true).setProcSkillEffects(true).setAttackingHand(InteractionHand.OFF_HAND).setDamageTyping(CombatDamageSource.TYPE.PHYSICAL).setDamageDealer(caster.getMainHandItem()), 0, cap.consumeBarrier(cap.getBarrier()/4));
-        cap.setBarrierCooldown(cap.getBarrierCooldown() / 2);
+        //SkillUtils.auxAttack(caster, target, new CombatDamageSource("player", caster).setProcNormalEffects(false).setProcAttackEffects(true).setProcSkillEffects(true).setAttackingHand(InteractionHand.OFF_HAND).setDamageTyping(CombatDamageSource.TYPE.PHYSICAL).setDamageDealer(caster.getMainHandItem()), 0, cap.consumeBarrier(cap.getBarrier()/4));
+        //cap.setBarrierCooldown(cap.getBarrierCooldown() / 2);
     }
 
     @Override
@@ -95,9 +88,9 @@ public class ShieldBash extends Skill {
 
         protected void performEffect(LivingEntity caster, LivingEntity target) {
             target.addEffect(new MobEffectInstance(MobEffects.CONFUSION, 60));
-            CombatUtils.knockBack(target, caster, (float) caster.getAttributeValue(WarAttributes.BARRIER.get()), true, false);
-            CombatData.getCap(caster).consumeBarrier(CombatData.getCap(caster).getBarrier());
-            CombatData.getCap(caster).setBarrierCooldown(CombatData.getCap(caster).getBarrierCooldown() / 2);
+//            CombatUtils.knockBack(target, caster, (float) caster.getAttributeValue(WarAttributes.BARRIER.get()), true, false);
+//            CombatData.getCap(caster).consumeBarrier(CombatData.getCap(caster).getBarrier());
+//            CombatData.getCap(caster).setBarrierCooldown(CombatData.getCap(caster).getBarrierCooldown() / 2);
         }
     }
 
@@ -109,9 +102,9 @@ public class ShieldBash extends Skill {
 
         protected void performEffect(LivingEntity caster, LivingEntity target) {
             super.performEffect(caster, target);
-            final int time = CombatData.getCap(caster).getBarrierCooldown();
-            target.addEffect(new MobEffectInstance(MobEffects.MOVEMENT_SLOWDOWN, time * 2));
-            target.addEffect(new MobEffectInstance(FootworkEffects.DISTRACTION.get(), time * 2));
+//            final int time = CombatData.getCap(caster).getBarrierCooldown();
+//            target.addEffect(new MobEffectInstance(MobEffects.MOVEMENT_SLOWDOWN, time * 2));
+//            target.addEffect(new MobEffectInstance(FootworkEffects.DISTRACTION.get(), time * 2));
         }
     }
 }

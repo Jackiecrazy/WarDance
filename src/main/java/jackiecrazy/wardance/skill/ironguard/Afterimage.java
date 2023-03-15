@@ -30,7 +30,7 @@ public class Afterimage extends IronGuard {
         if (!caster.isShiftKeyDown()||state==STATE.COOLING) return;
         final float cost = ((ParryEvent) procPoint).getPostureConsumption();
         SkillUtils.createCloud(caster.level, caster, caster.getX(), caster.getY(), caster.getZ(), cost, ParticleTypes.LARGE_SMOKE);
-        for (LivingEntity e : caster.level.getLoadedEntitiesOfClass(LivingEntity.class, caster.getBoundingBox().inflate(cost))) {
+        for (LivingEntity e : caster.level.getEntitiesOfClass(LivingEntity.class, caster.getBoundingBox().inflate(cost))) {
             if (e.distanceToSqr(caster) > cost * cost) {
                 e.addEffect(new MobEffectInstance(MobEffects.BLINDNESS, 100));
             }

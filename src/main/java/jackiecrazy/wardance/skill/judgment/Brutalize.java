@@ -39,7 +39,7 @@ public class Brutalize extends Judgment {
             CombatData.getCap(target).setStaggerTime(0);
             CombatData.getCap(target).consumePosture(caster, Float.MAX_VALUE, 0, true);
         }
-        final List<LivingEntity> list = caster.level.getLoadedEntitiesOfClass(LivingEntity.class, caster.getBoundingBox().inflate(10), (a) -> TargetingUtils.isHostile(a, caster));
+        final List<LivingEntity> list = caster.level.getEntitiesOfClass(LivingEntity.class, caster.getBoundingBox().inflate(10), (a) -> TargetingUtils.isHostile(a, caster));
         for (LivingEntity enemy : list) {
             enemy.addEffect(new MobEffectInstance(FootworkEffects.ENFEEBLE.get(), 200));
             if (stack == 3 && target.getMaxHealth() > enemy.getMaxHealth())
