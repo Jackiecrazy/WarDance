@@ -12,16 +12,15 @@ import jackiecrazy.wardance.skill.*;
 import jackiecrazy.wardance.utils.CombatUtils;
 import jackiecrazy.wardance.utils.SkillUtils;
 import jackiecrazy.wardance.utils.WarColors;
+import net.minecraft.world.damagesource.DamageSource;
+import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.ai.attributes.AttributeInstance;
 import net.minecraft.world.entity.ai.attributes.AttributeModifier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
-import net.minecraft.world.entity.ai.attributes.AttributeInstance;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
-import net.minecraft.world.effect.MobEffectInstance;
-import net.minecraft.tags.SetTag;
-import net.minecraft.world.damagesource.DamageSource;
 import net.minecraftforge.event.entity.living.LivingDamageEvent;
 import net.minecraftforge.event.entity.living.LivingHealEvent;
 import net.minecraftforge.event.entity.living.LivingHurtEvent;
@@ -40,20 +39,20 @@ import java.util.UUID;
 @Mod.EventBusSubscriber(modid = WarDance.MODID)
 public class Hex extends Skill {
     static final UUID HEX = UUID.fromString("67fe7ef6-a398-4c62-9bb1-42edaa80e7b1");
-    private final SetTag<String> tag = makeTag("melee", "noDamage", "boundCast", ProcPoints.afflict_tick, ProcPoints.change_parry_result, ProcPoints.recharge_time, "normalAttack", "chant", "countdown");
-    private final SetTag<String> thing = makeTag(SkillTags.offensive, SkillTags.magical);
+    private final HashSet<String> tag = makeTag("melee", "noDamage", "boundCast", ProcPoints.afflict_tick, ProcPoints.change_parry_result, ProcPoints.recharge_time, "normalAttack", "chant", "countdown");
+    private final HashSet<String> thing = makeTag(SkillTags.offensive, SkillTags.magical);
 
     @SubscribeEvent
     public static void snakebite(LivingHealEvent e) {
-        if (!e.getEntityLiving().isEffectiveAi()) return;
-        LivingEntity entity = e.getEntityLiving();
+        if (!e.getEntity().isEffectiveAi()) return;
+        LivingEntity entity = e.getEntity();
         //snakebite nullifies healing
         Marks.getCap(entity).getActiveMark(WarSkills.GANGRENE.get()).ifPresent(a -> e.setCanceled(a.getArbitraryFloat() > 0));
     }
 
     @SubscribeEvent
     public static void echoes(LivingHurtEvent e) {
-        LivingEntity target = e.getEntityLiving();
+        LivingEntity target = e.getEntity();
         Marks.getCap(target).getActiveMark(WarSkills.CURSE_OF_ECHOES.get()).ifPresent(a -> {
             if (a.getArbitraryFloat() < 0 && CombatUtils.isMeleeAttack(e.getSource())) {
                 target.invulnerableTime = 0;
@@ -65,8 +64,8 @@ public class Hex extends Skill {
 
     @SubscribeEvent
     public static void blackmark(LivingDamageEvent e) {
-        if (!e.getEntityLiving().isEffectiveAi()) return;
-        LivingEntity target = e.getEntityLiving();
+        if (!e.getEntity().isEffectiveAi()) return;
+        LivingEntity target = e.getEntity();
         //black mark stealing health/posture/spirit
         if (e.getAmount() > 0 && CombatUtils.isMeleeAttack(e.getSource()) && Marks.getCap(target).isMarked(WarSkills.BLACK_MARK.get())) {
             Entity source = e.getSource().getEntity();
@@ -86,18 +85,18 @@ public class Hex extends Skill {
             }
         }
         if (!CombatUtils.isPhysicalAttack(e.getSource()))
-            Marks.getCap(e.getEntityLiving()).getActiveMark(WarSkills.GANGRENE.get()).ifPresent(g -> g.setArbitraryFloat(40));
+            Marks.getCap(e.getEntity()).getActiveMark(WarSkills.GANGRENE.get()).ifPresent(g -> g.setArbitraryFloat(40));
     }
 
 //    @SubscribeEvent
 //    public static void petrify(CriticalHitEvent e) {
-//        if (!e.getEntityLiving().isServerWorld()) return;
+//        if (!e.getEntity().isServerWorld()) return;
 //        if (!(e.getTarget() instanceof LivingEntity)) return;
 //        LivingEntity target = (LivingEntity) e.getTarget();
 //        //crit explosion on petrified target
 //        StatusEffects.getCap(target).getActiveStatus(WarSkills.PETRIFY.get()).ifPresent((sd) -> {
 //            if (sd.isCondition() && (e.getResult() == Event.Result.ALLOW || (e.getResult() == Event.Result.DEFAULT && e.isVanillaCritical()))) {
-//                FakeExplosion.explode(e.getEntityLiving().world, e.getPlayer(), target.getPosX(), target.getPosY(), target.getPosZ(), target.getWidth() * target.getHeight() * 3, new CombatDamageSource("explosion.player", e.getPlayer()).setArmorReductionPercentage(2).setDamageTyping(CombatDamageSource.TYPE.PHYSICAL).setProcSkillEffects(false).setProcNormalEffects(false).setProcAttackEffects(false).setExplosion(), target.getTotalArmorValue());
+//                FakeExplosion.explode(e.getEntity().world, e.getPlayer(), target.getPosX(), target.getPosY(), target.getPosZ(), target.getWidth() * target.getHeight() * 3, new CombatDamageSource("explosion.player", e.getPlayer()).setArmorReductionPercentage(2).setDamageTyping(CombatDamageSource.TYPE.PHYSICAL).setProcSkillEffects(false).setProcNormalEffects(false).setProcAttackEffects(false).setExplosion(), target.getTotalArmorValue());
 //                StatusEffects.getCap(target).removeStatus(WarSkills.PETRIFY.get());
 //            }
 //        });
@@ -247,7 +246,7 @@ public class Hex extends Skill {
                 }
             }
             if (proc)
-                FakeExplosion.explode(caster.level, caster, target.getX(), target.getY() + target.getBbHeight() * 1.1f, target.getZ(), size, DamageSource.explosion(caster).setMagic(), damage);
+                FakeExplosion.explode(caster.level, caster, target.getX(), target.getY() + target.getBbHeight() * 1.1f, target.getZ(), size, DamageSource.explosion(caster, null).setMagic(), damage);
         }
     }
 

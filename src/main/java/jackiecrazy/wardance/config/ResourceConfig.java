@@ -6,7 +6,7 @@ import jackiecrazy.wardance.utils.CombatUtils;
 import net.minecraftforge.common.ForgeConfigSpec;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
-import net.minecraftforge.fml.config.ModConfig;
+import net.minecraftforge.fml.event.config.ModConfigEvent;
 import org.apache.commons.lang3.tuple.Pair;
 
 import java.util.ArrayList;
@@ -86,10 +86,10 @@ public class ResourceConfig {
     }
 
     @SubscribeEvent
-    public static void loadConfig(ModConfig.ModConfigEvent e) {
+    public static void loadConfig(ModConfigEvent e) {
         if (e.getConfig().getSpec() == CONFIG_SPEC) {
             if(GeneralConfig.debug)
-            WarDance.LOGGER.debug("loading combat config!");
+                WarDance.LOGGER.debug("loading combat config!");
             bake();
         }
     }

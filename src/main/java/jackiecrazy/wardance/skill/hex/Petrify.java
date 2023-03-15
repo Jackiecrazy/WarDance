@@ -55,7 +55,7 @@ public class Petrify extends Hex {
 
     @Override
     public void onProc(LivingEntity caster, Event procPoint, STATE state, SkillData stats, LivingEntity target) {
-        if (procPoint instanceof LivingDamageEvent && ((LivingDamageEvent) procPoint).getEntityLiving() == target && target.hasEffect(FootworkEffects.PETRIFY.get())) {
+        if (procPoint instanceof LivingDamageEvent && ((LivingDamageEvent) procPoint).getEntity() == target && target.hasEffect(FootworkEffects.PETRIFY.get())) {
             //create dust cloud and end petrify
             SkillUtils.createCloud(caster.level, caster, target.getX(), target.getY(), target.getZ(), 7, ParticleTypes.LARGE_SMOKE);
             for (LivingEntity entity : target.level.getEntitiesOfClass(LivingEntity.class, target.getBoundingBoxForCulling().inflate(7), a->!TargetingUtils.isAlly(a, caster))) {

@@ -4,7 +4,7 @@ import jackiecrazy.wardance.capability.skill.CasterData;
 import jackiecrazy.wardance.capability.skill.ISkillCapability;
 import jackiecrazy.wardance.skill.Skill;
 import net.minecraft.network.FriendlyByteBuf;
-import net.minecraftforge.fml.network.NetworkEvent;
+import net.minecraftforge.network.NetworkEvent;
 
 import java.util.function.BiConsumer;
 import java.util.function.Function;

@@ -3,13 +3,13 @@ package jackiecrazy.wardance.networking;
 import jackiecrazy.footwork.utils.GeneralUtils;
 import jackiecrazy.wardance.config.GeneralConfig;
 import jackiecrazy.wardance.utils.CombatUtils;
-import net.minecraft.world.entity.Entity;
-import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.network.FriendlyByteBuf;
-import net.minecraft.world.effect.MobEffects;
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.InteractionHand;
+import net.minecraft.world.effect.MobEffects;
+import net.minecraft.world.entity.Entity;
 import net.minecraftforge.common.ForgeMod;
-import net.minecraftforge.fml.network.NetworkEvent;
+import net.minecraftforge.network.NetworkEvent;
 
 import java.util.function.BiConsumer;
 import java.util.function.Function;

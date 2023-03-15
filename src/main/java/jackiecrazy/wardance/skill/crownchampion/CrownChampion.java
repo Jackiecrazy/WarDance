@@ -13,14 +13,13 @@ import jackiecrazy.wardance.skill.*;
 import jackiecrazy.wardance.utils.CombatUtils;
 import jackiecrazy.wardance.utils.SkillUtils;
 import jackiecrazy.wardance.utils.WarColors;
+import net.minecraft.world.effect.MobEffectInstance;
+import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.ai.attributes.AttributeModifier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.effect.MobEffectInstance;
-import net.minecraft.world.effect.MobEffects;
-import net.minecraft.tags.SetTag;
 import net.minecraftforge.event.entity.living.LivingAttackEvent;
 import net.minecraftforge.event.entity.living.LivingDamageEvent;
 import net.minecraftforge.event.entity.living.LivingDeathEvent;
@@ -32,7 +31,6 @@ import net.minecraftforge.fml.common.Mod;
 
 import javax.annotation.Nonnull;
 import java.awt.*;
-import java.util.Arrays;
 import java.util.HashSet;
 import java.util.UUID;
 
@@ -45,12 +43,12 @@ prideful might: triple might gain, but clear everything on taking damage; shatte
 elemental might: +1 burn/snowball/poison/drown damage to targets you have attacked; +1 might for every mob that dies to environmental damage around you
      */
     private static final UUID MULT = UUID.fromString("abb2e130-36af-4fbb-bf66-0f4be905dc24");
-    private final SetTag<String> tag = SetTag.create(new HashSet<>(Arrays.asList("passive", ProcPoints.change_might)));
+    private final HashSet<String> tag = makeTag("passive", ProcPoints.change_might);
 
     @SubscribeEvent(priority = EventPriority.HIGHEST)
     public static void hurt(LivingDamageEvent e) {
         Entity seme = e.getSource().getEntity();
-        LivingEntity uke = e.getEntityLiving();
+        LivingEntity uke = e.getEntity();
         if (seme instanceof LivingEntity) {
             final Skill venge = WarSkills.VENGEFUL_MIGHT.get();
             for (Player p : uke.level.players())
@@ -74,7 +72,7 @@ elemental might: +1 burn/snowball/poison/drown damage to targets you have attack
 
     @SubscribeEvent(priority = EventPriority.LOWEST)
     public static void oops(LivingDamageEvent e) {
-        LivingEntity uke = e.getEntityLiving();
+        LivingEntity uke = e.getEntity();
         if (CasterData.getCap(uke).getEquippedSkills().contains(WarSkills.PRIDEFUL_MIGHT.get())) {
             CombatData.getCap(uke).setMight(0);
         }
@@ -82,14 +80,14 @@ elemental might: +1 burn/snowball/poison/drown damage to targets you have attack
 
     @SubscribeEvent
     public static void sneaky(LivingEvent.LivingVisibilityEvent e) {
-        if (CasterData.getCap(e.getEntityLiving()).getEquippedSkills().contains(WarSkills.HIDDEN_MIGHT.get()))
-            e.modifyVisibility(0.7 + CombatData.getCap(e.getEntityLiving()).getMight() * 0.03);
+        if (CasterData.getCap(e.getEntity()).getEquippedSkills().contains(WarSkills.HIDDEN_MIGHT.get()))
+            e.modifyVisibility(0.7 + CombatData.getCap(e.getEntity()).getMight() * 0.03);
     }
 
     @SubscribeEvent
     public static void deady(LivingDeathEvent e) {
         if (!CombatUtils.isPhysicalAttack(e.getSource())) {
-            for (Player pe : e.getEntityLiving().level.getLoadedEntitiesOfClass(Player.class, e.getEntity().getBoundingBox().inflate(5))) {
+            for (Player pe : e.getEntity().level.getEntitiesOfClass(Player.class, e.getEntity().getBoundingBox().inflate(5))) {
                 if (CasterData.getCap(pe).getEquippedSkills().contains(WarSkills.ELEMENTAL_MIGHT.get())) {
                     CombatData.getCap(pe).addMight(1);
                 }
@@ -145,7 +143,7 @@ elemental might: +1 burn/snowball/poison/drown damage to targets you have attack
 
     public static class HiddenMight extends CrownChampion {
 
-        private final SetTag<String> tag = SetTag.create(new HashSet<>(Arrays.asList("passive", ProcPoints.attack_might)));
+        private final HashSet<String> tag = makeTag("passive", ProcPoints.attack_might);
 
         @Override
         public void onProc(LivingEntity caster, Event procPoint, STATE state, SkillData stats, LivingEntity target) {
@@ -211,7 +209,7 @@ elemental might: +1 burn/snowball/poison/drown damage to targets you have attack
         @Override
         public void onProc(LivingEntity caster, Event procPoint, STATE state, SkillData stats, LivingEntity target) {
             if (procPoint instanceof LivingAttackEvent)
-                ((LivingAttackEvent) procPoint).getEntityLiving().addEffect(new MobEffectInstance(FootworkEffects.VULNERABLE.get(), 100, (int) (CombatData.getCap(caster).getMight() / 3)));
+                ((LivingAttackEvent) procPoint).getEntity().addEffect(new MobEffectInstance(FootworkEffects.VULNERABLE.get(), 100, (int) (CombatData.getCap(caster).getMight() / 3)));
         }
 
         @Override

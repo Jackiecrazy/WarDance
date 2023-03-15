@@ -85,17 +85,17 @@ public class SkillSliceButton extends SkillSelectionButton {
                 matrixStack.pushPose();
                 //blue if it is the literal skill, grey if it is selectable, orange if it is not selectable, red if they share a parent, yellow if they're incompatible
                 if (!this.isHovered) {
-                    RenderSystem.color4f(0.6f, 0.6f, 0.6f, 1);
+                    RenderSystem.setShaderColor(0.6f, 0.6f, 0.6f, 1);
                 }
                 applySlotTint();
                 this.renderButton(matrixStack, mouseX, mouseY, partialTicks);
                 if (s != null) {
                     Minecraft.getInstance().textureManager.bind(s.icon());
                     Color c = s.getColor();
-                    RenderSystem.color4f(c.getRed() / 255f, c.getGreen() / 255f, c.getBlue() / 255f, 1);
+                    RenderSystem.setShaderColor(c.getRed() / 255f, c.getGreen() / 255f, c.getBlue() / 255f, 1);
                     GuiComponent.blit(matrixStack, x + iconX[index], y + iconY[index], 0, 0, 24, 24, 24, 24);
                 }
-                RenderSystem.color4f(1f, 1f, 1f, 1);
+                RenderSystem.setShaderColor(1f, 1f, 1f, 1);
                 matrixStack.popPose();
             }
 

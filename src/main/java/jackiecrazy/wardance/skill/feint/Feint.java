@@ -14,14 +14,13 @@ import jackiecrazy.wardance.skill.*;
 import jackiecrazy.wardance.utils.CombatUtils;
 import jackiecrazy.wardance.utils.SkillUtils;
 import jackiecrazy.wardance.utils.WarColors;
+import net.minecraft.world.InteractionHand;
+import net.minecraft.world.effect.MobEffectInstance;
+import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.ai.attributes.AttributeModifier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
-import net.minecraft.world.effect.MobEffectInstance;
-import net.minecraft.world.effect.MobEffects;
-import net.minecraft.tags.SetTag;
-import net.minecraft.world.InteractionHand;
 import net.minecraftforge.event.entity.living.LivingAttackEvent;
 import net.minecraftforge.event.entity.living.LivingHurtEvent;
 import net.minecraftforge.eventbus.api.Event;
@@ -33,19 +32,18 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.awt.*;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashSet;
 import java.util.UUID;
 
 @Mod.EventBusSubscriber(modid = WarDance.MODID)
 public class Feint extends Skill {
-    private final SetTag<String> proc = SetTag.create(new HashSet<>(Arrays.asList("physical", "disableShield", "noDamage", ProcPoints.melee, ProcPoints.afflict_tick, "boundCast", ProcPoints.countdown, ProcPoints.recharge_normal, ProcPoints.change_parry_result)));
-    private final SetTag<String> tag = SetTag.create(new HashSet<>(Arrays.asList(SkillTags.physical, SkillTags.offensive, "noDamage")));
+    private final HashSet<String> proc = makeTag("physical", "disableShield", "noDamage", ProcPoints.melee, ProcPoints.afflict_tick, "boundCast", ProcPoints.countdown, ProcPoints.recharge_normal, ProcPoints.change_parry_result);
+    private final HashSet<String> tag = makeTag(SkillTags.physical, SkillTags.offensive, "noDamage");
 
     @SubscribeEvent()
     public static void hurt(LivingAttackEvent e) {
         Entity seme = e.getSource().getEntity();
-        LivingEntity uke = e.getEntityLiving();
+        LivingEntity uke = e.getEntity();
         //reduce mark "cooldown", trigger capricious strike
         if (seme instanceof LivingEntity) {
             final LivingEntity caster = (LivingEntity) seme;
@@ -72,7 +70,7 @@ public class Feint extends Skill {
 
     @SubscribeEvent()
     public static void spiritBomb(LivingHurtEvent e) {
-        LivingEntity uke = e.getEntityLiving();
+        LivingEntity uke = e.getEntity();
         Marks.getCap(uke).getActiveMark(WarSkills.SPIRIT_RESONANCE.get()).ifPresent((a) -> {
             if (a.isCondition() && e.getSource() instanceof CombatDamageSource && ((CombatDamageSource) e.getSource()).canProcSkillEffects()) {
                 e.setAmount(e.getAmount() + 2);
@@ -84,7 +82,7 @@ public class Feint extends Skill {
     @SubscribeEvent()
     public static void aware(EntityAwarenessEvent e) {
         LivingEntity seme = e.getAttacker();
-        LivingEntity uke = e.getEntityLiving();
+        LivingEntity uke = e.getEntity();
         if (seme != null) {
             if (Marks.getCap(uke).isMarked(WarSkills.SMIRKING_SHADOW.get()) && Marks.getCap(uke).getActiveMark(WarSkills.SMIRKING_SHADOW.get()).get().getDuration() > 0.1 && CasterData.getCap(seme).getEquippedSkills().contains(WarSkills.SMIRKING_SHADOW.get())) {
                 e.setAwareness(StealthUtils.Awareness.UNAWARE);
@@ -110,7 +108,7 @@ public class Feint extends Skill {
 
     @Override
     public void onProc(LivingEntity caster, Event procPoint, STATE state, SkillData stats, LivingEntity target) {
-        if (procPoint instanceof LivingAttackEvent && procPoint.getPhase() == EventPriority.HIGHEST && state == STATE.HOLSTERED && ((LivingAttackEvent) procPoint).getEntityLiving() == target && cast(caster, target, -999)) {
+        if (procPoint instanceof LivingAttackEvent && procPoint.getPhase() == EventPriority.HIGHEST && state == STATE.HOLSTERED && ((LivingAttackEvent) procPoint).getEntity() == target && cast(caster, target, -999)) {
             int dur = 20;
             if (Marks.getCap(target).isMarked(this)) {
                 SkillData a = Marks.getCap(target).getActiveMark(this).get();
@@ -123,7 +121,7 @@ public class Feint extends Skill {
             procPoint.setCanceled(true);
             markUsed(caster);
         }
-        if (procPoint instanceof LivingAttackEvent && this == WarSkills.FOLLOWUP.get() && procPoint.getPhase() == EventPriority.LOWEST && ((LivingAttackEvent) procPoint).getEntityLiving() == target &&
+        if (procPoint instanceof LivingAttackEvent && this == WarSkills.FOLLOWUP.get() && procPoint.getPhase() == EventPriority.LOWEST && ((LivingAttackEvent) procPoint).getEntity() == target &&
                 CombatData.getCap(target).getHandBind(InteractionHand.MAIN_HAND) > 0 && CombatData.getCap(target).getHandBind(InteractionHand.OFF_HAND) > 0) {
             CombatUtils.setHandCooldown(caster, InteractionHand.MAIN_HAND, 0.5f, true);
         }
@@ -183,8 +181,8 @@ public class Feint extends Skill {
     }
 
     public static class ScorpionSting extends Feint {
-        private final SetTag<String> tag = SetTag.create(new HashSet<>(Arrays.asList("physical", "disableShield", "noDamage", ProcPoints.melee, "boundCast", ProcPoints.on_hurt, ProcPoints.countdown, ProcPoints.recharge_normal, ProcPoints.change_parry_result)));
-        private final SetTag<String> no = SetTag.create(new HashSet<>(Arrays.asList("normalAttack")));
+        private final HashSet<String> tag = makeTag("physical", "disableShield", "noDamage", ProcPoints.melee, "boundCast", ProcPoints.on_hurt, ProcPoints.countdown, ProcPoints.recharge_normal, ProcPoints.change_parry_result);
+        private final HashSet<String> no = makeTag("normalAttack");
 
         @Override
         public Color getColor() {

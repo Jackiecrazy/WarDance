@@ -2,10 +2,10 @@ package jackiecrazy.wardance.networking;
 
 import jackiecrazy.footwork.capability.resources.CombatData;
 import jackiecrazy.wardance.handlers.EntityHandler;
-import net.minecraft.world.entity.LivingEntity;
-import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.network.FriendlyByteBuf;
-import net.minecraftforge.fml.network.NetworkEvent;
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.entity.LivingEntity;
+import net.minecraftforge.network.NetworkEvent;
 
 import java.util.function.BiConsumer;
 import java.util.function.Function;

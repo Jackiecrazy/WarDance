@@ -1,28 +1,34 @@
 package jackiecrazy.wardance.client.screen;
 
-import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.systems.RenderSystem;
+import com.mojang.blaze3d.vertex.PoseStack;
+import com.mojang.blaze3d.vertex.Tesselator;
 import jackiecrazy.wardance.WarDance;
 import jackiecrazy.wardance.capability.skill.CasterData;
 import jackiecrazy.wardance.networking.CombatChannel;
 import jackiecrazy.wardance.networking.UpdateSkillSelectionPacket;
 import jackiecrazy.wardance.skill.Skill;
 import jackiecrazy.wardance.skill.SkillCategory;
+import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
-import net.minecraft.client.gui.screens.Screen;
-import net.minecraft.client.gui.components.EditBox;
 import net.minecraft.client.gui.components.Button;
+import net.minecraft.client.gui.components.EditBox;
 import net.minecraft.client.gui.components.ObjectSelectionList;
-import com.mojang.blaze3d.vertex.Tesselator;
-import net.minecraft.util.FormattedCharSequence;
+import net.minecraft.client.gui.narration.NarrationElementOutput;
+import net.minecraft.client.gui.screens.Screen;
+import net.minecraft.client.renderer.GameRenderer;
+import net.minecraft.locale.Language;
+import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.Style;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.util.text.*;
-import net.minecraftforge.client.gui.ScrollPanel;
+import net.minecraft.util.FormattedCharSequence;
+import net.minecraftforge.client.gui.ScreenUtils;
+import net.minecraftforge.client.gui.widget.ScrollPanel;
 import net.minecraftforge.common.ForgeHooks;
-import net.minecraftforge.fml.client.gui.GuiUtils;
 import net.minecraftforge.fml.loading.StringUtils;
 
+import javax.annotation.Nonnull;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -30,12 +36,6 @@ import java.util.List;
 import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.stream.Collectors;
-
-import net.minecraft.ChatFormatting;
-import net.minecraft.locale.Language;
-import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.Style;
-import net.minecraft.network.chat.TranslatableComponent;
 
 public class SkillSelectionScreen extends Screen {
     private static final ResourceLocation radial = new ResourceLocation(WarDance.MODID, "textures/skill/radialhud.png");
@@ -58,6 +58,8 @@ public class SkillSelectionScreen extends Screen {
     private int listWidth;
     private List<SkillCategory> bases;
     private int buttonMargin = 1;
+
+    private Button doneButton;
     private String lastFilterText = "";
 
     private EditBox search;
@@ -141,39 +143,39 @@ public class SkillSelectionScreen extends Screen {
         int infoWidth = this.width - this.listWidth - skillCircleWidth - (PADDING * 4);
         int doneButtonWidth = Math.min(infoWidth, 200);
         int y = this.height - 20 - PADDING;
-        this.addButton(new Button(((listWidth + PADDING + this.width - doneButtonWidth) / 2), y, doneButtonWidth, 20,
-                Component.translatable("gui.done"), b -> SkillSelectionScreen.this.onClose()));
+        doneButton = Button.builder(Component.translatable("gui.done"), b -> SkillSelectionScreen.this.onClose()).bounds(((listWidth + PADDING + this.width - doneButtonWidth) / 2), y, doneButtonWidth, 20).build();
+        this.addRenderableWidget(doneButton);
         //y -= 20 + PADDING;
 
         //y -= 14 + PADDING + 1;
         search = new EditBox(getFontRenderer(), PADDING + 1, y, listWidth - 2, 14, Component.translatable("fml.menu.mods.search"));
 
         int fullButtonHeight = PADDING + 20 + PADDING;
-        this.skillList = new SkillListWidget(this, listWidth, PADDING, search.y - getFontRenderer().lineHeight - PADDING);
+        this.skillList = new SkillListWidget(this, listWidth, PADDING, search.getY() - getFontRenderer().lineHeight - PADDING);
         this.skillList.setLeftPos(PADDING);
 
         int split = (this.height - PADDING * 2 - fullButtonHeight) * 2 / 3;
         this.skillInfo = new InfoPanel(this.minecraft, infoWidth, split, PADDING);
-        this.variationList = new VariationListWidget(this, infoWidth - 9, split + PADDING * 2, search.y - getFontRenderer().lineHeight - PADDING);
+        this.variationList = new VariationListWidget(this, infoWidth - 9, split + PADDING * 2, search.getY() - getFontRenderer().lineHeight - PADDING);
         this.variationList.setLeftPos(PADDING * 2 + listWidth);
 
         List<Skill> oldList = CasterData.getCap(Minecraft.getInstance().player).getEquippedSkills();
         for (int d = 0; d < skillPie.length; d++) {
             skillPie[d] = new SkillSliceButton(this, width - skillCircleWidth, PADDING / 2, skillCircleWidth, fixedU[d], fixedV[d], radial, d);
             skillPie[d].setSkill(oldList.get(d));
-            children.add(skillPie[d]);
+            addRenderableWidget(skillPie[d]);
         }
 
         for (int d = 0; d < passives.length; d++) {
             passives[d] = new PassiveButton(this, width - skillCircleWidth + d * (31), PADDING + skillCircleWidth, 23, d);
             passives[d].setSkill(oldList.get(d + skillPie.length));
-            children.add(passives[d]);
+            addRenderableWidget(passives[d]);
         }
 
-        children.add(search);
-        children.add(skillList);
-        children.add(variationList);
-        children.add(skillInfo);
+        addRenderableWidget(search);
+        addRenderableWidget(skillList);
+        addRenderableWidget(variationList);
+        addRenderableWidget(skillInfo);
         search.setFocus(false);
         search.setCanLoseFocus(true);
 
@@ -266,7 +268,7 @@ public class SkillSelectionScreen extends Screen {
 
         Component text = Component.translatable("fml.menu.mods.search");
         int x = skillList.getLeft() + ((skillList.getRight() - skillList.getLeft()) / 2) - (getFontRenderer().width(text) / 2);
-        getFontRenderer().draw(mStack, text.getVisualOrderText(), x, search.y - getFontRenderer().lineHeight, 0xFFFFFF);
+        getFontRenderer().draw(mStack, text.getVisualOrderText(), x, search.getY() - getFontRenderer().lineHeight, 0xFFFFFF);
         this.search.render(mStack, mouseX, mouseY, partialTicks);
         super.render(mStack, mouseX, mouseY, partialTicks);
     }
@@ -312,9 +314,9 @@ public class SkillSelectionScreen extends Screen {
             lines.add(selectedVariation.getSkill().description().getString());
             if (minecraft != null && minecraft.options.renderDebug) {
                 lines.add("\n");
-                lines.add(ChatFormatting.DARK_GRAY + Component.translatable("wardance:skill_tag").getString() + selectedVariation.getSkill().getTags(minecraft.player).getValues() + "\n");
-                lines.add(ChatFormatting.DARK_GRAY + Component.translatable("wardance:skill_soft_incompat").getString() + selectedVariation.getSkill().getSoftIncompatibility(minecraft.player).getValues() + "\n");
-                lines.add(ChatFormatting.DARK_GRAY + Component.translatable("wardance:skill_hard_incompat").getString() + selectedVariation.getSkill().getHardIncompatibility(minecraft.player).getValues() + ChatFormatting.RESET);
+                lines.add(ChatFormatting.DARK_GRAY + Component.translatable("wardance:skill_tag").getString() + selectedVariation.getSkill().getTags(minecraft.player) + "\n");
+                lines.add(ChatFormatting.DARK_GRAY + Component.translatable("wardance:skill_soft_incompat").getString() + selectedVariation.getSkill().getSoftIncompatibility(minecraft.player) + "\n");
+                lines.add(ChatFormatting.DARK_GRAY + Component.translatable("wardance:skill_hard_incompat").getString() + selectedVariation.getSkill().getHardIncompatibility(minecraft.player) + ChatFormatting.RESET);
             }
         }
         lines.add("\n");
@@ -429,12 +431,13 @@ public class SkillSelectionScreen extends Screen {
         @Override
         protected void drawPanel(PoseStack mStack, int entryRight, int relativeY, Tesselator tess, int mouseX, int mouseY) {
             if (logoPath != null) {
-                Minecraft.getInstance().getTextureManager().bind(logoPath);
+                RenderSystem.setShader(GameRenderer::getPositionTexShader);
                 RenderSystem.enableBlend();
-                RenderSystem.color4f(1.0F, 1.0F, 1.0F, 1.0F);
+                RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, 1.0F);
+                RenderSystem.setShaderTexture(0, logoPath);
                 // Draw the logo image inscribed in a rectangle with width entryWidth (minus some padding) and height 50
                 int headerHeight = 50;
-                GuiUtils.drawInscribedRect(mStack, left + PADDING, relativeY, width - (PADDING * 2), headerHeight, 64, 64, false, true);
+                ScreenUtils.blitInscribed(mStack, left + PADDING, relativeY, width - (PADDING * 2), headerHeight, 64, 64, false, true);
                 relativeY += headerHeight + PADDING;
             }
 
@@ -442,7 +445,7 @@ public class SkillSelectionScreen extends Screen {
                 if (line != null) {
                     RenderSystem.enableBlend();
                     SkillSelectionScreen.this.font.drawShadow(mStack, line, left + PADDING, relativeY, 0xFFFFFF);
-                    RenderSystem.disableAlphaTest();
+                    //RenderSystem.disableAlphaTest();
                     RenderSystem.disableBlend();
                 }
                 relativeY += font.lineHeight;
@@ -483,10 +486,14 @@ public class SkillSelectionScreen extends Screen {
             return super.mouseClicked(mouseX, mouseY, button);
         }
 
+        @Nonnull
         @Override
-        protected void drawBackground() {
-            //this.drawGradientRect(, this.left, this.top, this.right, this.bottom, 0xC0101010, 0xD0101010);
+        public NarrationPriority narrationPriority() {
+            return NarrationPriority.NONE;
+        }
 
+        @Override
+        public void updateNarration(@Nonnull NarrationElementOutput p_169152_) {
         }
     }
 }

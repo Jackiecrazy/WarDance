@@ -28,7 +28,7 @@ public class ViralDecay extends Judgment {
 
     @SubscribeEvent
     public static void virus(LivingDeathEvent e) {
-        Marks.getCap(e.getEntityLiving()).getActiveMark(WarSkills.VIRAL_DECAY.get()).ifPresent((a) -> detonate(e.getEntityLiving(), a.getCaster(e.getEntityLiving().level)));
+        Marks.getCap(e.getEntity()).getActiveMark(WarSkills.VIRAL_DECAY.get()).ifPresent((a) -> detonate(e.getEntity(), a.getCaster(e.getEntity().level)));
     }
 
     private static void detonate(LivingEntity target, LivingEntity caster) {

@@ -7,17 +7,15 @@ import jackiecrazy.wardance.event.ParryEvent;
 import jackiecrazy.wardance.skill.ProcPoints;
 import jackiecrazy.wardance.skill.SkillData;
 import net.minecraft.world.entity.LivingEntity;
-import net.minecraft.tags.SetTag;
 import net.minecraftforge.event.entity.living.LivingHurtEvent;
 import net.minecraftforge.eventbus.api.Event;
 import net.minecraftforge.eventbus.api.EventPriority;
 
 import java.awt.*;
-import java.util.Arrays;
 import java.util.HashSet;
 
 public class PoundOfFlesh extends MementoMori {
-    private final SetTag<String> tag = SetTag.create(new HashSet<>(Arrays.asList(ProcPoints.melee, ProcPoints.on_hurt, ProcPoints.state, ProcPoints.on_being_parried)));
+    private final HashSet<String> tag = makeTag(ProcPoints.melee, ProcPoints.on_hurt, ProcPoints.state, ProcPoints.on_being_parried);
 
     @Override
     public Color getColor() {
@@ -49,8 +47,8 @@ public class PoundOfFlesh extends MementoMori {
             if (procPoint instanceof ParryEvent && procPoint.getPhase() == EventPriority.HIGHEST && ((ParryEvent) procPoint).canParry()) {
                 caster.invulnerableTime = 0;
                 caster.hurt(CombatDamageSource.causeSelfDamage(caster).setDamageTyping(CombatDamageSource.TYPE.TRUE).setSkillUsed(this).bypassArmor().bypassMagic(), GeneralUtils.getMaxHealthBeforeWounding(caster) * 0.05f);
-                ((ParryEvent) procPoint).setPostureConsumption(((ParryEvent) procPoint).getPostureConsumption() + CombatData.getCap(target).getTrueMaxPosture() * 0.1f);
-            } else if (procPoint instanceof LivingHurtEvent && procPoint.getPhase() == EventPriority.HIGHEST && ((LivingHurtEvent) procPoint).getEntityLiving() == target && (!(((LivingHurtEvent) procPoint).getSource() instanceof CombatDamageSource) || ((CombatDamageSource) ((LivingHurtEvent) procPoint).getSource()).getSkillUsed() != this)) {
+                ((ParryEvent) procPoint).setPostureConsumption(((ParryEvent) procPoint).getPostureConsumption() + CombatData.getCap(target).getMaxPosture() * 0.1f);
+            } else if (procPoint instanceof LivingHurtEvent && procPoint.getPhase() == EventPriority.HIGHEST && ((LivingHurtEvent) procPoint).getEntity() == target && (!(((LivingHurtEvent) procPoint).getSource() instanceof CombatDamageSource) || ((CombatDamageSource) ((LivingHurtEvent) procPoint).getSource()).getSkillUsed() != this)) {
                 caster.invulnerableTime = 0;
                 caster.hurt(CombatDamageSource.causeSelfDamage(caster).setDamageTyping(CombatDamageSource.TYPE.TRUE).setSkillUsed(this).bypassArmor().bypassMagic(), GeneralUtils.getMaxHealthBeforeWounding(caster) * 0.05f);
                 ((LivingHurtEvent) procPoint).setAmount(((LivingHurtEvent) procPoint).getAmount() + GeneralUtils.getMaxHealthBeforeWounding(target) * 0.05f);

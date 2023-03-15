@@ -6,14 +6,12 @@ import jackiecrazy.footwork.event.RegenSpiritEvent;
 import jackiecrazy.wardance.skill.*;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.ai.attributes.AttributeModifier;
-import net.minecraft.tags.SetTag;
 import net.minecraftforge.event.entity.living.LivingDeathEvent;
 import net.minecraftforge.eventbus.api.Event;
 import net.minecraftforge.eventbus.api.EventPriority;
 
 import javax.annotation.Nonnull;
 import java.awt.*;
-import java.util.Arrays;
 import java.util.HashSet;
 import java.util.UUID;
 
@@ -29,8 +27,8 @@ lady luck: after casting a skill, have a 1+luck/5+luck chance to recover the spi
 confidence: your spirit regeneration speed scales proportionally with how much spirit you have left, from 200% at full to 50% at empty
      */
 
-    private final SetTag<String> tag = SetTag.create(new HashSet<>(Arrays.asList("passive", ProcPoints.on_kill, ProcPoints.change_spirit)));
-    private final SetTag<String> no = SetTag.empty();
+    private final HashSet<String> tag = makeTag("passive", ProcPoints.on_kill, ProcPoints.change_spirit);
+    private final HashSet<String> no = none;
 
     @Override
     public Color getColor() {

@@ -8,9 +8,8 @@ import jackiecrazy.wardance.capability.status.Marks;
 import jackiecrazy.wardance.skill.ProcPoints;
 import jackiecrazy.wardance.skill.SkillData;
 import jackiecrazy.wardance.skill.WarSkills;
-import net.minecraft.world.entity.LivingEntity;
-import net.minecraft.tags.SetTag;
 import net.minecraft.world.InteractionHand;
+import net.minecraft.world.entity.LivingEntity;
 import net.minecraftforge.event.entity.living.LivingDeathEvent;
 import net.minecraftforge.event.entity.player.CriticalHitEvent;
 import net.minecraftforge.eventbus.api.Event;
@@ -19,19 +18,15 @@ import net.minecraftforge.fml.common.Mod;
 
 import javax.annotation.Nullable;
 import java.awt.*;
-import java.util.Arrays;
 import java.util.HashSet;
-
-import jackiecrazy.wardance.skill.Skill.STATE;
 
 @Mod.EventBusSubscriber(modid = WarDance.MODID)
 public class Silencer extends HeavyBlow {
-    private final SetTag<String> tag = SetTag.create(new HashSet<>(Arrays.asList("physical", ProcPoints.disable_shield, ProcPoints.melee, ProcPoints.normal_attack, ProcPoints.modify_crit, ProcPoints.recharge_normal, ProcPoints.afflict_tick)));
+    private final HashSet<String> tag = makeTag("physical", ProcPoints.disable_shield, ProcPoints.melee, ProcPoints.normal_attack, ProcPoints.modify_crit, ProcPoints.recharge_normal, ProcPoints.afflict_tick);
 
     @SubscribeEvent
     public static void silenced(LivingDeathEvent e) {
-        if (e.getSource().getEntity() instanceof LivingEntity && Marks.getCap(e.getEntityLiving()).isMarked(WarSkills.SILENCER.get())) {
-            LivingEntity elb = (LivingEntity) e.getSource().getEntity();
+        if (e.getSource().getEntity() instanceof LivingEntity elb && Marks.getCap(e.getEntity()).isMarked(WarSkills.SILENCER.get())) {
             CasterData.getCap(elb).changeSkillState(WarSkills.SILENCER.get(), STATE.INACTIVE);
         }
     }

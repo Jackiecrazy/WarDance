@@ -16,38 +16,37 @@ import jackiecrazy.wardance.networking.CombatChannel;
 import jackiecrazy.wardance.networking.UpdateAttackPacket;
 import jackiecrazy.wardance.skill.Skill;
 import jackiecrazy.wardance.skill.SkillCategories;
-import net.minecraft.world.item.enchantment.EnchantmentHelper;
-import net.minecraft.world.item.enchantment.Enchantments;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.sounds.SoundEvents;
+import net.minecraft.util.Mth;
+import net.minecraft.util.Tuple;
+import net.minecraft.world.InteractionHand;
+import net.minecraft.world.damagesource.DamageSource;
+import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.ai.attributes.AttributeModifier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.server.level.ServerPlayer;
-import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.item.ArmorItem;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.effect.MobEffects;
-import net.minecraft.util.*;
-import net.minecraft.util.math.MathHelper;
+import net.minecraft.world.item.enchantment.EnchantmentHelper;
+import net.minecraft.world.item.enchantment.Enchantments;
 import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.util.FakePlayer;
 import net.minecraftforge.event.entity.player.CriticalHitEvent;
 import net.minecraftforge.eventbus.api.Event;
-import net.minecraftforge.fml.network.PacketDistributor;
+import net.minecraftforge.network.PacketDistributor;
 import net.minecraftforge.registries.ForgeRegistries;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.*;
-
-import net.minecraft.resources.ResourceLocation;
-import net.minecraft.sounds.SoundEvents;
-import net.minecraft.world.InteractionHand;
-import net.minecraft.world.damagesource.DamageSource;
 
 public class CombatUtils {
     public static final UUID off = UUID.fromString("8c8028c8-da69-49a2-99cd-f92d7ad22534");
@@ -178,7 +177,7 @@ public class CombatUtils {
                     destroy = tags.contains("d");
                     trigger = tags.contains("t");
                 }
-                EntityType<?> type = ForgeRegistries.ENTITIES.getValue(key);
+                EntityType<?> type = ForgeRegistries.ENTITY_TYPES.getValue(key);
                 if (type != null)
                     projectileMap.put(type, new ProjectileInfo(posture, count, destroy, trigger));
             } catch (Exception e) {
@@ -396,13 +395,13 @@ public class CombatUtils {
             if (considerRelativeAngle)
                 knockBack((LivingEntity) to, from, strength, distVec.x, distVec.y, distVec.z, false);
             else
-                knockBack(((LivingEntity) to), from, (float) strength * 0.5F, (double) Mth.sin(from.yRot * 0.017453292F), 0, (double) (-Mth.cos(from.yRot * 0.017453292F)), false);
+                knockBack(((LivingEntity) to), from, (float) strength * 0.5F, (double) Mth.sin(from.getYRot() * 0.017453292F), 0, (double) (-Mth.cos(from.getYRot() * 0.017453292F)), false);
         } else {
             //eh
             if (considerRelativeAngle) {
                 to.lerpMotion(distVec.x * -strength, to.verticalCollision ? 0.1 : distVec.y * -strength, distVec.z * -strength);
             } else {
-                to.push(-Mth.sin(-from.yRot * 0.017453292F - (float) Math.PI) * 0.5, 0.1, -Mth.cos(-from.yRot * 0.017453292F - (float) Math.PI) * 0.5);
+                to.push(-Mth.sin(-from.getYRot() * 0.017453292F - (float) Math.PI) * 0.5, 0.1, -Mth.cos(-from.getYRot() * 0.017453292F - (float) Math.PI) * 0.5);
             }
             to.hurtMarked = true;
         }
@@ -424,7 +423,7 @@ public class CombatUtils {
             Vec3 vec = to.getDeltaMovement();
             double motionX = vec.x, motionY = vec.y, motionZ = vec.z;
             to.hasImpulse = true;
-            float pythagora = Mth.sqrt(xRatio * xRatio + zRatio * zRatio);
+            double pythagora = Math.sqrt(xRatio * xRatio + zRatio * zRatio);
             if (to.isOnGround()) {
                 motionY /= 2.0D;
                 motionY += strength;
@@ -433,7 +432,7 @@ public class CombatUtils {
                     motionY = 0.4000000059604645D;
                 }
             } else if (yRatio != 0) {
-                pythagora = Mth.sqrt(xRatio * xRatio + zRatio * zRatio + yRatio * yRatio);
+                pythagora = Math.sqrt(xRatio * xRatio + zRatio * zRatio + yRatio * yRatio);
                 motionY /= 2.0D;
                 motionY -= yRatio / (double) pythagora * (double) strength;
             }
@@ -531,7 +530,7 @@ public class CombatUtils {
                 continue;
             }
             if (!GeneralUtils.isFacingEntity(e, target, angle)) continue;
-            if (!e.canSee(target)) continue;
+            if (!e.hasLineOfSight(target)) continue;
             if (GeneralUtils.getDistSqCompensated(e, target) > modRange * modRange) continue;
             CombatUtils.setHandCooldown(e, InteractionHand.MAIN_HAND, charge, false);
             hit = true;

@@ -7,11 +7,10 @@ import jackiecrazy.wardance.capability.status.Marks;
 import jackiecrazy.wardance.skill.*;
 import jackiecrazy.wardance.utils.CombatUtils;
 import jackiecrazy.wardance.utils.SkillUtils;
-import net.minecraft.world.entity.LivingEntity;
-import net.minecraft.tags.SetTag;
-import net.minecraft.world.InteractionHand;
-import net.minecraft.sounds.SoundSource;
 import net.minecraft.sounds.SoundEvents;
+import net.minecraft.sounds.SoundSource;
+import net.minecraft.world.InteractionHand;
+import net.minecraft.world.entity.LivingEntity;
 import net.minecraftforge.event.entity.living.LivingAttackEvent;
 import net.minecraftforge.event.entity.living.LivingDeathEvent;
 import net.minecraftforge.eventbus.api.Event;
@@ -19,7 +18,6 @@ import net.minecraftforge.eventbus.api.EventPriority;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-
 import java.util.HashSet;
 
 public class Judgment extends Skill {
@@ -50,7 +48,7 @@ public class Judgment extends Skill {
                 float healthDiff = target.getMaxHealth() - target.getHealth();
                 amount += healthDiff;
             }
-            CombatData.getCap(target).addWounding(amount);
+            //CombatData.getCap(target).addWounding(amount);
         } else
             target.hurt(new CombatDamageSource("player", caster).setDamageTyping(CombatDamageSource.TYPE.PHYSICAL).setProcSkillEffects(true).setProcAttackEffects(true).setDamageTyping(CombatDamageSource.TYPE.TRUE).bypassArmor().bypassMagic(), amount);
     }
@@ -131,10 +129,10 @@ public class Judgment extends Skill {
 
     @Override
     public void onProc(LivingEntity caster, Event procPoint, STATE state, SkillData stats, @Nullable LivingEntity target) {
-        if (procPoint instanceof LivingDeathEvent && procPoint.getPhase() == EventPriority.HIGHEST && ((LivingDeathEvent) procPoint).getEntityLiving() == target) {
+        if (procPoint instanceof LivingDeathEvent && procPoint.getPhase() == EventPriority.HIGHEST && ((LivingDeathEvent) procPoint).getEntity() == target) {
             Marks.getCap(target).getActiveMark(this).ifPresent((a) -> CombatData.getCap(caster).addMight(a.getArbitraryFloat() * mightConsumption(caster) * 1.4f));
         }
-        if (procPoint instanceof LivingAttackEvent && ((LivingAttackEvent) procPoint).getEntityLiving() == target) {
+        if (procPoint instanceof LivingAttackEvent && ((LivingAttackEvent) procPoint).getEntity() == target) {
             if (state == STATE.ACTIVE)
                 ((LivingAttackEvent) procPoint).getSource().bypassArmor().bypassMagic();
             Marks.getCap(target).getActiveMark(this).ifPresent((a) -> a.setDuration(a.getArbitraryFloat() == 1 ? 6 : 12));

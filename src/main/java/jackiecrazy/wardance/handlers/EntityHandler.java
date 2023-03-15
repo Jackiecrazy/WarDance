@@ -10,25 +10,27 @@ import jackiecrazy.wardance.capability.status.Marks;
 import jackiecrazy.wardance.networking.CombatChannel;
 import jackiecrazy.wardance.networking.SyncSkillPacket;
 import jackiecrazy.wardance.skill.Skill;
+import net.minecraft.core.BlockPos;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.util.Tuple;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.server.level.ServerPlayer;
-import net.minecraft.resources.ResourceLocation;
-import net.minecraft.util.Tuple;
-import net.minecraft.core.BlockPos;
 import net.minecraft.world.level.Level;
 import net.minecraftforge.event.AttachCapabilitiesEvent;
 import net.minecraftforge.event.TickEvent;
+import net.minecraftforge.event.entity.EntityJoinLevelEvent;
 import net.minecraftforge.event.entity.EntityJoinWorldEvent;
 import net.minecraftforge.event.entity.living.LivingEvent;
 import net.minecraftforge.event.entity.player.PlayerEvent;
+import net.minecraftforge.event.server.ServerStartingEvent;
+import net.minecraftforge.event.server.ServerStoppingEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.LogicalSide;
 import net.minecraftforge.fml.common.Mod;
-import net.minecraftforge.fml.event.server.FMLServerStartingEvent;
-import net.minecraftforge.fml.event.server.FMLServerStoppingEvent;
 import net.minecraftforge.fml.network.PacketDistributor;
+import net.minecraftforge.network.PacketDistributor;
 
 import java.util.HashMap;
 import java.util.concurrent.ConcurrentHashMap;
@@ -39,13 +41,13 @@ public class EntityHandler {
     public static final ConcurrentHashMap<Tuple<Level, BlockPos>, Float> alertTracker = new ConcurrentHashMap<>();
 
     @SubscribeEvent
-    public static void start(FMLServerStartingEvent e) {
+    public static void start(ServerStartingEvent e) {
         mustUpdate.clear();
         alertTracker.clear();
     }
 
     @SubscribeEvent
-    public static void stop(FMLServerStoppingEvent e) {
+    public static void stop(ServerStoppingEvent e) {
         mustUpdate.clear();
         alertTracker.clear();
     }
@@ -61,7 +63,7 @@ public class EntityHandler {
     }
 
     @SubscribeEvent
-    public static void takeThis(EntityJoinWorldEvent e) {
+    public static void takeThis(EntityJoinLevelEvent e) {
         if (e.getEntity() instanceof ServerPlayer) {
             CombatChannel.INSTANCE.send(PacketDistributor.PLAYER.with(() -> (ServerPlayer) e.getEntity()), new SyncSkillPacket(CasterData.getCap((LivingEntity) e.getEntity()).write()));
         }
@@ -69,21 +71,18 @@ public class EntityHandler {
 
     @SubscribeEvent
     public static void respawn(PlayerEvent.Clone e) {
-        CasterData.getCap(e.getPlayer()).read(CasterData.getCap(e.getOriginal()).write());
+        final Player p = e.getEntity();
+        CasterData.getCap(p).read(CasterData.getCap(e.getOriginal()).write());
         if (!e.isWasDeath()) {
-            final ICombatCapability icc = CombatData.getCap(e.getPlayer());
+            final ICombatCapability icc = CombatData.getCap(p);
             icc.read(CombatData.getCap(e.getOriginal()).write());
-
-            icc.setFatigue(0);
-            icc.setBurnout(0);
-            icc.setWounding(0);
         }
         //CasterData.getCap(e.getPlayer()).read(CasterData.getCap(e.getOriginal()).write());
-        ISkillCapability cap = CasterData.getCap(e.getPlayer());
+        ISkillCapability cap = CasterData.getCap(p);
         cap.setEquippedSkills(CasterData.getCap(e.getOriginal()).getEquippedSkills());
         for (Skill s : cap.getEquippedSkills())
             if (s != null) {
-                s.onEquip(e.getPlayer());
+                s.onEquip(p);
             }
     }
 
@@ -100,8 +99,8 @@ public class EntityHandler {
     }
 
     @SubscribeEvent
-    public static void tickMobs(LivingEvent.LivingUpdateEvent e) {
-        LivingEntity elb = e.getEntityLiving();
+    public static void tickMobs(LivingEvent.LivingTickEvent e) {
+        LivingEntity elb = e.getEntity();
         if (!elb.level.isClientSide) {
             if (!(elb instanceof Player)) {
                 Marks.getCap(elb).update();

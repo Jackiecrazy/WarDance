@@ -4,10 +4,10 @@ import jackiecrazy.wardance.capability.skill.CasterData;
 import jackiecrazy.wardance.capability.skill.ISkillCapability;
 import jackiecrazy.wardance.skill.Skill;
 import jackiecrazy.wardance.skill.SkillData;
-import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraftforge.fml.network.NetworkEvent;
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraftforge.network.NetworkEvent;
 
 import java.util.ArrayList;
 import java.util.Comparator;

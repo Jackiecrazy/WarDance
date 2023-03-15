@@ -9,7 +9,7 @@ import net.minecraftforge.common.ForgeConfigSpec;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod.EventBusSubscriber;
 import net.minecraftforge.fml.common.Mod.EventBusSubscriber.Bus;
-import net.minecraftforge.fml.config.ModConfig;
+import net.minecraftforge.fml.event.config.ModConfigEvent;
 import org.apache.commons.lang3.tuple.Pair;
 
 @EventBusSubscriber(
@@ -31,7 +31,7 @@ public class StealthConfig {
     }
 
     @SubscribeEvent
-    public static void loadConfig(ModConfig.ModConfigEvent e) {
+    public static void loadConfig(ModConfigEvent e) {
         if (e.getConfig().getSpec() == CONFIG_SPEC) {
             bake();
         }

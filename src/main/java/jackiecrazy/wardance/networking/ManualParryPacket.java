@@ -3,9 +3,9 @@ package jackiecrazy.wardance.networking;
 import jackiecrazy.footwork.capability.resources.CombatData;
 import jackiecrazy.footwork.capability.resources.ICombatCapability;
 import jackiecrazy.wardance.config.CombatConfig;
-import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.network.FriendlyByteBuf;
-import net.minecraftforge.fml.network.NetworkEvent;
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraftforge.network.NetworkEvent;
 
 import java.util.Objects;
 import java.util.function.BiConsumer;

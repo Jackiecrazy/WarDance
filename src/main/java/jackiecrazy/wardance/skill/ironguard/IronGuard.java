@@ -6,7 +6,7 @@ import jackiecrazy.wardance.skill.SkillCategories;
 import jackiecrazy.wardance.skill.SkillCategory;
 import jackiecrazy.wardance.skill.SkillData;
 import net.minecraft.world.entity.LivingEntity;
-import net.minecraft.tags.SetTag;
+import net.minecraft.tags.HashSet;
 import net.minecraftforge.eventbus.api.Event;
 import net.minecraftforge.eventbus.api.EventPriority;
 
@@ -35,7 +35,7 @@ public abstract class IronGuard extends Skill {
 
     @Override
     public void onProc(LivingEntity caster, Event procPoint, STATE state, SkillData stats, @Nullable LivingEntity target) {
-        if (procPoint instanceof ParryEvent && procPoint.getPhase() == EventPriority.HIGHEST && state!=STATE.COOLING && ((ParryEvent) procPoint).getEntityLiving() == caster && ((ParryEvent) procPoint).canParry() && ((ParryEvent) procPoint).getPostureConsumption() > 0 && cast(caster, target, -999)) {
+        if (procPoint instanceof ParryEvent && procPoint.getPhase() == EventPriority.HIGHEST && state!=STATE.COOLING && ((ParryEvent) procPoint).getEntity() == caster && ((ParryEvent) procPoint).canParry() && ((ParryEvent) procPoint).getPostureConsumption() > 0 && cast(caster, target, -999)) {
             parry(caster, (ParryEvent) procPoint, stats, target, state);
         }
     }

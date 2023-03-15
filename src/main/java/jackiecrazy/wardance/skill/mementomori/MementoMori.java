@@ -10,7 +10,6 @@ import jackiecrazy.wardance.utils.SkillUtils;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.ai.attributes.AttributeModifier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
-import net.minecraft.tags.SetTag;
 import net.minecraftforge.event.entity.living.LivingAttackEvent;
 import net.minecraftforge.event.entity.living.LivingDamageEvent;
 import net.minecraftforge.eventbus.api.Event;
@@ -18,7 +17,6 @@ import net.minecraftforge.eventbus.api.EventPriority;
 
 import javax.annotation.Nonnull;
 import java.awt.*;
-import java.util.Arrays;
 import java.util.HashSet;
 import java.util.UUID;
 
@@ -33,8 +31,8 @@ death denial: upon receiving fatal damage, become immune to all damage and all h
 saving throw: your luck scales very strongly with lost health
 pound of flesh: active skill. Consumes all your spirit, and until your spirit regenerates or (spirit) seconds have elapsed take 5% max health damage per attack to deal 10% max posture damage if parried, or 5% max health damage if connected
      */
-    private final SetTag<String> tag = SetTag.create(new HashSet<>(Arrays.asList("passive", ProcPoints.recharge_sleep, ProcPoints.change_heals, ProcPoints.on_being_damaged, ProcPoints.attack_might)));
-    private final SetTag<String> no = SetTag.empty();
+    private final HashSet<String> tag = makeTag("passive", ProcPoints.recharge_sleep, ProcPoints.change_heals, ProcPoints.on_being_damaged, ProcPoints.attack_might);
+    private final HashSet<String> no = none;
 
     @Nonnull
     @Override
@@ -108,17 +106,17 @@ pound of flesh: active skill. Consumes all your spirit, and until your spirit re
 
         @Override
         public void onProc(LivingEntity caster, Event procPoint, STATE state, SkillData stats, LivingEntity target) {
-            if (procPoint instanceof LivingDamageEvent && procPoint.getPhase() == EventPriority.HIGHEST && ((LivingDamageEvent) procPoint).getEntityLiving() == caster) {
+            if (procPoint instanceof LivingDamageEvent && procPoint.getPhase() == EventPriority.HIGHEST && ((LivingDamageEvent) procPoint).getEntity() == caster) {
                 float stat = stats.getArbitraryFloat();
                 stat += ((LivingDamageEvent) procPoint).getAmount();
                 stat = Math.min(stat, GeneralUtils.getMaxHealthBeforeWounding(caster) / 5);
                 stats.setArbitraryFloat(stat);
             }
-            if (procPoint instanceof LivingAttackEvent && procPoint.getPhase() == EventPriority.HIGHEST && CombatUtils.isMeleeAttack(((LivingAttackEvent) procPoint).getSource()) && ((LivingAttackEvent) procPoint).getEntityLiving() == target) {
+            if (procPoint instanceof LivingAttackEvent && procPoint.getPhase() == EventPriority.HIGHEST && CombatUtils.isMeleeAttack(((LivingAttackEvent) procPoint).getSource()) && ((LivingAttackEvent) procPoint).getEntity() == target) {
                 float stat = stats.getArbitraryFloat();
                 if (stat > 1) {
                     //EXPLOOOOSION
-                    for (LivingEntity e : caster.level.getLoadedEntitiesOfClass(LivingEntity.class, caster.getBoundingBox().inflate(5))) {
+                    for (LivingEntity e : caster.level.getEntitiesOfClass(LivingEntity.class, caster.getBoundingBox().inflate(5))) {
                         if (TargetingUtils.isHostile(e, caster)) {
                             e.hurt(new CombatDamageSource("lightningBolt", caster).setDamageTyping(CombatDamageSource.TYPE.MAGICAL).setProcSkillEffects(true).setKnockbackPercentage(0).setAttackingHand(null).setSkillUsed(this).setMagic(), stat);
                             CombatUtils.knockBack(e, caster, stat / 4, true, false);

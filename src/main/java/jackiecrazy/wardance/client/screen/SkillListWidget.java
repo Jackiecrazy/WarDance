@@ -51,7 +51,7 @@ public class SkillListWidget extends ObjectSelectionList<SkillListWidget.Categor
         RenderSystem.disableTexture();
         Tesselator tessellator = Tesselator.getInstance();
         BufferBuilder bufferbuilder = tessellator.getBuilder();
-        RenderSystem.color4f(1.0F, 1.0F, 1.0F, 1.0F);
+        RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, 1.0F);
         bufferbuilder.begin(7, DefaultVertexFormat.POSITION_TEX_COLOR);
         bufferbuilder.vertex((double)this.x0, (double)this.y1, 0.0D).uv((float)this.x0 / 32.0F, (float)(this.y1 + (int)this.getScrollAmount()) / 32.0F).color(20, 20, 20, 255).endVertex();
         bufferbuilder.vertex((double)this.x1, (double)this.y1, 0.0D).uv((float)this.x1 / 32.0F, (float)(this.y1 + (int)this.getScrollAmount()) / 32.0F).color(20, 20, 20, 255).endVertex();
@@ -67,7 +67,7 @@ public class SkillListWidget extends ObjectSelectionList<SkillListWidget.Categor
         Tesselator tessellator = Tesselator.getInstance();
         BufferBuilder bufferbuilder = tessellator.getBuilder();
         this.minecraft.getTextureManager().bind(GuiComponent.BACKGROUND_LOCATION);
-        RenderSystem.color4f(1.0F, 1.0F, 1.0F, 1.0F);
+        RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, 1.0F);
         bufferbuilder.begin(7, DefaultVertexFormat.POSITION_TEX_COLOR);
         int color=this.isFocused()?255:160;
         bufferbuilder.vertex((double)this.x0+1, (double)this.y1+1, 0.0D).uv((float)this.x0 / 32.0F, (float)(this.y1 + (int)this.getScrollAmount()) / 32.0F).color(color, color, color, 255).endVertex();
@@ -110,7 +110,7 @@ public class SkillListWidget extends ObjectSelectionList<SkillListWidget.Categor
             //font.draw(ms, LanguageMap.getInstance().getVisualOrder(ITextProperties.composite(font.substrByWidth(version, listWidth))), left + 3, top + 2 + font.FONT_HEIGHT, 0xCCCCCC);
             //lil' skill icon
             Minecraft.getInstance().getTextureManager().bind(s.icon());
-            RenderSystem.color4f(1, 1, 1, 1);
+            RenderSystem.setShaderColor(1, 1, 1, 1);
             RenderSystem.pushMatrix();
             GuiComponent.blit(ms, getLeft() + width - 12, top + entryHeight / 4, 0, 0, 8, 8, 8, 8);
             RenderSystem.popMatrix();

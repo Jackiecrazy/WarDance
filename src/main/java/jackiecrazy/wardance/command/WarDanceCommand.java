@@ -17,10 +17,10 @@ import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.Commands;
 import net.minecraft.commands.arguments.EntityArgument;
 import net.minecraft.commands.arguments.selector.options.EntitySelectorOptions;
+import net.minecraft.network.chat.Component;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.network.chat.TranslatableComponent;
 
 public class WarDanceCommand {
 
@@ -80,42 +80,6 @@ public class WarDanceCommand {
                                                 .executes(WarDanceCommand::consumePosture))
                                         .then(Commands.literal("set")
                                                 .executes(WarDanceCommand::setPosture)))))
-                .then(Commands.literal("wounding")
-                        .executes(WarDanceCommand::missingArgument)
-                        .then(Commands.argument("entity", EntityArgument.entity())
-                                .executes(WarDanceCommand::getWounding)
-                                .then(Commands.argument("amount", FloatArgumentType.floatArg(0))
-                                        .executes(WarDanceCommand::missingArgument)
-                                        .then(Commands.literal("add")
-                                                .executes(WarDanceCommand::addWounding))
-                                        .then(Commands.literal("consume")
-                                                .executes(WarDanceCommand::consumeWounding))
-                                        .then(Commands.literal("set")
-                                                .executes(WarDanceCommand::setWounding)))))
-                .then(Commands.literal("fatigue")
-                        .executes(WarDanceCommand::missingArgument)
-                        .then(Commands.argument("entity", EntityArgument.entity())
-                                .executes(WarDanceCommand::getFatigue)
-                                .then(Commands.argument("amount", FloatArgumentType.floatArg(0))
-                                        .executes(WarDanceCommand::missingArgument)
-                                        .then(Commands.literal("add")
-                                                .executes(WarDanceCommand::addFatigue))
-                                        .then(Commands.literal("consume")
-                                                .executes(WarDanceCommand::consumeFatigue))
-                                        .then(Commands.literal("set")
-                                                .executes(WarDanceCommand::setFatigue)))))
-                .then(Commands.literal("burnout")
-                        .executes(WarDanceCommand::missingArgument)
-                        .then(Commands.argument("entity", EntityArgument.entity())
-                                .executes(WarDanceCommand::getBurnout)
-                                .then(Commands.argument("amount", FloatArgumentType.floatArg(0))
-                                        .executes(WarDanceCommand::missingArgument)
-                                        .then(Commands.literal("add")
-                                                .executes(WarDanceCommand::addBurnout))
-                                        .then(Commands.literal("consume")
-                                                .executes(WarDanceCommand::consumeBurnout))
-                                        .then(Commands.literal("set")
-                                                .executes(WarDanceCommand::setBurnout)))))
                 .then(Commands.literal("stagger")
                         .executes(WarDanceCommand::missingArgument)
                         .then(Commands.argument("entity", EntityArgument.entity())
@@ -132,18 +96,17 @@ public class WarDanceCommand {
         if (!(player instanceof LivingEntity)) throw EntitySelectorOptions.ERROR_INAPPLICABLE_OPTION.create(player);
         int time = IntegerArgumentType.getInteger(ctx, "time");
         int count = IntegerArgumentType.getInteger(ctx, "count");
-        CombatData.getCap((LivingEntity) player).setStaggerTime(time);
-        CombatData.getCap((LivingEntity) player).setStaggerCount(count);
+        CombatData.getCap((LivingEntity) player).stagger(time);
         ctx.getSource().sendSuccess(Component.translatable("wardance.command.command.stagger", player.getDisplayName(), time, count), false);
         return Command.SINGLE_SUCCESS;
     }
 
+    //TODO expose command
     private static int defaultStagger(CommandContext<CommandSourceStack> ctx) throws CommandSyntaxException {
         Entity player = EntityArgument.getEntity(ctx, "entity");
         if (!(player instanceof LivingEntity)) throw EntitySelectorOptions.ERROR_INAPPLICABLE_OPTION.create(player);
         int time = IntegerArgumentType.getInteger(ctx, "time");
-        CombatData.getCap((LivingEntity) player).setStaggerTime(time);
-        CombatData.getCap((LivingEntity) player).setStaggerCount(0);
+        CombatData.getCap((LivingEntity) player).stagger(time);
         ctx.getSource().sendSuccess(Component.translatable("wardance.command.staggerDefault", player.getDisplayName(), time), false);
         return Command.SINGLE_SUCCESS;
     }
@@ -251,111 +214,6 @@ public class WarDanceCommand {
         float posture = CombatData.getCap((LivingEntity) player).getPosture();
         ctx.getSource().sendSuccess(Component.translatable("wardance.command.getPosture", player.getDisplayName(), posture), false);
         return Math.round(posture);
-    }
-
-    private static int setWounding(CommandContext<CommandSourceStack> ctx) throws CommandSyntaxException {
-        Entity player = EntityArgument.getEntity(ctx, "entity");
-        if (!(player instanceof LivingEntity)) throw EntitySelectorOptions.ERROR_INAPPLICABLE_OPTION.create(player);
-        float i = FloatArgumentType.getFloat(ctx, "amount");
-        CombatData.getCap((LivingEntity) player).setWounding(i);
-        ctx.getSource().sendSuccess(Component.translatable("wardance.command.setWounding", player.getDisplayName(), i), false);
-        return Command.SINGLE_SUCCESS;
-    }
-
-    private static int consumeWounding(CommandContext<CommandSourceStack> ctx) throws CommandSyntaxException {
-        Entity player = EntityArgument.getEntity(ctx, "entity");
-        if (!(player instanceof LivingEntity)) throw EntitySelectorOptions.ERROR_INAPPLICABLE_OPTION.create(player);
-        float i = FloatArgumentType.getFloat(ctx, "amount");
-        CombatData.getCap((LivingEntity) player).addWounding(-i);
-        ctx.getSource().sendSuccess(Component.translatable("wardance.command.conWounding", player.getDisplayName(), i), false);
-        return Command.SINGLE_SUCCESS;
-    }
-
-    private static int addWounding(CommandContext<CommandSourceStack> ctx) throws CommandSyntaxException {
-        Entity player = EntityArgument.getEntity(ctx, "entity");
-        if (!(player instanceof LivingEntity)) throw EntitySelectorOptions.ERROR_INAPPLICABLE_OPTION.create(player);
-        float i = FloatArgumentType.getFloat(ctx, "amount");
-        CombatData.getCap((LivingEntity) player).addWounding(i);
-        ctx.getSource().sendSuccess(Component.translatable("wardance.command.addWounding", player.getDisplayName(), i), false);
-        return Command.SINGLE_SUCCESS;
-    }
-
-    private static int getWounding(CommandContext<CommandSourceStack> ctx) throws CommandSyntaxException {
-        Entity player = EntityArgument.getEntity(ctx, "entity");
-        if (!(player instanceof LivingEntity)) throw EntitySelectorOptions.ERROR_INAPPLICABLE_OPTION.create(player);
-        float wounding = CombatData.getCap((LivingEntity) player).getWounding();
-        ctx.getSource().sendSuccess(Component.translatable("wardance.command.getWounding", player.getDisplayName(), wounding), false);
-        return Math.round(wounding);
-    }
-
-    private static int setFatigue(CommandContext<CommandSourceStack> ctx) throws CommandSyntaxException {
-        Entity player = EntityArgument.getEntity(ctx, "entity");
-        if (!(player instanceof LivingEntity)) throw EntitySelectorOptions.ERROR_INAPPLICABLE_OPTION.create(player);
-        float i = FloatArgumentType.getFloat(ctx, "amount");
-        CombatData.getCap((LivingEntity) player).setFatigue(i);
-        ctx.getSource().sendSuccess(Component.translatable("wardance.command.setFatigue", player.getDisplayName(), i), false);
-        return Command.SINGLE_SUCCESS;
-    }
-
-    private static int consumeFatigue(CommandContext<CommandSourceStack> ctx) throws CommandSyntaxException {
-        Entity player = EntityArgument.getEntity(ctx, "entity");
-        if (!(player instanceof LivingEntity)) throw EntitySelectorOptions.ERROR_INAPPLICABLE_OPTION.create(player);
-        float i = FloatArgumentType.getFloat(ctx, "amount");
-        CombatData.getCap((LivingEntity) player).addFatigue(-i);
-        ctx.getSource().sendSuccess(Component.translatable("wardance.command.conFatigue", player.getDisplayName(), i), false);
-        return Command.SINGLE_SUCCESS;
-    }
-
-    private static int addFatigue(CommandContext<CommandSourceStack> ctx) throws CommandSyntaxException {
-        Entity player = EntityArgument.getEntity(ctx, "entity");
-        if (!(player instanceof LivingEntity)) throw EntitySelectorOptions.ERROR_INAPPLICABLE_OPTION.create(player);
-        float i = FloatArgumentType.getFloat(ctx, "amount");
-        CombatData.getCap((LivingEntity) player).addFatigue(i);
-        ctx.getSource().sendSuccess(Component.translatable("wardance.command.addFatigue", player.getDisplayName(), i), false);
-        return Command.SINGLE_SUCCESS;
-    }
-
-    private static int getFatigue(CommandContext<CommandSourceStack> ctx) throws CommandSyntaxException {
-        Entity player = EntityArgument.getEntity(ctx, "entity");
-        if (!(player instanceof LivingEntity)) throw EntitySelectorOptions.ERROR_INAPPLICABLE_OPTION.create(player);
-        float fatigue = CombatData.getCap((LivingEntity) player).getFatigue();
-        ctx.getSource().sendSuccess(Component.translatable("wardance.command.getFatigue", player.getDisplayName(), fatigue), false);
-        return Math.round(fatigue);
-    }
-
-    private static int setBurnout(CommandContext<CommandSourceStack> ctx) throws CommandSyntaxException {
-        Entity player = EntityArgument.getEntity(ctx, "entity");
-        if (!(player instanceof LivingEntity)) throw EntitySelectorOptions.ERROR_INAPPLICABLE_OPTION.create(player);
-        float i = FloatArgumentType.getFloat(ctx, "amount");
-        CombatData.getCap((LivingEntity) player).setBurnout(i);
-        ctx.getSource().sendSuccess(Component.translatable("wardance.command.setBurnout", player.getDisplayName(), i), false);
-        return Command.SINGLE_SUCCESS;
-    }
-
-    private static int consumeBurnout(CommandContext<CommandSourceStack> ctx) throws CommandSyntaxException {
-        Entity player = EntityArgument.getEntity(ctx, "entity");
-        if (!(player instanceof LivingEntity)) throw EntitySelectorOptions.ERROR_INAPPLICABLE_OPTION.create(player);
-        float i = FloatArgumentType.getFloat(ctx, "amount");
-        CombatData.getCap((LivingEntity) player).addBurnout(-i);
-        ctx.getSource().sendSuccess(Component.translatable("wardance.command.conBurnout", player.getDisplayName(), i), false);
-        return Command.SINGLE_SUCCESS;
-    }
-
-    private static int addBurnout(CommandContext<CommandSourceStack> ctx) throws CommandSyntaxException {
-        Entity player = EntityArgument.getEntity(ctx, "entity");
-        if (!(player instanceof LivingEntity)) throw EntitySelectorOptions.ERROR_INAPPLICABLE_OPTION.create(player);
-        float i = FloatArgumentType.getFloat(ctx, "amount");
-        CombatData.getCap((LivingEntity) player).addBurnout(i);
-        ctx.getSource().sendSuccess(Component.translatable("wardance.command.addBurnout", player.getDisplayName(), i), false);
-        return Command.SINGLE_SUCCESS;
-    }
-
-    private static int getBurnout(CommandContext<CommandSourceStack> ctx) throws CommandSyntaxException {
-        Entity player = EntityArgument.getEntity(ctx, "entity");
-        if (!(player instanceof LivingEntity)) throw EntitySelectorOptions.ERROR_INAPPLICABLE_OPTION.create(player);
-        float burnout = CombatData.getCap((LivingEntity) player).getBurnout();
-        ctx.getSource().sendSuccess(Component.translatable("wardance.command.getBurnout", player.getDisplayName(), burnout), false);
-        return Math.round(burnout);
     }
 
     private static int setSkill(CommandContext<CommandSourceStack> ctx) throws CommandSyntaxException {

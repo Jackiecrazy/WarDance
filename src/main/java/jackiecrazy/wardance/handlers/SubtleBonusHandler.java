@@ -27,7 +27,7 @@ public class SubtleBonusHandler {
 
     @SubscribeEvent
     public static void tank(LivingHealEvent e) {
-        e.setAmount(e.getAmount() * (1 + (CombatData.getCap(e.getEntityLiving()).getComboRank() * 0.02f * (CombatData.getCap(e.getEntityLiving()).halvedAdrenaline() ? 0.5f : 1))));
+        e.setAmount(e.getAmount() * (1 + (CombatData.getCap(e.getEntity()).getComboRank() * 0.02f * (CombatData.getCap(e.getEntity()).halvedAdrenaline() ? 0.5f : 1))));
     }
 
     @SubscribeEvent

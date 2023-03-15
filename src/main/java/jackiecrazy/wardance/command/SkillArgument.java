@@ -14,10 +14,8 @@ import jackiecrazy.wardance.skill.WarSkills;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.SharedSuggestionProvider;
 import net.minecraft.commands.synchronization.SuggestionProviders;
+import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.Util;
-import net.minecraft.network.chat.TranslatableComponent;
-import net.minecraftforge.fml.common.registry.GameRegistry;
 
 import java.util.Collection;
 import java.util.concurrent.CompletableFuture;
@@ -29,9 +27,8 @@ public class SkillArgument implements ArgumentType<Skill> {
     public static final SuggestionProvider<CommandSourceStack> SKILLS = SuggestionProviders
             .register(new ResourceLocation(WarDance.MODID, "skills"),
                     (context, builder) -> SharedSuggestionProvider.suggestResource(
-                            GameRegistry.findRegistry(Skill.class).getValues().stream(),
-                            builder, Skill::getRegistryName, (type) -> Component.translatable(
-                                    Util.makeDescriptionId("skill", type.getRegistryName()))));
+                            WarSkills.SUPPLIER.get().getKeys(),
+                            builder));//, Skill::getRegistryName, (type) -> Component.translatable(Util.makeDescriptionId("skill", type))));
     private static final Collection<String> EXAMPLES = Stream.of(WarSkills.RETURN_TO_SENDER.get(), WarSkills.VITAL_STRIKE.get()).map((worldKey) -> worldKey.getRegistryName().toString()).collect(Collectors.toList());
     private static final DynamicCommandExceptionType INVALID_SKILL_EXCEPTION = new DynamicCommandExceptionType((worldKey) -> Component.translatable("argument.skill.invalid", worldKey));
 
@@ -42,7 +39,7 @@ public class SkillArgument implements ArgumentType<Skill> {
     @Override
     public Skill parse(StringReader reader) throws CommandSyntaxException {
         final int start = reader.getCursor();
-        final ResourceLocation skill=ResourceLocation.read(reader);
+        final ResourceLocation skill = ResourceLocation.read(reader);
         final Skill result = Skill.getSkill(skill);
         if (result == null) {
             reader.setCursor(start);
@@ -53,7 +50,7 @@ public class SkillArgument implements ArgumentType<Skill> {
 
     @Override
     public <S> CompletableFuture<Suggestions> listSuggestions(CommandContext<S> p_listSuggestions_1_, SuggestionsBuilder p_listSuggestions_2_) {
-        return SharedSuggestionProvider.suggestResource(GameRegistry.findRegistry(Skill.class).getKeys(), p_listSuggestions_2_);
+        return SharedSuggestionProvider.suggestResource(WarSkills.SUPPLIER.get().getKeys(), p_listSuggestions_2_);
     }
 
     @Override

@@ -5,28 +5,25 @@ import jackiecrazy.footwork.capability.resources.ICombatCapability;
 import jackiecrazy.footwork.utils.GeneralUtils;
 import jackiecrazy.wardance.WarDance;
 import jackiecrazy.wardance.api.CombatDamageSource;
-import jackiecrazy.wardance.config.CombatConfig;
 import jackiecrazy.wardance.skill.Skill;
 import jackiecrazy.wardance.skill.SkillCategories;
 import jackiecrazy.wardance.skill.SkillCategory;
 import jackiecrazy.wardance.skill.SkillData;
+import net.minecraft.sounds.SoundEvents;
+import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.tags.SetTag;
-import net.minecraft.sounds.SoundSource;
-import net.minecraft.sounds.SoundEvents;
 import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.eventbus.api.Event;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.awt.*;
-import java.util.Arrays;
 import java.util.HashSet;
 
 public class Kick extends Skill {
-    private final SetTag<String> tag = SetTag.create(new HashSet<>(Arrays.asList("physical", "melee", "noDamage", "boundCast", "normalAttack", "countdown", "rechargeWithAttack")));
-    private final SetTag<String> no = SetTag.create(new HashSet<>(Arrays.asList("normalAttack")));
+    private final HashSet<String> tag = makeTag("physical", "melee", "noDamage", "boundCast", "normalAttack", "countdown", "rechargeWithAttack");
+    private final HashSet<String> no = makeTag((("normalAttack")));
 
     @Override
     public HashSet<String> getTags(LivingEntity caster) {
@@ -53,8 +50,6 @@ public class Kick extends Skill {
     protected void additionally(LivingEntity caster, LivingEntity target) {
         final ICombatCapability cap = CombatData.getCap(target);
         if (cap.getStaggerTime() > 0) {
-            cap.setStaggerTime(cap.getStaggerTime() + CombatConfig.staggerDuration);
-            cap.setStaggerCount(cap.getStaggerCount() + CombatConfig.staggerHits);
         }
     }
 

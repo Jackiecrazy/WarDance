@@ -5,22 +5,20 @@ import jackiecrazy.footwork.capability.resources.ICombatCapability;
 import jackiecrazy.wardance.WarDance;
 import jackiecrazy.wardance.skill.*;
 import jackiecrazy.wardance.utils.CombatUtils;
-import net.minecraft.world.entity.LivingEntity;
-import net.minecraft.tags.SetTag;
-import net.minecraft.sounds.SoundSource;
 import net.minecraft.sounds.SoundEvents;
+import net.minecraft.sounds.SoundSource;
+import net.minecraft.world.entity.LivingEntity;
 import net.minecraftforge.event.entity.living.LivingAttackEvent;
 import net.minecraftforge.eventbus.api.Event;
 import net.minecraftforge.eventbus.api.EventPriority;
 
 import javax.annotation.Nonnull;
 import java.awt.*;
-import java.util.Arrays;
 import java.util.HashSet;
 
 public class Grapple extends Skill {
-    private final SetTag<String> tag = SetTag.create(new HashSet<>(Arrays.asList("physical", "boundCast", "melee", "normalAttack", "countdown", "unarmed", "rechargeWithAttack")));
-    private final SetTag<String> unarm = makeTag(SkillTags.offensive, SkillTags.physical, SkillTags.unarmed);
+    private final HashSet<String> tag = makeTag("physical", "boundCast", "melee", "normalAttack", "countdown", "unarmed", "rechargeWithAttack");
+    private final HashSet<String> unarm = makeTag(SkillTags.offensive, SkillTags.physical, SkillTags.unarmed);
 
     @Nonnull
     @Override
@@ -53,7 +51,7 @@ public class Grapple extends Skill {
 
     @Override
     public void onProc(LivingEntity caster, Event procPoint, STATE state, SkillData stats, LivingEntity target) {
-        if (procPoint instanceof LivingAttackEvent && ((LivingAttackEvent) procPoint).getEntityLiving() == target && procPoint.getPhase() == EventPriority.HIGHEST) {
+        if (procPoint instanceof LivingAttackEvent && ((LivingAttackEvent) procPoint).getEntity() == target && procPoint.getPhase() == EventPriority.HIGHEST) {
             if (state == STATE.HOLSTERED && isUnarmed(caster)) {
                 if (stats.isCondition() && caster.getLastHurtMob() == target && caster.tickCount-caster.getLastHurtMobTimestamp()<40 && cast(caster, target, -999)) {
                     performEffect(caster, target);

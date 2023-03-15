@@ -1,17 +1,16 @@
 package jackiecrazy.wardance.handlers;
 
 import jackiecrazy.wardance.WarDance;
-import net.minecraft.client.Minecraft;
 import net.minecraft.client.KeyMapping;
-import net.minecraft.world.entity.Entity;
-import net.minecraft.world.entity.ai.targeting.TargetingConditions;
-import net.minecraft.world.entity.LivingEntity;
-import net.minecraft.world.entity.player.Player;
+import net.minecraft.client.Minecraft;
 import net.minecraft.util.Mth;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.ai.targeting.TargetingConditions;
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.TickEvent;
-import net.minecraftforge.fml.client.registry.ClientRegistry;
 import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
 import org.lwjgl.glfw.GLFW;
 
@@ -30,8 +29,8 @@ public class ZTargetHandler {
     public static void client(FMLClientSetupEvent e) {//TODO register
         LOCK_ON = new KeyMapping("key." + WarDance.MODID + ".lock_on", GLFW.GLFW_KEY_O, "key.categories." + WarDance.MODID);
         TAB = new KeyMapping("key." + WarDance.MODID + ".tab", GLFW.GLFW_KEY_TAB, "key.categories." + WarDance.MODID);
-        ClientRegistry.registerKeyBinding(LOCK_ON);
-        ClientRegistry.registerKeyBinding(TAB);
+        //ClientRegistry.registerKeyBinding(LOCK_ON);
+        //ClientRegistry.registerKeyBinding(TAB);
         MinecraftForge.EVENT_BUS.addListener(ZTargetHandler::handleKeyPress);
     }
 
@@ -75,7 +74,7 @@ public class ZTargetHandler {
                 if (newDelta < -180) {
                     newDelta += 360;
                 }
-                mc.player.yRot = (float)newDelta;//problematic
+                mc.player.setYRot((float) newDelta);//problematic
             }
         }
     }
@@ -96,7 +95,7 @@ public class ZTargetHandler {
     }
 
     private static final Predicate<LivingEntity> ENTITY_PREDICATE = entity -> entity.isAlive() && entity.attackable();
-    private static final TargetingConditions ENEMY_CONDITION = new TargetingConditions().range(20.0D).selector(ENTITY_PREDICATE);
+    private static final TargetingConditions ENEMY_CONDITION = TargetingConditions.forCombat().range(20.0D).selector(ENTITY_PREDICATE);
 
     private static int cycle = -1;
 

@@ -3,26 +3,24 @@ package jackiecrazy.wardance.skill.warcry;
 import jackiecrazy.footwork.capability.resources.CombatData;
 import jackiecrazy.wardance.WarDance;
 import jackiecrazy.wardance.skill.*;
-import net.minecraft.world.entity.LivingEntity;
-import net.minecraft.world.entity.ai.attributes.AttributeModifier;
+import net.minecraft.sounds.SoundEvents;
+import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.effect.MobEffects;
-import net.minecraft.tags.SetTag;
-import net.minecraft.sounds.SoundSource;
-import net.minecraft.sounds.SoundEvents;
+import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.ai.attributes.AttributeModifier;
 import net.minecraftforge.event.entity.living.LivingHealEvent;
 import net.minecraftforge.eventbus.api.Event;
 import net.minecraftforge.eventbus.api.EventPriority;
 
 import javax.annotation.Nonnull;
-import java.util.Arrays;
 import java.util.HashSet;
 import java.util.UUID;
 
 public class WarCry extends Skill {
     private static final AttributeModifier wrap = new AttributeModifier(UUID.fromString("4b342542-fcfb-47a8-8da8-4f57588f7003"), "bandaging wounds", -1, AttributeModifier.Operation.MULTIPLY_TOTAL);
-    private final SetTag<String> procs = SetTag.create(new HashSet<>(Arrays.asList("chant", ProcPoints.on_being_hurt, ProcPoints.countdown, ProcPoints.recharge_time, ProcPoints.recharge_sleep)));
-    private final SetTag<String> tag = SetTag.create(new HashSet<>(Arrays.asList(SkillTags.chant, SkillTags.melee, SkillTags.state)));
+    private final HashSet<String> procs = makeTag("chant", ProcPoints.on_being_hurt, ProcPoints.countdown, ProcPoints.recharge_time, ProcPoints.recharge_sleep);
+    private final HashSet<String> tag = makeTag(SkillTags.chant, SkillTags.melee, SkillTags.state);
 
     @Override
     public HashSet<String> getTags(LivingEntity caster) {

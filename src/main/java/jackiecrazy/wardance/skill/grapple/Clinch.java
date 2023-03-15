@@ -21,7 +21,7 @@ public class Clinch extends Grapple {
 
     @Override
     public void onProc(LivingEntity caster, Event procPoint, STATE state, SkillData stats, LivingEntity target) {
-        if (procPoint instanceof LivingAttackEvent && procPoint.getPhase() == EventPriority.HIGHEST && ((LivingAttackEvent) procPoint).getEntityLiving() == target) {
+        if (procPoint instanceof LivingAttackEvent && procPoint.getPhase() == EventPriority.HIGHEST && ((LivingAttackEvent) procPoint).getEntity() == target) {
             if (state == STATE.HOLSTERED) {
                 if (stats.isCondition() && CombatUtils.isUnarmed(caster.getMainHandItem(), caster) && caster.tickCount - caster.getLastHurtMobTimestamp() < 40 && caster.getLastHurtMob() == target && cast(caster, target, -999)) {
                     performEffect(caster, target);

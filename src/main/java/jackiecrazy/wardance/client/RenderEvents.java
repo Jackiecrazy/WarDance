@@ -169,7 +169,7 @@ public class RenderEvents {
 
                             mc.getTextureManager().bind(GuiComponent.GUI_ICONS_LOCATION);
                             int modStrength = (int) (strength * 19.0F);
-                            RenderSystem.color4f(1.0F, 1.0F, 1.0F, 1.0F);
+                            RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, 1.0F);
                             mc.gui.blit(stack, x + 18, y, 0, 94, 18, 18);
                             mc.gui.blit(stack, x + 18, y + 18 - modStrength, 18, 112 - modStrength, 18, modStrength);
                         }
@@ -202,7 +202,7 @@ public class RenderEvents {
                     int fillHeight = (int) (Math.min(1, currentMightLevel / cap.getMaxMight()) * 32);
                     if (ClientConfig.CONFIG.might.enabled) {
                         //might circle
-                        RenderSystem.color4f(1, 1, 1, 1);
+                        RenderSystem.setShaderColor(1, 1, 1, 1);
                         stack.pushPose();
                         stack.pushPose();
                         mc.gui.blit(stack, x, y, 0, 64, 32, 32);
@@ -324,7 +324,7 @@ public class RenderEvents {
                             SkillData s = afflict.get(index);
                             mc.getTextureManager().bind(s.getSkill().icon());
                             Color c = s.getSkill().getColor();
-                            RenderSystem.color4f(c.getRed() / 255f, c.getGreen() / 255f, c.getBlue() / 255f, 1);
+                            RenderSystem.setShaderColor(c.getRed() / 255f, c.getGreen() / 255f, c.getBlue() / 255f, 1);
                             GuiComponent.blit(stack, pair.getFirst() - (afflict.size() - 1 - index) * 16 + (afflict.size() - 1) * 8 - 8, pair.getSecond(), 0, 0, 16, 16, 16, 16);
                             if(s.getMaxDuration()!=0) {
                                 String display = formatter.format(s.getDuration());
@@ -333,7 +333,7 @@ public class RenderEvents {
 
                         }
                     }
-                    RenderSystem.color4f(1, 1, 1, 1);
+                    RenderSystem.setShaderColor(1, 1, 1, 1);
                     stealth:
                     {
                         if (ClientConfig.CONFIG.stealth.enabled && cap.isCombatMode()) {
@@ -485,10 +485,10 @@ public class RenderEvents {
                 mc.gui.blit(ms, atX - flexBarWidth - 1, atY, 0, 7, flexBarWidth + 1, barHeight - 1);
                 //determine bar color by shatter
                 if (shatter > 0 && shatter != mshatter) {//gold that rapidly fades
-                    RenderSystem.color4f(1, 1, 1, (float) shatter / mshatter);
+                    RenderSystem.setShaderColor(1, 1, 1, (float) shatter / mshatter);
                     mc.gui.blit(ms, atX, atY, 238 - flexBarWidth, 54, flexBarWidth, barHeight - 1);
                     mc.gui.blit(ms, atX - flexBarWidth - 1, atY, 0, 54, flexBarWidth + 1, barHeight - 1);
-                    RenderSystem.color4f(1, 1, 1, 1);
+                    RenderSystem.setShaderColor(1, 1, 1, 1);
                 }
                 // draw barrier if eligible
                 final float barrier = itsc.getBarrier();
@@ -566,15 +566,15 @@ public class RenderEvents {
                         float otemp = 1 - (float) shatter / mshatter;
                         otemp *= 2;//will go over 1 if shatter is less than half
                         if (otemp > 1) {
-                            RenderSystem.color4f(1, 1, 1, -(otemp - 2));
+                            RenderSystem.setShaderColor(1, 1, 1, -(otemp - 2));
                             otemp = 1;
                         }
                         int fini = (int) (otemp * temp);
                         //gold that stretches out to the edges before disappearing
                         mc.gui.blit(ms, atX, atY - 2, 240 - fini - 10, 70, fini + 10, barHeight);
                         mc.gui.blit(ms, atX - fini - 9, atY - 2, 0, 70, fini + 10, barHeight);
-                        RenderSystem.color4f(1, 1, 1, -(otemp - 2));
-                        RenderSystem.color4f(1, 1, 1, 1);
+                        RenderSystem.setShaderColor(1, 1, 1, -(otemp - 2));
+                        RenderSystem.setShaderColor(1, 1, 1, 1);
                         insigniaV = 90;
                     }
                     //insignia

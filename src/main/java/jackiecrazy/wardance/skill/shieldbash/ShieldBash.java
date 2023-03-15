@@ -13,7 +13,7 @@ import jackiecrazy.wardance.utils.SkillUtils;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.effect.MobEffects;
-import net.minecraft.tags.SetTag;
+import net.minecraft.tags.HashSet;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.sounds.SoundEvents;
@@ -27,8 +27,8 @@ import java.util.Arrays;
 import java.util.HashSet;
 
 public class ShieldBash extends Skill {
-    private final SetTag<String> tag = SetTag.create(new HashSet<>(Arrays.asList("physical", "melee", "boundCast", "normalAttack", "countdown", ProcPoints.recharge_parry)));
-    private final SetTag<String> no = SetTag.create(new HashSet<>(Arrays.asList("normalAttack")));
+    private final HashSet<String> tag = makeTag("physical", "melee", "boundCast", "normalAttack", "countdown", ProcPoints.recharge_parry);
+    private final HashSet<String> no = makeTag("normalAttack");
 
     @Override
     public HashSet<String> getTags(LivingEntity caster) {
@@ -61,7 +61,7 @@ public class ShieldBash extends Skill {
 
     @Override
     public void onProc(LivingEntity caster, Event procPoint, STATE state, SkillData stats, LivingEntity target) {
-        if (procPoint instanceof LivingAttackEvent && ((LivingAttackEvent) procPoint).getEntityLiving() == target && CombatUtils.isMeleeAttack(((LivingAttackEvent) procPoint).getSource()) && procPoint.getPhase() == EventPriority.HIGHEST) {
+        if (procPoint instanceof LivingAttackEvent && ((LivingAttackEvent) procPoint).getEntity() == target && CombatUtils.isMeleeAttack(((LivingAttackEvent) procPoint).getSource()) && procPoint.getPhase() == EventPriority.HIGHEST) {
             final boolean base = isPassive(caster) && state != STATE.COOLING;
             final boolean otherwise = state == STATE.HOLSTERED && CombatUtils.isShield(caster, CombatUtils.getAttackingItemStack(((LivingAttackEvent) procPoint).getSource()));
             if ((base || otherwise) && cast(caster, target, -999)) {
@@ -70,7 +70,7 @@ public class ShieldBash extends Skill {
                 markUsed(caster);
             }
         }
-        if (procPoint instanceof ParryEvent && procPoint.getPhase() == EventPriority.HIGHEST && state == STATE.COOLING && ((ParryEvent) procPoint).getEntityLiving() == caster) {
+        if (procPoint instanceof ParryEvent && procPoint.getPhase() == EventPriority.HIGHEST && state == STATE.COOLING && ((ParryEvent) procPoint).getEntity() == caster) {
             stats.decrementDuration();
         }
     }

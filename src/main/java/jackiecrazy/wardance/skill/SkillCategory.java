@@ -1,8 +1,7 @@
 package jackiecrazy.wardance.skill;
 
-import net.minecraft.resources.ResourceLocation;
 import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.TranslatableComponent;
+import net.minecraft.resources.ResourceLocation;
 
 public class SkillCategory {
     private final String category;

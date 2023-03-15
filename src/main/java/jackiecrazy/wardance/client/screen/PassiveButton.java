@@ -1,15 +1,10 @@
 package jackiecrazy.wardance.client.screen;
 
-import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.systems.RenderSystem;
+import com.mojang.blaze3d.vertex.PoseStack;
 import jackiecrazy.wardance.WarDance;
-import jackiecrazy.wardance.skill.Skill;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.AbstractGui;
-import net.minecraft.client.gui.FontRenderer;
-import net.minecraft.client.gui.widget.button.ImageButton;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.util.math.MathHelper;
 
 import java.awt.*;
 
@@ -49,21 +44,21 @@ public class PassiveButton extends SkillSelectionButton {
     }
 
     public void renderButton(PoseStack matrixStack, int mouseX, int mouseY, float partialTicks) {
-        Minecraft.getInstance().getTextureManager().bind(passive);
+        RenderSystem.setShaderTexture(0, passive);
         if (!this.isHovered) {
-            RenderSystem.color4f(0.6f, 0.6f, 0.6f, 1);
+            RenderSystem.setShaderColor(0.6f, 0.6f, 0.6f, 1);
         }
         applySlotTint();
-        blit(matrixStack, this.x, this.y, 0, 0, this.width, this.height, width, height);
+        blit(matrixStack, this.getX(), this.getY(), 0, 0, this.width, this.height, width, height);
         if (s != null) {
-            Minecraft.getInstance().getTextureManager().bind(s.icon());
+            RenderSystem.setShaderTexture(0, s.icon());
             Color c = s.getColor();
-            RenderSystem.color4f(c.getRed() / 255f, c.getGreen() / 255f, c.getBlue() / 255f, 1);
-            blit(matrixStack, this.x, this.y, 0, 0, this.width, this.height, width, height);
+            RenderSystem.setShaderColor(c.getRed() / 255f, c.getGreen() / 255f, c.getBlue() / 255f, 1);
+            blit(matrixStack, this.getX(), this.getY(), 0, 0, this.width, this.height, width, height);
         }
-        RenderSystem.color4f(1, 1, 1, 1);
-        if (this.isHovered()) {
-            this.renderToolTip(matrixStack, mouseX, mouseY);
+        RenderSystem.setShaderColor(1, 1, 1, 1);
+        if (this.isHoveredOrFocused()) {
+            this.renderButton(matrixStack, mouseX, mouseY, partialTicks);
         }
     }
 }

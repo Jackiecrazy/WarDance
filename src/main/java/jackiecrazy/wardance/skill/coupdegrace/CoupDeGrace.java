@@ -11,15 +11,14 @@ import jackiecrazy.wardance.capability.skill.ISkillCapability;
 import jackiecrazy.wardance.entity.FakeExplosion;
 import jackiecrazy.wardance.event.SkillCastEvent;
 import jackiecrazy.wardance.skill.*;
+import net.minecraft.sounds.SoundEvents;
+import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.tags.SetTag;
-import net.minecraft.sounds.SoundSource;
-import net.minecraft.sounds.SoundEvents;
 import net.minecraftforge.common.ForgeMod;
 import net.minecraftforge.event.entity.living.LivingDropsEvent;
 import net.minecraftforge.event.entity.living.LivingHurtEvent;
@@ -33,7 +32,7 @@ import java.util.Arrays;
 import java.util.HashSet;
 
 public class CoupDeGrace extends Skill {
-    private final SetTag<String> tag = SetTag.create(new HashSet<>(Arrays.asList("physical", ProcPoints.melee, ProcPoints.normal_attack, ProcPoints.on_hurt, ProcPoints.recharge_cast, ProcPoints.change_parry_result, "execution")));
+    private final HashSet<String> tag = new HashSet<>(Arrays.asList("physical", ProcPoints.melee, ProcPoints.normal_attack, ProcPoints.on_hurt, ProcPoints.recharge_cast, ProcPoints.change_parry_result, "execution"));
 
     protected float getDamage(LivingEntity caster, LivingEntity target) {
         return (GeneralUtils.getMaxHealthBeforeWounding(target) - target.getHealth()) * 0.2f;
@@ -74,8 +73,8 @@ public class CoupDeGrace extends Skill {
     public void onProc(LivingEntity caster, Event procPoint, STATE state, SkillData stats, LivingEntity target) {
         if (procPoint instanceof LivingHurtEvent && procPoint.getPhase() == EventPriority.HIGHEST && state == STATE.ACTIVE) {
             LivingHurtEvent e = (LivingHurtEvent) procPoint;
-            if (e.getEntityLiving() != caster) {
-                if (CombatData.getCap(e.getEntityLiving()).getStaggerTime() > 0 && !CombatData.getCap(e.getEntityLiving()).isFirstStaggerStrike()) {
+            if (e.getEntity() != caster) {
+                if (CombatData.getCap(e.getEntity()).getStaggerTime() > 0 && !CombatData.getCap(e.getEntity()).isStaggeringStrike()) {
                     if (willKillOnCast(caster, target))
                         target.setHealth(1);
                     e.setAmount(e.getAmount() + getDamage(caster, target));
@@ -92,7 +91,7 @@ public class CoupDeGrace extends Skill {
             stats.decrementDuration();
         }
         if (state == STATE.ACTIVE && stats.getDuration() < 0 && this == WarSkills.DECAPITATE.get() && procPoint.getPhase() == EventPriority.LOWEST) {
-            if (procPoint instanceof LivingDropsEvent && ((LivingDropsEvent) procPoint).getEntityLiving() == target) {
+            if (procPoint instanceof LivingDropsEvent && ((LivingDropsEvent) procPoint).getEntity() == target) {
                 ItemStack drop = GeneralUtils.dropSkull(target);
                 if (drop == null) return;
                 for (ItemEntity i : ((LivingDropsEvent) procPoint).getDrops()) {
@@ -104,7 +103,7 @@ public class CoupDeGrace extends Skill {
                 ((LivingDropsEvent) procPoint).getDrops().add(forceSkull);
             }
 
-            if (procPoint instanceof LootingLevelEvent && ((LootingLevelEvent) procPoint).getEntityLiving() == target && GeneralUtils.dropSkull(target) == null) {
+            if (procPoint instanceof LootingLevelEvent && ((LootingLevelEvent) procPoint).getEntity() == target && GeneralUtils.dropSkull(target) == null) {
                 ((LootingLevelEvent) procPoint).setLootingLevel(((LootingLevelEvent) procPoint).getLootingLevel() + 3);
             }
         }
@@ -140,7 +139,7 @@ public class CoupDeGrace extends Skill {
         @Override
         protected void deathCheck(LivingEntity caster, LivingEntity target, float amount) {
             CombatData.getCap(target).consumeSpirit(CombatData.getCap(target).getSpirit() / 2);
-            FakeExplosion.explode(caster.level, caster, target.getX(), target.getY(), target.getZ(), (float) Math.sqrt(CombatData.getCap(target).getTrueMaxPosture()), new CombatDamageSource("explosion.player", caster).setProxy(target).setDamageTyping(CombatDamageSource.TYPE.PHYSICAL).setProcSkillEffects(true).setExplosion().setMagic(), 4 * CombatData.getCap(target).getSpirit());
+            FakeExplosion.explode(caster.level, caster, target.getX(), target.getY(), target.getZ(), (float) Math.sqrt(CombatData.getCap(target).getMaxPosture()), new CombatDamageSource("explosion.player", caster).setProxy(target).setDamageTyping(CombatDamageSource.TYPE.PHYSICAL).setProcSkillEffects(true).setExplosion().setMagic(), 4 * CombatData.getCap(target).getSpirit());
         }
     }
 
@@ -157,8 +156,8 @@ public class CoupDeGrace extends Skill {
     }
 
     public static class ReapersLaugh extends CoupDeGrace {
-        private final SetTag<String> tag = SetTag.create(new HashSet<>(Arrays.asList("physical", ProcPoints.melee, ProcPoints.change_awareness, ProcPoints.on_hurt, ProcPoints.recharge_cast, ProcPoints.change_parry_result, "execution")));
-        private final SetTag<String> tague = SetTag.create(new HashSet<>(Arrays.asList(SkillTags.special, SkillTags.offensive)));
+        private final HashSet<String> tag = (new HashSet<>(Arrays.asList("physical", ProcPoints.melee, ProcPoints.change_awareness, ProcPoints.on_hurt, ProcPoints.recharge_cast, ProcPoints.change_parry_result, "execution")));
+        private final HashSet<String> tague = (new HashSet<>(Arrays.asList(SkillTags.special, SkillTags.offensive)));
 
         @Override
         public HashSet<String> getTags(LivingEntity caster) {
@@ -189,7 +188,7 @@ public class CoupDeGrace extends Skill {
             if (to == STATE.ACTIVE && cast(caster, -999)) {
                 //DIE!
                 for (Entity e : caster.level.getEntities(caster, caster.getBoundingBox().inflate(caster.getAttributeValue(ForgeMod.REACH_DISTANCE.get())), (a -> !TargetingUtils.isAlly(a, caster)))) {
-                    if (!(e instanceof LivingEntity) || !caster.canSee(e)) continue;
+                    if (!(e instanceof LivingEntity) || !caster.hasLineOfSight(e)) continue;
                     final CombatDamageSource die = new CombatDamageSource("player", caster).setDamageTyping(CombatDamageSource.TYPE.PHYSICAL).setProcSkillEffects(true).setSkillUsed(this).setKnockbackPercentage(0);
                     if (willKillOnCast(caster, (LivingEntity) e)) {
                         prev.flagCondition(true);
@@ -222,9 +221,6 @@ public class CoupDeGrace extends Skill {
 
         protected void deathCheck(LivingEntity caster, LivingEntity target, float amount) {
             final ICombatCapability cap = CombatData.getCap(caster);
-            cap.addFatigue(-1);
-            cap.addWounding(-1);
-            cap.addBurnout(-1);
         }
     }
 

@@ -9,7 +9,7 @@ import jackiecrazy.wardance.skill.SkillCategories;
 import jackiecrazy.wardance.skill.SkillCategory;
 import jackiecrazy.wardance.skill.SkillData;
 import net.minecraft.world.entity.LivingEntity;
-import net.minecraft.tags.SetTag;
+import net.minecraft.tags.HashSet;
 import net.minecraft.util.Mth;
 import net.minecraftforge.eventbus.api.Event;
 import net.minecraftforge.eventbus.api.EventPriority;

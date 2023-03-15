@@ -18,7 +18,6 @@ import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.entity.living.LivingAttackEvent;
 import net.minecraftforge.eventbus.api.Event;
 import net.minecraftforge.eventbus.api.EventPriority;
-import net.minecraftforge.registries.IForgeRegistry;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -26,7 +25,7 @@ import java.awt.*;
 import java.util.List;
 import java.util.*;
 
-public abstract class Skill implements IForgeRegistry<Skill> {
+public abstract class Skill {
     public static final HashMap<SkillCategory, List<Skill>> variationMap = new HashMap<>();
     protected static final HashSet<String> none = new HashSet<>();
     protected static final HashSet<String> offensivePhysical = makeTag(SkillTags.offensive, SkillTags.physical);
@@ -36,6 +35,7 @@ public abstract class Skill implements IForgeRegistry<Skill> {
     protected static final HashSet<String> passive = makeTag(SkillTags.passive);
     protected static final HashSet<String> special = makeTag(SkillTags.special);
     protected static final HashSet<String> state = makeTag(SkillTags.state);
+    private ResourceLocation registryName;
 
     public Skill() {
         //SkillCategory
@@ -125,6 +125,13 @@ public abstract class Skill implements IForgeRegistry<Skill> {
         return Component.translatable(this.getRegistryName().toString() + ".desc");
     }
 
+    public ResourceLocation getRegistryName() {
+        if (registryName == null) {
+            registryName = WarSkills.SUPPLIER.get().getKey(this);
+        }
+        return registryName;
+    }
+
     /**
      * @param caster only nonnull if it's in the casting bar!
      */
@@ -164,7 +171,7 @@ public abstract class Skill implements IForgeRegistry<Skill> {
         return false;
     }
 
-    public boolean showsMark(SkillData mark, LivingEntity target){
+    public boolean showsMark(SkillData mark, LivingEntity target) {
         return true;
     }
 
@@ -373,7 +380,7 @@ public abstract class Skill implements IForgeRegistry<Skill> {
         return Marks.getCap(target).getActiveMark(this).orElse(SkillData.DUMMY);
     }
 
-    protected boolean hasMark(LivingEntity target){
+    protected boolean hasMark(LivingEntity target) {
         return Marks.getCap(target).getActiveMark(this).isPresent();
     }
 

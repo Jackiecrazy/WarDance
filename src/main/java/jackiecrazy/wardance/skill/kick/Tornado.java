@@ -5,23 +5,19 @@ import jackiecrazy.footwork.utils.TargetingUtils;
 import jackiecrazy.wardance.WarDance;
 import jackiecrazy.wardance.api.CombatDamageSource;
 import jackiecrazy.wardance.skill.SkillData;
+import net.minecraft.sounds.SoundEvents;
+import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.tags.SetTag;
-import net.minecraft.sounds.SoundSource;
-import net.minecraft.sounds.SoundEvents;
 import net.minecraftforge.common.ForgeMod;
 
 import java.awt.*;
-import java.util.Arrays;
 import java.util.HashSet;
 
-import jackiecrazy.wardance.skill.Skill.STATE;
-
 public class Tornado extends Kick {
-    private final SetTag<String> tag = SetTag.create(new HashSet<>(Arrays.asList("physical", "melee", "sweep", "boundCast", "normalAttack", "countdown", "rechargeWithAttack")));
-    private final SetTag<String> no = SetTag.create(new HashSet<>(Arrays.asList("normalAttack", "sweep")));
+    private final HashSet<String> tag = makeTag("physical", "melee", "sweep", "boundCast", "normalAttack", "countdown", "rechargeWithAttack");
+    private final HashSet<String> no = makeTag("normalAttack", "sweep");
 
     protected void additionally(LivingEntity caster, LivingEntity target) {
 

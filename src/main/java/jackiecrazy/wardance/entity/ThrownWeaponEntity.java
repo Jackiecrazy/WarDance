@@ -4,24 +4,24 @@ import com.google.common.collect.Lists;
 import it.unimi.dsi.fastutil.ints.IntOpenHashSet;
 import jackiecrazy.wardance.skill.Skill;
 import jackiecrazy.wardance.skill.WarSkills;
-import mcp.MethodsReturnNonnullByDefault;
+import net.minecraft.MethodsReturnNonnullByDefault;
 import net.minecraft.advancements.CriteriaTriggers;
-import net.minecraft.world.item.enchantment.EnchantmentHelper;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.network.protocol.game.ClientboundGameEventPacket;
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.util.Mth;
+import net.minecraft.world.InteractionHand;
+import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.projectile.AbstractArrow;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.nbt.CompoundTag;
-import net.minecraft.network.protocol.game.ClientboundGameEventPacket;
-import net.minecraft.world.damagesource.DamageSource;
-import net.minecraft.world.InteractionHand;
-import net.minecraft.world.phys.EntityHitResult;
-import net.minecraft.util.Mth;
-import net.minecraft.world.phys.Vec3;
+import net.minecraft.world.item.enchantment.EnchantmentHelper;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.phys.EntityHitResult;
+import net.minecraft.world.phys.Vec3;
 
 import java.util.Arrays;
 
@@ -41,7 +41,7 @@ end him rightly: keep the weapon in your hand and throw the pommel instead, dist
     //private static final DataParameter<Skill> SKILL = EntityDataManager.createKey(ThrownWeaponEntity.class, SkillUtils.SKILLSERIALIZER);
     InteractionHand hand = InteractionHand.MAIN_HAND;
     ItemStack stack = ItemStack.EMPTY;
-    private Skill s= WarSkills.VITAL_STRIKE.get();
+    private Skill s = WarSkills.VITAL_STRIKE.get();
 
     public ThrownWeaponEntity(EntityType<? extends ThrownWeaponEntity> type, Level worldIn) {
         super(type, worldIn);
@@ -80,8 +80,8 @@ end him rightly: keep the weapon in your hand and throw the pommel instead, dist
     @Override
     protected void onHitEntity(EntityHitResult result) {
         Entity entity = result.getEntity();
-        float f = (float)this.getDeltaMovement().length();
-        int i = Mth.ceil(Mth.clamp((double)f * this.getBaseDamage(), 0.0D, 2.147483647E9D));
+        float f = (float) this.getDeltaMovement().length();
+        int i = Mth.ceil(Mth.clamp((double) f * this.getBaseDamage(), 0.0D, 2.147483647E9D));
         if (this.getPierceLevel() > 0) {
             if (this.piercingIgnoreEntityIds == null) {
                 this.piercingIgnoreEntityIds = new IntOpenHashSet(5);
@@ -92,7 +92,7 @@ end him rightly: keep the weapon in your hand and throw the pommel instead, dist
             }
 
             if (this.piercingIgnoreEntityIds.size() >= this.getPierceLevel() + 1) {
-                this.remove();
+                this.remove(RemovalReason.KILLED);
                 return;
             }
 
@@ -100,8 +100,8 @@ end him rightly: keep the weapon in your hand and throw the pommel instead, dist
         }
 
         if (this.isCritArrow()) {
-            long j = (long)this.random.nextInt(i / 2 + 2);
-            i = (int)Math.min(j + (long)i, 2147483647L);
+            long j = (long) this.random.nextInt(i / 2 + 2);
+            i = (int) Math.min(j + (long) i, 2147483647L);
         }
 
         Entity entity1 = this.getOwner();
@@ -111,7 +111,7 @@ end him rightly: keep the weapon in your hand and throw the pommel instead, dist
         } else {
             damagesource = DamageSource.arrow(this, entity1);
             if (entity1 instanceof LivingEntity) {
-                ((LivingEntity)entity1).setLastHurtMob(entity);
+                ((LivingEntity) entity1).setLastHurtMob(entity);
             }
         }
 
@@ -121,19 +121,19 @@ end him rightly: keep the weapon in your hand and throw the pommel instead, dist
             entity.setSecondsOnFire(5);
         }
 
-        if (entity.hurt(damagesource, (float)i)) {
+        if (entity.hurt(damagesource, (float) i)) {
             if (flag) {
                 return;
             }
 
             if (entity instanceof LivingEntity) {
-                LivingEntity livingentity = (LivingEntity)entity;
+                LivingEntity livingentity = (LivingEntity) entity;
                 if (!this.level.isClientSide && this.getPierceLevel() <= 0) {
                     livingentity.setArrowCount(livingentity.getArrowCount() + 1);
                 }
 
                 if (this.knockback > 0) {
-                    Vec3 vector3d = this.getDeltaMovement().multiply(1.0D, 0.0D, 1.0D).normalize().scale((double)this.knockback * 0.6D);
+                    Vec3 vector3d = this.getDeltaMovement().multiply(1.0D, 0.0D, 1.0D).normalize().scale((double) this.knockback * 0.6D);
                     if (vector3d.lengthSqr() > 0.0D) {
                         livingentity.push(vector3d.x, 0.1D, vector3d.z);
                     }
@@ -141,12 +141,12 @@ end him rightly: keep the weapon in your hand and throw the pommel instead, dist
 
                 if (!this.level.isClientSide && entity1 instanceof LivingEntity) {
                     EnchantmentHelper.doPostHurtEffects(livingentity, entity1);
-                    EnchantmentHelper.doPostDamageEffects((LivingEntity)entity1, livingentity);
+                    EnchantmentHelper.doPostDamageEffects((LivingEntity) entity1, livingentity);
                 }
 
                 this.doPostHurtEffects(livingentity);
                 if (livingentity != entity1 && livingentity instanceof Player && entity1 instanceof ServerPlayer && !this.isSilent()) {
-                    ((ServerPlayer)entity1).connection.send(new ClientboundGameEventPacket(ClientboundGameEventPacket.ARROW_HIT_PLAYER, 0.0F));
+                    ((ServerPlayer) entity1).connection.send(new ClientboundGameEventPacket(ClientboundGameEventPacket.ARROW_HIT_PLAYER, 0.0F));
                 }
 
                 if (!entity.isAlive() && this.piercedAndKilledEntities != null) {
@@ -154,7 +154,7 @@ end him rightly: keep the weapon in your hand and throw the pommel instead, dist
                 }
 
                 if (!this.level.isClientSide && entity1 instanceof ServerPlayer) {
-                    ServerPlayer serverplayerentity = (ServerPlayer)entity1;
+                    ServerPlayer serverplayerentity = (ServerPlayer) entity1;
                     if (this.piercedAndKilledEntities != null && this.shotFromCrossbow()) {
                         CriteriaTriggers.KILLED_BY_CROSSBOW.trigger(serverplayerentity, this.piercedAndKilledEntities);
                     } else if (!entity.isAlive() && this.shotFromCrossbow()) {
@@ -165,19 +165,19 @@ end him rightly: keep the weapon in your hand and throw the pommel instead, dist
 
             this.playSound(this.getDefaultHitGroundSoundEvent(), 1.0F, 1.2F / (this.random.nextFloat() * 0.2F + 0.9F));
             if (this.getPierceLevel() <= 0) {
-                this.remove();
+                this.remove(RemovalReason.KILLED);
             }
         } else {
             entity.setRemainingFireTicks(k);
             this.setDeltaMovement(this.getDeltaMovement().scale(-0.1D));
-            this.yRot += 180.0F;
+            setYRot(getYRot() + 180f);
             this.yRotO += 180.0F;
             if (!this.level.isClientSide && this.getDeltaMovement().lengthSqr() < 1.0E-7D) {
                 if (this.pickup == AbstractArrow.Pickup.ALLOWED) {
                     this.spawnAtLocation(this.getPickupItem(), 0.1F);
                 }
 
-                this.remove();
+                this.remove(RemovalReason.KILLED);
             }
         }
     }

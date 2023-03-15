@@ -2,7 +2,7 @@ package jackiecrazy.wardance.networking;
 
 import jackiecrazy.wardance.capability.skill.CasterData;
 import net.minecraft.network.FriendlyByteBuf;
-import net.minecraftforge.fml.network.NetworkEvent;
+import net.minecraftforge.network.NetworkEvent;
 
 import java.util.function.BiConsumer;
 import java.util.function.Function;

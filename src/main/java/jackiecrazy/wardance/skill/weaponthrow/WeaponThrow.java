@@ -3,7 +3,6 @@ package jackiecrazy.wardance.skill.weaponthrow;
 import jackiecrazy.wardance.skill.Skill;
 import jackiecrazy.wardance.skill.SkillData;
 import net.minecraft.world.entity.LivingEntity;
-import net.minecraft.tags.SetTag;
 import net.minecraftforge.eventbus.api.Event;
 
 import javax.annotation.Nonnull;

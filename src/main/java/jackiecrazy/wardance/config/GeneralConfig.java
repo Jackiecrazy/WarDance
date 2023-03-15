@@ -4,7 +4,7 @@ import jackiecrazy.wardance.WarDance;
 import net.minecraftforge.common.ForgeConfigSpec;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
-import net.minecraftforge.fml.config.ModConfig;
+import net.minecraftforge.fml.event.config.ModConfigEvent;
 import org.apache.commons.lang3.tuple.Pair;
 
 @Mod.EventBusSubscriber(modid = WarDance.MODID, bus = Mod.EventBusSubscriber.Bus.MOD)
@@ -100,10 +100,10 @@ public class GeneralConfig {
     }
 
     @SubscribeEvent
-    public static void loadConfig(ModConfig.ModConfigEvent e) {
+    public static void loadConfig(ModConfigEvent e) {
         if (e.getConfig().getSpec() == CONFIG_SPEC) {
             if(GeneralConfig.debug)
-            WarDance.LOGGER.debug("loading general config!");
+               WarDance.LOGGER.debug("loading general config!");
             bake();
         }
     }

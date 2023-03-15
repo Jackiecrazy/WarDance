@@ -1,28 +1,23 @@
 package jackiecrazy.wardance.client.screen;
 
-import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.platform.GlStateManager;
 import com.mojang.blaze3d.systems.RenderSystem;
+import com.mojang.blaze3d.vertex.*;
 import jackiecrazy.wardance.WarDance;
 import jackiecrazy.wardance.capability.skill.CasterData;
 import jackiecrazy.wardance.client.Keybinds;
-import jackiecrazy.wardance.networking.SelectSkillPacket;
 import jackiecrazy.wardance.networking.CombatChannel;
+import jackiecrazy.wardance.networking.SelectSkillPacket;
 import jackiecrazy.wardance.skill.Skill;
 import jackiecrazy.wardance.skill.SkillData;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiComponent;
 import net.minecraft.client.gui.screens.Screen;
-import com.mojang.blaze3d.vertex.BufferBuilder;
-import com.mojang.blaze3d.vertex.Tesselator;
-import com.mojang.blaze3d.vertex.DefaultVertexFormat;
+import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.Mth;
-import net.minecraft.network.chat.TextComponent;
-import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
-import net.minecraftforge.client.gui.ForgeIngameGui;
 
 import java.awt.*;
 import java.text.DecimalFormat;
@@ -57,7 +52,7 @@ public class SkillCastScreen extends Screen {
     protected int exIndex = -1;
 
     public SkillCastScreen(List<Skill> skills) {
-        super(new TextComponent("yeet"));
+        super(Component.empty());
         this.passEvents = true;
         this.elements = new Skill[5];
         for (int a = 0; a < elements.length; a++) {
@@ -88,45 +83,45 @@ public class SkillCastScreen extends Screen {
         }
         int index = distance ? (int) Math.floor((angle / 90) % 4) + 1 : 0;
         matrixStack.pushPose();
-        RenderSystem.enableAlphaTest();
+        //RenderSystem.enableAlphaTest();
         RenderSystem.enableBlend();
-        mc.getTextureManager().bind(radial);
+        RenderSystem.setShaderTexture(0, radial);
         this.exIndex = index;
         //mc.player.sendStatusMessage(new StringTextComponent(selected == null ? "none" : selected.getRegistryName().toString()), true);
         int x = width / 2 - 100;
         int y = height / 2 - 100;
-        RenderSystem.color4f(0.6f, 0.6f, 0.6f, 1);
+        RenderSystem.setShaderColor(0.6f, 0.6f, 0.6f, 1);
         blit(matrixStack, x, y, 0, 0, 200, 200, 600, 600);
-        RenderSystem.color4f(1, 1, 1, 1);
+        RenderSystem.setShaderColor(1, 1, 1, 1);
         for (int a = 0; a < elements.length; a++) {
             if (elements[a] != null) {
                 Skill s = elements[a];
 
                 //radial slice for highlighting
                 matrixStack.pushPose();
-                mc.textureManager.bind(radial);
+                RenderSystem.setShaderTexture(0, radial);
                 //holstered is green
                 if (CasterData.getCap(mc.player).getHolsteredSkill() == elements[a])
-                    RenderSystem.color4f(0.4f, 0.7f, 0.4f, 1);
+                    RenderSystem.setShaderColor(0.4f, 0.7f, 0.4f, 1);
                     //active is blue
                 else if (CasterData.getCap(mc.player).getSkillState(elements[a]) == Skill.STATE.ACTIVE)
-                    RenderSystem.color4f(0.4f, 0.4f, 0.9f, 1);
+                    RenderSystem.setShaderColor(0.4f, 0.4f, 0.9f, 1);
                     //not allowed is dark gray
                 else if (s.castingCheck(mc.player) != Skill.CastStatus.ALLOWED)
-                    RenderSystem.color4f(0.4f, 0.4f, 0.4f, 1);
+                    RenderSystem.setShaderColor(0.4f, 0.4f, 0.4f, 1);
                     //allowed is light gray, selected is white
                 else if (a != index)
-                    RenderSystem.color4f(0.6f, 0.6f, 0.6f, 1);
+                    RenderSystem.setShaderColor(0.6f, 0.6f, 0.6f, 1);
                 blit(matrixStack, x, y, fixedU[a], fixedV[a], 200, 200, 600, 600);
                 matrixStack.popPose();
 
                 //skill icon
                 matrixStack.pushPose();
-                mc.textureManager.bind(s.icon());
+                RenderSystem.setShaderTexture(0, s.icon());
                 Color c = s.getColor();
-                RenderSystem.color4f(c.getRed() / 255f, c.getGreen() / 255f, c.getBlue() / 255f, 1);
+                RenderSystem.setShaderColor(c.getRed() / 255f, c.getGreen() / 255f, c.getBlue() / 255f, 1);
                 GuiComponent.blit(matrixStack, x + iconX[a], y + iconY[a], 0, 0, 32, 32, 32, 32);
-                RenderSystem.color4f(1, 1, 1, 1);
+                RenderSystem.setShaderColor(1, 1, 1, 1);
                 matrixStack.popPose();
 
                 //cooldown overlay and mask
@@ -140,7 +135,7 @@ public class SkillCastScreen extends Screen {
                         //cooldown spinny
                         float cd = CasterData.getCap(mc.player).getSkillData(s).orElse(SkillData.DUMMY).getDuration();
                         float cdPerc = cd / CasterData.getCap(mc.player).getSkillData(s).orElse(SkillData.DUMMY).getMaxDuration();
-                        mc.textureManager.bind(cooldown);
+                        RenderSystem.setShaderTexture(0, cooldown);
                         drawCooldownCircle(matrixStack, x + iconX[a], y + iconY[a], cdPerc);
                         RenderSystem.disableBlend();
 
@@ -149,8 +144,8 @@ public class SkillCastScreen extends Screen {
                         if (Math.ceil(cd) != cd)
                             num = formatter.format(cd);
                         matrixStack.pushPose();
-                        mc.textureManager.bind(cooldown);
-                        RenderSystem.color4f(1.0F, 1.0F, 1.0F, 0.6F);
+                        RenderSystem.setShaderTexture(0, cooldown);
+                        RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, 0.6F);
                         //AbstractGui.blit(matrixStack, x + iconX[a], y + iconY[a], 0, 0, 32, 32, 32, 32);
                         mc.font.draw(matrixStack, num, x + iconX[a] + 16 - mc.font.width(num) / 2f, y + iconY[a] + 12, 0xFFFFFF);
                         matrixStack.popPose();
@@ -167,9 +162,9 @@ public class SkillCastScreen extends Screen {
                         if (sd.getMaxDuration() != 0) {
                             //active spinny
                             float cdPerc = sd.getDuration() / sd.getMaxDuration();
-                            mc.textureManager.bind(cooldown);
+                            RenderSystem.setShaderTexture(0, cooldown);
                             float cd = sd.getDuration();
-                            RenderSystem.color4f(0.4f, 0.7f, 0.4f, 1);
+                            RenderSystem.setShaderColor(0.4f, 0.7f, 0.4f, 1);
                             drawCooldownCircle(matrixStack, x + iconX[finalA], y + iconY[finalA], cdPerc);
 
                             //active number
@@ -177,8 +172,8 @@ public class SkillCastScreen extends Screen {
                             if (Math.ceil(cd) != cd)
                                 num = formatter.format(cd);
                             matrixStack.pushPose();
-                            mc.textureManager.bind(cooldown);
-                            RenderSystem.color4f(1.0F, 1.0F, 1.0F, 0.6F);
+                            RenderSystem.setShaderTexture(0, cooldown);
+                            RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, 0.6F);
                             //AbstractGui.blit(matrixStack, x + iconX[a], y + iconY[a], 0, 0, 32, 32, 32, 32);
                             mc.font.draw(matrixStack, num, x + iconX[finalA] + 16 - mc.font.width(num) / 2f, y + iconY[finalA] + 12, 0xFFFFFF);
                             matrixStack.popPose();
@@ -220,7 +215,7 @@ public class SkillCastScreen extends Screen {
             }
 
         }
-        RenderSystem.disableAlphaTest();
+        //RenderSystem.disableAlphaTest();
         RenderSystem.disableBlend();
         matrixStack.popPose();
 
@@ -228,14 +223,14 @@ public class SkillCastScreen extends Screen {
 
     private void drawCooldownCircle(PoseStack ms, int x, int y, float v) {
         ms.pushPose();
-        RenderSystem.enableAlphaTest();
+        //RenderSystem.enableAlphaTest();
         RenderSystem.enableBlend();
         RenderSystem.blendFunc(GlStateManager.SourceFactor.ONE_MINUS_SRC_ALPHA, GlStateManager.DestFactor.DST_ALPHA);
-        Minecraft.getInstance().textureManager.bind(cooldown);
+        RenderSystem.setShaderTexture(0, cooldown);
         if (v <= 0) return; // nothing to be drawn
         int x2 = x + 32, y2 = y + 32; // bottom-right corner
         if (v >= 1) {
-            RenderSystem.color4f(0.125F, 0.125F, 0.125F, 0.6F);
+            RenderSystem.setShaderColor(0.125F, 0.125F, 0.125F, 0.6F);
             GuiComponent.blit(ms, x, y, 0, 0, 32, 32, 32, 32);
             ms.popPose();
             // entirely filled
@@ -243,7 +238,7 @@ public class SkillCastScreen extends Screen {
         }
         int xm = (x + x2) / 2, ym = (y + y2) / 2; // middle point
         BufferBuilder bufferbuilder = Tesselator.getInstance().getBuilder();
-        bufferbuilder.begin(9, DefaultVertexFormat.POSITION_TEX_COLOR);
+        bufferbuilder.begin(VertexFormat.Mode.QUADS, DefaultVertexFormat.POSITION_TEX_COLOR);//TODO quads?
         drawVertex(bufferbuilder, xm, ym);
         drawVertex(bufferbuilder, xm, y);
 // draw corners:
@@ -263,7 +258,7 @@ public class SkillCastScreen extends Screen {
         }
         drawVertex(bufferbuilder, (int) (xm + vx * (x2 - x) / 2), (int) (ym + vy * (y2 - y) / 2));
         Tesselator.getInstance().end();
-        RenderSystem.color4f(1.0F, 1.0F, 1.0F, 1F);
+        RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, 1F);
         ms.popPose();
     }
 
@@ -282,9 +277,7 @@ public class SkillCastScreen extends Screen {
                 this.minecraft
                         .player.closeContainer();
             } else {
-                this.minecraft
-                        .player.input.tick(this.minecraft
-                                .player.isMovingSlowly()); //shouldRenderSneaking
+                this.minecraft.player.input.tick(this.minecraft.player.isMovingSlowly(), 1); //shouldRenderSneaking
             }
         }
     }
@@ -315,20 +308,20 @@ public class SkillCastScreen extends Screen {
     @Override
     public void init() {
         super.init();
-        ForgeIngameGui.renderCrosshairs = false;
+        //ForgeIngameGui.renderCrosshairs = false;
     }
 
     @Override
     public void removed() {
         super.removed();
         //GLFW.glfwSetInputMode(Minecraft.getInstance().getMainWindow().getHandle(), GLFW.GLFW_CURSOR, GLFW.GLFW_CURSOR_NORMAL);
-        ForgeIngameGui.renderCrosshairs = true;
+        //ForgeIngameGui.renderCrosshairs = true;
     }
 
     @Override
     public void onClose() {
         super.onClose();
-        ForgeIngameGui.renderCrosshairs = true;
+        //ForgeIngameGui.renderCrosshairs = true;
     }
 
     @Override
