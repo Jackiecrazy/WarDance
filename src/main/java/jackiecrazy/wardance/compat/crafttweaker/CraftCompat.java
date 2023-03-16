@@ -1,26 +1,16 @@
 package jackiecrazy.wardance.compat.crafttweaker;
 
-import com.blamejared.crafttweaker.api.annotations.ZenRegister;
+import com.blamejared.crafttweaker.api.annotation.ZenRegister;
 import jackiecrazy.footwork.capability.resources.CombatData;
 import jackiecrazy.wardance.capability.skill.CasterData;
 import jackiecrazy.wardance.skill.Skill;
-import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.InteractionHand;
+import net.minecraft.world.entity.LivingEntity;
 import org.openzen.zencode.java.ZenCodeType;
 
 @ZenRegister
 @ZenCodeType.Expansion("crafttweaker.api.entity.MCLivingEntity")
 public class CraftCompat {
-    @ZenCodeType.Method
-    public static float getResolve(LivingEntity entity) {
-        return CombatData.getCap(entity).getResolve();
-    }
-
-    @ZenCodeType.Method
-    public static void setResolve(LivingEntity entity, float amount) {
-        CombatData.getCap(entity).setResolve(amount);
-    }
-
     @ZenCodeType.Method
     public static float getMight(LivingEntity entity) {
         return CombatData.getCap(entity).getMight();
@@ -107,8 +97,8 @@ public class CraftCompat {
     }
 
     @ZenCodeType.Method
-    public boolean isFirstStaggerStrike(LivingEntity entity) {
-        return CombatData.getCap(entity).isFirstStaggerStrike();
+    public boolean isStaggeringStrike(LivingEntity entity) {
+        return CombatData.getCap(entity).isStaggeringStrike();
     }
 
     @ZenCodeType.Method
@@ -152,33 +142,8 @@ public class CraftCompat {
     }
 
     @ZenCodeType.Method
-    public float getTrueMaxPosture(LivingEntity entity) {
-        return CombatData.getCap(entity).getTrueMaxPosture();
-    }
-
-    @ZenCodeType.Method
-    public void setTrueMaxPosture(LivingEntity entity, float amount) {
-        CombatData.getCap(entity).setTrueMaxPosture(amount);
-    }
-
-    @ZenCodeType.Method
-    public float getTrueMaxSpirit(LivingEntity entity) {
-        return CombatData.getCap(entity).getTrueMaxSpirit();
-    }
-
-    @ZenCodeType.Method
-    public void setTrueMaxSpirit(LivingEntity entity, float amount) {
-        CombatData.getCap(entity).setTrueMaxSpirit(amount);
-    }
-
-    @ZenCodeType.Method
     public float getMaxMight(LivingEntity entity) {
         return CombatData.getCap(entity).getMaxMight();
-    }
-
-    @ZenCodeType.Method
-    public void setMaxMight(LivingEntity entity, float amount) {
-        CombatData.getCap(entity).setMaxMight(amount);
     }
 
     @ZenCodeType.Method
@@ -187,58 +152,13 @@ public class CraftCompat {
     }
 
     @ZenCodeType.Method
-    public void setStaggerTime(LivingEntity entity, int amount) {
-        CombatData.getCap(entity).setStaggerTime(amount);
+    public void stagger(LivingEntity entity, int amount) {
+        CombatData.getCap(entity).stagger(amount);
     }
 
     @ZenCodeType.Method
     public int decrementStaggerTime(LivingEntity entity, int amount) {
         return CombatData.getCap(entity).decrementStaggerTime(amount);
-    }
-
-    @ZenCodeType.Method
-    public int getStaggerCount(LivingEntity entity) {
-        return CombatData.getCap(entity).getStaggerCount();
-    }
-
-    @ZenCodeType.Method
-    public void setStaggerCount(LivingEntity entity, int amount) {
-        CombatData.getCap(entity).setStaggerCount(amount);
-    }
-
-    @ZenCodeType.Method
-    public void decrementStaggerCount(LivingEntity entity, int amount) {
-        CombatData.getCap(entity).decrementStaggerCount(amount);
-    }
-
-    @ZenCodeType.Method
-    public int getShieldTime(LivingEntity entity) {
-        return CombatData.getCap(entity).getBarrierCooldown();
-    }
-
-    @ZenCodeType.Method
-    public void setShieldTime(LivingEntity entity, int amount) {
-        CombatData.getCap(entity).setBarrierCooldown(amount);
-    }
-
-    @ZenCodeType.Method
-    public void decrementShieldTime(LivingEntity entity, int amount) {
-        CombatData.getCap(entity).decrementBarrierCooldown(amount);
-    }
-
-    @ZenCodeType.Method
-    public float getShieldCount(LivingEntity entity) {
-        return CombatData.getCap(entity).getBarrier();
-    }
-
-    @ZenCodeType.Method
-    public void setShieldCount(LivingEntity entity, int amount) {
-        CombatData.getCap(entity).setBarrier(amount);
-    }
-
-    @ZenCodeType.Method
-    public void decrementShieldCount(LivingEntity entity, int amount) {
-        CombatData.getCap(entity).consumeBarrier(amount);
     }
 
     @ZenCodeType.Method
@@ -282,51 +202,6 @@ public class CraftCompat {
     }
 
     @ZenCodeType.Method
-    public float getWounding(LivingEntity entity) {
-        return CombatData.getCap(entity).getWounding();
-    }
-
-    @ZenCodeType.Method
-    public void setWounding(LivingEntity entity, float amount) {
-        CombatData.getCap(entity).setWounding(amount);
-    }
-
-    @ZenCodeType.Method
-    public float getFatigue(LivingEntity entity) {
-        return CombatData.getCap(entity).getFatigue();
-    }
-
-    @ZenCodeType.Method
-    public void setFatigue(LivingEntity entity, float amount) {
-        CombatData.getCap(entity).setFatigue(amount);
-    }
-
-    @ZenCodeType.Method
-    public float getBurnout(LivingEntity entity) {
-        return CombatData.getCap(entity).getBurnout();
-    }
-
-    @ZenCodeType.Method
-    public void setBurnout(LivingEntity entity, float amount) {
-        CombatData.getCap(entity).setBurnout(amount);
-    }
-
-    @ZenCodeType.Method
-    public void addWounding(LivingEntity entity, float amount) {
-        CombatData.getCap(entity).addWounding(amount);
-    }
-
-    @ZenCodeType.Method
-    public void addFatigue(LivingEntity entity, float amount) {
-        CombatData.getCap(entity).addFatigue(amount);
-    }
-
-    @ZenCodeType.Method
-    public void addBurnout(LivingEntity entity, float amount) {
-        CombatData.getCap(entity).addBurnout(amount);
-    }
-
-    @ZenCodeType.Method
     public int getHandBind(LivingEntity entity, InteractionHand h) {
         return CombatData.getCap(entity).getHandBind(h);
     }
@@ -339,16 +214,6 @@ public class CraftCompat {
     @ZenCodeType.Method
     public void decrementHandBind(LivingEntity entity, InteractionHand h, int amount) {
         CombatData.getCap(entity).decrementHandBind(h, amount);
-    }
-
-    @ZenCodeType.Method
-    public float getHandReel(LivingEntity entity, InteractionHand hand) {
-        return CombatData.getCap(entity).getHandReel(hand);
-    }
-
-    @ZenCodeType.Method
-    public void setHandReel(LivingEntity entity, InteractionHand hand, float value) {
-        CombatData.getCap(entity).setHandReel(hand, value);
     }
 
     @ZenCodeType.Method

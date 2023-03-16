@@ -88,7 +88,7 @@ public class ShieldBash extends Skill {
 
         protected void performEffect(LivingEntity caster, LivingEntity target) {
             target.addEffect(new MobEffectInstance(MobEffects.CONFUSION, 60));
-//            CombatUtils.knockBack(target, caster, (float) caster.getAttributeValue(WarAttributes.BARRIER.get()), true, false);
+//            CombatUtils.knockBack(target, caster, (float) caster.getAttributeValue(FootworkAttributes.BARRIER.get()), true, false);
 //            CombatData.getCap(caster).consumeBarrier(CombatData.getCap(caster).getBarrier());
 //            CombatData.getCap(caster).setBarrierCooldown(CombatData.getCap(caster).getBarrierCooldown() / 2);
         }

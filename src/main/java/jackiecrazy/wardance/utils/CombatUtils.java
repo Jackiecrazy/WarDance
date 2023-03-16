@@ -1,6 +1,6 @@
 package jackiecrazy.wardance.utils;
 
-import jackiecrazy.footwork.api.WarAttributes;
+import jackiecrazy.footwork.api.FootworkAttributes;
 import jackiecrazy.footwork.capability.resources.CombatData;
 import jackiecrazy.footwork.capability.resources.ICombatCapability;
 import jackiecrazy.footwork.capability.weaponry.CombatManipulator;
@@ -139,7 +139,7 @@ public class CombatUtils {
             }
             if (ForgeRegistries.ITEMS.containsKey(key) && (ForgeRegistries.ITEMS.getValue(key)) instanceof ArmorItem) {
                 final Item armor = ForgeRegistries.ITEMS.getValue(key);
-                UUID touse = WarAttributes.MODIFIERS[((ArmorItem) armor).getSlot().getIndex()];
+                UUID touse = FootworkAttributes.MODIFIERS[((ArmorItem) armor).getSlot().getIndex()];
                 armorStats.put(armor, new AttributeModifier[]{
                         new AttributeModifier(touse, "war dance modifier", absorption, AttributeModifier.Operation.ADDITION),
                         new AttributeModifier(touse, "war dance modifier", deflection, AttributeModifier.Operation.ADDITION),

@@ -1,6 +1,5 @@
 package jackiecrazy.wardance.handlers;
 
-import jackiecrazy.footwork.api.WarAttributes;
 import jackiecrazy.footwork.capability.resources.CombatData;
 import jackiecrazy.footwork.capability.resources.ICombatCapability;
 import jackiecrazy.footwork.capability.weaponry.CombatManipulator;
@@ -156,7 +155,7 @@ public class CombatHandler {
                 uke.level.playSound(null, uke.getX(), uke.getY(), uke.getZ(), SoundEvents.WOODEN_TRAPDOOR_CLOSE, SoundSource.PLAYERS, 0.75f + WarDance.rand.nextFloat() * 0.5f, (1 - (ukeCap.getPosture() / ukeCap.getMaxPosture())) + WarDance.rand.nextFloat() * 0.5f);
                 if (pe.doesTrigger()) {
                     if (uke.isEffectiveAi()) {
-                        FearEntity dummy = new FearEntity(WarEntities.fear, uke.level);
+                        FearEntity dummy = new FearEntity(WarEntities.FEAR.get(), uke.level);
                         dummy.teleportTo(projectile.getX(), projectile.getY(), projectile.getZ());
                         uke.level.addFreshEntity(dummy);
                         //I am not proud of this.
@@ -176,17 +175,17 @@ public class CombatHandler {
                 return;
             }
             //deflection
-            if ((uke instanceof Player || WarDance.rand.nextFloat() > CombatConfig.mobDeflectChance) && GeneralUtils.isFacingEntity(uke, projectile, 120 + 2 * (int) GeneralUtils.getAttributeValueSafe(uke, WarAttributes.DEFLECTION.get())) && !canParry && ukeCap.doConsumePosture(consume)) {
-                e.setCanceled(true);
-                uke.level.playSound(null, uke.getX(), uke.getY(), uke.getZ(), SoundEvents.IRON_TRAPDOOR_OPEN, SoundSource.PLAYERS, 0.75f + WarDance.rand.nextFloat() * 0.5f, (1 - (ukeCap.getPosture() / ukeCap.getMaxPosture())) + WarDance.rand.nextFloat() * 0.5f);
-                if (pe.getReturnVec() != null) {
-                    projectile.setDeltaMovement(pe.getReturnVec().x, pe.getReturnVec().y, pe.getReturnVec().z);
-                    if (projectile instanceof Projectile) {
-                        double power = pe.getReturnVec().x / pe.getReturnVec().normalize().x;
-                        ((Projectile) projectile).shoot(pe.getReturnVec().x, pe.getReturnVec().y, pe.getReturnVec().z, (float) power, 0);
-                    }
-                } else projectile.remove(Entity.RemovalReason.KILLED);
-            }
+//            if ((uke instanceof Player || WarDance.rand.nextFloat() > CombatConfig.mobDeflectChance) && GeneralUtils.isFacingEntity(uke, projectile, 120 + 2 * (int) GeneralUtils.getAttributeValueSafe(uke, FootworkAttributes.DEFLECTION.get())) && !canParry && ukeCap.doConsumePosture(consume)) {
+//                e.setCanceled(true);
+//                uke.level.playSound(null, uke.getX(), uke.getY(), uke.getZ(), SoundEvents.IRON_TRAPDOOR_OPEN, SoundSource.PLAYERS, 0.75f + WarDance.rand.nextFloat() * 0.5f, (1 - (ukeCap.getPosture() / ukeCap.getMaxPosture())) + WarDance.rand.nextFloat() * 0.5f);
+//                if (pe.getReturnVec() != null) {
+//                    projectile.setDeltaMovement(pe.getReturnVec().x, pe.getReturnVec().y, pe.getReturnVec().z);
+//                    if (projectile instanceof Projectile) {
+//                        double power = pe.getReturnVec().x / pe.getReturnVec().normalize().x;
+//                        ((Projectile) projectile).shoot(pe.getReturnVec().x, pe.getReturnVec().y, pe.getReturnVec().z, (float) power, 0);
+//                    }
+//                } else projectile.remove(Entity.RemovalReason.KILLED);
+//            }
         }
     }
 
@@ -261,7 +260,7 @@ public class CombatHandler {
                 failManualParry |= CombatConfig.parryTime < 0 && ukeCap.getParryingTick() == -1;
                 failManualParry &= uke instanceof Player;
                 boolean canParry = GeneralUtils.isFacingEntity(uke, seme, 120);
-                boolean useDeflect = (uke instanceof Player || WarDance.rand.nextFloat() < CombatConfig.mobDeflectChance) && GeneralUtils.isFacingEntity(uke, seme, 120 + 2 * (int) GeneralUtils.getAttributeValueSafe(uke, WarAttributes.DEFLECTION.get())) && !GeneralUtils.isFacingEntity(uke, seme, 120) && !canParry;
+                //boolean useDeflect = (uke instanceof Player || WarDance.rand.nextFloat() < CombatConfig.mobDeflectChance) && GeneralUtils.isFacingEntity(uke, seme, 120 + 2 * (int) GeneralUtils.getAttributeValueSafe(uke, FootworkAttributes.DEFLECTION.get())) && !GeneralUtils.isFacingEntity(uke, seme, 120) && !canParry;
                 //staggered, no parry
                 if (ukeCap.getStaggerTime() > 0) {
                     downingHit = false;
@@ -319,7 +318,7 @@ public class CombatHandler {
                 float finalPostureConsumption = Math.abs(atkMult * defMult);
                 //updating this quickly, it's basically the above without crit and stab multipliers, which were necessary for calculating canParry so they couldn't be eliminated cleanly...
                 float originalPostureConsumption = Math.abs(original * defMult);
-                ParryEvent pe = new ParryEvent(uke, seme, ((canParry && defend != null) || useDeflect), attackingHand, attack, parryHand, defend, finalPostureConsumption, originalPostureConsumption, e.getAmount());
+                ParryEvent pe = new ParryEvent(uke, seme, (canParry && defend != null), attackingHand, attack, parryHand, defend, finalPostureConsumption, originalPostureConsumption, e.getAmount());
                 if (failManualParry)
                     pe.setResult(Event.Result.DENY);
                 MinecraftForge.EVENT_BUS.post(pe);
@@ -337,11 +336,11 @@ public class CombatHandler {
                         e.setCanceled(true);
                         downingHit = false;
                         ukeCap.addRank(0);
-                        if (useDeflect) {
-                            //deflect
-                            uke.level.playSound(null, uke.getX(), uke.getY(), uke.getZ(), SoundEvents.IRON_TRAPDOOR_OPEN, SoundSource.PLAYERS, 0.75f + WarDance.rand.nextFloat() * 0.5f, (1 - (ukeCap.getPosture() / ukeCap.getMaxPosture())) + WarDance.rand.nextFloat() * 0.5f);
-                            return;
-                        }
+//                        if (useDeflect) {
+//                            //deflect
+//                            uke.level.playSound(null, uke.getX(), uke.getY(), uke.getZ(), SoundEvents.IRON_TRAPDOOR_OPEN, SoundSource.PLAYERS, 0.75f + WarDance.rand.nextFloat() * 0.5f, (1 - (ukeCap.getPosture() / ukeCap.getMaxPosture())) + WarDance.rand.nextFloat() * 0.5f);
+//                            return;
+//                        }
                         //shield disabling
                         boolean disshield = false;
                         parryHand = uke.getOffhandItem() == defend ? InteractionHand.OFF_HAND : InteractionHand.MAIN_HAND;
@@ -392,15 +391,15 @@ public class CombatHandler {
                 }
             }
             //shatter, at the rock bottom of the attack event, saving your protected butt.
-            if (!uke.isBlocking() && !e.isCanceled()) {
-                if (CombatUtils.isPhysicalAttack(e.getSource()) && StealthUtils.INSTANCE.getAwareness(e.getSource().getDirectEntity() instanceof LivingEntity ? (LivingEntity) e.getSource().getDirectEntity() : null, uke) != StealthUtils.Awareness.UNAWARE) {
-                    if (CombatData.getCap(uke).consumeShatter(e.getAmount())) {
-                        e.setCanceled(true);
-                        uke.level.playSound(null, uke.getX(), uke.getY(), uke.getZ(), SoundEvents.GLASS_BREAK, SoundSource.PLAYERS, 0.25f + WarDance.rand.nextFloat() * 0.5f, 0.75f + WarDance.rand.nextFloat() * 0.5f);
-                    }
-                    //otherwise the rest of the damage goes through and is handled later down the line anyway
-                }
-            }
+//            if (!uke.isBlocking() && !e.isCanceled()) {
+//                if (CombatUtils.isPhysicalAttack(e.getSource()) && StealthUtils.INSTANCE.getAwareness(e.getSource().getDirectEntity() instanceof LivingEntity ? (LivingEntity) e.getSource().getDirectEntity() : null, uke) != StealthUtils.Awareness.UNAWARE) {
+//                    if (CombatData.getCap(uke).consumeShatter(e.getAmount())) {
+//                        e.setCanceled(true);
+//                        uke.level.playSound(null, uke.getX(), uke.getY(), uke.getZ(), SoundEvents.GLASS_BREAK, SoundSource.PLAYERS, 0.25f + WarDance.rand.nextFloat() * 0.5f, 0.75f + WarDance.rand.nextFloat() * 0.5f);
+//                    }
+//                    //otherwise the rest of the damage goes through and is handled later down the line anyway
+//                }
+//            }
         }
 
     }
@@ -513,14 +512,14 @@ public class CombatHandler {
             }
         }
         //stuff used to exist here, moved to footwork
-        if (CombatData.getCap(uke).getStaggerTime() == 0 && CombatUtils.isPhysicalAttack(e.getSource())) {
-            if (e.getSource().getEntity() instanceof LivingEntity && StealthUtils.INSTANCE.getAwareness((LivingEntity) e.getSource().getEntity(), uke) == StealthUtils.Awareness.UNAWARE)
-                return;
-            float amount = e.getAmount();
-            //absorption
-            amount -= GeneralUtils.getAttributeValueSafe(uke, WarAttributes.ABSORPTION.get());
-            e.setAmount(Math.max(0, amount));
-        }
+//        if (CombatData.getCap(uke).getStaggerTime() == 0 && CombatUtils.isPhysicalAttack(e.getSource())) {
+//            if (e.getSource().getEntity() instanceof LivingEntity && StealthUtils.INSTANCE.getAwareness((LivingEntity) e.getSource().getEntity(), uke) == StealthUtils.Awareness.UNAWARE)
+//                return;
+//            float amount = e.getAmount();
+//            //absorption
+//            amount -= GeneralUtils.getAttributeValueSafe(uke, FootworkAttributes.ABSORPTION.get());
+//            e.setAmount(Math.max(0, amount));
+//        }
         if (e.getAmount() <= 0) e.setCanceled(true);
     }
 

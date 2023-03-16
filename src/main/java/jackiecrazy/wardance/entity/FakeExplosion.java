@@ -2,28 +2,25 @@ package jackiecrazy.wardance.entity;
 
 import jackiecrazy.footwork.utils.TargetingUtils;
 import jackiecrazy.wardance.utils.SkillUtils;
-import net.minecraft.world.item.enchantment.ProtectionEnchantment;
-import net.minecraft.world.entity.Entity;
-import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.world.damagesource.DamageSource;
-import net.minecraft.world.phys.AABB;
-import net.minecraft.util.Mth;
-import net.minecraft.world.phys.Vec3;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.item.enchantment.ProtectionEnchantment;
 import net.minecraft.world.level.Explosion;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.phys.AABB;
+import net.minecraft.world.phys.Vec3;
 
 import javax.annotation.Nullable;
 import java.util.List;
-
-import net.minecraft.world.level.Explosion.BlockInteraction;
 
 public class FakeExplosion extends Explosion {
     private float radius, damage;
     private Level world;
 
     public FakeExplosion(Level worldIn, @Nullable Entity entityIn, double x, double y, double z, float radius, DamageSource ds, float damage) {
-        super(worldIn, entityIn, ds, null, x, y, z, radius, false, BlockInteraction.NONE);
+        super(worldIn, entityIn, ds, null, x, y, z, radius, false, BlockInteraction.KEEP);
         this.radius = radius * 2;
         world = worldIn;
         this.damage = damage;
@@ -47,12 +44,12 @@ public class FakeExplosion extends Explosion {
 
         for (Entity entity : list) {
             if (!entity.ignoreExplosion() && !TargetingUtils.isAlly(entity, getExploder())) {
-                double percentage = Mth.sqrt(entity.distanceToSqr(vector3d)) / radius;
+                double percentage = Math.sqrt(entity.distanceToSqr(vector3d)) / radius;
                 if (percentage <= 1.0D) {
                     double xDiff = entity.getX() - vector3d.x;
                     double yDiff = entity.getEyeY() - vector3d.y;
                     double zDiff = entity.getZ() - vector3d.z;
-                    double dist = Mth.sqrt(xDiff * xDiff + yDiff * yDiff + zDiff * zDiff);
+                    double dist = Math.sqrt(xDiff * xDiff + yDiff * yDiff + zDiff * zDiff);
                     if (dist != 0.0D) {
                         xDiff = xDiff / dist;
                         yDiff = yDiff / dist;

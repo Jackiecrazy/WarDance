@@ -1,6 +1,6 @@
 package jackiecrazy.wardance.capability.resources;
 
-import jackiecrazy.footwork.api.WarAttributes;
+import jackiecrazy.footwork.api.FootworkAttributes;
 import jackiecrazy.footwork.capability.resources.ICombatCapability;
 import jackiecrazy.footwork.event.*;
 import jackiecrazy.footwork.potion.FootworkEffects;
@@ -100,7 +100,7 @@ public class CombatCapability implements ICombatCapability {
             ret = CombatUtils.customPosture.get(GeneralUtils.getResourceLocationFromEntity(elb));
         else ret = (float) (Math.ceil(10 / 1.09 * elb.getBbWidth() * elb.getBbHeight()) + elb.getArmorValue() / 2d);
         if (elb instanceof Player) ret *= 1.5;
-        ret += GeneralUtils.getAttributeValueSafe(elb, WarAttributes.MAX_POSTURE.get());
+        ret += GeneralUtils.getAttributeValueSafe(elb, FootworkAttributes.MAX_POSTURE.get());
         return ret;
     }
 
@@ -118,13 +118,18 @@ public class CombatCapability implements ICombatCapability {
 
     @Override
     public float addMight(float amount) {
+        double grace = ResourceConfig.qiGrace;
+        if (dude.get() != null) {
+            amount *= dude.get().getAttributeValue(FootworkAttributes.MIGHT_GEN.get());
+            grace *= dude.get().getAttributeValue(FootworkAttributes.MIGHT_GRACE.get());
+        }
         GainMightEvent gme = new GainMightEvent(dude.get(), amount);
         MinecraftForge.EVENT_BUS.post(gme);
         if (gme.isCanceled()) return -1;
         amount = gme.getQuantity();
         float temp = might + amount;
         setMight(temp);
-        setMightGrace(ResourceConfig.qiGrace);
+        setMightGrace((int) grace);
         addRank(amount * 0.1f);
         return temp % 10;
     }
@@ -169,7 +174,7 @@ public class CombatCapability implements ICombatCapability {
     @Override
     public float getMaxSpirit() {
         final LivingEntity e = dude.get();
-        return e == null ? 1 : (float) e.getAttributeValue(WarAttributes.MAX_SPIRIT.get());
+        return e == null ? 1 : (float) e.getAttributeValue(FootworkAttributes.MAX_SPIRIT.get());
     }
 
     @Override
@@ -185,6 +190,11 @@ public class CombatCapability implements ICombatCapability {
 
     @Override
     public float addSpirit(float amount) {
+        if (dude.get() != null)
+            amount *= dude.get().getAttributeValue(FootworkAttributes.SPIRIT_GAIN.get());
+        GainSpiritEvent cse = new GainSpiritEvent(dude.get(), amount);
+        MinecraftForge.EVENT_BUS.post(cse);
+        amount = cse.getQuantity();
         float overflow = Math.max(0, spirit + amount - getMaxSpirit());
         setSpirit(spirit + amount);
         return overflow;
@@ -203,7 +213,10 @@ public class CombatCapability implements ICombatCapability {
         if (cse.getResult() == Event.Result.DEFAULT && lacking) return false;
         amount = Math.min(amount, spirit - above);
         spirit -= amount;
-        setSpiritGrace(ResourceConfig.spiritCD);
+        double cd = ResourceConfig.spiritCD;
+        if (dude.get() != null)
+            cd /= dude.get().getAttributeValue(FootworkAttributes.SPIRIT_COOLDOWN.get());
+        setSpiritGrace((int) cd);
         return cse.getResult() != Event.Result.DENY;
     }
 
@@ -220,7 +233,7 @@ public class CombatCapability implements ICombatCapability {
     @Override
     public float getMaxPosture() {
         final LivingEntity e = dude.get();
-        return e == null ? 1 : (float) e.getAttributeValue(WarAttributes.MAX_POSTURE.get());
+        return e == null ? 1 : (float) e.getAttributeValue(FootworkAttributes.MAX_POSTURE.get());
     }
 
     @Override
@@ -247,6 +260,11 @@ public class CombatCapability implements ICombatCapability {
 
     @Override
     public float addPosture(float amount) {
+        if (dude.get() != null)
+            amount *= dude.get().getAttributeValue(FootworkAttributes.POSTURE_GAIN.get());
+        GainPostureEvent cse = new GainPostureEvent(dude.get(), amount);
+        MinecraftForge.EVENT_BUS.post(cse);
+        amount = cse.getQuantity();
         float overflow = Math.max(0, posture + amount - getMaxPosture());
         setPosture(posture + amount);
         return overflow;
@@ -304,8 +322,7 @@ public class CombatCapability implements ICombatCapability {
         if (elb.hasEffect(MobEffects.HUNGER))
             for (int uwu = 0; uwu < elb.getEffect(MobEffects.HUNGER).getAmplifier() + 1; uwu++)
                 weakness *= GeneralConfig.hunger;
-        float cooldown = ResourceConfig.postureCD * weakness;
-        cooldown += ResourceConfig.armorPostureCD * elb.getArmorValue() / 20f;
+        double cooldown = ResourceConfig.postureCD * weakness / elb.getAttributeValue(FootworkAttributes.POSTURE_COOLDOWN.get());
         posture -= amount;
         setPostureGrace((int) cooldown);
         sync();
@@ -374,7 +391,7 @@ public class CombatCapability implements ICombatCapability {
     @Override
     public float getMaxMight() {
         final LivingEntity e = dude.get();
-        return e == null ? 1 : (float) e.getAttributeValue(WarAttributes.MAX_POSTURE.get());
+        return e == null ? 1 : (float) e.getAttributeValue(FootworkAttributes.MAX_MIGHT.get());
     }
 
     @Override
@@ -468,7 +485,7 @@ public class CombatCapability implements ICombatCapability {
     @Override
     public float getMaxFracture() {
         final LivingEntity e = dude.get();
-        return e == null ? 1 : (float) e.getAttributeValue(WarAttributes.MAX_FRACTURE.get());
+        return e == null ? 1 : (float) e.getAttributeValue(FootworkAttributes.MAX_FRACTURE.get());
     }
 
     @Override
@@ -488,9 +505,9 @@ public class CombatCapability implements ICombatCapability {
         if (time == 0 && expose > 0 && e != null) {
             e.getAttribute(Attributes.MOVEMENT_SPEED).removeModifier(WOUND);
             e.getAttribute(Attributes.ARMOR).removeModifier(WOUND);
-            e.getAttribute(WarAttributes.ABSORPTION.get()).removeModifier(WOUND);
-            e.getAttribute(WarAttributes.DEFLECTION.get()).removeModifier(WOUND);
-            e.getAttribute(WarAttributes.SHATTER.get()).removeModifier(WOUND);
+//            e.getAttribute(FootworkAttributes.ABSORPTION.get()).removeModifier(WOUND);
+//            e.getAttribute(FootworkAttributes.DEFLECTION.get()).removeModifier(WOUND);
+//            e.getAttribute(FootworkAttributes.SHATTER.get()).removeModifier(WOUND);
             mexpose = 0;
         }//entering expose
         else if (e != null && time > 0 && expose == 0) {
@@ -499,12 +516,12 @@ public class CombatCapability implements ICombatCapability {
             e.getAttribute(Attributes.MOVEMENT_SPEED).addPermanentModifier(EXPOSEA);
             e.getAttribute(Attributes.ARMOR).removeModifier(WOUND);
             e.getAttribute(Attributes.ARMOR).addPermanentModifier(EXPOSEA);
-            e.getAttribute(WarAttributes.ABSORPTION.get()).removeModifier(WOUND);
-            e.getAttribute(WarAttributes.ABSORPTION.get()).addPermanentModifier(EXPOSEA);
-            e.getAttribute(WarAttributes.DEFLECTION.get()).removeModifier(WOUND);
-            e.getAttribute(WarAttributes.DEFLECTION.get()).addPermanentModifier(EXPOSEA);
-            e.getAttribute(WarAttributes.SHATTER.get()).removeModifier(WOUND);
-            e.getAttribute(WarAttributes.SHATTER.get()).addPermanentModifier(EXPOSEA);
+//            e.getAttribute(FootworkAttributes.ABSORPTION.get()).removeModifier(WOUND);
+//            e.getAttribute(FootworkAttributes.ABSORPTION.get()).addPermanentModifier(EXPOSEA);
+//            e.getAttribute(FootworkAttributes.DEFLECTION.get()).removeModifier(WOUND);
+//            e.getAttribute(FootworkAttributes.DEFLECTION.get()).addPermanentModifier(EXPOSEA);
+//            e.getAttribute(FootworkAttributes.SHATTER.get()).removeModifier(WOUND);
+//            e.getAttribute(FootworkAttributes.SHATTER.get()).addPermanentModifier(EXPOSEA);
         }
         mexpose = Math.max(mexpose, time);
         expose = time;
@@ -712,8 +729,8 @@ public class CombatCapability implements ICombatCapability {
         decrementRollTime(ticks);
         decrementStaggerTime(ticks);
         //regenerate posture
-        if (getPostureGrace() == 0 && getStaggerTime() == 0 && getPosture() < getMaxPosture()) {
-            addPosture(getPPT() * (poExtra));
+        if ((getPostureGrace() == 0 || getStaggerTime() != 0 || getExposeTime() != 0) && getPosture() < getMaxPosture()) {
+            setPosture(getPosture() + getPPT() * (poExtra));
         }
         //regenerate barrier
 //        if (getBarrierCooldown() == 0 && getStaggerTime() == 0) {
@@ -730,22 +747,22 @@ public class CombatCapability implements ICombatCapability {
 //            }
 //        }
         float nausea = elb instanceof Player || !elb.hasEffect(MobEffects.CONFUSION) ? 0 : (elb.getEffect(MobEffects.CONFUSION).getAmplifier() + 1) * GeneralConfig.nausea;
-        addPosture(-nausea * ticks);
+        consumePosture(nausea * ticks, 0.1f);
         //shatter handling
-        if (shatterCD <= 0) {
-            shatterCD += ticks;
-            if (shatterCD >= 0) {
-                shattering = false;
-                shatterCD = (int) GeneralUtils.getAttributeValueSafe(elb, WarAttributes.SHATTER.get());
-            }
-        } else if (shattering) {
-            shatterCD -= ticks;
-            if (shatterCD <= 0) {
-                shatterCD = -ResourceConfig.shatterCooldown;
-            }
-        } else shatterCD = (int) GeneralUtils.getAttributeValueSafe(elb, WarAttributes.SHATTER.get());
+//        if (shatterCD <= 0) {
+//            shatterCD += ticks;
+//            if (shatterCD >= 0) {
+//                shattering = false;
+//                shatterCD = (int) GeneralUtils.getAttributeValueSafe(elb, FootworkAttributes.SHATTER.get());
+//            }
+//        } else if (shattering) {
+//            shatterCD -= ticks;
+//            if (shatterCD <= 0) {
+//                shatterCD = -ResourceConfig.shatterCooldown;
+//            }
+//        } else shatterCD = (int) GeneralUtils.getAttributeValueSafe(elb, FootworkAttributes.SHATTER.get());
         if (getSpiritGrace() == 0 && getStaggerTime() == 0 && getSpirit() < getMaxSpirit()) {
-            addSpirit(getSPT() * spExtra);
+            setSpirit(getSpirit() + getSPT() * spExtra);//to not run into spirit increase mod
         }
         //might decay
         if (getMightGrace() == 0) {
@@ -958,8 +975,8 @@ public class CombatCapability implements ICombatCapability {
 //            return getMaxPosture() * armorMod * speedMod * healthMod / (1.5f * ResourceConfig.staggerDuration);
 //        }
         //0.2f
-        final float ret = (((getMaxPosture() / (armorMod * 20)) * cooldownMod)) * exhaustMod * healthMod * poison;
-        GainPostureEvent ev = new GainPostureEvent(elb, ret);
+        final double ret = (elb.getAttributeValue(FootworkAttributes.POSTURE_REGEN.get()) * cooldownMod) * exhaustMod * healthMod * poison;
+        GainPostureEvent ev = new GainPostureEvent(elb, (float) ret);
         MinecraftForge.EVENT_BUS.post(ev);
         return ev.getQuantity();
     }
@@ -973,10 +990,10 @@ public class CombatCapability implements ICombatCapability {
             poison *= GeneralConfig.poison;
         }
         float exhaustMod = Math.max(0, elb.hasEffect(FootworkEffects.EXHAUSTION.get()) ? 1 - elb.getEffect(FootworkEffects.EXHAUSTION.get()).getAmplifier() * 0.2f : 1);
-        float armorMod = 5f + Math.min(elb.getArmorValue(), 20) * 0.25f;
+        //float armorMod = 5f + Math.min(elb.getArmorValue(), 20) * 0.25f;
         //float healthMod = 0.25f + elb.getHealth() / elb.getMaxHealth() * 0.75f;
-        final float ret = (getMaxSpirit() / (armorMod * 20)) * exhaustMod * poison;
-        RegenSpiritEvent ev = new RegenSpiritEvent(elb, ret);
+        final double ret = GeneralUtils.getAttributeValueSafe(elb, FootworkAttributes.SPIRIT_REGEN.get()) * exhaustMod * poison;
+        RegenSpiritEvent ev = new RegenSpiritEvent(elb, (float) ret);
         MinecraftForge.EVENT_BUS.post(ev);
         return ev.getQuantity();
     }

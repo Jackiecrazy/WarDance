@@ -5,17 +5,15 @@ import jackiecrazy.footwork.utils.GeneralUtils;
 import jackiecrazy.wardance.WarDance;
 import jackiecrazy.wardance.api.CombatDamageSource;
 import jackiecrazy.wardance.skill.SkillData;
+import net.minecraft.core.particles.ParticleTypes;
+import net.minecraft.server.level.ServerLevel;
+import net.minecraft.sounds.SoundEvents;
+import net.minecraft.sounds.SoundSource;
+import net.minecraft.util.Mth;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.core.particles.ParticleTypes;
-import net.minecraft.sounds.SoundSource;
-import net.minecraft.sounds.SoundEvents;
-import net.minecraft.util.Mth;
-import net.minecraft.server.level.ServerLevel;
 
 import java.awt.*;
-
-import jackiecrazy.wardance.skill.Skill.STATE;
 
 public class ShadowlessKick extends Kick {
 
@@ -51,8 +49,8 @@ public class ShadowlessKick extends Kick {
         if (target != null) {
             CombatData.getCap(target).consumePosture(caster, 2);
             if (caster instanceof Player && caster.level instanceof ServerLevel) {
-                double d0 = (double) (-Mth.sin(caster.yRot * ((float) Math.PI / 180F)));
-                double d1 = (double) Mth.cos(caster.yRot * ((float) Math.PI / 180F));
+                double d0 = (double) (-Mth.sin(caster.getYRot() * ((float) Math.PI / 180F)));
+                double d1 = (double) Mth.cos(caster.getYRot() * ((float) Math.PI / 180F));
                 ((ServerLevel) caster.level).sendParticles(ParticleTypes.EXPLOSION, caster.getX() + d0, caster.getY(0.5D), caster.getZ() + d1, 0, d0, 0.0D, d1, 0.0D);
             }
             target.hurt(new CombatDamageSource("fallingBlock", caster).setDamageTyping(CombatDamageSource.TYPE.PHYSICAL).setProcSkillEffects(true).setProcNormalEffects(false).setProcAttackEffects(true).setKnockbackPercentage(0.7f), 1);

@@ -4,18 +4,16 @@ import jackiecrazy.footwork.potion.FootworkEffects;
 import jackiecrazy.footwork.utils.GeneralUtils;
 import jackiecrazy.wardance.WarDance;
 import jackiecrazy.wardance.api.ITetherAnchor;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.server.level.ServerLevel;
+import net.minecraft.util.Mth;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.MoverType;
 import net.minecraft.world.entity.ai.attributes.Attributes;
-import net.minecraft.nbt.CompoundTag;
-import net.minecraft.network.protocol.Packet;
-import net.minecraft.network.protocol.game.ClientboundAddEntityPacket;
-import net.minecraft.util.Mth;
-import net.minecraft.world.phys.Vec3;
 import net.minecraft.world.level.Level;
-import net.minecraft.server.level.ServerLevel;
+import net.minecraft.world.phys.Vec3;
 
 import javax.annotation.Nullable;
 
@@ -86,7 +84,8 @@ public class FearEntity extends Entity implements ITetherAnchor {
                 float rotate = GeneralUtils.deg((float) Mth.atan2(x, z));
                 if (!wuss.hasEffect(FootworkEffects.FEAR.get()))
                     removeAfterChangingDimensions();
-                yRot = wuss.yRot = -rotate;
+                setYRot(-rotate);
+                wuss.setYRot(-rotate);
                 updateTetheringVelocity();
             } else removeAfterChangingDimensions();
         }
@@ -118,10 +117,5 @@ public class FearEntity extends Entity implements ITetherAnchor {
             compound.putUUID("lovecraft", wuss.getUUID());
             compound.putInt("bruh", wuss.getId());
         }
-    }
-
-    @Override
-    public Packet<?> getAddEntityPacket() {
-        return new ClientboundAddEntityPacket(this);
     }
 }

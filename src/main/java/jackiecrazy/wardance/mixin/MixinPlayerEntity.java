@@ -19,7 +19,7 @@ public abstract class MixinPlayerEntity extends LivingEntity {
     }
 
     @Redirect(method = "attack",
-            at = @At(value = "FIELD", target = "Lnet/minecraft/entity/player/PlayerEntity;walkDist:F", opcode = Opcodes.GETFIELD))
+            at = @At(value = "FIELD", target = "Lnet/minecraft/world/entity/player/Player;walkDist:F", opcode = Opcodes.GETFIELD))
     private float noSweep(Player player) {
         if (GeneralConfig.betterSweep)
             return Float.MAX_VALUE;

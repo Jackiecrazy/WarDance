@@ -1,8 +1,7 @@
 package jackiecrazy.wardance.skill.regenspirit;
 
-import jackiecrazy.footwork.api.WarAttributes;
+import jackiecrazy.footwork.api.FootworkAttributes;
 import jackiecrazy.footwork.capability.resources.CombatData;
-import jackiecrazy.footwork.event.RegenSpiritEvent;
 import jackiecrazy.wardance.skill.*;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.ai.attributes.AttributeModifier;
@@ -16,7 +15,8 @@ import java.util.HashSet;
 import java.util.UUID;
 
 public class NaturalSprinter extends Skill {
-    private static final AttributeModifier sprint = new AttributeModifier(UUID.fromString("0683fe69-5348-4a83-95d5-81a2eeb2cca0"), "gimli moment", 10, AttributeModifier.Operation.ADDITION);
+    private static final AttributeModifier sprint = new AttributeModifier(UUID.fromString("0683fe69-5348-4a83-95d5-81a2eeb2cca0"), "gimli moment", 1, AttributeModifier.Operation.MULTIPLY_BASE);
+    private static final AttributeModifier sprint2 = new AttributeModifier(UUID.fromString("0683fe69-5348-4a83-95d5-81a2eeb2cca0"), "gimli moment", -0.66, AttributeModifier.Operation.MULTIPLY_TOTAL);
 
     /*
     back and forth: recover (1/attack speed) spirit when parrying or landing a critical hit.
@@ -54,22 +54,23 @@ confidence: your spirit regeneration speed scales proportionally with how much s
 
     @Override
     public void onEquip(LivingEntity caster) {
-        caster.getAttribute(WarAttributes.MAX_SPIRIT.get()).removeModifier(sprint);
-        caster.getAttribute(WarAttributes.MAX_SPIRIT.get()).addPermanentModifier(sprint);
+        caster.getAttribute(FootworkAttributes.MAX_SPIRIT.get()).removeModifier(sprint);
+        caster.getAttribute(FootworkAttributes.MAX_SPIRIT.get()).addPermanentModifier(sprint);
+        caster.getAttribute(FootworkAttributes.SPIRIT_REGEN.get()).removeModifier(sprint2);
+        caster.getAttribute(FootworkAttributes.SPIRIT_REGEN.get()).addPermanentModifier(sprint2);
         super.onEquip(caster);
     }
 
     @Override
     public void onUnequip(LivingEntity caster, SkillData stats) {
-        caster.getAttribute(WarAttributes.MAX_SPIRIT.get()).removeModifier(sprint);
+        caster.getAttribute(FootworkAttributes.MAX_SPIRIT.get()).removeModifier(sprint);
+        caster.getAttribute(FootworkAttributes.SPIRIT_REGEN.get()).removeModifier(sprint2);
     }
 
     @Override
     public void onProc(LivingEntity caster, Event procPoint, STATE state, SkillData stats, LivingEntity target) {
         if (procPoint instanceof LivingDeathEvent && procPoint.getPhase() == EventPriority.HIGHEST) {
             CombatData.getCap(caster).addSpirit(3);
-        } else if (procPoint instanceof RegenSpiritEvent && procPoint.getPhase() == EventPriority.HIGHEST) {
-            ((RegenSpiritEvent) procPoint).setQuantity(((RegenSpiritEvent) procPoint).getQuantity() / 3);
         }
     }
 

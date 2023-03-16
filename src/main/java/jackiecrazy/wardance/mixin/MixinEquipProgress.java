@@ -19,7 +19,7 @@ public abstract class MixinEquipProgress {
 
     @Redirect(method = "tick", require = 0,
             at = @At(value = "INVOKE",
-                    target = "Lnet/minecraft/util/math/MathHelper;clamp(FFF)F",
+                    target = "Lnet/minecraft/util/Mth;clamp(FFF)F",
                     ordinal = 3))
     private float modifyEquipProgress(float num, float min, float max) {
         if (!GeneralConfig.dual || Minecraft.getInstance().player == null) return Mth.clamp(num, min, max);

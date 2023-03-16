@@ -11,8 +11,9 @@ import org.spongepowered.asm.mixin.Shadow;
 
 @Mixin(value = IForgeItemStack.class, remap = false)
 public interface MixinShieldDisabler {
+
     @Shadow
-    ItemStack getStack();
+    ItemStack self();
 
     /**
      * @reason Mixins don't allow injecting interfaces, so here we are
@@ -22,6 +23,6 @@ public interface MixinShieldDisabler {
     @Overwrite
     default boolean canDisableShield(ItemStack shield, LivingEntity entity, LivingEntity attacker) {
         if (CasterData.getCap(attacker).isTagActive(ProcPoints.disable_shield)) return true;
-        return getStack().getItem().canDisableShield(getStack(), shield, entity, attacker);
+        return self().getItem().canDisableShield(self(), shield, entity, attacker);
     }
 }

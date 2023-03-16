@@ -116,8 +116,11 @@ dependencies {
     // that the dep is a ForgeGradle 'patcher' dependency. And it's patches will be applied.
     // The userdev artifact is a special name and will get all sorts of transformations applied to it.
     minecraft "net.minecraftforge:forge:${mc_version}-${forge_version}"
-    //compileOnly fg.deobf("curse.maven:elenaidodge2-442962:3221492")
-    //compileOnly fg.deobf("com.blamejared.crafttweaker:CraftTweaker-1.18.2-9.1.205")
+    compileOnly fg.deobf("curse.maven:feathers-699933:4416864")
+    compileOnly fg.deobf("curse.maven:elenaidodge2-442962:4127740")
+    def ctDep = 'com.blamejared.crafttweaker:CraftTweaker-forge-1.19.2:10.1.38'
+    compileOnly(ctDep)
+    runtimeOnly(fg.deobf(ctDep))
     annotationProcessor 'org.spongepowered:mixin:0.8.5:processor'
     implementation fg.deobf("jackiecrazy.footwork:footwork-${footwork_version}:${mc_version}")
     implementation fg.deobf("jackiecrazy.cloakanddagger:cloakanddagger-${cd_version}:${mc_version}")

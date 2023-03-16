@@ -3,6 +3,8 @@ package jackiecrazy.wardance;
 import jackiecrazy.wardance.capability.skill.ISkillCapability;
 import jackiecrazy.wardance.capability.status.IMark;
 import jackiecrazy.wardance.client.Keybinds;
+import jackiecrazy.wardance.client.hud.OffhandCooldownDisplay;
+import jackiecrazy.wardance.client.hud.ResourceDisplay;
 import jackiecrazy.wardance.command.WarDanceCommand;
 import jackiecrazy.wardance.compat.ElenaiCompat;
 import jackiecrazy.wardance.compat.WarCompat;
@@ -11,7 +13,9 @@ import jackiecrazy.wardance.entity.WarEntities;
 import jackiecrazy.wardance.networking.*;
 import jackiecrazy.wardance.skill.WarSkills;
 import net.minecraft.world.level.GameRules;
+import net.minecraftforge.client.event.RegisterGuiOverlaysEvent;
 import net.minecraftforge.client.event.RegisterKeyMappingsEvent;
+import net.minecraftforge.client.gui.overlay.VanillaGuiOverlay;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.capabilities.RegisterCapabilitiesEvent;
 import net.minecraftforge.event.RegisterCommandsEvent;
@@ -98,6 +102,11 @@ public class WarDance {
         event.register(Keybinds.SELECT);
         event.register(Keybinds.BINDCAST);
         event.register(Keybinds.PARRY);
+    }
+
+    private void gui(final RegisterGuiOverlaysEvent event) {
+        event.registerAbove(VanillaGuiOverlay.HOTBAR.id(), "offhandcd", new OffhandCooldownDisplay());
+        event.registerAboveAll("pwdresources", new ResourceDisplay());
     }
 
     private void caps(final RegisterCapabilitiesEvent event) {

@@ -9,8 +9,6 @@ import net.minecraft.world.entity.LivingEntity;
 
 import java.awt.*;
 
-import jackiecrazy.wardance.skill.Skill.STATE;
-
 public class Overpower extends IronGuard {
     @Override
     public Color getColor() {
@@ -29,7 +27,7 @@ public class Overpower extends IronGuard {
     @Override
     public boolean equippedTick(LivingEntity caster, SkillData stats) {
         final ICombatCapability cap = CombatData.getCap(caster);
-        if (stats.getDuration() > 0.1 || (cap.getPosture() == cap.getMaxPosture()&& cap.getMaxBarrier()== cap.getBarrier()))
+        if (stats.getDuration() > 0.1 || (cap.getPosture() == cap.getMaxPosture()))
             return cooldownTick(stats);
         return false;
     }
