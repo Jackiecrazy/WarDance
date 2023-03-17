@@ -5,6 +5,7 @@ import jackiecrazy.wardance.capability.status.IMark;
 import jackiecrazy.wardance.client.Keybinds;
 import jackiecrazy.wardance.client.hud.OffhandCooldownDisplay;
 import jackiecrazy.wardance.client.hud.ResourceDisplay;
+import jackiecrazy.wardance.command.SkillArgument;
 import jackiecrazy.wardance.command.WarDanceCommand;
 import jackiecrazy.wardance.compat.ElenaiCompat;
 import jackiecrazy.wardance.compat.WarCompat;
@@ -12,6 +13,10 @@ import jackiecrazy.wardance.config.*;
 import jackiecrazy.wardance.entity.WarEntities;
 import jackiecrazy.wardance.networking.*;
 import jackiecrazy.wardance.skill.WarSkills;
+import net.minecraft.commands.synchronization.ArgumentTypeInfo;
+import net.minecraft.commands.synchronization.ArgumentTypeInfos;
+import net.minecraft.commands.synchronization.SingletonArgumentInfo;
+import net.minecraft.core.registries.Registries;
 import net.minecraft.world.level.GameRules;
 import net.minecraftforge.client.event.RegisterGuiOverlaysEvent;
 import net.minecraftforge.client.event.RegisterKeyMappingsEvent;
@@ -29,7 +34,9 @@ import net.minecraftforge.fml.event.lifecycle.InterModEnqueueEvent;
 import net.minecraftforge.fml.event.lifecycle.InterModProcessEvent;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 import net.minecraftforge.fml.loading.FMLPaths;
+import net.minecraftforge.registries.DeferredRegister;
 import net.minecraftforge.registries.RegistryBuilder;
+import net.minecraftforge.registries.RegistryObject;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -43,7 +50,10 @@ public class WarDance {
 
     public static final Logger LOGGER = LogManager.getLogger();
     public static final GameRules.Key<GameRules.BooleanValue> GATED_SKILLS = GameRules.register("lockWarSkills", GameRules.Category.PLAYER, GameRules.BooleanValue.create(false)); //Blessed be the TF
-
+    private static final DeferredRegister<ArgumentTypeInfo<?, ?>> COMMAND_ARGUMENT_TYPES = DeferredRegister.create(Registries.COMMAND_ARGUMENT_TYPE, "forge");
+    private static final RegistryObject<SingletonArgumentInfo<SkillArgument>> MODID_COMMAND_ARGUMENT_TYPE = COMMAND_ARGUMENT_TYPES.register("modid", () ->
+            ArgumentTypeInfos.registerByClass(SkillArgument.class,
+                    SingletonArgumentInfo.contextFree(SkillArgument::skill)));
     public WarDance() {
         // Register the setup method for modloading
         FMLJavaModLoadingContext.get().getModEventBus().addListener(this::setup);
@@ -54,6 +64,7 @@ public class WarDance {
         FMLJavaModLoadingContext.get().getModEventBus().addListener(this::processIMC);
         // Register the doClientStuff method for modloading
         FMLJavaModLoadingContext.get().getModEventBus().addListener(this::doClientStuff);
+        FMLJavaModLoadingContext.get().getModEventBus().addListener(this::gui);
         FMLJavaModLoadingContext.get().getModEventBus().addListener(this::keys);
 
         // Register ourselves for server and other game events we are interested in
@@ -69,6 +80,7 @@ public class WarDance {
         WarSkills.SUPPLIER = WarSkills.SKILLS.makeRegistry(RegistryBuilder::new);
         WarSkills.SKILLS.register(bus);
         WarEntities.ENTITIES.register(bus);
+        COMMAND_ARGUMENT_TYPES.register(bus);
         MinecraftForge.EVENT_BUS.addListener(this::commands);
     }
 

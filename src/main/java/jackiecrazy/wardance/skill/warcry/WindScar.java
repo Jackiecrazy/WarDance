@@ -23,21 +23,21 @@ public class WindScar extends WarCry {
 
     @Override
     protected void evoke(LivingEntity caster) {
-        caster.getAttribute(ForgeMod.REACH_DISTANCE.get()).removeModifier(bigReach);
-        caster.getAttribute(ForgeMod.REACH_DISTANCE.get()).addTransientModifier(new AttributeModifier(bigReach, "wind scar active bonus", CombatData.getCap(caster).getMight(), AttributeModifier.Operation.ADDITION));
+        caster.getAttribute(ForgeMod.ATTACK_RANGE.get()).removeModifier(bigReach);
+        caster.getAttribute(ForgeMod.ATTACK_RANGE.get()).addTransientModifier(new AttributeModifier(bigReach, "wind scar active bonus", CombatData.getCap(caster).getMight(), AttributeModifier.Operation.ADDITION));
         super.evoke(caster);
     }
 
     @Override
     public void onEquip(LivingEntity caster) {
-        caster.getAttribute(ForgeMod.REACH_DISTANCE.get()).addPermanentModifier(reach);
+        caster.getAttribute(ForgeMod.ATTACK_RANGE.get()).addPermanentModifier(reach);
         super.onEquip(caster);
     }
 
     @Override
     public void onUnequip(LivingEntity caster, SkillData stats) {
-        caster.getAttribute(ForgeMod.REACH_DISTANCE.get()).removeModifier(reach);
-        caster.getAttribute(ForgeMod.REACH_DISTANCE.get()).removeModifier(bigReach);
+        caster.getAttribute(ForgeMod.ATTACK_RANGE.get()).removeModifier(reach);
+        caster.getAttribute(ForgeMod.ATTACK_RANGE.get()).removeModifier(bigReach);
         super.onUnequip(caster, stats);
     }
 
@@ -49,7 +49,7 @@ public class WindScar extends WarCry {
     @Override
     public void onProc(LivingEntity caster, Event procPoint, STATE state, SkillData stats, LivingEntity target) {
         if (procPoint instanceof LivingAttackEvent && procPoint.getPhase() == EventPriority.HIGHEST && state == STATE.ACTIVE && ((LivingAttackEvent) procPoint).getEntity() == target) {
-            double realReach = caster.getAttributeValue(ForgeMod.REACH_DISTANCE.get()) - stats.getArbitraryFloat();
+            double realReach = caster.getAttributeValue(ForgeMod.ATTACK_RANGE.get()) - stats.getArbitraryFloat();
             double dist = Math.sqrt(GeneralUtils.getDistSqCompensated(caster, target));
             if (dist > realReach)
                 stats.decrementDuration((float) (dist - realReach));
@@ -69,7 +69,7 @@ public class WindScar extends WarCry {
     @Override
     public boolean onStateChange(LivingEntity caster, SkillData prev, STATE from, STATE to) {
         if (to == STATE.COOLING) {
-            caster.getAttribute(ForgeMod.REACH_DISTANCE.get()).removeModifier(bigReach);
+            caster.getAttribute(ForgeMod.ATTACK_RANGE.get()).removeModifier(bigReach);
         }
         return super.onStateChange(caster, prev, from, to);
     }

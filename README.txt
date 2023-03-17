@@ -4,7 +4,7 @@ Miscellaneous:
 Posture: a stat that quantifies how steady the player is on his feet. Stamina and poise rolled into one if you play souls-likes, but actually heavily inspired by Sekiro and DMC.
 - Max posture is calculated by (width*height*5), so a player starts with 10 posture.
 - Being attacked consumes posture regardless of parry. This makes parrying unequivocably the best option, since you’ll be taking posture damage either way.
-- Posture recovers quickly when not attacking, but has a 1s cooldown after being consumed. At full HP, standing still naked, you heal back to full in 1 second.
+- Posture recovers quickly when not attacking, but has a cooldown after being consumed. At full HP, standing still naked, you heal back to full in 1 second.
 - Armor items may add max posture. Regeneration is determined by base max posture only, so it will take you longer to "fully" recover.
 - Moving slows posture regen down by 7% per block per second, so regeneration is roughly 70% while walking and 60% while sprinting.
 - Regeneration also is multiplied by your current health percentage.

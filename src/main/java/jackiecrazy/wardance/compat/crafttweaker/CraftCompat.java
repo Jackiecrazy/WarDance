@@ -1,3 +1,4 @@
+/*
 package jackiecrazy.wardance.compat.crafttweaker;
 
 import com.blamejared.crafttweaker.api.annotation.ZenRegister;
@@ -243,3 +244,4 @@ public class CraftCompat {
             CasterData.getCap(entity).setSkillSelectable(Skill.getSkill(s), selectable);
     }
 }
+*/

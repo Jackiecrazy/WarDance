@@ -9,6 +9,7 @@ import jackiecrazy.wardance.capability.skill.ISkillCapability;
 import jackiecrazy.wardance.capability.skill.SkillCapability;
 import jackiecrazy.wardance.capability.status.Mark;
 import jackiecrazy.wardance.capability.status.Marks;
+import jackiecrazy.wardance.entity.ai.ExposeGoal;
 import jackiecrazy.wardance.networking.CombatChannel;
 import jackiecrazy.wardance.networking.SyncSkillPacket;
 import jackiecrazy.wardance.skill.Skill;
@@ -18,6 +19,7 @@ import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.util.Tuple;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.Mob;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
 import net.minecraftforge.event.AttachCapabilitiesEvent;
@@ -63,9 +65,20 @@ public class EntityHandler {
     }
 
     @SubscribeEvent
+    public static void death(LivingEvent.LivingJumpEvent e) {
+        if (!(e.getEntity() instanceof Player) && CombatData.getCap(e.getEntity()).getExposeTime() > 0) {
+            e.getEntity().setDeltaMovement(0, 0, 0);
+        }
+    }
+
+    @SubscribeEvent
     public static void takeThis(EntityJoinLevelEvent e) {
         if (e.getEntity() instanceof ServerPlayer) {
             CombatChannel.INSTANCE.send(PacketDistributor.PLAYER.with(() -> (ServerPlayer) e.getEntity()), new SyncSkillPacket(CasterData.getCap((LivingEntity) e.getEntity()).write()));
+        }
+        if (e.getEntity() instanceof Mob mob) {
+            mob.goalSelector.addGoal(-1, new ExposeGoal(mob));
+            mob.targetSelector.addGoal(-1, new ExposeGoal(mob));
         }
     }
 
@@ -121,7 +134,7 @@ Mobs should move into a position that is close to the player, far from allies, a
                          */
                 //staggered mobs bypass update interval
                 ICombatCapability cap = CombatData.getCap(elb);
-                if (cap.getStaggerTime() > 0 || mustUpdate.containsValue(e.getEntity()))
+                if (cap.isStaggered() || cap.isExposed() || mustUpdate.containsValue(e.getEntity()))
                     cap.serverTick();
             }
         }

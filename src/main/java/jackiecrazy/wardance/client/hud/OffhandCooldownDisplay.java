@@ -61,9 +61,9 @@ public class OffhandCooldownDisplay implements IGuiOverlay {
             float cooldown = CombatUtils.getCooledAttackStrength(player, InteractionHand.OFF_HAND, 0f);
             boolean hyperspeed = false;
 
-            if (RenderEvents.getEntityLookedAt(player, GeneralUtils.getAttributeValueHandSensitive(player, ForgeMod.REACH_DISTANCE.get(), InteractionHand.OFF_HAND)) != null && cooldown >= 1.0F) {
+            if (RenderEvents.getEntityLookedAt(player, GeneralUtils.getAttributeValueHandSensitive(player, ForgeMod.ATTACK_RANGE.get(), InteractionHand.OFF_HAND)) != null && cooldown >= 1.0F) {
                 hyperspeed = CombatUtils.getCooldownPeriod(player, InteractionHand.OFF_HAND) > 5.0F;
-                hyperspeed = hyperspeed & (RenderEvents.getEntityLookedAt(player, GeneralUtils.getAttributeValueHandSensitive(player, ForgeMod.REACH_DISTANCE.get(), InteractionHand.OFF_HAND))).isAlive();
+                hyperspeed = hyperspeed & (RenderEvents.getEntityLookedAt(player, GeneralUtils.getAttributeValueHandSensitive(player, ForgeMod.ATTACK_RANGE.get(), InteractionHand.OFF_HAND))).isAlive();
             }
 
             int y = height / 2 - 7 - 7;

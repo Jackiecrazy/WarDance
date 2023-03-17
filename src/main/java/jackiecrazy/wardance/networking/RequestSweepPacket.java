@@ -58,7 +58,7 @@ public class RequestSweepPacket {
                     //TODO throw weapon
                     double d0 = sender.walkDist - sender.walkDistO;
                     if (!(sender.fallDistance > 0.0F && !sender.onClimbable() && !sender.isInWater() && !sender.hasEffect(MobEffects.BLINDNESS) && !sender.isPassenger()) && !sender.isSprinting() && sender.isOnGround() && d0 < (double) sender.getSpeed())
-                        CombatUtils.sweep(sender, sender.level.getEntity(updateClientPacket.id), h, GeneralUtils.getAttributeValueSafe(sender, ForgeMod.REACH_DISTANCE.get()));
+                        CombatUtils.sweep(sender, sender.level.getEntity(updateClientPacket.id), h, GeneralUtils.getAttributeValueSafe(sender, ForgeMod.ATTACK_RANGE.get()));
                 }
                 if (h == InteractionHand.OFF_HAND)
                     CombatUtils.setHandCooldown(sender, h, 0, false);

@@ -54,7 +54,7 @@ public class RequestAttackPacket {
                 ServerPlayer sender = contextSupplier.get().getSender();
                 if (sender != null) {
                     Entity e = sender.level.getEntity(updateClientPacket.id);
-                    if (e != null && (GeneralConfig.dual||updateClientPacket.main) && GeneralUtils.getDistSqCompensated(sender, e) < GeneralUtils.getAttributeValueSafe(sender, ForgeMod.REACH_DISTANCE.get()) * GeneralUtils.getAttributeValueSafe(sender, ForgeMod.REACH_DISTANCE.get())) {
+                    if (e != null && (GeneralConfig.dual||updateClientPacket.main) && GeneralUtils.getDistSqCompensated(sender, e) < GeneralUtils.getAttributeValueSafe(sender, ForgeMod.ATTACK_RANGE.get()) * GeneralUtils.getAttributeValueSafe(sender, ForgeMod.ATTACK_RANGE.get())) {
                         if (!updateClientPacket.main) {
                             CombatUtils.swapHeldItems(sender);
                             CombatData.getCap(sender).setOffhandAttack(true);

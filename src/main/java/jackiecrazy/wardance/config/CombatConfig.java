@@ -444,8 +444,8 @@ public class CombatConfig {
     public static int shieldCooldown;
     public static float barrierSize;
     public static int staggerDuration;
-    public static int staggerDurationMin;
-    public static int staggerHits, adrenaline;
+    public static int exposeDuration;
+    public static int adrenaline;
     public static float staggerDamage;
     public static float unStaggerDamage;
     public static int parryTime;
@@ -468,7 +468,6 @@ public class CombatConfig {
     private final ForgeConfigSpec.DoubleValue _defaultMultiplierPostureAttack;
     private final ForgeConfigSpec.IntValue _rollThreshold;
     private final ForgeConfigSpec.IntValue _rollCooldown;
-    private final ForgeConfigSpec.IntValue _recovery;
     private final ForgeConfigSpec.BooleanValue _dodge;
     private final ForgeConfigSpec.IntValue _sneakParry;
     private final ForgeConfigSpec.IntValue _foodCool;
@@ -478,7 +477,8 @@ public class CombatConfig {
     private final ForgeConfigSpec.DoubleValue _mobDeflectChance;
     private final ForgeConfigSpec.DoubleValue _mobScaler;
     private final ForgeConfigSpec.ConfigValue<List<? extends String>> _customParry;
-    private final ForgeConfigSpec.DoubleValue _posCap;
+    private final ForgeConfigSpec.IntValue _staggerDuration;
+    private final ForgeConfigSpec.IntValue _exposeDuration;
     private final ForgeConfigSpec.DoubleValue _stagger;
     private final ForgeConfigSpec.DoubleValue _unstagger;
     private final ForgeConfigSpec.DoubleValue _knockbackNerf;
@@ -486,10 +486,6 @@ public class CombatConfig {
 
     public CombatConfig(ForgeConfigSpec.Builder b) {
         //feature toggle, resource, defense, compat, stealth, lists
-        b.push("posture");
-        _posCap = b.translation("wardance.config.posCap").comment("percentage of max posture that can be dealt in a single hit").defineInRange("posture cap", 0.4, 0, 1);
-        _recovery = b.translation("wardance.config.recovery").comment("amount of ticks over which you'll quickly recover back to one posture cap's worth of posture if you're lower than that. This triggers after your posture cooldown elapses, plus 50% of that time. Set to 0 to disable this feature.").defineInRange("recovery speed", 15, 0, Integer.MAX_VALUE);
-        b.pop();
         b.push("parrying");
         _sneakParry = b.translation("wardance.config.sneakParry").comment("parries will only work in this many ticks after pressing the designated key, and cannot be triggered again for the same amount of time afterwards; 0 to disable. I don't know why everyone wants this option, but here it is. Set to -1 to toggle auto parry on and off with the key instead.").defineInRange("manual parry time", 0, -1, Integer.MAX_VALUE);
         _posturePerProjectile = b.translation("wardance.config.ppp").comment("Posture consumed per projectile parried").defineInRange("posture per projectile", 0.5, 0, Double.MAX_VALUE);
@@ -503,6 +499,8 @@ public class CombatConfig {
         _rollCooldown = b.translation("wardance.config.rollC").comment("Within this number of ticks after dodging the entity cannot dodge again").defineInRange("roll cooldown", 20, 0, Integer.MAX_VALUE);
         b.pop();
         b.push("expose");
+        _staggerDuration = b.translation("wardance.config.staggerD").comment("Number of ticks an entity should be staggered for when its posture reaches 0.").defineInRange("stagger duration", 30, 1, Integer.MAX_VALUE);
+        _exposeDuration = b.translation("wardance.config.exposeD").comment("Number of ticks an entity should be exposed for when its fracture hits maximum.").defineInRange("exposed duration", 100, 1, Integer.MAX_VALUE);
         _stagger = b.translation("wardance.config.stagger").comment("Extra damage taken by an exposed entity. Defaults to 1 because expose already nullifies all protection.").defineInRange("stagger damage multiplier", 1, 0, Double.MAX_VALUE);
         _unstagger = b.translation("wardance.config.unstagger").comment("Damage taken by a non-exposed entity. Added out of curiosity.").defineInRange("normal damage multiplier", 1, 0, Double.MAX_VALUE);
         b.pop();
@@ -544,11 +542,11 @@ public class CombatConfig {
         mobParryChanceShield = CONFIG._mobParryChanceShield.get().floatValue();
         mobDeflectChance = CONFIG._mobDeflectChance.get().floatValue();
         mobScaler = CONFIG._mobScaler.get().floatValue();
-        posCap = CONFIG._posCap.get().floatValue();
         dodge = CONFIG._dodge.get();
         kbNerf = CONFIG._knockbackNerf.get().floatValue();
         parryTime = CONFIG._sneakParry.get();
-        recovery = CONFIG._recovery.get();
+        staggerDuration = CONFIG._staggerDuration.get();
+        exposeDuration = CONFIG._exposeDuration.get();
         foodCool = CONFIG._foodCool.get();
         adrenaline = CONFIG._adrenaline.get();
         CombatUtils.updateMobParrying(CONFIG._customParry.get());
@@ -558,8 +556,8 @@ public class CombatConfig {
     @SubscribeEvent
     public static void loadConfig(ModConfigEvent e) {
         if (e.getConfig().getSpec() == CONFIG_SPEC) {
-            if(GeneralConfig.debug)
-            WarDance.LOGGER.debug("loading combat config!");
+            if (GeneralConfig.debug)
+                WarDance.LOGGER.debug("loading combat config!");
             bake();
         }
     }

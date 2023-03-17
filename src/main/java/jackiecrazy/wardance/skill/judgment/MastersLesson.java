@@ -26,7 +26,7 @@ public class MastersLesson extends Judgment {
         if (procPoint instanceof StaggerEvent && ((StaggerEvent) procPoint).getEntity() == target) {
             ((StaggerEvent) procPoint).setLength(200);
         } else if (procPoint instanceof LivingAttackEvent && ((LivingAttackEvent) procPoint).getEntity() == target) {
-            if (CombatData.getCap(target).getStaggerTime() > 0)
+            if (CombatData.getCap(target).isStaggered() || CombatData.getCap(target).isExposed())
                 procPoint.setCanceled(true);
             else if (procPoint.getPhase() == EventPriority.HIGHEST && Marks.getCap(target).isMarked(this)) {
                 CombatData.getCap(target).consumePosture(((LivingAttackEvent) procPoint).getAmount());

@@ -43,6 +43,7 @@ minecraft {
             workingDirectory project.file('run')
             arg "-mixin.config=wardance.mixins.json"
             property 'mixin.env.remapRefMap', 'true'
+            property 'mixin.debug.strict', 'true'
             property 'mixin.env.refMapRemappingFile', "${buildDir}/createSrgToMcp/output.srg"
 
             // Recommended logging data for a userdev environment
@@ -118,9 +119,10 @@ dependencies {
     minecraft "net.minecraftforge:forge:${mc_version}-${forge_version}"
     compileOnly fg.deobf("curse.maven:feathers-699933:4416864")
     compileOnly fg.deobf("curse.maven:elenaidodge2-442962:4127740")
-    def ctDep = 'com.blamejared.crafttweaker:CraftTweaker-forge-1.19.2:10.1.38'
-    compileOnly(ctDep)
-    runtimeOnly(fg.deobf(ctDep))
+    //def ctDep = 'com.blamejared.crafttweaker:CraftTweaker-forge-1.19.2:10.1.38'
+    //compileOnly(ctDep)
+    //runtimeOnly(fg.deobf(ctDep))
+    //implementation fg.deobf(ctDep)
     annotationProcessor 'org.spongepowered:mixin:0.8.5:processor'
     implementation fg.deobf("jackiecrazy.footwork:footwork-${footwork_version}:${mc_version}")
     implementation fg.deobf("jackiecrazy.cloakanddagger:cloakanddagger-${cd_version}:${mc_version}")
@@ -165,5 +167,4 @@ publishing {
 mixin {
     add sourceSets.main, "wardance.refmap.json"
     config "wardance.mixins.json"
-    debug.verbose = true
 }

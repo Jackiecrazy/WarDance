@@ -205,7 +205,7 @@ public class CombatHandler {
                 semeCap.serverTick();
                 InteractionHand h = semeCap.isOffhandAttack() ? InteractionHand.OFF_HAND : InteractionHand.MAIN_HAND;
                 //hand bound or staggered, no attack
-                if (semeCap.getStaggerTime() > 0 || semeCap.getHandBind(h) > 0) {
+                if (semeCap.isStaggered() || semeCap.isExposed() || semeCap.getHandBind(h) > 0) {
                     e.setCanceled(true);
                     return;
                 }
@@ -233,7 +233,7 @@ public class CombatHandler {
                 ICombatCapability semeCap = CombatData.getCap(seme);
                 InteractionHand attackingHand = semeCap.isOffhandAttack() ? InteractionHand.OFF_HAND : InteractionHand.MAIN_HAND;
                 //hand bound or staggered, no attack
-                if (semeCap.getStaggerTime() > 0 || semeCap.getHandBind(attackingHand) > 0) {
+                if (semeCap.isStaggered() || semeCap.isExposed() || semeCap.getHandBind(attackingHand) > 0) {
                     e.setCanceled(true);
                     return;
                 }
@@ -262,7 +262,7 @@ public class CombatHandler {
                 boolean canParry = GeneralUtils.isFacingEntity(uke, seme, 120);
                 //boolean useDeflect = (uke instanceof Player || WarDance.rand.nextFloat() < CombatConfig.mobDeflectChance) && GeneralUtils.isFacingEntity(uke, seme, 120 + 2 * (int) GeneralUtils.getAttributeValueSafe(uke, FootworkAttributes.DEFLECTION.get())) && !GeneralUtils.isFacingEntity(uke, seme, 120) && !canParry;
                 //staggered, no parry
-                if (ukeCap.getStaggerTime() > 0) {
+                if (ukeCap.isStaggered() || ukeCap.isExposed()) {
                     downingHit = false;
                     return;
                 }
@@ -479,9 +479,9 @@ public class CombatHandler {
             double luckDiff = WarDance.rand.nextFloat() * (GeneralUtils.getAttributeValueSafe(seme, Attributes.LUCK)) - WarDance.rand.nextFloat() * (GeneralUtils.getAttributeValueSafe(uke, Attributes.LUCK));
             e.setAmount(e.getAmount() + (float) luckDiff * GeneralConfig.luck);
         }
-        if ((cap.getStaggerTime() > 0 || cap.getExposeTime() > 0) && !cap.isStaggeringStrike()) {
+        if ((cap.isStaggered() || cap.isExposed()) && !cap.isStaggeringStrike()) {
             //stagger tests for melee damage
-            if (cap.getExposeTime() > 0 && CombatUtils.isMeleeAttack(ds)) {
+            if (cap.isExposed() && CombatUtils.isMeleeAttack(ds)) {
                 //expose, add 10% max health damage
                 e.setAmount(e.getAmount() + uke.getMaxHealth() * 0.1f);
                 e.getSource().bypassArmor().bypassEnchantments().bypassMagic();
@@ -531,10 +531,15 @@ public class CombatHandler {
             e.setAmount(0);
         final ICombatCapability cap = CombatData.getCap(e.getEntity());
         if (!e.isCanceled() && CombatUtils.isMeleeAttack(e.getSource()) && !cap.isStaggeringStrike()) {
-            if (cap.getStaggerTime() > 0)
-                cap.stagger(0);
-            if (cap.getExposeTime() > 0)
-                cap.expose(0);
+            cap.updateDefenselessStatus();
         }
+    }
+
+    @SubscribeEvent(priority = EventPriority.LOWEST, receiveCanceled = true)
+    public static void diepotato(LivingDeathEvent e) {
+//        LivingEntity elb=e.getEntity();
+//        if(e.getSource().getEntity() instanceof LivingEntity killer){
+//            CombatData.getCap(killer).clearFracture(elb, true);
+//        }
     }
 }

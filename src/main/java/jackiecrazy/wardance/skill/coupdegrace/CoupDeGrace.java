@@ -74,7 +74,7 @@ public class CoupDeGrace extends Skill {
         if (procPoint instanceof LivingHurtEvent && procPoint.getPhase() == EventPriority.HIGHEST && state == STATE.ACTIVE) {
             LivingHurtEvent e = (LivingHurtEvent) procPoint;
             if (e.getEntity() != caster) {
-                if (CombatData.getCap(e.getEntity()).getStaggerTime() > 0 && !CombatData.getCap(e.getEntity()).isStaggeringStrike()) {
+                if (CombatData.getCap(e.getEntity()).isExposed() && !CombatData.getCap(e.getEntity()).isStaggeringStrike()) {
                     if (willKillOnCast(caster, target))
                         target.setHealth(1);
                     e.setAmount(e.getAmount() + getDamage(caster, target));
@@ -187,7 +187,7 @@ public class CoupDeGrace extends Skill {
             }
             if (to == STATE.ACTIVE && cast(caster, -999)) {
                 //DIE!
-                for (Entity e : caster.level.getEntities(caster, caster.getBoundingBox().inflate(caster.getAttributeValue(ForgeMod.REACH_DISTANCE.get())), (a -> !TargetingUtils.isAlly(a, caster)))) {
+                for (Entity e : caster.level.getEntities(caster, caster.getBoundingBox().inflate(caster.getAttributeValue(ForgeMod.ATTACK_RANGE.get())), (a -> !TargetingUtils.isAlly(a, caster)))) {
                     if (!(e instanceof LivingEntity) || !caster.hasLineOfSight(e)) continue;
                     final CombatDamageSource die = new CombatDamageSource("player", caster).setDamageTyping(CombatDamageSource.TYPE.PHYSICAL).setProcSkillEffects(true).setSkillUsed(this).setKnockbackPercentage(0);
                     if (willKillOnCast(caster, (LivingEntity) e)) {

@@ -59,11 +59,11 @@ public class SkillUtils {
     }
 
     public static Entity aimEntity(LivingEntity caster) {
-        return GeneralUtils.raytraceEntity(caster.level, caster, caster.getAttributeValue(ForgeMod.REACH_DISTANCE.get()));
+        return GeneralUtils.raytraceEntity(caster.level, caster, caster.getAttributeValue(ForgeMod.ATTACK_RANGE.get()));
     }
 
     public static LivingEntity aimLiving(LivingEntity caster) {
-        return GeneralUtils.raytraceLiving(caster.level, caster, caster.getAttributeValue(ForgeMod.REACH_DISTANCE.get()));
+        return GeneralUtils.raytraceLiving(caster.level, caster, caster.getAttributeValue(ForgeMod.ATTACK_RANGE.get()));
     }
 
     public static boolean auxAttack(LivingEntity caster, LivingEntity target, DamageSource s, float dmg, float posdmg, Runnable onHit, Runnable onDamage) {

@@ -126,7 +126,7 @@ public class ClientEvents {
                 CombatChannel.INSTANCE.sendToServer(new DodgePacket(dir, mi.shiftKeyDown));
         }
 
-        if (itsc.getExposeTime() > 0) {
+        if (itsc.isExposed()) {
             //no moving while you're down! (except for a safety roll)
             KeyMapping.releaseAll();
             return;
@@ -149,10 +149,14 @@ public class ClientEvents {
     public static void downTick(LivingEvent.LivingTickEvent event) {
         final LivingEntity e = event.getEntity();
         if (e.isAlive()) {
-            if (CombatData.getCap(e).getStaggerTime() > 0) {
+            if (CombatData.getCap(e).isStaggered()) {
+                event.getEntity().level.addParticle(ParticleTypes.CRIT, e.getX() + Math.sin(e.tickCount) * e.getBbWidth() / 2, e.getY() + e.getBbHeight() + 0.4, e.getZ() + Math.cos(e.tickCount) * e.getBbWidth() / 2, 0, 0, 0);
+            }
+            if (CombatData.getCap(e).isExposed()) {
                 boolean reg = (rotate.containsKey(EntityType.getKey(e.getType()).toString()));
                 float height = reg && rotate.getOrDefault(EntityType.getKey(e.getType()).toString(), false) ? e.getBbWidth() : e.getBbHeight();
-                event.getEntity().level.addParticle(ParticleTypes.CRIT, e.getX() + Math.sin(e.tickCount) * e.getBbWidth() / 2, e.getY() + height, e.getZ() + Math.cos(e.tickCount) * e.getBbWidth() / 2, 0, 0, 0);
+                if (event.getEntity().tickCount % 10 == 0)
+                    event.getEntity().level.addParticle(ParticleTypes.ANGRY_VILLAGER, e.getX() + Math.sin(e.tickCount) * e.getBbWidth() / 2, e.getY() + height/2, e.getZ() + Math.cos(e.tickCount) * e.getBbWidth() / 2, 0, 0, 0);
             }
 
 
@@ -166,7 +170,7 @@ public class ClientEvents {
         float height = e.getBbHeight();
 
         if (e.isAlive()) {
-            if (CombatData.getCap(event.getEntity()).getStaggerTime() > 0) {
+            if (CombatData.getCap(event.getEntity()).isExposed()) {
                 //System.out.println("yes");
                 PoseStack ms = event.getPoseStack();
                 //ms.push();
@@ -248,7 +252,7 @@ public class ClientEvents {
 
     @SubscribeEvent
     public static void noFovChange(ComputeFovModifierEvent e) {
-        if (CombatData.getCap(e.getPlayer()).getStaggerTime() > 0)
+        if (CombatData.getCap(e.getPlayer()).isExposed())
             e.setNewFovModifier(0.7f);
     }
 
@@ -269,7 +273,7 @@ public class ClientEvents {
 
     @SubscribeEvent
     public static void sweepSwing(PlayerInteractEvent.LeftClickEmpty e) {
-        Entity n = RenderEvents.getEntityLookedAt(e.getEntity(), GeneralUtils.getAttributeValueHandSensitive(e.getEntity(), ForgeMod.REACH_DISTANCE.get(), InteractionHand.MAIN_HAND) - (e.getItemStack().isEmpty() ? 1 : 0));
+        Entity n = RenderEvents.getEntityLookedAt(e.getEntity(), GeneralUtils.getAttributeValueHandSensitive(e.getEntity(), ForgeMod.ATTACK_RANGE.get(), InteractionHand.MAIN_HAND) - (e.getItemStack().isEmpty() ? 1 : 0));
         if (n != null)
             CombatChannel.INSTANCE.sendToServer(new RequestAttackPacket(true, n));
         CombatChannel.INSTANCE.sendToServer(new RequestSweepPacket(true, n));
@@ -279,7 +283,7 @@ public class ClientEvents {
     public static void sweepSwingOff(PlayerInteractEvent.RightClickEmpty e) {
         if (!rightClick && GeneralConfig.dual && e.getHand() == InteractionHand.OFF_HAND && ((CombatUtils.isWeapon(e.getEntity(), e.getItemStack()) || (e.getItemStack().isEmpty() && CombatData.getCap(e.getEntity()).isCombatMode())))) {
             rightClick = true;
-            Entity n = RenderEvents.getEntityLookedAt(e.getEntity(), GeneralUtils.getAttributeValueHandSensitive(e.getEntity(), ForgeMod.REACH_DISTANCE.get(), InteractionHand.OFF_HAND) - (e.getItemStack().isEmpty() ? 1 : 0));
+            Entity n = RenderEvents.getEntityLookedAt(e.getEntity(), GeneralUtils.getAttributeValueHandSensitive(e.getEntity(), ForgeMod.ATTACK_RANGE.get(), InteractionHand.OFF_HAND) - (e.getItemStack().isEmpty() ? 1 : 0));
             e.getEntity().swing(InteractionHand.OFF_HAND, false);
             if (n != null)
                 CombatChannel.INSTANCE.sendToServer(new RequestAttackPacket(false, n));
@@ -291,7 +295,7 @@ public class ClientEvents {
     public static void sweepSwingBlock(PlayerInteractEvent.LeftClickBlock e) {
         if (Minecraft.getInstance().gameMode.isDestroying()) return;
         float temp = CombatUtils.getCooledAttackStrength(e.getEntity(), InteractionHand.MAIN_HAND, 0.5f);
-        Entity n = RenderEvents.getEntityLookedAt(e.getEntity(), GeneralUtils.getAttributeValueHandSensitive(e.getEntity(), ForgeMod.REACH_DISTANCE.get(), InteractionHand.MAIN_HAND) - (e.getItemStack().isEmpty() ? 1 : 0));
+        Entity n = RenderEvents.getEntityLookedAt(e.getEntity(), GeneralUtils.getAttributeValueHandSensitive(e.getEntity(), ForgeMod.ATTACK_RANGE.get(), InteractionHand.MAIN_HAND) - (e.getItemStack().isEmpty() ? 1 : 0));
         if (n != null)
             CombatChannel.INSTANCE.sendToServer(new RequestAttackPacket(true, n));
         CombatChannel.INSTANCE.sendToServer(new RequestSweepPacket(true, n));
@@ -301,7 +305,7 @@ public class ClientEvents {
     public static void sweepSwingOffItem(PlayerInteractEvent.RightClickItem e) {
         if (!rightClick && GeneralConfig.dual && e.getHand() == InteractionHand.OFF_HAND && ((CombatUtils.isWeapon(e.getEntity(), e.getItemStack()) || (e.getItemStack().isEmpty() && CombatData.getCap(e.getEntity()).isCombatMode())))) {
             rightClick = true;
-            Entity n = RenderEvents.getEntityLookedAt(e.getEntity(), GeneralUtils.getAttributeValueHandSensitive(e.getEntity(), ForgeMod.REACH_DISTANCE.get(), InteractionHand.OFF_HAND) - (e.getItemStack().isEmpty() ? 1 : 0));
+            Entity n = RenderEvents.getEntityLookedAt(e.getEntity(), GeneralUtils.getAttributeValueHandSensitive(e.getEntity(), ForgeMod.ATTACK_RANGE.get(), InteractionHand.OFF_HAND) - (e.getItemStack().isEmpty() ? 1 : 0));
             e.getEntity().swing(InteractionHand.OFF_HAND, false);
             if (n != null)
                 CombatChannel.INSTANCE.sendToServer(new RequestAttackPacket(false, n));
@@ -313,7 +317,7 @@ public class ClientEvents {
     public static void punchy(PlayerInteractEvent.EntityInteract e) {
         if (!rightClick && GeneralConfig.dual && e.getHand() == InteractionHand.OFF_HAND && (e.getItemStack().isEmpty() && CombatData.getCap(e.getEntity()).isCombatMode())) {
             rightClick = true;
-            Entity n = RenderEvents.getEntityLookedAt(e.getEntity(), GeneralUtils.getAttributeValueHandSensitive(e.getEntity(), ForgeMod.REACH_DISTANCE.get(), InteractionHand.OFF_HAND) - (e.getItemStack().isEmpty() ? 1 : 0));
+            Entity n = RenderEvents.getEntityLookedAt(e.getEntity(), GeneralUtils.getAttributeValueHandSensitive(e.getEntity(), ForgeMod.ATTACK_RANGE.get(), InteractionHand.OFF_HAND) - (e.getItemStack().isEmpty() ? 1 : 0));
             e.getEntity().swing(InteractionHand.OFF_HAND, false);
             if (n != null)
                 CombatChannel.INSTANCE.sendToServer(new RequestAttackPacket(false, n));
@@ -325,7 +329,7 @@ public class ClientEvents {
     public static void sweepSwingOffItemBlock(PlayerInteractEvent.RightClickBlock e) {
         if (!rightClick && GeneralConfig.dual && e.getHand() == InteractionHand.OFF_HAND && ((CombatUtils.isWeapon(e.getEntity(), e.getItemStack()) || (e.getItemStack().isEmpty() && CombatData.getCap(e.getEntity()).isCombatMode())))) {
             rightClick = true;
-            Entity n = RenderEvents.getEntityLookedAt(e.getEntity(), GeneralUtils.getAttributeValueHandSensitive(e.getEntity(), ForgeMod.REACH_DISTANCE.get(), InteractionHand.OFF_HAND) - (e.getItemStack().isEmpty() ? 1 : 0));
+            Entity n = RenderEvents.getEntityLookedAt(e.getEntity(), GeneralUtils.getAttributeValueHandSensitive(e.getEntity(), ForgeMod.ATTACK_RANGE.get(), InteractionHand.OFF_HAND) - (e.getItemStack().isEmpty() ? 1 : 0));
             e.getEntity().swing(InteractionHand.OFF_HAND, false);
             if (n != null)
                 CombatChannel.INSTANCE.sendToServer(new RequestAttackPacket(false, n));
@@ -338,7 +342,7 @@ public class ClientEvents {
     public static void noHit(InputEvent.KeyInputEvent e) {
         Minecraft mc = Minecraft.getInstance();
         if (mc.player == null) return;
-        double range = GeneralUtils.getAttributeValueSafe(mc.player, ForgeMod.REACH_DISTANCE.get()) - (mc.player.getMainHandItem().isEmpty() ? 1 : 0);
+        double range = GeneralUtils.getAttributeValueSafe(mc.player, ForgeMod.ATTACK_RANGE.get()) - (mc.player.getMainHandItem().isEmpty() ? 1 : 0);
         Vec3 look = mc.player.getViewVector(1);
         if (mc.crosshairPickEntity != null) {
             if (GeneralUtils.getDistSqCompensated(mc.crosshairPickEntity, mc.player) > range * range) {
@@ -359,7 +363,7 @@ public class ClientEvents {
     public static void noHitMouse(InputEvent.MouseInputEvent e) {
         Minecraft mc = Minecraft.getInstance();
         if (mc.player == null) return;
-        double range = GeneralUtils.getAttributeValueSafe(mc.player, ForgeMod.REACH_DISTANCE.get()) - (mc.player.getMainHandItem().isEmpty() ? 1 : 0);
+        double range = GeneralUtils.getAttributeValueSafe(mc.player, ForgeMod.ATTACK_RANGE.get()) - (mc.player.getMainHandItem().isEmpty() ? 1 : 0);
         Vec3 look = mc.player.getViewVector(1);
         if (mc.crosshairPickEntity != null) {
             if (GeneralUtils.getDistSqCompensated(mc.crosshairPickEntity, mc.player) > range * range) {
@@ -381,7 +385,7 @@ public class ClientEvents {
         if (event.phase == TickEvent.Phase.END) {
             Minecraft mc = Minecraft.getInstance();
             if (mc.player == null) return;
-            double range = GeneralUtils.getAttributeValueSafe(mc.player, ForgeMod.REACH_DISTANCE.get()) - (mc.player.getMainHandItem().isEmpty() ? 1 : 0);
+            double range = GeneralUtils.getAttributeValueSafe(mc.player, ForgeMod.ATTACK_RANGE.get()) - (mc.player.getMainHandItem().isEmpty() ? 1 : 0);
             Vec3 look = mc.player.getViewVector(1);
             if (mc.crosshairPickEntity != null) {
                 if (GeneralUtils.getDistSqCompensated(mc.crosshairPickEntity, mc.player) > range * range) {

@@ -7,11 +7,13 @@ import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.HitResult;
 import net.minecraft.world.phys.Vec3;
 
+import java.text.DecimalFormat;
 import java.util.List;
 import java.util.Optional;
 
 //@Mod.EventBusSubscriber(value = Dist.CLIENT, modid = WarDance.MODID)
 public class RenderEvents {
+    static final DecimalFormat formatter = new DecimalFormat("#.#");
     /**
      * @author Vazkii
      */
