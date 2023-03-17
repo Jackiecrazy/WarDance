@@ -16,4 +16,11 @@ public class SkillCategories {
             hex = new SkillCategory("hex"),
             morale = new SkillCategory("morale"),
             none = new SkillCategory("what");
+//    dominance = new SkillCategory("dominance",Color.RED),
+//    resolution = new SkillCategory("resolution",WarColors.DARK_GREEN),
+//    subterfuge = new SkillCategory("subterfuge", Color.LIGHT_GRAY),
+//    fervor = new SkillCategory("fervor", Color.ORANGE),
+//    perception = new SkillCategory("perception", Color.CYAN),
+//    decay = new SkillCategory("decay", WarColors.VIOLET),
+//    none = new SkillCategory("what", Color.WHITE);
 }

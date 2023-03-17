@@ -27,7 +27,7 @@ public abstract class IronGuard extends Skill {
 
     @Nonnull
     @Override
-    public SkillCategory getParentCategory() {
+    public SkillCategory getCategory() {
         return SkillCategories.iron_guard;
     }
 

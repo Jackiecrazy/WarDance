@@ -126,7 +126,7 @@ public class SkillCapability implements ISkillCapability {
     @Override
     public Skill.STATE getCategoryState(SkillCategory skill) {
         for (Skill s : new ArrayList<>(data.keySet())) {
-            if (s != null && s.getParentCategory().equals(skill)) return getSkillState(s);
+            if (s != null && s.getCategory().equals(skill)) return getSkillState(s);
         }
         return Skill.STATE.INACTIVE;
     }
@@ -151,7 +151,7 @@ public class SkillCapability implements ISkillCapability {
     @Override
     public Skill getEquippedVariation(SkillCategory other) {
         for (Skill k : new ArrayList<>(equippedSkill))
-            if (k != null && k.getParentCategory() == other) return k;
+            if (k != null && k.getCategory() == other) return k;
         return null;
     }
 

@@ -25,7 +25,7 @@ public class Brutalize extends Judgment {
 
     @Override
     public float mightConsumption(LivingEntity caster) {
-        return 5;
+        return 2;
     }
 
     @Override

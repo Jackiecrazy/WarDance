@@ -77,7 +77,7 @@ public class Mark implements IMark {
     @Override
     public boolean isMarked(SkillCategory skill) {
         for (Skill s : statuus.keySet())
-            if (s != null && s.getParentCategory() == skill) return true;
+            if (s != null && s.getCategory() == skill) return true;
         return false;
     }
 

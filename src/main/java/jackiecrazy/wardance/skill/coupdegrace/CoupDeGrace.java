@@ -51,7 +51,7 @@ public class CoupDeGrace extends Skill {
 
     @Nonnull
     @Override
-    public SkillCategory getParentCategory() {
+    public SkillCategory getCategory() {
         return SkillCategories.coup_de_grace;
     }
 
@@ -63,7 +63,7 @@ public class CoupDeGrace extends Skill {
 
     @Override
     public float mightConsumption(LivingEntity caster) {
-        return 3;
+        return 1;
     }
 
     protected void deathCheck(LivingEntity caster, LivingEntity target, float amount) {

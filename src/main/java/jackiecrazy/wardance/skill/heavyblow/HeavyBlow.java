@@ -29,7 +29,7 @@ public class HeavyBlow extends Skill {
 
     @Nonnull
     @Override
-    public SkillCategory getParentCategory() {
+    public SkillCategory getCategory() {
         return SkillCategories.heavy_blow;
     }
 

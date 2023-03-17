@@ -57,8 +57,8 @@ public class PassiveButton extends SkillSelectionButton {
             blit(matrixStack, this.getX(), this.getY(), 0, 0, this.width, this.height, width, height);
         }
         RenderSystem.setShaderColor(1, 1, 1, 1);
-        if (this.isHoveredOrFocused()) {
-            this.renderButton(matrixStack, mouseX, mouseY, partialTicks);
-        }
+//        if (this.isHoveredOrFocused()) {
+//            this.render(matrixStack, mouseX, mouseY, partialTicks);
+//        }
     }
 }

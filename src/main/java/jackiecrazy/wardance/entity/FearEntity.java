@@ -5,6 +5,8 @@ import jackiecrazy.footwork.utils.GeneralUtils;
 import jackiecrazy.wardance.WarDance;
 import jackiecrazy.wardance.api.ITetherAnchor;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.network.protocol.Packet;
+import net.minecraft.network.protocol.game.ClientboundAddEntityPacket;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.Entity;
@@ -117,5 +119,10 @@ public class FearEntity extends Entity implements ITetherAnchor {
             compound.putUUID("lovecraft", wuss.getUUID());
             compound.putInt("bruh", wuss.getId());
         }
+    }
+
+    @Override
+    public Packet<?> getAddEntityPacket() {
+        return new ClientboundAddEntityPacket(this);
     }
 }

@@ -1,7 +1,7 @@
 package jackiecrazy.wardance.client;
 
 import com.mojang.blaze3d.vertex.PoseStack;
-import com.mojang.math.Axis;
+import com.mojang.math.Vector3f;
 import jackiecrazy.footwork.capability.resources.CombatData;
 import jackiecrazy.footwork.capability.resources.ICombatCapability;
 import jackiecrazy.footwork.utils.GeneralUtils;
@@ -178,9 +178,9 @@ public class ClientEvents {
                 boolean reg = (ForgeRegistries.ENTITY_TYPES.getKey(e.getType()) != null && rotate.containsKey(ForgeRegistries.ENTITY_TYPES.getKey(e.getType()).toString()));
                 boolean rot = reg ? rotate.getOrDefault(ForgeRegistries.ENTITY_TYPES.getKey(e.getType()).toString(), false) : width < height;
                 if (rot) {
-                    ms.mulPose(Axis.XN.rotationDegrees(90));
-                    ms.mulPose(Axis.ZP.rotationDegrees(-e.yBodyRot));
-                    ms.mulPose(Axis.YP.rotationDegrees(e.yBodyRot));
+                    ms.mulPose(Vector3f.XN.rotationDegrees(90));
+                    ms.mulPose(Vector3f.ZP.rotationDegrees(-e.yBodyRot));
+                    ms.mulPose(Vector3f.YP.rotationDegrees(e.yBodyRot));
                     ms.translate(0, -e.getBbHeight() / 2, 0);
                 }
                 //cube bois become side bois
@@ -189,7 +189,7 @@ public class ClientEvents {
             }
             if (CombatData.getCap(e).getRollTime() != 0 && e.getPose() == Pose.SLEEPING) {
                 PoseStack ms = event.getPoseStack();
-                ms.mulPose(Axis.YN.rotationDegrees(e.getYRot() - e.getBedOrientation().toYRot()));
+                ms.mulPose(Vector3f.YN.rotationDegrees(e.getYRot() - e.getBedOrientation().toYRot()));
 //                ms.rotate(Vector3f.ZP.rotationDegrees(-e.renderYawOffset));
 //                ms.rotate(Vector3f.YP.rotationDegrees(e.renderYawOffset));
             }

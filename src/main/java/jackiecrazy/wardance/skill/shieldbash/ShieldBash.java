@@ -36,13 +36,13 @@ public class ShieldBash extends Skill {
 
     @Nonnull
     @Override
-    public SkillCategory getParentCategory() {
+    public SkillCategory getCategory() {
         return SkillCategories.shield_bash;
     }
 
     @Override
     public float spiritConsumption(LivingEntity caster) {
-        return 2;
+        return 1;
     }
 
 

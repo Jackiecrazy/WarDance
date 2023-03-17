@@ -35,12 +35,12 @@ public class WarCry extends Skill {
 
     @Override
     public float mightConsumption(LivingEntity caster) {
-        return 5;
+        return 2;
     }
 
     @Nonnull
     @Override
-    public SkillCategory getParentCategory() {
+    public SkillCategory getCategory() {
         return SkillCategories.war_cry;
     }
 
@@ -49,7 +49,7 @@ public class WarCry extends Skill {
     }
 
     protected void evoke(LivingEntity caster) {
-        CombatData.getCap(caster).addMight(mightConsumption(caster));
+        //CombatData.getCap(caster).addMight(mightConsumption(caster));
         caster.level.playSound(null, caster, SoundEvents.FIRE_EXTINGUISH, SoundSource.AMBIENT, 0.3f + WarDance.rand.nextFloat() * 0.5f, 0.5f + WarDance.rand.nextFloat());
         if (this == WarSkills.REJUVENATE.get()) {
             final float might = CombatData.getCap(caster).getMight();

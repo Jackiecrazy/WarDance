@@ -35,7 +35,7 @@ public class Recovery extends Skill {
 
     @Nonnull
     @Override
-    public SkillCategory getParentCategory() {
+    public SkillCategory getCategory() {
         return SkillCategories.iron_guard;
     }
 

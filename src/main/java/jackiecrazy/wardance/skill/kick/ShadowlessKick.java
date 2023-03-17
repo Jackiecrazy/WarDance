@@ -24,7 +24,7 @@ public class ShadowlessKick extends Kick {
 
     @Override
     public float spiritConsumption(LivingEntity caster) {
-        return 4;
+        return 2;
     }
 
     @Override

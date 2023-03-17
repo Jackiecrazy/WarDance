@@ -22,7 +22,7 @@ public class Grapple extends Skill {
 
     @Nonnull
     @Override
-    public SkillCategory getParentCategory() {
+    public SkillCategory getCategory() {
         return SkillCategories.grapple;
     }
 
@@ -39,7 +39,7 @@ public class Grapple extends Skill {
 
     @Override
     public float spiritConsumption(LivingEntity caster) {
-        return 2;
+        return 1;
     }
 
     protected void performEffect(LivingEntity caster, LivingEntity target) {

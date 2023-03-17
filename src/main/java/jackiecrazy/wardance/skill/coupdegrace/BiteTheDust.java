@@ -32,7 +32,7 @@ public class BiteTheDust extends CoupDeGrace {
 
     @Nonnull
     @Override
-    public SkillCategory getParentCategory() {
+    public SkillCategory getCategory() {
         return SkillCategories.coup_de_grace;
     }
 

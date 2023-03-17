@@ -37,20 +37,13 @@ public class Judgment extends Skill {
 
     @Nonnull
     @Override
-    public SkillCategory getParentCategory() {
+    public SkillCategory getCategory() {
         return SkillCategories.judgment;
     }
 
     protected void performEffect(LivingEntity caster, LivingEntity target, int stack, SkillData sd) {
         float amount = stack == 3 ? target.getHealth() * 0.15f : target.getHealth() * 0.03f;
-        if (this == WarSkills.AMPUTATION.get()) {
-            if (stack == 3) {
-                float healthDiff = target.getMaxHealth() - target.getHealth();
-                amount += healthDiff;
-            }
-            //CombatData.getCap(target).addWounding(amount);
-        } else
-            target.hurt(new CombatDamageSource("player", caster).setDamageTyping(CombatDamageSource.TYPE.PHYSICAL).setProcSkillEffects(true).setProcAttackEffects(true).setDamageTyping(CombatDamageSource.TYPE.TRUE).bypassArmor().bypassMagic(), amount);
+        target.hurt(new CombatDamageSource("player", caster).setDamageTyping(CombatDamageSource.TYPE.PHYSICAL).setProcSkillEffects(true).setProcAttackEffects(true).setDamageTyping(CombatDamageSource.TYPE.TRUE).bypassArmor().bypassMagic(), amount);
     }
 
     @Override
@@ -62,7 +55,7 @@ public class Judgment extends Skill {
 
     @Override
     public float mightConsumption(LivingEntity caster) {
-        return 3;
+        return 2;
     }
 
     @Override

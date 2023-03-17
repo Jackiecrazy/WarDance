@@ -103,7 +103,7 @@ public class Feint extends Skill {
 
     @Override
     public float spiritConsumption(LivingEntity caster) {
-        return 3;
+        return 1;
     }
 
     @Override
@@ -153,7 +153,7 @@ public class Feint extends Skill {
 
     @Nonnull
     @Override
-    public SkillCategory getParentCategory() {
+    public SkillCategory getCategory() {
         return SkillCategories.feint;
     }
 

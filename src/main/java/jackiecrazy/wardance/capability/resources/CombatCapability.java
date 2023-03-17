@@ -35,7 +35,6 @@ import net.minecraftforge.common.util.FakePlayer;
 import net.minecraftforge.eventbus.api.Event;
 import net.minecraftforge.network.PacketDistributor;
 import org.jetbrains.annotations.Nullable;
-import org.joml.Math;
 
 import java.lang.ref.WeakReference;
 import java.util.*;
@@ -73,7 +72,7 @@ public class CombatCapability implements ICombatCapability {
     private float mpos, mspi, mmight, mfrac;
     private boolean offhand, combat, painful;
     private long lastUpdate;
-    private boolean first, client, fractureDirty = true;
+    private boolean first = true, client, fractureDirty = true;
     private float cache;//no need to save this because it'll be used within the span of a tick
     private int parrying, retina, fracount;
     private long staggerTickExisted;
@@ -92,9 +91,8 @@ public class CombatCapability implements ICombatCapability {
         if (elb == null) return ret;
         if (GeneralUtils.getResourceLocationFromEntity(elb) != null && CombatUtils.customPosture.containsKey(GeneralUtils.getResourceLocationFromEntity(elb)))
             ret = CombatUtils.customPosture.get(GeneralUtils.getResourceLocationFromEntity(elb));
-        else ret = (float) (Math.ceil(10 / 1.09 * elb.getBbWidth() * elb.getBbHeight()) + elb.getArmorValue() / 2d);
+        else ret = (float) (Math.ceil(10 / 1.09 * Math.sqrt(elb.getBbWidth() * elb.getBbHeight())));
         if (elb instanceof Player) ret *= 1.5;
-        ret += GeneralUtils.getAttributeValueSafe(elb, FootworkAttributes.MAX_POSTURE.get());
         return ret;
     }
 
@@ -692,8 +690,12 @@ public class CombatCapability implements ICombatCapability {
         if (elb.hasEffect(FootworkEffects.SLEEP.get()) || elb.hasEffect(FootworkEffects.PARALYSIS.get()) || elb.hasEffect(FootworkEffects.PETRIFY.get()))
             vision = -1;
         //initialize posture
-        if (first)
+        if (first) {
+            final float mPos = getMPos(elb);
+            elb.getAttribute(FootworkAttributes.MAX_POSTURE.get()).setBaseValue(mPos);
+            elb.getAttribute(FootworkAttributes.MAX_FRACTURE.get()).setBaseValue(Math.floor(Math.sqrt(mpos) - 1));
             setPosture(getMaxPosture());
+        }
         //store motion for further use
         if (ticks > 5 || (lastUpdate + ticks) % 5 != lastUpdate % 5)
             motion = elb.position();

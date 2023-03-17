@@ -116,12 +116,12 @@ public class Hex extends Skill {
 
     @Override
     public float spiritConsumption(LivingEntity caster) {
-        return 4;
+        return 1;
     }
 
     @Nonnull
     @Override
-    public SkillCategory getParentCategory() {
+    public SkillCategory getCategory() {
         return SkillCategories.hex;
     }
 
@@ -246,7 +246,7 @@ public class Hex extends Skill {
                 }
             }
             if (proc)
-                FakeExplosion.explode(caster.level, caster, target.getX(), target.getY() + target.getBbHeight() * 1.1f, target.getZ(), size, DamageSource.explosion(caster, null).setMagic(), damage);
+                FakeExplosion.explode(caster.level, caster, target.getX(), target.getY() + target.getBbHeight() * 1.1f, target.getZ(), size, DamageSource.explosion(caster).setMagic(), damage);
         }
     }
 

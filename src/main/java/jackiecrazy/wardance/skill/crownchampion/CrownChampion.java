@@ -61,7 +61,7 @@ elemental might: +1 burn/snowball/poison/drown damage to targets you have attack
             if (Marks.getCap(uke).isMarked(venge) && CasterData.getCap((LivingEntity) seme).getEquippedSkills().contains(venge)) {
                 Marks.getCap(uke).getActiveMark(venge).ifPresent(a -> {
                     final float amnt = Math.min(e.getAmount(), a.getArbitraryFloat());
-                    CombatData.getCap((LivingEntity) seme).addMight(amnt);
+                    CombatData.getCap((LivingEntity) seme).addMight(amnt/4);
                     e.setAmount(e.getAmount() + amnt);
                     a.setArbitraryFloat(a.getArbitraryFloat() - e.getAmount());
                     if (a.getArbitraryFloat() < 0) a.setDuration(-10);
@@ -89,7 +89,7 @@ elemental might: +1 burn/snowball/poison/drown damage to targets you have attack
         if (!CombatUtils.isPhysicalAttack(e.getSource())) {
             for (Player pe : e.getEntity().level.getEntitiesOfClass(Player.class, e.getEntity().getBoundingBox().inflate(5))) {
                 if (CasterData.getCap(pe).getEquippedSkills().contains(WarSkills.ELEMENTAL_MIGHT.get())) {
-                    CombatData.getCap(pe).addMight(1);
+                    CombatData.getCap(pe).addMight(0.25f);
                 }
             }
         }
@@ -97,7 +97,7 @@ elemental might: +1 burn/snowball/poison/drown damage to targets you have attack
 
     @Nonnull
     @Override
-    public SkillCategory getParentCategory() {
+    public SkillCategory getCategory() {
         return SkillCategories.prowess;
     }
 

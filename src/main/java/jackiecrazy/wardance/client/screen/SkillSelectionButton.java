@@ -57,4 +57,12 @@ public abstract class SkillSelectionButton extends ImageButton {
             return false;
         return true;
     }
+
+    protected int getX() {
+        return x;
+    }
+
+    protected int getY() {
+        return y;
+    }
 }

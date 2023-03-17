@@ -26,7 +26,7 @@ import java.util.List;
 import java.util.*;
 
 public abstract class Skill {
-    public static final HashMap<SkillCategory, List<Skill>> variationMap = new HashMap<>();
+    public static final HashMap<SkillCategory, List<Skill>> colorMap = new HashMap<>();
     protected static final HashSet<String> none = new HashSet<>();
     protected static final HashSet<String> offensivePhysical = makeTag(SkillTags.offensive, SkillTags.physical);
     protected static final HashSet<String> defensivePhysical = makeTag(SkillTags.defensive, SkillTags.physical);
@@ -39,12 +39,12 @@ public abstract class Skill {
 
     public Skill() {
         //SkillCategory
-        List<Skill> insert = variationMap.get(getParentCategory());
+        List<Skill> insert = colorMap.get(getCategory());
         if (insert == null) {
             insert = new ArrayList<>();
         }
         insert.add(this);
-        variationMap.put(this.getParentCategory(), insert);
+        colorMap.put(this.getCategory(), insert);
     }
 
     protected static HashSet<String> makeTag(String... stuff) {
@@ -63,7 +63,7 @@ public abstract class Skill {
 
     public boolean isFamily(Skill s) {
         if (s == null) return false;
-        return getParentCategory().equals(s.getParentCategory());
+        return getCategory().equals(s.getCategory());
     }
 
     public boolean isPassive(LivingEntity caster) {
@@ -71,7 +71,7 @@ public abstract class Skill {
     }
 
     @Nonnull
-    public SkillCategory getParentCategory() {
+    public SkillCategory getCategory() {
         return SkillCategories.none;
     }
 
@@ -140,7 +140,7 @@ public abstract class Skill {
     }
 
     public ResourceLocation icon() {
-        return getParentCategory().icon();
+        return getCategory().icon();
     }
 
     public Color getColor() {
