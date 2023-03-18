@@ -9,10 +9,12 @@ import java.awt.*;
 public class SkillCategory {
     private final String category;
     private final Color color;
+    private final ChatFormatting[] formattings;
 
-    public SkillCategory(String name, Color c) {
+    public SkillCategory(String name, Color c, ChatFormatting... ca) {
         category = name;
         color = c;
+        formattings=ca;
     }
 
     @Override
@@ -21,7 +23,7 @@ public class SkillCategory {
     }
 
     public Component name() {
-        return Component.translatable("wardance:category." + category + ".name").withStyle(ChatFormatting.BOLD);
+        return Component.translatable("wardance:category." + category + ".name").withStyle(formattings);
     }
 
     public Component description() {

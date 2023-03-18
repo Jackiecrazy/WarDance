@@ -68,6 +68,7 @@ public class SkillListWidget extends ObjectSelectionList<SkillListWidget.Categor
 
     public void refreshList() {
         this.clearEntries();
+        setScrollAmount(0);
         parent.buildSkillList(this::addEntry, mod -> new CategoryEntry(mod, this.parent));
     }
 
@@ -90,7 +91,7 @@ public class SkillListWidget extends ObjectSelectionList<SkillListWidget.Categor
             //ITextComponent version = new StringTextComponent(stripControlCodes(MavenVersionStringHelper.artifactVersionToString(modInfo.getVersion())));
             //VersionChecker.CheckResult vercheck = VersionChecker.getResult(modInfo);
             Font font = this.parent.getFontRenderer();
-            font.draw(ms, Language.getInstance().getVisualOrder(FormattedText.composite(font.substrByWidth(name, listWidth))), left + 3, top + 2, s.getColor().getRGB());
+            font.draw(ms, Language.getInstance().getVisualOrder(FormattedText.composite(font.substrByWidth(name, listWidth))), left + 3, top + 2, 0xffffff);
             //font.draw(ms, LanguageMap.getInstance().getVisualOrder(ITextProperties.composite(font.substrByWidth(version, listWidth))), left + 3, top + 2 + font.FONT_HEIGHT, 0xCCCCCC);
             //lil' skill icon
             RenderSystem.setShaderTexture(0, s.icon());

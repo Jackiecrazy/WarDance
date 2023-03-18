@@ -1,14 +1,41 @@
 package jackiecrazy.wardance.client.screen;
 
+import com.mojang.blaze3d.systems.RenderSystem;
+import com.mojang.blaze3d.vertex.PoseStack;
+import jackiecrazy.wardance.skill.SkillCategory;
 import net.minecraft.client.gui.components.ImageButton;
-import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.util.FormattedCharSequence;
+
+import java.util.List;
 
 public class SkillCategoryButton extends ImageButton {
     private SkillSelectionScreen parent;
-    public SkillCategoryButton(SkillSelectionScreen screen, int p_94242_, int p_94243_, int p_94244_, int p_94245_, int p_94246_, int p_94247_, int p_94248_, ResourceLocation p_94249_, int p_94250_, int p_94251_, OnPress p_94252_, OnTooltip p_94253_, Component p_94254_) {
-        super(p_94242_, p_94243_, p_94244_, p_94245_, 0, 0, 0, p_94249_, 16, 16, p_94252_, p_94253_, p_94254_);
-        parent=screen;
+    private SkillSelectionScreen.SkillCategorySort sort;
 
+    public SkillCategoryButton(SkillSelectionScreen screen, SkillSelectionScreen.SkillCategorySort scc, List<FormattedCharSequence> display, int x, int y, int width, int height, ResourceLocation icon) {
+        super(x, y, width, height, 0, 0, 0, icon, width, height,
+                b -> screen.filterSkills(scc.cat),
+                (butt, stack, butx, buty) -> screen.renderTooltip(stack, display, butx, buty),
+                scc.getText());
+        parent = screen;
+        sort = scc;
+    }
+
+    @Override
+    public void renderButton(PoseStack matrixStack, int x, int y, float a) {
+        SkillCategory s = sort.cat;
+        float r = s.getColor().getRed() / 255f;
+        float g = s.getColor().getGreen() / 255f;
+        float b = s.getColor().getBlue() / 255f;
+        if (!this.active)
+            RenderSystem.setShaderColor(r, g, b, 1);
+        RenderSystem.setShaderTexture(0, s.icon());
+        RenderSystem.enableDepthTest();
+        blit(matrixStack, this.x, this.y, 0, 0, this.width, this.height, width, height);
+        RenderSystem.setShaderColor(1, 1, 1, 1);
+        if (this.isHovered) {
+            this.renderToolTip(matrixStack, x, y);
+        }
     }
 }

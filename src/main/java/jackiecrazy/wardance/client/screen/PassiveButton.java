@@ -49,7 +49,9 @@ public class PassiveButton extends SkillSelectionButton {
             RenderSystem.setShaderColor(0.6f, 0.6f, 0.6f, 1);
         }
         applySlotTint();
+        //base
         blit(matrixStack, this.getX(), this.getY(), 0, 0, this.width, this.height, width, height);
+        //skill
         if (s != null) {
             RenderSystem.setShaderTexture(0, s.icon());
             Color c = s.getColor();
