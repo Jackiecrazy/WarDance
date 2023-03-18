@@ -17,7 +17,7 @@ import jackiecrazy.wardance.client.RenderEvents;
 import jackiecrazy.wardance.config.ClientConfig;
 import jackiecrazy.wardance.config.CombatConfig;
 import jackiecrazy.wardance.skill.Skill;
-import jackiecrazy.wardance.skill.SkillCategories;
+import jackiecrazy.wardance.skill.SkillArchetypes;
 import jackiecrazy.wardance.skill.SkillData;
 import jackiecrazy.wardance.skill.coupdegrace.CoupDeGrace;
 import net.minecraft.client.Minecraft;
@@ -528,7 +528,7 @@ public class ResourceDisplay implements IGuiOverlay {
                 final ISkillCapability skill = CasterData.getCap(player);
                 if (ClientConfig.CONFIG.enemyAfflict.enabled) {
                     //coup de grace
-                    final Skill variant = skill.getEquippedVariation(SkillCategories.coup_de_grace);
+                    final Skill variant = skill.getEquippedVariation(SkillArchetypes.coup_de_grace);
                     if (look != player && variant instanceof CoupDeGrace && skill.isSkillUsable(variant)) {
                         CoupDeGrace cdg = (CoupDeGrace) variant;
                         if (cdg.willKillOnCast(player, looked)) {

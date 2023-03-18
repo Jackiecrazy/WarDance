@@ -2,15 +2,7 @@ package jackiecrazy.wardance.skill.shieldbash;
 
 import net.minecraft.world.entity.LivingEntity;
 
-import java.awt.*;
-
 public class ArmLock extends ShieldBash{
-    @Override
-    public Color getColor() {
-        return Color.GREEN;
-    }
-
-
     @Override
     protected void performEffect(LivingEntity caster, LivingEntity target) {
 //        CombatData.getCap(caster).consumeBarrier(Float.MAX_VALUE);

@@ -4,8 +4,8 @@ import jackiecrazy.footwork.utils.GeneralUtils;
 import jackiecrazy.footwork.utils.LuckUtils;
 import jackiecrazy.wardance.event.SkillResourceEvent;
 import jackiecrazy.wardance.skill.Skill;
-import jackiecrazy.wardance.skill.SkillCategories;
-import jackiecrazy.wardance.skill.SkillCategory;
+import jackiecrazy.wardance.skill.SkillArchetypes;
+import jackiecrazy.wardance.skill.SkillArchetype;
 import jackiecrazy.wardance.skill.SkillData;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.ai.attributes.Attributes;
@@ -33,8 +33,8 @@ apathy: your max spirit is 4, your spirit instantly refills after cooldown, you 
 
     @Nonnull
     @Override
-    public SkillCategory getCategory() {
-        return SkillCategories.morale;
+    public SkillArchetype getArchetype() {
+        return SkillArchetypes.morale;
     }
 
     @Override

@@ -2,15 +2,12 @@ package jackiecrazy.wardance.skill.coupdegrace;
 
 import jackiecrazy.footwork.event.StaggerEvent;
 import jackiecrazy.wardance.api.CombatDamageSource;
-import jackiecrazy.wardance.skill.SkillCategories;
-import jackiecrazy.wardance.skill.SkillCategory;
-import jackiecrazy.wardance.skill.SkillData;
+import jackiecrazy.wardance.skill.*;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraftforge.eventbus.api.Event;
 import net.minecraftforge.eventbus.api.EventPriority;
 
 import javax.annotation.Nonnull;
-import java.awt.*;
 import java.util.HashSet;
 
 public class BiteTheDust extends CoupDeGrace {
@@ -25,15 +22,10 @@ public class BiteTheDust extends CoupDeGrace {
         return none;
     }
 
-    @Override
-    public Color getColor() {
-        return Color.GREEN;
-    }
-
     @Nonnull
     @Override
-    public SkillCategory getCategory() {
-        return SkillCategories.coup_de_grace;
+    public SkillArchetype getArchetype() {
+        return SkillArchetypes.coup_de_grace;
     }
 
     @Override

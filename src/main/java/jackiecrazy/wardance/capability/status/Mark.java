@@ -7,7 +7,7 @@ import jackiecrazy.wardance.handlers.EntityHandler;
 import jackiecrazy.wardance.networking.CombatChannel;
 import jackiecrazy.wardance.networking.UpdateAfflictionPacket;
 import jackiecrazy.wardance.skill.Skill;
-import jackiecrazy.wardance.skill.SkillCategory;
+import jackiecrazy.wardance.skill.SkillArchetype;
 import jackiecrazy.wardance.skill.SkillData;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
@@ -75,9 +75,9 @@ public class Mark implements IMark {
     }
 
     @Override
-    public boolean isMarked(SkillCategory skill) {
+    public boolean isMarked(SkillArchetype skill) {
         for (Skill s : statuus.keySet())
-            if (s != null && s.getCategory() == skill) return true;
+            if (s != null && s.getArchetype() == skill) return true;
         return false;
     }
 

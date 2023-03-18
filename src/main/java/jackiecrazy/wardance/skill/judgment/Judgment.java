@@ -37,8 +37,8 @@ public class Judgment extends Skill {
 
     @Nonnull
     @Override
-    public SkillCategory getCategory() {
-        return SkillCategories.judgment;
+    public SkillArchetype getArchetype() {
+        return SkillArchetypes.judgment;
     }
 
     protected void performEffect(LivingEntity caster, LivingEntity target, int stack, SkillData sd) {

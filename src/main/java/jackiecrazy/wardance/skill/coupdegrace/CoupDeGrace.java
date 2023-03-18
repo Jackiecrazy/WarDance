@@ -51,8 +51,8 @@ public class CoupDeGrace extends Skill {
 
     @Nonnull
     @Override
-    public SkillCategory getCategory() {
-        return SkillCategories.coup_de_grace;
+    public SkillArchetype getArchetype() {
+        return SkillArchetypes.coup_de_grace;
     }
 
     @Override

@@ -27,10 +27,10 @@ public interface ISkillCapability {
 
     Skill.STATE getSkillState(Skill skill);
 
-    Skill.STATE getCategoryState(SkillCategory s);
+    Skill.STATE getCategoryState(SkillArchetype s);
 
     @Nullable
-    Skill getEquippedVariation(SkillCategory base);
+    Skill getEquippedVariation(SkillArchetype base);
 
     boolean isTagActive(String tag);
 

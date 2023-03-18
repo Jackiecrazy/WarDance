@@ -87,7 +87,7 @@ public class WarSkills {
     public static final RegistryObject<Skill> SMIRKING_SHADOW = SKILLS.register("smirking_shadow", Feint.SmirkingShadow::new);
     public static final RegistryObject<Skill> SCORPION_STING = SKILLS.register("scorpion_sting", Feint.ScorpionSting::new);
     public static final RegistryObject<Skill> UPPER_HAND = SKILLS.register("upper_hand", Feint.UpperHand::new);
-    public static final RegistryObject<Skill> CAPRICIOUS_STRIKE = SKILLS.register("capricious_strike", Feint.CapriciousStrike::new);
+    public static final RegistryObject<Skill> CAPRICIOUS_STRIKE = SKILLS.register("capricious_strike", ()-> new Feint().setCategory(SkillColors.fervor));
     //public static final RegistryObject<Skill> AMPUTATION = SKILLS.register("amputation", Judgment::new);
     //public static final RegistryObject<Skill> CROWD_PLEASER = SKILLS.register("combo_breaker", ComboBreaker::new);
     //public static final RegistryObject<Skill> LICHTENBERG_SCAR = SKILLS.register("lichtenberg_scar", LichtenbergScar::new);
@@ -105,7 +105,7 @@ public class WarSkills {
     public static final RegistryObject<Skill> ITCHY_CURSE = SKILLS.register("itchy_curse", ItchyCurse::new);
     public static final RegistryObject<Skill> UNRAVEL = SKILLS.register("unravel", Hex.Unravel::new);
     public static final RegistryObject<Skill> GANGRENE = SKILLS.register("gangrene", Hex.Gangrene::new);
-    public static final RegistryObject<Skill> BLACK_MARK = SKILLS.register("black_mark", Hex.BlackMark::new);
+    public static final RegistryObject<Skill> BLACK_MARK = SKILLS.register("black_mark", Hex::new);
     public static final RegistryObject<Skill> PETRIFY = SKILLS.register("petrify", Petrify::new);
     public static final RegistryObject<Skill> BACK_AND_FORTH = SKILLS.register("back_and_forth", Morale::new);
     public static final RegistryObject<Skill> ARCHERS_PARADOX = SKILLS.register("archers_paradox", ArchersParadox::new);

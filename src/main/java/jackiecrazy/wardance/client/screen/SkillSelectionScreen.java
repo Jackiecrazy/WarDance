@@ -7,9 +7,7 @@ import jackiecrazy.wardance.WarDance;
 import jackiecrazy.wardance.capability.skill.CasterData;
 import jackiecrazy.wardance.networking.CombatChannel;
 import jackiecrazy.wardance.networking.UpdateSkillSelectionPacket;
-import jackiecrazy.wardance.skill.Skill;
-import jackiecrazy.wardance.skill.SkillCategories;
-import jackiecrazy.wardance.skill.SkillCategory;
+import jackiecrazy.wardance.skill.*;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
@@ -50,7 +48,7 @@ public class SkillSelectionScreen extends Screen {
     private final List<Skill> unsortedBases;
     private final SkillSliceButton[] skillPie = new SkillSliceButton[5];
     private final PassiveButton[] passives = new PassiveButton[5];
-    private final int numButtons = Skill.colorMap.size();
+    private final int numButtons = Skill.variationMap.size();
     public SkillListWidget.CategoryEntry selectedSkill = null;
     //public VariationListWidget.VariationEntry selectedVariation = null;
     private SkillListWidget skillList;
@@ -67,12 +65,12 @@ public class SkillSelectionScreen extends Screen {
 
     private boolean filtered = false;
     private ArrayList<SkillCategorySort> filters = new ArrayList<>();
-    private SkillCategory displayedCategory = SkillCategories.none;
+    private SkillCategory displayedCategory = SkillColors.none;
 
     public SkillSelectionScreen() {
         super(Component.translatable("wardance.skillselection.title"));
         bases = new ArrayList<>();
-        for (List<Skill> list : Skill.colorMap.values()) {
+        for (List<Skill> list : Skill.variationMap.values()) {
             this.bases.addAll(list);
         }
 
@@ -81,8 +79,8 @@ public class SkillSelectionScreen extends Screen {
 
     private static String stripControlCodes(String value) {return net.minecraft.util.StringUtil.stripColor(value);}
 
-    private boolean selectable(SkillCategory s) {
-        for (Skill sub : Skill.colorMap.get(s))
+    private boolean selectable(SkillArchetype s) {
+        for (Skill sub : Skill.variationMap.get(s))
             if (CasterData.getCap(Minecraft.getInstance().player).isSkillSelectable(sub)) return true;
         return false;
     }
@@ -150,9 +148,9 @@ public class SkillSelectionScreen extends Screen {
 //        });
 //    }
 
-    private void reloadSkills() {
+    private void reloadSkills() {//(mi.getCategory() == displayedCategory || displayedCategory == SkillCategories.none) &&
         this.bases = this.unsortedBases.stream().
-                filter(mi -> (mi.getCategory() == displayedCategory || displayedCategory == SkillCategories.none) && StringUtils.toLowerCase(stripControlCodes(mi.getDisplayName(null).getString())).contains(StringUtils.toLowerCase(search.getValue()))).collect(Collectors.toList());
+                filter(mi -> StringUtils.toLowerCase(stripControlCodes(mi.getDisplayName(null).getString())).contains(StringUtils.toLowerCase(search.getValue()))).collect(Collectors.toList());
         lastFilterText = search.getValue();
     }
 
@@ -211,7 +209,7 @@ public class SkillSelectionScreen extends Screen {
 
     @Override
     public void init() {
-        for (SkillCategory sc : Skill.colorMap.keySet()) {
+        for (SkillCategory sc : Skill.categoryMap.keySet()) {
             filters.add(new SkillCategorySort(sc));
         }
         for (Skill mod : bases) {
@@ -264,12 +262,13 @@ public class SkillSelectionScreen extends Screen {
         final int width = listWidth / numButtons;
         int x = PADDING;
         for (SkillCategorySort scc : filters) {
-            addRenderableWidget(scc.button = new ImageButton(x, PADDING, width - buttonMargin, 20, 0, 0, 0, scc.cat.icon(), 64, 64, b -> filterSkills(scc.cat), (butt, stack, butx, buty) -> {
-                this.renderTooltip(stack, this.minecraft.font.split(scc.cat.description(), Math.max(this.width / 2 - 43, 170)), butx, buty);
-            }));
+            addRenderableWidget(scc.button = new ImageButton(x, PADDING, width - buttonMargin, 20, 0, 0, 0, scc.cat.icon(), 64, 64,
+                    b -> filterSkills(scc.cat),
+                    (butt, stack, butx, buty) -> this.renderTooltip(stack, this.minecraft.font.split(scc.cat.description(), Math.max(this.width / 2 - 43, 170)), butx, buty)
+                    , scc.getText()));
             x += width + buttonMargin;
         }
-        filterSkills(SkillCategories.none);
+        filterSkills(SkillColors.none);
         updateCache();
         setInitialFocus(skillList);
     }
@@ -308,7 +307,7 @@ public class SkillSelectionScreen extends Screen {
         this.selectedSkill = selected;
         if (!this.search.getValue().isEmpty())
             reloadSkills();
-        if (sort != SkillCategories.none)
+        if (sort != SkillColors.none)
             filterSkills(sort);
         updateCache();
     }

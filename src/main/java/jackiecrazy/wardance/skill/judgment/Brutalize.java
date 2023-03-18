@@ -14,15 +14,9 @@ import net.minecraftforge.eventbus.api.Event;
 import net.minecraftforge.eventbus.api.EventPriority;
 
 import javax.annotation.Nullable;
-import java.awt.*;
 import java.util.List;
 
 public class Brutalize extends Judgment {
-    @Override
-    public Color getColor() {
-        return Color.RED;
-    }
-
     @Override
     public float mightConsumption(LivingEntity caster) {
         return 2;

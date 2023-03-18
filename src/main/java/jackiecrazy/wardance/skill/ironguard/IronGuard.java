@@ -2,8 +2,8 @@ package jackiecrazy.wardance.skill.ironguard;
 
 import jackiecrazy.wardance.event.ParryEvent;
 import jackiecrazy.wardance.skill.Skill;
-import jackiecrazy.wardance.skill.SkillCategories;
-import jackiecrazy.wardance.skill.SkillCategory;
+import jackiecrazy.wardance.skill.SkillArchetypes;
+import jackiecrazy.wardance.skill.SkillArchetype;
 import jackiecrazy.wardance.skill.SkillData;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraftforge.eventbus.api.Event;
@@ -27,8 +27,8 @@ public abstract class IronGuard extends Skill {
 
     @Nonnull
     @Override
-    public SkillCategory getCategory() {
-        return SkillCategories.iron_guard;
+    public SkillArchetype getArchetype() {
+        return SkillArchetypes.iron_guard;
     }
 
     @Override

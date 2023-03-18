@@ -3,8 +3,8 @@ package jackiecrazy.wardance.skill.regenspirit;
 import jackiecrazy.footwork.capability.resources.CombatData;
 import jackiecrazy.footwork.event.RegenSpiritEvent;
 import jackiecrazy.wardance.skill.Skill;
-import jackiecrazy.wardance.skill.SkillCategories;
-import jackiecrazy.wardance.skill.SkillCategory;
+import jackiecrazy.wardance.skill.SkillArchetypes;
+import jackiecrazy.wardance.skill.SkillArchetype;
 import jackiecrazy.wardance.skill.SkillData;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.ai.attributes.AttributeModifier;
@@ -46,8 +46,8 @@ confidence: your spirit regeneration speed scales proportionally with how much s
 
     @Nonnull
     @Override
-    public SkillCategory getCategory() {
-        return SkillCategories.morale;
+    public SkillArchetype getArchetype() {
+        return SkillArchetypes.morale;
     }
 
     @Override

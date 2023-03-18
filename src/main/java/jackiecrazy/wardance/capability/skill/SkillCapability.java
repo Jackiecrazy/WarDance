@@ -5,7 +5,7 @@ import jackiecrazy.wardance.config.GeneralConfig;
 import jackiecrazy.wardance.networking.CombatChannel;
 import jackiecrazy.wardance.networking.SyncSkillPacket;
 import jackiecrazy.wardance.skill.Skill;
-import jackiecrazy.wardance.skill.SkillCategory;
+import jackiecrazy.wardance.skill.SkillArchetype;
 import jackiecrazy.wardance.skill.SkillData;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
@@ -124,9 +124,9 @@ public class SkillCapability implements ISkillCapability {
     }
 
     @Override
-    public Skill.STATE getCategoryState(SkillCategory skill) {
+    public Skill.STATE getCategoryState(SkillArchetype skill) {
         for (Skill s : new ArrayList<>(data.keySet())) {
-            if (s != null && s.getCategory().equals(skill)) return getSkillState(s);
+            if (s != null && s.getArchetype().equals(skill)) return getSkillState(s);
         }
         return Skill.STATE.INACTIVE;
     }
@@ -149,9 +149,9 @@ public class SkillCapability implements ISkillCapability {
     }
 
     @Override
-    public Skill getEquippedVariation(SkillCategory other) {
+    public Skill getEquippedVariation(SkillArchetype other) {
         for (Skill k : new ArrayList<>(equippedSkill))
-            if (k != null && k.getCategory() == other) return k;
+            if (k != null && k.getArchetype() == other) return k;
         return null;
     }
 

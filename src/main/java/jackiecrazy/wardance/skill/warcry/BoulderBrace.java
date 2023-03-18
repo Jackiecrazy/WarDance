@@ -4,10 +4,6 @@ import jackiecrazy.footwork.capability.resources.CombatData;
 import jackiecrazy.wardance.skill.SkillData;
 import net.minecraft.world.entity.LivingEntity;
 
-import java.awt.*;
-
-import jackiecrazy.wardance.skill.Skill.STATE;
-
 public class BoulderBrace extends WarCry {
     @Override
     protected void evoke(LivingEntity caster) {
@@ -23,11 +19,5 @@ public class BoulderBrace extends WarCry {
         }
         return super.equippedTick(caster, stats);
     }
-
-    @Override
-    public Color getColor() {
-        return Color.LIGHT_GRAY;
-    }
-
 
 }

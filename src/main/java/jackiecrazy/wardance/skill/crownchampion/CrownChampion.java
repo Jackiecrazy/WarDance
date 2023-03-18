@@ -97,8 +97,8 @@ elemental might: +1 burn/snowball/poison/drown damage to targets you have attack
 
     @Nonnull
     @Override
-    public SkillCategory getCategory() {
-        return SkillCategories.prowess;
+    public SkillArchetype getArchetype() {
+        return SkillArchetypes.prowess;
     }
 
     @Override

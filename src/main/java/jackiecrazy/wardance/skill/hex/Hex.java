@@ -11,7 +11,6 @@ import jackiecrazy.wardance.entity.FakeExplosion;
 import jackiecrazy.wardance.skill.*;
 import jackiecrazy.wardance.utils.CombatUtils;
 import jackiecrazy.wardance.utils.SkillUtils;
-import jackiecrazy.wardance.utils.WarColors;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.entity.Entity;
@@ -30,7 +29,6 @@ import net.minecraftforge.fml.common.Mod;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import java.awt.*;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
@@ -121,8 +119,8 @@ public class Hex extends Skill {
 
     @Nonnull
     @Override
-    public SkillCategory getCategory() {
-        return SkillCategories.hex;
+    public SkillArchetype getArchetype() {
+        return SkillArchetypes.hex;
     }
 
 
@@ -187,11 +185,6 @@ public class Hex extends Skill {
 
     public static class Gangrene extends Hex {
         @Override
-        public Color getColor() {
-            return WarColors.VIOLET;
-        }
-
-        @Override
         public boolean markTick(LivingEntity caster, LivingEntity target, SkillData sd) {
             sd.setArbitraryFloat(sd.getArbitraryFloat() - 1);
             return super.markTick(caster, target, sd);
@@ -203,19 +196,7 @@ public class Hex extends Skill {
         }
     }
 
-    public static class BlackMark extends Hex {
-        @Override
-        public Color getColor() {
-            return Color.LIGHT_GRAY;
-        }
-    }
-
     public static class CurseOfEchoes extends Hex {
-        @Override
-        public Color getColor() {
-            return Color.RED;
-        }
-
         @Override
         public boolean markTick(LivingEntity caster, LivingEntity target, SkillData sd) {
             sd.setArbitraryFloat(sd.getArbitraryFloat() - 1);
@@ -224,12 +205,6 @@ public class Hex extends Skill {
     }
 
     public static class Unravel extends Hex {
-
-        @Override
-        public Color getColor() {
-            return Color.ORANGE;
-        }
-
         @Override
         protected void mark(LivingEntity caster, LivingEntity target, float duration, float arbitrary) {
             ItemStack milk = new ItemStack(Items.MILK_BUCKET);

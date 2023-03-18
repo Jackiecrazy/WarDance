@@ -4,14 +4,7 @@ import jackiecrazy.wardance.utils.CombatUtils;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.LivingEntity;
 
-import java.awt.*;
-
 public class Berserk extends ShieldBash {
-    @Override
-    public Color getColor() {
-        return Color.ORANGE;
-    }
-
     @Override
     public void performEffect(LivingEntity caster, LivingEntity target) {
         super.performEffect(caster, target);

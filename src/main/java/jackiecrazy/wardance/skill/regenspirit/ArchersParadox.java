@@ -3,17 +3,13 @@ package jackiecrazy.wardance.skill.regenspirit;
 import jackiecrazy.footwork.capability.resources.CombatData;
 import jackiecrazy.footwork.event.EntityAwarenessEvent;
 import jackiecrazy.footwork.utils.StealthUtils;
-import jackiecrazy.wardance.skill.Skill;
-import jackiecrazy.wardance.skill.SkillCategories;
-import jackiecrazy.wardance.skill.SkillCategory;
-import jackiecrazy.wardance.skill.SkillData;
+import jackiecrazy.wardance.skill.*;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraftforge.event.entity.ProjectileImpactEvent;
 import net.minecraftforge.eventbus.api.Event;
 import net.minecraftforge.eventbus.api.EventPriority;
 
 import javax.annotation.Nonnull;
-import java.awt.*;
 import java.util.HashSet;
 
 public class ArchersParadox extends Skill {
@@ -25,11 +21,6 @@ speed demon: halve spirit cooldown on dodge, recover spirit on attack depending 
 lady luck: after casting a skill, have a 1+luck/5+luck chance to recover the spirit cost, stacking chance until it triggers.
 apathy: your max spirit is 4, your spirit instantly refills after cooldown, you are immune to burnout.
      */
-
-    @Override
-    public Color getColor() {
-        return Color.CYAN;
-    }
 
     @Override
     public HashSet<String> getTags(LivingEntity caster) {
@@ -45,8 +36,8 @@ apathy: your max spirit is 4, your spirit instantly refills after cooldown, you 
 
     @Nonnull
     @Override
-    public SkillCategory getCategory() {
-        return SkillCategories.morale;
+    public SkillArchetype getArchetype() {
+        return SkillArchetypes.morale;
     }
 
     @Override

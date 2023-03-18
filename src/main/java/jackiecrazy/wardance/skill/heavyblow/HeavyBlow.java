@@ -29,8 +29,8 @@ public class HeavyBlow extends Skill {
 
     @Nonnull
     @Override
-    public SkillCategory getCategory() {
-        return SkillCategories.heavy_blow;
+    public SkillArchetype getArchetype() {
+        return SkillArchetypes.heavy_blow;
     }
 
     @Override

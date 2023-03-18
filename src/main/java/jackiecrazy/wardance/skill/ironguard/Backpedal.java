@@ -4,16 +4,7 @@ import jackiecrazy.wardance.event.ParryEvent;
 import jackiecrazy.wardance.skill.SkillData;
 import net.minecraft.world.entity.LivingEntity;
 
-import java.awt.*;
-
-import jackiecrazy.wardance.skill.Skill.STATE;
-
 public class Backpedal extends IronGuard {
-    @Override
-    public Color getColor() {
-        return Color.CYAN;
-    }
-
     @Override
     protected void parry(LivingEntity caster, ParryEvent procPoint, SkillData stats, LivingEntity target, STATE state) {
         if (!caster.isOnGround() && state != STATE.COOLING) {

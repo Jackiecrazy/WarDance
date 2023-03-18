@@ -5,10 +5,7 @@ import jackiecrazy.footwork.capability.resources.ICombatCapability;
 import jackiecrazy.footwork.utils.GeneralUtils;
 import jackiecrazy.wardance.WarDance;
 import jackiecrazy.wardance.api.CombatDamageSource;
-import jackiecrazy.wardance.skill.Skill;
-import jackiecrazy.wardance.skill.SkillCategories;
-import jackiecrazy.wardance.skill.SkillCategory;
-import jackiecrazy.wardance.skill.SkillData;
+import jackiecrazy.wardance.skill.*;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.entity.LivingEntity;
@@ -18,7 +15,6 @@ import net.minecraftforge.eventbus.api.Event;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import java.awt.*;
 import java.util.HashSet;
 
 public class Kick extends Skill {
@@ -27,8 +23,8 @@ public class Kick extends Skill {
 
     @Nonnull
     @Override
-    public SkillCategory getCategory() {
-        return SkillCategories.kick;
+    public SkillArchetype getArchetype() {
+        return SkillArchetypes.kick;
     }
 
     @Override
@@ -83,11 +79,6 @@ public class Kick extends Skill {
     }
 
     public static class Backflip extends Kick {
-        @Override
-        public Color getColor() {
-            return Color.LIGHT_GRAY;
-        }
-
         protected void additionally(LivingEntity caster, LivingEntity target) {
             final Vec3 vec = caster.position().vectorTo(target.position());
             final Vec3 noy = new Vec3(vec.x, 0, vec.z).normalize().scale(-1);

@@ -40,8 +40,8 @@ public class WarCry extends Skill {
 
     @Nonnull
     @Override
-    public SkillCategory getCategory() {
-        return SkillCategories.war_cry;
+    public SkillArchetype getArchetype() {
+        return SkillArchetypes.war_cry;
     }
 
     protected int getDuration(float might) {

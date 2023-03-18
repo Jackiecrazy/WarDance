@@ -15,7 +15,7 @@ import jackiecrazy.wardance.event.ProjectileParryEvent;
 import jackiecrazy.wardance.networking.CombatChannel;
 import jackiecrazy.wardance.networking.UpdateAttackPacket;
 import jackiecrazy.wardance.skill.Skill;
-import jackiecrazy.wardance.skill.SkillCategories;
+import jackiecrazy.wardance.skill.SkillArchetypes;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvents;
@@ -248,7 +248,7 @@ public class CombatUtils {
 
     public static boolean isWeapon(@Nullable LivingEntity e, ItemStack stack) {
         if (stack == null) return false;
-        if (e != null && CasterData.getCap(e).getCategoryState(SkillCategories.shield_bash) == Skill.STATE.HOLSTERED)
+        if (e != null && CasterData.getCap(e).getCategoryState(SkillArchetypes.shield_bash) == Skill.STATE.HOLSTERED)
             return combatList.containsKey(stack.getItem());
         return combatList.containsKey(stack.getItem()) && !combatList.getOrDefault(stack.getItem(), DEFAULTMELEE).isShield;//stack.getItem() instanceof SwordItem || stack.getItem() instanceof AxeItem;
     }

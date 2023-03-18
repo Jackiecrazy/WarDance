@@ -26,7 +26,8 @@ import java.util.List;
 import java.util.*;
 
 public abstract class Skill {
-    public static final HashMap<SkillCategory, List<Skill>> colorMap = new HashMap<>();
+    public static final HashMap<SkillArchetype, List<Skill>> variationMap = new HashMap<>();
+    public static final HashMap<SkillCategory, List<Skill>> categoryMap = new HashMap<>();
     protected static final HashSet<String> none = new HashSet<>();
     protected static final HashSet<String> offensivePhysical = makeTag(SkillTags.offensive, SkillTags.physical);
     protected static final HashSet<String> defensivePhysical = makeTag(SkillTags.defensive, SkillTags.physical);
@@ -36,15 +37,23 @@ public abstract class Skill {
     protected static final HashSet<String> special = makeTag(SkillTags.special);
     protected static final HashSet<String> state = makeTag(SkillTags.state);
     private ResourceLocation registryName;
+    private SkillCategory category = SkillColors.none;
 
     public Skill() {
         //SkillCategory
-        List<Skill> insert = colorMap.get(getCategory());
+        List<Skill> insert = variationMap.get(getArchetype());
         if (insert == null) {
             insert = new ArrayList<>();
         }
         insert.add(this);
-        colorMap.put(this.getCategory(), insert);
+        variationMap.put(this.getArchetype(), insert);
+        //SkillCategory
+        insert = categoryMap.get(getCategory());
+        if (insert == null) {
+            insert = new ArrayList<>();
+        }
+        insert.add(this);
+        categoryMap.put(getCategory(), insert);
     }
 
     protected static HashSet<String> makeTag(String... stuff) {
@@ -63,7 +72,7 @@ public abstract class Skill {
 
     public boolean isFamily(Skill s) {
         if (s == null) return false;
-        return getCategory().equals(s.getCategory());
+        return getArchetype().equals(s.getArchetype());
     }
 
     public boolean isPassive(LivingEntity caster) {
@@ -71,8 +80,18 @@ public abstract class Skill {
     }
 
     @Nonnull
+    public SkillArchetype getArchetype() {
+        return SkillArchetypes.none;
+    }
+
+    @Nonnull
     public SkillCategory getCategory() {
-        return SkillCategories.none;
+        return category;
+    }
+
+    public Skill setCategory(SkillCategory sc) {
+        category = sc;
+        return this;
     }
 
     public boolean isSelectable(LivingEntity caster) {
@@ -143,11 +162,11 @@ public abstract class Skill {
     }
 
     public ResourceLocation icon() {
-        return getCategory().icon();
+        return getArchetype().icon();
     }
 
     public Color getColor() {
-        return Color.WHITE;
+        return getCategory().getColor();
     }
 
     public abstract HashSet<String> getTags(LivingEntity caster);//requires breath, bound, debuffing, healing, aoe, etc.

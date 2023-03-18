@@ -48,8 +48,8 @@ confidence: your spirit regeneration speed scales proportionally with how much s
 
     @Nonnull
     @Override
-    public SkillCategory getCategory() {
-        return SkillCategories.morale;
+    public SkillArchetype getArchetype() {
+        return SkillArchetypes.morale;
     }
 
     @Override

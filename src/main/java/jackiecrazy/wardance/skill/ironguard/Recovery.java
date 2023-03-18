@@ -4,8 +4,8 @@ import jackiecrazy.footwork.capability.resources.CombatData;
 import jackiecrazy.footwork.event.ConsumePostureEvent;
 import jackiecrazy.wardance.config.ResourceConfig;
 import jackiecrazy.wardance.skill.Skill;
-import jackiecrazy.wardance.skill.SkillCategories;
-import jackiecrazy.wardance.skill.SkillCategory;
+import jackiecrazy.wardance.skill.SkillArchetypes;
+import jackiecrazy.wardance.skill.SkillArchetype;
 import jackiecrazy.wardance.skill.SkillData;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraftforge.eventbus.api.Event;
@@ -35,8 +35,8 @@ public class Recovery extends Skill {
 
     @Nonnull
     @Override
-    public SkillCategory getCategory() {
-        return SkillCategories.iron_guard;
+    public SkillArchetype getArchetype() {
+        return SkillArchetypes.iron_guard;
     }
 
     @Override

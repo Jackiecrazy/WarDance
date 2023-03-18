@@ -36,8 +36,8 @@ public class ShieldBash extends Skill {
 
     @Nonnull
     @Override
-    public SkillCategory getCategory() {
-        return SkillCategories.shield_bash;
+    public SkillArchetype getArchetype() {
+        return SkillArchetypes.shield_bash;
     }
 
     @Override

@@ -36,8 +36,8 @@ pound of flesh: active skill. Consumes all your spirit, and until your spirit re
 
     @Nonnull
     @Override
-    public SkillCategory getCategory() {
-        return SkillCategories.memento_mori;
+    public SkillArchetype getArchetype() {
+        return SkillArchetypes.memento_mori;
     }
 
     @Override

@@ -57,13 +57,13 @@ public class DummySkillCap implements ISkillCapability {
     }
 
     @Override
-    public Skill.STATE getCategoryState(SkillCategory s) {
+    public Skill.STATE getCategoryState(SkillArchetype s) {
         return Skill.STATE.INACTIVE;
     }
 
     @Nullable
     @Override
-    public Skill getEquippedVariation(SkillCategory base) {
+    public Skill getEquippedVariation(SkillArchetype base) {
         return null;
     }
 

@@ -5,10 +5,9 @@ import jackiecrazy.footwork.event.AttackMightEvent;
 import jackiecrazy.footwork.event.DodgeEvent;
 import jackiecrazy.footwork.utils.GeneralUtils;
 import jackiecrazy.wardance.skill.Skill;
-import jackiecrazy.wardance.skill.SkillCategories;
-import jackiecrazy.wardance.skill.SkillCategory;
+import jackiecrazy.wardance.skill.SkillArchetypes;
+import jackiecrazy.wardance.skill.SkillArchetype;
 import jackiecrazy.wardance.skill.SkillData;
-import net.minecraft.util.Mth;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraftforge.eventbus.api.Event;
 import net.minecraftforge.eventbus.api.EventPriority;
@@ -46,8 +45,8 @@ apathy: your max spirit is 4, your spirit instantly refills after cooldown, you 
 
     @Nonnull
     @Override
-    public SkillCategory getCategory() {
-        return SkillCategories.morale;
+    public SkillArchetype getArchetype() {
+        return SkillArchetypes.morale;
     }
     @Override
     public void onProc(LivingEntity caster, Event procPoint, STATE state, SkillData stats, LivingEntity target) {

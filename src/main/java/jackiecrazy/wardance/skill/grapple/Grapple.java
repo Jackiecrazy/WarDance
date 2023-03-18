@@ -22,8 +22,8 @@ public class Grapple extends Skill {
 
     @Nonnull
     @Override
-    public SkillCategory getCategory() {
-        return SkillCategories.grapple;
+    public SkillArchetype getArchetype() {
+        return SkillArchetypes.grapple;
     }
 
     @Override

@@ -48,8 +48,8 @@ public class Feint extends Skill {
         if (seme instanceof LivingEntity) {
             final LivingEntity caster = (LivingEntity) seme;
             final ISkillCapability cap = CasterData.getCap(caster);
-            final Skill feint = cap.getEquippedVariation(SkillCategories.feint);
-            if (feint != null && Marks.getCap(uke).isMarked(SkillCategories.feint)) {
+            final Skill feint = cap.getEquippedVariation(SkillArchetypes.feint);
+            if (feint != null && Marks.getCap(uke).isMarked(SkillArchetypes.feint)) {
                 Marks.getCap(uke).getActiveMark(feint).ifPresent(a -> a.setArbitraryFloat(a.getArbitraryFloat() - 1));
                 if (cap.getEquippedSkills().contains(WarSkills.CAPRICIOUS_STRIKE.get()))
                     for (Skill s : cap.getEquippedSkills())
@@ -153,8 +153,8 @@ public class Feint extends Skill {
 
     @Nonnull
     @Override
-    public SkillCategory getCategory() {
-        return SkillCategories.feint;
+    public SkillArchetype getArchetype() {
+        return SkillArchetypes.feint;
     }
 
     public static class SpiritBomb extends Feint {
@@ -170,14 +170,6 @@ public class Feint extends Skill {
         public Color getColor() {
             return Color.LIGHT_GRAY;
         }
-    }
-
-    public static class CapriciousStrike extends Feint {
-        @Override
-        public Color getColor() {
-            return Color.orange;
-        }
-
     }
 
     public static class ScorpionSting extends Feint {

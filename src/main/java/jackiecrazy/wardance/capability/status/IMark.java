@@ -1,7 +1,7 @@
 package jackiecrazy.wardance.capability.status;
 
 import jackiecrazy.wardance.skill.Skill;
-import jackiecrazy.wardance.skill.SkillCategory;
+import jackiecrazy.wardance.skill.SkillArchetype;
 import jackiecrazy.wardance.skill.SkillData;
 import net.minecraft.nbt.CompoundTag;
 
@@ -21,7 +21,7 @@ public interface IMark {
 
     boolean isMarked(Skill skill);
 
-    boolean isMarked(SkillCategory skill);
+    boolean isMarked(SkillArchetype skill);
 
     CompoundTag write();
 
