@@ -3,11 +3,15 @@ package jackiecrazy.wardance.skill;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 
+import java.awt.*;
+
 public class SkillCategory {
     private final String category;
+    private final Color color;
 
-    public SkillCategory(String name) {
+    public SkillCategory(String name, Color c) {
         category = name;
+        color=c;
     }
 
     @Override
@@ -25,5 +29,9 @@ public class SkillCategory {
 
     public ResourceLocation icon() {
         return new ResourceLocation("wardance:textures/skill/" + category + ".png");
+    }
+
+    public Color getColor() {
+        return color;
     }
 }

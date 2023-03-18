@@ -2,7 +2,7 @@ package jackiecrazy.wardance.client.screen;
 
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.*;
-import jackiecrazy.wardance.skill.SkillCategory;
+import jackiecrazy.wardance.skill.Skill;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.GuiComponent;
 import net.minecraft.client.gui.components.ObjectSelectionList;
@@ -72,21 +72,21 @@ public class SkillListWidget extends ObjectSelectionList<SkillListWidget.Categor
     }
 
     public class CategoryEntry extends ObjectSelectionList.Entry<CategoryEntry> {
-        private final SkillCategory s;
+        private final Skill s;
         private SkillSelectionScreen parent;
 
-        public CategoryEntry(SkillCategory skill, SkillSelectionScreen sss) {
+        public CategoryEntry(Skill skill, SkillSelectionScreen sss) {
             s = skill;
             parent = sss;
         }
 
-        public SkillCategory getCategory() {
+        public Skill getSkill() {
             return s;
         }
 
         @Override
         public void render(PoseStack ms, int entryIdx, int top, int left, int entryWidth, int entryHeight, int mouseX, int mouseY, boolean something, float partialTicks) {
-            Component name = s.name();
+            Component name = s.getDisplayName(null);
             //ITextComponent version = new StringTextComponent(stripControlCodes(MavenVersionStringHelper.artifactVersionToString(modInfo.getVersion())));
             //VersionChecker.CheckResult vercheck = VersionChecker.getResult(modInfo);
             Font font = this.parent.getFontRenderer();
@@ -109,7 +109,7 @@ public class SkillListWidget extends ObjectSelectionList<SkillListWidget.Categor
 
         @Override
         public Component getNarration() {
-            return Component.translatable("narrator.select", s.name());
+            return Component.translatable("narrator.select", s.getDisplayName(null));
         }
     }
 }

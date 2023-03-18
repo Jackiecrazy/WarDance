@@ -82,12 +82,15 @@ public abstract class Skill {
     public CastStatus castingCheck(LivingEntity caster) {
         ISkillCapability cap = CasterData.getCap(caster);
         switch (cap.getSkillState(this)) {
-            case ACTIVE:
+            case ACTIVE -> {
                 return CastStatus.ACTIVE;
-            case COOLING:
+            }
+            case COOLING -> {
                 return CastStatus.COOLDOWN;
-            case HOLSTERED:
+            }
+            case HOLSTERED -> {
                 return CastStatus.HOLSTERED;
+            }
         }
         for (String s : getSoftIncompatibility(caster))
             if (cap.isTagActive(s))

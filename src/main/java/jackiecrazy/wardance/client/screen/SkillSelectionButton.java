@@ -46,7 +46,7 @@ public abstract class SkillSelectionButton extends ImageButton {
     }
 
     Skill getParentSelection() {
-        return parent.selectedVariation == null ? null : parent.selectedVariation.getSkill();
+        return parent.selectedSkill == null ? null : parent.selectedSkill.getSkill();
     }
 
     boolean isValidSelection() {
