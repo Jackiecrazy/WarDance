@@ -10,7 +10,6 @@ import net.minecraftforge.eventbus.api.Event;
 import net.minecraftforge.eventbus.api.EventPriority;
 
 import javax.annotation.Nonnull;
-import java.awt.*;
 import java.util.HashSet;
 import java.util.UUID;
 
@@ -29,11 +28,6 @@ confidence: your spirit regeneration speed scales proportionally with how much s
 
     private final HashSet<String> tag = makeTag("passive", ProcPoints.on_kill, ProcPoints.change_spirit);
     private final HashSet<String> no = none;
-
-    @Override
-    public Color getColor() {
-        return Color.RED;
-    }
 
     @Override
     public HashSet<String> getTags(LivingEntity caster) {

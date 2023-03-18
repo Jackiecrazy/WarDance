@@ -9,15 +9,7 @@ import net.minecraftforge.event.entity.player.CriticalHitEvent;
 import net.minecraftforge.eventbus.api.Event;
 import net.minecraftforge.eventbus.api.EventPriority;
 
-import java.awt.*;
-
-import jackiecrazy.wardance.skill.Skill.STATE;
-
 public class Stagger extends HeavyBlow {
-    @Override
-    public Color getColor() {
-        return Color.RED;
-    }
 
     @Override
     public void onProc(LivingEntity caster, Event procPoint, STATE state, SkillData stats, LivingEntity target) {

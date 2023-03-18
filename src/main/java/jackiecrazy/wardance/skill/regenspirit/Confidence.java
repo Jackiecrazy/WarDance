@@ -12,7 +12,6 @@ import net.minecraftforge.eventbus.api.Event;
 import net.minecraftforge.eventbus.api.EventPriority;
 
 import javax.annotation.Nonnull;
-import java.awt.*;
 import java.util.HashSet;
 import java.util.UUID;
 
@@ -27,11 +26,6 @@ speed demon: halve spirit cooldown on dodge, recover spirit on attack depending 
 lady luck: after casting a skill, have a 1+luck/5+luck chance to recover the spirit cost, stacking chance until it triggers.
 confidence: your spirit regeneration speed scales proportionally with how much spirit you have left, from 200% at full to 50% at empty
      */
-
-    @Override
-    public Color getColor() {
-        return Color.GREEN;
-    }
 
     @Override
     public HashSet<String> getTags(LivingEntity caster) {

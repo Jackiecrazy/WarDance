@@ -7,7 +7,6 @@ import jackiecrazy.wardance.capability.status.Marks;
 import jackiecrazy.wardance.skill.SkillData;
 import jackiecrazy.wardance.skill.WarSkills;
 import jackiecrazy.wardance.utils.SkillUtils;
-import jackiecrazy.wardance.utils.WarColors;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.LivingEntity;
@@ -17,7 +16,6 @@ import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 
 import javax.annotation.Nullable;
-import java.awt.*;
 import java.util.List;
 
 @Mod.EventBusSubscriber(modid = WarDance.MODID)
@@ -39,11 +37,6 @@ public class ViralDecay extends Judgment {
             enemy.hurt(VIRUS, 2);
             Marks.getCap(enemy).mark(new SkillData(WarSkills.VIRAL_DECAY.get(), 6).setArbitraryFloat(1).setCaster(caster));
         }
-    }
-
-    @Override
-    public Color getColor() {
-        return WarColors.VIOLET;
     }
 
     @Override

@@ -22,8 +22,8 @@ import net.minecraftforge.eventbus.api.EventPriority;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.awt.*;
-import java.util.List;
 import java.util.*;
+import java.util.List;
 
 public abstract class Skill {
     public static final HashMap<SkillArchetype, List<Skill>> variationMap = new HashMap<>();
@@ -40,20 +40,13 @@ public abstract class Skill {
     private SkillCategory category = SkillColors.none;
 
     public Skill() {
-        //SkillCategory
+        //archetype only, color is handled by category declaration
         List<Skill> insert = variationMap.get(getArchetype());
         if (insert == null) {
             insert = new ArrayList<>();
         }
         insert.add(this);
         variationMap.put(this.getArchetype(), insert);
-        //SkillCategory
-        insert = categoryMap.get(getCategory());
-        if (insert == null) {
-            insert = new ArrayList<>();
-        }
-        insert.add(this);
-        categoryMap.put(getCategory(), insert);
     }
 
     protected static HashSet<String> makeTag(String... stuff) {
@@ -91,6 +84,12 @@ public abstract class Skill {
 
     public Skill setCategory(SkillCategory sc) {
         category = sc;
+        List<Skill> insert = categoryMap.get(getCategory());
+        if (insert == null) {
+            insert = new ArrayList<>();
+        }
+        insert.add(this);
+        categoryMap.put(getCategory(), insert);
         return this;
     }
 
@@ -165,7 +164,7 @@ public abstract class Skill {
         return getArchetype().icon();
     }
 
-    public Color getColor() {
+    public Color getColor(){
         return getCategory().getColor();
     }
 

@@ -6,11 +6,12 @@ import java.awt.*;
 
 public class SkillColors {
     public static final SkillCategory
-    dominance = new SkillCategory("dominance",Color.RED),
-    resolution = new SkillCategory("resolution",WarColors.DARK_GREEN),
-    subterfuge = new SkillCategory("subterfuge", Color.LIGHT_GRAY),
-    fervor = new SkillCategory("fervor", Color.ORANGE),
-    perception = new SkillCategory("perception", Color.CYAN),
-    decay = new SkillCategory("decay", WarColors.VIOLET),
-    none = new SkillCategory("general", Color.WHITE);
+            red = new SkillCategory("dominance",Color.RED),
+    green = new SkillCategory("resolution",WarColors.DARK_GREEN),
+    gray = new SkillCategory("subterfuge", Color.LIGHT_GRAY),
+    orange = new SkillCategory("fervor", Color.ORANGE),
+    cyan = new SkillCategory("perception", Color.CYAN),
+    purple = new SkillCategory("decay", WarColors.VIOLET),
+    white = new SkillCategory("general", Color.WHITE),
+    none = new SkillCategory("none", Color.WHITE);
 }

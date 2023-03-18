@@ -8,7 +8,6 @@ import net.minecraftforge.eventbus.api.Event;
 import net.minecraftforge.eventbus.api.EventPriority;
 
 import javax.annotation.Nonnull;
-import java.awt.*;
 import java.util.Arrays;
 import java.util.HashSet;
 
@@ -62,11 +61,6 @@ public class HeavyBlow extends Skill {
 
 
     public static class Leverage extends HeavyBlow {
-
-        @Override
-        public Color getColor() {
-            return Color.CYAN;
-        }
 
         @Override
         protected void onCrit(CriticalHitEvent proc, SkillData stats, LivingEntity caster, LivingEntity target) {

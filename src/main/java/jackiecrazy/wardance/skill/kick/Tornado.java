@@ -12,7 +12,6 @@ import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraftforge.common.ForgeMod;
 
-import java.awt.*;
 import java.util.HashSet;
 
 public class Tornado extends Kick {
@@ -46,8 +45,4 @@ public class Tornado extends Kick {
         return boundCast(prev, from, to);
     }
 
-    @Override
-    public Color getColor() {
-        return Color.CYAN;
-    }
 }

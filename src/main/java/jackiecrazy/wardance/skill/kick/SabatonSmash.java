@@ -6,13 +6,7 @@ import jackiecrazy.wardance.skill.SkillData;
 import jackiecrazy.wardance.utils.CombatUtils;
 import net.minecraft.world.entity.LivingEntity;
 
-import java.awt.*;
-
 public class SabatonSmash extends Kick {
-    @Override
-    public Color getColor() {
-        return Color.RED;
-    }
 
     protected void additionally(LivingEntity caster, LivingEntity target) {
         CombatData.getCap(caster).consumePosture(1);

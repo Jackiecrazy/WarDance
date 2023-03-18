@@ -16,7 +16,6 @@ import net.minecraftforge.eventbus.api.Event;
 import net.minecraftforge.eventbus.api.EventPriority;
 
 import javax.annotation.Nonnull;
-import java.awt.*;
 import java.util.HashSet;
 
 public class ShieldBash extends Skill {
@@ -81,10 +80,6 @@ public class ShieldBash extends Skill {
     }
 
     public static class RimPunch extends ShieldBash {
-        @Override
-        public Color getColor() {
-            return Color.CYAN;
-        }
 
         protected void performEffect(LivingEntity caster, LivingEntity target) {
             target.addEffect(new MobEffectInstance(MobEffects.CONFUSION, 60));
@@ -95,10 +90,6 @@ public class ShieldBash extends Skill {
     }
 
     public static class FootSlam extends ShieldBash {
-        @Override
-        public Color getColor() {
-            return Color.LIGHT_GRAY;
-        }
 
         protected void performEffect(LivingEntity caster, LivingEntity target) {
             super.performEffect(caster, target);

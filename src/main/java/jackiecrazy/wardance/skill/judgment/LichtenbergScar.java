@@ -9,16 +9,9 @@ import net.minecraft.world.entity.LightningBolt;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.server.level.ServerLevel;
 
-import java.awt.*;
 import java.util.List;
 
-import jackiecrazy.wardance.skill.Skill.STATE;
-
 public class LichtenbergScar extends Judgment {
-    @Override
-    public Color getColor() {
-        return Color.CYAN;
-    }
 
     @Override
     public float mightConsumption(LivingEntity caster) {

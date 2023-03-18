@@ -3,16 +3,10 @@ package jackiecrazy.wardance.skill.shieldbash;
 import jackiecrazy.wardance.skill.ProcPoints;
 import net.minecraft.world.entity.LivingEntity;
 
-import java.awt.*;
 import java.util.HashSet;
 
 public class Overbear extends ShieldBash {
     private final HashSet<String> tag = makeTag("physical", "melee", "boundCast", "normalAttack", "countdown", ProcPoints.on_hurt, ProcPoints.recharge_parry);
-
-    @Override
-    public Color getColor() {
-        return Color.RED;
-    }
 
     @Override
     protected void performEffect(LivingEntity caster, LivingEntity target) {

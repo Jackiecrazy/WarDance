@@ -15,18 +15,10 @@ import net.minecraftforge.event.entity.living.LivingDamageEvent;
 import net.minecraftforge.eventbus.api.Event;
 
 import javax.annotation.Nullable;
-import java.awt.*;
 import java.util.UUID;
-
-import jackiecrazy.wardance.skill.Skill.STATE;
 
 public class Petrify extends Hex {
     private static final AttributeModifier SPEED = new AttributeModifier(UUID.fromString("d6bf16c6-b548-4253-a00c-2361d243bdb4"), "hex", -0.3, AttributeModifier.Operation.MULTIPLY_TOTAL);
-
-    @Override
-    public Color getColor() {
-        return Color.GREEN;
-    }
 
     @Override
     protected int duration() {

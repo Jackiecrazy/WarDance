@@ -11,7 +11,6 @@ import net.minecraftforge.event.entity.living.LivingAttackEvent;
 import net.minecraftforge.eventbus.api.Event;
 import net.minecraftforge.eventbus.api.EventPriority;
 
-import java.awt.*;
 import java.util.HashSet;
 import java.util.UUID;
 
@@ -55,11 +54,6 @@ public class WindScar extends WarCry {
                 stats.decrementDuration((float) (dist - realReach));
         }
         super.onProc(caster, procPoint, state, stats, target);
-    }
-
-    @Override
-    public Color getColor() {
-        return Color.GREEN;
     }
 
     protected boolean cast(LivingEntity caster, float duration) {

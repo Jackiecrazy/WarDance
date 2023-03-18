@@ -28,23 +28,18 @@ public class SkillListWidget extends ObjectSelectionList<SkillListWidget.Categor
     private static String stripControlCodes(String value) {return net.minecraft.util.StringUtil.stripColor(value);}
 
     @Override
-    protected int getScrollbarPosition() {
-        return this.listWidth + 7;
-    }
-
-    @Override
     public int getRowWidth() {
         return this.listWidth;
-    }
-
-    public void refreshList() {
-        this.clearEntries();
-        parent.buildSkillList(this::addEntry, mod -> new CategoryEntry(mod, this.parent));
     }
 
     @Override
     protected void renderBackground(PoseStack mStack) {
         fill(mStack, x0, y0, x1, y1, -16777216);
+    }
+
+    @Override
+    protected void renderDecorations(PoseStack matrixStack, int mouseX, int mouseY) {
+
     }
 
     @Override
@@ -67,8 +62,13 @@ public class SkillListWidget extends ObjectSelectionList<SkillListWidget.Categor
     }
 
     @Override
-    protected void renderDecorations(PoseStack matrixStack, int mouseX, int mouseY) {
+    protected int getScrollbarPosition() {
+        return this.listWidth + 7;
+    }
 
+    public void refreshList() {
+        this.clearEntries();
+        parent.buildSkillList(this::addEntry, mod -> new CategoryEntry(mod, this.parent));
     }
 
     public class CategoryEntry extends ObjectSelectionList.Entry<CategoryEntry> {
@@ -90,11 +90,14 @@ public class SkillListWidget extends ObjectSelectionList<SkillListWidget.Categor
             //ITextComponent version = new StringTextComponent(stripControlCodes(MavenVersionStringHelper.artifactVersionToString(modInfo.getVersion())));
             //VersionChecker.CheckResult vercheck = VersionChecker.getResult(modInfo);
             Font font = this.parent.getFontRenderer();
-            font.draw(ms, Language.getInstance().getVisualOrder(FormattedText.composite(font.substrByWidth(name, listWidth))), left + 3, top + 2, 0xFFFFFF);
+            font.draw(ms, Language.getInstance().getVisualOrder(FormattedText.composite(font.substrByWidth(name, listWidth))), left + 3, top + 2, s.getColor().getRGB());
             //font.draw(ms, LanguageMap.getInstance().getVisualOrder(ITextProperties.composite(font.substrByWidth(version, listWidth))), left + 3, top + 2 + font.FONT_HEIGHT, 0xCCCCCC);
             //lil' skill icon
             RenderSystem.setShaderTexture(0, s.icon());
-            RenderSystem.setShaderColor(1, 1, 1, 1);
+            float r = s.getColor().getRed() / 255f;
+            float g = s.getColor().getGreen() / 255f;
+            float b = s.getColor().getBlue() / 255f;
+            RenderSystem.setShaderColor(r, g, b, 1);
             ms.pushPose();
             GuiComponent.blit(ms, getLeft() + width - 12, top + entryHeight / 4, 0, 0, 8, 8, 8, 8);
             ms.popPose();

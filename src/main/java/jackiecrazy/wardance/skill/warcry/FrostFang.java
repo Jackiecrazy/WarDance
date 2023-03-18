@@ -13,7 +13,6 @@ import net.minecraftforge.event.entity.living.LivingAttackEvent;
 import net.minecraftforge.eventbus.api.Event;
 import net.minecraftforge.eventbus.api.EventPriority;
 
-import java.awt.*;
 import java.util.HashSet;
 import java.util.UUID;
 
@@ -33,11 +32,6 @@ public class FrostFang extends WarCry {
     @Override
     protected int getDuration(float might) {
         return (int) (might * 20);
-    }
-
-    @Override
-    public Color getColor() {
-        return Color.CYAN;
     }
 
     @Override

@@ -11,17 +11,11 @@ import net.minecraftforge.event.entity.living.LivingDamageEvent;
 import net.minecraftforge.event.entity.living.LivingHealEvent;
 import net.minecraftforge.eventbus.api.Event;
 
-import java.awt.*;
 import java.util.HashSet;
 
 public class DeathDenial extends MementoMori {
     private final HashSet<String> tag = makeTag("passive", ProcPoints.recharge_sleep, ProcPoints.change_heals, ProcPoints.change_parry_result, ProcPoints.on_being_damaged);
 
-
-    @Override
-    public Color getColor() {
-        return Color.ORANGE;
-    }
 
     @Override
     public void onProc(LivingEntity caster, Event procPoint, STATE state, SkillData stats, LivingEntity target) {

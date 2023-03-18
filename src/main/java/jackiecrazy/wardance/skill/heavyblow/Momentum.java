@@ -12,14 +12,8 @@ import net.minecraftforge.eventbus.api.Event;
 import net.minecraftforge.eventbus.api.EventPriority;
 import net.minecraftforge.fml.common.Mod;
 
-import java.awt.*;
-
 @Mod.EventBusSubscriber(modid = WarDance.MODID)
 public class Momentum extends HeavyBlow {
-    @Override
-    public Color getColor() {
-        return Color.ORANGE;
-    }
 
     @Override
     public void onProc(LivingEntity caster, Event procPoint, STATE state, SkillData stats, LivingEntity target) {

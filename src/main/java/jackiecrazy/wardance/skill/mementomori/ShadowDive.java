@@ -15,13 +15,7 @@ import net.minecraftforge.event.entity.living.LivingDamageEvent;
 import net.minecraftforge.eventbus.api.Event;
 import net.minecraftforge.eventbus.api.EventPriority;
 
-import java.awt.*;
-
 public class ShadowDive extends MementoMori {
-    @Override
-    public Color getColor() {
-        return Color.LIGHT_GRAY;
-    }
 
     @Override
     public void onProc(LivingEntity caster, Event procPoint, STATE state, SkillData stats, LivingEntity target) {

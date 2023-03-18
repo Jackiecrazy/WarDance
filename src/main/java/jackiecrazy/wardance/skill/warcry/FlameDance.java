@@ -18,7 +18,6 @@ import net.minecraftforge.eventbus.api.EventPriority;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 
-import java.awt.*;
 import java.util.HashSet;
 import java.util.UUID;
 
@@ -42,11 +41,6 @@ public class FlameDance extends WarCry {
     @Override
     protected int getDuration(float might) {
         return (int) (might * 2);
-    }
-
-    @Override
-    public Color getColor() {
-        return Color.RED;
     }
 
     @Override

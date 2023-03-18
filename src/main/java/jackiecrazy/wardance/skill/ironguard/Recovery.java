@@ -13,14 +13,9 @@ import net.minecraftforge.eventbus.api.EventPriority;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import java.awt.*;
 import java.util.HashSet;
 
 public class Recovery extends Skill {
-    @Override
-    public Color getColor() {
-        return Color.GREEN;
-    }
 
     @Override
     public HashSet<String> getTags(LivingEntity caster) {

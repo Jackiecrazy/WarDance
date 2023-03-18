@@ -14,7 +14,6 @@ import net.minecraftforge.eventbus.api.EventPriority;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 
-import java.awt.*;
 import java.util.HashSet;
 
 @Mod.EventBusSubscriber(modid = WarDance.MODID)
@@ -37,11 +36,6 @@ public class Timberfall extends WarCry {
             stats.decrementDuration();
         }
         super.onProc(caster, procPoint, state, stats, target);
-    }
-
-    @Override
-    public Color getColor() {
-        return Color.orange;
     }
 
     @Override

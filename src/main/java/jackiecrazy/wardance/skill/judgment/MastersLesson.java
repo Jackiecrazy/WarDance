@@ -10,16 +10,10 @@ import net.minecraftforge.event.entity.living.LivingAttackEvent;
 import net.minecraftforge.eventbus.api.Event;
 import net.minecraftforge.eventbus.api.EventPriority;
 
-import java.awt.*;
 import java.util.HashSet;
 
 public class MastersLesson extends Judgment {
     private final HashSet<String> tag = makeTag("physical", ProcPoints.on_hurt, ProcPoints.normal_attack, ProcPoints.on_stagger, ProcPoints.on_cast, "melee", "execution");
-
-    @Override
-    public Color getColor() {
-        return Color.GREEN;
-    }
 
     @Override
     public void onProc(LivingEntity caster, Event procPoint, STATE state, SkillData stats, LivingEntity target) {

@@ -1,5 +1,6 @@
 package jackiecrazy.wardance.skill;
 
+import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 
@@ -11,7 +12,7 @@ public class SkillCategory {
 
     public SkillCategory(String name, Color c) {
         category = name;
-        color=c;
+        color = c;
     }
 
     @Override
@@ -20,15 +21,15 @@ public class SkillCategory {
     }
 
     public Component name() {
-        return Component.translatable("category." + category + ".name");
+        return Component.translatable("wardance:category." + category + ".name").withStyle(ChatFormatting.BOLD);
     }
 
     public Component description() {
-        return Component.translatable("category." + category + ".desc");
+        return Component.translatable("wardance:category." + category + ".desc").withStyle(ChatFormatting.ITALIC);
     }
 
     public ResourceLocation icon() {
-        return new ResourceLocation("wardance:textures/skill/" + category + ".png");
+        return new ResourceLocation("wardance:textures/skill/categories/" + category + ".png");
     }
 
     public Color getColor() {

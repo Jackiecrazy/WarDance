@@ -9,17 +9,11 @@ import net.minecraftforge.event.entity.player.CriticalHitEvent;
 import net.minecraftforge.eventbus.api.Event;
 import net.minecraftforge.eventbus.api.EventPriority;
 
-import java.awt.*;
 import java.util.HashSet;
 
 public class Poise extends HeavyBlow {
     private final HashSet<String> tag = makeTag("physical", "disableShield", ProcPoints.melee, ProcPoints.on_hurt, "boundCast", ProcPoints.normal_attack, ProcPoints.countdown, ProcPoints.modify_crit, ProcPoints.recharge_normal, ProcPoints.on_being_parried, ProcPoints.on_parry);
     private final HashSet<String> no = makeTag("normalAttack", "noCrit");
-
-    @Override
-    public Color getColor() {
-        return Color.GREEN;
-    }
 
     @Override
     protected void onCrit(CriticalHitEvent proc, SkillData stats, LivingEntity caster, LivingEntity target) {

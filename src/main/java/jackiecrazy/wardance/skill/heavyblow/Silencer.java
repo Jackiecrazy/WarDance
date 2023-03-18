@@ -17,7 +17,6 @@ import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 
 import javax.annotation.Nullable;
-import java.awt.*;
 import java.util.HashSet;
 
 @Mod.EventBusSubscriber(modid = WarDance.MODID)
@@ -29,11 +28,6 @@ public class Silencer extends HeavyBlow {
         if (e.getSource().getEntity() instanceof LivingEntity elb && Marks.getCap(e.getEntity()).isMarked(WarSkills.SILENCER.get())) {
             CasterData.getCap(elb).changeSkillState(WarSkills.SILENCER.get(), STATE.INACTIVE);
         }
-    }
-
-    @Override
-    public Color getColor() {
-        return Color.LIGHT_GRAY;
     }
 
     @Override

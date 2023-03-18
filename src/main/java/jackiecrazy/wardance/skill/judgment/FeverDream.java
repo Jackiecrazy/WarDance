@@ -13,14 +13,9 @@ import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.effect.MobEffects;
 
-import java.awt.*;
 import java.util.List;
 
 public class FeverDream extends Judgment {
-    @Override
-    public Color getColor() {
-        return Color.LIGHT_GRAY;
-    }
 
     @Override
     protected void performEffect(LivingEntity caster, LivingEntity target, int stack, SkillData sd) {

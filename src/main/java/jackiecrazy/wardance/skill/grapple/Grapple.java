@@ -13,7 +13,6 @@ import net.minecraftforge.eventbus.api.Event;
 import net.minecraftforge.eventbus.api.EventPriority;
 
 import javax.annotation.Nonnull;
-import java.awt.*;
 import java.util.HashSet;
 
 public class Grapple extends Skill {
@@ -78,10 +77,6 @@ public class Grapple extends Skill {
     }
 
     public static class ReverseGrip extends Grapple {
-        @Override
-        public Color getColor() {
-            return Color.LIGHT_GRAY;
-        }
 
         @Override
         protected boolean isUnarmed(LivingEntity caster) {
@@ -99,10 +94,6 @@ public class Grapple extends Skill {
     }
 
     public static class Suplex extends Grapple {
-        @Override
-        public Color getColor() {
-            return Color.RED;
-        }
 
         protected void performEffect(LivingEntity caster, LivingEntity target) {
             caster.level.playSound(null, target.getX(), target.getY(), target.getZ(), SoundEvents.ZOMBIE_ATTACK_IRON_DOOR, SoundSource.PLAYERS, 0.3f + WarDance.rand.nextFloat() * 0.5f, 0.75f + WarDance.rand.nextFloat() * 0.5f);

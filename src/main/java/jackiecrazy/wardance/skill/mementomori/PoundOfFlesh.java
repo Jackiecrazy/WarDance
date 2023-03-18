@@ -11,16 +11,10 @@ import net.minecraftforge.event.entity.living.LivingHurtEvent;
 import net.minecraftforge.eventbus.api.Event;
 import net.minecraftforge.eventbus.api.EventPriority;
 
-import java.awt.*;
 import java.util.HashSet;
 
 public class PoundOfFlesh extends MementoMori {
     private final HashSet<String> tag = makeTag(ProcPoints.melee, ProcPoints.on_hurt, ProcPoints.state, ProcPoints.on_being_parried);
-
-    @Override
-    public Color getColor() {
-        return Color.RED;
-    }
 
 
     @Override

@@ -13,7 +13,6 @@ import jackiecrazy.wardance.capability.status.Marks;
 import jackiecrazy.wardance.skill.*;
 import jackiecrazy.wardance.utils.CombatUtils;
 import jackiecrazy.wardance.utils.SkillUtils;
-import jackiecrazy.wardance.utils.WarColors;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.effect.MobEffects;
@@ -30,7 +29,6 @@ import net.minecraftforge.fml.common.Mod;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import java.awt.*;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.UUID;
@@ -157,29 +155,9 @@ public class Feint extends Skill {
         return SkillArchetypes.feint;
     }
 
-    public static class SpiritBomb extends Feint {
-        @Override
-        public Color getColor() {
-            return Color.CYAN;
-        }
-
-    }
-
-    public static class SmirkingShadow extends Feint {
-        @Override
-        public Color getColor() {
-            return Color.LIGHT_GRAY;
-        }
-    }
-
     public static class ScorpionSting extends Feint {
         private final HashSet<String> tag = makeTag("physical", "disableShield", "noDamage", ProcPoints.melee, "boundCast", ProcPoints.on_hurt, ProcPoints.countdown, ProcPoints.recharge_normal, ProcPoints.change_parry_result);
         private final HashSet<String> no = makeTag("normalAttack");
-
-        @Override
-        public Color getColor() {
-            return WarColors.VIOLET;
-        }
 
         @Override
         public SkillData onMarked(LivingEntity caster, LivingEntity target, SkillData sd, @Nullable SkillData existing) {
@@ -194,11 +172,6 @@ public class Feint extends Skill {
 
     public static class UpperHand extends Feint {
         static final UUID UPPER = UUID.fromString("67fe7ef6-a398-4c62-9fb1-42edaa80e7c1");
-
-        @Override
-        public Color getColor() {
-            return Color.GREEN;
-        }
 
 
         @Override

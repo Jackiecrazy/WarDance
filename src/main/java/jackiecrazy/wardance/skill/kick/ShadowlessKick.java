@@ -13,14 +13,7 @@ import net.minecraft.util.Mth;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 
-import java.awt.*;
-
 public class ShadowlessKick extends Kick {
-
-    @Override
-    public Color getColor() {
-        return Color.ORANGE;
-    }
 
     @Override
     public float spiritConsumption(LivingEntity caster) {

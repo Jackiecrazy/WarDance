@@ -16,7 +16,6 @@ import net.minecraftforge.eventbus.api.Event;
 import net.minecraftforge.eventbus.api.EventPriority;
 
 import javax.annotation.Nonnull;
-import java.awt.*;
 import java.util.HashSet;
 import java.util.UUID;
 
@@ -81,10 +80,6 @@ pound of flesh: active skill. Consumes all your spirit, and until your spirit re
     }
 
     public static class RapidClotting extends MementoMori {
-        @Override
-        public Color getColor() {
-            return Color.GREEN;
-        }
 
         @Override
         public boolean equippedTick(LivingEntity caster, SkillData d) {
@@ -98,11 +93,6 @@ pound of flesh: active skill. Consumes all your spirit, and until your spirit re
     public static class StaticDischarge extends MementoMori {
         //If you have taken over 1 point of damage, create a shockwave that deals electric damage and majorly knocks back nearby entities
         //You can accumulate up to (max health/5) charge.
-
-        @Override
-        public Color getColor() {
-            return Color.CYAN;
-        }
 
         @Override
         public void onProc(LivingEntity caster, Event procPoint, STATE state, SkillData stats, LivingEntity target) {

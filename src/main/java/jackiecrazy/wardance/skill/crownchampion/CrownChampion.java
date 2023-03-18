@@ -12,7 +12,6 @@ import jackiecrazy.wardance.capability.status.Marks;
 import jackiecrazy.wardance.skill.*;
 import jackiecrazy.wardance.utils.CombatUtils;
 import jackiecrazy.wardance.utils.SkillUtils;
-import jackiecrazy.wardance.utils.WarColors;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.Entity;
@@ -30,7 +29,6 @@ import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 
 import javax.annotation.Nonnull;
-import java.awt.*;
 import java.util.HashSet;
 import java.util.UUID;
 
@@ -158,17 +156,9 @@ elemental might: +1 burn/snowball/poison/drown damage to targets you have attack
             return super.equippedTick(caster, stats);
         }
 
-        @Override
-        public Color getColor() {
-            return Color.LIGHT_GRAY;
-        }
     }
 
     public static class VengefulMight extends CrownChampion {
-        @Override
-        public Color getColor() {
-            return Color.RED;
-        }
 
         @Override
         public void onProc(LivingEntity caster, Event procPoint, STATE state, SkillData stats, LivingEntity target) {
@@ -187,10 +177,6 @@ elemental might: +1 burn/snowball/poison/drown damage to targets you have attack
     }
 
     public static class PridefulMight extends CrownChampion {
-        @Override
-        public Color getColor() {
-            return Color.ORANGE;
-        }
 
         @Override
         public void onProc(LivingEntity caster, Event procPoint, STATE state, SkillData pd, LivingEntity target) {
@@ -212,10 +198,6 @@ elemental might: +1 burn/snowball/poison/drown damage to targets you have attack
                 ((LivingAttackEvent) procPoint).getEntity().addEffect(new MobEffectInstance(FootworkEffects.VULNERABLE.get(), 100, (int) (CombatData.getCap(caster).getMight() / 3)));
         }
 
-        @Override
-        public Color getColor() {
-            return WarColors.VIOLET;
-        }
     }
 
 

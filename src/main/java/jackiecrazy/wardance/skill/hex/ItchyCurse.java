@@ -10,15 +10,7 @@ import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.ai.attributes.AttributeInstance;
 import net.minecraft.world.InteractionHand;
 
-import java.awt.*;
-
-import jackiecrazy.wardance.skill.Skill.STATE;
-
 public class ItchyCurse extends Hex {
-    @Override
-    public Color getColor() {
-        return Color.CYAN;
-    }
 
     @Override
     public boolean markTick(LivingEntity caster, LivingEntity target, SkillData sd) {

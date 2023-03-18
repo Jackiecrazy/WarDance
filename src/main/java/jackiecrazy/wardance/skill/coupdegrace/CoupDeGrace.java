@@ -27,7 +27,6 @@ import net.minecraftforge.eventbus.api.Event;
 import net.minecraftforge.eventbus.api.EventPriority;
 
 import javax.annotation.Nonnull;
-import java.awt.*;
 import java.util.Arrays;
 import java.util.HashSet;
 
@@ -128,13 +127,6 @@ public class CoupDeGrace extends Skill {
     }
 
     public static class Rupture extends CoupDeGrace {
-        //detonate the entire spirit bar and leech half. Size of explosion is determined by size of mob, damage is determined by spirit.
-        //danse macabre: proc percentage scales with combo
-        //reaping: deal weapon damage*2+5% max health in a wide area. Enemies below that line take true damage, and skill refreshes on any death
-        @Override
-        public Color getColor() {
-            return Color.CYAN;
-        }
 
         @Override
         protected void deathCheck(LivingEntity caster, LivingEntity target, float amount) {
@@ -144,10 +136,6 @@ public class CoupDeGrace extends Skill {
     }
 
     public static class DanseMacabre extends CoupDeGrace {
-        @Override
-        public Color getColor() {
-            return Color.LIGHT_GRAY;
-        }
 
         @Override
         protected float getDamage(LivingEntity caster, LivingEntity target) {
@@ -162,11 +150,6 @@ public class CoupDeGrace extends Skill {
         @Override
         public HashSet<String> getTags(LivingEntity caster) {
             return special;
-        }
-
-        @Override
-        public Color getColor() {
-            return Color.RED;
         }
 
         @Override
@@ -214,10 +197,6 @@ public class CoupDeGrace extends Skill {
     }
 
     public static class Reinvigorate extends CoupDeGrace {
-        @Override
-        public Color getColor() {
-            return Color.GREEN;
-        }
 
         protected void deathCheck(LivingEntity caster, LivingEntity target, float amount) {
             final ICombatCapability cap = CombatData.getCap(caster);
@@ -225,10 +204,6 @@ public class CoupDeGrace extends Skill {
     }
 
     public static class Frenzy extends CoupDeGrace {
-        @Override
-        public Color getColor() {
-            return Color.ORANGE;
-        }
 
         protected void deathCheck(LivingEntity caster, LivingEntity target, float amount) {
             ISkillCapability isc = CasterData.getCap(caster);

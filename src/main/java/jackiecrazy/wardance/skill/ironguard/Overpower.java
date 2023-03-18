@@ -7,13 +7,7 @@ import jackiecrazy.wardance.skill.SkillData;
 import jackiecrazy.wardance.utils.CombatUtils;
 import net.minecraft.world.entity.LivingEntity;
 
-import java.awt.*;
-
 public class Overpower extends IronGuard {
-    @Override
-    public Color getColor() {
-        return Color.RED;
-    }
 
     @Override
     protected void parry(LivingEntity caster, ParryEvent procPoint, SkillData stats, LivingEntity target, STATE state) {

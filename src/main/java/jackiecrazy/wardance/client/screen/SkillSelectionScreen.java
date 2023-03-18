@@ -7,7 +7,10 @@ import jackiecrazy.wardance.WarDance;
 import jackiecrazy.wardance.capability.skill.CasterData;
 import jackiecrazy.wardance.networking.CombatChannel;
 import jackiecrazy.wardance.networking.UpdateSkillSelectionPacket;
-import jackiecrazy.wardance.skill.*;
+import jackiecrazy.wardance.skill.Skill;
+import jackiecrazy.wardance.skill.SkillArchetype;
+import jackiecrazy.wardance.skill.SkillCategory;
+import jackiecrazy.wardance.skill.SkillColors;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
@@ -48,7 +51,7 @@ public class SkillSelectionScreen extends Screen {
     private final List<Skill> unsortedBases;
     private final SkillSliceButton[] skillPie = new SkillSliceButton[5];
     private final PassiveButton[] passives = new PassiveButton[5];
-    private final int numButtons = Skill.variationMap.size();
+    private final int numButtons = Skill.categoryMap.size();
     public SkillListWidget.CategoryEntry selectedSkill = null;
     //public VariationListWidget.VariationEntry selectedVariation = null;
     private SkillListWidget skillList;
@@ -56,7 +59,7 @@ public class SkillSelectionScreen extends Screen {
     private SkillSelectionScreen.InfoPanel skillInfo;
     private int listWidth;
     private List<Skill> bases;
-    private int buttonMargin = 1;
+    private int buttonMargin = 4;
 
     private Button doneButton;
     private String lastFilterText = "";
@@ -70,7 +73,7 @@ public class SkillSelectionScreen extends Screen {
     public SkillSelectionScreen() {
         super(Component.translatable("wardance.skillselection.title"));
         bases = new ArrayList<>();
-        for (List<Skill> list : Skill.variationMap.values()) {
+        for (List<Skill> list : Skill.categoryMap.values()) {
             this.bases.addAll(list);
         }
 
@@ -148,9 +151,9 @@ public class SkillSelectionScreen extends Screen {
 //        });
 //    }
 
-    private void reloadSkills() {//(mi.getCategory() == displayedCategory || displayedCategory == SkillCategories.none) &&
+    private void reloadSkills() {//
         this.bases = this.unsortedBases.stream().
-                filter(mi -> StringUtils.toLowerCase(stripControlCodes(mi.getDisplayName(null).getString())).contains(StringUtils.toLowerCase(search.getValue()))).collect(Collectors.toList());
+                filter(mi -> (mi.getCategory() == displayedCategory || displayedCategory == SkillColors.none) && StringUtils.toLowerCase(stripControlCodes(mi.getDisplayName(null).getString())).contains(StringUtils.toLowerCase(search.getValue()))).collect(Collectors.toList());
         lastFilterText = search.getValue();
     }
 
@@ -209,8 +212,12 @@ public class SkillSelectionScreen extends Screen {
 
     @Override
     public void init() {
+        filters.clear();
+        filters.add(new SkillCategorySort(SkillColors.none));
+        filters.add(new SkillCategorySort(SkillColors.white));
         for (SkillCategory sc : Skill.categoryMap.keySet()) {
-            filters.add(new SkillCategorySort(sc));
+            if (sc != SkillColors.none && sc != SkillColors.white)
+                filters.add(new SkillCategorySort(sc));
         }
         for (Skill mod : bases) {
             listWidth = Math.max(listWidth, getFontRenderer().width(mod.getDisplayName(null).getString()) + 20);
@@ -230,12 +237,12 @@ public class SkillSelectionScreen extends Screen {
         //y -= 14 + PADDING + 1;
         search = new EditBox(getFontRenderer(), PADDING + 1, y, listWidth - 2, 14, Component.translatable("fml.menu.mods.search"));
 
-        int fullButtonHeight = PADDING + 20 + PADDING;
+        int fullButtonHeight = PADDING + 16 + PADDING;
         this.skillList = new SkillListWidget(this, listWidth, fullButtonHeight, search.y - getFontRenderer().lineHeight - PADDING);
         this.skillList.setLeftPos(PADDING);
 
         int split = (this.height - PADDING * 2 - fullButtonHeight) * 2 / 3;
-        this.skillInfo = new InfoPanel(this.minecraft, infoWidth, split, PADDING);
+        this.skillInfo = new InfoPanel(this.minecraft, infoWidth, split, fullButtonHeight);
 //        this.variationList = new VariationListWidget(this, infoWidth - 9, split + PADDING * 2, search.y - getFontRenderer().lineHeight - PADDING);
 //        this.variationList.setLeftPos(PADDING * 2 + listWidth);
 
@@ -262,9 +269,12 @@ public class SkillSelectionScreen extends Screen {
         final int width = listWidth / numButtons;
         int x = PADDING;
         for (SkillCategorySort scc : filters) {
-            addRenderableWidget(scc.button = new ImageButton(x, PADDING, width - buttonMargin, 20, 0, 0, 0, scc.cat.icon(), 64, 64,
+            ArrayList<FormattedCharSequence> display =new ArrayList<>();
+            display.addAll(this.minecraft.font.split(scc.cat.name(), Math.max(this.width / 2 - 43, 170)));
+            display.addAll(this.minecraft.font.split(scc.cat.description(), Math.max(this.width / 2 - 43, 170)));
+            addRenderableWidget(scc.button = new ImageButton(x, PADDING, width, 17, 0, 0, 0, scc.cat.icon(), 16, 16,
                     b -> filterSkills(scc.cat),
-                    (butt, stack, butx, buty) -> this.renderTooltip(stack, this.minecraft.font.split(scc.cat.description(), Math.max(this.width / 2 - 43, 170)), butx, buty)
+                    (butt, stack, butx, buty) -> this.renderTooltip(stack, display, butx, buty)
                     , scc.getText()));
             x += width + buttonMargin;
         }
