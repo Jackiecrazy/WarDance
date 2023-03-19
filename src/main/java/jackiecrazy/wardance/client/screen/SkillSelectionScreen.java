@@ -22,12 +22,13 @@ import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.renderer.GameRenderer;
 import net.minecraft.locale.Language;
 import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.HoverEvent;
+import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.network.chat.Style;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.FormattedCharSequence;
 import net.minecraftforge.client.gui.ScreenUtils;
 import net.minecraftforge.client.gui.widget.ScrollPanel;
-import net.minecraftforge.common.ForgeHooks;
 import net.minecraftforge.fml.loading.StringUtils;
 
 import javax.annotation.Nonnull;
@@ -37,6 +38,8 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.function.Consumer;
 import java.util.function.Function;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 public class SkillSelectionScreen extends Screen {
@@ -216,8 +219,8 @@ public class SkillSelectionScreen extends Screen {
                 filters.add(new SkillCategorySort(sc));
         }
         filters.sort(SORTER);
-        filters.add(0,new SkillCategorySort(SkillColors.white));
-        filters.add(0,new SkillCategorySort(SkillColors.none));
+        filters.add(0, new SkillCategorySort(SkillColors.white));
+        filters.add(0, new SkillCategorySort(SkillColors.none));
 
         for (Skill mod : bases) {
             listWidth = Math.max(listWidth, getFontRenderer().width(mod.getDisplayName(null).getString()) + 20);
@@ -348,6 +351,7 @@ public class SkillSelectionScreen extends Screen {
         List<String> lines = new ArrayList<>();
 
         lines.add(ChatFormatting.BOLD + "" + ChatFormatting.UNDERLINE + selectedSkill.getDisplayName(null).getString() + ChatFormatting.RESET + "\n");
+        lines.add(selectedSkill.getArchetype().description().getString());
         lines.add(selectedSkill.description().getString());
 //        if (selectedVariation != null) {
 //            //lines.add(String.valueOf(selectedVariation.getSkill().getColor().getRGB()));
@@ -379,11 +383,69 @@ public class SkillSelectionScreen extends Screen {
     }
 
     class InfoPanel extends ScrollPanel {
+        static final Pattern TOOLTIP_PATTERN = Pattern.compile(
+                //         schema                          ipv4            OR        namespace                 port     path         ends
+                //   |-----------------|        |-------------------------|  |-------------------------|    |---------| |--|   |---------------|
+                "\\{[^}]*\\}",
+                Pattern.CASE_INSENSITIVE);
         private ResourceLocation logoPath;
         private List<FormattedCharSequence> lines = Collections.emptyList();
 
         InfoPanel(Minecraft mcIn, int widthIn, int heightIn, int topIn) {
             super(mcIn, widthIn, heightIn, topIn, skillList.getRight() + PADDING);
+        }
+
+        public static Component tooltipText(String string) {
+            MutableComponent ichat = null;
+            Matcher matcher = TOOLTIP_PATTERN.matcher(string);
+            int lastEnd = 0;
+
+            // Find all tooltips
+            while (matcher.find()) {
+                int start = matcher.start();
+                int end = matcher.end();
+                String literal = string.substring(lastEnd, start);
+                if (literal.length() > 0) {
+                    if (ichat == null)
+                        ichat = Component.literal(literal);
+                    else
+                        ichat.append(literal);
+                }
+                lastEnd = end;
+
+                String part = string.substring(start + 1, end - 1);
+                String[] parted = part.split(";");
+                String display = parted[0].trim();
+                String[] rawFormatting = parted[1].trim().split(",");
+                String tooltip = "";
+                String[] additionalData = {""};
+                if (parted.length > 2) tooltip = parted[2].trim();
+                if (parted.length > 3) additionalData = parted[3].trim().split(",");
+                ArrayList<ChatFormatting> formatting = new ArrayList<>();
+                for (String raw : rawFormatting) {
+                    ChatFormatting cf = ChatFormatting.getByName(raw.trim());
+                    if (cf != null) formatting.add(cf);
+                }
+                ChatFormatting[] fff = new ChatFormatting[formatting.size()];
+                MutableComponent tooltipText = Component.literal(display);
+                Style style = tooltipText.getStyle().withBold(true);
+                if (!formatting.isEmpty())
+                    style = style.applyFormats(formatting.toArray(fff));
+                if (!tooltip.isEmpty())
+                    style = style.withHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, Component.translatable(tooltip, additionalData)));
+                tooltipText.setStyle(style);
+                if (ichat == null)
+                    ichat = Component.literal("");
+                ichat.append(tooltipText);
+            }
+
+            // Append the rest of the message.
+            String end = string.substring(lastEnd);
+            if (ichat == null)
+                ichat = Component.literal(end);
+            else if (end.length() > 0)
+                ichat.append(Component.literal(string.substring(lastEnd)));
+            return ichat;
         }
 
         void setInfo(List<String> lines, ResourceLocation logoPath) {
@@ -406,10 +468,10 @@ public class SkillSelectionScreen extends Screen {
                     continue;
                 }
 
-                Component chat = ForgeHooks.newChatWithLinks(line, false);
+                Component chat = tooltipText(line);
                 int maxTextLength = this.width - 12;
                 if (maxTextLength >= 0) {
-                    ret.addAll(Language.getInstance().getVisualOrder(font.getSplitter().splitLines(chat, maxTextLength, Style.EMPTY)));
+                    ret.addAll(Language.getInstance().getVisualOrder(font.getSplitter().splitLines(chat, maxTextLength, chat.getStyle())));
                 }
             }
             return ret;
@@ -422,6 +484,13 @@ public class SkillSelectionScreen extends Screen {
             if (height < this.bottom - this.top - 8)
                 height = this.bottom - this.top - 8;
             return height;
+        }
+
+        @Override
+        protected void drawBackground(PoseStack matrix, Tesselator tess, float partialTick) {
+            fill(matrix, left, top, right, bottom, -16777216);
+            //this.drawGradientRect(matrix, this.left+1, this.top+1, this.right-1, this.bottom-1, 0xC0101010, 0xC0101010);
+            //super.drawBackground(matrix, tess, partialTick);
         }
 
         @Override
@@ -446,11 +515,6 @@ public class SkillSelectionScreen extends Screen {
                 }
                 relativeY += font.lineHeight;
             }
-
-            final Style component = findTextLine(mouseX, mouseY);
-            if (component != null) {
-                SkillSelectionScreen.this.renderComponentHoverEffect(mStack, component, mouseX, mouseY);
-            }
         }
 
         @Override
@@ -468,8 +532,19 @@ public class SkillSelectionScreen extends Screen {
             return super.mouseClicked(mouseX, mouseY, button);
         }
 
+        @Override
+        public void render(PoseStack matrix, int mouseX, int mouseY, float partialTick) {
+            super.render(matrix, mouseX, mouseY, partialTick);
+
+            final Style component = findTextLine(mouseX, mouseY);
+            if (component != null) {
+                SkillSelectionScreen.this.renderComponentHoverEffect(matrix, component, mouseX, mouseY);
+            }
+        }
+
         private Style findTextLine(final int mouseX, final int mouseY) {
             double offset = (mouseY - top) + border + scrollDistance + 1;
+            int xoff = (mouseX - left) - border;
             if (logoPath != null) {
                 offset -= 50;
             }
@@ -482,7 +557,7 @@ public class SkillSelectionScreen extends Screen {
 
             FormattedCharSequence line = lines.get(lineIdx - 1);
             if (line != null) {
-                return font.getSplitter().componentStyleAtWidth(line, mouseX);
+                return font.getSplitter().componentStyleAtWidth(line, xoff);
             }
             return null;
         }

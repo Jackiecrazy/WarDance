@@ -22,8 +22,8 @@ import net.minecraftforge.eventbus.api.EventPriority;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.awt.*;
-import java.util.*;
 import java.util.List;
+import java.util.*;
 
 public abstract class Skill {
     public static final HashMap<SkillArchetype, List<Skill>> variationMap = new HashMap<>();
@@ -143,7 +143,7 @@ public abstract class Skill {
     }
 
     public Component description() {
-        return Component.translatable(this.getRegistryName().toString() + ".desc");
+        return Component.translatable("wardance." + this.getRegistryName().getPath() + ".desc");
     }
 
     public ResourceLocation getRegistryName() {
@@ -164,7 +164,7 @@ public abstract class Skill {
         return getArchetype().icon();
     }
 
-    public Color getColor(){
+    public Color getColor() {
         return getCategory().getColor();
     }
 

@@ -102,6 +102,7 @@ public class SkillListWidget extends ObjectSelectionList<SkillListWidget.Categor
             ms.pushPose();
             GuiComponent.blit(ms, getLeft() + width - 12, top + entryHeight / 4, 0, 0, 8, 8, 8, 8);
             ms.popPose();
+            RenderSystem.setShaderColor(1, 1, 1, 1);
         }
 
         @Override

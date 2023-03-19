@@ -23,11 +23,11 @@ public class SkillCategory {
     }
 
     public Component name() {
-        return Component.translatable("wardance:category." + category + ".name").withStyle(formattings);
+        return Component.translatable("wardance.category." + category + ".name").withStyle(formattings);//.withStyle(Style.EMPTY.withHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, Component.literal("tooltip"))));
     }
 
     public Component description() {
-        return Component.translatable("wardance:category." + category + ".desc").withStyle(ChatFormatting.ITALIC);
+        return Component.translatable("wardance.category." + category + ".desc").withStyle(ChatFormatting.ITALIC);
     }
 
     public ResourceLocation icon() {

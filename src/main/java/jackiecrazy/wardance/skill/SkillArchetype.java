@@ -1,5 +1,6 @@
 package jackiecrazy.wardance.skill;
 
+import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 
 public class SkillArchetype {
@@ -12,6 +13,10 @@ public class SkillArchetype {
     @Override
     public boolean equals(Object obj) {
         return obj instanceof SkillArchetype && ((SkillArchetype) obj).archetype.equals(archetype);
+    }
+
+    public Component description() {
+        return Component.translatable("archetype." + archetype + ".desc");
     }
 
     public ResourceLocation icon() {
