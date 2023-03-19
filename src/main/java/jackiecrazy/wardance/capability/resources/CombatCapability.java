@@ -25,6 +25,7 @@ import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.Pose;
+import net.minecraft.world.entity.ai.attributes.AttributeInstance;
 import net.minecraft.world.entity.ai.attributes.AttributeModifier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.player.Player;
@@ -103,6 +104,8 @@ public class CombatCapability implements ICombatCapability {
         setPosture(getMaxPosture());
         LivingEntity e = dude.get();
         e.getAttribute(Attributes.MOVEMENT_SPEED).removeModifier(WOUND);
+        if (e.getAttribute(Attributes.FLYING_SPEED) != null)
+            e.getAttribute(Attributes.FLYING_SPEED).removeModifier(WOUND);
         e.getAttribute(Attributes.ARMOR).removeModifier(WOUND);
     }
 
@@ -369,6 +372,12 @@ public class CombatCapability implements ICombatCapability {
         else if (e != null && time > 0 && staggert == 0) {
             e.getAttribute(Attributes.MOVEMENT_SPEED).removeModifier(WOUND);
             e.getAttribute(Attributes.MOVEMENT_SPEED).addPermanentModifier(STAGGER);
+
+            final AttributeInstance fly = e.getAttribute(Attributes.FLYING_SPEED);
+            if (fly != null) {
+                fly.removeModifier(WOUND);
+                fly.addPermanentModifier(STAGGER);
+            }
             painful = true;
         }
         mstaggert = Math.max(mstaggert, time);
@@ -470,6 +479,12 @@ public class CombatCapability implements ICombatCapability {
             e.level.playSound(null, e.getX(), e.getY(), e.getZ(), SoundEvents.ZOMBIE_BREAK_WOODEN_DOOR, SoundSource.PLAYERS, 0.3f + WarDance.rand.nextFloat() * 0.5f, 0.75f + WarDance.rand.nextFloat() * 0.5f);
             e.getAttribute(Attributes.MOVEMENT_SPEED).removeModifier(WOUND);
             e.getAttribute(Attributes.MOVEMENT_SPEED).addPermanentModifier(EXPOSEA);
+
+            final AttributeInstance fly = e.getAttribute(Attributes.FLYING_SPEED);
+            if (fly != null) {
+                fly.removeModifier(WOUND);
+                fly.addPermanentModifier(EXPOSEA);
+            }
             e.getAttribute(Attributes.ARMOR).removeModifier(WOUND);
             e.getAttribute(Attributes.ARMOR).addPermanentModifier(EXPOSEA);
             painful = true;

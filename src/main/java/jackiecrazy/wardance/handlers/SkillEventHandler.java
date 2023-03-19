@@ -37,7 +37,7 @@ public class SkillEventHandler {
 //                cap.setResolve(0);
 //            }
             ISkillCapability isc = CasterData.getCap(e.getEntity());
-            for (Skill s : isc.getEquippedSkills()) {
+            for (Skill s : isc.getEquippedSkillsAndStyle()) {
                 if (s != null) {
                     isc.getSkillData(s).ifPresent(a -> a.setDuration(-1));
                     isc.changeSkillState(s, Skill.STATE.INACTIVE);
@@ -50,7 +50,7 @@ public class SkillEventHandler {
     public static void casting(SkillCastEvent e) {
         final ISkillCapability cap = CasterData.getCap(e.getEntity());
         if (!e.getEntity().isEffectiveAi()) return;
-        for (Skill s : cap.getEquippedSkills()) {
+        for (Skill s : cap.getEquippedSkillsAndStyle()) {
             cap.getSkillData(s).ifPresent(d -> s.onProc(e.getEntity(), e, d.getState(), d, e.getEntity()));
         }
     }
@@ -59,7 +59,7 @@ public class SkillEventHandler {
     public static void dodge(DodgeEvent e) {
         if (!e.getEntity().isEffectiveAi()) return;
         final ISkillCapability cap = CasterData.getCap(e.getEntity());
-        for (Skill s : cap.getEquippedSkills()) {
+        for (Skill s : cap.getEquippedSkillsAndStyle()) {
             cap.getSkillData(s).ifPresent(d -> s.onProc(e.getEntity(), e, d.getState(), d, null));
         }
     }
@@ -68,7 +68,7 @@ public class SkillEventHandler {
     public static void forceCrit(CriticalHitEvent e) {
         if (!e.getEntity().isEffectiveAi() || !(e.getTarget() instanceof LivingEntity)) return;
         final ISkillCapability cap = CasterData.getCap(e.getEntity());
-        for (Skill s : cap.getEquippedSkills()) {
+        for (Skill s : cap.getEquippedSkillsAndStyle()) {
             cap.getSkillData(s).ifPresent(d -> s.onProc(e.getEntity(), e, d.getState(), d, (LivingEntity) e.getTarget()));
         }
     }
@@ -78,7 +78,7 @@ public class SkillEventHandler {
         if (e.getAttacker() == null) return;
         if (!e.getEntity().isEffectiveAi()) return;
         final ISkillCapability cap = CasterData.getCap(e.getAttacker());
-        for (Skill s : cap.getEquippedSkills()) {
+        for (Skill s : cap.getEquippedSkillsAndStyle()) {
             cap.getSkillData(s).ifPresent(d -> s.onProc(e.getAttacker(), e, d.getState(), d, e.getEntity()));
         }
     }
@@ -88,7 +88,7 @@ public class SkillEventHandler {
         if (!e.getEntity().isEffectiveAi()) return;
         if (e.getSource().getEntity() instanceof final LivingEntity trueSource) {
             final ISkillCapability cap = CasterData.getCap(trueSource);
-            for (Skill s : cap.getEquippedSkills()) {
+            for (Skill s : cap.getEquippedSkillsAndStyle()) {
                 cap.getSkillData(s).ifPresent(d -> s.onProc(trueSource, e, d.getState(), d, e.getEntity()));
             }
         }
@@ -99,7 +99,7 @@ public class SkillEventHandler {
     public static void mightFlags(AttackMightEvent e) {
         if (!e.getEntity().isEffectiveAi()) return;
         final ISkillCapability cap = CasterData.getCap(e.getAttacker());
-        for (Skill s : cap.getEquippedSkills()) {
+        for (Skill s : cap.getEquippedSkillsAndStyle()) {
             cap.getSkillData(s).ifPresent(d -> s.onProc(e.getAttacker(), e, d.getState(), d, e.getEntity()));
         }
         //System.out.println("might "+e.isCanceled());
@@ -110,7 +110,7 @@ public class SkillEventHandler {
         if (!e.getEntity().isEffectiveAi()) return;
         LivingEntity attacker = e.getEntity();
         final ISkillCapability cap = CasterData.getCap(e.getEntity());
-        for (Skill s : cap.getEquippedSkills()) {
+        for (Skill s : cap.getEquippedSkillsAndStyle()) {
             cap.getSkillData(s).ifPresent(d -> s.onProc(e.getEntity(), e, d.getState(), d, null));
         }
         //System.out.println("might "+e.isCanceled());
@@ -120,7 +120,7 @@ public class SkillEventHandler {
     public static void healFlags(LivingHealEvent e) {
         if (!e.getEntity().isEffectiveAi()) return;
         final ISkillCapability cap = CasterData.getCap(e.getEntity());
-        for (Skill s : cap.getEquippedSkills()) {
+        for (Skill s : cap.getEquippedSkillsAndStyle()) {
             cap.getSkillData(s).ifPresent(d -> s.onProc(e.getEntity(), e, d.getState(), d, null));
         }
     }
@@ -129,7 +129,7 @@ public class SkillEventHandler {
     public static void postureFlags(GainPostureEvent e) {
         if (!e.getEntity().isEffectiveAi()) return;
         final ISkillCapability cap = CasterData.getCap(e.getEntity());
-        for (Skill s : cap.getEquippedSkills()) {
+        for (Skill s : cap.getEquippedSkillsAndStyle()) {
             cap.getSkillData(s).ifPresent(d -> s.onProc(e.getEntity(), e, d.getState(), d, null));
         }
     }
@@ -138,7 +138,7 @@ public class SkillEventHandler {
     public static void spiritFlags(RegenSpiritEvent e) {
         if (!e.getEntity().isEffectiveAi()) return;
         final ISkillCapability cap = CasterData.getCap(e.getEntity());
-        for (Skill s : cap.getEquippedSkills()) {
+        for (Skill s : cap.getEquippedSkillsAndStyle()) {
             cap.getSkillData(s).ifPresent(d -> s.onProc(e.getEntity(), e, d.getState(), d, null));
         }
     }
@@ -149,12 +149,12 @@ public class SkillEventHandler {
         if (e.getAttacker() != null) {
             LivingEntity attacker = e.getAttacker();
             ISkillCapability isc = CasterData.getCap(attacker);
-            for (Skill s : isc.getEquippedSkills()) {
+            for (Skill s : isc.getEquippedSkillsAndStyle()) {
                 isc.getSkillData(s).ifPresent(d -> s.onProc(attacker, e, d.getState(), d, e.getEntity()));
             }
         }
         ISkillCapability isc = CasterData.getCap(e.getEntity());
-        for (Skill s : isc.getEquippedSkills()) {
+        for (Skill s : isc.getEquippedSkillsAndStyle()) {
             isc.getSkillData(s).ifPresent(d -> s.onProc(e.getEntity(), e, d.getState(), d, e.getAttacker()));
         }
     }
@@ -164,12 +164,12 @@ public class SkillEventHandler {
         if (!e.getEntity().isEffectiveAi()) return;
         if (e.getSource().getEntity() instanceof LivingEntity attacker) {
             ISkillCapability isc = CasterData.getCap(attacker);
-            for (Skill s : isc.getEquippedSkills()) {
+            for (Skill s : isc.getEquippedSkillsAndStyle()) {
                 isc.getSkillData(s).ifPresent(d -> s.onProc(attacker, e, d.getState(), d, e.getEntity()));
             }
         }
         ISkillCapability isc = CasterData.getCap(e.getEntity());
-        for (Skill s : isc.getEquippedSkills()) {
+        for (Skill s : isc.getEquippedSkillsAndStyle()) {
             isc.getSkillData(s).ifPresent(d -> s.onProc(e.getEntity(), e, d.getState(), d, null));
         }
     }
@@ -180,12 +180,12 @@ public class SkillEventHandler {
         if (e.getAttacker() != null) {
             LivingEntity attacker = e.getAttacker();
             ISkillCapability isc = CasterData.getCap(attacker);
-            for (Skill s : isc.getEquippedSkills()) {
+            for (Skill s : isc.getEquippedSkillsAndStyle()) {
                 isc.getSkillData(s).ifPresent(d -> s.onProc(attacker, e, d.getState(), d, e.getEntity()));
             }
         }
         ISkillCapability isc = CasterData.getCap(e.getEntity());
-        for (Skill s : isc.getEquippedSkills()) {
+        for (Skill s : isc.getEquippedSkillsAndStyle()) {
             isc.getSkillData(s).ifPresent(d -> s.onProc(e.getEntity(), e, d.getState(), d, e.getAttacker()));
         }
     }
@@ -195,12 +195,12 @@ public class SkillEventHandler {
         if (!e.getEntity().isEffectiveAi()) return;
         if (e.getSource().getEntity() instanceof LivingEntity attacker) {
             ISkillCapability isc = CasterData.getCap(attacker);
-            for (Skill s : isc.getEquippedSkills()) {
+            for (Skill s : isc.getEquippedSkillsAndStyle()) {
                 isc.getSkillData(s).ifPresent(d -> s.onProc(attacker, e, d.getState(), d, e.getEntity()));
             }
         }
         ISkillCapability isc = CasterData.getCap(e.getEntity());
-        for (Skill s : isc.getEquippedSkills()) {
+        for (Skill s : isc.getEquippedSkillsAndStyle()) {
             isc.getSkillData(s).ifPresent(d -> s.onProc(e.getEntity(), e, d.getState(), d, null));
         }
     }
@@ -210,12 +210,12 @@ public class SkillEventHandler {
         if (!e.getEntity().isEffectiveAi()) return;
         if (e.getSource().getEntity() instanceof LivingEntity attacker) {
             ISkillCapability isc = CasterData.getCap(attacker);
-            for (Skill s : isc.getEquippedSkills()) {
+            for (Skill s : isc.getEquippedSkillsAndStyle()) {
                 isc.getSkillData(s).ifPresent(d -> s.onProc(attacker, e, d.getState(), d, e.getEntity()));
             }
         }
         ISkillCapability isc = CasterData.getCap(e.getEntity());
-        for (Skill s : isc.getEquippedSkills()) {
+        for (Skill s : isc.getEquippedSkillsAndStyle()) {
             isc.getSkillData(s).ifPresent(d -> s.onProc(e.getEntity(), e, d.getState(), d, null));
         }
     }
@@ -226,12 +226,12 @@ public class SkillEventHandler {
         if (e.getAttacker() != null) {
             LivingEntity attacker = e.getAttacker();
             ISkillCapability isc = CasterData.getCap(attacker);
-            for (Skill s : isc.getEquippedSkills()) {
+            for (Skill s : isc.getEquippedSkillsAndStyle()) {
                 isc.getSkillData(s).ifPresent(d -> s.onProc(attacker, e, d.getState(), d, e.getEntity()));
             }
         }
         ISkillCapability isc = CasterData.getCap(e.getEntity());
-        for (Skill s : isc.getEquippedSkills()) {
+        for (Skill s : isc.getEquippedSkillsAndStyle()) {
             isc.getSkillData(s).ifPresent(d -> s.onProc(e.getEntity(), e, d.getState(), d, e.getAttacker()));
         }
     }
@@ -244,7 +244,7 @@ public class SkillEventHandler {
             Entity shooter = ((Projectile) proj).getOwner();
             if (shooter instanceof LivingEntity) {
                 ISkillCapability isc = CasterData.getCap((LivingEntity) shooter);
-                for (Skill s : isc.getEquippedSkills()) {
+                for (Skill s : isc.getEquippedSkillsAndStyle()) {
                     isc.getSkillData(s).ifPresent(d -> s.onProc((LivingEntity) shooter, e, d.getState(), d, null));
                 }
             }
@@ -256,7 +256,7 @@ public class SkillEventHandler {
     public static void parryFlags(ProjectileParryEvent e) {
         if (!e.getEntity().isEffectiveAi()) return;
         final ISkillCapability isc = CasterData.getCap(e.getEntity());
-        for (Skill s : isc.getEquippedSkills()) {
+        for (Skill s : isc.getEquippedSkillsAndStyle()) {
             isc.getSkillData(s).ifPresent(d -> s.onProc(e.getEntity(), e, d.getState(), d, null));
         }
     }
@@ -265,7 +265,7 @@ public class SkillEventHandler {
     public static void castingE(SkillCastEvent e) {
         final ISkillCapability cap = CasterData.getCap(e.getEntity());
         if (!e.getEntity().isEffectiveAi()) return;
-        for (Skill s : cap.getEquippedSkills()) {
+        for (Skill s : cap.getEquippedSkillsAndStyle()) {
             cap.getSkillData(s).ifPresent(d -> s.onProc(e.getEntity(), e, d.getState(), d, e.getEntity()));
         }
     }
@@ -274,7 +274,7 @@ public class SkillEventHandler {
     public static void dodgE(DodgeEvent e) {
         if (!e.getEntity().isEffectiveAi()) return;
         final ISkillCapability cap = CasterData.getCap(e.getEntity());
-        for (Skill s : cap.getEquippedSkills()) {
+        for (Skill s : cap.getEquippedSkillsAndStyle()) {
             cap.getSkillData(s).ifPresent(d -> s.onProc(e.getEntity(), e, d.getState(), d, null));
         }
     }
@@ -283,7 +283,7 @@ public class SkillEventHandler {
     public static void forceCriT(CriticalHitEvent e) {
         if (!e.getEntity().isEffectiveAi() || !(e.getTarget() instanceof LivingEntity)) return;
         final ISkillCapability cap = CasterData.getCap(e.getEntity());
-        for (Skill s : cap.getEquippedSkills()) {
+        for (Skill s : cap.getEquippedSkillsAndStyle()) {
             cap.getSkillData(s).ifPresent(d -> s.onProc(e.getEntity(), e, d.getState(), d, (LivingEntity) e.getTarget()));
         }
     }
@@ -293,7 +293,7 @@ public class SkillEventHandler {
         if (e.getAttacker() == null) return;
         if (!e.getEntity().isEffectiveAi()) return;
         final ISkillCapability cap = CasterData.getCap(e.getAttacker());
-        for (Skill s : cap.getEquippedSkills()) {
+        for (Skill s : cap.getEquippedSkillsAndStyle()) {
             cap.getSkillData(s).ifPresent(d -> s.onProc(e.getAttacker(), e, d.getState(), d, e.getEntity()));
         }
     }
@@ -303,7 +303,7 @@ public class SkillEventHandler {
         if (!e.getEntity().isEffectiveAi()) return;
         if (e.getSource().getEntity() instanceof final LivingEntity trueSource) {
             final ISkillCapability cap = CasterData.getCap(trueSource);
-            for (Skill s : cap.getEquippedSkills()) {
+            for (Skill s : cap.getEquippedSkillsAndStyle()) {
                 cap.getSkillData(s).ifPresent(d -> s.onProc(trueSource, e, d.getState(), d, e.getEntity()));
             }
         }
@@ -314,7 +314,7 @@ public class SkillEventHandler {
     public static void mightFlagS(AttackMightEvent e) {
         if (!e.getEntity().isEffectiveAi()) return;
         final ISkillCapability cap = CasterData.getCap(e.getAttacker());
-        for (Skill s : cap.getEquippedSkills()) {
+        for (Skill s : cap.getEquippedSkillsAndStyle()) {
             cap.getSkillData(s).ifPresent(d -> s.onProc(e.getAttacker(), e, d.getState(), d, e.getEntity()));
         }
         //System.out.println("might "+e.isCanceled());
@@ -325,7 +325,7 @@ public class SkillEventHandler {
         if (!e.getEntity().isEffectiveAi()) return;
         LivingEntity attacker = e.getEntity();
         final ISkillCapability cap = CasterData.getCap(e.getEntity());
-        for (Skill s : cap.getEquippedSkills()) {
+        for (Skill s : cap.getEquippedSkillsAndStyle()) {
             cap.getSkillData(s).ifPresent(d -> s.onProc(e.getEntity(), e, d.getState(), d, null));
         }
         //System.out.println("might "+e.isCanceled());
@@ -335,7 +335,7 @@ public class SkillEventHandler {
     public static void healFlagS(LivingHealEvent e) {
         if (!e.getEntity().isEffectiveAi()) return;
         final ISkillCapability cap = CasterData.getCap(e.getEntity());
-        for (Skill s : cap.getEquippedSkills()) {
+        for (Skill s : cap.getEquippedSkillsAndStyle()) {
             cap.getSkillData(s).ifPresent(d -> s.onProc(e.getEntity(), e, d.getState(), d, null));
         }
     }
@@ -344,7 +344,7 @@ public class SkillEventHandler {
     public static void postureFlagS(GainPostureEvent e) {
         if (!e.getEntity().isEffectiveAi()) return;
         final ISkillCapability cap = CasterData.getCap(e.getEntity());
-        for (Skill s : cap.getEquippedSkills()) {
+        for (Skill s : cap.getEquippedSkillsAndStyle()) {
             cap.getSkillData(s).ifPresent(d -> s.onProc(e.getEntity(), e, d.getState(), d, null));
         }
     }
@@ -353,7 +353,7 @@ public class SkillEventHandler {
     public static void spiritFlagS(RegenSpiritEvent e) {
         if (!e.getEntity().isEffectiveAi()) return;
         final ISkillCapability cap = CasterData.getCap(e.getEntity());
-        for (Skill s : cap.getEquippedSkills()) {
+        for (Skill s : cap.getEquippedSkillsAndStyle()) {
             cap.getSkillData(s).ifPresent(d -> s.onProc(e.getEntity(), e, d.getState(), d, null));
         }
     }
@@ -362,7 +362,7 @@ public class SkillEventHandler {
     public static void luckFlagH(LuckEvent e) {
         if (!e.getEntity().isEffectiveAi()) return;
         final ISkillCapability cap = CasterData.getCap(e.getEntity());
-        for (Skill s : cap.getEquippedSkills()) {
+        for (Skill s : cap.getEquippedSkillsAndStyle()) {
             cap.getSkillData(s).ifPresent(d -> s.onProc(e.getEntity(), e, d.getState(), d, null));
         }
     }
@@ -371,7 +371,7 @@ public class SkillEventHandler {
     public static void luckFlagL(LuckEvent e) {
         if (!e.getEntity().isEffectiveAi()) return;
         final ISkillCapability cap = CasterData.getCap(e.getEntity());
-        for (Skill s : cap.getEquippedSkills()) {
+        for (Skill s : cap.getEquippedSkillsAndStyle()) {
             cap.getSkillData(s).ifPresent(d -> s.onProc(e.getEntity(), e, d.getState(), d, null));
         }
     }
@@ -382,12 +382,12 @@ public class SkillEventHandler {
         if (e.getAttacker() != null) {
             LivingEntity attacker = e.getAttacker();
             ISkillCapability isc = CasterData.getCap(attacker);
-            for (Skill s : isc.getEquippedSkills()) {
+            for (Skill s : isc.getEquippedSkillsAndStyle()) {
                 isc.getSkillData(s).ifPresent(d -> s.onProc(attacker, e, d.getState(), d, e.getEntity()));
             }
         }
         ISkillCapability isc = CasterData.getCap(e.getEntity());
-        for (Skill s : isc.getEquippedSkills()) {
+        for (Skill s : isc.getEquippedSkillsAndStyle()) {
             isc.getSkillData(s).ifPresent(d -> s.onProc(e.getEntity(), e, d.getState(), d, e.getAttacker()));
         }
     }
@@ -397,12 +397,12 @@ public class SkillEventHandler {
         if (!e.getEntity().isEffectiveAi()) return;
         if (e.getSource().getEntity() instanceof LivingEntity attacker) {
             ISkillCapability isc = CasterData.getCap(attacker);
-            for (Skill s : isc.getEquippedSkills()) {
+            for (Skill s : isc.getEquippedSkillsAndStyle()) {
                 isc.getSkillData(s).ifPresent(d -> s.onProc(attacker, e, d.getState(), d, e.getEntity()));
             }
         }
         ISkillCapability isc = CasterData.getCap(e.getEntity());
-        for (Skill s : isc.getEquippedSkills()) {
+        for (Skill s : isc.getEquippedSkillsAndStyle()) {
             isc.getSkillData(s).ifPresent(d -> s.onProc(e.getEntity(), e, d.getState(), d, null));
         }
     }
@@ -413,12 +413,12 @@ public class SkillEventHandler {
         if (e.getAttacker() != null) {
             LivingEntity attacker = e.getAttacker();
             ISkillCapability isc = CasterData.getCap(attacker);
-            for (Skill s : isc.getEquippedSkills()) {
+            for (Skill s : isc.getEquippedSkillsAndStyle()) {
                 isc.getSkillData(s).ifPresent(d -> s.onProc(attacker, e, d.getState(), d, e.getEntity()));
             }
         }
         ISkillCapability isc = CasterData.getCap(e.getEntity());
-        for (Skill s : isc.getEquippedSkills()) {
+        for (Skill s : isc.getEquippedSkillsAndStyle()) {
             isc.getSkillData(s).ifPresent(d -> s.onProc(e.getEntity(), e, d.getState(), d, e.getAttacker()));
         }
     }
@@ -428,12 +428,12 @@ public class SkillEventHandler {
         if (!e.getEntity().isEffectiveAi()) return;
         if (e.getSource().getEntity() instanceof LivingEntity attacker) {
             ISkillCapability isc = CasterData.getCap(attacker);
-            for (Skill s : isc.getEquippedSkills()) {
+            for (Skill s : isc.getEquippedSkillsAndStyle()) {
                 isc.getSkillData(s).ifPresent(d -> s.onProc(attacker, e, d.getState(), d, e.getEntity()));
             }
         }
         ISkillCapability isc = CasterData.getCap(e.getEntity());
-        for (Skill s : isc.getEquippedSkills()) {
+        for (Skill s : isc.getEquippedSkillsAndStyle()) {
             isc.getSkillData(s).ifPresent(d -> s.onProc(e.getEntity(), e, d.getState(), d, null));
         }
     }
@@ -443,12 +443,12 @@ public class SkillEventHandler {
         if (!e.getEntity().isEffectiveAi()) return;
         if (e.getSource().getEntity() instanceof LivingEntity attacker) {
             ISkillCapability isc = CasterData.getCap(attacker);
-            for (Skill s : isc.getEquippedSkills()) {
+            for (Skill s : isc.getEquippedSkillsAndStyle()) {
                 isc.getSkillData(s).ifPresent(d -> s.onProc(attacker, e, d.getState(), d, e.getEntity()));
             }
         }
         ISkillCapability isc = CasterData.getCap(e.getEntity());
-        for (Skill s : isc.getEquippedSkills()) {
+        for (Skill s : isc.getEquippedSkillsAndStyle()) {
             isc.getSkillData(s).ifPresent(d -> s.onProc(e.getEntity(), e, d.getState(), d, null));
         }
     }
@@ -459,12 +459,12 @@ public class SkillEventHandler {
         if (e.getAttacker() != null) {
             LivingEntity attacker = e.getAttacker();
             ISkillCapability isc = CasterData.getCap(attacker);
-            for (Skill s : isc.getEquippedSkills()) {
+            for (Skill s : isc.getEquippedSkillsAndStyle()) {
                 isc.getSkillData(s).ifPresent(d -> s.onProc(attacker, e, d.getState(), d, e.getEntity()));
             }
         }
         ISkillCapability isc = CasterData.getCap(e.getEntity());
-        for (Skill s : isc.getEquippedSkills()) {
+        for (Skill s : isc.getEquippedSkillsAndStyle()) {
             isc.getSkillData(s).ifPresent(d -> s.onProc(e.getEntity(), e, d.getState(), d, e.getAttacker()));
         }
     }
@@ -477,7 +477,7 @@ public class SkillEventHandler {
             Entity shooter = ((Projectile) proj).getOwner();
             if (shooter instanceof LivingEntity) {
                 ISkillCapability isc = CasterData.getCap((LivingEntity) shooter);
-                for (Skill s : isc.getEquippedSkills()) {
+                for (Skill s : isc.getEquippedSkillsAndStyle()) {
                     isc.getSkillData(s).ifPresent(d -> s.onProc((LivingEntity) shooter, e, d.getState(), d, null));
                 }
             }
@@ -489,7 +489,7 @@ public class SkillEventHandler {
     public static void parryFlagS(ProjectileParryEvent e) {
         if (!e.getEntity().isEffectiveAi()) return;
         final ISkillCapability isc = CasterData.getCap(e.getEntity());
-        for (Skill s : isc.getEquippedSkills()) {
+        for (Skill s : isc.getEquippedSkillsAndStyle()) {
             isc.getSkillData(s).ifPresent(d -> s.onProc(e.getEntity(), e, d.getState(), d, null));
         }
     }
@@ -499,7 +499,7 @@ public class SkillEventHandler {
     public static void resourcE(SkillResourceEvent e) {
         final ISkillCapability cap = CasterData.getCap(e.getEntity());
         if (!e.getEntity().isEffectiveAi()) return;
-        for (Skill s : cap.getEquippedSkills()) {
+        for (Skill s : cap.getEquippedSkillsAndStyle()) {
             cap.getSkillData(s).ifPresent(d -> s.onProc(e.getEntity(), e, d.getState(), d, e.getEntity()));
         }
     }
@@ -509,7 +509,7 @@ public class SkillEventHandler {
     public static void resource(SkillResourceEvent e) {
         final ISkillCapability cap = CasterData.getCap(e.getEntity());
         if (!e.getEntity().isEffectiveAi()) return;
-        for (Skill s : cap.getEquippedSkills()) {
+        for (Skill s : cap.getEquippedSkillsAndStyle()) {
             cap.getSkillData(s).ifPresent(d -> s.onProc(e.getEntity(), e, d.getState(), d, e.getEntity()));
         }
     }
@@ -519,12 +519,12 @@ public class SkillEventHandler {
         if (e.getEntity() != null && !e.getEntity().isEffectiveAi()) return;
         if (e.getSource().getEntity() instanceof LivingEntity attacker) {
             ISkillCapability isc = CasterData.getCap(attacker);
-            for (Skill s : isc.getEquippedSkills()) {
+            for (Skill s : isc.getEquippedSkillsAndStyle()) {
                 isc.getSkillData(s).ifPresent(d -> s.onProc(attacker, e, d.getState(), d, e.getEntity()));
             }
         }
         ISkillCapability isc = CasterData.getCap(e.getEntity());
-        for (Skill s : isc.getEquippedSkills()) {
+        for (Skill s : isc.getEquippedSkillsAndStyle()) {
             isc.getSkillData(s).ifPresent(d -> s.onProc(e.getEntity(), e, d.getState(), d, null));
         }
     }
@@ -534,12 +534,12 @@ public class SkillEventHandler {
         if (e.getEntity() != null && !e.getEntity().isEffectiveAi()) return;
         if (e.getSource().getEntity() instanceof LivingEntity attacker) {
             ISkillCapability isc = CasterData.getCap(attacker);
-            for (Skill s : isc.getEquippedSkills()) {
+            for (Skill s : isc.getEquippedSkillsAndStyle()) {
                 isc.getSkillData(s).ifPresent(d -> s.onProc(attacker, e, d.getState(), d, e.getEntity()));
             }
         }
         ISkillCapability isc = CasterData.getCap(e.getEntity());
-        for (Skill s : isc.getEquippedSkills()) {
+        for (Skill s : isc.getEquippedSkillsAndStyle()) {
             isc.getSkillData(s).ifPresent(d -> s.onProc(e.getEntity(), e, d.getState(), d, null));
         }
     }
@@ -550,12 +550,12 @@ public class SkillEventHandler {
         if (e.getDamageSource() == null) return;
         if (e.getDamageSource().getEntity() instanceof LivingEntity attacker) {
             ISkillCapability isc = CasterData.getCap(attacker);
-            for (Skill s : isc.getEquippedSkills()) {
+            for (Skill s : isc.getEquippedSkillsAndStyle()) {
                 isc.getSkillData(s).ifPresent(d -> s.onProc(attacker, e, d.getState(), d, e.getEntity()));
             }
         }
         ISkillCapability isc = CasterData.getCap(e.getEntity());
-        for (Skill s : isc.getEquippedSkills()) {
+        for (Skill s : isc.getEquippedSkillsAndStyle()) {
             isc.getSkillData(s).ifPresent(d -> s.onProc(e.getEntity(), e, d.getState(), d, null));
         }
     }
@@ -566,12 +566,12 @@ public class SkillEventHandler {
         if (e.getDamageSource() == null) return;
         if (e.getDamageSource().getEntity() instanceof LivingEntity attacker) {
             ISkillCapability isc = CasterData.getCap(attacker);
-            for (Skill s : isc.getEquippedSkills()) {
+            for (Skill s : isc.getEquippedSkillsAndStyle()) {
                 isc.getSkillData(s).ifPresent(d -> s.onProc(attacker, e, d.getState(), d, e.getEntity()));
             }
         }
         ISkillCapability isc = CasterData.getCap(e.getEntity());
-        for (Skill s : isc.getEquippedSkills()) {
+        for (Skill s : isc.getEquippedSkillsAndStyle()) {
             isc.getSkillData(s).ifPresent(d -> s.onProc(e.getEntity(), e, d.getState(), d, null));
         }
     }

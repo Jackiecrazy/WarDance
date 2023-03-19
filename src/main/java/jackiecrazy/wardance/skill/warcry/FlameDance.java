@@ -54,7 +54,7 @@ public class FlameDance extends WarCry {
     @Override
     public void onProc(LivingEntity caster, Event procPoint, STATE state, SkillData stats, LivingEntity target) {
         if (procPoint instanceof LivingAttackEvent && state == STATE.ACTIVE && procPoint.getPhase() == EventPriority.HIGHEST && ((LivingAttackEvent) procPoint).getEntity() == target) {
-            stats.setArbitraryFloat(stats.getArbitraryFloat() + 0.34f);
+            stats.addArbitraryFloat(0.34f);
             if (((LivingAttackEvent) procPoint).getEntity() == target && ((LivingAttackEvent) procPoint).getSource() instanceof CombatDamageSource) {
                 if (stats.getArbitraryFloat() >= 1 && target.getRemainingFireTicks() > 0)
                     ((CombatDamageSource) ((LivingAttackEvent) procPoint).getSource()).setArmorReductionPercentage(0.5f);

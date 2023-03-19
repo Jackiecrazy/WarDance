@@ -13,21 +13,31 @@ import net.minecraft.world.InteractionHand;
 public class ItchyCurse extends Hex {
 
     @Override
+    public boolean onStateChange(LivingEntity caster, SkillData prev, STATE from, STATE to) {
+        LivingEntity e = SkillUtils.aimLiving(caster);
+        if (to == STATE.ACTIVE && e != null && cast(caster, e, -999)) {
+            mark(caster, e, 60);
+            markUsed(caster);
+        }
+        if (to == STATE.COOLING)
+            setCooldown(caster, prev, 15);
+        return boundCast(prev, from, to);
+    }
+
+    @Override
     public boolean markTick(LivingEntity caster, LivingEntity target, SkillData sd) {
         boolean stationary = target.zza == 0 && target.xxa == 0 && target.yya == 0;
         if (stationary) {
             sd.decrementDuration();
         }
-        if (target.tickCount % 20 == 0) {
-            sd.setArbitraryFloat(sd.getArbitraryFloat() + 1);
-            if (sd.getArbitraryFloat() >= 3) {
-                SkillUtils.modifyAttribute(target, Attributes.MOVEMENT_SPEED, HEX, -1, AttributeModifier.Operation.MULTIPLY_TOTAL);
-                CombatData.getCap(target).setHandBind(InteractionHand.MAIN_HAND, 20);
-                CombatData.getCap(target).setHandBind(InteractionHand.OFF_HAND, 20);
-                sd.setArbitraryFloat(-1);
-            } else if (sd.getArbitraryFloat() == 0) {
-                SkillUtils.modifyAttribute(target, Attributes.MOVEMENT_SPEED, HEX, 0, AttributeModifier.Operation.MULTIPLY_TOTAL);
-            }
+        sd.addArbitraryFloat(0.05f);
+        if (sd.getArbitraryFloat() >= 3) {
+            SkillUtils.modifyAttribute(target, Attributes.MOVEMENT_SPEED, HEX, -1, AttributeModifier.Operation.MULTIPLY_TOTAL);
+            CombatData.getCap(target).setHandBind(InteractionHand.MAIN_HAND, 20);
+            CombatData.getCap(target).setHandBind(InteractionHand.OFF_HAND, 20);
+            sd.setArbitraryFloat(-1);
+        } else if (sd.getArbitraryFloat() == 0) {
+            SkillUtils.modifyAttribute(target, Attributes.MOVEMENT_SPEED, HEX, 0, AttributeModifier.Operation.MULTIPLY_TOTAL);
         }
         //SkillUtils.modifyAttribute(target, Attributes.ARMOR, HEX.getID(), -sd.getArbitraryFloat() * 2, AttributeModifier.Operation.ADDITION);
 //            if (target.getTotalArmorValue() == 0 && sd.getArbitraryFloat() > 7) {
@@ -50,17 +60,5 @@ public class ItchyCurse extends Hex {
             speed.removeModifier(HEX);
         }
         super.onMarkEnd(caster, target, sd);
-    }
-
-    @Override
-    public boolean onStateChange(LivingEntity caster, SkillData prev, STATE from, STATE to) {
-        LivingEntity e = SkillUtils.aimLiving(caster);
-        if (to == STATE.ACTIVE && e != null && cast(caster, e, -999)) {
-            mark(caster, e, 60);
-            markUsed(caster);
-        }
-        if (to == STATE.COOLING)
-            setCooldown(caster, prev, 15);
-        return boundCast(prev, from, to);
     }
 }

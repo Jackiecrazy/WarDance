@@ -4,6 +4,7 @@ import jackiecrazy.wardance.skill.*;
 import net.minecraft.nbt.CompoundTag;
 
 import javax.annotation.Nullable;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -27,14 +28,27 @@ public interface ISkillCapability {
 
     Skill.STATE getSkillState(Skill skill);
 
-    Skill.STATE getCategoryState(SkillArchetype s);
+    Skill.STATE getArchetypeState(SkillArchetype s);
 
     @Nullable
     Skill getEquippedVariation(SkillArchetype base);
 
+    @Nullable
+    SkillStyle getStyle();
+
+    void setStyle(SkillStyle style);
+
     boolean isTagActive(String tag);
 
     void removeActiveTag(String tag);
+
+    List<SkillCategory> getEquippedColors();
+
+    default List<Skill> getEquippedSkillsAndStyle(){
+        List<Skill> ret = new ArrayList<>(getEquippedSkills());
+        ret.add(getStyle());
+        return ret;
+    }
 
     List<Skill> getEquippedSkills();
 

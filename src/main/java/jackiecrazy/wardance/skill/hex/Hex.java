@@ -186,7 +186,7 @@ public class Hex extends Skill {
     public static class Gangrene extends Hex {
         @Override
         public boolean markTick(LivingEntity caster, LivingEntity target, SkillData sd) {
-            sd.setArbitraryFloat(sd.getArbitraryFloat() - 1);
+            sd.addArbitraryFloat(- 1);
             return super.markTick(caster, target, sd);
         }
 
@@ -199,7 +199,7 @@ public class Hex extends Skill {
     public static class CurseOfEchoes extends Hex {
         @Override
         public boolean markTick(LivingEntity caster, LivingEntity target, SkillData sd) {
-            sd.setArbitraryFloat(sd.getArbitraryFloat() - 1);
+            sd.addArbitraryFloat(- 1);
             return super.markTick(caster, target, sd);
         }
     }

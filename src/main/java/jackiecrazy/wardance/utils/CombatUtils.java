@@ -248,7 +248,7 @@ public class CombatUtils {
 
     public static boolean isWeapon(@Nullable LivingEntity e, ItemStack stack) {
         if (stack == null) return false;
-        if (e != null && CasterData.getCap(e).getCategoryState(SkillArchetypes.shield_bash) == Skill.STATE.HOLSTERED)
+        if (e != null && CasterData.getCap(e).getArchetypeState(SkillArchetypes.shield_bash) == Skill.STATE.HOLSTERED)
             return combatList.containsKey(stack.getItem());
         return combatList.containsKey(stack.getItem()) && !combatList.getOrDefault(stack.getItem(), DEFAULTMELEE).isShield;//stack.getItem() instanceof SwordItem || stack.getItem() instanceof AxeItem;
     }

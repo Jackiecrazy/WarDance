@@ -252,31 +252,31 @@ public class ResourceDisplay implements IGuiOverlay {
 //                mc.gui.blit(ms, atX - flexBarWidth, atY - 2, 0, vOffset, flexBarWidth + 1, barHeight);
 //                mc.gui.blit(ms, atX, atY - 2, 239 - flexBarWidth, vOffset, flexBarWidth + 1, barHeight);
             }
-                // render shatter overlay if present
-                if (itsc.getMaxFracture() > 0) {
-                    int insigniaU = 115, insigniaV = 80, insigniaW = 11;
-                    if (itsc.getFractureCount() > 0) {//shattering
-                        float otemp = (float) itsc.getFractureCount() / itsc.getMaxFracture();
-                        //otemp *= 2;//will go over 1 if shatter is less than half
-                        if (otemp > 1) {
-                            RenderSystem.setShaderColor(1, 1, 1, -(otemp - 2));
-                            otemp = 1;
-                        }
-                        int fini = (int) (otemp * temp);
-                        //gold that stretches out to the edges before disappearing
-                        mc.gui.blit(ms, atX, atY - 2, 240 - fini - 10, 70, fini + 10, barHeight);
-                        mc.gui.blit(ms, atX - fini - 9, atY - 2, 0, 70, fini + 10, barHeight);
+            // render shatter overlay if present
+            if (itsc.getMaxFracture() > 0) {
+                int insigniaU = 115, insigniaV = 80, insigniaW = 11;
+                if (itsc.getFractureCount() > 0) {//shattering
+                    float otemp = (float) itsc.getFractureCount() / itsc.getMaxFracture();
+                    //otemp *= 2;//will go over 1 if shatter is less than half
+                    if (otemp > 1) {
                         RenderSystem.setShaderColor(1, 1, 1, -(otemp - 2));
-                        RenderSystem.setShaderColor(1, 1, 1, 1);
-                        insigniaV = 90;
+                        otemp = 1;
                     }
-                    //insignia
-                    mc.gui.blit(ms, atX - insigniaW / 2, atY - 2, insigniaU, insigniaV, insigniaW, barHeight - 1);
-                    //shatter bracket
-                    mc.gui.blit(ms, atX - temp - 8, atY - 2, 0, 80, 10, barHeight);
-                    //shatter bracket
-                    mc.gui.blit(ms, atX + temp, atY - 2, 232, 80, 10, barHeight);
+                    int fini = (int) (otemp * temp);
+                    //gold that stretches out to the edges before disappearing
+                    mc.gui.blit(ms, atX, atY - 2, 240 - fini - 10, 70, fini + 10, barHeight);
+                    mc.gui.blit(ms, atX - fini - 9, atY - 2, 0, 70, fini + 10, barHeight);
+                    RenderSystem.setShaderColor(1, 1, 1, -(otemp - 2));
+                    RenderSystem.setShaderColor(1, 1, 1, 1);
+                    insigniaV = 90;
                 }
+                //insignia
+                mc.gui.blit(ms, atX - insigniaW / 2, atY - 2, insigniaU, insigniaV, insigniaW, barHeight - 1);
+                //shatter bracket
+                mc.gui.blit(ms, atX - temp - 8, atY - 2, 0, 80, 10, barHeight);
+                //shatter bracket
+                mc.gui.blit(ms, atX + temp, atY - 2, 232, 80, 10, barHeight);
+            }
         }
         mc.getProfiler().pop();
         RenderSystem.setShaderTexture(0, GuiComponent.GUI_ICONS_LOCATION);
@@ -419,7 +419,7 @@ public class ResourceDisplay implements IGuiOverlay {
                 Pair<Integer, Integer> pair = translateCoords(ClientConfig.CONFIG.might, width, height);
                 int x = Math.max(pair.getFirst() - 16, 0);
                 int y = Math.min(pair.getSecond() - 16, height - 32);
-                int fillHeight = (int) (Math.min(1, currentMightLevel / cap.getMaxMight()) * 32);
+                int fillHeight = (int) (Math.min(1, currentMightLevel % 1) * 32);
                 if (ClientConfig.CONFIG.might.enabled) {
                     //might circle
                     RenderSystem.setShaderColor(1, 1, 1, 1);
@@ -433,15 +433,19 @@ public class ResourceDisplay implements IGuiOverlay {
                     stack.popPose();
                     fillHeight += Math.min(fillHeight, 3);
                     fillHeight = Math.min(fillHeight, 32);
-                    //might base
-                    stack.pushPose();
-                    mc.gui.blit(stack, x, y, 32, 64, 32, 32);
-                    stack.popPose();
-                    //might illumination
-                    stack.pushPose();
-                    mc.gui.blit(stack, x, y + 32 - fillHeight, 64, 96 - fillHeight, 32, fillHeight);
-                    stack.popPose();
-                    stack.popPose();
+                    //might crown, rendered when above half might
+                    if (currentMightLevel >= cap.getMaxMight() / 2) {
+                        stack.pushPose();
+                        mc.gui.blit(stack, x, y, 32, 64, 32, 32);
+                        stack.popPose();
+                    }
+                    //might crown plus pro ultra, rendered at max might
+                    if (currentMightLevel == cap.getMaxMight()) {
+                        stack.pushPose();
+                        mc.gui.blit(stack, x, y, 64, 96, 32, 32);
+                        stack.popPose();
+                        stack.popPose();
+                    }
                 }
                 pair = translateCoords(ClientConfig.CONFIG.spirit, width, height);
                 x = Mth.clamp(pair.getFirst() - 16, 0, width - 32);

@@ -49,7 +49,7 @@ public class ShadowlessKick extends Kick {
             target.hurt(new CombatDamageSource("fallingBlock", caster).setDamageTyping(CombatDamageSource.TYPE.PHYSICAL).setProcSkillEffects(true).setProcNormalEffects(false).setProcAttackEffects(true).setKnockbackPercentage(0.7f), 1);
             if (target.getLastHurtByMob() == null)
                 target.setLastHurtByMob(caster);
-            stats.setArbitraryFloat(stats.getArbitraryFloat() + 1);
+            stats.addArbitraryFloat(1);
             if (stats.getArbitraryFloat() >= 6) {
                 markUsed(caster);
                 caster.level.playSound(null, caster.getX(), caster.getY(), caster.getZ(), SoundEvents.DRAGON_FIREBALL_EXPLODE, SoundSource.PLAYERS, 0.5f + WarDance.rand.nextFloat() * 0.5f, 0.5f + WarDance.rand.nextFloat() * 0.5f);

@@ -19,6 +19,7 @@ import net.minecraft.client.gui.components.EditBox;
 import net.minecraft.client.gui.components.ObjectSelectionList;
 import net.minecraft.client.gui.narration.NarrationElementOutput;
 import net.minecraft.client.gui.screens.Screen;
+import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.client.renderer.GameRenderer;
 import net.minecraft.locale.Language;
 import net.minecraft.network.chat.Component;
@@ -159,11 +160,12 @@ public class SkillSelectionScreen extends Screen {
     }
 
     boolean isValidInsertion(Skill insert) {
+        final LocalPlayer player = Minecraft.getInstance().player;
         for (SkillSelectionButton ssb : skillPie)
-            if (ssb.getSkill() != null && ssb.getSkill().isFamily(insert)) return false;
+            if (ssb.getSkill() != null && !ssb.getSkill().isEquippableWith(insert, player)) return false;
         for (SkillSelectionButton ssb : passives)
-            if (ssb.getSkill() != null && ssb.getSkill().isFamily(insert)) return false;
-        return CasterData.getCap(Minecraft.getInstance().player).isSkillSelectable(insert);
+            if (ssb.getSkill() != null && !ssb.getSkill().isEquippableWith(insert, player)) return false;
+        return CasterData.getCap(player).isSkillSelectable(insert);
     }
 
     void filterSkills(SkillCategory newSort) {

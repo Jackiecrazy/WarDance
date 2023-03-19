@@ -4,9 +4,7 @@ import jackiecrazy.wardance.WarDance;
 import jackiecrazy.wardance.config.GeneralConfig;
 import jackiecrazy.wardance.networking.CombatChannel;
 import jackiecrazy.wardance.networking.SyncSkillPacket;
-import jackiecrazy.wardance.skill.Skill;
-import jackiecrazy.wardance.skill.SkillArchetype;
-import jackiecrazy.wardance.skill.SkillData;
+import jackiecrazy.wardance.skill.*;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
 import net.minecraft.nbt.StringTag;
@@ -27,6 +25,7 @@ public class SkillCapability implements ISkillCapability {
     private final Queue<Skill> lastCast = new LinkedList<>();
     boolean sync = false, fastSync = false, gatedSkills = false;
     int index = -1;
+    private SkillStyle style;
 
     public SkillCapability(LivingEntity attachTo) {
         dude = new WeakReference<>(attachTo);
@@ -69,12 +68,6 @@ public class SkillCapability implements ISkillCapability {
     @Override
     public Optional<SkillData> getSkillData(Skill s) {
         return Optional.ofNullable(data.get(s));
-    }
-
-    @Override
-    public Skill.STATE getSkillState(Skill s) {
-        if (!data.containsKey(s)) return Skill.STATE.INACTIVE;
-        return data.get(s).getState();
     }
 
     @Override
@@ -124,11 +117,37 @@ public class SkillCapability implements ISkillCapability {
     }
 
     @Override
-    public Skill.STATE getCategoryState(SkillArchetype skill) {
+    public Skill.STATE getSkillState(Skill s) {
+        if (!data.containsKey(s)) return Skill.STATE.INACTIVE;
+        return data.get(s).getState();
+    }
+
+    @Override
+    public Skill.STATE getArchetypeState(SkillArchetype skill) {
         for (Skill s : new ArrayList<>(data.keySet())) {
             if (s != null && s.getArchetype().equals(skill)) return getSkillState(s);
         }
         return Skill.STATE.INACTIVE;
+    }
+
+    @Override
+    public Skill getEquippedVariation(SkillArchetype other) {
+        for (Skill k : new ArrayList<>(equippedSkill))
+            if (k != null && k.getArchetype() == other) return k;
+        return null;
+    }
+
+    @Nullable
+    @Override
+    public SkillStyle getStyle() {
+        return style;
+    }
+
+    @Override
+    public void setStyle(SkillStyle style) {
+        this.style = style;
+        equippedSkill.clear();
+        sync = true;
     }
 
     @Override
@@ -149,10 +168,12 @@ public class SkillCapability implements ISkillCapability {
     }
 
     @Override
-    public Skill getEquippedVariation(SkillArchetype other) {
-        for (Skill k : new ArrayList<>(equippedSkill))
-            if (k != null && k.getArchetype() == other) return k;
-        return null;
+    public List<SkillCategory> getEquippedColors() {
+        ArrayList<SkillCategory> ret = new ArrayList<>();
+        for (Skill k : new ArrayList<>(equippedSkill)) {
+            if (k != null && !ret.contains(k.getCategory())) ret.add(k.getCategory());
+        }
+        return ret;
     }
 
     @Override
@@ -235,23 +256,6 @@ public class SkillCapability implements ISkillCapability {
         }
     }
 
-    private CompoundTag fastWrite() {
-        CompoundTag to = new CompoundTag();
-        if (!this.data.isEmpty()) {
-            ListTag listnbt = new ListTag();
-            for (SkillData effectinstance : this.data.values()) {
-                if (effectinstance._isDirty()) {
-                    listnbt.add(effectinstance.write(new CompoundTag()));
-                }
-            }
-            if (!listnbt.isEmpty()) {
-                to.put("skillData", listnbt);
-                to.putBoolean("fast", true);
-            }
-        }
-        return to;
-    }
-
     @Override
     public void update() {
         final LivingEntity caster = dude.get();
@@ -260,7 +264,7 @@ public class SkillCapability implements ISkillCapability {
         sync |= gatedSkills != gate;
         gatedSkills = gate;
         for (SkillData d : data.values()) {
-            if (d == null || d.getSkill() == null){
+            if (d == null || d.getSkill() == null) {
                 continue;
             }
             if (d.getSkill().equippedTick(caster, d)) {
@@ -294,5 +298,22 @@ public class SkillCapability implements ISkillCapability {
     @Override
     public Skill[] getPastCasts() {
         return lastCast.toArray(new Skill[5]);
+    }
+
+    private CompoundTag fastWrite() {
+        CompoundTag to = new CompoundTag();
+        if (!this.data.isEmpty()) {
+            ListTag listnbt = new ListTag();
+            for (SkillData effectinstance : this.data.values()) {
+                if (effectinstance._isDirty()) {
+                    listnbt.add(effectinstance.write(new CompoundTag()));
+                }
+            }
+            if (!listnbt.isEmpty()) {
+                to.put("skillData", listnbt);
+                to.putBoolean("fast", true);
+            }
+        }
+        return to;
     }
 }

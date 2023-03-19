@@ -36,6 +36,7 @@ public abstract class Skill {
     protected static final HashSet<String> passive = makeTag(SkillTags.passive);
     protected static final HashSet<String> special = makeTag(SkillTags.special);
     protected static final HashSet<String> state = makeTag(SkillTags.state);
+    protected static final HashSet<String> style = makeTag(SkillTags.style);
     private ResourceLocation registryName;
     private SkillCategory category = SkillColors.none;
 
@@ -138,6 +139,15 @@ public abstract class Skill {
         return true;
     }
 
+    public boolean isEquippableWith(Skill s, LivingEntity caster) {
+        if (s == null) return true;
+        for (String tag : this.getTags(caster))
+            if (s.getHardIncompatibility(caster).contains(tag)) return false;
+        for (String tag : s.getTags(caster))
+            if (this.getHardIncompatibility(caster).contains(tag)) return false;
+        return true;
+    }
+
     public void onCooledDown(LivingEntity caster, float overflow) {
         caster.level.playSound(null, caster, SoundEvents.EXPERIENCE_ORB_PICKUP, SoundSource.AMBIENT, 0.3f + WarDance.rand.nextFloat(), 0.5f + WarDance.rand.nextFloat());
     }
@@ -173,7 +183,7 @@ public abstract class Skill {
     @Nonnull
     public abstract HashSet<String> getSoftIncompatibility(LivingEntity caster);
 
-    public HashSet<String> getHardIncompatibility(LivingEntity caster) {//TODO implement
+    public HashSet<String> getHardIncompatibility(LivingEntity caster) {
         return none;
     }
 

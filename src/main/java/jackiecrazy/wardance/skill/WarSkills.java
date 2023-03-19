@@ -20,6 +20,7 @@ import jackiecrazy.wardance.skill.mementomori.MementoMori;
 import jackiecrazy.wardance.skill.mementomori.PoundOfFlesh;
 import jackiecrazy.wardance.skill.mementomori.ShadowDive;
 import jackiecrazy.wardance.skill.regenspirit.*;
+import jackiecrazy.wardance.skill.styles.one.Survivor;
 import jackiecrazy.wardance.skill.warcry.*;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraftforge.registries.DeferredRegister;
@@ -32,11 +33,19 @@ import java.util.function.Supplier;
 public class WarSkills {
 
     public static ResourceLocation REGISTRY_NAME = new ResourceLocation(WarDance.MODID, "skills");
-
     public static Supplier<IForgeRegistry<Skill>> SUPPLIER;
-
     public static DeferredRegister<Skill> SKILLS = DeferredRegister.create(REGISTRY_NAME, WarDance.MODID);
 
+    //===========================================================================================================//
+    //                                                      Styles
+    //===========================================================================================================//
+    public static final RegistryObject<SkillStyle> SURVIVOR = SKILLS.register("survivor", Survivor::new);
+
+
+
+    //===========================================================================================================//
+    //                                                      Skills
+    //===========================================================================================================//
     public static final RegistryObject<Skill> VITAL_STRIKE = SKILLS.register("vital_strike", () -> new HeavyBlow().setCategory(SkillColors.white));
     public static final RegistryObject<Skill> MOMENTUM = SKILLS.register("momentum", () -> new Momentum().setCategory(SkillColors.orange));
     public static final RegistryObject<Skill> STAGGER = SKILLS.register("stagger", () -> new Stagger().setCategory(SkillColors.red));

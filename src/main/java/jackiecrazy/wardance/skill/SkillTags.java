@@ -5,6 +5,7 @@ public class SkillTags {
     public static final String offensive = "offensive";
     public static final String defensive = "defensive";
     public static final String state = "state";
+    public static final String style = "style";
     public static final String passive = "passive";
     public static final String special = "special";
 

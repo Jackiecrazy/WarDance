@@ -9,6 +9,7 @@ import java.util.*;
 public class DummySkillCap implements ISkillCapability {
     private static final Map<Skill, SkillData> dummy = new HashMap<>();
     private static final List<Skill> otherDummy = new ArrayList<>();
+    private static final List<SkillCategory> dum = new ArrayList<>();
 
 
     @Override
@@ -57,7 +58,7 @@ public class DummySkillCap implements ISkillCapability {
     }
 
     @Override
-    public Skill.STATE getCategoryState(SkillArchetype s) {
+    public Skill.STATE getArchetypeState(SkillArchetype s) {
         return Skill.STATE.INACTIVE;
     }
 
@@ -65,6 +66,17 @@ public class DummySkillCap implements ISkillCapability {
     @Override
     public Skill getEquippedVariation(SkillArchetype base) {
         return null;
+    }
+
+    @org.jetbrains.annotations.Nullable
+    @Override
+    public SkillStyle getStyle() {
+        return null;
+    }
+
+    @Override
+    public void setStyle(SkillStyle style) {
+
     }
 
     @Override
@@ -75,6 +87,11 @@ public class DummySkillCap implements ISkillCapability {
     @Override
     public void removeActiveTag(String tag) {
 
+    }
+
+    @Override
+    public List<SkillCategory> getEquippedColors() {
+        return dum;
     }
 
     @Override

@@ -79,6 +79,10 @@ public class SkillData {
         return this;
     }
 
+    public void addArbitraryFloat(float variable) {
+        this.var = var + variable;
+    }
+
     public boolean isCondition() {
         return condition;
     }

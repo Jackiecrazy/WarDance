@@ -48,7 +48,7 @@ public class Feint extends Skill {
             final ISkillCapability cap = CasterData.getCap(caster);
             final Skill feint = cap.getEquippedVariation(SkillArchetypes.feint);
             if (feint != null && Marks.getCap(uke).isMarked(SkillArchetypes.feint)) {
-                Marks.getCap(uke).getActiveMark(feint).ifPresent(a -> a.setArbitraryFloat(a.getArbitraryFloat() - 1));
+                Marks.getCap(uke).getActiveMark(feint).ifPresent(a -> a.addArbitraryFloat(-1));
                 if (cap.getEquippedSkills().contains(WarSkills.CAPRICIOUS_STRIKE.get()))
                     for (Skill s : cap.getEquippedSkills())
                         if (s != null && s.getTags(caster).contains(SkillTags.physical) && cap.getSkillState(s) == STATE.COOLING)
@@ -59,7 +59,7 @@ public class Feint extends Skill {
         Marks.getCap(uke).getActiveMark(WarSkills.SPIRIT_RESONANCE.get()).ifPresent((a) -> {
             if (a.getDuration() <= 0.1 && e.getSource() instanceof CombatDamageSource && ((CombatDamageSource) e.getSource()).canProcSkillEffects()) {
                 a.flagCondition(true);
-                a.setArbitraryFloat(a.getArbitraryFloat() - 1);
+                a.addArbitraryFloat(-1);
                 a.setDuration(1.1f);
                 CombatData.getCap(uke).consumePosture(2);
             }
@@ -88,6 +88,17 @@ public class Feint extends Skill {
         }
     }
 
+    @Nonnull
+    @Override
+    public SkillArchetype getArchetype() {
+        return SkillArchetypes.feint;
+    }
+
+    @Override
+    public float spiritConsumption(LivingEntity caster) {
+        return 1;
+    }
+
     @Override
     public HashSet<String> getTags(LivingEntity caster) {
         return tag;
@@ -100,8 +111,11 @@ public class Feint extends Skill {
     }
 
     @Override
-    public float spiritConsumption(LivingEntity caster) {
-        return 1;
+    public boolean markTick(LivingEntity caster, LivingEntity target, SkillData sd) {
+        if (sd.getDuration() > 0.1 || sd.getArbitraryFloat() <= 0) {
+            sd.decrementDuration(0.05f);
+        }
+        return super.markTick(caster, target, sd);
     }
 
     @Override
@@ -125,13 +139,6 @@ public class Feint extends Skill {
         }
     }
 
-    @Override
-    public SkillData onMarked(LivingEntity caster, LivingEntity target, SkillData sd, @Nullable SkillData existing) {
-        if (existing != null)
-            sd.setArbitraryFloat(sd.getArbitraryFloat() + existing.getArbitraryFloat());
-        return sd;
-    }
-
     //ignores all attempt to activate it
     @Override
     public boolean onStateChange(LivingEntity caster, SkillData prev, STATE from, STATE to) {
@@ -142,17 +149,10 @@ public class Feint extends Skill {
     }
 
     @Override
-    public boolean markTick(LivingEntity caster, LivingEntity target, SkillData sd) {
-        if (sd.getDuration() > 0.1 || sd.getArbitraryFloat() <= 0) {
-            sd.decrementDuration(0.05f);
-        }
-        return super.markTick(caster, target, sd);
-    }
-
-    @Nonnull
-    @Override
-    public SkillArchetype getArchetype() {
-        return SkillArchetypes.feint;
+    public SkillData onMarked(LivingEntity caster, LivingEntity target, SkillData sd, @Nullable SkillData existing) {
+        if (existing != null)
+            sd.addArbitraryFloat(existing.getArbitraryFloat());
+        return sd;
     }
 
     public static class ScorpionSting extends Feint {
@@ -173,7 +173,6 @@ public class Feint extends Skill {
     public static class UpperHand extends Feint {
         static final UUID UPPER = UUID.fromString("67fe7ef6-a398-4c62-9fb1-42edaa80e7c1");
 
-
         @Override
         public boolean markTick(LivingEntity caster, LivingEntity target, SkillData sd) {
             if (caster == target) {
@@ -187,7 +186,7 @@ public class Feint extends Skill {
         public SkillData onMarked(LivingEntity caster, LivingEntity target, SkillData sd, @Nullable SkillData existing) {
             if (existing != null) {
                 sd.setDuration(200);
-                sd.setArbitraryFloat(sd.getArbitraryFloat() + existing.getArbitraryFloat());
+                sd.addArbitraryFloat(existing.getArbitraryFloat());
                 if (caster == target) {
                     SkillUtils.modifyAttribute(caster, Attributes.ARMOR, UPPER, sd.getArbitraryFloat() * 2, AttributeModifier.Operation.ADDITION);
                 } else {

@@ -26,13 +26,17 @@ public class Petrify extends Hex {
     }
 
     @Override
-    public void onMarkEnd(LivingEntity caster, LivingEntity target, SkillData sd) {
-        final AttributeInstance speed = target.getAttribute(Attributes.MOVEMENT_SPEED);
-        if (speed != null) {
-            speed.removeModifier(SPEED);
+    public void onProc(LivingEntity caster, Event procPoint, STATE state, SkillData stats, LivingEntity target) {
+        if (procPoint instanceof LivingDamageEvent && ((LivingDamageEvent) procPoint).getEntity() == target && target.hasEffect(FootworkEffects.PETRIFY.get())) {
+            //create dust cloud and end petrify
+            SkillUtils.createCloud(caster.level, caster, target.getX(), target.getY(), target.getZ(), 7, ParticleTypes.LARGE_SMOKE);
+            for (LivingEntity entity : target.level.getEntitiesOfClass(LivingEntity.class, target.getBoundingBoxForCulling().inflate(7), a -> !TargetingUtils.isAlly(a, caster))) {
+                CombatData.getCap(entity).consumePosture(5);
+                target.addEffect(new MobEffectInstance(FootworkEffects.ENFEEBLE.get(), 60));
+            }
+            target.removeEffect(FootworkEffects.PETRIFY.get());
         }
-        target.addEffect(new MobEffectInstance(FootworkEffects.PETRIFY.get(), 60));
-        super.onMarkEnd(caster, target, sd);
+        super.onProc(caster, procPoint, state, stats, target);
     }
 
     @Override
@@ -42,20 +46,26 @@ public class Petrify extends Hex {
             speed.removeModifier(SPEED);
             speed.addPermanentModifier(SPEED);
         }
+        final AttributeInstance fly = target.getAttribute(Attributes.FLYING_SPEED);
+        if (fly != null) {
+            fly.removeModifier(SPEED);
+            fly.addPermanentModifier(SPEED);
+        }
         return super.onMarked(caster, target, sd, existing);
     }
 
     @Override
-    public void onProc(LivingEntity caster, Event procPoint, STATE state, SkillData stats, LivingEntity target) {
-        if (procPoint instanceof LivingDamageEvent && ((LivingDamageEvent) procPoint).getEntity() == target && target.hasEffect(FootworkEffects.PETRIFY.get())) {
-            //create dust cloud and end petrify
-            SkillUtils.createCloud(caster.level, caster, target.getX(), target.getY(), target.getZ(), 7, ParticleTypes.LARGE_SMOKE);
-            for (LivingEntity entity : target.level.getEntitiesOfClass(LivingEntity.class, target.getBoundingBoxForCulling().inflate(7), a->!TargetingUtils.isAlly(a, caster))) {
-                CombatData.getCap(entity).consumePosture(5);
-                target.addEffect(new MobEffectInstance(FootworkEffects.ENFEEBLE.get(), 60));
-            }
-            target.removeEffect(FootworkEffects.PETRIFY.get());
+    public void onMarkEnd(LivingEntity caster, LivingEntity target, SkillData sd) {
+        final AttributeInstance speed = target.getAttribute(Attributes.MOVEMENT_SPEED);
+        if (speed != null) {
+            speed.removeModifier(SPEED);
         }
-        super.onProc(caster, procPoint, state, stats, target);
+
+        final AttributeInstance fly = target.getAttribute(Attributes.FLYING_SPEED);
+        if (fly != null) {
+            fly.removeModifier(SPEED);
+        }
+        target.addEffect(new MobEffectInstance(FootworkEffects.PETRIFY.get(), 60));
+        super.onMarkEnd(caster, target, sd);
     }
 }

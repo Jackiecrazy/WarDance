@@ -108,7 +108,7 @@ public class Judgment extends Skill {
     public SkillData onMarked(LivingEntity caster, LivingEntity target, SkillData sd, @Nullable SkillData existing) {
         if (existing != null) {
             if (existing.getDuration() < 0) return null;
-            sd.setArbitraryFloat(sd.getArbitraryFloat() + existing.getArbitraryFloat());
+            sd.addArbitraryFloat(existing.getArbitraryFloat());
             sd.setDuration(12);
         }
         return sd;

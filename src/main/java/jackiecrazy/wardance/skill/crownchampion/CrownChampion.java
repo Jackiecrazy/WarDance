@@ -53,15 +53,15 @@ elemental might: +1 burn/snowball/poison/drown damage to targets you have attack
                 if (TargetingUtils.isAlly(p, uke) && !TargetingUtils.isAlly(p, seme) && p.distanceToSqr(uke) < 100 && CasterData.getCap(p).getEquippedSkills().contains(venge)) {
                     ((LivingEntity) seme).addEffect(new MobEffectInstance(MobEffects.GLOWING, 100));
                     SkillData apply = Marks.getCap((LivingEntity) seme).getActiveMark(venge).orElse(new SkillData(venge, 0));
-                    apply.setArbitraryFloat(apply.getArbitraryFloat() + e.getAmount());
+                    apply.addArbitraryFloat(e.getAmount());
                     Marks.getCap((LivingEntity) seme).mark(apply);
                 }
             if (Marks.getCap(uke).isMarked(venge) && CasterData.getCap((LivingEntity) seme).getEquippedSkills().contains(venge)) {
                 Marks.getCap(uke).getActiveMark(venge).ifPresent(a -> {
                     final float amnt = Math.min(e.getAmount(), a.getArbitraryFloat());
-                    CombatData.getCap((LivingEntity) seme).addMight(amnt/4);
+                    CombatData.getCap((LivingEntity) seme).addMight(amnt / 4);
                     e.setAmount(e.getAmount() + amnt);
-                    a.setArbitraryFloat(a.getArbitraryFloat() - e.getAmount());
+                    a.addArbitraryFloat(-e.getAmount());
                     if (a.getArbitraryFloat() < 0) a.setDuration(-10);
                 });
             }
@@ -182,7 +182,7 @@ elemental might: +1 burn/snowball/poison/drown damage to targets you have attack
         public void onProc(LivingEntity caster, Event procPoint, STATE state, SkillData pd, LivingEntity target) {
             if (procPoint instanceof GainMightEvent && procPoint.getPhase() == EventPriority.HIGHEST) {
                 ((GainMightEvent) procPoint).setQuantity(((GainMightEvent) procPoint).getQuantity() * 3);
-                pd.setArbitraryFloat(pd.getArbitraryFloat() + ((GainMightEvent) procPoint).getQuantity());
+                pd.addArbitraryFloat(((GainMightEvent) procPoint).getQuantity());
                 if (pd.getArbitraryFloat() > 3) {
                     pd.setArbitraryFloat(pd.getArbitraryFloat() % 3);
                     CombatData.getCap(caster).setShatterCooldown(0);
