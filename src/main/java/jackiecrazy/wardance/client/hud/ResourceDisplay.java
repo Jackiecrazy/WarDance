@@ -442,7 +442,7 @@ public class ResourceDisplay implements IGuiOverlay {
                     //might crown plus pro ultra, rendered at max might
                     if (currentMightLevel == cap.getMaxMight()) {
                         stack.pushPose();
-                        mc.gui.blit(stack, x, y, 64, 96, 32, 32);
+                        mc.gui.blit(stack, x, y, 64, 64, 32, 32);
                         stack.popPose();
                         stack.popPose();
                     }

@@ -4,6 +4,7 @@ import jackiecrazy.wardance.capability.skill.CasterData;
 import jackiecrazy.wardance.capability.skill.ISkillCapability;
 import jackiecrazy.wardance.skill.Skill;
 import jackiecrazy.wardance.skill.SkillData;
+import jackiecrazy.wardance.skill.SkillStyle;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
@@ -25,15 +26,18 @@ public class UpdateSkillSelectionPacket {
         return o1 == o2 ? 0 : o1.getRegistryName().compareTo(o2.getRegistryName());
     };
     private List<Skill> l;
+    private SkillStyle style;
 
-    public UpdateSkillSelectionPacket(List<Skill> list) {
+    public UpdateSkillSelectionPacket(SkillStyle style, List<Skill> list) {
         l = list;
+        this.style = style;
     }
 
     public static class UpdateSkillEncoder implements BiConsumer<UpdateSkillSelectionPacket, FriendlyByteBuf> {
 
         @Override
         public void accept(UpdateSkillSelectionPacket updateSkillPacket, FriendlyByteBuf packetBuffer) {
+            packetBuffer.writeResourceLocation(updateSkillPacket.style == null ? DUMMY : updateSkillPacket.style.getRegistryName());
             packetBuffer.writeInt(updateSkillPacket.l.size());
             for (Skill s : updateSkillPacket.l)
                 if (s != null)
@@ -46,12 +50,13 @@ public class UpdateSkillSelectionPacket {
 
         @Override
         public UpdateSkillSelectionPacket apply(FriendlyByteBuf packetBuffer) {
+            SkillStyle ss = SkillStyle.getStyle(packetBuffer.readResourceLocation());
             int size = packetBuffer.readInt();
             List<Skill> read = new ArrayList<>(size);
             for (int a = 0; a < size; a++) {
                 read.add(a, Skill.getSkill(packetBuffer.readResourceLocation()));
             }
-            return new UpdateSkillSelectionPacket(read);
+            return new UpdateSkillSelectionPacket(ss, read);
         }
     }
 
@@ -67,11 +72,12 @@ public class UpdateSkillSelectionPacket {
                     List<Skill> now = new ArrayList<>(updateSkillPacket.l);
                     prev.sort(comparator);
                     now.sort(comparator);
-                    if (!prev.equals(now)) {
+                    if (!prev.equals(now) || updateSkillPacket.style != cap.getStyle()) {
                         for (Skill s : cap.getEquippedSkills())
                             if (s != null) {
                                 s.onUnequip(sender, new SkillData(s, 0).setCaster(sender));
                             }
+                        cap.setStyle(updateSkillPacket.style);
                         cap.getAllSkillData().clear();
                         cap.setEquippedSkills(updateSkillPacket.l);
                         for (Skill s : cap.getEquippedSkills())

@@ -34,7 +34,7 @@ public class SkillSliceButton extends SkillSelectionButton {
 
     @Override
     public void onPress() {
-        if (isValidSelection())
+        if (isValidSelection()&&!parent.contains(getParentSelection()))
             s = getParentSelection();
     }
 

@@ -41,6 +41,10 @@
   "wardance.tooltip.noParry": "Cannot be used to parry",
   "wardance.tooltip.ignoreParry": "Ignores parries",
 
+  "wardance.tooltip.resetStyle1": "Too many colors chosen for this style!",
+  "wardance.tooltip.resetStyle2": "To reset your style, deselect current skill entry by clicking it again.",
+  "wardance.tooltip.resetStyle3": "Right click to reset. Beware, this will also clear your skill selections!",
+
   "wardance.absorption": "Absorption",
   "wardance.deflection": "Deflection Angle",
   "wardance.shatter": "Shatter Ticks",
@@ -104,13 +108,19 @@
   "wardance.skill.taken_damage.desc": "damage before armor, potion effects, and other similar calculations",
   "wardance.skill.received_damage.desc": "damage after armor, potion effects, and other similar calculations",
   "wardance.skill.enemies.desc": "those who are targeting you or one of your allies, and those you have attacked. \n Non-aggravated neutral mobs and unaware mobs are not considered enemies.",
+  "wardance.skill.allies.desc": "pets, owners of pets, team members, and all other players if PvP is disabled.",
   "wardance.skill.aux_attack.desc": "adds another attack onto your normal attack every %d seconds, dealing %d health damage and %d posture damage.",
+  "wardance.skill.true_damage.desc": "not affected by armor, enchantments, and other similar effects.",
 
-  "wardance.skills_general": "Click on a skill in the sidebar to see its variations, then click on the variation you want and click on a gray slot to add it to that slot. Right click on a slot with a skill to clear that slot.",
-  "wardance.skills_colors": "You can only equip one variation of one skill at a time, the currently equipped variation will be highlighted in red. Some skills cannot be simultaneously cast, and skills that cannot be cast at the same time as the skill you have selected will be highlighted in orange.",
+  "wardance.skills_style": "Welcome! \n Select a style from the left and equip it by clicking the slot on the right to get started.\nSkills are colored by their overall theme. You may see styles that place {limitations on the number of colors you may equip; YELLOW}. Generally, styles with {many limitations; GOLD} will have {powerful effects; GOLD}, while styles with {few limitations; AQUA} will have {weaker overall effects; AQUA} or even {negative effects; RED} to compensate for their flexibility.",
+  "wardance.skills_general": "Click on a skill, then click on a {gray; GRAY} slot to add it to that slot. You may only equip each skill once. Right click on a slot with a skill to clear that slot.",
   "wardance.skill_tag": "Tags: ",
   "wardance.skill_soft_incompat": "Cannot be cast with skills tagged as: ",
   "wardance.skill_hard_incompat": "Cannot be equipped with skills tagged as: ",
+
+  "wardance.survivor.name": "Survivor",
+  "wardance.survivor.desc": "You may pick 1 color. \nUpon receiving fatal damage at max might, become unstoppable for 10 seconds. During this time you cannot {heal; RED}, {take damage; GREEN}, or {gain might; RED}. At the end, {recover health; DARK_GREEN, BOLD; 10%% for each entity, or all for a player} for each entity slain during this period.",
+
   "archetype.heavy_blow.name": "Heavy Blow",
   "archetype.heavy_blow.desc": "If your target parries a critical hit, their parrying hand will be disabled for 1.5 seconds; if the target blocks the blow, their shield will be disabled for 3 seconds. Recharges after 3 attacks.\nOffensive bonuses are not applied if the target has Iron Guard active.",
   "wardance.vital_strike.name": "Vital Strike",
@@ -248,7 +258,7 @@
   "wardance.brutalize.desc": " Might cost per cast increased to 5. Intimidate hostile targets in a 10 block radius on every cast, causing them to take 20% more posture damage from you for 10 seconds. Successfully judging a target staggers it for double the usual time, nearby enemies with less health than the judged target are compelled to flee in fear.",
   "wardance.brutalize.requirement": "must reach S rank first",
   "wardance.viral_decay.name": "Viral Decay",
-  "wardance.viral_decay.desc": " The {mark; ITALIC, BOLD; wardance.skill.mark.desc} cannot be extended by attacking, but deals (stack) wither damage every second. Manual detonation or death while {marked; ITALIC, BOLD; wardance.skill.mark.desc} creates an explosion instead of refunding might, dealing 2 true damage and {marking; ITALIC, BOLD; wardance.skill.mark.desc} non-ally targets in a 3 block radius.",
+  "wardance.viral_decay.desc": " The {mark; DARK_PURPLE, BOLD; wardance.skill.mark.desc} cannot be extended by attacking, but deals {decay damage; GRAY; equal to its stack count} every second. Manual detonation or death while {marked; DARK_PURPLE, BOLD; wardance.skill.mark.desc} creates an explosion, dealing 2 {true damage; BOLD, RED; wardance.skill.true_damage.desc} and {marking; DARK_PURPLE, BOLD; wardance.skill.mark.desc} non-{ally; AQUA; wardance.skill.allies.desc} targets in a 3 block radius.",
   "wardance.viral_decay.requirement": "must reach S rank first",
   "wardance.fever_dream.name": "Fever Dream",
   "wardance.fever_dream.desc": " Upon successfully judging a target, compel entities in a 7 block radius to attack each other randomly. If this affects another {marked; ITALIC, BOLD; wardance.skill.mark.desc} entity, they will repeat this effect. The effect can be chained up to 3 times.",

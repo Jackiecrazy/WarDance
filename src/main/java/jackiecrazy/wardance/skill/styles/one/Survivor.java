@@ -1,6 +1,8 @@
 package jackiecrazy.wardance.skill.styles.one;
 
+import jackiecrazy.footwork.capability.resources.CombatData;
 import jackiecrazy.footwork.event.ConsumePostureEvent;
+import jackiecrazy.footwork.event.GainMightEvent;
 import jackiecrazy.wardance.WarDance;
 import jackiecrazy.wardance.skill.SkillData;
 import jackiecrazy.wardance.skill.SkillStyle;
@@ -39,7 +41,7 @@ public class Survivor extends SkillStyle {
     @Override
     public void onProc(LivingEntity caster, Event procPoint, STATE state, SkillData stats, LivingEntity target) {
         super.onProc(caster, procPoint, state, stats, target);
-        if (procPoint instanceof LivingDamageEvent && ((LivingDamageEvent) procPoint).getEntity() == caster && state != STATE.COOLING && (((LivingDamageEvent) procPoint).getAmount() > caster.getHealth() || stats.isCondition())) {
+        if (procPoint instanceof LivingDamageEvent e && e.getEntity() == caster && ((e.getAmount() > caster.getHealth()  && CombatData.getCap(caster).consumeMight(2)) || stats.isCondition())) {
             if (!stats.isCondition())
                 caster.level.playSound(null, caster.getX(), caster.getY(), caster.getZ(), SoundEvents.BELL_BLOCK, SoundSource.PLAYERS, 0.25f + WarDance.rand.nextFloat() * 0.5f, 0.5f + WarDance.rand.nextFloat() * 0.5f);
             onStateChange(caster, stats, stats.getState(), STATE.ACTIVE);
@@ -51,6 +53,9 @@ public class Survivor extends SkillStyle {
             procPoint.setCanceled(true);
             ((ConsumePostureEvent) procPoint).setAmount(0);
             ((ConsumePostureEvent) procPoint).setResetCooldown(false);
+        }
+        if (procPoint instanceof GainMightEvent e && state == STATE.ACTIVE) {
+            e.setQuantity(0);
         }
         if (procPoint instanceof LivingHealEvent && state == STATE.ACTIVE) {
             ((LivingHealEvent) procPoint).setAmount(0);
@@ -64,8 +69,7 @@ public class Survivor extends SkillStyle {
     @Override
     public boolean onStateChange(LivingEntity caster, SkillData prev, STATE from, STATE to) {
         if (to == STATE.COOLING) {
-            caster.setHealth(prev.getArbitraryFloat() * caster.getMaxHealth() / 10);
-            setCooldown(caster, prev, 10);
+            prev.setState(STATE.INACTIVE);
             return true;
         }
         if (from != STATE.ACTIVE && to == STATE.ACTIVE) {

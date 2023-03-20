@@ -1,6 +1,7 @@
 package jackiecrazy.wardance.skill;
 
 import jackiecrazy.wardance.capability.skill.CasterData;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.LivingEntity;
 
 import javax.annotation.Nonnull;
@@ -14,9 +15,12 @@ public abstract class SkillStyle extends Skill {
     private final int maxColors;
 
     public SkillStyle(int max) {
-        super();
         maxColors = max;
         styleList.add(this);
+    }
+
+    public static SkillStyle getStyle(ResourceLocation rl) {
+        return getSkill(rl) instanceof SkillStyle ss ? ss : null;
     }
 
     public int getMaxColors() {
@@ -25,8 +29,13 @@ public abstract class SkillStyle extends Skill {
 
     @Override
     public boolean isEquippableWith(Skill s, LivingEntity caster) {
+        if (s == null) return true;
         List<SkillCategory> equipped = CasterData.getCap(caster).getEquippedColors();
         return equipped.contains(s.getCategory()) || equipped.size() < maxColors;
+    }
+
+    public ResourceLocation icon() {
+        return new ResourceLocation("wardance:textures/skill/" + getRegistryName().getPath() + ".png");
     }
 
     @Nonnull

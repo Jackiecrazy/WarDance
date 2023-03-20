@@ -46,6 +46,9 @@ public class SkillCapability implements ISkillCapability {
         final LivingEntity bruv = dude.get();
         if (bruv != null) {
             if (!s.isSelectable(bruv)) return false;
+            for (Skill skill : skillList) {
+                if (!skill.isEquippableWith(s, bruv)) return false;
+            }
             return skillList.contains(s) == gatedSkills;
         }
         return true;
@@ -184,7 +187,9 @@ public class SkillCapability implements ISkillCapability {
     @Override
     public void setEquippedSkills(List<Skill> skills) {
         equippedSkill.clear();
-        equippedSkill.addAll(skills);
+        for (Skill ski : skills) {
+            if (basicSanityCheck(ski)) equippedSkill.add(ski);
+        }
         sync = true;
     }
 
@@ -201,6 +206,8 @@ public class SkillCapability implements ISkillCapability {
         CompoundTag to = new CompoundTag();
         to.putInt("holster", index);
         to.putBoolean("gamerule", gatedSkills);
+        if (style != null)
+            to.putString("style", style.getRegistryName().toString());
         if (!this.data.isEmpty()) {
             ListTag listnbt = new ListTag();
 
@@ -227,6 +234,8 @@ public class SkillCapability implements ISkillCapability {
             data.clear();
             index = from.getInt("holster");
             gatedSkills = from.getBoolean("gamerule");//it's the easy way out...
+            if (Skill.getSkill(from.getString("style")) instanceof SkillStyle ss)
+                style = ss;
             Skill[] als = new Skill[10];
             for (int a = 0; a < als.length; a++)
                 if (from.contains("equippedSkill" + a))
@@ -298,6 +307,12 @@ public class SkillCapability implements ISkillCapability {
     @Override
     public Skill[] getPastCasts() {
         return lastCast.toArray(new Skill[5]);
+    }
+
+    private boolean basicSanityCheck(Skill insert) {
+        if (skillList.contains(insert)) return false;
+        if (style != null && !style.isEquippableWith(insert, dude.get())) return false;
+        return true;
     }
 
     private CompoundTag fastWrite() {

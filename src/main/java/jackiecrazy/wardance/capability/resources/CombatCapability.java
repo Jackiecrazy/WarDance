@@ -778,7 +778,7 @@ public class CombatCapability implements ICombatCapability {
         }
         //might decay
         if (getMightGrace() == 0) {
-            float over = qiExtra * 0.01f;
+            float over = qiExtra * 0.005f;
             float decay = getMight();
             setMight(getMight() - over);
         }
@@ -955,7 +955,7 @@ public class CombatCapability implements ICombatCapability {
         LivingEntity shooter = dude.get();
         if (shooter == null) return;
         if (pass)
-            addMight(Mth.clamp((shooter.tickCount - lastRangeTick) * 0.01f, 0, 0.3f));
+            addMight(Mth.clamp((shooter.tickCount - lastRangeTick) * 0.002f, 0, 0.06f));
         lastRangeTick = shooter.tickCount;
     }
 

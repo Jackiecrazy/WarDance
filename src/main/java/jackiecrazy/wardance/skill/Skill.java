@@ -167,7 +167,7 @@ public abstract class Skill {
      * @param caster only nonnull if it's in the casting bar!
      */
     public Component getDisplayName(LivingEntity caster) {
-        return Component.translatable(this.getRegistryName().toString() + ".name");
+        return Component.translatable("wardance." + this.getRegistryName().getPath() + ".name");
     }
 
     public ResourceLocation icon() {

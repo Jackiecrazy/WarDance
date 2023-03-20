@@ -5,12 +5,10 @@ import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.Tesselator;
 import jackiecrazy.wardance.WarDance;
 import jackiecrazy.wardance.capability.skill.CasterData;
+import jackiecrazy.wardance.capability.skill.ISkillCapability;
 import jackiecrazy.wardance.networking.CombatChannel;
 import jackiecrazy.wardance.networking.UpdateSkillSelectionPacket;
-import jackiecrazy.wardance.skill.Skill;
-import jackiecrazy.wardance.skill.SkillArchetype;
-import jackiecrazy.wardance.skill.SkillCategory;
-import jackiecrazy.wardance.skill.SkillColors;
+import jackiecrazy.wardance.skill.*;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
@@ -45,25 +43,27 @@ import java.util.stream.Collectors;
 
 public class SkillSelectionScreen extends Screen {
     private static final ResourceLocation radial = new ResourceLocation(WarDance.MODID, "textures/skill/radialhud.png");
-    private static final int[] fixedU = {
-            150, 0, 150, 300, 300
-    };
-    private static final int[] fixedV = {
-            0, 150, 150, 150, 0
-    };
+    private static final int[] fixedU = {150, 0, 150, 300, 300};
+    private static final int[] fixedV = {0, 150, 150, 150, 0};
     private static final int PADDING = 6;
-    private final List<Skill> unsortedBases;
+    private final List<Skill> unsortedSkills;
+    private final List<Skill> unsortedStyles;
     private final SkillSliceButton[] skillPie = new SkillSliceButton[5];
     private final PassiveButton[] passives = new PassiveButton[5];
     private final int numButtons = Skill.categoryMap.size();
-    private final Comparator<SkillCategorySort> SORTER = Comparator.comparing(o -> StringUtils.toLowerCase(stripControlCodes(o.getText().getString())));
+    private final Comparator<SkillCategorySort> CATEGORYSORT = Comparator.comparing(o -> StringUtils.toLowerCase(stripControlCodes(o.getText().getString())));
+
+    private final Comparator<Skill> SKILLSORT = Comparator.comparing(o -> StringUtils.toLowerCase(stripControlCodes(o.getDisplayName(null).getString())));
     public SkillListWidget.CategoryEntry selectedSkill = null;
+    boolean refresh = false;
+    SkillStyleButton style;
     //public VariationListWidget.VariationEntry selectedVariation = null;
     private SkillListWidget skillList;
     //private VariationListWidget variationList;
     private SkillSelectionScreen.InfoPanel skillInfo;
     private int listWidth;
     private List<Skill> bases;
+    private List<SkillStyle> stylebases;
     private int buttonMargin = 4;
     private Button doneButton;
     private String lastFilterText = "";
@@ -71,6 +71,7 @@ public class SkillSelectionScreen extends Screen {
     private boolean filtered = false;
     private ArrayList<SkillCategorySort> filters = new ArrayList<>();
     private SkillCategory displayedCategory = SkillColors.none;
+    int update=0;
 
     public SkillSelectionScreen() {
         super(Component.translatable("wardance.skillselection.title"));
@@ -78,8 +79,13 @@ public class SkillSelectionScreen extends Screen {
         for (List<Skill> list : Skill.categoryMap.values()) {
             this.bases.addAll(list);
         }
+        bases.sort(SKILLSORT);
+        stylebases = new ArrayList<>();
+        stylebases.addAll(SkillStyle.styleList);
+        stylebases.sort(SKILLSORT);
 
-        this.unsortedBases = Collections.unmodifiableList(this.bases);
+        this.unsortedSkills = Collections.unmodifiableList(this.bases);
+        this.unsortedStyles = Collections.unmodifiableList(this.bases);
     }
 
     private static String stripControlCodes(String value) {return net.minecraft.util.StringUtil.stripColor(value);}
@@ -140,7 +146,11 @@ public class SkillSelectionScreen extends Screen {
      */
 
     public <T extends ObjectSelectionList.Entry<T>> void buildSkillList(Consumer<T> modListViewConsumer, Function<Skill, T> newEntry) {
-        bases.forEach(mod -> {
+        if (style.getSkill() == null) stylebases.forEach(mod -> {
+            if (CasterData.getCap(Minecraft.getInstance().player).isSkillSelectable(mod))
+                modListViewConsumer.accept(newEntry.apply(mod));
+        });
+        else bases.forEach(mod -> {
             if (CasterData.getCap(Minecraft.getInstance().player).isSkillSelectable(mod))
                 modListViewConsumer.accept(newEntry.apply(mod));
         });
@@ -154,17 +164,30 @@ public class SkillSelectionScreen extends Screen {
 //    }
 
     private void reloadSkills() {//
-        this.bases = this.unsortedBases.stream().
-                filter(mi -> (mi.getCategory() == displayedCategory || displayedCategory == SkillColors.none) && StringUtils.toLowerCase(stripControlCodes(mi.getDisplayName(null).getString())).contains(StringUtils.toLowerCase(search.getValue()))).collect(Collectors.toList());
+        this.bases = this.unsortedSkills.stream().filter(mi -> (mi.getCategory() == displayedCategory || displayedCategory == SkillColors.none) && StringUtils.toLowerCase(stripControlCodes(mi.getDisplayName(null).getString())).contains(StringUtils.toLowerCase(search.getValue()))).collect(Collectors.toList());
         lastFilterText = search.getValue();
+    }
+
+    boolean contains(Skill query) {
+        for (SkillSelectionButton ssb : skillPie)
+            if (ssb.getSkill() == query)
+                return true;
+        for (SkillSelectionButton ssb : passives)
+            if (ssb.getSkill() == query)
+                return true;
+        return false;
     }
 
     boolean isValidInsertion(Skill insert) {
         final LocalPlayer player = Minecraft.getInstance().player;
+        if (style.getStyle() == null && !(insert instanceof SkillStyle)) return false;
+        if (style.getStyle() != null && getNumColors() > style.getStyle().getMaxColors()) return false;
         for (SkillSelectionButton ssb : skillPie)
-            if (ssb.getSkill() != null && !ssb.getSkill().isEquippableWith(insert, player)) return false;
+            if (ssb.getSkill() != null && (!ssb.getSkill().isEquippableWith(insert, player)))
+                return false;
         for (SkillSelectionButton ssb : passives)
-            if (ssb.getSkill() != null && !ssb.getSkill().isEquippableWith(insert, player)) return false;
+            if (ssb.getSkill() != null && (!ssb.getSkill().isEquippableWith(insert, player)))
+                return false;
         return CasterData.getCap(player).isSkillSelectable(insert);
     }
 
@@ -172,8 +195,7 @@ public class SkillSelectionScreen extends Screen {
         this.displayedCategory = newSort;
 
         for (SkillCategorySort sort : filters) {
-            if (sort.button != null)
-                sort.button.active = displayedCategory != sort.cat;
+            if (sort.button != null) sort.button.active = displayedCategory != sort.cat;
         }
         filtered = false;
     }
@@ -181,23 +203,9 @@ public class SkillSelectionScreen extends Screen {
     @Override
     public void render(PoseStack mStack, int mouseX, int mouseY, float partialTicks) {
         this.renderBackground(mStack);
-        this.skillList.render(mStack, mouseX, mouseY, partialTicks);
-        //this.variationList.render(mStack, mouseX, mouseY, partialTicks);
-        if (this.skillInfo != null) {
-            this.skillInfo.render(mStack, mouseX, mouseY, partialTicks);
-            RenderSystem.disableScissor();
-        }
-        for (SkillSliceButton ssb : skillPie) {
-            ssb.render(mStack, mouseX, mouseY, partialTicks);
-        }
-        for (PassiveButton pb : passives) {
-            pb.render(mStack, mouseX, mouseY, partialTicks);
-        }
-
         Component text = Component.translatable("fml.menu.mods.search");
         int x = skillList.getLeft() + ((skillList.getRight() - skillList.getLeft()) / 2) - (getFontRenderer().width(text) / 2);
         getFontRenderer().draw(mStack, text.getVisualOrderText(), x, search.y - getFontRenderer().lineHeight, 0xFFFFFF);
-        this.search.render(mStack, mouseX, mouseY, partialTicks);
         super.render(mStack, mouseX, mouseY, partialTicks);
     }
 
@@ -208,62 +216,92 @@ public class SkillSelectionScreen extends Screen {
             newSkills.add(ssb.getSkill());
         for (PassiveButton pb : passives)
             newSkills.add(pb.getSkill());
+        CasterData.getCap(Minecraft.getInstance().player).setStyle(style.getStyle());
         CasterData.getCap(Minecraft.getInstance().player).setEquippedSkills(newSkills);
-        CombatChannel.INSTANCE.sendToServer(new UpdateSkillSelectionPacket(newSkills));
+        CombatChannel.INSTANCE.sendToServer(new UpdateSkillSelectionPacket(style.getStyle(), newSkills));
         this.minecraft.setScreen(null);
     }
 
     @Override
     public void init() {
         filters.clear();
-        for (SkillCategory sc : Skill.categoryMap.keySet()) {
-            if (sc != SkillColors.none && sc != SkillColors.white)
-                filters.add(new SkillCategorySort(sc));
+        final ISkillCapability cap = CasterData.getCap(Minecraft.getInstance().player);
+        int skillCircleWidth = 150;
+
+        //style
+        if (style == null) {
+            style = new SkillStyleButton(this, width - skillCircleWidth / 2 - 12, PADDING + skillCircleWidth / 2 - 12, 23);
+            style.setSkill(cap.getStyle());
         }
-        filters.sort(SORTER);
+        addRenderableWidget(style);
+        //if no style, halt some developments
+        final boolean noStyle = style.getSkill() == null;
+        int noStyleOffset = 0;
+        if (noStyle) {
+            style.x = width - skillCircleWidth / 2 - 12;
+            style.y = PADDING + skillCircleWidth / 2 - 12;
+            noStyleOffset = width;
+        } else {
+            style.x = width - style.getWidth() - PADDING;
+            style.y = height - style.getHeight() - PADDING;
+        }
+
+        //filter buttons
+        for (SkillCategory sc : Skill.categoryMap.keySet()) {
+            if (sc != SkillColors.none && sc != SkillColors.white) filters.add(new SkillCategorySort(sc));
+        }
+        filters.sort(CATEGORYSORT);
         filters.add(0, new SkillCategorySort(SkillColors.white));
         filters.add(0, new SkillCategorySort(SkillColors.none));
 
-        for (Skill mod : bases) {
+        List<? extends Skill> reference = noStyle ? stylebases : bases;
+
+        //create skill list
+        for (Skill mod : reference) {
             listWidth = Math.max(listWidth, getFontRenderer().width(mod.getDisplayName(null).getString()) + 20);
         }
         listWidth = Math.max(Math.min(listWidth, width / 5), 100);
         listWidth += listWidth % numButtons != 0 ? (numButtons - listWidth % numButtons) : 0;
-
-        int skillCircleWidth = 150;
         int infoWidth = this.width - this.listWidth - skillCircleWidth - (PADDING * 4);
+
+        //done button
         int doneButtonWidth = Math.min(infoWidth, 200);
         int y = this.height - 20 - PADDING;
         doneButton = new Button(((listWidth + PADDING + this.width - doneButtonWidth) / 2), y, doneButtonWidth, 20, Component.translatable("gui.done"), b -> SkillSelectionScreen.this.onClose());
         //use a builder in 1.19.3
         this.addRenderableWidget(doneButton);
-        //y -= 20 + PADDING;
 
-        //y -= 14 + PADDING + 1;
+        //search bar
         search = new EditBox(getFontRenderer(), PADDING + 1, y, listWidth - 2, 14, Component.translatable("fml.menu.mods.search"));
 
+        //skill list
         int fullButtonHeight = PADDING + 16 + PADDING;
         this.skillList = new SkillListWidget(this, listWidth, fullButtonHeight, search.y - getFontRenderer().lineHeight - PADDING);
         this.skillList.setLeftPos(PADDING);
 
+        //skill info
         int split = (this.height - (PADDING + fullButtonHeight) * 2);
         this.skillInfo = new InfoPanel(this.minecraft, infoWidth, split, fullButtonHeight);
 //        this.variationList = new VariationListWidget(this, infoWidth - 9, split + PADDING * 2, search.y - getFontRenderer().lineHeight - PADDING);
 //        this.variationList.setLeftPos(PADDING * 2 + listWidth);
 
-        List<Skill> oldList = CasterData.getCap(Minecraft.getInstance().player).getEquippedSkills();
+        //currently equipped skills
+        List<Skill> oldList = cap.getEquippedSkills();
         for (int d = 0; d < skillPie.length; d++) {
-            skillPie[d] = new SkillSliceButton(this, width - skillCircleWidth, PADDING / 2, skillCircleWidth, fixedU[d], fixedV[d], radial, d);
-            skillPie[d].setSkill(oldList.get(d));
+            skillPie[d] = new SkillSliceButton(this, width - skillCircleWidth + noStyleOffset, PADDING / 2, skillCircleWidth, fixedU[d], fixedV[d], radial, d);
+            if (!noStyle)
+                skillPie[d].setSkill(oldList.get(d));
             addRenderableWidget(skillPie[d]);
         }
 
         for (int d = 0; d < passives.length; d++) {
-            passives[d] = new PassiveButton(this, width - skillCircleWidth + d * (31), PADDING + skillCircleWidth, 23, d);
-            passives[d].setSkill(oldList.get(d + skillPie.length));
+            passives[d] = new PassiveButton(this, width - skillCircleWidth + d * (31) + noStyleOffset, PADDING + skillCircleWidth, 23, d);
+            if (!noStyle)
+                passives[d].setSkill(oldList.get(d + skillPie.length));
             addRenderableWidget(passives[d]);
         }
 
+        //add everything!
         addRenderableWidget(search);
         addRenderableWidget(skillList);
         //addRenderableWidget(variationList);
@@ -273,6 +311,8 @@ public class SkillSelectionScreen extends Screen {
 
         final int width = listWidth / numButtons;
         int x = PADDING;
+
+        //add filter buttons
         for (SkillCategorySort scc : filters) {
             ArrayList<FormattedCharSequence> display = new ArrayList<>();
             display.addAll(this.minecraft.font.split(scc.cat.name(), Math.max(this.width / 2 - 43, 170)));
@@ -290,6 +330,18 @@ public class SkillSelectionScreen extends Screen {
         search.tick();
         skillList.setSelected(selectedSkill);
         //variationList.setSelected(selectedVariation);
+        if (refresh) {
+            String s = this.search.getValue();
+            SkillCategory sort = this.displayedCategory;
+            SkillListWidget.CategoryEntry selected = this.selectedSkill;
+            this.init(getMinecraftInstance(), width, height);
+            this.search.setValue(s);
+            this.selectedSkill = selected;
+            if (!this.search.getValue().isEmpty()) reloadSkills();
+            if (sort != SkillColors.none) filterSkills(sort);
+            updateCache();
+            refresh = false;
+        }
 
         if (!search.getValue().equals(lastFilterText)) {
             reloadSkills();
@@ -317,10 +369,8 @@ public class SkillSelectionScreen extends Screen {
         this.init(mc, width, height);
         this.search.setValue(s);
         this.selectedSkill = selected;
-        if (!this.search.getValue().isEmpty())
-            reloadSkills();
-        if (sort != SkillColors.none)
-            filterSkills(sort);
+        if (!this.search.getValue().isEmpty()) reloadSkills();
+        if (sort != SkillColors.none) filterSkills(sort);
         updateCache();
     }
 
@@ -339,13 +389,35 @@ public class SkillSelectionScreen extends Screen {
         updateCache();
     }
 
+    int getNumColors() {
+        ArrayList<SkillCategory> colors = new ArrayList<>();
+        for (SkillSelectionButton a : passives) {
+            if (a.getSkill() != null && !colors.contains(a.getSkill().getCategory())) {
+                colors.add(a.getSkill().getCategory());
+            }
+        }
+        for (SkillSelectionButton a : skillPie) {
+            if (a.getSkill() != null && !colors.contains(a.getSkill().getCategory())) {
+                colors.add(a.getSkill().getCategory());
+            }
+        }
+        if (selectedSkill != null && !colors.contains(selectedSkill.getSkill().getCategory()))
+            colors.add(selectedSkill.getSkill().getCategory());
+        return colors.size();
+    }
+
     private void updateCache() {
+        if(style.getStyle()==null&&selectedSkill == null){
+            this.skillInfo.clearInfo();
+            List<String> lines = new ArrayList<>();
+            lines.add(Component.translatable("wardance.skills_style").getString() + "\n");
+            skillInfo.setInfo(lines, null);
+            return;
+        }
         if (selectedSkill == null) {
             this.skillInfo.clearInfo();
             List<String> lines = new ArrayList<>();
-            lines.add(Component.translatable("wardance:skills_general").getString() + "\n");
-            lines.add(Component.translatable("wardance:skills_colors").getString() + "\n");
-            lines.add(Component.translatable("wardance:skills_terms").getString() + "\n");
+            lines.add(Component.translatable("wardance.skills_general").getString() + "\n");
             skillInfo.setInfo(lines, null);
             return;
         }
@@ -353,7 +425,8 @@ public class SkillSelectionScreen extends Screen {
         List<String> lines = new ArrayList<>();
 
         lines.add(ChatFormatting.BOLD + "" + ChatFormatting.UNDERLINE + selectedSkill.getDisplayName(null).getString() + ChatFormatting.RESET + "\n");
-        lines.add(selectedSkill.getArchetype().description().getString());
+        if (selectedSkill.getArchetype() != SkillArchetypes.none)
+            lines.add(selectedSkill.getArchetype().description().getString());
         lines.add(selectedSkill.description().getString());
 //        if (selectedVariation != null) {
 //            //lines.add(String.valueOf(selectedVariation.getSkill().getColor().getRGB()));
@@ -388,8 +461,7 @@ public class SkillSelectionScreen extends Screen {
         static final Pattern TOOLTIP_PATTERN = Pattern.compile(
                 //         schema                          ipv4            OR        namespace                 port     path         ends
                 //   |-----------------|        |-------------------------|  |-------------------------|    |---------| |--|   |---------------|
-                "\\{[^}]*\\}",
-                Pattern.CASE_INSENSITIVE);
+                "\\{[^}]*\\}", Pattern.CASE_INSENSITIVE);
         private ResourceLocation logoPath;
         private List<FormattedCharSequence> lines = Collections.emptyList();
 
@@ -408,10 +480,8 @@ public class SkillSelectionScreen extends Screen {
                 int end = matcher.end();
                 String literal = string.substring(lastEnd, start);
                 if (literal.length() > 0) {
-                    if (ichat == null)
-                        ichat = Component.literal(literal);
-                    else
-                        ichat.append(literal);
+                    if (ichat == null) ichat = Component.literal(literal);
+                    else ichat.append(literal);
                 }
                 lastEnd = end;
 
@@ -431,22 +501,18 @@ public class SkillSelectionScreen extends Screen {
                 ChatFormatting[] fff = new ChatFormatting[formatting.size()];
                 MutableComponent tooltipText = Component.literal(display);
                 Style style = tooltipText.getStyle().withBold(true);
-                if (!formatting.isEmpty())
-                    style = style.applyFormats(formatting.toArray(fff));
+                if (!formatting.isEmpty()) style = style.applyFormats(formatting.toArray(fff));
                 if (!tooltip.isEmpty())
                     style = style.withHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, Component.translatable(tooltip, additionalData)));
                 tooltipText.setStyle(style);
-                if (ichat == null)
-                    ichat = Component.literal("");
+                if (ichat == null) ichat = Component.literal("");
                 ichat.append(tooltipText);
             }
 
             // Append the rest of the message.
             String end = string.substring(lastEnd);
-            if (ichat == null)
-                ichat = Component.literal(end);
-            else if (end.length() > 0)
-                ichat.append(Component.literal(string.substring(lastEnd)));
+            if (ichat == null) ichat = Component.literal(end);
+            else if (end.length() > 0) ichat.append(Component.literal(string.substring(lastEnd)));
             return ichat;
         }
 
@@ -483,8 +549,7 @@ public class SkillSelectionScreen extends Screen {
         public int getContentHeight() {
             int height = 0;
             height += (lines.size() * font.lineHeight);
-            if (height < this.bottom - this.top - 8)
-                height = this.bottom - this.top - 8;
+            if (height < this.bottom - this.top - 8) height = this.bottom - this.top - 8;
             return height;
         }
 
@@ -550,12 +615,10 @@ public class SkillSelectionScreen extends Screen {
             if (logoPath != null) {
                 offset -= 50;
             }
-            if (offset <= 0)
-                return null;
+            if (offset <= 0) return null;
 
             int lineIdx = (int) (offset / font.lineHeight);
-            if (lineIdx >= lines.size() || lineIdx < 1)
-                return null;
+            if (lineIdx >= lines.size() || lineIdx < 1) return null;
 
             FormattedCharSequence line = lines.get(lineIdx - 1);
             if (line != null) {
