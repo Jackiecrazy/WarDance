@@ -84,8 +84,10 @@ public class UpdateSkillSelectionPacket {
                             if (s != null) {
                                 s.onEquip(sender);
                             }
-                    } else
+                    } else {
+                        cap.setStyle(updateSkillPacket.style);
                         cap.setEquippedSkills(updateSkillPacket.l);
+                    }
                 }
             });
             contextSupplier.get().setPacketHandled(true);

@@ -3,7 +3,7 @@ package jackiecrazy.wardance.skill.mementomori;
 import jackiecrazy.footwork.event.AttackMightEvent;
 import jackiecrazy.footwork.utils.GeneralUtils;
 import jackiecrazy.footwork.utils.TargetingUtils;
-import jackiecrazy.wardance.api.CombatDamageSource;
+import jackiecrazy.footwork.api.CombatDamageSource;
 import jackiecrazy.wardance.skill.*;
 import jackiecrazy.wardance.utils.CombatUtils;
 import jackiecrazy.wardance.utils.SkillUtils;

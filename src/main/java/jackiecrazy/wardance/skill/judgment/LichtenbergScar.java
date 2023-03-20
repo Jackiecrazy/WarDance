@@ -1,6 +1,6 @@
 package jackiecrazy.wardance.skill.judgment;
 
-import jackiecrazy.wardance.api.CombatDamageSource;
+import jackiecrazy.footwork.api.CombatDamageSource;
 import jackiecrazy.wardance.capability.status.Marks;
 import jackiecrazy.wardance.skill.SkillData;
 import net.minecraft.world.entity.EntityType;

@@ -1,7 +1,7 @@
 package jackiecrazy.wardance.skill.kick;
 
 import jackiecrazy.footwork.capability.resources.CombatData;
-import jackiecrazy.wardance.api.CombatDamageSource;
+import jackiecrazy.footwork.api.CombatDamageSource;
 import jackiecrazy.wardance.skill.SkillData;
 import jackiecrazy.wardance.utils.CombatUtils;
 import net.minecraft.world.entity.LivingEntity;

@@ -23,11 +23,11 @@ public class OffhandCooldownDisplay implements IGuiOverlay {
     public void render(ForgeGui gui, PoseStack stack, float partialTick, int width, int height) {
         Minecraft mc = Minecraft.getInstance();
         Player player = mc.player;
+        RenderSystem.setShaderTexture(0, GuiComponent.GUI_ICONS_LOCATION);
         if (mc.options.getCameraType() != CameraType.FIRST_PERSON || player == null) return;
         if (Minecraft.getInstance().options.attackIndicator().get() == AttackIndicatorStatus.HOTBAR) {
-            if (mc.getCameraEntity() instanceof Player) {
+            if (mc.getCameraEntity() instanceof Player p) {
                 GlStateManager._clearColor(1.0F, 1.0F, 1.0F, 1.0F);
-                Player p = (Player) mc.getCameraEntity();
                 ItemStack itemstack = p.getOffhandItem();
                 HumanoidArm oppositeHand = p.getMainArm().getOpposite();
                 int halfOfScreen = width / 2;

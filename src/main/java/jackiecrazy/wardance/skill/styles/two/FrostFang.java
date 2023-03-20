@@ -1,4 +1,4 @@
-package jackiecrazy.wardance.skill.warcry;
+package jackiecrazy.wardance.skill.styles.two;
 
 import jackiecrazy.footwork.utils.StealthUtils;
 import jackiecrazy.wardance.skill.ProcPoints;
@@ -23,29 +23,15 @@ public class FrostFang extends WarCry {
     private final HashSet<String> chant = makeTag(SkillTags.chant, SkillTags.melee, SkillTags.state);
 
     @Override
-    protected void evoke(LivingEntity caster) {
-        caster.getAttribute(Attributes.MOVEMENT_SPEED).removeModifier(speed);
-        caster.getAttribute(Attributes.MOVEMENT_SPEED).addTransientModifier(speed);
-        super.evoke(caster);
-    }
-
-    @Override
     protected int getDuration(float might) {
         return (int) (might * 20);
     }
 
     @Override
-    public void onEquip(LivingEntity caster) {
-        caster.getAttribute(Attributes.LUCK).removeModifier(luck.getId());
-        caster.getAttribute(Attributes.LUCK).addPermanentModifier(luck);
-        super.onEquip(caster);
-    }
-
-    @Override
-    public void onUnequip(LivingEntity caster, SkillData stats) {
-        caster.getAttribute(Attributes.LUCK).removeModifier(luck);
+    protected void evoke(LivingEntity caster) {
         caster.getAttribute(Attributes.MOVEMENT_SPEED).removeModifier(speed);
-        super.onUnequip(caster, stats);
+        caster.getAttribute(Attributes.MOVEMENT_SPEED).addTransientModifier(speed);
+        super.evoke(caster);
     }
 
     @Override
@@ -61,9 +47,19 @@ public class FrostFang extends WarCry {
 
     @Override
     public boolean equippedTick(LivingEntity caster, SkillData stats) {
-        if (stats.getState() == STATE.ACTIVE) {
-            return activeTick(stats);
-        }
         return super.equippedTick(caster, stats);
+    }
+
+    @Override
+    public void onEquip(LivingEntity caster) {
+        caster.getAttribute(Attributes.LUCK).removeModifier(luck.getId());
+        caster.getAttribute(Attributes.LUCK).addPermanentModifier(luck);
+        super.onEquip(caster);
+    }
+
+    @Override
+    public void onUnequip(LivingEntity caster, SkillData stats) {
+        caster.getAttribute(Attributes.LUCK).removeModifier(luck);
+        super.onUnequip(caster, stats);
     }
 }

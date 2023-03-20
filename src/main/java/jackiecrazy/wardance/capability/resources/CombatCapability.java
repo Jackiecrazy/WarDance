@@ -6,13 +6,11 @@ import jackiecrazy.footwork.event.*;
 import jackiecrazy.footwork.potion.FootworkEffects;
 import jackiecrazy.footwork.utils.GeneralUtils;
 import jackiecrazy.wardance.WarDance;
-import jackiecrazy.wardance.capability.skill.CasterData;
 import jackiecrazy.wardance.config.CombatConfig;
 import jackiecrazy.wardance.config.GeneralConfig;
 import jackiecrazy.wardance.config.ResourceConfig;
 import jackiecrazy.wardance.networking.CombatChannel;
 import jackiecrazy.wardance.networking.UpdateClientPacket;
-import jackiecrazy.wardance.skill.WarSkills;
 import jackiecrazy.wardance.utils.CombatUtils;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.server.level.ServerLevel;
@@ -67,7 +65,7 @@ public class CombatCapability implements ICombatCapability {
     private ItemStack prev;
     private float might, spirit, posture, rank, vision;
     private int shatterCD;
-    private int qcd, scd, pcd, ccd;
+    private float qcd, scd, pcd, ccd;
     private int mBind, oBind;
     private int staggert, mstaggert, offhandcd, roll, expose, mexpose, sweepAngle = -1;
     private float mpos, mspi, mmight, mfrac;
@@ -131,7 +129,6 @@ public class CombatCapability implements ICombatCapability {
         double grace = ResourceConfig.qiGrace;
         if (dude.get() != null) {
             amount *= dude.get().getAttributeValue(FootworkAttributes.MIGHT_GEN.get());
-            grace *= dude.get().getAttributeValue(FootworkAttributes.MIGHT_GRACE.get());
         }
         GainMightEvent gme = new GainMightEvent(dude.get(), amount);
         MinecraftForge.EVENT_BUS.post(gme);
@@ -162,7 +159,7 @@ public class CombatCapability implements ICombatCapability {
 
     @Override
     public int getMightGrace() {
-        return qcd;
+        return (int)qcd;
     }
 
     @Override
@@ -172,9 +169,13 @@ public class CombatCapability implements ICombatCapability {
 
     @Override
     public int decrementMightGrace(int amount) {
+        return (int) decrementPostureGrace((float)amount);
+    }
+
+    private float decrementMightGrace(float amount) {
         qcd -= amount;
         if (qcd < 0) {
-            int temp = qcd;
+            float temp = qcd;
             qcd = 0;
             return -temp;
         }
@@ -223,15 +224,13 @@ public class CombatCapability implements ICombatCapability {
         amount = Math.min(amount, spirit - above);
         spirit -= amount;
         double cd = ResourceConfig.spiritCD;
-        if (dude.get() != null)
-            cd /= dude.get().getAttributeValue(FootworkAttributes.SPIRIT_COOLDOWN.get());
         setSpiritGrace((int) cd);
         return cse.getResult() != Event.Result.DENY;
     }
 
     @Override
     public int getSpiritGrace() {
-        return scd;
+        return (int)scd;
     }
 
     @Override
@@ -246,9 +245,13 @@ public class CombatCapability implements ICombatCapability {
 
     @Override
     public int decrementSpiritGrace(int amount) {
+        return (int) decrementPostureGrace((float)amount);
+    }
+
+    private float decrementSpiritGrace(float amount) {
         scd -= amount;
         if (scd < 0) {
-            int temp = scd;
+            float temp = scd;
             scd = 0;
             return -temp;
         }
@@ -323,7 +326,7 @@ public class CombatCapability implements ICombatCapability {
         if (elb.hasEffect(MobEffects.HUNGER))
             for (int uwu = 0; uwu < elb.getEffect(MobEffects.HUNGER).getAmplifier() + 1; uwu++)
                 weakness *= GeneralConfig.hunger;
-        double cooldown = ResourceConfig.postureCD * weakness / elb.getAttributeValue(FootworkAttributes.POSTURE_COOLDOWN.get());
+        double cooldown = ResourceConfig.postureCD * weakness;
         posture -= amount;
         setPostureGrace((int) cooldown);
         sync();
@@ -332,7 +335,7 @@ public class CombatCapability implements ICombatCapability {
 
     @Override
     public int getPostureGrace() {
-        return pcd;
+        return (int)pcd;
     }
 
     @Override
@@ -342,9 +345,13 @@ public class CombatCapability implements ICombatCapability {
 
     @Override
     public int decrementPostureGrace(int amount) {
+        return (int) decrementPostureGrace((float)amount);
+    }
+
+    private float decrementPostureGrace(float amount) {
         pcd -= amount;
         if (pcd < 0) {
-            int temp = pcd;
+            float temp = pcd;
             pcd = 0;
             return -temp;
         }
@@ -708,7 +715,7 @@ public class CombatCapability implements ICombatCapability {
         if (first) {
             final float mPos = getMPos(elb);
             elb.getAttribute(FootworkAttributes.MAX_POSTURE.get()).setBaseValue(mPos);
-            elb.getAttribute(FootworkAttributes.MAX_FRACTURE.get()).setBaseValue(Math.floor(Math.sqrt(mpos) - 1));
+            elb.getAttribute(FootworkAttributes.MAX_FRACTURE.get()).setBaseValue(3 + Math.min(3, Math.round(elb.getMaxHealth() / 50)));
             setPosture(getMaxPosture());
         }
         //store motion for further use
@@ -723,9 +730,9 @@ public class CombatCapability implements ICombatCapability {
         //tick down everything
         if (adrenaline > 0)
             adrenaline -= Math.min(adrenaline, ticks);
-        int qiExtra = decrementMightGrace(ticks);
-        int spExtra = decrementSpiritGrace(ticks);
-        int poExtra = decrementPostureGrace(ticks);
+        float qiExtra = decrementMightGrace((float) (ticks/elb.getAttributeValue(FootworkAttributes.MIGHT_GRACE.get())));
+        float spExtra = decrementSpiritGrace((float) (ticks*elb.getAttributeValue(FootworkAttributes.SPIRIT_COOLDOWN.get())));
+        float poExtra = decrementPostureGrace((float) (ticks*elb.getAttributeValue(FootworkAttributes.POSTURE_COOLDOWN.get())));
         for (InteractionHand h : InteractionHand.values()) {
             decrementHandBind(h, ticks);
             if (getHandBind(h) != 0)
@@ -1009,10 +1016,6 @@ public class CombatCapability implements ICombatCapability {
         float armorMod = 2.5f + Math.min(elb.getArmorValue(), 20) * 0.125f;
         float cooldownMod = Math.min(CombatUtils.getCooledAttackStrength(elb, InteractionHand.MAIN_HAND, 0.5f), CombatUtils.getCooledAttackStrength(elb, InteractionHand.MAIN_HAND, 0.5f));
         float healthMod = 0.25f + elb.getHealth() / elb.getMaxHealth() * 0.75f;
-        if (CasterData.getCap(elb).isSkillUsable(WarSkills.BOULDER_BRACE.get())) {
-            armorMod = 2.5f;
-            healthMod = 1;
-        }
         //Vector3d spd = elb.getMotion();
         //float speedMod = (float) Math.min(1, 0.007f / (spd.x * spd.x + spd.z * spd.z));
 //        if (getStaggerTime() > 0) {

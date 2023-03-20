@@ -3,7 +3,7 @@ package jackiecrazy.wardance.skill.kick;
 import jackiecrazy.footwork.capability.resources.CombatData;
 import jackiecrazy.footwork.utils.TargetingUtils;
 import jackiecrazy.wardance.WarDance;
-import jackiecrazy.wardance.api.CombatDamageSource;
+import jackiecrazy.footwork.api.CombatDamageSource;
 import jackiecrazy.wardance.skill.SkillData;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;

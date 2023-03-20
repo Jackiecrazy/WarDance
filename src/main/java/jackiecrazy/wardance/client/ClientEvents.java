@@ -317,7 +317,7 @@ public class ClientEvents {
     public static void punchy(PlayerInteractEvent.EntityInteract e) {
         if (!rightClick && GeneralConfig.dual && e.getHand() == InteractionHand.OFF_HAND && (e.getItemStack().isEmpty() && CombatData.getCap(e.getEntity()).isCombatMode())) {
             rightClick = true;
-            Entity n = RenderEvents.getEntityLookedAt(e.getEntity(), GeneralUtils.getAttributeValueHandSensitive(e.getEntity(), ForgeMod.ATTACK_RANGE.get(), InteractionHand.OFF_HAND) - (e.getItemStack().isEmpty() ? 1 : 0));
+            Entity n = RenderEvents.getEntityLookedAt(e.getEntity(), GeneralUtils.getAttributeValueHandSensitive(e.getEntity(), ForgeMod.ATTACK_RANGE.get(), InteractionHand.OFF_HAND));
             e.getEntity().swing(InteractionHand.OFF_HAND, false);
             if (n != null)
                 CombatChannel.INSTANCE.sendToServer(new RequestAttackPacket(false, n));

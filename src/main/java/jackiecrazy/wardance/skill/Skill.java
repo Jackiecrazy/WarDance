@@ -1,6 +1,7 @@
 package jackiecrazy.wardance.skill;
 
 import jackiecrazy.footwork.capability.resources.CombatData;
+import jackiecrazy.footwork.move.Move;
 import jackiecrazy.wardance.WarDance;
 import jackiecrazy.wardance.capability.skill.CasterData;
 import jackiecrazy.wardance.capability.skill.ISkillCapability;
@@ -25,7 +26,7 @@ import java.awt.*;
 import java.util.List;
 import java.util.*;
 
-public abstract class Skill {
+public abstract class Skill extends Move {
     public static final HashMap<SkillArchetype, List<Skill>> variationMap = new HashMap<>();
     public static final HashMap<SkillCategory, List<Skill>> categoryMap = new HashMap<>();
     protected static final HashSet<String> none = new HashSet<>();

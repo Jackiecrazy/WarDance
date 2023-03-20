@@ -57,6 +57,7 @@ public class SkillSelectionScreen extends Screen {
     public SkillListWidget.CategoryEntry selectedSkill = null;
     boolean refresh = false;
     SkillStyleButton style;
+    int update = 0;
     //public VariationListWidget.VariationEntry selectedVariation = null;
     private SkillListWidget skillList;
     //private VariationListWidget variationList;
@@ -71,7 +72,6 @@ public class SkillSelectionScreen extends Screen {
     private boolean filtered = false;
     private ArrayList<SkillCategorySort> filters = new ArrayList<>();
     private SkillCategory displayedCategory = SkillColors.none;
-    int update=0;
 
     public SkillSelectionScreen() {
         super(Component.translatable("wardance.skillselection.title"));
@@ -115,6 +115,7 @@ public class SkillSelectionScreen extends Screen {
     1 color styles: major bonus
         Survivor: taking fatal damage at max fury negates all damage and healing for 10 seconds, you are healed 20% for each mob killed in this time (100% for player/boss)
         Specialist: +40% effectiveness on all skills, 60% at max fury
+        Generalist: can only use white skills. Each skill cast has a chance to be converted into a variation.
         Berserker Blood: can only use red skills. Fury gain is massively improved, use at max to emit a damaging scream
     2 color styles: decent bonus
         Boulder Brace:
@@ -181,7 +182,7 @@ public class SkillSelectionScreen extends Screen {
     boolean isValidInsertion(Skill insert) {
         final LocalPlayer player = Minecraft.getInstance().player;
         if (style.getStyle() == null && !(insert instanceof SkillStyle)) return false;
-        if (style.getStyle() != null && getNumColors() > style.getStyle().getMaxColors()) return false;
+        if (style.getStyle() != null && getNumColors().size() > style.getStyle().getMaxColors()) return false;
         for (SkillSelectionButton ssb : skillPie)
             if (ssb.getSkill() != null && (!ssb.getSkill().isEquippableWith(insert, player)))
                 return false;
@@ -275,13 +276,13 @@ public class SkillSelectionScreen extends Screen {
         search = new EditBox(getFontRenderer(), PADDING + 1, y, listWidth - 2, 14, Component.translatable("fml.menu.mods.search"));
 
         //skill list
-        int fullButtonHeight = PADDING + 16 + PADDING;
+        int fullButtonHeight = PADDING + 16 + PADDING + 16 + PADDING;
         this.skillList = new SkillListWidget(this, listWidth, fullButtonHeight, search.y - getFontRenderer().lineHeight - PADDING);
         this.skillList.setLeftPos(PADDING);
 
         //skill info
         int split = (this.height - (PADDING + fullButtonHeight) * 2);
-        this.skillInfo = new InfoPanel(this.minecraft, infoWidth, split, fullButtonHeight);
+        this.skillInfo = new InfoPanel(this.minecraft, infoWidth, split, PADDING);
 //        this.variationList = new VariationListWidget(this, infoWidth - 9, split + PADDING * 2, search.y - getFontRenderer().lineHeight - PADDING);
 //        this.variationList.setLeftPos(PADDING * 2 + listWidth);
 
@@ -302,23 +303,31 @@ public class SkillSelectionScreen extends Screen {
         }
 
         //add everything!
-        addRenderableWidget(search);
         addRenderableWidget(skillList);
         //addRenderableWidget(variationList);
+        addRenderableWidget(search);
         addRenderableWidget(skillInfo);
         search.setFocus(false);
         search.setCanLoseFocus(true);
 
-        final int width = listWidth / numButtons;
+        final int width = Math.min(2 * listWidth / numButtons, 16);
         int x = PADDING;
 
         //add filter buttons
+        boolean firstRow = true;
         for (SkillCategorySort scc : filters) {
             ArrayList<FormattedCharSequence> display = new ArrayList<>();
             display.addAll(this.minecraft.font.split(scc.cat.name(), Math.max(this.width / 2 - 43, 170)));
             display.addAll(this.minecraft.font.split(scc.cat.description(), Math.max(this.width / 2 - 43, 170)));
-            addRenderableWidget(scc.button = new SkillCategoryButton(this, scc, display, x, PADDING, width, 16, scc.cat.icon()));
-            x += width + buttonMargin;
+            addRenderableWidget(scc.button = new SkillCategoryButton(this, scc, display, x, PADDING + (firstRow ? 0 : 16 + PADDING), width, 16, scc.cat.icon()));
+            if (!firstRow) {
+                //first two down, draw a little line
+                if (x == PADDING) {
+                    x += PADDING;
+                }
+                x += width + buttonMargin;
+            }
+            firstRow = !firstRow;
         }
         filterSkills(SkillColors.none);
         updateCache();
@@ -389,7 +398,7 @@ public class SkillSelectionScreen extends Screen {
         updateCache();
     }
 
-    int getNumColors() {
+    List<SkillCategory> getNumColors() {
         ArrayList<SkillCategory> colors = new ArrayList<>();
         for (SkillSelectionButton a : passives) {
             if (a.getSkill() != null && !colors.contains(a.getSkill().getCategory())) {
@@ -403,11 +412,11 @@ public class SkillSelectionScreen extends Screen {
         }
         if (selectedSkill != null && !colors.contains(selectedSkill.getSkill().getCategory()))
             colors.add(selectedSkill.getSkill().getCategory());
-        return colors.size();
+        return colors;
     }
 
     private void updateCache() {
-        if(style.getStyle()==null&&selectedSkill == null){
+        if (style.getStyle() == null && selectedSkill == null) {
             this.skillInfo.clearInfo();
             List<String> lines = new ArrayList<>();
             lines.add(Component.translatable("wardance.skills_style").getString() + "\n");
@@ -500,7 +509,7 @@ public class SkillSelectionScreen extends Screen {
                 }
                 ChatFormatting[] fff = new ChatFormatting[formatting.size()];
                 MutableComponent tooltipText = Component.literal(display);
-                Style style = tooltipText.getStyle().withBold(true);
+                Style style = tooltipText.getStyle();
                 if (!formatting.isEmpty()) style = style.applyFormats(formatting.toArray(fff));
                 if (!tooltip.isEmpty())
                     style = style.withHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, Component.translatable(tooltip, additionalData)));

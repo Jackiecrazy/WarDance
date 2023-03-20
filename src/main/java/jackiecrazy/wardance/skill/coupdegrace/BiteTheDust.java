@@ -1,7 +1,7 @@
 package jackiecrazy.wardance.skill.coupdegrace;
 
 import jackiecrazy.footwork.event.StaggerEvent;
-import jackiecrazy.wardance.api.CombatDamageSource;
+import jackiecrazy.footwork.api.CombatDamageSource;
 import jackiecrazy.wardance.skill.*;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraftforge.eventbus.api.Event;

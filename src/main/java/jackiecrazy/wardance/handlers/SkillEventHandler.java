@@ -423,6 +423,38 @@ public class SkillEventHandler {
         }
     }
 
+    @SubscribeEvent(priority = EventPriority.HIGHEST)
+    public static void expose(ExposeEvent e) {
+        if (!e.getEntity().isEffectiveAi()) return;
+        if (e.getAttacker() != null) {
+            LivingEntity attacker = e.getAttacker();
+            ISkillCapability isc = CasterData.getCap(attacker);
+            for (Skill s : isc.getEquippedSkillsAndStyle()) {
+                isc.getSkillData(s).ifPresent(d -> s.onProc(attacker, e, d.getState(), d, e.getEntity()));
+            }
+        }
+        ISkillCapability isc = CasterData.getCap(e.getEntity());
+        for (Skill s : isc.getEquippedSkillsAndStyle()) {
+            isc.getSkillData(s).ifPresent(d -> s.onProc(e.getEntity(), e, d.getState(), d, e.getAttacker()));
+        }
+    }
+
+    @SubscribeEvent(priority = EventPriority.LOWEST)
+    public static void exposeS(ExposeEvent e) {
+        if (!e.getEntity().isEffectiveAi()) return;
+        if (e.getAttacker() != null) {
+            LivingEntity attacker = e.getAttacker();
+            ISkillCapability isc = CasterData.getCap(attacker);
+            for (Skill s : isc.getEquippedSkillsAndStyle()) {
+                isc.getSkillData(s).ifPresent(d -> s.onProc(attacker, e, d.getState(), d, e.getEntity()));
+            }
+        }
+        ISkillCapability isc = CasterData.getCap(e.getEntity());
+        for (Skill s : isc.getEquippedSkillsAndStyle()) {
+            isc.getSkillData(s).ifPresent(d -> s.onProc(e.getEntity(), e, d.getState(), d, e.getAttacker()));
+        }
+    }
+
     @SubscribeEvent(priority = EventPriority.LOWEST)
     public static void damageFlagS(LivingDamageEvent e) {
         if (!e.getEntity().isEffectiveAi()) return;

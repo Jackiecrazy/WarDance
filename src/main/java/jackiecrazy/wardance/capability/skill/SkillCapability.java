@@ -148,8 +148,9 @@ public class SkillCapability implements ISkillCapability {
 
     @Override
     public void setStyle(SkillStyle style) {
+        if (style != null) style.onUnequip(dude.get(), nonNullGet(style));
         this.style = style;
-        equippedSkill.clear();
+        if (style != null) style.onEquip(dude.get());
         sync = true;
     }
 

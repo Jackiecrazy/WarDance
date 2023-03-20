@@ -1,12 +1,10 @@
-package jackiecrazy.wardance.skill.warcry;
+package jackiecrazy.wardance.skill.styles.two;
 
 import jackiecrazy.footwork.capability.resources.CombatData;
 import jackiecrazy.wardance.WarDance;
 import jackiecrazy.wardance.skill.*;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
-import net.minecraft.world.effect.MobEffectInstance;
-import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.ai.attributes.AttributeModifier;
 import net.minecraftforge.event.entity.living.LivingHealEvent;
@@ -17,10 +15,14 @@ import javax.annotation.Nonnull;
 import java.util.HashSet;
 import java.util.UUID;
 
-public class WarCry extends Skill {
+public class WarCry extends SkillStyle {
     private static final AttributeModifier wrap = new AttributeModifier(UUID.fromString("4b342542-fcfb-47a8-8da8-4f57588f7003"), "bandaging wounds", -1, AttributeModifier.Operation.MULTIPLY_TOTAL);
     private final HashSet<String> procs = makeTag("chant", ProcPoints.on_being_hurt, ProcPoints.countdown, ProcPoints.recharge_time, ProcPoints.recharge_sleep);
     private final HashSet<String> tag = makeTag(SkillTags.chant, SkillTags.melee, SkillTags.state);
+
+    public WarCry() {
+        super(2);
+    }
 
     @Override
     public HashSet<String> getTags(LivingEntity caster) {
@@ -41,7 +43,7 @@ public class WarCry extends Skill {
     @Nonnull
     @Override
     public SkillArchetype getArchetype() {
-        return SkillArchetypes.war_cry;
+        return SkillArchetypes.none;
     }
 
     protected int getDuration(float might) {
@@ -51,16 +53,6 @@ public class WarCry extends Skill {
     protected void evoke(LivingEntity caster) {
         //CombatData.getCap(caster).addMight(mightConsumption(caster));
         caster.level.playSound(null, caster, SoundEvents.FIRE_EXTINGUISH, SoundSource.AMBIENT, 0.3f + WarDance.rand.nextFloat() * 0.5f, 0.5f + WarDance.rand.nextFloat());
-        if (this == WarSkills.REJUVENATE.get()) {
-            final float might = CombatData.getCap(caster).getMight();
-            final int duration = getDuration(might) * 20;
-            caster.addEffect(new MobEffectInstance(MobEffects.REGENERATION, duration));
-            if (might > 7) {
-                caster.addEffect(new MobEffectInstance(MobEffects.DAMAGE_RESISTANCE, duration));
-                caster.addEffect(new MobEffectInstance(MobEffects.ABSORPTION, duration, 1));
-            } else caster.addEffect(new MobEffectInstance(MobEffects.ABSORPTION, duration));
-            markUsed(caster);
-        }
         CombatData.getCap(caster).setMight(0);
     }
 

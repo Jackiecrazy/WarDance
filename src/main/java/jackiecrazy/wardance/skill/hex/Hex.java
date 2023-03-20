@@ -5,7 +5,7 @@ import jackiecrazy.footwork.capability.resources.ICombatCapability;
 import jackiecrazy.footwork.event.LuckEvent;
 import jackiecrazy.footwork.utils.EffectUtils;
 import jackiecrazy.wardance.WarDance;
-import jackiecrazy.wardance.api.CombatDamageSource;
+import jackiecrazy.footwork.api.CombatDamageSource;
 import jackiecrazy.wardance.capability.status.Marks;
 import jackiecrazy.wardance.entity.FakeExplosion;
 import jackiecrazy.wardance.skill.*;

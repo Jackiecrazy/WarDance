@@ -1,12 +1,9 @@
-package jackiecrazy.wardance.skill.warcry;
+package jackiecrazy.wardance.skill.styles.two;
 
-import jackiecrazy.footwork.capability.resources.CombatData;
 import jackiecrazy.footwork.event.AttackMightEvent;
 import jackiecrazy.wardance.WarDance;
-import jackiecrazy.wardance.capability.skill.CasterData;
 import jackiecrazy.wardance.skill.ProcPoints;
 import jackiecrazy.wardance.skill.SkillData;
-import jackiecrazy.wardance.skill.WarSkills;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraftforge.event.entity.player.CriticalHitEvent;
 import net.minecraftforge.eventbus.api.Event;
@@ -23,9 +20,9 @@ public class Timberfall extends WarCry {
 
     @SubscribeEvent
     public static void timberfall(AttackMightEvent e) {
-        if (e.getAttacker() != null && CasterData.getCap(e.getAttacker()).isSkillUsable(WarSkills.TIMBERFALL.get())) {
-            CombatData.getCap(e.getEntity()).consumePosture(e.getQuantity() * 5);
-        }
+//        if (e.getAttacker() != null && CasterData.getCap(e.getAttacker()).isSkillUsable(WarSkills.TIMBERFALL.get())) {
+//            CombatData.getCap(e.getEntity()).consumePosture(e.getQuantity() * 5);
+//        }
     }
 
     @Override
