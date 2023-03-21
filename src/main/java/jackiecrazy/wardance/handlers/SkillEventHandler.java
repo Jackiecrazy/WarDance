@@ -408,6 +408,32 @@ public class SkillEventHandler {
     }
 
     @SubscribeEvent(priority = EventPriority.LOWEST)
+    public static void consumePosture(ConsumePostureEvent e) {
+        if (!e.getEntity().isEffectiveAi()) return;
+        ISkillCapability isc = CasterData.getCap(e.getAttacker());
+        for (Skill s : isc.getEquippedSkillsAndStyle()) {
+            isc.getSkillData(s).ifPresent(d -> s.onProc(e.getAttacker(), e, d.getState(), d, e.getEntity()));
+        }
+        isc = CasterData.getCap(e.getEntity());
+        for (Skill s : isc.getEquippedSkillsAndStyle()) {
+            isc.getSkillData(s).ifPresent(d -> s.onProc(e.getEntity(), e, d.getState(), d, e.getAttacker()));
+        }
+    }
+
+    @SubscribeEvent(priority = EventPriority.HIGHEST)
+    public static void consumePostureE(ConsumePostureEvent e) {
+        if (!e.getEntity().isEffectiveAi()) return;
+        ISkillCapability isc = CasterData.getCap(e.getAttacker());
+        for (Skill s : isc.getEquippedSkillsAndStyle()) {
+            isc.getSkillData(s).ifPresent(d -> s.onProc(e.getAttacker(), e, d.getState(), d, e.getEntity()));
+        }
+        isc = CasterData.getCap(e.getEntity());
+        for (Skill s : isc.getEquippedSkillsAndStyle()) {
+            isc.getSkillData(s).ifPresent(d -> s.onProc(e.getEntity(), e, d.getState(), d, e.getAttacker()));
+        }
+    }
+
+    @SubscribeEvent(priority = EventPriority.LOWEST)
     public static void staggerFlagS(StaggerEvent e) {
         if (!e.getEntity().isEffectiveAi()) return;
         if (e.getAttacker() != null) {

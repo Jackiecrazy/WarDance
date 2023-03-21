@@ -16,6 +16,7 @@ import java.util.function.Function;
 import java.util.function.Supplier;
 
 public class UpdateClientPacket {
+    public static int timesInvoked=0;
     int e;
     CompoundTag icc;
 

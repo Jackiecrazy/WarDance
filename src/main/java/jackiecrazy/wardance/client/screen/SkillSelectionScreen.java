@@ -134,7 +134,7 @@ public class SkillSelectionScreen extends Screen {
         Gambler's Whimsy: only certain skills are castable. The selection increases with fury and rerolls after every cast
     5+ color styles: major disadvantage that has to be worked around
         Nature's Equilibrium: 5 colors, cannot use the same color twice in a row
-        Sifu: any color, can only deal posture damage to non-staggered targets (special: instead of dying, mobs will run away, leaving drops and exp as usual)
+        Sifu: any color except purple, can only deal posture damage to non-staggered targets (special: instead of dying, mobs will run away, leaving drops and exp as usual)
 
     a skill list widget that lists all castable skills, composed of skill entries, on the very very left
     a skill entry is made from the main skill icon, the name, and a smaller assortment of icons representing available variations. They can be kind of generic across every skill

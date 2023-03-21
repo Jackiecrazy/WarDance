@@ -159,7 +159,7 @@ public class CombatCapability implements ICombatCapability {
 
     @Override
     public int getMightGrace() {
-        return (int)qcd;
+        return (int) qcd;
     }
 
     @Override
@@ -169,17 +169,7 @@ public class CombatCapability implements ICombatCapability {
 
     @Override
     public int decrementMightGrace(int amount) {
-        return (int) decrementPostureGrace((float)amount);
-    }
-
-    private float decrementMightGrace(float amount) {
-        qcd -= amount;
-        if (qcd < 0) {
-            float temp = qcd;
-            qcd = 0;
-            return -temp;
-        }
-        return 0;
+        return (int) decrementPostureGrace((float) amount);
     }
 
     @Override
@@ -230,7 +220,7 @@ public class CombatCapability implements ICombatCapability {
 
     @Override
     public int getSpiritGrace() {
-        return (int)scd;
+        return (int) scd;
     }
 
     @Override
@@ -245,17 +235,7 @@ public class CombatCapability implements ICombatCapability {
 
     @Override
     public int decrementSpiritGrace(int amount) {
-        return (int) decrementPostureGrace((float)amount);
-    }
-
-    private float decrementSpiritGrace(float amount) {
-        scd -= amount;
-        if (scd < 0) {
-            float temp = scd;
-            scd = 0;
-            return -temp;
-        }
-        return 0;
+        return (int) decrementPostureGrace((float) amount);
     }
 
     @Override
@@ -289,6 +269,9 @@ public class CombatCapability implements ICombatCapability {
         //staggered already, no more posture damage
         if (getStaggerTime() > 0 || getExposeTime() > 0) return amount;
         if (!Float.isFinite(posture)) posture = getMaxPosture();
+        //resistance go brr
+        if (elb.hasEffect(MobEffects.DAMAGE_RESISTANCE) && GeneralConfig.resistance)
+            amount *= (1 - (elb.getEffect(MobEffects.DAMAGE_RESISTANCE).getAmplifier() + 1) * 0.2f);
         //event for oodles of compat
         ConsumePostureEvent cpe = new ConsumePostureEvent(elb, assailant, amount, above);
         MinecraftForge.EVENT_BUS.post(cpe);
@@ -301,8 +284,6 @@ public class CombatCapability implements ICombatCapability {
 //            ret = amount - getTrueMaxPosture() * CombatConfig.posCap;
 //            amount = getTrueMaxPosture() * CombatConfig.posCap;
 //        }
-        if (elb.hasEffect(MobEffects.DAMAGE_RESISTANCE) && GeneralConfig.resistance)
-            amount *= (1 - (elb.getEffect(MobEffects.DAMAGE_RESISTANCE).getAmplifier() + 1) * 0.2f);
         if (above > 0 && posture - amount < above) {
             //posture floor, set and bypass stagger test
             ret = amount - above;
@@ -335,7 +316,7 @@ public class CombatCapability implements ICombatCapability {
 
     @Override
     public int getPostureGrace() {
-        return (int)pcd;
+        return (int) pcd;
     }
 
     @Override
@@ -345,17 +326,7 @@ public class CombatCapability implements ICombatCapability {
 
     @Override
     public int decrementPostureGrace(int amount) {
-        return (int) decrementPostureGrace((float)amount);
-    }
-
-    private float decrementPostureGrace(float amount) {
-        pcd -= amount;
-        if (pcd < 0) {
-            float temp = pcd;
-            pcd = 0;
-            return -temp;
-        }
-        return 0;
+        return (int) decrementPostureGrace((float) amount);
     }
 
     @Override
@@ -730,9 +701,9 @@ public class CombatCapability implements ICombatCapability {
         //tick down everything
         if (adrenaline > 0)
             adrenaline -= Math.min(adrenaline, ticks);
-        float qiExtra = decrementMightGrace((float) (ticks/elb.getAttributeValue(FootworkAttributes.MIGHT_GRACE.get())));
-        float spExtra = decrementSpiritGrace((float) (ticks*elb.getAttributeValue(FootworkAttributes.SPIRIT_COOLDOWN.get())));
-        float poExtra = decrementPostureGrace((float) (ticks*elb.getAttributeValue(FootworkAttributes.POSTURE_COOLDOWN.get())));
+        float qiExtra = decrementMightGrace((float) (ticks / elb.getAttributeValue(FootworkAttributes.MIGHT_GRACE.get())));
+        float spExtra = decrementSpiritGrace((float) (ticks * elb.getAttributeValue(FootworkAttributes.SPIRIT_COOLDOWN.get())));
+        float poExtra = decrementPostureGrace((float) (ticks * elb.getAttributeValue(FootworkAttributes.POSTURE_COOLDOWN.get())));
         for (InteractionHand h : InteractionHand.values()) {
             decrementHandBind(h, ticks);
             if (getHandBind(h) != 0)
@@ -982,6 +953,36 @@ public class CombatCapability implements ICombatCapability {
         return vision;
     }
 
+    private float decrementMightGrace(float amount) {
+        qcd -= amount;
+        if (qcd < 0) {
+            float temp = qcd;
+            qcd = 0;
+            return -temp;
+        }
+        return 0;
+    }
+
+    private float decrementSpiritGrace(float amount) {
+        scd -= amount;
+        if (scd < 0) {
+            float temp = scd;
+            scd = 0;
+            return -temp;
+        }
+        return 0;
+    }
+
+    private float decrementPostureGrace(float amount) {
+        pcd -= amount;
+        if (pcd < 0) {
+            float temp = pcd;
+            pcd = 0;
+            return -temp;
+        }
+        return 0;
+    }
+
     public CompoundTag quickWrite() {
         CompoundTag c = new CompoundTag();
         c.putFloat("posture", getPosture());
@@ -1016,13 +1017,9 @@ public class CombatCapability implements ICombatCapability {
         float armorMod = 2.5f + Math.min(elb.getArmorValue(), 20) * 0.125f;
         float cooldownMod = Math.min(CombatUtils.getCooledAttackStrength(elb, InteractionHand.MAIN_HAND, 0.5f), CombatUtils.getCooledAttackStrength(elb, InteractionHand.MAIN_HAND, 0.5f));
         float healthMod = 0.25f + elb.getHealth() / elb.getMaxHealth() * 0.75f;
-        //Vector3d spd = elb.getMotion();
-        //float speedMod = (float) Math.min(1, 0.007f / (spd.x * spd.x + spd.z * spd.z));
-//        if (getStaggerTime() > 0) {
-//            return getMaxPosture() * armorMod * speedMod * healthMod / (1.5f * ResourceConfig.staggerDuration);
-//        }
-        //0.2f
-        final double ret = (elb.getAttributeValue(FootworkAttributes.POSTURE_REGEN.get()) / 20 * cooldownMod) * exhaustMod * healthMod * poison;
+        //no speed modifier because it encourages not moving
+        float speedMod = elb.isSprinting() ? 0.3f : elb.zza == 0 && elb.xxa == 0 && elb.yya == 0 ? 1f : 0.5f;
+        final double ret = (elb.getAttributeValue(FootworkAttributes.POSTURE_REGEN.get()) / 20 * cooldownMod) * speedMod * exhaustMod * healthMod * poison;
         RegenPostureEvent ev = new RegenPostureEvent(elb, (float) ret);
         MinecraftForge.EVENT_BUS.post(ev);
         return ev.getQuantity();

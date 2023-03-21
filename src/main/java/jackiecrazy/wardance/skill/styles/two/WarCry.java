@@ -7,9 +7,7 @@ import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.ai.attributes.AttributeModifier;
-import net.minecraftforge.event.entity.living.LivingHealEvent;
 import net.minecraftforge.eventbus.api.Event;
-import net.minecraftforge.eventbus.api.EventPriority;
 
 import javax.annotation.Nonnull;
 import java.util.HashSet;
@@ -58,9 +56,6 @@ public class WarCry extends SkillStyle {
 
     @Override
     public void onProc(LivingEntity caster, Event procPoint, STATE state, SkillData stats, LivingEntity target) {
-        if (procPoint instanceof LivingHealEvent && procPoint.getPhase() == EventPriority.HIGHEST) {
-            ((LivingHealEvent) procPoint).setAmount(((LivingHealEvent) procPoint).getAmount() * 1.5f);
-        }
     }
 
     @Override

@@ -24,4 +24,9 @@ public class SabatonSmash extends Kick {
         }
         return super.markTick(caster, target, sd);
     }
+
+    @Override
+    public boolean showsMark(SkillData mark, LivingEntity target) {
+        return false;
+    }
 }

@@ -216,7 +216,7 @@
   "wardance.wind_scar.name": "Wind Scar",
   "wardance.wind_scar.desc": " You may pick up to 2 colors. +1 attack reach. All melee and skill attacks ignore 15%% armor for every block of distance between you and the target.",
   "wardance.timberfall.name": "Timberfall",
-  "wardance.timberfall.desc": " You may pick up to 2 colors. After casting a skill, your next melee attack deals 40% extra damage. If this staggers the target, they gain an extra fracture mark.",
+  "wardance.timberfall.desc": " You may pick up to 2 colors. After casting a skill, your next melee attack in 3 seconds counts as a skill attack and deals 40% extra health and posture damage. If this staggers the target, they gain an extra fracture mark.",
   "wardance.frost_fang.name": "Frost Fang",
   "wardance.frost_fang.desc": " You may pick up to 2 colors. +2 luck. Gain 20%% extra damage every 4 seconds of not attacking, up to 100%%. Lose this bonus 2 seconds after any attack.",
   "wardance.flame_dance.name": "Flame Dance",

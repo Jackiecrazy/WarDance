@@ -43,8 +43,8 @@ public class WarSkills {
     public static final RegistryObject<Skill> BOULDER_BRACE = SKILLS.register("boulder_brace", () -> new BoulderBrace().setCategory(SkillColors.green));
     public static final RegistryObject<Skill> WIND_SCAR = SKILLS.register("wind_scar", () -> new WindScar().setCategory(SkillColors.cyan));
     public static final RegistryObject<Skill> FLAME_DANCE = SKILLS.register("flame_dance", () -> new FlameDance().setCategory(SkillColors.orange));
-    //public static final RegistryObject<Skill> FROST_FANG = SKILLS.register("frost_fang", () -> new FrostFang().setCategory(SkillColors.gray));
-    //public static final RegistryObject<Skill> TIMBERFALL = SKILLS.register("timberfall", () -> new Timberfall().setCategory(SkillColors.red));
+    public static final RegistryObject<Skill> FROST_FANG = SKILLS.register("frost_fang", () -> new FrostFang().setCategory(SkillColors.gray));
+    public static final RegistryObject<Skill> TIMBERFALL = SKILLS.register("timberfall", () -> new Timberfall().setCategory(SkillColors.red));
 
 
 
