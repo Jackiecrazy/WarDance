@@ -175,7 +175,7 @@ public class SkillEventHandler {
     }
 
     @SubscribeEvent(priority = EventPriority.HIGHEST)
-    public static void staggerFlags(StaggerEvent e) {
+    public static void staggerFlags(StunEvent e) {
         if (!e.getEntity().isEffectiveAi()) return;
         if (e.getAttacker() != null) {
             LivingEntity attacker = e.getAttacker();
@@ -434,7 +434,7 @@ public class SkillEventHandler {
     }
 
     @SubscribeEvent(priority = EventPriority.LOWEST)
-    public static void staggerFlagS(StaggerEvent e) {
+    public static void staggerFlagS(StunEvent e) {
         if (!e.getEntity().isEffectiveAi()) return;
         if (e.getAttacker() != null) {
             LivingEntity attacker = e.getAttacker();

@@ -1,7 +1,7 @@
 package jackiecrazy.wardance.skill.judgment;
 
 import jackiecrazy.footwork.capability.resources.CombatData;
-import jackiecrazy.footwork.event.StaggerEvent;
+import jackiecrazy.footwork.event.StunEvent;
 import jackiecrazy.footwork.potion.FootworkEffects;
 import jackiecrazy.footwork.utils.EffectUtils;
 import jackiecrazy.footwork.utils.TargetingUtils;
@@ -28,7 +28,7 @@ public class Brutalize extends Judgment {
         if (stack == 3) {
             if (target.level instanceof ServerLevel)
                 ((ServerLevel) target.level).sendParticles(ParticleTypes.SOUL_FIRE_FLAME, target.getX(), target.getY() + target.getBbHeight() / 2, target.getZ(), 20, target.getBbWidth() / 4, target.getBbHeight() / 4, target.getBbWidth() / 4, 0.5f);
-            CombatData.getCap(target).stagger(0);
+            CombatData.getCap(target).expose(0);
             CombatData.getCap(target).consumePosture(caster, Float.MAX_VALUE, 0, true);
         }
         final List<LivingEntity> list = caster.level.getEntitiesOfClass(LivingEntity.class, caster.getBoundingBox().inflate(10), (a) -> TargetingUtils.isHostile(a, caster));
@@ -42,9 +42,9 @@ public class Brutalize extends Judgment {
     @Override
     public void onProc(LivingEntity caster, Event procPoint, STATE state, SkillData stats, @Nullable LivingEntity target) {
         super.onProc(caster, procPoint, state, stats, target);
-        if (procPoint instanceof StaggerEvent && state == STATE.ACTIVE && !stats.isCondition() && procPoint.getPhase() == EventPriority.HIGHEST && ((StaggerEvent) procPoint).getAttacker() == caster) {
-            //((StaggerEvent) procPoint).setCount(((StaggerEvent) procPoint).getCount() * 2);
-            ((StaggerEvent) procPoint).setLength(((StaggerEvent) procPoint).getLength() * 2);
+        if (procPoint instanceof StunEvent && state == STATE.ACTIVE && !stats.isCondition() && procPoint.getPhase() == EventPriority.HIGHEST && ((StunEvent) procPoint).getAttacker() == caster) {
+            //((StunEvent) procPoint).setCount(((StunEvent) procPoint).getCount() * 2);
+            ((StunEvent) procPoint).setLength(((StunEvent) procPoint).getLength() * 2);
         }
     }
 }

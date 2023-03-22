@@ -111,8 +111,8 @@ public class ResourceDisplay implements IGuiOverlay {
 //            filled = (int) (fatigue * (float) (barWidth));
 //            RenderSystem.setShaderColor(1, 0.1f, 0.1f, 1);
 //            mc.gui.blit(ms, left + filled, atY, filled, 69, barWidth - filled, 5);
-            if (itsc.getStaggerTime() > 0) {
-                int invulTime = (int) (Mth.clamp((float) itsc.getStaggerTime() / (float) CombatConfig.staggerDuration, 0, 1) * (float) (barWidth));//apparently this is synced to the client?
+            if (itsc.getStunTime() > 0) {
+                int invulTime = (int) (Mth.clamp((float) itsc.getStunTime() / (float) CombatConfig.staggerDuration, 0, 1) * (float) (barWidth));//apparently this is synced to the client?
                 RenderSystem.setShaderColor(0, 0, 0, 1);//, ((float) itsc.getPosInvulTime()) / (float) CombatConfig.ssptime);
                 mc.gui.blit(ms, left, atY, 0, 69, invulTime, 5);
             }
@@ -147,7 +147,7 @@ public class ResourceDisplay implements IGuiOverlay {
         final int barHeight = 7;
         //double shatter = MathHelper.clamp(itsc.getBarrier() / itsc.getMaxBarrier(), 0, 1);
         if (cap > 0) {
-            final int shatter = itsc.getShatterCooldown();
+            final int shatter = itsc.getEvade();
             //final int mshatter = (int) GeneralUtils.getAttributeValueSafe(elb, FootworkAttributes.SHATTER.get());
             //take a two-way approach to draw this:
             //first draw the cap brackets
@@ -158,9 +158,9 @@ public class ResourceDisplay implements IGuiOverlay {
             mc.gui.blit(ms, atX + flexBarWidth, atY - 1, 235, 40, 5, barHeight);
             mc.gui.blit(ms, atX - flexBarWidth - 5, atY - 1, 0, 40, 5, barHeight);
             //grayscale and change width if staggered
-            if (itsc.getStaggerTime() > 0) {
+            if (itsc.getStunTime() > 0) {
                 //int count = (int) ((itsc.getMaxStaggerCount() - itsc.getStaggerCount()) * flexBarWidth / (float) itsc.getMaxStaggerCount()) + 3;
-                int time = (int) ((itsc.getMaxStaggerTime() - itsc.getStaggerTime()) * flexBarWidth / (float) itsc.getMaxStaggerTime()) + 3;
+                int time = (int) ((itsc.getMaxStunTime() - itsc.getStunTime()) * flexBarWidth / (float) itsc.getMaxStunTime()) + 3;
                 flexBarWidth = time;//Math.max(count, time);
                 mc.gui.blit(ms, atX, atY, 238 - flexBarWidth, 13, flexBarWidth, barHeight - 1);
                 mc.gui.blit(ms, atX - flexBarWidth, atY, 0, 13, flexBarWidth, barHeight - 1);
@@ -227,9 +227,9 @@ public class ResourceDisplay implements IGuiOverlay {
             mc.gui.blit(ms, atX + flexBarWidth, atY - 2, 232, 50, 10, barHeight);
             mc.gui.blit(ms, atX - flexBarWidth - 9, atY - 2, 0, 50, 12, barHeight);
             //grayscale and change width if staggered
-            if (itsc.getStaggerTime() > 0) {
+            if (itsc.getStunTime() > 0) {
                 //int count = (int) ((itsc.getMaxStaggerCount() - itsc.getStaggerCount()) * flexBarWidth / (float) itsc.getMaxStaggerCount()) + 3;
-                int time = (int) ((itsc.getMaxStaggerTime() - itsc.getStaggerTime()) * flexBarWidth / (float) itsc.getMaxStaggerTime()) + 3;
+                int time = (int) ((itsc.getMaxStunTime() - itsc.getStunTime()) * flexBarWidth / (float) itsc.getMaxStunTime()) + 3;
                 flexBarWidth = time;//Math.max(count, time);
                 mc.gui.blit(ms, atX, atY - 2, 238 - flexBarWidth, 20, flexBarWidth, barHeight);
                 mc.gui.blit(ms, atX - flexBarWidth, atY - 2, 0, 20, flexBarWidth, barHeight);
@@ -523,7 +523,7 @@ public class ResourceDisplay implements IGuiOverlay {
             }
             RenderSystem.setShaderTexture(0, amo);
             //render posture bar if not full, displayed even out of combat mode because it's pretty relevant to not dying
-            if (cap.isCombatMode() || cap.getPosture() < cap.getMaxPosture() || cap.getStaggerTime() > 0)
+            if (cap.isCombatMode() || cap.getPosture() < cap.getMaxPosture() || cap.getStunTime() > 0)
                 drawPostureBarAt(true, stack, player, width, height);
             Entity look = RenderEvents.getEntityLookedAt(player, 32);
             if (look instanceof LivingEntity) {
@@ -580,7 +580,7 @@ public class ResourceDisplay implements IGuiOverlay {
                     }
                 }
                 final ICombatCapability loocap = CombatData.getCap((LivingEntity) look);
-                if (ClientConfig.CONFIG.enemyPosture.enabled && (cap.isCombatMode() || loocap.getPosture() < loocap.getMaxPosture() || loocap.isStaggered() || loocap.isExposed()))
+                if (ClientConfig.CONFIG.enemyPosture.enabled && (cap.isCombatMode() || loocap.getPosture() < loocap.getMaxPosture() || loocap.isVulnerable()))
                     drawPostureBarAt(false, stack, looked, width, height);//Math.min(HudConfig.client.enemyPosture.x, width - 64), Math.min(HudConfig.client.enemyPosture.y, height - 64));
             }
         }

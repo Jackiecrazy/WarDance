@@ -96,7 +96,7 @@ public class WarDanceCommand {
         if (!(player instanceof LivingEntity)) throw EntitySelectorOptions.ERROR_INAPPLICABLE_OPTION.create(player);
         int time = IntegerArgumentType.getInteger(ctx, "time");
         int count = IntegerArgumentType.getInteger(ctx, "count");
-        CombatData.getCap((LivingEntity) player).stagger(time);
+        CombatData.getCap((LivingEntity) player).stun(time);
         ctx.getSource().sendSuccess(Component.translatable("wardance.command.command.stagger", player.getDisplayName(), time, count), false);
         return Command.SINGLE_SUCCESS;
     }
@@ -106,7 +106,7 @@ public class WarDanceCommand {
         Entity player = EntityArgument.getEntity(ctx, "entity");
         if (!(player instanceof LivingEntity)) throw EntitySelectorOptions.ERROR_INAPPLICABLE_OPTION.create(player);
         int time = IntegerArgumentType.getInteger(ctx, "time");
-        CombatData.getCap((LivingEntity) player).stagger(time);
+        CombatData.getCap((LivingEntity) player).stun(time);
         ctx.getSource().sendSuccess(Component.translatable("wardance.command.staggerDefault", player.getDisplayName(), time), false);
         return Command.SINGLE_SUCCESS;
     }

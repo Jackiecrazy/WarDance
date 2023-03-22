@@ -1,7 +1,7 @@
 package jackiecrazy.wardance.skill.judgment;
 
 import jackiecrazy.footwork.capability.resources.CombatData;
-import jackiecrazy.footwork.event.StaggerEvent;
+import jackiecrazy.footwork.event.StunEvent;
 import jackiecrazy.wardance.capability.status.Marks;
 import jackiecrazy.wardance.skill.ProcPoints;
 import jackiecrazy.wardance.skill.SkillData;
@@ -17,10 +17,10 @@ public class MastersLesson extends Judgment {
 
     @Override
     public void onProc(LivingEntity caster, Event procPoint, STATE state, SkillData stats, LivingEntity target) {
-        if (procPoint instanceof StaggerEvent && ((StaggerEvent) procPoint).getEntity() == target) {
-            ((StaggerEvent) procPoint).setLength(200);
+        if (procPoint instanceof StunEvent && ((StunEvent) procPoint).getEntity() == target) {
+            ((StunEvent) procPoint).setLength(200);
         } else if (procPoint instanceof LivingAttackEvent && ((LivingAttackEvent) procPoint).getEntity() == target) {
-            if (CombatData.getCap(target).isStaggered() || CombatData.getCap(target).isExposed())
+            if (CombatData.getCap(target).isVulnerable())
                 procPoint.setCanceled(true);
             else if (procPoint.getPhase() == EventPriority.HIGHEST && Marks.getCap(target).isMarked(this)) {
                 CombatData.getCap(target).consumePosture(((LivingAttackEvent) procPoint).getAmount());

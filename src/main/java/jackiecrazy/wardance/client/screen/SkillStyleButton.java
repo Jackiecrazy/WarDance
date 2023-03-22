@@ -29,6 +29,7 @@ public class SkillStyleButton extends SkillSelectionButton {
     public void onPress() {
         if (isValidSelection()) {
             s = getParentSelection();
+            parent.setSelectedSkill(null);
             parent.refresh = true;
         }
     }

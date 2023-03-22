@@ -133,7 +133,6 @@ public class SkillSelectionScreen extends Screen {
         Blood Tax: all skills that cost might or spirit instead cost half the amount in health. Activate to trade health for fury
         Gambler's Whimsy: only certain skills are castable. The selection increases with fury and rerolls after every cast
     5+ color styles: major disadvantage that has to be worked around
-        Nature's Equilibrium: 5 colors, cannot use the same color twice in a row
         Sifu: any color except purple, can only deal posture damage to non-staggered targets (special: instead of dying, mobs will run away, leaving drops and exp as usual)
 
     a skill list widget that lists all castable skills, composed of skill entries, on the very very left
@@ -234,7 +233,6 @@ public class SkillSelectionScreen extends Screen {
             style = new SkillStyleButton(this, width - skillCircleWidth / 2 - 12, PADDING + skillCircleWidth / 2 - 12, 23);
             style.setSkill(cap.getStyle());
         }
-        addRenderableWidget(style);
         //if no style, halt some developments
         final boolean noStyle = style.getSkill() == null;
         int noStyleOffset = 0;
@@ -281,7 +279,7 @@ public class SkillSelectionScreen extends Screen {
         this.skillList.setLeftPos(PADDING);
 
         //skill info
-        int split = (this.height - (PADDING + fullButtonHeight) * 2);
+        int split = (this.height - (PADDING) * 2 - 20);
         this.skillInfo = new InfoPanel(this.minecraft, infoWidth, split, PADDING);
 //        this.variationList = new VariationListWidget(this, infoWidth - 9, split + PADDING * 2, search.y - getFontRenderer().lineHeight - PADDING);
 //        this.variationList.setLeftPos(PADDING * 2 + listWidth);
@@ -309,6 +307,7 @@ public class SkillSelectionScreen extends Screen {
         addRenderableWidget(skillInfo);
         search.setFocus(false);
         search.setCanLoseFocus(true);
+        addRenderableWidget(style);
 
         final int width = Math.min(2 * listWidth / numButtons, 16);
         int x = PADDING;
@@ -512,7 +511,7 @@ public class SkillSelectionScreen extends Screen {
                 Style style = tooltipText.getStyle();
                 if (!formatting.isEmpty()) style = style.applyFormats(formatting.toArray(fff));
                 if (!tooltip.isEmpty())
-                    style = style.withHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, Component.translatable(tooltip, additionalData)));
+                    style = style.withHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, Component.translatable(tooltip, (Object[]) additionalData)));
                 tooltipText.setStyle(style);
                 if (ichat == null) ichat = Component.literal("");
                 ichat.append(tooltipText);
@@ -624,10 +623,11 @@ public class SkillSelectionScreen extends Screen {
             if (logoPath != null) {
                 offset -= 50;
             }
-            if (offset <= 0) return null;
+            if (offset <= 0 || xoff < 1) return null;
 
             int lineIdx = (int) (offset / font.lineHeight);
-            if (lineIdx >= lines.size() || lineIdx < 1) return null;
+            if (lineIdx >= lines.size() || lineIdx < 1)
+                return null;
 
             FormattedCharSequence line = lines.get(lineIdx - 1);
             if (line != null) {

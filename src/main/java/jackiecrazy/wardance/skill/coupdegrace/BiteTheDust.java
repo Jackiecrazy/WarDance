@@ -1,6 +1,6 @@
 package jackiecrazy.wardance.skill.coupdegrace;
 
-import jackiecrazy.footwork.event.StaggerEvent;
+import jackiecrazy.footwork.event.StunEvent;
 import jackiecrazy.footwork.api.CombatDamageSource;
 import jackiecrazy.wardance.skill.*;
 import net.minecraft.world.entity.LivingEntity;
@@ -45,7 +45,7 @@ public class BiteTheDust extends CoupDeGrace {
 
     @Override
     public void onProc(LivingEntity caster, Event procPoint, STATE state, SkillData stats, LivingEntity target) {
-        if (procPoint instanceof StaggerEvent && ((StaggerEvent) procPoint).getAttacker() == caster && procPoint.getPhase() == EventPriority.HIGHEST && cast(caster, target, -999)) {
+        if (procPoint instanceof StunEvent && ((StunEvent) procPoint).getAttacker() == caster && procPoint.getPhase() == EventPriority.HIGHEST && cast(caster, target, -999)) {
             float damage = 2;
             float currentMark = getExistingMark(target).getDuration();
             while (currentMark > 0) {

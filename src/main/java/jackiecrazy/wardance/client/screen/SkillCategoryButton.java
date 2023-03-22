@@ -28,7 +28,7 @@ public class SkillCategoryButton extends ImageButton {
         float r = s.getColor().getRed() / 255f;
         float g = s.getColor().getGreen() / 255f;
         float b = s.getColor().getBlue() / 255f;
-        if (!this.active || parent.getNumColors().contains(sort.cat))
+        if (!this.active || parent.style.getStyle()==null || parent.getNumColors().contains(sort.cat))
             RenderSystem.setShaderColor(r, g, b, 1);
         RenderSystem.setShaderTexture(0, s.icon());
         RenderSystem.enableDepthTest();

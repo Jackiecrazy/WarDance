@@ -12,7 +12,9 @@ Posture: a stat that quantifies how steady the player is on his feet. Stamina an
 - If your attack cooldown is less than 100%, you gain an equivalent regeneration penalty
 - Dodging resets your posture cooldown.
 - This means that while actions play a role, the real deal-breaker is health. Defeating an enemy requires wearing down their health to make staggering easier.
-- At 0 posture the entity is knocked back and staggered, gaining 1 fracture, binding both hands and slowing movement. The stagger ends after 1.5 seconds or taking damage once. During this time posture regenerates rapidly and cannot be depleted until it reaches max again.
+- At 0 posture the entity is knocked back and stunned, gaining 1 fracture, binding both hands and slowing movement. The stagger ends after 1 seconds or taking damage once. During this time posture regenerates rapidly and cannot be depleted until it reaches max again.
+- Special case: taking a stunning instance of posture damage that exceeds half of their max posture will additionally knock them down, which lengthens
+- The expectation to gain a fracture on a reasonably armored entity (around chain grade) is 8 dagger, 6 sword, 5 claymore, 3 axe, or 2 mace hits. Balance around this.
 - Accumulating an attribute-defined quantity of fracture marks instead exposes the entity for 5 seconds. In this state the entity cannot do anything, has all armor negated, and the next hit on it deals an extra 10% of its max health in damage.
 - Fracture marks are cleared after exposure. Killing any entity that fractured you will also remove their respective fractures, as well as any ownerless fractures.
 
@@ -39,10 +41,13 @@ Idle Parry:
 - Shields also parry projectiles, and can reduce posture damage from all sources via an attribute.
 
 Armor Stats:
-- Amor can have many different attributes that slightly modify the aforementioned mechanics. The overall change on feel in gameplay will be outlined below:
+- Amor can have different attributes that slightly modify the aforementioned mechanics. The overall change on feel in gameplay will be outlined below:
 - light armor increases posture regeneration speed/reduces cooldown, so you must manage your own fracture and run away frequently, but can easily come back to continue harassing your enemies. They have an "evasion" stat that negates damage once in a long while to help them survive.
 - medium armor increases posture healed (distinct from regeneration speed), which encourages using in-combat recovery and certain reckless tactics like suplex. They also have some evasion to facilitate taking a few hits.
 - heavy armor greatly increases max posture and fracture marks, which allows you to tank. Though you have a higher initial pool of not dying, your relative ability to recover it is poor, so you must seek to overpower your opponents before the "fatigue" kicks in.
+- magical items trade posture stats for magical stats: robes add significant quantities of regen and
+- physical items trade posture stats for
+- mobility items trade all stats for some extra stealth
 
 Dual wielding: weapons in the offhand can be swung.
 - Bows and the like will function as per normal.

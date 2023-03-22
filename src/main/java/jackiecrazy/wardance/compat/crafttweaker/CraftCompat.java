@@ -148,8 +148,8 @@ public class CraftCompat {
     }
 
     @ZenCodeType.Method
-    public int getStaggerTime(LivingEntity entity) {
-        return CombatData.getCap(entity).getStaggerTime();
+    public int getStunTime(LivingEntity entity) {
+        return CombatData.getCap(entity).getStunTime();
     }
 
     @ZenCodeType.Method

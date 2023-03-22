@@ -13,15 +13,9 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 public class CasterData implements ICapabilitySerializable<CompoundTag> {
-    private static ISkillCapability OHNO = new DummySkillCap();
-
     public static Capability<ISkillCapability> CAP = CapabilityManager.get(new CapabilityToken<>() {
     });
-
-    public static ISkillCapability getCap(LivingEntity le) {
-        return le.getCapability(CAP).orElse(OHNO);//.orElseThrow(() -> new IllegalArgumentException("attempted to find a nonexistent capability"));
-    }
-
+    private static ISkillCapability OHNO = new DummySkillCap();
     protected final ISkillCapability instance;
 
     public CasterData() {
@@ -30,6 +24,11 @@ public class CasterData implements ICapabilitySerializable<CompoundTag> {
 
     public CasterData(ISkillCapability cap) {
         instance = cap;
+    }
+
+    public static ISkillCapability getCap(LivingEntity le) {
+        if (le == null) return OHNO;
+        return le.getCapability(CAP).orElse(OHNO);//.orElseThrow(() -> new IllegalArgumentException("attempted to find a nonexistent capability"));
     }
 
     @Nonnull

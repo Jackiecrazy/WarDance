@@ -1,5 +1,6 @@
 package jackiecrazy.wardance.client;
 
+import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.math.Vector3f;
 import jackiecrazy.footwork.capability.resources.CombatData;
@@ -12,15 +13,26 @@ import jackiecrazy.wardance.config.CombatConfig;
 import jackiecrazy.wardance.config.GeneralConfig;
 import jackiecrazy.wardance.networking.*;
 import jackiecrazy.wardance.utils.CombatUtils;
+import net.minecraft.client.Camera;
 import net.minecraft.client.KeyMapping;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.GuiComponent;
+import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.client.player.AbstractClientPlayer;
 import net.minecraft.client.player.Input;
+import net.minecraft.client.renderer.culling.Frustum;
+import net.minecraft.client.renderer.entity.EntityRenderDispatcher;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.network.chat.Component;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.util.Mth;
 import net.minecraft.world.InteractionHand;
-import net.minecraft.world.entity.*;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.HumanoidArm;
+import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.Pose;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.client.event.*;
 import net.minecraftforge.common.ForgeMod;
@@ -39,6 +51,7 @@ import java.util.List;
 
 @Mod.EventBusSubscriber(value = Dist.CLIENT, modid = WarDance.MODID)
 public class ClientEvents {
+    private static final ResourceLocation stealth = new ResourceLocation(WarDance.MODID, "textures/hud/stealth.png");
     private static final int ALLOWANCE = 7;
     /**
      * left, back, right
@@ -78,7 +91,7 @@ public class ClientEvents {
         Minecraft mc = Minecraft.getInstance();
         Input mi = e.getInput();
         final ICombatCapability itsc = CombatData.getCap(mc.player);
-//        if (itsc.getStaggerTime() > 0) {
+//        if (itsc.getStunTime() > 0) {
 //            //no moving while you're rooted!
 //            KeyBinding.unPressAllKeys();
 //            return;
@@ -149,14 +162,18 @@ public class ClientEvents {
     public static void downTick(LivingEvent.LivingTickEvent event) {
         final LivingEntity e = event.getEntity();
         if (e.isAlive()) {
-            if (CombatData.getCap(e).isStaggered()) {
+            if (CombatData.getCap(e).isStunned()) {
                 event.getEntity().level.addParticle(ParticleTypes.CRIT, e.getX() + Math.sin(e.tickCount) * e.getBbWidth() / 2, e.getY() + e.getBbHeight() + 0.4, e.getZ() + Math.cos(e.tickCount) * e.getBbWidth() / 2, 0, 0, 0);
             }
             if (CombatData.getCap(e).isExposed()) {
-                boolean reg = (rotate.containsKey(EntityType.getKey(e.getType()).toString()));
-                float height = reg && rotate.getOrDefault(EntityType.getKey(e.getType()).toString(), false) ? e.getBbWidth() : e.getBbHeight();
+                //boolean reg = (rotate.containsKey(EntityType.getKey(e.getType()).toString()));
+                float height = e.getBbHeight();// reg && rotate.getOrDefault(EntityType.getKey(e.getType()).toString(), false) ? e.getBbWidth() : e.getBbHeight();
                 if (event.getEntity().tickCount % 10 == 0)
-                    event.getEntity().level.addParticle(ParticleTypes.ANGRY_VILLAGER, e.getX() + Math.sin(e.tickCount) * e.getBbWidth() / 2, e.getY() + height/2, e.getZ() + Math.cos(e.tickCount) * e.getBbWidth() / 2, 0, 0, 0);
+                    event.getEntity().level.addParticle(ParticleTypes.ANGRY_VILLAGER, e.getX() + Math.sin(e.tickCount) * e.getBbWidth() / 2, e.getY() + height / 2, e.getZ() + Math.cos(e.tickCount) * e.getBbWidth() / 2, 0, 0, 0);
+            }
+            if (CombatData.getCap(e).isKnockedDown()) {
+                if (event.getEntity().tickCount % 10 == 0)
+                    event.getEntity().level.addParticle(ParticleTypes.MYCELIUM, e.getX() + Math.sin(e.tickCount) * e.getBbHeight() / 2, e.getY(), e.getZ() + Math.cos(e.tickCount) * e.getBbHeight() / 2, 0, 0, 0);
             }
 
 
@@ -198,6 +215,31 @@ public class ClientEvents {
 //                Minecraft.getInstance().getTextureManager().bindTexture(AbstractGui.GUI_ICONS_LOCATION);
 //            }
         }
+    }
+
+    @SubscribeEvent
+    public static void down(RenderLevelStageEvent event) {
+        Minecraft mc = Minecraft.getInstance();
+        if (event.getStage() != RenderLevelStageEvent.Stage.AFTER_CUTOUT_BLOCKS) return;
+
+        Camera camera = mc.gameRenderer.getMainCamera();
+        PoseStack poseStack = event.getPoseStack();
+        float partialTicks = event.getPartialTick();
+        Entity cameraEntity = camera.getEntity() != null ? camera.getEntity() : mc.player;
+
+        Vec3 cameraPos = camera.getPosition();
+        final Frustum frustum = new Frustum(poseStack.last().pose(), event.getProjectionMatrix());
+        frustum.prepare(cameraPos.x(), cameraPos.y(), cameraPos.z());
+
+        ClientLevel client = mc.level;
+        if (client != null) {
+            for (Entity entity : client.entitiesForRendering()) {
+                if (entity instanceof LivingEntity e && entity != cameraEntity && entity.isAlive() && !entity.getIndirectPassengers().iterator().hasNext() && CombatData.getCap(e).isExposed() && entity.shouldRender(cameraPos.x(), cameraPos.y(), cameraPos.z()) && (entity.noCulling || frustum.isVisible(entity.getBoundingBox())) && !GeneralUtils.viewBlocked(mc.player, e, false)) {
+                    renderDie((LivingEntity) entity, partialTicks, poseStack);
+                }
+            }
+        }
+
     }
 
     @SubscribeEvent
@@ -335,6 +377,27 @@ public class ClientEvents {
                 CombatChannel.INSTANCE.sendToServer(new RequestAttackPacket(false, n));
             CombatChannel.INSTANCE.sendToServer(new RequestSweepPacket(false, n));
         }
+    }
+
+    private static void renderDie(LivingEntity passedEntity, float partialTicks, PoseStack poseStack) {
+        double x = passedEntity.xo + (passedEntity.getX() - passedEntity.xo) * partialTicks;
+        double y = passedEntity.yo + (passedEntity.getY() - passedEntity.yo) * partialTicks;
+        double z = passedEntity.zo + (passedEntity.getZ() - passedEntity.zo) * partialTicks;
+
+        EntityRenderDispatcher renderDispatcher = Minecraft.getInstance().getEntityRenderDispatcher();
+        Vec3 renderPos = renderDispatcher.camera.getPosition();
+
+        poseStack.pushPose();
+        poseStack.translate((float) (x - renderPos.x()), (float) (y - renderPos.y() + passedEntity.getBbHeight()), (float) (z - renderPos.z()));
+        RenderSystem.setShaderTexture(0, stealth);
+        poseStack.translate(0.0D, (double) 0.5, 0.0D);
+        poseStack.mulPose(Minecraft.getInstance().getEntityRenderDispatcher().cameraOrientation());
+        final float size = Mth.clamp(0.002F * CombatData.getCap(passedEntity).getMaxPosture(), 0.015f, 0.1f);
+        poseStack.scale(-size, -size, size);
+        GuiComponent.blit(poseStack, -16, -8, 32, 0, 32, 16, 64, 64);
+        poseStack.popPose();
+
+        //poseStack.translate(0.0D, -(NeatConfig.backgroundHeight + NeatConfig.barHeight + NeatConfig.backgroundPadding), 0.0D);
     }
 
     //I think this is no longer necessary, but we'll seal it away for now

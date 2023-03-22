@@ -26,6 +26,7 @@ import net.minecraftforge.registries.DeferredRegister;
 import net.minecraftforge.registries.IForgeRegistry;
 import net.minecraftforge.registries.RegistryObject;
 
+import java.awt.*;
 import java.util.function.Supplier;
 
 @SuppressWarnings("unused")
@@ -40,11 +41,11 @@ public class WarSkills {
     //===========================================================================================================//
     public static final RegistryObject<SkillStyle> SURVIVOR = SKILLS.register("survivor", Survivor::new);
     //public static final RegistryObject<Skill> REJUVENATE = SKILLS.register("rejuvenate", () -> new WarCry().setCategory(SkillColors.white));
-    public static final RegistryObject<Skill> BOULDER_BRACE = SKILLS.register("boulder_brace", () -> new BoulderBrace().setCategory(SkillColors.green));
-    public static final RegistryObject<Skill> WIND_SCAR = SKILLS.register("wind_scar", () -> new WindScar().setCategory(SkillColors.cyan));
-    public static final RegistryObject<Skill> FLAME_DANCE = SKILLS.register("flame_dance", () -> new FlameDance().setCategory(SkillColors.orange));
-    public static final RegistryObject<Skill> FROST_FANG = SKILLS.register("frost_fang", () -> new FrostFang().setCategory(SkillColors.gray));
-    public static final RegistryObject<Skill> TIMBERFALL = SKILLS.register("timberfall", () -> new Timberfall().setCategory(SkillColors.red));
+    public static final RegistryObject<Skill> BOULDER_BRACE = SKILLS.register("boulder_brace", () -> new BoulderBrace().setColor(Color.GREEN));
+    public static final RegistryObject<Skill> WIND_SCAR = SKILLS.register("wind_scar", () -> new WindScar().setColor(Color.CYAN));
+    public static final RegistryObject<Skill> FLAME_DANCE = SKILLS.register("flame_dance", () -> new FlameDance().setColor(Color.ORANGE));
+    public static final RegistryObject<Skill> FROST_FANG = SKILLS.register("frost_fang", () -> new FrostFang().setColor(Color.LIGHT_GRAY));
+    public static final RegistryObject<Skill> TIMBERFALL = SKILLS.register("timberfall", () -> new Timberfall().setColor(Color.RED));
 
 
 

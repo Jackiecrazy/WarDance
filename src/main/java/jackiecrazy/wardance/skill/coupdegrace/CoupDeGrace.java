@@ -78,7 +78,6 @@ public class CoupDeGrace extends Skill {
                         target.setHealth(1);
                     e.setAmount(e.getAmount() + getDamage(caster, target));
                     e.getSource().bypassArmor().bypassMagic();
-                    CombatData.getCap(target).decrementStaggerTime(CombatData.getCap(target).getStaggerTime());
                     deathCheck(caster, target, e.getAmount());
                     markUsed(caster);
                 } else if (target.getHealth() < getDamage(caster, target)) {

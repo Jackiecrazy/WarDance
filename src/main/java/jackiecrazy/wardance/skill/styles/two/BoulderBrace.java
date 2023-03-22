@@ -2,7 +2,7 @@ package jackiecrazy.wardance.skill.styles.two;
 
 import jackiecrazy.footwork.api.FootworkAttributes;
 import jackiecrazy.footwork.capability.resources.CombatData;
-import jackiecrazy.footwork.event.StaggerEvent;
+import jackiecrazy.footwork.event.StunEvent;
 import jackiecrazy.wardance.skill.SkillData;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.ai.attributes.AttributeModifier;
@@ -21,7 +21,7 @@ public class BoulderBrace extends WarCry {
 
     @Override
     public void onProc(LivingEntity caster, Event procPoint, STATE state, SkillData stats, LivingEntity target) {
-        if (procPoint instanceof StaggerEvent se && procPoint.getPhase() == EventPriority.HIGHEST) {
+        if (procPoint instanceof StunEvent se && procPoint.getPhase() == EventPriority.HIGHEST) {
             if (se.getEntity() == caster && CombatData.getCap(caster).consumeMight(1))
                 se.setCanceled(true);
         }

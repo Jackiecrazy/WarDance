@@ -46,7 +46,7 @@ apathy: your max spirit is 4, your spirit instantly refills after cooldown, you 
             d.decrementDuration();
         if (d.getDuration() <= 0) {
             d.flagCondition(false);
-            d.setDuration(30);
+            d.setDuration(60);
         }
         return false;
     }

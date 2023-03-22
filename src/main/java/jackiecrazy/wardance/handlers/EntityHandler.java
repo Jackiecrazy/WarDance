@@ -134,7 +134,7 @@ Mobs should move into a position that is close to the player, far from allies, a
                          */
                 //staggered mobs bypass update interval
                 ICombatCapability cap = CombatData.getCap(elb);
-                if (cap.isStaggered() || cap.isExposed() || mustUpdate.containsValue(e.getEntity()))
+                if (cap.isVulnerable() || mustUpdate.containsValue(e.getEntity()))
                     cap.serverTick();
             }
         }

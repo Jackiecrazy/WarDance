@@ -205,7 +205,7 @@ public class CombatHandler {
                 semeCap.serverTick();
                 InteractionHand h = semeCap.isOffhandAttack() ? InteractionHand.OFF_HAND : InteractionHand.MAIN_HAND;
                 //hand bound or staggered, no attack
-                if (semeCap.isStaggered() || semeCap.isExposed() || semeCap.getHandBind(h) > 0) {
+                if (semeCap.isVulnerable() || semeCap.getHandBind(h) > 0) {
                     e.setCanceled(true);
                     return;
                 }
@@ -233,7 +233,7 @@ public class CombatHandler {
                 ICombatCapability semeCap = CombatData.getCap(seme);
                 InteractionHand attackingHand = semeCap.isOffhandAttack() ? InteractionHand.OFF_HAND : InteractionHand.MAIN_HAND;
                 //hand bound or staggered, no attack
-                if (semeCap.isStaggered() || semeCap.isExposed() || semeCap.getHandBind(attackingHand) > 0) {
+                if (semeCap.isVulnerable() || semeCap.getHandBind(attackingHand) > 0) {
                     e.setCanceled(true);
                     return;
                 }
@@ -262,7 +262,7 @@ public class CombatHandler {
                 boolean canParry = GeneralUtils.isFacingEntity(uke, seme, 120);
                 //boolean useDeflect = (uke instanceof Player || WarDance.rand.nextFloat() < CombatConfig.mobDeflectChance) && GeneralUtils.isFacingEntity(uke, seme, 120 + 2 * (int) GeneralUtils.getAttributeValueSafe(uke, FootworkAttributes.DEFLECTION.get())) && !GeneralUtils.isFacingEntity(uke, seme, 120) && !canParry;
                 //staggered, no parry
-                if (ukeCap.isStaggered() || ukeCap.isExposed()) {
+                if (ukeCap.isVulnerable()) {
                     downingHit = false;
                     return;
                 }
@@ -326,7 +326,7 @@ public class CombatHandler {
                     e.setCanceled(true);
                     return;
                 }
-                if (ukeCap.getStaggerTime() == 0) {
+                if (ukeCap.getStunTime() == 0) {
                     //overflow posture
                     float consumption = pe.getPostureConsumption();
                     float knockback = ukeCap.consumePosture(seme, consumption);
@@ -390,16 +390,16 @@ public class CombatHandler {
                     semeCap.setHandBind(attackingHand, CombatUtils.getCooldownPeriod(seme, attackingHand) + 7);
                 }
             }
-            //shatter, at the rock bottom of the attack event, saving your protected butt.
-//            if (!uke.isBlocking() && !e.isCanceled()) {
-//                if (CombatUtils.isPhysicalAttack(e.getSource()) && StealthUtils.INSTANCE.getAwareness(e.getSource().getDirectEntity() instanceof LivingEntity ? (LivingEntity) e.getSource().getDirectEntity() : null, uke) != StealthUtils.Awareness.UNAWARE) {
-//                    if (CombatData.getCap(uke).consumeShatter(e.getAmount())) {
-//                        e.setCanceled(true);
-//                        uke.level.playSound(null, uke.getX(), uke.getY(), uke.getZ(), SoundEvents.GLASS_BREAK, SoundSource.PLAYERS, 0.25f + WarDance.rand.nextFloat() * 0.5f, 0.75f + WarDance.rand.nextFloat() * 0.5f);
-//                    }
-//                    //otherwise the rest of the damage goes through and is handled later down the line anyway
-//                }
-//            }
+            //evade, at the rock bottom of the attack event, saving your protected butt.
+            if (!uke.isBlocking() && !e.isCanceled()) {
+                if (CombatUtils.isPhysicalAttack(e.getSource()) && StealthUtils.INSTANCE.getAwareness(e.getSource().getDirectEntity() instanceof LivingEntity ? (LivingEntity) e.getSource().getDirectEntity() : null, uke) != StealthUtils.Awareness.UNAWARE) {
+                    if (CombatData.getCap(uke).consumeEvade()) {
+                        e.setCanceled(true);
+                        uke.level.playSound(null, uke.getX(), uke.getY(), uke.getZ(), SoundEvents.IRON_DOOR_OPEN, SoundSource.PLAYERS, 0.25f + WarDance.rand.nextFloat() * 0.5f, 0.75f + WarDance.rand.nextFloat() * 0.5f);
+                    }
+                    //otherwise the rest of the damage goes through and is handled later down the line anyway
+                }
+            }
         }
 
     }
@@ -438,7 +438,7 @@ public class CombatHandler {
     @SubscribeEvent(priority = EventPriority.HIGHEST)
     public static void knockKnockWhosThere(LivingKnockBackEvent e) {
         final LivingEntity entity = e.getEntity();
-        if (!CombatData.getCap(entity).isStaggeringStrike() && CombatData.getCap(entity).getStaggerTime() > 0) {
+        if (!CombatData.getCap(entity).isStaggeringStrike() && CombatData.getCap(entity).getStunTime() > 0) {
             e.setCanceled(true);
             return;
         }
@@ -479,7 +479,7 @@ public class CombatHandler {
             double luckDiff = WarDance.rand.nextFloat() * (GeneralUtils.getAttributeValueSafe(seme, Attributes.LUCK)) - WarDance.rand.nextFloat() * (GeneralUtils.getAttributeValueSafe(uke, Attributes.LUCK));
             e.setAmount(e.getAmount() + (float) luckDiff * GeneralConfig.luck);
         }
-        if ((cap.isStaggered() || cap.isExposed()) && !cap.isStaggeringStrike()) {
+        if ((cap.isVulnerable()) && !cap.isStaggeringStrike()) {
             //stagger tests for melee damage
             if (cap.isExposed() && CombatUtils.isMeleeAttack(ds)) {
                 //expose, add 10% max health damage
@@ -512,7 +512,7 @@ public class CombatHandler {
             }
         }
         //stuff used to exist here, moved to footwork
-//        if (CombatData.getCap(uke).getStaggerTime() == 0 && CombatUtils.isPhysicalAttack(e.getSource())) {
+//        if (CombatData.getCap(uke).getStunTime() == 0 && CombatUtils.isPhysicalAttack(e.getSource())) {
 //            if (e.getSource().getEntity() instanceof LivingEntity && StealthUtils.INSTANCE.getAwareness((LivingEntity) e.getSource().getEntity(), uke) == StealthUtils.Awareness.UNAWARE)
 //                return;
 //            float amount = e.getAmount();
@@ -530,6 +530,10 @@ public class CombatHandler {
         if (!Float.isFinite(e.getAmount()))
             e.setAmount(0);
         final ICombatCapability cap = CombatData.getCap(e.getEntity());
+        if (e.getSource().isFall()) {
+            //nom posture
+            cap.consumePosture(e.getAmount());
+        }
         if (!e.isCanceled() && CombatUtils.isMeleeAttack(e.getSource()) && !cap.isStaggeringStrike()) {
             cap.updateDefenselessStatus();
         }

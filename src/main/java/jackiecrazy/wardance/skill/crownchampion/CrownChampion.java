@@ -7,6 +7,7 @@ import jackiecrazy.footwork.potion.FootworkEffects;
 import jackiecrazy.footwork.utils.StealthUtils;
 import jackiecrazy.footwork.utils.TargetingUtils;
 import jackiecrazy.wardance.WarDance;
+import jackiecrazy.wardance.capability.resources.CombatCapability;
 import jackiecrazy.wardance.capability.skill.CasterData;
 import jackiecrazy.wardance.capability.status.Marks;
 import jackiecrazy.wardance.skill.*;
@@ -146,7 +147,7 @@ elemental might: +1 burn/snowball/poison/drown damage to targets you have attack
         @Override
         public void onProc(LivingEntity caster, Event procPoint, STATE state, SkillData stats, LivingEntity target) {
             if (procPoint instanceof AttackMightEvent && procPoint.getPhase() == EventPriority.HIGHEST && StealthUtils.INSTANCE.getAwareness(caster, target).equals(StealthUtils.Awareness.UNAWARE))
-                ((AttackMightEvent) procPoint).setQuantity(((AttackMightEvent) procPoint).getQuantity() + 0.5f);
+                ((AttackMightEvent) procPoint).setQuantity(((AttackMightEvent) procPoint).getQuantity() + 0.25f);
         }
 
         @Override
@@ -185,7 +186,7 @@ elemental might: +1 burn/snowball/poison/drown damage to targets you have attack
                 pd.addArbitraryFloat(((GainMightEvent) procPoint).getQuantity());
                 if (pd.getArbitraryFloat() > 3) {
                     pd.setArbitraryFloat(pd.getArbitraryFloat() % 3);
-                    CombatData.getCap(caster).setShatterCooldown(0);
+                    CombatData.getCap(caster).setEvade(CombatCapability.EVADE_CHARGE);
                 }
             }
         }

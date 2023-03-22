@@ -452,7 +452,7 @@ public class CombatConfig {
     public static int recovery;
     public static int foodCool;
     public static float mobParryChanceWeapon, mobParryChanceShield, mobDeflectChance, mobScaler;
-    public static float posCap;
+    public static int knockdownDuration;
     public static boolean dodge;
     public static float kbNerf;
 
@@ -479,6 +479,7 @@ public class CombatConfig {
     private final ForgeConfigSpec.ConfigValue<List<? extends String>> _customParry;
     private final ForgeConfigSpec.IntValue _staggerDuration;
     private final ForgeConfigSpec.IntValue _exposeDuration;
+    private final ForgeConfigSpec.IntValue _knockdownDuration;
     private final ForgeConfigSpec.DoubleValue _stagger;
     private final ForgeConfigSpec.DoubleValue _unstagger;
     private final ForgeConfigSpec.DoubleValue _knockbackNerf;
@@ -499,9 +500,10 @@ public class CombatConfig {
         _rollCooldown = b.translation("wardance.config.rollC").comment("Within this number of ticks after dodging the entity cannot dodge again").defineInRange("roll cooldown", 20, 0, Integer.MAX_VALUE);
         b.pop();
         b.push("expose");
-        _staggerDuration = b.translation("wardance.config.staggerD").comment("Number of ticks an entity should be staggered for when its posture reaches 0.").defineInRange("stagger duration", 30, 1, Integer.MAX_VALUE);
+        _staggerDuration = b.translation("wardance.config.staggerD").comment("Number of ticks an entity should be stunned for when its posture reaches 0.").defineInRange("stagger duration", 20, 1, Integer.MAX_VALUE);
+        _knockdownDuration = b.translation("wardance.config.knockdownD").comment("Number of ticks an entity should be knocked down for on a large hit.").defineInRange("stagger duration", 60, 1, Integer.MAX_VALUE);
         _exposeDuration = b.translation("wardance.config.exposeD").comment("Number of ticks an entity should be exposed for when its fracture hits maximum.").defineInRange("exposed duration", 100, 1, Integer.MAX_VALUE);
-        _stagger = b.translation("wardance.config.stagger").comment("Extra damage taken by an exposed entity. Defaults to 1 because expose already nullifies all protection.").defineInRange("stagger damage multiplier", 1, 0, Double.MAX_VALUE);
+        _stagger = b.translation("wardance.config.stagger").comment("Extra damage taken by an exposed entity. Defaults to 1 because expose already nullifies all protection.").defineInRange("exposed damage multiplier", 1, 0, Double.MAX_VALUE);
         _unstagger = b.translation("wardance.config.unstagger").comment("Damage taken by a non-exposed entity. Added out of curiosity.").defineInRange("normal damage multiplier", 1, 0, Double.MAX_VALUE);
         b.pop();
         b.push("difficulty");
@@ -546,6 +548,7 @@ public class CombatConfig {
         kbNerf = CONFIG._knockbackNerf.get().floatValue();
         parryTime = CONFIG._sneakParry.get();
         staggerDuration = CONFIG._staggerDuration.get();
+        knockdownDuration = CONFIG._knockdownDuration.get();
         exposeDuration = CONFIG._exposeDuration.get();
         foodCool = CONFIG._foodCool.get();
         adrenaline = CONFIG._adrenaline.get();

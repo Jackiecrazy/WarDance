@@ -15,7 +15,7 @@ public class ElenaiCompat {
 
 //    @SubscribeEvent(priority = EventPriority.HIGHEST)
 //    public static void noDodge(DodgeEvent.ServerDodgeEvent e) {
-//        if (CombatConfig.elenai && CombatData.getCap(e.getPlayer()).getStaggerTime() > 0) {
+//        if (CombatConfig.elenai && CombatData.getCap(e.getPlayer()).getStunTime() > 0) {
 //            e.setCanceled(true);
 //            int dir = -1;
 //            switch (e.getDirection()) {

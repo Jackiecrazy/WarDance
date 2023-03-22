@@ -37,7 +37,7 @@ public class Recovery extends Skill {
     @Override
     public void onProc(LivingEntity caster, Event procPoint, STATE state, SkillData stats, @Nullable LivingEntity target) {
         if (procPoint instanceof ConsumePostureEvent && procPoint.getPhase() == EventPriority.HIGHEST) {
-            if (CombatData.getCap(caster).getPosture() < CombatData.getCap(caster).getMaxPosture() / 2)
+            if (CombatData.getCap(caster).getPosture() < CombatData.getCap(caster).getMaxPosture() / 4)
                 ((ConsumePostureEvent) procPoint).setResetCooldown(false);
             CombatData.getCap(caster).setMightGrace(ResourceConfig.qiGrace);
         }
