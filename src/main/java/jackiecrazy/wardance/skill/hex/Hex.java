@@ -1,11 +1,9 @@
 package jackiecrazy.wardance.skill.hex;
 
-import jackiecrazy.footwork.capability.resources.CombatData;
-import jackiecrazy.footwork.capability.resources.ICombatCapability;
+import jackiecrazy.footwork.api.CombatDamageSource;
 import jackiecrazy.footwork.event.LuckEvent;
 import jackiecrazy.footwork.utils.EffectUtils;
 import jackiecrazy.wardance.WarDance;
-import jackiecrazy.footwork.api.CombatDamageSource;
 import jackiecrazy.wardance.capability.status.Marks;
 import jackiecrazy.wardance.entity.FakeExplosion;
 import jackiecrazy.wardance.skill.*;
@@ -13,7 +11,6 @@ import jackiecrazy.wardance.utils.CombatUtils;
 import jackiecrazy.wardance.utils.SkillUtils;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.effect.MobEffectInstance;
-import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.ai.attributes.AttributeInstance;
 import net.minecraft.world.entity.ai.attributes.AttributeModifier;
@@ -65,23 +62,23 @@ public class Hex extends Skill {
         if (!e.getEntity().isEffectiveAi()) return;
         LivingEntity target = e.getEntity();
         //black mark stealing health/posture/spirit
-        if (e.getAmount() > 0 && CombatUtils.isMeleeAttack(e.getSource()) && Marks.getCap(target).isMarked(WarSkills.BLACK_MARK.get())) {
-            Entity source = e.getSource().getEntity();
-            if (source instanceof LivingEntity) {
-                LivingEntity le = (LivingEntity) source;
-                final ICombatCapability cap = CombatData.getCap(le);
-                float posture = cap.getPosture();
-                float spirit = cap.getSpirit();
-                if (posture < spirit) {
-                    CombatData.getCap(target).consumePosture(2);
-                    cap.addPosture(1);
-                } else {
-                    CombatData.getCap(target).consumeSpirit(3);
-                    cap.addSpirit(1.5f);
-                }
-                le.heal(e.getAmount() / 3);
-            }
-        }
+//        if (e.getAmount() > 0 && CombatUtils.isMeleeAttack(e.getSource()) && Marks.getCap(target).isMarked(WarSkills.BLACK_MARK.get())) {
+//            Entity source = e.getSource().getEntity();
+//            if (source instanceof LivingEntity) {
+//                LivingEntity le = (LivingEntity) source;
+//                final ICombatCapability cap = CombatData.getCap(le);
+//                float posture = cap.getPosture();
+//                float spirit = cap.getSpirit();
+//                if (posture < spirit) {
+//                    CombatData.getCap(target).consumePosture(2);
+//                    cap.addPosture(1);
+//                } else {
+//                    CombatData.getCap(target).consumeSpirit(3);
+//                    cap.addSpirit(1.5f);
+//                }
+//                le.heal(e.getAmount() / 3);
+//            }
+//        }
         if (!CombatUtils.isPhysicalAttack(e.getSource()))
             Marks.getCap(e.getEntity()).getActiveMark(WarSkills.GANGRENE.get()).ifPresent(g -> g.setArbitraryFloat(40));
     }

@@ -123,7 +123,7 @@ public class CombatHandler {
                 if (((Projectile) projectile).getOwner() == uke) return;
                 a = StealthUtils.INSTANCE.getAwareness((LivingEntity) ((Projectile) projectile).getOwner(), uke);
             }
-            boolean canParry = GeneralUtils.isFacingEntity(uke, projectile, 120);
+            boolean canParry = GeneralUtils.isFacingEntity(uke, projectile, 90);
             boolean force = false;
             if (a != StealthUtils.Awareness.UNAWARE && CombatUtils.parryMap.containsKey(GeneralUtils.getResourceLocationFromEntity(uke))) {
                 CombatUtils.MobInfo stats = CombatUtils.parryMap.get(GeneralUtils.getResourceLocationFromEntity(uke));
@@ -259,7 +259,7 @@ public class CombatHandler {
                 boolean failManualParry = CombatConfig.parryTime > 0 && (ukeCap.getParryingTick() > uke.tickCount || ukeCap.getParryingTick() < uke.tickCount - CombatConfig.parryTime);
                 failManualParry |= CombatConfig.parryTime < 0 && ukeCap.getParryingTick() == -1;
                 failManualParry &= uke instanceof Player;
-                boolean canParry = GeneralUtils.isFacingEntity(uke, seme, 120);
+                boolean canParry = GeneralUtils.isFacingEntity(uke, seme, 90);
                 //boolean useDeflect = (uke instanceof Player || WarDance.rand.nextFloat() < CombatConfig.mobDeflectChance) && GeneralUtils.isFacingEntity(uke, seme, 120 + 2 * (int) GeneralUtils.getAttributeValueSafe(uke, FootworkAttributes.DEFLECTION.get())) && !GeneralUtils.isFacingEntity(uke, seme, 120) && !canParry;
                 //staggered, no parry
                 if (ukeCap.isVulnerable()) {

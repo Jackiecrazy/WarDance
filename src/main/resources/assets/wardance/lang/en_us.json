@@ -33,6 +33,8 @@
   "wardance.command.clearSkilltrue": "%1$s can no longer equip or use any skills",
   "wardance.command.clearSkillfalse": "%1$s can now equip and use all skills",
 
+  "gamerule.lockWarSkills": "Lock skills by default (unlock individually with command)",
+
   "wardance.tooltip.postureAttack": "Posture per attack: %.2d",
   "wardance.tooltip.postureDefend": "Defense posture multiplier: %.2d",
   "wardance.tooltip.parry": "Parries up to %s posture damage per %.2d seconds",

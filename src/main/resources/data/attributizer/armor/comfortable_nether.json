@@ -1,0 +1,26 @@
+{
+"comfortable_nether:golden_snout_helmet":[
+      {
+        "attribute":"footwork:posture_regen",
+        "modify":"0.03",
+        "operation":"MULTIPLY_BASE"
+      },
+      {
+        "attribute":"footwork:stealth",
+        "modify":"-0.9",
+        "operation":"ADDITION"
+      }
+    ],
+"comfortable_nether:padded_leather_boots_boots":[
+      {
+        "attribute":"footwork:posture_regen",
+        "modify":"0.07",
+        "operation":"MULTIPLY_BASE"
+      },
+      {
+        "attribute":"footwork:stealth",
+        "modify":"-0.4",
+        "operation":"ADDITION"
+      }
+    ]
+}

@@ -500,8 +500,8 @@ public class CombatConfig {
         _rollCooldown = b.translation("wardance.config.rollC").comment("Within this number of ticks after dodging the entity cannot dodge again").defineInRange("roll cooldown", 20, 0, Integer.MAX_VALUE);
         b.pop();
         b.push("expose");
-        _staggerDuration = b.translation("wardance.config.staggerD").comment("Number of ticks an entity should be stunned for when its posture reaches 0.").defineInRange("stagger duration", 20, 1, Integer.MAX_VALUE);
-        _knockdownDuration = b.translation("wardance.config.knockdownD").comment("Number of ticks an entity should be knocked down for on a large hit.").defineInRange("stagger duration", 60, 1, Integer.MAX_VALUE);
+        _staggerDuration = b.translation("wardance.config.staggerD").comment("Number of ticks an entity should be stunned for when its posture reaches 0.").defineInRange("stun duration", 20, 1, Integer.MAX_VALUE);
+        _knockdownDuration = b.translation("wardance.config.knockdownD").comment("Number of ticks an entity should be knocked down for on a large hit.").defineInRange("knockdown duration", 60, 1, Integer.MAX_VALUE);
         _exposeDuration = b.translation("wardance.config.exposeD").comment("Number of ticks an entity should be exposed for when its fracture hits maximum.").defineInRange("exposed duration", 100, 1, Integer.MAX_VALUE);
         _stagger = b.translation("wardance.config.stagger").comment("Extra damage taken by an exposed entity. Defaults to 1 because expose already nullifies all protection.").defineInRange("exposed damage multiplier", 1, 0, Double.MAX_VALUE);
         _unstagger = b.translation("wardance.config.unstagger").comment("Damage taken by a non-exposed entity. Added out of curiosity.").defineInRange("normal damage multiplier", 1, 0, Double.MAX_VALUE);

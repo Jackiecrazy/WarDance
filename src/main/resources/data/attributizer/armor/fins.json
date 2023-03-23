@@ -1,0 +1,14 @@
+{
+"fins:fwinged_boots":[
+      {
+        "attribute":"footwork:posture_regen",
+        "modify":"0.07",
+        "operation":"MULTIPLY_BASE"
+      },
+      {
+        "attribute":"footwork:stealth",
+        "modify":"-0.3",
+        "operation":"ADDITION"
+      }
+    ]
+}

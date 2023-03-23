@@ -51,7 +51,7 @@ import java.util.List;
 
 @Mod.EventBusSubscriber(value = Dist.CLIENT, modid = WarDance.MODID)
 public class ClientEvents {
-    private static final ResourceLocation stealth = new ResourceLocation(WarDance.MODID, "textures/hud/stealth.png");
+    private static final ResourceLocation expose = new ResourceLocation(WarDance.MODID, "textures/hud/exposed.png");
     private static final int ALLOWANCE = 7;
     /**
      * left, back, right
@@ -187,7 +187,7 @@ public class ClientEvents {
         float height = e.getBbHeight();
 
         if (e.isAlive()) {
-            if (CombatData.getCap(event.getEntity()).isExposed()) {
+            if (CombatData.getCap(event.getEntity()).isKnockedDown()) {
                 //System.out.println("yes");
                 PoseStack ms = event.getPoseStack();
                 //ms.push();
@@ -389,12 +389,12 @@ public class ClientEvents {
 
         poseStack.pushPose();
         poseStack.translate((float) (x - renderPos.x()), (float) (y - renderPos.y() + passedEntity.getBbHeight()), (float) (z - renderPos.z()));
-        RenderSystem.setShaderTexture(0, stealth);
-        poseStack.translate(0.0D, (double) 0.5, 0.0D);
+        RenderSystem.setShaderTexture(0, expose);
+        poseStack.translate(0.0D, (double) 1, 0.0D);
         poseStack.mulPose(Minecraft.getInstance().getEntityRenderDispatcher().cameraOrientation());
         final float size = Mth.clamp(0.002F * CombatData.getCap(passedEntity).getMaxPosture(), 0.015f, 0.1f);
         poseStack.scale(-size, -size, size);
-        GuiComponent.blit(poseStack, -16, -8, 32, 0, 32, 16, 64, 64);
+        GuiComponent.blit(poseStack, -32, -32, 0, 0, 64, 64, 64, 64);
         poseStack.popPose();
 
         //poseStack.translate(0.0D, -(NeatConfig.backgroundHeight + NeatConfig.barHeight + NeatConfig.backgroundPadding), 0.0D);

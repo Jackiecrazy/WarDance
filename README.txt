@@ -42,12 +42,10 @@ Idle Parry:
 
 Armor Stats:
 - Amor can have different attributes that slightly modify the aforementioned mechanics. The overall change on feel in gameplay will be outlined below:
-- light armor increases posture regeneration speed/reduces cooldown, so you must manage your own fracture and run away frequently, but can easily come back to continue harassing your enemies. They have an "evasion" stat that negates damage once in a long while to help them survive.
-- medium armor increases posture healed (distinct from regeneration speed), which encourages using in-combat recovery and certain reckless tactics like suplex. They also have some evasion to facilitate taking a few hits.
-- heavy armor greatly increases max posture and fracture marks, which allows you to tank. Though you have a higher initial pool of not dying, your relative ability to recover it is poor, so you must seek to overpower your opponents before the "fatigue" kicks in.
-- magical items trade posture stats for magical stats: robes add significant quantities of regen and
-- physical items trade posture stats for
-- mobility items trade all stats for some extra stealth
+- light armor increases posture regeneration speed, so you must manage your own fracture and run away frequently, but can easily come back to continue harassing your enemies. They also have better stealth ratings and often conduct spirit well.
+- medium armor increases max posture, which encourages using in-combat recovery and certain reckless tactics like suplex. They also have a deflection rating to facilitate taking a few hits, but low magical conductivity.
+- heavy armor greatly increases fracture marks, which allows you to tank. Though you have a higher initial pool of not dying, your relative ability to recover it is poor, so you must seek to overpower your opponents before the "fatigue" kicks in.
+- To slightly counteract mixing and matching, each piece of heavy armor grants up to 0.75 fracture so you need 2 to hit the first breakpoint.
 
 Dual wielding: weapons in the offhand can be swung.
 - Bows and the like will function as per normal.

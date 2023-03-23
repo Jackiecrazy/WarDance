@@ -1,0 +1,14 @@
+{
+"pandoras_creatures:plant_hat":[
+      {
+        "attribute":"footwork:posture_regen",
+        "modify":"0.03",
+        "operation":"MULTIPLY_BASE"
+      },
+      {
+        "attribute":"footwork:stealth",
+        "modify":"-0.2",
+        "operation":"ADDITION"
+      }
+    ]
+}

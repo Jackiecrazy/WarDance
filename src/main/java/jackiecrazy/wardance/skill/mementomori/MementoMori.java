@@ -1,9 +1,8 @@
 package jackiecrazy.wardance.skill.mementomori;
 
-import jackiecrazy.footwork.event.AttackMightEvent;
+import jackiecrazy.footwork.api.CombatDamageSource;
 import jackiecrazy.footwork.utils.GeneralUtils;
 import jackiecrazy.footwork.utils.TargetingUtils;
-import jackiecrazy.footwork.api.CombatDamageSource;
 import jackiecrazy.wardance.skill.*;
 import jackiecrazy.wardance.utils.CombatUtils;
 import jackiecrazy.wardance.utils.SkillUtils;
@@ -55,15 +54,6 @@ pound of flesh: active skill. Consumes all your spirit, and until your spirit re
         caster.getAttribute(Attributes.ATTACK_DAMAGE).removeModifier(MULT);
         caster.getAttribute(Attributes.ARMOR).removeModifier(MULT);
         caster.getAttribute(Attributes.LUCK).removeModifier(MULT);
-    }
-
-    @Override
-    public void onProc(LivingEntity caster, Event procPoint, STATE state, SkillData stats, LivingEntity target) {
-        //on attack might event, check health percentage and increment
-        if (procPoint instanceof AttackMightEvent && this == WarSkills.BLOODLUST.get()) {
-            float healthPercentage = caster.getHealth() / GeneralUtils.getMaxHealthBeforeWounding(caster);
-            ((AttackMightEvent) procPoint).setQuantity(((AttackMightEvent) procPoint).getQuantity() * (3 - 2 * healthPercentage));
-        }
     }
 
     @Override

@@ -11,7 +11,6 @@ import jackiecrazy.wardance.capability.resources.CombatCapability;
 import jackiecrazy.wardance.capability.skill.CasterData;
 import jackiecrazy.wardance.capability.status.Marks;
 import jackiecrazy.wardance.skill.*;
-import jackiecrazy.wardance.utils.CombatUtils;
 import jackiecrazy.wardance.utils.SkillUtils;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.effect.MobEffects;
@@ -22,8 +21,6 @@ import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.player.Player;
 import net.minecraftforge.event.entity.living.LivingAttackEvent;
 import net.minecraftforge.event.entity.living.LivingDamageEvent;
-import net.minecraftforge.event.entity.living.LivingDeathEvent;
-import net.minecraftforge.event.entity.living.LivingEvent;
 import net.minecraftforge.eventbus.api.Event;
 import net.minecraftforge.eventbus.api.EventPriority;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
@@ -77,22 +74,16 @@ elemental might: +1 burn/snowball/poison/drown damage to targets you have attack
         }
     }
 
-    @SubscribeEvent
-    public static void sneaky(LivingEvent.LivingVisibilityEvent e) {
-        if (CasterData.getCap(e.getEntity()).getEquippedSkills().contains(WarSkills.HIDDEN_MIGHT.get()))
-            e.modifyVisibility(0.7 + CombatData.getCap(e.getEntity()).getMight() * 0.03);
-    }
-
-    @SubscribeEvent
-    public static void deady(LivingDeathEvent e) {
-        if (!CombatUtils.isPhysicalAttack(e.getSource())) {
-            for (Player pe : e.getEntity().level.getEntitiesOfClass(Player.class, e.getEntity().getBoundingBox().inflate(5))) {
-                if (CasterData.getCap(pe).getEquippedSkills().contains(WarSkills.ELEMENTAL_MIGHT.get())) {
-                    CombatData.getCap(pe).addMight(0.25f);
-                }
-            }
-        }
-    }
+//    @SubscribeEvent
+//    public static void deady(LivingDeathEvent e) {
+//        if (!CombatUtils.isPhysicalAttack(e.getSource())) {
+//            for (Player pe : e.getEntity().level.getEntitiesOfClass(Player.class, e.getEntity().getBoundingBox().inflate(5))) {
+//                if (CasterData.getCap(pe).getEquippedSkills().contains(WarSkills.ELEMENTAL_MIGHT.get())) {
+//                    CombatData.getCap(pe).addMight(0.25f);
+//                }
+//            }
+//        }
+//    }
 
     @Nonnull
     @Override

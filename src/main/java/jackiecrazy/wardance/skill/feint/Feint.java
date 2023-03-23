@@ -49,10 +49,6 @@ public class Feint extends Skill {
             final Skill feint = cap.getEquippedVariation(SkillArchetypes.feint);
             if (feint != null && Marks.getCap(uke).isMarked(SkillArchetypes.feint)) {
                 Marks.getCap(uke).getActiveMark(feint).ifPresent(a -> a.addArbitraryFloat(-1));
-                if (cap.getEquippedSkills().contains(WarSkills.CAPRICIOUS_STRIKE.get()))
-                    for (Skill s : cap.getEquippedSkills())
-                        if (s != null && s.getTags(caster).contains(SkillTags.physical) && cap.getSkillState(s) == STATE.COOLING)
-                            cap.getSkillData(s).ifPresent(SkillData::decrementDuration);
             }
         }
         //spirit bomb damage amplification

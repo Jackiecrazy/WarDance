@@ -283,7 +283,7 @@ public class CombatCapability implements ICombatCapability {
         } else if (posture - amount < 0) {
             posture = 0;
             if (addFracture(assailant, 1)) {
-                final boolean knockdown = posture > getMaxPosture() / 2 || elb.hasEffect(FootworkEffects.UNSTEADY.get());
+                final boolean knockdown = amount > getMaxPosture() / 2 || elb.hasEffect(FootworkEffects.UNSTEADY.get());
                 StunEvent se = new StunEvent(elb, assailant, knockdown ? CombatConfig.knockdownDuration : CombatConfig.staggerDuration, knockdown);
                 MinecraftForge.EVENT_BUS.post(se);
                 if (se.isCanceled()) return 0f;

@@ -1,0 +1,70 @@
+{
+"endrem:end_crystal_boots":[
+      {
+        "attribute":"footwork:max_fracture",
+        "modify":"1",
+        "operation":"ADDITION"
+      },
+      {
+        "attribute":"footwork:posture_cooldown_speed",
+        "modify":"0.11",
+        "operation":"MULTIPLY_BASE"
+      },
+      {
+        "attribute":"footwork:stealth",
+        "modify":"-7",
+        "operation":"ADDITION"
+      }
+    ],
+"endrem:end_crystal_chestplate":[
+      {
+        "attribute":"footwork:max_fracture",
+        "modify":"1.5",
+        "operation":"ADDITION"
+      },
+      {
+        "attribute":"footwork:posture_cooldown_speed",
+        "modify":"0.22",
+        "operation":"MULTIPLY_BASE"
+      },
+      {
+        "attribute":"footwork:stealth",
+        "modify":"-14",
+        "operation":"ADDITION"
+      }
+    ],
+"endrem:end_crystal_helmet":[
+      {
+        "attribute":"footwork:max_fracture",
+        "modify":"1",
+        "operation":"ADDITION"
+      },
+      {
+        "attribute":"footwork:posture_cooldown_speed",
+        "modify":"0.11",
+        "operation":"MULTIPLY_BASE"
+      },
+      {
+        "attribute":"footwork:stealth",
+        "modify":"-7",
+        "operation":"ADDITION"
+      }
+    ],
+"endrem:end_crystal_leggings":[
+      {
+        "attribute":"footwork:max_fracture",
+        "modify":"1.5",
+        "operation":"ADDITION"
+      },
+      {
+        "attribute":"footwork:posture_cooldown_speed",
+        "modify":"0.17",
+        "operation":"MULTIPLY_BASE"
+      },
+      {
+        "attribute":"footwork:stealth",
+        "modify":"-10.5",
+        "operation":"ADDITION"
+      }
+    ]
+}
