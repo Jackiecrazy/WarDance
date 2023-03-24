@@ -6,29 +6,24 @@
         "operation":"ADDITION"
       },
       {
+        "attribute":"footwork:max_fracture",
+        "modify":"0.25",
+        "operation":"ADDITION"
+      },
+      {
         "attribute":"footwork:max_posture",
         "modify":"0.3",
         "operation":"ADDITION"
       },
       {
         "attribute":"footwork:posture_regen",
-        "modify":"0.04",
-        "operation":"MULTIPLY_BASE"
-      },
-      {
-        "attribute":"footwork:posture_gain",
-        "modify":"0.01",
-        "operation":"MULTIPLY_BASE"
+        "modify":"3.5",
+        "operation":"ADDITION"
       },
       {
         "attribute":"footwork:max_spirit",
         "modify":"1",
         "operation":"ADDITION"
-      },
-      {
-        "attribute":"footwork:might_grace",
-        "modify":"0.1",
-        "operation":"MULTIPLY_BASE"
       },
       {
         "attribute":"footwork:stealth",

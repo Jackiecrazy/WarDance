@@ -12,7 +12,8 @@ import net.minecraftforge.eventbus.api.EventPriority;
 import java.util.UUID;
 
 public class BoulderBrace extends WarCry {
-    private static final AttributeModifier brace = new AttributeModifier(UUID.fromString("abe24c38-73e3-4551-9df4-e06e117699c1"), "boulder brace bonus", 0.5, AttributeModifier.Operation.MULTIPLY_BASE);
+    private static final AttributeModifier brace = new AttributeModifier(UUID.fromString("abe24c38-73e3-4551-9df4-e06e117699c1"), "boulder brace bonus", 3, AttributeModifier.Operation.ADDITION);
+    private static final AttributeModifier brrrr = new AttributeModifier(UUID.fromString("abe24c38-73e3-4551-9df4-e06e117699c1"), "boulder brace bonus", 0.5, AttributeModifier.Operation.MULTIPLY_BASE);
 
     @Override
     protected void evoke(LivingEntity caster) {
@@ -39,14 +40,14 @@ public class BoulderBrace extends WarCry {
 
     @Override
     public void onEquip(LivingEntity caster) {
-        caster.getAttribute(FootworkAttributes.POSTURE_COOLDOWN.get()).addPermanentModifier(brace);
+        caster.getAttribute(FootworkAttributes.POSTURE_COOLDOWN.get()).addPermanentModifier(brrrr);
         super.onEquip(caster);
     }
 
     @Override
     public void onUnequip(LivingEntity caster, SkillData stats) {
         caster.getAttribute(FootworkAttributes.POSTURE_REGEN.get()).removeModifier(brace);
-        caster.getAttribute(FootworkAttributes.POSTURE_COOLDOWN.get()).removeModifier(brace);
+        caster.getAttribute(FootworkAttributes.POSTURE_COOLDOWN.get()).removeModifier(brrrr);
         super.onUnequip(caster, stats);
     }
 

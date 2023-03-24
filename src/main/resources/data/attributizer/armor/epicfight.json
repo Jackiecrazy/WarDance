@@ -1,9 +1,14 @@
 {
 "epicfight:stray_hat":[
       {
+        "attribute":"footwork:max_fracture",
+        "modify":"0.25",
+        "operation":"ADDITION"
+      },
+      {
         "attribute":"footwork:posture_regen",
-        "modify":"0.05",
-        "operation":"MULTIPLY_BASE"
+        "modify":"4.67",
+        "operation":"ADDITION"
       },
       {
         "attribute":"footwork:stealth",
@@ -14,13 +19,13 @@
 "epicfight:stray_pants":[
       {
         "attribute":"footwork:max_fracture",
-        "modify":"0.5",
+        "modify":"0.25",
         "operation":"ADDITION"
       },
       {
         "attribute":"footwork:posture_regen",
-        "modify":"0.07",
-        "operation":"MULTIPLY_BASE"
+        "modify":"7",
+        "operation":"ADDITION"
       },
       {
         "attribute":"footwork:stealth",
@@ -31,13 +36,13 @@
 "epicfight:stray_robes":[
       {
         "attribute":"footwork:max_fracture",
-        "modify":"0.5",
+        "modify":"0.25",
         "operation":"ADDITION"
       },
       {
         "attribute":"footwork:posture_regen",
-        "modify":"0.09",
-        "operation":"MULTIPLY_BASE"
+        "modify":"9.33",
+        "operation":"ADDITION"
       },
       {
         "attribute":"footwork:stealth",

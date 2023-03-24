@@ -1,9 +1,14 @@
 {
 "thermal:beekeeper_boots":[
       {
+        "attribute":"footwork:max_fracture",
+        "modify":"0.25",
+        "operation":"ADDITION"
+      },
+      {
         "attribute":"footwork:posture_regen",
-        "modify":"0.07",
-        "operation":"MULTIPLY_BASE"
+        "modify":"6.67",
+        "operation":"ADDITION"
       },
       {
         "attribute":"footwork:stealth",
@@ -14,13 +19,13 @@
 "thermal:beekeeper_chestplate":[
       {
         "attribute":"footwork:max_fracture",
-        "modify":"0.5",
+        "modify":"0.25",
         "operation":"ADDITION"
       },
       {
         "attribute":"footwork:posture_regen",
-        "modify":"0.13",
-        "operation":"MULTIPLY_BASE"
+        "modify":"13.33",
+        "operation":"ADDITION"
       },
       {
         "attribute":"footwork:stealth",
@@ -30,9 +35,14 @@
     ],
 "thermal:beekeeper_helmet":[
       {
+        "attribute":"footwork:max_fracture",
+        "modify":"0.25",
+        "operation":"ADDITION"
+      },
+      {
         "attribute":"footwork:posture_regen",
-        "modify":"0.07",
-        "operation":"MULTIPLY_BASE"
+        "modify":"6.67",
+        "operation":"ADDITION"
       },
       {
         "attribute":"footwork:stealth",
@@ -43,13 +53,13 @@
 "thermal:beekeeper_leggings":[
       {
         "attribute":"footwork:max_fracture",
-        "modify":"0.5",
+        "modify":"0.25",
         "operation":"ADDITION"
       },
       {
         "attribute":"footwork:posture_regen",
-        "modify":"0.1",
-        "operation":"MULTIPLY_BASE"
+        "modify":"10",
+        "operation":"ADDITION"
       },
       {
         "attribute":"footwork:stealth",
@@ -59,9 +69,14 @@
     ],
 "thermal:diving_boots":[
       {
+        "attribute":"footwork:max_fracture",
+        "modify":"0.25",
+        "operation":"ADDITION"
+      },
+      {
         "attribute":"footwork:posture_regen",
-        "modify":"0.07",
-        "operation":"MULTIPLY_BASE"
+        "modify":"6.67",
+        "operation":"ADDITION"
       },
       {
         "attribute":"footwork:stealth",
@@ -72,13 +87,13 @@
 "thermal:diving_chestplate":[
       {
         "attribute":"footwork:max_fracture",
-        "modify":"0.5",
+        "modify":"0.25",
         "operation":"ADDITION"
       },
       {
         "attribute":"footwork:posture_regen",
-        "modify":"0.13",
-        "operation":"MULTIPLY_BASE"
+        "modify":"13.33",
+        "operation":"ADDITION"
       },
       {
         "attribute":"footwork:stealth",
@@ -88,9 +103,14 @@
     ],
 "thermal:diving_helmet":[
       {
+        "attribute":"footwork:max_fracture",
+        "modify":"0.25",
+        "operation":"ADDITION"
+      },
+      {
         "attribute":"footwork:posture_regen",
-        "modify":"0.07",
-        "operation":"MULTIPLY_BASE"
+        "modify":"6.67",
+        "operation":"ADDITION"
       },
       {
         "attribute":"footwork:stealth",
@@ -101,13 +121,13 @@
 "thermal:diving_leggings":[
       {
         "attribute":"footwork:max_fracture",
-        "modify":"0.5",
+        "modify":"0.25",
         "operation":"ADDITION"
       },
       {
         "attribute":"footwork:posture_regen",
-        "modify":"0.1",
-        "operation":"MULTIPLY_BASE"
+        "modify":"10",
+        "operation":"ADDITION"
       },
       {
         "attribute":"footwork:stealth",
@@ -117,9 +137,14 @@
     ],
 "thermal:hazmat_boots":[
       {
+        "attribute":"footwork:max_fracture",
+        "modify":"0.25",
+        "operation":"ADDITION"
+      },
+      {
         "attribute":"footwork:posture_regen",
-        "modify":"0.07",
-        "operation":"MULTIPLY_BASE"
+        "modify":"6.67",
+        "operation":"ADDITION"
       },
       {
         "attribute":"footwork:stealth",
@@ -130,13 +155,13 @@
 "thermal:hazmat_chestplate":[
       {
         "attribute":"footwork:max_fracture",
-        "modify":"0.5",
+        "modify":"0.25",
         "operation":"ADDITION"
       },
       {
         "attribute":"footwork:posture_regen",
-        "modify":"0.13",
-        "operation":"MULTIPLY_BASE"
+        "modify":"13.33",
+        "operation":"ADDITION"
       },
       {
         "attribute":"footwork:stealth",
@@ -146,9 +171,14 @@
     ],
 "thermal:hazmat_helmet":[
       {
+        "attribute":"footwork:max_fracture",
+        "modify":"0.25",
+        "operation":"ADDITION"
+      },
+      {
         "attribute":"footwork:posture_regen",
-        "modify":"0.07",
-        "operation":"MULTIPLY_BASE"
+        "modify":"6.67",
+        "operation":"ADDITION"
       },
       {
         "attribute":"footwork:stealth",
@@ -159,13 +189,13 @@
 "thermal:hazmat_leggings":[
       {
         "attribute":"footwork:max_fracture",
-        "modify":"0.5",
+        "modify":"0.25",
         "operation":"ADDITION"
       },
       {
         "attribute":"footwork:posture_regen",
-        "modify":"0.1",
-        "operation":"MULTIPLY_BASE"
+        "modify":"10",
+        "operation":"ADDITION"
       },
       {
         "attribute":"footwork:stealth",

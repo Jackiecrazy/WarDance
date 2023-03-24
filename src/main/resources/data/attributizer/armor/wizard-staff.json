@@ -1,19 +1,19 @@
 {
 "wizard-staff:druid_boots":[
       {
+        "attribute":"footwork:max_fracture",
+        "modify":"0.25",
+        "operation":"ADDITION"
+      },
+      {
         "attribute":"footwork:posture_regen",
-        "modify":"0.06",
-        "operation":"MULTIPLY_BASE"
+        "modify":"6",
+        "operation":"ADDITION"
       },
       {
         "attribute":"footwork:spirit_regen",
         "modify":"0.06",
-        "operation":"MULTIPLY_BASE"
-      },
-      {
-        "attribute":"footwork:spirit_gain",
-        "modify":"0.06",
-        "operation":"MULTIPLY_BASE"
+        "operation":"ADDITION"
       },
       {
         "attribute":"footwork:stealth",
@@ -24,23 +24,18 @@
 "wizard-staff:druid_chestplate":[
       {
         "attribute":"footwork:max_fracture",
-        "modify":"0.5",
+        "modify":"0.25",
         "operation":"ADDITION"
       },
       {
         "attribute":"footwork:posture_regen",
-        "modify":"0.12",
-        "operation":"MULTIPLY_BASE"
+        "modify":"12",
+        "operation":"ADDITION"
       },
       {
         "attribute":"footwork:spirit_regen",
         "modify":"0.16",
-        "operation":"MULTIPLY_BASE"
-      },
-      {
-        "attribute":"footwork:spirit_gain",
-        "modify":"0.16",
-        "operation":"MULTIPLY_BASE"
+        "operation":"ADDITION"
       },
       {
         "attribute":"footwork:stealth",
@@ -50,19 +45,19 @@
     ],
 "wizard-staff:druid_helmet":[
       {
+        "attribute":"footwork:max_fracture",
+        "modify":"0.25",
+        "operation":"ADDITION"
+      },
+      {
         "attribute":"footwork:posture_regen",
-        "modify":"0.06",
-        "operation":"MULTIPLY_BASE"
+        "modify":"6",
+        "operation":"ADDITION"
       },
       {
         "attribute":"footwork:spirit_regen",
         "modify":"0.06",
-        "operation":"MULTIPLY_BASE"
-      },
-      {
-        "attribute":"footwork:spirit_gain",
-        "modify":"0.06",
-        "operation":"MULTIPLY_BASE"
+        "operation":"ADDITION"
       },
       {
         "attribute":"footwork:stealth",
@@ -73,23 +68,18 @@
 "wizard-staff:druid_leggings":[
       {
         "attribute":"footwork:max_fracture",
-        "modify":"0.5",
+        "modify":"0.25",
         "operation":"ADDITION"
       },
       {
         "attribute":"footwork:posture_regen",
-        "modify":"0.09",
-        "operation":"MULTIPLY_BASE"
+        "modify":"9",
+        "operation":"ADDITION"
       },
       {
         "attribute":"footwork:spirit_regen",
         "modify":"0.12",
-        "operation":"MULTIPLY_BASE"
-      },
-      {
-        "attribute":"footwork:spirit_gain",
-        "modify":"0.12",
-        "operation":"MULTIPLY_BASE"
+        "operation":"ADDITION"
       },
       {
         "attribute":"footwork:stealth",
@@ -104,19 +94,19 @@
         "operation":"ADDITION"
       },
       {
+        "attribute":"footwork:max_fracture",
+        "modify":"0.25",
+        "operation":"ADDITION"
+      },
+      {
         "attribute":"footwork:max_posture",
         "modify":"1.47",
         "operation":"ADDITION"
       },
       {
         "attribute":"footwork:posture_regen",
-        "modify":"0.06",
-        "operation":"MULTIPLY_BASE"
-      },
-      {
-        "attribute":"footwork:posture_gain",
-        "modify":"0.06",
-        "operation":"MULTIPLY_BASE"
+        "modify":"6",
+        "operation":"ADDITION"
       },
       {
         "attribute":"footwork:max_might",
@@ -142,7 +132,7 @@
       },
       {
         "attribute":"footwork:max_fracture",
-        "modify":"0.5",
+        "modify":"0.25",
         "operation":"ADDITION"
       },
       {
@@ -152,13 +142,8 @@
       },
       {
         "attribute":"footwork:posture_regen",
-        "modify":"0.12",
-        "operation":"MULTIPLY_BASE"
-      },
-      {
-        "attribute":"footwork:posture_gain",
-        "modify":"0.12",
-        "operation":"MULTIPLY_BASE"
+        "modify":"12",
+        "operation":"ADDITION"
       },
       {
         "attribute":"footwork:max_might",
@@ -183,19 +168,19 @@
         "operation":"ADDITION"
       },
       {
+        "attribute":"footwork:max_fracture",
+        "modify":"0.25",
+        "operation":"ADDITION"
+      },
+      {
         "attribute":"footwork:max_posture",
         "modify":"1.47",
         "operation":"ADDITION"
       },
       {
         "attribute":"footwork:posture_regen",
-        "modify":"0.06",
-        "operation":"MULTIPLY_BASE"
-      },
-      {
-        "attribute":"footwork:posture_gain",
-        "modify":"0.06",
-        "operation":"MULTIPLY_BASE"
+        "modify":"6",
+        "operation":"ADDITION"
       },
       {
         "attribute":"footwork:max_might",
@@ -221,7 +206,7 @@
       },
       {
         "attribute":"footwork:max_fracture",
-        "modify":"0.5",
+        "modify":"0.25",
         "operation":"ADDITION"
       },
       {
@@ -231,13 +216,8 @@
       },
       {
         "attribute":"footwork:posture_regen",
-        "modify":"0.09",
-        "operation":"MULTIPLY_BASE"
-      },
-      {
-        "attribute":"footwork:posture_gain",
-        "modify":"0.09",
-        "operation":"MULTIPLY_BASE"
+        "modify":"9",
+        "operation":"ADDITION"
       },
       {
         "attribute":"footwork:max_might",
@@ -257,19 +237,19 @@
     ],
 "wizard-staff:wizard_boots":[
       {
+        "attribute":"footwork:max_fracture",
+        "modify":"0.25",
+        "operation":"ADDITION"
+      },
+      {
         "attribute":"footwork:posture_regen",
-        "modify":"0.06",
-        "operation":"MULTIPLY_BASE"
+        "modify":"6",
+        "operation":"ADDITION"
       },
       {
         "attribute":"footwork:max_spirit",
         "modify":"0.5",
         "operation":"ADDITION"
-      },
-      {
-        "attribute":"footwork:spirit_cooldown_speed",
-        "modify":"0.06",
-        "operation":"MULTIPLY_BASE"
       },
       {
         "attribute":"footwork:stealth",
@@ -280,23 +260,18 @@
 "wizard-staff:wizard_chestplate":[
       {
         "attribute":"footwork:max_fracture",
-        "modify":"0.5",
+        "modify":"0.25",
         "operation":"ADDITION"
       },
       {
         "attribute":"footwork:posture_regen",
-        "modify":"0.12",
-        "operation":"MULTIPLY_BASE"
+        "modify":"12",
+        "operation":"ADDITION"
       },
       {
         "attribute":"footwork:max_spirit",
         "modify":"0.5",
         "operation":"ADDITION"
-      },
-      {
-        "attribute":"footwork:spirit_cooldown_speed",
-        "modify":"0.16",
-        "operation":"MULTIPLY_BASE"
       },
       {
         "attribute":"footwork:stealth",
@@ -306,19 +281,19 @@
     ],
 "wizard-staff:wizard_hat":[
       {
+        "attribute":"footwork:max_fracture",
+        "modify":"0.25",
+        "operation":"ADDITION"
+      },
+      {
         "attribute":"footwork:posture_regen",
-        "modify":"0.03",
-        "operation":"MULTIPLY_BASE"
+        "modify":"3",
+        "operation":"ADDITION"
       },
       {
         "attribute":"footwork:max_spirit",
         "modify":"1",
         "operation":"ADDITION"
-      },
-      {
-        "attribute":"footwork:spirit_cooldown_speed",
-        "modify":"0.06",
-        "operation":"MULTIPLY_BASE"
       },
       {
         "attribute":"footwork:stealth",
@@ -329,23 +304,18 @@
 "wizard-staff:wizard_leggings":[
       {
         "attribute":"footwork:max_fracture",
-        "modify":"0.5",
+        "modify":"0.25",
         "operation":"ADDITION"
       },
       {
         "attribute":"footwork:posture_regen",
-        "modify":"0.09",
-        "operation":"MULTIPLY_BASE"
+        "modify":"9",
+        "operation":"ADDITION"
       },
       {
         "attribute":"footwork:max_spirit",
         "modify":"1",
         "operation":"ADDITION"
-      },
-      {
-        "attribute":"footwork:spirit_cooldown_speed",
-        "modify":"0.12",
-        "operation":"MULTIPLY_BASE"
       },
       {
         "attribute":"footwork:stealth",

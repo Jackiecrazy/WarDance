@@ -6,19 +6,19 @@
         "operation":"ADDITION"
       },
       {
+        "attribute":"footwork:max_fracture",
+        "modify":"0.25",
+        "operation":"ADDITION"
+      },
+      {
         "attribute":"footwork:max_posture",
         "modify":"1.59",
         "operation":"ADDITION"
       },
       {
         "attribute":"footwork:posture_regen",
-        "modify":"0.04",
-        "operation":"MULTIPLY_BASE"
-      },
-      {
-        "attribute":"footwork:posture_gain",
-        "modify":"0.07",
-        "operation":"MULTIPLY_BASE"
+        "modify":"4.33",
+        "operation":"ADDITION"
       },
       {
         "attribute":"footwork:stealth",
@@ -34,7 +34,7 @@
       },
       {
         "attribute":"footwork:max_fracture",
-        "modify":"0.5",
+        "modify":"0.25",
         "operation":"ADDITION"
       },
       {
@@ -44,13 +44,8 @@
       },
       {
         "attribute":"footwork:posture_regen",
-        "modify":"0.09",
-        "operation":"MULTIPLY_BASE"
-      },
-      {
-        "attribute":"footwork:posture_gain",
-        "modify":"0.14",
-        "operation":"MULTIPLY_BASE"
+        "modify":"8.67",
+        "operation":"ADDITION"
       },
       {
         "attribute":"footwork:stealth",
@@ -65,19 +60,19 @@
         "operation":"ADDITION"
       },
       {
+        "attribute":"footwork:max_fracture",
+        "modify":"0.25",
+        "operation":"ADDITION"
+      },
+      {
         "attribute":"footwork:max_posture",
         "modify":"1.59",
         "operation":"ADDITION"
       },
       {
         "attribute":"footwork:posture_regen",
-        "modify":"0.04",
-        "operation":"MULTIPLY_BASE"
-      },
-      {
-        "attribute":"footwork:posture_gain",
-        "modify":"0.07",
-        "operation":"MULTIPLY_BASE"
+        "modify":"4.33",
+        "operation":"ADDITION"
       },
       {
         "attribute":"footwork:stealth",
@@ -93,7 +88,7 @@
       },
       {
         "attribute":"footwork:max_fracture",
-        "modify":"0.5",
+        "modify":"0.25",
         "operation":"ADDITION"
       },
       {
@@ -103,13 +98,8 @@
       },
       {
         "attribute":"footwork:posture_regen",
-        "modify":"0.07",
-        "operation":"MULTIPLY_BASE"
-      },
-      {
-        "attribute":"footwork:posture_gain",
-        "modify":"0.11",
-        "operation":"MULTIPLY_BASE"
+        "modify":"6.5",
+        "operation":"ADDITION"
       },
       {
         "attribute":"footwork:stealth",
@@ -120,18 +110,13 @@
 "pyromancer:netherite_mask_helmet":[
       {
         "attribute":"footwork:max_fracture",
-        "modify":"0.5",
+        "modify":"1.05",
         "operation":"ADDITION"
       },
       {
-        "attribute":"footwork:posture_cooldown_speed",
-        "modify":"0.08",
-        "operation":"MULTIPLY_BASE"
-      },
-      {
         "attribute":"footwork:posture_regen",
-        "modify":"0.02",
-        "operation":"MULTIPLY_BASE"
+        "modify":"2",
+        "operation":"ADDITION"
       },
       {
         "attribute":"footwork:stealth",

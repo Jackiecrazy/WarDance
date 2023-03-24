@@ -41,11 +41,11 @@ Idle Parry:
 - Shields also parry projectiles, and can reduce posture damage from all sources via an attribute.
 
 Armor Stats:
-- Amor can have different attributes that slightly modify the aforementioned mechanics. The overall change on feel in gameplay will be outlined below:
+- Armor can have different attributes that slightly modify the aforementioned mechanics. The overall change on feel in gameplay will be outlined below:
 - light armor increases posture regeneration speed, so you must manage your own fracture and run away frequently, but can easily come back to continue harassing your enemies. They also have better stealth ratings and often conduct spirit well.
 - medium armor increases max posture, which encourages using in-combat recovery and certain reckless tactics like suplex. They also have a deflection rating to facilitate taking a few hits, but low magical conductivity.
 - heavy armor greatly increases fracture marks, which allows you to tank. Though you have a higher initial pool of not dying, your relative ability to recover it is poor, so you must seek to overpower your opponents before the "fatigue" kicks in.
-- To slightly counteract mixing and matching, each piece of heavy armor grants up to 0.75 fracture so you need 2 to hit the first breakpoint.
+- To slightly counteract mixing and matching, armor will grant continuous quantities of discrete attributes
 
 Dual wielding: weapons in the offhand can be swung.
 - Bows and the like will function as per normal.

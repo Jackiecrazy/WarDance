@@ -6,19 +6,19 @@
         "operation":"ADDITION"
       },
       {
+        "attribute":"footwork:max_fracture",
+        "modify":"0.25",
+        "operation":"ADDITION"
+      },
+      {
         "attribute":"footwork:max_posture",
         "modify":"1.34",
         "operation":"ADDITION"
       },
       {
         "attribute":"footwork:posture_regen",
-        "modify":"0.08",
-        "operation":"MULTIPLY_BASE"
-      },
-      {
-        "attribute":"footwork:posture_gain",
-        "modify":"0.05",
-        "operation":"MULTIPLY_BASE"
+        "modify":"7.67",
+        "operation":"ADDITION"
       },
       {
         "attribute":"footwork:might_gen",
@@ -39,7 +39,7 @@
       },
       {
         "attribute":"footwork:max_fracture",
-        "modify":"0.5",
+        "modify":"0.25",
         "operation":"ADDITION"
       },
       {
@@ -49,13 +49,8 @@
       },
       {
         "attribute":"footwork:posture_regen",
-        "modify":"0.15",
-        "operation":"MULTIPLY_BASE"
-      },
-      {
-        "attribute":"footwork:posture_gain",
-        "modify":"0.1",
-        "operation":"MULTIPLY_BASE"
+        "modify":"15.33",
+        "operation":"ADDITION"
       },
       {
         "attribute":"footwork:might_gen",
@@ -76,7 +71,7 @@
       },
       {
         "attribute":"footwork:max_fracture",
-        "modify":"0.5",
+        "modify":"0.25",
         "operation":"ADDITION"
       },
       {
@@ -86,13 +81,8 @@
       },
       {
         "attribute":"footwork:posture_regen",
-        "modify":"0.12",
-        "operation":"MULTIPLY_BASE"
-      },
-      {
-        "attribute":"footwork:posture_gain",
-        "modify":"0.08",
-        "operation":"MULTIPLY_BASE"
+        "modify":"11.5",
+        "operation":"ADDITION"
       },
       {
         "attribute":"footwork:might_gen",
@@ -112,19 +102,19 @@
         "operation":"ADDITION"
       },
       {
+        "attribute":"footwork:max_fracture",
+        "modify":"0.25",
+        "operation":"ADDITION"
+      },
+      {
         "attribute":"footwork:max_posture",
         "modify":"1.34",
         "operation":"ADDITION"
       },
       {
         "attribute":"footwork:posture_regen",
-        "modify":"0.08",
-        "operation":"MULTIPLY_BASE"
-      },
-      {
-        "attribute":"footwork:posture_gain",
-        "modify":"0.05",
-        "operation":"MULTIPLY_BASE"
+        "modify":"7.67",
+        "operation":"ADDITION"
       },
       {
         "attribute":"footwork:might_gen",

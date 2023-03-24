@@ -1,9 +1,14 @@
 {
 "eidolon:top_hat":[
       {
+        "attribute":"footwork:max_fracture",
+        "modify":"0.25",
+        "operation":"ADDITION"
+      },
+      {
         "attribute":"footwork:posture_regen",
-        "modify":"0.02",
-        "operation":"MULTIPLY_BASE"
+        "modify":"2.33",
+        "operation":"ADDITION"
       },
       {
         "attribute":"footwork:stealth",
@@ -18,29 +23,24 @@
         "operation":"ADDITION"
       },
       {
+        "attribute":"footwork:max_fracture",
+        "modify":"0.25",
+        "operation":"ADDITION"
+      },
+      {
         "attribute":"footwork:max_posture",
         "modify":"1.7",
         "operation":"ADDITION"
       },
       {
         "attribute":"footwork:posture_regen",
-        "modify":"0.08",
-        "operation":"MULTIPLY_BASE"
-      },
-      {
-        "attribute":"footwork:posture_gain",
-        "modify":"0.08",
-        "operation":"MULTIPLY_BASE"
-      },
-      {
-        "attribute":"footwork:spirit_cooldown_speed",
-        "modify":"0.07",
-        "operation":"MULTIPLY_BASE"
+        "modify":"8",
+        "operation":"ADDITION"
       },
       {
         "attribute":"footwork:spirit_regen",
         "modify":"0.07",
-        "operation":"MULTIPLY_BASE"
+        "operation":"ADDITION"
       },
       {
         "attribute":"footwork:stealth",
@@ -56,7 +56,7 @@
       },
       {
         "attribute":"footwork:max_fracture",
-        "modify":"0.5",
+        "modify":"0.25",
         "operation":"ADDITION"
       },
       {
@@ -66,23 +66,13 @@
       },
       {
         "attribute":"footwork:posture_regen",
-        "modify":"0.16",
-        "operation":"MULTIPLY_BASE"
-      },
-      {
-        "attribute":"footwork:posture_gain",
-        "modify":"0.16",
-        "operation":"MULTIPLY_BASE"
-      },
-      {
-        "attribute":"footwork:spirit_cooldown_speed",
-        "modify":"0.07",
-        "operation":"MULTIPLY_BASE"
+        "modify":"16",
+        "operation":"ADDITION"
       },
       {
         "attribute":"footwork:spirit_regen",
         "modify":"0.07",
-        "operation":"MULTIPLY_BASE"
+        "operation":"ADDITION"
       },
       {
         "attribute":"footwork:stealth",
@@ -97,29 +87,24 @@
         "operation":"ADDITION"
       },
       {
+        "attribute":"footwork:max_fracture",
+        "modify":"0.25",
+        "operation":"ADDITION"
+      },
+      {
         "attribute":"footwork:max_posture",
         "modify":"1.7",
         "operation":"ADDITION"
       },
       {
         "attribute":"footwork:posture_regen",
-        "modify":"0.08",
-        "operation":"MULTIPLY_BASE"
-      },
-      {
-        "attribute":"footwork:posture_gain",
-        "modify":"0.08",
-        "operation":"MULTIPLY_BASE"
-      },
-      {
-        "attribute":"footwork:spirit_cooldown_speed",
-        "modify":"0.07",
-        "operation":"MULTIPLY_BASE"
+        "modify":"8",
+        "operation":"ADDITION"
       },
       {
         "attribute":"footwork:spirit_regen",
         "modify":"0.07",
-        "operation":"MULTIPLY_BASE"
+        "operation":"ADDITION"
       },
       {
         "attribute":"footwork:stealth",

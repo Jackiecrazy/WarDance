@@ -5,6 +5,7 @@ import jackiecrazy.footwork.capability.resources.ICombatCapability;
 import jackiecrazy.footwork.utils.GeneralUtils;
 import jackiecrazy.wardance.WarDance;
 import jackiecrazy.footwork.api.CombatDamageSource;
+import jackiecrazy.wardance.config.CombatConfig;
 import jackiecrazy.wardance.skill.*;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
@@ -70,7 +71,10 @@ public class Kick extends Skill {
 
     protected void additionally(LivingEntity caster, LivingEntity target) {
         final ICombatCapability cap = CombatData.getCap(target);
-        if (cap.getStunTime() > 0) {
+        if (cap.isVulnerable() || cap.getStunTime() != 0 || cap.getExposeTime() != 0 || cap.getPosture() < 2) {
+            cap.consumePosture(2);
+            //boop
+            cap.knockdown(CombatConfig.knockdownDuration);
         }
     }
 

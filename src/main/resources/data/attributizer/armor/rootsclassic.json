@@ -1,19 +1,19 @@
 {
 "rootsclassic:sylvan_boots":[
       {
+        "attribute":"footwork:max_fracture",
+        "modify":"0.25",
+        "operation":"ADDITION"
+      },
+      {
         "attribute":"footwork:posture_regen",
-        "modify":"0.08",
-        "operation":"MULTIPLY_BASE"
+        "modify":"8",
+        "operation":"ADDITION"
       },
       {
         "attribute":"footwork:max_spirit",
         "modify":"0.5",
         "operation":"ADDITION"
-      },
-      {
-        "attribute":"footwork:spirit_cooldown_speed",
-        "modify":"0.06",
-        "operation":"MULTIPLY_BASE"
       },
       {
         "attribute":"footwork:stealth",
@@ -23,19 +23,19 @@
     ],
 "rootsclassic:sylvan_hood":[
       {
+        "attribute":"footwork:max_fracture",
+        "modify":"0.25",
+        "operation":"ADDITION"
+      },
+      {
         "attribute":"footwork:posture_regen",
-        "modify":"0.04",
-        "operation":"MULTIPLY_BASE"
+        "modify":"4",
+        "operation":"ADDITION"
       },
       {
         "attribute":"footwork:max_spirit",
         "modify":"0.5",
         "operation":"ADDITION"
-      },
-      {
-        "attribute":"footwork:spirit_cooldown_speed",
-        "modify":"0.16",
-        "operation":"MULTIPLY_BASE"
       },
       {
         "attribute":"footwork:stealth",
@@ -46,23 +46,18 @@
 "rootsclassic:sylvan_robes":[
       {
         "attribute":"footwork:max_fracture",
-        "modify":"0.5",
+        "modify":"0.25",
         "operation":"ADDITION"
       },
       {
         "attribute":"footwork:posture_regen",
-        "modify":"0.12",
-        "operation":"MULTIPLY_BASE"
+        "modify":"12",
+        "operation":"ADDITION"
       },
       {
         "attribute":"footwork:max_spirit",
         "modify":"1",
         "operation":"ADDITION"
-      },
-      {
-        "attribute":"footwork:spirit_cooldown_speed",
-        "modify":"0.06",
-        "operation":"MULTIPLY_BASE"
       },
       {
         "attribute":"footwork:stealth",
@@ -73,23 +68,18 @@
 "rootsclassic:sylvan_tunic":[
       {
         "attribute":"footwork:max_fracture",
-        "modify":"0.5",
+        "modify":"0.25",
         "operation":"ADDITION"
       },
       {
         "attribute":"footwork:posture_regen",
-        "modify":"0.12",
-        "operation":"MULTIPLY_BASE"
+        "modify":"12",
+        "operation":"ADDITION"
       },
       {
         "attribute":"footwork:max_spirit",
         "modify":"1",
         "operation":"ADDITION"
-      },
-      {
-        "attribute":"footwork:spirit_cooldown_speed",
-        "modify":"0.12",
-        "operation":"MULTIPLY_BASE"
       },
       {
         "attribute":"footwork:stealth",
@@ -104,29 +94,24 @@
         "operation":"ADDITION"
       },
       {
+        "attribute":"footwork:max_fracture",
+        "modify":"0.49",
+        "operation":"ADDITION"
+      },
+      {
         "attribute":"footwork:max_posture",
         "modify":"1.9",
         "operation":"ADDITION"
       },
       {
-        "attribute":"footwork:posture_cooldown_speed",
-        "modify":"0.02",
-        "operation":"MULTIPLY_BASE"
-      },
-      {
         "attribute":"footwork:posture_regen",
-        "modify":"0.03",
-        "operation":"MULTIPLY_BASE"
-      },
-      {
-        "attribute":"footwork:posture_gain",
-        "modify":"0.1",
-        "operation":"MULTIPLY_BASE"
+        "modify":"3.33",
+        "operation":"ADDITION"
       },
       {
         "attribute":"footwork:spirit_regen",
         "modify":"0.1",
-        "operation":"MULTIPLY_BASE"
+        "operation":"ADDITION"
       },
       {
         "attribute":"footwork:might_gen",
@@ -147,7 +132,7 @@
       },
       {
         "attribute":"footwork:max_fracture",
-        "modify":"0.5",
+        "modify":"0.61",
         "operation":"ADDITION"
       },
       {
@@ -156,24 +141,14 @@
         "operation":"ADDITION"
       },
       {
-        "attribute":"footwork:posture_cooldown_speed",
-        "modify":"0.04",
-        "operation":"MULTIPLY_BASE"
-      },
-      {
         "attribute":"footwork:posture_regen",
-        "modify":"0.05",
-        "operation":"MULTIPLY_BASE"
-      },
-      {
-        "attribute":"footwork:posture_gain",
-        "modify":"0.15",
-        "operation":"MULTIPLY_BASE"
+        "modify":"5",
+        "operation":"ADDITION"
       },
       {
         "attribute":"footwork:spirit_regen",
         "modify":"0.1",
-        "operation":"MULTIPLY_BASE"
+        "operation":"ADDITION"
       },
       {
         "attribute":"footwork:might_gen",
@@ -193,29 +168,24 @@
         "operation":"ADDITION"
       },
       {
+        "attribute":"footwork:max_fracture",
+        "modify":"0.49",
+        "operation":"ADDITION"
+      },
+      {
         "attribute":"footwork:max_posture",
         "modify":"1.9",
         "operation":"ADDITION"
       },
       {
-        "attribute":"footwork:posture_cooldown_speed",
-        "modify":"0.02",
-        "operation":"MULTIPLY_BASE"
-      },
-      {
         "attribute":"footwork:posture_regen",
-        "modify":"0.03",
-        "operation":"MULTIPLY_BASE"
-      },
-      {
-        "attribute":"footwork:posture_gain",
-        "modify":"0.1",
-        "operation":"MULTIPLY_BASE"
+        "modify":"3.33",
+        "operation":"ADDITION"
       },
       {
         "attribute":"footwork:spirit_regen",
         "modify":"0.1",
-        "operation":"MULTIPLY_BASE"
+        "operation":"ADDITION"
       },
       {
         "attribute":"footwork:might_gen",
@@ -236,7 +206,7 @@
       },
       {
         "attribute":"footwork:max_fracture",
-        "modify":"0.5",
+        "modify":"0.73",
         "operation":"ADDITION"
       },
       {
@@ -245,24 +215,14 @@
         "operation":"ADDITION"
       },
       {
-        "attribute":"footwork:posture_cooldown_speed",
-        "modify":"0.05",
-        "operation":"MULTIPLY_BASE"
-      },
-      {
         "attribute":"footwork:posture_regen",
-        "modify":"0.07",
-        "operation":"MULTIPLY_BASE"
-      },
-      {
-        "attribute":"footwork:posture_gain",
-        "modify":"0.2",
-        "operation":"MULTIPLY_BASE"
+        "modify":"6.67",
+        "operation":"ADDITION"
       },
       {
         "attribute":"footwork:spirit_regen",
         "modify":"0.1",
-        "operation":"MULTIPLY_BASE"
+        "operation":"ADDITION"
       },
       {
         "attribute":"footwork:might_gen",

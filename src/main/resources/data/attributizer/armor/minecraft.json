@@ -6,19 +6,19 @@
         "operation":"ADDITION"
       },
       {
+        "attribute":"footwork:max_fracture",
+        "modify":"0.25",
+        "operation":"ADDITION"
+      },
+      {
         "attribute":"footwork:max_posture",
         "modify":"1.47",
         "operation":"ADDITION"
       },
       {
         "attribute":"footwork:posture_regen",
-        "modify":"0.06",
-        "operation":"MULTIPLY_BASE"
-      },
-      {
-        "attribute":"footwork:posture_gain",
-        "modify":"0.06",
-        "operation":"MULTIPLY_BASE"
+        "modify":"0.44",
+        "operation":"ADDITION"
       },
       {
         "attribute":"footwork:stealth",
@@ -34,7 +34,7 @@
       },
       {
         "attribute":"footwork:max_fracture",
-        "modify":"0.5",
+        "modify":"0.25",
         "operation":"ADDITION"
       },
       {
@@ -44,13 +44,8 @@
       },
       {
         "attribute":"footwork:posture_regen",
-        "modify":"0.12",
-        "operation":"MULTIPLY_BASE"
-      },
-      {
-        "attribute":"footwork:posture_gain",
-        "modify":"0.12",
-        "operation":"MULTIPLY_BASE"
+        "modify":"0.62",
+        "operation":"ADDITION"
       },
       {
         "attribute":"footwork:stealth",
@@ -65,19 +60,19 @@
         "operation":"ADDITION"
       },
       {
+        "attribute":"footwork:max_fracture",
+        "modify":"0.25",
+        "operation":"ADDITION"
+      },
+      {
         "attribute":"footwork:max_posture",
         "modify":"1.47",
         "operation":"ADDITION"
       },
       {
         "attribute":"footwork:posture_regen",
-        "modify":"0.06",
-        "operation":"MULTIPLY_BASE"
-      },
-      {
-        "attribute":"footwork:posture_gain",
-        "modify":"0.06",
-        "operation":"MULTIPLY_BASE"
+        "modify":"0.44",
+        "operation":"ADDITION"
       },
       {
         "attribute":"footwork:stealth",
@@ -93,7 +88,7 @@
       },
       {
         "attribute":"footwork:max_fracture",
-        "modify":"0.5",
+        "modify":"0.25",
         "operation":"ADDITION"
       },
       {
@@ -103,13 +98,8 @@
       },
       {
         "attribute":"footwork:posture_regen",
-        "modify":"0.09",
-        "operation":"MULTIPLY_BASE"
-      },
-      {
-        "attribute":"footwork:posture_gain",
-        "modify":"0.09",
-        "operation":"MULTIPLY_BASE"
+        "modify":"0.54",
+        "operation":"ADDITION"
       },
       {
         "attribute":"footwork:stealth",
@@ -120,13 +110,8 @@
 "minecraft:diamond_boots":[
       {
         "attribute":"footwork:max_fracture",
-        "modify":"0.5",
+        "modify":"1.05",
         "operation":"ADDITION"
-      },
-      {
-        "attribute":"footwork:posture_cooldown_speed",
-        "modify":"0.08",
-        "operation":"MULTIPLY_BASE"
       },
       {
         "attribute":"footwork:stealth",
@@ -137,13 +122,8 @@
 "minecraft:diamond_chestplate":[
       {
         "attribute":"footwork:max_fracture",
-        "modify":"1",
+        "modify":"1.85",
         "operation":"ADDITION"
-      },
-      {
-        "attribute":"footwork:posture_cooldown_speed",
-        "modify":"0.16",
-        "operation":"MULTIPLY_BASE"
       },
       {
         "attribute":"footwork:stealth",
@@ -154,13 +134,8 @@
 "minecraft:diamond_helmet":[
       {
         "attribute":"footwork:max_fracture",
-        "modify":"0.5",
+        "modify":"1.05",
         "operation":"ADDITION"
-      },
-      {
-        "attribute":"footwork:posture_cooldown_speed",
-        "modify":"0.08",
-        "operation":"MULTIPLY_BASE"
       },
       {
         "attribute":"footwork:stealth",
@@ -171,13 +146,8 @@
 "minecraft:diamond_leggings":[
       {
         "attribute":"footwork:max_fracture",
-        "modify":"1",
+        "modify":"1.45",
         "operation":"ADDITION"
-      },
-      {
-        "attribute":"footwork:posture_cooldown_speed",
-        "modify":"0.12",
-        "operation":"MULTIPLY_BASE"
       },
       {
         "attribute":"footwork:stealth",
@@ -192,24 +162,14 @@
         "operation":"ADDITION"
       },
       {
-        "attribute":"footwork:max_posture",
-        "modify":"1.04",
+        "attribute":"footwork:max_fracture",
+        "modify":"0.65",
         "operation":"ADDITION"
       },
       {
-        "attribute":"footwork:posture_cooldown_speed",
-        "modify":"0.02",
-        "operation":"MULTIPLY_BASE"
-      },
-      {
-        "attribute":"footwork:posture_regen",
-        "modify":"0.01",
-        "operation":"MULTIPLY_BASE"
-      },
-      {
-        "attribute":"footwork:posture_gain",
-        "modify":"0.03",
-        "operation":"MULTIPLY_BASE"
+        "attribute":"footwork:max_posture",
+        "modify":"1.04",
+        "operation":"ADDITION"
       },
       {
         "attribute":"footwork:max_spirit",
@@ -223,7 +183,7 @@
       },
       {
         "attribute":"footwork:stealth",
-        "modify":"-3.2",
+        "modify":"-4",
         "operation":"ADDITION"
       }
     ],
@@ -235,28 +195,13 @@
       },
       {
         "attribute":"footwork:max_fracture",
-        "modify":"0.5",
+        "modify":"1.05",
         "operation":"ADDITION"
       },
       {
         "attribute":"footwork:max_posture",
         "modify":"2.08",
         "operation":"ADDITION"
-      },
-      {
-        "attribute":"footwork:posture_cooldown_speed",
-        "modify":"0.05",
-        "operation":"MULTIPLY_BASE"
-      },
-      {
-        "attribute":"footwork:posture_regen",
-        "modify":"0.02",
-        "operation":"MULTIPLY_BASE"
-      },
-      {
-        "attribute":"footwork:posture_gain",
-        "modify":"0.06",
-        "operation":"MULTIPLY_BASE"
       },
       {
         "attribute":"footwork:max_spirit",
@@ -270,7 +215,7 @@
       },
       {
         "attribute":"footwork:stealth",
-        "modify":"-6.4",
+        "modify":"-8",
         "operation":"ADDITION"
       }
     ],
@@ -281,24 +226,14 @@
         "operation":"ADDITION"
       },
       {
-        "attribute":"footwork:max_posture",
-        "modify":"1.04",
+        "attribute":"footwork:max_fracture",
+        "modify":"0.65",
         "operation":"ADDITION"
       },
       {
-        "attribute":"footwork:posture_cooldown_speed",
-        "modify":"0.02",
-        "operation":"MULTIPLY_BASE"
-      },
-      {
-        "attribute":"footwork:posture_regen",
-        "modify":"0.01",
-        "operation":"MULTIPLY_BASE"
-      },
-      {
-        "attribute":"footwork:posture_gain",
-        "modify":"0.03",
-        "operation":"MULTIPLY_BASE"
+        "attribute":"footwork:max_posture",
+        "modify":"1.04",
+        "operation":"ADDITION"
       },
       {
         "attribute":"footwork:max_spirit",
@@ -312,7 +247,7 @@
       },
       {
         "attribute":"footwork:stealth",
-        "modify":"-3.2",
+        "modify":"-4",
         "operation":"ADDITION"
       }
     ],
@@ -324,28 +259,13 @@
       },
       {
         "attribute":"footwork:max_fracture",
-        "modify":"0.5",
+        "modify":"0.85",
         "operation":"ADDITION"
       },
       {
         "attribute":"footwork:max_posture",
         "modify":"1.56",
         "operation":"ADDITION"
-      },
-      {
-        "attribute":"footwork:posture_cooldown_speed",
-        "modify":"0.04",
-        "operation":"MULTIPLY_BASE"
-      },
-      {
-        "attribute":"footwork:posture_regen",
-        "modify":"0.02",
-        "operation":"MULTIPLY_BASE"
-      },
-      {
-        "attribute":"footwork:posture_gain",
-        "modify":"0.05",
-        "operation":"MULTIPLY_BASE"
       },
       {
         "attribute":"footwork:max_spirit",
@@ -359,7 +279,7 @@
       },
       {
         "attribute":"footwork:stealth",
-        "modify":"-4.8",
+        "modify":"-6",
         "operation":"ADDITION"
       }
     ],
@@ -370,19 +290,14 @@
         "operation":"ADDITION"
       },
       {
-        "attribute":"footwork:max_posture",
-        "modify":"1.9",
+        "attribute":"footwork:max_fracture",
+        "modify":"0.25",
         "operation":"ADDITION"
       },
       {
-        "attribute":"footwork:posture_regen",
-        "modify":"0.03",
-        "operation":"MULTIPLY_BASE"
-      },
-      {
-        "attribute":"footwork:posture_gain",
-        "modify":"0.1",
-        "operation":"MULTIPLY_BASE"
+        "attribute":"footwork:max_posture",
+        "modify":"1.9",
+        "operation":"ADDITION"
       },
       {
         "attribute":"footwork:stealth",
@@ -398,23 +313,13 @@
       },
       {
         "attribute":"footwork:max_fracture",
-        "modify":"0.5",
+        "modify":"0.25",
         "operation":"ADDITION"
       },
       {
         "attribute":"footwork:max_posture",
         "modify":"3.79",
         "operation":"ADDITION"
-      },
-      {
-        "attribute":"footwork:posture_regen",
-        "modify":"0.07",
-        "operation":"MULTIPLY_BASE"
-      },
-      {
-        "attribute":"footwork:posture_gain",
-        "modify":"0.2",
-        "operation":"MULTIPLY_BASE"
       },
       {
         "attribute":"footwork:stealth",
@@ -429,19 +334,14 @@
         "operation":"ADDITION"
       },
       {
-        "attribute":"footwork:max_posture",
-        "modify":"1.9",
+        "attribute":"footwork:max_fracture",
+        "modify":"0.25",
         "operation":"ADDITION"
       },
       {
-        "attribute":"footwork:posture_regen",
-        "modify":"0.03",
-        "operation":"MULTIPLY_BASE"
-      },
-      {
-        "attribute":"footwork:posture_gain",
-        "modify":"0.1",
-        "operation":"MULTIPLY_BASE"
+        "attribute":"footwork:max_posture",
+        "modify":"1.9",
+        "operation":"ADDITION"
       },
       {
         "attribute":"footwork:stealth",
@@ -457,23 +357,13 @@
       },
       {
         "attribute":"footwork:max_fracture",
-        "modify":"0.5",
+        "modify":"0.25",
         "operation":"ADDITION"
       },
       {
         "attribute":"footwork:max_posture",
         "modify":"2.85",
         "operation":"ADDITION"
-      },
-      {
-        "attribute":"footwork:posture_regen",
-        "modify":"0.05",
-        "operation":"MULTIPLY_BASE"
-      },
-      {
-        "attribute":"footwork:posture_gain",
-        "modify":"0.15",
-        "operation":"MULTIPLY_BASE"
       },
       {
         "attribute":"footwork:stealth",
@@ -483,9 +373,14 @@
     ],
 "minecraft:leather_boots":[
       {
+        "attribute":"footwork:max_fracture",
+        "modify":"0.25",
+        "operation":"ADDITION"
+      },
+      {
         "attribute":"footwork:posture_regen",
-        "modify":"0.07",
-        "operation":"MULTIPLY_BASE"
+        "modify":"0.57",
+        "operation":"ADDITION"
       },
       {
         "attribute":"footwork:stealth",
@@ -496,13 +391,13 @@
 "minecraft:leather_chestplate":[
       {
         "attribute":"footwork:max_fracture",
-        "modify":"0.5",
+        "modify":"0.25",
         "operation":"ADDITION"
       },
       {
         "attribute":"footwork:posture_regen",
-        "modify":"0.13",
-        "operation":"MULTIPLY_BASE"
+        "modify":"0.8",
+        "operation":"ADDITION"
       },
       {
         "attribute":"footwork:stealth",
@@ -512,9 +407,14 @@
     ],
 "minecraft:leather_helmet":[
       {
+        "attribute":"footwork:max_fracture",
+        "modify":"0.25",
+        "operation":"ADDITION"
+      },
+      {
         "attribute":"footwork:posture_regen",
-        "modify":"0.07",
-        "operation":"MULTIPLY_BASE"
+        "modify":"0.57",
+        "operation":"ADDITION"
       },
       {
         "attribute":"footwork:stealth",
@@ -525,13 +425,13 @@
 "minecraft:leather_leggings":[
       {
         "attribute":"footwork:max_fracture",
-        "modify":"0.5",
+        "modify":"0.25",
         "operation":"ADDITION"
       },
       {
         "attribute":"footwork:posture_regen",
-        "modify":"0.1",
-        "operation":"MULTIPLY_BASE"
+        "modify":"0.69",
+        "operation":"ADDITION"
       },
       {
         "attribute":"footwork:stealth",
@@ -542,18 +442,13 @@
 "minecraft:netherite_boots":[
       {
         "attribute":"footwork:max_fracture",
-        "modify":"0.5",
+        "modify":"0.81",
         "operation":"ADDITION"
       },
       {
-        "attribute":"footwork:posture_cooldown_speed",
-        "modify":"0.06",
-        "operation":"MULTIPLY_BASE"
-      },
-      {
         "attribute":"footwork:posture_regen",
-        "modify":"0.05",
-        "operation":"MULTIPLY_BASE"
+        "modify":"0.47",
+        "operation":"ADDITION"
       },
       {
         "attribute":"footwork:stealth",
@@ -564,18 +459,13 @@
 "minecraft:netherite_chestplate":[
       {
         "attribute":"footwork:max_fracture",
-        "modify":"1",
+        "modify":"1.37",
         "operation":"ADDITION"
       },
       {
-        "attribute":"footwork:posture_cooldown_speed",
-        "modify":"0.11",
-        "operation":"MULTIPLY_BASE"
-      },
-      {
         "attribute":"footwork:posture_regen",
-        "modify":"0.09",
-        "operation":"MULTIPLY_BASE"
+        "modify":"0.67",
+        "operation":"ADDITION"
       },
       {
         "attribute":"footwork:stealth",
@@ -586,18 +476,13 @@
 "minecraft:netherite_helmet":[
       {
         "attribute":"footwork:max_fracture",
-        "modify":"0.5",
+        "modify":"0.81",
         "operation":"ADDITION"
       },
       {
-        "attribute":"footwork:posture_cooldown_speed",
-        "modify":"0.06",
-        "operation":"MULTIPLY_BASE"
-      },
-      {
         "attribute":"footwork:posture_regen",
-        "modify":"0.05",
-        "operation":"MULTIPLY_BASE"
+        "modify":"0.47",
+        "operation":"ADDITION"
       },
       {
         "attribute":"footwork:stealth",
@@ -608,18 +493,13 @@
 "minecraft:netherite_leggings":[
       {
         "attribute":"footwork:max_fracture",
-        "modify":"1",
+        "modify":"1.09",
         "operation":"ADDITION"
       },
       {
-        "attribute":"footwork:posture_cooldown_speed",
-        "modify":"0.08",
-        "operation":"MULTIPLY_BASE"
-      },
-      {
         "attribute":"footwork:posture_regen",
-        "modify":"0.07",
-        "operation":"MULTIPLY_BASE"
+        "modify":"0.58",
+        "operation":"ADDITION"
       },
       {
         "attribute":"footwork:stealth",
@@ -634,19 +514,19 @@
         "operation":"ADDITION"
       },
       {
+        "attribute":"footwork:max_fracture",
+        "modify":"0.25",
+        "operation":"ADDITION"
+      },
+      {
         "attribute":"footwork:max_posture",
         "modify":"1.34",
         "operation":"ADDITION"
       },
       {
         "attribute":"footwork:posture_regen",
-        "modify":"0.05",
-        "operation":"MULTIPLY_BASE"
-      },
-      {
-        "attribute":"footwork:posture_gain",
-        "modify":"0.05",
-        "operation":"MULTIPLY_BASE"
+        "modify":"0.4",
+        "operation":"ADDITION"
       },
       {
         "attribute":"footwork:stealth",

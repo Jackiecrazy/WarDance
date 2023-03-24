@@ -2,18 +2,13 @@
 "advancedrocketry:spaceboots":[
       {
         "attribute":"footwork:max_fracture",
-        "modify":"0.5",
+        "modify":"0.57",
         "operation":"ADDITION"
       },
       {
-        "attribute":"footwork:posture_cooldown_speed",
-        "modify":"0.03",
-        "operation":"MULTIPLY_BASE"
-      },
-      {
         "attribute":"footwork:posture_regen",
-        "modify":"0.03",
-        "operation":"MULTIPLY_BASE"
+        "modify":"2.67",
+        "operation":"ADDITION"
       },
       {
         "attribute":"footwork:stealth",
@@ -24,18 +19,13 @@
 "advancedrocketry:spacechest":[
       {
         "attribute":"footwork:max_fracture",
-        "modify":"1",
+        "modify":"0.89",
         "operation":"ADDITION"
       },
       {
-        "attribute":"footwork:posture_cooldown_speed",
-        "modify":"0.06",
-        "operation":"MULTIPLY_BASE"
-      },
-      {
         "attribute":"footwork:posture_regen",
-        "modify":"0.05",
-        "operation":"MULTIPLY_BASE"
+        "modify":"5.33",
+        "operation":"ADDITION"
       },
       {
         "attribute":"footwork:stealth",
@@ -46,18 +36,13 @@
 "advancedrocketry:spacehelmet":[
       {
         "attribute":"footwork:max_fracture",
-        "modify":"0.5",
+        "modify":"0.57",
         "operation":"ADDITION"
       },
       {
-        "attribute":"footwork:posture_cooldown_speed",
-        "modify":"0.03",
-        "operation":"MULTIPLY_BASE"
-      },
-      {
         "attribute":"footwork:posture_regen",
-        "modify":"0.03",
-        "operation":"MULTIPLY_BASE"
+        "modify":"2.67",
+        "operation":"ADDITION"
       },
       {
         "attribute":"footwork:stealth",
@@ -68,18 +53,13 @@
 "advancedrocketry:spaceleggings":[
       {
         "attribute":"footwork:max_fracture",
-        "modify":"1",
+        "modify":"0.73",
         "operation":"ADDITION"
       },
       {
-        "attribute":"footwork:posture_cooldown_speed",
-        "modify":"0.05",
-        "operation":"MULTIPLY_BASE"
-      },
-      {
         "attribute":"footwork:posture_regen",
-        "modify":"0.04",
-        "operation":"MULTIPLY_BASE"
+        "modify":"4",
+        "operation":"ADDITION"
       },
       {
         "attribute":"footwork:stealth",

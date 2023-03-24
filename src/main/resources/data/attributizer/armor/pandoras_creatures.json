@@ -1,9 +1,14 @@
 {
 "pandoras_creatures:plant_hat":[
       {
+        "attribute":"footwork:max_fracture",
+        "modify":"0.25",
+        "operation":"ADDITION"
+      },
+      {
         "attribute":"footwork:posture_regen",
-        "modify":"0.03",
-        "operation":"MULTIPLY_BASE"
+        "modify":"3.33",
+        "operation":"ADDITION"
       },
       {
         "attribute":"footwork:stealth",

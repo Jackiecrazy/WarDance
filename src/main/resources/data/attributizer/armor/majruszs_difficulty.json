@@ -2,13 +2,8 @@
 "majruszs_difficulty:end_boots":[
       {
         "attribute":"footwork:max_fracture",
-        "modify":"1",
+        "modify":"1.29",
         "operation":"ADDITION"
-      },
-      {
-        "attribute":"footwork:posture_cooldown_speed",
-        "modify":"0.1",
-        "operation":"MULTIPLY_BASE"
       },
       {
         "attribute":"footwork:stealth",
@@ -19,13 +14,8 @@
 "majruszs_difficulty:end_chestplate":[
       {
         "attribute":"footwork:max_fracture",
-        "modify":"1.5",
+        "modify":"2.33",
         "operation":"ADDITION"
-      },
-      {
-        "attribute":"footwork:posture_cooldown_speed",
-        "modify":"0.21",
-        "operation":"MULTIPLY_BASE"
       },
       {
         "attribute":"footwork:stealth",
@@ -36,13 +26,8 @@
 "majruszs_difficulty:end_helmet":[
       {
         "attribute":"footwork:max_fracture",
-        "modify":"1",
+        "modify":"1.29",
         "operation":"ADDITION"
-      },
-      {
-        "attribute":"footwork:posture_cooldown_speed",
-        "modify":"0.1",
-        "operation":"MULTIPLY_BASE"
       },
       {
         "attribute":"footwork:stealth",
@@ -53,13 +38,8 @@
 "majruszs_difficulty:end_leggings":[
       {
         "attribute":"footwork:max_fracture",
-        "modify":"1.5",
+        "modify":"1.81",
         "operation":"ADDITION"
-      },
-      {
-        "attribute":"footwork:posture_cooldown_speed",
-        "modify":"0.16",
-        "operation":"MULTIPLY_BASE"
       },
       {
         "attribute":"footwork:stealth",
@@ -74,19 +54,19 @@
         "operation":"ADDITION"
       },
       {
+        "attribute":"footwork:max_fracture",
+        "modify":"0.25",
+        "operation":"ADDITION"
+      },
+      {
         "attribute":"footwork:max_posture",
         "modify":"1.04",
         "operation":"ADDITION"
       },
       {
         "attribute":"footwork:posture_regen",
-        "modify":"0.08",
-        "operation":"MULTIPLY_BASE"
-      },
-      {
-        "attribute":"footwork:posture_gain",
-        "modify":"0.03",
-        "operation":"MULTIPLY_BASE"
+        "modify":"7.67",
+        "operation":"ADDITION"
       },
       {
         "attribute":"footwork:stealth",
