@@ -1,0 +1,17 @@
+{
+"mowziesmobs:naga_fang_dagger":{
+        "attack": "1.3",
+        "defend": "1.00",
+        "shield": "false"
+    },
+"mowziesmobs:spear":{
+        "attack": "2.5",
+        "defend": "0.70",
+        "shield": "false"
+    },
+"mowziesmobs:wrought_axe":{
+        "attack": "6",
+        "defend": "0.80",
+        "shield": "false"
+    }
+}

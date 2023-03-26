@@ -1,0 +1,27 @@
+{
+"kobolds:kobold_axe":{
+        "attack": "4",
+        "defend": "0.90",
+        "shield": "false"
+    },
+"kobolds:kobold_netherite_sword":{
+        "attack": "2.6",
+        "defend": "0.90",
+        "shield": "false"
+    },
+"kobolds:kobold_pickaxe":{
+        "attack": "2.5",
+        "defend": "1.00",
+        "shield": "false"
+    },
+"kobolds:kobold_shovel":{
+        "attack": "6",
+        "defend": "0.90",
+        "shield": "false"
+    },
+"kobolds:kobold_sword":{
+        "attack": "2.6",
+        "defend": "0.90",
+        "shield": "false"
+    }
+}

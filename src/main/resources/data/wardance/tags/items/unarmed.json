@@ -1,0 +1,190 @@
+{
+  "replace": false,
+  "values": [
+    "minecraft:iron_nugget",
+    {
+      "id": "biomancy:leech_claw",
+      "required": false
+    },
+    {
+      "id": "biomancy:long_claws",
+      "required": false
+    },
+    {
+      "id": "biomancy:long_range_claw",
+      "required": false
+    },
+    {
+      "id": "coldsclaws:diamond_claw",
+      "required": false
+    },
+    {
+      "id": "coldsclaws:golden_claw",
+      "required": false
+    },
+    {
+      "id": "coldsclaws:iron_claw",
+      "required": false
+    },
+    {
+      "id": "coldsclaws:netherite_claw",
+      "required": false
+    },
+    {
+      "id": "coldsclaws:stone_claw",
+      "required": false
+    },
+    {
+      "id": "coldsclaws:wooden_claw",
+      "required": false
+    },
+    {
+      "id": "divinerpg:dual_claw",
+      "required": false
+    },
+    {
+      "id": "mod_lavacow:beast_claw",
+      "required": false
+    },
+    {
+      "id": "mutantbeasts:endersoul_hand",
+      "required": false
+    },
+    {
+      "id": "rats:feral_bagh_nakhs",
+      "required": false
+    },
+    {
+      "id": "vanilla_claws:black_opal_claws",
+      "required": false
+    },
+    {
+      "id": "vanilla_claws:citrine_claws",
+      "required": false
+    },
+    {
+      "id": "vanilla_claws:copper_claws",
+      "required": false
+    },
+    {
+      "id": "vanilla_claws:diamond_claws",
+      "required": false
+    },
+    {
+      "id": "vanilla_claws:emerald_claws",
+      "required": false
+    },
+    {
+      "id": "vanilla_claws:gobber2_claws",
+      "required": false
+    },
+    {
+      "id": "vanilla_claws:gobber2_end_claws",
+      "required": false
+    },
+    {
+      "id": "vanilla_claws:gobber2_nether_claws",
+      "required": false
+    },
+    {
+      "id": "vanilla_claws:gold_claws",
+      "required": false
+    },
+    {
+      "id": "vanilla_claws:iron_claws",
+      "required": false
+    },
+    {
+      "id": "vanilla_claws:netherite_claws",
+      "required": false
+    },
+    {
+      "id": "vanilla_claws:soapy_claws",
+      "required": false
+    },
+    {
+      "id": "vanilla_claws:stone_claws",
+      "required": false
+    },
+    {
+      "id": "vanilla_claws:tanzanite_claws",
+      "required": false
+    },
+    {
+      "id": "vanilla_claws:wooden_claws",
+      "required": false
+    },
+    {
+      "id": "vanilla_claws:zircon_claws",
+      "required": false
+    },
+    {
+      "id": "alexsmobs:falconry_glove",
+      "required": false
+    },
+    {
+      "id": "davespotioneering:netherite_gauntlet",
+      "required": false
+    },
+    {
+      "id": "davespotioneering:potioneer_gauntlet",
+      "required": false
+    },
+    {
+      "id": "davespotioneering:rudimentary_gauntlet",
+      "required": false
+    },
+    {
+      "id": "dungeons_gear:fighters_binding",
+      "required": false
+    },
+    {
+      "id": "dungeons_gear:gauntlet",
+      "required": false
+    },
+    {
+      "id": "dungeons_gear:mauler",
+      "required": false
+    },
+    {
+      "id": "dungeons_gear:soul_fist",
+      "required": false
+    },
+    {
+      "id": "enigmaticlegacy:forbidden_axe",
+      "required": false
+    },
+    {
+      "id": "fins:red_claw_gauntlet",
+      "required": false
+    },
+    {
+      "id": "fins:white_claw_gauntlet",
+      "required": false
+    },
+    {
+      "id": "iceandfire:deathworm_gauntlet_red",
+      "required": false
+    },
+    {
+      "id": "iceandfire:deathworm_gauntlet_white",
+      "required": false
+    },
+    {
+      "id": "iceandfire:deathworm_gauntlet_yellow",
+      "required": false
+    },
+    {
+      "id": "rising_uppercut:gauntlet",
+      "required": false
+    },
+    {
+      "id": "spartanweaponry:cestus",
+      "required": false
+    },
+    {
+      "id": "spartanweaponry:cestus_studded",
+      "required": false
+    }
+  ]
+}

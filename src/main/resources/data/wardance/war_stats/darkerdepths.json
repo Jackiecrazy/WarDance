@@ -1,0 +1,32 @@
+{
+"darkerdepths:petrified_door":{
+        "attack": "6",
+        "defend": "0.50",
+        "shield": "true"
+    },
+"darkerdepths:petrified_sign":{
+        "attack": "2.4",
+        "defend": "0.90",
+        "shield": "false"
+    },
+"darkerdepths:petrified_trapdoor":{
+        "attack": "3",
+        "defend": "0.70",
+        "shield": "true"
+    },
+"darkersouls:dragonslayer_spear":{
+        "attack": "2.5",
+        "defend": "0.70",
+        "shield": "false"
+    },
+"darkersouls:dragonslayer_swordspear":{
+        "attack": "2.5",
+        "defend": "0.70",
+        "shield": "false"
+    },
+"darkersouls:storm_curved_sword":{
+        "attack": "2.6",
+        "defend": "0.90",
+        "shield": "false"
+    }
+}

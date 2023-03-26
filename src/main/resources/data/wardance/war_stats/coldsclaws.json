@@ -1,0 +1,32 @@
+{
+"coldsclaws:diamond_claw":{
+        "attack": "2.4",
+        "defend": "1.00",
+        "shield": "false"
+    },
+"coldsclaws:golden_claw":{
+        "attack": "2.4",
+        "defend": "1.00",
+        "shield": "false"
+    },
+"coldsclaws:iron_claw":{
+        "attack": "2.4",
+        "defend": "1.00",
+        "shield": "false"
+    },
+"coldsclaws:netherite_claw":{
+        "attack": "2.4",
+        "defend": "1.00",
+        "shield": "false"
+    },
+"coldsclaws:stone_claw":{
+        "attack": "2.4",
+        "defend": "1.00",
+        "shield": "false"
+    },
+"coldsclaws:wooden_claw":{
+        "attack": "2.4",
+        "defend": "1.00",
+        "shield": "false"
+    }
+}

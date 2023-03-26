@@ -1,0 +1,7 @@
+{
+"create:deforester":{
+        "attack": "4",
+        "defend": "0.90",
+        "shield": "false"
+    }
+}

@@ -124,7 +124,7 @@ dependencies {
     //runtimeOnly(fg.deobf(ctDep))
     //implementation fg.deobf(ctDep)
     annotationProcessor 'org.spongepowered:mixin:0.8.5:processor'
-    runtimeOnly fg.deobf("jackiecrazy.attributizer:attributizer-1.0:${mc_version}")
+    runtimeOnly fg.deobf("jackiecrazy.attributizer:attributizer-1.1:${mc_version}")
     implementation fg.deobf("jackiecrazy.footwork:footwork-${footwork_version}:${mc_version}")
     implementation fg.deobf("jackiecrazy.cloakanddagger:cloakanddagger-${cd_version}:${mc_version}")
     //compile fg.deobf("curse.maven:offhandcombat-417112:3203449")

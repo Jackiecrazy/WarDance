@@ -1,0 +1,502 @@
+{
+"betterendforge:aeternium_axe":{
+        "attack": "4",
+        "defend": "0.9",
+        "shield": "false"
+    },
+"betterendforge:aeternium_hammer":{
+        "attack": "6",
+        "defend": "0.9",
+        "shield": "false"
+    },
+"betterendforge:aeternium_hoe":{
+        "attack": "1",
+        "defend": "1",
+        "shield": "false"
+    },
+"betterendforge:aeternium_pickaxe":{
+        "attack": "2.5",
+        "defend": "1",
+        "shield": "false"
+    },
+"betterendforge:aeternium_shovel":{
+        "attack": "6",
+        "defend": "0.9",
+        "shield": "false"
+    },
+"betterendforge:aeternium_sword":{
+        "attack": "2.6",
+        "defend": "0.9",
+        "shield": "false"
+    },
+"betterendforge:diamond_hammer":{
+        "attack": "6",
+        "defend": "0.9",
+        "shield": "false"
+    },
+"betterendforge:dragon_tree_door":{
+        "attack": "6",
+        "defend": "0.5",
+        "shield": "true"
+    },
+"betterendforge:dragon_tree_sign":{
+        "attack": "2.4",
+        "defend": "0.9",
+        "shield": "false"
+    },
+"betterendforge:dragon_tree_trapdoor":{
+        "attack": "3",
+        "defend": "0.7",
+        "shield": "true"
+    },
+"betterendforge:end_lotus_door":{
+        "attack": "6",
+        "defend": "0.5",
+        "shield": "true"
+    },
+"betterendforge:end_lotus_sign":{
+        "attack": "2.4",
+        "defend": "0.9",
+        "shield": "false"
+    },
+"betterendforge:end_lotus_trapdoor":{
+        "attack": "3",
+        "defend": "0.7",
+        "shield": "true"
+    },
+"betterendforge:golden_hammer":{
+        "attack": "6",
+        "defend": "0.9",
+        "shield": "false"
+    },
+"betterendforge:helix_tree_door":{
+        "attack": "6",
+        "defend": "0.5",
+        "shield": "true"
+    },
+"betterendforge:helix_tree_sign":{
+        "attack": "2.4",
+        "defend": "0.9",
+        "shield": "false"
+    },
+"betterendforge:helix_tree_trapdoor":{
+        "attack": "3",
+        "defend": "0.7",
+        "shield": "true"
+    },
+"betterendforge:iron_hammer":{
+        "attack": "6",
+        "defend": "0.9",
+        "shield": "false"
+    },
+"betterendforge:jellyshroom_door":{
+        "attack": "6",
+        "defend": "0.5",
+        "shield": "true"
+    },
+"betterendforge:jellyshroom_sign":{
+        "attack": "2.4",
+        "defend": "0.9",
+        "shield": "false"
+    },
+"betterendforge:jellyshroom_trapdoor":{
+        "attack": "3",
+        "defend": "0.7",
+        "shield": "true"
+    },
+"betterendforge:lacugrove_door":{
+        "attack": "6",
+        "defend": "0.5",
+        "shield": "true"
+    },
+"betterendforge:lacugrove_sign":{
+        "attack": "2.4",
+        "defend": "0.9",
+        "shield": "false"
+    },
+"betterendforge:lacugrove_trapdoor":{
+        "attack": "3",
+        "defend": "0.7",
+        "shield": "true"
+    },
+"betterendforge:lucernia_door":{
+        "attack": "6",
+        "defend": "0.5",
+        "shield": "true"
+    },
+"betterendforge:lucernia_sign":{
+        "attack": "2.4",
+        "defend": "0.9",
+        "shield": "false"
+    },
+"betterendforge:lucernia_trapdoor":{
+        "attack": "3",
+        "defend": "0.7",
+        "shield": "true"
+    },
+"betterendforge:mossy_glowshroom_door":{
+        "attack": "6",
+        "defend": "0.5",
+        "shield": "true"
+    },
+"betterendforge:mossy_glowshroom_sign":{
+        "attack": "2.4",
+        "defend": "0.9",
+        "shield": "false"
+    },
+"betterendforge:mossy_glowshroom_trapdoor":{
+        "attack": "3",
+        "defend": "0.7",
+        "shield": "true"
+    },
+"betterendforge:netherite_hammer":{
+        "attack": "6",
+        "defend": "0.9",
+        "shield": "false"
+    },
+"betterendforge:pythadendron_door":{
+        "attack": "6",
+        "defend": "0.5",
+        "shield": "true"
+    },
+"betterendforge:pythadendron_sign":{
+        "attack": "2.4",
+        "defend": "0.9",
+        "shield": "false"
+    },
+"betterendforge:pythadendron_trapdoor":{
+        "attack": "3",
+        "defend": "0.7",
+        "shield": "true"
+    },
+"betterendforge:tenanea_door":{
+        "attack": "6",
+        "defend": "0.5",
+        "shield": "true"
+    },
+"betterendforge:tenanea_sign":{
+        "attack": "2.4",
+        "defend": "0.90",
+        "shield": "false"
+    },
+"betterendforge:tenanea_trapdoor":{
+        "attack": "3",
+        "defend": "0.70",
+        "shield": "true"
+    },
+"betterendforge:terminite_axe":{
+        "attack": "4",
+        "defend": "0.90",
+        "shield": "false"
+    },
+"betterendforge:terminite_door":{
+        "attack": "6",
+        "defend": "0.50",
+        "shield": "true"
+    },
+"betterendforge:terminite_hammer":{
+        "attack": "6",
+        "defend": "0.90",
+        "shield": "false"
+    },
+"betterendforge:terminite_hoe":{
+        "attack": "1",
+        "defend": "1.00",
+        "shield": "false"
+    },
+"betterendforge:terminite_pickaxe":{
+        "attack": "2.5",
+        "defend": "1.00",
+        "shield": "false"
+    },
+"betterendforge:terminite_shovel":{
+        "attack": "6",
+        "defend": "0.90",
+        "shield": "false"
+    },
+"betterendforge:terminite_sword":{
+        "attack": "2.6",
+        "defend": "0.90",
+        "shield": "false"
+    },
+"betterendforge:terminite_trapdoor":{
+        "attack": "3",
+        "defend": "0.70",
+        "shield": "true"
+    },
+"betterendforge:thallasium_axe":{
+        "attack": "4",
+        "defend": "0.90",
+        "shield": "false"
+    },
+"betterendforge:thallasium_door":{
+        "attack": "6",
+        "defend": "0.50",
+        "shield": "true"
+    },
+"betterendforge:thallasium_hammer":{
+        "attack": "6",
+        "defend": "0.90",
+        "shield": "false"
+    },
+"betterendforge:thallasium_hoe":{
+        "attack": "1",
+        "defend": "1.00",
+        "shield": "false"
+    },
+"betterendforge:thallasium_pickaxe":{
+        "attack": "2.5",
+        "defend": "1.00",
+        "shield": "false"
+    },
+"betterendforge:thallasium_shovel":{
+        "attack": "6",
+        "defend": "0.90",
+        "shield": "false"
+    },
+"betterendforge:thallasium_sword":{
+        "attack": "2.6",
+        "defend": "0.90",
+        "shield": "false"
+    },
+"betterendforge:thallasium_trapdoor":{
+        "attack": "3",
+        "defend": "0.70",
+        "shield": "true"
+    },
+"betterendforge:umbrella_tree_door":{
+        "attack": "6",
+        "defend": "0.50",
+        "shield": "true"
+    },
+"betterendforge:umbrella_tree_sign":{
+        "attack": "2.4",
+        "defend": "0.90",
+        "shield": "false"
+    },
+"betterendforge:umbrella_tree_trapdoor":{
+        "attack": "3",
+        "defend": "0.70",
+        "shield": "true"
+    },
+"betternether:anchor_tree_door":{
+        "attack": "6",
+        "defend": "0.50",
+        "shield": "true"
+    },
+"betternether:anchor_tree_trapdoor":{
+        "attack": "3",
+        "defend": "0.70",
+        "shield": "true"
+    },
+"betternether:bone_cincinnasite_door":{
+        "attack": "6",
+        "defend": "0.50",
+        "shield": "true"
+    },
+"betternether:bone_reed_door":{
+        "attack": "6",
+        "defend": "0.50",
+        "shield": "true"
+    },
+"betternether:cincinnasite_axe":{
+        "attack": "4",
+        "defend": "0.90",
+        "shield": "false"
+    },
+"betternether:cincinnasite_axe_diamond":{
+        "attack": "4",
+        "defend": "0.90",
+        "shield": "false"
+    },
+"betternether:cincinnasite_hoe":{
+        "attack": "1",
+        "defend": "1.00",
+        "shield": "false"
+    },
+"betternether:cincinnasite_hoe_diamond":{
+        "attack": "1",
+        "defend": "1.00",
+        "shield": "false"
+    },
+"betternether:cincinnasite_pickaxe":{
+        "attack": "2.5",
+        "defend": "1.00",
+        "shield": "false"
+    },
+"betternether:cincinnasite_pickaxe_diamond":{
+        "attack": "2.5",
+        "defend": "1.00",
+        "shield": "false"
+    },
+"betternether:cincinnasite_shovel":{
+        "attack": "6",
+        "defend": "0.90",
+        "shield": "false"
+    },
+"betternether:cincinnasite_shovel_diamond":{
+        "attack": "6",
+        "defend": "0.90",
+        "shield": "false"
+    },
+"betternether:cincinnasite_sword":{
+        "attack": "2.6",
+        "defend": "0.90",
+        "shield": "false"
+    },
+"betternether:cincinnasite_sword_diamond":{
+        "attack": "2.6",
+        "defend": "0.90",
+        "shield": "false"
+    },
+"betternether:mushroom_door":{
+        "attack": "6",
+        "defend": "0.50",
+        "shield": "true"
+    },
+"betternether:mushroom_fir_door":{
+        "attack": "6",
+        "defend": "0.50",
+        "shield": "true"
+    },
+"betternether:mushroom_fir_trapdoor":{
+        "attack": "3",
+        "defend": "0.70",
+        "shield": "true"
+    },
+"betternether:mushroom_trapdoor":{
+        "attack": "3",
+        "defend": "0.70",
+        "shield": "true"
+    },
+"betternether:nether_ruby_axe":{
+        "attack": "4",
+        "defend": "0.90",
+        "shield": "false"
+    },
+"betternether:nether_ruby_hoe":{
+        "attack": "1",
+        "defend": "1.00",
+        "shield": "false"
+    },
+"betternether:nether_ruby_pickaxe":{
+        "attack": "2.5",
+        "defend": "1.00",
+        "shield": "false"
+    },
+"betternether:nether_ruby_shovel":{
+        "attack": "6",
+        "defend": "0.90",
+        "shield": "false"
+    },
+"betternether:nether_ruby_sword":{
+        "attack": "2.6",
+        "defend": "0.90",
+        "shield": "false"
+    },
+"betternether:nether_sakura_door":{
+        "attack": "6",
+        "defend": "0.50",
+        "shield": "true"
+    },
+"betternether:nether_sakura_trapdoor":{
+        "attack": "3",
+        "defend": "0.70",
+        "shield": "true"
+    },
+"betternether:reeds_door":{
+        "attack": "6",
+        "defend": "0.50",
+        "shield": "true"
+    },
+"betternether:reeds_trapdoor":{
+        "attack": "3",
+        "defend": "0.70",
+        "shield": "true"
+    },
+"betternether:rubeus_door":{
+        "attack": "6",
+        "defend": "0.50",
+        "shield": "true"
+    },
+"betternether:rubeus_trapdoor":{
+        "attack": "3",
+        "defend": "0.70",
+        "shield": "true"
+    },
+"betternether:sign_anchor_tree":{
+        "attack": "2.4",
+        "defend": "0.90",
+        "shield": "false"
+    },
+"betternether:sign_mushroom":{
+        "attack": "2.4",
+        "defend": "0.90",
+        "shield": "false"
+    },
+"betternether:sign_mushroom_fir":{
+        "attack": "2.4",
+        "defend": "0.90",
+        "shield": "false"
+    },
+"betternether:sign_nether_sakura":{
+        "attack": "2.4",
+        "defend": "0.90",
+        "shield": "false"
+    },
+"betternether:sign_reed":{
+        "attack": "2.4",
+        "defend": "0.90",
+        "shield": "false"
+    },
+"betternether:sign_rubeus":{
+        "attack": "2.4",
+        "defend": "0.90",
+        "shield": "false"
+    },
+"betternether:sign_stalagnate":{
+        "attack": "2.4",
+        "defend": "0.90",
+        "shield": "false"
+    },
+"betternether:sign_wart":{
+        "attack": "2.4",
+        "defend": "0.90",
+        "shield": "false"
+    },
+"betternether:sign_willow":{
+        "attack": "2.4",
+        "defend": "0.90",
+        "shield": "false"
+    },
+"betternether:stalagnate_planks_door":{
+        "attack": "6",
+        "defend": "0.50",
+        "shield": "true"
+    },
+"betternether:stalagnate_planks_trapdoor":{
+        "attack": "3",
+        "defend": "0.70",
+        "shield": "true"
+    },
+"betternether:wart_door":{
+        "attack": "6",
+        "defend": "0.50",
+        "shield": "true"
+    },
+"betternether:wart_trapdoor":{
+        "attack": "3",
+        "defend": "0.70",
+        "shield": "true"
+    },
+"betternether:willow_door":{
+        "attack": "6",
+        "defend": "0.50",
+        "shield": "true"
+    },
+"betternether:willow_trapdoor":{
+        "attack": "3",
+        "defend": "0.70",
+        "shield": "true"
+    }
+}

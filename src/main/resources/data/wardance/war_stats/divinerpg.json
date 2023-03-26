@@ -1,0 +1,342 @@
+{
+"divinerpg:apalachia_blade":{
+        "attack": "2.6",
+        "defend": "0.9",
+        "shield": "false"
+    },
+"divinerpg:aquatic_dagger":{
+        "attack": "1.3",
+        "defend": "1.00",
+        "shield": "false"
+    },
+"divinerpg:aquatic_maul":{
+        "attack": "8",
+        "defend": "0.8",
+        "shield": "false"
+    },
+"divinerpg:aquatic_trident":{
+        "attack": "2.5",
+        "defend": "0.7",
+        "shield": "false"
+    },
+"divinerpg:aquaton":{
+        "attack": "8",
+        "defend": "0.8",
+        "shield": "false"
+    },
+"divinerpg:aquatooth_maul":{
+        "attack": "8",
+        "defend": "0.8",
+        "shield": "false"
+    },
+"divinerpg:aquatooth_sword":{
+        "attack": "2.6",
+        "defend": "0.90",
+        "shield": "false"
+    },
+"divinerpg:arcanite_blade":{
+        "attack": "2.6",
+        "defend": "0.9",
+        "shield": "false"
+    },
+"divinerpg:arcanium_saber":{
+        "attack": "2.9",
+        "defend": "0.90",
+        "shield": "false"
+    },
+"divinerpg:arlemite_stabber":{
+        "attack": "1.3",
+        "defend": "1",
+        "shield": "false"
+    },
+"divinerpg:bedrock_maul":{
+        "attack": "8",
+        "defend": "0.8",
+        "shield": "false"
+    },
+"divinerpg:bedrock_sword":{
+        "attack": "2.6",
+        "defend": "0.90",
+        "shield": "false"
+    },
+"divinerpg:black_ender_sword":{
+        "attack": "2.6",
+        "defend": "0.90",
+        "shield": "false"
+    },
+"divinerpg:bloodgem_sword":{
+        "attack": "2.6",
+        "defend": "0.90",
+        "shield": "false"
+    },
+"divinerpg:blue_divine_sword":{
+        "attack": "2.6",
+        "defend": "0.90",
+        "shield": "false"
+    },
+"divinerpg:blue_ender_sword":{
+        "attack": "2.6",
+        "defend": "0.90",
+        "shield": "false"
+    },
+"divinerpg:corrupted_maul":{
+        "attack": "8",
+        "defend": "0.8",
+        "shield": "false"
+    },
+"divinerpg:crabclaw_maul":{
+        "attack": "8",
+        "defend": "0.8",
+        "shield": "false"
+    },
+"divinerpg:cyclopsian_sword":{
+        "attack": "2.6",
+        "defend": "0.90",
+        "shield": "false"
+    },
+"divinerpg:death_bringer":{
+        "attack": "2.6",
+        "defend": "0.9",
+        "shield": "false"
+    },
+"divinerpg:divine_sword":{
+        "attack": "2.6",
+        "defend": "0.90",
+        "shield": "false"
+    },
+"divinerpg:dual_claw":{
+        "attack": "2.4",
+        "defend": "1",
+        "shield": "false"
+    },
+"divinerpg:eden_blade":{
+        "attack": "2.6",
+        "defend": "0.9",
+        "shield": "false"
+    },
+"divinerpg:ender_scepter":{
+        "attack": "0.5",
+        "defend": "1",
+        "shield": "false"
+    },
+"divinerpg:ender_sword":{
+        "attack": "2.6",
+        "defend": "0.90",
+        "shield": "false"
+    },
+"divinerpg:enderice":{
+        "attack": "2.6",
+        "defend": "0.9",
+        "shield": "false"
+    },
+"divinerpg:flaming_fury":{
+        "attack": "2.6",
+        "defend": "0.9",
+        "shield": "false"
+    },
+"divinerpg:frossivence":{
+        "attack": "2.5",
+        "defend": "0.7",
+        "shield": "false"
+    },
+"divinerpg:frost_sword":{
+        "attack": "2.6",
+        "defend": "0.90",
+        "shield": "false"
+    },
+"divinerpg:frostking_sword":{
+        "attack": "2.6",
+        "defend": "0.90",
+        "shield": "false"
+    },
+"divinerpg:frozen_maul":{
+        "attack": "8",
+        "defend": "0.8",
+        "shield": "false"
+    },
+"divinerpg:fury_maul":{
+        "attack": "8",
+        "defend": "0.8",
+        "shield": "false"
+    },
+"divinerpg:glacier_sword":{
+        "attack": "2.6",
+        "defend": "0.90",
+        "shield": "false"
+    },
+"divinerpg:gray_divine_sword":{
+        "attack": "2.6",
+        "defend": "0.90",
+        "shield": "false"
+    },
+"divinerpg:green_divine_sword":{
+        "attack": "2.6",
+        "defend": "0.90",
+        "shield": "false"
+    },
+"divinerpg:green_ender_sword":{
+        "attack": "2.6",
+        "defend": "0.90",
+        "shield": "false"
+    },
+"divinerpg:halite_blade":{
+        "attack": "2.6",
+        "defend": "0.9",
+        "shield": "false"
+    },
+"divinerpg:icicle_bane":{
+        "attack": "2.6",
+        "defend": "0.9",
+        "shield": "false"
+    },
+"divinerpg:icine_sword":{
+        "attack": "2.6",
+        "defend": "0.90",
+        "shield": "false"
+    },
+"divinerpg:inferno_sword":{
+        "attack": "2.6",
+        "defend": "0.90",
+        "shield": "false"
+    },
+"divinerpg:jungle_knife":{
+        "attack": "1.3",
+        "defend": "1.00",
+        "shield": "false"
+    },
+"divinerpg:jungle_rapier":{
+        "attack": "2",
+        "defend": "0.85",
+        "shield": "false"
+    },
+"divinerpg:livicia_sword":{
+        "attack": "2.6",
+        "defend": "0.90",
+        "shield": "false"
+    },
+"divinerpg:massivence":{
+        "attack": "2.5",
+        "defend": "0.7",
+        "shield": "false"
+    },
+"divinerpg:molten_sword":{
+        "attack": "2.6",
+        "defend": "0.90",
+        "shield": "false"
+    },
+"divinerpg:mortum_blade":{
+        "attack": "2.6",
+        "defend": "0.9",
+        "shield": "false"
+    },
+"divinerpg:ocean_knife":{
+        "attack": "1.3",
+        "defend": "1.00",
+        "shield": "false"
+    },
+"divinerpg:palavence":{
+        "attack": "2.5",
+        "defend": "0.7",
+        "shield": "false"
+    },
+"divinerpg:poison_saber":{
+        "attack": "2.9",
+        "defend": "0.90",
+        "shield": "false"
+    },
+"divinerpg:realmite_sword":{
+        "attack": "2.6",
+        "defend": "0.90",
+        "shield": "false"
+    },
+"divinerpg:red_divine_sword":{
+        "attack": "2.6",
+        "defend": "0.90",
+        "shield": "false"
+    },
+"divinerpg:red_ender_sword":{
+        "attack": "2.6",
+        "defend": "0.90",
+        "shield": "false"
+    },
+"divinerpg:rupee_rapier":{
+        "attack": "2",
+        "defend": "0.85",
+        "shield": "false"
+    },
+"divinerpg:sandslash":{
+        "attack": "2.6",
+        "defend": "0.9",
+        "shield": "false"
+    },
+"divinerpg:scorching_sword":{
+        "attack": "2.6",
+        "defend": "0.90",
+        "shield": "false"
+    },
+"divinerpg:shadow_saber":{
+        "attack": "2.9",
+        "defend": "0.90",
+        "shield": "false"
+    },
+"divinerpg:shark_sword":{
+        "attack": "2.6",
+        "defend": "0.90",
+        "shield": "false"
+    },
+"divinerpg:skythern_blade":{
+        "attack": "2.6",
+        "defend": "0.9",
+        "shield": "false"
+    },
+"divinerpg:slime_sword":{
+        "attack": "2.6",
+        "defend": "0.90",
+        "shield": "false"
+    },
+"divinerpg:snowslash":{
+        "attack": "2.6",
+        "defend": "0.9",
+        "shield": "false"
+    },
+"divinerpg:soulfire_sword":{
+        "attack": "2.6",
+        "defend": "0.90",
+        "shield": "false"
+    },
+"divinerpg:storm_sword":{
+        "attack": "2.6",
+        "defend": "0.90",
+        "shield": "false"
+    },
+"divinerpg:terran_dagger":{
+        "attack": "1.3",
+        "defend": "1.00",
+        "shield": "false"
+    },
+"divinerpg:terran_knife":{
+        "attack": "1.3",
+        "defend": "1.00",
+        "shield": "false"
+    },
+"divinerpg:terran_maul":{
+        "attack": "2.6",
+        "defend": "0.9",
+        "shield": "false"
+    },
+"divinerpg:wildwood_blade":{
+        "attack": "2.6",
+        "defend": "0.9",
+        "shield": "false"
+    },
+"divinerpg:yellow_divine_sword":{
+        "attack": "2.6",
+        "defend": "0.90",
+        "shield": "false"
+    },
+"divinerpg:yellow_ender_sword":{
+        "attack": "2.6",
+        "defend": "0.90",
+        "shield": "false"
+    }
+}

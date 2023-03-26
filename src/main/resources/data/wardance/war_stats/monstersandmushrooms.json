@@ -1,0 +1,72 @@
+{
+"monstersandmushrooms:avalasword":{
+        "attack": "2.6",
+        "defend": "0.90",
+        "shield": "false"
+    },
+"monstersandmushrooms:blazewand":{
+        "attack": "0.5",
+        "defend": "1.00",
+        "shield": "false"
+    },
+"monstersandmushrooms:brutesword":{
+        "attack": "2.6",
+        "defend": "0.90",
+        "shield": "false"
+    },
+"monstersandmushrooms:bugsywand":{
+        "attack": "0.5",
+        "defend": "1.00",
+        "shield": "false"
+    },
+"monstersandmushrooms:chorussword":{
+        "attack": "2.6",
+        "defend": "0.90",
+        "shield": "false"
+    },
+"monstersandmushrooms:drownedsword":{
+        "attack": "2.6",
+        "defend": "0.90",
+        "shield": "false"
+    },
+"monstersandmushrooms:endstaff":{
+        "attack": "1",
+        "defend": "0.90",
+        "shield": "false"
+    },
+"monstersandmushrooms:endwand":{
+        "attack": "0.5",
+        "defend": "1.00",
+        "shield": "false"
+    },
+"monstersandmushrooms:gnomesword":{
+        "attack": "2.6",
+        "defend": "0.90",
+        "shield": "false"
+    },
+"monstersandmushrooms:maggartstaff":{
+        "attack": "1",
+        "defend": "0.90",
+        "shield": "false"
+    },
+"monstersandmushrooms:magmacubestaff":{
+        "attack": "1",
+        "defend": "0.90",
+        "shield": "false"
+    },
+"monstersandmushrooms:meangreenwand":{
+        "attack": "0.5",
+        "defend": "1.00",
+        "shield": "false"
+    },
+"monstersandmushrooms:shroomsterstaff":{
+        "attack": "1",
+        "defend": "0.90",
+        "shield": "false"
+    },
+"monstersandmushrooms:straystaff":{
+        "attack": "1",
+        "defend": "0.90",
+        "shield": "false"
+    }
+}

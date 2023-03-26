@@ -1,0 +1,7 @@
+{
+"consecration:fire_stick":{
+        "attack": "0.5",
+        "defend": "1.00",
+        "shield": "false"
+    }
+}

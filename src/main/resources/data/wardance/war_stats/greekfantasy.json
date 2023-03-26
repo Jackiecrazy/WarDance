@@ -1,0 +1,67 @@
+{
+"greekfantasy:bident":{
+        "attack": "2.5",
+        "defend": "0.7",
+        "shield": "false"
+    },
+"greekfantasy:discus":{
+        "attack": "1",
+        "defend": "1.00",
+        "shield": "false"
+    },
+"greekfantasy:flint_knife":{
+        "attack": "1.3",
+        "defend": "1.00",
+        "shield": "false"
+    },
+"greekfantasy:iron_club":{
+        "attack": "15",
+        "defend": "0.70",
+        "shield": "true"
+    },
+"greekfantasy:iron_spear":{
+        "attack": "2.5",
+        "defend": "0.70",
+        "shield": "false"
+    },
+"greekfantasy:ivory_sword":{
+        "attack": "2.6",
+        "defend": "0.90",
+        "shield": "false"
+    },
+"greekfantasy:staff_of_healing":{
+        "attack": "1",
+        "defend": "0.90",
+        "shield": "false"
+    },
+"greekfantasy:stone_club":{
+        "attack": "15",
+        "defend": "0.70",
+        "shield": "true"
+    },
+"greekfantasy:stone_spear":{
+        "attack": "2.5",
+        "defend": "0.70",
+        "shield": "false"
+    },
+"greekfantasy:throwing_axe":{
+        "attack": "4",
+        "defend": "0.90",
+        "shield": "false"
+    },
+"greekfantasy:thyrsus":{
+        "attack": "2.5",
+        "defend": "0.7",
+        "shield": "false"
+    },
+"greekfantasy:wooden_club":{
+        "attack": "15",
+        "defend": "0.70",
+        "shield": "true"
+    },
+"greekfantasy:wooden_spear":{
+        "attack": "2.5",
+        "defend": "0.70",
+        "shield": "false"
+    }
+}

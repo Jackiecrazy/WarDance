@@ -1,0 +1,17 @@
+{
+"adhooks:pudge_launcher":{
+        "attack": "1",
+        "defend": "1",
+        "shield": "false"
+    },
+"adhooks:spear_launcher":{
+        "attack": "1",
+        "defend": "1",
+        "shield": "false"
+    },
+"adhooks:web_launcher":{
+        "attack": "1",
+        "defend": "1",
+        "shield": "false"
+    }
+}

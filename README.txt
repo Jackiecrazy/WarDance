@@ -13,7 +13,7 @@ Posture: a stat that quantifies how steady the player is on his feet. Stamina an
 - Dodging resets your posture cooldown.
 - This means that while actions play a role, the real deal-breaker is health. Defeating an enemy requires wearing down their health to make staggering easier.
 - At 0 posture the entity is knocked back and stunned, gaining 1 fracture, binding both hands and slowing movement. The stagger ends after 1 seconds or taking damage once. During this time posture regenerates rapidly and cannot be depleted until it reaches max again.
-- Special case: taking a stunning instance of posture damage that exceeds half of their max posture will additionally knock them down, which lengthens
+- Special case: taking a stunning instance of posture damage that exceeds half of their max posture will additionally knock them down, which lengthens downtime to 3 seconds and disables movement.
 - The expectation to gain a fracture on a reasonably armored entity (around chain grade) is 8 dagger, 6 sword, 5 claymore, 3 axe, or 2 mace hits. Balance around this.
 - Accumulating an attribute-defined quantity of fracture marks instead exposes the entity for 5 seconds. In this state the entity cannot do anything, has all armor negated, and the next hit on it deals an extra 10% of its max health in damage.
 - Fracture marks are cleared after exposure. Killing any entity that fractured you will also remove their respective fractures, as well as any ownerless fractures.

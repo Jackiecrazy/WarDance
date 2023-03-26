@@ -1,0 +1,27 @@
+{
+"gunswithoutroses:diamond_gatling":{
+        "attack": "1.8",
+        "defend": "1.1",
+        "shield": "false"
+    },
+"gunswithoutroses:diamond_shotgun":{
+        "attack": "1.8",
+        "defend": "1.1",
+        "shield": "false"
+    },
+"gunswithoutroses:diamond_sniper":{
+        "attack": "1.8",
+        "defend": "1.1",
+        "shield": "false"
+    },
+"gunswithoutroses:gold_gun":{
+        "attack": "1.8",
+        "defend": "1.1",
+        "shield": "false"
+    },
+"gunswithoutroses:iron_gun":{
+        "attack": "1.8",
+        "defend": "1.1",
+        "shield": "false"
+    }
+}

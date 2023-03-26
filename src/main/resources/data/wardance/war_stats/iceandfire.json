@@ -1,0 +1,322 @@
+{
+"iceandfire:amphithere_macuahuitl":{
+        "attack": "4",
+        "defend": "0.9",
+        "shield": "false"
+    },
+"iceandfire:copper_axe":{
+        "attack": "4",
+        "defend": "0.90",
+        "shield": "false"
+    },
+"iceandfire:copper_hoe":{
+        "attack": "1",
+        "defend": "1.00",
+        "shield": "false"
+    },
+"iceandfire:copper_pickaxe":{
+        "attack": "2.5",
+        "defend": "1.00",
+        "shield": "false"
+    },
+"iceandfire:copper_shovel":{
+        "attack": "6",
+        "defend": "0.90",
+        "shield": "false"
+    },
+"iceandfire:copper_sword":{
+        "attack": "2.6",
+        "defend": "0.90",
+        "shield": "false"
+    },
+"iceandfire:deathworm_gauntlet_red":{
+        "attack": "3.2",
+        "defend": "1",
+        "shield": "false"
+    },
+"iceandfire:deathworm_gauntlet_white":{
+        "attack": "3.2",
+        "defend": "1",
+        "shield": "false"
+    },
+"iceandfire:deathworm_gauntlet_yellow":{
+        "attack": "3.2",
+        "defend": "1",
+        "shield": "false"
+    },
+"iceandfire:dragonbone_axe":{
+        "attack": "4",
+        "defend": "0.90",
+        "shield": "false"
+    },
+"iceandfire:dragonbone_bow":{
+        "attack": "1.2",
+        "defend": "0.90",
+        "shield": "false"
+    },
+"iceandfire:dragonbone_hoe":{
+        "attack": "1",
+        "defend": "1.00",
+        "shield": "false"
+    },
+"iceandfire:dragonbone_pickaxe":{
+        "attack": "2.5",
+        "defend": "1.00",
+        "shield": "false"
+    },
+"iceandfire:dragonbone_shovel":{
+        "attack": "6",
+        "defend": "0.90",
+        "shield": "false"
+    },
+"iceandfire:dragonbone_sword":{
+        "attack": "2.6",
+        "defend": "0.90",
+        "shield": "false"
+    },
+"iceandfire:dragonbone_sword_fire":{
+        "attack": "2.6",
+        "defend": "0.90",
+        "shield": "false"
+    },
+"iceandfire:dragonbone_sword_ice":{
+        "attack": "2.6",
+        "defend": "0.90",
+        "shield": "false"
+    },
+"iceandfire:dragonbone_sword_lightning":{
+        "attack": "2.6",
+        "defend": "0.90",
+        "shield": "false"
+    },
+"iceandfire:dragonsteel_fire_axe":{
+        "attack": "4",
+        "defend": "0.90",
+        "shield": "false"
+    },
+"iceandfire:dragonsteel_fire_hoe":{
+        "attack": "1",
+        "defend": "1.00",
+        "shield": "false"
+    },
+"iceandfire:dragonsteel_fire_pickaxe":{
+        "attack": "2.5",
+        "defend": "1.00",
+        "shield": "false"
+    },
+"iceandfire:dragonsteel_fire_shovel":{
+        "attack": "6",
+        "defend": "0.90",
+        "shield": "false"
+    },
+"iceandfire:dragonsteel_fire_sword":{
+        "attack": "2.6",
+        "defend": "0.90",
+        "shield": "false"
+    },
+"iceandfire:dragonsteel_ice_axe":{
+        "attack": "4",
+        "defend": "0.90",
+        "shield": "false"
+    },
+"iceandfire:dragonsteel_ice_hoe":{
+        "attack": "1",
+        "defend": "1.00",
+        "shield": "false"
+    },
+"iceandfire:dragonsteel_ice_pickaxe":{
+        "attack": "2.5",
+        "defend": "1.00",
+        "shield": "false"
+    },
+"iceandfire:dragonsteel_ice_shovel":{
+        "attack": "6",
+        "defend": "0.90",
+        "shield": "false"
+    },
+"iceandfire:dragonsteel_ice_sword":{
+        "attack": "2.6",
+        "defend": "0.90",
+        "shield": "false"
+    },
+"iceandfire:dragonsteel_lightning_axe":{
+        "attack": "4",
+        "defend": "0.90",
+        "shield": "false"
+    },
+"iceandfire:dragonsteel_lightning_hoe":{
+        "attack": "1",
+        "defend": "1.00",
+        "shield": "false"
+    },
+"iceandfire:dragonsteel_lightning_pickaxe":{
+        "attack": "2.5",
+        "defend": "1.00",
+        "shield": "false"
+    },
+"iceandfire:dragonsteel_lightning_shovel":{
+        "attack": "6",
+        "defend": "0.90",
+        "shield": "false"
+    },
+"iceandfire:dragonsteel_lightning_sword":{
+        "attack": "2.6",
+        "defend": "0.90",
+        "shield": "false"
+    },
+"iceandfire:dread_knight_sword":{
+        "attack": "2.6",
+        "defend": "0.90",
+        "shield": "false"
+    },
+"iceandfire:dread_queen_sword":{
+        "attack": "2.6",
+        "defend": "0.90",
+        "shield": "false"
+    },
+"iceandfire:dread_sword":{
+        "attack": "2.6",
+        "defend": "0.90",
+        "shield": "false"
+    },
+"iceandfire:ghost_sword":{
+        "attack": "2.6",
+        "defend": "0.90",
+        "shield": "false"
+    },
+"iceandfire:hippocampus_slapper":{
+        "attack": "6",
+        "defend": "0.9",
+        "shield": "false"
+    },
+"iceandfire:hippogryph_sword":{
+        "attack": "2.6",
+        "defend": "0.90",
+        "shield": "false"
+    },
+"iceandfire:myrmex_desert_axe":{
+        "attack": "4",
+        "defend": "0.90",
+        "shield": "false"
+    },
+"iceandfire:myrmex_desert_hoe":{
+        "attack": "1",
+        "defend": "1.00",
+        "shield": "false"
+    },
+"iceandfire:myrmex_desert_pickaxe":{
+        "attack": "2.5",
+        "defend": "1.00",
+        "shield": "false"
+    },
+"iceandfire:myrmex_desert_shovel":{
+        "attack": "6",
+        "defend": "0.90",
+        "shield": "false"
+    },
+"iceandfire:myrmex_desert_sword":{
+        "attack": "2.6",
+        "defend": "0.90",
+        "shield": "false"
+    },
+"iceandfire:myrmex_desert_sword_venom":{
+        "attack": "2.6",
+        "defend": "0.90",
+        "shield": "false"
+    },
+"iceandfire:myrmex_jungle_axe":{
+        "attack": "4",
+        "defend": "0.90",
+        "shield": "false"
+    },
+"iceandfire:myrmex_jungle_hoe":{
+        "attack": "1",
+        "defend": "1.00",
+        "shield": "false"
+    },
+"iceandfire:myrmex_jungle_pickaxe":{
+        "attack": "2.5",
+        "defend": "1.00",
+        "shield": "false"
+    },
+"iceandfire:myrmex_jungle_shovel":{
+        "attack": "6",
+        "defend": "0.90",
+        "shield": "false"
+    },
+"iceandfire:myrmex_jungle_sword":{
+        "attack": "2.6",
+        "defend": "0.90",
+        "shield": "false"
+    },
+"iceandfire:myrmex_jungle_sword_venom":{
+        "attack": "2.6",
+        "defend": "0.90",
+        "shield": "false"
+    },
+"iceandfire:silver_axe":{
+        "attack": "4",
+        "defend": "0.90",
+        "shield": "false"
+    },
+"iceandfire:silver_hoe":{
+        "attack": "1",
+        "defend": "1.00",
+        "shield": "false"
+    },
+"iceandfire:silver_pickaxe":{
+        "attack": "2.5",
+        "defend": "1.00",
+        "shield": "false"
+    },
+"iceandfire:silver_shovel":{
+        "attack": "6",
+        "defend": "0.90",
+        "shield": "false"
+    },
+"iceandfire:silver_sword":{
+        "attack": "2.6",
+        "defend": "0.90",
+        "shield": "false"
+    },
+"iceandfire:stymphalian_bird_dagger":{
+        "attack": "1.3",
+        "defend": "1.00",
+        "shield": "false"
+    },
+"iceandfire:troll_weapon_axe":{
+        "attack": "15",
+        "defend": "0.70",
+        "shield": "true"
+    },
+"iceandfire:troll_weapon_column":{
+        "attack": "15",
+        "defend": "0.70",
+        "shield": "true"
+    },
+"iceandfire:troll_weapon_column_forest":{
+        "attack": "15",
+        "defend": "0.70",
+        "shield": "true"
+    },
+"iceandfire:troll_weapon_column_frost":{
+        "attack": "15",
+        "defend": "0.70",
+        "shield": "true"
+    },
+"iceandfire:troll_weapon_hammer":{
+        "attack": "15",
+        "defend": "0.70",
+        "shield": "true"
+    },
+"iceandfire:troll_weapon_trunk":{
+        "attack": "15",
+        "defend": "0.70",
+        "shield": "true"
+    },
+"iceandfire:troll_weapon_trunk_frost":{
+        "attack": "15",
+        "defend": "0.70",
+        "shield": "true"
+    }
+}

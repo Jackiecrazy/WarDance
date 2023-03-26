@@ -1,0 +1,32 @@
+{
+"hmag:crimson_bow":{
+        "attack": "1.2",
+        "defend": "0.90",
+        "shield": "false"
+    },
+"hmag:fortress_shield":{
+        "attack": "6",
+        "defend": "0.50",
+        "shield": "true"
+    },
+"hmag:golden_fork":{
+        "attack": "1",
+        "defend": "1.00",
+        "shield": "false"
+    },
+"hmag:insomnia_sword":{
+        "attack": "2.6",
+        "defend": "0.90",
+        "shield": "false"
+    },
+"hmag:iron_spear":{
+        "attack": "2.5",
+        "defend": "0.70",
+        "shield": "false"
+    },
+"hmag:nemesis_blade":{
+        "attack": "2.6",
+        "defend": "0.9",
+        "shield": "false"
+    }
+}

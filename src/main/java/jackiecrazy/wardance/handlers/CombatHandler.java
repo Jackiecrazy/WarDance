@@ -1,5 +1,6 @@
 package jackiecrazy.wardance.handlers;
 
+import jackiecrazy.footwork.api.CombatDamageSource;
 import jackiecrazy.footwork.capability.resources.CombatData;
 import jackiecrazy.footwork.capability.resources.ICombatCapability;
 import jackiecrazy.footwork.capability.weaponry.CombatManipulator;
@@ -8,7 +9,6 @@ import jackiecrazy.footwork.event.MeleeKnockbackEvent;
 import jackiecrazy.footwork.utils.GeneralUtils;
 import jackiecrazy.footwork.utils.StealthUtils;
 import jackiecrazy.wardance.WarDance;
-import jackiecrazy.footwork.api.CombatDamageSource;
 import jackiecrazy.wardance.config.CombatConfig;
 import jackiecrazy.wardance.config.GeneralConfig;
 import jackiecrazy.wardance.config.ResourceConfig;
@@ -24,7 +24,6 @@ import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
-import net.minecraft.util.Tuple;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.Entity;
@@ -282,13 +281,13 @@ public class CombatHandler {
                 if (canParry) {
                     float posMod = 1337;
                     boolean isShield = false;
-                    if (CombatUtils.canParry(uke, seme, uke.getOffhandItem(), atkMult)) {
+                    if (CombatUtils.canParry(uke, seme, uke.getOffhandItem(), attack, atkMult)) {
                         defend = uke.getOffhandItem();
                         posMod = CombatUtils.getPostureDef(seme, uke, uke.getOffhandItem(), e.getAmount());
                         isShield = CombatUtils.isShield(uke, uke.getOffhandItem());
                         parryHand = InteractionHand.OFF_HAND;
                     }
-                    if (!isShield && CombatUtils.canParry(uke, seme, uke.getMainHandItem(), atkMult) && CombatUtils.getPostureDef(seme, uke, uke.getMainHandItem(), e.getAmount()) < posMod) {
+                    if (!isShield && CombatUtils.canParry(uke, seme, uke.getMainHandItem(), attack, atkMult) && CombatUtils.getPostureDef(seme, uke, uke.getMainHandItem(), e.getAmount()) < posMod) {
                         defend = uke.getMainHandItem();
                         parryHand = InteractionHand.MAIN_HAND;
                     }
@@ -346,12 +345,12 @@ public class CombatHandler {
                         parryHand = uke.getOffhandItem() == defend ? InteractionHand.OFF_HAND : InteractionHand.MAIN_HAND;
                         //barrier has already been handled. Subsequent binding and cooldown are handled by the capability.
                         if (CombatUtils.isShield(uke, defend)) {
-                            Tuple<Integer, Float> stat = CombatUtils.getShieldStats(defend);
+                            //Tuple<Integer, Float> stat = CombatUtils.getShieldStats(defend);
                             if (attack.canDisableShield(defend, uke, seme)) {
                                 //shield is disabled
                                 if (uke instanceof Player) {
-                                    ((Player) uke).getCooldowns().addCooldown(defend.getItem(), stat.getA());
-                                } else ukeCap.setHandBind(parryHand, stat.getA());
+                                    ((Player) uke).getCooldowns().addCooldown(defend.getItem(), 100);
+                                } else ukeCap.setHandBind(parryHand, 100);
                                 disshield = true;
                             }
                         }

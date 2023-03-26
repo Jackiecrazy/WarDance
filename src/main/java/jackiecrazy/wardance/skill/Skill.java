@@ -327,6 +327,10 @@ public abstract class Skill extends Move {
         return false;
     }
 
+    protected boolean cast(LivingEntity caster) {
+        return cast(caster, -999);
+    }
+
     protected boolean cast(LivingEntity caster, float duration) {
         return cast(caster, null, duration);
     }

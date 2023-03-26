@@ -1,0 +1,112 @@
+{
+"farmersdelight:black_canvas_sign":{
+        "attack": "2.4",
+        "defend": "0.90",
+        "shield": "false"
+    },
+"farmersdelight:blue_canvas_sign":{
+        "attack": "2.4",
+        "defend": "0.90",
+        "shield": "false"
+    },
+"farmersdelight:brown_canvas_sign":{
+        "attack": "2.4",
+        "defend": "0.90",
+        "shield": "false"
+    },
+"farmersdelight:canvas_sign":{
+        "attack": "2.4",
+        "defend": "0.90",
+        "shield": "false"
+    },
+"farmersdelight:cyan_canvas_sign":{
+        "attack": "2.4",
+        "defend": "0.90",
+        "shield": "false"
+    },
+"farmersdelight:diamond_knife":{
+        "attack": "1.3",
+        "defend": "1.00",
+        "shield": "false"
+    },
+"farmersdelight:flint_knife":{
+        "attack": "1.3",
+        "defend": "1.00",
+        "shield": "false"
+    },
+"farmersdelight:golden_knife":{
+        "attack": "1.3",
+        "defend": "1.00",
+        "shield": "false"
+    },
+"farmersdelight:gray_canvas_sign":{
+        "attack": "2.4",
+        "defend": "0.90",
+        "shield": "false"
+    },
+"farmersdelight:green_canvas_sign":{
+        "attack": "2.4",
+        "defend": "0.90",
+        "shield": "false"
+    },
+"farmersdelight:iron_knife":{
+        "attack": "1.3",
+        "defend": "1.00",
+        "shield": "false"
+    },
+"farmersdelight:light_blue_canvas_sign":{
+        "attack": "2.4",
+        "defend": "0.90",
+        "shield": "false"
+    },
+"farmersdelight:light_gray_canvas_sign":{
+        "attack": "2.4",
+        "defend": "0.90",
+        "shield": "false"
+    },
+"farmersdelight:lime_canvas_sign":{
+        "attack": "2.4",
+        "defend": "0.90",
+        "shield": "false"
+    },
+"farmersdelight:magenta_canvas_sign":{
+        "attack": "2.4",
+        "defend": "0.90",
+        "shield": "false"
+    },
+"farmersdelight:netherite_knife":{
+        "attack": "1.3",
+        "defend": "1.00",
+        "shield": "false"
+    },
+"farmersdelight:orange_canvas_sign":{
+        "attack": "2.4",
+        "defend": "0.90",
+        "shield": "false"
+    },
+"farmersdelight:pink_canvas_sign":{
+        "attack": "2.4",
+        "defend": "0.90",
+        "shield": "false"
+    },
+"farmersdelight:purple_canvas_sign":{
+        "attack": "2.4",
+        "defend": "0.90",
+        "shield": "false"
+    },
+"farmersdelight:red_canvas_sign":{
+        "attack": "2.4",
+        "defend": "0.90",
+        "shield": "false"
+    },
+"farmersdelight:white_canvas_sign":{
+        "attack": "2.4",
+        "defend": "0.90",
+        "shield": "false"
+    },
+"farmersdelight:yellow_canvas_sign":{
+        "attack": "2.4",
+        "defend": "0.90",
+        "shield": "false"
+    }
+}

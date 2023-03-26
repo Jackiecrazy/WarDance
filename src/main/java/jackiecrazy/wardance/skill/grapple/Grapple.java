@@ -2,11 +2,13 @@ package jackiecrazy.wardance.skill.grapple;
 
 import jackiecrazy.footwork.capability.resources.CombatData;
 import jackiecrazy.footwork.capability.resources.ICombatCapability;
+import jackiecrazy.footwork.potion.FootworkEffects;
 import jackiecrazy.wardance.WarDance;
 import jackiecrazy.wardance.skill.*;
 import jackiecrazy.wardance.utils.CombatUtils;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
+import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraftforge.event.entity.living.LivingAttackEvent;
 import net.minecraftforge.eventbus.api.Event;
@@ -26,6 +28,11 @@ public class Grapple extends Skill {
     }
 
     @Override
+    public float spiritConsumption(LivingEntity caster) {
+        return 2;
+    }
+
+    @Override
     public HashSet<String> getTags(LivingEntity caster) {
         return unarm;
     }
@@ -37,34 +44,19 @@ public class Grapple extends Skill {
     }
 
     @Override
-    public float spiritConsumption(LivingEntity caster) {
-        return 1;
-    }
-
-    protected void performEffect(LivingEntity caster, LivingEntity target) {
-        caster.level.playSound(null, target.getX(), target.getY(), target.getZ(), SoundEvents.BARREL_OPEN, SoundSource.PLAYERS, 0.3f + WarDance.rand.nextFloat() * 0.5f, 0.75f + WarDance.rand.nextFloat() * 0.5f);
-        if (this==WarSkills.THROW.get()) CombatData.getCap(target).consumePosture(caster, 11, 0, true);
-        else CombatData.getCap(target).consumePosture(caster, 7, 0, true);
-
-    }
-
-    @Override
     public void onProc(LivingEntity caster, Event procPoint, STATE state, SkillData stats, LivingEntity target) {
         if (procPoint instanceof LivingAttackEvent && ((LivingAttackEvent) procPoint).getEntity() == target && procPoint.getPhase() == EventPriority.HIGHEST) {
             if (state == STATE.HOLSTERED && isUnarmed(caster)) {
-                if (stats.isCondition() && caster.getLastHurtMob() == target && caster.tickCount-caster.getLastHurtMobTimestamp()<40 && cast(caster, target, -999)) {
-                    performEffect(caster, target);
-                } else{
+                if (stats.isCondition() && caster.getLastHurtMob() == target && caster.tickCount - caster.getLastHurtMobTimestamp() < 40 && cast(caster, target, -999)) {
+                    performEffect(caster, target, stats);
+                } else {
+                    target.addEffect(new MobEffectInstance(FootworkEffects.UNSTEADY.get(), 20));
                     stats.flagCondition(true);
                     caster.setLastHurtMob(target);
                 }
             }
         }
         attackCooldown(procPoint, caster, stats);
-    }
-
-    protected boolean isUnarmed(LivingEntity caster) {
-        return CombatUtils.isUnarmed(caster.getMainHandItem(), caster);
     }
 
     @Override
@@ -76,12 +68,17 @@ public class Grapple extends Skill {
         return boundCast(prev, from, to);
     }
 
-    public static class ReverseGrip extends Grapple {
+    protected void performEffect(LivingEntity caster, LivingEntity target, SkillData stats) {
+        caster.level.playSound(null, target.getX(), target.getY(), target.getZ(), SoundEvents.BARREL_OPEN, SoundSource.PLAYERS, 0.3f + WarDance.rand.nextFloat() * 0.5f, 0.75f + WarDance.rand.nextFloat() * 0.5f);
+        CombatData.getCap(target).consumePosture(caster, 7, 0, true);
 
-        @Override
-        protected boolean isUnarmed(LivingEntity caster) {
-            return true;
-        }
+    }
+
+    protected boolean isUnarmed(LivingEntity caster) {
+        return CombatUtils.isUnarmed(caster.getMainHandItem(), caster);
+    }
+
+    public static class ReverseGrip extends Grapple {
 
         @Override
         public boolean onStateChange(LivingEntity caster, SkillData prev, STATE from, STATE to) {
@@ -90,6 +87,11 @@ public class Grapple extends Skill {
             }
             prev.flagCondition(false);
             return boundCast(prev, from, to);
+        }
+
+        @Override
+        protected boolean isUnarmed(LivingEntity caster) {
+            return true;
         }
     }
 

@@ -1,0 +1,2767 @@
+{
+"alexsmobs:shield_of_the_deep":[
+      {
+        "attribute":"minecraft:generic.attack_speed",
+        "modify":"-2.7",
+        "operation":"ADDITION"
+      }
+  ],
+"ars_nouveau:archwood_door":[
+      {
+        "attribute":"minecraft:generic.attack_speed",
+        "modify":"-3.2",
+        "operation":"ADDITION"
+      }
+  ],
+"ars_nouveau:archwood_trapdoor":[
+      {
+        "attribute":"minecraft:generic.attack_speed",
+        "modify":"-2.4",
+        "operation":"ADDITION"
+      }
+  ],
+"ars_nouveau:enchanters_shield":[
+      {
+        "attribute":"minecraft:generic.attack_speed",
+        "modify":"-2.7",
+        "operation":"ADDITION"
+      }
+  ],
+"artifacts:umbrella":[
+      {
+        "attribute":"minecraft:generic.attack_speed",
+        "modify":"-2.7",
+        "operation":"ADDITION"
+      }
+  ],
+"atmospheric:aspen_door":[
+      {
+        "attribute":"minecraft:generic.attack_speed",
+        "modify":"-3.2",
+        "operation":"ADDITION"
+      }
+  ],
+"atmospheric:aspen_sign":[
+      {
+        "attribute":"minecraft:generic.attack_speed",
+        "modify":"-2",
+        "operation":"ADDITION"
+      }
+  ],
+"atmospheric:aspen_trapdoor":[
+      {
+        "attribute":"minecraft:generic.attack_speed",
+        "modify":"-2.4",
+        "operation":"ADDITION"
+      }
+  ],
+"atmospheric:grimwood_door":[
+      {
+        "attribute":"minecraft:generic.attack_speed",
+        "modify":"-3.2",
+        "operation":"ADDITION"
+      }
+  ],
+"atmospheric:grimwood_sign":[
+      {
+        "attribute":"minecraft:generic.attack_speed",
+        "modify":"-2",
+        "operation":"ADDITION"
+      }
+  ],
+"atmospheric:grimwood_trapdoor":[
+      {
+        "attribute":"minecraft:generic.attack_speed",
+        "modify":"-2.4",
+        "operation":"ADDITION"
+      }
+  ],
+"atmospheric:kousa_door":[
+      {
+        "attribute":"minecraft:generic.attack_speed",
+        "modify":"-3.2",
+        "operation":"ADDITION"
+      }
+  ],
+"atmospheric:kousa_sign":[
+      {
+        "attribute":"minecraft:generic.attack_speed",
+        "modify":"-2",
+        "operation":"ADDITION"
+      }
+  ],
+"atmospheric:kousa_trapdoor":[
+      {
+        "attribute":"minecraft:generic.attack_speed",
+        "modify":"-2.4",
+        "operation":"ADDITION"
+      }
+  ],
+"atmospheric:morado_door":[
+      {
+        "attribute":"minecraft:generic.attack_speed",
+        "modify":"-3.2",
+        "operation":"ADDITION"
+      }
+  ],
+"atmospheric:morado_sign":[
+      {
+        "attribute":"minecraft:generic.attack_speed",
+        "modify":"-2",
+        "operation":"ADDITION"
+      }
+  ],
+"atmospheric:morado_trapdoor":[
+      {
+        "attribute":"minecraft:generic.attack_speed",
+        "modify":"-2.4",
+        "operation":"ADDITION"
+      }
+  ],
+"atmospheric:rosewood_door":[
+      {
+        "attribute":"minecraft:generic.attack_speed",
+        "modify":"-3.2",
+        "operation":"ADDITION"
+      }
+  ],
+"atmospheric:rosewood_sign":[
+      {
+        "attribute":"minecraft:generic.attack_speed",
+        "modify":"-2",
+        "operation":"ADDITION"
+      }
+  ],
+"atmospheric:rosewood_trapdoor":[
+      {
+        "attribute":"minecraft:generic.attack_speed",
+        "modify":"-2.4",
+        "operation":"ADDITION"
+      }
+  ],
+"atmospheric:yucca_door":[
+      {
+        "attribute":"minecraft:generic.attack_speed",
+        "modify":"-3.2",
+        "operation":"ADDITION"
+      }
+  ],
+"atmospheric:yucca_sign":[
+      {
+        "attribute":"minecraft:generic.attack_speed",
+        "modify":"-2",
+        "operation":"ADDITION"
+      }
+  ],
+"atmospheric:yucca_trapdoor":[
+      {
+        "attribute":"minecraft:generic.attack_speed",
+        "modify":"-2.4",
+        "operation":"ADDITION"
+      }
+  ],
+"atum:atems_protection":[
+      {
+        "attribute":"minecraft:generic.attack_speed",
+        "modify":"-2.4",
+        "operation":"ADDITION"
+      }
+  ],
+"atum:brigand_shield":[
+      {
+        "attribute":"minecraft:generic.attack_speed",
+        "modify":"-2.4",
+        "operation":"ADDITION"
+      }
+  ],
+"atum:deadwood_door":[
+      {
+        "attribute":"minecraft:generic.attack_speed",
+        "modify":"-3.2",
+        "operation":"ADDITION"
+      }
+  ],
+"atum:deadwood_sign":[
+      {
+        "attribute":"minecraft:generic.attack_speed",
+        "modify":"-2",
+        "operation":"ADDITION"
+      }
+  ],
+"atum:limestone_brick_carved_door":[
+      {
+        "attribute":"minecraft:generic.attack_speed",
+        "modify":"-3.2",
+        "operation":"ADDITION"
+      }
+  ],
+"atum:limestone_brick_chiseled_door":[
+      {
+        "attribute":"minecraft:generic.attack_speed",
+        "modify":"-3.2",
+        "operation":"ADDITION"
+      }
+  ],
+"atum:limestone_brick_cracked_brick_door":[
+      {
+        "attribute":"minecraft:generic.attack_speed",
+        "modify":"-3.2",
+        "operation":"ADDITION"
+      }
+  ],
+"atum:limestone_brick_large_door":[
+      {
+        "attribute":"minecraft:generic.attack_speed",
+        "modify":"-3.2",
+        "operation":"ADDITION"
+      }
+  ],
+"atum:limestone_brick_small_door":[
+      {
+        "attribute":"minecraft:generic.attack_speed",
+        "modify":"-3.2",
+        "operation":"ADDITION"
+      }
+  ],
+"atum:limestone_cracked_door":[
+      {
+        "attribute":"minecraft:generic.attack_speed",
+        "modify":"-3.2",
+        "operation":"ADDITION"
+      }
+  ],
+"atum:limestone_door":[
+      {
+        "attribute":"minecraft:generic.attack_speed",
+        "modify":"-3.2",
+        "operation":"ADDITION"
+      }
+  ],
+"atum:palm_door":[
+      {
+        "attribute":"minecraft:generic.attack_speed",
+        "modify":"-3.2",
+        "operation":"ADDITION"
+      }
+  ],
+"atum:palm_sign":[
+      {
+        "attribute":"minecraft:generic.attack_speed",
+        "modify":"-2",
+        "operation":"ADDITION"
+      }
+  ],
+"atum:stoneguard_shield":[
+      {
+        "attribute":"minecraft:generic.attack_speed",
+        "modify":"-3",
+        "operation":"ADDITION"
+      }
+  ],
+"betterendforge:dragon_tree_door":[
+      {
+        "attribute":"minecraft:generic.attack_speed",
+        "modify":"-3.2",
+        "operation":"ADDITION"
+      }
+  ],
+"betterendforge:dragon_tree_sign":[
+      {
+        "attribute":"minecraft:generic.attack_speed",
+        "modify":"-2",
+        "operation":"ADDITION"
+      }
+  ],
+"betterendforge:dragon_tree_trapdoor":[
+      {
+        "attribute":"minecraft:generic.attack_speed",
+        "modify":"-2.4",
+        "operation":"ADDITION"
+      }
+  ],
+"betterendforge:end_lotus_door":[
+      {
+        "attribute":"minecraft:generic.attack_speed",
+        "modify":"-3.2",
+        "operation":"ADDITION"
+      }
+  ],
+"betterendforge:end_lotus_sign":[
+      {
+        "attribute":"minecraft:generic.attack_speed",
+        "modify":"-2",
+        "operation":"ADDITION"
+      }
+  ],
+"betterendforge:end_lotus_trapdoor":[
+      {
+        "attribute":"minecraft:generic.attack_speed",
+        "modify":"-2.4",
+        "operation":"ADDITION"
+      }
+  ],
+"betterendforge:helix_tree_door":[
+      {
+        "attribute":"minecraft:generic.attack_speed",
+        "modify":"-3.2",
+        "operation":"ADDITION"
+      }
+  ],
+"betterendforge:helix_tree_sign":[
+      {
+        "attribute":"minecraft:generic.attack_speed",
+        "modify":"-2",
+        "operation":"ADDITION"
+      }
+  ],
+"betterendforge:helix_tree_trapdoor":[
+      {
+        "attribute":"minecraft:generic.attack_speed",
+        "modify":"-2.4",
+        "operation":"ADDITION"
+      }
+  ],
+"betterendforge:jellyshroom_door":[
+      {
+        "attribute":"minecraft:generic.attack_speed",
+        "modify":"-3.2",
+        "operation":"ADDITION"
+      }
+  ],
+"betterendforge:jellyshroom_sign":[
+      {
+        "attribute":"minecraft:generic.attack_speed",
+        "modify":"-2",
+        "operation":"ADDITION"
+      }
+  ],
+"betterendforge:jellyshroom_trapdoor":[
+      {
+        "attribute":"minecraft:generic.attack_speed",
+        "modify":"-2.4",
+        "operation":"ADDITION"
+      }
+  ],
+"betterendforge:lacugrove_door":[
+      {
+        "attribute":"minecraft:generic.attack_speed",
+        "modify":"-3.2",
+        "operation":"ADDITION"
+      }
+  ],
+"betterendforge:lacugrove_sign":[
+      {
+        "attribute":"minecraft:generic.attack_speed",
+        "modify":"-2",
+        "operation":"ADDITION"
+      }
+  ],
+"betterendforge:lacugrove_trapdoor":[
+      {
+        "attribute":"minecraft:generic.attack_speed",
+        "modify":"-2.4",
+        "operation":"ADDITION"
+      }
+  ],
+"betterendforge:lucernia_door":[
+      {
+        "attribute":"minecraft:generic.attack_speed",
+        "modify":"-3.2",
+        "operation":"ADDITION"
+      }
+  ],
+"betterendforge:lucernia_sign":[
+      {
+        "attribute":"minecraft:generic.attack_speed",
+        "modify":"-2",
+        "operation":"ADDITION"
+      }
+  ],
+"betterendforge:lucernia_trapdoor":[
+      {
+        "attribute":"minecraft:generic.attack_speed",
+        "modify":"-2.4",
+        "operation":"ADDITION"
+      }
+  ],
+"betterendforge:mossy_glowshroom_door":[
+      {
+        "attribute":"minecraft:generic.attack_speed",
+        "modify":"-3.2",
+        "operation":"ADDITION"
+      }
+  ],
+"betterendforge:mossy_glowshroom_sign":[
+      {
+        "attribute":"minecraft:generic.attack_speed",
+        "modify":"-2",
+        "operation":"ADDITION"
+      }
+  ],
+"betterendforge:mossy_glowshroom_trapdoor":[
+      {
+        "attribute":"minecraft:generic.attack_speed",
+        "modify":"-2.4",
+        "operation":"ADDITION"
+      }
+  ],
+"betterendforge:pythadendron_door":[
+      {
+        "attribute":"minecraft:generic.attack_speed",
+        "modify":"-3.2",
+        "operation":"ADDITION"
+      }
+  ],
+"betterendforge:pythadendron_sign":[
+      {
+        "attribute":"minecraft:generic.attack_speed",
+        "modify":"-2",
+        "operation":"ADDITION"
+      }
+  ],
+"betterendforge:pythadendron_trapdoor":[
+      {
+        "attribute":"minecraft:generic.attack_speed",
+        "modify":"-2.4",
+        "operation":"ADDITION"
+      }
+  ],
+"betterendforge:tenanea_door":[
+      {
+        "attribute":"minecraft:generic.attack_speed",
+        "modify":"-3.2",
+        "operation":"ADDITION"
+      }
+  ],
+"betterendforge:tenanea_sign":[
+      {
+        "attribute":"minecraft:generic.attack_speed",
+        "modify":"-2",
+        "operation":"ADDITION"
+      }
+  ],
+"betterendforge:tenanea_trapdoor":[
+      {
+        "attribute":"minecraft:generic.attack_speed",
+        "modify":"-2.4",
+        "operation":"ADDITION"
+      }
+  ],
+"betterendforge:terminite_door":[
+      {
+        "attribute":"minecraft:generic.attack_speed",
+        "modify":"-3.2",
+        "operation":"ADDITION"
+      }
+  ],
+"betterendforge:terminite_trapdoor":[
+      {
+        "attribute":"minecraft:generic.attack_speed",
+        "modify":"-2.4",
+        "operation":"ADDITION"
+      }
+  ],
+"betterendforge:thallasium_door":[
+      {
+        "attribute":"minecraft:generic.attack_speed",
+        "modify":"-3.2",
+        "operation":"ADDITION"
+      }
+  ],
+"betterendforge:thallasium_trapdoor":[
+      {
+        "attribute":"minecraft:generic.attack_speed",
+        "modify":"-2.4",
+        "operation":"ADDITION"
+      }
+  ],
+"betterendforge:umbrella_tree_door":[
+      {
+        "attribute":"minecraft:generic.attack_speed",
+        "modify":"-3.2",
+        "operation":"ADDITION"
+      }
+  ],
+"betterendforge:umbrella_tree_sign":[
+      {
+        "attribute":"minecraft:generic.attack_speed",
+        "modify":"-2",
+        "operation":"ADDITION"
+      }
+  ],
+"betterendforge:umbrella_tree_trapdoor":[
+      {
+        "attribute":"minecraft:generic.attack_speed",
+        "modify":"-2.4",
+        "operation":"ADDITION"
+      }
+  ],
+"betternether:anchor_tree_door":[
+      {
+        "attribute":"minecraft:generic.attack_speed",
+        "modify":"-3.2",
+        "operation":"ADDITION"
+      }
+  ],
+"betternether:anchor_tree_trapdoor":[
+      {
+        "attribute":"minecraft:generic.attack_speed",
+        "modify":"-2.4",
+        "operation":"ADDITION"
+      }
+  ],
+"betternether:bone_cincinnasite_door":[
+      {
+        "attribute":"minecraft:generic.attack_speed",
+        "modify":"-3.2",
+        "operation":"ADDITION"
+      }
+  ],
+"betternether:bone_reed_door":[
+      {
+        "attribute":"minecraft:generic.attack_speed",
+        "modify":"-3.2",
+        "operation":"ADDITION"
+      }
+  ],
+"betternether:mushroom_door":[
+      {
+        "attribute":"minecraft:generic.attack_speed",
+        "modify":"-3.2",
+        "operation":"ADDITION"
+      }
+  ],
+"betternether:mushroom_fir_door":[
+      {
+        "attribute":"minecraft:generic.attack_speed",
+        "modify":"-3.2",
+        "operation":"ADDITION"
+      }
+  ],
+"betternether:mushroom_fir_trapdoor":[
+      {
+        "attribute":"minecraft:generic.attack_speed",
+        "modify":"-2.4",
+        "operation":"ADDITION"
+      }
+  ],
+"betternether:mushroom_trapdoor":[
+      {
+        "attribute":"minecraft:generic.attack_speed",
+        "modify":"-2.4",
+        "operation":"ADDITION"
+      }
+  ],
+"betternether:nether_sakura_door":[
+      {
+        "attribute":"minecraft:generic.attack_speed",
+        "modify":"-3.2",
+        "operation":"ADDITION"
+      }
+  ],
+"betternether:nether_sakura_trapdoor":[
+      {
+        "attribute":"minecraft:generic.attack_speed",
+        "modify":"-2.4",
+        "operation":"ADDITION"
+      }
+  ],
+"betternether:reeds_door":[
+      {
+        "attribute":"minecraft:generic.attack_speed",
+        "modify":"-3.2",
+        "operation":"ADDITION"
+      }
+  ],
+"betternether:reeds_trapdoor":[
+      {
+        "attribute":"minecraft:generic.attack_speed",
+        "modify":"-2.4",
+        "operation":"ADDITION"
+      }
+  ],
+"betternether:rubeus_door":[
+      {
+        "attribute":"minecraft:generic.attack_speed",
+        "modify":"-3.2",
+        "operation":"ADDITION"
+      }
+  ],
+"betternether:rubeus_trapdoor":[
+      {
+        "attribute":"minecraft:generic.attack_speed",
+        "modify":"-2.4",
+        "operation":"ADDITION"
+      }
+  ],
+"betternether:sign_anchor_tree":[
+      {
+        "attribute":"minecraft:generic.attack_speed",
+        "modify":"-2",
+        "operation":"ADDITION"
+      }
+  ],
+"betternether:sign_mushroom":[
+      {
+        "attribute":"minecraft:generic.attack_speed",
+        "modify":"-2",
+        "operation":"ADDITION"
+      }
+  ],
+"betternether:sign_mushroom_fir":[
+      {
+        "attribute":"minecraft:generic.attack_speed",
+        "modify":"-2",
+        "operation":"ADDITION"
+      }
+  ],
+"betternether:sign_nether_sakura":[
+      {
+        "attribute":"minecraft:generic.attack_speed",
+        "modify":"-2",
+        "operation":"ADDITION"
+      }
+  ],
+"betternether:sign_reed":[
+      {
+        "attribute":"minecraft:generic.attack_speed",
+        "modify":"-2",
+        "operation":"ADDITION"
+      }
+  ],
+"betternether:sign_rubeus":[
+      {
+        "attribute":"minecraft:generic.attack_speed",
+        "modify":"-2",
+        "operation":"ADDITION"
+      }
+  ],
+"betternether:sign_stalagnate":[
+      {
+        "attribute":"minecraft:generic.attack_speed",
+        "modify":"-2",
+        "operation":"ADDITION"
+      }
+  ],
+"betternether:sign_wart":[
+      {
+        "attribute":"minecraft:generic.attack_speed",
+        "modify":"-2",
+        "operation":"ADDITION"
+      }
+  ],
+"betternether:sign_willow":[
+      {
+        "attribute":"minecraft:generic.attack_speed",
+        "modify":"-2",
+        "operation":"ADDITION"
+      }
+  ],
+"betternether:stalagnate_planks_door":[
+      {
+        "attribute":"minecraft:generic.attack_speed",
+        "modify":"-3.2",
+        "operation":"ADDITION"
+      }
+  ],
+"betternether:stalagnate_planks_trapdoor":[
+      {
+        "attribute":"minecraft:generic.attack_speed",
+        "modify":"-2.4",
+        "operation":"ADDITION"
+      }
+  ],
+"betternether:wart_door":[
+      {
+        "attribute":"minecraft:generic.attack_speed",
+        "modify":"-3.2",
+        "operation":"ADDITION"
+      }
+  ],
+"betternether:wart_trapdoor":[
+      {
+        "attribute":"minecraft:generic.attack_speed",
+        "modify":"-2.4",
+        "operation":"ADDITION"
+      }
+  ],
+"betternether:willow_door":[
+      {
+        "attribute":"minecraft:generic.attack_speed",
+        "modify":"-3.2",
+        "operation":"ADDITION"
+      }
+  ],
+"betternether:willow_trapdoor":[
+      {
+        "attribute":"minecraft:generic.attack_speed",
+        "modify":"-2.4",
+        "operation":"ADDITION"
+      }
+  ],
+"bigbrain:buckler":[
+      {
+        "attribute":"minecraft:generic.attack_speed",
+        "modify":"-2.4",
+        "operation":"ADDITION"
+      }
+  ],
+"blue_skies:moonstone_shield":[
+      {
+        "attribute":"minecraft:generic.attack_speed",
+        "modify":"-2.7",
+        "operation":"ADDITION"
+      }
+  ],
+"bountifulbaubles:shield_ankh":[
+      {
+        "attribute":"minecraft:generic.attack_speed",
+        "modify":"-2.7",
+        "operation":"ADDITION"
+      }
+  ],
+"bountifulbaubles:shield_cobalt":[
+      {
+        "attribute":"minecraft:generic.attack_speed",
+        "modify":"-2.7",
+        "operation":"ADDITION"
+      }
+  ],
+"bountifulbaubles:shield_obsidian":[
+      {
+        "attribute":"minecraft:generic.attack_speed",
+        "modify":"-2.7",
+        "operation":"ADDITION"
+      }
+  ],
+"byg:aspen_door":[
+      {
+        "attribute":"minecraft:generic.attack_speed",
+        "modify":"-3.2",
+        "operation":"ADDITION"
+      }
+  ],
+"byg:aspen_trapdoor":[
+      {
+        "attribute":"minecraft:generic.attack_speed",
+        "modify":"-2.4",
+        "operation":"ADDITION"
+      }
+  ],
+"byg:baobab_door":[
+      {
+        "attribute":"minecraft:generic.attack_speed",
+        "modify":"-3.2",
+        "operation":"ADDITION"
+      }
+  ],
+"byg:baobab_trapdoor":[
+      {
+        "attribute":"minecraft:generic.attack_speed",
+        "modify":"-2.4",
+        "operation":"ADDITION"
+      }
+  ],
+"byg:blue_enchanted_door":[
+      {
+        "attribute":"minecraft:generic.attack_speed",
+        "modify":"-3.2",
+        "operation":"ADDITION"
+      }
+  ],
+"byg:blue_enchanted_trapdoor":[
+      {
+        "attribute":"minecraft:generic.attack_speed",
+        "modify":"-2.4",
+        "operation":"ADDITION"
+      }
+  ],
+"byg:bulbis_door":[
+      {
+        "attribute":"minecraft:generic.attack_speed",
+        "modify":"-3.2",
+        "operation":"ADDITION"
+      }
+  ],
+"byg:bulbis_trapdoor":[
+      {
+        "attribute":"minecraft:generic.attack_speed",
+        "modify":"-2.4",
+        "operation":"ADDITION"
+      }
+  ],
+"byg:cherry_door":[
+      {
+        "attribute":"minecraft:generic.attack_speed",
+        "modify":"-3.2",
+        "operation":"ADDITION"
+      }
+  ],
+"byg:cherry_trapdoor":[
+      {
+        "attribute":"minecraft:generic.attack_speed",
+        "modify":"-2.4",
+        "operation":"ADDITION"
+      }
+  ],
+"byg:cika_door":[
+      {
+        "attribute":"minecraft:generic.attack_speed",
+        "modify":"-3.2",
+        "operation":"ADDITION"
+      }
+  ],
+"byg:cika_trapdoor":[
+      {
+        "attribute":"minecraft:generic.attack_speed",
+        "modify":"-2.4",
+        "operation":"ADDITION"
+      }
+  ],
+"byg:cypress_door":[
+      {
+        "attribute":"minecraft:generic.attack_speed",
+        "modify":"-3.2",
+        "operation":"ADDITION"
+      }
+  ],
+"byg:cypress_trapdoor":[
+      {
+        "attribute":"minecraft:generic.attack_speed",
+        "modify":"-2.4",
+        "operation":"ADDITION"
+      }
+  ],
+"byg:ebony_door":[
+      {
+        "attribute":"minecraft:generic.attack_speed",
+        "modify":"-3.2",
+        "operation":"ADDITION"
+      }
+  ],
+"byg:ebony_trapdoor":[
+      {
+        "attribute":"minecraft:generic.attack_speed",
+        "modify":"-2.4",
+        "operation":"ADDITION"
+      }
+  ],
+"byg:embur_door":[
+      {
+        "attribute":"minecraft:generic.attack_speed",
+        "modify":"-3.2",
+        "operation":"ADDITION"
+      }
+  ],
+"byg:embur_trapdoor":[
+      {
+        "attribute":"minecraft:generic.attack_speed",
+        "modify":"-2.4",
+        "operation":"ADDITION"
+      }
+  ],
+"byg:ether_door":[
+      {
+        "attribute":"minecraft:generic.attack_speed",
+        "modify":"-3.2",
+        "operation":"ADDITION"
+      }
+  ],
+"byg:ether_trapdoor":[
+      {
+        "attribute":"minecraft:generic.attack_speed",
+        "modify":"-2.4",
+        "operation":"ADDITION"
+      }
+  ],
+"byg:fir_door":[
+      {
+        "attribute":"minecraft:generic.attack_speed",
+        "modify":"-3.2",
+        "operation":"ADDITION"
+      }
+  ],
+"byg:fir_trapdoor":[
+      {
+        "attribute":"minecraft:generic.attack_speed",
+        "modify":"-2.4",
+        "operation":"ADDITION"
+      }
+  ],
+"byg:green_enchanted_door":[
+      {
+        "attribute":"minecraft:generic.attack_speed",
+        "modify":"-3.2",
+        "operation":"ADDITION"
+      }
+  ],
+"byg:green_enchanted_trapdoor":[
+      {
+        "attribute":"minecraft:generic.attack_speed",
+        "modify":"-2.4",
+        "operation":"ADDITION"
+      }
+  ],
+"byg:holly_door":[
+      {
+        "attribute":"minecraft:generic.attack_speed",
+        "modify":"-3.2",
+        "operation":"ADDITION"
+      }
+  ],
+"byg:holly_trapdoor":[
+      {
+        "attribute":"minecraft:generic.attack_speed",
+        "modify":"-2.4",
+        "operation":"ADDITION"
+      }
+  ],
+"byg:imparius_door":[
+      {
+        "attribute":"minecraft:generic.attack_speed",
+        "modify":"-3.2",
+        "operation":"ADDITION"
+      }
+  ],
+"byg:imparius_trapdoor":[
+      {
+        "attribute":"minecraft:generic.attack_speed",
+        "modify":"-2.4",
+        "operation":"ADDITION"
+      }
+  ],
+"byg:jacaranda_door":[
+      {
+        "attribute":"minecraft:generic.attack_speed",
+        "modify":"-3.2",
+        "operation":"ADDITION"
+      }
+  ],
+"byg:jacaranda_trapdoor":[
+      {
+        "attribute":"minecraft:generic.attack_speed",
+        "modify":"-2.4",
+        "operation":"ADDITION"
+      }
+  ],
+"byg:lament_door":[
+      {
+        "attribute":"minecraft:generic.attack_speed",
+        "modify":"-3.2",
+        "operation":"ADDITION"
+      }
+  ],
+"byg:lament_trapdoor":[
+      {
+        "attribute":"minecraft:generic.attack_speed",
+        "modify":"-2.4",
+        "operation":"ADDITION"
+      }
+  ],
+"byg:mahogany_door":[
+      {
+        "attribute":"minecraft:generic.attack_speed",
+        "modify":"-3.2",
+        "operation":"ADDITION"
+      }
+  ],
+"byg:mahogany_trapdoor":[
+      {
+        "attribute":"minecraft:generic.attack_speed",
+        "modify":"-2.4",
+        "operation":"ADDITION"
+      }
+  ],
+"byg:mangrove_door":[
+      {
+        "attribute":"minecraft:generic.attack_speed",
+        "modify":"-3.2",
+        "operation":"ADDITION"
+      }
+  ],
+"byg:mangrove_trapdoor":[
+      {
+        "attribute":"minecraft:generic.attack_speed",
+        "modify":"-2.4",
+        "operation":"ADDITION"
+      }
+  ],
+"byg:maple_door":[
+      {
+        "attribute":"minecraft:generic.attack_speed",
+        "modify":"-3.2",
+        "operation":"ADDITION"
+      }
+  ],
+"byg:maple_trapdoor":[
+      {
+        "attribute":"minecraft:generic.attack_speed",
+        "modify":"-2.4",
+        "operation":"ADDITION"
+      }
+  ],
+"byg:nightshade_door":[
+      {
+        "attribute":"minecraft:generic.attack_speed",
+        "modify":"-3.2",
+        "operation":"ADDITION"
+      }
+  ],
+"byg:nightshade_trapdoor":[
+      {
+        "attribute":"minecraft:generic.attack_speed",
+        "modify":"-2.4",
+        "operation":"ADDITION"
+      }
+  ],
+"byg:palm_door":[
+      {
+        "attribute":"minecraft:generic.attack_speed",
+        "modify":"-3.2",
+        "operation":"ADDITION"
+      }
+  ],
+"byg:palm_trapdoor":[
+      {
+        "attribute":"minecraft:generic.attack_speed",
+        "modify":"-2.4",
+        "operation":"ADDITION"
+      }
+  ],
+"byg:pine_door":[
+      {
+        "attribute":"minecraft:generic.attack_speed",
+        "modify":"-3.2",
+        "operation":"ADDITION"
+      }
+  ],
+"byg:pine_trapdoor":[
+      {
+        "attribute":"minecraft:generic.attack_speed",
+        "modify":"-2.4",
+        "operation":"ADDITION"
+      }
+  ],
+"byg:rainbow_eucalyptus_door":[
+      {
+        "attribute":"minecraft:generic.attack_speed",
+        "modify":"-3.2",
+        "operation":"ADDITION"
+      }
+  ],
+"byg:rainbow_eucalyptus_trapdoor":[
+      {
+        "attribute":"minecraft:generic.attack_speed",
+        "modify":"-2.4",
+        "operation":"ADDITION"
+      }
+  ],
+"byg:redwood_door":[
+      {
+        "attribute":"minecraft:generic.attack_speed",
+        "modify":"-3.2",
+        "operation":"ADDITION"
+      }
+  ],
+"byg:redwood_trapdoor":[
+      {
+        "attribute":"minecraft:generic.attack_speed",
+        "modify":"-2.4",
+        "operation":"ADDITION"
+      }
+  ],
+"byg:skyris_door":[
+      {
+        "attribute":"minecraft:generic.attack_speed",
+        "modify":"-3.2",
+        "operation":"ADDITION"
+      }
+  ],
+"byg:skyris_trapdoor":[
+      {
+        "attribute":"minecraft:generic.attack_speed",
+        "modify":"-2.4",
+        "operation":"ADDITION"
+      }
+  ],
+"byg:sythian_door":[
+      {
+        "attribute":"minecraft:generic.attack_speed",
+        "modify":"-3.2",
+        "operation":"ADDITION"
+      }
+  ],
+"byg:sythian_trapdoor":[
+      {
+        "attribute":"minecraft:generic.attack_speed",
+        "modify":"-2.4",
+        "operation":"ADDITION"
+      }
+  ],
+"byg:willow_door":[
+      {
+        "attribute":"minecraft:generic.attack_speed",
+        "modify":"-3.2",
+        "operation":"ADDITION"
+      }
+  ],
+"byg:willow_trapdoor":[
+      {
+        "attribute":"minecraft:generic.attack_speed",
+        "modify":"-2.4",
+        "operation":"ADDITION"
+      }
+  ],
+"byg:witch_hazel_door":[
+      {
+        "attribute":"minecraft:generic.attack_speed",
+        "modify":"-3.2",
+        "operation":"ADDITION"
+      }
+  ],
+"byg:witch_hazel_trapdoor":[
+      {
+        "attribute":"minecraft:generic.attack_speed",
+        "modify":"-2.4",
+        "operation":"ADDITION"
+      }
+  ],
+"byg:zelkova_door":[
+      {
+        "attribute":"minecraft:generic.attack_speed",
+        "modify":"-3.2",
+        "operation":"ADDITION"
+      }
+  ],
+"byg:zelkova_trapdoor":[
+      {
+        "attribute":"minecraft:generic.attack_speed",
+        "modify":"-2.4",
+        "operation":"ADDITION"
+      }
+  ],
+"darkerdepths:petrified_door":[
+      {
+        "attribute":"minecraft:generic.attack_speed",
+        "modify":"-3.2",
+        "operation":"ADDITION"
+      }
+  ],
+"darkerdepths:petrified_sign":[
+      {
+        "attribute":"minecraft:generic.attack_speed",
+        "modify":"-2",
+        "operation":"ADDITION"
+      }
+  ],
+"darkerdepths:petrified_trapdoor":[
+      {
+        "attribute":"minecraft:generic.attack_speed",
+        "modify":"-2.4",
+        "operation":"ADDITION"
+      }
+  ],
+"druidcraft:bone_shield":[
+      {
+        "attribute":"minecraft:generic.attack_speed",
+        "modify":"-2.7",
+        "operation":"ADDITION"
+      }
+  ],
+"druidcraft:chitin_shield":[
+      {
+        "attribute":"minecraft:generic.attack_speed",
+        "modify":"-2.7",
+        "operation":"ADDITION"
+      }
+  ],
+"druidcraft:moonstone_shield":[
+      {
+        "attribute":"minecraft:generic.attack_speed",
+        "modify":"-3.2",
+        "operation":"ADDITION"
+      }
+  ],
+"dungeons_mobs:royal_guard_shield":[
+      {
+        "attribute":"minecraft:generic.attack_speed",
+        "modify":"-3.2",
+        "operation":"ADDITION"
+      }
+  ],
+"dungeons_mobs:skeleton_vanguard_shield":[
+      {
+        "attribute":"minecraft:generic.attack_speed",
+        "modify":"-3.2",
+        "operation":"ADDITION"
+      }
+  ],
+"endergetic:poise_door":[
+      {
+        "attribute":"minecraft:generic.attack_speed",
+        "modify":"-3.2",
+        "operation":"ADDITION"
+      }
+  ],
+"endergetic:poise_sign":[
+      {
+        "attribute":"minecraft:generic.attack_speed",
+        "modify":"-2",
+        "operation":"ADDITION"
+      }
+  ],
+"endergetic:poise_trapdoor":[
+      {
+        "attribute":"minecraft:generic.attack_speed",
+        "modify":"-2.4",
+        "operation":"ADDITION"
+      }
+  ],
+"enigmaticlegacy:infernal_shield":[
+      {
+        "attribute":"minecraft:generic.attack_speed",
+        "modify":"-2.7",
+        "operation":"ADDITION"
+      }
+  ],
+"environmental:cherry_door":[
+      {
+        "attribute":"minecraft:generic.attack_speed",
+        "modify":"-3.2",
+        "operation":"ADDITION"
+      }
+  ],
+"environmental:cherry_sign":[
+      {
+        "attribute":"minecraft:generic.attack_speed",
+        "modify":"-2",
+        "operation":"ADDITION"
+      }
+  ],
+"environmental:cherry_trapdoor":[
+      {
+        "attribute":"minecraft:generic.attack_speed",
+        "modify":"-2.4",
+        "operation":"ADDITION"
+      }
+  ],
+"environmental:willow_door":[
+      {
+        "attribute":"minecraft:generic.attack_speed",
+        "modify":"-3.2",
+        "operation":"ADDITION"
+      }
+  ],
+"environmental:willow_sign":[
+      {
+        "attribute":"minecraft:generic.attack_speed",
+        "modify":"-2",
+        "operation":"ADDITION"
+      }
+  ],
+"environmental:willow_trapdoor":[
+      {
+        "attribute":"minecraft:generic.attack_speed",
+        "modify":"-2.4",
+        "operation":"ADDITION"
+      }
+  ],
+"environmental:wisteria_door":[
+      {
+        "attribute":"minecraft:generic.attack_speed",
+        "modify":"-3.2",
+        "operation":"ADDITION"
+      }
+  ],
+"environmental:wisteria_sign":[
+      {
+        "attribute":"minecraft:generic.attack_speed",
+        "modify":"-2",
+        "operation":"ADDITION"
+      }
+  ],
+"environmental:wisteria_trapdoor":[
+      {
+        "attribute":"minecraft:generic.attack_speed",
+        "modify":"-2.4",
+        "operation":"ADDITION"
+      }
+  ],
+"farmersdelight:black_canvas_sign":[
+      {
+        "attribute":"minecraft:generic.attack_speed",
+        "modify":"-2",
+        "operation":"ADDITION"
+      }
+  ],
+"farmersdelight:blue_canvas_sign":[
+      {
+        "attribute":"minecraft:generic.attack_speed",
+        "modify":"-2",
+        "operation":"ADDITION"
+      }
+  ],
+"farmersdelight:brown_canvas_sign":[
+      {
+        "attribute":"minecraft:generic.attack_speed",
+        "modify":"-2",
+        "operation":"ADDITION"
+      }
+  ],
+"farmersdelight:canvas_sign":[
+      {
+        "attribute":"minecraft:generic.attack_speed",
+        "modify":"-2",
+        "operation":"ADDITION"
+      }
+  ],
+"farmersdelight:cyan_canvas_sign":[
+      {
+        "attribute":"minecraft:generic.attack_speed",
+        "modify":"-2",
+        "operation":"ADDITION"
+      }
+  ],
+"farmersdelight:gray_canvas_sign":[
+      {
+        "attribute":"minecraft:generic.attack_speed",
+        "modify":"-2",
+        "operation":"ADDITION"
+      }
+  ],
+"farmersdelight:green_canvas_sign":[
+      {
+        "attribute":"minecraft:generic.attack_speed",
+        "modify":"-2",
+        "operation":"ADDITION"
+      }
+  ],
+"farmersdelight:light_blue_canvas_sign":[
+      {
+        "attribute":"minecraft:generic.attack_speed",
+        "modify":"-2",
+        "operation":"ADDITION"
+      }
+  ],
+"farmersdelight:light_gray_canvas_sign":[
+      {
+        "attribute":"minecraft:generic.attack_speed",
+        "modify":"-2",
+        "operation":"ADDITION"
+      }
+  ],
+"farmersdelight:lime_canvas_sign":[
+      {
+        "attribute":"minecraft:generic.attack_speed",
+        "modify":"-2",
+        "operation":"ADDITION"
+      }
+  ],
+"farmersdelight:magenta_canvas_sign":[
+      {
+        "attribute":"minecraft:generic.attack_speed",
+        "modify":"-2",
+        "operation":"ADDITION"
+      }
+  ],
+"farmersdelight:orange_canvas_sign":[
+      {
+        "attribute":"minecraft:generic.attack_speed",
+        "modify":"-2",
+        "operation":"ADDITION"
+      }
+  ],
+"farmersdelight:pink_canvas_sign":[
+      {
+        "attribute":"minecraft:generic.attack_speed",
+        "modify":"-2",
+        "operation":"ADDITION"
+      }
+  ],
+"farmersdelight:purple_canvas_sign":[
+      {
+        "attribute":"minecraft:generic.attack_speed",
+        "modify":"-2",
+        "operation":"ADDITION"
+      }
+  ],
+"farmersdelight:red_canvas_sign":[
+      {
+        "attribute":"minecraft:generic.attack_speed",
+        "modify":"-2",
+        "operation":"ADDITION"
+      }
+  ],
+"farmersdelight:white_canvas_sign":[
+      {
+        "attribute":"minecraft:generic.attack_speed",
+        "modify":"-2",
+        "operation":"ADDITION"
+      }
+  ],
+"farmersdelight:yellow_canvas_sign":[
+      {
+        "attribute":"minecraft:generic.attack_speed",
+        "modify":"-2",
+        "operation":"ADDITION"
+      }
+  ],
+"hmag:fortress_shield":[
+      {
+        "attribute":"minecraft:generic.attack_speed",
+        "modify":"-3.2",
+        "operation":"ADDITION"
+      }
+  ],
+"immersiveengineering:shield":[
+      {
+        "attribute":"minecraft:generic.attack_speed",
+        "modify":"-2.7",
+        "operation":"ADDITION"
+      }
+  ],
+"magistuarmory:bronze_buckler":[
+      {
+        "attribute":"minecraft:generic.attack_speed",
+        "modify":"-2.4",
+        "operation":"ADDITION"
+      }
+  ],
+"magistuarmory:bronze_ellipticalshield":[
+      {
+        "attribute":"minecraft:generic.attack_speed",
+        "modify":"-2.7",
+        "operation":"ADDITION"
+      }
+  ],
+"magistuarmory:bronze_heatershield":[
+      {
+        "attribute":"minecraft:generic.attack_speed",
+        "modify":"-2.7",
+        "operation":"ADDITION"
+      }
+  ],
+"magistuarmory:bronze_kiteshield":[
+      {
+        "attribute":"minecraft:generic.attack_speed",
+        "modify":"-2.7",
+        "operation":"ADDITION"
+      }
+  ],
+"magistuarmory:bronze_pavese":[
+      {
+        "attribute":"minecraft:generic.attack_speed",
+        "modify":"-3.2",
+        "operation":"ADDITION"
+      }
+  ],
+"magistuarmory:bronze_rondache":[
+      {
+        "attribute":"minecraft:generic.attack_speed",
+        "modify":"-2.4",
+        "operation":"ADDITION"
+      }
+  ],
+"magistuarmory:bronze_roundshield":[
+      {
+        "attribute":"minecraft:generic.attack_speed",
+        "modify":"-2.7",
+        "operation":"ADDITION"
+      }
+  ],
+"magistuarmory:bronze_tartsche":[
+      {
+        "attribute":"minecraft:generic.attack_speed",
+        "modify":"-2.7",
+        "operation":"ADDITION"
+      }
+  ],
+"magistuarmory:copper_buckler":[
+      {
+        "attribute":"minecraft:generic.attack_speed",
+        "modify":"-2.4",
+        "operation":"ADDITION"
+      }
+  ],
+"magistuarmory:copper_ellipticalshield":[
+      {
+        "attribute":"minecraft:generic.attack_speed",
+        "modify":"-2.7",
+        "operation":"ADDITION"
+      }
+  ],
+"magistuarmory:copper_heatershield":[
+      {
+        "attribute":"minecraft:generic.attack_speed",
+        "modify":"-2.7",
+        "operation":"ADDITION"
+      }
+  ],
+"magistuarmory:copper_kiteshield":[
+      {
+        "attribute":"minecraft:generic.attack_speed",
+        "modify":"-2.7",
+        "operation":"ADDITION"
+      }
+  ],
+"magistuarmory:copper_pavese":[
+      {
+        "attribute":"minecraft:generic.attack_speed",
+        "modify":"-3.2",
+        "operation":"ADDITION"
+      }
+  ],
+"magistuarmory:copper_rondache":[
+      {
+        "attribute":"minecraft:generic.attack_speed",
+        "modify":"-2.4",
+        "operation":"ADDITION"
+      }
+  ],
+"magistuarmory:copper_roundshield":[
+      {
+        "attribute":"minecraft:generic.attack_speed",
+        "modify":"-2.7",
+        "operation":"ADDITION"
+      }
+  ],
+"magistuarmory:copper_target":[
+      {
+        "attribute":"minecraft:generic.attack_speed",
+        "modify":"-2.4",
+        "operation":"ADDITION"
+      }
+  ],
+"magistuarmory:copper_tartsche":[
+      {
+        "attribute":"minecraft:generic.attack_speed",
+        "modify":"-2.7",
+        "operation":"ADDITION"
+      }
+  ],
+"magistuarmory:corruptedroundshield":[
+      {
+        "attribute":"minecraft:generic.attack_speed",
+        "modify":"-2.7",
+        "operation":"ADDITION"
+      }
+  ],
+"magistuarmory:diamond_buckler":[
+      {
+        "attribute":"minecraft:generic.attack_speed",
+        "modify":"-2.4",
+        "operation":"ADDITION"
+      }
+  ],
+"magistuarmory:diamond_ellipticalshield":[
+      {
+        "attribute":"minecraft:generic.attack_speed",
+        "modify":"-2.7",
+        "operation":"ADDITION"
+      }
+  ],
+"magistuarmory:diamond_heatershield":[
+      {
+        "attribute":"minecraft:generic.attack_speed",
+        "modify":"-2.7",
+        "operation":"ADDITION"
+      }
+  ],
+"magistuarmory:diamond_kiteshield":[
+      {
+        "attribute":"minecraft:generic.attack_speed",
+        "modify":"-2.7",
+        "operation":"ADDITION"
+      }
+  ],
+"magistuarmory:diamond_pavese":[
+      {
+        "attribute":"minecraft:generic.attack_speed",
+        "modify":"-3.2",
+        "operation":"ADDITION"
+      }
+  ],
+"magistuarmory:diamond_rondache":[
+      {
+        "attribute":"minecraft:generic.attack_speed",
+        "modify":"-2.4",
+        "operation":"ADDITION"
+      }
+  ],
+"magistuarmory:diamond_roundshield":[
+      {
+        "attribute":"minecraft:generic.attack_speed",
+        "modify":"-2.7",
+        "operation":"ADDITION"
+      }
+  ],
+"magistuarmory:diamond_target":[
+      {
+        "attribute":"minecraft:generic.attack_speed",
+        "modify":"-2.4",
+        "operation":"ADDITION"
+      }
+  ],
+"magistuarmory:diamond_tartsche":[
+      {
+        "attribute":"minecraft:generic.attack_speed",
+        "modify":"-2.7",
+        "operation":"ADDITION"
+      }
+  ],
+"magistuarmory:gold_buckler":[
+      {
+        "attribute":"minecraft:generic.attack_speed",
+        "modify":"-2.4",
+        "operation":"ADDITION"
+      }
+  ],
+"magistuarmory:gold_ellipticalshield":[
+      {
+        "attribute":"minecraft:generic.attack_speed",
+        "modify":"-2.7",
+        "operation":"ADDITION"
+      }
+  ],
+"magistuarmory:gold_heatershield":[
+      {
+        "attribute":"minecraft:generic.attack_speed",
+        "modify":"-2.7",
+        "operation":"ADDITION"
+      }
+  ],
+"magistuarmory:gold_kiteshield":[
+      {
+        "attribute":"minecraft:generic.attack_speed",
+        "modify":"-2.7",
+        "operation":"ADDITION"
+      }
+  ],
+"magistuarmory:gold_pavese":[
+      {
+        "attribute":"minecraft:generic.attack_speed",
+        "modify":"-3.2",
+        "operation":"ADDITION"
+      }
+  ],
+"magistuarmory:gold_rondache":[
+      {
+        "attribute":"minecraft:generic.attack_speed",
+        "modify":"-2.4",
+        "operation":"ADDITION"
+      }
+  ],
+"magistuarmory:gold_roundshield":[
+      {
+        "attribute":"minecraft:generic.attack_speed",
+        "modify":"-2.7",
+        "operation":"ADDITION"
+      }
+  ],
+"magistuarmory:gold_target":[
+      {
+        "attribute":"minecraft:generic.attack_speed",
+        "modify":"-2.4",
+        "operation":"ADDITION"
+      }
+  ],
+"magistuarmory:gold_tartsche":[
+      {
+        "attribute":"minecraft:generic.attack_speed",
+        "modify":"-2.7",
+        "operation":"ADDITION"
+      }
+  ],
+"magistuarmory:iron_buckler":[
+      {
+        "attribute":"minecraft:generic.attack_speed",
+        "modify":"-2.4",
+        "operation":"ADDITION"
+      }
+  ],
+"magistuarmory:iron_ellipticalshield":[
+      {
+        "attribute":"minecraft:generic.attack_speed",
+        "modify":"-2.7",
+        "operation":"ADDITION"
+      }
+  ],
+"magistuarmory:iron_heatershield":[
+      {
+        "attribute":"minecraft:generic.attack_speed",
+        "modify":"-2.7",
+        "operation":"ADDITION"
+      }
+  ],
+"magistuarmory:iron_kiteshield":[
+      {
+        "attribute":"minecraft:generic.attack_speed",
+        "modify":"-2.7",
+        "operation":"ADDITION"
+      }
+  ],
+"magistuarmory:iron_pavese":[
+      {
+        "attribute":"minecraft:generic.attack_speed",
+        "modify":"-3.2",
+        "operation":"ADDITION"
+      }
+  ],
+"magistuarmory:iron_rondache":[
+      {
+        "attribute":"minecraft:generic.attack_speed",
+        "modify":"-2.4",
+        "operation":"ADDITION"
+      }
+  ],
+"magistuarmory:iron_roundshield":[
+      {
+        "attribute":"minecraft:generic.attack_speed",
+        "modify":"-2.7",
+        "operation":"ADDITION"
+      }
+  ],
+"magistuarmory:iron_target":[
+      {
+        "attribute":"minecraft:generic.attack_speed",
+        "modify":"-2.4",
+        "operation":"ADDITION"
+      }
+  ],
+"magistuarmory:iron_tartsche":[
+      {
+        "attribute":"minecraft:generic.attack_speed",
+        "modify":"-2.7",
+        "operation":"ADDITION"
+      }
+  ],
+"magistuarmory:netherite_buckler":[
+      {
+        "attribute":"minecraft:generic.attack_speed",
+        "modify":"-2.4",
+        "operation":"ADDITION"
+      }
+  ],
+"magistuarmory:netherite_ellipticalshield":[
+      {
+        "attribute":"minecraft:generic.attack_speed",
+        "modify":"-2.7",
+        "operation":"ADDITION"
+      }
+  ],
+"magistuarmory:netherite_heatershield":[
+      {
+        "attribute":"minecraft:generic.attack_speed",
+        "modify":"-2.7",
+        "operation":"ADDITION"
+      }
+  ],
+"magistuarmory:netherite_kiteshield":[
+      {
+        "attribute":"minecraft:generic.attack_speed",
+        "modify":"-2.7",
+        "operation":"ADDITION"
+      }
+  ],
+"magistuarmory:netherite_pavese":[
+      {
+        "attribute":"minecraft:generic.attack_speed",
+        "modify":"-3.2",
+        "operation":"ADDITION"
+      }
+  ],
+"magistuarmory:netherite_rondache":[
+      {
+        "attribute":"minecraft:generic.attack_speed",
+        "modify":"-2.4",
+        "operation":"ADDITION"
+      }
+  ],
+"magistuarmory:netherite_roundshield":[
+      {
+        "attribute":"minecraft:generic.attack_speed",
+        "modify":"-2.7",
+        "operation":"ADDITION"
+      }
+  ],
+"magistuarmory:netherite_target":[
+      {
+        "attribute":"minecraft:generic.attack_speed",
+        "modify":"-2.4",
+        "operation":"ADDITION"
+      }
+  ],
+"magistuarmory:netherite_tartsche":[
+      {
+        "attribute":"minecraft:generic.attack_speed",
+        "modify":"-2.7",
+        "operation":"ADDITION"
+      }
+  ],
+"magistuarmory:silver_buckler":[
+      {
+        "attribute":"minecraft:generic.attack_speed",
+        "modify":"-2.4",
+        "operation":"ADDITION"
+      }
+  ],
+"magistuarmory:silver_ellipticalshield":[
+      {
+        "attribute":"minecraft:generic.attack_speed",
+        "modify":"-2.7",
+        "operation":"ADDITION"
+      }
+  ],
+"magistuarmory:silver_heatershield":[
+      {
+        "attribute":"minecraft:generic.attack_speed",
+        "modify":"-2.7",
+        "operation":"ADDITION"
+      }
+  ],
+"magistuarmory:silver_kiteshield":[
+      {
+        "attribute":"minecraft:generic.attack_speed",
+        "modify":"-2.7",
+        "operation":"ADDITION"
+      }
+  ],
+"magistuarmory:silver_pavese":[
+      {
+        "attribute":"minecraft:generic.attack_speed",
+        "modify":"-3.2",
+        "operation":"ADDITION"
+      }
+  ],
+"magistuarmory:silver_rondache":[
+      {
+        "attribute":"minecraft:generic.attack_speed",
+        "modify":"-2.4",
+        "operation":"ADDITION"
+      }
+  ],
+"magistuarmory:silver_roundshield":[
+      {
+        "attribute":"minecraft:generic.attack_speed",
+        "modify":"-2.7",
+        "operation":"ADDITION"
+      }
+  ],
+"magistuarmory:silver_target":[
+      {
+        "attribute":"minecraft:generic.attack_speed",
+        "modify":"-2.4",
+        "operation":"ADDITION"
+      }
+  ],
+"magistuarmory:silver_tartsche":[
+      {
+        "attribute":"minecraft:generic.attack_speed",
+        "modify":"-2.7",
+        "operation":"ADDITION"
+      }
+  ],
+"magistuarmory:steel_buckler":[
+      {
+        "attribute":"minecraft:generic.attack_speed",
+        "modify":"-2.4",
+        "operation":"ADDITION"
+      }
+  ],
+"magistuarmory:steel_ellipticalshield":[
+      {
+        "attribute":"minecraft:generic.attack_speed",
+        "modify":"-2.7",
+        "operation":"ADDITION"
+      }
+  ],
+"magistuarmory:steel_heatershield":[
+      {
+        "attribute":"minecraft:generic.attack_speed",
+        "modify":"-2.7",
+        "operation":"ADDITION"
+      }
+  ],
+"magistuarmory:steel_kiteshield":[
+      {
+        "attribute":"minecraft:generic.attack_speed",
+        "modify":"-2.7",
+        "operation":"ADDITION"
+      }
+  ],
+"magistuarmory:steel_pavese":[
+      {
+        "attribute":"minecraft:generic.attack_speed",
+        "modify":"-3.2",
+        "operation":"ADDITION"
+      }
+  ],
+"magistuarmory:steel_rondache":[
+      {
+        "attribute":"minecraft:generic.attack_speed",
+        "modify":"-2.4",
+        "operation":"ADDITION"
+      }
+  ],
+"magistuarmory:steel_roundshield":[
+      {
+        "attribute":"minecraft:generic.attack_speed",
+        "modify":"-2.7",
+        "operation":"ADDITION"
+      }
+  ],
+"magistuarmory:steel_target":[
+      {
+        "attribute":"minecraft:generic.attack_speed",
+        "modify":"-2.4",
+        "operation":"ADDITION"
+      }
+  ],
+"magistuarmory:steel_tartsche":[
+      {
+        "attribute":"minecraft:generic.attack_speed",
+        "modify":"-2.7",
+        "operation":"ADDITION"
+      }
+  ],
+"magistuarmory:stone_buckler":[
+      {
+        "attribute":"minecraft:generic.attack_speed",
+        "modify":"-2.4",
+        "operation":"ADDITION"
+      }
+  ],
+"magistuarmory:stone_ellipticalshield":[
+      {
+        "attribute":"minecraft:generic.attack_speed",
+        "modify":"-2.7",
+        "operation":"ADDITION"
+      }
+  ],
+"magistuarmory:stone_heatershield":[
+      {
+        "attribute":"minecraft:generic.attack_speed",
+        "modify":"-2.7",
+        "operation":"ADDITION"
+      }
+  ],
+"magistuarmory:stone_kiteshield":[
+      {
+        "attribute":"minecraft:generic.attack_speed",
+        "modify":"-2.7",
+        "operation":"ADDITION"
+      }
+  ],
+"magistuarmory:stone_pavese":[
+      {
+        "attribute":"minecraft:generic.attack_speed",
+        "modify":"-3.2",
+        "operation":"ADDITION"
+      }
+  ],
+"magistuarmory:stone_rondache":[
+      {
+        "attribute":"minecraft:generic.attack_speed",
+        "modify":"-2.4",
+        "operation":"ADDITION"
+      }
+  ],
+"magistuarmory:stone_roundshield":[
+      {
+        "attribute":"minecraft:generic.attack_speed",
+        "modify":"-2.7",
+        "operation":"ADDITION"
+      }
+  ],
+"magistuarmory:stone_target":[
+      {
+        "attribute":"minecraft:generic.attack_speed",
+        "modify":"-2.4",
+        "operation":"ADDITION"
+      }
+  ],
+"magistuarmory:stone_tartsche":[
+      {
+        "attribute":"minecraft:generic.attack_speed",
+        "modify":"-2.7",
+        "operation":"ADDITION"
+      }
+  ],
+"magistuarmory:tin_buckler":[
+      {
+        "attribute":"minecraft:generic.attack_speed",
+        "modify":"-2.4",
+        "operation":"ADDITION"
+      }
+  ],
+"magistuarmory:tin_ellipticalshield":[
+      {
+        "attribute":"minecraft:generic.attack_speed",
+        "modify":"-2.7",
+        "operation":"ADDITION"
+      }
+  ],
+"magistuarmory:tin_heatershield":[
+      {
+        "attribute":"minecraft:generic.attack_speed",
+        "modify":"-2.7",
+        "operation":"ADDITION"
+      }
+  ],
+"magistuarmory:tin_kiteshield":[
+      {
+        "attribute":"minecraft:generic.attack_speed",
+        "modify":"-2.7",
+        "operation":"ADDITION"
+      }
+  ],
+"magistuarmory:tin_pavese":[
+      {
+        "attribute":"minecraft:generic.attack_speed",
+        "modify":"-3.2",
+        "operation":"ADDITION"
+      }
+  ],
+"magistuarmory:tin_rondache":[
+      {
+        "attribute":"minecraft:generic.attack_speed",
+        "modify":"-2.4",
+        "operation":"ADDITION"
+      }
+  ],
+"magistuarmory:tin_roundshield":[
+      {
+        "attribute":"minecraft:generic.attack_speed",
+        "modify":"-2.7",
+        "operation":"ADDITION"
+      }
+  ],
+"magistuarmory:tin_tartsche":[
+      {
+        "attribute":"minecraft:generic.attack_speed",
+        "modify":"-2.7",
+        "operation":"ADDITION"
+      }
+  ],
+"magistuarmory:wood_buckler":[
+      {
+        "attribute":"minecraft:generic.attack_speed",
+        "modify":"-2.4",
+        "operation":"ADDITION"
+      }
+  ],
+"magistuarmory:wood_ellipticalshield":[
+      {
+        "attribute":"minecraft:generic.attack_speed",
+        "modify":"-2.7",
+        "operation":"ADDITION"
+      }
+  ],
+"magistuarmory:wood_heatershield":[
+      {
+        "attribute":"minecraft:generic.attack_speed",
+        "modify":"-2.7",
+        "operation":"ADDITION"
+      }
+  ],
+"magistuarmory:wood_kiteshield":[
+      {
+        "attribute":"minecraft:generic.attack_speed",
+        "modify":"-2.7",
+        "operation":"ADDITION"
+      }
+  ],
+"magistuarmory:wood_pavese":[
+      {
+        "attribute":"minecraft:generic.attack_speed",
+        "modify":"-3.2",
+        "operation":"ADDITION"
+      }
+  ],
+"magistuarmory:wood_rondache":[
+      {
+        "attribute":"minecraft:generic.attack_speed",
+        "modify":"-2.4",
+        "operation":"ADDITION"
+      }
+  ],
+"magistuarmory:wood_roundshield":[
+      {
+        "attribute":"minecraft:generic.attack_speed",
+        "modify":"-2.7",
+        "operation":"ADDITION"
+      }
+  ],
+"magistuarmory:wood_target":[
+      {
+        "attribute":"minecraft:generic.attack_speed",
+        "modify":"-2.4",
+        "operation":"ADDITION"
+      }
+  ],
+"magistuarmory:wood_tartsche":[
+      {
+        "attribute":"minecraft:generic.attack_speed",
+        "modify":"-2.7",
+        "operation":"ADDITION"
+      }
+  ],
+"majruszs_difficulty:ocean_shield":[
+      {
+        "attribute":"minecraft:generic.attack_speed",
+        "modify":"-2.7",
+        "operation":"ADDITION"
+      }
+  ],
+"minecraft:acacia_door":[
+      {
+        "attribute":"minecraft:generic.attack_speed",
+        "modify":"-3.2",
+        "operation":"ADDITION"
+      }
+  ],
+"minecraft:acacia_sign":[
+      {
+        "attribute":"minecraft:generic.attack_speed",
+        "modify":"-2",
+        "operation":"ADDITION"
+      }
+  ],
+"minecraft:acacia_trapdoor":[
+      {
+        "attribute":"minecraft:generic.attack_speed",
+        "modify":"-2.4",
+        "operation":"ADDITION"
+      }
+  ],
+"minecraft:birch_door":[
+      {
+        "attribute":"minecraft:generic.attack_speed",
+        "modify":"-3.2",
+        "operation":"ADDITION"
+      }
+  ],
+"minecraft:birch_sign":[
+      {
+        "attribute":"minecraft:generic.attack_speed",
+        "modify":"-2",
+        "operation":"ADDITION"
+      }
+  ],
+"minecraft:birch_trapdoor":[
+      {
+        "attribute":"minecraft:generic.attack_speed",
+        "modify":"-2.4",
+        "operation":"ADDITION"
+      }
+  ],
+"minecraft:crimson_door":[
+      {
+        "attribute":"minecraft:generic.attack_speed",
+        "modify":"-3.2",
+        "operation":"ADDITION"
+      }
+  ],
+"minecraft:crimson_sign":[
+      {
+        "attribute":"minecraft:generic.attack_speed",
+        "modify":"-2",
+        "operation":"ADDITION"
+      }
+  ],
+"minecraft:crimson_trapdoor":[
+      {
+        "attribute":"minecraft:generic.attack_speed",
+        "modify":"-2.4",
+        "operation":"ADDITION"
+      }
+  ],
+"minecraft:dark_oak_door":[
+      {
+        "attribute":"minecraft:generic.attack_speed",
+        "modify":"-3.2",
+        "operation":"ADDITION"
+      }
+  ],
+"minecraft:dark_oak_sign":[
+      {
+        "attribute":"minecraft:generic.attack_speed",
+        "modify":"-2",
+        "operation":"ADDITION"
+      }
+  ],
+"minecraft:dark_oak_trapdoor":[
+      {
+        "attribute":"minecraft:generic.attack_speed",
+        "modify":"-2.4",
+        "operation":"ADDITION"
+      }
+  ],
+"minecraft:iron_door":[
+      {
+        "attribute":"minecraft:generic.attack_speed",
+        "modify":"-3.2",
+        "operation":"ADDITION"
+      }
+  ],
+"minecraft:iron_trapdoor":[
+      {
+        "attribute":"minecraft:generic.attack_speed",
+        "modify":"-2.4",
+        "operation":"ADDITION"
+      }
+  ],
+"minecraft:jungle_door":[
+      {
+        "attribute":"minecraft:generic.attack_speed",
+        "modify":"-3.2",
+        "operation":"ADDITION"
+      }
+  ],
+"minecraft:jungle_sign":[
+      {
+        "attribute":"minecraft:generic.attack_speed",
+        "modify":"-2",
+        "operation":"ADDITION"
+      }
+  ],
+"minecraft:jungle_trapdoor":[
+      {
+        "attribute":"minecraft:generic.attack_speed",
+        "modify":"-2.4",
+        "operation":"ADDITION"
+      }
+  ],
+"minecraft:oak_door":[
+      {
+        "attribute":"minecraft:generic.attack_speed",
+        "modify":"-3.2",
+        "operation":"ADDITION"
+      }
+  ],
+"minecraft:oak_sign":[
+      {
+        "attribute":"minecraft:generic.attack_speed",
+        "modify":"-2",
+        "operation":"ADDITION"
+      }
+  ],
+"minecraft:oak_trapdoor":[
+      {
+        "attribute":"minecraft:generic.attack_speed",
+        "modify":"-2.4",
+        "operation":"ADDITION"
+      }
+  ],
+"minecraft:shield":[
+      {
+        "attribute":"minecraft:generic.attack_speed",
+        "modify":"-2.7",
+        "operation":"ADDITION"
+      }
+  ],
+"minecraft:spruce_door":[
+      {
+        "attribute":"minecraft:generic.attack_speed",
+        "modify":"-3.2",
+        "operation":"ADDITION"
+      }
+  ],
+"minecraft:spruce_sign":[
+      {
+        "attribute":"minecraft:generic.attack_speed",
+        "modify":"-2",
+        "operation":"ADDITION"
+      }
+  ],
+"minecraft:spruce_trapdoor":[
+      {
+        "attribute":"minecraft:generic.attack_speed",
+        "modify":"-2.4",
+        "operation":"ADDITION"
+      }
+  ],
+"minecraft:warped_door":[
+      {
+        "attribute":"minecraft:generic.attack_speed",
+        "modify":"-3.2",
+        "operation":"ADDITION"
+      }
+  ],
+"minecraft:warped_sign":[
+      {
+        "attribute":"minecraft:generic.attack_speed",
+        "modify":"-2",
+        "operation":"ADDITION"
+      }
+  ],
+"minecraft:warped_trapdoor":[
+      {
+        "attribute":"minecraft:generic.attack_speed",
+        "modify":"-2.4",
+        "operation":"ADDITION"
+      }
+  ],
+"mod_lavacow:vespa_shield":[
+      {
+        "attribute":"minecraft:generic.attack_speed",
+        "modify":"-2.7",
+        "operation":"ADDITION"
+      }
+  ],
+"outer_end:azure_door":[
+      {
+        "attribute":"minecraft:generic.attack_speed",
+        "modify":"-3.2",
+        "operation":"ADDITION"
+      }
+  ],
+"outer_end:azure_sign":[
+      {
+        "attribute":"minecraft:generic.attack_speed",
+        "modify":"-2",
+        "operation":"ADDITION"
+      }
+  ],
+"outer_end:azure_trapdoor":[
+      {
+        "attribute":"minecraft:generic.attack_speed",
+        "modify":"-2.4",
+        "operation":"ADDITION"
+      }
+  ],
+"securitycraft:door_indestructible_iron_item":[
+      {
+        "attribute":"minecraft:generic.attack_speed",
+        "modify":"-3.2",
+        "operation":"ADDITION"
+      }
+  ],
+"securitycraft:keypad_door_item":[
+      {
+        "attribute":"minecraft:generic.attack_speed",
+        "modify":"-3.2",
+        "operation":"ADDITION"
+      }
+  ],
+"securitycraft:reinforced_iron_trapdoor":[
+      {
+        "attribute":"minecraft:generic.attack_speed",
+        "modify":"-2.4",
+        "operation":"ADDITION"
+      }
+  ],
+"securitycraft:scanner_door_item":[
+      {
+        "attribute":"minecraft:generic.attack_speed",
+        "modify":"-3.2",
+        "operation":"ADDITION"
+      }
+  ],
+"securitycraft:secret_acacia_sign_item":[
+      {
+        "attribute":"minecraft:generic.attack_speed",
+        "modify":"-2",
+        "operation":"ADDITION"
+      }
+  ],
+"securitycraft:secret_birch_sign_item":[
+      {
+        "attribute":"minecraft:generic.attack_speed",
+        "modify":"-2",
+        "operation":"ADDITION"
+      }
+  ],
+"securitycraft:secret_crimson_sign_item":[
+      {
+        "attribute":"minecraft:generic.attack_speed",
+        "modify":"-2",
+        "operation":"ADDITION"
+      }
+  ],
+"securitycraft:secret_dark_oak_sign_item":[
+      {
+        "attribute":"minecraft:generic.attack_speed",
+        "modify":"-2",
+        "operation":"ADDITION"
+      }
+  ],
+"securitycraft:secret_jungle_sign_item":[
+      {
+        "attribute":"minecraft:generic.attack_speed",
+        "modify":"-2",
+        "operation":"ADDITION"
+      }
+  ],
+"securitycraft:secret_sign_item":[
+      {
+        "attribute":"minecraft:generic.attack_speed",
+        "modify":"-2",
+        "operation":"ADDITION"
+      }
+  ],
+"securitycraft:secret_spruce_sign_item":[
+      {
+        "attribute":"minecraft:generic.attack_speed",
+        "modify":"-2",
+        "operation":"ADDITION"
+      }
+  ],
+"securitycraft:secret_warped_sign_item":[
+      {
+        "attribute":"minecraft:generic.attack_speed",
+        "modify":"-2",
+        "operation":"ADDITION"
+      }
+  ],
+"silentgear:shield":[
+      {
+        "attribute":"minecraft:generic.attack_speed",
+        "modify":"-2.7",
+        "operation":"ADDITION"
+      }
+  ],
+"spartanshields:shield_basic_bronze":[
+      {
+        "attribute":"minecraft:generic.attack_speed",
+        "modify":"-2.7",
+        "operation":"ADDITION"
+      }
+  ],
+"spartanshields:shield_basic_constantan":[
+      {
+        "attribute":"minecraft:generic.attack_speed",
+        "modify":"-2.7",
+        "operation":"ADDITION"
+      }
+  ],
+"spartanshields:shield_basic_copper":[
+      {
+        "attribute":"minecraft:generic.attack_speed",
+        "modify":"-2.7",
+        "operation":"ADDITION"
+      }
+  ],
+"spartanshields:shield_basic_diamond":[
+      {
+        "attribute":"minecraft:generic.attack_speed",
+        "modify":"-2.7",
+        "operation":"ADDITION"
+      }
+  ],
+"spartanshields:shield_basic_electrum":[
+      {
+        "attribute":"minecraft:generic.attack_speed",
+        "modify":"-2.7",
+        "operation":"ADDITION"
+      }
+  ],
+"spartanshields:shield_basic_gold":[
+      {
+        "attribute":"minecraft:generic.attack_speed",
+        "modify":"-2.7",
+        "operation":"ADDITION"
+      }
+  ],
+"spartanshields:shield_basic_invar":[
+      {
+        "attribute":"minecraft:generic.attack_speed",
+        "modify":"-2.7",
+        "operation":"ADDITION"
+      }
+  ],
+"spartanshields:shield_basic_iron":[
+      {
+        "attribute":"minecraft:generic.attack_speed",
+        "modify":"-2.7",
+        "operation":"ADDITION"
+      }
+  ],
+"spartanshields:shield_basic_lead":[
+      {
+        "attribute":"minecraft:generic.attack_speed",
+        "modify":"-2.7",
+        "operation":"ADDITION"
+      }
+  ],
+"spartanshields:shield_basic_netherite":[
+      {
+        "attribute":"minecraft:generic.attack_speed",
+        "modify":"-2.7",
+        "operation":"ADDITION"
+      }
+  ],
+"spartanshields:shield_basic_nickel":[
+      {
+        "attribute":"minecraft:generic.attack_speed",
+        "modify":"-2.7",
+        "operation":"ADDITION"
+      }
+  ],
+"spartanshields:shield_basic_obsidian":[
+      {
+        "attribute":"minecraft:generic.attack_speed",
+        "modify":"-2.7",
+        "operation":"ADDITION"
+      }
+  ],
+"spartanshields:shield_basic_platinum":[
+      {
+        "attribute":"minecraft:generic.attack_speed",
+        "modify":"-2.7",
+        "operation":"ADDITION"
+      }
+  ],
+"spartanshields:shield_basic_silver":[
+      {
+        "attribute":"minecraft:generic.attack_speed",
+        "modify":"-2.7",
+        "operation":"ADDITION"
+      }
+  ],
+"spartanshields:shield_basic_steel":[
+      {
+        "attribute":"minecraft:generic.attack_speed",
+        "modify":"-2.7",
+        "operation":"ADDITION"
+      }
+  ],
+"spartanshields:shield_basic_stone":[
+      {
+        "attribute":"minecraft:generic.attack_speed",
+        "modify":"-2.7",
+        "operation":"ADDITION"
+      }
+  ],
+"spartanshields:shield_basic_tin":[
+      {
+        "attribute":"minecraft:generic.attack_speed",
+        "modify":"-2.7",
+        "operation":"ADDITION"
+      }
+  ],
+"spartanshields:shield_basic_wood":[
+      {
+        "attribute":"minecraft:generic.attack_speed",
+        "modify":"-2.7",
+        "operation":"ADDITION"
+      }
+  ],
+"spartanshields:shield_botania_elementium":[
+      {
+        "attribute":"minecraft:generic.attack_speed",
+        "modify":"-2.7",
+        "operation":"ADDITION"
+      }
+  ],
+"spartanshields:shield_botania_manasteel":[
+      {
+        "attribute":"minecraft:generic.attack_speed",
+        "modify":"-2.7",
+        "operation":"ADDITION"
+      }
+  ],
+"spartanshields:shield_botania_terrasteel":[
+      {
+        "attribute":"minecraft:generic.attack_speed",
+        "modify":"-2.7",
+        "operation":"ADDITION"
+      }
+  ],
+"spartanshields:shield_mekanism_lapis_lazuli":[
+      {
+        "attribute":"minecraft:generic.attack_speed",
+        "modify":"-2.7",
+        "operation":"ADDITION"
+      }
+  ],
+"spartanshields:shield_mekanism_osmium":[
+      {
+        "attribute":"minecraft:generic.attack_speed",
+        "modify":"-2.7",
+        "operation":"ADDITION"
+      }
+  ],
+"spartanshields:shield_mekanism_refined_glowstone":[
+      {
+        "attribute":"minecraft:generic.attack_speed",
+        "modify":"-2.7",
+        "operation":"ADDITION"
+      }
+  ],
+"spartanshields:shield_mekanism_refined_obsidian":[
+      {
+        "attribute":"minecraft:generic.attack_speed",
+        "modify":"-2.7",
+        "operation":"ADDITION"
+      }
+  ],
+"spartanshields:shield_tower_bronze":[
+      {
+        "attribute":"minecraft:generic.attack_speed",
+        "modify":"-3.2",
+        "operation":"ADDITION"
+      }
+  ],
+"spartanshields:shield_tower_constantan":[
+      {
+        "attribute":"minecraft:generic.attack_speed",
+        "modify":"-3.2",
+        "operation":"ADDITION"
+      }
+  ],
+"spartanshields:shield_tower_copper":[
+      {
+        "attribute":"minecraft:generic.attack_speed",
+        "modify":"-3.2",
+        "operation":"ADDITION"
+      }
+  ],
+"spartanshields:shield_tower_diamond":[
+      {
+        "attribute":"minecraft:generic.attack_speed",
+        "modify":"-3.2",
+        "operation":"ADDITION"
+      }
+  ],
+"spartanshields:shield_tower_electrum":[
+      {
+        "attribute":"minecraft:generic.attack_speed",
+        "modify":"-3.2",
+        "operation":"ADDITION"
+      }
+  ],
+"spartanshields:shield_tower_gold":[
+      {
+        "attribute":"minecraft:generic.attack_speed",
+        "modify":"-3.2",
+        "operation":"ADDITION"
+      }
+  ],
+"spartanshields:shield_tower_invar":[
+      {
+        "attribute":"minecraft:generic.attack_speed",
+        "modify":"-3.2",
+        "operation":"ADDITION"
+      }
+  ],
+"spartanshields:shield_tower_iron":[
+      {
+        "attribute":"minecraft:generic.attack_speed",
+        "modify":"-3.2",
+        "operation":"ADDITION"
+      }
+  ],
+"spartanshields:shield_tower_lead":[
+      {
+        "attribute":"minecraft:generic.attack_speed",
+        "modify":"-3.2",
+        "operation":"ADDITION"
+      }
+  ],
+"spartanshields:shield_tower_netherite":[
+      {
+        "attribute":"minecraft:generic.attack_speed",
+        "modify":"-3.2",
+        "operation":"ADDITION"
+      }
+  ],
+"spartanshields:shield_tower_nickel":[
+      {
+        "attribute":"minecraft:generic.attack_speed",
+        "modify":"-3.2",
+        "operation":"ADDITION"
+      }
+  ],
+"spartanshields:shield_tower_obsidian":[
+      {
+        "attribute":"minecraft:generic.attack_speed",
+        "modify":"-3.2",
+        "operation":"ADDITION"
+      }
+  ],
+"spartanshields:shield_tower_platinum":[
+      {
+        "attribute":"minecraft:generic.attack_speed",
+        "modify":"-3.2",
+        "operation":"ADDITION"
+      }
+  ],
+"spartanshields:shield_tower_silver":[
+      {
+        "attribute":"minecraft:generic.attack_speed",
+        "modify":"-3.2",
+        "operation":"ADDITION"
+      }
+  ],
+"spartanshields:shield_tower_steel":[
+      {
+        "attribute":"minecraft:generic.attack_speed",
+        "modify":"-3.2",
+        "operation":"ADDITION"
+      }
+  ],
+"spartanshields:shield_tower_stone":[
+      {
+        "attribute":"minecraft:generic.attack_speed",
+        "modify":"-3.2",
+        "operation":"ADDITION"
+      }
+  ],
+"spartanshields:shield_tower_tin":[
+      {
+        "attribute":"minecraft:generic.attack_speed",
+        "modify":"-3.2",
+        "operation":"ADDITION"
+      }
+  ],
+"spartanshields:shield_tower_wood":[
+      {
+        "attribute":"minecraft:generic.attack_speed",
+        "modify":"-3.2",
+        "operation":"ADDITION"
+      }
+  ],
+"stalwart_dungeons:chorundum_shield":[
+      {
+        "attribute":"minecraft:generic.attack_speed",
+        "modify":"-2.7",
+        "operation":"ADDITION"
+      }
+  ],
+"stalwart_dungeons:tungsten_shield":[
+      {
+        "attribute":"minecraft:generic.attack_speed",
+        "modify":"-2.7",
+        "operation":"ADDITION"
+      }
+  ],
+"traverse:fir_door":[
+      {
+        "attribute":"minecraft:generic.attack_speed",
+        "modify":"-3.2",
+        "operation":"ADDITION"
+      }
+  ],
+"traverse:fir_sign":[
+      {
+        "attribute":"minecraft:generic.attack_speed",
+        "modify":"-2",
+        "operation":"ADDITION"
+      }
+  ],
+"traverse:fir_trapdoor":[
+      {
+        "attribute":"minecraft:generic.attack_speed",
+        "modify":"-2.4",
+        "operation":"ADDITION"
+      }
+  ],
+"twilightforest:knightmetal_shield":[
+      {
+        "attribute":"minecraft:generic.attack_speed",
+        "modify":"-2.7",
+        "operation":"ADDITION"
+      }
+  ]
+}

@@ -1,0 +1,12 @@
+{
+"totemic:baykok_bow":{
+        "attack": "1.2",
+        "defend": "0.90",
+        "shield": "false"
+    },
+"totemic:totem_whittling_knife":{
+        "attack": "1.3",
+        "defend": "1.00",
+        "shield": "false"
+    }
+}

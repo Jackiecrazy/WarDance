@@ -1,0 +1,92 @@
+{
+"mod_lavacow:beast_claw":{
+        "attack": "2.4",
+        "defend": "1",
+        "shield": "false"
+    },
+"mod_lavacow:bonesword":{
+        "attack": "2.6",
+        "defend": "0.90",
+        "shield": "false"
+    },
+"mod_lavacow:famine":{
+        "attack": "1.3",
+        "defend": "1",
+        "shield": "false"
+    },
+"mod_lavacow:frozen_dagger":{
+        "attack": "1.3",
+        "defend": "1.00",
+        "shield": "false"
+    },
+"mod_lavacow:frozenthigh":{
+        "attack": "6",
+        "defend": "0.9",
+        "shield": "false"
+    },
+"mod_lavacow:moltenaxe":{
+        "attack": "4",
+        "defend": "0.90",
+        "shield": "false"
+    },
+"mod_lavacow:moltenhammer":{
+        "attack": "6",
+        "defend": "0.90",
+        "shield": "false"
+    },
+"mod_lavacow:moltenpan":{
+        "attack": "6",
+        "defend": "0.9",
+        "shield": "true"
+    },
+"mod_lavacow:piranhalauncher":{
+        "attack": "1.8",
+        "defend": "1.1",
+        "shield": "false"
+    },
+"mod_lavacow:reapers_scythe":{
+        "attack": "3",
+        "defend": "0.80",
+        "shield": "false"
+    },
+"mod_lavacow:skeletonking_mace":{
+        "attack": "6",
+        "defend": "0.90",
+        "shield": "false"
+    },
+"mod_lavacow:sludge_wand":{
+        "attack": "0.5",
+        "defend": "1.00",
+        "shield": "false"
+    },
+"mod_lavacow:spectral_dagger":{
+        "attack": "1.3",
+        "defend": "1.00",
+        "shield": "false"
+    },
+"mod_lavacow:tooth_dagger":{
+        "attack": "1.3",
+        "defend": "1.00",
+        "shield": "false"
+    },
+"mod_lavacow:undertaker_shovel":{
+        "attack": "6",
+        "defend": "0.90",
+        "shield": "false"
+    },
+"mod_lavacow:vespa_dagger":{
+        "attack": "1.3",
+        "defend": "1.00",
+        "shield": "false"
+    },
+"mod_lavacow:vespa_shield":{
+        "attack": "4",
+        "defend": "0.60",
+        "shield": "true"
+    },
+"mod_lavacow:war":{
+        "attack": "1.8",
+        "defend": "1.1",
+        "shield": "false"
+    }
+}

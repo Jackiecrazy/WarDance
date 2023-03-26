@@ -1,0 +1,217 @@
+{
+"theabyss:aberythe_axe":{
+        "attack": "4",
+        "defend": "0.90",
+        "shield": "false"
+    },
+"theabyss:aberythe_hoe":{
+        "attack": "1",
+        "defend": "1.00",
+        "shield": "false"
+    },
+"theabyss:aberythe_shovel":{
+        "attack": "6",
+        "defend": "0.90",
+        "shield": "false"
+    },
+"theabyss:aberythe_sword":{
+        "attack": "2.6",
+        "defend": "0.90",
+        "shield": "false"
+    },
+"theabyss:abyss_sword":{
+        "attack": "2.6",
+        "defend": "0.90",
+        "shield": "false"
+    },
+"theabyss:bone_axe":{
+        "attack": "4",
+        "defend": "0.90",
+        "shield": "false"
+    },
+"theabyss:bone_hoe":{
+        "attack": "1",
+        "defend": "1.00",
+        "shield": "false"
+    },
+"theabyss:bone_pickaxe":{
+        "attack": "2.5",
+        "defend": "1.00",
+        "shield": "false"
+    },
+"theabyss:bone_sword_item":{
+        "attack": "2.6",
+        "defend": "0.90",
+        "shield": "false"
+    },
+"theabyss:bricked_knight_sword":{
+        "attack": "2.6",
+        "defend": "0.90",
+        "shield": "false"
+    },
+"theabyss:fusion_axe":{
+        "attack": "4",
+        "defend": "0.90",
+        "shield": "false"
+    },
+"theabyss:fusion_hoe":{
+        "attack": "1",
+        "defend": "1.00",
+        "shield": "false"
+    },
+"theabyss:fusion_pickaxe":{
+        "attack": "2.5",
+        "defend": "1.00",
+        "shield": "false"
+    },
+"theabyss:fusion_shovel":{
+        "attack": "6",
+        "defend": "0.90",
+        "shield": "false"
+    },
+"theabyss:fusion_sword":{
+        "attack": "2.6",
+        "defend": "0.90",
+        "shield": "false"
+    },
+"theabyss:garnite_axe":{
+        "attack": "4",
+        "defend": "0.90",
+        "shield": "false"
+    },
+"theabyss:garnite_hoe":{
+        "attack": "1",
+        "defend": "1.00",
+        "shield": "false"
+    },
+"theabyss:garnite_pickaxe":{
+        "attack": "2.5",
+        "defend": "1.00",
+        "shield": "false"
+    },
+"theabyss:garnite_shovel":{
+        "attack": "6",
+        "defend": "0.90",
+        "shield": "false"
+    },
+"theabyss:garnite_sword":{
+        "attack": "2.6",
+        "defend": "0.90",
+        "shield": "false"
+    },
+"theabyss:ignisithe_sword":{
+        "attack": "2.6",
+        "defend": "0.90",
+        "shield": "false"
+    },
+"theabyss:incorythe_axe":{
+        "attack": "4",
+        "defend": "0.90",
+        "shield": "false"
+    },
+"theabyss:incorythe_hoe":{
+        "attack": "1",
+        "defend": "1.00",
+        "shield": "false"
+    },
+"theabyss:incorythe_pickaxe":{
+        "attack": "2.5",
+        "defend": "1.00",
+        "shield": "false"
+    },
+"theabyss:incorythe_shovel":{
+        "attack": "6",
+        "defend": "0.90",
+        "shield": "false"
+    },
+"theabyss:incorythe_sword":{
+        "attack": "2.6",
+        "defend": "0.90",
+        "shield": "false"
+    },
+"theabyss:incorythe_sword_mkii":{
+        "attack": "2.6",
+        "defend": "0.90",
+        "shield": "false"
+    },
+"theabyss:knight_axe":{
+        "attack": "4",
+        "defend": "0.90",
+        "shield": "false"
+    },
+"theabyss:knight_pick_axe":{
+        "attack": "2.5",
+        "defend": "1.00",
+        "shield": "false"
+    },
+"theabyss:knight_shovel":{
+        "attack": "6",
+        "defend": "0.90",
+        "shield": "false"
+    },
+"theabyss:knight_sword":{
+        "attack": "2.6",
+        "defend": "0.90",
+        "shield": "false"
+    },
+"theabyss:phantom_axe":{
+        "attack": "4",
+        "defend": "0.90",
+        "shield": "false"
+    },
+"theabyss:phantom_hoe":{
+        "attack": "1",
+        "defend": "1.00",
+        "shield": "false"
+    },
+"theabyss:phantom_pickaxe":{
+        "attack": "2.5",
+        "defend": "1.00",
+        "shield": "false"
+    },
+"theabyss:phantom_shovel":{
+        "attack": "6",
+        "defend": "0.90",
+        "shield": "false"
+    },
+"theabyss:phantom_sword":{
+        "attack": "2.6",
+        "defend": "0.90",
+        "shield": "false"
+    },
+"theabyss:shuriken":{
+        "attack": "1",
+        "defend": "1",
+        "shield": "false"
+    },
+"theabyss:shuriken_explosive":{
+        "attack": "1",
+        "defend": "1",
+        "shield": "false"
+    },
+"theabyss:unorithe_axe":{
+        "attack": "4",
+        "defend": "0.90",
+        "shield": "false"
+    },
+"theabyss:unorithe_hoe":{
+        "attack": "1",
+        "defend": "1.00",
+        "shield": "false"
+    },
+"theabyss:unorithe_pick_axe":{
+        "attack": "2.5",
+        "defend": "1.00",
+        "shield": "false"
+    },
+"theabyss:unorithe_shovel":{
+        "attack": "6",
+        "defend": "0.90",
+        "shield": "false"
+    },
+"theabyss:unorithe_sword":{
+        "attack": "2.6",
+        "defend": "0.90",
+        "shield": "false"
+    }
+}

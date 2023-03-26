@@ -1,0 +1,47 @@
+{
+"reliquary:ender_staff":{
+        "attack": "1",
+        "defend": "0.90",
+        "shield": "false"
+    },
+"reliquary:glacial_staff":{
+        "attack": "1",
+        "defend": "0.90",
+        "shield": "false"
+    },
+"reliquary:harvest_rod":{
+        "attack": "0.5",
+        "defend": "1.00",
+        "shield": "false"
+    },
+"reliquary:ice_magus_rod":{
+        "attack": "0.5",
+        "defend": "1.00",
+        "shield": "false"
+    },
+"reliquary:pyromancer_staff":{
+        "attack": "1",
+        "defend": "0.90",
+        "shield": "false"
+    },
+"reliquary:rending_gale":{
+        "attack": "0.5",
+        "defend": "1.00",
+        "shield": "false"
+    },
+"reliquary:serpent_staff":{
+        "attack": "1",
+        "defend": "0.90",
+        "shield": "false"
+    },
+"reliquary:shears_of_winter":{
+        "attack": "0.5",
+        "defend": "1",
+        "shield": "false"
+    },
+"reliquary:sojourner_staff":{
+        "attack": "1",
+        "defend": "0.90",
+        "shield": "false"
+    }
+}

@@ -1,13 +1,14 @@
 package jackiecrazy.wardance.utils;
 
-import jackiecrazy.footwork.api.FootworkAttributes;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
+import jackiecrazy.footwork.api.CombatDamageSource;
 import jackiecrazy.footwork.capability.resources.CombatData;
 import jackiecrazy.footwork.capability.resources.ICombatCapability;
 import jackiecrazy.footwork.capability.weaponry.CombatManipulator;
 import jackiecrazy.footwork.event.AttackMightEvent;
 import jackiecrazy.footwork.utils.GeneralUtils;
 import jackiecrazy.wardance.WarDance;
-import jackiecrazy.footwork.api.CombatDamageSource;
 import jackiecrazy.wardance.capability.skill.CasterData;
 import jackiecrazy.wardance.config.CombatConfig;
 import jackiecrazy.wardance.config.GeneralConfig;
@@ -18,9 +19,12 @@ import jackiecrazy.wardance.skill.Skill;
 import jackiecrazy.wardance.skill.SkillArchetypes;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.server.packs.resources.ResourceManager;
 import net.minecraft.sounds.SoundEvents;
+import net.minecraft.tags.ItemTags;
+import net.minecraft.tags.TagKey;
 import net.minecraft.util.Mth;
-import net.minecraft.util.Tuple;
+import net.minecraft.util.profiling.ProfilerFiller;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.effect.MobEffects;
@@ -31,7 +35,6 @@ import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.ai.attributes.AttributeModifier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.item.ArmorItem;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.enchantment.EnchantmentHelper;
@@ -50,6 +53,11 @@ import java.util.*;
 
 public class CombatUtils {
     public static final UUID off = UUID.fromString("8c8028c8-da69-49a2-99cd-f92d7ad22534");
+    public static final TagKey<Item> TWO_HANDED = ItemTags.create(new ResourceLocation(WarDance.MODID, "two_handed"));
+    public static final TagKey<Item> UNARMED = ItemTags.create(new ResourceLocation(WarDance.MODID, "unarmed"));
+    public static final TagKey<Item> PIERCE_PARRY = ItemTags.create(new ResourceLocation(WarDance.MODID, "pierce_parry"));
+    public static final TagKey<Item> PIERCE_SHIELD = ItemTags.create(new ResourceLocation(WarDance.MODID, "pierce_shield"));
+    public static final TagKey<Item> CANNOT_PARRY = ItemTags.create(new ResourceLocation(WarDance.MODID, "cannot_parry"));
     private static final UUID main = UUID.fromString("8c8028c8-da67-49a2-99cd-f92d7ad22534");
     public static HashMap<ResourceLocation, Float> customPosture = new HashMap<>();
     public static HashMap<ResourceLocation, MobInfo> parryMap = new HashMap<>();
@@ -57,109 +65,43 @@ public class CombatUtils {
     public static HashMap<Item, AttributeModifier[]> shieldStat = new HashMap<>();
     public static boolean isSweeping = false;
     public static boolean suppress = false;
-    private static MeleeInfo DEFAULTMELEE = new MeleeInfo(1, 1, false, 0, 0);
+    private static MeleeInfo DEFAULTMELEE = new MeleeInfo(1, 1);
     private static ProjectileInfo DEFAULTRANGED = new ProjectileInfo(0.1, 1, false, false);
     private static HashMap<Item, MeleeInfo> combatList = new HashMap<>();
     private static HashMap<EntityType, ProjectileInfo> projectileMap = new HashMap<>();
     private static ArrayList<Item> unarmed = new ArrayList<>();
 
-    public static void updateItems(List<? extends String> interpretC, List<? extends String> interpretA, List<? extends String> interpretU) {
-        DEFAULTMELEE = new MeleeInfo(CombatConfig.defaultMultiplierPostureAttack, CombatConfig.defaultMultiplierPostureDefend, false, CombatConfig.shieldCooldown, CombatConfig.barrierSize);
+    public static void updateItems(Map<ResourceLocation, JsonElement> object, ResourceManager rm, ProfilerFiller profiler) {
+        DEFAULTMELEE = new MeleeInfo(CombatConfig.defaultMultiplierPostureAttack, CombatConfig.defaultMultiplierPostureDefend);
         combatList = new HashMap<>();
         armorStats = new HashMap<>();
         shieldStat = new HashMap<>();
         unarmed = new ArrayList<>();
-        for (String s : interpretC) {
-            String[] val = s.split(",");
-            String name = val[0];
-            double attack = CombatConfig.defaultMultiplierPostureAttack;
-            double defend = CombatConfig.defaultMultiplierPostureDefend;
-            boolean shield = false;
-            if (val.length > 1)
+
+        object.forEach((key, value) -> {
+            JsonObject file = value.getAsJsonObject();
+            file.entrySet().forEach(entry -> {
+                final String name = entry.getKey();
+                ResourceLocation i = new ResourceLocation(name);
+                Item item = ForgeRegistries.ITEMS.getValue(i);
+                if (item == null) {
+                    if (GeneralConfig.debug)
+                        WarDance.LOGGER.debug(name + " is not a registered item!");
+                    return;
+                }
                 try {
-                    attack = Float.parseFloat(val[1].trim());
-                } catch (NumberFormatException ignored) {
-                    WarDance.LOGGER.warn("attack data for config entry " + s + " is not properly formatted, replacing with default values.");
+                    JsonObject obj = entry.getValue().getAsJsonObject();
+                    MeleeInfo put = new MeleeInfo(CombatConfig.defaultMultiplierPostureAttack, CombatConfig.defaultMultiplierPostureDefend);
+                    if (obj.has("attack")) put.attackPostureMultiplier = obj.get("attack").getAsDouble();
+                    if (obj.has("defend")) put.defensePostureMultiplier = obj.get("defend").getAsDouble();
+                    if (obj.has("shield")) put.isShield = obj.get("shield").getAsBoolean();
+                    combatList.put(item, put);
+                } catch (Exception x) {
+                    WarDance.LOGGER.error("malformed json under " + name + "!");
+                    x.printStackTrace();
                 }
-            if (val.length > 2)
-                try {
-                    defend = Float.parseFloat(val[2].trim());
-                } catch (NumberFormatException ignored) {
-                    WarDance.LOGGER.warn("defense data for config entry " + s + " is not properly formatted, replacing with default values.");
-                }
-            if (val.length > 3)
-                shield = Boolean.parseBoolean(val[3].trim());
-            int pTime = CombatConfig.shieldCooldown;
-            float pCount = CombatConfig.barrierSize;
-            if (shield) {
-                try {
-                    pTime = Integer.parseInt(val[4].trim());
-                    pCount = Float.parseFloat(val[5].trim());
-                } catch (Exception e) {
-                    WarDance.LOGGER.warn("additional data for shield config entry " + s + " is not properly formatted, replacing with default values.");
-                }
-            }
-            ResourceLocation key = null;
-            try {
-                key = new ResourceLocation(name);
-            } catch (Exception e) {
-                WarDance.LOGGER.warn(name + " is not a proper item name, it will not be registered.");
-            }
-            //System.out.print("\""+key+"\",\n");
-            if (ForgeRegistries.ITEMS.containsKey(key)) {
-                final Item item = ForgeRegistries.ITEMS.getValue(key);
-                combatList.put(item, new MeleeInfo(attack, defend, shield, pTime, pCount));
-                if (shield) {
-                    final AttributeModifier downtimeM = new AttributeModifier(main, "extra downtime", pTime, AttributeModifier.Operation.ADDITION);
-                    final AttributeModifier barrierM = new AttributeModifier(main, "barrier bonus", pCount, AttributeModifier.Operation.ADDITION);
-                    final AttributeModifier downtimeO = new AttributeModifier(off, "extra downtime", pTime, AttributeModifier.Operation.ADDITION);
-                    final AttributeModifier barrierO = new AttributeModifier(off, "barrier bonus", pCount, AttributeModifier.Operation.ADDITION);
-                    shieldStat.put(item, new AttributeModifier[]{downtimeM, barrierM, downtimeO, barrierO});
-                }
-            }
-            //System.out.print("\"" + name+ "\", ");
-        }
-        for (String s : interpretA) {
-            String[] val = s.split(",");
-            String name = val[0];
-            double absorption = 0, deflection = 0, shatter = 0, stealth = 0;
-            try {
-                absorption = Double.parseDouble(val[1]);
-                deflection = Double.parseDouble(val[2]);
-                shatter = Double.parseDouble(val[3]);
-                stealth = Double.parseDouble(val[4]);
-            } catch (Exception ignored) {
-                WarDance.LOGGER.warn("armor data for config entry " + s + " is not properly formatted, filling in zeros.");
-            }
-            ResourceLocation key = null;
-            try {
-                key = new ResourceLocation(name);
-            } catch (Exception e) {
-                WarDance.LOGGER.warn(name + " is not a proper item name, it will not be registered.");
-            }
-            if (ForgeRegistries.ITEMS.containsKey(key) && (ForgeRegistries.ITEMS.getValue(key)) instanceof ArmorItem) {
-                final Item armor = ForgeRegistries.ITEMS.getValue(key);
-                UUID touse = FootworkAttributes.MODIFIERS[((ArmorItem) armor).getSlot().getIndex()];
-                armorStats.put(armor, new AttributeModifier[]{
-                        new AttributeModifier(touse, "war dance modifier", absorption, AttributeModifier.Operation.ADDITION),
-                        new AttributeModifier(touse, "war dance modifier", deflection, AttributeModifier.Operation.ADDITION),
-                        new AttributeModifier(touse, "war dance modifier", shatter, AttributeModifier.Operation.ADDITION),
-                        new AttributeModifier(touse, "war dance modifier", stealth, AttributeModifier.Operation.ADDITION)
-                });
-            }
-            //System.out.print("\"" + name+ "\", ");
-        }
-        for (String name : interpretU) {
-            ResourceLocation key = null;
-            try {
-                key = new ResourceLocation(name);
-            } catch (Exception e) {
-                WarDance.LOGGER.warn(name + " is not a proper item name, it will not be registered.");
-            }
-            if (ForgeRegistries.ITEMS.containsKey(key)) {
-                unarmed.add(ForgeRegistries.ITEMS.getValue(key));
-            }
-        }
+            });
+        });
     }
 
     public static void updateProjectiles(List<? extends String> interpretP) {
@@ -254,29 +196,53 @@ public class CombatUtils {
     }
 
     public static boolean isUnarmed(ItemStack is, LivingEntity e) {
-        return is.isEmpty() || unarmed.contains(is.getItem());
+        return is.isEmpty() || is.is(UNARMED);
+    }
+
+    public static boolean isTwoHanded(ItemStack is, LivingEntity e) {
+        return !is.isEmpty() && is.is(TWO_HANDED);
+    }
+
+    public static boolean canPierceParry(ItemStack is, LivingEntity e) {
+        return is.is(PIERCE_PARRY);
+    }
+
+    public static boolean canPierceShield(ItemStack is, LivingEntity e) {
+        return is.is(PIERCE_SHIELD);
     }
 
     public static boolean canParry(LivingEntity defender, Entity attacker, @Nonnull ItemStack i, float postureDamage) {
-        InteractionHand h = defender.getOffhandItem() == i ? InteractionHand.OFF_HAND : InteractionHand.MAIN_HAND;
+        return canParry(defender, attacker, i, null, postureDamage);
+    }
+
+    public static boolean canParry(LivingEntity defender, Entity attacker, @Nonnull ItemStack defend, @Nullable ItemStack attack, float postureDamage) {
+        InteractionHand h = defender.getOffhandItem() == defend ? InteractionHand.OFF_HAND : InteractionHand.MAIN_HAND;
         if (postureDamage < 0) return false;
-        if (attacker instanceof LivingEntity && getPostureDef((LivingEntity) attacker, defender, i, postureDamage) < 0)
+        if (attacker instanceof LivingEntity && getPostureDef((LivingEntity) attacker, defender, defend, postureDamage) < 0)
             return false;
-        if (defender instanceof Player && ((Player) defender).getCooldowns().isOnCooldown(i.getItem()))
+        if (defend.is(CANNOT_PARRY))
+            return false;
+        if (attack != null) {
+            if (attack.is(PIERCE_PARRY) && isWeapon(defender, defend))
+                return false;
+            if (attack.is(PIERCE_SHIELD) && isShield(defender, defend))
+                return false;
+        }
+        if (defender instanceof Player && ((Player) defender).getCooldowns().isOnCooldown(defend.getItem()))
             return false;
         if (CombatData.getCap(defender).getHandBind(h) > 0)
             return false;
         float rand = WarDance.rand.nextFloat();
         boolean recharge = true;//getCooledAttackStrength(defender, h, 0.5f) > 0.9f && CombatData.getCap(defender).getHandBind(h) == 0;
         recharge &= (!(defender instanceof Player) || ((Player) defender).getCooldowns().getCooldownPercent(defender.getItemInHand(h).getItem(), 0) == 0);
-        if (i.getCapability(CombatManipulator.CAP).isPresent() && attacker instanceof LivingEntity) {
-            return i.getCapability(CombatManipulator.CAP).resolve().get().canBlock(defender, attacker, i, recharge, postureDamage);
+        if (defend.getCapability(CombatManipulator.CAP).isPresent() && attacker instanceof LivingEntity) {
+            return defend.getCapability(CombatManipulator.CAP).resolve().get().canBlock(defender, attacker, defend, recharge, postureDamage);
         }
-        if (isShield(defender, i)) {
+        if (isShield(defender, defend)) {
             boolean canShield = (defender instanceof Player || rand < CombatConfig.mobParryChanceShield);
             boolean canParry = true;//CombatData.getCap(defender).getBarrierCooldown() == 0 || CombatData.getCap(defender).getBarrier() > 0;
             return recharge & canParry & canShield;
-        } else if (isWeapon(defender, i)) {
+        } else if (isWeapon(defender, defend)) {
             boolean canWeapon = (defender instanceof Player || rand < CombatConfig.mobParryChanceWeapon);
             return recharge & canWeapon;
         } else return false;
@@ -291,18 +257,6 @@ public class CombatUtils {
             return e.getMainHandItem();//CombatData.getCap(e).isOffhandAttack() ? e.getHeldItemOffhand() : e.getHeldItemMainhand();
         }
         return null;
-    }
-
-    /**
-     * first is threshold, second is count
-     *
-     * @return
-     */
-    public static Tuple<Integer, Float> getShieldStats(ItemStack stack) {
-        if (stack != null && combatList.containsKey(stack.getItem())) {
-            return new Tuple<>(combatList.get(stack.getItem()).parryTime, combatList.get(stack.getItem()).parryCount);
-        }
-        return new Tuple<>(CombatConfig.shieldCooldown, CombatConfig.barrierSize);
     }
 
     public static float getPostureAtk(@Nullable LivingEntity attacker, @Nullable LivingEntity defender, @Nullable InteractionHand h, float amount, ItemStack stack) {
@@ -563,17 +517,12 @@ public class CombatUtils {
     }
 
     private static class MeleeInfo {
-        private final double attackPostureMultiplier, defensePostureMultiplier;
-        private final int parryTime;
-        private final float parryCount;
-        private final boolean isShield;
+        private double attackPostureMultiplier, defensePostureMultiplier;
+        private boolean isShield, ignoreParry, ignoreShield, canParry;
 
-        private MeleeInfo(double attack, double defend, boolean shield, int pTime, float pCount) {
+        private MeleeInfo(double attack, double defend) {
             attackPostureMultiplier = attack;
             defensePostureMultiplier = defend;
-            isShield = shield;
-            parryCount = pCount;
-            parryTime = pTime;
         }
     }
 

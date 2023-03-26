@@ -1,0 +1,69 @@
+{
+  "replace": false,
+  "values": [
+    {
+      "id": "alexsmobs:tendon_whip",
+      "required": false
+    },
+    {
+      "id": "craftvania2:chain_w_hip",
+      "required": false
+    },
+    {
+      "id": "craftvania2:diamond_whip",
+      "required": false
+    },
+    {
+      "id": "craftvania2:fire_whip",
+      "required": false
+    },
+    {
+      "id": "craftvania2:gold_chain_whip",
+      "required": false
+    },
+    {
+      "id": "craftvania2:icewhip",
+      "required": false
+    },
+    {
+      "id": "craftvania2:leather_whip",
+      "required": false
+    },
+    {
+      "id": "craftvania2:morning_star_w_hip",
+      "required": false
+    },
+    {
+      "id": "craftvania2:retrovampirekiller",
+      "required": false
+    },
+    {
+      "id": "craftvania2:thornwhip",
+      "required": false
+    },
+    {
+      "id": "craftvania2:vampire_killer_whip",
+      "required": false
+    },
+    {
+      "id": "dungeons_gear:vine_whip",
+      "required": false
+    },
+    {
+      "id": "dungeons_gear:whip",
+      "required": false
+    },
+    {
+      "id": "infernalexp:blindsight_tongue_whip",
+      "required": false
+    },
+    {
+      "id": "infernalexp:kinetic_tongue_whip",
+      "required": false
+    },
+    {
+      "id": "pyromancyer:hogwhip",
+      "required": false
+    }
+  ]
+}

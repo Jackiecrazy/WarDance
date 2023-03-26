@@ -6,10 +6,10 @@ import jackiecrazy.footwork.event.DodgeEvent;
 import jackiecrazy.footwork.utils.GeneralUtils;
 import jackiecrazy.wardance.compat.WarCompat;
 import jackiecrazy.wardance.config.CombatConfig;
+import net.minecraft.util.Mth;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.Pose;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.util.Mth;
 import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.common.MinecraftForge;
 
@@ -19,14 +19,15 @@ public class MovementUtils {
         return CombatData.getCap(elb).getRollTime() > CombatConfig.rollEndsAt || CombatData.getCap(elb).getRollTime() < 0;
     }
 
-//    /**
-//     * Checks the +x, -x, +y, -y, +z, -z, in that order
-//     */
+    /**
+     * Checks the +x, -x, +y, -y, +z, -z, in that order
+     */
 //    public static boolean willHitWall(Entity elb) {
 //        double allowance = 1;
-//        AxisAlignedBB aabb = elb.getEntityBoundingBox();
-//        List<AxisAlignedBB> boxes = elb.world.getCollisionBoxes(elb, aabb.expand(elb.motionX, elb.motionY, elb.motionZ));
-//        for (AxisAlignedBB a : boxes) {
+//        AABB aabb = elb.getBoundingBox();
+//        Iterable<VoxelShape> boxes = elb.level.getBlockCollisions(elb, aabb.expandTowards(elb.getDeltaMovement()));
+//        for (VoxelShape a : boxes) {
+//            boxes.
 //            if (aabb.calculateXOffset(a, allowance) != allowance) return true;
 //            if (aabb.calculateXOffset(a, -allowance) != -allowance) return true;
 //            if (aabb.calculateZOffset(a, allowance) != allowance) return true;
@@ -44,10 +45,10 @@ public class MovementUtils {
 //
 //    public static boolean willHitWallFrom(Entity elb, Entity from) {
 //        double allowance = 1;
-//        AxisAlignedBB aabb = elb.getEntityBoundingBox();
+//        AABB aabb = elb.getEntityBoundingBox();
 //        Vec3d fromToElb = elb.getPositionVector().subtract(from.getPositionVector()).normalize();
-//        List<AxisAlignedBB> boxes = elb.world.getCollisionBoxes(elb, aabb.expand(fromToElb.x, fromToElb.y, fromToElb.z));
-//        for (AxisAlignedBB a : boxes) {
+//        List<AABB> boxes = elb.world.getCollisionBoxes(elb, aabb.expand(fromToElb.x, fromToElb.y, fromToElb.z));
+//        for (AABB a : boxes) {
 //            if (aabb.calculateXOffset(a, allowance) != allowance) return true;
 //            if (aabb.calculateXOffset(a, -allowance) != -allowance) return true;
 //            if (aabb.calculateZOffset(a, allowance) != allowance) return true;
@@ -59,9 +60,9 @@ public class MovementUtils {
 //    public static boolean[] collisionStatusVelocitySensitive(LivingEntity elb) {
 //        double allowance = 1.1;
 //        boolean[] ret = {false, false, false, false, false, false};
-//        AxisAlignedBB aabb = elb.getEntityBoundingBox();
-//        List<AxisAlignedBB> boxes = elb.world.getCollisionBoxes(elb, aabb.expand(elb.motionX, elb.motionY, elb.motionZ));
-//        for (AxisAlignedBB a : boxes) {
+//        AABB aabb = elb.getEntityBoundingBox();
+//        List<AABB> boxes = elb.world.getCollisionBoxes(elb, aabb.expand(elb.motionX, elb.motionY, elb.motionZ));
+//        for (AABB a : boxes) {
 //            if (aabb.calculateXOffset(a, allowance) != allowance) ret[0] = true;
 //            if (aabb.calculateXOffset(a, -allowance) != -allowance) ret[1] = true;
 //            if (aabb.calculateYOffset(a, allowance) != allowance) ret[2] = true;
@@ -151,7 +152,7 @@ public class MovementUtils {
 //     * @return
 //     */
 //    public static Entity collidingEntity(Entity elb) {
-//        AxisAlignedBB aabb = elb.getEntityBoundingBox();
+//        AABB aabb = elb.getEntityBoundingBox();
 //        List<Entity> entities = elb.world.getEntitiesInAABBexcluding(elb, aabb.expand(elb.motionX, elb.motionY * 6, elb.motionZ), VALID_TARGETS::test);
 //        double dist = 0;
 //        Entity pick = null;
@@ -185,9 +186,9 @@ public class MovementUtils {
 //    public static boolean[] collisionStatus(Entity elb) {
 //        double allowance = 0.1;
 //        boolean[] ret = {false, false, false, false, false, false};
-//        AxisAlignedBB aabb = elb.getEntityBoundingBox();
-//        List<AxisAlignedBB> boxes = elb.world.getCollisionBoxes(elb, aabb.grow(allowance / 2));
-//        for (AxisAlignedBB a : boxes) {
+//        AABB aabb = elb.getEntityBoundingBox();
+//        List<AABB> boxes = elb.world.getCollisionBoxes(elb, aabb.grow(allowance / 2));
+//        for (AABB a : boxes) {
 //            if (aabb.calculateXOffset(a, allowance) != allowance) ret[0] = true;
 //            if (aabb.calculateXOffset(a, -allowance) != -allowance) ret[1] = true;
 //            if (aabb.calculateYOffset(a, allowance) != allowance) ret[2] = true;

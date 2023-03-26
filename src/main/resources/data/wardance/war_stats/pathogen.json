@@ -1,0 +1,92 @@
+{
+"pathogen:battle_hook_crimson":{
+        "attack": "2.4",
+        "defend": "0.95",
+        "shield": "false"
+    },
+"pathogen:battle_hook_ender":{
+        "attack": "2.4",
+        "defend": "0.95",
+        "shield": "false"
+    },
+"pathogen:battle_hook_jungle":{
+        "attack": "2.4",
+        "defend": "0.95",
+        "shield": "false"
+    },
+"pathogen:battle_hook_mesa":{
+        "attack": "2.4",
+        "defend": "0.95",
+        "shield": "false"
+    },
+"pathogen:battle_hook_swamp":{
+        "attack": "2.4",
+        "defend": "0.95",
+        "shield": "false"
+    },
+"pathogen:battle_hook_warped":{
+        "attack": "2.4",
+        "defend": "0.95",
+        "shield": "false"
+    },
+"pathogen:beast_slayer_crimson":{
+        "attack": "3.8",
+        "defend": "0.80",
+        "shield": "false"
+    },
+"pathogen:beast_slayer_ender":{
+        "attack": "3.8",
+        "defend": "0.80",
+        "shield": "false"
+    },
+"pathogen:beast_slayer_jungle":{
+        "attack": "3.8",
+        "defend": "0.80",
+        "shield": "false"
+    },
+"pathogen:beast_slayer_mesa":{
+        "attack": "3.8",
+        "defend": "0.80",
+        "shield": "false"
+    },
+"pathogen:beast_slayer_swamp":{
+        "attack": "3.8",
+        "defend": "0.80",
+        "shield": "false"
+    },
+"pathogen:beast_slayer_warped":{
+        "attack": "3.8",
+        "defend": "0.80",
+        "shield": "false"
+    },
+"pathogen:katana_crimson":{
+        "attack": "2.9",
+        "defend": "0.90",
+        "shield": "false"
+    },
+"pathogen:katana_ender":{
+        "attack": "2.9",
+        "defend": "0.90",
+        "shield": "false"
+    },
+"pathogen:katana_jungle":{
+        "attack": "2.9",
+        "defend": "0.90",
+        "shield": "false"
+    },
+"pathogen:katana_mesa":{
+        "attack": "2.9",
+        "defend": "0.90",
+        "shield": "false"
+    },
+"pathogen:katana_swamp":{
+        "attack": "2.9",
+        "defend": "0.90",
+        "shield": "false"
+    },
+"pathogen:katana_warped":{
+        "attack": "2.9",
+        "defend": "0.90",
+        "shield": "false"
+    }
+}

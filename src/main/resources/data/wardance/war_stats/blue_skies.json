@@ -1,0 +1,427 @@
+{
+"blue_skies:aquite_axe":{
+        "attack": "4",
+        "defend": "0.90",
+        "shield": "false"
+    },
+"blue_skies:aquite_hoe":{
+        "attack": "1",
+        "defend": "1.00",
+        "shield": "false"
+    },
+"blue_skies:aquite_pickaxe":{
+        "attack": "2.5",
+        "defend": "1.00",
+        "shield": "false"
+    },
+"blue_skies:aquite_shovel":{
+        "attack": "6",
+        "defend": "0.90",
+        "shield": "false"
+    },
+"blue_skies:aquite_sword":{
+        "attack": "2.6",
+        "defend": "0.90",
+        "shield": "false"
+    },
+"blue_skies:bluebright_axe":{
+        "attack": "4",
+        "defend": "0.90",
+        "shield": "false"
+    },
+"blue_skies:bluebright_hoe":{
+        "attack": "1",
+        "defend": "1.00",
+        "shield": "false"
+    },
+"blue_skies:bluebright_pickaxe":{
+        "attack": "2.5",
+        "defend": "1.00",
+        "shield": "false"
+    },
+"blue_skies:bluebright_shovel":{
+        "attack": "6",
+        "defend": "0.90",
+        "shield": "false"
+    },
+"blue_skies:bluebright_spear":{
+        "attack": "2.5",
+        "defend": "0.70",
+        "shield": "false"
+    },
+"blue_skies:bluebright_sword":{
+        "attack": "2.6",
+        "defend": "0.90",
+        "shield": "false"
+    },
+"blue_skies:charoite_axe":{
+        "attack": "4",
+        "defend": "0.90",
+        "shield": "false"
+    },
+"blue_skies:charoite_hoe":{
+        "attack": "1",
+        "defend": "1.00",
+        "shield": "false"
+    },
+"blue_skies:charoite_pickaxe":{
+        "attack": "2.5",
+        "defend": "1.00",
+        "shield": "false"
+    },
+"blue_skies:charoite_shovel":{
+        "attack": "6",
+        "defend": "0.90",
+        "shield": "false"
+    },
+"blue_skies:charoite_sword":{
+        "attack": "2.6",
+        "defend": "0.90",
+        "shield": "false"
+    },
+"blue_skies:cherry_axe":{
+        "attack": "4",
+        "defend": "0.90",
+        "shield": "false"
+    },
+"blue_skies:cherry_hoe":{
+        "attack": "1",
+        "defend": "1.00",
+        "shield": "false"
+    },
+"blue_skies:cherry_pickaxe":{
+        "attack": "2.5",
+        "defend": "1.00",
+        "shield": "false"
+    },
+"blue_skies:cherry_shovel":{
+        "attack": "6",
+        "defend": "0.90",
+        "shield": "false"
+    },
+"blue_skies:cherry_spear":{
+        "attack": "2.5",
+        "defend": "0.70",
+        "shield": "false"
+    },
+"blue_skies:cherry_sword":{
+        "attack": "2.6",
+        "defend": "0.90",
+        "shield": "false"
+    },
+"blue_skies:crushing_hammer":{
+        "attack": "6",
+        "defend": "0.90",
+        "shield": "false"
+    },
+"blue_skies:different_sword":{
+        "attack": "2.6",
+        "defend": "0.90",
+        "shield": "false"
+    },
+"blue_skies:diopside_axe":{
+        "attack": "4",
+        "defend": "0.90",
+        "shield": "false"
+    },
+"blue_skies:diopside_hoe":{
+        "attack": "1",
+        "defend": "1.00",
+        "shield": "false"
+    },
+"blue_skies:diopside_pickaxe":{
+        "attack": "2.5",
+        "defend": "1.00",
+        "shield": "false"
+    },
+"blue_skies:diopside_shovel":{
+        "attack": "6",
+        "defend": "0.90",
+        "shield": "false"
+    },
+"blue_skies:diopside_sword":{
+        "attack": "2.6",
+        "defend": "0.90",
+        "shield": "false"
+    },
+"blue_skies:dusk_axe":{
+        "attack": "4",
+        "defend": "0.90",
+        "shield": "false"
+    },
+"blue_skies:dusk_hoe":{
+        "attack": "1",
+        "defend": "1.00",
+        "shield": "false"
+    },
+"blue_skies:dusk_pickaxe":{
+        "attack": "2.5",
+        "defend": "1.00",
+        "shield": "false"
+    },
+"blue_skies:dusk_shovel":{
+        "attack": "6",
+        "defend": "0.90",
+        "shield": "false"
+    },
+"blue_skies:dusk_spear":{
+        "attack": "2.5",
+        "defend": "0.70",
+        "shield": "false"
+    },
+"blue_skies:dusk_sword":{
+        "attack": "2.6",
+        "defend": "0.90",
+        "shield": "false"
+    },
+"blue_skies:frostbright_axe":{
+        "attack": "4",
+        "defend": "0.90",
+        "shield": "false"
+    },
+"blue_skies:frostbright_hoe":{
+        "attack": "1",
+        "defend": "1.00",
+        "shield": "false"
+    },
+"blue_skies:frostbright_pickaxe":{
+        "attack": "2.5",
+        "defend": "1.00",
+        "shield": "false"
+    },
+"blue_skies:frostbright_shovel":{
+        "attack": "6",
+        "defend": "0.90",
+        "shield": "false"
+    },
+"blue_skies:frostbright_spear":{
+        "attack": "2.5",
+        "defend": "0.70",
+        "shield": "false"
+    },
+"blue_skies:frostbright_sword":{
+        "attack": "2.6",
+        "defend": "0.90",
+        "shield": "false"
+    },
+"blue_skies:horizonite_axe":{
+        "attack": "4",
+        "defend": "0.90",
+        "shield": "false"
+    },
+"blue_skies:horizonite_hoe":{
+        "attack": "1",
+        "defend": "1.00",
+        "shield": "false"
+    },
+"blue_skies:horizonite_pickaxe":{
+        "attack": "2.5",
+        "defend": "1.00",
+        "shield": "false"
+    },
+"blue_skies:horizonite_shovel":{
+        "attack": "6",
+        "defend": "0.90",
+        "shield": "false"
+    },
+"blue_skies:horizonite_sword":{
+        "attack": "2.6",
+        "defend": "0.90",
+        "shield": "false"
+    },
+"blue_skies:infused_arc_sword":{
+        "attack": "2.6",
+        "defend": "0.90",
+        "shield": "false"
+    },
+"blue_skies:lunar_axe":{
+        "attack": "4",
+        "defend": "0.90",
+        "shield": "false"
+    },
+"blue_skies:lunar_hoe":{
+        "attack": "1",
+        "defend": "1.00",
+        "shield": "false"
+    },
+"blue_skies:lunar_pickaxe":{
+        "attack": "2.5",
+        "defend": "1.00",
+        "shield": "false"
+    },
+"blue_skies:lunar_shovel":{
+        "attack": "6",
+        "defend": "0.90",
+        "shield": "false"
+    },
+"blue_skies:lunar_spear":{
+        "attack": "2.5",
+        "defend": "0.70",
+        "shield": "false"
+    },
+"blue_skies:lunar_stone_axe":{
+        "attack": "4",
+        "defend": "0.90",
+        "shield": "false"
+    },
+"blue_skies:lunar_stone_hoe":{
+        "attack": "1",
+        "defend": "1.00",
+        "shield": "false"
+    },
+"blue_skies:lunar_stone_pickaxe":{
+        "attack": "2.5",
+        "defend": "1.00",
+        "shield": "false"
+    },
+"blue_skies:lunar_stone_shovel":{
+        "attack": "6",
+        "defend": "0.90",
+        "shield": "false"
+    },
+"blue_skies:lunar_stone_sword":{
+        "attack": "2.6",
+        "defend": "0.90",
+        "shield": "false"
+    },
+"blue_skies:lunar_sword":{
+        "attack": "2.6",
+        "defend": "0.90",
+        "shield": "false"
+    },
+"blue_skies:maple_axe":{
+        "attack": "4",
+        "defend": "0.90",
+        "shield": "false"
+    },
+"blue_skies:maple_hoe":{
+        "attack": "1",
+        "defend": "1.00",
+        "shield": "false"
+    },
+"blue_skies:maple_pickaxe":{
+        "attack": "2.5",
+        "defend": "1.00",
+        "shield": "false"
+    },
+"blue_skies:maple_shovel":{
+        "attack": "6",
+        "defend": "0.90",
+        "shield": "false"
+    },
+"blue_skies:maple_spear":{
+        "attack": "2.5",
+        "defend": "0.70",
+        "shield": "false"
+    },
+"blue_skies:maple_sword":{
+        "attack": "2.6",
+        "defend": "0.90",
+        "shield": "false"
+    },
+"blue_skies:moonstone_shield":{
+        "attack": "4",
+        "defend": "0.60",
+        "shield": "true"
+    },
+"blue_skies:pyrope_axe":{
+        "attack": "4",
+        "defend": "0.90",
+        "shield": "false"
+    },
+"blue_skies:pyrope_hoe":{
+        "attack": "1",
+        "defend": "1.00",
+        "shield": "false"
+    },
+"blue_skies:pyrope_pickaxe":{
+        "attack": "2.5",
+        "defend": "1.00",
+        "shield": "false"
+    },
+"blue_skies:pyrope_shovel":{
+        "attack": "6",
+        "defend": "0.90",
+        "shield": "false"
+    },
+"blue_skies:pyrope_sword":{
+        "attack": "2.6",
+        "defend": "0.90",
+        "shield": "false"
+    },
+"blue_skies:soulbound_spear":{
+        "attack": "2.5",
+        "defend": "0.70",
+        "shield": "false"
+    },
+"blue_skies:spike_shield":{
+        "attack": "1",
+        "defend": "0.60",
+        "shield": "true"
+    },
+"blue_skies:starlit_axe":{
+        "attack": "4",
+        "defend": "0.90",
+        "shield": "false"
+    },
+"blue_skies:starlit_hoe":{
+        "attack": "1",
+        "defend": "1.00",
+        "shield": "false"
+    },
+"blue_skies:starlit_pickaxe":{
+        "attack": "2.5",
+        "defend": "1.00",
+        "shield": "false"
+    },
+"blue_skies:starlit_shovel":{
+        "attack": "6",
+        "defend": "0.90",
+        "shield": "false"
+    },
+"blue_skies:starlit_spear":{
+        "attack": "2.5",
+        "defend": "0.70",
+        "shield": "false"
+    },
+"blue_skies:starlit_sword":{
+        "attack": "2.6",
+        "defend": "0.90",
+        "shield": "false"
+    },
+"blue_skies:summoning_tome":{
+        "attack": "1",
+        "defend": "1.00",
+        "shield": "true"
+    },
+"blue_skies:turquoise_stone_axe":{
+        "attack": "4",
+        "defend": "0.90",
+        "shield": "false"
+    },
+"blue_skies:turquoise_stone_hoe":{
+        "attack": "1",
+        "defend": "1.00",
+        "shield": "false"
+    },
+"blue_skies:turquoise_stone_pickaxe":{
+        "attack": "2.5",
+        "defend": "1.00",
+        "shield": "false"
+    },
+"blue_skies:turquoise_stone_shovel":{
+        "attack": "6",
+        "defend": "0.90",
+        "shield": "false"
+    },
+"blue_skies:turquoise_stone_sword":{
+        "attack": "2.6",
+        "defend": "0.90",
+        "shield": "false"
+    },
+"blue_skies:zeal_lighter":{
+        "attack": "0.5",
+        "defend": "1.00",
+        "shield": "false"
+    }
+}

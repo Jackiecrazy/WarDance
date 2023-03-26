@@ -1,0 +1,22 @@
+{
+"eidolon:cleaving_axe":{
+        "attack": "4",
+        "defend": "0.90",
+        "shield": "false"
+    },
+"eidolon:reaper_scythe":{
+        "attack": "3",
+        "defend": "0.8",
+        "shield": "false"
+    },
+"eidolon:reversal_pick":{
+        "attack": "2.5",
+        "defend": "1.00",
+        "shield": "false"
+    },
+"eidolon:sapping_sword":{
+        "attack": "2.6",
+        "defend": "0.90",
+        "shield": "false"
+    }
+}

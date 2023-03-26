@@ -78,7 +78,7 @@ public class SkillCapability implements ISkillCapability {
     public Skill getHolsteredSkill() {
         if (index < 0) return null;
         Skill ret = equippedSkill.get(index % equippedSkill.size());
-        if (getSkillState(ret) != Skill.STATE.HOLSTERED) {
+        if (getSkillState(ret) != Skill.STATE.HOLSTERED) {//check to make sure you're not repeatedly casting a skill that is already active
             ret = null;
         }
         return ret;

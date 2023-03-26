@@ -1,0 +1,12 @@
+{
+"band_of_gigantism:frying_pan":{
+        "attack": "4",
+        "defend": "0.9",
+        "shield": "true"
+    },
+"band_of_gigantism:golden_frying_pan":{
+        "attack": "4",
+        "defend": "0.9",
+        "shield": "true"
+    }
+}

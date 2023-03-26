@@ -1,0 +1,67 @@
+{
+"ars_nouveau:apprentice_spell_book":{
+        "attack": "1",
+        "defend": "1",
+        "shield": "true"
+    },
+"ars_nouveau:archmage_spell_book":{
+        "attack": "1",
+        "defend": "1",
+        "shield": "true"
+    },
+"ars_nouveau:archwood_door":{
+        "attack": "6",
+        "defend": "0.5",
+        "shield": "true"
+    },
+"ars_nouveau:archwood_trapdoor":{
+        "attack": "3",
+        "defend": "0.7",
+        "shield": "true"
+    },
+"ars_nouveau:caster_tome":{
+        "attack": "1",
+        "defend": "1",
+        "shield": "true"
+    },
+"ars_nouveau:dominion_wand":{
+        "attack": "0.5",
+        "defend": "1",
+        "shield": "false"
+    },
+"ars_nouveau:enchanters_mirror":{
+        "attack": "1",
+        "defend": "1",
+        "shield": "true"
+    },
+"ars_nouveau:enchanters_shield":{
+        "attack": "4",
+        "defend": "0.6",
+        "shield": "true"
+    },
+"ars_nouveau:enchanters_sword":{
+        "attack": "2.6",
+        "defend": "0.9",
+        "shield": "false"
+    },
+"ars_nouveau:novice_spell_book":{
+        "attack": "1",
+        "defend": "1",
+        "shield": "true"
+    },
+"ars_nouveau:spell_bow":{
+        "attack": "1.2",
+        "defend": "0.9",
+        "shield": "false"
+    },
+"ars_nouveau:wand":{
+        "attack": "0.5",
+        "defend": "1",
+        "shield": "false"
+    },
+"ars_nouveau:wilden_spike":{
+        "attack": "0.5",
+        "defend": "0.7",
+        "shield": "false"
+    }
+}

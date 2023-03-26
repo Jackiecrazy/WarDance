@@ -1,0 +1,47 @@
+{
+"environmental:cherry_door":{
+        "attack": "6",
+        "defend": "0.50",
+        "shield": "true"
+    },
+"environmental:cherry_sign":{
+        "attack": "2.4",
+        "defend": "0.90",
+        "shield": "false"
+    },
+"environmental:cherry_trapdoor":{
+        "attack": "3",
+        "defend": "0.70",
+        "shield": "true"
+    },
+"environmental:willow_door":{
+        "attack": "6",
+        "defend": "0.50",
+        "shield": "true"
+    },
+"environmental:willow_sign":{
+        "attack": "2.4",
+        "defend": "0.90",
+        "shield": "false"
+    },
+"environmental:willow_trapdoor":{
+        "attack": "3",
+        "defend": "0.70",
+        "shield": "true"
+    },
+"environmental:wisteria_door":{
+        "attack": "6",
+        "defend": "0.50",
+        "shield": "true"
+    },
+"environmental:wisteria_sign":{
+        "attack": "2.4",
+        "defend": "0.90",
+        "shield": "false"
+    },
+"environmental:wisteria_trapdoor":{
+        "attack": "3",
+        "defend": "0.70",
+        "shield": "true"
+    }
+}

@@ -1,0 +1,17 @@
+{
+"hexerei:mahogany_broom":{
+        "attack": "2.5",
+        "defend": "0.70",
+        "shield": "false"
+    },
+"hexerei:warhammer":{
+        "attack": "8",
+        "defend": "0.80",
+        "shield": "false"
+    },
+"hexerei:willow_broom":{
+        "attack": "2.5",
+        "defend": "0.70",
+        "shield": "false"
+    }
+}

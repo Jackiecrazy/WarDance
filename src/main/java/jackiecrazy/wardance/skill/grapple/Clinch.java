@@ -15,7 +15,7 @@ public class Clinch extends Grapple {
         if (procPoint instanceof LivingAttackEvent && procPoint.getPhase() == EventPriority.HIGHEST && ((LivingAttackEvent) procPoint).getEntity() == target) {
             if (state == STATE.HOLSTERED) {
                 if (stats.isCondition() && CombatUtils.isUnarmed(caster.getMainHandItem(), caster) && caster.tickCount - caster.getLastHurtMobTimestamp() < 40 && caster.getLastHurtMob() == target && cast(caster, target, -999)) {
-                    performEffect(caster, target);
+                    performEffect(caster, target, stats);
                     markUsed(caster);
                 } else {
                     stats.flagCondition(true);
