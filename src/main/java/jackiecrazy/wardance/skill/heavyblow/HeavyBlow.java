@@ -15,6 +15,12 @@ public class HeavyBlow extends Skill {
     private final HashSet<String> tag = (new HashSet<>(Arrays.asList("physical", ProcPoints.disable_shield, ProcPoints.melee, ProcPoints.on_hurt, "boundCast", ProcPoints.normal_attack, ProcPoints.modify_crit, ProcPoints.recharge_normal, ProcPoints.on_being_parried)));
     private final HashSet<String> tags = makeTag(SkillTags.physical, SkillTags.forced_crit, SkillTags.passive, SkillTags.offensive, SkillTags.disable_shield);
 
+    @Nonnull
+    @Override
+    public SkillArchetype getArchetype() {
+        return SkillArchetypes.heavy_blow;
+    }
+
     @Override
     public HashSet<String> getTags(LivingEntity caster) {
         return passive;
@@ -24,12 +30,6 @@ public class HeavyBlow extends Skill {
     @Override
     public HashSet<String> getSoftIncompatibility(LivingEntity caster) {
         return none;
-    }
-
-    @Nonnull
-    @Override
-    public SkillArchetype getArchetype() {
-        return SkillArchetypes.heavy_blow;
     }
 
     @Override
@@ -43,14 +43,6 @@ public class HeavyBlow extends Skill {
         }
     }
 
-    protected boolean isCrit(CriticalHitEvent c) {
-        return (c.getResult() == Event.Result.DEFAULT && c.isVanillaCritical()) || c.getResult() == Event.Result.ALLOW;
-    }
-
-    protected void onCrit(CriticalHitEvent proc, SkillData stats, LivingEntity caster, LivingEntity target) {
-        proc.setDamageModifier(proc.getDamageModifier() * 1.3f);
-    }
-
     @Override
     public boolean onStateChange(LivingEntity caster, SkillData prev, STATE from, STATE to) {
         if (to == STATE.COOLING) {
@@ -59,6 +51,14 @@ public class HeavyBlow extends Skill {
         return passive(prev, from, to);
     }
 
+    protected boolean isCrit(CriticalHitEvent c) {
+        return (c.getResult() == Event.Result.DEFAULT && c.isVanillaCritical()) || c.getResult() == Event.Result.ALLOW;
+    }
+
+    protected void onCrit(CriticalHitEvent proc, SkillData stats, LivingEntity caster, LivingEntity target) {
+        if (this == WarSkills.VITAL_STRIKE.get())
+            proc.setDamageModifier(proc.getDamageModifier() * 1.5f);
+    }
 
     public static class Leverage extends HeavyBlow {
 

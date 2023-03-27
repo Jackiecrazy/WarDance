@@ -3,6 +3,8 @@ package jackiecrazy.wardance.skill.grapple;
 import jackiecrazy.footwork.api.CombatDamageSource;
 import jackiecrazy.footwork.capability.resources.CombatData;
 import jackiecrazy.wardance.WarDance;
+import jackiecrazy.wardance.capability.skill.CasterData;
+import jackiecrazy.wardance.config.CombatConfig;
 import jackiecrazy.wardance.skill.SkillData;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
@@ -42,7 +44,7 @@ public class Throw extends Grapple {
             Entity yeet = caster.getFirstPassenger();
             yeet.stopRiding();
             yeet.setDeltaMovement(caster.getLookAngle().scale(1.5));
-            if (yeet instanceof LivingEntity e) mark(caster, e, 5);
+            if (yeet instanceof LivingEntity e) mark(caster, e, 5, 0, true);
         }
         if (to == STATE.COOLING) {
             if (prev.isCondition())
@@ -57,6 +59,7 @@ public class Throw extends Grapple {
         caster.level.playSound(null, target.getX(), target.getY(), target.getZ(), SoundEvents.BARREL_OPEN, SoundSource.PLAYERS, 0.3f + WarDance.rand.nextFloat() * 0.5f, 0.75f + WarDance.rand.nextFloat() * 0.5f);
         if (CombatData.getCap(target).consumePosture(caster, 7, 0, true) < 0) {
             target.startRiding(caster, true);
+            mark(caster, target, CombatConfig.knockdownDuration*2);
             stats.flagCondition(true);
 
         } else {
@@ -67,12 +70,24 @@ public class Throw extends Grapple {
 
     @Override
     public boolean markTick(LivingEntity caster, LivingEntity target, SkillData sd) {
-        if (target.horizontalCollision || target.verticalCollision) {
+        sd.decrementDuration(0.05f);
+        if (sd.isCondition() && (target.horizontalCollision || target.verticalCollision)) {
             removeMark(target);
             CombatData.getCap(target).consumePosture(7);
             target.hurt(new CombatDamageSource("fallingBlock", caster).setDamageTyping(CombatDamageSource.TYPE.PHYSICAL).setProcSkillEffects(true).setProcAttackEffects(true), 3);
         }
-        sd.decrementDuration(0.05f);
+        if(!sd.isCondition()){
+            if(!CombatData.getCap(target).isVulnerable()){
+                removeMark(target);
+                target.stopRiding();
+                setCooldown(caster, CasterData.getCap(caster).getSkillData(this).get(), 7);
+            }
+        }
         return super.markTick(caster, target, sd);
+    }
+
+    @Override
+    public void onMarkEnd(LivingEntity caster, LivingEntity target, SkillData sd) {
+        if (target.isPassenger()) target.stopRiding();
     }
 }

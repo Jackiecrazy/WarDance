@@ -275,7 +275,7 @@ public class CombatUtils {
                 base = (float) combatList.get(stack.getItem()).attackPostureMultiplier;
 
         } else {
-            if (!(attacker instanceof Player))
+            if (attacker != null && !(attacker instanceof Player))
                 base = CombatData.getCap(attacker).getMaxPosture() * CombatConfig.defaultMultiplierPostureMob;
         }
         if (attacker == null || h == null) return base;

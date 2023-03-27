@@ -62,7 +62,7 @@ public class CoupDeGrace extends Skill {
 
     @Override
     public float mightConsumption(LivingEntity caster) {
-        return 1;
+        return 2;
     }
 
     protected void deathCheck(LivingEntity caster, LivingEntity target, float amount) {

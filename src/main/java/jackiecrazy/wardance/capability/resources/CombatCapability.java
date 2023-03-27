@@ -673,7 +673,7 @@ public class CombatCapability implements ICombatCapability {
         if (elb.hasEffect(FootworkEffects.SLEEP.get()) || elb.hasEffect(FootworkEffects.PARALYSIS.get()) || elb.hasEffect(FootworkEffects.PETRIFY.get()))
             vision = -1;
         //initialize posture
-        if (first && elb.getAttribute(FootworkAttributes.MAX_POSTURE.get()).getBaseValue() == 10d) {//ew
+        if (first && elb.getAttribute(FootworkAttributes.MAX_POSTURE.get()).getBaseValue() == 0d) {//ew
             final float mPos = getMPos(elb);
             elb.getAttribute(FootworkAttributes.MAX_POSTURE.get()).setBaseValue(mPos);
             elb.getAttribute(FootworkAttributes.MAX_FRACTURE.get()).setBaseValue(3 + Math.min(3, Math.round(elb.getMaxHealth() / 50)));

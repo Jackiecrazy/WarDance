@@ -420,6 +420,10 @@ public abstract class Skill extends Move {
         Marks.getCap(target).mark(new SkillData(this, duration).setCaster(caster).setArbitraryFloat(arbitrary));
     }
 
+    protected void mark(LivingEntity caster, LivingEntity target, float duration, float arbitrary, boolean bool) {
+        Marks.getCap(target).mark(new SkillData(this, duration).setCaster(caster).setArbitraryFloat(arbitrary).flagCondition(bool));
+    }
+
     protected SkillData getExistingMark(LivingEntity target) {
         return Marks.getCap(target).getActiveMark(this).orElse(SkillData.DUMMY);
     }
