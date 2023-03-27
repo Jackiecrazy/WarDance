@@ -139,7 +139,7 @@ public class CombatCapability implements ICombatCapability {
         float temp = might + amount;
         setMight(temp);
         setMightGrace((int) grace);
-        addRank(amount * 0.1f);
+        addRank(amount * 0.08f);
         return temp % 10;
     }
 
@@ -664,6 +664,16 @@ public class CombatCapability implements ICombatCapability {
         if (elb == null) return;
         final int ticks = (int) (elb.level.getGameTime() - lastUpdate);
         if (ticks < 1) return;//sometimes time runs backwards
+        //initialize posture and fracture
+        if (elb.getAttribute(FootworkAttributes.MAX_POSTURE.get()).getBaseValue() == 0d) {//ew
+            final float mPos = getMPos(elb);
+            elb.getAttribute(FootworkAttributes.MAX_POSTURE.get()).setBaseValue(mPos);
+            mpos = (float) elb.getAttributeValue(FootworkAttributes.MAX_POSTURE.get());
+            setPosture(getMaxPosture());
+        }
+        if (elb.getAttribute(FootworkAttributes.MAX_FRACTURE.get()).getBaseValue() == 0d) {//ew
+            elb.getAttribute(FootworkAttributes.MAX_FRACTURE.get()).setBaseValue(3 + Math.min(3, Math.round(elb.getMaxHealth() / 50)));
+        }
         //update max values
         vision = (float) elb.getAttributeValue(Attributes.FOLLOW_RANGE);
         mpos = (float) elb.getAttributeValue(FootworkAttributes.MAX_POSTURE.get());
@@ -672,13 +682,6 @@ public class CombatCapability implements ICombatCapability {
         mfrac = (float) elb.getAttributeValue(FootworkAttributes.MAX_FRACTURE.get());
         if (elb.hasEffect(FootworkEffects.SLEEP.get()) || elb.hasEffect(FootworkEffects.PARALYSIS.get()) || elb.hasEffect(FootworkEffects.PETRIFY.get()))
             vision = -1;
-        //initialize posture
-        if (first && elb.getAttribute(FootworkAttributes.MAX_POSTURE.get()).getBaseValue() == 0d) {//ew
-            final float mPos = getMPos(elb);
-            elb.getAttribute(FootworkAttributes.MAX_POSTURE.get()).setBaseValue(mPos);
-            elb.getAttribute(FootworkAttributes.MAX_FRACTURE.get()).setBaseValue(3 + Math.min(3, Math.round(elb.getMaxHealth() / 50)));
-            setPosture(getMaxPosture());
-        }
         //store motion for further use
         if (ticks > 5 || (lastUpdate + ticks) % 5 != lastUpdate % 5)
             motion = elb.position();

@@ -241,7 +241,7 @@ public class CombatHandler {
                 seme.getMainHandItem().getCapability(CombatManipulator.CAP).ifPresent((i) -> i.attackStart(e.getSource(), seme, uke, seme.getMainHandItem(), e.getAmount()));
                 //add stats if it's the first attack this tick and cooldown is sufficient
                 if (semeCap.getSweepTick() != seme.tickCount) {//first hit of a potential sweep attack
-                    semeCap.addRank(0.1f);
+                    //semeCap.addRank(0.1f);
                     float might = CombatUtils.getAttackMight(seme, uke);
                     semeCap.addMight(might);
                     semeCap.setSweepTick(seme.tickCount);
@@ -358,9 +358,9 @@ public class CombatHandler {
                         double kb = Math.sqrt(atkMult) - 0.18 - (1 / Math.max(defMult, 0.1)); //this will return negative if the defmult is greater, and positive if the atkmult is greater. Larger abs val=larger difference
                         //sigmoid curve again!
                         kb = 1d / (1d + Math.exp(-kb));//this is the knockback to be applied to the defender
-                        CombatUtils.knockBack(uke, seme, Math.min(uke instanceof Player ? 1.6f : 1.3f, 0.2f + (pe.getPostureConsumption() + knockback) * (float) kb * (uke instanceof Player ? 6 : 4) / ukeCap.getMaxPosture()), true, false);
+                        CombatUtils.knockBack(uke, seme, Math.min(uke instanceof Player ? 1.6f : 1.3f, 0.2f + (pe.getPostureConsumption() + knockback) * (float) kb * (uke instanceof Player ? 3 : 2f) / ukeCap.getMaxPosture()), true, false);
                         kb = 1 - kb;
-                        CombatUtils.knockBack(seme, uke, Math.min(uke instanceof Player ? 1.6f : 1.3f, 0.1f + pe.getPostureConsumption() * (float) kb * (seme instanceof Player ? 3 : 2) / semeCap.getMaxPosture()), true, false);
+                        CombatUtils.knockBack(seme, uke, Math.min(uke instanceof Player ? 1.6f : 1.3f, 0.1f + pe.getPostureConsumption() * (float) kb * (seme instanceof Player ? 2.5f : 1.5f) / semeCap.getMaxPosture()), true, false);
                         uke.level.playSound(null, uke.getX(), uke.getY(), uke.getZ(), disshield ? SoundEvents.SHIELD_BLOCK : SoundEvents.ANVIL_PLACE, SoundSource.PLAYERS, 0.25f + WarDance.rand.nextFloat() * 0.5f, (1 - (ukeCap.getPosture() / ukeCap.getMaxPosture())) + WarDance.rand.nextFloat() * 0.5f);
                         //reset cooldown
 //                        if (defMult != 0) {//shield time
