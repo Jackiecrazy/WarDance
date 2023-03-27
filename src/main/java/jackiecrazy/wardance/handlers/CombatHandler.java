@@ -481,8 +481,8 @@ public class CombatHandler {
         if ((cap.isVulnerable()) && !cap.isStaggeringStrike()) {
             //stagger tests for melee damage
             if (cap.isExposed() && CombatUtils.isMeleeAttack(ds)) {
-                //expose, add 10% max health damage
-                e.setAmount(e.getAmount() + uke.getMaxHealth() * 0.1f);
+                //expose, add 20% max health damage
+                e.setAmount(e.getAmount() + uke.getMaxHealth() * 0.2f);
                 e.getSource().bypassArmor().bypassEnchantments().bypassMagic();
                 //fatality!
                 if (ds.getEntity() instanceof LivingEntity) {

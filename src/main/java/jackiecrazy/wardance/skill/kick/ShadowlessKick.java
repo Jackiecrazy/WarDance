@@ -76,4 +76,9 @@ public class ShadowlessKick extends Kick {
         }
         return boundCast(prev, from, to);
     }
+
+    @Override
+    protected boolean showArchetypeDescription() {
+        return false;
+    }
 }

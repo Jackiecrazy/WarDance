@@ -157,6 +157,11 @@ public class CoupDeGrace extends Skill {
         }
 
         @Override
+        protected boolean showArchetypeDescription() {
+            return false;
+        }
+
+        @Override
         public boolean willKillOnCast(LivingEntity caster, LivingEntity target) {
             return target.getHealth() < (GeneralUtils.getMaxHealthBeforeWounding(target) * 0.10f + caster.getAttributeValue(Attributes.ATTACK_DAMAGE));
         }

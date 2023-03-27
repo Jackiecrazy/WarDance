@@ -42,7 +42,7 @@ public class Hex extends Skill {
         if (!e.getEntity().isEffectiveAi()) return;
         LivingEntity entity = e.getEntity();
         //snakebite nullifies healing
-        Marks.getCap(entity).getActiveMark(WarSkills.GANGRENE.get()).ifPresent(a -> e.setCanceled(a.getArbitraryFloat() > 0));
+        //Marks.getCap(entity).getActiveMark(WarSkills.GANGRENE.get()).ifPresent(a -> e.setCanceled(a.getArbitraryFloat() > 0));
     }
 
     @SubscribeEvent
@@ -79,8 +79,8 @@ public class Hex extends Skill {
 //                le.heal(e.getAmount() / 3);
 //            }
 //        }
-        if (!CombatUtils.isPhysicalAttack(e.getSource()))
-            Marks.getCap(e.getEntity()).getActiveMark(WarSkills.GANGRENE.get()).ifPresent(g -> g.setArbitraryFloat(40));
+//        if (!CombatUtils.isPhysicalAttack(e.getSource()))
+//            Marks.getCap(e.getEntity()).getActiveMark(WarSkills.GANGRENE.get()).ifPresent(g -> g.setArbitraryFloat(40));
     }
 
 //    @SubscribeEvent

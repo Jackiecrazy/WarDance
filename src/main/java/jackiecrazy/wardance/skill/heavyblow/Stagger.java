@@ -33,4 +33,9 @@ public class Stagger extends HeavyBlow {
         proc.setDamageModifier(1);
         stats.flagCondition(true);
     }
+
+    @Override
+    protected boolean showArchetypeDescription() {
+        return false;
+    }
 }

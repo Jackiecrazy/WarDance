@@ -6,23 +6,18 @@
         "operation":"ADDITION"
       },
       {
-        "attribute":"footwork:max_fracture",
-        "modify":"0.25",
-        "operation":"ADDITION"
-      },
-      {
         "attribute":"footwork:max_posture",
         "modify":"1.47",
         "operation":"ADDITION"
       },
       {
         "attribute":"footwork:posture_regen",
-        "modify":"0.44",
+        "modify":"0.49",
         "operation":"ADDITION"
       },
       {
-        "attribute":"footwork:stealth",
-        "modify":"-2",
+        "attribute":"footwork:max_fracture",
+        "modify":"0.25",
         "operation":"ADDITION"
       }
     ],
@@ -33,23 +28,18 @@
         "operation":"ADDITION"
       },
       {
-        "attribute":"footwork:max_fracture",
-        "modify":"0.25",
-        "operation":"ADDITION"
-      },
-      {
         "attribute":"footwork:max_posture",
         "modify":"2.94",
         "operation":"ADDITION"
       },
       {
         "attribute":"footwork:posture_regen",
-        "modify":"0.62",
+        "modify":"0.98",
         "operation":"ADDITION"
       },
       {
-        "attribute":"footwork:stealth",
-        "modify":"-4",
+        "attribute":"footwork:max_fracture",
+        "modify":"0.25",
         "operation":"ADDITION"
       }
     ],
@@ -60,23 +50,18 @@
         "operation":"ADDITION"
       },
       {
-        "attribute":"footwork:max_fracture",
-        "modify":"0.25",
-        "operation":"ADDITION"
-      },
-      {
         "attribute":"footwork:max_posture",
         "modify":"1.47",
         "operation":"ADDITION"
       },
       {
         "attribute":"footwork:posture_regen",
-        "modify":"0.44",
+        "modify":"0.49",
         "operation":"ADDITION"
       },
       {
-        "attribute":"footwork:stealth",
-        "modify":"-2",
+        "attribute":"footwork:max_fracture",
+        "modify":"0.25",
         "operation":"ADDITION"
       }
     ],
@@ -87,23 +72,18 @@
         "operation":"ADDITION"
       },
       {
-        "attribute":"footwork:max_fracture",
-        "modify":"0.25",
-        "operation":"ADDITION"
-      },
-      {
         "attribute":"footwork:max_posture",
         "modify":"2.2",
         "operation":"ADDITION"
       },
       {
         "attribute":"footwork:posture_regen",
-        "modify":"0.54",
+        "modify":"0.73",
         "operation":"ADDITION"
       },
       {
-        "attribute":"footwork:stealth",
-        "modify":"-3",
+        "attribute":"footwork:max_fracture",
+        "modify":"0.25",
         "operation":"ADDITION"
       }
     ],
@@ -112,22 +92,12 @@
         "attribute":"footwork:max_fracture",
         "modify":"1.05",
         "operation":"ADDITION"
-      },
-      {
-        "attribute":"footwork:stealth",
-        "modify":"-5.4",
-        "operation":"ADDITION"
       }
     ],
 "minecraft:diamond_chestplate":[
       {
         "attribute":"footwork:max_fracture",
         "modify":"1.85",
-        "operation":"ADDITION"
-      },
-      {
-        "attribute":"footwork:stealth",
-        "modify":"-10.8",
         "operation":"ADDITION"
       }
     ],
@@ -136,11 +106,6 @@
         "attribute":"footwork:max_fracture",
         "modify":"1.05",
         "operation":"ADDITION"
-      },
-      {
-        "attribute":"footwork:stealth",
-        "modify":"-5.4",
-        "operation":"ADDITION"
       }
     ],
 "minecraft:diamond_leggings":[
@@ -148,22 +113,12 @@
         "attribute":"footwork:max_fracture",
         "modify":"1.45",
         "operation":"ADDITION"
-      },
-      {
-        "attribute":"footwork:stealth",
-        "modify":"-8.1",
-        "operation":"ADDITION"
       }
     ],
 "minecraft:golden_boots":[
       {
         "attribute":"footwork:evasion",
         "modify":"0.3",
-        "operation":"ADDITION"
-      },
-      {
-        "attribute":"footwork:max_fracture",
-        "modify":"0.65",
         "operation":"ADDITION"
       },
       {
@@ -182,8 +137,8 @@
         "operation":"ADDITION"
       },
       {
-        "attribute":"footwork:stealth",
-        "modify":"-4",
+        "attribute":"footwork:max_fracture",
+        "modify":"0.65",
         "operation":"ADDITION"
       }
     ],
@@ -191,11 +146,6 @@
       {
         "attribute":"footwork:evasion",
         "modify":"0.6",
-        "operation":"ADDITION"
-      },
-      {
-        "attribute":"footwork:max_fracture",
-        "modify":"1.05",
         "operation":"ADDITION"
       },
       {
@@ -214,8 +164,8 @@
         "operation":"ADDITION"
       },
       {
-        "attribute":"footwork:stealth",
-        "modify":"-8",
+        "attribute":"footwork:max_fracture",
+        "modify":"1.05",
         "operation":"ADDITION"
       }
     ],
@@ -223,11 +173,6 @@
       {
         "attribute":"footwork:evasion",
         "modify":"0.3",
-        "operation":"ADDITION"
-      },
-      {
-        "attribute":"footwork:max_fracture",
-        "modify":"0.65",
         "operation":"ADDITION"
       },
       {
@@ -246,8 +191,8 @@
         "operation":"ADDITION"
       },
       {
-        "attribute":"footwork:stealth",
-        "modify":"-4",
+        "attribute":"footwork:max_fracture",
+        "modify":"0.65",
         "operation":"ADDITION"
       }
     ],
@@ -255,11 +200,6 @@
       {
         "attribute":"footwork:evasion",
         "modify":"0.45",
-        "operation":"ADDITION"
-      },
-      {
-        "attribute":"footwork:max_fracture",
-        "modify":"0.85",
         "operation":"ADDITION"
       },
       {
@@ -278,8 +218,8 @@
         "operation":"ADDITION"
       },
       {
-        "attribute":"footwork:stealth",
-        "modify":"-6",
+        "attribute":"footwork:max_fracture",
+        "modify":"0.85",
         "operation":"ADDITION"
       }
     ],
@@ -290,18 +230,13 @@
         "operation":"ADDITION"
       },
       {
-        "attribute":"footwork:max_fracture",
-        "modify":"0.25",
-        "operation":"ADDITION"
-      },
-      {
         "attribute":"footwork:max_posture",
         "modify":"1.9",
         "operation":"ADDITION"
       },
       {
-        "attribute":"footwork:stealth",
-        "modify":"-3.4",
+        "attribute":"footwork:max_fracture",
+        "modify":"0.25",
         "operation":"ADDITION"
       }
     ],
@@ -312,18 +247,13 @@
         "operation":"ADDITION"
       },
       {
-        "attribute":"footwork:max_fracture",
-        "modify":"0.25",
-        "operation":"ADDITION"
-      },
-      {
         "attribute":"footwork:max_posture",
         "modify":"3.79",
         "operation":"ADDITION"
       },
       {
-        "attribute":"footwork:stealth",
-        "modify":"-6.8",
+        "attribute":"footwork:max_fracture",
+        "modify":"0.25",
         "operation":"ADDITION"
       }
     ],
@@ -334,18 +264,13 @@
         "operation":"ADDITION"
       },
       {
-        "attribute":"footwork:max_fracture",
-        "modify":"0.25",
-        "operation":"ADDITION"
-      },
-      {
         "attribute":"footwork:max_posture",
         "modify":"1.9",
         "operation":"ADDITION"
       },
       {
-        "attribute":"footwork:stealth",
-        "modify":"-3.4",
+        "attribute":"footwork:max_fracture",
+        "modify":"0.25",
         "operation":"ADDITION"
       }
     ],
@@ -356,154 +281,109 @@
         "operation":"ADDITION"
       },
       {
-        "attribute":"footwork:max_fracture",
-        "modify":"0.25",
-        "operation":"ADDITION"
-      },
-      {
         "attribute":"footwork:max_posture",
         "modify":"2.85",
         "operation":"ADDITION"
       },
       {
-        "attribute":"footwork:stealth",
-        "modify":"-5.1",
+        "attribute":"footwork:max_fracture",
+        "modify":"0.25",
         "operation":"ADDITION"
       }
     ],
 "minecraft:leather_boots":[
       {
+        "attribute":"footwork:posture_regen",
+        "modify":"0.63",
+        "operation":"ADDITION"
+      },
+      {
         "attribute":"footwork:max_fracture",
         "modify":"0.25",
-        "operation":"ADDITION"
-      },
-      {
-        "attribute":"footwork:posture_regen",
-        "modify":"0.57",
-        "operation":"ADDITION"
-      },
-      {
-        "attribute":"footwork:stealth",
-        "modify":"-0.4",
         "operation":"ADDITION"
       }
     ],
 "minecraft:leather_chestplate":[
       {
+        "attribute":"footwork:posture_regen",
+        "modify":"1.26",
+        "operation":"ADDITION"
+      },
+      {
         "attribute":"footwork:max_fracture",
         "modify":"0.25",
-        "operation":"ADDITION"
-      },
-      {
-        "attribute":"footwork:posture_regen",
-        "modify":"0.8",
-        "operation":"ADDITION"
-      },
-      {
-        "attribute":"footwork:stealth",
-        "modify":"-0.8",
         "operation":"ADDITION"
       }
     ],
 "minecraft:leather_helmet":[
       {
+        "attribute":"footwork:posture_regen",
+        "modify":"0.63",
+        "operation":"ADDITION"
+      },
+      {
         "attribute":"footwork:max_fracture",
         "modify":"0.25",
-        "operation":"ADDITION"
-      },
-      {
-        "attribute":"footwork:posture_regen",
-        "modify":"0.57",
-        "operation":"ADDITION"
-      },
-      {
-        "attribute":"footwork:stealth",
-        "modify":"-0.4",
         "operation":"ADDITION"
       }
     ],
 "minecraft:leather_leggings":[
       {
+        "attribute":"footwork:posture_regen",
+        "modify":"0.95",
+        "operation":"ADDITION"
+      },
+      {
         "attribute":"footwork:max_fracture",
         "modify":"0.25",
-        "operation":"ADDITION"
-      },
-      {
-        "attribute":"footwork:posture_regen",
-        "modify":"0.69",
-        "operation":"ADDITION"
-      },
-      {
-        "attribute":"footwork:stealth",
-        "modify":"-0.6",
         "operation":"ADDITION"
       }
     ],
 "minecraft:netherite_boots":[
       {
+        "attribute":"footwork:posture_regen",
+        "modify":"0.53",
+        "operation":"ADDITION"
+      },
+      {
         "attribute":"footwork:max_fracture",
         "modify":"0.81",
-        "operation":"ADDITION"
-      },
-      {
-        "attribute":"footwork:posture_regen",
-        "modify":"0.47",
-        "operation":"ADDITION"
-      },
-      {
-        "attribute":"footwork:stealth",
-        "modify":"-3.5",
         "operation":"ADDITION"
       }
     ],
 "minecraft:netherite_chestplate":[
       {
+        "attribute":"footwork:posture_regen",
+        "modify":"1.06",
+        "operation":"ADDITION"
+      },
+      {
         "attribute":"footwork:max_fracture",
         "modify":"1.37",
-        "operation":"ADDITION"
-      },
-      {
-        "attribute":"footwork:posture_regen",
-        "modify":"0.67",
-        "operation":"ADDITION"
-      },
-      {
-        "attribute":"footwork:stealth",
-        "modify":"-7",
         "operation":"ADDITION"
       }
     ],
 "minecraft:netherite_helmet":[
       {
+        "attribute":"footwork:posture_regen",
+        "modify":"0.53",
+        "operation":"ADDITION"
+      },
+      {
         "attribute":"footwork:max_fracture",
         "modify":"0.81",
-        "operation":"ADDITION"
-      },
-      {
-        "attribute":"footwork:posture_regen",
-        "modify":"0.47",
-        "operation":"ADDITION"
-      },
-      {
-        "attribute":"footwork:stealth",
-        "modify":"-3.5",
         "operation":"ADDITION"
       }
     ],
 "minecraft:netherite_leggings":[
       {
+        "attribute":"footwork:posture_regen",
+        "modify":"0.79",
+        "operation":"ADDITION"
+      },
+      {
         "attribute":"footwork:max_fracture",
         "modify":"1.09",
-        "operation":"ADDITION"
-      },
-      {
-        "attribute":"footwork:posture_regen",
-        "modify":"0.58",
-        "operation":"ADDITION"
-      },
-      {
-        "attribute":"footwork:stealth",
-        "modify":"-5.3",
         "operation":"ADDITION"
       }
     ],
@@ -514,23 +394,18 @@
         "operation":"ADDITION"
       },
       {
-        "attribute":"footwork:max_fracture",
-        "modify":"0.25",
-        "operation":"ADDITION"
-      },
-      {
         "attribute":"footwork:max_posture",
         "modify":"1.34",
         "operation":"ADDITION"
       },
       {
         "attribute":"footwork:posture_regen",
-        "modify":"0.4",
+        "modify":"0.45",
         "operation":"ADDITION"
       },
       {
-        "attribute":"footwork:stealth",
-        "modify":"-1.9",
+        "attribute":"footwork:max_fracture",
+        "modify":"0.25",
         "operation":"ADDITION"
       }
     ]

@@ -48,6 +48,11 @@ public abstract class IronGuard extends Skill {
     }
 
     @Override
+    protected boolean showArchetypeDescription() {
+        return false;
+    }
+
+    @Override
     public boolean equippedTick(LivingEntity caster, SkillData stats) {
         return cooldownTick(stats);
     }

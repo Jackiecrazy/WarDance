@@ -1,145 +1,153 @@
 {
-"thermal:beekeeper_boots":[
+"stalwart_dungeons:chorundum_armor_boots":[
       {
         "attribute":"footwork:posture_regen",
-        "modify":"0.63",
+        "modify":"0.2",
         "operation":"ADDITION"
       },
       {
+        "attribute":"footwork:might_gen",
+        "modify":"3",
+        "operation":"MULTIPLY_BASE"
+      },
+      {
         "attribute":"footwork:max_fracture",
-        "modify":"0.25",
+        "modify":"1.05",
         "operation":"ADDITION"
       }
     ],
-"thermal:beekeeper_chestplate":[
+"stalwart_dungeons:chorundum_armor_chestplate":[
       {
         "attribute":"footwork:posture_regen",
-        "modify":"1.26",
+        "modify":"0.4",
         "operation":"ADDITION"
       },
       {
+        "attribute":"footwork:might_gen",
+        "modify":"8",
+        "operation":"MULTIPLY_BASE"
+      },
+      {
         "attribute":"footwork:max_fracture",
-        "modify":"0.25",
+        "modify":"1.85",
         "operation":"ADDITION"
       }
     ],
-"thermal:beekeeper_helmet":[
+"stalwart_dungeons:chorundum_armor_helmet":[
       {
         "attribute":"footwork:posture_regen",
-        "modify":"0.63",
+        "modify":"0.2",
         "operation":"ADDITION"
       },
       {
+        "attribute":"footwork:might_gen",
+        "modify":"3",
+        "operation":"MULTIPLY_BASE"
+      },
+      {
         "attribute":"footwork:max_fracture",
-        "modify":"0.25",
+        "modify":"1.05",
         "operation":"ADDITION"
       }
     ],
-"thermal:beekeeper_leggings":[
+"stalwart_dungeons:chorundum_armor_leggings":[
       {
         "attribute":"footwork:posture_regen",
-        "modify":"0.95",
+        "modify":"0.3",
         "operation":"ADDITION"
       },
       {
+        "attribute":"footwork:might_gen",
+        "modify":"6",
+        "operation":"MULTIPLY_BASE"
+      },
+      {
         "attribute":"footwork:max_fracture",
-        "modify":"0.25",
+        "modify":"1.45",
         "operation":"ADDITION"
       }
     ],
-"thermal:diving_boots":[
+"stalwart_dungeons:tungsten_boots":[
       {
         "attribute":"footwork:posture_regen",
-        "modify":"0.63",
+        "modify":"0.2",
         "operation":"ADDITION"
       },
       {
         "attribute":"footwork:max_fracture",
-        "modify":"0.25",
+        "modify":"1.05",
         "operation":"ADDITION"
       }
     ],
-"thermal:diving_chestplate":[
+"stalwart_dungeons:tungsten_chestplate":[
       {
         "attribute":"footwork:posture_regen",
-        "modify":"1.26",
+        "modify":"0.4",
         "operation":"ADDITION"
       },
       {
         "attribute":"footwork:max_fracture",
-        "modify":"0.25",
+        "modify":"1.85",
         "operation":"ADDITION"
       }
     ],
-"thermal:diving_helmet":[
+"stalwart_dungeons:tungsten_helmet":[
       {
         "attribute":"footwork:posture_regen",
-        "modify":"0.63",
+        "modify":"0.2",
         "operation":"ADDITION"
       },
       {
         "attribute":"footwork:max_fracture",
-        "modify":"0.25",
+        "modify":"1.05",
         "operation":"ADDITION"
       }
     ],
-"thermal:diving_leggings":[
+"stalwart_dungeons:tungsten_leggings":[
       {
         "attribute":"footwork:posture_regen",
-        "modify":"0.95",
+        "modify":"0.3",
         "operation":"ADDITION"
       },
       {
         "attribute":"footwork:max_fracture",
-        "modify":"0.25",
+        "modify":"1.45",
         "operation":"ADDITION"
       }
     ],
-"thermal:hazmat_boots":[
+"stalwart_dungeons:warted_tungsten_chestplate":[
       {
         "attribute":"footwork:posture_regen",
-        "modify":"0.63",
+        "modify":"0.57",
         "operation":"ADDITION"
       },
       {
         "attribute":"footwork:max_fracture",
-        "modify":"0.25",
+        "modify":"1.85",
         "operation":"ADDITION"
       }
     ],
-"thermal:hazmat_chestplate":[
+"stalwart_dungeons:warted_tungsten_helmet":[
       {
         "attribute":"footwork:posture_regen",
-        "modify":"1.26",
+        "modify":"0.28",
         "operation":"ADDITION"
       },
       {
         "attribute":"footwork:max_fracture",
-        "modify":"0.25",
+        "modify":"1.05",
         "operation":"ADDITION"
       }
     ],
-"thermal:hazmat_helmet":[
+"stalwart_dungeons:warted_tungsten_leggings":[
       {
         "attribute":"footwork:posture_regen",
-        "modify":"0.63",
+        "modify":"0.42",
         "operation":"ADDITION"
       },
       {
         "attribute":"footwork:max_fracture",
-        "modify":"0.25",
-        "operation":"ADDITION"
-      }
-    ],
-"thermal:hazmat_leggings":[
-      {
-        "attribute":"footwork:posture_regen",
-        "modify":"0.95",
-        "operation":"ADDITION"
-      },
-      {
-        "attribute":"footwork:max_fracture",
-        "modify":"0.25",
+        "modify":"1.45",
         "operation":"ADDITION"
       }
     ]

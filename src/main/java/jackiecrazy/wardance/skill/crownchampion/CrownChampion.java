@@ -66,6 +66,11 @@ elemental might: +1 burn/snowball/poison/drown damage to targets you have attack
         }
     }
 
+    @Override
+    protected boolean showArchetypeDescription() {
+        return false;
+    }
+
     @SubscribeEvent(priority = EventPriority.LOWEST)
     public static void oops(LivingDamageEvent e) {
         LivingEntity uke = e.getEntity();

@@ -1,69 +1,49 @@
 {
 "environmental:architect_belt":[
       {
+        "attribute":"footwork:posture_regen",
+        "modify":"0.99",
+        "operation":"ADDITION"
+      },
+      {
         "attribute":"footwork:max_fracture",
         "modify":"0.25",
-        "operation":"ADDITION"
-      },
-      {
-        "attribute":"footwork:posture_regen",
-        "modify":"11",
-        "operation":"ADDITION"
-      },
-      {
-        "attribute":"footwork:stealth",
-        "modify":"-0.5",
         "operation":"ADDITION"
       }
     ],
 "environmental:healer_pouch":[
       {
+        "attribute":"footwork:posture_regen",
+        "modify":"1.33",
+        "operation":"ADDITION"
+      },
+      {
         "attribute":"footwork:max_fracture",
         "modify":"0.25",
-        "operation":"ADDITION"
-      },
-      {
-        "attribute":"footwork:posture_regen",
-        "modify":"14.67",
-        "operation":"ADDITION"
-      },
-      {
-        "attribute":"footwork:stealth",
-        "modify":"-0.6",
         "operation":"ADDITION"
       }
     ],
 "environmental:thief_hood":[
       {
+        "attribute":"footwork:posture_regen",
+        "modify":"0.66",
+        "operation":"ADDITION"
+      },
+      {
         "attribute":"footwork:max_fracture",
         "modify":"0.25",
-        "operation":"ADDITION"
-      },
-      {
-        "attribute":"footwork:posture_regen",
-        "modify":"7.33",
-        "operation":"ADDITION"
-      },
-      {
-        "attribute":"footwork:stealth",
-        "modify":"-0.3",
         "operation":"ADDITION"
       }
     ],
 "environmental:wanderer_boots":[
       {
+        "attribute":"footwork:posture_regen",
+        "modify":"0.66",
+        "operation":"ADDITION"
+      },
+      {
         "attribute":"footwork:max_fracture",
         "modify":"0.25",
-        "operation":"ADDITION"
-      },
-      {
-        "attribute":"footwork:posture_regen",
-        "modify":"7.33",
-        "operation":"ADDITION"
-      },
-      {
-        "attribute":"footwork:stealth",
-        "modify":"-0.3",
         "operation":"ADDITION"
       }
     ]

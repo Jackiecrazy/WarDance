@@ -1,8 +1,6 @@
 package jackiecrazy.wardance.skill.styles.two;
 
 import jackiecrazy.footwork.api.CombatDamageSource;
-import jackiecrazy.footwork.capability.resources.CombatData;
-import jackiecrazy.footwork.event.ConsumePostureEvent;
 import jackiecrazy.wardance.event.ParryEvent;
 import jackiecrazy.wardance.skill.ProcPoints;
 import jackiecrazy.wardance.skill.SkillData;
@@ -43,8 +41,6 @@ public class FrostFang extends WarCry {
             activate(caster, 40, stats.getArbitraryFloat());
         } else if (procPoint instanceof ParryEvent cpe && state == STATE.ACTIVE && cpe.getEntity() == target) {
             cpe.setPostureConsumption(cpe.getPostureConsumption() * (1 + stats.getArbitraryFloat()));
-        } else if (procPoint instanceof ConsumePostureEvent cpe && state == STATE.ACTIVE && cpe.getAbove() <= 0 && cpe.getEntity() == target && cpe.getAmount() > CombatData.getCap(target).getPosture()) {
-            if (!cpe.isCanceled()) CombatData.getCap(target).addFracture(caster, 1);
         } else if (procPoint instanceof LivingHurtEvent cpe && state == STATE.ACTIVE && cpe.getEntity() == target) {
             if (!cpe.isCanceled()) {
                 if (cpe.getSource() instanceof CombatDamageSource cds) {

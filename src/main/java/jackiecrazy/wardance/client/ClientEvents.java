@@ -345,7 +345,7 @@ public class ClientEvents {
 
     @SubscribeEvent
     public static void sweepSwingOffItem(PlayerInteractEvent.RightClickItem e) {
-        if (!rightClick && GeneralConfig.dual && e.getHand() == InteractionHand.OFF_HAND && ((CombatUtils.isWeapon(e.getEntity(), e.getItemStack()) || (e.getItemStack().isEmpty() && CombatData.getCap(e.getEntity()).isCombatMode())))) {
+        if (!rightClick && GeneralConfig.dual && e.getHand() == InteractionHand.OFF_HAND && ((CombatUtils.isWeapon(e.getEntity(), e.getItemStack()) || CombatUtils.isShield(e.getEntity(), e.getItemStack()) || (e.getItemStack().isEmpty() && CombatData.getCap(e.getEntity()).isCombatMode())))) {
             rightClick = true;
             Entity n = RenderEvents.getEntityLookedAt(e.getEntity(), GeneralUtils.getAttributeValueHandSensitive(e.getEntity(), ForgeMod.ATTACK_RANGE.get(), InteractionHand.OFF_HAND) - (e.getItemStack().isEmpty() ? 1 : 0));
             e.getEntity().swing(InteractionHand.OFF_HAND, false);
@@ -369,7 +369,7 @@ public class ClientEvents {
 
     @SubscribeEvent
     public static void sweepSwingOffItemBlock(PlayerInteractEvent.RightClickBlock e) {
-        if (!rightClick && GeneralConfig.dual && e.getHand() == InteractionHand.OFF_HAND && ((CombatUtils.isWeapon(e.getEntity(), e.getItemStack()) || (e.getItemStack().isEmpty() && CombatData.getCap(e.getEntity()).isCombatMode())))) {
+        if (!rightClick && GeneralConfig.dual && e.getHand() == InteractionHand.OFF_HAND && ((CombatUtils.isWeapon(e.getEntity(), e.getItemStack()) || CombatUtils.isShield(e.getEntity(), e.getItemStack()) || (e.getItemStack().isEmpty() && CombatData.getCap(e.getEntity()).isCombatMode())))) {
             rightClick = true;
             Entity n = RenderEvents.getEntityLookedAt(e.getEntity(), GeneralUtils.getAttributeValueHandSensitive(e.getEntity(), ForgeMod.ATTACK_RANGE.get(), InteractionHand.OFF_HAND) - (e.getItemStack().isEmpty() ? 1 : 0));
             e.getEntity().swing(InteractionHand.OFF_HAND, false);

@@ -6,23 +6,18 @@
         "operation":"ADDITION"
       },
       {
-        "attribute":"footwork:max_fracture",
-        "modify":"0.25",
-        "operation":"ADDITION"
-      },
-      {
         "attribute":"footwork:max_posture",
         "modify":"1.59",
         "operation":"ADDITION"
       },
       {
         "attribute":"footwork:posture_regen",
-        "modify":"7",
+        "modify":"0.53",
         "operation":"ADDITION"
       },
       {
-        "attribute":"footwork:stealth",
-        "modify":"-2.1",
+        "attribute":"footwork:max_fracture",
+        "modify":"0.25",
         "operation":"ADDITION"
       }
     ],
@@ -33,23 +28,18 @@
         "operation":"ADDITION"
       },
       {
-        "attribute":"footwork:max_fracture",
-        "modify":"0.25",
-        "operation":"ADDITION"
-      },
-      {
         "attribute":"footwork:max_posture",
         "modify":"3.17",
         "operation":"ADDITION"
       },
       {
         "attribute":"footwork:posture_regen",
-        "modify":"14",
+        "modify":"1.06",
         "operation":"ADDITION"
       },
       {
-        "attribute":"footwork:stealth",
-        "modify":"-4.2",
+        "attribute":"footwork:max_fracture",
+        "modify":"0.25",
         "operation":"ADDITION"
       }
     ],
@@ -60,23 +50,18 @@
         "operation":"ADDITION"
       },
       {
-        "attribute":"footwork:max_fracture",
-        "modify":"0.25",
-        "operation":"ADDITION"
-      },
-      {
         "attribute":"footwork:max_posture",
         "modify":"1.59",
         "operation":"ADDITION"
       },
       {
         "attribute":"footwork:posture_regen",
-        "modify":"7",
+        "modify":"0.53",
         "operation":"ADDITION"
       },
       {
-        "attribute":"footwork:stealth",
-        "modify":"-2.1",
+        "attribute":"footwork:max_fracture",
+        "modify":"0.25",
         "operation":"ADDITION"
       }
     ],
@@ -87,23 +72,18 @@
         "operation":"ADDITION"
       },
       {
-        "attribute":"footwork:max_fracture",
-        "modify":"0.25",
-        "operation":"ADDITION"
-      },
-      {
         "attribute":"footwork:max_posture",
         "modify":"2.38",
         "operation":"ADDITION"
       },
       {
         "attribute":"footwork:posture_regen",
-        "modify":"10.5",
+        "modify":"0.79",
         "operation":"ADDITION"
       },
       {
-        "attribute":"footwork:stealth",
-        "modify":"-3.2",
+        "attribute":"footwork:max_fracture",
+        "modify":"0.25",
         "operation":"ADDITION"
       }
     ]

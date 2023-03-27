@@ -1,18 +1,13 @@
 {
 "fins:fwinged_boots":[
       {
+        "attribute":"footwork:posture_regen",
+        "modify":"0.66",
+        "operation":"ADDITION"
+      },
+      {
         "attribute":"footwork:max_fracture",
         "modify":"0.25",
-        "operation":"ADDITION"
-      },
-      {
-        "attribute":"footwork:posture_regen",
-        "modify":"7.33",
-        "operation":"ADDITION"
-      },
-      {
-        "attribute":"footwork:stealth",
-        "modify":"-0.3",
         "operation":"ADDITION"
       }
     ]

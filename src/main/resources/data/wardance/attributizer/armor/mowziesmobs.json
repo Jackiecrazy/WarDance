@@ -1,13 +1,8 @@
 {
 "mowziesmobs:barako_mask":[
       {
-        "attribute":"footwork:max_fracture",
-        "modify":"0.25",
-        "operation":"ADDITION"
-      },
-      {
         "attribute":"footwork:posture_regen",
-        "modify":"6.67",
+        "modify":"0.63",
         "operation":"ADDITION"
       },
       {
@@ -16,93 +11,98 @@
         "operation":"ADDITION"
       },
       {
-        "attribute":"footwork:stealth",
-        "modify":"-0.4",
+        "attribute":"footwork:spirit_cooldown_speed",
+        "modify":"20",
+        "operation":"MULTIPLY_BASE"
+      },
+      {
+        "attribute":"footwork:max_fracture",
+        "modify":"0.25",
         "operation":"ADDITION"
       }
     ],
 "mowziesmobs:barakoa_mask_bliss":[
       {
+        "attribute":"footwork:posture_regen",
+        "modify":"0.32",
+        "operation":"ADDITION"
+      },
+      {
+        "attribute":"footwork:spirit_cooldown_speed",
+        "modify":"10",
+        "operation":"MULTIPLY_BASE"
+      },
+      {
         "attribute":"footwork:max_fracture",
         "modify":"0.25",
-        "operation":"ADDITION"
-      },
-      {
-        "attribute":"footwork:posture_regen",
-        "modify":"3.33",
-        "operation":"ADDITION"
-      },
-      {
-        "attribute":"footwork:stealth",
-        "modify":"-0.2",
         "operation":"ADDITION"
       }
     ],
 "mowziesmobs:barakoa_mask_fear":[
       {
+        "attribute":"footwork:posture_regen",
+        "modify":"0.32",
+        "operation":"ADDITION"
+      },
+      {
+        "attribute":"footwork:spirit_cooldown_speed",
+        "modify":"10",
+        "operation":"MULTIPLY_BASE"
+      },
+      {
         "attribute":"footwork:max_fracture",
         "modify":"0.25",
-        "operation":"ADDITION"
-      },
-      {
-        "attribute":"footwork:posture_regen",
-        "modify":"3.33",
-        "operation":"ADDITION"
-      },
-      {
-        "attribute":"footwork:stealth",
-        "modify":"-0.2",
         "operation":"ADDITION"
       }
     ],
 "mowziesmobs:barakoa_mask_fury":[
       {
+        "attribute":"footwork:posture_regen",
+        "modify":"0.32",
+        "operation":"ADDITION"
+      },
+      {
+        "attribute":"footwork:spirit_cooldown_speed",
+        "modify":"10",
+        "operation":"MULTIPLY_BASE"
+      },
+      {
         "attribute":"footwork:max_fracture",
         "modify":"0.25",
-        "operation":"ADDITION"
-      },
-      {
-        "attribute":"footwork:posture_regen",
-        "modify":"3.33",
-        "operation":"ADDITION"
-      },
-      {
-        "attribute":"footwork:stealth",
-        "modify":"-0.2",
         "operation":"ADDITION"
       }
     ],
 "mowziesmobs:barakoa_mask_misery":[
       {
+        "attribute":"footwork:posture_regen",
+        "modify":"0.32",
+        "operation":"ADDITION"
+      },
+      {
+        "attribute":"footwork:spirit_cooldown_speed",
+        "modify":"10",
+        "operation":"MULTIPLY_BASE"
+      },
+      {
         "attribute":"footwork:max_fracture",
         "modify":"0.25",
-        "operation":"ADDITION"
-      },
-      {
-        "attribute":"footwork:posture_regen",
-        "modify":"3.33",
-        "operation":"ADDITION"
-      },
-      {
-        "attribute":"footwork:stealth",
-        "modify":"-0.2",
         "operation":"ADDITION"
       }
     ],
 "mowziesmobs:barakoa_mask_rage":[
       {
+        "attribute":"footwork:posture_regen",
+        "modify":"0.32",
+        "operation":"ADDITION"
+      },
+      {
+        "attribute":"footwork:spirit_cooldown_speed",
+        "modify":"10",
+        "operation":"MULTIPLY_BASE"
+      },
+      {
         "attribute":"footwork:max_fracture",
         "modify":"0.25",
-        "operation":"ADDITION"
-      },
-      {
-        "attribute":"footwork:posture_regen",
-        "modify":"3.33",
-        "operation":"ADDITION"
-      },
-      {
-        "attribute":"footwork:stealth",
-        "modify":"-0.2",
         "operation":"ADDITION"
       }
     ],
@@ -113,28 +113,18 @@
         "operation":"ADDITION"
       },
       {
-        "attribute":"footwork:max_fracture",
-        "modify":"0.49",
-        "operation":"ADDITION"
-      },
-      {
         "attribute":"footwork:max_posture",
         "modify":"3.9",
         "operation":"ADDITION"
       },
       {
-        "attribute":"footwork:posture_regen",
-        "modify":"3.33",
-        "operation":"ADDITION"
-      },
-      {
         "attribute":"footwork:might_gen",
-        "modify":"0.2",
+        "modify":"20",
         "operation":"MULTIPLY_BASE"
       },
       {
-        "attribute":"footwork:stealth",
-        "modify":"-4.6",
+        "attribute":"footwork:max_fracture",
+        "modify":"0.49",
         "operation":"ADDITION"
       }
     ]

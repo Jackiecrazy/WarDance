@@ -1,30 +1,22 @@
 package jackiecrazy.wardance.skill.grapple;
 
+import jackiecrazy.footwork.capability.resources.CombatData;
+import jackiecrazy.wardance.WarDance;
 import jackiecrazy.wardance.skill.SkillData;
-import jackiecrazy.wardance.utils.CombatUtils;
+import net.minecraft.sounds.SoundEvents;
+import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.entity.LivingEntity;
-import net.minecraftforge.event.entity.living.LivingAttackEvent;
-import net.minecraftforge.eventbus.api.Event;
-import net.minecraftforge.eventbus.api.EventPriority;
 
 public class Submission extends Grapple {
 
     @Override
-    public void onProc(LivingEntity caster, Event procPoint, STATE state, SkillData stats, LivingEntity target) {
-        if (procPoint instanceof LivingAttackEvent && ((LivingAttackEvent) procPoint).getEntity() == target && procPoint.getPhase() == EventPriority.HIGHEST) {
-            if (state == STATE.HOLSTERED && (caster.tickCount - caster.getLastHurtMobTimestamp() < 40 || caster.getArmorValue() > target.getArmorValue()) && CombatUtils.isUnarmed(caster.getMainHandItem(), caster) && caster.getLastHurtMob() == target && cast(caster, target, -999)) {
-                performEffect(caster, target, stats);
-                stats.flagCondition(caster.getArmorValue() > target.getArmorValue());
-            } else if (state == STATE.COOLING) stats.decrementDuration();
+    protected void performEffect(LivingEntity caster, LivingEntity target, SkillData stats) {
+        final float armor = caster.getArmorValue() / 4f;
+        float consume = 7 + armor;
+        caster.level.playSound(null, target.getX(), target.getY(), target.getZ(), SoundEvents.BARREL_OPEN, SoundSource.PLAYERS, 0.3f + WarDance.rand.nextFloat() * 0.5f, 0.75f + WarDance.rand.nextFloat() * 0.5f);
+        if (CombatData.getCap(target).consumePosture(caster, consume, 0, true) < 0) {
+            CombatData.getCap(caster).addSpirit(1);
         }
-    }
-
-    @Override
-    public boolean onStateChange(LivingEntity caster, SkillData prev, STATE from, STATE to) {
-        if (to == STATE.COOLING) {
-            setCooldown(caster, prev, prev.isCondition() ? 4 : 7);
-        }
-        prev.flagCondition(false);
-        return boundCast(prev, from, to);
+        CombatData.getCap(caster).addPosture(armor);
     }
 }

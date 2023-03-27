@@ -11,6 +11,7 @@ import jackiecrazy.wardance.event.SkillCastEvent;
 import jackiecrazy.wardance.event.SkillCooldownEvent;
 import jackiecrazy.wardance.event.SkillResourceEvent;
 import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
@@ -153,8 +154,15 @@ public abstract class Skill extends Move {
         caster.level.playSound(null, caster, SoundEvents.EXPERIENCE_ORB_PICKUP, SoundSource.AMBIENT, 0.3f + WarDance.rand.nextFloat(), 0.5f + WarDance.rand.nextFloat());
     }
 
+    protected boolean showArchetypeDescription() {
+        return getArchetype() != SkillArchetypes.none;
+    }
+
     public Component description() {
-        return Component.translatable("wardance." + this.getRegistryName().getPath() + ".desc");
+        MutableComponent ret = Component.empty();
+        if (showArchetypeDescription())
+            ret = getArchetype().description().append("\n");
+        return ret.append(Component.translatable("wardance." + this.getRegistryName().getPath() + ".desc"));
     }
 
     public ResourceLocation getRegistryName() {

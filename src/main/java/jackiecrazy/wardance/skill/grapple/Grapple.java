@@ -3,9 +3,12 @@ package jackiecrazy.wardance.skill.grapple;
 import jackiecrazy.footwork.capability.resources.CombatData;
 import jackiecrazy.footwork.capability.resources.ICombatCapability;
 import jackiecrazy.footwork.potion.FootworkEffects;
+import jackiecrazy.footwork.utils.TargetingUtils;
 import jackiecrazy.wardance.WarDance;
 import jackiecrazy.wardance.skill.*;
 import jackiecrazy.wardance.utils.CombatUtils;
+import jackiecrazy.wardance.utils.SkillUtils;
+import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.effect.MobEffectInstance;
@@ -103,7 +106,15 @@ public class Grapple extends Skill {
             float posture = casterCap.getPosture();
             target.setDeltaMovement(caster.getDeltaMovement().add(caster.position().vectorTo(target.position()).scale(-0.3)));
             target.hurtMarked = true;
-            CombatData.getCap(target).consumePosture(caster, posture * 2, 0, true);
+            float overflow = CombatData.getCap(target).consumePosture(caster, posture * 1.5f, 0, true);
+            if (overflow < 0) {
+                CombatData.getCap(target).addFracture(caster, 1);
+                //suplex shockwave
+                SkillUtils.createCloud(caster.level, caster, target.getX(), target.getY(), target.getZ(), 7, ParticleTypes.LARGE_SMOKE);
+                for (LivingEntity entity : target.level.getEntitiesOfClass(LivingEntity.class, target.getBoundingBoxForCulling().inflate(7), a -> !TargetingUtils.isAlly(a, caster))) {
+                    CombatData.getCap(entity).consumePosture(overflow / -2);
+                }
+            }
             casterCap.setPosture(0.1f);
         }
     }

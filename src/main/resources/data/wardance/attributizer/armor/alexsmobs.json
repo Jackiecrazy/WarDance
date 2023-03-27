@@ -6,23 +6,23 @@
         "operation":"ADDITION"
       },
       {
-        "attribute":"footwork:max_fracture",
-        "modify":"0.25",
-        "operation":"ADDITION"
-      },
-      {
         "attribute":"footwork:max_posture",
         "modify":"2.38",
         "operation":"ADDITION"
       },
       {
         "attribute":"footwork:posture_regen",
-        "modify":"10.5",
+        "modify":"0.79",
         "operation":"ADDITION"
       },
       {
-        "attribute":"footwork:stealth",
-        "modify":"-3.2",
+        "attribute":"footwork:might_grace",
+        "modify":"10",
+        "operation":"MULTIPLY_BASE"
+      },
+      {
+        "attribute":"footwork:max_fracture",
+        "modify":"0.25",
         "operation":"ADDITION"
       }
     ],
@@ -33,28 +33,23 @@
         "operation":"ADDITION"
       },
       {
-        "attribute":"footwork:max_fracture",
-        "modify":"0.25",
-        "operation":"ADDITION"
-      },
-      {
         "attribute":"footwork:max_posture",
         "modify":"3.17",
         "operation":"ADDITION"
       },
       {
         "attribute":"footwork:posture_regen",
-        "modify":"14",
+        "modify":"1.06",
         "operation":"ADDITION"
       },
       {
         "attribute":"footwork:might_gen",
-        "modify":"0.15",
+        "modify":"15",
         "operation":"MULTIPLY_BASE"
       },
       {
-        "attribute":"footwork:stealth",
-        "modify":"-4.2",
+        "attribute":"footwork:max_fracture",
+        "modify":"0.25",
         "operation":"ADDITION"
       }
     ],
@@ -65,35 +60,30 @@
         "operation":"ADDITION"
       },
       {
-        "attribute":"footwork:max_fracture",
-        "modify":"0.25",
-        "operation":"ADDITION"
-      },
-      {
         "attribute":"footwork:max_posture",
         "modify":"2.38",
         "operation":"ADDITION"
       },
       {
         "attribute":"footwork:posture_regen",
-        "modify":"10.5",
+        "modify":"0.79",
         "operation":"ADDITION"
       },
       {
-        "attribute":"footwork:stealth",
-        "modify":"-3.2",
+        "attribute":"footwork:spirit_cooldown_speed",
+        "modify":"10",
+        "operation":"MULTIPLY_BASE"
+      },
+      {
+        "attribute":"footwork:max_fracture",
+        "modify":"0.25",
         "operation":"ADDITION"
       }
     ],
 "alexsmobs:fedora":[
       {
-        "attribute":"footwork:max_fracture",
-        "modify":"0.25",
-        "operation":"ADDITION"
-      },
-      {
         "attribute":"footwork:posture_regen",
-        "modify":"6.67",
+        "modify":"0.63",
         "operation":"ADDITION"
       },
       {
@@ -102,25 +92,49 @@
         "operation":"ADDITION"
       },
       {
-        "attribute":"footwork:stealth",
-        "modify":"-0.4",
+        "attribute":"footwork:max_fracture",
+        "modify":"0.25",
+        "operation":"ADDITION"
+      }
+    ],
+"alexsmobs:flying_fish_boots":[
+      {
+        "attribute":"footwork:posture_regen",
+        "modify":"0.66",
+        "operation":"ADDITION"
+      },
+      {
+        "attribute":"footwork:max_fracture",
+        "modify":"0.25",
         "operation":"ADDITION"
       }
     ],
 "alexsmobs:frontier_cap":[
       {
+        "attribute":"footwork:posture_regen",
+        "modify":"0.63",
+        "operation":"ADDITION"
+      },
+      {
+        "attribute":"footwork:might_grace",
+        "modify":"10",
+        "operation":"MULTIPLY_BASE"
+      },
+      {
         "attribute":"footwork:max_fracture",
         "modify":"0.25",
         "operation":"ADDITION"
-      },
+      }
+    ],
+"alexsmobs:froststalker_helmet":[
       {
         "attribute":"footwork:posture_regen",
-        "modify":"6.67",
+        "modify":"0.66",
         "operation":"ADDITION"
       },
       {
-        "attribute":"footwork:stealth",
-        "modify":"-0.4",
+        "attribute":"footwork:max_fracture",
+        "modify":"0.25",
         "operation":"ADDITION"
       }
     ],
@@ -131,67 +145,86 @@
         "operation":"ADDITION"
       },
       {
-        "attribute":"footwork:max_fracture",
-        "modify":"0.25",
-        "operation":"ADDITION"
-      },
-      {
         "attribute":"footwork:max_posture",
         "modify":"1.59",
         "operation":"ADDITION"
       },
       {
         "attribute":"footwork:posture_regen",
-        "modify":"7",
+        "modify":"0.53",
         "operation":"ADDITION"
       },
       {
         "attribute":"footwork:might_gen",
-        "modify":"0.2",
+        "modify":"20",
         "operation":"MULTIPLY_BASE"
       },
       {
-        "attribute":"footwork:stealth",
-        "modify":"-2.1",
+        "attribute":"footwork:max_fracture",
+        "modify":"0.25",
+        "operation":"ADDITION"
+      }
+    ],
+"alexsmobs:novelty_hat":[
+      {
+        "attribute":"footwork:posture_regen",
+        "modify":"0.45",
+        "operation":"ADDITION"
+      },
+      {
+        "attribute":"footwork:max_fracture",
+        "modify":"0.25",
         "operation":"ADDITION"
       }
     ],
 "alexsmobs:roadrunner_boots":[
       {
-        "attribute":"footwork:max_fracture",
-        "modify":"0.25",
-        "operation":"ADDITION"
-      },
-      {
         "attribute":"footwork:posture_regen",
-        "modify":"6.67",
+        "modify":"0.63",
         "operation":"ADDITION"
       },
       {
         "attribute":"footwork:spirit_regen",
-        "modify":"0.1",
+        "modify":"10",
         "operation":"ADDITION"
       },
       {
-        "attribute":"footwork:stealth",
-        "modify":"-0.4",
+        "attribute":"footwork:max_fracture",
+        "modify":"0.25",
+        "operation":"ADDITION"
+      }
+    ],
+"alexsmobs:rocky_chestplate":[
+      {
+        "attribute":"footwork:evasion",
+        "modify":"1.4",
+        "operation":"ADDITION"
+      },
+      {
+        "attribute":"footwork:max_posture",
+        "modify":"3.17",
+        "operation":"ADDITION"
+      },
+      {
+        "attribute":"footwork:max_fracture",
+        "modify":"1.37",
         "operation":"ADDITION"
       }
     ],
 "alexsmobs:sombrero":[
       {
+        "attribute":"footwork:posture_regen",
+        "modify":"0.53",
+        "operation":"ADDITION"
+      },
+      {
+        "attribute":"footwork:spirit_gain",
+        "modify":"15",
+        "operation":"MULTIPLY_BASE"
+      },
+      {
         "attribute":"footwork:max_fracture",
         "modify":"0.25",
-        "operation":"ADDITION"
-      },
-      {
-        "attribute":"footwork:posture_regen",
-        "modify":"4.67",
-        "operation":"ADDITION"
-      },
-      {
-        "attribute":"footwork:stealth",
-        "modify":"-0.7",
         "operation":"ADDITION"
       }
     ],
@@ -202,18 +235,13 @@
         "operation":"ADDITION"
       },
       {
-        "attribute":"footwork:max_fracture",
-        "modify":"0.25",
-        "operation":"ADDITION"
-      },
-      {
         "attribute":"footwork:max_posture",
         "modify":"1.59",
         "operation":"ADDITION"
       },
       {
         "attribute":"footwork:posture_regen",
-        "modify":"7",
+        "modify":"0.53",
         "operation":"ADDITION"
       },
       {
@@ -222,8 +250,37 @@
         "operation":"ADDITION"
       },
       {
-        "attribute":"footwork:stealth",
-        "modify":"-2.1",
+        "attribute":"footwork:max_fracture",
+        "modify":"0.25",
+        "operation":"ADDITION"
+      }
+    ],
+"alexsmobs:tarantula_hawk_elytra":[
+      {
+        "attribute":"footwork:posture_regen",
+        "modify":"1.33",
+        "operation":"ADDITION"
+      },
+      {
+        "attribute":"footwork:max_fracture",
+        "modify":"0.25",
+        "operation":"ADDITION"
+      }
+    ],
+"alexsmobs:unsettling_kimono":[
+      {
+        "attribute":"footwork:posture_regen",
+        "modify":"1.33",
+        "operation":"ADDITION"
+      },
+      {
+        "attribute":"footwork:max_spirit",
+        "modify":"1",
+        "operation":"ADDITION"
+      },
+      {
+        "attribute":"footwork:max_fracture",
+        "modify":"0.25",
         "operation":"ADDITION"
       }
     ]

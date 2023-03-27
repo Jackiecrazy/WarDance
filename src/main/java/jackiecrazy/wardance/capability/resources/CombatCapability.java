@@ -281,6 +281,7 @@ public class CombatCapability implements ICombatCapability {
             ret = amount - above;
             amount = posture - above;
         } else if (posture - amount < 0) {
+            ret = posture - amount;
             posture = 0;
             if (addFracture(assailant, 1)) {
                 final boolean knockdown = amount > getMaxPosture() / 2 || elb.hasEffect(FootworkEffects.UNSTEADY.get());
@@ -297,7 +298,7 @@ public class CombatCapability implements ICombatCapability {
             for (Entity rider : elb.getPassengers())
                 rider.removeVehicle();
             staggerTickExisted = elb.tickCount;
-            return -1f;
+            return ret;
         }
         float weakness = 1;
         if (elb.hasEffect(MobEffects.HUNGER))
@@ -672,7 +673,7 @@ public class CombatCapability implements ICombatCapability {
         if (elb.hasEffect(FootworkEffects.SLEEP.get()) || elb.hasEffect(FootworkEffects.PARALYSIS.get()) || elb.hasEffect(FootworkEffects.PETRIFY.get()))
             vision = -1;
         //initialize posture
-        if (first) {
+        if (first && elb.getAttribute(FootworkAttributes.MAX_POSTURE.get()).getBaseValue() == 10d) {//ew
             final float mPos = getMPos(elb);
             elb.getAttribute(FootworkAttributes.MAX_POSTURE.get()).setBaseValue(mPos);
             elb.getAttribute(FootworkAttributes.MAX_FRACTURE.get()).setBaseValue(3 + Math.min(3, Math.round(elb.getMaxHealth() / 50)));
@@ -1046,7 +1047,7 @@ public class CombatCapability implements ICombatCapability {
         float exhaustMod = Math.max(0, elb.hasEffect(FootworkEffects.EXHAUSTION.get()) ? 1 - elb.getEffect(FootworkEffects.EXHAUSTION.get()).getAmplifier() * 0.2f : 1);
         float armorMod = 2.5f + Math.min(elb.getArmorValue(), 20) * 0.125f;
         float cooldownMod = Math.min(CombatUtils.getCooledAttackStrength(elb, InteractionHand.MAIN_HAND, 0.5f), CombatUtils.getCooledAttackStrength(elb, InteractionHand.MAIN_HAND, 0.5f));
-        float healthMod = 0.25f + elb.getHealth() / elb.getMaxHealth() * 0.75f;
+        float healthMod = elb.getHealth() / elb.getMaxHealth();
         //no speed modifier because it encourages not moving
         float speedMod = elb.isSprinting() ? 0.3f : elb.zza == 0 && elb.xxa == 0 && elb.yya == 0 ? 1f : 0.5f;
         final double ret = (elb.getAttributeValue(FootworkAttributes.POSTURE_REGEN.get()) / 20 * cooldownMod) * speedMod * exhaustMod * healthMod * poison;

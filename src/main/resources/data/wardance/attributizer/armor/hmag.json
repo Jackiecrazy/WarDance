@@ -1,23 +1,46 @@
 {
-"psi:psimetal_exosuit_boots":[
+"hmag:ancient_boots":[
+      {
+        "attribute":"footwork:max_fracture",
+        "modify":"1.05",
+        "operation":"ADDITION"
+      }
+    ],
+"hmag:ancient_chestplate":[
+      {
+        "attribute":"footwork:max_fracture",
+        "modify":"1.85",
+        "operation":"ADDITION"
+      }
+    ],
+"hmag:ancient_helmet":[
+      {
+        "attribute":"footwork:max_fracture",
+        "modify":"1.05",
+        "operation":"ADDITION"
+      }
+    ],
+"hmag:ancient_leggings":[
+      {
+        "attribute":"footwork:max_fracture",
+        "modify":"1.45",
+        "operation":"ADDITION"
+      }
+    ],
+"hmag:necrotic_chainmail_boots":[
       {
         "attribute":"footwork:evasion",
-        "modify":"1.1",
+        "modify":"0.6",
         "operation":"ADDITION"
       },
       {
         "attribute":"footwork:max_posture",
-        "modify":"1.99",
+        "modify":"1.47",
         "operation":"ADDITION"
       },
       {
-        "attribute":"footwork:spirit_cooldown_speed",
-        "modify":"7",
-        "operation":"MULTIPLY_BASE"
-      },
-      {
-        "attribute":"footwork:spirit_regen",
-        "modify":"5",
+        "attribute":"footwork:posture_regen",
+        "modify":"0.49",
         "operation":"ADDITION"
       },
       {
@@ -26,79 +49,64 @@
         "operation":"ADDITION"
       }
     ],
-"psi:psimetal_exosuit_chestplate":[
+"hmag:necrotic_chainmail_chestplate":[
       {
         "attribute":"footwork:evasion",
+        "modify":"1.2",
+        "operation":"ADDITION"
+      },
+      {
+        "attribute":"footwork:max_posture",
+        "modify":"2.94",
+        "operation":"ADDITION"
+      },
+      {
+        "attribute":"footwork:posture_regen",
+        "modify":"0.98",
+        "operation":"ADDITION"
+      },
+      {
+        "attribute":"footwork:max_fracture",
+        "modify":"0.25",
+        "operation":"ADDITION"
+      }
+    ],
+"hmag:necrotic_chainmail_helmet":[
+      {
+        "attribute":"footwork:evasion",
+        "modify":"0.6",
+        "operation":"ADDITION"
+      },
+      {
+        "attribute":"footwork:max_posture",
+        "modify":"1.47",
+        "operation":"ADDITION"
+      },
+      {
+        "attribute":"footwork:posture_regen",
+        "modify":"0.49",
+        "operation":"ADDITION"
+      },
+      {
+        "attribute":"footwork:max_fracture",
+        "modify":"0.25",
+        "operation":"ADDITION"
+      }
+    ],
+"hmag:necrotic_chainmail_leggings":[
+      {
+        "attribute":"footwork:evasion",
+        "modify":"0.9",
+        "operation":"ADDITION"
+      },
+      {
+        "attribute":"footwork:max_posture",
         "modify":"2.2",
         "operation":"ADDITION"
       },
       {
-        "attribute":"footwork:max_posture",
-        "modify":"3.98",
-        "operation":"ADDITION"
-      },
-      {
-        "attribute":"footwork:spirit_cooldown_speed",
-        "modify":"7",
-        "operation":"MULTIPLY_BASE"
-      },
-      {
-        "attribute":"footwork:spirit_regen",
-        "modify":"5",
-        "operation":"ADDITION"
-      },
-      {
-        "attribute":"footwork:max_fracture",
-        "modify":"0.25",
-        "operation":"ADDITION"
-      }
-    ],
-"psi:psimetal_exosuit_helmet":[
-      {
-        "attribute":"footwork:evasion",
-        "modify":"1.1",
-        "operation":"ADDITION"
-      },
-      {
-        "attribute":"footwork:max_posture",
-        "modify":"1.99",
-        "operation":"ADDITION"
-      },
-      {
-        "attribute":"footwork:spirit_cooldown_speed",
-        "modify":"7",
-        "operation":"MULTIPLY_BASE"
-      },
-      {
-        "attribute":"footwork:spirit_regen",
-        "modify":"5",
-        "operation":"ADDITION"
-      },
-      {
-        "attribute":"footwork:max_fracture",
-        "modify":"0.25",
-        "operation":"ADDITION"
-      }
-    ],
-"psi:psimetal_exosuit_leggings":[
-      {
-        "attribute":"footwork:evasion",
-        "modify":"1.65",
-        "operation":"ADDITION"
-      },
-      {
-        "attribute":"footwork:max_posture",
-        "modify":"2.98",
-        "operation":"ADDITION"
-      },
-      {
-        "attribute":"footwork:spirit_cooldown_speed",
-        "modify":"7",
-        "operation":"MULTIPLY_BASE"
-      },
-      {
-        "attribute":"footwork:spirit_regen",
-        "modify":"5",
+        "attribute":"footwork:posture_regen",
+        "modify":"0.73",
         "operation":"ADDITION"
       },
       {

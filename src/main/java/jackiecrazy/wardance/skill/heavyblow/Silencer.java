@@ -36,6 +36,11 @@ public class Silencer extends HeavyBlow {
     }
 
     @Override
+    protected boolean showArchetypeDescription() {
+        return false;
+    }
+
+    @Override
     public void onProc(LivingEntity caster, Event procPoint, STATE state, SkillData stats, LivingEntity target) {
         if (procPoint instanceof CriticalHitEvent && ((CriticalHitEvent) procPoint).getTarget() == target && state == STATE.INACTIVE) {
             if (caster.level.isClientSide() || caster == target) return;

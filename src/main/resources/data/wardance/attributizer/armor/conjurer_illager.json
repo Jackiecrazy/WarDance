@@ -1,13 +1,8 @@
 {
 "conjurer_illager:conjurer_hat":[
       {
-        "attribute":"footwork:max_fracture",
-        "modify":"0.25",
-        "operation":"ADDITION"
-      },
-      {
         "attribute":"footwork:posture_regen",
-        "modify":"4.67",
+        "modify":"0.53",
         "operation":"ADDITION"
       },
       {
@@ -16,8 +11,13 @@
         "operation":"ADDITION"
       },
       {
-        "attribute":"footwork:stealth",
-        "modify":"-0.7",
+        "attribute":"footwork:spirit_gain",
+        "modify":"30",
+        "operation":"MULTIPLY_BASE"
+      },
+      {
+        "attribute":"footwork:max_fracture",
+        "modify":"0.25",
         "operation":"ADDITION"
       }
     ]

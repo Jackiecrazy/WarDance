@@ -31,6 +31,17 @@ public class Momentum extends HeavyBlow {
         }
     }
 
+    @Override
+    public boolean onStateChange(LivingEntity caster, SkillData prev, STATE from, STATE to) {
+        prev.setState(STATE.INACTIVE);
+        return false;
+    }
+
+    @Override
+    protected boolean showArchetypeDescription() {
+        return false;
+    }
+
     private float power(float base, int to) {
         float fin = 1;
         while (to != 0) {
@@ -38,11 +49,5 @@ public class Momentum extends HeavyBlow {
             to--;
         }
         return fin;
-    }
-
-    @Override
-    public boolean onStateChange(LivingEntity caster, SkillData prev, STATE from, STATE to) {
-        prev.setState(STATE.INACTIVE);
-        return false;
     }
 }

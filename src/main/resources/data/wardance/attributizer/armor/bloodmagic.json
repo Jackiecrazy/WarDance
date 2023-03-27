@@ -6,28 +6,23 @@
         "operation":"ADDITION"
       },
       {
-        "attribute":"footwork:max_fracture",
-        "modify":"0.65",
-        "operation":"ADDITION"
-      },
-      {
         "attribute":"footwork:max_posture",
         "modify":"1.9",
         "operation":"ADDITION"
       },
       {
-        "attribute":"footwork:posture_regen",
-        "modify":"3.33",
-        "operation":"ADDITION"
-      },
-      {
         "attribute":"footwork:spirit_regen",
-        "modify":"0.03",
+        "modify":"3",
         "operation":"ADDITION"
       },
       {
-        "attribute":"footwork:stealth",
-        "modify":"-5.4",
+        "attribute":"footwork:might_grace",
+        "modify":"2",
+        "operation":"MULTIPLY_BASE"
+      },
+      {
+        "attribute":"footwork:max_fracture",
+        "modify":"0.65",
         "operation":"ADDITION"
       }
     ],
@@ -38,28 +33,23 @@
         "operation":"ADDITION"
       },
       {
-        "attribute":"footwork:max_fracture",
-        "modify":"0.65",
-        "operation":"ADDITION"
-      },
-      {
         "attribute":"footwork:max_posture",
         "modify":"1.9",
         "operation":"ADDITION"
       },
       {
-        "attribute":"footwork:posture_regen",
-        "modify":"3.33",
-        "operation":"ADDITION"
-      },
-      {
         "attribute":"footwork:spirit_regen",
-        "modify":"0.08",
+        "modify":"8",
         "operation":"ADDITION"
       },
       {
-        "attribute":"footwork:stealth",
-        "modify":"-5.4",
+        "attribute":"footwork:might_grace",
+        "modify":"6",
+        "operation":"MULTIPLY_BASE"
+      },
+      {
+        "attribute":"footwork:max_fracture",
+        "modify":"0.65",
         "operation":"ADDITION"
       }
     ],
@@ -70,28 +60,23 @@
         "operation":"ADDITION"
       },
       {
-        "attribute":"footwork:max_fracture",
-        "modify":"0.85",
-        "operation":"ADDITION"
-      },
-      {
         "attribute":"footwork:max_posture",
         "modify":"2.85",
         "operation":"ADDITION"
       },
       {
-        "attribute":"footwork:posture_regen",
-        "modify":"5",
-        "operation":"ADDITION"
-      },
-      {
         "attribute":"footwork:spirit_regen",
-        "modify":"0.06",
+        "modify":"6",
         "operation":"ADDITION"
       },
       {
-        "attribute":"footwork:stealth",
-        "modify":"-8.1",
+        "attribute":"footwork:might_grace",
+        "modify":"5",
+        "operation":"MULTIPLY_BASE"
+      },
+      {
+        "attribute":"footwork:max_fracture",
+        "modify":"0.85",
         "operation":"ADDITION"
       }
     ],
@@ -102,28 +87,23 @@
         "operation":"ADDITION"
       },
       {
-        "attribute":"footwork:max_fracture",
-        "modify":"1.05",
-        "operation":"ADDITION"
-      },
-      {
         "attribute":"footwork:max_posture",
         "modify":"3.79",
         "operation":"ADDITION"
       },
       {
-        "attribute":"footwork:posture_regen",
-        "modify":"6.67",
-        "operation":"ADDITION"
-      },
-      {
         "attribute":"footwork:spirit_regen",
-        "modify":"0.03",
+        "modify":"3",
         "operation":"ADDITION"
       },
       {
-        "attribute":"footwork:stealth",
-        "modify":"-10.8",
+        "attribute":"footwork:might_grace",
+        "modify":"2",
+        "operation":"MULTIPLY_BASE"
+      },
+      {
+        "attribute":"footwork:max_fracture",
+        "modify":"1.05",
         "operation":"ADDITION"
       }
     ]

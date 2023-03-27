@@ -1,13 +1,8 @@
 {
 "mod_lavacow:faminearmor_boots":[
       {
-        "attribute":"footwork:max_fracture",
-        "modify":"0.25",
-        "operation":"ADDITION"
-      },
-      {
         "attribute":"footwork:posture_regen",
-        "modify":"8",
+        "modify":"0.69",
         "operation":"ADDITION"
       },
       {
@@ -16,30 +11,40 @@
         "operation":"ADDITION"
       },
       {
-        "attribute":"footwork:spirit_regen",
-        "modify":"-0.1",
-        "operation":"ADDITION"
-      },
-      {
-        "attribute":"footwork:might_gen",
-        "modify":"0.25",
+        "attribute":"footwork:spirit_cooldown_speed",
+        "modify":"-10",
         "operation":"MULTIPLY_BASE"
       },
       {
-        "attribute":"footwork:stealth",
-        "modify":"-0.2",
+        "attribute":"footwork:spirit_regen",
+        "modify":"-10",
+        "operation":"ADDITION"
+      },
+      {
+        "attribute":"footwork:spirit_gain",
+        "modify":"25",
+        "operation":"MULTIPLY_BASE"
+      },
+      {
+        "attribute":"footwork:might_grace",
+        "modify":"-10",
+        "operation":"MULTIPLY_BASE"
+      },
+      {
+        "attribute":"footwork:might_gen",
+        "modify":"25",
+        "operation":"MULTIPLY_BASE"
+      },
+      {
+        "attribute":"footwork:max_fracture",
+        "modify":"0.25",
         "operation":"ADDITION"
       }
     ],
 "mod_lavacow:faminearmor_chestplate":[
       {
-        "attribute":"footwork:max_fracture",
-        "modify":"0.25",
-        "operation":"ADDITION"
-      },
-      {
         "attribute":"footwork:posture_regen",
-        "modify":"16",
+        "modify":"1.39",
         "operation":"ADDITION"
       },
       {
@@ -48,30 +53,40 @@
         "operation":"ADDITION"
       },
       {
-        "attribute":"footwork:spirit_regen",
-        "modify":"-0.1",
-        "operation":"ADDITION"
-      },
-      {
-        "attribute":"footwork:might_gen",
-        "modify":"0.25",
+        "attribute":"footwork:spirit_cooldown_speed",
+        "modify":"-10",
         "operation":"MULTIPLY_BASE"
       },
       {
-        "attribute":"footwork:stealth",
-        "modify":"-0.4",
+        "attribute":"footwork:spirit_regen",
+        "modify":"-10",
+        "operation":"ADDITION"
+      },
+      {
+        "attribute":"footwork:spirit_gain",
+        "modify":"25",
+        "operation":"MULTIPLY_BASE"
+      },
+      {
+        "attribute":"footwork:might_grace",
+        "modify":"-10",
+        "operation":"MULTIPLY_BASE"
+      },
+      {
+        "attribute":"footwork:might_gen",
+        "modify":"25",
+        "operation":"MULTIPLY_BASE"
+      },
+      {
+        "attribute":"footwork:max_fracture",
+        "modify":"0.25",
         "operation":"ADDITION"
       }
     ],
 "mod_lavacow:faminearmor_helmet":[
       {
-        "attribute":"footwork:max_fracture",
-        "modify":"0.25",
-        "operation":"ADDITION"
-      },
-      {
         "attribute":"footwork:posture_regen",
-        "modify":"8",
+        "modify":"0.69",
         "operation":"ADDITION"
       },
       {
@@ -80,30 +95,40 @@
         "operation":"ADDITION"
       },
       {
-        "attribute":"footwork:spirit_regen",
-        "modify":"-0.1",
-        "operation":"ADDITION"
-      },
-      {
-        "attribute":"footwork:might_gen",
-        "modify":"0.25",
+        "attribute":"footwork:spirit_cooldown_speed",
+        "modify":"-10",
         "operation":"MULTIPLY_BASE"
       },
       {
-        "attribute":"footwork:stealth",
-        "modify":"-0.2",
+        "attribute":"footwork:spirit_regen",
+        "modify":"-10",
+        "operation":"ADDITION"
+      },
+      {
+        "attribute":"footwork:spirit_gain",
+        "modify":"25",
+        "operation":"MULTIPLY_BASE"
+      },
+      {
+        "attribute":"footwork:might_grace",
+        "modify":"-10",
+        "operation":"MULTIPLY_BASE"
+      },
+      {
+        "attribute":"footwork:might_gen",
+        "modify":"25",
+        "operation":"MULTIPLY_BASE"
+      },
+      {
+        "attribute":"footwork:max_fracture",
+        "modify":"0.25",
         "operation":"ADDITION"
       }
     ],
 "mod_lavacow:faminearmor_leggings":[
       {
-        "attribute":"footwork:max_fracture",
-        "modify":"0.25",
-        "operation":"ADDITION"
-      },
-      {
         "attribute":"footwork:posture_regen",
-        "modify":"12",
+        "modify":"1.04",
         "operation":"ADDITION"
       },
       {
@@ -112,18 +137,33 @@
         "operation":"ADDITION"
       },
       {
-        "attribute":"footwork:spirit_regen",
-        "modify":"-0.1",
-        "operation":"ADDITION"
-      },
-      {
-        "attribute":"footwork:might_gen",
-        "modify":"0.25",
+        "attribute":"footwork:spirit_cooldown_speed",
+        "modify":"-10",
         "operation":"MULTIPLY_BASE"
       },
       {
-        "attribute":"footwork:stealth",
-        "modify":"-0.3",
+        "attribute":"footwork:spirit_regen",
+        "modify":"-10",
+        "operation":"ADDITION"
+      },
+      {
+        "attribute":"footwork:spirit_gain",
+        "modify":"25",
+        "operation":"MULTIPLY_BASE"
+      },
+      {
+        "attribute":"footwork:might_grace",
+        "modify":"-10",
+        "operation":"MULTIPLY_BASE"
+      },
+      {
+        "attribute":"footwork:might_gen",
+        "modify":"25",
+        "operation":"MULTIPLY_BASE"
+      },
+      {
+        "attribute":"footwork:max_fracture",
+        "modify":"0.25",
         "operation":"ADDITION"
       }
     ],
@@ -134,28 +174,23 @@
         "operation":"ADDITION"
       },
       {
-        "attribute":"footwork:max_fracture",
-        "modify":"0.25",
-        "operation":"ADDITION"
-      },
-      {
         "attribute":"footwork:max_posture",
         "modify":"1.7",
         "operation":"ADDITION"
       },
       {
         "attribute":"footwork:posture_regen",
-        "modify":"7.33",
+        "modify":"0.53",
         "operation":"ADDITION"
       },
       {
         "attribute":"footwork:spirit_regen",
-        "modify":"0.1",
+        "modify":"10",
         "operation":"ADDITION"
       },
       {
-        "attribute":"footwork:stealth",
-        "modify":"-2.3",
+        "attribute":"footwork:max_fracture",
+        "modify":"0.25",
         "operation":"ADDITION"
       }
     ],
@@ -166,28 +201,23 @@
         "operation":"ADDITION"
       },
       {
-        "attribute":"footwork:max_fracture",
-        "modify":"0.25",
-        "operation":"ADDITION"
-      },
-      {
         "attribute":"footwork:max_posture",
         "modify":"3.39",
         "operation":"ADDITION"
       },
       {
         "attribute":"footwork:posture_regen",
-        "modify":"14.67",
+        "modify":"1.06",
         "operation":"ADDITION"
       },
       {
         "attribute":"footwork:spirit_regen",
-        "modify":"0.1",
+        "modify":"10",
         "operation":"ADDITION"
       },
       {
-        "attribute":"footwork:stealth",
-        "modify":"-4.6",
+        "attribute":"footwork:max_fracture",
+        "modify":"0.25",
         "operation":"ADDITION"
       }
     ],
@@ -198,28 +228,23 @@
         "operation":"ADDITION"
       },
       {
-        "attribute":"footwork:max_fracture",
-        "modify":"0.25",
-        "operation":"ADDITION"
-      },
-      {
         "attribute":"footwork:max_posture",
         "modify":"1.7",
         "operation":"ADDITION"
       },
       {
         "attribute":"footwork:posture_regen",
-        "modify":"7.33",
+        "modify":"0.53",
         "operation":"ADDITION"
       },
       {
         "attribute":"footwork:spirit_regen",
-        "modify":"0.1",
+        "modify":"10",
         "operation":"ADDITION"
       },
       {
-        "attribute":"footwork:stealth",
-        "modify":"-2.3",
+        "attribute":"footwork:max_fracture",
+        "modify":"0.25",
         "operation":"ADDITION"
       }
     ],
@@ -230,40 +255,30 @@
         "operation":"ADDITION"
       },
       {
-        "attribute":"footwork:max_fracture",
-        "modify":"0.25",
-        "operation":"ADDITION"
-      },
-      {
         "attribute":"footwork:max_posture",
         "modify":"2.55",
         "operation":"ADDITION"
       },
       {
         "attribute":"footwork:posture_regen",
-        "modify":"11",
+        "modify":"0.79",
         "operation":"ADDITION"
       },
       {
         "attribute":"footwork:spirit_regen",
-        "modify":"0.1",
+        "modify":"10",
         "operation":"ADDITION"
       },
       {
-        "attribute":"footwork:stealth",
-        "modify":"-3.5",
+        "attribute":"footwork:max_fracture",
+        "modify":"0.25",
         "operation":"ADDITION"
       }
     ],
 "mod_lavacow:skeletonking_crown":[
       {
-        "attribute":"footwork:max_fracture",
-        "modify":"0.25",
-        "operation":"ADDITION"
-      },
-      {
         "attribute":"footwork:posture_regen",
-        "modify":"6.67",
+        "modify":"0.63",
         "operation":"ADDITION"
       },
       {
@@ -277,96 +292,76 @@
         "operation":"ADDITION"
       },
       {
-        "attribute":"footwork:stealth",
-        "modify":"-0.4",
+        "attribute":"footwork:max_fracture",
+        "modify":"0.25",
         "operation":"ADDITION"
       }
     ],
 "mod_lavacow:swinearmor_boots":[
       {
-        "attribute":"footwork:max_fracture",
-        "modify":"0.25",
-        "operation":"ADDITION"
-      },
-      {
         "attribute":"footwork:posture_regen",
-        "modify":"5.33",
+        "modify":"0.57",
         "operation":"ADDITION"
       },
       {
         "attribute":"footwork:might_gen",
-        "modify":"0.05",
+        "modify":"5",
         "operation":"MULTIPLY_BASE"
       },
       {
-        "attribute":"footwork:stealth",
-        "modify":"-0.6",
+        "attribute":"footwork:max_fracture",
+        "modify":"0.25",
         "operation":"ADDITION"
       }
     ],
 "mod_lavacow:swinearmor_chestplate":[
       {
-        "attribute":"footwork:max_fracture",
-        "modify":"0.25",
-        "operation":"ADDITION"
-      },
-      {
         "attribute":"footwork:posture_regen",
-        "modify":"10.67",
+        "modify":"1.13",
         "operation":"ADDITION"
       },
       {
         "attribute":"footwork:might_gen",
-        "modify":"0.05",
+        "modify":"5",
         "operation":"MULTIPLY_BASE"
       },
       {
-        "attribute":"footwork:stealth",
-        "modify":"-1.2",
+        "attribute":"footwork:max_fracture",
+        "modify":"0.25",
         "operation":"ADDITION"
       }
     ],
 "mod_lavacow:swinearmor_helmet":[
       {
-        "attribute":"footwork:max_fracture",
-        "modify":"0.25",
-        "operation":"ADDITION"
-      },
-      {
         "attribute":"footwork:posture_regen",
-        "modify":"5.33",
+        "modify":"0.57",
         "operation":"ADDITION"
       },
       {
         "attribute":"footwork:might_gen",
-        "modify":"0.05",
+        "modify":"5",
         "operation":"MULTIPLY_BASE"
       },
       {
-        "attribute":"footwork:stealth",
-        "modify":"-0.6",
+        "attribute":"footwork:max_fracture",
+        "modify":"0.25",
         "operation":"ADDITION"
       }
     ],
 "mod_lavacow:swinearmor_leggings":[
       {
-        "attribute":"footwork:max_fracture",
-        "modify":"0.25",
-        "operation":"ADDITION"
-      },
-      {
         "attribute":"footwork:posture_regen",
-        "modify":"8",
+        "modify":"0.85",
         "operation":"ADDITION"
       },
       {
         "attribute":"footwork:might_gen",
-        "modify":"0.05",
+        "modify":"5",
         "operation":"MULTIPLY_BASE"
       },
       {
-        "attribute":"footwork:stealth",
-        "modify":"-0.9",
+        "attribute":"footwork:max_fracture",
+        "modify":"0.25",
         "operation":"ADDITION"
       }
     ]

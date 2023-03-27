@@ -4,22 +4,12 @@
         "attribute":"footwork:max_fracture",
         "modify":"1.05",
         "operation":"ADDITION"
-      },
-      {
-        "attribute":"footwork:stealth",
-        "modify":"-5.4",
-        "operation":"ADDITION"
       }
     ],
 "cyclic:crystal_chestplate":[
       {
         "attribute":"footwork:max_fracture",
         "modify":"1.85",
-        "operation":"ADDITION"
-      },
-      {
-        "attribute":"footwork:stealth",
-        "modify":"-10.8",
         "operation":"ADDITION"
       }
     ],
@@ -28,22 +18,12 @@
         "attribute":"footwork:max_fracture",
         "modify":"1.05",
         "operation":"ADDITION"
-      },
-      {
-        "attribute":"footwork:stealth",
-        "modify":"-5.4",
-        "operation":"ADDITION"
       }
     ],
 "cyclic:crystal_leggings":[
       {
         "attribute":"footwork:max_fracture",
         "modify":"1.45",
-        "operation":"ADDITION"
-      },
-      {
-        "attribute":"footwork:stealth",
-        "modify":"-8.1",
         "operation":"ADDITION"
       }
     ],
@@ -52,22 +32,12 @@
         "attribute":"footwork:max_fracture",
         "modify":"1.05",
         "operation":"ADDITION"
-      },
-      {
-        "attribute":"footwork:stealth",
-        "modify":"-5.4",
-        "operation":"ADDITION"
       }
     ],
 "cyclic:emerald_chestplate":[
       {
         "attribute":"footwork:max_fracture",
         "modify":"1.85",
-        "operation":"ADDITION"
-      },
-      {
-        "attribute":"footwork:stealth",
-        "modify":"-10.8",
         "operation":"ADDITION"
       }
     ],
@@ -76,22 +46,12 @@
         "attribute":"footwork:max_fracture",
         "modify":"1.05",
         "operation":"ADDITION"
-      },
-      {
-        "attribute":"footwork:stealth",
-        "modify":"-5.4",
-        "operation":"ADDITION"
       }
     ],
 "cyclic:emerald_leggings":[
       {
         "attribute":"footwork:max_fracture",
         "modify":"1.45",
-        "operation":"ADDITION"
-      },
-      {
-        "attribute":"footwork:stealth",
-        "modify":"-8.1",
         "operation":"ADDITION"
       }
     ],
@@ -102,23 +62,18 @@
         "operation":"ADDITION"
       },
       {
-        "attribute":"footwork:max_fracture",
-        "modify":"0.25",
-        "operation":"ADDITION"
-      },
-      {
         "attribute":"footwork:max_posture",
         "modify":"1.9",
         "operation":"ADDITION"
       },
       {
         "attribute":"footwork:posture_regen",
-        "modify":"5.33",
+        "modify":"0.35",
         "operation":"ADDITION"
       },
       {
-        "attribute":"footwork:stealth",
-        "modify":"-3.1",
+        "attribute":"footwork:max_fracture",
+        "modify":"0.25",
         "operation":"ADDITION"
       }
     ]

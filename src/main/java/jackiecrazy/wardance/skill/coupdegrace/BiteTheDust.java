@@ -69,4 +69,9 @@ public class BiteTheDust extends CoupDeGrace {
         prev.setState(STATE.INACTIVE);
         return false;
     }
+
+    @Override
+    protected boolean showArchetypeDescription() {
+        return false;
+    }
 }

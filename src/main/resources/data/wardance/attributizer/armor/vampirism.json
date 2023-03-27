@@ -1,240 +1,4 @@
 {
-"vampirism:armor_of_swiftness_chest_normal":[
-      {
-        "attribute":"footwork:evasion",
-        "modify":"0.2",
-        "operation":"ADDITION"
-      },
-      {
-        "attribute":"footwork:max_fracture",
-        "modify":"0.25",
-        "operation":"ADDITION"
-      },
-      {
-        "attribute":"footwork:max_posture",
-        "modify":"1.2",
-        "operation":"ADDITION"
-      },
-      {
-        "attribute":"footwork:posture_regen",
-        "modify":"14",
-        "operation":"ADDITION"
-      },
-      {
-        "attribute":"footwork:stealth",
-        "modify":"-1.2",
-        "operation":"ADDITION"
-      }
-    ],
-"vampirism:armor_of_swiftness_feet_normal":[
-      {
-        "attribute":"footwork:evasion",
-        "modify":"0.1",
-        "operation":"ADDITION"
-      },
-      {
-        "attribute":"footwork:max_fracture",
-        "modify":"0.25",
-        "operation":"ADDITION"
-      },
-      {
-        "attribute":"footwork:max_posture",
-        "modify":"0.6",
-        "operation":"ADDITION"
-      },
-      {
-        "attribute":"footwork:posture_regen",
-        "modify":"7",
-        "operation":"ADDITION"
-      },
-      {
-        "attribute":"footwork:stealth",
-        "modify":"-0.6",
-        "operation":"ADDITION"
-      }
-    ],
-"vampirism:armor_of_swiftness_head_normal":[
-      {
-        "attribute":"footwork:evasion",
-        "modify":"0.1",
-        "operation":"ADDITION"
-      },
-      {
-        "attribute":"footwork:max_fracture",
-        "modify":"0.25",
-        "operation":"ADDITION"
-      },
-      {
-        "attribute":"footwork:max_posture",
-        "modify":"0.6",
-        "operation":"ADDITION"
-      },
-      {
-        "attribute":"footwork:posture_regen",
-        "modify":"7",
-        "operation":"ADDITION"
-      },
-      {
-        "attribute":"footwork:stealth",
-        "modify":"-0.6",
-        "operation":"ADDITION"
-      }
-    ],
-"vampirism:armor_of_swiftness_legs_normal":[
-      {
-        "attribute":"footwork:evasion",
-        "modify":"0.15",
-        "operation":"ADDITION"
-      },
-      {
-        "attribute":"footwork:max_fracture",
-        "modify":"0.25",
-        "operation":"ADDITION"
-      },
-      {
-        "attribute":"footwork:max_posture",
-        "modify":"0.9",
-        "operation":"ADDITION"
-      },
-      {
-        "attribute":"footwork:posture_regen",
-        "modify":"10.5",
-        "operation":"ADDITION"
-      },
-      {
-        "attribute":"footwork:stealth",
-        "modify":"-0.9",
-        "operation":"ADDITION"
-      }
-    ],
-"vampirism:hunter_coat_chest_normal":[
-      {
-        "attribute":"footwork:evasion",
-        "modify":"0.2",
-        "operation":"ADDITION"
-      },
-      {
-        "attribute":"footwork:max_fracture",
-        "modify":"0.25",
-        "operation":"ADDITION"
-      },
-      {
-        "attribute":"footwork:max_posture",
-        "modify":"1.2",
-        "operation":"ADDITION"
-      },
-      {
-        "attribute":"footwork:posture_regen",
-        "modify":"14",
-        "operation":"ADDITION"
-      },
-      {
-        "attribute":"footwork:might_gen",
-        "modify":"0.04",
-        "operation":"MULTIPLY_BASE"
-      },
-      {
-        "attribute":"footwork:stealth",
-        "modify":"-1.2",
-        "operation":"ADDITION"
-      }
-    ],
-"vampirism:hunter_coat_feet_normal":[
-      {
-        "attribute":"footwork:evasion",
-        "modify":"0.1",
-        "operation":"ADDITION"
-      },
-      {
-        "attribute":"footwork:max_fracture",
-        "modify":"0.25",
-        "operation":"ADDITION"
-      },
-      {
-        "attribute":"footwork:max_posture",
-        "modify":"0.6",
-        "operation":"ADDITION"
-      },
-      {
-        "attribute":"footwork:posture_regen",
-        "modify":"7",
-        "operation":"ADDITION"
-      },
-      {
-        "attribute":"footwork:might_gen",
-        "modify":"0.02",
-        "operation":"MULTIPLY_BASE"
-      },
-      {
-        "attribute":"footwork:stealth",
-        "modify":"-0.6",
-        "operation":"ADDITION"
-      }
-    ],
-"vampirism:hunter_coat_head_normal":[
-      {
-        "attribute":"footwork:evasion",
-        "modify":"0.1",
-        "operation":"ADDITION"
-      },
-      {
-        "attribute":"footwork:max_fracture",
-        "modify":"0.25",
-        "operation":"ADDITION"
-      },
-      {
-        "attribute":"footwork:max_posture",
-        "modify":"0.6",
-        "operation":"ADDITION"
-      },
-      {
-        "attribute":"footwork:posture_regen",
-        "modify":"7",
-        "operation":"ADDITION"
-      },
-      {
-        "attribute":"footwork:might_gen",
-        "modify":"0.02",
-        "operation":"MULTIPLY_BASE"
-      },
-      {
-        "attribute":"footwork:stealth",
-        "modify":"-0.6",
-        "operation":"ADDITION"
-      }
-    ],
-"vampirism:hunter_coat_legs_normal":[
-      {
-        "attribute":"footwork:evasion",
-        "modify":"0.15",
-        "operation":"ADDITION"
-      },
-      {
-        "attribute":"footwork:max_fracture",
-        "modify":"0.25",
-        "operation":"ADDITION"
-      },
-      {
-        "attribute":"footwork:max_posture",
-        "modify":"0.9",
-        "operation":"ADDITION"
-      },
-      {
-        "attribute":"footwork:posture_regen",
-        "modify":"10.5",
-        "operation":"ADDITION"
-      },
-      {
-        "attribute":"footwork:might_gen",
-        "modify":"0.03",
-        "operation":"MULTIPLY_BASE"
-      },
-      {
-        "attribute":"footwork:stealth",
-        "modify":"-0.9",
-        "operation":"ADDITION"
-      }
-    ],
 "vampirism:armor_of_swiftness_chest_enhanced":[
       {
         "attribute":"footwork:evasion",
@@ -242,296 +6,40 @@
         "operation":"ADDITION"
       },
       {
-        "attribute":"footwork:max_fracture",
-        "modify":"0.25",
-        "operation":"ADDITION"
-      },
-      {
         "attribute":"footwork:max_posture",
         "modify":"1.7",
         "operation":"ADDITION"
       },
       {
         "attribute":"footwork:posture_regen",
-        "modify":"16",
+        "modify":"1.33",
         "operation":"ADDITION"
       },
       {
-        "attribute":"footwork:stealth",
-        "modify":"-1.4",
+        "attribute":"footwork:max_fracture",
+        "modify":"0.25",
         "operation":"ADDITION"
       }
     ],
-"vampirism:armor_of_swiftness_feet_enhanced":[
+"vampirism:armor_of_swiftness_chest_normal":[
       {
         "attribute":"footwork:evasion",
         "modify":"0.2",
         "operation":"ADDITION"
       },
       {
-        "attribute":"footwork:max_fracture",
-        "modify":"0.25",
-        "operation":"ADDITION"
-      },
-      {
         "attribute":"footwork:max_posture",
-        "modify":"0.85",
+        "modify":"1.2",
         "operation":"ADDITION"
       },
       {
         "attribute":"footwork:posture_regen",
-        "modify":"8",
-        "operation":"ADDITION"
-      },
-      {
-        "attribute":"footwork:stealth",
-        "modify":"-0.7",
-        "operation":"ADDITION"
-      }
-    ],
-"vampirism:armor_of_swiftness_head_enhanced":[
-      {
-        "attribute":"footwork:evasion",
-        "modify":"0.2",
+        "modify":"1.26",
         "operation":"ADDITION"
       },
       {
         "attribute":"footwork:max_fracture",
         "modify":"0.25",
-        "operation":"ADDITION"
-      },
-      {
-        "attribute":"footwork:max_posture",
-        "modify":"0.85",
-        "operation":"ADDITION"
-      },
-      {
-        "attribute":"footwork:posture_regen",
-        "modify":"8",
-        "operation":"ADDITION"
-      },
-      {
-        "attribute":"footwork:stealth",
-        "modify":"-0.7",
-        "operation":"ADDITION"
-      }
-    ],
-"vampirism:armor_of_swiftness_legs_enhanced":[
-      {
-        "attribute":"footwork:evasion",
-        "modify":"0.3",
-        "operation":"ADDITION"
-      },
-      {
-        "attribute":"footwork:max_fracture",
-        "modify":"0.25",
-        "operation":"ADDITION"
-      },
-      {
-        "attribute":"footwork:max_posture",
-        "modify":"1.27",
-        "operation":"ADDITION"
-      },
-      {
-        "attribute":"footwork:posture_regen",
-        "modify":"12",
-        "operation":"ADDITION"
-      },
-      {
-        "attribute":"footwork:stealth",
-        "modify":"-1.1",
-        "operation":"ADDITION"
-      }
-    ],
-"vampirism:hunter_coat_chest_enhanced":[
-      {
-        "attribute":"footwork:evasion",
-        "modify":"0.4",
-        "operation":"ADDITION"
-      },
-      {
-        "attribute":"footwork:max_fracture",
-        "modify":"0.25",
-        "operation":"ADDITION"
-      },
-      {
-        "attribute":"footwork:max_posture",
-        "modify":"1.7",
-        "operation":"ADDITION"
-      },
-      {
-        "attribute":"footwork:posture_regen",
-        "modify":"16",
-        "operation":"ADDITION"
-      },
-      {
-        "attribute":"footwork:might_gen",
-        "modify":"0.06",
-        "operation":"MULTIPLY_BASE"
-      },
-      {
-        "attribute":"footwork:stealth",
-        "modify":"-1.4",
-        "operation":"ADDITION"
-      }
-    ],
-"vampirism:hunter_coat_feet_enhanced":[
-      {
-        "attribute":"footwork:evasion",
-        "modify":"0.2",
-        "operation":"ADDITION"
-      },
-      {
-        "attribute":"footwork:max_fracture",
-        "modify":"0.25",
-        "operation":"ADDITION"
-      },
-      {
-        "attribute":"footwork:max_posture",
-        "modify":"0.85",
-        "operation":"ADDITION"
-      },
-      {
-        "attribute":"footwork:posture_regen",
-        "modify":"8",
-        "operation":"ADDITION"
-      },
-      {
-        "attribute":"footwork:might_gen",
-        "modify":"0.03",
-        "operation":"MULTIPLY_BASE"
-      },
-      {
-        "attribute":"footwork:stealth",
-        "modify":"-0.7",
-        "operation":"ADDITION"
-      }
-    ],
-"vampirism:hunter_coat_head_enhanced":[
-      {
-        "attribute":"footwork:evasion",
-        "modify":"0.2",
-        "operation":"ADDITION"
-      },
-      {
-        "attribute":"footwork:max_fracture",
-        "modify":"0.25",
-        "operation":"ADDITION"
-      },
-      {
-        "attribute":"footwork:max_posture",
-        "modify":"0.85",
-        "operation":"ADDITION"
-      },
-      {
-        "attribute":"footwork:posture_regen",
-        "modify":"8",
-        "operation":"ADDITION"
-      },
-      {
-        "attribute":"footwork:might_gen",
-        "modify":"0.03",
-        "operation":"MULTIPLY_BASE"
-      },
-      {
-        "attribute":"footwork:stealth",
-        "modify":"-0.7",
-        "operation":"ADDITION"
-      }
-    ],
-"vampirism:hunter_coat_legs_enhanced":[
-      {
-        "attribute":"footwork:evasion",
-        "modify":"0.3",
-        "operation":"ADDITION"
-      },
-      {
-        "attribute":"footwork:max_fracture",
-        "modify":"0.25",
-        "operation":"ADDITION"
-      },
-      {
-        "attribute":"footwork:max_posture",
-        "modify":"1.27",
-        "operation":"ADDITION"
-      },
-      {
-        "attribute":"footwork:posture_regen",
-        "modify":"12",
-        "operation":"ADDITION"
-      },
-      {
-        "attribute":"footwork:might_gen",
-        "modify":"0.05",
-        "operation":"MULTIPLY_BASE"
-      },
-      {
-        "attribute":"footwork:stealth",
-        "modify":"-1.1",
-        "operation":"ADDITION"
-      }
-    ],
-"vampirism:hunter_hat_head_0":[
-      {
-        "attribute":"footwork:evasion",
-        "modify":"0.4",
-        "operation":"ADDITION"
-      },
-      {
-        "attribute":"footwork:max_fracture",
-        "modify":"0.25",
-        "operation":"ADDITION"
-      },
-      {
-        "attribute":"footwork:max_posture",
-        "modify":"1.7",
-        "operation":"ADDITION"
-      },
-      {
-        "attribute":"footwork:posture_regen",
-        "modify":"16",
-        "operation":"ADDITION"
-      },
-      {
-        "attribute":"footwork:might_gen",
-        "modify":"0.03",
-        "operation":"MULTIPLY_BASE"
-      },
-      {
-        "attribute":"footwork:stealth",
-        "modify":"-1.4",
-        "operation":"ADDITION"
-      }
-    ],
-"vampirism:hunter_hat_head_1":[
-      {
-        "attribute":"footwork:evasion",
-        "modify":"0.2",
-        "operation":"ADDITION"
-      },
-      {
-        "attribute":"footwork:max_fracture",
-        "modify":"0.25",
-        "operation":"ADDITION"
-      },
-      {
-        "attribute":"footwork:max_posture",
-        "modify":"0.85",
-        "operation":"ADDITION"
-      },
-      {
-        "attribute":"footwork:posture_regen",
-        "modify":"8",
-        "operation":"ADDITION"
-      },
-      {
-        "attribute":"footwork:might_gen",
-        "modify":"0.03",
-        "operation":"MULTIPLY_BASE"
-      },
-      {
-        "attribute":"footwork:stealth",
-        "modify":"-0.7",
         "operation":"ADDITION"
       }
     ],
@@ -542,23 +50,62 @@
         "operation":"ADDITION"
       },
       {
-        "attribute":"footwork:max_fracture",
-        "modify":"0.25",
-        "operation":"ADDITION"
-      },
-      {
         "attribute":"footwork:max_posture",
         "modify":"2.08",
         "operation":"ADDITION"
       },
       {
         "attribute":"footwork:posture_regen",
-        "modify":"18",
+        "modify":"1.39",
         "operation":"ADDITION"
       },
       {
-        "attribute":"footwork:stealth",
-        "modify":"-1.6",
+        "attribute":"footwork:max_fracture",
+        "modify":"0.25",
+        "operation":"ADDITION"
+      }
+    ],
+"vampirism:armor_of_swiftness_feet_enhanced":[
+      {
+        "attribute":"footwork:evasion",
+        "modify":"0.2",
+        "operation":"ADDITION"
+      },
+      {
+        "attribute":"footwork:max_posture",
+        "modify":"0.85",
+        "operation":"ADDITION"
+      },
+      {
+        "attribute":"footwork:posture_regen",
+        "modify":"0.66",
+        "operation":"ADDITION"
+      },
+      {
+        "attribute":"footwork:max_fracture",
+        "modify":"0.25",
+        "operation":"ADDITION"
+      }
+    ],
+"vampirism:armor_of_swiftness_feet_normal":[
+      {
+        "attribute":"footwork:evasion",
+        "modify":"0.1",
+        "operation":"ADDITION"
+      },
+      {
+        "attribute":"footwork:max_posture",
+        "modify":"0.6",
+        "operation":"ADDITION"
+      },
+      {
+        "attribute":"footwork:posture_regen",
+        "modify":"0.63",
+        "operation":"ADDITION"
+      },
+      {
+        "attribute":"footwork:max_fracture",
+        "modify":"0.25",
         "operation":"ADDITION"
       }
     ],
@@ -569,23 +116,62 @@
         "operation":"ADDITION"
       },
       {
-        "attribute":"footwork:max_fracture",
-        "modify":"0.25",
-        "operation":"ADDITION"
-      },
-      {
         "attribute":"footwork:max_posture",
         "modify":"1.04",
         "operation":"ADDITION"
       },
       {
         "attribute":"footwork:posture_regen",
-        "modify":"9",
+        "modify":"0.69",
         "operation":"ADDITION"
       },
       {
-        "attribute":"footwork:stealth",
-        "modify":"-0.8",
+        "attribute":"footwork:max_fracture",
+        "modify":"0.25",
+        "operation":"ADDITION"
+      }
+    ],
+"vampirism:armor_of_swiftness_head_enhanced":[
+      {
+        "attribute":"footwork:evasion",
+        "modify":"0.2",
+        "operation":"ADDITION"
+      },
+      {
+        "attribute":"footwork:max_posture",
+        "modify":"0.85",
+        "operation":"ADDITION"
+      },
+      {
+        "attribute":"footwork:posture_regen",
+        "modify":"0.66",
+        "operation":"ADDITION"
+      },
+      {
+        "attribute":"footwork:max_fracture",
+        "modify":"0.25",
+        "operation":"ADDITION"
+      }
+    ],
+"vampirism:armor_of_swiftness_head_normal":[
+      {
+        "attribute":"footwork:evasion",
+        "modify":"0.1",
+        "operation":"ADDITION"
+      },
+      {
+        "attribute":"footwork:max_posture",
+        "modify":"0.6",
+        "operation":"ADDITION"
+      },
+      {
+        "attribute":"footwork:posture_regen",
+        "modify":"0.63",
+        "operation":"ADDITION"
+      },
+      {
+        "attribute":"footwork:max_fracture",
+        "modify":"0.25",
         "operation":"ADDITION"
       }
     ],
@@ -596,23 +182,62 @@
         "operation":"ADDITION"
       },
       {
-        "attribute":"footwork:max_fracture",
-        "modify":"0.25",
-        "operation":"ADDITION"
-      },
-      {
         "attribute":"footwork:max_posture",
         "modify":"1.04",
         "operation":"ADDITION"
       },
       {
         "attribute":"footwork:posture_regen",
-        "modify":"9",
+        "modify":"0.69",
         "operation":"ADDITION"
       },
       {
-        "attribute":"footwork:stealth",
-        "modify":"-0.8",
+        "attribute":"footwork:max_fracture",
+        "modify":"0.25",
+        "operation":"ADDITION"
+      }
+    ],
+"vampirism:armor_of_swiftness_legs_enhanced":[
+      {
+        "attribute":"footwork:evasion",
+        "modify":"0.3",
+        "operation":"ADDITION"
+      },
+      {
+        "attribute":"footwork:max_posture",
+        "modify":"1.27",
+        "operation":"ADDITION"
+      },
+      {
+        "attribute":"footwork:posture_regen",
+        "modify":"0.99",
+        "operation":"ADDITION"
+      },
+      {
+        "attribute":"footwork:max_fracture",
+        "modify":"0.25",
+        "operation":"ADDITION"
+      }
+    ],
+"vampirism:armor_of_swiftness_legs_normal":[
+      {
+        "attribute":"footwork:evasion",
+        "modify":"0.15",
+        "operation":"ADDITION"
+      },
+      {
+        "attribute":"footwork:max_posture",
+        "modify":"0.9",
+        "operation":"ADDITION"
+      },
+      {
+        "attribute":"footwork:posture_regen",
+        "modify":"0.95",
+        "operation":"ADDITION"
+      },
+      {
+        "attribute":"footwork:max_fracture",
+        "modify":"0.25",
         "operation":"ADDITION"
       }
     ],
@@ -623,23 +248,72 @@
         "operation":"ADDITION"
       },
       {
-        "attribute":"footwork:max_fracture",
-        "modify":"0.25",
-        "operation":"ADDITION"
-      },
-      {
         "attribute":"footwork:max_posture",
         "modify":"1.56",
         "operation":"ADDITION"
       },
       {
         "attribute":"footwork:posture_regen",
-        "modify":"13.5",
+        "modify":"1.04",
         "operation":"ADDITION"
       },
       {
-        "attribute":"footwork:stealth",
-        "modify":"-1.2",
+        "attribute":"footwork:max_fracture",
+        "modify":"0.25",
+        "operation":"ADDITION"
+      }
+    ],
+"vampirism:hunter_coat_chest_enhanced":[
+      {
+        "attribute":"footwork:evasion",
+        "modify":"0.4",
+        "operation":"ADDITION"
+      },
+      {
+        "attribute":"footwork:max_posture",
+        "modify":"1.7",
+        "operation":"ADDITION"
+      },
+      {
+        "attribute":"footwork:posture_regen",
+        "modify":"1.33",
+        "operation":"ADDITION"
+      },
+      {
+        "attribute":"footwork:might_gen",
+        "modify":"6",
+        "operation":"MULTIPLY_BASE"
+      },
+      {
+        "attribute":"footwork:max_fracture",
+        "modify":"0.25",
+        "operation":"ADDITION"
+      }
+    ],
+"vampirism:hunter_coat_chest_normal":[
+      {
+        "attribute":"footwork:evasion",
+        "modify":"0.2",
+        "operation":"ADDITION"
+      },
+      {
+        "attribute":"footwork:max_posture",
+        "modify":"1.2",
+        "operation":"ADDITION"
+      },
+      {
+        "attribute":"footwork:posture_regen",
+        "modify":"1.26",
+        "operation":"ADDITION"
+      },
+      {
+        "attribute":"footwork:might_gen",
+        "modify":"4",
+        "operation":"MULTIPLY_BASE"
+      },
+      {
+        "attribute":"footwork:max_fracture",
+        "modify":"0.25",
         "operation":"ADDITION"
       }
     ],
@@ -650,28 +324,77 @@
         "operation":"ADDITION"
       },
       {
-        "attribute":"footwork:max_fracture",
-        "modify":"0.25",
-        "operation":"ADDITION"
-      },
-      {
         "attribute":"footwork:max_posture",
         "modify":"2.08",
         "operation":"ADDITION"
       },
       {
         "attribute":"footwork:posture_regen",
-        "modify":"18",
+        "modify":"1.39",
         "operation":"ADDITION"
       },
       {
         "attribute":"footwork:might_gen",
-        "modify":"0.08",
+        "modify":"8",
         "operation":"MULTIPLY_BASE"
       },
       {
-        "attribute":"footwork:stealth",
-        "modify":"-1.6",
+        "attribute":"footwork:max_fracture",
+        "modify":"0.25",
+        "operation":"ADDITION"
+      }
+    ],
+"vampirism:hunter_coat_feet_enhanced":[
+      {
+        "attribute":"footwork:evasion",
+        "modify":"0.2",
+        "operation":"ADDITION"
+      },
+      {
+        "attribute":"footwork:max_posture",
+        "modify":"0.85",
+        "operation":"ADDITION"
+      },
+      {
+        "attribute":"footwork:posture_regen",
+        "modify":"0.66",
+        "operation":"ADDITION"
+      },
+      {
+        "attribute":"footwork:might_gen",
+        "modify":"3",
+        "operation":"MULTIPLY_BASE"
+      },
+      {
+        "attribute":"footwork:max_fracture",
+        "modify":"0.25",
+        "operation":"ADDITION"
+      }
+    ],
+"vampirism:hunter_coat_feet_normal":[
+      {
+        "attribute":"footwork:evasion",
+        "modify":"0.1",
+        "operation":"ADDITION"
+      },
+      {
+        "attribute":"footwork:max_posture",
+        "modify":"0.6",
+        "operation":"ADDITION"
+      },
+      {
+        "attribute":"footwork:posture_regen",
+        "modify":"0.63",
+        "operation":"ADDITION"
+      },
+      {
+        "attribute":"footwork:might_gen",
+        "modify":"2",
+        "operation":"MULTIPLY_BASE"
+      },
+      {
+        "attribute":"footwork:max_fracture",
+        "modify":"0.25",
         "operation":"ADDITION"
       }
     ],
@@ -682,28 +405,77 @@
         "operation":"ADDITION"
       },
       {
-        "attribute":"footwork:max_fracture",
-        "modify":"0.25",
-        "operation":"ADDITION"
-      },
-      {
         "attribute":"footwork:max_posture",
         "modify":"1.04",
         "operation":"ADDITION"
       },
       {
         "attribute":"footwork:posture_regen",
-        "modify":"9",
+        "modify":"0.69",
         "operation":"ADDITION"
       },
       {
         "attribute":"footwork:might_gen",
-        "modify":"0.04",
+        "modify":"4",
         "operation":"MULTIPLY_BASE"
       },
       {
-        "attribute":"footwork:stealth",
-        "modify":"-0.8",
+        "attribute":"footwork:max_fracture",
+        "modify":"0.25",
+        "operation":"ADDITION"
+      }
+    ],
+"vampirism:hunter_coat_head_enhanced":[
+      {
+        "attribute":"footwork:evasion",
+        "modify":"0.2",
+        "operation":"ADDITION"
+      },
+      {
+        "attribute":"footwork:max_posture",
+        "modify":"0.85",
+        "operation":"ADDITION"
+      },
+      {
+        "attribute":"footwork:posture_regen",
+        "modify":"0.66",
+        "operation":"ADDITION"
+      },
+      {
+        "attribute":"footwork:might_gen",
+        "modify":"3",
+        "operation":"MULTIPLY_BASE"
+      },
+      {
+        "attribute":"footwork:max_fracture",
+        "modify":"0.25",
+        "operation":"ADDITION"
+      }
+    ],
+"vampirism:hunter_coat_head_normal":[
+      {
+        "attribute":"footwork:evasion",
+        "modify":"0.1",
+        "operation":"ADDITION"
+      },
+      {
+        "attribute":"footwork:max_posture",
+        "modify":"0.6",
+        "operation":"ADDITION"
+      },
+      {
+        "attribute":"footwork:posture_regen",
+        "modify":"0.63",
+        "operation":"ADDITION"
+      },
+      {
+        "attribute":"footwork:might_gen",
+        "modify":"2",
+        "operation":"MULTIPLY_BASE"
+      },
+      {
+        "attribute":"footwork:max_fracture",
+        "modify":"0.25",
         "operation":"ADDITION"
       }
     ],
@@ -714,28 +486,77 @@
         "operation":"ADDITION"
       },
       {
-        "attribute":"footwork:max_fracture",
-        "modify":"0.25",
-        "operation":"ADDITION"
-      },
-      {
         "attribute":"footwork:max_posture",
         "modify":"1.04",
         "operation":"ADDITION"
       },
       {
         "attribute":"footwork:posture_regen",
-        "modify":"9",
+        "modify":"0.69",
         "operation":"ADDITION"
       },
       {
         "attribute":"footwork:might_gen",
-        "modify":"0.04",
+        "modify":"4",
         "operation":"MULTIPLY_BASE"
       },
       {
-        "attribute":"footwork:stealth",
-        "modify":"-0.8",
+        "attribute":"footwork:max_fracture",
+        "modify":"0.25",
+        "operation":"ADDITION"
+      }
+    ],
+"vampirism:hunter_coat_legs_enhanced":[
+      {
+        "attribute":"footwork:evasion",
+        "modify":"0.3",
+        "operation":"ADDITION"
+      },
+      {
+        "attribute":"footwork:max_posture",
+        "modify":"1.27",
+        "operation":"ADDITION"
+      },
+      {
+        "attribute":"footwork:posture_regen",
+        "modify":"0.99",
+        "operation":"ADDITION"
+      },
+      {
+        "attribute":"footwork:might_gen",
+        "modify":"5",
+        "operation":"MULTIPLY_BASE"
+      },
+      {
+        "attribute":"footwork:max_fracture",
+        "modify":"0.25",
+        "operation":"ADDITION"
+      }
+    ],
+"vampirism:hunter_coat_legs_normal":[
+      {
+        "attribute":"footwork:evasion",
+        "modify":"0.15",
+        "operation":"ADDITION"
+      },
+      {
+        "attribute":"footwork:max_posture",
+        "modify":"0.9",
+        "operation":"ADDITION"
+      },
+      {
+        "attribute":"footwork:posture_regen",
+        "modify":"0.95",
+        "operation":"ADDITION"
+      },
+      {
+        "attribute":"footwork:might_gen",
+        "modify":"3",
+        "operation":"MULTIPLY_BASE"
+      },
+      {
+        "attribute":"footwork:max_fracture",
+        "modify":"0.25",
         "operation":"ADDITION"
       }
     ],
@@ -746,35 +567,35 @@
         "operation":"ADDITION"
       },
       {
-        "attribute":"footwork:max_fracture",
-        "modify":"0.25",
-        "operation":"ADDITION"
-      },
-      {
         "attribute":"footwork:max_posture",
         "modify":"1.56",
         "operation":"ADDITION"
       },
       {
         "attribute":"footwork:posture_regen",
-        "modify":"13.5",
+        "modify":"1.04",
         "operation":"ADDITION"
       },
       {
         "attribute":"footwork:might_gen",
-        "modify":"0.06",
+        "modify":"6",
         "operation":"MULTIPLY_BASE"
       },
       {
-        "attribute":"footwork:stealth",
-        "modify":"-1.2",
+        "attribute":"footwork:max_fracture",
+        "modify":"0.25",
         "operation":"ADDITION"
       }
     ],
-"vampirism:obsidian_armor_chest_normal":[
+"vampirism:hunter_hat_head_0":[
       {
-        "attribute":"footwork:max_fracture",
-        "modify":"1.85",
+        "attribute":"footwork:evasion",
+        "modify":"0.4",
+        "operation":"ADDITION"
+      },
+      {
+        "attribute":"footwork:max_posture",
+        "modify":"1.7",
         "operation":"ADDITION"
       },
       {
@@ -783,195 +604,382 @@
         "operation":"ADDITION"
       },
       {
-        "attribute":"footwork:stealth",
-        "modify":"-10.6",
+        "attribute":"footwork:might_gen",
+        "modify":"3",
+        "operation":"MULTIPLY_BASE"
+      },
+      {
+        "attribute":"footwork:max_fracture",
+        "modify":"0.25",
         "operation":"ADDITION"
       }
     ],
-"vampirism:obsidian_armor_feet_normal":[
+"vampirism:hunter_hat_head_1":[
       {
-        "attribute":"footwork:max_fracture",
-        "modify":"1.05",
+        "attribute":"footwork:evasion",
+        "modify":"0.2",
+        "operation":"ADDITION"
+      },
+      {
+        "attribute":"footwork:max_posture",
+        "modify":"0.85",
         "operation":"ADDITION"
       },
       {
         "attribute":"footwork:posture_regen",
-        "modify":"0.67",
+        "modify":"0.66",
         "operation":"ADDITION"
       },
       {
-        "attribute":"footwork:stealth",
-        "modify":"-5.3",
-        "operation":"ADDITION"
-      }
-    ],
-"vampirism:obsidian_armor_head_normal":[
+        "attribute":"footwork:might_gen",
+        "modify":"3",
+        "operation":"MULTIPLY_BASE"
+      },
       {
         "attribute":"footwork:max_fracture",
-        "modify":"1.05",
-        "operation":"ADDITION"
-      },
-      {
-        "attribute":"footwork:posture_regen",
-        "modify":"0.67",
-        "operation":"ADDITION"
-      },
-      {
-        "attribute":"footwork:stealth",
-        "modify":"-5.3",
-        "operation":"ADDITION"
-      }
-    ],
-"vampirism:obsidian_armor_legs_normal":[
-      {
-        "attribute":"footwork:max_fracture",
-        "modify":"1.45",
-        "operation":"ADDITION"
-      },
-      {
-        "attribute":"footwork:posture_regen",
-        "modify":"1",
-        "operation":"ADDITION"
-      },
-      {
-        "attribute":"footwork:stealth",
-        "modify":"-8",
+        "modify":"0.25",
         "operation":"ADDITION"
       }
     ],
 "vampirism:obsidian_armor_chest_enhanced":[
       {
+        "attribute":"footwork:posture_regen",
+        "modify":"0.57",
+        "operation":"ADDITION"
+      },
+      {
         "attribute":"footwork:max_fracture",
         "modify":"2.01",
         "operation":"ADDITION"
-      },
-      {
-        "attribute":"footwork:posture_regen",
-        "modify":"2.67",
-        "operation":"ADDITION"
-      },
-      {
-        "attribute":"footwork:stealth",
-        "modify":"-11.2",
-        "operation":"ADDITION"
       }
     ],
-"vampirism:obsidian_armor_feet_enhanced":[
-      {
-        "attribute":"footwork:max_fracture",
-        "modify":"1.13",
-        "operation":"ADDITION"
-      },
+"vampirism:obsidian_armor_chest_normal":[
       {
         "attribute":"footwork:posture_regen",
-        "modify":"1.33",
+        "modify":"0.4",
         "operation":"ADDITION"
       },
-      {
-        "attribute":"footwork:stealth",
-        "modify":"-5.6",
-        "operation":"ADDITION"
-      }
-    ],
-"vampirism:obsidian_armor_head_enhanced":[
       {
         "attribute":"footwork:max_fracture",
-        "modify":"1.13",
-        "operation":"ADDITION"
-      },
-      {
-        "attribute":"footwork:posture_regen",
-        "modify":"1.33",
-        "operation":"ADDITION"
-      },
-      {
-        "attribute":"footwork:stealth",
-        "modify":"-5.6",
-        "operation":"ADDITION"
-      }
-    ],
-"vampirism:obsidian_armor_legs_enhanced":[
-      {
-        "attribute":"footwork:max_fracture",
-        "modify":"1.57",
-        "operation":"ADDITION"
-      },
-      {
-        "attribute":"footwork:posture_regen",
-        "modify":"2",
-        "operation":"ADDITION"
-      },
-      {
-        "attribute":"footwork:stealth",
-        "modify":"-8.4",
+        "modify":"1.85",
         "operation":"ADDITION"
       }
     ],
 "vampirism:obsidian_armor_chest_ultimate":[
       {
+        "attribute":"footwork:posture_regen",
+        "modify":"0.69",
+        "operation":"ADDITION"
+      },
+      {
         "attribute":"footwork:max_fracture",
         "modify":"2.17",
         "operation":"ADDITION"
-      },
+      }
+    ],
+"vampirism:obsidian_armor_feet_enhanced":[
       {
         "attribute":"footwork:posture_regen",
-        "modify":"4",
+        "modify":"0.28",
         "operation":"ADDITION"
       },
       {
-        "attribute":"footwork:stealth",
-        "modify":"-11.8",
+        "attribute":"footwork:max_fracture",
+        "modify":"1.13",
+        "operation":"ADDITION"
+      }
+    ],
+"vampirism:obsidian_armor_feet_normal":[
+      {
+        "attribute":"footwork:posture_regen",
+        "modify":"0.2",
+        "operation":"ADDITION"
+      },
+      {
+        "attribute":"footwork:max_fracture",
+        "modify":"1.05",
         "operation":"ADDITION"
       }
     ],
 "vampirism:obsidian_armor_feet_ultimate":[
       {
+        "attribute":"footwork:posture_regen",
+        "modify":"0.35",
+        "operation":"ADDITION"
+      },
+      {
         "attribute":"footwork:max_fracture",
         "modify":"1.21",
         "operation":"ADDITION"
-      },
+      }
+    ],
+"vampirism:obsidian_armor_head_enhanced":[
       {
         "attribute":"footwork:posture_regen",
-        "modify":"2",
+        "modify":"0.28",
         "operation":"ADDITION"
       },
       {
-        "attribute":"footwork:stealth",
-        "modify":"-5.9",
+        "attribute":"footwork:max_fracture",
+        "modify":"1.13",
+        "operation":"ADDITION"
+      }
+    ],
+"vampirism:obsidian_armor_head_normal":[
+      {
+        "attribute":"footwork:posture_regen",
+        "modify":"0.2",
+        "operation":"ADDITION"
+      },
+      {
+        "attribute":"footwork:max_fracture",
+        "modify":"1.05",
         "operation":"ADDITION"
       }
     ],
 "vampirism:obsidian_armor_head_ultimate":[
       {
+        "attribute":"footwork:posture_regen",
+        "modify":"0.35",
+        "operation":"ADDITION"
+      },
+      {
         "attribute":"footwork:max_fracture",
         "modify":"1.21",
         "operation":"ADDITION"
-      },
+      }
+    ],
+"vampirism:obsidian_armor_legs_enhanced":[
       {
         "attribute":"footwork:posture_regen",
-        "modify":"2",
+        "modify":"0.42",
         "operation":"ADDITION"
       },
       {
-        "attribute":"footwork:stealth",
-        "modify":"-5.9",
+        "attribute":"footwork:max_fracture",
+        "modify":"1.57",
+        "operation":"ADDITION"
+      }
+    ],
+"vampirism:obsidian_armor_legs_normal":[
+      {
+        "attribute":"footwork:posture_regen",
+        "modify":"0.3",
+        "operation":"ADDITION"
+      },
+      {
+        "attribute":"footwork:max_fracture",
+        "modify":"1.45",
         "operation":"ADDITION"
       }
     ],
 "vampirism:obsidian_armor_legs_ultimate":[
       {
+        "attribute":"footwork:posture_regen",
+        "modify":"0.52",
+        "operation":"ADDITION"
+      },
+      {
         "attribute":"footwork:max_fracture",
         "modify":"1.69",
         "operation":"ADDITION"
-      },
+      }
+    ],
+"vampirism:vampire_cloak_black_blue":[
       {
         "attribute":"footwork:posture_regen",
-        "modify":"3",
+        "modify":"1.26",
         "operation":"ADDITION"
       },
       {
-        "attribute":"footwork:stealth",
-        "modify":"-8.9",
+        "attribute":"footwork:max_spirit",
+        "modify":"0.5",
+        "operation":"ADDITION"
+      },
+      {
+        "attribute":"footwork:spirit_cooldown_speed",
+        "modify":"10",
+        "operation":"MULTIPLY_BASE"
+      },
+      {
+        "attribute":"footwork:max_fracture",
+        "modify":"0.25",
+        "operation":"ADDITION"
+      }
+    ],
+"vampirism:vampire_cloak_black_red":[
+      {
+        "attribute":"footwork:posture_regen",
+        "modify":"1.26",
+        "operation":"ADDITION"
+      },
+      {
+        "attribute":"footwork:max_spirit",
+        "modify":"0.5",
+        "operation":"ADDITION"
+      },
+      {
+        "attribute":"footwork:spirit_cooldown_speed",
+        "modify":"10",
+        "operation":"MULTIPLY_BASE"
+      },
+      {
+        "attribute":"footwork:max_fracture",
+        "modify":"0.25",
+        "operation":"ADDITION"
+      }
+    ],
+"vampirism:vampire_cloak_black_white":[
+      {
+        "attribute":"footwork:posture_regen",
+        "modify":"1.26",
+        "operation":"ADDITION"
+      },
+      {
+        "attribute":"footwork:max_spirit",
+        "modify":"0.5",
+        "operation":"ADDITION"
+      },
+      {
+        "attribute":"footwork:spirit_cooldown_speed",
+        "modify":"10",
+        "operation":"MULTIPLY_BASE"
+      },
+      {
+        "attribute":"footwork:max_fracture",
+        "modify":"0.25",
+        "operation":"ADDITION"
+      }
+    ],
+"vampirism:vampire_cloak_red_black":[
+      {
+        "attribute":"footwork:posture_regen",
+        "modify":"1.26",
+        "operation":"ADDITION"
+      },
+      {
+        "attribute":"footwork:max_spirit",
+        "modify":"0.5",
+        "operation":"ADDITION"
+      },
+      {
+        "attribute":"footwork:spirit_cooldown_speed",
+        "modify":"10",
+        "operation":"MULTIPLY_BASE"
+      },
+      {
+        "attribute":"footwork:max_fracture",
+        "modify":"0.25",
+        "operation":"ADDITION"
+      }
+    ],
+"vampirism:vampire_cloak_white_black":[
+      {
+        "attribute":"footwork:posture_regen",
+        "modify":"1.26",
+        "operation":"ADDITION"
+      },
+      {
+        "attribute":"footwork:max_spirit",
+        "modify":"0.5",
+        "operation":"ADDITION"
+      },
+      {
+        "attribute":"footwork:spirit_cooldown_speed",
+        "modify":"10",
+        "operation":"MULTIPLY_BASE"
+      },
+      {
+        "attribute":"footwork:max_fracture",
+        "modify":"0.25",
+        "operation":"ADDITION"
+      }
+    ],
+"vampirism:vampire_clothing_boots":[
+      {
+        "attribute":"footwork:posture_regen",
+        "modify":"0.63",
+        "operation":"ADDITION"
+      },
+      {
+        "attribute":"footwork:max_spirit",
+        "modify":"0.5",
+        "operation":"ADDITION"
+      },
+      {
+        "attribute":"footwork:spirit_cooldown_speed",
+        "modify":"10",
+        "operation":"MULTIPLY_BASE"
+      },
+      {
+        "attribute":"footwork:max_fracture",
+        "modify":"0.25",
+        "operation":"ADDITION"
+      }
+    ],
+"vampirism:vampire_clothing_crown":[
+      {
+        "attribute":"footwork:posture_regen",
+        "modify":"1.26",
+        "operation":"ADDITION"
+      },
+      {
+        "attribute":"footwork:max_spirit",
+        "modify":"0.5",
+        "operation":"ADDITION"
+      },
+      {
+        "attribute":"footwork:spirit_cooldown_speed",
+        "modify":"10",
+        "operation":"MULTIPLY_BASE"
+      },
+      {
+        "attribute":"footwork:max_fracture",
+        "modify":"0.25",
+        "operation":"ADDITION"
+      }
+    ],
+"vampirism:vampire_clothing_hat":[
+      {
+        "attribute":"footwork:posture_regen",
+        "modify":"0.63",
+        "operation":"ADDITION"
+      },
+      {
+        "attribute":"footwork:max_spirit",
+        "modify":"0.5",
+        "operation":"ADDITION"
+      },
+      {
+        "attribute":"footwork:spirit_cooldown_speed",
+        "modify":"10",
+        "operation":"MULTIPLY_BASE"
+      },
+      {
+        "attribute":"footwork:max_fracture",
+        "modify":"0.25",
+        "operation":"ADDITION"
+      }
+    ],
+"vampirism:vampire_clothing_legs":[
+      {
+        "attribute":"footwork:posture_regen",
+        "modify":"0.95",
+        "operation":"ADDITION"
+      },
+      {
+        "attribute":"footwork:max_spirit",
+        "modify":"0.5",
+        "operation":"ADDITION"
+      },
+      {
+        "attribute":"footwork:spirit_cooldown_speed",
+        "modify":"10",
+        "operation":"MULTIPLY_BASE"
+      },
+      {
+        "attribute":"footwork:max_fracture",
+        "modify":"0.25",
         "operation":"ADDITION"
       }
     ]

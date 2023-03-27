@@ -430,12 +430,17 @@ public class SkillSelectionScreen extends Screen {
             return;
         }
         Skill selectedSkill = this.selectedSkill.getSkill();
+        displaySkillInfo(selectedSkill);
+    }
+
+    protected void displaySkillInfo(Skill s) {
+        skillInfo.clearInfo();
         List<String> lines = new ArrayList<>();
 
-        lines.add(ChatFormatting.BOLD + "" + ChatFormatting.UNDERLINE + selectedSkill.getDisplayName(null).getString() + ChatFormatting.RESET + "\n");
-        if (selectedSkill.getArchetype() != SkillArchetypes.none)
-            lines.add(selectedSkill.getArchetype().description().getString());
-        lines.add(selectedSkill.description().getString());
+        lines.add(ChatFormatting.BOLD + "" + ChatFormatting.UNDERLINE + s.getDisplayName(null).getString() + ChatFormatting.RESET + "\n");
+//        if (selectedSkill.getArchetype() != SkillArchetypes.none)
+//            lines.add(selectedSkill.getArchetype().description().getString());
+        lines.add(s.description().getString());
 //        if (selectedVariation != null) {
 //            //lines.add(String.valueOf(selectedVariation.getSkill().getColor().getRGB()));
 //            lines.add("\n");

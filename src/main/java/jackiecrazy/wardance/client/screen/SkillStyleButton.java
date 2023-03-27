@@ -40,6 +40,9 @@ public class SkillStyleButton extends SkillSelectionButton {
             if (this.clicked(mouseX, mouseY)) {
                 if (button == 0) {
                     this.playDownSound(Minecraft.getInstance().getSoundManager());
+                    //send style data to parent
+                    if (getStyle() != null)
+                        parent.displaySkillInfo(getStyle());
                     this.onClick(mouseX, mouseY);
                     return true;
                 } else if (button == 1 && getParentSelection() == null) {

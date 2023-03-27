@@ -1,173 +1,163 @@
 {
-"greekfantasy:achilles_boots":[
+"forbidden_arcanus:deorum_boots":[
       {
         "attribute":"footwork:evasion",
-        "modify":"0.9",
+        "modify":"1",
         "operation":"ADDITION"
       },
       {
         "attribute":"footwork:max_posture",
-        "modify":"1.8",
-        "operation":"ADDITION"
-      },
-      {
-        "attribute":"footwork:max_might",
-        "modify":"0.3",
+        "modify":"1.9",
         "operation":"ADDITION"
       },
       {
         "attribute":"footwork:max_fracture",
-        "modify":"0.57",
+        "modify":"0.33",
         "operation":"ADDITION"
       }
     ],
-"greekfantasy:achilles_chestplate":[
+"forbidden_arcanus:deorum_chestplate":[
       {
         "attribute":"footwork:evasion",
-        "modify":"1.8",
+        "modify":"2",
         "operation":"ADDITION"
       },
       {
         "attribute":"footwork:max_posture",
-        "modify":"3.6",
-        "operation":"ADDITION"
-      },
-      {
-        "attribute":"footwork:max_might",
-        "modify":"0.8",
+        "modify":"3.79",
         "operation":"ADDITION"
       },
       {
         "attribute":"footwork:max_fracture",
-        "modify":"0.89",
+        "modify":"0.41",
         "operation":"ADDITION"
       }
     ],
-"greekfantasy:achilles_helmet":[
+"forbidden_arcanus:deorum_helmet":[
       {
         "attribute":"footwork:evasion",
-        "modify":"0.9",
+        "modify":"1",
         "operation":"ADDITION"
       },
       {
         "attribute":"footwork:max_posture",
-        "modify":"1.8",
-        "operation":"ADDITION"
-      },
-      {
-        "attribute":"footwork:max_might",
-        "modify":"0.6",
+        "modify":"1.9",
         "operation":"ADDITION"
       },
       {
         "attribute":"footwork:max_fracture",
-        "modify":"0.57",
+        "modify":"0.33",
         "operation":"ADDITION"
       }
     ],
-"greekfantasy:achilles_leggings":[
+"forbidden_arcanus:deorum_leggings":[
       {
         "attribute":"footwork:evasion",
-        "modify":"1.35",
+        "modify":"1.5",
         "operation":"ADDITION"
       },
       {
         "attribute":"footwork:max_posture",
-        "modify":"2.7",
-        "operation":"ADDITION"
-      },
-      {
-        "attribute":"footwork:max_might",
-        "modify":"0.3",
+        "modify":"2.85",
         "operation":"ADDITION"
       },
       {
         "attribute":"footwork:max_fracture",
-        "modify":"0.73",
+        "modify":"0.37",
         "operation":"ADDITION"
       }
     ],
-"greekfantasy:hellenic_boots":[
+"forbidden_arcanus:draco_arcanus_boots":[
       {
         "attribute":"footwork:evasion",
-        "modify":"0.9",
+        "modify":"0.7",
         "operation":"ADDITION"
       },
       {
         "attribute":"footwork:max_posture",
-        "modify":"1.8",
+        "modify":"1.59",
         "operation":"ADDITION"
       },
       {
         "attribute":"footwork:max_fracture",
-        "modify":"0.57",
+        "modify":"0.81",
         "operation":"ADDITION"
       }
     ],
-"greekfantasy:hellenic_chestplate":[
+"forbidden_arcanus:draco_arcanus_chestplate":[
       {
         "attribute":"footwork:evasion",
-        "modify":"1.8",
+        "modify":"1.4",
         "operation":"ADDITION"
       },
       {
         "attribute":"footwork:max_posture",
-        "modify":"3.6",
+        "modify":"3.17",
         "operation":"ADDITION"
       },
       {
         "attribute":"footwork:max_fracture",
-        "modify":"0.89",
+        "modify":"1.37",
         "operation":"ADDITION"
       }
     ],
-"greekfantasy:hellenic_helmet":[
+"forbidden_arcanus:draco_arcanus_helmet":[
       {
         "attribute":"footwork:evasion",
-        "modify":"0.9",
+        "modify":"0.7",
         "operation":"ADDITION"
       },
       {
         "attribute":"footwork:max_posture",
-        "modify":"1.8",
+        "modify":"1.59",
         "operation":"ADDITION"
       },
       {
         "attribute":"footwork:max_fracture",
-        "modify":"0.57",
+        "modify":"0.81",
         "operation":"ADDITION"
       }
     ],
-"greekfantasy:hellenic_leggings":[
+"forbidden_arcanus:draco_arcanus_leggings":[
       {
         "attribute":"footwork:evasion",
-        "modify":"1.35",
-        "operation":"ADDITION"
-      },
-      {
-        "attribute":"footwork:max_posture",
-        "modify":"2.7",
-        "operation":"ADDITION"
-      },
-      {
-        "attribute":"footwork:max_fracture",
-        "modify":"0.73",
-        "operation":"ADDITION"
-      }
-    ],
-"greekfantasy:helm_of_darkness":[
-      {
-        "attribute":"footwork:might_gen",
-        "modify":"20",
-        "operation":"MULTIPLY_BASE"
-      },
-      {
-        "attribute":"footwork:max_fracture",
         "modify":"1.05",
         "operation":"ADDITION"
+      },
+      {
+        "attribute":"footwork:max_posture",
+        "modify":"2.38",
+        "operation":"ADDITION"
+      },
+      {
+        "attribute":"footwork:max_fracture",
+        "modify":"1.09",
+        "operation":"ADDITION"
       }
     ],
-"greekfantasy:nemean_lion_hide":[
+"forbidden_arcanus:mortem_boots":[
+      {
+        "attribute":"footwork:evasion",
+        "modify":"0.2",
+        "operation":"ADDITION"
+      },
+      {
+        "attribute":"footwork:max_posture",
+        "modify":"0.85",
+        "operation":"ADDITION"
+      },
+      {
+        "attribute":"footwork:posture_regen",
+        "modify":"0.28",
+        "operation":"ADDITION"
+      },
+      {
+        "attribute":"footwork:max_fracture",
+        "modify":"0.41",
+        "operation":"ADDITION"
+      }
+    ],
+"forbidden_arcanus:mortem_chestplate":[
       {
         "attribute":"footwork:evasion",
         "modify":"0.4",
@@ -175,82 +165,89 @@
       },
       {
         "attribute":"footwork:max_posture",
-        "modify":"1.2",
+        "modify":"1.7",
         "operation":"ADDITION"
       },
       {
         "attribute":"footwork:posture_regen",
-        "modify":"0.63",
+        "modify":"0.57",
         "operation":"ADDITION"
       },
       {
         "attribute":"footwork:max_fracture",
-        "modify":"0.25",
+        "modify":"0.57",
         "operation":"ADDITION"
       }
     ],
-"greekfantasy:snakeskin_boots":[
+"forbidden_arcanus:mortem_helmet":[
+      {
+        "attribute":"footwork:evasion",
+        "modify":"0.2",
+        "operation":"ADDITION"
+      },
+      {
+        "attribute":"footwork:max_posture",
+        "modify":"0.85",
+        "operation":"ADDITION"
+      },
       {
         "attribute":"footwork:posture_regen",
-        "modify":"0.63",
+        "modify":"0.28",
         "operation":"ADDITION"
       },
       {
         "attribute":"footwork:max_fracture",
-        "modify":"0.25",
+        "modify":"0.41",
         "operation":"ADDITION"
       }
     ],
-"greekfantasy:snakeskin_chestplate":[
+"forbidden_arcanus:mortem_leggings":[
+      {
+        "attribute":"footwork:evasion",
+        "modify":"0.3",
+        "operation":"ADDITION"
+      },
+      {
+        "attribute":"footwork:max_posture",
+        "modify":"1.27",
+        "operation":"ADDITION"
+      },
       {
         "attribute":"footwork:posture_regen",
-        "modify":"1.26",
+        "modify":"0.42",
         "operation":"ADDITION"
       },
       {
         "attribute":"footwork:max_fracture",
-        "modify":"0.25",
+        "modify":"0.49",
         "operation":"ADDITION"
       }
     ],
-"greekfantasy:snakeskin_helmet":[
-      {
-        "attribute":"footwork:posture_regen",
-        "modify":"0.63",
-        "operation":"ADDITION"
-      },
+"forbidden_arcanus:tyr_boots":[
       {
         "attribute":"footwork:max_fracture",
-        "modify":"0.25",
+        "modify":"1.29",
         "operation":"ADDITION"
       }
     ],
-"greekfantasy:snakeskin_leggings":[
-      {
-        "attribute":"footwork:posture_regen",
-        "modify":"0.95",
-        "operation":"ADDITION"
-      },
+"forbidden_arcanus:tyr_chestplate":[
       {
         "attribute":"footwork:max_fracture",
-        "modify":"0.25",
+        "modify":"2.33",
         "operation":"ADDITION"
       }
     ],
-"greekfantasy:winged_sandals":[
-      {
-        "attribute":"footwork:posture_regen",
-        "modify":"0.72",
-        "operation":"ADDITION"
-      },
-      {
-        "attribute":"footwork:spirit_cooldown_speed",
-        "modify":"10",
-        "operation":"MULTIPLY_BASE"
-      },
+"forbidden_arcanus:tyr_helmet":[
       {
         "attribute":"footwork:max_fracture",
-        "modify":"0.25",
+        "modify":"1.29",
+        "operation":"ADDITION"
+      }
+    ],
+"forbidden_arcanus:tyr_leggings":[
+      {
+        "attribute":"footwork:max_fracture",
+        "modify":"1.81",
         "operation":"ADDITION"
       }
     ]

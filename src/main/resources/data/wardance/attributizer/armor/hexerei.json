@@ -1,23 +1,23 @@
 {
-"psi:psimetal_exosuit_boots":[
+"hexerei:mushroom_witch_hat":[
       {
-        "attribute":"footwork:evasion",
-        "modify":"1.1",
+        "attribute":"footwork:posture_regen",
+        "modify":"0.69",
         "operation":"ADDITION"
       },
       {
-        "attribute":"footwork:max_posture",
-        "modify":"1.99",
+        "attribute":"footwork:max_spirit",
+        "modify":"1",
         "operation":"ADDITION"
       },
       {
         "attribute":"footwork:spirit_cooldown_speed",
-        "modify":"7",
+        "modify":"5",
         "operation":"MULTIPLY_BASE"
       },
       {
         "attribute":"footwork:spirit_regen",
-        "modify":"5",
+        "modify":"10",
         "operation":"ADDITION"
       },
       {
@@ -26,25 +26,25 @@
         "operation":"ADDITION"
       }
     ],
-"psi:psimetal_exosuit_chestplate":[
+"hexerei:witch_boots":[
       {
-        "attribute":"footwork:evasion",
-        "modify":"2.2",
+        "attribute":"footwork:posture_regen",
+        "modify":"0.69",
         "operation":"ADDITION"
       },
       {
-        "attribute":"footwork:max_posture",
-        "modify":"3.98",
+        "attribute":"footwork:max_spirit",
+        "modify":"0.5",
         "operation":"ADDITION"
       },
       {
         "attribute":"footwork:spirit_cooldown_speed",
-        "modify":"7",
+        "modify":"5",
         "operation":"MULTIPLY_BASE"
       },
       {
         "attribute":"footwork:spirit_regen",
-        "modify":"5",
+        "modify":"10",
         "operation":"ADDITION"
       },
       {
@@ -53,25 +53,25 @@
         "operation":"ADDITION"
       }
     ],
-"psi:psimetal_exosuit_helmet":[
+"hexerei:witch_chestplate":[
       {
-        "attribute":"footwork:evasion",
-        "modify":"1.1",
+        "attribute":"footwork:posture_regen",
+        "modify":"1.39",
         "operation":"ADDITION"
       },
       {
-        "attribute":"footwork:max_posture",
-        "modify":"1.99",
+        "attribute":"footwork:max_spirit",
+        "modify":"0.5",
         "operation":"ADDITION"
       },
       {
         "attribute":"footwork:spirit_cooldown_speed",
-        "modify":"7",
+        "modify":"5",
         "operation":"MULTIPLY_BASE"
       },
       {
         "attribute":"footwork:spirit_regen",
-        "modify":"5",
+        "modify":"10",
         "operation":"ADDITION"
       },
       {
@@ -80,25 +80,25 @@
         "operation":"ADDITION"
       }
     ],
-"psi:psimetal_exosuit_leggings":[
+"hexerei:witch_helmet":[
       {
-        "attribute":"footwork:evasion",
-        "modify":"1.65",
+        "attribute":"footwork:posture_regen",
+        "modify":"0.69",
         "operation":"ADDITION"
       },
       {
-        "attribute":"footwork:max_posture",
-        "modify":"2.98",
+        "attribute":"footwork:max_spirit",
+        "modify":"1",
         "operation":"ADDITION"
       },
       {
         "attribute":"footwork:spirit_cooldown_speed",
-        "modify":"7",
+        "modify":"5",
         "operation":"MULTIPLY_BASE"
       },
       {
         "attribute":"footwork:spirit_regen",
-        "modify":"5",
+        "modify":"10",
         "operation":"ADDITION"
       },
       {

@@ -1,6 +1,7 @@
 package jackiecrazy.wardance.skill;
 
 import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.resources.ResourceLocation;
 
 public class SkillArchetype {
@@ -15,7 +16,7 @@ public class SkillArchetype {
         return obj instanceof SkillArchetype && ((SkillArchetype) obj).archetype.equals(archetype);
     }
 
-    public Component description() {
+    public MutableComponent description() {
         return Component.translatable("archetype." + archetype + ".desc");
     }
 

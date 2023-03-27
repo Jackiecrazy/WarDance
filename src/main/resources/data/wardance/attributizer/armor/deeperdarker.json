@@ -1,29 +1,29 @@
 {
-"endrem:end_crystal_boots":[
+"deeperdarker:warden_boots":[
       {
         "attribute":"footwork:max_fracture",
-        "modify":"1.37",
+        "modify":"1.29",
         "operation":"ADDITION"
       }
     ],
-"endrem:end_crystal_chestplate":[
+"deeperdarker:warden_chestplate":[
       {
         "attribute":"footwork:max_fracture",
-        "modify":"2.49",
+        "modify":"2.33",
         "operation":"ADDITION"
       }
     ],
-"endrem:end_crystal_helmet":[
+"deeperdarker:warden_helmet":[
       {
         "attribute":"footwork:max_fracture",
-        "modify":"1.37",
+        "modify":"1.29",
         "operation":"ADDITION"
       }
     ],
-"endrem:end_crystal_leggings":[
+"deeperdarker:warden_leggings":[
       {
         "attribute":"footwork:max_fracture",
-        "modify":"1.93",
+        "modify":"1.81",
         "operation":"ADDITION"
       }
     ]
