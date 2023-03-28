@@ -4,6 +4,7 @@ import jackiecrazy.footwork.api.FootworkAttributes;
 import jackiecrazy.footwork.capability.resources.CombatData;
 import jackiecrazy.footwork.event.StunEvent;
 import jackiecrazy.wardance.skill.SkillData;
+import jackiecrazy.wardance.utils.SkillUtils;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.ai.attributes.AttributeModifier;
 import net.minecraftforge.eventbus.api.Event;
@@ -33,7 +34,7 @@ public class BoulderBrace extends WarCry {
     public boolean equippedTick(LivingEntity caster, SkillData stats) {
         boolean stationary = caster.zza == 0 && caster.xxa == 0 && caster.yya == 0;
         if (stationary) {
-            caster.getAttribute(FootworkAttributes.POSTURE_REGEN.get()).addPermanentModifier(brace);
+            SkillUtils.modifyAttribute(caster, FootworkAttributes.POSTURE_REGEN.get(), brace.getId(), 3, AttributeModifier.Operation.ADDITION);
         } else caster.getAttribute(FootworkAttributes.POSTURE_REGEN.get()).removeModifier(brace);
         return super.equippedTick(caster, stats);
     }

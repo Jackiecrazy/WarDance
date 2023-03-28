@@ -196,7 +196,7 @@
   "wardance.cursed_palms.name": "替罪",
   "wardance.cursed_palms.desc": "額外將自身一個{負面效果;LIGHT_PURPLE}轉移至目標身上。",
   "wardance.wrestle.name": "強人鎖男",
-  "wardance.wrestle.desc": "{綁定技能; ITALIC; wardance.skill.bound_cast.desc}。消耗1威和1靈使一個範圍3內的目標獲得10層{標記; ITALIC; wardance.skill.mark.desc}。被{標記; ITALIC; wardance.skill.mark.desc}的目標{攻速;GOLD}-30%、{受到架勢傷害;GOLD}+20%、且所有{破防升級爲擊倒;GOLD}。\n當雙方距離超過3方塊時{印記; ITALIC; wardance.skill.mark.desc}會消耗自身將雙方{拉向彼此;GOLD}。\n對目標造成傷害或目標造成傷害時印記層數-1，若成功對印記施加者造成傷害則{印記層數-3;RED}。{印記; ITALIC; wardance.skill.mark.desc}層數爲0時自動結束。\n10秒冷卻。",
+  "wardance.wrestle.desc": "{綁定技能; ITALIC; wardance.skill.bound_cast.desc}。雙手均爲空手消耗1威和2靈使一個範圍3內的目標獲得10層{標記; ITALIC; wardance.skill.mark.desc}。被{標記; ITALIC; wardance.skill.mark.desc}的目標{攻速;GOLD}-30%、{受到架勢傷害;GOLD}+20%、試圖逃脫時會被{拉向施加者;GOLD}、且所有{破防升級爲擊倒;GOLD}。\n{同時你的移動速度減半。; RED}\n對目標造成傷害或目標造成傷害時印記層數-1，若成功對印記施加者造成傷害則{印記層數-3;RED}。\n{印記; ITALIC; wardance.skill.mark.desc}層數爲0時、或10秒經過後、或施加者不再空手時自動結束，之後進入10秒冷卻。",
   "archetype.shield_bash.name": "盾擊",
   "archetype.shield_bash.desc": "{預備技能; ITALIC; wardance.skill.holster_cast.desc}。你的下一次盾牌攻擊附帶額外效果\n7次招架後冷卻，需要1靈。",
   "wardance.pummel.name": "劍盾",

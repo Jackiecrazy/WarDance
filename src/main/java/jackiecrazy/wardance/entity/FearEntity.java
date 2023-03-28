@@ -1,9 +1,9 @@
 package jackiecrazy.wardance.entity;
 
+import jackiecrazy.footwork.api.ITetherAnchor;
 import jackiecrazy.footwork.potion.FootworkEffects;
 import jackiecrazy.footwork.utils.GeneralUtils;
 import jackiecrazy.wardance.WarDance;
-import jackiecrazy.wardance.api.ITetherAnchor;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.protocol.Packet;
 import net.minecraft.network.protocol.game.ClientboundAddEntityPacket;

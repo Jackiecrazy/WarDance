@@ -37,6 +37,7 @@ import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.Items;
 import net.minecraft.world.item.enchantment.EnchantmentHelper;
 import net.minecraft.world.item.enchantment.Enchantments;
 import net.minecraft.world.phys.Vec3;
@@ -84,7 +85,7 @@ public class CombatUtils {
                 final String name = entry.getKey();
                 ResourceLocation i = new ResourceLocation(name);
                 Item item = ForgeRegistries.ITEMS.getValue(i);
-                if (item == null) {
+                if (item == null||item== Items.AIR) {
                     if (GeneralConfig.debug)
                         WarDance.LOGGER.debug(name + " is not a registered item!");
                     return;
@@ -197,6 +198,14 @@ public class CombatUtils {
 
     public static boolean isUnarmed(ItemStack is, LivingEntity e) {
         return is.isEmpty() || is.is(UNARMED);
+    }
+
+    public static boolean isUnarmed(LivingEntity e, InteractionHand hand) {
+        return isUnarmed(e.getItemInHand(hand), e);
+    }
+
+    public static boolean isFullyUnarmed(LivingEntity e) {
+        return isUnarmed(e, InteractionHand.MAIN_HAND) && isUnarmed(e, InteractionHand.OFF_HAND);
     }
 
     public static boolean isTwoHanded(ItemStack is, LivingEntity e) {

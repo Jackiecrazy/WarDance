@@ -37,9 +37,10 @@ public class SkillUtils {
     public static void modifyAttribute(LivingEntity caster, Attribute a, UUID id, double amount, AttributeModifier.Operation op) {
         final AttributeInstance atr = caster.getAttribute(a);
         if (atr == null) return;
-        if (atr.getModifier(id) != null) {
-            if (atr.getModifier(id).getAmount() == amount && atr.getModifier(id).getOperation() == op)
-                return;//I think this is a bit more efficient.
+        final AttributeModifier modifier = atr.getModifier(id);
+        if (modifier != null) {
+            if (modifier.getAmount() == amount && modifier.getOperation() == op)
+                return;//saves operations and prevents race conditions.
         }
         atr.removeModifier(id);
         if (amount != 0) {

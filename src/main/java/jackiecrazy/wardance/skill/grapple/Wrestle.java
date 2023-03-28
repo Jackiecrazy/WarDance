@@ -6,10 +6,14 @@ import jackiecrazy.wardance.WarDance;
 import jackiecrazy.wardance.capability.status.Marks;
 import jackiecrazy.wardance.skill.*;
 import jackiecrazy.wardance.utils.CombatUtils;
+import jackiecrazy.wardance.utils.SkillUtils;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.ai.attributes.AttributeModifier;
+import net.minecraft.world.entity.ai.attributes.Attributes;
+import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.event.entity.living.LivingDamageEvent;
 import net.minecraftforge.eventbus.api.Event;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
@@ -17,10 +21,12 @@ import net.minecraftforge.fml.common.Mod;
 
 import javax.annotation.Nonnull;
 import java.util.HashSet;
+import java.util.UUID;
 
 @Mod.EventBusSubscriber(modid = WarDance.MODID)
 public class Wrestle extends Skill {
     private final HashSet<String> unarm = makeTag(SkillTags.offensive, SkillTags.physical, SkillTags.unarmed);
+    UUID slow = UUID.fromString("abe24c38-73e3-4551-9ef4-e16e117699c1");
 
     @SubscribeEvent
     public static void wrestle(LivingDamageEvent e) {
@@ -41,14 +47,25 @@ public class Wrestle extends Skill {
         }
     }
 
+    @Nonnull
+    @Override
+    public SkillArchetype getArchetype() {
+        return SkillArchetypes.grapple;
+    }
+
     @Override
     public float spiritConsumption(LivingEntity caster) {
-        return 1;
+        return 2;
     }
 
     @Override
     public float mightConsumption(LivingEntity caster) {
         return 1;
+    }
+
+    @Override
+    protected boolean showArchetypeDescription() {
+        return false;
     }
 
     @Override
@@ -64,6 +81,10 @@ public class Wrestle extends Skill {
 
     @Override
     public boolean equippedTick(LivingEntity caster, SkillData stats) {
+        activeTick(stats);
+        if (stats.getState() == STATE.ACTIVE) {
+            SkillUtils.modifyAttribute(caster, Attributes.MOVEMENT_SPEED, slow, -0.5, AttributeModifier.Operation.MULTIPLY_TOTAL);
+        }
         if (cooldownTick(stats)) {
             return true;
         }
@@ -72,20 +93,22 @@ public class Wrestle extends Skill {
 
     @Override
     public boolean markTick(LivingEntity caster, LivingEntity target, SkillData sd) {
-        sd.decrementDuration();
-        //test for distance
-        if (GeneralUtils.getDistSqCompensated(caster, target) > 9) {
-            //boing
-            target.setDeltaMovement(caster.getDeltaMovement().add(caster.position().vectorTo(target.position()).scale(-0.3)));
-            caster.setDeltaMovement(target.getDeltaMovement().add(target.position().vectorTo(caster.position()).scale(-0.3)));
-            removeMark(target);
-        } else {
-            //effects
-            target.addEffect(new MobEffectInstance(MobEffects.DIG_SLOWDOWN, 60));
-            target.addEffect(new MobEffectInstance(FootworkEffects.ENFEEBLE.get(), 60));
-            target.addEffect(new MobEffectInstance(FootworkEffects.UNSTEADY.get(), 60));
-        }
+        //immediately end if not unarmed
+        if(!CombatUtils.isFullyUnarmed(caster))
+            sd.setDuration(-999);
+        //boing
+        updateTetheringVelocity(caster, target);
+        //effects
+        target.addEffect(new MobEffectInstance(MobEffects.DIG_SLOWDOWN, 10));
+        target.addEffect(new MobEffectInstance(FootworkEffects.ENFEEBLE.get(), 10));
+        target.addEffect(new MobEffectInstance(FootworkEffects.UNSTEADY.get(), 10));
+        sd.decrementDuration(0.05f);
         return super.markTick(caster, target, sd);
+    }
+
+    @Override
+    public void onUnequip(LivingEntity caster, SkillData stats) {
+        SkillUtils.modifyAttribute(caster, Attributes.MOVEMENT_SPEED, slow, 0, AttributeModifier.Operation.MULTIPLY_TOTAL);
     }
 
     @Override
@@ -93,28 +116,41 @@ public class Wrestle extends Skill {
 
     }
 
-    @Nonnull
-    @Override
-    public SkillArchetype getArchetype() {
-        return SkillArchetypes.grapple;
-    }
-
-    @Override
-    protected boolean showArchetypeDescription() {
-        return false;
-    }
-
     @Override
     public boolean onStateChange(LivingEntity caster, SkillData prev, STATE from, STATE to) {
         LivingEntity e = GeneralUtils.raytraceLiving(caster.level, caster, 3);
-        if (to == STATE.ACTIVE && e != null && CombatUtils.isUnarmed(caster.getMainHandItem(), caster) && CombatUtils.isUnarmed(caster.getOffhandItem(), caster) && cast(caster, e, -999)) {
+        if (to == STATE.ACTIVE && e != null && CombatUtils.isFullyUnarmed(caster) && cast(caster, e, duration())) {
             mark(caster, e, duration(), 10);
             prev.setArbitraryFloat(0);
+            activate(caster, 10);
+        }
+        if (to == STATE.COOLING) {
+            setCooldown(caster, prev, 10);
+            SkillUtils.modifyAttribute(caster, Attributes.MOVEMENT_SPEED, slow, 0, AttributeModifier.Operation.MULTIPLY_TOTAL);
+        }
+        return boundCast(prev, from, to);
+    }
+
+    @Override
+    public void onMarkEnd(LivingEntity caster, LivingEntity target, SkillData sd) {
+        if (caster != null) {
+            SkillUtils.modifyAttribute(caster, Attributes.MOVEMENT_SPEED, slow, 0, AttributeModifier.Operation.MULTIPLY_TOTAL);
             markUsed(caster);
         }
-        if (to == STATE.COOLING)
-            setCooldown(caster, prev, 10);
-        return boundCast(prev, from, to);
+        super.onMarkEnd(caster, target, sd);
+    }
+
+    private void updateTetheringVelocity(LivingEntity moveTowards, LivingEntity toBeMoved) {
+        if (toBeMoved != null && moveTowards != null) {
+            double distsq = toBeMoved.distanceToSqr(moveTowards);
+            Vec3 point = moveTowards.position();
+
+            if (4 < distsq) {
+                toBeMoved.push((point.x - toBeMoved.getX()) * 0.05, (point.y - toBeMoved.getY()) * 0.05, (point.z - toBeMoved.getZ()) * 0.05);
+            }
+            toBeMoved.hurtMarked = true;
+        }
+
     }
 
     protected int duration() {

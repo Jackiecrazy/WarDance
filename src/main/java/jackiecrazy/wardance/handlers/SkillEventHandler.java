@@ -4,6 +4,7 @@ import jackiecrazy.footwork.event.*;
 import jackiecrazy.wardance.WarDance;
 import jackiecrazy.wardance.capability.skill.CasterData;
 import jackiecrazy.wardance.capability.skill.ISkillCapability;
+import jackiecrazy.wardance.capability.status.Marks;
 import jackiecrazy.wardance.config.ResourceConfig;
 import jackiecrazy.wardance.event.ParryEvent;
 import jackiecrazy.wardance.event.ProjectileParryEvent;
@@ -509,6 +510,7 @@ public class SkillEventHandler {
         for (Skill s : isc.getEquippedSkillsAndStyle()) {
             isc.getSkillData(s).ifPresent(d -> s.onProc(e.getEntity(), e, d.getState(), d, null));
         }
+        Marks.getCap(e.getEntity()).clearMarks();
     }
 
     @SubscribeEvent(priority = EventPriority.LOWEST)
