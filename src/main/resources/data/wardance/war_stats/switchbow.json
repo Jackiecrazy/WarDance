@@ -7,6 +7,6 @@
 "switchbow:switchcrossbow":{
         "attack": "1.2",
         "defend": "0.90",
-        "shield": "true"
+        "shield": "false"
     }
 }

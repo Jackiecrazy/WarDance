@@ -2,197 +2,197 @@
 "mutantbeasts:mutant_skeleton_boots":[
       {
         "attribute":"footwork:evasion",
-        "modify":"0.5",
-        "operation":"ADDITION"
+        "operation":"ADDITION",
+        "modify":0.5
       },
       {
         "attribute":"footwork:max_posture",
-        "modify":"1.34",
-        "operation":"ADDITION"
+        "operation":"ADDITION",
+        "modify":1.34
       },
       {
         "attribute":"footwork:posture_regen",
-        "modify":"0.6",
-        "operation":"ADDITION"
+        "operation":"ADDITION",
+        "modify":0.6
       },
       {
         "attribute":"footwork:might_gen",
-        "modify":"5",
-        "operation":"MULTIPLY_BASE"
+        "operation":"MULTIPLY_BASE",
+        "modify":0.05
       },
       {
         "attribute":"footwork:max_fracture",
-        "modify":"0.25",
-        "operation":"ADDITION"
+        "operation":"ADDITION",
+        "modify":0.25
       }
     ],
 "mutantbeasts:mutant_skeleton_chestplate":[
       {
         "attribute":"footwork:evasion",
-        "modify":"1",
-        "operation":"ADDITION"
+        "operation":"ADDITION",
+        "modify":1
       },
       {
         "attribute":"footwork:max_posture",
-        "modify":"2.68",
-        "operation":"ADDITION"
+        "operation":"ADDITION",
+        "modify":2.68
       },
       {
         "attribute":"footwork:posture_regen",
-        "modify":"1.2",
-        "operation":"ADDITION"
+        "operation":"ADDITION",
+        "modify":1.2
       },
       {
         "attribute":"footwork:might_gen",
-        "modify":"5",
-        "operation":"MULTIPLY_BASE"
+        "operation":"MULTIPLY_BASE",
+        "modify":0.05
       },
       {
         "attribute":"footwork:max_fracture",
-        "modify":"0.25",
-        "operation":"ADDITION"
+        "operation":"ADDITION",
+        "modify":0.25
       }
     ],
 "mutantbeasts:mutant_skeleton_leggings":[
       {
         "attribute":"footwork:evasion",
-        "modify":"0.75",
-        "operation":"ADDITION"
+        "operation":"ADDITION",
+        "modify":0.75
       },
       {
         "attribute":"footwork:max_posture",
-        "modify":"2.01",
-        "operation":"ADDITION"
+        "operation":"ADDITION",
+        "modify":2.01
       },
       {
         "attribute":"footwork:posture_regen",
-        "modify":"0.9",
-        "operation":"ADDITION"
+        "operation":"ADDITION",
+        "modify":0.9
       },
       {
         "attribute":"footwork:might_gen",
-        "modify":"5",
-        "operation":"MULTIPLY_BASE"
+        "operation":"MULTIPLY_BASE",
+        "modify":0.05
       },
       {
         "attribute":"footwork:max_fracture",
-        "modify":"0.25",
-        "operation":"ADDITION"
+        "operation":"ADDITION",
+        "modify":0.25
       }
     ],
 "mutantbeasts:mutant_skeleton_skull":[
       {
         "attribute":"footwork:evasion",
-        "modify":"0.5",
-        "operation":"ADDITION"
+        "operation":"ADDITION",
+        "modify":0.5
       },
       {
         "attribute":"footwork:max_posture",
-        "modify":"1.34",
-        "operation":"ADDITION"
+        "operation":"ADDITION",
+        "modify":1.34
       },
       {
         "attribute":"footwork:posture_regen",
-        "modify":"0.6",
-        "operation":"ADDITION"
+        "operation":"ADDITION",
+        "modify":0.6
       },
       {
         "attribute":"footwork:might_gen",
-        "modify":"5",
-        "operation":"MULTIPLY_BASE"
+        "operation":"MULTIPLY_BASE",
+        "modify":0.05
       },
       {
         "attribute":"footwork:max_fracture",
-        "modify":"0.25",
-        "operation":"ADDITION"
+        "operation":"ADDITION",
+        "modify":0.25
       }
     ],
 "mutantmore:mutant_wither_skeleton_boots":[
       {
         "attribute":"footwork:evasion",
-        "modify":"0.5",
-        "operation":"ADDITION"
+        "operation":"ADDITION",
+        "modify":0.5
       },
       {
         "attribute":"footwork:max_posture",
-        "modify":"1.34",
-        "operation":"ADDITION"
+        "operation":"ADDITION",
+        "modify":1.34
       },
       {
         "attribute":"footwork:posture_regen",
-        "modify":"0.6",
-        "operation":"ADDITION"
+        "operation":"ADDITION",
+        "modify":0.6
       },
       {
         "attribute":"footwork:max_fracture",
-        "modify":"0.25",
-        "operation":"ADDITION"
+        "operation":"ADDITION",
+        "modify":0.25
       }
     ],
 "mutantmore:mutant_wither_skeleton_chestplate":[
       {
         "attribute":"footwork:evasion",
-        "modify":"1",
-        "operation":"ADDITION"
+        "operation":"ADDITION",
+        "modify":1
       },
       {
         "attribute":"footwork:max_posture",
-        "modify":"2.68",
-        "operation":"ADDITION"
+        "operation":"ADDITION",
+        "modify":2.68
       },
       {
         "attribute":"footwork:posture_regen",
-        "modify":"1.2",
-        "operation":"ADDITION"
+        "operation":"ADDITION",
+        "modify":1.2
       },
       {
         "attribute":"footwork:max_fracture",
-        "modify":"0.25",
-        "operation":"ADDITION"
+        "operation":"ADDITION",
+        "modify":0.25
       }
     ],
 "mutantmore:mutant_wither_skeleton_leggings":[
       {
         "attribute":"footwork:evasion",
-        "modify":"0.75",
-        "operation":"ADDITION"
+        "operation":"ADDITION",
+        "modify":0.75
       },
       {
         "attribute":"footwork:max_posture",
-        "modify":"2.01",
-        "operation":"ADDITION"
+        "operation":"ADDITION",
+        "modify":2.01
       },
       {
         "attribute":"footwork:posture_regen",
-        "modify":"0.9",
-        "operation":"ADDITION"
+        "operation":"ADDITION",
+        "modify":0.9
       },
       {
         "attribute":"footwork:max_fracture",
-        "modify":"0.25",
-        "operation":"ADDITION"
+        "operation":"ADDITION",
+        "modify":0.25
       }
     ],
 "mutantmore:mutant_wither_skeleton_skull":[
       {
         "attribute":"footwork:evasion",
-        "modify":"0.5",
-        "operation":"ADDITION"
+        "operation":"ADDITION",
+        "modify":0.5
       },
       {
         "attribute":"footwork:max_posture",
-        "modify":"1.34",
-        "operation":"ADDITION"
+        "operation":"ADDITION",
+        "modify":1.34
       },
       {
         "attribute":"footwork:posture_regen",
-        "modify":"0.6",
-        "operation":"ADDITION"
+        "operation":"ADDITION",
+        "modify":0.6
       },
       {
         "attribute":"footwork:max_fracture",
-        "modify":"0.25",
-        "operation":"ADDITION"
+        "operation":"ADDITION",
+        "modify":0.25
       }
     ]
 }

@@ -413,112 +413,130 @@ public class ResourceDisplay implements IGuiOverlay {
             currentComboLevel = cap.getRank() > currentComboLevel ? updateValue(currentComboLevel, cap.getRank()) : cap.getRank();
             //yourCurrentPostureLevel = updateValue(yourCurrentPostureLevel, cap.getPosture());
             if (cap.isCombatMode()) {
-                stack.pushPose();
-                RenderSystem.enableBlend();
-                //RenderSystem.enableAlphaTest();
-                Pair<Integer, Integer> pair = translateCoords(ClientConfig.CONFIG.might, width, height);
-                int x = Math.max(pair.getFirst() - 16, 0);
-                int y = Math.min(pair.getSecond() - 16, height - 32);
-                int fillHeight = (int) (Math.min(1, currentMightLevel % 1) * 32);
-                if (ClientConfig.CONFIG.might.enabled) {
-                    //might circle
-                    RenderSystem.setShaderColor(1, 1, 1, 1);
+                {
                     stack.pushPose();
-                    stack.pushPose();
-                    mc.gui.blit(stack, x, y, 0, 64, 32, 32);
-                    stack.popPose();
-                    //might circle filling
-                    stack.pushPose();
-                    mc.gui.blit(stack, x, y + 32 - fillHeight, 0, 96 - fillHeight, 32, fillHeight);
-                    stack.popPose();
-                    fillHeight += Math.min(fillHeight, 3);
-                    fillHeight = Math.min(fillHeight, 32);
-                    //might crown, rendered when above half might
-                    if (currentMightLevel >= cap.getMaxMight() / 2) {
+                    RenderSystem.enableBlend();
+                    //RenderSystem.enableAlphaTest();
+                    Pair<Integer, Integer> pair = translateCoords(ClientConfig.CONFIG.might, width, height);
+                    int x = Math.max(pair.getFirst() - 16, 0);
+                    int y = Math.min(pair.getSecond() - 16, height - 32);
+                    int fillHeight = (int) (Math.min(1, currentMightLevel % 1) * 32);
+                    if (ClientConfig.CONFIG.might.enabled) {
+                        //might circle
+                        RenderSystem.setShaderColor(1, 1, 1, 1);
                         stack.pushPose();
-                        mc.gui.blit(stack, x, y, 32, 64, 32, 32);
+                        {
+                            stack.pushPose();
+                            mc.gui.blit(stack, x, y, 0, 64, 32, 32);
+                            stack.popPose();
+                        }
+                        //might circle filling
+                        {
+                            stack.pushPose();
+                            mc.gui.blit(stack, x, y + 32 - fillHeight, 0, 96 - fillHeight, 32, fillHeight);
+                            stack.popPose();
+                        }
+                        fillHeight += Math.min(fillHeight, 3);
+                        fillHeight = Math.min(fillHeight, 32);
+                        //might crown, rendered when above half might
+                        if (currentMightLevel >= cap.getMaxMight() / 2) {
+                            stack.pushPose();
+                            mc.gui.blit(stack, x, y, 32, 64, 32, 32);
+                            stack.popPose();
+                        }
+                        //might crown plus pro ultra, rendered at max might
+                        if (currentMightLevel == cap.getMaxMight()) {
+                            {
+                                stack.pushPose();
+                                mc.gui.blit(stack, x, y, 64, 64, 32, 32);
+                                stack.popPose();
+                            }
+                        }
                         stack.popPose();
                     }
-                    //might crown plus pro ultra, rendered at max might
-                    if (currentMightLevel == cap.getMaxMight()) {
+                    pair = translateCoords(ClientConfig.CONFIG.spirit, width, height);
+                    x = Mth.clamp(pair.getFirst() - 16, 0, width - 32);
+                    y = Mth.clamp(pair.getSecond() - 16, 0, height - 32);
+                    fillHeight = (int) (Math.min(1, currentSpiritLevel / cap.getMaxSpirit()) * 32);
+                    String display = formatter.format(currentSpiritLevel) + "/" + formatter.format(cap.getMaxSpirit());
+                    //spirit circle
+                    {
                         stack.pushPose();
-                        mc.gui.blit(stack, x, y, 64, 64, 32, 32);
-                        stack.popPose();
+                        if (ClientConfig.CONFIG.spirit.enabled) {
+                            {
+                                stack.pushPose();
+                                mc.gui.blit(stack, x, y, 0, 96, 32, 32);
+                                stack.popPose();
+                            }
+                            //spirit circle filling
+                            {
+                                stack.pushPose();
+                                mc.gui.blit(stack, x, y + 32 - fillHeight, 0, 128 - fillHeight, 32, fillHeight);
+                                stack.popPose();
+                            }
+                            fillHeight += Math.min(fillHeight, 3);
+                            fillHeight = Math.min(fillHeight, 32);
+                            //spirit base
+                            {
+                                stack.pushPose();
+                                mc.gui.blit(stack, x, y + 1, 32, 96, 32, 32);
+                                stack.popPose();
+                            }
+                            //spirit illumination
+                            {
+                                stack.pushPose();
+                                mc.gui.blit(stack, x, y + 33 - fillHeight, 64, 128 - fillHeight, 32, fillHeight);
+                                stack.popPose();
+                            }
+                        }
+                        if (ClientConfig.CONFIG.spiritNumber.enabled) {
+                            pair = translateCoords(ClientConfig.CONFIG.spiritNumber, width, height);
+                            mc.font.drawShadow(stack, display, pair.getFirst() - mc.font.width(display) / 2f, pair.getSecond() - 2, ClientConfig.spiritColor);
+                        }
+                        if (ClientConfig.CONFIG.mightNumber.enabled) {
+                            pair = translateCoords(ClientConfig.CONFIG.mightNumber, width, height);
+                            display = formatter.format(currentMightLevel) + "/" + formatter.format(cap.getMaxMight());
+                            mc.font.drawShadow(stack, display, pair.getFirst() - mc.font.width(display) / 2f, pair.getSecond() - 2, ClientConfig.mightColor);
+                        }
                         stack.popPose();
                     }
-                }
-                pair = translateCoords(ClientConfig.CONFIG.spirit, width, height);
-                x = Mth.clamp(pair.getFirst() - 16, 0, width - 32);
-                y = Mth.clamp(pair.getSecond() - 16, 0, height - 32);
-                fillHeight = (int) (Math.min(1, currentSpiritLevel / cap.getMaxSpirit()) * 32);
-                String display = formatter.format(currentSpiritLevel) + "/" + formatter.format(cap.getMaxSpirit());
-                //spirit circle
-                stack.pushPose();
-                if (ClientConfig.CONFIG.spirit.enabled) {
-                    stack.pushPose();
-                    mc.gui.blit(stack, x, y, 0, 96, 32, 32);
-                    stack.popPose();
-                    //spirit circle filling
-                    stack.pushPose();
-                    mc.gui.blit(stack, x, y + 32 - fillHeight, 0, 128 - fillHeight, 32, fillHeight);
-                    stack.popPose();
-                    fillHeight += Math.min(fillHeight, 3);
-                    fillHeight = Math.min(fillHeight, 32);
-                    //spirit base
-                    stack.pushPose();
-                    mc.gui.blit(stack, x, y + 1, 32, 96, 32, 32);
-                    stack.popPose();
-                    //spirit illumination
-                    stack.pushPose();
-                    mc.gui.blit(stack, x, y + 33 - fillHeight, 64, 128 - fillHeight, 32, fillHeight);
-                    stack.popPose();
-                }
-                if (ClientConfig.CONFIG.spiritNumber.enabled) {
-                    pair = translateCoords(ClientConfig.CONFIG.spiritNumber, width, height);
-                    mc.font.drawShadow(stack, display, pair.getFirst() - mc.font.width(display) / 2f, pair.getSecond() - 2, ClientConfig.spiritColor);
-                }
-                if (ClientConfig.CONFIG.mightNumber.enabled) {
-                    pair = translateCoords(ClientConfig.CONFIG.mightNumber, width, height);
-                    display = formatter.format(currentMightLevel) + "/" + formatter.format(cap.getMaxMight());
-                    mc.font.drawShadow(stack, display, pair.getFirst() - mc.font.width(display) / 2f, pair.getSecond() - 2, ClientConfig.mightColor);
-                }
-                stack.popPose();
 
-                //RenderSystem.disableAlphaTest();
-                RenderSystem.disableBlend();
-                stack.popPose();
-                //combo bar at 224,20 to 229, 121. Grace at 222,95 to 224, 121
-                //initial bar
-                RenderSystem.enableBlend();
-                stack.pushPose();
-                if (ClientConfig.CONFIG.combo.enabled) {
-                    RenderSystem.setShaderTexture(0, raihud);
-                    int combowidth = 32;
-                    float workingCombo = currentComboLevel;
-                    int comboU = (int) (Mth.clamp(Math.floor(workingCombo), 0, 4)) * 32;
-                    int divisor = 1;
-                    if (workingCombo >= 4)//S
-                        divisor = 2;
-                    if (workingCombo >= 6) {//SS
-                        combowidth = 33;
-                        comboU = 159;
-                        divisor = 3;
+                    //RenderSystem.disableAlphaTest();
+                    RenderSystem.disableBlend();
+                    stack.popPose();
+                    //combo bar at 224,20 to 229, 121. Grace at 222,95 to 224, 121
+                    //initial bar
+                    RenderSystem.enableBlend();
+                    stack.pushPose();
+                    if (ClientConfig.CONFIG.combo.enabled) {
+                        RenderSystem.setShaderTexture(0, raihud);
+                        int combowidth = 32;
+                        float workingCombo = currentComboLevel;
+                        int comboU = (int) (Mth.clamp(Math.floor(workingCombo), 0, 4)) * 32;
+                        int divisor = 1;
+                        if (workingCombo >= 4)//S
+                            divisor = 2;
+                        if (workingCombo >= 6) {//SS
+                            combowidth = 33;
+                            comboU = 159;
+                            divisor = 3;
+                        }
+                        if (workingCombo >= 9) {//SSS
+                            combowidth = 64;
+                            comboU = 192;
+                            fillHeight = (int) ((workingCombo - 9) * 32f);
+                        } else if (divisor > 1) fillHeight = (int) ((workingCombo - divisor * 2) / divisor * 32f);
+                        else fillHeight = (int) ((workingCombo - Math.floor(workingCombo)) * 32f);
+                        pair = translateCoords(ClientConfig.CONFIG.combo, width, height);
+                        x = Mth.clamp(pair.getFirst() - combowidth / 2, 0, width - combowidth);
+                        y = Mth.clamp(pair.getSecond() - 23, 0, height - 46);
+                        mc.gui.blit(stack, x, y, comboU, 0, combowidth, 32);
+                        //fancy fill percentage
+                        mc.gui.blit(stack, x, y + 33 - fillHeight, comboU, 65 - fillHeight, combowidth, fillHeight - 2);
                     }
-                    if (workingCombo >= 9) {//SSS
-                        combowidth = 64;
-                        comboU = 192;
-                        fillHeight = (int) ((workingCombo - 9) * 32f);
-                    } else if (divisor > 1) fillHeight = (int) ((workingCombo - divisor * 2) / divisor * 32f);
-                    else fillHeight = (int) ((workingCombo - Math.floor(workingCombo)) * 32f);
-                    pair = translateCoords(ClientConfig.CONFIG.combo, width, height);
-                    x = Mth.clamp(pair.getFirst() - combowidth / 2, 0, width - combowidth);
-                    y = Mth.clamp(pair.getSecond() - 23, 0, height - 46);
-                    mc.gui.blit(stack, x, y, comboU, 0, combowidth, 32);
-                    //fancy fill percentage
-                    mc.gui.blit(stack, x, y + 33 - fillHeight, comboU, 65 - fillHeight, combowidth, fillHeight - 2);
-                }
 
-                stack.popPose();
+                    stack.popPose();
+                }
                 RenderSystem.disableBlend();
             }
             RenderSystem.setShaderTexture(0, amo);

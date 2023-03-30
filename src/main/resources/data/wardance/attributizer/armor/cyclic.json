@@ -2,79 +2,79 @@
 "cyclic:crystal_boots":[
       {
         "attribute":"footwork:max_fracture",
-        "modify":"1.05",
-        "operation":"ADDITION"
+        "operation":"ADDITION",
+        "modify":1.05
       }
     ],
 "cyclic:crystal_chestplate":[
       {
         "attribute":"footwork:max_fracture",
-        "modify":"1.85",
-        "operation":"ADDITION"
+        "operation":"ADDITION",
+        "modify":1.85
       }
     ],
 "cyclic:crystal_helmet":[
       {
         "attribute":"footwork:max_fracture",
-        "modify":"1.05",
-        "operation":"ADDITION"
+        "operation":"ADDITION",
+        "modify":1.05
       }
     ],
 "cyclic:crystal_leggings":[
       {
         "attribute":"footwork:max_fracture",
-        "modify":"1.45",
-        "operation":"ADDITION"
+        "operation":"ADDITION",
+        "modify":1.45
       }
     ],
 "cyclic:emerald_boots":[
       {
         "attribute":"footwork:max_fracture",
-        "modify":"1.05",
-        "operation":"ADDITION"
+        "operation":"ADDITION",
+        "modify":1.05
       }
     ],
 "cyclic:emerald_chestplate":[
       {
         "attribute":"footwork:max_fracture",
-        "modify":"1.85",
-        "operation":"ADDITION"
+        "operation":"ADDITION",
+        "modify":1.85
       }
     ],
 "cyclic:emerald_helmet":[
       {
         "attribute":"footwork:max_fracture",
-        "modify":"1.05",
-        "operation":"ADDITION"
+        "operation":"ADDITION",
+        "modify":1.05
       }
     ],
 "cyclic:emerald_leggings":[
       {
         "attribute":"footwork:max_fracture",
-        "modify":"1.45",
-        "operation":"ADDITION"
+        "operation":"ADDITION",
+        "modify":1.45
       }
     ],
 "cyclic:glowing_helmet":[
       {
         "attribute":"footwork:evasion",
-        "modify":"1",
-        "operation":"ADDITION"
+        "operation":"ADDITION",
+        "modify":1
       },
       {
         "attribute":"footwork:max_posture",
-        "modify":"1.9",
-        "operation":"ADDITION"
+        "operation":"ADDITION",
+        "modify":1.9
       },
       {
         "attribute":"footwork:posture_regen",
-        "modify":"0.35",
-        "operation":"ADDITION"
+        "operation":"ADDITION",
+        "modify":0.35
       },
       {
         "attribute":"footwork:max_fracture",
-        "modify":"0.25",
-        "operation":"ADDITION"
+        "operation":"ADDITION",
+        "modify":0.25
       }
     ]
 }

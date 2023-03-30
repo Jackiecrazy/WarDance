@@ -2,325 +2,325 @@
 "monsters_and_girls:brown_mushroom_hat_helmet":[
       {
         "attribute":"footwork:posture_regen",
-        "modify":"0.63",
-        "operation":"ADDITION"
+        "operation":"ADDITION",
+        "modify":0.63
       },
       {
         "attribute":"footwork:max_spirit",
-        "modify":"0.5",
-        "operation":"ADDITION"
+        "operation":"ADDITION",
+        "modify":0.5
       },
       {
         "attribute":"footwork:spirit_cooldown_speed",
-        "modify":"15",
-        "operation":"MULTIPLY_BASE"
+        "operation":"MULTIPLY_BASE",
+        "modify":0.15
       },
       {
         "attribute":"footwork:spirit_regen",
-        "modify":"7",
-        "operation":"ADDITION"
+        "operation":"ADDITION",
+        "modify":0.07
       },
       {
         "attribute":"footwork:max_fracture",
-        "modify":"0.25",
-        "operation":"ADDITION"
+        "operation":"ADDITION",
+        "modify":0.25
       }
     ],
 "monsters_and_girls:crimson_hat_helmet":[
       {
         "attribute":"footwork:posture_regen",
-        "modify":"0.63",
-        "operation":"ADDITION"
+        "operation":"ADDITION",
+        "modify":0.63
       },
       {
         "attribute":"footwork:max_spirit",
-        "modify":"0.5",
-        "operation":"ADDITION"
+        "operation":"ADDITION",
+        "modify":0.5
       },
       {
         "attribute":"footwork:spirit_cooldown_speed",
-        "modify":"15",
-        "operation":"MULTIPLY_BASE"
+        "operation":"MULTIPLY_BASE",
+        "modify":0.15
       },
       {
         "attribute":"footwork:spirit_regen",
-        "modify":"7",
-        "operation":"ADDITION"
+        "operation":"ADDITION",
+        "modify":0.07
       },
       {
         "attribute":"footwork:max_fracture",
-        "modify":"0.25",
-        "operation":"ADDITION"
+        "operation":"ADDITION",
+        "modify":0.25
       }
     ],
 "monsters_and_girls:ender_puffball_hat_helmet":[
       {
         "attribute":"footwork:posture_regen",
-        "modify":"0.63",
-        "operation":"ADDITION"
+        "operation":"ADDITION",
+        "modify":0.63
       },
       {
         "attribute":"footwork:max_spirit",
-        "modify":"0.5",
-        "operation":"ADDITION"
+        "operation":"ADDITION",
+        "modify":0.5
       },
       {
         "attribute":"footwork:spirit_cooldown_speed",
-        "modify":"15",
-        "operation":"MULTIPLY_BASE"
+        "operation":"MULTIPLY_BASE",
+        "modify":0.15
       },
       {
         "attribute":"footwork:spirit_regen",
-        "modify":"7",
-        "operation":"ADDITION"
+        "operation":"ADDITION",
+        "modify":0.07
       },
       {
         "attribute":"footwork:max_fracture",
-        "modify":"0.25",
-        "operation":"ADDITION"
+        "operation":"ADDITION",
+        "modify":0.25
       }
     ],
 "monsters_and_girls:inferna_mushroom_hat_helmet":[
       {
         "attribute":"footwork:posture_regen",
-        "modify":"0.63",
-        "operation":"ADDITION"
+        "operation":"ADDITION",
+        "modify":0.63
       },
       {
         "attribute":"footwork:max_spirit",
-        "modify":"0.5",
-        "operation":"ADDITION"
+        "operation":"ADDITION",
+        "modify":0.5
       },
       {
         "attribute":"footwork:spirit_cooldown_speed",
-        "modify":"15",
-        "operation":"MULTIPLY_BASE"
+        "operation":"MULTIPLY_BASE",
+        "modify":0.15
       },
       {
         "attribute":"footwork:spirit_regen",
-        "modify":"7",
-        "operation":"ADDITION"
+        "operation":"ADDITION",
+        "modify":0.07
       },
       {
         "attribute":"footwork:max_fracture",
-        "modify":"0.25",
-        "operation":"ADDITION"
+        "operation":"ADDITION",
+        "modify":0.25
       }
     ],
 "monsters_and_girls:ink_cap_hat_helmet":[
       {
         "attribute":"footwork:posture_regen",
-        "modify":"0.63",
-        "operation":"ADDITION"
+        "operation":"ADDITION",
+        "modify":0.63
       },
       {
         "attribute":"footwork:max_spirit",
-        "modify":"0.5",
-        "operation":"ADDITION"
+        "operation":"ADDITION",
+        "modify":0.5
       },
       {
         "attribute":"footwork:spirit_cooldown_speed",
-        "modify":"15",
-        "operation":"MULTIPLY_BASE"
+        "operation":"MULTIPLY_BASE",
+        "modify":0.15
       },
       {
         "attribute":"footwork:spirit_regen",
-        "modify":"7",
-        "operation":"ADDITION"
+        "operation":"ADDITION",
+        "modify":0.07
       },
       {
         "attribute":"footwork:max_fracture",
-        "modify":"0.25",
-        "operation":"ADDITION"
+        "operation":"ADDITION",
+        "modify":0.25
       }
     ],
 "monsters_and_girls:mizuno_crimson_hat_helmet":[
       {
         "attribute":"footwork:posture_regen",
-        "modify":"0.63",
-        "operation":"ADDITION"
+        "operation":"ADDITION",
+        "modify":0.63
       },
       {
         "attribute":"footwork:max_spirit",
-        "modify":"0.5",
-        "operation":"ADDITION"
+        "operation":"ADDITION",
+        "modify":0.5
       },
       {
         "attribute":"footwork:spirit_cooldown_speed",
-        "modify":"15",
-        "operation":"MULTIPLY_BASE"
+        "operation":"MULTIPLY_BASE",
+        "modify":0.15
       },
       {
         "attribute":"footwork:spirit_regen",
-        "modify":"7",
-        "operation":"ADDITION"
+        "operation":"ADDITION",
+        "modify":0.07
       },
       {
         "attribute":"footwork:max_fracture",
-        "modify":"0.25",
-        "operation":"ADDITION"
+        "operation":"ADDITION",
+        "modify":0.25
       }
     ],
 "monsters_and_girls:mizuno_warped_hat_helmet":[
       {
         "attribute":"footwork:posture_regen",
-        "modify":"0.63",
-        "operation":"ADDITION"
+        "operation":"ADDITION",
+        "modify":0.63
       },
       {
         "attribute":"footwork:max_spirit",
-        "modify":"0.5",
-        "operation":"ADDITION"
+        "operation":"ADDITION",
+        "modify":0.5
       },
       {
         "attribute":"footwork:spirit_cooldown_speed",
-        "modify":"15",
-        "operation":"MULTIPLY_BASE"
+        "operation":"MULTIPLY_BASE",
+        "modify":0.15
       },
       {
         "attribute":"footwork:spirit_regen",
-        "modify":"7",
-        "operation":"ADDITION"
+        "operation":"ADDITION",
+        "modify":0.07
       },
       {
         "attribute":"footwork:max_fracture",
-        "modify":"0.25",
-        "operation":"ADDITION"
+        "operation":"ADDITION",
+        "modify":0.25
       }
     ],
 "monsters_and_girls:molten_fungus_hat_helmet":[
       {
         "attribute":"footwork:posture_regen",
-        "modify":"0.63",
-        "operation":"ADDITION"
+        "operation":"ADDITION",
+        "modify":0.63
       },
       {
         "attribute":"footwork:max_spirit",
-        "modify":"0.5",
-        "operation":"ADDITION"
+        "operation":"ADDITION",
+        "modify":0.5
       },
       {
         "attribute":"footwork:spirit_cooldown_speed",
-        "modify":"15",
-        "operation":"MULTIPLY_BASE"
+        "operation":"MULTIPLY_BASE",
+        "modify":0.15
       },
       {
         "attribute":"footwork:spirit_regen",
-        "modify":"7",
-        "operation":"ADDITION"
+        "operation":"ADDITION",
+        "modify":0.07
       },
       {
         "attribute":"footwork:max_fracture",
-        "modify":"0.25",
-        "operation":"ADDITION"
+        "operation":"ADDITION",
+        "modify":0.25
       }
     ],
 "monsters_and_girls:red_mushroom_hat_helmet":[
       {
         "attribute":"footwork:posture_regen",
-        "modify":"0.63",
-        "operation":"ADDITION"
+        "operation":"ADDITION",
+        "modify":0.63
       },
       {
         "attribute":"footwork:max_spirit",
-        "modify":"0.5",
-        "operation":"ADDITION"
+        "operation":"ADDITION",
+        "modify":0.5
       },
       {
         "attribute":"footwork:spirit_cooldown_speed",
-        "modify":"15",
-        "operation":"MULTIPLY_BASE"
+        "operation":"MULTIPLY_BASE",
+        "modify":0.15
       },
       {
         "attribute":"footwork:spirit_regen",
-        "modify":"7",
-        "operation":"ADDITION"
+        "operation":"ADDITION",
+        "modify":0.07
       },
       {
         "attribute":"footwork:max_fracture",
-        "modify":"0.25",
-        "operation":"ADDITION"
+        "operation":"ADDITION",
+        "modify":0.25
       }
     ],
 "monsters_and_girls:soul_wanderer_hat_helmet":[
       {
         "attribute":"footwork:posture_regen",
-        "modify":"0.63",
-        "operation":"ADDITION"
+        "operation":"ADDITION",
+        "modify":0.63
       },
       {
         "attribute":"footwork:max_spirit",
-        "modify":"0.5",
-        "operation":"ADDITION"
+        "operation":"ADDITION",
+        "modify":0.5
       },
       {
         "attribute":"footwork:spirit_cooldown_speed",
-        "modify":"15",
-        "operation":"MULTIPLY_BASE"
+        "operation":"MULTIPLY_BASE",
+        "modify":0.15
       },
       {
         "attribute":"footwork:spirit_regen",
-        "modify":"7",
-        "operation":"ADDITION"
+        "operation":"ADDITION",
+        "modify":0.07
       },
       {
         "attribute":"footwork:max_fracture",
-        "modify":"0.25",
-        "operation":"ADDITION"
+        "operation":"ADDITION",
+        "modify":0.25
       }
     ],
 "monsters_and_girls:warped_fungus_hat_helmet":[
       {
         "attribute":"footwork:posture_regen",
-        "modify":"0.63",
-        "operation":"ADDITION"
+        "operation":"ADDITION",
+        "modify":0.63
       },
       {
         "attribute":"footwork:max_spirit",
-        "modify":"0.5",
-        "operation":"ADDITION"
+        "operation":"ADDITION",
+        "modify":0.5
       },
       {
         "attribute":"footwork:spirit_cooldown_speed",
-        "modify":"15",
-        "operation":"MULTIPLY_BASE"
+        "operation":"MULTIPLY_BASE",
+        "modify":0.15
       },
       {
         "attribute":"footwork:spirit_regen",
-        "modify":"7",
-        "operation":"ADDITION"
+        "operation":"ADDITION",
+        "modify":0.07
       },
       {
         "attribute":"footwork:max_fracture",
-        "modify":"0.25",
-        "operation":"ADDITION"
+        "operation":"ADDITION",
+        "modify":0.25
       }
     ],
 "monsters_and_girls:yellow_agaric_cap_helmet":[
       {
         "attribute":"footwork:posture_regen",
-        "modify":"0.63",
-        "operation":"ADDITION"
+        "operation":"ADDITION",
+        "modify":0.63
       },
       {
         "attribute":"footwork:max_spirit",
-        "modify":"0.5",
-        "operation":"ADDITION"
+        "operation":"ADDITION",
+        "modify":0.5
       },
       {
         "attribute":"footwork:spirit_cooldown_speed",
-        "modify":"15",
-        "operation":"MULTIPLY_BASE"
+        "operation":"MULTIPLY_BASE",
+        "modify":0.15
       },
       {
         "attribute":"footwork:spirit_regen",
-        "modify":"7",
-        "operation":"ADDITION"
+        "operation":"ADDITION",
+        "modify":0.07
       },
       {
         "attribute":"footwork:max_fracture",
-        "modify":"0.25",
-        "operation":"ADDITION"
+        "operation":"ADDITION",
+        "modify":0.25
       }
     ]
 }

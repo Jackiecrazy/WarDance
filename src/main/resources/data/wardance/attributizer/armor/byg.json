@@ -2,89 +2,89 @@
 "byg:ametrine_boots":[
       {
         "attribute":"footwork:evasion",
-        "modify":"0.3",
-        "operation":"ADDITION"
+        "operation":"ADDITION",
+        "modify":0.3
       },
       {
         "attribute":"footwork:max_posture",
-        "modify":"1.04",
-        "operation":"ADDITION"
+        "operation":"ADDITION",
+        "modify":1.04
       },
       {
         "attribute":"footwork:spirit_cooldown_speed",
-        "modify":"5",
-        "operation":"MULTIPLY_BASE"
+        "operation":"MULTIPLY_BASE",
+        "modify":0.05
       },
       {
         "attribute":"footwork:max_fracture",
-        "modify":"1.05",
-        "operation":"ADDITION"
+        "operation":"ADDITION",
+        "modify":1.05
       }
     ],
 "byg:ametrine_chestplate":[
       {
         "attribute":"footwork:evasion",
-        "modify":"0.6",
-        "operation":"ADDITION"
+        "operation":"ADDITION",
+        "modify":0.6
       },
       {
         "attribute":"footwork:max_posture",
-        "modify":"2.08",
-        "operation":"ADDITION"
+        "operation":"ADDITION",
+        "modify":2.08
       },
       {
         "attribute":"footwork:spirit_cooldown_speed",
-        "modify":"12",
-        "operation":"MULTIPLY_BASE"
+        "operation":"MULTIPLY_BASE",
+        "modify":0.12
       },
       {
         "attribute":"footwork:max_fracture",
-        "modify":"1.85",
-        "operation":"ADDITION"
+        "operation":"ADDITION",
+        "modify":1.85
       }
     ],
 "byg:ametrine_helmet":[
       {
         "attribute":"footwork:evasion",
-        "modify":"0.3",
-        "operation":"ADDITION"
+        "operation":"ADDITION",
+        "modify":0.3
       },
       {
         "attribute":"footwork:max_posture",
-        "modify":"1.04",
-        "operation":"ADDITION"
+        "operation":"ADDITION",
+        "modify":1.04
       },
       {
         "attribute":"footwork:spirit_cooldown_speed",
-        "modify":"10",
-        "operation":"MULTIPLY_BASE"
+        "operation":"MULTIPLY_BASE",
+        "modify":0.1
       },
       {
         "attribute":"footwork:max_fracture",
-        "modify":"1.05",
-        "operation":"ADDITION"
+        "operation":"ADDITION",
+        "modify":1.05
       }
     ],
 "byg:ametrine_leggings":[
       {
         "attribute":"footwork:evasion",
-        "modify":"0.45",
-        "operation":"ADDITION"
+        "operation":"ADDITION",
+        "modify":0.45
       },
       {
         "attribute":"footwork:max_posture",
-        "modify":"1.56",
-        "operation":"ADDITION"
+        "operation":"ADDITION",
+        "modify":1.56
       },
       {
         "attribute":"footwork:spirit_cooldown_speed",
-        "modify":"5",
-        "operation":"MULTIPLY_BASE"
+        "operation":"MULTIPLY_BASE",
+        "modify":0.05
       },
       {
         "attribute":"footwork:max_fracture",
-        "modify":"1.45",
-        "operation":"ADDITION"
+        "operation":"ADDITION",
+        "modify":1.45
       }
     ]
 }

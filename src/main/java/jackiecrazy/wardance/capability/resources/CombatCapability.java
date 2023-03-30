@@ -668,6 +668,7 @@ public class CombatCapability implements ICombatCapability {
         if (elb.getAttribute(FootworkAttributes.MAX_POSTURE.get()).getBaseValue() == 0d) {//ew
             final float mPos = getMPos(elb);
             elb.getAttribute(FootworkAttributes.MAX_POSTURE.get()).setBaseValue(mPos);
+            elb.getAttribute(FootworkAttributes.POSTURE_REGEN.get()).setBaseValue(mPos);
             mpos = (float) elb.getAttributeValue(FootworkAttributes.MAX_POSTURE.get());
             setPosture(getMaxPosture());
         }

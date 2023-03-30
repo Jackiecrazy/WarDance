@@ -2,153 +2,153 @@
 "stalwart_dungeons:chorundum_armor_boots":[
       {
         "attribute":"footwork:posture_regen",
-        "modify":"0.2",
-        "operation":"ADDITION"
+        "operation":"ADDITION",
+        "modify":0.2
       },
       {
         "attribute":"footwork:might_gen",
-        "modify":"3",
-        "operation":"MULTIPLY_BASE"
+        "operation":"MULTIPLY_BASE",
+        "modify":0.03
       },
       {
         "attribute":"footwork:max_fracture",
-        "modify":"1.05",
-        "operation":"ADDITION"
+        "operation":"ADDITION",
+        "modify":1.05
       }
     ],
 "stalwart_dungeons:chorundum_armor_chestplate":[
       {
         "attribute":"footwork:posture_regen",
-        "modify":"0.4",
-        "operation":"ADDITION"
+        "operation":"ADDITION",
+        "modify":0.4
       },
       {
         "attribute":"footwork:might_gen",
-        "modify":"8",
-        "operation":"MULTIPLY_BASE"
+        "operation":"MULTIPLY_BASE",
+        "modify":0.08
       },
       {
         "attribute":"footwork:max_fracture",
-        "modify":"1.85",
-        "operation":"ADDITION"
+        "operation":"ADDITION",
+        "modify":1.85
       }
     ],
 "stalwart_dungeons:chorundum_armor_helmet":[
       {
         "attribute":"footwork:posture_regen",
-        "modify":"0.2",
-        "operation":"ADDITION"
+        "operation":"ADDITION",
+        "modify":0.2
       },
       {
         "attribute":"footwork:might_gen",
-        "modify":"3",
-        "operation":"MULTIPLY_BASE"
+        "operation":"MULTIPLY_BASE",
+        "modify":0.03
       },
       {
         "attribute":"footwork:max_fracture",
-        "modify":"1.05",
-        "operation":"ADDITION"
+        "operation":"ADDITION",
+        "modify":1.05
       }
     ],
 "stalwart_dungeons:chorundum_armor_leggings":[
       {
         "attribute":"footwork:posture_regen",
-        "modify":"0.3",
-        "operation":"ADDITION"
+        "operation":"ADDITION",
+        "modify":0.3
       },
       {
         "attribute":"footwork:might_gen",
-        "modify":"6",
-        "operation":"MULTIPLY_BASE"
+        "operation":"MULTIPLY_BASE",
+        "modify":0.06
       },
       {
         "attribute":"footwork:max_fracture",
-        "modify":"1.45",
-        "operation":"ADDITION"
+        "operation":"ADDITION",
+        "modify":1.45
       }
     ],
 "stalwart_dungeons:tungsten_boots":[
       {
         "attribute":"footwork:posture_regen",
-        "modify":"0.2",
-        "operation":"ADDITION"
+        "operation":"ADDITION",
+        "modify":0.2
       },
       {
         "attribute":"footwork:max_fracture",
-        "modify":"1.05",
-        "operation":"ADDITION"
+        "operation":"ADDITION",
+        "modify":1.05
       }
     ],
 "stalwart_dungeons:tungsten_chestplate":[
       {
         "attribute":"footwork:posture_regen",
-        "modify":"0.4",
-        "operation":"ADDITION"
+        "operation":"ADDITION",
+        "modify":0.4
       },
       {
         "attribute":"footwork:max_fracture",
-        "modify":"1.85",
-        "operation":"ADDITION"
+        "operation":"ADDITION",
+        "modify":1.85
       }
     ],
 "stalwart_dungeons:tungsten_helmet":[
       {
         "attribute":"footwork:posture_regen",
-        "modify":"0.2",
-        "operation":"ADDITION"
+        "operation":"ADDITION",
+        "modify":0.2
       },
       {
         "attribute":"footwork:max_fracture",
-        "modify":"1.05",
-        "operation":"ADDITION"
+        "operation":"ADDITION",
+        "modify":1.05
       }
     ],
 "stalwart_dungeons:tungsten_leggings":[
       {
         "attribute":"footwork:posture_regen",
-        "modify":"0.3",
-        "operation":"ADDITION"
+        "operation":"ADDITION",
+        "modify":0.3
       },
       {
         "attribute":"footwork:max_fracture",
-        "modify":"1.45",
-        "operation":"ADDITION"
+        "operation":"ADDITION",
+        "modify":1.45
       }
     ],
 "stalwart_dungeons:warted_tungsten_chestplate":[
       {
         "attribute":"footwork:posture_regen",
-        "modify":"0.57",
-        "operation":"ADDITION"
+        "operation":"ADDITION",
+        "modify":0.57
       },
       {
         "attribute":"footwork:max_fracture",
-        "modify":"1.85",
-        "operation":"ADDITION"
+        "operation":"ADDITION",
+        "modify":1.85
       }
     ],
 "stalwart_dungeons:warted_tungsten_helmet":[
       {
         "attribute":"footwork:posture_regen",
-        "modify":"0.28",
-        "operation":"ADDITION"
+        "operation":"ADDITION",
+        "modify":0.28
       },
       {
         "attribute":"footwork:max_fracture",
-        "modify":"1.05",
-        "operation":"ADDITION"
+        "operation":"ADDITION",
+        "modify":1.05
       }
     ],
 "stalwart_dungeons:warted_tungsten_leggings":[
       {
         "attribute":"footwork:posture_regen",
-        "modify":"0.42",
-        "operation":"ADDITION"
+        "operation":"ADDITION",
+        "modify":0.42
       },
       {
         "attribute":"footwork:max_fracture",
-        "modify":"1.45",
-        "operation":"ADDITION"
+        "operation":"ADDITION",
+        "modify":1.45
       }
     ]
 }

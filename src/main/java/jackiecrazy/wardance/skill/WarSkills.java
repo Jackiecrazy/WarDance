@@ -1,6 +1,7 @@
 package jackiecrazy.wardance.skill;
 
 import jackiecrazy.wardance.WarDance;
+import jackiecrazy.wardance.skill.coupdegrace.BiteTheDust;
 import jackiecrazy.wardance.skill.coupdegrace.CoupDeGrace;
 import jackiecrazy.wardance.skill.crownchampion.CrownChampion;
 import jackiecrazy.wardance.skill.feint.Feint;
@@ -15,7 +16,10 @@ import jackiecrazy.wardance.skill.hex.Petrify;
 import jackiecrazy.wardance.skill.ironguard.*;
 import jackiecrazy.wardance.skill.judgment.ViralDecay;
 import jackiecrazy.wardance.skill.kick.*;
-import jackiecrazy.wardance.skill.mementomori.*;
+import jackiecrazy.wardance.skill.mementomori.MementoMori;
+import jackiecrazy.wardance.skill.mementomori.Necrosis;
+import jackiecrazy.wardance.skill.mementomori.PoundOfFlesh;
+import jackiecrazy.wardance.skill.mementomori.ShadowDive;
 import jackiecrazy.wardance.skill.regenspirit.ArchersParadox;
 import jackiecrazy.wardance.skill.regenspirit.LadyLuck;
 import jackiecrazy.wardance.skill.regenspirit.NaturalSprinter;
@@ -66,7 +70,7 @@ public class WarSkills {
     public static final RegistryObject<Skill> OVERPOWER = SKILLS.register("overpower", () -> new Overpower().setCategory(SkillColors.red));
     //public static final RegistryObject<Skill> RECOVERY = SKILLS.register("recovery", () -> new Recovery().setCategory(SkillColors.green));
     public static final RegistryObject<Skill> DECAPITATE = SKILLS.register("decapitate", () -> new CoupDeGrace().setCategory(SkillColors.white));
-    //public static final RegistryObject<Skill> REINVIGORATE = SKILLS.register("reinvigorate", () -> new BiteTheDust().setCategory(SkillColors.green));
+    public static final RegistryObject<Skill> REINVIGORATE = SKILLS.register("reinvigorate", () -> new BiteTheDust().setCategory(SkillColors.green));
     public static final RegistryObject<Skill> DANSE_MACABRE = SKILLS.register("danse_macabre", () -> new CoupDeGrace.DanseMacabre().setCategory(SkillColors.gray));
     public static final RegistryObject<Skill> FRENZY = SKILLS.register("frenzy", () -> new CoupDeGrace.Frenzy().setCategory(SkillColors.orange));
     public static final RegistryObject<Skill> REAPING = SKILLS.register("reaping", () -> new CoupDeGrace.ReapersLaugh().setCategory(SkillColors.red));

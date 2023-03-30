@@ -2,29 +2,29 @@
 "endrem:end_crystal_boots":[
       {
         "attribute":"footwork:max_fracture",
-        "modify":"1.37",
-        "operation":"ADDITION"
+        "operation":"ADDITION",
+        "modify":1.37
       }
     ],
 "endrem:end_crystal_chestplate":[
       {
         "attribute":"footwork:max_fracture",
-        "modify":"2.49",
-        "operation":"ADDITION"
+        "operation":"ADDITION",
+        "modify":2.49
       }
     ],
 "endrem:end_crystal_helmet":[
       {
         "attribute":"footwork:max_fracture",
-        "modify":"1.37",
-        "operation":"ADDITION"
+        "operation":"ADDITION",
+        "modify":1.37
       }
     ],
 "endrem:end_crystal_leggings":[
       {
         "attribute":"footwork:max_fracture",
-        "modify":"1.93",
-        "operation":"ADDITION"
+        "operation":"ADDITION",
+        "modify":1.93
       }
     ]
 }

@@ -2,109 +2,109 @@
 "psi:psimetal_exosuit_boots":[
       {
         "attribute":"footwork:evasion",
-        "modify":"1.1",
-        "operation":"ADDITION"
+        "operation":"ADDITION",
+        "modify":1.1
       },
       {
         "attribute":"footwork:max_posture",
-        "modify":"1.99",
-        "operation":"ADDITION"
+        "operation":"ADDITION",
+        "modify":1.99
       },
       {
         "attribute":"footwork:spirit_cooldown_speed",
-        "modify":"7",
-        "operation":"MULTIPLY_BASE"
+        "operation":"MULTIPLY_BASE",
+        "modify":0.07
       },
       {
         "attribute":"footwork:spirit_regen",
-        "modify":"5",
-        "operation":"ADDITION"
+        "operation":"ADDITION",
+        "modify":0.05
       },
       {
         "attribute":"footwork:max_fracture",
-        "modify":"0.25",
-        "operation":"ADDITION"
+        "operation":"ADDITION",
+        "modify":0.25
       }
     ],
 "psi:psimetal_exosuit_chestplate":[
       {
         "attribute":"footwork:evasion",
-        "modify":"2.2",
-        "operation":"ADDITION"
+        "operation":"ADDITION",
+        "modify":2.2
       },
       {
         "attribute":"footwork:max_posture",
-        "modify":"3.98",
-        "operation":"ADDITION"
+        "operation":"ADDITION",
+        "modify":3.98
       },
       {
         "attribute":"footwork:spirit_cooldown_speed",
-        "modify":"7",
-        "operation":"MULTIPLY_BASE"
+        "operation":"MULTIPLY_BASE",
+        "modify":0.07
       },
       {
         "attribute":"footwork:spirit_regen",
-        "modify":"5",
-        "operation":"ADDITION"
+        "operation":"ADDITION",
+        "modify":0.05
       },
       {
         "attribute":"footwork:max_fracture",
-        "modify":"0.25",
-        "operation":"ADDITION"
+        "operation":"ADDITION",
+        "modify":0.25
       }
     ],
 "psi:psimetal_exosuit_helmet":[
       {
         "attribute":"footwork:evasion",
-        "modify":"1.1",
-        "operation":"ADDITION"
+        "operation":"ADDITION",
+        "modify":1.1
       },
       {
         "attribute":"footwork:max_posture",
-        "modify":"1.99",
-        "operation":"ADDITION"
+        "operation":"ADDITION",
+        "modify":1.99
       },
       {
         "attribute":"footwork:spirit_cooldown_speed",
-        "modify":"7",
-        "operation":"MULTIPLY_BASE"
+        "operation":"MULTIPLY_BASE",
+        "modify":0.07
       },
       {
         "attribute":"footwork:spirit_regen",
-        "modify":"5",
-        "operation":"ADDITION"
+        "operation":"ADDITION",
+        "modify":0.05
       },
       {
         "attribute":"footwork:max_fracture",
-        "modify":"0.25",
-        "operation":"ADDITION"
+        "operation":"ADDITION",
+        "modify":0.25
       }
     ],
 "psi:psimetal_exosuit_leggings":[
       {
         "attribute":"footwork:evasion",
-        "modify":"1.65",
-        "operation":"ADDITION"
+        "operation":"ADDITION",
+        "modify":1.65
       },
       {
         "attribute":"footwork:max_posture",
-        "modify":"2.98",
-        "operation":"ADDITION"
+        "operation":"ADDITION",
+        "modify":2.98
       },
       {
         "attribute":"footwork:spirit_cooldown_speed",
-        "modify":"7",
-        "operation":"MULTIPLY_BASE"
+        "operation":"MULTIPLY_BASE",
+        "modify":0.07
       },
       {
         "attribute":"footwork:spirit_regen",
-        "modify":"5",
-        "operation":"ADDITION"
+        "operation":"ADDITION",
+        "modify":0.05
       },
       {
         "attribute":"footwork:max_fracture",
-        "modify":"0.25",
-        "operation":"ADDITION"
+        "operation":"ADDITION",
+        "modify":0.25
       }
     ]
 }

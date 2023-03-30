@@ -189,6 +189,14 @@ public class CombatUtils {
         return combatList.containsKey(stack.getItem()) && (combatList.getOrDefault(stack.getItem(), DEFAULTMELEE).isShield);//stack.isShield(e);
     }
 
+    public static boolean isShield(LivingEntity e, InteractionHand hand) {
+        return isShield(e, e.getItemInHand(hand));
+    }
+
+    public static boolean isHoldingShield(LivingEntity e){
+        return isShield(e, InteractionHand.MAIN_HAND) || isShield(e, InteractionHand.OFF_HAND);
+    }
+
     public static boolean isWeapon(@Nullable LivingEntity e, ItemStack stack) {
         if (stack == null) return false;
         if (e != null && CasterData.getCap(e).getArchetypeState(SkillArchetypes.shield_bash) == Skill.STATE.HOLSTERED)

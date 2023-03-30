@@ -1,6 +1,5 @@
 package jackiecrazy.wardance.skill.shieldbash;
 
-import jackiecrazy.footwork.api.CombatDamageSource;
 import jackiecrazy.footwork.capability.resources.CombatData;
 import jackiecrazy.footwork.capability.resources.ICombatCapability;
 import jackiecrazy.footwork.potion.FootworkEffects;
@@ -8,7 +7,6 @@ import jackiecrazy.wardance.WarDance;
 import jackiecrazy.wardance.event.ParryEvent;
 import jackiecrazy.wardance.skill.*;
 import jackiecrazy.wardance.utils.CombatUtils;
-import jackiecrazy.wardance.utils.SkillUtils;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.InteractionHand;
@@ -24,7 +22,7 @@ import javax.annotation.Nonnull;
 import java.util.HashSet;
 
 public class ShieldBash extends Skill {
-    private final HashSet<String> tag = makeTag("physical", "melee", "boundCast", "normalAttack", "countdown", ProcPoints.recharge_parry);
+    private final HashSet<String> tag = makeTag("physical", "melee", "boundCast", "normalAttack", "shield", "countdown", ProcPoints.recharge_parry);
     private final HashSet<String> no = makeTag("normalAttack");
 
     @Override
@@ -52,7 +50,7 @@ public class ShieldBash extends Skill {
 
     protected void performEffect(LivingEntity caster, LivingEntity target, float attack) {
         final ICombatCapability cap = CombatData.getCap(caster);
-        SkillUtils.auxAttack(caster, target, new CombatDamageSource("player", caster).setProcNormalEffects(false).setProcAttackEffects(true).setProcSkillEffects(true).setAttackingHand(InteractionHand.OFF_HAND).setDamageTyping(CombatDamageSource.TYPE.PHYSICAL).setDamageDealer(caster.getMainHandItem()), 0, attack);
+        //SkillUtils.auxAttack(caster, target, new CombatDamageSource("player", caster).setProcNormalEffects(false).setProcAttackEffects(true).setProcSkillEffects(true).setAttackingHand(InteractionHand.OFF_HAND).setDamageTyping(CombatDamageSource.TYPE.PHYSICAL).setDamageDealer(caster.getMainHandItem()), 0, attack);
     }
 
     @Override

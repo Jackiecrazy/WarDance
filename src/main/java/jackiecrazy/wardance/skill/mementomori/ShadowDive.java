@@ -20,7 +20,7 @@ public class ShadowDive extends MementoMori {
 
     @Override
     public void onProc(LivingEntity caster, Event procPoint, STATE state, SkillData stats, LivingEntity target) {
-        if (procPoint instanceof LivingDamageEvent lde && state == STATE.INACTIVE && lde.getEntity() == caster && procPoint.getPhase() == EventPriority.HIGHEST && lde.getAmount() > caster.getHealth() / 4) {
+        if (procPoint instanceof LivingDamageEvent lde && state == STATE.INACTIVE && lde.getEntity() == caster && procPoint.getPhase() == EventPriority.LOWEST && lde.getAmount() > caster.getHealth() / 4) {
             activate(caster, 160);
             lde.setAmount(caster.getHealth() / 4);
             caster.addEffect(new MobEffectInstance(MobEffects.INVISIBILITY, 160));

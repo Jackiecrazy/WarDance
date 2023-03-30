@@ -2,389 +2,389 @@
 "mysticalworld:copper_boots":[
       {
         "attribute":"footwork:evasion",
-        "modify":"0.8",
-        "operation":"ADDITION"
+        "operation":"ADDITION",
+        "modify":0.8
       },
       {
         "attribute":"footwork:max_posture",
-        "modify":"1.7",
-        "operation":"ADDITION"
+        "operation":"ADDITION",
+        "modify":1.7
       },
       {
         "attribute":"footwork:max_fracture",
-        "modify":"0.25",
-        "operation":"ADDITION"
+        "operation":"ADDITION",
+        "modify":0.25
       }
     ],
 "mysticalworld:copper_chestplate":[
       {
         "attribute":"footwork:evasion",
-        "modify":"1.6",
-        "operation":"ADDITION"
+        "operation":"ADDITION",
+        "modify":1.6
       },
       {
         "attribute":"footwork:max_posture",
-        "modify":"3.39",
-        "operation":"ADDITION"
+        "operation":"ADDITION",
+        "modify":3.39
       },
       {
         "attribute":"footwork:max_fracture",
-        "modify":"0.25",
-        "operation":"ADDITION"
+        "operation":"ADDITION",
+        "modify":0.25
       }
     ],
 "mysticalworld:copper_helmet":[
       {
         "attribute":"footwork:evasion",
-        "modify":"0.8",
-        "operation":"ADDITION"
+        "operation":"ADDITION",
+        "modify":0.8
       },
       {
         "attribute":"footwork:max_posture",
-        "modify":"1.7",
-        "operation":"ADDITION"
+        "operation":"ADDITION",
+        "modify":1.7
       },
       {
         "attribute":"footwork:max_fracture",
-        "modify":"0.25",
-        "operation":"ADDITION"
+        "operation":"ADDITION",
+        "modify":0.25
       }
     ],
 "mysticalworld:copper_leggings":[
       {
         "attribute":"footwork:evasion",
-        "modify":"1.2",
-        "operation":"ADDITION"
+        "operation":"ADDITION",
+        "modify":1.2
       },
       {
         "attribute":"footwork:max_posture",
-        "modify":"2.55",
-        "operation":"ADDITION"
+        "operation":"ADDITION",
+        "modify":2.55
       },
       {
         "attribute":"footwork:max_fracture",
-        "modify":"0.25",
-        "operation":"ADDITION"
+        "operation":"ADDITION",
+        "modify":0.25
       }
     ],
 "mysticalworld:lead_boots":[
       {
         "attribute":"footwork:evasion",
-        "modify":"0.7",
-        "operation":"ADDITION"
+        "operation":"ADDITION",
+        "modify":0.7
       },
       {
         "attribute":"footwork:max_posture",
-        "modify":"1.59",
-        "operation":"ADDITION"
+        "operation":"ADDITION",
+        "modify":1.59
       },
       {
         "attribute":"footwork:max_fracture",
-        "modify":"0.73",
-        "operation":"ADDITION"
+        "operation":"ADDITION",
+        "modify":0.73
       }
     ],
 "mysticalworld:lead_chestplate":[
       {
         "attribute":"footwork:evasion",
-        "modify":"1.4",
-        "operation":"ADDITION"
+        "operation":"ADDITION",
+        "modify":1.4
       },
       {
         "attribute":"footwork:max_posture",
-        "modify":"3.17",
-        "operation":"ADDITION"
+        "operation":"ADDITION",
+        "modify":3.17
       },
       {
         "attribute":"footwork:max_fracture",
-        "modify":"1.21",
-        "operation":"ADDITION"
+        "operation":"ADDITION",
+        "modify":1.21
       }
     ],
 "mysticalworld:lead_helmet":[
       {
         "attribute":"footwork:evasion",
-        "modify":"0.7",
-        "operation":"ADDITION"
+        "operation":"ADDITION",
+        "modify":0.7
       },
       {
         "attribute":"footwork:max_posture",
-        "modify":"1.59",
-        "operation":"ADDITION"
+        "operation":"ADDITION",
+        "modify":1.59
       },
       {
         "attribute":"footwork:max_fracture",
-        "modify":"0.73",
-        "operation":"ADDITION"
+        "operation":"ADDITION",
+        "modify":0.73
       }
     ],
 "mysticalworld:lead_leggings":[
       {
         "attribute":"footwork:evasion",
-        "modify":"1.05",
-        "operation":"ADDITION"
+        "operation":"ADDITION",
+        "modify":1.05
       },
       {
         "attribute":"footwork:max_posture",
-        "modify":"2.38",
-        "operation":"ADDITION"
+        "operation":"ADDITION",
+        "modify":2.38
       },
       {
         "attribute":"footwork:max_fracture",
-        "modify":"0.97",
-        "operation":"ADDITION"
+        "operation":"ADDITION",
+        "modify":0.97
       }
     ],
 "mysticalworld:quicksilver_boots":[
       {
         "attribute":"footwork:evasion",
-        "modify":"0.6",
-        "operation":"ADDITION"
+        "operation":"ADDITION",
+        "modify":0.6
       },
       {
         "attribute":"footwork:max_posture",
-        "modify":"1.47",
-        "operation":"ADDITION"
+        "operation":"ADDITION",
+        "modify":1.47
       },
       {
         "attribute":"footwork:posture_regen",
-        "modify":"0.4",
-        "operation":"ADDITION"
+        "operation":"ADDITION",
+        "modify":0.4
       },
       {
         "attribute":"footwork:max_fracture",
-        "modify":"0.25",
-        "operation":"ADDITION"
+        "operation":"ADDITION",
+        "modify":0.25
       }
     ],
 "mysticalworld:quicksilver_chestplate":[
       {
         "attribute":"footwork:evasion",
-        "modify":"1.2",
-        "operation":"ADDITION"
+        "operation":"ADDITION",
+        "modify":1.2
       },
       {
         "attribute":"footwork:max_posture",
-        "modify":"2.94",
-        "operation":"ADDITION"
+        "operation":"ADDITION",
+        "modify":2.94
       },
       {
         "attribute":"footwork:posture_regen",
-        "modify":"0.8",
-        "operation":"ADDITION"
+        "operation":"ADDITION",
+        "modify":0.8
       },
       {
         "attribute":"footwork:max_fracture",
-        "modify":"0.25",
-        "operation":"ADDITION"
+        "operation":"ADDITION",
+        "modify":0.25
       }
     ],
 "mysticalworld:quicksilver_helmet":[
       {
         "attribute":"footwork:evasion",
-        "modify":"0.6",
-        "operation":"ADDITION"
+        "operation":"ADDITION",
+        "modify":0.6
       },
       {
         "attribute":"footwork:max_posture",
-        "modify":"1.47",
-        "operation":"ADDITION"
+        "operation":"ADDITION",
+        "modify":1.47
       },
       {
         "attribute":"footwork:posture_regen",
-        "modify":"0.4",
-        "operation":"ADDITION"
+        "operation":"ADDITION",
+        "modify":0.4
       },
       {
         "attribute":"footwork:max_fracture",
-        "modify":"0.25",
-        "operation":"ADDITION"
+        "operation":"ADDITION",
+        "modify":0.25
       }
     ],
 "mysticalworld:quicksilver_leggings":[
       {
         "attribute":"footwork:evasion",
-        "modify":"0.9",
-        "operation":"ADDITION"
+        "operation":"ADDITION",
+        "modify":0.9
       },
       {
         "attribute":"footwork:max_posture",
-        "modify":"2.2",
-        "operation":"ADDITION"
+        "operation":"ADDITION",
+        "modify":2.2
       },
       {
         "attribute":"footwork:posture_regen",
-        "modify":"0.6",
-        "operation":"ADDITION"
+        "operation":"ADDITION",
+        "modify":0.6
       },
       {
         "attribute":"footwork:max_fracture",
-        "modify":"0.25",
-        "operation":"ADDITION"
+        "operation":"ADDITION",
+        "modify":0.25
       }
     ],
 "mysticalworld:sapphire_boots":[
       {
         "attribute":"footwork:max_fracture",
-        "modify":"1.05",
-        "operation":"ADDITION"
+        "operation":"ADDITION",
+        "modify":1.05
       }
     ],
 "mysticalworld:sapphire_chestplate":[
       {
         "attribute":"footwork:max_fracture",
-        "modify":"1.85",
-        "operation":"ADDITION"
+        "operation":"ADDITION",
+        "modify":1.85
       }
     ],
 "mysticalworld:sapphire_helmet":[
       {
         "attribute":"footwork:max_fracture",
-        "modify":"1.05",
-        "operation":"ADDITION"
+        "operation":"ADDITION",
+        "modify":1.05
       }
     ],
 "mysticalworld:sapphire_leggings":[
       {
         "attribute":"footwork:max_fracture",
-        "modify":"1.45",
-        "operation":"ADDITION"
+        "operation":"ADDITION",
+        "modify":1.45
       }
     ],
 "mysticalworld:silver_boots":[
       {
         "attribute":"footwork:evasion",
-        "modify":"0.9",
-        "operation":"ADDITION"
+        "operation":"ADDITION",
+        "modify":0.9
       },
       {
         "attribute":"footwork:max_posture",
-        "modify":"1.8",
-        "operation":"ADDITION"
+        "operation":"ADDITION",
+        "modify":1.8
       },
       {
         "attribute":"footwork:max_fracture",
-        "modify":"0.41",
-        "operation":"ADDITION"
+        "operation":"ADDITION",
+        "modify":0.41
       }
     ],
 "mysticalworld:silver_chestplate":[
       {
         "attribute":"footwork:evasion",
-        "modify":"1.8",
-        "operation":"ADDITION"
+        "operation":"ADDITION",
+        "modify":1.8
       },
       {
         "attribute":"footwork:max_posture",
-        "modify":"3.6",
-        "operation":"ADDITION"
+        "operation":"ADDITION",
+        "modify":3.6
       },
       {
         "attribute":"footwork:max_fracture",
-        "modify":"0.57",
-        "operation":"ADDITION"
+        "operation":"ADDITION",
+        "modify":0.57
       }
     ],
 "mysticalworld:silver_helmet":[
       {
         "attribute":"footwork:evasion",
-        "modify":"0.9",
-        "operation":"ADDITION"
+        "operation":"ADDITION",
+        "modify":0.9
       },
       {
         "attribute":"footwork:max_posture",
-        "modify":"1.8",
-        "operation":"ADDITION"
+        "operation":"ADDITION",
+        "modify":1.8
       },
       {
         "attribute":"footwork:max_fracture",
-        "modify":"0.41",
-        "operation":"ADDITION"
+        "operation":"ADDITION",
+        "modify":0.41
       }
     ],
 "mysticalworld:silver_leggings":[
       {
         "attribute":"footwork:evasion",
-        "modify":"1.35",
-        "operation":"ADDITION"
+        "operation":"ADDITION",
+        "modify":1.35
       },
       {
         "attribute":"footwork:max_posture",
-        "modify":"2.7",
-        "operation":"ADDITION"
+        "operation":"ADDITION",
+        "modify":2.7
       },
       {
         "attribute":"footwork:max_fracture",
-        "modify":"0.49",
-        "operation":"ADDITION"
+        "operation":"ADDITION",
+        "modify":0.49
       }
     ],
 "mysticalworld:tin_boots":[
       {
         "attribute":"footwork:evasion",
-        "modify":"0.6",
-        "operation":"ADDITION"
+        "operation":"ADDITION",
+        "modify":0.6
       },
       {
         "attribute":"footwork:max_posture",
-        "modify":"1.47",
-        "operation":"ADDITION"
+        "operation":"ADDITION",
+        "modify":1.47
       },
       {
         "attribute":"footwork:max_fracture",
-        "modify":"0.41",
-        "operation":"ADDITION"
+        "operation":"ADDITION",
+        "modify":0.41
       }
     ],
 "mysticalworld:tin_chestplate":[
       {
         "attribute":"footwork:evasion",
-        "modify":"1.2",
-        "operation":"ADDITION"
+        "operation":"ADDITION",
+        "modify":1.2
       },
       {
         "attribute":"footwork:max_posture",
-        "modify":"2.94",
-        "operation":"ADDITION"
+        "operation":"ADDITION",
+        "modify":2.94
       },
       {
         "attribute":"footwork:max_fracture",
-        "modify":"0.57",
-        "operation":"ADDITION"
+        "operation":"ADDITION",
+        "modify":0.57
       }
     ],
 "mysticalworld:tin_helmet":[
       {
         "attribute":"footwork:evasion",
-        "modify":"0.6",
-        "operation":"ADDITION"
+        "operation":"ADDITION",
+        "modify":0.6
       },
       {
         "attribute":"footwork:max_posture",
-        "modify":"1.47",
-        "operation":"ADDITION"
+        "operation":"ADDITION",
+        "modify":1.47
       },
       {
         "attribute":"footwork:max_fracture",
-        "modify":"0.41",
-        "operation":"ADDITION"
+        "operation":"ADDITION",
+        "modify":0.41
       }
     ],
 "mysticalworld:tin_leggings":[
       {
         "attribute":"footwork:evasion",
-        "modify":"0.9",
-        "operation":"ADDITION"
+        "operation":"ADDITION",
+        "modify":0.9
       },
       {
         "attribute":"footwork:max_posture",
-        "modify":"2.2",
-        "operation":"ADDITION"
+        "operation":"ADDITION",
+        "modify":2.2
       },
       {
         "attribute":"footwork:max_fracture",
-        "modify":"0.49",
-        "operation":"ADDITION"
+        "operation":"ADDITION",
+        "modify":0.49
       }
     ]
 }

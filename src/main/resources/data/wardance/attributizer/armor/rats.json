@@ -2,503 +2,503 @@
 "rats:archeologist_hat":[
       {
         "attribute":"footwork:evasion",
-        "modify":"0.05",
-        "operation":"ADDITION"
+        "operation":"ADDITION",
+        "modify":0.05
       },
       {
         "attribute":"footwork:max_posture",
-        "modify":"0.3",
-        "operation":"ADDITION"
+        "operation":"ADDITION",
+        "modify":0.3
       },
       {
         "attribute":"footwork:posture_regen",
-        "modify":"0.17",
-        "operation":"ADDITION"
+        "operation":"ADDITION",
+        "modify":0.17
       },
       {
         "attribute":"footwork:max_fracture",
-        "modify":"0.25",
-        "operation":"ADDITION"
+        "operation":"ADDITION",
+        "modify":0.25
       }
     ],
 "rats:aviator_hat":[
       {
         "attribute":"footwork:evasion",
-        "modify":"0.05",
-        "operation":"ADDITION"
+        "operation":"ADDITION",
+        "modify":0.05
       },
       {
         "attribute":"footwork:max_posture",
-        "modify":"0.3",
-        "operation":"ADDITION"
+        "operation":"ADDITION",
+        "modify":0.3
       },
       {
         "attribute":"footwork:posture_regen",
-        "modify":"0.17",
-        "operation":"ADDITION"
+        "operation":"ADDITION",
+        "modify":0.17
       },
       {
         "attribute":"footwork:max_fracture",
-        "modify":"0.25",
-        "operation":"ADDITION"
+        "operation":"ADDITION",
+        "modify":0.25
       }
     ],
 "rats:black_death_mask":[
       {
         "attribute":"footwork:evasion",
-        "modify":"0.4",
-        "operation":"ADDITION"
+        "operation":"ADDITION",
+        "modify":0.4
       },
       {
         "attribute":"footwork:max_posture",
-        "modify":"1.2",
-        "operation":"ADDITION"
+        "operation":"ADDITION",
+        "modify":1.2
       },
       {
         "attribute":"footwork:posture_regen",
-        "modify":"0.69",
-        "operation":"ADDITION"
+        "operation":"ADDITION",
+        "modify":0.69
       },
       {
         "attribute":"footwork:max_fracture",
-        "modify":"0.25",
-        "operation":"ADDITION"
+        "operation":"ADDITION",
+        "modify":0.25
       }
     ],
 "rats:exterminator_hat":[
       {
         "attribute":"footwork:evasion",
-        "modify":"0.05",
-        "operation":"ADDITION"
+        "operation":"ADDITION",
+        "modify":0.05
       },
       {
         "attribute":"footwork:max_posture",
-        "modify":"0.3",
-        "operation":"ADDITION"
+        "operation":"ADDITION",
+        "modify":0.3
       },
       {
         "attribute":"footwork:posture_regen",
-        "modify":"0.17",
-        "operation":"ADDITION"
+        "operation":"ADDITION",
+        "modify":0.17
       },
       {
         "attribute":"footwork:max_fracture",
-        "modify":"0.25",
-        "operation":"ADDITION"
+        "operation":"ADDITION",
+        "modify":0.25
       }
     ],
 "rats:farmer_hat":[
       {
         "attribute":"footwork:evasion",
-        "modify":"0.05",
-        "operation":"ADDITION"
+        "operation":"ADDITION",
+        "modify":0.05
       },
       {
         "attribute":"footwork:max_posture",
-        "modify":"0.3",
-        "operation":"ADDITION"
+        "operation":"ADDITION",
+        "modify":0.3
       },
       {
         "attribute":"footwork:posture_regen",
-        "modify":"0.17",
-        "operation":"ADDITION"
+        "operation":"ADDITION",
+        "modify":0.17
       },
       {
         "attribute":"footwork:max_fracture",
-        "modify":"0.25",
-        "operation":"ADDITION"
+        "operation":"ADDITION",
+        "modify":0.25
       }
     ],
 "rats:fisherman_hat":[
       {
         "attribute":"footwork:evasion",
-        "modify":"0.05",
-        "operation":"ADDITION"
+        "operation":"ADDITION",
+        "modify":0.05
       },
       {
         "attribute":"footwork:max_posture",
-        "modify":"0.3",
-        "operation":"ADDITION"
+        "operation":"ADDITION",
+        "modify":0.3
       },
       {
         "attribute":"footwork:posture_regen",
-        "modify":"0.17",
-        "operation":"ADDITION"
+        "operation":"ADDITION",
+        "modify":0.17
       },
       {
         "attribute":"footwork:max_fracture",
-        "modify":"0.25",
-        "operation":"ADDITION"
+        "operation":"ADDITION",
+        "modify":0.25
       }
     ],
 "rats:halo_hat":[
       {
         "attribute":"footwork:evasion",
-        "modify":"0.05",
-        "operation":"ADDITION"
+        "operation":"ADDITION",
+        "modify":0.05
       },
       {
         "attribute":"footwork:max_posture",
-        "modify":"0.3",
-        "operation":"ADDITION"
+        "operation":"ADDITION",
+        "modify":0.3
       },
       {
         "attribute":"footwork:posture_regen",
-        "modify":"0.17",
-        "operation":"ADDITION"
+        "operation":"ADDITION",
+        "modify":0.17
       },
       {
         "attribute":"footwork:max_fracture",
-        "modify":"0.25",
-        "operation":"ADDITION"
+        "operation":"ADDITION",
+        "modify":0.25
       }
     ],
 "rats:party_hat_1":[
       {
         "attribute":"footwork:evasion",
-        "modify":"0.05",
-        "operation":"ADDITION"
+        "operation":"ADDITION",
+        "modify":0.05
       },
       {
         "attribute":"footwork:max_posture",
-        "modify":"0.3",
-        "operation":"ADDITION"
+        "operation":"ADDITION",
+        "modify":0.3
       },
       {
         "attribute":"footwork:posture_regen",
-        "modify":"0.17",
-        "operation":"ADDITION"
+        "operation":"ADDITION",
+        "modify":0.17
       },
       {
         "attribute":"footwork:max_fracture",
-        "modify":"0.25",
-        "operation":"ADDITION"
+        "operation":"ADDITION",
+        "modify":0.25
       }
     ],
 "rats:party_hat_2":[
       {
         "attribute":"footwork:evasion",
-        "modify":"0.05",
-        "operation":"ADDITION"
+        "operation":"ADDITION",
+        "modify":0.05
       },
       {
         "attribute":"footwork:max_posture",
-        "modify":"0.3",
-        "operation":"ADDITION"
+        "operation":"ADDITION",
+        "modify":0.3
       },
       {
         "attribute":"footwork:posture_regen",
-        "modify":"0.17",
-        "operation":"ADDITION"
+        "operation":"ADDITION",
+        "modify":0.17
       },
       {
         "attribute":"footwork:max_fracture",
-        "modify":"0.25",
-        "operation":"ADDITION"
+        "operation":"ADDITION",
+        "modify":0.25
       }
     ],
 "rats:party_hat_3":[
       {
         "attribute":"footwork:evasion",
-        "modify":"0.05",
-        "operation":"ADDITION"
+        "operation":"ADDITION",
+        "modify":0.05
       },
       {
         "attribute":"footwork:max_posture",
-        "modify":"0.3",
-        "operation":"ADDITION"
+        "operation":"ADDITION",
+        "modify":0.3
       },
       {
         "attribute":"footwork:posture_regen",
-        "modify":"0.17",
-        "operation":"ADDITION"
+        "operation":"ADDITION",
+        "modify":0.17
       },
       {
         "attribute":"footwork:max_fracture",
-        "modify":"0.25",
-        "operation":"ADDITION"
+        "operation":"ADDITION",
+        "modify":0.25
       }
     ],
 "rats:party_hat_4":[
       {
         "attribute":"footwork:evasion",
-        "modify":"0.05",
-        "operation":"ADDITION"
+        "operation":"ADDITION",
+        "modify":0.05
       },
       {
         "attribute":"footwork:max_posture",
-        "modify":"0.3",
-        "operation":"ADDITION"
+        "operation":"ADDITION",
+        "modify":0.3
       },
       {
         "attribute":"footwork:posture_regen",
-        "modify":"0.17",
-        "operation":"ADDITION"
+        "operation":"ADDITION",
+        "modify":0.17
       },
       {
         "attribute":"footwork:max_fracture",
-        "modify":"0.25",
-        "operation":"ADDITION"
+        "operation":"ADDITION",
+        "modify":0.25
       }
     ],
 "rats:pirat_hat":[
       {
         "attribute":"footwork:evasion",
-        "modify":"0.05",
-        "operation":"ADDITION"
+        "operation":"ADDITION",
+        "modify":0.05
       },
       {
         "attribute":"footwork:max_posture",
-        "modify":"0.3",
-        "operation":"ADDITION"
+        "operation":"ADDITION",
+        "modify":0.3
       },
       {
         "attribute":"footwork:posture_regen",
-        "modify":"0.17",
-        "operation":"ADDITION"
+        "operation":"ADDITION",
+        "modify":0.17
       },
       {
         "attribute":"footwork:max_fracture",
-        "modify":"0.25",
-        "operation":"ADDITION"
+        "operation":"ADDITION",
+        "modify":0.25
       }
     ],
 "rats:plague_doctor_mask":[
       {
         "attribute":"footwork:evasion",
-        "modify":"0.25",
-        "operation":"ADDITION"
+        "operation":"ADDITION",
+        "modify":0.25
       },
       {
         "attribute":"footwork:max_posture",
-        "modify":"0.67",
-        "operation":"ADDITION"
+        "operation":"ADDITION",
+        "modify":0.67
       },
       {
         "attribute":"footwork:posture_regen",
-        "modify":"0.22",
-        "operation":"ADDITION"
+        "operation":"ADDITION",
+        "modify":0.22
       },
       {
         "attribute":"footwork:max_fracture",
-        "modify":"0.25",
-        "operation":"ADDITION"
+        "operation":"ADDITION",
+        "modify":0.25
       }
     ],
 "rats:rat_fez":[
       {
         "attribute":"footwork:evasion",
-        "modify":"0.05",
-        "operation":"ADDITION"
+        "operation":"ADDITION",
+        "modify":0.05
       },
       {
         "attribute":"footwork:max_posture",
-        "modify":"0.3",
-        "operation":"ADDITION"
+        "operation":"ADDITION",
+        "modify":0.3
       },
       {
         "attribute":"footwork:posture_regen",
-        "modify":"0.17",
-        "operation":"ADDITION"
+        "operation":"ADDITION",
+        "modify":0.17
       },
       {
         "attribute":"footwork:max_fracture",
-        "modify":"0.25",
-        "operation":"ADDITION"
+        "operation":"ADDITION",
+        "modify":0.25
       }
     ],
 "rats:rat_king_crown":[
       {
         "attribute":"footwork:evasion",
-        "modify":"0.1",
-        "operation":"ADDITION"
+        "operation":"ADDITION",
+        "modify":0.1
       },
       {
         "attribute":"footwork:max_posture",
-        "modify":"0.6",
-        "operation":"ADDITION"
+        "operation":"ADDITION",
+        "modify":0.6
       },
       {
         "attribute":"footwork:posture_regen",
-        "modify":"0.35",
-        "operation":"ADDITION"
+        "operation":"ADDITION",
+        "modify":0.35
       },
       {
         "attribute":"footwork:max_fracture",
-        "modify":"0.25",
-        "operation":"ADDITION"
+        "operation":"ADDITION",
+        "modify":0.25
       }
     ],
 "rats:ratlantis_boots":[
       {
         "attribute":"footwork:evasion",
-        "modify":"0.6",
-        "operation":"ADDITION"
+        "operation":"ADDITION",
+        "modify":0.6
       },
       {
         "attribute":"footwork:max_posture",
-        "modify":"1.47",
-        "operation":"ADDITION"
+        "operation":"ADDITION",
+        "modify":1.47
       },
       {
         "attribute":"footwork:spirit_cooldown_speed",
-        "modify":"6",
-        "operation":"MULTIPLY_BASE"
+        "operation":"MULTIPLY_BASE",
+        "modify":0.06
       },
       {
         "attribute":"footwork:spirit_regen",
-        "modify":"3",
-        "operation":"ADDITION"
+        "operation":"ADDITION",
+        "modify":0.03
       },
       {
         "attribute":"footwork:might_gen",
-        "modify":"6",
-        "operation":"MULTIPLY_BASE"
+        "operation":"MULTIPLY_BASE",
+        "modify":0.06
       },
       {
         "attribute":"footwork:max_fracture",
-        "modify":"1.13",
-        "operation":"ADDITION"
+        "operation":"ADDITION",
+        "modify":1.13
       }
     ],
 "rats:ratlantis_chestplate":[
       {
         "attribute":"footwork:evasion",
-        "modify":"1.2",
-        "operation":"ADDITION"
+        "operation":"ADDITION",
+        "modify":1.2
       },
       {
         "attribute":"footwork:max_posture",
-        "modify":"2.94",
-        "operation":"ADDITION"
+        "operation":"ADDITION",
+        "modify":2.94
       },
       {
         "attribute":"footwork:spirit_cooldown_speed",
-        "modify":"16",
-        "operation":"MULTIPLY_BASE"
+        "operation":"MULTIPLY_BASE",
+        "modify":0.16
       },
       {
         "attribute":"footwork:spirit_regen",
-        "modify":"8",
-        "operation":"ADDITION"
+        "operation":"ADDITION",
+        "modify":0.08
       },
       {
         "attribute":"footwork:might_gen",
-        "modify":"16",
-        "operation":"MULTIPLY_BASE"
+        "operation":"MULTIPLY_BASE",
+        "modify":0.16
       },
       {
         "attribute":"footwork:max_fracture",
-        "modify":"2.01",
-        "operation":"ADDITION"
+        "operation":"ADDITION",
+        "modify":2.01
       }
     ],
 "rats:ratlantis_helmet":[
       {
         "attribute":"footwork:evasion",
-        "modify":"0.6",
-        "operation":"ADDITION"
+        "operation":"ADDITION",
+        "modify":0.6
       },
       {
         "attribute":"footwork:max_posture",
-        "modify":"1.47",
-        "operation":"ADDITION"
+        "operation":"ADDITION",
+        "modify":1.47
       },
       {
         "attribute":"footwork:spirit_cooldown_speed",
-        "modify":"6",
-        "operation":"MULTIPLY_BASE"
+        "operation":"MULTIPLY_BASE",
+        "modify":0.06
       },
       {
         "attribute":"footwork:spirit_regen",
-        "modify":"3",
-        "operation":"ADDITION"
+        "operation":"ADDITION",
+        "modify":0.03
       },
       {
         "attribute":"footwork:might_gen",
-        "modify":"6",
-        "operation":"MULTIPLY_BASE"
+        "operation":"MULTIPLY_BASE",
+        "modify":0.06
       },
       {
         "attribute":"footwork:max_fracture",
-        "modify":"1.13",
-        "operation":"ADDITION"
+        "operation":"ADDITION",
+        "modify":1.13
       }
     ],
 "rats:ratlantis_leggings":[
       {
         "attribute":"footwork:evasion",
-        "modify":"0.9",
-        "operation":"ADDITION"
+        "operation":"ADDITION",
+        "modify":0.9
       },
       {
         "attribute":"footwork:max_posture",
-        "modify":"2.2",
-        "operation":"ADDITION"
+        "operation":"ADDITION",
+        "modify":2.2
       },
       {
         "attribute":"footwork:spirit_cooldown_speed",
-        "modify":"12",
-        "operation":"MULTIPLY_BASE"
+        "operation":"MULTIPLY_BASE",
+        "modify":0.12
       },
       {
         "attribute":"footwork:spirit_regen",
-        "modify":"6",
-        "operation":"ADDITION"
+        "operation":"ADDITION",
+        "modify":0.06
       },
       {
         "attribute":"footwork:might_gen",
-        "modify":"12",
-        "operation":"MULTIPLY_BASE"
+        "operation":"MULTIPLY_BASE",
+        "modify":0.12
       },
       {
         "attribute":"footwork:max_fracture",
-        "modify":"1.57",
-        "operation":"ADDITION"
+        "operation":"ADDITION",
+        "modify":1.57
       }
     ],
 "rats:santa_hat":[
       {
         "attribute":"footwork:evasion",
-        "modify":"0.05",
-        "operation":"ADDITION"
+        "operation":"ADDITION",
+        "modify":0.05
       },
       {
         "attribute":"footwork:max_posture",
-        "modify":"0.3",
-        "operation":"ADDITION"
+        "operation":"ADDITION",
+        "modify":0.3
       },
       {
         "attribute":"footwork:posture_regen",
-        "modify":"0.24",
-        "operation":"ADDITION"
+        "operation":"ADDITION",
+        "modify":0.24
       },
       {
         "attribute":"footwork:max_fracture",
-        "modify":"0.25",
-        "operation":"ADDITION"
+        "operation":"ADDITION",
+        "modify":0.25
       }
     ],
 "rats:top_hat":[
       {
         "attribute":"footwork:evasion",
-        "modify":"0.05",
-        "operation":"ADDITION"
+        "operation":"ADDITION",
+        "modify":0.05
       },
       {
         "attribute":"footwork:max_posture",
-        "modify":"0.3",
-        "operation":"ADDITION"
+        "operation":"ADDITION",
+        "modify":0.3
       },
       {
         "attribute":"footwork:posture_regen",
-        "modify":"0.24",
-        "operation":"ADDITION"
+        "operation":"ADDITION",
+        "modify":0.24
       },
       {
         "attribute":"footwork:max_fracture",
-        "modify":"0.25",
-        "operation":"ADDITION"
+        "operation":"ADDITION",
+        "modify":0.25
       }
     ]
 }

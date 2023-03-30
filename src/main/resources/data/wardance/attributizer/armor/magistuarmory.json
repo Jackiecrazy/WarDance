@@ -2,1320 +2,1320 @@
 "magistuarmory:armet":[
       {
         "attribute":"footwork:evasion",
-        "modify":"0.35",
-        "operation":"ADDITION"
+        "operation":"ADDITION",
+        "modify":0.35
       },
       {
         "attribute":"footwork:max_posture",
-        "modify":"0.79",
-        "operation":"ADDITION"
+        "operation":"ADDITION",
+        "modify":0.79
       },
       {
         "attribute":"footwork:max_fracture",
-        "modify":"0.41",
-        "operation":"ADDITION"
+        "operation":"ADDITION",
+        "modify":0.41
       }
     ],
 "magistuarmory:barbute":[
       {
         "attribute":"footwork:evasion",
-        "modify":"0.5",
-        "operation":"ADDITION"
+        "operation":"ADDITION",
+        "modify":0.5
       },
       {
         "attribute":"footwork:max_posture",
-        "modify":"0.95",
-        "operation":"ADDITION"
+        "operation":"ADDITION",
+        "modify":0.95
       },
       {
         "attribute":"footwork:might_grace",
-        "modify":"10",
-        "operation":"MULTIPLY_BASE"
+        "operation":"MULTIPLY_BASE",
+        "modify":0.1
       },
       {
         "attribute":"footwork:max_fracture",
-        "modify":"0.33",
-        "operation":"ADDITION"
+        "operation":"ADDITION",
+        "modify":0.33
       }
     ],
 "magistuarmory:bascinet":[
       {
         "attribute":"footwork:evasion",
-        "modify":"0.4",
-        "operation":"ADDITION"
+        "operation":"ADDITION",
+        "modify":0.4
       },
       {
         "attribute":"footwork:max_posture",
-        "modify":"1.2",
-        "operation":"ADDITION"
+        "operation":"ADDITION",
+        "modify":1.2
       },
       {
         "attribute":"footwork:max_might",
-        "modify":"0.25",
-        "operation":"ADDITION"
+        "operation":"ADDITION",
+        "modify":0.25
       },
       {
         "attribute":"footwork:max_fracture",
-        "modify":"0.89",
-        "operation":"ADDITION"
+        "operation":"ADDITION",
+        "modify":0.89
       }
     ],
 "magistuarmory:brigandine_chestplate":[
       {
         "attribute":"footwork:evasion",
-        "modify":"1.2",
-        "operation":"ADDITION"
+        "operation":"ADDITION",
+        "modify":1.2
       },
       {
         "attribute":"footwork:max_posture",
-        "modify":"2.94",
-        "operation":"ADDITION"
+        "operation":"ADDITION",
+        "modify":2.94
       },
       {
         "attribute":"footwork:posture_regen",
-        "modify":"0.89",
-        "operation":"ADDITION"
+        "operation":"ADDITION",
+        "modify":0.89
       },
       {
         "attribute":"footwork:max_fracture",
-        "modify":"0.25",
-        "operation":"ADDITION"
+        "operation":"ADDITION",
+        "modify":0.25
       }
     ],
 "magistuarmory:ceremonial_boots":[
       {
         "attribute":"footwork:evasion",
-        "modify":"1",
-        "operation":"ADDITION"
+        "operation":"ADDITION",
+        "modify":1
       },
       {
         "attribute":"footwork:max_posture",
-        "modify":"1.9",
-        "operation":"ADDITION"
+        "operation":"ADDITION",
+        "modify":1.9
       },
       {
         "attribute":"footwork:posture_regen",
-        "modify":"0.2",
-        "operation":"ADDITION"
+        "operation":"ADDITION",
+        "modify":0.2
       },
       {
         "attribute":"footwork:max_fracture",
-        "modify":"0.25",
-        "operation":"ADDITION"
+        "operation":"ADDITION",
+        "modify":0.25
       }
     ],
 "magistuarmory:ceremonial_chestplate":[
       {
         "attribute":"footwork:evasion",
-        "modify":"2",
-        "operation":"ADDITION"
+        "operation":"ADDITION",
+        "modify":2
       },
       {
         "attribute":"footwork:max_posture",
-        "modify":"3.79",
-        "operation":"ADDITION"
+        "operation":"ADDITION",
+        "modify":3.79
       },
       {
         "attribute":"footwork:posture_regen",
-        "modify":"0.4",
-        "operation":"ADDITION"
+        "operation":"ADDITION",
+        "modify":0.4
       },
       {
         "attribute":"footwork:max_fracture",
-        "modify":"0.25",
-        "operation":"ADDITION"
+        "operation":"ADDITION",
+        "modify":0.25
       }
     ],
 "magistuarmory:ceremonialarmet":[
       {
         "attribute":"footwork:evasion",
-        "modify":"0.5",
-        "operation":"ADDITION"
+        "operation":"ADDITION",
+        "modify":0.5
       },
       {
         "attribute":"footwork:max_posture",
-        "modify":"0.95",
-        "operation":"ADDITION"
+        "operation":"ADDITION",
+        "modify":0.95
       },
       {
         "attribute":"footwork:posture_regen",
-        "modify":"0.1",
-        "operation":"ADDITION"
+        "operation":"ADDITION",
+        "modify":0.1
       },
       {
         "attribute":"footwork:max_fracture",
-        "modify":"0.25",
-        "operation":"ADDITION"
+        "operation":"ADDITION",
+        "modify":0.25
       }
     ],
 "magistuarmory:chainmail_boots":[
       {
         "attribute":"footwork:evasion",
-        "modify":"0.4",
-        "operation":"ADDITION"
+        "operation":"ADDITION",
+        "modify":0.4
       },
       {
         "attribute":"footwork:max_posture",
-        "modify":"1.2",
-        "operation":"ADDITION"
+        "operation":"ADDITION",
+        "modify":1.2
       },
       {
         "attribute":"footwork:posture_regen",
-        "modify":"0.4",
-        "operation":"ADDITION"
+        "operation":"ADDITION",
+        "modify":0.4
       },
       {
         "attribute":"footwork:max_fracture",
-        "modify":"0.25",
-        "operation":"ADDITION"
+        "operation":"ADDITION",
+        "modify":0.25
       }
     ],
 "magistuarmory:chainmail_chestplate":[
       {
         "attribute":"footwork:evasion",
-        "modify":"0.8",
-        "operation":"ADDITION"
+        "operation":"ADDITION",
+        "modify":0.8
       },
       {
         "attribute":"footwork:max_posture",
-        "modify":"2.4",
-        "operation":"ADDITION"
+        "operation":"ADDITION",
+        "modify":2.4
       },
       {
         "attribute":"footwork:posture_regen",
-        "modify":"0.8",
-        "operation":"ADDITION"
+        "operation":"ADDITION",
+        "modify":0.8
       },
       {
         "attribute":"footwork:max_fracture",
-        "modify":"0.25",
-        "operation":"ADDITION"
+        "operation":"ADDITION",
+        "modify":0.25
       }
     ],
 "magistuarmory:chainmail_helmet":[
       {
         "attribute":"footwork:evasion",
-        "modify":"0.4",
-        "operation":"ADDITION"
+        "operation":"ADDITION",
+        "modify":0.4
       },
       {
         "attribute":"footwork:max_posture",
-        "modify":"1.2",
-        "operation":"ADDITION"
+        "operation":"ADDITION",
+        "modify":1.2
       },
       {
         "attribute":"footwork:posture_regen",
-        "modify":"0.4",
-        "operation":"ADDITION"
+        "operation":"ADDITION",
+        "modify":0.4
       },
       {
         "attribute":"footwork:max_fracture",
-        "modify":"0.25",
-        "operation":"ADDITION"
+        "operation":"ADDITION",
+        "modify":0.25
       }
     ],
 "magistuarmory:chainmail_leggings":[
       {
         "attribute":"footwork:evasion",
-        "modify":"0.6",
-        "operation":"ADDITION"
+        "operation":"ADDITION",
+        "modify":0.6
       },
       {
         "attribute":"footwork:max_posture",
-        "modify":"1.8",
-        "operation":"ADDITION"
+        "operation":"ADDITION",
+        "modify":1.8
       },
       {
         "attribute":"footwork:posture_regen",
-        "modify":"0.6",
-        "operation":"ADDITION"
+        "operation":"ADDITION",
+        "modify":0.6
       },
       {
         "attribute":"footwork:max_fracture",
-        "modify":"0.25",
-        "operation":"ADDITION"
+        "operation":"ADDITION",
+        "modify":0.25
       }
     ],
 "magistuarmory:coif":[
       {
         "attribute":"footwork:evasion",
-        "modify":"0.4",
-        "operation":"ADDITION"
+        "operation":"ADDITION",
+        "modify":0.4
       },
       {
         "attribute":"footwork:max_posture",
-        "modify":"0.85",
-        "operation":"ADDITION"
+        "operation":"ADDITION",
+        "modify":0.85
       },
       {
         "attribute":"footwork:posture_regen",
-        "modify":"0.2",
-        "operation":"ADDITION"
+        "operation":"ADDITION",
+        "modify":0.2
       },
       {
         "attribute":"footwork:max_fracture",
-        "modify":"0.25",
-        "operation":"ADDITION"
+        "operation":"ADDITION",
+        "modify":0.25
       }
     ],
 "magistuarmory:crusader_boots":[
       {
         "attribute":"footwork:evasion",
-        "modify":"0.7",
-        "operation":"ADDITION"
+        "operation":"ADDITION",
+        "modify":0.7
       },
       {
         "attribute":"footwork:max_posture",
-        "modify":"1.59",
-        "operation":"ADDITION"
+        "operation":"ADDITION",
+        "modify":1.59
       },
       {
         "attribute":"footwork:might_gen",
-        "modify":"10",
-        "operation":"MULTIPLY_BASE"
+        "operation":"MULTIPLY_BASE",
+        "modify":0.1
       },
       {
         "attribute":"footwork:max_fracture",
-        "modify":"0.81",
-        "operation":"ADDITION"
+        "operation":"ADDITION",
+        "modify":0.81
       }
     ],
 "magistuarmory:crusader_chestplate":[
       {
         "attribute":"footwork:evasion",
-        "modify":"1.4",
-        "operation":"ADDITION"
+        "operation":"ADDITION",
+        "modify":1.4
       },
       {
         "attribute":"footwork:max_posture",
-        "modify":"3.17",
-        "operation":"ADDITION"
+        "operation":"ADDITION",
+        "modify":3.17
       },
       {
         "attribute":"footwork:might_gen",
-        "modify":"10",
-        "operation":"MULTIPLY_BASE"
+        "operation":"MULTIPLY_BASE",
+        "modify":0.1
       },
       {
         "attribute":"footwork:max_fracture",
-        "modify":"1.37",
-        "operation":"ADDITION"
+        "operation":"ADDITION",
+        "modify":1.37
       }
     ],
 "magistuarmory:crusader_leggings":[
       {
         "attribute":"footwork:evasion",
-        "modify":"1.05",
-        "operation":"ADDITION"
+        "operation":"ADDITION",
+        "modify":1.05
       },
       {
         "attribute":"footwork:max_posture",
-        "modify":"2.38",
-        "operation":"ADDITION"
+        "operation":"ADDITION",
+        "modify":2.38
       },
       {
         "attribute":"footwork:might_gen",
-        "modify":"10",
-        "operation":"MULTIPLY_BASE"
+        "operation":"MULTIPLY_BASE",
+        "modify":0.1
       },
       {
         "attribute":"footwork:max_fracture",
-        "modify":"1.09",
-        "operation":"ADDITION"
+        "operation":"ADDITION",
+        "modify":1.09
       }
     ],
 "magistuarmory:cuirassier_boots":[
       {
         "attribute":"footwork:evasion",
-        "modify":"0.8",
-        "operation":"ADDITION"
+        "operation":"ADDITION",
+        "modify":0.8
       },
       {
         "attribute":"footwork:max_posture",
-        "modify":"1.7",
-        "operation":"ADDITION"
+        "operation":"ADDITION",
+        "modify":1.7
       },
       {
         "attribute":"footwork:posture_regen",
-        "modify":"0.28",
-        "operation":"ADDITION"
+        "operation":"ADDITION",
+        "modify":0.28
       },
       {
         "attribute":"footwork:might_gen",
-        "modify":"10",
-        "operation":"MULTIPLY_BASE"
+        "operation":"MULTIPLY_BASE",
+        "modify":0.1
       },
       {
         "attribute":"footwork:max_fracture",
-        "modify":"0.41",
-        "operation":"ADDITION"
+        "operation":"ADDITION",
+        "modify":0.41
       }
     ],
 "magistuarmory:cuirassier_chestplate":[
       {
         "attribute":"footwork:evasion",
-        "modify":"1.6",
-        "operation":"ADDITION"
+        "operation":"ADDITION",
+        "modify":1.6
       },
       {
         "attribute":"footwork:max_posture",
-        "modify":"3.39",
-        "operation":"ADDITION"
+        "operation":"ADDITION",
+        "modify":3.39
       },
       {
         "attribute":"footwork:posture_regen",
-        "modify":"0.57",
-        "operation":"ADDITION"
+        "operation":"ADDITION",
+        "modify":0.57
       },
       {
         "attribute":"footwork:might_gen",
-        "modify":"10",
-        "operation":"MULTIPLY_BASE"
+        "operation":"MULTIPLY_BASE",
+        "modify":0.1
       },
       {
         "attribute":"footwork:max_fracture",
-        "modify":"0.57",
-        "operation":"ADDITION"
+        "operation":"ADDITION",
+        "modify":0.57
       }
     ],
 "magistuarmory:cuirassier_helmet":[
       {
         "attribute":"footwork:evasion",
-        "modify":"0.8",
-        "operation":"ADDITION"
+        "operation":"ADDITION",
+        "modify":0.8
       },
       {
         "attribute":"footwork:max_posture",
-        "modify":"1.7",
-        "operation":"ADDITION"
+        "operation":"ADDITION",
+        "modify":1.7
       },
       {
         "attribute":"footwork:posture_regen",
-        "modify":"0.28",
-        "operation":"ADDITION"
+        "operation":"ADDITION",
+        "modify":0.28
       },
       {
         "attribute":"footwork:might_gen",
-        "modify":"10",
-        "operation":"MULTIPLY_BASE"
+        "operation":"MULTIPLY_BASE",
+        "modify":0.1
       },
       {
         "attribute":"footwork:max_fracture",
-        "modify":"0.41",
-        "operation":"ADDITION"
+        "operation":"ADDITION",
+        "modify":0.41
       }
     ],
 "magistuarmory:cuirassier_leggings":[
       {
         "attribute":"footwork:evasion",
-        "modify":"1.2",
-        "operation":"ADDITION"
+        "operation":"ADDITION",
+        "modify":1.2
       },
       {
         "attribute":"footwork:max_posture",
-        "modify":"2.55",
-        "operation":"ADDITION"
+        "operation":"ADDITION",
+        "modify":2.55
       },
       {
         "attribute":"footwork:posture_regen",
-        "modify":"0.42",
-        "operation":"ADDITION"
+        "operation":"ADDITION",
+        "modify":0.42
       },
       {
         "attribute":"footwork:might_gen",
-        "modify":"10",
-        "operation":"MULTIPLY_BASE"
+        "operation":"MULTIPLY_BASE",
+        "modify":0.1
       },
       {
         "attribute":"footwork:max_fracture",
-        "modify":"0.49",
-        "operation":"ADDITION"
+        "operation":"ADDITION",
+        "modify":0.49
       }
     ],
 "magistuarmory:face_helmet":[
       {
         "attribute":"footwork:evasion",
-        "modify":"1.1",
-        "operation":"ADDITION"
+        "operation":"ADDITION",
+        "modify":1.1
       },
       {
         "attribute":"footwork:max_posture",
-        "modify":"1.99",
-        "operation":"ADDITION"
+        "operation":"ADDITION",
+        "modify":1.99
       },
       {
         "attribute":"footwork:max_fracture",
-        "modify":"0.25",
-        "operation":"ADDITION"
+        "operation":"ADDITION",
+        "modify":0.25
       }
     ],
 "magistuarmory:gambeson_boots":[
       {
         "attribute":"footwork:posture_regen",
-        "modify":"0.63",
-        "operation":"ADDITION"
+        "operation":"ADDITION",
+        "modify":0.63
       },
       {
         "attribute":"footwork:max_fracture",
-        "modify":"0.25",
-        "operation":"ADDITION"
+        "operation":"ADDITION",
+        "modify":0.25
       }
     ],
 "magistuarmory:gambeson_chestplate":[
       {
         "attribute":"footwork:posture_regen",
-        "modify":"1.26",
-        "operation":"ADDITION"
+        "operation":"ADDITION",
+        "modify":1.26
       },
       {
         "attribute":"footwork:max_fracture",
-        "modify":"0.25",
-        "operation":"ADDITION"
+        "operation":"ADDITION",
+        "modify":0.25
       }
     ],
 "magistuarmory:gothic_boots":[
       {
         "attribute":"footwork:evasion",
-        "modify":"0.7",
-        "operation":"ADDITION"
+        "operation":"ADDITION",
+        "modify":0.7
       },
       {
         "attribute":"footwork:max_posture",
-        "modify":"1.59",
-        "operation":"ADDITION"
+        "operation":"ADDITION",
+        "modify":1.59
       },
       {
         "attribute":"footwork:max_might",
-        "modify":"0.25",
-        "operation":"ADDITION"
+        "operation":"ADDITION",
+        "modify":0.25
       },
       {
         "attribute":"footwork:max_fracture",
-        "modify":"0.81",
-        "operation":"ADDITION"
+        "operation":"ADDITION",
+        "modify":0.81
       }
     ],
 "magistuarmory:gothic_chestplate":[
       {
         "attribute":"footwork:evasion",
-        "modify":"1.4",
-        "operation":"ADDITION"
+        "operation":"ADDITION",
+        "modify":1.4
       },
       {
         "attribute":"footwork:max_posture",
-        "modify":"3.17",
-        "operation":"ADDITION"
+        "operation":"ADDITION",
+        "modify":3.17
       },
       {
         "attribute":"footwork:max_might",
-        "modify":"0.25",
-        "operation":"ADDITION"
+        "operation":"ADDITION",
+        "modify":0.25
       },
       {
         "attribute":"footwork:max_fracture",
-        "modify":"1.37",
-        "operation":"ADDITION"
+        "operation":"ADDITION",
+        "modify":1.37
       }
     ],
 "magistuarmory:gothic_leggings":[
       {
         "attribute":"footwork:evasion",
-        "modify":"1.05",
-        "operation":"ADDITION"
+        "operation":"ADDITION",
+        "modify":1.05
       },
       {
         "attribute":"footwork:max_posture",
-        "modify":"2.38",
-        "operation":"ADDITION"
+        "operation":"ADDITION",
+        "modify":2.38
       },
       {
         "attribute":"footwork:max_might",
-        "modify":"0.25",
-        "operation":"ADDITION"
+        "operation":"ADDITION",
+        "modify":0.25
       },
       {
         "attribute":"footwork:max_fracture",
-        "modify":"1.09",
-        "operation":"ADDITION"
+        "operation":"ADDITION",
+        "modify":1.09
       }
     ],
 "magistuarmory:grand_bascinet":[
       {
         "attribute":"footwork:evasion",
-        "modify":"0.8",
-        "operation":"ADDITION"
+        "operation":"ADDITION",
+        "modify":0.8
       },
       {
         "attribute":"footwork:max_posture",
-        "modify":"1.7",
-        "operation":"ADDITION"
+        "operation":"ADDITION",
+        "modify":1.7
       },
       {
         "attribute":"footwork:max_fracture",
-        "modify":"0.49",
-        "operation":"ADDITION"
+        "operation":"ADDITION",
+        "modify":0.49
       }
     ],
 "magistuarmory:greathelm":[
       {
         "attribute":"footwork:evasion",
-        "modify":"0.35",
-        "operation":"ADDITION"
+        "operation":"ADDITION",
+        "modify":0.35
       },
       {
         "attribute":"footwork:max_posture",
-        "modify":"0.79",
-        "operation":"ADDITION"
+        "operation":"ADDITION",
+        "modify":0.79
       },
       {
         "attribute":"footwork:might_gen",
-        "modify":"10",
-        "operation":"MULTIPLY_BASE"
+        "operation":"MULTIPLY_BASE",
+        "modify":0.1
       },
       {
         "attribute":"footwork:max_fracture",
-        "modify":"0.53",
-        "operation":"ADDITION"
+        "operation":"ADDITION",
+        "modify":0.53
       }
     ],
 "magistuarmory:halfarmor_chestplate":[
       {
         "attribute":"footwork:evasion",
-        "modify":"1.2",
-        "operation":"ADDITION"
+        "operation":"ADDITION",
+        "modify":1.2
       },
       {
         "attribute":"footwork:max_posture",
-        "modify":"2.94",
-        "operation":"ADDITION"
+        "operation":"ADDITION",
+        "modify":2.94
       },
       {
         "attribute":"footwork:posture_regen",
-        "modify":"0.98",
-        "operation":"ADDITION"
+        "operation":"ADDITION",
+        "modify":0.98
       },
       {
         "attribute":"footwork:max_fracture",
-        "modify":"0.25",
-        "operation":"ADDITION"
+        "operation":"ADDITION",
+        "modify":0.25
       }
     ],
 "magistuarmory:jousting_boots":[
       {
         "attribute":"footwork:max_might",
-        "modify":"0.25",
-        "operation":"ADDITION"
+        "operation":"ADDITION",
+        "modify":0.25
       },
       {
         "attribute":"footwork:max_fracture",
-        "modify":"1.37",
-        "operation":"ADDITION"
+        "operation":"ADDITION",
+        "modify":1.37
       }
     ],
 "magistuarmory:jousting_chestplate":[
       {
         "attribute":"footwork:max_might",
-        "modify":"0.25",
-        "operation":"ADDITION"
+        "operation":"ADDITION",
+        "modify":0.25
       },
       {
         "attribute":"footwork:max_fracture",
-        "modify":"2.49",
-        "operation":"ADDITION"
+        "operation":"ADDITION",
+        "modify":2.49
       }
     ],
 "magistuarmory:jousting_leggings":[
       {
         "attribute":"footwork:max_might",
-        "modify":"0.25",
-        "operation":"ADDITION"
+        "operation":"ADDITION",
+        "modify":0.25
       },
       {
         "attribute":"footwork:max_fracture",
-        "modify":"1.93",
-        "operation":"ADDITION"
+        "operation":"ADDITION",
+        "modify":1.93
       }
     ],
 "magistuarmory:kastenbrust_boots":[
       {
         "attribute":"footwork:evasion",
-        "modify":"0.8",
-        "operation":"ADDITION"
+        "operation":"ADDITION",
+        "modify":0.8
       },
       {
         "attribute":"footwork:max_posture",
-        "modify":"1.7",
-        "operation":"ADDITION"
+        "operation":"ADDITION",
+        "modify":1.7
       },
       {
         "attribute":"footwork:max_fracture",
-        "modify":"0.49",
-        "operation":"ADDITION"
+        "operation":"ADDITION",
+        "modify":0.49
       }
     ],
 "magistuarmory:kastenbrust_chestplate":[
       {
         "attribute":"footwork:evasion",
-        "modify":"1.6",
-        "operation":"ADDITION"
+        "operation":"ADDITION",
+        "modify":1.6
       },
       {
         "attribute":"footwork:max_posture",
-        "modify":"3.39",
-        "operation":"ADDITION"
+        "operation":"ADDITION",
+        "modify":3.39
       },
       {
         "attribute":"footwork:max_fracture",
-        "modify":"0.73",
-        "operation":"ADDITION"
+        "operation":"ADDITION",
+        "modify":0.73
       }
     ],
 "magistuarmory:kastenbrust_leggings":[
       {
         "attribute":"footwork:evasion",
-        "modify":"1.2",
-        "operation":"ADDITION"
+        "operation":"ADDITION",
+        "modify":1.2
       },
       {
         "attribute":"footwork:max_posture",
-        "modify":"2.55",
-        "operation":"ADDITION"
+        "operation":"ADDITION",
+        "modify":2.55
       },
       {
         "attribute":"footwork:max_fracture",
-        "modify":"0.61",
-        "operation":"ADDITION"
+        "operation":"ADDITION",
+        "modify":0.61
       }
     ],
 "magistuarmory:kettlehat":[
       {
         "attribute":"footwork:evasion",
-        "modify":"0.5",
-        "operation":"ADDITION"
+        "operation":"ADDITION",
+        "modify":0.5
       },
       {
         "attribute":"footwork:max_posture",
-        "modify":"0.95",
-        "operation":"ADDITION"
+        "operation":"ADDITION",
+        "modify":0.95
       },
       {
         "attribute":"footwork:max_fracture",
-        "modify":"0.41",
-        "operation":"ADDITION"
+        "operation":"ADDITION",
+        "modify":0.41
       }
     ],
 "magistuarmory:knight_boots":[
       {
         "attribute":"footwork:evasion",
-        "modify":"1",
-        "operation":"ADDITION"
+        "operation":"ADDITION",
+        "modify":1
       },
       {
         "attribute":"footwork:max_posture",
-        "modify":"1.9",
-        "operation":"ADDITION"
+        "operation":"ADDITION",
+        "modify":1.9
       },
       {
         "attribute":"footwork:max_fracture",
-        "modify":"0.57",
-        "operation":"ADDITION"
+        "operation":"ADDITION",
+        "modify":0.57
       }
     ],
 "magistuarmory:knight_chestplate":[
       {
         "attribute":"footwork:evasion",
-        "modify":"2",
-        "operation":"ADDITION"
+        "operation":"ADDITION",
+        "modify":2
       },
       {
         "attribute":"footwork:max_posture",
-        "modify":"3.79",
-        "operation":"ADDITION"
+        "operation":"ADDITION",
+        "modify":3.79
       },
       {
         "attribute":"footwork:max_fracture",
-        "modify":"0.89",
-        "operation":"ADDITION"
+        "operation":"ADDITION",
+        "modify":0.89
       }
     ],
 "magistuarmory:knight_leggings":[
       {
         "attribute":"footwork:evasion",
-        "modify":"1.5",
-        "operation":"ADDITION"
+        "operation":"ADDITION",
+        "modify":1.5
       },
       {
         "attribute":"footwork:max_posture",
-        "modify":"2.85",
-        "operation":"ADDITION"
+        "operation":"ADDITION",
+        "modify":2.85
       },
       {
         "attribute":"footwork:max_fracture",
-        "modify":"0.73",
-        "operation":"ADDITION"
+        "operation":"ADDITION",
+        "modify":0.73
       }
     ],
 "magistuarmory:lamellar_boots":[
       {
         "attribute":"footwork:evasion",
-        "modify":"1.2",
-        "operation":"ADDITION"
+        "operation":"ADDITION",
+        "modify":1.2
       },
       {
         "attribute":"footwork:max_posture",
-        "modify":"2.08",
-        "operation":"ADDITION"
+        "operation":"ADDITION",
+        "modify":2.08
       },
       {
         "attribute":"footwork:max_fracture",
-        "modify":"0.25",
-        "operation":"ADDITION"
+        "operation":"ADDITION",
+        "modify":0.25
       }
     ],
 "magistuarmory:lamellar_chestplate":[
       {
         "attribute":"footwork:evasion",
-        "modify":"2.4",
-        "operation":"ADDITION"
+        "operation":"ADDITION",
+        "modify":2.4
       },
       {
         "attribute":"footwork:max_posture",
-        "modify":"4.16",
-        "operation":"ADDITION"
+        "operation":"ADDITION",
+        "modify":4.16
       },
       {
         "attribute":"footwork:max_fracture",
-        "modify":"0.25",
-        "operation":"ADDITION"
+        "operation":"ADDITION",
+        "modify":0.25
       }
     ],
 "magistuarmory:maximilian_boots":[
       {
         "attribute":"footwork:evasion",
-        "modify":"0.4",
-        "operation":"ADDITION"
+        "operation":"ADDITION",
+        "modify":0.4
       },
       {
         "attribute":"footwork:max_posture",
-        "modify":"1.2",
-        "operation":"ADDITION"
+        "operation":"ADDITION",
+        "modify":1.2
       },
       {
         "attribute":"footwork:might_grace",
-        "modify":"10",
-        "operation":"MULTIPLY_BASE"
+        "operation":"MULTIPLY_BASE",
+        "modify":0.1
       },
       {
         "attribute":"footwork:max_fracture",
-        "modify":"0.89",
-        "operation":"ADDITION"
+        "operation":"ADDITION",
+        "modify":0.89
       }
     ],
 "magistuarmory:maximilian_chestplate":[
       {
         "attribute":"footwork:evasion",
-        "modify":"0.8",
-        "operation":"ADDITION"
+        "operation":"ADDITION",
+        "modify":0.8
       },
       {
         "attribute":"footwork:max_posture",
-        "modify":"2.4",
-        "operation":"ADDITION"
+        "operation":"ADDITION",
+        "modify":2.4
       },
       {
         "attribute":"footwork:might_grace",
-        "modify":"10",
-        "operation":"MULTIPLY_BASE"
+        "operation":"MULTIPLY_BASE",
+        "modify":0.1
       },
       {
         "attribute":"footwork:max_fracture",
-        "modify":"1.53",
-        "operation":"ADDITION"
+        "operation":"ADDITION",
+        "modify":1.53
       }
     ],
 "magistuarmory:maximilian_helmet":[
       {
         "attribute":"footwork:evasion",
-        "modify":"0.4",
-        "operation":"ADDITION"
+        "operation":"ADDITION",
+        "modify":0.4
       },
       {
         "attribute":"footwork:max_posture",
-        "modify":"1.2",
-        "operation":"ADDITION"
+        "operation":"ADDITION",
+        "modify":1.2
       },
       {
         "attribute":"footwork:might_grace",
-        "modify":"10",
-        "operation":"MULTIPLY_BASE"
+        "operation":"MULTIPLY_BASE",
+        "modify":0.1
       },
       {
         "attribute":"footwork:max_fracture",
-        "modify":"0.89",
-        "operation":"ADDITION"
+        "operation":"ADDITION",
+        "modify":0.89
       }
     ],
 "magistuarmory:maximilian_leggings":[
       {
         "attribute":"footwork:evasion",
-        "modify":"0.6",
-        "operation":"ADDITION"
+        "operation":"ADDITION",
+        "modify":0.6
       },
       {
         "attribute":"footwork:max_posture",
-        "modify":"1.8",
-        "operation":"ADDITION"
+        "operation":"ADDITION",
+        "modify":1.8
       },
       {
         "attribute":"footwork:might_grace",
-        "modify":"10",
-        "operation":"MULTIPLY_BASE"
+        "operation":"MULTIPLY_BASE",
+        "modify":0.1
       },
       {
         "attribute":"footwork:max_fracture",
-        "modify":"1.21",
-        "operation":"ADDITION"
+        "operation":"ADDITION",
+        "modify":1.21
       }
     ],
 "magistuarmory:norman_helmet":[
       {
         "attribute":"footwork:evasion",
-        "modify":"1",
-        "operation":"ADDITION"
+        "operation":"ADDITION",
+        "modify":1
       },
       {
         "attribute":"footwork:max_posture",
-        "modify":"1.9",
-        "operation":"ADDITION"
+        "operation":"ADDITION",
+        "modify":1.9
       },
       {
         "attribute":"footwork:max_fracture",
-        "modify":"0.25",
-        "operation":"ADDITION"
+        "operation":"ADDITION",
+        "modify":0.25
       }
     ],
 "magistuarmory:pantyhose":[
       {
         "attribute":"footwork:posture_regen",
-        "modify":"0.95",
-        "operation":"ADDITION"
+        "operation":"ADDITION",
+        "modify":0.95
       },
       {
         "attribute":"footwork:max_fracture",
-        "modify":"0.25",
-        "operation":"ADDITION"
+        "operation":"ADDITION",
+        "modify":0.25
       }
     ],
 "magistuarmory:platemail_boots":[
       {
         "attribute":"footwork:evasion",
-        "modify":"1",
-        "operation":"ADDITION"
+        "operation":"ADDITION",
+        "modify":1
       },
       {
         "attribute":"footwork:max_posture",
-        "modify":"1.9",
-        "operation":"ADDITION"
+        "operation":"ADDITION",
+        "modify":1.9
       },
       {
         "attribute":"footwork:might_grace",
-        "modify":"10",
-        "operation":"MULTIPLY_BASE"
+        "operation":"MULTIPLY_BASE",
+        "modify":0.1
       },
       {
         "attribute":"footwork:max_fracture",
-        "modify":"0.41",
-        "operation":"ADDITION"
+        "operation":"ADDITION",
+        "modify":0.41
       }
     ],
 "magistuarmory:platemail_chestplate":[
       {
         "attribute":"footwork:evasion",
-        "modify":"2",
-        "operation":"ADDITION"
+        "operation":"ADDITION",
+        "modify":2
       },
       {
         "attribute":"footwork:max_posture",
-        "modify":"3.79",
-        "operation":"ADDITION"
+        "operation":"ADDITION",
+        "modify":3.79
       },
       {
         "attribute":"footwork:might_grace",
-        "modify":"10",
-        "operation":"MULTIPLY_BASE"
+        "operation":"MULTIPLY_BASE",
+        "modify":0.1
       },
       {
         "attribute":"footwork:max_fracture",
-        "modify":"0.57",
-        "operation":"ADDITION"
+        "operation":"ADDITION",
+        "modify":0.57
       }
     ],
 "magistuarmory:platemail_leggings":[
       {
         "attribute":"footwork:evasion",
-        "modify":"1.5",
-        "operation":"ADDITION"
+        "operation":"ADDITION",
+        "modify":1.5
       },
       {
         "attribute":"footwork:max_posture",
-        "modify":"2.85",
-        "operation":"ADDITION"
+        "operation":"ADDITION",
+        "modify":2.85
       },
       {
         "attribute":"footwork:might_grace",
-        "modify":"10",
-        "operation":"MULTIPLY_BASE"
+        "operation":"MULTIPLY_BASE",
+        "modify":0.1
       },
       {
         "attribute":"footwork:max_fracture",
-        "modify":"0.49",
-        "operation":"ADDITION"
+        "operation":"ADDITION",
+        "modify":0.49
       }
     ],
 "magistuarmory:rustedbarbute":[
       {
         "attribute":"footwork:evasion",
-        "modify":"0.9",
-        "operation":"ADDITION"
+        "operation":"ADDITION",
+        "modify":0.9
       },
       {
         "attribute":"footwork:max_posture",
-        "modify":"1.8",
-        "operation":"ADDITION"
+        "operation":"ADDITION",
+        "modify":1.8
       },
       {
         "attribute":"footwork:max_fracture",
-        "modify":"0.33",
-        "operation":"ADDITION"
+        "operation":"ADDITION",
+        "modify":0.33
       }
     ],
 "magistuarmory:rustedchainmail_boots":[
       {
         "attribute":"footwork:evasion",
-        "modify":"0.3",
-        "operation":"ADDITION"
+        "operation":"ADDITION",
+        "modify":0.3
       },
       {
         "attribute":"footwork:max_posture",
-        "modify":"1.04",
-        "operation":"ADDITION"
+        "operation":"ADDITION",
+        "modify":1.04
       },
       {
         "attribute":"footwork:posture_regen",
-        "modify":"0.35",
-        "operation":"ADDITION"
+        "operation":"ADDITION",
+        "modify":0.35
       },
       {
         "attribute":"footwork:max_fracture",
-        "modify":"0.25",
-        "operation":"ADDITION"
+        "operation":"ADDITION",
+        "modify":0.25
       }
     ],
 "magistuarmory:rustedchainmail_chestplate":[
       {
         "attribute":"footwork:evasion",
-        "modify":"0.6",
-        "operation":"ADDITION"
+        "operation":"ADDITION",
+        "modify":0.6
       },
       {
         "attribute":"footwork:max_posture",
-        "modify":"2.08",
-        "operation":"ADDITION"
+        "operation":"ADDITION",
+        "modify":2.08
       },
       {
         "attribute":"footwork:posture_regen",
-        "modify":"0.69",
-        "operation":"ADDITION"
+        "operation":"ADDITION",
+        "modify":0.69
       },
       {
         "attribute":"footwork:max_fracture",
-        "modify":"0.25",
-        "operation":"ADDITION"
+        "operation":"ADDITION",
+        "modify":0.25
       }
     ],
 "magistuarmory:rustedchainmail_helmet":[
       {
         "attribute":"footwork:evasion",
-        "modify":"0.3",
-        "operation":"ADDITION"
+        "operation":"ADDITION",
+        "modify":0.3
       },
       {
         "attribute":"footwork:max_posture",
-        "modify":"1.04",
-        "operation":"ADDITION"
+        "operation":"ADDITION",
+        "modify":1.04
       },
       {
         "attribute":"footwork:posture_regen",
-        "modify":"0.35",
-        "operation":"ADDITION"
+        "operation":"ADDITION",
+        "modify":0.35
       },
       {
         "attribute":"footwork:max_fracture",
-        "modify":"0.25",
-        "operation":"ADDITION"
+        "operation":"ADDITION",
+        "modify":0.25
       }
     ],
 "magistuarmory:rustedchainmail_leggings":[
       {
         "attribute":"footwork:evasion",
-        "modify":"0.45",
-        "operation":"ADDITION"
+        "operation":"ADDITION",
+        "modify":0.45
       },
       {
         "attribute":"footwork:max_posture",
-        "modify":"1.56",
-        "operation":"ADDITION"
+        "operation":"ADDITION",
+        "modify":1.56
       },
       {
         "attribute":"footwork:posture_regen",
-        "modify":"0.52",
-        "operation":"ADDITION"
+        "operation":"ADDITION",
+        "modify":0.52
       },
       {
         "attribute":"footwork:max_fracture",
-        "modify":"0.25",
-        "operation":"ADDITION"
+        "operation":"ADDITION",
+        "modify":0.25
       }
     ],
 "magistuarmory:rustedcrusader_boots":[
       {
         "attribute":"footwork:evasion",
-        "modify":"0.6",
-        "operation":"ADDITION"
+        "operation":"ADDITION",
+        "modify":0.6
       },
       {
         "attribute":"footwork:max_posture",
-        "modify":"1.47",
-        "operation":"ADDITION"
+        "operation":"ADDITION",
+        "modify":1.47
       },
       {
         "attribute":"footwork:max_fracture",
-        "modify":"0.73",
-        "operation":"ADDITION"
+        "operation":"ADDITION",
+        "modify":0.73
       }
     ],
 "magistuarmory:rustedcrusader_chestplate":[
       {
         "attribute":"footwork:evasion",
-        "modify":"1.2",
-        "operation":"ADDITION"
+        "operation":"ADDITION",
+        "modify":1.2
       },
       {
         "attribute":"footwork:max_posture",
-        "modify":"2.94",
-        "operation":"ADDITION"
+        "operation":"ADDITION",
+        "modify":2.94
       },
       {
         "attribute":"footwork:max_fracture",
-        "modify":"1.21",
-        "operation":"ADDITION"
+        "operation":"ADDITION",
+        "modify":1.21
       }
     ],
 "magistuarmory:rustedgreathelm":[
       {
         "attribute":"footwork:evasion",
-        "modify":"0.6",
-        "operation":"ADDITION"
+        "operation":"ADDITION",
+        "modify":0.6
       },
       {
         "attribute":"footwork:max_posture",
-        "modify":"1.47",
-        "operation":"ADDITION"
+        "operation":"ADDITION",
+        "modify":1.47
       },
       {
         "attribute":"footwork:max_fracture",
-        "modify":"0.73",
-        "operation":"ADDITION"
+        "operation":"ADDITION",
+        "modify":0.73
       }
     ],
 "magistuarmory:rustedhalfarmor_chestplate":[
       {
         "attribute":"footwork:evasion",
-        "modify":"1",
-        "operation":"ADDITION"
+        "operation":"ADDITION",
+        "modify":1
       },
       {
         "attribute":"footwork:max_posture",
-        "modify":"2.68",
-        "operation":"ADDITION"
+        "operation":"ADDITION",
+        "modify":2.68
       },
       {
         "attribute":"footwork:posture_regen",
-        "modify":"0.89",
-        "operation":"ADDITION"
+        "operation":"ADDITION",
+        "modify":0.89
       },
       {
         "attribute":"footwork:max_fracture",
-        "modify":"0.25",
-        "operation":"ADDITION"
+        "operation":"ADDITION",
+        "modify":0.25
       }
     ],
 "magistuarmory:rustedkettlehat":[
       {
         "attribute":"footwork:evasion",
-        "modify":"0.9",
-        "operation":"ADDITION"
+        "operation":"ADDITION",
+        "modify":0.9
       },
       {
         "attribute":"footwork:max_posture",
-        "modify":"1.8",
-        "operation":"ADDITION"
+        "operation":"ADDITION",
+        "modify":1.8
       },
       {
         "attribute":"footwork:max_fracture",
-        "modify":"0.25",
-        "operation":"ADDITION"
+        "operation":"ADDITION",
+        "modify":0.25
       }
     ],
 "magistuarmory:rustednorman_helmet":[
       {
         "attribute":"footwork:evasion",
-        "modify":"0.9",
-        "operation":"ADDITION"
+        "operation":"ADDITION",
+        "modify":0.9
       },
       {
         "attribute":"footwork:max_posture",
-        "modify":"1.8",
-        "operation":"ADDITION"
+        "operation":"ADDITION",
+        "modify":1.8
       },
       {
         "attribute":"footwork:max_fracture",
-        "modify":"0.25",
-        "operation":"ADDITION"
+        "operation":"ADDITION",
+        "modify":0.25
       }
     ],
 "magistuarmory:sallet":[
       {
         "attribute":"footwork:evasion",
-        "modify":"0.3",
-        "operation":"ADDITION"
+        "operation":"ADDITION",
+        "modify":0.3
       },
       {
         "attribute":"footwork:max_posture",
-        "modify":"0.73",
-        "operation":"ADDITION"
+        "operation":"ADDITION",
+        "modify":0.73
       },
       {
         "attribute":"footwork:max_might",
-        "modify":"0.25",
-        "operation":"ADDITION"
+        "operation":"ADDITION",
+        "modify":0.25
       },
       {
         "attribute":"footwork:max_fracture",
-        "modify":"0.49",
-        "operation":"ADDITION"
+        "operation":"ADDITION",
+        "modify":0.49
       }
     ],
 "magistuarmory:shishak":[
       {
         "attribute":"footwork:evasion",
-        "modify":"0.5",
-        "operation":"ADDITION"
+        "operation":"ADDITION",
+        "modify":0.5
       },
       {
         "attribute":"footwork:max_posture",
-        "modify":"0.95",
-        "operation":"ADDITION"
+        "operation":"ADDITION",
+        "modify":0.95
       },
       {
         "attribute":"footwork:max_fracture",
-        "modify":"0.25",
-        "operation":"ADDITION"
+        "operation":"ADDITION",
+        "modify":0.25
       }
     ],
 "magistuarmory:stechhelm":[
       {
         "attribute":"footwork:max_might",
-        "modify":"0.25",
-        "operation":"ADDITION"
+        "operation":"ADDITION",
+        "modify":0.25
       },
       {
         "attribute":"footwork:max_fracture",
-        "modify":"0.81",
-        "operation":"ADDITION"
+        "operation":"ADDITION",
+        "modify":0.81
       }
     ],
 "magistuarmory:wingedhussar_chestplate":[
       {
         "attribute":"footwork:evasion",
-        "modify":"0.8",
-        "operation":"ADDITION"
+        "operation":"ADDITION",
+        "modify":0.8
       },
       {
         "attribute":"footwork:max_posture",
-        "modify":"2.4",
-        "operation":"ADDITION"
+        "operation":"ADDITION",
+        "modify":2.4
       },
       {
         "attribute":"footwork:max_fracture",
-        "modify":"1.53",
-        "operation":"ADDITION"
+        "operation":"ADDITION",
+        "modify":1.53
       }
     ],
 "magistuarmory:xivcenturyknight_boots":[
       {
         "attribute":"footwork:evasion",
-        "modify":"0.4",
-        "operation":"ADDITION"
+        "operation":"ADDITION",
+        "modify":0.4
       },
       {
         "attribute":"footwork:max_posture",
-        "modify":"1.2",
-        "operation":"ADDITION"
+        "operation":"ADDITION",
+        "modify":1.2
       },
       {
         "attribute":"footwork:max_might",
-        "modify":"0.25",
-        "operation":"ADDITION"
+        "operation":"ADDITION",
+        "modify":0.25
       },
       {
         "attribute":"footwork:max_fracture",
-        "modify":"0.89",
-        "operation":"ADDITION"
+        "operation":"ADDITION",
+        "modify":0.89
       }
     ],
 "magistuarmory:xivcenturyknight_chestplate":[
       {
         "attribute":"footwork:evasion",
-        "modify":"0.8",
-        "operation":"ADDITION"
+        "operation":"ADDITION",
+        "modify":0.8
       },
       {
         "attribute":"footwork:max_posture",
-        "modify":"2.4",
-        "operation":"ADDITION"
+        "operation":"ADDITION",
+        "modify":2.4
       },
       {
         "attribute":"footwork:max_might",
-        "modify":"0.25",
-        "operation":"ADDITION"
+        "operation":"ADDITION",
+        "modify":0.25
       },
       {
         "attribute":"footwork:max_fracture",
-        "modify":"1.53",
-        "operation":"ADDITION"
+        "operation":"ADDITION",
+        "modify":1.53
       }
     ],
 "magistuarmory:xivcenturyknight_leggings":[
       {
         "attribute":"footwork:evasion",
-        "modify":"0.6",
-        "operation":"ADDITION"
+        "operation":"ADDITION",
+        "modify":0.6
       },
       {
         "attribute":"footwork:max_posture",
-        "modify":"1.8",
-        "operation":"ADDITION"
+        "operation":"ADDITION",
+        "modify":1.8
       },
       {
         "attribute":"footwork:max_might",
-        "modify":"0.25",
-        "operation":"ADDITION"
+        "operation":"ADDITION",
+        "modify":0.25
       },
       {
         "attribute":"footwork:max_fracture",
-        "modify":"1.21",
-        "operation":"ADDITION"
+        "operation":"ADDITION",
+        "modify":1.21
       }
     ]
 }

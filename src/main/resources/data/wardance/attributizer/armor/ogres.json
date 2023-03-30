@@ -2,109 +2,109 @@
 "ogres:ogre_armor_boots":[
       {
         "attribute":"footwork:evasion",
-        "modify":"0.2",
-        "operation":"ADDITION"
+        "operation":"ADDITION",
+        "modify":0.2
       },
       {
         "attribute":"footwork:max_posture",
-        "modify":"0.85",
-        "operation":"ADDITION"
+        "operation":"ADDITION",
+        "modify":0.85
       },
       {
         "attribute":"footwork:posture_regen",
-        "modify":"0.53",
-        "operation":"ADDITION"
+        "operation":"ADDITION",
+        "modify":0.53
       },
       {
         "attribute":"footwork:might_gen",
-        "modify":"5",
-        "operation":"MULTIPLY_BASE"
+        "operation":"MULTIPLY_BASE",
+        "modify":0.05
       },
       {
         "attribute":"footwork:max_fracture",
-        "modify":"0.25",
-        "operation":"ADDITION"
+        "operation":"ADDITION",
+        "modify":0.25
       }
     ],
 "ogres:ogre_armor_chestplate":[
       {
         "attribute":"footwork:evasion",
-        "modify":"0.4",
-        "operation":"ADDITION"
+        "operation":"ADDITION",
+        "modify":0.4
       },
       {
         "attribute":"footwork:max_posture",
-        "modify":"1.7",
-        "operation":"ADDITION"
+        "operation":"ADDITION",
+        "modify":1.7
       },
       {
         "attribute":"footwork:posture_regen",
-        "modify":"1.06",
-        "operation":"ADDITION"
+        "operation":"ADDITION",
+        "modify":1.06
       },
       {
         "attribute":"footwork:might_gen",
-        "modify":"5",
-        "operation":"MULTIPLY_BASE"
+        "operation":"MULTIPLY_BASE",
+        "modify":0.05
       },
       {
         "attribute":"footwork:max_fracture",
-        "modify":"0.25",
-        "operation":"ADDITION"
+        "operation":"ADDITION",
+        "modify":0.25
       }
     ],
 "ogres:ogre_armor_helmet":[
       {
         "attribute":"footwork:evasion",
-        "modify":"0.2",
-        "operation":"ADDITION"
+        "operation":"ADDITION",
+        "modify":0.2
       },
       {
         "attribute":"footwork:max_posture",
-        "modify":"0.85",
-        "operation":"ADDITION"
+        "operation":"ADDITION",
+        "modify":0.85
       },
       {
         "attribute":"footwork:posture_regen",
-        "modify":"0.53",
-        "operation":"ADDITION"
+        "operation":"ADDITION",
+        "modify":0.53
       },
       {
         "attribute":"footwork:might_gen",
-        "modify":"5",
-        "operation":"MULTIPLY_BASE"
+        "operation":"MULTIPLY_BASE",
+        "modify":0.05
       },
       {
         "attribute":"footwork:max_fracture",
-        "modify":"0.25",
-        "operation":"ADDITION"
+        "operation":"ADDITION",
+        "modify":0.25
       }
     ],
 "ogres:ogre_armor_leggings":[
       {
         "attribute":"footwork:evasion",
-        "modify":"0.3",
-        "operation":"ADDITION"
+        "operation":"ADDITION",
+        "modify":0.3
       },
       {
         "attribute":"footwork:max_posture",
-        "modify":"1.27",
-        "operation":"ADDITION"
+        "operation":"ADDITION",
+        "modify":1.27
       },
       {
         "attribute":"footwork:posture_regen",
-        "modify":"0.79",
-        "operation":"ADDITION"
+        "operation":"ADDITION",
+        "modify":0.79
       },
       {
         "attribute":"footwork:might_gen",
-        "modify":"5",
-        "operation":"MULTIPLY_BASE"
+        "operation":"MULTIPLY_BASE",
+        "modify":0.05
       },
       {
         "attribute":"footwork:max_fracture",
-        "modify":"0.25",
-        "operation":"ADDITION"
+        "operation":"ADDITION",
+        "modify":0.25
       }
     ]
 }

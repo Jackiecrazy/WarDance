@@ -2,81 +2,81 @@
 "dannys_expansion:antique_boots":[
       {
         "attribute":"footwork:evasion",
-        "modify":"1",
-        "operation":"ADDITION"
+        "operation":"ADDITION",
+        "modify":1
       },
       {
         "attribute":"footwork:max_posture",
-        "modify":"1.9",
-        "operation":"ADDITION"
+        "operation":"ADDITION",
+        "modify":1.9
       },
       {
         "attribute":"footwork:max_fracture",
-        "modify":"0.25",
-        "operation":"ADDITION"
+        "operation":"ADDITION",
+        "modify":0.25
       }
     ],
 "dannys_expansion:antique_chestplate":[
       {
         "attribute":"footwork:evasion",
-        "modify":"2",
-        "operation":"ADDITION"
+        "operation":"ADDITION",
+        "modify":2
       },
       {
         "attribute":"footwork:max_posture",
-        "modify":"3.79",
-        "operation":"ADDITION"
+        "operation":"ADDITION",
+        "modify":3.79
       },
       {
         "attribute":"footwork:max_fracture",
-        "modify":"0.25",
-        "operation":"ADDITION"
+        "operation":"ADDITION",
+        "modify":0.25
       }
     ],
 "dannys_expansion:antique_helmet":[
       {
         "attribute":"footwork:evasion",
-        "modify":"1",
-        "operation":"ADDITION"
+        "operation":"ADDITION",
+        "modify":1
       },
       {
         "attribute":"footwork:max_posture",
-        "modify":"1.9",
-        "operation":"ADDITION"
+        "operation":"ADDITION",
+        "modify":1.9
       },
       {
         "attribute":"footwork:max_fracture",
-        "modify":"0.25",
-        "operation":"ADDITION"
+        "operation":"ADDITION",
+        "modify":0.25
       }
     ],
 "dannys_expansion:antique_leggings":[
       {
         "attribute":"footwork:evasion",
-        "modify":"1.5",
-        "operation":"ADDITION"
+        "operation":"ADDITION",
+        "modify":1.5
       },
       {
         "attribute":"footwork:max_posture",
-        "modify":"2.85",
-        "operation":"ADDITION"
+        "operation":"ADDITION",
+        "modify":2.85
       },
       {
         "attribute":"footwork:max_fracture",
-        "modify":"0.25",
-        "operation":"ADDITION"
+        "operation":"ADDITION",
+        "modify":0.25
       }
     ],
 "dannys_expansion:mummy_chestplate":[
       {
         "attribute":"footwork:posture_regen",
-        "modify":"0.98",
-        "operation":"ADDITION"
+        "operation":"ADDITION",
+        "modify":0.98
       },
       {
         "attribute":"footwork:max_fracture",
-        "modify":"0.25",
-        "operation":"ADDITION"
+        "operation":"ADDITION",
+        "modify":0.25
       }
     ]
 }

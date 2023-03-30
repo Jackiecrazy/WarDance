@@ -43,6 +43,7 @@
   "wardance.tooltip.ignoreParry": "无法被武器招架",
   "wardance.tooltip.twoHanded": "双手武器",
   "wardance.tooltip.ignoreShield": "无法被盾牌招架",
+  "wardance.tooltip.shield": "盾牌",
   "wardance.tooltip.resetStyle1": "选择过多颜色！",
   "wardance.tooltip.resetStyle2": "左击显示流派信息。重置流派请先清空当前技能选项",
   "wardance.tooltip.resetStyle3": "左击显示流派信息，右击重置流派和所有装备的技能",
@@ -324,5 +325,6 @@
   "wardance..name": "",
   "wardance..desc": "",
   "wardance..requirement": "",
-  "wardance.": ""
+  "wardance.": "",
+  "wardance.tooltip.shield": "Shield: parries projectiles"
 }

@@ -2,265 +2,265 @@
 "ars_nouveau:apprentice_boots":[
       {
         "attribute":"footwork:posture_regen",
-        "modify":"0.63",
-        "operation":"ADDITION"
+        "operation":"ADDITION",
+        "modify":0.63
       },
       {
         "attribute":"footwork:spirit_cooldown_speed",
-        "modify":"5",
-        "operation":"MULTIPLY_BASE"
+        "operation":"MULTIPLY_BASE",
+        "modify":0.05
       },
       {
         "attribute":"footwork:spirit_regen",
-        "modify":"5",
-        "operation":"ADDITION"
+        "operation":"ADDITION",
+        "modify":0.05
       },
       {
         "attribute":"footwork:max_fracture",
-        "modify":"0.25",
-        "operation":"ADDITION"
+        "operation":"ADDITION",
+        "modify":0.25
       }
     ],
 "ars_nouveau:apprentice_hood":[
       {
         "attribute":"footwork:posture_regen",
-        "modify":"0.63",
-        "operation":"ADDITION"
+        "operation":"ADDITION",
+        "modify":0.63
       },
       {
         "attribute":"footwork:spirit_cooldown_speed",
-        "modify":"5",
-        "operation":"MULTIPLY_BASE"
+        "operation":"MULTIPLY_BASE",
+        "modify":0.05
       },
       {
         "attribute":"footwork:spirit_regen",
-        "modify":"5",
-        "operation":"ADDITION"
+        "operation":"ADDITION",
+        "modify":0.05
       },
       {
         "attribute":"footwork:max_fracture",
-        "modify":"0.25",
-        "operation":"ADDITION"
+        "operation":"ADDITION",
+        "modify":0.25
       }
     ],
 "ars_nouveau:apprentice_leggings":[
       {
         "attribute":"footwork:posture_regen",
-        "modify":"0.95",
-        "operation":"ADDITION"
+        "operation":"ADDITION",
+        "modify":0.95
       },
       {
         "attribute":"footwork:spirit_cooldown_speed",
-        "modify":"5",
-        "operation":"MULTIPLY_BASE"
+        "operation":"MULTIPLY_BASE",
+        "modify":0.05
       },
       {
         "attribute":"footwork:spirit_regen",
-        "modify":"5",
-        "operation":"ADDITION"
+        "operation":"ADDITION",
+        "modify":0.05
       },
       {
         "attribute":"footwork:max_fracture",
-        "modify":"0.25",
-        "operation":"ADDITION"
+        "operation":"ADDITION",
+        "modify":0.25
       }
     ],
 "ars_nouveau:apprentice_robes":[
       {
         "attribute":"footwork:posture_regen",
-        "modify":"1.26",
-        "operation":"ADDITION"
+        "operation":"ADDITION",
+        "modify":1.26
       },
       {
         "attribute":"footwork:spirit_cooldown_speed",
-        "modify":"5",
-        "operation":"MULTIPLY_BASE"
+        "operation":"MULTIPLY_BASE",
+        "modify":0.05
       },
       {
         "attribute":"footwork:spirit_regen",
-        "modify":"5",
-        "operation":"ADDITION"
+        "operation":"ADDITION",
+        "modify":0.05
       },
       {
         "attribute":"footwork:max_fracture",
-        "modify":"0.25",
-        "operation":"ADDITION"
+        "operation":"ADDITION",
+        "modify":0.25
       }
     ],
 "ars_nouveau:archmage_boots":[
       {
         "attribute":"footwork:posture_regen",
-        "modify":"0.69",
-        "operation":"ADDITION"
+        "operation":"ADDITION",
+        "modify":0.69
       },
       {
         "attribute":"footwork:max_spirit",
-        "modify":"0.75",
-        "operation":"ADDITION"
+        "operation":"ADDITION",
+        "modify":0.75
       },
       {
         "attribute":"footwork:spirit_cooldown_speed",
-        "modify":"5",
-        "operation":"MULTIPLY_BASE"
+        "operation":"MULTIPLY_BASE",
+        "modify":0.05
       },
       {
         "attribute":"footwork:spirit_regen",
-        "modify":"7",
-        "operation":"ADDITION"
+        "operation":"ADDITION",
+        "modify":0.07
       },
       {
         "attribute":"footwork:max_fracture",
-        "modify":"0.25",
-        "operation":"ADDITION"
+        "operation":"ADDITION",
+        "modify":0.25
       }
     ],
 "ars_nouveau:archmage_hood":[
       {
         "attribute":"footwork:posture_regen",
-        "modify":"0.69",
-        "operation":"ADDITION"
+        "operation":"ADDITION",
+        "modify":0.69
       },
       {
         "attribute":"footwork:max_spirit",
-        "modify":"0.75",
-        "operation":"ADDITION"
+        "operation":"ADDITION",
+        "modify":0.75
       },
       {
         "attribute":"footwork:spirit_cooldown_speed",
-        "modify":"5",
-        "operation":"MULTIPLY_BASE"
+        "operation":"MULTIPLY_BASE",
+        "modify":0.05
       },
       {
         "attribute":"footwork:spirit_regen",
-        "modify":"7",
-        "operation":"ADDITION"
+        "operation":"ADDITION",
+        "modify":0.07
       },
       {
         "attribute":"footwork:max_fracture",
-        "modify":"0.25",
-        "operation":"ADDITION"
+        "operation":"ADDITION",
+        "modify":0.25
       }
     ],
 "ars_nouveau:archmage_leggings":[
       {
         "attribute":"footwork:posture_regen",
-        "modify":"1.04",
-        "operation":"ADDITION"
+        "operation":"ADDITION",
+        "modify":1.04
       },
       {
         "attribute":"footwork:max_spirit",
-        "modify":"0.75",
-        "operation":"ADDITION"
+        "operation":"ADDITION",
+        "modify":0.75
       },
       {
         "attribute":"footwork:spirit_cooldown_speed",
-        "modify":"5",
-        "operation":"MULTIPLY_BASE"
+        "operation":"MULTIPLY_BASE",
+        "modify":0.05
       },
       {
         "attribute":"footwork:spirit_regen",
-        "modify":"7",
-        "operation":"ADDITION"
+        "operation":"ADDITION",
+        "modify":0.07
       },
       {
         "attribute":"footwork:max_fracture",
-        "modify":"0.25",
-        "operation":"ADDITION"
+        "operation":"ADDITION",
+        "modify":0.25
       }
     ],
 "ars_nouveau:archmage_robes":[
       {
         "attribute":"footwork:posture_regen",
-        "modify":"1.39",
-        "operation":"ADDITION"
+        "operation":"ADDITION",
+        "modify":1.39
       },
       {
         "attribute":"footwork:max_spirit",
-        "modify":"0.75",
-        "operation":"ADDITION"
+        "operation":"ADDITION",
+        "modify":0.75
       },
       {
         "attribute":"footwork:spirit_cooldown_speed",
-        "modify":"5",
-        "operation":"MULTIPLY_BASE"
+        "operation":"MULTIPLY_BASE",
+        "modify":0.05
       },
       {
         "attribute":"footwork:spirit_regen",
-        "modify":"7",
-        "operation":"ADDITION"
+        "operation":"ADDITION",
+        "modify":0.07
       },
       {
         "attribute":"footwork:max_fracture",
-        "modify":"0.25",
-        "operation":"ADDITION"
+        "operation":"ADDITION",
+        "modify":0.25
       }
     ],
 "ars_nouveau:novice_boots":[
       {
         "attribute":"footwork:posture_regen",
-        "modify":"0.49",
-        "operation":"ADDITION"
+        "operation":"ADDITION",
+        "modify":0.49
       },
       {
         "attribute":"footwork:spirit_cooldown_speed",
-        "modify":"5",
-        "operation":"MULTIPLY_BASE"
+        "operation":"MULTIPLY_BASE",
+        "modify":0.05
       },
       {
         "attribute":"footwork:max_fracture",
-        "modify":"0.25",
-        "operation":"ADDITION"
+        "operation":"ADDITION",
+        "modify":0.25
       }
     ],
 "ars_nouveau:novice_hood":[
       {
         "attribute":"footwork:posture_regen",
-        "modify":"0.49",
-        "operation":"ADDITION"
+        "operation":"ADDITION",
+        "modify":0.49
       },
       {
         "attribute":"footwork:spirit_cooldown_speed",
-        "modify":"5",
-        "operation":"MULTIPLY_BASE"
+        "operation":"MULTIPLY_BASE",
+        "modify":0.05
       },
       {
         "attribute":"footwork:max_fracture",
-        "modify":"0.25",
-        "operation":"ADDITION"
+        "operation":"ADDITION",
+        "modify":0.25
       }
     ],
 "ars_nouveau:novice_leggings":[
       {
         "attribute":"footwork:posture_regen",
-        "modify":"0.73",
-        "operation":"ADDITION"
+        "operation":"ADDITION",
+        "modify":0.73
       },
       {
         "attribute":"footwork:spirit_cooldown_speed",
-        "modify":"5",
-        "operation":"MULTIPLY_BASE"
+        "operation":"MULTIPLY_BASE",
+        "modify":0.05
       },
       {
         "attribute":"footwork:max_fracture",
-        "modify":"0.25",
-        "operation":"ADDITION"
+        "operation":"ADDITION",
+        "modify":0.25
       }
     ],
 "ars_nouveau:novice_robes":[
       {
         "attribute":"footwork:posture_regen",
-        "modify":"0.98",
-        "operation":"ADDITION"
+        "operation":"ADDITION",
+        "modify":0.98
       },
       {
         "attribute":"footwork:spirit_cooldown_speed",
-        "modify":"5",
-        "operation":"MULTIPLY_BASE"
+        "operation":"MULTIPLY_BASE",
+        "modify":0.05
       },
       {
         "attribute":"footwork:max_fracture",
-        "modify":"0.25",
-        "operation":"ADDITION"
+        "operation":"ADDITION",
+        "modify":0.25
       }
     ]
 }

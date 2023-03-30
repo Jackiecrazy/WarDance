@@ -2,13 +2,13 @@
 "endergetic:booflo_vest":[
       {
         "attribute":"footwork:posture_regen",
-        "modify":"1.26",
-        "operation":"ADDITION"
+        "operation":"ADDITION",
+        "modify":1.26
       },
       {
         "attribute":"footwork:max_fracture",
-        "modify":"0.25",
-        "operation":"ADDITION"
+        "operation":"ADDITION",
+        "modify":0.25
       }
     ]
 }

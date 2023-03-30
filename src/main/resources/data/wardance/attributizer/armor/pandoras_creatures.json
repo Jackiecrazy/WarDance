@@ -2,13 +2,13 @@
 "pandoras_creatures:plant_hat":[
       {
         "attribute":"footwork:posture_regen",
-        "modify":"0.32",
-        "operation":"ADDITION"
+        "operation":"ADDITION",
+        "modify":0.32
       },
       {
         "attribute":"footwork:max_fracture",
-        "modify":"0.25",
-        "operation":"ADDITION"
+        "operation":"ADDITION",
+        "modify":0.25
       }
     ]
 }

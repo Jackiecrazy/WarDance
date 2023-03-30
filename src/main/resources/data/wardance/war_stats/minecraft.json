@@ -52,7 +52,7 @@
 "minecraft:crossbow":{
         "attack": "1",
         "defend": "1.10",
-        "shield": "true"
+        "shield": "false"
     },
 "minecraft:dark_oak_door":{
         "attack": "6",

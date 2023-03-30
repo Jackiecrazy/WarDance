@@ -2,256 +2,256 @@
 "greekfantasy:achilles_boots":[
       {
         "attribute":"footwork:evasion",
-        "modify":"0.9",
-        "operation":"ADDITION"
+        "operation":"ADDITION",
+        "modify":0.9
       },
       {
         "attribute":"footwork:max_posture",
-        "modify":"1.8",
-        "operation":"ADDITION"
+        "operation":"ADDITION",
+        "modify":1.8
       },
       {
         "attribute":"footwork:max_might",
-        "modify":"0.3",
-        "operation":"ADDITION"
+        "operation":"ADDITION",
+        "modify":0.3
       },
       {
         "attribute":"footwork:max_fracture",
-        "modify":"0.57",
-        "operation":"ADDITION"
+        "operation":"ADDITION",
+        "modify":0.57
       }
     ],
 "greekfantasy:achilles_chestplate":[
       {
         "attribute":"footwork:evasion",
-        "modify":"1.8",
-        "operation":"ADDITION"
+        "operation":"ADDITION",
+        "modify":1.8
       },
       {
         "attribute":"footwork:max_posture",
-        "modify":"3.6",
-        "operation":"ADDITION"
+        "operation":"ADDITION",
+        "modify":3.6
       },
       {
         "attribute":"footwork:max_might",
-        "modify":"0.8",
-        "operation":"ADDITION"
+        "operation":"ADDITION",
+        "modify":0.8
       },
       {
         "attribute":"footwork:max_fracture",
-        "modify":"0.89",
-        "operation":"ADDITION"
+        "operation":"ADDITION",
+        "modify":0.89
       }
     ],
 "greekfantasy:achilles_helmet":[
       {
         "attribute":"footwork:evasion",
-        "modify":"0.9",
-        "operation":"ADDITION"
+        "operation":"ADDITION",
+        "modify":0.9
       },
       {
         "attribute":"footwork:max_posture",
-        "modify":"1.8",
-        "operation":"ADDITION"
+        "operation":"ADDITION",
+        "modify":1.8
       },
       {
         "attribute":"footwork:max_might",
-        "modify":"0.6",
-        "operation":"ADDITION"
+        "operation":"ADDITION",
+        "modify":0.6
       },
       {
         "attribute":"footwork:max_fracture",
-        "modify":"0.57",
-        "operation":"ADDITION"
+        "operation":"ADDITION",
+        "modify":0.57
       }
     ],
 "greekfantasy:achilles_leggings":[
       {
         "attribute":"footwork:evasion",
-        "modify":"1.35",
-        "operation":"ADDITION"
+        "operation":"ADDITION",
+        "modify":1.35
       },
       {
         "attribute":"footwork:max_posture",
-        "modify":"2.7",
-        "operation":"ADDITION"
+        "operation":"ADDITION",
+        "modify":2.7
       },
       {
         "attribute":"footwork:max_might",
-        "modify":"0.3",
-        "operation":"ADDITION"
+        "operation":"ADDITION",
+        "modify":0.3
       },
       {
         "attribute":"footwork:max_fracture",
-        "modify":"0.73",
-        "operation":"ADDITION"
+        "operation":"ADDITION",
+        "modify":0.73
       }
     ],
 "greekfantasy:hellenic_boots":[
       {
         "attribute":"footwork:evasion",
-        "modify":"0.9",
-        "operation":"ADDITION"
+        "operation":"ADDITION",
+        "modify":0.9
       },
       {
         "attribute":"footwork:max_posture",
-        "modify":"1.8",
-        "operation":"ADDITION"
+        "operation":"ADDITION",
+        "modify":1.8
       },
       {
         "attribute":"footwork:max_fracture",
-        "modify":"0.57",
-        "operation":"ADDITION"
+        "operation":"ADDITION",
+        "modify":0.57
       }
     ],
 "greekfantasy:hellenic_chestplate":[
       {
         "attribute":"footwork:evasion",
-        "modify":"1.8",
-        "operation":"ADDITION"
+        "operation":"ADDITION",
+        "modify":1.8
       },
       {
         "attribute":"footwork:max_posture",
-        "modify":"3.6",
-        "operation":"ADDITION"
+        "operation":"ADDITION",
+        "modify":3.6
       },
       {
         "attribute":"footwork:max_fracture",
-        "modify":"0.89",
-        "operation":"ADDITION"
+        "operation":"ADDITION",
+        "modify":0.89
       }
     ],
 "greekfantasy:hellenic_helmet":[
       {
         "attribute":"footwork:evasion",
-        "modify":"0.9",
-        "operation":"ADDITION"
+        "operation":"ADDITION",
+        "modify":0.9
       },
       {
         "attribute":"footwork:max_posture",
-        "modify":"1.8",
-        "operation":"ADDITION"
+        "operation":"ADDITION",
+        "modify":1.8
       },
       {
         "attribute":"footwork:max_fracture",
-        "modify":"0.57",
-        "operation":"ADDITION"
+        "operation":"ADDITION",
+        "modify":0.57
       }
     ],
 "greekfantasy:hellenic_leggings":[
       {
         "attribute":"footwork:evasion",
-        "modify":"1.35",
-        "operation":"ADDITION"
+        "operation":"ADDITION",
+        "modify":1.35
       },
       {
         "attribute":"footwork:max_posture",
-        "modify":"2.7",
-        "operation":"ADDITION"
+        "operation":"ADDITION",
+        "modify":2.7
       },
       {
         "attribute":"footwork:max_fracture",
-        "modify":"0.73",
-        "operation":"ADDITION"
+        "operation":"ADDITION",
+        "modify":0.73
       }
     ],
 "greekfantasy:helm_of_darkness":[
       {
         "attribute":"footwork:might_gen",
-        "modify":"20",
-        "operation":"MULTIPLY_BASE"
+        "operation":"MULTIPLY_BASE",
+        "modify":0.2
       },
       {
         "attribute":"footwork:max_fracture",
-        "modify":"1.05",
-        "operation":"ADDITION"
+        "operation":"ADDITION",
+        "modify":1.05
       }
     ],
 "greekfantasy:nemean_lion_hide":[
       {
         "attribute":"footwork:evasion",
-        "modify":"0.4",
-        "operation":"ADDITION"
+        "operation":"ADDITION",
+        "modify":0.4
       },
       {
         "attribute":"footwork:max_posture",
-        "modify":"1.2",
-        "operation":"ADDITION"
+        "operation":"ADDITION",
+        "modify":1.2
       },
       {
         "attribute":"footwork:posture_regen",
-        "modify":"0.63",
-        "operation":"ADDITION"
+        "operation":"ADDITION",
+        "modify":0.63
       },
       {
         "attribute":"footwork:max_fracture",
-        "modify":"0.25",
-        "operation":"ADDITION"
+        "operation":"ADDITION",
+        "modify":0.25
       }
     ],
 "greekfantasy:snakeskin_boots":[
       {
         "attribute":"footwork:posture_regen",
-        "modify":"0.63",
-        "operation":"ADDITION"
+        "operation":"ADDITION",
+        "modify":0.63
       },
       {
         "attribute":"footwork:max_fracture",
-        "modify":"0.25",
-        "operation":"ADDITION"
+        "operation":"ADDITION",
+        "modify":0.25
       }
     ],
 "greekfantasy:snakeskin_chestplate":[
       {
         "attribute":"footwork:posture_regen",
-        "modify":"1.26",
-        "operation":"ADDITION"
+        "operation":"ADDITION",
+        "modify":1.26
       },
       {
         "attribute":"footwork:max_fracture",
-        "modify":"0.25",
-        "operation":"ADDITION"
+        "operation":"ADDITION",
+        "modify":0.25
       }
     ],
 "greekfantasy:snakeskin_helmet":[
       {
         "attribute":"footwork:posture_regen",
-        "modify":"0.63",
-        "operation":"ADDITION"
+        "operation":"ADDITION",
+        "modify":0.63
       },
       {
         "attribute":"footwork:max_fracture",
-        "modify":"0.25",
-        "operation":"ADDITION"
+        "operation":"ADDITION",
+        "modify":0.25
       }
     ],
 "greekfantasy:snakeskin_leggings":[
       {
         "attribute":"footwork:posture_regen",
-        "modify":"0.95",
-        "operation":"ADDITION"
+        "operation":"ADDITION",
+        "modify":0.95
       },
       {
         "attribute":"footwork:max_fracture",
-        "modify":"0.25",
-        "operation":"ADDITION"
+        "operation":"ADDITION",
+        "modify":0.25
       }
     ],
 "greekfantasy:winged_sandals":[
       {
         "attribute":"footwork:posture_regen",
-        "modify":"0.72",
-        "operation":"ADDITION"
+        "operation":"ADDITION",
+        "modify":0.72
       },
       {
         "attribute":"footwork:spirit_cooldown_speed",
-        "modify":"10",
-        "operation":"MULTIPLY_BASE"
+        "operation":"MULTIPLY_BASE",
+        "modify":0.1
       },
       {
         "attribute":"footwork:max_fracture",
-        "modify":"0.25",
-        "operation":"ADDITION"
+        "operation":"ADDITION",
+        "modify":0.25
       }
     ]
 }

@@ -2,89 +2,89 @@
 "savageandravage:griefer_boots":[
       {
         "attribute":"footwork:evasion",
-        "modify":"0.7",
-        "operation":"ADDITION"
+        "operation":"ADDITION",
+        "modify":0.7
       },
       {
         "attribute":"footwork:max_posture",
-        "modify":"1.59",
-        "operation":"ADDITION"
+        "operation":"ADDITION",
+        "modify":1.59
       },
       {
         "attribute":"footwork:posture_regen",
-        "modify":"0.53",
-        "operation":"ADDITION"
+        "operation":"ADDITION",
+        "modify":0.53
       },
       {
         "attribute":"footwork:max_fracture",
-        "modify":"0.25",
-        "operation":"ADDITION"
+        "operation":"ADDITION",
+        "modify":0.25
       }
     ],
 "savageandravage:griefer_chestplate":[
       {
         "attribute":"footwork:evasion",
-        "modify":"1.4",
-        "operation":"ADDITION"
+        "operation":"ADDITION",
+        "modify":1.4
       },
       {
         "attribute":"footwork:max_posture",
-        "modify":"3.17",
-        "operation":"ADDITION"
+        "operation":"ADDITION",
+        "modify":3.17
       },
       {
         "attribute":"footwork:posture_regen",
-        "modify":"1.06",
-        "operation":"ADDITION"
+        "operation":"ADDITION",
+        "modify":1.06
       },
       {
         "attribute":"footwork:max_fracture",
-        "modify":"0.25",
-        "operation":"ADDITION"
+        "operation":"ADDITION",
+        "modify":0.25
       }
     ],
 "savageandravage:griefer_helmet":[
       {
         "attribute":"footwork:evasion",
-        "modify":"0.7",
-        "operation":"ADDITION"
+        "operation":"ADDITION",
+        "modify":0.7
       },
       {
         "attribute":"footwork:max_posture",
-        "modify":"1.59",
-        "operation":"ADDITION"
+        "operation":"ADDITION",
+        "modify":1.59
       },
       {
         "attribute":"footwork:posture_regen",
-        "modify":"0.53",
-        "operation":"ADDITION"
+        "operation":"ADDITION",
+        "modify":0.53
       },
       {
         "attribute":"footwork:max_fracture",
-        "modify":"0.25",
-        "operation":"ADDITION"
+        "operation":"ADDITION",
+        "modify":0.25
       }
     ],
 "savageandravage:griefer_leggings":[
       {
         "attribute":"footwork:evasion",
-        "modify":"1.05",
-        "operation":"ADDITION"
+        "operation":"ADDITION",
+        "modify":1.05
       },
       {
         "attribute":"footwork:max_posture",
-        "modify":"2.38",
-        "operation":"ADDITION"
+        "operation":"ADDITION",
+        "modify":2.38
       },
       {
         "attribute":"footwork:posture_regen",
-        "modify":"0.79",
-        "operation":"ADDITION"
+        "operation":"ADDITION",
+        "modify":0.79
       },
       {
         "attribute":"footwork:max_fracture",
-        "modify":"0.25",
-        "operation":"ADDITION"
+        "operation":"ADDITION",
+        "modify":0.25
       }
     ]
 }

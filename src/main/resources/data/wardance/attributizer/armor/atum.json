@@ -2,469 +2,469 @@
 "atum:body_of_atem":[
       {
         "attribute":"footwork:evasion",
-        "modify":"0.8",
-        "operation":"ADDITION"
+        "operation":"ADDITION",
+        "modify":0.8
       },
       {
         "attribute":"footwork:max_posture",
-        "modify":"2.4",
-        "operation":"ADDITION"
+        "operation":"ADDITION",
+        "modify":2.4
       },
       {
         "attribute":"footwork:max_spirit",
-        "modify":"0.5",
-        "operation":"ADDITION"
+        "operation":"ADDITION",
+        "modify":0.5
       },
       {
         "attribute":"footwork:spirit_regen",
-        "modify":"15",
-        "operation":"ADDITION"
+        "operation":"ADDITION",
+        "modify":0.15
       },
       {
         "attribute":"footwork:max_fracture",
-        "modify":"1.85",
-        "operation":"ADDITION"
+        "operation":"ADDITION",
+        "modify":1.85
       }
     ],
 "atum:body_of_ra":[
       {
         "attribute":"footwork:evasion",
-        "modify":"0.8",
-        "operation":"ADDITION"
+        "operation":"ADDITION",
+        "modify":0.8
       },
       {
         "attribute":"footwork:max_posture",
-        "modify":"2.4",
-        "operation":"ADDITION"
+        "operation":"ADDITION",
+        "modify":2.4
       },
       {
         "attribute":"footwork:max_spirit",
-        "modify":"0.5",
-        "operation":"ADDITION"
+        "operation":"ADDITION",
+        "modify":0.5
       },
       {
         "attribute":"footwork:might_gen",
-        "modify":"15",
-        "operation":"MULTIPLY_BASE"
+        "operation":"MULTIPLY_BASE",
+        "modify":0.15
       },
       {
         "attribute":"footwork:max_fracture",
-        "modify":"1.85",
-        "operation":"ADDITION"
+        "operation":"ADDITION",
+        "modify":1.85
       }
     ],
 "atum:desert_boots_diamond":[
       {
         "attribute":"footwork:max_fracture",
-        "modify":"1.13",
-        "operation":"ADDITION"
+        "operation":"ADDITION",
+        "modify":1.13
       }
     ],
 "atum:desert_boots_gold":[
       {
         "attribute":"footwork:evasion",
-        "modify":"0.3",
-        "operation":"ADDITION"
+        "operation":"ADDITION",
+        "modify":0.3
       },
       {
         "attribute":"footwork:max_posture",
-        "modify":"1.04",
-        "operation":"ADDITION"
+        "operation":"ADDITION",
+        "modify":1.04
       },
       {
         "attribute":"footwork:max_spirit",
-        "modify":"0.5",
-        "operation":"ADDITION"
+        "operation":"ADDITION",
+        "modify":0.5
       },
       {
         "attribute":"footwork:max_might",
-        "modify":"0.25",
-        "operation":"ADDITION"
+        "operation":"ADDITION",
+        "modify":0.25
       },
       {
         "attribute":"footwork:max_fracture",
-        "modify":"0.49",
-        "operation":"ADDITION"
+        "operation":"ADDITION",
+        "modify":0.49
       }
     ],
 "atum:desert_boots_iron":[
       {
         "attribute":"footwork:evasion",
-        "modify":"1.1",
-        "operation":"ADDITION"
+        "operation":"ADDITION",
+        "modify":1.1
       },
       {
         "attribute":"footwork:max_posture",
-        "modify":"1.99",
-        "operation":"ADDITION"
+        "operation":"ADDITION",
+        "modify":1.99
       },
       {
         "attribute":"footwork:max_fracture",
-        "modify":"0.25",
-        "operation":"ADDITION"
+        "operation":"ADDITION",
+        "modify":0.25
       }
     ],
 "atum:desert_chest_diamond":[
       {
         "attribute":"footwork:max_fracture",
-        "modify":"2.01",
-        "operation":"ADDITION"
+        "operation":"ADDITION",
+        "modify":2.01
       }
     ],
 "atum:desert_chest_gold":[
       {
         "attribute":"footwork:evasion",
-        "modify":"0.6",
-        "operation":"ADDITION"
+        "operation":"ADDITION",
+        "modify":0.6
       },
       {
         "attribute":"footwork:max_posture",
-        "modify":"2.08",
-        "operation":"ADDITION"
+        "operation":"ADDITION",
+        "modify":2.08
       },
       {
         "attribute":"footwork:max_spirit",
-        "modify":"0.5",
-        "operation":"ADDITION"
+        "operation":"ADDITION",
+        "modify":0.5
       },
       {
         "attribute":"footwork:max_might",
-        "modify":"0.25",
-        "operation":"ADDITION"
+        "operation":"ADDITION",
+        "modify":0.25
       },
       {
         "attribute":"footwork:max_fracture",
-        "modify":"0.73",
-        "operation":"ADDITION"
+        "operation":"ADDITION",
+        "modify":0.73
       }
     ],
 "atum:desert_chest_iron":[
       {
         "attribute":"footwork:evasion",
-        "modify":"2.2",
-        "operation":"ADDITION"
+        "operation":"ADDITION",
+        "modify":2.2
       },
       {
         "attribute":"footwork:max_posture",
-        "modify":"3.98",
-        "operation":"ADDITION"
+        "operation":"ADDITION",
+        "modify":3.98
       },
       {
         "attribute":"footwork:max_fracture",
-        "modify":"0.25",
-        "operation":"ADDITION"
+        "operation":"ADDITION",
+        "modify":0.25
       }
     ],
 "atum:desert_helmet_diamond":[
       {
         "attribute":"footwork:max_fracture",
-        "modify":"1.13",
-        "operation":"ADDITION"
+        "operation":"ADDITION",
+        "modify":1.13
       }
     ],
 "atum:desert_helmet_gold":[
       {
         "attribute":"footwork:evasion",
-        "modify":"0.3",
-        "operation":"ADDITION"
+        "operation":"ADDITION",
+        "modify":0.3
       },
       {
         "attribute":"footwork:max_posture",
-        "modify":"1.04",
-        "operation":"ADDITION"
+        "operation":"ADDITION",
+        "modify":1.04
       },
       {
         "attribute":"footwork:max_spirit",
-        "modify":"0.5",
-        "operation":"ADDITION"
+        "operation":"ADDITION",
+        "modify":0.5
       },
       {
         "attribute":"footwork:max_might",
-        "modify":"0.25",
-        "operation":"ADDITION"
+        "operation":"ADDITION",
+        "modify":0.25
       },
       {
         "attribute":"footwork:max_fracture",
-        "modify":"0.49",
-        "operation":"ADDITION"
+        "operation":"ADDITION",
+        "modify":0.49
       }
     ],
 "atum:desert_helmet_iron":[
       {
         "attribute":"footwork:evasion",
-        "modify":"1.1",
-        "operation":"ADDITION"
+        "operation":"ADDITION",
+        "modify":1.1
       },
       {
         "attribute":"footwork:max_posture",
-        "modify":"1.99",
-        "operation":"ADDITION"
+        "operation":"ADDITION",
+        "modify":1.99
       },
       {
         "attribute":"footwork:max_fracture",
-        "modify":"0.25",
-        "operation":"ADDITION"
+        "operation":"ADDITION",
+        "modify":0.25
       }
     ],
 "atum:desert_legs_diamond":[
       {
         "attribute":"footwork:max_fracture",
-        "modify":"1.57",
-        "operation":"ADDITION"
+        "operation":"ADDITION",
+        "modify":1.57
       }
     ],
 "atum:desert_legs_gold":[
       {
         "attribute":"footwork:evasion",
-        "modify":"0.45",
-        "operation":"ADDITION"
+        "operation":"ADDITION",
+        "modify":0.45
       },
       {
         "attribute":"footwork:max_posture",
-        "modify":"1.56",
-        "operation":"ADDITION"
+        "operation":"ADDITION",
+        "modify":1.56
       },
       {
         "attribute":"footwork:max_spirit",
-        "modify":"0.5",
-        "operation":"ADDITION"
+        "operation":"ADDITION",
+        "modify":0.5
       },
       {
         "attribute":"footwork:max_might",
-        "modify":"0.25",
-        "operation":"ADDITION"
+        "operation":"ADDITION",
+        "modify":0.25
       },
       {
         "attribute":"footwork:max_fracture",
-        "modify":"0.61",
-        "operation":"ADDITION"
+        "operation":"ADDITION",
+        "modify":0.61
       }
     ],
 "atum:desert_legs_iron":[
       {
         "attribute":"footwork:evasion",
-        "modify":"1.65",
-        "operation":"ADDITION"
+        "operation":"ADDITION",
+        "modify":1.65
       },
       {
         "attribute":"footwork:max_posture",
-        "modify":"2.98",
-        "operation":"ADDITION"
+        "operation":"ADDITION",
+        "modify":2.98
       },
       {
         "attribute":"footwork:max_fracture",
-        "modify":"0.25",
-        "operation":"ADDITION"
+        "operation":"ADDITION",
+        "modify":0.25
       }
     ],
 "atum:eyes_of_atem":[
       {
         "attribute":"footwork:evasion",
-        "modify":"0.4",
-        "operation":"ADDITION"
+        "operation":"ADDITION",
+        "modify":0.4
       },
       {
         "attribute":"footwork:max_posture",
-        "modify":"1.2",
-        "operation":"ADDITION"
+        "operation":"ADDITION",
+        "modify":1.2
       },
       {
         "attribute":"footwork:max_spirit",
-        "modify":"0.5",
-        "operation":"ADDITION"
+        "operation":"ADDITION",
+        "modify":0.5
       },
       {
         "attribute":"footwork:spirit_regen",
-        "modify":"5",
-        "operation":"ADDITION"
+        "operation":"ADDITION",
+        "modify":0.05
       },
       {
         "attribute":"footwork:max_fracture",
-        "modify":"1.05",
-        "operation":"ADDITION"
+        "operation":"ADDITION",
+        "modify":1.05
       }
     ],
 "atum:feet_of_atem":[
       {
         "attribute":"footwork:evasion",
-        "modify":"0.4",
-        "operation":"ADDITION"
+        "operation":"ADDITION",
+        "modify":0.4
       },
       {
         "attribute":"footwork:max_posture",
-        "modify":"1.2",
-        "operation":"ADDITION"
+        "operation":"ADDITION",
+        "modify":1.2
       },
       {
         "attribute":"footwork:max_spirit",
-        "modify":"0.5",
-        "operation":"ADDITION"
+        "operation":"ADDITION",
+        "modify":0.5
       },
       {
         "attribute":"footwork:spirit_regen",
-        "modify":"12",
-        "operation":"ADDITION"
+        "operation":"ADDITION",
+        "modify":0.12
       },
       {
         "attribute":"footwork:max_fracture",
-        "modify":"1.05",
-        "operation":"ADDITION"
+        "operation":"ADDITION",
+        "modify":1.05
       }
     ],
 "atum:feet_of_ra":[
       {
         "attribute":"footwork:evasion",
-        "modify":"0.4",
-        "operation":"ADDITION"
+        "operation":"ADDITION",
+        "modify":0.4
       },
       {
         "attribute":"footwork:max_posture",
-        "modify":"1.2",
-        "operation":"ADDITION"
+        "operation":"ADDITION",
+        "modify":1.2
       },
       {
         "attribute":"footwork:max_spirit",
-        "modify":"0.5",
-        "operation":"ADDITION"
+        "operation":"ADDITION",
+        "modify":0.5
       },
       {
         "attribute":"footwork:might_gen",
-        "modify":"12",
-        "operation":"MULTIPLY_BASE"
+        "operation":"MULTIPLY_BASE",
+        "modify":0.12
       },
       {
         "attribute":"footwork:max_fracture",
-        "modify":"1.05",
-        "operation":"ADDITION"
+        "operation":"ADDITION",
+        "modify":1.05
       }
     ],
 "atum:halo_of_ra":[
       {
         "attribute":"footwork:evasion",
-        "modify":"0.4",
-        "operation":"ADDITION"
+        "operation":"ADDITION",
+        "modify":0.4
       },
       {
         "attribute":"footwork:max_posture",
-        "modify":"1.2",
-        "operation":"ADDITION"
+        "operation":"ADDITION",
+        "modify":1.2
       },
       {
         "attribute":"footwork:max_spirit",
-        "modify":"0.5",
-        "operation":"ADDITION"
+        "operation":"ADDITION",
+        "modify":0.5
       },
       {
         "attribute":"footwork:might_gen",
-        "modify":"5",
-        "operation":"MULTIPLY_BASE"
+        "operation":"MULTIPLY_BASE",
+        "modify":0.05
       },
       {
         "attribute":"footwork:max_fracture",
-        "modify":"1.05",
-        "operation":"ADDITION"
+        "operation":"ADDITION",
+        "modify":1.05
       }
     ],
 "atum:legs_of_atem":[
       {
         "attribute":"footwork:evasion",
-        "modify":"0.6",
-        "operation":"ADDITION"
+        "operation":"ADDITION",
+        "modify":0.6
       },
       {
         "attribute":"footwork:max_posture",
-        "modify":"1.8",
-        "operation":"ADDITION"
+        "operation":"ADDITION",
+        "modify":1.8
       },
       {
         "attribute":"footwork:max_spirit",
-        "modify":"0.5",
-        "operation":"ADDITION"
+        "operation":"ADDITION",
+        "modify":0.5
       },
       {
         "attribute":"footwork:spirit_regen",
-        "modify":"5",
-        "operation":"ADDITION"
+        "operation":"ADDITION",
+        "modify":0.05
       },
       {
         "attribute":"footwork:max_fracture",
-        "modify":"1.45",
-        "operation":"ADDITION"
+        "operation":"ADDITION",
+        "modify":1.45
       }
     ],
 "atum:legs_of_ra":[
       {
         "attribute":"footwork:evasion",
-        "modify":"0.6",
-        "operation":"ADDITION"
+        "operation":"ADDITION",
+        "modify":0.6
       },
       {
         "attribute":"footwork:max_posture",
-        "modify":"1.8",
-        "operation":"ADDITION"
+        "operation":"ADDITION",
+        "modify":1.8
       },
       {
         "attribute":"footwork:max_spirit",
-        "modify":"0.5",
-        "operation":"ADDITION"
+        "operation":"ADDITION",
+        "modify":0.5
       },
       {
         "attribute":"footwork:might_gen",
-        "modify":"5",
-        "operation":"MULTIPLY_BASE"
+        "operation":"MULTIPLY_BASE",
+        "modify":0.05
       },
       {
         "attribute":"footwork:max_fracture",
-        "modify":"1.45",
-        "operation":"ADDITION"
+        "operation":"ADDITION",
+        "modify":1.45
       }
     ],
 "atum:wanderer_boots":[
       {
         "attribute":"footwork:posture_regen",
-        "modify":"0.66",
-        "operation":"ADDITION"
+        "operation":"ADDITION",
+        "modify":0.66
       },
       {
         "attribute":"footwork:max_fracture",
-        "modify":"0.25",
-        "operation":"ADDITION"
+        "operation":"ADDITION",
+        "modify":0.25
       }
     ],
 "atum:wanderer_chestplate":[
       {
         "attribute":"footwork:posture_regen",
-        "modify":"1.33",
-        "operation":"ADDITION"
+        "operation":"ADDITION",
+        "modify":1.33
       },
       {
         "attribute":"footwork:max_fracture",
-        "modify":"0.25",
-        "operation":"ADDITION"
+        "operation":"ADDITION",
+        "modify":0.25
       }
     ],
 "atum:wanderer_helmet":[
       {
         "attribute":"footwork:posture_regen",
-        "modify":"0.66",
-        "operation":"ADDITION"
+        "operation":"ADDITION",
+        "modify":0.66
       },
       {
         "attribute":"footwork:max_fracture",
-        "modify":"0.25",
-        "operation":"ADDITION"
+        "operation":"ADDITION",
+        "modify":0.25
       }
     ],
 "atum:wanderer_legs":[
       {
         "attribute":"footwork:posture_regen",
-        "modify":"0.99",
-        "operation":"ADDITION"
+        "operation":"ADDITION",
+        "modify":0.99
       },
       {
         "attribute":"footwork:max_fracture",
-        "modify":"0.25",
-        "operation":"ADDITION"
+        "operation":"ADDITION",
+        "modify":0.25
       }
     ]
 }

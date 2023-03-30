@@ -2,49 +2,49 @@
 "environmental:architect_belt":[
       {
         "attribute":"footwork:posture_regen",
-        "modify":"0.99",
-        "operation":"ADDITION"
+        "operation":"ADDITION",
+        "modify":0.99
       },
       {
         "attribute":"footwork:max_fracture",
-        "modify":"0.25",
-        "operation":"ADDITION"
+        "operation":"ADDITION",
+        "modify":0.25
       }
     ],
 "environmental:healer_pouch":[
       {
         "attribute":"footwork:posture_regen",
-        "modify":"1.33",
-        "operation":"ADDITION"
+        "operation":"ADDITION",
+        "modify":1.33
       },
       {
         "attribute":"footwork:max_fracture",
-        "modify":"0.25",
-        "operation":"ADDITION"
+        "operation":"ADDITION",
+        "modify":0.25
       }
     ],
 "environmental:thief_hood":[
       {
         "attribute":"footwork:posture_regen",
-        "modify":"0.66",
-        "operation":"ADDITION"
+        "operation":"ADDITION",
+        "modify":0.66
       },
       {
         "attribute":"footwork:max_fracture",
-        "modify":"0.25",
-        "operation":"ADDITION"
+        "operation":"ADDITION",
+        "modify":0.25
       }
     ],
 "environmental:wanderer_boots":[
       {
         "attribute":"footwork:posture_regen",
-        "modify":"0.66",
-        "operation":"ADDITION"
+        "operation":"ADDITION",
+        "modify":0.66
       },
       {
         "attribute":"footwork:max_fracture",
-        "modify":"0.25",
-        "operation":"ADDITION"
+        "operation":"ADDITION",
+        "modify":0.25
       }
     ]
 }

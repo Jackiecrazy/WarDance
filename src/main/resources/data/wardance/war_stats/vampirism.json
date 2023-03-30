@@ -2,32 +2,32 @@
 "vampirism:basic_crossbow":{
         "attack": "1",
         "defend": "1.10",
-        "shield": "true"
+        "shield": "false"
     },
 "vampirism:basic_double_crossbow":{
         "attack": "1",
         "defend": "1.10",
-        "shield": "true"
+        "shield": "false"
     },
 "vampirism:basic_tech_crossbow":{
         "attack": "1",
         "defend": "1.10",
-        "shield": "true"
+        "shield": "false"
     },
 "vampirism:enhanced_crossbow":{
         "attack": "1",
         "defend": "1.10",
-        "shield": "true"
+        "shield": "false"
     },
 "vampirism:enhanced_double_crossbow":{
         "attack": "1",
         "defend": "1.10",
-        "shield": "true"
+        "shield": "false"
     },
 "vampirism:enhanced_tech_crossbow":{
         "attack": "1",
         "defend": "1.10",
-        "shield": "true"
+        "shield": "false"
     },
 "vampirism:heart_seeker_enhanced":{
         "attack": "2",

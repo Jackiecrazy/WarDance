@@ -12,7 +12,7 @@
 "silentgear:crossbow":{
         "attack": "1",
         "defend": "1.10",
-        "shield": "true"
+        "shield": "false"
     },
 "silentgear:dagger":{
         "attack": "1.3",

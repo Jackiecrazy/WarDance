@@ -2,286 +2,286 @@
 "alexsmobs:centipede_leggings":[
       {
         "attribute":"footwork:evasion",
-        "modify":"1.05",
-        "operation":"ADDITION"
+        "operation":"ADDITION",
+        "modify":1.05
       },
       {
         "attribute":"footwork:max_posture",
-        "modify":"2.38",
-        "operation":"ADDITION"
+        "operation":"ADDITION",
+        "modify":2.38
       },
       {
         "attribute":"footwork:posture_regen",
-        "modify":"0.79",
-        "operation":"ADDITION"
+        "operation":"ADDITION",
+        "modify":0.79
       },
       {
         "attribute":"footwork:might_grace",
-        "modify":"10",
-        "operation":"MULTIPLY_BASE"
+        "operation":"MULTIPLY_BASE",
+        "modify":0.1
       },
       {
         "attribute":"footwork:max_fracture",
-        "modify":"0.25",
-        "operation":"ADDITION"
+        "operation":"ADDITION",
+        "modify":0.25
       }
     ],
 "alexsmobs:crocodile_chestplate":[
       {
         "attribute":"footwork:evasion",
-        "modify":"1.4",
-        "operation":"ADDITION"
+        "operation":"ADDITION",
+        "modify":1.4
       },
       {
         "attribute":"footwork:max_posture",
-        "modify":"3.17",
-        "operation":"ADDITION"
+        "operation":"ADDITION",
+        "modify":3.17
       },
       {
         "attribute":"footwork:posture_regen",
-        "modify":"1.06",
-        "operation":"ADDITION"
+        "operation":"ADDITION",
+        "modify":1.06
       },
       {
         "attribute":"footwork:might_gen",
-        "modify":"15",
-        "operation":"MULTIPLY_BASE"
+        "operation":"MULTIPLY_BASE",
+        "modify":0.15
       },
       {
         "attribute":"footwork:max_fracture",
-        "modify":"0.25",
-        "operation":"ADDITION"
+        "operation":"ADDITION",
+        "modify":0.25
       }
     ],
 "alexsmobs:emu_leggings":[
       {
         "attribute":"footwork:evasion",
-        "modify":"1.05",
-        "operation":"ADDITION"
+        "operation":"ADDITION",
+        "modify":1.05
       },
       {
         "attribute":"footwork:max_posture",
-        "modify":"2.38",
-        "operation":"ADDITION"
+        "operation":"ADDITION",
+        "modify":2.38
       },
       {
         "attribute":"footwork:posture_regen",
-        "modify":"0.79",
-        "operation":"ADDITION"
+        "operation":"ADDITION",
+        "modify":0.79
       },
       {
         "attribute":"footwork:spirit_cooldown_speed",
-        "modify":"10",
-        "operation":"MULTIPLY_BASE"
+        "operation":"MULTIPLY_BASE",
+        "modify":0.1
       },
       {
         "attribute":"footwork:max_fracture",
-        "modify":"0.25",
-        "operation":"ADDITION"
+        "operation":"ADDITION",
+        "modify":0.25
       }
     ],
 "alexsmobs:fedora":[
       {
         "attribute":"footwork:posture_regen",
-        "modify":"0.63",
-        "operation":"ADDITION"
+        "operation":"ADDITION",
+        "modify":0.63
       },
       {
         "attribute":"footwork:max_might",
-        "modify":"0.4",
-        "operation":"ADDITION"
+        "operation":"ADDITION",
+        "modify":0.4
       },
       {
         "attribute":"footwork:max_fracture",
-        "modify":"0.25",
-        "operation":"ADDITION"
+        "operation":"ADDITION",
+        "modify":0.25
       }
     ],
 "alexsmobs:flying_fish_boots":[
       {
         "attribute":"footwork:posture_regen",
-        "modify":"0.66",
-        "operation":"ADDITION"
+        "operation":"ADDITION",
+        "modify":0.66
       },
       {
         "attribute":"footwork:max_fracture",
-        "modify":"0.25",
-        "operation":"ADDITION"
+        "operation":"ADDITION",
+        "modify":0.25
       }
     ],
 "alexsmobs:frontier_cap":[
       {
         "attribute":"footwork:posture_regen",
-        "modify":"0.63",
-        "operation":"ADDITION"
+        "operation":"ADDITION",
+        "modify":0.63
       },
       {
         "attribute":"footwork:might_grace",
-        "modify":"10",
-        "operation":"MULTIPLY_BASE"
+        "operation":"MULTIPLY_BASE",
+        "modify":0.1
       },
       {
         "attribute":"footwork:max_fracture",
-        "modify":"0.25",
-        "operation":"ADDITION"
+        "operation":"ADDITION",
+        "modify":0.25
       }
     ],
 "alexsmobs:froststalker_helmet":[
       {
         "attribute":"footwork:posture_regen",
-        "modify":"0.66",
-        "operation":"ADDITION"
+        "operation":"ADDITION",
+        "modify":0.66
       },
       {
         "attribute":"footwork:max_fracture",
-        "modify":"0.25",
-        "operation":"ADDITION"
+        "operation":"ADDITION",
+        "modify":0.25
       }
     ],
 "alexsmobs:moose_headgear":[
       {
         "attribute":"footwork:evasion",
-        "modify":"0.7",
-        "operation":"ADDITION"
+        "operation":"ADDITION",
+        "modify":0.7
       },
       {
         "attribute":"footwork:max_posture",
-        "modify":"1.59",
-        "operation":"ADDITION"
+        "operation":"ADDITION",
+        "modify":1.59
       },
       {
         "attribute":"footwork:posture_regen",
-        "modify":"0.53",
-        "operation":"ADDITION"
+        "operation":"ADDITION",
+        "modify":0.53
       },
       {
         "attribute":"footwork:might_gen",
-        "modify":"20",
-        "operation":"MULTIPLY_BASE"
+        "operation":"MULTIPLY_BASE",
+        "modify":0.2
       },
       {
         "attribute":"footwork:max_fracture",
-        "modify":"0.25",
-        "operation":"ADDITION"
+        "operation":"ADDITION",
+        "modify":0.25
       }
     ],
 "alexsmobs:novelty_hat":[
       {
         "attribute":"footwork:posture_regen",
-        "modify":"0.45",
-        "operation":"ADDITION"
+        "operation":"ADDITION",
+        "modify":0.45
       },
       {
         "attribute":"footwork:max_fracture",
-        "modify":"0.25",
-        "operation":"ADDITION"
+        "operation":"ADDITION",
+        "modify":0.25
       }
     ],
 "alexsmobs:roadrunner_boots":[
       {
         "attribute":"footwork:posture_regen",
-        "modify":"0.63",
-        "operation":"ADDITION"
+        "operation":"ADDITION",
+        "modify":0.63
       },
       {
         "attribute":"footwork:spirit_regen",
-        "modify":"10",
-        "operation":"ADDITION"
+        "operation":"ADDITION",
+        "modify":0.1
       },
       {
         "attribute":"footwork:max_fracture",
-        "modify":"0.25",
-        "operation":"ADDITION"
+        "operation":"ADDITION",
+        "modify":0.25
       }
     ],
 "alexsmobs:rocky_chestplate":[
       {
         "attribute":"footwork:evasion",
-        "modify":"1.4",
-        "operation":"ADDITION"
+        "operation":"ADDITION",
+        "modify":1.4
       },
       {
         "attribute":"footwork:max_posture",
-        "modify":"3.17",
-        "operation":"ADDITION"
+        "operation":"ADDITION",
+        "modify":3.17
       },
       {
         "attribute":"footwork:max_fracture",
-        "modify":"1.37",
-        "operation":"ADDITION"
+        "operation":"ADDITION",
+        "modify":1.37
       }
     ],
 "alexsmobs:sombrero":[
       {
         "attribute":"footwork:posture_regen",
-        "modify":"0.53",
-        "operation":"ADDITION"
+        "operation":"ADDITION",
+        "modify":0.53
       },
       {
         "attribute":"footwork:spirit_gain",
-        "modify":"15",
-        "operation":"MULTIPLY_BASE"
+        "operation":"MULTIPLY_BASE",
+        "modify":0.15
       },
       {
         "attribute":"footwork:max_fracture",
-        "modify":"0.25",
-        "operation":"ADDITION"
+        "operation":"ADDITION",
+        "modify":0.25
       }
     ],
 "alexsmobs:spiked_turtle_shell":[
       {
         "attribute":"footwork:evasion",
-        "modify":"0.7",
-        "operation":"ADDITION"
+        "operation":"ADDITION",
+        "modify":0.7
       },
       {
         "attribute":"footwork:max_posture",
-        "modify":"1.59",
-        "operation":"ADDITION"
+        "operation":"ADDITION",
+        "modify":1.59
       },
       {
         "attribute":"footwork:posture_regen",
-        "modify":"0.53",
-        "operation":"ADDITION"
+        "operation":"ADDITION",
+        "modify":0.53
       },
       {
         "attribute":"footwork:max_spirit",
-        "modify":"1",
-        "operation":"ADDITION"
+        "operation":"ADDITION",
+        "modify":1
       },
       {
         "attribute":"footwork:max_fracture",
-        "modify":"0.25",
-        "operation":"ADDITION"
+        "operation":"ADDITION",
+        "modify":0.25
       }
     ],
 "alexsmobs:tarantula_hawk_elytra":[
       {
         "attribute":"footwork:posture_regen",
-        "modify":"1.33",
-        "operation":"ADDITION"
+        "operation":"ADDITION",
+        "modify":1.33
       },
       {
         "attribute":"footwork:max_fracture",
-        "modify":"0.25",
-        "operation":"ADDITION"
+        "operation":"ADDITION",
+        "modify":0.25
       }
     ],
 "alexsmobs:unsettling_kimono":[
       {
         "attribute":"footwork:posture_regen",
-        "modify":"1.33",
-        "operation":"ADDITION"
+        "operation":"ADDITION",
+        "modify":1.33
       },
       {
         "attribute":"footwork:max_spirit",
-        "modify":"1",
-        "operation":"ADDITION"
+        "operation":"ADDITION",
+        "modify":1
       },
       {
         "attribute":"footwork:max_fracture",
-        "modify":"0.25",
-        "operation":"ADDITION"
+        "operation":"ADDITION",
+        "modify":0.25
       }
     ]
 }

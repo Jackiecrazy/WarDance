@@ -2,297 +2,297 @@
 "pyromancer:armor_of_hellblaze_monarch_boots":[
       {
         "attribute":"footwork:posture_regen",
-        "modify":"0.4",
-        "operation":"ADDITION"
+        "operation":"ADDITION",
+        "modify":0.4
       },
       {
         "attribute":"footwork:spirit_gain",
-        "modify":"5",
-        "operation":"MULTIPLY_BASE"
+        "operation":"MULTIPLY_BASE",
+        "modify":0.05
       },
       {
         "attribute":"footwork:might_gen",
-        "modify":"10",
-        "operation":"MULTIPLY_BASE"
+        "operation":"MULTIPLY_BASE",
+        "modify":0.1
       },
       {
         "attribute":"footwork:max_fracture",
-        "modify":"1.05",
-        "operation":"ADDITION"
+        "operation":"ADDITION",
+        "modify":1.05
       }
     ],
 "pyromancer:armor_of_hellblaze_monarch_chestplate":[
       {
         "attribute":"footwork:posture_regen",
-        "modify":"0.8",
-        "operation":"ADDITION"
+        "operation":"ADDITION",
+        "modify":0.8
       },
       {
         "attribute":"footwork:spirit_gain",
-        "modify":"5",
-        "operation":"MULTIPLY_BASE"
+        "operation":"MULTIPLY_BASE",
+        "modify":0.05
       },
       {
         "attribute":"footwork:might_gen",
-        "modify":"10",
-        "operation":"MULTIPLY_BASE"
+        "operation":"MULTIPLY_BASE",
+        "modify":0.1
       },
       {
         "attribute":"footwork:max_fracture",
-        "modify":"1.85",
-        "operation":"ADDITION"
+        "operation":"ADDITION",
+        "modify":1.85
       }
     ],
 "pyromancer:armor_of_hellblaze_monarch_helmet":[
       {
         "attribute":"footwork:posture_regen",
-        "modify":"0.4",
-        "operation":"ADDITION"
+        "operation":"ADDITION",
+        "modify":0.4
       },
       {
         "attribute":"footwork:spirit_gain",
-        "modify":"5",
-        "operation":"MULTIPLY_BASE"
+        "operation":"MULTIPLY_BASE",
+        "modify":0.05
       },
       {
         "attribute":"footwork:might_gen",
-        "modify":"10",
-        "operation":"MULTIPLY_BASE"
+        "operation":"MULTIPLY_BASE",
+        "modify":0.1
       },
       {
         "attribute":"footwork:max_fracture",
-        "modify":"1.05",
-        "operation":"ADDITION"
+        "operation":"ADDITION",
+        "modify":1.05
       }
     ],
 "pyromancer:armor_of_hellblaze_monarch_leggings":[
       {
         "attribute":"footwork:posture_regen",
-        "modify":"0.6",
-        "operation":"ADDITION"
+        "operation":"ADDITION",
+        "modify":0.6
       },
       {
         "attribute":"footwork:spirit_gain",
-        "modify":"5",
-        "operation":"MULTIPLY_BASE"
+        "operation":"MULTIPLY_BASE",
+        "modify":0.05
       },
       {
         "attribute":"footwork:might_gen",
-        "modify":"10",
-        "operation":"MULTIPLY_BASE"
+        "operation":"MULTIPLY_BASE",
+        "modify":0.1
       },
       {
         "attribute":"footwork:max_fracture",
-        "modify":"1.45",
-        "operation":"ADDITION"
+        "operation":"ADDITION",
+        "modify":1.45
       }
     ],
 "pyromancer:marauders_armor_boots":[
       {
         "attribute":"footwork:evasion",
-        "modify":"0.7",
-        "operation":"ADDITION"
+        "operation":"ADDITION",
+        "modify":0.7
       },
       {
         "attribute":"footwork:max_posture",
-        "modify":"1.59",
-        "operation":"ADDITION"
+        "operation":"ADDITION",
+        "modify":1.59
       },
       {
         "attribute":"footwork:posture_regen",
-        "modify":"0.35",
-        "operation":"ADDITION"
+        "operation":"ADDITION",
+        "modify":0.35
       },
       {
         "attribute":"footwork:max_fracture",
-        "modify":"0.25",
-        "operation":"ADDITION"
+        "operation":"ADDITION",
+        "modify":0.25
       }
     ],
 "pyromancer:marauders_armor_chestplate":[
       {
         "attribute":"footwork:evasion",
-        "modify":"1.4",
-        "operation":"ADDITION"
+        "operation":"ADDITION",
+        "modify":1.4
       },
       {
         "attribute":"footwork:max_posture",
-        "modify":"3.17",
-        "operation":"ADDITION"
+        "operation":"ADDITION",
+        "modify":3.17
       },
       {
         "attribute":"footwork:posture_regen",
-        "modify":"0.69",
-        "operation":"ADDITION"
+        "operation":"ADDITION",
+        "modify":0.69
       },
       {
         "attribute":"footwork:max_fracture",
-        "modify":"0.25",
-        "operation":"ADDITION"
+        "operation":"ADDITION",
+        "modify":0.25
       }
     ],
 "pyromancer:marauders_armor_helmet":[
       {
         "attribute":"footwork:evasion",
-        "modify":"0.7",
-        "operation":"ADDITION"
+        "operation":"ADDITION",
+        "modify":0.7
       },
       {
         "attribute":"footwork:max_posture",
-        "modify":"1.59",
-        "operation":"ADDITION"
+        "operation":"ADDITION",
+        "modify":1.59
       },
       {
         "attribute":"footwork:posture_regen",
-        "modify":"0.35",
-        "operation":"ADDITION"
+        "operation":"ADDITION",
+        "modify":0.35
       },
       {
         "attribute":"footwork:max_fracture",
-        "modify":"0.25",
-        "operation":"ADDITION"
+        "operation":"ADDITION",
+        "modify":0.25
       }
     ],
 "pyromancer:marauders_armor_leggings":[
       {
         "attribute":"footwork:evasion",
-        "modify":"1.05",
-        "operation":"ADDITION"
+        "operation":"ADDITION",
+        "modify":1.05
       },
       {
         "attribute":"footwork:max_posture",
-        "modify":"2.38",
-        "operation":"ADDITION"
+        "operation":"ADDITION",
+        "modify":2.38
       },
       {
         "attribute":"footwork:posture_regen",
-        "modify":"0.52",
-        "operation":"ADDITION"
+        "operation":"ADDITION",
+        "modify":0.52
       },
       {
         "attribute":"footwork:max_fracture",
-        "modify":"0.25",
-        "operation":"ADDITION"
+        "operation":"ADDITION",
+        "modify":0.25
       }
     ],
 "pyromancer:netherite_mask_helmet":[
       {
         "attribute":"footwork:posture_regen",
-        "modify":"0.35",
-        "operation":"ADDITION"
+        "operation":"ADDITION",
+        "modify":0.35
       },
       {
         "attribute":"footwork:max_fracture",
-        "modify":"1.05",
-        "operation":"ADDITION"
+        "operation":"ADDITION",
+        "modify":1.05
       }
     ],
 "pyromancer:pyromancer_armor_boots":[
       {
         "attribute":"footwork:posture_regen",
-        "modify":"0.66",
-        "operation":"ADDITION"
+        "operation":"ADDITION",
+        "modify":0.66
       },
       {
         "attribute":"footwork:max_spirit",
-        "modify":"0.25",
-        "operation":"ADDITION"
+        "operation":"ADDITION",
+        "modify":0.25
       },
       {
         "attribute":"footwork:spirit_cooldown_speed",
-        "modify":"8",
-        "operation":"MULTIPLY_BASE"
+        "operation":"MULTIPLY_BASE",
+        "modify":0.08
       },
       {
         "attribute":"footwork:spirit_regen",
-        "modify":"5",
-        "operation":"ADDITION"
+        "operation":"ADDITION",
+        "modify":0.05
       },
       {
         "attribute":"footwork:max_fracture",
-        "modify":"0.25",
-        "operation":"ADDITION"
+        "operation":"ADDITION",
+        "modify":0.25
       }
     ],
 "pyromancer:pyromancer_armor_chestplate":[
       {
         "attribute":"footwork:posture_regen",
-        "modify":"1.33",
-        "operation":"ADDITION"
+        "operation":"ADDITION",
+        "modify":1.33
       },
       {
         "attribute":"footwork:max_spirit",
-        "modify":"0.25",
-        "operation":"ADDITION"
+        "operation":"ADDITION",
+        "modify":0.25
       },
       {
         "attribute":"footwork:spirit_cooldown_speed",
-        "modify":"8",
-        "operation":"MULTIPLY_BASE"
+        "operation":"MULTIPLY_BASE",
+        "modify":0.08
       },
       {
         "attribute":"footwork:spirit_regen",
-        "modify":"5",
-        "operation":"ADDITION"
+        "operation":"ADDITION",
+        "modify":0.05
       },
       {
         "attribute":"footwork:max_fracture",
-        "modify":"0.25",
-        "operation":"ADDITION"
+        "operation":"ADDITION",
+        "modify":0.25
       }
     ],
 "pyromancer:pyromancer_armor_helmet":[
       {
         "attribute":"footwork:posture_regen",
-        "modify":"0.66",
-        "operation":"ADDITION"
+        "operation":"ADDITION",
+        "modify":0.66
       },
       {
         "attribute":"footwork:max_spirit",
-        "modify":"0.25",
-        "operation":"ADDITION"
+        "operation":"ADDITION",
+        "modify":0.25
       },
       {
         "attribute":"footwork:spirit_cooldown_speed",
-        "modify":"8",
-        "operation":"MULTIPLY_BASE"
+        "operation":"MULTIPLY_BASE",
+        "modify":0.08
       },
       {
         "attribute":"footwork:spirit_regen",
-        "modify":"5",
-        "operation":"ADDITION"
+        "operation":"ADDITION",
+        "modify":0.05
       },
       {
         "attribute":"footwork:max_fracture",
-        "modify":"0.25",
-        "operation":"ADDITION"
+        "operation":"ADDITION",
+        "modify":0.25
       }
     ],
 "pyromancer:pyromancer_armor_leggings":[
       {
         "attribute":"footwork:posture_regen",
-        "modify":"0.99",
-        "operation":"ADDITION"
+        "operation":"ADDITION",
+        "modify":0.99
       },
       {
         "attribute":"footwork:max_spirit",
-        "modify":"0.25",
-        "operation":"ADDITION"
+        "operation":"ADDITION",
+        "modify":0.25
       },
       {
         "attribute":"footwork:spirit_cooldown_speed",
-        "modify":"8",
-        "operation":"MULTIPLY_BASE"
+        "operation":"MULTIPLY_BASE",
+        "modify":0.08
       },
       {
         "attribute":"footwork:spirit_regen",
-        "modify":"5",
-        "operation":"ADDITION"
+        "operation":"ADDITION",
+        "modify":0.05
       },
       {
         "attribute":"footwork:max_fracture",
-        "modify":"0.25",
-        "operation":"ADDITION"
+        "operation":"ADDITION",
+        "modify":0.25
       }
     ]
 }

@@ -432,6 +432,10 @@ public abstract class Skill extends Move {
         return Marks.getCap(target).getActiveMark(this).isPresent();
     }
 
+    protected boolean hasSkill(LivingEntity caster) {
+        return CasterData.getCap(caster).getSkillData(this).isPresent();
+    }
+
     public enum CastStatus {
         ALLOWED,
         COOLDOWN,

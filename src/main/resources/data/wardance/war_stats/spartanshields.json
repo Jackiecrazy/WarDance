@@ -877,82 +877,82 @@
 "spartanweaponry:heavy_crossbow_bronze":{
         "attack": "1",
         "defend": "1.10",
-        "shield": "true"
+        "shield": "false"
     },
 "spartanweaponry:heavy_crossbow_copper":{
         "attack": "1",
         "defend": "1.10",
-        "shield": "true"
+        "shield": "false"
     },
 "spartanweaponry:heavy_crossbow_diamond":{
         "attack": "1",
         "defend": "1.10",
-        "shield": "true"
+        "shield": "false"
     },
 "spartanweaponry:heavy_crossbow_electrum":{
         "attack": "1",
         "defend": "1.10",
-        "shield": "true"
+        "shield": "false"
     },
 "spartanweaponry:heavy_crossbow_gold":{
         "attack": "1",
         "defend": "1.10",
-        "shield": "true"
+        "shield": "false"
     },
 "spartanweaponry:heavy_crossbow_invar":{
         "attack": "1",
         "defend": "1.10",
-        "shield": "true"
+        "shield": "false"
     },
 "spartanweaponry:heavy_crossbow_iron":{
         "attack": "1",
         "defend": "1.10",
-        "shield": "true"
+        "shield": "false"
     },
 "spartanweaponry:heavy_crossbow_lead":{
         "attack": "1",
         "defend": "1.10",
-        "shield": "true"
+        "shield": "false"
     },
 "spartanweaponry:heavy_crossbow_leather":{
         "attack": "1",
         "defend": "1.10",
-        "shield": "true"
+        "shield": "false"
     },
 "spartanweaponry:heavy_crossbow_netherite":{
         "attack": "1",
         "defend": "1.10",
-        "shield": "true"
+        "shield": "false"
     },
 "spartanweaponry:heavy_crossbow_nickel":{
         "attack": "1",
         "defend": "1.10",
-        "shield": "true"
+        "shield": "false"
     },
 "spartanweaponry:heavy_crossbow_platinum":{
         "attack": "1",
         "defend": "1.10",
-        "shield": "true"
+        "shield": "false"
     },
 "spartanweaponry:heavy_crossbow_silver":{
         "attack": "1",
         "defend": "1.10",
-        "shield": "true"
+        "shield": "false"
     },
 "spartanweaponry:heavy_crossbow_steel":{
         "attack": "1",
         "defend": "1.10",
-        "shield": "true"
+        "shield": "false"
     },
 "spartanweaponry:heavy_crossbow_tin":{
         "attack": "1",
         "defend": "1.10",
-        "shield": "true"
+        "shield": "false"
     },
 "spartanweaponry:heavy_crossbow_wood":{
         "attack": "1",
         "defend": "1.10",
-        "shield": "true"
+        "shield": "false"
     },
 "spartanweaponry:javelin_bronze":{
         "attack": "1.75",

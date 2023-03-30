@@ -2,89 +2,89 @@
 "enigmaticlegacy:etherium_boots":[
       {
         "attribute":"footwork:evasion",
-        "modify":"0.5",
-        "operation":"ADDITION"
+        "operation":"ADDITION",
+        "modify":0.5
       },
       {
         "attribute":"footwork:max_posture",
-        "modify":"1.34",
-        "operation":"ADDITION"
+        "operation":"ADDITION",
+        "modify":1.34
       },
       {
         "attribute":"footwork:posture_regen",
-        "modify":"0.45",
-        "operation":"ADDITION"
+        "operation":"ADDITION",
+        "modify":0.45
       },
       {
         "attribute":"footwork:max_fracture",
-        "modify":"0.65",
-        "operation":"ADDITION"
+        "operation":"ADDITION",
+        "modify":0.65
       }
     ],
 "enigmaticlegacy:etherium_chestplate":[
       {
         "attribute":"footwork:evasion",
-        "modify":"1",
-        "operation":"ADDITION"
+        "operation":"ADDITION",
+        "modify":1
       },
       {
         "attribute":"footwork:max_posture",
-        "modify":"2.68",
-        "operation":"ADDITION"
+        "operation":"ADDITION",
+        "modify":2.68
       },
       {
         "attribute":"footwork:posture_regen",
-        "modify":"0.89",
-        "operation":"ADDITION"
+        "operation":"ADDITION",
+        "modify":0.89
       },
       {
         "attribute":"footwork:max_fracture",
-        "modify":"1.05",
-        "operation":"ADDITION"
+        "operation":"ADDITION",
+        "modify":1.05
       }
     ],
 "enigmaticlegacy:etherium_helmet":[
       {
         "attribute":"footwork:evasion",
-        "modify":"0.5",
-        "operation":"ADDITION"
+        "operation":"ADDITION",
+        "modify":0.5
       },
       {
         "attribute":"footwork:max_posture",
-        "modify":"1.34",
-        "operation":"ADDITION"
+        "operation":"ADDITION",
+        "modify":1.34
       },
       {
         "attribute":"footwork:posture_regen",
-        "modify":"0.45",
-        "operation":"ADDITION"
+        "operation":"ADDITION",
+        "modify":0.45
       },
       {
         "attribute":"footwork:max_fracture",
-        "modify":"0.65",
-        "operation":"ADDITION"
+        "operation":"ADDITION",
+        "modify":0.65
       }
     ],
 "enigmaticlegacy:etherium_leggings":[
       {
         "attribute":"footwork:evasion",
-        "modify":"0.75",
-        "operation":"ADDITION"
+        "operation":"ADDITION",
+        "modify":0.75
       },
       {
         "attribute":"footwork:max_posture",
-        "modify":"2.01",
-        "operation":"ADDITION"
+        "operation":"ADDITION",
+        "modify":2.01
       },
       {
         "attribute":"footwork:posture_regen",
-        "modify":"0.67",
-        "operation":"ADDITION"
+        "operation":"ADDITION",
+        "modify":0.67
       },
       {
         "attribute":"footwork:max_fracture",
-        "modify":"0.85",
-        "operation":"ADDITION"
+        "operation":"ADDITION",
+        "modify":0.85
       }
     ]
 }

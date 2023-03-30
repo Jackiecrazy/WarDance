@@ -2,207 +2,207 @@
 "majruszs_difficulty:end_boots":[
       {
         "attribute":"footwork:max_fracture",
-        "modify":"1.29",
-        "operation":"ADDITION"
+        "operation":"ADDITION",
+        "modify":1.29
       }
     ],
 "majruszs_difficulty:end_chestplate":[
       {
         "attribute":"footwork:max_fracture",
-        "modify":"2.33",
-        "operation":"ADDITION"
+        "operation":"ADDITION",
+        "modify":2.33
       }
     ],
 "majruszs_difficulty:end_helmet":[
       {
         "attribute":"footwork:max_fracture",
-        "modify":"1.29",
-        "operation":"ADDITION"
+        "operation":"ADDITION",
+        "modify":1.29
       }
     ],
 "majruszs_difficulty:end_leggings":[
       {
         "attribute":"footwork:max_fracture",
-        "modify":"1.81",
-        "operation":"ADDITION"
+        "operation":"ADDITION",
+        "modify":1.81
       }
     ],
 "majruszs_difficulty:hermes_boots":[
       {
         "attribute":"footwork:evasion",
-        "modify":"0.3",
-        "operation":"ADDITION"
+        "operation":"ADDITION",
+        "modify":0.3
       },
       {
         "attribute":"footwork:max_posture",
-        "modify":"1.04",
-        "operation":"ADDITION"
+        "operation":"ADDITION",
+        "modify":1.04
       },
       {
         "attribute":"footwork:posture_regen",
-        "modify":"0.63",
-        "operation":"ADDITION"
+        "operation":"ADDITION",
+        "modify":0.63
       },
       {
         "attribute":"footwork:max_fracture",
-        "modify":"1.29",
-        "operation":"ADDITION"
+        "operation":"ADDITION",
+        "modify":1.29
       }
     ],
 "majruszsdifficulty:enderium_boots":[
       {
         "attribute":"footwork:max_fracture",
-        "modify":"1.29",
-        "operation":"ADDITION"
+        "operation":"ADDITION",
+        "modify":1.29
       }
     ],
 "majruszsdifficulty:enderium_chestplate":[
       {
         "attribute":"footwork:max_fracture",
-        "modify":"2.33",
-        "operation":"ADDITION"
+        "operation":"ADDITION",
+        "modify":2.33
       }
     ],
 "majruszsdifficulty:enderium_helmet":[
       {
         "attribute":"footwork:max_fracture",
-        "modify":"1.29",
-        "operation":"ADDITION"
+        "operation":"ADDITION",
+        "modify":1.29
       }
     ],
 "majruszsdifficulty:enderium_leggings":[
       {
         "attribute":"footwork:max_fracture",
-        "modify":"1.81",
-        "operation":"ADDITION"
+        "operation":"ADDITION",
+        "modify":1.81
       }
     ],
 "majruszsdifficulty:tattered_boots":[
       {
         "attribute":"footwork:posture_regen",
-        "modify":"0.66",
-        "operation":"ADDITION"
+        "operation":"ADDITION",
+        "modify":0.66
       },
       {
         "attribute":"footwork:spirit_cooldown_speed",
-        "modify":"5",
-        "operation":"MULTIPLY_BASE"
+        "operation":"MULTIPLY_BASE",
+        "modify":0.05
       },
       {
         "attribute":"footwork:spirit_regen",
-        "modify":"5",
-        "operation":"ADDITION"
+        "operation":"ADDITION",
+        "modify":0.05
       },
       {
         "attribute":"footwork:might_grace",
-        "modify":"5",
-        "operation":"MULTIPLY_BASE"
+        "operation":"MULTIPLY_BASE",
+        "modify":0.05
       },
       {
         "attribute":"footwork:might_gen",
-        "modify":"5",
-        "operation":"MULTIPLY_BASE"
+        "operation":"MULTIPLY_BASE",
+        "modify":0.05
       },
       {
         "attribute":"footwork:max_fracture",
-        "modify":"0.25",
-        "operation":"ADDITION"
+        "operation":"ADDITION",
+        "modify":0.25
       }
     ],
 "majruszsdifficulty:tattered_chestplate":[
       {
         "attribute":"footwork:posture_regen",
-        "modify":"1.33",
-        "operation":"ADDITION"
+        "operation":"ADDITION",
+        "modify":1.33
       },
       {
         "attribute":"footwork:spirit_cooldown_speed",
-        "modify":"5",
-        "operation":"MULTIPLY_BASE"
+        "operation":"MULTIPLY_BASE",
+        "modify":0.05
       },
       {
         "attribute":"footwork:spirit_regen",
-        "modify":"5",
-        "operation":"ADDITION"
+        "operation":"ADDITION",
+        "modify":0.05
       },
       {
         "attribute":"footwork:might_grace",
-        "modify":"5",
-        "operation":"MULTIPLY_BASE"
+        "operation":"MULTIPLY_BASE",
+        "modify":0.05
       },
       {
         "attribute":"footwork:might_gen",
-        "modify":"5",
-        "operation":"MULTIPLY_BASE"
+        "operation":"MULTIPLY_BASE",
+        "modify":0.05
       },
       {
         "attribute":"footwork:max_fracture",
-        "modify":"0.25",
-        "operation":"ADDITION"
+        "operation":"ADDITION",
+        "modify":0.25
       }
     ],
 "majruszsdifficulty:tattered_helmet":[
       {
         "attribute":"footwork:posture_regen",
-        "modify":"0.66",
-        "operation":"ADDITION"
+        "operation":"ADDITION",
+        "modify":0.66
       },
       {
         "attribute":"footwork:spirit_cooldown_speed",
-        "modify":"5",
-        "operation":"MULTIPLY_BASE"
+        "operation":"MULTIPLY_BASE",
+        "modify":0.05
       },
       {
         "attribute":"footwork:spirit_regen",
-        "modify":"5",
-        "operation":"ADDITION"
+        "operation":"ADDITION",
+        "modify":0.05
       },
       {
         "attribute":"footwork:might_grace",
-        "modify":"5",
-        "operation":"MULTIPLY_BASE"
+        "operation":"MULTIPLY_BASE",
+        "modify":0.05
       },
       {
         "attribute":"footwork:might_gen",
-        "modify":"5",
-        "operation":"MULTIPLY_BASE"
+        "operation":"MULTIPLY_BASE",
+        "modify":0.05
       },
       {
         "attribute":"footwork:max_fracture",
-        "modify":"0.25",
-        "operation":"ADDITION"
+        "operation":"ADDITION",
+        "modify":0.25
       }
     ],
 "majruszsdifficulty:tattered_leggings":[
       {
         "attribute":"footwork:posture_regen",
-        "modify":"0.99",
-        "operation":"ADDITION"
+        "operation":"ADDITION",
+        "modify":0.99
       },
       {
         "attribute":"footwork:spirit_cooldown_speed",
-        "modify":"5",
-        "operation":"MULTIPLY_BASE"
+        "operation":"MULTIPLY_BASE",
+        "modify":0.05
       },
       {
         "attribute":"footwork:spirit_regen",
-        "modify":"5",
-        "operation":"ADDITION"
+        "operation":"ADDITION",
+        "modify":0.05
       },
       {
         "attribute":"footwork:might_grace",
-        "modify":"5",
-        "operation":"MULTIPLY_BASE"
+        "operation":"MULTIPLY_BASE",
+        "modify":0.05
       },
       {
         "attribute":"footwork:might_gen",
-        "modify":"5",
-        "operation":"MULTIPLY_BASE"
+        "operation":"MULTIPLY_BASE",
+        "modify":0.05
       },
       {
         "attribute":"footwork:max_fracture",
-        "modify":"0.25",
-        "operation":"ADDITION"
+        "operation":"ADDITION",
+        "modify":0.25
       }
     ]
 }

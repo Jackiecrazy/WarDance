@@ -35,7 +35,7 @@ public class ResourceConfig {
         //master, resources, compat, stealth, items, misc
         _qiGrace = b.translation("wardance.config.qiG").comment("Number of ticks after gaining might during which it will not decrease").defineInRange("might grace period", 100, 1, Integer.MAX_VALUE);
         _spiritCD = b.translation("wardance.config.spiritC").comment("Number of ticks after consuming spirit during which it will not regenerate").defineInRange("spirit cooldown", 80, 1, Integer.MAX_VALUE);
-        _postureCD = b.translation("wardance.config.postureC").comment("Number of ticks after consuming posture during which it will not regenerate").defineInRange("posture cooldown", 20, 1, Integer.MAX_VALUE);
+        _postureCD = b.translation("wardance.config.postureC").comment("Number of ticks after consuming posture during which it will not regenerate").defineInRange("posture cooldown", 18, 0, Integer.MAX_VALUE);
         _customPosture = b.translation("wardance.config.postureMobs").comment("Here you can define custom max posture for mobs. Armor adds to this independently.").defineList("custom mob posture", Lists.newArrayList("example:dragon, 100", "example:ghast, 8"), String.class::isInstance);
     }
 
