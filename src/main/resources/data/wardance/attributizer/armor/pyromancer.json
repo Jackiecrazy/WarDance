@@ -96,12 +96,12 @@
       {
         "attribute":"footwork:max_posture",
         "operation":"ADDITION",
-        "modify":1.59
+        "modify":1.6
       },
       {
         "attribute":"footwork:posture_regen",
         "operation":"ADDITION",
-        "modify":0.35
+        "modify":0.3
       },
       {
         "attribute":"footwork:max_fracture",
@@ -118,12 +118,12 @@
       {
         "attribute":"footwork:max_posture",
         "operation":"ADDITION",
-        "modify":3.17
+        "modify":3.2
       },
       {
         "attribute":"footwork:posture_regen",
         "operation":"ADDITION",
-        "modify":0.69
+        "modify":0.7
       },
       {
         "attribute":"footwork:max_fracture",
@@ -140,12 +140,12 @@
       {
         "attribute":"footwork:max_posture",
         "operation":"ADDITION",
-        "modify":1.59
+        "modify":1.6
       },
       {
         "attribute":"footwork:posture_regen",
         "operation":"ADDITION",
-        "modify":0.35
+        "modify":0.3
       },
       {
         "attribute":"footwork:max_fracture",
@@ -157,17 +157,17 @@
       {
         "attribute":"footwork:evasion",
         "operation":"ADDITION",
-        "modify":1.05
+        "modify":1.1
       },
       {
         "attribute":"footwork:max_posture",
         "operation":"ADDITION",
-        "modify":2.38
+        "modify":2.4
       },
       {
         "attribute":"footwork:posture_regen",
         "operation":"ADDITION",
-        "modify":0.52
+        "modify":0.5
       },
       {
         "attribute":"footwork:max_fracture",
@@ -179,7 +179,7 @@
       {
         "attribute":"footwork:posture_regen",
         "operation":"ADDITION",
-        "modify":0.35
+        "modify":0.3
       },
       {
         "attribute":"footwork:max_fracture",
@@ -191,7 +191,7 @@
       {
         "attribute":"footwork:posture_regen",
         "operation":"ADDITION",
-        "modify":0.66
+        "modify":0.7
       },
       {
         "attribute":"footwork:max_spirit",
@@ -218,7 +218,7 @@
       {
         "attribute":"footwork:posture_regen",
         "operation":"ADDITION",
-        "modify":1.33
+        "modify":1.3
       },
       {
         "attribute":"footwork:max_spirit",
@@ -245,7 +245,7 @@
       {
         "attribute":"footwork:posture_regen",
         "operation":"ADDITION",
-        "modify":0.66
+        "modify":0.7
       },
       {
         "attribute":"footwork:max_spirit",
@@ -272,7 +272,7 @@
       {
         "attribute":"footwork:posture_regen",
         "operation":"ADDITION",
-        "modify":0.99
+        "modify":1
       },
       {
         "attribute":"footwork:max_spirit",

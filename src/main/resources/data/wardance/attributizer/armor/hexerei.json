@@ -3,7 +3,7 @@
       {
         "attribute":"footwork:posture_regen",
         "operation":"ADDITION",
-        "modify":0.69
+        "modify":0.7
       },
       {
         "attribute":"footwork:max_spirit",
@@ -30,7 +30,7 @@
       {
         "attribute":"footwork:posture_regen",
         "operation":"ADDITION",
-        "modify":0.69
+        "modify":0.7
       },
       {
         "attribute":"footwork:max_spirit",
@@ -57,7 +57,7 @@
       {
         "attribute":"footwork:posture_regen",
         "operation":"ADDITION",
-        "modify":1.39
+        "modify":1.4
       },
       {
         "attribute":"footwork:max_spirit",
@@ -84,7 +84,7 @@
       {
         "attribute":"footwork:posture_regen",
         "operation":"ADDITION",
-        "modify":0.69
+        "modify":0.7
       },
       {
         "attribute":"footwork:max_spirit",

@@ -18,7 +18,7 @@
       {
         "attribute":"footwork:max_fracture",
         "operation":"ADDITION",
-        "modify":0.57
+        "modify":0.55
       }
     ],
 "silentgear:chestplate":[
@@ -40,7 +40,7 @@
       {
         "attribute":"footwork:max_fracture",
         "operation":"ADDITION",
-        "modify":0.89
+        "modify":0.85
       }
     ],
 "silentgear:helmet":[
@@ -62,7 +62,7 @@
       {
         "attribute":"footwork:max_fracture",
         "operation":"ADDITION",
-        "modify":0.57
+        "modify":0.55
       }
     ],
 "silentgear:leggings":[
@@ -84,7 +84,7 @@
       {
         "attribute":"footwork:max_fracture",
         "operation":"ADDITION",
-        "modify":0.73
+        "modify":0.75
       }
     ]
 }

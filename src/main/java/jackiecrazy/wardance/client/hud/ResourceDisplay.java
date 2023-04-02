@@ -566,9 +566,13 @@ public class ResourceDisplay implements IGuiOverlay {
                         Color c = s.getSkill().getColor();
                         RenderSystem.setShaderColor(c.getRed() / 255f, c.getGreen() / 255f, c.getBlue() / 255f, 1);
                         GuiComponent.blit(stack, pair.getFirst() - (afflict.size() - 1 - index) * 16 + (afflict.size() - 1) * 8 - 8, pair.getSecond(), 0, 0, 16, 16, 16, 16);
-                        if (s.getMaxDuration() != 0) {
+                        if (s.getMaxDuration() >= 1) {
                             String display = formatter.format(s.getDuration());
-                            mc.font.drawShadow(stack, display, pair.getFirst() - (afflict.size() - 1 - index) * 16 + (afflict.size() - 1) * 8 - 8, pair.getSecond() - 2, 0);
+                            mc.font.drawShadow(stack, display, pair.getFirst() - (afflict.size() - 1 - index) * 16 + (afflict.size() - 1) * 8 - 8, pair.getSecond() - 2, 0xffffff);
+                        }
+                        if (s.getArbitraryFloat() != 0) {
+                            String display = formatter.format(s.getArbitraryFloat());
+                            mc.font.drawShadow(stack, display, pair.getFirst() - (afflict.size() - 1 - index) * 16 + (afflict.size() - 1) * 8 + 4, pair.getSecond() + 8, 0xffffff);
                         }
 
                     }

@@ -36,12 +36,12 @@
       {
         "attribute":"footwork:max_posture",
         "operation":"ADDITION",
-        "modify":1.47
+        "modify":1.5
       },
       {
         "attribute":"footwork:posture_regen",
         "operation":"ADDITION",
-        "modify":0.49
+        "modify":0.5
       },
       {
         "attribute":"footwork:max_fracture",
@@ -58,12 +58,12 @@
       {
         "attribute":"footwork:max_posture",
         "operation":"ADDITION",
-        "modify":2.94
+        "modify":2.9
       },
       {
         "attribute":"footwork:posture_regen",
         "operation":"ADDITION",
-        "modify":0.98
+        "modify":1
       },
       {
         "attribute":"footwork:max_fracture",
@@ -80,12 +80,12 @@
       {
         "attribute":"footwork:max_posture",
         "operation":"ADDITION",
-        "modify":1.47
+        "modify":1.5
       },
       {
         "attribute":"footwork:posture_regen",
         "operation":"ADDITION",
-        "modify":0.49
+        "modify":0.5
       },
       {
         "attribute":"footwork:max_fracture",
@@ -107,7 +107,7 @@
       {
         "attribute":"footwork:posture_regen",
         "operation":"ADDITION",
-        "modify":0.73
+        "modify":0.7
       },
       {
         "attribute":"footwork:max_fracture",

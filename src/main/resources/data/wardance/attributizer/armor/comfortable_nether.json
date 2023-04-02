@@ -3,7 +3,7 @@
       {
         "attribute":"footwork:posture_regen",
         "operation":"ADDITION",
-        "modify":0.45
+        "modify":0.4
       },
       {
         "attribute":"footwork:max_fracture",
@@ -15,7 +15,7 @@
       {
         "attribute":"footwork:posture_regen",
         "operation":"ADDITION",
-        "modify":0.63
+        "modify":0.6
       },
       {
         "attribute":"footwork:max_fracture",

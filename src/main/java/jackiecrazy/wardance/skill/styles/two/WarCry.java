@@ -60,12 +60,13 @@ public class WarCry extends SkillStyle {
 
     @Override
     public boolean onStateChange(LivingEntity caster, SkillData prev, STATE from, STATE to) {
-        if (to == STATE.HOLSTERED && cast(caster, getDuration(CombatData.getCap(caster).getMight())))
-            evoke(caster);
-        if (to == STATE.COOLING) {
-            prev.setState(STATE.INACTIVE);
-            prev.setDuration(0);
-        }
+//        if (to == STATE.HOLSTERED && cast(caster, getDuration(CombatData.getCap(caster).getMight())))
+//            evoke(caster);
+//        if (to == STATE.COOLING) {
+//            prev.setState(STATE.INACTIVE);
+//            prev.setDuration(0);
+//        }
+        prev.setState(STATE.INACTIVE);
         return instantCast(prev, from, to);
     }
 }

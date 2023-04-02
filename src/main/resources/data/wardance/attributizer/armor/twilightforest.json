@@ -30,7 +30,7 @@
       {
         "attribute":"footwork:max_posture",
         "operation":"ADDITION",
-        "modify":3.39
+        "modify":3.4
       },
       {
         "attribute":"footwork:posture_regen",
@@ -74,7 +74,7 @@
       {
         "attribute":"footwork:max_posture",
         "operation":"ADDITION",
-        "modify":2.55
+        "modify":2.5
       },
       {
         "attribute":"footwork:posture_regen",
@@ -106,7 +106,7 @@
       {
         "attribute":"footwork:max_fracture",
         "operation":"ADDITION",
-        "modify":0.49
+        "modify":0.45
       }
     ],
 "twilightforest:fiery_chestplate":[
@@ -118,7 +118,7 @@
       {
         "attribute":"footwork:max_posture",
         "operation":"ADDITION",
-        "modify":3.79
+        "modify":3.8
       },
       {
         "attribute":"footwork:spirit_regen",
@@ -128,7 +128,7 @@
       {
         "attribute":"footwork:max_fracture",
         "operation":"ADDITION",
-        "modify":0.73
+        "modify":0.75
       }
     ],
 "twilightforest:fiery_helmet":[
@@ -150,7 +150,7 @@
       {
         "attribute":"footwork:max_fracture",
         "operation":"ADDITION",
-        "modify":0.49
+        "modify":0.45
       }
     ],
 "twilightforest:fiery_leggings":[
@@ -162,7 +162,7 @@
       {
         "attribute":"footwork:max_posture",
         "operation":"ADDITION",
-        "modify":2.85
+        "modify":2.8
       },
       {
         "attribute":"footwork:spirit_regen",
@@ -172,7 +172,7 @@
       {
         "attribute":"footwork:max_fracture",
         "operation":"ADDITION",
-        "modify":0.61
+        "modify":0.65
       }
     ],
 "twilightforest:ironwood_boots":[
@@ -184,12 +184,12 @@
       {
         "attribute":"footwork:max_posture",
         "operation":"ADDITION",
-        "modify":1.59
+        "modify":1.6
       },
       {
         "attribute":"footwork:posture_regen",
         "operation":"ADDITION",
-        "modify":0.35
+        "modify":0.3
       },
       {
         "attribute":"footwork:max_fracture",
@@ -206,12 +206,12 @@
       {
         "attribute":"footwork:max_posture",
         "operation":"ADDITION",
-        "modify":3.17
+        "modify":3.2
       },
       {
         "attribute":"footwork:posture_regen",
         "operation":"ADDITION",
-        "modify":0.69
+        "modify":0.7
       },
       {
         "attribute":"footwork:max_fracture",
@@ -228,12 +228,12 @@
       {
         "attribute":"footwork:max_posture",
         "operation":"ADDITION",
-        "modify":1.59
+        "modify":1.6
       },
       {
         "attribute":"footwork:posture_regen",
         "operation":"ADDITION",
-        "modify":0.35
+        "modify":0.3
       },
       {
         "attribute":"footwork:max_fracture",
@@ -245,17 +245,17 @@
       {
         "attribute":"footwork:evasion",
         "operation":"ADDITION",
-        "modify":1.05
+        "modify":1.1
       },
       {
         "attribute":"footwork:max_posture",
         "operation":"ADDITION",
-        "modify":2.38
+        "modify":2.4
       },
       {
         "attribute":"footwork:posture_regen",
         "operation":"ADDITION",
-        "modify":0.52
+        "modify":0.5
       },
       {
         "attribute":"footwork:max_fracture",
@@ -282,7 +282,7 @@
       {
         "attribute":"footwork:max_fracture",
         "operation":"ADDITION",
-        "modify":0.41
+        "modify":0.45
       }
     ],
 "twilightforest:knightmetal_chestplate":[
@@ -294,7 +294,7 @@
       {
         "attribute":"footwork:max_posture",
         "operation":"ADDITION",
-        "modify":3.39
+        "modify":3.4
       },
       {
         "attribute":"footwork:max_might",
@@ -304,7 +304,7 @@
       {
         "attribute":"footwork:max_fracture",
         "operation":"ADDITION",
-        "modify":0.57
+        "modify":0.55
       }
     ],
 "twilightforest:knightmetal_helmet":[
@@ -326,7 +326,7 @@
       {
         "attribute":"footwork:max_fracture",
         "operation":"ADDITION",
-        "modify":0.41
+        "modify":0.45
       }
     ],
 "twilightforest:knightmetal_leggings":[
@@ -338,7 +338,7 @@
       {
         "attribute":"footwork:max_posture",
         "operation":"ADDITION",
-        "modify":2.55
+        "modify":2.5
       },
       {
         "attribute":"footwork:max_might",
@@ -348,7 +348,7 @@
       {
         "attribute":"footwork:max_fracture",
         "operation":"ADDITION",
-        "modify":0.49
+        "modify":0.45
       }
     ],
 "twilightforest:naga_chestplate":[
@@ -360,12 +360,12 @@
       {
         "attribute":"footwork:max_posture",
         "operation":"ADDITION",
-        "modify":3.17
+        "modify":3.2
       },
       {
         "attribute":"footwork:posture_regen",
         "operation":"ADDITION",
-        "modify":1.06
+        "modify":1.1
       },
       {
         "attribute":"footwork:max_spirit",
@@ -382,17 +382,17 @@
       {
         "attribute":"footwork:evasion",
         "operation":"ADDITION",
-        "modify":1.05
+        "modify":1.1
       },
       {
         "attribute":"footwork:max_posture",
         "operation":"ADDITION",
-        "modify":2.38
+        "modify":2.4
       },
       {
         "attribute":"footwork:posture_regen",
         "operation":"ADDITION",
-        "modify":0.79
+        "modify":0.8
       },
       {
         "attribute":"footwork:max_spirit",
@@ -414,7 +414,7 @@
       {
         "attribute":"footwork:max_posture",
         "operation":"ADDITION",
-        "modify":3.39
+        "modify":3.4
       },
       {
         "attribute":"footwork:max_might",
@@ -424,7 +424,7 @@
       {
         "attribute":"footwork:max_fracture",
         "operation":"ADDITION",
-        "modify":0.89
+        "modify":0.85
       }
     ],
 "twilightforest:phantom_helmet":[
@@ -446,7 +446,7 @@
       {
         "attribute":"footwork:max_fracture",
         "operation":"ADDITION",
-        "modify":0.57
+        "modify":0.55
       }
     ],
 "twilightforest:steeleaf_boots":[
@@ -463,7 +463,7 @@
       {
         "attribute":"footwork:max_fracture",
         "operation":"ADDITION",
-        "modify":0.49
+        "modify":0.45
       }
     ],
 "twilightforest:steeleaf_chestplate":[
@@ -475,12 +475,12 @@
       {
         "attribute":"footwork:max_posture",
         "operation":"ADDITION",
-        "modify":3.39
+        "modify":3.4
       },
       {
         "attribute":"footwork:max_fracture",
         "operation":"ADDITION",
-        "modify":0.73
+        "modify":0.75
       }
     ],
 "twilightforest:steeleaf_helmet":[
@@ -497,7 +497,7 @@
       {
         "attribute":"footwork:max_fracture",
         "operation":"ADDITION",
-        "modify":0.49
+        "modify":0.45
       }
     ],
 "twilightforest:steeleaf_leggings":[
@@ -509,12 +509,12 @@
       {
         "attribute":"footwork:max_posture",
         "operation":"ADDITION",
-        "modify":2.55
+        "modify":2.5
       },
       {
         "attribute":"footwork:max_fracture",
         "operation":"ADDITION",
-        "modify":0.61
+        "modify":0.65
       }
     ],
 "twilightforest:yeti_boots":[
@@ -526,12 +526,12 @@
       {
         "attribute":"footwork:max_posture",
         "operation":"ADDITION",
-        "modify":0.85
+        "modify":0.8
       },
       {
         "attribute":"footwork:posture_regen",
         "operation":"ADDITION",
-        "modify":0.63
+        "modify":0.6
       },
       {
         "attribute":"footwork:spirit_cooldown_speed",
@@ -573,7 +573,7 @@
       {
         "attribute":"footwork:posture_regen",
         "operation":"ADDITION",
-        "modify":1.26
+        "modify":1.3
       },
       {
         "attribute":"footwork:spirit_cooldown_speed",
@@ -610,12 +610,12 @@
       {
         "attribute":"footwork:max_posture",
         "operation":"ADDITION",
-        "modify":0.85
+        "modify":0.8
       },
       {
         "attribute":"footwork:posture_regen",
         "operation":"ADDITION",
-        "modify":0.63
+        "modify":0.6
       },
       {
         "attribute":"footwork:spirit_cooldown_speed",
@@ -652,12 +652,12 @@
       {
         "attribute":"footwork:max_posture",
         "operation":"ADDITION",
-        "modify":1.27
+        "modify":1.3
       },
       {
         "attribute":"footwork:posture_regen",
         "operation":"ADDITION",
-        "modify":0.95
+        "modify":0.9
       },
       {
         "attribute":"footwork:spirit_cooldown_speed",

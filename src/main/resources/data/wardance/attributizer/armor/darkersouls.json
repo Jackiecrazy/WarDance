@@ -8,12 +8,12 @@
       {
         "attribute":"footwork:max_posture",
         "operation":"ADDITION",
-        "modify":1.47
+        "modify":1.5
       },
       {
         "attribute":"footwork:max_fracture",
         "operation":"ADDITION",
-        "modify":0.97
+        "modify":0.95
       }
     ],
 "darkersouls:golden_greaves":[
@@ -30,7 +30,7 @@
       {
         "attribute":"footwork:max_fracture",
         "operation":"ADDITION",
-        "modify":1.33
+        "modify":1.35
       }
     ],
 "darkersouls:nameless_king_chestplate":[
@@ -42,12 +42,12 @@
       {
         "attribute":"footwork:max_posture",
         "operation":"ADDITION",
-        "modify":2.94
+        "modify":2.9
       },
       {
         "attribute":"footwork:max_fracture",
         "operation":"ADDITION",
-        "modify":1.69
+        "modify":1.65
       }
     ],
 "darkersouls:nameless_king_leggings":[
@@ -64,7 +64,7 @@
       {
         "attribute":"footwork:max_fracture",
         "operation":"ADDITION",
-        "modify":1.33
+        "modify":1.35
       }
     ]
 }

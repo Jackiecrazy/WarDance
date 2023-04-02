@@ -353,8 +353,10 @@ public abstract class Skill extends Move {
         if (!sre.isCanceled() && CombatData.getCap(caster).getMight() >= sre.getMight() && CombatData.getCap(caster).getSpirit() >= sre.getSpirit()) {
             SkillCastEvent sce = new SkillCastEvent(caster, target, this, sre.getMight(), sre.getSpirit(), duration, flag, arbitrary);
             MinecraftForge.EVENT_BUS.post(sce);
-            CombatData.getCap(caster).consumeMight(sce.getMight());
-            CombatData.getCap(caster).consumeSpirit(sce.getSpirit());
+            if (sce.getMight() > 0)
+                CombatData.getCap(caster).consumeMight(sce.getMight());
+            if (sce.getMight() > 0)
+                CombatData.getCap(caster).consumeSpirit(sce.getSpirit());
             activate(caster, sce.getDuration(), sce.isFlag(), sce.getArbitrary());
             return true;
         }

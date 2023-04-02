@@ -8,12 +8,12 @@
       {
         "attribute":"footwork:max_posture",
         "operation":"ADDITION",
-        "modify":0.85
+        "modify":0.8
       },
       {
         "attribute":"footwork:posture_regen",
         "operation":"ADDITION",
-        "modify":0.53
+        "modify":0.5
       },
       {
         "attribute":"footwork:might_gen",
@@ -40,7 +40,7 @@
       {
         "attribute":"footwork:posture_regen",
         "operation":"ADDITION",
-        "modify":1.06
+        "modify":1.1
       },
       {
         "attribute":"footwork:might_gen",
@@ -62,12 +62,12 @@
       {
         "attribute":"footwork:max_posture",
         "operation":"ADDITION",
-        "modify":0.85
+        "modify":0.8
       },
       {
         "attribute":"footwork:posture_regen",
         "operation":"ADDITION",
-        "modify":0.53
+        "modify":0.5
       },
       {
         "attribute":"footwork:might_gen",
@@ -89,12 +89,12 @@
       {
         "attribute":"footwork:max_posture",
         "operation":"ADDITION",
-        "modify":1.27
+        "modify":1.3
       },
       {
         "attribute":"footwork:posture_regen",
         "operation":"ADDITION",
-        "modify":0.79
+        "modify":0.8
       },
       {
         "attribute":"footwork:might_gen",

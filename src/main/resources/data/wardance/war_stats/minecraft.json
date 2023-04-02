@@ -1,337 +1,342 @@
 {
-"minecraft:acacia_door":{
-        "attack": "6",
-        "defend": "0.50",
-        "shield": "true"
-    },
-"minecraft:acacia_sign":{
-        "attack": "2.4",
-        "defend": "0.90",
-        "shield": "false"
-    },
-"minecraft:acacia_trapdoor":{
-        "attack": "3",
-        "defend": "0.70",
-        "shield": "true"
-    },
-"minecraft:birch_door":{
-        "attack": "6",
-        "defend": "0.50",
-        "shield": "true"
-    },
-"minecraft:birch_sign":{
-        "attack": "2.4",
-        "defend": "0.90",
-        "shield": "false"
-    },
-"minecraft:birch_trapdoor":{
-        "attack": "3",
-        "defend": "0.70",
-        "shield": "true"
-    },
-"minecraft:bow":{
-        "attack": "1.2",
-        "defend": "0.90",
-        "shield": "false"
-    },
-"minecraft:crimson_door":{
-        "attack": "6",
-        "defend": "0.50",
-        "shield": "true"
-    },
-"minecraft:crimson_sign":{
-        "attack": "2.4",
-        "defend": "0.90",
-        "shield": "false"
-    },
-"minecraft:crimson_trapdoor":{
-        "attack": "3",
-        "defend": "0.70",
-        "shield": "true"
-    },
-"minecraft:crossbow":{
-        "attack": "1",
-        "defend": "1.10",
-        "shield": "false"
-    },
-"minecraft:dark_oak_door":{
-        "attack": "6",
-        "defend": "0.50",
-        "shield": "true"
-    },
-"minecraft:dark_oak_sign":{
-        "attack": "2.4",
-        "defend": "0.90",
-        "shield": "false"
-    },
-"minecraft:dark_oak_trapdoor":{
-        "attack": "3",
-        "defend": "0.70",
-        "shield": "true"
-    },
-"minecraft:diamond_axe":{
-        "attack": "4",
-        "defend": "0.90",
-        "shield": "false"
-    },
-"minecraft:diamond_hoe":{
-        "attack": "1",
-        "defend": "1.00",
-        "shield": "false"
-    },
-"minecraft:diamond_pickaxe":{
-        "attack": "2.5",
-        "defend": "1.00",
-        "shield": "false"
-    },
-"minecraft:diamond_shovel":{
-        "attack": "6",
-        "defend": "0.90",
-        "shield": "false"
-    },
-"minecraft:diamond_sword":{
-        "attack": "2.6",
-        "defend": "0.90",
-        "shield": "false"
-    },
-"minecraft:end_rod":{
-        "attack": "0.5",
-        "defend": "1.00",
-        "shield": "false"
-    },
-"minecraft:flint_and_steel":{
-        "attack": "0.5",
-        "defend": "1",
-        "shield": "false"
-    },
-"minecraft:golden_axe":{
-        "attack": "4",
-        "defend": "0.90",
-        "shield": "false"
-    },
-"minecraft:golden_hoe":{
-        "attack": "1",
-        "defend": "1.00",
-        "shield": "false"
-    },
-"minecraft:golden_pickaxe":{
-        "attack": "2.5",
-        "defend": "1.00",
-        "shield": "false"
-    },
-"minecraft:golden_shovel":{
-        "attack": "6",
-        "defend": "0.90",
-        "shield": "false"
-    },
-"minecraft:golden_sword":{
-        "attack": "2.6",
-        "defend": "0.90",
-        "shield": "false"
-    },
-"minecraft:iron_axe":{
-        "attack": "4",
-        "defend": "0.90",
-        "shield": "false"
-    },
-"minecraft:iron_door":{
-        "attack": "6",
-        "defend": "0.50",
-        "shield": "true"
-    },
-"minecraft:iron_hoe":{
-        "attack": "1",
-        "defend": "1.00",
-        "shield": "false"
-    },
-"minecraft:iron_pickaxe":{
-        "attack": "2.5",
-        "defend": "1.00",
-        "shield": "false"
-    },
-"minecraft:iron_shovel":{
-        "attack": "6",
-        "defend": "0.90",
-        "shield": "false"
-    },
-"minecraft:iron_sword":{
-        "attack": "2.6",
-        "defend": "0.90",
-        "shield": "false"
-    },
-"minecraft:iron_trapdoor":{
-        "attack": "3",
-        "defend": "0.70",
-        "shield": "true"
-    },
-"minecraft:jungle_door":{
-        "attack": "6",
-        "defend": "0.50",
-        "shield": "true"
-    },
-"minecraft:jungle_sign":{
-        "attack": "2.4",
-        "defend": "0.90",
-        "shield": "false"
-    },
-"minecraft:jungle_trapdoor":{
-        "attack": "3",
-        "defend": "0.70",
-        "shield": "true"
-    },
-"minecraft:lantern":{
-        "attack": "0.5",
-        "defend": "1",
-        "shield": "false"
-    },
-"minecraft:netherite_axe":{
-        "attack": "4",
-        "defend": "0.90",
-        "shield": "false"
-    },
-"minecraft:netherite_hoe":{
-        "attack": "1",
-        "defend": "1.00",
-        "shield": "false"
-    },
-"minecraft:netherite_pickaxe":{
-        "attack": "2.5",
-        "defend": "1.00",
-        "shield": "false"
-    },
-"minecraft:netherite_shovel":{
-        "attack": "6",
-        "defend": "0.90",
-        "shield": "false"
-    },
-"minecraft:netherite_sword":{
-        "attack": "2.6",
-        "defend": "0.90",
-        "shield": "false"
-    },
-"minecraft:oak_door":{
-        "attack": "6",
-        "defend": "0.50",
-        "shield": "true"
-    },
-"minecraft:oak_sign":{
-        "attack": "2.4",
-        "defend": "0.90",
-        "shield": "false"
-    },
-"minecraft:oak_trapdoor":{
-        "attack": "3",
-        "defend": "0.70",
-        "shield": "true"
-    },
-"minecraft:redstone_torch":{
-        "attack": "0.5",
-        "defend": "1",
-        "shield": "false"
-    },
-"minecraft:shield":{
-        "attack": "4",
-        "defend": "0.60",
-        "shield": "true"
-    },
-"minecraft:soul_lantern":{
-        "attack": "0.5",
-        "defend": "1",
-        "shield": "false"
-    },
-"minecraft:spruce_door":{
-        "attack": "6",
-        "defend": "0.50",
-        "shield": "true"
-    },
-"minecraft:spruce_sign":{
-        "attack": "2.4",
-        "defend": "0.90",
-        "shield": "false"
-    },
-"minecraft:spruce_trapdoor":{
-        "attack": "3",
-        "defend": "0.70",
-        "shield": "true"
-    },
-"minecraft:spyglass":{
-        "attack": "0.5",
-        "defend": "1",
-        "shield": "false"
-    },
-"minecraft:stone_axe":{
-        "attack": "4",
-        "defend": "0.90",
-        "shield": "false"
-    },
-"minecraft:stone_hoe":{
-        "attack": "1",
-        "defend": "1.00",
-        "shield": "false"
-    },
-"minecraft:stone_pickaxe":{
-        "attack": "2.5",
-        "defend": "1.00",
-        "shield": "false"
-    },
-"minecraft:stone_shovel":{
-        "attack": "6",
-        "defend": "0.90",
-        "shield": "false"
-    },
-"minecraft:stone_sword":{
-        "attack": "2.6",
-        "defend": "0.90",
-        "shield": "false"
-    },
-"minecraft:torch":{
-        "attack": "0.5",
-        "defend": "1",
-        "shield": "false"
-    },
-"minecraft:trident":{
-        "attack": "2.5",
-        "defend": "0.7",
-        "shield": "false"
-    },
-"minecraft:warped_door":{
-        "attack": "6",
-        "defend": "0.50",
-        "shield": "true"
-    },
-"minecraft:warped_sign":{
-        "attack": "2.4",
-        "defend": "0.90",
-        "shield": "false"
-    },
-"minecraft:warped_trapdoor":{
-        "attack": "3",
-        "defend": "0.70",
-        "shield": "true"
-    },
-"minecraft:wooden_axe":{
-        "attack": "4",
-        "defend": "0.90",
-        "shield": "false"
-    },
-"minecraft:wooden_hoe":{
-        "attack": "1",
-        "defend": "1.00",
-        "shield": "false"
-    },
-"minecraft:wooden_pickaxe":{
-        "attack": "2.5",
-        "defend": "1.00",
-        "shield": "false"
-    },
-"minecraft:wooden_shovel":{
-        "attack": "6",
-        "defend": "0.90",
-        "shield": "false"
-    },
-"minecraft:wooden_sword":{
-        "attack": "2.6",
-        "defend": "0.90",
-        "shield": "false"
-    }
+  "minecraft:acacia_door": {
+    "attack": "6",
+    "defend": "0.50",
+    "shield": "true"
+  },
+  "minecraft:iron_nugget": {
+    "attack": "1",
+    "defend": "1",
+    "shield": "false"
+  },
+  "minecraft:acacia_sign": {
+    "attack": "2.4",
+    "defend": "0.90",
+    "shield": "false"
+  },
+  "minecraft:acacia_trapdoor": {
+    "attack": "3",
+    "defend": "0.70",
+    "shield": "true"
+  },
+  "minecraft:birch_door": {
+    "attack": "6",
+    "defend": "0.50",
+    "shield": "true"
+  },
+  "minecraft:birch_sign": {
+    "attack": "2.4",
+    "defend": "0.90",
+    "shield": "false"
+  },
+  "minecraft:birch_trapdoor": {
+    "attack": "3",
+    "defend": "0.70",
+    "shield": "true"
+  },
+  "minecraft:bow": {
+    "attack": "1.2",
+    "defend": "0.90",
+    "shield": "false"
+  },
+  "minecraft:crimson_door": {
+    "attack": "6",
+    "defend": "0.50",
+    "shield": "true"
+  },
+  "minecraft:crimson_sign": {
+    "attack": "2.4",
+    "defend": "0.90",
+    "shield": "false"
+  },
+  "minecraft:crimson_trapdoor": {
+    "attack": "3",
+    "defend": "0.70",
+    "shield": "true"
+  },
+  "minecraft:crossbow": {
+    "attack": "1",
+    "defend": "1.10",
+    "shield": "false"
+  },
+  "minecraft:dark_oak_door": {
+    "attack": "6",
+    "defend": "0.50",
+    "shield": "true"
+  },
+  "minecraft:dark_oak_sign": {
+    "attack": "2.4",
+    "defend": "0.90",
+    "shield": "false"
+  },
+  "minecraft:dark_oak_trapdoor": {
+    "attack": "3",
+    "defend": "0.70",
+    "shield": "true"
+  },
+  "minecraft:diamond_axe": {
+    "attack": "4",
+    "defend": "0.90",
+    "shield": "false"
+  },
+  "minecraft:diamond_hoe": {
+    "attack": "1",
+    "defend": "1.00",
+    "shield": "false"
+  },
+  "minecraft:diamond_pickaxe": {
+    "attack": "2.5",
+    "defend": "1.00",
+    "shield": "false"
+  },
+  "minecraft:diamond_shovel": {
+    "attack": "6",
+    "defend": "0.90",
+    "shield": "false"
+  },
+  "minecraft:diamond_sword": {
+    "attack": "2.6",
+    "defend": "0.90",
+    "shield": "false"
+  },
+  "minecraft:end_rod": {
+    "attack": "0.5",
+    "defend": "1.00",
+    "shield": "false"
+  },
+  "minecraft:flint_and_steel": {
+    "attack": "0.5",
+    "defend": "1",
+    "shield": "false"
+  },
+  "minecraft:golden_axe": {
+    "attack": "4",
+    "defend": "0.90",
+    "shield": "false"
+  },
+  "minecraft:golden_hoe": {
+    "attack": "1",
+    "defend": "1.00",
+    "shield": "false"
+  },
+  "minecraft:golden_pickaxe": {
+    "attack": "2.5",
+    "defend": "1.00",
+    "shield": "false"
+  },
+  "minecraft:golden_shovel": {
+    "attack": "6",
+    "defend": "0.90",
+    "shield": "false"
+  },
+  "minecraft:golden_sword": {
+    "attack": "2.6",
+    "defend": "0.90",
+    "shield": "false"
+  },
+  "minecraft:iron_axe": {
+    "attack": "4",
+    "defend": "0.90",
+    "shield": "false"
+  },
+  "minecraft:iron_door": {
+    "attack": "6",
+    "defend": "0.50",
+    "shield": "true"
+  },
+  "minecraft:iron_hoe": {
+    "attack": "1",
+    "defend": "1.00",
+    "shield": "false"
+  },
+  "minecraft:iron_pickaxe": {
+    "attack": "2.5",
+    "defend": "1.00",
+    "shield": "false"
+  },
+  "minecraft:iron_shovel": {
+    "attack": "6",
+    "defend": "0.90",
+    "shield": "false"
+  },
+  "minecraft:iron_sword": {
+    "attack": "2.6",
+    "defend": "0.90",
+    "shield": "false"
+  },
+  "minecraft:iron_trapdoor": {
+    "attack": "3",
+    "defend": "0.70",
+    "shield": "true"
+  },
+  "minecraft:jungle_door": {
+    "attack": "6",
+    "defend": "0.50",
+    "shield": "true"
+  },
+  "minecraft:jungle_sign": {
+    "attack": "2.4",
+    "defend": "0.90",
+    "shield": "false"
+  },
+  "minecraft:jungle_trapdoor": {
+    "attack": "3",
+    "defend": "0.70",
+    "shield": "true"
+  },
+  "minecraft:lantern": {
+    "attack": "0.5",
+    "defend": "1",
+    "shield": "false"
+  },
+  "minecraft:netherite_axe": {
+    "attack": "4",
+    "defend": "0.90",
+    "shield": "false"
+  },
+  "minecraft:netherite_hoe": {
+    "attack": "1",
+    "defend": "1.00",
+    "shield": "false"
+  },
+  "minecraft:netherite_pickaxe": {
+    "attack": "2.5",
+    "defend": "1.00",
+    "shield": "false"
+  },
+  "minecraft:netherite_shovel": {
+    "attack": "6",
+    "defend": "0.90",
+    "shield": "false"
+  },
+  "minecraft:netherite_sword": {
+    "attack": "2.6",
+    "defend": "0.90",
+    "shield": "false"
+  },
+  "minecraft:oak_door": {
+    "attack": "6",
+    "defend": "0.50",
+    "shield": "true"
+  },
+  "minecraft:oak_sign": {
+    "attack": "2.4",
+    "defend": "0.90",
+    "shield": "false"
+  },
+  "minecraft:oak_trapdoor": {
+    "attack": "3",
+    "defend": "0.70",
+    "shield": "true"
+  },
+  "minecraft:redstone_torch": {
+    "attack": "0.5",
+    "defend": "1",
+    "shield": "false"
+  },
+  "minecraft:shield": {
+    "attack": "4",
+    "defend": "0.60",
+    "shield": "true"
+  },
+  "minecraft:soul_lantern": {
+    "attack": "0.5",
+    "defend": "1",
+    "shield": "false"
+  },
+  "minecraft:spruce_door": {
+    "attack": "6",
+    "defend": "0.50",
+    "shield": "true"
+  },
+  "minecraft:spruce_sign": {
+    "attack": "2.4",
+    "defend": "0.90",
+    "shield": "false"
+  },
+  "minecraft:spruce_trapdoor": {
+    "attack": "3",
+    "defend": "0.70",
+    "shield": "true"
+  },
+  "minecraft:spyglass": {
+    "attack": "0.5",
+    "defend": "1",
+    "shield": "false"
+  },
+  "minecraft:stone_axe": {
+    "attack": "4",
+    "defend": "0.90",
+    "shield": "false"
+  },
+  "minecraft:stone_hoe": {
+    "attack": "1",
+    "defend": "1.00",
+    "shield": "false"
+  },
+  "minecraft:stone_pickaxe": {
+    "attack": "2.5",
+    "defend": "1.00",
+    "shield": "false"
+  },
+  "minecraft:stone_shovel": {
+    "attack": "6",
+    "defend": "0.90",
+    "shield": "false"
+  },
+  "minecraft:stone_sword": {
+    "attack": "2.6",
+    "defend": "0.90",
+    "shield": "false"
+  },
+  "minecraft:torch": {
+    "attack": "0.5",
+    "defend": "1",
+    "shield": "false"
+  },
+  "minecraft:trident": {
+    "attack": "2.5",
+    "defend": "0.7",
+    "shield": "false"
+  },
+  "minecraft:warped_door": {
+    "attack": "6",
+    "defend": "0.50",
+    "shield": "true"
+  },
+  "minecraft:warped_sign": {
+    "attack": "2.4",
+    "defend": "0.90",
+    "shield": "false"
+  },
+  "minecraft:warped_trapdoor": {
+    "attack": "3",
+    "defend": "0.70",
+    "shield": "true"
+  },
+  "minecraft:wooden_axe": {
+    "attack": "4",
+    "defend": "0.90",
+    "shield": "false"
+  },
+  "minecraft:wooden_hoe": {
+    "attack": "1",
+    "defend": "1.00",
+    "shield": "false"
+  },
+  "minecraft:wooden_pickaxe": {
+    "attack": "2.5",
+    "defend": "1.00",
+    "shield": "false"
+  },
+  "minecraft:wooden_shovel": {
+    "attack": "6",
+    "defend": "0.90",
+    "shield": "false"
+  },
+  "minecraft:wooden_sword": {
+    "attack": "2.6",
+    "defend": "0.90",
+    "shield": "false"
+  }
 }

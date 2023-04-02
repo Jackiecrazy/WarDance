@@ -8,7 +8,7 @@
       {
         "attribute":"footwork:max_posture",
         "operation":"ADDITION",
-        "modify":1.04
+        "modify":1
       },
       {
         "attribute":"footwork:spirit_cooldown_speed",
@@ -30,7 +30,7 @@
       {
         "attribute":"footwork:max_posture",
         "operation":"ADDITION",
-        "modify":2.08
+        "modify":2.1
       },
       {
         "attribute":"footwork:spirit_cooldown_speed",
@@ -52,7 +52,7 @@
       {
         "attribute":"footwork:max_posture",
         "operation":"ADDITION",
-        "modify":1.04
+        "modify":1
       },
       {
         "attribute":"footwork:spirit_cooldown_speed",
@@ -69,12 +69,12 @@
       {
         "attribute":"footwork:evasion",
         "operation":"ADDITION",
-        "modify":0.45
+        "modify":0.5
       },
       {
         "attribute":"footwork:max_posture",
         "operation":"ADDITION",
-        "modify":1.56
+        "modify":1.6
       },
       {
         "attribute":"footwork:spirit_cooldown_speed",

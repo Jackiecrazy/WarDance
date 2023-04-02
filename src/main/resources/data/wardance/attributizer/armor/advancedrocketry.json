@@ -8,7 +8,7 @@
       {
         "attribute":"footwork:max_fracture",
         "operation":"ADDITION",
-        "modify":0.57
+        "modify":0.55
       }
     ],
 "advancedrocketry:spacechest":[
@@ -20,7 +20,7 @@
       {
         "attribute":"footwork:max_fracture",
         "operation":"ADDITION",
-        "modify":0.89
+        "modify":0.85
       }
     ],
 "advancedrocketry:spacehelmet":[
@@ -32,7 +32,7 @@
       {
         "attribute":"footwork:max_fracture",
         "operation":"ADDITION",
-        "modify":0.57
+        "modify":0.55
       }
     ],
 "advancedrocketry:spaceleggings":[
@@ -44,7 +44,7 @@
       {
         "attribute":"footwork:max_fracture",
         "operation":"ADDITION",
-        "modify":0.73
+        "modify":0.75
       }
     ]
 }

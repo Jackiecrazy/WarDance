@@ -57,7 +57,7 @@
       {
         "attribute":"footwork:max_fracture",
         "operation":"ADDITION",
-        "modify":1.13
+        "modify":1.15
       }
     ],
 "atum:desert_boots_gold":[
@@ -69,7 +69,7 @@
       {
         "attribute":"footwork:max_posture",
         "operation":"ADDITION",
-        "modify":1.04
+        "modify":1
       },
       {
         "attribute":"footwork:max_spirit",
@@ -84,7 +84,7 @@
       {
         "attribute":"footwork:max_fracture",
         "operation":"ADDITION",
-        "modify":0.49
+        "modify":0.45
       }
     ],
 "atum:desert_boots_iron":[
@@ -96,7 +96,7 @@
       {
         "attribute":"footwork:max_posture",
         "operation":"ADDITION",
-        "modify":1.99
+        "modify":2
       },
       {
         "attribute":"footwork:max_fracture",
@@ -108,7 +108,7 @@
       {
         "attribute":"footwork:max_fracture",
         "operation":"ADDITION",
-        "modify":2.01
+        "modify":2.05
       }
     ],
 "atum:desert_chest_gold":[
@@ -120,7 +120,7 @@
       {
         "attribute":"footwork:max_posture",
         "operation":"ADDITION",
-        "modify":2.08
+        "modify":2.1
       },
       {
         "attribute":"footwork:max_spirit",
@@ -135,7 +135,7 @@
       {
         "attribute":"footwork:max_fracture",
         "operation":"ADDITION",
-        "modify":0.73
+        "modify":0.75
       }
     ],
 "atum:desert_chest_iron":[
@@ -147,7 +147,7 @@
       {
         "attribute":"footwork:max_posture",
         "operation":"ADDITION",
-        "modify":3.98
+        "modify":4
       },
       {
         "attribute":"footwork:max_fracture",
@@ -159,7 +159,7 @@
       {
         "attribute":"footwork:max_fracture",
         "operation":"ADDITION",
-        "modify":1.13
+        "modify":1.15
       }
     ],
 "atum:desert_helmet_gold":[
@@ -171,7 +171,7 @@
       {
         "attribute":"footwork:max_posture",
         "operation":"ADDITION",
-        "modify":1.04
+        "modify":1
       },
       {
         "attribute":"footwork:max_spirit",
@@ -186,7 +186,7 @@
       {
         "attribute":"footwork:max_fracture",
         "operation":"ADDITION",
-        "modify":0.49
+        "modify":0.45
       }
     ],
 "atum:desert_helmet_iron":[
@@ -198,7 +198,7 @@
       {
         "attribute":"footwork:max_posture",
         "operation":"ADDITION",
-        "modify":1.99
+        "modify":2
       },
       {
         "attribute":"footwork:max_fracture",
@@ -210,19 +210,19 @@
       {
         "attribute":"footwork:max_fracture",
         "operation":"ADDITION",
-        "modify":1.57
+        "modify":1.55
       }
     ],
 "atum:desert_legs_gold":[
       {
         "attribute":"footwork:evasion",
         "operation":"ADDITION",
-        "modify":0.45
+        "modify":0.5
       },
       {
         "attribute":"footwork:max_posture",
         "operation":"ADDITION",
-        "modify":1.56
+        "modify":1.6
       },
       {
         "attribute":"footwork:max_spirit",
@@ -237,19 +237,19 @@
       {
         "attribute":"footwork:max_fracture",
         "operation":"ADDITION",
-        "modify":0.61
+        "modify":0.65
       }
     ],
 "atum:desert_legs_iron":[
       {
         "attribute":"footwork:evasion",
         "operation":"ADDITION",
-        "modify":1.65
+        "modify":1.7
       },
       {
         "attribute":"footwork:max_posture",
         "operation":"ADDITION",
-        "modify":2.98
+        "modify":3
       },
       {
         "attribute":"footwork:max_fracture",
@@ -423,7 +423,7 @@
       {
         "attribute":"footwork:posture_regen",
         "operation":"ADDITION",
-        "modify":0.66
+        "modify":0.7
       },
       {
         "attribute":"footwork:max_fracture",
@@ -435,7 +435,7 @@
       {
         "attribute":"footwork:posture_regen",
         "operation":"ADDITION",
-        "modify":1.33
+        "modify":1.3
       },
       {
         "attribute":"footwork:max_fracture",
@@ -447,7 +447,7 @@
       {
         "attribute":"footwork:posture_regen",
         "operation":"ADDITION",
-        "modify":0.66
+        "modify":0.7
       },
       {
         "attribute":"footwork:max_fracture",
@@ -459,7 +459,7 @@
       {
         "attribute":"footwork:posture_regen",
         "operation":"ADDITION",
-        "modify":0.99
+        "modify":1
       },
       {
         "attribute":"footwork:max_fracture",

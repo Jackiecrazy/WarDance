@@ -62,7 +62,7 @@
       {
         "attribute":"footwork:max_posture",
         "operation":"ADDITION",
-        "modify":2.85
+        "modify":2.8
       },
       {
         "attribute":"footwork:spirit_regen",
@@ -89,7 +89,7 @@
       {
         "attribute":"footwork:max_posture",
         "operation":"ADDITION",
-        "modify":3.79
+        "modify":3.8
       },
       {
         "attribute":"footwork:spirit_regen",

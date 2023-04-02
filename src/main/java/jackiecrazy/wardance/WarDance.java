@@ -67,7 +67,6 @@ public class WarDance {
         // Register the doClientStuff method for modloading
         FMLJavaModLoadingContext.get().getModEventBus().addListener(this::doClientStuff);
         FMLJavaModLoadingContext.get().getModEventBus().addListener(this::gui);
-        FMLJavaModLoadingContext.get().getModEventBus().addListener(this::keys);
 
         // Register ourselves for server and other game events we are interested in
         MinecraftForge.EVENT_BUS.register(this);
@@ -108,6 +107,7 @@ public class WarDance {
     private void doClientStuff(final FMLClientSetupEvent event) {
         // do something that can only be done on the client
         ClientConfig.bake();
+        FMLJavaModLoadingContext.get().getModEventBus().addListener(this::keys);
     }
 
     private void keys(final RegisterKeyMappingsEvent event) {

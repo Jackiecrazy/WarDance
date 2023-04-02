@@ -45,7 +45,7 @@ public class BiteTheDust extends CoupDeGrace {
 
     @Override
     public void onProc(LivingEntity caster, Event procPoint, STATE state, SkillData stats, LivingEntity target) {
-        if (procPoint instanceof StunEvent && ((StunEvent) procPoint).getAttacker() == caster && procPoint.getPhase() == EventPriority.HIGHEST && cast(caster, target, -999)) {
+        if (procPoint instanceof StunEvent && ((StunEvent) procPoint).getAttacker() == caster && procPoint.getPhase() == EventPriority.HIGHEST) {
             float damage = 2;
             float currentMark = getExistingMark(target).getDuration();
             while (currentMark > 0) {
@@ -53,7 +53,6 @@ public class BiteTheDust extends CoupDeGrace {
                 currentMark--;
             }
             target.hurtTime = target.hurtDuration = target.invulnerableTime = 0;
-            System.out.println("start!");
             target.hurt(new CombatDamageSource("player", caster).setDamageTyping(CombatDamageSource.TYPE.TRUE).setSkillUsed(this).setKnockbackPercentage(0).bypassArmor().bypassMagic(), damage);
             mark(caster, target, 1);
         }

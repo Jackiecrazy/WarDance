@@ -25,17 +25,17 @@
       {
         "attribute":"footwork:evasion",
         "operation":"ADDITION",
-        "modify":0.2
+        "modify":0.4
       },
       {
         "attribute":"footwork:max_posture",
         "operation":"ADDITION",
-        "modify":0.6
+        "modify":1.2
       },
       {
         "attribute":"footwork:posture_regen",
         "operation":"ADDITION",
-        "modify":0.2
+        "modify":0.4
       },
       {
         "attribute":"footwork:max_fracture",
@@ -47,17 +47,17 @@
       {
         "attribute":"footwork:evasion",
         "operation":"ADDITION",
-        "modify":0.2
+        "modify":0.4
       },
       {
         "attribute":"footwork:max_posture",
         "operation":"ADDITION",
-        "modify":0.6
+        "modify":1.2
       },
       {
         "attribute":"footwork:posture_regen",
         "operation":"ADDITION",
-        "modify":0.2
+        "modify":0.4
       },
       {
         "attribute":"footwork:max_fracture",
@@ -96,46 +96,46 @@
       {
         "attribute":"footwork:max_posture",
         "operation":"ADDITION",
-        "modify":2.55
+        "modify":2.5
       },
       {
         "attribute":"footwork:max_fracture",
         "operation":"ADDITION",
-        "modify":0.49
+        "modify":0.45
       }
     ],
 "immersiveengineering:armor_steel_feet":[
       {
         "attribute":"footwork:evasion",
         "operation":"ADDITION",
-        "modify":0.4
+        "modify":0.8
       },
       {
         "attribute":"footwork:max_posture",
         "operation":"ADDITION",
-        "modify":0.85
+        "modify":1.7
       },
       {
         "attribute":"footwork:max_fracture",
         "operation":"ADDITION",
-        "modify":0.33
+        "modify":0.45
       }
     ],
 "immersiveengineering:armor_steel_head":[
       {
         "attribute":"footwork:evasion",
         "operation":"ADDITION",
-        "modify":0.4
+        "modify":0.8
       },
       {
         "attribute":"footwork:max_posture",
         "operation":"ADDITION",
-        "modify":0.85
+        "modify":1.7
       },
       {
         "attribute":"footwork:max_fracture",
         "operation":"ADDITION",
-        "modify":0.33
+        "modify":0.45
       }
     ],
 "immersiveengineering:armor_steel_legs":[
@@ -147,12 +147,12 @@
       {
         "attribute":"footwork:max_posture",
         "operation":"ADDITION",
-        "modify":2.55
+        "modify":2.5
       },
       {
         "attribute":"footwork:max_fracture",
         "operation":"ADDITION",
-        "modify":0.49
+        "modify":0.45
       }
     ]
 }

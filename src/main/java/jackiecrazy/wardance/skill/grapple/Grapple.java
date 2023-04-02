@@ -100,7 +100,7 @@ public class Grapple extends Skill {
 
     public static class Suplex extends Grapple {
 
-        protected void performEffect(LivingEntity caster, LivingEntity target) {
+        protected void performEffect(LivingEntity caster, LivingEntity target, SkillData stats) {
             caster.level.playSound(null, target.getX(), target.getY(), target.getZ(), SoundEvents.ZOMBIE_ATTACK_IRON_DOOR, SoundSource.PLAYERS, 0.3f + WarDance.rand.nextFloat() * 0.5f, 0.75f + WarDance.rand.nextFloat() * 0.5f);
             final ICombatCapability casterCap = CombatData.getCap(caster);
             float posture = casterCap.getPosture();
@@ -115,7 +115,7 @@ public class Grapple extends Skill {
                     CombatData.getCap(entity).consumePosture(overflow / -2);
                 }
             }
-            casterCap.setPosture(0.1f);
+            casterCap.consumePosture(posture-0.1f);
         }
     }
 }

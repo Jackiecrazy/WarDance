@@ -8,7 +8,7 @@
       {
         "attribute":"footwork:max_fracture",
         "operation":"ADDITION",
-        "modify":0.97
+        "modify":0.95
       }
     ],
 "iceandfire:armor_amythest_chestplate":[
@@ -20,7 +20,7 @@
       {
         "attribute":"footwork:max_fracture",
         "operation":"ADDITION",
-        "modify":1.69
+        "modify":1.65
       }
     ],
 "iceandfire:armor_amythest_helmet":[
@@ -32,7 +32,7 @@
       {
         "attribute":"footwork:max_fracture",
         "operation":"ADDITION",
-        "modify":0.97
+        "modify":0.95
       }
     ],
 "iceandfire:armor_amythest_leggings":[
@@ -44,7 +44,7 @@
       {
         "attribute":"footwork:max_fracture",
         "operation":"ADDITION",
-        "modify":1.33
+        "modify":1.35
       }
     ],
 "iceandfire:armor_black_boots":[
@@ -56,7 +56,7 @@
       {
         "attribute":"footwork:max_fracture",
         "operation":"ADDITION",
-        "modify":0.97
+        "modify":0.95
       }
     ],
 "iceandfire:armor_black_chestplate":[
@@ -68,7 +68,7 @@
       {
         "attribute":"footwork:max_fracture",
         "operation":"ADDITION",
-        "modify":1.69
+        "modify":1.65
       }
     ],
 "iceandfire:armor_black_helmet":[
@@ -80,7 +80,7 @@
       {
         "attribute":"footwork:max_fracture",
         "operation":"ADDITION",
-        "modify":0.97
+        "modify":0.95
       }
     ],
 "iceandfire:armor_black_leggings":[
@@ -92,7 +92,7 @@
       {
         "attribute":"footwork:max_fracture",
         "operation":"ADDITION",
-        "modify":1.33
+        "modify":1.35
       }
     ],
 "iceandfire:armor_blue_boots":[
@@ -104,7 +104,7 @@
       {
         "attribute":"footwork:max_fracture",
         "operation":"ADDITION",
-        "modify":0.97
+        "modify":0.95
       }
     ],
 "iceandfire:armor_blue_chestplate":[
@@ -116,7 +116,7 @@
       {
         "attribute":"footwork:max_fracture",
         "operation":"ADDITION",
-        "modify":1.69
+        "modify":1.65
       }
     ],
 "iceandfire:armor_blue_helmet":[
@@ -128,7 +128,7 @@
       {
         "attribute":"footwork:max_fracture",
         "operation":"ADDITION",
-        "modify":0.97
+        "modify":0.95
       }
     ],
 "iceandfire:armor_blue_leggings":[
@@ -140,7 +140,7 @@
       {
         "attribute":"footwork:max_fracture",
         "operation":"ADDITION",
-        "modify":1.33
+        "modify":1.35
       }
     ],
 "iceandfire:armor_bronze_boots":[
@@ -152,7 +152,7 @@
       {
         "attribute":"footwork:max_fracture",
         "operation":"ADDITION",
-        "modify":0.97
+        "modify":0.95
       }
     ],
 "iceandfire:armor_bronze_chestplate":[
@@ -164,7 +164,7 @@
       {
         "attribute":"footwork:max_fracture",
         "operation":"ADDITION",
-        "modify":1.69
+        "modify":1.65
       }
     ],
 "iceandfire:armor_bronze_helmet":[
@@ -176,7 +176,7 @@
       {
         "attribute":"footwork:max_fracture",
         "operation":"ADDITION",
-        "modify":0.97
+        "modify":0.95
       }
     ],
 "iceandfire:armor_bronze_leggings":[
@@ -188,7 +188,7 @@
       {
         "attribute":"footwork:max_fracture",
         "operation":"ADDITION",
-        "modify":1.33
+        "modify":1.35
       }
     ],
 "iceandfire:armor_copper_boots":[
@@ -200,7 +200,7 @@
       {
         "attribute":"footwork:max_fracture",
         "operation":"ADDITION",
-        "modify":0.97
+        "modify":0.95
       }
     ],
 "iceandfire:armor_copper_chestplate":[
@@ -212,7 +212,7 @@
       {
         "attribute":"footwork:max_fracture",
         "operation":"ADDITION",
-        "modify":1.69
+        "modify":1.65
       }
     ],
 "iceandfire:armor_copper_helmet":[
@@ -224,7 +224,7 @@
       {
         "attribute":"footwork:max_fracture",
         "operation":"ADDITION",
-        "modify":0.97
+        "modify":0.95
       }
     ],
 "iceandfire:armor_copper_leggings":[
@@ -236,7 +236,7 @@
       {
         "attribute":"footwork:max_fracture",
         "operation":"ADDITION",
-        "modify":1.33
+        "modify":1.35
       }
     ],
 "iceandfire:armor_copper_metal_boots":[
@@ -270,7 +270,7 @@
       {
         "attribute":"footwork:max_posture",
         "operation":"ADDITION",
-        "modify":3.39
+        "modify":3.4
       },
       {
         "attribute":"footwork:posture_regen",
@@ -314,7 +314,7 @@
       {
         "attribute":"footwork:max_posture",
         "operation":"ADDITION",
-        "modify":2.55
+        "modify":2.5
       },
       {
         "attribute":"footwork:posture_regen",
@@ -336,7 +336,7 @@
       {
         "attribute":"footwork:max_fracture",
         "operation":"ADDITION",
-        "modify":0.97
+        "modify":0.95
       }
     ],
 "iceandfire:armor_electric_chestplate":[
@@ -348,7 +348,7 @@
       {
         "attribute":"footwork:max_fracture",
         "operation":"ADDITION",
-        "modify":1.69
+        "modify":1.65
       }
     ],
 "iceandfire:armor_electric_helmet":[
@@ -360,7 +360,7 @@
       {
         "attribute":"footwork:max_fracture",
         "operation":"ADDITION",
-        "modify":0.97
+        "modify":0.95
       }
     ],
 "iceandfire:armor_electric_leggings":[
@@ -372,7 +372,7 @@
       {
         "attribute":"footwork:max_fracture",
         "operation":"ADDITION",
-        "modify":1.33
+        "modify":1.35
       }
     ],
 "iceandfire:armor_gray_boots":[
@@ -384,7 +384,7 @@
       {
         "attribute":"footwork:max_fracture",
         "operation":"ADDITION",
-        "modify":0.97
+        "modify":0.95
       }
     ],
 "iceandfire:armor_gray_chestplate":[
@@ -396,7 +396,7 @@
       {
         "attribute":"footwork:max_fracture",
         "operation":"ADDITION",
-        "modify":1.69
+        "modify":1.65
       }
     ],
 "iceandfire:armor_gray_helmet":[
@@ -408,7 +408,7 @@
       {
         "attribute":"footwork:max_fracture",
         "operation":"ADDITION",
-        "modify":0.97
+        "modify":0.95
       }
     ],
 "iceandfire:armor_gray_leggings":[
@@ -420,7 +420,7 @@
       {
         "attribute":"footwork:max_fracture",
         "operation":"ADDITION",
-        "modify":1.33
+        "modify":1.35
       }
     ],
 "iceandfire:armor_green_boots":[
@@ -432,7 +432,7 @@
       {
         "attribute":"footwork:max_fracture",
         "operation":"ADDITION",
-        "modify":0.97
+        "modify":0.95
       }
     ],
 "iceandfire:armor_green_chestplate":[
@@ -444,7 +444,7 @@
       {
         "attribute":"footwork:max_fracture",
         "operation":"ADDITION",
-        "modify":1.69
+        "modify":1.65
       }
     ],
 "iceandfire:armor_green_helmet":[
@@ -456,7 +456,7 @@
       {
         "attribute":"footwork:max_fracture",
         "operation":"ADDITION",
-        "modify":0.97
+        "modify":0.95
       }
     ],
 "iceandfire:armor_green_leggings":[
@@ -468,7 +468,7 @@
       {
         "attribute":"footwork:max_fracture",
         "operation":"ADDITION",
-        "modify":1.33
+        "modify":1.35
       }
     ],
 "iceandfire:armor_red_boots":[
@@ -480,7 +480,7 @@
       {
         "attribute":"footwork:max_fracture",
         "operation":"ADDITION",
-        "modify":0.97
+        "modify":0.95
       }
     ],
 "iceandfire:armor_red_chestplate":[
@@ -492,7 +492,7 @@
       {
         "attribute":"footwork:max_fracture",
         "operation":"ADDITION",
-        "modify":1.69
+        "modify":1.65
       }
     ],
 "iceandfire:armor_red_helmet":[
@@ -504,7 +504,7 @@
       {
         "attribute":"footwork:max_fracture",
         "operation":"ADDITION",
-        "modify":0.97
+        "modify":0.95
       }
     ],
 "iceandfire:armor_red_leggings":[
@@ -516,7 +516,7 @@
       {
         "attribute":"footwork:max_fracture",
         "operation":"ADDITION",
-        "modify":1.33
+        "modify":1.35
       }
     ],
 "iceandfire:armor_sapphire_boots":[
@@ -528,7 +528,7 @@
       {
         "attribute":"footwork:max_fracture",
         "operation":"ADDITION",
-        "modify":0.97
+        "modify":0.95
       }
     ],
 "iceandfire:armor_sapphire_chestplate":[
@@ -540,7 +540,7 @@
       {
         "attribute":"footwork:max_fracture",
         "operation":"ADDITION",
-        "modify":1.69
+        "modify":1.65
       }
     ],
 "iceandfire:armor_sapphire_helmet":[
@@ -552,7 +552,7 @@
       {
         "attribute":"footwork:max_fracture",
         "operation":"ADDITION",
-        "modify":0.97
+        "modify":0.95
       }
     ],
 "iceandfire:armor_sapphire_leggings":[
@@ -564,7 +564,7 @@
       {
         "attribute":"footwork:max_fracture",
         "operation":"ADDITION",
-        "modify":1.33
+        "modify":1.35
       }
     ],
 "iceandfire:armor_silver_boots":[
@@ -576,7 +576,7 @@
       {
         "attribute":"footwork:max_fracture",
         "operation":"ADDITION",
-        "modify":0.97
+        "modify":0.95
       }
     ],
 "iceandfire:armor_silver_chestplate":[
@@ -588,7 +588,7 @@
       {
         "attribute":"footwork:max_fracture",
         "operation":"ADDITION",
-        "modify":1.69
+        "modify":1.65
       }
     ],
 "iceandfire:armor_silver_helmet":[
@@ -600,7 +600,7 @@
       {
         "attribute":"footwork:max_fracture",
         "operation":"ADDITION",
-        "modify":0.97
+        "modify":0.95
       }
     ],
 "iceandfire:armor_silver_leggings":[
@@ -612,7 +612,7 @@
       {
         "attribute":"footwork:max_fracture",
         "operation":"ADDITION",
-        "modify":1.33
+        "modify":1.35
       }
     ],
 "iceandfire:armor_silver_metal_boots":[
@@ -629,7 +629,7 @@
       {
         "attribute":"footwork:max_fracture",
         "operation":"ADDITION",
-        "modify":0.41
+        "modify":0.45
       }
     ],
 "iceandfire:armor_silver_metal_chestplate":[
@@ -646,7 +646,7 @@
       {
         "attribute":"footwork:max_fracture",
         "operation":"ADDITION",
-        "modify":0.57
+        "modify":0.55
       }
     ],
 "iceandfire:armor_silver_metal_helmet":[
@@ -663,14 +663,14 @@
       {
         "attribute":"footwork:max_fracture",
         "operation":"ADDITION",
-        "modify":0.41
+        "modify":0.45
       }
     ],
 "iceandfire:armor_silver_metal_leggings":[
       {
         "attribute":"footwork:evasion",
         "operation":"ADDITION",
-        "modify":1.35
+        "modify":1.4
       },
       {
         "attribute":"footwork:max_posture",
@@ -680,7 +680,7 @@
       {
         "attribute":"footwork:max_fracture",
         "operation":"ADDITION",
-        "modify":0.49
+        "modify":0.45
       }
     ],
 "iceandfire:armor_white_boots":[
@@ -692,7 +692,7 @@
       {
         "attribute":"footwork:max_fracture",
         "operation":"ADDITION",
-        "modify":0.97
+        "modify":0.95
       }
     ],
 "iceandfire:armor_white_chestplate":[
@@ -704,7 +704,7 @@
       {
         "attribute":"footwork:max_fracture",
         "operation":"ADDITION",
-        "modify":1.69
+        "modify":1.65
       }
     ],
 "iceandfire:armor_white_helmet":[
@@ -716,7 +716,7 @@
       {
         "attribute":"footwork:max_fracture",
         "operation":"ADDITION",
-        "modify":0.97
+        "modify":0.95
       }
     ],
 "iceandfire:armor_white_leggings":[
@@ -728,7 +728,7 @@
       {
         "attribute":"footwork:max_fracture",
         "operation":"ADDITION",
-        "modify":1.33
+        "modify":1.35
       }
     ],
 "iceandfire:deathworm_red_boots":[
@@ -740,7 +740,7 @@
       {
         "attribute":"footwork:max_posture",
         "operation":"ADDITION",
-        "modify":1.04
+        "modify":1
       },
       {
         "attribute":"footwork:posture_regen",
@@ -762,7 +762,7 @@
       {
         "attribute":"footwork:max_posture",
         "operation":"ADDITION",
-        "modify":2.08
+        "modify":2.1
       },
       {
         "attribute":"footwork:posture_regen",
@@ -784,7 +784,7 @@
       {
         "attribute":"footwork:max_posture",
         "operation":"ADDITION",
-        "modify":1.04
+        "modify":1
       },
       {
         "attribute":"footwork:posture_regen",
@@ -801,12 +801,12 @@
       {
         "attribute":"footwork:evasion",
         "operation":"ADDITION",
-        "modify":0.45
+        "modify":0.5
       },
       {
         "attribute":"footwork:max_posture",
         "operation":"ADDITION",
-        "modify":1.56
+        "modify":1.6
       },
       {
         "attribute":"footwork:posture_regen",
@@ -828,7 +828,7 @@
       {
         "attribute":"footwork:max_posture",
         "operation":"ADDITION",
-        "modify":1.04
+        "modify":1
       },
       {
         "attribute":"footwork:posture_regen",
@@ -850,7 +850,7 @@
       {
         "attribute":"footwork:max_posture",
         "operation":"ADDITION",
-        "modify":2.08
+        "modify":2.1
       },
       {
         "attribute":"footwork:posture_regen",
@@ -872,7 +872,7 @@
       {
         "attribute":"footwork:max_posture",
         "operation":"ADDITION",
-        "modify":1.04
+        "modify":1
       },
       {
         "attribute":"footwork:posture_regen",
@@ -889,12 +889,12 @@
       {
         "attribute":"footwork:evasion",
         "operation":"ADDITION",
-        "modify":0.45
+        "modify":0.5
       },
       {
         "attribute":"footwork:max_posture",
         "operation":"ADDITION",
-        "modify":1.56
+        "modify":1.6
       },
       {
         "attribute":"footwork:posture_regen",
@@ -916,7 +916,7 @@
       {
         "attribute":"footwork:max_posture",
         "operation":"ADDITION",
-        "modify":1.04
+        "modify":1
       },
       {
         "attribute":"footwork:posture_regen",
@@ -938,7 +938,7 @@
       {
         "attribute":"footwork:max_posture",
         "operation":"ADDITION",
-        "modify":2.08
+        "modify":2.1
       },
       {
         "attribute":"footwork:posture_regen",
@@ -960,7 +960,7 @@
       {
         "attribute":"footwork:max_posture",
         "operation":"ADDITION",
-        "modify":1.04
+        "modify":1
       },
       {
         "attribute":"footwork:posture_regen",
@@ -977,12 +977,12 @@
       {
         "attribute":"footwork:evasion",
         "operation":"ADDITION",
-        "modify":0.45
+        "modify":0.5
       },
       {
         "attribute":"footwork:max_posture",
         "operation":"ADDITION",
-        "modify":1.56
+        "modify":1.6
       },
       {
         "attribute":"footwork:posture_regen",
@@ -1004,7 +1004,7 @@
       {
         "attribute":"footwork:max_posture",
         "operation":"ADDITION",
-        "modify":1.59
+        "modify":1.6
       },
       {
         "attribute":"footwork:max_might",
@@ -1026,7 +1026,7 @@
       {
         "attribute":"footwork:max_posture",
         "operation":"ADDITION",
-        "modify":3.17
+        "modify":3.2
       },
       {
         "attribute":"footwork:max_might",
@@ -1048,7 +1048,7 @@
       {
         "attribute":"footwork:max_posture",
         "operation":"ADDITION",
-        "modify":1.59
+        "modify":1.6
       },
       {
         "attribute":"footwork:max_might",
@@ -1065,12 +1065,12 @@
       {
         "attribute":"footwork:evasion",
         "operation":"ADDITION",
-        "modify":1.05
+        "modify":1.1
       },
       {
         "attribute":"footwork:max_posture",
         "operation":"ADDITION",
-        "modify":2.38
+        "modify":2.4
       },
       {
         "attribute":"footwork:max_might",
@@ -1092,7 +1092,7 @@
       {
         "attribute":"footwork:max_posture",
         "operation":"ADDITION",
-        "modify":1.59
+        "modify":1.6
       },
       {
         "attribute":"footwork:max_spirit",
@@ -1114,7 +1114,7 @@
       {
         "attribute":"footwork:max_posture",
         "operation":"ADDITION",
-        "modify":3.17
+        "modify":3.2
       },
       {
         "attribute":"footwork:max_spirit",
@@ -1136,7 +1136,7 @@
       {
         "attribute":"footwork:max_posture",
         "operation":"ADDITION",
-        "modify":1.59
+        "modify":1.6
       },
       {
         "attribute":"footwork:max_spirit",
@@ -1153,12 +1153,12 @@
       {
         "attribute":"footwork:evasion",
         "operation":"ADDITION",
-        "modify":1.05
+        "modify":1.1
       },
       {
         "attribute":"footwork:max_posture",
         "operation":"ADDITION",
-        "modify":2.38
+        "modify":2.4
       },
       {
         "attribute":"footwork:max_spirit",
@@ -1180,7 +1180,7 @@
       {
         "attribute":"footwork:max_posture",
         "operation":"ADDITION",
-        "modify":1.59
+        "modify":1.6
       },
       {
         "attribute":"footwork:spirit_regen",
@@ -1207,7 +1207,7 @@
       {
         "attribute":"footwork:max_posture",
         "operation":"ADDITION",
-        "modify":3.17
+        "modify":3.2
       },
       {
         "attribute":"footwork:spirit_regen",
@@ -1234,7 +1234,7 @@
       {
         "attribute":"footwork:max_posture",
         "operation":"ADDITION",
-        "modify":1.59
+        "modify":1.6
       },
       {
         "attribute":"footwork:spirit_regen",
@@ -1256,12 +1256,12 @@
       {
         "attribute":"footwork:evasion",
         "operation":"ADDITION",
-        "modify":1.05
+        "modify":1.1
       },
       {
         "attribute":"footwork:max_posture",
         "operation":"ADDITION",
-        "modify":2.38
+        "modify":2.4
       },
       {
         "attribute":"footwork:spirit_regen",
@@ -1283,7 +1283,7 @@
       {
         "attribute":"footwork:posture_regen",
         "operation":"ADDITION",
-        "modify":0.69
+        "modify":0.7
       },
       {
         "attribute":"footwork:max_fracture",
@@ -1295,7 +1295,7 @@
       {
         "attribute":"footwork:posture_regen",
         "operation":"ADDITION",
-        "modify":1.39
+        "modify":1.4
       },
       {
         "attribute":"footwork:max_fracture",
@@ -1307,7 +1307,7 @@
       {
         "attribute":"footwork:posture_regen",
         "operation":"ADDITION",
-        "modify":0.69
+        "modify":0.7
       },
       {
         "attribute":"footwork:max_fracture",
@@ -1319,7 +1319,7 @@
       {
         "attribute":"footwork:posture_regen",
         "operation":"ADDITION",
-        "modify":1.04
+        "modify":1
       },
       {
         "attribute":"footwork:max_fracture",
@@ -1331,7 +1331,7 @@
       {
         "attribute":"footwork:posture_regen",
         "operation":"ADDITION",
-        "modify":0.69
+        "modify":0.7
       },
       {
         "attribute":"footwork:max_fracture",
@@ -1343,7 +1343,7 @@
       {
         "attribute":"footwork:posture_regen",
         "operation":"ADDITION",
-        "modify":1.39
+        "modify":1.4
       },
       {
         "attribute":"footwork:max_fracture",
@@ -1355,7 +1355,7 @@
       {
         "attribute":"footwork:posture_regen",
         "operation":"ADDITION",
-        "modify":0.69
+        "modify":0.7
       },
       {
         "attribute":"footwork:max_fracture",
@@ -1367,7 +1367,7 @@
       {
         "attribute":"footwork:posture_regen",
         "operation":"ADDITION",
-        "modify":1.04
+        "modify":1
       },
       {
         "attribute":"footwork:max_fracture",
@@ -1379,7 +1379,7 @@
       {
         "attribute":"footwork:posture_regen",
         "operation":"ADDITION",
-        "modify":0.69
+        "modify":0.7
       },
       {
         "attribute":"footwork:max_fracture",
@@ -1391,7 +1391,7 @@
       {
         "attribute":"footwork:posture_regen",
         "operation":"ADDITION",
-        "modify":1.39
+        "modify":1.4
       },
       {
         "attribute":"footwork:max_fracture",
@@ -1403,7 +1403,7 @@
       {
         "attribute":"footwork:posture_regen",
         "operation":"ADDITION",
-        "modify":0.69
+        "modify":0.7
       },
       {
         "attribute":"footwork:max_fracture",
@@ -1415,7 +1415,7 @@
       {
         "attribute":"footwork:posture_regen",
         "operation":"ADDITION",
-        "modify":1.04
+        "modify":1
       },
       {
         "attribute":"footwork:max_fracture",
@@ -1432,12 +1432,12 @@
       {
         "attribute":"footwork:max_posture",
         "operation":"ADDITION",
-        "modify":1.59
+        "modify":1.6
       },
       {
         "attribute":"footwork:posture_regen",
         "operation":"ADDITION",
-        "modify":0.49
+        "modify":0.5
       },
       {
         "attribute":"footwork:max_fracture",
@@ -1454,12 +1454,12 @@
       {
         "attribute":"footwork:max_posture",
         "operation":"ADDITION",
-        "modify":3.17
+        "modify":3.2
       },
       {
         "attribute":"footwork:posture_regen",
         "operation":"ADDITION",
-        "modify":0.98
+        "modify":1
       },
       {
         "attribute":"footwork:max_fracture",
@@ -1476,12 +1476,12 @@
       {
         "attribute":"footwork:max_posture",
         "operation":"ADDITION",
-        "modify":1.59
+        "modify":1.6
       },
       {
         "attribute":"footwork:posture_regen",
         "operation":"ADDITION",
-        "modify":0.49
+        "modify":0.5
       },
       {
         "attribute":"footwork:max_fracture",
@@ -1493,17 +1493,17 @@
       {
         "attribute":"footwork:evasion",
         "operation":"ADDITION",
-        "modify":1.05
+        "modify":1.1
       },
       {
         "attribute":"footwork:max_posture",
         "operation":"ADDITION",
-        "modify":2.38
+        "modify":2.4
       },
       {
         "attribute":"footwork:posture_regen",
         "operation":"ADDITION",
-        "modify":0.73
+        "modify":0.7
       },
       {
         "attribute":"footwork:max_fracture",
@@ -1520,12 +1520,12 @@
       {
         "attribute":"footwork:max_posture",
         "operation":"ADDITION",
-        "modify":1.59
+        "modify":1.6
       },
       {
         "attribute":"footwork:posture_regen",
         "operation":"ADDITION",
-        "modify":0.49
+        "modify":0.5
       },
       {
         "attribute":"footwork:max_fracture",
@@ -1542,12 +1542,12 @@
       {
         "attribute":"footwork:max_posture",
         "operation":"ADDITION",
-        "modify":3.17
+        "modify":3.2
       },
       {
         "attribute":"footwork:posture_regen",
         "operation":"ADDITION",
-        "modify":0.98
+        "modify":1
       },
       {
         "attribute":"footwork:max_fracture",
@@ -1564,12 +1564,12 @@
       {
         "attribute":"footwork:max_posture",
         "operation":"ADDITION",
-        "modify":1.59
+        "modify":1.6
       },
       {
         "attribute":"footwork:posture_regen",
         "operation":"ADDITION",
-        "modify":0.49
+        "modify":0.5
       },
       {
         "attribute":"footwork:max_fracture",
@@ -1581,17 +1581,17 @@
       {
         "attribute":"footwork:evasion",
         "operation":"ADDITION",
-        "modify":1.05
+        "modify":1.1
       },
       {
         "attribute":"footwork:max_posture",
         "operation":"ADDITION",
-        "modify":2.38
+        "modify":2.4
       },
       {
         "attribute":"footwork:posture_regen",
         "operation":"ADDITION",
-        "modify":0.73
+        "modify":0.7
       },
       {
         "attribute":"footwork:max_fracture",
@@ -1656,12 +1656,12 @@
       {
         "attribute":"footwork:max_posture",
         "operation":"ADDITION",
-        "modify":1.47
+        "modify":1.5
       },
       {
         "attribute":"footwork:posture_regen",
         "operation":"ADDITION",
-        "modify":0.63
+        "modify":0.6
       },
       {
         "attribute":"footwork:max_spirit",
@@ -1683,12 +1683,12 @@
       {
         "attribute":"footwork:max_posture",
         "operation":"ADDITION",
-        "modify":2.94
+        "modify":2.9
       },
       {
         "attribute":"footwork:posture_regen",
         "operation":"ADDITION",
-        "modify":1.26
+        "modify":1.3
       },
       {
         "attribute":"footwork:max_spirit",
@@ -1710,12 +1710,12 @@
       {
         "attribute":"footwork:max_posture",
         "operation":"ADDITION",
-        "modify":1.47
+        "modify":1.5
       },
       {
         "attribute":"footwork:posture_regen",
         "operation":"ADDITION",
-        "modify":0.63
+        "modify":0.6
       },
       {
         "attribute":"footwork:max_spirit",
@@ -1742,7 +1742,7 @@
       {
         "attribute":"footwork:posture_regen",
         "operation":"ADDITION",
-        "modify":0.95
+        "modify":0.9
       },
       {
         "attribute":"footwork:max_spirit",
@@ -1764,12 +1764,12 @@
       {
         "attribute":"footwork:max_posture",
         "operation":"ADDITION",
-        "modify":1.47
+        "modify":1.5
       },
       {
         "attribute":"footwork:posture_regen",
         "operation":"ADDITION",
-        "modify":0.63
+        "modify":0.6
       },
       {
         "attribute":"footwork:max_spirit",
@@ -1791,12 +1791,12 @@
       {
         "attribute":"footwork:max_posture",
         "operation":"ADDITION",
-        "modify":2.94
+        "modify":2.9
       },
       {
         "attribute":"footwork:posture_regen",
         "operation":"ADDITION",
-        "modify":1.26
+        "modify":1.3
       },
       {
         "attribute":"footwork:max_spirit",
@@ -1818,12 +1818,12 @@
       {
         "attribute":"footwork:max_posture",
         "operation":"ADDITION",
-        "modify":1.47
+        "modify":1.5
       },
       {
         "attribute":"footwork:posture_regen",
         "operation":"ADDITION",
-        "modify":0.63
+        "modify":0.6
       },
       {
         "attribute":"footwork:max_spirit",
@@ -1850,7 +1850,7 @@
       {
         "attribute":"footwork:posture_regen",
         "operation":"ADDITION",
-        "modify":0.95
+        "modify":0.9
       },
       {
         "attribute":"footwork:max_spirit",
@@ -1872,12 +1872,12 @@
       {
         "attribute":"footwork:max_posture",
         "operation":"ADDITION",
-        "modify":1.47
+        "modify":1.5
       },
       {
         "attribute":"footwork:posture_regen",
         "operation":"ADDITION",
-        "modify":0.63
+        "modify":0.6
       },
       {
         "attribute":"footwork:max_spirit",
@@ -1899,12 +1899,12 @@
       {
         "attribute":"footwork:max_posture",
         "operation":"ADDITION",
-        "modify":2.94
+        "modify":2.9
       },
       {
         "attribute":"footwork:posture_regen",
         "operation":"ADDITION",
-        "modify":1.26
+        "modify":1.3
       },
       {
         "attribute":"footwork:max_spirit",
@@ -1926,12 +1926,12 @@
       {
         "attribute":"footwork:max_posture",
         "operation":"ADDITION",
-        "modify":1.47
+        "modify":1.5
       },
       {
         "attribute":"footwork:posture_regen",
         "operation":"ADDITION",
-        "modify":0.63
+        "modify":0.6
       },
       {
         "attribute":"footwork:max_spirit",
@@ -1958,7 +1958,7 @@
       {
         "attribute":"footwork:posture_regen",
         "operation":"ADDITION",
-        "modify":0.95
+        "modify":0.9
       },
       {
         "attribute":"footwork:max_spirit",
@@ -1980,12 +1980,12 @@
       {
         "attribute":"footwork:max_posture",
         "operation":"ADDITION",
-        "modify":1.47
+        "modify":1.5
       },
       {
         "attribute":"footwork:posture_regen",
         "operation":"ADDITION",
-        "modify":0.63
+        "modify":0.6
       },
       {
         "attribute":"footwork:max_spirit",
@@ -2007,12 +2007,12 @@
       {
         "attribute":"footwork:max_posture",
         "operation":"ADDITION",
-        "modify":2.94
+        "modify":2.9
       },
       {
         "attribute":"footwork:posture_regen",
         "operation":"ADDITION",
-        "modify":1.26
+        "modify":1.3
       },
       {
         "attribute":"footwork:max_spirit",
@@ -2034,12 +2034,12 @@
       {
         "attribute":"footwork:max_posture",
         "operation":"ADDITION",
-        "modify":1.47
+        "modify":1.5
       },
       {
         "attribute":"footwork:posture_regen",
         "operation":"ADDITION",
-        "modify":0.63
+        "modify":0.6
       },
       {
         "attribute":"footwork:max_spirit",
@@ -2066,7 +2066,7 @@
       {
         "attribute":"footwork:posture_regen",
         "operation":"ADDITION",
-        "modify":0.95
+        "modify":0.9
       },
       {
         "attribute":"footwork:max_spirit",
@@ -2088,12 +2088,12 @@
       {
         "attribute":"footwork:max_posture",
         "operation":"ADDITION",
-        "modify":1.47
+        "modify":1.5
       },
       {
         "attribute":"footwork:posture_regen",
         "operation":"ADDITION",
-        "modify":0.63
+        "modify":0.6
       },
       {
         "attribute":"footwork:max_spirit",
@@ -2115,12 +2115,12 @@
       {
         "attribute":"footwork:max_posture",
         "operation":"ADDITION",
-        "modify":2.94
+        "modify":2.9
       },
       {
         "attribute":"footwork:posture_regen",
         "operation":"ADDITION",
-        "modify":1.26
+        "modify":1.3
       },
       {
         "attribute":"footwork:max_spirit",
@@ -2142,12 +2142,12 @@
       {
         "attribute":"footwork:max_posture",
         "operation":"ADDITION",
-        "modify":1.47
+        "modify":1.5
       },
       {
         "attribute":"footwork:posture_regen",
         "operation":"ADDITION",
-        "modify":0.63
+        "modify":0.6
       },
       {
         "attribute":"footwork:max_spirit",
@@ -2174,7 +2174,7 @@
       {
         "attribute":"footwork:posture_regen",
         "operation":"ADDITION",
-        "modify":0.95
+        "modify":0.9
       },
       {
         "attribute":"footwork:max_spirit",
@@ -2196,12 +2196,12 @@
       {
         "attribute":"footwork:max_posture",
         "operation":"ADDITION",
-        "modify":1.47
+        "modify":1.5
       },
       {
         "attribute":"footwork:posture_regen",
         "operation":"ADDITION",
-        "modify":0.63
+        "modify":0.6
       },
       {
         "attribute":"footwork:max_spirit",
@@ -2223,12 +2223,12 @@
       {
         "attribute":"footwork:max_posture",
         "operation":"ADDITION",
-        "modify":2.94
+        "modify":2.9
       },
       {
         "attribute":"footwork:posture_regen",
         "operation":"ADDITION",
-        "modify":1.26
+        "modify":1.3
       },
       {
         "attribute":"footwork:max_spirit",
@@ -2250,12 +2250,12 @@
       {
         "attribute":"footwork:max_posture",
         "operation":"ADDITION",
-        "modify":1.47
+        "modify":1.5
       },
       {
         "attribute":"footwork:posture_regen",
         "operation":"ADDITION",
-        "modify":0.63
+        "modify":0.6
       },
       {
         "attribute":"footwork:max_spirit",
@@ -2282,7 +2282,7 @@
       {
         "attribute":"footwork:posture_regen",
         "operation":"ADDITION",
-        "modify":0.95
+        "modify":0.9
       },
       {
         "attribute":"footwork:max_spirit",
@@ -2304,12 +2304,12 @@
       {
         "attribute":"footwork:max_posture",
         "operation":"ADDITION",
-        "modify":1.47
+        "modify":1.5
       },
       {
         "attribute":"footwork:posture_regen",
         "operation":"ADDITION",
-        "modify":0.63
+        "modify":0.6
       },
       {
         "attribute":"footwork:max_spirit",
@@ -2331,12 +2331,12 @@
       {
         "attribute":"footwork:max_posture",
         "operation":"ADDITION",
-        "modify":2.94
+        "modify":2.9
       },
       {
         "attribute":"footwork:posture_regen",
         "operation":"ADDITION",
-        "modify":1.26
+        "modify":1.3
       },
       {
         "attribute":"footwork:max_spirit",
@@ -2358,12 +2358,12 @@
       {
         "attribute":"footwork:max_posture",
         "operation":"ADDITION",
-        "modify":1.47
+        "modify":1.5
       },
       {
         "attribute":"footwork:posture_regen",
         "operation":"ADDITION",
-        "modify":0.63
+        "modify":0.6
       },
       {
         "attribute":"footwork:max_spirit",
@@ -2390,7 +2390,7 @@
       {
         "attribute":"footwork:posture_regen",
         "operation":"ADDITION",
-        "modify":0.95
+        "modify":0.9
       },
       {
         "attribute":"footwork:max_spirit",

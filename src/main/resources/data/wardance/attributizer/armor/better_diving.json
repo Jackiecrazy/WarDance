@@ -3,7 +3,7 @@
       {
         "attribute":"footwork:posture_regen",
         "operation":"ADDITION",
-        "modify":0.49
+        "modify":0.5
       },
       {
         "attribute":"footwork:max_fracture",
@@ -27,7 +27,7 @@
       {
         "attribute":"footwork:posture_regen",
         "operation":"ADDITION",
-        "modify":0.98
+        "modify":1
       },
       {
         "attribute":"footwork:max_fracture",
@@ -39,7 +39,7 @@
       {
         "attribute":"footwork:posture_regen",
         "operation":"ADDITION",
-        "modify":0.73
+        "modify":0.7
       },
       {
         "attribute":"footwork:max_fracture",
@@ -51,7 +51,7 @@
       {
         "attribute":"footwork:posture_regen",
         "operation":"ADDITION",
-        "modify":0.49
+        "modify":0.5
       },
       {
         "attribute":"footwork:max_fracture",
@@ -68,7 +68,7 @@
       {
         "attribute":"footwork:max_posture",
         "operation":"ADDITION",
-        "modify":0.85
+        "modify":0.8
       },
       {
         "attribute":"footwork:posture_regen",
@@ -78,7 +78,7 @@
       {
         "attribute":"footwork:max_fracture",
         "operation":"ADDITION",
-        "modify":0.41
+        "modify":0.45
       }
     ],
 "better_diving:reinforced_fins":[
@@ -90,7 +90,7 @@
       {
         "attribute":"footwork:max_posture",
         "operation":"ADDITION",
-        "modify":0.85
+        "modify":0.8
       },
       {
         "attribute":"footwork:posture_regen",
@@ -100,7 +100,7 @@
       {
         "attribute":"footwork:max_fracture",
         "operation":"ADDITION",
-        "modify":0.41
+        "modify":0.45
       }
     ],
 "better_diving:reinforced_o2_tank":[
@@ -112,7 +112,7 @@
       {
         "attribute":"footwork:max_posture",
         "operation":"ADDITION",
-        "modify":0.85
+        "modify":0.8
       },
       {
         "attribute":"footwork:posture_regen",
@@ -122,7 +122,7 @@
       {
         "attribute":"footwork:max_fracture",
         "operation":"ADDITION",
-        "modify":0.41
+        "modify":0.45
       }
     ],
 "better_diving:reinforced_wetsuit_leggings":[
@@ -134,7 +134,7 @@
       {
         "attribute":"footwork:max_posture",
         "operation":"ADDITION",
-        "modify":1.27
+        "modify":1.3
       },
       {
         "attribute":"footwork:posture_regen",
@@ -144,7 +144,7 @@
       {
         "attribute":"footwork:max_fracture",
         "operation":"ADDITION",
-        "modify":0.49
+        "modify":0.45
       }
     ],
 "better_diving:standard_o2_tank":[
@@ -202,7 +202,7 @@
       {
         "attribute":"footwork:max_fracture",
         "operation":"ADDITION",
-        "modify":0.57
+        "modify":0.55
       }
     ],
 "betterendforge:aeternium_chestplate":[
@@ -224,7 +224,7 @@
       {
         "attribute":"footwork:max_fracture",
         "operation":"ADDITION",
-        "modify":0.89
+        "modify":0.85
       }
     ],
 "betterendforge:aeternium_helmet":[
@@ -246,14 +246,14 @@
       {
         "attribute":"footwork:max_fracture",
         "operation":"ADDITION",
-        "modify":0.57
+        "modify":0.55
       }
     ],
 "betterendforge:aeternium_leggings":[
       {
         "attribute":"footwork:evasion",
         "operation":"ADDITION",
-        "modify":1.35
+        "modify":1.4
       },
       {
         "attribute":"footwork:max_posture",
@@ -268,7 +268,7 @@
       {
         "attribute":"footwork:max_fracture",
         "operation":"ADDITION",
-        "modify":0.73
+        "modify":0.75
       }
     ],
 "betterendforge:crystalite_boots":[
@@ -290,7 +290,7 @@
       {
         "attribute":"footwork:max_fracture",
         "operation":"ADDITION",
-        "modify":0.97
+        "modify":0.95
       }
     ],
 "betterendforge:crystalite_chestplate":[
@@ -312,7 +312,7 @@
       {
         "attribute":"footwork:max_fracture",
         "operation":"ADDITION",
-        "modify":1.69
+        "modify":1.65
       }
     ],
 "betterendforge:crystalite_helmet":[
@@ -334,7 +334,7 @@
       {
         "attribute":"footwork:max_fracture",
         "operation":"ADDITION",
-        "modify":0.97
+        "modify":0.95
       }
     ],
 "betterendforge:crystalite_leggings":[
@@ -356,7 +356,7 @@
       {
         "attribute":"footwork:max_fracture",
         "operation":"ADDITION",
-        "modify":1.33
+        "modify":1.35
       }
     ],
 "betterendforge:terminite_boots":[
@@ -368,7 +368,7 @@
       {
         "attribute":"footwork:max_posture",
         "operation":"ADDITION",
-        "modify":1.34
+        "modify":1.3
       },
       {
         "attribute":"footwork:max_fracture",
@@ -385,7 +385,7 @@
       {
         "attribute":"footwork:max_posture",
         "operation":"ADDITION",
-        "modify":2.68
+        "modify":2.7
       },
       {
         "attribute":"footwork:max_fracture",
@@ -402,7 +402,7 @@
       {
         "attribute":"footwork:max_posture",
         "operation":"ADDITION",
-        "modify":1.34
+        "modify":1.3
       },
       {
         "attribute":"footwork:max_fracture",
@@ -414,12 +414,12 @@
       {
         "attribute":"footwork:evasion",
         "operation":"ADDITION",
-        "modify":0.75
+        "modify":0.8
       },
       {
         "attribute":"footwork:max_posture",
         "operation":"ADDITION",
-        "modify":2.01
+        "modify":2
       },
       {
         "attribute":"footwork:max_fracture",
@@ -453,7 +453,7 @@
       {
         "attribute":"footwork:max_posture",
         "operation":"ADDITION",
-        "modify":3.79
+        "modify":3.8
       },
       {
         "attribute":"footwork:max_fracture",
@@ -487,7 +487,7 @@
       {
         "attribute":"footwork:max_posture",
         "operation":"ADDITION",
-        "modify":2.85
+        "modify":2.8
       },
       {
         "attribute":"footwork:max_fracture",
@@ -499,76 +499,76 @@
       {
         "attribute":"footwork:posture_regen",
         "operation":"ADDITION",
-        "modify":0.49
+        "modify":0.5
       },
       {
         "attribute":"footwork:max_fracture",
         "operation":"ADDITION",
-        "modify":0.73
+        "modify":0.75
       }
     ],
 "betternether:cincinnasite_chestplate":[
       {
         "attribute":"footwork:posture_regen",
         "operation":"ADDITION",
-        "modify":0.98
+        "modify":1
       },
       {
         "attribute":"footwork:max_fracture",
         "operation":"ADDITION",
-        "modify":1.21
+        "modify":1.25
       }
     ],
 "betternether:cincinnasite_helmet":[
       {
         "attribute":"footwork:posture_regen",
         "operation":"ADDITION",
-        "modify":0.49
+        "modify":0.5
       },
       {
         "attribute":"footwork:max_fracture",
         "operation":"ADDITION",
-        "modify":0.73
+        "modify":0.75
       }
     ],
 "betternether:cincinnasite_leggings":[
       {
         "attribute":"footwork:posture_regen",
         "operation":"ADDITION",
-        "modify":0.73
+        "modify":0.7
       },
       {
         "attribute":"footwork:max_fracture",
         "operation":"ADDITION",
-        "modify":0.97
+        "modify":0.95
       }
     ],
 "betternether:nether_ruby_boots":[
       {
         "attribute":"footwork:max_fracture",
         "operation":"ADDITION",
-        "modify":1.13
+        "modify":1.15
       }
     ],
 "betternether:nether_ruby_chestplate":[
       {
         "attribute":"footwork:max_fracture",
         "operation":"ADDITION",
-        "modify":2.01
+        "modify":2.05
       }
     ],
 "betternether:nether_ruby_helmet":[
       {
         "attribute":"footwork:max_fracture",
         "operation":"ADDITION",
-        "modify":1.13
+        "modify":1.15
       }
     ],
 "betternether:nether_ruby_leggings":[
       {
         "attribute":"footwork:max_fracture",
         "operation":"ADDITION",
-        "modify":1.57
+        "modify":1.55
       }
     ]
 }

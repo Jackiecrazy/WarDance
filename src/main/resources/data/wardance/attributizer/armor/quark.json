@@ -3,17 +3,17 @@
       {
         "attribute":"footwork:evasion",
         "operation":"ADDITION",
-        "modify":0.05
+        "modify":0.1
       },
       {
         "attribute":"footwork:max_posture",
         "operation":"ADDITION",
-        "modify":0.3
+        "modify":0.6
       },
       {
         "attribute":"footwork:posture_regen",
         "operation":"ADDITION",
-        "modify":0.32
+        "modify":0.6
       },
       {
         "attribute":"footwork:max_spirit",
