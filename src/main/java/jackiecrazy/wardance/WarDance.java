@@ -2,7 +2,6 @@ package jackiecrazy.wardance;
 
 import jackiecrazy.wardance.capability.skill.ISkillCapability;
 import jackiecrazy.wardance.capability.status.IMark;
-import jackiecrazy.wardance.client.Keybinds;
 import jackiecrazy.wardance.client.hud.OffhandCooldownDisplay;
 import jackiecrazy.wardance.client.hud.ResourceDisplay;
 import jackiecrazy.wardance.command.SkillArgument;
@@ -18,7 +17,6 @@ import net.minecraft.commands.synchronization.ArgumentTypeInfos;
 import net.minecraft.commands.synchronization.SingletonArgumentInfo;
 import net.minecraft.world.level.GameRules;
 import net.minecraftforge.client.event.RegisterGuiOverlaysEvent;
-import net.minecraftforge.client.event.RegisterKeyMappingsEvent;
 import net.minecraftforge.client.gui.overlay.VanillaGuiOverlay;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.capabilities.RegisterCapabilitiesEvent;
@@ -107,16 +105,8 @@ public class WarDance {
     private void doClientStuff(final FMLClientSetupEvent event) {
         // do something that can only be done on the client
         ClientConfig.bake();
-        FMLJavaModLoadingContext.get().getModEventBus().addListener(this::keys);
     }
 
-    private void keys(final RegisterKeyMappingsEvent event) {
-        event.register(Keybinds.COMBAT);
-        event.register(Keybinds.CAST);
-        event.register(Keybinds.SELECT);
-        event.register(Keybinds.BINDCAST);
-        event.register(Keybinds.PARRY);
-    }
 
     @SubscribeEvent
     public void onJsonListener(AddReloadListenerEvent event) {
