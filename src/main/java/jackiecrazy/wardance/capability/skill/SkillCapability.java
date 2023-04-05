@@ -125,21 +125,6 @@ public class SkillCapability implements ISkillCapability {
         return data.get(s).getState();
     }
 
-    @Override
-    public Skill.STATE getArchetypeState(SkillArchetype skill) {
-        for (Skill s : new ArrayList<>(data.keySet())) {
-            if (s != null && s.getArchetype().equals(skill)) return getSkillState(s);
-        }
-        return Skill.STATE.INACTIVE;
-    }
-
-    @Override
-    public Skill getEquippedVariation(SkillArchetype other) {
-        for (Skill k : new ArrayList<>(equippedSkill))
-            if (k != null && k.getArchetype() == other) return k;
-        return null;
-    }
-
     @Nullable
     @Override
     public SkillStyle getStyle() {

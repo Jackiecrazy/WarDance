@@ -673,7 +673,8 @@ public class CombatCapability implements ICombatCapability {
             setPosture(getMaxPosture());
         }
         if (elb.getAttribute(FootworkAttributes.MAX_FRACTURE.get()).getBaseValue() == 0d) {//ew
-            elb.getAttribute(FootworkAttributes.MAX_FRACTURE.get()).setBaseValue(3 + Math.min(3, Math.round(elb.getMaxHealth() / 50)));
+            double above = Math.min(0, elb.getMaxHealth() - 50);
+            elb.getAttribute(FootworkAttributes.MAX_FRACTURE.get()).setBaseValue(1 + (int)(above/50));
         }
         //update max values
         vision = (float) elb.getAttributeValue(Attributes.FOLLOW_RANGE);

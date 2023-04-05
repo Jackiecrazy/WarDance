@@ -157,7 +157,7 @@
   "wardance.recovery.name": "Recovery",
   "wardance.recovery.desc": "Parrying below 25% posture will not incur a posture regeneration cooldown, and will refresh the might grace period.",
   "archetype.coup_de_grace.name": "Coup de Grace",
-  "archetype.coup_de_grace.desc": "When toggled, an attack on an exposed target will deal 20% of their lost health as {true damage; ITALIC,RED; wardance.skill.true_damage.desc}. \nIf the target would die from a successful coup de grace, it is marked with an icon (unlike other skills, this is not a real {mark; ITALIC; wardance.skill.mark.desc}), and all damage dealt to it is converted to equivalent posture damage. \nCast when active to end this skill. \nRecharge after 3 skill casts, costs 2 might.",
+  "archetype.coup_de_grace.desc": "When toggled, an attack on an exposed target will deal 20% of their lost health as {true damage; ITALIC,RED; wardance.skill.true_damage.desc}. \nIf the target would die from a successful coup de grace, it is marked with an icon (unlike other skills, this is not a real {mark; ITALIC; wardance.skill.mark.desc}), all damage dealt to it is converted to equivalent posture damage, and it will be instantly exposed on the next stun. \nCast when active to end this skill. \nRecharge after 3 skill casts, costs 2 might.",
   "wardance.decapitate.name": "Decapitate",
   "wardance.decapitate.desc": "This kill is guaranteed to {drop a head;GOLD}, or have its {looting;GOLD} level increased by 3 if the target lacks a harvestable head.",
   "wardance.rupture.name": "Rupture",

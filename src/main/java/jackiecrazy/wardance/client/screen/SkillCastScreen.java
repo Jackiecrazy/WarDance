@@ -178,6 +178,7 @@ public class SkillCastScreen extends Screen {
                             mc.font.draw(matrixStack, num, x + iconX[finalA] + 16 - mc.font.width(num) / 2f, y + iconY[finalA] + 12, 0xFFFFFF);
                             matrixStack.popPose();
                         }
+                        RenderSystem.disableBlend();
                     });
                     matrixStack.popPose();
                 }

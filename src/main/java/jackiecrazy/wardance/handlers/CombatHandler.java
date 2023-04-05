@@ -478,24 +478,29 @@ public class CombatHandler {
             double luckDiff = WarDance.rand.nextFloat() * (GeneralUtils.getAttributeValueSafe(seme, Attributes.LUCK)) - WarDance.rand.nextFloat() * (GeneralUtils.getAttributeValueSafe(uke, Attributes.LUCK));
             e.setAmount(e.getAmount() + (float) luckDiff * GeneralConfig.luck);
         }
-        if ((cap.isVulnerable()) && !cap.isStaggeringStrike()) {
-            //stagger tests for melee damage
-            if (cap.isExposed() && CombatUtils.isMeleeAttack(ds)) {
-                //expose, add 20% max health damage
-                e.setAmount(e.getAmount() + uke.getMaxHealth() * 0.2f);
-                e.getSource().bypassArmor().bypassEnchantments().bypassMagic();
-                //fatality!
-                if (ds.getEntity() instanceof LivingEntity) {
-                    LivingEntity seme = ((LivingEntity) ds.getEntity());
-                    if (seme.level instanceof ServerLevel) {
-                        ((ServerLevel) seme.level).sendParticles(ParticleTypes.ANGRY_VILLAGER, uke.getX(), uke.getY(), uke.getZ(), 5, uke.getBbWidth(), uke.getBbHeight(), uke.getBbWidth(), 0.5f);
+        if (CombatUtils.isMeleeAttack(ds)) {
+            if ((cap.isVulnerable()) && !cap.isStaggeringStrike()) {
+                //stagger tests for melee damage
+                if (cap.isExposed()) {
+                    //expose, add 10% max health damage
+                    e.setAmount(e.getAmount() * CombatConfig.exposeDamage + uke.getMaxHealth() * 0.1f);
+                    e.getSource().bypassArmor().bypassEnchantments().bypassMagic();
+                    //fatality!
+                    if (ds.getEntity() instanceof LivingEntity seme) {
+                        if (seme.level instanceof ServerLevel) {
+                            ((ServerLevel) seme.level).sendParticles(ParticleTypes.ANGRY_VILLAGER, uke.getX(), uke.getY(), uke.getZ(), 5, uke.getBbWidth(), uke.getBbHeight(), uke.getBbWidth(), 0.5f);
+                        }
+                        seme.level.playSound(null, uke.getX(), uke.getY(), uke.getZ(), SoundEvents.GENERIC_BIG_FALL, SoundSource.PLAYERS, 0.25f + WarDance.rand.nextFloat() * 0.5f, 0.75f + WarDance.rand.nextFloat() * 0.5f);
                     }
-                    seme.level.playSound(null, uke.getX(), uke.getY(), uke.getZ(), SoundEvents.GENERIC_BIG_FALL, SoundSource.PLAYERS, 0.25f + WarDance.rand.nextFloat() * 0.5f, 0.75f + WarDance.rand.nextFloat() * 0.5f);
                 }
+                //knockdown damage multiplier
+                else if (cap.isKnockedDown()) e.setAmount(e.getAmount() * CombatConfig.knockdownDamage);
+                //stun damage multiplier
+                else if (cap.isStunned()) e.setAmount(e.getAmount() * CombatConfig.stunDamage);
+            } else {
+                //unfatality!
+                e.setAmount(e.getAmount() * CombatConfig.normalDamage);
             }
-        } else {
-            //unfatality!
-            e.setAmount(e.getAmount() * CombatConfig.unStaggerDamage);
         }
     }
 

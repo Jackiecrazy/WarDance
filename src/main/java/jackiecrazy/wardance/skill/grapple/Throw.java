@@ -2,6 +2,7 @@ package jackiecrazy.wardance.skill.grapple;
 
 import jackiecrazy.footwork.api.CombatDamageSource;
 import jackiecrazy.footwork.capability.resources.CombatData;
+import jackiecrazy.footwork.event.StunEvent;
 import jackiecrazy.wardance.WarDance;
 import jackiecrazy.wardance.capability.skill.CasterData;
 import jackiecrazy.wardance.config.CombatConfig;
@@ -33,7 +34,8 @@ public class Throw extends Grapple {
                     caster.setLastHurtMob(target);
                 }
             }
-        }
+        } else if (procPoint instanceof StunEvent se && se.getEntity() == target && se.getPhase() == EventPriority.LOWEST)
+            performEffect(caster, target, stats);
         attackCooldown(procPoint, caster, stats);
     }
 
@@ -57,11 +59,10 @@ public class Throw extends Grapple {
 
     protected void performEffect(LivingEntity caster, LivingEntity target, SkillData stats) {
         caster.level.playSound(null, target.getX(), target.getY(), target.getZ(), SoundEvents.BARREL_OPEN, SoundSource.PLAYERS, 0.3f + WarDance.rand.nextFloat() * 0.5f, 0.75f + WarDance.rand.nextFloat() * 0.5f);
-        if (CombatData.getCap(target).consumePosture(caster, 7, 0, true) < 0) {
+        if (CombatData.getCap(target).consumePosture(caster, 7, 0, true) < 0 || CombatData.getCap(target).isVulnerable()) {
             target.startRiding(caster, true);
-            mark(caster, target, CombatConfig.knockdownDuration*2);
+            mark(caster, target, CombatConfig.knockdownDuration * 2);
             stats.flagCondition(true);
-
         } else {
             stats.flagCondition(false);
             markUsed(caster);
@@ -76,8 +77,8 @@ public class Throw extends Grapple {
             CombatData.getCap(target).consumePosture(7);
             target.hurt(new CombatDamageSource("fallingBlock", caster).setDamageTyping(CombatDamageSource.TYPE.PHYSICAL).setProcSkillEffects(true).setProcAttackEffects(true), 3);
         }
-        if(!sd.isCondition()){
-            if(!CombatData.getCap(target).isVulnerable()){
+        if (!sd.isCondition()) {
+            if (!CombatData.getCap(target).isVulnerable()) {
                 removeMark(target);
                 target.stopRiding();
                 setCooldown(caster, CasterData.getCap(caster).getSkillData(this).get(), 7);

@@ -355,7 +355,7 @@ public abstract class Skill extends Move {
             MinecraftForge.EVENT_BUS.post(sce);
             if (sce.getMight() > 0)
                 CombatData.getCap(caster).consumeMight(sce.getMight());
-            if (sce.getMight() > 0)
+            if (sce.getSpirit() > 0)
                 CombatData.getCap(caster).consumeSpirit(sce.getSpirit());
             activate(caster, sce.getDuration(), sce.isFlag(), sce.getArbitrary());
             return true;

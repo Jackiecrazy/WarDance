@@ -2,6 +2,7 @@ package jackiecrazy.wardance.skill.coupdegrace;
 
 import jackiecrazy.footwork.capability.resources.CombatData;
 import jackiecrazy.footwork.capability.resources.ICombatCapability;
+import jackiecrazy.footwork.event.StunEvent;
 import jackiecrazy.footwork.utils.GeneralUtils;
 import jackiecrazy.footwork.utils.TargetingUtils;
 import jackiecrazy.wardance.WarDance;
@@ -70,9 +71,8 @@ public class CoupDeGrace extends Skill {
 
     @Override
     public void onProc(LivingEntity caster, Event procPoint, STATE state, SkillData stats, LivingEntity target) {
-        if (procPoint instanceof LivingHurtEvent && procPoint.getPhase() == EventPriority.HIGHEST && state == STATE.ACTIVE) {
-            LivingHurtEvent e = (LivingHurtEvent) procPoint;
-            if (e.getEntity() != caster) {
+        if (procPoint instanceof LivingHurtEvent e && procPoint.getPhase() == EventPriority.HIGHEST && state == STATE.ACTIVE) {
+            if (e.getEntity() == target) {
                 if (CombatData.getCap(e.getEntity()).isExposed() && !CombatData.getCap(e.getEntity()).isStaggeringStrike()) {
                     if (willKillOnCast(caster, target))
                         target.setHealth(1);
@@ -80,13 +80,19 @@ public class CoupDeGrace extends Skill {
                     e.getSource().bypassArmor().bypassMagic();
                     deathCheck(caster, target, e.getAmount());
                     markUsed(caster);
-                } else if (target.getHealth() < getDamage(caster, target)) {
+                } else if (willKillOnCast(caster, target)) {
                     e.setCanceled(true);
                     CombatData.getCap(target).consumePosture(caster, e.getAmount());
                 }
             }
         } else if (procPoint instanceof SkillCastEvent && procPoint.getPhase() == EventPriority.HIGHEST && state == STATE.COOLING) {
             stats.decrementDuration();
+        }else if (procPoint instanceof StunEvent e && procPoint.getPhase() == EventPriority.HIGHEST && state == STATE.ACTIVE) {
+            if (e.getEntity() == target) {
+                if (willKillOnCast(caster, target)) {
+                    CombatData.getCap(target).addFracture(caster, Integer.MAX_VALUE);
+                }
+            }
         }
         if (state == STATE.ACTIVE && stats.getDuration() < 0 && this == WarSkills.DECAPITATE.get() && procPoint.getPhase() == EventPriority.LOWEST) {
             if (procPoint instanceof LivingDropsEvent && ((LivingDropsEvent) procPoint).getEntity() == target) {
@@ -110,15 +116,20 @@ public class CoupDeGrace extends Skill {
     @Override
     public boolean onStateChange(LivingEntity caster, SkillData prev, STATE from, STATE to) {
         if (from == STATE.ACTIVE && to == STATE.HOLSTERED) {
-            CasterData.getCap(caster).removeActiveTag(SkillTags.special);
+            //return statement necessary to prevent instant cast re-activating the effect
+            prev.setState(STATE.INACTIVE);
+            return true;
         }
         if (from == STATE.INACTIVE && to == STATE.HOLSTERED && cast(caster, 1)) {
             CasterData.getCap(caster).removeActiveTag(SkillTags.special);
             prev.setMaxDuration(0);
+            return true;
         }
-        if (to == STATE.COOLING)
+        if (to == STATE.COOLING) {
             setCooldown(caster, prev, 2);
-        return instantCast(prev, from, to);
+            return true;
+        }
+        return false;
     }
 
     public boolean willKillOnCast(LivingEntity caster, LivingEntity target) {

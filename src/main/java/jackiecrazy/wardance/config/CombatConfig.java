@@ -441,15 +441,11 @@ public class CombatConfig {
     public static float defaultMultiplierPostureMob;
     public static int rollEndsAt;
     public static int rollCooldown;
-    public static int shieldCooldown;
-    public static float barrierSize;
     public static int staggerDuration;
     public static int exposeDuration;
     public static int adrenaline;
-    public static float staggerDamage;
-    public static float unStaggerDamage;
+    public static float exposeDamage, normalDamage, stunDamage, knockdownDamage;
     public static int parryTime;
-    public static int recovery;
     public static int foodCool;
     public static float mobParryChanceWeapon, mobParryChanceShield, mobDeflectChance, mobScaler;
     public static int knockdownDuration;
@@ -481,7 +477,7 @@ public class CombatConfig {
     private final ForgeConfigSpec.IntValue _exposeDuration;
     private final ForgeConfigSpec.IntValue _knockdownDuration;
     private final ForgeConfigSpec.DoubleValue _stagger;
-    private final ForgeConfigSpec.DoubleValue _unstagger;
+    private final ForgeConfigSpec.DoubleValue _unstagger, _stun, _knockdown;
     private final ForgeConfigSpec.DoubleValue _knockbackNerf;
     private final ForgeConfigSpec.ConfigValue<List<? extends String>> _customProjectile;
 
@@ -501,9 +497,11 @@ public class CombatConfig {
         b.pop();
         b.push("expose");
         _staggerDuration = b.translation("wardance.config.staggerD").comment("Number of ticks an entity should be stunned for when its posture reaches 0.").defineInRange("stun duration", 20, 1, Integer.MAX_VALUE);
-        _knockdownDuration = b.translation("wardance.config.knockdownD").comment("Number of ticks an entity should be knocked down for on a large hit.").defineInRange("knockdown duration", 20, 1, Integer.MAX_VALUE);
-        _exposeDuration = b.translation("wardance.config.exposeD").comment("Number of ticks an entity should be exposed for when its fracture hits maximum.").defineInRange("exposed duration", 100, 1, Integer.MAX_VALUE);
-        _stagger = b.translation("wardance.config.stagger").comment("Extra damage taken by an exposed entity. Defaults to 1 because expose already nullifies all protection.").defineInRange("exposed damage multiplier", 1, 0, Double.MAX_VALUE);
+        _knockdownDuration = b.translation("wardance.config.knockdownD").comment("Number of ticks an entity should be knocked down for on a large hit.").defineInRange("knockdown duration", 40, 1, Integer.MAX_VALUE);
+        _exposeDuration = b.translation("wardance.config.exposeD").comment("Number of ticks an entity should be exposed for when its fracture hits maximum.").defineInRange("exposed duration", 60, 1, Integer.MAX_VALUE);
+        _stagger = b.translation("wardance.config.stagger").comment("Extra damage taken by an exposed entity. Defaults to 1 because expose already nullifies all protection and adds max health damage.").defineInRange("exposed damage multiplier", 1, 0, Double.MAX_VALUE);
+        _stun = b.translation("wardance.config.unstagger").comment("Damage taken by a stunned entity.").defineInRange("stun damage multiplier", 1, 0, Double.MAX_VALUE);
+        _knockdown = b.translation("wardance.config.unstagger").comment("Damage taken by a knocked down entity.").defineInRange("knockdown damage multiplier", 1, 0, Double.MAX_VALUE);
         _unstagger = b.translation("wardance.config.unstagger").comment("Damage taken by a non-exposed entity. Added out of curiosity.").defineInRange("normal damage multiplier", 1, 0, Double.MAX_VALUE);
         b.pop();
         b.push("difficulty");
@@ -538,8 +536,10 @@ public class CombatConfig {
         defaultMultiplierPostureMob = CONFIG._defaultMultiplierPostureMob.get().floatValue();
         rollCooldown = CONFIG._rollCooldown.get();
         rollEndsAt = rollCooldown - CONFIG._rollThreshold.get();
-        staggerDamage = CONFIG._stagger.get().floatValue();
-        unStaggerDamage = CONFIG._unstagger.get().floatValue();
+        exposeDamage = CONFIG._stagger.get().floatValue();
+        normalDamage = CONFIG._unstagger.get().floatValue();
+        stunDamage = CONFIG._stun.get().floatValue();
+        knockdownDamage = CONFIG._knockdown.get().floatValue();
         mobParryChanceWeapon = CONFIG._mobParryChanceWeapon.get().floatValue();
         mobParryChanceShield = CONFIG._mobParryChanceShield.get().floatValue();
         mobDeflectChance = CONFIG._mobDeflectChance.get().floatValue();

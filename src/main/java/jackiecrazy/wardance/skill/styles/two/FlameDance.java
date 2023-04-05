@@ -51,10 +51,11 @@ public class FlameDance extends WarCry {
             mark(caster, target, 0.1f, 1);
             //kaboom!
             if (CombatData.getCap(caster).getMight() == CombatData.getCap(caster).getMaxMight()) {
-                DamageSource kaboom = new CombatDamageSource("player", caster).setDamageTyping(CombatDamageSource.TYPE.MAGICAL).setProcSkillEffects(true).setSkillUsed(this).setProcNormalEffects(true).setPostureDamage(0).bypassArmor();
+                DamageSource kaboom = new CombatDamageSource("player", caster).setDamageTyping(CombatDamageSource.TYPE.MAGICAL).setProcSkillEffects(true).setSkillUsed(this).setPostureDamage(0).bypassArmor();
                 final float f = getExistingMark(target).getArbitraryFloat();
                 target.hurt(kaboom, f * ((int) (2 + f / 10)) / 2f);
                 target.hurtTime = target.hurtDuration = target.invulnerableTime = 0;
+                removeMark(target);
             }
         } else if (procPoint instanceof SkillCastEvent sce && procPoint.getPhase() == EventPriority.HIGHEST && sce.getEntity() == caster) {
             mark(caster, target, 0.1f, 1);

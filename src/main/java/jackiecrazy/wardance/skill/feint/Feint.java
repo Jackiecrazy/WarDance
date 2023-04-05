@@ -43,13 +43,13 @@ public class Feint extends Skill {
         Entity seme = e.getSource().getEntity();
         LivingEntity uke = e.getEntity();
         //reduce mark "cooldown", trigger capricious strike
-        if (seme instanceof LivingEntity) {
+        if (seme instanceof LivingEntity && CombatUtils.isMeleeAttack(e.getSource())) {
             final LivingEntity caster = (LivingEntity) seme;
             final ISkillCapability cap = CasterData.getCap(caster);
-            final Skill feint = cap.getEquippedVariation(SkillArchetypes.feint);
-            if (feint != null && Marks.getCap(uke).isMarked(SkillArchetypes.feint)) {
-                Marks.getCap(uke).getActiveMark(feint).ifPresent(a -> a.addArbitraryFloat(-1));
-            }
+            for (Skill feint : cap.getEquippedVariations(SkillArchetypes.feint))
+                if (feint != null && Marks.getCap(uke).isMarked(SkillArchetypes.feint)) {
+                    Marks.getCap(uke).getActiveMark(feint).ifPresent(a -> a.addArbitraryFloat(-1));
+                }
         }
         //spirit bomb damage amplification
         Marks.getCap(uke).getActiveMark(WarSkills.SPIRIT_RESONANCE.get()).ifPresent((a) -> {

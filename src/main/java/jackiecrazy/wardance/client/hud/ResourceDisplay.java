@@ -550,13 +550,12 @@ public class ResourceDisplay implements IGuiOverlay {
                 final ISkillCapability skill = CasterData.getCap(player);
                 if (ClientConfig.CONFIG.enemyAfflict.enabled) {
                     //coup de grace
-                    final Skill variant = skill.getEquippedVariation(SkillArchetypes.coup_de_grace);
-                    if (look != player && variant instanceof CoupDeGrace && skill.isSkillUsable(variant)) {
-                        CoupDeGrace cdg = (CoupDeGrace) variant;
-                        if (cdg.willKillOnCast(player, looked)) {
-                            afflict.add(new SkillData(cdg, 0, 0));
+                    for (Skill variant : skill.getEquippedVariations(SkillArchetypes.coup_de_grace))
+                        if (look != player && variant instanceof CoupDeGrace cdg && skill.isSkillUsable(variant)) {
+                            if (cdg.willKillOnCast(player, looked)) {
+                                afflict.add(new SkillData(cdg, 0, 0));
+                            }
                         }
-                    }
                     //marks
                     afflict.addAll(Marks.getCap(looked).getActiveMarks().values().stream().filter(a -> a.getSkill().showsMark(a, looked)).collect(Collectors.toList()));
                     Pair<Integer, Integer> pair = translateCoords(ClientConfig.CONFIG.enemyAfflict, width, height);

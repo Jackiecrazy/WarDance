@@ -4,10 +4,8 @@ import jackiecrazy.wardance.skill.*;
 import net.minecraft.nbt.CompoundTag;
 
 import javax.annotation.Nullable;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
+import java.util.stream.Collectors;
 
 public interface ISkillCapability {
     boolean isSkillSelectable(Skill s);
@@ -28,10 +26,9 @@ public interface ISkillCapability {
 
     Skill.STATE getSkillState(Skill skill);
 
-    Skill.STATE getArchetypeState(SkillArchetype s);
-
-    @Nullable
-    Skill getEquippedVariation(SkillArchetype base);
+    default Set<Skill> getEquippedVariations(SkillArchetype base) {
+        return getEquippedSkills().stream().filter(a -> a != null && a.getArchetype() == base).collect(Collectors.toSet());
+    }
 
     @Nullable
     SkillStyle getStyle();
@@ -44,7 +41,7 @@ public interface ISkillCapability {
 
     List<SkillCategory> getEquippedColors();
 
-    default List<Skill> getEquippedSkillsAndStyle(){
+    default List<Skill> getEquippedSkillsAndStyle() {
         List<Skill> ret = new ArrayList<>(getEquippedSkills());
         ret.add(getStyle());
         return ret;

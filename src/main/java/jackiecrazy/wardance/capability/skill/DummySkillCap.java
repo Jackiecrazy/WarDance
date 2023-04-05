@@ -3,7 +3,6 @@ package jackiecrazy.wardance.capability.skill;
 import jackiecrazy.wardance.skill.*;
 import net.minecraft.nbt.CompoundTag;
 
-import javax.annotation.Nullable;
 import java.util.*;
 
 public class DummySkillCap implements ISkillCapability {
@@ -55,17 +54,6 @@ public class DummySkillCap implements ISkillCapability {
     @Override
     public Skill.STATE getSkillState(Skill skill) {
         return Skill.STATE.INACTIVE;
-    }
-
-    @Override
-    public Skill.STATE getArchetypeState(SkillArchetype s) {
-        return Skill.STATE.INACTIVE;
-    }
-
-    @Nullable
-    @Override
-    public Skill getEquippedVariation(SkillArchetype base) {
-        return null;
     }
 
     @org.jetbrains.annotations.Nullable
