@@ -13,7 +13,7 @@
       {
         "attribute":"footwork:max_fracture",
         "operation":"ADDITION",
-        "modify":0.85
+        "modify":0.8
       }
     ],
 "wyrmroost:blue_geode_chestplate":[
@@ -30,7 +30,7 @@
       {
         "attribute":"footwork:max_fracture",
         "operation":"ADDITION",
-        "modify":1.55
+        "modify":1.7
       }
     ],
 "wyrmroost:blue_geode_helmet":[
@@ -47,7 +47,7 @@
       {
         "attribute":"footwork:max_fracture",
         "operation":"ADDITION",
-        "modify":0.85
+        "modify":0.8
       }
     ],
 "wyrmroost:blue_geode_leggings":[
@@ -64,7 +64,7 @@
       {
         "attribute":"footwork:max_fracture",
         "operation":"ADDITION",
-        "modify":1.25
+        "modify":1.3
       }
     ],
 "wyrmroost:drake_boots":[
@@ -76,7 +76,7 @@
       {
         "attribute":"footwork:max_fracture",
         "operation":"ADDITION",
-        "modify":0.85
+        "modify":0.8
       }
     ],
 "wyrmroost:drake_chestplate":[
@@ -88,7 +88,7 @@
       {
         "attribute":"footwork:max_fracture",
         "operation":"ADDITION",
-        "modify":1.35
+        "modify":1.5
       }
     ],
 "wyrmroost:drake_helmet":[
@@ -100,7 +100,7 @@
       {
         "attribute":"footwork:max_fracture",
         "operation":"ADDITION",
-        "modify":0.85
+        "modify":0.8
       }
     ],
 "wyrmroost:drake_leggings":[
@@ -112,7 +112,7 @@
       {
         "attribute":"footwork:max_fracture",
         "operation":"ADDITION",
-        "modify":1.05
+        "modify":1.1
       }
     ],
 "wyrmroost:platinum_boots":[
@@ -129,7 +129,7 @@
       {
         "attribute":"footwork:max_fracture",
         "operation":"ADDITION",
-        "modify":0.25
+        "modify":0.2
       }
     ],
 "wyrmroost:platinum_chestplate":[
@@ -146,7 +146,7 @@
       {
         "attribute":"footwork:max_fracture",
         "operation":"ADDITION",
-        "modify":0.25
+        "modify":0.4
       }
     ],
 "wyrmroost:platinum_helmet":[
@@ -163,7 +163,7 @@
       {
         "attribute":"footwork:max_fracture",
         "operation":"ADDITION",
-        "modify":0.25
+        "modify":0.2
       }
     ],
 "wyrmroost:platinum_leggings":[
@@ -180,7 +180,7 @@
       {
         "attribute":"footwork:max_fracture",
         "operation":"ADDITION",
-        "modify":0.25
+        "modify":0.3
       }
     ],
 "wyrmroost:purple_geode_boots":[
@@ -197,7 +197,7 @@
       {
         "attribute":"footwork:max_fracture",
         "operation":"ADDITION",
-        "modify":0.95
+        "modify":0.9
       }
     ],
 "wyrmroost:purple_geode_chestplate":[
@@ -214,7 +214,7 @@
       {
         "attribute":"footwork:max_fracture",
         "operation":"ADDITION",
-        "modify":1.65
+        "modify":1.8
       }
     ],
 "wyrmroost:purple_geode_helmet":[
@@ -231,7 +231,7 @@
       {
         "attribute":"footwork:max_fracture",
         "operation":"ADDITION",
-        "modify":0.95
+        "modify":0.9
       }
     ],
 "wyrmroost:purple_geode_leggings":[
@@ -248,7 +248,7 @@
       {
         "attribute":"footwork:max_fracture",
         "operation":"ADDITION",
-        "modify":1.35
+        "modify":1.4
       }
     ],
 "wyrmroost:red_geode_boots":[
@@ -265,7 +265,7 @@
       {
         "attribute":"footwork:max_fracture",
         "operation":"ADDITION",
-        "modify":0.85
+        "modify":0.8
       }
     ],
 "wyrmroost:red_geode_chestplate":[
@@ -282,7 +282,7 @@
       {
         "attribute":"footwork:max_fracture",
         "operation":"ADDITION",
-        "modify":1.55
+        "modify":1.7
       }
     ],
 "wyrmroost:red_geode_helmet":[
@@ -299,7 +299,7 @@
       {
         "attribute":"footwork:max_fracture",
         "operation":"ADDITION",
-        "modify":0.85
+        "modify":0.8
       }
     ],
 "wyrmroost:red_geode_leggings":[
@@ -316,7 +316,7 @@
       {
         "attribute":"footwork:max_fracture",
         "operation":"ADDITION",
-        "modify":1.25
+        "modify":1.3
       }
     ]
 }

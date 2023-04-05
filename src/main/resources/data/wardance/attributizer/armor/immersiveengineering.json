@@ -18,7 +18,7 @@
       {
         "attribute":"footwork:max_fracture",
         "operation":"ADDITION",
-        "modify":0.25
+        "modify":0.3
       }
     ],
 "immersiveengineering:armor_faraday_feet":[
@@ -40,7 +40,7 @@
       {
         "attribute":"footwork:max_fracture",
         "operation":"ADDITION",
-        "modify":0.25
+        "modify":0.2
       }
     ],
 "immersiveengineering:armor_faraday_head":[
@@ -62,7 +62,7 @@
       {
         "attribute":"footwork:max_fracture",
         "operation":"ADDITION",
-        "modify":0.25
+        "modify":0.2
       }
     ],
 "immersiveengineering:armor_faraday_legs":[
@@ -84,7 +84,7 @@
       {
         "attribute":"footwork:max_fracture",
         "operation":"ADDITION",
-        "modify":0.25
+        "modify":0.3
       }
     ],
 "immersiveengineering:armor_steel_chest":[
@@ -101,7 +101,7 @@
       {
         "attribute":"footwork:max_fracture",
         "operation":"ADDITION",
-        "modify":0.45
+        "modify":0.5
       }
     ],
 "immersiveengineering:armor_steel_feet":[
@@ -118,7 +118,7 @@
       {
         "attribute":"footwork:max_fracture",
         "operation":"ADDITION",
-        "modify":0.45
+        "modify":0.4
       }
     ],
 "immersiveengineering:armor_steel_head":[
@@ -135,7 +135,7 @@
       {
         "attribute":"footwork:max_fracture",
         "operation":"ADDITION",
-        "modify":0.45
+        "modify":0.4
       }
     ],
 "immersiveengineering:armor_steel_legs":[
@@ -152,7 +152,7 @@
       {
         "attribute":"footwork:max_fracture",
         "operation":"ADDITION",
-        "modify":0.45
+        "modify":0.5
       }
     ]
 }

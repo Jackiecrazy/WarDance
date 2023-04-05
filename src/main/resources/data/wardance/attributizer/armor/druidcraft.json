@@ -28,7 +28,7 @@
       {
         "attribute":"footwork:max_fracture",
         "operation":"ADDITION",
-        "modify":0.25
+        "modify":0.2
       }
     ],
 "druidcraft:bone_chestplate":[
@@ -60,7 +60,7 @@
       {
         "attribute":"footwork:max_fracture",
         "operation":"ADDITION",
-        "modify":0.25
+        "modify":0.4
       }
     ],
 "druidcraft:bone_helmet":[
@@ -92,7 +92,7 @@
       {
         "attribute":"footwork:max_fracture",
         "operation":"ADDITION",
-        "modify":0.25
+        "modify":0.2
       }
     ],
 "druidcraft:bone_leggings":[
@@ -124,7 +124,7 @@
       {
         "attribute":"footwork:max_fracture",
         "operation":"ADDITION",
-        "modify":0.25
+        "modify":0.3
       }
     ],
 "druidcraft:chitin_boots":[
@@ -151,7 +151,7 @@
       {
         "attribute":"footwork:max_fracture",
         "operation":"ADDITION",
-        "modify":0.65
+        "modify":0.6
       }
     ],
 "druidcraft:chitin_chestplate":[
@@ -178,7 +178,7 @@
       {
         "attribute":"footwork:max_fracture",
         "operation":"ADDITION",
-        "modify":1.05
+        "modify":1.2
       }
     ],
 "druidcraft:chitin_helmet":[
@@ -205,7 +205,7 @@
       {
         "attribute":"footwork:max_fracture",
         "operation":"ADDITION",
-        "modify":0.65
+        "modify":0.6
       }
     ],
 "druidcraft:chitin_leggings":[
@@ -232,7 +232,7 @@
       {
         "attribute":"footwork:max_fracture",
         "operation":"ADDITION",
-        "modify":0.85
+        "modify":0.9
       }
     ],
 "druidcraft:moonstone_boots":[
@@ -259,7 +259,7 @@
       {
         "attribute":"footwork:max_fracture",
         "operation":"ADDITION",
-        "modify":0.95
+        "modify":0.9
       }
     ],
 "druidcraft:moonstone_chestplate":[
@@ -286,7 +286,7 @@
       {
         "attribute":"footwork:max_fracture",
         "operation":"ADDITION",
-        "modify":1.65
+        "modify":1.8
       }
     ],
 "druidcraft:moonstone_helmet":[
@@ -313,7 +313,7 @@
       {
         "attribute":"footwork:max_fracture",
         "operation":"ADDITION",
-        "modify":0.95
+        "modify":0.9
       }
     ],
 "druidcraft:moonstone_leggings":[
@@ -340,7 +340,7 @@
       {
         "attribute":"footwork:max_fracture",
         "operation":"ADDITION",
-        "modify":1.35
+        "modify":1.4
       }
     ]
 }

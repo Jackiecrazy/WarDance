@@ -3,28 +3,28 @@
       {
         "attribute":"footwork:max_fracture",
         "operation":"ADDITION",
-        "modify":1.05
+        "modify":1
       }
     ],
 "hmag:ancient_chestplate":[
       {
         "attribute":"footwork:max_fracture",
         "operation":"ADDITION",
-        "modify":1.85
+        "modify":2
       }
     ],
 "hmag:ancient_helmet":[
       {
         "attribute":"footwork:max_fracture",
         "operation":"ADDITION",
-        "modify":1.05
+        "modify":1
       }
     ],
 "hmag:ancient_leggings":[
       {
         "attribute":"footwork:max_fracture",
         "operation":"ADDITION",
-        "modify":1.45
+        "modify":1.5
       }
     ],
 "hmag:necrotic_chainmail_boots":[
@@ -46,7 +46,7 @@
       {
         "attribute":"footwork:max_fracture",
         "operation":"ADDITION",
-        "modify":0.25
+        "modify":0.2
       }
     ],
 "hmag:necrotic_chainmail_chestplate":[
@@ -68,7 +68,7 @@
       {
         "attribute":"footwork:max_fracture",
         "operation":"ADDITION",
-        "modify":0.25
+        "modify":0.4
       }
     ],
 "hmag:necrotic_chainmail_helmet":[
@@ -90,7 +90,7 @@
       {
         "attribute":"footwork:max_fracture",
         "operation":"ADDITION",
-        "modify":0.25
+        "modify":0.2
       }
     ],
 "hmag:necrotic_chainmail_leggings":[
@@ -112,7 +112,7 @@
       {
         "attribute":"footwork:max_fracture",
         "operation":"ADDITION",
-        "modify":0.25
+        "modify":0.3
       }
     ]
 }

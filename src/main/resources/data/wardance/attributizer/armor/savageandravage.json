@@ -18,7 +18,7 @@
       {
         "attribute":"footwork:max_fracture",
         "operation":"ADDITION",
-        "modify":0.25
+        "modify":0.2
       }
     ],
 "savageandravage:griefer_chestplate":[
@@ -40,7 +40,7 @@
       {
         "attribute":"footwork:max_fracture",
         "operation":"ADDITION",
-        "modify":0.25
+        "modify":0.4
       }
     ],
 "savageandravage:griefer_helmet":[
@@ -62,7 +62,7 @@
       {
         "attribute":"footwork:max_fracture",
         "operation":"ADDITION",
-        "modify":0.25
+        "modify":0.2
       }
     ],
 "savageandravage:griefer_leggings":[
@@ -84,7 +84,7 @@
       {
         "attribute":"footwork:max_fracture",
         "operation":"ADDITION",
-        "modify":0.25
+        "modify":0.3
       }
     ]
 }

@@ -8,7 +8,7 @@
       {
         "attribute":"footwork:max_fracture",
         "operation":"ADDITION",
-        "modify":0.25
+        "modify":0.1
       }
     ],
 "eidolon:warlock_boots":[
@@ -40,7 +40,7 @@
       {
         "attribute":"footwork:max_fracture",
         "operation":"ADDITION",
-        "modify":0.25
+        "modify":0.2
       }
     ],
 "eidolon:warlock_cloak":[
@@ -72,7 +72,7 @@
       {
         "attribute":"footwork:max_fracture",
         "operation":"ADDITION",
-        "modify":0.25
+        "modify":0.4
       }
     ],
 "eidolon:warlock_hat":[
@@ -104,7 +104,7 @@
       {
         "attribute":"footwork:max_fracture",
         "operation":"ADDITION",
-        "modify":0.25
+        "modify":0.2
       }
     ]
 }

@@ -13,7 +13,7 @@
       {
         "attribute":"footwork:max_fracture",
         "operation":"ADDITION",
-        "modify":0.25
+        "modify":0.2
       }
     ],
 "blue_skies:aquite_chestplate":[
@@ -30,7 +30,7 @@
       {
         "attribute":"footwork:max_fracture",
         "operation":"ADDITION",
-        "modify":0.25
+        "modify":0.4
       }
     ],
 "blue_skies:aquite_helmet":[
@@ -47,7 +47,7 @@
       {
         "attribute":"footwork:max_fracture",
         "operation":"ADDITION",
-        "modify":0.25
+        "modify":0.2
       }
     ],
 "blue_skies:aquite_leggings":[
@@ -64,35 +64,35 @@
       {
         "attribute":"footwork:max_fracture",
         "operation":"ADDITION",
-        "modify":0.25
+        "modify":0.3
       }
     ],
 "blue_skies:charoite_boots":[
       {
         "attribute":"footwork:max_fracture",
         "operation":"ADDITION",
-        "modify":1.05
+        "modify":1
       }
     ],
 "blue_skies:charoite_chestplate":[
       {
         "attribute":"footwork:max_fracture",
         "operation":"ADDITION",
-        "modify":1.85
+        "modify":2
       }
     ],
 "blue_skies:charoite_helmet":[
       {
         "attribute":"footwork:max_fracture",
         "operation":"ADDITION",
-        "modify":1.05
+        "modify":1
       }
     ],
 "blue_skies:charoite_leggings":[
       {
         "attribute":"footwork:max_fracture",
         "operation":"ADDITION",
-        "modify":1.45
+        "modify":1.5
       }
     ],
 "blue_skies:diopside_boots":[
@@ -109,7 +109,7 @@
       {
         "attribute":"footwork:max_fracture",
         "operation":"ADDITION",
-        "modify":1.05
+        "modify":1
       }
     ],
 "blue_skies:diopside_chestplate":[
@@ -126,7 +126,7 @@
       {
         "attribute":"footwork:max_fracture",
         "operation":"ADDITION",
-        "modify":1.85
+        "modify":2
       }
     ],
 "blue_skies:diopside_helmet":[
@@ -143,7 +143,7 @@
       {
         "attribute":"footwork:max_fracture",
         "operation":"ADDITION",
-        "modify":1.05
+        "modify":1
       }
     ],
 "blue_skies:diopside_leggings":[
@@ -160,7 +160,7 @@
       {
         "attribute":"footwork:max_fracture",
         "operation":"ADDITION",
-        "modify":1.45
+        "modify":1.5
       }
     ],
 "blue_skies:horizonite_boots":[
@@ -182,7 +182,7 @@
       {
         "attribute":"footwork:max_fracture",
         "operation":"ADDITION",
-        "modify":0.25
+        "modify":0.2
       }
     ],
 "blue_skies:horizonite_chestplate":[
@@ -204,7 +204,7 @@
       {
         "attribute":"footwork:max_fracture",
         "operation":"ADDITION",
-        "modify":0.25
+        "modify":0.4
       }
     ],
 "blue_skies:horizonite_helmet":[
@@ -226,7 +226,7 @@
       {
         "attribute":"footwork:max_fracture",
         "operation":"ADDITION",
-        "modify":0.25
+        "modify":0.2
       }
     ],
 "blue_skies:horizonite_leggings":[
@@ -248,7 +248,7 @@
       {
         "attribute":"footwork:max_fracture",
         "operation":"ADDITION",
-        "modify":0.25
+        "modify":0.3
       }
     ],
 "blue_skies:pyrope_boots":[
@@ -270,7 +270,7 @@
       {
         "attribute":"footwork:max_fracture",
         "operation":"ADDITION",
-        "modify":0.25
+        "modify":0.2
       }
     ],
 "blue_skies:pyrope_chestplate":[
@@ -292,7 +292,7 @@
       {
         "attribute":"footwork:max_fracture",
         "operation":"ADDITION",
-        "modify":0.25
+        "modify":0.4
       }
     ],
 "blue_skies:pyrope_helmet":[
@@ -314,7 +314,7 @@
       {
         "attribute":"footwork:max_fracture",
         "operation":"ADDITION",
-        "modify":0.25
+        "modify":0.2
       }
     ],
 "blue_skies:pyrope_leggings":[
@@ -336,7 +336,7 @@
       {
         "attribute":"footwork:max_fracture",
         "operation":"ADDITION",
-        "modify":0.25
+        "modify":0.3
       }
     ],
 "blue_skies:shadow_boots":[
@@ -358,7 +358,7 @@
       {
         "attribute":"footwork:max_fracture",
         "operation":"ADDITION",
-        "modify":0.55
+        "modify":0.5
       }
     ],
 "blue_skies:shadow_chestplate":[
@@ -380,7 +380,7 @@
       {
         "attribute":"footwork:max_fracture",
         "operation":"ADDITION",
-        "modify":0.85
+        "modify":1
       }
     ],
 "blue_skies:shadow_helmet":[
@@ -402,7 +402,7 @@
       {
         "attribute":"footwork:max_fracture",
         "operation":"ADDITION",
-        "modify":0.55
+        "modify":0.5
       }
     ],
 "blue_skies:shadow_leggings":[
@@ -424,7 +424,7 @@
       {
         "attribute":"footwork:max_fracture",
         "operation":"ADDITION",
-        "modify":0.75
+        "modify":0.8
       }
     ]
 }

@@ -18,7 +18,7 @@
       {
         "attribute":"footwork:max_fracture",
         "operation":"ADDITION",
-        "modify":0.25
+        "modify":0.2
       }
     ],
 "minecraft:chainmail_chestplate":[
@@ -40,7 +40,7 @@
       {
         "attribute":"footwork:max_fracture",
         "operation":"ADDITION",
-        "modify":0.25
+        "modify":0.4
       }
     ],
 "minecraft:chainmail_helmet":[
@@ -62,7 +62,7 @@
       {
         "attribute":"footwork:max_fracture",
         "operation":"ADDITION",
-        "modify":0.25
+        "modify":0.2
       }
     ],
 "minecraft:chainmail_leggings":[
@@ -84,35 +84,35 @@
       {
         "attribute":"footwork:max_fracture",
         "operation":"ADDITION",
-        "modify":0.25
+        "modify":0.3
       }
     ],
 "minecraft:diamond_boots":[
       {
         "attribute":"footwork:max_fracture",
         "operation":"ADDITION",
-        "modify":1.05
+        "modify":1
       }
     ],
 "minecraft:diamond_chestplate":[
       {
         "attribute":"footwork:max_fracture",
         "operation":"ADDITION",
-        "modify":1.85
+        "modify":2
       }
     ],
 "minecraft:diamond_helmet":[
       {
         "attribute":"footwork:max_fracture",
         "operation":"ADDITION",
-        "modify":1.05
+        "modify":1
       }
     ],
 "minecraft:diamond_leggings":[
       {
         "attribute":"footwork:max_fracture",
         "operation":"ADDITION",
-        "modify":1.45
+        "modify":1.5
       }
     ],
 "minecraft:golden_boots":[
@@ -139,7 +139,7 @@
       {
         "attribute":"footwork:max_fracture",
         "operation":"ADDITION",
-        "modify":0.65
+        "modify":0.6
       }
     ],
 "minecraft:golden_chestplate":[
@@ -166,7 +166,7 @@
       {
         "attribute":"footwork:max_fracture",
         "operation":"ADDITION",
-        "modify":1.05
+        "modify":1.2
       }
     ],
 "minecraft:golden_helmet":[
@@ -193,7 +193,7 @@
       {
         "attribute":"footwork:max_fracture",
         "operation":"ADDITION",
-        "modify":0.65
+        "modify":0.6
       }
     ],
 "minecraft:golden_leggings":[
@@ -220,7 +220,7 @@
       {
         "attribute":"footwork:max_fracture",
         "operation":"ADDITION",
-        "modify":0.85
+        "modify":0.9
       }
     ],
 "minecraft:iron_boots":[
@@ -237,7 +237,7 @@
       {
         "attribute":"footwork:max_fracture",
         "operation":"ADDITION",
-        "modify":0.25
+        "modify":0.2
       }
     ],
 "minecraft:iron_chestplate":[
@@ -254,7 +254,7 @@
       {
         "attribute":"footwork:max_fracture",
         "operation":"ADDITION",
-        "modify":0.25
+        "modify":0.4
       }
     ],
 "minecraft:iron_helmet":[
@@ -271,7 +271,7 @@
       {
         "attribute":"footwork:max_fracture",
         "operation":"ADDITION",
-        "modify":0.25
+        "modify":0.2
       }
     ],
 "minecraft:iron_leggings":[
@@ -288,7 +288,7 @@
       {
         "attribute":"footwork:max_fracture",
         "operation":"ADDITION",
-        "modify":0.25
+        "modify":0.3
       }
     ],
 "minecraft:leather_boots":[
@@ -300,7 +300,7 @@
       {
         "attribute":"footwork:max_fracture",
         "operation":"ADDITION",
-        "modify":0.25
+        "modify":0.2
       }
     ],
 "minecraft:leather_chestplate":[
@@ -312,7 +312,7 @@
       {
         "attribute":"footwork:max_fracture",
         "operation":"ADDITION",
-        "modify":0.25
+        "modify":0.4
       }
     ],
 "minecraft:leather_helmet":[
@@ -324,7 +324,7 @@
       {
         "attribute":"footwork:max_fracture",
         "operation":"ADDITION",
-        "modify":0.25
+        "modify":0.2
       }
     ],
 "minecraft:leather_leggings":[
@@ -336,7 +336,7 @@
       {
         "attribute":"footwork:max_fracture",
         "operation":"ADDITION",
-        "modify":0.25
+        "modify":0.3
       }
     ],
 "minecraft:netherite_boots":[
@@ -348,7 +348,7 @@
       {
         "attribute":"footwork:max_fracture",
         "operation":"ADDITION",
-        "modify":0.85
+        "modify":0.8
       }
     ],
 "minecraft:netherite_chestplate":[
@@ -360,7 +360,7 @@
       {
         "attribute":"footwork:max_fracture",
         "operation":"ADDITION",
-        "modify":1.35
+        "modify":1.5
       }
     ],
 "minecraft:netherite_helmet":[
@@ -372,7 +372,7 @@
       {
         "attribute":"footwork:max_fracture",
         "operation":"ADDITION",
-        "modify":0.85
+        "modify":0.8
       }
     ],
 "minecraft:netherite_leggings":[
@@ -384,7 +384,7 @@
       {
         "attribute":"footwork:max_fracture",
         "operation":"ADDITION",
-        "modify":1.05
+        "modify":1.1
       }
     ],
 "minecraft:turtle_helmet":[
@@ -406,7 +406,7 @@
       {
         "attribute":"footwork:max_fracture",
         "operation":"ADDITION",
-        "modify":0.25
+        "modify":0.2
       }
     ]
 }

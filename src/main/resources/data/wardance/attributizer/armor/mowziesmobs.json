@@ -18,7 +18,7 @@
       {
         "attribute":"footwork:max_fracture",
         "operation":"ADDITION",
-        "modify":0.25
+        "modify":0.2
       }
     ],
 "mowziesmobs:barakoa_mask_bliss":[
@@ -35,7 +35,7 @@
       {
         "attribute":"footwork:max_fracture",
         "operation":"ADDITION",
-        "modify":0.25
+        "modify":0.2
       }
     ],
 "mowziesmobs:barakoa_mask_fear":[
@@ -52,7 +52,7 @@
       {
         "attribute":"footwork:max_fracture",
         "operation":"ADDITION",
-        "modify":0.25
+        "modify":0.2
       }
     ],
 "mowziesmobs:barakoa_mask_fury":[
@@ -69,7 +69,7 @@
       {
         "attribute":"footwork:max_fracture",
         "operation":"ADDITION",
-        "modify":0.25
+        "modify":0.2
       }
     ],
 "mowziesmobs:barakoa_mask_misery":[
@@ -86,7 +86,7 @@
       {
         "attribute":"footwork:max_fracture",
         "operation":"ADDITION",
-        "modify":0.25
+        "modify":0.2
       }
     ],
 "mowziesmobs:barakoa_mask_rage":[
@@ -103,7 +103,7 @@
       {
         "attribute":"footwork:max_fracture",
         "operation":"ADDITION",
-        "modify":0.25
+        "modify":0.2
       }
     ],
 "mowziesmobs:wrought_helmet":[
@@ -125,7 +125,7 @@
       {
         "attribute":"footwork:max_fracture",
         "operation":"ADDITION",
-        "modify":0.45
+        "modify":0.4
       }
     ]
 }

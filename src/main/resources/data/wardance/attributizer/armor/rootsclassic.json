@@ -18,7 +18,7 @@
       {
         "attribute":"footwork:max_fracture",
         "operation":"ADDITION",
-        "modify":0.25
+        "modify":0.2
       }
     ],
 "rootsclassic:sylvan_hood":[
@@ -40,7 +40,7 @@
       {
         "attribute":"footwork:max_fracture",
         "operation":"ADDITION",
-        "modify":0.25
+        "modify":0.2
       }
     ],
 "rootsclassic:sylvan_robe":[
@@ -62,7 +62,7 @@
       {
         "attribute":"footwork:max_fracture",
         "operation":"ADDITION",
-        "modify":0.25
+        "modify":0.3
       }
     ],
 "rootsclassic:sylvan_tunic":[
@@ -84,7 +84,7 @@
       {
         "attribute":"footwork:max_fracture",
         "operation":"ADDITION",
-        "modify":0.25
+        "modify":0.3
       }
     ],
 "rootsclassic:wildwood_boots":[
@@ -111,7 +111,7 @@
       {
         "attribute":"footwork:max_fracture",
         "operation":"ADDITION",
-        "modify":0.45
+        "modify":0.4
       }
     ],
 "rootsclassic:wildwood_leggings":[
@@ -138,7 +138,7 @@
       {
         "attribute":"footwork:max_fracture",
         "operation":"ADDITION",
-        "modify":0.65
+        "modify":0.7
       }
     ],
 "rootsclassic:wildwood_mask":[
@@ -165,7 +165,7 @@
       {
         "attribute":"footwork:max_fracture",
         "operation":"ADDITION",
-        "modify":0.45
+        "modify":0.4
       }
     ],
 "rootsclassic:wildwood_plate":[
@@ -192,7 +192,7 @@
       {
         "attribute":"footwork:max_fracture",
         "operation":"ADDITION",
-        "modify":0.75
+        "modify":0.9
       }
     ]
 }

@@ -3,56 +3,56 @@
       {
         "attribute":"footwork:max_fracture",
         "operation":"ADDITION",
-        "modify":1.05
+        "modify":1
       }
     ],
 "cyclic:crystal_chestplate":[
       {
         "attribute":"footwork:max_fracture",
         "operation":"ADDITION",
-        "modify":1.85
+        "modify":2
       }
     ],
 "cyclic:crystal_helmet":[
       {
         "attribute":"footwork:max_fracture",
         "operation":"ADDITION",
-        "modify":1.05
+        "modify":1
       }
     ],
 "cyclic:crystal_leggings":[
       {
         "attribute":"footwork:max_fracture",
         "operation":"ADDITION",
-        "modify":1.45
+        "modify":1.5
       }
     ],
 "cyclic:emerald_boots":[
       {
         "attribute":"footwork:max_fracture",
         "operation":"ADDITION",
-        "modify":1.05
+        "modify":1
       }
     ],
 "cyclic:emerald_chestplate":[
       {
         "attribute":"footwork:max_fracture",
         "operation":"ADDITION",
-        "modify":1.85
+        "modify":2
       }
     ],
 "cyclic:emerald_helmet":[
       {
         "attribute":"footwork:max_fracture",
         "operation":"ADDITION",
-        "modify":1.05
+        "modify":1
       }
     ],
 "cyclic:emerald_leggings":[
       {
         "attribute":"footwork:max_fracture",
         "operation":"ADDITION",
-        "modify":1.45
+        "modify":1.5
       }
     ],
 "cyclic:glowing_helmet":[
@@ -74,7 +74,7 @@
       {
         "attribute":"footwork:max_fracture",
         "operation":"ADDITION",
-        "modify":0.25
+        "modify":0.2
       }
     ]
 }

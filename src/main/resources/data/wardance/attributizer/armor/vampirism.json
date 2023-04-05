@@ -18,7 +18,7 @@
       {
         "attribute":"footwork:max_fracture",
         "operation":"ADDITION",
-        "modify":0.25
+        "modify":0.4
       }
     ],
 "vampirism:armor_of_swiftness_chest_normal":[
@@ -40,7 +40,7 @@
       {
         "attribute":"footwork:max_fracture",
         "operation":"ADDITION",
-        "modify":0.25
+        "modify":0.4
       }
     ],
 "vampirism:armor_of_swiftness_chest_ultimate":[
@@ -62,7 +62,7 @@
       {
         "attribute":"footwork:max_fracture",
         "operation":"ADDITION",
-        "modify":0.25
+        "modify":0.4
       }
     ],
 "vampirism:armor_of_swiftness_feet_enhanced":[
@@ -84,7 +84,7 @@
       {
         "attribute":"footwork:max_fracture",
         "operation":"ADDITION",
-        "modify":0.25
+        "modify":0.2
       }
     ],
 "vampirism:armor_of_swiftness_feet_normal":[
@@ -106,7 +106,7 @@
       {
         "attribute":"footwork:max_fracture",
         "operation":"ADDITION",
-        "modify":0.25
+        "modify":0.2
       }
     ],
 "vampirism:armor_of_swiftness_feet_ultimate":[
@@ -128,7 +128,7 @@
       {
         "attribute":"footwork:max_fracture",
         "operation":"ADDITION",
-        "modify":0.25
+        "modify":0.2
       }
     ],
 "vampirism:armor_of_swiftness_head_enhanced":[
@@ -150,7 +150,7 @@
       {
         "attribute":"footwork:max_fracture",
         "operation":"ADDITION",
-        "modify":0.25
+        "modify":0.2
       }
     ],
 "vampirism:armor_of_swiftness_head_normal":[
@@ -172,7 +172,7 @@
       {
         "attribute":"footwork:max_fracture",
         "operation":"ADDITION",
-        "modify":0.25
+        "modify":0.2
       }
     ],
 "vampirism:armor_of_swiftness_head_ultimate":[
@@ -194,7 +194,7 @@
       {
         "attribute":"footwork:max_fracture",
         "operation":"ADDITION",
-        "modify":0.25
+        "modify":0.2
       }
     ],
 "vampirism:armor_of_swiftness_legs_enhanced":[
@@ -216,7 +216,7 @@
       {
         "attribute":"footwork:max_fracture",
         "operation":"ADDITION",
-        "modify":0.25
+        "modify":0.3
       }
     ],
 "vampirism:armor_of_swiftness_legs_normal":[
@@ -238,7 +238,7 @@
       {
         "attribute":"footwork:max_fracture",
         "operation":"ADDITION",
-        "modify":0.25
+        "modify":0.3
       }
     ],
 "vampirism:armor_of_swiftness_legs_ultimate":[
@@ -260,7 +260,7 @@
       {
         "attribute":"footwork:max_fracture",
         "operation":"ADDITION",
-        "modify":0.25
+        "modify":0.3
       }
     ],
 "vampirism:hunter_coat_chest_enhanced":[
@@ -287,7 +287,7 @@
       {
         "attribute":"footwork:max_fracture",
         "operation":"ADDITION",
-        "modify":0.25
+        "modify":0.4
       }
     ],
 "vampirism:hunter_coat_chest_normal":[
@@ -314,7 +314,7 @@
       {
         "attribute":"footwork:max_fracture",
         "operation":"ADDITION",
-        "modify":0.25
+        "modify":0.4
       }
     ],
 "vampirism:hunter_coat_chest_ultimate":[
@@ -341,7 +341,7 @@
       {
         "attribute":"footwork:max_fracture",
         "operation":"ADDITION",
-        "modify":0.25
+        "modify":0.4
       }
     ],
 "vampirism:hunter_coat_feet_enhanced":[
@@ -368,7 +368,7 @@
       {
         "attribute":"footwork:max_fracture",
         "operation":"ADDITION",
-        "modify":0.25
+        "modify":0.2
       }
     ],
 "vampirism:hunter_coat_feet_normal":[
@@ -395,7 +395,7 @@
       {
         "attribute":"footwork:max_fracture",
         "operation":"ADDITION",
-        "modify":0.25
+        "modify":0.2
       }
     ],
 "vampirism:hunter_coat_feet_ultimate":[
@@ -422,7 +422,7 @@
       {
         "attribute":"footwork:max_fracture",
         "operation":"ADDITION",
-        "modify":0.25
+        "modify":0.2
       }
     ],
 "vampirism:hunter_coat_head_enhanced":[
@@ -449,7 +449,7 @@
       {
         "attribute":"footwork:max_fracture",
         "operation":"ADDITION",
-        "modify":0.25
+        "modify":0.2
       }
     ],
 "vampirism:hunter_coat_head_normal":[
@@ -476,7 +476,7 @@
       {
         "attribute":"footwork:max_fracture",
         "operation":"ADDITION",
-        "modify":0.25
+        "modify":0.2
       }
     ],
 "vampirism:hunter_coat_head_ultimate":[
@@ -503,7 +503,7 @@
       {
         "attribute":"footwork:max_fracture",
         "operation":"ADDITION",
-        "modify":0.25
+        "modify":0.2
       }
     ],
 "vampirism:hunter_coat_legs_enhanced":[
@@ -530,7 +530,7 @@
       {
         "attribute":"footwork:max_fracture",
         "operation":"ADDITION",
-        "modify":0.25
+        "modify":0.3
       }
     ],
 "vampirism:hunter_coat_legs_normal":[
@@ -557,7 +557,7 @@
       {
         "attribute":"footwork:max_fracture",
         "operation":"ADDITION",
-        "modify":0.25
+        "modify":0.3
       }
     ],
 "vampirism:hunter_coat_legs_ultimate":[
@@ -584,7 +584,7 @@
       {
         "attribute":"footwork:max_fracture",
         "operation":"ADDITION",
-        "modify":0.25
+        "modify":0.3
       }
     ],
 "vampirism:hunter_hat_head_0":[
@@ -611,7 +611,7 @@
       {
         "attribute":"footwork:max_fracture",
         "operation":"ADDITION",
-        "modify":0.25
+        "modify":0.4
       }
     ],
 "vampirism:hunter_hat_head_1":[
@@ -638,7 +638,7 @@
       {
         "attribute":"footwork:max_fracture",
         "operation":"ADDITION",
-        "modify":0.25
+        "modify":0.2
       }
     ],
 "vampirism:obsidian_armor_chest_enhanced":[
@@ -650,7 +650,7 @@
       {
         "attribute":"footwork:max_fracture",
         "operation":"ADDITION",
-        "modify":2.05
+        "modify":2.2
       }
     ],
 "vampirism:obsidian_armor_chest_normal":[
@@ -662,7 +662,7 @@
       {
         "attribute":"footwork:max_fracture",
         "operation":"ADDITION",
-        "modify":1.85
+        "modify":2
       }
     ],
 "vampirism:obsidian_armor_chest_ultimate":[
@@ -674,7 +674,7 @@
       {
         "attribute":"footwork:max_fracture",
         "operation":"ADDITION",
-        "modify":2.15
+        "modify":2.3
       }
     ],
 "vampirism:obsidian_armor_feet_enhanced":[
@@ -686,7 +686,7 @@
       {
         "attribute":"footwork:max_fracture",
         "operation":"ADDITION",
-        "modify":1.15
+        "modify":1.1
       }
     ],
 "vampirism:obsidian_armor_feet_normal":[
@@ -698,7 +698,7 @@
       {
         "attribute":"footwork:max_fracture",
         "operation":"ADDITION",
-        "modify":1.05
+        "modify":1
       }
     ],
 "vampirism:obsidian_armor_feet_ultimate":[
@@ -710,7 +710,7 @@
       {
         "attribute":"footwork:max_fracture",
         "operation":"ADDITION",
-        "modify":1.25
+        "modify":1.2
       }
     ],
 "vampirism:obsidian_armor_head_enhanced":[
@@ -722,7 +722,7 @@
       {
         "attribute":"footwork:max_fracture",
         "operation":"ADDITION",
-        "modify":1.15
+        "modify":1.1
       }
     ],
 "vampirism:obsidian_armor_head_normal":[
@@ -734,7 +734,7 @@
       {
         "attribute":"footwork:max_fracture",
         "operation":"ADDITION",
-        "modify":1.05
+        "modify":1
       }
     ],
 "vampirism:obsidian_armor_head_ultimate":[
@@ -746,7 +746,7 @@
       {
         "attribute":"footwork:max_fracture",
         "operation":"ADDITION",
-        "modify":1.25
+        "modify":1.2
       }
     ],
 "vampirism:obsidian_armor_legs_enhanced":[
@@ -758,7 +758,7 @@
       {
         "attribute":"footwork:max_fracture",
         "operation":"ADDITION",
-        "modify":1.55
+        "modify":1.6
       }
     ],
 "vampirism:obsidian_armor_legs_normal":[
@@ -770,7 +770,7 @@
       {
         "attribute":"footwork:max_fracture",
         "operation":"ADDITION",
-        "modify":1.45
+        "modify":1.5
       }
     ],
 "vampirism:obsidian_armor_legs_ultimate":[
@@ -782,7 +782,7 @@
       {
         "attribute":"footwork:max_fracture",
         "operation":"ADDITION",
-        "modify":1.65
+        "modify":1.7
       }
     ],
 "vampirism:vampire_cloak_black_blue":[
@@ -804,7 +804,7 @@
       {
         "attribute":"footwork:max_fracture",
         "operation":"ADDITION",
-        "modify":0.25
+        "modify":0.4
       }
     ],
 "vampirism:vampire_cloak_black_red":[
@@ -826,7 +826,7 @@
       {
         "attribute":"footwork:max_fracture",
         "operation":"ADDITION",
-        "modify":0.25
+        "modify":0.4
       }
     ],
 "vampirism:vampire_cloak_black_white":[
@@ -848,7 +848,7 @@
       {
         "attribute":"footwork:max_fracture",
         "operation":"ADDITION",
-        "modify":0.25
+        "modify":0.4
       }
     ],
 "vampirism:vampire_cloak_red_black":[
@@ -870,7 +870,7 @@
       {
         "attribute":"footwork:max_fracture",
         "operation":"ADDITION",
-        "modify":0.25
+        "modify":0.4
       }
     ],
 "vampirism:vampire_cloak_white_black":[
@@ -892,7 +892,7 @@
       {
         "attribute":"footwork:max_fracture",
         "operation":"ADDITION",
-        "modify":0.25
+        "modify":0.4
       }
     ],
 "vampirism:vampire_clothing_boots":[
@@ -914,7 +914,7 @@
       {
         "attribute":"footwork:max_fracture",
         "operation":"ADDITION",
-        "modify":0.25
+        "modify":0.2
       }
     ],
 "vampirism:vampire_clothing_crown":[
@@ -936,7 +936,7 @@
       {
         "attribute":"footwork:max_fracture",
         "operation":"ADDITION",
-        "modify":0.25
+        "modify":0.4
       }
     ],
 "vampirism:vampire_clothing_hat":[
@@ -958,7 +958,7 @@
       {
         "attribute":"footwork:max_fracture",
         "operation":"ADDITION",
-        "modify":0.25
+        "modify":0.2
       }
     ],
 "vampirism:vampire_clothing_legs":[
@@ -980,7 +980,7 @@
       {
         "attribute":"footwork:max_fracture",
         "operation":"ADDITION",
-        "modify":0.25
+        "modify":0.3
       }
     ]
 }

@@ -18,7 +18,7 @@
       {
         "attribute":"footwork:max_fracture",
         "operation":"ADDITION",
-        "modify":0.25
+        "modify":0.2
       }
     ],
 "twilightforest:arctic_chestplate":[
@@ -40,7 +40,7 @@
       {
         "attribute":"footwork:max_fracture",
         "operation":"ADDITION",
-        "modify":0.25
+        "modify":0.4
       }
     ],
 "twilightforest:arctic_helmet":[
@@ -62,7 +62,7 @@
       {
         "attribute":"footwork:max_fracture",
         "operation":"ADDITION",
-        "modify":0.25
+        "modify":0.2
       }
     ],
 "twilightforest:arctic_leggings":[
@@ -84,7 +84,7 @@
       {
         "attribute":"footwork:max_fracture",
         "operation":"ADDITION",
-        "modify":0.25
+        "modify":0.3
       }
     ],
 "twilightforest:fiery_boots":[
@@ -106,7 +106,7 @@
       {
         "attribute":"footwork:max_fracture",
         "operation":"ADDITION",
-        "modify":0.45
+        "modify":0.4
       }
     ],
 "twilightforest:fiery_chestplate":[
@@ -128,7 +128,7 @@
       {
         "attribute":"footwork:max_fracture",
         "operation":"ADDITION",
-        "modify":0.75
+        "modify":0.9
       }
     ],
 "twilightforest:fiery_helmet":[
@@ -150,7 +150,7 @@
       {
         "attribute":"footwork:max_fracture",
         "operation":"ADDITION",
-        "modify":0.45
+        "modify":0.4
       }
     ],
 "twilightforest:fiery_leggings":[
@@ -172,7 +172,7 @@
       {
         "attribute":"footwork:max_fracture",
         "operation":"ADDITION",
-        "modify":0.65
+        "modify":0.7
       }
     ],
 "twilightforest:ironwood_boots":[
@@ -194,7 +194,7 @@
       {
         "attribute":"footwork:max_fracture",
         "operation":"ADDITION",
-        "modify":0.25
+        "modify":0.2
       }
     ],
 "twilightforest:ironwood_chestplate":[
@@ -216,7 +216,7 @@
       {
         "attribute":"footwork:max_fracture",
         "operation":"ADDITION",
-        "modify":0.25
+        "modify":0.4
       }
     ],
 "twilightforest:ironwood_helmet":[
@@ -238,7 +238,7 @@
       {
         "attribute":"footwork:max_fracture",
         "operation":"ADDITION",
-        "modify":0.25
+        "modify":0.2
       }
     ],
 "twilightforest:ironwood_leggings":[
@@ -260,7 +260,7 @@
       {
         "attribute":"footwork:max_fracture",
         "operation":"ADDITION",
-        "modify":0.25
+        "modify":0.3
       }
     ],
 "twilightforest:knightmetal_boots":[
@@ -282,7 +282,7 @@
       {
         "attribute":"footwork:max_fracture",
         "operation":"ADDITION",
-        "modify":0.45
+        "modify":0.4
       }
     ],
 "twilightforest:knightmetal_chestplate":[
@@ -304,7 +304,7 @@
       {
         "attribute":"footwork:max_fracture",
         "operation":"ADDITION",
-        "modify":0.55
+        "modify":0.7
       }
     ],
 "twilightforest:knightmetal_helmet":[
@@ -326,7 +326,7 @@
       {
         "attribute":"footwork:max_fracture",
         "operation":"ADDITION",
-        "modify":0.45
+        "modify":0.4
       }
     ],
 "twilightforest:knightmetal_leggings":[
@@ -348,7 +348,7 @@
       {
         "attribute":"footwork:max_fracture",
         "operation":"ADDITION",
-        "modify":0.45
+        "modify":0.5
       }
     ],
 "twilightforest:naga_chestplate":[
@@ -375,7 +375,7 @@
       {
         "attribute":"footwork:max_fracture",
         "operation":"ADDITION",
-        "modify":0.25
+        "modify":0.4
       }
     ],
 "twilightforest:naga_leggings":[
@@ -402,7 +402,7 @@
       {
         "attribute":"footwork:max_fracture",
         "operation":"ADDITION",
-        "modify":0.25
+        "modify":0.3
       }
     ],
 "twilightforest:phantom_chestplate":[
@@ -424,7 +424,7 @@
       {
         "attribute":"footwork:max_fracture",
         "operation":"ADDITION",
-        "modify":0.85
+        "modify":1
       }
     ],
 "twilightforest:phantom_helmet":[
@@ -446,7 +446,7 @@
       {
         "attribute":"footwork:max_fracture",
         "operation":"ADDITION",
-        "modify":0.55
+        "modify":0.5
       }
     ],
 "twilightforest:steeleaf_boots":[
@@ -463,7 +463,7 @@
       {
         "attribute":"footwork:max_fracture",
         "operation":"ADDITION",
-        "modify":0.45
+        "modify":0.4
       }
     ],
 "twilightforest:steeleaf_chestplate":[
@@ -480,7 +480,7 @@
       {
         "attribute":"footwork:max_fracture",
         "operation":"ADDITION",
-        "modify":0.75
+        "modify":0.9
       }
     ],
 "twilightforest:steeleaf_helmet":[
@@ -497,7 +497,7 @@
       {
         "attribute":"footwork:max_fracture",
         "operation":"ADDITION",
-        "modify":0.45
+        "modify":0.4
       }
     ],
 "twilightforest:steeleaf_leggings":[
@@ -514,7 +514,7 @@
       {
         "attribute":"footwork:max_fracture",
         "operation":"ADDITION",
-        "modify":0.65
+        "modify":0.7
       }
     ],
 "twilightforest:yeti_boots":[
@@ -556,7 +556,7 @@
       {
         "attribute":"footwork:max_fracture",
         "operation":"ADDITION",
-        "modify":0.25
+        "modify":0.2
       }
     ],
 "twilightforest:yeti_chestplate":[
@@ -598,7 +598,7 @@
       {
         "attribute":"footwork:max_fracture",
         "operation":"ADDITION",
-        "modify":0.25
+        "modify":0.4
       }
     ],
 "twilightforest:yeti_helmet":[
@@ -640,7 +640,7 @@
       {
         "attribute":"footwork:max_fracture",
         "operation":"ADDITION",
-        "modify":0.25
+        "modify":0.2
       }
     ],
 "twilightforest:yeti_leggings":[
@@ -682,7 +682,7 @@
       {
         "attribute":"footwork:max_fracture",
         "operation":"ADDITION",
-        "modify":0.25
+        "modify":0.3
       }
     ]
 }

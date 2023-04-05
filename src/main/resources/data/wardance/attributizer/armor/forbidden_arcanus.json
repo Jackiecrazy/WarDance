@@ -13,7 +13,7 @@
       {
         "attribute":"footwork:max_fracture",
         "operation":"ADDITION",
-        "modify":0.35
+        "modify":0.3
       }
     ],
 "forbidden_arcanus:deorum_chestplate":[
@@ -30,7 +30,7 @@
       {
         "attribute":"footwork:max_fracture",
         "operation":"ADDITION",
-        "modify":0.45
+        "modify":0.6
       }
     ],
 "forbidden_arcanus:deorum_helmet":[
@@ -47,7 +47,7 @@
       {
         "attribute":"footwork:max_fracture",
         "operation":"ADDITION",
-        "modify":0.35
+        "modify":0.3
       }
     ],
 "forbidden_arcanus:deorum_leggings":[
@@ -64,7 +64,7 @@
       {
         "attribute":"footwork:max_fracture",
         "operation":"ADDITION",
-        "modify":0.35
+        "modify":0.4
       }
     ],
 "forbidden_arcanus:draco_arcanus_boots":[
@@ -81,7 +81,7 @@
       {
         "attribute":"footwork:max_fracture",
         "operation":"ADDITION",
-        "modify":0.85
+        "modify":0.8
       }
     ],
 "forbidden_arcanus:draco_arcanus_chestplate":[
@@ -98,7 +98,7 @@
       {
         "attribute":"footwork:max_fracture",
         "operation":"ADDITION",
-        "modify":1.35
+        "modify":1.5
       }
     ],
 "forbidden_arcanus:draco_arcanus_helmet":[
@@ -115,7 +115,7 @@
       {
         "attribute":"footwork:max_fracture",
         "operation":"ADDITION",
-        "modify":0.85
+        "modify":0.8
       }
     ],
 "forbidden_arcanus:draco_arcanus_leggings":[
@@ -132,7 +132,7 @@
       {
         "attribute":"footwork:max_fracture",
         "operation":"ADDITION",
-        "modify":1.05
+        "modify":1.1
       }
     ],
 "forbidden_arcanus:mortem_boots":[
@@ -154,7 +154,7 @@
       {
         "attribute":"footwork:max_fracture",
         "operation":"ADDITION",
-        "modify":0.45
+        "modify":0.4
       }
     ],
 "forbidden_arcanus:mortem_chestplate":[
@@ -176,7 +176,7 @@
       {
         "attribute":"footwork:max_fracture",
         "operation":"ADDITION",
-        "modify":0.55
+        "modify":0.7
       }
     ],
 "forbidden_arcanus:mortem_helmet":[
@@ -198,7 +198,7 @@
       {
         "attribute":"footwork:max_fracture",
         "operation":"ADDITION",
-        "modify":0.45
+        "modify":0.4
       }
     ],
 "forbidden_arcanus:mortem_leggings":[
@@ -220,35 +220,35 @@
       {
         "attribute":"footwork:max_fracture",
         "operation":"ADDITION",
-        "modify":0.45
+        "modify":0.5
       }
     ],
 "forbidden_arcanus:tyr_boots":[
       {
         "attribute":"footwork:max_fracture",
         "operation":"ADDITION",
-        "modify":1.25
+        "modify":1.2
       }
     ],
 "forbidden_arcanus:tyr_chestplate":[
       {
         "attribute":"footwork:max_fracture",
         "operation":"ADDITION",
-        "modify":2.35
+        "modify":2.5
       }
     ],
 "forbidden_arcanus:tyr_helmet":[
       {
         "attribute":"footwork:max_fracture",
         "operation":"ADDITION",
-        "modify":1.25
+        "modify":1.2
       }
     ],
 "forbidden_arcanus:tyr_leggings":[
       {
         "attribute":"footwork:max_fracture",
         "operation":"ADDITION",
-        "modify":1.85
+        "modify":1.9
       }
     ]
 }

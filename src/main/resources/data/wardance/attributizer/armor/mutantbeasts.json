@@ -23,7 +23,7 @@
       {
         "attribute":"footwork:max_fracture",
         "operation":"ADDITION",
-        "modify":0.25
+        "modify":0.2
       }
     ],
 "mutantbeasts:mutant_skeleton_chestplate":[
@@ -50,7 +50,7 @@
       {
         "attribute":"footwork:max_fracture",
         "operation":"ADDITION",
-        "modify":0.25
+        "modify":0.4
       }
     ],
 "mutantbeasts:mutant_skeleton_leggings":[
@@ -77,7 +77,7 @@
       {
         "attribute":"footwork:max_fracture",
         "operation":"ADDITION",
-        "modify":0.25
+        "modify":0.3
       }
     ],
 "mutantbeasts:mutant_skeleton_skull":[
@@ -104,7 +104,7 @@
       {
         "attribute":"footwork:max_fracture",
         "operation":"ADDITION",
-        "modify":0.25
+        "modify":0.2
       }
     ],
 "mutantmore:mutant_wither_skeleton_boots":[
@@ -126,7 +126,7 @@
       {
         "attribute":"footwork:max_fracture",
         "operation":"ADDITION",
-        "modify":0.25
+        "modify":0.2
       }
     ],
 "mutantmore:mutant_wither_skeleton_chestplate":[
@@ -148,7 +148,7 @@
       {
         "attribute":"footwork:max_fracture",
         "operation":"ADDITION",
-        "modify":0.25
+        "modify":0.4
       }
     ],
 "mutantmore:mutant_wither_skeleton_leggings":[
@@ -170,7 +170,7 @@
       {
         "attribute":"footwork:max_fracture",
         "operation":"ADDITION",
-        "modify":0.25
+        "modify":0.3
       }
     ],
 "mutantmore:mutant_wither_skeleton_skull":[
@@ -192,7 +192,7 @@
       {
         "attribute":"footwork:max_fracture",
         "operation":"ADDITION",
-        "modify":0.25
+        "modify":0.2
       }
     ]
 }
