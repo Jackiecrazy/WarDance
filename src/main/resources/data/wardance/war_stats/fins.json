@@ -1,12 +1,12 @@
 {
 "fins:red_claw_gauntlet":{
-        "attack": "3.2",
-        "defend": "1",
-        "shield": "false"
+        "attack": 3.2,
+        "defend": 1,
+        "shield": false
     },
 "fins:white_claw_gauntlet":{
-        "attack": "3.2",
-        "defend": "1",
-        "shield": "false"
+        "attack": 3.2,
+        "defend": 1,
+        "shield": false
     }
 }

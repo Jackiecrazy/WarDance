@@ -1,12 +1,12 @@
 {
 "pandoras_creatures:arachnon_hammer":{
-        "attack": "6",
-        "defend": "0.90",
-        "shield": "false"
+        "attack": 6,
+        "defend": 0.90,
+        "shield": false
     },
 "pandoras_creatures:arachnon_hammer":{
-        "attack": "6",
-        "defend": "0.90",
-        "shield": "false"
+        "attack": 6,
+        "defend": 0.90,
+        "shield": false
     }
 }

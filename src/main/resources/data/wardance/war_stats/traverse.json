@@ -1,17 +1,17 @@
 {
 "traverse:fir_door":{
-        "attack": "6",
-        "defend": "0.50",
-        "shield": "true"
+        "attack": 6,
+        "defend": 0.50,
+        "shield": true
     },
 "traverse:fir_sign":{
-        "attack": "2.4",
-        "defend": "0.90",
-        "shield": "false"
+        "attack": 2.4,
+        "defend": 0.90,
+        "shield": false
     },
 "traverse:fir_trapdoor":{
-        "attack": "3",
-        "defend": "0.70",
-        "shield": "true"
+        "attack": 3,
+        "defend": 0.70,
+        "shield": true
     }
 }

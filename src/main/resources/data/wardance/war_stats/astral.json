@@ -1,27 +1,27 @@
 {
 "astral:phantasmal_axe":{
-        "attack": "4",
-        "defend": "0.9",
-        "shield": "false"
+        "attack": 4,
+        "defend": 0.9,
+        "shield": false
     },
 "astral:phantasmal_hoe":{
-        "attack": "1",
-        "defend": "1",
-        "shield": "false"
+        "attack": 1,
+        "defend": 1,
+        "shield": false
     },
 "astral:phantasmal_pickaxe":{
-        "attack": "2.5",
-        "defend": "1",
-        "shield": "false"
+        "attack": 2.5,
+        "defend": 1,
+        "shield": false
     },
 "astral:phantasmal_shovel":{
-        "attack": "6",
-        "defend": "0.9",
-        "shield": "false"
+        "attack": 6,
+        "defend": 0.9,
+        "shield": false
     },
 "astral:phantasmal_sword":{
-        "attack": "2.6",
-        "defend": "0.9",
-        "shield": "false"
+        "attack": 2.6,
+        "defend": 0.9,
+        "shield": false
     }
 }

@@ -1,27 +1,27 @@
 {
 "deeperdarker:warden_axe":{
-        "attack": "4",
-        "defend": "0.90",
-        "shield": "false"
+        "attack": 4,
+        "defend": 0.90,
+        "shield": false
     },
 "deeperdarker:warden_hoe":{
-        "attack": "1",
-        "defend": "1.00",
-        "shield": "false"
+        "attack": 1,
+        "defend": 1.00,
+        "shield": false
     },
 "deeperdarker:warden_pickaxe":{
-        "attack": "2.5",
-        "defend": "1.00",
-        "shield": "false"
+        "attack": 2.5,
+        "defend": 1.00,
+        "shield": false
     },
 "deeperdarker:warden_shovel":{
-        "attack": "6",
-        "defend": "0.90",
-        "shield": "false"
+        "attack": 6,
+        "defend": 0.90,
+        "shield": false
     },
 "deeperdarker:warden_sword":{
-        "attack": "2.6",
-        "defend": "0.90",
-        "shield": "false"
+        "attack": 2.6,
+        "defend": 0.90,
+        "shield": false
     }
 }

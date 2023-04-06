@@ -1,37 +1,37 @@
 {
 "alexsmobs:falconry_glove":{
-        "attack": "3.2",
-        "defend": "1",
-        "shield": "false"
+        "attack": 3.2,
+        "defend": 1,
+        "shield": false
     },
 "alexsmobs:ghostly_pickaxe":{
-        "attack": "2.5",
-        "defend": "1",
-        "shield": "false"
+        "attack": 2.5,
+        "defend": 1,
+        "shield": false
     },
 "alexsmobs:hemolymph_blaster":{
-        "attack": "1.8",
-        "defend": "1.1",
-        "shield": "false"
+        "attack": 1.8,
+        "defend": 1.1,
+        "shield": false
     },
 "alexsmobs:shield_of_the_deep":{
-        "attack": "4",
-        "defend": "0.6",
-        "shield": "true"
+        "attack": 4,
+        "defend": 0.6,
+        "shield": true
     },
 "alexsmobs:skelewag_sword":{
-        "attack": "2.6",
-        "defend": "0.9",
-        "shield": "false"
+        "attack": 2.6,
+        "defend": 0.9,
+        "shield": false
     },
 "alexsmobs:stink_ray":{
-        "attack": "1.8",
-        "defend": "1.1",
-        "shield": "false"
+        "attack": 1.8,
+        "defend": 1.1,
+        "shield": false
     },
 "alexsmobs:tendon_whip":{
-        "attack": "1.4",
-        "defend": "1",
-        "shield": "false"
+        "attack": 1.4,
+        "defend": 1,
+        "shield": false
     }
 }

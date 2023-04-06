@@ -1,207 +1,207 @@
 {
 "craftvania2:alucard_sword":{
-        "attack": "2.6",
-        "defend": "0.90",
-        "shield": "false"
+        "attack": 2.6,
+        "defend": 0.90,
+        "shield": false
     },
 "craftvania2:alucard_sword_modern":{
-        "attack": "2.6",
-        "defend": "0.90",
-        "shield": "false"
+        "attack": 2.6,
+        "defend": 0.90,
+        "shield": false
     },
 "craftvania2:axe_subweapon_tool":{
-        "attack": "4",
-        "defend": "0.90",
-        "shield": "false"
+        "attack": 4,
+        "defend": 0.90,
+        "shield": false
     },
 "craftvania2:axetoolretro":{
-        "attack": "4",
-        "defend": "0.90",
-        "shield": "false"
+        "attack": 4,
+        "defend": 0.90,
+        "shield": false
     },
 "craftvania2:bamboosword":{
-        "attack": "2.6",
-        "defend": "0.90",
-        "shield": "false"
+        "attack": 2.6,
+        "defend": 0.90,
+        "shield": false
     },
 "craftvania2:burtgang":{
-        "attack": "2.9",
-        "defend": "0.9",
-        "shield": "false"
+        "attack": 2.9,
+        "defend": 0.9,
+        "shield": false
     },
 "craftvania2:chain_w_hip":{
-        "attack": "1.4",
-        "defend": "1",
-        "shield": "false"
+        "attack": 1.4,
+        "defend": 1,
+        "shield": false
     },
 "craftvania2:claimh_solais":{
-        "attack": "2.9",
-        "defend": "0.9",
-        "shield": "false"
+        "attack": 2.9,
+        "defend": 0.9,
+        "shield": false
     },
 "craftvania2:claymore":{
-        "attack": "3.8",
-        "defend": "0.80",
-        "shield": "false"
+        "attack": 3.8,
+        "defend": 0.80,
+        "shield": false
     },
 "craftvania2:crissaegrim":{
-        "attack": "2.9",
-        "defend": "0.9",
-        "shield": "false"
+        "attack": 2.9,
+        "defend": 0.9,
+        "shield": false
     },
 "craftvania2:dagger_subweapon_tool":{
-        "attack": "1.3",
-        "defend": "1.00",
-        "shield": "false"
+        "attack": 1.3,
+        "defend": 1.00,
+        "shield": false
     },
 "craftvania2:daybreak":{
-        "attack": "2.9",
-        "defend": "0.9",
-        "shield": "false"
+        "attack": 2.9,
+        "defend": 0.9,
+        "shield": false
     },
 "craftvania2:diamond_whip":{
-        "attack": "1.4",
-        "defend": "1",
-        "shield": "false"
+        "attack": 1.4,
+        "defend": 1,
+        "shield": false
     },
 "craftvania2:fire_whip":{
-        "attack": "1.4",
-        "defend": "1",
-        "shield": "false"
+        "attack": 1.4,
+        "defend": 1,
+        "shield": false
     },
 "craftvania2:flamesword":{
-        "attack": "2.6",
-        "defend": "0.90",
-        "shield": "false"
+        "attack": 2.6,
+        "defend": 0.90,
+        "shield": false
     },
 "craftvania2:gold_chain_whip":{
-        "attack": "1.4",
-        "defend": "1",
-        "shield": "false"
+        "attack": 1.4,
+        "defend": 1,
+        "shield": false
     },
 "craftvania2:heavnessword":{
-        "attack": "2.6",
-        "defend": "0.90",
-        "shield": "false"
+        "attack": 2.6,
+        "defend": 0.90,
+        "shield": false
     },
 "craftvania2:holy_rod":{
-        "attack": "0.5",
-        "defend": "1.00",
-        "shield": "false"
+        "attack": 0.5,
+        "defend": 1.00,
+        "shield": false
     },
 "craftvania2:holysword":{
-        "attack": "2.6",
-        "defend": "0.90",
-        "shield": "false"
+        "attack": 2.6,
+        "defend": 0.90,
+        "shield": false
     },
 "craftvania2:hrunting":{
-        "attack": "2.9",
-        "defend": "0.9",
-        "shield": "false"
+        "attack": 2.9,
+        "defend": 0.9,
+        "shield": false
     },
 "craftvania2:ice_sword":{
-        "attack": "2.6",
-        "defend": "0.90",
-        "shield": "false"
+        "attack": 2.6,
+        "defend": 0.90,
+        "shield": false
     },
 "craftvania2:icewhip":{
-        "attack": "1.4",
-        "defend": "1",
-        "shield": "false"
+        "attack": 1.4,
+        "defend": 1,
+        "shield": false
     },
 "craftvania2:jewel_sword":{
-        "attack": "2.6",
-        "defend": "0.90",
-        "shield": "false"
+        "attack": 2.6,
+        "defend": 0.90,
+        "shield": false
     },
 "craftvania2:leather_whip":{
-        "attack": "1.4",
-        "defend": "1",
-        "shield": "false"
+        "attack": 1.4,
+        "defend": 1,
+        "shield": false
     },
 "craftvania2:mace":{
-        "attack": "6",
-        "defend": "0.90",
-        "shield": "false"
+        "attack": 6,
+        "defend": 0.90,
+        "shield": false
     },
 "craftvania2:masamune":{
-        "attack": "2.9",
-        "defend": "0.9",
-        "shield": "false"
+        "attack": 2.9,
+        "defend": 0.9,
+        "shield": false
     },
 "craftvania2:millicanssword":{
-        "attack": "2.6",
-        "defend": "0.90",
-        "shield": "false"
+        "attack": 2.6,
+        "defend": 0.90,
+        "shield": false
     },
 "craftvania2:morning_star_w_hip":{
-        "attack": "1.4",
-        "defend": "1",
-        "shield": "false"
+        "attack": 1.4,
+        "defend": 1,
+        "shield": false
     },
 "craftvania2:moruneblade":{
-        "attack": "2.9",
-        "defend": "0.9",
-        "shield": "false"
+        "attack": 2.9,
+        "defend": 0.9,
+        "shield": false
     },
 "craftvania2:muramasa":{
-        "attack": "2.9",
-        "defend": "0.9",
-        "shield": "false"
+        "attack": 2.9,
+        "defend": 0.9,
+        "shield": false
     },
 "craftvania2:nunchaku":{
-        "attack": "2.5",
-        "defend": "0.7",
-        "shield": "false"
+        "attack": 2.5,
+        "defend": 0.7,
+        "shield": false
     },
 "craftvania2:retrodaggertool":{
-        "attack": "1.3",
-        "defend": "1.00",
-        "shield": "false"
+        "attack": 1.3,
+        "defend": 1.00,
+        "shield": false
     },
 "craftvania2:retrovampirekiller":{
-        "attack": "1.4",
-        "defend": "1",
-        "shield": "false"
+        "attack": 1.4,
+        "defend": 1,
+        "shield": false
     },
 "craftvania2:rune_sword":{
-        "attack": "2.6",
-        "defend": "0.90",
-        "shield": "false"
+        "attack": 2.6,
+        "defend": 0.90,
+        "shield": false
     },
 "craftvania2:shield_rod":{
-        "attack": "0.5",
-        "defend": "1.00",
-        "shield": "false"
+        "attack": 0.5,
+        "defend": 1.00,
+        "shield": false
     },
 "craftvania2:thornwhip":{
-        "attack": "1.4",
-        "defend": "1",
-        "shield": "false"
+        "attack": 1.4,
+        "defend": 1,
+        "shield": false
     },
 "craftvania2:thunderbrand":{
-        "attack": "2.9",
-        "defend": "0.9",
-        "shield": "false"
+        "attack": 2.9,
+        "defend": 0.9,
+        "shield": false
     },
 "craftvania2:vampire_killer_whip":{
-        "attack": "1.4",
-        "defend": "1",
-        "shield": "false"
+        "attack": 1.4,
+        "defend": 1,
+        "shield": false
     },
 "craftvania2:vorpal_blade":{
-        "attack": "2.9",
-        "defend": "0.9",
-        "shield": "false"
+        "attack": 2.9,
+        "defend": 0.9,
+        "shield": false
     },
 "craftvania2:werebane":{
-        "attack": "2.9",
-        "defend": "0.9",
-        "shield": "false"
+        "attack": 2.9,
+        "defend": 0.9,
+        "shield": false
     },
 "craftvania2:zweihander":{
-        "attack": "3.8",
-        "defend": "0.80",
-        "shield": "false"
+        "attack": 3.8,
+        "defend": 0.80,
+        "shield": false
     }
 }

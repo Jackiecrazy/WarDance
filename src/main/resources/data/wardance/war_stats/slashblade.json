@@ -1,7 +1,7 @@
 {
 "slashblade:slashblade":{
-        "attack": "2.9",
-        "defend": "0.9",
-        "shield": "false"
+        "attack": 2.9,
+        "defend": 0.9,
+        "shield": false
     }
 }

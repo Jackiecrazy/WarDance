@@ -1,172 +1,172 @@
 {
 "twilightforest:block_and_chain":{
-        "attack": "8",
-        "defend": "0.8",
-        "shield": "false"
+        "attack": 8,
+        "defend": 0.8,
+        "shield": false
     },
 "twilightforest:diamond_minotaur_axe":{
-        "attack": "4",
-        "defend": "0.90",
-        "shield": "false"
+        "attack": 4,
+        "defend": 0.90,
+        "shield": false
     },
 "twilightforest:ender_bow":{
-        "attack": "1.2",
-        "defend": "0.90",
-        "shield": "false"
+        "attack": 1.2,
+        "defend": 0.90,
+        "shield": false
     },
 "twilightforest:fiery_pickaxe":{
-        "attack": "2.5",
-        "defend": "1.00",
-        "shield": "false"
+        "attack": 2.5,
+        "defend": 1.00,
+        "shield": false
     },
 "twilightforest:fiery_sword":{
-        "attack": "2.6",
-        "defend": "0.90",
-        "shield": "false"
+        "attack": 2.6,
+        "defend": 0.90,
+        "shield": false
     },
 "twilightforest:fortification_scepter":{
-        "attack": "0.5",
-        "defend": "1.00",
-        "shield": "false"
+        "attack": 0.5,
+        "defend": 1.00,
+        "shield": false
     },
 "twilightforest:giant_pickaxe":{
-        "attack": "4",
-        "defend": "0.80",
-        "shield": "false"
+        "attack": 4,
+        "defend": 0.80,
+        "shield": false
     },
 "twilightforest:giant_sword":{
-        "attack": "2.6",
-        "defend": "0.90",
-        "shield": "false"
+        "attack": 2.6,
+        "defend": 0.90,
+        "shield": false
     },
 "twilightforest:glass_sword":{
-        "attack": "2.6",
-        "defend": "0.90",
-        "shield": "false"
+        "attack": 2.6,
+        "defend": 0.90,
+        "shield": false
     },
 "twilightforest:gold_minotaur_axe":{
-        "attack": "4",
-        "defend": "0.90",
-        "shield": "false"
+        "attack": 4,
+        "defend": 0.90,
+        "shield": false
     },
 "twilightforest:ice_bow":{
-        "attack": "1.2",
-        "defend": "0.90",
-        "shield": "false"
+        "attack": 1.2,
+        "defend": 0.90,
+        "shield": false
     },
 "twilightforest:ice_sword":{
-        "attack": "2.6",
-        "defend": "0.90",
-        "shield": "false"
+        "attack": 2.6,
+        "defend": 0.90,
+        "shield": false
     },
 "twilightforest:ironwood_axe":{
-        "attack": "4",
-        "defend": "0.90",
-        "shield": "false"
+        "attack": 4,
+        "defend": 0.90,
+        "shield": false
     },
 "twilightforest:ironwood_hoe":{
-        "attack": "1",
-        "defend": "1.00",
-        "shield": "false"
+        "attack": 1,
+        "defend": 1.00,
+        "shield": false
     },
 "twilightforest:ironwood_pickaxe":{
-        "attack": "2.5",
-        "defend": "1.00",
-        "shield": "false"
+        "attack": 2.5,
+        "defend": 1.00,
+        "shield": false
     },
 "twilightforest:ironwood_shovel":{
-        "attack": "6",
-        "defend": "0.90",
-        "shield": "false"
+        "attack": 6,
+        "defend": 0.90,
+        "shield": false
     },
 "twilightforest:ironwood_sword":{
-        "attack": "2.6",
-        "defend": "0.90",
-        "shield": "false"
+        "attack": 2.6,
+        "defend": 0.90,
+        "shield": false
     },
 "twilightforest:knightmetal_axe":{
-        "attack": "4",
-        "defend": "0.90",
-        "shield": "false"
+        "attack": 4,
+        "defend": 0.90,
+        "shield": false
     },
 "twilightforest:knightmetal_pickaxe":{
-        "attack": "2.5",
-        "defend": "1.00",
-        "shield": "false"
+        "attack": 2.5,
+        "defend": 1.00,
+        "shield": false
     },
 "twilightforest:knightmetal_shield":{
-        "attack": "5",
-        "defend": "0.60",
-        "shield": "true"
+        "attack": 5,
+        "defend": 0.60,
+        "shield": true
     },
 "twilightforest:knightmetal_sword":{
-        "attack": "2.6",
-        "defend": "0.90",
-        "shield": "false"
+        "attack": 2.6,
+        "defend": 0.90,
+        "shield": false
     },
 "twilightforest:lifedrain_scepter":{
-        "attack": "0.5",
-        "defend": "1.00",
-        "shield": "false"
+        "attack": 0.5,
+        "defend": 1.00,
+        "shield": false
     },
 "twilightforest:mazebreaker_pickaxe":{
-        "attack": "2.5",
-        "defend": "1.00",
-        "shield": "false"
+        "attack": 2.5,
+        "defend": 1.00,
+        "shield": false
     },
 "twilightforest:minotaur_axe":{
-        "attack": "4",
-        "defend": "0.90",
-        "shield": "false"
+        "attack": 4,
+        "defend": 0.90,
+        "shield": false
     },
 "twilightforest:minotaur_axe_gold":{
-        "attack": "4",
-        "defend": "0.90",
-        "shield": "false"
+        "attack": 4,
+        "defend": 0.90,
+        "shield": false
     },
 "twilightforest:seeker_bow":{
-        "attack": "1.2",
-        "defend": "0.90",
-        "shield": "false"
+        "attack": 1.2,
+        "defend": 0.90,
+        "shield": false
     },
 "twilightforest:steeleaf_axe":{
-        "attack": "4",
-        "defend": "0.90",
-        "shield": "false"
+        "attack": 4,
+        "defend": 0.90,
+        "shield": false
     },
 "twilightforest:steeleaf_hoe":{
-        "attack": "1",
-        "defend": "1.00",
-        "shield": "false"
+        "attack": 1,
+        "defend": 1.00,
+        "shield": false
     },
 "twilightforest:steeleaf_pickaxe":{
-        "attack": "2.5",
-        "defend": "1.00",
-        "shield": "false"
+        "attack": 2.5,
+        "defend": 1.00,
+        "shield": false
     },
 "twilightforest:steeleaf_shovel":{
-        "attack": "6",
-        "defend": "0.90",
-        "shield": "false"
+        "attack": 6,
+        "defend": 0.90,
+        "shield": false
     },
 "twilightforest:steeleaf_sword":{
-        "attack": "2.6",
-        "defend": "0.90",
-        "shield": "false"
+        "attack": 2.6,
+        "defend": 0.90,
+        "shield": false
     },
 "twilightforest:triple_bow":{
-        "attack": "1.2",
-        "defend": "0.90",
-        "shield": "false"
+        "attack": 1.2,
+        "defend": 0.90,
+        "shield": false
     },
 "twilightforest:twilight_scepter":{
-        "attack": "0.5",
-        "defend": "1.00",
-        "shield": "false"
+        "attack": 0.5,
+        "defend": 1.00,
+        "shield": false
     },
 "twilightforest:zombie_scepter":{
-        "attack": "0.5",
-        "defend": "1.00",
-        "shield": "false"
+        "attack": 0.5,
+        "defend": 1.00,
+        "shield": false
     }
 }

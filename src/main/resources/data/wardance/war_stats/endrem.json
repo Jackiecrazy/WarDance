@@ -1,27 +1,27 @@
 {
 "endrem:end_crystal_axe":{
-        "attack": "4",
-        "defend": "0.90",
-        "shield": "false"
+        "attack": 4,
+        "defend": 0.90,
+        "shield": false
     },
 "endrem:end_crystal_hoe":{
-        "attack": "1",
-        "defend": "1.00",
-        "shield": "false"
+        "attack": 1,
+        "defend": 1.00,
+        "shield": false
     },
 "endrem:end_crystal_pickaxe":{
-        "attack": "2.5",
-        "defend": "1.00",
-        "shield": "false"
+        "attack": 2.5,
+        "defend": 1.00,
+        "shield": false
     },
 "endrem:end_crystal_shovel":{
-        "attack": "6",
-        "defend": "0.90",
-        "shield": "false"
+        "attack": 6,
+        "defend": 0.90,
+        "shield": false
     },
 "endrem:end_crystal_sword":{
-        "attack": "2.6",
-        "defend": "0.90",
-        "shield": "false"
+        "attack": 2.6,
+        "defend": 0.90,
+        "shield": false
     }
 }

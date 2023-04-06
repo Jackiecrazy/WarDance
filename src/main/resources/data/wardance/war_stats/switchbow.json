@@ -1,12 +1,12 @@
 {
 "switchbow:switchbow":{
-        "attack": "1.2",
-        "defend": "0.90",
-        "shield": "false"
+        "attack": 1.2,
+        "defend": 0.90,
+        "shield": false
     },
 "switchbow:switchcrossbow":{
-        "attack": "1.2",
-        "defend": "0.90",
-        "shield": "false"
+        "attack": 1.2,
+        "defend": 0.90,
+        "shield": false
     }
 }

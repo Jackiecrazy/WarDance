@@ -1,62 +1,62 @@
 {
 "securitycraft:door_indestructible_iron_item":{
-        "attack": "6",
-        "defend": "0.50",
-        "shield": "true"
+        "attack": 6,
+        "defend": 0.50,
+        "shield": true
     },
 "securitycraft:keypad_door_item":{
-        "attack": "6",
-        "defend": "0.50",
-        "shield": "true"
+        "attack": 6,
+        "defend": 0.50,
+        "shield": true
     },
 "securitycraft:reinforced_iron_trapdoor":{
-        "attack": "3",
-        "defend": "0.70",
-        "shield": "true"
+        "attack": 3,
+        "defend": 0.70,
+        "shield": true
     },
 "securitycraft:scanner_door_item":{
-        "attack": "6",
-        "defend": "0.50",
-        "shield": "true"
+        "attack": 6,
+        "defend": 0.50,
+        "shield": true
     },
 "securitycraft:secret_acacia_sign_item":{
-        "attack": "2.4",
-        "defend": "0.90",
-        "shield": "false"
+        "attack": 2.4,
+        "defend": 0.90,
+        "shield": false
     },
 "securitycraft:secret_birch_sign_item":{
-        "attack": "2.4",
-        "defend": "0.90",
-        "shield": "false"
+        "attack": 2.4,
+        "defend": 0.90,
+        "shield": false
     },
 "securitycraft:secret_crimson_sign_item":{
-        "attack": "2.4",
-        "defend": "0.90",
-        "shield": "false"
+        "attack": 2.4,
+        "defend": 0.90,
+        "shield": false
     },
 "securitycraft:secret_dark_oak_sign_item":{
-        "attack": "2.4",
-        "defend": "0.90",
-        "shield": "false"
+        "attack": 2.4,
+        "defend": 0.90,
+        "shield": false
     },
 "securitycraft:secret_jungle_sign_item":{
-        "attack": "2.4",
-        "defend": "0.90",
-        "shield": "false"
+        "attack": 2.4,
+        "defend": 0.90,
+        "shield": false
     },
 "securitycraft:secret_sign_item":{
-        "attack": "2.4",
-        "defend": "0.90",
-        "shield": "false"
+        "attack": 2.4,
+        "defend": 0.90,
+        "shield": false
     },
 "securitycraft:secret_spruce_sign_item":{
-        "attack": "2.4",
-        "defend": "0.90",
-        "shield": "false"
+        "attack": 2.4,
+        "defend": 0.90,
+        "shield": false
     },
 "securitycraft:secret_warped_sign_item":{
-        "attack": "2.4",
-        "defend": "0.90",
-        "shield": "false"
+        "attack": 2.4,
+        "defend": 0.90,
+        "shield": false
     }
 }

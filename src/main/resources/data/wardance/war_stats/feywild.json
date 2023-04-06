@@ -1,7 +1,7 @@
 {
 "feywild:reaper_scythe":{
-        "attack": "3",
-        "defend": "0.8",
-        "shield": "false"
+        "attack": 3,
+        "defend": 0.8,
+        "shield": false
     }
 }

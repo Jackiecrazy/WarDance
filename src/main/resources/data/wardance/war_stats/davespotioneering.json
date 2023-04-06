@@ -1,17 +1,17 @@
 {
 "davespotioneering:netherite_gauntlet":{
-        "attack": "3.2",
-        "defend": "1.00",
-        "shield": "false"
+        "attack": 3.2,
+        "defend": 1.00,
+        "shield": false
     },
 "davespotioneering:potioneer_gauntlet":{
-        "attack": "3.2",
-        "defend": "1.00",
-        "shield": "false"
+        "attack": 3.2,
+        "defend": 1.00,
+        "shield": false
     },
 "davespotioneering:rudimentary_gauntlet":{
-        "attack": "3.2",
-        "defend": "1.00",
-        "shield": "false"
+        "attack": 3.2,
+        "defend": 1.00,
+        "shield": false
     }
 }

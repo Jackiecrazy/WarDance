@@ -1,1662 +1,1662 @@
 {
 "magistuarmory:barbedclub":{
-        "attack": "6",
-        "defend": "0.9",
-        "shield": "false"
+        "attack": 6,
+        "defend": 0.9,
+        "shield": false
     },
 "magistuarmory:blacksmith_hammer":{
-        "attack": "6",
-        "defend": "0.90",
-        "shield": "false"
+        "attack": 6,
+        "defend": 0.90,
+        "shield": false
     },
 "magistuarmory:bronze_ahlspiess":{
-        "attack": "2.5",
-        "defend": "0.70",
-        "shield": "false"
+        "attack": 2.5,
+        "defend": 0.70,
+        "shield": false
     },
 "magistuarmory:bronze_bastardsword":{
-        "attack": "2.9",
-        "defend": "0.85",
-        "shield": "false"
+        "attack": 2.9,
+        "defend": 0.85,
+        "shield": false
     },
 "magistuarmory:bronze_buckler":{
-        "attack": "3",
-        "defend": "0.70",
-        "shield": "true"
+        "attack": 3,
+        "defend": 0.70,
+        "shield": true
     },
 "magistuarmory:bronze_chainmorgenstern":{
-        "attack": "6",
-        "defend": "0.90",
-        "shield": "false"
+        "attack": 6,
+        "defend": 0.90,
+        "shield": false
     },
 "magistuarmory:bronze_chivalrylance":{
-        "attack": "2.5",
-        "defend": "0.70",
-        "shield": "false"
+        "attack": 2.5,
+        "defend": 0.70,
+        "shield": false
     },
 "magistuarmory:bronze_claymore":{
-        "attack": "3.8",
-        "defend": "0.80",
-        "shield": "false"
+        "attack": 3.8,
+        "defend": 0.80,
+        "shield": false
     },
 "magistuarmory:bronze_concavehalberd":{
-        "attack": "4",
-        "defend": "0.70",
-        "shield": "false"
+        "attack": 4,
+        "defend": 0.70,
+        "shield": false
     },
 "magistuarmory:bronze_ellipticalshield":{
-        "attack": "4",
-        "defend": "0.60",
-        "shield": "true"
+        "attack": 4,
+        "defend": 0.60,
+        "shield": true
     },
 "magistuarmory:bronze_estoc":{
-        "attack": "1.3",
-        "defend": "1.00",
-        "shield": "false"
+        "attack": 1.3,
+        "defend": 1.00,
+        "shield": false
     },
 "magistuarmory:bronze_flamebladedsword":{
-        "attack": "3.8",
-        "defend": "0.80",
-        "shield": "false"
+        "attack": 3.8,
+        "defend": 0.80,
+        "shield": false
     },
 "magistuarmory:bronze_guisarme":{
-        "attack": "4",
-        "defend": "0.70",
-        "shield": "false"
+        "attack": 4,
+        "defend": 0.70,
+        "shield": false
     },
 "magistuarmory:bronze_heatershield":{
-        "attack": "4",
-        "defend": "0.60",
-        "shield": "true"
+        "attack": 4,
+        "defend": 0.60,
+        "shield": true
     },
 "magistuarmory:bronze_heavymace":{
-        "attack": "6",
-        "defend": "0.90",
-        "shield": "false"
+        "attack": 6,
+        "defend": 0.90,
+        "shield": false
     },
 "magistuarmory:bronze_heavywarhammer":{
-        "attack": "8",
-        "defend": "0.80",
-        "shield": "false"
+        "attack": 8,
+        "defend": 0.80,
+        "shield": false
     },
 "magistuarmory:bronze_katzbalger":{
-        "attack": "2.6",
-        "defend": "0.90",
-        "shield": "false"
+        "attack": 2.6,
+        "defend": 0.90,
+        "shield": false
     },
 "magistuarmory:bronze_kiteshield":{
-        "attack": "4",
-        "defend": "0.60",
-        "shield": "true"
+        "attack": 4,
+        "defend": 0.60,
+        "shield": true
     },
 "magistuarmory:bronze_lochaberaxe":{
-        "attack": "4",
-        "defend": "0.70",
-        "shield": "false"
+        "attack": 4,
+        "defend": 0.70,
+        "shield": false
     },
 "magistuarmory:bronze_lucernhammer":{
-        "attack": "8",
-        "defend": "0.80",
-        "shield": "false"
+        "attack": 8,
+        "defend": 0.80,
+        "shield": false
     },
 "magistuarmory:bronze_morgenstern":{
-        "attack": "6",
-        "defend": "0.90",
-        "shield": "false"
+        "attack": 6,
+        "defend": 0.90,
+        "shield": false
     },
 "magistuarmory:bronze_pavese":{
-        "attack": "5",
-        "defend": "0.50",
-        "shield": "true"
+        "attack": 5,
+        "defend": 0.50,
+        "shield": true
     },
 "magistuarmory:bronze_pike":{
-        "attack": "3.2",
-        "defend": "0.70",
-        "shield": "false"
+        "attack": 3.2,
+        "defend": 0.70,
+        "shield": false
     },
 "magistuarmory:bronze_ranseur":{
-        "attack": "4",
-        "defend": "0.70",
-        "shield": "false"
+        "attack": 4,
+        "defend": 0.70,
+        "shield": false
     },
 "magistuarmory:bronze_rondache":{
-        "attack": "3",
-        "defend": "0.70",
-        "shield": "true"
+        "attack": 3,
+        "defend": 0.70,
+        "shield": true
     },
 "magistuarmory:bronze_roundshield":{
-        "attack": "4",
-        "defend": "0.60",
-        "shield": "true"
+        "attack": 4,
+        "defend": 0.60,
+        "shield": true
     },
 "magistuarmory:bronze_shortsword":{
-        "attack": "2",
-        "defend": "0.85",
-        "shield": "false"
+        "attack": 2,
+        "defend": 0.85,
+        "shield": false
     },
 "magistuarmory:bronze_stylet":{
-        "attack": "1.3",
-        "defend": "1.00",
-        "shield": "false"
+        "attack": 1.3,
+        "defend": 1.00,
+        "shield": false
     },
 "magistuarmory:bronze_tartsche":{
-        "attack": "4",
-        "defend": "0.60",
-        "shield": "true"
+        "attack": 4,
+        "defend": 0.60,
+        "shield": true
     },
 "magistuarmory:bronze_zweihander":{
-        "attack": "3.8",
-        "defend": "0.80",
-        "shield": "false"
+        "attack": 3.8,
+        "defend": 0.80,
+        "shield": false
     },
 "magistuarmory:club":{
-        "attack": "6",
-        "defend": "0.9",
-        "shield": "false"
+        "attack": 6,
+        "defend": 0.9,
+        "shield": false
     },
 "magistuarmory:copper_ahlspiess":{
-        "attack": "2.5",
-        "defend": "0.70",
-        "shield": "false"
+        "attack": 2.5,
+        "defend": 0.70,
+        "shield": false
     },
 "magistuarmory:copper_bastardsword":{
-        "attack": "2.9",
-        "defend": "0.85",
-        "shield": "false"
+        "attack": 2.9,
+        "defend": 0.85,
+        "shield": false
     },
 "magistuarmory:copper_buckler":{
-        "attack": "3",
-        "defend": "0.70",
-        "shield": "true"
+        "attack": 3,
+        "defend": 0.70,
+        "shield": true
     },
 "magistuarmory:copper_chainmorgenstern":{
-        "attack": "6",
-        "defend": "0.90",
-        "shield": "false"
+        "attack": 6,
+        "defend": 0.90,
+        "shield": false
     },
 "magistuarmory:copper_chivalrylance":{
-        "attack": "2.5",
-        "defend": "0.70",
-        "shield": "false"
+        "attack": 2.5,
+        "defend": 0.70,
+        "shield": false
     },
 "magistuarmory:copper_claymore":{
-        "attack": "3.8",
-        "defend": "0.80",
-        "shield": "false"
+        "attack": 3.8,
+        "defend": 0.80,
+        "shield": false
     },
 "magistuarmory:copper_concavehalberd":{
-        "attack": "4",
-        "defend": "0.70",
-        "shield": "false"
+        "attack": 4,
+        "defend": 0.70,
+        "shield": false
     },
 "magistuarmory:copper_ellipticalshield":{
-        "attack": "4",
-        "defend": "0.60",
-        "shield": "true"
+        "attack": 4,
+        "defend": 0.60,
+        "shield": true
     },
 "magistuarmory:copper_estoc":{
-        "attack": "1.3",
-        "defend": "1.00",
-        "shield": "false"
+        "attack": 1.3,
+        "defend": 1.00,
+        "shield": false
     },
 "magistuarmory:copper_flamebladedsword":{
-        "attack": "3.8",
-        "defend": "0.80",
-        "shield": "false"
+        "attack": 3.8,
+        "defend": 0.80,
+        "shield": false
     },
 "magistuarmory:copper_guisarme":{
-        "attack": "4",
-        "defend": "0.70",
-        "shield": "false"
+        "attack": 4,
+        "defend": 0.70,
+        "shield": false
     },
 "magistuarmory:copper_heatershield":{
-        "attack": "4",
-        "defend": "0.60",
-        "shield": "true"
+        "attack": 4,
+        "defend": 0.60,
+        "shield": true
     },
 "magistuarmory:copper_heavymace":{
-        "attack": "6",
-        "defend": "0.90",
-        "shield": "false"
+        "attack": 6,
+        "defend": 0.90,
+        "shield": false
     },
 "magistuarmory:copper_heavywarhammer":{
-        "attack": "8",
-        "defend": "0.80",
-        "shield": "false"
+        "attack": 8,
+        "defend": 0.80,
+        "shield": false
     },
 "magistuarmory:copper_katzbalger":{
-        "attack": "2.6",
-        "defend": "0.90",
-        "shield": "false"
+        "attack": 2.6,
+        "defend": 0.90,
+        "shield": false
     },
 "magistuarmory:copper_kiteshield":{
-        "attack": "4",
-        "defend": "0.60",
-        "shield": "true"
+        "attack": 4,
+        "defend": 0.60,
+        "shield": true
     },
 "magistuarmory:copper_lochaberaxe":{
-        "attack": "4",
-        "defend": "0.70",
-        "shield": "false"
+        "attack": 4,
+        "defend": 0.70,
+        "shield": false
     },
 "magistuarmory:copper_lucernhammer":{
-        "attack": "8",
-        "defend": "0.80",
-        "shield": "false"
+        "attack": 8,
+        "defend": 0.80,
+        "shield": false
     },
 "magistuarmory:copper_morgenstern":{
-        "attack": "6",
-        "defend": "0.90",
-        "shield": "false"
+        "attack": 6,
+        "defend": 0.90,
+        "shield": false
     },
 "magistuarmory:copper_pavese":{
-        "attack": "5",
-        "defend": "0.50",
-        "shield": "true"
+        "attack": 5,
+        "defend": 0.50,
+        "shield": true
     },
 "magistuarmory:copper_pike":{
-        "attack": "3.2",
-        "defend": "0.70",
-        "shield": "false"
+        "attack": 3.2,
+        "defend": 0.70,
+        "shield": false
     },
 "magistuarmory:copper_ranseur":{
-        "attack": "4",
-        "defend": "0.70",
-        "shield": "false"
+        "attack": 4,
+        "defend": 0.70,
+        "shield": false
     },
 "magistuarmory:copper_rondache":{
-        "attack": "3",
-        "defend": "0.70",
-        "shield": "true"
+        "attack": 3,
+        "defend": 0.70,
+        "shield": true
     },
 "magistuarmory:copper_roundshield":{
-        "attack": "4",
-        "defend": "0.60",
-        "shield": "true"
+        "attack": 4,
+        "defend": 0.60,
+        "shield": true
     },
 "magistuarmory:copper_shortsword":{
-        "attack": "2",
-        "defend": "0.85",
-        "shield": "false"
+        "attack": 2,
+        "defend": 0.85,
+        "shield": false
     },
 "magistuarmory:copper_stylet":{
-        "attack": "1.3",
-        "defend": "1.00",
-        "shield": "false"
+        "attack": 1.3,
+        "defend": 1.00,
+        "shield": false
     },
 "magistuarmory:copper_target":{
-        "attack": "3",
-        "defend": "0.70",
-        "shield": "true"
+        "attack": 3,
+        "defend": 0.70,
+        "shield": true
     },
 "magistuarmory:copper_tartsche":{
-        "attack": "4",
-        "defend": "0.60",
-        "shield": "true"
+        "attack": 4,
+        "defend": 0.60,
+        "shield": true
     },
 "magistuarmory:copper_zweihander":{
-        "attack": "3.8",
-        "defend": "0.80",
-        "shield": "false"
+        "attack": 3.8,
+        "defend": 0.80,
+        "shield": false
     },
 "magistuarmory:corruptedroundshield":{
-        "attack": "4",
-        "defend": "0.60",
-        "shield": "true"
+        "attack": 4,
+        "defend": 0.60,
+        "shield": true
     },
 "magistuarmory:diamond_ahlspiess":{
-        "attack": "2.5",
-        "defend": "0.70",
-        "shield": "false"
+        "attack": 2.5,
+        "defend": 0.70,
+        "shield": false
     },
 "magistuarmory:diamond_bastardsword":{
-        "attack": "2.9",
-        "defend": "0.85",
-        "shield": "false"
+        "attack": 2.9,
+        "defend": 0.85,
+        "shield": false
     },
 "magistuarmory:diamond_buckler":{
-        "attack": "3",
-        "defend": "0.70",
-        "shield": "true"
+        "attack": 3,
+        "defend": 0.70,
+        "shield": true
     },
 "magistuarmory:diamond_chainmorgenstern":{
-        "attack": "6",
-        "defend": "0.90",
-        "shield": "false"
+        "attack": 6,
+        "defend": 0.90,
+        "shield": false
     },
 "magistuarmory:diamond_chivalrylance":{
-        "attack": "2.5",
-        "defend": "0.70",
-        "shield": "false"
+        "attack": 2.5,
+        "defend": 0.70,
+        "shield": false
     },
 "magistuarmory:diamond_claymore":{
-        "attack": "3.8",
-        "defend": "0.80",
-        "shield": "false"
+        "attack": 3.8,
+        "defend": 0.80,
+        "shield": false
     },
 "magistuarmory:diamond_concavehalberd":{
-        "attack": "4",
-        "defend": "0.70",
-        "shield": "false"
+        "attack": 4,
+        "defend": 0.70,
+        "shield": false
     },
 "magistuarmory:diamond_ellipticalshield":{
-        "attack": "4",
-        "defend": "0.60",
-        "shield": "true"
+        "attack": 4,
+        "defend": 0.60,
+        "shield": true
     },
 "magistuarmory:diamond_estoc":{
-        "attack": "1.3",
-        "defend": "1.00",
-        "shield": "false"
+        "attack": 1.3,
+        "defend": 1.00,
+        "shield": false
     },
 "magistuarmory:diamond_flamebladedsword":{
-        "attack": "3.8",
-        "defend": "0.80",
-        "shield": "false"
+        "attack": 3.8,
+        "defend": 0.80,
+        "shield": false
     },
 "magistuarmory:diamond_guisarme":{
-        "attack": "4",
-        "defend": "0.70",
-        "shield": "false"
+        "attack": 4,
+        "defend": 0.70,
+        "shield": false
     },
 "magistuarmory:diamond_heatershield":{
-        "attack": "4",
-        "defend": "0.60",
-        "shield": "true"
+        "attack": 4,
+        "defend": 0.60,
+        "shield": true
     },
 "magistuarmory:diamond_heavymace":{
-        "attack": "6",
-        "defend": "0.90",
-        "shield": "false"
+        "attack": 6,
+        "defend": 0.90,
+        "shield": false
     },
 "magistuarmory:diamond_heavywarhammer":{
-        "attack": "8",
-        "defend": "0.80",
-        "shield": "false"
+        "attack": 8,
+        "defend": 0.80,
+        "shield": false
     },
 "magistuarmory:diamond_katzbalger":{
-        "attack": "2.6",
-        "defend": "0.90",
-        "shield": "false"
+        "attack": 2.6,
+        "defend": 0.90,
+        "shield": false
     },
 "magistuarmory:diamond_kiteshield":{
-        "attack": "4",
-        "defend": "0.60",
-        "shield": "true"
+        "attack": 4,
+        "defend": 0.60,
+        "shield": true
     },
 "magistuarmory:diamond_lochaberaxe":{
-        "attack": "4",
-        "defend": "0.70",
-        "shield": "false"
+        "attack": 4,
+        "defend": 0.70,
+        "shield": false
     },
 "magistuarmory:diamond_lucernhammer":{
-        "attack": "8",
-        "defend": "0.80",
-        "shield": "false"
+        "attack": 8,
+        "defend": 0.80,
+        "shield": false
     },
 "magistuarmory:diamond_morgenstern":{
-        "attack": "6",
-        "defend": "0.90",
-        "shield": "false"
+        "attack": 6,
+        "defend": 0.90,
+        "shield": false
     },
 "magistuarmory:diamond_pavese":{
-        "attack": "5",
-        "defend": "0.50",
-        "shield": "true"
+        "attack": 5,
+        "defend": 0.50,
+        "shield": true
     },
 "magistuarmory:diamond_pike":{
-        "attack": "3.2",
-        "defend": "0.70",
-        "shield": "false"
+        "attack": 3.2,
+        "defend": 0.70,
+        "shield": false
     },
 "magistuarmory:diamond_ranseur":{
-        "attack": "4",
-        "defend": "0.70",
-        "shield": "false"
+        "attack": 4,
+        "defend": 0.70,
+        "shield": false
     },
 "magistuarmory:diamond_rondache":{
-        "attack": "3",
-        "defend": "0.70",
-        "shield": "true"
+        "attack": 3,
+        "defend": 0.70,
+        "shield": true
     },
 "magistuarmory:diamond_roundshield":{
-        "attack": "4",
-        "defend": "0.60",
-        "shield": "true"
+        "attack": 4,
+        "defend": 0.60,
+        "shield": true
     },
 "magistuarmory:diamond_shortsword":{
-        "attack": "2",
-        "defend": "0.85",
-        "shield": "false"
+        "attack": 2,
+        "defend": 0.85,
+        "shield": false
     },
 "magistuarmory:diamond_stylet":{
-        "attack": "1.3",
-        "defend": "1.00",
-        "shield": "false"
+        "attack": 1.3,
+        "defend": 1.00,
+        "shield": false
     },
 "magistuarmory:diamond_target":{
-        "attack": "3",
-        "defend": "0.70",
-        "shield": "true"
+        "attack": 3,
+        "defend": 0.70,
+        "shield": true
     },
 "magistuarmory:diamond_tartsche":{
-        "attack": "4",
-        "defend": "0.60",
-        "shield": "true"
+        "attack": 4,
+        "defend": 0.60,
+        "shield": true
     },
 "magistuarmory:diamond_zweihander":{
-        "attack": "3.8",
-        "defend": "0.80",
-        "shield": "false"
+        "attack": 3.8,
+        "defend": 0.80,
+        "shield": false
     },
 "magistuarmory:gold_ahlspiess":{
-        "attack": "2.5",
-        "defend": "0.70",
-        "shield": "false"
+        "attack": 2.5,
+        "defend": 0.70,
+        "shield": false
     },
 "magistuarmory:gold_bastardsword":{
-        "attack": "2.9",
-        "defend": "0.85",
-        "shield": "false"
+        "attack": 2.9,
+        "defend": 0.85,
+        "shield": false
     },
 "magistuarmory:gold_buckler":{
-        "attack": "3",
-        "defend": "0.70",
-        "shield": "true"
+        "attack": 3,
+        "defend": 0.70,
+        "shield": true
     },
 "magistuarmory:gold_chainmorgenstern":{
-        "attack": "6",
-        "defend": "0.90",
-        "shield": "false"
+        "attack": 6,
+        "defend": 0.90,
+        "shield": false
     },
 "magistuarmory:gold_chivalrylance":{
-        "attack": "2.5",
-        "defend": "0.70",
-        "shield": "false"
+        "attack": 2.5,
+        "defend": 0.70,
+        "shield": false
     },
 "magistuarmory:gold_claymore":{
-        "attack": "3.8",
-        "defend": "0.80",
-        "shield": "false"
+        "attack": 3.8,
+        "defend": 0.80,
+        "shield": false
     },
 "magistuarmory:gold_concavehalberd":{
-        "attack": "4",
-        "defend": "0.70",
-        "shield": "false"
+        "attack": 4,
+        "defend": 0.70,
+        "shield": false
     },
 "magistuarmory:gold_ellipticalshield":{
-        "attack": "4",
-        "defend": "0.60",
-        "shield": "true"
+        "attack": 4,
+        "defend": 0.60,
+        "shield": true
     },
 "magistuarmory:gold_estoc":{
-        "attack": "1.3",
-        "defend": "1.00",
-        "shield": "false"
+        "attack": 1.3,
+        "defend": 1.00,
+        "shield": false
     },
 "magistuarmory:gold_flamebladedsword":{
-        "attack": "3.8",
-        "defend": "0.80",
-        "shield": "false"
+        "attack": 3.8,
+        "defend": 0.80,
+        "shield": false
     },
 "magistuarmory:gold_guisarme":{
-        "attack": "4",
-        "defend": "0.70",
-        "shield": "false"
+        "attack": 4,
+        "defend": 0.70,
+        "shield": false
     },
 "magistuarmory:gold_heatershield":{
-        "attack": "4",
-        "defend": "0.60",
-        "shield": "true"
+        "attack": 4,
+        "defend": 0.60,
+        "shield": true
     },
 "magistuarmory:gold_heavymace":{
-        "attack": "6",
-        "defend": "0.90",
-        "shield": "false"
+        "attack": 6,
+        "defend": 0.90,
+        "shield": false
     },
 "magistuarmory:gold_heavywarhammer":{
-        "attack": "8",
-        "defend": "0.80",
-        "shield": "false"
+        "attack": 8,
+        "defend": 0.80,
+        "shield": false
     },
 "magistuarmory:gold_katzbalger":{
-        "attack": "2.6",
-        "defend": "0.90",
-        "shield": "false"
+        "attack": 2.6,
+        "defend": 0.90,
+        "shield": false
     },
 "magistuarmory:gold_kiteshield":{
-        "attack": "4",
-        "defend": "0.60",
-        "shield": "true"
+        "attack": 4,
+        "defend": 0.60,
+        "shield": true
     },
 "magistuarmory:gold_lochaberaxe":{
-        "attack": "4",
-        "defend": "0.70",
-        "shield": "false"
+        "attack": 4,
+        "defend": 0.70,
+        "shield": false
     },
 "magistuarmory:gold_lucernhammer":{
-        "attack": "8",
-        "defend": "0.80",
-        "shield": "false"
+        "attack": 8,
+        "defend": 0.80,
+        "shield": false
     },
 "magistuarmory:gold_morgenstern":{
-        "attack": "6",
-        "defend": "0.90",
-        "shield": "false"
+        "attack": 6,
+        "defend": 0.90,
+        "shield": false
     },
 "magistuarmory:gold_pavese":{
-        "attack": "5",
-        "defend": "0.50",
-        "shield": "true"
+        "attack": 5,
+        "defend": 0.50,
+        "shield": true
     },
 "magistuarmory:gold_pike":{
-        "attack": "3.2",
-        "defend": "0.70",
-        "shield": "false"
+        "attack": 3.2,
+        "defend": 0.70,
+        "shield": false
     },
 "magistuarmory:gold_ranseur":{
-        "attack": "4",
-        "defend": "0.70",
-        "shield": "false"
+        "attack": 4,
+        "defend": 0.70,
+        "shield": false
     },
 "magistuarmory:gold_rondache":{
-        "attack": "3",
-        "defend": "0.70",
-        "shield": "true"
+        "attack": 3,
+        "defend": 0.70,
+        "shield": true
     },
 "magistuarmory:gold_roundshield":{
-        "attack": "4",
-        "defend": "0.60",
-        "shield": "true"
+        "attack": 4,
+        "defend": 0.60,
+        "shield": true
     },
 "magistuarmory:gold_shortsword":{
-        "attack": "2",
-        "defend": "0.85",
-        "shield": "false"
+        "attack": 2,
+        "defend": 0.85,
+        "shield": false
     },
 "magistuarmory:gold_stylet":{
-        "attack": "1.3",
-        "defend": "1.00",
-        "shield": "false"
+        "attack": 1.3,
+        "defend": 1.00,
+        "shield": false
     },
 "magistuarmory:gold_target":{
-        "attack": "3",
-        "defend": "0.70",
-        "shield": "true"
+        "attack": 3,
+        "defend": 0.70,
+        "shield": true
     },
 "magistuarmory:gold_tartsche":{
-        "attack": "4",
-        "defend": "0.60",
-        "shield": "true"
+        "attack": 4,
+        "defend": 0.60,
+        "shield": true
     },
 "magistuarmory:gold_zweihander":{
-        "attack": "3.8",
-        "defend": "0.80",
-        "shield": "false"
+        "attack": 3.8,
+        "defend": 0.80,
+        "shield": false
     },
 "magistuarmory:heavy_crossbow":{
-        "attack": "1",
-        "defend": "1.10",
-        "shield": "true"
+        "attack": 1,
+        "defend": 1.10,
+        "shield": true
     },
 "magistuarmory:hilt":{
-        "attack": "0.5",
-        "defend": "1.00",
-        "shield": "false"
+        "attack": 0.5,
+        "defend": 1.00,
+        "shield": false
     },
 "magistuarmory:iron_ahlspiess":{
-        "attack": "2.5",
-        "defend": "0.70",
-        "shield": "false"
+        "attack": 2.5,
+        "defend": 0.70,
+        "shield": false
     },
 "magistuarmory:iron_bastardsword":{
-        "attack": "2.9",
-        "defend": "0.85",
-        "shield": "false"
+        "attack": 2.9,
+        "defend": 0.85,
+        "shield": false
     },
 "magistuarmory:iron_buckler":{
-        "attack": "3",
-        "defend": "0.70",
-        "shield": "true"
+        "attack": 3,
+        "defend": 0.70,
+        "shield": true
     },
 "magistuarmory:iron_chainmorgenstern":{
-        "attack": "6",
-        "defend": "0.90",
-        "shield": "false"
+        "attack": 6,
+        "defend": 0.90,
+        "shield": false
     },
 "magistuarmory:iron_chivalrylance":{
-        "attack": "2.5",
-        "defend": "0.70",
-        "shield": "false"
+        "attack": 2.5,
+        "defend": 0.70,
+        "shield": false
     },
 "magistuarmory:iron_claymore":{
-        "attack": "3.8",
-        "defend": "0.80",
-        "shield": "false"
+        "attack": 3.8,
+        "defend": 0.80,
+        "shield": false
     },
 "magistuarmory:iron_concavehalberd":{
-        "attack": "4",
-        "defend": "0.70",
-        "shield": "false"
+        "attack": 4,
+        "defend": 0.70,
+        "shield": false
     },
 "magistuarmory:iron_ellipticalshield":{
-        "attack": "4",
-        "defend": "0.60",
-        "shield": "true"
+        "attack": 4,
+        "defend": 0.60,
+        "shield": true
     },
 "magistuarmory:iron_estoc":{
-        "attack": "1.3",
-        "defend": "1.00",
-        "shield": "false"
+        "attack": 1.3,
+        "defend": 1.00,
+        "shield": false
     },
 "magistuarmory:iron_flamebladedsword":{
-        "attack": "3.8",
-        "defend": "0.80",
-        "shield": "false"
+        "attack": 3.8,
+        "defend": 0.80,
+        "shield": false
     },
 "magistuarmory:iron_guisarme":{
-        "attack": "4",
-        "defend": "0.70",
-        "shield": "false"
+        "attack": 4,
+        "defend": 0.70,
+        "shield": false
     },
 "magistuarmory:iron_heatershield":{
-        "attack": "4",
-        "defend": "0.60",
-        "shield": "true"
+        "attack": 4,
+        "defend": 0.60,
+        "shield": true
     },
 "magistuarmory:iron_heavymace":{
-        "attack": "6",
-        "defend": "0.90",
-        "shield": "false"
+        "attack": 6,
+        "defend": 0.90,
+        "shield": false
     },
 "magistuarmory:iron_heavywarhammer":{
-        "attack": "8",
-        "defend": "0.80",
-        "shield": "false"
+        "attack": 8,
+        "defend": 0.80,
+        "shield": false
     },
 "magistuarmory:iron_katzbalger":{
-        "attack": "2.6",
-        "defend": "0.90",
-        "shield": "false"
+        "attack": 2.6,
+        "defend": 0.90,
+        "shield": false
     },
 "magistuarmory:iron_kiteshield":{
-        "attack": "4",
-        "defend": "0.60",
-        "shield": "true"
+        "attack": 4,
+        "defend": 0.60,
+        "shield": true
     },
 "magistuarmory:iron_lochaberaxe":{
-        "attack": "4",
-        "defend": "0.70",
-        "shield": "false"
+        "attack": 4,
+        "defend": 0.70,
+        "shield": false
     },
 "magistuarmory:iron_lucernhammer":{
-        "attack": "8",
-        "defend": "0.80",
-        "shield": "false"
+        "attack": 8,
+        "defend": 0.80,
+        "shield": false
     },
 "magistuarmory:iron_morgensterne":{
-        "attack": "6",
-        "defend": "0.90",
-        "shield": "false"
+        "attack": 6,
+        "defend": 0.90,
+        "shield": false
     },
 "magistuarmory:iron_pavese":{
-        "attack": "5",
-        "defend": "0.50",
-        "shield": "true"
+        "attack": 5,
+        "defend": 0.50,
+        "shield": true
     },
 "magistuarmory:iron_pike":{
-        "attack": "3.2",
-        "defend": "0.70",
-        "shield": "false"
+        "attack": 3.2,
+        "defend": 0.70,
+        "shield": false
     },
 "magistuarmory:iron_ranseur":{
-        "attack": "4",
-        "defend": "0.70",
-        "shield": "false"
+        "attack": 4,
+        "defend": 0.70,
+        "shield": false
     },
 "magistuarmory:iron_rondache":{
-        "attack": "3",
-        "defend": "0.70",
-        "shield": "true"
+        "attack": 3,
+        "defend": 0.70,
+        "shield": true
     },
 "magistuarmory:iron_roundshield":{
-        "attack": "4",
-        "defend": "0.60",
-        "shield": "true"
+        "attack": 4,
+        "defend": 0.60,
+        "shield": true
     },
 "magistuarmory:iron_shortsword":{
-        "attack": "2",
-        "defend": "0.85",
-        "shield": "false"
+        "attack": 2,
+        "defend": 0.85,
+        "shield": false
     },
 "magistuarmory:iron_stylet":{
-        "attack": "1.3",
-        "defend": "1.00",
-        "shield": "false"
+        "attack": 1.3,
+        "defend": 1.00,
+        "shield": false
     },
 "magistuarmory:iron_target":{
-        "attack": "3",
-        "defend": "0.70",
-        "shield": "true"
+        "attack": 3,
+        "defend": 0.70,
+        "shield": true
     },
 "magistuarmory:iron_tartsche":{
-        "attack": "4",
-        "defend": "0.60",
-        "shield": "true"
+        "attack": 4,
+        "defend": 0.60,
+        "shield": true
     },
 "magistuarmory:iron_zweihander":{
-        "attack": "3.8",
-        "defend": "0.80",
-        "shield": "false"
+        "attack": 3.8,
+        "defend": 0.80,
+        "shield": false
     },
 "magistuarmory:longbow":{
-        "attack": "1.2",
-        "defend": "0.90",
-        "shield": "false"
+        "attack": 1.2,
+        "defend": 0.90,
+        "shield": false
     },
 "magistuarmory:longbow":{
-        "attack": "1.2",
-        "defend": "0.90",
-        "shield": "false"
+        "attack": 1.2,
+        "defend": 0.90,
+        "shield": false
     },
 "magistuarmory:messer_sword":{
-        "attack": "2.6",
-        "defend": "0.90",
-        "shield": "false"
+        "attack": 2.6,
+        "defend": 0.90,
+        "shield": false
     },
 "magistuarmory:netherite_ahlspiess":{
-        "attack": "2.5",
-        "defend": "0.70",
-        "shield": "false"
+        "attack": 2.5,
+        "defend": 0.70,
+        "shield": false
     },
 "magistuarmory:netherite_bastardsword":{
-        "attack": "2.9",
-        "defend": "0.85",
-        "shield": "false"
+        "attack": 2.9,
+        "defend": 0.85,
+        "shield": false
     },
 "magistuarmory:netherite_buckler":{
-        "attack": "3",
-        "defend": "0.70",
-        "shield": "true"
+        "attack": 3,
+        "defend": 0.70,
+        "shield": true
     },
 "magistuarmory:netherite_chainmorgenstern":{
-        "attack": "6",
-        "defend": "0.90",
-        "shield": "false"
+        "attack": 6,
+        "defend": 0.90,
+        "shield": false
     },
 "magistuarmory:netherite_chivalrylance":{
-        "attack": "2.5",
-        "defend": "0.70",
-        "shield": "false"
+        "attack": 2.5,
+        "defend": 0.70,
+        "shield": false
     },
 "magistuarmory:netherite_claymore":{
-        "attack": "3.8",
-        "defend": "0.80",
-        "shield": "false"
+        "attack": 3.8,
+        "defend": 0.80,
+        "shield": false
     },
 "magistuarmory:netherite_concavehalberd":{
-        "attack": "4",
-        "defend": "0.70",
-        "shield": "false"
+        "attack": 4,
+        "defend": 0.70,
+        "shield": false
     },
 "magistuarmory:netherite_ellipticalshield":{
-        "attack": "4",
-        "defend": "0.60",
-        "shield": "true"
+        "attack": 4,
+        "defend": 0.60,
+        "shield": true
     },
 "magistuarmory:netherite_estoc":{
-        "attack": "1.3",
-        "defend": "1.00",
-        "shield": "false"
+        "attack": 1.3,
+        "defend": 1.00,
+        "shield": false
     },
 "magistuarmory:netherite_flamebladedsword":{
-        "attack": "3.8",
-        "defend": "0.80",
-        "shield": "false"
+        "attack": 3.8,
+        "defend": 0.80,
+        "shield": false
     },
 "magistuarmory:netherite_guisarme":{
-        "attack": "4",
-        "defend": "0.70",
-        "shield": "false"
+        "attack": 4,
+        "defend": 0.70,
+        "shield": false
     },
 "magistuarmory:netherite_heatershield":{
-        "attack": "4",
-        "defend": "0.60",
-        "shield": "true"
+        "attack": 4,
+        "defend": 0.60,
+        "shield": true
     },
 "magistuarmory:netherite_heavymace":{
-        "attack": "6",
-        "defend": "0.90",
-        "shield": "false"
+        "attack": 6,
+        "defend": 0.90,
+        "shield": false
     },
 "magistuarmory:netherite_heavywarhammer":{
-        "attack": "8",
-        "defend": "0.80",
-        "shield": "false"
+        "attack": 8,
+        "defend": 0.80,
+        "shield": false
     },
 "magistuarmory:netherite_katzbalger":{
-        "attack": "2.6",
-        "defend": "0.90",
-        "shield": "false"
+        "attack": 2.6,
+        "defend": 0.90,
+        "shield": false
     },
 "magistuarmory:netherite_kiteshield":{
-        "attack": "4",
-        "defend": "0.60",
-        "shield": "true"
+        "attack": 4,
+        "defend": 0.60,
+        "shield": true
     },
 "magistuarmory:netherite_lochaberaxe":{
-        "attack": "4",
-        "defend": "0.70",
-        "shield": "false"
+        "attack": 4,
+        "defend": 0.70,
+        "shield": false
     },
 "magistuarmory:netherite_lucernhammer":{
-        "attack": "8",
-        "defend": "0.80",
-        "shield": "false"
+        "attack": 8,
+        "defend": 0.80,
+        "shield": false
     },
 "magistuarmory:netherite_morgenstern":{
-        "attack": "6",
-        "defend": "0.90",
-        "shield": "false"
+        "attack": 6,
+        "defend": 0.90,
+        "shield": false
     },
 "magistuarmory:netherite_pavese":{
-        "attack": "5",
-        "defend": "0.50",
-        "shield": "true"
+        "attack": 5,
+        "defend": 0.50,
+        "shield": true
     },
 "magistuarmory:netherite_pike":{
-        "attack": "3.2",
-        "defend": "0.70",
-        "shield": "false"
+        "attack": 3.2,
+        "defend": 0.70,
+        "shield": false
     },
 "magistuarmory:netherite_ranseur":{
-        "attack": "4",
-        "defend": "0.70",
-        "shield": "false"
+        "attack": 4,
+        "defend": 0.70,
+        "shield": false
     },
 "magistuarmory:netherite_rondache":{
-        "attack": "3",
-        "defend": "0.70",
-        "shield": "true"
+        "attack": 3,
+        "defend": 0.70,
+        "shield": true
     },
 "magistuarmory:netherite_roundshield":{
-        "attack": "4",
-        "defend": "0.60",
-        "shield": "true"
+        "attack": 4,
+        "defend": 0.60,
+        "shield": true
     },
 "magistuarmory:netherite_shortsword":{
-        "attack": "2",
-        "defend": "0.85",
-        "shield": "false"
+        "attack": 2,
+        "defend": 0.85,
+        "shield": false
     },
 "magistuarmory:netherite_stylet":{
-        "attack": "1.3",
-        "defend": "1.00",
-        "shield": "false"
+        "attack": 1.3,
+        "defend": 1.00,
+        "shield": false
     },
 "magistuarmory:netherite_target":{
-        "attack": "3",
-        "defend": "0.70",
-        "shield": "true"
+        "attack": 3,
+        "defend": 0.70,
+        "shield": true
     },
 "magistuarmory:netherite_tartsche":{
-        "attack": "4",
-        "defend": "0.60",
-        "shield": "true"
+        "attack": 4,
+        "defend": 0.60,
+        "shield": true
     },
 "magistuarmory:netherite_zweihander":{
-        "attack": "3.8",
-        "defend": "0.80",
-        "shield": "false"
+        "attack": 3.8,
+        "defend": 0.80,
+        "shield": false
     },
 "magistuarmory:noble_sword":{
-        "attack": "2.6",
-        "defend": "0.90",
-        "shield": "false"
+        "attack": 2.6,
+        "defend": 0.90,
+        "shield": false
     },
 "magistuarmory:pitchfork":{
-        "attack": "2.5",
-        "defend": "0.70",
-        "shield": "false"
+        "attack": 2.5,
+        "defend": 0.70,
+        "shield": false
     },
 "magistuarmory:pole":{
-        "attack": "2.5",
-        "defend": "0.70",
-        "shield": "false"
+        "attack": 2.5,
+        "defend": 0.70,
+        "shield": false
     },
 "magistuarmory:rusted_bastardsword":{
-        "attack": "2.9",
-        "defend": "0.85",
-        "shield": "false"
+        "attack": 2.9,
+        "defend": 0.85,
+        "shield": false
     },
 "magistuarmory:rusted_heavymace":{
-        "attack": "6",
-        "defend": "0.90",
-        "shield": "false"
+        "attack": 6,
+        "defend": 0.90,
+        "shield": false
     },
 "magistuarmory:silver_ahlspiess":{
-        "attack": "2.5",
-        "defend": "0.70",
-        "shield": "false"
+        "attack": 2.5,
+        "defend": 0.70,
+        "shield": false
     },
 "magistuarmory:silver_bastardsword":{
-        "attack": "2.9",
-        "defend": "0.85",
-        "shield": "false"
+        "attack": 2.9,
+        "defend": 0.85,
+        "shield": false
     },
 "magistuarmory:silver_buckler":{
-        "attack": "3",
-        "defend": "0.70",
-        "shield": "true"
+        "attack": 3,
+        "defend": 0.70,
+        "shield": true
     },
 "magistuarmory:silver_chainmorgenstern":{
-        "attack": "6",
-        "defend": "0.90",
-        "shield": "false"
+        "attack": 6,
+        "defend": 0.90,
+        "shield": false
     },
 "magistuarmory:silver_chivalrylance":{
-        "attack": "2.5",
-        "defend": "0.70",
-        "shield": "false"
+        "attack": 2.5,
+        "defend": 0.70,
+        "shield": false
     },
 "magistuarmory:silver_claymore":{
-        "attack": "3.8",
-        "defend": "0.80",
-        "shield": "false"
+        "attack": 3.8,
+        "defend": 0.80,
+        "shield": false
     },
 "magistuarmory:silver_concavehalberd":{
-        "attack": "4",
-        "defend": "0.70",
-        "shield": "false"
+        "attack": 4,
+        "defend": 0.70,
+        "shield": false
     },
 "magistuarmory:silver_ellipticalshield":{
-        "attack": "4",
-        "defend": "0.60",
-        "shield": "true"
+        "attack": 4,
+        "defend": 0.60,
+        "shield": true
     },
 "magistuarmory:silver_estoc":{
-        "attack": "1.3",
-        "defend": "1.00",
-        "shield": "false"
+        "attack": 1.3,
+        "defend": 1.00,
+        "shield": false
     },
 "magistuarmory:silver_flamebladedsword":{
-        "attack": "3.8",
-        "defend": "0.80",
-        "shield": "false"
+        "attack": 3.8,
+        "defend": 0.80,
+        "shield": false
     },
 "magistuarmory:silver_guisarme":{
-        "attack": "4",
-        "defend": "0.70",
-        "shield": "false"
+        "attack": 4,
+        "defend": 0.70,
+        "shield": false
     },
 "magistuarmory:silver_heatershield":{
-        "attack": "4",
-        "defend": "0.60",
-        "shield": "true"
+        "attack": 4,
+        "defend": 0.60,
+        "shield": true
     },
 "magistuarmory:silver_heavymace":{
-        "attack": "6",
-        "defend": "0.90",
-        "shield": "false"
+        "attack": 6,
+        "defend": 0.90,
+        "shield": false
     },
 "magistuarmory:silver_heavywarhammer":{
-        "attack": "8",
-        "defend": "0.80",
-        "shield": "false"
+        "attack": 8,
+        "defend": 0.80,
+        "shield": false
     },
 "magistuarmory:silver_katzbalger":{
-        "attack": "2.6",
-        "defend": "0.90",
-        "shield": "false"
+        "attack": 2.6,
+        "defend": 0.90,
+        "shield": false
     },
 "magistuarmory:silver_kiteshield":{
-        "attack": "4",
-        "defend": "0.60",
-        "shield": "true"
+        "attack": 4,
+        "defend": 0.60,
+        "shield": true
     },
 "magistuarmory:silver_lochaberaxe":{
-        "attack": "4",
-        "defend": "0.70",
-        "shield": "false"
+        "attack": 4,
+        "defend": 0.70,
+        "shield": false
     },
 "magistuarmory:silver_lucernhammer":{
-        "attack": "8",
-        "defend": "0.80",
-        "shield": "false"
+        "attack": 8,
+        "defend": 0.80,
+        "shield": false
     },
 "magistuarmory:silver_morgenstern":{
-        "attack": "6",
-        "defend": "0.90",
-        "shield": "false"
+        "attack": 6,
+        "defend": 0.90,
+        "shield": false
     },
 "magistuarmory:silver_pavese":{
-        "attack": "5",
-        "defend": "0.50",
-        "shield": "true"
+        "attack": 5,
+        "defend": 0.50,
+        "shield": true
     },
 "magistuarmory:silver_pike":{
-        "attack": "3.2",
-        "defend": "0.70",
-        "shield": "false"
+        "attack": 3.2,
+        "defend": 0.70,
+        "shield": false
     },
 "magistuarmory:silver_ranseur":{
-        "attack": "4",
-        "defend": "0.70",
-        "shield": "false"
+        "attack": 4,
+        "defend": 0.70,
+        "shield": false
     },
 "magistuarmory:silver_rondache":{
-        "attack": "3",
-        "defend": "0.70",
-        "shield": "true"
+        "attack": 3,
+        "defend": 0.70,
+        "shield": true
     },
 "magistuarmory:silver_roundshield":{
-        "attack": "4",
-        "defend": "0.60",
-        "shield": "true"
+        "attack": 4,
+        "defend": 0.60,
+        "shield": true
     },
 "magistuarmory:silver_shortsword":{
-        "attack": "2",
-        "defend": "0.85",
-        "shield": "false"
+        "attack": 2,
+        "defend": 0.85,
+        "shield": false
     },
 "magistuarmory:silver_stylet":{
-        "attack": "1.3",
-        "defend": "1.00",
-        "shield": "false"
+        "attack": 1.3,
+        "defend": 1.00,
+        "shield": false
     },
 "magistuarmory:silver_target":{
-        "attack": "3",
-        "defend": "0.70",
-        "shield": "true"
+        "attack": 3,
+        "defend": 0.70,
+        "shield": true
     },
 "magistuarmory:silver_tartsche":{
-        "attack": "4",
-        "defend": "0.60",
-        "shield": "true"
+        "attack": 4,
+        "defend": 0.60,
+        "shield": true
     },
 "magistuarmory:silver_zweihander":{
-        "attack": "3.8",
-        "defend": "0.80",
-        "shield": "false"
+        "attack": 3.8,
+        "defend": 0.80,
+        "shield": false
     },
 "magistuarmory:steel_ahlspiess":{
-        "attack": "2.5",
-        "defend": "0.70",
-        "shield": "false"
+        "attack": 2.5,
+        "defend": 0.70,
+        "shield": false
     },
 "magistuarmory:steel_bastardsword":{
-        "attack": "2.9",
-        "defend": "0.85",
-        "shield": "false"
+        "attack": 2.9,
+        "defend": 0.85,
+        "shield": false
     },
 "magistuarmory:steel_buckler":{
-        "attack": "3",
-        "defend": "0.70",
-        "shield": "true"
+        "attack": 3,
+        "defend": 0.70,
+        "shield": true
     },
 "magistuarmory:steel_chain":{
-        "attack": "6",
-        "defend": "0.90",
-        "shield": "false"
+        "attack": 6,
+        "defend": 0.90,
+        "shield": false
     },
 "magistuarmory:steel_chainmorgenstern":{
-        "attack": "6",
-        "defend": "0.90",
-        "shield": "false"
+        "attack": 6,
+        "defend": 0.90,
+        "shield": false
     },
 "magistuarmory:steel_chivalrylance":{
-        "attack": "2.5",
-        "defend": "0.70",
-        "shield": "false"
+        "attack": 2.5,
+        "defend": 0.70,
+        "shield": false
     },
 "magistuarmory:steel_claymore":{
-        "attack": "3.8",
-        "defend": "0.80",
-        "shield": "false"
+        "attack": 3.8,
+        "defend": 0.80,
+        "shield": false
     },
 "magistuarmory:steel_concavehalberd":{
-        "attack": "4",
-        "defend": "0.70",
-        "shield": "false"
+        "attack": 4,
+        "defend": 0.70,
+        "shield": false
     },
 "magistuarmory:steel_ellipticalshield":{
-        "attack": "4",
-        "defend": "0.60",
-        "shield": "true"
+        "attack": 4,
+        "defend": 0.60,
+        "shield": true
     },
 "magistuarmory:steel_estoc":{
-        "attack": "1.3",
-        "defend": "1.00",
-        "shield": "false"
+        "attack": 1.3,
+        "defend": 1.00,
+        "shield": false
     },
 "magistuarmory:steel_flamebladedsword":{
-        "attack": "3.8",
-        "defend": "0.80",
-        "shield": "false"
+        "attack": 3.8,
+        "defend": 0.80,
+        "shield": false
     },
 "magistuarmory:steel_guisarme":{
-        "attack": "4",
-        "defend": "0.70",
-        "shield": "false"
+        "attack": 4,
+        "defend": 0.70,
+        "shield": false
     },
 "magistuarmory:steel_heatershield":{
-        "attack": "4",
-        "defend": "0.60",
-        "shield": "true"
+        "attack": 4,
+        "defend": 0.60,
+        "shield": true
     },
 "magistuarmory:steel_heavymace":{
-        "attack": "6",
-        "defend": "0.90",
-        "shield": "false"
+        "attack": 6,
+        "defend": 0.90,
+        "shield": false
     },
 "magistuarmory:steel_heavywarhammer":{
-        "attack": "8",
-        "defend": "0.80",
-        "shield": "false"
+        "attack": 8,
+        "defend": 0.80,
+        "shield": false
     },
 "magistuarmory:steel_katzbalger":{
-        "attack": "2.6",
-        "defend": "0.90",
-        "shield": "false"
+        "attack": 2.6,
+        "defend": 0.90,
+        "shield": false
     },
 "magistuarmory:steel_kiteshield":{
-        "attack": "4",
-        "defend": "0.60",
-        "shield": "true"
+        "attack": 4,
+        "defend": 0.60,
+        "shield": true
     },
 "magistuarmory:steel_lochaberaxe":{
-        "attack": "4",
-        "defend": "0.70",
-        "shield": "false"
+        "attack": 4,
+        "defend": 0.70,
+        "shield": false
     },
 "magistuarmory:steel_lucernhammer":{
-        "attack": "8",
-        "defend": "0.80",
-        "shield": "false"
+        "attack": 8,
+        "defend": 0.80,
+        "shield": false
     },
 "magistuarmory:steel_morgenstern":{
-        "attack": "6",
-        "defend": "0.90",
-        "shield": "false"
+        "attack": 6,
+        "defend": 0.90,
+        "shield": false
     },
 "magistuarmory:steel_pavese":{
-        "attack": "5",
-        "defend": "0.50",
-        "shield": "true"
+        "attack": 5,
+        "defend": 0.50,
+        "shield": true
     },
 "magistuarmory:steel_pike":{
-        "attack": "3.2",
-        "defend": "0.70",
-        "shield": "false"
+        "attack": 3.2,
+        "defend": 0.70,
+        "shield": false
     },
 "magistuarmory:steel_ranseur":{
-        "attack": "4",
-        "defend": "0.70",
-        "shield": "false"
+        "attack": 4,
+        "defend": 0.70,
+        "shield": false
     },
 "magistuarmory:steel_rondache":{
-        "attack": "3",
-        "defend": "0.70",
-        "shield": "true"
+        "attack": 3,
+        "defend": 0.70,
+        "shield": true
     },
 "magistuarmory:steel_roundshield":{
-        "attack": "4",
-        "defend": "0.60",
-        "shield": "true"
+        "attack": 4,
+        "defend": 0.60,
+        "shield": true
     },
 "magistuarmory:steel_shortsword":{
-        "attack": "2",
-        "defend": "0.85",
-        "shield": "false"
+        "attack": 2,
+        "defend": 0.85,
+        "shield": false
     },
 "magistuarmory:steel_stylet":{
-        "attack": "1.3",
-        "defend": "1.00",
-        "shield": "false"
+        "attack": 1.3,
+        "defend": 1.00,
+        "shield": false
     },
 "magistuarmory:steel_target":{
-        "attack": "3",
-        "defend": "0.70",
-        "shield": "true"
+        "attack": 3,
+        "defend": 0.70,
+        "shield": true
     },
 "magistuarmory:steel_tartsche":{
-        "attack": "4",
-        "defend": "0.60",
-        "shield": "true"
+        "attack": 4,
+        "defend": 0.60,
+        "shield": true
     },
 "magistuarmory:steel_zweihander":{
-        "attack": "3.8",
-        "defend": "0.80",
-        "shield": "false"
+        "attack": 3.8,
+        "defend": 0.80,
+        "shield": false
     },
 "magistuarmory:stone_ahlspiess":{
-        "attack": "2.5",
-        "defend": "0.70",
-        "shield": "false"
+        "attack": 2.5,
+        "defend": 0.70,
+        "shield": false
     },
 "magistuarmory:stone_bastardsword":{
-        "attack": "2.9",
-        "defend": "0.85",
-        "shield": "false"
+        "attack": 2.9,
+        "defend": 0.85,
+        "shield": false
     },
 "magistuarmory:stone_buckler":{
-        "attack": "3",
-        "defend": "0.70",
-        "shield": "true"
+        "attack": 3,
+        "defend": 0.70,
+        "shield": true
     },
 "magistuarmory:stone_chainmorgenstern":{
-        "attack": "6",
-        "defend": "0.90",
-        "shield": "false"
+        "attack": 6,
+        "defend": 0.90,
+        "shield": false
     },
 "magistuarmory:stone_chivalrylance":{
-        "attack": "2.5",
-        "defend": "0.70",
-        "shield": "false"
+        "attack": 2.5,
+        "defend": 0.70,
+        "shield": false
     },
 "magistuarmory:stone_claymored":{
-        "attack": "3.8",
-        "defend": "0.80",
-        "shield": "false"
+        "attack": 3.8,
+        "defend": 0.80,
+        "shield": false
     },
 "magistuarmory:stone_concavehalberd":{
-        "attack": "4",
-        "defend": "0.70",
-        "shield": "false"
+        "attack": 4,
+        "defend": 0.70,
+        "shield": false
     },
 "magistuarmory:stone_ellipticalshield":{
-        "attack": "4",
-        "defend": "0.60",
-        "shield": "true"
+        "attack": 4,
+        "defend": 0.60,
+        "shield": true
     },
 "magistuarmory:stone_estoc":{
-        "attack": "1.3",
-        "defend": "1.00",
-        "shield": "false"
+        "attack": 1.3,
+        "defend": 1.00,
+        "shield": false
     },
 "magistuarmory:stone_flamebladedsword":{
-        "attack": "3.8",
-        "defend": "0.80",
-        "shield": "false"
+        "attack": 3.8,
+        "defend": 0.80,
+        "shield": false
     },
 "magistuarmory:stone_guisarme":{
-        "attack": "4",
-        "defend": "0.70",
-        "shield": "false"
+        "attack": 4,
+        "defend": 0.70,
+        "shield": false
     },
 "magistuarmory:stone_heatershield":{
-        "attack": "4",
-        "defend": "0.60",
-        "shield": "true"
+        "attack": 4,
+        "defend": 0.60,
+        "shield": true
     },
 "magistuarmory:stone_heavymace":{
-        "attack": "6",
-        "defend": "0.90",
-        "shield": "false"
+        "attack": 6,
+        "defend": 0.90,
+        "shield": false
     },
 "magistuarmory:stone_heavywarhammer":{
-        "attack": "8",
-        "defend": "0.80",
-        "shield": "false"
+        "attack": 8,
+        "defend": 0.80,
+        "shield": false
     },
 "magistuarmory:stone_katzbalger":{
-        "attack": "2.6",
-        "defend": "0.90",
-        "shield": "false"
+        "attack": 2.6,
+        "defend": 0.90,
+        "shield": false
     },
 "magistuarmory:stone_kiteshield":{
-        "attack": "4",
-        "defend": "0.60",
-        "shield": "true"
+        "attack": 4,
+        "defend": 0.60,
+        "shield": true
     },
 "magistuarmory:stone_lochaberaxe":{
-        "attack": "4",
-        "defend": "0.70",
-        "shield": "false"
+        "attack": 4,
+        "defend": 0.70,
+        "shield": false
     },
 "magistuarmory:stone_lucernhammer":{
-        "attack": "8",
-        "defend": "0.80",
-        "shield": "false"
+        "attack": 8,
+        "defend": 0.80,
+        "shield": false
     },
 "magistuarmory:stone_morgenstern":{
-        "attack": "6",
-        "defend": "0.90",
-        "shield": "false"
+        "attack": 6,
+        "defend": 0.90,
+        "shield": false
     },
 "magistuarmory:stone_pavese":{
-        "attack": "5",
-        "defend": "0.50",
-        "shield": "true"
+        "attack": 5,
+        "defend": 0.50,
+        "shield": true
     },
 "magistuarmory:stone_pike":{
-        "attack": "3.2",
-        "defend": "0.70",
-        "shield": "false"
+        "attack": 3.2,
+        "defend": 0.70,
+        "shield": false
     },
 "magistuarmory:stone_ranseur":{
-        "attack": "4",
-        "defend": "0.70",
-        "shield": "false"
+        "attack": 4,
+        "defend": 0.70,
+        "shield": false
     },
 "magistuarmory:stone_rondache":{
-        "attack": "3",
-        "defend": "0.70",
-        "shield": "true"
+        "attack": 3,
+        "defend": 0.70,
+        "shield": true
     },
 "magistuarmory:stone_roundshield":{
-        "attack": "4",
-        "defend": "0.60",
-        "shield": "true"
+        "attack": 4,
+        "defend": 0.60,
+        "shield": true
     },
 "magistuarmory:stone_shortsword":{
-        "attack": "2",
-        "defend": "0.85",
-        "shield": "false"
+        "attack": 2,
+        "defend": 0.85,
+        "shield": false
     },
 "magistuarmory:stone_stylet":{
-        "attack": "1.3",
-        "defend": "1.00",
-        "shield": "false"
+        "attack": 1.3,
+        "defend": 1.00,
+        "shield": false
     },
 "magistuarmory:stone_target":{
-        "attack": "3",
-        "defend": "0.70",
-        "shield": "true"
+        "attack": 3,
+        "defend": 0.70,
+        "shield": true
     },
 "magistuarmory:stone_tartsche":{
-        "attack": "4",
-        "defend": "0.60",
-        "shield": "true"
+        "attack": 4,
+        "defend": 0.60,
+        "shield": true
     },
 "magistuarmory:stone_zweihander":{
-        "attack": "3.8",
-        "defend": "0.80",
-        "shield": "false"
+        "attack": 3.8,
+        "defend": 0.80,
+        "shield": false
     },
 "magistuarmory:tin_ahlspiess":{
-        "attack": "2.5",
-        "defend": "0.70",
-        "shield": "false"
+        "attack": 2.5,
+        "defend": 0.70,
+        "shield": false
     },
 "magistuarmory:tin_bastardsword":{
-        "attack": "2.9",
-        "defend": "0.85",
-        "shield": "false"
+        "attack": 2.9,
+        "defend": 0.85,
+        "shield": false
     },
 "magistuarmory:tin_buckler":{
-        "attack": "3",
-        "defend": "0.70",
-        "shield": "true"
+        "attack": 3,
+        "defend": 0.70,
+        "shield": true
     },
 "magistuarmory:tin_chainmorgenstern":{
-        "attack": "6",
-        "defend": "0.90",
-        "shield": "false"
+        "attack": 6,
+        "defend": 0.90,
+        "shield": false
     },
 "magistuarmory:tin_chivalrylance":{
-        "attack": "2.5",
-        "defend": "0.70",
-        "shield": "false"
+        "attack": 2.5,
+        "defend": 0.70,
+        "shield": false
     },
 "magistuarmory:tin_claymore":{
-        "attack": "3.8",
-        "defend": "0.80",
-        "shield": "false"
+        "attack": 3.8,
+        "defend": 0.80,
+        "shield": false
     },
 "magistuarmory:tin_concavehalberd":{
-        "attack": "4",
-        "defend": "0.70",
-        "shield": "false"
+        "attack": 4,
+        "defend": 0.70,
+        "shield": false
     },
 "magistuarmory:tin_ellipticalshield":{
-        "attack": "4",
-        "defend": "0.60",
-        "shield": "true"
+        "attack": 4,
+        "defend": 0.60,
+        "shield": true
     },
 "magistuarmory:tin_estoc":{
-        "attack": "1.3",
-        "defend": "1.00",
-        "shield": "false"
+        "attack": 1.3,
+        "defend": 1.00,
+        "shield": false
     },
 "magistuarmory:tin_flamebladedsword":{
-        "attack": "3.8",
-        "defend": "0.80",
-        "shield": "false"
+        "attack": 3.8,
+        "defend": 0.80,
+        "shield": false
     },
 "magistuarmory:tin_guisarme":{
-        "attack": "4",
-        "defend": "0.70",
-        "shield": "false"
+        "attack": 4,
+        "defend": 0.70,
+        "shield": false
     },
 "magistuarmory:tin_heatershield":{
-        "attack": "4",
-        "defend": "0.60",
-        "shield": "true"
+        "attack": 4,
+        "defend": 0.60,
+        "shield": true
     },
 "magistuarmory:tin_heavymace":{
-        "attack": "6",
-        "defend": "0.90",
-        "shield": "false"
+        "attack": 6,
+        "defend": 0.90,
+        "shield": false
     },
 "magistuarmory:tin_heavywarhammer":{
-        "attack": "8",
-        "defend": "0.80",
-        "shield": "false"
+        "attack": 8,
+        "defend": 0.80,
+        "shield": false
     },
 "magistuarmory:tin_katzbalger":{
-        "attack": "2.6",
-        "defend": "0.90",
-        "shield": "false"
+        "attack": 2.6,
+        "defend": 0.90,
+        "shield": false
     },
 "magistuarmory:tin_kiteshield":{
-        "attack": "4",
-        "defend": "0.60",
-        "shield": "true"
+        "attack": 4,
+        "defend": 0.60,
+        "shield": true
     },
 "magistuarmory:tin_lochaberaxe":{
-        "attack": "4",
-        "defend": "0.70",
-        "shield": "false"
+        "attack": 4,
+        "defend": 0.70,
+        "shield": false
     },
 "magistuarmory:tin_lucernhammer":{
-        "attack": "8",
-        "defend": "0.80",
-        "shield": "false"
+        "attack": 8,
+        "defend": 0.80,
+        "shield": false
     },
 "magistuarmory:tin_morgenstern":{
-        "attack": "6",
-        "defend": "0.90",
-        "shield": "false"
+        "attack": 6,
+        "defend": 0.90,
+        "shield": false
     },
 "magistuarmory:tin_pavese":{
-        "attack": "5",
-        "defend": "0.50",
-        "shield": "true"
+        "attack": 5,
+        "defend": 0.50,
+        "shield": true
     },
 "magistuarmory:tin_pike":{
-        "attack": "3.2",
-        "defend": "0.70",
-        "shield": "false"
+        "attack": 3.2,
+        "defend": 0.70,
+        "shield": false
     },
 "magistuarmory:tin_ranseur":{
-        "attack": "4",
-        "defend": "0.70",
-        "shield": "false"
+        "attack": 4,
+        "defend": 0.70,
+        "shield": false
     },
 "magistuarmory:tin_rondache":{
-        "attack": "3",
-        "defend": "0.70",
-        "shield": "true"
+        "attack": 3,
+        "defend": 0.70,
+        "shield": true
     },
 "magistuarmory:tin_roundshield":{
-        "attack": "4",
-        "defend": "0.60",
-        "shield": "true"
+        "attack": 4,
+        "defend": 0.60,
+        "shield": true
     },
 "magistuarmory:tin_shortsword":{
-        "attack": "2",
-        "defend": "0.85",
-        "shield": "false"
+        "attack": 2,
+        "defend": 0.85,
+        "shield": false
     },
 "magistuarmory:tin_stylet":{
-        "attack": "1.3",
-        "defend": "1.00",
-        "shield": "false"
+        "attack": 1.3,
+        "defend": 1.00,
+        "shield": false
     },
 "magistuarmory:tin_tartsche":{
-        "attack": "4",
-        "defend": "0.60",
-        "shield": "true"
+        "attack": 4,
+        "defend": 0.60,
+        "shield": true
     },
 "magistuarmory:tin_zweihander":{
-        "attack": "3.8",
-        "defend": "0.80",
-        "shield": "false"
+        "attack": 3.8,
+        "defend": 0.80,
+        "shield": false
     },
 "magistuarmory:wood_ahlspiess":{
-        "attack": "2.5",
-        "defend": "0.70",
-        "shield": "false"
+        "attack": 2.5,
+        "defend": 0.70,
+        "shield": false
     },
 "magistuarmory:wood_bastardsword":{
-        "attack": "2.9",
-        "defend": "0.85",
-        "shield": "false"
+        "attack": 2.9,
+        "defend": 0.85,
+        "shield": false
     },
 "magistuarmory:wood_buckler":{
-        "attack": "3",
-        "defend": "0.70",
-        "shield": "true"
+        "attack": 3,
+        "defend": 0.70,
+        "shield": true
     },
 "magistuarmory:wood_chainmorgenstern":{
-        "attack": "6",
-        "defend": "0.90",
-        "shield": "false"
+        "attack": 6,
+        "defend": 0.90,
+        "shield": false
     },
 "magistuarmory:wood_chivalrylance":{
-        "attack": "2.5",
-        "defend": "0.70",
-        "shield": "false"
+        "attack": 2.5,
+        "defend": 0.70,
+        "shield": false
     },
 "magistuarmory:wood_claymore":{
-        "attack": "3.8",
-        "defend": "0.80",
-        "shield": "false"
+        "attack": 3.8,
+        "defend": 0.80,
+        "shield": false
     },
 "magistuarmory:wood_concavehalberd":{
-        "attack": "4",
-        "defend": "0.70",
-        "shield": "false"
+        "attack": 4,
+        "defend": 0.70,
+        "shield": false
     },
 "magistuarmory:wood_ellipticalshield":{
-        "attack": "4",
-        "defend": "0.60",
-        "shield": "true"
+        "attack": 4,
+        "defend": 0.60,
+        "shield": true
     },
 "magistuarmory:wood_estoc":{
-        "attack": "1.3",
-        "defend": "1.00",
-        "shield": "false"
+        "attack": 1.3,
+        "defend": 1.00,
+        "shield": false
     },
 "magistuarmory:wood_flamebladedsword":{
-        "attack": "3.8",
-        "defend": "0.80",
-        "shield": "false"
+        "attack": 3.8,
+        "defend": 0.80,
+        "shield": false
     },
 "magistuarmory:wood_guisarme":{
-        "attack": "4",
-        "defend": "0.70",
-        "shield": "false"
+        "attack": 4,
+        "defend": 0.70,
+        "shield": false
     },
 "magistuarmory:wood_heatershield":{
-        "attack": "4",
-        "defend": "0.60",
-        "shield": "true"
+        "attack": 4,
+        "defend": 0.60,
+        "shield": true
     },
 "magistuarmory:wood_heavymace":{
-        "attack": "6",
-        "defend": "0.90",
-        "shield": "false"
+        "attack": 6,
+        "defend": 0.90,
+        "shield": false
     },
 "magistuarmory:wood_heavywarhammer":{
-        "attack": "8",
-        "defend": "0.80",
-        "shield": "false"
+        "attack": 8,
+        "defend": 0.80,
+        "shield": false
     },
 "magistuarmory:wood_katzbalger":{
-        "attack": "2.6",
-        "defend": "0.90",
-        "shield": "false"
+        "attack": 2.6,
+        "defend": 0.90,
+        "shield": false
     },
 "magistuarmory:wood_kiteshield":{
-        "attack": "4",
-        "defend": "0.60",
-        "shield": "true"
+        "attack": 4,
+        "defend": 0.60,
+        "shield": true
     },
 "magistuarmory:wood_lochaberaxe":{
-        "attack": "4",
-        "defend": "0.70",
-        "shield": "false"
+        "attack": 4,
+        "defend": 0.70,
+        "shield": false
     },
 "magistuarmory:wood_lucernhammer":{
-        "attack": "8",
-        "defend": "0.80",
-        "shield": "false"
+        "attack": 8,
+        "defend": 0.80,
+        "shield": false
     },
 "magistuarmory:wood_morgenstern":{
-        "attack": "6",
-        "defend": "0.90",
-        "shield": "false"
+        "attack": 6,
+        "defend": 0.90,
+        "shield": false
     },
 "magistuarmory:wood_pavese":{
-        "attack": "5",
-        "defend": "0.50",
-        "shield": "true"
+        "attack": 5,
+        "defend": 0.50,
+        "shield": true
     },
 "magistuarmory:wood_pike":{
-        "attack": "3.2",
-        "defend": "0.70",
-        "shield": "false"
+        "attack": 3.2,
+        "defend": 0.70,
+        "shield": false
     },
 "magistuarmory:wood_ranseur":{
-        "attack": "4",
-        "defend": "0.70",
-        "shield": "false"
+        "attack": 4,
+        "defend": 0.70,
+        "shield": false
     },
 "magistuarmory:wood_rondache":{
-        "attack": "3",
-        "defend": "0.70",
-        "shield": "true"
+        "attack": 3,
+        "defend": 0.70,
+        "shield": true
     },
 "magistuarmory:wood_roundshield":{
-        "attack": "4",
-        "defend": "0.60",
-        "shield": "true"
+        "attack": 4,
+        "defend": 0.60,
+        "shield": true
     },
 "magistuarmory:wood_shortsword":{
-        "attack": "2",
-        "defend": "0.85",
-        "shield": "false"
+        "attack": 2,
+        "defend": 0.85,
+        "shield": false
     },
 "magistuarmory:wood_stylet":{
-        "attack": "1.3",
-        "defend": "1.00",
-        "shield": "false"
+        "attack": 1.3,
+        "defend": 1.00,
+        "shield": false
     },
 "magistuarmory:wood_target":{
-        "attack": "3",
-        "defend": "0.70",
-        "shield": "true"
+        "attack": 3,
+        "defend": 0.70,
+        "shield": true
     },
 "magistuarmory:wood_tartsche":{
-        "attack": "4",
-        "defend": "0.60",
-        "shield": "true"
+        "attack": 4,
+        "defend": 0.60,
+        "shield": true
     },
 "magistuarmory:wood_zweihander":{
-        "attack": "3.8",
-        "defend": "0.80",
-        "shield": "false"
+        "attack": 3.8,
+        "defend": 0.80,
+        "shield": false
     }
 }

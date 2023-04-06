@@ -1,112 +1,112 @@
 {
 "stalwart_dungeons:awful_dagger":{
-        "attack": "1.3",
-        "defend": "1.00",
-        "shield": "false"
+        "attack": 1.3,
+        "defend": 1.00,
+        "shield": false
     },
 "stalwart_dungeons:awful_gun":{
-        "attack": "1.8",
-        "defend": "1.1",
-        "shield": "false"
+        "attack": 1.8,
+        "defend": 1.1,
+        "shield": false
     },
 "stalwart_dungeons:chorundum_axe":{
-        "attack": "4",
-        "defend": "0.90",
-        "shield": "false"
+        "attack": 4,
+        "defend": 0.90,
+        "shield": false
     },
 "stalwart_dungeons:chorundum_hoe":{
-        "attack": "1",
-        "defend": "1.00",
-        "shield": "false"
+        "attack": 1,
+        "defend": 1.00,
+        "shield": false
     },
 "stalwart_dungeons:chorundum_pickaxe":{
-        "attack": "2.5",
-        "defend": "1.00",
-        "shield": "false"
+        "attack": 2.5,
+        "defend": 1.00,
+        "shield": false
     },
 "stalwart_dungeons:chorundum_shield":{
-        "attack": "4",
-        "defend": "0.60",
-        "shield": "true"
+        "attack": 4,
+        "defend": 0.60,
+        "shield": true
     },
 "stalwart_dungeons:chorundum_shovel":{
-        "attack": "6",
-        "defend": "0.90",
-        "shield": "false"
+        "attack": 6,
+        "defend": 0.90,
+        "shield": false
     },
 "stalwart_dungeons:chorundum_sword":{
-        "attack": "2.6",
-        "defend": "0.90",
-        "shield": "false"
+        "attack": 2.6,
+        "defend": 0.90,
+        "shield": false
     },
 "stalwart_dungeons:diamond_hammer":{
-        "attack": "6",
-        "defend": "0.90",
-        "shield": "false"
+        "attack": 6,
+        "defend": 0.90,
+        "shield": false
     },
 "stalwart_dungeons:golden_hammer":{
-        "attack": "6",
-        "defend": "0.90",
-        "shield": "false"
+        "attack": 6,
+        "defend": 0.90,
+        "shield": false
     },
 "stalwart_dungeons:iron_hammer":{
-        "attack": "6",
-        "defend": "0.90",
-        "shield": "false"
+        "attack": 6,
+        "defend": 0.90,
+        "shield": false
     },
 "stalwart_dungeons:nether_hammer":{
-        "attack": "6",
-        "defend": "0.90",
-        "shield": "false"
+        "attack": 6,
+        "defend": 0.90,
+        "shield": false
     },
 "stalwart_dungeons:netherite_hammer":{
-        "attack": "6",
-        "defend": "0.90",
-        "shield": "false"
+        "attack": 6,
+        "defend": 0.90,
+        "shield": false
     },
 "stalwart_dungeons:stone_hammer":{
-        "attack": "6",
-        "defend": "0.90",
-        "shield": "false"
+        "attack": 6,
+        "defend": 0.90,
+        "shield": false
     },
 "stalwart_dungeons:tungsten_axe":{
-        "attack": "4",
-        "defend": "0.90",
-        "shield": "false"
+        "attack": 4,
+        "defend": 0.90,
+        "shield": false
     },
 "stalwart_dungeons:tungsten_hammer":{
-        "attack": "6",
-        "defend": "0.90",
-        "shield": "false"
+        "attack": 6,
+        "defend": 0.90,
+        "shield": false
     },
 "stalwart_dungeons:tungsten_hoe":{
-        "attack": "1",
-        "defend": "1.00",
-        "shield": "false"
+        "attack": 1,
+        "defend": 1.00,
+        "shield": false
     },
 "stalwart_dungeons:tungsten_pickaxe":{
-        "attack": "2.5",
-        "defend": "1.00",
-        "shield": "false"
+        "attack": 2.5,
+        "defend": 1.00,
+        "shield": false
     },
 "stalwart_dungeons:tungsten_shield":{
-        "attack": "4",
-        "defend": "0.60",
-        "shield": "true"
+        "attack": 4,
+        "defend": 0.60,
+        "shield": true
     },
 "stalwart_dungeons:tungsten_shovel":{
-        "attack": "6",
-        "defend": "0.90",
-        "shield": "false"
+        "attack": 6,
+        "defend": 0.90,
+        "shield": false
     },
 "stalwart_dungeons:tungsten_sword":{
-        "attack": "2.6",
-        "defend": "0.90",
-        "shield": "false"
+        "attack": 2.6,
+        "defend": 0.90,
+        "shield": false
     },
 "stalwart_dungeons:wooden_hammer":{
-        "attack": "6",
-        "defend": "0.90",
-        "shield": "false"
+        "attack": 6,
+        "defend": 0.90,
+        "shield": false
     }
 }

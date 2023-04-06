@@ -478,7 +478,7 @@ public class CombatHandler {
             double luckDiff = WarDance.rand.nextFloat() * (GeneralUtils.getAttributeValueSafe(seme, Attributes.LUCK)) - WarDance.rand.nextFloat() * (GeneralUtils.getAttributeValueSafe(uke, Attributes.LUCK));
             e.setAmount(e.getAmount() + (float) luckDiff * GeneralConfig.luck);
         }
-        if (CombatUtils.isMeleeAttack(ds)) {
+        if (CombatUtils.isPhysicalAttack(ds)) {
             if ((cap.isVulnerable()) && !cap.isStaggeringStrike()) {
                 //stagger tests for melee damage
                 if (cap.isExposed()) {
@@ -495,7 +495,7 @@ public class CombatHandler {
                 }
                 //knockdown damage multiplier
                 else if (cap.isKnockedDown()) e.setAmount(e.getAmount() * CombatConfig.knockdownDamage);
-                //stun damage multiplier
+                    //stun damage multiplier
                 else if (cap.isStunned()) e.setAmount(e.getAmount() * CombatConfig.stunDamage);
             } else {
                 //unfatality!
@@ -545,9 +545,10 @@ public class CombatHandler {
 
     @SubscribeEvent(priority = EventPriority.LOWEST, receiveCanceled = true)
     public static void diepotato(LivingDeathEvent e) {
-//        LivingEntity elb=e.getEntity();
-//        if(e.getSource().getEntity() instanceof LivingEntity killer){
-//            CombatData.getCap(killer).clearFracture(elb, true);
-//        }
+        LivingEntity elb = e.getEntity();
+        LivingEntity killer = elb.getCombatTracker().getKiller();
+        if (killer != null) {
+            CombatData.getCap(killer).addRank(0.2f);
+        }
     }
 }

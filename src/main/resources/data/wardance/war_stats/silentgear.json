@@ -1,97 +1,97 @@
 {
 "silentgear:axe":{
-        "attack": "4",
-        "defend": "0.90",
-        "shield": "false"
+        "attack": 4,
+        "defend": 0.90,
+        "shield": false
     },
 "silentgear:bow":{
-        "attack": "1.2",
-        "defend": "0.90",
-        "shield": "false"
+        "attack": 1.2,
+        "defend": 0.90,
+        "shield": false
     },
 "silentgear:crossbow":{
-        "attack": "1",
-        "defend": "1.10",
-        "shield": "false"
+        "attack": 1,
+        "defend": 1.10,
+        "shield": false
     },
 "silentgear:dagger":{
-        "attack": "1.3",
-        "defend": "1.00",
-        "shield": "false"
+        "attack": 1.3,
+        "defend": 1.00,
+        "shield": false
     },
 "silentgear:excavator":{
-        "attack": "6",
-        "defend": "0.9",
-        "shield": "false"
+        "attack": 6,
+        "defend": 0.9,
+        "shield": false
     },
 "silentgear:hammer":{
-        "attack": "6",
-        "defend": "0.90",
-        "shield": "false"
+        "attack": 6,
+        "defend": 0.90,
+        "shield": false
     },
 "silentgear:katana":{
-        "attack": "2.9",
-        "defend": "0.90",
-        "shield": "false"
+        "attack": 2.9,
+        "defend": 0.90,
+        "shield": false
     },
 "silentgear:knife":{
-        "attack": "1.3",
-        "defend": "1.00",
-        "shield": "false"
+        "attack": 1.3,
+        "defend": 1.00,
+        "shield": false
     },
 "silentgear:machete":{
-        "attack": "4",
-        "defend": "0.9",
-        "shield": "false"
+        "attack": 4,
+        "defend": 0.9,
+        "shield": false
     },
 "silentgear:mattock":{
-        "attack": "4",
-        "defend": "0.9",
-        "shield": "false"
+        "attack": 4,
+        "defend": 0.9,
+        "shield": false
     },
 "silentgear:paxel":{
-        "attack": "4",
-        "defend": "0.90",
-        "shield": "false"
+        "attack": 4,
+        "defend": 0.90,
+        "shield": false
     },
 "silentgear:pickaxe":{
-        "attack": "2.5",
-        "defend": "1.00",
-        "shield": "false"
+        "attack": 2.5,
+        "defend": 1.00,
+        "shield": false
     },
 "silentgear:prospector_hammer":{
-        "attack": "6",
-        "defend": "0.90",
-        "shield": "false"
+        "attack": 6,
+        "defend": 0.90,
+        "shield": false
     },
 "silentgear:saw":{
-        "attack": "0.5",
-        "defend": "1",
-        "shield": "false"
+        "attack": 0.5,
+        "defend": 1,
+        "shield": false
     },
 "silentgear:shield":{
-        "attack": "4",
-        "defend": "0.60",
-        "shield": "true"
+        "attack": 4,
+        "defend": 0.60,
+        "shield": true
     },
 "silentgear:shovel":{
-        "attack": "6",
-        "defend": "0.90",
-        "shield": "false"
+        "attack": 6,
+        "defend": 0.90,
+        "shield": false
     },
 "silentgear:sickle":{
-        "attack": "2.4",
-        "defend": "0.95",
-        "shield": "false"
+        "attack": 2.4,
+        "defend": 0.95,
+        "shield": false
     },
 "silentgear:spear":{
-        "attack": "2.5",
-        "defend": "0.70",
-        "shield": "false"
+        "attack": 2.5,
+        "defend": 0.70,
+        "shield": false
     },
 "silentgear:sword":{
-        "attack": "2.6",
-        "defend": "0.90",
-        "shield": "false"
+        "attack": 2.6,
+        "defend": 0.90,
+        "shield": false
     }
 }

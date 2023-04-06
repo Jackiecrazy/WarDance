@@ -1,12 +1,12 @@
 {
 "arsmagicalegacy:crystal_wrench":{
-        "attack": "0.5",
-        "defend": "1",
-        "shield": "false"
+        "attack": 0.5,
+        "defend": 1,
+        "shield": false
     },
 "arsmagicalegacy:spell_book":{
-        "attack": "1",
-        "defend": "1",
-        "shield": "true"
+        "attack": 1,
+        "defend": 1,
+        "shield": true
     }
 }

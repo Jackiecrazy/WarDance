@@ -1,7 +1,7 @@
 {
 "cursedcrypts:cursed_wand":{
-        "attack": "0.5",
-        "defend": "1.00",
-        "shield": "false"
+        "attack": 0.5,
+        "defend": 1.00,
+        "shield": false
     }
 }

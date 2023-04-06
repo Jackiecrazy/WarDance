@@ -320,7 +320,7 @@ public class CombatUtils {
     public static float getAttackMight(LivingEntity seme, LivingEntity uke) {
         ICombatCapability semeCap = CombatData.getCap(seme);
         final float magicScale = 1.722f;
-        final float magicNumber = 3125f;//magic numbers scale the modified formula to 0.05 per sword hit
+        final float magicNumber = 1562.5f;//magic numbers scale the modified formula to 0.1 per sword hit
         final float cooldownSq = semeCap.getCachedCooldown() * semeCap.getCachedCooldown();
         final double period = 20.0D / (seme.getAttribute(Attributes.ATTACK_SPEED).getValue() + 0.5d);//+0.5 makes sure heavies don't scale forever, light ones are still puny
         float might = cooldownSq * cooldownSq * magicScale * (float) period * (float) period / magicNumber;

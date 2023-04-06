@@ -139,7 +139,7 @@ public class CombatCapability implements ICombatCapability {
         float temp = might + amount;
         setMight(temp);
         setMightGrace((int) grace);
-        addRank(amount * 0.08f);
+        addRank(amount * 0.05f);
         return temp % 10;
     }
 
@@ -276,6 +276,9 @@ public class CombatCapability implements ICombatCapability {
 //            ret = amount - getTrueMaxPosture() * CombatConfig.posCap;
 //            amount = getTrueMaxPosture() * CombatConfig.posCap;
 //        }
+        if (amount > getMaxPosture() / 2) {
+            elb.addEffect(new MobEffectInstance(FootworkEffects.UNSTEADY.get(), 40));
+        }
         if (above > 0 && posture - amount < above) {
             //posture floor, set and bypass stagger test
             ret = amount - above;
@@ -284,10 +287,11 @@ public class CombatCapability implements ICombatCapability {
             ret = posture - amount;
             posture = 0;
             if (addFracture(assailant, 1)) {
-                final boolean knockdown = amount > getMaxPosture() / 2 || elb.hasEffect(FootworkEffects.UNSTEADY.get());
+                final boolean knockdown = elb.hasEffect(FootworkEffects.UNSTEADY.get());
                 StunEvent se = new StunEvent(elb, assailant, knockdown ? CombatConfig.knockdownDuration : CombatConfig.staggerDuration, knockdown);
                 MinecraftForge.EVENT_BUS.post(se);
                 if (se.isCanceled()) return 0f;
+                elb.stopUsingItem();
                 if (se.isKnockdown()) {
                     knockdown(se.getLength());
                     elb.removeEffect(FootworkEffects.UNSTEADY.get());
@@ -422,6 +426,7 @@ public class CombatCapability implements ICombatCapability {
             ExposeEvent se = new ExposeEvent(dude.get(), livingEntity, CombatConfig.exposeDuration); //magic number
             MinecraftForge.EVENT_BUS.post(se);
             if (se.isCanceled()) return false;
+            dude.get().stopUsingItem();
             expose(se.getLength());
             clearFracture(null, false);
             return false;
@@ -665,16 +670,21 @@ public class CombatCapability implements ICombatCapability {
         final int ticks = (int) (elb.level.getGameTime() - lastUpdate);
         if (ticks < 1) return;//sometimes time runs backwards
         //initialize posture and fracture
-        if (elb.getAttribute(FootworkAttributes.MAX_POSTURE.get()).getBaseValue() == 0d) {//ew
+
+        final boolean uninitializedPosture = elb.getAttribute(FootworkAttributes.MAX_POSTURE.get()).getBaseValue() == 0d;
+        final boolean uninitializedFracture = elb.getAttribute(FootworkAttributes.MAX_FRACTURE.get()).getBaseValue() == 0d;
+        if (uninitializedPosture || uninitializedFracture) {
+            float effectiveMaxPosture = elb.getMaxHealth() / 2;
             final float mPos = getMPos(elb);
-            elb.getAttribute(FootworkAttributes.MAX_POSTURE.get()).setBaseValue(mPos);
-            elb.getAttribute(FootworkAttributes.POSTURE_REGEN.get()).setBaseValue(mPos);
-            mpos = (float) elb.getAttributeValue(FootworkAttributes.MAX_POSTURE.get());
-            setPosture(getMaxPosture());
-        }
-        if (elb.getAttribute(FootworkAttributes.MAX_FRACTURE.get()).getBaseValue() == 0d) {//ew
-            double above = Math.min(0, elb.getMaxHealth() - 50);
-            elb.getAttribute(FootworkAttributes.MAX_FRACTURE.get()).setBaseValue(1 + (int)(above/50));
+            if (uninitializedPosture) {//ew
+                elb.getAttribute(FootworkAttributes.MAX_POSTURE.get()).setBaseValue(mPos);
+                elb.getAttribute(FootworkAttributes.POSTURE_REGEN.get()).setBaseValue(mPos);
+                mpos = (float) elb.getAttributeValue(FootworkAttributes.MAX_POSTURE.get());
+                setPosture(getMaxPosture());
+            }
+            if (uninitializedFracture) {//ew
+                elb.getAttribute(FootworkAttributes.MAX_FRACTURE.get()).setBaseValue(Math.ceil(effectiveMaxPosture / mPos));
+            }
         }
         //update max values
         vision = (float) elb.getAttributeValue(Attributes.FOLLOW_RANGE);

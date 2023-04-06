@@ -1,32 +1,32 @@
 {
 "epicfight:diamond_spear":{
-        "attack": "2.5",
-        "defend": "0.70",
-        "shield": "false"
+        "attack": 2.5,
+        "defend": 0.70,
+        "shield": false
     },
 "epicfight:gold_spear":{
-        "attack": "2.5",
-        "defend": "0.70",
-        "shield": "false"
+        "attack": 2.5,
+        "defend": 0.70,
+        "shield": false
     },
 "epicfight:greatsword":{
-        "attack": "3.8",
-        "defend": "0.80",
-        "shield": "false"
+        "attack": 3.8,
+        "defend": 0.80,
+        "shield": false
     },
 "epicfight:iron_spear":{
-        "attack": "2.5",
-        "defend": "0.70",
-        "shield": "false"
+        "attack": 2.5,
+        "defend": 0.70,
+        "shield": false
     },
 "epicfight:katana":{
-        "attack": "2.9",
-        "defend": "0.90",
-        "shield": "false"
+        "attack": 2.9,
+        "defend": 0.90,
+        "shield": false
     },
 "epicfight:stone_spear":{
-        "attack": "2.5",
-        "defend": "0.70",
-        "shield": "false"
+        "attack": 2.5,
+        "defend": 0.70,
+        "shield": false
     }
 }

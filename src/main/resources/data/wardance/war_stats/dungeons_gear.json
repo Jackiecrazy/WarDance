@@ -1,617 +1,617 @@
 {
 "dungeons_gear:anchor":{
-        "attack": "8",
-        "defend": "0.8",
-        "shield": "false"
+        "attack": 8,
+        "defend": 0.8,
+        "shield": false
     },
 "dungeons_gear:ancient_bow":{
-        "attack": "1.2",
-        "defend": "0.90",
-        "shield": "false"
+        "attack": 1.2,
+        "defend": 0.90,
+        "shield": false
     },
 "dungeons_gear:auto_crossbow":{
-        "attack": "1",
-        "defend": "1.10",
-        "shield": "false"
+        "attack": 1,
+        "defend": 1.10,
+        "shield": false
     },
 "dungeons_gear:axe":{
-        "attack": "4",
-        "defend": "0.90",
-        "shield": "false"
+        "attack": 4,
+        "defend": 0.90,
+        "shield": false
     },
 "dungeons_gear:azure_seeker":{
-        "attack": "1",
-        "defend": "1.10",
-        "shield": "false"
+        "attack": 1,
+        "defend": 1.10,
+        "shield": false
     },
 "dungeons_gear:battlestaff":{
-        "attack": "3",
-        "defend": "0.70",
-        "shield": "false"
+        "attack": 3,
+        "defend": 0.70,
+        "shield": false
     },
 "dungeons_gear:battlestaff_of_terror":{
-        "attack": "3",
-        "defend": "0.70",
-        "shield": "false"
+        "attack": 3,
+        "defend": 0.70,
+        "shield": false
     },
 "dungeons_gear:bee_stinger":{
-        "attack": "2",
-        "defend": "0.85",
-        "shield": "false"
+        "attack": 2,
+        "defend": 0.85,
+        "shield": false
     },
 "dungeons_gear:bone_cudgel":{
-        "attack": "8",
-        "defend": "0.8",
-        "shield": "false"
+        "attack": 8,
+        "defend": 0.8,
+        "shield": false
     },
 "dungeons_gear:bonebow":{
-        "attack": "1.2",
-        "defend": "0.90",
-        "shield": "false"
+        "attack": 1.2,
+        "defend": 0.90,
+        "shield": false
     },
 "dungeons_gear:boneclub":{
-        "attack": "8",
-        "defend": "0.8",
-        "shield": "false"
+        "attack": 8,
+        "defend": 0.8,
+        "shield": false
     },
 "dungeons_gear:bow_of_lost_souls":{
-        "attack": "1.2",
-        "defend": "0.90",
-        "shield": "false"
+        "attack": 1.2,
+        "defend": 0.90,
+        "shield": false
     },
 "dungeons_gear:broadsword":{
-        "attack": "2.6",
-        "defend": "0.90",
-        "shield": "false"
+        "attack": 2.6,
+        "defend": 0.90,
+        "shield": false
     },
 "dungeons_gear:broken_sawblade":{
-        "attack": "2.6",
-        "defend": "0.9",
-        "shield": "false"
+        "attack": 2.6,
+        "defend": 0.9,
+        "shield": false
     },
 "dungeons_gear:burst_crossbow":{
-        "attack": "1",
-        "defend": "1.10",
-        "shield": "false"
+        "attack": 1,
+        "defend": 1.10,
+        "shield": false
     },
 "dungeons_gear:butterfly_crossbow":{
-        "attack": "1",
-        "defend": "1.10",
-        "shield": "false"
+        "attack": 1,
+        "defend": 1.10,
+        "shield": false
     },
 "dungeons_gear:chill_gale_knife":{
-        "attack": "1.3",
-        "defend": "1.00",
-        "shield": "false"
+        "attack": 1.3,
+        "defend": 1.00,
+        "shield": false
     },
 "dungeons_gear:claymore":{
-        "attack": "3.8",
-        "defend": "0.80",
-        "shield": "false"
+        "attack": 3.8,
+        "defend": 0.80,
+        "shield": false
     },
 "dungeons_gear:cog_crossbow":{
-        "attack": "1",
-        "defend": "1.10",
-        "shield": "false"
+        "attack": 1,
+        "defend": 1.10,
+        "shield": false
     },
 "dungeons_gear:coral_blade":{
-        "attack": "1.3",
-        "defend": "1",
-        "shield": "false"
+        "attack": 1.3,
+        "defend": 1,
+        "shield": false
     },
 "dungeons_gear:corrupted_crossbow":{
-        "attack": "1",
-        "defend": "1.10",
-        "shield": "false"
+        "attack": 1,
+        "defend": 1.10,
+        "shield": false
     },
 "dungeons_gear:cursed_axe":{
-        "attack": "4",
-        "defend": "0.90",
-        "shield": "false"
+        "attack": 4,
+        "defend": 0.90,
+        "shield": false
     },
 "dungeons_gear:cutlass":{
-        "attack": "2.6",
-        "defend": "0.9",
-        "shield": "false"
+        "attack": 2.6,
+        "defend": 0.9,
+        "shield": false
     },
 "dungeons_gear:dagger":{
-        "attack": "1.3",
-        "defend": "1.00",
-        "shield": "false"
+        "attack": 1.3,
+        "defend": 1.00,
+        "shield": false
     },
 "dungeons_gear:dancers_sword":{
-        "attack": "2.6",
-        "defend": "0.90",
-        "shield": "false"
+        "attack": 2.6,
+        "defend": 0.90,
+        "shield": false
     },
 "dungeons_gear:dark_katana":{
-        "attack": "2.9",
-        "defend": "0.90",
-        "shield": "false"
+        "attack": 2.9,
+        "defend": 0.90,
+        "shield": false
     },
 "dungeons_gear:diamond_pickaxe":{
-        "attack": "2.5",
-        "defend": "1.00",
-        "shield": "false"
+        "attack": 2.5,
+        "defend": 1.00,
+        "shield": false
     },
 "dungeons_gear:diamond_sword":{
-        "attack": "2.6",
-        "defend": "0.90",
-        "shield": "false"
+        "attack": 2.6,
+        "defend": 0.90,
+        "shield": false
     },
 "dungeons_gear:doom_crossbow":{
-        "attack": "1",
-        "defend": "1.10",
-        "shield": "false"
+        "attack": 1,
+        "defend": 1.10,
+        "shield": false
     },
 "dungeons_gear:double_axe":{
-        "attack": "4",
-        "defend": "0.90",
-        "shield": "false"
+        "attack": 4,
+        "defend": 0.90,
+        "shield": false
     },
 "dungeons_gear:elite_power_bow":{
-        "attack": "1.2",
-        "defend": "0.90",
-        "shield": "false"
+        "attack": 1.2,
+        "defend": 0.90,
+        "shield": false
     },
 "dungeons_gear:encrusted_anchor":{
-        "attack": "8",
-        "defend": "0.8",
-        "shield": "false"
+        "attack": 8,
+        "defend": 0.8,
+        "shield": false
     },
 "dungeons_gear:eternal_knife":{
-        "attack": "3",
-        "defend": "1.00",
-        "shield": "false"
+        "attack": 3,
+        "defend": 1.00,
+        "shield": false
     },
 "dungeons_gear:exploding_crossbow":{
-        "attack": "1",
-        "defend": "1.10",
-        "shield": "false"
+        "attack": 1,
+        "defend": 1.10,
+        "shield": false
     },
 "dungeons_gear:fang_of_frost":{
-        "attack": "1.3",
-        "defend": "1",
-        "shield": "false"
+        "attack": 1.3,
+        "defend": 1,
+        "shield": false
     },
 "dungeons_gear:feral_soul_crossbow":{
-        "attack": "1",
-        "defend": "1.10",
-        "shield": "false"
+        "attack": 1,
+        "defend": 1.10,
+        "shield": false
     },
 "dungeons_gear:fighters_binding":{
-        "attack": "3.2",
-        "defend": "1",
-        "shield": "false"
+        "attack": 3.2,
+        "defend": 1,
+        "shield": false
     },
 "dungeons_gear:firebolt_thrower":{
-        "attack": "1",
-        "defend": "1.10",
-        "shield": "false"
+        "attack": 1,
+        "defend": 1.10,
+        "shield": false
     },
 "dungeons_gear:firebrand":{
-        "attack": "4",
-        "defend": "0.9",
-        "shield": "false"
+        "attack": 4,
+        "defend": 0.9,
+        "shield": false
     },
 "dungeons_gear:flail":{
-        "attack": "6",
-        "defend": "0.9",
-        "shield": "false"
+        "attack": 6,
+        "defend": 0.9,
+        "shield": false
     },
 "dungeons_gear:fortune_spear":{
-        "attack": "2.5",
-        "defend": "0.70",
-        "shield": "false"
+        "attack": 2.5,
+        "defend": 0.70,
+        "shield": false
     },
 "dungeons_gear:freezing_foil":{
-        "attack": "2",
-        "defend": "0.85",
-        "shield": "false"
+        "attack": 2,
+        "defend": 0.85,
+        "shield": false
     },
 "dungeons_gear:frost_scythe":{
-        "attack": "3",
-        "defend": "0.80",
-        "shield": "false"
+        "attack": 3,
+        "defend": 0.80,
+        "shield": false
     },
 "dungeons_gear:frost_slayer":{
-        "attack": "3.8",
-        "defend": "0.8",
-        "shield": "false"
+        "attack": 3.8,
+        "defend": 0.8,
+        "shield": false
     },
 "dungeons_gear:gauntlet":{
-        "attack": "3.2",
-        "defend": "1",
-        "shield": "false"
+        "attack": 3.2,
+        "defend": 1,
+        "shield": false
     },
 "dungeons_gear:glaive":{
-        "attack": "4",
-        "defend": "0.70",
-        "shield": "false"
+        "attack": 4,
+        "defend": 0.70,
+        "shield": false
     },
 "dungeons_gear:grave_bane":{
-        "attack": "4",
-        "defend": "0.70",
-        "shield": "false"
+        "attack": 4,
+        "defend": 0.70,
+        "shield": false
     },
 "dungeons_gear:great_axeblade":{
-        "attack": "4",
-        "defend": "0.90",
-        "shield": "false"
+        "attack": 4,
+        "defend": 0.90,
+        "shield": false
     },
 "dungeons_gear:great_hammer":{
-        "attack": "6",
-        "defend": "0.90",
-        "shield": "false"
+        "attack": 6,
+        "defend": 0.90,
+        "shield": false
     },
 "dungeons_gear:growing_staff":{
-        "attack": "3",
-        "defend": "0.70",
-        "shield": "false"
+        "attack": 3,
+        "defend": 0.70,
+        "shield": false
     },
 "dungeons_gear:guardian_bow":{
-        "attack": "1.2",
-        "defend": "0.90",
-        "shield": "false"
+        "attack": 1.2,
+        "defend": 0.90,
+        "shield": false
     },
 "dungeons_gear:hammer_of_gravity":{
-        "attack": "6",
-        "defend": "0.90",
-        "shield": "false"
+        "attack": 6,
+        "defend": 0.90,
+        "shield": false
     },
 "dungeons_gear:harp_crossbow":{
-        "attack": "1",
-        "defend": "1.10",
-        "shield": "false"
+        "attack": 1,
+        "defend": 1.10,
+        "shield": false
     },
 "dungeons_gear:harpoon_crossbow":{
-        "attack": "1",
-        "defend": "1.10",
-        "shield": "false"
+        "attack": 1,
+        "defend": 1.10,
+        "shield": false
     },
 "dungeons_gear:haunted_bow":{
-        "attack": "1.2",
-        "defend": "0.90",
-        "shield": "false"
+        "attack": 1.2,
+        "defend": 0.90,
+        "shield": false
     },
 "dungeons_gear:hawkbrand":{
-        "attack": "2.6",
-        "defend": "0.9",
-        "shield": "false"
+        "attack": 2.6,
+        "defend": 0.9,
+        "shield": false
     },
 "dungeons_gear:heartstealer":{
-        "attack": "3.8",
-        "defend": "0.8",
-        "shield": "false"
+        "attack": 3.8,
+        "defend": 0.8,
+        "shield": false
     },
 "dungeons_gear:heavy_crossbow":{
-        "attack": "1",
-        "defend": "1.10",
-        "shield": "false"
+        "attack": 1,
+        "defend": 1.10,
+        "shield": false
     },
 "dungeons_gear:highland_axe":{
-        "attack": "4",
-        "defend": "0.90",
-        "shield": "false"
+        "attack": 4,
+        "defend": 0.90,
+        "shield": false
     },
 "dungeons_gear:hunters_promise":{
-        "attack": "1.2",
-        "defend": "0.9",
-        "shield": "false"
+        "attack": 1.2,
+        "defend": 0.9,
+        "shield": false
     },
 "dungeons_gear:hunting_bow":{
-        "attack": "1.2",
-        "defend": "0.90",
-        "shield": "false"
+        "attack": 1.2,
+        "defend": 0.90,
+        "shield": false
     },
 "dungeons_gear:imploding_crossbow":{
-        "attack": "1",
-        "defend": "1.10",
-        "shield": "false"
+        "attack": 1,
+        "defend": 1.10,
+        "shield": false
     },
 "dungeons_gear:jailors_scythe":{
-        "attack": "3",
-        "defend": "0.8",
-        "shield": "false"
+        "attack": 3,
+        "defend": 0.8,
+        "shield": false
     },
 "dungeons_gear:katana":{
-        "attack": "2.9",
-        "defend": "0.90",
-        "shield": "false"
+        "attack": 2.9,
+        "defend": 0.90,
+        "shield": false
     },
 "dungeons_gear:lightning_harp_crossbow":{
-        "attack": "1",
-        "defend": "1.10",
-        "shield": "false"
+        "attack": 1,
+        "defend": 1.10,
+        "shield": false
     },
 "dungeons_gear:longbow":{
-        "attack": "1.2",
-        "defend": "0.90",
-        "shield": "false"
+        "attack": 1.2,
+        "defend": 0.90,
+        "shield": false
     },
 "dungeons_gear:love_spell_bow":{
-        "attack": "1.2",
-        "defend": "0.90",
-        "shield": "false"
+        "attack": 1.2,
+        "defend": 0.90,
+        "shield": false
     },
 "dungeons_gear:mace":{
-        "attack": "6",
-        "defend": "0.90",
-        "shield": "false"
+        "attack": 6,
+        "defend": 0.90,
+        "shield": false
     },
 "dungeons_gear:masters_bow":{
-        "attack": "1.2",
-        "defend": "0.90",
-        "shield": "false"
+        "attack": 1.2,
+        "defend": 0.90,
+        "shield": false
     },
 "dungeons_gear:masters_katana":{
-        "attack": "2.9",
-        "defend": "0.90",
-        "shield": "false"
+        "attack": 2.9,
+        "defend": 0.90,
+        "shield": false
     },
 "dungeons_gear:mauler":{
-        "attack": "3.2",
-        "defend": "1",
-        "shield": "false"
+        "attack": 3.2,
+        "defend": 1,
+        "shield": false
     },
 "dungeons_gear:mechanical_shortbow":{
-        "attack": "1.2",
-        "defend": "0.90",
-        "shield": "false"
+        "attack": 1.2,
+        "defend": 0.90,
+        "shield": false
     },
 "dungeons_gear:mechanized_sawblade":{
-        "attack": "2.6",
-        "defend": "0.9",
-        "shield": "false"
+        "attack": 2.6,
+        "defend": 0.9,
+        "shield": false
     },
 "dungeons_gear:moon_dagger":{
-        "attack": "1.3",
-        "defend": "1.00",
-        "shield": "false"
+        "attack": 1.3,
+        "defend": 1.00,
+        "shield": false
     },
 "dungeons_gear:nameless_blade":{
-        "attack": "2.6",
-        "defend": "0.9",
-        "shield": "false"
+        "attack": 2.6,
+        "defend": 0.9,
+        "shield": false
     },
 "dungeons_gear:nautical_crossbow":{
-        "attack": "1",
-        "defend": "1.10",
-        "shield": "false"
+        "attack": 1,
+        "defend": 1.10,
+        "shield": false
     },
 "dungeons_gear:nightmares_bite":{
-        "attack": "2.4",
-        "defend": "0.95",
-        "shield": "false"
+        "attack": 2.4,
+        "defend": 0.95,
+        "shield": false
     },
 "dungeons_gear:nocturnal_bow":{
-        "attack": "1.2",
-        "defend": "0.90",
-        "shield": "false"
+        "attack": 1.2,
+        "defend": 0.90,
+        "shield": false
     },
 "dungeons_gear:pickaxe":{
-        "attack": "2.5",
-        "defend": "1.00",
-        "shield": "false"
+        "attack": 2.5,
+        "defend": 1.00,
+        "shield": false
     },
 "dungeons_gear:power_bow":{
-        "attack": "1.2",
-        "defend": "0.90",
-        "shield": "false"
+        "attack": 1.2,
+        "defend": 0.90,
+        "shield": false
     },
 "dungeons_gear:pride_of_the_piglins":{
-        "attack": "1",
-        "defend": "1.10",
-        "shield": "false"
+        "attack": 1,
+        "defend": 1.10,
+        "shield": false
     },
 "dungeons_gear:purple_storm":{
-        "attack": "1.2",
-        "defend": "0.9",
-        "shield": "false"
+        "attack": 1.2,
+        "defend": 0.9,
+        "shield": false
     },
 "dungeons_gear:rapid_crossbow":{
-        "attack": "1",
-        "defend": "1.10",
-        "shield": "false"
+        "attack": 1,
+        "defend": 1.10,
+        "shield": false
     },
 "dungeons_gear:rapier":{
-        "attack": "2",
-        "defend": "0.85",
-        "shield": "false"
+        "attack": 2,
+        "defend": 0.85,
+        "shield": false
     },
 "dungeons_gear:red_snake":{
-        "attack": "1.2",
-        "defend": "0.9",
-        "shield": "false"
+        "attack": 1.2,
+        "defend": 0.9,
+        "shield": false
     },
 "dungeons_gear:resolute_tempest_knife":{
-        "attack": "2",
-        "defend": "1.00",
-        "shield": "false"
+        "attack": 2,
+        "defend": 1.00,
+        "shield": false
     },
 "dungeons_gear:sabrewing":{
-        "attack": "1.2",
-        "defend": "0.9",
-        "shield": "false"
+        "attack": 1.2,
+        "defend": 0.9,
+        "shield": false
     },
 "dungeons_gear:scatter_crossbow":{
-        "attack": "1",
-        "defend": "1.10",
-        "shield": "false"
+        "attack": 1,
+        "defend": 1.10,
+        "shield": false
     },
 "dungeons_gear:shear_dagger":{
-        "attack": "1.3",
-        "defend": "1.00",
-        "shield": "false"
+        "attack": 1.3,
+        "defend": 1.00,
+        "shield": false
     },
 "dungeons_gear:shortbow":{
-        "attack": "1.2",
-        "defend": "0.90",
-        "shield": "false"
+        "attack": 1.2,
+        "defend": 0.90,
+        "shield": false
     },
 "dungeons_gear:sickle":{
-        "attack": "2.4",
-        "defend": "0.95",
-        "shield": "false"
+        "attack": 2.4,
+        "defend": 0.95,
+        "shield": false
     },
 "dungeons_gear:sinister_sword":{
-        "attack": "2.6",
-        "defend": "0.90",
-        "shield": "false"
+        "attack": 2.6,
+        "defend": 0.90,
+        "shield": false
     },
 "dungeons_gear:slayer_crossbow":{
-        "attack": "1",
-        "defend": "1.10",
-        "shield": "false"
+        "attack": 1,
+        "defend": 1.10,
+        "shield": false
     },
 "dungeons_gear:snow_bow":{
-        "attack": "1.2",
-        "defend": "0.90",
-        "shield": "false"
+        "attack": 1.2,
+        "defend": 0.90,
+        "shield": false
     },
 "dungeons_gear:soul_bow":{
-        "attack": "1.2",
-        "defend": "0.90",
-        "shield": "false"
+        "attack": 1.2,
+        "defend": 0.90,
+        "shield": false
     },
 "dungeons_gear:soul_crossbow":{
-        "attack": "1",
-        "defend": "1.10",
-        "shield": "false"
+        "attack": 1,
+        "defend": 1.10,
+        "shield": false
     },
 "dungeons_gear:soul_fist":{
-        "attack": "3.2",
-        "defend": "1",
-        "shield": "false"
+        "attack": 3.2,
+        "defend": 1,
+        "shield": false
     },
 "dungeons_gear:soul_hunter_crossbow":{
-        "attack": "1",
-        "defend": "1.10",
-        "shield": "false"
+        "attack": 1,
+        "defend": 1.10,
+        "shield": false
     },
 "dungeons_gear:soul_knife":{
-        "attack": "3",
-        "defend": "1.00",
-        "shield": "false"
+        "attack": 3,
+        "defend": 1.00,
+        "shield": false
     },
 "dungeons_gear:soul_scythe":{
-        "attack": "3",
-        "defend": "0.8",
-        "shield": "false"
+        "attack": 3,
+        "defend": 0.8,
+        "shield": false
     },
 "dungeons_gear:sparkler":{
-        "attack": "2.6",
-        "defend": "0.9",
-        "shield": "false"
+        "attack": 2.6,
+        "defend": 0.9,
+        "shield": false
     },
 "dungeons_gear:spear":{
-        "attack": "2.5",
-        "defend": "0.70",
-        "shield": "false"
+        "attack": 2.5,
+        "defend": 0.70,
+        "shield": false
     },
 "dungeons_gear:sponge_striker":{
-        "attack": "1.3",
-        "defend": "1",
-        "shield": "false"
+        "attack": 1.3,
+        "defend": 1,
+        "shield": false
     },
 "dungeons_gear:stormlander":{
-        "attack": "6",
-        "defend": "0.9",
-        "shield": "false"
+        "attack": 6,
+        "defend": 0.9,
+        "shield": false
     },
 "dungeons_gear:suns_grace":{
-        "attack": "6",
-        "defend": "0.9",
-        "shield": "false"
+        "attack": 6,
+        "defend": 0.9,
+        "shield": false
     },
 "dungeons_gear:sword":{
-        "attack": "2.6",
-        "defend": "0.90",
-        "shield": "false"
+        "attack": 2.6,
+        "defend": 0.90,
+        "shield": false
     },
 "dungeons_gear:tempest_knife":{
-        "attack": "2",
-        "defend": "1.00",
-        "shield": "false"
+        "attack": 2,
+        "defend": 1.00,
+        "shield": false
     },
 "dungeons_gear:the_green_menace":{
-        "attack": "1.2",
-        "defend": "0.9",
-        "shield": "false"
+        "attack": 1.2,
+        "defend": 0.9,
+        "shield": false
     },
 "dungeons_gear:the_last_laugh":{
-        "attack": "2.4",
-        "defend": "0.95",
-        "shield": "false"
+        "attack": 2.4,
+        "defend": 0.95,
+        "shield": false
     },
 "dungeons_gear:the_pink_scoundrel":{
-        "attack": "1.2",
-        "defend": "0.9",
-        "shield": "false"
+        "attack": 1.2,
+        "defend": 0.9,
+        "shield": false
     },
 "dungeons_gear:the_slicer":{
-        "attack": "1",
-        "defend": "1.10",
-        "shield": "false"
+        "attack": 1,
+        "defend": 1.10,
+        "shield": false
     },
 "dungeons_gear:trickbow":{
-        "attack": "1.2",
-        "defend": "0.90",
-        "shield": "false"
+        "attack": 1.2,
+        "defend": 0.90,
+        "shield": false
     },
 "dungeons_gear:truthseeker":{
-        "attack": "1.3",
-        "defend": "1",
-        "shield": "false"
+        "attack": 1.3,
+        "defend": 1,
+        "shield": false
     },
 "dungeons_gear:twin_bow":{
-        "attack": "1.2",
-        "defend": "0.90",
-        "shield": "false"
+        "attack": 1.2,
+        "defend": 0.90,
+        "shield": false
     },
 "dungeons_gear:venom_glaive":{
-        "attack": "4",
-        "defend": "0.70",
-        "shield": "false"
+        "attack": 4,
+        "defend": 0.70,
+        "shield": false
     },
 "dungeons_gear:vine_whip":{
-        "attack": "1.4",
-        "defend": "1.00",
-        "shield": "false"
+        "attack": 1.4,
+        "defend": 1.00,
+        "shield": false
     },
 "dungeons_gear:voidcaller":{
-        "attack": "1",
-        "defend": "1.1",
-        "shield": "false"
+        "attack": 1,
+        "defend": 1.1,
+        "shield": false
     },
 "dungeons_gear:whip":{
-        "attack": "1.4",
-        "defend": "1.00",
-        "shield": "false"
+        "attack": 1.4,
+        "defend": 1.00,
+        "shield": false
     },
 "dungeons_gear:whirlwind":{
-        "attack": "4",
-        "defend": "0.9",
-        "shield": "false"
+        "attack": 4,
+        "defend": 0.9,
+        "shield": false
     },
 "dungeons_gear:whispering_spear":{
-        "attack": "2.5",
-        "defend": "0.70",
-        "shield": "false"
+        "attack": 2.5,
+        "defend": 0.70,
+        "shield": false
     },
 "dungeons_gear:winters_touch":{
-        "attack": "1.2",
-        "defend": "0.9",
-        "shield": "false"
+        "attack": 1.2,
+        "defend": 0.9,
+        "shield": false
     },
 "dungeons_mobs:royal_guard_shield":{
-        "attack": "6",
-        "defend": "0.50",
-        "shield": "true"
+        "attack": 6,
+        "defend": 0.50,
+        "shield": true
     },
 "dungeons_mobs:skeleton_vanguard_shield":{
-        "attack": "6",
-        "defend": "0.50",
-        "shield": "true"
+        "attack": 6,
+        "defend": 0.50,
+        "shield": true
     }
 }

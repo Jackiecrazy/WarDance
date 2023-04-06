@@ -1,17 +1,17 @@
 {
 "goety:dark_scythe":{
-        "attack": "3",
-        "defend": "0.8",
-        "shield": "false"
+        "attack": 3,
+        "defend": 0.8,
+        "shield": false
     },
 "goety:dark_wand":{
-        "attack": "0.5",
-        "defend": "1.00",
-        "shield": "false"
+        "attack": 0.5,
+        "defend": 1.00,
+        "shield": false
     },
 "goety:death_scythe":{
-        "attack": "3",
-        "defend": "0.8",
-        "shield": "false"
+        "attack": 3,
+        "defend": 0.8,
+        "shield": false
     }
 }

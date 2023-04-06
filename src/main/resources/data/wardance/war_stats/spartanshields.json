@@ -1,2157 +1,2157 @@
 {
 "spartanshields:shield_basic_bronze":{
-        "attack": "4",
-        "defend": "0.60",
-        "shield": "true"
+        "attack": 4,
+        "defend": 0.60,
+        "shield": true
     },
 "spartanshields:shield_basic_constantan":{
-        "attack": "4",
-        "defend": "0.60",
-        "shield": "true"
+        "attack": 4,
+        "defend": 0.60,
+        "shield": true
     },
 "spartanshields:shield_basic_copper":{
-        "attack": "4",
-        "defend": "0.60",
-        "shield": "true"
+        "attack": 4,
+        "defend": 0.60,
+        "shield": true
     },
 "spartanshields:shield_basic_diamond":{
-        "attack": "4",
-        "defend": "0.60",
-        "shield": "true"
+        "attack": 4,
+        "defend": 0.60,
+        "shield": true
     },
 "spartanshields:shield_basic_electrum":{
-        "attack": "4",
-        "defend": "0.60",
-        "shield": "true"
+        "attack": 4,
+        "defend": 0.60,
+        "shield": true
     },
 "spartanshields:shield_basic_gold":{
-        "attack": "4",
-        "defend": "0.60",
-        "shield": "true"
+        "attack": 4,
+        "defend": 0.60,
+        "shield": true
     },
 "spartanshields:shield_basic_invar":{
-        "attack": "4",
-        "defend": "0.60",
-        "shield": "true"
+        "attack": 4,
+        "defend": 0.60,
+        "shield": true
     },
 "spartanshields:shield_basic_iron":{
-        "attack": "4",
-        "defend": "0.60",
-        "shield": "true"
+        "attack": 4,
+        "defend": 0.60,
+        "shield": true
     },
 "spartanshields:shield_basic_lead":{
-        "attack": "4",
-        "defend": "0.60",
-        "shield": "true"
+        "attack": 4,
+        "defend": 0.60,
+        "shield": true
     },
 "spartanshields:shield_basic_netherite":{
-        "attack": "4",
-        "defend": "0.60",
-        "shield": "true"
+        "attack": 4,
+        "defend": 0.60,
+        "shield": true
     },
 "spartanshields:shield_basic_nickel":{
-        "attack": "4",
-        "defend": "0.60",
-        "shield": "true"
+        "attack": 4,
+        "defend": 0.60,
+        "shield": true
     },
 "spartanshields:shield_basic_obsidian":{
-        "attack": "4",
-        "defend": "0.60",
-        "shield": "true"
+        "attack": 4,
+        "defend": 0.60,
+        "shield": true
     },
 "spartanshields:shield_basic_platinum":{
-        "attack": "4",
-        "defend": "0.60",
-        "shield": "true"
+        "attack": 4,
+        "defend": 0.60,
+        "shield": true
     },
 "spartanshields:shield_basic_silver":{
-        "attack": "4",
-        "defend": "0.60",
-        "shield": "true"
+        "attack": 4,
+        "defend": 0.60,
+        "shield": true
     },
 "spartanshields:shield_basic_steel":{
-        "attack": "4",
-        "defend": "0.60",
-        "shield": "true"
+        "attack": 4,
+        "defend": 0.60,
+        "shield": true
     },
 "spartanshields:shield_basic_stone":{
-        "attack": "4",
-        "defend": "0.60",
-        "shield": "true"
+        "attack": 4,
+        "defend": 0.60,
+        "shield": true
     },
 "spartanshields:shield_basic_tin":{
-        "attack": "4",
-        "defend": "0.60",
-        "shield": "true"
+        "attack": 4,
+        "defend": 0.60,
+        "shield": true
     },
 "spartanshields:shield_basic_wood":{
-        "attack": "4",
-        "defend": "0.60",
-        "shield": "true"
+        "attack": 4,
+        "defend": 0.60,
+        "shield": true
     },
 "spartanshields:shield_botania_elementium":{
-        "attack": "4",
-        "defend": "0.60",
-        "shield": "true"
+        "attack": 4,
+        "defend": 0.60,
+        "shield": true
     },
 "spartanshields:shield_botania_manasteel":{
-        "attack": "4",
-        "defend": "0.60",
-        "shield": "true"
+        "attack": 4,
+        "defend": 0.60,
+        "shield": true
     },
 "spartanshields:shield_botania_terrasteel":{
-        "attack": "4",
-        "defend": "0.60",
-        "shield": "true"
+        "attack": 4,
+        "defend": 0.60,
+        "shield": true
     },
 "spartanshields:shield_mekanism_lapis_lazuli":{
-        "attack": "4",
-        "defend": "0.60",
-        "shield": "true"
+        "attack": 4,
+        "defend": 0.60,
+        "shield": true
     },
 "spartanshields:shield_mekanism_osmium":{
-        "attack": "4",
-        "defend": "0.60",
-        "shield": "true"
+        "attack": 4,
+        "defend": 0.60,
+        "shield": true
     },
 "spartanshields:shield_mekanism_refined_glowstone":{
-        "attack": "4",
-        "defend": "0.60",
-        "shield": "true"
+        "attack": 4,
+        "defend": 0.60,
+        "shield": true
     },
 "spartanshields:shield_mekanism_refined_obsidian":{
-        "attack": "4",
-        "defend": "0.60",
-        "shield": "true"
+        "attack": 4,
+        "defend": 0.60,
+        "shield": true
     },
 "spartanshields:shield_tower_bronze":{
-        "attack": "6",
-        "defend": "0.50",
-        "shield": "true"
+        "attack": 6,
+        "defend": 0.50,
+        "shield": true
     },
 "spartanshields:shield_tower_constantan":{
-        "attack": "6",
-        "defend": "0.50",
-        "shield": "true"
+        "attack": 6,
+        "defend": 0.50,
+        "shield": true
     },
 "spartanshields:shield_tower_copper":{
-        "attack": "6",
-        "defend": "0.50",
-        "shield": "true"
+        "attack": 6,
+        "defend": 0.50,
+        "shield": true
     },
 "spartanshields:shield_tower_diamond":{
-        "attack": "6",
-        "defend": "0.50",
-        "shield": "true"
+        "attack": 6,
+        "defend": 0.50,
+        "shield": true
     },
 "spartanshields:shield_tower_electrum":{
-        "attack": "6",
-        "defend": "0.50",
-        "shield": "true"
+        "attack": 6,
+        "defend": 0.50,
+        "shield": true
     },
 "spartanshields:shield_tower_gold":{
-        "attack": "6",
-        "defend": "0.50",
-        "shield": "true"
+        "attack": 6,
+        "defend": 0.50,
+        "shield": true
     },
 "spartanshields:shield_tower_invar":{
-        "attack": "6",
-        "defend": "0.50",
-        "shield": "true"
+        "attack": 6,
+        "defend": 0.50,
+        "shield": true
     },
 "spartanshields:shield_tower_iron":{
-        "attack": "6",
-        "defend": "0.50",
-        "shield": "true"
+        "attack": 6,
+        "defend": 0.50,
+        "shield": true
     },
 "spartanshields:shield_tower_lead":{
-        "attack": "6",
-        "defend": "0.50",
-        "shield": "true"
+        "attack": 6,
+        "defend": 0.50,
+        "shield": true
     },
 "spartanshields:shield_tower_netherite":{
-        "attack": "6",
-        "defend": "0.50",
-        "shield": "true"
+        "attack": 6,
+        "defend": 0.50,
+        "shield": true
     },
 "spartanshields:shield_tower_nickel":{
-        "attack": "6",
-        "defend": "0.50",
-        "shield": "true"
+        "attack": 6,
+        "defend": 0.50,
+        "shield": true
     },
 "spartanshields:shield_tower_obsidian":{
-        "attack": "6",
-        "defend": "0.50",
-        "shield": "true"
+        "attack": 6,
+        "defend": 0.50,
+        "shield": true
     },
 "spartanshields:shield_tower_platinum":{
-        "attack": "6",
-        "defend": "0.50",
-        "shield": "true"
+        "attack": 6,
+        "defend": 0.50,
+        "shield": true
     },
 "spartanshields:shield_tower_silver":{
-        "attack": "6",
-        "defend": "0.50",
-        "shield": "true"
+        "attack": 6,
+        "defend": 0.50,
+        "shield": true
     },
 "spartanshields:shield_tower_steel":{
-        "attack": "6",
-        "defend": "0.50",
-        "shield": "true"
+        "attack": 6,
+        "defend": 0.50,
+        "shield": true
     },
 "spartanshields:shield_tower_stone":{
-        "attack": "6",
-        "defend": "0.50",
-        "shield": "true"
+        "attack": 6,
+        "defend": 0.50,
+        "shield": true
     },
 "spartanshields:shield_tower_tin":{
-        "attack": "6",
-        "defend": "0.50",
-        "shield": "true"
+        "attack": 6,
+        "defend": 0.50,
+        "shield": true
     },
 "spartanshields:shield_tower_wood":{
-        "attack": "6",
-        "defend": "0.50",
-        "shield": "true"
+        "attack": 6,
+        "defend": 0.50,
+        "shield": true
     },
 "spartanweaponry:battleaxe_bronze":{
-        "attack": "6",
-        "defend": "0.80",
-        "shield": "false"
+        "attack": 6,
+        "defend": 0.80,
+        "shield": false
     },
 "spartanweaponry:battleaxe_copper":{
-        "attack": "6",
-        "defend": "0.80",
-        "shield": "false"
+        "attack": 6,
+        "defend": 0.80,
+        "shield": false
     },
 "spartanweaponry:battleaxe_diamond":{
-        "attack": "6",
-        "defend": "0.80",
-        "shield": "false"
+        "attack": 6,
+        "defend": 0.80,
+        "shield": false
     },
 "spartanweaponry:battleaxe_electrum":{
-        "attack": "6",
-        "defend": "0.80",
-        "shield": "false"
+        "attack": 6,
+        "defend": 0.80,
+        "shield": false
     },
 "spartanweaponry:battleaxe_gold":{
-        "attack": "6",
-        "defend": "0.80",
-        "shield": "false"
+        "attack": 6,
+        "defend": 0.80,
+        "shield": false
     },
 "spartanweaponry:battleaxe_invar":{
-        "attack": "6",
-        "defend": "0.80",
-        "shield": "false"
+        "attack": 6,
+        "defend": 0.80,
+        "shield": false
     },
 "spartanweaponry:battleaxe_iron":{
-        "attack": "6",
-        "defend": "0.80",
-        "shield": "false"
+        "attack": 6,
+        "defend": 0.80,
+        "shield": false
     },
 "spartanweaponry:battleaxe_lead":{
-        "attack": "6",
-        "defend": "0.80",
-        "shield": "false"
+        "attack": 6,
+        "defend": 0.80,
+        "shield": false
     },
 "spartanweaponry:battleaxe_netherite":{
-        "attack": "6",
-        "defend": "0.80",
-        "shield": "false"
+        "attack": 6,
+        "defend": 0.80,
+        "shield": false
     },
 "spartanweaponry:battleaxe_nickel":{
-        "attack": "6",
-        "defend": "0.80",
-        "shield": "false"
+        "attack": 6,
+        "defend": 0.80,
+        "shield": false
     },
 "spartanweaponry:battleaxe_platinum":{
-        "attack": "6",
-        "defend": "0.80",
-        "shield": "false"
+        "attack": 6,
+        "defend": 0.80,
+        "shield": false
     },
 "spartanweaponry:battleaxe_silver":{
-        "attack": "6",
-        "defend": "0.80",
-        "shield": "false"
+        "attack": 6,
+        "defend": 0.80,
+        "shield": false
     },
 "spartanweaponry:battleaxe_steel":{
-        "attack": "6",
-        "defend": "0.80",
-        "shield": "false"
+        "attack": 6,
+        "defend": 0.80,
+        "shield": false
     },
 "spartanweaponry:battleaxe_stone":{
-        "attack": "6",
-        "defend": "0.80",
-        "shield": "false"
+        "attack": 6,
+        "defend": 0.80,
+        "shield": false
     },
 "spartanweaponry:battleaxe_tin":{
-        "attack": "6",
-        "defend": "0.80",
-        "shield": "false"
+        "attack": 6,
+        "defend": 0.80,
+        "shield": false
     },
 "spartanweaponry:battleaxe_wood":{
-        "attack": "6",
-        "defend": "0.80",
-        "shield": "false"
+        "attack": 6,
+        "defend": 0.80,
+        "shield": false
     },
 "spartanweaponry:boomerang_bronze":{
-        "attack": "1",
-        "defend": "1.00",
-        "shield": "false"
+        "attack": 1,
+        "defend": 1.00,
+        "shield": false
     },
 "spartanweaponry:boomerang_copper":{
-        "attack": "1",
-        "defend": "1.00",
-        "shield": "false"
+        "attack": 1,
+        "defend": 1.00,
+        "shield": false
     },
 "spartanweaponry:boomerang_diamond":{
-        "attack": "1",
-        "defend": "1.00",
-        "shield": "false"
+        "attack": 1,
+        "defend": 1.00,
+        "shield": false
     },
 "spartanweaponry:boomerang_electrum":{
-        "attack": "1",
-        "defend": "1.00",
-        "shield": "false"
+        "attack": 1,
+        "defend": 1.00,
+        "shield": false
     },
 "spartanweaponry:boomerang_gold":{
-        "attack": "1",
-        "defend": "1.00",
-        "shield": "false"
+        "attack": 1,
+        "defend": 1.00,
+        "shield": false
     },
 "spartanweaponry:boomerang_invar":{
-        "attack": "1",
-        "defend": "1.00",
-        "shield": "false"
+        "attack": 1,
+        "defend": 1.00,
+        "shield": false
     },
 "spartanweaponry:boomerang_iron":{
-        "attack": "1",
-        "defend": "1.00",
-        "shield": "false"
+        "attack": 1,
+        "defend": 1.00,
+        "shield": false
     },
 "spartanweaponry:boomerang_lead":{
-        "attack": "1",
-        "defend": "1.00",
-        "shield": "false"
+        "attack": 1,
+        "defend": 1.00,
+        "shield": false
     },
 "spartanweaponry:boomerang_netherite":{
-        "attack": "1",
-        "defend": "1.00",
-        "shield": "false"
+        "attack": 1,
+        "defend": 1.00,
+        "shield": false
     },
 "spartanweaponry:boomerang_nickel":{
-        "attack": "1",
-        "defend": "1.00",
-        "shield": "false"
+        "attack": 1,
+        "defend": 1.00,
+        "shield": false
     },
 "spartanweaponry:boomerang_platinum":{
-        "attack": "1",
-        "defend": "1.00",
-        "shield": "false"
+        "attack": 1,
+        "defend": 1.00,
+        "shield": false
     },
 "spartanweaponry:boomerang_silver":{
-        "attack": "1",
-        "defend": "1.00",
-        "shield": "false"
+        "attack": 1,
+        "defend": 1.00,
+        "shield": false
     },
 "spartanweaponry:boomerang_steel":{
-        "attack": "1",
-        "defend": "1.00",
-        "shield": "false"
+        "attack": 1,
+        "defend": 1.00,
+        "shield": false
     },
 "spartanweaponry:boomerang_stone":{
-        "attack": "1",
-        "defend": "1.00",
-        "shield": "false"
+        "attack": 1,
+        "defend": 1.00,
+        "shield": false
     },
 "spartanweaponry:boomerang_tin":{
-        "attack": "1",
-        "defend": "1.00",
-        "shield": "false"
+        "attack": 1,
+        "defend": 1.00,
+        "shield": false
     },
 "spartanweaponry:boomerang_wood":{
-        "attack": "1",
-        "defend": "1.00",
-        "shield": "false"
+        "attack": 1,
+        "defend": 1.00,
+        "shield": false
     },
 "spartanweaponry:cestus":{
-        "attack": "3.2",
-        "defend": "1.00",
-        "shield": "false"
+        "attack": 3.2,
+        "defend": 1.00,
+        "shield": false
     },
 "spartanweaponry:cestus_studded":{
-        "attack": "3.2",
-        "defend": "1.00",
-        "shield": "false"
+        "attack": 3.2,
+        "defend": 1.00,
+        "shield": false
     },
 "spartanweaponry:club_studded":{
-        "attack": "6",
-        "defend": "0.9",
-        "shield": "false"
+        "attack": 6,
+        "defend": 0.9,
+        "shield": false
     },
 "spartanweaponry:club_wood":{
-        "attack": "6",
-        "defend": "0.9",
-        "shield": "false"
+        "attack": 6,
+        "defend": 0.9,
+        "shield": false
     },
 "spartanweaponry:dagger_bronze":{
-        "attack": "1.3",
-        "defend": "1.00",
-        "shield": "false"
+        "attack": 1.3,
+        "defend": 1.00,
+        "shield": false
     },
 "spartanweaponry:dagger_copper":{
-        "attack": "1.3",
-        "defend": "1.00",
-        "shield": "false"
+        "attack": 1.3,
+        "defend": 1.00,
+        "shield": false
     },
 "spartanweaponry:dagger_diamond":{
-        "attack": "1.3",
-        "defend": "1.00",
-        "shield": "false"
+        "attack": 1.3,
+        "defend": 1.00,
+        "shield": false
     },
 "spartanweaponry:dagger_electrum":{
-        "attack": "1.3",
-        "defend": "1.00",
-        "shield": "false"
+        "attack": 1.3,
+        "defend": 1.00,
+        "shield": false
     },
 "spartanweaponry:dagger_gold":{
-        "attack": "1.3",
-        "defend": "1.00",
-        "shield": "false"
+        "attack": 1.3,
+        "defend": 1.00,
+        "shield": false
     },
 "spartanweaponry:dagger_invar":{
-        "attack": "1.3",
-        "defend": "1.00",
-        "shield": "false"
+        "attack": 1.3,
+        "defend": 1.00,
+        "shield": false
     },
 "spartanweaponry:dagger_iron":{
-        "attack": "1.3",
-        "defend": "1.00",
-        "shield": "false"
+        "attack": 1.3,
+        "defend": 1.00,
+        "shield": false
     },
 "spartanweaponry:dagger_lead":{
-        "attack": "1.3",
-        "defend": "1.00",
-        "shield": "false"
+        "attack": 1.3,
+        "defend": 1.00,
+        "shield": false
     },
 "spartanweaponry:dagger_netherite":{
-        "attack": "1.3",
-        "defend": "1.00",
-        "shield": "false"
+        "attack": 1.3,
+        "defend": 1.00,
+        "shield": false
     },
 "spartanweaponry:dagger_nickel":{
-        "attack": "1.3",
-        "defend": "1.00",
-        "shield": "false"
+        "attack": 1.3,
+        "defend": 1.00,
+        "shield": false
     },
 "spartanweaponry:dagger_platinum":{
-        "attack": "1.3",
-        "defend": "1.00",
-        "shield": "false"
+        "attack": 1.3,
+        "defend": 1.00,
+        "shield": false
     },
 "spartanweaponry:dagger_silver":{
-        "attack": "1.3",
-        "defend": "1.00",
-        "shield": "false"
+        "attack": 1.3,
+        "defend": 1.00,
+        "shield": false
     },
 "spartanweaponry:dagger_steel":{
-        "attack": "1.3",
-        "defend": "1.00",
-        "shield": "false"
+        "attack": 1.3,
+        "defend": 1.00,
+        "shield": false
     },
 "spartanweaponry:dagger_stone":{
-        "attack": "1.3",
-        "defend": "1.00",
-        "shield": "false"
+        "attack": 1.3,
+        "defend": 1.00,
+        "shield": false
     },
 "spartanweaponry:dagger_tin":{
-        "attack": "1.3",
-        "defend": "1.00",
-        "shield": "false"
+        "attack": 1.3,
+        "defend": 1.00,
+        "shield": false
     },
 "spartanweaponry:dagger_wood":{
-        "attack": "1.3",
-        "defend": "1.00",
-        "shield": "false"
+        "attack": 1.3,
+        "defend": 1.00,
+        "shield": false
     },
 "spartanweaponry:flanged_mace_bronze":{
-        "attack": "6",
-        "defend": "0.90",
-        "shield": "false"
+        "attack": 6,
+        "defend": 0.90,
+        "shield": false
     },
 "spartanweaponry:flanged_mace_copper":{
-        "attack": "6",
-        "defend": "0.90",
-        "shield": "false"
+        "attack": 6,
+        "defend": 0.90,
+        "shield": false
     },
 "spartanweaponry:flanged_mace_diamond":{
-        "attack": "6",
-        "defend": "0.90",
-        "shield": "false"
+        "attack": 6,
+        "defend": 0.90,
+        "shield": false
     },
 "spartanweaponry:flanged_mace_electrum":{
-        "attack": "6",
-        "defend": "0.90",
-        "shield": "false"
+        "attack": 6,
+        "defend": 0.90,
+        "shield": false
     },
 "spartanweaponry:flanged_mace_gold":{
-        "attack": "6",
-        "defend": "0.90",
-        "shield": "false"
+        "attack": 6,
+        "defend": 0.90,
+        "shield": false
     },
 "spartanweaponry:flanged_mace_invar":{
-        "attack": "6",
-        "defend": "0.90",
-        "shield": "false"
+        "attack": 6,
+        "defend": 0.90,
+        "shield": false
     },
 "spartanweaponry:flanged_mace_iron":{
-        "attack": "6",
-        "defend": "0.90",
-        "shield": "false"
+        "attack": 6,
+        "defend": 0.90,
+        "shield": false
     },
 "spartanweaponry:flanged_mace_lead":{
-        "attack": "6",
-        "defend": "0.90",
-        "shield": "false"
+        "attack": 6,
+        "defend": 0.90,
+        "shield": false
     },
 "spartanweaponry:flanged_mace_netherite":{
-        "attack": "6",
-        "defend": "0.90",
-        "shield": "false"
+        "attack": 6,
+        "defend": 0.90,
+        "shield": false
     },
 "spartanweaponry:flanged_mace_nickel":{
-        "attack": "6",
-        "defend": "0.90",
-        "shield": "false"
+        "attack": 6,
+        "defend": 0.90,
+        "shield": false
     },
 "spartanweaponry:flanged_mace_platinum":{
-        "attack": "6",
-        "defend": "0.90",
-        "shield": "false"
+        "attack": 6,
+        "defend": 0.90,
+        "shield": false
     },
 "spartanweaponry:flanged_mace_silver":{
-        "attack": "6",
-        "defend": "0.90",
-        "shield": "false"
+        "attack": 6,
+        "defend": 0.90,
+        "shield": false
     },
 "spartanweaponry:flanged_mace_steel":{
-        "attack": "6",
-        "defend": "0.90",
-        "shield": "false"
+        "attack": 6,
+        "defend": 0.90,
+        "shield": false
     },
 "spartanweaponry:flanged_mace_stone":{
-        "attack": "6",
-        "defend": "0.90",
-        "shield": "false"
+        "attack": 6,
+        "defend": 0.90,
+        "shield": false
     },
 "spartanweaponry:flanged_mace_tin":{
-        "attack": "6",
-        "defend": "0.90",
-        "shield": "false"
+        "attack": 6,
+        "defend": 0.90,
+        "shield": false
     },
 "spartanweaponry:flanged_mace_wood":{
-        "attack": "6",
-        "defend": "0.90",
-        "shield": "false"
+        "attack": 6,
+        "defend": 0.90,
+        "shield": false
     },
 "spartanweaponry:glaive_bronze":{
-        "attack": "4",
-        "defend": "0.70",
-        "shield": "false"
+        "attack": 4,
+        "defend": 0.70,
+        "shield": false
     },
 "spartanweaponry:glaive_copper":{
-        "attack": "4",
-        "defend": "0.70",
-        "shield": "false"
+        "attack": 4,
+        "defend": 0.70,
+        "shield": false
     },
 "spartanweaponry:glaive_diamond":{
-        "attack": "4",
-        "defend": "0.70",
-        "shield": "false"
+        "attack": 4,
+        "defend": 0.70,
+        "shield": false
     },
 "spartanweaponry:glaive_electrum":{
-        "attack": "4",
-        "defend": "0.70",
-        "shield": "false"
+        "attack": 4,
+        "defend": 0.70,
+        "shield": false
     },
 "spartanweaponry:glaive_gold":{
-        "attack": "4",
-        "defend": "0.70",
-        "shield": "false"
+        "attack": 4,
+        "defend": 0.70,
+        "shield": false
     },
 "spartanweaponry:glaive_invar":{
-        "attack": "4",
-        "defend": "0.70",
-        "shield": "false"
+        "attack": 4,
+        "defend": 0.70,
+        "shield": false
     },
 "spartanweaponry:glaive_iron":{
-        "attack": "4",
-        "defend": "0.70",
-        "shield": "false"
+        "attack": 4,
+        "defend": 0.70,
+        "shield": false
     },
 "spartanweaponry:glaive_lead":{
-        "attack": "4",
-        "defend": "0.70",
-        "shield": "false"
+        "attack": 4,
+        "defend": 0.70,
+        "shield": false
     },
 "spartanweaponry:glaive_netherite":{
-        "attack": "4",
-        "defend": "0.70",
-        "shield": "false"
+        "attack": 4,
+        "defend": 0.70,
+        "shield": false
     },
 "spartanweaponry:glaive_nickel":{
-        "attack": "4",
-        "defend": "0.70",
-        "shield": "false"
+        "attack": 4,
+        "defend": 0.70,
+        "shield": false
     },
 "spartanweaponry:glaive_platinum":{
-        "attack": "4",
-        "defend": "0.70",
-        "shield": "false"
+        "attack": 4,
+        "defend": 0.70,
+        "shield": false
     },
 "spartanweaponry:glaive_silver":{
-        "attack": "4",
-        "defend": "0.70",
-        "shield": "false"
+        "attack": 4,
+        "defend": 0.70,
+        "shield": false
     },
 "spartanweaponry:glaive_steel":{
-        "attack": "4",
-        "defend": "0.70",
-        "shield": "false"
+        "attack": 4,
+        "defend": 0.70,
+        "shield": false
     },
 "spartanweaponry:glaive_stone":{
-        "attack": "4",
-        "defend": "0.70",
-        "shield": "false"
+        "attack": 4,
+        "defend": 0.70,
+        "shield": false
     },
 "spartanweaponry:glaive_tin":{
-        "attack": "4",
-        "defend": "0.70",
-        "shield": "false"
+        "attack": 4,
+        "defend": 0.70,
+        "shield": false
     },
 "spartanweaponry:glaive_wood":{
-        "attack": "4",
-        "defend": "0.70",
-        "shield": "false"
+        "attack": 4,
+        "defend": 0.70,
+        "shield": false
     },
 "spartanweaponry:greatsword_bronze":{
-        "attack": "3.8",
-        "defend": "0.80",
-        "shield": "false"
+        "attack": 3.8,
+        "defend": 0.80,
+        "shield": false
     },
 "spartanweaponry:greatsword_copper":{
-        "attack": "3.8",
-        "defend": "0.80",
-        "shield": "false"
+        "attack": 3.8,
+        "defend": 0.80,
+        "shield": false
     },
 "spartanweaponry:greatsword_diamond":{
-        "attack": "3.8",
-        "defend": "0.80",
-        "shield": "false"
+        "attack": 3.8,
+        "defend": 0.80,
+        "shield": false
     },
 "spartanweaponry:greatsword_electrum":{
-        "attack": "3.8",
-        "defend": "0.80",
-        "shield": "false"
+        "attack": 3.8,
+        "defend": 0.80,
+        "shield": false
     },
 "spartanweaponry:greatsword_gold":{
-        "attack": "3.8",
-        "defend": "0.80",
-        "shield": "false"
+        "attack": 3.8,
+        "defend": 0.80,
+        "shield": false
     },
 "spartanweaponry:greatsword_invar":{
-        "attack": "3.8",
-        "defend": "0.80",
-        "shield": "false"
+        "attack": 3.8,
+        "defend": 0.80,
+        "shield": false
     },
 "spartanweaponry:greatsword_iron":{
-        "attack": "3.8",
-        "defend": "0.80",
-        "shield": "false"
+        "attack": 3.8,
+        "defend": 0.80,
+        "shield": false
     },
 "spartanweaponry:greatsword_lead":{
-        "attack": "3.8",
-        "defend": "0.80",
-        "shield": "false"
+        "attack": 3.8,
+        "defend": 0.80,
+        "shield": false
     },
 "spartanweaponry:greatsword_netherite":{
-        "attack": "3.8",
-        "defend": "0.80",
-        "shield": "false"
+        "attack": 3.8,
+        "defend": 0.80,
+        "shield": false
     },
 "spartanweaponry:greatsword_nickel":{
-        "attack": "3.8",
-        "defend": "0.80",
-        "shield": "false"
+        "attack": 3.8,
+        "defend": 0.80,
+        "shield": false
     },
 "spartanweaponry:greatsword_platinum":{
-        "attack": "3.8",
-        "defend": "0.80",
-        "shield": "false"
+        "attack": 3.8,
+        "defend": 0.80,
+        "shield": false
     },
 "spartanweaponry:greatsword_silver":{
-        "attack": "3.8",
-        "defend": "0.80",
-        "shield": "false"
+        "attack": 3.8,
+        "defend": 0.80,
+        "shield": false
     },
 "spartanweaponry:greatsword_steel":{
-        "attack": "3.8",
-        "defend": "0.80",
-        "shield": "false"
+        "attack": 3.8,
+        "defend": 0.80,
+        "shield": false
     },
 "spartanweaponry:greatsword_stone":{
-        "attack": "3.8",
-        "defend": "0.80",
-        "shield": "false"
+        "attack": 3.8,
+        "defend": 0.80,
+        "shield": false
     },
 "spartanweaponry:greatsword_tin":{
-        "attack": "3.8",
-        "defend": "0.80",
-        "shield": "false"
+        "attack": 3.8,
+        "defend": 0.80,
+        "shield": false
     },
 "spartanweaponry:greatsword_wood":{
-        "attack": "3.8",
-        "defend": "0.80",
-        "shield": "false"
+        "attack": 3.8,
+        "defend": 0.80,
+        "shield": false
     },
 "spartanweaponry:halberd_bronze":{
-        "attack": "4",
-        "defend": "0.70",
-        "shield": "false"
+        "attack": 4,
+        "defend": 0.70,
+        "shield": false
     },
 "spartanweaponry:halberd_copper":{
-        "attack": "4",
-        "defend": "0.70",
-        "shield": "false"
+        "attack": 4,
+        "defend": 0.70,
+        "shield": false
     },
 "spartanweaponry:halberd_diamond":{
-        "attack": "4",
-        "defend": "0.70",
-        "shield": "false"
+        "attack": 4,
+        "defend": 0.70,
+        "shield": false
     },
 "spartanweaponry:halberd_electrum":{
-        "attack": "4",
-        "defend": "0.70",
-        "shield": "false"
+        "attack": 4,
+        "defend": 0.70,
+        "shield": false
     },
 "spartanweaponry:halberd_gold":{
-        "attack": "4",
-        "defend": "0.70",
-        "shield": "false"
+        "attack": 4,
+        "defend": 0.70,
+        "shield": false
     },
 "spartanweaponry:halberd_invar":{
-        "attack": "4",
-        "defend": "0.70",
-        "shield": "false"
+        "attack": 4,
+        "defend": 0.70,
+        "shield": false
     },
 "spartanweaponry:halberd_iron":{
-        "attack": "4",
-        "defend": "0.70",
-        "shield": "false"
+        "attack": 4,
+        "defend": 0.70,
+        "shield": false
     },
 "spartanweaponry:halberd_lead":{
-        "attack": "4",
-        "defend": "0.70",
-        "shield": "false"
+        "attack": 4,
+        "defend": 0.70,
+        "shield": false
     },
 "spartanweaponry:halberd_netherite":{
-        "attack": "4",
-        "defend": "0.70",
-        "shield": "false"
+        "attack": 4,
+        "defend": 0.70,
+        "shield": false
     },
 "spartanweaponry:halberd_nickel":{
-        "attack": "4",
-        "defend": "0.70",
-        "shield": "false"
+        "attack": 4,
+        "defend": 0.70,
+        "shield": false
     },
 "spartanweaponry:halberd_platinum":{
-        "attack": "4",
-        "defend": "0.70",
-        "shield": "false"
+        "attack": 4,
+        "defend": 0.70,
+        "shield": false
     },
 "spartanweaponry:halberd_silver":{
-        "attack": "4",
-        "defend": "0.70",
-        "shield": "false"
+        "attack": 4,
+        "defend": 0.70,
+        "shield": false
     },
 "spartanweaponry:halberd_steel":{
-        "attack": "4",
-        "defend": "0.70",
-        "shield": "false"
+        "attack": 4,
+        "defend": 0.70,
+        "shield": false
     },
 "spartanweaponry:halberd_stone":{
-        "attack": "4",
-        "defend": "0.70",
-        "shield": "false"
+        "attack": 4,
+        "defend": 0.70,
+        "shield": false
     },
 "spartanweaponry:halberd_tin":{
-        "attack": "4",
-        "defend": "0.70",
-        "shield": "false"
+        "attack": 4,
+        "defend": 0.70,
+        "shield": false
     },
 "spartanweaponry:halberd_wood":{
-        "attack": "4",
-        "defend": "0.70",
-        "shield": "false"
+        "attack": 4,
+        "defend": 0.70,
+        "shield": false
     },
 "spartanweaponry:hammer_bronze":{
-        "attack": "6",
-        "defend": "0.90",
-        "shield": "false"
+        "attack": 6,
+        "defend": 0.90,
+        "shield": false
     },
 "spartanweaponry:hammer_copper":{
-        "attack": "6",
-        "defend": "0.90",
-        "shield": "false"
+        "attack": 6,
+        "defend": 0.90,
+        "shield": false
     },
 "spartanweaponry:hammer_diamond":{
-        "attack": "6",
-        "defend": "0.90",
-        "shield": "false"
+        "attack": 6,
+        "defend": 0.90,
+        "shield": false
     },
 "spartanweaponry:hammer_electrum":{
-        "attack": "6",
-        "defend": "0.90",
-        "shield": "false"
+        "attack": 6,
+        "defend": 0.90,
+        "shield": false
     },
 "spartanweaponry:hammer_gold":{
-        "attack": "6",
-        "defend": "0.90",
-        "shield": "false"
+        "attack": 6,
+        "defend": 0.90,
+        "shield": false
     },
 "spartanweaponry:hammer_invar":{
-        "attack": "6",
-        "defend": "0.90",
-        "shield": "false"
+        "attack": 6,
+        "defend": 0.90,
+        "shield": false
     },
 "spartanweaponry:hammer_iron":{
-        "attack": "6",
-        "defend": "0.90",
-        "shield": "false"
+        "attack": 6,
+        "defend": 0.90,
+        "shield": false
     },
 "spartanweaponry:hammer_lead":{
-        "attack": "6",
-        "defend": "0.90",
-        "shield": "false"
+        "attack": 6,
+        "defend": 0.90,
+        "shield": false
     },
 "spartanweaponry:hammer_netherite":{
-        "attack": "6",
-        "defend": "0.90",
-        "shield": "false"
+        "attack": 6,
+        "defend": 0.90,
+        "shield": false
     },
 "spartanweaponry:hammer_nickel":{
-        "attack": "6",
-        "defend": "0.90",
-        "shield": "false"
+        "attack": 6,
+        "defend": 0.90,
+        "shield": false
     },
 "spartanweaponry:hammer_platinum":{
-        "attack": "6",
-        "defend": "0.90",
-        "shield": "false"
+        "attack": 6,
+        "defend": 0.90,
+        "shield": false
     },
 "spartanweaponry:hammer_silver":{
-        "attack": "6",
-        "defend": "0.90",
-        "shield": "false"
+        "attack": 6,
+        "defend": 0.90,
+        "shield": false
     },
 "spartanweaponry:hammer_steel":{
-        "attack": "6",
-        "defend": "0.90",
-        "shield": "false"
+        "attack": 6,
+        "defend": 0.90,
+        "shield": false
     },
 "spartanweaponry:hammer_stone":{
-        "attack": "6",
-        "defend": "0.90",
-        "shield": "false"
+        "attack": 6,
+        "defend": 0.90,
+        "shield": false
     },
 "spartanweaponry:hammer_tin":{
-        "attack": "6",
-        "defend": "0.90",
-        "shield": "false"
+        "attack": 6,
+        "defend": 0.90,
+        "shield": false
     },
 "spartanweaponry:hammer_wood":{
-        "attack": "6",
-        "defend": "0.90",
-        "shield": "false"
+        "attack": 6,
+        "defend": 0.90,
+        "shield": false
     },
 "spartanweaponry:heavy_crossbow_bronze":{
-        "attack": "1",
-        "defend": "1.10",
-        "shield": "false"
+        "attack": 1,
+        "defend": 1.10,
+        "shield": false
     },
 "spartanweaponry:heavy_crossbow_copper":{
-        "attack": "1",
-        "defend": "1.10",
-        "shield": "false"
+        "attack": 1,
+        "defend": 1.10,
+        "shield": false
     },
 "spartanweaponry:heavy_crossbow_diamond":{
-        "attack": "1",
-        "defend": "1.10",
-        "shield": "false"
+        "attack": 1,
+        "defend": 1.10,
+        "shield": false
     },
 "spartanweaponry:heavy_crossbow_electrum":{
-        "attack": "1",
-        "defend": "1.10",
-        "shield": "false"
+        "attack": 1,
+        "defend": 1.10,
+        "shield": false
     },
 "spartanweaponry:heavy_crossbow_gold":{
-        "attack": "1",
-        "defend": "1.10",
-        "shield": "false"
+        "attack": 1,
+        "defend": 1.10,
+        "shield": false
     },
 "spartanweaponry:heavy_crossbow_invar":{
-        "attack": "1",
-        "defend": "1.10",
-        "shield": "false"
+        "attack": 1,
+        "defend": 1.10,
+        "shield": false
     },
 "spartanweaponry:heavy_crossbow_iron":{
-        "attack": "1",
-        "defend": "1.10",
-        "shield": "false"
+        "attack": 1,
+        "defend": 1.10,
+        "shield": false
     },
 "spartanweaponry:heavy_crossbow_lead":{
-        "attack": "1",
-        "defend": "1.10",
-        "shield": "false"
+        "attack": 1,
+        "defend": 1.10,
+        "shield": false
     },
 "spartanweaponry:heavy_crossbow_leather":{
-        "attack": "1",
-        "defend": "1.10",
-        "shield": "false"
+        "attack": 1,
+        "defend": 1.10,
+        "shield": false
     },
 "spartanweaponry:heavy_crossbow_netherite":{
-        "attack": "1",
-        "defend": "1.10",
-        "shield": "false"
+        "attack": 1,
+        "defend": 1.10,
+        "shield": false
     },
 "spartanweaponry:heavy_crossbow_nickel":{
-        "attack": "1",
-        "defend": "1.10",
-        "shield": "false"
+        "attack": 1,
+        "defend": 1.10,
+        "shield": false
     },
 "spartanweaponry:heavy_crossbow_platinum":{
-        "attack": "1",
-        "defend": "1.10",
-        "shield": "false"
+        "attack": 1,
+        "defend": 1.10,
+        "shield": false
     },
 "spartanweaponry:heavy_crossbow_silver":{
-        "attack": "1",
-        "defend": "1.10",
-        "shield": "false"
+        "attack": 1,
+        "defend": 1.10,
+        "shield": false
     },
 "spartanweaponry:heavy_crossbow_steel":{
-        "attack": "1",
-        "defend": "1.10",
-        "shield": "false"
+        "attack": 1,
+        "defend": 1.10,
+        "shield": false
     },
 "spartanweaponry:heavy_crossbow_tin":{
-        "attack": "1",
-        "defend": "1.10",
-        "shield": "false"
+        "attack": 1,
+        "defend": 1.10,
+        "shield": false
     },
 "spartanweaponry:heavy_crossbow_wood":{
-        "attack": "1",
-        "defend": "1.10",
-        "shield": "false"
+        "attack": 1,
+        "defend": 1.10,
+        "shield": false
     },
 "spartanweaponry:javelin_bronze":{
-        "attack": "1.75",
-        "defend": "0.7",
-        "shield": "false"
+        "attack": 1.75,
+        "defend": 0.7,
+        "shield": false
     },
 "spartanweaponry:javelin_copper":{
-        "attack": "1.75",
-        "defend": "0.7",
-        "shield": "false"
+        "attack": 1.75,
+        "defend": 0.7,
+        "shield": false
     },
 "spartanweaponry:javelin_diamond":{
-        "attack": "1.75",
-        "defend": "0.7",
-        "shield": "false"
+        "attack": 1.75,
+        "defend": 0.7,
+        "shield": false
     },
 "spartanweaponry:javelin_electrum":{
-        "attack": "1.75",
-        "defend": "0.7",
-        "shield": "false"
+        "attack": 1.75,
+        "defend": 0.7,
+        "shield": false
     },
 "spartanweaponry:javelin_gold":{
-        "attack": "1.75",
-        "defend": "0.7",
-        "shield": "false"
+        "attack": 1.75,
+        "defend": 0.7,
+        "shield": false
     },
 "spartanweaponry:javelin_invar":{
-        "attack": "1.75",
-        "defend": "0.7",
-        "shield": "false"
+        "attack": 1.75,
+        "defend": 0.7,
+        "shield": false
     },
 "spartanweaponry:javelin_iron":{
-        "attack": "1.75",
-        "defend": "0.7",
-        "shield": "false"
+        "attack": 1.75,
+        "defend": 0.7,
+        "shield": false
     },
 "spartanweaponry:javelin_lead":{
-        "attack": "1.75",
-        "defend": "0.7",
-        "shield": "false"
+        "attack": 1.75,
+        "defend": 0.7,
+        "shield": false
     },
 "spartanweaponry:javelin_netherite":{
-        "attack": "1.75",
-        "defend": "0.7",
-        "shield": "false"
+        "attack": 1.75,
+        "defend": 0.7,
+        "shield": false
     },
 "spartanweaponry:javelin_nickel":{
-        "attack": "1.75",
-        "defend": "0.7",
-        "shield": "false"
+        "attack": 1.75,
+        "defend": 0.7,
+        "shield": false
     },
 "spartanweaponry:javelin_platinum":{
-        "attack": "1.75",
-        "defend": "0.7",
-        "shield": "false"
+        "attack": 1.75,
+        "defend": 0.7,
+        "shield": false
     },
 "spartanweaponry:javelin_silver":{
-        "attack": "1.75",
-        "defend": "0.7",
-        "shield": "false"
+        "attack": 1.75,
+        "defend": 0.7,
+        "shield": false
     },
 "spartanweaponry:javelin_steel":{
-        "attack": "1.75",
-        "defend": "0.7",
-        "shield": "false"
+        "attack": 1.75,
+        "defend": 0.7,
+        "shield": false
     },
 "spartanweaponry:javelin_stone":{
-        "attack": "1.75",
-        "defend": "0.7",
-        "shield": "false"
+        "attack": 1.75,
+        "defend": 0.7,
+        "shield": false
     },
 "spartanweaponry:javelin_tin":{
-        "attack": "1.75",
-        "defend": "0.7",
-        "shield": "false"
+        "attack": 1.75,
+        "defend": 0.7,
+        "shield": false
     },
 "spartanweaponry:javelin_wood":{
-        "attack": "1.75",
-        "defend": "0.7",
-        "shield": "false"
+        "attack": 1.75,
+        "defend": 0.7,
+        "shield": false
     },
 "spartanweaponry:katana_bronze":{
-        "attack": "2.9",
-        "defend": "0.90",
-        "shield": "false"
+        "attack": 2.9,
+        "defend": 0.90,
+        "shield": false
     },
 "spartanweaponry:katana_copper":{
-        "attack": "2.9",
-        "defend": "0.90",
-        "shield": "false"
+        "attack": 2.9,
+        "defend": 0.90,
+        "shield": false
     },
 "spartanweaponry:katana_diamond":{
-        "attack": "2.9",
-        "defend": "0.90",
-        "shield": "false"
+        "attack": 2.9,
+        "defend": 0.90,
+        "shield": false
     },
 "spartanweaponry:katana_electrum":{
-        "attack": "2.9",
-        "defend": "0.90",
-        "shield": "false"
+        "attack": 2.9,
+        "defend": 0.90,
+        "shield": false
     },
 "spartanweaponry:katana_gold":{
-        "attack": "2.9",
-        "defend": "0.90",
-        "shield": "false"
+        "attack": 2.9,
+        "defend": 0.90,
+        "shield": false
     },
 "spartanweaponry:katana_invar":{
-        "attack": "2.9",
-        "defend": "0.90",
-        "shield": "false"
+        "attack": 2.9,
+        "defend": 0.90,
+        "shield": false
     },
 "spartanweaponry:katana_iron":{
-        "attack": "2.9",
-        "defend": "0.90",
-        "shield": "false"
+        "attack": 2.9,
+        "defend": 0.90,
+        "shield": false
     },
 "spartanweaponry:katana_lead":{
-        "attack": "2.9",
-        "defend": "0.90",
-        "shield": "false"
+        "attack": 2.9,
+        "defend": 0.90,
+        "shield": false
     },
 "spartanweaponry:katana_netherite":{
-        "attack": "2.9",
-        "defend": "0.90",
-        "shield": "false"
+        "attack": 2.9,
+        "defend": 0.90,
+        "shield": false
     },
 "spartanweaponry:katana_nickel":{
-        "attack": "2.9",
-        "defend": "0.90",
-        "shield": "false"
+        "attack": 2.9,
+        "defend": 0.90,
+        "shield": false
     },
 "spartanweaponry:katana_platinum":{
-        "attack": "2.9",
-        "defend": "0.90",
-        "shield": "false"
+        "attack": 2.9,
+        "defend": 0.90,
+        "shield": false
     },
 "spartanweaponry:katana_silver":{
-        "attack": "2.9",
-        "defend": "0.90",
-        "shield": "false"
+        "attack": 2.9,
+        "defend": 0.90,
+        "shield": false
     },
 "spartanweaponry:katana_steel":{
-        "attack": "2.9",
-        "defend": "0.90",
-        "shield": "false"
+        "attack": 2.9,
+        "defend": 0.90,
+        "shield": false
     },
 "spartanweaponry:katana_stone":{
-        "attack": "2.9",
-        "defend": "0.90",
-        "shield": "false"
+        "attack": 2.9,
+        "defend": 0.90,
+        "shield": false
     },
 "spartanweaponry:katana_tin":{
-        "attack": "2.9",
-        "defend": "0.90",
-        "shield": "false"
+        "attack": 2.9,
+        "defend": 0.90,
+        "shield": false
     },
 "spartanweaponry:katana_wood":{
-        "attack": "2.9",
-        "defend": "0.90",
-        "shield": "false"
+        "attack": 2.9,
+        "defend": 0.90,
+        "shield": false
     },
 "spartanweaponry:lance_bronze":{
-        "attack": "2.5",
-        "defend": "0.70",
-        "shield": "false"
+        "attack": 2.5,
+        "defend": 0.70,
+        "shield": false
     },
 "spartanweaponry:lance_copper":{
-        "attack": "2.5",
-        "defend": "0.70",
-        "shield": "false"
+        "attack": 2.5,
+        "defend": 0.70,
+        "shield": false
     },
 "spartanweaponry:lance_diamond":{
-        "attack": "2.5",
-        "defend": "0.70",
-        "shield": "false"
+        "attack": 2.5,
+        "defend": 0.70,
+        "shield": false
     },
 "spartanweaponry:lance_electrum":{
-        "attack": "2.5",
-        "defend": "0.70",
-        "shield": "false"
+        "attack": 2.5,
+        "defend": 0.70,
+        "shield": false
     },
 "spartanweaponry:lance_gold":{
-        "attack": "2.5",
-        "defend": "0.70",
-        "shield": "false"
+        "attack": 2.5,
+        "defend": 0.70,
+        "shield": false
     },
 "spartanweaponry:lance_invar":{
-        "attack": "2.5",
-        "defend": "0.70",
-        "shield": "false"
+        "attack": 2.5,
+        "defend": 0.70,
+        "shield": false
     },
 "spartanweaponry:lance_iron":{
-        "attack": "2.5",
-        "defend": "0.70",
-        "shield": "false"
+        "attack": 2.5,
+        "defend": 0.70,
+        "shield": false
     },
 "spartanweaponry:lance_lead":{
-        "attack": "2.5",
-        "defend": "0.70",
-        "shield": "false"
+        "attack": 2.5,
+        "defend": 0.70,
+        "shield": false
     },
 "spartanweaponry:lance_netherite":{
-        "attack": "2.5",
-        "defend": "0.70",
-        "shield": "false"
+        "attack": 2.5,
+        "defend": 0.70,
+        "shield": false
     },
 "spartanweaponry:lance_nickel":{
-        "attack": "2.5",
-        "defend": "0.70",
-        "shield": "false"
+        "attack": 2.5,
+        "defend": 0.70,
+        "shield": false
     },
 "spartanweaponry:lance_platinum":{
-        "attack": "2.5",
-        "defend": "0.70",
-        "shield": "false"
+        "attack": 2.5,
+        "defend": 0.70,
+        "shield": false
     },
 "spartanweaponry:lance_silver":{
-        "attack": "2.5",
-        "defend": "0.70",
-        "shield": "false"
+        "attack": 2.5,
+        "defend": 0.70,
+        "shield": false
     },
 "spartanweaponry:lance_steel":{
-        "attack": "2.5",
-        "defend": "0.70",
-        "shield": "false"
+        "attack": 2.5,
+        "defend": 0.70,
+        "shield": false
     },
 "spartanweaponry:lance_stone":{
-        "attack": "2.5",
-        "defend": "0.70",
-        "shield": "false"
+        "attack": 2.5,
+        "defend": 0.70,
+        "shield": false
     },
 "spartanweaponry:lance_tin":{
-        "attack": "2.5",
-        "defend": "0.70",
-        "shield": "false"
+        "attack": 2.5,
+        "defend": 0.70,
+        "shield": false
     },
 "spartanweaponry:lance_wood":{
-        "attack": "2.5",
-        "defend": "0.70",
-        "shield": "false"
+        "attack": 2.5,
+        "defend": 0.70,
+        "shield": false
     },
 "spartanweaponry:longbow_bronze":{
-        "attack": "1.2",
-        "defend": "0.90",
-        "shield": "false"
+        "attack": 1.2,
+        "defend": 0.90,
+        "shield": false
     },
 "spartanweaponry:longbow_copper":{
-        "attack": "1.2",
-        "defend": "0.90",
-        "shield": "false"
+        "attack": 1.2,
+        "defend": 0.90,
+        "shield": false
     },
 "spartanweaponry:longbow_diamond":{
-        "attack": "1.2",
-        "defend": "0.90",
-        "shield": "false"
+        "attack": 1.2,
+        "defend": 0.90,
+        "shield": false
     },
 "spartanweaponry:longbow_electrum":{
-        "attack": "1.2",
-        "defend": "0.90",
-        "shield": "false"
+        "attack": 1.2,
+        "defend": 0.90,
+        "shield": false
     },
 "spartanweaponry:longbow_gold":{
-        "attack": "1.2",
-        "defend": "0.90",
-        "shield": "false"
+        "attack": 1.2,
+        "defend": 0.90,
+        "shield": false
     },
 "spartanweaponry:longbow_invar":{
-        "attack": "1.2",
-        "defend": "0.90",
-        "shield": "false"
+        "attack": 1.2,
+        "defend": 0.90,
+        "shield": false
     },
 "spartanweaponry:longbow_iron":{
-        "attack": "1.2",
-        "defend": "0.90",
-        "shield": "false"
+        "attack": 1.2,
+        "defend": 0.90,
+        "shield": false
     },
 "spartanweaponry:longbow_lead":{
-        "attack": "1.2",
-        "defend": "0.90",
-        "shield": "false"
+        "attack": 1.2,
+        "defend": 0.90,
+        "shield": false
     },
 "spartanweaponry:longbow_leather":{
-        "attack": "1.2",
-        "defend": "0.90",
-        "shield": "false"
+        "attack": 1.2,
+        "defend": 0.90,
+        "shield": false
     },
 "spartanweaponry:longbow_netherite":{
-        "attack": "1.2",
-        "defend": "0.90",
-        "shield": "false"
+        "attack": 1.2,
+        "defend": 0.90,
+        "shield": false
     },
 "spartanweaponry:longbow_nickel":{
-        "attack": "1.2",
-        "defend": "0.90",
-        "shield": "false"
+        "attack": 1.2,
+        "defend": 0.90,
+        "shield": false
     },
 "spartanweaponry:longbow_platinum":{
-        "attack": "1.2",
-        "defend": "0.90",
-        "shield": "false"
+        "attack": 1.2,
+        "defend": 0.90,
+        "shield": false
     },
 "spartanweaponry:longbow_silver":{
-        "attack": "1.2",
-        "defend": "0.90",
-        "shield": "false"
+        "attack": 1.2,
+        "defend": 0.90,
+        "shield": false
     },
 "spartanweaponry:longbow_steel":{
-        "attack": "1.2",
-        "defend": "0.90",
-        "shield": "false"
+        "attack": 1.2,
+        "defend": 0.90,
+        "shield": false
     },
 "spartanweaponry:longbow_tin":{
-        "attack": "1.2",
-        "defend": "0.90",
-        "shield": "false"
+        "attack": 1.2,
+        "defend": 0.90,
+        "shield": false
     },
 "spartanweaponry:longbow_wood":{
-        "attack": "1.2",
-        "defend": "0.90",
-        "shield": "false"
+        "attack": 1.2,
+        "defend": 0.90,
+        "shield": false
     },
 "spartanweaponry:longsword_bronze":{
-        "attack": "2.9",
-        "defend": "0.90",
-        "shield": "false"
+        "attack": 2.9,
+        "defend": 0.90,
+        "shield": false
     },
 "spartanweaponry:longsword_copper":{
-        "attack": "2.9",
-        "defend": "0.90",
-        "shield": "false"
+        "attack": 2.9,
+        "defend": 0.90,
+        "shield": false
     },
 "spartanweaponry:longsword_diamond":{
-        "attack": "2.9",
-        "defend": "0.90",
-        "shield": "false"
+        "attack": 2.9,
+        "defend": 0.90,
+        "shield": false
     },
 "spartanweaponry:longsword_electrum":{
-        "attack": "2.9",
-        "defend": "0.90",
-        "shield": "false"
+        "attack": 2.9,
+        "defend": 0.90,
+        "shield": false
     },
 "spartanweaponry:longsword_gold":{
-        "attack": "2.9",
-        "defend": "0.90",
-        "shield": "false"
+        "attack": 2.9,
+        "defend": 0.90,
+        "shield": false
     },
 "spartanweaponry:longsword_invar":{
-        "attack": "2.9",
-        "defend": "0.90",
-        "shield": "false"
+        "attack": 2.9,
+        "defend": 0.90,
+        "shield": false
     },
 "spartanweaponry:longsword_iron":{
-        "attack": "2.9",
-        "defend": "0.90",
-        "shield": "false"
+        "attack": 2.9,
+        "defend": 0.90,
+        "shield": false
     },
 "spartanweaponry:longsword_lead":{
-        "attack": "2.9",
-        "defend": "0.90",
-        "shield": "false"
+        "attack": 2.9,
+        "defend": 0.90,
+        "shield": false
     },
 "spartanweaponry:longsword_netherite":{
-        "attack": "2.9",
-        "defend": "0.90",
-        "shield": "false"
+        "attack": 2.9,
+        "defend": 0.90,
+        "shield": false
     },
 "spartanweaponry:longsword_nickel":{
-        "attack": "2.9",
-        "defend": "0.90",
-        "shield": "false"
+        "attack": 2.9,
+        "defend": 0.90,
+        "shield": false
     },
 "spartanweaponry:longsword_platinum":{
-        "attack": "2.9",
-        "defend": "0.90",
-        "shield": "false"
+        "attack": 2.9,
+        "defend": 0.90,
+        "shield": false
     },
 "spartanweaponry:longsword_silver":{
-        "attack": "2.9",
-        "defend": "0.90",
-        "shield": "false"
+        "attack": 2.9,
+        "defend": 0.90,
+        "shield": false
     },
 "spartanweaponry:longsword_steel":{
-        "attack": "2.9",
-        "defend": "0.90",
-        "shield": "false"
+        "attack": 2.9,
+        "defend": 0.90,
+        "shield": false
     },
 "spartanweaponry:longsword_stone":{
-        "attack": "2.9",
-        "defend": "0.90",
-        "shield": "false"
+        "attack": 2.9,
+        "defend": 0.90,
+        "shield": false
     },
 "spartanweaponry:longsword_tin":{
-        "attack": "2.9",
-        "defend": "0.90",
-        "shield": "false"
+        "attack": 2.9,
+        "defend": 0.90,
+        "shield": false
     },
 "spartanweaponry:longsword_wood":{
-        "attack": "2.9",
-        "defend": "0.90",
-        "shield": "false"
+        "attack": 2.9,
+        "defend": 0.90,
+        "shield": false
     },
 "spartanweaponry:parrying_dagger_bronze":{
-        "attack": "1.3",
-        "defend": "0.90",
-        "shield": "false"
+        "attack": 1.3,
+        "defend": 0.90,
+        "shield": false
     },
 "spartanweaponry:parrying_dagger_copper":{
-        "attack": "1.3",
-        "defend": "0.90",
-        "shield": "false"
+        "attack": 1.3,
+        "defend": 0.90,
+        "shield": false
     },
 "spartanweaponry:parrying_dagger_diamond":{
-        "attack": "1.3",
-        "defend": "0.90",
-        "shield": "false"
+        "attack": 1.3,
+        "defend": 0.90,
+        "shield": false
     },
 "spartanweaponry:parrying_dagger_electrum":{
-        "attack": "1.3",
-        "defend": "0.90",
-        "shield": "false"
+        "attack": 1.3,
+        "defend": 0.90,
+        "shield": false
     },
 "spartanweaponry:parrying_dagger_gold":{
-        "attack": "1.3",
-        "defend": "0.90",
-        "shield": "false"
+        "attack": 1.3,
+        "defend": 0.90,
+        "shield": false
     },
 "spartanweaponry:parrying_dagger_invar":{
-        "attack": "1.3",
-        "defend": "0.90",
-        "shield": "false"
+        "attack": 1.3,
+        "defend": 0.90,
+        "shield": false
     },
 "spartanweaponry:parrying_dagger_iron":{
-        "attack": "1.3",
-        "defend": "0.90",
-        "shield": "false"
+        "attack": 1.3,
+        "defend": 0.90,
+        "shield": false
     },
 "spartanweaponry:parrying_dagger_lead":{
-        "attack": "1.3",
-        "defend": "0.90",
-        "shield": "false"
+        "attack": 1.3,
+        "defend": 0.90,
+        "shield": false
     },
 "spartanweaponry:parrying_dagger_netherite":{
-        "attack": "1.3",
-        "defend": "0.90",
-        "shield": "false"
+        "attack": 1.3,
+        "defend": 0.90,
+        "shield": false
     },
 "spartanweaponry:parrying_dagger_nickel":{
-        "attack": "1.3",
-        "defend": "0.90",
-        "shield": "false"
+        "attack": 1.3,
+        "defend": 0.90,
+        "shield": false
     },
 "spartanweaponry:parrying_dagger_platinum":{
-        "attack": "1.3",
-        "defend": "0.90",
-        "shield": "false"
+        "attack": 1.3,
+        "defend": 0.90,
+        "shield": false
     },
 "spartanweaponry:parrying_dagger_silver":{
-        "attack": "1.3",
-        "defend": "0.90",
-        "shield": "false"
+        "attack": 1.3,
+        "defend": 0.90,
+        "shield": false
     },
 "spartanweaponry:parrying_dagger_steel":{
-        "attack": "1.3",
-        "defend": "0.90",
-        "shield": "false"
+        "attack": 1.3,
+        "defend": 0.90,
+        "shield": false
     },
 "spartanweaponry:parrying_dagger_stone":{
-        "attack": "1.3",
-        "defend": "0.90",
-        "shield": "false"
+        "attack": 1.3,
+        "defend": 0.90,
+        "shield": false
     },
 "spartanweaponry:parrying_dagger_tin":{
-        "attack": "1.3",
-        "defend": "0.90",
-        "shield": "false"
+        "attack": 1.3,
+        "defend": 0.90,
+        "shield": false
     },
 "spartanweaponry:parrying_dagger_wood":{
-        "attack": "1.3",
-        "defend": "0.90",
-        "shield": "false"
+        "attack": 1.3,
+        "defend": 0.90,
+        "shield": false
     },
 "spartanweaponry:pike_bronze":{
-        "attack": "3.2",
-        "defend": "0.70",
-        "shield": "false"
+        "attack": 3.2,
+        "defend": 0.70,
+        "shield": false
     },
 "spartanweaponry:pike_copper":{
-        "attack": "3.2",
-        "defend": "0.70",
-        "shield": "false"
+        "attack": 3.2,
+        "defend": 0.70,
+        "shield": false
     },
 "spartanweaponry:pike_diamond":{
-        "attack": "3.2",
-        "defend": "0.70",
-        "shield": "false"
+        "attack": 3.2,
+        "defend": 0.70,
+        "shield": false
     },
 "spartanweaponry:pike_electrum":{
-        "attack": "3.2",
-        "defend": "0.70",
-        "shield": "false"
+        "attack": 3.2,
+        "defend": 0.70,
+        "shield": false
     },
 "spartanweaponry:pike_gold":{
-        "attack": "3.2",
-        "defend": "0.70",
-        "shield": "false"
+        "attack": 3.2,
+        "defend": 0.70,
+        "shield": false
     },
 "spartanweaponry:pike_invar":{
-        "attack": "3.2",
-        "defend": "0.70",
-        "shield": "false"
+        "attack": 3.2,
+        "defend": 0.70,
+        "shield": false
     },
 "spartanweaponry:pike_iron":{
-        "attack": "3.2",
-        "defend": "0.70",
-        "shield": "false"
+        "attack": 3.2,
+        "defend": 0.70,
+        "shield": false
     },
 "spartanweaponry:pike_lead":{
-        "attack": "3.2",
-        "defend": "0.70",
-        "shield": "false"
+        "attack": 3.2,
+        "defend": 0.70,
+        "shield": false
     },
 "spartanweaponry:pike_netherite":{
-        "attack": "3.2",
-        "defend": "0.70",
-        "shield": "false"
+        "attack": 3.2,
+        "defend": 0.70,
+        "shield": false
     },
 "spartanweaponry:pike_nickel":{
-        "attack": "3.2",
-        "defend": "0.70",
-        "shield": "false"
+        "attack": 3.2,
+        "defend": 0.70,
+        "shield": false
     },
 "spartanweaponry:pike_platinum":{
-        "attack": "3.2",
-        "defend": "0.70",
-        "shield": "false"
+        "attack": 3.2,
+        "defend": 0.70,
+        "shield": false
     },
 "spartanweaponry:pike_silver":{
-        "attack": "3.2",
-        "defend": "0.70",
-        "shield": "false"
+        "attack": 3.2,
+        "defend": 0.70,
+        "shield": false
     },
 "spartanweaponry:pike_steel":{
-        "attack": "3.2",
-        "defend": "0.70",
-        "shield": "false"
+        "attack": 3.2,
+        "defend": 0.70,
+        "shield": false
     },
 "spartanweaponry:pike_stone":{
-        "attack": "3.2",
-        "defend": "0.70",
-        "shield": "false"
+        "attack": 3.2,
+        "defend": 0.70,
+        "shield": false
     },
 "spartanweaponry:pike_tin":{
-        "attack": "3.2",
-        "defend": "0.70",
-        "shield": "false"
+        "attack": 3.2,
+        "defend": 0.70,
+        "shield": false
     },
 "spartanweaponry:pike_wood":{
-        "attack": "3.2",
-        "defend": "0.70",
-        "shield": "false"
+        "attack": 3.2,
+        "defend": 0.70,
+        "shield": false
     },
 "spartanweaponry:quarterstaff_bronze":{
-        "attack": "3",
-        "defend": "0.70",
-        "shield": "false"
+        "attack": 3,
+        "defend": 0.70,
+        "shield": false
     },
 "spartanweaponry:quarterstaff_copper":{
-        "attack": "3",
-        "defend": "0.70",
-        "shield": "false"
+        "attack": 3,
+        "defend": 0.70,
+        "shield": false
     },
 "spartanweaponry:quarterstaff_diamond":{
-        "attack": "3",
-        "defend": "0.70",
-        "shield": "false"
+        "attack": 3,
+        "defend": 0.70,
+        "shield": false
     },
 "spartanweaponry:quarterstaff_electrum":{
-        "attack": "3",
-        "defend": "0.70",
-        "shield": "false"
+        "attack": 3,
+        "defend": 0.70,
+        "shield": false
     },
 "spartanweaponry:quarterstaff_gold":{
-        "attack": "3",
-        "defend": "0.70",
-        "shield": "false"
+        "attack": 3,
+        "defend": 0.70,
+        "shield": false
     },
 "spartanweaponry:quarterstaff_invar":{
-        "attack": "3",
-        "defend": "0.70",
-        "shield": "false"
+        "attack": 3,
+        "defend": 0.70,
+        "shield": false
     },
 "spartanweaponry:quarterstaff_iron":{
-        "attack": "3",
-        "defend": "0.70",
-        "shield": "false"
+        "attack": 3,
+        "defend": 0.70,
+        "shield": false
     },
 "spartanweaponry:quarterstaff_lead":{
-        "attack": "3",
-        "defend": "0.70",
-        "shield": "false"
+        "attack": 3,
+        "defend": 0.70,
+        "shield": false
     },
 "spartanweaponry:quarterstaff_netherite":{
-        "attack": "3",
-        "defend": "0.70",
-        "shield": "false"
+        "attack": 3,
+        "defend": 0.70,
+        "shield": false
     },
 "spartanweaponry:quarterstaff_nickel":{
-        "attack": "3",
-        "defend": "0.70",
-        "shield": "false"
+        "attack": 3,
+        "defend": 0.70,
+        "shield": false
     },
 "spartanweaponry:quarterstaff_platinum":{
-        "attack": "3",
-        "defend": "0.70",
-        "shield": "false"
+        "attack": 3,
+        "defend": 0.70,
+        "shield": false
     },
 "spartanweaponry:quarterstaff_silver":{
-        "attack": "3",
-        "defend": "0.70",
-        "shield": "false"
+        "attack": 3,
+        "defend": 0.70,
+        "shield": false
     },
 "spartanweaponry:quarterstaff_steel":{
-        "attack": "3",
-        "defend": "0.70",
-        "shield": "false"
+        "attack": 3,
+        "defend": 0.70,
+        "shield": false
     },
 "spartanweaponry:quarterstaff_stone":{
-        "attack": "3",
-        "defend": "0.70",
-        "shield": "false"
+        "attack": 3,
+        "defend": 0.70,
+        "shield": false
     },
 "spartanweaponry:quarterstaff_tin":{
-        "attack": "3",
-        "defend": "0.70",
-        "shield": "false"
+        "attack": 3,
+        "defend": 0.70,
+        "shield": false
     },
 "spartanweaponry:quarterstaff_wood":{
-        "attack": "3",
-        "defend": "0.70",
-        "shield": "false"
+        "attack": 3,
+        "defend": 0.70,
+        "shield": false
     },
 "spartanweaponry:rapier_bronze":{
-        "attack": "2",
-        "defend": "0.85",
-        "shield": "false"
+        "attack": 2,
+        "defend": 0.85,
+        "shield": false
     },
 "spartanweaponry:rapier_copper":{
-        "attack": "2",
-        "defend": "0.85",
-        "shield": "false"
+        "attack": 2,
+        "defend": 0.85,
+        "shield": false
     },
 "spartanweaponry:rapier_diamond":{
-        "attack": "2",
-        "defend": "0.85",
-        "shield": "false"
+        "attack": 2,
+        "defend": 0.85,
+        "shield": false
     },
 "spartanweaponry:rapier_electrum":{
-        "attack": "2",
-        "defend": "0.85",
-        "shield": "false"
+        "attack": 2,
+        "defend": 0.85,
+        "shield": false
     },
 "spartanweaponry:rapier_gold":{
-        "attack": "2",
-        "defend": "0.85",
-        "shield": "false"
+        "attack": 2,
+        "defend": 0.85,
+        "shield": false
     },
 "spartanweaponry:rapier_invar":{
-        "attack": "2",
-        "defend": "0.85",
-        "shield": "false"
+        "attack": 2,
+        "defend": 0.85,
+        "shield": false
     },
 "spartanweaponry:rapier_iron":{
-        "attack": "2",
-        "defend": "0.85",
-        "shield": "false"
+        "attack": 2,
+        "defend": 0.85,
+        "shield": false
     },
 "spartanweaponry:rapier_lead":{
-        "attack": "2",
-        "defend": "0.85",
-        "shield": "false"
+        "attack": 2,
+        "defend": 0.85,
+        "shield": false
     },
 "spartanweaponry:rapier_netherite":{
-        "attack": "2",
-        "defend": "0.85",
-        "shield": "false"
+        "attack": 2,
+        "defend": 0.85,
+        "shield": false
     },
 "spartanweaponry:rapier_nickel":{
-        "attack": "2",
-        "defend": "0.85",
-        "shield": "false"
+        "attack": 2,
+        "defend": 0.85,
+        "shield": false
     },
 "spartanweaponry:rapier_platinum":{
-        "attack": "2",
-        "defend": "0.85",
-        "shield": "false"
+        "attack": 2,
+        "defend": 0.85,
+        "shield": false
     },
 "spartanweaponry:rapier_silver":{
-        "attack": "2",
-        "defend": "0.85",
-        "shield": "false"
+        "attack": 2,
+        "defend": 0.85,
+        "shield": false
     },
 "spartanweaponry:rapier_steel":{
-        "attack": "2",
-        "defend": "0.85",
-        "shield": "false"
+        "attack": 2,
+        "defend": 0.85,
+        "shield": false
     },
 "spartanweaponry:rapier_stone":{
-        "attack": "2",
-        "defend": "0.85",
-        "shield": "false"
+        "attack": 2,
+        "defend": 0.85,
+        "shield": false
     },
 "spartanweaponry:rapier_tin":{
-        "attack": "2",
-        "defend": "0.85",
-        "shield": "false"
+        "attack": 2,
+        "defend": 0.85,
+        "shield": false
     },
 "spartanweaponry:rapier_wood":{
-        "attack": "2",
-        "defend": "0.85",
-        "shield": "false"
+        "attack": 2,
+        "defend": 0.85,
+        "shield": false
     },
 "spartanweaponry:saber_bronze":{
-        "attack": "2.9",
-        "defend": "0.90",
-        "shield": "false"
+        "attack": 2.9,
+        "defend": 0.90,
+        "shield": false
     },
 "spartanweaponry:saber_copper":{
-        "attack": "2.9",
-        "defend": "0.90",
-        "shield": "false"
+        "attack": 2.9,
+        "defend": 0.90,
+        "shield": false
     },
 "spartanweaponry:saber_diamond":{
-        "attack": "2.9",
-        "defend": "0.90",
-        "shield": "false"
+        "attack": 2.9,
+        "defend": 0.90,
+        "shield": false
     },
 "spartanweaponry:saber_electrum":{
-        "attack": "2.9",
-        "defend": "0.90",
-        "shield": "false"
+        "attack": 2.9,
+        "defend": 0.90,
+        "shield": false
     },
 "spartanweaponry:saber_gold":{
-        "attack": "2.9",
-        "defend": "0.90",
-        "shield": "false"
+        "attack": 2.9,
+        "defend": 0.90,
+        "shield": false
     },
 "spartanweaponry:saber_invar":{
-        "attack": "2.9",
-        "defend": "0.90",
-        "shield": "false"
+        "attack": 2.9,
+        "defend": 0.90,
+        "shield": false
     },
 "spartanweaponry:saber_iron":{
-        "attack": "2.9",
-        "defend": "0.90",
-        "shield": "false"
+        "attack": 2.9,
+        "defend": 0.90,
+        "shield": false
     },
 "spartanweaponry:saber_lead":{
-        "attack": "2.9",
-        "defend": "0.90",
-        "shield": "false"
+        "attack": 2.9,
+        "defend": 0.90,
+        "shield": false
     },
 "spartanweaponry:saber_netherite":{
-        "attack": "2.9",
-        "defend": "0.90",
-        "shield": "false"
+        "attack": 2.9,
+        "defend": 0.90,
+        "shield": false
     },
 "spartanweaponry:saber_nickel":{
-        "attack": "2.9",
-        "defend": "0.90",
-        "shield": "false"
+        "attack": 2.9,
+        "defend": 0.90,
+        "shield": false
     },
 "spartanweaponry:saber_platinum":{
-        "attack": "2.9",
-        "defend": "0.90",
-        "shield": "false"
+        "attack": 2.9,
+        "defend": 0.90,
+        "shield": false
     },
 "spartanweaponry:saber_silver":{
-        "attack": "2.9",
-        "defend": "0.90",
-        "shield": "false"
+        "attack": 2.9,
+        "defend": 0.90,
+        "shield": false
     },
 "spartanweaponry:saber_steel":{
-        "attack": "2.9",
-        "defend": "0.90",
-        "shield": "false"
+        "attack": 2.9,
+        "defend": 0.90,
+        "shield": false
     },
 "spartanweaponry:saber_stone":{
-        "attack": "2.9",
-        "defend": "0.90",
-        "shield": "false"
+        "attack": 2.9,
+        "defend": 0.90,
+        "shield": false
     },
 "spartanweaponry:saber_tin":{
-        "attack": "2.9",
-        "defend": "0.90",
-        "shield": "false"
+        "attack": 2.9,
+        "defend": 0.90,
+        "shield": false
     },
 "spartanweaponry:saber_wood":{
-        "attack": "2.9",
-        "defend": "0.90",
-        "shield": "false"
+        "attack": 2.9,
+        "defend": 0.90,
+        "shield": false
     },
 "spartanweaponry:scythe_bronze":{
-        "attack": "3",
-        "defend": "0.80",
-        "shield": "false"
+        "attack": 3,
+        "defend": 0.80,
+        "shield": false
     },
 "spartanweaponry:scythe_copper":{
-        "attack": "3",
-        "defend": "0.80",
-        "shield": "false"
+        "attack": 3,
+        "defend": 0.80,
+        "shield": false
     },
 "spartanweaponry:scythe_diamond":{
-        "attack": "3",
-        "defend": "0.80",
-        "shield": "false"
+        "attack": 3,
+        "defend": 0.80,
+        "shield": false
     },
 "spartanweaponry:scythe_electrum":{
-        "attack": "3",
-        "defend": "0.80",
-        "shield": "false"
+        "attack": 3,
+        "defend": 0.80,
+        "shield": false
     },
 "spartanweaponry:scythe_gold":{
-        "attack": "3",
-        "defend": "0.80",
-        "shield": "false"
+        "attack": 3,
+        "defend": 0.80,
+        "shield": false
     },
 "spartanweaponry:scythe_invar":{
-        "attack": "3",
-        "defend": "0.80",
-        "shield": "false"
+        "attack": 3,
+        "defend": 0.80,
+        "shield": false
     },
 "spartanweaponry:scythe_iron":{
-        "attack": "3",
-        "defend": "0.80",
-        "shield": "false"
+        "attack": 3,
+        "defend": 0.80,
+        "shield": false
     },
 "spartanweaponry:scythe_lead":{
-        "attack": "3",
-        "defend": "0.80",
-        "shield": "false"
+        "attack": 3,
+        "defend": 0.80,
+        "shield": false
     },
 "spartanweaponry:scythe_netherite":{
-        "attack": "3",
-        "defend": "0.80",
-        "shield": "false"
+        "attack": 3,
+        "defend": 0.80,
+        "shield": false
     },
 "spartanweaponry:scythe_nickel":{
-        "attack": "3",
-        "defend": "0.80",
-        "shield": "false"
+        "attack": 3,
+        "defend": 0.80,
+        "shield": false
     },
 "spartanweaponry:scythe_platinum":{
-        "attack": "3",
-        "defend": "0.80",
-        "shield": "false"
+        "attack": 3,
+        "defend": 0.80,
+        "shield": false
     },
 "spartanweaponry:scythe_silver":{
-        "attack": "3",
-        "defend": "0.80",
-        "shield": "false"
+        "attack": 3,
+        "defend": 0.80,
+        "shield": false
     },
 "spartanweaponry:scythe_steel":{
-        "attack": "3",
-        "defend": "0.80",
-        "shield": "false"
+        "attack": 3,
+        "defend": 0.80,
+        "shield": false
     },
 "spartanweaponry:scythe_stone":{
-        "attack": "3",
-        "defend": "0.80",
-        "shield": "false"
+        "attack": 3,
+        "defend": 0.80,
+        "shield": false
     },
 "spartanweaponry:scythe_tin":{
-        "attack": "3",
-        "defend": "0.80",
-        "shield": "false"
+        "attack": 3,
+        "defend": 0.80,
+        "shield": false
     },
 "spartanweaponry:scythe_wood":{
-        "attack": "3",
-        "defend": "0.80",
-        "shield": "false"
+        "attack": 3,
+        "defend": 0.80,
+        "shield": false
     },
 "spartanweaponry:spear_bronze":{
-        "attack": "2.5",
-        "defend": "0.70",
-        "shield": "false"
+        "attack": 2.5,
+        "defend": 0.70,
+        "shield": false
     },
 "spartanweaponry:spear_copper":{
-        "attack": "2.5",
-        "defend": "0.70",
-        "shield": "false"
+        "attack": 2.5,
+        "defend": 0.70,
+        "shield": false
     },
 "spartanweaponry:spear_diamond":{
-        "attack": "2.5",
-        "defend": "0.70",
-        "shield": "false"
+        "attack": 2.5,
+        "defend": 0.70,
+        "shield": false
     },
 "spartanweaponry:spear_electrum":{
-        "attack": "2.5",
-        "defend": "0.70",
-        "shield": "false"
+        "attack": 2.5,
+        "defend": 0.70,
+        "shield": false
     },
 "spartanweaponry:spear_gold":{
-        "attack": "2.5",
-        "defend": "0.70",
-        "shield": "false"
+        "attack": 2.5,
+        "defend": 0.70,
+        "shield": false
     },
 "spartanweaponry:spear_invar":{
-        "attack": "2.5",
-        "defend": "0.70",
-        "shield": "false"
+        "attack": 2.5,
+        "defend": 0.70,
+        "shield": false
     },
 "spartanweaponry:spear_iron":{
-        "attack": "2.5",
-        "defend": "0.70",
-        "shield": "false"
+        "attack": 2.5,
+        "defend": 0.70,
+        "shield": false
     },
 "spartanweaponry:spear_lead":{
-        "attack": "2.5",
-        "defend": "0.70",
-        "shield": "false"
+        "attack": 2.5,
+        "defend": 0.70,
+        "shield": false
     },
 "spartanweaponry:spear_netherite":{
-        "attack": "2.5",
-        "defend": "0.70",
-        "shield": "false"
+        "attack": 2.5,
+        "defend": 0.70,
+        "shield": false
     },
 "spartanweaponry:spear_nickel":{
-        "attack": "2.5",
-        "defend": "0.70",
-        "shield": "false"
+        "attack": 2.5,
+        "defend": 0.70,
+        "shield": false
     },
 "spartanweaponry:spear_platinum":{
-        "attack": "2.5",
-        "defend": "0.70",
-        "shield": "false"
+        "attack": 2.5,
+        "defend": 0.70,
+        "shield": false
     },
 "spartanweaponry:spear_silver":{
-        "attack": "2.5",
-        "defend": "0.70",
-        "shield": "false"
+        "attack": 2.5,
+        "defend": 0.70,
+        "shield": false
     },
 "spartanweaponry:spear_steel":{
-        "attack": "2.5",
-        "defend": "0.70",
-        "shield": "false"
+        "attack": 2.5,
+        "defend": 0.70,
+        "shield": false
     },
 "spartanweaponry:spear_stone":{
-        "attack": "2.5",
-        "defend": "0.70",
-        "shield": "false"
+        "attack": 2.5,
+        "defend": 0.70,
+        "shield": false
     },
 "spartanweaponry:spear_tin":{
-        "attack": "2.5",
-        "defend": "0.70",
-        "shield": "false"
+        "attack": 2.5,
+        "defend": 0.70,
+        "shield": false
     },
 "spartanweaponry:spear_wood":{
-        "attack": "2.5",
-        "defend": "0.70",
-        "shield": "false"
+        "attack": 2.5,
+        "defend": 0.70,
+        "shield": false
     },
 "spartanweaponry:throwing_knife_bronze":{
-        "attack": "1.3",
-        "defend": "1.00",
-        "shield": "false"
+        "attack": 1.3,
+        "defend": 1.00,
+        "shield": false
     },
 "spartanweaponry:throwing_knife_copper":{
-        "attack": "1.3",
-        "defend": "1.00",
-        "shield": "false"
+        "attack": 1.3,
+        "defend": 1.00,
+        "shield": false
     },
 "spartanweaponry:throwing_knife_diamond":{
-        "attack": "1.3",
-        "defend": "1.00",
-        "shield": "false"
+        "attack": 1.3,
+        "defend": 1.00,
+        "shield": false
     },
 "spartanweaponry:throwing_knife_electrum":{
-        "attack": "1.3",
-        "defend": "1.00",
-        "shield": "false"
+        "attack": 1.3,
+        "defend": 1.00,
+        "shield": false
     },
 "spartanweaponry:throwing_knife_gold":{
-        "attack": "1.3",
-        "defend": "1.00",
-        "shield": "false"
+        "attack": 1.3,
+        "defend": 1.00,
+        "shield": false
     },
 "spartanweaponry:throwing_knife_invar":{
-        "attack": "1.3",
-        "defend": "1.00",
-        "shield": "false"
+        "attack": 1.3,
+        "defend": 1.00,
+        "shield": false
     },
 "spartanweaponry:throwing_knife_iron":{
-        "attack": "1.3",
-        "defend": "1.00",
-        "shield": "false"
+        "attack": 1.3,
+        "defend": 1.00,
+        "shield": false
     },
 "spartanweaponry:throwing_knife_lead":{
-        "attack": "1.3",
-        "defend": "1.00",
-        "shield": "false"
+        "attack": 1.3,
+        "defend": 1.00,
+        "shield": false
     },
 "spartanweaponry:throwing_knife_netherite":{
-        "attack": "1.3",
-        "defend": "1.00",
-        "shield": "false"
+        "attack": 1.3,
+        "defend": 1.00,
+        "shield": false
     },
 "spartanweaponry:throwing_knife_nickel":{
-        "attack": "1.3",
-        "defend": "1.00",
-        "shield": "false"
+        "attack": 1.3,
+        "defend": 1.00,
+        "shield": false
     },
 "spartanweaponry:throwing_knife_platinum":{
-        "attack": "1.3",
-        "defend": "1.00",
-        "shield": "false"
+        "attack": 1.3,
+        "defend": 1.00,
+        "shield": false
     },
 "spartanweaponry:throwing_knife_silver":{
-        "attack": "1.3",
-        "defend": "1.00",
-        "shield": "false"
+        "attack": 1.3,
+        "defend": 1.00,
+        "shield": false
     },
 "spartanweaponry:throwing_knife_steel":{
-        "attack": "1.3",
-        "defend": "1.00",
-        "shield": "false"
+        "attack": 1.3,
+        "defend": 1.00,
+        "shield": false
     },
 "spartanweaponry:throwing_knife_stone":{
-        "attack": "1.3",
-        "defend": "1.00",
-        "shield": "false"
+        "attack": 1.3,
+        "defend": 1.00,
+        "shield": false
     },
 "spartanweaponry:throwing_knife_tin":{
-        "attack": "1.3",
-        "defend": "1.00",
-        "shield": "false"
+        "attack": 1.3,
+        "defend": 1.00,
+        "shield": false
     },
 "spartanweaponry:throwing_knife_wood":{
-        "attack": "1.3",
-        "defend": "1.00",
-        "shield": "false"
+        "attack": 1.3,
+        "defend": 1.00,
+        "shield": false
     },
 "spartanweaponry:tomahawk_bronze":{
-        "attack": "2.8",
-        "defend": "0.9",
-        "shield": "false"
+        "attack": 2.8,
+        "defend": 0.9,
+        "shield": false
     },
 "spartanweaponry:tomahawk_copper":{
-        "attack": "2.8",
-        "defend": "0.9",
-        "shield": "false"
+        "attack": 2.8,
+        "defend": 0.9,
+        "shield": false
     },
 "spartanweaponry:tomahawk_diamond":{
-        "attack": "2.8",
-        "defend": "0.9",
-        "shield": "false"
+        "attack": 2.8,
+        "defend": 0.9,
+        "shield": false
     },
 "spartanweaponry:tomahawk_electrum":{
-        "attack": "2.8",
-        "defend": "0.9",
-        "shield": "false"
+        "attack": 2.8,
+        "defend": 0.9,
+        "shield": false
     },
 "spartanweaponry:tomahawk_gold":{
-        "attack": "2.8",
-        "defend": "0.9",
-        "shield": "false"
+        "attack": 2.8,
+        "defend": 0.9,
+        "shield": false
     },
 "spartanweaponry:tomahawk_invar":{
-        "attack": "2.8",
-        "defend": "0.9",
-        "shield": "false"
+        "attack": 2.8,
+        "defend": 0.9,
+        "shield": false
     },
 "spartanweaponry:tomahawk_iron":{
-        "attack": "2.8",
-        "defend": "0.9",
-        "shield": "false"
+        "attack": 2.8,
+        "defend": 0.9,
+        "shield": false
     },
 "spartanweaponry:tomahawk_lead":{
-        "attack": "2.8",
-        "defend": "0.9",
-        "shield": "false"
+        "attack": 2.8,
+        "defend": 0.9,
+        "shield": false
     },
 "spartanweaponry:tomahawk_netherite":{
-        "attack": "2.8",
-        "defend": "0.9",
-        "shield": "false"
+        "attack": 2.8,
+        "defend": 0.9,
+        "shield": false
     },
 "spartanweaponry:tomahawk_nickel":{
-        "attack": "2.8",
-        "defend": "0.9",
-        "shield": "false"
+        "attack": 2.8,
+        "defend": 0.9,
+        "shield": false
     },
 "spartanweaponry:tomahawk_platinum":{
-        "attack": "2.8",
-        "defend": "0.9",
-        "shield": "false"
+        "attack": 2.8,
+        "defend": 0.9,
+        "shield": false
     },
 "spartanweaponry:tomahawk_silver":{
-        "attack": "2.8",
-        "defend": "0.9",
-        "shield": "false"
+        "attack": 2.8,
+        "defend": 0.9,
+        "shield": false
     },
 "spartanweaponry:tomahawk_steel":{
-        "attack": "2.8",
-        "defend": "0.9",
-        "shield": "false"
+        "attack": 2.8,
+        "defend": 0.9,
+        "shield": false
     },
 "spartanweaponry:tomahawk_stone":{
-        "attack": "2.8",
-        "defend": "0.9",
-        "shield": "false"
+        "attack": 2.8,
+        "defend": 0.9,
+        "shield": false
     },
 "spartanweaponry:tomahawk_tin":{
-        "attack": "2.8",
-        "defend": "0.9",
-        "shield": "false"
+        "attack": 2.8,
+        "defend": 0.9,
+        "shield": false
     },
 "spartanweaponry:tomahawk_wood":{
-        "attack": "2.8",
-        "defend": "0.9",
-        "shield": "false"
+        "attack": 2.8,
+        "defend": 0.9,
+        "shield": false
     },
 "spartanweaponry:warhammer_bronze":{
-        "attack": "8",
-        "defend": "0.80",
-        "shield": "false"
+        "attack": 8,
+        "defend": 0.80,
+        "shield": false
     },
 "spartanweaponry:warhammer_copper":{
-        "attack": "8",
-        "defend": "0.80",
-        "shield": "false"
+        "attack": 8,
+        "defend": 0.80,
+        "shield": false
     },
 "spartanweaponry:warhammer_diamond":{
-        "attack": "8",
-        "defend": "0.80",
-        "shield": "false"
+        "attack": 8,
+        "defend": 0.80,
+        "shield": false
     },
 "spartanweaponry:warhammer_electrum":{
-        "attack": "8",
-        "defend": "0.80",
-        "shield": "false"
+        "attack": 8,
+        "defend": 0.80,
+        "shield": false
     },
 "spartanweaponry:warhammer_gold":{
-        "attack": "8",
-        "defend": "0.80",
-        "shield": "false"
+        "attack": 8,
+        "defend": 0.80,
+        "shield": false
     },
 "spartanweaponry:warhammer_invar":{
-        "attack": "8",
-        "defend": "0.80",
-        "shield": "false"
+        "attack": 8,
+        "defend": 0.80,
+        "shield": false
     },
 "spartanweaponry:warhammer_iron":{
-        "attack": "8",
-        "defend": "0.80",
-        "shield": "false"
+        "attack": 8,
+        "defend": 0.80,
+        "shield": false
     },
 "spartanweaponry:warhammer_lead":{
-        "attack": "8",
-        "defend": "0.80",
-        "shield": "false"
+        "attack": 8,
+        "defend": 0.80,
+        "shield": false
     },
 "spartanweaponry:warhammer_netherite":{
-        "attack": "8",
-        "defend": "0.80",
-        "shield": "false"
+        "attack": 8,
+        "defend": 0.80,
+        "shield": false
     },
 "spartanweaponry:warhammer_nickel":{
-        "attack": "8",
-        "defend": "0.80",
-        "shield": "false"
+        "attack": 8,
+        "defend": 0.80,
+        "shield": false
     },
 "spartanweaponry:warhammer_platinum":{
-        "attack": "8",
-        "defend": "0.80",
-        "shield": "false"
+        "attack": 8,
+        "defend": 0.80,
+        "shield": false
     },
 "spartanweaponry:warhammer_silver":{
-        "attack": "8",
-        "defend": "0.80",
-        "shield": "false"
+        "attack": 8,
+        "defend": 0.80,
+        "shield": false
     },
 "spartanweaponry:warhammer_steel":{
-        "attack": "8",
-        "defend": "0.80",
-        "shield": "false"
+        "attack": 8,
+        "defend": 0.80,
+        "shield": false
     },
 "spartanweaponry:warhammer_stone":{
-        "attack": "8",
-        "defend": "0.80",
-        "shield": "false"
+        "attack": 8,
+        "defend": 0.80,
+        "shield": false
     },
 "spartanweaponry:warhammer_tin":{
-        "attack": "8",
-        "defend": "0.80",
-        "shield": "false"
+        "attack": 8,
+        "defend": 0.80,
+        "shield": false
     },
 "spartanweaponry:warhammer_wood":{
-        "attack": "8",
-        "defend": "0.80",
-        "shield": "false"
+        "attack": 8,
+        "defend": 0.80,
+        "shield": false
     }
 }

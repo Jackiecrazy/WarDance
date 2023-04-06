@@ -1,32 +1,32 @@
 {
 "nikgubs_blades_plus:blasphemy":{
-        "attack": "1.8",
-        "defend": "1.1",
-        "shield": "false"
+        "attack": 1.8,
+        "defend": 1.1,
+        "shield": false
     },
 "nikgubs_blades_plus:excalibur":{
-        "attack": "2.6",
-        "defend": "0.9",
-        "shield": "false"
+        "attack": 2.6,
+        "defend": 0.9,
+        "shield": false
     },
 "nikgubs_blades_plus:gaia":{
-        "attack": "2.6",
-        "defend": "0.9",
-        "shield": "false"
+        "attack": 2.6,
+        "defend": 0.9,
+        "shield": false
     },
 "nikgubs_blades_plus:gold_hoarder":{
-        "attack": "2.6",
-        "defend": "0.9",
-        "shield": "false"
+        "attack": 2.6,
+        "defend": 0.9,
+        "shield": false
     },
 "nikgubs_blades_plus:groveblade":{
-        "attack": "2.6",
-        "defend": "0.9",
-        "shield": "false"
+        "attack": 2.6,
+        "defend": 0.9,
+        "shield": false
     },
 "nikgubs_blades_plus:yamato":{
-        "attack": "2.9",
-        "defend": "0.9",
-        "shield": "false"
+        "attack": 2.9,
+        "defend": 0.9,
+        "shield": false
     }
 }

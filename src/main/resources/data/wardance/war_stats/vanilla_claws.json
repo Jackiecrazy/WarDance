@@ -1,92 +1,92 @@
 {
 "vanilla_claws:black_opal_claws":{
-        "attack": "2.4",
-        "defend": "1.00",
-        "shield": "false"
+        "attack": 2.4,
+        "defend": 1.00,
+        "shield": false
     },
 "vanilla_claws:citrine_claws":{
-        "attack": "2.4",
-        "defend": "1.00",
-        "shield": "false"
+        "attack": 2.4,
+        "defend": 1.00,
+        "shield": false
     },
 "vanilla_claws:copper_claws":{
-        "attack": "2.4",
-        "defend": "1.00",
-        "shield": "false"
+        "attack": 2.4,
+        "defend": 1.00,
+        "shield": false
     },
 "vanilla_claws:diamond_claws":{
-        "attack": "2.4",
-        "defend": "1.00",
-        "shield": "false"
+        "attack": 2.4,
+        "defend": 1.00,
+        "shield": false
     },
 "vanilla_claws:emerald_claws":{
-        "attack": "2.4",
-        "defend": "1.00",
-        "shield": "false"
+        "attack": 2.4,
+        "defend": 1.00,
+        "shield": false
     },
 "vanilla_claws:gobber2_claws":{
-        "attack": "2.4",
-        "defend": "1.00",
-        "shield": "false"
+        "attack": 2.4,
+        "defend": 1.00,
+        "shield": false
     },
 "vanilla_claws:gobber2_end_claws":{
-        "attack": "2.4",
-        "defend": "1.00",
-        "shield": "false"
+        "attack": 2.4,
+        "defend": 1.00,
+        "shield": false
     },
 "vanilla_claws:gobber2_nether_claws":{
-        "attack": "2.4",
-        "defend": "1.00",
-        "shield": "false"
+        "attack": 2.4,
+        "defend": 1.00,
+        "shield": false
     },
 "vanilla_claws:gold_claws":{
-        "attack": "2.4",
-        "defend": "1.00",
-        "shield": "false"
+        "attack": 2.4,
+        "defend": 1.00,
+        "shield": false
     },
 "vanilla_claws:iron_claws":{
-        "attack": "2.4",
-        "defend": "1.00",
-        "shield": "false"
+        "attack": 2.4,
+        "defend": 1.00,
+        "shield": false
     },
 "vanilla_claws:netherite_claws":{
-        "attack": "2.4",
-        "defend": "1.00",
-        "shield": "false"
+        "attack": 2.4,
+        "defend": 1.00,
+        "shield": false
     },
 "vanilla_claws:soapy_claws":{
-        "attack": "2.4",
-        "defend": "1.00",
-        "shield": "false"
+        "attack": 2.4,
+        "defend": 1.00,
+        "shield": false
     },
 "vanilla_claws:stone_claws":{
-        "attack": "2.4",
-        "defend": "1.00",
-        "shield": "false"
+        "attack": 2.4,
+        "defend": 1.00,
+        "shield": false
     },
 "vanilla_claws:tanzanite_claws":{
-        "attack": "2.4",
-        "defend": "1.00",
-        "shield": "false"
+        "attack": 2.4,
+        "defend": 1.00,
+        "shield": false
     },
 "vanilla_claws:wooden_claws":{
-        "attack": "2.4",
-        "defend": "1.00",
-        "shield": "false"
+        "attack": 2.4,
+        "defend": 1.00,
+        "shield": false
     },
 "vanilla_claws:zircon_claws":{
-        "attack": "2.4",
-        "defend": "1.00",
-        "shield": "false"
+        "attack": 2.4,
+        "defend": 1.00,
+        "shield": false
     },
 "vanillafoodpantry:flint_butcher_axe":{
-        "attack": "4",
-        "defend": "0.90",
-        "shield": "false"
+        "attack": 4,
+        "defend": 0.90,
+        "shield": false
     },
 "vanillafoodpantry:rolling_pin":{
-        "attack": "1",
-        "defend": "0.9",
-        "shield": "false"
+        "attack": 1,
+        "defend": 0.9,
+        "shield": false
     }
 }

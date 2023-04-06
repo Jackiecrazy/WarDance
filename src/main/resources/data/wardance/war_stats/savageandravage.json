@@ -1,7 +1,7 @@
 {
 "savageandravage:cleaver_of_beheading":{
-        "attack": "3.8",
-        "defend": "0.8",
-        "shield": "false"
+        "attack": 3.8,
+        "defend": 0.8,
+        "shield": false
     }
 }

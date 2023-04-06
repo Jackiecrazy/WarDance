@@ -1,187 +1,187 @@
 {
 "atum:anputs_hunger":{
-        "attack": "1.3",
-        "defend": "1",
-        "shield": "false"
+        "attack": 1.3,
+        "defend": 1,
+        "shield": false
     },
 "atum:anubis_wrath":{
-        "attack": "2.4",
-        "defend": "0.95",
-        "shield": "false"
+        "attack": 2.4,
+        "defend": 0.95,
+        "shield": false
     },
 "atum:atems_protection":{
-        "attack": "5",
-        "defend": "0.5",
-        "shield": "true"
+        "attack": 5,
+        "defend": 0.5,
+        "shield": true
     },
 "atum:atems_will":{
-        "attack": "2.6",
-        "defend": "0.9",
-        "shield": "false"
+        "attack": 2.6,
+        "defend": 0.9,
+        "shield": false
     },
 "atum:brigand_shield":{
-        "attack": "3",
-        "defend": "0.5",
-        "shield": "true"
+        "attack": 3,
+        "defend": 0.5,
+        "shield": true
     },
 "atum:dagger_poison":{
-        "attack": "1.3",
-        "defend": "1",
-        "shield": "false"
+        "attack": 1.3,
+        "defend": 1,
+        "shield": false
     },
 "atum:deadwood_door":{
-        "attack": "6",
-        "defend": "0.5",
-        "shield": "true"
+        "attack": 6,
+        "defend": 0.5,
+        "shield": true
     },
 "atum:deadwood_sign":{
-        "attack": "2.4",
-        "defend": "0.9",
-        "shield": "false"
+        "attack": 2.4,
+        "defend": 0.9,
+        "shield": false
     },
 "atum:gebs_might":{
-        "attack": "8",
-        "defend": "0.8",
-        "shield": "false"
+        "attack": 8,
+        "defend": 0.8,
+        "shield": false
     },
 "atum:horus_ascension":{
-        "attack": "1.3",
-        "defend": "1",
-        "shield": "false"
+        "attack": 1.3,
+        "defend": 1,
+        "shield": false
     },
 "atum:iron_club":{
-        "attack": "8",
-        "defend": "0.8",
-        "shield": "false"
+        "attack": 8,
+        "defend": 0.8,
+        "shield": false
     },
 "atum:iron_dagger":{
-        "attack": "1.3",
-        "defend": "1",
-        "shield": "false"
+        "attack": 1.3,
+        "defend": 1,
+        "shield": false
     },
 "atum:iron_greatsword":{
-        "attack": "3.8",
-        "defend": "0.8",
-        "shield": "false"
+        "attack": 3.8,
+        "defend": 0.8,
+        "shield": false
     },
 "atum:iron_khopesh":{
-        "attack": "2.4",
-        "defend": "0.95",
-        "shield": "false"
+        "attack": 2.4,
+        "defend": 0.95,
+        "shield": false
     },
 "atum:iron_scimitar":{
-        "attack": "2.6",
-        "defend": "0.9",
-        "shield": "false"
+        "attack": 2.6,
+        "defend": 0.9,
+        "shield": false
     },
 "atum:limestone_brick_carved_door":{
-        "attack": "6",
-        "defend": "0.5",
-        "shield": "true"
+        "attack": 6,
+        "defend": 0.5,
+        "shield": true
     },
 "atum:limestone_brick_chiseled_door":{
-        "attack": "6",
-        "defend": "0.5",
-        "shield": "true"
+        "attack": 6,
+        "defend": 0.5,
+        "shield": true
     },
 "atum:limestone_brick_cracked_brick_door":{
-        "attack": "6",
-        "defend": "0.5",
-        "shield": "true"
+        "attack": 6,
+        "defend": 0.5,
+        "shield": true
     },
 "atum:limestone_brick_large_door":{
-        "attack": "6",
-        "defend": "0.5",
-        "shield": "true"
+        "attack": 6,
+        "defend": 0.5,
+        "shield": true
     },
 "atum:limestone_brick_small_door":{
-        "attack": "6",
-        "defend": "0.5",
-        "shield": "true"
+        "attack": 6,
+        "defend": 0.5,
+        "shield": true
     },
 "atum:limestone_cracked_door":{
-        "attack": "6",
-        "defend": "0.5",
-        "shield": "true"
+        "attack": 6,
+        "defend": 0.5,
+        "shield": true
     },
 "atum:limestone_door":{
-        "attack": "6",
-        "defend": "0.5",
-        "shield": "true"
+        "attack": 6,
+        "defend": 0.5,
+        "shield": true
     },
 "atum:limestone_sword":{
-        "attack": "2.6",
-        "defend": "0.9",
-        "shield": "false"
+        "attack": 2.6,
+        "defend": 0.9,
+        "shield": false
     },
 "atum:montus_strike":{
-        "attack": "1.2",
-        "defend": "0.9",
-        "shield": "false"
+        "attack": 1.2,
+        "defend": 0.9,
+        "shield": false
     },
 "atum:nepthys_banishing":{
-        "attack": "2.6",
-        "defend": "0.9",
-        "shield": "false"
+        "attack": 2.6,
+        "defend": 0.9,
+        "shield": false
     },
 "atum:nuits_ire":{
-        "attack": "3",
-        "defend": "0.8",
-        "shield": "false"
+        "attack": 3,
+        "defend": 0.8,
+        "shield": false
     },
 "atum:nuits_quarter":{
-        "attack": "3",
-        "defend": "0.8",
-        "shield": "false"
+        "attack": 3,
+        "defend": 0.8,
+        "shield": false
     },
 "atum:palm_door":{
-        "attack": "6",
-        "defend": "0.5",
-        "shield": "true"
+        "attack": 6,
+        "defend": 0.5,
+        "shield": true
     },
 "atum:palm_sign":{
-        "attack": "2.4",
-        "defend": "0.9",
-        "shield": "false"
+        "attack": 2.4,
+        "defend": 0.9,
+        "shield": false
     },
 "atum:seths_sting":{
-        "attack": "1.3",
-        "defend": "1",
-        "shield": "false"
+        "attack": 1.3,
+        "defend": 1,
+        "shield": false
     },
 "atum:shus_exile":{
-        "attack": "1.2",
-        "defend": "0.9",
-        "shield": "false"
+        "attack": 1.2,
+        "defend": 0.9,
+        "shield": false
     },
 "atum:stoneguard_club":{
-        "attack": "8",
-        "defend": "0.8",
-        "shield": "false"
+        "attack": 8,
+        "defend": 0.8,
+        "shield": false
     },
 "atum:stoneguard_greatsword":{
-        "attack": "4.5",
-        "defend": "0.8",
-        "shield": "false"
+        "attack": 4.5,
+        "defend": 0.8,
+        "shield": false
     },
 "atum:stoneguard_khopesh":{
-        "attack": "2.4",
-        "defend": "0.95",
-        "shield": "false"
+        "attack": 2.4,
+        "defend": 0.95,
+        "shield": false
     },
 "atum:stoneguard_shield":{
-        "attack": "5",
-        "defend": "0.5",
-        "shield": "true"
+        "attack": 5,
+        "defend": 0.5,
+        "shield": true
     },
 "atum:stoneguard_sword":{
-        "attack": "3.8",
-        "defend": "0.8",
-        "shield": "false"
+        "attack": 3.8,
+        "defend": 0.8,
+        "shield": false
     },
 "atum:tefnuts_call":{
-        "attack": "2.5",
-        "defend": "0.7",
-        "shield": "false"
+        "attack": 2.5,
+        "defend": 0.7,
+        "shield": false
     }
 }
