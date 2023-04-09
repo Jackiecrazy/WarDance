@@ -87,7 +87,7 @@ public class CombatUtils {
                         if (obj.has("attack")) put.attackPostureMultiplier = obj.get("attack").getAsDouble();
                         if (obj.has("defend")) put.defensePostureMultiplier = obj.get("defend").getAsDouble();
                         if (obj.has("shield")) put.isShield = obj.get("shield").getAsBoolean();
-                        archetypes.put(ItemTags.create(new ResourceLocation(WarDance.MODID, name)), put);
+                        archetypes.put(ItemTags.create(new ResourceLocation(WarDance.MODID, name.substring(1))), put);
                     } catch (Exception x) {
                         WarDance.LOGGER.error("malformed json under " + name + "!");
                         x.printStackTrace();
