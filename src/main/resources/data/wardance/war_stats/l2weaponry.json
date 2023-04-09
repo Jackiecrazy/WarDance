@@ -1,445 +1,445 @@
 {
-"l2weaponry:iron_claw ":{
+"l2weaponry:iron_claw":{
         "attack": 2.4,
         "defend": 1.00,
         "shield": false
     },
-"l2weaponry:iron_dagger ":{
+"l2weaponry:iron_dagger":{
         "attack": 1.3,
         "defend": 1.00,
         "shield": false
     },
-"l2weaponry:iron_machete ":{
+"l2weaponry:iron_machete":{
         "attack": 4,
         "defend": 0.90,
         "shield": false
     },
-"l2weaponry:iron_throwing_axe ":{
+"l2weaponry:iron_throwing_axe":{
         "attack": 4,
         "defend": 1.00,
         "shield": false
     },
-"l2weaponry:iron_hammer ":{
+"l2weaponry:iron_hammer":{
         "attack": 6,
         "defend": 0.90,
         "shield": false
     },
-"l2weaponry:iron_battle_axe ":{
+"l2weaponry:iron_battle_axe":{
         "attack": 6,
         "defend": 0.80,
         "shield": false
     },
-"l2weaponry:iron_spear ":{
+"l2weaponry:iron_spear":{
         "attack": 2.5,
         "defend": 0.70,
         "shield": false
     },
-"l2weaponry:iron_javelin ":{
+"l2weaponry:iron_javelin":{
         "attack": 2.5,
         "defend": 0.90,
         "shield": false
     },
-"l2weaponry:iron_round_shield ":{
+"l2weaponry:iron_round_shield":{
         "attack": 3,
         "defend": 0.70,
         "shield": true
     },
-"l2weaponry:iron_plate_shield ":{
+"l2weaponry:iron_plate_shield":{
         "attack": 6,
         "defend": 0.50,
         "shield": true
     },
-"l2weaponry:gold_claw ":{
+"l2weaponry:gold_claw":{
         "attack": 2.4,
         "defend": 1.00,
         "shield": false
     },
-"l2weaponry:gold_dagger ":{
+"l2weaponry:gold_dagger":{
         "attack": 1.3,
         "defend": 1.00,
         "shield": false
     },
-"l2weaponry:gold_machete ":{
+"l2weaponry:gold_machete":{
         "attack": 4,
         "defend": 0.90,
         "shield": false
     },
-"l2weaponry:gold_throwing_axe ":{
+"l2weaponry:gold_throwing_axe":{
         "attack": 4,
         "defend": 1.00,
         "shield": false
     },
-"l2weaponry:gold_hammer ":{
+"l2weaponry:gold_hammer":{
         "attack": 6,
         "defend": 0.90,
         "shield": false
     },
-"l2weaponry:gold_battle_axe ":{
+"l2weaponry:gold_battle_axe":{
         "attack": 6,
         "defend": 0.80,
         "shield": false
     },
-"l2weaponry:gold_spear ":{
+"l2weaponry:gold_spear":{
         "attack": 2.5,
         "defend": 0.70,
         "shield": false
     },
-"l2weaponry:gold_javelin ":{
+"l2weaponry:gold_javelin":{
         "attack": 2.5,
         "defend": 0.90,
         "shield": false
     },
-"l2weaponry:gold_round_shield ":{
+"l2weaponry:gold_round_shield":{
         "attack": 3,
         "defend": 0.70,
         "shield": true
     },
-"l2weaponry:gold_plate_shield ":{
+"l2weaponry:gold_plate_shield":{
         "attack": 6,
         "defend": 0.50,
         "shield": true
     },
-"l2weaponry:diamond_claw ":{
+"l2weaponry:diamond_claw":{
         "attack": 2.4,
         "defend": 1.00,
         "shield": false
     },
-"l2weaponry:diamond_dagger ":{
+"l2weaponry:diamond_dagger":{
         "attack": 1.3,
         "defend": 1.00,
         "shield": false
     },
-"l2weaponry:diamond_machete ":{
+"l2weaponry:diamond_machete":{
         "attack": 4,
         "defend": 0.90,
         "shield": false
     },
-"l2weaponry:diamond_throwing_axe ":{
+"l2weaponry:diamond_throwing_axe":{
         "attack": 4,
         "defend": 1.00,
         "shield": false
     },
-"l2weaponry:diamond_hammer ":{
+"l2weaponry:diamond_hammer":{
         "attack": 6,
         "defend": 0.90,
         "shield": false
     },
-"l2weaponry:diamond_battle_axe ":{
+"l2weaponry:diamond_battle_axe":{
         "attack": 6,
         "defend": 0.80,
         "shield": false
     },
-"l2weaponry:diamond_spear ":{
+"l2weaponry:diamond_spear":{
         "attack": 2.5,
         "defend": 0.70,
         "shield": false
     },
-"l2weaponry:diamond_javelin ":{
+"l2weaponry:diamond_javelin":{
         "attack": 2.5,
         "defend": 0.90,
         "shield": false
     },
-"l2weaponry:diamond_round_shield ":{
+"l2weaponry:diamond_round_shield":{
         "attack": 3,
         "defend": 0.70,
         "shield": true
     },
-"l2weaponry:diamond_plate_shield ":{
+"l2weaponry:diamond_plate_shield":{
         "attack": 6,
         "defend": 0.50,
         "shield": true
     },
-"l2weaponry:netherite_claw ":{
+"l2weaponry:netherite_claw":{
         "attack": 2.4,
         "defend": 1.00,
         "shield": false
     },
-"l2weaponry:netherite_dagger ":{
+"l2weaponry:netherite_dagger":{
         "attack": 1.3,
         "defend": 1.00,
         "shield": false
     },
-"l2weaponry:netherite_machete ":{
+"l2weaponry:netherite_machete":{
         "attack": 4,
         "defend": 0.90,
         "shield": false
     },
-"l2weaponry:netherite_throwing_axe ":{
+"l2weaponry:netherite_throwing_axe":{
         "attack": 4,
         "defend": 1.00,
         "shield": false
     },
-"l2weaponry:netherite_hammer ":{
+"l2weaponry:netherite_hammer":{
         "attack": 6,
         "defend": 0.90,
         "shield": false
     },
-"l2weaponry:netherite_battle_axe ":{
+"l2weaponry:netherite_battle_axe":{
         "attack": 6,
         "defend": 0.80,
         "shield": false
     },
-"l2weaponry:netherite_spear ":{
+"l2weaponry:netherite_spear":{
         "attack": 2.5,
         "defend": 0.70,
         "shield": false
     },
-"l2weaponry:netherite_javelin ":{
+"l2weaponry:netherite_javelin":{
         "attack": 2.5,
         "defend": 0.90,
         "shield": false
     },
-"l2weaponry:netherite_round_shield ":{
+"l2weaponry:netherite_round_shield":{
         "attack": 3,
         "defend": 0.70,
         "shield": true
     },
-"l2weaponry:netherite_plate_shield ":{
+"l2weaponry:netherite_plate_shield":{
         "attack": 6,
         "defend": 0.50,
         "shield": true
     },
-"l2weaponry:totemic_gold_claw ":{
+"l2weaponry:totemic_gold_claw":{
         "attack": 2.4,
         "defend": 1.00,
         "shield": false
     },
-"l2weaponry:totemic_gold_dagger ":{
+"l2weaponry:totemic_gold_dagger":{
         "attack": 1.3,
         "defend": 1.00,
         "shield": false
     },
-"l2weaponry:totemic_gold_machete ":{
+"l2weaponry:totemic_gold_machete":{
         "attack": 4,
         "defend": 0.90,
         "shield": false
     },
-"l2weaponry:totemic_gold_throwing_axe ":{
+"l2weaponry:totemic_gold_throwing_axe":{
         "attack": 4,
         "defend": 1.00,
         "shield": false
     },
-"l2weaponry:totemic_gold_hammer ":{
+"l2weaponry:totemic_gold_hammer":{
         "attack": 6,
         "defend": 0.90,
         "shield": false
     },
-"l2weaponry:totemic_gold_battle_axe ":{
+"l2weaponry:totemic_gold_battle_axe":{
         "attack": 6,
         "defend": 0.80,
         "shield": false
     },
-"l2weaponry:totemic_gold_spear ":{
+"l2weaponry:totemic_gold_spear":{
         "attack": 2.5,
         "defend": 0.70,
         "shield": false
     },
-"l2weaponry:totemic_gold_javelin ":{
+"l2weaponry:totemic_gold_javelin":{
         "attack": 2.5,
         "defend": 0.90,
         "shield": false
     },
-"l2weaponry:totemic_gold_round_shield ":{
+"l2weaponry:totemic_gold_round_shield":{
         "attack": 3,
         "defend": 0.70,
         "shield": true
     },
-"l2weaponry:totemic_gold_plate_shield ":{
+"l2weaponry:totemic_gold_plate_shield":{
         "attack": 6,
         "defend": 0.50,
         "shield": true
     },
-"l2weaponry:poseidite_claw ":{
+"l2weaponry:poseidite_claw":{
         "attack": 2.4,
         "defend": 1.00,
         "shield": false
     },
-"l2weaponry:poseidite_dagger ":{
+"l2weaponry:poseidite_dagger":{
         "attack": 1.3,
         "defend": 1.00,
         "shield": false
     },
-"l2weaponry:poseidite_machete ":{
+"l2weaponry:poseidite_machete":{
         "attack": 4,
         "defend": 0.90,
         "shield": false
     },
-"l2weaponry:poseidite_throwing_axe ":{
+"l2weaponry:poseidite_throwing_axe":{
         "attack": 4,
         "defend": 1.00,
         "shield": false
     },
-"l2weaponry:poseidite_hammer ":{
+"l2weaponry:poseidite_hammer":{
         "attack": 6,
         "defend": 0.90,
         "shield": false
     },
-"l2weaponry:poseidite_battle_axe ":{
+"l2weaponry:poseidite_battle_axe":{
         "attack": 6,
         "defend": 0.80,
         "shield": false
     },
-"l2weaponry:poseidite_spear ":{
+"l2weaponry:poseidite_spear":{
         "attack": 2.5,
         "defend": 0.70,
         "shield": false
     },
-"l2weaponry:poseidite_javelin ":{
+"l2weaponry:poseidite_javelin":{
         "attack": 2.5,
         "defend": 0.90,
         "shield": false
     },
-"l2weaponry:poseidite_round_shield ":{
+"l2weaponry:poseidite_round_shield":{
         "attack": 3,
         "defend": 0.70,
         "shield": true
     },
-"l2weaponry:poseidite_plate_shield ":{
+"l2weaponry:poseidite_plate_shield":{
         "attack": 6,
         "defend": 0.50,
         "shield": true
     },
-"l2weaponry:shulkerate_claw ":{
+"l2weaponry:shulkerate_claw":{
         "attack": 2.4,
         "defend": 1.00,
         "shield": false
     },
-"l2weaponry:shulkerate_dagger ":{
+"l2weaponry:shulkerate_dagger":{
         "attack": 1.3,
         "defend": 1.00,
         "shield": false
     },
-"l2weaponry:shulkerate_machete ":{
+"l2weaponry:shulkerate_machete":{
         "attack": 4,
         "defend": 0.90,
         "shield": false
     },
-"l2weaponry:shulkerate_throwing_axe ":{
+"l2weaponry:shulkerate_throwing_axe":{
         "attack": 4,
         "defend": 1.00,
         "shield": false
     },
-"l2weaponry:shulkerate_hammer ":{
+"l2weaponry:shulkerate_hammer":{
         "attack": 6,
         "defend": 0.90,
         "shield": false
     },
-"l2weaponry:shulkerate_battle_axe ":{
+"l2weaponry:shulkerate_battle_axe":{
         "attack": 6,
         "defend": 0.80,
         "shield": false
     },
-"l2weaponry:shulkerate_spear ":{
+"l2weaponry:shulkerate_spear":{
         "attack": 2.5,
         "defend": 0.70,
         "shield": false
     },
-"l2weaponry:shulkerate_javelin ":{
+"l2weaponry:shulkerate_javelin":{
         "attack": 2.5,
         "defend": 0.90,
         "shield": false
     },
-"l2weaponry:shulkerate_round_shield ":{
+"l2weaponry:shulkerate_round_shield":{
         "attack": 3,
         "defend": 0.70,
         "shield": true
     },
-"l2weaponry:shulkerate_plate_shield ":{
+"l2weaponry:shulkerate_plate_shield":{
         "attack": 6,
         "defend": 0.50,
         "shield": true
     },
-"l2weaponry:sculkium_claw ":{
+"l2weaponry:sculkium_claw":{
         "attack": 2.4,
         "defend": 1.00,
         "shield": false
     },
-"l2weaponry:sculkium_dagger ":{
+"l2weaponry:sculkium_dagger":{
         "attack": 1.3,
         "defend": 1.00,
         "shield": false
     },
-"l2weaponry:sculkium_machete ":{
+"l2weaponry:sculkium_machete":{
         "attack": 4,
         "defend": 0.90,
         "shield": false
     },
-"l2weaponry:sculkium_throwing_axe ":{
+"l2weaponry:sculkium_throwing_axe":{
         "attack": 4,
         "defend": 1.00,
         "shield": false
     },
-"l2weaponry:sculkium_hammer ":{
+"l2weaponry:sculkium_hammer":{
         "attack": 6,
         "defend": 0.90,
         "shield": false
     },
-"l2weaponry:sculkium_battle_axe ":{
+"l2weaponry:sculkium_battle_axe":{
         "attack": 6,
         "defend": 0.80,
         "shield": false
     },
-"l2weaponry:sculkium_spear ":{
+"l2weaponry:sculkium_spear":{
         "attack": 2.5,
         "defend": 0.70,
         "shield": false
     },
-"l2weaponry:sculkium_javelin ":{
+"l2weaponry:sculkium_javelin":{
         "attack": 2.5,
         "defend": 0.90,
         "shield": false
     },
-"l2weaponry:sculkium_round_shield ":{
+"l2weaponry:sculkium_round_shield":{
         "attack": 3,
         "defend": 0.70,
         "shield": true
     },
-"l2weaponry:sculkium_plate_shield ":{
+"l2weaponry:sculkium_plate_shield":{
         "attack": 6,
         "defend": 0.50,
         "shield": true
     },
-"l2weaponry:eternium_claw ":{
+"l2weaponry:eternium_claw":{
         "attack": 2.4,
         "defend": 1.00,
         "shield": false
     },
-"l2weaponry:eternium_dagger ":{
+"l2weaponry:eternium_dagger":{
         "attack": 1.3,
         "defend": 1.00,
         "shield": false
     },
-"l2weaponry:eternium_machete ":{
+"l2weaponry:eternium_machete":{
         "attack": 4,
         "defend": 0.90,
         "shield": false
     },
-"l2weaponry:eternium_throwing_axe ":{
+"l2weaponry:eternium_throwing_axe":{
         "attack": 4,
         "defend": 1.00,
         "shield": false
     },
-"l2weaponry:eternium_hammer ":{
+"l2weaponry:eternium_hammer":{
         "attack": 6,
         "defend": 0.90,
         "shield": false
     },
-"l2weaponry:eternium_battle_axe ":{
+"l2weaponry:eternium_battle_axe":{
         "attack": 6,
         "defend": 0.80,
         "shield": false
     },
-"l2weaponry:eternium_spear ":{
+"l2weaponry:eternium_spear":{
         "attack": 2.5,
         "defend": 0.70,
         "shield": false
     },
-"l2weaponry:eternium_javelin ":{
+"l2weaponry:eternium_javelin":{
         "attack": 2.5,
         "defend": 0.90,
         "shield": false
     },
-"l2weaponry:eternium_round_shield ":{
+"l2weaponry:eternium_round_shield":{
         "attack": 3,
         "defend": 0.70,
         "shield": true

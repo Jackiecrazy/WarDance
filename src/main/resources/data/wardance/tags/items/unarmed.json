@@ -185,6 +185,54 @@
     {
       "id": "spartanweaponry:cestus_studded",
       "required": false
+    },
+    {
+      "id": "l2weaponry:iron_claw",
+      "required": false
+    },
+    {
+      "id": "l2weaponry:gold_claw",
+      "required": false
+    },
+    {
+      "id": "l2weaponry:diamond_claw",
+      "required": false
+    },
+    {
+      "id": "l2weaponry:netherite_claw",
+      "required": false
+    },
+    {
+      "id": "l2weaponry:totemic_gold_claw",
+      "required": false
+    },
+    {
+      "id": "l2weaponry:poseidite_claw",
+      "required": false
+    },
+    {
+      "id": "l2weaponry:shulkerate_claw",
+      "required": false
+    },
+    {
+      "id": "l2weaponry:sculkium_claw",
+      "required": false
+    },
+    {
+      "id": "l2weaponry:eternium_claw",
+      "required": false
+    },
+    {
+      "id": "l2weaponry:claw_of_determination",
+      "required": false
+    },
+    {
+      "id": "l2weaponry:vampire_desire",
+      "required": false
+    },
+    {
+      "id": "evilcraft:spikey_claws",
+      "required": false
     }
   ]
 }

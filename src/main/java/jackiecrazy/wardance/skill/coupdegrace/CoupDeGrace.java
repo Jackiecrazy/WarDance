@@ -129,7 +129,7 @@ public class CoupDeGrace extends Skill {
             setCooldown(caster, prev, 2);
             return true;
         }
-        return false;
+        return boundCast(prev, from, to);
     }
 
     public boolean willKillOnCast(LivingEntity caster, LivingEntity target) {

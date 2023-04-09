@@ -18,5 +18,10 @@
         "attack": 2.5,
         "defend": 1.00,
         "shield": false
-    }
+    },
+  "evilcraft:spikey_claws":{
+    "attack": 2.4,
+    "defend": 1.00,
+    "shield": false
+  }
 }

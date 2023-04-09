@@ -683,7 +683,10 @@ public class CombatCapability implements ICombatCapability {
                 setPosture(getMaxPosture());
             }
             if (uninitializedFracture) {//ew
-                elb.getAttribute(FootworkAttributes.MAX_FRACTURE.get()).setBaseValue(Math.ceil(effectiveMaxPosture / mPos));
+                if (elb instanceof Player)
+                    elb.getAttribute(FootworkAttributes.MAX_FRACTURE.get()).setBaseValue(3);
+                else
+                    elb.getAttribute(FootworkAttributes.MAX_FRACTURE.get()).setBaseValue(Mth.clamp(Math.floor(effectiveMaxPosture / mPos), 1, 5));
             }
         }
         //update max values

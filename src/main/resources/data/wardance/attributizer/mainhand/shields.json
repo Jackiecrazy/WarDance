@@ -2764,119 +2764,119 @@
         "operation":"ADDITION"
       }
   ],
-"l2weaponry:iron_round_shield ":[
+"l2weaponry:iron_round_shield":[
       {
         "attribute":"minecraft:generic.attack_speed",
         "modify":-2.8,
         "operation":"ADDITION"
       }
   ],
-"l2weaponry:iron_plate_shield ":[
+"l2weaponry:iron_plate_shield":[
       {
         "attribute":"minecraft:generic.attack_speed",
         "modify":-3.5,
         "operation":"ADDITION"
       }
   ],
-"l2weaponry:gold_round_shield ":[
+"l2weaponry:gold_round_shield":[
       {
         "attribute":"minecraft:generic.attack_speed",
         "modify":-2.8,
         "operation":"ADDITION"
       }
   ],
-"l2weaponry:gold_plate_shield ":[
+"l2weaponry:gold_plate_shield":[
       {
         "attribute":"minecraft:generic.attack_speed",
         "modify":-3.5,
         "operation":"ADDITION"
       }
   ],
-"l2weaponry:diamond_round_shield ":[
+"l2weaponry:diamond_round_shield":[
       {
         "attribute":"minecraft:generic.attack_speed",
         "modify":-2.8,
         "operation":"ADDITION"
       }
   ],
-"l2weaponry:diamond_plate_shield ":[
+"l2weaponry:diamond_plate_shield":[
       {
         "attribute":"minecraft:generic.attack_speed",
         "modify":-3.5,
         "operation":"ADDITION"
       }
   ],
-"l2weaponry:netherite_round_shield ":[
+"l2weaponry:netherite_round_shield":[
       {
         "attribute":"minecraft:generic.attack_speed",
         "modify":-2.8,
         "operation":"ADDITION"
       }
   ],
-"l2weaponry:netherite_plate_shield ":[
+"l2weaponry:netherite_plate_shield":[
       {
         "attribute":"minecraft:generic.attack_speed",
         "modify":-3.5,
         "operation":"ADDITION"
       }
   ],
-"l2weaponry:totemic_gold_round_shield ":[
+"l2weaponry:totemic_gold_round_shield":[
       {
         "attribute":"minecraft:generic.attack_speed",
         "modify":-2.8,
         "operation":"ADDITION"
       }
   ],
-"l2weaponry:totemic_gold_plate_shield ":[
+"l2weaponry:totemic_gold_plate_shield":[
       {
         "attribute":"minecraft:generic.attack_speed",
         "modify":-3.5,
         "operation":"ADDITION"
       }
   ],
-"l2weaponry:poseidite_round_shield ":[
+"l2weaponry:poseidite_round_shield":[
       {
         "attribute":"minecraft:generic.attack_speed",
         "modify":-2.8,
         "operation":"ADDITION"
       }
   ],
-"l2weaponry:poseidite_plate_shield ":[
+"l2weaponry:poseidite_plate_shield":[
       {
         "attribute":"minecraft:generic.attack_speed",
         "modify":-3.5,
         "operation":"ADDITION"
       }
   ],
-"l2weaponry:shulkerate_round_shield ":[
+"l2weaponry:shulkerate_round_shield":[
       {
         "attribute":"minecraft:generic.attack_speed",
         "modify":-2.8,
         "operation":"ADDITION"
       }
   ],
-"l2weaponry:shulkerate_plate_shield ":[
+"l2weaponry:shulkerate_plate_shield":[
       {
         "attribute":"minecraft:generic.attack_speed",
         "modify":-3.5,
         "operation":"ADDITION"
       }
   ],
-"l2weaponry:sculkium_round_shield ":[
+"l2weaponry:sculkium_round_shield":[
       {
         "attribute":"minecraft:generic.attack_speed",
         "modify":-2.8,
         "operation":"ADDITION"
       }
   ],
-"l2weaponry:sculkium_plate_shield ":[
+"l2weaponry:sculkium_plate_shield":[
       {
         "attribute":"minecraft:generic.attack_speed",
         "modify":-3.5,
         "operation":"ADDITION"
       }
   ],
-"l2weaponry:eternium_round_shield ":[
+"l2weaponry:eternium_round_shield":[
       {
         "attribute":"minecraft:generic.attack_speed",
         "modify":-2.8,
@@ -2889,5 +2889,5 @@
         "modify":-3.5,
         "operation":"ADDITION"
       }
-  ],
+  ]
 }

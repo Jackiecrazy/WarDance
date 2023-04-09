@@ -66,23 +66,37 @@ public class CombatUtils {
     private static MeleeInfo DEFAULTMELEE = new MeleeInfo(1, 1);
     private static ProjectileInfo DEFAULTRANGED = new ProjectileInfo(0.1, 1, false, false);
     private static HashMap<Item, MeleeInfo> combatList = new HashMap<>();
+    private static HashMap<TagKey<Item>, MeleeInfo> archetypes = new HashMap<>();
     private static HashMap<EntityType, ProjectileInfo> projectileMap = new HashMap<>();
-    private static ArrayList<Item> unarmed = new ArrayList<>();
 
     public static void updateItems(Map<ResourceLocation, JsonElement> object, ResourceManager rm, ProfilerFiller profiler) {
         DEFAULTMELEE = new MeleeInfo(CombatConfig.defaultMultiplierPostureAttack, CombatConfig.defaultMultiplierPostureDefend);
         combatList = new HashMap<>();
         armorStats = new HashMap<>();
         shieldStat = new HashMap<>();
-        unarmed = new ArrayList<>();
+        archetypes = new HashMap<>();
 
         object.forEach((key, value) -> {
             JsonObject file = value.getAsJsonObject();
             file.entrySet().forEach(entry -> {
                 final String name = entry.getKey();
+                if (name.startsWith("#")) {//register tags separately
+                    try {
+                        JsonObject obj = entry.getValue().getAsJsonObject();
+                        MeleeInfo put = new MeleeInfo(CombatConfig.defaultMultiplierPostureAttack, CombatConfig.defaultMultiplierPostureDefend);
+                        if (obj.has("attack")) put.attackPostureMultiplier = obj.get("attack").getAsDouble();
+                        if (obj.has("defend")) put.defensePostureMultiplier = obj.get("defend").getAsDouble();
+                        if (obj.has("shield")) put.isShield = obj.get("shield").getAsBoolean();
+                        archetypes.put(ItemTags.create(new ResourceLocation(WarDance.MODID, name)), put);
+                    } catch (Exception x) {
+                        WarDance.LOGGER.error("malformed json under " + name + "!");
+                        x.printStackTrace();
+                    }
+                    return;
+                }
                 ResourceLocation i = new ResourceLocation(name);
                 Item item = ForgeRegistries.ITEMS.getValue(i);
-                if (item == null||item== Items.AIR) {
+                if (item == null || item == Items.AIR) {
                     if (GeneralConfig.debug)
                         WarDance.LOGGER.debug(name + " is not a registered item!");
                     return;
@@ -181,22 +195,34 @@ public class CombatUtils {
         return (int) (1.0D / GeneralUtils.getAttributeValueHandSensitive(e, Attributes.ATTACK_SPEED, h) * 20.0D);
     }
 
+    @Nullable
+    private static MeleeInfo lookupStats(ItemStack is) {
+        if (combatList.containsKey(is.getItem())) return combatList.get(is.getItem());
+        for (TagKey<Item> tag : archetypes.keySet()) {
+            if (is.is(tag))
+                return archetypes.get(tag);
+        }
+        return null;
+    }
+
     public static boolean isShield(LivingEntity e, ItemStack stack) {
         if (stack == null) return false;
-        return combatList.containsKey(stack.getItem()) && (combatList.getOrDefault(stack.getItem(), DEFAULTMELEE).isShield);//stack.isShield(e);
+        MeleeInfo rt = lookupStats(stack);//stack.isShield(e);
+        return rt != null && rt.isShield;
     }
 
     public static boolean isShield(LivingEntity e, InteractionHand hand) {
         return isShield(e, e.getItemInHand(hand));
     }
 
-    public static boolean isHoldingShield(LivingEntity e){
+    public static boolean isHoldingShield(LivingEntity e) {
         return isShield(e, InteractionHand.MAIN_HAND) || isShield(e, InteractionHand.OFF_HAND);
     }
 
     public static boolean isWeapon(@Nullable LivingEntity e, ItemStack stack) {
         if (stack == null) return false;
-        return combatList.containsKey(stack.getItem()) && !combatList.getOrDefault(stack.getItem(), DEFAULTMELEE).isShield;//stack.getItem() instanceof SwordItem || stack.getItem() instanceof AxeItem;
+        MeleeInfo rt = lookupStats(stack);
+        return rt != null && !rt.isShield;
     }
 
     public static boolean isUnarmed(ItemStack is, LivingEntity e) {
@@ -283,8 +309,11 @@ public class CombatUtils {
             scaler = 1;
             if (stack.getCapability(CombatManipulator.CAP).isPresent()) {
                 base = stack.getCapability(CombatManipulator.CAP).resolve().get().postureDealtBase(attacker, defender, stack, amount);
-            } else if (combatList.containsKey(stack.getItem()))
-                base = (float) combatList.get(stack.getItem()).attackPostureMultiplier;
+            } else {
+                final MeleeInfo meleeInfo = lookupStats(stack);
+                if (meleeInfo !=null)
+                    base = (float) meleeInfo.attackPostureMultiplier;
+            }
 
         } else {
             if (attacker != null && !(attacker instanceof Player))
@@ -303,8 +332,9 @@ public class CombatUtils {
         if (stack.getCapability(CombatManipulator.CAP).isPresent()) {
             return stack.getCapability(CombatManipulator.CAP).resolve().get().postureMultiplierDefend(attacker, defender, stack, amount);
         }
-        if (combatList.containsKey(stack.getItem())) {
-            return (float) combatList.get(stack.getItem()).defensePostureMultiplier;
+        final MeleeInfo meleeInfo = lookupStats(stack);
+        if (meleeInfo !=null) {
+            return (float) meleeInfo.defensePostureMultiplier;
         }
         return (float) DEFAULTMELEE.defensePostureMultiplier;
     }

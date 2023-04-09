@@ -294,7 +294,7 @@ public class CombatHandler {
                 }
                 float defMult = CombatUtils.getPostureDef(seme, uke, defend, e.getAmount());
                 //special mob parry overrides
-                if (atkMult >= 0 && awareness != StealthUtils.Awareness.UNAWARE && CombatUtils.parryMap.containsKey(GeneralUtils.getResourceLocationFromEntity(uke))) {
+                if (!ukeCap.isVulnerable() && atkMult >= 0 && awareness != StealthUtils.Awareness.UNAWARE && CombatUtils.parryMap.containsKey(GeneralUtils.getResourceLocationFromEntity(uke))) {
                     CombatUtils.MobInfo stats = CombatUtils.parryMap.get(GeneralUtils.getResourceLocationFromEntity(uke));
                     if (WarDance.rand.nextFloat() < stats.chance) {
                         if (stats.mult < 0) {//cannot parry
