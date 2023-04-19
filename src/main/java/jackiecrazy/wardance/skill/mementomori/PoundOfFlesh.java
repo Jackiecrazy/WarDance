@@ -40,12 +40,12 @@ public class PoundOfFlesh extends MementoMori {
         if (state == STATE.ACTIVE)
             if (procPoint instanceof ParryEvent && procPoint.getPhase() == EventPriority.HIGHEST && ((ParryEvent) procPoint).canParry()) {
                 caster.invulnerableTime = 0;
-                caster.hurt(CombatDamageSource.causeSelfDamage(caster).setDamageTyping(CombatDamageSource.TYPE.TRUE).setSkillUsed(this).bypassArmor().bypassMagic(), GeneralUtils.getMaxHealthBeforeWounding(caster) * 0.05f);
-                ((ParryEvent) procPoint).setPostureConsumption(((ParryEvent) procPoint).getPostureConsumption() + CombatData.getCap(target).getMaxPosture() * 0.1f);
-            } else if (procPoint instanceof LivingHurtEvent && procPoint.getPhase() == EventPriority.HIGHEST && ((LivingHurtEvent) procPoint).getEntity() == target && (!(((LivingHurtEvent) procPoint).getSource() instanceof CombatDamageSource) || ((CombatDamageSource) ((LivingHurtEvent) procPoint).getSource()).getSkillUsed() != this)) {
+                caster.hurt(CombatDamageSource.causeSelfDamage(caster).setDamageTyping(CombatDamageSource.TYPE.TRUE).setSkillUsed(this).bypassArmor().bypassMagic(), GeneralUtils.getMaxHealthBeforeWounding(caster) * 0.1f);
+                ((ParryEvent) procPoint).setPostureConsumption(((ParryEvent) procPoint).getPostureConsumption() + CombatData.getCap(target).getMaxPosture() * 0.15f);
+            } else if (procPoint instanceof LivingHurtEvent lhe && procPoint.getPhase() == EventPriority.HIGHEST && lhe.getEntity() != caster && (!(lhe.getSource() instanceof CombatDamageSource cds) || cds.getSkillUsed() != this)) {
                 caster.invulnerableTime = 0;
-                caster.hurt(CombatDamageSource.causeSelfDamage(caster).setDamageTyping(CombatDamageSource.TYPE.TRUE).setSkillUsed(this).bypassArmor().bypassMagic(), GeneralUtils.getMaxHealthBeforeWounding(caster) * 0.05f);
-                ((LivingHurtEvent) procPoint).setAmount(((LivingHurtEvent) procPoint).getAmount() + GeneralUtils.getMaxHealthBeforeWounding(target) * 0.05f);
+                caster.hurt(CombatDamageSource.causeSelfDamage(caster).setDamageTyping(CombatDamageSource.TYPE.TRUE).setSkillUsed(this).bypassArmor().bypassMagic(), GeneralUtils.getMaxHealthBeforeWounding(caster) * 0.1f);
+                lhe.setAmount(((LivingHurtEvent) procPoint).getAmount() + GeneralUtils.getMaxHealthBeforeWounding(target) * 0.07f);
             }
     }
 

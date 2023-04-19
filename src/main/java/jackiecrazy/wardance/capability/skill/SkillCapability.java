@@ -104,7 +104,7 @@ public class SkillCapability implements ISkillCapability {
     public boolean changeSkillState(Skill d, Skill.STATE to) {
         SkillData data = nonNullGet(d);
         if (data != null)
-            if (data.getState() == Skill.STATE.ACTIVE) {
+            if (to == Skill.STATE.ACTIVE && data.getState() == Skill.STATE.ACTIVE) {
                 if (GeneralConfig.debug)
                     WarDance.LOGGER.debug("skill " + d + " is already active, overwriting.");
             }

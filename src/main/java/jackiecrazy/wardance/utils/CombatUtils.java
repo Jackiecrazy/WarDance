@@ -78,6 +78,8 @@ public class CombatUtils {
 
         object.forEach((key, value) -> {
             JsonObject file = value.getAsJsonObject();
+            if (GeneralConfig.debug)
+                WarDance.LOGGER.debug("loading "+ key);
             file.entrySet().forEach(entry -> {
                 final String name = entry.getKey();
                 if (name.startsWith("#")) {//register tags separately

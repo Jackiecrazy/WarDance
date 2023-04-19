@@ -4,6 +4,8 @@ import jackiecrazy.footwork.capability.resources.CombatData;
 import jackiecrazy.footwork.utils.GeneralUtils;
 import jackiecrazy.wardance.WarDance;
 import jackiecrazy.footwork.api.CombatDamageSource;
+import jackiecrazy.wardance.event.SkillCastEvent;
+import jackiecrazy.wardance.event.SkillResourceEvent;
 import jackiecrazy.wardance.skill.SkillData;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.server.level.ServerLevel;
@@ -12,6 +14,7 @@ import net.minecraft.sounds.SoundSource;
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
+import net.minecraftforge.common.MinecraftForge;
 
 public class ShadowlessKick extends Kick {
 
@@ -40,6 +43,10 @@ public class ShadowlessKick extends Kick {
     private boolean kick(LivingEntity caster, SkillData stats) {
         LivingEntity target = GeneralUtils.raytraceLiving(caster, distance());
         if (target != null) {
+            SkillResourceEvent sre = new SkillResourceEvent(caster, target, this);
+            MinecraftForge.EVENT_BUS.post(sre);
+            SkillCastEvent sce = new SkillCastEvent(caster, target, this, 0, 0, 0, false, stats.getArbitraryFloat());
+            MinecraftForge.EVENT_BUS.post(sce);
             CombatData.getCap(target).consumePosture(caster, 2);
             if (caster instanceof Player && caster.level instanceof ServerLevel) {
                 double d0 = (double) (-Mth.sin(caster.getYRot() * ((float) Math.PI / 180F)));

@@ -9,6 +9,7 @@ import jackiecrazy.wardance.WarDance;
 import jackiecrazy.footwork.api.CombatDamageSource;
 import jackiecrazy.wardance.capability.skill.CasterData;
 import jackiecrazy.wardance.capability.skill.ISkillCapability;
+import jackiecrazy.wardance.config.CombatConfig;
 import jackiecrazy.wardance.entity.FakeExplosion;
 import jackiecrazy.wardance.event.SkillCastEvent;
 import jackiecrazy.wardance.skill.*;
@@ -38,17 +39,6 @@ public class CoupDeGrace extends Skill {
         return (GeneralUtils.getMaxHealthBeforeWounding(target) - target.getHealth()) * 0.2f;
     }
 
-    @Override
-    public HashSet<String> getTags(LivingEntity caster) {
-        return special;
-    }
-
-    @Nonnull
-    @Override
-    public HashSet<String> getSoftIncompatibility(LivingEntity caster) {
-        return special;
-    }
-
     @Nonnull
     @Override
     public SkillArchetype getArchetype() {
@@ -66,7 +56,15 @@ public class CoupDeGrace extends Skill {
         return 2;
     }
 
-    protected void deathCheck(LivingEntity caster, LivingEntity target, float amount) {
+    @Override
+    public HashSet<String> getTags(LivingEntity caster) {
+        return special;
+    }
+
+    @Nonnull
+    @Override
+    public HashSet<String> getSoftIncompatibility(LivingEntity caster) {
+        return special;
     }
 
     @Override
@@ -80,17 +78,17 @@ public class CoupDeGrace extends Skill {
                     e.getSource().bypassArmor().bypassMagic();
                     deathCheck(caster, target, e.getAmount());
                     markUsed(caster);
-                } else if (willKillOnCast(caster, target)) {
+                } else if (!CombatData.getCap(e.getEntity()).isExposed() && willKillOnCast(caster, target)) {
                     e.setCanceled(true);
                     CombatData.getCap(target).consumePosture(caster, e.getAmount());
                 }
             }
         } else if (procPoint instanceof SkillCastEvent && procPoint.getPhase() == EventPriority.HIGHEST && state == STATE.COOLING) {
             stats.decrementDuration();
-        }else if (procPoint instanceof StunEvent e && procPoint.getPhase() == EventPriority.HIGHEST && state == STATE.ACTIVE) {
+        } else if (procPoint instanceof StunEvent e && procPoint.getPhase() == EventPriority.HIGHEST && state == STATE.ACTIVE) {
             if (e.getEntity() == target) {
                 if (willKillOnCast(caster, target)) {
-                    CombatData.getCap(target).addFracture(caster, Integer.MAX_VALUE);
+                    CombatData.getCap(target).expose(CombatConfig.exposeDuration);
                 }
             }
         }
@@ -132,6 +130,9 @@ public class CoupDeGrace extends Skill {
         return boundCast(prev, from, to);
     }
 
+    protected void deathCheck(LivingEntity caster, LivingEntity target, float amount) {
+    }
+
     public boolean willKillOnCast(LivingEntity caster, LivingEntity target) {
         return target.getHealth() < getDamage(caster, target);
     }
@@ -158,23 +159,20 @@ public class CoupDeGrace extends Skill {
         private final HashSet<String> tague = (new HashSet<>(Arrays.asList(SkillTags.special, SkillTags.offensive)));
 
         @Override
-        public HashSet<String> getTags(LivingEntity caster) {
-            return special;
-        }
-
-        @Override
         public float mightConsumption(LivingEntity caster) {
             return 0;
         }
 
         @Override
-        protected boolean showArchetypeDescription() {
-            return false;
+        public HashSet<String> getTags(LivingEntity caster) {
+            return special;
         }
 
         @Override
-        public boolean willKillOnCast(LivingEntity caster, LivingEntity target) {
-            return target.getHealth() < (GeneralUtils.getMaxHealthBeforeWounding(target) * 0.10f + caster.getAttributeValue(Attributes.ATTACK_DAMAGE));
+        public void onProc(LivingEntity caster, Event procPoint, STATE state, SkillData stats, LivingEntity target) {
+            if (procPoint instanceof SkillCastEvent && procPoint.getPhase() == EventPriority.HIGHEST && state == STATE.COOLING) {
+                stats.decrementDuration();
+            }
         }
 
         @Override
@@ -189,25 +187,30 @@ public class CoupDeGrace extends Skill {
                     if (!(e instanceof LivingEntity) || !caster.hasLineOfSight(e)) continue;
                     final CombatDamageSource die = new CombatDamageSource("player", caster).setDamageTyping(CombatDamageSource.TYPE.PHYSICAL).setProcSkillEffects(true).setSkillUsed(this).setKnockbackPercentage(0);
                     if (willKillOnCast(caster, (LivingEntity) e)) {
-                        prev.flagCondition(true);
                         die.setCrit(true).setDamageTyping(CombatDamageSource.TYPE.TRUE).bypassArmor().bypassMagic();
                     }
                     e.hurt(die, GeneralUtils.getMaxHealthBeforeWounding((LivingEntity) e) * 0.1f + (float) caster.getAttributeValue(Attributes.ATTACK_DAMAGE));
+                    if (((LivingEntity) e).isDeadOrDying()) prev.flagCondition(true);
                 }
             }
-            if (to == STATE.COOLING)
+            if (to == STATE.COOLING) {
                 if (prev.isCondition())
                     prev.setState(STATE.INACTIVE);
                 else setCooldown(caster, prev, 5);
+                prev.flagCondition(false);
+            }
             boundCast(prev, from, to);
             return from != prev.getState();
         }
 
         @Override
-        public void onProc(LivingEntity caster, Event procPoint, STATE state, SkillData stats, LivingEntity target) {
-            if (procPoint instanceof SkillCastEvent && procPoint.getPhase() == EventPriority.HIGHEST && state == STATE.COOLING) {
-                stats.decrementDuration();
-            }
+        public boolean willKillOnCast(LivingEntity caster, LivingEntity target) {
+            return target.getHealth() < (GeneralUtils.getMaxHealthBeforeWounding(target) * 0.10f + caster.getAttributeValue(Attributes.ATTACK_DAMAGE));
+        }
+
+        @Override
+        protected boolean showArchetypeDescription() {
+            return false;
         }
     }
 

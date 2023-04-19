@@ -259,7 +259,7 @@ public class CombatCapability implements ICombatCapability {
         LivingEntity elb = dude.get();
         if (elb == null) return ret;
         //staggered already, no more posture damage
-        if (getStunTime() > 0 || getExposeTime() > 0) return amount;
+        if (getStunTime() > 0 || getExposeTime() > 0 || posture == 0) return amount;
         if (!Float.isFinite(posture)) posture = getMaxPosture();
         //resistance go brr
         if (elb.hasEffect(MobEffects.DAMAGE_RESISTANCE) && GeneralConfig.resistance)

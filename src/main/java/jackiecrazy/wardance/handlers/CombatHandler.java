@@ -13,8 +13,6 @@ import jackiecrazy.wardance.config.CombatConfig;
 import jackiecrazy.wardance.config.GeneralConfig;
 import jackiecrazy.wardance.config.ResourceConfig;
 import jackiecrazy.wardance.config.StealthConfig;
-import jackiecrazy.wardance.entity.FearEntity;
-import jackiecrazy.wardance.entity.WarEntities;
 import jackiecrazy.wardance.event.ParryEvent;
 import jackiecrazy.wardance.event.ProjectileParryEvent;
 import jackiecrazy.wardance.mixin.ProjectileImpactMixin;
@@ -27,7 +25,9 @@ import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.Marker;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.entity.projectile.AbstractArrow;
@@ -154,14 +154,15 @@ public class CombatHandler {
                 uke.level.playSound(null, uke.getX(), uke.getY(), uke.getZ(), SoundEvents.WOODEN_TRAPDOOR_CLOSE, SoundSource.PLAYERS, 0.75f + WarDance.rand.nextFloat() * 0.5f, (1 - (ukeCap.getPosture() / ukeCap.getMaxPosture())) + WarDance.rand.nextFloat() * 0.5f);
                 if (pe.doesTrigger()) {
                     if (uke.isEffectiveAi()) {
-                        FearEntity dummy = new FearEntity(WarEntities.FEAR.get(), uke.level);
+                        //I am not proud of this.
+                        Marker dummy = new Marker(EntityType.MARKER, uke.level);
                         dummy.teleportTo(projectile.getX(), projectile.getY(), projectile.getZ());
                         uke.level.addFreshEntity(dummy);
-                        //I am not proud of this.
                         if (projectile instanceof Projectile) {
                             HitResult rtr = new EntityHitResult(dummy);
                             ((ProjectileImpactMixin) projectile).callOnHit(rtr);
                         }
+                        dummy.discard();
                     }
                 } else if (pe.getReturnVec() != null) {
                     projectile.setDeltaMovement(pe.getReturnVec().x, pe.getReturnVec().y, pe.getReturnVec().z);
@@ -229,6 +230,10 @@ public class CombatHandler {
             ItemStack attack = CombatUtils.getAttackingItemStack(e.getSource());
             //melee attack from an entity source over 0
             if (CombatUtils.isMeleeAttack(e.getSource()) && e.getSource().getEntity() instanceof LivingEntity seme && attack != null && e.getAmount() > 0) {
+                if(seme.getType().getDescriptionId().equals("entity.evilcraft.vengeance_spirit")){
+                    //makes the world lag plus how do you parry a ghost
+                    return;
+                }
                 ICombatCapability semeCap = CombatData.getCap(seme);
                 InteractionHand attackingHand = semeCap.isOffhandAttack() ? InteractionHand.OFF_HAND : InteractionHand.MAIN_HAND;
                 //hand bound or staggered, no attack
@@ -358,9 +363,9 @@ public class CombatHandler {
                         double kb = Math.sqrt(atkMult) - 0.18 - (1 / Math.max(defMult, 0.1)); //this will return negative if the defmult is greater, and positive if the atkmult is greater. Larger abs val=larger difference
                         //sigmoid curve again!
                         kb = 1d / (1d + Math.exp(-kb));//this is the knockback to be applied to the defender
-                        CombatUtils.knockBack(uke, seme, Math.min(uke instanceof Player ? 1.6f : 1.3f, 0.2f + (pe.getPostureConsumption() + knockback) * (float) kb * (uke instanceof Player ? 3 : 2f) / ukeCap.getMaxPosture()), true, false);
+                        CombatUtils.knockBack(uke, seme, Math.min(uke instanceof Player ? 1.6f : 1.3f, 0.2f + (pe.getPostureConsumption() + knockback) * (float) kb * (uke instanceof Player ? 2f : 1f) / ukeCap.getMaxPosture()), true, false);
                         kb = 1 - kb;
-                        CombatUtils.knockBack(seme, uke, Math.min(uke instanceof Player ? 1.6f : 1.3f, 0.1f + pe.getPostureConsumption() * (float) kb * (seme instanceof Player ? 2.5f : 1.5f) / semeCap.getMaxPosture()), true, false);
+                        CombatUtils.knockBack(seme, uke, Math.min(uke instanceof Player ? 1.6f : 1.3f, 0.1f + pe.getPostureConsumption() * (float) kb * (seme instanceof Player ? 1.7f : 1f) / semeCap.getMaxPosture()), true, false);
                         uke.level.playSound(null, uke.getX(), uke.getY(), uke.getZ(), disshield ? SoundEvents.SHIELD_BLOCK : SoundEvents.ANVIL_PLACE, SoundSource.PLAYERS, 0.25f + WarDance.rand.nextFloat() * 0.5f, (1 - (ukeCap.getPosture() / ukeCap.getMaxPosture())) + WarDance.rand.nextFloat() * 0.5f);
                         //reset cooldown
 //                        if (defMult != 0) {//shield time
@@ -457,8 +462,9 @@ public class CombatHandler {
 
     @SubscribeEvent(priority = EventPriority.HIGHEST)
     public static void pain(LivingHurtEvent e) {
-        if (GeneralConfig.debug)
+        if (GeneralConfig.debug) {
             WarDance.LOGGER.debug("damage from " + e.getSource() + " received with amount " + e.getAmount());
+        }
         LivingEntity uke = e.getEntity();
         LivingEntity kek = null;
         DamageSource ds = e.getSource();

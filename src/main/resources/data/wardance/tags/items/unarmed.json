@@ -233,6 +233,10 @@
     {
       "id": "evilcraft:spikey_claws",
       "required": false
+    },
+    {
+      "id": "#forge:weapons/claws",
+      "required": false
     }
   ]
 }

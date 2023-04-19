@@ -3,6 +3,7 @@ package jackiecrazy.wardance.skill.grapple;
 import jackiecrazy.footwork.api.CombatDamageSource;
 import jackiecrazy.footwork.capability.resources.CombatData;
 import jackiecrazy.footwork.event.StunEvent;
+import jackiecrazy.footwork.utils.GeneralUtils;
 import jackiecrazy.wardance.WarDance;
 import jackiecrazy.wardance.capability.skill.CasterData;
 import jackiecrazy.wardance.config.CombatConfig;
@@ -72,10 +73,15 @@ public class Throw extends Grapple {
     @Override
     public boolean markTick(LivingEntity caster, LivingEntity target, SkillData sd) {
         sd.decrementDuration(0.05f);
-        if (sd.isCondition() && (target.horizontalCollision || target.verticalCollision)) {
+        Entity collide= GeneralUtils.collidingEntity(target);
+        if (sd.isCondition() && (target.horizontalCollision || target.verticalCollision||collide!=null)) {
             removeMark(target);
             CombatData.getCap(target).consumePosture(7);
             target.hurt(new CombatDamageSource("fallingBlock", caster).setDamageTyping(CombatDamageSource.TYPE.PHYSICAL).setProcSkillEffects(true).setProcAttackEffects(true), 3);
+            if(collide instanceof LivingEntity elb){
+                CombatData.getCap(elb).consumePosture(7);
+                elb.hurt(new CombatDamageSource("fallingBlock", caster).setDamageTyping(CombatDamageSource.TYPE.PHYSICAL).setProcSkillEffects(true).setProcAttackEffects(true), 3);
+            }
         }
         if (!sd.isCondition()) {
             if (!CombatData.getCap(target).isVulnerable()) {
