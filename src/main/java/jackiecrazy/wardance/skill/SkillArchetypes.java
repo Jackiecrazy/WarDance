@@ -15,5 +15,6 @@ public class SkillArchetypes {
             descend = new SkillArchetype("descend"),
             hex = new SkillArchetype("hex"),
             morale = new SkillArchetype("morale"),
+            five_element_fist = new SkillArchetype("five_element_fist"),
             none = new SkillArchetype("none");
 }

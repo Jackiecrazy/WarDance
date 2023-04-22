@@ -409,7 +409,7 @@ public abstract class Skill extends Move {
             WarDance.LOGGER.debug(this.getRegistryName() + " has ended");
         caster.level.playSound(null, caster, SoundEvents.FIRE_EXTINGUISH, SoundSource.AMBIENT, 0.3f + WarDance.rand.nextFloat() * 0.5f, 0.5f + WarDance.rand.nextFloat());
         CasterData.getCap(caster).getSkillData(this).ifPresent(a -> {
-            a.setDuration(-Float.MAX_VALUE / 2);
+            a.setDuration(-999);
             a.setState(STATE.ACTIVE);
         });
     }

@@ -42,7 +42,7 @@ public class Hex extends Skill {
         if (!e.getEntity().isEffectiveAi()) return;
         LivingEntity entity = e.getEntity();
         //snakebite nullifies healing
-        //Marks.getCap(entity).getActiveMark(WarSkills.GANGRENE.get()).ifPresent(a -> e.setCanceled(a.getArbitraryFloat() > 0));
+        Marks.getCap(entity).getActiveMark(WarSkills.GANGRENE.get()).ifPresent(a -> e.setCanceled(true));
     }
 
     @SubscribeEvent
@@ -183,7 +183,6 @@ public class Hex extends Skill {
     public static class Gangrene extends Hex {
         @Override
         public boolean markTick(LivingEntity caster, LivingEntity target, SkillData sd) {
-            sd.addArbitraryFloat(- 1);
             return super.markTick(caster, target, sd);
         }
 

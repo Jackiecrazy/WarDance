@@ -17,7 +17,7 @@ import java.util.UUID;
 @Mod.EventBusSubscriber(modid = WarDance.MODID)
 public class SubtleBonusHandler {
     public static boolean update = false;
-    private static UUID u = UUID.fromString("1896391d-0d6c-4a3e-a4a5-5e3c9d173b80");
+    private static final UUID u = UUID.fromString("1896391d-0d6c-4a3e-a4a5-5e3c9d173b80");
 
     @SubscribeEvent
     public static void thief(LootingLevelEvent e) {

@@ -93,6 +93,17 @@ public class DummySkillCap implements ISkillCapability {
     }
 
     @Override
+    public boolean equipSkill(Skill skill) {
+        return false;
+    }
+
+    @Override
+    public boolean replaceSkill(Skill from, Skill to) {
+        return false;
+
+    }
+
+    @Override
     public boolean isSkillUsable(Skill skill) {
         return false;
     }

@@ -180,6 +180,43 @@ public class SkillCapability implements ISkillCapability {
     }
 
     @Override
+    public boolean equipSkill(Skill skill) {
+        if (!basicSanityCheck(skill)) return false;
+        int index = 0, end = 5;
+        if (skill.isPassive(dude.get())) {
+            //magic number
+            index = 5;
+            end = 10;
+        }
+        List<Skill> section = equippedSkill.subList(index, end);
+        if (section.contains(null)) {
+            int nil = section.indexOf(null);
+            section.set(nil, skill);
+            sync = true;
+            return true;
+        }
+        return false;
+    }
+
+    @Override
+    public boolean replaceSkill(Skill from, Skill to) {
+        if (equippedSkill.contains(from)) {
+            int nil = equippedSkill.indexOf(from);
+            equippedSkill.set(nil, null);
+            if (!basicSanityCheck(to)){
+                equippedSkill.set(nil, from);
+                return false;
+            }
+            from.onUnequip(dude.get(), nonNullGet(from));
+            equippedSkill.set(nil, to);
+            to.onEquip(dude.get());
+            sync = true;
+            return true;
+        }
+        return false;
+    }
+
+    @Override
     public boolean isSkillUsable(Skill skill) {
         if (skill == null) return false;
         if (!isSkillSelectable(skill)) return false;
@@ -258,7 +295,7 @@ public class SkillCapability implements ISkillCapability {
         final boolean gate = caster.level.getGameRules().getBoolean(WarDance.GATED_SKILLS);
         sync |= gatedSkills != gate;
         gatedSkills = gate;
-        for (SkillData d : data.values()) {
+        for (SkillData d : data.values().stream().toList()) {
             if (d == null || d.getSkill() == null) {
                 continue;
             }

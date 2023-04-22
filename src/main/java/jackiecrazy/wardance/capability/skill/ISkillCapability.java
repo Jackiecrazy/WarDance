@@ -51,6 +51,10 @@ public interface ISkillCapability {
 
     void setEquippedSkills(List<Skill> skills);
 
+    boolean equipSkill(Skill skill);
+
+    boolean replaceSkill(Skill from, Skill to);
+
     boolean isSkillUsable(Skill skill);
 
     CompoundTag write();

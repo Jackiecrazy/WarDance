@@ -331,6 +331,7 @@ public class ClientEvents {
         if (!rightClick && GeneralConfig.dual && e.getHand() == InteractionHand.OFF_HAND && ((CombatUtils.isWeapon(e.getEntity(), e.getItemStack()) || (e.getItemStack().isEmpty() && CombatData.getCap(e.getEntity()).isCombatMode())))) {
             rightClick = true;
             Entity n = RenderEvents.getEntityLookedAt(e.getEntity(), GeneralUtils.getAttributeValueHandSensitive(e.getEntity(), ForgeMod.ATTACK_RANGE.get(), InteractionHand.OFF_HAND));
+            if (n == null && CombatUtils.isShield(e.getEntity(), e.getItemStack())) return;
             e.getEntity().swing(InteractionHand.OFF_HAND, false);
             if (n != null && e.getEntity().tickCount != lastAttackTick) {
                 CombatChannel.INSTANCE.sendToServer(new RequestAttackPacket(false, n));
@@ -361,6 +362,7 @@ public class ClientEvents {
         if (!rightClick && GeneralConfig.dual && e.getHand() == InteractionHand.OFF_HAND && (CombatUtils.isWeapon(e.getEntity(), e.getItemStack()) || ((e.getItemStack().isEmpty() || CombatUtils.isShield(e.getEntity(), e.getItemStack())) && CombatData.getCap(e.getEntity()).isCombatMode()))) {
             rightClick = true;
             Entity n = RenderEvents.getEntityLookedAt(e.getEntity(), GeneralUtils.getAttributeValueHandSensitive(e.getEntity(), ForgeMod.ATTACK_RANGE.get(), InteractionHand.OFF_HAND));
+            if (n == null && CombatUtils.isShield(e.getEntity(), e.getItemStack())) return;
             e.getEntity().swing(InteractionHand.OFF_HAND, false);
             if (n != null && e.getEntity().tickCount != lastAttackTick) {
                 CombatChannel.INSTANCE.sendToServer(new RequestAttackPacket(false, n));
@@ -378,6 +380,7 @@ public class ClientEvents {
             rightClick = true;
             Entity n = RenderEvents.getEntityLookedAt(e.getEntity(), GeneralUtils.getAttributeValueHandSensitive(e.getEntity(), ForgeMod.ATTACK_RANGE.get(), InteractionHand.OFF_HAND));
             e.getEntity().swing(InteractionHand.OFF_HAND, false);
+            if (n == null && CombatUtils.isShield(e.getEntity(), e.getItemStack())) return;
             if (n != null && e.getEntity().tickCount != lastAttackTick) {
                 CombatChannel.INSTANCE.sendToServer(new RequestAttackPacket(false, n));
                 lastAttackTick = e.getEntity().tickCount;
@@ -394,6 +397,7 @@ public class ClientEvents {
             rightClick = true;
             Entity n = RenderEvents.getEntityLookedAt(e.getEntity(), GeneralUtils.getAttributeValueHandSensitive(e.getEntity(), ForgeMod.ATTACK_RANGE.get(), InteractionHand.OFF_HAND) - (e.getItemStack().isEmpty() ? 1 : 0));
             e.getEntity().swing(InteractionHand.OFF_HAND, false);
+            if (n == null && CombatUtils.isShield(e.getEntity(), e.getItemStack())) return;
             if (n != null && e.getEntity().tickCount != lastAttackTick) {
                 CombatChannel.INSTANCE.sendToServer(new RequestAttackPacket(false, n));
                 lastAttackTick = e.getEntity().tickCount;

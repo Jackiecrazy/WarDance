@@ -79,7 +79,7 @@ public class CombatUtils {
         object.forEach((key, value) -> {
             JsonObject file = value.getAsJsonObject();
             if (GeneralConfig.debug)
-                WarDance.LOGGER.debug("loading "+ key);
+                WarDance.LOGGER.debug("loading " + key);
             file.entrySet().forEach(entry -> {
                 final String name = entry.getKey();
                 if (name.startsWith("#")) {//register tags separately
@@ -273,7 +273,7 @@ public class CombatUtils {
         if (CombatData.getCap(defender).getHandBind(h) > 0)
             return false;
         float rand = WarDance.rand.nextFloat();
-        boolean recharge = true;//getCooledAttackStrength(defender, h, 0.5f) > 0.9f && CombatData.getCap(defender).getHandBind(h) == 0;
+        boolean recharge = !isShield(defender, defend) || getCooledAttackStrength(defender, h, 0.5f) > 0.9f && CombatData.getCap(defender).getHandBind(h) == 0;
         recharge &= (!(defender instanceof Player) || ((Player) defender).getCooldowns().getCooldownPercent(defender.getItemInHand(h).getItem(), 0) == 0);
         if (defend.getCapability(CombatManipulator.CAP).isPresent() && attacker instanceof LivingEntity) {
             return defend.getCapability(CombatManipulator.CAP).resolve().get().canBlock(defender, attacker, defend, recharge, postureDamage);
@@ -313,7 +313,7 @@ public class CombatUtils {
                 base = stack.getCapability(CombatManipulator.CAP).resolve().get().postureDealtBase(attacker, defender, stack, amount);
             } else {
                 final MeleeInfo meleeInfo = lookupStats(stack);
-                if (meleeInfo !=null)
+                if (meleeInfo != null)
                     base = (float) meleeInfo.attackPostureMultiplier;
             }
 
@@ -322,8 +322,11 @@ public class CombatUtils {
                 base = CombatData.getCap(attacker).getMaxPosture() * CombatConfig.defaultMultiplierPostureMob;
         }
         if (attacker == null || h == null) return base;
-        final float fin = attacker instanceof Player ? Math.max(CombatData.getCap(attacker).getCachedCooldown(), ((Player) attacker).getAttackStrengthScale(0.5f)) : scaler;
-        return base * fin;
+        double fin = scaler;
+        if (attacker instanceof Player) {
+            fin = (Math.max(CombatData.getCap(attacker).getCachedCooldown(), ((Player) attacker).getAttackStrengthScale(0.5f)) - 0.20) / 0.80;
+        }
+        return (float) (base * fin);
     }
 
     public static float getPostureDef(@Nullable LivingEntity attacker, @Nullable LivingEntity defender, ItemStack stack, float amount) {
@@ -335,7 +338,7 @@ public class CombatUtils {
             return stack.getCapability(CombatManipulator.CAP).resolve().get().postureMultiplierDefend(attacker, defender, stack, amount);
         }
         final MeleeInfo meleeInfo = lookupStats(stack);
-        if (meleeInfo !=null) {
+        if (meleeInfo != null) {
             return (float) meleeInfo.defensePostureMultiplier;
         }
         return (float) DEFAULTMELEE.defensePostureMultiplier;
