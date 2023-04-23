@@ -6,6 +6,7 @@ import jackiecrazy.wardance.WarDance;
 import jackiecrazy.wardance.capability.status.Marks;
 import jackiecrazy.wardance.skill.*;
 import jackiecrazy.wardance.utils.CombatUtils;
+import jackiecrazy.wardance.utils.DamageUtils;
 import jackiecrazy.wardance.utils.SkillUtils;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.effect.MobEffects;
@@ -34,7 +35,7 @@ public class Wrestle extends Skill {
         LivingEntity target = e.getEntity();
         Entity t = e.getSource().getEntity();
         //black mark stealing health/posture/spirit
-        if (e.getAmount() > 0 && CombatUtils.isMeleeAttack(e.getSource()) && t instanceof LivingEntity attacker) {
+        if (e.getAmount() > 0 && DamageUtils.isMeleeAttack(e.getSource()) && t instanceof LivingEntity attacker) {
             Marks.getCap(target).getActiveMark(WarSkills.WRESTLE.get()).ifPresent(a -> {
                 a.addArbitraryFloat(-1);
                 if (a.getArbitraryFloat() < 0) a.setDuration(-999);

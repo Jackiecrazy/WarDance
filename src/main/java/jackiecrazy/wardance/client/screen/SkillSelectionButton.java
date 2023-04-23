@@ -2,7 +2,7 @@ package jackiecrazy.wardance.client.screen;
 
 import com.mojang.blaze3d.systems.RenderSystem;
 import jackiecrazy.wardance.skill.Skill;
-import jackiecrazy.wardance.skill.SkillStyle;
+import jackiecrazy.wardance.skill.styles.SkillStyle;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.components.ImageButton;

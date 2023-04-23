@@ -112,10 +112,10 @@ public class Grapple extends Skill {
                 //suplex shockwave
                 SkillUtils.createCloud(caster.level, caster, target.getX(), target.getY(), target.getZ(), 7, ParticleTypes.LARGE_SMOKE);
                 for (LivingEntity entity : target.level.getEntitiesOfClass(LivingEntity.class, target.getBoundingBoxForCulling().inflate(7), a -> !TargetingUtils.isAlly(a, caster))) {
-                    CombatData.getCap(entity).consumePosture(overflow / -2);
+                    CombatData.getCap(entity).consumePosture(caster, overflow / -2);
                 }
             }
-            casterCap.consumePosture(posture-0.1f);
+            casterCap.consumePosture(posture - 0.1f);
         }
     }
 }

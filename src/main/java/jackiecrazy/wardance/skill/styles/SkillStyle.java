@@ -1,6 +1,9 @@
-package jackiecrazy.wardance.skill;
+package jackiecrazy.wardance.skill.styles;
 
 import jackiecrazy.wardance.capability.skill.CasterData;
+import jackiecrazy.wardance.skill.Skill;
+import jackiecrazy.wardance.skill.SkillCategory;
+import jackiecrazy.wardance.skill.SkillData;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.LivingEntity;
 
@@ -29,6 +32,11 @@ public abstract class SkillStyle extends Skill {
     }
 
     @Override
+    public Skill setCategory(SkillCategory sc) {
+        return this;//cannot set category
+    }
+
+    @Override
     public boolean isEquippableWith(Skill s, LivingEntity caster) {
         if (s == null) return true;
         List<SkillCategory> equipped = CasterData.getCap(caster).getEquippedColors();
@@ -45,8 +53,14 @@ public abstract class SkillStyle extends Skill {
     }
 
     @Override
-    public Skill setCategory(SkillCategory sc) {
-        return this;//cannot set category
+    public HashSet<String> getTags(LivingEntity caster) {
+        return passive;
+    }
+
+    @Nonnull
+    @Override
+    public HashSet<String> getSoftIncompatibility(LivingEntity caster) {
+        return none;
     }
 
     public SkillStyle setColor(Color sc) {
@@ -54,9 +68,8 @@ public abstract class SkillStyle extends Skill {
         return this;
     }
 
-    @Nonnull
     @Override
-    public HashSet<String> getSoftIncompatibility(LivingEntity caster) {
-        return none;
+    public boolean onStateChange(LivingEntity caster, SkillData prev, STATE from, STATE to) {
+        return passive(prev, from, to);
     }
 }

@@ -86,7 +86,7 @@ Flow: cooldown of all attack skills are halved, and any cooled attack skill is a
             prev.setMaxDuration(0);
             return true;
         }
-        if(from==STATE.ACTIVE&&to==STATE.COOLING){
+        if (from == STATE.ACTIVE && to == STATE.COOLING) {
             prev.setState(STATE.INACTIVE);
         }
         return instantCast(prev, from, to);

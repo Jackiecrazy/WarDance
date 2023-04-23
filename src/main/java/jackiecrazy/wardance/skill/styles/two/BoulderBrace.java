@@ -27,7 +27,6 @@ public class BoulderBrace extends WarCry {
             if (se.getEntity() == caster && CombatData.getCap(caster).consumeMight(1))
                 se.setCanceled(true);
         }
-        super.onProc(caster, procPoint, state, stats, target);
     }
 
     @Override

@@ -1,6 +1,7 @@
 package jackiecrazy.wardance.capability.skill;
 
 import jackiecrazy.wardance.skill.*;
+import jackiecrazy.wardance.skill.styles.SkillStyle;
 import net.minecraft.nbt.CompoundTag;
 
 import java.util.*;

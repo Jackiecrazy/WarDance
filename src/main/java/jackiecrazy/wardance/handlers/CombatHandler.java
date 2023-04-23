@@ -17,6 +17,7 @@ import jackiecrazy.wardance.event.ParryEvent;
 import jackiecrazy.wardance.event.ProjectileParryEvent;
 import jackiecrazy.wardance.mixin.ProjectileImpactMixin;
 import jackiecrazy.wardance.utils.CombatUtils;
+import jackiecrazy.wardance.utils.DamageUtils;
 import jackiecrazy.wardance.utils.MovementUtils;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.server.level.ServerLevel;
@@ -191,14 +192,14 @@ public class CombatHandler {
 
     @SubscribeEvent(priority = EventPriority.HIGHEST)
     public static void cancel(final LivingAttackEvent e) {
-        if (!e.getEntity().level.isClientSide && e.getSource() != null && CombatUtils.isPhysicalAttack(e.getSource())) {
+        if (!e.getEntity().level.isClientSide && e.getSource() != null && DamageUtils.isPhysicalAttack(e.getSource())) {
             LivingEntity uke = e.getEntity();
             if (MovementUtils.hasInvFrames(uke)) {
                 e.setCanceled(true);
             }
             ICombatCapability ukeCap = CombatData.getCap(uke);
             ItemStack attack = CombatUtils.getAttackingItemStack(e.getSource());
-            if (CombatUtils.isMeleeAttack(e.getSource()) && e.getSource().getEntity() instanceof LivingEntity && attack != null && e.getAmount() > 0) {
+            if (DamageUtils.isMeleeAttack(e.getSource()) && e.getSource().getEntity() instanceof LivingEntity && attack != null && e.getAmount() > 0) {
                 LivingEntity seme = (LivingEntity) e.getSource().getEntity();
                 ICombatCapability semeCap = CombatData.getCap(seme);
                 ukeCap.serverTick();
@@ -220,7 +221,7 @@ public class CombatHandler {
     @SubscribeEvent(priority = EventPriority.LOWEST)//because compat with BHT...
     public static void parry(final LivingAttackEvent e) {
         //if physical attack with source
-        if (!e.getEntity().level.isClientSide && e.getSource() != null && CombatUtils.isPhysicalAttack(e.getSource())) {
+        if (!e.getEntity().level.isClientSide && e.getSource() != null && DamageUtils.isPhysicalAttack(e.getSource())) {
             LivingEntity uke = e.getEntity();
             if (MovementUtils.hasInvFrames(uke)) {
                 //iframe cancel
@@ -229,7 +230,7 @@ public class CombatHandler {
             ICombatCapability ukeCap = CombatData.getCap(uke);
             ItemStack attack = CombatUtils.getAttackingItemStack(e.getSource());
             //melee attack from an entity source over 0
-            if (CombatUtils.isMeleeAttack(e.getSource()) && e.getSource().getEntity() instanceof LivingEntity seme && attack != null && e.getAmount() > 0) {
+            if (DamageUtils.isMeleeAttack(e.getSource()) && e.getSource().getEntity() instanceof LivingEntity seme && attack != null && e.getAmount() > 0) {
                 if(seme.getType().getDescriptionId().equals("entity.evilcraft.vengeance_spirit")){
                     //makes the world lag plus how do you parry a ghost
                     return;
@@ -396,7 +397,7 @@ public class CombatHandler {
             }
             //evade, at the rock bottom of the attack event, saving your protected butt.
             if (!uke.isBlocking() && !e.isCanceled()) {
-                if (CombatUtils.isPhysicalAttack(e.getSource()) && StealthUtils.INSTANCE.getAwareness(e.getSource().getDirectEntity() instanceof LivingEntity ? (LivingEntity) e.getSource().getDirectEntity() : null, uke) != StealthUtils.Awareness.UNAWARE) {
+                if (DamageUtils.isPhysicalAttack(e.getSource()) && StealthUtils.INSTANCE.getAwareness(e.getSource().getDirectEntity() instanceof LivingEntity ? (LivingEntity) e.getSource().getDirectEntity() : null, uke) != StealthUtils.Awareness.UNAWARE) {
                     if (CombatData.getCap(uke).consumeEvade()) {
                         e.setCanceled(true);
                         uke.level.playSound(null, uke.getX(), uke.getY(), uke.getZ(), SoundEvents.IRON_DOOR_OPEN, SoundSource.PLAYERS, 0.25f + WarDance.rand.nextFloat() * 0.5f, 0.75f + WarDance.rand.nextFloat() * 0.5f);
@@ -478,13 +479,13 @@ public class CombatHandler {
         SubtleBonusHandler.update = true;
         StealthUtils.Awareness awareness = StealthUtils.INSTANCE.getAwareness(kek, uke);
         if (ds.getEntity() instanceof LivingEntity seme) {
-            if (CombatUtils.isPhysicalAttack(e.getSource())) {
+            if (DamageUtils.isPhysicalAttack(e.getSource())) {
                 cap.setMightGrace(0);
             }
             double luckDiff = WarDance.rand.nextFloat() * (GeneralUtils.getAttributeValueSafe(seme, Attributes.LUCK)) - WarDance.rand.nextFloat() * (GeneralUtils.getAttributeValueSafe(uke, Attributes.LUCK));
             e.setAmount(e.getAmount() + (float) luckDiff * GeneralConfig.luck);
         }
-        if (CombatUtils.isPhysicalAttack(ds)) {
+        if (DamageUtils.isPhysicalAttack(ds)) {
             if ((cap.isVulnerable()) && !cap.isStaggeringStrike()) {
                 //stagger tests for melee damage
                 if (cap.isExposed()) {
@@ -515,7 +516,7 @@ public class CombatHandler {
         final LivingEntity uke = e.getEntity();
         //no food!
         ItemStack active = uke.getItemInHand(uke.getUsedItemHand());
-        if (CombatUtils.isPhysicalAttack(e.getSource()) && CombatConfig.foodCool >= 0 && (active.getItem().getUseAnimation(active) == UseAnim.EAT || active.getItem().getUseAnimation(active) == UseAnim.DRINK) && uke.isUsingItem()) {
+        if (DamageUtils.isPhysicalAttack(e.getSource()) && CombatConfig.foodCool >= 0 && (active.getItem().getUseAnimation(active) == UseAnim.EAT || active.getItem().getUseAnimation(active) == UseAnim.DRINK) && uke.isUsingItem()) {
             uke.releaseUsingItem();
             if (uke instanceof Player && CombatConfig.foodCool > 0) {
                 ((Player) uke).getCooldowns().addCooldown(active.getItem(), CombatConfig.foodCool);
@@ -544,7 +545,7 @@ public class CombatHandler {
             //nom posture
             cap.consumePosture(e.getAmount());
         }
-        if (!e.isCanceled() && CombatUtils.isMeleeAttack(e.getSource()) && !cap.isStaggeringStrike()) {
+        if (!e.isCanceled() && DamageUtils.isMeleeAttack(e.getSource()) && !cap.isStaggeringStrike()) {
             cap.updateDefenselessStatus();
         }
     }

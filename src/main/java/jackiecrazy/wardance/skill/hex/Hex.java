@@ -7,7 +7,7 @@ import jackiecrazy.wardance.WarDance;
 import jackiecrazy.wardance.capability.status.Marks;
 import jackiecrazy.wardance.entity.FakeExplosion;
 import jackiecrazy.wardance.skill.*;
-import jackiecrazy.wardance.utils.CombatUtils;
+import jackiecrazy.wardance.utils.DamageUtils;
 import jackiecrazy.wardance.utils.SkillUtils;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.effect.MobEffectInstance;
@@ -49,7 +49,7 @@ public class Hex extends Skill {
     public static void echoes(LivingHurtEvent e) {
         LivingEntity target = e.getEntity();
         Marks.getCap(target).getActiveMark(WarSkills.CURSE_OF_ECHOES.get()).ifPresent(a -> {
-            if (a.getArbitraryFloat() < 0 && CombatUtils.isMeleeAttack(e.getSource())) {
+            if (a.getArbitraryFloat() < 0 && DamageUtils.isMeleeAttack(e.getSource())) {
                 target.invulnerableTime = 0;
                 target.hurt(new CombatDamageSource("echo", a.getCaster(target.level)).setDamageTyping(CombatDamageSource.TYPE.TRUE).setSkillUsed(WarSkills.CURSE_OF_ECHOES.get()).bypassArmor().bypassMagic(), e.getAmount() * 0.4f);
                 a.setArbitraryFloat(20);

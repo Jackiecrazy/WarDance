@@ -40,8 +40,6 @@ import net.minecraft.world.item.enchantment.Enchantments;
 import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.util.FakePlayer;
-import net.minecraftforge.event.entity.player.CriticalHitEvent;
-import net.minecraftforge.eventbus.api.Event;
 import net.minecraftforge.network.PacketDistributor;
 import net.minecraftforge.registries.ForgeRegistries;
 
@@ -344,14 +342,6 @@ public class CombatUtils {
         return (float) DEFAULTMELEE.defensePostureMultiplier;
     }
 
-    public static boolean isMeleeAttack(DamageSource s) {
-        if (s instanceof CombatDamageSource) {
-            return ((CombatDamageSource) s).canProcAutoEffects();
-        }
-        //TODO does this break anything?
-        return s.getEntity() != null && s.getEntity() == s.getDirectEntity() && !s.isExplosion() && !s.isProjectile();//!s.isFire() && !s.isMagic() &&
-    }
-
     public static float getAttackMight(LivingEntity seme, LivingEntity uke) {
         ICombatCapability semeCap = CombatData.getCap(seme);
         final float magicScale = 1.722f;
@@ -369,22 +359,6 @@ public class CombatUtils {
         AttackMightEvent ame = new AttackMightEvent(seme, uke, might);
         MinecraftForge.EVENT_BUS.post(ame);
         return ame.getQuantity();
-    }
-
-    public static boolean isPhysicalAttack(DamageSource s) {
-        if (s instanceof CombatDamageSource) {
-            CombatDamageSource cds = (CombatDamageSource) s;
-            return cds.getDamageTyping() == CombatDamageSource.TYPE.PHYSICAL;
-        }
-        return !s.isExplosion() && !s.isFire() && !s.isMagic() && !s.isBypassArmor();
-    }
-
-    public static boolean isTrueDamage(DamageSource s) {
-        if (s instanceof CombatDamageSource) {
-            CombatDamageSource cds = (CombatDamageSource) s;
-            return cds.getDamageTyping() == CombatDamageSource.TYPE.TRUE;
-        }
-        return s.isBypassInvul() || (s.isBypassMagic() && s.isBypassArmor());
     }
 
     /**
@@ -550,10 +524,6 @@ public class CombatUtils {
             CombatData.getCap(e).setOffhandAttack(false);
         }
         CombatData.getCap(e).setForcedSweep(-1);
-    }
-
-    public static boolean isCrit(CriticalHitEvent e) {
-        return e.getResult() == Event.Result.ALLOW || (e.getResult() == Event.Result.DEFAULT && e.isVanillaCritical());
     }
 
     public static void initializePPE(ProjectileParryEvent ppe, float mult) {

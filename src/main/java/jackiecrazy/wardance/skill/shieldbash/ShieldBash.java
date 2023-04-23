@@ -1,5 +1,6 @@
 package jackiecrazy.wardance.skill.shieldbash;
 
+import jackiecrazy.footwork.api.CombatDamageSource;
 import jackiecrazy.footwork.capability.resources.CombatData;
 import jackiecrazy.footwork.capability.resources.ICombatCapability;
 import jackiecrazy.footwork.potion.FootworkEffects;
@@ -7,6 +8,7 @@ import jackiecrazy.wardance.WarDance;
 import jackiecrazy.wardance.event.ParryEvent;
 import jackiecrazy.wardance.skill.*;
 import jackiecrazy.wardance.utils.CombatUtils;
+import jackiecrazy.wardance.utils.DamageUtils;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.InteractionHand;
@@ -55,9 +57,13 @@ public class ShieldBash extends Skill {
 
     @Override
     public void onProc(LivingEntity caster, Event procPoint, STATE state, SkillData stats, LivingEntity target) {
-        if (procPoint instanceof LivingAttackEvent && ((LivingAttackEvent) procPoint).getEntity() == target && CombatUtils.isMeleeAttack(((LivingAttackEvent) procPoint).getSource()) && procPoint.getPhase() == EventPriority.HIGHEST) {
+        if (procPoint instanceof LivingAttackEvent lae && lae.getEntity() == target && DamageUtils.isMeleeAttack(lae.getSource()) && procPoint.getPhase() == EventPriority.HIGHEST) {
+            if (lae.getSource() instanceof CombatDamageSource cds) {
+                cds.setProcSkillEffects(true);
+                cds.setSkillUsed(this);
+            }
             final boolean base = isPassive(caster) && state != STATE.COOLING;
-            final ItemStack stack = CombatUtils.getAttackingItemStack(((LivingAttackEvent) procPoint).getSource());
+            final ItemStack stack = CombatUtils.getAttackingItemStack(lae.getSource());
             final boolean otherwise = state == STATE.HOLSTERED && CombatUtils.isShield(caster, stack);
             if ((base || otherwise) && cast(caster, target, -999)) {
                 float attack=CombatUtils.getPostureAtk(caster, target, InteractionHand.MAIN_HAND, 0, stack);

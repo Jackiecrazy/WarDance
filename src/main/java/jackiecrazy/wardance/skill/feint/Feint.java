@@ -12,6 +12,7 @@ import jackiecrazy.wardance.capability.skill.ISkillCapability;
 import jackiecrazy.wardance.capability.status.Marks;
 import jackiecrazy.wardance.skill.*;
 import jackiecrazy.wardance.utils.CombatUtils;
+import jackiecrazy.wardance.utils.DamageUtils;
 import jackiecrazy.wardance.utils.SkillUtils;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.effect.MobEffectInstance;
@@ -43,7 +44,7 @@ public class Feint extends Skill {
         Entity seme = e.getSource().getEntity();
         LivingEntity uke = e.getEntity();
         //reduce mark "cooldown", trigger capricious strike
-        if (seme instanceof LivingEntity && CombatUtils.isMeleeAttack(e.getSource())) {
+        if (seme instanceof LivingEntity && DamageUtils.isMeleeAttack(e.getSource())) {
             final LivingEntity caster = (LivingEntity) seme;
             final ISkillCapability cap = CasterData.getCap(caster);
             for (Skill feint : cap.getEquippedVariations(SkillArchetypes.feint))

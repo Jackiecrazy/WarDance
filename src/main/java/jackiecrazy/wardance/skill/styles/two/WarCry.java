@@ -3,6 +3,7 @@ package jackiecrazy.wardance.skill.styles.two;
 import jackiecrazy.footwork.capability.resources.CombatData;
 import jackiecrazy.wardance.WarDance;
 import jackiecrazy.wardance.skill.*;
+import jackiecrazy.wardance.skill.styles.SkillStyle;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.entity.LivingEntity;
