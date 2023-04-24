@@ -201,6 +201,9 @@ public class SkillCastScreen extends Screen {
                     case SILENCE:
                         print = Component.translatable("wardance.skill.silence").getString();
                         break;
+                    case STYLE:
+                        print = Component.translatable("wardance.skill.style").getString();
+                        break;
                     case SPIRIT:
                         print = Component.translatable("wardance.skill.spirit", selected.spiritConsumption(mc.player)).getString();
                         break;

@@ -1,5 +1,6 @@
 package jackiecrazy.wardance.entity;
 
+import jackiecrazy.footwork.api.CombatDamageSource;
 import jackiecrazy.footwork.utils.TargetingUtils;
 import jackiecrazy.wardance.utils.SkillUtils;
 import net.minecraft.core.particles.ParticleTypes;
@@ -27,23 +28,27 @@ public class FakeExplosion extends Explosion {
 
     }
 
-    public static FakeExplosion explode(Level world, Entity entityIn, double x, double y, double z, float radius, DamageSource damageSource, float damage) {
+    public static FakeExplosion explode(Level world, Entity entityIn, double x, double y, double z, float radius, boolean friendlyFire, DamageSource damageSource, float damage) {
         FakeExplosion explosion = new FakeExplosion(world, entityIn, x, y, z, radius, damageSource, damage);
-        explosion.explode();
+        explosion.explode(friendlyFire);
         explosion.finalizeExplosion(true);
         //oh wow, yikes
         SkillUtils.createCloud(world, entityIn, x, y, z, radius * 2, ParticleTypes.EXPLOSION);
         return explosion;
     }
 
-    public void explode() {
+    public static FakeExplosion explode(Level world, Entity entityIn, double x, double y, double z, float radius, DamageSource damageSource, float damage) {
+        return explode(world, entityIn, x, y, z, radius, false, damageSource, damage);
+    }
+
+    public void explode(boolean friendly) {
         if (getExploder() == null) return;
         List<Entity> list = world.getEntities(this.getExploder(), AABB.unitCubeFromLowerCorner(getPosition()).inflate(radius));
         net.minecraftforge.event.ForgeEventFactory.onExplosionDetonate(this.world, this, list, radius * 2);
         Vec3 vector3d = getPosition();
 
         for (Entity entity : list) {
-            if (!entity.ignoreExplosion() && !TargetingUtils.isAlly(entity, getExploder())) {
+            if (!entity.ignoreExplosion() && (friendly || !TargetingUtils.isAlly(entity, getExploder()))) {
                 double percentage = Math.sqrt(entity.distanceToSqr(vector3d)) / radius;
                 if (percentage <= 1.0D) {
                     double xDiff = entity.getX() - vector3d.x;
@@ -61,7 +66,10 @@ public class FakeExplosion extends Explosion {
                         if (entity instanceof LivingEntity) {
                             d11 = ProtectionEnchantment.getExplosionKnockbackAfterDampener((LivingEntity) entity, densityReducedPerc);
                         }
-                        if (entity != getDamageSource().getEntity()&&entity != getDamageSource().getDirectEntity())
+                        if (getDamageSource() instanceof CombatDamageSource cds) {
+                            d11 *= cds.getKnockbackPercentage();
+                        }
+                        if (entity != getDamageSource().getEntity() && entity != getDamageSource().getDirectEntity())
                             entity.setDeltaMovement(entity.getDeltaMovement().add(xDiff * d11, yDiff * d11, zDiff * d11));
                     }
                 }

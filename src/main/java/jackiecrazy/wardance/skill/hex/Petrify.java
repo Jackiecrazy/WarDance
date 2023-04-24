@@ -22,7 +22,7 @@ public class Petrify extends Hex {
 
     @Override
     protected int duration() {
-        return 100;
+        return 7;
     }
 
     @Override

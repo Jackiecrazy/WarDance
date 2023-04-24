@@ -9,7 +9,8 @@
     "MixinShieldDisabler",
     "MixinSuppressSwapSound",
     "MixinSweepDurabilitySuppressor",
-    "ProjectileImpactMixin"
+    "ProjectileImpactMixin",
+    "SifuDropsMixin"
   ],
   "client": [
     "MixinEquipProgress"

@@ -57,6 +57,10 @@ public abstract class SkillStyle extends Skill {
         return passive;
     }
 
+    public boolean canCast(LivingEntity caster, Skill s){
+        return true;
+    }
+
     @Nonnull
     @Override
     public HashSet<String> getSoftIncompatibility(LivingEntity caster) {

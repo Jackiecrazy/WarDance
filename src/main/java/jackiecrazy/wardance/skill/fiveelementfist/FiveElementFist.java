@@ -112,4 +112,9 @@ public abstract class FiveElementFist extends Skill {
             }
         }
     }
+
+    @Override
+    public boolean showsMark(SkillData mark, LivingEntity target) {
+        return false;
+    }
 }

@@ -16,7 +16,7 @@ public class ItchyCurse extends Hex {
     public boolean onStateChange(LivingEntity caster, SkillData prev, STATE from, STATE to) {
         LivingEntity e = SkillUtils.aimLiving(caster);
         if (to == STATE.ACTIVE && e != null && cast(caster, e, -999)) {
-            mark(caster, e, 60);
+            mark(caster, e, 3);
             markUsed(caster);
         }
         if (to == STATE.COOLING)
@@ -28,7 +28,7 @@ public class ItchyCurse extends Hex {
     public boolean markTick(LivingEntity caster, LivingEntity target, SkillData sd) {
         boolean stationary = target.zza == 0 && target.xxa == 0 && target.yya == 0;
         if (stationary) {
-            sd.decrementDuration();
+            markTickDown(sd);
         }
         sd.addArbitraryFloat(0.05f);
         if (sd.getArbitraryFloat() >= 3) {

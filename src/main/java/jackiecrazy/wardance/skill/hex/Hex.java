@@ -135,13 +135,12 @@ public class Hex extends Skill {
     }
 
     protected int duration() {
-        return 200;
+        return 10;
     }
 
     @Override
     public boolean markTick(LivingEntity caster, LivingEntity target, SkillData sd) {
-        sd.decrementDuration();
-        return super.markTick(caster, target, sd);
+        return markTickDown(sd);
     }
 
     @Override
@@ -182,22 +181,12 @@ public class Hex extends Skill {
 
     public static class Gangrene extends Hex {
         @Override
-        public boolean markTick(LivingEntity caster, LivingEntity target, SkillData sd) {
-            return super.markTick(caster, target, sd);
-        }
-
-        @Override
         protected int duration() {
-            return 160;
+            return 8;
         }
     }
 
     public static class CurseOfEchoes extends Hex {
-        @Override
-        public boolean markTick(LivingEntity caster, LivingEntity target, SkillData sd) {
-            sd.addArbitraryFloat(- 1);
-            return super.markTick(caster, target, sd);
-        }
     }
 
     public static class Unravel extends Hex {

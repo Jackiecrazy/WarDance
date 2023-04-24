@@ -10,6 +10,7 @@ import jackiecrazy.wardance.config.GeneralConfig;
 import jackiecrazy.wardance.event.SkillCastEvent;
 import jackiecrazy.wardance.event.SkillCooldownEvent;
 import jackiecrazy.wardance.event.SkillResourceEvent;
+import jackiecrazy.wardance.skill.styles.SkillStyle;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.resources.ResourceLocation;
@@ -113,6 +114,8 @@ public abstract class Skill extends Move {
                 return CastStatus.HOLSTERED;
             }
         }
+        SkillStyle style = cap.getStyle();
+        if (style != null && !style.canCast(caster, this)) return CastStatus.STYLE;
         for (String s : getSoftIncompatibility(caster))
             if (cap.isTagActive(s))
                 return CastStatus.CONFLICT;
@@ -335,6 +338,12 @@ public abstract class Skill extends Move {
         return false;
     }
 
+    protected boolean markTickDown(SkillData stats) {
+        stats.decrementDuration(0.05f);
+        int round = (int) (stats.getDuration() * 20);
+        return stats.getDuration() < 3 || round % 20 == 0;
+    }
+
     protected boolean cast(LivingEntity caster) {
         return cast(caster, -999);
     }
@@ -426,6 +435,10 @@ public abstract class Skill extends Move {
         Marks.getCap(target).mark(new SkillData(this, duration).setCaster(caster).setArbitraryFloat(arbitrary).flagCondition(bool));
     }
 
+    protected boolean isMarked(LivingEntity target) {
+        return Marks.getCap(target).isMarked(this);
+    }
+
     protected SkillData getExistingMark(LivingEntity target) {
         return Marks.getCap(target).getActiveMark(this).orElse(SkillData.DUMMY);
     }
@@ -447,6 +460,7 @@ public abstract class Skill extends Move {
         MIGHT,
         SILENCE,
         ACTIVE,
+        STYLE,
         OTHER
     }
 
