@@ -22,7 +22,7 @@ public class Doppelsoldner extends SkillStyle {
     public boolean equippedTick(LivingEntity caster, SkillData stats) {
         SkillUtils.modifyAttribute(caster, Attributes.ATTACK_SPEED, uid, CombatData.getCap(caster).isCombatMode() ? 0.6 : 0, AttributeModifier.Operation.ADDITION);
         if (CombatData.getCap(caster).isCombatMode()) {
-            CombatData.getCap(caster).setHandBind(InteractionHand.OFF_HAND, 99);
+            CombatData.getCap(caster).setHandBind(InteractionHand.OFF_HAND, 60);
         }
         return false;
     }

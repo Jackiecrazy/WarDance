@@ -179,11 +179,12 @@ public abstract class Skill extends Move {
      * @param caster only nonnull if it's in the casting bar!
      */
     public Component getDisplayName(LivingEntity caster) {
-        return Component.translatable("wardance." + this.getRegistryName().getPath() + ".name");
+        return Component.translatable("wardance." + getRegistryName().getPath() + ".name");
     }
 
     public ResourceLocation icon() {
-        return getArchetype().icon();
+        if (getArchetype() != SkillArchetypes.none) return getArchetype().icon();
+        return new ResourceLocation("wardance:textures/skill/" + getRegistryName().getPath() + ".png");
     }
 
     public Color getColor() {
@@ -207,10 +208,6 @@ public abstract class Skill extends Move {
     }
 
     public boolean markTick(LivingEntity caster, LivingEntity target, SkillData sd) {
-        if (sd.getDuration() <= 0) {
-            removeMark(target);
-            return true;
-        }
         return false;
     }
 
@@ -341,7 +338,7 @@ public abstract class Skill extends Move {
     protected boolean markTickDown(SkillData stats) {
         stats.decrementDuration(0.05f);
         int round = (int) (stats.getDuration() * 20);
-        return stats.getDuration() < 3 || round % 20 == 0;
+        return (round % 20 == 0);
     }
 
     protected boolean cast(LivingEntity caster) {

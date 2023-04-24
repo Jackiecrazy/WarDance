@@ -19,10 +19,15 @@ public abstract class ColorRestrictionStyle extends SkillStyle {
 
     @Override
     public boolean isEquippableWith(Skill s, LivingEntity caster) {
+        if (s == null) return true;
         if (Arrays.stream(bans).anyMatch(a -> a == s.getCategory()))
             return false;
         if (Arrays.stream(reqs).anyMatch(a -> a == s.getCategory()))
             return true;
         return super.isEquippableWith(s, caster);
+    }
+
+    public int getMaxColorsForSorting() {
+        return this.getMaxColors() + reqs.length + bans.length;
     }
 }

@@ -297,8 +297,12 @@ public class CombatUtils {
         return null;
     }
 
-    public static float getPostureAtk(@Nullable LivingEntity attacker, @Nullable LivingEntity defender, @Nullable InteractionHand h, float amount, ItemStack stack) {
-        float base = amount * (float) DEFAULTMELEE.attackPostureMultiplier;
+    public static float getPostureAtk(LivingEntity attacker, LivingEntity defender, InteractionHand h) {
+        return getPostureAtk(attacker, defender, h, GeneralUtils.getAttributeValueHandSensitive(attacker, Attributes.ATTACK_DAMAGE, h), attacker.getItemInHand(h));
+    }
+
+    public static float getPostureAtk(@Nullable LivingEntity attacker, @Nullable LivingEntity defender, @Nullable InteractionHand h, double amount, ItemStack stack) {
+        double base = amount * (float) DEFAULTMELEE.attackPostureMultiplier;
         //Spartan Shields compat, doesn't seem to work.
         if (attacker != null && attacker.isBlocking()) {
             h = attacker.getUsedItemHand();
@@ -319,7 +323,7 @@ public class CombatUtils {
             if (attacker != null && !(attacker instanceof Player))
                 base = CombatData.getCap(attacker).getMaxPosture() * CombatConfig.defaultMultiplierPostureMob;
         }
-        if (attacker == null || h == null) return base;
+        if (attacker == null || h == null) return (float) base;
         double fin = scaler;
         if (attacker instanceof Player) {
             fin = (Math.max(CombatData.getCap(attacker).getCachedCooldown(), ((Player) attacker).getAttackStrengthScale(0.5f)) - 0.20) / 0.80;

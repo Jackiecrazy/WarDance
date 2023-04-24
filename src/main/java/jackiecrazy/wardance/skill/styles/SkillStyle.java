@@ -31,6 +31,10 @@ public abstract class SkillStyle extends Skill {
         return maxColors;
     }
 
+    public int getMaxColorsForSorting() {
+        return maxColors;
+    }
+
     @Override
     public Skill setCategory(SkillCategory sc) {
         return this;//cannot set category
@@ -44,12 +48,12 @@ public abstract class SkillStyle extends Skill {
     }
 
     public ResourceLocation icon() {
-        return new ResourceLocation("wardance:textures/skill/" + getRegistryName().getPath() + ".png");
+        return new ResourceLocation("wardance:textures/skill/styles/" + getRegistryName().getPath() + ".png");
     }
 
     @Override
     public Color getColor() {
-        return colour;
+        return Color.white;
     }
 
     @Override

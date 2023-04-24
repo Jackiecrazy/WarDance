@@ -12,6 +12,7 @@ import net.minecraft.world.entity.ai.attributes.AttributeModifier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraftforge.event.entity.living.LivingAttackEvent;
 import net.minecraftforge.event.entity.living.LivingDamageEvent;
+import net.minecraftforge.event.entity.living.LivingHealEvent;
 import net.minecraftforge.eventbus.api.Event;
 import net.minecraftforge.eventbus.api.EventPriority;
 
@@ -51,6 +52,14 @@ pound of flesh: active skill. Consumes all your spirit, and until your spirit re
     }
 
     @Override
+    public boolean equippedTick(LivingEntity caster, SkillData d) {
+        if (getClass() != MementoMori.class) return false;
+        float health = 1 - (caster.getHealth() / GeneralUtils.getMaxHealthBeforeWounding(caster));
+        SkillUtils.modifyAttribute(caster, Attributes.ATTACK_DAMAGE, MULT, health, AttributeModifier.Operation.MULTIPLY_TOTAL);
+        return false;
+    }
+
+    @Override
     public void onUnequip(LivingEntity caster, SkillData stats) {
         caster.getAttribute(Attributes.ATTACK_DAMAGE).removeModifier(MULT);
         caster.getAttribute(Attributes.ARMOR).removeModifier(MULT);
@@ -59,14 +68,6 @@ pound of flesh: active skill. Consumes all your spirit, and until your spirit re
 
     @Override
     public boolean onStateChange(LivingEntity caster, SkillData prev, STATE from, STATE to) {
-        return false;
-    }
-
-    @Override
-    public boolean equippedTick(LivingEntity caster, SkillData d) {
-        if (getClass() != MementoMori.class) return false;
-        float health = 1 - (caster.getHealth() / GeneralUtils.getMaxHealthBeforeWounding(caster));
-        SkillUtils.modifyAttribute(caster, Attributes.ATTACK_DAMAGE, MULT, health, AttributeModifier.Operation.MULTIPLY_TOTAL);
         return false;
     }
 
@@ -104,6 +105,23 @@ pound of flesh: active skill. Consumes all your spirit, and until your spirit re
                         }
                     }
                     stats.setArbitraryFloat(0);
+                }
+            }
+        }
+    }
+
+    public static class HealShock extends MementoMori {
+        //When there is a hostile within 6 blocks, healing is redirected to shock and knock them back.
+
+        @Override
+        public void onProc(LivingEntity caster, Event procPoint, STATE state, SkillData stats, LivingEntity target) {
+            if (procPoint instanceof LivingHealEvent ee && procPoint.getPhase() == EventPriority.HIGHEST) {
+                for (LivingEntity e : caster.level.getEntitiesOfClass(LivingEntity.class, caster.getBoundingBox().inflate(6))) {
+                    if (TargetingUtils.isHostile(e, caster)) {
+                        ee.setCanceled(true);
+                        e.hurt(new CombatDamageSource("lightningBolt", caster).setDamageTyping(CombatDamageSource.TYPE.MAGICAL).setProcSkillEffects(true).setKnockbackPercentage(0).setAttackingHand(null).setSkillUsed(this).setMagic(), ee.getAmount()/4);
+                        CombatUtils.knockBack(e, caster, ee.getAmount() / 4, true, false);
+                    }
                 }
             }
         }

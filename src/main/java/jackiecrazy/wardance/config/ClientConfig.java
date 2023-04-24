@@ -97,7 +97,8 @@ public class ClientConfig {
     public static enum BarType {
         CLASSIC,
         AMO,
-        DARKMEGA
+        DARKMEGA,
+        NEWDARK
     }
 
     public static class PostureData extends DisplayConfigUtils.DisplayData {
@@ -106,7 +107,7 @@ public class ClientConfig {
 
         private PostureData(ForgeConfigSpec.Builder b, String s, DisplayConfigUtils.AnchorPoint ap, int defX, int defY) {
             super(b, s, ap, defX, defY);
-            _bar = b.translation("wardance.config." + s + "Type").comment("Determine which type of posture bar will be rendered. Valid values are 'classic' (ugly), 'amo' (minimalist), and 'darkmega' (default).").defineEnum(s + " style", BarType.DARKMEGA);
+            _bar = b.translation("wardance.config." + s + "Type").comment("Determine which type of posture bar will be rendered. Valid values are 'classic' (ugly), 'amo' (minimalist), 'darkmega' (old), and 'newdark' (default).").defineEnum(s + " style", BarType.NEWDARK);
         }
 
         @Override

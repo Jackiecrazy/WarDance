@@ -119,6 +119,10 @@ public class Mark implements IMark {
         final Collection<SkillData> active = new ArrayList<>(getActiveMarks().values());
         for (SkillData cd : active) {
             if (cd.getSkill().markTick(cd.getCaster(ticker.level), ticker, cd)) sync = true;
+            if (cd.getDuration() <= 0) {
+                removeMark(cd.getSkill());
+                sync=true;
+            }
         }
         if (sync && ticker instanceof ServerPlayer) {
             CombatChannel.INSTANCE.send(PacketDistributor.PLAYER.with(() -> (ServerPlayer) ticker), new UpdateAfflictionPacket(ticker.getId(), this.write()));

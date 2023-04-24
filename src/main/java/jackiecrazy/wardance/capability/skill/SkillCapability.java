@@ -296,10 +296,11 @@ public class SkillCapability implements ISkillCapability {
         final boolean gate = caster.level.getGameRules().getBoolean(WarDance.GATED_SKILLS);
         sync |= gatedSkills != gate;
         gatedSkills = gate;
-        for (SkillData d : data.values().stream().toList()) {
-            if (d == null || d.getSkill() == null) {
+        for (Skill s:getEquippedSkillsAndStyle()) {
+            if (s == null) {
                 continue;
             }
+            SkillData d=nonNullGet(s);
             if (d.getSkill().equippedTick(caster, d)) {
                 d.markDirty();
                 fastSync = true;

@@ -8,8 +8,10 @@ import com.mojang.datafixers.util.Pair;
 import jackiecrazy.footwork.capability.resources.CombatData;
 import jackiecrazy.footwork.capability.resources.ICombatCapability;
 import jackiecrazy.footwork.config.DisplayConfigUtils;
+import jackiecrazy.footwork.potion.FootworkEffects;
 import jackiecrazy.footwork.utils.StealthUtils;
 import jackiecrazy.wardance.WarDance;
+import jackiecrazy.wardance.capability.resources.CombatCapability;
 import jackiecrazy.wardance.capability.skill.CasterData;
 import jackiecrazy.wardance.capability.skill.ISkillCapability;
 import jackiecrazy.wardance.capability.status.Marks;
@@ -48,13 +50,15 @@ public class ResourceDisplay implements IGuiOverlay {
     private static final Cache<LivingEntity, Tuple<StealthUtils.Awareness, Double>> cache = CacheBuilder.newBuilder().weakKeys().expireAfterWrite(1, TimeUnit.SECONDS).build();
     private static final ResourceLocation amo = new ResourceLocation(WarDance.MODID, "textures/hud/amo.png");
     private static final ResourceLocation darkmega = new ResourceLocation(WarDance.MODID, "textures/hud/dark.png");
+    private static final ResourceLocation newdark = new ResourceLocation(WarDance.MODID, "textures/hud/mega.png");
     private static final ResourceLocation raihud = new ResourceLocation(WarDance.MODID, "textures/hud/thanksrai.png");
     private static final ResourceLocation stealth = new ResourceLocation(WarDance.MODID, "textures/hud/stealth.png");
     static float currentComboLevel = 0;
     private static float currentMightLevel = 0;
     private static float currentSpiritLevel = 0;
-    private static float currentPostureLevel = 0;
+    private static float scurrentEvasion = 0, lcurrentEvasion = 0;
     private static boolean flip = false;
+    private static int snewDarkAnimFrames = 0, lnewDarkAnimFrames = 0;
 
     private static void drawPostureBarAt(boolean you, PoseStack ms, LivingEntity elb, int width, int height) {
         ClientConfig.BarType b = ClientConfig.CONFIG.enemyPosture.bar;
@@ -63,7 +67,8 @@ public class ResourceDisplay implements IGuiOverlay {
         }
         switch (b) {
             case AMO -> drawAmoPostureBarAt(you, ms, elb, width, height);
-            case DARKMEGA -> drawDarkPostureBarAt(you, ms, elb, width, height);
+            case DARKMEGA -> drawNewDarkPostureBarAt(you, ms, elb, width, height);
+            case NEWDARK -> drawNewDarkPostureBarAt(you, ms, elb, width, height);
             case CLASSIC -> drawOldPostureBarAt(you, ms, elb, width, height);
         }
     }
@@ -276,6 +281,133 @@ public class ResourceDisplay implements IGuiOverlay {
                 mc.gui.blit(ms, atX - temp - 8, atY - 2, 0, 80, 10, barHeight);
                 //shatter bracket
                 mc.gui.blit(ms, atX + temp, atY - 2, 232, 80, 10, barHeight);
+            }
+        }
+        mc.getProfiler().pop();
+        RenderSystem.setShaderTexture(0, GuiComponent.GUI_ICONS_LOCATION);
+        RenderSystem.disableBlend();
+        RenderSystem.setShaderColor(1, 1, 1, 1);
+    }
+
+    /**
+     * Draws it with the coord as its center
+     */
+    private static void drawNewDarkPostureBarAt(boolean you, PoseStack ms, LivingEntity elb, int width, int height) {
+        Pair<Integer, Integer> pair = you ? translateCoords(ClientConfig.CONFIG.playerPosture, width, height) : translateCoords(ClientConfig.CONFIG.enemyPosture, width, height);
+        int atX = pair.getFirst();
+        int atY = pair.getSecond();
+        Minecraft mc = Minecraft.getInstance();
+        RenderSystem.setShaderTexture(0, newdark);
+        RenderSystem.defaultBlendFunc();
+        RenderSystem.enableBlend();
+        ICombatCapability itsc = CombatData.getCap(elb);
+        mc.getProfiler().push("postureBar");
+        float cap = itsc.getMaxPosture();
+        //182
+        //so we want the full size to be 240, 25 to be 125, and every 5 max posture changes this by 20 pixels
+        int halfBarWidth = Math.min(240, (int) (Math.sqrt(itsc.getMaxPosture()) * 25)) / 2;
+        //divvy by 2 for two-pronged approach
+        int flexBarWidth = halfBarWidth + 3;
+        final int barHeight = 12;
+        //double shatter = MathHelper.clamp(itsc.getBarrier() / itsc.getMaxBarrier(), 0, 1);
+        if (cap > 0) {
+            //draw working bracket
+            final int barY = atY - barHeight / 2;
+            mc.gui.blit(ms, atX, barY, 243 - flexBarWidth, 0, flexBarWidth, barHeight);
+            mc.gui.blit(ms, atX - flexBarWidth, barY, 0, 0, flexBarWidth, barHeight);
+            //grayscale and change width if staggered
+            if (itsc.getStunTime() > 0) {
+                flexBarWidth = (int) ((itsc.getMaxStunTime() - itsc.getStunTime()) * flexBarWidth / (float) itsc.getMaxStunTime()) + 3;
+                mc.gui.blit(ms, atX, barY, 243 - flexBarWidth, 24, flexBarWidth, barHeight);
+                mc.gui.blit(ms, atX - flexBarWidth, barY, 0, 24, flexBarWidth, barHeight);
+            } else if (itsc.getExposeTime() > 0) {
+                flexBarWidth = (int) ((itsc.getMaxExposeTime() - itsc.getExposeTime()) * flexBarWidth / (float) itsc.getMaxExposeTime()) + 3;
+                mc.gui.blit(ms, atX, barY, 243 - flexBarWidth, 24, flexBarWidth, barHeight);
+                mc.gui.blit(ms, atX - flexBarWidth, barY, 0, 24, flexBarWidth, barHeight);
+            } else {
+                flexBarWidth = (int) (itsc.getPosture() * halfBarWidth / itsc.getMaxPosture()) + 3;
+                mc.gui.blit(ms, atX, barY, 243 - flexBarWidth, 12, flexBarWidth, barHeight);
+                mc.gui.blit(ms, atX - flexBarWidth, barY, 0, 12, flexBarWidth, barHeight);
+            }
+            // render fracture if present
+            if (itsc.getMaxFracture() > 0) {
+                if (itsc.getFractureCount() > 0) {//shattering
+                    float otemp = (float) itsc.getFractureCount() / itsc.getMaxFracture();
+                    int fini = (int) (otemp * flexBarWidth);
+                    int shatterV = Math.min(36 + (int) (otemp * 2.8) * 12, 60);
+                    //gold that stretches out to the edges before disappearing
+                    mc.gui.blit(ms, atX + 5, atY - barHeight / 2, 243 - fini, shatterV, fini, barHeight);
+                    mc.gui.blit(ms, atX - fini - 5, atY - barHeight / 2, 0, shatterV, fini, barHeight);
+                    RenderSystem.setShaderColor(1, 1, 1, 1);
+                }
+            }
+            //render insignia
+            {
+                int insigniaWH = 24;
+                int iconW = 12, iconH = 10;
+                //normal, use green
+                int statusU = 0, statusV = 83;
+                int iconU = 0, iconV = 72;
+                //unsteady override
+                if (elb.hasEffect(FootworkEffects.UNSTEADY.get()))
+                    iconU = 12;
+                //danger, use red
+                if (itsc.isVulnerable()) {
+                    statusU = 48;
+                    if (itsc.isExposed())
+                        iconU = 36;
+                    if (itsc.isStunned())
+                        iconU = 24;
+                }
+                //recharge, use yellow
+                else if (itsc.getStunTime() != 0 || itsc.getExposeTime() != 0) {
+                    statusU = 48;
+                    iconU = 12;
+                }
+                //draw status color
+                mc.gui.blit(ms, atX - insigniaWH / 2, atY - insigniaWH / 2, statusU, statusV, insigniaWH, insigniaWH);
+                double evasionPerc = Math.min(1, itsc.getEvade() * 1d / CombatCapability.EVADE_CHARGE);
+                //draw status icon
+                mc.gui.blit(ms, atX - iconW / 2, atY - iconH / 2, iconU, iconV, iconW, iconH);
+                //draw evasion
+                statusU = 72;
+                mc.gui.blit(ms, atX - insigniaWH / 2, atY + insigniaWH / 2 - (int) (insigniaWH * evasionPerc), statusU, statusV + insigniaWH - (int) (insigniaWH * evasionPerc), insigniaWH, (int) (insigniaWH * evasionPerc));
+                //draw evasion animation when needed
+                if (you) {
+                    //filled up, start animation frames
+                    if (scurrentEvasion != (float) evasionPerc && (evasionPerc == 1 || evasionPerc < scurrentEvasion)) {
+                        snewDarkAnimFrames = (int) (56 * (evasionPerc - 0.5));
+                    }
+                    scurrentEvasion = (float) evasionPerc;
+                    statusV = 107;
+                    if (snewDarkAnimFrames > 0) {
+                        statusU = (4 - (snewDarkAnimFrames / 3)) * 24;
+                        mc.gui.blit(ms, atX - insigniaWH / 2, atY - insigniaWH / 2, statusU, statusV, insigniaWH, insigniaWH);
+                        snewDarkAnimFrames--;
+                    } else if (snewDarkAnimFrames < 0) {
+                        statusU = (7 + (snewDarkAnimFrames / 4)) * 24;
+                        statusV = 131;
+                        mc.gui.blit(ms, atX - insigniaWH / 2, atY - insigniaWH / 2, statusU, statusV, insigniaWH, insigniaWH);
+                        snewDarkAnimFrames++;
+                    }
+                } else {
+                    //filled up, start animation frames
+                    if (lcurrentEvasion != (float) evasionPerc && (evasionPerc == 1 || evasionPerc < lcurrentEvasion)) {
+                        lnewDarkAnimFrames = (int) (2000 * (evasionPerc - 0.5));
+                    }
+                    lcurrentEvasion = (float) evasionPerc;
+                    statusV = 107;
+                    if (lnewDarkAnimFrames > 0) {
+                        statusU = (4 - (lnewDarkAnimFrames / 3)) * 24;
+                        mc.gui.blit(ms, atX - insigniaWH / 2, atY - insigniaWH / 2, statusU, statusV, insigniaWH, insigniaWH);
+                        lnewDarkAnimFrames--;
+                    } else if (lnewDarkAnimFrames < 0) {
+                        statusU = (7 + (lnewDarkAnimFrames / 4)) * 24;
+                        statusV = 131;
+                        mc.gui.blit(ms, atX - insigniaWH / 2, atY - insigniaWH / 2, statusU, statusV, insigniaWH, insigniaWH);
+                        lnewDarkAnimFrames++;
+                    }
+                }
             }
         }
         mc.getProfiler().pop();
@@ -566,7 +698,7 @@ public class ResourceDisplay implements IGuiOverlay {
                         RenderSystem.setShaderColor(c.getRed() / 255f, c.getGreen() / 255f, c.getBlue() / 255f, 1);
                         GuiComponent.blit(stack, pair.getFirst() - (afflict.size() - 1 - index) * 16 + (afflict.size() - 1) * 8 - 8, pair.getSecond(), 0, 0, 16, 16, 16, 16);
                         if (s.getMaxDuration() >= 1) {
-                            String display = formatter.format(s.getDuration());
+                            String display = formatter.format(Math.round(s.getDuration()));
                             mc.font.drawShadow(stack, display, pair.getFirst() - (afflict.size() - 1 - index) * 16 + (afflict.size() - 1) * 8 - 8, pair.getSecond() - 2, 0xffffff);
                         }
                         if (s.getArbitraryFloat() != 0) {

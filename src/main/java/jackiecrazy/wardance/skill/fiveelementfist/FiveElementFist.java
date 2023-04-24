@@ -21,6 +21,10 @@ import java.util.UUID;
 
 public abstract class FiveElementFist extends Skill {
 
+    private static final HashSet<String> tag =makeTag(SkillTags.offensive, SkillTags.physical, "elementfist");
+    private static final HashSet<String> no =makeTag("elementfist");
+
+
     private static final UUID u = UUID.fromString("1896391d-0d6c-4a3e-a4b5-5e3c9d573b80");
     private static Skill[] cycle = {
     };
@@ -28,6 +32,11 @@ public abstract class FiveElementFist extends Skill {
     @Override
     public boolean isPassive(LivingEntity caster) {
         return true;
+    }
+
+    @Override
+    public HashSet<String> getHardIncompatibility(LivingEntity caster) {
+        return no;
     }
 
     @Nonnull
@@ -38,7 +47,7 @@ public abstract class FiveElementFist extends Skill {
 
     @Override
     public HashSet<String> getTags(LivingEntity caster) {
-        return offensivePhysical;
+        return tag;
     }
 
     @Nonnull

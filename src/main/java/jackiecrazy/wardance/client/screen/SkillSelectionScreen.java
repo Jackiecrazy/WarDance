@@ -55,6 +55,19 @@ public class SkillSelectionScreen extends Screen {
     private final Comparator<SkillCategorySort> CATEGORYSORT = Comparator.comparing(o -> StringUtils.toLowerCase(stripControlCodes(o.getText().getString())));
 
     private final Comparator<Skill> SKILLSORT = Comparator.comparing(o -> StringUtils.toLowerCase(stripControlCodes(o.getDisplayName(null).getString())));
+    private final Comparator<SkillStyle> STYLESORT = new Comparator<SkillStyle>() {
+        @Override
+        public int compare(SkillStyle o1, SkillStyle o2) {
+            //styles with more colors overall get pushed to the bottom
+            if (o1.getMaxColorsForSorting() - o2.getMaxColorsForSorting() != 0)
+                return o1.getMaxColorsForSorting() - o2.getMaxColorsForSorting();
+            //styles with specific color requirements are put at the top. The more specific the requirements, the higher they rank
+            if(o1.getMaxColors()-o2.getMaxColors()!=0)
+                return o1.getMaxColors()-o2.getMaxColors();
+            //alphabet
+            return SKILLSORT.compare(o1, o2);
+        }
+    };
     public SkillListWidget.CategoryEntry selectedSkill = null;
     boolean refresh = false;
     SkillStyleButton style;
@@ -83,7 +96,7 @@ public class SkillSelectionScreen extends Screen {
         bases.sort(SKILLSORT);
         stylebases = new ArrayList<>();
         stylebases.addAll(SkillStyle.styleList);
-        stylebases.sort(SKILLSORT);
+        stylebases.sort(STYLESORT);
 
         this.unsortedSkills = Collections.unmodifiableList(this.bases);
         this.unsortedStyles = Collections.unmodifiableList(this.bases);
@@ -182,6 +195,7 @@ public class SkillSelectionScreen extends Screen {
     boolean isValidInsertion(Skill insert) {
         final LocalPlayer player = Minecraft.getInstance().player;
         if (style.getStyle() == null && !(insert instanceof SkillStyle)) return false;
+        if (style.getSkill() != null && !style.getStyle().isEquippableWith(insert, player)) return false;
         if (style.getStyle() != null && getNumColors().size() > style.getStyle().getMaxColors()) return false;
         for (SkillSelectionButton ssb : skillPie)
             if (ssb.getSkill() != null && (!ssb.getSkill().isEquippableWith(insert, player)))

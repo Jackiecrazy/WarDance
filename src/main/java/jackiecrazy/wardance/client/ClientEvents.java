@@ -13,14 +13,11 @@ import jackiecrazy.wardance.config.CombatConfig;
 import jackiecrazy.wardance.config.GeneralConfig;
 import jackiecrazy.wardance.networking.*;
 import jackiecrazy.wardance.utils.CombatUtils;
-import net.minecraft.client.Camera;
 import net.minecraft.client.KeyMapping;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiComponent;
-import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.client.player.AbstractClientPlayer;
 import net.minecraft.client.player.Input;
-import net.minecraft.client.renderer.culling.Frustum;
 import net.minecraft.client.renderer.entity.EntityRenderDispatcher;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.network.chat.Component;
@@ -216,31 +213,6 @@ public class ClientEvents {
 //                Minecraft.getInstance().getTextureManager().bindTexture(AbstractGui.GUI_ICONS_LOCATION);
 //            }
         }
-    }
-
-    @SubscribeEvent
-    public static void down(RenderLevelStageEvent event) {
-        Minecraft mc = Minecraft.getInstance();
-        if (event.getStage() != RenderLevelStageEvent.Stage.AFTER_CUTOUT_BLOCKS) return;
-
-        Camera camera = mc.gameRenderer.getMainCamera();
-        PoseStack poseStack = event.getPoseStack();
-        float partialTicks = event.getPartialTick();
-        Entity cameraEntity = camera.getEntity() != null ? camera.getEntity() : mc.player;
-
-        Vec3 cameraPos = camera.getPosition();
-        final Frustum frustum = new Frustum(poseStack.last().pose(), event.getProjectionMatrix());
-        frustum.prepare(cameraPos.x(), cameraPos.y(), cameraPos.z());
-
-        ClientLevel client = mc.level;
-        if (client != null) {
-            for (Entity entity : client.entitiesForRendering()) {
-                if (entity instanceof LivingEntity e && entity != cameraEntity && entity.isAlive() && !entity.getIndirectPassengers().iterator().hasNext() && CombatData.getCap(e).isExposed() && entity.shouldRender(cameraPos.x(), cameraPos.y(), cameraPos.z()) && (entity.noCulling || frustum.isVisible(entity.getBoundingBox())) && !GeneralUtils.viewBlocked(mc.player, e, false)) {
-                    renderDie((LivingEntity) entity, partialTicks, poseStack);
-                }
-            }
-        }
-
     }
 
     @SubscribeEvent

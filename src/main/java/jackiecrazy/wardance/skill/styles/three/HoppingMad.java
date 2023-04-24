@@ -25,11 +25,13 @@ public class HoppingMad extends SkillStyle {
     @Override
     public void onEquip(LivingEntity caster) {
         caster.getAttribute(FootworkAttributes.MAX_POSTURE.get()).addPermanentModifier(mad);
+        super.onEquip(caster);
     }
 
     @Override
     public void onUnequip(LivingEntity caster, SkillData stats) {
         caster.getAttribute(FootworkAttributes.MAX_POSTURE.get()).removeModifier(mad);
+        super.onUnequip(caster, stats);
     }
 
     @Override
