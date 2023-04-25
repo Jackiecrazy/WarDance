@@ -6,14 +6,15 @@ import jackiecrazy.footwork.utils.GeneralUtils;
 import jackiecrazy.wardance.WarDance;
 import jackiecrazy.wardance.capability.skill.CasterData;
 import jackiecrazy.wardance.config.CombatConfig;
-import jackiecrazy.wardance.skill.*;
+import jackiecrazy.wardance.skill.SkillArchetype;
+import jackiecrazy.wardance.skill.SkillArchetypes;
+import jackiecrazy.wardance.skill.SkillData;
 import jackiecrazy.wardance.skill.shieldbash.ShieldBash;
 import jackiecrazy.wardance.utils.CombatUtils;
 import jackiecrazy.wardance.utils.SkillUtils;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.effect.MobEffectInstance;
-import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.ai.attributes.AttributeModifier;
@@ -52,8 +53,6 @@ public class ShieldCrush extends ShieldBash {
             removeMark(target);
         if(CasterData.getCap(caster).getSkillState(this)==STATE.COOLING)removeMark(target);
         //boing
-        //effects
-        target.addEffect(new MobEffectInstance(MobEffects.DIG_SLOWDOWN, 10));
         target.addEffect(new MobEffectInstance(FootworkEffects.ENFEEBLE.get(), 10));
         return super.markTick(caster, target, sd);
     }
@@ -73,6 +72,7 @@ public class ShieldCrush extends ShieldBash {
         }
         SkillUtils.modifyAttribute(target, Attributes.MOVEMENT_SPEED, debuffID, 0, AttributeModifier.Operation.MULTIPLY_TOTAL);
         SkillUtils.modifyAttribute(target, Attributes.KNOCKBACK_RESISTANCE, debuffID, 0, AttributeModifier.Operation.MULTIPLY_TOTAL);
+        SkillUtils.modifyAttribute(target, Attributes.ATTACK_SPEED, debuffID, 0, AttributeModifier.Operation.MULTIPLY_TOTAL);
         super.onMarkEnd(caster, target, sd);
     }
 
@@ -110,6 +110,7 @@ public class ShieldCrush extends ShieldBash {
                 SkillUtils.modifyAttribute(caster, Attributes.MOVEMENT_SPEED, debuffID, -0.6, AttributeModifier.Operation.MULTIPLY_TOTAL);
                 SkillUtils.modifyAttribute(elb, Attributes.MOVEMENT_SPEED, debuffID, -0.6, AttributeModifier.Operation.MULTIPLY_TOTAL);
                 SkillUtils.modifyAttribute(caster, Attributes.KNOCKBACK_RESISTANCE, debuffID, 0.6, AttributeModifier.Operation.ADDITION);
+                SkillUtils.modifyAttribute(elb, Attributes.ATTACK_SPEED, debuffID, -0.2, AttributeModifier.Operation.MULTIPLY_TOTAL);
                 SkillUtils.modifyAttribute(elb, Attributes.KNOCKBACK_RESISTANCE, debuffID, 0.6, AttributeModifier.Operation.ADDITION);
                 //up your grindset
                 if (CombatData.getCap(elb).consumePosture(0.1f * posdam / 2) < 0) {

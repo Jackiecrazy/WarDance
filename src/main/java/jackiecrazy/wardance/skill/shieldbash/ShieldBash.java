@@ -5,7 +5,7 @@ import jackiecrazy.footwork.capability.resources.CombatData;
 import jackiecrazy.footwork.capability.resources.ICombatCapability;
 import jackiecrazy.footwork.potion.FootworkEffects;
 import jackiecrazy.wardance.WarDance;
-import jackiecrazy.wardance.event.ParryEvent;
+import jackiecrazy.wardance.capability.skill.CasterData;
 import jackiecrazy.wardance.skill.*;
 import jackiecrazy.wardance.utils.CombatUtils;
 import jackiecrazy.wardance.utils.DamageUtils;
@@ -24,19 +24,8 @@ import javax.annotation.Nonnull;
 import java.util.HashSet;
 
 public class ShieldBash extends Skill {
-    private final HashSet<String> tag = makeTag("physical", "melee", "boundCast", "normalAttack", "shield", "countdown", ProcPoints.recharge_parry);
+    private final HashSet<String> tag = makeTag("shield", SkillTags.offensive, SkillTags.physical);
     private final HashSet<String> no = makeTag("normalAttack");
-
-    @Override
-    public HashSet<String> getTags(LivingEntity caster) {
-        return offensivePhysical;
-    }
-
-    @Nonnull
-    @Override
-    public HashSet<String> getSoftIncompatibility(LivingEntity caster) {
-        return offensive;
-    }
 
     @Nonnull
     @Override
@@ -49,10 +38,20 @@ public class ShieldBash extends Skill {
         return 1;
     }
 
+    @Override
+    public HashSet<String> getTags(LivingEntity caster) {
+        return tag;
+    }
 
-    protected void performEffect(LivingEntity caster, LivingEntity target, float attack) {
-        final ICombatCapability cap = CombatData.getCap(caster);
-        //SkillUtils.auxAttack(caster, target, new CombatDamageSource("player", caster).setProcNormalEffects(false).setProcAttackEffects(true).setProcSkillEffects(true).setAttackingHand(InteractionHand.OFF_HAND).setDamageTyping(CombatDamageSource.TYPE.PHYSICAL).setDamageDealer(caster.getMainHandItem()), 0, attack);
+    @Nonnull
+    @Override
+    public HashSet<String> getSoftIncompatibility(LivingEntity caster) {
+        return offensive;
+    }
+
+    @Override
+    public boolean equippedTick(LivingEntity caster, SkillData stats) {
+        return super.equippedTick(caster, stats);
     }
 
     @Override
@@ -64,22 +63,17 @@ public class ShieldBash extends Skill {
             }
             final boolean base = isPassive(caster) && state != STATE.COOLING;
             final ItemStack stack = CombatUtils.getAttackingItemStack(lae.getSource());
-            final boolean otherwise = state == STATE.HOLSTERED && CombatUtils.isShield(caster, stack);
+            if (!CombatUtils.isShield(caster, stack)) return;
+            if (stats.getState() == STATE.COOLING && !CasterData.getCap(caster).isTagActive("shield"))
+                stats.decrementDuration();
+            final boolean otherwise = state == STATE.HOLSTERED;
             if ((base || otherwise) && cast(caster, target, -999)) {
-                float attack=CombatUtils.getPostureAtk(caster, target, InteractionHand.MAIN_HAND, 0, stack);
+                float attack = CombatUtils.getPostureAtk(caster, target, InteractionHand.MAIN_HAND, 0, stack);
                 performEffect(caster, target, attack);
                 caster.level.playSound(null, caster.getX(), caster.getY(), caster.getZ(), SoundEvents.ZOMBIE_ATTACK_IRON_DOOR, SoundSource.PLAYERS, 0.25f + WarDance.rand.nextFloat() * 0.5f, 0.5f + WarDance.rand.nextFloat() * 0.5f);
                 markUsed(caster);
             }
         }
-        if (procPoint instanceof ParryEvent && procPoint.getPhase() == EventPriority.HIGHEST && state == STATE.COOLING && ((ParryEvent) procPoint).getEntity() == caster) {
-            stats.decrementDuration();
-        }
-    }
-
-    @Override
-    public boolean equippedTick(LivingEntity caster, SkillData stats) {
-        return super.equippedTick(caster, stats);
     }
 
     @Override
@@ -87,6 +81,11 @@ public class ShieldBash extends Skill {
         if (to == STATE.COOLING)//no need for cooldown because it basically cools down with shield anyway
             setCooldown(caster, prev, 7);
         return boundCast(prev, from, to);
+    }
+
+    protected void performEffect(LivingEntity caster, LivingEntity target, float attack) {
+        final ICombatCapability cap = CombatData.getCap(caster);
+        //SkillUtils.auxAttack(caster, target, new CombatDamageSource("player", caster).setProcNormalEffects(false).setProcAttackEffects(true).setProcSkillEffects(true).setAttackingHand(InteractionHand.OFF_HAND).setDamageTyping(CombatDamageSource.TYPE.PHYSICAL).setDamageDealer(caster.getMainHandItem()), 0, attack);
     }
 
     public static class RimPunch extends ShieldBash {
@@ -101,7 +100,7 @@ public class ShieldBash extends Skill {
 
         protected void performEffect(LivingEntity caster, LivingEntity target, float atk) {
             super.performEffect(caster, target, atk);
-            final int time = (int) (atk*20);
+            final int time = (int) (atk * 20);
             target.addEffect(new MobEffectInstance(MobEffects.MOVEMENT_SLOWDOWN, time * 2));
             target.addEffect(new MobEffectInstance(FootworkEffects.CONFUSION.get(), time * 2));
         }

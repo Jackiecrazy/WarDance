@@ -9,7 +9,6 @@ import jackiecrazy.wardance.utils.CombatUtils;
 import jackiecrazy.wardance.utils.DamageUtils;
 import jackiecrazy.wardance.utils.SkillUtils;
 import net.minecraft.world.effect.MobEffectInstance;
-import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.ai.attributes.AttributeModifier;
@@ -19,6 +18,7 @@ import net.minecraftforge.event.entity.living.LivingDamageEvent;
 import net.minecraftforge.eventbus.api.Event;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
+import org.jetbrains.annotations.Nullable;
 
 import javax.annotation.Nonnull;
 import java.util.HashSet;
@@ -100,7 +100,6 @@ public class Wrestle extends Skill {
         //boing
         updateTetheringVelocity(caster, target);
         //effects
-        target.addEffect(new MobEffectInstance(MobEffects.DIG_SLOWDOWN, 10));
         target.addEffect(new MobEffectInstance(FootworkEffects.ENFEEBLE.get(), 10));
         target.addEffect(new MobEffectInstance(FootworkEffects.UNSTEADY.get(), 10));
         sd.decrementDuration(0.05f);
@@ -132,12 +131,20 @@ public class Wrestle extends Skill {
         return boundCast(prev, from, to);
     }
 
+    @Nullable
+    @Override
+    public SkillData onMarked(LivingEntity caster, LivingEntity target, SkillData sd, @Nullable SkillData existing) {
+        SkillUtils.modifyAttribute(target, Attributes.ATTACK_SPEED, slow, -0.2, AttributeModifier.Operation.MULTIPLY_TOTAL);
+        return super.onMarked(caster, target, sd, existing);
+    }
+
     @Override
     public void onMarkEnd(LivingEntity caster, LivingEntity target, SkillData sd) {
         if (caster != null) {
             SkillUtils.modifyAttribute(caster, Attributes.MOVEMENT_SPEED, slow, 0, AttributeModifier.Operation.MULTIPLY_TOTAL);
             markUsed(caster);
         }
+        SkillUtils.modifyAttribute(target, Attributes.ATTACK_SPEED, slow, 0, AttributeModifier.Operation.MULTIPLY_TOTAL);
         super.onMarkEnd(caster, target, sd);
     }
 
