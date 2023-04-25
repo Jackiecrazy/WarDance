@@ -70,7 +70,7 @@ public class Wrestle extends Skill {
     }
 
     @Override
-    public HashSet<String> getTags(LivingEntity caster) {
+    public HashSet<String> getTags() {
         return unarm;
     }
 
@@ -94,6 +94,10 @@ public class Wrestle extends Skill {
 
     @Override
     public boolean markTick(LivingEntity caster, LivingEntity target, SkillData sd) {
+        if(caster==null){
+            sd.setDuration(-999);
+            return true;
+        }
         //immediately end if not unarmed
         if(!CombatUtils.isFullyUnarmed(caster))
             sd.setDuration(-999);

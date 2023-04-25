@@ -29,7 +29,7 @@ apathy: your max spirit is 4, your spirit instantly refills after cooldown, you 
     private final HashSet<String> no = none;
 
     @Override
-    public HashSet<String> getTags(LivingEntity caster) {
+    public HashSet<String> getTags() {
         return passive;
     }
 

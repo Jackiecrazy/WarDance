@@ -17,7 +17,7 @@ import java.util.HashSet;
 
 public class PhantomDive extends Skill {
     @Override
-    public HashSet<String> getTags(LivingEntity caster) {
+    public HashSet<String> getTags() {
         return passive;
     }
 
@@ -39,7 +39,7 @@ public class PhantomDive extends Skill {
     @Override
     public void onProc(LivingEntity caster, Event procPoint, STATE state, SkillData stats, @Nullable LivingEntity target) {
         if (procPoint instanceof LivingEvent.LivingJumpEvent) {
-            activate(caster, 1F, (float) caster.getY());
+            silentActivate(caster, 1F, false, (float) caster.getY());
         }
         if (procPoint instanceof LivingFallEvent) {
             markUsed(caster);

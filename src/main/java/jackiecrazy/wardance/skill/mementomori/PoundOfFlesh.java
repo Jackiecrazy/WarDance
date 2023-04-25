@@ -31,7 +31,7 @@ public class PoundOfFlesh extends MementoMori {
 
 
     @Override
-    public HashSet<String> getTags(LivingEntity caster) {
+    public HashSet<String> getTags() {
         return special;
     }
 

@@ -62,6 +62,7 @@ public class DemonHunter extends ColorRestrictionStyle {
             if (Marks.getCap(target).isMarked(this))
                 CombatUtils.knockBack(caster, target, 1, true, true);
             mark(caster, target, 3);
+            caster.getAttribute(ForgeMod.ATTACK_RANGE.get()).removeModifier(reach);
         }
     }
 

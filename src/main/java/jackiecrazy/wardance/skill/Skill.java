@@ -73,7 +73,7 @@ public abstract class Skill extends Move {
     }
 
     public boolean isPassive(LivingEntity caster) {
-        return getTags(caster).contains("passive");
+        return getTags().contains("passive");
     }
 
     @Nonnull
@@ -119,7 +119,7 @@ public abstract class Skill extends Move {
         for (String s : getSoftIncompatibility(caster))
             if (cap.isTagActive(s))
                 return CastStatus.CONFLICT;
-        if (caster.isSilent() && getTags(caster).contains("chant")) return CastStatus.SILENCE;
+        if (caster.isSilent() && getTags().contains("chant")) return CastStatus.SILENCE;
         if (CombatData.getCap(caster).getSpirit() < spiritConsumption(caster))
             return CastStatus.SPIRIT;
         if (CombatData.getCap(caster).getMight() < mightConsumption(caster))
@@ -137,19 +137,20 @@ public abstract class Skill extends Move {
 
     public boolean isCompatibleWith(Skill s, LivingEntity caster) {
         if (s == null) return true;
-        for (String tag : this.getTags(caster))
+        for (String tag : this.getTags())
             if (s.getSoftIncompatibility(caster).contains(tag)) return false;
-        for (String tag : s.getTags(caster))
+        for (String tag : s.getTags())
             if (this.getSoftIncompatibility(caster).contains(tag)) return false;
         return true;
     }
 
     public boolean isEquippableWith(Skill s, LivingEntity caster) {
         if (s == null) return true;
-        for (String tag : this.getTags(caster))
-            if (s.getHardIncompatibility(caster).contains(tag)) return false;
-        for (String tag : s.getTags(caster))
-            if (this.getHardIncompatibility(caster).contains(tag)) return false;
+        if (s == this) return true; //of course I'm compatible with myself excuse me
+        for (String tag : this.getTags())
+            if (s.getHardIncompatibility().contains(tag)) return false;
+        for (String tag : s.getTags())
+            if (this.getHardIncompatibility().contains(tag)) return false;
         return true;
     }
 
@@ -191,12 +192,12 @@ public abstract class Skill extends Move {
         return getCategory().getColor();
     }
 
-    public abstract HashSet<String> getTags(LivingEntity caster);//requires breath, bound, debuffing, healing, aoe, etc.
+    public abstract HashSet<String> getTags();//requires breath, bound, debuffing, healing, aoe, etc.
 
     @Nonnull
     public abstract HashSet<String> getSoftIncompatibility(LivingEntity caster);
 
-    public HashSet<String> getHardIncompatibility(LivingEntity caster) {
+    public HashSet<String> getHardIncompatibility() {
         return none;
     }
 
@@ -207,7 +208,7 @@ public abstract class Skill extends Move {
         return false;
     }
 
-    public boolean markTick(LivingEntity caster, LivingEntity target, SkillData sd) {
+    public boolean markTick(@Nullable LivingEntity caster, LivingEntity target, SkillData sd) {
         return false;
     }
 
@@ -370,6 +371,7 @@ public abstract class Skill extends Move {
     }
 
     protected void setCooldown(LivingEntity caster, SkillData a, float duration) {
+        if(caster==null)return;
         SkillCooldownEvent sce = new SkillCooldownEvent(caster, this, duration);
         MinecraftForge.EVENT_BUS.post(sce);
 //        if (getParentSkill() != null)
@@ -400,6 +402,17 @@ public abstract class Skill extends Move {
     protected boolean activate(LivingEntity caster, float duration, boolean flag, float something) {
         //System.out.println("enabling for " + duration);
         caster.level.playSound(null, caster, SoundEvents.FIRECHARGE_USE, SoundSource.AMBIENT, 0.3f + WarDance.rand.nextFloat(), 0.5f + WarDance.rand.nextFloat());
+        CasterData.getCap(caster).getSkillData(this).ifPresent(a -> {
+            a.setDuration(duration);
+            a.setMaxDuration(duration);
+            a.flagCondition(flag);
+            a.setArbitraryFloat(something);
+            a.setState(STATE.ACTIVE);
+        });
+        return true;
+    }
+
+    protected boolean silentActivate(LivingEntity caster, float duration, boolean flag, float something) {
         CasterData.getCap(caster).getSkillData(this).ifPresent(a -> {
             a.setDuration(duration);
             a.setMaxDuration(duration);

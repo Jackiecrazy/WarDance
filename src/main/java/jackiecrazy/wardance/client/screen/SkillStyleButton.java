@@ -9,8 +9,6 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 
-import java.awt.*;
-
 public class SkillStyleButton extends SkillSelectionButton {
     private static final ResourceLocation passive = new ResourceLocation(WarDance.MODID, "textures/skill/passive.png");
     private int flashTime;
@@ -69,10 +67,11 @@ public class SkillStyleButton extends SkillSelectionButton {
         //base
         blit(matrixStack, this.getX(), this.getY(), 0, 0, this.width, this.height, width, height);
         //skill
+        RenderSystem.setShaderColor(1, 1, 1, 1);
         if (s != null) {
             RenderSystem.setShaderTexture(0, s.icon());
-            Color c = s.getColor();
-            RenderSystem.setShaderColor(c.getRed() / 255f, c.getGreen() / 255f, c.getBlue() / 255f, 1);
+            //Color c = s.getColor();
+            //RenderSystem.setShaderColor(c.getRed() / 255f, c.getGreen() / 255f, c.getBlue() / 255f, 1);
             blit(matrixStack, this.getX(), this.getY(), 0, 0, this.width, this.height, width, height);
         }
         RenderSystem.setShaderColor(1, 1, 1, 1);

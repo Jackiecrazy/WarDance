@@ -31,7 +31,7 @@ Helicopter kick: disables both hands, instead dealing 7 posture damage per attac
 Flow: cooldown of all attack skills are halved, and any cooled attack skill is automatically cast
      */
     @Override
-    public HashSet<String> getTags(LivingEntity caster) {
+    public HashSet<String> getTags() {
         return state;
     }
     private static final ResourceLocation rl=new ResourceLocation("wardance:textures/skill/montante.png");

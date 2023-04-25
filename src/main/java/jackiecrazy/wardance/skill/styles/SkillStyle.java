@@ -12,6 +12,7 @@ import java.awt.*;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Objects;
 
 public abstract class SkillStyle extends Skill {
     public static final List<SkillStyle> styleList = new ArrayList<>();
@@ -42,8 +43,12 @@ public abstract class SkillStyle extends Skill {
 
     @Override
     public boolean isEquippableWith(Skill s, LivingEntity caster) {
+        return isEquippableWith(s, CasterData.getCap(caster).getEquippedSkills());
+    }
+
+    public boolean isEquippableWith(Skill s, List<Skill> existing){
         if (s == null) return true;
-        List<SkillCategory> equipped = CasterData.getCap(caster).getEquippedColors();
+        List<SkillCategory> equipped = existing.stream().filter(Objects::nonNull).map(Skill::getCategory).distinct().toList();
         return equipped.contains(s.getCategory()) || equipped.size() < maxColors;
     }
 
@@ -57,7 +62,7 @@ public abstract class SkillStyle extends Skill {
     }
 
     @Override
-    public HashSet<String> getTags(LivingEntity caster) {
+    public HashSet<String> getTags() {
         return passive;
     }
 

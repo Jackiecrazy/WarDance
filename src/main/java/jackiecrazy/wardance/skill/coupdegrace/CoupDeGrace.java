@@ -57,7 +57,7 @@ public class CoupDeGrace extends Skill {
     }
 
     @Override
-    public HashSet<String> getTags(LivingEntity caster) {
+    public HashSet<String> getTags() {
         return special;
     }
 
@@ -164,7 +164,7 @@ public class CoupDeGrace extends Skill {
         }
 
         @Override
-        public HashSet<String> getTags(LivingEntity caster) {
+        public HashSet<String> getTags() {
             return special;
         }
 
@@ -226,7 +226,7 @@ public class CoupDeGrace extends Skill {
         protected void deathCheck(LivingEntity caster, LivingEntity target, float amount) {
             ISkillCapability isc = CasterData.getCap(caster);
             for (SkillData d : isc.getAllSkillData().values()) {
-                if (d.getState() == STATE.COOLING && d.getSkill().getTags(caster).contains(SkillTags.physical)) {
+                if (d.getState() == STATE.COOLING && d.getSkill().getTags().contains(SkillTags.physical)) {
                     isc.changeSkillState(d.getSkill(), STATE.INACTIVE);
                 }
             }

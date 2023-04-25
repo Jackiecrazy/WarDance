@@ -28,13 +28,9 @@ import java.util.UUID;
 
 @Mod.EventBusSubscriber(modid = WarDance.MODID)
 public class ShieldCrush extends ShieldBash {
+    private static final ResourceLocation rl = new ResourceLocation("wardance:textures/skill/shield_crush.png");
     UUID debuffID = UUID.fromString("abe24c38-73e3-4551-9ef4-e16e117699c1");
-    private static final ResourceLocation rl=new ResourceLocation("wardance:textures/skill/shield_crush.png");
 
-    @Override
-    public ResourceLocation icon() {
-        return rl;
-    }
     @Override
     public float mightConsumption(LivingEntity caster) {
         return 1;
@@ -46,12 +42,20 @@ public class ShieldCrush extends ShieldBash {
     }
 
     @Override
+    public ResourceLocation icon() {
+        return rl;
+    }
+
+    @Override
     public boolean markTick(LivingEntity caster, LivingEntity target, SkillData sd) {
         //immediately end if not shielded
-        if(caster==null)removeMark(target);
+        if (caster == null) {
+            removeMark(target);
+            return true;
+        }
         if (!CombatUtils.isHoldingShield(caster))
             removeMark(target);
-        if(CasterData.getCap(caster).getSkillState(this)==STATE.COOLING)removeMark(target);
+        if (CasterData.getCap(caster).getSkillState(this) == STATE.COOLING) removeMark(target);
         //boing
         target.addEffect(new MobEffectInstance(FootworkEffects.ENFEEBLE.get(), 10));
         return super.markTick(caster, target, sd);
@@ -85,11 +89,6 @@ public class ShieldCrush extends ShieldBash {
     @Override
     public float spiritConsumption(LivingEntity caster) {
         return 3;
-    }
-
-    @Override
-    public void onProc(LivingEntity caster, Event procPoint, STATE state, SkillData stats, LivingEntity target) {
-
     }
 
     @Override
@@ -131,6 +130,11 @@ public class ShieldCrush extends ShieldBash {
             return true;
         }
         return super.equippedTick(caster, stats);
+    }
+
+    @Override
+    public void onProc(LivingEntity caster, Event procPoint, STATE state, SkillData stats, LivingEntity target) {
+
     }
 
     @Override

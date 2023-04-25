@@ -42,7 +42,7 @@ public class GoldRush extends ColorRestrictionStyle {
     @SubscribeEvent()
     public static void loot(LootingLevelEvent e) {
         //phat loot
-        if (e.getDamageSource().getEntity() instanceof LivingEntity attacker)
+        if (e.getDamageSource() != null && e.getDamageSource().getEntity() instanceof LivingEntity attacker)
             Marks.getCap(attacker).getActiveMark(WarSkills.GOLD_RUSH.get()).ifPresent(a -> {
                 int lvl = 0;
                 if (a.getArbitraryFloat() >= 10)
@@ -98,10 +98,5 @@ public class GoldRush extends ColorRestrictionStyle {
             sd.setArbitraryFloat(Math.min(10, sd.getArbitraryFloat()));
         }
         return sd;
-    }
-
-    @Override
-    public void mark(LivingEntity caster, LivingEntity target, float duration, float arb) {
-        super.mark(caster, target, duration, arb);
     }
 }

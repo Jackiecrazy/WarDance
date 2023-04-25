@@ -97,7 +97,7 @@ elemental might: +1 burn/snowball/poison/drown damage to targets you have attack
     }
 
     @Override
-    public HashSet<String> getTags(LivingEntity caster) {
+    public HashSet<String> getTags() {
         return passive;
     }
 

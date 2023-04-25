@@ -212,6 +212,7 @@ public class CombatUtils {
     }
 
     public static boolean isShield(LivingEntity e, InteractionHand hand) {
+        if (e == null) return false;
         return isShield(e, e.getItemInHand(hand));
     }
 

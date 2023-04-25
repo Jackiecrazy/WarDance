@@ -35,7 +35,7 @@ public abstract class FiveElementFist extends Skill {
     }
 
     @Override
-    public HashSet<String> getHardIncompatibility(LivingEntity caster) {
+    public HashSet<String> getHardIncompatibility() {
         return no;
     }
 
@@ -46,7 +46,7 @@ public abstract class FiveElementFist extends Skill {
     }
 
     @Override
-    public HashSet<String> getTags(LivingEntity caster) {
+    public HashSet<String> getTags() {
         return tag;
     }
 

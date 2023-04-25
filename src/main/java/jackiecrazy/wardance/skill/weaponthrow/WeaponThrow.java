@@ -12,7 +12,7 @@ public class WeaponThrow extends Skill {
 
 
     @Override
-    public HashSet<String> getTags(LivingEntity caster) {
+    public HashSet<String> getTags() {
         return null;
     }
 

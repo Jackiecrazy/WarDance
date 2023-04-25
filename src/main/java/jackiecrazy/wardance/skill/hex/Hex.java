@@ -99,7 +99,7 @@ public class Hex extends Skill {
 //    }
 
     @Override
-    public HashSet<String> getTags(LivingEntity caster) {
+    public HashSet<String> getTags() {
         return thing;
     }
 

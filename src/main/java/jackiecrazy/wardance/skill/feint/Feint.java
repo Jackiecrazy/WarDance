@@ -97,7 +97,7 @@ public class Feint extends Skill {
     }
 
     @Override
-    public HashSet<String> getTags(LivingEntity caster) {
+    public HashSet<String> getTags() {
         return tag;
     }
 
@@ -173,16 +173,15 @@ public class Feint extends Skill {
         @Override
         public boolean markTick(LivingEntity caster, LivingEntity target, SkillData sd) {
             if (caster == target) {
-                sd.decrementDuration();
                 return true;
             }
-            return super.markTick(caster, target, sd);
+            return markTickDown(sd);
         }
 
         @Override
         public SkillData onMarked(LivingEntity caster, LivingEntity target, SkillData sd, @Nullable SkillData existing) {
             if (existing != null) {
-                sd.setDuration(200);
+                sd.setDuration(10);
                 sd.addArbitraryFloat(existing.getArbitraryFloat());
                 if (caster == target) {
                     SkillUtils.modifyAttribute(caster, Attributes.ARMOR, UPPER, sd.getArbitraryFloat() * 2, AttributeModifier.Operation.ADDITION);
@@ -195,7 +194,8 @@ public class Feint extends Skill {
 
         @Override
         public void onMarkEnd(LivingEntity caster, LivingEntity target, SkillData sd) {
-            caster.getAttribute(Attributes.ARMOR).removeModifier(UPPER);
+            if (caster == target && caster != null)
+                caster.getAttribute(Attributes.ARMOR).removeModifier(UPPER);
             super.onMarkEnd(caster, target, sd);
         }
     }

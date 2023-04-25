@@ -39,7 +39,7 @@ public class ShieldBash extends Skill {
     }
 
     @Override
-    public HashSet<String> getTags(LivingEntity caster) {
+    public HashSet<String> getTags() {
         return tag;
     }
 

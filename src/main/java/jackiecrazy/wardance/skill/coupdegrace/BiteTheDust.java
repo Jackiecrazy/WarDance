@@ -12,7 +12,7 @@ import java.util.HashSet;
 
 public class BiteTheDust extends CoupDeGrace {
     @Override
-    public HashSet<String> getTags(LivingEntity caster) {
+    public HashSet<String> getTags() {
         return passive;
     }
 

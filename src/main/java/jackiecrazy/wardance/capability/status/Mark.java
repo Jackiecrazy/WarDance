@@ -40,8 +40,8 @@ public class Mark implements IMark {
                 WarDance.LOGGER.warn("status " + d + " is already active, merging according to rules.");
         }
         SkillData sd = d.getSkill().onMarked(d.getCaster(dude.get().level), dude.get(), d, statuus.get(d.getSkill()));
-        if(sd!=null)
-        statuus.put(d.getSkill(), sd);
+        if (sd != null)
+            statuus.put(d.getSkill(), sd);
         else statuus.remove(d.getSkill());
         sync = true;
     }
@@ -118,10 +118,11 @@ public class Mark implements IMark {
         if (ticker == null) return;
         final Collection<SkillData> active = new ArrayList<>(getActiveMarks().values());
         for (SkillData cd : active) {
-            if (cd.getSkill().markTick(cd.getCaster(ticker.level), ticker, cd)) sync = true;
+            final LivingEntity caster = cd.getCaster(ticker.level);
+            if (cd.getSkill().markTick(caster, ticker, cd)) sync = true;
             if (cd.getDuration() <= 0) {
                 removeMark(cd.getSkill());
-                sync=true;
+                sync = true;
             }
         }
         if (sync && ticker instanceof ServerPlayer) {

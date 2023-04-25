@@ -28,7 +28,7 @@ confidence: your spirit regeneration speed scales proportionally with how much s
      */
 
     @Override
-    public HashSet<String> getTags(LivingEntity caster) {
+    public HashSet<String> getTags() {
         return passive;
     }
 

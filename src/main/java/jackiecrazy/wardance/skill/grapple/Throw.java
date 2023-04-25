@@ -77,10 +77,12 @@ public class Throw extends Grapple {
         if (sd.isCondition() && (target.horizontalCollision || target.verticalCollision||collide!=null)) {
             removeMark(target);
             CombatData.getCap(target).consumePosture(7);
-            target.hurt(new CombatDamageSource("fallingBlock", caster).setDamageTyping(CombatDamageSource.TYPE.PHYSICAL).setProcSkillEffects(true).setProcAttackEffects(true), 3);
-            if(collide instanceof LivingEntity elb){
-                CombatData.getCap(elb).consumePosture(7);
-                elb.hurt(new CombatDamageSource("fallingBlock", caster).setDamageTyping(CombatDamageSource.TYPE.PHYSICAL).setProcSkillEffects(true).setProcAttackEffects(true), 3);
+            if(caster!=null) {
+                target.hurt(new CombatDamageSource("fallingBlock", caster).setDamageTyping(CombatDamageSource.TYPE.PHYSICAL).setProcSkillEffects(true).setProcAttackEffects(true), 3);
+                if (collide instanceof LivingEntity elb) {
+                    CombatData.getCap(elb).consumePosture(7);
+                    elb.hurt(new CombatDamageSource("fallingBlock", caster).setDamageTyping(CombatDamageSource.TYPE.PHYSICAL).setProcSkillEffects(true).setProcAttackEffects(true), 3);
+                }
             }
         }
         if (!sd.isCondition()) {

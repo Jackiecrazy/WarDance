@@ -12,7 +12,6 @@ import jackiecrazy.wardance.capability.status.Marks;
 import jackiecrazy.wardance.entity.ai.ExposeGoal;
 import jackiecrazy.wardance.networking.CombatChannel;
 import jackiecrazy.wardance.networking.SyncSkillPacket;
-import jackiecrazy.wardance.skill.Skill;
 import net.minecraft.core.BlockPos;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
@@ -84,19 +83,20 @@ public class EntityHandler {
 
     @SubscribeEvent
     public static void respawn(PlayerEvent.Clone e) {
+        final Player orig=e.getOriginal();
         final Player p = e.getEntity();
-        CasterData.getCap(p).read(CasterData.getCap(e.getOriginal()).write());
+        orig.reviveCaps();
         if (!e.isWasDeath()) {
             final ICombatCapability icc = CombatData.getCap(p);
             icc.read(CombatData.getCap(e.getOriginal()).write());
         }
         //CasterData.getCap(e.getPlayer()).read(CasterData.getCap(e.getOriginal()).write());
         ISkillCapability cap = CasterData.getCap(p);
-        cap.setEquippedSkills(CasterData.getCap(e.getOriginal()).getEquippedSkills());
-        for (Skill s : cap.getEquippedSkills())
-            if (s != null) {
-                s.onEquip(p);
-            }
+        ISkillCapability ocap = CasterData.getCap(orig);
+        cap.setStyle(ocap.getStyle());
+        cap.setEquippedSkills(ocap.getEquippedSkills());
+        //yare yare daze
+        orig.invalidateCaps();
     }
 
     @SubscribeEvent

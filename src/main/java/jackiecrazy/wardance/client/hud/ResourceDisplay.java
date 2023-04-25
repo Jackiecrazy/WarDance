@@ -67,7 +67,7 @@ public class ResourceDisplay implements IGuiOverlay {
         }
         switch (b) {
             case AMO -> drawAmoPostureBarAt(you, ms, elb, width, height);
-            case DARKMEGA -> drawNewDarkPostureBarAt(you, ms, elb, width, height);
+            case DARKMEGA -> drawDarkPostureBarAt(you, ms, elb, width, height);
             case NEWDARK -> drawNewDarkPostureBarAt(you, ms, elb, width, height);
             case CLASSIC -> drawOldPostureBarAt(you, ms, elb, width, height);
         }

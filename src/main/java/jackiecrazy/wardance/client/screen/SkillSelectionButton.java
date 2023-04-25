@@ -34,18 +34,17 @@ public abstract class SkillSelectionButton extends ImageButton {
                 RenderSystem.setShaderColor(173 / 255f, 216 / 255f, 230 / 255f, 1);
             else {
                 final LocalPlayer player = Minecraft.getInstance().player;
-                if (!getParentSelection().isEquippableWith(s, player))//is family, cannot equip
+                if (!getParentSelection().isEquippableWith(s, player))//hard incompatibility
                     RenderSystem.setShaderColor(220 / 255f, 20 / 255f, 60 / 255f, 1);
-                else if (parent.style.getStyle() != null && parent.getNumColors().size() > parent.style.getStyle().getMaxColors())
+                else if (parent.style.getStyle() != null && !parent.style.getStyle().isEquippableWith(s, parent.collectSkills()))
                     RenderSystem.setShaderColor(220 / 255f, 20 / 255f, 60 / 255f, 1);
-                else if (!getParentSelection().isCompatibleWith(s, player))//incompatibility
+                else if (!getParentSelection().isCompatibleWith(s, player))//soft incompatibility
                     RenderSystem.setShaderColor(200 / 255f, 160 / 255f, 0 / 255f, 1);
                 else if (!isValidSelection())//just can't stick it in for some reason, generally passive/active mixup
                     RenderSystem.setShaderColor(230 / 255f, 110 / 255f, 0 / 255f, 1);
             }
         }
     }
-
 
 
     public Skill getSkill() {

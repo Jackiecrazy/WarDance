@@ -15,7 +15,7 @@ import java.util.HashSet;
 
 public abstract class IronGuard extends Skill {
     @Override
-    public HashSet<String> getTags(LivingEntity caster) {
+    public HashSet<String> getTags() {
         return passive;
     }
 

@@ -53,7 +53,6 @@ public class SkillSelectionScreen extends Screen {
     private final PassiveButton[] passives = new PassiveButton[5];
     private final int numButtons = Skill.categoryMap.size();
     private final Comparator<SkillCategorySort> CATEGORYSORT = Comparator.comparing(o -> StringUtils.toLowerCase(stripControlCodes(o.getText().getString())));
-
     private final Comparator<Skill> SKILLSORT = Comparator.comparing(o -> StringUtils.toLowerCase(stripControlCodes(o.getDisplayName(null).getString())));
     private final Comparator<SkillStyle> STYLESORT = new Comparator<SkillStyle>() {
         @Override
@@ -62,8 +61,8 @@ public class SkillSelectionScreen extends Screen {
             if (o1.getMaxColorsForSorting() - o2.getMaxColorsForSorting() != 0)
                 return o1.getMaxColorsForSorting() - o2.getMaxColorsForSorting();
             //styles with specific color requirements are put at the top. The more specific the requirements, the higher they rank
-            if(o1.getMaxColors()-o2.getMaxColors()!=0)
-                return o1.getMaxColors()-o2.getMaxColors();
+            if (o1.getMaxColors() - o2.getMaxColors() != 0)
+                return o1.getMaxColors() - o2.getMaxColors();
             //alphabet
             return SKILLSORT.compare(o1, o2);
         }
@@ -72,6 +71,8 @@ public class SkillSelectionScreen extends Screen {
     boolean refresh = false;
     SkillStyleButton style;
     int update = 0;
+    private List<Skill> skillCache;
+    private boolean cacheDirty;
     //public VariationListWidget.VariationEntry selectedVariation = null;
     private SkillListWidget skillList;
     //private VariationListWidget variationList;
@@ -195,15 +196,16 @@ public class SkillSelectionScreen extends Screen {
     boolean isValidInsertion(Skill insert) {
         final LocalPlayer player = Minecraft.getInstance().player;
         if (style.getStyle() == null && !(insert instanceof SkillStyle)) return false;
-        if (style.getSkill() != null && !style.getStyle().isEquippableWith(insert, player)) return false;
-        if (style.getStyle() != null && getNumColors().size() > style.getStyle().getMaxColors()) return false;
+        if (style.getSkill() != null && !style.getStyle().isEquippableWith(insert, collectSkills())) return false;
+//        if (style.getStyle() != null && getNumColors().size() > style.getStyle().getMaxColors())
+//            return false;//fixme breaks demon hunter
         for (SkillSelectionButton ssb : skillPie)
             if (ssb.getSkill() != null && (!ssb.getSkill().isEquippableWith(insert, player)))
                 return false;
         for (SkillSelectionButton ssb : passives)
             if (ssb.getSkill() != null && (!ssb.getSkill().isEquippableWith(insert, player)))
                 return false;
-        return CasterData.getCap(player).isSkillSelectable(insert);
+        return true;
     }
 
     void filterSkills(SkillCategory newSort) {
@@ -226,11 +228,7 @@ public class SkillSelectionScreen extends Screen {
 
     @Override
     public void onClose() {
-        List<Skill> newSkills = new ArrayList<>();
-        for (SkillSliceButton ssb : skillPie)
-            newSkills.add(ssb.getSkill());
-        for (PassiveButton pb : passives)
-            newSkills.add(pb.getSkill());
+        List<Skill> newSkills = collectSkills();
         CasterData.getCap(Minecraft.getInstance().player).setStyle(style.getStyle());
         CasterData.getCap(Minecraft.getInstance().player).setEquippedSkills(newSkills);
         CombatChannel.INSTANCE.sendToServer(new UpdateSkillSelectionPacket(style.getStyle(), newSkills));
@@ -300,7 +298,7 @@ public class SkillSelectionScreen extends Screen {
 //        this.variationList.setLeftPos(PADDING * 2 + listWidth);
 
         //currently equipped skills
-        List<Skill> oldList = cap.getEquippedSkills();
+        List<Skill> oldList = skillCache == null ? cap.getEquippedSkills() : skillCache;
         for (int d = 0; d < skillPie.length; d++) {
             skillPie[d] = new SkillSliceButton(this, width - skillCircleWidth + noStyleOffset, PADDING / 2, skillCircleWidth, fixedU[d], fixedV[d], radial, d);
             if (!noStyle)
@@ -357,6 +355,8 @@ public class SkillSelectionScreen extends Screen {
             String s = this.search.getValue();
             SkillCategory sort = this.displayedCategory;
             SkillListWidget.CategoryEntry selected = this.selectedSkill;
+            //store current selection before reset
+            skillCache = collectSkills();
             this.init(getMinecraftInstance(), width, height);
             this.search.setValue(s);
             this.selectedSkill = selected;
@@ -389,12 +389,22 @@ public class SkillSelectionScreen extends Screen {
         String s = this.search.getValue();
         SkillCategory sort = this.displayedCategory;
         SkillListWidget.CategoryEntry selected = this.selectedSkill;
+        skillCache=collectSkills();
         this.init(mc, width, height);
         this.search.setValue(s);
         this.selectedSkill = selected;
         if (!this.search.getValue().isEmpty()) reloadSkills();
         if (sort != SkillColors.none) filterSkills(sort);
         updateCache();
+    }
+
+    public List<Skill> collectSkills() {
+        List<Skill> newSkills = new ArrayList<>();
+        for (SkillSliceButton ssb : skillPie)
+            newSkills.add(ssb.getSkill());
+        for (PassiveButton pb : passives)
+            newSkills.add(pb.getSkill());
+        return newSkills;
     }
 
     public Minecraft getMinecraftInstance() {

@@ -45,7 +45,7 @@ public class SkillCapability implements ISkillCapability {
     @Override
     public boolean isSkillSelectable(Skill s) {
         final LivingEntity bruv = dude.get();
-        if (bruv != null) {
+        if (bruv != null && s != null) {
             if (!s.isSelectable(bruv)) return false;
             for (Skill skill : skillList) {
                 if (!skill.isEquippableWith(s, bruv)) return false;
@@ -143,7 +143,7 @@ public class SkillCapability implements ISkillCapability {
     @Override
     public boolean isTagActive(String tag) {
         for (SkillData e : new ArrayList<>(data.values())) {
-            if (e.getState() == Skill.STATE.ACTIVE && e.getSkill().getTags(dude.get()).contains(tag))
+            if (e.getState() == Skill.STATE.ACTIVE && e.getSkill().getTags().contains(tag))
                 return true;
         }
         return false;
@@ -152,7 +152,7 @@ public class SkillCapability implements ISkillCapability {
     @Override
     public void removeActiveTag(String tag) {
         for (Map.Entry<Skill, SkillData> e : data.entrySet()) {
-            if (e.getKey().getTags(dude.get()).contains(tag))
+            if (e.getKey().getTags().contains(tag))
                 changeSkillState(e.getKey(), Skill.STATE.INACTIVE);
         }
     }
@@ -193,6 +193,7 @@ public class SkillCapability implements ISkillCapability {
         if (section.contains(null)) {
             int nil = section.indexOf(null);
             section.set(nil, skill);
+            skill.onEquip(dude.get());
             sync = true;
             return true;
         }
@@ -204,7 +205,7 @@ public class SkillCapability implements ISkillCapability {
         if (equippedSkill.contains(from)) {
             int nil = equippedSkill.indexOf(from);
             equippedSkill.set(nil, null);
-            if (!basicSanityCheck(to)){
+            if (!basicSanityCheck(to)) {
                 equippedSkill.set(nil, from);
                 return false;
             }
@@ -296,11 +297,11 @@ public class SkillCapability implements ISkillCapability {
         final boolean gate = caster.level.getGameRules().getBoolean(WarDance.GATED_SKILLS);
         sync |= gatedSkills != gate;
         gatedSkills = gate;
-        for (Skill s:getEquippedSkillsAndStyle()) {
+        for (Skill s : getEquippedSkillsAndStyle()) {
             if (s == null) {
                 continue;
             }
-            SkillData d=nonNullGet(s);
+            SkillData d = nonNullGet(s);
             if (d.getSkill().equippedTick(caster, d)) {
                 d.markDirty();
                 fastSync = true;
@@ -335,8 +336,9 @@ public class SkillCapability implements ISkillCapability {
     }
 
     private boolean basicSanityCheck(Skill insert) {
-        if (skillList.contains(insert)) return false;
+        if (equippedSkill.contains(insert)) return false;
         if (style != null && !style.isEquippableWith(insert, dude.get())) return false;
+        if (!isSkillSelectable(insert)) return false;
         return true;
     }
 

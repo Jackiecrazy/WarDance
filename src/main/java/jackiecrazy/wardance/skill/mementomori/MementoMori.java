@@ -41,7 +41,7 @@ pound of flesh: active skill. Consumes all your spirit, and until your spirit re
     }
 
     @Override
-    public HashSet<String> getTags(LivingEntity caster) {
+    public HashSet<String> getTags() {
         return passive;
     }
 

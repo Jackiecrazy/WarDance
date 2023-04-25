@@ -18,7 +18,7 @@ import java.util.HashSet;
 public class Recovery extends Skill {
 
     @Override
-    public HashSet<String> getTags(LivingEntity caster) {
+    public HashSet<String> getTags() {
         return passive;
     }
 

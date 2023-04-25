@@ -24,7 +24,7 @@ public class WarCry extends SkillStyle {
     }
 
     @Override
-    public HashSet<String> getTags(LivingEntity caster) {
+    public HashSet<String> getTags() {
         return tag;
     }
 

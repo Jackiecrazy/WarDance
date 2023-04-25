@@ -59,9 +59,12 @@ public class Sifu extends ColorRestrictionStyle {
                 ((SifuDropsMixin) target).callDropAllDeathLoot(target.getLastDamageSource());
                 sd.addArbitraryFloat(1);
             }
-            GoalCapabilityProvider.getCap(target).ifPresent((a) -> a.setFearSource(caster));
-            target.move(MoverType.SELF, target.position().subtract(caster.position()).normalize().scale(0.01));
-            if (target.distanceToSqr(caster) > 256 || !GeneralUtils.isFacingEntity(caster, target, 180))
+            if (caster != null) {
+                GoalCapabilityProvider.getCap(target).ifPresent((a) -> a.setFearSource(caster));
+                target.move(MoverType.SELF, target.position().subtract(caster.position()).normalize().scale(0.01));
+                if (target.distanceToSqr(caster) > 256 || !GeneralUtils.isFacingEntity(caster, target, 180))
+                    target.remove(Entity.RemovalReason.KILLED);
+            } else
                 target.remove(Entity.RemovalReason.KILLED);
             return false;
         }
@@ -87,7 +90,7 @@ public class Sifu extends ColorRestrictionStyle {
             }
         }
         //great evils
-        if (isGreatEvil(target)) return;
+        if (target == null || isGreatEvil(target)) return;
         //applies to eligible enemies
         if (procPoint instanceof LivingAttackEvent lae && procPoint.getPhase() == EventPriority.HIGHEST && lae.getEntity() == target) {
             if (!CombatData.getCap(target).isVulnerable()) {
