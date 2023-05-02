@@ -465,6 +465,13 @@ public class CombatHandler {
     public static void pain(LivingHurtEvent e) {
         if (GeneralConfig.debug) {
             WarDance.LOGGER.debug("damage from " + e.getSource() + " received with amount " + e.getAmount());
+            if(e.getSource() ==DamageSource.GENERIC){
+                try{
+                    throw new IllegalArgumentException("do not use this damagesource!");
+                }catch (Exception a){
+                    a.printStackTrace();
+                }
+            }
         }
         LivingEntity uke = e.getEntity();
         LivingEntity kek = null;

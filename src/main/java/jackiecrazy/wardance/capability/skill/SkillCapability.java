@@ -336,6 +336,7 @@ public class SkillCapability implements ISkillCapability {
     }
 
     private boolean basicSanityCheck(Skill insert) {
+        if (insert == null) return true;
         if (equippedSkill.contains(insert)) return false;
         if (style != null && !style.isEquippableWith(insert, dude.get())) return false;
         if (!isSkillSelectable(insert)) return false;

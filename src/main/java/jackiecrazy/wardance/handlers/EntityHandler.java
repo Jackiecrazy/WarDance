@@ -34,6 +34,7 @@ import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.network.PacketDistributor;
 
 import java.util.HashMap;
+import java.util.Objects;
 import java.util.concurrent.ConcurrentHashMap;
 
 @Mod.EventBusSubscriber(modid = WarDance.MODID)
@@ -83,7 +84,7 @@ public class EntityHandler {
 
     @SubscribeEvent
     public static void respawn(PlayerEvent.Clone e) {
-        final Player orig=e.getOriginal();
+        final Player orig = e.getOriginal();
         final Player p = e.getEntity();
         orig.reviveCaps();
         if (!e.isWasDeath()) {
@@ -95,6 +96,7 @@ public class EntityHandler {
         ISkillCapability ocap = CasterData.getCap(orig);
         cap.setStyle(ocap.getStyle());
         cap.setEquippedSkills(ocap.getEquippedSkills());
+        cap.getEquippedSkillsAndStyle().stream().filter(Objects::nonNull).forEach(a->a.onEquip(p));
         //yare yare daze
         orig.invalidateCaps();
     }

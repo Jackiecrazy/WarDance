@@ -93,15 +93,18 @@ public class Sifu extends ColorRestrictionStyle {
         if (target == null || isGreatEvil(target)) return;
         //applies to eligible enemies
         if (procPoint instanceof LivingAttackEvent lae && procPoint.getPhase() == EventPriority.HIGHEST && lae.getEntity() == target) {
-            if (!CombatData.getCap(target).isVulnerable()) {
+            if (CombatData.getCap(target).isVulnerable()) {
                 //cannot attack the weak
                 lae.setCanceled(true);
             }
             if (!isMarked(target) && cast(caster)) {
                 mark(caster, target, 4f, 0);
             }
-        } else if (procPoint instanceof LivingHurtEvent lae && procPoint.getPhase() == EventPriority.HIGHEST && isMarked(target) && lae.getEntity() == target) {
-            lae.setAmount(lae.getAmount() / Math.max(getExistingMark(target).getDuration(), 1));
+        } else if (procPoint instanceof LivingHurtEvent lae && procPoint.getPhase() == EventPriority.HIGHEST && lae.getEntity() == target) {
+            if (isMarked(target))
+                lae.setAmount(lae.getAmount() * Math.max(5 - getExistingMark(target).getDuration(), 1) * 0.2f);
+            else
+                lae.setAmount(lae.getAmount() / 5);
         } else if (procPoint instanceof StunEvent sce && procPoint.getPhase() == EventPriority.HIGHEST && sce.getEntity() != caster) {
             //upgrade to knockdown
             sce.setKnockdown(true);
