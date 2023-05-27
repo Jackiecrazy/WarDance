@@ -3,6 +3,7 @@ package jackiecrazy.wardance.skill.regenspirit;
 import jackiecrazy.footwork.api.FootworkAttributes;
 import jackiecrazy.footwork.capability.resources.CombatData;
 import jackiecrazy.wardance.skill.*;
+import jackiecrazy.wardance.utils.SkillUtils;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.ai.attributes.AttributeModifier;
 import net.minecraftforge.event.entity.living.LivingDeathEvent;
@@ -48,17 +49,15 @@ confidence: your spirit regeneration speed scales proportionally with how much s
 
     @Override
     public void onEquip(LivingEntity caster) {
-        caster.getAttribute(FootworkAttributes.MAX_SPIRIT.get()).removeModifier(sprint);
-        caster.getAttribute(FootworkAttributes.MAX_SPIRIT.get()).addPermanentModifier(sprint);
-        caster.getAttribute(FootworkAttributes.SPIRIT_REGEN.get()).removeModifier(sprint2);
-        caster.getAttribute(FootworkAttributes.SPIRIT_REGEN.get()).addPermanentModifier(sprint2);
+        SkillUtils.addAttribute(caster, FootworkAttributes.MAX_SPIRIT.get(), sprint);
+        SkillUtils.addAttribute(caster, FootworkAttributes.SPIRIT_REGEN.get(), sprint2);
         super.onEquip(caster);
     }
 
     @Override
     public void onUnequip(LivingEntity caster, SkillData stats) {
-        caster.getAttribute(FootworkAttributes.MAX_SPIRIT.get()).removeModifier(sprint);
-        caster.getAttribute(FootworkAttributes.SPIRIT_REGEN.get()).removeModifier(sprint2);
+        SkillUtils.removeAttribute(caster, FootworkAttributes.MAX_SPIRIT.get(), sprint);
+        SkillUtils.removeAttribute(caster, FootworkAttributes.SPIRIT_REGEN.get(), sprint2);
     }
 
     @Override

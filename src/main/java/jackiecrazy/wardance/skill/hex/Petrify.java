@@ -5,12 +5,11 @@ import jackiecrazy.footwork.potion.FootworkEffects;
 import jackiecrazy.footwork.utils.TargetingUtils;
 import jackiecrazy.wardance.skill.SkillData;
 import jackiecrazy.wardance.utils.SkillUtils;
+import net.minecraft.core.particles.ParticleTypes;
+import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.ai.attributes.AttributeModifier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
-import net.minecraft.world.entity.ai.attributes.AttributeInstance;
-import net.minecraft.core.particles.ParticleTypes;
-import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraftforge.event.entity.living.LivingDamageEvent;
 import net.minecraftforge.eventbus.api.Event;
 
@@ -41,30 +40,15 @@ public class Petrify extends Hex {
 
     @Override
     public SkillData onMarked(LivingEntity caster, LivingEntity target, SkillData sd, @Nullable SkillData existing) {
-        final AttributeInstance speed = target.getAttribute(Attributes.MOVEMENT_SPEED);
-        if (speed != null) {
-            speed.removeModifier(SPEED);
-            speed.addPermanentModifier(SPEED);
-        }
-        final AttributeInstance fly = target.getAttribute(Attributes.FLYING_SPEED);
-        if (fly != null) {
-            fly.removeModifier(SPEED);
-            fly.addPermanentModifier(SPEED);
-        }
+        SkillUtils.addAttribute(target, Attributes.MOVEMENT_SPEED, SPEED);
+        SkillUtils.addAttribute(target, Attributes.FLYING_SPEED, SPEED);
         return super.onMarked(caster, target, sd, existing);
     }
 
     @Override
     public void onMarkEnd(LivingEntity caster, LivingEntity target, SkillData sd) {
-        final AttributeInstance speed = target.getAttribute(Attributes.MOVEMENT_SPEED);
-        if (speed != null) {
-            speed.removeModifier(SPEED);
-        }
-
-        final AttributeInstance fly = target.getAttribute(Attributes.FLYING_SPEED);
-        if (fly != null) {
-            fly.removeModifier(SPEED);
-        }
+        SkillUtils.removeAttribute(target, Attributes.MOVEMENT_SPEED, SPEED);
+        SkillUtils.removeAttribute(target, Attributes.FLYING_SPEED, SPEED);
         target.addEffect(new MobEffectInstance(FootworkEffects.PETRIFY.get(), 60));
         super.onMarkEnd(caster, target, sd);
     }

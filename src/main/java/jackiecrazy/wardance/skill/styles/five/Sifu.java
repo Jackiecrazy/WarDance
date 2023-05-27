@@ -18,6 +18,7 @@ import jackiecrazy.wardance.skill.WarSkills;
 import jackiecrazy.wardance.skill.styles.ColorRestrictionStyle;
 import jackiecrazy.wardance.utils.CombatUtils;
 import jackiecrazy.wardance.utils.DamageUtils;
+import jackiecrazy.wardance.utils.SkillUtils;
 import net.minecraft.core.Registry;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.TagKey;
@@ -47,10 +48,12 @@ public class Sifu extends ColorRestrictionStyle {
         super(10, true, SkillColors.purple);
     }
 
+    //redundancy, just in case
     @SubscribeEvent
     public static void death(LivingDeathEvent e) {
         if (Marks.getCap(e.getEntity()).isMarked(WarSkills.SIFU.get())) {
             e.setCanceled(true);
+            fakeDie(e.getEntity(), e.getEntity().getCombatTracker().getKiller());
         }
     }
 
@@ -69,9 +72,11 @@ public class Sifu extends ColorRestrictionStyle {
                 mob.goalSelector.addGoal(0, new FearGoal(p));
         }
         final SkillData sd = new SkillData(WarSkills.SIFU.get(), 100).flagCondition(true);
-        if (caster != null) sd.setCaster(caster);
+        if (caster != null) {
+            sd.setCaster(caster);
+            EffectUtils.causeFear(target, caster, 2000);
+        }
         Marks.getCap(target).mark(sd);
-        EffectUtils.causeFear(target, caster, 2000);
         CombatData.getCap(target).knockdown(120);
     }
 
@@ -87,17 +92,13 @@ public class Sifu extends ColorRestrictionStyle {
     @Override
     public boolean markTick(LivingEntity caster, LivingEntity target, SkillData sd) {
         if (sd.isCondition() && target instanceof Mob && !CombatData.getCap(target).isVulnerable()) {
-            if (sd.getArbitraryFloat() == 0) {
-                ((SifuDropsMixin) target).callDropAllDeathLoot(target.getLastDamageSource());
-                sd.addArbitraryFloat(1);
-            }
             if (caster != null) {
                 GoalCapabilityProvider.getCap(target).ifPresent((a) -> a.setFearSource(caster));
                 target.move(MoverType.SELF, target.position().subtract(caster.position()).normalize().scale(0.01));
                 if (target.distanceToSqr(caster) > 256 || !GeneralUtils.isFacingEntity(caster, target, 180))
-                    target.remove(Entity.RemovalReason.KILLED);
+                    removeMark(target);
             } else
-                target.remove(Entity.RemovalReason.KILLED);
+                removeMark(target);
             return false;
         }
         return markTickDown(sd);
@@ -144,7 +145,7 @@ public class Sifu extends ColorRestrictionStyle {
         } else if (procPoint instanceof LivingDeathEvent e && e.getPhase() == EventPriority.LOWEST && e.getEntity() != caster) {
             //run away!
             e.setCanceled(true);
-
+            fakeDie(target, caster);
         }
     }
 
@@ -159,14 +160,15 @@ public class Sifu extends ColorRestrictionStyle {
                 CombatUtils.knockBack(entity, caster, 0.5f, true, false);
             }
         }
-        target.getAttribute(Attributes.KNOCKBACK_RESISTANCE).addPermanentModifier(kbr);
+        SkillUtils.addAttribute(target, Attributes.KNOCKBACK_RESISTANCE, kbr);
         return sd;
     }
 
     @Override
     public void onMarkEnd(LivingEntity caster, LivingEntity target, SkillData sd) {
-        target.getAttribute(Attributes.KNOCKBACK_RESISTANCE).removeModifier(kbr);
+        SkillUtils.removeAttribute(target, Attributes.KNOCKBACK_RESISTANCE, kbr);
         if (sd.isCondition() && target instanceof Mob) {
+            ((SifuDropsMixin) target).callDropAllDeathLoot(target.getLastDamageSource());
             target.remove(Entity.RemovalReason.KILLED);
         }
     }

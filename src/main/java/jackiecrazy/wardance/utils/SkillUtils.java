@@ -45,8 +45,25 @@ public class SkillUtils {
         atr.removeModifier(id);
         if (amount != 0) {
             AttributeModifier am = new AttributeModifier(id, "skill modifier", amount, op);
-            atr.addTransientModifier(am);
+            atr.addPermanentModifier(am);
         }
+    }
+
+    public static void addAttribute(LivingEntity to, Attribute a, AttributeModifier am) {
+        final AttributeInstance atr = to.getAttribute(a);
+        if (atr == null) return;
+        atr.removeModifier(am.getId());
+        atr.addPermanentModifier(am);
+    }
+
+    public static void removeAttribute(LivingEntity to, Attribute a, AttributeModifier am) {
+        removeAttribute(to, a, am.getId());
+    }
+
+    public static void removeAttribute(LivingEntity to, Attribute a, UUID am) {
+        final AttributeInstance atr = to.getAttribute(a);
+        if (atr == null) return;
+        atr.removeModifier(am);
     }
 
     public static void createCloud(Level world, Entity entityIn, double x, double y, double z, float size, ParticleOptions type) {

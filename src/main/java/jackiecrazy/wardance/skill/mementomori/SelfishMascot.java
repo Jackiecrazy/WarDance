@@ -41,7 +41,7 @@ public class SelfishMascot extends Skill {
                     if (TargetingUtils.isAlly(caster, e))
                         e.addEffect(new MobEffectInstance(MobEffects.LUCK, 60, 1));
                 } else {
-                    //absorb luck
+                    //absorb luck in a really weird and funky way
                     e.addEffect(new MobEffectInstance(MobEffects.UNLUCK, 60));
                     e.getAttribute(Attributes.LUCK).removeModifier(uid);
                     stacks += e.getAttributeValue(Attributes.LUCK);

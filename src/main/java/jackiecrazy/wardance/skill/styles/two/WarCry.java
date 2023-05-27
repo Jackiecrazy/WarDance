@@ -1,11 +1,7 @@
 package jackiecrazy.wardance.skill.styles.two;
 
-import jackiecrazy.footwork.capability.resources.CombatData;
-import jackiecrazy.wardance.WarDance;
 import jackiecrazy.wardance.skill.*;
 import jackiecrazy.wardance.skill.styles.SkillStyle;
-import net.minecraft.sounds.SoundEvents;
-import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.ai.attributes.AttributeModifier;
 import net.minecraftforge.eventbus.api.Event;
@@ -47,12 +43,6 @@ public class WarCry extends SkillStyle {
 
     protected int getDuration(float might) {
         return Math.max(0, (int) (might * 1.5));
-    }
-
-    protected void evoke(LivingEntity caster) {
-        //CombatData.getCap(caster).addMight(mightConsumption(caster));
-        caster.level.playSound(null, caster, SoundEvents.FIRE_EXTINGUISH, SoundSource.AMBIENT, 0.3f + WarDance.rand.nextFloat() * 0.5f, 0.5f + WarDance.rand.nextFloat());
-        CombatData.getCap(caster).setMight(0);
     }
 
     @Override

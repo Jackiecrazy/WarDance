@@ -5,6 +5,7 @@ import jackiecrazy.footwork.capability.resources.CombatData;
 import jackiecrazy.footwork.utils.GeneralUtils;
 import jackiecrazy.wardance.skill.ProcPoints;
 import jackiecrazy.wardance.skill.SkillData;
+import jackiecrazy.wardance.utils.SkillUtils;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.ai.attributes.AttributeModifier;
 import net.minecraftforge.common.ForgeMod;
@@ -22,13 +23,13 @@ public class WindScar extends WarCry {
 
     @Override
     public void onEquip(LivingEntity caster) {
-        caster.getAttribute(ForgeMod.ATTACK_RANGE.get()).addPermanentModifier(reach);
+        SkillUtils.addAttribute(caster, ForgeMod.ATTACK_RANGE.get(), reach);
         super.onEquip(caster);
     }
 
     @Override
     public void onUnequip(LivingEntity caster, SkillData stats) {
-        caster.getAttribute(ForgeMod.ATTACK_RANGE.get()).removeModifier(reach);
+        SkillUtils.removeAttribute(caster, ForgeMod.ATTACK_RANGE.get(), reach);
         super.onUnequip(caster, stats);
     }
 
@@ -39,11 +40,6 @@ public class WindScar extends WarCry {
     @Override
     protected int getDuration(float might) {
         return (int) (3 * might);
-    }
-
-    @Override
-    protected void evoke(LivingEntity caster) {
-        super.evoke(caster);
     }
 
     @Override

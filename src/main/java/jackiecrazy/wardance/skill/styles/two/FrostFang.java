@@ -5,6 +5,7 @@ import jackiecrazy.wardance.event.ParryEvent;
 import jackiecrazy.wardance.skill.ProcPoints;
 import jackiecrazy.wardance.skill.SkillData;
 import jackiecrazy.wardance.skill.SkillTags;
+import jackiecrazy.wardance.utils.SkillUtils;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.ai.attributes.AttributeModifier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
@@ -25,13 +26,6 @@ public class FrostFang extends WarCry {
     @Override
     protected int getDuration(float might) {
         return (int) (might * 20);
-    }
-
-    @Override
-    protected void evoke(LivingEntity caster) {
-        caster.getAttribute(Attributes.MOVEMENT_SPEED).removeModifier(speed);
-        caster.getAttribute(Attributes.MOVEMENT_SPEED).addTransientModifier(speed);
-        super.evoke(caster);
     }
 
     @Override
@@ -75,14 +69,13 @@ public class FrostFang extends WarCry {
 
     @Override
     public void onEquip(LivingEntity caster) {
-        caster.getAttribute(Attributes.LUCK).removeModifier(luck.getId());
-        caster.getAttribute(Attributes.LUCK).addPermanentModifier(luck);
+        SkillUtils.addAttribute(caster, Attributes.LUCK, luck);
         super.onEquip(caster);
     }
 
     @Override
     public void onUnequip(LivingEntity caster, SkillData stats) {
-        caster.getAttribute(Attributes.LUCK).removeModifier(luck);
+        SkillUtils.removeAttribute(caster, Attributes.LUCK, luck);
         super.onUnequip(caster, stats);
     }
 }

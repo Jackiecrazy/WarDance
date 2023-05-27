@@ -5,6 +5,7 @@ import jackiecrazy.footwork.capability.resources.CombatData;
 import jackiecrazy.footwork.capability.resources.ICombatCapability;
 import jackiecrazy.wardance.skill.SkillData;
 import jackiecrazy.wardance.skill.styles.SkillStyle;
+import jackiecrazy.wardance.utils.SkillUtils;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.ai.attributes.AttributeModifier;
 import net.minecraftforge.event.entity.living.LivingEvent;
@@ -24,13 +25,13 @@ public class HoppingMad extends SkillStyle {
 
     @Override
     public void onEquip(LivingEntity caster) {
-        caster.getAttribute(FootworkAttributes.MAX_POSTURE.get()).addPermanentModifier(mad);
+        SkillUtils.addAttribute(caster, FootworkAttributes.MAX_POSTURE.get(), mad);
         super.onEquip(caster);
     }
 
     @Override
     public void onUnequip(LivingEntity caster, SkillData stats) {
-        caster.getAttribute(FootworkAttributes.MAX_POSTURE.get()).removeModifier(mad);
+        SkillUtils.removeAttribute(caster, FootworkAttributes.MAX_POSTURE.get(), mad);
         super.onUnequip(caster, stats);
     }
 
