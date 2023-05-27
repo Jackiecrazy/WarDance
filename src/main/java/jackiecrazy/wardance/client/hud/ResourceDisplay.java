@@ -325,6 +325,7 @@ public class ResourceDisplay implements IGuiOverlay {
                 mc.gui.blit(ms, atX, barY, 243 - flexBarWidth, 24, flexBarWidth, barHeight);
                 mc.gui.blit(ms, atX - flexBarWidth, barY, 0, 24, flexBarWidth, barHeight);
             } else {
+                //otherwise draw normal posture
                 flexBarWidth = (int) (itsc.getPosture() * halfBarWidth / itsc.getMaxPosture()) + 3;
                 mc.gui.blit(ms, atX, barY, 243 - flexBarWidth, 12, flexBarWidth, barHeight);
                 mc.gui.blit(ms, atX - flexBarWidth, barY, 0, 12, flexBarWidth, barHeight);
@@ -333,7 +334,7 @@ public class ResourceDisplay implements IGuiOverlay {
             if (itsc.getMaxFracture() > 0) {
                 if (itsc.getFractureCount() > 0) {//shattering
                     float otemp = (float) itsc.getFractureCount() / itsc.getMaxFracture();
-                    int fini = (int) (otemp * flexBarWidth);
+                    int fini = (int) (otemp * halfBarWidth);
                     int shatterV = Math.min(36 + (int) (otemp * 2.8) * 12, 60);
                     //gold that stretches out to the edges before disappearing
                     mc.gui.blit(ms, atX + 5, atY - barHeight / 2, 243 - fini, shatterV, fini, barHeight);

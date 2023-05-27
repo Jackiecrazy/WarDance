@@ -57,10 +57,11 @@ Flow: cooldown of all attack skills are halved, and any cooled attack skill is a
         if(stats.getState()!=STATE.ACTIVE)return false;
         if (!CombatData.getCap(caster).consumeMight(0.05f)) markUsed(caster);
         caster.attackStrengthTicker++;
-        if (stats.getState() == STATE.ACTIVE && CombatUtils.getCooledAttackStrength(caster, InteractionHand.MAIN_HAND, 0.5f) == 1f && !caster.isAutoSpinAttack()) {
+        if (stats.getState() == STATE.ACTIVE && CombatUtils.getCooledAttackStrength(caster, InteractionHand.MAIN_HAND, 0f) == 1f && !caster.isAutoSpinAttack()) {
             //spin to win!
             CombatData.getCap(caster).setForcedSweep(360);
             CombatUtils.sweep(caster, null, InteractionHand.MAIN_HAND, caster.getAttributeValue(ForgeMod.ATTACK_RANGE.get()));
+            CombatUtils.setHandCooldown(caster, InteractionHand.MAIN_HAND, 0, true);
         }
         return super.equippedTick(caster, stats);
     }

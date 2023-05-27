@@ -192,6 +192,9 @@ public class CombatHandler {
 
     @SubscribeEvent(priority = EventPriority.HIGHEST)
     public static void cancel(final LivingAttackEvent e) {
+        if (GeneralConfig.debug) {
+            WarDance.LOGGER.debug("attack from " + e.getSource() + " started with amount " + e.getAmount());
+        }
         if (!e.getEntity().level.isClientSide && e.getSource() != null && DamageUtils.isPhysicalAttack(e.getSource())) {
             LivingEntity uke = e.getEntity();
             if (MovementUtils.hasInvFrames(uke)) {
@@ -220,6 +223,9 @@ public class CombatHandler {
 
     @SubscribeEvent(priority = EventPriority.LOWEST)//because compat with BHT...
     public static void parry(final LivingAttackEvent e) {
+        if (GeneralConfig.debug) {
+            WarDance.LOGGER.debug("attack source " + e.getSource() + " sent to hurt check with amount " + e.getAmount());
+        }
         //if physical attack with source
         if (!e.getEntity().level.isClientSide && e.getSource() != null && DamageUtils.isPhysicalAttack(e.getSource())) {
             LivingEntity uke = e.getEntity();
@@ -231,7 +237,7 @@ public class CombatHandler {
             ItemStack attack = CombatUtils.getAttackingItemStack(e.getSource());
             //melee attack from an entity source over 0
             if (DamageUtils.isMeleeAttack(e.getSource()) && e.getSource().getEntity() instanceof LivingEntity seme && attack != null && e.getAmount() > 0) {
-                if(seme.getType().getDescriptionId().equals("entity.evilcraft.vengeance_spirit")){
+                if (seme.getType().getDescriptionId().equals("entity.evilcraft.vengeance_spirit")) {
                     //makes the world lag plus how do you parry a ghost
                     return;
                 }
@@ -465,13 +471,6 @@ public class CombatHandler {
     public static void pain(LivingHurtEvent e) {
         if (GeneralConfig.debug) {
             WarDance.LOGGER.debug("damage from " + e.getSource() + " received with amount " + e.getAmount());
-            if(e.getSource() ==DamageSource.GENERIC){
-                try{
-                    throw new IllegalArgumentException("do not use this damagesource!");
-                }catch (Exception a){
-                    a.printStackTrace();
-                }
-            }
         }
         LivingEntity uke = e.getEntity();
         LivingEntity kek = null;
@@ -518,8 +517,16 @@ public class CombatHandler {
         }
     }
 
+    @SubscribeEvent(priority = EventPriority.LOWEST, receiveCanceled = true)
+    public static void paint(LivingHurtEvent e) {
+        if (GeneralConfig.debug)
+            WarDance.LOGGER.debug((e.isCanceled() ? "canceled " : "") + "damage from " + e.getSource() + " sent for armor calculations with amount " + e.getAmount());
+    }
+
     @SubscribeEvent(priority = EventPriority.HIGHEST)
     public static void tanky(LivingDamageEvent e) {
+        if (GeneralConfig.debug)
+            WarDance.LOGGER.debug("damage from " + e.getSource() + " recalculated to " + e.getAmount());
         final LivingEntity uke = e.getEntity();
         //no food!
         ItemStack active = uke.getItemInHand(uke.getUsedItemHand());

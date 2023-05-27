@@ -12,6 +12,7 @@ import jackiecrazy.wardance.WarDance;
 import jackiecrazy.wardance.config.CombatConfig;
 import jackiecrazy.wardance.config.GeneralConfig;
 import jackiecrazy.wardance.event.ProjectileParryEvent;
+import jackiecrazy.wardance.event.SweepEvent;
 import jackiecrazy.wardance.networking.CombatChannel;
 import jackiecrazy.wardance.networking.UpdateAttackPacket;
 import net.minecraft.resources.ResourceLocation;
@@ -496,7 +497,14 @@ public class CombatUtils {
             swapHeldItems(e);
             CombatData.getCap(e).setOffhandAttack(true);
         }
-        int angle = CombatData.getCap(e).getForcedSweep() > 0 ? CombatData.getCap(e).getForcedSweep() : EnchantmentHelper.getEnchantmentLevel(Enchantments.SWEEPING_EDGE, e) * GeneralConfig.sweepAngle;
+        int angle = EnchantmentHelper.getEnchantmentLevel(Enchantments.SWEEPING_EDGE, e) * GeneralConfig.sweepAngle;
+        if (CombatData.getCap(e).getForcedSweep() > 0)
+            angle = CombatData.getCap(e).getForcedSweep();
+        else {
+            SweepEvent sre = new SweepEvent(e, h, e.getMainHandItem(), angle);
+            MinecraftForge.EVENT_BUS.post(sre);
+            angle = sre.getAngle();
+        }
         if (e.getMainHandItem().getCapability(CombatManipulator.CAP).isPresent())
             angle = e.getMainHandItem().getCapability(CombatManipulator.CAP).resolve().get().sweepArea(e, e.getMainHandItem());
         float charge = Math.max(CombatUtils.getCooledAttackStrength(e, InteractionHand.MAIN_HAND, 0.5f), CombatData.getCap(e).getCachedCooldown());

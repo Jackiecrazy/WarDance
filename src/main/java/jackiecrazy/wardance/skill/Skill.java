@@ -371,7 +371,7 @@ public abstract class Skill extends Move {
     }
 
     protected void setCooldown(LivingEntity caster, SkillData a, float duration) {
-        if(caster==null)return;
+        if (caster == null) return;
         SkillCooldownEvent sce = new SkillCooldownEvent(caster, this, duration);
         MinecraftForge.EVENT_BUS.post(sce);
 //        if (getParentSkill() != null)
@@ -424,9 +424,14 @@ public abstract class Skill extends Move {
     }
 
     protected void markUsed(LivingEntity caster) {
+        markUsed(caster, false);
+    }
+
+    protected void markUsed(LivingEntity caster, boolean silent) {
         if (GeneralConfig.debug)
             WarDance.LOGGER.debug(this.getRegistryName() + " has ended");
-        caster.level.playSound(null, caster, SoundEvents.FIRE_EXTINGUISH, SoundSource.AMBIENT, 0.3f + WarDance.rand.nextFloat() * 0.5f, 0.5f + WarDance.rand.nextFloat());
+        if (!silent)
+            caster.level.playSound(null, caster, SoundEvents.FIRE_EXTINGUISH, SoundSource.AMBIENT, 0.3f + WarDance.rand.nextFloat() * 0.5f, 0.5f + WarDance.rand.nextFloat());
         CasterData.getCap(caster).getSkillData(this).ifPresent(a -> {
             a.setDuration(-999);
             a.setState(STATE.ACTIVE);

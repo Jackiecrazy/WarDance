@@ -59,15 +59,17 @@ Flow: cooldown of all attack skills are halved, and any cooled attack skill is a
         caster.attackStrengthTicker++;
         cap.setOffhandCooldown(cap.getOffhandCooldown() + 1);
         //main hand flurry
-        if (stats.getState() == STATE.ACTIVE && CombatUtils.getCooledAttackStrength(caster, InteractionHand.MAIN_HAND, 0.5f) == 1f && !caster.isAutoSpinAttack()) {
+        if (stats.getState() == STATE.ACTIVE && CombatUtils.getCooledAttackStrength(caster, InteractionHand.MAIN_HAND, 0f) == 1f && !caster.isAutoSpinAttack()) {
             cap.setForcedSweep(360);
             CombatUtils.sweep(caster, null, InteractionHand.MAIN_HAND, 3);
+            CombatUtils.setHandCooldown(caster, InteractionHand.MAIN_HAND, 0, true);
         }
         //offhand flurry
-        if (stats.getState() == STATE.ACTIVE && CombatUtils.getCooledAttackStrength(caster, InteractionHand.OFF_HAND, 0.5f) == 1f && !caster.isAutoSpinAttack()) {
+        if (stats.getState() == STATE.ACTIVE && CombatUtils.getCooledAttackStrength(caster, InteractionHand.OFF_HAND, 0f) == 1f && !caster.isAutoSpinAttack()) {
             //spin to win!
             cap.setForcedSweep(360);
             CombatUtils.sweep(caster, null, InteractionHand.OFF_HAND, 3);
+            CombatUtils.setHandCooldown(caster, InteractionHand.OFF_HAND, 0, true);
         }
         return super.equippedTick(caster, stats);
     }

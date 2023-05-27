@@ -42,7 +42,7 @@ public class PhantomDive extends Skill {
             silentActivate(caster, 1F, false, (float) caster.getY());
         }
         if (procPoint instanceof LivingFallEvent) {
-            markUsed(caster);
+            markUsed(caster, true);
         }
         if (procPoint instanceof EntityAwarenessEvent e && e.getAttacker() == caster) {
             StealthUtils.Awareness awareness = e.getAwareness();
@@ -58,6 +58,7 @@ public class PhantomDive extends Skill {
             }
             if (length > 0) e.getEntity().addEffect(new MobEffectInstance(FootworkEffects.PARALYSIS.get(), length));
             ((EntityAwarenessEvent) procPoint).setAwareness(awareness);
+            markUsed(caster);
             caster.fallDistance = 0;
         }
     }

@@ -9,10 +9,12 @@ import jackiecrazy.footwork.utils.EffectUtils;
 import jackiecrazy.footwork.utils.GeneralUtils;
 import jackiecrazy.footwork.utils.TargetingUtils;
 import jackiecrazy.wardance.WarDance;
+import jackiecrazy.wardance.capability.status.Marks;
 import jackiecrazy.wardance.entity.ai.ExposeGoal;
 import jackiecrazy.wardance.mixin.SifuDropsMixin;
 import jackiecrazy.wardance.skill.SkillColors;
 import jackiecrazy.wardance.skill.SkillData;
+import jackiecrazy.wardance.skill.WarSkills;
 import jackiecrazy.wardance.skill.styles.ColorRestrictionStyle;
 import jackiecrazy.wardance.utils.CombatUtils;
 import jackiecrazy.wardance.utils.DamageUtils;
@@ -29,18 +31,48 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraftforge.event.entity.living.*;
 import net.minecraftforge.eventbus.api.Event;
 import net.minecraftforge.eventbus.api.EventPriority;
+import net.minecraftforge.eventbus.api.SubscribeEvent;
+import net.minecraftforge.fml.common.Mod;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.HashSet;
 import java.util.UUID;
 
-
+@Mod.EventBusSubscriber(modid = WarDance.MODID)
 public class Sifu extends ColorRestrictionStyle {
     public static final TagKey<EntityType<?>> EVIL = TagKey.create(Registry.ENTITY_TYPE_REGISTRY, new ResourceLocation(WarDance.MODID, "great_evil"));
     private static final AttributeModifier kbr = new AttributeModifier(UUID.fromString("abc24c38-73e3-4551-9df4-e06e117699c1"), "sifu target", 1, AttributeModifier.Operation.ADDITION);
 
     public Sifu() {
         super(10, true, SkillColors.purple);
+    }
+
+    @SubscribeEvent
+    public static void death(LivingDeathEvent e) {
+        if (Marks.getCap(e.getEntity()).isMarked(WarSkills.SIFU.get())) {
+            e.setCanceled(true);
+        }
+    }
+
+    private static void fakeDie(LivingEntity target, @Nullable LivingEntity caster) {
+        target.setHealth(1);
+        if (target instanceof Mob mob) {
+            for (WrappedGoal wg : new HashSet<>(mob.goalSelector.getAvailableGoals())) {
+                if (!(wg.getGoal() instanceof FearGoal) && !(wg.getGoal() instanceof ExposeGoal))
+                    mob.goalSelector.removeGoal(wg.getGoal());
+            }
+            for (WrappedGoal wg : new HashSet<>(mob.targetSelector.getAvailableGoals())) {
+                if (!(wg.getGoal() instanceof FearGoal) && !(wg.getGoal() instanceof ExposeGoal))
+                    mob.targetSelector.removeGoal(wg.getGoal());
+            }
+            if (target instanceof PathfinderMob p)
+                mob.goalSelector.addGoal(0, new FearGoal(p));
+        }
+        final SkillData sd = new SkillData(WarSkills.SIFU.get(), 100).flagCondition(true);
+        if (caster != null) sd.setCaster(caster);
+        Marks.getCap(target).mark(sd);
+        EffectUtils.causeFear(target, caster, 2000);
+        CombatData.getCap(target).knockdown(120);
     }
 
     @Override
@@ -111,23 +143,8 @@ public class Sifu extends ColorRestrictionStyle {
             CombatUtils.knockBack(target, caster, 1f, true, true);
         } else if (procPoint instanceof LivingDeathEvent e && e.getPhase() == EventPriority.LOWEST && e.getEntity() != caster) {
             //run away!
-            target.setHealth(1);
             e.setCanceled(true);
-            if (target instanceof Mob mob) {
-                for (WrappedGoal wg : new HashSet<>(mob.goalSelector.getAvailableGoals())) {
-                    if (!(wg.getGoal() instanceof FearGoal) && !(wg.getGoal() instanceof ExposeGoal))
-                        mob.goalSelector.removeGoal(wg.getGoal());
-                }
-                for (WrappedGoal wg : new HashSet<>(mob.targetSelector.getAvailableGoals())) {
-                    if (!(wg.getGoal() instanceof FearGoal) && !(wg.getGoal() instanceof ExposeGoal))
-                        mob.targetSelector.removeGoal(wg.getGoal());
-                }
-                if (target instanceof PathfinderMob p)
-                    mob.goalSelector.addGoal(0, new FearGoal(p));
-            }
-            mark(caster, target, 100, 0, true);
-            EffectUtils.causeFear(target, caster, 2000);
-            CombatData.getCap(target).knockdown(120);
+
         }
     }
 
