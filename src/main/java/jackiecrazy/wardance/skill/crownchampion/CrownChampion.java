@@ -66,17 +66,18 @@ elemental might: +1 burn/snowball/poison/drown damage to targets you have attack
         }
     }
 
-    @Override
-    protected boolean showArchetypeDescription() {
-        return false;
-    }
-
     @SubscribeEvent(priority = EventPriority.LOWEST)
     public static void oops(LivingDamageEvent e) {
         LivingEntity uke = e.getEntity();
         if (CasterData.getCap(uke).getEquippedSkills().contains(WarSkills.PRIDEFUL_MIGHT.get())) {
             CombatData.getCap(uke).setMight(0);
         }
+    }
+
+    @Nonnull
+    @Override
+    public SkillArchetype getArchetype() {
+        return SkillArchetypes.prowess;
     }
 
 //    @SubscribeEvent
@@ -90,10 +91,9 @@ elemental might: +1 burn/snowball/poison/drown damage to targets you have attack
 //        }
 //    }
 
-    @Nonnull
     @Override
-    public SkillArchetype getArchetype() {
-        return SkillArchetypes.prowess;
+    protected boolean showArchetypeDescription() {
+        return false;
     }
 
     @Override
@@ -120,12 +120,12 @@ elemental might: +1 burn/snowball/poison/drown damage to targets you have attack
 
     @Override
     public void onProc(LivingEntity caster, Event procPoint, STATE state, SkillData stats, LivingEntity target) {
-        int might = (int) CombatData.getCap(caster).getMight() - 1;
+        int might = (int) CombatData.getCap(caster).getMight();
         if (procPoint instanceof LivingAttackEvent && procPoint.getPhase() == EventPriority.LOWEST) {
-            SkillUtils.modifyAttribute(caster, Attributes.ATTACK_DAMAGE, MULT, 0.05f * might, AttributeModifier.Operation.MULTIPLY_BASE);
+            SkillUtils.modifyAttribute(caster, Attributes.ATTACK_DAMAGE, MULT, 0.25f * might, AttributeModifier.Operation.MULTIPLY_BASE);
         }
         if (procPoint instanceof GainMightEvent && procPoint.getPhase() == EventPriority.HIGHEST) {
-            ((GainMightEvent) procPoint).setQuantity(((GainMightEvent) procPoint).getQuantity() * (15 - might / 2f) / 10f);
+            ((GainMightEvent) procPoint).setQuantity(((GainMightEvent) procPoint).getQuantity() * (1 - (CombatData.getCap(caster).getMaxMight() - might)) / 10f);
         }
     }
 

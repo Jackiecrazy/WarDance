@@ -71,9 +71,8 @@ public class Kick extends Skill {
 
     protected void additionally(LivingEntity caster, LivingEntity target) {
         final ICombatCapability cap = CombatData.getCap(target);
-        if (cap.isVulnerable() || cap.getStunTime() != 0 || cap.getExposeTime() != 0 || cap.getPosture() < 2) {
-            cap.consumePosture(2);
-            //boop
+        if (cap.isVulnerable() || cap.getPosture() < 2) {
+            //upgrades stun to knockdown
             cap.knockdown(CombatConfig.knockdownDuration);
         }
     }

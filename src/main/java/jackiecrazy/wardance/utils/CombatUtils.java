@@ -84,10 +84,7 @@ public class CombatUtils {
                 if (name.startsWith("#")) {//register tags separately
                     try {
                         JsonObject obj = entry.getValue().getAsJsonObject();
-                        MeleeInfo put = new MeleeInfo(CombatConfig.defaultMultiplierPostureAttack, CombatConfig.defaultMultiplierPostureDefend);
-                        if (obj.has("attack")) put.attackPostureMultiplier = obj.get("attack").getAsDouble();
-                        if (obj.has("defend")) put.defensePostureMultiplier = obj.get("defend").getAsDouble();
-                        if (obj.has("shield")) put.isShield = obj.get("shield").getAsBoolean();
+                        MeleeInfo put = parseMeleeInfo(obj);
                         archetypes.put(ItemTags.create(new ResourceLocation(WarDance.MODID, name.substring(1))), put);
                     } catch (Exception x) {
                         WarDance.LOGGER.error("malformed json under " + name + "!");
@@ -104,10 +101,7 @@ public class CombatUtils {
                 }
                 try {
                     JsonObject obj = entry.getValue().getAsJsonObject();
-                    MeleeInfo put = new MeleeInfo(CombatConfig.defaultMultiplierPostureAttack, CombatConfig.defaultMultiplierPostureDefend);
-                    if (obj.has("attack")) put.attackPostureMultiplier = obj.get("attack").getAsDouble();
-                    if (obj.has("defend")) put.defensePostureMultiplier = obj.get("defend").getAsDouble();
-                    if (obj.has("shield")) put.isShield = obj.get("shield").getAsBoolean();
+                    MeleeInfo put = parseMeleeInfo(obj);
                     combatList.put(item, put);
                 } catch (Exception x) {
                     WarDance.LOGGER.error("malformed json under " + name + "!");
@@ -115,6 +109,16 @@ public class CombatUtils {
                 }
             });
         });
+    }
+
+    @Nonnull
+    private static MeleeInfo parseMeleeInfo(JsonObject obj) {
+        MeleeInfo put = new MeleeInfo(CombatConfig.defaultMultiplierPostureAttack, CombatConfig.defaultMultiplierPostureDefend);
+        if (obj.has("attack")) put.attackPostureMultiplier = obj.get("attack").getAsDouble();
+        if (obj.has("defend")) put.defensePostureMultiplier = obj.get("defend").getAsDouble();
+        if (obj.has("shield")) put.isShield = obj.get("shield").getAsBoolean();
+        if (obj.has("sweep")) put.sweep = SWEEPTYPE.valueOf(obj.get("sweep").getAsString().toUpperCase(Locale.ROOT));
+        return put;
     }
 
     public static void updateProjectiles(List<? extends String> interpretP) {
@@ -487,6 +491,10 @@ public class CombatUtils {
     }
 
     public static void sweep(LivingEntity e, Entity ignore, InteractionHand h, double reach) {
+
+    }
+
+    public static void sweep(LivingEntity e, Entity ignore, InteractionHand h, SWEEPTYPE type, double reach, double base, double scaling) {
         if (!GeneralConfig.betterSweep) return;
         if (!CombatData.getCap(e).isCombatMode()) return;
         if (CombatData.getCap(e).getForcedSweep() == 0) {
@@ -546,9 +554,18 @@ public class CombatUtils {
         ppe.setTrigger(pi.trigger);
     }
 
+    public enum SWEEPTYPE {
+        NONE,
+        CONE,
+        LINE,
+        IMPACT,
+        CIRCLE
+    }
+
     private static class MeleeInfo {
         private double attackPostureMultiplier, defensePostureMultiplier;
         private boolean isShield, ignoreParry, ignoreShield, canParry;
+        private SWEEPTYPE sweep = SWEEPTYPE.CONE;
 
         private MeleeInfo(double attack, double defend) {
             attackPostureMultiplier = attack;

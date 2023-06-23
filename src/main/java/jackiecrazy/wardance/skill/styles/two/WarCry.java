@@ -27,7 +27,7 @@ public class WarCry extends SkillStyle {
     @Nonnull
     @Override
     public HashSet<String> getSoftIncompatibility(LivingEntity caster) {
-        return state;
+        return none;
     }
 
     @Override

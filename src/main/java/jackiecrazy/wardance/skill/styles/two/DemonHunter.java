@@ -59,7 +59,7 @@ public class DemonHunter extends ColorRestrictionStyle {
     @Override
     public void onProc(LivingEntity caster, Event procPoint, STATE state, SkillData stats, @Nullable LivingEntity target) {
         if (procPoint instanceof LivingAttackEvent a && DamageUtils.isMeleeAttack(a.getSource()) && target != null && a.getEntity() != caster && a.getPhase() == EventPriority.HIGHEST) {
-            if (Marks.getCap(target).isMarked(this))
+            if (Marks.getCap(target).isMarked(this))//fixme knockback borked
                 CombatUtils.knockBack(caster, target, 1, true, true);
             mark(caster, target, 3);
             caster.getAttribute(ForgeMod.ATTACK_RANGE.get()).removeModifier(reach);

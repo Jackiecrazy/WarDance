@@ -26,17 +26,17 @@ public class Throw extends Grapple {
 
     @Override
     public void onProc(LivingEntity caster, Event procPoint, STATE state, SkillData stats, LivingEntity target) {
-        if (procPoint instanceof LivingAttackEvent && ((LivingAttackEvent) procPoint).getEntity() == target && procPoint.getPhase() == EventPriority.HIGHEST) {
-            if (state == STATE.HOLSTERED && isUnarmed(caster)) {
+        if (state == STATE.HOLSTERED && isUnarmed(caster)) {
+            if (procPoint instanceof LivingAttackEvent && ((LivingAttackEvent) procPoint).getEntity() == target && procPoint.getPhase() == EventPriority.HIGHEST) {
                 if (stats.isCondition() && caster.getLastHurtMob() == target && caster.tickCount - caster.getLastHurtMobTimestamp() < 40 && cast(caster, target, -999)) {
                     performEffect(caster, target, stats);
                 } else {
                     stats.flagCondition(true);
                     caster.setLastHurtMob(target);
                 }
-            }
-        } else if (procPoint instanceof StunEvent se && se.getEntity() == target && se.getPhase() == EventPriority.LOWEST)
-            performEffect(caster, target, stats);
+            } else if (procPoint instanceof StunEvent se && se.getEntity() == target && se.getPhase() == EventPriority.LOWEST)
+                performEffect(caster, target, stats);
+        }
         attackCooldown(procPoint, caster, stats);
     }
 
@@ -73,11 +73,11 @@ public class Throw extends Grapple {
     @Override
     public boolean markTick(LivingEntity caster, LivingEntity target, SkillData sd) {
         sd.decrementDuration(0.05f);
-        Entity collide= GeneralUtils.collidingEntity(target);
-        if (sd.isCondition() && (target.horizontalCollision || target.verticalCollision||collide!=null)) {
+        Entity collide = GeneralUtils.collidingEntity(target);
+        if (sd.isCondition() && (target.horizontalCollision || target.verticalCollision || collide != null)) {
             removeMark(target);
             CombatData.getCap(target).consumePosture(7);
-            if(caster!=null) {
+            if (caster != null) {
                 target.hurt(new CombatDamageSource("fallingBlock", caster).setDamageTyping(CombatDamageSource.TYPE.PHYSICAL).setProcSkillEffects(true).setProcAttackEffects(true), 3);
                 if (collide instanceof LivingEntity elb) {
                     CombatData.getCap(elb).consumePosture(7);
