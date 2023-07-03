@@ -109,6 +109,7 @@ public class CombatUtils {
                 }
             });
         });
+        //TODO send to client
     }
 
     @Nonnull
@@ -490,13 +491,29 @@ public class CombatUtils {
         cap.setOffhandCooldown(tssl);
     }
 
-    public static void sweep(LivingEntity e, Entity ignore, InteractionHand h, double reach) {
+    public static SWEEPTYPE getSweepType(LivingEntity e, ItemStack i) {
+        //todo forced sweep override
+        return lookupStats(i).sweep;
+    }
 
+    public static double getSweepBase(ItemStack i) {
+        return lookupStats(i).sweepBase;
+    }
+
+    public static double getSweepScale(ItemStack i) {
+        return lookupStats(i).sweepScale;
+    }
+
+    public static void sweep(LivingEntity e, Entity ignore, InteractionHand h, double reach) {
+        ItemStack stack = e.getItemInHand(h);
+        sweep(e, ignore, h, getSweepType(e, stack), reach, getSweepBase(stack), getSweepScale(stack));
     }
 
     public static void sweep(LivingEntity e, Entity ignore, InteractionHand h, SWEEPTYPE type, double reach, double base, double scaling) {
+        //no go cases
         if (!GeneralConfig.betterSweep) return;
         if (!CombatData.getCap(e).isCombatMode()) return;
+        if (type == SWEEPTYPE.NONE) return;
         if (CombatData.getCap(e).getForcedSweep() == 0) {
             CombatData.getCap(e).setForcedSweep(-1);
             return;
@@ -506,6 +523,8 @@ public class CombatUtils {
             CombatData.getCap(e).setOffhandAttack(true);
         }
         int angle = EnchantmentHelper.getEnchantmentLevel(Enchantments.SWEEPING_EDGE, e) * GeneralConfig.sweepAngle;
+
+
         if (CombatData.getCap(e).getForcedSweep() > 0)
             angle = CombatData.getCap(e).getForcedSweep();
         else {
@@ -525,9 +544,17 @@ public class CombatUtils {
                     hit = true;
                 continue;
             }
-            if (!GeneralUtils.isFacingEntity(e, target, angle)) continue;
             if (!e.hasLineOfSight(target)) continue;
-            if (GeneralUtils.getDistSqCompensated(e, target) > modRange * modRange) continue;
+            //type specific sweep checks
+            switch(type){
+                case CONE:
+                    if (!GeneralUtils.isFacingEntity(e, target, angle)) continue;
+                    if (GeneralUtils.getDistSqCompensated(e, target) > modRange * modRange) continue;
+                    break;
+                case LINE:
+
+            }
+
             CombatUtils.setHandCooldown(e, InteractionHand.MAIN_HAND, charge, false);
             hit = true;
             if (e instanceof Player)
@@ -566,6 +593,7 @@ public class CombatUtils {
         private double attackPostureMultiplier, defensePostureMultiplier;
         private boolean isShield, ignoreParry, ignoreShield, canParry;
         private SWEEPTYPE sweep = SWEEPTYPE.CONE;
+        private double sweepBase, sweepScale;
 
         private MeleeInfo(double attack, double defend) {
             attackPostureMultiplier = attack;

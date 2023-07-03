@@ -15,7 +15,7 @@ import jackiecrazy.wardance.capability.resources.CombatCapability;
 import jackiecrazy.wardance.capability.skill.CasterData;
 import jackiecrazy.wardance.capability.skill.ISkillCapability;
 import jackiecrazy.wardance.capability.status.Marks;
-import jackiecrazy.wardance.client.RenderEvents;
+import jackiecrazy.wardance.client.RenderUtils;
 import jackiecrazy.wardance.config.ClientConfig;
 import jackiecrazy.wardance.config.CombatConfig;
 import jackiecrazy.wardance.skill.Skill;
@@ -676,7 +676,7 @@ public class ResourceDisplay implements IGuiOverlay {
             //render posture bar if not full, displayed even out of combat mode because it's pretty relevant to not dying
             if (cap.isCombatMode() || cap.getPosture() < cap.getMaxPosture() || cap.getStunTime() > 0)
                 drawPostureBarAt(true, stack, player, width, height);
-            Entity look = RenderEvents.getEntityLookedAt(player, 32);
+            Entity look = RenderUtils.getEntityLookedAt(player, 32);
             if (look instanceof LivingEntity) {
                 LivingEntity looked = (LivingEntity) look;
                 List<SkillData> afflict = new ArrayList<>();

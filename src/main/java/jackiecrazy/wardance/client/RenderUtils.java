@@ -12,7 +12,7 @@ import java.util.List;
 import java.util.Optional;
 
 //@Mod.EventBusSubscriber(value = Dist.CLIENT, modid = WarDance.MODID)
-public class RenderEvents {
+public class RenderUtils {
     static final DecimalFormat formatter = new DecimalFormat("#.#");
     /**
      * @author Vazkii
