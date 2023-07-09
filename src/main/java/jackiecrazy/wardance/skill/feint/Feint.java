@@ -117,7 +117,7 @@ public class Feint extends Skill {
 
     @Override
     public void onProc(LivingEntity caster, Event procPoint, STATE state, SkillData stats, LivingEntity target) {
-        if (procPoint instanceof LivingAttackEvent && procPoint.getPhase() == EventPriority.HIGHEST && state == STATE.HOLSTERED && ((LivingAttackEvent) procPoint).getEntity() == target && cast(caster, target, -999)) {
+        if (procPoint instanceof LivingAttackEvent e && procPoint.getPhase() == EventPriority.HIGHEST && state == STATE.HOLSTERED && DamageUtils.isMeleeAttack(e.getSource()) && e.getEntity() == target && cast(caster, target, -999)) {
             int dur = 20;
             if (Marks.getCap(target).isMarked(this)) {
                 SkillData a = Marks.getCap(target).getActiveMark(this).get();
@@ -130,7 +130,7 @@ public class Feint extends Skill {
             procPoint.setCanceled(true);
             markUsed(caster);
         }
-        if (procPoint instanceof LivingAttackEvent && this == WarSkills.FOLLOWUP.get() && procPoint.getPhase() == EventPriority.LOWEST && ((LivingAttackEvent) procPoint).getEntity() == target &&
+        if (procPoint instanceof LivingAttackEvent e && this == WarSkills.FOLLOWUP.get() && procPoint.getPhase() == EventPriority.LOWEST && DamageUtils.isMeleeAttack(e.getSource()) && e.getEntity() == target &&
                 CombatData.getCap(target).getHandBind(InteractionHand.MAIN_HAND) > 0 && CombatData.getCap(target).getHandBind(InteractionHand.OFF_HAND) > 0) {
             CombatUtils.setHandCooldown(caster, InteractionHand.MAIN_HAND, 0.5f, true);
         }

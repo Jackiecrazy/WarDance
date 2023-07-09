@@ -13,7 +13,7 @@ import java.util.UUID;
 public class WarCry extends SkillStyle {
     private static final AttributeModifier wrap = new AttributeModifier(UUID.fromString("4b342542-fcfb-47a8-8da8-4f57588f7003"), "bandaging wounds", -1, AttributeModifier.Operation.MULTIPLY_TOTAL);
     private final HashSet<String> procs = makeTag("chant", ProcPoints.on_being_hurt, ProcPoints.countdown, ProcPoints.recharge_time, ProcPoints.recharge_sleep);
-    private final HashSet<String> tag = makeTag(SkillTags.chant, SkillTags.melee, SkillTags.state);
+    private final HashSet<String> tag = makeTag(SkillTags.chant, SkillTags.melee);
 
     public WarCry() {
         super(2);
@@ -21,7 +21,7 @@ public class WarCry extends SkillStyle {
 
     @Override
     public HashSet<String> getTags() {
-        return tag;
+        return none;
     }
 
     @Nonnull

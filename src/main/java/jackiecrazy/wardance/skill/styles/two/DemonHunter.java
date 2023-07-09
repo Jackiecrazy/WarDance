@@ -11,6 +11,7 @@ import jackiecrazy.wardance.skill.WarSkills;
 import jackiecrazy.wardance.skill.styles.ColorRestrictionStyle;
 import jackiecrazy.wardance.utils.CombatUtils;
 import jackiecrazy.wardance.utils.DamageUtils;
+import jackiecrazy.wardance.utils.SkillUtils;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.LivingEntity;
@@ -62,13 +63,13 @@ public class DemonHunter extends ColorRestrictionStyle {
             if (Marks.getCap(target).isMarked(this))//fixme knockback borked
                 CombatUtils.knockBack(caster, target, 1, true, true);
             mark(caster, target, 3);
-            caster.getAttribute(ForgeMod.ATTACK_RANGE.get()).removeModifier(reach);
+            SkillUtils.removeAttribute(caster, ForgeMod.ATTACK_RANGE.get(), reach);
         }
     }
 
     @Override
     public void onMarkEnd(LivingEntity caster, LivingEntity target, SkillData sd) {
-        CasterData.getCap(caster).getSkillData(this).ifPresent(a -> caster.getAttribute(ForgeMod.ATTACK_RANGE.get()).addTransientModifier(reach));
+        CasterData.getCap(caster).getSkillData(this).ifPresent(a -> SkillUtils.addAttribute(caster, ForgeMod.ATTACK_RANGE.get(), reach));
     }
 
     @Nullable

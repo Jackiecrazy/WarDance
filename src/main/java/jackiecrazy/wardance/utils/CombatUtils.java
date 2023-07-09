@@ -15,6 +15,7 @@ import jackiecrazy.wardance.event.ProjectileParryEvent;
 import jackiecrazy.wardance.event.SweepEvent;
 import jackiecrazy.wardance.networking.CombatChannel;
 import jackiecrazy.wardance.networking.UpdateAttackPacket;
+import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.server.packs.resources.ResourceManager;
@@ -30,7 +31,6 @@ import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.LivingEntity;
-import net.minecraft.world.entity.ai.attributes.AttributeModifier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
@@ -58,8 +58,6 @@ public class CombatUtils {
     private static final UUID main = UUID.fromString("8c8028c8-da67-49a2-99cd-f92d7ad22534");
     public static HashMap<ResourceLocation, Float> customPosture = new HashMap<>();
     public static HashMap<ResourceLocation, MobInfo> parryMap = new HashMap<>();
-    public static HashMap<Item, AttributeModifier[]> armorStats = new HashMap<>();
-    public static HashMap<Item, AttributeModifier[]> shieldStat = new HashMap<>();
     public static boolean isSweeping = false;
     public static boolean suppress = false;
     private static MeleeInfo DEFAULTMELEE = new MeleeInfo(1, 1);
@@ -68,11 +66,17 @@ public class CombatUtils {
     private static HashMap<TagKey<Item>, MeleeInfo> archetypes = new HashMap<>();
     private static HashMap<EntityType, ProjectileInfo> projectileMap = new HashMap<>();
 
+    public static void clientWeaponOverride(Map<Item, MeleeInfo> server) {
+        combatList = new HashMap<>(server);
+    }
+
+    public static void clientTagOverride(Map<TagKey<Item>, MeleeInfo> server) {
+        archetypes = new HashMap<>(server);
+    }
+
     public static void updateItems(Map<ResourceLocation, JsonElement> object, ResourceManager rm, ProfilerFiller profiler) {
         DEFAULTMELEE = new MeleeInfo(CombatConfig.defaultMultiplierPostureAttack, CombatConfig.defaultMultiplierPostureDefend);
         combatList = new HashMap<>();
-        armorStats = new HashMap<>();
-        shieldStat = new HashMap<>();
         archetypes = new HashMap<>();
 
         object.forEach((key, value) -> {
@@ -546,7 +550,7 @@ public class CombatUtils {
             }
             if (!e.hasLineOfSight(target)) continue;
             //type specific sweep checks
-            switch(type){
+            switch (type) {
                 case CONE:
                     if (!GeneralUtils.isFacingEntity(e, target, angle)) continue;
                     if (GeneralUtils.getDistSqCompensated(e, target) > modRange * modRange) continue;
@@ -589,7 +593,7 @@ public class CombatUtils {
         CIRCLE
     }
 
-    private static class MeleeInfo {
+    public static class MeleeInfo {
         private double attackPostureMultiplier, defensePostureMultiplier;
         private boolean isShield, ignoreParry, ignoreShield, canParry;
         private SWEEPTYPE sweep = SWEEPTYPE.CONE;
@@ -598,6 +602,26 @@ public class CombatUtils {
         private MeleeInfo(double attack, double defend) {
             attackPostureMultiplier = attack;
             defensePostureMultiplier = defend;
+        }
+
+        public static MeleeInfo read(FriendlyByteBuf f) {
+            MeleeInfo ret = new MeleeInfo(0, 0);
+            ret.attackPostureMultiplier = f.readDouble();
+            ret.defensePostureMultiplier = f.readDouble();
+            ret.isShield = f.readBoolean();
+            ret.sweep = SWEEPTYPE.values()[f.readInt()];
+            ret.sweepBase = f.readDouble();
+            ret.sweepScale = f.readDouble();
+            return ret;
+        }
+
+        public void write(FriendlyByteBuf f) {
+            f.writeDouble(attackPostureMultiplier);
+            f.writeDouble(defensePostureMultiplier);
+            f.writeBoolean(isShield);
+            f.writeInt(sweep.ordinal());
+            f.writeDouble(sweepBase);
+            f.writeDouble(sweepScale);
         }
     }
 
