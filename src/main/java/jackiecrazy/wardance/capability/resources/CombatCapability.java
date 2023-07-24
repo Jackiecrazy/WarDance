@@ -796,7 +796,6 @@ public class CombatCapability implements ICombatCapability {
 
     @Override
     public void sync() {
-
         LivingEntity elb = dude.get();
         if (elb == null || elb.level.isClientSide) return;
         CombatChannel.INSTANCE.send(PacketDistributor.TRACKING_ENTITY.with(() -> elb), new UpdateClientPacket(elb.getId(), quickWrite()));

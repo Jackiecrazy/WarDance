@@ -17,26 +17,27 @@ public class ItemTooltipHandler {
         final ItemStack stack = e.getItemStack();
         if (CombatUtils.isWeapon(e.getEntity(), stack) || CombatUtils.isShield(e.getEntity(), stack)) {
             float atk = CombatUtils.getPostureAtk(null, null, null, 0, stack);
-            if(stack.is(CombatUtils.PIERCE_PARRY)){
+            if (stack.is(CombatUtils.PIERCE_PARRY)) {
                 e.getToolTip().add(Component.translatable("wardance.tooltip.ignoreParry").withStyle(ChatFormatting.GREEN));
             }
-            if(stack.is(CombatUtils.PIERCE_SHIELD)){
+            if (stack.is(CombatUtils.PIERCE_SHIELD)) {
                 e.getToolTip().add(Component.translatable("wardance.tooltip.ignoreShield").withStyle(ChatFormatting.DARK_GREEN));
             }
             e.getToolTip().add(Component.translatable("wardance.tooltip.postureAttack", atk));
             final float def = CombatUtils.getPostureDef(null, null, stack, 0);
-            if(stack.is(CombatUtils.CANNOT_PARRY))
+            if (stack.is(CombatUtils.CANNOT_PARRY))
                 e.getToolTip().add(Component.translatable("wardance.tooltip.noParry").withStyle(ChatFormatting.DARK_RED));
             else
                 e.getToolTip().add(Component.translatable("wardance.tooltip.postureDefend", def));
+            e.getToolTip().add(Component.translatable("wardance.tooltip.sweep", CombatUtils.getSweepType(e.getEntity(), e.getItemStack()), CombatUtils.getSweepBase(e.getItemStack()), CombatUtils.getSweepScale(e.getItemStack())).withStyle(ChatFormatting.AQUA));
         }
-        if(CombatUtils.isUnarmed(stack, e.getEntity())){
+        if (CombatUtils.isUnarmed(stack, e.getEntity())) {
             e.getToolTip().add(Component.translatable("wardance.tooltip.unarmed").withStyle(ChatFormatting.GOLD));
         }
-        if(CombatUtils.isShield(e.getEntity(), stack)){
+        if (CombatUtils.isShield(e.getEntity(), stack)) {
             e.getToolTip().add(Component.translatable("wardance.tooltip.shield").withStyle(ChatFormatting.GOLD));
         }
-        if(CombatUtils.isTwoHanded(stack, e.getEntity())){
+        if (CombatUtils.isTwoHanded(stack, e.getEntity())) {
             e.getToolTip().add(Component.translatable("wardance.tooltip.twoHanded").withStyle(ChatFormatting.DARK_RED));
         }
     }

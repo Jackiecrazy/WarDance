@@ -35,9 +35,7 @@ import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.item.Item;
-import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.Items;
+import net.minecraft.world.item.*;
 import net.minecraft.world.item.enchantment.EnchantmentHelper;
 import net.minecraft.world.item.enchantment.Enchantments;
 import net.minecraft.world.phys.Vec3;
@@ -68,7 +66,7 @@ public class CombatUtils {
     private static HashMap<TagKey<Item>, MeleeInfo> archetypes = new HashMap<>();
     private static HashMap<EntityType, ProjectileInfo> projectileMap = new HashMap<>();
 
-    public static void sendItemData(ServerPlayer p){
+    public static void sendItemData(ServerPlayer p) {
         CombatChannel.INSTANCE.send(PacketDistributor.PLAYER.with(() -> p), new SyncItemDataPacket(combatList));
         CombatChannel.INSTANCE.send(PacketDistributor.PLAYER.with(() -> p), new SyncTagDataPacket(archetypes));
     }
@@ -130,6 +128,18 @@ public class CombatUtils {
         if (obj.has("defend")) put.defensePostureMultiplier = obj.get("defend").getAsDouble();
         if (obj.has("shield")) put.isShield = obj.get("shield").getAsBoolean();
         if (obj.has("sweep")) put.sweep = SWEEPTYPE.valueOf(obj.get("sweep").getAsString().toUpperCase(Locale.ROOT));
+        if (obj.has("sweep_base")) put.sweepBase = obj.get("sweep_base").getAsDouble();
+        else if (Objects.requireNonNull(put.sweep) == SWEEPTYPE.CONE) {
+            put.sweepBase = 30;
+        } else {
+            put.sweepBase = 1;
+        }
+        if (obj.has("sweep_scale")) put.sweepScale = obj.get("sweep_scale").getAsDouble();
+        else if (Objects.requireNonNull(put.sweep) == SWEEPTYPE.CONE) {
+            put.sweepScale = 30;
+        } else {
+            put.sweepScale = 1.5;
+        }
         return put;
     }
 
@@ -504,15 +514,30 @@ public class CombatUtils {
 
     public static SWEEPTYPE getSweepType(LivingEntity e, ItemStack i) {
         //todo forced sweep override
-        return lookupStats(i).sweep;
+        final MeleeInfo info = lookupStats(i);
+//        if (i.getItem() instanceof TridentItem) {
+//            return SWEEPTYPE.LINE;
+//        }
+//        if (i.getItem() instanceof HoeItem) {
+//            return SWEEPTYPE.CIRCLE;
+//        }
+//        if (i.getItem() instanceof AxeItem) {
+//            return SWEEPTYPE.IMPACT;
+//        }
+//        if (i.getItem() instanceof SwordItem) {
+//            return SWEEPTYPE.CONE;
+//        }
+        return info == null ? SWEEPTYPE.NONE : info.sweep;
     }
 
     public static double getSweepBase(ItemStack i) {
-        return lookupStats(i).sweepBase;
+        final MeleeInfo meleeInfo = lookupStats(i);
+        return meleeInfo == null ? 0 : meleeInfo.sweepBase;
     }
 
     public static double getSweepScale(ItemStack i) {
-        return lookupStats(i).sweepScale;
+        final MeleeInfo meleeInfo = lookupStats(i);
+        return meleeInfo == null ? 0 : meleeInfo.sweepScale;
     }
 
     public static void sweep(LivingEntity e, Entity ignore, InteractionHand h, double reach) {
@@ -533,37 +558,50 @@ public class CombatUtils {
             swapHeldItems(e);
             CombatData.getCap(e).setOffhandAttack(true);
         }
-        int angle = EnchantmentHelper.getEnchantmentLevel(Enchantments.SWEEPING_EDGE, e) * GeneralConfig.sweepAngle;
+        double scaled = EnchantmentHelper.getEnchantmentLevel(Enchantments.SWEEPING_EDGE, e) * scaling;
+        double radius = base + scaled;
 
 
         if (CombatData.getCap(e).getForcedSweep() > 0)
-            angle = CombatData.getCap(e).getForcedSweep();
+            radius = CombatData.getCap(e).getForcedSweep();
         else {
-            SweepEvent sre = new SweepEvent(e, h, e.getMainHandItem(), angle);
+            SweepEvent sre = new SweepEvent(e, h, e.getMainHandItem(), type, radius);
             MinecraftForge.EVENT_BUS.post(sre);
-            angle = sre.getAngle();
+            radius = sre.getWidth();
         }
         if (e.getMainHandItem().getCapability(CombatManipulator.CAP).isPresent())
-            angle = e.getMainHandItem().getCapability(CombatManipulator.CAP).resolve().get().sweepArea(e, e.getMainHandItem());
+            radius = e.getMainHandItem().getCapability(CombatManipulator.CAP).resolve().get().sweepArea(e, e.getMainHandItem());
         float charge = Math.max(CombatUtils.getCooledAttackStrength(e, InteractionHand.MAIN_HAND, 0.5f), CombatData.getCap(e).getCachedCooldown());
         boolean hit = false;
         isSweeping = ignore != null;
         double modRange = Math.min(GeneralConfig.maxRange, GeneralConfig.baseRange + (reach - 3) * GeneralConfig.rangeMult);
+        //grab everyone in "range"
         for (Entity target : e.level.getEntities(e, e.getBoundingBox().inflate(modRange + 3))) {
             if (target == ignore) {
-                if (angle > 0)
+                if (radius > 0)
                     hit = true;
                 continue;
             }
             if (!e.hasLineOfSight(target)) continue;
             //type specific sweep checks
             switch (type) {
-                case CONE:
-                    if (!GeneralUtils.isFacingEntity(e, target, angle)) continue;
+                case CONE -> {
+                    if (!GeneralUtils.isFacingEntity(e, target, (int) radius)) continue;
                     if (GeneralUtils.getDistSqCompensated(e, target) > modRange * modRange) continue;
-                    break;
-                case LINE:
-
+                }
+                case IMPACT -> {
+                    Vec3 starting = ignore == null ? GeneralUtils.raytraceAnything(e.level, e, reach).getLocation() : ignore.position();
+                    if (GeneralUtils.getDistSqCompensated(target, starting) > radius * radius) continue;
+                }
+                case CIRCLE -> {
+                    if (GeneralUtils.getDistSqCompensated(target, e) > radius * radius) continue;
+                }
+                case LINE -> {
+                    Vec3 start = e.getEyePosition(0.5F);
+                    Vec3 look = e.getLookAngle().scale(reach);
+                    Vec3 end = start.add(look);
+                    if (!target.getBoundingBox().inflate(radius).intersects(start, end)) continue;
+                }
             }
 
             CombatUtils.setHandCooldown(e, InteractionHand.MAIN_HAND, charge, false);
@@ -594,10 +632,10 @@ public class CombatUtils {
 
     public enum SWEEPTYPE {
         NONE,
-        CONE,
-        LINE,
-        IMPACT,
-        CIRCLE
+        CONE,//conical area in front of the entity up to max range, base and scale add angle
+        LINE,//1 block wide line up to max range, base and scale add to thickness
+        IMPACT,//splash at point of impact or furthest distance if no mob aimed, base and scale add radius
+        CIRCLE//splash with entity as center, ignores range, base and scale add radius
     }
 
     public static class MeleeInfo {

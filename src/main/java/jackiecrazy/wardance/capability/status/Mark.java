@@ -3,7 +3,6 @@ package jackiecrazy.wardance.capability.status;
 import com.google.common.collect.Maps;
 import jackiecrazy.wardance.WarDance;
 import jackiecrazy.wardance.config.GeneralConfig;
-import jackiecrazy.wardance.handlers.EntityHandler;
 import jackiecrazy.wardance.networking.CombatChannel;
 import jackiecrazy.wardance.networking.UpdateAfflictionPacket;
 import jackiecrazy.wardance.skill.Skill;
@@ -120,6 +119,7 @@ public class Mark implements IMark {
         for (SkillData cd : active) {
             final LivingEntity caster = cd.getCaster(ticker.level);
             if (cd.getSkill().markTick(caster, ticker, cd)) sync = true;
+            if (cd._isDirty()) sync = true;
             if (cd.getDuration() <= 0) {
                 removeMark(cd.getSkill());
                 sync = true;
@@ -129,7 +129,7 @@ public class Mark implements IMark {
             CombatChannel.INSTANCE.send(PacketDistributor.PLAYER.with(() -> (ServerPlayer) ticker), new UpdateAfflictionPacket(ticker.getId(), this.write()));
             sync = false;
         }
-        if (sync && EntityHandler.mustUpdate.containsValue(ticker)) {
+        if (sync) {
             CombatChannel.INSTANCE.send(PacketDistributor.TRACKING_ENTITY_AND_SELF.with(() -> ticker), new UpdateAfflictionPacket(ticker.getId(), this.write()));
             sync = false;
         }

@@ -1,15 +1,17 @@
 package jackiecrazy.wardance.event;
 
+import jackiecrazy.wardance.utils.CombatUtils;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.event.entity.living.LivingEvent;
 
 public class SweepEvent extends LivingEvent {
-    private final int oangle;
-    private int a;
+    private final double oangle;
+    private double a;
     private final InteractionHand hand;
     private final ItemStack stack;
+    private CombatUtils.SWEEPTYPE t;
 
     public InteractionHand getHand() {
         return hand;
@@ -19,23 +21,31 @@ public class SweepEvent extends LivingEvent {
         return stack;
     }
 
-    public SweepEvent(LivingEntity entity, InteractionHand hand, ItemStack stack, int angle) {
+    public SweepEvent(LivingEntity entity, InteractionHand hand, ItemStack stack, CombatUtils.SWEEPTYPE type, double width) {
         super(entity);
-        oangle = a = angle;
+        oangle = a = width;
         this.hand = hand;
         this.stack = stack;
+        t=type;
     }
 
-    public int getOriginalAngle() {
+    public double getOriginalWidth() {
         return oangle;
     }
 
-    public int getAngle() {
+    public double getWidth() {
         return a;
     }
 
-    public SweepEvent setAngle(int a) {
+    public void setWidth(int a) {
         this.a = a;
-        return this;
+    }
+
+    public CombatUtils.SWEEPTYPE getType() {
+        return t;
+    }
+
+    public void setType(CombatUtils.SWEEPTYPE t) {
+        this.t = t;
     }
 }

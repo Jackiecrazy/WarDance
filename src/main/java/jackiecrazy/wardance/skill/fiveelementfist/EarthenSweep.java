@@ -19,7 +19,7 @@ public class EarthenSweep extends FiveElementFist {
             e.setAmount(e.getAmount() * 2);
         }
         if (procPoint instanceof SweepEvent e && procPoint.getPhase() == EventPriority.HIGHEST && CombatUtils.isUnarmed(e.getStack(), caster)) {
-            e.setAngle(40);
+            e.setWidth(40);
         }
         super.onProc(caster, procPoint, state, stats, target);
     }

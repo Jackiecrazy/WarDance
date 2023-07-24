@@ -89,6 +89,7 @@ public class SkillSelectionScreen extends Screen {
     private SkillCategory displayedCategory = SkillColors.none;
 
     public SkillSelectionScreen() {
+        //initialize all skills
         super(Component.translatable("wardance.skillselection.title"));
         bases = new ArrayList<>();
         for (List<Skill> list : Skill.categoryMap.values()) {
@@ -195,13 +196,17 @@ public class SkillSelectionScreen extends Screen {
 
     boolean isValidInsertion(Skill insert) {
         final LocalPlayer player = Minecraft.getInstance().player;
+        //cannot insert any skill without a style
         if (style.getStyle() == null && !(insert instanceof SkillStyle)) return false;
+        //cannot insert skills contrary to style
         if (style.getSkill() != null && !style.getStyle().isEquippableWith(insert, collectSkills())) return false;
 //        if (style.getStyle() != null && getNumColors().size() > style.getStyle().getMaxColors())
 //            return false;//fixme breaks demon hunter
+        //current active conflict
         for (SkillSelectionButton ssb : skillPie)
             if (ssb.getSkill() != null && (!ssb.getSkill().isEquippableWith(insert, player)))
                 return false;
+        //current passive conflict
         for (SkillSelectionButton ssb : passives)
             if (ssb.getSkill() != null && (!ssb.getSkill().isEquippableWith(insert, player)))
                 return false;
@@ -497,8 +502,6 @@ public class SkillSelectionScreen extends Screen {
 
     class InfoPanel extends ScrollPanel {
         static final Pattern TOOLTIP_PATTERN = Pattern.compile(
-                //         schema                          ipv4            OR        namespace                 port     path         ends
-                //   |-----------------|        |-------------------------|  |-------------------------|    |---------| |--|   |---------------|
                 "\\{[^}]*\\}", Pattern.CASE_INSENSITIVE);
         private ResourceLocation logoPath;
         private List<FormattedCharSequence> lines = Collections.emptyList();
