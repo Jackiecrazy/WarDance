@@ -12,6 +12,7 @@ import jackiecrazy.wardance.capability.status.Marks;
 import jackiecrazy.wardance.entity.ai.ExposeGoal;
 import jackiecrazy.wardance.networking.CombatChannel;
 import jackiecrazy.wardance.networking.SyncSkillPacket;
+import jackiecrazy.wardance.utils.CombatUtils;
 import net.minecraft.core.BlockPos;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
@@ -22,6 +23,7 @@ import net.minecraft.world.entity.Mob;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
 import net.minecraftforge.event.AttachCapabilitiesEvent;
+import net.minecraftforge.event.OnDatapackSyncEvent;
 import net.minecraftforge.event.TickEvent;
 import net.minecraftforge.event.entity.EntityJoinLevelEvent;
 import net.minecraftforge.event.entity.living.LivingEvent;
@@ -68,6 +70,13 @@ public class EntityHandler {
     public static void death(LivingEvent.LivingJumpEvent e) {
         if (!(e.getEntity() instanceof Player) && CombatData.getCap(e.getEntity()).getExposeTime() > 0) {
             e.getEntity().setDeltaMovement(0, 0, 0);
+        }
+    }
+
+    @SubscribeEvent
+    public static void reload(OnDatapackSyncEvent e){
+        for(ServerPlayer p: e.getPlayerList().getPlayers()){
+            CombatUtils.sendItemData(p);
         }
     }
 

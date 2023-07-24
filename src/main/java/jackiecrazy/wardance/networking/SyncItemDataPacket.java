@@ -19,7 +19,7 @@ public class SyncItemDataPacket {
 
     private static final FriendlyByteBuf.Reader<Item> ritem = friendlyByteBuf -> ForgeRegistries.ITEMS.getValue(friendlyByteBuf.readResourceLocation());
     private static final FriendlyByteBuf.Reader<CombatUtils.MeleeInfo> rinfo = CombatUtils.MeleeInfo::read;
-    private Map<Item, CombatUtils.MeleeInfo> map;
+    private final Map<Item, CombatUtils.MeleeInfo> map;
 
     public SyncItemDataPacket(Map<Item, CombatUtils.MeleeInfo> map) {
         this.map = map;
@@ -47,7 +47,7 @@ public class SyncItemDataPacket {
         public void accept(SyncItemDataPacket updateClientPacket, Supplier<NetworkEvent.Context> contextSupplier) {
 
             //prevent client overriding server
-            if (contextSupplier.get().getDirection() == NetworkDirection.LOGIN_TO_CLIENT)
+            if (contextSupplier.get().getDirection() == NetworkDirection.PLAY_TO_CLIENT)
                 contextSupplier.get().enqueueWork(() -> {
                     CombatUtils.clientWeaponOverride(updateClientPacket.map);
                 });

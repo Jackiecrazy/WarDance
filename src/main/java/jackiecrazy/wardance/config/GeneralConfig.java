@@ -18,7 +18,7 @@ public class GeneralConfig {
     public static float luck;
     public static float nausea;
     public static double rangeMult;
-    public static boolean betterSweep, sweepDurability, resistance, dual, debug;
+    public static boolean betterSweep, sweepDurability, resistance, dual, debug, test;
     public static int sweepAngle, maxRange, baseRange;
 
     static {
@@ -44,12 +44,13 @@ public class GeneralConfig {
     private final ForgeConfigSpec.DoubleValue _luck;
     private final ForgeConfigSpec.BooleanValue _resistance;
     private final ForgeConfigSpec.BooleanValue _dual;
-    private final ForgeConfigSpec.BooleanValue _debug;
+    private final ForgeConfigSpec.BooleanValue _debug, _testing;
 
     public GeneralConfig(ForgeConfigSpec.Builder b) {
         //feature toggle, resource, defense, compat, stealth, lists
         b.push("general");
         _debug = b.translation("wardance.config.debug").comment("primarily tells you how much damage was applied before and after armor. These will only appear in debug.log.").define("enable debug messages", false);
+        _testing = b.translation("wardance.config.testing").comment("used by the developer and testers to experiment with some unusual features that change from version to version. Only the dev himself really knows what this option does at any given moment. Enable at your own risk!").define("testing mode", false);
         b.pop();
         b.push("dual wielding");
         _dual = b.translation("wardance.config.dualwield").comment("added per request. Shield bash will not work from the offhand when this is off, and clients will not render their offhand.").define("enable dual wielding", true);
@@ -97,6 +98,7 @@ public class GeneralConfig {
         rangeMult = CONFIG._sweepRangeMult.get();
         maxRange = CONFIG._sweepRangeMax.get();
         baseRange = CONFIG._sweepRangeMin.get();
+        test = CONFIG._testing.get();
     }
 
     @SubscribeEvent

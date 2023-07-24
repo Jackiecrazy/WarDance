@@ -245,7 +245,7 @@
   "wardance.vengeful_might.name": "Vengeful Might",
   "wardance.vengeful_might.desc": "Attackers of you or your allies within 10 blocks will be highlighted and {marked; ITALIC; wardance.skill.mark.desc} with the damage they have §linflicted§r; successfully dealing damage to a {marked; ITALIC; wardance.skill.mark.desc} target deals up to double damage and grants a quarter of the damage in might by consuming charge from the {mark; ITALIC; wardance.skill.mark.desc}.",
   "wardance.prideful_might.name": "Prideful Might",
-  "wardance.prideful_might.desc": "Might gain is {tripled;GOLD}, but all might is lost when {receiving;RED;wardance.skill.received_damage.desc} damage. Your {evasion;GOLD} is refreshed every 2 levels of might.",
+  "wardance.prideful_might.desc": "Might gain is {doubled;GOLD}, but all might is lost when {receiving;RED;wardance.skill.received_damage.desc} damage. Your {deflection;GOLD} is refreshed every 2 levels of might.",
   "wardance.hidden_might.name": "Hidden Might",
   "wardance.hidden_might.desc": "Gain 0.25 might from an unaware attack. The distance at which you are detected is reduced by 30%; for every level of might you gain, 3% of this detection is converted to speed.",
   "wardance.elemental_might.name": "Elemental Might",

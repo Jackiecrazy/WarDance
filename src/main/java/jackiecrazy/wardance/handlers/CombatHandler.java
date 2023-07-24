@@ -495,15 +495,18 @@ public class CombatHandler {
             if ((cap.isVulnerable()) && !cap.isStaggeringStrike()) {
                 //stagger tests for melee damage
                 if (cap.isExposed()) {
-                    //expose, add 10% max health damage
-                    e.setAmount(e.getAmount() * CombatConfig.exposeDamage + uke.getMaxHealth() * 0.1f);
-                    e.getSource().bypassArmor().bypassEnchantments().bypassMagic();
-                    //fatality!
-                    if (ds.getEntity() instanceof LivingEntity seme) {
-                        if (seme.level instanceof ServerLevel) {
-                            ((ServerLevel) seme.level).sendParticles(ParticleTypes.ANGRY_VILLAGER, uke.getX(), uke.getY(), uke.getZ(), 5, uke.getBbWidth(), uke.getBbHeight(), uke.getBbWidth(), 0.5f);
+                    e.setAmount(e.getAmount() * CombatConfig.exposeDamage);
+                    if (DamageUtils.isMeleeAttack(ds)) {
+                        //expose, add 10% max health damage
+                        e.setAmount(e.getAmount() + uke.getMaxHealth() * 0.1f);
+                        e.getSource().bypassArmor().bypassEnchantments().bypassMagic();
+                        //fatality!
+                        if (ds.getEntity() instanceof LivingEntity seme) {
+                            if (seme.level instanceof ServerLevel) {
+                                ((ServerLevel) seme.level).sendParticles(ParticleTypes.ANGRY_VILLAGER, uke.getX(), uke.getY(), uke.getZ(), 5, uke.getBbWidth(), uke.getBbHeight(), uke.getBbWidth(), 0.5f);
+                            }
+                            seme.level.playSound(null, uke.getX(), uke.getY(), uke.getZ(), SoundEvents.GENERIC_BIG_FALL, SoundSource.PLAYERS, 0.25f + WarDance.rand.nextFloat() * 0.5f, 0.75f + WarDance.rand.nextFloat() * 0.5f);
                         }
-                        seme.level.playSound(null, uke.getX(), uke.getY(), uke.getZ(), SoundEvents.GENERIC_BIG_FALL, SoundSource.PLAYERS, 0.25f + WarDance.rand.nextFloat() * 0.5f, 0.75f + WarDance.rand.nextFloat() * 0.5f);
                     }
                 }
                 //knockdown damage multiplier
@@ -552,7 +555,15 @@ public class CombatHandler {
     public static void udedlol(LivingDamageEvent e) {
         if (GeneralConfig.debug)
             WarDance.LOGGER.debug("damage from " + e.getSource() + " finalized with amount " + e.getAmount());
-        if (!Float.isFinite(e.getAmount()))
+        //"halo mode"
+        if (GeneralConfig.test) {
+            //master chief!
+            if (!CombatData.getCap(e.getEntity()).isVulnerable()) {
+                CombatData.getCap(e.getEntity()).consumePosture(e.getAmount());
+                e.setCanceled(true);
+            }
+        }
+        if (!Float.isFinite(e.getAmount()))//what
             e.setAmount(0);
         final ICombatCapability cap = CombatData.getCap(e.getEntity());
         if (e.getSource().isFall()) {

@@ -14,6 +14,8 @@ import jackiecrazy.wardance.config.GeneralConfig;
 import jackiecrazy.wardance.event.ProjectileParryEvent;
 import jackiecrazy.wardance.event.SweepEvent;
 import jackiecrazy.wardance.networking.CombatChannel;
+import jackiecrazy.wardance.networking.SyncItemDataPacket;
+import jackiecrazy.wardance.networking.SyncTagDataPacket;
 import jackiecrazy.wardance.networking.UpdateAttackPacket;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.resources.ResourceLocation;
@@ -65,6 +67,11 @@ public class CombatUtils {
     private static HashMap<Item, MeleeInfo> combatList = new HashMap<>();
     private static HashMap<TagKey<Item>, MeleeInfo> archetypes = new HashMap<>();
     private static HashMap<EntityType, ProjectileInfo> projectileMap = new HashMap<>();
+
+    public static void sendItemData(ServerPlayer p){
+        CombatChannel.INSTANCE.send(PacketDistributor.PLAYER.with(() -> p), new SyncItemDataPacket(combatList));
+        CombatChannel.INSTANCE.send(PacketDistributor.PLAYER.with(() -> p), new SyncTagDataPacket(archetypes));
+    }
 
     public static void clientWeaponOverride(Map<Item, MeleeInfo> server) {
         combatList = new HashMap<>(server);

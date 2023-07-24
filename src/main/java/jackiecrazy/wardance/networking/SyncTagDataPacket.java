@@ -21,7 +21,7 @@ public class SyncTagDataPacket {
 
     private static final FriendlyByteBuf.Reader<TagKey<Item>> ritem = f -> ItemTags.create(new ResourceLocation(WarDance.MODID, f.readResourceLocation().getPath()));;
     private static final FriendlyByteBuf.Reader<CombatUtils.MeleeInfo> rinfo = CombatUtils.MeleeInfo::read;
-    private Map<TagKey<Item>, CombatUtils.MeleeInfo> map;
+    private final Map<TagKey<Item>, CombatUtils.MeleeInfo> map;
 
     public SyncTagDataPacket(Map<TagKey<Item>, CombatUtils.MeleeInfo> map) {
         this.map = map;

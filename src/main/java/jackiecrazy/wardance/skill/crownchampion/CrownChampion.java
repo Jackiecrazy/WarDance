@@ -178,10 +178,10 @@ elemental might: +1 burn/snowball/poison/drown damage to targets you have attack
         @Override
         public void onProc(LivingEntity caster, Event procPoint, STATE state, SkillData pd, LivingEntity target) {
             if (procPoint instanceof GainMightEvent && procPoint.getPhase() == EventPriority.HIGHEST) {
-                ((GainMightEvent) procPoint).setQuantity(((GainMightEvent) procPoint).getQuantity() * 3);
+                ((GainMightEvent) procPoint).setQuantity(((GainMightEvent) procPoint).getQuantity() * 2);
                 pd.addArbitraryFloat(((GainMightEvent) procPoint).getQuantity());
-                if (pd.getArbitraryFloat() > 3) {
-                    pd.setArbitraryFloat(pd.getArbitraryFloat() % 3);
+                if (pd.getArbitraryFloat() > 2) {
+                    pd.setArbitraryFloat(pd.getArbitraryFloat() % 2);
                     CombatData.getCap(caster).setEvade(CombatCapability.EVADE_CHARGE);
                 }
             }
