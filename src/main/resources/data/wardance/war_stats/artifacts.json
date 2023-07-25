@@ -1,7 +1,0 @@
-{
-"artifacts:umbrella":{
-        "attack": 4,
-        "defend": 0.6,
-        "shield": true
-    }
-}

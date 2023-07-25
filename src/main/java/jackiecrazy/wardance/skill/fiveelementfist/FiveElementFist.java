@@ -21,8 +21,8 @@ import java.util.UUID;
 
 public abstract class FiveElementFist extends Skill {
 
-    private static final HashSet<String> tag =makeTag(SkillTags.offensive, SkillTags.physical, "elementfist");
-    private static final HashSet<String> no =makeTag("elementfist");
+    private static final HashSet<String> tag = makeTag(SkillTags.offensive, SkillTags.physical, "elementfist");
+    private static final HashSet<String> no = makeTag("elementfist");
 
 
     private static final UUID u = UUID.fromString("1896391d-0d6c-4a3e-a4b5-5e3c9d573b80");
@@ -32,11 +32,6 @@ public abstract class FiveElementFist extends Skill {
     @Override
     public boolean isPassive(LivingEntity caster) {
         return true;
-    }
-
-    @Override
-    public HashSet<String> getHardIncompatibility() {
-        return no;
     }
 
     @Nonnull
@@ -57,14 +52,24 @@ public abstract class FiveElementFist extends Skill {
     }
 
     @Override
+    public HashSet<String> getHardIncompatibility() {
+        return no;
+    }
+
+    @Override
     public boolean equippedTick(LivingEntity caster, SkillData stats) {
         SkillUtils.modifyAttribute(caster, Attributes.ATTACK_KNOCKBACK, u, -1, AttributeModifier.Operation.MULTIPLY_TOTAL);
         //if active, change
         if (stats.getState() == STATE.ACTIVE) {
-            swapTo(caster);
+            swap(caster);
             stats.setState(STATE.INACTIVE);
         }
         return super.equippedTick(caster, stats);
+    }
+
+    @Override
+    public boolean showsMark(SkillData mark, LivingEntity target) {
+        return false;
     }
 
     @Override
@@ -79,7 +84,7 @@ public abstract class FiveElementFist extends Skill {
         if (procPoint instanceof CriticalHitEvent lae && lae.getTarget() == target && CombatUtils.isUnarmed(caster, InteractionHand.MAIN_HAND)) {
             if (lae.getPhase() == EventPriority.HIGHEST) {
                 onStateChange(caster, stats, STATE.INACTIVE, STATE.ACTIVE);
-                Vec3 vec=target.getDeltaMovement();
+                Vec3 vec = target.getDeltaMovement();
                 target.setDeltaMovement(vec.x, 0, vec.z);
                 doAttack(caster, target);
             }
@@ -96,7 +101,7 @@ public abstract class FiveElementFist extends Skill {
     protected void doAttack(LivingEntity caster, LivingEntity target) {
     }
 
-    protected void swapTo(LivingEntity caster) {
+    protected void swap(LivingEntity caster) {
         if (cycle.length == 0)
             cycle = new Skill[]{
                     WarSkills.WOODEN_JAB.get(),
@@ -115,15 +120,9 @@ public abstract class FiveElementFist extends Skill {
                 int next = (x + 1) % cycle.length;
                 final Skill skill = cycle[next];
                 if (CasterData.getCap(caster).replaceSkill(this, skill)) {
-                    System.out.println("swapped to " + skill);
                     return;
                 }
             }
         }
-    }
-
-    @Override
-    public boolean showsMark(SkillData mark, LivingEntity target) {
-        return false;
     }
 }

@@ -2,161 +2,273 @@
   "#axe": {
     "attack": 4,
     "defend": 0.9,
-    "shield": false
+    "shield": false,
+    "sweep": "impact",
+    "sweep_base": 0.5,
+    "sweep_scale": 0.5
   },
   "#battleaxe": {
     "attack": 6,
-    "defend": 0.8,
-    "shield": false
+    "defend": 0.80,
+    "shield": false,
+    "sweep": "circle",
+    "sweep_base": 2,
+    "sweep_scale": 1
   },
   "#book": {
     "attack": 1,
-    "defend": 1.4,
-    "shield": true
+    "defend": 1.2,
+    "shield": true,
+    "sweep": "none",
+    "sweep_base": 0,
+    "sweep_scale": 0
   },
   "#bow": {
-    "attack": 1.2,
-    "defend": 1.2,
-    "shield": false
+    "attack": 1.5,
+    "defend": 1.1,
+    "shield": false,
+    "sweep": "line",
+    "sweep_base": 0.5,
+    "sweep_scale": 1
   },
   "#buckler": {
     "attack": 3,
     "defend": 0.7,
-    "shield": true
+    "shield": true,
+    "sweep": "impact",
+    "sweep_base": 0,
+    "sweep_scale": 0.5
   },
   "#claw": {
-    "attack": 2.4,
+    "attack": 2,
     "defend": 1,
-    "shield": false
+    "shield": false,
+    "sweep": "cone",
+    "sweep_base": 30,
+    "sweep_scale": 15
   },
   "#crossbow": {
-    "attack": 1,
-    "defend": 1.2,
-    "shield": false
+    "attack": 2,
+    "defend": 1.10,
+    "shield": true,
+    "sweep": "cone",
+    "sweep_base": 40,
+    "sweep_scale": 20
   },
   "#dagger": {
     "attack": 1.3,
     "defend": 1,
-    "shield": false
+    "shield": false,
+    "sweep": "cone",
+    "sweep_base": 0,
+    "sweep_scale": 0
   },
   "#gauntlet": {
-    "attack": 3.2,
+    "attack": 2.8,
     "defend": 1,
-    "shield": false
+    "shield": false,
+    "sweep": "impact",
+    "sweep_base": 0,
+    "sweep_scale": 0.5
   },
   "#greatmace": {
     "attack": 8,
     "defend": 0.8,
-    "shield": false
+    "shield": false,
+    "sweep": "impact",
+    "sweep_base": 1,
+    "sweep_scale": 1
   },
   "#greatsword": {
     "attack": 3.8,
     "defend": 0.8,
-    "shield": false
+    "shield": false,
+    "sweep": "cone",
+    "sweep_base": 60,
+    "sweep_scale": 40
   },
   "#gun": {
-    "attack": 1.8,
+    "attack": 2,
     "defend": 1.1,
-    "shield": false
+    "shield": false,
+    "sweep": "cone",
+    "sweep_base": 30,
+    "sweep_scale": 20
   },
   "#hoe": {
     "attack": 1,
     "defend": 1,
-    "shield": false
+    "shield": false,
+    "sweep": "cone",
+    "sweep_base": 20,
+    "sweep_scale": 20
   },
   "#khopesh": {
     "attack": 2.4,
     "defend": 0.95,
-    "shield": false
+    "shield": false,
+    "sweep": "cone",
+    "sweep_base": 40,
+    "sweep_scale": 30
   },
   "#longsword": {
     "attack": 2.9,
     "defend": 0.9,
-    "shield": false
+    "shield": false,
+    "sweep": "cone",
+    "sweep_base": 40,
+    "sweep_scale": 30
   },
   "#mace": {
     "attack": 6,
     "defend": 0.9,
-    "shield": false
+    "shield": false,
+    "sweep": "impact",
+    "sweep_base": 0.5,
+    "sweep_scale": 0.5
+  },
+  "#machete": {
+    "attack": 2.8,
+    "defend": 0.85,
+    "shield": false,
+    "sweep": "cone",
+    "sweep_base": 60,
+    "sweep_scale": 40
   },
   "#magestaff": {
     "attack": 1.5,
     "defend": 0.9,
-    "shield": false
+    "shield": false,
+    "sweep": "cone",
+    "sweep_base": 40,
+    "sweep_scale": 30
   },
   "#pickaxe": {
     "attack": 2.5,
     "defend": 1,
-    "shield": false
+    "shield": false,
+    "sweep": "impact",
+    "sweep_base": 0,
+    "sweep_scale": 1
   },
   "#pike": {
     "attack": 3.2,
     "defend": 0.7,
-    "shield": false
+    "shield": false,
+    "sweep": "line",
+    "sweep_base": 0.5,
+    "sweep_scale": 0.5
   },
   "#polearm": {
     "attack": 4,
     "defend": 0.7,
-    "shield": false
+    "shield": false,
+    "sweep": "line",
+    "sweep_base": 0.5,
+    "sweep_scale": 0.5
   },
   "#quarterstaff": {
     "attack": 3,
-    "defend": 0.7,
-    "shield": false
+    "defend": 0.70,
+    "shield": false,
+    "sweep": "circle",
+    "sweep_base": 1.5,
+    "sweep_scale": 1
   },
   "#rapier": {
     "attack": 2,
     "defend": 0.85,
-    "shield": false
+    "shield": false,
+    "sweep": "line",
+    "sweep_base": 0,
+    "sweep_scale": 1
   },
   "#scythe": {
     "attack": 3,
     "defend": 0.8,
-    "shield": false
+    "shield": false,
+    "sweep": "cone",
+    "sweep_base": 80,
+    "sweep_scale": 60
   },
   "#shield": {
     "attack": 4,
     "defend": 0.6,
-    "shield": true
+    "shield": true,
+    "sweep": "impact",
+    "sweep_base": 0.5,
+    "sweep_scale": 0.5
   },
   "#shovel": {
     "attack": 6,
     "defend": 0.9,
-    "shield": false
+    "shield": false,
+    "sweep": "impact",
+    "sweep_base": 0.5,
+    "sweep_scale": 0.5
   },
   "#sign": {
     "attack": 2.4,
     "defend": 0.9,
-    "shield": false
+    "shield": false,
+    "sweep": "cone",
+    "sweep_base": 30,
+    "sweep_scale": 30
   },
   "#spear": {
     "attack": 2.5,
     "defend": 0.7,
-    "shield": false
+    "shield": false,
+    "sweep": "line",
+    "sweep_base": 0.5,
+    "sweep_scale": 1
+  },
+  "#staff": {
+    "attack": 1.8,
+    "defend": 0.9,
+    "shield": false,
+    "sweep": "circle",
+    "sweep_base": 1,
+    "sweep_scale": 1
   },
   "#sword": {
     "attack": 2.6,
     "defend": 0.9,
-    "shield": false
+    "shield": false,
+    "sweep": "cone",
+    "sweep_base": 40,
+    "sweep_scale": 40
   },
   "#thrown": {
-    "attack": 2,
-    "defend": 1.2,
-    "shield": false
+    "attack": 1,
+    "defend": 1,
+    "shield": false,
+    "sweep": "impact",
+    "sweep_base": 0,
+    "sweep_scale": 0.5
   },
-  "#tower_shield": {
+  "#tower": {
     "attack": 6,
     "defend": 0.5,
-    "shield": true
+    "shield": true,
+    "sweep": "impact",
+    "sweep_base": 1,
+    "sweep_scale": 1
   },
   "#wand": {
     "attack": 0.5,
     "defend": 1,
-    "shield": false
+    "shield": false,
+    "sweep": "none",
+    "sweep_base": 0,
+    "sweep_scale": 0
   },
   "#whip": {
     "attack": 1.4,
     "defend": 1,
-    "shield": false
+    "shield": false,
+    "sweep": "impact",
+    "sweep_base": 1,
+    "sweep_scale": 0.5
   }
 }

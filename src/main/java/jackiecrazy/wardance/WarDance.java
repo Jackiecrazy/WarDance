@@ -113,6 +113,7 @@ public class WarDance {
     @SubscribeEvent
     public void onJsonListener(AddReloadListenerEvent event) {
         WeaponStats.register(event);
+        TwohandingStats.register(event);
     }
 
     private void gui(final RegisterGuiOverlaysEvent event) {

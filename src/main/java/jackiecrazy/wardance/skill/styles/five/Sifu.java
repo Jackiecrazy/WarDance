@@ -11,6 +11,7 @@ import jackiecrazy.footwork.utils.TargetingUtils;
 import jackiecrazy.wardance.WarDance;
 import jackiecrazy.wardance.capability.status.Marks;
 import jackiecrazy.wardance.entity.ai.ExposeGoal;
+import jackiecrazy.wardance.event.SweepEvent;
 import jackiecrazy.wardance.mixin.SifuDropsMixin;
 import jackiecrazy.wardance.skill.SkillColors;
 import jackiecrazy.wardance.skill.SkillData;
@@ -82,10 +83,6 @@ public class Sifu extends ColorRestrictionStyle {
 
     @Override
     public boolean equippedTick(LivingEntity caster, SkillData stats) {
-        if (stats.getState() == STATE.COOLING) {
-            CombatData.getCap(caster).setForcedSweep(0);
-            return cooldownTick(stats);
-        }
         return super.equippedTick(caster, stats);
     }
 
@@ -106,6 +103,10 @@ public class Sifu extends ColorRestrictionStyle {
 
     @Override
     public void onProc(LivingEntity caster, Event procPoint, STATE state, SkillData stats, LivingEntity target) {
+        //no sweeping
+        if (procPoint instanceof SweepEvent e && procPoint.getPhase() == EventPriority.HIGHEST && stats.getState() == STATE.COOLING) {
+            e.setCanceled(true);
+        }
         //applies to you
         if (procPoint instanceof LivingHurtEvent e && DamageUtils.isPhysicalAttack(e.getSource()) && e.getEntity() == caster && e.getPhase() == EventPriority.HIGHEST) {
             //ouch
@@ -177,8 +178,6 @@ public class Sifu extends ColorRestrictionStyle {
     public boolean onStateChange(LivingEntity caster, SkillData prev, STATE from, STATE to) {
         if (from == STATE.ACTIVE && to == STATE.COOLING)
             setCooldown(caster, prev, 5);
-        if (from == STATE.COOLING && to == STATE.INACTIVE)
-            CombatData.getCap(caster).setForcedSweep(-1);
         return super.onStateChange(caster, prev, from, to);
     }
 

@@ -35,9 +35,9 @@ import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.item.*;
-import net.minecraft.world.item.enchantment.EnchantmentHelper;
-import net.minecraft.world.item.enchantment.Enchantments;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.Items;
 import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.util.FakePlayer;
@@ -118,7 +118,6 @@ public class CombatUtils {
                 }
             });
         });
-        //TODO send to client
     }
 
     @Nonnull
@@ -513,7 +512,6 @@ public class CombatUtils {
     }
 
     public static SWEEPTYPE getSweepType(LivingEntity e, ItemStack i) {
-        //todo forced sweep override
         final MeleeInfo info = lookupStats(i);
 //        if (i.getItem() instanceof TridentItem) {
 //            return SWEEPTYPE.LINE;
@@ -547,36 +545,30 @@ public class CombatUtils {
 
     public static void sweep(LivingEntity e, Entity ignore, InteractionHand h, SWEEPTYPE type, double reach, double base, double scaling) {
         //no go cases
-        if (!GeneralConfig.betterSweep) return;
+        //if (!GeneralConfig.betterSweep) return;
         if (!CombatData.getCap(e).isCombatMode()) return;
-        if (type == SWEEPTYPE.NONE) return;
-        if (CombatData.getCap(e).getForcedSweep() == 0) {
-            CombatData.getCap(e).setForcedSweep(-1);
-            return;
-        }
         if (h == InteractionHand.OFF_HAND) {
             swapHeldItems(e);
             CombatData.getCap(e).setOffhandAttack(true);
         }
-        double scaled = EnchantmentHelper.getEnchantmentLevel(Enchantments.SWEEPING_EDGE, e) * scaling;
-        double radius = base + scaled;
+        double radius;
 
-
-        if (CombatData.getCap(e).getForcedSweep() > 0)
-            radius = CombatData.getCap(e).getForcedSweep();
-        else {
-            SweepEvent sre = new SweepEvent(e, h, e.getMainHandItem(), type, radius);
-            MinecraftForge.EVENT_BUS.post(sre);
-            radius = sre.getWidth();
-        }
+        SweepEvent sre = new SweepEvent(e, h, e.getMainHandItem(), type, base, scaling);
+        MinecraftForge.EVENT_BUS.post(sre);
+        base = sre.getBase();
+        scaling = sre.getScaling();
+        radius = sre.getFinalizedWidth();
+        type = sre.getType();
+        if (sre.isCanceled()) return;
+        if (type == SWEEPTYPE.NONE || radius == 0) return;
         if (e.getMainHandItem().getCapability(CombatManipulator.CAP).isPresent())
             radius = e.getMainHandItem().getCapability(CombatManipulator.CAP).resolve().get().sweepArea(e, e.getMainHandItem());
         float charge = Math.max(CombatUtils.getCooledAttackStrength(e, InteractionHand.MAIN_HAND, 0.5f), CombatData.getCap(e).getCachedCooldown());
         boolean hit = false;
         isSweeping = ignore != null;
-        double modRange = Math.min(GeneralConfig.maxRange, GeneralConfig.baseRange + (reach - 3) * GeneralConfig.rangeMult);
+        Vec3 starting = ignore == null ? GeneralUtils.raytraceAnything(e.level, e, reach).getLocation() : ignore.position();
         //grab everyone in "range"
-        for (Entity target : e.level.getEntities(e, e.getBoundingBox().inflate(modRange + 3))) {
+        for (Entity target : e.level.getEntities(e, e.getBoundingBox().inflate(reach * 2))) {
             if (target == ignore) {
                 if (radius > 0)
                     hit = true;
@@ -587,19 +579,19 @@ public class CombatUtils {
             switch (type) {
                 case CONE -> {
                     if (!GeneralUtils.isFacingEntity(e, target, (int) radius)) continue;
-                    if (GeneralUtils.getDistSqCompensated(e, target) > modRange * modRange) continue;
+                    if (GeneralUtils.getDistSqCompensated(e, target) > reach * reach) continue;
                 }
                 case IMPACT -> {
-                    Vec3 starting = ignore == null ? GeneralUtils.raytraceAnything(e.level, e, reach).getLocation() : ignore.position();
                     if (GeneralUtils.getDistSqCompensated(target, starting) > radius * radius) continue;
                 }
                 case CIRCLE -> {
                     if (GeneralUtils.getDistSqCompensated(target, e) > radius * radius) continue;
                 }
                 case LINE -> {
-                    Vec3 start = e.getEyePosition(0.5F);
-                    Vec3 look = e.getLookAngle().scale(reach);
-                    Vec3 end = start.add(look);
+                    Vec3 eye = e.getEyePosition(0.5F);
+                    Vec3 look = e.getLookAngle();
+                    Vec3 start = eye.add(look.scale(radius));
+                    Vec3 end = eye.add(look.scale(reach));
                     if (!target.getBoundingBox().inflate(radius).intersects(start, end)) continue;
                 }
             }
@@ -611,16 +603,51 @@ public class CombatUtils {
             else e.doHurtTarget(target);
             isSweeping = true;
         }
-        if (e instanceof Player && hit) {
-            ((Player) e).sweepAttack();
-            e.level.playSound(null, e.getX(), e.getY(), e.getZ(), SoundEvents.PLAYER_ATTACK_SWEEP, e.getSoundSource(), 1.0F, 1.0F);
+        //if (e instanceof Player && hit) {
+        //play sweep particles in different ways
+        switch (type) {
+            case LINE -> ParticleUtils.playSweepParticle(e, 0, reach, e.getBbHeight() / 2);
+            case CIRCLE -> {
+                ParticleUtils.playSweepParticle(e, 0, radius, e.getBbHeight() / 2);
+                ParticleUtils.playSweepParticle(e, 180, radius, e.getBbHeight() / 2);
+                if (radius > 1) {
+                    ParticleUtils.playSweepParticle(e, 90, radius, e.getBbHeight() / 2);
+                    ParticleUtils.playSweepParticle(e, 270, radius, e.getBbHeight() / 2);
+                }
+                if (radius > 3) {
+                    ParticleUtils.playSweepParticle(e, 45, radius, e.getBbHeight() / 2);
+                    ParticleUtils.playSweepParticle(e, 135, radius, e.getBbHeight() / 2);
+                    ParticleUtils.playSweepParticle(e, 225, radius, e.getBbHeight() / 2);
+                    ParticleUtils.playSweepParticle(e, 315, radius, e.getBbHeight() / 2);
+                }
+            }
+            case CONE -> {
+                ParticleUtils.playSweepParticle(e, 0, reach, e.getBbHeight() / 2);
+                ParticleUtils.playSweepParticle(e, (int) (radius / 2), reach, e.getBbHeight() / 2);
+                ParticleUtils.playSweepParticle(e, (int) (-radius / 2), reach, e.getBbHeight() / 2);
+            }
+            case IMPACT -> {
+                ParticleUtils.playSweepParticle(e, starting, 0, radius, 0.5);
+                ParticleUtils.playSweepParticle(e, starting, 180, radius, 0.5);
+                if (radius > 1) {
+                    ParticleUtils.playSweepParticle(e, starting, 90, radius, 0.5);
+                    ParticleUtils.playSweepParticle(e, starting, 270, radius, 0.5);
+                }
+                if (radius > 3) {
+                    ParticleUtils.playSweepParticle(e, starting, 45, radius, 0.5);
+                    ParticleUtils.playSweepParticle(e, starting, 135, radius, 0.5);
+                    ParticleUtils.playSweepParticle(e, starting, 225, radius, 0.5);
+                    ParticleUtils.playSweepParticle(e, starting, 315, radius, 0.5);
+                }
+            }
         }
+        e.level.playSound(null, e.getX(), e.getY(), e.getZ(), SoundEvents.PLAYER_ATTACK_SWEEP, e.getSoundSource(), 1.0F, 1.0F);
+        //}
         isSweeping = false;
         if (h == InteractionHand.OFF_HAND) {
             swapHeldItems(e);
             CombatData.getCap(e).setOffhandAttack(false);
         }
-        CombatData.getCap(e).setForcedSweep(-1);
     }
 
     public static void initializePPE(ProjectileParryEvent ppe, float mult) {
