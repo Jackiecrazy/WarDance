@@ -553,7 +553,7 @@ public class ResourceDisplay implements IGuiOverlay {
                     Pair<Integer, Integer> pair = translateCoords(ClientConfig.CONFIG.might, width, height);
                     int x = Math.max(pair.getFirst() - 16, 0);
                     int y = Math.min(pair.getSecond() - 16, height - 32);
-                    int fillHeight = (int) (Math.min(1, currentMightLevel % 1) * 32);
+                    int fillHeight = (int) (currentMightLevel * 32 / cap.getMaxMight());
                     if (ClientConfig.CONFIG.might.enabled) {
                         //might circle
                         RenderSystem.setShaderColor(1, 1, 1, 1);
@@ -566,17 +566,17 @@ public class ResourceDisplay implements IGuiOverlay {
                         //might circle filling
                         {
                             stack.pushPose();
-                            mc.gui.blit(stack, x, y + 32 - fillHeight, 0, 96 - fillHeight, 32, fillHeight);
+                            mc.gui.blit(stack, x, y + 32 - fillHeight, 32, 96 - fillHeight, 32, fillHeight);
                             stack.popPose();
                         }
                         fillHeight += Math.min(fillHeight, 3);
                         fillHeight = Math.min(fillHeight, 32);
                         //might crown, rendered when above half might
-                        if (currentMightLevel >= cap.getMaxMight() / 2) {
-                            stack.pushPose();
-                            mc.gui.blit(stack, x, y, 32, 64, 32, 32);
-                            stack.popPose();
-                        }
+//                        if (currentMightLevel >= cap.getMaxMight() / 2) {
+//                            stack.pushPose();
+//                            mc.gui.blit(stack, x, y, 32, 64, 32, 32);
+//                            stack.popPose();
+//                        }
                         //might crown plus pro ultra, rendered at max might
                         if (currentMightLevel == cap.getMaxMight()) {
                             {

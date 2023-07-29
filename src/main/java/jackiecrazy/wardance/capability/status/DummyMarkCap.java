@@ -64,5 +64,10 @@ public class DummyMarkCap implements IMark {
 
     }
 
+    @Override
+    public void sync() {
+
+    }
+
 
 }

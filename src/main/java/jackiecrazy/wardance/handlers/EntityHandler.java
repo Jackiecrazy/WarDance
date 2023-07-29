@@ -126,8 +126,8 @@ public class EntityHandler {
     public static void tickMobs(LivingEvent.LivingTickEvent e) {
         LivingEntity elb = e.getEntity();
         if (!elb.level.isClientSide) {
+            Marks.getCap(elb).update();
             if (!(elb instanceof Player)) {
-                Marks.getCap(elb).update();
                         /*
                         The battle circle AI basically works like this (from an enemy's perspective):
 First, walk towards the player until I get within a "danger" radius

@@ -1,6 +1,7 @@
 package jackiecrazy.wardance.networking;
 
 import jackiecrazy.footwork.capability.resources.CombatData;
+import jackiecrazy.wardance.capability.status.Marks;
 import jackiecrazy.wardance.handlers.EntityHandler;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.server.level.ServerPlayer;
@@ -43,6 +44,7 @@ public class RequestUpdatePacket {
                 if (sender != null && sender.level.getEntity(updateClientPacket.e) instanceof LivingEntity entity) {
                     EntityHandler.mustUpdate.put(sender, entity);
                     CombatData.getCap(entity).serverTick();
+                    Marks.getCap(entity).sync();
                 } else EntityHandler.mustUpdate.put(sender, null);
             });
             contextSupplier.get().setPacketHandled(true);

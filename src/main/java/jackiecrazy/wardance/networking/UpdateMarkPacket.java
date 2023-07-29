@@ -15,36 +15,36 @@ import java.util.function.BiConsumer;
 import java.util.function.Function;
 import java.util.function.Supplier;
 
-public class UpdateAfflictionPacket {
+public class UpdateMarkPacket {
     int e;
     CompoundTag icc;
 
-    public UpdateAfflictionPacket(int ent, CompoundTag c) {
+    public UpdateMarkPacket(int ent, CompoundTag c) {
         e = ent;
         icc = c;
     }
 
-    public static class UpdateClientEncoder implements BiConsumer<UpdateAfflictionPacket, FriendlyByteBuf> {
+    public static class UpdateClientEncoder implements BiConsumer<UpdateMarkPacket, FriendlyByteBuf> {
 
         @Override
-        public void accept(UpdateAfflictionPacket updateClientPacket, FriendlyByteBuf packetBuffer) {
+        public void accept(UpdateMarkPacket updateClientPacket, FriendlyByteBuf packetBuffer) {
             packetBuffer.writeInt(updateClientPacket.e);
             packetBuffer.writeNbt(updateClientPacket.icc);
         }
     }
 
-    public static class UpdateClientDecoder implements Function<FriendlyByteBuf, UpdateAfflictionPacket> {
+    public static class UpdateClientDecoder implements Function<FriendlyByteBuf, UpdateMarkPacket> {
 
         @Override
-        public UpdateAfflictionPacket apply(FriendlyByteBuf packetBuffer) {
-            return new UpdateAfflictionPacket(packetBuffer.readInt(), packetBuffer.readNbt());
+        public UpdateMarkPacket apply(FriendlyByteBuf packetBuffer) {
+            return new UpdateMarkPacket(packetBuffer.readInt(), packetBuffer.readNbt());
         }
     }
 
-    public static class UpdateClientHandler implements BiConsumer<UpdateAfflictionPacket, Supplier<NetworkEvent.Context>> {
+    public static class UpdateClientHandler implements BiConsumer<UpdateMarkPacket, Supplier<NetworkEvent.Context>> {
 
         @Override
-        public void accept(UpdateAfflictionPacket updateClientPacket, Supplier<NetworkEvent.Context> contextSupplier) {
+        public void accept(UpdateMarkPacket updateClientPacket, Supplier<NetworkEvent.Context> contextSupplier) {
             contextSupplier.get().enqueueWork(() -> DistExecutor.unsafeRunWhenOn(Dist.CLIENT, () -> () -> {
                 ClientLevel world = Minecraft.getInstance().level;
                 if (world != null) {

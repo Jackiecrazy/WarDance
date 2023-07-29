@@ -4,7 +4,7 @@ import com.google.common.collect.Maps;
 import jackiecrazy.wardance.WarDance;
 import jackiecrazy.wardance.config.GeneralConfig;
 import jackiecrazy.wardance.networking.CombatChannel;
-import jackiecrazy.wardance.networking.UpdateAfflictionPacket;
+import jackiecrazy.wardance.networking.UpdateMarkPacket;
 import jackiecrazy.wardance.skill.Skill;
 import jackiecrazy.wardance.skill.SkillArchetype;
 import jackiecrazy.wardance.skill.SkillData;
@@ -125,12 +125,19 @@ public class Mark implements IMark {
                 sync = true;
             }
         }
+        sync();
+    }
+
+    @Override
+    public void sync() {
+        final LivingEntity ticker = dude.get();
+        if (ticker == null) return;
         if (sync && ticker instanceof ServerPlayer) {
-            CombatChannel.INSTANCE.send(PacketDistributor.PLAYER.with(() -> (ServerPlayer) ticker), new UpdateAfflictionPacket(ticker.getId(), this.write()));
+            CombatChannel.INSTANCE.send(PacketDistributor.PLAYER.with(() -> (ServerPlayer) ticker), new UpdateMarkPacket(ticker.getId(), this.write()));
             sync = false;
         }
         if (sync) {
-            CombatChannel.INSTANCE.send(PacketDistributor.TRACKING_ENTITY_AND_SELF.with(() -> ticker), new UpdateAfflictionPacket(ticker.getId(), this.write()));
+            CombatChannel.INSTANCE.send(PacketDistributor.TRACKING_ENTITY_AND_SELF.with(() -> ticker), new UpdateMarkPacket(ticker.getId(), this.write()));
             sync = false;
         }
     }

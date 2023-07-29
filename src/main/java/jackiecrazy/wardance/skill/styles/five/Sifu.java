@@ -1,5 +1,6 @@
 package jackiecrazy.wardance.skill.styles.five;
 
+import jackiecrazy.footwork.api.CombatDamageSource;
 import jackiecrazy.footwork.api.FootworkAttributes;
 import jackiecrazy.footwork.capability.goal.GoalCapabilityProvider;
 import jackiecrazy.footwork.capability.resources.CombatData;
@@ -69,6 +70,7 @@ public class Sifu extends ColorRestrictionStyle {
                 if (!(wg.getGoal() instanceof FearGoal) && !(wg.getGoal() instanceof ExposeGoal))
                     mob.targetSelector.removeGoal(wg.getGoal());
             }
+            mob.getBrain().removeAllBehaviors();
             if (target instanceof PathfinderMob p)
                 mob.goalSelector.addGoal(0, new FearGoal(p));
         }
@@ -127,7 +129,7 @@ public class Sifu extends ColorRestrictionStyle {
         if (target == null || isGreatEvil(target)) return;
         //applies to eligible enemies
         if (procPoint instanceof LivingAttackEvent lae && procPoint.getPhase() == EventPriority.HIGHEST && lae.getEntity() == target) {
-            if (CombatData.getCap(target).isVulnerable()) {
+            if (CombatData.getCap(target).isVulnerable() && !CombatData.getCap(target).isExposed()) {
                 //cannot attack the weak
                 lae.setCanceled(true);
             }
@@ -169,7 +171,10 @@ public class Sifu extends ColorRestrictionStyle {
     public void onMarkEnd(LivingEntity caster, LivingEntity target, SkillData sd) {
         SkillUtils.removeAttribute(target, Attributes.KNOCKBACK_RESISTANCE, kbr);
         if (sd.isCondition() && target instanceof Mob) {
-            ((SifuDropsMixin) target).callDropAllDeathLoot(target.getLastDamageSource());
+            final SifuDropsMixin sifu = (SifuDropsMixin) target;
+            if (caster instanceof Player p)
+                target.setLastHurtByPlayer(p);
+            sifu.callDropAllDeathLoot(new CombatDamageSource("player", caster));
             target.remove(Entity.RemovalReason.KILLED);
         }
     }

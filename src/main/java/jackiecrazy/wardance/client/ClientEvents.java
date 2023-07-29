@@ -7,6 +7,7 @@ import jackiecrazy.footwork.capability.resources.CombatData;
 import jackiecrazy.footwork.capability.resources.ICombatCapability;
 import jackiecrazy.footwork.utils.GeneralUtils;
 import jackiecrazy.wardance.WarDance;
+import jackiecrazy.wardance.client.screen.SkillSelectionScreen;
 import jackiecrazy.wardance.compat.WarCompat;
 import jackiecrazy.wardance.config.ClientConfig;
 import jackiecrazy.wardance.config.CombatConfig;
@@ -82,6 +83,16 @@ public class ClientEvents {
                     WarDance.LOGGER.warn("improperly formatted custom rotation definition " + s + "!");
             }
         }
+    }
+
+    @SubscribeEvent
+    public static void skillReading(RenderTooltipEvent.Color e) {
+        if (e.getItemStack().isEmpty() && Minecraft.getInstance().screen instanceof SkillSelectionScreen) {
+            e.setBorderEnd(0xffffffff);
+            e.setBorderStart(0xffffffff);
+        }
+        //e.setBackgroundStart(0xffffff);
+        //e.setBackgroundEnd(0);
     }
 
     @SubscribeEvent(priority = EventPriority.HIGHEST)

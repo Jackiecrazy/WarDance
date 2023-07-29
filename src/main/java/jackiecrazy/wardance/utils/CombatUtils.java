@@ -559,8 +559,14 @@ public class CombatUtils {
         scaling = sre.getScaling();
         radius = sre.getFinalizedWidth();
         type = sre.getType();
-        if (sre.isCanceled()) return;
-        if (type == SWEEPTYPE.NONE || radius == 0) return;
+        if (sre.isCanceled() || type == SWEEPTYPE.NONE || radius == 0) {
+            //no go, swap items back and stop
+            if (h == InteractionHand.OFF_HAND) {
+                swapHeldItems(e);
+                CombatData.getCap(e).setOffhandAttack(false);
+            }
+            return;
+        }
         if (e.getMainHandItem().getCapability(CombatManipulator.CAP).isPresent())
             radius = e.getMainHandItem().getCapability(CombatManipulator.CAP).resolve().get().sweepArea(e, e.getMainHandItem());
         float charge = Math.max(CombatUtils.getCooledAttackStrength(e, InteractionHand.MAIN_HAND, 0.5f), CombatData.getCap(e).getCachedCooldown());

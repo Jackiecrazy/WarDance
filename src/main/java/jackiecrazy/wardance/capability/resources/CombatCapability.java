@@ -139,7 +139,7 @@ public class CombatCapability implements ICombatCapability {
         float temp = might + amount;
         setMight(temp);
         setMightGrace((int) grace);
-        addRank(amount * 0.05f);
+        addRank(amount);
         return temp % 10;
     }
 

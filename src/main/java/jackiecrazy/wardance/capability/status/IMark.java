@@ -28,4 +28,6 @@ public interface IMark {
     void read(CompoundTag from);
 
     void update();
+
+    void sync();
 }
