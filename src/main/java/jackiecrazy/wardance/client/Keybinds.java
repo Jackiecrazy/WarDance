@@ -4,6 +4,7 @@ import com.mojang.blaze3d.platform.InputConstants;
 import jackiecrazy.footwork.capability.resources.CombatData;
 import jackiecrazy.footwork.capability.resources.ICombatCapability;
 import jackiecrazy.wardance.WarDance;
+import jackiecrazy.wardance.capability.action.PermissionData;
 import jackiecrazy.wardance.capability.skill.CasterData;
 import jackiecrazy.wardance.client.screen.SkillCastScreen;
 import jackiecrazy.wardance.client.screen.SkillSelectionScreen;
@@ -57,6 +58,10 @@ public class Keybinds {
             mc.setScreen(new SkillCastScreen(CasterData.getCap(mc.player).getEquippedSkills()));
         }
         if (SELECT.getKeyConflictContext().isActive() && SELECT.consumeClick() && mc.player.isAlive()) {
+            //hard no go
+            if(!PermissionData.getCap(mc.player).canSelectSkills()) {
+                return;
+            }
             mc.setScreen(new SkillSelectionScreen());
         }
         if (BINDCAST.getKeyConflictContext().isActive() && BINDCAST.consumeClick() && mc.player.isAlive()) {

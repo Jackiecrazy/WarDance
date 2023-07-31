@@ -23,6 +23,11 @@ public class DummySkillCap implements ISkillCapability {
     }
 
     @Override
+    public void setColorSelectable(SkillCategory s, boolean selectable) {
+
+    }
+
+    @Override
     public List<Skill> getSelectableList() {
         return otherDummy;
     }

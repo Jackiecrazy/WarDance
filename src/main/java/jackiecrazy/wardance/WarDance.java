@@ -1,9 +1,11 @@
 package jackiecrazy.wardance;
 
+import jackiecrazy.wardance.capability.action.IAction;
 import jackiecrazy.wardance.capability.skill.ISkillCapability;
 import jackiecrazy.wardance.capability.status.IMark;
 import jackiecrazy.wardance.client.hud.OffhandCooldownDisplay;
 import jackiecrazy.wardance.client.hud.ResourceDisplay;
+import jackiecrazy.wardance.command.CategoryArgument;
 import jackiecrazy.wardance.command.SkillArgument;
 import jackiecrazy.wardance.command.WarDanceCommand;
 import jackiecrazy.wardance.compat.ElenaiCompat;
@@ -52,9 +54,13 @@ public class WarDance {
     public static final Logger LOGGER = LogManager.getLogger();
     public static final GameRules.Key<GameRules.BooleanValue> GATED_SKILLS = GameRules.register("lockWarSkills", GameRules.Category.PLAYER, GameRules.BooleanValue.create(false)); //Blessed be the TF
     private static final DeferredRegister<ArgumentTypeInfo<?, ?>> COMMAND_ARGUMENT_TYPES = DeferredRegister.create(ForgeRegistries.COMMAND_ARGUMENT_TYPES, "forge");
-    private static final RegistryObject<SingletonArgumentInfo<SkillArgument>> MODID_COMMAND_ARGUMENT_TYPE = COMMAND_ARGUMENT_TYPES.register("modid", () ->
+    private static final RegistryObject<SingletonArgumentInfo<SkillArgument>> WARDANCE_COMMAND_SKI_ARGUMENT_TYPE = COMMAND_ARGUMENT_TYPES.register(MODID, () ->
             ArgumentTypeInfos.registerByClass(SkillArgument.class,
                     SingletonArgumentInfo.contextFree(SkillArgument::skill)));
+    private static final RegistryObject<SingletonArgumentInfo<CategoryArgument>> WARDANCE_COMMAND_CAT_ARGUMENT_TYPE = COMMAND_ARGUMENT_TYPES.register(MODID, () ->
+            ArgumentTypeInfos.registerByClass(CategoryArgument.class,
+                    SingletonArgumentInfo.contextFree(CategoryArgument::color)));
+
     public WarDance() {
         // Register the setup method for modloading
         FMLJavaModLoadingContext.get().getModEventBus().addListener(this::setup);
@@ -88,7 +94,7 @@ public class WarDance {
     private void setup(final FMLCommonSetupEvent event) {
         // some preinit code
         int index = 0;
-        CombatChannel.INSTANCE.registerMessage(index++, UpdateClientPacket.class, new UpdateClientPacket.UpdateClientEncoder(), new UpdateClientPacket.UpdateClientDecoder(), new UpdateClientPacket.UpdateClientHandler());
+        CombatChannel.INSTANCE.registerMessage(index++, UpdateClientResourcePacket.class, new UpdateClientResourcePacket.UpdateClientEncoder(), new UpdateClientResourcePacket.UpdateClientDecoder(), new UpdateClientResourcePacket.UpdateClientHandler());
         CombatChannel.INSTANCE.registerMessage(index++, UpdateMarkPacket.class, new UpdateMarkPacket.UpdateClientEncoder(), new UpdateMarkPacket.UpdateClientDecoder(), new UpdateMarkPacket.UpdateClientHandler());
         CombatChannel.INSTANCE.registerMessage(index++, UpdateAttackPacket.class, new UpdateAttackPacket.UpdateAttackEncoder(), new UpdateAttackPacket.UpdateAttackDecoder(), new UpdateAttackPacket.UpdateAttackHandler());
         CombatChannel.INSTANCE.registerMessage(index++, DodgePacket.class, new DodgePacket.DodgeEncoder(), new DodgePacket.DodgeDecoder(), new DodgePacket.DodgeHandler());
@@ -104,6 +110,7 @@ public class WarDance {
         CombatChannel.INSTANCE.registerMessage(index++, UpdateTargetPacket.class, new UpdateTargetPacket.UpdateTargetEncoder(), new UpdateTargetPacket.UpdateTargetDecoder(), new UpdateTargetPacket.UpdateTargetHandler());
         CombatChannel.INSTANCE.registerMessage(index++, SyncItemDataPacket.class, new SyncItemDataPacket.Encoder(), new SyncItemDataPacket.Decoder(), new SyncItemDataPacket.Handler());
         CombatChannel.INSTANCE.registerMessage(index++, SyncTagDataPacket.class, new SyncTagDataPacket.Encoder(), new SyncTagDataPacket.Decoder(), new SyncTagDataPacket.Handler());
+        CombatChannel.INSTANCE.registerMessage(index++, UpdateClientPermissionPacket.class, new UpdateClientPermissionPacket.Encoder(), new UpdateClientPermissionPacket.Decoder(), new UpdateClientPermissionPacket.Handler());
     }
 
     private void doClientStuff(final FMLClientSetupEvent event) {
@@ -126,6 +133,7 @@ public class WarDance {
     private void caps(final RegisterCapabilitiesEvent event) {
         event.register(IMark.class);
         event.register(ISkillCapability.class);
+        event.register(IAction.class);
     }
 
     private void enqueueIMC(final InterModEnqueueEvent event) {

@@ -11,10 +11,12 @@ import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import com.mojang.brigadier.exceptions.SimpleCommandExceptionType;
 import jackiecrazy.footwork.capability.resources.CombatData;
 import jackiecrazy.wardance.WarDance;
+import jackiecrazy.wardance.capability.action.PermissionData;
 import jackiecrazy.wardance.capability.skill.CasterData;
 import jackiecrazy.wardance.items.ManualItem;
 import jackiecrazy.wardance.items.WarItems;
 import jackiecrazy.wardance.skill.Skill;
+import jackiecrazy.wardance.skill.SkillCategory;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.Commands;
 import net.minecraft.commands.arguments.EntityArgument;
@@ -46,8 +48,11 @@ public class WarDanceCommand {
                                         .then(Commands.argument("enabled", BoolArgumentType.bool())
                                                 .executes(WarDanceCommand::setSkill)))
                                 .then(Commands.literal("reset")
-                                        .executes(WarDanceCommand::resetSkills)
-                                )
+                                        .executes(WarDanceCommand::resetSkills))
+                                .then(Commands.argument("color", CategoryArgument.color())
+                                        .executes(WarDanceCommand::getSkillCategory)
+                                        .then(Commands.argument("enabled", BoolArgumentType.bool())
+                                                .executes(WarDanceCommand::setSkillCategory)))
                         )
                 )
                 .then(Commands.literal("might")
@@ -114,6 +119,42 @@ public class WarDanceCommand {
                         .executes(WarDanceCommand::manualize)
                         .then(Commands.argument("autolearn", BoolArgumentType.bool())
                                 .executes(WarDanceCommand::manualize)
+                        )
+                )
+                .then(Commands.literal("toggle")
+                        .executes(WarDanceCommand::missingArgument)
+                        .then(Commands.argument("player", EntityArgument.player())
+                                .executes(WarDanceCommand::missingArgument)
+                                .then(Commands.literal("parry")
+                                        .executes(a -> WarDanceCommand.getPermission(a, Permission.PARRY))
+                                        .then(Commands.argument("enabled", BoolArgumentType.bool())
+                                                .executes(a -> WarDanceCommand.setPermission(a, Permission.PARRY))
+                                        )
+                                )
+                                .then(Commands.literal("posture")
+                                        .executes(a -> WarDanceCommand.getPermission(a, Permission.POSTURE))
+                                        .then(Commands.argument("enabled", BoolArgumentType.bool())
+                                                .executes(a -> WarDanceCommand.setPermission(a, Permission.POSTURE))
+                                        )
+                                )
+                                .then(Commands.literal("skill")
+                                        .executes(a -> WarDanceCommand.getPermission(a, Permission.SKILL))
+                                        .then(Commands.argument("enabled", BoolArgumentType.bool())
+                                                .executes(a -> WarDanceCommand.setPermission(a, Permission.SKILL))
+                                        )
+                                )
+                                .then(Commands.literal("combat")
+                                        .executes(a -> WarDanceCommand.getPermission(a, Permission.COMBAT))
+                                        .then(Commands.argument("enabled", BoolArgumentType.bool())
+                                                .executes(a -> WarDanceCommand.setPermission(a, Permission.COMBAT))
+                                        )
+                                )
+                                .then(Commands.literal("sweep")
+                                        .executes(a -> WarDanceCommand.getPermission(a, Permission.SWEEP))
+                                        .then(Commands.argument("enabled", BoolArgumentType.bool())
+                                                .executes(a -> WarDanceCommand.setPermission(a, Permission.SWEEP))
+                                        )
+                                )
                         )
                 );
         dispatcher.register(builder);
@@ -277,6 +318,67 @@ public class WarDanceCommand {
         CasterData.getCap(player).getSelectableList().clear();
         ctx.getSource().sendSuccess(Component.translatable("wardance.command.clearSkill" + (player.level.getGameRules().getBoolean(WarDance.GATED_SKILLS)), player.getDisplayName()), false);
         return Command.SINGLE_SUCCESS;
+    }
+
+    private static int setSkillCategory(CommandContext<CommandSourceStack> ctx) throws CommandSyntaxException {
+        Player player = EntityArgument.getPlayer(ctx, "player");
+        final SkillCategory skill = ctx.getArgument("color", SkillCategory.class);
+        final boolean enabled = BoolArgumentType.getBool(ctx, "enabled");
+        for (Skill s : Skill.categoryMap.get(skill))
+            CasterData.getCap(player).setSkillSelectable(s, enabled);
+        ctx.getSource().sendSuccess(Component.translatable("wardance.command.setSkillCategory" + (enabled), player.getDisplayName(), skill.name()), false);
+        return Command.SINGLE_SUCCESS;
+    }
+
+    /**
+     * tells you how many skills you can select in a given category
+     */
+    private static int getSkillCategory(CommandContext<CommandSourceStack> ctx) throws CommandSyntaxException {
+        Player player = EntityArgument.getPlayer(ctx, "player");
+        final SkillCategory cat = ctx.getArgument("color", SkillCategory.class);
+        int ret = 0;
+        for (Skill s : Skill.categoryMap.get(cat))
+            if (CasterData.getCap(player).isSkillSelectable(s))
+                ret++;
+        ctx.getSource().sendSuccess(Component.translatable("wardance.command.getSkillCategory", player.getDisplayName(), ret, cat.name()), false);
+        return ret;
+    }
+
+    private static int getPermission(CommandContext<CommandSourceStack> ctx, Permission permission) throws CommandSyntaxException {
+        Player player = EntityArgument.getPlayer(ctx, "player");
+        boolean enabled = true;
+        switch (permission) {
+            case PARRY -> enabled = PermissionData.getCap(player).canParry();
+            case SKILL -> enabled = PermissionData.getCap(player).canSelectSkills();
+            case COMBAT -> enabled = PermissionData.getCap(player).canEnterCombatMode();
+            case POSTURE -> enabled = PermissionData.getCap(player).canDealPostureDamage();
+            case SWEEP -> enabled = PermissionData.getCap(player).canSweep();
+        }
+        ctx.getSource().sendSuccess(Component.translatable("wardance.command.permission." + permission.name() + "." + enabled, player.getDisplayName()), false);
+
+        return enabled ? 1 : 0;
+    }
+
+    private static int setPermission(CommandContext<CommandSourceStack> ctx, Permission permission) throws CommandSyntaxException {
+        Player player = EntityArgument.getPlayer(ctx, "player");
+        final boolean enabled = BoolArgumentType.getBool(ctx, "enabled");
+        switch (permission) {
+            case PARRY -> PermissionData.getCap(player).setParry(enabled);
+            case SKILL -> PermissionData.getCap(player).setSkill(enabled);
+            case COMBAT -> PermissionData.getCap(player).setCombat(enabled);
+            case POSTURE -> PermissionData.getCap(player).setPosture(enabled);
+            case SWEEP -> PermissionData.getCap(player).setSweep(enabled);
+        }
+        ctx.getSource().sendSuccess(Component.translatable("wardance.command.permission." + permission.name() + "." + enabled, player.getDisplayName()), false);
+        return Command.SINGLE_SUCCESS;
+    }
+
+    private enum Permission {
+        PARRY,
+        POSTURE,
+        COMBAT,
+        SKILL,
+        SWEEP
     }
 
 }

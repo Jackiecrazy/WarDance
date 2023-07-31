@@ -6,11 +6,12 @@ import jackiecrazy.footwork.event.*;
 import jackiecrazy.footwork.potion.FootworkEffects;
 import jackiecrazy.footwork.utils.GeneralUtils;
 import jackiecrazy.wardance.WarDance;
+import jackiecrazy.wardance.capability.action.PermissionData;
 import jackiecrazy.wardance.config.CombatConfig;
 import jackiecrazy.wardance.config.GeneralConfig;
 import jackiecrazy.wardance.config.ResourceConfig;
 import jackiecrazy.wardance.networking.CombatChannel;
-import jackiecrazy.wardance.networking.UpdateClientPacket;
+import jackiecrazy.wardance.networking.UpdateClientResourcePacket;
 import jackiecrazy.wardance.utils.CombatUtils;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.server.level.ServerLevel;
@@ -255,6 +256,9 @@ public class CombatCapability implements ICombatCapability {
 
     @Override
     public float consumePosture(LivingEntity assailant, float amount, float above, boolean force) {
+        if(!PermissionData.getCap(assailant).canDealPostureDamage()) {
+            return 0;
+        }
         float ret = 0;
         LivingEntity elb = dude.get();
         if (elb == null) return ret;
@@ -302,6 +306,7 @@ public class CombatCapability implements ICombatCapability {
             for (Entity rider : elb.getPassengers())
                 rider.removeVehicle();
             staggerTickExisted = elb.tickCount;
+            //returns overflow
             return ret;
         }
         float weakness = 1;
@@ -589,6 +594,10 @@ public class CombatCapability implements ICombatCapability {
 
     @Override
     public void toggleCombatMode(boolean on) {
+        if(!PermissionData.getCap(dude.get()).canEnterCombatMode()) {
+            combat = false;
+            return;
+        }
         combat = on;
     }
 
@@ -798,9 +807,9 @@ public class CombatCapability implements ICombatCapability {
     public void sync() {
         LivingEntity elb = dude.get();
         if (elb == null || elb.level.isClientSide) return;
-        CombatChannel.INSTANCE.send(PacketDistributor.TRACKING_ENTITY.with(() -> elb), new UpdateClientPacket(elb.getId(), quickWrite()));
+        CombatChannel.INSTANCE.send(PacketDistributor.TRACKING_ENTITY.with(() -> elb), new UpdateClientResourcePacket(elb.getId(), quickWrite()));
         if (!(elb instanceof FakePlayer) && elb instanceof ServerPlayer sp)
-            CombatChannel.INSTANCE.send(PacketDistributor.PLAYER.with(() -> sp), new UpdateClientPacket(elb.getId(), write()));
+            CombatChannel.INSTANCE.send(PacketDistributor.PLAYER.with(() -> sp), new UpdateClientResourcePacket(elb.getId(), write()));
 
     }
 

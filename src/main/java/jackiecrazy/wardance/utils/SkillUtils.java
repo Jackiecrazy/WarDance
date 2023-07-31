@@ -103,4 +103,8 @@ public class SkillUtils {
         return auxAttack(caster, target, s, dmg, posdmg, () -> {}, () -> {});
     }
 
+    public static double getSkillEffectiveness(LivingEntity caster){
+        return
+    }
+
 }

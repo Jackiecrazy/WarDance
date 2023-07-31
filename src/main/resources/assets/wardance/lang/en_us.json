@@ -32,6 +32,23 @@
   "wardance.command.setSkillfalse": "%1$s can no longer equip or use %2$s",
   "wardance.command.clearSkilltrue": "%1$s can no longer equip or use any skills",
   "wardance.command.clearSkillfalse": "%1$s can now equip and use all skills",
+  "wardance.command.setSkillCategorytrue": "%1$s can now equip and use all skills in %2$s",
+  "wardance.command.setSkillCategoryfalse": "%1$s can no longer equip or use any skills in %2$s",
+  "wardance.command.getSkillCategory": "%1$s can equip %2$s skills belonging to %3$s",
+
+  "wardance.command.permission.PARRY.true": "%1$s can parry",
+  "wardance.command.permission.PARRY.false": "%1$s cannot parry",
+  "wardance.command.permission.POSTURE.true": "%1$s can deal posture damage",
+  "wardance.command.permission.POSTURE.false": "%1$s cannot deal posture damage",
+  "wardance.command.permission.COMBAT.true": "%1$s can enter combat mode and cast skills",
+  "wardance.command.permission.COMBAT.false": "%1$s cannot enter combat mode to cast skills",
+  "wardance.command.permission.SKILL.true": "%1$s can select skills",
+  "wardance.command.permission.SKILL.false": "%1$s cannot select skills",
+  "wardance.command.permission.SWEEP.true": "%1$s can sweep attack",
+  "wardance.command.permission.SWEEP.false": "%1$s cannot sweep attack",
+
+  "argument.category.invalid": "invalid category: %s",
+  "argument.skill.invalid": "invalid skill: %s",
 
   "gamerule.lockWarSkills": "Lock skills by default (unlock individually with command)",
 

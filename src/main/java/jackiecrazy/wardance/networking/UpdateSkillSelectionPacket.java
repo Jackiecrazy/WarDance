@@ -1,5 +1,6 @@
 package jackiecrazy.wardance.networking;
 
+import jackiecrazy.wardance.capability.action.PermissionData;
 import jackiecrazy.wardance.capability.skill.CasterData;
 import jackiecrazy.wardance.capability.skill.ISkillCapability;
 import jackiecrazy.wardance.skill.Skill;
@@ -66,6 +67,11 @@ public class UpdateSkillSelectionPacket {
         public void accept(UpdateSkillSelectionPacket updateSkillPacket, Supplier<NetworkEvent.Context> contextSupplier) {
             contextSupplier.get().enqueueWork(() -> {
                 ServerPlayer sender = contextSupplier.get().getSender();
+
+                //hard no go
+                if(!PermissionData.getCap(sender).canSelectSkills()) {
+                    return;
+                }
                 if (sender != null) {
                     final ISkillCapability cap = CasterData.getCap(sender);
                     List<Skill> prev = cap.getEquippedSkills();

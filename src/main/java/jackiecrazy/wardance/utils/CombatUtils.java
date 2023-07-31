@@ -9,6 +9,7 @@ import jackiecrazy.footwork.capability.weaponry.CombatManipulator;
 import jackiecrazy.footwork.event.AttackMightEvent;
 import jackiecrazy.footwork.utils.GeneralUtils;
 import jackiecrazy.wardance.WarDance;
+import jackiecrazy.wardance.capability.action.PermissionData;
 import jackiecrazy.wardance.config.CombatConfig;
 import jackiecrazy.wardance.config.GeneralConfig;
 import jackiecrazy.wardance.event.ProjectileParryEvent;
@@ -551,6 +552,7 @@ public class CombatUtils {
             swapHeldItems(e);
             CombatData.getCap(e).setOffhandAttack(true);
         }
+        if (!PermissionData.getCap(e).canSweep()) type = SWEEPTYPE.NONE;
         double radius;
 
         SweepEvent sre = new SweepEvent(e, h, e.getMainHandItem(), type, base, scaling);

@@ -3,6 +3,7 @@ package jackiecrazy.wardance.handlers;
 import jackiecrazy.footwork.capability.resources.CombatData;
 import jackiecrazy.footwork.capability.resources.ICombatCapability;
 import jackiecrazy.wardance.WarDance;
+import jackiecrazy.wardance.capability.action.PermissionData;
 import jackiecrazy.wardance.capability.resources.CombatDataOverride;
 import jackiecrazy.wardance.capability.skill.CasterData;
 import jackiecrazy.wardance.capability.skill.ISkillCapability;
@@ -61,8 +62,10 @@ public class EntityHandler {
         if (e.getObject() instanceof LivingEntity lb) {
             e.addCapability(new ResourceLocation("wardance:combatinfo"), new CombatDataOverride(lb));
             e.addCapability(new ResourceLocation("wardance:statuseffects"), new Marks(new Mark(lb)));
-            if (lb instanceof Player)
+            if (lb instanceof Player) {
                 e.addCapability(new ResourceLocation("wardance:casterinfo"), new CasterData(new SkillCapability(lb)));
+                e.addCapability(new ResourceLocation("wardance:permissions"), new PermissionData());
+            }
         }
     }
 

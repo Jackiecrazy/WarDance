@@ -5,26 +5,37 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 
 import java.awt.*;
+import java.util.HashMap;
 
 public class SkillCategory {
+
+    private static final HashMap<String, SkillCategory> colors = new HashMap<>();
     private final String category;
     private final Color color;
-
-    public ChatFormatting[] getFormattings() {
-        return formattings;
-    }
-
     private final ChatFormatting[] formattings;
 
     public SkillCategory(String name, Color c, ChatFormatting... ca) {
         category = name;
         color = c;
-        formattings=ca;
+        formattings = ca;
+        colors.put(name, this);
+    }
+
+    public static SkillCategory fromString(String key) {
+        return colors.get(key);
+    }
+
+    public ChatFormatting[] getFormattings() {
+        return formattings;
     }
 
     @Override
     public boolean equals(Object obj) {
         return obj instanceof SkillCategory && ((SkillCategory) obj).category.equals(category);
+    }
+
+    public String rawName() {
+        return category;
     }
 
     public Component name() {

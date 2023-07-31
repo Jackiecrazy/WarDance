@@ -1,12 +1,12 @@
 package jackiecrazy.wardance.networking;
 
-import jackiecrazy.footwork.capability.resources.CombatData;
+import jackiecrazy.wardance.capability.action.PermissionData;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.world.entity.Entity;
-import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.player.Player;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.fml.DistExecutor;
 import net.minecraftforge.network.NetworkEvent;
@@ -15,42 +15,41 @@ import java.util.function.BiConsumer;
 import java.util.function.Function;
 import java.util.function.Supplier;
 
-public class UpdateClientPacket {
-    public static int timesInvoked=0;
+public class UpdateClientPermissionPacket {
     int e;
     CompoundTag icc;
 
-    public UpdateClientPacket(int ent, CompoundTag c) {
+    public UpdateClientPermissionPacket(int ent, CompoundTag c) {
         e = ent;
         icc = c;
     }
 
-    public static class UpdateClientEncoder implements BiConsumer<UpdateClientPacket, FriendlyByteBuf> {
+    public static class Encoder implements BiConsumer<UpdateClientPermissionPacket, FriendlyByteBuf> {
 
         @Override
-        public void accept(UpdateClientPacket updateClientPacket, FriendlyByteBuf packetBuffer) {
+        public void accept(UpdateClientPermissionPacket updateClientPacket, FriendlyByteBuf packetBuffer) {
             packetBuffer.writeInt(updateClientPacket.e);
             packetBuffer.writeNbt(updateClientPacket.icc);
         }
     }
 
-    public static class UpdateClientDecoder implements Function<FriendlyByteBuf, UpdateClientPacket> {
+    public static class Decoder implements Function<FriendlyByteBuf, UpdateClientPermissionPacket> {
 
         @Override
-        public UpdateClientPacket apply(FriendlyByteBuf packetBuffer) {
-            return new UpdateClientPacket(packetBuffer.readInt(), packetBuffer.readNbt());
+        public UpdateClientPermissionPacket apply(FriendlyByteBuf packetBuffer) {
+            return new UpdateClientPermissionPacket(packetBuffer.readInt(), packetBuffer.readNbt());
         }
     }
 
-    public static class UpdateClientHandler implements BiConsumer<UpdateClientPacket, Supplier<NetworkEvent.Context>> {
+    public static class Handler implements BiConsumer<UpdateClientPermissionPacket, Supplier<NetworkEvent.Context>> {
 
         @Override
-        public void accept(UpdateClientPacket updateClientPacket, Supplier<NetworkEvent.Context> contextSupplier) {
+        public void accept(UpdateClientPermissionPacket updateClientPacket, Supplier<NetworkEvent.Context> contextSupplier) {
             contextSupplier.get().enqueueWork(() -> DistExecutor.unsafeRunWhenOn(Dist.CLIENT, () -> () -> {
                 ClientLevel world = Minecraft.getInstance().level;
                 if (world != null) {
                     Entity entity = world.getEntity(updateClientPacket.e);
-                    if (entity instanceof LivingEntity) CombatData.getCap((LivingEntity) entity).read(updateClientPacket.icc);
+                    if (entity instanceof Player p) PermissionData.getCap(p).read(updateClientPacket.icc);
                 }
             }));
             contextSupplier.get().setPacketHandled(true);

@@ -9,6 +9,7 @@ import jackiecrazy.footwork.event.MeleeKnockbackEvent;
 import jackiecrazy.footwork.utils.GeneralUtils;
 import jackiecrazy.footwork.utils.StealthUtils;
 import jackiecrazy.wardance.WarDance;
+import jackiecrazy.wardance.capability.action.PermissionData;
 import jackiecrazy.wardance.config.CombatConfig;
 import jackiecrazy.wardance.config.GeneralConfig;
 import jackiecrazy.wardance.config.ResourceConfig;
@@ -96,6 +97,10 @@ public class CombatHandler {
             if (e.getEntity() instanceof AbstractArrow) {
                 if (((AbstractArrow) e.getEntity()).getPierceLevel() > 0)
                     return;
+            }
+            //hard no go
+            if (!PermissionData.getCap(uke).canParry()) {
+                return;
             }
             float consume = CombatConfig.posturePerProjectile;
             ICombatCapability ukeCap = CombatData.getCap(uke);
@@ -270,6 +275,7 @@ public class CombatHandler {
                 failManualParry |= CombatConfig.parryTime < 0 && ukeCap.getParryingTick() == -1;
                 failManualParry &= uke instanceof Player;
                 boolean canParry = GeneralUtils.isFacingEntity(uke, seme, 90);
+
                 //boolean useDeflect = (uke instanceof Player || WarDance.rand.nextFloat() < CombatConfig.mobDeflectChance) && GeneralUtils.isFacingEntity(uke, seme, 120 + 2 * (int) GeneralUtils.getAttributeValueSafe(uke, FootworkAttributes.DEFLECTION.get())) && !GeneralUtils.isFacingEntity(uke, seme, 120) && !canParry;
                 //staggered, no parry
                 if (ukeCap.isVulnerable()) {
@@ -329,7 +335,7 @@ public class CombatHandler {
                 //updating this quickly, it's basically the above without crit and stab multipliers, which were necessary for calculating canParry so they couldn't be eliminated cleanly...
                 float originalPostureConsumption = Math.abs(original * defMult);
                 ParryEvent pe = new ParryEvent(uke, seme, (canParry && defend != null), attackingHand, attack, parryHand, defend, finalPostureConsumption, originalPostureConsumption, e.getAmount());
-                if (failManualParry)
+                if (failManualParry || !PermissionData.getCap(uke).canParry())
                     pe.setResult(Event.Result.DENY);
                 MinecraftForge.EVENT_BUS.post(pe);
                 if (pe.isCanceled()) {

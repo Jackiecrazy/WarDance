@@ -1,6 +1,7 @@
 package jackiecrazy.wardance.handlers;
 
 import jackiecrazy.wardance.WarDance;
+import jackiecrazy.wardance.capability.action.PermissionData;
 import jackiecrazy.wardance.utils.CombatUtils;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.gui.screens.Screen;
@@ -26,14 +27,20 @@ public class ItemTooltipHandler {
         final ItemStack stack = e.getItemStack();
         if (CombatUtils.isWeapon(e.getEntity(), stack) || CombatUtils.isShield(e.getEntity(), stack)) {
             if (Screen.hasShiftDown()) {
-                float atk = CombatUtils.getPostureAtk(null, null, null, 0, stack);
-                e.getToolTip().add(Component.translatable("wardance.tooltip.postureAttack", atk).withStyle(ChatFormatting.RED));
+                if (PermissionData.getCap(e.getEntity()).canDealPostureDamage()) {
+                    float atk = CombatUtils.getPostureAtk(null, null, null, 0, stack);
+                    e.getToolTip().add(Component.translatable("wardance.tooltip.postureAttack", atk).withStyle(ChatFormatting.RED));
+                }
                 final float def = CombatUtils.getPostureDef(null, null, stack, 0);
-                if (stack.is(CombatUtils.CANNOT_PARRY))
-                    e.getToolTip().add(Component.translatable("wardance.tooltip.noParry").withStyle(ChatFormatting.DARK_RED));
-                else
-                    e.getToolTip().add(Component.translatable("wardance.tooltip.postureDefend", def).withStyle(ChatFormatting.DARK_GREEN));
-                e.getToolTip().add(Component.translatable("wardance.tooltip.sweep." + CombatUtils.getSweepType(e.getEntity(), e.getItemStack()), CombatUtils.getSweepBase(e.getItemStack()), CombatUtils.getSweepScale(e.getItemStack())).withStyle(ChatFormatting.AQUA));
+                if (PermissionData.getCap(e.getEntity()).canParry()) {
+                    if (stack.is(CombatUtils.CANNOT_PARRY))
+                        e.getToolTip().add(Component.translatable("wardance.tooltip.noParry").withStyle(ChatFormatting.DARK_RED));
+                    else
+                        e.getToolTip().add(Component.translatable("wardance.tooltip.postureDefend", def).withStyle(ChatFormatting.DARK_GREEN));
+                }
+                if (PermissionData.getCap(e.getEntity()).canSweep()) {
+                    e.getToolTip().add(Component.translatable("wardance.tooltip.sweep." + CombatUtils.getSweepType(e.getEntity(), e.getItemStack()), CombatUtils.getSweepBase(e.getItemStack()), CombatUtils.getSweepScale(e.getItemStack())).withStyle(ChatFormatting.AQUA));
+                }
             } else {
                 e.getToolTip().add(Component.translatable("wardance.tooltip.shift").withStyle(ChatFormatting.GREEN));
             }
