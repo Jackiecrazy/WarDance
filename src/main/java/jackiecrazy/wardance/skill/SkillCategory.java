@@ -9,6 +9,11 @@ import java.awt.*;
 public class SkillCategory {
     private final String category;
     private final Color color;
+
+    public ChatFormatting[] getFormattings() {
+        return formattings;
+    }
+
     private final ChatFormatting[] formattings;
 
     public SkillCategory(String name, Color c, ChatFormatting... ca) {

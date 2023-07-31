@@ -22,6 +22,7 @@ public class SkillCapability implements ISkillCapability {
     private final HashMap<Skill, SkillData> data = new HashMap<>();
     private final List<Skill> equippedSkill = new ArrayList<>(10);
     private final List<Skill> skillList = new ArrayList<>();
+    private final List<SkillCategory> categories = new ArrayList<>();
     private final WeakReference<LivingEntity> dude;
     private final Queue<Skill> lastCast = new LinkedList<>();
     boolean sync = false, fastSync = false, gatedSkills = false;
@@ -55,13 +56,21 @@ public class SkillCapability implements ISkillCapability {
         return true;
     }
 
+
+
     @Override
     public void setSkillSelectable(Skill s, boolean selectable) {
+        if (s == null) return;
         if (selectable == gatedSkills) {
             if (!skillList.contains(s))
                 skillList.add(s);
         } else skillList.remove(s);
         sync = true;
+    }
+
+    @Override
+    public void setColorSelectable(SkillCategory s, boolean selectable) {
+
     }
 
     @Override

@@ -4,7 +4,6 @@ import jackiecrazy.footwork.capability.resources.CombatData;
 import jackiecrazy.wardance.WarDance;
 import jackiecrazy.wardance.capability.skill.CasterData;
 import jackiecrazy.wardance.capability.status.Marks;
-import jackiecrazy.wardance.event.ProjectileParryEvent;
 import jackiecrazy.wardance.skill.SkillColors;
 import jackiecrazy.wardance.skill.SkillData;
 import jackiecrazy.wardance.skill.WarSkills;
@@ -19,8 +18,11 @@ import net.minecraft.world.entity.ai.attributes.AttributeModifier;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ProjectileWeaponItem;
 import net.minecraft.world.item.TridentItem;
+import net.minecraft.world.phys.EntityHitResult;
+import net.minecraft.world.phys.HitResult;
 import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.common.ForgeMod;
+import net.minecraftforge.event.entity.ProjectileImpactEvent;
 import net.minecraftforge.event.entity.living.LivingAttackEvent;
 import net.minecraftforge.event.entity.living.LivingEntityUseItemEvent;
 import net.minecraftforge.eventbus.api.Event;
@@ -43,7 +45,8 @@ public class DemonHunter extends ColorRestrictionStyle {
     public static void slow(LivingEntityUseItemEvent e) {
         //charge faster
         if (e.getEntity() instanceof Player player && !player.level.isClientSide && !player.isOnGround()) {
-            if (!(e.getItem().getItem() instanceof ProjectileWeaponItem)&&!(e.getItem().getItem() instanceof TridentItem)) return;
+            if (!(e.getItem().getItem() instanceof ProjectileWeaponItem) && !(e.getItem().getItem() instanceof TridentItem))
+                return;
             if (CasterData.getCap(player).getStyle() != WarSkills.DEMON_HUNTER.get()) return;
             player.addEffect(new MobEffectInstance(MobEffects.SLOW_FALLING, 60, 0, true, false, false));
             if (player.tickCount % 2 == 0) e.setDuration(e.getDuration() - 1);
@@ -51,13 +54,16 @@ public class DemonHunter extends ColorRestrictionStyle {
     }
 
     @SubscribeEvent()
-    public static void pain(ProjectileParryEvent e) {
-        //more pain for marked
-        Marks.getCap(e.getEntity()).getActiveMark(WarSkills.DEMON_HUNTER.get()).ifPresent(a -> {
-            LivingEntity marker = a.getCaster(e.getEntity().level);
-            CombatData.getCap(e.getEntity()).consumePosture(marker, 2);
-            a.decrementDuration();
-        });
+    public static void pain(ProjectileImpactEvent e) {
+        if (e.getRayTraceResult().getType() == HitResult.Type.ENTITY && e.getRayTraceResult() instanceof EntityHitResult ehr && ehr.getEntity() instanceof LivingEntity uke) {
+
+            //more pain for marked
+            Marks.getCap(uke).getActiveMark(WarSkills.DEMON_HUNTER.get()).ifPresent(a -> {
+                LivingEntity marker = a.getCaster(e.getEntity().level);
+                CombatData.getCap(uke).consumePosture(marker, 2);
+                a.decrementDuration();
+            });
+        }
     }
 
     @Override
@@ -65,8 +71,8 @@ public class DemonHunter extends ColorRestrictionStyle {
         if (procPoint instanceof LivingAttackEvent a && DamageUtils.isMeleeAttack(a.getSource()) && target != null && a.getEntity() != caster && a.getPhase() == EventPriority.LOWEST) {
             if (Marks.getCap(target).isMarked(this)) {
                 CombatUtils.knockBack(caster, target, 1, true, true);
-                Vec3 vec=caster.getDeltaMovement();
-                caster.lerpMotion(vec.x, vec.y+1, vec.z);
+                Vec3 vec = caster.getDeltaMovement();
+                caster.lerpMotion(vec.x, vec.y + 1, vec.z);
             }
             mark(caster, target, 3);
             SkillUtils.removeAttribute(caster, ForgeMod.ATTACK_RANGE.get(), reach);

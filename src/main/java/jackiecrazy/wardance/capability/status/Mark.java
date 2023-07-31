@@ -125,20 +125,18 @@ public class Mark implements IMark {
                 sync = true;
             }
         }
-        sync();
+        if (sync)
+            sync();
     }
 
     @Override
     public void sync() {
         final LivingEntity ticker = dude.get();
         if (ticker == null) return;
-        if (sync && ticker instanceof ServerPlayer) {
+        if (ticker instanceof ServerPlayer) {
             CombatChannel.INSTANCE.send(PacketDistributor.PLAYER.with(() -> (ServerPlayer) ticker), new UpdateMarkPacket(ticker.getId(), this.write()));
-            sync = false;
         }
-        if (sync) {
-            CombatChannel.INSTANCE.send(PacketDistributor.TRACKING_ENTITY_AND_SELF.with(() -> ticker), new UpdateMarkPacket(ticker.getId(), this.write()));
-            sync = false;
-        }
+        CombatChannel.INSTANCE.send(PacketDistributor.TRACKING_ENTITY_AND_SELF.with(() -> ticker), new UpdateMarkPacket(ticker.getId(), this.write()));
+        sync = false;
     }
 }

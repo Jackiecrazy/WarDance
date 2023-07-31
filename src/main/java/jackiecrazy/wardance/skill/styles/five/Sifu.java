@@ -6,10 +6,12 @@ import jackiecrazy.footwork.capability.goal.GoalCapabilityProvider;
 import jackiecrazy.footwork.capability.resources.CombatData;
 import jackiecrazy.footwork.entity.ai.FearGoal;
 import jackiecrazy.footwork.event.StunEvent;
+import jackiecrazy.footwork.potion.FootworkEffects;
 import jackiecrazy.footwork.utils.EffectUtils;
 import jackiecrazy.footwork.utils.GeneralUtils;
 import jackiecrazy.footwork.utils.TargetingUtils;
 import jackiecrazy.wardance.WarDance;
+import jackiecrazy.wardance.capability.skill.CasterData;
 import jackiecrazy.wardance.capability.status.Marks;
 import jackiecrazy.wardance.entity.ai.ExposeGoal;
 import jackiecrazy.wardance.event.SweepEvent;
@@ -47,7 +49,7 @@ public class Sifu extends ColorRestrictionStyle {
     private static final AttributeModifier kbr = new AttributeModifier(UUID.fromString("abc24c38-73e3-4551-9df4-e06e117699c1"), "sifu target", 1, AttributeModifier.Operation.ADDITION);
 
     public Sifu() {
-        super(10, true, SkillColors.purple);
+        super(10, true, SkillColors.purple, SkillColors.gold);
     }
 
     //redundancy, just in case
@@ -60,7 +62,10 @@ public class Sifu extends ColorRestrictionStyle {
     }
 
     private static void fakeDie(LivingEntity target, @Nullable LivingEntity caster) {
+        SkillUtils.removeAttribute(target, Attributes.KNOCKBACK_RESISTANCE, kbr);
         target.setHealth(1);
+        target.removeAllEffects();
+        target.clearFire();
         if (target instanceof Mob mob) {
             for (WrappedGoal wg : new HashSet<>(mob.goalSelector.getAvailableGoals())) {
                 if (!(wg.getGoal() instanceof FearGoal) && !(wg.getGoal() instanceof ExposeGoal))
@@ -79,21 +84,23 @@ public class Sifu extends ColorRestrictionStyle {
             sd.setCaster(caster);
             EffectUtils.causeFear(target, caster, 2000);
         }
+        target.addEffect(new MobEffectInstance(MobEffects.DAMAGE_RESISTANCE, 200, 10));
         Marks.getCap(target).mark(sd);
         CombatData.getCap(target).knockdown(120);
     }
 
     @Override
     public boolean equippedTick(LivingEntity caster, SkillData stats) {
-        return super.equippedTick(caster, stats);
+        return cooldownTick(stats);
     }
 
     @Override
     public boolean markTick(LivingEntity caster, LivingEntity target, SkillData sd) {
         if (sd.isCondition() && target instanceof Mob && !CombatData.getCap(target).isVulnerable()) {
             if (caster != null) {
+                if (!target.hasEffect(FootworkEffects.FEAR.get()))
+                    EffectUtils.causeFear(target, caster, 100);
                 GoalCapabilityProvider.getCap(target).ifPresent((a) -> a.setFearSource(caster));
-                target.move(MoverType.SELF, target.position().subtract(caster.position()).normalize().scale(0.01));
                 if (target.distanceToSqr(caster) > 256 || !GeneralUtils.isFacingEntity(caster, target, 180))
                     removeMark(target);
             } else
@@ -129,7 +136,7 @@ public class Sifu extends ColorRestrictionStyle {
         if (target == null || isGreatEvil(target)) return;
         //applies to eligible enemies
         if (procPoint instanceof LivingAttackEvent lae && procPoint.getPhase() == EventPriority.HIGHEST && lae.getEntity() == target) {
-            if (CombatData.getCap(target).isVulnerable() && !CombatData.getCap(target).isExposed()) {
+            if (CombatData.getCap(target).isVulnerable()) {
                 //cannot attack the weak
                 lae.setCanceled(true);
             }
@@ -137,14 +144,20 @@ public class Sifu extends ColorRestrictionStyle {
                 mark(caster, target, 4f, 0);
             }
         } else if (procPoint instanceof LivingHurtEvent lae && procPoint.getPhase() == EventPriority.HIGHEST && lae.getEntity() == target) {
-            if (isMarked(target))
-                lae.setAmount(lae.getAmount() * Math.max(5 - getExistingMark(target).getDuration(), 1) * 0.2f);
-            else
-                lae.setAmount(lae.getAmount() / 5);
+            //less damage
+            for (int ignore = 0; ignore < CasterData.getCap(caster).getEquippedColors().size(); ignore++) {
+                lae.setAmount(lae.getAmount() * 0.85f);
+            }
+            //%max health dealt immediately on expose
+            if (CombatData.getCap(target).isExposed()) {
+                lae.setAmount(lae.getAmount() + target.getMaxHealth() * 0.07f);
+                lae.getSource().bypassArmor().bypassEnchantments().bypassMagic();
+            }
         } else if (procPoint instanceof StunEvent sce && procPoint.getPhase() == EventPriority.HIGHEST && sce.getEntity() != caster) {
+            SkillUtils.removeAttribute(target, Attributes.KNOCKBACK_RESISTANCE, kbr);
+            CombatUtils.knockBack(target, caster, 1f, false, true);
             //upgrade to knockdown
             sce.setKnockdown(true);
-            CombatUtils.knockBack(target, caster, 1f, true, true);
         } else if (procPoint instanceof LivingDeathEvent e && e.getPhase() == EventPriority.LOWEST && e.getEntity() != caster) {
             //run away!
             e.setCanceled(true);

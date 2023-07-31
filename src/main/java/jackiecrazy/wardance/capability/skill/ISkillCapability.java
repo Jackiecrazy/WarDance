@@ -13,6 +13,8 @@ public interface ISkillCapability {
 
     void setSkillSelectable(Skill s, boolean selectable);
 
+    void setColorSelectable(SkillCategory s, boolean selectable);
+
     List<Skill> getSelectableList();
 
     Optional<SkillData> getSkillData(Skill s);
@@ -44,7 +46,7 @@ public interface ISkillCapability {
 
     default List<Skill> getEquippedSkillsAndStyle() {
         List<Skill> ret = new ArrayList<>(getEquippedSkills());
-        ret.add(getStyle());
+        ret.add(0, getStyle());
         return ret;
     }
 

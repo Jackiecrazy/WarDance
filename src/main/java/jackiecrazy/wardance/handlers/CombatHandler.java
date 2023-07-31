@@ -84,8 +84,7 @@ public class CombatHandler {
             final LivingEntity shooter = (LivingEntity) ((Projectile) projectile).getOwner();
             CombatData.getCap(shooter).addRangedMight(e.getRayTraceResult().getType() == HitResult.Type.ENTITY);
         }
-        if (e.getRayTraceResult().getType() == HitResult.Type.ENTITY && e.getRayTraceResult() instanceof EntityHitResult && ((EntityHitResult) e.getRayTraceResult()).getEntity() instanceof LivingEntity) {
-            LivingEntity uke = (LivingEntity) ((EntityHitResult) e.getRayTraceResult()).getEntity();
+        if (e.getRayTraceResult().getType() == HitResult.Type.ENTITY && e.getRayTraceResult() instanceof EntityHitResult ehr && ehr.getEntity() instanceof LivingEntity uke) {
             if (StealthUtils.INSTANCE.getAwareness(null, uke) != StealthUtils.Awareness.ALERT) {
                 return;
             }
@@ -573,6 +572,7 @@ public class CombatHandler {
         if (!e.isCanceled() && DamageUtils.isMeleeAttack(e.getSource()) && !cap.isStaggeringStrike()) {
             cap.updateDefenselessStatus();
         }
+
     }
 
     @SubscribeEvent(priority = EventPriority.LOWEST, receiveCanceled = true)

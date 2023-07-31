@@ -179,7 +179,7 @@ public abstract class Skill extends Move {
     /**
      * @param caster only nonnull if it's in the casting bar!
      */
-    public Component getDisplayName(LivingEntity caster) {
+    public MutableComponent getDisplayName(LivingEntity caster) {
         return Component.translatable("wardance." + getRegistryName().getPath() + ".name");
     }
 

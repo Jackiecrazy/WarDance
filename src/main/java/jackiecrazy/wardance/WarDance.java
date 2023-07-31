@@ -10,6 +10,7 @@ import jackiecrazy.wardance.compat.ElenaiCompat;
 import jackiecrazy.wardance.compat.WarCompat;
 import jackiecrazy.wardance.config.*;
 import jackiecrazy.wardance.entity.WarEntities;
+import jackiecrazy.wardance.items.WarItems;
 import jackiecrazy.wardance.networking.*;
 import jackiecrazy.wardance.skill.WarSkills;
 import net.minecraft.commands.synchronization.ArgumentTypeInfo;
@@ -79,6 +80,7 @@ public class WarDance {
         WarSkills.SUPPLIER = WarSkills.SKILLS.makeRegistry(RegistryBuilder::new);
         WarSkills.SKILLS.register(bus);
         WarEntities.ENTITIES.register(bus);
+        WarItems.ITEMS.register(bus);
         COMMAND_ARGUMENT_TYPES.register(bus);
         MinecraftForge.EVENT_BUS.addListener(this::commands);
     }

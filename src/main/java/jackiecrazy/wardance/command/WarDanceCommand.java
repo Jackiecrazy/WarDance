@@ -12,6 +12,8 @@ import com.mojang.brigadier.exceptions.SimpleCommandExceptionType;
 import jackiecrazy.footwork.capability.resources.CombatData;
 import jackiecrazy.wardance.WarDance;
 import jackiecrazy.wardance.capability.skill.CasterData;
+import jackiecrazy.wardance.items.ManualItem;
+import jackiecrazy.wardance.items.WarItems;
 import jackiecrazy.wardance.skill.Skill;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.Commands;
@@ -21,6 +23,7 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.ItemStack;
 
 public class WarDanceCommand {
 
@@ -43,7 +46,10 @@ public class WarDanceCommand {
                                         .then(Commands.argument("enabled", BoolArgumentType.bool())
                                                 .executes(WarDanceCommand::setSkill)))
                                 .then(Commands.literal("reset")
-                                        .executes(WarDanceCommand::resetSkills))))
+                                        .executes(WarDanceCommand::resetSkills)
+                                )
+                        )
+                )
                 .then(Commands.literal("might")
                         .executes(WarDanceCommand::missingArgument)
                         .then(Commands.argument("entity", EntityArgument.entity())
@@ -55,7 +61,11 @@ public class WarDanceCommand {
                                         .then(Commands.literal("consume")
                                                 .executes(WarDanceCommand::consumeMight))
                                         .then(Commands.literal("set")
-                                                .executes(WarDanceCommand::setMight)))))
+                                                .executes(WarDanceCommand::setMight)
+                                        )
+                                )
+                        )
+                )
                 .then(Commands.literal("spirit")
                         .executes(WarDanceCommand::missingArgument)
                         .then(Commands.argument("entity", EntityArgument.entity())
@@ -67,7 +77,11 @@ public class WarDanceCommand {
                                         .then(Commands.literal("consume")
                                                 .executes(WarDanceCommand::consumeSpirit))
                                         .then(Commands.literal("set")
-                                                .executes(WarDanceCommand::setSpirit)))))
+                                                .executes(WarDanceCommand::setSpirit)
+                                        )
+                                )
+                        )
+                )
                 .then(Commands.literal("posture")
                         .executes(WarDanceCommand::missingArgument)
                         .then(Commands.argument("entity", EntityArgument.entity())
@@ -79,7 +93,11 @@ public class WarDanceCommand {
                                         .then(Commands.literal("consume")
                                                 .executes(WarDanceCommand::consumePosture))
                                         .then(Commands.literal("set")
-                                                .executes(WarDanceCommand::setPosture)))))
+                                                .executes(WarDanceCommand::setPosture)
+                                        )
+                                )
+                        )
+                )
                 .then(Commands.literal("stagger")
                         .executes(WarDanceCommand::missingArgument)
                         .then(Commands.argument("entity", EntityArgument.entity())
@@ -87,8 +105,29 @@ public class WarDanceCommand {
                                 .then(Commands.argument("time", IntegerArgumentType.integer(0))
                                         .executes(WarDanceCommand::defaultStagger)
                                         .then(Commands.argument("count", IntegerArgumentType.integer())
-                                                .executes(WarDanceCommand::stagger)))));
+                                                .executes(WarDanceCommand::stagger)
+                                        )
+                                )
+                        )
+                )
+                .then(Commands.literal("manualize")
+                        .executes(WarDanceCommand::manualize)
+                        .then(Commands.argument("autolearn", BoolArgumentType.bool())
+                                .executes(WarDanceCommand::manualize)
+                        )
+                );
         dispatcher.register(builder);
+    }
+
+    private static int manualize(CommandContext<CommandSourceStack> ctx) throws CommandSyntaxException {
+        Player player = ctx.getSource().getPlayer();
+        if (player == null) throw EntitySelectorOptions.ERROR_INAPPLICABLE_OPTION.create(null);
+        boolean autoLearn = BoolArgumentType.getBool(ctx, "autolearn");
+        ItemStack give = new ItemStack(WarItems.MANUAL.get());
+        ((ManualItem) give.getItem()).setSkill(give, CasterData.getCap(player).getEquippedSkillsAndStyle());
+        ((ManualItem) give.getItem()).setAutoLearn(give, autoLearn);
+        player.addItem(give);
+        return Command.SINGLE_SUCCESS;
     }
 
     private static int stagger(CommandContext<CommandSourceStack> ctx) throws CommandSyntaxException {
@@ -221,7 +260,7 @@ public class WarDanceCommand {
         final Skill skill = ctx.getArgument("skill", Skill.class);
         final boolean enabled = BoolArgumentType.getBool(ctx, "enabled");
         CasterData.getCap(player).setSkillSelectable(skill, enabled);
-        ctx.getSource().sendSuccess(Component.translatable("wardance.command.setSkill"+(CasterData.getCap(player).isSkillSelectable(skill)), player.getDisplayName(), skill.getDisplayName(null)), false);
+        ctx.getSource().sendSuccess(Component.translatable("wardance.command.setSkill" + (CasterData.getCap(player).isSkillSelectable(skill)), player.getDisplayName(), skill.getDisplayName(null)), false);
         return Command.SINGLE_SUCCESS;
     }
 
@@ -229,14 +268,14 @@ public class WarDanceCommand {
         Player player = EntityArgument.getPlayer(ctx, "player");
         final Skill skill = ctx.getArgument("skill", Skill.class);
         final boolean enabled = CasterData.getCap(player).isSkillSelectable(skill);
-        ctx.getSource().sendSuccess(Component.translatable("wardance.command.getSkill"+(CasterData.getCap(player).isSkillSelectable(skill)), player.getDisplayName(), skill.getDisplayName(null)), false);
+        ctx.getSource().sendSuccess(Component.translatable("wardance.command.getSkill" + (CasterData.getCap(player).isSkillSelectable(skill)), player.getDisplayName(), skill.getDisplayName(null)), false);
         return enabled ? 1 : 0;
     }
 
     private static int resetSkills(CommandContext<CommandSourceStack> ctx) throws CommandSyntaxException {
         Player player = EntityArgument.getPlayer(ctx, "player");
         CasterData.getCap(player).getSelectableList().clear();
-        ctx.getSource().sendSuccess(Component.translatable("wardance.command.clearSkill"+(player.level.getGameRules().getBoolean(WarDance.GATED_SKILLS)), player.getDisplayName()), false);
+        ctx.getSource().sendSuccess(Component.translatable("wardance.command.clearSkill" + (player.level.getGameRules().getBoolean(WarDance.GATED_SKILLS)), player.getDisplayName()), false);
         return Command.SINGLE_SUCCESS;
     }
 
