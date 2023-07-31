@@ -1,5 +1,6 @@
 package jackiecrazy.wardance.skill;
 
+import jackiecrazy.footwork.api.FootworkAttributes;
 import jackiecrazy.footwork.capability.resources.CombatData;
 import jackiecrazy.footwork.move.Move;
 import jackiecrazy.wardance.WarDance;
@@ -358,7 +359,7 @@ public abstract class Skill extends Move {
         SkillResourceEvent sre = new SkillResourceEvent(caster, target, this);
         MinecraftForge.EVENT_BUS.post(sre);
         if (!sre.isCanceled() && CombatData.getCap(caster).getMight() >= sre.getMight() && CombatData.getCap(caster).getSpirit() >= sre.getSpirit()) {
-            SkillCastEvent sce = new SkillCastEvent(caster, target, this, sre.getMight(), sre.getSpirit(), duration, flag, arbitrary);
+            SkillCastEvent sce = new SkillCastEvent(caster, target, this, caster.getAttributeValue(FootworkAttributes.), sre.getMight(), sre.getSpirit(), duration, flag, arbitrary);
             MinecraftForge.EVENT_BUS.post(sce);
             if (sce.getMight() > 0)
                 CombatData.getCap(caster).consumeMight(sce.getMight());
