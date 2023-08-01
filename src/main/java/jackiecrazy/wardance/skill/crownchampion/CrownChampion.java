@@ -122,10 +122,11 @@ elemental might: +1 burn/snowball/poison/drown damage to targets you have attack
     public void onProc(LivingEntity caster, Event procPoint, STATE state, SkillData stats, LivingEntity target) {
         int might = (int) CombatData.getCap(caster).getMight();
         if (procPoint instanceof LivingAttackEvent && procPoint.getPhase() == EventPriority.LOWEST) {
-            SkillUtils.modifyAttribute(caster, Attributes.ATTACK_DAMAGE, MULT, 0.25f * might, AttributeModifier.Operation.MULTIPLY_BASE);
+            SkillUtils.modifyAttribute(caster, Attributes.ATTACK_DAMAGE, MULT, 0.15f * might, AttributeModifier.Operation.MULTIPLY_BASE);
         }
         if (procPoint instanceof GainMightEvent && procPoint.getPhase() == EventPriority.HIGHEST) {
-            ((GainMightEvent) procPoint).setQuantity(((GainMightEvent) procPoint).getQuantity() * (1 - (CombatData.getCap(caster).getMaxMight() - might)) / 10f);
+            float missingMight = (CombatData.getCap(caster).getMaxMight() - might);
+            ((GainMightEvent) procPoint).setQuantity(((GainMightEvent) procPoint).getQuantity() * (1 + missingMight * .15f));
         }
     }
 
@@ -178,7 +179,7 @@ elemental might: +1 burn/snowball/poison/drown damage to targets you have attack
         @Override
         public void onProc(LivingEntity caster, Event procPoint, STATE state, SkillData pd, LivingEntity target) {
             if (procPoint instanceof GainMightEvent && procPoint.getPhase() == EventPriority.HIGHEST) {
-                ((GainMightEvent) procPoint).setQuantity(((GainMightEvent) procPoint).getQuantity() * 2);
+                ((GainMightEvent) procPoint).setQuantity(((GainMightEvent) procPoint).getQuantity() * 1.5f);
                 pd.addArbitraryFloat(((GainMightEvent) procPoint).getQuantity());
                 if (pd.getArbitraryFloat() > 2) {
                     pd.setArbitraryFloat(pd.getArbitraryFloat() % 2);

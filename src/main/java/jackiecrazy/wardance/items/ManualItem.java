@@ -1,6 +1,5 @@
 package jackiecrazy.wardance.items;
 
-import jackiecrazy.wardance.WarDance;
 import jackiecrazy.wardance.capability.skill.CasterData;
 import jackiecrazy.wardance.capability.skill.ISkillCapability;
 import jackiecrazy.wardance.skill.Skill;
@@ -48,7 +47,7 @@ public class ManualItem extends Item {
                 tag.putString("active" + a, s.get(a).getRegistryName().toString());
         }
         for (int a = 1; a < 6; a++) {
-            if (s.get(a+5) != null)
+            if (s.get(a + 5) != null)
                 tag.putString("passive" + a, s.get(a + 5).getRegistryName().toString());
         }
         stack.setTag(tag);
@@ -70,15 +69,13 @@ public class ManualItem extends Item {
         boolean autoLearn = autoLearn(stack);
         final ISkillCapability cap = CasterData.getCap(p);
         for (Skill s : skills) {
-            if (l.getGameRules().getBoolean(WarDance.GATED_SKILLS)) {
-                if (autoLearn)
-                    cap.setSkillSelectable(s, true);
-                else if (s == null || !cap.isSkillSelectable(s)) {
-                    if (s instanceof SkillStyle) {
-                        //cannot learn the style, auto-fail
-                        p.displayClientMessage(Component.translatable("wardance.manual.style").withStyle(ChatFormatting.RED), true);
-                        return InteractionResultHolder.fail(stack);
-                    }
+            if (autoLearn)
+                cap.setSkillSelectable(s, true);
+            else if (s == null || !cap.isSkillSelectable(s)) {
+                if (s instanceof SkillStyle) {
+                    //cannot learn the style, auto-fail
+                    p.displayClientMessage(Component.translatable("wardance.manual.style").withStyle(ChatFormatting.RED), true);
+                    return InteractionResultHolder.fail(stack);
                 }
             }
         }

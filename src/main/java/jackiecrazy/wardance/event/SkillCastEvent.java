@@ -15,7 +15,7 @@ public class SkillCastEvent extends LivingEvent {
     private double effectiveness;
     private boolean flag;
 
-    public SkillCastEvent(LivingEntity entity, LivingEntity t, Skill skill, double effectiveness, float mig, float spi, float dur, boolean fla, float arb) {
+    public SkillCastEvent(LivingEntity entity, LivingEntity t, Skill skill, float mig, float spi, float dur, boolean fla, float arb) {
         super(entity);
         s = skill;
         oeffectiveness = this.effectiveness = effectiveness;

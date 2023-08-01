@@ -34,7 +34,7 @@ public class ScrollItem extends Item {
     }
 
     public static void setSkills(ItemStack stack, Skill... list) {
-        CompoundTag tag=new CompoundTag();
+        CompoundTag tag = new CompoundTag();
         for (Skill s : list)
             tag.putBoolean(s.getRegistryName().toString(), true);
         stack.getOrCreateTag().put("skills", tag);
@@ -51,23 +51,23 @@ public class ScrollItem extends Item {
         ItemStack stack = p.getItemInHand(hand);
         Skill skill = getSkill(stack);
         //TODO open up a screen that gives 3 choices if not a fixed scroll. Allow determining which 3 via nbt (skill/style discrimination)
-        if (leve.getGameRules().getBoolean(WarDance.GATED_SKILLS)) {
-            if (skill == null) {
-                Skill[] set = (Skill[]) WarSkills.SUPPLIER.get().getValues().stream().filter(a -> !CasterData.getCap(p).isSkillSelectable(a)).toArray();
-                if (set.length > 0)
-                    skill = set[WarDance.rand.nextInt(set.length)];
+        if (skill == null) {
+            List<Skill> set = WarSkills.SUPPLIER.get().getValues().stream().filter(a -> !CasterData.getCap(p).isSkillSelectable(a)).toList();
+            if (!set.isEmpty()) {
+                skill = set.get(WarDance.rand.nextInt(set.size()));
+                setSkill(stack, skill);
             }
-            if(CasterData.getCap(p).isSkillSelectable(skill)) {
-                p.displayClientMessage(Component.translatable("wardance.scroll.learned").withStyle(ChatFormatting.RED), true);
-                return InteractionResultHolder.fail(stack);
-            }
-            CasterData.getCap(p).setSkillSelectable(skill, true);
-            p.displayClientMessage(Component.translatable("wardance.scroll.learn", skill.getDisplayName(p)), true);
-            return InteractionResultHolder.consume(stack);
-        }else{
-            p.displayClientMessage(Component.translatable("wardance.scroll.ungated").withStyle(ChatFormatting.GOLD), true);
         }
-        return super.use(leve, p, hand);
+        if (CasterData.getCap(p).isSkillSelectable(skill)) {
+            p.displayClientMessage(Component.translatable("wardance.scroll.learned").withStyle(ChatFormatting.RED), true);
+            return InteractionResultHolder.fail(stack);
+        }
+        CasterData.getCap(p).setSkillSelectable(skill, true);
+        p.displayClientMessage(Component.translatable("wardance.scroll.learn", skill.getDisplayName(p)), true);
+        if (!p.getAbilities().instabuild) {
+            stack.shrink(1);
+        }
+        return InteractionResultHolder.consume(stack);
     }
 
     @Override
@@ -79,7 +79,9 @@ public class ScrollItem extends Item {
     }
 
     public void fillItemCategory(CreativeModeTab p_41151_, NonNullList<ItemStack> p_41152_) {
-        p_41152_.add(new ItemStack(WarItems.SCROLL.get()));
-        WarSkills.SUPPLIER.get().getValues().forEach((a) -> p_41152_.add(makeScroll(a)));
+        if(p_41151_==CreativeModeTab.TAB_COMBAT) {
+            p_41152_.add(new ItemStack(WarItems.SCROLL.get()));
+            WarSkills.SUPPLIER.get().getValues().forEach((a) -> p_41152_.add(makeScroll(a)));
+        }
     }
 }

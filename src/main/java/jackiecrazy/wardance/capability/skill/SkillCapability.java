@@ -48,14 +48,13 @@ public class SkillCapability implements ISkillCapability {
         final LivingEntity bruv = dude.get();
         if (bruv != null && s != null) {
             if (!s.isSelectable(bruv)) return false;
-            for (Skill skill : skillList) {
-                if (!skill.isEquippableWith(s, bruv)) return false;
+            for (Skill skill : getEquippedSkills()) {
+                if (skill != null && !skill.isEquippableWith(s, bruv)) return false;
             }
             return skillList.contains(s) == gatedSkills;
         }
         return true;
     }
-
 
 
     @Override
@@ -143,6 +142,7 @@ public class SkillCapability implements ISkillCapability {
 
     @Override
     public void setStyle(SkillStyle style) {
+        if (!isSkillSelectable(style)) return;
         if (this.style != null) this.style.onUnequip(dude.get(), nonNullGet(style));
         this.style = style;
         if (style != null) style.onEquip(dude.get());

@@ -1,5 +1,6 @@
 package jackiecrazy.wardance.utils;
 
+import jackiecrazy.footwork.api.FootworkAttributes;
 import jackiecrazy.footwork.capability.resources.CombatData;
 import jackiecrazy.footwork.utils.GeneralUtils;
 import jackiecrazy.wardance.skill.Skill;
@@ -104,7 +105,7 @@ public class SkillUtils {
     }
 
     public static double getSkillEffectiveness(LivingEntity caster){
-        return
+        return caster.getAttributeValue(FootworkAttributes.SKILL_EFFECTIVENESS.get());
     }
 
 }
