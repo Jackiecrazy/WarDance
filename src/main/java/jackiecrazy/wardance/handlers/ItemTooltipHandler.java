@@ -93,7 +93,7 @@ public class ItemTooltipHandler {
                                     "wardance.twohanding.modifier.negative." +
                                             am.getOperation().toValue(),
                                     ATTRIBUTE_MODIFIER_FORMAT.format(-amount),
-                                            Component.translatable(attr.getDescriptionId())))
+                                    Component.translatable(attr.getDescriptionId())))
                                     .withStyle(ChatFormatting.RED));
                         }
                     }));

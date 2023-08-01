@@ -16,6 +16,7 @@ public class SweepEvent extends LivingEvent {
     private final ItemStack stack;
     private double a, b;
     private CombatUtils.SWEEPTYPE t;
+    private CombatUtils.SWEEPSTATE state;
 
     public SweepEvent(LivingEntity entity, InteractionHand hand, ItemStack stack, CombatUtils.SWEEPTYPE type, double base, double scale) {
         super(entity);
@@ -24,6 +25,7 @@ public class SweepEvent extends LivingEvent {
         this.hand = hand;
         this.stack = stack;
         t = type;
+        state= CombatUtils.getSweepState(entity);
     }
 
     public InteractionHand getHand() {
@@ -68,5 +70,9 @@ public class SweepEvent extends LivingEvent {
 
     public void setType(CombatUtils.SWEEPTYPE t) {
         this.t = t;
+    }
+
+    public CombatUtils.SWEEPSTATE getState() {
+        return state;
     }
 }

@@ -1,5 +1,6 @@
 package jackiecrazy.wardance.skill;
 
+import jackiecrazy.footwork.api.FootworkAttributes;
 import jackiecrazy.footwork.capability.resources.CombatData;
 import jackiecrazy.footwork.move.Move;
 import jackiecrazy.wardance.WarDance;
@@ -11,6 +12,7 @@ import jackiecrazy.wardance.event.SkillCastEvent;
 import jackiecrazy.wardance.event.SkillCooldownEvent;
 import jackiecrazy.wardance.event.SkillResourceEvent;
 import jackiecrazy.wardance.skill.styles.SkillStyle;
+import jackiecrazy.wardance.utils.SkillUtils;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.resources.ResourceLocation;
@@ -354,17 +356,22 @@ public abstract class Skill extends Move {
         return cast(caster, target, duration, false, 0);
     }
 
+    /*
+    upon casting, send event to determine effectiveness
+    get effectiveness, feed into activation with custom transformations on a skill-by-skill basis
+     */
     protected boolean cast(LivingEntity caster, @Nullable LivingEntity target, float duration, boolean flag, float arbitrary) {
         SkillResourceEvent sre = new SkillResourceEvent(caster, target, this);
         MinecraftForge.EVENT_BUS.post(sre);
         if (!sre.isCanceled() && CombatData.getCap(caster).getMight() >= sre.getMight() && CombatData.getCap(caster).getSpirit() >= sre.getSpirit()) {
-            SkillCastEvent sce = new SkillCastEvent(caster, target, this, sre.getMight(), sre.getSpirit(), duration, flag, arbitrary);
+            SkillCastEvent sce = new SkillCastEvent(caster, target, this, SkillUtils.getSkillEffectiveness(caster), sre.getMight(), sre.getSpirit(), duration, flag, arbitrary);
+
             MinecraftForge.EVENT_BUS.post(sce);
             if (sce.getMight() > 0)
                 CombatData.getCap(caster).consumeMight(sce.getMight());
             if (sce.getSpirit() > 0)
                 CombatData.getCap(caster).consumeSpirit(sce.getSpirit());
-            activate(caster, sce.getDuration(), sce.isFlag(), sce.getArbitrary());
+            activate(caster, (float) sce.getEffectiveness(), sce.getDuration(), sce.isFlag(), sce.getArbitrary());
             return true;
         }
         return false;
@@ -396,11 +403,15 @@ public abstract class Skill extends Move {
         return activate(caster, duration, false, something);
     }
 
+    protected boolean activate(LivingEntity caster, float duration, boolean flag, float something) {
+        return activate(caster, (float) caster.getAttributeValue(FootworkAttributes.SKILL_EFFECTIVENESS.get()), duration, flag, something);
+    }
+
     /**
      * @return whether the skill was successfully cast
      */
-    protected boolean activate(LivingEntity caster, float duration, boolean flag, float something) {
-        //System.out.println("enabling for " + duration);
+    protected boolean activate(LivingEntity caster, float effectiveness, float duration, boolean flag, float something) {
+        //default implementation scales duration
         caster.level.playSound(null, caster, SoundEvents.FIRECHARGE_USE, SoundSource.AMBIENT, 0.3f + WarDance.rand.nextFloat(), 0.5f + WarDance.rand.nextFloat());
         CasterData.getCap(caster).getSkillData(this).ifPresent(a -> {
             a.setDuration(duration);
@@ -408,6 +419,7 @@ public abstract class Skill extends Move {
             a.flagCondition(flag);
             a.setArbitraryFloat(something);
             a.setState(STATE.ACTIVE);
+            a.setEffectiveness(effectiveness);
         });
         return true;
     }
@@ -456,6 +468,13 @@ public abstract class Skill extends Move {
 
     protected SkillData getExistingMark(LivingEntity target) {
         return Marks.getCap(target).getActiveMark(this).orElse(SkillData.DUMMY);
+    }
+
+    /**
+     * returns an event with all enhancements from effectiveness already applied. Override as needed.
+     */
+    protected SkillCastEvent initializeCast(LivingEntity caster, @Nullable LivingEntity target, float might, float spirit, double effectiveness, float duration, boolean flag, float arbitrary) {
+        return new SkillCastEvent(caster, target, this, effectiveness, might, spirit, duration, flag, arbitrary);
     }
 
     protected boolean hasMark(LivingEntity target) {

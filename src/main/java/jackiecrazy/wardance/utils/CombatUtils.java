@@ -379,7 +379,7 @@ public class CombatUtils {
         final float magicScale = 1.722f;
         final float magicNumber = 1562.5f;//magic numbers scale the modified formula to 0.1 per sword hit
         final float cooldownSq = semeCap.getCachedCooldown() * semeCap.getCachedCooldown();
-            final double period = 20.0D / (seme.getAttribute(Attributes.ATTACK_SPEED).getValue() + 0.5d);//+0.5 makes sure heavies don't scale forever, light ones are still puny
+        final double period = 20.0D / (seme.getAttribute(Attributes.ATTACK_SPEED).getValue() + 0.5d);//+0.5 makes sure heavies don't scale forever, light ones are still puny
         float might = cooldownSq * cooldownSq * magicScale * (float) period * (float) period / magicNumber;
         might *= (1f + (semeCap.getRank() / 20f));//combo bonus
         float weakness = 1;
@@ -512,20 +512,8 @@ public class CombatUtils {
         cap.setOffhandCooldown(tssl);
     }
 
-    public static SWEEPTYPE getSweepType(LivingEntity e, ItemStack i) {
+    public static SWEEPTYPE getSweepType(LivingEntity e, ItemStack i, SWEEPSTATE s) {
         final MeleeInfo info = lookupStats(i);
-//        if (i.getItem() instanceof TridentItem) {
-//            return SWEEPTYPE.LINE;
-//        }
-//        if (i.getItem() instanceof HoeItem) {
-//            return SWEEPTYPE.CIRCLE;
-//        }
-//        if (i.getItem() instanceof AxeItem) {
-//            return SWEEPTYPE.IMPACT;
-//        }
-//        if (i.getItem() instanceof SwordItem) {
-//            return SWEEPTYPE.CONE;
-//        }
         return info == null ? SWEEPTYPE.NONE : info.sweep;
     }
 
@@ -541,12 +529,13 @@ public class CombatUtils {
 
     public static void sweep(LivingEntity e, Entity ignore, InteractionHand h, double reach) {
         ItemStack stack = e.getItemInHand(h);
+        SWEEPSTATE s = getSweepState(e);
         sweep(e, ignore, h, getSweepType(e, stack), reach, getSweepBase(stack), getSweepScale(stack));
     }
 
     public static void sweep(LivingEntity e, Entity ignore, InteractionHand h, SWEEPTYPE type, double reach, double base, double scaling) {
         //no go cases
-        //if (!GeneralConfig.betterSweep) return;
+        if (!GeneralConfig.betterSweep) return;//a shame, but alas
         if (!CombatData.getCap(e).isCombatMode()) return;
         if (h == InteractionHand.OFF_HAND) {
             swapHeldItems(e);
@@ -586,7 +575,11 @@ public class CombatUtils {
             //type specific sweep checks
             switch (type) {
                 case CONE -> {
-                    if (!GeneralUtils.isFacingEntity(e, target, (int) radius)) continue;
+                    if (!GeneralUtils.isFacingEntity(e, target, (int) radius, 30)) continue;
+                    if (GeneralUtils.getDistSqCompensated(e, target) > reach * reach) continue;
+                }
+                case CLEAVE -> {
+                    if (!GeneralUtils.isFacingEntity(e, target, 30, (int) radius)) continue;
                     if (GeneralUtils.getDistSqCompensated(e, target) > reach * reach) continue;
                 }
                 case IMPACT -> {
@@ -634,6 +627,11 @@ public class CombatUtils {
                 ParticleUtils.playSweepParticle(e, (int) (radius / 2), reach, e.getBbHeight() / 2);
                 ParticleUtils.playSweepParticle(e, (int) (-radius / 2), reach, e.getBbHeight() / 2);
             }
+            case CLEAVE -> {
+                ParticleUtils.playSweepParticle(e, 0, reach, e.getBbHeight() / 2);
+                ParticleUtils.playSweepParticle(e, 0, reach, radius / 2);
+                ParticleUtils.playSweepParticle(e, 0, reach, -radius / 2);
+            }
             case IMPACT -> {
                 ParticleUtils.playSweepParticle(e, starting, 0, radius, 0.5);
                 ParticleUtils.playSweepParticle(e, starting, 180, radius, 0.5);
@@ -665,12 +663,30 @@ public class CombatUtils {
         ppe.setTrigger(pi.trigger);
     }
 
+    public static SWEEPSTATE getSweepState(LivingEntity entity) {
+        if (entity.isSwimming() || entity.isSprinting()) return CombatUtils.SWEEPSTATE.SPRINTING;
+        if (!entity.isOnGround()) return CombatUtils.SWEEPSTATE.FALLING;
+        if (entity.isPassenger()) return CombatUtils.SWEEPSTATE.RIDING;
+        if (entity.isCrouching()) return CombatUtils.SWEEPSTATE.SNEAKING;
+        return SWEEPSTATE.STANDING;
+    }
+
     public enum SWEEPTYPE {
         NONE,
-        CONE,//conical area in front of the entity up to max range, base and scale add angle
+        CONE,//horizontal fan area in front of the entity up to max range, base and scale add angle
+        CLEAVE,//cone but vertical
         LINE,//1 block wide line up to max range, base and scale add to thickness
         IMPACT,//splash at point of impact or furthest distance if no mob aimed, base and scale add radius
         CIRCLE//splash with entity as center, ignores range, base and scale add radius
+    }
+
+    public enum SWEEPSTATE {
+        STANDING,
+        //RISING, //may implement some day
+        FALLING,
+        SNEAKING,
+        SPRINTING,//also while swimming
+        RIDING //no speed requirement
     }
 
     public static class MeleeInfo {

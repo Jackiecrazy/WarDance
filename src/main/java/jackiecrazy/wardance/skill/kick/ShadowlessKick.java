@@ -7,6 +7,7 @@ import jackiecrazy.footwork.api.CombatDamageSource;
 import jackiecrazy.wardance.event.SkillCastEvent;
 import jackiecrazy.wardance.event.SkillResourceEvent;
 import jackiecrazy.wardance.skill.SkillData;
+import jackiecrazy.wardance.utils.SkillUtils;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvents;
@@ -45,7 +46,7 @@ public class ShadowlessKick extends Kick {
         if (target != null) {
             SkillResourceEvent sre = new SkillResourceEvent(caster, target, this);
             MinecraftForge.EVENT_BUS.post(sre);
-            SkillCastEvent sce = new SkillCastEvent(caster, target, this, 0, 0, 0, false, stats.getArbitraryFloat());
+            SkillCastEvent sce = new SkillCastEvent(caster, target, this, SkillUtils.getSkillEffectiveness(caster), 0, 0, 0, false, stats.getArbitraryFloat());
             MinecraftForge.EVENT_BUS.post(sce);
             CombatData.getCap(target).consumePosture(caster, 2);
             if (caster instanceof Player && caster.level instanceof ServerLevel) {

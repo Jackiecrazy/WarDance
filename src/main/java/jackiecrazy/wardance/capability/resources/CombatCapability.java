@@ -1,6 +1,7 @@
 package jackiecrazy.wardance.capability.resources;
 
 import jackiecrazy.footwork.api.FootworkAttributes;
+import jackiecrazy.footwork.capability.resources.CombatData;
 import jackiecrazy.footwork.capability.resources.ICombatCapability;
 import jackiecrazy.footwork.event.*;
 import jackiecrazy.footwork.potion.FootworkEffects;
@@ -140,7 +141,7 @@ public class CombatCapability implements ICombatCapability {
         float temp = might + amount;
         setMight(temp);
         setMightGrace((int) grace);
-        addRank(amount);
+        addRank(amount / 5);
         return temp % 10;
     }
 
@@ -157,6 +158,7 @@ public class CombatCapability implements ICombatCapability {
         if (cse.getResult() == Event.Result.DEFAULT && lacking) return false;
         amount = Math.min(amount, might - above);
         might -= amount;
+        addRank(amount / 3);
         return cse.getResult() != Event.Result.DENY;
     }
 
@@ -211,6 +213,7 @@ public class CombatCapability implements ICombatCapability {
         if (cse.getResult() == Event.Result.DEFAULT && lacking) return false;
         amount = Math.min(amount, spirit - above);
         spirit -= amount;
+        addRank(amount / 5);
         double cd = ResourceConfig.spiritCD;
         setSpiritGrace((int) cd);
         return cse.getResult() != Event.Result.DENY;
@@ -256,7 +259,7 @@ public class CombatCapability implements ICombatCapability {
 
     @Override
     public float consumePosture(LivingEntity assailant, float amount, float above, boolean force) {
-        if(!PermissionData.getCap(assailant).canDealPostureDamage()) {
+        if (!PermissionData.getCap(assailant).canDealPostureDamage()) {
             return 0;
         }
         float ret = 0;
@@ -300,6 +303,7 @@ public class CombatCapability implements ICombatCapability {
                     knockdown(se.getLength());
                     elb.removeEffect(FootworkEffects.UNSTEADY.get());
                 } else stun(se.getLength());
+                CombatData.getCap(assailant).addRank(se.isKnockdown() ? 0.2f : 0.1f);
                 elb.level.playSound(null, elb.getX(), elb.getY(), elb.getZ(), SoundEvents.ZOMBIE_ATTACK_WOODEN_DOOR, SoundSource.PLAYERS, 0.3f + WarDance.rand.nextFloat() * 0.5f, 0.75f + WarDance.rand.nextFloat() * 0.5f);
             }
             elb.removeVehicle();
@@ -433,6 +437,7 @@ public class CombatCapability implements ICombatCapability {
             if (se.isCanceled()) return false;
             dude.get().stopUsingItem();
             expose(se.getLength());
+            CombatData.getCap(livingEntity).addRank(0.4f);
             clearFracture(null, false);
             return false;
         }
@@ -594,7 +599,7 @@ public class CombatCapability implements ICombatCapability {
 
     @Override
     public void toggleCombatMode(boolean on) {
-        if(!PermissionData.getCap(dude.get()).canEnterCombatMode()) {
+        if (!PermissionData.getCap(dude.get()).canEnterCombatMode()) {
             combat = false;
             return;
         }
@@ -824,55 +829,6 @@ public class CombatCapability implements ICombatCapability {
     }
 
     @Override
-    public void read(CompoundTag c) {
-        int temp = roll;
-        staggert = (c.getInt("staggert"));
-        mstaggert = c.getInt("mstaggert");
-        expose = (c.getInt("expose"));
-        lastUpdate = c.getLong("lastUpdate");
-        mexpose = c.getInt("mexpose");
-        mpos = c.getFloat("maxposture");
-        mfrac = c.getFloat("maxfracture");
-        painful = c.getBoolean("painful");
-        knockdown = c.getBoolean("knocked");
-        setPosture(c.getFloat("posture"));
-        if (c.contains("fractures")) {
-            fractures.clear();
-            CompoundTag t = (CompoundTag) c.get("fractures");
-            if (t != null) for (String id : t.getAllKeys()) {
-                fractures.put(UUID.fromString(id), t.getInt(id));
-            }
-        }
-        if (!c.contains("qi")) return;
-        setEvade(c.getInt("shattercd"));
-        mspi = c.getFloat("maxspirit");
-        mmight = c.getFloat("maxmight");
-        setMight(c.getFloat("qi"));
-        setRank(c.getFloat("combo"));
-        setSpirit(c.getFloat("spirit"));
-        setMightGrace(c.getInt("qicd"));
-        setPostureGrace(c.getInt("posturecd"));
-        setSpiritGrace(c.getInt("spiritcd"));
-        setOffhandCooldown(c.getInt("offhandcd"));
-        setRollTime(c.getInt("roll"));
-        setHandBind(InteractionHand.MAIN_HAND, c.getInt("mainBind"));
-        setHandBind(InteractionHand.OFF_HAND, c.getInt("offBind"));
-        setOffhandAttack(c.getBoolean("offhand"));
-        toggleCombatMode(c.getBoolean("combat"));
-        setForcedSweep(c.getInt("sweep"));
-        first = c.getBoolean("first");
-        adrenaline = c.getInt("adrenaline");
-        parrying = c.getInt("parrying");
-        setTempItemStack(ItemStack.of(c.getCompound("temp")));
-        if (dude.get() instanceof Player p) {
-            if (getRollTime() > CombatConfig.rollEndsAt && c.getBoolean("rolling"))
-                p.setForcedPose(Pose.SLEEPING);
-            else if (temp == (CombatConfig.rollEndsAt))
-                p.setForcedPose(null);
-        }
-    }
-
-    @Override
     public int getParryingTick() {
         return parrying;
     }
@@ -945,6 +901,55 @@ public class CombatCapability implements ICombatCapability {
         if (!tempOffhand.isEmpty())
             c.put("temp", tempOffhand.save(new CompoundTag()));
         return c;
+    }
+
+    @Override
+    public void read(CompoundTag c) {
+        int temp = roll;
+        staggert = (c.getInt("staggert"));
+        mstaggert = c.getInt("mstaggert");
+        expose = (c.getInt("expose"));
+        lastUpdate = c.getLong("lastUpdate");
+        mexpose = c.getInt("mexpose");
+        mpos = c.getFloat("maxposture");
+        mfrac = c.getFloat("maxfracture");
+        painful = c.getBoolean("painful");
+        knockdown = c.getBoolean("knocked");
+        setPosture(c.getFloat("posture"));
+        if (c.contains("fractures")) {
+            fractures.clear();
+            CompoundTag t = (CompoundTag) c.get("fractures");
+            if (t != null) for (String id : t.getAllKeys()) {
+                fractures.put(UUID.fromString(id), t.getInt(id));
+            }
+        }
+        if (!c.contains("qi")) return;
+        setEvade(c.getInt("shattercd"));
+        mspi = c.getFloat("maxspirit");
+        mmight = c.getFloat("maxmight");
+        setMight(c.getFloat("qi"));
+        setRank(c.getFloat("combo"));
+        setSpirit(c.getFloat("spirit"));
+        setMightGrace(c.getInt("qicd"));
+        setPostureGrace(c.getInt("posturecd"));
+        setSpiritGrace(c.getInt("spiritcd"));
+        setOffhandCooldown(c.getInt("offhandcd"));
+        setRollTime(c.getInt("roll"));
+        setHandBind(InteractionHand.MAIN_HAND, c.getInt("mainBind"));
+        setHandBind(InteractionHand.OFF_HAND, c.getInt("offBind"));
+        setOffhandAttack(c.getBoolean("offhand"));
+        toggleCombatMode(c.getBoolean("combat"));
+        setForcedSweep(c.getInt("sweep"));
+        first = c.getBoolean("first");
+        adrenaline = c.getInt("adrenaline");
+        parrying = c.getInt("parrying");
+        setTempItemStack(ItemStack.of(c.getCompound("temp")));
+        if (dude.get() instanceof Player p) {
+            if (getRollTime() > CombatConfig.rollEndsAt && c.getBoolean("rolling"))
+                p.setForcedPose(Pose.SLEEPING);
+            else if (temp == (CombatConfig.rollEndsAt))
+                p.setForcedPose(null);
+        }
     }
 
     @Override

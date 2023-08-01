@@ -10,14 +10,14 @@ import java.util.UUID;
 public class SkillData {
     public static final SkillData DUMMY = new SkillData(WarSkills.VITAL_STRIKE.get(), 0);
     private final Skill s;
-    private float duration, max, var;
+    private float duration;
+    private float max;
+    private float var;
+    private float effectiveness;
     private boolean condition, dirty;
     private Skill.STATE state = Skill.STATE.INACTIVE;
     private LivingEntity caster;
     private UUID casterID;
-
-    //TODO allow skills to store custom data
-
     public SkillData(Skill skill, float arbitraryDuration, float max) {
         s = skill;
         duration = arbitraryDuration;
@@ -25,23 +25,33 @@ public class SkillData {
         var = 0;
         condition = false;
     }
-
     public SkillData(Skill skill, float arbitraryDuration) {
         this(skill, arbitraryDuration, arbitraryDuration);
         state = Skill.STATE.ACTIVE;
     }
+
+    //TODO allow skills to store custom data
 
     @Nullable
     public static SkillData read(CompoundTag from) {
         if (!from.contains("skill") || !from.contains("duration")) return null;
         if (Skill.getSkill(from.getString("skill")) == null)
             return null;
-        SkillData ret = new SkillData(Skill.getSkill(from.getString("skill")), from.getFloat("duration")).flagCondition(from.getBoolean("condition")).setArbitraryFloat(from.getFloat("something"));
+        SkillData ret = new SkillData(Skill.getSkill(from.getString("skill")), from.getFloat("duration")).flagCondition(from.getBoolean("condition")).setArbitraryFloat(from.getFloat("something")).setEffectiveness(from.getFloat("stonks"));
         ret.max = from.getFloat("max");
         ret.state = Skill.STATE.values()[from.getInt("state")];
         if (from.contains("caster"))
             ret.casterID = from.getUUID("caster");
         return ret;
+    }
+
+    public float getEffectiveness() {
+        return effectiveness;
+    }
+
+    public SkillData setEffectiveness(float effectiveness) {
+        this.effectiveness = effectiveness;
+        return this;
     }
 
     @Nullable
@@ -136,6 +146,7 @@ public class SkillData {
         to.putFloat("duration", duration);
         to.putFloat("max", max);
         to.putFloat("something", var);
+        to.putFloat("stonks", effectiveness);
         to.putBoolean("condition", condition);
         if (casterID != null)
             to.putUUID("caster", casterID);

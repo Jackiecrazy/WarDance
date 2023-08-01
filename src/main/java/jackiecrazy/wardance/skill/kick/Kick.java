@@ -88,7 +88,7 @@ public class Kick extends Skill {
             caster.setDeltaMovement(caster.getDeltaMovement().add(noy.x, 0.4, noy.z));
             caster.hurtMarked = true;
             final ICombatCapability cap = CombatData.getCap(caster);
-            cap.addRank(0.4f);
+            cap.addRank(0.3f);
             cap.addPosture(0.3f * (cap.getPosture() / cap.getMaxPosture()));
         }
     }
