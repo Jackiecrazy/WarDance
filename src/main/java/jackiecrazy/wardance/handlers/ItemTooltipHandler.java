@@ -16,6 +16,7 @@ import net.minecraftforge.fml.common.Mod;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 
 import static net.minecraft.world.item.ItemStack.ATTRIBUTE_MODIFIER_FORMAT;
@@ -39,7 +40,8 @@ public class ItemTooltipHandler {
                         e.getToolTip().add(Component.translatable("wardance.tooltip.postureDefend", def).withStyle(ChatFormatting.DARK_GREEN));
                 }
                 if (PermissionData.getCap(e.getEntity()).canSweep()) {
-                    e.getToolTip().add(Component.translatable("wardance.tooltip.sweep." + CombatUtils.getSweepType(e.getEntity(), e.getItemStack()), CombatUtils.getSweepBase(e.getItemStack()), CombatUtils.getSweepScale(e.getItemStack())).withStyle(ChatFormatting.AQUA));
+                    for (CombatUtils.SWEEPSTATE s : CombatUtils.SWEEPSTATE.values())
+                        e.getToolTip().add(Component.translatable( "wardance.tooltip.sweep."+ s.name().toLowerCase(Locale.ROOT), Component.translatable("wardance.tooltip.sweep." + CombatUtils.getSweepType(e.getEntity(), e.getItemStack(), s), CombatUtils.getSweepBase(e.getItemStack(), s), CombatUtils.getSweepScale(e.getItemStack(), s)).withStyle(ChatFormatting.AQUA)));
                 }
             } else {
                 e.getToolTip().add(Component.translatable("wardance.tooltip.shift").withStyle(ChatFormatting.GREEN));

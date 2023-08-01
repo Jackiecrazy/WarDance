@@ -17,9 +17,8 @@ public class MixinNewSweepAttack {
             at = @At(value = "INVOKE", target = "Lnet/minecraft/server/level/ServerPlayer;attack(Lnet/minecraft/world/entity/Entity;)V"))
     private void sweep(ServerPlayer player, Entity entity) {
         if (CombatUtils.getCooledAttackStrength(player, InteractionHand.MAIN_HAND, 1f) >= 0.9f) {
-            double move = player.walkDist - player.walkDistO;
             int temp = player.attackStrengthTicker;
-            if (!(player.fallDistance > 0.0F && !player.onClimbable() && !player.isInWater() && !player.hasEffect(MobEffects.BLINDNESS) && !player.isPassenger()) && !player.isSprinting() && player.isOnGround() && move < (double) player.getSpeed())
+            if (!player.hasEffect(MobEffects.BLINDNESS))
                 CombatUtils.sweep(player, entity, InteractionHand.MAIN_HAND, player.getAttributeValue(ForgeMod.ATTACK_RANGE.get()));
             player.attackStrengthTicker = temp;
         }

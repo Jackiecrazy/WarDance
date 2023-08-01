@@ -57,6 +57,12 @@ public class CombatUtils {
     public static final TagKey<Item> PIERCE_SHIELD = ItemTags.create(new ResourceLocation(WarDance.MODID, "pierce_shield"));
     public static final TagKey<Item> CANNOT_PARRY = ItemTags.create(new ResourceLocation(WarDance.MODID, "cannot_parry"));
     private static final UUID main = UUID.fromString("8c8028c8-da67-49a2-99cd-f92d7ad22534");
+    private static final SweepInfo DEFAULT_FAN = new SweepInfo(SWEEPTYPE.CONE, 30, 30);
+    private static final SweepInfo DEFAULT_CLEAVE = new SweepInfo(SWEEPTYPE.CLEAVE, 30, 30);
+    private static final SweepInfo DEFAULT_IMPACT = new SweepInfo(SWEEPTYPE.IMPACT, 1, 1.5);
+    private static final SweepInfo DEFAULT_LINE = new SweepInfo(SWEEPTYPE.LINE, 1, 1.5);
+    private static final SweepInfo DEFAULT_CIRCLE = new SweepInfo(SWEEPTYPE.CIRCLE, 1, 1.5);
+    private static final SweepInfo DEFAULT_NONE = new SweepInfo(SWEEPTYPE.NONE, 0, 0);
     public static HashMap<ResourceLocation, Float> customPosture = new HashMap<>();
     public static HashMap<ResourceLocation, MobInfo> parryMap = new HashMap<>();
     public static boolean isSweeping = false;
@@ -127,20 +133,42 @@ public class CombatUtils {
         if (obj.has("attack")) put.attackPostureMultiplier = obj.get("attack").getAsDouble();
         if (obj.has("defend")) put.defensePostureMultiplier = obj.get("defend").getAsDouble();
         if (obj.has("shield")) put.isShield = obj.get("shield").getAsBoolean();
-        if (obj.has("sweep")) put.sweep = SWEEPTYPE.valueOf(obj.get("sweep").getAsString().toUpperCase(Locale.ROOT));
-        if (obj.has("sweep_base")) put.sweepBase = obj.get("sweep_base").getAsDouble();
-        else if (Objects.requireNonNull(put.sweep) == SWEEPTYPE.CONE) {
-            put.sweepBase = 30;
-        } else {
-            put.sweepBase = 1;
-        }
-        if (obj.has("sweep_scale")) put.sweepScale = obj.get("sweep_scale").getAsDouble();
-        else if (Objects.requireNonNull(put.sweep) == SWEEPTYPE.CONE) {
-            put.sweepScale = 30;
-        } else {
-            put.sweepScale = 1.5;
+        SweepInfo defaultSweep = getSweepInfo(obj);
+        put.sweeps[0] = defaultSweep;
+        for (SWEEPSTATE s : SWEEPSTATE.values()) {
+            int ord = s.ordinal();
+            JsonElement gottem = obj.get(s.name());
+            if (gottem == null || !gottem.isJsonObject()) {
+                put.sweeps[ord] = s == SWEEPSTATE.FALLING ? DEFAULT_NONE : put.sweeps[0];
+                continue;
+            }
+            JsonObject sub = gottem.getAsJsonObject();
+            SweepInfo sweep = getSweepInfo(sub);
+            put.sweeps[ord] = sweep;
         }
         return put;
+    }
+
+    @Nonnull
+    private static SweepInfo getSweepInfo(JsonObject sub) {
+        SWEEPTYPE type = SWEEPTYPE.NONE;
+        double base = 0, scaling = 0;
+        if (sub.has("sweep"))
+            type = SWEEPTYPE.valueOf(sub.get("sweep").getAsString().toUpperCase(Locale.ROOT));
+        if (sub.has("sweep_base")) base = sub.get("sweep_base").getAsDouble();
+        else if (type == SWEEPTYPE.CONE) {
+            base = 30;
+        } else {
+            base = 1;
+        }
+        if (sub.has("sweep_scale")) scaling = sub.get("sweep_scale").getAsDouble();
+        else if (type == SWEEPTYPE.CONE) {
+            scaling = 30;
+        } else {
+            scaling = 1.5;
+        }
+        SweepInfo sweep = new SweepInfo(type, base, scaling);
+        return sweep;
     }
 
     public static void updateProjectiles(List<? extends String> interpretP) {
@@ -514,23 +542,23 @@ public class CombatUtils {
 
     public static SWEEPTYPE getSweepType(LivingEntity e, ItemStack i, SWEEPSTATE s) {
         final MeleeInfo info = lookupStats(i);
-        return info == null ? SWEEPTYPE.NONE : info.sweep;
+        return info == null ? SWEEPTYPE.NONE : info.sweeps[s.ordinal()].type;
     }
 
-    public static double getSweepBase(ItemStack i) {
+    public static double getSweepBase(ItemStack i, SWEEPSTATE s) {
         final MeleeInfo meleeInfo = lookupStats(i);
-        return meleeInfo == null ? 0 : meleeInfo.sweepBase;
+        return meleeInfo == null ? 0 : meleeInfo.sweeps[s.ordinal()].base;
     }
 
-    public static double getSweepScale(ItemStack i) {
+    public static double getSweepScale(ItemStack i, SWEEPSTATE s) {
         final MeleeInfo meleeInfo = lookupStats(i);
-        return meleeInfo == null ? 0 : meleeInfo.sweepScale;
+        return meleeInfo == null ? 0 : meleeInfo.sweeps[s.ordinal()].scaling;
     }
 
     public static void sweep(LivingEntity e, Entity ignore, InteractionHand h, double reach) {
         ItemStack stack = e.getItemInHand(h);
         SWEEPSTATE s = getSweepState(e);
-        sweep(e, ignore, h, getSweepType(e, stack), reach, getSweepBase(stack), getSweepScale(stack));
+        sweep(e, ignore, h, getSweepType(e, stack, s), reach, getSweepBase(stack, s), getSweepScale(stack, s));
     }
 
     public static void sweep(LivingEntity e, Entity ignore, InteractionHand h, SWEEPTYPE type, double reach, double base, double scaling) {
@@ -664,10 +692,10 @@ public class CombatUtils {
     }
 
     public static SWEEPSTATE getSweepState(LivingEntity entity) {
-        if (entity.isSwimming() || entity.isSprinting()) return CombatUtils.SWEEPSTATE.SPRINTING;
-        if (!entity.isOnGround()) return CombatUtils.SWEEPSTATE.FALLING;
         if (entity.isPassenger()) return CombatUtils.SWEEPSTATE.RIDING;
         if (entity.isCrouching()) return CombatUtils.SWEEPSTATE.SNEAKING;
+        if (!entity.isOnGround() && !entity.onClimbable() && !entity.isInWater()) return CombatUtils.SWEEPSTATE.FALLING;
+        if (entity.isSwimming() || entity.isSprinting()) return CombatUtils.SWEEPSTATE.SPRINTING;
         return SWEEPSTATE.STANDING;
     }
 
@@ -692,8 +720,8 @@ public class CombatUtils {
     public static class MeleeInfo {
         private double attackPostureMultiplier, defensePostureMultiplier;
         private boolean isShield, ignoreParry, ignoreShield, canParry;
-        private SWEEPTYPE sweep = SWEEPTYPE.CONE;
-        private double sweepBase, sweepScale;
+        //standing, falling, sneaking, sprinting, riding
+        private SweepInfo[] sweeps = {DEFAULT_FAN, DEFAULT_CLEAVE, DEFAULT_IMPACT, DEFAULT_CIRCLE, DEFAULT_LINE};
 
         private MeleeInfo(double attack, double defend) {
             attackPostureMultiplier = attack;
@@ -705,9 +733,10 @@ public class CombatUtils {
             ret.attackPostureMultiplier = f.readDouble();
             ret.defensePostureMultiplier = f.readDouble();
             ret.isShield = f.readBoolean();
-            ret.sweep = SWEEPTYPE.values()[f.readInt()];
-            ret.sweepBase = f.readDouble();
-            ret.sweepScale = f.readDouble();
+            for (SWEEPSTATE ss : SWEEPSTATE.values()) {
+                int ord = ss.ordinal();
+                ret.sweeps[ord] = new SweepInfo(SWEEPTYPE.values()[f.readInt()], f.readDouble(), f.readDouble());
+            }
             return ret;
         }
 
@@ -715,9 +744,11 @@ public class CombatUtils {
             f.writeDouble(attackPostureMultiplier);
             f.writeDouble(defensePostureMultiplier);
             f.writeBoolean(isShield);
-            f.writeInt(sweep.ordinal());
-            f.writeDouble(sweepBase);
-            f.writeDouble(sweepScale);
+            for (SweepInfo ss : sweeps) {
+                f.writeInt(ss.type.ordinal());
+                f.writeDouble(ss.base);
+                f.writeDouble(ss.scaling);
+            }
         }
     }
 
@@ -744,6 +775,18 @@ public class CombatUtils {
             chance = c;
             omnidirectional = o;
             shield = s;
+        }
+    }
+
+    private static class SweepInfo {
+        public final double base;
+        public final double scaling;
+        public final SWEEPTYPE type;
+
+        private SweepInfo(SWEEPTYPE t, double b, double s) {
+            type = t;
+            base = b;
+            scaling = s;
         }
     }
 }
