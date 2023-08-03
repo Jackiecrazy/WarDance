@@ -41,7 +41,8 @@ public class ItemTooltipHandler {
                 }
                 if (PermissionData.getCap(e.getEntity()).canSweep()) {
                     for (CombatUtils.SWEEPSTATE s : CombatUtils.SWEEPSTATE.values())
-                        e.getToolTip().add(Component.translatable( "wardance.tooltip.sweep."+ s.name().toLowerCase(Locale.ROOT), Component.translatable("wardance.tooltip.sweep." + CombatUtils.getSweepType(e.getEntity(), e.getItemStack(), s), CombatUtils.getSweepBase(e.getItemStack(), s), CombatUtils.getSweepScale(e.getItemStack(), s)).withStyle(ChatFormatting.AQUA)));
+                        if (s == CombatUtils.SWEEPSTATE.STANDING || !CombatUtils.getSweepInfo(stack, s).equals(CombatUtils.getSweepInfo(stack, CombatUtils.SWEEPSTATE.STANDING)))
+                            e.getToolTip().add(Component.translatable("wardance.tooltip.sweep." + s.name().toLowerCase(Locale.ROOT), Component.translatable("wardance.tooltip.sweep." + CombatUtils.getSweepType(e.getEntity(), e.getItemStack(), s), CombatUtils.getSweepBase(e.getItemStack(), s), CombatUtils.getSweepScale(e.getItemStack(), s)).withStyle(ChatFormatting.AQUA)));
                 }
             } else {
                 e.getToolTip().add(Component.translatable("wardance.tooltip.shift").withStyle(ChatFormatting.GREEN));

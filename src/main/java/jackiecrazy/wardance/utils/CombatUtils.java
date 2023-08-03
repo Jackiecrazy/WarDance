@@ -139,7 +139,16 @@ public class CombatUtils {
             int ord = s.ordinal();
             JsonElement gottem = obj.get(s.name());
             if (gottem == null || !gottem.isJsonObject()) {
-                put.sweeps[ord] = s == SWEEPSTATE.FALLING ? DEFAULT_NONE : put.sweeps[0];
+                //"smartly" infer what kind of falling attack is wanted:
+                //cone->cleave, impact->impact, line->line, the others->none
+                if (s == SWEEPSTATE.FALLING)
+                    switch (defaultSweep.type) {
+                        case CONE ->
+                                put.sweeps[ord] = new SweepInfo(SWEEPTYPE.CLEAVE, defaultSweep.base, defaultSweep.scaling);
+                        case IMPACT, LINE -> put.sweeps[ord] = defaultSweep;
+                        default -> put.sweeps[ord] = DEFAULT_NONE;
+                    }
+                else put.sweeps[ord] = put.sweeps[0];
                 continue;
             }
             JsonObject sub = gottem.getAsJsonObject();
@@ -536,23 +545,28 @@ public class CombatUtils {
         off.getAttributeModifiers(EquipmentSlot.MAINHAND).forEach((att, mod) -> {
             Optional.ofNullable(e.getAttribute(att)).ifPresent((mai) -> {mai.addTransientModifier(mod);});
         });
+        int mbind = cap.getHandBind(InteractionHand.MAIN_HAND);
+        cap.setHandBind(InteractionHand.MAIN_HAND, cap.getHandBind(InteractionHand.OFF_HAND));
+        cap.setHandBind(InteractionHand.OFF_HAND, mbind);
         e.attackStrengthTicker = cap.getOffhandCooldown();
         cap.setOffhandCooldown(tssl);
     }
 
-    public static SWEEPTYPE getSweepType(LivingEntity e, ItemStack i, SWEEPSTATE s) {
+    public static SweepInfo getSweepInfo(ItemStack i, SWEEPSTATE s) {
         final MeleeInfo info = lookupStats(i);
-        return info == null ? SWEEPTYPE.NONE : info.sweeps[s.ordinal()].type;
+        return info == null ? DEFAULT_NONE : info.sweeps[s.ordinal()];
+    }
+
+    public static SWEEPTYPE getSweepType(LivingEntity e, ItemStack i, SWEEPSTATE s) {
+        return getSweepInfo(i, s).type;
     }
 
     public static double getSweepBase(ItemStack i, SWEEPSTATE s) {
-        final MeleeInfo meleeInfo = lookupStats(i);
-        return meleeInfo == null ? 0 : meleeInfo.sweeps[s.ordinal()].base;
+        return getSweepInfo(i, s).base;
     }
 
     public static double getSweepScale(ItemStack i, SWEEPSTATE s) {
-        final MeleeInfo meleeInfo = lookupStats(i);
-        return meleeInfo == null ? 0 : meleeInfo.sweeps[s.ordinal()].scaling;
+        return getSweepInfo(i, s).scaling;
     }
 
     public static void sweep(LivingEntity e, Entity ignore, InteractionHand h, double reach) {
@@ -603,11 +617,11 @@ public class CombatUtils {
             //type specific sweep checks
             switch (type) {
                 case CONE -> {
-                    if (!GeneralUtils.isFacingEntity(e, target, (int) radius, 30)) continue;
+                    if (!GeneralUtils.isFacingEntity(e, target, (int) radius, 40)) continue;
                     if (GeneralUtils.getDistSqCompensated(e, target) > reach * reach) continue;
                 }
                 case CLEAVE -> {
-                    if (!GeneralUtils.isFacingEntity(e, target, 30, (int) radius)) continue;
+                    if (!GeneralUtils.isFacingEntity(e, target, 40, (int) radius)) continue;
                     if (GeneralUtils.getDistSqCompensated(e, target) > reach * reach) continue;
                 }
                 case IMPACT -> {
@@ -657,8 +671,9 @@ public class CombatUtils {
             }
             case CLEAVE -> {
                 ParticleUtils.playSweepParticle(e, 0, reach, e.getBbHeight() / 2);
-                ParticleUtils.playSweepParticle(e, 0, reach, radius / 2);
-                ParticleUtils.playSweepParticle(e, 0, reach, -radius / 2);
+                float rad = GeneralUtils.rad((float) (radius / 2));
+                ParticleUtils.playSweepParticle(e, 0, reach * Mth.cos(rad), reach * Mth.sin(rad));
+                ParticleUtils.playSweepParticle(e, 0, reach * Mth.cos(rad), -reach * Mth.sin(rad));
             }
             case IMPACT -> {
                 ParticleUtils.playSweepParticle(e, starting, 0, radius, 0.5);
@@ -778,7 +793,14 @@ public class CombatUtils {
         }
     }
 
-    private static class SweepInfo {
+    public static class SweepInfo {
+        //general effects:
+        // knockback scaling (negative supported),
+        // (posture) damage scaling,
+        // force crit,
+        // crit damage,
+        // crit conversion (decimal)
+        //TODO can we build output/ grab libs from a central symlinked folder?
         public final double base;
         public final double scaling;
         public final SWEEPTYPE type;
@@ -787,6 +809,11 @@ public class CombatUtils {
             type = t;
             base = b;
             scaling = s;
+        }
+
+        @Override
+        public boolean equals(Object obj) {
+            return obj instanceof SweepInfo other && other.type == type && other.scaling == scaling && other.base == base;
         }
     }
 }
