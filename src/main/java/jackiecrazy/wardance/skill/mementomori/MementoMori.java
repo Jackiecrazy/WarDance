@@ -63,7 +63,6 @@ pound of flesh: active skill. Consumes all your spirit, and until your spirit re
     public void onUnequip(LivingEntity caster, SkillData stats) {
         caster.getAttribute(Attributes.ATTACK_DAMAGE).removeModifier(MULT);
         caster.getAttribute(Attributes.ARMOR).removeModifier(MULT);
-        caster.getAttribute(Attributes.LUCK).removeModifier(MULT);
     }
 
     @Override

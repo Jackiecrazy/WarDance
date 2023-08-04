@@ -3,6 +3,7 @@ package jackiecrazy.wardance.skill.flurry;
 import jackiecrazy.footwork.capability.resources.CombatData;
 import jackiecrazy.footwork.event.GainMightEvent;
 import jackiecrazy.wardance.capability.skill.CasterData;
+import jackiecrazy.wardance.config.WeaponStats;
 import jackiecrazy.wardance.event.ParryEvent;
 import jackiecrazy.wardance.event.ProjectileParryEvent;
 import jackiecrazy.wardance.skill.Skill;
@@ -56,11 +57,10 @@ Flow: cooldown of all attack skills are halved, and any cooled attack skill is a
     public boolean equippedTick(LivingEntity caster, SkillData stats) {
         if(stats.getState()!=STATE.ACTIVE)return false;
         if (!CombatData.getCap(caster).consumeMight(0.05f)) markUsed(caster);
-        caster.attackStrengthTicker++;
         if (stats.getState() == STATE.ACTIVE && CombatUtils.getCooledAttackStrength(caster, InteractionHand.MAIN_HAND, 0f) == 1f && !caster.isAutoSpinAttack()) {
             //spin to win!
             double reach=caster.getAttributeValue(ForgeMod.ATTACK_RANGE.get());
-            CombatUtils.sweep(caster, null, InteractionHand.MAIN_HAND, CombatUtils.SWEEPTYPE.CIRCLE, reach, reach, 0);
+            CombatUtils.sweep(caster, null, InteractionHand.MAIN_HAND, WeaponStats.SWEEPTYPE.CIRCLE, reach, reach, 0);
             CombatUtils.setHandCooldown(caster, InteractionHand.MAIN_HAND, 0, true);
         }
         return super.equippedTick(caster, stats);

@@ -3,21 +3,17 @@ package jackiecrazy.wardance.skill.regenspirit;
 import jackiecrazy.footwork.capability.resources.CombatData;
 import jackiecrazy.footwork.event.RegenSpiritEvent;
 import jackiecrazy.wardance.skill.Skill;
-import jackiecrazy.wardance.skill.SkillArchetypes;
 import jackiecrazy.wardance.skill.SkillArchetype;
+import jackiecrazy.wardance.skill.SkillArchetypes;
 import jackiecrazy.wardance.skill.SkillData;
 import net.minecraft.world.entity.LivingEntity;
-import net.minecraft.world.entity.ai.attributes.AttributeModifier;
 import net.minecraftforge.eventbus.api.Event;
 import net.minecraftforge.eventbus.api.EventPriority;
 
 import javax.annotation.Nonnull;
 import java.util.HashSet;
-import java.util.UUID;
 
 public class Confidence extends Skill {
-    private static final AttributeModifier sprint = new AttributeModifier(UUID.fromString("0683fe69-5348-4a83-95d5-81a2eeb2cca0"), "gimli moment", 10, AttributeModifier.Operation.ADDITION);
-
     /*
     back and forth: recover (1/attack speed) spirit when parrying or landing a critical hit.
 natural sprinter: max spirit doubled, but regeneration speed reduced to a third; recover 3 spirit on a kill.

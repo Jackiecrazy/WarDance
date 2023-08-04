@@ -4,6 +4,7 @@ import jackiecrazy.footwork.capability.resources.CombatData;
 import jackiecrazy.footwork.capability.resources.ICombatCapability;
 import jackiecrazy.footwork.event.GainMightEvent;
 import jackiecrazy.wardance.capability.skill.CasterData;
+import jackiecrazy.wardance.config.WeaponStats;
 import jackiecrazy.wardance.skill.Skill;
 import jackiecrazy.wardance.skill.SkillData;
 import jackiecrazy.wardance.skill.SkillTags;
@@ -60,13 +61,13 @@ Flow: cooldown of all attack skills are halved, and any cooled attack skill is a
         cap.setOffhandCooldown(cap.getOffhandCooldown() + 1);
         //main hand flurry
         if (stats.getState() == STATE.ACTIVE && CombatUtils.getCooledAttackStrength(caster, InteractionHand.MAIN_HAND, 0f) == 1f && !caster.isAutoSpinAttack()) {
-            CombatUtils.sweep(caster, null, InteractionHand.MAIN_HAND, CombatUtils.SWEEPTYPE.CIRCLE, 3, 3, 0);
+            CombatUtils.sweep(caster, null, InteractionHand.MAIN_HAND, WeaponStats.SWEEPTYPE.CIRCLE, 3, 3, 0);
             CombatUtils.setHandCooldown(caster, InteractionHand.MAIN_HAND, 0, true);
         }
         //offhand flurry
         if (stats.getState() == STATE.ACTIVE && CombatUtils.getCooledAttackStrength(caster, InteractionHand.OFF_HAND, 0f) == 1f && !caster.isAutoSpinAttack()) {
             //spin to win!
-            CombatUtils.sweep(caster, null, InteractionHand.OFF_HAND, CombatUtils.SWEEPTYPE.CIRCLE, 3, 3, 0);
+            CombatUtils.sweep(caster, null, InteractionHand.OFF_HAND, WeaponStats.SWEEPTYPE.CIRCLE, 3, 3, 0);
             CombatUtils.setHandCooldown(caster, InteractionHand.OFF_HAND, 0, true);
         }
         return super.equippedTick(caster, stats);

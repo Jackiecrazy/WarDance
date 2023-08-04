@@ -6,6 +6,7 @@ import jackiecrazy.footwork.utils.GeneralUtils;
 import jackiecrazy.wardance.WarDance;
 import jackiecrazy.wardance.capability.skill.CasterData;
 import jackiecrazy.wardance.config.CombatConfig;
+import jackiecrazy.wardance.config.WeaponStats;
 import jackiecrazy.wardance.skill.SkillArchetype;
 import jackiecrazy.wardance.skill.SkillArchetypes;
 import jackiecrazy.wardance.skill.SkillData;
@@ -100,9 +101,9 @@ public class ShieldCrush extends ShieldBash {
             if (look instanceof LivingEntity elb && CombatUtils.isHoldingShield(caster)) {
                 ItemStack main = caster.getMainHandItem(), off = caster.getOffhandItem();
                 float posdam = 2;
-                if (CombatUtils.isShield(caster, main))
+                if (WeaponStats.isShield(caster, main))
                     posdam = CombatUtils.getPostureAtk(caster, elb, InteractionHand.MAIN_HAND, 0, main);
-                if (CombatUtils.isShield(caster, off))
+                if (WeaponStats.isShield(caster, off))
                     posdam = Math.max(posdam, CombatUtils.getPostureAtk(caster, elb, InteractionHand.OFF_HAND, 0, off));
                 posdam = Math.max(posdam, 2);
                 //crush!

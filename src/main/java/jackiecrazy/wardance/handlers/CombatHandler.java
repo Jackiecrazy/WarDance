@@ -10,10 +10,7 @@ import jackiecrazy.footwork.utils.GeneralUtils;
 import jackiecrazy.footwork.utils.StealthUtils;
 import jackiecrazy.wardance.WarDance;
 import jackiecrazy.wardance.capability.action.PermissionData;
-import jackiecrazy.wardance.config.CombatConfig;
-import jackiecrazy.wardance.config.GeneralConfig;
-import jackiecrazy.wardance.config.ResourceConfig;
-import jackiecrazy.wardance.config.StealthConfig;
+import jackiecrazy.wardance.config.*;
 import jackiecrazy.wardance.event.ParryEvent;
 import jackiecrazy.wardance.event.ProjectileParryEvent;
 import jackiecrazy.wardance.mixin.ProjectileImpactMixin;
@@ -112,11 +109,11 @@ public class CombatHandler {
             ItemStack defend = null;
             InteractionHand h = null;
             float defMult = 0;
-            if (CombatUtils.isShield(uke, uke.getOffhandItem()) && CombatUtils.canParry(uke, e.getEntity(), uke.getOffhandItem(), 0)) {
+            if (WeaponStats.isShield(uke, uke.getOffhandItem()) && CombatUtils.canParry(uke, e.getEntity(), uke.getOffhandItem(), 0)) {
                 defend = uke.getOffhandItem();
                 defMult = CombatUtils.getPostureDef(null, uke, defend, 0);
                 h = InteractionHand.OFF_HAND;
-            } else if (CombatUtils.isShield(uke, uke.getMainHandItem()) && CombatUtils.canParry(uke, e.getEntity(), uke.getMainHandItem(), 0)) {
+            } else if (WeaponStats.isShield(uke, uke.getMainHandItem()) && CombatUtils.canParry(uke, e.getEntity(), uke.getMainHandItem(), 0)) {
                 defend = uke.getMainHandItem();
                 defMult = CombatUtils.getPostureDef(null, uke, defend, 0);
                 h = InteractionHand.MAIN_HAND;
@@ -129,19 +126,19 @@ public class CombatHandler {
             }
             boolean canParry = GeneralUtils.isFacingEntity(uke, projectile, 90);
             boolean force = false;
-            if (a != StealthUtils.Awareness.UNAWARE && CombatUtils.parryMap.containsKey(GeneralUtils.getResourceLocationFromEntity(uke))) {
-                CombatUtils.MobInfo stats = CombatUtils.parryMap.get(GeneralUtils.getResourceLocationFromEntity(uke));
-                if (stats.shield && WarDance.rand.nextFloat() < stats.chance) {
-                    if (stats.mult < 0) {//cannot parry
+            if (a != StealthUtils.Awareness.UNAWARE && MobSpecs.mobMap.containsKey(uke.getType())) {
+                MobSpecs.MobInfo stats = MobSpecs.mobMap.get(uke.getType());
+                if (stats.isShield() && WarDance.rand.nextFloat() < stats.getParryChance()) {
+                    if (stats.getAutoParryMultiplier() < 0) {//cannot parry
                         defend = null;
                         canParry = false;
-                        defMult = (float) -stats.mult;
-                    } else if (stats.omnidirectional || canParry) {
+                        defMult = (float) -stats.getAutoParryMultiplier();
+                    } else if (stats.isOmnidirectional() || canParry) {
                         if (!canParry) {
                             h = CombatUtils.getCooledAttackStrength(uke, InteractionHand.MAIN_HAND, 0.5f) > CombatUtils.getCooledAttackStrength(uke, InteractionHand.OFF_HAND, 0.5f) ? InteractionHand.MAIN_HAND : InteractionHand.OFF_HAND;
                         }
                         defend = ItemStack.EMPTY;
-                        defMult = (float) Math.min(stats.mult, defMult);
+                        defMult = (float) Math.min(stats.getAutoParryMultiplier(), defMult);
                         canParry = true;
                         force = true;
                     }
@@ -255,6 +252,9 @@ public class CombatHandler {
                 boolean sweeping = false;
                 //capability handler
                 seme.getMainHandItem().getCapability(CombatManipulator.CAP).ifPresent((i) -> i.attackStart(e.getSource(), seme, uke, seme.getMainHandItem(), e.getAmount()));
+                final WeaponStats.SweepInfo sweepInfo = WeaponStats.getSweepInfo(seme.getMainHandItem(), CombatUtils.getSweepState(seme));
+                sweepInfo.performCommand(seme, true, false);
+                sweepInfo.performCommand(uke, false, false);
                 //add stats if it's the first attack this tick and cooldown is sufficient
                 if (semeCap.getSweepTick() != seme.tickCount) {//first hit of a potential sweep attack
                     //semeCap.addRank(0.1f);
@@ -301,7 +301,7 @@ public class CombatHandler {
                     if (CombatUtils.canParry(uke, seme, uke.getOffhandItem(), attack, atkMult)) {
                         defend = uke.getOffhandItem();
                         posMod = CombatUtils.getPostureDef(seme, uke, uke.getOffhandItem(), e.getAmount());
-                        isShield = CombatUtils.isShield(uke, uke.getOffhandItem());
+                        isShield = WeaponStats.isShield(uke, uke.getOffhandItem());
                         parryHand = InteractionHand.OFF_HAND;
                     }
                     if (!isShield && CombatUtils.canParry(uke, seme, uke.getMainHandItem(), attack, atkMult) && CombatUtils.getPostureDef(seme, uke, uke.getMainHandItem(), e.getAmount()) < posMod) {
@@ -311,20 +311,20 @@ public class CombatHandler {
                 }
                 float defMult = CombatUtils.getPostureDef(seme, uke, defend, e.getAmount());
                 //special mob parry overrides
-                if (!ukeCap.isVulnerable() && atkMult >= 0 && awareness != StealthUtils.Awareness.UNAWARE && CombatUtils.parryMap.containsKey(GeneralUtils.getResourceLocationFromEntity(uke))) {
-                    CombatUtils.MobInfo stats = CombatUtils.parryMap.get(GeneralUtils.getResourceLocationFromEntity(uke));
-                    if (WarDance.rand.nextFloat() < stats.chance) {
-                        if (stats.mult < 0) {//cannot parry
+                if (!ukeCap.isVulnerable() && atkMult >= 0 && awareness != StealthUtils.Awareness.UNAWARE && MobSpecs.mobMap.containsKey(uke.getType())) {
+                    MobSpecs.MobInfo stats = MobSpecs.mobMap.get(uke.getType());
+                    if (WarDance.rand.nextFloat() < stats.getParryChance()) {
+                        if (stats.getAutoParryMultiplier() < 0) {//cannot parry
                             defend = null;
                             canParry = false;
-                            defMult = (float) -stats.mult;
-                        } else if (stats.omnidirectional || canParry) {
-                            if (defMult > stats.mult) {
+                            defMult = (float) -stats.getAutoParryMultiplier();
+                        } else if (stats.isOmnidirectional() || canParry) {
+                            if (defMult > stats.getAutoParryMultiplier()) {
                                 if (!canParry) {
                                     parryHand = CombatUtils.getCooledAttackStrength(uke, InteractionHand.MAIN_HAND, 0.5f) > CombatUtils.getCooledAttackStrength(uke, InteractionHand.OFF_HAND, 0.5f) ? InteractionHand.MAIN_HAND : InteractionHand.OFF_HAND;
                                 }
                                 defend = ItemStack.EMPTY;
-                                defMult = (float) Math.min(stats.mult, defMult);
+                                defMult = (float) Math.min(stats.getAutoParryMultiplier(), defMult);
                                 canParry = true;
                             }
                         }
@@ -361,7 +361,7 @@ public class CombatHandler {
                         boolean disshield = false;
                         parryHand = uke.getOffhandItem() == defend ? InteractionHand.OFF_HAND : InteractionHand.MAIN_HAND;
                         //barrier has already been handled. Subsequent binding and cooldown are handled by the capability.
-                        if (CombatUtils.isShield(uke, defend)) {
+                        if (WeaponStats.isShield(uke, defend)) {
                             //Tuple<Integer, Float> stat = CombatUtils.getShieldStats(defend);
                             if (attack.canDisableShield(defend, uke, seme)) {
                                 //shield is disabled
@@ -420,13 +420,18 @@ public class CombatHandler {
 
     }
 
-    @SubscribeEvent
+    @SubscribeEvent(priority = EventPriority.HIGH)
     public static void critHooks(CriticalHitEvent e) {
         if (!e.getEntity().level.isClientSide && e.getTarget() instanceof LivingEntity uke) {
             LivingEntity seme = e.getEntity();
             if (seme.getMainHandItem().getCapability(CombatManipulator.CAP).isPresent()) {
                 e.setResult(seme.getMainHandItem().getCapability(CombatManipulator.CAP).resolve().get().critCheck(seme, uke, seme.getMainHandItem(), e.getOldDamageModifier(), e.isVanillaCritical()));
                 e.setDamageModifier(seme.getMainHandItem().getCapability(CombatManipulator.CAP).resolve().get().critDamage(seme, uke, seme.getMainHandItem()));
+            }
+            if (WeaponStats.isWeapon(seme, seme.getMainHandItem())) {
+                final WeaponStats.SweepInfo info = WeaponStats.getSweepInfo(seme.getMainHandItem(), CombatUtils.getSweepState(seme));
+                e.setResult(info.isCrit() ? Event.Result.ALLOW : Event.Result.DENY);
+                e.setDamageModifier((float) info.getCritDamage());
             }
         }
     }
@@ -440,6 +445,10 @@ public class CombatHandler {
             uke.getMainHandItem().getCapability(CombatManipulator.CAP).ifPresent((i) -> i.onBeingKnockedBack(seme, uke, seme.getMainHandItem(), e.getOriginalStrength()));
             uke.getOffhandItem().getCapability(CombatManipulator.CAP).ifPresent((i) -> i.onBeingKnockedBack(seme, uke, seme.getOffhandItem(), e.getOriginalStrength()));
 
+            if (WeaponStats.isWeapon(seme, seme.getMainHandItem())) {
+                final WeaponStats.SweepInfo info = WeaponStats.getSweepInfo(seme.getMainHandItem(), CombatUtils.getSweepState(seme));
+                e.setStrength((float) (e.getStrength()*info.getKnockback()));
+            }
         }
     }
 
@@ -484,12 +493,16 @@ public class CombatHandler {
             kek = (LivingEntity) ds.getDirectEntity();
         }
         //stuff used to exist here, moved to footwork
+
         ICombatCapability cap = CombatData.getCap(uke);
         cap.setSpiritGrace(ResourceConfig.spiritCD);
         cap.setAdrenalineCooldown(CombatConfig.adrenaline);
         SubtleBonusHandler.update = true;
         StealthUtils.Awareness awareness = StealthUtils.INSTANCE.getAwareness(kek, uke);
         if (ds.getEntity() instanceof LivingEntity seme) {
+            final WeaponStats.SweepInfo sweepInfo = WeaponStats.getSweepInfo(seme.getMainHandItem(), CombatUtils.getSweepState(seme));
+            sweepInfo.performCommand(seme, true, true);
+            sweepInfo.performCommand(uke, false, true);
             if (DamageUtils.isPhysicalAttack(e.getSource())) {
                 cap.setMightGrace(0);
             }

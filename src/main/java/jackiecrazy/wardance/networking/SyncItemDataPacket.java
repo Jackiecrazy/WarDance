@@ -1,6 +1,6 @@
 package jackiecrazy.wardance.networking;
 
-import jackiecrazy.wardance.utils.CombatUtils;
+import jackiecrazy.wardance.config.WeaponStats;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.world.item.Item;
 import net.minecraftforge.network.NetworkDirection;
@@ -15,13 +15,13 @@ import java.util.function.Supplier;
 
 public class SyncItemDataPacket {
     private static final FriendlyByteBuf.Writer<Item> item = (f, item) -> f.writeResourceLocation(Objects.requireNonNull(ForgeRegistries.ITEMS.getKey(item)));
-    private static final FriendlyByteBuf.Writer<CombatUtils.MeleeInfo> info = (f, info) -> info.write(f);
+    private static final FriendlyByteBuf.Writer<WeaponStats.MeleeInfo> info = (f, info) -> info.write(f);
 
     private static final FriendlyByteBuf.Reader<Item> ritem = friendlyByteBuf -> ForgeRegistries.ITEMS.getValue(friendlyByteBuf.readResourceLocation());
-    private static final FriendlyByteBuf.Reader<CombatUtils.MeleeInfo> rinfo = CombatUtils.MeleeInfo::read;
-    private final Map<Item, CombatUtils.MeleeInfo> map;
+    private static final FriendlyByteBuf.Reader<WeaponStats.MeleeInfo> rinfo = WeaponStats.MeleeInfo::read;
+    private final Map<Item, WeaponStats.MeleeInfo> map;
 
-    public SyncItemDataPacket(Map<Item, CombatUtils.MeleeInfo> map) {
+    public SyncItemDataPacket(Map<Item, WeaponStats.MeleeInfo> map) {
         this.map = map;
     }
 
@@ -37,7 +37,9 @@ public class SyncItemDataPacket {
 
         @Override
         public SyncItemDataPacket apply(FriendlyByteBuf packetBuffer) {
-            return new SyncItemDataPacket(packetBuffer.readMap(ritem, rinfo));
+            //FIXME this appears to only retain the last loaded value for sweeps
+            final Map<Item, WeaponStats.MeleeInfo> huh = packetBuffer.readMap(ritem, rinfo);
+            return new SyncItemDataPacket(huh);
         }
     }
 
@@ -49,7 +51,7 @@ public class SyncItemDataPacket {
             //prevent client overriding server
             if (contextSupplier.get().getDirection() == NetworkDirection.PLAY_TO_CLIENT)
                 contextSupplier.get().enqueueWork(() -> {
-                    CombatUtils.clientWeaponOverride(updateClientPacket.map);
+                    WeaponStats.clientWeaponOverride(updateClientPacket.map);
                 });
             contextSupplier.get().setPacketHandled(true);
         }

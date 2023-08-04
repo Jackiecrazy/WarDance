@@ -3,7 +3,7 @@ package jackiecrazy.wardance.handlers;
 import jackiecrazy.footwork.capability.resources.CombatData;
 import jackiecrazy.wardance.WarDance;
 import jackiecrazy.wardance.config.TwohandingStats;
-import jackiecrazy.wardance.utils.CombatUtils;
+import jackiecrazy.wardance.config.WeaponStats;
 import jackiecrazy.wardance.utils.SkillUtils;
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.InteractionHand;
@@ -41,7 +41,7 @@ public class TwoHandingHandler {
         } else {
             //offhand change
             from = to = e.getTo();
-            if (CombatUtils.isWeapon(living, to) || CombatUtils.isShield(living, to)) {
+            if (WeaponStats.isWeapon(living, to) || WeaponStats.isShield(living, to)) {
                 //remove modifiers
                 getStats(living.getMainHandItem()).forEach((k, v) -> v.forEach(am -> SkillUtils.removeAttribute(living, k, am)));
             } else {//apply modifiers
@@ -50,8 +50,16 @@ public class TwoHandingHandler {
         }
     }
 
+    public static void updateTwoHanding(LivingEntity e, ItemStack main){
+        if(isTwoHanding(e, main)){
+            getStats(main).forEach((k, v) -> v.forEach(am -> SkillUtils.addAttribute(e, k, am)));
+        }else{
+            getStats(main).forEach((k, v) -> v.forEach(am -> SkillUtils.removeAttribute(e, k, am)));
+        }
+    }
+
     public static boolean isTwoHanding(LivingEntity living, ItemStack i) {
-        return i.is(CombatUtils.TWO_HANDED) || CombatData.getCap(living).getHandBind(InteractionHand.OFF_HAND) > 0 || (!CombatUtils.isWeapon(living, living.getOffhandItem()) && !CombatUtils.isShield(living, living.getOffhandItem()));
+        return i.is(WeaponStats.TWO_HANDED) || CombatData.getCap(living).getHandBind(InteractionHand.OFF_HAND) > 0 || (!WeaponStats.isWeapon(living, living.getOffhandItem()) && !WeaponStats.isShield(living, living.getOffhandItem()));
     }
 
     public static Map<Attribute, List<AttributeModifier>> getStats(ItemStack i) {

@@ -6,6 +6,7 @@ import jackiecrazy.footwork.capability.resources.ICombatCapability;
 import jackiecrazy.footwork.potion.FootworkEffects;
 import jackiecrazy.wardance.WarDance;
 import jackiecrazy.wardance.capability.skill.CasterData;
+import jackiecrazy.wardance.config.WeaponStats;
 import jackiecrazy.wardance.skill.*;
 import jackiecrazy.wardance.utils.CombatUtils;
 import jackiecrazy.wardance.utils.DamageUtils;
@@ -63,7 +64,7 @@ public class ShieldBash extends Skill {
             }
             final boolean base = isPassive(caster) && state != STATE.COOLING;
             final ItemStack stack = CombatUtils.getAttackingItemStack(lae.getSource());
-            if (!CombatUtils.isShield(caster, stack)) return;
+            if (!WeaponStats.isShield(caster, stack)) return;
             if (stats.getState() == STATE.COOLING && !CasterData.getCap(caster).isTagActive("shield"))
                 stats.decrementDuration();
             final boolean otherwise = state == STATE.HOLSTERED;

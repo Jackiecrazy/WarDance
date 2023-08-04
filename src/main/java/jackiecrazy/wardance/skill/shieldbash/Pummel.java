@@ -1,5 +1,6 @@
 package jackiecrazy.wardance.skill.shieldbash;
 
+import jackiecrazy.wardance.config.WeaponStats;
 import jackiecrazy.wardance.skill.SkillData;
 import jackiecrazy.wardance.utils.CombatUtils;
 import jackiecrazy.wardance.utils.DamageUtils;
@@ -67,7 +68,7 @@ public class Pummel extends ShieldBash {
 
     private void updateCasterShieldDamage(LivingEntity caster, @Nullable LivingEntity target) {
         final ItemStack stack = caster.getMainHandItem();
-        final boolean shield = CombatUtils.isShield(caster, stack);
+        final boolean shield = WeaponStats.isShield(caster, stack);
         float attack=0;
         if(shield)
             attack = CombatUtils.getPostureAtk(caster, target, InteractionHand.MAIN_HAND, 0, stack);

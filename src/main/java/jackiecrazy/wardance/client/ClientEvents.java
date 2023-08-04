@@ -12,6 +12,7 @@ import jackiecrazy.wardance.compat.WarCompat;
 import jackiecrazy.wardance.config.ClientConfig;
 import jackiecrazy.wardance.config.CombatConfig;
 import jackiecrazy.wardance.config.GeneralConfig;
+import jackiecrazy.wardance.config.WeaponStats;
 import jackiecrazy.wardance.networking.*;
 import jackiecrazy.wardance.utils.CombatUtils;
 import net.minecraft.client.KeyMapping;
@@ -311,10 +312,10 @@ public class ClientEvents {
 
     @SubscribeEvent
     public static void sweepSwingOff(PlayerInteractEvent.RightClickEmpty e) {
-        if (!rightClick && GeneralConfig.dual && e.getHand() == InteractionHand.OFF_HAND && ((CombatUtils.isWeapon(e.getEntity(), e.getItemStack()) || (e.getItemStack().isEmpty() && CombatData.getCap(e.getEntity()).isCombatMode())))) {
+        if (!rightClick && GeneralConfig.dual && e.getHand() == InteractionHand.OFF_HAND && ((WeaponStats.isWeapon(e.getEntity(), e.getItemStack()) || (e.getItemStack().isEmpty() && CombatData.getCap(e.getEntity()).isCombatMode())))) {
             rightClick = true;
             Entity n = RenderUtils.getEntityLookedAt(e.getEntity(), GeneralUtils.getAttributeValueHandSensitive(e.getEntity(), ForgeMod.ATTACK_RANGE.get(), InteractionHand.OFF_HAND));
-            if (n == null && CombatUtils.isShield(e.getEntity(), e.getItemStack())) return;
+            if (n == null && WeaponStats.isShield(e.getEntity(), e.getItemStack())) return;
             e.getEntity().swing(InteractionHand.OFF_HAND, false);
             if (n != null && e.getEntity().tickCount != lastAttackTick) {
                 CombatChannel.INSTANCE.sendToServer(new RequestAttackPacket(false, n));
@@ -342,10 +343,10 @@ public class ClientEvents {
 
     @SubscribeEvent
     public static void sweepSwingOffItem(PlayerInteractEvent.RightClickItem e) {
-        if (!rightClick && GeneralConfig.dual && e.getHand() == InteractionHand.OFF_HAND && (CombatUtils.isWeapon(e.getEntity(), e.getItemStack()) || ((e.getItemStack().isEmpty() || CombatUtils.isShield(e.getEntity(), e.getItemStack())) && CombatData.getCap(e.getEntity()).isCombatMode()))) {
+        if (!rightClick && GeneralConfig.dual && e.getHand() == InteractionHand.OFF_HAND && (WeaponStats.isWeapon(e.getEntity(), e.getItemStack()) || ((e.getItemStack().isEmpty() || WeaponStats.isShield(e.getEntity(), e.getItemStack())) && CombatData.getCap(e.getEntity()).isCombatMode()))) {
             rightClick = true;
             Entity n = RenderUtils.getEntityLookedAt(e.getEntity(), GeneralUtils.getAttributeValueHandSensitive(e.getEntity(), ForgeMod.ATTACK_RANGE.get(), InteractionHand.OFF_HAND));
-            if (n == null && CombatUtils.isShield(e.getEntity(), e.getItemStack())) return;
+            if (n == null && WeaponStats.isShield(e.getEntity(), e.getItemStack())) return;
             e.getEntity().swing(InteractionHand.OFF_HAND, false);
             if (n != null && e.getEntity().tickCount != lastAttackTick) {
                 CombatChannel.INSTANCE.sendToServer(new RequestAttackPacket(false, n));
@@ -359,11 +360,11 @@ public class ClientEvents {
 
     @SubscribeEvent
     public static void punchy(PlayerInteractEvent.EntityInteract e) {
-        if (!rightClick && GeneralConfig.dual && e.getHand() == InteractionHand.OFF_HAND && ((e.getItemStack().isEmpty() || CombatUtils.isShield(e.getEntity(), e.getItemStack())) && CombatData.getCap(e.getEntity()).isCombatMode())) {
+        if (!rightClick && GeneralConfig.dual && e.getHand() == InteractionHand.OFF_HAND && ((e.getItemStack().isEmpty() || WeaponStats.isShield(e.getEntity(), e.getItemStack())) && CombatData.getCap(e.getEntity()).isCombatMode())) {
             rightClick = true;
             Entity n = RenderUtils.getEntityLookedAt(e.getEntity(), GeneralUtils.getAttributeValueHandSensitive(e.getEntity(), ForgeMod.ATTACK_RANGE.get(), InteractionHand.OFF_HAND));
             e.getEntity().swing(InteractionHand.OFF_HAND, false);
-            if (n == null && CombatUtils.isShield(e.getEntity(), e.getItemStack())) return;
+            if (n == null && WeaponStats.isShield(e.getEntity(), e.getItemStack())) return;
             if (n != null && e.getEntity().tickCount != lastAttackTick) {
                 CombatChannel.INSTANCE.sendToServer(new RequestAttackPacket(false, n));
                 lastAttackTick = e.getEntity().tickCount;
@@ -376,11 +377,11 @@ public class ClientEvents {
 
     @SubscribeEvent
     public static void sweepSwingOffItemBlock(PlayerInteractEvent.RightClickBlock e) {
-        if (!rightClick && GeneralConfig.dual && e.getHand() == InteractionHand.OFF_HAND && (CombatUtils.isWeapon(e.getEntity(), e.getItemStack()) || (e.getItemStack().isEmpty() || CombatUtils.isShield(e.getEntity(), e.getItemStack())) && CombatData.getCap(e.getEntity()).isCombatMode())) {
+        if (!rightClick && GeneralConfig.dual && e.getHand() == InteractionHand.OFF_HAND && (WeaponStats.isWeapon(e.getEntity(), e.getItemStack()) || (e.getItemStack().isEmpty() || WeaponStats.isShield(e.getEntity(), e.getItemStack())) && CombatData.getCap(e.getEntity()).isCombatMode())) {
             rightClick = true;
             Entity n = RenderUtils.getEntityLookedAt(e.getEntity(), GeneralUtils.getAttributeValueHandSensitive(e.getEntity(), ForgeMod.ATTACK_RANGE.get(), InteractionHand.OFF_HAND) - (e.getItemStack().isEmpty() ? 1 : 0));
             e.getEntity().swing(InteractionHand.OFF_HAND, false);
-            if (n == null && CombatUtils.isShield(e.getEntity(), e.getItemStack())) return;
+            if (n == null && WeaponStats.isShield(e.getEntity(), e.getItemStack())) return;
             if (n != null && e.getEntity().tickCount != lastAttackTick) {
                 CombatChannel.INSTANCE.sendToServer(new RequestAttackPacket(false, n));
                 lastAttackTick = e.getEntity().tickCount;

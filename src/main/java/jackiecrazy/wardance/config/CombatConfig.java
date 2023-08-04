@@ -520,7 +520,7 @@ public class CombatConfig {
                 "Additionally, you may tag mobs as (o)mnidirectional and/or (s)hielded.\n" +
                 "Omnidirectional mobs can parry from any orientation\n" +
                 "Shielded mobs can parry projectiles innately.").defineList("auto parry mobs", Arrays.asList(MOBS), String.class::isInstance);
-        _mobScaler = b.translation("wardance.config.mobB").comment("posture damage from mob attacks will be scaled by this number.").defineInRange("mob posture damage buff", 1, 0, Double.MAX_VALUE);
+        _mobScaler = b.translation("wardance.config.mobB").comment("use this to quickly scale all posture damage from mob attacks.").defineInRange("mob posture damage buff", 1, 0, Double.MAX_VALUE);
         _knockbackNerf = b.translation("wardance.config.knockback").comment("knockback from all sources to everything will be multiplied by this amount").defineInRange("knockback multiplier", 1, 0, 10d);
         b.pop();
         b.push("misc");
@@ -552,7 +552,6 @@ public class CombatConfig {
         exposeDuration = CONFIG._exposeDuration.get();
         foodCool = CONFIG._foodCool.get();
         adrenaline = CONFIG._adrenaline.get();
-        CombatUtils.updateMobParrying(CONFIG._customParry.get());
         CombatUtils.updateProjectiles(CONFIG._customProjectile.get());
     }
 

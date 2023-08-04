@@ -67,7 +67,7 @@ public class ScrollItem extends Item {
         if (!p.getAbilities().instabuild) {
             stack.shrink(1);
         }
-        return InteractionResultHolder.consume(stack);
+        return InteractionResultHolder.success(stack);
     }
 
     @Override

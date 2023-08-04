@@ -123,6 +123,7 @@ public class WarDance {
     public void onJsonListener(AddReloadListenerEvent event) {
         WeaponStats.register(event);
         TwohandingStats.register(event);
+        MobSpecs.register(event);
     }
 
     private void gui(final RegisterGuiOverlaysEvent event) {

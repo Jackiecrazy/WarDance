@@ -8,9 +8,8 @@ import jackiecrazy.footwork.potion.FootworkEffects;
 import jackiecrazy.footwork.utils.GeneralUtils;
 import jackiecrazy.wardance.WarDance;
 import jackiecrazy.wardance.capability.action.PermissionData;
-import jackiecrazy.wardance.config.CombatConfig;
-import jackiecrazy.wardance.config.GeneralConfig;
-import jackiecrazy.wardance.config.ResourceConfig;
+import jackiecrazy.wardance.config.*;
+import jackiecrazy.wardance.handlers.TwoHandingHandler;
 import jackiecrazy.wardance.networking.CombatChannel;
 import jackiecrazy.wardance.networking.UpdateClientResourcePacket;
 import jackiecrazy.wardance.utils.CombatUtils;
@@ -91,10 +90,10 @@ public class CombatCapability implements ICombatCapability {
     private static float getMPos(LivingEntity elb) {
         float ret = 1;
         if (elb == null) return ret;
-        if (GeneralUtils.getResourceLocationFromEntity(elb) != null && CombatUtils.customPosture.containsKey(GeneralUtils.getResourceLocationFromEntity(elb)))
-            ret = CombatUtils.customPosture.get(GeneralUtils.getResourceLocationFromEntity(elb));
+        if (GeneralUtils.getResourceLocationFromEntity(elb) != null && MobSpecs.mobMap.containsKey(elb.getType()))
+            ret = (float) MobSpecs.mobMap.get(elb.getType()).getMaxPosture();
         else ret = (float) (Math.ceil(10 / 1.09 * Math.sqrt(elb.getBbWidth() * elb.getBbHeight())));
-        if (elb instanceof Player) ret *= 1.5;
+        if (!(elb instanceof Player)) ret *= 1.5;
         return ret;
     }
 
@@ -611,7 +610,7 @@ public class CombatCapability implements ICombatCapability {
         if (isVulnerable()) return 99999;
         if (dude.get() != null) {
             LivingEntity bro = dude.get();
-            if (h == InteractionHand.OFF_HAND && (bro.getItemInHand(InteractionHand.MAIN_HAND).is(CombatUtils.TWO_HANDED) || bro.getItemInHand(InteractionHand.OFF_HAND).is(CombatUtils.TWO_HANDED)))
+            if (h == InteractionHand.OFF_HAND && (bro.getItemInHand(InteractionHand.MAIN_HAND).is(WeaponStats.TWO_HANDED) || bro.getItemInHand(InteractionHand.OFF_HAND).is(WeaponStats.TWO_HANDED)))
                 return 99999;
         }
         if (h == InteractionHand.OFF_HAND) {
@@ -622,9 +621,16 @@ public class CombatCapability implements ICombatCapability {
 
     @Override
     public void setHandBind(InteractionHand h, int amount) {
+        final LivingEntity e = dude.get();
         switch (h) {
-            case MAIN_HAND -> mBind = amount;
-            case OFF_HAND -> oBind = amount;
+            case MAIN_HAND -> {
+                mBind = amount;
+            }
+            case OFF_HAND -> {
+                if ((oBind == 0 || amount == 0) && oBind != amount && e != null)
+                    TwoHandingHandler.updateTwoHanding(e, e.getMainHandItem());
+                oBind = amount;
+            }
         }
     }
 
@@ -692,6 +698,9 @@ public class CombatCapability implements ICombatCapability {
             final float mPos = getMPos(elb);
             if (uninitializedPosture) {//ew
                 elb.getAttribute(FootworkAttributes.MAX_POSTURE.get()).setBaseValue(mPos);
+                double permScale = MobSpecs.mobMap.getOrDefault(elb.getType(), MobSpecs.DEFAULT).getMaxPostureScaling();
+                if (permScale != 1)
+                    elb.getAttribute(FootworkAttributes.MAX_POSTURE.get()).addPermanentModifier(new AttributeModifier(CombatUtils.main, "json bonus", permScale, AttributeModifier.Operation.MULTIPLY_TOTAL));
                 elb.getAttribute(FootworkAttributes.POSTURE_REGEN.get()).setBaseValue(mPos);
                 mpos = (float) elb.getAttributeValue(FootworkAttributes.MAX_POSTURE.get());
                 setPosture(getMaxPosture());
@@ -1010,7 +1019,13 @@ public class CombatCapability implements ICombatCapability {
     public void decrementHandBind(InteractionHand h, int amount) {
         switch (h) {
             case MAIN_HAND -> mBind -= Math.min(amount, mBind);
-            case OFF_HAND -> oBind -= Math.min(amount, oBind);
+            case OFF_HAND -> {
+                int prev = oBind;
+                oBind -= Math.min(amount, oBind);
+                LivingEntity e = dude.get();
+                if ((oBind == 0 || prev == 0) && prev != amount && e != null)
+                    TwoHandingHandler.updateTwoHanding(e, e.getMainHandItem());
+            }
         }
     }
 

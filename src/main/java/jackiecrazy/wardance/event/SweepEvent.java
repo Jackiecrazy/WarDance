@@ -1,5 +1,6 @@
 package jackiecrazy.wardance.event;
 
+import jackiecrazy.wardance.config.WeaponStats;
 import jackiecrazy.wardance.utils.CombatUtils;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.LivingEntity;
@@ -15,10 +16,10 @@ public class SweepEvent extends LivingEvent {
     private final InteractionHand hand;
     private final ItemStack stack;
     private double a, b;
-    private CombatUtils.SWEEPTYPE t;
-    private CombatUtils.SWEEPSTATE state;
+    private WeaponStats.SWEEPTYPE t;
+    private WeaponStats.SWEEPSTATE state;
 
-    public SweepEvent(LivingEntity entity, InteractionHand hand, ItemStack stack, CombatUtils.SWEEPTYPE type, double base, double scale) {
+    public SweepEvent(LivingEntity entity, InteractionHand hand, ItemStack stack, WeaponStats.SWEEPTYPE type, double base, double scale) {
         super(entity);
         oangle = a = base;
         oscale = b = scale;
@@ -64,15 +65,15 @@ public class SweepEvent extends LivingEvent {
         this.b = a;
     }
 
-    public CombatUtils.SWEEPTYPE getType() {
+    public WeaponStats.SWEEPTYPE getType() {
         return t;
     }
 
-    public void setType(CombatUtils.SWEEPTYPE t) {
+    public void setType(WeaponStats.SWEEPTYPE t) {
         this.t = t;
     }
 
-    public CombatUtils.SWEEPSTATE getState() {
+    public WeaponStats.SWEEPSTATE getState() {
         return state;
     }
 }

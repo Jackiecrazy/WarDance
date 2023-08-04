@@ -44,11 +44,12 @@ apathy: your max spirit is 4, your spirit instantly refills after cooldown, you 
 
     @Override
     public void onProc(LivingEntity caster, Event procPoint, STATE state, SkillData stats, LivingEntity target) {
-        if (procPoint instanceof SkillResourceEvent && ((SkillResourceEvent) procPoint).getSpirit() > 0 && procPoint.getPhase() == EventPriority.HIGHEST) {
+        if (procPoint instanceof SkillResourceEvent sre && sre.getSpirit() > 0 && procPoint.getPhase() == EventPriority.HIGHEST) {
             float luck = (float) Math.max(0, GeneralUtils.getAttributeValueSafe(caster, Attributes.LUCK));
+            if (sre.getTarget() != null) luck -= GeneralUtils.getAttributeValueSafe(sre.getTarget(), Attributes.LUCK);
             stats.addArbitraryFloat(((1 + luck) / (5 + luck)));
             if (LuckUtils.luckRoll(caster, stats.getArbitraryFloat())) {
-                ((SkillResourceEvent) procPoint).setSpirit(0);
+                sre.setSpirit(0);
                 stats.setArbitraryFloat(0);
             }
         }

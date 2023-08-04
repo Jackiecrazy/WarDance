@@ -5,8 +5,8 @@ import jackiecrazy.footwork.capability.resources.ICombatCapability;
 import jackiecrazy.footwork.potion.FootworkEffects;
 import jackiecrazy.footwork.utils.TargetingUtils;
 import jackiecrazy.wardance.WarDance;
+import jackiecrazy.wardance.config.WeaponStats;
 import jackiecrazy.wardance.skill.*;
-import jackiecrazy.wardance.utils.CombatUtils;
 import jackiecrazy.wardance.utils.SkillUtils;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.sounds.SoundEvents;
@@ -78,7 +78,7 @@ public class Grapple extends Skill {
     }
 
     protected boolean isUnarmed(LivingEntity caster) {
-        return CombatUtils.isUnarmed(caster.getMainHandItem(), caster);
+        return WeaponStats.isUnarmed(caster.getMainHandItem(), caster);
     }
 
     public static class ReverseGrip extends Grapple {

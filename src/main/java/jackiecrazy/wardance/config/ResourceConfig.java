@@ -2,7 +2,6 @@ package jackiecrazy.wardance.config;
 
 import com.google.common.collect.Lists;
 import jackiecrazy.wardance.WarDance;
-import jackiecrazy.wardance.utils.CombatUtils;
 import net.minecraftforge.common.ForgeConfigSpec;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
@@ -43,7 +42,6 @@ public class ResourceConfig {
         qiGrace = CONFIG._qiGrace.get();
         spiritCD = CONFIG._spiritCD.get();
         postureCD = CONFIG._postureCD.get();
-        CombatUtils.updateMobPosture(CONFIG._customPosture.get());
     }
 
     @SubscribeEvent

@@ -1,7 +1,5 @@
 package jackiecrazy.wardance.utils;
 
-import com.google.gson.JsonElement;
-import com.google.gson.JsonObject;
 import jackiecrazy.footwork.api.CombatDamageSource;
 import jackiecrazy.footwork.capability.resources.CombatData;
 import jackiecrazy.footwork.capability.resources.ICombatCapability;
@@ -12,21 +10,16 @@ import jackiecrazy.wardance.WarDance;
 import jackiecrazy.wardance.capability.action.PermissionData;
 import jackiecrazy.wardance.config.CombatConfig;
 import jackiecrazy.wardance.config.GeneralConfig;
+import jackiecrazy.wardance.config.MobSpecs;
+import jackiecrazy.wardance.config.WeaponStats;
 import jackiecrazy.wardance.event.ProjectileParryEvent;
 import jackiecrazy.wardance.event.SweepEvent;
 import jackiecrazy.wardance.networking.CombatChannel;
-import jackiecrazy.wardance.networking.SyncItemDataPacket;
-import jackiecrazy.wardance.networking.SyncTagDataPacket;
 import jackiecrazy.wardance.networking.UpdateAttackPacket;
-import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
-import net.minecraft.server.packs.resources.ResourceManager;
 import net.minecraft.sounds.SoundEvents;
-import net.minecraft.tags.ItemTags;
-import net.minecraft.tags.TagKey;
 import net.minecraft.util.Mth;
-import net.minecraft.util.profiling.ProfilerFiller;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.effect.MobEffects;
@@ -34,11 +27,10 @@ import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.ai.attributes.AttributeModifier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.Items;
 import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.util.FakePlayer;
@@ -51,134 +43,11 @@ import java.util.*;
 
 public class CombatUtils {
     public static final UUID off = UUID.fromString("8c8028c8-da69-49a2-99cd-f92d7ad22534");
-    public static final TagKey<Item> TWO_HANDED = ItemTags.create(new ResourceLocation(WarDance.MODID, "two_handed"));
-    public static final TagKey<Item> UNARMED = ItemTags.create(new ResourceLocation(WarDance.MODID, "unarmed"));
-    public static final TagKey<Item> PIERCE_PARRY = ItemTags.create(new ResourceLocation(WarDance.MODID, "pierce_parry"));
-    public static final TagKey<Item> PIERCE_SHIELD = ItemTags.create(new ResourceLocation(WarDance.MODID, "pierce_shield"));
-    public static final TagKey<Item> CANNOT_PARRY = ItemTags.create(new ResourceLocation(WarDance.MODID, "cannot_parry"));
-    private static final UUID main = UUID.fromString("8c8028c8-da67-49a2-99cd-f92d7ad22534");
-    private static final SweepInfo DEFAULT_FAN = new SweepInfo(SWEEPTYPE.CONE, 30, 30);
-    private static final SweepInfo DEFAULT_CLEAVE = new SweepInfo(SWEEPTYPE.CLEAVE, 30, 30);
-    private static final SweepInfo DEFAULT_IMPACT = new SweepInfo(SWEEPTYPE.IMPACT, 1, 1.5);
-    private static final SweepInfo DEFAULT_LINE = new SweepInfo(SWEEPTYPE.LINE, 1, 1.5);
-    private static final SweepInfo DEFAULT_CIRCLE = new SweepInfo(SWEEPTYPE.CIRCLE, 1, 1.5);
-    private static final SweepInfo DEFAULT_NONE = new SweepInfo(SWEEPTYPE.NONE, 0, 0);
-    public static HashMap<ResourceLocation, Float> customPosture = new HashMap<>();
-    public static HashMap<ResourceLocation, MobInfo> parryMap = new HashMap<>();
+    public static final UUID main = UUID.fromString("8c8028c8-da67-49a2-99cd-f92d7ad22534");
     public static boolean isSweeping = false;
     public static boolean suppress = false;
-    private static MeleeInfo DEFAULTMELEE = new MeleeInfo(1, 1);
     private static ProjectileInfo DEFAULTRANGED = new ProjectileInfo(0.1, 1, false, false);
-    private static HashMap<Item, MeleeInfo> combatList = new HashMap<>();
-    private static HashMap<TagKey<Item>, MeleeInfo> archetypes = new HashMap<>();
     private static HashMap<EntityType, ProjectileInfo> projectileMap = new HashMap<>();
-
-    public static void sendItemData(ServerPlayer p) {
-        CombatChannel.INSTANCE.send(PacketDistributor.PLAYER.with(() -> p), new SyncItemDataPacket(combatList));
-        CombatChannel.INSTANCE.send(PacketDistributor.PLAYER.with(() -> p), new SyncTagDataPacket(archetypes));
-    }
-
-    public static void clientWeaponOverride(Map<Item, MeleeInfo> server) {
-        combatList = new HashMap<>(server);
-    }
-
-    public static void clientTagOverride(Map<TagKey<Item>, MeleeInfo> server) {
-        archetypes = new HashMap<>(server);
-    }
-
-    public static void updateItems(Map<ResourceLocation, JsonElement> object, ResourceManager rm, ProfilerFiller profiler) {
-        DEFAULTMELEE = new MeleeInfo(CombatConfig.defaultMultiplierPostureAttack, CombatConfig.defaultMultiplierPostureDefend);
-        combatList = new HashMap<>();
-        archetypes = new HashMap<>();
-
-        object.forEach((key, value) -> {
-            JsonObject file = value.getAsJsonObject();
-            if (GeneralConfig.debug)
-                WarDance.LOGGER.debug("loading " + key);
-            file.entrySet().forEach(entry -> {
-                final String name = entry.getKey();
-                if (name.startsWith("#")) {//register tags separately
-                    try {
-                        JsonObject obj = entry.getValue().getAsJsonObject();
-                        MeleeInfo put = parseMeleeInfo(obj);
-                        archetypes.put(ItemTags.create(new ResourceLocation(WarDance.MODID, name.substring(1))), put);
-                    } catch (Exception x) {
-                        WarDance.LOGGER.error("malformed json under " + name + "!");
-                        x.printStackTrace();
-                    }
-                    return;
-                }
-                ResourceLocation i = new ResourceLocation(name);
-                Item item = ForgeRegistries.ITEMS.getValue(i);
-                if (item == null || item == Items.AIR) {
-                    if (GeneralConfig.debug)
-                        WarDance.LOGGER.debug(name + " is not a registered item!");
-                    return;
-                }
-                try {
-                    JsonObject obj = entry.getValue().getAsJsonObject();
-                    MeleeInfo put = parseMeleeInfo(obj);
-                    combatList.put(item, put);
-                } catch (Exception x) {
-                    WarDance.LOGGER.error("malformed json under " + name + "!");
-                    x.printStackTrace();
-                }
-            });
-        });
-    }
-
-    @Nonnull
-    private static MeleeInfo parseMeleeInfo(JsonObject obj) {
-        MeleeInfo put = new MeleeInfo(CombatConfig.defaultMultiplierPostureAttack, CombatConfig.defaultMultiplierPostureDefend);
-        if (obj.has("attack")) put.attackPostureMultiplier = obj.get("attack").getAsDouble();
-        if (obj.has("defend")) put.defensePostureMultiplier = obj.get("defend").getAsDouble();
-        if (obj.has("shield")) put.isShield = obj.get("shield").getAsBoolean();
-        SweepInfo defaultSweep = getSweepInfo(obj);
-        put.sweeps[0] = defaultSweep;
-        for (SWEEPSTATE s : SWEEPSTATE.values()) {
-            int ord = s.ordinal();
-            JsonElement gottem = obj.get(s.name());
-            if (gottem == null || !gottem.isJsonObject()) {
-                //"smartly" infer what kind of falling attack is wanted:
-                //cone->cleave, impact->impact, line->line, the others->none
-                if (s == SWEEPSTATE.FALLING)
-                    switch (defaultSweep.type) {
-                        case CONE ->
-                                put.sweeps[ord] = new SweepInfo(SWEEPTYPE.CLEAVE, defaultSweep.base, defaultSweep.scaling);
-                        case IMPACT, LINE -> put.sweeps[ord] = defaultSweep;
-                        default -> put.sweeps[ord] = DEFAULT_NONE;
-                    }
-                else put.sweeps[ord] = put.sweeps[0];
-                continue;
-            }
-            JsonObject sub = gottem.getAsJsonObject();
-            SweepInfo sweep = getSweepInfo(sub);
-            put.sweeps[ord] = sweep;
-        }
-        return put;
-    }
-
-    @Nonnull
-    private static SweepInfo getSweepInfo(JsonObject sub) {
-        SWEEPTYPE type = SWEEPTYPE.NONE;
-        double base = 0, scaling = 0;
-        if (sub.has("sweep"))
-            type = SWEEPTYPE.valueOf(sub.get("sweep").getAsString().toUpperCase(Locale.ROOT));
-        if (sub.has("sweep_base")) base = sub.get("sweep_base").getAsDouble();
-        else if (type == SWEEPTYPE.CONE) {
-            base = 30;
-        } else {
-            base = 1;
-        }
-        if (sub.has("sweep_scale")) scaling = sub.get("sweep_scale").getAsDouble();
-        else if (type == SWEEPTYPE.CONE) {
-            scaling = 30;
-        } else {
-            scaling = 1.5;
-        }
-        SweepInfo sweep = new SweepInfo(type, base, scaling);
-        return sweep;
-    }
 
     public static void updateProjectiles(List<? extends String> interpretP) {
         projectileMap.clear();
@@ -201,35 +70,6 @@ public class CombatUtils {
             } catch (Exception e) {
                 WarDance.LOGGER.warn("improperly formatted projectile parry definition " + s + "!");
             }
-    }
-
-    public static void updateMobParrying(List<? extends String> interpretM) {
-        parryMap.clear();
-        for (String s : interpretM) {
-            try {
-                String[] val = s.split(",");
-                if (val.length < 4)
-                    CombatUtils.parryMap.put(new ResourceLocation(val[0]), new MobInfo(Float.parseFloat(val[1]), Float.parseFloat(val[2]), false, false));
-                else
-                    CombatUtils.parryMap.put(new ResourceLocation(val[0]), new MobInfo(Float.parseFloat(val[1]), Float.parseFloat(val[2]), val[3].contains("o"), val[3].contains("s")));
-
-            } catch (Exception e) {
-                WarDance.LOGGER.warn("improperly formatted mob parrying definition " + s + "!");
-            }
-        }
-    }
-
-    public static void updateMobPosture(List<? extends String> interpretP) {
-        customPosture.clear();
-        for (String s : interpretP) {
-            try {
-                String[] val = s.split(",");
-                CombatUtils.customPosture.put(new ResourceLocation(val[0]), Float.parseFloat(val[1]));
-
-            } catch (Exception e) {
-                WarDance.LOGGER.warn("improperly formatted custom posture definition " + s + "!");
-            }
-        }
     }
 
     public static void attack(LivingEntity from, Entity to, boolean offhand) {
@@ -259,59 +99,16 @@ public class CombatUtils {
         return (int) (1.0D / GeneralUtils.getAttributeValueHandSensitive(e, Attributes.ATTACK_SPEED, h) * 20.0D);
     }
 
-    @Nullable
-    private static MeleeInfo lookupStats(ItemStack is) {
-        if (combatList.containsKey(is.getItem())) return combatList.get(is.getItem());
-        for (TagKey<Item> tag : archetypes.keySet()) {
-            if (is.is(tag))
-                return archetypes.get(tag);
-        }
-        return null;
-    }
-
-    public static boolean isShield(LivingEntity e, ItemStack stack) {
-        if (stack == null) return false;
-        MeleeInfo rt = lookupStats(stack);//stack.isShield(e);
-        return rt != null && rt.isShield;
-    }
-
-    public static boolean isShield(LivingEntity e, InteractionHand hand) {
-        if (e == null) return false;
-        return isShield(e, e.getItemInHand(hand));
-    }
-
     public static boolean isHoldingShield(LivingEntity e) {
-        return isShield(e, InteractionHand.MAIN_HAND) || isShield(e, InteractionHand.OFF_HAND);
-    }
-
-    public static boolean isWeapon(@Nullable LivingEntity e, ItemStack stack) {
-        if (stack == null) return false;
-        MeleeInfo rt = lookupStats(stack);
-        return rt != null && !rt.isShield;
-    }
-
-    public static boolean isUnarmed(ItemStack is, LivingEntity e) {
-        return is.isEmpty() || is.is(UNARMED);
+        return WeaponStats.isShield(e, InteractionHand.MAIN_HAND) || WeaponStats.isShield(e, InteractionHand.OFF_HAND);
     }
 
     public static boolean isUnarmed(LivingEntity e, InteractionHand hand) {
-        return isUnarmed(e.getItemInHand(hand), e);
+        return WeaponStats.isUnarmed(e.getItemInHand(hand), e);
     }
 
     public static boolean isFullyUnarmed(LivingEntity e) {
         return isUnarmed(e, InteractionHand.MAIN_HAND) && isUnarmed(e, InteractionHand.OFF_HAND);
-    }
-
-    public static boolean isTwoHanded(ItemStack is, LivingEntity e) {
-        return !is.isEmpty() && is.is(TWO_HANDED);
-    }
-
-    public static boolean canPierceParry(ItemStack is, LivingEntity e) {
-        return is.is(PIERCE_PARRY);
-    }
-
-    public static boolean canPierceShield(ItemStack is, LivingEntity e) {
-        return is.is(PIERCE_SHIELD);
     }
 
     public static boolean canParry(LivingEntity defender, Entity attacker, @Nonnull ItemStack i, float postureDamage) {
@@ -323,12 +120,12 @@ public class CombatUtils {
         if (postureDamage < 0) return false;
         if (attacker instanceof LivingEntity && getPostureDef((LivingEntity) attacker, defender, defend, postureDamage) < 0)
             return false;
-        if (defend.is(CANNOT_PARRY))
+        if (defend.is(WeaponStats.CANNOT_PARRY))
             return false;
         if (attack != null) {
-            if (attack.is(PIERCE_PARRY) && isWeapon(defender, defend))
+            if (attack.is(WeaponStats.PIERCE_PARRY) && WeaponStats.isWeapon(defender, defend))
                 return false;
-            if (attack.is(PIERCE_SHIELD) && isShield(defender, defend))
+            if (attack.is(WeaponStats.PIERCE_SHIELD) && WeaponStats.isShield(defender, defend))
                 return false;
         }
         if (defender instanceof Player && ((Player) defender).getCooldowns().isOnCooldown(defend.getItem()))
@@ -336,16 +133,16 @@ public class CombatUtils {
         if (CombatData.getCap(defender).getHandBind(h) > 0)
             return false;
         float rand = WarDance.rand.nextFloat();
-        boolean recharge = !isShield(defender, defend) || getCooledAttackStrength(defender, h, 0.5f) > 0.9f && CombatData.getCap(defender).getHandBind(h) == 0;
+        boolean recharge = !WeaponStats.isShield(defender, defend) || getCooledAttackStrength(defender, h, 0.5f) > 0.9f && CombatData.getCap(defender).getHandBind(h) == 0;
         recharge &= (!(defender instanceof Player) || ((Player) defender).getCooldowns().getCooldownPercent(defender.getItemInHand(h).getItem(), 0) == 0);
         if (defend.getCapability(CombatManipulator.CAP).isPresent() && attacker instanceof LivingEntity) {
             return defend.getCapability(CombatManipulator.CAP).resolve().get().canBlock(defender, attacker, defend, recharge, postureDamage);
         }
-        if (isShield(defender, defend)) {
+        if (WeaponStats.isShield(defender, defend)) {
             boolean canShield = (defender instanceof Player || rand < CombatConfig.mobParryChanceShield);
             boolean canParry = true;//CombatData.getCap(defender).getBarrierCooldown() == 0 || CombatData.getCap(defender).getBarrier() > 0;
             return recharge & canParry & canShield;
-        } else if (isWeapon(defender, defend)) {
+        } else if (WeaponStats.isWeapon(defender, defend)) {
             boolean canWeapon = (defender instanceof Player || rand < CombatConfig.mobParryChanceWeapon);
             return recharge & canWeapon;
         } else return false;
@@ -367,48 +164,60 @@ public class CombatUtils {
     }
 
     public static float getPostureAtk(@Nullable LivingEntity attacker, @Nullable LivingEntity defender, @Nullable InteractionHand h, double amount, ItemStack stack) {
-        double base = amount * (float) DEFAULTMELEE.attackPostureMultiplier;
-        //Spartan Shields compat, doesn't seem to work.
+        double base = amount * (float) WeaponStats.DEFAULTMELEE.getAttackPostureMultiplier();
+        //Spartan Shields compat, doesn't seem to work?
         if (attacker != null && attacker.isBlocking()) {
             h = attacker.getUsedItemHand();
             stack = attacker.getItemInHand(h);
         }
         float scaler = CombatConfig.mobScaler;
-        if (stack != null && !stack.isEmpty()) {
+        if (stack != null && !stack.isEmpty()) {//weapon
             scaler = 1;
             if (stack.getCapability(CombatManipulator.CAP).isPresent()) {
                 base = stack.getCapability(CombatManipulator.CAP).resolve().get().postureDealtBase(attacker, defender, stack, amount);
             } else {
-                final MeleeInfo meleeInfo = lookupStats(stack);
-                if (meleeInfo != null)
-                    base = (float) meleeInfo.attackPostureMultiplier;
+                final WeaponStats.MeleeInfo meleeInfo = WeaponStats.lookupStats(stack);
+                if (meleeInfo != null) {
+                    base = (float) meleeInfo.getAttackPostureMultiplier();
+                    if (attacker != null) {
+                        final WeaponStats.SweepInfo info = WeaponStats.getSweepInfo(attacker.getMainHandItem(), CombatUtils.getSweepState(attacker));
+                        base *= info.getPostureScale();
+                    }
+                }
+            }
+            //scale by mob and sweep
+            if (attacker != null) {
+                base *= MobSpecs.mobMap.getOrDefault(attacker.getType(), MobSpecs.DEFAULT).getItemPostureScaling();
             }
 
-        } else {
-            if (attacker != null && !(attacker instanceof Player))
-                base = CombatData.getCap(attacker).getMaxPosture() * CombatConfig.defaultMultiplierPostureMob;
+        } else {//unarmed
+            if (attacker != null && !(attacker instanceof Player)) {
+                base = MobSpecs.mobMap.getOrDefault(attacker.getType(), MobSpecs.DEFAULT).getBaseAttackPosture();
+                if (base == -1)
+                    base = CombatData.getCap(attacker).getMaxPosture() * CombatConfig.defaultMultiplierPostureMob;
+            }
         }
         if (attacker == null || h == null) return (float) base;
-        double fin = scaler;
+        double finalScale = scaler;
         if (attacker instanceof Player) {
-            fin = (Math.max(CombatData.getCap(attacker).getCachedCooldown(), ((Player) attacker).getAttackStrengthScale(0.5f)) - 0.20) / 0.80;
+            finalScale = (Math.max(CombatData.getCap(attacker).getCachedCooldown(), ((Player) attacker).getAttackStrengthScale(0.5f)) - 0.20) / 0.80;
         }
-        return (float) (base * fin);
+        return (float) (base * finalScale);
     }
 
     public static float getPostureDef(@Nullable LivingEntity attacker, @Nullable LivingEntity defender, ItemStack stack, float amount) {
-        if (stack == null) return (float) DEFAULTMELEE.defensePostureMultiplier;
+        if (stack == null) return (float) WeaponStats.DEFAULTMELEE.getDefensePostureMultiplier();
 //        if (defender != null && isShield(defender, stack) && CombatData.getCap(defender).getBarrierCooldown() > 0 && CombatData.getCap(defender).getBarrier() > 0) {
 //            return 0;
 //        }
         if (stack.getCapability(CombatManipulator.CAP).isPresent()) {
             return stack.getCapability(CombatManipulator.CAP).resolve().get().postureMultiplierDefend(attacker, defender, stack, amount);
         }
-        final MeleeInfo meleeInfo = lookupStats(stack);
+        final WeaponStats.MeleeInfo meleeInfo = WeaponStats.lookupStats(stack);
         if (meleeInfo != null) {
-            return (float) meleeInfo.defensePostureMultiplier;
+            return (float) meleeInfo.getDefensePostureMultiplier();
         }
-        return (float) DEFAULTMELEE.defensePostureMultiplier;
+        return (float) WeaponStats.DEFAULTMELEE.getDefensePostureMultiplier();
     }
 
     public static float getAttackMight(LivingEntity seme, LivingEntity uke) {
@@ -552,30 +361,17 @@ public class CombatUtils {
         cap.setOffhandCooldown(tssl);
     }
 
-    public static SweepInfo getSweepInfo(ItemStack i, SWEEPSTATE s) {
-        final MeleeInfo info = lookupStats(i);
-        return info == null ? DEFAULT_NONE : info.sweeps[s.ordinal()];
-    }
-
-    public static SWEEPTYPE getSweepType(LivingEntity e, ItemStack i, SWEEPSTATE s) {
-        return getSweepInfo(i, s).type;
-    }
-
-    public static double getSweepBase(ItemStack i, SWEEPSTATE s) {
-        return getSweepInfo(i, s).base;
-    }
-
-    public static double getSweepScale(ItemStack i, SWEEPSTATE s) {
-        return getSweepInfo(i, s).scaling;
-    }
-
     public static void sweep(LivingEntity e, Entity ignore, InteractionHand h, double reach) {
         ItemStack stack = e.getItemInHand(h);
-        SWEEPSTATE s = getSweepState(e);
-        sweep(e, ignore, h, getSweepType(e, stack, s), reach, getSweepBase(stack, s), getSweepScale(stack, s));
+        WeaponStats.SWEEPSTATE s = getSweepState(e);
+        WeaponStats.SweepInfo info = WeaponStats.getSweepInfo(stack, s);
+        //apply instantaneous damage multiplier
+        SkillUtils.modifyAttribute(e, Attributes.ATTACK_DAMAGE, main, info.getDamageScale() - 1, AttributeModifier.Operation.MULTIPLY_TOTAL);
+        sweep(e, ignore, h, info.getType(), reach, info.getBase(), info.getScaling());
+        SkillUtils.removeAttribute(e, Attributes.ATTACK_DAMAGE, main);
     }
 
-    public static void sweep(LivingEntity e, Entity ignore, InteractionHand h, SWEEPTYPE type, double reach, double base, double scaling) {
+    public static void sweep(LivingEntity e, Entity ignore, InteractionHand h, WeaponStats.SWEEPTYPE type, double reach, double base, double scaling) {
         //no go cases
         if (!GeneralConfig.betterSweep) return;//a shame, but alas
         if (!CombatData.getCap(e).isCombatMode()) return;
@@ -583,7 +379,7 @@ public class CombatUtils {
             swapHeldItems(e);
             CombatData.getCap(e).setOffhandAttack(true);
         }
-        if (!PermissionData.getCap(e).canSweep()) type = SWEEPTYPE.NONE;
+        if (!PermissionData.getCap(e).canSweep()) type = WeaponStats.SWEEPTYPE.NONE;
         double radius;
 
         SweepEvent sre = new SweepEvent(e, h, e.getMainHandItem(), type, base, scaling);
@@ -592,7 +388,7 @@ public class CombatUtils {
         scaling = sre.getScaling();
         radius = sre.getFinalizedWidth();
         type = sre.getType();
-        if (sre.isCanceled() || type == SWEEPTYPE.NONE || radius == 0) {
+        if (sre.isCanceled() || type == WeaponStats.SWEEPTYPE.NONE || radius == 0) {
             //no go, swap items back and stop
             if (h == InteractionHand.OFF_HAND) {
                 swapHeldItems(e);
@@ -706,65 +502,13 @@ public class CombatUtils {
         ppe.setTrigger(pi.trigger);
     }
 
-    public static SWEEPSTATE getSweepState(LivingEntity entity) {
-        if (entity.isPassenger()) return CombatUtils.SWEEPSTATE.RIDING;
-        if (entity.isCrouching()) return CombatUtils.SWEEPSTATE.SNEAKING;
-        if (!entity.isOnGround() && !entity.onClimbable() && !entity.isInWater()) return CombatUtils.SWEEPSTATE.FALLING;
-        if (entity.isSwimming() || entity.isSprinting()) return CombatUtils.SWEEPSTATE.SPRINTING;
-        return SWEEPSTATE.STANDING;
-    }
-
-    public enum SWEEPTYPE {
-        NONE,
-        CONE,//horizontal fan area in front of the entity up to max range, base and scale add angle
-        CLEAVE,//cone but vertical
-        LINE,//1 block wide line up to max range, base and scale add to thickness
-        IMPACT,//splash at point of impact or furthest distance if no mob aimed, base and scale add radius
-        CIRCLE//splash with entity as center, ignores range, base and scale add radius
-    }
-
-    public enum SWEEPSTATE {
-        STANDING,
-        //RISING, //may implement some day
-        FALLING,
-        SNEAKING,
-        SPRINTING,//also while swimming
-        RIDING //no speed requirement
-    }
-
-    public static class MeleeInfo {
-        private double attackPostureMultiplier, defensePostureMultiplier;
-        private boolean isShield, ignoreParry, ignoreShield, canParry;
-        //standing, falling, sneaking, sprinting, riding
-        private SweepInfo[] sweeps = {DEFAULT_FAN, DEFAULT_CLEAVE, DEFAULT_IMPACT, DEFAULT_CIRCLE, DEFAULT_LINE};
-
-        private MeleeInfo(double attack, double defend) {
-            attackPostureMultiplier = attack;
-            defensePostureMultiplier = defend;
-        }
-
-        public static MeleeInfo read(FriendlyByteBuf f) {
-            MeleeInfo ret = new MeleeInfo(0, 0);
-            ret.attackPostureMultiplier = f.readDouble();
-            ret.defensePostureMultiplier = f.readDouble();
-            ret.isShield = f.readBoolean();
-            for (SWEEPSTATE ss : SWEEPSTATE.values()) {
-                int ord = ss.ordinal();
-                ret.sweeps[ord] = new SweepInfo(SWEEPTYPE.values()[f.readInt()], f.readDouble(), f.readDouble());
-            }
-            return ret;
-        }
-
-        public void write(FriendlyByteBuf f) {
-            f.writeDouble(attackPostureMultiplier);
-            f.writeDouble(defensePostureMultiplier);
-            f.writeBoolean(isShield);
-            for (SweepInfo ss : sweeps) {
-                f.writeInt(ss.type.ordinal());
-                f.writeDouble(ss.base);
-                f.writeDouble(ss.scaling);
-            }
-        }
+    public static WeaponStats.SWEEPSTATE getSweepState(LivingEntity entity) {
+        if (entity.isPassenger()) return WeaponStats.SWEEPSTATE.RIDING;
+        if (entity.isCrouching()) return WeaponStats.SWEEPSTATE.SNEAKING;
+        if ((!(entity instanceof Player p) || !p.getAbilities().flying) && !entity.isOnGround() && !entity.onClimbable() && !entity.isInWater())
+            return WeaponStats.SWEEPSTATE.FALLING;
+        if (entity.isSwimming() || entity.isSprinting()) return WeaponStats.SWEEPSTATE.SPRINTING;
+        return WeaponStats.SWEEPSTATE.STANDING;
     }
 
     private static class ProjectileInfo {
@@ -780,40 +524,4 @@ public class CombatUtils {
         }
     }
 
-    public static class MobInfo {
-        public final double mult;
-        public final double chance;
-        public final boolean omnidirectional, shield;
-
-        private MobInfo(double m, double c, boolean o, boolean s) {
-            mult = m;
-            chance = c;
-            omnidirectional = o;
-            shield = s;
-        }
-    }
-
-    public static class SweepInfo {
-        //general effects:
-        // knockback scaling (negative supported),
-        // (posture) damage scaling,
-        // force crit,
-        // crit damage,
-        // crit conversion (decimal)
-        //TODO can we build output/ grab libs from a central symlinked folder?
-        public final double base;
-        public final double scaling;
-        public final SWEEPTYPE type;
-
-        private SweepInfo(SWEEPTYPE t, double b, double s) {
-            type = t;
-            base = b;
-            scaling = s;
-        }
-
-        @Override
-        public boolean equals(Object obj) {
-            return obj instanceof SweepInfo other && other.type == type && other.scaling == scaling && other.base == base;
-        }
-    }
 }

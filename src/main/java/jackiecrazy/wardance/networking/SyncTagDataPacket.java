@@ -1,7 +1,7 @@
 package jackiecrazy.wardance.networking;
 
 import jackiecrazy.wardance.WarDance;
-import jackiecrazy.wardance.utils.CombatUtils;
+import jackiecrazy.wardance.config.WeaponStats;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.ItemTags;
@@ -17,13 +17,13 @@ import java.util.function.Supplier;
 
 public class SyncTagDataPacket {
     private static final FriendlyByteBuf.Writer<TagKey<Item>> item = (f, item) -> f.writeResourceLocation(item.location());
-    private static final FriendlyByteBuf.Writer<CombatUtils.MeleeInfo> info = (f, info) -> info.write(f);
+    private static final FriendlyByteBuf.Writer<WeaponStats.MeleeInfo> info = (f, info) -> info.write(f);
 
     private static final FriendlyByteBuf.Reader<TagKey<Item>> ritem = f -> ItemTags.create(new ResourceLocation(WarDance.MODID, f.readResourceLocation().getPath()));;
-    private static final FriendlyByteBuf.Reader<CombatUtils.MeleeInfo> rinfo = CombatUtils.MeleeInfo::read;
-    private final Map<TagKey<Item>, CombatUtils.MeleeInfo> map;
+    private static final FriendlyByteBuf.Reader<WeaponStats.MeleeInfo> rinfo = WeaponStats.MeleeInfo::read;
+    private final Map<TagKey<Item>, WeaponStats.MeleeInfo> map;
 
-    public SyncTagDataPacket(Map<TagKey<Item>, CombatUtils.MeleeInfo> map) {
+    public SyncTagDataPacket(Map<TagKey<Item>, WeaponStats.MeleeInfo> map) {
         this.map = map;
     }
 
@@ -51,7 +51,7 @@ public class SyncTagDataPacket {
             //prevent client overriding server
             if (contextSupplier.get().getDirection() == NetworkDirection.LOGIN_TO_CLIENT)
                 contextSupplier.get().enqueueWork(() -> {
-                    CombatUtils.clientTagOverride(updateClientPacket.map);
+                    WeaponStats.clientTagOverride(updateClientPacket.map);
                 });
             contextSupplier.get().setPacketHandled(true);
         }
