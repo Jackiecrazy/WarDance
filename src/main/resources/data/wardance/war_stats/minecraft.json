@@ -62,7 +62,11 @@
       "damage_scale": 1,
       "posture_scale": 1,
       "crit": true,
-      "crit_damage": 1.5
+      "crit_damage": 1.5,
+      "hit_self_command" : "",
+      "hit_other_command" : "",
+      "damage_self_command" : "",
+      "damage_other_command" : ""
     }
   },
   "minecraft:end_rod": {
