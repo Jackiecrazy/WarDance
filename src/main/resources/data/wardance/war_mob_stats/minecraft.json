@@ -1,0 +1,12 @@
+{
+  "minecraft:spider": {
+    "base_max_posture": 12,
+    "max_posture_scaling": 0.80,
+    "base_attack_posture": 5,
+    "item_attack_posture_scaling": 0.2,
+    "auto_parry_multiplier": 1,
+    "parry_chance": 0.3,
+    "parry_omnidirectional": true,
+    "natural_shield": true
+  }
+}

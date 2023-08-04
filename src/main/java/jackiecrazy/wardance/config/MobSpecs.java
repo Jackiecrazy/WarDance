@@ -23,11 +23,11 @@ public class MobSpecs extends SimpleJsonResourceReloadListener {
     public static HashMap<EntityType<?>, MobInfo> mobMap = new HashMap<>();
 
     public static void register(AddReloadListenerEvent event) {
-        event.addListener(new WeaponStats());
+        event.addListener(new MobSpecs());
     }
 
     public MobSpecs() {
-        super(GSON, "war_stats");
+        super(GSON, "war_mob_stats");
     }
 
     @Override

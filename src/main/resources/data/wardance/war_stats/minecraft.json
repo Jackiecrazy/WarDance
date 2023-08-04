@@ -1,338 +1,348 @@
 {
-"minecraft:bow":{
-        "attack": 1.2,
-        "defend": 0.90,
-        "shield": false,
-        "sweep": "line",
-        "sweep_base": 0.5,
-        "sweep_scale": 1
-    },
-"minecraft:crossbow":{
-        "attack": 2,
-        "defend": 1.10,
-        "shield": true,
-        "sweep": "cone",
-        "sweep_base": 40,
-        "sweep_scale": 20
-    },
-"minecraft:diamond_axe":{
-        "attack": 4,
-        "defend": 0.9,
-        "shield": false,
-        "sweep": "impact",
-        "sweep_base": 0.5,
-        "sweep_scale": 0.5
-    },
-"minecraft:diamond_hoe":{
-        "attack": 1,
-        "defend": 1.00,
-        "shield": false,
-        "sweep": "cone",
-        "sweep_base": 20,
-        "sweep_scale": 20
-    },
-"minecraft:diamond_pickaxe":{
-        "attack": 2.5,
-        "defend": 1,
-        "shield": false,
-        "sweep": "impact",
-        "sweep_base": 0,
-        "sweep_scale": 1
-    },
-"minecraft:diamond_shovel":{
-        "attack": 6,
-        "defend": 0.9,
-        "shield": false,
-        "sweep": "impact",
-        "sweep_base": 0.5,
-        "sweep_scale": 0.5
-    },
-"minecraft:diamond_sword":{
-        "attack": 2.6,
-        "defend": 0.90,
-        "shield": false,
-        "sweep": "cone",
-        "sweep_base": 40,
-        "sweep_scale": 40
-    },
-"minecraft:end_rod":{
-        "attack": 0.5,
-        "defend": 1.00,
-        "shield": false,
-        "sweep": "none",
-        "sweep_base": 0,
-        "sweep_scale": 0
-    },
-"minecraft:flint_and_steel":{
-        "attack": 0.5,
-        "defend": 1,
-        "shield": false,
-        "sweep": "none",
-        "sweep_base": 0,
-        "sweep_scale": 0
-    },
-"minecraft:golden_axe":{
-        "attack": 4,
-        "defend": 0.9,
-        "shield": false,
-        "sweep": "impact",
-        "sweep_base": 0.5,
-        "sweep_scale": 0.5
-    },
-"minecraft:golden_hoe":{
-        "attack": 1,
-        "defend": 1.00,
-        "shield": false,
-        "sweep": "cone",
-        "sweep_base": 20,
-        "sweep_scale": 20
-    },
-"minecraft:golden_pickaxe":{
-        "attack": 2.5,
-        "defend": 1,
-        "shield": false,
-        "sweep": "impact",
-        "sweep_base": 0,
-        "sweep_scale": 1
-    },
-"minecraft:golden_shovel":{
-        "attack": 6,
-        "defend": 0.9,
-        "shield": false,
-        "sweep": "impact",
-        "sweep_base": 0.5,
-        "sweep_scale": 0.5
-    },
-"minecraft:golden_sword":{
-        "attack": 2.6,
-        "defend": 0.90,
-        "shield": false,
-        "sweep": "cone",
-        "sweep_base": 40,
-        "sweep_scale": 40
-    },
-"minecraft:iron_axe":{
-        "attack": 4,
-        "defend": 0.9,
-        "shield": false,
-        "sweep": "impact",
-        "sweep_base": 0.5,
-        "sweep_scale": 0.5
-    },
-"minecraft:iron_hoe":{
-        "attack": 1,
-        "defend": 1.00,
-        "shield": false,
-        "sweep": "cone",
-        "sweep_base": 20,
-        "sweep_scale": 20
-    },
-"minecraft:iron_nugget":{
-        "attack": 1,
-        "defend": 1.00,
-        "shield": false,
-        "sweep": "none",
-        "sweep_base": 0,
-        "sweep_scale": 0
-    },
-"minecraft:iron_pickaxe":{
-        "attack": 2.5,
-        "defend": 1,
-        "shield": false,
-        "sweep": "impact",
-        "sweep_base": 0,
-        "sweep_scale": 1
-    },
-"minecraft:iron_shovel":{
-        "attack": 6,
-        "defend": 0.9,
-        "shield": false,
-        "sweep": "impact",
-        "sweep_base": 0.5,
-        "sweep_scale": 0.5
-    },
-"minecraft:iron_sword":{
-        "attack": 2.6,
-        "defend": 0.90,
-        "shield": false,
-        "sweep": "cone",
-        "sweep_base": 40,
-        "sweep_scale": 40
-    },
-"minecraft:lantern":{
-        "attack": 0.5,
-        "defend": 1,
-        "shield": false,
-        "sweep": "none",
-        "sweep_base": 0,
-        "sweep_scale": 0
-    },
-"minecraft:netherite_axe":{
-        "attack": 4,
-        "defend": 0.9,
-        "shield": false,
-        "sweep": "impact",
-        "sweep_base": 0.5,
-        "sweep_scale": 0.5
-    },
-"minecraft:netherite_hoe":{
-        "attack": 1,
-        "defend": 1.00,
-        "shield": false,
-        "sweep": "cone",
-        "sweep_base": 20,
-        "sweep_scale": 20
-    },
-"minecraft:netherite_pickaxe":{
-        "attack": 2.5,
-        "defend": 1,
-        "shield": false,
-        "sweep": "impact",
-        "sweep_base": 0,
-        "sweep_scale": 1
-    },
-"minecraft:netherite_shovel":{
-        "attack": 6,
-        "defend": 0.9,
-        "shield": false,
-        "sweep": "impact",
-        "sweep_base": 0.5,
-        "sweep_scale": 0.5
-    },
-"minecraft:netherite_sword":{
-        "attack": 2.6,
-        "defend": 0.90,
-        "shield": false,
-        "sweep": "cone",
-        "sweep_base": 40,
-        "sweep_scale": 40
-    },
-"minecraft:redstone_torch":{
-        "attack": 0.5,
-        "defend": 1,
-        "shield": false,
-        "sweep": "none",
-        "sweep_base": 0,
-        "sweep_scale": 0
-    },
-"minecraft:shield":{
-        "attack": 4,
-        "defend": 0.60,
-        "shield": true,
-        "sweep": "impact",
-        "sweep_base": 0.5,
-        "sweep_scale": 0.5
-    },
-"minecraft:soul_lantern":{
-        "attack": 0.5,
-        "defend": 1,
-        "shield": false,
-        "sweep": "none",
-        "sweep_base": 0,
-        "sweep_scale": 0
-    },
-"minecraft:spyglass":{
-        "attack": 0.5,
-        "defend": 1,
-        "shield": false,
-        "sweep": "none",
-        "sweep_base": 0,
-        "sweep_scale": 0
-    },
-"minecraft:stone_axe":{
-        "attack": 4,
-        "defend": 0.9,
-        "shield": false,
-        "sweep": "impact",
-        "sweep_base": 0.5,
-        "sweep_scale": 0.5
-    },
-"minecraft:stone_hoe":{
-        "attack": 1,
-        "defend": 1.00,
-        "shield": false,
-        "sweep": "cone",
-        "sweep_base": 20,
-        "sweep_scale": 20
-    },
-"minecraft:stone_pickaxe":{
-        "attack": 2.5,
-        "defend": 1,
-        "shield": false,
-        "sweep": "impact",
-        "sweep_base": 0,
-        "sweep_scale": 1
-    },
-"minecraft:stone_shovel":{
-        "attack": 6,
-        "defend": 0.9,
-        "shield": false,
-        "sweep": "impact",
-        "sweep_base": 0.5,
-        "sweep_scale": 0.5
-    },
-"minecraft:stone_sword":{
-        "attack": 2.6,
-        "defend": 0.90,
-        "shield": false,
-        "sweep": "cone",
-        "sweep_base": 40,
-        "sweep_scale": 40
-    },
-"minecraft:torch":{
-        "attack": 0.5,
-        "defend": 1,
-        "shield": false,
-        "sweep": "none",
-        "sweep_base": 0,
-        "sweep_scale": 0
-    },
-"minecraft:trident":{
-        "attack": 2.5,
-        "defend": 0.7,
-        "shield": false,
-        "sweep": "line",
-        "sweep_base": 0.5,
-        "sweep_scale": 1
-    },
-"minecraft:wooden_axe":{
-        "attack": 4,
-        "defend": 0.9,
-        "shield": false,
-        "sweep": "impact",
-        "sweep_base": 0.5,
-        "sweep_scale": 0.5
-    },
-"minecraft:wooden_hoe":{
-        "attack": 1,
-        "defend": 1.00,
-        "shield": false,
-        "sweep": "cone",
-        "sweep_base": 20,
-        "sweep_scale": 20
-    },
-"minecraft:wooden_pickaxe":{
-        "attack": 2.5,
-        "defend": 1,
-        "shield": false,
-        "sweep": "impact",
-        "sweep_base": 0,
-        "sweep_scale": 1
-    },
-"minecraft:wooden_shovel":{
-        "attack": 6,
-        "defend": 0.9,
-        "shield": false,
-        "sweep": "impact",
-        "sweep_base": 0.5,
-        "sweep_scale": 0.5
-    },
-"minecraft:wooden_sword":{
-        "attack": 2.6,
-        "defend": 0.90,
-        "shield": false,
-        "sweep": "cone",
-        "sweep_base": 40,
-        "sweep_scale": 40
+  "minecraft:bow": {
+    "attack": 1.2,
+    "defend": 0.90,
+    "shield": false,
+    "sweep": "line",
+    "sweep_base": 0.5,
+    "sweep_scale": 1
+  },
+  "minecraft:crossbow": {
+    "attack": 2,
+    "defend": 1.10,
+    "shield": true,
+    "sweep": "cone",
+    "sweep_base": 40,
+    "sweep_scale": 20
+  },
+  "minecraft:diamond_axe": {
+    "attack": 4,
+    "defend": 0.9,
+    "shield": false,
+    "sweep": "impact",
+    "sweep_base": 0.5,
+    "sweep_scale": 0.5
+  },
+  "minecraft:diamond_hoe": {
+    "attack": 1,
+    "defend": 1.00,
+    "shield": false,
+    "sweep": "cone",
+    "sweep_base": 20,
+    "sweep_scale": 20
+  },
+  "minecraft:diamond_pickaxe": {
+    "attack": 2.5,
+    "defend": 1,
+    "shield": false,
+    "sweep": "impact",
+    "sweep_base": 0,
+    "sweep_scale": 1
+  },
+  "minecraft:diamond_shovel": {
+    "attack": 6,
+    "defend": 0.9,
+    "shield": false,
+    "sweep": "impact",
+    "sweep_base": 0.5,
+    "sweep_scale": 0.5
+  },
+  "minecraft:diamond_sword": {
+    "attack": 2.6,
+    "defend": 0.90,
+    "shield": false,
+    "sweep": "cone",
+    "sweep_base": 40,
+    "sweep_scale": 40,
+    "falling": {
+      "sweep": "cleave",
+      "sweep_base": 40,
+      "sweep_scale": 40,
+      "knockback": 1,
+      "damage_scale": 1,
+      "posture_scale": 1,
+      "crit": true,
+      "crit_damage": 1.5
     }
+  },
+  "minecraft:end_rod": {
+    "attack": 0.5,
+    "defend": 1.00,
+    "shield": false,
+    "sweep": "none",
+    "sweep_base": 0,
+    "sweep_scale": 0
+  },
+  "minecraft:flint_and_steel": {
+    "attack": 0.5,
+    "defend": 1,
+    "shield": false,
+    "sweep": "none",
+    "sweep_base": 0,
+    "sweep_scale": 0
+  },
+  "minecraft:golden_axe": {
+    "attack": 4,
+    "defend": 0.9,
+    "shield": false,
+    "sweep": "impact",
+    "sweep_base": 0.5,
+    "sweep_scale": 0.5
+  },
+  "minecraft:golden_hoe": {
+    "attack": 1,
+    "defend": 1.00,
+    "shield": false,
+    "sweep": "cone",
+    "sweep_base": 20,
+    "sweep_scale": 20
+  },
+  "minecraft:golden_pickaxe": {
+    "attack": 2.5,
+    "defend": 1,
+    "shield": false,
+    "sweep": "impact",
+    "sweep_base": 0,
+    "sweep_scale": 1
+  },
+  "minecraft:golden_shovel": {
+    "attack": 6,
+    "defend": 0.9,
+    "shield": false,
+    "sweep": "impact",
+    "sweep_base": 0.5,
+    "sweep_scale": 0.5
+  },
+  "minecraft:golden_sword": {
+    "attack": 2.6,
+    "defend": 0.90,
+    "shield": false,
+    "sweep": "cone",
+    "sweep_base": 40,
+    "sweep_scale": 40
+  },
+  "minecraft:iron_axe": {
+    "attack": 4,
+    "defend": 0.9,
+    "shield": false,
+    "sweep": "impact",
+    "sweep_base": 0.5,
+    "sweep_scale": 0.5
+  },
+  "minecraft:iron_hoe": {
+    "attack": 1,
+    "defend": 1.00,
+    "shield": false,
+    "sweep": "cone",
+    "sweep_base": 20,
+    "sweep_scale": 20
+  },
+  "minecraft:iron_nugget": {
+    "attack": 1,
+    "defend": 1.00,
+    "shield": false,
+    "sweep": "none",
+    "sweep_base": 0,
+    "sweep_scale": 0
+  },
+  "minecraft:iron_pickaxe": {
+    "attack": 2.5,
+    "defend": 1,
+    "shield": false,
+    "sweep": "impact",
+    "sweep_base": 0,
+    "sweep_scale": 1
+  },
+  "minecraft:iron_shovel": {
+    "attack": 6,
+    "defend": 0.9,
+    "shield": false,
+    "sweep": "impact",
+    "sweep_base": 0.5,
+    "sweep_scale": 0.5
+  },
+  "minecraft:iron_sword": {
+    "attack": 2.6,
+    "defend": 0.90,
+    "shield": false,
+    "sweep": "cone",
+    "sweep_base": 40,
+    "sweep_scale": 40
+  },
+  "minecraft:lantern": {
+    "attack": 0.5,
+    "defend": 1,
+    "shield": false,
+    "sweep": "none",
+    "sweep_base": 0,
+    "sweep_scale": 0
+  },
+  "minecraft:netherite_axe": {
+    "attack": 4,
+    "defend": 0.9,
+    "shield": false,
+    "sweep": "impact",
+    "sweep_base": 0.5,
+    "sweep_scale": 0.5
+  },
+  "minecraft:netherite_hoe": {
+    "attack": 1,
+    "defend": 1.00,
+    "shield": false,
+    "sweep": "cone",
+    "sweep_base": 20,
+    "sweep_scale": 20
+  },
+  "minecraft:netherite_pickaxe": {
+    "attack": 2.5,
+    "defend": 1,
+    "shield": false,
+    "sweep": "impact",
+    "sweep_base": 0,
+    "sweep_scale": 1
+  },
+  "minecraft:netherite_shovel": {
+    "attack": 6,
+    "defend": 0.9,
+    "shield": false,
+    "sweep": "impact",
+    "sweep_base": 0.5,
+    "sweep_scale": 0.5
+  },
+  "minecraft:netherite_sword": {
+    "attack": 2.6,
+    "defend": 0.90,
+    "shield": false,
+    "sweep": "cone",
+    "sweep_base": 40,
+    "sweep_scale": 40
+  },
+  "minecraft:redstone_torch": {
+    "attack": 0.5,
+    "defend": 1,
+    "shield": false,
+    "sweep": "none",
+    "sweep_base": 0,
+    "sweep_scale": 0
+  },
+  "minecraft:shield": {
+    "attack": 4,
+    "defend": 0.60,
+    "shield": true,
+    "sweep": "impact",
+    "sweep_base": 0.5,
+    "sweep_scale": 0.5
+  },
+  "minecraft:soul_lantern": {
+    "attack": 0.5,
+    "defend": 1,
+    "shield": false,
+    "sweep": "none",
+    "sweep_base": 0,
+    "sweep_scale": 0
+  },
+  "minecraft:spyglass": {
+    "attack": 0.5,
+    "defend": 1,
+    "shield": false,
+    "sweep": "none",
+    "sweep_base": 0,
+    "sweep_scale": 0
+  },
+  "minecraft:stone_axe": {
+    "attack": 4,
+    "defend": 0.9,
+    "shield": false,
+    "sweep": "impact",
+    "sweep_base": 0.5,
+    "sweep_scale": 0.5
+  },
+  "minecraft:stone_hoe": {
+    "attack": 1,
+    "defend": 1.00,
+    "shield": false,
+    "sweep": "cone",
+    "sweep_base": 20,
+    "sweep_scale": 20
+  },
+  "minecraft:stone_pickaxe": {
+    "attack": 2.5,
+    "defend": 1,
+    "shield": false,
+    "sweep": "impact",
+    "sweep_base": 0,
+    "sweep_scale": 1
+  },
+  "minecraft:stone_shovel": {
+    "attack": 6,
+    "defend": 0.9,
+    "shield": false,
+    "sweep": "impact",
+    "sweep_base": 0.5,
+    "sweep_scale": 0.5
+  },
+  "minecraft:stone_sword": {
+    "attack": 2.6,
+    "defend": 0.90,
+    "shield": false,
+    "sweep": "cone",
+    "sweep_base": 40,
+    "sweep_scale": 40
+  },
+  "minecraft:torch": {
+    "attack": 0.5,
+    "defend": 1,
+    "shield": false,
+    "sweep": "none",
+    "sweep_base": 0,
+    "sweep_scale": 0
+  },
+  "minecraft:trident": {
+    "attack": 2.5,
+    "defend": 0.7,
+    "shield": false,
+    "sweep": "line",
+    "sweep_base": 0.5,
+    "sweep_scale": 1
+  },
+  "minecraft:wooden_axe": {
+    "attack": 4,
+    "defend": 0.9,
+    "shield": false,
+    "sweep": "impact",
+    "sweep_base": 0.5,
+    "sweep_scale": 0.5
+  },
+  "minecraft:wooden_hoe": {
+    "attack": 1,
+    "defend": 1.00,
+    "shield": false,
+    "sweep": "cone",
+    "sweep_base": 20,
+    "sweep_scale": 20
+  },
+  "minecraft:wooden_pickaxe": {
+    "attack": 2.5,
+    "defend": 1,
+    "shield": false,
+    "sweep": "impact",
+    "sweep_base": 0,
+    "sweep_scale": 1
+  },
+  "minecraft:wooden_shovel": {
+    "attack": 6,
+    "defend": 0.9,
+    "shield": false,
+    "sweep": "impact",
+    "sweep_base": 0.5,
+    "sweep_scale": 0.5
+  },
+  "minecraft:wooden_sword": {
+    "attack": 2.6,
+    "defend": 0.90,
+    "shield": false,
+    "sweep": "cone",
+    "sweep_base": 40,
+    "sweep_scale": 40
+  }
 }

@@ -34,8 +34,9 @@ public class SubtleBonusHandler {
     @SubscribeEvent
     public static void tank(TickEvent.PlayerTickEvent e) {
         if (e.player.tickCount % 60 == 0 || update) {
-            SkillUtils.modifyAttribute(e.player, Attributes.MOVEMENT_SPEED, u, 0.02 * CombatData.getCap(e.player).getComboRank() * (CombatData.getCap(e.player).halvedAdrenaline() ? 0.5 : 1), AttributeModifier.Operation.MULTIPLY_BASE);
-            SkillUtils.modifyAttribute(e.player, Attributes.ATTACK_SPEED, u, 0.02 * CombatData.getCap(e.player).getComboRank() * (CombatData.getCap(e.player).halvedAdrenaline() ? 0.5 : 1), AttributeModifier.Operation.MULTIPLY_TOTAL);
+            final boolean adrenaline = CombatData.getCap(e.player).halvedAdrenaline();
+            SkillUtils.modifyAttribute(e.player, Attributes.MOVEMENT_SPEED, u, 0.02 * CombatData.getCap(e.player).getComboRank() * (adrenaline ? 0 : 1), AttributeModifier.Operation.MULTIPLY_BASE);
+            SkillUtils.modifyAttribute(e.player, Attributes.ATTACK_SPEED, u, 0.02 * CombatData.getCap(e.player).getComboRank() * (adrenaline ? 0 : 1), AttributeModifier.Operation.MULTIPLY_TOTAL);
             update = false;
         }
     }

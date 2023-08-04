@@ -23,6 +23,19 @@ import javax.annotation.Nonnull;
 import java.util.HashSet;
 
 public class Montante extends Skill {
+    private static final ResourceLocation rl = new ResourceLocation("wardance:textures/skill/montante.png");
+
+    @Override
+    public CastStatus castingCheck(LivingEntity caster) {
+        if (CombatData.getCap(caster).getMight() < 1) return CastStatus.OTHER;
+        return super.castingCheck(caster);
+    }
+
+    @Override
+    public ResourceLocation icon() {
+        return rl;
+    }
+
     /*
     Whirlwind: until your might is emptied, continuously attack with alternating hands as soon as they recharge. Requires at least 5 might to start.
 Blade storm: after every attack, choose one direction to lunge forward in
@@ -35,12 +48,7 @@ Flow: cooldown of all attack skills are halved, and any cooled attack skill is a
     public HashSet<String> getTags() {
         return state;
     }
-    private static final ResourceLocation rl=new ResourceLocation("wardance:textures/skill/montante.png");
 
-    @Override
-    public ResourceLocation icon() {
-        return rl;
-    }
     @Nonnull
     @Override
     public HashSet<String> getSoftIncompatibility(LivingEntity caster) {
@@ -48,18 +56,13 @@ Flow: cooldown of all attack skills are halved, and any cooled attack skill is a
     }
 
     @Override
-    public CastStatus castingCheck(LivingEntity caster) {
-        if(CombatData.getCap(caster).getMight()<1)return CastStatus.OTHER;
-        return super.castingCheck(caster);
-    }
-
-    @Override
     public boolean equippedTick(LivingEntity caster, SkillData stats) {
-        if(stats.getState()!=STATE.ACTIVE)return false;
+        if (stats.getState() != STATE.ACTIVE) return false;
         if (!CombatData.getCap(caster).consumeMight(0.05f)) markUsed(caster);
-        if (stats.getState() == STATE.ACTIVE && CombatUtils.getCooledAttackStrength(caster, InteractionHand.MAIN_HAND, 0f) == 1f && !caster.isAutoSpinAttack()) {
+        if (stats.getState() == STATE.ACTIVE && caster.tickCount % 10 == 0 && !caster.isAutoSpinAttack()) {
             //spin to win!
-            double reach=caster.getAttributeValue(ForgeMod.ATTACK_RANGE.get());
+            double reach = caster.getAttributeValue(ForgeMod.ATTACK_RANGE.get());
+            CombatUtils.setHandCooldown(caster, InteractionHand.MAIN_HAND, 1f, false);
             CombatUtils.sweep(caster, null, InteractionHand.MAIN_HAND, WeaponStats.SWEEPTYPE.CIRCLE, reach, reach, 0);
             CombatUtils.setHandCooldown(caster, InteractionHand.MAIN_HAND, 0, true);
         }
@@ -90,7 +93,7 @@ Flow: cooldown of all attack skills are halved, and any cooled attack skill is a
             prev.setMaxDuration(0);
             return true;
         }
-        if(from==STATE.ACTIVE&&to==STATE.COOLING){
+        if (from == STATE.ACTIVE && to == STATE.COOLING) {
             prev.setState(STATE.INACTIVE);
         }
         return instantCast(prev, from, to);
