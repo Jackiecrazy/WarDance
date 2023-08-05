@@ -91,9 +91,9 @@ public class CombatCapability implements ICombatCapability {
         float ret = 1;
         if (elb == null) return ret;
         if (GeneralUtils.getResourceLocationFromEntity(elb) != null && MobSpecs.mobMap.containsKey(elb.getType()))
-            ret = (float) MobSpecs.mobMap.get(elb.getType()).getMaxPosture();
+            return (float) MobSpecs.mobMap.get(elb.getType()).getMaxPosture();
         else ret = (float) (Math.ceil(10 / 1.09 * Math.sqrt(elb.getBbWidth() * elb.getBbHeight())));
-        if (!(elb instanceof Player)) ret *= 1.5;
+        if (!(elb instanceof Player)) ret *= 1.5;//heuheuheu
         return ret;
     }
 
@@ -607,11 +607,13 @@ public class CombatCapability implements ICombatCapability {
 
     @Override
     public int getHandBind(InteractionHand h) {
-        if (isVulnerable()) return 99999;
-        if (dude.get() != null) {
-            LivingEntity bro = dude.get();
-            if (h == InteractionHand.OFF_HAND && (bro.getItemInHand(InteractionHand.MAIN_HAND).is(WeaponStats.TWO_HANDED) || bro.getItemInHand(InteractionHand.OFF_HAND).is(WeaponStats.TWO_HANDED)))
-                return 99999;
+        if(!CombatUtils.suppress) {
+            if (isVulnerable()) return 99999;
+            if (dude.get() != null) {
+                LivingEntity bro = dude.get();
+                if (h == InteractionHand.OFF_HAND && (WeaponStats.isTwoHanded(bro.getOffhandItem(), bro) || WeaponStats.isTwoHanded(bro.getMainHandItem(), bro)))
+                    return 99999;
+            }
         }
         if (h == InteractionHand.OFF_HAND) {
             return oBind;
@@ -627,7 +629,7 @@ public class CombatCapability implements ICombatCapability {
                 mBind = amount;
             }
             case OFF_HAND -> {
-                if ((oBind == 0 || amount == 0) && oBind != amount && e != null)
+                if (!CombatUtils.suppress&&(oBind == 0 || amount == 0) && oBind != amount && e != null)
                     TwoHandingHandler.updateTwoHanding(e, e.getMainHandItem());
                 oBind = amount;
             }
@@ -1023,7 +1025,7 @@ public class CombatCapability implements ICombatCapability {
                 int prev = oBind;
                 oBind -= Math.min(amount, oBind);
                 LivingEntity e = dude.get();
-                if ((oBind == 0 || prev == 0) && prev != amount && e != null)
+                if (!CombatUtils.suppress&&(oBind == 0 || prev == 0) && prev != amount && e != null)
                     TwoHandingHandler.updateTwoHanding(e, e.getMainHandItem());
             }
         }

@@ -336,6 +336,9 @@ public class CombatUtils {
         ICombatCapability cap = CombatData.getCap(e);
         e.setItemInHand(InteractionHand.MAIN_HAND, e.getOffhandItem());
         e.setItemInHand(InteractionHand.OFF_HAND, main);
+        int mbind = cap.getHandBind(InteractionHand.MAIN_HAND);
+        cap.setHandBind(InteractionHand.MAIN_HAND, cap.getHandBind(InteractionHand.OFF_HAND));
+        cap.setHandBind(InteractionHand.OFF_HAND, mbind);
         suppress = false;
 //        attributes.addAll(main.getAttributeModifiers(EquipmentSlotType.MAINHAND).keys());
 //        attributes.addAll(main.getAttributeModifiers(EquipmentSlotType.OFFHAND).keys());
@@ -354,9 +357,6 @@ public class CombatUtils {
         off.getAttributeModifiers(EquipmentSlot.MAINHAND).forEach((att, mod) -> {
             Optional.ofNullable(e.getAttribute(att)).ifPresent((mai) -> {mai.addTransientModifier(mod);});
         });
-        int mbind = cap.getHandBind(InteractionHand.MAIN_HAND);
-        cap.setHandBind(InteractionHand.MAIN_HAND, cap.getHandBind(InteractionHand.OFF_HAND));
-        cap.setHandBind(InteractionHand.OFF_HAND, mbind);
         e.attackStrengthTicker = cap.getOffhandCooldown();
         cap.setOffhandCooldown(tssl);
     }
@@ -375,6 +375,7 @@ public class CombatUtils {
         //no go cases
         if (!GeneralConfig.betterSweep) return;//a shame, but alas
         if (!CombatData.getCap(e).isCombatMode()) return;
+        if (CombatData.getCap(e).getHandBind(h) > 0) return;//don't even try dude
         if (h == InteractionHand.OFF_HAND) {
             swapHeldItems(e);
             CombatData.getCap(e).setOffhandAttack(true);
@@ -507,7 +508,8 @@ public class CombatUtils {
         if (entity.isCrouching()) return WeaponStats.SWEEPSTATE.SNEAKING;
         if ((!(entity instanceof Player p) || !p.getAbilities().flying) && !entity.isOnGround() && !entity.onClimbable() && !entity.isInWater())
             return WeaponStats.SWEEPSTATE.FALLING;
-        if (entity.isSwimming() || entity.isSprinting()) return WeaponStats.SWEEPSTATE.SPRINTING;
+        if (entity.isSwimming() || entity.isSprinting() || MovementUtils.hasInvFrames(entity))
+            return WeaponStats.SWEEPSTATE.SPRINTING;
         return WeaponStats.SWEEPSTATE.STANDING;
     }
 

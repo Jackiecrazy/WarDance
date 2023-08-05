@@ -598,6 +598,8 @@ public class CombatHandler {
     public static void diepotato(LivingDeathEvent e) {
         LivingEntity elb = e.getEntity();
         LivingEntity killer = elb.getCombatTracker().getKiller();
+        CombatData.getCap(elb).setHandBind(InteractionHand.MAIN_HAND, 0);
+        CombatData.getCap(elb).setHandBind(InteractionHand.OFF_HAND, 0);
         if (killer != null) {
             CombatData.getCap(killer).addRank(0.2f);
         }

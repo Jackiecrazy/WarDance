@@ -6,6 +6,7 @@ import jackiecrazy.wardance.config.GeneralConfig;
 import jackiecrazy.wardance.utils.CombatUtils;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.Entity;
 import net.minecraftforge.common.ForgeMod;
 import net.minecraftforge.network.NetworkEvent;
@@ -56,6 +57,8 @@ public class RequestAttackPacket {
                     Entity e = sender.level.getEntity(updateClientPacket.id);
                     if (e != null && (GeneralConfig.dual||updateClientPacket.main) && GeneralUtils.getDistSqCompensated(sender, e) < GeneralUtils.getAttributeValueSafe(sender, ForgeMod.ATTACK_RANGE.get()) * GeneralUtils.getAttributeValueSafe(sender, ForgeMod.ATTACK_RANGE.get())) {
                         if (!updateClientPacket.main) {
+                            if(CombatData.getCap(sender).getHandBind(InteractionHand.OFF_HAND)>0)//no go
+                                return;
                             CombatUtils.swapHeldItems(sender);
                             CombatData.getCap(sender).setOffhandAttack(true);
                         }

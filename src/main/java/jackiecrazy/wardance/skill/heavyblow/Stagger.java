@@ -16,7 +16,7 @@ public class Stagger extends HeavyBlow {
         if (procPoint instanceof ParryEvent && state != STATE.COOLING && stats.isCondition() && procPoint.getPhase() == EventPriority.LOWEST && ((ParryEvent) procPoint).getAttacker() == caster&& cast(caster, target, -999)) {
             CombatData.getCap(target).setHandBind(InteractionHand.MAIN_HAND, 60);
             CombatData.getCap(target).setHandBind(InteractionHand.OFF_HAND, 60);
-            ((ParryEvent) procPoint).setPostureConsumption(((ParryEvent) procPoint).getPostureConsumption() * stats.getArbitraryFloat());
+            ((ParryEvent) procPoint).setPostureConsumption(((ParryEvent) procPoint).getPostureConsumption() * stats.getArbitraryFloat() * stats.getArbitraryFloat());
             markUsed(caster);
         } else if (procPoint instanceof CriticalHitEvent) {
             if (isCrit((CriticalHitEvent) procPoint) && state != STATE.COOLING && procPoint.getPhase() == EventPriority.LOWEST) {

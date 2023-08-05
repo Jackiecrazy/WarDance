@@ -70,11 +70,12 @@ public class DemonHunter extends ColorRestrictionStyle {
     public void onProc(LivingEntity caster, Event procPoint, STATE state, SkillData stats, @Nullable LivingEntity target) {
         if (procPoint instanceof LivingAttackEvent a && DamageUtils.isMeleeAttack(a.getSource()) && target != null && a.getEntity() != caster && a.getPhase() == EventPriority.LOWEST) {
             if (Marks.getCap(target).isMarked(this)) {
-                CombatUtils.knockBack(caster, target, 1, true, true);
-                Vec3 vec = caster.getDeltaMovement();
-                caster.lerpMotion(vec.x, vec.y + 1, vec.z);
-            }
-            mark(caster, target, 3);
+                if (caster.isShiftKeyDown()) {
+                    CombatUtils.knockBack(caster, target, 1, true, true);
+                    Vec3 vec = caster.getDeltaMovement();
+                    caster.lerpMotion(vec.x, vec.y + 1, vec.z);
+                }
+            } else mark(caster, target, 3);
             SkillUtils.removeAttribute(caster, ForgeMod.ATTACK_RANGE.get(), reach);
         }
     }
@@ -82,10 +83,6 @@ public class DemonHunter extends ColorRestrictionStyle {
     @Nullable
     @Override
     public SkillData onMarked(LivingEntity caster, LivingEntity target, SkillData sd, @Nullable SkillData existing) {
-        if (existing != null) {
-            sd.setDuration(Math.min(sd.getDuration() + existing.getDuration(), 5));
-        }
-        sd.setMaxDuration(5);
         return sd;
     }
 

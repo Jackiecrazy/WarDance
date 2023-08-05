@@ -23,9 +23,7 @@ import net.minecraft.util.StringUtil;
 import net.minecraft.util.profiling.ProfilerFiller;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.LivingEntity;
-import net.minecraft.world.item.Item;
-import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.Items;
+import net.minecraft.world.item.*;
 import net.minecraft.world.item.enchantment.Enchantments;
 import net.minecraft.world.level.Level;
 import net.minecraftforge.event.AddReloadListenerEvent;
@@ -191,6 +189,7 @@ public class WeaponStats extends SimpleJsonResourceReloadListener {
     }
 
     public static boolean isTwoHanded(ItemStack is, LivingEntity e) {
+        if (is.getItem() instanceof AxeItem) return true;
         return !is.isEmpty() && is.is(TWO_HANDED);
     }
 
