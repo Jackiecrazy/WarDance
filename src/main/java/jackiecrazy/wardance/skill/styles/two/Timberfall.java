@@ -7,6 +7,7 @@ import jackiecrazy.wardance.event.ParryEvent;
 import jackiecrazy.wardance.event.SkillCastEvent;
 import jackiecrazy.wardance.skill.ProcPoints;
 import jackiecrazy.wardance.skill.SkillData;
+import jackiecrazy.wardance.utils.SkillUtils;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraftforge.event.entity.living.LivingAttackEvent;
 import net.minecraftforge.event.entity.living.LivingHurtEvent;
@@ -30,7 +31,7 @@ public class Timberfall extends WarCry {
         if (procPoint instanceof LivingAttackEvent lae && state == STATE.ACTIVE && lae.getEntity() == target) {
             markUsed(caster);
         } else if (procPoint instanceof ParryEvent cpe && state == STATE.ACTIVE && cpe.getEntity() == target) {
-            cpe.setPostureConsumption(cpe.getPostureConsumption() * 1.4f);
+            cpe.setPostureConsumption(cpe.getPostureConsumption() * 1.4f * SkillUtils.getSkillEffectiveness(caster));
         } else if (procPoint instanceof ConsumePostureEvent cpe && state == STATE.ACTIVE && cpe.getAbove() <= 0 && cpe.getEntity() == target && cpe.getAmount() > CombatData.getCap(target).getPosture()) {
             if (!cpe.isCanceled()) CombatData.getCap(target).addFracture(caster, 1);
         } else if (procPoint instanceof LivingHurtEvent cpe && state == STATE.ACTIVE && cpe.getEntity() == target) {
@@ -39,7 +40,7 @@ public class Timberfall extends WarCry {
                     cds.setProcSkillEffects(true);
                     cds.setSkillUsed(this);
                 }
-                cpe.setAmount(cpe.getAmount() * 1.4f);
+                cpe.setAmount(cpe.getAmount() * 1.4f * SkillUtils.getSkillEffectiveness(caster));
             }
         } else if (procPoint instanceof SkillCastEvent sce && state == STATE.INACTIVE && sce.getEntity() == caster) {
             activate(caster, 60);

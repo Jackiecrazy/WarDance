@@ -4,6 +4,7 @@ import jackiecrazy.footwork.api.FootworkAttributes;
 import jackiecrazy.footwork.capability.resources.CombatData;
 import jackiecrazy.footwork.utils.GeneralUtils;
 import jackiecrazy.wardance.skill.Skill;
+import jackiecrazy.wardance.skill.SkillData;
 import net.minecraft.world.entity.AreaEffectCloud;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
@@ -17,6 +18,7 @@ import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.level.Level;
 import net.minecraftforge.common.ForgeMod;
 
+import javax.annotation.Nullable;
 import java.util.UUID;
 
 public class SkillUtils {
@@ -104,8 +106,12 @@ public class SkillUtils {
         return auxAttack(caster, target, s, dmg, posdmg, () -> {}, () -> {});
     }
 
-    public static double getSkillEffectiveness(LivingEntity caster){
-        return caster.getAttributeValue(FootworkAttributes.SKILL_EFFECTIVENESS.get());
+    /**
+     * use {@link SkillData#getEffectiveness()} for any skills that invoke {@link Skill#cast(LivingEntity, float)}
+     */
+    public static float getSkillEffectiveness(@Nullable LivingEntity caster) {
+        if (caster == null) return 1;
+        return (float) caster.getAttributeValue(FootworkAttributes.SKILL_EFFECTIVENESS.get());
     }
 
 }

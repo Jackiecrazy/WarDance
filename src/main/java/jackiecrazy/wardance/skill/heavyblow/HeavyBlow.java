@@ -2,6 +2,7 @@ package jackiecrazy.wardance.skill.heavyblow;
 
 import jackiecrazy.footwork.utils.GeneralUtils;
 import jackiecrazy.wardance.skill.*;
+import jackiecrazy.wardance.utils.SkillUtils;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraftforge.event.entity.player.CriticalHitEvent;
 import net.minecraftforge.eventbus.api.Event;
@@ -57,14 +58,14 @@ public class HeavyBlow extends Skill {
 
     protected void onCrit(CriticalHitEvent proc, SkillData stats, LivingEntity caster, LivingEntity target) {
         if (this == WarSkills.VITAL_STRIKE.get())
-            proc.setDamageModifier(proc.getDamageModifier() * 1.5f);
+            proc.setDamageModifier(proc.getDamageModifier() * 1.5f * stats.getEffectiveness() * stats.getEffectiveness());
     }
 
     public static class Leverage extends HeavyBlow {
 
         @Override
         protected void onCrit(CriticalHitEvent proc, SkillData stats, LivingEntity caster, LivingEntity target) {
-            proc.setDamageModifier(1 + (float) Math.max(2, Math.sqrt(GeneralUtils.getDistSqCompensated(caster, target)) / 4f));
+            proc.setDamageModifier(1 + (float) Math.max(2, Math.sqrt(GeneralUtils.getDistSqCompensated(caster, target)) / 4f)* SkillUtils.getSkillEffectiveness(caster));
 //            Vector3d extra = caster.position().vectorTo(target.position()).scale(-1);
 //            if (extra.lengthSqr() > 1) extra = extra.normalize();
 //            caster.setDeltaMovement(caster.getDeltaMovement().add(extra));

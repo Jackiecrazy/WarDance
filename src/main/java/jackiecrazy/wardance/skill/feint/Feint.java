@@ -125,14 +125,14 @@ public class Feint extends Skill {
             }
             CombatData.getCap(target).setHandBind(InteractionHand.MAIN_HAND, dur);
             CombatData.getCap(target).setHandBind(InteractionHand.OFF_HAND, dur);
-            CombatUtils.setHandCooldown(caster, InteractionHand.MAIN_HAND, this == WarSkills.FOLLOWUP.get() ? 1 : 0.5f, true);
+            CombatUtils.setHandCooldown(caster, InteractionHand.MAIN_HAND, this == WarSkills.FOLLOWUP.get() ? 1 : (0.5f * stats.getEffectiveness()), true);
             mark(caster, target, dur / 20f + 0.1f, 6);
             procPoint.setCanceled(true);
             markUsed(caster);
         }
         if (procPoint instanceof LivingAttackEvent e && this == WarSkills.FOLLOWUP.get() && procPoint.getPhase() == EventPriority.LOWEST && DamageUtils.isMeleeAttack(e.getSource()) && e.getEntity() == target &&
                 CombatData.getCap(target).getHandBind(InteractionHand.MAIN_HAND) > 0 && CombatData.getCap(target).getHandBind(InteractionHand.OFF_HAND) > 0) {
-            CombatUtils.setHandCooldown(caster, InteractionHand.MAIN_HAND, 0.5f, true);
+            CombatUtils.setHandCooldown(caster, InteractionHand.MAIN_HAND, 0.5f * SkillUtils.getSkillEffectiveness(caster), true);
         }
     }
 

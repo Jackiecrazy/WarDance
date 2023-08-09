@@ -37,7 +37,6 @@ public class SyncItemDataPacket {
 
         @Override
         public SyncItemDataPacket apply(FriendlyByteBuf packetBuffer) {
-            //FIXME this appears to only retain the last loaded value for sweeps
             final Map<Item, WeaponStats.MeleeInfo> huh = packetBuffer.readMap(ritem, rinfo);
             return new SyncItemDataPacket(huh);
         }

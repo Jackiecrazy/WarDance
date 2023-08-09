@@ -9,6 +9,7 @@ import jackiecrazy.wardance.skill.Skill;
 import jackiecrazy.wardance.skill.SkillData;
 import jackiecrazy.wardance.skill.SkillTags;
 import jackiecrazy.wardance.utils.CombatUtils;
+import jackiecrazy.wardance.utils.SkillUtils;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.LivingEntity;
@@ -56,7 +57,7 @@ Flow: cooldown of all attack skills are halved, and any cooled attack skill is a
     public boolean equippedTick(LivingEntity caster, SkillData stats) {
         if (stats.getState() != STATE.ACTIVE) return false;
         final ICombatCapability cap = CombatData.getCap(caster);
-        if (!cap.consumeMight(0.05f)) markUsed(caster);
+        if (!cap.consumeMight(0.05f/ stats.getEffectiveness())) markUsed(caster);
         caster.attackStrengthTicker++;
         cap.setOffhandCooldown(cap.getOffhandCooldown() + 1);
         //main hand flurry

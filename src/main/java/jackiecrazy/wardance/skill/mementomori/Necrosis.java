@@ -38,9 +38,9 @@ public class Necrosis extends Skill {
 
     @Override
     public boolean equippedTick(LivingEntity caster, SkillData stats) {
+        double shouldBe = caster.getMaxHealth();
         final double amount = CombatData.getCap(caster).getComboRank() / 7d;
-        SkillUtils.modifyAttribute(caster, Attributes.MAX_HEALTH, uuid, amount, AttributeModifier.Operation.MULTIPLY_TOTAL);
-        double shouldBe = caster.getMaxHealth() / (1 + amount);
+        SkillUtils.modifyAttribute(caster, Attributes.MAX_HEALTH, uuid, amount * SkillUtils.getSkillEffectiveness(caster), AttributeModifier.Operation.MULTIPLY_TOTAL);
         if (caster.getHealth() > shouldBe) caster.setHealth((float) shouldBe);
         return super.equippedTick(caster, stats);
     }

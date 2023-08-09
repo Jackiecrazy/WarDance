@@ -445,7 +445,7 @@ public class CombatConfig {
     public static int exposeDuration;
     public static int adrenaline;
     public static float exposeDamage, normalDamage, stunDamage, knockdownDamage;
-    public static int parryTime;
+    public static int parryTime, parryCD;
     public static int foodCool;
     public static float mobParryChanceWeapon, mobParryChanceShield, mobDeflectChance, mobScaler;
     public static int knockdownDuration;
@@ -466,6 +466,7 @@ public class CombatConfig {
     private final ForgeConfigSpec.IntValue _rollCooldown;
     private final ForgeConfigSpec.BooleanValue _dodge;
     private final ForgeConfigSpec.IntValue _sneakParry;
+    private final ForgeConfigSpec.IntValue _sneakParryCD;
     private final ForgeConfigSpec.IntValue _foodCool;
     private final ForgeConfigSpec.IntValue _adrenaline;
     private final ForgeConfigSpec.DoubleValue _mobParryChanceWeapon;
@@ -483,7 +484,8 @@ public class CombatConfig {
     public CombatConfig(ForgeConfigSpec.Builder b) {
         //feature toggle, resource, defense, compat, stealth, lists
         b.push("parrying");
-        _sneakParry = b.translation("wardance.config.sneakParry").comment("parries will only work in this many ticks after pressing the designated key, and cannot be triggered again for the same amount of time afterwards; 0 to disable. I don't know why everyone wants this option, but here it is. Set to -1 to toggle auto parry on and off with the key instead.").defineInRange("manual parry time", 0, -1, Integer.MAX_VALUE);
+        _sneakParry = b.translation("wardance.config.sneakParry").comment("parries will only work in this many ticks after pressing the designated key. 0 to disable. Successful parry resets this. I don't know why everyone wants this option, but here it is. Set to -1 to toggle auto parry on and off with the key instead.").defineInRange("manual parry time", 0, -1, Integer.MAX_VALUE);
+        _sneakParryCD = b.translation("wardance.config.sneakParryCD").comment("does nothing unless manual parry is turned on. Defines the amount of time afterwards that your hand will be bound and thus incapable of parry. Offhand is prioritized before main hand. Not applied on successful parry.").defineInRange("manual parry cooldown", 10, 0, Integer.MAX_VALUE);
         _posturePerProjectile = b.translation("wardance.config.ppp").comment("Posture consumed per projectile parried").defineInRange("posture per projectile", 0.5, 0, Double.MAX_VALUE);
         _defaultMultiplierPostureAttack = b.translation("wardance.config.dmpa").comment("Default multiplier for any items not defined in the config, multiplied by their attack damage").defineInRange("default attack multiplier", 0.15, 0, Double.MAX_VALUE);
         _defaultMultiplierPostureDefend = b.translation("wardance.config.dmpd").comment("Default multiplier for any item not defined in the config, when used for parrying").defineInRange("default defense multiplier", 1.4, 0, Double.MAX_VALUE);
@@ -535,6 +537,7 @@ public class CombatConfig {
         dodge = CONFIG._dodge.get();
         kbNerf = CONFIG._knockbackNerf.get().floatValue();
         parryTime = CONFIG._sneakParry.get();
+        parryCD = CONFIG._sneakParryCD.get();
         staggerDuration = CONFIG._staggerDuration.get();
         knockdownDuration = CONFIG._knockdownDuration.get();
         exposeDuration = CONFIG._exposeDuration.get();

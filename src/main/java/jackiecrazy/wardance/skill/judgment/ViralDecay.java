@@ -49,7 +49,7 @@ public class ViralDecay extends Judgment {
     @Override
     public boolean markTick(LivingEntity caster, LivingEntity target, SkillData sd) {
         if (target.tickCount % 20 == 0)
-            target.hurt(VIRUS, sd.getArbitraryFloat() / 2);
+            target.hurt(VIRUS, sd.getArbitraryFloat()*SkillUtils.getSkillEffectiveness(caster));
         return super.markTick(caster, target, sd);
     }
 

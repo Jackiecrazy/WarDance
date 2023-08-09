@@ -54,7 +54,7 @@ public class Tornado extends Kick {
         return boundCast(prev, from, to);
     }
 
-    protected void additionally(LivingEntity caster, LivingEntity target) {
+    protected void additionally(LivingEntity caster, LivingEntity target, SkillData sd) {
 
     }
 

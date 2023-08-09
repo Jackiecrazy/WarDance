@@ -82,6 +82,7 @@ public class CombatCapability implements ICombatCapability {
     private ItemStack tempOffhand = ItemStack.EMPTY;
     private Vec3 motion;
     private int internal_fracture_timer = 10;
+    private int internal_parry_timer = 0;
 
     public CombatCapability(LivingEntity e) {
         dude = new WeakReference<>(e);
@@ -302,7 +303,8 @@ public class CombatCapability implements ICombatCapability {
                     knockdown(se.getLength());
                     elb.removeEffect(FootworkEffects.UNSTEADY.get());
                 } else stun(se.getLength());
-                CombatData.getCap(assailant).addRank(se.isKnockdown() ? 0.2f : 0.1f);
+                if (assailant != null)
+                    CombatData.getCap(assailant).addRank(se.isKnockdown() ? 0.2f : 0.1f);
                 elb.level.playSound(null, elb.getX(), elb.getY(), elb.getZ(), SoundEvents.ZOMBIE_ATTACK_WOODEN_DOOR, SoundSource.PLAYERS, 0.3f + WarDance.rand.nextFloat() * 0.5f, 0.75f + WarDance.rand.nextFloat() * 0.5f);
             }
             elb.removeVehicle();
@@ -436,7 +438,8 @@ public class CombatCapability implements ICombatCapability {
             if (se.isCanceled()) return false;
             dude.get().stopUsingItem();
             expose(se.getLength());
-            CombatData.getCap(livingEntity).addRank(0.4f);
+            if (livingEntity != null)
+                CombatData.getCap(livingEntity).addRank(0.4f);
             clearFracture(null, false);
             return false;
         }
@@ -607,7 +610,7 @@ public class CombatCapability implements ICombatCapability {
 
     @Override
     public int getHandBind(InteractionHand h) {
-        if(!CombatUtils.suppress) {
+        if (!CombatUtils.suppress) {
             if (isVulnerable()) return 99999;
             if (dude.get() != null) {
                 LivingEntity bro = dude.get();
@@ -629,7 +632,7 @@ public class CombatCapability implements ICombatCapability {
                 mBind = amount;
             }
             case OFF_HAND -> {
-                if (!CombatUtils.suppress&&(oBind == 0 || amount == 0) && oBind != amount && e != null)
+                if (!CombatUtils.suppress && (oBind == 0 || amount == 0) && oBind != amount && e != null)
                     TwoHandingHandler.updateTwoHanding(e, e.getMainHandItem());
                 oBind = amount;
             }
@@ -729,7 +732,16 @@ public class CombatCapability implements ICombatCapability {
         internal_fracture_timer -= ticks;
         if (internal_fracture_timer < 0) {
             clearFracture(null, true);
-            internal_fracture_timer = 10;
+            internal_fracture_timer = 400;
+        }
+        //detect failed parrying
+        if (internal_parry_timer > 0) {
+            internal_parry_timer -= ticks;
+            if (internal_parry_timer <= 0) {
+                //failed parry
+                if (getHandBind(InteractionHand.OFF_HAND) <= 0) oBind = CombatConfig.parryCD;
+                else mBind = CombatConfig.parryCD;
+            }
         }
         evade += ticks * elb.getAttributeValue(FootworkAttributes.EVASION.get());
         //tick down everything
@@ -756,35 +768,8 @@ public class CombatCapability implements ICombatCapability {
         }
         if (getPosture() > getMaxPosture())
             setPosture(getMaxPosture());
-        //regenerate barrier
-//        if (getBarrierCooldown() == 0 && getStunTime() == 0) {
-//            addBarrier(getBPT() * (ticks));
-//        }
-        //enforce shieldlessness without barrier
-        //if (getMaxBarrier() == 0) shieldDown = true;
-        //disable shields if barrier still down
-//        if (shieldDown) {
-//            for (Hand h : Hand.values()) {
-//                if (CombatUtils.isShield(elb, elb.getItemInHand(h)) && getHandBind(h) < 5) {
-//                    setHandBind(h, 7);
-//                }
-//            }
-//        }
         float nausea = elb instanceof Player || !elb.hasEffect(MobEffects.CONFUSION) ? 0 : (elb.getEffect(MobEffects.CONFUSION).getAmplifier() + 1) * GeneralConfig.nausea;
         if (nausea > 0) consumePosture(nausea * ticks, 0.1f);
-        //shatter handling
-//        if (shatterCD <= 0) {
-//            shatterCD += ticks;
-//            if (shatterCD >= 0) {
-//                shattering = false;
-//                shatterCD = (int) GeneralUtils.getAttributeValueSafe(elb, FootworkAttributes.SHATTER.get());
-//            }
-//        } else if (shattering) {
-//            shatterCD -= ticks;
-//            if (shatterCD <= 0) {
-//                shatterCD = -ResourceConfig.shatterCooldown;
-//            }
-//        } else shatterCD = (int) GeneralUtils.getAttributeValueSafe(elb, FootworkAttributes.SHATTER.get());
         if (getSpiritGrace() == 0 && getStunTime() == 0 && getSpirit() < getMaxSpirit()) {
             setSpirit(getSpirit() + getSPT() * spExtra);//to not run into spirit increase mod
         }
@@ -847,6 +832,9 @@ public class CombatCapability implements ICombatCapability {
     @Override
     public void setParryingTick(int parrying) {
         this.parrying = parrying;
+        if (parrying != 0)
+            internal_parry_timer = CombatConfig.parryTime;
+        else internal_parry_timer = 0;
     }
 
     @Override
@@ -896,8 +884,8 @@ public class CombatCapability implements ICombatCapability {
         c.putInt("mexpose", getMaxExposeTime());
         c.putInt("offhandcd", getOffhandCooldown());
         c.putInt("roll", getRollTime());
-        c.putInt("mainBind", getHandBind(InteractionHand.MAIN_HAND));
-        c.putInt("offBind", getHandBind(InteractionHand.OFF_HAND));
+        c.putInt("mainBind", mBind);
+        c.putInt("offBind", oBind);
         c.putBoolean("offhand", isOffhandAttack());
         c.putBoolean("combat", isCombatMode());
         c.putBoolean("painful", painful);
@@ -1025,7 +1013,7 @@ public class CombatCapability implements ICombatCapability {
                 int prev = oBind;
                 oBind -= Math.min(amount, oBind);
                 LivingEntity e = dude.get();
-                if (!CombatUtils.suppress&&(oBind == 0 || prev == 0) && prev != amount && e != null)
+                if (!CombatUtils.suppress && (oBind == 0 || prev == 0) && prev != amount && e != null)
                     TwoHandingHandler.updateTwoHanding(e, e.getMainHandItem());
             }
         }

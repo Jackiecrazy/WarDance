@@ -1,8 +1,10 @@
 package jackiecrazy.wardance.skill.coupdegrace;
 
-import jackiecrazy.footwork.event.StunEvent;
 import jackiecrazy.footwork.api.CombatDamageSource;
-import jackiecrazy.wardance.skill.*;
+import jackiecrazy.footwork.event.StunEvent;
+import jackiecrazy.wardance.skill.SkillArchetype;
+import jackiecrazy.wardance.skill.SkillArchetypes;
+import jackiecrazy.wardance.skill.SkillData;
 import jackiecrazy.wardance.utils.SkillUtils;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraftforge.eventbus.api.Event;
@@ -43,7 +45,7 @@ public class BiteTheDust extends CoupDeGrace {
                 damage *= 2;
                 currentMark--;
             }
-            double stonks = SkillUtils.getSkillEffectiveness(caster);
+            double stonks = stats.getEffectiveness();
             while (stonks > 1.1) {
                 damage *= 2;
                 stonks -= 0.1;
@@ -61,12 +63,17 @@ public class BiteTheDust extends CoupDeGrace {
     }
 
     @Override
-    public boolean willKillOnCast(LivingEntity caster, LivingEntity target) {
+    public boolean willKillOnCast(LivingEntity caster, LivingEntity target, SkillData stats) {
         float damage = 2;
         float currentMark = getExistingMark(target).getDuration();
         while (currentMark > 0) {
             damage *= 2;
             currentMark--;
+        }
+        double stonks = SkillUtils.getSkillEffectiveness(caster);
+        while (stonks > 1.1) {
+            damage *= 2;
+            stonks -= 0.1;
         }
         return damage > target.getHealth();
     }

@@ -10,8 +10,13 @@ public class DamageUtils {
         if (s instanceof CombatDamageSource) {
             return ((CombatDamageSource) s).canProcAutoEffects();
         }
-        //TODO does this break anything?
         return s.getEntity() != null && s.getEntity() == s.getDirectEntity() && !s.isExplosion() && !s.isProjectile();//!s.isFire() && !s.isMagic() &&
+    }
+    public static boolean isSkillAttack(DamageSource s) {
+        if (s instanceof CombatDamageSource) {
+            return ((CombatDamageSource) s).getSkillUsed()!=null;
+        }
+        return false;
     }
 
     public static boolean isPhysicalAttack(DamageSource s) {

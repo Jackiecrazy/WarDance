@@ -98,6 +98,17 @@ public class Hex extends Skill {
 //
 //    }
 
+    @Nonnull
+    @Override
+    public SkillArchetype getArchetype() {
+        return SkillArchetypes.hex;
+    }
+
+    @Override
+    public float spiritConsumption(LivingEntity caster) {
+        return 1;
+    }
+
     @Override
     public HashSet<String> getTags() {
         return thing;
@@ -110,32 +121,11 @@ public class Hex extends Skill {
     }
 
     @Override
-    public float spiritConsumption(LivingEntity caster) {
-        return 1;
-    }
-
-    @Nonnull
-    @Override
-    public SkillArchetype getArchetype() {
-        return SkillArchetypes.hex;
-    }
-
-
-    @Override
-    public boolean onStateChange(LivingEntity caster, SkillData prev, STATE from, STATE to) {
-        LivingEntity e = SkillUtils.aimLiving(caster);
-        if (to == STATE.ACTIVE && e != null && cast(caster, e, -999)) {
-            mark(caster, e, duration(), prev.getArbitraryFloat());
-            prev.setArbitraryFloat(0);
-            markUsed(caster);
+    public boolean equippedTick(LivingEntity caster, SkillData stats) {
+        if (cooldownTick(stats)) {
+            return true;
         }
-        if (to == STATE.COOLING)
-            setCooldown(caster, prev, 15);
-        return boundCast(prev, from, to);
-    }
-
-    protected int duration() {
-        return 10;
+        return super.equippedTick(caster, stats);
     }
 
     @Override
@@ -151,11 +141,16 @@ public class Hex extends Skill {
     }
 
     @Override
-    public boolean equippedTick(LivingEntity caster, SkillData stats) {
-        if (cooldownTick(stats)) {
-            return true;
+    public boolean onStateChange(LivingEntity caster, SkillData prev, STATE from, STATE to) {
+        LivingEntity e = SkillUtils.aimLiving(caster);
+        if (to == STATE.ACTIVE && e != null && cast(caster, e, -999)) {
+            mark(caster, e, duration(), prev.getArbitraryFloat());
+            prev.setArbitraryFloat(0);
+            markUsed(caster);
         }
-        return super.equippedTick(caster, stats);
+        if (to == STATE.COOLING)
+            setCooldown(caster, prev, 15 / prev.getEffectiveness());
+        return boundCast(prev, from, to);
     }
 
     @Override
@@ -177,6 +172,10 @@ public class Hex extends Skill {
             luck.removeModifier(HEX);
         }
         super.onMarkEnd(caster, target, sd);
+    }
+
+    protected int duration() {
+        return 10;
     }
 
     public static class Gangrene extends Hex {

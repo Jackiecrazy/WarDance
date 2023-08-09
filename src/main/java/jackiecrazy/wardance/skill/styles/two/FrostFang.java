@@ -60,7 +60,7 @@ public class FrostFang extends WarCry {
         if (stats.getState() == STATE.INACTIVE) {
             stats.decrementDuration();
             if (stats.getDuration() <= 0) {
-                stats.setArbitraryFloat(Math.min(0.5f, stats.getArbitraryFloat() + 0.1f));
+                stats.setArbitraryFloat(Math.min(0.5f * SkillUtils.getSkillEffectiveness(caster), stats.getArbitraryFloat() + 0.1f * SkillUtils.getSkillEffectiveness(caster)));
                 stats.setDuration(80);
             }
         }

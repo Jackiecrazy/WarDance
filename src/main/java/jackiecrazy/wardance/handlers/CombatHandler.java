@@ -103,7 +103,7 @@ public class CombatHandler {
             ICombatCapability ukeCap = CombatData.getCap(uke);
             //manual parry toggle
             // why does everyone want this feature...
-            boolean failManualParry = CombatConfig.parryTime > 0 && (ukeCap.getParryingTick() > uke.tickCount || ukeCap.getParryingTick() < uke.tickCount - CombatConfig.parryTime);
+            boolean failManualParry = CombatConfig.parryTime > 0 && (ukeCap.getParryingTick() > uke.tickCount || ukeCap.getParryingTick() + CombatConfig.parryTime < uke.tickCount);
             failManualParry |= CombatConfig.parryTime < 0 && ukeCap.getParryingTick() == -1;
             failManualParry &= uke instanceof Player;
             ItemStack defend = null;
@@ -173,6 +173,7 @@ public class CombatHandler {
                         ((Projectile) projectile).shoot(pe.getReturnVec().x, pe.getReturnVec().y, pe.getReturnVec().z, (float) power, 0);
                     }
                 } else projectile.remove(Entity.RemovalReason.KILLED);
+                ukeCap.setParryingTick(0);
                 CombatUtils.knockBack(uke, projectile, 0.01f, true, false);
                 return;
             }
@@ -208,7 +209,7 @@ public class CombatHandler {
                 ICombatCapability semeCap = CombatData.getCap(seme);
                 ukeCap.serverTick();
                 semeCap.serverTick();
-                InteractionHand h = InteractionHand.MAIN_HAND;
+                InteractionHand h = semeCap.isOffhandAttack() ? InteractionHand.OFF_HAND : InteractionHand.MAIN_HAND;
                 //hand bound or staggered, no attack
                 if (semeCap.isVulnerable() || semeCap.getHandBind(h) > 0) {
                     e.setCanceled(true);
@@ -243,7 +244,7 @@ public class CombatHandler {
                     return;
                 }
                 ICombatCapability semeCap = CombatData.getCap(seme);
-                InteractionHand attackingHand = InteractionHand.MAIN_HAND;
+                InteractionHand attackingHand = semeCap.isOffhandAttack() ? InteractionHand.OFF_HAND : InteractionHand.MAIN_HAND;
                 //hand bound or staggered, no attack
                 if (semeCap.isVulnerable() || semeCap.getHandBind(attackingHand) > 0) {
                     e.setCanceled(true);
@@ -271,7 +272,7 @@ public class CombatHandler {
                 }
                 //manual parry toggle
                 // why does everyone want this feature...
-                boolean failManualParry = CombatConfig.parryTime > 0 && (ukeCap.getParryingTick() > uke.tickCount || ukeCap.getParryingTick() < uke.tickCount - CombatConfig.parryTime);
+                boolean failManualParry = CombatConfig.parryTime > 0 && (ukeCap.getParryingTick() > uke.tickCount || ukeCap.getParryingTick() + CombatConfig.parryTime < uke.tickCount);
                 failManualParry |= CombatConfig.parryTime < 0 && ukeCap.getParryingTick() == -1;
                 failManualParry &= uke instanceof Player;
                 boolean canParry = GeneralUtils.isFacingEntity(uke, seme, 90);
@@ -350,6 +351,8 @@ public class CombatHandler {
                     if (StealthConfig.ignore && awareness == StealthUtils.Awareness.UNAWARE) return;
                     if (pe.canParry()) {
                         e.setCanceled(true);
+                        //reset manual parry
+                        ukeCap.setParryingTick(0);
                         downingHit = false;
                         ukeCap.addRank(0);
 //                        if (useDeflect) {
@@ -447,7 +450,7 @@ public class CombatHandler {
 
             if (WeaponStats.isWeapon(seme, seme.getMainHandItem())) {
                 final WeaponStats.SweepInfo info = WeaponStats.getSweepInfo(seme.getMainHandItem(), CombatUtils.getSweepState(seme));
-                e.setStrength((float) (e.getStrength()*info.getKnockback()));
+                e.setStrength((float) (e.getStrength() * info.getKnockback()));
             }
         }
     }

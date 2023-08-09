@@ -69,7 +69,7 @@ public class ShieldBash extends Skill {
                 stats.decrementDuration();
             final boolean otherwise = state == STATE.HOLSTERED;
             if ((base || otherwise) && cast(caster, target, -999)) {
-                float attack = CombatUtils.getPostureAtk(caster, target, InteractionHand.MAIN_HAND, 0, stack);
+                float attack = CombatUtils.getPostureAtk(caster, target, InteractionHand.MAIN_HAND, 0, stack) * stats.getEffectiveness();
                 performEffect(caster, target, attack);
                 caster.level.playSound(null, caster.getX(), caster.getY(), caster.getZ(), SoundEvents.ZOMBIE_ATTACK_IRON_DOOR, SoundSource.PLAYERS, 0.25f + WarDance.rand.nextFloat() * 0.5f, 0.5f + WarDance.rand.nextFloat() * 0.5f);
                 markUsed(caster);

@@ -40,17 +40,9 @@ public class Silencer extends HeavyBlow {
         return false;
     }
 
-    @Override
-    public void onProc(LivingEntity caster, Event procPoint, STATE state, SkillData stats, LivingEntity target) {
-        if (procPoint instanceof CriticalHitEvent && ((CriticalHitEvent) procPoint).getTarget() == target && state == STATE.INACTIVE) {
-            if (caster.level.isClientSide() || caster == target) return;
-            if (StealthUtils.INSTANCE.getAwareness(caster, target) != StealthUtils.Awareness.UNAWARE || !cast(caster, target, -999))
-                return;
-            CombatData.getCap(target).setHandBind(InteractionHand.MAIN_HAND, 60);
-            CombatData.getCap(target).setHandBind(InteractionHand.OFF_HAND, 60);
-            procPoint.setResult(Event.Result.ALLOW);
-            mark(caster, target, 60);
-        } else if (state == STATE.COOLING) stats.decrementDuration();
+    public boolean markTick(LivingEntity caster, LivingEntity target, SkillData sd) {
+        sd.decrementDuration();
+        return super.markTick(caster, target, sd);
     }
 
     @Override
@@ -60,15 +52,24 @@ public class Silencer extends HeavyBlow {
         return super.onMarked(caster, target, sd, existing);
     }
 
-    public boolean markTick(LivingEntity caster, LivingEntity target, SkillData sd) {
-        sd.decrementDuration();
-        return super.markTick(caster, target, sd);
-    }
-
     @Override
     public void onMarkEnd(LivingEntity caster, LivingEntity target, SkillData sd) {
         target.setSilent(sd.isCondition());
         super.onMarkEnd(caster, target, sd);
+    }
+
+    @Override
+    public void onProc(LivingEntity caster, Event procPoint, STATE state, SkillData stats, LivingEntity target) {
+        if (procPoint instanceof CriticalHitEvent && ((CriticalHitEvent) procPoint).getTarget() == target && state == STATE.INACTIVE) {
+            if (caster.level.isClientSide() || caster == target) return;
+            if (StealthUtils.INSTANCE.getAwareness(caster, target) != StealthUtils.Awareness.UNAWARE || !cast(caster, target, -999))
+                return;
+            final int i = (int) (60 * stats.getEffectiveness());
+            CombatData.getCap(target).setHandBind(InteractionHand.MAIN_HAND, i);
+            CombatData.getCap(target).setHandBind(InteractionHand.OFF_HAND, i);
+            procPoint.setResult(Event.Result.ALLOW);
+            mark(caster, target, i);
+        } else if (state == STATE.COOLING) stats.decrementDuration();
     }
 
     @Override

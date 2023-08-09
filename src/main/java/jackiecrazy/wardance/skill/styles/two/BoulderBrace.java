@@ -19,7 +19,7 @@ public class BoulderBrace extends WarCry {
     @Override
     public void onProc(LivingEntity caster, Event procPoint, STATE state, SkillData stats, LivingEntity target) {
         if (procPoint instanceof StunEvent se && procPoint.getPhase() == EventPriority.HIGHEST) {
-            if (se.getEntity() == caster && CombatData.getCap(caster).consumeMight(1))
+            if (se.getEntity() == caster && CombatData.getCap(caster).consumeMight(1 / SkillUtils.getSkillEffectiveness(caster)))
                 se.setCanceled(true);
         }
     }

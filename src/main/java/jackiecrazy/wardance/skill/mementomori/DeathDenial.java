@@ -4,6 +4,7 @@ import jackiecrazy.footwork.event.ConsumePostureEvent;
 import jackiecrazy.wardance.WarDance;
 import jackiecrazy.wardance.skill.ProcPoints;
 import jackiecrazy.wardance.skill.SkillData;
+import jackiecrazy.wardance.utils.SkillUtils;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.entity.LivingEntity;
@@ -39,19 +40,6 @@ public class DeathDenial extends MementoMori {
     }
 
     @Override
-    public boolean onStateChange(LivingEntity caster, SkillData prev, STATE from, STATE to) {
-        if (to == STATE.COOLING) {
-            setCooldown(caster, prev, 10);
-            return true;
-        }
-        if (from != STATE.ACTIVE && to == STATE.ACTIVE) {
-            prev.setDuration(100);
-            prev.setState(STATE.ACTIVE);
-        }
-        return passive(prev, from, to);
-    }
-
-    @Override
     public boolean equippedTick(LivingEntity caster, SkillData d) {
         if (d.getState() == STATE.ACTIVE) {
             d.decrementDuration();
@@ -59,5 +47,18 @@ public class DeathDenial extends MementoMori {
             return true;
         }
         return super.equippedTick(caster, d);
+    }
+
+    @Override
+    public boolean onStateChange(LivingEntity caster, SkillData prev, STATE from, STATE to) {
+        if (to == STATE.COOLING) {
+            setCooldown(caster, prev, 10);
+            return true;
+        }
+        if (from != STATE.ACTIVE && to == STATE.ACTIVE) {
+            prev.setDuration(100 * SkillUtils.getSkillEffectiveness(caster));
+            prev.setState(STATE.ACTIVE);
+        }
+        return passive(prev, from, to);
     }
 }

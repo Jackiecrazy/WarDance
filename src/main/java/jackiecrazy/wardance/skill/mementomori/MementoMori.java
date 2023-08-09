@@ -11,8 +11,8 @@ import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.ai.attributes.AttributeModifier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraftforge.event.entity.living.LivingAttackEvent;
-import net.minecraftforge.event.entity.living.LivingDamageEvent;
 import net.minecraftforge.event.entity.living.LivingHealEvent;
+import net.minecraftforge.event.entity.living.LivingHurtEvent;
 import net.minecraftforge.eventbus.api.Event;
 import net.minecraftforge.eventbus.api.EventPriority;
 
@@ -55,7 +55,7 @@ pound of flesh: active skill. Consumes all your spirit, and until your spirit re
     public boolean equippedTick(LivingEntity caster, SkillData d) {
         if (getClass() != MementoMori.class) return false;
         float health = 1 - (caster.getHealth() / GeneralUtils.getMaxHealthBeforeWounding(caster));
-        SkillUtils.modifyAttribute(caster, Attributes.ATTACK_DAMAGE, MULT, health, AttributeModifier.Operation.MULTIPLY_TOTAL);
+        SkillUtils.modifyAttribute(caster, Attributes.ATTACK_DAMAGE, MULT, health * SkillUtils.getSkillEffectiveness(caster), AttributeModifier.Operation.MULTIPLY_TOTAL);
         return false;
     }
 
@@ -76,7 +76,7 @@ pound of flesh: active skill. Consumes all your spirit, and until your spirit re
         public boolean equippedTick(LivingEntity caster, SkillData d) {
             float lostHealth = GeneralUtils.getMaxHealthBeforeWounding(caster) - caster.getHealth();
             lostHealth /= GeneralUtils.getMaxHealthBeforeWounding(caster);
-            SkillUtils.modifyAttribute(caster, Attributes.ARMOR, MULT, lostHealth * 20, AttributeModifier.Operation.ADDITION);
+            SkillUtils.modifyAttribute(caster, Attributes.ARMOR, MULT, lostHealth * SkillUtils.getSkillEffectiveness(caster) * 20, AttributeModifier.Operation.ADDITION);
             return super.equippedTick(caster, d);
         }
     }
@@ -87,10 +87,10 @@ pound of flesh: active skill. Consumes all your spirit, and until your spirit re
 
         @Override
         public void onProc(LivingEntity caster, Event procPoint, STATE state, SkillData stats, LivingEntity target) {
-            if (procPoint instanceof LivingDamageEvent && procPoint.getPhase() == EventPriority.HIGHEST && ((LivingDamageEvent) procPoint).getEntity() == caster) {
+            if (procPoint instanceof final LivingHurtEvent lhe && procPoint.getPhase() == EventPriority.HIGHEST && lhe.getEntity() == caster) {
                 float stat = stats.getArbitraryFloat();
-                stat += ((LivingDamageEvent) procPoint).getAmount();
-                stat = Math.min(stat, GeneralUtils.getMaxHealthBeforeWounding(caster) / 5);
+                stat += lhe.getAmount();
+                stat = Math.min(stat, GeneralUtils.getMaxHealthBeforeWounding(caster));
                 stats.setArbitraryFloat(stat);
             }
             if (procPoint instanceof LivingAttackEvent && procPoint.getPhase() == EventPriority.HIGHEST && DamageUtils.isMeleeAttack(((LivingAttackEvent) procPoint).getSource()) && ((LivingAttackEvent) procPoint).getEntity() == target) {
@@ -99,7 +99,7 @@ pound of flesh: active skill. Consumes all your spirit, and until your spirit re
                     //EXPLOOOOSION
                     for (LivingEntity e : caster.level.getEntitiesOfClass(LivingEntity.class, caster.getBoundingBox().inflate(5))) {
                         if (TargetingUtils.isHostile(e, caster)) {
-                            e.hurt(new CombatDamageSource("lightningBolt", caster).setDamageTyping(CombatDamageSource.TYPE.MAGICAL).setProcSkillEffects(true).setKnockbackPercentage(0).setAttackingHand(null).setSkillUsed(this).setMagic(), stat);
+                            e.hurt(new CombatDamageSource("lightningBolt", caster).setDamageTyping(CombatDamageSource.TYPE.MAGICAL).setProcSkillEffects(true).setKnockbackPercentage(0).setAttackingHand(null).setSkillUsed(this).setMagic(), stat * SkillUtils.getSkillEffectiveness(caster));
                             CombatUtils.knockBack(e, caster, stat / 4, true, false);
                         }
                     }
@@ -118,7 +118,7 @@ pound of flesh: active skill. Consumes all your spirit, and until your spirit re
                 for (LivingEntity e : caster.level.getEntitiesOfClass(LivingEntity.class, caster.getBoundingBox().inflate(6))) {
                     if (TargetingUtils.isHostile(e, caster)) {
                         ee.setCanceled(true);
-                        e.hurt(new CombatDamageSource("lightningBolt", caster).setDamageTyping(CombatDamageSource.TYPE.MAGICAL).setProcSkillEffects(true).setKnockbackPercentage(0).setAttackingHand(null).setSkillUsed(this).setMagic(), ee.getAmount()/4);
+                        e.hurt(new CombatDamageSource("lightningBolt", caster).setDamageTyping(CombatDamageSource.TYPE.MAGICAL).setProcSkillEffects(true).setKnockbackPercentage(0).setAttackingHand(null).setSkillUsed(this).setMagic(), ee.getAmount() * SkillUtils.getSkillEffectiveness(caster));
                         CombatUtils.knockBack(e, caster, ee.getAmount() / 4, true, false);
                     }
                 }

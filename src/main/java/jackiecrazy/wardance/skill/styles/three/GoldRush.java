@@ -1,5 +1,6 @@
 package jackiecrazy.wardance.skill.styles.three;
 
+import jackiecrazy.footwork.event.GainMightEvent;
 import jackiecrazy.wardance.WarDance;
 import jackiecrazy.wardance.capability.status.Marks;
 import jackiecrazy.wardance.event.ParryEvent;
@@ -7,10 +8,9 @@ import jackiecrazy.wardance.skill.SkillColors;
 import jackiecrazy.wardance.skill.SkillData;
 import jackiecrazy.wardance.skill.WarSkills;
 import jackiecrazy.wardance.skill.styles.ColorRestrictionStyle;
-import jackiecrazy.wardance.utils.DamageUtils;
+import jackiecrazy.wardance.utils.SkillUtils;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.ai.attributes.AttributeModifier;
-import net.minecraftforge.event.entity.living.LivingAttackEvent;
 import net.minecraftforge.event.entity.living.LootingLevelEvent;
 import net.minecraftforge.eventbus.api.Event;
 import net.minecraftforge.eventbus.api.EventPriority;
@@ -29,14 +29,17 @@ public class GoldRush extends ColorRestrictionStyle {
         super(3, false, SkillColors.gold);
     }
 
-    @SubscribeEvent()
-    public static void spread(LivingAttackEvent e) {
+    @SubscribeEvent(priority = EventPriority.LOWEST)
+    public static void spread(ParryEvent e) {
         //spread mark
-        if (DamageUtils.isMeleeAttack(e.getSource()) && e.getSource().getEntity() instanceof LivingEntity attacker)
-            Marks.getCap(attacker).getActiveMark(WarSkills.GOLD_RUSH.get()).ifPresent(a -> {
-                a.addArbitraryFloat(-1);
-                ((GoldRush) WarSkills.GOLD_RUSH.get()).mark(a.getCaster(attacker.level), e.getEntity(), 10, 1);
-            });
+        Marks.getCap(e.getEntity()).getActiveMark(WarSkills.GOLD_RUSH.get()).ifPresent(a -> {
+            //more pain
+            e.setPostureConsumption(e.getPostureConsumption() * (1 + a.getArbitraryFloat() * 0.1f));
+            //expire
+            a.setDuration(-10);
+            //infect
+            ((GoldRush) WarSkills.GOLD_RUSH.get()).mark(a.getCaster(e.getAttacker().level), e.getAttacker(), 10, a.getArbitraryFloat());
+        });
     }
 
     @SubscribeEvent()
@@ -55,12 +58,6 @@ public class GoldRush extends ColorRestrictionStyle {
                     lvl++;
                 e.setLootingLevel(e.getLootingLevel() + lvl);
             });
-    }
-
-    @SubscribeEvent()
-    public static void pain(ParryEvent e) {
-        //more damage
-        Marks.getCap(e.getEntity()).getActiveMark(WarSkills.GOLD_RUSH.get()).ifPresent(a -> e.setPostureConsumption(e.getPostureConsumption() * (1 + a.getArbitraryFloat() * 0.1f)));
     }
 
     @Override
@@ -83,10 +80,13 @@ public class GoldRush extends ColorRestrictionStyle {
     }
 
     @Override
-    public void onProc(LivingEntity caster, Event procPoint, STATE state, SkillData stats, LivingEntity target) {
+    public void onProc(LivingEntity caster, Event procPoint, STATE state, SkillData pd, LivingEntity target) {
         if (procPoint.getPhase() != EventPriority.LOWEST) return;
-        if (procPoint instanceof LivingAttackEvent lae && state == STATE.INACTIVE && lae.getEntity() == target && cast(caster)) {
-            mark(caster, target, 10, 1);
+        if (procPoint instanceof final GainMightEvent gme) {
+            pd.addArbitraryFloat(gme.getQuantity() * SkillUtils.getSkillEffectiveness(caster));
+            if (pd.getArbitraryFloat() > 1) {
+                mark(caster, caster, 10, 1);
+            }
         }
     }
 

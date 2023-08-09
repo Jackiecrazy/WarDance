@@ -106,6 +106,7 @@ public class ShieldCrush extends ShieldBash {
                 if (WeaponStats.isShield(caster, off))
                     posdam = Math.max(posdam, CombatUtils.getPostureAtk(caster, elb, InteractionHand.OFF_HAND, 0, off));
                 posdam = Math.max(posdam, 2);
+                posdam *= stats.getEffectiveness();
                 //crush!
                 SkillUtils.modifyAttribute(caster, Attributes.MOVEMENT_SPEED, debuffID, -0.6, AttributeModifier.Operation.MULTIPLY_TOTAL);
                 SkillUtils.modifyAttribute(elb, Attributes.MOVEMENT_SPEED, debuffID, -0.6, AttributeModifier.Operation.MULTIPLY_TOTAL);

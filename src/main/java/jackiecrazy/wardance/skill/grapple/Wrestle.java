@@ -94,12 +94,12 @@ public class Wrestle extends Skill {
 
     @Override
     public boolean markTick(LivingEntity caster, LivingEntity target, SkillData sd) {
-        if(caster==null){
+        if (caster == null) {
             sd.setDuration(-999);
             return true;
         }
         //immediately end if not unarmed
-        if(!CombatUtils.isFullyUnarmed(caster))
+        if (!CombatUtils.isFullyUnarmed(caster))
             sd.setDuration(-999);
         //boing
         updateTetheringVelocity(caster, target);
@@ -124,9 +124,8 @@ public class Wrestle extends Skill {
     public boolean onStateChange(LivingEntity caster, SkillData prev, STATE from, STATE to) {
         LivingEntity e = GeneralUtils.raytraceLiving(caster.level, caster, 3);
         if (to == STATE.ACTIVE && e != null && CombatUtils.isFullyUnarmed(caster) && cast(caster, e, duration())) {
-            mark(caster, e, duration(), 10);
+            mark(caster, e, duration(), 10 * prev.getEffectiveness());
             prev.setArbitraryFloat(0);
-            activate(caster, 10);
         }
         if (to == STATE.COOLING) {
             setCooldown(caster, prev, 10);

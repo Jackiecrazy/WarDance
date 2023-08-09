@@ -28,9 +28,15 @@ public class WoodenJab extends FiveElementFist {
     }
 
     @Override
+    public void onUnequip(LivingEntity caster, SkillData stats) {
+        SkillUtils.modifyAttribute(caster, ForgeMod.ATTACK_RANGE.get(), u, 0, AttributeModifier.Operation.ADDITION);
+        super.onUnequip(caster, stats);
+    }
+
+    @Override
     public void onProc(LivingEntity caster, Event procPoint, STATE state, SkillData stats, @Nullable LivingEntity target) {
         if (procPoint instanceof MeleeKnockbackEvent e && procPoint.getPhase() == EventPriority.HIGHEST && CombatUtils.isUnarmed(caster, InteractionHand.MAIN_HAND) && e.getAttacker() == caster) {
-            e.setStrength((float) (e.getOriginalStrength() * 1.5));
+            e.setStrength((float) (e.getOriginalStrength() * 1.5 * SkillUtils.getSkillEffectiveness(caster)));
         }
         super.onProc(caster, procPoint, state, stats, target);
     }
@@ -38,11 +44,5 @@ public class WoodenJab extends FiveElementFist {
     @Override
     protected void doAttack(LivingEntity caster, LivingEntity target) {
         CombatData.getCap(caster).addMight(0.1f);
-    }
-
-    @Override
-    public void onUnequip(LivingEntity caster, SkillData stats) {
-        SkillUtils.modifyAttribute(caster, ForgeMod.ATTACK_RANGE.get(), u, 0, AttributeModifier.Operation.ADDITION);
-        super.onUnequip(caster, stats);
     }
 }

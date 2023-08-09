@@ -13,8 +13,8 @@ import java.util.HashSet;
 import java.util.UUID;
 
 public class Apathy extends Skill {
-    private static final AttributeModifier sprint = new AttributeModifier(UUID.fromString("0683fe69-5348-4a83-95d5-81a2eeb2cca0"), "meh", -2, AttributeModifier.Operation.ADDITION);
-    private static final AttributeModifier sprint2 = new AttributeModifier(UUID.fromString("0683fe69-5348-4a83-95d5-81a2eeb2cca0"), "eh", 1, AttributeModifier.Operation.ADDITION);
+    private static final AttributeModifier sprint = new AttributeModifier(UUID.fromString("0683fe69-5348-4a83-95d5-81a2eeb2ffa0"), "meh", -2, AttributeModifier.Operation.ADDITION);
+    private static final AttributeModifier sprint2 = new AttributeModifier(UUID.fromString("0683fe69-5348-4a83-95d5-81a2eeb2ffa0"), "eh", 1, AttributeModifier.Operation.ADDITION);
 
     /*
     back and forth: recover (1/attack speed) spirit when parrying or landing a critical hit.

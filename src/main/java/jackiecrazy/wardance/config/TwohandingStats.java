@@ -18,7 +18,7 @@ import net.minecraftforge.registries.ForgeRegistries;
 import java.util.*;
 
 public class TwohandingStats extends SimpleJsonResourceReloadListener {
-    public static final UUID uuid = UUID.fromString("a516026a-bee2-4014-bcb6-b6a5775553de");
+    public static final UUID uuid = UUID.fromString("a516026a-bee2-4014-bcb6-b6a5776663de");
     public static final UUID[] MODIFIERS = {
             UUID.fromString("a516026a-bee2-4014-bcb6-b6a5775553da"),
             UUID.fromString("a516026a-bee2-4014-bcb6-b6a5775553db"),

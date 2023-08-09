@@ -201,7 +201,7 @@ public class SkillSelectionScreen extends Screen {
         //cannot insert skills contrary to style
         if (style.getSkill() != null && !style.getStyle().isEquippableWith(insert, collectSkills())) return false;
 //        if (style.getStyle() != null && getNumColors().size() > style.getStyle().getMaxColors())
-//            return false;//fixme breaks demon hunter
+//            return false;
         //current active conflict
         for (SkillSelectionButton ssb : skillPie)
             if (ssb.getSkill() != null && (!ssb.getSkill().isEquippableWith(insert, player)))
@@ -548,7 +548,7 @@ public class SkillSelectionScreen extends Screen {
                 Style style = tooltipText.getStyle();
                 if (!formatting.isEmpty()) style = style.applyFormats(formatting.toArray(fff));
                 if (!tooltip.isEmpty())
-                    style = style.withHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, unTooltipL18N(tooltip, additionalData)));
+                    style = style.withHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, unTooltipL18N(tooltip, (Object) additionalData)));
                 tooltipText.setStyle(style);
                 if (ichat == null) ichat = Component.literal("");
                 //literal

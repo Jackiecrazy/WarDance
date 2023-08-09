@@ -3,8 +3,8 @@ package jackiecrazy.wardance.skill.heavyblow;
 import jackiecrazy.footwork.capability.resources.CombatData;
 import jackiecrazy.wardance.event.ParryEvent;
 import jackiecrazy.wardance.skill.SkillData;
-import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.InteractionHand;
+import net.minecraft.world.entity.LivingEntity;
 import net.minecraftforge.event.entity.player.CriticalHitEvent;
 import net.minecraftforge.eventbus.api.Event;
 import net.minecraftforge.eventbus.api.EventPriority;
@@ -30,7 +30,7 @@ public class Stagger extends HeavyBlow {
     @Override
     protected void onCrit(CriticalHitEvent proc, SkillData stats, LivingEntity caster, LivingEntity target) {
         stats.setArbitraryFloat(proc.getDamageModifier());
-        proc.setDamageModifier(1);
+        proc.setDamageModifier(stats.getEffectiveness());
         stats.flagCondition(true);
     }
 

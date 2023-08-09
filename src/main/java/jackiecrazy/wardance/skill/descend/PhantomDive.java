@@ -54,7 +54,7 @@ public class PhantomDive extends Skill {
                     case DISTRACTED -> awareness = StealthUtils.Awareness.UNAWARE;
                     case UNAWARE -> length += 60;
                 }
-                posDiff -= 7;
+                posDiff -= 7 / stats.getEffectiveness();
             }
             if (length > 0) e.getEntity().addEffect(new MobEffectInstance(FootworkEffects.PARALYSIS.get(), length));
             ((EntityAwarenessEvent) procPoint).setAwareness(awareness);

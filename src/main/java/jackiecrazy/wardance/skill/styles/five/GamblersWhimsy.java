@@ -7,6 +7,7 @@ import jackiecrazy.wardance.event.SkillCastEvent;
 import jackiecrazy.wardance.skill.Skill;
 import jackiecrazy.wardance.skill.SkillData;
 import jackiecrazy.wardance.skill.styles.SkillStyle;
+import jackiecrazy.wardance.utils.SkillUtils;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraftforge.eventbus.api.Event;
 import net.minecraftforge.eventbus.api.EventPriority;
@@ -40,7 +41,7 @@ public class GamblersWhimsy extends SkillStyle {
         if (procPoint instanceof SkillCastEvent sre && sre.getPhase() == EventPriority.HIGHEST) {
             //slots that can be cast
             int allowed = 0x00000;
-            int indices = (int) (CombatData.getCap(caster).getComboRank() / 2d + 1.5);
+            int indices = (int) (CombatData.getCap(caster).getComboRank()* SkillUtils.getSkillEffectiveness(caster) / 2d + 1.5);
             while (indices > 0) {
                 int index = WarDance.rand.nextInt(indices);
                 allowed = unban(allowed, index);

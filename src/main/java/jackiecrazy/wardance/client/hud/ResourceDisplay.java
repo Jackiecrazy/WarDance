@@ -685,7 +685,7 @@ public class ResourceDisplay implements IGuiOverlay {
                     //coup de grace
                     for (Skill variant : skill.getEquippedVariations(SkillArchetypes.coup_de_grace))
                         if (look != player && variant instanceof CoupDeGrace cdg && skill.isSkillUsable(variant)) {
-                            if (cdg.willKillOnCast(player, looked)) {
+                            if (cdg.willKillOnCast(player, looked, skill.getSkillData(variant).get())) {
                                 afflict.add(new SkillData(cdg, 0, 0));
                             }
                         }

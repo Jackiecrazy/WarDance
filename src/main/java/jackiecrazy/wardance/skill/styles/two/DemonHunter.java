@@ -60,7 +60,7 @@ public class DemonHunter extends ColorRestrictionStyle {
             //more pain for marked
             Marks.getCap(uke).getActiveMark(WarSkills.DEMON_HUNTER.get()).ifPresent(a -> {
                 LivingEntity marker = a.getCaster(e.getEntity().level);
-                CombatData.getCap(uke).consumePosture(marker, 2);
+                CombatData.getCap(uke).consumePosture(marker, 2 * SkillUtils.getSkillEffectiveness(marker));
                 a.decrementDuration();
             });
         }

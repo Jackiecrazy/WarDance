@@ -1,0 +1,53 @@
+{
+  "variant": "skilled",
+  "weight": 10,
+  "quality": 1,
+  "dimensions": [
+  ],
+  "bonuses": [
+    {
+      "type": "apotheosis:attribute",
+      "gem_class": {
+        "key": "core_armor",
+        "types": [
+          "leggings",
+          "chestplate"
+        ]
+      },
+      "attribute": "footwork:skill_effectiveness",
+      "operation": "MULTIPLY_BASE",
+      "values": {
+        "common": {
+          "min": 0.05,
+          "steps": 1,
+          "step": 0.025
+        },
+        "uncommon": {
+          "min": 0.075,
+          "steps": 2,
+          "step": 0.025
+        },
+        "rare": {
+          "min": 0.01,
+          "steps": 2,
+          "step": 0.025
+        },
+        "epic": {
+          "min": 0.125,
+          "steps": 3,
+          "step": 0.025
+        },
+        "mythic": {
+          "min": 0.175,
+          "steps": 3,
+          "step": 0.025
+        },
+        "ancient": {
+          "min": 0.2,
+          "steps": 4,
+          "step": 0.025
+        }
+      }
+    }
+  ]
+}

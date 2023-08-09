@@ -42,7 +42,7 @@ public class WalkOfDionysus extends SkillStyle {
     private void fall(LivingEntity caster) {
         //area damage
         SkillUtils.createCloud(caster.level, caster, caster.getX(), caster.getY(), caster.getZ(), 7, ParticleTypes.LARGE_SMOKE);
-        for (LivingEntity entity : caster.level.getEntitiesOfClass(LivingEntity.class, caster.getBoundingBoxForCulling().inflate(5), a -> !TargetingUtils.isAlly(a, caster))) {
+        for (LivingEntity entity : caster.level.getEntitiesOfClass(LivingEntity.class, caster.getBoundingBoxForCulling().inflate(5 * SkillUtils.getSkillEffectiveness(caster)), a -> !TargetingUtils.isAlly(a, caster))) {
             CombatData.getCap(entity).consumePosture(caster, 5);
         }
     }

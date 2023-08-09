@@ -44,9 +44,9 @@ public class SelfishMascot extends Skill {
                     //absorb luck in a really weird and funky way
                     e.addEffect(new MobEffectInstance(MobEffects.UNLUCK, 60));
                     e.getAttribute(Attributes.LUCK).removeModifier(uid);
-                    stacks += e.getAttributeValue(Attributes.LUCK);
+                    stacks += e.getAttributeValue(Attributes.LUCK) ;
                     e.getAttribute(Attributes.LUCK).addPermanentModifier(unluck);
-                    SkillUtils.modifyAttribute(caster, Attributes.LUCK, uid, stacks, AttributeModifier.Operation.ADDITION);
+                    SkillUtils.modifyAttribute(caster, Attributes.LUCK, uid, stacks* SkillUtils.getSkillEffectiveness(caster), AttributeModifier.Operation.ADDITION);
                 }
             }
         }

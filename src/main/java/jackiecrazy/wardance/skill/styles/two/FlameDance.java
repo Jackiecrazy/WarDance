@@ -2,16 +2,16 @@ package jackiecrazy.wardance.skill.styles.two;
 
 import jackiecrazy.footwork.api.CombatDamageSource;
 import jackiecrazy.footwork.capability.resources.CombatData;
-import jackiecrazy.wardance.WarDance;
 import jackiecrazy.wardance.event.SkillCastEvent;
 import jackiecrazy.wardance.skill.ProcPoints;
 import jackiecrazy.wardance.skill.SkillData;
+import jackiecrazy.wardance.utils.DamageUtils;
+import jackiecrazy.wardance.utils.SkillUtils;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraftforge.event.entity.living.LivingAttackEvent;
 import net.minecraftforge.eventbus.api.Event;
 import net.minecraftforge.eventbus.api.EventPriority;
-import net.minecraftforge.fml.common.Mod;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.HashSet;
@@ -33,9 +33,9 @@ public class FlameDance extends WarCry {
         if (procPoint instanceof LivingAttackEvent lae && !lae.getSource().isBypassArmor() && procPoint.getPhase() == EventPriority.HIGHEST && lae.getEntity() == target) {
             mark(caster, target, 0.1f, 1);
             //kaboom!
-            if (CombatData.getCap(caster).getMight() == CombatData.getCap(caster).getMaxMight()) {
+            if (!DamageUtils.isSkillAttack(lae.getSource()) && CombatData.getCap(caster).getMight() == CombatData.getCap(caster).getMaxMight()) {
                 DamageSource kaboom = new CombatDamageSource("player", caster).setDamageTyping(CombatDamageSource.TYPE.MAGICAL).setProcSkillEffects(true).setSkillUsed(this).setPostureDamage(0).bypassArmor();
-                final float f = getExistingMark(target).getArbitraryFloat();
+                final float f = getExistingMark(target).getArbitraryFloat() * SkillUtils.getSkillEffectiveness(caster);
                 target.hurt(kaboom, f * ((int) (2 + f / 10)) / 2f);
                 target.hurtTime = target.hurtDuration = target.invulnerableTime = 0;
                 removeMark(target);

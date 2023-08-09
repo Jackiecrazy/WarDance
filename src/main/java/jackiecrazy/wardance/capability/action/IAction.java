@@ -23,7 +23,6 @@ public interface IAction {
 
     public void setSkill(boolean yes);
 
-    //TODO see stealth display or land distracted/unaware backstabs
     public void read(CompoundTag from);
 
     public CompoundTag write();

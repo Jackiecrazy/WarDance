@@ -10,6 +10,7 @@ import jackiecrazy.wardance.skill.Skill;
 import jackiecrazy.wardance.skill.SkillData;
 import jackiecrazy.wardance.skill.SkillTags;
 import jackiecrazy.wardance.utils.CombatUtils;
+import jackiecrazy.wardance.utils.SkillUtils;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.LivingEntity;
@@ -58,7 +59,7 @@ Flow: cooldown of all attack skills are halved, and any cooled attack skill is a
     @Override
     public boolean equippedTick(LivingEntity caster, SkillData stats) {
         if (stats.getState() != STATE.ACTIVE) return false;
-        if (!CombatData.getCap(caster).consumeMight(0.05f)) markUsed(caster);
+        if (!CombatData.getCap(caster).consumeMight(0.05f / stats.getEffectiveness())) markUsed(caster);
         if (stats.getState() == STATE.ACTIVE && caster.tickCount % 10 == 0 && !caster.isAutoSpinAttack()) {
             //spin to win!
             double reach = caster.getAttributeValue(ForgeMod.ATTACK_RANGE.get());

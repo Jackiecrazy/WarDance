@@ -73,7 +73,7 @@ public class Grapple extends Skill {
 
     protected void performEffect(LivingEntity caster, LivingEntity target, SkillData stats) {
         caster.level.playSound(null, target.getX(), target.getY(), target.getZ(), SoundEvents.BARREL_OPEN, SoundSource.PLAYERS, 0.3f + WarDance.rand.nextFloat() * 0.5f, 0.75f + WarDance.rand.nextFloat() * 0.5f);
-        CombatData.getCap(target).consumePosture(caster, 7, 0, true);
+        CombatData.getCap(target).consumePosture(caster, 7 * stats.getEffectiveness() * stats.getEffectiveness(), 0, true);
 
     }
 
@@ -110,8 +110,8 @@ public class Grapple extends Skill {
             if (overflow < 0) {
                 CombatData.getCap(target).addFracture(caster, 1);
                 //suplex shockwave
-                SkillUtils.createCloud(caster.level, caster, target.getX(), target.getY(), target.getZ(), 7, ParticleTypes.LARGE_SMOKE);
-                for (LivingEntity entity : target.level.getEntitiesOfClass(LivingEntity.class, target.getBoundingBoxForCulling().inflate(7), a -> !TargetingUtils.isAlly(a, caster))) {
+                SkillUtils.createCloud(caster.level, caster, target.getX(), target.getY(), target.getZ(), 7 * stats.getEffectiveness(), ParticleTypes.LARGE_SMOKE);
+                for (LivingEntity entity : target.level.getEntitiesOfClass(LivingEntity.class, target.getBoundingBoxForCulling().inflate(7 * stats.getEffectiveness()), a -> !TargetingUtils.isAlly(a, caster))) {
                     CombatData.getCap(entity).consumePosture(caster, overflow / -2);
                 }
             }

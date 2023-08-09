@@ -17,7 +17,7 @@ import java.util.HashSet;
 import java.util.UUID;
 
 public class WindScar extends WarCry {
-    private static final AttributeModifier reach = new AttributeModifier(UUID.fromString("abe24c38-73e3-4551-9df4-e06e117699c1"), "wind scar bonus", 1, AttributeModifier.Operation.ADDITION);
+    private static final AttributeModifier reach = new AttributeModifier(UUID.fromString("abe24c38-73e3-4551-9df4-e06e117699c1"), "wind scar bonus", 1.5, AttributeModifier.Operation.ADDITION);
     private final HashSet<String> tag = makeTag("chant", ProcPoints.on_being_hurt, ProcPoints.melee, ProcPoints.recharge_time, ProcPoints.recharge_sleep);
     private final HashSet<String> no = makeTag((("sweep")));
 

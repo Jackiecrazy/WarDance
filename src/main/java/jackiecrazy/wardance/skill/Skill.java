@@ -431,6 +431,7 @@ public abstract class Skill extends Move {
             a.flagCondition(flag);
             a.setArbitraryFloat(something);
             a.setState(STATE.ACTIVE);
+            a.setEffectiveness(SkillUtils.getSkillEffectiveness(caster));
         });
         return true;
     }

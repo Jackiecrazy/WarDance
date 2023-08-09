@@ -8,6 +8,7 @@ import jackiecrazy.wardance.WarDance;
 import jackiecrazy.wardance.capability.skill.CasterData;
 import jackiecrazy.wardance.config.CombatConfig;
 import jackiecrazy.wardance.skill.SkillData;
+import jackiecrazy.wardance.utils.SkillUtils;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.entity.Entity;
@@ -60,7 +61,7 @@ public class Throw extends Grapple {
 
     protected void performEffect(LivingEntity caster, LivingEntity target, SkillData stats) {
         caster.level.playSound(null, target.getX(), target.getY(), target.getZ(), SoundEvents.BARREL_OPEN, SoundSource.PLAYERS, 0.3f + WarDance.rand.nextFloat() * 0.5f, 0.75f + WarDance.rand.nextFloat() * 0.5f);
-        if (CombatData.getCap(target).consumePosture(caster, 7, 0, true) < 0 || CombatData.getCap(target).isVulnerable()) {
+        if (CombatData.getCap(target).consumePosture(caster, 7*stats.getEffectiveness(), 0, true) < 0 || CombatData.getCap(target).isVulnerable()) {
             target.startRiding(caster, true);
             mark(caster, target, CombatConfig.knockdownDuration * 2);
             stats.flagCondition(true);
@@ -75,6 +76,7 @@ public class Throw extends Grapple {
         sd.decrementDuration(0.05f);
         Entity collide = GeneralUtils.collidingEntity(target);
         if (sd.isCondition() && (target.horizontalCollision || target.verticalCollision || collide != null)) {
+            //FIXME what's the point of consuming posture when they're already knocked down?
             removeMark(target);
             CombatData.getCap(target).consumePosture(7);
             if (caster != null) {

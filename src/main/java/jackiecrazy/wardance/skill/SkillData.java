@@ -13,7 +13,7 @@ public class SkillData {
     private float duration;
     private float max;
     private float var;
-    private float effectiveness;
+    private float effectiveness =1;
     private boolean condition, dirty;
     private Skill.STATE state = Skill.STATE.INACTIVE;
     private LivingEntity caster;
@@ -29,8 +29,6 @@ public class SkillData {
         this(skill, arbitraryDuration, arbitraryDuration);
         state = Skill.STATE.ACTIVE;
     }
-
-    //TODO allow skills to store custom data
 
     @Nullable
     public static SkillData read(CompoundTag from) {

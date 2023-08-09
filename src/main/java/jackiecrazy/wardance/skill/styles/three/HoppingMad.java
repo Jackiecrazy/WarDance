@@ -41,7 +41,7 @@ public class HoppingMad extends SkillStyle {
             stats.flagCondition(true);
         } else if (procPoint instanceof LivingFallEvent && stats.isCondition() && procPoint.getPhase() == EventPriority.HIGHEST) {
             final ICombatCapability cap = CombatData.getCap(caster);
-            cap.addPosture((cap.getMaxPosture() - cap.getPosture()) / 2);
+            cap.addPosture((cap.getMaxPosture() - cap.getPosture())*SkillUtils.getSkillEffectiveness(caster) / 2);
             stats.flagCondition(false);
         }
     }

@@ -2,6 +2,7 @@ package jackiecrazy.wardance.skill.ironguard;
 
 import jackiecrazy.wardance.event.ParryEvent;
 import jackiecrazy.wardance.skill.SkillData;
+import jackiecrazy.wardance.utils.SkillUtils;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraftforge.event.entity.living.LivingAttackEvent;
 import net.minecraftforge.eventbus.api.Event;
@@ -35,7 +36,7 @@ public class Mikiri extends IronGuard {
     @Override
     public boolean onStateChange(LivingEntity caster, SkillData prev, STATE from, STATE to) {
         if (to == STATE.COOLING)
-            setCooldown(caster, prev, 7);
+            setCooldown(caster, prev, 7/ SkillUtils.getSkillEffectiveness(caster));
         return passive(prev, from, to);
     }
 }

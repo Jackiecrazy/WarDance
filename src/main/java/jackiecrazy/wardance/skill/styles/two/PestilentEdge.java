@@ -6,6 +6,7 @@ import jackiecrazy.wardance.event.ParryEvent;
 import jackiecrazy.wardance.skill.SkillData;
 import jackiecrazy.wardance.skill.styles.SkillStyle;
 import jackiecrazy.wardance.utils.DamageUtils;
+import jackiecrazy.wardance.utils.SkillUtils;
 import net.minecraft.world.effect.MobEffectCategory;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.entity.LivingEntity;
@@ -22,14 +23,14 @@ public class PestilentEdge extends SkillStyle {
 
     @Override
     public void onProc(LivingEntity caster, Event procPoint, STATE state, SkillData stats, @Nullable LivingEntity target) {
-        if (procPoint instanceof ParryEvent cpe && cpe.getEntity() == target &&cpe.getPhase()== EventPriority.HIGHEST) {
+        if (procPoint instanceof ParryEvent cpe && cpe.getEntity() == target && cpe.getPhase() == EventPriority.HIGHEST) {
             int debuffs = 0;
             for (MobEffectInstance mei : target.getActiveEffects().stream().toList()) {
-                if (mei.getEffect().getCategory() == MobEffectCategory.HARMFUL) debuffs += mei.getAmplifier() + 1;
+                if (mei.getEffect().getCategory() == MobEffectCategory.HARMFUL) debuffs += 1;
             }
             debuffs += Marks.getCap(target).getActiveMarks().size();
-            cpe.setPostureConsumption(cpe.getPostureConsumption() + debuffs);
-        } else if (procPoint instanceof LivingHurtEvent cpe &&cpe.getPhase()== EventPriority.HIGHEST && DamageUtils.isMeleeAttack(cpe.getSource()) && cpe.getEntity() == target) {
+            cpe.setPostureConsumption(cpe.getPostureConsumption() + debuffs * SkillUtils.getSkillEffectiveness(caster));
+        } else if (procPoint instanceof LivingHurtEvent cpe && cpe.getPhase() == EventPriority.HIGHEST && DamageUtils.isMeleeAttack(cpe.getSource()) && cpe.getEntity() == target) {
             if (!cpe.isCanceled()) {
                 if (cpe.getSource() instanceof CombatDamageSource cds) {
                     cds.setProcSkillEffects(true);
@@ -37,10 +38,10 @@ public class PestilentEdge extends SkillStyle {
                 }
                 int debuffs = 0;
                 for (MobEffectInstance mei : target.getActiveEffects().stream().toList()) {
-                    if (mei.getEffect().getCategory() == MobEffectCategory.HARMFUL) debuffs += mei.getAmplifier() + 1;
+                    if (mei.getEffect().getCategory() == MobEffectCategory.HARMFUL) debuffs += 1;
                 }
                 debuffs += Marks.getCap(target).getActiveMarks().size();
-                cpe.setAmount(cpe.getAmount() + debuffs);
+                cpe.setAmount(cpe.getAmount() + debuffs * SkillUtils.getSkillEffectiveness(caster));
             }
         }
     }

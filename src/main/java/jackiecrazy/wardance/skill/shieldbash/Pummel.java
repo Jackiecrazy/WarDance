@@ -26,26 +26,7 @@ public class Pummel extends ShieldBash {
     }
 
     @Override
-    public float spiritConsumption(LivingEntity caster) {
-        return 0;
-    }
-
-    @Override
-    public void onProc(LivingEntity caster, Event procPoint, STATE state, SkillData stats, LivingEntity target) {
-        if (procPoint instanceof LivingAttackEvent lae && lae.getEntity() == target && DamageUtils.isMeleeAttack(lae.getSource()) && procPoint.getPhase() == EventPriority.HIGHEST) {
-            updateCasterShieldDamage(caster, target);
-        }
-        stats.setState(STATE.INACTIVE);
-    }
-
-    @Override
     protected boolean showArchetypeDescription() {
-        return false;
-    }
-
-    @Override
-    public boolean equippedTick(LivingEntity caster, SkillData stats) {
-        updateCasterShieldDamage(caster, null);
         return false;
     }
 
@@ -62,6 +43,25 @@ public class Pummel extends ShieldBash {
     }
 
     @Override
+    public float spiritConsumption(LivingEntity caster) {
+        return 0;
+    }
+
+    @Override
+    public boolean equippedTick(LivingEntity caster, SkillData stats) {
+        updateCasterShieldDamage(caster, null);
+        return false;
+    }
+
+    @Override
+    public void onProc(LivingEntity caster, Event procPoint, STATE state, SkillData stats, LivingEntity target) {
+        if (procPoint instanceof LivingAttackEvent lae && lae.getEntity() == target && DamageUtils.isMeleeAttack(lae.getSource()) && procPoint.getPhase() == EventPriority.HIGHEST) {
+            updateCasterShieldDamage(caster, target);
+        }
+        stats.setState(STATE.INACTIVE);
+    }
+
+    @Override
     public boolean onStateChange(LivingEntity caster, SkillData prev, STATE from, STATE to) {
         return passive(prev, from, to);
     }
@@ -69,9 +69,9 @@ public class Pummel extends ShieldBash {
     private void updateCasterShieldDamage(LivingEntity caster, @Nullable LivingEntity target) {
         final ItemStack stack = caster.getMainHandItem();
         final boolean shield = WeaponStats.isShield(caster, stack);
-        float attack=0;
-        if(shield)
-            attack = CombatUtils.getPostureAtk(caster, target, InteractionHand.MAIN_HAND, 0, stack);
+        float attack = 0;
+        if (shield)
+            attack = CombatUtils.getPostureAtk(caster, target, InteractionHand.MAIN_HAND, 0, stack)*SkillUtils.getSkillEffectiveness(caster);
         SkillUtils.modifyAttribute(caster, Attributes.ATTACK_DAMAGE, pummel, attack, AttributeModifier.Operation.ADDITION);
     }
 }

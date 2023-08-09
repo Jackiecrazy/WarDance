@@ -189,7 +189,6 @@ public class WeaponStats extends SimpleJsonResourceReloadListener {
     }
 
     public static boolean isTwoHanded(ItemStack is, LivingEntity e) {
-        if (is.getItem() instanceof AxeItem) return true;
         return !is.isEmpty() && is.is(TWO_HANDED);
     }
 

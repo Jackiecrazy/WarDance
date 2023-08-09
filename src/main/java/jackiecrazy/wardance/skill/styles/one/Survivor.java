@@ -6,6 +6,7 @@ import jackiecrazy.footwork.event.GainMightEvent;
 import jackiecrazy.wardance.WarDance;
 import jackiecrazy.wardance.skill.SkillData;
 import jackiecrazy.wardance.skill.styles.SkillStyle;
+import jackiecrazy.wardance.utils.SkillUtils;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.entity.LivingEntity;
@@ -73,7 +74,7 @@ public class Survivor extends SkillStyle {
             return true;
         }
         if (from != STATE.ACTIVE && to == STATE.ACTIVE) {
-            prev.setDuration(200);
+            prev.setDuration(200* SkillUtils.getSkillEffectiveness(caster));
             prev.setState(STATE.ACTIVE);
         }
         return passive(prev, from, to);

@@ -29,9 +29,9 @@ displayName="Project: War Dance" #mandatory
 # A file name (in the root of the mod JAR) containing a logo for display
 logoFile="pwd.png" #optional
 # A text field displayed in the mod UI
-credits="Swirtz, Forge guys, Darkmega, Darkhax, everyone on the discord server!" #optional
+credits="Swirtz, Shadow, Darkhax, everyone on the discord server!" #optional
 # A text field displayed in the mod UI
-authors="Jackiecrazy" #optional
+authors="Jackiecrazy, DarkMega, amoooooooooooo, Raiguri" #optional
 # The description text for the mod (multi line!) (#mandatory)
 description='''
 A mod about in-combat resources. Dodge, kick, stagger, and dual-wield your way to victory.

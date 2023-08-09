@@ -43,21 +43,21 @@ elemental might: +1 burn/snowball/poison/drown damage to targets you have attack
 
     @SubscribeEvent(priority = EventPriority.HIGHEST)
     public static void hurt(LivingDamageEvent e) {
-        Entity seme = e.getSource().getEntity();
+        Entity ent = e.getSource().getEntity();
         LivingEntity uke = e.getEntity();
-        if (seme instanceof LivingEntity) {
+        if (ent instanceof LivingEntity seme) {
             final Skill venge = WarSkills.VENGEFUL_MIGHT.get();
             for (Player p : uke.level.players())
                 if (TargetingUtils.isAlly(p, uke) && !TargetingUtils.isAlly(p, seme) && p.distanceToSqr(uke) < 100 && CasterData.getCap(p).getEquippedSkills().contains(venge)) {
-                    ((LivingEntity) seme).addEffect(new MobEffectInstance(MobEffects.GLOWING, 100));
-                    SkillData apply = Marks.getCap((LivingEntity) seme).getActiveMark(venge).orElse(new SkillData(venge, 0));
-                    apply.addArbitraryFloat(e.getAmount());
-                    Marks.getCap((LivingEntity) seme).mark(apply);
+                    seme.addEffect(new MobEffectInstance(MobEffects.GLOWING, 100));
+                    SkillData apply = Marks.getCap(seme).getActiveMark(venge).orElse(new SkillData(venge, 0));
+                    apply.addArbitraryFloat(e.getAmount() * SkillUtils.getSkillEffectiveness(p));
+                    Marks.getCap(seme).mark(apply);
                 }
-            if (Marks.getCap(uke).isMarked(venge) && CasterData.getCap((LivingEntity) seme).getEquippedSkills().contains(venge)) {
+            if (Marks.getCap(uke).isMarked(venge) && CasterData.getCap(seme).getEquippedSkills().contains(venge)) {
                 Marks.getCap(uke).getActiveMark(venge).ifPresent(a -> {
-                    final float amnt = Math.min(e.getAmount(), a.getArbitraryFloat());
-                    CombatData.getCap((LivingEntity) seme).addMight(amnt / 2);
+                    final float amnt = Math.min(e.getAmount(), a.getArbitraryFloat()) * SkillUtils.getSkillEffectiveness(seme);
+                    CombatData.getCap(seme).addMight(amnt / 2);
                     e.setAmount(e.getAmount() + amnt);
                     a.addArbitraryFloat(-e.getAmount());
                     if (a.getArbitraryFloat() < 0) a.setDuration(-10);
@@ -122,11 +122,11 @@ elemental might: +1 burn/snowball/poison/drown damage to targets you have attack
     public void onProc(LivingEntity caster, Event procPoint, STATE state, SkillData stats, LivingEntity target) {
         int might = (int) CombatData.getCap(caster).getMight();
         if (procPoint instanceof LivingAttackEvent && procPoint.getPhase() == EventPriority.LOWEST) {
-            SkillUtils.modifyAttribute(caster, Attributes.ATTACK_DAMAGE, MULT, 0.15f * might, AttributeModifier.Operation.MULTIPLY_BASE);
+            SkillUtils.modifyAttribute(caster, Attributes.ATTACK_DAMAGE, MULT, 0.15f * might * SkillUtils.getSkillEffectiveness(caster), AttributeModifier.Operation.MULTIPLY_BASE);
         }
-        if (procPoint instanceof GainMightEvent && procPoint.getPhase() == EventPriority.HIGHEST) {
-            float missingMight = (CombatData.getCap(caster).getMaxMight() - might);
-            ((GainMightEvent) procPoint).setQuantity(((GainMightEvent) procPoint).getQuantity() * (1 + missingMight * .15f));
+        if (procPoint instanceof GainMightEvent gme && procPoint.getPhase() == EventPriority.HIGHEST) {
+            float missingMight = (CombatData.getCap(caster).getMaxMight() - might) - 1 + SkillUtils.getSkillEffectiveness(caster);
+            gme.setQuantity(gme.getQuantity() * (1 + missingMight * .15f));
         }
     }
 
@@ -178,9 +178,9 @@ elemental might: +1 burn/snowball/poison/drown damage to targets you have attack
 
         @Override
         public void onProc(LivingEntity caster, Event procPoint, STATE state, SkillData pd, LivingEntity target) {
-            if (procPoint instanceof GainMightEvent && procPoint.getPhase() == EventPriority.HIGHEST) {
-                ((GainMightEvent) procPoint).setQuantity(((GainMightEvent) procPoint).getQuantity() * 1.5f);
-                pd.addArbitraryFloat(((GainMightEvent) procPoint).getQuantity());
+            if (procPoint instanceof final GainMightEvent gme && procPoint.getPhase() == EventPriority.HIGHEST) {
+                gme.setQuantity(gme.getQuantity() * 1.5f);
+                pd.addArbitraryFloat(gme.getQuantity() * SkillUtils.getSkillEffectiveness(caster));
                 if (pd.getArbitraryFloat() > 2) {
                     pd.setArbitraryFloat(pd.getArbitraryFloat() % 2);
                     CombatData.getCap(caster).setEvade(CombatCapability.EVADE_CHARGE);
