@@ -59,7 +59,7 @@ A mod about in-combat resources. Dodge, kick, stagger, and dual-wield your way t
 [[dependencies.wardance]]
     modId="footwork"
     mandatory=true
-    versionRange="[2.9,)"
+    versionRange="[3.0,)"
     ordering="AFTER"
     side="BOTH"
 [[dependencies.wardance]]

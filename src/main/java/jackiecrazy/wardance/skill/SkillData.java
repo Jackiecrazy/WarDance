@@ -97,6 +97,7 @@ public class SkillData {
 
     public SkillData flagCondition(boolean success) {
         condition = success;
+        dirty=true;
         return this;
     }
 

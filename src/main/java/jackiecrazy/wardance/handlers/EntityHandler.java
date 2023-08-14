@@ -121,7 +121,6 @@ public class EntityHandler {
                 return;
             } else CombatData.getCap(e.player).serverTick();
             CasterData.getCap(e.player).update();
-            Marks.getCap(e.player).update();
         }
     }
 

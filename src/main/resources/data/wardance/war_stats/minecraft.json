@@ -1,352 +1,1708 @@
 {
-  "minecraft:bow": {
-    "attack": 1.2,
-    "defend": 0.90,
+  "minecraft:golden_hoe": {
+    "attack": 1.0,
+    "defend": 1.0,
     "shield": false,
-    "sweep": "line",
-    "sweep_base": 0.5,
-    "sweep_scale": 1
+    "sweep": "CONE",
+    "knockback": 1.0,
+    "damage_scale": 1.0,
+    "posture_scale": 1.0,
+    "crit": false,
+    "crit_damage": 1.5,
+    "sweep_base": 40.0,
+    "sweep_scale": 20.0,
+    "standing": {
+      "sweep": "CONE",
+      "sweep_base": 40.0,
+      "sweep_scale": 20.0
+    },
+    "falling": {
+      "sweep": "CLEAVE",
+      "knockback": 0.75,
+      "damage_scale": 2.0,
+      "posture_scale": 2.0,
+      "sweep_base": 60.0,
+      "sweep_scale": 20.0,
+      "crit": true
+    },
+    "sneaking": {
+      "sweep": "CONE",
+      "knockback": 1.25,
+      "posture_scale": 0.75,
+      "sweep_base": 60.0,
+      "sweep_scale": 20.0
+    },
+    "sprinting": {
+      "sweep": "CLEAVE",
+      "knockback": 1.5,
+      "sweep_base": 50.0,
+      "sweep_scale": 25.0
+    },
+    "riding": {
+      "sweep": "CONE",
+      "knockback": 1.5,
+      "posture_scale": 1.5,
+      "crit_damage": 2.0,
+      "sweep_base": 40.0,
+      "sweep_scale": 20.0
+    }
   },
-  "minecraft:crossbow": {
-    "attack": 2,
-    "defend": 1.10,
-    "shield": true,
-    "sweep": "cone",
-    "sweep_base": 40,
-    "sweep_scale": 20
-  },
-  "minecraft:diamond_axe": {
-    "attack": 4,
+  "minecraft:stone_shovel": {
+    "attack": 6.0,
     "defend": 0.9,
     "shield": false,
-    "sweep": "impact",
-    "sweep_base": 0.5,
-    "sweep_scale": 0.5
+    "sweep": "IMPACT",
+    "knockback": 1.0,
+    "damage_scale": 1.0,
+    "posture_scale": 0.75,
+    "crit": false,
+    "crit_damage": 1.5,
+    "sweep_base": 0.75,
+    "sweep_scale": 0.5,
+    "standing": {
+      "sweep": "IMPACT",
+      "sweep_base": 0.75,
+      "sweep_scale": 0.5
+    },
+    "falling": {
+      "sweep": "IMPACT",
+      "knockback": 1.25,
+      "crit_damage": 2.0,
+      "sweep_base": 1.5,
+      "sweep_scale": 0.75,
+      "crit": true
+    },
+    "sneaking": {
+      "sweep": "CONE",
+      "knockback": 0.5,
+      "damage_scale": 0.5,
+      "posture_scale": 0.5,
+      "sweep_base": 50.0,
+      "sweep_scale": 30.0
+    },
+    "sprinting": {
+      "sweep": "NONE",
+      "knockback": 2.0,
+      "posture_scale": 1.5,
+      "damage_other_command": "/function wardance:attack/damageother_mildstun",
+      "crit": true
+    },
+    "riding": {
+      "sweep": "IMPACT",
+      "knockback": 2.0,
+      "damage_scale": 1.5,
+      "posture_scale": 1.25,
+      "crit_damage": 2.0,
+      "sweep_base": 1.25,
+      "sweep_scale": 0.75
+    }
   },
-  "minecraft:diamond_hoe": {
-    "attack": 1,
-    "defend": 1.00,
+  "minecraft:iron_nugget": {
+    "attack": 0.5,
+    "defend": 1.2,
     "shield": false,
-    "sweep": "cone",
-    "sweep_base": 20,
-    "sweep_scale": 20
+    "sweep": "NONE",
+    "knockback": 1.0,
+    "damage_scale": 1.0,
+    "posture_scale": 1.0,
+    "crit": false,
+    "crit_damage": 1.5,
+    "sweep_base": 0.0,
+    "sweep_scale": 0.0,
+    "riding": {
+      "sweep": "NONE",
+      "knockback": 1.5,
+      "damage_scale": 1.5,
+      "posture_scale": 1.25,
+      "crit_damage": 2.0
+    }
   },
   "minecraft:diamond_pickaxe": {
     "attack": 2.5,
-    "defend": 1,
+    "defend": 1.0,
     "shield": false,
-    "sweep": "impact",
-    "sweep_base": 0,
-    "sweep_scale": 1
-  },
-  "minecraft:diamond_shovel": {
-    "attack": 6,
-    "defend": 0.9,
-    "shield": false,
-    "sweep": "impact",
+    "sweep": "IMPACT",
+    "knockback": 1.0,
+    "damage_scale": 1.0,
+    "posture_scale": 1.0,
+    "crit": false,
+    "crit_damage": 1.5,
     "sweep_base": 0.5,
-    "sweep_scale": 0.5
-  },
-  "minecraft:diamond_sword": {
-    "attack": 2.6,
-    "defend": 0.90,
-    "shield": false,
-    "sweep": "cone",
-    "sweep_base": 40,
-    "sweep_scale": 40,
+    "sweep_scale": 0.5,
+    "standing": {
+      "sweep": "IMPACT",
+      "sweep_base": 0.5,
+      "sweep_scale": 0.5
+    },
     "falling": {
-      "sweep": "cleave",
-      "sweep_base": 40,
-      "sweep_scale": 40,
-      "knockback": 1,
-      "damage_scale": 1,
-      "posture_scale": 1,
-      "crit": true,
-      "crit_damage": 1.5,
-      "hit_self_command" : "",
-      "hit_other_command" : "",
-      "damage_self_command" : "",
-      "damage_other_command" : ""
+      "sweep": "NONE",
+      "posture_scale": 1.5,
+      "crit_damage": 2.0,
+      "crit": true
+    },
+    "sneaking": {
+      "sweep": "CLEAVE",
+      "knockback": 0.75,
+      "damage_scale": 0.75,
+      "posture_scale": 0.75,
+      "sweep_base": 40.0,
+      "sweep_scale": 20.0
+    },
+    "sprinting": {
+      "sweep": "IMPACT",
+      "knockback": 1.5,
+      "sweep_base": 1.0,
+      "sweep_scale": 0.5,
+      "damage_other_command": "/function damageother_armorcleaveminor",
+      "crit": true
+    },
+    "riding": {
+      "sweep": "IMPACT",
+      "crit_damage": 2.0,
+      "sweep_base": 0.5,
+      "sweep_scale": 0.5
     }
-  },
-  "minecraft:end_rod": {
-    "attack": 0.5,
-    "defend": 1.00,
-    "shield": false,
-    "sweep": "none",
-    "sweep_base": 0,
-    "sweep_scale": 0
-  },
-  "minecraft:flint_and_steel": {
-    "attack": 0.5,
-    "defend": 1,
-    "shield": false,
-    "sweep": "none",
-    "sweep_base": 0,
-    "sweep_scale": 0
-  },
-  "minecraft:golden_axe": {
-    "attack": 4,
-    "defend": 0.9,
-    "shield": false,
-    "sweep": "impact",
-    "sweep_base": 0.5,
-    "sweep_scale": 0.5
-  },
-  "minecraft:golden_hoe": {
-    "attack": 1,
-    "defend": 1.00,
-    "shield": false,
-    "sweep": "cone",
-    "sweep_base": 20,
-    "sweep_scale": 20
-  },
-  "minecraft:golden_pickaxe": {
-    "attack": 2.5,
-    "defend": 1,
-    "shield": false,
-    "sweep": "impact",
-    "sweep_base": 0,
-    "sweep_scale": 1
-  },
-  "minecraft:golden_shovel": {
-    "attack": 6,
-    "defend": 0.9,
-    "shield": false,
-    "sweep": "impact",
-    "sweep_base": 0.5,
-    "sweep_scale": 0.5
-  },
-  "minecraft:golden_sword": {
-    "attack": 2.6,
-    "defend": 0.90,
-    "shield": false,
-    "sweep": "cone",
-    "sweep_base": 40,
-    "sweep_scale": 40
-  },
-  "minecraft:iron_axe": {
-    "attack": 4,
-    "defend": 0.9,
-    "shield": false,
-    "sweep": "impact",
-    "sweep_base": 0.5,
-    "sweep_scale": 0.5
-  },
-  "minecraft:iron_hoe": {
-    "attack": 1,
-    "defend": 1.00,
-    "shield": false,
-    "sweep": "cone",
-    "sweep_base": 20,
-    "sweep_scale": 20
-  },
-  "minecraft:iron_nugget": {
-    "attack": 1,
-    "defend": 1.00,
-    "shield": false,
-    "sweep": "none",
-    "sweep_base": 0,
-    "sweep_scale": 0
-  },
-  "minecraft:iron_pickaxe": {
-    "attack": 2.5,
-    "defend": 1,
-    "shield": false,
-    "sweep": "impact",
-    "sweep_base": 0,
-    "sweep_scale": 1
-  },
-  "minecraft:iron_shovel": {
-    "attack": 6,
-    "defend": 0.9,
-    "shield": false,
-    "sweep": "impact",
-    "sweep_base": 0.5,
-    "sweep_scale": 0.5
-  },
-  "minecraft:iron_sword": {
-    "attack": 2.6,
-    "defend": 0.90,
-    "shield": false,
-    "sweep": "cone",
-    "sweep_base": 40,
-    "sweep_scale": 40
-  },
-  "minecraft:lantern": {
-    "attack": 0.5,
-    "defend": 1,
-    "shield": false,
-    "sweep": "none",
-    "sweep_base": 0,
-    "sweep_scale": 0
-  },
-  "minecraft:netherite_axe": {
-    "attack": 4,
-    "defend": 0.9,
-    "shield": false,
-    "sweep": "impact",
-    "sweep_base": 0.5,
-    "sweep_scale": 0.5
-  },
-  "minecraft:netherite_hoe": {
-    "attack": 1,
-    "defend": 1.00,
-    "shield": false,
-    "sweep": "cone",
-    "sweep_base": 20,
-    "sweep_scale": 20
   },
   "minecraft:netherite_pickaxe": {
     "attack": 2.5,
-    "defend": 1,
+    "defend": 1.0,
     "shield": false,
-    "sweep": "impact",
-    "sweep_base": 0,
-    "sweep_scale": 1
-  },
-  "minecraft:netherite_shovel": {
-    "attack": 6,
-    "defend": 0.9,
-    "shield": false,
-    "sweep": "impact",
+    "sweep": "IMPACT",
+    "knockback": 1.0,
+    "damage_scale": 1.0,
+    "posture_scale": 1.0,
+    "crit": false,
+    "crit_damage": 1.5,
     "sweep_base": 0.5,
-    "sweep_scale": 0.5
+    "sweep_scale": 0.5,
+    "standing": {
+      "sweep": "IMPACT",
+      "sweep_base": 0.5,
+      "sweep_scale": 0.5
+    },
+    "falling": {
+      "sweep": "NONE",
+      "posture_scale": 1.5,
+      "crit_damage": 2.0,
+      "crit": true
+    },
+    "sneaking": {
+      "sweep": "CLEAVE",
+      "knockback": 0.75,
+      "damage_scale": 0.75,
+      "posture_scale": 0.75,
+      "sweep_base": 40.0,
+      "sweep_scale": 20.0
+    },
+    "sprinting": {
+      "sweep": "IMPACT",
+      "knockback": 1.5,
+      "sweep_base": 1.0,
+      "sweep_scale": 0.5,
+      "damage_other_command": "/function damageother_armorcleaveminor",
+      "crit": true
+    },
+    "riding": {
+      "sweep": "IMPACT",
+      "crit_damage": 2.0,
+      "sweep_base": 0.5,
+      "sweep_scale": 0.5
+    }
   },
-  "minecraft:netherite_sword": {
+  "minecraft:iron_sword": {
     "attack": 2.6,
-    "defend": 0.90,
-    "shield": false,
-    "sweep": "cone",
-    "sweep_base": 40,
-    "sweep_scale": 40
-  },
-  "minecraft:redstone_torch": {
-    "attack": 0.5,
-    "defend": 1,
-    "shield": false,
-    "sweep": "none",
-    "sweep_base": 0,
-    "sweep_scale": 0
-  },
-  "minecraft:shield": {
-    "attack": 4,
-    "defend": 0.60,
-    "shield": true,
-    "sweep": "impact",
-    "sweep_base": 0.5,
-    "sweep_scale": 0.5
-  },
-  "minecraft:soul_lantern": {
-    "attack": 0.5,
-    "defend": 1,
-    "shield": false,
-    "sweep": "none",
-    "sweep_base": 0,
-    "sweep_scale": 0
-  },
-  "minecraft:spyglass": {
-    "attack": 0.5,
-    "defend": 1,
-    "shield": false,
-    "sweep": "none",
-    "sweep_base": 0,
-    "sweep_scale": 0
-  },
-  "minecraft:stone_axe": {
-    "attack": 4,
     "defend": 0.9,
     "shield": false,
-    "sweep": "impact",
-    "sweep_base": 0.5,
-    "sweep_scale": 0.5
+    "sweep": "CONE",
+    "knockback": 0.75,
+    "damage_scale": 0.5,
+    "posture_scale": 0.75,
+    "crit": false,
+    "crit_damage": 1.5,
+    "sweep_base": 40.0,
+    "sweep_scale": 20.0,
+    "standing": {
+      "sweep": "CONE",
+      "knockback": 0.75,
+      "damage_scale": 0.5,
+      "posture_scale": 0.75,
+      "sweep_base": 40.0,
+      "sweep_scale": 20.0
+    },
+    "falling": {
+      "sweep": "CLEAVE",
+      "posture_scale": 1.5,
+      "sweep_base": 50.0,
+      "sweep_scale": 25.0,
+      "crit": true
+    },
+    "sneaking": {
+      "sweep": "CONE",
+      "knockback": 1.25,
+      "damage_scale": 0.5,
+      "sweep_base": 50.0,
+      "sweep_scale": 30.0
+    },
+    "sprinting": {
+      "sweep": "LINE",
+      "knockback": 0.75,
+      "crit_damage": 2.0,
+      "sweep_base": 0.3,
+      "sweep_scale": 0.2,
+      "crit": true
+    },
+    "riding": {
+      "sweep": "CONE",
+      "knockback": 1.5,
+      "damage_scale": 1.5,
+      "posture_scale": 1.5,
+      "crit_damage": 2.0,
+      "sweep_base": 40.0,
+      "sweep_scale": 20.0
+    }
   },
-  "minecraft:stone_hoe": {
-    "attack": 1,
-    "defend": 1.00,
-    "shield": false,
-    "sweep": "cone",
-    "sweep_base": 20,
-    "sweep_scale": 20
-  },
-  "minecraft:stone_pickaxe": {
+  "minecraft:wooden_pickaxe": {
     "attack": 2.5,
-    "defend": 1,
+    "defend": 1.0,
     "shield": false,
-    "sweep": "impact",
-    "sweep_base": 0,
-    "sweep_scale": 1
+    "sweep": "IMPACT",
+    "knockback": 1.0,
+    "damage_scale": 1.0,
+    "posture_scale": 1.0,
+    "crit": false,
+    "crit_damage": 1.5,
+    "sweep_base": 0.5,
+    "sweep_scale": 0.5,
+    "standing": {
+      "sweep": "IMPACT",
+      "sweep_base": 0.5,
+      "sweep_scale": 0.5
+    },
+    "falling": {
+      "sweep": "NONE",
+      "posture_scale": 1.5,
+      "crit_damage": 2.0,
+      "crit": true
+    },
+    "sneaking": {
+      "sweep": "CLEAVE",
+      "knockback": 0.75,
+      "damage_scale": 0.75,
+      "posture_scale": 0.75,
+      "sweep_base": 40.0,
+      "sweep_scale": 20.0
+    },
+    "sprinting": {
+      "sweep": "IMPACT",
+      "knockback": 1.5,
+      "sweep_base": 1.0,
+      "sweep_scale": 0.5,
+      "damage_other_command": "/function damageother_armorcleaveminor",
+      "crit": true
+    },
+    "riding": {
+      "sweep": "IMPACT",
+      "crit_damage": 2.0,
+      "sweep_base": 0.5,
+      "sweep_scale": 0.5
+    }
   },
-  "minecraft:stone_shovel": {
-    "attack": 6,
+  "minecraft:golden_shovel": {
+    "attack": 6.0,
     "defend": 0.9,
     "shield": false,
-    "sweep": "impact",
-    "sweep_base": 0.5,
-    "sweep_scale": 0.5
+    "sweep": "IMPACT",
+    "knockback": 1.0,
+    "damage_scale": 1.0,
+    "posture_scale": 0.75,
+    "crit": false,
+    "crit_damage": 1.5,
+    "sweep_base": 0.75,
+    "sweep_scale": 0.5,
+    "standing": {
+      "sweep": "IMPACT",
+      "sweep_base": 0.75,
+      "sweep_scale": 0.5
+    },
+    "falling": {
+      "sweep": "IMPACT",
+      "knockback": 1.25,
+      "crit_damage": 2.0,
+      "sweep_base": 1.5,
+      "sweep_scale": 0.75,
+      "crit": true
+    },
+    "sneaking": {
+      "sweep": "CONE",
+      "knockback": 0.5,
+      "damage_scale": 0.5,
+      "posture_scale": 0.5,
+      "sweep_base": 50.0,
+      "sweep_scale": 30.0
+    },
+    "sprinting": {
+      "sweep": "NONE",
+      "knockback": 2.0,
+      "posture_scale": 1.5,
+      "damage_other_command": "/function wardance:attack/damageother_mildstun",
+      "crit": true
+    },
+    "riding": {
+      "sweep": "IMPACT",
+      "knockback": 2.0,
+      "damage_scale": 1.5,
+      "posture_scale": 1.25,
+      "crit_damage": 2.0,
+      "sweep_base": 1.25,
+      "sweep_scale": 0.75
+    }
+  },
+  "minecraft:netherite_hoe": {
+    "attack": 1.0,
+    "defend": 1.0,
+    "shield": false,
+    "sweep": "CONE",
+    "knockback": 1.0,
+    "damage_scale": 1.0,
+    "posture_scale": 1.0,
+    "crit": false,
+    "crit_damage": 1.5,
+    "sweep_base": 40.0,
+    "sweep_scale": 20.0,
+    "standing": {
+      "sweep": "CONE",
+      "sweep_base": 40.0,
+      "sweep_scale": 20.0
+    },
+    "falling": {
+      "sweep": "CLEAVE",
+      "knockback": 0.75,
+      "damage_scale": 2.0,
+      "posture_scale": 2.0,
+      "sweep_base": 60.0,
+      "sweep_scale": 20.0,
+      "crit": true
+    },
+    "sneaking": {
+      "sweep": "CONE",
+      "knockback": 1.25,
+      "posture_scale": 0.75,
+      "sweep_base": 60.0,
+      "sweep_scale": 20.0
+    },
+    "sprinting": {
+      "sweep": "CLEAVE",
+      "knockback": 1.5,
+      "sweep_base": 50.0,
+      "sweep_scale": 25.0
+    },
+    "riding": {
+      "sweep": "CONE",
+      "knockback": 1.5,
+      "posture_scale": 1.5,
+      "crit_damage": 2.0,
+      "sweep_base": 40.0,
+      "sweep_scale": 20.0
+    }
+  },
+  "minecraft:wooden_hoe": {
+    "attack": 1.0,
+    "defend": 1.0,
+    "shield": false,
+    "sweep": "CONE",
+    "knockback": 1.0,
+    "damage_scale": 1.0,
+    "posture_scale": 1.0,
+    "crit": false,
+    "crit_damage": 1.5,
+    "sweep_base": 40.0,
+    "sweep_scale": 20.0,
+    "standing": {
+      "sweep": "CONE",
+      "sweep_base": 40.0,
+      "sweep_scale": 20.0
+    },
+    "falling": {
+      "sweep": "CLEAVE",
+      "knockback": 0.75,
+      "damage_scale": 2.0,
+      "posture_scale": 2.0,
+      "sweep_base": 60.0,
+      "sweep_scale": 20.0,
+      "crit": true
+    },
+    "sneaking": {
+      "sweep": "CONE",
+      "knockback": 1.25,
+      "posture_scale": 0.75,
+      "sweep_base": 60.0,
+      "sweep_scale": 20.0
+    },
+    "sprinting": {
+      "sweep": "CLEAVE",
+      "knockback": 1.5,
+      "sweep_base": 50.0,
+      "sweep_scale": 25.0
+    },
+    "riding": {
+      "sweep": "CONE",
+      "knockback": 1.5,
+      "posture_scale": 1.5,
+      "crit_damage": 2.0,
+      "sweep_base": 40.0,
+      "sweep_scale": 20.0
+    }
+  },
+  "minecraft:iron_axe": {
+    "attack": 4.0,
+    "defend": 0.9,
+    "shield": false,
+    "sweep": "CONE",
+    "knockback": 1.2,
+    "damage_scale": 0.5,
+    "posture_scale": 0.75,
+    "crit": false,
+    "crit_damage": 1.5,
+    "sweep_base": 30.0,
+    "sweep_scale": 20.0,
+    "standing": {
+      "sweep": "CONE",
+      "knockback": 1.2,
+      "damage_scale": 0.5,
+      "posture_scale": 0.75,
+      "sweep_base": 30.0,
+      "sweep_scale": 20.0
+    },
+    "falling": {
+      "sweep": "CLEAVE",
+      "knockback": 0.5,
+      "posture_scale": 1.5,
+      "crit_damage": 2.0,
+      "sweep_base": 50.0,
+      "sweep_scale": 25.0,
+      "crit": true
+    },
+    "sneaking": {
+      "sweep": "CLEAVE",
+      "knockback": 1.25,
+      "damage_scale": 0.75,
+      "posture_scale": 0.5,
+      "sweep_base": 50.0,
+      "sweep_scale": 25.0
+    },
+    "sprinting": {
+      "sweep": "NONE",
+      "knockback": 1.5,
+      "posture_scale": 1.5,
+      "crit": true
+    },
+    "riding": {
+      "sweep": "CLEAVE",
+      "knockback": 2.0,
+      "damage_scale": 1.5,
+      "posture_scale": 1.5,
+      "crit_damage": 2.0,
+      "sweep_base": 50.0,
+      "sweep_scale": 25.0
+    }
   },
   "minecraft:stone_sword": {
     "attack": 2.6,
-    "defend": 0.90,
+    "defend": 0.9,
     "shield": false,
-    "sweep": "cone",
-    "sweep_base": 40,
-    "sweep_scale": 40
+    "sweep": "CONE",
+    "knockback": 0.75,
+    "damage_scale": 0.5,
+    "posture_scale": 0.75,
+    "crit": false,
+    "crit_damage": 1.5,
+    "sweep_base": 40.0,
+    "sweep_scale": 20.0,
+    "standing": {
+      "sweep": "CONE",
+      "knockback": 0.75,
+      "damage_scale": 0.5,
+      "posture_scale": 0.75,
+      "sweep_base": 40.0,
+      "sweep_scale": 20.0
+    },
+    "falling": {
+      "sweep": "CLEAVE",
+      "posture_scale": 1.5,
+      "sweep_base": 50.0,
+      "sweep_scale": 25.0,
+      "crit": true
+    },
+    "sneaking": {
+      "sweep": "CONE",
+      "knockback": 1.25,
+      "damage_scale": 0.5,
+      "sweep_base": 50.0,
+      "sweep_scale": 30.0
+    },
+    "sprinting": {
+      "sweep": "LINE",
+      "knockback": 0.75,
+      "crit_damage": 2.0,
+      "sweep_base": 0.3,
+      "sweep_scale": 0.2,
+      "crit": true
+    },
+    "riding": {
+      "sweep": "CONE",
+      "knockback": 1.5,
+      "damage_scale": 1.5,
+      "posture_scale": 1.5,
+      "crit_damage": 2.0,
+      "sweep_base": 40.0,
+      "sweep_scale": 20.0
+    }
   },
-  "minecraft:torch": {
-    "attack": 0.5,
-    "defend": 1,
+  "minecraft:diamond_shovel": {
+    "attack": 6.0,
+    "defend": 0.9,
     "shield": false,
-    "sweep": "none",
-    "sweep_base": 0,
-    "sweep_scale": 0
+    "sweep": "IMPACT",
+    "knockback": 1.0,
+    "damage_scale": 1.0,
+    "posture_scale": 0.75,
+    "crit": false,
+    "crit_damage": 1.5,
+    "sweep_base": 0.75,
+    "sweep_scale": 0.5,
+    "standing": {
+      "sweep": "IMPACT",
+      "sweep_base": 0.75,
+      "sweep_scale": 0.5
+    },
+    "falling": {
+      "sweep": "IMPACT",
+      "knockback": 1.25,
+      "crit_damage": 2.0,
+      "sweep_base": 1.5,
+      "sweep_scale": 0.75,
+      "crit": true
+    },
+    "sneaking": {
+      "sweep": "CONE",
+      "knockback": 0.5,
+      "damage_scale": 0.5,
+      "posture_scale": 0.5,
+      "sweep_base": 50.0,
+      "sweep_scale": 30.0
+    },
+    "sprinting": {
+      "sweep": "NONE",
+      "knockback": 2.0,
+      "posture_scale": 1.5,
+      "damage_other_command": "/function wardance:attack/damageother_mildstun",
+      "crit": true
+    },
+    "riding": {
+      "sweep": "IMPACT",
+      "knockback": 2.0,
+      "damage_scale": 1.5,
+      "posture_scale": 1.25,
+      "crit_damage": 2.0,
+      "sweep_base": 1.25,
+      "sweep_scale": 0.75
+    }
+  },
+  "minecraft:diamond_sword": {
+    "attack": 2.6,
+    "defend": 0.9,
+    "shield": false,
+    "sweep": "CONE",
+    "knockback": 0.75,
+    "damage_scale": 0.5,
+    "posture_scale": 0.75,
+    "crit": false,
+    "crit_damage": 1.5,
+    "sweep_base": 40.0,
+    "sweep_scale": 20.0,
+    "standing": {
+      "sweep": "CONE",
+      "knockback": 0.75,
+      "damage_scale": 0.5,
+      "posture_scale": 0.75,
+      "sweep_base": 40.0,
+      "sweep_scale": 20.0
+    },
+    "falling": {
+      "sweep": "CLEAVE",
+      "posture_scale": 1.5,
+      "sweep_base": 50.0,
+      "sweep_scale": 25.0,
+      "crit": true
+    },
+    "sneaking": {
+      "sweep": "CONE",
+      "knockback": 1.25,
+      "damage_scale": 0.5,
+      "sweep_base": 50.0,
+      "sweep_scale": 30.0
+    },
+    "sprinting": {
+      "sweep": "LINE",
+      "knockback": 0.75,
+      "crit_damage": 2.0,
+      "sweep_base": 0.3,
+      "sweep_scale": 0.2,
+      "crit": true
+    },
+    "riding": {
+      "sweep": "CONE",
+      "knockback": 1.5,
+      "damage_scale": 1.5,
+      "posture_scale": 1.5,
+      "crit_damage": 2.0,
+      "sweep_base": 40.0,
+      "sweep_scale": 20.0
+    }
+  },
+  "minecraft:diamond_axe": {
+    "attack": 4.0,
+    "defend": 0.9,
+    "shield": false,
+    "sweep": "CONE",
+    "knockback": 1.2,
+    "damage_scale": 0.5,
+    "posture_scale": 0.75,
+    "crit": false,
+    "crit_damage": 1.5,
+    "sweep_base": 30.0,
+    "sweep_scale": 20.0,
+    "standing": {
+      "sweep": "CONE",
+      "knockback": 1.2,
+      "damage_scale": 0.5,
+      "posture_scale": 0.75,
+      "sweep_base": 30.0,
+      "sweep_scale": 20.0
+    },
+    "falling": {
+      "sweep": "CLEAVE",
+      "knockback": 0.5,
+      "posture_scale": 1.5,
+      "crit_damage": 2.0,
+      "sweep_base": 50.0,
+      "sweep_scale": 25.0,
+      "crit": true
+    },
+    "sneaking": {
+      "sweep": "CLEAVE",
+      "knockback": 1.25,
+      "damage_scale": 0.75,
+      "posture_scale": 0.5,
+      "sweep_base": 50.0,
+      "sweep_scale": 25.0
+    },
+    "sprinting": {
+      "sweep": "NONE",
+      "knockback": 1.5,
+      "posture_scale": 1.5,
+      "crit": true
+    },
+    "riding": {
+      "sweep": "CLEAVE",
+      "knockback": 2.0,
+      "damage_scale": 1.5,
+      "posture_scale": 1.5,
+      "crit_damage": 2.0,
+      "sweep_base": 50.0,
+      "sweep_scale": 25.0
+    }
+  },
+  "minecraft:stone_axe": {
+    "attack": 4.0,
+    "defend": 0.9,
+    "shield": false,
+    "sweep": "CONE",
+    "knockback": 1.2,
+    "damage_scale": 0.5,
+    "posture_scale": 0.75,
+    "crit": false,
+    "crit_damage": 1.5,
+    "sweep_base": 30.0,
+    "sweep_scale": 20.0,
+    "standing": {
+      "sweep": "CONE",
+      "knockback": 1.2,
+      "damage_scale": 0.5,
+      "posture_scale": 0.75,
+      "sweep_base": 30.0,
+      "sweep_scale": 20.0
+    },
+    "falling": {
+      "sweep": "CLEAVE",
+      "knockback": 0.5,
+      "posture_scale": 1.5,
+      "crit_damage": 2.0,
+      "sweep_base": 50.0,
+      "sweep_scale": 25.0,
+      "crit": true
+    },
+    "sneaking": {
+      "sweep": "CLEAVE",
+      "knockback": 1.25,
+      "damage_scale": 0.75,
+      "posture_scale": 0.5,
+      "sweep_base": 50.0,
+      "sweep_scale": 25.0
+    },
+    "sprinting": {
+      "sweep": "NONE",
+      "knockback": 1.5,
+      "posture_scale": 1.5,
+      "crit": true
+    },
+    "riding": {
+      "sweep": "CLEAVE",
+      "knockback": 2.0,
+      "damage_scale": 1.5,
+      "posture_scale": 1.5,
+      "crit_damage": 2.0,
+      "sweep_base": 50.0,
+      "sweep_scale": 25.0
+    }
+  },
+  "minecraft:diamond_hoe": {
+    "attack": 1.0,
+    "defend": 1.0,
+    "shield": false,
+    "sweep": "CONE",
+    "knockback": 1.0,
+    "damage_scale": 1.0,
+    "posture_scale": 1.0,
+    "crit": false,
+    "crit_damage": 1.5,
+    "sweep_base": 40.0,
+    "sweep_scale": 20.0,
+    "standing": {
+      "sweep": "CONE",
+      "sweep_base": 40.0,
+      "sweep_scale": 20.0
+    },
+    "falling": {
+      "sweep": "CLEAVE",
+      "knockback": 0.75,
+      "damage_scale": 2.0,
+      "posture_scale": 2.0,
+      "sweep_base": 60.0,
+      "sweep_scale": 20.0,
+      "crit": true
+    },
+    "sneaking": {
+      "sweep": "CONE",
+      "knockback": 1.25,
+      "posture_scale": 0.75,
+      "sweep_base": 60.0,
+      "sweep_scale": 20.0
+    },
+    "sprinting": {
+      "sweep": "CLEAVE",
+      "knockback": 1.5,
+      "sweep_base": 50.0,
+      "sweep_scale": 25.0
+    },
+    "riding": {
+      "sweep": "CONE",
+      "knockback": 1.5,
+      "posture_scale": 1.5,
+      "crit_damage": 2.0,
+      "sweep_base": 40.0,
+      "sweep_scale": 20.0
+    }
+  },
+  "minecraft:bow": {
+    "attack": 1.5,
+    "defend": 1.1,
+    "shield": false,
+    "sweep": "NONE",
+    "knockback": 1.0,
+    "damage_scale": 1.0,
+    "posture_scale": 1.0,
+    "crit": false,
+    "crit_damage": 1.5,
+    "sweep_base": 0.0,
+    "sweep_scale": 0.0,
+    "standing": {
+      "sweep": "NONE"
+    },
+    "falling": {
+      "sweep": "NONE",
+      "posture_scale": 1.5,
+      "crit": true
+    },
+    "sneaking": {
+      "sweep": "LINE",
+      "knockback": 0.75,
+      "damage_scale": 0.5,
+      "sweep_base": 0.3,
+      "sweep_scale": 0.2
+    },
+    "sprinting": {
+      "sweep": "CIRCLE",
+      "knockback": 1.5,
+      "posture_scale": 1.5,
+      "sweep_base": 2.0,
+      "sweep_scale": 0.5,
+      "crit": true
+    },
+    "riding": {
+      "sweep": "NONE",
+      "knockback": 2.0,
+      "crit_damage": 2.0
+    }
   },
   "minecraft:trident": {
     "attack": 2.5,
     "defend": 0.7,
     "shield": false,
-    "sweep": "line",
-    "sweep_base": 0.5,
-    "sweep_scale": 1
+    "sweep": "LINE",
+    "knockback": 0.75,
+    "damage_scale": 0.75,
+    "posture_scale": 0.75,
+    "crit": false,
+    "crit_damage": 1.5,
+    "sweep_base": 0.3,
+    "sweep_scale": 0.25,
+    "standing": {
+      "sweep": "LINE",
+      "knockback": 0.75,
+      "damage_scale": 0.75,
+      "posture_scale": 0.75,
+      "sweep_base": 0.3,
+      "sweep_scale": 0.25
+    },
+    "falling": {
+      "sweep": "NONE",
+      "posture_scale": 1.5,
+      "crit": true
+    },
+    "sneaking": {
+      "sweep": "CIRCLE",
+      "knockback": 0.75,
+      "damage_scale": 0.5,
+      "posture_scale": 0.75,
+      "sweep_base": 3.0,
+      "sweep_scale": 0.5
+    },
+    "sprinting": {
+      "sweep": "LINE",
+      "knockback": 1.5,
+      "posture_scale": 1.5,
+      "sweep_base": 0.5,
+      "sweep_scale": 0.25,
+      "crit": true
+    },
+    "riding": {
+      "sweep": "LINE",
+      "knockback": 0.75,
+      "damage_scale": 0.75,
+      "posture_scale": 0.75,
+      "crit_damage": 2.0,
+      "sweep_base": 0.3,
+      "sweep_scale": 0.25
+    }
+  },
+  "minecraft:golden_axe": {
+    "attack": 4.0,
+    "defend": 0.9,
+    "shield": false,
+    "sweep": "CONE",
+    "knockback": 1.2,
+    "damage_scale": 0.5,
+    "posture_scale": 0.75,
+    "crit": false,
+    "crit_damage": 1.5,
+    "sweep_base": 30.0,
+    "sweep_scale": 20.0,
+    "standing": {
+      "sweep": "CONE",
+      "knockback": 1.2,
+      "damage_scale": 0.5,
+      "posture_scale": 0.75,
+      "sweep_base": 30.0,
+      "sweep_scale": 20.0
+    },
+    "falling": {
+      "sweep": "CLEAVE",
+      "knockback": 0.5,
+      "posture_scale": 1.5,
+      "crit_damage": 2.0,
+      "sweep_base": 50.0,
+      "sweep_scale": 25.0,
+      "crit": true
+    },
+    "sneaking": {
+      "sweep": "CLEAVE",
+      "knockback": 1.25,
+      "damage_scale": 0.75,
+      "posture_scale": 0.5,
+      "sweep_base": 50.0,
+      "sweep_scale": 25.0
+    },
+    "sprinting": {
+      "sweep": "NONE",
+      "knockback": 1.5,
+      "posture_scale": 1.5,
+      "crit": true
+    },
+    "riding": {
+      "sweep": "CLEAVE",
+      "knockback": 2.0,
+      "damage_scale": 1.5,
+      "posture_scale": 1.5,
+      "crit_damage": 2.0,
+      "sweep_base": 50.0,
+      "sweep_scale": 25.0
+    }
+  },
+  "minecraft:iron_shovel": {
+    "attack": 6.0,
+    "defend": 0.9,
+    "shield": false,
+    "sweep": "IMPACT",
+    "knockback": 1.0,
+    "damage_scale": 1.0,
+    "posture_scale": 0.75,
+    "crit": false,
+    "crit_damage": 1.5,
+    "sweep_base": 0.75,
+    "sweep_scale": 0.5,
+    "standing": {
+      "sweep": "IMPACT",
+      "sweep_base": 0.75,
+      "sweep_scale": 0.5
+    },
+    "falling": {
+      "sweep": "IMPACT",
+      "knockback": 1.25,
+      "crit_damage": 2.0,
+      "sweep_base": 1.5,
+      "sweep_scale": 0.75,
+      "crit": true
+    },
+    "sneaking": {
+      "sweep": "CONE",
+      "knockback": 0.5,
+      "damage_scale": 0.5,
+      "posture_scale": 0.5,
+      "sweep_base": 50.0,
+      "sweep_scale": 30.0
+    },
+    "sprinting": {
+      "sweep": "NONE",
+      "knockback": 2.0,
+      "posture_scale": 1.5,
+      "damage_other_command": "/function wardance:attack/damageother_mildstun",
+      "crit": true
+    },
+    "riding": {
+      "sweep": "IMPACT",
+      "knockback": 2.0,
+      "damage_scale": 1.5,
+      "posture_scale": 1.25,
+      "crit_damage": 2.0,
+      "sweep_base": 1.25,
+      "sweep_scale": 0.75
+    }
+  },
+  "minecraft:netherite_axe": {
+    "attack": 4.0,
+    "defend": 0.9,
+    "shield": false,
+    "sweep": "CONE",
+    "knockback": 1.2,
+    "damage_scale": 0.5,
+    "posture_scale": 0.75,
+    "crit": false,
+    "crit_damage": 1.5,
+    "sweep_base": 30.0,
+    "sweep_scale": 20.0,
+    "standing": {
+      "sweep": "CONE",
+      "knockback": 1.2,
+      "damage_scale": 0.5,
+      "posture_scale": 0.75,
+      "sweep_base": 30.0,
+      "sweep_scale": 20.0
+    },
+    "falling": {
+      "sweep": "CLEAVE",
+      "knockback": 0.5,
+      "posture_scale": 1.5,
+      "crit_damage": 2.0,
+      "sweep_base": 50.0,
+      "sweep_scale": 25.0,
+      "crit": true
+    },
+    "sneaking": {
+      "sweep": "CLEAVE",
+      "knockback": 1.25,
+      "damage_scale": 0.75,
+      "posture_scale": 0.5,
+      "sweep_base": 50.0,
+      "sweep_scale": 25.0
+    },
+    "sprinting": {
+      "sweep": "NONE",
+      "knockback": 1.5,
+      "posture_scale": 1.5,
+      "crit": true
+    },
+    "riding": {
+      "sweep": "CLEAVE",
+      "knockback": 2.0,
+      "damage_scale": 1.5,
+      "posture_scale": 1.5,
+      "crit_damage": 2.0,
+      "sweep_base": 50.0,
+      "sweep_scale": 25.0
+    }
   },
   "minecraft:wooden_axe": {
-    "attack": 4,
+    "attack": 4.0,
     "defend": 0.9,
     "shield": false,
-    "sweep": "impact",
-    "sweep_base": 0.5,
-    "sweep_scale": 0.5
+    "sweep": "CONE",
+    "knockback": 1.2,
+    "damage_scale": 0.5,
+    "posture_scale": 0.75,
+    "crit": false,
+    "crit_damage": 1.5,
+    "sweep_base": 30.0,
+    "sweep_scale": 20.0,
+    "standing": {
+      "sweep": "CONE",
+      "knockback": 1.2,
+      "damage_scale": 0.5,
+      "posture_scale": 0.75,
+      "sweep_base": 30.0,
+      "sweep_scale": 20.0
+    },
+    "falling": {
+      "sweep": "CLEAVE",
+      "knockback": 0.5,
+      "posture_scale": 1.5,
+      "crit_damage": 2.0,
+      "sweep_base": 50.0,
+      "sweep_scale": 25.0,
+      "crit": true
+    },
+    "sneaking": {
+      "sweep": "CLEAVE",
+      "knockback": 1.25,
+      "damage_scale": 0.75,
+      "posture_scale": 0.5,
+      "sweep_base": 50.0,
+      "sweep_scale": 25.0
+    },
+    "sprinting": {
+      "sweep": "NONE",
+      "knockback": 1.5,
+      "posture_scale": 1.5,
+      "crit": true
+    },
+    "riding": {
+      "sweep": "CLEAVE",
+      "knockback": 2.0,
+      "damage_scale": 1.5,
+      "posture_scale": 1.5,
+      "crit_damage": 2.0,
+      "sweep_base": 50.0,
+      "sweep_scale": 25.0
+    }
   },
-  "minecraft:wooden_hoe": {
-    "attack": 1,
-    "defend": 1.00,
-    "shield": false,
-    "sweep": "cone",
-    "sweep_base": 20,
-    "sweep_scale": 20
-  },
-  "minecraft:wooden_pickaxe": {
-    "attack": 2.5,
-    "defend": 1,
-    "shield": false,
-    "sweep": "impact",
-    "sweep_base": 0,
-    "sweep_scale": 1
-  },
-  "minecraft:wooden_shovel": {
-    "attack": 6,
-    "defend": 0.9,
-    "shield": false,
-    "sweep": "impact",
-    "sweep_base": 0.5,
-    "sweep_scale": 0.5
+  "minecraft:crossbow": {
+    "attack": 2.4,
+    "defend": 1.0,
+    "shield": true,
+    "sweep": "CONE",
+    "knockback": 1.0,
+    "damage_scale": 0.5,
+    "posture_scale": 0.75,
+    "crit": false,
+    "crit_damage": 1.5,
+    "sweep_base": 40.0,
+    "sweep_scale": 20.0,
+    "standing": {
+      "sweep": "CONE",
+      "damage_scale": 0.5,
+      "posture_scale": 0.75,
+      "sweep_base": 40.0,
+      "sweep_scale": 20.0
+    },
+    "falling": {
+      "sweep": "IMPACT",
+      "knockback": 1.5,
+      "posture_scale": 1.25,
+      "sweep_base": 1.0,
+      "sweep_scale": 0.5,
+      "crit": true
+    },
+    "sneaking": {
+      "sweep": "CONE",
+      "damage_scale": 0.5,
+      "posture_scale": 0.75,
+      "sweep_base": 40.0,
+      "sweep_scale": 20.0
+    },
+    "sprinting": {
+      "sweep": "NONE",
+      "knockback": 2.0,
+      "posture_scale": 2.0,
+      "damage_other_command": "/function wardance:attack/damageother_mildstun",
+      "crit": true
+    },
+    "riding": {
+      "sweep": "NONE",
+      "knockback": 1.5,
+      "crit_damage": 2.0,
+      "sweep_base": 40.0,
+      "sweep_scale": 20.0
+    }
   },
   "minecraft:wooden_sword": {
     "attack": 2.6,
-    "defend": 0.90,
+    "defend": 0.9,
     "shield": false,
-    "sweep": "cone",
-    "sweep_base": 40,
-    "sweep_scale": 40
+    "sweep": "CONE",
+    "knockback": 0.75,
+    "damage_scale": 0.5,
+    "posture_scale": 0.75,
+    "crit": false,
+    "crit_damage": 1.5,
+    "sweep_base": 40.0,
+    "sweep_scale": 20.0,
+    "standing": {
+      "sweep": "CONE",
+      "knockback": 0.75,
+      "damage_scale": 0.5,
+      "posture_scale": 0.75,
+      "sweep_base": 40.0,
+      "sweep_scale": 20.0
+    },
+    "falling": {
+      "sweep": "CLEAVE",
+      "posture_scale": 1.5,
+      "sweep_base": 50.0,
+      "sweep_scale": 25.0,
+      "crit": true
+    },
+    "sneaking": {
+      "sweep": "CONE",
+      "knockback": 1.25,
+      "damage_scale": 0.5,
+      "sweep_base": 50.0,
+      "sweep_scale": 30.0
+    },
+    "sprinting": {
+      "sweep": "LINE",
+      "knockback": 0.75,
+      "crit_damage": 2.0,
+      "sweep_base": 0.3,
+      "sweep_scale": 0.2,
+      "crit": true
+    },
+    "riding": {
+      "sweep": "CONE",
+      "knockback": 1.5,
+      "damage_scale": 1.5,
+      "posture_scale": 1.5,
+      "crit_damage": 2.0,
+      "sweep_base": 40.0,
+      "sweep_scale": 20.0
+    }
+  },
+  "minecraft:golden_pickaxe": {
+    "attack": 2.5,
+    "defend": 1.0,
+    "shield": false,
+    "sweep": "IMPACT",
+    "knockback": 1.0,
+    "damage_scale": 1.0,
+    "posture_scale": 1.0,
+    "crit": false,
+    "crit_damage": 1.5,
+    "sweep_base": 0.5,
+    "sweep_scale": 0.5,
+    "standing": {
+      "sweep": "IMPACT",
+      "sweep_base": 0.5,
+      "sweep_scale": 0.5
+    },
+    "falling": {
+      "sweep": "NONE",
+      "posture_scale": 1.5,
+      "crit_damage": 2.0,
+      "crit": true
+    },
+    "sneaking": {
+      "sweep": "CLEAVE",
+      "knockback": 0.75,
+      "damage_scale": 0.75,
+      "posture_scale": 0.75,
+      "sweep_base": 40.0,
+      "sweep_scale": 20.0
+    },
+    "sprinting": {
+      "sweep": "IMPACT",
+      "knockback": 1.5,
+      "sweep_base": 1.0,
+      "sweep_scale": 0.5,
+      "damage_other_command": "/function damageother_armorcleaveminor",
+      "crit": true
+    },
+    "riding": {
+      "sweep": "IMPACT",
+      "crit_damage": 2.0,
+      "sweep_base": 0.5,
+      "sweep_scale": 0.5
+    }
+  },
+  "minecraft:wooden_shovel": {
+    "attack": 6.0,
+    "defend": 0.9,
+    "shield": false,
+    "sweep": "IMPACT",
+    "knockback": 1.0,
+    "damage_scale": 1.0,
+    "posture_scale": 0.75,
+    "crit": false,
+    "crit_damage": 1.5,
+    "sweep_base": 0.75,
+    "sweep_scale": 0.5,
+    "standing": {
+      "sweep": "IMPACT",
+      "sweep_base": 0.75,
+      "sweep_scale": 0.5
+    },
+    "falling": {
+      "sweep": "IMPACT",
+      "knockback": 1.25,
+      "crit_damage": 2.0,
+      "sweep_base": 1.5,
+      "sweep_scale": 0.75,
+      "crit": true
+    },
+    "sneaking": {
+      "sweep": "CONE",
+      "knockback": 0.5,
+      "damage_scale": 0.5,
+      "posture_scale": 0.5,
+      "sweep_base": 50.0,
+      "sweep_scale": 30.0
+    },
+    "sprinting": {
+      "sweep": "NONE",
+      "knockback": 2.0,
+      "posture_scale": 1.5,
+      "damage_other_command": "/function wardance:attack/damageother_mildstun",
+      "crit": true
+    },
+    "riding": {
+      "sweep": "IMPACT",
+      "knockback": 2.0,
+      "damage_scale": 1.5,
+      "posture_scale": 1.25,
+      "crit_damage": 2.0,
+      "sweep_base": 1.25,
+      "sweep_scale": 0.75
+    }
+  },
+  "minecraft:stone_hoe": {
+    "attack": 1.0,
+    "defend": 1.0,
+    "shield": false,
+    "sweep": "CONE",
+    "knockback": 1.0,
+    "damage_scale": 1.0,
+    "posture_scale": 1.0,
+    "crit": false,
+    "crit_damage": 1.5,
+    "sweep_base": 40.0,
+    "sweep_scale": 20.0,
+    "standing": {
+      "sweep": "CONE",
+      "sweep_base": 40.0,
+      "sweep_scale": 20.0
+    },
+    "falling": {
+      "sweep": "CLEAVE",
+      "knockback": 0.75,
+      "damage_scale": 2.0,
+      "posture_scale": 2.0,
+      "sweep_base": 60.0,
+      "sweep_scale": 20.0,
+      "crit": true
+    },
+    "sneaking": {
+      "sweep": "CONE",
+      "knockback": 1.25,
+      "posture_scale": 0.75,
+      "sweep_base": 60.0,
+      "sweep_scale": 20.0
+    },
+    "sprinting": {
+      "sweep": "CLEAVE",
+      "knockback": 1.5,
+      "sweep_base": 50.0,
+      "sweep_scale": 25.0
+    },
+    "riding": {
+      "sweep": "CONE",
+      "knockback": 1.5,
+      "posture_scale": 1.5,
+      "crit_damage": 2.0,
+      "sweep_base": 40.0,
+      "sweep_scale": 20.0
+    }
+  },
+  "minecraft:iron_hoe": {
+    "attack": 1.0,
+    "defend": 1.0,
+    "shield": false,
+    "sweep": "CONE",
+    "knockback": 1.0,
+    "damage_scale": 1.0,
+    "posture_scale": 1.0,
+    "crit": false,
+    "crit_damage": 1.5,
+    "sweep_base": 40.0,
+    "sweep_scale": 20.0,
+    "standing": {
+      "sweep": "CONE",
+      "sweep_base": 40.0,
+      "sweep_scale": 20.0
+    },
+    "falling": {
+      "sweep": "CLEAVE",
+      "knockback": 0.75,
+      "damage_scale": 2.0,
+      "posture_scale": 2.0,
+      "sweep_base": 60.0,
+      "sweep_scale": 20.0,
+      "crit": true
+    },
+    "sneaking": {
+      "sweep": "CONE",
+      "knockback": 1.25,
+      "posture_scale": 0.75,
+      "sweep_base": 60.0,
+      "sweep_scale": 20.0
+    },
+    "sprinting": {
+      "sweep": "CLEAVE",
+      "knockback": 1.5,
+      "sweep_base": 50.0,
+      "sweep_scale": 25.0
+    },
+    "riding": {
+      "sweep": "CONE",
+      "knockback": 1.5,
+      "posture_scale": 1.5,
+      "crit_damage": 2.0,
+      "sweep_base": 40.0,
+      "sweep_scale": 20.0
+    }
+  },
+  "minecraft:shield": {
+    "attack": 4.0,
+    "defend": 0.6,
+    "shield": true,
+    "sweep": "NONE",
+    "knockback": 1.25,
+    "damage_scale": 1.0,
+    "posture_scale": 0.75,
+    "crit": false,
+    "crit_damage": 1.5,
+    "sweep_base": 0.0,
+    "sweep_scale": 0.0,
+    "standing": {
+      "sweep": "NONE",
+      "knockback": 1.25,
+      "posture_scale": 0.75
+    },
+    "falling": {
+      "sweep": "IMPACT",
+      "knockback": 0.5,
+      "posture_scale": 1.5,
+      "sweep_base": 1.25,
+      "sweep_scale": 0.75,
+      "crit": true
+    },
+    "sneaking": {
+      "sweep": "CONE",
+      "knockback": 1.25,
+      "damage_scale": 0.5,
+      "posture_scale": 0.5,
+      "sweep_base": 40.0,
+      "sweep_scale": 20.0
+    },
+    "sprinting": {
+      "sweep": "IMPACT",
+      "knockback": 1.5,
+      "posture_scale": 1.5,
+      "sweep_base": 1.0,
+      "sweep_scale": 0.5,
+      "damage_other_command": "/function wardance:attack/damageother_mildstun",
+      "crit": true
+    },
+    "riding": {
+      "sweep": "CONE",
+      "knockback": 1.5,
+      "damage_scale": 0.75,
+      "crit_damage": 2.0,
+      "sweep_base": 40.0,
+      "sweep_scale": 30.0
+    }
+  },
+  "minecraft:netherite_shovel": {
+    "attack": 6.0,
+    "defend": 0.9,
+    "shield": false,
+    "sweep": "IMPACT",
+    "knockback": 1.0,
+    "damage_scale": 1.0,
+    "posture_scale": 0.75,
+    "crit": false,
+    "crit_damage": 1.5,
+    "sweep_base": 0.75,
+    "sweep_scale": 0.5,
+    "standing": {
+      "sweep": "IMPACT",
+      "sweep_base": 0.75,
+      "sweep_scale": 0.5
+    },
+    "falling": {
+      "sweep": "IMPACT",
+      "knockback": 1.25,
+      "crit_damage": 2.0,
+      "sweep_base": 1.5,
+      "sweep_scale": 0.75,
+      "crit": true
+    },
+    "sneaking": {
+      "sweep": "CONE",
+      "knockback": 0.5,
+      "damage_scale": 0.5,
+      "posture_scale": 0.5,
+      "sweep_base": 50.0,
+      "sweep_scale": 30.0
+    },
+    "sprinting": {
+      "sweep": "NONE",
+      "knockback": 2.0,
+      "posture_scale": 1.5,
+      "damage_other_command": "/function wardance:attack/damageother_mildstun",
+      "crit": true
+    },
+    "riding": {
+      "sweep": "IMPACT",
+      "knockback": 2.0,
+      "damage_scale": 1.5,
+      "posture_scale": 1.25,
+      "crit_damage": 2.0,
+      "sweep_base": 1.25,
+      "sweep_scale": 0.75
+    }
+  },
+  "minecraft:golden_sword": {
+    "attack": 2.6,
+    "defend": 0.9,
+    "shield": false,
+    "sweep": "CONE",
+    "knockback": 0.75,
+    "damage_scale": 0.5,
+    "posture_scale": 0.75,
+    "crit": false,
+    "crit_damage": 1.5,
+    "sweep_base": 40.0,
+    "sweep_scale": 20.0,
+    "standing": {
+      "sweep": "CONE",
+      "knockback": 0.75,
+      "damage_scale": 0.5,
+      "posture_scale": 0.75,
+      "sweep_base": 40.0,
+      "sweep_scale": 20.0
+    },
+    "falling": {
+      "sweep": "CLEAVE",
+      "posture_scale": 1.5,
+      "sweep_base": 50.0,
+      "sweep_scale": 25.0,
+      "crit": true
+    },
+    "sneaking": {
+      "sweep": "CONE",
+      "knockback": 1.25,
+      "damage_scale": 0.5,
+      "sweep_base": 50.0,
+      "sweep_scale": 30.0
+    },
+    "sprinting": {
+      "sweep": "LINE",
+      "knockback": 0.75,
+      "crit_damage": 2.0,
+      "sweep_base": 0.3,
+      "sweep_scale": 0.2,
+      "crit": true
+    },
+    "riding": {
+      "sweep": "CONE",
+      "knockback": 1.5,
+      "damage_scale": 1.5,
+      "posture_scale": 1.5,
+      "crit_damage": 2.0,
+      "sweep_base": 40.0,
+      "sweep_scale": 20.0
+    }
+  },
+  "minecraft:stone_pickaxe": {
+    "attack": 2.5,
+    "defend": 1.0,
+    "shield": false,
+    "sweep": "IMPACT",
+    "knockback": 1.0,
+    "damage_scale": 1.0,
+    "posture_scale": 1.0,
+    "crit": false,
+    "crit_damage": 1.5,
+    "sweep_base": 0.5,
+    "sweep_scale": 0.5,
+    "standing": {
+      "sweep": "IMPACT",
+      "sweep_base": 0.5,
+      "sweep_scale": 0.5
+    },
+    "falling": {
+      "sweep": "NONE",
+      "posture_scale": 1.5,
+      "crit_damage": 2.0,
+      "crit": true
+    },
+    "sneaking": {
+      "sweep": "CLEAVE",
+      "knockback": 0.75,
+      "damage_scale": 0.75,
+      "posture_scale": 0.75,
+      "sweep_base": 40.0,
+      "sweep_scale": 20.0
+    },
+    "sprinting": {
+      "sweep": "IMPACT",
+      "knockback": 1.5,
+      "sweep_base": 1.0,
+      "sweep_scale": 0.5,
+      "damage_other_command": "/function damageother_armorcleaveminor",
+      "crit": true
+    },
+    "riding": {
+      "sweep": "IMPACT",
+      "crit_damage": 2.0,
+      "sweep_base": 0.5,
+      "sweep_scale": 0.5
+    }
+  },
+  "minecraft:iron_pickaxe": {
+    "attack": 2.5,
+    "defend": 1.0,
+    "shield": false,
+    "sweep": "IMPACT",
+    "knockback": 1.0,
+    "damage_scale": 1.0,
+    "posture_scale": 1.0,
+    "crit": false,
+    "crit_damage": 1.5,
+    "sweep_base": 0.5,
+    "sweep_scale": 0.5,
+    "standing": {
+      "sweep": "IMPACT",
+      "sweep_base": 0.5,
+      "sweep_scale": 0.5
+    },
+    "falling": {
+      "sweep": "NONE",
+      "posture_scale": 1.5,
+      "crit_damage": 2.0,
+      "crit": true
+    },
+    "sneaking": {
+      "sweep": "CLEAVE",
+      "knockback": 0.75,
+      "damage_scale": 0.75,
+      "posture_scale": 0.75,
+      "sweep_base": 40.0,
+      "sweep_scale": 20.0
+    },
+    "sprinting": {
+      "sweep": "IMPACT",
+      "knockback": 1.5,
+      "sweep_base": 1.0,
+      "sweep_scale": 0.5,
+      "damage_other_command": "/function damageother_armorcleaveminor",
+      "crit": true
+    },
+    "riding": {
+      "sweep": "IMPACT",
+      "crit_damage": 2.0,
+      "sweep_base": 0.5,
+      "sweep_scale": 0.5
+    }
+  },
+  "minecraft:netherite_sword": {
+    "attack": 2.6,
+    "defend": 0.9,
+    "shield": false,
+    "sweep": "CONE",
+    "knockback": 0.75,
+    "damage_scale": 0.5,
+    "posture_scale": 0.75,
+    "crit": false,
+    "crit_damage": 1.5,
+    "sweep_base": 40.0,
+    "sweep_scale": 20.0,
+    "standing": {
+      "sweep": "CONE",
+      "knockback": 0.75,
+      "damage_scale": 0.5,
+      "posture_scale": 0.75,
+      "sweep_base": 40.0,
+      "sweep_scale": 20.0
+    },
+    "falling": {
+      "sweep": "CLEAVE",
+      "posture_scale": 1.5,
+      "sweep_base": 50.0,
+      "sweep_scale": 25.0,
+      "crit": true
+    },
+    "sneaking": {
+      "sweep": "CONE",
+      "knockback": 1.25,
+      "damage_scale": 0.5,
+      "sweep_base": 50.0,
+      "sweep_scale": 30.0
+    },
+    "sprinting": {
+      "sweep": "LINE",
+      "knockback": 0.75,
+      "crit_damage": 2.0,
+      "sweep_base": 0.3,
+      "sweep_scale": 0.2,
+      "crit": true
+    },
+    "riding": {
+      "sweep": "CONE",
+      "knockback": 1.5,
+      "damage_scale": 1.5,
+      "posture_scale": 1.5,
+      "crit_damage": 2.0,
+      "sweep_base": 40.0,
+      "sweep_scale": 20.0
+    }
   }
 }

@@ -3,8 +3,10 @@ package jackiecrazy.wardance;
 import jackiecrazy.wardance.capability.action.IAction;
 import jackiecrazy.wardance.capability.skill.ISkillCapability;
 import jackiecrazy.wardance.capability.status.IMark;
+import jackiecrazy.wardance.client.hud.MarkDisplay;
 import jackiecrazy.wardance.client.hud.OffhandCooldownDisplay;
 import jackiecrazy.wardance.client.hud.ResourceDisplay;
+import jackiecrazy.wardance.client.hud.SkillCoolDisplay;
 import jackiecrazy.wardance.command.CategoryArgument;
 import jackiecrazy.wardance.command.SkillArgument;
 import jackiecrazy.wardance.command.WarDanceCommand;
@@ -129,6 +131,8 @@ public class WarDance {
     private void gui(final RegisterGuiOverlaysEvent event) {
         event.registerAbove(VanillaGuiOverlay.HOTBAR.id(), "offhandcd", new OffhandCooldownDisplay());
         event.registerAboveAll("pwdresources", new ResourceDisplay());
+        event.registerAboveAll("pwdskills", new SkillCoolDisplay());
+        event.registerAboveAll("pwdmarks", new MarkDisplay());
     }
 
     private void caps(final RegisterCapabilitiesEvent event) {

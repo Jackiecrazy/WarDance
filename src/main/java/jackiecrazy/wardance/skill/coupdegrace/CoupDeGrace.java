@@ -3,8 +3,10 @@ package jackiecrazy.wardance.skill.coupdegrace;
 import jackiecrazy.footwork.api.CombatDamageSource;
 import jackiecrazy.footwork.capability.resources.CombatData;
 import jackiecrazy.footwork.capability.resources.ICombatCapability;
+import jackiecrazy.footwork.client.particle.FootworkParticles;
 import jackiecrazy.footwork.event.StunEvent;
 import jackiecrazy.footwork.utils.GeneralUtils;
+import jackiecrazy.footwork.utils.ParticleUtils;
 import jackiecrazy.footwork.utils.TargetingUtils;
 import jackiecrazy.wardance.WarDance;
 import jackiecrazy.wardance.capability.skill.CasterData;
@@ -187,9 +189,9 @@ public class CoupDeGrace extends Skill {
                 //DIE!
                 for (Entity e : caster.level.getEntities(caster, caster.getBoundingBox().inflate(caster.getAttributeValue(ForgeMod.ATTACK_RANGE.get())), (a -> !TargetingUtils.isAlly(a, caster)))) {
                     if (!(e instanceof LivingEntity) || !caster.hasLineOfSight(e)) continue;
-                    final CombatDamageSource die = new CombatDamageSource("player", caster).setDamageTyping(CombatDamageSource.TYPE.PHYSICAL).setProcSkillEffects(true).setSkillUsed(this).setKnockbackPercentage(0);
+                    final CombatDamageSource die = new CombatDamageSource("player", caster).setDamageTyping(CombatDamageSource.TYPE.PHYSICAL).setProcSkillEffects(true).setSkillUsed(this);
                     if (willKillOnCast(caster, (LivingEntity) e, prev)) {
-                        die.setCrit(true).setCritDamage(1).setDamageTyping(CombatDamageSource.TYPE.TRUE).bypassArmor().bypassMagic();
+                        die.setCrit(true).setCritDamage(1).setKnockbackPercentage(0).setDamageTyping(CombatDamageSource.TYPE.TRUE).bypassArmor().bypassMagic();
                     }
                     e.hurt(die, GeneralUtils.getMaxHealthBeforeWounding((LivingEntity) e) * prev.getEffectiveness() / 10 + (float) caster.getAttributeValue(Attributes.ATTACK_DAMAGE));
                     if (((LivingEntity) e).isDeadOrDying()) prev.flagCondition(true);
@@ -202,6 +204,7 @@ public class CoupDeGrace extends Skill {
                 prev.flagCondition(false);
             }
             boundCast(prev, from, to);
+            ParticleUtils.playSweepParticle(FootworkParticles.CIRCLE.get(), caster, caster.position().add(caster.getLookAngle().multiply(1, 0, 1)), 0, caster.getAttributeValue(ForgeMod.ATTACK_RANGE.get()), 0.5f);
             return from != prev.getState();
         }
 

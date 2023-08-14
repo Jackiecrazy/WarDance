@@ -4,8 +4,11 @@ import jackiecrazy.footwork.api.CombatDamageSource;
 import jackiecrazy.footwork.capability.resources.CombatData;
 import jackiecrazy.footwork.capability.resources.ICombatCapability;
 import jackiecrazy.footwork.capability.weaponry.CombatManipulator;
+import jackiecrazy.footwork.client.particle.FootworkParticles;
+import jackiecrazy.footwork.client.particle.ScalingParticleType;
 import jackiecrazy.footwork.event.AttackMightEvent;
 import jackiecrazy.footwork.utils.GeneralUtils;
+import jackiecrazy.footwork.utils.ParticleUtils;
 import jackiecrazy.wardance.WarDance;
 import jackiecrazy.wardance.capability.action.PermissionData;
 import jackiecrazy.wardance.config.CombatConfig;
@@ -16,6 +19,7 @@ import jackiecrazy.wardance.event.ProjectileParryEvent;
 import jackiecrazy.wardance.event.SweepEvent;
 import jackiecrazy.wardance.networking.CombatChannel;
 import jackiecrazy.wardance.networking.UpdateAttackPacket;
+import net.minecraft.core.particles.ParticleType;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvents;
@@ -39,7 +43,10 @@ import net.minecraftforge.registries.ForgeRegistries;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import java.util.*;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Optional;
+import java.util.UUID;
 
 public class CombatUtils {
     public static final UUID off = UUID.fromString("8c8028c8-da69-49a2-99cd-f92d7ad22534");
@@ -341,23 +348,10 @@ public class CombatUtils {
 //        cap.setHandBind(InteractionHand.OFF_HAND, mbind);
         //tried really hard to make this work, but it just causes more problems.
         suppress = false;
-//        attributes.addAll(main.getAttributeModifiers(EquipmentSlotType.MAINHAND).keys());
-//        attributes.addAll(main.getAttributeModifiers(EquipmentSlotType.OFFHAND).keys());
-//        attributes.addAll(off.getAttributeModifiers(EquipmentSlotType.MAINHAND).keys());
-//        attributes.addAll(off.getAttributeModifiers(EquipmentSlotType.OFFHAND).keys());
-//        attributes.forEach((att)->{Optional.ofNullable(e.getAttribute(att)).ifPresent(ModifiableAttributeInstance::compute);});
-        main.getAttributeModifiers(EquipmentSlot.MAINHAND).forEach((att, mod) -> {
-            Optional.ofNullable(e.getAttribute(att)).ifPresent((mai) -> {mai.removeModifier(mod);});
-        });
-        off.getAttributeModifiers(EquipmentSlot.OFFHAND).forEach((att, mod) -> {
-            Optional.ofNullable(e.getAttribute(att)).ifPresent((mai) -> {mai.removeModifier(mod);});
-        });
-        main.getAttributeModifiers(EquipmentSlot.OFFHAND).forEach((att, mod) -> {
-            Optional.ofNullable(e.getAttribute(att)).ifPresent((mai) -> {mai.addTransientModifier(mod);});
-        });
-        off.getAttributeModifiers(EquipmentSlot.MAINHAND).forEach((att, mod) -> {
-            Optional.ofNullable(e.getAttribute(att)).ifPresent((mai) -> {mai.addTransientModifier(mod);});
-        });
+        main.getAttributeModifiers(EquipmentSlot.MAINHAND).forEach((att, mod) -> Optional.ofNullable(e.getAttribute(att)).ifPresent((mai) -> mai.removeModifier(mod)));
+        off.getAttributeModifiers(EquipmentSlot.OFFHAND).forEach((att, mod) -> Optional.ofNullable(e.getAttribute(att)).ifPresent((mai) -> mai.removeModifier(mod)));
+        main.getAttributeModifiers(EquipmentSlot.OFFHAND).forEach((att, mod) -> Optional.ofNullable(e.getAttribute(att)).ifPresent((mai) -> mai.addTransientModifier(mod)));
+        off.getAttributeModifiers(EquipmentSlot.MAINHAND).forEach((att, mod) -> Optional.ofNullable(e.getAttribute(att)).ifPresent((mai) -> mai.addTransientModifier(mod)));
         e.attackStrengthTicker = cap.getOffhandCooldown();
         cap.setOffhandCooldown(tssl);
     }
@@ -446,48 +440,29 @@ public class CombatUtils {
         }
         //if (e instanceof Player && hit) {
         //play sweep particles in different ways
+        ParticleType<ScalingParticleType> particle = FootworkParticles.SWEEP.get();
+        float offset = 0;
         switch (type) {
-            case LINE -> ParticleUtils.playSweepParticle(e, 0, reach, e.getBbHeight() / 2);
+            case LINE -> particle = FootworkParticles.LINE.get();
             case CIRCLE -> {
-                ParticleUtils.playSweepParticle(e, 0, radius, e.getBbHeight() / 2);
-                ParticleUtils.playSweepParticle(e, 180, radius, e.getBbHeight() / 2);
-                if (radius > 1) {
-                    ParticleUtils.playSweepParticle(e, 90, radius, e.getBbHeight() / 2);
-                    ParticleUtils.playSweepParticle(e, 270, radius, e.getBbHeight() / 2);
-                }
-                if (radius > 3) {
-                    ParticleUtils.playSweepParticle(e, 45, radius, e.getBbHeight() / 2);
-                    ParticleUtils.playSweepParticle(e, 135, radius, e.getBbHeight() / 2);
-                    ParticleUtils.playSweepParticle(e, 225, radius, e.getBbHeight() / 2);
-                    ParticleUtils.playSweepParticle(e, 315, radius, e.getBbHeight() / 2);
-                }
+                Vec3 look = e.getLookAngle();
+                starting = e.position().add(look.x, 0, look.z);
+                particle = FootworkParticles.CIRCLE.get();
+                offset = e.getEyeHeight() / 3;
             }
             case CONE -> {
-                ParticleUtils.playSweepParticle(e, 0, reach, e.getBbHeight() / 2);
-                ParticleUtils.playSweepParticle(e, (int) (radius / 2), reach, e.getBbHeight() / 2);
-                ParticleUtils.playSweepParticle(e, (int) (-radius / 2), reach, e.getBbHeight() / 2);
+                radius = Math.tan(GeneralUtils.rad((float) radius / 2)) * reach;
+                particle = h == InteractionHand.OFF_HAND ? FootworkParticles.SWEEP_LEFT.get() : FootworkParticles.SWEEP.get();
             }
             case CLEAVE -> {
-                ParticleUtils.playSweepParticle(e, 0, reach, e.getBbHeight() / 2);
-                float rad = GeneralUtils.rad((float) (radius / 2));
-                ParticleUtils.playSweepParticle(e, 0, reach * Mth.cos(rad), reach * Mth.sin(rad));
-                ParticleUtils.playSweepParticle(e, 0, reach * Mth.cos(rad), -reach * Mth.sin(rad));
+                particle = FootworkParticles.CLEAVE.get();
+                radius = Math.tan(GeneralUtils.rad((float) radius / 2)) * reach;
             }
             case IMPACT -> {
-                ParticleUtils.playSweepParticle(e, starting, 0, radius, 0.5);
-                ParticleUtils.playSweepParticle(e, starting, 180, radius, 0.5);
-                if (radius > 1) {
-                    ParticleUtils.playSweepParticle(e, starting, 90, radius, 0.5);
-                    ParticleUtils.playSweepParticle(e, starting, 270, radius, 0.5);
-                }
-                if (radius > 3) {
-                    ParticleUtils.playSweepParticle(e, starting, 45, radius, 0.5);
-                    ParticleUtils.playSweepParticle(e, starting, 135, radius, 0.5);
-                    ParticleUtils.playSweepParticle(e, starting, 225, radius, 0.5);
-                    ParticleUtils.playSweepParticle(e, starting, 315, radius, 0.5);
-                }
+                particle = FootworkParticles.IMPACT.get();
             }
         }
+        ParticleUtils.playSweepParticle(particle, e, starting, 0, radius, offset);
         e.level.playSound(null, e.getX(), e.getY(), e.getZ(), SoundEvents.PLAYER_ATTACK_SWEEP, e.getSoundSource(), 1.0F, 1.0F);
         //}
         isSweeping = false;

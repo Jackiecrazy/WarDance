@@ -17,7 +17,6 @@ public class SabatonSmash extends Kick {
 
     @Override
     public boolean markTick(LivingEntity caster, LivingEntity target, SkillData sd) {
-        sd.decrementDuration();
         if (target.horizontalCollision) {
             removeMark(target);
             if (caster != null) {
@@ -26,7 +25,7 @@ public class SabatonSmash extends Kick {
 
             }
         }
-        return super.markTick(caster, target, sd);
+        return markTickDown(sd);
     }
 
     @Override

@@ -2,10 +2,11 @@ package jackiecrazy.wardance.skill.kick;
 
 import jackiecrazy.footwork.api.CombatDamageSource;
 import jackiecrazy.footwork.capability.resources.CombatData;
+import jackiecrazy.footwork.client.particle.FootworkParticles;
+import jackiecrazy.footwork.utils.ParticleUtils;
 import jackiecrazy.footwork.utils.TargetingUtils;
 import jackiecrazy.wardance.WarDance;
 import jackiecrazy.wardance.skill.SkillData;
-import jackiecrazy.wardance.utils.ParticleUtils;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.entity.Entity;
@@ -31,21 +32,8 @@ public class Tornado extends Kick {
                 }
             //play little sweep animation
             caster.level.playSound(null, caster.getX(), caster.getY(), caster.getZ(), SoundEvents.ZOMBIE_ATTACK_WOODEN_DOOR, SoundSource.PLAYERS, 0.25f + WarDance.rand.nextFloat() * 0.5f, 0.5f + WarDance.rand.nextFloat() * 0.5f);
-            int radius = 1;
-            ParticleUtils.playSweepParticle(caster, 30, radius, 0.1);
-            ParticleUtils.playSweepParticle(caster, 120, radius, 0.1);
-            ParticleUtils.playSweepParticle(caster, 210, radius, 0.1);
-            ParticleUtils.playSweepParticle(caster, 300, radius, 0.1);
-            radius = 2;
-            ParticleUtils.playSweepParticle(caster, 45, radius, caster.getBbHeight() / 2);
-            ParticleUtils.playSweepParticle(caster, 135, radius, caster.getBbHeight() / 2);
-            ParticleUtils.playSweepParticle(caster, 225, radius, caster.getBbHeight() / 2);
-            ParticleUtils.playSweepParticle(caster, 315, radius, caster.getBbHeight() / 2);
-            radius = 3;
-            ParticleUtils.playSweepParticle(caster, 60, radius, caster.getBbHeight());
-            ParticleUtils.playSweepParticle(caster, 150, radius, caster.getBbHeight());
-            ParticleUtils.playSweepParticle(caster, 240, radius, caster.getBbHeight());
-            ParticleUtils.playSweepParticle(caster, 330, radius, caster.getBbHeight());
+            for (int radius = 1; radius < 4; ++radius)
+                ParticleUtils.playSweepParticle(FootworkParticles.CIRCLE.get(), caster, caster.getLookAngle().multiply(1, 0, 1), 0, radius, 1+radius);
         }
         if (to == STATE.COOLING) {
             setCooldown(caster, prev, 4);

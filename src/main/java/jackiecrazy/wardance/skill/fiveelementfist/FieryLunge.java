@@ -41,7 +41,7 @@ public class FieryLunge extends FiveElementFist {
 
     @Override
     protected void doAttack(LivingEntity caster, LivingEntity target) {
-        caster.setDeltaMovement(caster.getDeltaMovement().add(caster.position().vectorTo(target.position()).scale(0.18)));
+        caster.setDeltaMovement(caster.getDeltaMovement().add(caster.position().vectorTo(target.position()).scale(0.14)));
         CombatData.getCap(caster).setRollTime(-10);
         caster.hurtMarked = true;
         CombatData.getCap(target).setHandBind(InteractionHand.MAIN_HAND, (int) (SkillUtils.getSkillEffectiveness(caster) * 10));

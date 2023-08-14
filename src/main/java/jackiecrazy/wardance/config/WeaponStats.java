@@ -33,6 +33,7 @@ import net.minecraftforge.registries.ForgeRegistries;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.lang.reflect.Type;
+import java.text.DecimalFormat;
 import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
@@ -45,6 +46,7 @@ public class WeaponStats extends SimpleJsonResourceReloadListener {
     public static final TagKey<Item> PIERCE_PARRY = ItemTags.create(new ResourceLocation(WarDance.MODID, "pierce_parry"));
     public static final TagKey<Item> PIERCE_SHIELD = ItemTags.create(new ResourceLocation(WarDance.MODID, "pierce_shield"));
     public static final TagKey<Item> CANNOT_PARRY = ItemTags.create(new ResourceLocation(WarDance.MODID, "cannot_parry"));
+    private static final DecimalFormat formatter = new DecimalFormat("#.#");
     private static final SweepInfo DEFAULT_FAN = new SweepInfo(SWEEPTYPE.CONE, 30, 30);
     private static final SweepInfo DEFAULT_CLEAVE = new SweepInfo(SWEEPTYPE.CLEAVE, 30, 30);
     private static final SweepInfo DEFAULT_IMPACT = new SweepInfo(SWEEPTYPE.IMPACT, 1, 1.5);
@@ -114,6 +116,8 @@ public class WeaponStats extends SimpleJsonResourceReloadListener {
                 try {
                     JsonObject obj = entry.getValue().getAsJsonObject();
                     MeleeInfo put = parseMeleeInfo(obj);
+                    if (GeneralConfig.debug)
+                        WarDance.LOGGER.debug(name + " has been registered with sweep types: " + put.sweeps[0].getType() + " " + put.sweeps[1].getType() + " " + put.sweeps[2].getType() + " " + put.sweeps[3].getType() + " " + put.sweeps[4].getType() + " ");
                     combatList.put(item, put);
                 } catch (Exception x) {
                     WarDance.LOGGER.error("malformed json under " + name + "!");
@@ -135,6 +139,8 @@ public class WeaponStats extends SimpleJsonResourceReloadListener {
             int ord = s.ordinal();
             JsonElement gottem = obj.get(s.name().toLowerCase(Locale.ROOT));
             if (gottem == null || !gottem.isJsonObject()) {
+                if (GeneralConfig.debug)
+                    WarDance.LOGGER.debug("did not find " + s + ", generating defaults");
                 //"smartly" infer what kind of falling attack is wanted:
                 //cone->cleave, impact->impact, line->line, the others->none
                 if (s == SWEEPSTATE.FALLING)
@@ -325,7 +331,7 @@ public class WeaponStats extends SimpleJsonResourceReloadListener {
             double damage = damage_scale;
             double posture = posture_scale;
             if (knockback != REFERENCE.knockback) {
-                MutableComponent cp = Component.literal(knockback + "x");
+                MutableComponent cp = Component.literal(formatter.format(knockback) + "x");
                 if (!advanced) {
                     if (knockback > 1)
                         cp = Component.translatable("wardance.tooltip.more");
@@ -342,19 +348,27 @@ public class WeaponStats extends SimpleJsonResourceReloadListener {
                 posture *= crit_damage;
             }
             if (damage != 1)
-                sweepTip.append(Component.translatable("wardance.tooltip.sweep.damage" + advance, Component.literal(String.valueOf(damage * 100) + "%").withStyle(getColorFromValue(damage))));
+                sweepTip.append(Component.translatable("wardance.tooltip.sweep.damage" + advance, Component.literal(formatter.format(damage * 100) + "%").withStyle(getColorFromValue(damage))));
             if (posture != 1)
-                sweepTip.append(Component.translatable("wardance.tooltip.sweep.posture" + advance, Component.literal(String.valueOf(posture * 100) + "%").withStyle(getColorFromValue(posture))));
+                sweepTip.append(Component.translatable("wardance.tooltip.sweep.posture" + advance, Component.literal(formatter.format(posture * 100) + "%").withStyle(getColorFromValue(posture))));
             if (!hit_self_command.isEmpty() || !hit_other_command.isEmpty() || !damage_other_command.isEmpty() || !damage_self_command.isEmpty()) {
                 if (advanced) {
-                    sweepTip.append(Component.literal("\n"));
-                    sweepTip.append(Component.translatable("wardance.tooltip.sweep.command.self_hit", Component.literal(hit_self_command).withStyle(ChatFormatting.LIGHT_PURPLE)));
-                    sweepTip.append(Component.literal("\n"));
-                    sweepTip.append(Component.translatable("wardance.tooltip.sweep.command.other_hit", Component.literal(hit_other_command).withStyle(ChatFormatting.LIGHT_PURPLE)));
-                    sweepTip.append(Component.literal("\n"));
-                    sweepTip.append(Component.translatable("wardance.tooltip.sweep.command.self_damage", Component.literal(damage_self_command).withStyle(ChatFormatting.LIGHT_PURPLE)));
-                    sweepTip.append(Component.literal("\n"));
-                    sweepTip.append(Component.translatable("wardance.tooltip.sweep.command.other_damage", Component.literal(damage_other_command).withStyle(ChatFormatting.LIGHT_PURPLE)));
+                    if (!hit_self_command.isEmpty()) {
+                        sweepTip.append(Component.literal("\n"));
+                        sweepTip.append(Component.translatable("wardance.tooltip.sweep.command.self_hit", Component.literal(hit_self_command).withStyle(ChatFormatting.LIGHT_PURPLE)));
+                    }
+                    if (!hit_other_command.isEmpty()) {
+                        sweepTip.append(Component.literal("\n"));
+                        sweepTip.append(Component.translatable("wardance.tooltip.sweep.command.other_hit", Component.literal(hit_other_command).withStyle(ChatFormatting.LIGHT_PURPLE)));
+                    }
+                    if (!damage_self_command.isEmpty()) {
+                        sweepTip.append(Component.literal("\n"));
+                        sweepTip.append(Component.translatable("wardance.tooltip.sweep.command.self_damage", Component.literal(damage_self_command).withStyle(ChatFormatting.LIGHT_PURPLE)));
+                    }
+                    if (!damage_other_command.isEmpty()) {
+                        sweepTip.append(Component.literal("\n"));
+                        sweepTip.append(Component.translatable("wardance.tooltip.sweep.command.other_damage", Component.literal(damage_other_command).withStyle(ChatFormatting.LIGHT_PURPLE)));
+                    }
                 } else
                     sweepTip.append(Component.translatable("wardance.tooltip.sweep.command").withStyle(ChatFormatting.LIGHT_PURPLE));
             }

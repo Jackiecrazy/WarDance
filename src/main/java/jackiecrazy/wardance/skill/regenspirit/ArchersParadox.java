@@ -22,6 +22,12 @@ lady luck: after casting a skill, have a 1+luck/5+luck chance to recover the spi
 apathy: your max spirit is 4, your spirit instantly refills after cooldown, you are immune to burnout.
      */
 
+    @Nonnull
+    @Override
+    public SkillArchetype getArchetype() {
+        return SkillArchetypes.morale;
+    }
+
     @Override
     public HashSet<String> getTags() {
         return passive;
@@ -33,40 +39,35 @@ apathy: your max spirit is 4, your spirit instantly refills after cooldown, you 
         return none;
     }
 
-
-    @Nonnull
-    @Override
-    public SkillArchetype getArchetype() {
-        return SkillArchetypes.morale;
-    }
-
     @Override
     public boolean equippedTick(LivingEntity caster, SkillData d) {
-        if (d.isCondition())
-            d.decrementDuration();
-        if (d.getDuration() <= 0) {
-            d.flagCondition(false);
-            d.setDuration(60);
-        }
-        return false;
+        return cooldownTick(d);
     }
 
     @Override
     public void onProc(LivingEntity caster, Event procPoint, STATE state, SkillData stats, LivingEntity target) {
         if (stats.isCondition()) return;
-        if (procPoint instanceof ProjectileImpactEvent&&procPoint.getPhase()== EventPriority.HIGHEST) {
+        if (procPoint instanceof ProjectileImpactEvent pie && procPoint.getPhase() == EventPriority.HIGHEST) {
             CombatData.getCap(caster).addSpirit(1);
-            stats.flagCondition(true);
-        } else if (procPoint instanceof EntityAwarenessEvent&&((EntityAwarenessEvent) procPoint).getAttacker()==caster&&procPoint.getPhase()== EventPriority.HIGHEST) {
+            markUsed(caster, true);
+        } else if (procPoint instanceof EntityAwarenessEvent && ((EntityAwarenessEvent) procPoint).getAttacker() == caster && procPoint.getPhase() == EventPriority.HIGHEST) {
             if (((EntityAwarenessEvent) procPoint).getAwareness() != StealthUtils.Awareness.ALERT) {
                 CombatData.getCap(caster).addSpirit(1);
-                stats.flagCondition(true);
+                markUsed(caster, true);
             }
         }
     }
 
     @Override
     public boolean onStateChange(LivingEntity caster, SkillData prev, STATE from, STATE to) {
+        if (to == STATE.COOLING)
+            setCooldown(caster, prev, 3);
+        if (to == STATE.INACTIVE && from == STATE.COOLING && prev.getDuration() <= 0) {
+            prev.setState(STATE.ACTIVE);//so it shows up
+            prev.setDuration(0);
+            prev.setMaxDuration(0);
+            return true;
+        }
         return false;
     }
 }

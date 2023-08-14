@@ -720,8 +720,14 @@ public class CombatCapability implements ICombatCapability {
         //update max values
         vision = (float) elb.getAttributeValue(Attributes.FOLLOW_RANGE);
         mpos = (float) elb.getAttributeValue(FootworkAttributes.MAX_POSTURE.get());
+        if(posture>mpos)
+            setPosture(mpos);
         mspi = (float) elb.getAttributeValue(FootworkAttributes.MAX_SPIRIT.get());
+        if(spirit>mspi)
+            setSpirit(mspi);
         mmight = (float) elb.getAttributeValue(FootworkAttributes.MAX_MIGHT.get());
+        if(might>mmight)
+            setMight(mmight);
         mfrac = (int) elb.getAttributeValue(FootworkAttributes.MAX_FRACTURE.get());
         if (elb.hasEffect(FootworkEffects.SLEEP.get()) || elb.hasEffect(FootworkEffects.PARALYSIS.get()) || elb.hasEffect(FootworkEffects.PETRIFY.get()))
             vision = -1;

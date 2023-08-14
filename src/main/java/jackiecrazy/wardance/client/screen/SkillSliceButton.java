@@ -43,6 +43,8 @@ public class SkillSliceButton extends SkillSelectionButton {
         if (this.active && this.visible && this.isHovered) {
             if (this.clicked(mouseX, mouseY)) {
                 if (button == 0) {
+                    if(s!=null)
+                        parent.displaySkillInfo(s);
                     this.playDownSound(Minecraft.getInstance().getSoundManager());
                     this.onClick(mouseX, mouseY);
                     return true;

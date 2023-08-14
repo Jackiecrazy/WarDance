@@ -7,11 +7,13 @@ import jackiecrazy.wardance.client.ClientEvents;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraftforge.common.ForgeConfigSpec;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
+import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.event.config.ModConfigEvent;
 import org.apache.commons.lang3.tuple.Pair;
 
 import java.util.List;
 
+@Mod.EventBusSubscriber(modid = WarDance.MODID, bus = Mod.EventBusSubscriber.Bus.MOD)
 public class ClientConfig {
     public static final ClientConfig CONFIG;
     public static final ForgeConfigSpec CONFIG_SPEC;
@@ -26,7 +28,7 @@ public class ClientConfig {
         CONFIG_SPEC = specPair.getRight();
     }
 
-    public final DisplayConfigUtils.DisplayData might, mightNumber, spirit, spiritNumber, combo, playerAfflict, enemyAfflict, stealth;
+    public final DisplayConfigUtils.DisplayData might, mightNumber, spirit, spiritNumber, combo, playerAfflict, enemyAfflict, skillCD, stealth;
     public final PostureData playerPosture, enemyPosture;
     private final ForgeConfigSpec.IntValue _autoCombat;
     private final ForgeConfigSpec.ConfigValue<String> _mightColor;
@@ -38,13 +40,13 @@ public class ClientConfig {
         _autoCombat = b.translation("wardance.config.autoCombat").comment("combat mode will be automatically engaged once you attack or get attacked by an entity if it is not already on, for this number of ticks before turning itself off. Set to 0 to disable this feature.").defineInRange("auto combat mode", 260, 0, Integer.MAX_VALUE);
         b.pop();
         b.push("might");
-        might = new DisplayConfigUtils.DisplayData(b, "might", DisplayConfigUtils.AnchorPoint.BOTTOMLEFT, 64, -16);
-        mightNumber = new DisplayConfigUtils.DisplayData(b, "might number", DisplayConfigUtils.AnchorPoint.BOTTOMLEFT, 64, -38);
+        might = new DisplayConfigUtils.DisplayData(b, "might", DisplayConfigUtils.AnchorPoint.BOTTOMLEFT, 32, -16);
+        mightNumber = new DisplayConfigUtils.DisplayData(b, "might number", DisplayConfigUtils.AnchorPoint.BOTTOMLEFT, 32, -38);
         _mightColor = b.translation("wardance.config.mightC").comment("might color in hexadecimal").define("might color", "ccac00");
         b.pop();
         b.push("spirit");
-        spirit = new DisplayConfigUtils.DisplayData(b, "spirit", DisplayConfigUtils.AnchorPoint.BOTTOMRIGHT, -64, -16);
-        spiritNumber = new DisplayConfigUtils.DisplayData(b, "spirit number", DisplayConfigUtils.AnchorPoint.BOTTOMRIGHT, -64, -38);
+        spirit = new DisplayConfigUtils.DisplayData(b, "spirit", DisplayConfigUtils.AnchorPoint.BOTTOMLEFT, 80, -16);
+        spiritNumber = new DisplayConfigUtils.DisplayData(b, "spirit number", DisplayConfigUtils.AnchorPoint.BOTTOMLEFT, 80, -38);
         _spiritColor = b.translation("wardance.config.spiritC").comment("spirit color in hexadecimal").define("spirit color", "00e3e3");
         b.pop();
         b.push("combo");
@@ -56,11 +58,14 @@ public class ClientConfig {
         b.push("enemy posture");
         enemyPosture = new PostureData(b, "target posture", DisplayConfigUtils.AnchorPoint.TOPCENTER, 0, 20);
         b.pop();
-        b.push("your afflictions");
+        b.push("your marks");
         playerAfflict = new DisplayConfigUtils.DisplayData(b, "your marks", DisplayConfigUtils.AnchorPoint.CROSSHAIR, 0, 18);
         b.pop();
-        b.push("target afflictions");
+        b.push("target marks");
         enemyAfflict = new DisplayConfigUtils.DisplayData(b, "target marks", DisplayConfigUtils.AnchorPoint.CROSSHAIR, 0, -18);
+        b.pop();
+        b.push("skill cooldown");
+        skillCD = new DisplayConfigUtils.DisplayData(b, "skill cooldown", DisplayConfigUtils.AnchorPoint.BOTTOMRIGHT, -100, -36);
         b.pop();
         b.push("stealth");
         stealth = new DisplayConfigUtils.DisplayData(b, "stealth", DisplayConfigUtils.AnchorPoint.CROSSHAIR, 0, 0);
@@ -78,6 +83,7 @@ public class ClientConfig {
         CONFIG.enemyAfflict.bake();
         CONFIG.enemyPosture.bake();
         CONFIG.playerAfflict.bake();
+        CONFIG.skillCD.bake();
         CONFIG.stealth.bake();
         spiritColor = Integer.parseInt(CONFIG._spiritColor.get(), 16);
         mightColor = Integer.parseInt(CONFIG._mightColor.get(), 16);

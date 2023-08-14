@@ -26,7 +26,7 @@ public class PoundOfFlesh extends MementoMori {
         if (d.getState() == STATE.ACTIVE) {
             if (CombatData.getCap(caster).getSpirit() == CombatData.getCap(caster).getMaxSpirit())
                 markUsed(caster);
-            d.decrementDuration();
+            return activeTick(d);
         }
         return super.equippedTick(caster, d);
     }
@@ -37,7 +37,7 @@ public class PoundOfFlesh extends MementoMori {
             prev.setState(STATE.INACTIVE);
             prev.setDuration(0);
         }
-        if (to == STATE.HOLSTERED && cast(caster, CombatData.getCap(caster).getSpirit() * 100)) {
+        if (to == STATE.HOLSTERED && cast(caster, CombatData.getCap(caster).getSpirit() * 5)) {
             CombatData.getCap(caster).setSpirit(0);
         }
         return instantCast(prev, from, to);

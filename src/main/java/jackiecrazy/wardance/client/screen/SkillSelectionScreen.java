@@ -324,8 +324,8 @@ public class SkillSelectionScreen extends Screen {
         addRenderableWidget(search);
         search.setFocus(false);
         search.setCanLoseFocus(true);
-        addRenderableWidget(style);
         addRenderableWidget(skillInfo);
+        addRenderableWidget(style);
 
         final int width = Math.min(2 * listWidth / numButtons, 16);
         int x = PADDING;

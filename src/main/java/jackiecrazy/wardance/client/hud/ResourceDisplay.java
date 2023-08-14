@@ -7,21 +7,13 @@ import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.datafixers.util.Pair;
 import jackiecrazy.footwork.capability.resources.CombatData;
 import jackiecrazy.footwork.capability.resources.ICombatCapability;
-import jackiecrazy.footwork.config.DisplayConfigUtils;
 import jackiecrazy.footwork.potion.FootworkEffects;
 import jackiecrazy.footwork.utils.StealthUtils;
 import jackiecrazy.wardance.WarDance;
 import jackiecrazy.wardance.capability.resources.CombatCapability;
-import jackiecrazy.wardance.capability.skill.CasterData;
-import jackiecrazy.wardance.capability.skill.ISkillCapability;
-import jackiecrazy.wardance.capability.status.Marks;
 import jackiecrazy.wardance.client.RenderUtils;
 import jackiecrazy.wardance.config.ClientConfig;
 import jackiecrazy.wardance.config.CombatConfig;
-import jackiecrazy.wardance.skill.Skill;
-import jackiecrazy.wardance.skill.SkillArchetypes;
-import jackiecrazy.wardance.skill.SkillData;
-import jackiecrazy.wardance.skill.coupdegrace.CoupDeGrace;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiComponent;
 import net.minecraft.client.player.LocalPlayer;
@@ -36,29 +28,24 @@ import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.client.gui.overlay.ForgeGui;
 import net.minecraftforge.client.gui.overlay.IGuiOverlay;
 
-import java.awt.*;
-import java.text.DecimalFormat;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
-import java.util.stream.Collectors;
 
 public class ResourceDisplay implements IGuiOverlay {
 
-    static final DecimalFormat formatter = new DecimalFormat("#.#");
     private static final Cache<LivingEntity, Tuple<StealthUtils.Awareness, Double>> cache = CacheBuilder.newBuilder().weakKeys().expireAfterWrite(1, TimeUnit.SECONDS).build();
     private static final ResourceLocation amo = new ResourceLocation(WarDance.MODID, "textures/hud/amo.png");
     private static final ResourceLocation darkmega = new ResourceLocation(WarDance.MODID, "textures/hud/dark.png");
     private static final ResourceLocation newdark = new ResourceLocation(WarDance.MODID, "textures/hud/mega.png");
     private static final ResourceLocation raihud = new ResourceLocation(WarDance.MODID, "textures/hud/thanksrai.png");
     private static final ResourceLocation stealth = new ResourceLocation(WarDance.MODID, "textures/hud/stealth.png");
+    private static final ResourceLocation might = new ResourceLocation(WarDance.MODID, "textures/hud/bars.png");
     static float currentComboLevel = 0;
     private static float currentMightLevel = 0;
     private static float currentSpiritLevel = 0;
     private static float scurrentEvasion = 0, lcurrentEvasion = 0;
     private static boolean flip = false;
-    private static int snewDarkAnimFrames = 0, lnewDarkAnimFrames = 0;
+    private static int snewDarkAnimFrames = 0, lnewDarkAnimFrames = 0, spiritFrames = 0;
 
     private static void drawPostureBarAt(boolean you, PoseStack ms, LivingEntity elb, int width, int height) {
         ClientConfig.BarType b = ClientConfig.CONFIG.enemyPosture.bar;
@@ -77,7 +64,7 @@ public class ResourceDisplay implements IGuiOverlay {
      * Draws it with the coord as its center
      */
     private static void drawOldPostureBarAt(boolean you, PoseStack ms, LivingEntity elb, int width, int height) {
-        Pair<Integer, Integer> pair = you ? translateCoords(ClientConfig.CONFIG.playerPosture, width, height) : translateCoords(ClientConfig.CONFIG.enemyPosture, width, height);
+        Pair<Integer, Integer> pair = you ? RenderUtils.translateCoords(ClientConfig.CONFIG.playerPosture, width, height) : RenderUtils.translateCoords(ClientConfig.CONFIG.enemyPosture, width, height);
         int atX = pair.getFirst();
         int atY = pair.getSecond();
         Minecraft mc = Minecraft.getInstance();
@@ -134,7 +121,7 @@ public class ResourceDisplay implements IGuiOverlay {
      * Draws it with the coord as its center
      */
     private static void drawAmoPostureBarAt(boolean you, PoseStack ms, LivingEntity elb, int width, int height) {
-        Pair<Integer, Integer> pair = you ? translateCoords(ClientConfig.CONFIG.playerPosture, width, height) : translateCoords(ClientConfig.CONFIG.enemyPosture, width, height);
+        Pair<Integer, Integer> pair = you ? RenderUtils.translateCoords(ClientConfig.CONFIG.playerPosture, width, height) : RenderUtils.translateCoords(ClientConfig.CONFIG.enemyPosture, width, height);
         int atX = pair.getFirst();
         int atY = pair.getSecond();
         Minecraft mc = Minecraft.getInstance();
@@ -201,7 +188,7 @@ public class ResourceDisplay implements IGuiOverlay {
      * Draws it with the coord as its center
      */
     private static void drawDarkPostureBarAt(boolean you, PoseStack ms, LivingEntity elb, int width, int height) {
-        Pair<Integer, Integer> pair = you ? translateCoords(ClientConfig.CONFIG.playerPosture, width, height) : translateCoords(ClientConfig.CONFIG.enemyPosture, width, height);
+        Pair<Integer, Integer> pair = you ? RenderUtils.translateCoords(ClientConfig.CONFIG.playerPosture, width, height) : RenderUtils.translateCoords(ClientConfig.CONFIG.enemyPosture, width, height);
         int atX = pair.getFirst();
         int atY = pair.getSecond();
         Minecraft mc = Minecraft.getInstance();
@@ -293,7 +280,7 @@ public class ResourceDisplay implements IGuiOverlay {
      * Draws it with the coord as its center
      */
     private static void drawNewDarkPostureBarAt(boolean you, PoseStack ms, LivingEntity elb, int width, int height) {
-        Pair<Integer, Integer> pair = you ? translateCoords(ClientConfig.CONFIG.playerPosture, width, height) : translateCoords(ClientConfig.CONFIG.enemyPosture, width, height);
+        Pair<Integer, Integer> pair = you ? RenderUtils.translateCoords(ClientConfig.CONFIG.playerPosture, width, height) : RenderUtils.translateCoords(ClientConfig.CONFIG.enemyPosture, width, height);
         int atX = pair.getFirst();
         int atY = pair.getSecond();
         Minecraft mc = Minecraft.getInstance();
@@ -446,10 +433,6 @@ public class ResourceDisplay implements IGuiOverlay {
         return new Tuple<>(StealthUtils.Awareness.ALERT, 1d);
     }
 
-    private static Pair<Integer, Integer> translateCoords(DisplayConfigUtils.DisplayData dd, int width, int height) {
-        return translateCoords(dd.anchorPoint, dd.numberX, dd.numberY, width, height);
-    }
-
     private static void renderEye(LivingEntity passedEntity, float partialTicks, PoseStack poseStack) {
         final Tuple<StealthUtils.Awareness, Double> info = stealthInfo(passedEntity);
         double dist = info.getB();
@@ -486,53 +469,6 @@ public class ResourceDisplay implements IGuiOverlay {
         //poseStack.translate(0.0D, -(NeatConfig.backgroundHeight + NeatConfig.barHeight + NeatConfig.backgroundPadding), 0.0D);
     }
 
-    private static Pair<Integer, Integer> translateCoords(DisplayConfigUtils.AnchorPoint ap, int x, int y, int width, int height) {
-        int retx, rety;
-        switch (ap) {
-            case TOPLEFT:
-                retx = 0;
-                rety = 0;
-                break;
-            case TOPRIGHT:
-                retx = 0;
-                rety = width;
-                break;
-            case CROSSHAIR:
-                retx = width / 2;
-                rety = height / 2;
-                break;
-            case TOPCENTER:
-                retx = width / 2;
-                rety = 0;
-                break;
-            case BOTTOMLEFT:
-                retx = 0;
-                rety = height;
-                break;
-            case MIDDLELEFT:
-                retx = 0;
-                rety = height / 2;
-                break;
-            case BOTTOMRIGHT:
-                retx = width;
-                rety = height;
-                break;
-            case MIDDLERIGHT:
-                retx = width;
-                rety = height / 2;
-                break;
-            case BOTTOMCENTER:
-                retx = width / 2;
-                rety = height;
-                break;
-            default:
-                retx = rety = 0;
-        }
-        retx = Mth.clamp(retx + x, 0, width);
-        rety = Mth.clamp(rety + y, 0, height);
-        return Pair.of(retx, rety);
-    }
-
     @Override
     public void render(ForgeGui gui, PoseStack stack, float partialTick, int width, int height) {
         final Minecraft mc = Minecraft.getInstance();
@@ -541,7 +477,10 @@ public class ResourceDisplay implements IGuiOverlay {
             LocalPlayer player = mc.player;
             ICombatCapability cap = CombatData.getCap(player);
             RenderSystem.setShaderTexture(0, raihud);
+            float prev = currentSpiritLevel;
             currentSpiritLevel = updateValue(currentSpiritLevel, cap.getSpirit());
+            if ((int) prev < (int) currentSpiritLevel)//advance up 1
+                spiritFrames = 10;
             currentMightLevel = updateValue(currentMightLevel, cap.getMight());
             currentComboLevel = cap.getRank() > currentComboLevel ? updateValue(currentComboLevel, cap.getRank()) : cap.getRank();
             //yourCurrentPostureLevel = updateValue(yourCurrentPostureLevel, cap.getPosture());
@@ -550,11 +489,15 @@ public class ResourceDisplay implements IGuiOverlay {
                     stack.pushPose();
                     RenderSystem.enableBlend();
                     //RenderSystem.enableAlphaTest();
-                    Pair<Integer, Integer> pair = translateCoords(ClientConfig.CONFIG.might, width, height);
+                    Pair<Integer, Integer> pair = RenderUtils.translateCoords(ClientConfig.CONFIG.might, width, height);
                     int x = Math.max(pair.getFirst() - 16, 0);
                     int y = Math.min(pair.getSecond() - 16, height - 32);
                     int fillHeight = (int) (currentMightLevel * 32 / cap.getMaxMight());
                     if (ClientConfig.CONFIG.might.enabled) {
+                        RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, 1.0F);
+                        RenderSystem.setShaderTexture(0, might);
+                        drawBar(stack, width / 2, height / 2, currentMightLevel, currentMightLevel == cap.getMaxMight());
+                        RenderSystem.setShaderTexture(0, raihud);
                         //might circle
                         RenderSystem.setShaderColor(1, 1, 1, 1);
                         stack.pushPose();
@@ -571,12 +514,6 @@ public class ResourceDisplay implements IGuiOverlay {
                         }
                         fillHeight += Math.min(fillHeight, 3);
                         fillHeight = Math.min(fillHeight, 32);
-                        //might crown, rendered when above half might
-//                        if (currentMightLevel >= cap.getMaxMight() / 2) {
-//                            stack.pushPose();
-//                            mc.gui.blit(stack, x, y, 32, 64, 32, 32);
-//                            stack.popPose();
-//                        }
                         //might crown plus pro ultra, rendered at max might
                         if (currentMightLevel == cap.getMaxMight()) {
                             {
@@ -587,15 +524,53 @@ public class ResourceDisplay implements IGuiOverlay {
                         }
                         stack.popPose();
                     }
-                    pair = translateCoords(ClientConfig.CONFIG.spirit, width, height);
+
+
+                    pair = RenderUtils.translateCoords(ClientConfig.CONFIG.spirit, width, height);
                     x = Mth.clamp(pair.getFirst() - 16, 0, width - 32);
                     y = Mth.clamp(pair.getSecond() - 16, 0, height - 32);
                     fillHeight = (int) (Math.min(1, currentSpiritLevel / cap.getMaxSpirit()) * 32);
-                    String display = formatter.format(currentSpiritLevel) + "/" + formatter.format(cap.getMaxSpirit());
+                    String display = RenderUtils.formatter.format(currentSpiritLevel) + "/" + RenderUtils.formatter.format(cap.getMaxSpirit());
                     //spirit circle
                     {
                         stack.pushPose();
                         if (ClientConfig.CONFIG.spirit.enabled) {
+                            RenderSystem.setShaderTexture(0, might);
+                            //determine whether we are on the left side
+                            boolean invert = true;//x>width/2;
+                            int count = Mth.ceil(cap.getMaxSpirit());
+                            int spiritWidth = 13;
+                            int spiritHeight = 21;
+                            int spiritV = 80;
+                            int startX = width / 2 + 7;//x - spiritWidth * count / 2;
+                            int startY = height / 2 - 4;//y - spiritHeight / 2;
+                            //draw empty/full spirits
+                            if (invert)
+                                //fixme doesn't work
+                                for (int i = 0; i < count; i++) {
+                                    int inverted = count - i;
+                                    //if inverted (on left side), draw empty first
+                                    GuiComponent.blit(stack, startX + inverted * spiritWidth, startY, cap.getMaxSpirit()-(int) currentSpiritLevel <= i? 13 : 0, spiritV, spiritWidth, spiritHeight, 256, 256);
+                                    if ((int) currentSpiritLevel == inverted + 1 && spiritFrames > 0) {
+                                        spiritFrames--;
+                                        GuiComponent.blit(stack, startX + i * spiritWidth, startY, 26, spiritV, spiritWidth, spiritHeight, 256, 256);
+                                    }
+
+                                }
+                            else
+                                for (int i = 0; i < count; i++) {
+                                    //if not inverted (on left side), draw full first
+                                    GuiComponent.blit(stack, startX + i * spiritWidth, startY, ((int) currentSpiritLevel < i + 1)? 13 : 0, spiritV, spiritWidth, spiritHeight, 256, 256);
+                                    if ((int) currentSpiritLevel == i + 1 && spiritFrames > 0) {
+                                        spiritFrames--;
+                                        GuiComponent.blit(stack, startX + i * spiritWidth, startY, 26, spiritV, spiritWidth, spiritHeight, 256, 256);
+                                    }
+
+                                }
+                            //draw a new spirit that was made just now
+                            //draw full/empty spirits
+                            RenderSystem.setShaderTexture(0, raihud);
+
                             {
                                 stack.pushPose();
                                 mc.gui.blit(stack, x, y, 0, 96, 32, 32);
@@ -622,13 +597,16 @@ public class ResourceDisplay implements IGuiOverlay {
                                 stack.popPose();
                             }
                         }
+                    }
+                    //numbers
+                    {
                         if (ClientConfig.CONFIG.spiritNumber.enabled) {
-                            pair = translateCoords(ClientConfig.CONFIG.spiritNumber, width, height);
+                            pair = RenderUtils.translateCoords(ClientConfig.CONFIG.spiritNumber, width, height);
                             mc.font.drawShadow(stack, display, pair.getFirst() - mc.font.width(display) / 2f, pair.getSecond() - 2, ClientConfig.spiritColor);
                         }
                         if (ClientConfig.CONFIG.mightNumber.enabled) {
-                            pair = translateCoords(ClientConfig.CONFIG.mightNumber, width, height);
-                            display = formatter.format(currentMightLevel) + "/" + formatter.format(cap.getMaxMight());
+                            pair = RenderUtils.translateCoords(ClientConfig.CONFIG.mightNumber, width, height);
+                            display = RenderUtils.formatter.format(currentMightLevel) + "/" + RenderUtils.formatter.format(cap.getMaxMight());
                             mc.font.drawShadow(stack, display, pair.getFirst() - mc.font.width(display) / 2f, pair.getSecond() - 2, ClientConfig.mightColor);
                         }
                         stack.popPose();
@@ -660,7 +638,7 @@ public class ResourceDisplay implements IGuiOverlay {
                             fillHeight = (int) ((workingCombo - 9) * 32f);
                         } else if (divisor > 1) fillHeight = (int) ((workingCombo - divisor * 2) / divisor * 32f);
                         else fillHeight = (int) ((workingCombo - Math.floor(workingCombo)) * 32f);
-                        pair = translateCoords(ClientConfig.CONFIG.combo, width, height);
+                        pair = RenderUtils.translateCoords(ClientConfig.CONFIG.combo, width, height);
                         x = Mth.clamp(pair.getFirst() - combowidth / 2, 0, width - combowidth);
                         y = Mth.clamp(pair.getSecond() - 23, 0, height - 46);
                         mc.gui.blit(stack, x, y, comboU, 0, combowidth, 32);
@@ -676,44 +654,15 @@ public class ResourceDisplay implements IGuiOverlay {
             //render posture bar if not full, displayed even out of combat mode because it's pretty relevant to not dying
             if (cap.isCombatMode() || cap.getPosture() < cap.getMaxPosture() || cap.getStunTime() > 0)
                 drawPostureBarAt(true, stack, player, width, height);
-            Entity look = RenderUtils.getEntityLookedAt(player, 32);
-            if (look instanceof LivingEntity) {
-                LivingEntity looked = (LivingEntity) look;
-                List<SkillData> afflict = new ArrayList<>();
-                final ISkillCapability skill = CasterData.getCap(player);
-                if (ClientConfig.CONFIG.enemyAfflict.enabled) {
-                    //coup de grace
-                    for (Skill variant : skill.getEquippedVariations(SkillArchetypes.coup_de_grace))
-                        if (look != player && variant instanceof CoupDeGrace cdg && skill.isSkillUsable(variant)) {
-                            if (cdg.willKillOnCast(player, looked, skill.getSkillData(variant).get())) {
-                                afflict.add(new SkillData(cdg, 0, 0));
-                            }
-                        }
-                    //marks
-                    afflict.addAll(Marks.getCap(looked).getActiveMarks().values().stream().filter(a -> a.getSkill().showsMark(a, looked)).collect(Collectors.toList()));
-                    Pair<Integer, Integer> pair = translateCoords(ClientConfig.CONFIG.enemyAfflict, width, height);
-                    for (int index = 0; index < afflict.size(); index++) {
-                        SkillData s = afflict.get(index);
-                        RenderSystem.setShaderTexture(0, s.getSkill().icon());
-                        Color c = s.getSkill().getColor();
-                        RenderSystem.setShaderColor(c.getRed() / 255f, c.getGreen() / 255f, c.getBlue() / 255f, 1);
-                        GuiComponent.blit(stack, pair.getFirst() - (afflict.size() - 1 - index) * 16 + (afflict.size() - 1) * 8 - 8, pair.getSecond(), 0, 0, 16, 16, 16, 16);
-                        if (s.getMaxDuration() >= 1) {
-                            String display = formatter.format(Math.round(s.getDuration()));
-                            mc.font.drawShadow(stack, display, pair.getFirst() - (afflict.size() - 1 - index) * 16 + (afflict.size() - 1) * 8 - 8, pair.getSecond() - 2, 0xffffff);
-                        }
-                        if (s.getArbitraryFloat() != 0) {
-                            String display = formatter.format(s.getArbitraryFloat());
-                            mc.font.drawShadow(stack, display, pair.getFirst() - (afflict.size() - 1 - index) * 16 + (afflict.size() - 1) * 8 + 4, pair.getSecond() + 8, 0xffffff);
-                        }
 
-                    }
-                }
+
+            Entity look = RenderUtils.getEntityLookedAt(player, 32);
+            if (look instanceof LivingEntity looked) {
                 RenderSystem.setShaderColor(1, 1, 1, 1);
                 stealth:
                 {
                     if (ClientConfig.CONFIG.stealth.enabled && cap.isCombatMode()) {
-                        Pair<Integer, Integer> pair = translateCoords(ClientConfig.CONFIG.stealth, width, height);
+                        Pair<Integer, Integer> pair = RenderUtils.translateCoords(ClientConfig.CONFIG.stealth, width, height);
                         final Tuple<StealthUtils.Awareness, Double> info = stealthInfo(looked);
                         double dist = info.getB();
                         int shift = 0;
@@ -740,5 +689,35 @@ public class ResourceDisplay implements IGuiOverlay {
         }
     }
 
+    private void drawBar(PoseStack stack, int x, int y, int index, int to, int from) {
+        index %= 7;
+        GuiComponent.blit(stack, x, y, -90, 0, Math.max(0, index * 5 * 2 - 5), to, 5, 256, 256);
+        if (from != 0) {
+            RenderSystem.enableBlend();
+            RenderSystem.defaultBlendFunc();
+            GuiComponent.blit(stack, x, y, -90, 0, index * 5 * 2 + 5, to, 5, 256, 256);
+            RenderSystem.disableBlend();
+        }
 
+    }
+
+    private void drawBar(PoseStack stack, int x, int y, float prog, boolean maxed) {
+        final int length = 183;
+        int index = (int) prog;
+        this.drawBar(stack, x, y, index, length - 1, 0);
+        int i = (int) ((prog - (int) prog) * length);
+        if (prog == index && prog != 0)//maxed
+            i = length;
+        if (i > 0) {
+            this.drawBar(stack, x, y, index, i, 5);
+        }
+        if (maxed) {
+            //gold covering
+            GuiComponent.blit(stack, x, y, -90, 0, 70, 183, 5, 256, 256);
+            //gold cap
+            if (prog != (int) prog)
+                GuiComponent.blit(stack, x + i - 1, y, -90, 179, 70, 4, 5, 256, 256);
+        }
+
+    }
 }

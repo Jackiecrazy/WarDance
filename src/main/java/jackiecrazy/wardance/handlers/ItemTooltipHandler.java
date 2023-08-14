@@ -15,6 +15,7 @@ import net.minecraftforge.event.entity.player.ItemTooltipEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
@@ -24,6 +25,7 @@ import static net.minecraft.world.item.ItemStack.ATTRIBUTE_MODIFIER_FORMAT;
 
 @Mod.EventBusSubscriber(modid = WarDance.MODID, value = Dist.CLIENT)
 public class ItemTooltipHandler {
+    private static final DecimalFormat formatter = new DecimalFormat("#.#");
     @SubscribeEvent()
     public static void tooltip(ItemTooltipEvent e) {
         final ItemStack stack = e.getItemStack();
@@ -31,14 +33,14 @@ public class ItemTooltipHandler {
             if (Screen.hasShiftDown()) {
                 if (PermissionData.getCap(e.getEntity()).canDealPostureDamage()) {
                     float atk = CombatUtils.getPostureAtk(null, null, null, 0, stack);
-                    e.getToolTip().add(Component.translatable("wardance.tooltip.postureAttack", Component.literal(String.valueOf(atk)).withStyle(ChatFormatting.RED)));
+                    e.getToolTip().add(Component.translatable("wardance.tooltip.postureAttack", Component.literal(formatter.format(atk)).withStyle(ChatFormatting.RED)));
                 }
                 final float def = CombatUtils.getPostureDef(null, null, stack, 0);
                 if (PermissionData.getCap(e.getEntity()).canParry()) {
                     if (stack.is(WeaponStats.CANNOT_PARRY))
                         e.getToolTip().add(Component.translatable("wardance.tooltip.noParry").withStyle(ChatFormatting.DARK_RED));
                     else
-                        e.getToolTip().add(Component.translatable("wardance.tooltip.postureDefend", Component.literal(String.valueOf(def)).withStyle(ChatFormatting.DARK_GREEN)));
+                        e.getToolTip().add(Component.translatable("wardance.tooltip.postureDefend", Component.literal(formatter.format(def)).withStyle(ChatFormatting.DARK_GREEN)));
                 }
                 if (PermissionData.getCap(e.getEntity()).canSweep()) {
                     for (WeaponStats.SWEEPSTATE s : WeaponStats.SWEEPSTATE.values())

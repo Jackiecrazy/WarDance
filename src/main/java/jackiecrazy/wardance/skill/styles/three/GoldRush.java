@@ -11,6 +11,7 @@ import jackiecrazy.wardance.skill.styles.ColorRestrictionStyle;
 import jackiecrazy.wardance.utils.SkillUtils;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.ai.attributes.AttributeModifier;
+import net.minecraftforge.event.entity.living.LivingDeathEvent;
 import net.minecraftforge.event.entity.living.LootingLevelEvent;
 import net.minecraftforge.eventbus.api.Event;
 import net.minecraftforge.eventbus.api.EventPriority;
@@ -62,9 +63,6 @@ public class GoldRush extends ColorRestrictionStyle {
 
     @Override
     public boolean onStateChange(LivingEntity caster, SkillData prev, STATE from, STATE to) {
-        if (to == STATE.COOLING) {
-            setCooldown(caster, prev, 3);
-        }
         return passive(prev, from, to);
     }
 
@@ -85,8 +83,13 @@ public class GoldRush extends ColorRestrictionStyle {
         if (procPoint instanceof final GainMightEvent gme) {
             pd.addArbitraryFloat(gme.getQuantity() * SkillUtils.getSkillEffectiveness(caster));
             if (pd.getArbitraryFloat() > 1) {
-                mark(caster, caster, 10, 1);
+                mark(caster, caster, 20, 1);
+                pd.addArbitraryFloat(-1);
             }
+        }
+        if(procPoint instanceof LivingDeathEvent lde && lde.getSource().getEntity() ==caster){
+            mark(caster, caster, 60, 1);
+            pd.addArbitraryFloat(-1);
         }
     }
 
@@ -96,6 +99,7 @@ public class GoldRush extends ColorRestrictionStyle {
         if (existing != null) {
             sd.addArbitraryFloat(existing.getArbitraryFloat());
             sd.setArbitraryFloat(Math.min(10, sd.getArbitraryFloat()));
+            sd.setDuration(20);
         }
         return sd;
     }

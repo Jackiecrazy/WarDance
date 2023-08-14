@@ -41,8 +41,7 @@ public class Silencer extends HeavyBlow {
     }
 
     public boolean markTick(LivingEntity caster, LivingEntity target, SkillData sd) {
-        sd.decrementDuration();
-        return super.markTick(caster, target, sd);
+        return markTickDown(sd);
     }
 
     @Override
@@ -68,7 +67,7 @@ public class Silencer extends HeavyBlow {
             CombatData.getCap(target).setHandBind(InteractionHand.MAIN_HAND, i);
             CombatData.getCap(target).setHandBind(InteractionHand.OFF_HAND, i);
             procPoint.setResult(Event.Result.ALLOW);
-            mark(caster, target, i);
+            mark(caster, target, i / 20f);
         } else if (state == STATE.COOLING) stats.decrementDuration();
     }
 
