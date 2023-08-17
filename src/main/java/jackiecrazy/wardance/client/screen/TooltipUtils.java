@@ -15,6 +15,7 @@ public class TooltipUtils {
             "\\{[^}]*\\}", Pattern.CASE_INSENSITIVE);
 
     public static Component tooltipText(String string) {
+        if(string.isEmpty())return Component.empty();
         MutableComponent ichat = null;
         Matcher matcher = TOOLTIP_PATTERN.matcher(string);
         int lastEnd = 0;

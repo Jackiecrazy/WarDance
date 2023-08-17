@@ -47,6 +47,8 @@ import org.apache.logging.log4j.Logger;
 
 import java.util.Random;
 
+import static jackiecrazy.wardance.client.RenderUtils.formatter;
+
 // The value here should match an entry in the META-INF/mods.toml file
 @Mod("wardance")
 public class WarDance {
@@ -64,6 +66,10 @@ public class WarDance {
                     SingletonArgumentInfo.contextFree(CategoryArgument::color)));
 
     public WarDance() {
+        //eurgh
+        formatter.setMaximumFractionDigits(340); //340 = DecimalFormat.DOUBLE_FRACTION_DIGITS
+        formatter.setMinimumFractionDigits(0);
+
         // Register the setup method for modloading
         FMLJavaModLoadingContext.get().getModEventBus().addListener(this::setup);
         FMLJavaModLoadingContext.get().getModEventBus().addListener(this::caps);
@@ -113,6 +119,8 @@ public class WarDance {
         CombatChannel.INSTANCE.registerMessage(index++, SyncItemDataPacket.class, new SyncItemDataPacket.Encoder(), new SyncItemDataPacket.Decoder(), new SyncItemDataPacket.Handler());
         CombatChannel.INSTANCE.registerMessage(index++, SyncTagDataPacket.class, new SyncTagDataPacket.Encoder(), new SyncTagDataPacket.Decoder(), new SyncTagDataPacket.Handler());
         CombatChannel.INSTANCE.registerMessage(index++, UpdateClientPermissionPacket.class, new UpdateClientPermissionPacket.Encoder(), new UpdateClientPermissionPacket.Decoder(), new UpdateClientPermissionPacket.Handler());
+        CombatChannel.INSTANCE.registerMessage(index++, LearnScrollPacket.class, new LearnScrollPacket.Encoder(), new LearnScrollPacket.Decoder(), new LearnScrollPacket.Handler());
+        CombatChannel.INSTANCE.registerMessage(index++, OpenScrollScreenPacket.class, new OpenScrollScreenPacket.Encoder(), new OpenScrollScreenPacket.Decoder(), new OpenScrollScreenPacket.Handler());
     }
 
     private void doClientStuff(final FMLClientSetupEvent event) {

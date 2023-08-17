@@ -45,6 +45,11 @@ public class Recovery extends Skill {
     }
 
     @Override
+    public boolean displaysInactive(LivingEntity caster, SkillData stats) {
+        return CombatData.getCap(caster).getPosture() < CombatData.getCap(caster).getMaxPosture() * 0.25 * SkillUtils.getSkillEffectiveness(caster);
+    }
+
+    @Override
     public boolean onStateChange(LivingEntity caster, SkillData prev, STATE from, STATE to) {
         return false;
     }

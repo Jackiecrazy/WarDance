@@ -344,6 +344,10 @@ public abstract class Skill extends Move {
         return (round % 20 == 0);
     }
 
+    public boolean displaysInactive(LivingEntity caster, SkillData stats) {
+        return false;
+    }
+
     protected boolean cast(LivingEntity caster) {
         return cast(caster, -999);
     }

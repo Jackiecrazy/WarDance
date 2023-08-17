@@ -122,10 +122,13 @@ elemental might: +1 burn/snowball/poison/drown damage to targets you have attack
     public void onProc(LivingEntity caster, Event procPoint, STATE state, SkillData stats, LivingEntity target) {
         int might = (int) CombatData.getCap(caster).getMight();
         if (procPoint instanceof LivingAttackEvent && procPoint.getPhase() == EventPriority.LOWEST) {
-            SkillUtils.modifyAttribute(caster, Attributes.ATTACK_DAMAGE, MULT, 0.15f * might * SkillUtils.getSkillEffectiveness(caster), AttributeModifier.Operation.MULTIPLY_BASE);
+            final float amount = 0.15f * might * SkillUtils.getSkillEffectiveness(caster);
+            SkillUtils.modifyAttribute(caster, Attributes.ATTACK_DAMAGE, MULT, amount, AttributeModifier.Operation.MULTIPLY_BASE);
+            stats.setArbitraryFloat(amount);
         }
         if (procPoint instanceof GainMightEvent gme && procPoint.getPhase() == EventPriority.HIGHEST) {
             float missingMight = (CombatData.getCap(caster).getMaxMight() - might) - 1 + SkillUtils.getSkillEffectiveness(caster);
+            stats.setDuration(missingMight);
             gme.setQuantity(gme.getQuantity() * (1 + missingMight * .15f));
         }
     }
@@ -135,6 +138,11 @@ elemental might: +1 burn/snowball/poison/drown damage to targets you have attack
         //pure passive, no state changes possible.
         prev.setState(STATE.INACTIVE);
         return false;
+    }
+
+    @Override
+    public boolean displaysInactive(LivingEntity caster, SkillData stats) {
+        return true;
     }
 
     public static class HiddenMight extends CrownChampion {
@@ -164,6 +172,11 @@ elemental might: +1 burn/snowball/poison/drown damage to targets you have attack
         }
 
         @Override
+        public boolean displaysInactive(LivingEntity caster, SkillData stats) {
+            return false;
+        }
+
+        @Override
         public boolean markTick(LivingEntity caster, LivingEntity target, SkillData sd) {
             target.addEffect(new MobEffectInstance(MobEffects.GLOWING, 10));
             if (sd.getDuration() < 0) {
@@ -172,6 +185,8 @@ elemental might: +1 burn/snowball/poison/drown damage to targets you have attack
             }
             return false;
         }
+
+
     }
 
     public static class PridefulMight extends CrownChampion {

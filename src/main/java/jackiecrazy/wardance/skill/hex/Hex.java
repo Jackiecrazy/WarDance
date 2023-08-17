@@ -9,6 +9,7 @@ import jackiecrazy.wardance.entity.FakeExplosion;
 import jackiecrazy.wardance.skill.*;
 import jackiecrazy.wardance.utils.DamageUtils;
 import jackiecrazy.wardance.utils.SkillUtils;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.entity.LivingEntity;
@@ -83,6 +84,12 @@ public class Hex extends Skill {
 //            Marks.getCap(e.getEntity()).getActiveMark(WarSkills.GANGRENE.get()).ifPresent(g -> g.setArbitraryFloat(40));
     }
 
+    @Nonnull
+    @Override
+    public SkillArchetype getArchetype() {
+        return SkillArchetypes.hex;
+    }
+
 //    @SubscribeEvent
 //    public static void petrify(CriticalHitEvent e) {
 //        if (!e.getEntity().isServerWorld()) return;
@@ -98,15 +105,14 @@ public class Hex extends Skill {
 //
 //    }
 
-    @Nonnull
-    @Override
-    public SkillArchetype getArchetype() {
-        return SkillArchetypes.hex;
-    }
-
     @Override
     public float spiritConsumption(LivingEntity caster) {
         return 1;
+    }
+
+    @Override
+    public ResourceLocation icon() {
+        return new ResourceLocation("wardance:textures/skill/" + getRegistryName().getPath() + ".png");
     }
 
     @Override
@@ -172,6 +178,11 @@ public class Hex extends Skill {
             luck.removeModifier(HEX);
         }
         super.onMarkEnd(caster, target, sd);
+    }
+
+    @Override
+    public boolean displaysInactive(LivingEntity caster, SkillData stats) {
+        return this == WarSkills.CURSE_OF_MISFORTUNE.get() && stats.getArbitraryFloat() > 0;
     }
 
     protected int duration() {

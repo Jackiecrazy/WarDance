@@ -60,4 +60,9 @@ apathy: your max spirit is 4, your spirit instantly refills after cooldown, you 
     public boolean onStateChange(LivingEntity caster, SkillData prev, STATE from, STATE to) {
         return false;
     }
+
+    @Override
+    public boolean displaysInactive(LivingEntity caster, SkillData stats) {
+        return stats.getArbitraryFloat() > 0;
+    }
 }

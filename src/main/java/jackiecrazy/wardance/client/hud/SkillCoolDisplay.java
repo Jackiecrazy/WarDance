@@ -41,8 +41,10 @@ public class SkillCoolDisplay implements IGuiOverlay {
 //                mc.font.drawShadow(stack, display, centerX - 8, y - 2, 0xffffff);
 //            }
             if (s.getArbitraryFloat() != 0) {
+                formatter.setMinimumFractionDigits(0);
+                formatter.setMaximumFractionDigits(1);
                 String display = formatter.format(s.getArbitraryFloat());
-                mc.font.drawShadow(stack, display, centerX + 4, y + 8, 0xffffff);
+                mc.font.drawShadow(stack, display, centerX + 8-mc.font.width(display)/2, y + 8, 0xffffff);
             }
             stack.popPose();
 
@@ -71,7 +73,7 @@ public class SkillCoolDisplay implements IGuiOverlay {
                 RenderSystem.setShaderTexture(0, RenderUtils.cooldown);
                 RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, 0.6F);
                 //AbstractGui.blit(matrixStack, x + iconX[a], y + iconY[a], 0, 0, 32, 32, 32, 32);
-                mc.font.draw(stack, num, centerX - mc.font.width(num) / 2f, y + 6, 0xFFFFFF);
+                mc.font.draw(stack, num, centerX - 8 - mc.font.width(num) / 2f, y, 0xFFFFFF);
                 stack.popPose();
             }
             stack.popPose();
@@ -89,11 +91,11 @@ public class SkillCoolDisplay implements IGuiOverlay {
             List<SkillData> skill = new ArrayList<>();
             //actives
             final ISkillCapability cap = CasterData.getCap(player);
-            skill.addAll(cap.getAllSkillData().values().stream().filter(a -> a != null && cap.isSkillEquipped(a.getSkill()) && !a.getSkill().isPassive(player) && a.getDuration() >= 0 && (a.getState() == Skill.STATE.COOLING || a.getState() == Skill.STATE.ACTIVE)).toList());
+            skill.addAll(cap.getAllSkillData().values().stream().filter(a -> a != null && cap.isSkillEquipped(a.getSkill()) && !a.getSkill().isPassive(player) && a.getDuration() >= 0 && (a.getState() == Skill.STATE.COOLING || a.getState() == Skill.STATE.ACTIVE || a.getSkill().displaysInactive(player, a))).toList());
             Pair<Integer, Integer> pair = translateCoords(ClientConfig.CONFIG.skillCD, width, height);
             drawSkills(stack, mc, skill, pair.getFirst(), pair.getSecond());
             skill.clear();
-            skill.addAll(cap.getAllSkillData().values().stream().filter(a -> a != null && cap.isSkillEquipped(a.getSkill()) && a.getSkill().isPassive(player) && a.getDuration() >= 0 && (a.getState() == Skill.STATE.COOLING || a.getState() == Skill.STATE.ACTIVE)).toList());
+            skill.addAll(cap.getAllSkillData().values().stream().filter(a -> a != null && cap.isSkillEquipped(a.getSkill()) && a.getSkill().isPassive(player) && a.getDuration() >= 0 && (a.getState() == Skill.STATE.COOLING || a.getState() == Skill.STATE.ACTIVE || a.getSkill().displaysInactive(player, a))).toList());
             drawSkills(stack, mc, skill, pair.getFirst(), pair.getSecond() + 18);
         }
     }

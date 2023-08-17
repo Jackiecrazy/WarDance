@@ -31,12 +31,7 @@ public class Survivor extends SkillStyle {
 
     @Override
     public boolean equippedTick(LivingEntity caster, SkillData d) {
-        if (d.getState() == STATE.ACTIVE) {
-            d.decrementDuration();
-            //marking and sweeping is automatically done by the capability. Thanks, me!
-            return true;
-        }
-        return super.equippedTick(caster, d);
+        return activeTick(d);
     }
 
     @Override
@@ -74,7 +69,7 @@ public class Survivor extends SkillStyle {
             return true;
         }
         if (from != STATE.ACTIVE && to == STATE.ACTIVE) {
-            prev.setDuration(200* SkillUtils.getSkillEffectiveness(caster));
+            prev.setDuration(10* SkillUtils.getSkillEffectiveness(caster));
             prev.setState(STATE.ACTIVE);
         }
         return passive(prev, from, to);

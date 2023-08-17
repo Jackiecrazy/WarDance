@@ -129,7 +129,7 @@ public class WarSkills {
     //public static final RegistryObject<Skill> FEVER_DREAM = SKILLS.register("fever_dream", ()-> new  FeverDream().setCategory(SkillColors.));
     public static final RegistryObject<Skill> VIRAL_DECAY = SKILLS.register("viral_decay", () -> new ViralDecay().setCategory(SkillColors.purple));
     //public static final RegistryObject<Skill> BRUTALIZE = SKILLS.register("brutalize", ()-> new  Brutalize().setCategory(SkillColors.));
-    //public static final RegistryObject<Skill> BLOODLUST = SKILLS.register("bloodlust", () -> new MementoMori().setCategory(SkillColors.white));
+    public static final RegistryObject<Skill> BLOODLUST = SKILLS.register("bloodlust", () -> new MementoMori().setCategory(SkillColors.white));
     public static final RegistryObject<Skill> RAPID_CLOTTING = SKILLS.register("rapid_clotting", () -> new MementoMori.RapidClotting().setCategory(SkillColors.green));
     public static final RegistryObject<Skill> SHADOW_DIVE = SKILLS.register("shadow_dive", () -> new ShadowDive().setCategory(SkillColors.gray));
     public static final RegistryObject<Skill> NECROSIS = SKILLS.register("necrosis", () -> new Necrosis().setCategory(SkillColors.purple));

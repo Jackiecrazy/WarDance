@@ -57,7 +57,6 @@ public class WarCry extends SkillStyle {
 //            prev.setState(STATE.INACTIVE);
 //            prev.setDuration(0);
 //        }
-        prev.setState(STATE.INACTIVE);
         return instantCast(prev, from, to);
     }
 }

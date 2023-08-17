@@ -26,6 +26,11 @@ public class Timberfall extends WarCry {
     }
 
     @Override
+    public boolean equippedTick(LivingEntity caster, SkillData stats) {
+        return activeTick(stats);
+    }
+
+    @Override
     public void onProc(LivingEntity caster, Event procPoint, STATE state, SkillData stats, LivingEntity target) {
         if (procPoint.getPhase() != EventPriority.LOWEST) return;
         if (procPoint instanceof LivingAttackEvent lae && state == STATE.ACTIVE && lae.getEntity() == target) {
@@ -43,7 +48,7 @@ public class Timberfall extends WarCry {
                 cpe.setAmount(cpe.getAmount() * 1.4f * SkillUtils.getSkillEffectiveness(caster));
             }
         } else if (procPoint instanceof SkillCastEvent sce && state == STATE.INACTIVE && sce.getEntity() == caster) {
-            activate(caster, 60);
+            activate(caster, 3);
         }
         super.onProc(caster, procPoint, state, stats, target);
     }

@@ -17,13 +17,16 @@ import net.minecraft.world.phys.HitResult;
 import net.minecraft.world.phys.Vec3;
 
 import java.text.DecimalFormat;
+import java.text.DecimalFormatSymbols;
 import java.util.List;
+import java.util.Locale;
 import java.util.Optional;
 
 //@Mod.EventBusSubscriber(value = Dist.CLIENT, modid = WarDance.MODID)
 public class RenderUtils {
     public static final ResourceLocation cooldown = new ResourceLocation(WarDance.MODID, "textures/skill/blank.png");
-    public static final DecimalFormat formatter = new DecimalFormat("#.#");
+    public static DecimalFormat formatter = new DecimalFormat("0", DecimalFormatSymbols.getInstance(Locale.ENGLISH));
+
 
     /**
      * @author Vazkii
@@ -87,6 +90,7 @@ public class RenderUtils {
     }
 
     public static void drawCooldownCircle(PoseStack ms, int x, int y, int size, float v) {
+        if (v == 1) v = 0.95f;
         ms.pushPose();
         //RenderSystem.enableAlphaTest();
         RenderSystem.enableBlend();
@@ -95,7 +99,7 @@ public class RenderUtils {
         if (v <= 0) return; // nothing to be drawn
         int x2 = x + size, y2 = y + size; // bottom-right corner
         if (v >= 1) {
-            RenderSystem.setShaderColor(0.125F, 0.125F, 0.125F, 0.6F);
+            RenderSystem.setShaderColor(0.125F, 0.125F, 0.125F, 0.1F);
             GuiComponent.blit(ms, x, y, 0, 0, size, size, size, size);
             ms.popPose();
             // entirely filled
@@ -110,7 +114,7 @@ public class RenderUtils {
         if (v >= 0.125) drawVertex(bufferbuilder, x, y);
         if (v >= 0.375) drawVertex(bufferbuilder, x, y2);
         if (v >= 0.625) drawVertex(bufferbuilder, x2, y2);
-        if (v >= 0.875) drawVertex(bufferbuilder, x2, y);
+        //if (v >= 0.875) drawVertex(bufferbuilder, x2, y);
 // calculate angle & vector from value:
         double vd = Math.PI * (v * 2 - 0.5);
         double vx = -Math.cos(vd);

@@ -420,20 +420,7 @@ public class SkillSelectionScreen extends Screen {
         List<String> lines = new ArrayList<>();
 
         lines.add(ChatFormatting.BOLD + "" + ChatFormatting.UNDERLINE + s.getDisplayName(null).getString() + ChatFormatting.RESET + "\n");
-//        if (selectedSkill.getArchetype() != SkillArchetypes.none)
-//            lines.add(selectedSkill.getArchetype().description().getString());
         lines.add(s.description().getString());
-//        if (selectedVariation != null) {
-//            //lines.add(String.valueOf(selectedVariation.getSkill().getColor().getRGB()));
-//            lines.add("\n");
-//            lines.add(selectedVariation.getSkill().description().getString());
-//            if (minecraft != null && minecraft.options.renderDebug) {
-//                lines.add("\n");
-//                lines.add(ChatFormatting.DARK_GRAY + Component.translatable("wardance:skill_tag").getString() + selectedVariation.getSkill().getTags(minecraft.player) + "\n");
-//                lines.add(ChatFormatting.DARK_GRAY + Component.translatable("wardance:skill_soft_incompat").getString() + selectedVariation.getSkill().getSoftIncompatibility(minecraft.player) + "\n");
-//                lines.add(ChatFormatting.DARK_GRAY + Component.translatable("wardance:skill_hard_incompat").getString() + selectedVariation.getSkill().getHardIncompatibility(minecraft.player) + ChatFormatting.RESET);
-//            }
-//        }
         lines.add("\n");
         skillInfo.setInfo(lines, null);
     }
@@ -515,7 +502,7 @@ public class SkillSelectionScreen extends Screen {
                 RenderSystem.setShaderTexture(0, logoPath);
                 // Draw the logo image inscribed in a rectangle with width entryWidth (minus some padding) and height 50
                 int headerHeight = 50;
-                ScreenUtils.blitInscribed(mStack, left + PADDING, relativeY, width - (PADDING * 2), headerHeight, 64, 64, false, true);
+                ScreenUtils.blitInscribed(mStack, left +  width/2-32, relativeY, width - (PADDING * 2), headerHeight, 64, 64, false, true);
                 relativeY += headerHeight + PADDING;
             }
 

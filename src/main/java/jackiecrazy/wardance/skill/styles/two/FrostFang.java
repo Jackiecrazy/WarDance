@@ -29,18 +29,23 @@ public class FrostFang extends WarCry {
     }
 
     @Override
+    public boolean displaysInactive(LivingEntity caster, SkillData stats) {
+        return true;
+    }
+
+    @Override
     public void onProc(LivingEntity caster, Event procPoint, STATE state, SkillData stats, LivingEntity target) {
         if (procPoint.getPhase() != EventPriority.LOWEST) return;
         if (procPoint instanceof LivingAttackEvent lae && state == STATE.INACTIVE && lae.getEntity() == target) {
-            activate(caster, 40, stats.getArbitraryFloat());
+            activate(caster, 2, stats.getArbitraryFloat());
         } else if (procPoint instanceof ParryEvent cpe && state == STATE.ACTIVE && cpe.getEntity() == target) {
-            cpe.setPostureConsumption(cpe.getPostureConsumption() * (1 + stats.getArbitraryFloat()));
+            cpe.setPostureConsumption(cpe.getPostureConsumption() * (1 + stats.getArbitraryFloat()/10));
         } else if (procPoint instanceof LivingHurtEvent cpe && state == STATE.ACTIVE && cpe.getEntity() == target) {
             if (!cpe.isCanceled()) {
                 if (cpe.getSource() instanceof CombatDamageSource cds) {
                     cds.setProcSkillEffects(true);
                 }
-                cpe.setAmount(cpe.getAmount() * (1 + stats.getArbitraryFloat()));
+                cpe.setAmount(cpe.getAmount() * (1 + stats.getArbitraryFloat()/10));
             }
         }
     }
@@ -49,8 +54,9 @@ public class FrostFang extends WarCry {
     public boolean onStateChange(LivingEntity caster, SkillData prev, STATE from, STATE to) {
         if (to == STATE.COOLING) {
             prev.setState(STATE.INACTIVE);
-            prev.setDuration(40);
+            prev.setDuration(2);
             prev.setArbitraryFloat(0);
+            prev.setMaxDuration(0);
         }
         return instantCast(prev, from, to);
     }
@@ -58,13 +64,16 @@ public class FrostFang extends WarCry {
     @Override
     public boolean equippedTick(LivingEntity caster, SkillData stats) {
         if (stats.getState() == STATE.INACTIVE) {
-            stats.decrementDuration();
+
+            stats.decrementDuration(0.05f);
             if (stats.getDuration() <= 0) {
-                stats.setArbitraryFloat(Math.min(0.5f * SkillUtils.getSkillEffectiveness(caster), stats.getArbitraryFloat() + 0.1f * SkillUtils.getSkillEffectiveness(caster)));
-                stats.setDuration(80);
+                stats.setArbitraryFloat(Math.min(5f * SkillUtils.getSkillEffectiveness(caster), stats.getArbitraryFloat() + 1f * SkillUtils.getSkillEffectiveness(caster)));
+                stats.setDuration(2);
+                stats.setMaxDuration(0);
+                stats.markDirty();
             }
         }
-        return super.equippedTick(caster, stats);
+        return activeTick(stats);
     }
 
     @Override

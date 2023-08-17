@@ -6,12 +6,11 @@ import jackiecrazy.footwork.capability.resources.ICombatCapability;
 import jackiecrazy.wardance.WarDance;
 import jackiecrazy.wardance.capability.action.PermissionData;
 import jackiecrazy.wardance.capability.skill.CasterData;
-import jackiecrazy.wardance.client.screen.scroll.ScrollScreen;
 import jackiecrazy.wardance.client.screen.skill.SkillCastScreen;
+import jackiecrazy.wardance.client.screen.skill.SkillSelectionScreen;
 import jackiecrazy.wardance.networking.CombatChannel;
 import jackiecrazy.wardance.networking.CombatModePacket;
 import jackiecrazy.wardance.networking.EvokeSkillPacket;
-import jackiecrazy.wardance.skill.WarSkills;
 import net.minecraft.client.KeyMapping;
 import net.minecraft.client.Minecraft;
 import net.minecraft.network.chat.Component;
@@ -63,8 +62,8 @@ public class Keybinds {
             if (!PermissionData.getCap(mc.player).canSelectSkills()) {
                 return;
             }
-            //mc.setScreen(new SkillSelectionScreen());
-            mc.setScreen(new ScrollScreen(WarSkills.VITAL_STRIKE.get(), WarSkills.TRAMPLE.get(), WarSkills.DEMON_HUNTER.get()));
+            mc.setScreen(new SkillSelectionScreen());
+            //mc.setScreen(new ScrollScreen(WarSkills.VITAL_STRIKE.get(), WarSkills.SUPLEX.get(), WarSkills.DEMON_HUNTER.get(), WarSkills.SIFU.get(), WarSkills.GOLD_RUSH.get(), WarSkills.UNSTABLE_SPIRIT.get(), WarSkills.CURSE_OF_ECHOES.get(), WarSkills.PRIDEFUL_MIGHT.get(), WarSkills.BACKFLIP.get(), WarSkills.MOMENTUM.get(), WarSkills.MONTANTE.get(), WarSkills.PHANTOM_DIVE.get(), WarSkills.SHIELD_CRUSH.get()));
         }
         if (BINDCAST.getKeyConflictContext().isActive() && BINDCAST.consumeClick() && mc.player.isAlive()) {
             CombatChannel.INSTANCE.sendToServer(new EvokeSkillPacket());

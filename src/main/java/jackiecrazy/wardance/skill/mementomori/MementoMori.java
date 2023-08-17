@@ -55,7 +55,9 @@ pound of flesh: active skill. Consumes all your spirit, and until your spirit re
     public boolean equippedTick(LivingEntity caster, SkillData d) {
         if (getClass() != MementoMori.class) return false;
         float health = 1 - (caster.getHealth() / GeneralUtils.getMaxHealthBeforeWounding(caster));
-        SkillUtils.modifyAttribute(caster, Attributes.ATTACK_DAMAGE, MULT, health * SkillUtils.getSkillEffectiveness(caster), AttributeModifier.Operation.MULTIPLY_TOTAL);
+        final float amount = health * SkillUtils.getSkillEffectiveness(caster);
+        SkillUtils.modifyAttribute(caster, Attributes.ATTACK_DAMAGE, MULT, amount, AttributeModifier.Operation.MULTIPLY_TOTAL);
+        d.setArbitraryFloat(amount);
         return false;
     }
 
@@ -70,13 +72,20 @@ pound of flesh: active skill. Consumes all your spirit, and until your spirit re
         return false;
     }
 
+    @Override
+    public boolean displaysInactive(LivingEntity caster, SkillData stats) {
+        return caster.getHealth() != caster.getMaxHealth();
+    }
+
     public static class RapidClotting extends MementoMori {
 
         @Override
         public boolean equippedTick(LivingEntity caster, SkillData d) {
             float lostHealth = GeneralUtils.getMaxHealthBeforeWounding(caster) - caster.getHealth();
             lostHealth /= GeneralUtils.getMaxHealthBeforeWounding(caster);
-            SkillUtils.modifyAttribute(caster, Attributes.ARMOR, MULT, lostHealth * SkillUtils.getSkillEffectiveness(caster) * 20, AttributeModifier.Operation.ADDITION);
+            final float armor = lostHealth * SkillUtils.getSkillEffectiveness(caster) * 20;
+            SkillUtils.modifyAttribute(caster, Attributes.ARMOR, MULT, armor, AttributeModifier.Operation.ADDITION);
+            d.setArbitraryFloat(lostHealth);
             return super.equippedTick(caster, d);
         }
     }
@@ -115,14 +124,22 @@ pound of flesh: active skill. Consumes all your spirit, and until your spirit re
         @Override
         public void onProc(LivingEntity caster, Event procPoint, STATE state, SkillData stats, LivingEntity target) {
             if (procPoint instanceof LivingHealEvent ee && procPoint.getPhase() == EventPriority.HIGHEST) {
+                boolean found = false;
                 for (LivingEntity e : caster.level.getEntitiesOfClass(LivingEntity.class, caster.getBoundingBox().inflate(6))) {
                     if (TargetingUtils.isHostile(e, caster)) {
                         ee.setCanceled(true);
+                        found = true;
                         e.hurt(new CombatDamageSource("lightningBolt", caster).setDamageTyping(CombatDamageSource.TYPE.MAGICAL).setProcSkillEffects(true).setKnockbackPercentage(0).setAttackingHand(null).setSkillUsed(this).setMagic(), ee.getAmount() * SkillUtils.getSkillEffectiveness(caster));
                         CombatUtils.knockBack(e, caster, ee.getAmount() / 4, true, false);
                     }
                 }
+                stats.flagCondition(found);
             }
+        }
+
+        @Override
+        public boolean displaysInactive(LivingEntity caster, SkillData stats) {
+            return stats.isCondition();
         }
     }
 

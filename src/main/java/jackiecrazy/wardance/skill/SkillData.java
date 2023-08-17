@@ -13,11 +13,12 @@ public class SkillData {
     private float duration;
     private float max;
     private float var;
-    private float effectiveness =1;
+    private float effectiveness = 1;
     private boolean condition, dirty;
     private Skill.STATE state = Skill.STATE.INACTIVE;
     private LivingEntity caster;
     private UUID casterID;
+
     public SkillData(Skill skill, float arbitraryDuration, float max) {
         s = skill;
         duration = arbitraryDuration;
@@ -25,6 +26,7 @@ public class SkillData {
         var = 0;
         condition = false;
     }
+
     public SkillData(Skill skill, float arbitraryDuration) {
         this(skill, arbitraryDuration, arbitraryDuration);
         state = Skill.STATE.ACTIVE;
@@ -96,8 +98,9 @@ public class SkillData {
     }
 
     public SkillData flagCondition(boolean success) {
+        if (condition != success)
+            dirty = true;
         condition = success;
-        dirty=true;
         return this;
     }
 

@@ -55,7 +55,7 @@ public interface ISkillCapability {
     void setEquippedSkills(List<Skill> skills);
 
     default boolean isSkillEquipped(Skill s) {
-        return s != null && getEquippedSkills().contains(s);
+        return s != null && getEquippedSkillsAndStyle().contains(s);
     }
 
     boolean equipSkill(Skill skill);

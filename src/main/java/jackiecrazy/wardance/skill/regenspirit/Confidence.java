@@ -45,8 +45,14 @@ confidence: your spirit regeneration speed scales proportionally with how much s
     public void onProc(LivingEntity caster, Event procPoint, STATE state, SkillData stats, LivingEntity target) {
         if (procPoint instanceof RegenSpiritEvent && procPoint.getPhase() == EventPriority.HIGHEST) {
             float posPerc = CombatData.getCap(caster).getSpirit() * SkillUtils.getSkillEffectiveness(caster) / CombatData.getCap(caster).getMaxSpirit();
+            stats.setArbitraryFloat(posPerc);
             ((RegenSpiritEvent) procPoint).setQuantity(((RegenSpiritEvent) procPoint).getQuantity() * (0.5f + 1.5f * posPerc));
         }
+    }
+
+    @Override
+    public boolean displaysInactive(LivingEntity caster, SkillData stats) {
+        return true;
     }
 
     @Override

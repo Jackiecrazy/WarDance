@@ -69,6 +69,11 @@ public abstract class FiveElementFist extends Skill {
     }
 
     @Override
+    public boolean displaysInactive(LivingEntity caster, SkillData stats) {
+        return true;
+    }
+
+    @Override
     public boolean showsMark(SkillData mark, LivingEntity target) {
         return false;
     }

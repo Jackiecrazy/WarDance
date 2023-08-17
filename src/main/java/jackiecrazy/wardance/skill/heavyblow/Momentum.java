@@ -34,6 +34,11 @@ public class Momentum extends HeavyBlow {
     }
 
     @Override
+    public boolean displaysInactive(LivingEntity caster, SkillData stats) {
+        return true;
+    }
+
+    @Override
     public boolean onStateChange(LivingEntity caster, SkillData prev, STATE from, STATE to) {
         prev.setState(STATE.INACTIVE);
         return false;

@@ -37,6 +37,11 @@ public class PhantomDive extends Skill {
     }
 
     @Override
+    public boolean displaysInactive(LivingEntity caster, SkillData stats) {
+        return true;
+    }
+
+    @Override
     public void onProc(LivingEntity caster, Event procPoint, STATE state, SkillData stats, @Nullable LivingEntity target) {
         if (procPoint instanceof LivingEvent.LivingJumpEvent) {
             silentActivate(caster, 1F, false, (float) caster.getY());

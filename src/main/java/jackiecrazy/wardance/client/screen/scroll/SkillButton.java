@@ -3,28 +3,22 @@ package jackiecrazy.wardance.client.screen.scroll;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.PoseStack;
 import jackiecrazy.wardance.WarDance;
-import jackiecrazy.wardance.client.screen.skill.SkillSelectionButton;
-import jackiecrazy.wardance.client.screen.skill.SkillSelectionScreen;
 import jackiecrazy.wardance.skill.Skill;
-import jackiecrazy.wardance.skill.styles.SkillStyle;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.components.Button;
-import net.minecraft.client.player.LocalPlayer;
-import net.minecraft.network.chat.Component;
+import net.minecraft.client.gui.components.ImageButton;
 import net.minecraft.resources.ResourceLocation;
 
 import java.awt.*;
 
-public class SkillButton extends SkillSelectionButton {
+public class SkillButton extends ImageButton{
 
     protected ScrollScreen parent;
     protected Skill s;
 
-    public SkillButton(ScrollScreen sss, int xIn, int yIn, int sides, int index) {
+    public SkillButton(ScrollScreen sss, int xIn, int yIn, int sides, Skill skill) {
         super(xIn, yIn, sides, sides, 0, 0, 0, passive, (a) -> {});
-        this.index = index;
         parent = sss;
-        isPassive = true;
+        s=skill;
     }
 
     protected void applySlotTint() {

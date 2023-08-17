@@ -32,25 +32,28 @@ public class SelfishMascot extends Skill {
 
     @Override
     public boolean equippedTick(LivingEntity caster, SkillData stats) {
+        boolean prev = stats.isCondition();
         if (caster.tickCount % 40 == 0) {
             double stacks = 0;
             for (LivingEntity e : caster.level.getEntitiesOfClass(LivingEntity.class, caster.getBoundingBox().inflate(6))) {
                 if (e == caster) continue;
                 if (caster.getHealth() > caster.getMaxHealth() / 2) {
+                    stats.flagCondition(false);
                     //give luck
                     if (TargetingUtils.isAlly(caster, e))
                         e.addEffect(new MobEffectInstance(MobEffects.LUCK, 60, 1));
                 } else {
+                    stats.flagCondition(true);
                     //absorb luck in a really weird and funky way
                     e.addEffect(new MobEffectInstance(MobEffects.UNLUCK, 60));
                     e.getAttribute(Attributes.LUCK).removeModifier(uid);
-                    stacks += e.getAttributeValue(Attributes.LUCK) ;
+                    stacks += e.getAttributeValue(Attributes.LUCK);
                     e.getAttribute(Attributes.LUCK).addPermanentModifier(unluck);
-                    SkillUtils.modifyAttribute(caster, Attributes.LUCK, uid, stacks* SkillUtils.getSkillEffectiveness(caster), AttributeModifier.Operation.ADDITION);
+                    SkillUtils.modifyAttribute(caster, Attributes.LUCK, uid, stacks * SkillUtils.getSkillEffectiveness(caster), AttributeModifier.Operation.ADDITION);
                 }
             }
         }
-        return false;
+        return prev != stats.isCondition();
     }
 
     @Override
@@ -63,5 +66,8 @@ public class SelfishMascot extends Skill {
         return false;
     }
 
-
+    @Override
+    public boolean displaysInactive(LivingEntity caster, SkillData stats) {
+        return stats.isCondition();
+    }
 }
