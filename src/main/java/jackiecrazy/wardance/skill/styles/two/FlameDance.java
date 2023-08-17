@@ -30,16 +30,18 @@ public class FlameDance extends WarCry {
 
     @Override
     public void onProc(LivingEntity caster, Event procPoint, STATE state, SkillData stats, LivingEntity target) {
+        if (caster == target) return;
         if (procPoint instanceof LivingAttackEvent lae && !lae.getSource().isBypassArmor() && procPoint.getPhase() == EventPriority.HIGHEST && lae.getEntity() == target) {
-            mark(caster, target, 0.1f, 1);
             //kaboom!
-            if (!DamageUtils.isSkillAttack(lae.getSource()) && CombatData.getCap(caster).getMight() == CombatData.getCap(caster).getMaxMight()) {
-                DamageSource kaboom = new CombatDamageSource("player", caster).setDamageTyping(CombatDamageSource.TYPE.MAGICAL).setProcSkillEffects(true).setSkillUsed(this).setPostureDamage(0).bypassArmor();
-                final float f = getExistingMark(target).getArbitraryFloat() * SkillUtils.getSkillEffectiveness(caster);
-                target.hurt(kaboom, f * ((int) (2 + f / 10)) / 2f);
-                target.hurtTime = target.hurtDuration = target.invulnerableTime = 0;
-                removeMark(target);
-            }
+            if (CombatData.getCap(caster).getMight() == CombatData.getCap(caster).getMaxMight()) {
+                if (!DamageUtils.isSkillAttack(lae.getSource())) {
+                    DamageSource kaboom = new CombatDamageSource("player", caster).setDamageTyping(CombatDamageSource.TYPE.MAGICAL).setProcSkillEffects(true).setSkillUsed(this).setPostureDamage(0).bypassArmor();
+                    final float f = getExistingMark(target).getArbitraryFloat() * SkillUtils.getSkillEffectiveness(caster);
+                    target.hurt(kaboom, f * ((int) (2 + f / 10)) / 2f);
+                    target.hurtTime = target.hurtDuration = target.invulnerableTime = 0;
+                    removeMark(target);
+                }
+            } else mark(caster, target, 0.1f, 1);
         } else if (procPoint instanceof SkillCastEvent sce && procPoint.getPhase() == EventPriority.HIGHEST && sce.getEntity() == caster) {
             mark(caster, target, 0.1f, 1);
         }

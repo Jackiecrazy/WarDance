@@ -1,4 +1,4 @@
-package jackiecrazy.wardance.client.screen;
+package jackiecrazy.wardance.client.screen.skill;
 
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.PoseStack;
@@ -6,9 +6,13 @@ import com.mojang.blaze3d.vertex.Tesselator;
 import jackiecrazy.wardance.WarDance;
 import jackiecrazy.wardance.capability.skill.CasterData;
 import jackiecrazy.wardance.capability.skill.ISkillCapability;
+import jackiecrazy.wardance.client.screen.TooltipUtils;
 import jackiecrazy.wardance.networking.CombatChannel;
 import jackiecrazy.wardance.networking.UpdateSkillSelectionPacket;
-import jackiecrazy.wardance.skill.*;
+import jackiecrazy.wardance.skill.Skill;
+import jackiecrazy.wardance.skill.SkillArchetype;
+import jackiecrazy.wardance.skill.SkillCategory;
+import jackiecrazy.wardance.skill.SkillColors;
 import jackiecrazy.wardance.skill.styles.SkillStyle;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
@@ -22,8 +26,6 @@ import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.client.renderer.GameRenderer;
 import net.minecraft.locale.Language;
 import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.HoverEvent;
-import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.network.chat.Style;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.FormattedCharSequence;
@@ -38,7 +40,6 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.function.Consumer;
 import java.util.function.Function;
-import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
@@ -111,55 +112,6 @@ public class SkillSelectionScreen extends Screen {
             if (CasterData.getCap(Minecraft.getInstance().player).isSkillSelectable(sub)) return true;
         return false;
     }
-    //private SkillSelectionScreen.SortType sortType = SkillSelectionScreen.SortType.NORMAL;
-    /*
-    when you first enter you are greeted with an identical screen with a single slot on the right for your stance/art/style.
-    The center info screen gives a welcome message and basic instructions on how to pick a style, and the styles are listed on the left
-    after you pick a style, the slot moves into the top right corner and the skill screen comes out.
-    you can return to the style screen by clicking that slot again, but picking another style will void your current selection.
-    rough filter of number of colors you can pick would be useful, as well as color-specific styles?
-    (info before picking a style and changing styles should be different to reflect this)
-    on the top left, a filter bar for colors. Selecting skills from a color puts that color at the forefront, and reaching your color cap will gray out all other colors
-    this means each color needs some kind of distinguishable icon that's shaded over!
-    extra tooltips on mousing over colors: name, short description
-        red: dominance. You are mighty. Crush your foes.
-        green: resolution. Never give in, be the last standing.
-        gray: subterfuge. The deadliest strike is the one unseen.
-        orange: relentlessness. Implacable, unstoppable. Win with style.
-        cyan: perception. See all, reach all. None can escape your grasp.
-        violet: decay. All shall be dust.
-    1 color styles: major bonus
-        Survivor: taking fatal damage at max fury negates all damage and healing for 10 seconds, you are healed 20% for each mob killed in this time (100% for player/boss)
-        Specialist: +40% effectiveness on all skills, 60% at max fury
-        Generalist: can only use white skills. Each skill cast has a chance to be converted into a variation.
-        Berserker Blood: can only use red skills. Fury gain is massively improved, use at max to emit a damaging scream
-    2 color styles: decent bonus
-        Boulder Brace:
-        Flame Dance:
-        Wind Scar:
-        Timberfall:
-        Frost Fang: you know what we are
-    3 color styles: mini playstyle tweak
-        Dance of Destruction: each time you cast a skill, follow up with "stomp"; stomp will consume fury to strengthen itself
-        Walk of Dionysus: fall down drunk when stunned, creating a shockwave and extending stun immunity after recovering. Active aoe stun
-        Ippon-datara: max posture -50%, restore half of lost posture after landing from a jump
-        Serenade of Pain: all damage -30%. projectile and melee damage leave marks that cause the other to instead deal +(fury*15)% damage by consuming said mark.
-    4 color styles: disadvantage that can be exploited
-        Unstable Spirit: each time you use a skill, create a non-griefing and indiscriminate explosion. Explosion damage reduced by 30% per bar of fury
-        Blood Tax: all skills that cost might or spirit instead cost half the amount in health. Activate to trade health for fury
-        Gambler's Whimsy: only certain skills are castable. The selection increases with fury and rerolls after every cast
-    5+ color styles: major disadvantage that has to be worked around
-        Sifu: any color except purple, can only deal posture damage to non-staggered targets (special: instead of dying, mobs will run away, leaving drops and exp as usual)
-
-    a skill list widget that lists all castable skills, composed of skill entries, on the very very left
-    a skill entry is made from the main skill icon, the name, and a smaller assortment of icons representing available variations. They can be kind of generic across every skill
-    clicking a skill highlights it and will call the main screen to display text down the middle to describe the skill
-    A little panel at the bottom is reserved for displaying variation descriptions, to show the base and variation effects in a single screen.
-    On the right is the skill octagon and four slots to click skills into
-    these slots can be tinted blue if it is selected, grey if it's selectable, orange if it's not selectable, yellow if they share a parent skill, and red if the two skills are incompatible (such as breathing fire while chanting a spell).
-    Upon closing, the octagon is sent to the server, double checked, and finalized.
-    skill "effectiveness"/"proc coefficient" attribute that determines certain attributes
-     */
 
     public <T extends ObjectSelectionList.Entry<T>> void buildSkillList(Consumer<T> modListViewConsumer, Function<Skill, T> newEntry) {
         if (style.getSkill() == null) stylebases.forEach(mod -> {
@@ -510,103 +462,6 @@ public class SkillSelectionScreen extends Screen {
             super(mcIn, widthIn, heightIn, topIn, skillList.getRight() + PADDING);
         }
 
-        public static Component tooltipText(String string) {
-            MutableComponent ichat = null;
-            Matcher matcher = TOOLTIP_PATTERN.matcher(string);
-            int lastEnd = 0;
-
-            // Find all tooltips
-            while (matcher.find()) {
-                int start = matcher.start();
-                int end = matcher.end();
-                String literal = string.substring(lastEnd, start);
-                if (literal.length() > 0) {
-                    if (ichat == null) ichat = Component.literal(literal);
-                    else ichat.append(literal);
-                }
-                lastEnd = end;
-
-                //grab the full tooltip description
-                String part = string.substring(start + 1, end - 1);
-                String[] parted = part.split(";");
-                String display = parted[0].trim();
-                String[] rawFormatting = parted[1].trim().split(",");
-                String tooltip = "";
-                String[] additionalData = {""};
-                //grab the tooltip description
-                if (parted.length > 2) tooltip = parted[2].trim();
-                //additional tooltip formatting
-                if (parted.length > 3) additionalData = parted[3].trim().split(",");
-                ArrayList<ChatFormatting> formatting = new ArrayList<>();
-                for (String raw : rawFormatting) {
-                    ChatFormatting cf = ChatFormatting.getByName(raw.trim());
-                    if (cf != null) formatting.add(cf);
-                }
-                ChatFormatting[] fff = new ChatFormatting[formatting.size()];
-                //build tooltip text
-                MutableComponent tooltipText = Component.literal(display);
-                Style style = tooltipText.getStyle();
-                if (!formatting.isEmpty()) style = style.applyFormats(formatting.toArray(fff));
-                if (!tooltip.isEmpty())
-                    style = style.withHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, unTooltipL18N(tooltip, (Object) additionalData)));
-                tooltipText.setStyle(style);
-                if (ichat == null) ichat = Component.literal("");
-                //literal
-                ichat.append(tooltipText);
-            }
-
-            // Append the rest of the message.
-            String end = string.substring(lastEnd);
-            if (ichat == null) ichat = Component.literal(end);
-            else if (end.length() > 0) ichat.append(Component.literal(string.substring(lastEnd)));
-            return ichat;
-        }
-
-        private static Component unTooltipL18N(String resource, Object... additional) {
-            String string = Component.translatable(resource, additional).getString();
-            MutableComponent ichat = null;
-            Matcher matcher = TOOLTIP_PATTERN.matcher(string);
-            int lastEnd = 0;
-
-            // Find all tooltips
-            while (matcher.find()) {
-                int start = matcher.start();
-                int end = matcher.end();
-                String literal = string.substring(lastEnd, start);
-                if (literal.length() > 0) {
-                    if (ichat == null) ichat = Component.literal(literal);
-                    else ichat.append(literal);
-                }
-                lastEnd = end;
-
-                //grab the full tooltip description
-                String part = string.substring(start + 1, end - 1);
-                String[] parted = part.split(";");
-                String display = parted[0].trim();
-                String[] rawFormatting = parted[1].trim().split(",");
-                ArrayList<ChatFormatting> formatting = new ArrayList<>();
-                for (String raw : rawFormatting) {
-                    ChatFormatting cf = ChatFormatting.getByName(raw.trim());
-                    if (cf != null) formatting.add(cf);
-                }
-                ChatFormatting[] fff = new ChatFormatting[formatting.size()];
-                //build tooltip text
-                MutableComponent tooltipText = Component.literal(display);
-                Style style = tooltipText.getStyle();
-                if (!formatting.isEmpty()) style = style.applyFormats(formatting.toArray(fff));
-                tooltipText.setStyle(style);
-                if (ichat == null) ichat = Component.literal("");
-                //literal
-                ichat.append(tooltipText);
-            }
-
-            // Append the rest of the message.
-            String end = string.substring(lastEnd);
-            if (ichat == null) ichat = Component.literal(end);
-            else if (end.length() > 0) ichat.append(Component.literal(string.substring(lastEnd)));
-            return ichat;
-        }
-
         void setInfo(List<String> lines, ResourceLocation logoPath) {
             this.logoPath = logoPath;
             this.lines = resizeContent(lines);
@@ -627,7 +482,7 @@ public class SkillSelectionScreen extends Screen {
                     continue;
                 }
 
-                Component chat = tooltipText(line);
+                Component chat = TooltipUtils.tooltipText(line);
                 int maxTextLength = this.width - 12;
                 if (maxTextLength >= 0) {
                     ret.addAll(Language.getInstance().getVisualOrder(font.getSplitter().splitLines(chat, maxTextLength, chat.getStyle())));

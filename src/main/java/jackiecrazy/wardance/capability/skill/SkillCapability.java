@@ -4,7 +4,9 @@ import jackiecrazy.wardance.WarDance;
 import jackiecrazy.wardance.config.GeneralConfig;
 import jackiecrazy.wardance.networking.CombatChannel;
 import jackiecrazy.wardance.networking.SyncSkillPacket;
-import jackiecrazy.wardance.skill.*;
+import jackiecrazy.wardance.skill.Skill;
+import jackiecrazy.wardance.skill.SkillCategory;
+import jackiecrazy.wardance.skill.SkillData;
 import jackiecrazy.wardance.skill.styles.SkillStyle;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
@@ -25,7 +27,7 @@ public class SkillCapability implements ISkillCapability {
     private final List<SkillCategory> categories = new ArrayList<>();
     private final WeakReference<LivingEntity> dude;
     private final Queue<Skill> lastCast = new LinkedList<>();
-    boolean sync = false, fastSync = false, gatedSkills = false;
+    boolean sync = false, gatedSkills = false;
     int index = -1;
     private SkillStyle style;
 
@@ -79,6 +81,7 @@ public class SkillCapability implements ISkillCapability {
 
     @Override
     public Optional<SkillData> getSkillData(Skill s) {
+        if (s == null) return Optional.empty();//this occasionally happens and should not happen
         return Optional.ofNullable(data.get(s));
     }
 
@@ -104,7 +107,6 @@ public class SkillCapability implements ISkillCapability {
         if (to != null) {
             changeSkillState(to, Skill.STATE.HOLSTERED);
             nonNullGet(to).markDirty();
-            fastSync = true;
         }
         sync = true;
     }
@@ -119,7 +121,6 @@ public class SkillCapability implements ISkillCapability {
             }
         boolean update = d.onStateChange(dude.get(), data, data.getState(), to);
         data.markDirty();
-        fastSync = true;
         return update;
     }
 
@@ -313,7 +314,6 @@ public class SkillCapability implements ISkillCapability {
             SkillData d = nonNullGet(s);
             if (d.getSkill().equippedTick(caster, d)) {
                 d.markDirty();
-                fastSync = true;
             }
         }
         for (SkillData s : getAllSkillData().values()) {
@@ -332,7 +332,7 @@ public class SkillCapability implements ISkillCapability {
         if (sync && caster instanceof ServerPlayer)
             CombatChannel.INSTANCE.send(PacketDistributor.PLAYER.with(() -> (ServerPlayer) caster), new SyncSkillPacket(this.write()));
         else if (caster instanceof ServerPlayer) {
-            CompoundTag written = fastWrite();
+            CompoundTag written = writeDirtyOnly();
             if (!written.isEmpty())
                 CombatChannel.INSTANCE.send(PacketDistributor.PLAYER.with(() -> (ServerPlayer) caster), new SyncSkillPacket(written));
         }
@@ -352,7 +352,7 @@ public class SkillCapability implements ISkillCapability {
         return true;
     }
 
-    private CompoundTag fastWrite() {
+    private CompoundTag writeDirtyOnly() {
         CompoundTag to = new CompoundTag();
         if (!this.data.isEmpty()) {
             ListTag listnbt = new ListTag();

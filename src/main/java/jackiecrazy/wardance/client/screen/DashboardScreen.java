@@ -11,6 +11,15 @@ import net.minecraft.world.entity.player.Player;
 import javax.annotation.Nonnull;
 
 public class DashboardScreen extends Screen {
+    /*
+    The dashboard screen contains the following information:
+    little player doll on the left (see inventory
+    max health/spirit/posture/might (+mouseover information)
+    button to open patchouli manual?
+    button to open skill selection
+
+     */
+
     private static final ResourceLocation INVENTORY_BACKGROUND = new ResourceLocation("wardance:gui/dashboard.png");
     /**
      * The old x position of the mouse pointer

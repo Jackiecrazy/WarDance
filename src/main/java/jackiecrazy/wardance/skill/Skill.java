@@ -364,7 +364,7 @@ public abstract class Skill extends Move {
         SkillResourceEvent sre = new SkillResourceEvent(caster, target, this);
         MinecraftForge.EVENT_BUS.post(sre);
         if (!sre.isCanceled() && CombatData.getCap(caster).getMight() >= sre.getMight() && CombatData.getCap(caster).getSpirit() >= sre.getSpirit()) {
-            SkillCastEvent sce = new SkillCastEvent(caster, target, this, SkillUtils.getSkillEffectiveness(caster), sre.getMight(), sre.getSpirit(), duration, flag, arbitrary);
+            SkillCastEvent sce = initializeCast(caster, target, SkillUtils.getSkillEffectiveness(caster), sre.getMight(), sre.getSpirit(), duration, flag, arbitrary);
 
             MinecraftForge.EVENT_BUS.post(sce);
             if (sce.getMight() > 0)
@@ -474,7 +474,7 @@ public abstract class Skill extends Move {
     /**
      * returns an event with all enhancements from effectiveness already applied. Override as needed.
      */
-    protected SkillCastEvent initializeCast(LivingEntity caster, @Nullable LivingEntity target, float might, float spirit, double effectiveness, float duration, boolean flag, float arbitrary) {
+    protected SkillCastEvent initializeCast(LivingEntity caster, @Nullable LivingEntity target, double effectiveness, float might, float spirit, float duration, boolean flag, float arbitrary) {
         return new SkillCastEvent(caster, target, this, effectiveness, might, spirit, duration, flag, arbitrary);
     }
 

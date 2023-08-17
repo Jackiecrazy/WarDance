@@ -1,5 +1,6 @@
 package jackiecrazy.wardance.skill.fiveelementfist;
 
+import jackiecrazy.footwork.capability.resources.CombatData;
 import jackiecrazy.wardance.capability.skill.CasterData;
 import jackiecrazy.wardance.skill.*;
 import jackiecrazy.wardance.utils.CombatUtils;
@@ -110,14 +111,16 @@ public abstract class FiveElementFist extends Skill {
                     WarSkills.IRON_CHOP.get(),
                     WarSkills.WATER_UPPERCUT.get()
             };
-        boolean found = false;
+        int found = -1;
         for (int x = 0; x < cycle.length * 2; x++) {
             int working = x % cycle.length;
             if (cycle[working] == this) {
-                found = true;
+                found = working;
             }
-            if (found) {
+            if (found >= 0) {
                 int next = (x + 1) % cycle.length;
+                if (next == (found + 1) % cycle.length)
+                    CombatData.getCap(caster).addRank(0.1f);
                 final Skill skill = cycle[next];
                 if (CasterData.getCap(caster).replaceSkill(this, skill)) {
                     return;

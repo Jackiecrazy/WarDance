@@ -350,8 +350,14 @@ public class CombatUtils {
         suppress = false;
         main.getAttributeModifiers(EquipmentSlot.MAINHAND).forEach((att, mod) -> Optional.ofNullable(e.getAttribute(att)).ifPresent((mai) -> mai.removeModifier(mod)));
         off.getAttributeModifiers(EquipmentSlot.OFFHAND).forEach((att, mod) -> Optional.ofNullable(e.getAttribute(att)).ifPresent((mai) -> mai.removeModifier(mod)));
-        main.getAttributeModifiers(EquipmentSlot.OFFHAND).forEach((att, mod) -> Optional.ofNullable(e.getAttribute(att)).ifPresent((mai) -> mai.addTransientModifier(mod)));
-        off.getAttributeModifiers(EquipmentSlot.MAINHAND).forEach((att, mod) -> Optional.ofNullable(e.getAttribute(att)).ifPresent((mai) -> mai.addTransientModifier(mod)));
+        main.getAttributeModifiers(EquipmentSlot.OFFHAND).forEach((att, mod) -> Optional.ofNullable(e.getAttribute(att)).ifPresent((mai) -> {
+            if (!mai.hasModifier(mod))
+                mai.addTransientModifier(mod);
+        }));
+        off.getAttributeModifiers(EquipmentSlot.MAINHAND).forEach((att, mod) -> Optional.ofNullable(e.getAttribute(att)).ifPresent((mai) -> {
+            if (!mai.hasModifier(mod))
+                mai.addTransientModifier(mod);
+        }));
         e.attackStrengthTicker = cap.getOffhandCooldown();
         cap.setOffhandCooldown(tssl);
     }
@@ -400,6 +406,8 @@ public class CombatUtils {
         Vec3 starting = ignore == null ? GeneralUtils.raytraceAnything(e.level, e, reach).getLocation() : ignore.position();
         //grab everyone in "range"
         for (Entity target : e.level.getEntities(e, e.getBoundingBox().inflate(reach * 2))) {
+            if (target == e) continue;
+            if (target.hasPassenger(e) || e.hasPassenger(target)) continue;//poor horse
             if (target == ignore) {
                 if (radius > 0)
                     hit = true;
@@ -451,6 +459,7 @@ public class CombatUtils {
                 offset = e.getEyeHeight() / 3;
             }
             case CONE -> {
+                offset = e.getEyeHeight();
                 radius = Math.tan(GeneralUtils.rad((float) radius / 2)) * reach;
                 particle = h == InteractionHand.OFF_HAND ? FootworkParticles.SWEEP_LEFT.get() : FootworkParticles.SWEEP.get();
             }

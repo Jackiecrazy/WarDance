@@ -1,4 +1,4 @@
-package jackiecrazy.wardance.client.screen;
+package jackiecrazy.wardance.client.screen.skill;
 
 import com.mojang.blaze3d.systems.RenderSystem;
 import jackiecrazy.wardance.skill.Skill;

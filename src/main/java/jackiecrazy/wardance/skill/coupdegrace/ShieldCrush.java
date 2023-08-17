@@ -89,7 +89,7 @@ public class ShieldCrush extends ShieldBash {
 
     @Override
     public float spiritConsumption(LivingEntity caster) {
-        return 3;
+        return 1;
     }
 
     @Override

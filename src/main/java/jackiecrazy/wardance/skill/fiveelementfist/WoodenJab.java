@@ -43,6 +43,6 @@ public class WoodenJab extends FiveElementFist {
 
     @Override
     protected void doAttack(LivingEntity caster, LivingEntity target) {
-        CombatData.getCap(caster).addMight(0.1f);
+        CombatData.getCap(caster).addRank(0.1f);
     }
 }

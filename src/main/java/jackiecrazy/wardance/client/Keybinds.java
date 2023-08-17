@@ -6,11 +6,12 @@ import jackiecrazy.footwork.capability.resources.ICombatCapability;
 import jackiecrazy.wardance.WarDance;
 import jackiecrazy.wardance.capability.action.PermissionData;
 import jackiecrazy.wardance.capability.skill.CasterData;
-import jackiecrazy.wardance.client.screen.SkillCastScreen;
-import jackiecrazy.wardance.client.screen.SkillSelectionScreen;
+import jackiecrazy.wardance.client.screen.scroll.ScrollScreen;
+import jackiecrazy.wardance.client.screen.skill.SkillCastScreen;
 import jackiecrazy.wardance.networking.CombatChannel;
 import jackiecrazy.wardance.networking.CombatModePacket;
 import jackiecrazy.wardance.networking.EvokeSkillPacket;
+import jackiecrazy.wardance.skill.WarSkills;
 import net.minecraft.client.KeyMapping;
 import net.minecraft.client.Minecraft;
 import net.minecraft.network.chat.Component;
@@ -59,10 +60,11 @@ public class Keybinds {
         }
         if (SELECT.getKeyConflictContext().isActive() && SELECT.consumeClick() && mc.player.isAlive()) {
             //hard no go
-            if(!PermissionData.getCap(mc.player).canSelectSkills()) {
+            if (!PermissionData.getCap(mc.player).canSelectSkills()) {
                 return;
             }
-            mc.setScreen(new SkillSelectionScreen());
+            //mc.setScreen(new SkillSelectionScreen());
+            mc.setScreen(new ScrollScreen(WarSkills.VITAL_STRIKE.get(), WarSkills.TRAMPLE.get(), WarSkills.DEMON_HUNTER.get()));
         }
         if (BINDCAST.getKeyConflictContext().isActive() && BINDCAST.consumeClick() && mc.player.isAlive()) {
             CombatChannel.INSTANCE.sendToServer(new EvokeSkillPacket());

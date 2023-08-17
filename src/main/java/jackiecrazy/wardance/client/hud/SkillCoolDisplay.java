@@ -6,6 +6,7 @@ import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.datafixers.util.Pair;
 import jackiecrazy.footwork.capability.resources.CombatData;
 import jackiecrazy.wardance.capability.skill.CasterData;
+import jackiecrazy.wardance.capability.skill.ISkillCapability;
 import jackiecrazy.wardance.client.RenderUtils;
 import jackiecrazy.wardance.config.ClientConfig;
 import jackiecrazy.wardance.skill.Skill;
@@ -87,11 +88,12 @@ public class SkillCoolDisplay implements IGuiOverlay {
         if (ClientConfig.CONFIG.skillCD.enabled) {
             List<SkillData> skill = new ArrayList<>();
             //actives
-            skill.addAll(CasterData.getCap(player).getAllSkillData().values().stream().filter(a -> a != null && a.getSkill() != null && !a.getSkill().isPassive(player) && a.getDuration() >= 0 && (a.getState() == Skill.STATE.COOLING || a.getState() == Skill.STATE.ACTIVE)).toList());
+            final ISkillCapability cap = CasterData.getCap(player);
+            skill.addAll(cap.getAllSkillData().values().stream().filter(a -> a != null && cap.isSkillEquipped(a.getSkill()) && !a.getSkill().isPassive(player) && a.getDuration() >= 0 && (a.getState() == Skill.STATE.COOLING || a.getState() == Skill.STATE.ACTIVE)).toList());
             Pair<Integer, Integer> pair = translateCoords(ClientConfig.CONFIG.skillCD, width, height);
             drawSkills(stack, mc, skill, pair.getFirst(), pair.getSecond());
             skill.clear();
-            skill.addAll(CasterData.getCap(player).getAllSkillData().values().stream().filter(a -> a != null && a.getSkill() != null && a.getSkill().isPassive(player) && a.getDuration() >= 0 && (a.getState() == Skill.STATE.COOLING || a.getState() == Skill.STATE.ACTIVE)).toList());
+            skill.addAll(cap.getAllSkillData().values().stream().filter(a -> a != null && cap.isSkillEquipped(a.getSkill()) && a.getSkill().isPassive(player) && a.getDuration() >= 0 && (a.getState() == Skill.STATE.COOLING || a.getState() == Skill.STATE.ACTIVE)).toList());
             drawSkills(stack, mc, skill, pair.getFirst(), pair.getSecond() + 18);
         }
     }
