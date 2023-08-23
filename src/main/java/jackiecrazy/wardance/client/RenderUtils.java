@@ -6,6 +6,9 @@ import com.mojang.blaze3d.vertex.*;
 import com.mojang.datafixers.util.Pair;
 import jackiecrazy.footwork.config.DisplayConfigUtils;
 import jackiecrazy.wardance.WarDance;
+import jackiecrazy.wardance.client.screen.scroll.ScrollScreen;
+import jackiecrazy.wardance.skill.Skill;
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiComponent;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.Mth;
@@ -114,7 +117,7 @@ public class RenderUtils {
         if (v >= 0.125) drawVertex(bufferbuilder, x, y);
         if (v >= 0.375) drawVertex(bufferbuilder, x, y2);
         if (v >= 0.625) drawVertex(bufferbuilder, x2, y2);
-        //if (v >= 0.875) drawVertex(bufferbuilder, x2, y);
+        if (v >= 0.875) drawVertex(bufferbuilder, x2, y);
 // calculate angle & vector from value:
         double vd = Math.PI * (v * 2 - 0.5);
         double vx = -Math.cos(vd);
@@ -128,6 +131,8 @@ public class RenderUtils {
         drawVertex(bufferbuilder, (int) (xm + vx * (x2 - x) / 2), (int) (ym + vy * (y2 - y) / 2));
         Tesselator.getInstance().end();
         RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, 1F);
+        RenderSystem.defaultBlendFunc();
+        RenderSystem.disableBlend();
         ms.popPose();
     }
 
@@ -184,5 +189,9 @@ public class RenderUtils {
         retx = Mth.clamp(retx + x, 0, width);
         rety = Mth.clamp(rety + y, 0, height);
         return Pair.of(retx, rety);
+    }
+
+    public static void openScrollScreen(boolean off, Skill... sk) {
+        Minecraft.getInstance().setScreen(new ScrollScreen(off, sk));
     }
 }

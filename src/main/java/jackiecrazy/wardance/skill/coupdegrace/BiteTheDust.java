@@ -51,7 +51,7 @@ public class BiteTheDust extends CoupDeGrace {
                 stonks -= 0.1;
             }
             target.hurtTime = target.hurtDuration = target.invulnerableTime = 0;
-            target.hurt(new CombatDamageSource("player", caster).setDamageTyping(CombatDamageSource.TYPE.TRUE).setSkillUsed(this).setKnockbackPercentage(0).bypassArmor().bypassMagic(), damage);
+            target.hurt(new CombatDamageSource("player", caster).setDamageTyping(CombatDamageSource.TYPE.TRUE).setProcSkillEffects(true).setSkillUsed(this).setKnockbackPercentage(0).bypassArmor().bypassMagic(), damage);
             mark(caster, target, 1);
         }
     }

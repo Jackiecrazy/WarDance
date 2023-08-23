@@ -52,8 +52,8 @@ public class Hex extends Skill {
         Marks.getCap(target).getActiveMark(WarSkills.CURSE_OF_ECHOES.get()).ifPresent(a -> {
             if (a.getArbitraryFloat() < 0 && DamageUtils.isMeleeAttack(e.getSource())) {
                 target.invulnerableTime = 0;
-                target.hurt(new CombatDamageSource("echo", a.getCaster(target.level)).setDamageTyping(CombatDamageSource.TYPE.TRUE).setSkillUsed(WarSkills.CURSE_OF_ECHOES.get()).bypassArmor().bypassMagic(), e.getAmount() * 0.4f);
-                a.setArbitraryFloat(20);
+                target.hurt(new CombatDamageSource("echo", a.getCaster(target.level)).setDamageTyping(CombatDamageSource.TYPE.TRUE).setProcSkillEffects(true).setSkillUsed(WarSkills.CURSE_OF_ECHOES.get()).bypassArmor().bypassMagic(), e.getAmount() * 0.4f);
+                a.setArbitraryFloat(1);
             }
         });
     }
@@ -197,6 +197,11 @@ public class Hex extends Skill {
     }
 
     public static class CurseOfEchoes extends Hex {
+        @Override
+        public boolean markTick(LivingEntity caster, LivingEntity target, SkillData sd) {
+            sd.addArbitraryFloat(-0.05f);
+            return super.markTick(caster, target, sd);
+        }
     }
 
     public static class Unravel extends Hex {

@@ -489,14 +489,22 @@ public class ResourceDisplay implements IGuiOverlay {
                     stack.pushPose();
                     RenderSystem.enableBlend();
                     //RenderSystem.enableAlphaTest();
-                    Pair<Integer, Integer> pair = RenderUtils.translateCoords(ClientConfig.CONFIG.might, width, height);
-                    int x = Math.max(pair.getFirst() - 16, 0);
-                    int y = Math.min(pair.getSecond() - 16, height - 32);
+                    Pair<Integer, Integer> pair = RenderUtils.translateCoords(ClientConfig.CONFIG.mightBar, width, height);
+                    int x = Math.max(pair.getFirst(), 0);
+                    int y = Math.min(pair.getSecond(), height - 5);
                     int fillHeight = (int) (currentMightLevel * 32 / cap.getMaxMight());
-                    if (ClientConfig.CONFIG.might.enabled) {
+                    if (ClientConfig.CONFIG.mightBar.enabled) {
                         RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, 1.0F);
                         RenderSystem.setShaderTexture(0, might);
-                        drawBar(stack, width / 2, height / 2, currentMightLevel, currentMightLevel == cap.getMaxMight());
+                        drawMightBar(stack, x, y, currentMightLevel, currentMightLevel == cap.getMaxMight());
+                        RenderSystem.setShaderTexture(0, raihud);
+                    }
+
+                    pair = RenderUtils.translateCoords(ClientConfig.CONFIG.mightCircle, width, height);
+                    x = Mth.clamp(pair.getFirst() - 16, 0, width - 32);
+                    y = Mth.clamp(pair.getSecond() - 16, 0, height - 32);
+
+                    if (ClientConfig.CONFIG.mightCircle.enabled) {
                         RenderSystem.setShaderTexture(0, raihud);
                         //might circle
                         RenderSystem.setShaderColor(1, 1, 1, 1);
@@ -526,76 +534,50 @@ public class ResourceDisplay implements IGuiOverlay {
                     }
 
 
-                    pair = RenderUtils.translateCoords(ClientConfig.CONFIG.spirit, width, height);
-                    x = Mth.clamp(pair.getFirst() - 16, 0, width - 32);
-                    y = Mth.clamp(pair.getSecond() - 16, 0, height - 32);
+                    pair = RenderUtils.translateCoords(ClientConfig.CONFIG.spiritBar, width, height);
+                    x = Mth.clamp(pair.getFirst(), 0, width - 32);
+                    y = Mth.clamp(pair.getSecond(), 0, height - 5);
                     fillHeight = (int) (Math.min(1, currentSpiritLevel / cap.getMaxSpirit()) * 32);
                     String display = RenderUtils.formatter.format(currentSpiritLevel) + "/" + RenderUtils.formatter.format(cap.getMaxSpirit());
+                    //spirit bar
+                    stack.pushPose();
+                    if (ClientConfig.CONFIG.spiritBar.enabled) {
+                        RenderSystem.setShaderTexture(0, might);
+                        //here be the discrete spirit bar
+                        drawSpiritBar(stack, x, y, currentSpiritLevel, cap.getMaxSpirit());
+                        RenderSystem.setShaderTexture(0, raihud);
+                    }
+
                     //spirit circle
-                    {
-                        stack.pushPose();
-                        if (ClientConfig.CONFIG.spirit.enabled) {
-                            RenderSystem.setShaderTexture(0, might);
-                            //determine whether we are on the left side
-                            boolean invert = true;//x>width/2;
-                            int count = Mth.ceil(cap.getMaxSpirit());
-                            int spiritWidth = 13;
-                            int spiritHeight = 21;
-                            int spiritV = 80;
-                            int startX = width / 2 + 7;//x - spiritWidth * count / 2;
-                            int startY = height / 2 - 4;//y - spiritHeight / 2;
-                            //draw empty/full spirits
-                            if (invert)
-                                //fixme doesn't work
-                                for (int i = 0; i < count; i++) {
-                                    int inverted = count - i;
-                                    //if inverted (on left side), draw empty first
-                                    GuiComponent.blit(stack, startX + inverted * spiritWidth, startY, cap.getMaxSpirit()-(int) currentSpiritLevel <= i? 13 : 0, spiritV, spiritWidth, spiritHeight, 256, 256);
-                                    if ((int) currentSpiritLevel == inverted + 1 && spiritFrames > 0) {
-                                        spiritFrames--;
-                                        GuiComponent.blit(stack, startX + i * spiritWidth, startY, 26, spiritV, spiritWidth, spiritHeight, 256, 256);
-                                    }
-
-                                }
-                            else
-                                for (int i = 0; i < count; i++) {
-                                    //if not inverted (on left side), draw full first
-                                    GuiComponent.blit(stack, startX + i * spiritWidth, startY, ((int) currentSpiritLevel < i + 1)? 13 : 0, spiritV, spiritWidth, spiritHeight, 256, 256);
-                                    if ((int) currentSpiritLevel == i + 1 && spiritFrames > 0) {
-                                        spiritFrames--;
-                                        GuiComponent.blit(stack, startX + i * spiritWidth, startY, 26, spiritV, spiritWidth, spiritHeight, 256, 256);
-                                    }
-
-                                }
-                            //draw a new spirit that was made just now
-                            //draw full/empty spirits
-                            RenderSystem.setShaderTexture(0, raihud);
-
-                            {
-                                stack.pushPose();
-                                mc.gui.blit(stack, x, y, 0, 96, 32, 32);
-                                stack.popPose();
-                            }
-                            //spirit circle filling
-                            {
-                                stack.pushPose();
-                                mc.gui.blit(stack, x, y + 32 - fillHeight, 0, 128 - fillHeight, 32, fillHeight);
-                                stack.popPose();
-                            }
-                            fillHeight += Math.min(fillHeight, 3);
-                            fillHeight = Math.min(fillHeight, 32);
-                            //spirit base
-                            {
-                                stack.pushPose();
-                                mc.gui.blit(stack, x, y + 1, 32, 96, 32, 32);
-                                stack.popPose();
-                            }
-                            //spirit illumination
-                            {
-                                stack.pushPose();
-                                mc.gui.blit(stack, x, y + 33 - fillHeight, 64, 128 - fillHeight, 32, fillHeight);
-                                stack.popPose();
-                            }
+                    pair = RenderUtils.translateCoords(ClientConfig.CONFIG.spiritCircle, width, height);
+                    x = Mth.clamp(pair.getFirst() - 16, 0, width - 32);
+                    y = Mth.clamp(pair.getSecond() - 16, 0, height - 32);
+                    if (ClientConfig.CONFIG.spiritCircle.enabled) {
+                        RenderSystem.setShaderTexture(0, raihud);
+                        {
+                            stack.pushPose();
+                            mc.gui.blit(stack, x, y, 0, 96, 32, 32);
+                            stack.popPose();
+                        }
+                        //spirit circle filling
+                        {
+                            stack.pushPose();
+                            mc.gui.blit(stack, x, y + 32 - fillHeight, 0, 128 - fillHeight, 32, fillHeight);
+                            stack.popPose();
+                        }
+                        fillHeight += Math.min(fillHeight, 3);
+                        fillHeight = Math.min(fillHeight, 32);
+                        //spirit base
+                        {
+                            stack.pushPose();
+                            mc.gui.blit(stack, x, y + 1, 32, 96, 32, 32);
+                            stack.popPose();
+                        }
+                        //spirit illumination
+                        {
+                            stack.pushPose();
+                            mc.gui.blit(stack, x, y + 33 - fillHeight, 64, 128 - fillHeight, 32, fillHeight);
+                            stack.popPose();
                         }
                     }
                     //numbers
@@ -701,8 +683,36 @@ public class ResourceDisplay implements IGuiOverlay {
 
     }
 
-    private void drawBar(PoseStack stack, int x, int y, float prog, boolean maxed) {
-        final int length = 183;
+    private void drawSpiritBar(PoseStack stack, int x, int y, float prog, float max) {
+        final int length = 92;//you only have this many pixels
+        int perBar = (int) (length / max) - 2;
+        //draw from the center outwards
+        //draw one side of the bar
+        int firstbar = perBar;
+        for (int i = 0; i < max; i++) {
+            int workingPerBar = perBar;
+            if (i == 0 && (max - (int) max) != 0) {
+                workingPerBar = (int) ((max - (int) max) * perBar);
+                firstbar = workingPerBar;
+            }
+            GuiComponent.blit(stack, x + (workingPerBar + 2) * (i - 1) + firstbar, y, -90, 0, 40, workingPerBar - 2, 5, 256, 256);
+            //draw cap
+            GuiComponent.blit(stack, x + (i) * (workingPerBar + 2) + firstbar - 7, y, -90, 85, 40, 6, 5, 256, 256);
+
+            int remainder = (int) ((prog - (int) prog) * workingPerBar);
+            if (prog == max - i || i > max - prog)//filling up
+                remainder = workingPerBar;
+            if (max - i > Mth.ceil(prog))//not there yet
+                remainder = 0;
+            if (remainder > 0) {
+                GuiComponent.blit(stack, x + (i) * (workingPerBar + 2) + firstbar - remainder, y, -90, 92 - remainder - 2, 45, remainder - 2, 5, 256, 256);
+                //this.drawBar(stack, x + (i) * perBar+remainder-2, y, 4, 92, 92-remainder-2);
+            }
+        }
+    }
+
+    private void drawMightBar(PoseStack stack, int x, int y, float prog, boolean maxed) {
+        final int length = 92;
         int index = (int) prog;
         this.drawBar(stack, x, y, index, length - 1, 0);
         int i = (int) ((prog - (int) prog) * length);
@@ -713,10 +723,10 @@ public class ResourceDisplay implements IGuiOverlay {
         }
         if (maxed) {
             //gold covering
-            GuiComponent.blit(stack, x, y, -90, 0, 70, 183, 5, 256, 256);
+            GuiComponent.blit(stack, x, y, -90, 0, 70, length, 5, 256, 256);
             //gold cap
             if (prog != (int) prog)
-                GuiComponent.blit(stack, x + i - 1, y, -90, 179, 70, 4, 5, 256, 256);
+                GuiComponent.blit(stack, x + i - 1, y, -90, 88, 70, 4, 5, 256, 256);
         }
 
     }

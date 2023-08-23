@@ -67,7 +67,7 @@ public class ShadowDive extends MementoMori {
         if (d.getState() == STATE.COOLING && caster.getHealth() == caster.getMaxHealth()) {
             d.setDuration(-10);
         }
-        return super.equippedTick(caster, d);
+        return cooldownTick(d);
     }
 
     @Override

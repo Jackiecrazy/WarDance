@@ -21,7 +21,7 @@ public class SabatonSmash extends Kick {
             removeMark(target);
             if (caster != null) {
                 CombatData.getCap(target).consumePosture(caster.getArmorValue() * SkillUtils.getSkillEffectiveness(caster) / 4f);
-                target.hurt(new CombatDamageSource("fallingBlock", caster).setDamageTyping(CombatDamageSource.TYPE.PHYSICAL).setProcSkillEffects(true).setProcAttackEffects(true), caster.getArmorValue() * SkillUtils.getSkillEffectiveness(caster) / 4f);
+                target.hurt(new CombatDamageSource("fallingBlock", caster).setDamageTyping(CombatDamageSource.TYPE.PHYSICAL).setProcSkillEffects(true).setSkillUsed(this).setProcAttackEffects(true), caster.getArmorValue() * SkillUtils.getSkillEffectiveness(caster) / 4f);
 
             }
         }

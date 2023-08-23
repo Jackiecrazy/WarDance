@@ -1,7 +1,9 @@
 package jackiecrazy.wardance.skill.descend;
 
+import jackiecrazy.footwork.client.particle.FootworkParticles;
 import jackiecrazy.footwork.event.EntityAwarenessEvent;
 import jackiecrazy.footwork.potion.FootworkEffects;
+import jackiecrazy.footwork.utils.ParticleUtils;
 import jackiecrazy.footwork.utils.StealthUtils;
 import jackiecrazy.wardance.skill.Skill;
 import jackiecrazy.wardance.skill.SkillData;
@@ -52,6 +54,7 @@ public class PhantomDive extends Skill {
         if (procPoint instanceof EntityAwarenessEvent e && e.getAttacker() == caster) {
             StealthUtils.Awareness awareness = e.getAwareness();
             double posDiff = stats.getDuration() - caster.getY();
+            ParticleUtils.playSweepParticle(FootworkParticles.IMPACT.get(), caster, e.getEntity().position(), 0, posDiff, getColor(), 0);
             int length = 0;
             while (posDiff > 0) {
                 switch (awareness) {
@@ -62,7 +65,7 @@ public class PhantomDive extends Skill {
                 posDiff -= 7 / stats.getEffectiveness();
             }
             if (length > 0) e.getEntity().addEffect(new MobEffectInstance(FootworkEffects.PARALYSIS.get(), length));
-            ((EntityAwarenessEvent) procPoint).setAwareness(awareness);
+            e.setAwareness(awareness);
             markUsed(caster);
             caster.fallDistance = 0;
         }

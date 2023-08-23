@@ -10,10 +10,13 @@ import jackiecrazy.footwork.api.CombatDamageSource;
 import jackiecrazy.wardance.capability.skill.CasterData;
 import jackiecrazy.wardance.capability.skill.ISkillCapability;
 import jackiecrazy.wardance.capability.status.Marks;
+import jackiecrazy.wardance.event.SweepEvent;
 import jackiecrazy.wardance.skill.*;
 import jackiecrazy.wardance.utils.CombatUtils;
 import jackiecrazy.wardance.utils.DamageUtils;
 import jackiecrazy.wardance.utils.SkillUtils;
+import net.minecraft.core.particles.ParticleTypes;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.effect.MobEffects;
@@ -117,6 +120,9 @@ public class Feint extends Skill {
 
     @Override
     public void onProc(LivingEntity caster, Event procPoint, STATE state, SkillData stats, LivingEntity target) {
+        if (procPoint instanceof SweepEvent se && procPoint.getPhase() == EventPriority.LOWEST && (state == STATE.HOLSTERED || state == STATE.ACTIVE)) {
+            se.setCanceled(true);
+        }
         if (procPoint instanceof LivingAttackEvent e && procPoint.getPhase() == EventPriority.HIGHEST && state == STATE.HOLSTERED && DamageUtils.isMeleeAttack(e.getSource()) && e.getEntity() == target && cast(caster, target, -999)) {
             int dur = 20;
             if (Marks.getCap(target).isMarked(this)) {
@@ -128,6 +134,9 @@ public class Feint extends Skill {
             CombatUtils.setHandCooldown(caster, InteractionHand.MAIN_HAND, this == WarSkills.FOLLOWUP.get() ? 1 : (0.5f * stats.getEffectiveness()), true);
             mark(caster, target, dur / 20f + 0.1f, 6);
             procPoint.setCanceled(true);
+            if (caster.level instanceof ServerLevel sl) {
+                sl.sendParticles(ParticleTypes.LARGE_SMOKE, target.getX(), target.getY(), target.getZ(), 3, target.getBbWidth(), target.getBbHeight(), target.getBbWidth(), 0.5f);
+            }
             markUsed(caster);
         }
         if (procPoint instanceof LivingAttackEvent e && this == WarSkills.FOLLOWUP.get() && procPoint.getPhase() == EventPriority.LOWEST && DamageUtils.isMeleeAttack(e.getSource()) && e.getEntity() == target &&

@@ -35,6 +35,7 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.client.event.*;
+import net.minecraftforge.client.gui.overlay.VanillaGuiOverlay;
 import net.minecraftforge.common.ForgeMod;
 import net.minecraftforge.event.TickEvent;
 import net.minecraftforge.event.entity.living.LivingAttackEvent;
@@ -49,6 +50,8 @@ import java.math.RoundingMode;
 import java.util.HashMap;
 import java.util.List;
 
+import static jackiecrazy.wardance.client.RenderUtils.formatter;
+
 @Mod.EventBusSubscriber(value = Dist.CLIENT, modid = WarDance.MODID)
 public class ClientEvents {
     private static final ResourceLocation expose = new ResourceLocation(WarDance.MODID, "textures/hud/exposed.png");
@@ -58,7 +61,7 @@ public class ClientEvents {
      */
     private static final long[] lastTap = {0, 0, 0, 0};
     private static final boolean[] tapped = {false, false, false, false};
-    public static int combatTicks = Integer.MAX_VALUE;
+    public static int combatTicks = -999;
     static boolean lastTickParry;
     static boolean weird = false;
     private static HashMap<String, Boolean> rotate;
@@ -70,8 +73,9 @@ public class ClientEvents {
 
     static {
         RenderUtils.formatter.setRoundingMode(RoundingMode.DOWN);
-        RenderUtils.formatter.setMinimumFractionDigits(1);
-        RenderUtils.formatter.setMaximumFractionDigits(1);
+        //eurgh
+        formatter.setMaximumFractionDigits(340); //340 = DecimalFormat.DOUBLE_FRACTION_DIGITS
+        formatter.setMinimumFractionDigits(0);
     }
 
     public static void updateList(List<? extends String> pos) {
@@ -89,7 +93,7 @@ public class ClientEvents {
 
     @SubscribeEvent
     public static void skillReading(RenderTooltipEvent.Color e) {
-        if (e.getItemStack().isEmpty() && (Minecraft.getInstance().screen instanceof SkillSelectionScreen||Minecraft.getInstance().screen instanceof ScrollScreen)) {
+        if (e.getItemStack().isEmpty() && (Minecraft.getInstance().screen instanceof SkillSelectionScreen || Minecraft.getInstance().screen instanceof ScrollScreen)) {
             e.setBorderEnd(0xffffffff);
             e.setBorderStart(0xffffffff);
         }
@@ -192,6 +196,13 @@ public class ClientEvents {
     }
 
     @SubscribeEvent
+    public static void noXP(RenderGuiOverlayEvent.Pre e) {
+        if (ClientConfig.hide && Minecraft.getInstance().player != null && CombatData.getCap(Minecraft.getInstance().player).isCombatMode() && e.getOverlay() == VanillaGuiOverlay.EXPERIENCE_BAR.type()) {
+            e.setCanceled(true);
+        }
+    }
+
+    @SubscribeEvent
     public static void down(RenderLivingEvent.Pre event) {
         final LivingEntity e = event.getEntity();
         float width = e.getBbWidth();
@@ -228,11 +239,27 @@ public class ClientEvents {
         }
     }
 
+//    @SubscribeEvent
+//    public static void buildContents(CreativeModeTabEvent.Register event) {
+//        event.registerCreativeModeTab(new ResourceLocation(Gempire.MODID, "gemstones"), builder ->
+//                // Set name of tab to display
+//                builder.title(Component.translatable("item_group." + Gempire.MODID + ".gemstones"))
+//                        // Set icon of creative tab
+//                        .icon(() -> new ItemStack(ModItems.RUBY_GEM.get()))
+//                        // Add default items to tab
+//                        .displayItems((enabledFlags, populator, hasPermissions) -> {
+//                            populator.accept(ModItems.AQUAMARINE_GEM.get());
+//                            populator.accept(ModItems.NEPHRITE_GEM.get());
+//                            populator.accept(ModItems.BISMUTH_GEM.get());
+//                        })
+//        );
+//    }
+
     @SubscribeEvent
     public static void handRaising(RenderHandEvent e) {
         if (e.getHand().equals(InteractionHand.MAIN_HAND) || !GeneralConfig.dual) return;
         AbstractClientPlayer p = Minecraft.getInstance().player;
-        if (p == null || (!CombatData.getCap(p).isCombatMode() && (p.swingingArm != InteractionHand.OFF_HAND || !p.swinging)) || !e.getItemStack().isEmpty())
+        if (p == null || p.isInvisible() || (!CombatData.getCap(p).isCombatMode() && (p.swingingArm != InteractionHand.OFF_HAND || !p.swinging)) || !e.getItemStack().isEmpty())
             return;
         e.setCanceled(true);
         float cd = CombatUtils.getCooledAttackStrength(p, InteractionHand.OFF_HAND, e.getPartialTick());

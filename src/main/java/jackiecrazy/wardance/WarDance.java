@@ -20,6 +20,8 @@ import jackiecrazy.wardance.skill.WarSkills;
 import net.minecraft.commands.synchronization.ArgumentTypeInfo;
 import net.minecraft.commands.synchronization.ArgumentTypeInfos;
 import net.minecraft.commands.synchronization.SingletonArgumentInfo;
+import net.minecraft.world.item.CreativeModeTab;
+import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.GameRules;
 import net.minecraftforge.client.event.RegisterGuiOverlaysEvent;
 import net.minecraftforge.client.gui.overlay.VanillaGuiOverlay;
@@ -47,8 +49,6 @@ import org.apache.logging.log4j.Logger;
 
 import java.util.Random;
 
-import static jackiecrazy.wardance.client.RenderUtils.formatter;
-
 // The value here should match an entry in the META-INF/mods.toml file
 @Mod("wardance")
 public class WarDance {
@@ -57,6 +57,12 @@ public class WarDance {
 
     public static final Logger LOGGER = LogManager.getLogger();
     public static final GameRules.Key<GameRules.BooleanValue> GATED_SKILLS = GameRules.register("lockWarSkills", GameRules.Category.PLAYER, GameRules.BooleanValue.create(false)); //Blessed be the TF
+    public static final CreativeModeTab WARTAB = new CreativeModeTab(-1, "wardance") {
+        @Override
+        public ItemStack makeIcon() {
+            return new ItemStack(WarItems.SCROLL.get());
+        }
+    };
     private static final DeferredRegister<ArgumentTypeInfo<?, ?>> COMMAND_ARGUMENT_TYPES = DeferredRegister.create(ForgeRegistries.COMMAND_ARGUMENT_TYPES, "forge");
     private static final RegistryObject<SingletonArgumentInfo<SkillArgument>> WARDANCE_COMMAND_SKI_ARGUMENT_TYPE = COMMAND_ARGUMENT_TYPES.register("war_skills", () ->
             ArgumentTypeInfos.registerByClass(SkillArgument.class,
@@ -66,9 +72,6 @@ public class WarDance {
                     SingletonArgumentInfo.contextFree(CategoryArgument::color)));
 
     public WarDance() {
-        //eurgh
-        formatter.setMaximumFractionDigits(340); //340 = DecimalFormat.DOUBLE_FRACTION_DIGITS
-        formatter.setMinimumFractionDigits(0);
 
         // Register the setup method for modloading
         FMLJavaModLoadingContext.get().getModEventBus().addListener(this::setup);

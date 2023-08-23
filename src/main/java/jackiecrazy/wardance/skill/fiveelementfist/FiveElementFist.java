@@ -1,6 +1,10 @@
 package jackiecrazy.wardance.skill.fiveelementfist;
 
+import jackiecrazy.footwork.api.CombatDamageSource;
 import jackiecrazy.footwork.capability.resources.CombatData;
+import jackiecrazy.footwork.event.MeleeKnockbackEvent;
+import jackiecrazy.footwork.utils.GeneralUtils;
+import jackiecrazy.footwork.utils.ParticleUtils;
 import jackiecrazy.wardance.capability.skill.CasterData;
 import jackiecrazy.wardance.skill.*;
 import jackiecrazy.wardance.utils.CombatUtils;
@@ -9,7 +13,6 @@ import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.ai.attributes.AttributeModifier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
-import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.common.ForgeMod;
 import net.minecraftforge.event.entity.player.CriticalHitEvent;
 import net.minecraftforge.eventbus.api.Event;
@@ -69,11 +72,6 @@ public abstract class FiveElementFist extends Skill {
     }
 
     @Override
-    public boolean displaysInactive(LivingEntity caster, SkillData stats) {
-        return true;
-    }
-
-    @Override
     public boolean showsMark(SkillData mark, LivingEntity target) {
         return false;
     }
@@ -86,12 +84,21 @@ public abstract class FiveElementFist extends Skill {
 
     @Override
     public void onProc(LivingEntity caster, Event procPoint, STATE state, SkillData stats, @Nullable LivingEntity target) {
-        //unarmed attack
+        //swap
         if (procPoint instanceof CriticalHitEvent lae && lae.getTarget() == target && CombatUtils.isUnarmed(caster, InteractionHand.MAIN_HAND)) {
             if (lae.getPhase() == EventPriority.HIGHEST) {
                 onStateChange(caster, stats, STATE.INACTIVE, STATE.ACTIVE);
-                Vec3 vec = target.getDeltaMovement();
-                target.setDeltaMovement(vec.x, 0, vec.z);
+                ParticleUtils.playBonkParticle(caster.level, caster.getEyePosition().add(caster.getLookAngle().scale(Math.sqrt(GeneralUtils.getDistSqCompensated(caster, target)) * 0.9)), 0.5, 0.1, 8, getColor());
+            }
+        }
+        //unarmed attack
+        if (procPoint instanceof MeleeKnockbackEvent lae && lae.getEntity() == target && CombatUtils.isUnarmed(caster, InteractionHand.MAIN_HAND)) {
+            if (lae.getPhase() == EventPriority.HIGHEST) {
+                if (lae.getDamageSource() instanceof CombatDamageSource cds) {
+                    cds.setSkillUsed(this);
+                    cds.setProcSkillEffects(true);
+                    cds.setKnockbackPercentage(0.3f);
+                }
                 doAttack(caster, target);
             }
         }
@@ -102,6 +109,11 @@ public abstract class FiveElementFist extends Skill {
         //active means it's expended, cooling means it just swapped in
         if (to == STATE.ACTIVE) prev.setState(STATE.ACTIVE);
         return passive(prev, from, to);
+    }
+
+    @Override
+    public boolean displaysInactive(LivingEntity caster, SkillData stats) {
+        return true;
     }
 
     protected void doAttack(LivingEntity caster, LivingEntity target) {

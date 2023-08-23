@@ -15,17 +15,16 @@ import net.minecraftforge.event.entity.player.ItemTooltipEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 
-import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
+import static jackiecrazy.wardance.client.RenderUtils.formatter;
 import static net.minecraft.world.item.ItemStack.ATTRIBUTE_MODIFIER_FORMAT;
 
 @Mod.EventBusSubscriber(modid = WarDance.MODID, value = Dist.CLIENT)
 public class ItemTooltipHandler {
-    private static final DecimalFormat formatter = new DecimalFormat("#.#");
     @SubscribeEvent()
     public static void tooltip(ItemTooltipEvent e) {
         final ItemStack stack = e.getItemStack();

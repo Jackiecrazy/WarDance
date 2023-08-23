@@ -21,13 +21,11 @@ import java.awt.*;
 import java.util.ArrayList;
 import java.util.List;
 
-import static jackiecrazy.wardance.client.RenderUtils.formatter;
-import static jackiecrazy.wardance.client.RenderUtils.translateCoords;
-
 public class SkillCoolDisplay implements IGuiOverlay {
     private static void drawSkills(PoseStack stack, Minecraft mc, List<SkillData> skill, int x, int y) {
+        stack.pushPose();
         for (int index = 0; index < skill.size(); index++) {
-            stack.pushPose();
+
             stack.pushPose();
             //skill icon
             SkillData s = skill.get(index);
@@ -41,17 +39,17 @@ public class SkillCoolDisplay implements IGuiOverlay {
 //                mc.font.drawShadow(stack, display, centerX - 8, y - 2, 0xffffff);
 //            }
             if (s.getArbitraryFloat() != 0) {
-                formatter.setMinimumFractionDigits(0);
-                formatter.setMaximumFractionDigits(1);
-                String display = formatter.format(s.getArbitraryFloat());
-                mc.font.drawShadow(stack, display, centerX + 8-mc.font.width(display)/2, y + 8, 0xffffff);
+                RenderUtils.formatter.setMinimumFractionDigits(0);
+                RenderUtils.formatter.setMaximumFractionDigits(1);
+                String display = RenderUtils.formatter.format(s.getArbitraryFloat());
+                mc.font.drawShadow(stack, display, centerX + 8 - mc.font.width(display) / 2, y + 8, 0xffffff);
             }
             stack.popPose();
 
-            RenderSystem.enableBlend();
-            RenderSystem.blendFuncSeparate(GlStateManager.SourceFactor.ZERO, GlStateManager.DestFactor.ONE, GlStateManager.SourceFactor.ONE_MINUS_SRC_ALPHA, GlStateManager.DestFactor.ZERO);
             if (s.getMaxDuration() == 0) continue;
             //dark mask
+            RenderSystem.enableBlend();
+            RenderSystem.blendFuncSeparate(GlStateManager.SourceFactor.ZERO, GlStateManager.DestFactor.ONE, GlStateManager.SourceFactor.ONE_MINUS_SRC_ALPHA, GlStateManager.DestFactor.ZERO);
             if (s.getState() == Skill.STATE.ACTIVE)//inverted
                 RenderSystem.setShaderColor(c.getRed() / 255f, c.getGreen() / 255f, c.getBlue() / 255f, 1);
             GuiComponent.blit(stack, centerX - 8, y, 0, 0, 16, 16, 16, 16);
@@ -68,16 +66,18 @@ public class SkillCoolDisplay implements IGuiOverlay {
                 //cooldown number
                 String num = String.valueOf((int) cd);
                 if (Math.ceil(cd) != cd)
-                    num = formatter.format(cd);
+                    num = RenderUtils.formatter.format(cd);
                 stack.pushPose();
                 RenderSystem.setShaderTexture(0, RenderUtils.cooldown);
                 RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, 0.6F);
-                //AbstractGui.blit(matrixStack, x + iconX[a], y + iconY[a], 0, 0, 32, 32, 32, 32);
                 mc.font.draw(stack, num, centerX - 8 - mc.font.width(num) / 2f, y, 0xFFFFFF);
                 stack.popPose();
             }
-            stack.popPose();
         }
+        RenderSystem.defaultBlendFunc();
+        RenderSystem.setShaderColor(1, 1, 1, 1);
+        RenderSystem.disableBlend();
+        stack.popPose();
     }
 
     @Override
@@ -86,17 +86,23 @@ public class SkillCoolDisplay implements IGuiOverlay {
         Player player = mc.player;
         if (player == null) return;
         if (!CombatData.getCap(player).isCombatMode()) return;
+        stack.pushPose();
 //render skill cooldown
         if (ClientConfig.CONFIG.skillCD.enabled) {
+            stack.pushPose();
             List<SkillData> skill = new ArrayList<>();
             //actives
             final ISkillCapability cap = CasterData.getCap(player);
             skill.addAll(cap.getAllSkillData().values().stream().filter(a -> a != null && cap.isSkillEquipped(a.getSkill()) && !a.getSkill().isPassive(player) && a.getDuration() >= 0 && (a.getState() == Skill.STATE.COOLING || a.getState() == Skill.STATE.ACTIVE || a.getSkill().displaysInactive(player, a))).toList());
-            Pair<Integer, Integer> pair = translateCoords(ClientConfig.CONFIG.skillCD, width, height);
+            Pair<Integer, Integer> pair = RenderUtils.translateCoords(ClientConfig.CONFIG.skillCD, width, height);
             drawSkills(stack, mc, skill, pair.getFirst(), pair.getSecond());
             skill.clear();
             skill.addAll(cap.getAllSkillData().values().stream().filter(a -> a != null && cap.isSkillEquipped(a.getSkill()) && a.getSkill().isPassive(player) && a.getDuration() >= 0 && (a.getState() == Skill.STATE.COOLING || a.getState() == Skill.STATE.ACTIVE || a.getSkill().displaysInactive(player, a))).toList());
             drawSkills(stack, mc, skill, pair.getFirst(), pair.getSecond() + 18);
+            stack.popPose();
         }
+        RenderSystem.setShaderColor(1, 1, 1, 1);
+        RenderSystem.disableBlend();
+        stack.popPose();
     }
 }

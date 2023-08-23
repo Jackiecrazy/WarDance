@@ -57,8 +57,9 @@ pound of flesh: active skill. Consumes all your spirit, and until your spirit re
         float health = 1 - (caster.getHealth() / GeneralUtils.getMaxHealthBeforeWounding(caster));
         final float amount = health * SkillUtils.getSkillEffectiveness(caster);
         SkillUtils.modifyAttribute(caster, Attributes.ATTACK_DAMAGE, MULT, amount, AttributeModifier.Operation.MULTIPLY_TOTAL);
+        float afore = d.getArbitraryFloat();
         d.setArbitraryFloat(amount);
-        return false;
+        return afore != d.getArbitraryFloat();
     }
 
     @Override
@@ -85,8 +86,9 @@ pound of flesh: active skill. Consumes all your spirit, and until your spirit re
             lostHealth /= GeneralUtils.getMaxHealthBeforeWounding(caster);
             final float armor = lostHealth * SkillUtils.getSkillEffectiveness(caster) * 20;
             SkillUtils.modifyAttribute(caster, Attributes.ARMOR, MULT, armor, AttributeModifier.Operation.ADDITION);
-            d.setArbitraryFloat(lostHealth);
-            return super.equippedTick(caster, d);
+            float afore = d.getArbitraryFloat();
+            d.setArbitraryFloat(armor);
+            return afore != d.getArbitraryFloat();
         }
     }
 

@@ -98,7 +98,7 @@ public class ScrollScreen extends Screen {
         int startY = PADDING + (size + PADDING) * rows;
         final int height = this.height - SPACING - startY;
         okay = new CloseButton(this, width - SPACING - PADDING - 12, startY + height / 3 - 12, true);
-        cancel = new CloseButton(this, width - SPACING - PADDING - 12, startY + height * 2 / 3 -12, false);
+        cancel = new CloseButton(this, width - SPACING - PADDING - 12, startY + height * 2 / 3 - 12, false);
         int panelWidth = workingWidth - PADDING - 12 - PADDING;
         panel = new InfoPanel(Minecraft.getInstance(), panelWidth, height, startY, SPACING);
         addRenderableWidget(okay);
@@ -157,10 +157,7 @@ public class ScrollScreen extends Screen {
             this.blit(stack, this.x, this.y, 0, 46 + i * 20, this.width / 2, this.height);
             this.blit(stack, this.x + this.width / 2, this.y, 200 - this.width / 2, 46 + i * 20, this.width / 2, this.height);
             this.renderBg(stack, minecraft, x, y);
-//            int j = getFGColor();
-//            drawCenteredString(stack, font, this.getMessage(), this.x + this.width / 2, this.y + (this.height - 8) / 2, j | Mth.ceil(this.alpha * 255.0F) << 24);
-            //super.renderButton(stack, x, y, partial);
-            RenderSystem.setShaderTexture(0, finalize?check:cross);
+            RenderSystem.setShaderTexture(0, finalize ? check : cross);
 
             float pos = this.isHovered ? 0.5f : 0f;
             blit(stack, this.x, this.y, 0, pos, this.width, this.height, 40, 20);

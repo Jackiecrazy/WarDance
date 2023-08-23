@@ -1,9 +1,8 @@
 package jackiecrazy.wardance.networking;
 
 import jackiecrazy.wardance.capability.action.PermissionData;
-import jackiecrazy.wardance.client.screen.scroll.ScrollScreen;
+import jackiecrazy.wardance.client.RenderUtils;
 import jackiecrazy.wardance.skill.Skill;
-import net.minecraft.client.Minecraft;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
@@ -61,9 +60,10 @@ public class OpenScrollScreenPacket {
                 if (!PermissionData.getCap(sender).canEnterCombatMode()) {
                     return;
                 }
-                Minecraft.getInstance().setScreen(new ScrollScreen(updateSkillPacket.off, updateSkillPacket.l));
+                RenderUtils.openScrollScreen(updateSkillPacket.off, updateSkillPacket.l);
             });
             contextSupplier.get().setPacketHandled(true);
         }
+
     }
 }

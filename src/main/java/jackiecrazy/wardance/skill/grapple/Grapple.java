@@ -2,13 +2,13 @@ package jackiecrazy.wardance.skill.grapple;
 
 import jackiecrazy.footwork.capability.resources.CombatData;
 import jackiecrazy.footwork.capability.resources.ICombatCapability;
+import jackiecrazy.footwork.client.particle.FootworkParticles;
 import jackiecrazy.footwork.potion.FootworkEffects;
+import jackiecrazy.footwork.utils.ParticleUtils;
 import jackiecrazy.footwork.utils.TargetingUtils;
 import jackiecrazy.wardance.WarDance;
 import jackiecrazy.wardance.config.WeaponStats;
 import jackiecrazy.wardance.skill.*;
-import jackiecrazy.wardance.utils.SkillUtils;
-import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.effect.MobEffectInstance;
@@ -74,7 +74,7 @@ public class Grapple extends Skill {
     protected void performEffect(LivingEntity caster, LivingEntity target, SkillData stats) {
         caster.level.playSound(null, target.getX(), target.getY(), target.getZ(), SoundEvents.BARREL_OPEN, SoundSource.PLAYERS, 0.3f + WarDance.rand.nextFloat() * 0.5f, 0.75f + WarDance.rand.nextFloat() * 0.5f);
         CombatData.getCap(target).consumePosture(caster, 7 * stats.getEffectiveness() * stats.getEffectiveness(), 0, true);
-
+        ParticleUtils.playSweepParticle(FootworkParticles.IMPACT.get(), caster, caster.position(), 0, 1, getColor(), 0);
     }
 
     protected boolean isUnarmed(LivingEntity caster) {
@@ -110,7 +110,8 @@ public class Grapple extends Skill {
             if (overflow < 0) {
                 CombatData.getCap(target).addFracture(caster, 1);
                 //suplex shockwave
-                SkillUtils.createCloud(caster.level, caster, target.getX(), target.getY(), target.getZ(), 7 * stats.getEffectiveness(), ParticleTypes.LARGE_SMOKE);
+                ParticleUtils.playSweepParticle(FootworkParticles.IMPACT.get(), caster, target.position(), 0, 7 * stats.getEffectiveness(), getColor(), 0);
+                //SkillUtils.createCloud(caster.level, caster, target.getX(), target.getY(), target.getZ(), 7 * stats.getEffectiveness(), ParticleTypes.LARGE_SMOKE);
                 for (LivingEntity entity : target.level.getEntitiesOfClass(LivingEntity.class, target.getBoundingBoxForCulling().inflate(7 * stats.getEffectiveness()), a -> !TargetingUtils.isAlly(a, caster))) {
                     CombatData.getCap(entity).consumePosture(caster, overflow / -2);
                 }

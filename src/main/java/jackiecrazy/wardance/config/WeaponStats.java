@@ -3,6 +3,7 @@ package jackiecrazy.wardance.config;
 import com.google.common.collect.Maps;
 import com.google.gson.*;
 import jackiecrazy.wardance.WarDance;
+import jackiecrazy.wardance.client.RenderUtils;
 import jackiecrazy.wardance.networking.CombatChannel;
 import jackiecrazy.wardance.networking.SyncItemDataPacket;
 import jackiecrazy.wardance.networking.SyncTagDataPacket;
@@ -23,7 +24,9 @@ import net.minecraft.util.StringUtil;
 import net.minecraft.util.profiling.ProfilerFiller;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.LivingEntity;
-import net.minecraft.world.item.*;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.Items;
 import net.minecraft.world.item.enchantment.Enchantments;
 import net.minecraft.world.level.Level;
 import net.minecraftforge.event.AddReloadListenerEvent;
@@ -33,7 +36,6 @@ import net.minecraftforge.registries.ForgeRegistries;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.lang.reflect.Type;
-import java.text.DecimalFormat;
 import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
@@ -46,7 +48,6 @@ public class WeaponStats extends SimpleJsonResourceReloadListener {
     public static final TagKey<Item> PIERCE_PARRY = ItemTags.create(new ResourceLocation(WarDance.MODID, "pierce_parry"));
     public static final TagKey<Item> PIERCE_SHIELD = ItemTags.create(new ResourceLocation(WarDance.MODID, "pierce_shield"));
     public static final TagKey<Item> CANNOT_PARRY = ItemTags.create(new ResourceLocation(WarDance.MODID, "cannot_parry"));
-    private static final DecimalFormat formatter = new DecimalFormat("#.#");
     private static final SweepInfo DEFAULT_FAN = new SweepInfo(SWEEPTYPE.CONE, 30, 30);
     private static final SweepInfo DEFAULT_CLEAVE = new SweepInfo(SWEEPTYPE.CLEAVE, 30, 30);
     private static final SweepInfo DEFAULT_IMPACT = new SweepInfo(SWEEPTYPE.IMPACT, 1, 1.5);
@@ -331,7 +332,7 @@ public class WeaponStats extends SimpleJsonResourceReloadListener {
             double damage = damage_scale;
             double posture = posture_scale;
             if (knockback != REFERENCE.knockback) {
-                MutableComponent cp = Component.literal(formatter.format(knockback) + "x");
+                MutableComponent cp = Component.literal(RenderUtils.formatter.format(knockback) + "x");
                 if (!advanced) {
                     if (knockback > 1)
                         cp = Component.translatable("wardance.tooltip.more");
@@ -348,9 +349,9 @@ public class WeaponStats extends SimpleJsonResourceReloadListener {
                 posture *= crit_damage;
             }
             if (damage != 1)
-                sweepTip.append(Component.translatable("wardance.tooltip.sweep.damage" + advance, Component.literal(formatter.format(damage * 100) + "%").withStyle(getColorFromValue(damage))));
+                sweepTip.append(Component.translatable("wardance.tooltip.sweep.damage" + advance, Component.literal(RenderUtils.formatter.format(damage * 100) + "%").withStyle(getColorFromValue(damage))));
             if (posture != 1)
-                sweepTip.append(Component.translatable("wardance.tooltip.sweep.posture" + advance, Component.literal(formatter.format(posture * 100) + "%").withStyle(getColorFromValue(posture))));
+                sweepTip.append(Component.translatable("wardance.tooltip.sweep.posture" + advance, Component.literal(RenderUtils.formatter.format(posture * 100) + "%").withStyle(getColorFromValue(posture))));
             if (!hit_self_command.isEmpty() || !hit_other_command.isEmpty() || !damage_other_command.isEmpty() || !damage_self_command.isEmpty()) {
                 if (advanced) {
                     if (!hit_self_command.isEmpty()) {

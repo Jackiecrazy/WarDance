@@ -1,5 +1,6 @@
 package jackiecrazy.wardance.items;
 
+import jackiecrazy.wardance.WarDance;
 import jackiecrazy.wardance.capability.skill.CasterData;
 import jackiecrazy.wardance.capability.skill.ISkillCapability;
 import jackiecrazy.wardance.skill.Skill;
@@ -18,7 +19,7 @@ import java.util.HashSet;
 import java.util.List;
 
 public class ManualItem extends Item {
-    private static final Item.Properties prop = new Properties().rarity(Rarity.RARE).stacksTo(1).tab(CreativeModeTab.TAB_COMBAT);
+    private static final Item.Properties prop = new Properties().rarity(Rarity.RARE).stacksTo(1).tab(WarDance.WARTAB);
 
     public ManualItem() {
         super(prop);

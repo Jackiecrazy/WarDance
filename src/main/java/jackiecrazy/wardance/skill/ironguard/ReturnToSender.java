@@ -21,6 +21,17 @@ public class ReturnToSender extends IronGuard {
     }
 
     @Override
+    public boolean onStateChange(LivingEntity caster, SkillData prev, STATE from, STATE to) {
+        prev.setState(STATE.INACTIVE);
+        return false;
+    }
+
+    @Override
+    public boolean displaysInactive(LivingEntity caster, SkillData stats) {
+        return false;
+    }
+
+    @Override
     protected void parry(LivingEntity caster, ParryEvent procPoint, SkillData stats, LivingEntity target, STATE state) {
 
     }

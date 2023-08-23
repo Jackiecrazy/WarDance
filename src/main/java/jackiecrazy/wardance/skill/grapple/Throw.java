@@ -2,13 +2,14 @@ package jackiecrazy.wardance.skill.grapple;
 
 import jackiecrazy.footwork.api.CombatDamageSource;
 import jackiecrazy.footwork.capability.resources.CombatData;
+import jackiecrazy.footwork.client.particle.FootworkParticles;
 import jackiecrazy.footwork.event.StunEvent;
 import jackiecrazy.footwork.utils.GeneralUtils;
+import jackiecrazy.footwork.utils.ParticleUtils;
 import jackiecrazy.wardance.WarDance;
 import jackiecrazy.wardance.capability.skill.CasterData;
 import jackiecrazy.wardance.config.CombatConfig;
 import jackiecrazy.wardance.skill.SkillData;
-import jackiecrazy.wardance.utils.SkillUtils;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.entity.Entity;
@@ -61,9 +62,10 @@ public class Throw extends Grapple {
 
     protected void performEffect(LivingEntity caster, LivingEntity target, SkillData stats) {
         caster.level.playSound(null, target.getX(), target.getY(), target.getZ(), SoundEvents.BARREL_OPEN, SoundSource.PLAYERS, 0.3f + WarDance.rand.nextFloat() * 0.5f, 0.75f + WarDance.rand.nextFloat() * 0.5f);
-        if (CombatData.getCap(target).consumePosture(caster, 7*stats.getEffectiveness(), 0, true) < 0 || CombatData.getCap(target).isVulnerable()) {
+        if (CombatData.getCap(target).consumePosture(caster, 7 * stats.getEffectiveness(), 0, true) < 0 || CombatData.getCap(target).isVulnerable()) {
             target.startRiding(caster, true);
-            mark(caster, target, CombatConfig.knockdownDuration * 2);
+            ParticleUtils.playSweepParticle(FootworkParticles.IMPACT.get(), caster, caster.position(), 0, 1, getColor(), 0);
+            mark(caster, target, CombatConfig.knockdownDuration * 2, stats.getEffectiveness());
             stats.flagCondition(true);
         } else {
             stats.flagCondition(false);
@@ -76,14 +78,12 @@ public class Throw extends Grapple {
         sd.decrementDuration(0.05f);
         Entity collide = GeneralUtils.collidingEntity(target);
         if (sd.isCondition() && (target.horizontalCollision || target.verticalCollision || collide != null)) {
-            //FIXME what's the point of consuming posture when they're already knocked down?
             removeMark(target);
-            CombatData.getCap(target).consumePosture(7);
             if (caster != null) {
-                target.hurt(new CombatDamageSource("fallingBlock", caster).setDamageTyping(CombatDamageSource.TYPE.PHYSICAL).setProcSkillEffects(true).setProcAttackEffects(true), 3);
+                target.hurt(new CombatDamageSource("fallingBlock", caster).setDamageTyping(CombatDamageSource.TYPE.PHYSICAL).setProcSkillEffects(true).setSkillUsed(this).setProcAttackEffects(true), 10 * sd.getArbitraryFloat() * sd.getArbitraryFloat());
                 if (collide instanceof LivingEntity elb) {
-                    CombatData.getCap(elb).consumePosture(7);
-                    elb.hurt(new CombatDamageSource("fallingBlock", caster).setDamageTyping(CombatDamageSource.TYPE.PHYSICAL).setProcSkillEffects(true).setProcAttackEffects(true), 3);
+                    CombatData.getCap(elb).consumePosture(caster, 7 * sd.getArbitraryFloat() * sd.getArbitraryFloat());
+                    elb.hurt(new CombatDamageSource("fallingBlock", caster).setDamageTyping(CombatDamageSource.TYPE.PHYSICAL).setProcSkillEffects(true).setSkillUsed(this).setProcAttackEffects(true), 3 * sd.getArbitraryFloat() * sd.getArbitraryFloat());
                 }
             }
         }

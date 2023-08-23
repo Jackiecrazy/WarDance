@@ -43,6 +43,7 @@ import net.minecraftforge.registries.ForgeRegistries;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import java.awt.*;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Optional;
@@ -449,17 +450,17 @@ public class CombatUtils {
         //if (e instanceof Player && hit) {
         //play sweep particles in different ways
         ParticleType<ScalingParticleType> particle = FootworkParticles.SWEEP.get();
-        float offset = 0;
+        Vec3 look = e.getLookAngle();
+        starting = e.getEyePosition().add(look.scale(reach));
+        float offset = 0;//(float) look.scale(reach).y;
         switch (type) {
             case LINE -> particle = FootworkParticles.LINE.get();
             case CIRCLE -> {
-                Vec3 look = e.getLookAngle();
                 starting = e.position().add(look.x, 0, look.z);
                 particle = FootworkParticles.CIRCLE.get();
-                offset = e.getEyeHeight() / 3;
+                offset = e.getEyeHeight() / 2;
             }
             case CONE -> {
-                offset = e.getEyeHeight();
                 radius = Math.tan(GeneralUtils.rad((float) radius / 2)) * reach;
                 particle = h == InteractionHand.OFF_HAND ? FootworkParticles.SWEEP_LEFT.get() : FootworkParticles.SWEEP.get();
             }
@@ -469,9 +470,10 @@ public class CombatUtils {
             }
             case IMPACT -> {
                 particle = FootworkParticles.IMPACT.get();
+                offset = 0;
             }
         }
-        ParticleUtils.playSweepParticle(particle, e, starting, 0, radius, offset);
+        ParticleUtils.playSweepParticle(particle, e, starting, 0, radius, Color.WHITE, offset);
         e.level.playSound(null, e.getX(), e.getY(), e.getZ(), SoundEvents.PLAYER_ATTACK_SWEEP, e.getSoundSource(), 1.0F, 1.0F);
         //}
         isSweeping = false;

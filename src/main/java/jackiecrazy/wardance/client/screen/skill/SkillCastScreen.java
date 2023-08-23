@@ -21,8 +21,9 @@ import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 
 import java.awt.*;
-import java.text.DecimalFormat;
 import java.util.List;
+
+import static jackiecrazy.wardance.client.RenderUtils.formatter;
 
 @OnlyIn(Dist.CLIENT)
 public class SkillCastScreen extends Screen {
@@ -47,7 +48,6 @@ public class SkillCastScreen extends Screen {
             117,
             52
     };
-    private static final DecimalFormat formatter = new DecimalFormat("#.#");
     protected final Skill[] elements;
     protected int exIndex = -1;
 

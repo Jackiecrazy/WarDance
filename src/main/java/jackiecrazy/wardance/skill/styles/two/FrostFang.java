@@ -38,6 +38,7 @@ public class FrostFang extends WarCry {
         if (procPoint.getPhase() != EventPriority.LOWEST) return;
         if (procPoint instanceof LivingAttackEvent lae && state == STATE.INACTIVE && lae.getEntity() == target) {
             activate(caster, 2, stats.getArbitraryFloat());
+            stats.setMaxDuration(2);
         } else if (procPoint instanceof ParryEvent cpe && state == STATE.ACTIVE && cpe.getEntity() == target) {
             cpe.setPostureConsumption(cpe.getPostureConsumption() * (1 + stats.getArbitraryFloat()/10));
         } else if (procPoint instanceof LivingHurtEvent cpe && state == STATE.ACTIVE && cpe.getEntity() == target) {

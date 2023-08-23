@@ -48,6 +48,11 @@ public abstract class IronGuard extends Skill {
     }
 
     @Override
+    public boolean displaysInactive(LivingEntity caster, SkillData stats) {
+        return true;
+    }
+
+    @Override
     protected boolean showArchetypeDescription() {
         return false;
     }

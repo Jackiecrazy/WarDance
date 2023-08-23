@@ -13,6 +13,7 @@ import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraftforge.common.ForgeMod;
 
+import java.awt.*;
 import java.util.HashSet;
 
 public class Tornado extends Kick {
@@ -26,14 +27,14 @@ public class Tornado extends Kick {
                 if (t instanceof LivingEntity) {
                     LivingEntity target = (LivingEntity) t;
                     CombatData.getCap(target).consumePosture(caster, 4);
-                    target.hurt(new CombatDamageSource("fallingBlock", caster).setDamageTyping(CombatDamageSource.TYPE.PHYSICAL).setProcSkillEffects(true).setProcAttackEffects(true), 2);
+                    target.hurt(new CombatDamageSource("fallingBlock", caster).setDamageTyping(CombatDamageSource.TYPE.PHYSICAL).setSkillUsed(this).setProcSkillEffects(true).setProcAttackEffects(true), 2);
                     if (target.getLastHurtByMob() == null)
                         target.setLastHurtByMob(caster);
                 }
             //play little sweep animation
             caster.level.playSound(null, caster.getX(), caster.getY(), caster.getZ(), SoundEvents.ZOMBIE_ATTACK_WOODEN_DOOR, SoundSource.PLAYERS, 0.25f + WarDance.rand.nextFloat() * 0.5f, 0.5f + WarDance.rand.nextFloat() * 0.5f);
             for (int radius = 1; radius < 4; ++radius)
-                ParticleUtils.playSweepParticle(FootworkParticles.CIRCLE.get(), caster, caster.getLookAngle().multiply(1, 0, 1), 0, radius, 1+radius);
+                ParticleUtils.playSweepParticle(FootworkParticles.CIRCLE.get(), caster, caster.position(), 0, radius, Color.CYAN, 0.1+radius);
         }
         if (to == STATE.COOLING) {
             setCooldown(caster, prev, 4);

@@ -194,7 +194,7 @@ public class CombatHandler {
 
     @SubscribeEvent(priority = EventPriority.HIGHEST)
     public static void cancel(final LivingAttackEvent e) {
-        if (GeneralConfig.debug) {
+        if (GeneralConfig.debug && !e.getEntity().level.isClientSide) {
             WarDance.LOGGER.debug("attack from " + e.getSource() + " started with amount " + e.getAmount());
         }
         if (!e.getEntity().level.isClientSide && e.getSource() != null && DamageUtils.isPhysicalAttack(e.getSource())) {
@@ -225,7 +225,7 @@ public class CombatHandler {
 
     @SubscribeEvent(priority = EventPriority.LOWEST)//because compat with BHT...
     public static void parry(final LivingAttackEvent e) {
-        if (GeneralConfig.debug) {
+        if (GeneralConfig.debug && !e.getEntity().level.isClientSide) {
             WarDance.LOGGER.debug("attack source " + e.getSource() + " sent to hurt check with amount " + e.getAmount());
         }
         //if physical attack with source
@@ -486,7 +486,7 @@ public class CombatHandler {
 
     @SubscribeEvent(priority = EventPriority.HIGHEST)
     public static void pain(LivingHurtEvent e) {
-        if (GeneralConfig.debug) {
+        if (GeneralConfig.debug && !e.getEntity().level.isClientSide) {
             WarDance.LOGGER.debug("damage from " + e.getSource() + " received with amount " + e.getAmount());
         }
         LivingEntity uke = e.getEntity();
@@ -543,13 +543,13 @@ public class CombatHandler {
 
     @SubscribeEvent(priority = EventPriority.LOWEST, receiveCanceled = true)
     public static void paint(LivingHurtEvent e) {
-        if (GeneralConfig.debug)
+        if (GeneralConfig.debug && !e.getEntity().level.isClientSide)
             WarDance.LOGGER.debug((e.isCanceled() ? "canceled " : "") + "damage from " + e.getSource() + " sent for armor calculations with amount " + e.getAmount());
     }
 
     @SubscribeEvent(priority = EventPriority.HIGHEST)
     public static void tanky(LivingDamageEvent e) {
-        if (GeneralConfig.debug)
+        if (GeneralConfig.debug && !e.getEntity().level.isClientSide)
             WarDance.LOGGER.debug("damage from " + e.getSource() + " recalculated to " + e.getAmount());
         final LivingEntity uke = e.getEntity();
         //no food!
@@ -574,7 +574,7 @@ public class CombatHandler {
 
     @SubscribeEvent(priority = EventPriority.LOWEST, receiveCanceled = true)
     public static void udedlol(LivingDamageEvent e) {
-        if (GeneralConfig.debug)
+        if (GeneralConfig.debug && !e.getEntity().level.isClientSide)
             WarDance.LOGGER.debug("damage from " + e.getSource() + " finalized with amount " + e.getAmount());
         //"halo mode"
         if (GeneralConfig.test) {

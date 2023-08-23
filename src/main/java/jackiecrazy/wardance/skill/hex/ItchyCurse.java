@@ -50,7 +50,7 @@ public class ItchyCurse extends Hex {
             Marks.getCap(target).removeMark(this);
             return true;
         }
-        return false;
+        return sd.getArbitraryFloat()%1==sd.getArbitraryFloat();
     }
 
     @Override

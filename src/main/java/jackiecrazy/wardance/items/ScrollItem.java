@@ -26,7 +26,7 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 public class ScrollItem extends Item {
-    private static final Item.Properties prop = new Properties().rarity(Rarity.UNCOMMON).stacksTo(1).tab(CreativeModeTab.TAB_COMBAT);
+    private static final Item.Properties prop = new Properties().rarity(Rarity.UNCOMMON).stacksTo(1).tab(WarDance.WARTAB);
 
     public ScrollItem() {
         super(prop);
@@ -186,7 +186,7 @@ public class ScrollItem extends Item {
     }
 
     public void fillItemCategory(CreativeModeTab tab, NonNullList<ItemStack> list) {
-        if (tab == CreativeModeTab.TAB_COMBAT) {
+        if (tab == WarDance.WARTAB) {
             final Collection<Skill> values = WarSkills.SUPPLIER.get().getValues();
             ItemStack everything = makeScroll(false, (Skill) null);
             setRandomSize(everything, 4);
