@@ -50,8 +50,6 @@ import java.math.RoundingMode;
 import java.util.HashMap;
 import java.util.List;
 
-import static jackiecrazy.wardance.client.RenderUtils.formatter;
-
 @Mod.EventBusSubscriber(value = Dist.CLIENT, modid = WarDance.MODID)
 public class ClientEvents {
     private static final ResourceLocation expose = new ResourceLocation(WarDance.MODID, "textures/hud/exposed.png");
@@ -74,8 +72,8 @@ public class ClientEvents {
     static {
         RenderUtils.formatter.setRoundingMode(RoundingMode.DOWN);
         //eurgh
-        formatter.setMaximumFractionDigits(340); //340 = DecimalFormat.DOUBLE_FRACTION_DIGITS
-        formatter.setMinimumFractionDigits(0);
+        RenderUtils.formatter.setMaximumFractionDigits(1); //340 = DecimalFormat.DOUBLE_FRACTION_DIGITS
+        RenderUtils.formatter.setMinimumFractionDigits(0);
     }
 
     public static void updateList(List<? extends String> pos) {

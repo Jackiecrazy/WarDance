@@ -52,7 +52,7 @@ public class GeneralConfig {
         _dual = b.translation("wardance.config.dualwield").comment("added per request. Shield bash will not work from the offhand when this is off, and clients will not render their offhand.").define("enable dual wielding", true);
         b.pop();
         b.push("sweep");
-        _betterSweep = b.translation("wardance.config.sweep").comment("overrides vanilla sweep with a version hits all affected entities for full damage and effects and works regardless of aim, with sweeping edge determining the angle which is swept. Sweeps will be completely suppressed if you don't have the enchantment. Disabling this will also disable all functions that extend this, such as flurry.").define("enable better sweep", true);
+        _betterSweep = b.translation("wardance.config.sweep").comment("overrides vanilla sweep with a version hits all affected entities for full damage and effects and works regardless of aim. Disabling this will also disable all functions that extend this, such as flurry.").define("enable better sweep", true);
         _sweepDurability = b.translation("wardance.config.sweepD").comment("whether better sweep deals durability damage for each mob hit").define("durability damage per hit mob", false);
         b.pop();
         b.push("compat");

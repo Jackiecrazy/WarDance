@@ -81,8 +81,7 @@ public class ManualItem extends Item {
             }
         }
         try {
-            cap.setStyle((SkillStyle) skills.get(0));
-            cap.setEquippedSkills(skills.subList(1, skills.size()));
+            cap.setEquippedSkillsAndUpdate((SkillStyle) skills.get(0), skills.subList(1, skills.size()));
             if (!new HashSet<>(cap.getEquippedSkillsAndStyle()).containsAll(skills)) {
                 //could not learn everything
                 p.displayClientMessage(Component.translatable("wardance.manual.partiallearn", stack.getDisplayName()).withStyle(ChatFormatting.YELLOW), true);

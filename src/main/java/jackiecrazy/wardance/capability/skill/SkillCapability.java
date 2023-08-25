@@ -39,7 +39,7 @@ public class SkillCapability implements ISkillCapability {
         //if data doesn't have the skill tag, re-initialize the skill data.
         SkillData data = this.data.get(d);
         if (data == null) {
-            this.data.put(d, new SkillData(d, 0, 0));
+            this.data.put(d, new SkillData(d, 0, 0).setCaster(dude.get()));
             data = this.data.get(d);
         }
         return data;
@@ -226,6 +226,22 @@ public class SkillCapability implements ISkillCapability {
             return true;
         }
         return false;
+    }
+
+    @Override
+    public void setEquippedSkillsAndUpdate(SkillStyle style, List<Skill> skills) {
+        final LivingEntity caster = dude.get();
+        for (Skill s : getEquippedSkills())
+            if (s != null) {
+                s.onUnequip(caster, nonNullGet(s));
+            }
+        setStyle(style);
+        getAllSkillData().clear();
+        setEquippedSkills(skills);
+        for (Skill s : getEquippedSkills())
+            if (s != null) {
+                s.onEquip(caster);
+            }
     }
 
     @Override

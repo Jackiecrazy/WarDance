@@ -110,6 +110,11 @@ public class DummySkillCap implements ISkillCapability {
     }
 
     @Override
+    public void setEquippedSkillsAndUpdate(SkillStyle style, List<Skill> skills) {
+
+    }
+
+    @Override
     public boolean isSkillUsable(Skill skill) {
         return false;
     }

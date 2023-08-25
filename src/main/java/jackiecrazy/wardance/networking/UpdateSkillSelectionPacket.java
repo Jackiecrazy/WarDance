@@ -4,7 +4,6 @@ import jackiecrazy.wardance.capability.action.PermissionData;
 import jackiecrazy.wardance.capability.skill.CasterData;
 import jackiecrazy.wardance.capability.skill.ISkillCapability;
 import jackiecrazy.wardance.skill.Skill;
-import jackiecrazy.wardance.skill.SkillData;
 import jackiecrazy.wardance.skill.styles.SkillStyle;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.resources.ResourceLocation;
@@ -79,17 +78,7 @@ public class UpdateSkillSelectionPacket {
                     prev.sort(comparator);
                     now.sort(comparator);
                     if (!prev.equals(now) || updateSkillPacket.style != cap.getStyle()) {
-                        for (Skill s : cap.getEquippedSkills())
-                            if (s != null) {
-                                s.onUnequip(sender, new SkillData(s, 0).setCaster(sender));
-                            }
-                        cap.setStyle(updateSkillPacket.style);
-                        cap.getAllSkillData().clear();
-                        cap.setEquippedSkills(updateSkillPacket.l);
-                        for (Skill s : cap.getEquippedSkills())
-                            if (s != null) {
-                                s.onEquip(sender);
-                            }
+                        cap.setEquippedSkillsAndUpdate(updateSkillPacket.style, updateSkillPacket.l);
                     } else {
                         cap.setStyle(updateSkillPacket.style);
                         cap.setEquippedSkills(updateSkillPacket.l);

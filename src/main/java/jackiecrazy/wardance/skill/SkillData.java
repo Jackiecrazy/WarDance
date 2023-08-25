@@ -64,7 +64,8 @@ public class SkillData {
         return caster;
     }
 
-    public SkillData setCaster(LivingEntity caster) {
+    public SkillData setCaster(@Nullable LivingEntity caster) {
+        if(caster==null)return this;
         casterID = caster.getUUID();
         this.caster = caster;
         return this;

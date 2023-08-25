@@ -28,7 +28,7 @@ import java.util.Optional;
 //@Mod.EventBusSubscriber(value = Dist.CLIENT, modid = WarDance.MODID)
 public class RenderUtils {
     public static final ResourceLocation cooldown = new ResourceLocation(WarDance.MODID, "textures/skill/blank.png");
-    public static DecimalFormat formatter = new DecimalFormat("0", DecimalFormatSymbols.getInstance(Locale.ENGLISH));
+    public static DecimalFormat formatter = new DecimalFormat("0.##", DecimalFormatSymbols.getInstance(Locale.ENGLISH));
 
 
     /**
