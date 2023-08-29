@@ -641,7 +641,7 @@ public class CombatCapability implements ICombatCapability {
 
     @Override
     public boolean consumeEvade() {
-        if (evade > EVADE_CHARGE) {
+        if (evade >= EVADE_CHARGE) {
             evade = 0;
             return true;
         }

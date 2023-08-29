@@ -2,7 +2,7 @@ package jackiecrazy.wardance.skill.fiveelementfist;
 
 import jackiecrazy.footwork.api.CombatDamageSource;
 import jackiecrazy.footwork.capability.resources.CombatData;
-import jackiecrazy.footwork.event.MeleeKnockbackEvent;
+import jackiecrazy.footwork.event.DamageKnockbackEvent;
 import jackiecrazy.footwork.utils.GeneralUtils;
 import jackiecrazy.footwork.utils.ParticleUtils;
 import jackiecrazy.wardance.capability.skill.CasterData;
@@ -92,13 +92,13 @@ public abstract class FiveElementFist extends Skill {
             }
         }
         //unarmed attack
-        if (procPoint instanceof MeleeKnockbackEvent lae && lae.getEntity() == target && CombatUtils.isUnarmed(caster, InteractionHand.MAIN_HAND)) {
+        if (procPoint instanceof DamageKnockbackEvent lae && lae.getEntity() == target && CombatUtils.isUnarmed(caster, InteractionHand.MAIN_HAND)) {
             if (lae.getPhase() == EventPriority.HIGHEST) {
                 if (lae.getDamageSource() instanceof CombatDamageSource cds) {
                     cds.setSkillUsed(this);
                     cds.setProcSkillEffects(true);
-                    cds.setKnockbackPercentage(0.3f);
                 }
+                lae.setStrength(0.15);
                 doAttack(caster, target);
             }
         }

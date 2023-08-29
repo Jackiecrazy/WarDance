@@ -30,10 +30,7 @@ import jackiecrazy.wardance.skill.styles.five.Sifu;
 import jackiecrazy.wardance.skill.styles.four.BloodTax;
 import jackiecrazy.wardance.skill.styles.four.UnstableSpirit;
 import jackiecrazy.wardance.skill.styles.one.Survivor;
-import jackiecrazy.wardance.skill.styles.three.Doppelsoldner;
-import jackiecrazy.wardance.skill.styles.three.GoldRush;
-import jackiecrazy.wardance.skill.styles.three.HoppingMad;
-import jackiecrazy.wardance.skill.styles.three.WalkOfDionysus;
+import jackiecrazy.wardance.skill.styles.three.*;
 import jackiecrazy.wardance.skill.styles.two.*;
 import jackiecrazy.wardance.utils.WarColors;
 import net.minecraft.resources.ResourceLocation;
@@ -57,7 +54,7 @@ public class WarSkills {
     public static final RegistryObject<SkillStyle> SURVIVOR = SKILLS.register("survivor", Survivor::new);
     //public static final RegistryObject<Skill> REJUVENATE = SKILLS.register("rejuvenate", () -> new WarCry().setCategory(SkillColors.white));
     public static final RegistryObject<Skill> DEMON_HUNTER = SKILLS.register("demon_hunter", () -> new DemonHunter().setColor(Color.CYAN));
-    public static final RegistryObject<Skill> BOULDER_BRACE = SKILLS.register("boulder_brace", () -> new BoulderBrace().setColor(Color.GREEN));
+    public static final RegistryObject<Skill> BOULDER_BRACE = SKILLS.register("boulder_brace", () -> new BoulderBrace().setColor(WarColors.DARK_GREEN));
     public static final RegistryObject<Skill> WIND_SCAR = SKILLS.register("wind_scar", () -> new WindScar().setColor(Color.CYAN));
     public static final RegistryObject<Skill> FLAME_DANCE = SKILLS.register("flame_dance", () -> new FlameDance().setColor(Color.ORANGE));
     public static final RegistryObject<Skill> FROST_FANG = SKILLS.register("frost_fang", () -> new FrostFang().setColor(Color.LIGHT_GRAY));
@@ -65,6 +62,7 @@ public class WarSkills {
     public static final RegistryObject<Skill> PESTILENT_EDGE = SKILLS.register("pestilent_edge", () -> new PestilentEdge().setColor(WarColors.VIOLET));
     public static final RegistryObject<Skill> DOPPELSOLDNER = SKILLS.register("doppelsoldner", () -> new Doppelsoldner());
     public static final RegistryObject<Skill> GOLD_RUSH = SKILLS.register("gold_rush", () -> new GoldRush().setColor(WarColors.GOLD));
+    public static final RegistryObject<Skill> UNYIELDING_SPIRIT = SKILLS.register("unyielding_spirit", () -> new UnyieldingSpirit().setColor(WarColors.DARK_GREEN));
     public static final RegistryObject<Skill> HOPPING_MAD = SKILLS.register("hopping_mad", () -> new HoppingMad());
     public static final RegistryObject<Skill> DIONYSUS_WALK = SKILLS.register("walk_of_dionysus", () -> new WalkOfDionysus());
     public static final RegistryObject<Skill> BLOOD_TAX = SKILLS.register("blood_tax", () -> new BloodTax());

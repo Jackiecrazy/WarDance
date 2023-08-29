@@ -13,14 +13,14 @@ public class Stagger extends HeavyBlow {
 
     @Override
     public void onProc(LivingEntity caster, Event procPoint, STATE state, SkillData stats, LivingEntity target) {
-        if (procPoint instanceof ParryEvent && state != STATE.COOLING && stats.isCondition() && procPoint.getPhase() == EventPriority.LOWEST && ((ParryEvent) procPoint).getAttacker() == caster && ((ParryEvent) procPoint).getEntity()!=caster&& cast(caster, target, -999)) {
+        if (procPoint instanceof ParryEvent && state != STATE.COOLING && stats.isCondition() && procPoint.getPhase() == EventPriority.LOWEST && ((ParryEvent) procPoint).getAttacker() == caster && ((ParryEvent) procPoint).getEntity()!=caster) {
             CombatData.getCap(target).setHandBind(InteractionHand.MAIN_HAND, 60);
             CombatData.getCap(target).setHandBind(InteractionHand.OFF_HAND, 60);
             ((ParryEvent) procPoint).setPostureConsumption(((ParryEvent) procPoint).getPostureConsumption() * stats.getArbitraryFloat() * stats.getArbitraryFloat());
             markUsed(caster);
-        } else if (procPoint instanceof CriticalHitEvent) {
-            if (isCrit((CriticalHitEvent) procPoint) && state != STATE.COOLING && procPoint.getPhase() == EventPriority.LOWEST) {
-                onCrit((CriticalHitEvent) procPoint, stats, caster, target);
+        } else if (procPoint instanceof CriticalHitEvent point) {
+            if (isCrit(point) && state != STATE.COOLING && cast(caster) && procPoint.getPhase() == EventPriority.LOWEST) {
+                onCrit(point, stats, caster, target);
             } else if (state == STATE.COOLING && procPoint.getPhase() == EventPriority.HIGHEST) {
                 stats.decrementDuration();
             }

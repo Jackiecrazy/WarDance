@@ -399,7 +399,19 @@ public class WeaponStats extends SimpleJsonResourceReloadListener {
 
         @Override
         public boolean equals(Object obj) {
-            return obj instanceof SweepInfo other && other.sweep == sweep && other.sweep_scale == sweep_scale && other.sweep_base == sweep_base;
+            return obj instanceof SweepInfo other
+                    && other.sweep == sweep
+                    && other.sweep_scale == sweep_scale
+                    && other.damage_scale == damage_scale
+                    && other.posture_scale == posture_scale
+                    && other.crit_damage == crit_damage
+                    && other.crit == crit
+                    && other.knockback == knockback
+                    && other.hit_other_command.equals(hit_other_command)
+                    && other.hit_self_command.equals(hit_self_command)
+                    && other.damage_other_command.equals(damage_other_command)
+                    && other.damage_self_command.equals(damage_self_command)
+                    && other.sweep_base == sweep_base;
         }
 
         public SweepInfo clone() {

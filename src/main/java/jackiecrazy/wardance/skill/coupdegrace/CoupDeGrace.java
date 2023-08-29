@@ -188,6 +188,7 @@ public class CoupDeGrace extends Skill {
             }
             if (to == STATE.ACTIVE && cast(caster)) {
                 //DIE!
+                ParticleUtils.playSweepParticle(FootworkParticles.CIRCLE.get(), caster, caster.position().add(caster.getLookAngle().multiply(1, 0, 1)), 0, caster.getAttributeValue(ForgeMod.ATTACK_RANGE.get()), Color.RED, 0.5f);
                 for (Entity e : caster.level.getEntities(caster, caster.getBoundingBox().inflate(caster.getAttributeValue(ForgeMod.ATTACK_RANGE.get())), (a -> !TargetingUtils.isAlly(a, caster)))) {
                     if (!(e instanceof LivingEntity) || !caster.hasLineOfSight(e)) continue;
                     final CombatDamageSource die = new CombatDamageSource("player", caster).setDamageTyping(CombatDamageSource.TYPE.PHYSICAL).setProcSkillEffects(true).setSkillUsed(this);
@@ -205,7 +206,6 @@ public class CoupDeGrace extends Skill {
                 prev.flagCondition(false);
             }
             boundCast(prev, from, to);
-            ParticleUtils.playSweepParticle(FootworkParticles.CIRCLE.get(), caster, caster.position().add(caster.getLookAngle().multiply(1, 0, 1)), 0, caster.getAttributeValue(ForgeMod.ATTACK_RANGE.get()), Color.RED, 0.5f);
             return from != prev.getState();
         }
 

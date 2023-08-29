@@ -61,7 +61,7 @@ public class ScrollItem extends Item {
     }
 
     public static boolean isRandom(ItemStack stack) {
-        return !stack.hasTag() || stack.getOrCreateTag().getBoolean("randomPick");
+        return stack.hasTag() && stack.getOrCreateTag().contains("randomPick");
     }
 
     public static void setRandomSize(ItemStack stack, int random) {
@@ -101,10 +101,10 @@ public class ScrollItem extends Item {
 
     @Nonnull
     public static InteractionResultHolder<ItemStack> learnSkill(Player p, ItemStack stack, Skill skill) {
-        if (!List.of(getSkills(stack)).contains(skill)) {
-            p.displayClientMessage(Component.translatable("wardance.scroll.broken").withStyle(ChatFormatting.RED), true);
-            return InteractionResultHolder.fail(stack);
-        }
+//        if (!List.of(getSkills(stack)).contains(skill)) {
+//            p.displayClientMessage(Component.translatable("wardance.scroll.broken").withStyle(ChatFormatting.RED), true);
+//            return InteractionResultHolder.fail(stack);
+//        }
         if (CasterData.getCap(p).isSkillSelectable(skill)) {
             p.displayClientMessage(Component.translatable("wardance.scroll.learned").withStyle(ChatFormatting.RED), true);
             return InteractionResultHolder.fail(stack);

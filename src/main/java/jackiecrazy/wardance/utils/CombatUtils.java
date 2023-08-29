@@ -454,7 +454,10 @@ public class CombatUtils {
         starting = e.getEyePosition().add(look.scale(reach));
         float offset = 0;//(float) look.scale(reach).y;
         switch (type) {
-            case LINE -> particle = FootworkParticles.LINE.get();
+            case LINE -> {
+                particle = FootworkParticles.LINE.get();
+                //ParticleUtils.playSweepParticle(particle, e, e.getEyePosition().add(look.normalize()), 0, radius, Color.WHITE, offset);
+            }
             case CIRCLE -> {
                 starting = e.position().add(look.x, 0, look.z);
                 particle = FootworkParticles.CIRCLE.get();

@@ -39,6 +39,7 @@ public class GamblersWhimsy extends SkillStyle {
     @Override
     public void onProc(LivingEntity caster, Event procPoint, STATE state, SkillData stats, @Nullable LivingEntity target) {
         if (procPoint instanceof SkillCastEvent sre && sre.getPhase() == EventPriority.HIGHEST) {
+
             //slots that can be cast
             int allowed = 0x00000;
             int indices = (int) (CombatData.getCap(caster).getComboRank()* SkillUtils.getSkillEffectiveness(caster) / 2d + 1.5);
