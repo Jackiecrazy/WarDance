@@ -61,7 +61,7 @@ public class ScrollItem extends Item {
     }
 
     public static boolean isRandom(ItemStack stack) {
-        return stack.hasTag() && stack.getOrCreateTag().contains("randomPick");
+        return stack.hasTag() && stack.getOrCreateTag().contains("randomPick") && stack.getOrCreateTag().getBoolean("randomPick");
     }
 
     public static void setRandomSize(ItemStack stack, int random) {

@@ -254,9 +254,9 @@ public class CombatUtils {
         Vec3 distVec = to.position().add(0, to.getBbHeight() / 2, 0).vectorTo(from.position().add(0, from.getBbHeight() / 2, 0)).multiply(1, 0.5, 1).normalize();
         if (to instanceof LivingEntity && !bypassAllChecks) {
             if (considerRelativeAngle)
-                knockBack((LivingEntity) to, from, strength, distVec.x, distVec.y, distVec.z, false);
+                knockBack((LivingEntity) to, strength, distVec.x, distVec.y, distVec.z, false);
             else
-                knockBack(((LivingEntity) to), from, (float) strength * 0.5F, (double) Mth.sin(from.getYRot() * 0.017453292F), 0, (double) (-Mth.cos(from.getYRot() * 0.017453292F)), false);
+                knockBack(((LivingEntity) to), (float) strength * 0.5F, (double) Mth.sin(from.getYRot() * 0.017453292F), 0, (double) (-Mth.cos(from.getYRot() * 0.017453292F)), false);
         } else {
             //eh
             if (considerRelativeAngle) {
@@ -271,7 +271,7 @@ public class CombatUtils {
     /**
      * knockback in LivingEntity except it makes sense and the resist is factored into the event
      */
-    public static void knockBack(LivingEntity to, Entity from, float strength, double xRatio, double yRatio, double zRatio, boolean bypassEventCheck) {
+    public static void knockBack(LivingEntity to, float strength, double xRatio, double yRatio, double zRatio, boolean bypassEventCheck) {
         if (!bypassEventCheck) {
             net.minecraftforge.event.entity.living.LivingKnockBackEvent event = net.minecraftforge.common.ForgeHooks.onLivingKnockBack(to, strength, xRatio, zRatio);
             if (event.isCanceled()) return;
@@ -287,7 +287,7 @@ public class CombatUtils {
             double pythagora = Math.sqrt(xRatio * xRatio + zRatio * zRatio);
             if (to.isOnGround()) {
                 motionY /= 2.0D;
-                motionY += strength;
+                motionY += Math.abs(strength);
 
                 if (motionY > 0.4000000059604645D) {
                     motionY = 0.4000000059604645D;
@@ -496,10 +496,10 @@ public class CombatUtils {
     public static WeaponStats.SWEEPSTATE getSweepState(LivingEntity entity) {
         if (entity.isPassenger()) return WeaponStats.SWEEPSTATE.RIDING;
         if (entity.isCrouching()) return WeaponStats.SWEEPSTATE.SNEAKING;
-        if ((!(entity instanceof Player p) || !p.getAbilities().flying) && !entity.isOnGround() && !entity.onClimbable() && !entity.isInWater())
-            return WeaponStats.SWEEPSTATE.FALLING;
         if (entity.isSwimming() || entity.isSprinting() || MovementUtils.hasInvFrames(entity))
             return WeaponStats.SWEEPSTATE.SPRINTING;
+        if ((!(entity instanceof Player p) || !p.getAbilities().flying) && !entity.isOnGround() && entity.fallDistance > 0 && !entity.onClimbable() && !entity.isInWater())
+            return WeaponStats.SWEEPSTATE.FALLING;
         return WeaponStats.SWEEPSTATE.STANDING;
     }
 

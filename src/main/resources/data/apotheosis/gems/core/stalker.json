@@ -68,34 +68,34 @@
       "operation": "MULTIPLY_BASE",
       "values": {
         "common": {
-          "min": 0.05,
-          "steps": 1,
-          "step": 0.025
+          "min": 0.1,
+          "steps": 10,
+          "step": 0.02
         },
         "uncommon": {
-          "min": 0.075,
-          "steps": 2,
-          "step": 0.025
+          "min": 0.15,
+          "steps": 10,
+          "step": 0.02
         },
         "rare": {
-          "min": 0.01,
-          "steps": 2,
-          "step": 0.025
+          "min": 0.20,
+          "steps": 10,
+          "step": 0.02
         },
         "epic": {
-          "min": 0.125,
-          "steps": 3,
-          "step": 0.025
+          "min": 0.30,
+          "steps": 12,
+          "step": 0.02
         },
         "mythic": {
-          "min": 0.175,
-          "steps": 3,
-          "step": 0.025
+          "min": 0.40,
+          "steps": 15,
+          "step": 0.02
         },
         "ancient": {
-          "min": 0.2,
-          "steps": 4,
-          "step": 0.025
+          "min": 0.5,
+          "steps": 30,
+          "step": 0.02
         }
       }
     }

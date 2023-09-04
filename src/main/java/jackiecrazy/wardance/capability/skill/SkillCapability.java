@@ -50,10 +50,22 @@ public class SkillCapability implements ISkillCapability {
         final LivingEntity bruv = dude.get();
         if (bruv != null && s != null) {
             if (!s.isSelectable(bruv)) return false;
-            for (Skill skill : getEquippedSkills()) {
-                if (skill != null && !skill.isEquippableWith(s, bruv)) return false;
-            }
             return skillList.contains(s) == gatedSkills;
+        }
+        return true;
+    }
+
+    /**
+     * split from isSkillSelectable to prevent bugs
+     * @param s
+     * @return
+     */
+    private boolean isSkillEquippable(Skill s){
+        final LivingEntity bruv = dude.get();
+        if (bruv != null && s != null) {
+            for (Skill skill : getEquippedSkills()) {
+                if (skill != null && !skill.isEquippableWith(s, bruv)) return false;//fixme breaks skill selection screen
+            }
         }
         return true;
     }
@@ -144,6 +156,7 @@ public class SkillCapability implements ISkillCapability {
     @Override
     public void setStyle(SkillStyle style) {
         if (!isSkillSelectable(style)) return;
+        if(!isSkillEquippable(style))return;
         if (this.style != null) this.style.onUnequip(dude.get(), nonNullGet(style));
         this.style = style;
         if (style != null) style.onEquip(dude.get());
@@ -248,6 +261,7 @@ public class SkillCapability implements ISkillCapability {
     public boolean isSkillUsable(Skill skill) {
         if (skill == null) return false;
         if (!isSkillSelectable(skill)) return false;
+        if (!isSkillEquippable(skill)) return false;
         if (!equippedSkill.contains(skill)) return false;
         return skill.castingCheck(dude.get()) == Skill.CastStatus.ALLOWED || skill.castingCheck(dude.get()) == Skill.CastStatus.ACTIVE;
     }
@@ -365,6 +379,7 @@ public class SkillCapability implements ISkillCapability {
         if (equippedSkill.contains(insert)) return false;
         if (style != null && !style.isEquippableWith(insert, dude.get())) return false;
         if (!isSkillSelectable(insert)) return false;
+        if (!isSkillEquippable(insert)) return false;
         return true;
     }
 

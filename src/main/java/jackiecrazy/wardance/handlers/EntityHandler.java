@@ -106,6 +106,7 @@ public class EntityHandler {
         //CasterData.getCap(e.getPlayer()).read(CasterData.getCap(e.getOriginal()).write());
         ISkillCapability cap = CasterData.getCap(p);
         ISkillCapability ocap = CasterData.getCap(orig);
+        cap.read(ocap.write());
         cap.setStyle(ocap.getStyle());
         cap.setEquippedSkills(ocap.getEquippedSkills());
         cap.getEquippedSkillsAndStyle().stream().filter(Objects::nonNull).forEach(a -> cap.replaceSkill(a, a));

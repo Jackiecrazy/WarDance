@@ -66,7 +66,7 @@ public class PhantomDive extends Skill {
             }
             if (length > 0) e.getEntity().addEffect(new MobEffectInstance(FootworkEffects.PARALYSIS.get(), length));
             e.setAwareness(awareness);
-            markUsed(caster);
+            markUsed(caster, true);
             caster.fallDistance = 0;
         }
     }

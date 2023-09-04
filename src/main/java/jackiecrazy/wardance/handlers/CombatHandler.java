@@ -35,6 +35,7 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.UseAnim;
 import net.minecraft.world.phys.EntityHitResult;
 import net.minecraft.world.phys.HitResult;
+import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.entity.ProjectileImpactEvent;
 import net.minecraftforge.event.entity.living.*;
@@ -256,6 +257,11 @@ public class CombatHandler {
                 final WeaponStats.SweepInfo sweepInfo = WeaponStats.getSweepInfo(seme.getMainHandItem(), CombatUtils.getSweepState(seme));
                 sweepInfo.performCommand(seme, true, false);
                 sweepInfo.performCommand(uke, false, false);
+                if (e.getSource() instanceof CombatDamageSource cds) {
+                    cds.setKnockbackPercentage((float) sweepInfo.getKnockback());
+                    cds.setCrit(sweepInfo.isCrit());
+                    cds.setCritDamage((float) sweepInfo.getCritDamage());
+                }
                 //add stats if it's the first attack this tick and cooldown is sufficient
                 if (semeCap.getSweepTick() != seme.tickCount) {//first hit of a potential sweep attack
                     //semeCap.addRank(0.1f);
@@ -378,10 +384,12 @@ public class CombatHandler {
                         double kb = Math.sqrt(atkMult) - 0.18 - (1 / Math.max(defMult, 0.1)); //this will return negative if the defmult is greater, and positive if the atkmult is greater. Larger abs val=larger difference
                         //sigmoid curve again!
                         kb = 1d / (1d + Math.exp(-kb));//this is the knockback to be applied to the defender
-                        CombatUtils.knockBack(uke, seme, Math.min(uke instanceof Player ? 1.6f : 1.3f, 0.2f + (pe.getPostureConsumption() + knockback) * (float) kb * (uke instanceof Player ? 2f : 1f) / ukeCap.getMaxPosture()), true, false);
+                        //defender kb
+                        CombatUtils.knockBack(uke, seme, Math.min(uke instanceof Player ? 1.6f : 1.3f, 0.2f + (pe.getPostureConsumption() + knockback) * (float)sweepInfo.getKnockback() * (float) kb / ukeCap.getMaxPosture()), true, false);
                         kb = 1 - kb;
-                        CombatUtils.knockBack(seme, uke, Math.min(uke instanceof Player ? 1.6f : 1.3f, 0.1f + pe.getPostureConsumption() * (float) kb * (seme instanceof Player ? 1.7f : 1f) / semeCap.getMaxPosture()), true, false);
-                        uke.level.playSound(null, uke.getX(), uke.getY(), uke.getZ(), disshield ? SoundEvents.SHIELD_BLOCK : SoundEvents.ANVIL_PLACE, SoundSource.PLAYERS, 0.25f + WarDance.rand.nextFloat() * 0.5f, (1 - (ukeCap.getPosture() / ukeCap.getMaxPosture())) + WarDance.rand.nextFloat() * 0.5f);
+                        //attacker kb
+                        CombatUtils.knockBack(seme, uke, Math.min(uke instanceof Player ? 1.6f : 1.3f, 0.1f + pe.getPostureConsumption() * (float) kb / semeCap.getMaxPosture()), true, false);
+                        uke.level.playSound(null, uke.getX(), uke.getY(), uke.getZ(), disshield ? SoundEvents.SHIELD_BLOCK : SoundEvents.ANVIL_PLACE, SoundSource.PLAYERS, 0.25f + WarDance.rand.nextFloat() * 0.25f, (1 - (ukeCap.getPosture() / ukeCap.getMaxPosture())) + WarDance.rand.nextFloat() * 0.5f);
                         //reset cooldown
 //                        if (defMult != 0) {//shield time
 //                            int ticks = (int) ((consumption + 1) * 5);//(posture consumption+1)*5 ticks of cooldown
@@ -448,10 +456,6 @@ public class CombatHandler {
             uke.getMainHandItem().getCapability(CombatManipulator.CAP).ifPresent((i) -> i.onBeingKnockedBack(seme, uke, seme.getMainHandItem(), e.getOriginalStrength()));
             uke.getOffhandItem().getCapability(CombatManipulator.CAP).ifPresent((i) -> i.onBeingKnockedBack(seme, uke, seme.getOffhandItem(), e.getOriginalStrength()));
 
-            if (WeaponStats.isWeapon(seme, seme.getMainHandItem())) {
-                final WeaponStats.SweepInfo info = WeaponStats.getSweepInfo(seme.getMainHandItem(), CombatUtils.getSweepState(seme));
-                e.setStrength((float) (e.getStrength() * info.getKnockback()));
-            }
         }
     }
 
@@ -460,6 +464,12 @@ public class CombatHandler {
         if (e.getDamageSource() instanceof CombatDamageSource) {
             CombatDamageSource cds = (CombatDamageSource) e.getDamageSource();
             e.setStrength(e.getStrength() * cds.getKnockbackPercentage());
+        }
+        if(e.getStrength()<0 && e.getDamageSource().getEntity() instanceof LivingEntity from){
+            //not handled by LivingEntity, so we have to do it ourselves
+            LivingEntity to = e.getEntity();
+            Vec3 distVec = to.position().add(0, to.getBbHeight() / 2, 0).vectorTo(from.position().add(0, from.getBbHeight() / 2, 0)).multiply(1, 0.5, 1).normalize();
+            CombatUtils.knockBack(e.getEntity(), (float) e.getStrength(), distVec.x, distVec.y, distVec.z, true);
         }
     }
 

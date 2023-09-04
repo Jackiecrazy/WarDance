@@ -9,6 +9,9 @@ import jackiecrazy.wardance.utils.SkillUtils;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.ai.attributes.AttributeModifier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
+import net.minecraftforge.event.entity.living.LivingHealEvent;
+import net.minecraftforge.eventbus.api.Event;
+import org.jetbrains.annotations.Nullable;
 
 import javax.annotation.Nonnull;
 import java.util.HashSet;
@@ -38,9 +41,9 @@ public class Necrosis extends Skill {
 
     @Override
     public boolean equippedTick(LivingEntity caster, SkillData stats) {
-        double shouldBe = caster.getMaxHealth();
-        final double amount = CombatData.getCap(caster).getComboRank() / 7d;
-        SkillUtils.modifyAttribute(caster, Attributes.MAX_HEALTH, uuid, amount * SkillUtils.getSkillEffectiveness(caster), AttributeModifier.Operation.MULTIPLY_TOTAL);
+        final double amount = CombatData.getCap(caster).getComboRank() * SkillUtils.getSkillEffectiveness(caster) / 7d;
+        SkillUtils.modifyAttribute(caster, Attributes.MAX_HEALTH, uuid, amount, AttributeModifier.Operation.MULTIPLY_TOTAL);
+        final double shouldBe = Math.ceil(caster.getMaxHealth() / (1 + amount));
         if (caster.getHealth() > shouldBe) caster.setHealth((float) shouldBe);
         return super.equippedTick(caster, stats);
     }
@@ -54,6 +57,15 @@ public class Necrosis extends Skill {
     public void onUnequip(LivingEntity caster, SkillData stats) {
         caster.getAttribute(Attributes.MAX_HEALTH).removeModifier(uuid);
         super.onUnequip(caster, stats);
+    }
+
+    @Override
+    public void onProc(LivingEntity caster, Event procPoint, STATE state, SkillData stats, @Nullable LivingEntity target) {
+        if (procPoint instanceof LivingHealEvent lhe) {
+            final double amount = CombatData.getCap(caster).getComboRank() * SkillUtils.getSkillEffectiveness(caster) / 7d;
+            final double shouldBe = Math.ceil(caster.getMaxHealth() / (1 + amount));
+            lhe.setAmount((float) Math.min(lhe.getAmount(), shouldBe - caster.getHealth()));
+        }
     }
 
     @Override

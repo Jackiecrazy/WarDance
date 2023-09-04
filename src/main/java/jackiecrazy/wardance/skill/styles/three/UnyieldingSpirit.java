@@ -1,6 +1,5 @@
 package jackiecrazy.wardance.skill.styles.three;
 
-import jackiecrazy.footwork.api.FootworkAttributes;
 import jackiecrazy.footwork.capability.resources.CombatData;
 import jackiecrazy.footwork.event.GainSpiritEvent;
 import jackiecrazy.footwork.event.RegenSpiritEvent;
@@ -8,7 +7,6 @@ import jackiecrazy.wardance.capability.resources.CombatCapability;
 import jackiecrazy.wardance.skill.SkillColors;
 import jackiecrazy.wardance.skill.SkillData;
 import jackiecrazy.wardance.skill.styles.ColorRestrictionStyle;
-import jackiecrazy.wardance.utils.SkillUtils;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.ai.attributes.AttributeModifier;
 import net.minecraftforge.event.entity.living.LivingAttackEvent;
@@ -41,13 +39,11 @@ public class UnyieldingSpirit extends ColorRestrictionStyle {
 
     @Override
     public void onEquip(LivingEntity caster) {
-        SkillUtils.addAttribute(caster, FootworkAttributes.MIGHT_GEN.get(), noMight);
         super.onEquip(caster);
     }
 
     @Override
     public void onUnequip(LivingEntity caster, SkillData stats) {
-        SkillUtils.removeAttribute(caster, FootworkAttributes.MIGHT_GEN.get(), noMight);
     }
 
     @Override
@@ -57,7 +53,7 @@ public class UnyieldingSpirit extends ColorRestrictionStyle {
             //bonk
 
             if (CombatData.getCap(caster).consumeSpirit(1) && lae.getEntity() == target) {
-                CombatData.getCap(target).consumePosture(caster, 4);
+                CombatData.getCap(target).consumePosture(caster, 6);
             }
             if (lae.getEntity() == caster) {
                 if (!CombatData.getCap(caster).consumeEvade()) {

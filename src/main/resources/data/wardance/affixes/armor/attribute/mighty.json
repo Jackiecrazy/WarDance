@@ -1,0 +1,36 @@
+{
+	"type": "apotheosis:attribute",
+	"attribute": "footwork:might_gen",
+	"operation": "MULTIPLY_BASE",
+	"values": {
+		"uncommon": {
+			"min": 0.15,
+			"steps": 1,
+			"step": 0.25
+		},
+		"rare": {
+			"min": 0.3,
+			"steps": 3,
+			"step": 0.25
+		},
+		"epic": {
+			"min": 0.45,
+			"steps": 3,
+			"step": 0.25
+		},
+		"mythic": {
+			"min": 0.5,
+			"steps": 4,
+			"step": 0.25
+		},
+		"ancient": {
+			"min": 0.6,
+			"steps": 5,
+			"step": 0.25
+		}
+	},
+	"types": [
+		"chestplate", "leggings",
+		"shield", "sword", "trident", "heavy_weapon"
+	]
+}
