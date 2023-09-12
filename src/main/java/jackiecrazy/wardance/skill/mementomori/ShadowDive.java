@@ -24,7 +24,7 @@ public class ShadowDive extends MementoMori {
             final float threshold = caster.getHealth() / SkillUtils.getSkillEffectiveness(caster) * 0.25f;
             if (lde.getAmount() > threshold) {
                 final int duration = (int) (160 * SkillUtils.getSkillEffectiveness(caster));
-                activate(caster, duration / 20);
+                activate(caster, duration / 20f);
                 lde.setAmount(threshold);
                 caster.addEffect(new MobEffectInstance(MobEffects.INVISIBILITY, duration));
                 caster.addEffect(new MobEffectInstance(MobEffects.MOVEMENT_SPEED, duration));

@@ -31,7 +31,7 @@ public class ItemTooltipHandler {
         if (WeaponStats.isWeapon(e.getEntity(), stack) || WeaponStats.isShield(e.getEntity(), stack)) {
             if (Screen.hasShiftDown()) {
                 if (PermissionData.getCap(e.getEntity()).canDealPostureDamage()) {
-                    float atk = CombatUtils.getPostureAtk(null, null, null, 0, stack);
+                    float atk = CombatUtils.getPostureAtk(null, null, null, null, 0, stack);
                     e.getToolTip().add(Component.translatable("wardance.tooltip.postureAttack", Component.literal(formatter.format(atk)).withStyle(ChatFormatting.RED)));
                 }
                 final float def = CombatUtils.getPostureDef(null, null, stack, 0);

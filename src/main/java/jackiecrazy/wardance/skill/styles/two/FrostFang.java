@@ -36,12 +36,12 @@ public class FrostFang extends WarCry {
     @Override
     public void onProc(LivingEntity caster, Event procPoint, STATE state, SkillData stats, LivingEntity target) {
         if (procPoint.getPhase() != EventPriority.LOWEST) return;
-        if (procPoint instanceof LivingAttackEvent lae && state == STATE.INACTIVE && lae.getEntity() == target) {
+        if (procPoint instanceof LivingAttackEvent lae && state == STATE.INACTIVE && lae.getEntity() != caster) {
             activate(caster, 2, stats.getArbitraryFloat());
             stats.setMaxDuration(2);
-        } else if (procPoint instanceof ParryEvent cpe && state == STATE.ACTIVE && cpe.getEntity() == target) {
+        } else if (procPoint instanceof ParryEvent cpe && state == STATE.ACTIVE && cpe.getEntity() != caster) {
             cpe.setPostureConsumption(cpe.getPostureConsumption() * (1 + stats.getArbitraryFloat()/10));
-        } else if (procPoint instanceof LivingHurtEvent cpe && state == STATE.ACTIVE && cpe.getEntity() == target) {
+        } else if (procPoint instanceof LivingHurtEvent cpe && state == STATE.ACTIVE && cpe.getEntity() != caster) {
             if (!cpe.isCanceled()) {
                 if (cpe.getSource() instanceof CombatDamageSource cds) {
                     cds.setProcSkillEffects(true);

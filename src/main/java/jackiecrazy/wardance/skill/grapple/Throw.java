@@ -9,7 +9,11 @@ import jackiecrazy.footwork.utils.ParticleUtils;
 import jackiecrazy.wardance.WarDance;
 import jackiecrazy.wardance.capability.skill.CasterData;
 import jackiecrazy.wardance.config.CombatConfig;
+import jackiecrazy.wardance.networking.CombatChannel;
 import jackiecrazy.wardance.skill.SkillData;
+import jackiecrazy.wardance.utils.DamageUtils;
+import net.minecraft.network.protocol.game.ClientboundSetPassengersPacket;
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.entity.Entity;
@@ -17,6 +21,7 @@ import net.minecraft.world.entity.LivingEntity;
 import net.minecraftforge.event.entity.living.LivingAttackEvent;
 import net.minecraftforge.eventbus.api.Event;
 import net.minecraftforge.eventbus.api.EventPriority;
+import net.minecraftforge.network.PacketDistributor;
 
 public class Throw extends Grapple {
 
@@ -29,7 +34,7 @@ public class Throw extends Grapple {
     @Override
     public void onProc(LivingEntity caster, Event procPoint, STATE state, SkillData stats, LivingEntity target) {
         if (state == STATE.HOLSTERED && isUnarmed(caster)) {
-            if (procPoint instanceof LivingAttackEvent && ((LivingAttackEvent) procPoint).getEntity() == target && procPoint.getPhase() == EventPriority.HIGHEST) {
+            if (procPoint instanceof LivingAttackEvent lae && lae.getEntity() != caster && DamageUtils.isMeleeAttack(lae.getSource()) && procPoint.getPhase() == EventPriority.HIGHEST) {
                 if (stats.isCondition() && caster.getLastHurtMob() == target && caster.tickCount - caster.getLastHurtMobTimestamp() < 40 && cast(caster, target, -999)) {
                     performEffect(caster, target, stats);
                 } else {
@@ -64,6 +69,8 @@ public class Throw extends Grapple {
         caster.level.playSound(null, target.getX(), target.getY(), target.getZ(), SoundEvents.BARREL_OPEN, SoundSource.PLAYERS, 0.3f + WarDance.rand.nextFloat() * 0.5f, 0.75f + WarDance.rand.nextFloat() * 0.5f);
         if (CombatData.getCap(target).consumePosture(caster, 7 * stats.getEffectiveness(), 0, true) < 0 || CombatData.getCap(target).isVulnerable()) {
             target.startRiding(caster, true);
+            if (caster instanceof ServerPlayer p)
+                CombatChannel.INSTANCE.send(PacketDistributor.PLAYER.with(() -> p), new ClientboundSetPassengersPacket(caster));
             ParticleUtils.playSweepParticle(FootworkParticles.IMPACT.get(), caster, caster.position(), 0, 1, getColor(), 0);
             mark(caster, target, CombatConfig.knockdownDuration * 2, stats.getEffectiveness());
             stats.flagCondition(true);

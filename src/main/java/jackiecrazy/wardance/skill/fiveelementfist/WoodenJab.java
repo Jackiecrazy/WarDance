@@ -37,7 +37,7 @@ public class WoodenJab extends FiveElementFist {
     public void onProc(LivingEntity caster, Event procPoint, STATE state, SkillData stats, @Nullable LivingEntity target) {
         super.onProc(caster, procPoint, state, stats, target);
         if (procPoint instanceof DamageKnockbackEvent e && procPoint.getPhase() == EventPriority.HIGHEST && CombatUtils.isUnarmed(caster, InteractionHand.MAIN_HAND) && e.getEntity() == target) {
-            e.setStrength((float) (e.getOriginalStrength() * 1.5 * SkillUtils.getSkillEffectiveness(caster)));
+            e.setStrength((float) (e.getOriginalStrength() * 1.5));
         }
     }
 

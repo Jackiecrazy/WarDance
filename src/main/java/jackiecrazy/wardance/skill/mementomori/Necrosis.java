@@ -11,6 +11,7 @@ import net.minecraft.world.entity.ai.attributes.AttributeModifier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraftforge.event.entity.living.LivingHealEvent;
 import net.minecraftforge.eventbus.api.Event;
+import net.minecraftforge.eventbus.api.EventPriority;
 import org.jetbrains.annotations.Nullable;
 
 import javax.annotation.Nonnull;
@@ -61,7 +62,7 @@ public class Necrosis extends Skill {
 
     @Override
     public void onProc(LivingEntity caster, Event procPoint, STATE state, SkillData stats, @Nullable LivingEntity target) {
-        if (procPoint instanceof LivingHealEvent lhe) {
+        if (procPoint instanceof LivingHealEvent lhe && procPoint.getPhase()== EventPriority.LOWEST) {
             final double amount = CombatData.getCap(caster).getComboRank() * SkillUtils.getSkillEffectiveness(caster) / 7d;
             final double shouldBe = Math.ceil(caster.getMaxHealth() / (1 + amount));
             lhe.setAmount((float) Math.min(lhe.getAmount(), shouldBe - caster.getHealth()));

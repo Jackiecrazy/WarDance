@@ -10,7 +10,6 @@ import jackiecrazy.wardance.skill.Skill;
 import jackiecrazy.wardance.skill.SkillData;
 import jackiecrazy.wardance.skill.SkillTags;
 import jackiecrazy.wardance.utils.CombatUtils;
-import jackiecrazy.wardance.utils.SkillUtils;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.LivingEntity;
@@ -75,7 +74,7 @@ Flow: cooldown of all attack skills are halved, and any cooled attack skill is a
         if (procPoint instanceof ParryEvent lae && lae.getEntity() == caster && state == STATE.ACTIVE && procPoint.getPhase() == EventPriority.LOWEST) {
             lae.setPostureConsumption(0);
             if (target != null)
-                CombatData.getCap(lae.getAttacker()).consumePosture(caster, CombatUtils.getPostureAtk(caster, target, InteractionHand.MAIN_HAND, (float) caster.getAttributeValue(Attributes.ATTACK_DAMAGE), caster.getMainHandItem()));
+                CombatData.getCap(lae.getAttacker()).consumePosture(caster, CombatUtils.getPostureAtk(caster, target, InteractionHand.MAIN_HAND, null, (float) caster.getAttributeValue(Attributes.ATTACK_DAMAGE), caster.getMainHandItem()));
             lae.setResult(Event.Result.ALLOW);
         }
         if (procPoint instanceof ProjectileParryEvent lae && lae.getEntity() == caster && state == STATE.ACTIVE && procPoint.getPhase() == EventPriority.LOWEST) {

@@ -18,7 +18,7 @@ import javax.annotation.Nullable;
 import java.util.UUID;
 
 public class Pummel extends ShieldBash {
-    private static final UUID pummel = UUID.fromString("abe24c38-73e3-4551-9df4-e06e117699c1");
+    private static final UUID pummel = UUID.fromString("abe24c38-73e3-4551-9df4-e06e117612c1");
 
     @Override
     public boolean isPassive(LivingEntity caster) {
@@ -71,7 +71,7 @@ public class Pummel extends ShieldBash {
         final boolean shield = WeaponStats.isShield(caster, stack);
         float attack = 0;
         if (shield)
-            attack = CombatUtils.getPostureAtk(caster, target, InteractionHand.MAIN_HAND, 0, stack)*SkillUtils.getSkillEffectiveness(caster);
+            attack = CombatUtils.getPostureAtk(caster, target, InteractionHand.MAIN_HAND, null, 0, stack)*SkillUtils.getSkillEffectiveness(caster);
         SkillUtils.modifyAttribute(caster, Attributes.ATTACK_DAMAGE, pummel, attack, AttributeModifier.Operation.ADDITION);
     }
 }

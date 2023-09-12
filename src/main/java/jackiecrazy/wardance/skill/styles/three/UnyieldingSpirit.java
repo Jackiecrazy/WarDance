@@ -7,6 +7,7 @@ import jackiecrazy.wardance.capability.resources.CombatCapability;
 import jackiecrazy.wardance.skill.SkillColors;
 import jackiecrazy.wardance.skill.SkillData;
 import jackiecrazy.wardance.skill.styles.ColorRestrictionStyle;
+import jackiecrazy.wardance.utils.DamageUtils;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.ai.attributes.AttributeModifier;
 import net.minecraftforge.event.entity.living.LivingAttackEvent;
@@ -49,7 +50,7 @@ public class UnyieldingSpirit extends ColorRestrictionStyle {
     @Override
     public void onProc(LivingEntity caster, Event procPoint, STATE state, SkillData stats, @Nullable LivingEntity target) {
         if (caster == target) return;
-        if (procPoint instanceof LivingAttackEvent lae && lae.getEntity() == target && procPoint.getPhase() == EventPriority.HIGHEST) {
+        if (procPoint instanceof LivingAttackEvent lae && lae.getEntity() == target && DamageUtils.isMeleeAttack(lae.getSource()) && procPoint.getPhase() == EventPriority.HIGHEST) {
             //bonk
 
             if (CombatData.getCap(caster).consumeSpirit(1) && lae.getEntity() == target) {

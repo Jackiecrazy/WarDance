@@ -35,7 +35,7 @@ public class FieryLunge extends FiveElementFist {
     public void onProc(LivingEntity caster, Event procPoint, STATE state, SkillData stats, @Nullable LivingEntity target) {
         super.onProc(caster, procPoint, state, stats, target);
         if (procPoint instanceof DamageKnockbackEvent e && procPoint.getPhase() == EventPriority.HIGHEST && CombatUtils.isUnarmed(caster, InteractionHand.MAIN_HAND) && e.getEntity() == target) {
-            caster.setDeltaMovement(caster.getDeltaMovement().add(caster.position().vectorTo(target.position()).scale(0.2)));
+            caster.setDeltaMovement(caster.getDeltaMovement().add(caster.position().vectorTo(target.position()).scale(0.17)));
             CombatData.getCap(caster).setRollTime(-10);
             caster.hurtMarked = true;
         }

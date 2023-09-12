@@ -19,7 +19,7 @@ public class IronChop extends FiveElementFist {
             stats.flagCondition(false);
         }
         if (procPoint instanceof LivingHurtEvent lhe && procPoint.getPhase() == EventPriority.HIGHEST && lhe.getEntity() != caster && CombatUtils.isUnarmed(caster, InteractionHand.MAIN_HAND)) {
-            mark(caster, target, 1);
+            mark(caster, target, 1, SkillUtils.getSkillEffectiveness(caster));
         }
         super.onProc(caster, procPoint, state, stats, target);
     }
@@ -33,7 +33,7 @@ public class IronChop extends FiveElementFist {
 
     @Override
     protected void doAttack(LivingEntity caster, LivingEntity target) {
-        target.setDeltaMovement(target.getDeltaMovement().add(0, -2, 0));
+        target.setDeltaMovement(target.getDeltaMovement().add(0, -2*SkillUtils.getSkillEffectiveness(caster), 0));
         target.fallDistance += 5 * SkillUtils.getSkillEffectiveness(caster);
     }
 

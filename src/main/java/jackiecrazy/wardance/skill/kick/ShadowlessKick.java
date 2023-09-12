@@ -49,9 +49,11 @@ public class ShadowlessKick extends Kick {
         LivingEntity target = GeneralUtils.raytraceLiving(caster, distance());
         if (target != null) {
             SkillResourceEvent sre = new SkillResourceEvent(caster, target, this);
-            MinecraftForge.EVENT_BUS.post(sre);
             SkillCastEvent sce = new SkillCastEvent(caster, target, this, SkillUtils.getSkillEffectiveness(caster), 0, 0, 0, false, stats.getArbitraryFloat());
-            MinecraftForge.EVENT_BUS.post(sce);
+            if (stats.getArbitraryFloat() != 0) {
+                MinecraftForge.EVENT_BUS.post(sre);
+                MinecraftForge.EVENT_BUS.post(sce);
+            }
             float arb = stats.getArbitraryFloat();
             float mult = 1;
             while (arb > 0) {

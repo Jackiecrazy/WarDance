@@ -14,6 +14,7 @@ import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
 
 import javax.annotation.Nullable;
+import java.util.ArrayList;
 import java.util.List;
 
 public class FakeExplosion extends Explosion {
@@ -42,12 +43,11 @@ public class FakeExplosion extends Explosion {
     }
 
     public void explode(boolean friendly) {
-        if (getExploder() == null) return;
-        List<Entity> list = world.getEntities(this.getExploder(), AABB.unitCubeFromLowerCorner(getPosition()).inflate(radius));
-        net.minecraftforge.event.ForgeEventFactory.onExplosionDetonate(this.world, this, list, radius * 2);
+        List<LivingEntity> list = world.getEntitiesOfClass(LivingEntity.class, AABB.unitCubeFromLowerCorner(getPosition()).inflate(radius));
+        net.minecraftforge.event.ForgeEventFactory.onExplosionDetonate(this.world, this, new ArrayList<>(list), radius * 2);
         Vec3 vector3d = getPosition();
 
-        for (Entity entity : list) {
+        for (LivingEntity entity : list) {
             if (!entity.ignoreExplosion() && (friendly || !TargetingUtils.isAlly(entity, getExploder()))) {
                 double percentage = Math.sqrt(entity.distanceToSqr(vector3d)) / radius;
                 if (percentage <= 1.0D) {
@@ -63,9 +63,7 @@ public class FakeExplosion extends Explosion {
                         double densityReducedPerc = (1.0D - percentage) * density;
                         entity.hurt(this.getDamageSource(), (float) (damage * densityReducedPerc));
                         double d11 = densityReducedPerc;
-                        if (entity instanceof LivingEntity) {
-                            d11 = ProtectionEnchantment.getExplosionKnockbackAfterDampener((LivingEntity) entity, densityReducedPerc);
-                        }
+                        d11 = ProtectionEnchantment.getExplosionKnockbackAfterDampener((LivingEntity) entity, densityReducedPerc);
                         if (getDamageSource() instanceof CombatDamageSource cds) {
                             d11 *= cds.getKnockbackPercentage();
                         }

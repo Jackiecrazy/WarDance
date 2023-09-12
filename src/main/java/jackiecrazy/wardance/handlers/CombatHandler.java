@@ -290,7 +290,7 @@ public class CombatHandler {
                     return;
                 }
                 //parry code start, grab attack multiplier
-                float atkMult = CombatUtils.getPostureAtk(seme, seme, attackingHand, e.getAmount(), attack);
+                float atkMult = CombatUtils.getPostureAtk(seme, seme, attackingHand, e.getSource(), e.getAmount(), attack);
                 //store atkMult at this stage for event
                 float original = atkMult;
                 downingHit = true;
@@ -385,7 +385,7 @@ public class CombatHandler {
                         //sigmoid curve again!
                         kb = 1d / (1d + Math.exp(-kb));//this is the knockback to be applied to the defender
                         //defender kb
-                        CombatUtils.knockBack(uke, seme, Math.min(uke instanceof Player ? 1.6f : 1.3f, 0.2f + (pe.getPostureConsumption() + knockback) * (float)sweepInfo.getKnockback() * (float) kb / ukeCap.getMaxPosture()), true, false);
+                        CombatUtils.knockBack(uke, seme, Math.min(uke instanceof Player ? 1.6f : 1.3f, 0.2f + (pe.getPostureConsumption() + knockback) * (float) sweepInfo.getKnockback() * (float) kb / ukeCap.getMaxPosture()), true, false);
                         kb = 1 - kb;
                         //attacker kb
                         CombatUtils.knockBack(seme, uke, Math.min(uke instanceof Player ? 1.6f : 1.3f, 0.1f + pe.getPostureConsumption() * (float) kb / semeCap.getMaxPosture()), true, false);
@@ -419,13 +419,19 @@ public class CombatHandler {
             }
             //evade, at the rock bottom of the attack event, saving your protected butt.
             if (!uke.isBlocking() && !e.isCanceled()) {
-                if (DamageUtils.isPhysicalAttack(e.getSource()) && StealthUtils.INSTANCE.getAwareness(e.getSource().getDirectEntity() instanceof LivingEntity ? (LivingEntity) e.getSource().getDirectEntity() : null, uke) != StealthUtils.Awareness.UNAWARE) {
-                    if (CombatData.getCap(uke).consumeEvade()) {
-                        e.setCanceled(true);
-                        uke.level.playSound(null, uke.getX(), uke.getY(), uke.getZ(), SoundEvents.IRON_DOOR_OPEN, SoundSource.PLAYERS, 0.25f + WarDance.rand.nextFloat() * 0.5f, 0.75f + WarDance.rand.nextFloat() * 0.5f);
-                    }
+                if (DamageUtils.isPhysicalAttack(e.getSource()) && StealthUtils.INSTANCE.getAwareness(e.getSource().getDirectEntity() instanceof LivingEntity ? (LivingEntity) e.getSource().getDirectEntity() : null, uke) != StealthUtils.Awareness.UNAWARE && CombatData.getCap(uke).consumeEvade()) {
+
+                    e.setCanceled(true);
+                    uke.level.playSound(null, uke.getX(), uke.getY(), uke.getZ(), SoundEvents.IRON_DOOR_OPEN, SoundSource.PLAYERS, 0.25f + WarDance.rand.nextFloat() * 0.5f, 0.75f + WarDance.rand.nextFloat() * 0.5f);
                     //otherwise the rest of the damage goes through and is handled later down the line anyway
+                } else if (e.getSource() instanceof CombatDamageSource cds && cds.getPostureDamage() > 0) {
+                    CombatData.getCap(e.getEntity()).consumePosture(cds.getEntity() instanceof LivingEntity elb ? elb : null, cds.getPostureDamage());
                 }
+            }
+        } else {
+            //handle nonphysical cases of combat damage docking posture
+            if (e.getSource() instanceof CombatDamageSource cds && cds.getPostureDamage() > 0) {
+                CombatData.getCap(e.getEntity()).consumePosture(cds.getEntity() instanceof LivingEntity elb ? elb : null, cds.getPostureDamage());
             }
         }
 
@@ -465,7 +471,7 @@ public class CombatHandler {
             CombatDamageSource cds = (CombatDamageSource) e.getDamageSource();
             e.setStrength(e.getStrength() * cds.getKnockbackPercentage());
         }
-        if(e.getStrength()<0 && e.getDamageSource().getEntity() instanceof LivingEntity from){
+        if (e.getStrength() < 0 && e.getDamageSource().getEntity() instanceof LivingEntity from) {
             //not handled by LivingEntity, so we have to do it ourselves
             LivingEntity to = e.getEntity();
             Vec3 distVec = to.position().add(0, to.getBbHeight() / 2, 0).vectorTo(from.position().add(0, from.getBbHeight() / 2, 0)).multiply(1, 0.5, 1).normalize();

@@ -9,6 +9,7 @@ import jackiecrazy.footwork.utils.TargetingUtils;
 import jackiecrazy.wardance.WarDance;
 import jackiecrazy.wardance.config.WeaponStats;
 import jackiecrazy.wardance.skill.*;
+import jackiecrazy.wardance.utils.DamageUtils;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.effect.MobEffectInstance;
@@ -48,7 +49,7 @@ public class Grapple extends Skill {
 
     @Override
     public void onProc(LivingEntity caster, Event procPoint, STATE state, SkillData stats, LivingEntity target) {
-        if (procPoint instanceof LivingAttackEvent && ((LivingAttackEvent) procPoint).getEntity() == target && procPoint.getPhase() == EventPriority.HIGHEST) {
+        if (procPoint instanceof LivingAttackEvent la && la.getEntity() == target && DamageUtils.isMeleeAttack(la.getSource()) && procPoint.getPhase() == EventPriority.HIGHEST) {
             if (state == STATE.HOLSTERED && isUnarmed(caster)) {
                 if (stats.isCondition() && caster.getLastHurtMob() == target && caster.tickCount - caster.getLastHurtMobTimestamp() < 40 && cast(caster, target, -999)) {
                     performEffect(caster, target, stats);

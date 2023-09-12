@@ -7,6 +7,7 @@ import jackiecrazy.wardance.event.ParryEvent;
 import jackiecrazy.wardance.event.SkillCastEvent;
 import jackiecrazy.wardance.skill.ProcPoints;
 import jackiecrazy.wardance.skill.SkillData;
+import jackiecrazy.wardance.utils.DamageUtils;
 import jackiecrazy.wardance.utils.SkillUtils;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraftforge.event.entity.living.LivingAttackEvent;
@@ -33,13 +34,13 @@ public class Timberfall extends WarCry {
     @Override
     public void onProc(LivingEntity caster, Event procPoint, STATE state, SkillData stats, LivingEntity target) {
         if (procPoint.getPhase() != EventPriority.LOWEST) return;
-        if (procPoint instanceof LivingAttackEvent lae && state == STATE.ACTIVE && lae.getEntity() == target) {
+        if (procPoint instanceof LivingAttackEvent lae && DamageUtils.isMeleeAttack(lae.getSource()) && state == STATE.ACTIVE && lae.getEntity() == target) {
             markUsed(caster);
         } else if (procPoint instanceof ParryEvent cpe && state == STATE.ACTIVE && cpe.getEntity() == target) {
             cpe.setPostureConsumption(cpe.getPostureConsumption() * 1.4f * SkillUtils.getSkillEffectiveness(caster));
         } else if (procPoint instanceof ConsumePostureEvent cpe && state == STATE.ACTIVE && cpe.getAbove() <= 0 && cpe.getEntity() == target && cpe.getAmount() > CombatData.getCap(target).getPosture()) {
             if (!cpe.isCanceled()) CombatData.getCap(target).addFracture(caster, 1);
-        } else if (procPoint instanceof LivingHurtEvent cpe && state == STATE.ACTIVE && cpe.getEntity() == target) {
+        } else if (procPoint instanceof LivingHurtEvent cpe && DamageUtils.isMeleeAttack(cpe.getSource()) && state == STATE.ACTIVE && cpe.getEntity() == target) {
             if (!cpe.isCanceled()) {
                 if (cpe.getSource() instanceof CombatDamageSource cds) {
                     cds.setProcSkillEffects(true);

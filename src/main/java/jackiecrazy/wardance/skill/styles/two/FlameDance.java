@@ -31,7 +31,7 @@ public class FlameDance extends WarCry {
     @Override
     public void onProc(LivingEntity caster, Event procPoint, STATE state, SkillData stats, LivingEntity target) {
         if (caster == target) return;
-        if (procPoint instanceof LivingAttackEvent lae && !lae.getSource().isBypassArmor() && procPoint.getPhase() == EventPriority.HIGHEST && lae.getEntity() == target) {
+        if (procPoint instanceof LivingAttackEvent lae && (DamageUtils.isMeleeAttack(lae.getSource()) || DamageUtils.isSkillAttack(lae.getSource())) && !lae.getSource().isBypassArmor() && procPoint.getPhase() == EventPriority.HIGHEST && lae.getEntity() == target) {
             //kaboom!
             if (CombatData.getCap(caster).getMight() == CombatData.getCap(caster).getMaxMight()) {
                 if (!DamageUtils.isSkillAttack(lae.getSource())) {

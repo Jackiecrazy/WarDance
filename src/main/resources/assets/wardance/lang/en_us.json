@@ -222,7 +222,7 @@
   "wardance.blood_tax.name": "Blood Tax",
   "wardance.blood_tax.desc": "You may equip up to 4 colors. \n{All skill spirit costs are converted to health costs.;RED}.",
   "wardance.unstable_spirit.name": "Unstable Spirit",
-  "wardance.unstable_spirit.desc": "You may equip up to 4 colors. \nUpon casting a skill, create a non-griefing and {indiscriminate;RED} {explosion;UNDERLINE;no knockback. Radius, health and posture damage equal to 2+spirit cost+2*might cost}.",
+  "wardance.unstable_spirit.desc": "You may equip up to 4 colors. \nUpon casting a skill, create a non-griefing and {indiscriminate;RED} {explosion;UNDERLINE;no knockback. Radius, health damage, and posture damage equal to 2 + (spirit cost) + 2*(might cost) and scaled with skill effectiveness} at your location.",
   "wardance.gamblers_whimsy.name": "Gambler's Whimsy",
   "wardance.gamblers_whimsy.desc": "You may equip up to 5 colors. \nOnly one of your active skills is enabled. One more skill is enabled {every other level of rank; UNDERLINE; wardance.skill.enhancement.default} you earn. The list of enabled skills are randomly refreshed after every skill cast.",
   "wardance.sifu.name": "Sifu",

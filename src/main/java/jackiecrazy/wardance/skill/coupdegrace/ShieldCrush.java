@@ -102,9 +102,9 @@ public class ShieldCrush extends ShieldBash {
                 ItemStack main = caster.getMainHandItem(), off = caster.getOffhandItem();
                 float posdam = 2;
                 if (WeaponStats.isShield(caster, main))
-                    posdam = CombatUtils.getPostureAtk(caster, elb, InteractionHand.MAIN_HAND, 0, main);
+                    posdam = CombatUtils.getPostureAtk(caster, elb, InteractionHand.MAIN_HAND, null, 0, main);
                 if (WeaponStats.isShield(caster, off))
-                    posdam = Math.max(posdam, CombatUtils.getPostureAtk(caster, elb, InteractionHand.OFF_HAND, 0, off));
+                    posdam = Math.max(posdam, CombatUtils.getPostureAtk(caster, elb, InteractionHand.OFF_HAND, null, 0, off));
                 posdam = Math.max(posdam, 2);
                 posdam *= stats.getEffectiveness();
                 //crush!
