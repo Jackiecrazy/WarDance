@@ -341,7 +341,7 @@ public class CombatHandler {
                 float finalPostureConsumption = Math.abs(atkMult * defMult);
                 //updating this quickly, it's basically the above without crit and stab multipliers, which were necessary for calculating canParry so they couldn't be eliminated cleanly...
                 float originalPostureConsumption = Math.abs(original * defMult);
-                ParryEvent pe = new ParryEvent(uke, seme, (canParry && defend != null), attackingHand, attack, parryHand, defend, finalPostureConsumption, originalPostureConsumption, e.getAmount());
+                ParryEvent pe = new ParryEvent(uke, seme, (canParry && defend != null), attackingHand, attack, parryHand, defend, finalPostureConsumption, originalPostureConsumption, e.getSource(), e.getAmount());
                 if (failManualParry || !PermissionData.getCap(uke).canParry())
                     pe.setResult(Event.Result.DENY);
                 MinecraftForge.EVENT_BUS.post(pe);

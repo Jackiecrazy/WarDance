@@ -1,8 +1,11 @@
 package jackiecrazy.wardance.skill.styles.two;
 
+import jackiecrazy.footwork.api.CombatDamageSource;
 import jackiecrazy.footwork.api.FootworkAttributes;
 import jackiecrazy.footwork.capability.resources.CombatData;
+import jackiecrazy.footwork.capability.resources.ICombatCapability;
 import jackiecrazy.footwork.event.StunEvent;
+import jackiecrazy.wardance.event.ParryEvent;
 import jackiecrazy.wardance.skill.SkillData;
 import jackiecrazy.wardance.utils.SkillUtils;
 import net.minecraft.world.entity.LivingEntity;
@@ -21,9 +24,14 @@ public class BoulderBrace extends WarCry {
 
     @Override
     public void onProc(LivingEntity caster, Event procPoint, STATE state, SkillData stats, LivingEntity target) {
+        final ICombatCapability cap = CombatData.getCap(caster);
         if (procPoint instanceof StunEvent se && procPoint.getPhase() == EventPriority.HIGHEST) {
-            if (se.getEntity() == caster && CombatData.getCap(caster).consumeMight(1 / SkillUtils.getSkillEffectiveness(caster)))
+            if (se.getEntity() == caster && cap.consumeMight(1 / SkillUtils.getSkillEffectiveness(caster)))
                 se.setCanceled(true);
+        }
+        if (procPoint instanceof ParryEvent pe && procPoint.getPhase() == EventPriority.HIGHEST && pe.getDamageSource() instanceof CombatDamageSource cds && cds.isCrit()) {
+            pe.setPostureConsumption(pe.getPostureConsumption() + (cap.getPosture() * SkillUtils.getSkillEffectiveness(caster) * cds.getCritDamage() / 2));
+            cap.consumePosture(cap.getPosture() / 2);
         }
     }
 

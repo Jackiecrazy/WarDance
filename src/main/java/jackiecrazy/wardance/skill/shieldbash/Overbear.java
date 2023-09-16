@@ -12,8 +12,8 @@ public class Overbear extends ShieldBash {
     private final HashSet<String> tag = makeTag("physical", "melee", "boundCast", "normalAttack", "countdown", ProcPoints.on_hurt, ProcPoints.recharge_parry);
 
     @Override
-    protected void performEffect(LivingEntity caster, LivingEntity target, float atk) {
-        if (CombatData.getCap(target).consumePosture(caster, atk*3, 0, true) < 0) {
+    protected float performEffect(LivingEntity caster, LivingEntity target, float atk) {
+        if (CombatData.getCap(target).getPosture() < atk * 3) {
             //successful stagger
             CombatData.getCap(target).addFracture(caster, 1);
         } else {
@@ -22,5 +22,6 @@ public class Overbear extends ShieldBash {
             }
             CombatData.getCap(caster).setHandBind(CombatData.getCap(caster).isOffhandAttack() ? InteractionHand.OFF_HAND : InteractionHand.MAIN_HAND, 100);
         }
+        return atk * 3;
     }
 }
