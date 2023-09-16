@@ -3,8 +3,11 @@ package jackiecrazy.wardance.skill.styles.two;
 import jackiecrazy.footwork.api.CombatDamageSource;
 import jackiecrazy.footwork.capability.resources.CombatData;
 import jackiecrazy.footwork.utils.GeneralUtils;
+import jackiecrazy.wardance.config.WeaponStats;
+import jackiecrazy.wardance.event.SweepEvent;
 import jackiecrazy.wardance.skill.ProcPoints;
 import jackiecrazy.wardance.skill.SkillData;
+import jackiecrazy.wardance.utils.ComboRanks;
 import jackiecrazy.wardance.utils.SkillUtils;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.ai.attributes.AttributeModifier;
@@ -48,6 +51,11 @@ public class WindScar extends WarCry {
             double dist = Math.sqrt(GeneralUtils.getDistSqCompensated(caster, target));
             if (hurt.getSource() instanceof CombatDamageSource cds)
                 cds.setArmorReductionPercentage((float) (dist * 0.15f));
+        }
+        if (procPoint instanceof SweepEvent se && se.getPhase() == EventPriority.LOWEST && se.getType() != WeaponStats.SWEEPTYPE.NONE) {
+            if (!CombatData.getCap(caster).halvedAdrenaline() && CombatData.getCap(caster).getComboRank() >= ComboRanks.S) {
+                se.setSweepLevel(se.getSweepLevel() + CombatData.getCap(caster).getComboRank() - ComboRanks.A);
+            }
         }
         super.onProc(caster, procPoint, state, stats, target);
     }

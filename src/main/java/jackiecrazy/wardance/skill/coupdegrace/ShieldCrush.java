@@ -1,11 +1,11 @@
 package jackiecrazy.wardance.skill.coupdegrace;
 
 import jackiecrazy.footwork.capability.resources.CombatData;
+import jackiecrazy.footwork.event.StunEvent;
 import jackiecrazy.footwork.potion.FootworkEffects;
 import jackiecrazy.footwork.utils.GeneralUtils;
 import jackiecrazy.wardance.WarDance;
 import jackiecrazy.wardance.capability.skill.CasterData;
-import jackiecrazy.wardance.config.CombatConfig;
 import jackiecrazy.wardance.config.WeaponStats;
 import jackiecrazy.wardance.skill.SkillArchetype;
 import jackiecrazy.wardance.skill.SkillArchetypes;
@@ -99,6 +99,7 @@ public class ShieldCrush extends ShieldBash {
             //check the looked entity
             Entity look = SkillUtils.aimEntity(caster);
             if (look instanceof LivingEntity elb && CombatUtils.isHoldingShield(caster)) {
+                float remainingTime = stats.getDuration() / stats.getMaxDuration();
                 ItemStack main = caster.getMainHandItem(), off = caster.getOffhandItem();
                 float posdam = 2;
                 if (WeaponStats.isShield(caster, main))
@@ -107,19 +108,19 @@ public class ShieldCrush extends ShieldBash {
                     posdam = Math.max(posdam, CombatUtils.getPostureAtk(caster, elb, InteractionHand.OFF_HAND, null, 0, off));
                 posdam = Math.max(posdam, 2);
                 posdam *= stats.getEffectiveness();
+                posdam /= remainingTime;
                 //crush!
-                SkillUtils.modifyAttribute(caster, Attributes.MOVEMENT_SPEED, debuffID, -0.6, AttributeModifier.Operation.MULTIPLY_TOTAL);
-                SkillUtils.modifyAttribute(elb, Attributes.MOVEMENT_SPEED, debuffID, -0.6, AttributeModifier.Operation.MULTIPLY_TOTAL);
-                SkillUtils.modifyAttribute(caster, Attributes.KNOCKBACK_RESISTANCE, debuffID, 0.6, AttributeModifier.Operation.ADDITION);
+                SkillUtils.modifyAttribute(caster, Attributes.MOVEMENT_SPEED, debuffID, -0.8, AttributeModifier.Operation.MULTIPLY_TOTAL);
+                SkillUtils.modifyAttribute(elb, Attributes.MOVEMENT_SPEED, debuffID, -0.8, AttributeModifier.Operation.MULTIPLY_TOTAL);
+                SkillUtils.modifyAttribute(caster, Attributes.KNOCKBACK_RESISTANCE, debuffID, 10, AttributeModifier.Operation.ADDITION);
                 SkillUtils.modifyAttribute(elb, Attributes.ATTACK_SPEED, debuffID, -0.2, AttributeModifier.Operation.MULTIPLY_TOTAL);
-                SkillUtils.modifyAttribute(elb, Attributes.KNOCKBACK_RESISTANCE, debuffID, 0.6, AttributeModifier.Operation.ADDITION);
+                SkillUtils.modifyAttribute(elb, Attributes.KNOCKBACK_RESISTANCE, debuffID, 10, AttributeModifier.Operation.ADDITION);
                 //up your grindset
                 if (CombatData.getCap(elb).consumePosture(0.1f * posdam / 2) < 0) {
                     //crush, end state
-                    CombatData.getCap(elb).expose(CombatConfig.exposeDuration);
                     markUsed(caster);
                 }
-                if (CombatData.getCap(caster).consumePosture(0.1f) < 0) {
+                if (CombatData.getCap(caster).consumePosture(0.1f / remainingTime) < 0) {
                     //...well, rip
                     markUsed(caster);
                 }
@@ -136,7 +137,9 @@ public class ShieldCrush extends ShieldBash {
 
     @Override
     public void onProc(LivingEntity caster, Event procPoint, STATE state, SkillData stats, LivingEntity target) {
-
+        if(procPoint instanceof StunEvent se && state==STATE.ACTIVE && se.getEntity()!=caster){
+            CombatData.getCap(target).addFracture(caster, Integer.MAX_VALUE);
+        }
     }
 
     @Override

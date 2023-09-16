@@ -14,6 +14,7 @@ import jackiecrazy.wardance.config.ClientConfig;
 import jackiecrazy.wardance.config.CombatConfig;
 import jackiecrazy.wardance.config.GeneralConfig;
 import jackiecrazy.wardance.config.WeaponStats;
+import jackiecrazy.wardance.handlers.TwoHandingHandler;
 import jackiecrazy.wardance.networking.*;
 import jackiecrazy.wardance.utils.CombatUtils;
 import net.minecraft.client.KeyMapping;
@@ -338,6 +339,7 @@ public class ClientEvents {
 
     @SubscribeEvent
     public static void sweepSwingOff(PlayerInteractEvent.RightClickEmpty e) {
+        if (TwoHandingHandler.isTwoHanding(e.getEntity(), e.getEntity().getMainHandItem()) && e.getHand()==InteractionHand.OFF_HAND) return;
         if (!rightClick && GeneralConfig.dual && e.getHand() == InteractionHand.OFF_HAND && ((WeaponStats.isWeapon(e.getEntity(), e.getItemStack()) || (e.getItemStack().isEmpty() && CombatData.getCap(e.getEntity()).isCombatMode())))) {
             rightClick = true;
             Entity n = RenderUtils.getEntityLookedAt(e.getEntity(), GeneralUtils.getAttributeValueHandSensitive(e.getEntity(), ForgeMod.ATTACK_RANGE.get(), InteractionHand.OFF_HAND));
@@ -369,6 +371,7 @@ public class ClientEvents {
 
     @SubscribeEvent
     public static void sweepSwingOffItem(PlayerInteractEvent.RightClickItem e) {
+        if (TwoHandingHandler.isTwoHanding(e.getEntity(), e.getEntity().getMainHandItem()) && e.getHand()==InteractionHand.OFF_HAND) return;
         if (!rightClick && GeneralConfig.dual && e.getHand() == InteractionHand.OFF_HAND && (WeaponStats.isWeapon(e.getEntity(), e.getItemStack()) || ((e.getItemStack().isEmpty() || WeaponStats.isShield(e.getEntity(), e.getItemStack())) && CombatData.getCap(e.getEntity()).isCombatMode()))) {
             rightClick = true;
             Entity n = RenderUtils.getEntityLookedAt(e.getEntity(), GeneralUtils.getAttributeValueHandSensitive(e.getEntity(), ForgeMod.ATTACK_RANGE.get(), InteractionHand.OFF_HAND));
@@ -386,6 +389,7 @@ public class ClientEvents {
 
     @SubscribeEvent
     public static void punchy(PlayerInteractEvent.EntityInteract e) {
+        if (TwoHandingHandler.isTwoHanding(e.getEntity(), e.getEntity().getMainHandItem()) && e.getHand()==InteractionHand.OFF_HAND) return;
         if (!rightClick && GeneralConfig.dual && e.getHand() == InteractionHand.OFF_HAND && ((e.getItemStack().isEmpty() || WeaponStats.isShield(e.getEntity(), e.getItemStack())) && CombatData.getCap(e.getEntity()).isCombatMode())) {
             rightClick = true;
             Entity n = RenderUtils.getEntityLookedAt(e.getEntity(), GeneralUtils.getAttributeValueHandSensitive(e.getEntity(), ForgeMod.ATTACK_RANGE.get(), InteractionHand.OFF_HAND));
@@ -403,6 +407,7 @@ public class ClientEvents {
 
     @SubscribeEvent
     public static void sweepSwingOffItemBlock(PlayerInteractEvent.RightClickBlock e) {
+        if (TwoHandingHandler.isTwoHanding(e.getEntity(), e.getEntity().getMainHandItem()) && e.getHand()==InteractionHand.OFF_HAND) return;
         if (!rightClick && GeneralConfig.dual && e.getHand() == InteractionHand.OFF_HAND && (WeaponStats.isWeapon(e.getEntity(), e.getItemStack()) || (e.getItemStack().isEmpty() || WeaponStats.isShield(e.getEntity(), e.getItemStack())) && CombatData.getCap(e.getEntity()).isCombatMode())) {
             rightClick = true;
             Entity n = RenderUtils.getEntityLookedAt(e.getEntity(), GeneralUtils.getAttributeValueHandSensitive(e.getEntity(), ForgeMod.ATTACK_RANGE.get(), InteractionHand.OFF_HAND) - (e.getItemStack().isEmpty() ? 1 : 0));

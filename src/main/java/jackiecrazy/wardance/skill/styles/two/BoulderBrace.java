@@ -13,6 +13,9 @@ import net.minecraftforge.eventbus.api.EventPriority;
 import java.util.UUID;
 
 public class BoulderBrace extends WarCry {
+    /**
+     * also adds half of your current posture to any crit attack
+     */
     private static final AttributeModifier brace = new AttributeModifier(UUID.fromString("abe24c38-73e3-4551-9df4-e06e117699c1"), "boulder brace bonus", 3, AttributeModifier.Operation.ADDITION);
     private static final AttributeModifier brrrr = new AttributeModifier(UUID.fromString("abe24c38-73e3-4551-9df4-e06e117699c1"), "boulder brace bonus", 0.5, AttributeModifier.Operation.MULTIPLY_BASE);
 

@@ -33,7 +33,7 @@ public class Grapple extends Skill {
 
     @Override
     public float spiritConsumption(LivingEntity caster) {
-        return 2;
+        return 1;
     }
 
     @Override

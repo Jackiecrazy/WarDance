@@ -16,6 +16,7 @@ import net.minecraft.network.syncher.EntityDataSerializer;
 import net.minecraft.core.particles.ParticleOptions;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.common.ForgeMod;
 
 import javax.annotation.Nullable;
@@ -113,5 +114,19 @@ public class SkillUtils {
         if (caster == null) return 1;
         return (float) caster.getAttributeValue(FootworkAttributes.SKILL_EFFECTIVENESS.get());
     }
+
+    public static void updateTetheringVelocity(LivingEntity moveTowards, LivingEntity toBeMoved, double maxDist) {
+        if (toBeMoved != null && moveTowards != null) {
+            double distsq = toBeMoved.distanceToSqr(moveTowards);
+            Vec3 point = moveTowards.position();
+
+            if (maxDist*maxDist < distsq) {
+                toBeMoved.push((point.x - toBeMoved.getX()) * 0.05, (point.y - toBeMoved.getY()) * 0.05, (point.z - toBeMoved.getZ()) * 0.05);
+            }
+            toBeMoved.hurtMarked = true;
+        }
+
+    }
+
 
 }

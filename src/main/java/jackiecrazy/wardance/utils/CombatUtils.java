@@ -111,6 +111,12 @@ public class CombatUtils {
         return WeaponStats.isShield(e, InteractionHand.MAIN_HAND) || WeaponStats.isShield(e, InteractionHand.OFF_HAND);
     }
 
+    public static InteractionHand getShieldHand(LivingEntity e) {
+        for (InteractionHand h : InteractionHand.values())
+            if (WeaponStats.isShield(e, h)) return h;
+        return null;
+    }
+
     public static boolean isUnarmed(LivingEntity e, InteractionHand hand) {
         return WeaponStats.isUnarmed(e.getItemInHand(hand), e);
     }

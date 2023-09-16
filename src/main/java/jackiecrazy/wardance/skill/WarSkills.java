@@ -54,6 +54,7 @@ public class WarSkills {
     public static final RegistryObject<SkillStyle> SURVIVOR = SKILLS.register("survivor", Survivor::new);
     //public static final RegistryObject<Skill> REJUVENATE = SKILLS.register("rejuvenate", () -> new WarCry().setCategory(SkillColors.white));
     public static final RegistryObject<Skill> DEMON_HUNTER = SKILLS.register("demon_hunter", () -> new DemonHunter().setColor(Color.CYAN));
+    public static final RegistryObject<Skill> TABULA_RASA = SKILLS.register("tabula_rasa", () -> new TabulaRasa().setColor(Color.WHITE));
     public static final RegistryObject<Skill> BOULDER_BRACE = SKILLS.register("boulder_brace", () -> new BoulderBrace().setColor(WarColors.DARK_GREEN));
     public static final RegistryObject<Skill> WIND_SCAR = SKILLS.register("wind_scar", () -> new WindScar().setColor(Color.CYAN));
     public static final RegistryObject<Skill> FLAME_DANCE = SKILLS.register("flame_dance", () -> new FlameDance().setColor(Color.ORANGE));

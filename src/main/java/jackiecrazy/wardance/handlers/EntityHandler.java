@@ -78,7 +78,6 @@ public class EntityHandler {
 
     @SubscribeEvent
     public static void login(PlayerEvent.PlayerLoggedInEvent e) {
-        //FIXME this may not work on first load?
         if (e.getEntity() instanceof ServerPlayer sp) {
             WeaponStats.sendItemData(sp);
         }
@@ -86,7 +85,6 @@ public class EntityHandler {
 
     @SubscribeEvent
     public static void reload(OnDatapackSyncEvent e) {
-        //FIXME this may not work on first load?
         for (ServerPlayer p : e.getPlayerList().getPlayers()) {
             WeaponStats.sendItemData(p);
         }

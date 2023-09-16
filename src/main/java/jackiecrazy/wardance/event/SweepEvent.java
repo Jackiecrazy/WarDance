@@ -12,10 +12,26 @@ import net.minecraftforge.eventbus.api.Cancelable;
 
 @Cancelable
 public class SweepEvent extends LivingEvent {
-    private final double oangle, oscale;
+    private final double oangle;
+    private final double oscale;
+
+    public double getOriginalSweepLevel() {
+        return olevel;
+    }
+
+    public double getSweepLevel() {
+        return level;
+    }
+
+    public SweepEvent setSweepLevel(double level) {
+        this.level = level;
+        return this;
+    }
+
+    private final double olevel;
     private final InteractionHand hand;
     private final ItemStack stack;
-    private double a, b;
+    private double a, b, level;
     private WeaponStats.SWEEPTYPE t;
     private WeaponStats.SWEEPSTATE state;
 
@@ -25,8 +41,9 @@ public class SweepEvent extends LivingEvent {
         oscale = b = scale;
         this.hand = hand;
         this.stack = stack;
+        olevel = level = EnchantmentHelper.getEnchantmentLevel(Enchantments.SWEEPING_EDGE, this.getEntity());
         t = type;
-        state= CombatUtils.getSweepState(entity);
+        state = CombatUtils.getSweepState(entity);
     }
 
     public InteractionHand getHand() {
@@ -42,7 +59,7 @@ public class SweepEvent extends LivingEvent {
     }
 
     public double getFinalizedWidth() {
-        return a + (b * EnchantmentHelper.getEnchantmentLevel(Enchantments.SWEEPING_EDGE, this.getEntity()));
+        return a + (b * level);
     }
 
     public double getOriginalScaling() {

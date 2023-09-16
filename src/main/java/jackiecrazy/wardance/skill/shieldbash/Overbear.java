@@ -13,7 +13,7 @@ public class Overbear extends ShieldBash {
 
     @Override
     protected void performEffect(LivingEntity caster, LivingEntity target, float atk) {
-        if (CombatData.getCap(target).consumePosture(caster, atk*2, 0, true) < 0) {
+        if (CombatData.getCap(target).consumePosture(caster, atk*3, 0, true) < 0) {
             //successful stagger
             CombatData.getCap(target).addFracture(caster, 1);
         } else {

@@ -13,7 +13,6 @@ import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.ai.attributes.AttributeModifier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
-import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.event.entity.living.LivingDamageEvent;
 import net.minecraftforge.eventbus.api.Event;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
@@ -56,7 +55,7 @@ public class Wrestle extends Skill {
 
     @Override
     public float spiritConsumption(LivingEntity caster) {
-        return 2;
+        return 1;
     }
 
     @Override
@@ -102,7 +101,7 @@ public class Wrestle extends Skill {
         if (!CombatUtils.isFullyUnarmed(caster))
             sd.setDuration(-999);
         //boing
-        updateTetheringVelocity(caster, target);
+        SkillUtils.updateTetheringVelocity(caster, target, 2);
         //effects
         target.addEffect(new MobEffectInstance(FootworkEffects.ENFEEBLE.get(), 10));
         target.addEffect(new MobEffectInstance(FootworkEffects.UNSTEADY.get(), 10));
@@ -149,19 +148,6 @@ public class Wrestle extends Skill {
         }
         SkillUtils.modifyAttribute(target, Attributes.ATTACK_SPEED, slow, 0, AttributeModifier.Operation.MULTIPLY_TOTAL);
         super.onMarkEnd(caster, target, sd);
-    }
-
-    private void updateTetheringVelocity(LivingEntity moveTowards, LivingEntity toBeMoved) {
-        if (toBeMoved != null && moveTowards != null) {
-            double distsq = toBeMoved.distanceToSqr(moveTowards);
-            Vec3 point = moveTowards.position();
-
-            if (4 < distsq) {
-                toBeMoved.push((point.x - toBeMoved.getX()) * 0.05, (point.y - toBeMoved.getY()) * 0.05, (point.z - toBeMoved.getZ()) * 0.05);
-            }
-            toBeMoved.hurtMarked = true;
-        }
-
     }
 
     protected int duration() {

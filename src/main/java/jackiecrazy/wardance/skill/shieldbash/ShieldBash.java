@@ -7,12 +7,13 @@ import jackiecrazy.footwork.potion.FootworkEffects;
 import jackiecrazy.wardance.WarDance;
 import jackiecrazy.wardance.capability.skill.CasterData;
 import jackiecrazy.wardance.config.WeaponStats;
+import jackiecrazy.wardance.event.ParryEvent;
 import jackiecrazy.wardance.skill.*;
 import jackiecrazy.wardance.utils.CombatUtils;
 import jackiecrazy.wardance.utils.DamageUtils;
+import jackiecrazy.wardance.utils.SkillUtils;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
-import net.minecraft.world.InteractionHand;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.LivingEntity;
@@ -68,12 +69,12 @@ public class ShieldBash extends Skill {
             if (stats.getState() == STATE.COOLING && !CasterData.getCap(caster).isTagActive("shield"))
                 stats.decrementDuration();
             final boolean otherwise = state == STATE.HOLSTERED;
-            if ((base || otherwise) && cast(caster, target, -999)) {
-                float attack = CombatUtils.getPostureAtk(caster, target, InteractionHand.MAIN_HAND, null, 0, stack) * stats.getEffectiveness();
-                performEffect(caster, target, attack);
-                caster.level.playSound(null, caster.getX(), caster.getY(), caster.getZ(), SoundEvents.ZOMBIE_ATTACK_IRON_DOOR, SoundSource.PLAYERS, 0.25f + WarDance.rand.nextFloat() * 0.5f, 0.5f + WarDance.rand.nextFloat() * 0.5f);
-                markUsed(caster);
-            }
+            if ((base || otherwise)) cast(caster, target, -999);
+        }
+        if (procPoint instanceof ParryEvent e && e.getAttacker() == caster && e.getPhase() == EventPriority.HIGHEST && state == STATE.ACTIVE) {
+            e.setPostureConsumption(performEffect(caster, target, e.getPostureConsumption() * stats.getEffectiveness()));
+            caster.level.playSound(null, caster.getX(), caster.getY(), caster.getZ(), SoundEvents.ZOMBIE_ATTACK_IRON_DOOR, SoundSource.PLAYERS, 0.25f + WarDance.rand.nextFloat() * 0.5f, 0.5f + WarDance.rand.nextFloat() * 0.5f);
+            markUsed(caster);
         }
     }
 
@@ -84,26 +85,29 @@ public class ShieldBash extends Skill {
         return boundCast(prev, from, to);
     }
 
-    protected void performEffect(LivingEntity caster, LivingEntity target, float attack) {
+    protected float performEffect(LivingEntity caster, LivingEntity target, float attack) {
         final ICombatCapability cap = CombatData.getCap(caster);
         //SkillUtils.auxAttack(caster, target, new CombatDamageSource("player", caster).setProcNormalEffects(false).setProcAttackEffects(true).setProcSkillEffects(true).setAttackingHand(InteractionHand.OFF_HAND).setDamageTyping(CombatDamageSource.TYPE.PHYSICAL).setDamageDealer(caster.getMainHandItem()), 0, attack);
+        return attack;
     }
 
     public static class RimPunch extends ShieldBash {
 
-        protected void performEffect(LivingEntity caster, LivingEntity target, float atk) {
-            target.addEffect(new MobEffectInstance(MobEffects.CONFUSION, 60));
+        protected float performEffect(LivingEntity caster, LivingEntity target, float atk) {
+            target.addEffect(new MobEffectInstance(MobEffects.CONFUSION, 100));
             CombatUtils.knockBack(target, caster, (float) atk, true, false);
+            return 4;
         }
     }
 
     public static class FootSlam extends ShieldBash {
 
-        protected void performEffect(LivingEntity caster, LivingEntity target, float atk) {
+        protected float performEffect(LivingEntity caster, LivingEntity target, float atk) {
             super.performEffect(caster, target, atk);
-            final int time = (int) (atk * 20);
-            target.addEffect(new MobEffectInstance(MobEffects.MOVEMENT_SLOWDOWN, time * 2));
-            target.addEffect(new MobEffectInstance(FootworkEffects.CONFUSION.get(), time * 2));
+            final int time = (int) (3 * 20 * SkillUtils.getSkillEffectiveness(caster));
+            target.addEffect(new MobEffectInstance(MobEffects.MOVEMENT_SLOWDOWN, time));
+            target.addEffect(new MobEffectInstance(FootworkEffects.CONFUSION.get(), time));
+            return atk;
         }
     }
 }

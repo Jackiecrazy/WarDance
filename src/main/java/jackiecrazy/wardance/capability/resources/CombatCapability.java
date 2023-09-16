@@ -13,6 +13,7 @@ import jackiecrazy.wardance.handlers.TwoHandingHandler;
 import jackiecrazy.wardance.networking.CombatChannel;
 import jackiecrazy.wardance.networking.UpdateClientResourcePacket;
 import jackiecrazy.wardance.utils.CombatUtils;
+import jackiecrazy.wardance.utils.ComboRanks;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
@@ -307,9 +308,9 @@ public class CombatCapability implements ICombatCapability {
                     CombatData.getCap(assailant).addRank(se.isKnockdown() ? 0.2f : 0.1f);
                 elb.level.playSound(null, elb.getX(), elb.getY(), elb.getZ(), SoundEvents.ZOMBIE_ATTACK_WOODEN_DOOR, SoundSource.PLAYERS, 0.3f + WarDance.rand.nextFloat() * 0.5f, 0.75f + WarDance.rand.nextFloat() * 0.5f);
             }
-            elb.removeVehicle();
+            elb.stopRiding();
             for (Entity rider : elb.getPassengers())
-                rider.removeVehicle();
+                rider.stopRiding();
             staggerTickExisted = elb.tickCount;
             //returns overflow
             return ret;
@@ -533,7 +534,7 @@ public class CombatCapability implements ICombatCapability {
 
     @Override
     public boolean halvedAdrenaline() {
-        return adrenaline != 0;
+        return CombatConfig.adrenaline >= 0 && adrenaline != 0;
     }
 
     @Override
@@ -720,13 +721,13 @@ public class CombatCapability implements ICombatCapability {
         //update max values
         vision = (float) elb.getAttributeValue(Attributes.FOLLOW_RANGE);
         mpos = (float) elb.getAttributeValue(FootworkAttributes.MAX_POSTURE.get());
-        if(posture>mpos)
+        if (posture > mpos)
             setPosture(mpos);
         mspi = (float) elb.getAttributeValue(FootworkAttributes.MAX_SPIRIT.get());
-        if(spirit>mspi)
+        if (spirit > mspi)
             setSpirit(mspi);
         mmight = (float) elb.getAttributeValue(FootworkAttributes.MAX_MIGHT.get());
-        if(might>mmight)
+        if (might > mmight)
             setMight(mmight);
         mfrac = (int) elb.getAttributeValue(FootworkAttributes.MAX_FRACTURE.get());
         if (elb.hasEffect(FootworkEffects.SLEEP.get()) || elb.hasEffect(FootworkEffects.PARALYSIS.get()) || elb.hasEffect(FootworkEffects.PETRIFY.get()))
@@ -788,9 +789,9 @@ public class CombatCapability implements ICombatCapability {
         //reduce rank
         if (might == 0) {
             float decay = 0.01f;
-            if (getComboRank() == 6)
+            if (getComboRank() == ComboRanks.SS)
                 decay = 0.025f;
-            if (getComboRank() == 7)
+            if (getComboRank() == ComboRanks.SSS)
                 decay = 0.05f;
             decay *= ticks;
             consumeRank(decay);
