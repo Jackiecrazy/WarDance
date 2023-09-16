@@ -213,7 +213,7 @@ public class CombatHandler {
                 semeCap.serverTick();
                 InteractionHand h = semeCap.isOffhandAttack() ? InteractionHand.OFF_HAND : InteractionHand.MAIN_HAND;
                 //hand bound or staggered, no attack
-                if (semeCap.isVulnerable() || semeCap.getHandBind(h) > 0) {
+                if (semeCap.isVulnerable() || semeCap.getHandBind(InteractionHand.MAIN_HAND) > 0) {
                     e.setCanceled(true);
                     return;
                 }
@@ -246,7 +246,7 @@ public class CombatHandler {
                     return;
                 }
                 ICombatCapability semeCap = CombatData.getCap(seme);
-                InteractionHand attackingHand = semeCap.isOffhandAttack() ? InteractionHand.OFF_HAND : InteractionHand.MAIN_HAND;
+                InteractionHand attackingHand = InteractionHand.MAIN_HAND;//semeCap.isOffhandAttack() ? InteractionHand.OFF_HAND : InteractionHand.MAIN_HAND;
                 //hand bound or staggered, no attack
                 if (semeCap.isVulnerable() || semeCap.getHandBind(attackingHand) > 0) {
                     e.setCanceled(true);

@@ -612,11 +612,11 @@ public class CombatCapability implements ICombatCapability {
     @Override
     public int getHandBind(InteractionHand h) {
         if (!CombatUtils.suppress) {
-            if (isVulnerable()) return 99999;
+            if (isVulnerable()) return 1;
             LivingEntity bro = dude.get();
             if (dude.get() != null) {
                 if (h == InteractionHand.OFF_HAND && (WeaponStats.isTwoHanded(bro.getOffhandItem(), bro, InteractionHand.OFF_HAND) || WeaponStats.isTwoHanded(bro.getMainHandItem(), bro, InteractionHand.MAIN_HAND)))
-                    return 99999;
+                    return 1;
             }
         }
         if (h == InteractionHand.OFF_HAND) {

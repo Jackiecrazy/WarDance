@@ -199,12 +199,13 @@ public class WeaponStats extends SimpleJsonResourceReloadListener {
     }
 
     public static boolean isTwoHanded(ItemStack is, LivingEntity e, InteractionHand h) {
-        final double handing = e.getAttributeValue(FootworkAttributes.TWO_HANDING.get());
+        final double handing = e == null ? 0 : e.getAttributeValue(FootworkAttributes.TWO_HANDING.get());
         if (h == InteractionHand.MAIN_HAND && handing >= 1d)
             return false;
         if (h == InteractionHand.OFF_HAND && handing >= 3d)
             return false;
         //the hand is instantly swapped on offhand attack, which means a main hand twohander will now be on the offhand ._.
+        //this only happens at twohander values 1 and 2
         return !is.isEmpty() && is.is(TWO_HANDED);
     }
 

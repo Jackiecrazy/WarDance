@@ -359,9 +359,9 @@ public class CombatUtils {
         ICombatCapability cap = CombatData.getCap(e);
         e.setItemInHand(InteractionHand.MAIN_HAND, e.getOffhandItem());
         e.setItemInHand(InteractionHand.OFF_HAND, main);
-//        int mbind = cap.getHandBind(InteractionHand.MAIN_HAND);
-//        cap.setHandBind(InteractionHand.MAIN_HAND, cap.getHandBind(InteractionHand.OFF_HAND));
-//        cap.setHandBind(InteractionHand.OFF_HAND, mbind);
+        int mbind = cap.getHandBind(InteractionHand.MAIN_HAND);
+        cap.setHandBind(InteractionHand.MAIN_HAND, cap.getHandBind(InteractionHand.OFF_HAND));
+        cap.setHandBind(InteractionHand.OFF_HAND, mbind);
         //tried really hard to make this work, but it just causes more problems.
         suppress = false;
         main.getAttributeModifiers(EquipmentSlot.MAINHAND).forEach((att, mod) -> Optional.ofNullable(e.getAttribute(att)).ifPresent((mai) -> mai.removeModifier(mod)));

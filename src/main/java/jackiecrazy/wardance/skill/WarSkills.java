@@ -110,7 +110,7 @@ public class WarSkills {
     public static final RegistryObject<Skill> ARM_LOCK = SKILLS.register("lockdown", () -> new ArmLock().setCategory(SkillColors.green));
     public static final RegistryObject<Skill> FOOT_SLAM = SKILLS.register("foot_slam", () -> new ShieldBash.FootSlam().setCategory(SkillColors.gray));
     public static final RegistryObject<Skill> OVERBEAR = SKILLS.register("overbear", () -> new Overbear().setCategory(SkillColors.red));
-    public static final RegistryObject<Skill> BERSERK = SKILLS.register("berserk", () -> new Berserk().setCategory(SkillColors.azure));
+    public static final RegistryObject<Skill> BERSERK = SKILLS.register("berserk", () -> new Berserk().setCategory(SkillColors.red));
     public static final RegistryObject<Skill> CROWN_CHAMPION = SKILLS.register("crown_champion", () -> new CrownChampion().setCategory(SkillColors.white));
     public static final RegistryObject<Skill> VENGEFUL_MIGHT = SKILLS.register("vengeful_might", () -> new CrownChampion.VengefulMight().setCategory(SkillColors.green));
     //public static final RegistryObject<Skill> HIDDEN_MIGHT = SKILLS.register("hidden_might", () -> new CrownChampion.HiddenMight().setCategory(SkillColors.gray));
@@ -160,5 +160,6 @@ public class WarSkills {
     public static final RegistryObject<Skill> FIERY_LUNGE = SKILLS.register("fiery_lunge", () -> new FieryLunge().setCategory(SkillColors.red));
     public static final RegistryObject<Skill> EARTHEN_SWEEP = SKILLS.register("earthen_sweep", () -> new EarthenSweep().setCategory(SkillColors.green));
     public static final RegistryObject<Skill> PHANTOM_DIVE = SKILLS.register("phantom_dive", () -> new PhantomDive().setCategory(SkillColors.gray));
+    public static final RegistryObject<Skill> FATAL_CADENCE = SKILLS.register("fatal_cadence", () -> new FatalCadence().setCategory(SkillColors.white));
 
 }
