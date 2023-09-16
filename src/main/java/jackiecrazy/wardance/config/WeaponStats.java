@@ -2,11 +2,14 @@ package jackiecrazy.wardance.config;
 
 import com.google.common.collect.Maps;
 import com.google.gson.*;
+import jackiecrazy.footwork.api.FootworkAttributes;
+import jackiecrazy.footwork.capability.resources.CombatData;
 import jackiecrazy.wardance.WarDance;
 import jackiecrazy.wardance.client.RenderUtils;
 import jackiecrazy.wardance.networking.CombatChannel;
 import jackiecrazy.wardance.networking.SyncItemDataPacket;
 import jackiecrazy.wardance.networking.SyncTagDataPacket;
+import jackiecrazy.wardance.utils.CombatUtils;
 import net.minecraft.ChatFormatting;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.network.FriendlyByteBuf;
@@ -195,8 +198,31 @@ public class WeaponStats extends SimpleJsonResourceReloadListener {
         return is.isEmpty() || is.is(UNARMED);
     }
 
-    public static boolean isTwoHanded(ItemStack is, LivingEntity e) {
+    public static boolean isTwoHanded(ItemStack is, LivingEntity e, InteractionHand h) {
+        final double handing = e.getAttributeValue(FootworkAttributes.TWO_HANDING.get());
+        if (h == InteractionHand.MAIN_HAND && handing >= 1d)
+            return false;
+        if (h == InteractionHand.OFF_HAND && handing >= 3d)
+            return false;
+        //the hand is instantly swapped on offhand attack, which means a main hand twohander will now be on the offhand ._.
         return !is.isEmpty() && is.is(TWO_HANDED);
+    }
+
+    public static boolean twoHandBonus(LivingEntity e, InteractionHand h) {
+        // -1 disallows receiving bonuses from two-handing.
+        //At 0, you wield two-handed weapons normally.
+        // 1 allows you to wield a two-handed weapon with a one-handed weapon in the offhand.
+        // 2 allows you to do so while maintaining the two-handed bonus.
+        // 3 allows dual wielding two-handers with no offhand bonus, and
+        // 4 allows you to maintain the two-handing bonus of both.
+        final double twohanding = e.getAttributeValue(FootworkAttributes.TWO_HANDING.get());
+        if (twohanding < 0) return false;
+        boolean offhandFree = CombatData.getCap(e).getHandBind(InteractionHand.OFF_HAND) > 0 || CombatUtils.isHoldingNonWeapon(e, InteractionHand.OFF_HAND);
+        if (h == InteractionHand.MAIN_HAND && (twohanding >= 2 || (offhandFree && twohanding >= 0)))
+            return true;
+        if (h == InteractionHand.OFF_HAND && twohanding < 4)
+            return false;
+        return h == InteractionHand.MAIN_HAND && offhandFree;
     }
 
     public static boolean canPierceParry(ItemStack is, LivingEntity e) {

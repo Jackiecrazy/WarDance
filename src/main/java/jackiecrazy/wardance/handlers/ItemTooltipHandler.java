@@ -7,6 +7,7 @@ import jackiecrazy.wardance.utils.CombatUtils;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.Component;
+import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.ai.attributes.Attribute;
 import net.minecraft.world.entity.ai.attributes.AttributeModifier;
 import net.minecraft.world.item.ItemStack;
@@ -69,7 +70,7 @@ public class ItemTooltipHandler {
             if (WeaponStats.isShield(e.getEntity(), stack)) {
                 tips.add(Component.translatable("wardance.tooltip.shield").withStyle(ChatFormatting.GOLD));
             }
-            if (WeaponStats.isTwoHanded(stack, e.getEntity())) {
+            if (WeaponStats.isTwoHanded(stack, e.getEntity(), null)) {
                 tips.add(Component.translatable("wardance.tooltip.twoHanded").withStyle(ChatFormatting.DARK_RED));
             }
             boolean hasBuffs = !tips.isEmpty();
@@ -81,7 +82,7 @@ public class ItemTooltipHandler {
                 }
             }
             tips.clear();
-            final Map<Attribute, List<AttributeModifier>> stats = TwoHandingHandler.getStats(e.getItemStack());
+            final Map<Attribute, List<AttributeModifier>> stats = TwoHandingHandler.getStats(e.getItemStack(), InteractionHand.MAIN_HAND);
             if (!stats.isEmpty()) {
                 if (Screen.hasControlDown()) {
                     tips.add(Component.translatable("wardance.tooltip.twohanding").withStyle(ChatFormatting.GOLD));

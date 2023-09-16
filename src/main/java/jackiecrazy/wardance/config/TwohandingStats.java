@@ -7,6 +7,7 @@ import net.minecraft.server.packs.resources.ResourceManager;
 import net.minecraft.server.packs.resources.SimpleJsonResourceReloadListener;
 import net.minecraft.tags.ItemTags;
 import net.minecraft.tags.TagKey;
+import net.minecraft.util.Tuple;
 import net.minecraft.util.profiling.ProfilerFiller;
 import net.minecraft.world.entity.ai.attributes.Attribute;
 import net.minecraft.world.entity.ai.attributes.AttributeModifier;
@@ -19,16 +20,9 @@ import java.util.*;
 
 public class TwohandingStats extends SimpleJsonResourceReloadListener {
     public static final UUID uuid = UUID.fromString("a516026a-bee2-4014-bcb6-b6a5776663de");
-    public static final UUID[] MODIFIERS = {
-            UUID.fromString("a516026a-bee2-4014-bcb6-b6a5775553da"),
-            UUID.fromString("a516026a-bee2-4014-bcb6-b6a5775553db"),
-            UUID.fromString("a516026a-bee2-4014-bcb6-b6a5775553dc"),
-            UUID.fromString("a516026a-bee2-4014-bcb6-b6a5775553dd"),
-            uuid,
-            UUID.fromString("a516026a-bee2-4014-bcb6-b6a5775553df")
-    };
-    public static final Map<Item, Map<Attribute, List<AttributeModifier>>> MAP = new HashMap<>();
-    public static final Map<TagKey<Item>, Map<Attribute, List<AttributeModifier>>> ARCHETYPES = new HashMap<>();
+    public static final UUID offhanduuid = UUID.fromString("a516026a-bee2-5125-bcb6-b6a5776663de");
+    public static final Map<Item, Tuple<Map<Attribute, List<AttributeModifier>>, Map<Attribute, List<AttributeModifier>>>> MAP = new HashMap<>();
+    public static final Map<TagKey<Item>, Tuple<Map<Attribute, List<AttributeModifier>>, Map<Attribute, List<AttributeModifier>>>> ARCHETYPES = new HashMap<>();
     public static Gson GSON = new GsonBuilder().registerTypeAdapter(ResourceLocation.class, new ResourceLocation.Serializer()).create();
 
     public TwohandingStats() {
@@ -79,20 +73,33 @@ public class TwohandingStats extends SimpleJsonResourceReloadListener {
                             //have to grab the uuid haiyaaa
                             uid = uuid;
                         }
+                        UUID offuid;
+                        try {
+                            final String u = obj.get("offuuid").getAsString();
+                            offuid = UUID.fromString(u);
+                        } catch (Exception ignored) {
+                            //have to grab the uuid haiyaaa
+                            offuid = offhanduuid;
+                        }
 
-                        AttributeModifier am = new AttributeModifier(uid, "two-handing bonus", modify, AttributeModifier.Operation.valueOf(type));
-                        if(isTag){
+                        AttributeModifier main = new AttributeModifier(uid, "two-handing bonus", modify, AttributeModifier.Operation.valueOf(type));
+                        AttributeModifier off = new AttributeModifier(offuid, "two-handing bonus", modify, AttributeModifier.Operation.valueOf(type));
+                        if (isTag) {
                             final TagKey<Item> tag = ItemTags.create(i);
-                            ARCHETYPES.putIfAbsent(tag, new HashMap<>());
-                            Map<Attribute, List<AttributeModifier>> sub = ARCHETYPES.get(tag);
-                            sub.putIfAbsent(a, new ArrayList<>());
-                            sub.get(a).add(am);
+                            ARCHETYPES.putIfAbsent(tag, new Tuple<>(new HashMap<>(), new HashMap<>()));
+                            Tuple<Map<Attribute, List<AttributeModifier>>, Map<Attribute, List<AttributeModifier>>> sub = ARCHETYPES.get(tag);
+                            sub.getA().putIfAbsent(a, new ArrayList<>());
+                            sub.getA().get(a).add(main);
+                            sub.getB().putIfAbsent(a, new ArrayList<>());
+                            sub.getB().get(a).add(off);
                             ARCHETYPES.put(tag, sub);
-                        }else {
-                            MAP.putIfAbsent(item, new HashMap<>());
-                            Map<Attribute, List<AttributeModifier>> sub = MAP.get(item);
-                            sub.putIfAbsent(a, new ArrayList<>());
-                            sub.get(a).add(am);
+                        } else {
+                            MAP.putIfAbsent(item, new Tuple<>(new HashMap<>(), new HashMap<>()));
+                            Tuple<Map<Attribute, List<AttributeModifier>>, Map<Attribute, List<AttributeModifier>>> sub = MAP.get(item);
+                            sub.getA().putIfAbsent(a, new ArrayList<>());
+                            sub.getA().get(a).add(main);
+                            sub.getB().putIfAbsent(a, new ArrayList<>());
+                            sub.getB().get(a).add(off);
                             MAP.put(item, sub);
                         }
                     } catch (Exception x) {

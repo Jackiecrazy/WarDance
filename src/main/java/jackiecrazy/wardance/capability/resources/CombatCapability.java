@@ -613,9 +613,9 @@ public class CombatCapability implements ICombatCapability {
     public int getHandBind(InteractionHand h) {
         if (!CombatUtils.suppress) {
             if (isVulnerable()) return 99999;
+            LivingEntity bro = dude.get();
             if (dude.get() != null) {
-                LivingEntity bro = dude.get();
-                if (h == InteractionHand.OFF_HAND && (WeaponStats.isTwoHanded(bro.getOffhandItem(), bro) || WeaponStats.isTwoHanded(bro.getMainHandItem(), bro)))
+                if (h == InteractionHand.OFF_HAND && (WeaponStats.isTwoHanded(bro.getOffhandItem(), bro, InteractionHand.OFF_HAND) || WeaponStats.isTwoHanded(bro.getMainHandItem(), bro, InteractionHand.MAIN_HAND)))
                     return 99999;
             }
         }
@@ -634,7 +634,7 @@ public class CombatCapability implements ICombatCapability {
             }
             case OFF_HAND -> {
                 if (!CombatUtils.suppress && (oBind == 0 || amount == 0) && oBind != amount && e != null)
-                    TwoHandingHandler.updateTwoHanding(e, e.getMainHandItem());
+                    TwoHandingHandler.updateTwoHanding(e, e.getMainHandItem(), e.getMainHandItem());
                 oBind = amount;
             }
         }
@@ -1021,7 +1021,7 @@ public class CombatCapability implements ICombatCapability {
                 oBind -= Math.min(amount, oBind);
                 LivingEntity e = dude.get();
                 if (!CombatUtils.suppress && (oBind == 0 || prev == 0) && prev != amount && e != null)
-                    TwoHandingHandler.updateTwoHanding(e, e.getMainHandItem());
+                    TwoHandingHandler.updateTwoHanding(e, e.getMainHandItem(), e.getMainHandItem());
             }
         }
     }

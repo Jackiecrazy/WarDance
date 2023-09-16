@@ -54,7 +54,7 @@ public class CombatUtils {
     public static final UUID main = UUID.fromString("8c8028c8-da67-49a2-99cd-f92d7ad22534");
     public static boolean isSweeping = false;
     public static boolean suppress = false;
-    private static ProjectileInfo DEFAULTRANGED = new ProjectileInfo(0.1, 1, false, false);
+    private static ProjectileInfo DEFAULTRANGED = new ProjectileInfo(0.6, 1, false, false);
     private static HashMap<EntityType, ProjectileInfo> projectileMap = new HashMap<>();
 
     public static void updateProjectiles(List<? extends String> interpretP) {
@@ -109,6 +109,14 @@ public class CombatUtils {
 
     public static boolean isHoldingShield(LivingEntity e) {
         return WeaponStats.isShield(e, InteractionHand.MAIN_HAND) || WeaponStats.isShield(e, InteractionHand.OFF_HAND);
+    }
+
+    public static boolean isHoldingNonWeapon(LivingEntity living, InteractionHand h) {
+        return isHoldingNonWeapon(living, living.getItemInHand(h));
+    }
+
+    public static boolean isHoldingNonWeapon(LivingEntity living, ItemStack is) {
+        return (!WeaponStats.isWeapon(living, is) && !WeaponStats.isShield(living, is));
     }
 
     public static InteractionHand getShieldHand(LivingEntity e) {
