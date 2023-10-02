@@ -40,6 +40,8 @@ public class PhantomDive extends Skill {
             if (stats.getState() != STATE.ACTIVE)
                 silentActivate(caster, 1F, false, (float) caster.getY());
         }
+        if(caster.isOnGround())
+            markUsed(caster, true);
         return false;
     }
 
@@ -54,8 +56,9 @@ public class PhantomDive extends Skill {
         if (procPoint instanceof EntityAwarenessEvent e && e.getAttacker() == caster && state == STATE.ACTIVE) {
             StealthUtils.Awareness awareness = e.getAwareness();
             double posDiff = stats.getDuration() - caster.getY();
-            ParticleUtils.playSweepParticle(FootworkParticles.IMPACT.get(), caster, e.getEntity().position(), 0, posDiff, getColor(), 0);
             int length = 0;
+            if (posDiff > 1)
+                ParticleUtils.playSweepParticle(FootworkParticles.IMPACT.get(), caster, e.getEntity().position(), 0, posDiff, getColor(), 0);
             while (posDiff > 0) {
                 switch (awareness) {
                     case ALERT -> awareness = StealthUtils.Awareness.DISTRACTED;
@@ -66,7 +69,7 @@ public class PhantomDive extends Skill {
             }
             if (length > 0) e.getEntity().addEffect(new MobEffectInstance(FootworkEffects.PARALYSIS.get(), length));
             e.setAwareness(awareness);
-            markUsed(caster, true);
+            markUsed(caster, false);
             caster.fallDistance = 0;
         }
     }

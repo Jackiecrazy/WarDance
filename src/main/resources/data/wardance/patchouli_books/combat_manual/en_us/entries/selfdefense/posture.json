@@ -1,0 +1,25 @@
+{
+  "name": "Posture: A state of balance",
+  "icon": "wardance:textures/entry_icons/posture.png",
+  "category": "patchouli:selfdefense",
+  "sortnum": 0,
+  "pages": [
+    {
+      "type": "patchouli:image",
+	  "images": [
+	  "wardance:textures/guide/pure_gui.png"
+	  ],
+	  "border": true,
+      "text": "Your Posture is represented as the red two directional bar in the center of the default GUI. Your enemy's posture is usually at the top middle of the screen when mousing towards another entity.",
+	  "title": "Posture and you"
+    },
+    {
+      "type": "patchouli:text",
+      "text": "$(thing)Posture$() in War dance is a measure of how steady an entity is on their feet. It is reduced when taking damage from attacking foes regardless if it was a direct hit or parried. Fall damage also applies posture damage.$(br2)$(l)Maximum Posture$() is equivalent to a mobs width and height*5." 
+    },
+    {
+      "type": "patchouli:text",
+      "text": "This generally means the player has 10 posture (1 high, 2 wide, x5).$(br2)When a combatant's posture is emptied they will be $(#FF0000)$(l)Fractured$() causing varying levels of vulnerability in their ablity to defend themselves. $(br2)Even if mobs and players are parrying, with enough pressure you can open them (or be opened) up to devastating follow ups with a combination of consecutive hits and skill use." 
+    }
+  ]
+}

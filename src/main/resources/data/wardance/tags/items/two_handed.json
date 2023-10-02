@@ -2,10 +2,6 @@
   "replace": false,
   "values": [
     {
-      "id": "minecraft:diamond_axe",
-      "required": false
-    },
-    {
       "id": "magistuarmory:bronze_concavehalberd",
       "required": false
     },

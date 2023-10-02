@@ -1,0 +1,29 @@
+{
+  "name": "Combat Mode[1]: resources",
+  "icon": "minecraft:campfire",
+  "category": "footwork:wartheory",
+  "sortnum": 1,
+  "pages": [
+    {
+      "type": "patchouli:image",
+	  "images": [
+	  "wardance:textures/guide/mightyspirit.png"
+	  ],
+	  "border": true,
+      "text": "For one, you have fun first and then wait to have fun again. The other, you anticipate it growing by fighting to then possibly do cool things. Combined, it counteracts the $(o)\"mana system paradox\".$()",
+	  "title": "Combat Mode[1]: Resources"
+    },
+    {
+      "type": "patchouli:text",
+      "text": "$(#FF3333)Might$() and $(#33FFFF)Spirit$() are what two resources used mostly for casting skills.$(br2)Spirit starts full and is consumed as a sort of mana for normal skills before relatively quickly restoring itself back to full. $(br2)Meanwhile, Might is gradually built up during a fight and used to cast more impactful skills later as a reward." 
+    },
+    {
+      "type": "patchouli:text",
+      "text": "$(#33FFFF)Spirit$() regenerates at a point every 2 seconds, however consuming spirit or taking damage will pause it's regeneration for 2 seconds. $(br2)$(o)Parrying a hit conserves posture regeneration$() but becoming $(l:footwork:selfdefense/fracture0)fractured$() from a posture break will prevent spirit regeneration while you are recovering." 
+    },
+    {
+      "type": "patchouli:text",
+      "text": "$(#FF3333)Might$() is built with every attack, the rate determined by the base attack rate of your weapon. Slower weapons and attacks generate it faster.Might remains stable for up to 10 seconds, before gradually dropping back down until empty when the fun starts dieing down. $(br2)If you have might being held and get hit your might will immediately start to decay. So be sure to fight back to maintain it, even in a tough fight!" 
+    }
+  ]
+}

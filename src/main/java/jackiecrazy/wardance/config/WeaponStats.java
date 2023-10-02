@@ -214,12 +214,13 @@ public class WeaponStats extends SimpleJsonResourceReloadListener {
         //At 0, you wield two-handed weapons normally.
         // 1 allows you to wield a two-handed weapon with a one-handed weapon in the offhand.
         // 2 allows you to do so while maintaining the two-handed bonus.
-        // 3 allows dual wielding two-handers with no offhand bonus, and
+        // 3 allows dual wielding two-handers with no two-hander bonus, and
         // 4 allows you to maintain the two-handing bonus of both.
         final double twohanding = e.getAttributeValue(FootworkAttributes.TWO_HANDING.get());
         if (twohanding < 0) return false;
         boolean offhandFree = CombatData.getCap(e).getHandBind(InteractionHand.OFF_HAND) > 0 || CombatUtils.isHoldingNonWeapon(e, InteractionHand.OFF_HAND);
-        if (h == InteractionHand.MAIN_HAND && (twohanding >= 2 || (offhandFree && twohanding >= 0)))
+        boolean offhandTwo = isTwoHanded(e.getOffhandItem(), e, InteractionHand.OFF_HAND);
+        if (h == InteractionHand.MAIN_HAND && (twohanding >= 4 || !offhandTwo && twohanding >= 2 || (offhandFree && twohanding >= 0)))
             return true;
         if (h == InteractionHand.OFF_HAND && twohanding < 4)
             return false;

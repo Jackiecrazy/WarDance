@@ -6,6 +6,7 @@ import jackiecrazy.wardance.utils.DamageUtils;
 import jackiecrazy.wardance.utils.SkillUtils;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.ai.attributes.AttributeModifier;
+import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraftforge.event.entity.living.LivingAttackEvent;
 import net.minecraftforge.event.entity.living.LivingDeathEvent;
 import net.minecraftforge.eventbus.api.Event;
@@ -17,7 +18,8 @@ import java.util.UUID;
 
 public class Berserk extends Skill {
     private static final AttributeModifier berserk = new AttributeModifier(UUID.fromString("a2124c38-73e3-4551-9df4-e06e117600c1"), "berserk twohanding bonus", 3, AttributeModifier.Operation.ADDITION);
-    private final HashSet<String> tag = makeTag("shield", SkillTags.offensive, SkillTags.physical);
+    private static final AttributeModifier berserk1 = new AttributeModifier(UUID.fromString("a2124c38-73e3-4551-9df4-e06e117600c1"), "berserk attack speed bonus", 0.2, AttributeModifier.Operation.MULTIPLY_TOTAL);
+    private final HashSet<String> tag = makeTag(SkillTags.offensive, SkillTags.physical);
 
     @Override
     public float spiritConsumption(LivingEntity caster) {
@@ -50,6 +52,7 @@ public class Berserk extends Skill {
         if (procPoint instanceof LivingAttackEvent lae && lae.getEntity() == target && DamageUtils.isMeleeAttack(lae.getSource()) && procPoint.getPhase() == EventPriority.HIGHEST) {
             if (state == STATE.HOLSTERED && cast(caster, target, 3 * SkillUtils.getSkillEffectiveness(caster) * (1 - (caster.getHealth() / caster.getMaxHealth())) * (CombatData.getCap(caster).getMight()))) {
                 SkillUtils.addAttribute(caster, FootworkAttributes.TWO_HANDING.get(), berserk);
+                SkillUtils.addAttribute(caster, Attributes.ATTACK_SPEED, berserk1);
             }
         }
         if (procPoint instanceof LivingDeathEvent && state == STATE.ACTIVE && procPoint.getPhase() == EventPriority.HIGHEST) {
@@ -63,6 +66,7 @@ public class Berserk extends Skill {
             prev.setState(STATE.INACTIVE);
             CombatData.getCap(caster).setMight(0);
             SkillUtils.removeAttribute(caster, FootworkAttributes.TWO_HANDING.get(), berserk);
+            SkillUtils.removeAttribute(caster, Attributes.ATTACK_SPEED, berserk1);
         }
         return boundCast(prev, from, to);
     }

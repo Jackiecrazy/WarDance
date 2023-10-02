@@ -2,7 +2,7 @@
 	"type": "apotheosis:mob_effect",
 	"mob_effect": "footwork:distraction",
 	"target": "ARROW_TARGET",
-	"cooldown": 60,
+	"cooldown": 100,
 	"values": {
 		"rare": {
 			"duration": {

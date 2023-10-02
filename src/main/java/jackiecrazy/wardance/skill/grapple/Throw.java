@@ -80,6 +80,9 @@ public class Throw extends Grapple {
         caster.level.playSound(null, target.getX(), target.getY(), target.getZ(), SoundEvents.BARREL_OPEN, SoundSource.PLAYERS, 0.3f + WarDance.rand.nextFloat() * 0.5f, 0.75f + WarDance.rand.nextFloat() * 0.5f);
         if (CombatData.getCap(target).consumePosture(caster, 7 * stats.getEffectiveness(), 0, true) < 0 || CombatData.getCap(target).isVulnerable()) {
             stats.setDuration(target.getId());
+            target.startRiding(caster, true);
+            if (caster instanceof ServerPlayer p)
+                p.connection.send(new ClientboundSetPassengersPacket(caster));
             ParticleUtils.playSweepParticle(FootworkParticles.IMPACT.get(), caster, caster.position(), 0, 1, getColor(), 0);
             mark(caster, target, CombatConfig.knockdownDuration / 2f, stats.getEffectiveness());
             stats.setState(STATE.HOLSTERED);

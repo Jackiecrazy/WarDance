@@ -1,0 +1,21 @@
+{
+  "name": "Dualwielding",
+  "icon": "minecraft:iron_sword",
+  "category": "footwork:selfdefense",
+  "sortnum": 8,
+  "pages": [
+    {
+      "type": "patchouli:image",
+	  "images": [
+	  "wardance:textures/guide/dualwield.png"
+	  ],
+	  "border": true,
+      "text": "Twin blade action, for closer shave every time.",
+	  "title": "Dual-wielding"
+    },
+    {
+      "type": "patchouli:text",
+      "text": "$(thing)$(l:footwork:wartheory/combatmode)Combat Mode$() while combat mode is turned on the player is capable of swinging a configured offhand item or weapon in the offhand. This effectively doubles you capacity of damage dealing with small weapons and gives you an additional hand with which you can parry. $(br2)Shields in War dance can also be swung, although they deal low damage, they hit quite hard in the posture damage department although they are given an attack rate to compensate." 
+    }
+  ]
+}

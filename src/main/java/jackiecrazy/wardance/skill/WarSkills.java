@@ -133,7 +133,8 @@ public class WarSkills {
     public static final RegistryObject<Skill> SHADOW_DIVE = SKILLS.register("shadow_dive", () -> new ShadowDive().setCategory(SkillColors.gray));
     public static final RegistryObject<Skill> NECROSIS = SKILLS.register("necrosis", () -> new Necrosis().setCategory(SkillColors.purple));
     public static final RegistryObject<Skill> STATIC_DISCHARGE = SKILLS.register("static_discharge", () -> new MementoMori.StaticDischarge().setCategory(SkillColors.cyan));
-    public static final RegistryObject<Skill> HEAL_SHOCK = SKILLS.register("heal_shock", () -> new MementoMori.HealShock().setCategory(SkillColors.cyan));
+    //I tried many times, I really did, but healing is so far outside my hierarchy that I can't control it.
+    //public static final RegistryObject<Skill> HEAL_SHOCK = SKILLS.register("heal_shock", () -> new MementoMori.HealShock().setCategory(SkillColors.cyan));
     public static final RegistryObject<Skill> SELFISH_MASCOT = SKILLS.register("selfish_mascot", () -> new SelfishMascot().setCategory(SkillColors.gold));
     public static final RegistryObject<Skill> POUND_OF_FLESH = SKILLS.register("pound_of_flesh", () -> new PoundOfFlesh().setCategory(SkillColors.red));
     public static final RegistryObject<Skill> CURSE_OF_MISFORTUNE = SKILLS.register("curse_of_misfortune", () -> new Hex().setCategory(SkillColors.purple));

@@ -1,18 +1,20 @@
 package jackiecrazy.wardance.skill.mementomori;
 
 import jackiecrazy.footwork.api.CombatDamageSource;
+import jackiecrazy.footwork.potion.FootworkEffects;
+import jackiecrazy.footwork.utils.EffectUtils;
 import jackiecrazy.footwork.utils.GeneralUtils;
 import jackiecrazy.footwork.utils.TargetingUtils;
 import jackiecrazy.wardance.skill.*;
 import jackiecrazy.wardance.utils.CombatUtils;
 import jackiecrazy.wardance.utils.DamageUtils;
 import jackiecrazy.wardance.utils.SkillUtils;
+import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.ai.attributes.AttributeModifier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraftforge.event.entity.living.LivingAttackEvent;
 import net.minecraftforge.event.entity.living.LivingHealEvent;
-import net.minecraftforge.event.entity.living.LivingHurtEvent;
 import net.minecraftforge.eventbus.api.Event;
 import net.minecraftforge.eventbus.api.EventPriority;
 
@@ -98,7 +100,8 @@ pound of flesh: active skill. Consumes all your spirit, and until your spirit re
 
         @Override
         public void onProc(LivingEntity caster, Event procPoint, STATE state, SkillData stats, LivingEntity target) {
-            if (procPoint instanceof final LivingHurtEvent lhe && procPoint.getPhase() == EventPriority.HIGHEST && lhe.getEntity() == caster) {
+            if (procPoint instanceof final LivingHealEvent lhe && procPoint.getPhase() == EventPriority.HIGHEST && lhe.getEntity() == caster) {
+                lhe.setAmount(Math.min(lhe.getAmount(), caster.getMaxHealth() - caster.getHealth()));
                 float stat = stats.getArbitraryFloat();
                 stat += lhe.getAmount();
                 stat = Math.min(stat, GeneralUtils.getMaxHealthBeforeWounding(caster));
@@ -125,17 +128,16 @@ pound of flesh: active skill. Consumes all your spirit, and until your spirit re
 
         @Override
         public void onProc(LivingEntity caster, Event procPoint, STATE state, SkillData stats, LivingEntity target) {
-            if (procPoint instanceof LivingHealEvent ee && procPoint.getPhase() == EventPriority.HIGHEST) {
-                boolean found = false;
+            if (procPoint instanceof LivingHealEvent ee && procPoint.getPhase() == EventPriority.LOWEST) {
+                ee.setAmount(Math.min(ee.getAmount(), caster.getMaxHealth() - caster.getHealth()));
                 for (LivingEntity e : caster.level.getEntitiesOfClass(LivingEntity.class, caster.getBoundingBox().inflate(6))) {
-                    if (TargetingUtils.isHostile(e, caster)) {
+                    if (TargetingUtils.isHostile(e, caster) && !target.hasEffect(FootworkEffects.VULNERABLE.get())) {
                         ee.setCanceled(true);
-                        found = true;
-                        e.hurt(new CombatDamageSource("lightningBolt", caster).setDamageTyping(CombatDamageSource.TYPE.MAGICAL).setProcSkillEffects(true).setKnockbackPercentage(0).setAttackingHand(null).setSkillUsed(this).setMagic(), ee.getAmount() * SkillUtils.getSkillEffectiveness(caster));
-                        CombatUtils.knockBack(e, caster, ee.getAmount() / 4, true, false);
+                        e.addEffect(EffectUtils.stackPot(e, new MobEffectInstance(FootworkEffects.VULNERABLE.get(), (int) (5 * ee.getAmount() * SkillUtils.getSkillEffectiveness(caster)), 0), EffectUtils.StackingMethod.MAXDURATION));
+                        //e.hurt(new CombatDamageSource("lightningBolt", caster).setDamageTyping(CombatDamageSource.TYPE.MAGICAL).setProcSkillEffects(true).setKnockbackPercentage(0).setAttackingHand(null).setSkillUsed(this).setMagic(), ee.getAmount() * SkillUtils.getSkillEffectiveness(caster));
+                        return;
                     }
                 }
-                stats.flagCondition(found);
             }
         }
 

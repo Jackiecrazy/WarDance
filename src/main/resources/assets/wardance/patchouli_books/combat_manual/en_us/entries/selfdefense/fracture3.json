@@ -1,0 +1,29 @@
+{
+  "name": "Fractures [3]: Exposed",
+  "icon": "minecraft:crying_obsidian",
+  "category": "footwork:selfdefense",
+  "sortnum": 7,
+  "pages": [
+    {
+      "type": "patchouli:image",
+	  "images": [
+	  "wardance:textures/guide/exposed.png"
+	  ],
+	  "border": true,
+      "text": "$(o)Omae wa mou shinderu.",
+	  "title": "Fractures [3]: Exposed"
+    },
+    {
+      "type": "patchouli:text",
+      "text": "When a combatant exhausts all their fractures the resulting stun or knockdown will instead be known as becoming $(#FF0000)$(l)Exposed$().$(br2)Now similar to the knockdown, the expose completely disables the target once more and instead of crit sparkles they will emit anger particles but they won't be rendered as knocked down. Exposure lasts once more around 2-3 times longer than a knockdown.$(br2)"
+    },
+    {
+      "type": "patchouli:text",
+      "text": "The thing that makes exposing the enemy so much more deadly however is that in this state is that $(l)all armor value is negated$() and on being hit out of the exposed state an amount of $(l)damage equivalent to 10% of their max HP$() will be dealt, allowing you to effectively cleave through the HP of damage sponges more easily by instead focusing on repeatedly fracturing them to land an executing attack through exposure."
+    },
+    {
+      "type": "patchouli:text",
+      "text": "Some skills such as $(#FF8000)Decapitate$(), $(#808080)Danse Macabre$() and $(#3333FF)Frenzy$() can be used to further augment the damage you can deal on an exposed foe, provided you have the resources to cast it.$(br2)Regardless, when an combatant becomes exposed all their fractures are reset.$(br2)Exposure is represented by the center status diamond displaying a red eye."
+    }
+  ]
+}

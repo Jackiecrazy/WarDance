@@ -20,7 +20,7 @@ public class Overbear extends ShieldBash {
             if (caster instanceof Player p) {
                 p.getCooldowns().addCooldown(caster.getMainHandItem().getItem(), 100);
             }
-            CombatData.getCap(caster).setHandBind(CombatData.getCap(caster).isOffhandAttack() ? InteractionHand.OFF_HAND : InteractionHand.MAIN_HAND, 100);
+            CombatData.getCap(caster).setHandBind(InteractionHand.MAIN_HAND, 100);
         }
         return atk * 3;
     }

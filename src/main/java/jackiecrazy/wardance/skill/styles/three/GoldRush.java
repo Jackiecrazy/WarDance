@@ -39,7 +39,7 @@ public class GoldRush extends ColorRestrictionStyle {
             //expire
             a.setDuration(-10);
             //infect
-            ((GoldRush) WarSkills.GOLD_RUSH.get()).mark(a.getCaster(e.getAttacker().level), e.getAttacker(), 10, a.getArbitraryFloat());
+            ((GoldRush) WarSkills.GOLD_RUSH.get()).mark(a.getCaster(e.getAttacker().level), e.getAttacker(), 60, a.getArbitraryFloat());
         });
     }
 
@@ -83,7 +83,7 @@ public class GoldRush extends ColorRestrictionStyle {
         if (procPoint instanceof final GainMightEvent gme) {
             pd.addArbitraryFloat(gme.getQuantity() * SkillUtils.getSkillEffectiveness(caster));
             if (pd.getArbitraryFloat() > 1) {
-                mark(caster, caster, 20, 1);
+                mark(caster, caster, 60, 1);
                 pd.addArbitraryFloat(-1);
             }
         }
@@ -99,7 +99,7 @@ public class GoldRush extends ColorRestrictionStyle {
         if (existing != null) {
             sd.addArbitraryFloat(existing.getArbitraryFloat());
             sd.setArbitraryFloat(Math.min(10, sd.getArbitraryFloat()));
-            sd.setDuration(20);
+            sd.setDuration(60);
         }
         return sd;
     }

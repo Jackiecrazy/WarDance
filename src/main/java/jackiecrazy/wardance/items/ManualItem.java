@@ -3,16 +3,23 @@ package jackiecrazy.wardance.items;
 import jackiecrazy.wardance.WarDance;
 import jackiecrazy.wardance.capability.skill.CasterData;
 import jackiecrazy.wardance.capability.skill.ISkillCapability;
+import jackiecrazy.wardance.networking.CombatChannel;
+import jackiecrazy.wardance.networking.OpenManualScreenPacket;
 import jackiecrazy.wardance.skill.Skill;
 import jackiecrazy.wardance.skill.styles.SkillStyle;
 import net.minecraft.ChatFormatting;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResultHolder;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.item.*;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.Rarity;
+import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.level.Level;
+import net.minecraftforge.network.PacketDistributor;
 
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -25,7 +32,7 @@ public class ManualItem extends Item {
         super(prop);
     }
 
-    public List<Skill> getSkills(ItemStack stack) {
+    public static List<Skill> getSkills(ItemStack stack) {
         //style, active12345, passive12345
         List<Skill> ret = new ArrayList<>();
         final CompoundTag tag = stack.getOrCreateTag();
@@ -39,7 +46,7 @@ public class ManualItem extends Item {
         return ret;
     }
 
-    public void setSkill(ItemStack stack, List<Skill> s) {
+    public static void setSkill(ItemStack stack, List<Skill> s) {
         final CompoundTag tag = stack.getOrCreateTag();
         if (s.get(0) != null)
             tag.putString("style", s.get(0).getRegistryName().toString());
@@ -54,17 +61,24 @@ public class ManualItem extends Item {
         stack.setTag(tag);
     }
 
-    public boolean autoLearn(ItemStack stack) {
+    public static boolean autoLearn(ItemStack stack) {
         return !stack.getOrCreateTag().getBoolean("noUnlock");
     }
 
-    public void setAutoLearn(ItemStack stack, boolean s) {
+    public static void setAutoLearn(ItemStack stack, boolean s) {
         stack.getOrCreateTag().putBoolean("noUnlock", !s);
     }
 
     @Override
     public InteractionResultHolder<ItemStack> use(Level l, Player p, InteractionHand hand) {
         ItemStack stack = p.getItemInHand(hand);
+        if (p instanceof ServerPlayer sp) {
+            CombatChannel.INSTANCE.send(PacketDistributor.PLAYER.with(() -> sp), new OpenManualScreenPacket(hand == InteractionHand.OFF_HAND));
+            return InteractionResultHolder.success(stack);
+        }
+        return InteractionResultHolder.success(stack);
+    }
+    public static InteractionResultHolder<ItemStack> learn(Player p, ItemStack stack) {
         //TODO open up a screen that shows the skill wheel after equipping and an nbt-defined blurb on what the build does
         final List<Skill> skills = getSkills(stack);
         boolean autoLearn = autoLearn(stack);

@@ -1,7 +1,7 @@
 {
 	"type": "apotheosis:mob_effect",
 	"mob_effect": "footwork:confusion",
-	"cooldown": 100,
+	"cooldown": 200,
 	"target": "ARROW_TARGET",
 	"values": {
 		"rare": {

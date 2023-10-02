@@ -1,0 +1,36 @@
+{
+  "name": "Footwork Attributes",
+  "icon": "wardance:textures/entry_icons/attributes.png",
+  "category": "patchouli:wartheory",
+  "sortnum": 4,
+  "pages": [
+    {
+      "type": "patchouli:text",
+      "text": "$(thing)Attributes$() are a large portion of how armor and gear is modified by War dance and Cloak and Dagger to give different effects and boosts to add more variety to your equipment choices. The following pages contain these attributes and descriptions of them incase as a map/pack maker you wish to use them in gear or other things." 
+    },
+    {
+      "type": "patchouli:text",
+      "text": "$(br2)$(l)\"Evasion\" (or formerly: \"Deflection\"), $(o)$(#d0a800)[footwork:evasion]:$() Points in this regenerates the blue evasion diamond in the middle of your posture meter.$(br2)$(l)\"Stealth\", $(o)$(#d0a800)[footwork:stealth]:$() A value of how high your stealth effectiveness is for cloak and dagger.$(br2)$(l)\"Max Fractures\", $(o)$(#d0a800)[footwork:max_fractures]:$() The number of times your posture bar can be emptied and fractured before exposure. Only whole numbers contribute a fracture when totaled.$(br2)"
+    },	
+    {
+      "type": "patchouli:text",
+      "text": "$(l)\"Max Might\", $(o)$(#d0a800)[footwork:max_might]:$() Your maximum value of your red might meter in combat mode. Built through attacking, spent with certain skills. Can take decimals but is usually consumed in full numbers.$(br2)$(l)\"Max Posture\", $(o)$(#d0a800)[footwork:max_posture]:$() The maximum value of your posture meter. A measure of steadiness when parrying and taking hits.$(br2)$(l)\"Max Spirit\", $(o)$(#d0a800)[footwork:max_spirit]:$() The maximum value of your blue spirit bar. Used for War Dance skills. Can take decimals, but usually only full values are consumed."
+    },
+    {
+      "type": "patchouli:text",
+      "text": "$(br2)$(l)\"Might Duration\", $(o)$(#d0a800)[footwork:might_grace]:$() The multiplier for the duration before your Might will decay when no longer being generated or maintained in combat. Takes discreet values (0-1) as percentages.$(br2)$(l)\"Might Generation Multiplier\", $(o)$(#d0a800)[footwork.might_gen]:$() The multiplier applied to the amount of might you generate with each hit. Takes discreet values (0-1) as percentages.$(br2)$(l)\"Skill Effectiveness\", $(o)$(#d0a800)[footwork:skill_effectiveness]$() A percentage thats used to scale up the potency of different War Dance skills. View skill descriptions for it's effects upon the skill.Takes discreet values. (0-1) as percentages."
+    },
+    {
+      "type": "patchouli:text",
+      "text": "$(br2)$(l)\"Posture Cooldown Speed\", $(o)$(#d0a800)[footwork:posture_cooldown_speed]:$() The multiplier reduction to the time required before posture will regenerate after it takes damage. Takes discreet values (0-1) as percentages.$(br2)$(l)\"Posture Recovery Multiplier\", $(o)$(#d0a800)[footwork:posture_gain]:$() A multiplier applied to any posture healing generated from skills and effects. Takes discreet values (0-1) as percentages. $(br2)$(l)\"Posture Regeneration\", $(o)$(#d0a800)[footwork:posture_regen]:$() The multiplier applied to the speed of which posture normally regenerates. Takes discreet values (0-1) as percentages."
+    },
+    {
+      "type": "patchouli:text",
+      "text": "$(br2)$(l)\"Spirit Cooldown Speed\", $(o)$(#d0a800)[footwork:spirit_cooldown_speed]:$() The multiplier reduction to the time required before spirit will regenerate after it takes damage. Takes discreet values (0-1) as percentages.$(br2)$(l)\"Spirit Recovery Multiplier\", $(o)$(#d0a800)[footwork:spirit_gain]:$() A multiplier applied to any spirit restoration generated from skills and effects.$(br2)$(l)\"Spirit Regeneration\", $(o)$(#d0a800)[footwork:spirit_regen]:$() The multiplier applied to the speed of which posture normally regenerates."
+    },
+    {
+      "type": "patchouli:text",
+      "text": "$(br2)$(l)\"Encirclement Distance\", $(o)$(#d0a800)[footwork:encirclement_distance]:$() dictates the distance around it's intended target which a mob will try to maintain when not actively attacking while under combat circle AI. Does nothing for a player and shouldn't appear on anything.$(br2)$(l)\"Threat\", $(o)$(#d0a800)[footwork:threat]:$() Currently does nothing. Was meant to be for mobs and how powerful they are."
+    }
+  ]
+}

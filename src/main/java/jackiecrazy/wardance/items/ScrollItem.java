@@ -121,7 +121,6 @@ public class ScrollItem extends Item {
     public InteractionResultHolder<ItemStack> use(Level leve, Player p, InteractionHand hand) {
         ItemStack stack = p.getItemInHand(hand);
         Skill[] skills = getSkills(stack);
-        //TODO open up a screen that gives 3 choices if not a fixed scroll. Allow determining which 3 via nbt (skill/style discrimination)
         boolean trueRandom = noSkills(stack);
         if (trueRandom) {
             List<Skill> set = WarSkills.SUPPLIER.get().getValues().stream().filter(a -> a != null && !CasterData.getCap(p).isSkillSelectable(a)).toList();

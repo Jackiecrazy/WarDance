@@ -6,14 +6,18 @@ import com.mojang.blaze3d.vertex.*;
 import com.mojang.datafixers.util.Pair;
 import jackiecrazy.footwork.config.DisplayConfigUtils;
 import jackiecrazy.wardance.WarDance;
+import jackiecrazy.wardance.client.screen.manual.ManualScreen;
 import jackiecrazy.wardance.client.screen.scroll.ScrollScreen;
 import jackiecrazy.wardance.skill.Skill;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiComponent;
+import net.minecraft.client.gui.screens.inventory.BookViewScreen;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.Mth;
+import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.ClipContext;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.HitResult;
@@ -193,5 +197,10 @@ public class RenderUtils {
 
     public static void openScrollScreen(boolean off, Skill... sk) {
         Minecraft.getInstance().setScreen(new ScrollScreen(off, sk));
+    }
+
+    public static void openManualScreen(boolean off) {
+        ItemStack is=Minecraft.getInstance().player.getItemInHand(off? InteractionHand.OFF_HAND:InteractionHand.MAIN_HAND);
+        Minecraft.getInstance().setScreen(new ManualScreen(new BookViewScreen.WrittenBookAccess(is)));
     }
 }

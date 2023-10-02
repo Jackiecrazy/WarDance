@@ -26,6 +26,7 @@ import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.Items;
 
 public class WarDanceCommand {
 
@@ -163,8 +164,15 @@ public class WarDanceCommand {
     private static int manualize(CommandContext<CommandSourceStack> ctx) throws CommandSyntaxException {
         Player player = ctx.getSource().getPlayer();
         if (player == null) throw EntitySelectorOptions.ERROR_INAPPLICABLE_OPTION.create(null);
-        boolean autoLearn = BoolArgumentType.getBool(ctx, "autolearn");
+        boolean autoLearn = true;
+        try {
+            autoLearn = BoolArgumentType.getBool(ctx, "autolearn");
+        } catch (Exception ignored) {
+
+        }
         ItemStack give = new ItemStack(WarItems.MANUAL.get());
+        if (player.getMainHandItem().getItem() == Items.WRITTEN_BOOK)
+            give.setTag(player.getMainHandItem().getOrCreateTag().copy());
         ((ManualItem) give.getItem()).setSkill(give, CasterData.getCap(player).getEquippedSkillsAndStyle());
         ((ManualItem) give.getItem()).setAutoLearn(give, autoLearn);
         player.addItem(give);
@@ -177,7 +185,7 @@ public class WarDanceCommand {
         int time = IntegerArgumentType.getInteger(ctx, "time");
         int count = IntegerArgumentType.getInteger(ctx, "count");
         CombatData.getCap((LivingEntity) player).stun(time);
-        ctx.getSource().sendSuccess(Component.translatable("wardance.command.command.stagger", player.getDisplayName(), time, count), false);
+        ctx.getSource().sendSuccess(Component.translatable("wardance.command.stagger", player.getDisplayName(), time, count), false);
         return Command.SINGLE_SUCCESS;
     }
 

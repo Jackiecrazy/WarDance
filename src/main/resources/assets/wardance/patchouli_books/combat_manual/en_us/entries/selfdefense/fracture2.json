@@ -1,0 +1,37 @@
+{
+  "name": "Fractures [2]: Knockdown",
+  "icon": "minecraft:crying_obsidian",
+  "category": "footwork:selfdefense",
+  "sortnum": 6,
+  "pages": [
+    {
+      "type": "patchouli:image",
+	  "images": [
+	  "wardance:textures/guide/knocked_zombie.png"
+	  ],
+	  "border": true,
+      "text": "$(o)\"Help, I've fallen and can't get up!\"",
+	  "title": "Fractures [2]: Knockdown"
+    },
+    {
+      "type": "patchouli:text",
+      "text": "In the case of a combatant being stunned by a posture damage hit equivalent to or more than half their maximum posture a stun might be upgraded into a $(#CCCC00)$(l)knockdown$().$(br2)When knocked down the movement debilitation is upgraded to a complete inability to move and they are visibly rotated to be knocked onto their backs on the ground while also having their hands bound.$(br2)"
+    },
+    {
+      "type": "patchouli:text",
+      "text": "This type of improved stun lasts for a longer period of time $(o)(around 2-3 times longer)$() and can carry a different configurable percentage of bonus damage when being struck. $(br)Similarly to a stun, when the enemy is attacked the effects will be purged. However until the full stun time is elapsed they cannot take further posture damage.$(br2)Knockdowns can also be forced through proper use of certain skills such as $(#000000)Trample$(), $(#FF0000)Suplex$() or $(#00FFFF)Throw$(), this is especially useful on larger foes who have a lot more posture damage than you can typically deal with most hits where the only way to knock them over would be most likely through skill usage."
+    },
+    {
+      "type": "patchouli:image",
+	  "images": [
+	  "wardance:textures/guide/dizzy_ignis.png"
+	  ],
+	  "border": true,
+      "text": "$(l)Not even Ignis is safe from THE SUPLEX."
+    },
+    {
+      "type": "patchouli:text",
+      "text": "Similarly to a stun, a knocked down mob is completely disabled and should typically have their ai shut off until it gets back up or it's knockdown state is removed on hit.$(br2)Knockdowns are also quite common when dealing with large amounts of fall damage. Although this is less feasible against mobs who don't take it.$(br2)Knockdowns, being an upgraded stun, are also represented by the trio of stars on the posture widget."
+    }
+  ]
+}

@@ -414,8 +414,9 @@ public class CombatHandler {
                     }
                 }
                 //internally enforced hand bind to bypass slimes
-                if (!(seme instanceof Player)) {
-                    semeCap.setHandBind(attackingHand, CombatUtils.getCooldownPeriod(seme, attackingHand) + 7);
+                //added to world check to bypass goety lichdom weirdness
+                if (!(seme instanceof Player) && uke.isAddedToWorld()) {
+                    semeCap.setHandBind(attackingHand, CombatUtils.getCooldownPeriod(seme, attackingHand) + 1);
                 }
             }
             //evade, at the rock bottom of the attack event, saving your protected butt.
@@ -591,7 +592,7 @@ public class CombatHandler {
 
     @SubscribeEvent(priority = EventPriority.LOWEST, receiveCanceled = true)
     public static void udedlol(LivingDamageEvent e) {
-        if (GeneralConfig.debug && !e.getEntity().level.isClientSide)
+        if (GeneralConfig.debug && !e.isCanceled() && !e.getEntity().level.isClientSide)
             WarDance.LOGGER.debug("damage from " + e.getSource() + " finalized with amount " + e.getAmount());
         //"halo mode"
         if (GeneralConfig.test) {

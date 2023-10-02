@@ -1,0 +1,24 @@
+{
+  "name": "Parrying[1]: Basics",
+  "icon": "minecraft:shield",
+  "category": "footwork:selfdefense",
+  "sortnum": 1,
+  "pages": [
+    {
+      "type": "patchouli:text",
+      "text": "In War Dance $(thing)parrying$() is as simple as holding a registered weapon in your main or offhand and facing your attacker when they try to melee attack you.$(br)If done correctly you will hear a $(l)clang$() and damage will be negated.$(br2)A $(o)Configured weapon$() means any item which displays values such as $(o)\"posture per attack\" and \"Defense posture multiplier\"$() as part of their tooltips." 
+    },
+    {
+      "type": "patchouli:text",
+      "text": "When parrying: posture damage is instead taken based on either the mob's computed posture damage $(o)(usually based on it's size and damage or preconfigured values in the configs)$() or their held weapon. $(br)The posture damage taken is further modified by the $(l)Defense$() value of the user's weapon as a percentage.$(br2) So if you were meant to take 5 posture damage, but had a 0.8 multiplier in defense, that hit should only deal around 4 posture damage when parried." 
+    },
+    {
+      "type": "patchouli:text",
+      "text": "Most weapons however will not parry projectile based attacks such as arrows from skeletons or pillagers. $(br2)To automatically parry and deflect projectiles you need to use items marked as $(#FFD810)shields$().$(br)Which is usually restricted to actual shields of varying sizes, crossbows, large books and certain massive swords. Later it may also include doors, trapdoors and signs." 
+    },
+    {
+      "type": "patchouli:text",
+      "text": "Some projectiles such as those $(o)enchanted with piercing, those which explode or are magical in nature$() may not be parryable either. But depending on the mods and how they're made, all you can really do is simply test such projectiles or potentially configure via the configs. $(o)(if you do make some configs. consider sending them in to help everyone. :) )"
+    }
+  ]
+}

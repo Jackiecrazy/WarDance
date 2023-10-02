@@ -2,7 +2,7 @@
 	"type": "apotheosis:mob_effect",
 	"mob_effect": "footwork:sleep",
 	"target": "ATTACK_TARGET",
-	"cooldown": 80,
+	"cooldown": 300,
 	"values": {
 		"rare": {
 			"duration": {

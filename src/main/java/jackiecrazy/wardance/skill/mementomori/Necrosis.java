@@ -62,10 +62,11 @@ public class Necrosis extends Skill {
 
     @Override
     public void onProc(LivingEntity caster, Event procPoint, STATE state, SkillData stats, @Nullable LivingEntity target) {
-        if (procPoint instanceof LivingHealEvent lhe && procPoint.getPhase()== EventPriority.LOWEST) {
+        if (procPoint instanceof LivingHealEvent lhe && procPoint.getPhase()== EventPriority.HIGHEST) {
             final double amount = CombatData.getCap(caster).getComboRank() * SkillUtils.getSkillEffectiveness(caster) / 7d;
             final double shouldBe = Math.ceil(caster.getMaxHealth() / (1 + amount));
             lhe.setAmount((float) Math.min(lhe.getAmount(), shouldBe - caster.getHealth()));
+            if(lhe.getAmount()<=0)lhe.setCanceled(true);
         }
     }
 
