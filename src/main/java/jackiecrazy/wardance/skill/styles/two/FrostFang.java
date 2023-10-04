@@ -6,9 +6,13 @@ import jackiecrazy.wardance.skill.ProcPoints;
 import jackiecrazy.wardance.skill.SkillData;
 import jackiecrazy.wardance.skill.SkillTags;
 import jackiecrazy.wardance.utils.SkillUtils;
+import net.minecraft.core.particles.BlockParticleOption;
+import net.minecraft.core.particles.ParticleTypes;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.ai.attributes.AttributeModifier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
+import net.minecraft.world.level.block.Blocks;
 import net.minecraftforge.event.entity.living.LivingAttackEvent;
 import net.minecraftforge.event.entity.living.LivingHurtEvent;
 import net.minecraftforge.eventbus.api.Event;
@@ -29,24 +33,22 @@ public class FrostFang extends WarCry {
     }
 
     @Override
-    public boolean displaysInactive(LivingEntity caster, SkillData stats) {
-        return true;
-    }
-
-    @Override
     public void onProc(LivingEntity caster, Event procPoint, STATE state, SkillData stats, LivingEntity target) {
         if (procPoint.getPhase() != EventPriority.LOWEST) return;
         if (procPoint instanceof LivingAttackEvent lae && state == STATE.INACTIVE && lae.getEntity() != caster) {
             activate(caster, 2, stats.getArbitraryFloat());
             stats.setMaxDuration(2);
         } else if (procPoint instanceof ParryEvent cpe && state == STATE.ACTIVE && cpe.getEntity() != caster) {
-            cpe.setPostureConsumption(cpe.getPostureConsumption() * (1 + stats.getArbitraryFloat()/10));
+            cpe.setPostureConsumption(cpe.getPostureConsumption() * (1 + stats.getArbitraryFloat() / 10));
+            if (caster.level instanceof ServerLevel server)
+                server.sendParticles(new BlockParticleOption(ParticleTypes.BLOCK, Blocks.BLUE_ICE.defaultBlockState()).setPos(target.blockPosition()), target.getX(), target.getY(), target.getZ(), (int) stats.getArbitraryFloat() * 20, target.getBbWidth(), target.getBbHeight() / 2, target.getBbWidth(), 0.5f);
+
         } else if (procPoint instanceof LivingHurtEvent cpe && state == STATE.ACTIVE && cpe.getEntity() != caster) {
             if (!cpe.isCanceled()) {
                 if (cpe.getSource() instanceof CombatDamageSource cds) {
                     cds.setProcSkillEffects(true);
                 }
-                cpe.setAmount(cpe.getAmount() * (1 + stats.getArbitraryFloat()/10));
+                cpe.setAmount(cpe.getAmount() * (1 + stats.getArbitraryFloat() / 10));
             }
         }
     }
@@ -87,5 +89,10 @@ public class FrostFang extends WarCry {
     public void onUnequip(LivingEntity caster, SkillData stats) {
         SkillUtils.removeAttribute(caster, Attributes.LUCK, luck);
         super.onUnequip(caster, stats);
+    }
+
+    @Override
+    public boolean displaysInactive(LivingEntity caster, SkillData stats) {
+        return true;
     }
 }
