@@ -28,6 +28,10 @@ public abstract class SkillStyle extends Skill {
         return getSkill(rl) instanceof SkillStyle ss ? ss : null;
     }
 
+    public static SkillStyle getStyle(String rl) {
+        return getSkill(rl) instanceof SkillStyle ss ? ss : null;
+    }
+
     public int getMaxColors() {
         return maxColors;
     }

@@ -189,7 +189,6 @@ public class WarDanceCommand {
         return Command.SINGLE_SUCCESS;
     }
 
-    //TODO expose command
     private static int defaultStagger(CommandContext<CommandSourceStack> ctx) throws CommandSyntaxException {
         Entity player = EntityArgument.getEntity(ctx, "entity");
         if (!(player instanceof LivingEntity)) throw EntitySelectorOptions.ERROR_INAPPLICABLE_OPTION.create(player);

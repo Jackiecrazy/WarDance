@@ -11,6 +11,7 @@ import net.minecraft.ChatFormatting;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.util.StringUtil;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResultHolder;
 import net.minecraft.world.entity.player.Player;
@@ -32,11 +33,12 @@ public class ManualItem extends Item {
         super(prop);
     }
 
+
+
     public static List<Skill> getSkills(ItemStack stack) {
         //style, active12345, passive12345
         List<Skill> ret = new ArrayList<>();
         final CompoundTag tag = stack.getOrCreateTag();
-        ret.add(Skill.getSkill(tag.getString("style")));
         for (int a = 1; a < 6; a++) {
             ret.add(Skill.getSkill(tag.getString("active" + a)));
         }
@@ -44,6 +46,12 @@ public class ManualItem extends Item {
             ret.add(Skill.getSkill(tag.getString("passive" + a)));
         }
         return ret;
+    }
+
+    public static SkillStyle getStyle(ItemStack stack) {
+        //style, active12345, passive12345
+        final CompoundTag tag = stack.getOrCreateTag();
+        return SkillStyle.getStyle(tag.getString("style"));
     }
 
     public static void setSkill(ItemStack stack, List<Skill> s) {
@@ -76,13 +84,15 @@ public class ManualItem extends Item {
             CombatChannel.INSTANCE.send(PacketDistributor.PLAYER.with(() -> sp), new OpenManualScreenPacket(hand == InteractionHand.OFF_HAND));
             return InteractionResultHolder.success(stack);
         }
-        return InteractionResultHolder.success(stack);
+        return InteractionResultHolder.success(stack);//learn(p, stack);
     }
     public static InteractionResultHolder<ItemStack> learn(Player p, ItemStack stack) {
         //TODO open up a screen that shows the skill wheel after equipping and an nbt-defined blurb on what the build does
         final List<Skill> skills = getSkills(stack);
         boolean autoLearn = autoLearn(stack);
         final ISkillCapability cap = CasterData.getCap(p);
+        final SkillStyle ss =getStyle(stack);
+        skills.add(0, ss);
         for (Skill s : skills) {
             if (autoLearn)
                 cap.setSkillSelectable(s, true);
@@ -108,11 +118,31 @@ public class ManualItem extends Item {
         }
     }
 
+    public Component getName(ItemStack p_43480_) {
+        CompoundTag compoundtag = p_43480_.getTag();
+        if (compoundtag != null) {
+            String s = compoundtag.getString("title");
+            if (!StringUtil.isNullOrEmpty(s)) {
+                return Component.literal(s);
+            }
+        }
+
+        return super.getName(p_43480_);
+    }
+
     @Override
     public void appendHoverText(ItemStack stack, @org.jetbrains.annotations.Nullable Level p_41422_, List<Component> component, TooltipFlag flag) {
+        CompoundTag compoundtag = stack.getOrCreateTag();
+        String author = compoundtag.getString("author");
+        if (!StringUtil.isNullOrEmpty(author)) {
+            component.add(Component.translatable("book.byAuthor", author).withStyle(ChatFormatting.GRAY));
+        }
         if (autoLearn(stack))
             component.add(Component.translatable("wardance.manual.autolearn").withStyle(ChatFormatting.GOLD));
         else component.add(Component.translatable("wardance.manual.nolearn").withStyle(ChatFormatting.GRAY));
+        final SkillStyle style = getStyle(stack);
+        if(style !=null)
+            component.add(style.getDisplayName(null).withStyle(ChatFormatting.UNDERLINE));
         for (Skill s : getSkills(stack)) {
             if (s != null)
                 component.add(s.getDisplayName(null).withStyle(s.getCategory().getFormattings()));

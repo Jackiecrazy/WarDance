@@ -13,6 +13,7 @@ import jackiecrazy.wardance.capability.skill.CasterData;
 import jackiecrazy.wardance.capability.skill.ISkillCapability;
 import jackiecrazy.wardance.config.CombatConfig;
 import jackiecrazy.wardance.entity.FakeExplosion;
+import jackiecrazy.wardance.event.ExposeAttackEvent;
 import jackiecrazy.wardance.event.SkillCastEvent;
 import jackiecrazy.wardance.skill.*;
 import jackiecrazy.wardance.utils.SkillUtils;
@@ -74,19 +75,23 @@ public class CoupDeGrace extends Skill {
 
     @Override
     public void onProc(LivingEntity caster, Event procPoint, STATE state, SkillData stats, LivingEntity target) {
-        if (procPoint instanceof LivingHurtEvent e && procPoint.getPhase() == EventPriority.HIGHEST && state == STATE.ACTIVE) {
-            if (e.getEntity() == target) {
+        if (procPoint.getPhase() == EventPriority.HIGHEST && state == STATE.ACTIVE) {
+            if (procPoint instanceof LivingHurtEvent e && e.getEntity() == target) {
                 if (CombatData.getCap(e.getEntity()).isExposed() && !CombatData.getCap(e.getEntity()).isStaggeringStrike()) {
                     if (willKillOnCast(caster, target, stats))
                         target.setHealth(1);
-                    e.setAmount(e.getAmount() + getDamage(caster, target, stats));
-                    e.getSource().bypassArmor().bypassMagic();
+                    if(e.getSource() instanceof CombatDamageSource cds)
+                        cds.setDamageTyping(CombatDamageSource.TYPE.TRUE);
+                    e.getSource().bypassMagic().bypassArmor();
                     deathCheck(caster, target, e.getAmount());
                     markUsed(caster);
                 } else if (!CombatData.getCap(e.getEntity()).isExposed() && willKillOnCast(caster, target, stats)) {
                     e.setCanceled(true);
                     CombatData.getCap(target).consumePosture(caster, e.getAmount());
                 }
+            }
+            if (procPoint instanceof ExposeAttackEvent e && e.getEntity() == target) {
+                e.setAmount(getDamage(caster, target, stats));
             }
         } else if (procPoint instanceof SkillCastEvent && procPoint.getPhase() == EventPriority.HIGHEST && state == STATE.COOLING) {
             stats.decrementDuration();

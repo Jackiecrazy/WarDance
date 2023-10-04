@@ -6,12 +6,11 @@ import com.mojang.blaze3d.vertex.*;
 import com.mojang.datafixers.util.Pair;
 import jackiecrazy.footwork.config.DisplayConfigUtils;
 import jackiecrazy.wardance.WarDance;
-import jackiecrazy.wardance.client.screen.manual.ManualScreen;
+import jackiecrazy.wardance.client.screen.manual.NewManualScreen;
 import jackiecrazy.wardance.client.screen.scroll.ScrollScreen;
 import jackiecrazy.wardance.skill.Skill;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiComponent;
-import net.minecraft.client.gui.screens.inventory.BookViewScreen;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.Mth;
 import net.minecraft.world.InteractionHand;
@@ -97,6 +96,7 @@ public class RenderUtils {
     }
 
     public static void drawCooldownCircle(PoseStack ms, int x, int y, int size, float v) {
+        //todo occasionally reverts and shows a square when certain entities are in view
         if (v == 1) v = 0.95f;
         ms.pushPose();
         //RenderSystem.enableAlphaTest();
@@ -201,6 +201,6 @@ public class RenderUtils {
 
     public static void openManualScreen(boolean off) {
         ItemStack is=Minecraft.getInstance().player.getItemInHand(off? InteractionHand.OFF_HAND:InteractionHand.MAIN_HAND);
-        Minecraft.getInstance().setScreen(new ManualScreen(new BookViewScreen.WrittenBookAccess(is)));
+        Minecraft.getInstance().setScreen(new NewManualScreen(is));
     }
 }

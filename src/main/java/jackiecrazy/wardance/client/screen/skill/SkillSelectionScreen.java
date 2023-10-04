@@ -44,14 +44,15 @@ import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 public class SkillSelectionScreen extends Screen {
+    public static final int SKILL_CIRCLE_WIDTH = 150;
+    protected static final int PADDING = 6;
     private static final ResourceLocation radial = new ResourceLocation(WarDance.MODID, "textures/skill/radialhud.png");
     private static final int[] fixedU = {150, 0, 150, 300, 300};
     private static final int[] fixedV = {0, 150, 150, 150, 0};
-    private static final int PADDING = 6;
+    protected final SkillSliceButton[] skillPie = new SkillSliceButton[5];
+    protected final PassiveButton[] passives = new PassiveButton[5];
     private final List<Skill> unsortedSkills;
     private final List<Skill> unsortedStyles;
-    private final SkillSliceButton[] skillPie = new SkillSliceButton[5];
-    private final PassiveButton[] passives = new PassiveButton[5];
     private final int numButtons = Skill.categoryMap.size();
     private final Comparator<SkillCategorySort> CATEGORYSORT = Comparator.comparing(o -> StringUtils.toLowerCase(stripControlCodes(o.getText().getString())));
     private final Comparator<Skill> SKILLSORT = Comparator.comparing(o -> StringUtils.toLowerCase(stripControlCodes(o.getDisplayName(null).getString())));
@@ -69,25 +70,25 @@ public class SkillSelectionScreen extends Screen {
         }
     };
     public SkillListWidget.CategoryEntry selectedSkill = null;
-    boolean refresh = false;
-    SkillStyleButton style;
-    int update = 0;
-    private List<Skill> skillCache;
-    private boolean cacheDirty;
+    protected List<Skill> skillCache;
     //public VariationListWidget.VariationEntry selectedVariation = null;
-    private SkillListWidget skillList;
+    protected SkillListWidget skillList;
     //private VariationListWidget variationList;
-    private SkillSelectionScreen.InfoPanel skillInfo;
-    private int listWidth;
-    private List<Skill> bases;
-    private List<SkillStyle> stylebases;
-    private int buttonMargin = 4;
-    private Button doneButton;
-    private String lastFilterText = "";
-    private EditBox search;
-    private boolean filtered = false;
-    private ArrayList<SkillCategorySort> filters = new ArrayList<>();
-    private SkillCategory displayedCategory = SkillColors.none;
+    protected SkillSelectionScreen.InfoPanel skillInfo;
+    protected int listWidth;
+    protected List<Skill> bases;
+    protected List<SkillStyle> stylebases;
+    protected int buttonMargin = 4;
+    protected Button doneButton;
+    protected String lastFilterText = "";
+    protected EditBox search;
+    protected boolean filtered = false;
+    protected ArrayList<SkillCategorySort> filters = new ArrayList<>();
+    protected SkillCategory displayedCategory = SkillColors.none;
+    protected SkillStyleButton style;
+    boolean refresh = false;
+    int update = 0;
+    private boolean cacheDirty;
 
     public SkillSelectionScreen() {
         //initialize all skills
@@ -177,9 +178,7 @@ public class SkillSelectionScreen extends Screen {
     @Override
     public void render(PoseStack mStack, int mouseX, int mouseY, float partialTicks) {
         this.renderBackground(mStack);
-        Component text = Component.translatable("fml.menu.mods.search");
-        int x = skillList.getLeft() + ((skillList.getRight() - skillList.getLeft()) / 2) - (getFontRenderer().width(text) / 2);
-        getFontRenderer().draw(mStack, text.getVisualOrderText(), x, search.y - getFontRenderer().lineHeight, 0xFFFFFF);
+        renderSearchText(mStack);
         super.render(mStack, mouseX, mouseY, partialTicks);
     }
 
@@ -196,19 +195,18 @@ public class SkillSelectionScreen extends Screen {
     public void init() {
         filters.clear();
         final ISkillCapability cap = CasterData.getCap(Minecraft.getInstance().player);
-        int skillCircleWidth = 150;
 
         //style
         if (style == null) {
-            style = new SkillStyleButton(this, width - skillCircleWidth / 2 - 12, PADDING + skillCircleWidth / 2 - 12, 23);
+            style = new SkillStyleButton(this, width - SKILL_CIRCLE_WIDTH / 2 - 12, PADDING + SKILL_CIRCLE_WIDTH / 2 - 12, 23);
             style.setSkill(cap.getStyle());
         }
         //if no style, halt some developments
         final boolean noStyle = style.getSkill() == null;
         int noStyleOffset = 0;
         if (noStyle) {
-            style.x = width - skillCircleWidth / 2 - 12;
-            style.y = PADDING + skillCircleWidth / 2 - 12;
+            style.x = width - SKILL_CIRCLE_WIDTH / 2 - 12;
+            style.y = PADDING + SKILL_CIRCLE_WIDTH / 2 - 12;
             noStyleOffset = width;
         } else {
             style.x = width - style.getWidth() - PADDING;
@@ -231,14 +229,12 @@ public class SkillSelectionScreen extends Screen {
         }
         listWidth = Math.max(Math.min(listWidth, width / 5), 100);
         listWidth += listWidth % numButtons != 0 ? (numButtons - listWidth % numButtons) : 0;
-        int infoWidth = this.width - this.listWidth - skillCircleWidth - (PADDING * 4);
+        int infoWidth = this.width - this.listWidth - SKILL_CIRCLE_WIDTH - (PADDING * 4);
 
         //done button
         int doneButtonWidth = Math.min(infoWidth, 200);
         int y = this.height - 20 - PADDING;
         doneButton = new Button(((listWidth + PADDING + this.width - doneButtonWidth) / 2), y, doneButtonWidth, 20, Component.translatable("gui.done"), b -> SkillSelectionScreen.this.onClose());
-        //use a builder in 1.19.3
-        this.addRenderableWidget(doneButton);
 
         //search bar
         search = new EditBox(getFontRenderer(), PADDING + 1, y, listWidth - 2, 14, Component.translatable("fml.menu.mods.search"));
@@ -250,34 +246,24 @@ public class SkillSelectionScreen extends Screen {
 
         //skill info
         int split = (this.height - (PADDING) * 2 - 20);
-        this.skillInfo = new InfoPanel(this.minecraft, infoWidth, split, PADDING);
+        this.skillInfo = new InfoPanel(this.minecraft, infoWidth, split, skillList.getRight() + PADDING, PADDING);
 //        this.variationList = new VariationListWidget(this, infoWidth - 9, split + PADDING * 2, search.y - getFontRenderer().lineHeight - PADDING);
 //        this.variationList.setLeftPos(PADDING * 2 + listWidth);
 
         //currently equipped skills
         List<Skill> oldList = skillCache == null ? cap.getEquippedSkills() : skillCache;
         for (int d = 0; d < skillPie.length; d++) {
-            skillPie[d] = new SkillSliceButton(this, width - skillCircleWidth + noStyleOffset, PADDING / 2, skillCircleWidth, fixedU[d], fixedV[d], radial, d);
+            skillPie[d] = new SkillSliceButton(this, width - SKILL_CIRCLE_WIDTH + noStyleOffset-PADDING, PADDING / 2, SKILL_CIRCLE_WIDTH, fixedU[d], fixedV[d], radial, d);
             if (!noStyle)
                 skillPie[d].setSkill(oldList.get(d));
-            addRenderableWidget(skillPie[d]);
         }
 
         for (int d = 0; d < passives.length; d++) {
-            passives[d] = new PassiveButton(this, width - skillCircleWidth + d * (31) + noStyleOffset, PADDING + skillCircleWidth, 23, d);
+            passives[d] = new PassiveButton(this, width - SKILL_CIRCLE_WIDTH + d * (31) + noStyleOffset-PADDING, PADDING + SKILL_CIRCLE_WIDTH, 23, d);
             if (!noStyle)
                 passives[d].setSkill(oldList.get(d + skillPie.length));
-            addRenderableWidget(passives[d]);
         }
 
-        //add everything!
-        addRenderableWidget(skillList);
-        //addRenderableWidget(variationList);
-        addRenderableWidget(search);
-        search.setFocus(false);
-        search.setCanLoseFocus(true);
-        addRenderableWidget(skillInfo);
-        addRenderableWidget(style);
 
         final int width = Math.min(2 * listWidth / numButtons, 16);
         int x = PADDING;
@@ -288,7 +274,8 @@ public class SkillSelectionScreen extends Screen {
             ArrayList<FormattedCharSequence> display = new ArrayList<>();
             display.addAll(this.minecraft.font.split(scc.cat.name(), Math.max(this.width / 2 - 43, 170)));
             display.addAll(this.minecraft.font.split(scc.cat.description(), Math.max(this.width / 2 - 43, 170)));
-            addRenderableWidget(scc.button = new SkillCategoryButton(this, scc, display, x, PADDING + (firstRow ? 0 : 16 + PADDING), width, 16, scc.cat.icon()));
+            scc.button = new SkillCategoryButton(this, scc, display, x, PADDING + (firstRow ? 0 : 16 + PADDING), width, 16, scc.cat.icon());
+
             if (!firstRow) {
                 //first two down, draw a little line
                 if (x == PADDING) {
@@ -299,6 +286,7 @@ public class SkillSelectionScreen extends Screen {
             firstRow = !firstRow;
         }
         filterSkills(SkillColors.none);
+        addWidgets();
         updateCache();
         setInitialFocus(skillList);
     }
@@ -355,6 +343,33 @@ public class SkillSelectionScreen extends Screen {
         updateCache();
     }
 
+    protected void renderSearchText(PoseStack mStack) {
+        Component text = Component.translatable("fml.menu.mods.search");
+        int x = skillList.getLeft() + ((skillList.getRight() - skillList.getLeft()) / 2) - (getFontRenderer().width(text) / 2);
+        getFontRenderer().draw(mStack, text.getVisualOrderText(), x, search.y - getFontRenderer().lineHeight, 0xFFFFFF);
+    }
+
+    protected void addWidgets() {
+        //use a builder in 1.19.3
+        this.addRenderableWidget(doneButton);
+        for (SkillSliceButton skillSliceButton : skillPie) {
+            addRenderableWidget(skillSliceButton);
+        }
+        for (PassiveButton passive : passives) {
+            addRenderableWidget(passive);
+        }
+        //add everything!
+        addRenderableWidget(skillList);
+        //addRenderableWidget(variationList);
+        addRenderableWidget(search);
+        search.setFocus(false);
+        search.setCanLoseFocus(true);
+        addRenderableWidget(skillInfo);
+        addRenderableWidget(style);
+        for (SkillCategorySort scc : filters)
+            addRenderableWidget(scc.button);
+    }
+
     public List<Skill> collectSkills() {
         List<Skill> newSkills = new ArrayList<>();
         for (SkillSliceButton ssb : skillPie)
@@ -396,7 +411,7 @@ public class SkillSelectionScreen extends Screen {
         return colors;
     }
 
-    private void updateCache() {
+    protected void updateCache() {
         if (style.getStyle() == null && selectedSkill == null) {
             this.skillInfo.clearInfo();
             List<String> lines = new ArrayList<>();
@@ -425,9 +440,9 @@ public class SkillSelectionScreen extends Screen {
         skillInfo.setInfo(lines, null);
     }
 
-    static class SkillCategorySort {
-        SkillCategory cat;
-        private Button button;
+    protected static class SkillCategorySort {
+        protected SkillCategory cat;
+        protected Button button;
 
         SkillCategorySort(SkillCategory sc) {
             cat = sc;
@@ -439,23 +454,27 @@ public class SkillSelectionScreen extends Screen {
 
     }
 
-    class InfoPanel extends ScrollPanel {
+    protected class InfoPanel extends ScrollPanel {
         static final Pattern TOOLTIP_PATTERN = Pattern.compile(
                 "\\{[^}]*\\}", Pattern.CASE_INSENSITIVE);
         private ResourceLocation logoPath;
         private List<FormattedCharSequence> lines = Collections.emptyList();
 
-        InfoPanel(Minecraft mcIn, int widthIn, int heightIn, int topIn) {
-            super(mcIn, widthIn, heightIn, topIn, skillList.getRight() + PADDING);
+        public InfoPanel(Minecraft mcIn, int widthIn, int heightIn, int left, int topIn) {
+            super(mcIn, widthIn, heightIn, topIn, left);
         }
 
-        void setInfo(List<String> lines, ResourceLocation logoPath) {
+        public void setInfo(List<String> lines, ResourceLocation logoPath) {
             this.logoPath = logoPath;
             this.lines = resizeContent(lines);
             scrollDistance = 0;
         }
 
-        void clearInfo() {
+        public void setInfoRaw(List<FormattedCharSequence> seq) {
+            lines = seq;
+        }
+
+        public void clearInfo() {
             this.logoPath = null;
             this.lines = Collections.emptyList();
             scrollDistance = 0;
@@ -488,8 +507,8 @@ public class SkillSelectionScreen extends Screen {
 
         @Override
         protected void drawBackground(PoseStack matrix, Tesselator tess, float partialTick) {
-            fill(matrix, left, top, right, bottom, -16777216);
-            //this.drawGradientRect(matrix, this.left+1, this.top+1, this.right-1, this.bottom-1, 0xC0101010, 0xC0101010);
+            fill(matrix, this.left, this.top, this.right, this.bottom, 0xFFA0A0A0);
+            fill(matrix, left+1, top+1, right-1, bottom-1, 0xFF000000);
             //super.drawBackground(matrix, tess, partialTick);
         }
 
@@ -502,7 +521,7 @@ public class SkillSelectionScreen extends Screen {
                 RenderSystem.setShaderTexture(0, logoPath);
                 // Draw the logo image inscribed in a rectangle with width entryWidth (minus some padding) and height 50
                 int headerHeight = 50;
-                ScreenUtils.blitInscribed(mStack, left +  width/2-32, relativeY, width - (PADDING * 2), headerHeight, 64, 64, false, true);
+                ScreenUtils.blitInscribed(mStack, left + width / 2 - 32, relativeY, width - (PADDING * 2), headerHeight, 64, 64, false, true);
                 relativeY += headerHeight + PADDING;
             }
 

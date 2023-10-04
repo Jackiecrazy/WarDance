@@ -55,7 +55,6 @@ public class ScrollScreen extends Screen {
     protected void init() {
         super.init();
         renderables.clear();
-        //todo add skill buttons that reflect their clicks onto the info panel
         final int length = skills.length;
         final int workingWidth = width - (SPACING * 2) - (PADDING * 2);
         //new line if too many

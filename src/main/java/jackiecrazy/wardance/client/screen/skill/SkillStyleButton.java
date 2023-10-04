@@ -3,6 +3,7 @@ package jackiecrazy.wardance.client.screen.skill;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.PoseStack;
 import jackiecrazy.wardance.WarDance;
+import jackiecrazy.wardance.client.screen.manual.NewManualScreen;
 import jackiecrazy.wardance.skill.Skill;
 import jackiecrazy.wardance.skill.styles.SkillStyle;
 import net.minecraft.client.Minecraft;
@@ -16,7 +17,7 @@ public class SkillStyleButton extends SkillSelectionButton {
     public SkillStyleButton(SkillSelectionScreen sss, int xIn, int yIn, int sides) {
         super(xIn, yIn, sides, sides, 0, 0, 0, passive, 256, 256, (a) -> {}, (butt, stack, butx, buty) -> {
             SkillStyleButton b = (SkillStyleButton) butt;
-            if (b.getStyle() != null) {
+            if (b.getStyle() != null && !(sss instanceof NewManualScreen)) {
                 sss.renderTooltip(stack, Component.translatable("wardance.tooltip.resetStyle" + (b.getParentSelection() == null ? "3" : (b.parent.isValidInsertion(b.getParentSelection()) ? "2" : "1"))), butx, buty);
             }
         }, Component.empty());

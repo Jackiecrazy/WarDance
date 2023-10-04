@@ -1,9 +1,7 @@
 package jackiecrazy.wardance.networking;
 
-import jackiecrazy.wardance.WarDance;
 import jackiecrazy.wardance.config.WeaponStats;
 import net.minecraft.network.FriendlyByteBuf;
-import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.ItemTags;
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.item.Item;
@@ -19,7 +17,7 @@ public class SyncTagDataPacket {
     private static final FriendlyByteBuf.Writer<TagKey<Item>> item = (f, item) -> f.writeResourceLocation(item.location());
     private static final FriendlyByteBuf.Writer<WeaponStats.MeleeInfo> info = (f, info) -> info.write(f);
 
-    private static final FriendlyByteBuf.Reader<TagKey<Item>> ritem = f -> ItemTags.create(new ResourceLocation(WarDance.MODID, f.readResourceLocation().getPath()));;
+    private static final FriendlyByteBuf.Reader<TagKey<Item>> ritem = f -> ItemTags.create(f.readResourceLocation());;
     private static final FriendlyByteBuf.Reader<WeaponStats.MeleeInfo> rinfo = WeaponStats.MeleeInfo::read;
     private final Map<TagKey<Item>, WeaponStats.MeleeInfo> map;
 

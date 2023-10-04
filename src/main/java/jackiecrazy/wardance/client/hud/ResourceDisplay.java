@@ -472,7 +472,6 @@ public class ResourceDisplay implements IGuiOverlay {
     @Override
     public void render(ForgeGui gui, PoseStack stack, float partialTick, int width, int height) {
         final Minecraft mc = Minecraft.getInstance();
-        //TODO update in accordance with new might
         if (mc.getCameraEntity() instanceof Player) {
             LocalPlayer player = mc.player;
             ICombatCapability cap = CombatData.getCap(player);

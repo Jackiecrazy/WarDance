@@ -1,6 +1,4 @@
 {
-  "footwork:skill_effectiveness": "Skill Effectiveness",
-
   "itemGroup.wardance": "Project: War Dance",
 
   "wardance.command.": "",
@@ -68,6 +66,7 @@
   "wardance.manual.autolearn": "Unlocks and equips the following skills:",
   "wardance.manual.nolearn": "Equips the following skills:",
   "wardance.manual.gui.study": "Study",
+  "wardance.manual.gui.default": "Click on a skill on the right to learn more about it.",
   "wardance.scroll.learned": "You already know this skill",
   "wardance.scroll.learned.all": "You already know all the skills on this scroll",
   "wardance.scroll.learn": "You have learned how to use %s",
@@ -88,6 +87,8 @@
   "wardance.tooltip.more": "extra",
   "wardance.tooltip.less": "reduced",
   "wardance.tooltip.negative": "inverted",
+
+  "wardance.skillselection.title": "skill selection",
 
   "wardance.tooltip.sweep.standing": "When standing: %s",
   "wardance.tooltip.sweep.falling": "When falling: %s",
@@ -260,7 +261,7 @@
   "wardance.recovery.name": "Recovery",
   "wardance.recovery.desc": "Parrying below {25%; UNDERLINE; wardance.skill.enhancement.default} posture will not incur a posture regeneration cooldown, and will refresh the might grace period.",
   "archetype.coup_de_grace.name": "Coup de Grace",
-  "archetype.coup_de_grace.desc": "When toggled, an attack on an exposed target will deal {20%; UNDERLINE; wardance.skill.enhancement.default} of their lost health as {true damage; ITALIC,RED; wardance.skill.true_damage.desc}. \nIf the target would die from a successful coup de grace, it is marked with an icon (unlike other skills, this is not a real {mark; ITALIC; wardance.skill.mark.desc}), all damage dealt to it is converted to equivalent posture damage, and it will be instantly exposed on the next stun. \nCast when active to end this skill. \nRecharge after 3 skill casts, costs 2 might.",
+  "archetype.coup_de_grace.desc": "When toggled, an attack on an exposed target will deal {20%; UNDERLINE; wardance.skill.enhancement.default} of their lost health as {true damage; ITALIC,RED; wardance.skill.true_damage.desc} instead of the usual 10% max health damage. \nIf the target would die from a successful coup de grace, it is marked with an icon (unlike other skills, this is not a real {mark; ITALIC; wardance.skill.mark.desc}), all damage dealt to it is converted to equivalent posture damage, and it will be instantly exposed on the next stun. \nCast when active to end this skill. \nRecharge after 3 skill casts, costs 2 might.",
   "wardance.decapitate.name": "Decapitate",
   "wardance.decapitate.desc": "This kill is guaranteed to {drop a head;GOLD}, or have its {looting;GOLD} level increased by 3 if the target lacks a harvestable head.",
   "wardance.rupture.name": "Rupture",
@@ -292,13 +293,13 @@
   "archetype.grapple.name": "Grapple",
   "archetype.grapple.desc": "{Holster cast; ITALIC; wardance.skill.holster_cast.desc}. Recharge after 7 attacks, costs 1 spirit. \nStuns caused by this skill are upgraded to {knockdowns; GRAY}.",
   "wardance.throw.name": "Throw",
-  "wardance.throw.desc": "Land two unarmed strikes on the same target within 2 seconds to throw them off balance for {7; UNDERLINE; Multiplied by your skill effectiveness attribute squared.} posture damage. \nSuccessfully stunning the target will immediately refresh this skill and cause you to pick up the target until their knockdown ends. \n{Bound Cast; ITALIC; wardance.skill.bound_cast.desc}: while carrying any entity, instead {throws;AQUA} them towards where you are looking. Should they hit a {wall;GOLD}, deal {10; UNDERLINE; Multiplied by your skill effectiveness attribute squared.} falling block damage. If they collide with an entity, deal {7; UNDERLINE; Multiplied by your skill effectiveness attribute squared.} posture damage and {3; UNDERLINE; Multiplied by your skill effectiveness attribute squared.} falling block damage to the collided entity as well.",
+  "wardance.throw.desc": "Land two unarmed strikes on the same target within 2 seconds to throw them off balance for {7; UNDERLINE; Multiplied by your skill effectiveness attribute squared.} posture damage. \nSuccessfully stunning the target will immediately refresh this skill and cause you to pick up the target until their knockdown ends. \n{Bound Cast; ITALIC; wardance.skill.bound_cast.desc}: \nwhile not carrying any entity, pick up a sneaking player or any stunned entity until they recover or stop sneaking.\nwhile carrying any entity, instead {throws;AQUA} them towards where you are looking. Should they hit a {wall;GOLD}, deal {10; UNDERLINE; Multiplied by your skill effectiveness attribute squared.} falling block damage. If they collide with an entity, deal {7; UNDERLINE; Multiplied by your skill effectiveness attribute squared.} posture damage and {3; UNDERLINE; Multiplied by your skill effectiveness attribute squared.} falling block damage to the collided entity as well.",
   "wardance.suplex.name": "Suplex",
   "wardance.suplex.desc": "Land two unarmed strikes on the same target within 2 seconds to grab and brutally slam the target behind you for {high posture damage; UNDERLINE; equal to 150% of your current posture}.\nIf the target is stunned by this attack, inflict an extra fracture. The immense force generates a shockwave that deals {posture damage; UNDERLINE; equal to half of the overflow damage} to all {enemies; ITALIC; wardance.skill.enemies} in a {7; UNDERLINE; wardance.skill.enhancement.default} block radius.\n{This also consumes almost all of your own posture.; RED}",
   "wardance.submission.name": "Submission",
   "wardance.submission.desc": "Land two unarmed strikes on the same target within 2 seconds to throw them off balance for {7; UNDERLINE; wardance.skill.enhancement.default} posture damage. \nAdditionally leeches {posture; UNDERLINE; equal to 25% of your current armor multiplied by your skill effectiveness attribute} from the target. If the target is stunned, refund 1 spirit.",
   "wardance.cursed_palms.name": "Cursed Palms",
-  "wardance.cursed_palms.desc": "Land two unarmed strikes on the same target within 2 seconds to throw them off balance for {7; UNDERLINE; wardance.skill.enhancement.default} posture damage. \nSuccessfully stunning the target with this attack will cause them to emit a lingering cloud of every {negative effect;LIGHT_PURPLE, UNDERLINE; this cloud has a base radius of 5 and lasts 7 seconds with no shrinking, modified by the skill effectiveness attribute} they are afflicted with.",
+  "wardance.cursed_palms.desc": "Land two unarmed strikes on the same target within 2 seconds to throw them off balance for {7; UNDERLINE; Multiplied by your skill effectiveness attribute squared.} posture damage. \nSuccessfully stunning the target will immediately refresh this skill and cause you to pick up the target until their knockdown ends. \n{Bound Cast; ITALIC; wardance.skill.bound_cast.desc}: \nwhile not carrying any entity, pick up a sneaking player or any stunned entity until they recover or stop sneaking.\nwhile carrying any entity, instead {throws;AQUA} them towards where you are looking. Upon impact, they gain nausea and emit a lingering cloud of every {negative effect;LIGHT_PURPLE, UNDERLINE; this cloud has a base radius of 5 and lasts 7 seconds with no shrinking, modified by the skill effectiveness attribute} they are afflicted with.",
   "wardance.wrestle.name": "Wrestle",
   "wardance.wrestle.desc": "{Bound Cast; ITALIC; wardance.skill.bound_cast.desc}. Consume 1 might and 2 spirit to pin down a target in range 3 while unarmed in both hands, {marking; ITALIC; wardance.skill.mark.desc} them with {10; UNDERLINE; wardance.skill.enhancement.default} charges. \nWhile {marked; ITALIC; wardance.skill.mark.desc}, targets suffer from 30% {reduced attack speed;DARK_AQUA}, 20% {extra posture damage;DARK_AQUA}, will be {pulled; DARK_AQUA} towards the caster if they try to escape a 2 block radius, and will always be {knocked down if stunned;DARK_AQUA}. \n1 charge is consumed each time whenever the target deals damage or is dealt damage. If it successfully deals damage to you, {2 additional charges are reduced;RED}. \nThe {mark; ITALIC; wardance.skill.mark.desc} ends if charges run out, you swap to a non-unarmed item, or after 10 seconds. After this, it has another 10 seconds of cooldown.",
   "archetype.shield_bash.name": "Shield Bash",

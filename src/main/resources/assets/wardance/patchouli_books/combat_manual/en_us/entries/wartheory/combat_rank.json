@@ -15,11 +15,11 @@
     },
     {
       "type": "patchouli:text",
-      "text": "$(#FF3333)Rank$() or sometimes referred to by people as \"combo\" is a combat ranking system that improves your abilities slightly as you fight well. At a simple level, rank increases when might increases, with each point worth of rank increasing the displayed letter. The final SS rank costs 2 levels worth of rank to gain, while to fill triple SSS it requires 3 bars.$(br2) Rank is further increased by small amounts related to the consumption of spirit and might for skills while also increasing whenever you $(l:footwork:selfdefense/fracture0)fracture$() or defeat an enemy. The harder the fracture the more is gained." 
+      "text": "$(#FF3333)Rank$(), occasionally referred to as \"combo\", is a combat ranking system that improves your abilities slightly as you fight well. At a simple level, rank increases when might increases, with each point worth of rank increasing the displayed letter. The SS rank costs 2 levels worth of rank to gain, while the triple SSS requires 3 bars.$(br2) Rank is further increased by small amounts whenever you consume might or spirit, $(l:footwork:selfdefense/fracture0)fracture,$() or defeat an enemy."
     },
     {
       "type": "patchouli:text",
-      "text": "As rank increases you gain an \"adrenaline\" hidden adrenaline buff that gives you small amounts of movement and attack speed as each rank increases. When taking damage this bonus is halved temporarily.  When you might has decayed from being out of combat rank will rapidly drop back down to empty again if not maintained." 
+      "text": "As rank increases you gain a stacking \"adrenaline\" buff that gives you small amounts of movement speed, attack speed, heal multiplier, and (at high rank) looting levels. When taking damage this bonus is canceled temporarily.  Rank will rapidly drop back down to D when your might is reduced to 0."
     }
   ]
 }

@@ -15,15 +15,15 @@
     },
     {
       "type": "patchouli:text",
-      "text": ". $(br)Typically the first danger state which occurs with a fracture is simply being $(#CCCC00)stunned$(). This is denoted by crit sparkles flying above the afflicted's head. $(br2)In this state, until a configurable amount of seconds elapses $(o)(usually a second or two)$() a combatant is drastically slowed and has both hands bound. This hit depending on configurations can also have amplified percentage damage."
+      "text": ". $(br)Typically the first danger state which occurs with a fracture is simply being $(#CCCC00)stunned$(). This is denoted by crit sparkles flying above the afflicted's head. $(br2)In this state, until a configurable amount of seconds elapses $(o)(usually a second or two)$() a combatant is drastically slowed and has both hands bound. A stunned hit, depending on configurations, can also have amplified percentage damage."
     },
     {
       "type": "patchouli:text",
-      "text": "Until the time of a stun elapses the combatant cannot take anymore posture damage until their greyed out posture bar refills over this period. But the effects of the slow and bind will be dispelled when hit allowing resumption of normal movement.$(br2)When becoming stunned most mobs $(o)(mostly up to how they are coded)$() might have their AI interrupted and be unable to act or have their current actions canceled or muddled."
+      "text": "Until the time of a stun elapses, the combatant cannot take any posture damage. This is indicated by their greyed out posture bar refills over this period. The slow and bind will be dispelled when hit allowing resumption of normal movement.$(br2)When becoming stunned, mobs will $(o)(usually)$() stop moving, attacking, or performing other similar actions."
     },
     {
       "type": "patchouli:text",
-      "text": "On the hud, being stunned is represented by the a trio of stars in the center of the posture widget. Before becoming a broken shield while they are recovering and immune to further posture damage."
+      "text": "On the hud, being stunned is represented by the a trio of stars in the center of the posture widget. A broken shield while recovering indicates immunity to further posture damage."
     }
   ]
 }

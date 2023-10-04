@@ -35,17 +35,21 @@ public class TooltipUtils {
             String part = string.substring(start + 1, end - 1);
             String[] parted = part.split(";");
             String display = parted[0].trim();
-            String[] rawFormatting = parted[1].trim().split(",");
+            String[] rawFormatting=new String[1];
+            ArrayList<ChatFormatting> formatting = new ArrayList<>();
             String tooltip = "";
             String[] additionalData = {""};
-            //grab the tooltip description
-            if (parted.length > 2) tooltip = parted[2].trim();
-            //additional tooltip formatting
-            if (parted.length > 3) additionalData = parted[3].trim().split(",");
-            ArrayList<ChatFormatting> formatting = new ArrayList<>();
-            for (String raw : rawFormatting) {
-                ChatFormatting cf = ChatFormatting.getByName(raw.trim());
-                if (cf != null) formatting.add(cf);
+
+            if(parted.length>1) {
+                rawFormatting= parted[1].trim().split(",");
+                //grab the tooltip description
+                if (parted.length > 2) tooltip = parted[2].trim();
+                //additional tooltip formatting
+                if (parted.length > 3) additionalData = parted[3].trim().split(",");
+                for (String raw : rawFormatting) {
+                    ChatFormatting cf = ChatFormatting.getByName(raw.trim());
+                    if (cf != null) formatting.add(cf);
+                }
             }
             ChatFormatting[] fff = new ChatFormatting[formatting.size()];
             //build tooltip text

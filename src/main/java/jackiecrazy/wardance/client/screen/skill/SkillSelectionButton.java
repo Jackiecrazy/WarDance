@@ -59,7 +59,7 @@ public abstract class SkillSelectionButton extends ImageButton {
         return parent.selectedSkill == null ? null : parent.selectedSkill.getSkill();
     }
 
-    SkillStyle getStyle() {
+    public SkillStyle getStyle() {
         return getSkill() instanceof SkillStyle sss ? sss : null;
     }
 

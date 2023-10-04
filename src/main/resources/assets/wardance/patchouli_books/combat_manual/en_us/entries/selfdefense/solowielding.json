@@ -1,5 +1,5 @@
 {
-  "name": "Solowielding",
+  "name": "Two-handing",
   "icon": "minecraft:iron_sword",
   "category": "footwork:selfdefense",
   "sortnum": 9,
@@ -11,15 +11,15 @@
 	  ],
 	  "border": true,
       "text": "Overcompensation in the best possible way.",
-	  "title": "Solo-wielding"
+	  "title": "Two-handing"
     },
     {
       "type": "patchouli:text",
-      "text": "However some large weapons, particularly those from mods might be considered twohanded.$(br)Twohanded weapons $(thing)$(l:footwork:selfdefense/binding)bind$() your offhand when wielded, they are typically large weapons with large sweep radiuses and heavy posture damage.$(br2)However most weapons also come with a \"twohanding bonus\" which is engaged when a weapon is wielded with nothing in your offhand. $(o)(which naturally means twohanded weapons will always usually benefit from this)$()" 
+      "text": "However some large weapons, particularly those from mods might be considered two-handed.$(br)Two-handed weapons $(thing)$(l:footwork:selfdefense/binding)bind$() your offhand when wielded; they are typically large weapons with large sweeps and heavy posture damage.$(br2)Most weapons also come with a \"two-handing bonus\", which is engaged when a weapon is wielded without an active shield in your offhand. $(o)(of course, this means two-handed weapons will almost always benefit from this)$()"
     },
     {
       "type": "patchouli:text",
-      "text": "A weapon can have it's twohanded bonuses checked by holding ALT while browsing a weapon's tooltips. It varies from different types and sizes of weapons. But generally confers some level of bonus damage and attack rate and maybe a hint of reach with a bonus to certain resources. $(br2)Most similar weapons of a class type $(o)(hammers, axes, katanas, swords etc)$() will typically share a similar twohanding bonus." 
+      "text": "A weapon can have its twohanded bonuses checked by holding ALT while browsing a weapon's tooltips. It varies between different types and sizes of weapons, but generally confers a sizeable helping of useful attributes. $(br2)Most similar weapons of a class type $(o)(hammers, axes, katanas, spears, etc.)$() will share the same two-handing bonus."
     }
   ]
 }

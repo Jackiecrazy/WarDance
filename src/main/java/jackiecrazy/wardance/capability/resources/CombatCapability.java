@@ -23,7 +23,6 @@ import net.minecraft.util.Mth;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.effect.MobEffects;
-import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.Pose;
 import net.minecraft.world.entity.ai.attributes.AttributeInstance;
@@ -95,7 +94,7 @@ public class CombatCapability implements ICombatCapability {
         if (GeneralUtils.getResourceLocationFromEntity(elb) != null && MobSpecs.mobMap.containsKey(elb.getType()))
             return (float) MobSpecs.mobMap.get(elb.getType()).getMaxPosture();
         else ret = (float) (Math.ceil(10 / 1.09 * Math.sqrt(elb.getBbWidth() * elb.getBbHeight())));
-        if (!(elb instanceof Player)) ret *= 1.5;//heuheuheu
+        //if (!(elb instanceof Player)) ret *= 1.5;//a bit too rough
         return ret;
     }
 
@@ -308,9 +307,9 @@ public class CombatCapability implements ICombatCapability {
                     CombatData.getCap(assailant).addRank(se.isKnockdown() ? 0.2f : 0.1f);
                 elb.level.playSound(null, elb.getX(), elb.getY(), elb.getZ(), SoundEvents.ZOMBIE_ATTACK_WOODEN_DOOR, SoundSource.PLAYERS, 0.3f + WarDance.rand.nextFloat() * 0.5f, 0.75f + WarDance.rand.nextFloat() * 0.5f);
             }
-            elb.stopRiding();
-            for (Entity rider : elb.getPassengers())
-                rider.stopRiding();
+//            elb.stopRiding();
+//            for (Entity rider : elb.getPassengers())
+//                rider.stopRiding();
             staggerTickExisted = elb.tickCount;
             //returns overflow
             return ret;
@@ -700,7 +699,6 @@ public class CombatCapability implements ICombatCapability {
         final boolean uninitializedPosture = elb.getAttribute(FootworkAttributes.MAX_POSTURE.get()).getBaseValue() == 0d;
         final boolean uninitializedFracture = elb.getAttribute(FootworkAttributes.MAX_FRACTURE.get()).getBaseValue() == 0d;
         if (uninitializedPosture || uninitializedFracture) {
-            float effectiveMaxPosture = elb.getMaxHealth() / 2;
             final float mPos = getMPos(elb);
             if (uninitializedPosture) {//ew
                 elb.getAttribute(FootworkAttributes.MAX_POSTURE.get()).setBaseValue(mPos);
@@ -712,10 +710,11 @@ public class CombatCapability implements ICombatCapability {
                 setPosture(getMaxPosture());
             }
             if (uninitializedFracture) {//ew
+                double fracs = Math.log(elb.getMaxHealth())-1;
                 if (elb instanceof Player)
                     elb.getAttribute(FootworkAttributes.MAX_FRACTURE.get()).setBaseValue(3);
                 else
-                    elb.getAttribute(FootworkAttributes.MAX_FRACTURE.get()).setBaseValue(Mth.clamp(Math.floor(effectiveMaxPosture / mPos), 1, 5));
+                    elb.getAttribute(FootworkAttributes.MAX_FRACTURE.get()).setBaseValue(Math.floor(fracs));
             }
         }
         //update max values

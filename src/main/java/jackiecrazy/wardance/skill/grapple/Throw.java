@@ -8,7 +8,6 @@ import jackiecrazy.footwork.utils.GeneralUtils;
 import jackiecrazy.footwork.utils.ParticleUtils;
 import jackiecrazy.wardance.WarDance;
 import jackiecrazy.wardance.capability.skill.CasterData;
-import jackiecrazy.wardance.config.CombatConfig;
 import jackiecrazy.wardance.skill.SkillData;
 import jackiecrazy.wardance.utils.DamageUtils;
 import jackiecrazy.wardance.utils.SkillUtils;
@@ -18,9 +17,11 @@ import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.event.entity.living.LivingAttackEvent;
 import net.minecraftforge.eventbus.api.Event;
 import net.minecraftforge.eventbus.api.EventPriority;
+import org.jetbrains.annotations.Nullable;
 
 public class Throw extends Grapple {
 
@@ -34,7 +35,10 @@ public class Throw extends Grapple {
     public void onProc(LivingEntity caster, Event procPoint, STATE state, SkillData stats, LivingEntity target) {
         if (state == STATE.HOLSTERED && isUnarmed(caster)) {
             if (procPoint instanceof LivingAttackEvent lae && lae.getEntity() != caster && DamageUtils.isMeleeAttack(lae.getSource()) && procPoint.getPhase() == EventPriority.HIGHEST) {
+                if (caster.getFirstPassenger() != null)
+                    lae.setCanceled(true);
                 if (stats.isCondition() && caster.getLastHurtMob() == target && caster.tickCount - caster.getLastHurtMobTimestamp() < 40 && cast(caster, target, 10)) {
+                    ParticleUtils.playSweepParticle(FootworkParticles.IMPACT.get(), caster, caster.position(), 0, 1, getColor(), 0);
                     performEffect(caster, target, stats);
                 } else {
                     stats.flagCondition(true);
@@ -49,22 +53,25 @@ public class Throw extends Grapple {
     @Override
     public boolean onStateChange(LivingEntity caster, SkillData prev, STATE from, STATE to) {
         if (to == STATE.ACTIVE) {
-            if (prev.getDuration() > 0 && cast(caster)) {
+            if (caster.getFirstPassenger() != null && cast(caster)) {
                 //yeet!
-                Entity yeet = caster.level.getEntity((int) prev.getDuration());
+                Entity yeet = caster.getFirstPassenger();//caster.level.getEntity((int) prev.getDuration());
                 if (yeet != null) {
-                    Entity rider=yeet.getVehicle();
+                    Entity rider = yeet.getVehicle();
                     yeet.stopRiding();
-                    yeet.setPos(caster.getPosition(0.5f).add(0,+caster.getBbHeight()+0.5f, 0));
-                    if (caster instanceof ServerPlayer p && rider!=null)
+                    yeet.setPos(caster.getPosition(0.5f).add(0, +caster.getBbHeight() + 0.5f, 0));
+                    if (caster instanceof ServerPlayer p && rider != null)
                         p.connection.send(new ClientboundSetPassengersPacket(rider));
-                    yeet.setDeltaMovement(caster.getLookAngle().scale(1.5));
+                    yeet.setDeltaMovement(caster.getLookAngle().scale(1.5 * prev.getEffectiveness()));
                     yeet.hurtMarked = true;
                     if (yeet instanceof LivingEntity e) mark(caster, e, 5, 0, true);
                 }
-            } else if (SkillUtils.aimLiving(caster).isShiftKeyDown()) {
-                //auto pickup for friendly throw
-                mark(caster, SkillUtils.aimLiving(caster), CombatConfig.knockdownDuration / 2f, SkillUtils.getSkillEffectiveness(caster));
+            } else {
+                LivingEntity le = SkillUtils.aimLiving(caster);
+                if (le != null && (le.isShiftKeyDown() || CombatData.getCap(le).isVulnerable())) {
+                    //auto pickup for friendly throw
+                    mark(caster, le, 100, SkillUtils.getSkillEffectiveness(caster));
+                }
             }
         }
         if (to == STATE.COOLING) {
@@ -80,17 +87,12 @@ public class Throw extends Grapple {
         caster.level.playSound(null, target.getX(), target.getY(), target.getZ(), SoundEvents.BARREL_OPEN, SoundSource.PLAYERS, 0.3f + WarDance.rand.nextFloat() * 0.5f, 0.75f + WarDance.rand.nextFloat() * 0.5f);
         if (CombatData.getCap(target).consumePosture(caster, 7 * stats.getEffectiveness(), 0, true) < 0 || CombatData.getCap(target).isVulnerable()) {
             stats.setDuration(target.getId());
-            target.startRiding(caster, true);
-            if (caster instanceof ServerPlayer p)
-                p.connection.send(new ClientboundSetPassengersPacket(caster));
-            ParticleUtils.playSweepParticle(FootworkParticles.IMPACT.get(), caster, caster.position(), 0, 1, getColor(), 0);
-            mark(caster, target, CombatConfig.knockdownDuration / 2f, stats.getEffectiveness());
-            stats.setState(STATE.HOLSTERED);
+            mark(caster, target, 100, stats.getEffectiveness());
             stats.flagCondition(true);
         } else {
             stats.flagCondition(false);
-            markUsed(caster);
         }
+        markUsed(caster);
     }
 
     @Override
@@ -99,24 +101,54 @@ public class Throw extends Grapple {
         Entity collide = GeneralUtils.collidingEntity(target);
         if (sd.isCondition() && (target.horizontalCollision || target.verticalCollision || collide != null)) {
             removeMark(target);
-            if (caster != null) {
-                target.hurt(new CombatDamageSource("fallingBlock", caster).setDamageTyping(CombatDamageSource.TYPE.PHYSICAL).setProcSkillEffects(true).setSkillUsed(this).setProcAttackEffects(true), 10 * sd.getArbitraryFloat() * sd.getArbitraryFloat());
-                if (collide instanceof LivingEntity elb) {
-                    CombatData.getCap(elb).consumePosture(caster, 7 * sd.getArbitraryFloat() * sd.getArbitraryFloat());
-                    elb.hurt(new CombatDamageSource("fallingBlock", caster).setDamageTyping(CombatDamageSource.TYPE.PHYSICAL).setProcSkillEffects(true).setSkillUsed(this).setProcAttackEffects(true), 3 * sd.getArbitraryFloat() * sd.getArbitraryFloat());
-                }
+            if (collide != null) {
+                collide.setDeltaMovement(target.getDeltaMovement());
+                collide.hurtMarked = true;
             }
+            target.setDeltaMovement(Vec3.ZERO);
+            target.hurtMarked = true;
+            targetCollision(caster, target, sd, collide);
         }
         if (!sd.isCondition()) {
             if (!CombatData.getCap(target).isVulnerable() && !target.isShiftKeyDown()) {
                 removeMark(target);
                 setCooldown(caster, CasterData.getCap(caster).getSkillData(this).get(), 7);
-            }else SkillUtils.updateTetheringVelocity(caster, target, 2);
+            }
         }
         return super.markTick(caster, target, sd);
     }
 
+    protected void targetCollision(LivingEntity caster, LivingEntity target, SkillData sd, Entity collide) {
+        if (caster != null) {
+            target.hurt(new CombatDamageSource("fallingBlock", caster).setDamageTyping(CombatDamageSource.TYPE.PHYSICAL).setProcSkillEffects(true).setSkillUsed(this).setProcAttackEffects(true), 10 * sd.getArbitraryFloat() * sd.getArbitraryFloat());
+            if (collide instanceof LivingEntity elb) {
+                CombatData.getCap(elb).consumePosture(caster, 7 * sd.getArbitraryFloat() * sd.getArbitraryFloat());
+                elb.hurt(new CombatDamageSource("fallingBlock", caster).setDamageTyping(CombatDamageSource.TYPE.PHYSICAL).setProcSkillEffects(true).setSkillUsed(this).setProcAttackEffects(true), 3 * sd.getArbitraryFloat() * sd.getArbitraryFloat());
+            }
+        }
+    }
+
+    @Nullable
+    @Override
+    public SkillData onMarked(LivingEntity caster, LivingEntity target, SkillData sd, @Nullable SkillData existing) {
+        if (!sd.isCondition()) {
+            target.startRiding(caster, true);
+            if (caster instanceof ServerPlayer p)
+                p.connection.send(new ClientboundSetPassengersPacket(caster));
+        }
+        return super.onMarked(caster, target, sd, existing);
+    }
+
     @Override
     public void onMarkEnd(LivingEntity caster, LivingEntity target, SkillData sd) {
+        target.stopRiding();
+        if (caster instanceof ServerPlayer p)
+            p.connection.send(new ClientboundSetPassengersPacket(caster));
+
+    }
+
+    @Override
+    public boolean showsMark(SkillData mark, LivingEntity target) {
+        return false;
     }
 }

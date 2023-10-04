@@ -80,7 +80,6 @@ public class WeaponStats extends SimpleJsonResourceReloadListener {
     }
 
     public static void clientWeaponOverride(Map<Item, MeleeInfo> server) {
-        //FIXME this does not do what you think it does! The object is static so it will retain bogus client data!
         combatList.putAll(server);
     }
 
@@ -327,7 +326,6 @@ public class WeaponStats extends SimpleJsonResourceReloadListener {
         // (posture) damage scaling,
         // force crit,
         // crit damage
-        //TODO can we build output/ grab libs from a central symlinked folder?
         private double knockback = 1;
         private double damage_scale = 1;
         private double posture_scale = 1;

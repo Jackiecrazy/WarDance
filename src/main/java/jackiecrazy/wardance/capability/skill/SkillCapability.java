@@ -64,7 +64,7 @@ public class SkillCapability implements ISkillCapability {
         final LivingEntity bruv = dude.get();
         if (bruv != null && s != null) {
             for (Skill skill : getEquippedSkills()) {
-                if (skill != null && !skill.isEquippableWith(s, bruv)) return false;//fixme breaks skill selection screen
+                if (skill != null && !skill.isEquippableWith(s, bruv)) return false;
             }
         }
         return true;

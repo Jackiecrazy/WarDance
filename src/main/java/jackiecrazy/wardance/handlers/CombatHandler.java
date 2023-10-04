@@ -11,6 +11,7 @@ import jackiecrazy.footwork.utils.StealthUtils;
 import jackiecrazy.wardance.WarDance;
 import jackiecrazy.wardance.capability.action.PermissionData;
 import jackiecrazy.wardance.config.*;
+import jackiecrazy.wardance.event.ExposeAttackEvent;
 import jackiecrazy.wardance.event.ParryEvent;
 import jackiecrazy.wardance.event.ProjectileParryEvent;
 import jackiecrazy.wardance.mixin.ProjectileImpactMixin;
@@ -125,7 +126,7 @@ public class CombatHandler {
                 if (((Projectile) projectile).getOwner() == uke) return;
                 a = StealthUtils.INSTANCE.getAwareness((LivingEntity) ((Projectile) projectile).getOwner(), uke);
             }
-            boolean canParry = GeneralUtils.isFacingEntity(uke, projectile, 90);
+            boolean canParry = GeneralUtils.isFacingEntity(uke, projectile, 90, 140);
             boolean force = false;
             if (a != StealthUtils.Awareness.UNAWARE && MobSpecs.mobMap.containsKey(uke.getType())) {
                 MobSpecs.MobInfo stats = MobSpecs.mobMap.get(uke.getType());
@@ -282,7 +283,7 @@ public class CombatHandler {
                 boolean failManualParry = CombatConfig.parryTime > 0 && (ukeCap.getParryingTick() > uke.tickCount || ukeCap.getParryingTick() + CombatConfig.parryTime < uke.tickCount);
                 failManualParry |= CombatConfig.parryTime < 0 && ukeCap.getParryingTick() == -1;
                 failManualParry &= uke instanceof Player;
-                boolean canParry = GeneralUtils.isFacingEntity(uke, seme, 90);
+                boolean canParry = GeneralUtils.isFacingEntity(uke, seme, 90, 140);
 
                 //boolean useDeflect = (uke instanceof Player || WarDance.rand.nextFloat() < CombatConfig.mobDeflectChance) && GeneralUtils.isFacingEntity(uke, seme, 120 + 2 * (int) GeneralUtils.getAttributeValueSafe(uke, FootworkAttributes.DEFLECTION.get())) && !GeneralUtils.isFacingEntity(uke, seme, 120) && !canParry;
                 //staggered, no parry
@@ -537,7 +538,9 @@ public class CombatHandler {
                     e.setAmount(e.getAmount() * CombatConfig.exposeDamage);
                     if (DamageUtils.isMeleeAttack(ds)) {
                         //expose, add 10% max health damage
-                        e.setAmount(e.getAmount() + uke.getMaxHealth() * 0.1f);
+                        ExposeAttackEvent eae=new ExposeAttackEvent(kek, e.getSource(), uke);
+                        MinecraftForge.EVENT_BUS.post(eae);
+                        e.setAmount(e.getAmount() + eae.getAmount());
                         e.getSource().bypassArmor().bypassEnchantments().bypassMagic();
                         //fatality!
                         if (ds.getEntity() instanceof LivingEntity seme) {

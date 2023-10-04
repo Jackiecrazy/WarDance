@@ -3,6 +3,7 @@ package jackiecrazy.wardance.skill.grapple;
 import jackiecrazy.footwork.capability.resources.CombatData;
 import jackiecrazy.footwork.capability.resources.ICombatCapability;
 import jackiecrazy.footwork.client.particle.FootworkParticles;
+import jackiecrazy.footwork.event.StunEvent;
 import jackiecrazy.footwork.potion.FootworkEffects;
 import jackiecrazy.footwork.utils.ParticleUtils;
 import jackiecrazy.footwork.utils.TargetingUtils;
@@ -49,8 +50,8 @@ public class Grapple extends Skill {
 
     @Override
     public void onProc(LivingEntity caster, Event procPoint, STATE state, SkillData stats, LivingEntity target) {
-        if (procPoint instanceof LivingAttackEvent la && la.getEntity() == target && DamageUtils.isMeleeAttack(la.getSource()) && procPoint.getPhase() == EventPriority.HIGHEST) {
-            if (state == STATE.HOLSTERED && isUnarmed(caster)) {
+        if (state == STATE.HOLSTERED && isUnarmed(caster)) {
+            if (procPoint instanceof LivingAttackEvent la && la.getEntity() == target && DamageUtils.isMeleeAttack(la.getSource()) && procPoint.getPhase() == EventPriority.HIGHEST) {
                 if (stats.isCondition() && caster.getLastHurtMob() == target && caster.tickCount - caster.getLastHurtMobTimestamp() < 40 && cast(caster, target, -999)) {
                     performEffect(caster, target, stats);
                 } else {
@@ -58,7 +59,8 @@ public class Grapple extends Skill {
                     stats.flagCondition(true);
                     caster.setLastHurtMob(target);
                 }
-            }
+            } else if (procPoint instanceof StunEvent se && se.getEntity() == target && se.getPhase() == EventPriority.LOWEST)
+                performEffect(caster, target, stats);
         }
         attackCooldown(procPoint, caster, stats);
     }
@@ -80,23 +82,6 @@ public class Grapple extends Skill {
 
     protected boolean isUnarmed(LivingEntity caster) {
         return WeaponStats.isUnarmed(caster.getMainHandItem(), caster);
-    }
-
-    public static class ReverseGrip extends Grapple {
-
-        @Override
-        public boolean onStateChange(LivingEntity caster, SkillData prev, STATE from, STATE to) {
-            if (to == STATE.COOLING) {
-                setCooldown(caster, prev, 9);
-            }
-            prev.flagCondition(false);
-            return boundCast(prev, from, to);
-        }
-
-        @Override
-        protected boolean isUnarmed(LivingEntity caster) {
-            return true;
-        }
     }
 
     public static class Suplex extends Grapple {
