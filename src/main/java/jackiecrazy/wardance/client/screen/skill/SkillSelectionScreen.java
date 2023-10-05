@@ -500,7 +500,7 @@ public class SkillSelectionScreen extends Screen {
         @Override
         public int getContentHeight() {
             int height = 0;
-            height += (lines.size() * font.lineHeight);
+            height += (lines.size() * (font.lineHeight+2));
             if (height < this.bottom - this.top - 8) height = this.bottom - this.top - 8;
             return height;
         }
@@ -532,13 +532,13 @@ public class SkillSelectionScreen extends Screen {
                     //RenderSystem.disableAlphaTest();
                     RenderSystem.disableBlend();
                 }
-                relativeY += font.lineHeight;
+                relativeY += font.lineHeight + 2;
             }
         }
 
         @Override
         protected int getScrollAmount() {
-            return font.lineHeight * 3;
+            return (font.lineHeight+2) * 3;
         }
 
         @Override
@@ -569,7 +569,7 @@ public class SkillSelectionScreen extends Screen {
             }
             if (offset <= 0 || xoff < 1) return null;
 
-            int lineIdx = (int) (offset / font.lineHeight);
+            int lineIdx = (int) (offset / (font.lineHeight+2));
             if (lineIdx >= lines.size() || lineIdx < 1)
                 return null;
 
