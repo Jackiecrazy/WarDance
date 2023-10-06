@@ -76,7 +76,7 @@ public class SkillUtils {
             areaeffectcloudentity.setOwner((LivingEntity) entityIn);
         areaeffectcloudentity.setParticle(type);
         areaeffectcloudentity.setRadius(size);
-        areaeffectcloudentity.setDuration(0);
+        areaeffectcloudentity.setDuration(1);
         world.addFreshEntity(areaeffectcloudentity);
     }
 

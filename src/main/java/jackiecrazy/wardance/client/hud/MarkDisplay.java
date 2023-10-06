@@ -9,9 +9,7 @@ import jackiecrazy.wardance.capability.status.Marks;
 import jackiecrazy.wardance.client.RenderUtils;
 import jackiecrazy.wardance.config.ClientConfig;
 import jackiecrazy.wardance.skill.Skill;
-import jackiecrazy.wardance.skill.SkillArchetypes;
 import jackiecrazy.wardance.skill.SkillData;
-import jackiecrazy.wardance.skill.coupdegrace.CoupDeGrace;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiComponent;
 import net.minecraft.world.entity.Entity;
@@ -60,17 +58,14 @@ public class MarkDisplay implements IGuiOverlay {
             }
         }
         Entity look = RenderUtils.getEntityLookedAt(player, 32);
-        if (look instanceof LivingEntity) {
-            LivingEntity looked = (LivingEntity) look;
+        if (look instanceof LivingEntity looked) {
             List<SkillData> afflict = new ArrayList<>();
             final ISkillCapability skill = CasterData.getCap(player);
             if (ClientConfig.CONFIG.enemyAfflict.enabled) {
-                //coup de grace
-                for (Skill variant : skill.getEquippedVariations(SkillArchetypes.coup_de_grace))
-                    if (look != player && variant instanceof CoupDeGrace cdg && skill.isSkillUsable(variant)) {
-                        if (cdg.willKillOnCast(player, looked, skill.getSkillData(variant).orElse(SkillData.DUMMY))) {
-                            afflict.add(new SkillData(cdg, 0, 0));
-                        }
+                //fake marks
+                for (Skill s : skill.getEquippedSkillsAndStyle())
+                    if (s!=null&&look != player && s.fakeMark(mc.player, looked, skill.getSkillData(s).orElse(SkillData.DUMMY))) {
+                        afflict.add(new SkillData(s, 0, 0));
                     }
                 //marks
                 afflict.addAll(Marks.getCap(looked).getActiveMarks().values().stream().filter(a -> a.getSkill().showsMark(a, looked)).collect(Collectors.toList()));

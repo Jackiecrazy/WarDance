@@ -164,6 +164,11 @@ public class CoupDeGrace extends Skill {
         }
     }
 
+    @Override
+    public boolean fakeMark(LivingEntity caster, LivingEntity target, SkillData stats) {
+        return willKillOnCast(caster, target, stats);
+    }
+
     public static class ReapersLaugh extends CoupDeGrace {
         private final HashSet<String> tag = (new HashSet<>(Arrays.asList("physical", ProcPoints.melee, ProcPoints.change_awareness, ProcPoints.on_hurt, ProcPoints.recharge_cast, ProcPoints.change_parry_result, "execution")));
         private final HashSet<String> tague = (new HashSet<>(Arrays.asList(SkillTags.special, SkillTags.offensive)));

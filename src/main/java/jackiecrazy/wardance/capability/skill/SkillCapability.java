@@ -55,22 +55,6 @@ public class SkillCapability implements ISkillCapability {
         return true;
     }
 
-    /**
-     * split from isSkillSelectable to prevent bugs
-     * @param s
-     * @return
-     */
-    private boolean isSkillEquippable(Skill s){
-        final LivingEntity bruv = dude.get();
-        if (bruv != null && s != null) {
-            for (Skill skill : getEquippedSkills()) {
-                if (skill != null && !skill.isEquippableWith(s, bruv)) return false;
-            }
-        }
-        return true;
-    }
-
-
     @Override
     public void setSkillSelectable(Skill s, boolean selectable) {
         if (s == null) return;
@@ -94,7 +78,8 @@ public class SkillCapability implements ISkillCapability {
     @Override
     public Optional<SkillData> getSkillData(Skill s) {
         if (s == null) return Optional.empty();//this occasionally happens and should not happen
-        return Optional.ofNullable(data.get(s));
+        if (!isSkillEquipped(s)) return Optional.empty();//todo does this break anything?
+        return Optional.of(nonNullGet(s));
     }
 
     @Override
@@ -156,7 +141,7 @@ public class SkillCapability implements ISkillCapability {
     @Override
     public void setStyle(SkillStyle style) {
         if (!isSkillSelectable(style)) return;
-        if(!isSkillEquippable(style))return;
+        if (!isSkillEquippable(style)) return;
         if (this.style != null) this.style.onUnequip(dude.get(), nonNullGet(style));
         this.style = style;
         if (style != null) style.onEquip(dude.get());
@@ -372,6 +357,22 @@ public class SkillCapability implements ISkillCapability {
     @Override
     public Skill[] getPastCasts() {
         return lastCast.toArray(new Skill[5]);
+    }
+
+    /**
+     * split from isSkillSelectable to prevent bugs
+     *
+     * @param s
+     * @return
+     */
+    private boolean isSkillEquippable(Skill s) {
+        final LivingEntity bruv = dude.get();
+        if (bruv != null && s != null) {
+            for (Skill skill : getEquippedSkills()) {
+                if (skill != null && !skill.isEquippableWith(s, bruv)) return false;
+            }
+        }
+        return true;
     }
 
     private boolean basicSanityCheck(Skill insert) {

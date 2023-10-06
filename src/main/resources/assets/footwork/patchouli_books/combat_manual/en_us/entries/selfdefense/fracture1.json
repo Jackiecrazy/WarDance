@@ -1,0 +1,29 @@
+{
+  "name": "Fractures [1]: Stun",
+  "icon": "minecraft:crying_obsidian",
+  "category": "footwork:selfdefense",
+  "sortnum": 5,
+  "pages": [
+    {
+      "type": "patchouli:image",
+	  "images": [
+	  "footwork:textures/guide/stunned_husk.png"
+	  ],
+	  "border": true,
+      "text": "A husk in a stunned state with a high number of fractures. He's not gonna last much longer.",
+	  "title": "Fractures [1]: Stun"
+    },
+    {
+      "type": "patchouli:text",
+      "text": ". $(br)Typically the first danger state which occurs with a fracture is simply being $(#CCCC00)stunned$(). This is denoted by crit sparkles flying above the afflicted's head. $(br2)In this state, until a configurable amount of seconds elapses $(o)(usually a second or two)$() a combatant is drastically slowed and has both hands bound. A stunned hit, depending on configurations, can also have amplified percentage damage."
+    },
+    {
+      "type": "patchouli:text",
+      "text": "Until the time of a stun elapses, the combatant cannot take any posture damage. This is indicated by their greyed out posture bar refills over this period. The slow and bind will be dispelled when hit allowing resumption of normal movement.$(br2)When becoming stunned, mobs will $(o)(usually)$() stop moving, attacking, or performing other similar actions."
+    },
+    {
+      "type": "patchouli:text",
+      "text": "On the hud, being stunned is represented by the a trio of stars in the center of the posture widget. A broken shield while recovering indicates immunity to further posture damage."
+    }
+  ]
+}

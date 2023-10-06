@@ -10,6 +10,8 @@ import net.minecraft.world.item.enchantment.Enchantments;
 import net.minecraftforge.event.entity.living.LivingEvent;
 import net.minecraftforge.eventbus.api.Cancelable;
 
+import java.awt.*;
+
 @Cancelable
 public class SweepEvent extends LivingEvent {
     private final double oangle;
@@ -32,6 +34,7 @@ public class SweepEvent extends LivingEvent {
     private final InteractionHand hand;
     private final ItemStack stack;
     private double a, b, level;
+    private Color color=Color.WHITE;
     private WeaponStats.SWEEPTYPE t;
     private WeaponStats.SWEEPSTATE state;
 
@@ -92,5 +95,14 @@ public class SweepEvent extends LivingEvent {
 
     public WeaponStats.SWEEPSTATE getState() {
         return state;
+    }
+
+    public Color getColor() {
+        return color;
+    }
+
+    public SweepEvent setColor(Color color) {
+        this.color = color;
+        return this;
     }
 }

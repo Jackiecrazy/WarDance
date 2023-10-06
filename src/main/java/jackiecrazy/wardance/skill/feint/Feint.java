@@ -1,9 +1,12 @@
 package jackiecrazy.wardance.skill.feint;
 
 import jackiecrazy.footwork.capability.resources.CombatData;
+import jackiecrazy.footwork.client.particle.FootworkParticles;
 import jackiecrazy.footwork.event.EntityAwarenessEvent;
 import jackiecrazy.footwork.potion.FootworkEffects;
 import jackiecrazy.footwork.utils.EffectUtils;
+import jackiecrazy.footwork.utils.GeneralUtils;
+import jackiecrazy.footwork.utils.ParticleUtils;
 import jackiecrazy.footwork.utils.StealthUtils;
 import jackiecrazy.wardance.WarDance;
 import jackiecrazy.footwork.api.CombatDamageSource;
@@ -135,7 +138,8 @@ public class Feint extends Skill {
             mark(caster, target, dur / 20f + 0.1f, 6);
             procPoint.setCanceled(true);
             if (caster.level instanceof ServerLevel sl) {
-                sl.sendParticles(ParticleTypes.LARGE_SMOKE, target.getX(), target.getY(), target.getZ(), 3, target.getBbWidth(), target.getBbHeight(), target.getBbWidth(), 0.5f);
+                sl.sendParticles(ParticleTypes.LARGE_SMOKE, target.getX(), target.getY(), target.getZ(), 20, target.getBbWidth(), target.getBbHeight(), target.getBbWidth(), 0f);
+                ParticleUtils.playSweepParticle(FootworkParticles.SWEEP.get(), caster, caster.getEyePosition().add(caster.getLookAngle().scale(Math.sqrt(GeneralUtils.getDistSqCompensated(caster, target)) * 0.9)), 0, 0.5, getColor(), 0);
             }
             markUsed(caster);
         }

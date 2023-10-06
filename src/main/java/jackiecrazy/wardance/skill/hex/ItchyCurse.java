@@ -4,6 +4,8 @@ import jackiecrazy.footwork.capability.resources.CombatData;
 import jackiecrazy.wardance.capability.status.Marks;
 import jackiecrazy.wardance.skill.SkillData;
 import jackiecrazy.wardance.utils.SkillUtils;
+import net.minecraft.core.particles.ParticleTypes;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.ai.attributes.AttributeModifier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
@@ -14,10 +16,13 @@ public class ItchyCurse extends Hex {
 
     @Override
     public boolean onStateChange(LivingEntity caster, SkillData prev, STATE from, STATE to) {
-        LivingEntity e = SkillUtils.aimLiving(caster);
-        if (to == STATE.ACTIVE && e != null && cast(caster, e, -999)) {
-            mark(caster, e, 3);
+        LivingEntity target = SkillUtils.aimLiving(caster);
+        if (to == STATE.ACTIVE && target != null && cast(caster, target, -999)) {
+            mark(caster, target, 3);
             markUsed(caster);
+            if (caster.level instanceof ServerLevel sl) {
+                sl.sendParticles(ParticleTypes.ENCHANT, target.getX(), target.getY(), target.getZ(), 20, target.getBbWidth(), target.getBbHeight(), target.getBbWidth(), 0f);
+            }
         }
         if (to == STATE.COOLING)
             setCooldown(caster, prev, 15);

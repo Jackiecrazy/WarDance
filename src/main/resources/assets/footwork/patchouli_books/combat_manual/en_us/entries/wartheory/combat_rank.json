@@ -1,0 +1,25 @@
+{
+  "name": "Combat Mode[2]: Rank",
+  "icon": "minecraft:soul_campfire",
+  "category": "footwork:wartheory",
+  "sortnum": 1,
+  "pages": [
+    {
+      "type": "patchouli:image",
+	  "images": [
+	  "footwork:textures/guide/smokin.png"
+	  ],
+	  "border": true,
+      "text": "\"ARE YOU NOT ENTERTAINED?!\"$(br2)A player's power rank at empty (D) and full (triple S).",
+	  "title": "Combat Mode[2]: Rank"
+    },
+    {
+      "type": "patchouli:text",
+      "text": "$(#FF3333)Rank$(), occasionally referred to as \"combo\", is a combat ranking system that improves your abilities slightly as you fight well. At a simple level, rank increases when might increases, with each point worth of rank increasing the displayed letter. The SS rank costs 2 levels worth of rank to gain, while the triple SSS requires 3 bars.$(br2) Rank is further increased by small amounts whenever you consume might or spirit, $(l:footwork:selfdefense/fracture0)fracture,$() or defeat an enemy."
+    },
+    {
+      "type": "patchouli:text",
+      "text": "As rank increases you gain a stacking \"adrenaline\" buff that gives you small amounts of movement speed, attack speed, heal multiplier, and (at high rank) looting levels. When taking damage this bonus is canceled temporarily.  Rank will rapidly drop back down to D when your might is reduced to 0."
+    }
+  ]
+}

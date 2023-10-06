@@ -14,6 +14,7 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.ai.attributes.AttributeModifier;
 import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.eventbus.api.Event;
 import net.minecraftforge.eventbus.api.EventPriority;
 
@@ -37,8 +38,12 @@ public class BoulderBrace extends WarCry {
             pe.setPostureConsumption(pe.getPostureConsumption() + (cap.getPosture() * SkillUtils.getSkillEffectiveness(caster) * cds.getCritDamage() / 2));
             cap.consumePosture(cap.getPosture() / 2);
 
-            if (caster.level instanceof ServerLevel server)
-                server.sendParticles(new BlockParticleOption(ParticleTypes.BLOCK, Blocks.COBBLESTONE.defaultBlockState()).setPos(target.blockPosition()), target.getX(), target.getY(), target.getZ(), (int) 100, target.getBbWidth(), target.getBbHeight()/2, target.getBbWidth(), 0.5f);
+            if (caster.level instanceof ServerLevel s)
+                for (int reps = 0; reps < 100; reps++) {
+                    Vec3 startAt = target.position().add(((reps * 5) % target.getBbWidth()) - target.getBbWidth() / 2, ((target.tickCount * 31) % target.getBbHeight()), ((target.tickCount * 17) % target.getBbWidth()) - target.getBbWidth() / 2);
+                    Vec3 move = startAt.subtract(target.position()).normalize();
+                    s.sendParticles(new BlockParticleOption(ParticleTypes.BLOCK, Blocks.STONE.defaultBlockState()).setPos(target.blockPosition()), startAt.x, startAt.y, startAt.z, 0, move.x, move.y, move.z, 1);
+                }
 
         }
     }

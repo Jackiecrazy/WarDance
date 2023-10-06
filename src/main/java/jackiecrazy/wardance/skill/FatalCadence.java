@@ -1,6 +1,8 @@
 package jackiecrazy.wardance.skill;
 
 import jackiecrazy.wardance.event.SkillCastEvent;
+import net.minecraft.sounds.SoundEvents;
+import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraftforge.eventbus.api.Event;
 import net.minecraftforge.eventbus.api.EventPriority;
@@ -26,7 +28,8 @@ public class FatalCadence extends Skill {
         if (procPoint instanceof SkillCastEvent sre && procPoint.getPhase() == EventPriority.HIGHEST) {
             stats.setMaxDuration(4);
             stats.decrementDuration(1);
-            if (stats.getDuration() <=0) {
+            caster.level.playSound(null, caster.getX(), caster.getY(), caster.getZ(), SoundEvents.NOTE_BLOCK_XYLOPHONE, SoundSource.PLAYERS, 0.5f + 0.25f * (4 - stats.getDuration()), 0.5f + 0.25f * (4 - stats.getDuration()));
+            if (stats.getDuration() <= 0) {
                 stats.setDuration(4);
                 sre.setEffectiveness(sre.getEffectiveness() + 0.4);
             }

@@ -5,6 +5,7 @@ import jackiecrazy.footwork.capability.resources.CombatData;
 import jackiecrazy.footwork.event.ConsumePostureEvent;
 import jackiecrazy.wardance.event.ParryEvent;
 import jackiecrazy.wardance.event.SkillCastEvent;
+import jackiecrazy.wardance.event.SweepEvent;
 import jackiecrazy.wardance.skill.ProcPoints;
 import jackiecrazy.wardance.skill.SkillData;
 import jackiecrazy.wardance.utils.DamageUtils;
@@ -19,15 +20,25 @@ import net.minecraftforge.event.entity.living.LivingHurtEvent;
 import net.minecraftforge.eventbus.api.Event;
 import net.minecraftforge.eventbus.api.EventPriority;
 
+import java.awt.*;
 import java.util.HashSet;
 
 public class Timberfall extends WarCry {
+    private static final Color c=new Color(71, 48, 9);
     private final HashSet<String> tag = makeTag("chant", ProcPoints.melee, ProcPoints.modify_crit, ProcPoints.on_hurt, ProcPoints.attack_might, ProcPoints.on_being_hurt, ProcPoints.recharge_time, ProcPoints.recharge_sleep);
     private final HashSet<String> no = none;//.getTagFromContents(new HashSet<>(Collections.emptyList()));
 
     @Override
     protected int getDuration(float might) {
         return (int) might * 2 - 2;
+    }
+
+    @Override
+    public boolean onStateChange(LivingEntity caster, SkillData prev, STATE from, STATE to) {
+        if (to == STATE.COOLING) {
+            prev.setState(STATE.INACTIVE);
+        }
+        return super.onStateChange(caster, prev, from, to);
     }
 
     @Override
@@ -56,7 +67,9 @@ public class Timberfall extends WarCry {
                 cpe.setAmount(cpe.getAmount() * 1.4f * SkillUtils.getSkillEffectiveness(caster));
             }
         } else if (procPoint instanceof SkillCastEvent sce && state == STATE.INACTIVE && sce.getEntity() == caster) {
-            activate(caster, 3);
+            cast(caster, 3);
+        }else if(procPoint instanceof SweepEvent se&& state==STATE.ACTIVE){
+            se.setColor(Color.ORANGE);
         }
         super.onProc(caster, procPoint, state, stats, target);
     }

@@ -13,7 +13,7 @@ import net.minecraftforge.fml.event.config.ModConfigEvent;
 import org.apache.commons.lang3.tuple.Pair;
 
 @EventBusSubscriber(
-        modid = "cloakanddagger",
+        modid = "wardance",
         bus = Bus.MOD
 )
 public class StealthConfig {
@@ -23,11 +23,11 @@ public class StealthConfig {
     private final ForgeConfigSpec.BooleanValue _ignore;
 
     public StealthConfig(ForgeConfigSpec.Builder b) {
-        this._ignore = b.translation("wardance.config.ignore").comment("if you have Project: War Dance installed, whether unaware stabs ignore parry, deflection, shatter, and absorption").define("unaware stab defense ignore", true);
+        this._ignore = b.translation("wardance.config.ignore").comment("if you have Cloak and Dagger installed, whether unaware stabs ignore parry and evasion.").define("unaware stab defense ignore", true);
     }
 
     private static void bake() {
-        ignore = (Boolean)CONFIG._ignore.get();
+        ignore = CONFIG._ignore.get();
     }
 
     @SubscribeEvent

@@ -217,6 +217,9 @@ public abstract class Skill extends Move {
     public boolean showsMark(SkillData mark, LivingEntity target) {
         return true;
     }
+    public boolean fakeMark(LivingEntity caster, LivingEntity target, SkillData stats) {
+        return false;
+    }
 
     protected void removeMark(LivingEntity target) {
         Marks.getCap(target).removeMark(this);

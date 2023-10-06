@@ -1,0 +1,21 @@
+{
+  "name": "Dualwielding",
+  "icon": "minecraft:iron_sword",
+  "category": "footwork:selfdefense",
+  "sortnum": 8,
+  "pages": [
+    {
+      "type": "patchouli:image",
+	  "images": [
+	  "footwork:textures/guide/dualwield.png"
+	  ],
+	  "border": true,
+      "text": "Twin blade action, for a closer shave every time.",
+	  "title": "Dual-wielding"
+    },
+    {
+      "type": "patchouli:text",
+      "text": "$(thing)$(l:footwork:wartheory/combatmode)Combat Mode$() while combat mode is turned on the player is capable of swinging weapons, shields, and empty hands in the offhand. This effectively doubles you capacity of damage dealing with small weapons and gives you an additional hand with which you can parry. $(br2)Shields can also be swung. Although they are slow and deal low damage, they inflict a considerable amount of posture damage and generate a sizeable chunk of might."
+    }
+  ]
+}

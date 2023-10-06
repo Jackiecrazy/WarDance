@@ -4,6 +4,7 @@ import jackiecrazy.footwork.capability.resources.CombatData;
 import jackiecrazy.wardance.WarDance;
 import jackiecrazy.wardance.capability.skill.CasterData;
 import jackiecrazy.wardance.capability.status.Marks;
+import jackiecrazy.wardance.event.SweepEvent;
 import jackiecrazy.wardance.skill.SkillColors;
 import jackiecrazy.wardance.skill.SkillData;
 import jackiecrazy.wardance.skill.WarSkills;
@@ -11,6 +12,8 @@ import jackiecrazy.wardance.skill.styles.ColorRestrictionStyle;
 import jackiecrazy.wardance.utils.CombatUtils;
 import jackiecrazy.wardance.utils.DamageUtils;
 import jackiecrazy.wardance.utils.SkillUtils;
+import net.minecraft.core.particles.ParticleTypes;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.LivingEntity;
@@ -31,6 +34,7 @@ import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 import org.jetbrains.annotations.Nullable;
 
+import java.awt.*;
 import java.util.UUID;
 
 @Mod.EventBusSubscriber(modid = WarDance.MODID)
@@ -62,6 +66,9 @@ public class DemonHunter extends ColorRestrictionStyle {
                 LivingEntity marker = a.getCaster(e.getEntity().level);
                 CombatData.getCap(uke).consumePosture(marker, 2 * SkillUtils.getSkillEffectiveness(marker));
                 a.decrementDuration();
+                if (uke.level instanceof ServerLevel server)
+                    server.sendParticles(ParticleTypes.CRIT, uke.getX(), uke.getY(), uke.getZ(), (int) 20, uke.getBbWidth(), uke.getBbHeight(), uke.getBbWidth(), 0f);
+
             });
         }
     }
@@ -70,13 +77,18 @@ public class DemonHunter extends ColorRestrictionStyle {
     public void onProc(LivingEntity caster, Event procPoint, STATE state, SkillData stats, @Nullable LivingEntity target) {
         if (procPoint instanceof LivingAttackEvent a && DamageUtils.isMeleeAttack(a.getSource()) && target != null && a.getEntity() != caster && a.getPhase() == EventPriority.LOWEST) {
             if (Marks.getCap(target).isMarked(this)) {
-                if (caster.isShiftKeyDown()) {
+                if (!caster.isOnGround()) {
                     CombatUtils.knockBack(caster, target, 1, true, true);
                     Vec3 vec = caster.getDeltaMovement();
                     caster.lerpMotion(vec.x, vec.y + 1, vec.z);
                 }
             } else mark(caster, target, 3);
             SkillUtils.removeAttribute(caster, ForgeMod.ATTACK_RANGE.get(), reach);
+        }
+        if(procPoint instanceof SweepEvent se){
+            if (!caster.isOnGround()||caster.getAttribute(ForgeMod.ATTACK_RANGE.get()).hasModifier(reach)) {
+                se.setColor(Color.CYAN);
+            }
         }
     }
 

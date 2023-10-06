@@ -43,7 +43,6 @@ import net.minecraftforge.registries.ForgeRegistries;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import java.awt.*;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Optional;
@@ -491,7 +490,7 @@ public class CombatUtils {
                 offset = 0;
             }
         }
-        ParticleUtils.playSweepParticle(particle, e, starting, 0, radius, Color.WHITE, offset);
+        ParticleUtils.playSweepParticle(particle, e, starting, 0, radius, sre.getColor(), offset);
         e.level.playSound(null, e.getX(), e.getY(), e.getZ(), SoundEvents.PLAYER_ATTACK_SWEEP, e.getSoundSource(), 1.0F, 1.0F);
         //}
         isSweeping = false;

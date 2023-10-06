@@ -121,6 +121,7 @@ dependencies {
     minecraft "net.minecraftforge:forge:${mc_version}-${forge_version}"
     compileOnly fg.deobf("curse.maven:feathers-699933:4416864")
     compileOnly fg.deobf("curse.maven:elenaidodge2-442962:4127740")
+    runtimeOnly fg.deobf("curse.maven:patchouli-306770:4031402")
     //def ctDep = 'com.blamejared.crafttweaker:CraftTweaker-forge-1.19.2:10.1.38'
     //compileOnly(ctDep)
     //runtimeOnly(fg.deobf(ctDep))

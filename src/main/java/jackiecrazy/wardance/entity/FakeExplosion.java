@@ -61,7 +61,8 @@ public class FakeExplosion extends Explosion {
                         zDiff = zDiff / dist;
                         double density = getSeenPercent(vector3d, entity);
                         double densityReducedPerc = (1.0D - percentage) * density;
-                        entity.hurt(this.getDamageSource(), (float) (damage * densityReducedPerc));
+                        if (damage > 0)
+                            entity.hurt(this.getDamageSource(), (float) (damage * densityReducedPerc));
                         double d11 = densityReducedPerc;
                         d11 = ProtectionEnchantment.getExplosionKnockbackAfterDampener((LivingEntity) entity, densityReducedPerc);
                         if (getDamageSource() instanceof CombatDamageSource cds) {

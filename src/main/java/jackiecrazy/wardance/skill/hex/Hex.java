@@ -9,7 +9,9 @@ import jackiecrazy.wardance.entity.FakeExplosion;
 import jackiecrazy.wardance.skill.*;
 import jackiecrazy.wardance.utils.DamageUtils;
 import jackiecrazy.wardance.utils.SkillUtils;
+import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.entity.LivingEntity;
@@ -148,10 +150,13 @@ public class Hex extends Skill {
 
     @Override
     public boolean onStateChange(LivingEntity caster, SkillData prev, STATE from, STATE to) {
-        LivingEntity e = SkillUtils.aimLiving(caster);
-        if (to == STATE.ACTIVE && e != null && cast(caster, e, -999)) {
-            mark(caster, e, duration(), prev.getArbitraryFloat());
+        LivingEntity target = SkillUtils.aimLiving(caster);
+        if (to == STATE.ACTIVE && target != null && cast(caster, target, -999)) {
+            mark(caster, target, duration(), prev.getArbitraryFloat());
             prev.setArbitraryFloat(0);
+            if (caster.level instanceof ServerLevel sl) {
+                sl.sendParticles(ParticleTypes.ENCHANT, target.getX(), target.getY(), target.getZ(), 100, target.getBbWidth(), target.getBbHeight()/2, target.getBbWidth(), 0f);
+            }
             markUsed(caster);
         }
         if (to == STATE.COOLING)
