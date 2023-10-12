@@ -11,6 +11,8 @@ public class ArmLock extends ShieldBash {
     @Override
     protected float performEffect(LivingEntity caster, LivingEntity target, float atk) {
         mark(caster, target, atk, 0);
+        CombatData.getCap(target).setHandBind(InteractionHand.MAIN_HAND, 2);
+        CombatData.getCap(caster).setHandBind(InteractionHand.MAIN_HAND, (int) (atk*20));
         return atk;
     }
 

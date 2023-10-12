@@ -88,7 +88,7 @@ public class WarSkills {
     public static final RegistryObject<Skill> OVERPOWER = SKILLS.register("overpower", () -> new Overpower().setCategory(SkillColors.red));
     //public static final RegistryObject<Skill> RECOVERY = SKILLS.register("recovery", () -> new Recovery().setCategory(SkillColors.green));
     public static final RegistryObject<Skill> DECAPITATE = SKILLS.register("decapitate", () -> new CoupDeGrace().setCategory(SkillColors.gold));
-    public static final RegistryObject<Skill> REINVIGORATE = SKILLS.register("reinvigorate", () -> new BiteTheDust().setCategory(SkillColors.green));
+    public static final RegistryObject<Skill> REINVIGORATE = SKILLS.register("bite_the_dust", () -> new BiteTheDust().setCategory(SkillColors.green));
     public static final RegistryObject<Skill> DANSE_MACABRE = SKILLS.register("danse_macabre", () -> new CoupDeGrace.DanseMacabre().setCategory(SkillColors.gray));
     public static final RegistryObject<Skill> FRENZY = SKILLS.register("frenzy", () -> new CoupDeGrace.Frenzy().setCategory(SkillColors.azure));
     public static final RegistryObject<Skill> REAPING = SKILLS.register("reaping", () -> new CoupDeGrace.ReapersLaugh().setCategory(SkillColors.red));

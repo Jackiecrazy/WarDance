@@ -1,12 +1,12 @@
 package jackiecrazy.wardance.skill.coupdegrace;
 
 import jackiecrazy.footwork.capability.resources.CombatData;
-import jackiecrazy.footwork.event.StunEvent;
 import jackiecrazy.footwork.potion.FootworkEffects;
 import jackiecrazy.footwork.utils.GeneralUtils;
 import jackiecrazy.wardance.WarDance;
 import jackiecrazy.wardance.capability.skill.CasterData;
 import jackiecrazy.wardance.config.WeaponStats;
+import jackiecrazy.wardance.event.FractureEvent;
 import jackiecrazy.wardance.skill.SkillArchetype;
 import jackiecrazy.wardance.skill.SkillArchetypes;
 import jackiecrazy.wardance.skill.SkillData;
@@ -116,11 +116,11 @@ public class ShieldCrush extends ShieldBash {
                 SkillUtils.modifyAttribute(elb, Attributes.ATTACK_SPEED, debuffID, -0.2, AttributeModifier.Operation.MULTIPLY_TOTAL);
                 SkillUtils.modifyAttribute(elb, Attributes.KNOCKBACK_RESISTANCE, debuffID, 10, AttributeModifier.Operation.ADDITION);
                 //up your grindset
-                if (CombatData.getCap(elb).consumePosture(0.1f * posdam / 2) < 0) {
+                if (CombatData.getCap(elb).consumePosture(caster,0.1f * posdam / 2) < 0||CombatData.getCap(elb).isVulnerable()) {
                     //crush, end state
                     markUsed(caster);
                 }
-                if (CombatData.getCap(caster).consumePosture(0.1f / remainingTime) < 0) {
+                if (CombatData.getCap(caster).consumePosture(caster,0.1f / remainingTime) < 0) {
                     //...well, rip
                     markUsed(caster);
                 }
@@ -137,8 +137,8 @@ public class ShieldCrush extends ShieldBash {
 
     @Override
     public void onProc(LivingEntity caster, Event procPoint, STATE state, SkillData stats, LivingEntity target) {
-        if(procPoint instanceof StunEvent se && state==STATE.ACTIVE && se.getEntity()!=caster){
-            CombatData.getCap(target).addFracture(caster, Integer.MAX_VALUE);
+        if(procPoint instanceof FractureEvent se && state==STATE.ACTIVE && se.getAttacker()==caster){
+            se.setAmount(Integer.MAX_VALUE);
         }
     }
 
@@ -151,7 +151,7 @@ public class ShieldCrush extends ShieldBash {
             activate(caster, 10);
         }
         if (to == STATE.COOLING) {
-            setCooldown(caster, prev, 10);
+            setCooldown(caster, prev, 1);
             SkillUtils.modifyAttribute(caster, Attributes.MOVEMENT_SPEED, debuffID, 0, AttributeModifier.Operation.MULTIPLY_TOTAL);
         }
         return boundCast(prev, from, to);

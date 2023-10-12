@@ -95,7 +95,7 @@ public class RenderUtils {
         return e.level.clip(new ClipContext(origin, next, ClipContext.Block.COLLIDER, ClipContext.Fluid.NONE, e));
     }
 
-    public static void drawCooldownCircle(PoseStack ms, int x, int y, int size, float v) {
+    public static void drawCooldownCircle(PoseStack ms, int x, int y, int size, float v, boolean inverted) {
         //todo occasionally reverts and shows a square when certain entities are in view
         if (v == 1) v = 0.95f;
         ms.pushPose();

@@ -10,15 +10,16 @@ import net.minecraft.resources.ResourceLocation;
 
 import java.awt.*;
 
-public class SkillButton extends ImageButton{
+public class SkillButton extends ImageButton {
 
+    private static final ResourceLocation passive = new ResourceLocation(WarDance.MODID, "textures/skill/passive.png");
     protected ScrollScreen parent;
     protected Skill s;
 
     public SkillButton(ScrollScreen sss, int xIn, int yIn, int sides, Skill skill) {
         super(xIn, yIn, sides, sides, 0, 0, 0, passive, (a) -> {});
         parent = sss;
-        s=skill;
+        s = skill;
     }
 
     protected void applySlotTint() {
@@ -27,7 +28,6 @@ public class SkillButton extends ImageButton{
                 RenderSystem.setShaderColor(173 / 255f, 216 / 255f, 230 / 255f, 1);
         }
     }
-
 
     public Skill getSkill() {
         return s;
@@ -48,7 +48,6 @@ public class SkillButton extends ImageButton{
     protected int getY() {
         return y;
     }
-    private static final ResourceLocation passive = new ResourceLocation(WarDance.MODID, "textures/skill/passive.png");
 
     @Override
     public void onPress() {

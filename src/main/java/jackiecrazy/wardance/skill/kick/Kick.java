@@ -46,6 +46,11 @@ public class Kick extends Skill {
     }
 
     @Override
+    public boolean fakeMark(LivingEntity caster, LivingEntity target, SkillData stats) {
+        return getDamage(stats, target) >= CombatData.getCap(target).getPosture();
+    }
+
+    @Override
     public void onProc(LivingEntity caster, Event procPoint, STATE state, SkillData stats, @Nullable LivingEntity target) {
         attackCooldown(procPoint, caster, stats);
         if (procPoint instanceof StunEvent e && state == STATE.ACTIVE && this == WarSkills.TRAMPLE.get() && e.getPhase() == EventPriority.LOWEST) {
@@ -57,8 +62,7 @@ public class Kick extends Skill {
     public boolean onStateChange(LivingEntity caster, SkillData prev, STATE from, STATE to) {
         LivingEntity target = GeneralUtils.raytraceLiving(caster, distance());
         if (from == STATE.HOLSTERED && to == STATE.ACTIVE && target != null && cast(caster, target, -999)) {
-            float amount = 4 * prev.getEffectiveness();
-            amount = amount * 1.5f * prev.getEffectiveness() > CombatData.getCap(target).getPosture() ? amount * 1.5f * prev.getEffectiveness() : amount;
+            float amount = getDamage(prev, target);
             CombatData.getCap(target).consumePosture(caster, amount);
             ParticleUtils.playBonkParticle(caster.level, caster.getEyePosition().add(caster.getLookAngle().scale(Math.sqrt(GeneralUtils.getDistSqCompensated(caster, target)))), 1, 0, 8, getColor());
             additionally(caster, target, prev);
@@ -72,6 +76,13 @@ public class Kick extends Skill {
             return true;
         }
         return boundCast(prev, from, to);
+    }
+
+    private float getDamage(SkillData prev, LivingEntity target) {
+        float amount = 4 * prev.getEffectiveness();
+        final float trample = this == WarSkills.TRAMPLE.get() ? 1.5f : 1;
+        amount = amount * trample * prev.getEffectiveness() > CombatData.getCap(target).getPosture() ? amount * trample * prev.getEffectiveness() : amount;
+        return amount;
     }
 
     protected void additionally(LivingEntity caster, LivingEntity target, SkillData sd) {

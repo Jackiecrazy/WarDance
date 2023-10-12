@@ -303,17 +303,17 @@ public class ResourceDisplay implements IGuiOverlay {
             mc.gui.blit(ms, atX, barY, 243 - flexBarWidth, 0, flexBarWidth, barHeight);
             mc.gui.blit(ms, atX - flexBarWidth, barY, 0, 0, flexBarWidth, barHeight);
             //grayscale and change width if staggered
-            if (itsc.getStunTime() > 0) {
-                flexBarWidth = (int) ((itsc.getMaxStunTime() - itsc.getStunTime()) * flexBarWidth / (float) itsc.getMaxStunTime()) + 3;
+            if (itsc.getExposeTime() > 0) {
+                flexBarWidth = (int) ((itsc.getExposeTime()) * flexBarWidth / (float) itsc.getMaxExposeTime()) + 3;
                 mc.gui.blit(ms, atX, barY, 243 - flexBarWidth, 24, flexBarWidth, barHeight);
                 mc.gui.blit(ms, atX - flexBarWidth, barY, 0, 24, flexBarWidth, barHeight);
-            } else if (itsc.getExposeTime() > 0) {
-                flexBarWidth = (int) ((itsc.getMaxExposeTime() - itsc.getExposeTime()) * flexBarWidth / (float) itsc.getMaxExposeTime()) + 3;
+            }else if (itsc.getStunTime() > 0) {
+                flexBarWidth = (int) ((itsc.getStunTime()) * flexBarWidth / (float) itsc.getMaxStunTime()) + 3;
                 mc.gui.blit(ms, atX, barY, 243 - flexBarWidth, 24, flexBarWidth, barHeight);
                 mc.gui.blit(ms, atX - flexBarWidth, barY, 0, 24, flexBarWidth, barHeight);
-            } else {
+            }  else {
                 //otherwise draw normal posture
-                flexBarWidth = (int) (itsc.getPosture() * halfBarWidth / itsc.getMaxPosture()) + 3;
+                flexBarWidth = (int) ((itsc.getMaxPosture()-itsc.getPosture()) * halfBarWidth / itsc.getMaxPosture()) + 3;
                 mc.gui.blit(ms, atX, barY, 243 - flexBarWidth, 12, flexBarWidth, barHeight);
                 mc.gui.blit(ms, atX - flexBarWidth, barY, 0, 12, flexBarWidth, barHeight);
             }
@@ -342,10 +342,10 @@ public class ResourceDisplay implements IGuiOverlay {
                 //danger, use red
                 if (itsc.isVulnerable()) {
                     statusU = 48;
-                    if (itsc.isExposed())
-                        iconU = 36;
                     if (itsc.isStunned())
                         iconU = 24;
+                    if (itsc.isExposed())
+                        iconU = 36;
                 }
                 //recharge, use yellow
                 else if (itsc.getStunTime() != 0 || itsc.getExposeTime() != 0) {

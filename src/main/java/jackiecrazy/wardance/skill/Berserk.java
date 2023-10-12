@@ -50,7 +50,7 @@ public class Berserk extends Skill {
     @Override
     public void onProc(LivingEntity caster, Event procPoint, STATE state, SkillData stats, LivingEntity target) {
         if (procPoint instanceof LivingAttackEvent lae && lae.getEntity() == target && DamageUtils.isMeleeAttack(lae.getSource()) && procPoint.getPhase() == EventPriority.HIGHEST) {
-            if (state == STATE.HOLSTERED && cast(caster, target, 3 * SkillUtils.getSkillEffectiveness(caster) * (1 - (caster.getHealth() / caster.getMaxHealth())) * (CombatData.getCap(caster).getMight()))) {
+            if (state == STATE.HOLSTERED && cast(caster, target, 3 * SkillUtils.getSkillEffectiveness(caster) * (2 - (caster.getHealth() / caster.getMaxHealth())) * (CombatData.getCap(caster).getMight()))) {
                 SkillUtils.addAttribute(caster, FootworkAttributes.TWO_HANDING.get(), berserk);
                 SkillUtils.addAttribute(caster, Attributes.ATTACK_SPEED, berserk1);
             }

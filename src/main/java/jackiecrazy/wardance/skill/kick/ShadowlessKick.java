@@ -54,12 +54,8 @@ public class ShadowlessKick extends Kick {
                 MinecraftForge.EVENT_BUS.post(sre);
                 MinecraftForge.EVENT_BUS.post(sce);
             }
-            float arb = stats.getArbitraryFloat();
             float mult = 1;
-            while (arb > 0) {
-                mult *= sce.getEffectiveness();
-                arb--;
-            }
+            mult *= sce.getEffectiveness();
             CombatData.getCap(target).consumePosture(caster, 2 * mult);
             if (caster instanceof Player && caster.level instanceof ServerLevel) {
                 double d0 = (double) (-Mth.sin(caster.getYRot() * ((float) Math.PI / 180F)));

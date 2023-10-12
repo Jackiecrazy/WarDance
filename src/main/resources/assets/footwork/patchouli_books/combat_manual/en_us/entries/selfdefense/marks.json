@@ -1,0 +1,25 @@
+{
+  "name": "Skills: Marks",
+  "icon": "footwork:textures/entry_icons/skills.png",
+  "category": "footwork:selfdefense",
+  "sortnum": 11,
+  "pages": [
+    {
+      "type": "patchouli:image",
+	  "images": [
+	  "footwork:textures/guide/marked.png"
+	  ],
+	  "border": true,
+      "text": "Milk ain't gonna help you here, for better or for worse.",
+	  "title": "Skills: Marks"
+    },
+    {
+      "type": "patchouli:text",
+      "text": "A number of skills in war dance - most notably a large number of hexes - will attach effects known as $(thing)Marks$() to the foe. Marks are essentially effects in a non-potion form that usually count a number of triggers/charges or cooldown/duration in their image for various special effects in the mod. $(br2)Skills such as the echo effect of curse of echoes, or the stacking burstable damage effect of the flame dance style are marks."
+    },
+    {
+      "type": "patchouli:text",
+      "text": "For the player they're visible to the left of the crosshair, while for other entities they are displayed to the right of the crosshair when you're mousing over an affected foe (as pictured previously). Players will typically only be affected by them in pvp or for the uses of certain stances like gold rush."
+    }
+  ]
+}

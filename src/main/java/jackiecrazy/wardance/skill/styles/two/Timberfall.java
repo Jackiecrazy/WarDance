@@ -1,8 +1,7 @@
 package jackiecrazy.wardance.skill.styles.two;
 
 import jackiecrazy.footwork.api.CombatDamageSource;
-import jackiecrazy.footwork.capability.resources.CombatData;
-import jackiecrazy.footwork.event.ConsumePostureEvent;
+import jackiecrazy.wardance.event.FractureEvent;
 import jackiecrazy.wardance.event.ParryEvent;
 import jackiecrazy.wardance.event.SkillCastEvent;
 import jackiecrazy.wardance.event.SweepEvent;
@@ -56,8 +55,8 @@ public class Timberfall extends WarCry {
             if (caster.level instanceof ServerLevel server)
                 server.sendParticles(new BlockParticleOption(ParticleTypes.BLOCK, Blocks.OAK_LOG.defaultBlockState()).setPos(target.blockPosition()), target.getX(), target.getY(), target.getZ(), (int) stats.getArbitraryFloat() * 20, target.getBbWidth(), target.getBbHeight() / 2, target.getBbWidth(), 0.5f);
 
-        } else if (procPoint instanceof ConsumePostureEvent cpe && state == STATE.ACTIVE && cpe.getAbove() <= 0 && cpe.getEntity() == target && cpe.getAmount() > CombatData.getCap(target).getPosture()) {
-            if (!cpe.isCanceled()) CombatData.getCap(target).addFracture(caster, 1);
+        } else if (procPoint instanceof FractureEvent cpe && state == STATE.ACTIVE && cpe.getEntity() == target) {
+            if (!cpe.isCanceled()) cpe.addAmount(1);
         } else if (procPoint instanceof LivingHurtEvent cpe && DamageUtils.isMeleeAttack(cpe.getSource()) && state == STATE.ACTIVE && cpe.getEntity() == target) {
             if (!cpe.isCanceled()) {
                 if (cpe.getSource() instanceof CombatDamageSource cds) {

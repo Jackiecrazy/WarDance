@@ -259,7 +259,7 @@ public class CombatHandler {
                 final WeaponStats.SweepInfo sweepInfo = WeaponStats.getSweepInfo(seme.getMainHandItem(), CombatUtils.getSweepState(seme));
                 sweepInfo.performCommand(seme, true, false);
                 sweepInfo.performCommand(uke, false, false);
-                if (e.getSource() instanceof CombatDamageSource cds) {
+                if (e.getSource() instanceof CombatDamageSource cds && WeaponStats.lookupStats(seme.getMainHandItem()) != null) {
                     cds.setKnockbackPercentage((float) sweepInfo.getKnockback());
                     cds.setCrit(sweepInfo.isCrit());
                     cds.setCritDamage((float) sweepInfo.getCritDamage());
@@ -416,9 +416,9 @@ public class CombatHandler {
                 }
                 //internally enforced hand bind to bypass slimes
                 //added to world check to bypass goety lichdom weirdness
-                if (!(seme instanceof Player) && uke.isAddedToWorld()) {
-                    semeCap.setHandBind(attackingHand, CombatUtils.getCooldownPeriod(seme, attackingHand) + 1);
-                }
+//                if (!(seme instanceof Player) && uke.isAddedToWorld()) {
+//                    semeCap.setHandBind(attackingHand, CombatUtils.getCooldownPeriod(seme, attackingHand) + 1);
+//                }
             }
             //evade, at the rock bottom of the attack event, saving your protected butt.
             if (!uke.isBlocking() && !e.isCanceled()) {
@@ -538,7 +538,7 @@ public class CombatHandler {
                     e.setAmount(e.getAmount() * CombatConfig.exposeDamage);
                     if (DamageUtils.isMeleeAttack(ds)) {
                         //expose, add 10% max health damage
-                        ExposeAttackEvent eae=new ExposeAttackEvent(kek, e.getSource(), uke);
+                        ExposeAttackEvent eae = new ExposeAttackEvent(kek, e.getSource(), uke);
                         MinecraftForge.EVENT_BUS.post(eae);
                         e.setAmount(e.getAmount() + eae.getAmount());
                         e.getSource().bypassArmor().bypassEnchantments().bypassMagic();
@@ -590,7 +590,7 @@ public class CombatHandler {
 //            amount -= GeneralUtils.getAttributeValueSafe(uke, FootworkAttributes.ABSORPTION.get());
 //            e.setAmount(Math.max(0, amount));
 //        }
-        if (e.getAmount() <= 0) e.setCanceled(true);
+        if (e.getAmount() < 0) e.setCanceled(true);
     }
 
     @SubscribeEvent(priority = EventPriority.LOWEST, receiveCanceled = true)

@@ -200,7 +200,7 @@
   "wardance.tabula_rasa.name": "Tabula Rasa",
   "wardance.tabula_rasa.desc": "You may equip Expertise and 1 other color. \nYou gain 40% skill effectiveness.",
   "wardance.demon_hunter.name": "Demon Hunter",
-  "wardance.demon_hunter.desc": "You may equip {Perception;AQUA} and 1 other color. \nMelee attacks {mark; ITALIC, AQUA; wardance.skill.mark.desc} any unmarked targets with 3 stacks of {deadeye; ITALIC, AQUA; ranged attacks deal 2 more posture damage and reduce this mark by 1 stack. Melee attacks dealt to the target while sneaking knock demon hunters upwards.}. \nUpon exhausting all deadeye marks or target death, gain 3 attack reach for a single hit.\nCharging a projectile weapon midair grants slow fall for 2 seconds and speeds charging by 50%. ",
+  "wardance.demon_hunter.desc": "You may equip {Perception;AQUA} and 1 other color. \nMelee attacks {mark; ITALIC, AQUA; wardance.skill.mark.desc} any unmarked targets with 3 stacks of {deadeye; ITALIC, AQUA; ranged attacks deal 2 more posture damage and reduce this mark by 1 stack. Melee attacks dealt to the target while airborne knock demon hunters upwards.}. \nUpon exhausting all deadeye marks or target death, gain 3 attack reach for a single hit.\nCharging a projectile weapon midair grants slow fall for 2 seconds and speeds charging by 50%. ",
   "wardance.wind_scar.name": "Wind Scar",
   "wardance.wind_scar.desc": "You may equip up to 2 colors. \n+1.5 attack reach. \nAll melee and skill attacks ignore 15% armor for every block of distance between you and the target.\nIf your rank is at or above S, and your {adrenaline bonuses; ITALIC, AQUA; wardance.skill.adrenaline.desc} are active, you gain 1 effective level of sweeping edge for every rank tier.",
   "wardance.timberfall.name": "Timberfall",
@@ -228,7 +228,7 @@
   "wardance.unstable_spirit.name": "Unstable Spirit",
   "wardance.unstable_spirit.desc": "You may equip up to 4 colors. \nUpon casting a skill, create a non-griefing and {indiscriminate;RED} {explosion;UNDERLINE;no knockback. Radius, health damage, and posture damage equal to 2 + (spirit cost) + 2*(might cost) and scaled with skill effectiveness} at your location.",
   "wardance.gamblers_whimsy.name": "Gambler's Whimsy",
-  "wardance.gamblers_whimsy.desc": "You may equip up to 5 colors. \nOnly one of your active skills is enabled. One more skill is enabled {every other level of rank; UNDERLINE; wardance.skill.enhancement.default} you earn. The list of enabled skills are randomly refreshed after every skill cast.",
+  "wardance.gamblers_whimsy.desc": "You may equip up to 5 colors.\nYour skill effectiveness is rolled as a random value between 0 and the difference between you and the target's luck. \nOnly one of your active skills is enabled. \nYour effective luck for this calculation is increased by 1, and one more skill is enabled, for {every other level of rank; UNDERLINE; wardance.skill.enhancement.default} you earn. The list of enabled skills are randomly refreshed after every skill cast.",
   "wardance.sifu.name": "Sifu",
   "wardance.sifu.desc": "You may equip any skill in {Dominance; BOLD, RED}, {Resolution; BOLD, DARK_GREEN}, {Subterfuge; BOLD, GRAY}, {Perception; BOLD, AQUA}, or {Fervor; BOLD, BLUE}. \n{You;RED} {take;RED,ITALIC;wardance.skill.taken_damage.desc} {5% extra physical damage for every point of negative stealth.;RED,UNDERLINE; wardance.skill.enhancement.default} \n{You follow a code of honor:; UNDERLINE, GOLD; The following apply to non-players with less than 100 max health}\n{- Single combat is virtuous.;ITALIC;every 5 seconds when attacking a non-marked target, knock back and slow others nearby for 3 seconds, and mark the target for 5 seconds, causing it to become immune to knockback. While this ability cools down, you cannot sweep attack normally}.\n{- The downed should be spared.;ITALIC;Cannot attack stunned, knocked down, or exposed targets. Deal 7% max health damage immediately on expose scaling with effectiveness. Health damage dealt is reduced by 15% per equipped color, with multiplicative stacking and multiplied by effectiveness}\n{- You are their foe, you are their mentor.;ITALIC;All stuns are upgraded to knockdowns that knock the target back, ignoring immunity.} \n{- They will leave when they have learned.;ITALIC;On dealing fatal damage, knockdown the target for 6 seconds instead. After recovering, the target will run away, dropping experience and items once they are out of sight}\n{- Teaching is its own reward.;ITALIC;You have no looting multiplier, but experience gain is tripled}.",
 
@@ -266,8 +266,8 @@
   "wardance.decapitate.desc": "This kill is guaranteed to {drop a head;GOLD}, or have its {looting;GOLD} level increased by 3 if the target lacks a harvestable head.",
   "wardance.rupture.name": "Rupture",
   "wardance.rupture.desc": "Drain half of the target's spirit to create a large explosion. The size of the explosion increases with the target's max posture, and its damage increases with the target's spirit.\n[stats]\nExplosion radius: sqrt(max posture)\nExplosion damage: (spirit before drain) *2",
-  "wardance.reinvigorate.name": "Bite the Dust",
-  "wardance.reinvigorate.desc": "Passive. Deal {1; UNDERLINE; wardance.skill.enhancement.default} {true damage; ITALIC; wardance.skill.true_damage.desc} when stunning a target. \nFor every time this target has already been stunned by an user of this skill, the damage is doubled.",
+  "wardance.bite_the_dust.name": "Bite the Dust",
+  "wardance.bite_the_dust.desc": "Passive. Deal {1; UNDERLINE; wardance.skill.enhancement.default} {true damage; ITALIC; wardance.skill.true_damage.desc} when stunning a target. \nFor every time this target has already been stunned by an user of this skill, the damage is doubled.",
   "wardance.reaping.name": "Reaper's Laugh",
   "wardance.reaping.desc": "{Bound cast; ITALIC; wardance.skill.bound_cast.desc}: perform a wide sweeping attack that hits everything in your attack range. \nThis attack cannot be parried, but will alert all targets, dealing {percentage max health; UNDERLINE; equal to your skill effectiveness attribute multiplied by 10} extra damage; \ntargets with health lower than this threshold will take {true damage; GOLD, ITALIC; wardance.skill.true_damage.desc} and instantly {refresh this skill; DARK_GREEN}. \nRecharge after 6 skill casts.",
   "wardance.frenzy.name": "Frenzy",
@@ -630,5 +630,6 @@
   "affix.wardance:ranged/mob_effect/unfortunate_ranged":"Unfortunate",
   "affix.wardance:ranged/mob_effect/unfortunate_ranged.suffix":"of the Crow",
   "affix.wardance:ranged/mob_effect/terrifying_ranged":"Terrifying",
-  "affix.wardance:ranged/mob_effect/terrifying_ranged.suffix":"of Terror"
+  "affix.wardance:ranged/mob_effect/terrifying_ranged.suffix":"of Terror",
+  "wardance.gui.dashboard": "dashboard"
 }

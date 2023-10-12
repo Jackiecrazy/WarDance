@@ -9,6 +9,7 @@ import jackiecrazy.footwork.utils.ParticleUtils;
 import jackiecrazy.footwork.utils.TargetingUtils;
 import jackiecrazy.wardance.WarDance;
 import jackiecrazy.wardance.config.WeaponStats;
+import jackiecrazy.wardance.event.FractureEvent;
 import jackiecrazy.wardance.skill.*;
 import jackiecrazy.wardance.utils.DamageUtils;
 import net.minecraft.sounds.SoundEvents;
@@ -94,7 +95,6 @@ public class Grapple extends Skill {
             target.hurtMarked = true;
             float overflow = CombatData.getCap(target).consumePosture(caster, posture * 1.5f, 0, true);
             if (overflow < 0) {
-                CombatData.getCap(target).addFracture(caster, 1);
                 //suplex shockwave
                 ParticleUtils.playSweepParticle(FootworkParticles.IMPACT.get(), caster, target.position(), 0, 7 * stats.getEffectiveness(), getColor(), 0);
                 //SkillUtils.createCloud(caster.level, caster, target.getX(), target.getY(), target.getZ(), 7 * stats.getEffectiveness(), ParticleTypes.LARGE_SMOKE);
@@ -103,6 +103,14 @@ public class Grapple extends Skill {
                 }
             }
             casterCap.consumePosture(posture - 0.1f);
+        }
+
+        @Override
+        public void onProc(LivingEntity caster, Event procPoint, STATE state, SkillData stats, LivingEntity target) {
+            if (state == STATE.ACTIVE && procPoint instanceof FractureEvent e) {
+                e.addAmount(1);
+            }
+            super.onProc(caster, procPoint, state, stats, target);
         }
     }
 }

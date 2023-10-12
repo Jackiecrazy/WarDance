@@ -87,7 +87,6 @@ public class ManualItem extends Item {
         return InteractionResultHolder.success(stack);//learn(p, stack);
     }
     public static InteractionResultHolder<ItemStack> learn(Player p, ItemStack stack) {
-        //TODO open up a screen that shows the skill wheel after equipping and an nbt-defined blurb on what the build does
         final List<Skill> skills = getSkills(stack);
         boolean autoLearn = autoLearn(stack);
         final ISkillCapability cap = CasterData.getCap(p);

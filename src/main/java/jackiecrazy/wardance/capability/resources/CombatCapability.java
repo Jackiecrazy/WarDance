@@ -9,6 +9,7 @@ import jackiecrazy.footwork.utils.GeneralUtils;
 import jackiecrazy.wardance.WarDance;
 import jackiecrazy.wardance.capability.action.PermissionData;
 import jackiecrazy.wardance.config.*;
+import jackiecrazy.wardance.event.FractureEvent;
 import jackiecrazy.wardance.handlers.TwoHandingHandler;
 import jackiecrazy.wardance.networking.CombatChannel;
 import jackiecrazy.wardance.networking.UpdateClientResourcePacket;
@@ -432,6 +433,10 @@ public class CombatCapability implements ICombatCapability {
 
     @Override
     public boolean addFracture(@Nullable LivingEntity livingEntity, int i) {
+        FractureEvent fe = new FractureEvent(dude.get(), i, livingEntity);
+        MinecraftForge.EVENT_BUS.post(fe);
+        if (fe.isCanceled()) return true;
+        i = fe.getAmount();
         if (getFractureCount() + i >= getMaxFracture()) {
             ExposeEvent se = new ExposeEvent(dude.get(), livingEntity, CombatConfig.exposeDuration); //magic number
             MinecraftForge.EVENT_BUS.post(se);
@@ -488,6 +493,7 @@ public class CombatCapability implements ICombatCapability {
             mexpose = 0;
         }//entering expose
         else if (e != null && time > 0 && expose == 0) {
+            stun(0);
             e.level.playSound(null, e.getX(), e.getY(), e.getZ(), SoundEvents.ZOMBIE_BREAK_WOODEN_DOOR, SoundSource.PLAYERS, 0.3f + WarDance.rand.nextFloat() * 0.5f, 0.75f + WarDance.rand.nextFloat() * 0.5f);
             e.getAttribute(Attributes.MOVEMENT_SPEED).removeModifier(WOUND);
             e.getAttribute(Attributes.MOVEMENT_SPEED).addPermanentModifier(EXPOSEA);
@@ -710,7 +716,7 @@ public class CombatCapability implements ICombatCapability {
                 setPosture(getMaxPosture());
             }
             if (uninitializedFracture) {//ew
-                double fracs = Math.log(elb.getMaxHealth())-1;
+                double fracs = Math.log(elb.getMaxHealth()) - 1;
                 if (elb instanceof Player)
                     elb.getAttribute(FootworkAttributes.MAX_FRACTURE.get()).setBaseValue(3);
                 else

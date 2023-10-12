@@ -60,7 +60,7 @@ public class SkillCoolDisplay implements IGuiOverlay {
                 if (s.getState() == Skill.STATE.ACTIVE)
                     cdPerc = (s.getMaxDuration() - cd) / s.getMaxDuration();
                 RenderSystem.setShaderTexture(0, RenderUtils.cooldown);
-                RenderUtils.drawCooldownCircle(stack, centerX - 8, y, 16, cdPerc);
+                RenderUtils.drawCooldownCircle(stack, centerX - 8, y, 16, cdPerc, s.getState()== Skill.STATE.ACTIVE);
                 RenderSystem.disableBlend();
 
                 //cooldown number

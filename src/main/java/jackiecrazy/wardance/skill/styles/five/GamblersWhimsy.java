@@ -9,6 +9,7 @@ import jackiecrazy.wardance.skill.SkillData;
 import jackiecrazy.wardance.skill.styles.SkillStyle;
 import jackiecrazy.wardance.utils.SkillUtils;
 import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraftforge.eventbus.api.Event;
 import net.minecraftforge.eventbus.api.EventPriority;
 import org.jetbrains.annotations.Nullable;
@@ -27,7 +28,7 @@ public class GamblersWhimsy extends SkillStyle {
             //find the skill
             int index = CasterData.getCap(caster).getEquippedSkills().indexOf(s);
             int validity = 1 << index;
-            int allowed = 0x11111;
+            int allowed = 0b11111;
             Optional<SkillData> sd = CasterData.getCap(caster).getSkillData(this);
             if (sd.isPresent())
                 allowed = (int) sd.get().getDuration();
@@ -41,14 +42,15 @@ public class GamblersWhimsy extends SkillStyle {
         if (procPoint instanceof SkillCastEvent sre && sre.getPhase() == EventPriority.HIGHEST) {
 
             //slots that can be cast
-            int allowed = 0x00000;
-            int indices = (int) (CombatData.getCap(caster).getComboRank()* SkillUtils.getSkillEffectiveness(caster) / 2d + 1.5);
+            int allowed = 0b00000;
+            int indices = (int) (CombatData.getCap(caster).getComboRank() * SkillUtils.getSkillEffectiveness(caster) / 2d + 1.5);
             while (indices > 0) {
                 int index = WarDance.rand.nextInt(indices);
                 allowed = unban(allowed, index);
                 indices--;
             }
             stats.setDuration(allowed);
+            sre.setEffectiveness(WarDance.rand.nextFloat() * (caster.getAttributeValue(Attributes.LUCK) + CombatData.getCap(caster).getComboRank() / 2f - (sre.getTarget() == null ? 0 : sre.getTarget().getAttributeValue(Attributes.LUCK))));
         }
     }
 

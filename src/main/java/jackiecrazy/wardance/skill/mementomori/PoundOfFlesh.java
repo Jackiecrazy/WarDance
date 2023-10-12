@@ -47,10 +47,10 @@ public class PoundOfFlesh extends MementoMori {
     public void onProc(LivingEntity caster, Event procPoint, STATE state, SkillData stats, LivingEntity target) {
         if (state == STATE.ACTIVE) {
             final float amount = GeneralUtils.getMaxHealthBeforeWounding(caster) * 0.1f/stats.getEffectiveness();
-            if (procPoint instanceof ParryEvent && procPoint.getPhase() == EventPriority.HIGHEST && ((ParryEvent) procPoint).canParry()) {
+            if (procPoint instanceof ParryEvent pe && pe.getAttacker()!=caster && procPoint.getPhase() == EventPriority.HIGHEST && pe.canParry()) {
                 caster.invulnerableTime = 0;
                 caster.hurt(CombatDamageSource.causeSelfDamage(caster).setDamageTyping(CombatDamageSource.TYPE.TRUE).setSkillUsed(this).bypassArmor().bypassMagic(), amount);
-                ((ParryEvent) procPoint).setPostureConsumption(((ParryEvent) procPoint).getPostureConsumption() + CombatData.getCap(target).getMaxPosture() * 0.15f * stats.getEffectiveness());
+                pe.setPostureConsumption(pe.getPostureConsumption() + CombatData.getCap(target).getMaxPosture() * 0.15f * stats.getEffectiveness());
             } else if (procPoint instanceof LivingHurtEvent lhe && procPoint.getPhase() == EventPriority.HIGHEST && lhe.getEntity() != caster && (!(lhe.getSource() instanceof CombatDamageSource cds) || cds.getSkillUsed() != this)) {
                 caster.invulnerableTime = 0;
                 caster.hurt(CombatDamageSource.causeSelfDamage(caster).setDamageTyping(CombatDamageSource.TYPE.TRUE).setSkillUsed(this).bypassArmor().bypassMagic(), amount);

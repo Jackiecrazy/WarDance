@@ -29,6 +29,7 @@ public class BoulderBrace extends WarCry {
 
     @Override
     public void onProc(LivingEntity caster, Event procPoint, STATE state, SkillData stats, LivingEntity target) {
+        //TODO doesn't do fist crits?????
         final ICombatCapability cap = CombatData.getCap(caster);
         if (procPoint instanceof StunEvent se && procPoint.getPhase() == EventPriority.HIGHEST) {
             if (se.getEntity() == caster && cap.consumeMight(1 / SkillUtils.getSkillEffectiveness(caster)))
@@ -40,7 +41,7 @@ public class BoulderBrace extends WarCry {
 
             if (caster.level instanceof ServerLevel s)
                 for (int reps = 0; reps < 100; reps++) {
-                    Vec3 startAt = target.position().add(((reps * 5) % target.getBbWidth()) - target.getBbWidth() / 2, ((target.tickCount * 31) % target.getBbHeight()), ((target.tickCount * 17) % target.getBbWidth()) - target.getBbWidth() / 2);
+                    Vec3 startAt = target.position().add((((target.tickCount+reps) * 5) % target.getBbWidth()) - target.getBbWidth() / 2, (((target.tickCount+reps) * 31) % target.getBbHeight()), (((target.tickCount+reps) * 17) % target.getBbWidth()) - target.getBbWidth() / 2);
                     Vec3 move = startAt.subtract(target.position()).normalize();
                     s.sendParticles(new BlockParticleOption(ParticleTypes.BLOCK, Blocks.STONE.defaultBlockState()).setPos(target.blockPosition()), startAt.x, startAt.y, startAt.z, 0, move.x, move.y, move.z, 1);
                 }

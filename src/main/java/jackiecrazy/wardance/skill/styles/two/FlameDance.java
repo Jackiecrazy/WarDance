@@ -86,6 +86,7 @@ public class FlameDance extends WarCry {
     public SkillData onMarked(LivingEntity caster, LivingEntity target, SkillData sd, @Nullable SkillData existing) {
         if (existing != null)
             sd.addArbitraryFloat(existing.getArbitraryFloat());
+        sd.setArbitraryFloat(Math.min(sd.getArbitraryFloat(), 50));
         return sd;
     }
 }

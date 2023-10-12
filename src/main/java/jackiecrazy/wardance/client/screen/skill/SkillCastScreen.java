@@ -136,7 +136,7 @@ public class SkillCastScreen extends Screen {
                         float cd = CasterData.getCap(mc.player).getSkillData(s).orElse(SkillData.DUMMY).getDuration();
                         float cdPerc = cd / CasterData.getCap(mc.player).getSkillData(s).orElse(SkillData.DUMMY).getMaxDuration();
                         RenderSystem.setShaderTexture(0, RenderUtils.cooldown);
-                        RenderUtils.drawCooldownCircle(matrixStack, x + iconX[a], y + iconY[a], 32, cdPerc);
+                        RenderUtils.drawCooldownCircle(matrixStack, x + iconX[a], y + iconY[a], 32, cdPerc, false);
                         RenderSystem.disableBlend();
 
                         //cooldown number
@@ -165,7 +165,7 @@ public class SkillCastScreen extends Screen {
                             RenderSystem.setShaderTexture(0, RenderUtils.cooldown);
                             float cd = sd.getDuration();
                             RenderSystem.setShaderColor(0.4f, 0.7f, 0.4f, 1);
-                            RenderUtils.drawCooldownCircle(matrixStack, x + iconX[finalA], y + iconY[finalA], 32, cdPerc);
+                            RenderUtils.drawCooldownCircle(matrixStack, x + iconX[finalA], y + iconY[finalA], 32, cdPerc, false);
 
                             //active number
                             String num = String.valueOf((int) cd);
