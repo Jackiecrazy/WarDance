@@ -1,0 +1,28 @@
+{
+  "display": {
+    "announce_to_chat": false,
+    "background": "minecraft:textures/gui/advancements/backgrounds/stone.png",
+    "description": {
+      "translate": "advancements.wardance.root.description"
+    },
+    "frame": "task",
+    "hidden": false,
+    "icon": {
+      "item": "wardance:manual"
+    },
+    "show_toast": false,
+    "title": {
+      "translate": "advancements.wardance.root.title"
+    }
+  },
+  "criteria": {
+    "tick": {
+      "trigger": "minecraft:tick"
+    }
+  },
+  "rewards": {
+    "loot": [
+      "wardance:manuals"
+    ]
+  }
+}

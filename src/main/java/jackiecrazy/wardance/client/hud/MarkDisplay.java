@@ -75,14 +75,31 @@ public class MarkDisplay implements IGuiOverlay {
                     RenderSystem.setShaderTexture(0, s.getSkill().icon());
                     Color c = s.getSkill().getColor();
                     RenderSystem.setShaderColor(c.getRed() / 255f, c.getGreen() / 255f, c.getBlue() / 255f, 1);
-                    GuiComponent.blit(stack, pair.getFirst() - (afflict.size() - 1 - index) * 16 + (afflict.size() - 1) * 8 - 8, pair.getSecond(), 0, 0, 16, 16, 16, 16);
+                    final int atX = pair.getFirst() - (afflict.size() - 1 - index) * 16 + (afflict.size() - 1) * 8;
+                    GuiComponent.blit(stack, atX - 8, pair.getSecond(), 0, 0, 16, 16, 16, 16);
                     if (s.getMaxDuration() >= 1) {
-                        String display = formatter.format(Math.round(s.getDuration()));
-                        mc.font.drawShadow(stack, display, pair.getFirst() - (afflict.size() - 1 - index) * 16 + (afflict.size() - 1) * 8 - 8, pair.getSecond() - 2, 0xffffff);
+                        //cooldown/active spinny
+                        float cd = s.getDuration();
+                        float cdPerc = cd / s.getMaxDuration();
+                        if (s.getState() == Skill.STATE.ACTIVE)
+                            cdPerc = (s.getMaxDuration() - cd) / s.getMaxDuration();
+                        RenderSystem.setShaderTexture(0, RenderUtils.cooldown);
+                        RenderUtils.drawCooldownCircle(stack, atX, pair.getSecond(), 16, cdPerc, s.getState()== Skill.STATE.ACTIVE);
+                        RenderSystem.disableBlend();
+
+                        //cooldown number
+                        String num = String.valueOf((int) cd);
+                        if (Math.ceil(cd) != cd)
+                            num = RenderUtils.formatter.format(cd);
+                        stack.pushPose();
+                        RenderSystem.setShaderTexture(0, RenderUtils.cooldown);
+                        RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, 0.6F);
+                        mc.font.draw(stack, num, atX - mc.font.width(num) / 2f, pair.getSecond(), 0xFFFFFF);
+                        stack.popPose();
                     }
                     if (s.getArbitraryFloat() != 0) {
                         String display = formatter.format(s.getArbitraryFloat());
-                        mc.font.drawShadow(stack, display, pair.getFirst() - (afflict.size() - 1 - index) * 16 + (afflict.size() - 1) * 8 + 4, pair.getSecond() + 8, 0xffffff);
+                        mc.font.drawShadow(stack, display, atX + 4, pair.getSecond() + 8, 0xffffff);
                     }
 
                 }

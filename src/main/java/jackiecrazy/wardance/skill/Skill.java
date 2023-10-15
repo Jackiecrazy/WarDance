@@ -99,7 +99,7 @@ public abstract class Skill extends Move {
         return this;
     }
 
-    public boolean isSelectable(LivingEntity caster) {
+    public boolean isLearnable(LivingEntity caster) {
         return true;
     }
 

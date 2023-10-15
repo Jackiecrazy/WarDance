@@ -21,6 +21,9 @@ public interface ISkillCapability {
 
     Skill getHolsteredSkill();
 
+    default void holsterSkill(Skill s){
+        holsterSkill(getEquippedSkills().indexOf(s));
+    }
     void holsterSkill(int index);
 
     boolean changeSkillState(Skill d, Skill.STATE to);

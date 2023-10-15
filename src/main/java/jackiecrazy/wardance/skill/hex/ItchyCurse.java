@@ -31,6 +31,7 @@ public class ItchyCurse extends Hex {
 
     @Override
     public boolean markTick(LivingEntity caster, LivingEntity target, SkillData sd) {
+
         boolean stationary = target.zza == 0 && target.xxa == 0 && target.yya == 0;
         if (stationary) {
             markTickDown(sd);
@@ -41,7 +42,7 @@ public class ItchyCurse extends Hex {
             CombatData.getCap(target).setHandBind(InteractionHand.MAIN_HAND, 20);
             CombatData.getCap(target).setHandBind(InteractionHand.OFF_HAND, 20);
             sd.setArbitraryFloat(-1);
-        } else if (sd.getArbitraryFloat() == 0) {
+        } else if (sd.getArbitraryFloat() >= 0) {
             SkillUtils.modifyAttribute(target, Attributes.MOVEMENT_SPEED, HEX, 0, AttributeModifier.Operation.MULTIPLY_TOTAL);
         }
         //SkillUtils.modifyAttribute(target, Attributes.ARMOR, HEX.getID(), -sd.getArbitraryFloat() * 2, AttributeModifier.Operation.ADDITION);

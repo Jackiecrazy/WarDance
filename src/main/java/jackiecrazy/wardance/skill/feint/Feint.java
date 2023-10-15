@@ -18,8 +18,11 @@ import jackiecrazy.wardance.skill.*;
 import jackiecrazy.wardance.utils.CombatUtils;
 import jackiecrazy.wardance.utils.DamageUtils;
 import jackiecrazy.wardance.utils.SkillUtils;
+import jackiecrazy.wardance.utils.WarColors;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.server.level.ServerLevel;
+import net.minecraft.sounds.SoundEvents;
+import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.effect.MobEffects;
@@ -61,6 +64,10 @@ public class Feint extends Skill {
         //spirit bomb damage amplification
         Marks.getCap(uke).getActiveMark(WarSkills.SPIRIT_RESONANCE.get()).ifPresent((a) -> {
             if (a.getDuration() <= 0.1 && e.getSource() instanceof CombatDamageSource && ((CombatDamageSource) e.getSource()).canProcSkillEffects()) {
+                if(seme!=null) {
+                    ParticleUtils.playBonkParticle(uke.level, seme.getEyePosition().add(seme.getLookAngle().scale(Math.sqrt(GeneralUtils.getDistSqCompensated(seme, uke)))), 1.5, 0, 12, WarColors.AZURE);
+                    seme.level.playSound(null, seme.getX(), seme.getY(), seme.getZ(), SoundEvents.NOTE_BLOCK_PLING, SoundSource.PLAYERS, 0.5f + WarDance.rand.nextFloat() * 0.5f, 0.5f + WarDance.rand.nextFloat() * 0.5f);
+                }
                 a.flagCondition(true);
                 a.addArbitraryFloat(-1);
                 a.setDuration(1.1f);

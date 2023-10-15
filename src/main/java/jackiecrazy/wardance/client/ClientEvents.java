@@ -7,6 +7,7 @@ import jackiecrazy.footwork.capability.resources.CombatData;
 import jackiecrazy.footwork.capability.resources.ICombatCapability;
 import jackiecrazy.footwork.utils.GeneralUtils;
 import jackiecrazy.wardance.WarDance;
+import jackiecrazy.wardance.client.screen.dashboard.DashboardScreen;
 import jackiecrazy.wardance.client.screen.scroll.ScrollScreen;
 import jackiecrazy.wardance.client.screen.skill.SkillSelectionScreen;
 import jackiecrazy.wardance.compat.WarCompat;
@@ -92,7 +93,7 @@ public class ClientEvents {
 
     @SubscribeEvent
     public static void skillReading(RenderTooltipEvent.Color e) {
-        if (e.getItemStack().isEmpty() && (Minecraft.getInstance().screen instanceof SkillSelectionScreen || Minecraft.getInstance().screen instanceof ScrollScreen)) {
+        if (e.getItemStack().isEmpty() && (Minecraft.getInstance().screen instanceof DashboardScreen || Minecraft.getInstance().screen instanceof SkillSelectionScreen || Minecraft.getInstance().screen instanceof ScrollScreen)) {
             e.setBorderEnd(0xffffffff);
             e.setBorderStart(0xffffffff);
         }

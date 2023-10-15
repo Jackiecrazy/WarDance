@@ -13,6 +13,7 @@
     "SifuDropsMixin"
   ],
   "client": [
+    "ItchyCurseMixin",
     "MixinEquipProgress"
   ],
   "injectors": {

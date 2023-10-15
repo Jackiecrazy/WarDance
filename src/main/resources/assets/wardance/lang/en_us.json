@@ -1,5 +1,6 @@
 {
   "itemGroup.wardance": "Project: War Dance",
+  "death.attack.self": "%s was killed by recoil damage",
 
   "wardance.command.": "",
   "wardance.command.missing": "invalid command",
@@ -89,6 +90,11 @@
   "wardance.tooltip.negative": "inverted",
 
   "wardance.skillselection.title": "skill selection",
+  "wardance.gui.dashboard": "dashboard",
+  "wardance.dashboard.manualize": "Convert the written book held in your main hand into a manual",
+  "wardance.dashboard.skills": "Open Skill Selection Screen",
+  "wardance.dashboard.manual": "Recall The Combatant's Companion",
+  "wardance.manualized": "You compile your experiences into a manual",
 
   "wardance.tooltip.sweep.standing": "When standing: %s",
   "wardance.tooltip.sweep.falling": "When falling: %s",
@@ -133,10 +139,11 @@
   "wardance.tooltip.resetStyle2": "Left click to show info. To reset your style, deselect current skill entry by clicking it again.",
   "wardance.tooltip.resetStyle3": "Left click to show info. Right click to reset. Beware, this will also clear your skill selections!",
 
+  "key.categories.wardance": "Project: War Dance",
   "wardance.combat.on": "Combat Mode Activated",
   "wardance.combat.off": "Combat Mode Deactivated",
   "wardance.combat": "Toggle Combat Mode",
-  "wardance.selectSkill": "Open Skill Selection GUI",
+  "wardance.selectSkill": "Open Meditate GUI",
   "wardance.skill": "Casting Menu (Combat Mode only)",
   "wardance.bindCast": "Cast Bound Skill (Combat Mode only)",
   "wardance.shout": "Shout (Combat Mode only)",
@@ -631,5 +638,7 @@
   "affix.wardance:ranged/mob_effect/unfortunate_ranged.suffix":"of the Crow",
   "affix.wardance:ranged/mob_effect/terrifying_ranged":"Terrifying",
   "affix.wardance:ranged/mob_effect/terrifying_ranged.suffix":"of Terror",
-  "wardance.gui.dashboard": "dashboard"
+
+  "advancements.wardance.root.title": "The Dance of Combat",
+  "advancements.wardance.root.description": "Use the manual you were spawned with to learn and equip a basic skill kit. There are missing slots, you can fill them in as you learn more."
 }

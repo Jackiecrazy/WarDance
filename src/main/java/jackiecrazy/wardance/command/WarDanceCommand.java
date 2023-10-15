@@ -173,8 +173,8 @@ public class WarDanceCommand {
         ItemStack give = new ItemStack(WarItems.MANUAL.get());
         if (player.getMainHandItem().getItem() == Items.WRITTEN_BOOK)
             give.setTag(player.getMainHandItem().getOrCreateTag().copy());
-        ((ManualItem) give.getItem()).setSkill(give, CasterData.getCap(player).getEquippedSkillsAndStyle());
-        ((ManualItem) give.getItem()).setAutoLearn(give, autoLearn);
+        ManualItem.setSkill(give, CasterData.getCap(player).getEquippedSkillsAndStyle());
+        ManualItem.setAutoLearn(give, autoLearn);
         player.addItem(give);
         return Command.SINGLE_SUCCESS;
     }

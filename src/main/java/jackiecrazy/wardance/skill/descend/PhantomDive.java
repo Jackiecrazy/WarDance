@@ -31,17 +31,16 @@ public class PhantomDive extends Skill {
 
     @Override
     public boolean equippedTick(LivingEntity caster, SkillData stats) {
-        if (caster.getDeltaMovement().y() > 0) {
+        if (caster.isOnGround())
+            markUsed(caster, true);
+        else if (caster.getDeltaMovement().y() > 0) {
             if (stats.getState() == STATE.ACTIVE)
                 stats.setArbitraryFloat((float) caster.getY());
             else silentActivate(caster, 1F, false, (float) caster.getY());
-        }
-        if (caster.getDeltaMovement().y() < 0) {
+        } else if (caster.getDeltaMovement().y() < 0) {
             if (stats.getState() != STATE.ACTIVE)
                 silentActivate(caster, 1F, false, (float) caster.getY());
         }
-        if(caster.isOnGround())
-            markUsed(caster, true);
         return false;
     }
 
@@ -59,13 +58,12 @@ public class PhantomDive extends Skill {
             int length = 0;
             if (posDiff > 1)
                 ParticleUtils.playSweepParticle(FootworkParticles.IMPACT.get(), caster, e.getEntity().position(), 0, posDiff, getColor(), 0);
-            while (posDiff > 0) {
+            while ((posDiff -= (7 / stats.getEffectiveness())) > 0) {
                 switch (awareness) {
-                    case ALERT -> awareness = StealthUtils.Awareness.DISTRACTED;
-                    case DISTRACTED -> awareness = StealthUtils.Awareness.UNAWARE;
                     case UNAWARE -> length += 60;
+                    case DISTRACTED -> awareness = StealthUtils.Awareness.UNAWARE;
+                    case ALERT -> awareness = StealthUtils.Awareness.DISTRACTED;
                 }
-                posDiff -= 7 / stats.getEffectiveness();
             }
             if (length > 0) e.getEntity().addEffect(new MobEffectInstance(FootworkEffects.PARALYSIS.get(), length));
             e.setAwareness(awareness);
@@ -76,8 +74,10 @@ public class PhantomDive extends Skill {
 
     @Override
     public boolean onStateChange(LivingEntity caster, SkillData prev, STATE from, STATE to) {
-        if (prev.getState() == STATE.ACTIVE && to == STATE.COOLING)
-            prev.setState(STATE.INACTIVE);
+        if (prev.getState() == STATE.ACTIVE && to == STATE.COOLING) {
+            prev.setState(STATE.ACTIVE);
+
+        }
         return passive(prev, from, to);
     }
 

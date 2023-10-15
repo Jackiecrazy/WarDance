@@ -65,7 +65,7 @@ public class HeavyBlow extends Skill {
 
         @Override
         protected void onCrit(CriticalHitEvent proc, SkillData stats, LivingEntity caster, LivingEntity target) {
-            proc.setDamageModifier(1 + (float) Math.max(2, Math.sqrt(GeneralUtils.getDistSqCompensated(caster, target)) / 4f) * SkillUtils.getSkillEffectiveness(caster));
+            proc.setDamageModifier(1 + (float) Math.min(2, Math.sqrt(GeneralUtils.getDistSqCompensated(caster, target)) / 4f) * SkillUtils.getSkillEffectiveness(caster));
 //            Vector3d extra = caster.position().vectorTo(target.position()).scale(-1);
 //            if (extra.lengthSqr() > 1) extra = extra.normalize();
 //            caster.setDeltaMovement(caster.getDeltaMovement().add(extra));

@@ -75,8 +75,10 @@ public class Throw extends Grapple {
             }
         }
         if (to == STATE.COOLING) {
-            if (prev.isCondition())
+            if (prev.isCondition()) {
                 prev.setState(STATE.HOLSTERED);
+                CasterData.getCap(caster).holsterSkill(this);
+            }
             else
                 setCooldown(caster, prev, 7);
         }

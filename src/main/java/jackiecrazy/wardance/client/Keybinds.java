@@ -6,8 +6,8 @@ import jackiecrazy.footwork.capability.resources.ICombatCapability;
 import jackiecrazy.wardance.WarDance;
 import jackiecrazy.wardance.capability.action.PermissionData;
 import jackiecrazy.wardance.capability.skill.CasterData;
+import jackiecrazy.wardance.client.screen.dashboard.DashboardScreen;
 import jackiecrazy.wardance.client.screen.skill.SkillCastScreen;
-import jackiecrazy.wardance.client.screen.skill.SkillSelectionScreen;
 import jackiecrazy.wardance.networking.CombatChannel;
 import jackiecrazy.wardance.networking.CombatModePacket;
 import jackiecrazy.wardance.networking.EvokeSkillPacket;
@@ -38,11 +38,11 @@ public class Keybinds {
             return other != KeyConflictContext.GUI;
         }
     };
-    public static final KeyMapping COMBAT = new KeyMapping("wardance.combat", KeyConflictContext.IN_GAME, KeyModifier.SHIFT, InputConstants.Type.KEYSYM, GLFW.GLFW_KEY_R, "key.categories.gameplay");
-    public static final KeyMapping CAST = new KeyMapping("wardance.skill", IN_COMBAT, InputConstants.Type.KEYSYM, GLFW.GLFW_KEY_R, "key.categories.gameplay");
-    public static final KeyMapping BINDCAST = new KeyMapping("wardance.bindCast", IN_COMBAT, InputConstants.Type.MOUSE, GLFW.GLFW_MOUSE_BUTTON_MIDDLE, "key.categories.gameplay");
-    public static final KeyMapping SELECT = new KeyMapping("wardance.selectSkill", KeyConflictContext.IN_GAME, InputConstants.Type.KEYSYM, GLFW.GLFW_KEY_V, "key.categories.gameplay");
-    public static final KeyMapping PARRY = new KeyMapping("wardance.parry", KeyConflictContext.IN_GAME, InputConstants.Type.KEYSYM, GLFW.GLFW_KEY_LEFT_ALT, "key.categories.gameplay");
+    public static final KeyMapping COMBAT = new KeyMapping("wardance.combat", KeyConflictContext.IN_GAME, KeyModifier.SHIFT, InputConstants.Type.KEYSYM, GLFW.GLFW_KEY_R, "key.categories.wardance");
+    public static final KeyMapping CAST = new KeyMapping("wardance.skill", IN_COMBAT, InputConstants.Type.KEYSYM, GLFW.GLFW_KEY_R, "key.categories.wardance");
+    public static final KeyMapping BINDCAST = new KeyMapping("wardance.bindCast", IN_COMBAT, InputConstants.Type.MOUSE, GLFW.GLFW_MOUSE_BUTTON_MIDDLE, "key.categories.wardance");
+    public static final KeyMapping SELECT = new KeyMapping("wardance.selectSkill", KeyConflictContext.IN_GAME, InputConstants.Type.KEYSYM, GLFW.GLFW_KEY_V, "key.categories.wardance");
+    public static final KeyMapping PARRY = new KeyMapping("wardance.parry", KeyConflictContext.IN_GAME, InputConstants.Type.KEYSYM, GLFW.GLFW_KEY_LEFT_ALT, "key.categories.wardance");
 
     @SubscribeEvent(priority = EventPriority.HIGHEST)
     public static void handleInputEvent(InputEvent event) {
@@ -62,7 +62,7 @@ public class Keybinds {
             if (!PermissionData.getCap(mc.player).canSelectSkills()) {
                 return;
             }
-            mc.setScreen(new SkillSelectionScreen());
+            mc.setScreen(new DashboardScreen(mc.player));
             //mc.setScreen(new ScrollScreen(WarSkills.VITAL_STRIKE.get(), WarSkills.SUPLEX.get(), WarSkills.DEMON_HUNTER.get(), WarSkills.SIFU.get(), WarSkills.GOLD_RUSH.get(), WarSkills.UNSTABLE_SPIRIT.get(), WarSkills.CURSE_OF_ECHOES.get(), WarSkills.PRIDEFUL_MIGHT.get(), WarSkills.BACKFLIP.get(), WarSkills.MOMENTUM.get(), WarSkills.MONTANTE.get(), WarSkills.PHANTOM_DIVE.get(), WarSkills.SHIELD_CRUSH.get()));
         }
         if (BINDCAST.getKeyConflictContext().isActive() && BINDCAST.consumeClick() && mc.player.isAlive()) {

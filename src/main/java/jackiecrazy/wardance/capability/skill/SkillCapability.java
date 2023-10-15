@@ -49,7 +49,7 @@ public class SkillCapability implements ISkillCapability {
     public boolean isSkillSelectable(Skill s) {
         final LivingEntity bruv = dude.get();
         if (bruv != null && s != null) {
-            if (!s.isSelectable(bruv)) return false;
+            if (!s.isLearnable(bruv)) return false;
             return skillList.contains(s) == gatedSkills;
         }
         return true;

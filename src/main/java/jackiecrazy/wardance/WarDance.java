@@ -125,6 +125,7 @@ public class WarDance {
         CombatChannel.INSTANCE.registerMessage(index++, LearnScrollPacket.class, new LearnScrollPacket.Encoder(), new LearnScrollPacket.Decoder(), new LearnScrollPacket.Handler());
         CombatChannel.INSTANCE.registerMessage(index++, OpenScrollScreenPacket.class, new OpenScrollScreenPacket.Encoder(), new OpenScrollScreenPacket.Decoder(), new OpenScrollScreenPacket.Handler());
         CombatChannel.INSTANCE.registerMessage(index++, OpenManualScreenPacket.class, new OpenManualScreenPacket.Encoder(), new OpenManualScreenPacket.Decoder(), new OpenManualScreenPacket.Handler());
+        CombatChannel.INSTANCE.registerMessage(index++, ManualizePacket.class, new ManualizePacket.Encoder(), new ManualizePacket.Decoder(), new ManualizePacket.Handler());
     }
 
     private void doClientStuff(final FMLClientSetupEvent event) {
