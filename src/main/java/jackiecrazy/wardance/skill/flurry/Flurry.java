@@ -30,9 +30,9 @@ public class Flurry extends Skill {
     private static final ResourceLocation rl = new ResourceLocation("wardance:textures/skill/flurry.png");
 
     @Override
-    public CastStatus castingCheck(LivingEntity caster) {
+    public CastStatus castingCheck(LivingEntity caster, SkillData sd) {
         if (CombatData.getCap(caster).getMight() < 1) return CastStatus.OTHER;
-        return super.castingCheck(caster);
+        return super.castingCheck(caster, sd);
     }
 
     @Override

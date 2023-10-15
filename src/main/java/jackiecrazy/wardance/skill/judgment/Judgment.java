@@ -47,10 +47,10 @@ public class Judgment extends Skill {
     }
 
     @Override
-    public CastStatus castingCheck(LivingEntity caster) {
+    public CastStatus castingCheck(LivingEntity caster, SkillData sd) {
         if (CombatData.getCap(caster).getComboRank() < 5)
             return CastStatus.OTHER;
-        return super.castingCheck(caster);
+        return super.castingCheck(caster, sd);
     }
 
     @Override

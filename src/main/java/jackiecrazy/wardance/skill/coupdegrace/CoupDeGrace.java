@@ -52,8 +52,8 @@ public class CoupDeGrace extends Skill {
     }
 
     @Override
-    public CastStatus castingCheck(LivingEntity caster) {
-        final CastStatus supes = super.castingCheck(caster);
+    public CastStatus castingCheck(LivingEntity caster, SkillData sd) {
+        final CastStatus supes = super.castingCheck(caster, sd);
         return supes == CastStatus.ACTIVE | supes == CastStatus.HOLSTERED ? CastStatus.ALLOWED : supes;
     }
 

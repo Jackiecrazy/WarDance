@@ -6,11 +6,11 @@
       "entries": [
         {
           "type": "item",
-          "name": "wardance:manual",
+          "name": "wardance:scroll",
           "functions": [
             {
               "function": "set_nbt",
-              "tag": "{\"patchouli:book\": \"footwork:combat_manual\"}"
+              "tag": "{skills: 1, randomSelection: 4, style: 0, randomPick: 0}"
             }
           ]
         }

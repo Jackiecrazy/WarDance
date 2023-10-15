@@ -5,6 +5,7 @@ import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.PoseStack;
 import jackiecrazy.wardance.WarDance;
 import jackiecrazy.wardance.capability.skill.CasterData;
+import jackiecrazy.wardance.capability.skill.ISkillCapability;
 import jackiecrazy.wardance.client.Keybinds;
 import jackiecrazy.wardance.client.RenderUtils;
 import jackiecrazy.wardance.networking.CombatChannel;
@@ -101,13 +102,14 @@ public class SkillCastScreen extends Screen {
                 matrixStack.pushPose();
                 RenderSystem.setShaderTexture(0, radial);
                 //holstered is green
-                if (CasterData.getCap(mc.player).getHolsteredSkill() == elements[a])
+                final ISkillCapability cap = CasterData.getCap(mc.player);
+                if (cap.getHolsteredSkill() == elements[a])
                     RenderSystem.setShaderColor(0.4f, 0.7f, 0.4f, 1);
                     //active is blue
-                else if (CasterData.getCap(mc.player).getSkillState(elements[a]) == Skill.STATE.ACTIVE)
+                else if (cap.getSkillState(elements[a]) == Skill.STATE.ACTIVE)
                     RenderSystem.setShaderColor(0.4f, 0.4f, 0.9f, 1);
                     //not allowed is dark gray
-                else if (s.castingCheck(mc.player) != Skill.CastStatus.ALLOWED)
+                else if (s.castingCheck(mc.player, cap.getSkillData(s).orElse(SkillData.DUMMY)) != Skill.CastStatus.ALLOWED)
                     RenderSystem.setShaderColor(0.4f, 0.4f, 0.4f, 1);
                     //allowed is light gray, selected is white
                 else if (a != index)
@@ -125,16 +127,16 @@ public class SkillCastScreen extends Screen {
                 matrixStack.popPose();
 
                 //cooldown overlay and mask
-                if (CasterData.getCap(mc.player).getSkillState(s) == Skill.STATE.COOLING) {
+                if (cap.getSkillState(s) == Skill.STATE.COOLING) {
                     matrixStack.pushPose();
                     //overlay mask
                     RenderSystem.enableBlend();
                     RenderSystem.blendFuncSeparate(GlStateManager.SourceFactor.ZERO, GlStateManager.DestFactor.ONE, GlStateManager.SourceFactor.ONE_MINUS_SRC_ALPHA, GlStateManager.DestFactor.ZERO);
                     GuiComponent.blit(matrixStack, x + iconX[a], y + iconY[a], 0, 0, 32, 32, 32, 32);
-                    if (CasterData.getCap(mc.player).getSkillData(s).orElse(SkillData.DUMMY).getMaxDuration() != 0) {
+                    if (cap.getSkillData(s).orElse(SkillData.DUMMY).getMaxDuration() != 0) {
                         //cooldown spinny
-                        float cd = CasterData.getCap(mc.player).getSkillData(s).orElse(SkillData.DUMMY).getDuration();
-                        float cdPerc = cd / CasterData.getCap(mc.player).getSkillData(s).orElse(SkillData.DUMMY).getMaxDuration();
+                        float cd = cap.getSkillData(s).orElse(SkillData.DUMMY).getDuration();
+                        float cdPerc = cd / cap.getSkillData(s).orElse(SkillData.DUMMY).getMaxDuration();
                         RenderSystem.setShaderTexture(0, RenderUtils.cooldown);
                         RenderUtils.drawCooldownCircle(matrixStack, x + iconX[a], y + iconY[a], 32, cdPerc, false);
                         RenderSystem.disableBlend();
@@ -151,10 +153,10 @@ public class SkillCastScreen extends Screen {
                         matrixStack.popPose();
                     }
                     matrixStack.popPose();
-                } else if (CasterData.getCap(mc.player).getSkillState(s) == Skill.STATE.ACTIVE) {
+                } else if (cap.getSkillState(s) == Skill.STATE.ACTIVE) {
                     matrixStack.pushPose();
                     int finalA = a;
-                    CasterData.getCap(mc.player).getSkillData(s).ifPresent((sd) -> {
+                    cap.getSkillData(s).ifPresent((sd) -> {
                         RenderSystem.enableBlend();
                         //active mask
                         RenderSystem.blendFuncSeparate(GlStateManager.SourceFactor.ZERO, GlStateManager.DestFactor.ONE, GlStateManager.SourceFactor.ONE_MINUS_SRC_ALPHA, GlStateManager.DestFactor.ZERO);
@@ -189,7 +191,7 @@ public class SkillCastScreen extends Screen {
             String print = selected.getDisplayName(mc.player).getString();
             int yee = mc.font.width(print);
             mc.gui.getFont().draw(matrixStack, print, (width - yee) / 2f, 4, selected.getColor().getRGB());
-            final Skill.CastStatus castStatus = selected.castingCheck(mc.player);
+            final Skill.CastStatus castStatus = selected.castingCheck(mc.player, CasterData.getCap(mc.player).getSkillData(selected).orElse(SkillData.DUMMY));
             if (castStatus != Skill.CastStatus.ALLOWED && castStatus != Skill.CastStatus.HOLSTERED && castStatus != Skill.CastStatus.ACTIVE) {
                 switch (castStatus) {
                     case COOLDOWN:
@@ -211,7 +213,8 @@ public class SkillCastScreen extends Screen {
                         print = Component.translatable("wardance.skill.might", selected.mightConsumption(mc.player)).getString();
                         break;
                     case OTHER:
-                        print = Component.translatable(elements[index].getRegistryName().toString() + ".requirement").getString();
+                        final ResourceLocation registryName = elements[index].getRegistryName();
+                        print = Component.translatable(registryName.getNamespace()+"."+registryName.getPath() + ".requirement").getString();
                         break;
                 }
                 yee = mc.font.width(print);

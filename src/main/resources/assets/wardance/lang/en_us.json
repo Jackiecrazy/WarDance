@@ -288,7 +288,7 @@
   "wardance.trample.requirement": "requires 4 spirit",
   "wardance.shadowless_kick.name": "Shadowless Kick",
   "wardance.shadowless_kick.desc": "{Bound Cast; ITALIC; wardance.skill.bound_cast.desc}. \nDeal 2 posture damage and 1 falling block damage to a target in 3 blocks.\n0.25 seconds after casting, cast again if possible; this can {repeat;DARK_AQUA} up to 7 times.\n{Enhancement:; ITALIC; wardance.skill.enhancement.desc} damage is multiplied once by skill effectiveness for every consecutive kick. \nRecharge after 6 attacks, costs 2 spirit.",
-  "wardance.shadowless_kick.requirement": "must be standing",
+  "wardance.shadowless_kick.requirement": "no queued kicks",
   "wardance.tackle.name": "Tackle",
   "wardance.tackle.desc": "+2 range on kick and dash forward, gaining {half a second; UNDERLINE; wardance.skill.enhancement.default} of {invulnerability;DARK_GREEN}.",
   "wardance.tornado.name": "Tornado",
@@ -429,10 +429,10 @@
   "wardance.shield_crush.desc": "{Bound Cast; ITALIC; wardance.skill.bound_cast.desc}. Consume 1 might and 1 spirit to crush a target with your shield. \nWhile active, both sides take no knockback and are slowed by 80%, targets additionally suffer from 30% {reduced attack speed;GOLD} and 20% {extra posture damage;GOLD}, and will be instantly exposed on stun. \n{The posture of both sides will continuously drain, faster and faster, until one side falls; RED}. \nThe state ends if you swap to a non-shield item, take your crosshair off your target, or one side is stunned. After this, it has another 10 seconds of cooldown.",
   "wardance.flurry.name": "Flurry",
   "wardance.flurry.desc": "Whirl into a frenzy, cutting down all who oppose you. \nWhile active, your might continuously {drains; UNDERLINE; wardance.skill.enhancement.divide}, you cannot gain might, your hands cool down twice as fast, and your damage is {halved;RED}. \n You will automatically use both hands to sweep attack all targets in range 3 whenever possible, {without any knockback;YELLOW}.\nThis state ends when your might is reduced to 0.",
-  "wardance:flurry.requirement": "requires at least 1 might",
+  "wardance.flurry.requirement": "requires at least 1 might",
   "wardance.montante.name": "Montante",
   "wardance.montante.desc": "Grab your weapon with both hands and become an unstoppable whirling force. \nWhile active, your might continuously {drains; UNDERLINE; wardance.skill.enhancement.divide}, you cannot gain might, and your damage is {halved;RED}. \n You will automatically use your main hand to sweep attack in a circle twice every second.\nIncoming attacks and projectiles are automatically parried, dealing high retaliation posture damage to attackers.\nThis state ends when your might is reduced to 0.",
-  "wardance:montante.requirement": "requires at least 1 might",
+  "wardance.montante.requirement": "requires at least 1 might",
   "archetype.five_element_fist.desc": "A traditional unarmed martial art, this unarmed strike has reduced knockback and will change to another form on attack, in the order of {water;AQUA;wardance.water_uppercut.desc}-{wood;GOLD;wardance.wooden_jab.desc}-{fire;RED;wardance.fiery_lunge.desc}-{earth;DARK_GREEN;wardance.earthen_sweep.desc}-{iron;LIGHT_GRAY;wardance.iron_chop.desc}-{water;AQUA;wardance.water_uppercut.desc}. \nThis change is limited by your style: if your style does not support the next color, this skill will attempt to skip to the one after that, until it finds a color you can change into. \nHowever, changing according to the pattern grants 0.1 rank.",
   "wardance.earthen_sweep.name": "Earthen Sweep",
   "wardance.earthen_sweep.desc": "Sweep horizontally with your fist as a boulder, hitting a {40; UNDERLINE; increased every 10% skill effectiveness} degree sector in front of you, dealing double posture damage to targets with their main hand bound. \nChanges to {Iron Chop;LIGHT_GRAY; wardance.iron_chop.desc} after attack.",
@@ -640,5 +640,7 @@
   "affix.wardance:ranged/mob_effect/terrifying_ranged.suffix":"of Terror",
 
   "advancements.wardance.root.title": "The Dance of Combat",
-  "advancements.wardance.root.description": "Use the manual you were spawned with to learn and equip a basic skill kit. There are missing slots, you can fill them in as you learn more."
+  "advancements.wardance.root.description": "Use the manual you were spawned with to learn and equip a basic skill kit. There are missing slots, you can fill them in as you learn more.",
+  "advancements.wardance.shadowless.title": "Wong Fei Hung",
+  "advancements.wardance.shadowless.description": "Land 7 consecutive shadowless kicks in a single cast."
 }

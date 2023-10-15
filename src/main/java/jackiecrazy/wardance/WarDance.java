@@ -15,6 +15,7 @@ import jackiecrazy.wardance.compat.WarCompat;
 import jackiecrazy.wardance.config.*;
 import jackiecrazy.wardance.entity.WarEntities;
 import jackiecrazy.wardance.items.WarItems;
+import jackiecrazy.wardance.loot.ScrollLootModifier;
 import jackiecrazy.wardance.networking.*;
 import jackiecrazy.wardance.skill.WarSkills;
 import net.minecraft.commands.synchronization.ArgumentTypeInfo;
@@ -40,10 +41,7 @@ import net.minecraftforge.fml.event.lifecycle.InterModEnqueueEvent;
 import net.minecraftforge.fml.event.lifecycle.InterModProcessEvent;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 import net.minecraftforge.fml.loading.FMLPaths;
-import net.minecraftforge.registries.DeferredRegister;
-import net.minecraftforge.registries.ForgeRegistries;
-import net.minecraftforge.registries.RegistryBuilder;
-import net.minecraftforge.registries.RegistryObject;
+import net.minecraftforge.registries.*;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -83,6 +81,7 @@ public class WarDance {
         // Register the doClientStuff method for modloading
         FMLJavaModLoadingContext.get().getModEventBus().addListener(this::doClientStuff);
         FMLJavaModLoadingContext.get().getModEventBus().addListener(this::gui);
+        FMLJavaModLoadingContext.get().getModEventBus().addListener(this::register);
 
         // Register ourselves for server and other game events we are interested in
         MinecraftForge.EVENT_BUS.register(this);
@@ -90,6 +89,7 @@ public class WarDance {
         ModLoadingContext.get().registerConfig(ModConfig.Type.COMMON, GeneralConfig.CONFIG_SPEC, MODID + "/general.toml");
         ModLoadingContext.get().registerConfig(ModConfig.Type.COMMON, StealthConfig.CONFIG_SPEC, MODID + "/stealth.toml");
         ModLoadingContext.get().registerConfig(ModConfig.Type.COMMON, CombatConfig.CONFIG_SPEC, MODID + "/combat.toml");
+        ModLoadingContext.get().registerConfig(ModConfig.Type.COMMON, LootConfig.CONFIG_SPEC, MODID + "/loot.toml");
         //ModLoadingContext.get().registerConfig(ModConfig.Type.COMMON, ItemConfig.CONFIG_SPEC, MODID + "/items.toml");
         ModLoadingContext.get().registerConfig(ModConfig.Type.COMMON, ResourceConfig.CONFIG_SPEC, MODID + "/resources.toml");
         ModLoadingContext.get().registerConfig(ModConfig.Type.CLIENT, ClientConfig.CONFIG_SPEC, MODID + "/client.toml");
@@ -104,6 +104,7 @@ public class WarDance {
 
     private void setup(final FMLCommonSetupEvent event) {
         // some preinit code
+        //packets
         int index = 0;
         CombatChannel.INSTANCE.registerMessage(index++, UpdateClientResourcePacket.class, new UpdateClientResourcePacket.UpdateClientEncoder(), new UpdateClientResourcePacket.UpdateClientDecoder(), new UpdateClientResourcePacket.UpdateClientHandler());
         CombatChannel.INSTANCE.registerMessage(index++, UpdateMarkPacket.class, new UpdateMarkPacket.UpdateClientEncoder(), new UpdateMarkPacket.UpdateClientDecoder(), new UpdateMarkPacket.UpdateClientHandler());
@@ -139,6 +140,12 @@ public class WarDance {
         WeaponStats.register(event);
         TwohandingStats.register(event);
         MobSpecs.register(event);
+    }
+
+    public void register(RegisterEvent e) {
+        if (e.getForgeRegistry() == (Object) ForgeRegistries.GLOBAL_LOOT_MODIFIER_SERIALIZERS.get()) {
+            e.getForgeRegistry().register("scrolls", ScrollLootModifier.CODEC);
+        }
     }
 
     private void gui(final RegisterGuiOverlaysEvent event) {

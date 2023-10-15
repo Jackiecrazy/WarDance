@@ -20,16 +20,19 @@ public class SkillCastTrigger extends SimpleCriterionTrigger<SkillCastTrigger.Tr
 
     @Nonnull
     public TriggerInstance createInstance(JsonObject obj, @Nonnull EntityPredicate.Composite entity, DeserializationContext ctx) {
-        SkillPredicate skill = SkillPredicate.fromJson(obj);
+        SkillPredicate skill = SkillPredicate.fromJson(obj.get("skilldata"));
         EntityPredicate.Composite target = EntityPredicate.Composite.fromJson(obj, "target", ctx);
         EntityPredicate.Composite caster = EntityPredicate.Composite.fromJson(obj, "caster", ctx);
         return new TriggerInstance(caster, target, skill);
     }
 
     public void trigger(ServerPlayer player, Entity target, SkillData sd) {
-        LootContext targ = EntityPredicate.createContext(player, target);
-        LootContext caster = EntityPredicate.createContext(player, target);
-        this.trigger(player, (pred) -> pred.matches(caster, targ, sd));
+        LootContext targ = EntityPredicate.createContext(player, player);
+        if (target != null)
+            targ = EntityPredicate.createContext(player, target);
+        LootContext caster = EntityPredicate.createContext(player, player);
+        LootContext finalTarg = targ;
+        this.trigger(player, (pred) -> pred.matches(caster, finalTarg, sd));
     }
 
     public static class TriggerInstance extends AbstractCriterionTriggerInstance {
@@ -47,7 +50,7 @@ public class SkillCastTrigger extends SimpleCriterionTrigger<SkillCastTrigger.Tr
             if (!this.data.matches(dt)) {
                 return false;
             } else {
-                return this.caster.matches(caster)&&this.target.matches(target);
+                return this.caster.matches(caster) && this.target.matches(target);
             }
         }
 

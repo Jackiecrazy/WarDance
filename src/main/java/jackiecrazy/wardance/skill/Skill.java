@@ -4,6 +4,7 @@ import jackiecrazy.footwork.api.FootworkAttributes;
 import jackiecrazy.footwork.capability.resources.CombatData;
 import jackiecrazy.footwork.move.Move;
 import jackiecrazy.wardance.WarDance;
+import jackiecrazy.wardance.advancement.WarAdvancements;
 import jackiecrazy.wardance.capability.skill.CasterData;
 import jackiecrazy.wardance.capability.skill.ISkillCapability;
 import jackiecrazy.wardance.capability.status.Marks;
@@ -16,6 +17,7 @@ import jackiecrazy.wardance.utils.SkillUtils;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.entity.LivingEntity;
@@ -103,7 +105,7 @@ public abstract class Skill extends Move {
         return true;
     }
 
-    public CastStatus castingCheck(LivingEntity caster) {
+    public CastStatus castingCheck(LivingEntity caster, SkillData sd) {
         ISkillCapability cap = CasterData.getCap(caster);
         switch (cap.getSkillState(this)) {
             case ACTIVE -> {
@@ -379,6 +381,8 @@ public abstract class Skill extends Move {
             if (sce.getSpirit() > 0)
                 CombatData.getCap(caster).consumeSpirit(sce.getSpirit());
             activate(caster, (float) sce.getEffectiveness(), sce.getDuration(), sce.isFlag(), sce.getArbitrary());
+            if(caster instanceof ServerPlayer sp)
+                WarAdvancements.SKILL_CAST_TRIGGER.trigger(sp, target, getExistingData(caster));
             return true;
         }
         return false;
@@ -476,6 +480,10 @@ public abstract class Skill extends Move {
 
     protected SkillData getExistingMark(LivingEntity target) {
         return Marks.getCap(target).getActiveMark(this).orElse(SkillData.DUMMY);
+    }
+
+    protected SkillData getExistingData(LivingEntity caster) {
+        return CasterData.getCap(caster).getSkillData(this).orElse(SkillData.DUMMY);
     }
 
     /**

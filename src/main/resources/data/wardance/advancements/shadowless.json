@@ -1,0 +1,34 @@
+{
+  "parent": "wardance:root",
+  "display": {
+    "announce_to_chat": false,
+    "description": {
+      "translate": "advancements.wardance.shadowless.description"
+    },
+    "frame": "challenge",
+    "hidden": false,
+    "icon": {
+      "item": "minecraft:feather"
+    },
+    "show_toast": true,
+    "title": {
+      "translate": "advancements.wardance.shadowless.title"
+    }
+  },
+  "criteria": {
+    "mastery": {
+      "trigger": "wardance:cast_skill",
+      "conditions": {
+        "skilldata": {
+          "skill": "wardance:shadowless_kick",
+          "stack": 7
+        }
+      }
+    }
+  },
+  "rewards": {
+    "loot": [
+      "wardance:skillscroll"
+    ]
+  }
+}

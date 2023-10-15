@@ -40,7 +40,7 @@ public class ScrollScreen extends Screen {
     private boolean offhand;
 
     public ScrollScreen(boolean off, Skill... skills) {
-        super(Component.translatable("wardance.scroll.title"));
+        super(Component.translatable("wardance."));
         this.skills = skills;
         offhand = off;
     }

@@ -96,7 +96,7 @@ public class SkillCapability implements ISkillCapability {
     @Override
     public void holsterSkill(int index) {
         Skill to = equippedSkill.get(index % equippedSkill.size());
-        if (to != null && to.castingCheck(dude.get()) != Skill.CastStatus.ALLOWED) return;
+        if (to != null && to.castingCheck(dude.get(), nonNullGet(to)) != Skill.CastStatus.ALLOWED) return;
         for (Skill s : equippedSkill)
             if (s != null && getSkillState(s) == Skill.STATE.HOLSTERED)
                 changeSkillState(s, Skill.STATE.INACTIVE);
@@ -248,7 +248,7 @@ public class SkillCapability implements ISkillCapability {
         if (!isSkillSelectable(skill)) return false;
         if (!isSkillEquippable(skill)) return false;
         if (!equippedSkill.contains(skill)) return false;
-        return skill.castingCheck(dude.get()) == Skill.CastStatus.ALLOWED || skill.castingCheck(dude.get()) == Skill.CastStatus.ACTIVE;
+        return skill.castingCheck(dude.get(), nonNullGet(skill)) == Skill.CastStatus.ALLOWED || skill.castingCheck(dude.get(), nonNullGet(skill)) == Skill.CastStatus.ACTIVE;
     }
 
     @Override
