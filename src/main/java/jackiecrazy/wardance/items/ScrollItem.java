@@ -26,10 +26,11 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 public class ScrollItem extends Item {
-    private static final Item.Properties prop = new Properties().rarity(Rarity.UNCOMMON).stacksTo(1).tab(WarDance.WARTAB);
+    protected static final Item.Properties prop = new Properties().rarity(Rarity.UNCOMMON).stacksTo(1).tab(WarDance.WARTAB);
 
     public ScrollItem() {
         super(prop);
+
     }
 
     @Nonnull
@@ -85,6 +86,8 @@ public class ScrollItem extends Item {
         stack.getOrCreateTag().put("skills", tag);
     }
 
+
+
     public static ItemStack makeScroll(boolean random, Skill... s) {
         ItemStack itemstack = new ItemStack(WarItems.SCROLL.get());
         setSkills(itemstack, s);
@@ -92,7 +95,7 @@ public class ScrollItem extends Item {
         return itemstack;
     }
 
-    private static boolean noSkills(ItemStack stack) {
+    protected static boolean noSkills(ItemStack stack) {
         Skill[] skills = getSkills(stack);
         for (Skill s : skills)
             if (s != null) return false;

@@ -510,7 +510,7 @@ public class CombatUtils {
     public static WeaponStats.SWEEPSTATE getSweepState(LivingEntity entity) {
         if (entity.isPassenger()) return WeaponStats.SWEEPSTATE.RIDING;
         if (entity.isCrouching()) return WeaponStats.SWEEPSTATE.SNEAKING;
-        if (entity.isSwimming() || entity.isSprinting() || MovementUtils.hasInvFrames(entity))
+        if (entity.isSwimming() || entity.isSprinting() || entity.isFallFlying() || MovementUtils.hasInvFrames(entity))
             return WeaponStats.SWEEPSTATE.SPRINTING;
         if ((!(entity instanceof Player p) || !p.getAbilities().flying) && !entity.isOnGround() && entity.fallDistance > 0 && !entity.onClimbable() && !entity.isInWater())
             return WeaponStats.SWEEPSTATE.FALLING;

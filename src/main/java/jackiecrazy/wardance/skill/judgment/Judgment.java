@@ -116,8 +116,7 @@ public class Judgment extends Skill {
 
     @Override
     public boolean markTick(LivingEntity caster, LivingEntity target, SkillData sd) {
-        sd.decrementDuration(0.05f);
-        return super.markTick(caster, target, sd);
+        return markTickDown(sd);
     }
 
     @Override

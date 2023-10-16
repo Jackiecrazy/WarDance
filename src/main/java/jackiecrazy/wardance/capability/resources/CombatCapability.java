@@ -112,6 +112,17 @@ public class CombatCapability implements ICombatCapability {
         e.getAttribute(Attributes.ARMOR).removeModifier(WOUND);
     }
 
+    public int getComboRank() {
+        float workingCombo = this.getRank();
+        if (workingCombo >= 9.0F) {
+            return 6;
+        } else if (workingCombo >= 6.0F) {
+            return 5;
+        } else {
+            return workingCombo >= 4.0F ? 4 : (int)workingCombo;
+        }
+    }
+
     @Override
     public float getMaxMight() {
         return mmight;

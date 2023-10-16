@@ -10,6 +10,7 @@ public class WarItems {
     public static final DeferredRegister<Item> ITEMS = DeferredRegister.create(ForgeRegistries.ITEMS, WarDance.MODID);
 
     public static final RegistryObject<Item> SCROLL = ITEMS.register("scroll", ScrollItem::new);
+    public static final RegistryObject<Item> DUMMY = ITEMS.register("dummy", DummyItem::new);
     public static final RegistryObject<Item> MANUAL = ITEMS.register("manual", ManualItem::new);
 
 }

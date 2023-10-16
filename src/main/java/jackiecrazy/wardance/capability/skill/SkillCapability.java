@@ -2,6 +2,7 @@ package jackiecrazy.wardance.capability.skill;
 
 import jackiecrazy.wardance.WarDance;
 import jackiecrazy.wardance.config.GeneralConfig;
+import jackiecrazy.wardance.config.SkillConfig;
 import jackiecrazy.wardance.networking.CombatChannel;
 import jackiecrazy.wardance.networking.SyncSkillPacket;
 import jackiecrazy.wardance.skill.Skill;
@@ -319,7 +320,7 @@ public class SkillCapability implements ISkillCapability {
     public void update() {
         final LivingEntity caster = dude.get();
         if (caster == null) return;
-        final boolean gate = caster.level.getGameRules().getBoolean(WarDance.GATED_SKILLS);
+        final boolean gate = !SkillConfig.sifu;
         sync |= gatedSkills != gate;
         gatedSkills = gate;
         for (Skill s : getEquippedSkillsAndStyle()) {

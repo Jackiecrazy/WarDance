@@ -58,6 +58,7 @@
 
   "item.wardance.manual":"Manual",
   "item.wardance.scroll":"Scroll",
+  "item.wardance.dummy":"Dummy Scroll",
 
   "wardance.manual.partiallearn": "You study %s to the best of your abilities",
   "wardance.manual.learn": "You study %s thoroughly and memorize it by heart",
@@ -77,6 +78,7 @@
   "wardance.scroll.style.fixed": "Teaches styles",
   "wardance.scroll.skill.random": "Teaches a random skill",
   "wardance.scroll.style.random": "Teaches a random style",
+  "wardance.scroll.dummy": "This is a placeholder item mostly used for advancements, but it's also a valid scroll for all intents and purposes.",
   "wardance.scroll.random": "Teaches a random skill or style",
   "wardance.scroll.random.title": "Random",
   "wardance.scroll.random.desc": "Teaches a random skill or style",
@@ -642,5 +644,19 @@
   "advancements.wardance.root.title": "The Dance of Combat",
   "advancements.wardance.root.description": "Use the manual you were spawned with to learn and equip a basic skill kit. There are missing slots, you can fill them in as you learn more.",
   "advancements.wardance.shadowless.title": "Wong Fei Hung",
-  "advancements.wardance.shadowless.description": "Land 7 consecutive shadowless kicks in a single cast."
+  "advancements.wardance.shadowless.description": "Land 7 consecutive Shadowless Kicks in a single cast.",
+  "advancements.wardance.flame_dance.title": "EXPLOOOOOOSION",
+  "advancements.wardance.flame_dance.description": "Detonate 50 stacks of Flame Dance in a single hit.",
+  "advancements.wardance.survivor.title": "Tis but a Flesh Wound!",
+  "advancements.wardance.survivor.description": "Recover back to full health with Survivor.",
+  "advancements.wardance.prideful_might.title": "Hubris",
+  "advancements.wardance.prideful_might.description": "Max out your might with Prideful Might... then lose it all in a single hit.",
+  "advancements.wardance.berserk.title": "Overcompensation",
+  "advancements.wardance.berserk.description": "Dual wield two-handed weapons while under the effects of Berserk.",
+  "advancements.wardance.gamblers_whimsy.title": "Jackpot",
+  "advancements.wardance.gamblers_whimsy.description": "Roll a skill effectiveness above 2 with Gambler's Whimsy.",
+  "advancements.wardance.bite_the_dust.title": "Killer Queen",
+  "advancements.wardance.bite_the_dust.description": "Stack more than 6 Bite the Dust marks on a single target.",
+  "advancements.wardance.leverage.title": "Long Arm of the Law",
+  "advancements.wardance.leverage.description": "Attack with Leverage when more than 4 blocks away to get 200% base crit damage."
 }

@@ -1,0 +1,39 @@
+{
+  "parent": "wardance:root",
+  "criteria": {
+    "skill": {
+      "conditions": {
+        "skill": {
+          "skill": "wardance:bite_the_dust"
+        }
+      },
+      "trigger": "wardance:skill_challenge"
+    }
+  },
+  "display": {
+    "announce_to_chat": false,
+    "description": {
+      "translate": "advancements.wardance.bite_the_dust.description"
+    },
+    "frame": "challenge",
+    "hidden": false,
+    "icon": {
+      "item": "wardance:dummy",
+      "nbt": "{randomPick:0b,skills:{\"wardance:bite_the_dust\":1b}}"
+    },
+    "show_toast": true,
+    "title": {
+      "translate": "advancements.wardance.bite_the_dust.title"
+    }
+  },
+  "requirements": [
+    [
+      "skill"
+    ]
+  ],
+  "rewards": {
+    "loot": [
+      "wardance:skillscroll"
+    ]
+  }
+}

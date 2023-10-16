@@ -1,0 +1,6 @@
+{
+  "parent": "builtin/entity",
+  "textures": {
+    "layer0": "wardance:item/blueprint"
+  }
+}

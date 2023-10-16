@@ -31,30 +31,26 @@ public class PhantomDive extends Skill {
 
     @Override
     public boolean equippedTick(LivingEntity caster, SkillData stats) {
-        if (caster.isOnGround())
-            markUsed(caster, true);
-        else if (caster.getDeltaMovement().y() > 0) {
-            if (stats.getState() == STATE.ACTIVE)
-                stats.setArbitraryFloat((float) caster.getY());
-            else silentActivate(caster, 1F, false, (float) caster.getY());
-        } else if (caster.getDeltaMovement().y() < 0) {
-            if (stats.getState() != STATE.ACTIVE)
-                silentActivate(caster, 1F, false, (float) caster.getY());
+        float prev=stats.getArbitraryFloat();
+        if (caster.isOnGround()) {
+            stats.setArbitraryFloat((float) caster.getY());
+        } else if (caster.getDeltaMovement().y() > 0) {
+            stats.setArbitraryFloat((float) caster.getY());
         }
-        return false;
+        return stats.getArbitraryFloat()!=prev;
     }
 
     @Override
     public void onProc(LivingEntity caster, Event procPoint, STATE state, SkillData stats, @Nullable LivingEntity target) {
         if (procPoint instanceof LivingEvent.LivingJumpEvent) {
-            silentActivate(caster, 1F, false, (float) caster.getY());
+            silentActivate(caster, 0F, false, (float) caster.getY());
         }
         if (procPoint instanceof LivingFallEvent) {
-            markUsed(caster, true);
+            stats.setArbitraryFloat((float) caster.getY());
         }
         if (procPoint instanceof EntityAwarenessEvent e && e.getAttacker() == caster && state == STATE.ACTIVE) {
             StealthUtils.Awareness awareness = e.getAwareness();
-            double posDiff = stats.getDuration() - caster.getY();
+            double posDiff = stats.getArbitraryFloat() - caster.getY();
             int length = 0;
             if (posDiff > 1)
                 ParticleUtils.playSweepParticle(FootworkParticles.IMPACT.get(), caster, e.getEntity().position(), 0, posDiff, getColor(), 0);
@@ -67,16 +63,15 @@ public class PhantomDive extends Skill {
             }
             if (length > 0) e.getEntity().addEffect(new MobEffectInstance(FootworkEffects.PARALYSIS.get(), length));
             e.setAwareness(awareness);
-            markUsed(caster, false);
+            stats.setArbitraryFloat((float) caster.getY());
             caster.fallDistance = 0;
         }
     }
 
     @Override
     public boolean onStateChange(LivingEntity caster, SkillData prev, STATE from, STATE to) {
-        if (prev.getState() == STATE.ACTIVE && to == STATE.COOLING) {
+        if (to == STATE.COOLING) {
             prev.setState(STATE.ACTIVE);
-
         }
         return passive(prev, from, to);
     }

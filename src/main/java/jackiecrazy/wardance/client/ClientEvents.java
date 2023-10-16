@@ -46,6 +46,7 @@ import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 import net.minecraftforge.eventbus.api.EventPriority;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
+import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
 import net.minecraftforge.registries.ForgeRegistries;
 
 import java.math.RoundingMode;
@@ -70,6 +71,7 @@ public class ClientEvents {
     private static Entity lastTickLookAt;
     private static boolean rightClick = false;
     private static int lastAttackTick = 0, lastSweepTick = 0;
+    private static int meditationTicks=0;
 
     static {
         RenderUtils.formatter.setRoundingMode(RoundingMode.DOWN);

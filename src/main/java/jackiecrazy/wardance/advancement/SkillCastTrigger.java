@@ -22,8 +22,7 @@ public class SkillCastTrigger extends SimpleCriterionTrigger<SkillCastTrigger.Tr
     public TriggerInstance createInstance(JsonObject obj, @Nonnull EntityPredicate.Composite entity, DeserializationContext ctx) {
         SkillPredicate skill = SkillPredicate.fromJson(obj.get("skilldata"));
         EntityPredicate.Composite target = EntityPredicate.Composite.fromJson(obj, "target", ctx);
-        EntityPredicate.Composite caster = EntityPredicate.Composite.fromJson(obj, "caster", ctx);
-        return new TriggerInstance(caster, target, skill);
+        return new TriggerInstance(entity, target, skill);
     }
 
     public void trigger(ServerPlayer player, Entity target, SkillData sd) {

@@ -10,9 +10,9 @@ import com.mojang.brigadier.context.CommandContext;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import com.mojang.brigadier.exceptions.SimpleCommandExceptionType;
 import jackiecrazy.footwork.capability.resources.CombatData;
-import jackiecrazy.wardance.WarDance;
 import jackiecrazy.wardance.capability.action.PermissionData;
 import jackiecrazy.wardance.capability.skill.CasterData;
+import jackiecrazy.wardance.config.SkillConfig;
 import jackiecrazy.wardance.items.ManualItem;
 import jackiecrazy.wardance.items.WarItems;
 import jackiecrazy.wardance.skill.Skill;
@@ -323,7 +323,7 @@ public class WarDanceCommand {
     private static int resetSkills(CommandContext<CommandSourceStack> ctx) throws CommandSyntaxException {
         Player player = EntityArgument.getPlayer(ctx, "player");
         CasterData.getCap(player).getSelectableList().clear();
-        ctx.getSource().sendSuccess(Component.translatable("wardance.command.clearSkill" + (player.level.getGameRules().getBoolean(WarDance.GATED_SKILLS)), player.getDisplayName()), false);
+        ctx.getSource().sendSuccess(Component.translatable("wardance.command.clearSkill" + (!SkillConfig.sifu), player.getDisplayName()), false);
         return Command.SINGLE_SUCCESS;
     }
 

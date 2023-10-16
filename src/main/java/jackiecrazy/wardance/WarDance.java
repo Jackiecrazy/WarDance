@@ -23,7 +23,6 @@ import net.minecraft.commands.synchronization.ArgumentTypeInfos;
 import net.minecraft.commands.synchronization.SingletonArgumentInfo;
 import net.minecraft.world.item.CreativeModeTab;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.level.GameRules;
 import net.minecraftforge.client.event.RegisterGuiOverlaysEvent;
 import net.minecraftforge.client.gui.overlay.VanillaGuiOverlay;
 import net.minecraftforge.common.MinecraftForge;
@@ -45,6 +44,7 @@ import net.minecraftforge.registries.*;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import javax.annotation.Nonnull;
 import java.util.Random;
 
 // The value here should match an entry in the META-INF/mods.toml file
@@ -54,8 +54,8 @@ public class WarDance {
     public static final Random rand = new Random();
 
     public static final Logger LOGGER = LogManager.getLogger();
-    public static final GameRules.Key<GameRules.BooleanValue> GATED_SKILLS = GameRules.register("lockWarSkills", GameRules.Category.PLAYER, GameRules.BooleanValue.create(false)); //Blessed be the TF
     public static final CreativeModeTab WARTAB = new CreativeModeTab(-1, "wardance") {
+        @Nonnull
         @Override
         public ItemStack makeIcon() {
             return new ItemStack(WarItems.SCROLL.get());
@@ -90,6 +90,7 @@ public class WarDance {
         ModLoadingContext.get().registerConfig(ModConfig.Type.COMMON, StealthConfig.CONFIG_SPEC, MODID + "/stealth.toml");
         ModLoadingContext.get().registerConfig(ModConfig.Type.COMMON, CombatConfig.CONFIG_SPEC, MODID + "/combat.toml");
         ModLoadingContext.get().registerConfig(ModConfig.Type.COMMON, LootConfig.CONFIG_SPEC, MODID + "/loot.toml");
+        ModLoadingContext.get().registerConfig(ModConfig.Type.COMMON, SkillConfig.CONFIG_SPEC, MODID + "/skill.toml");
         //ModLoadingContext.get().registerConfig(ModConfig.Type.COMMON, ItemConfig.CONFIG_SPEC, MODID + "/items.toml");
         ModLoadingContext.get().registerConfig(ModConfig.Type.COMMON, ResourceConfig.CONFIG_SPEC, MODID + "/resources.toml");
         ModLoadingContext.get().registerConfig(ModConfig.Type.CLIENT, ClientConfig.CONFIG_SPEC, MODID + "/client.toml");

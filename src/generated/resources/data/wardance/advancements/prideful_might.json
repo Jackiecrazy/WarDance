@@ -1,0 +1,39 @@
+{
+  "parent": "wardance:root",
+  "criteria": {
+    "skill": {
+      "conditions": {
+        "skill": {
+          "skill": "wardance:prideful_might"
+        }
+      },
+      "trigger": "wardance:skill_challenge"
+    }
+  },
+  "display": {
+    "announce_to_chat": false,
+    "description": {
+      "translate": "advancements.wardance.prideful_might.description"
+    },
+    "frame": "challenge",
+    "hidden": false,
+    "icon": {
+      "item": "wardance:dummy",
+      "nbt": "{randomPick:0b,skills:{\"wardance:prideful_might\":1b}}"
+    },
+    "show_toast": true,
+    "title": {
+      "translate": "advancements.wardance.prideful_might.title"
+    }
+  },
+  "requirements": [
+    [
+      "skill"
+    ]
+  ],
+  "rewards": {
+    "loot": [
+      "wardance:skillscroll"
+    ]
+  }
+}

@@ -56,6 +56,15 @@ public abstract class Skill extends Move {
         insert.add(this);
         variationMap.put(this.getArchetype(), insert);
     }
+    private boolean challenge;
+
+    public boolean hasChallenge(){
+        return challenge;
+    }
+    public Skill setChallenge(){
+        challenge=true;
+        return this;
+    }
 
     protected static HashSet<String> makeTag(String... stuff) {
         return new HashSet<>(Arrays.asList(stuff));
@@ -203,6 +212,11 @@ public abstract class Skill extends Move {
 
     public HashSet<String> getHardIncompatibility() {
         return none;
+    }
+
+    protected void completeChallenge(LivingEntity caster) {
+        if(caster instanceof ServerPlayer sp)
+            WarAdvancements.CHALLENGE_ONLY.trigger(sp, CasterData.getCap(caster).getSkillData(this).orElse(SkillData.DUMMY));
     }
 
     /**

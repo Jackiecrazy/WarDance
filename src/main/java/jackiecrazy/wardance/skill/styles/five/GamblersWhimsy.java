@@ -39,7 +39,7 @@ public class GamblersWhimsy extends SkillStyle {
 
     @Override
     public void onProc(LivingEntity caster, Event procPoint, STATE state, SkillData stats, @Nullable LivingEntity target) {
-        if (procPoint instanceof SkillCastEvent sre && sre.getPhase() == EventPriority.HIGHEST) {
+        if (procPoint instanceof SkillCastEvent sre && sre.getPhase() == EventPriority.LOWEST) {
 
             //slots that can be cast
             int allowed = 0b00000;
@@ -50,7 +50,7 @@ public class GamblersWhimsy extends SkillStyle {
                 indices--;
             }
             stats.setDuration(allowed);
-            sre.setEffectiveness(WarDance.rand.nextFloat() * (caster.getAttributeValue(Attributes.LUCK) + CombatData.getCap(caster).getComboRank() / 2f - (sre.getTarget() == null ? 0 : sre.getTarget().getAttributeValue(Attributes.LUCK))));
+            sre.setEffectiveness(WarDance.rand.nextFloat() * (caster.getAttributeValue(Attributes.LUCK) + sre.getEffectiveness() - (sre.getTarget() == null ? 0 : sre.getTarget().getAttributeValue(Attributes.LUCK))));
         }
     }
 

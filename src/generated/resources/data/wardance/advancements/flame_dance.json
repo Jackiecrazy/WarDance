@@ -1,0 +1,39 @@
+{
+  "parent": "wardance:root",
+  "criteria": {
+    "skill": {
+      "conditions": {
+        "skill": {
+          "skill": "wardance:flame_dance"
+        }
+      },
+      "trigger": "wardance:skill_challenge"
+    }
+  },
+  "display": {
+    "announce_to_chat": false,
+    "description": {
+      "translate": "advancements.wardance.flame_dance.description"
+    },
+    "frame": "challenge",
+    "hidden": false,
+    "icon": {
+      "item": "wardance:dummy",
+      "nbt": "{randomPick:0b,skills:{\"wardance:flame_dance\":1b}}"
+    },
+    "show_toast": true,
+    "title": {
+      "translate": "advancements.wardance.flame_dance.title"
+    }
+  },
+  "requirements": [
+    [
+      "skill"
+    ]
+  ],
+  "rewards": {
+    "loot": [
+      "wardance:stylescroll"
+    ]
+  }
+}

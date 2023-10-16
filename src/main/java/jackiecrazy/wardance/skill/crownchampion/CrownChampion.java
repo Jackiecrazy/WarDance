@@ -7,11 +7,13 @@ import jackiecrazy.footwork.potion.FootworkEffects;
 import jackiecrazy.footwork.utils.StealthUtils;
 import jackiecrazy.footwork.utils.TargetingUtils;
 import jackiecrazy.wardance.WarDance;
+import jackiecrazy.wardance.advancement.WarAdvancements;
 import jackiecrazy.wardance.capability.resources.CombatCapability;
 import jackiecrazy.wardance.capability.skill.CasterData;
 import jackiecrazy.wardance.capability.status.Marks;
 import jackiecrazy.wardance.skill.*;
 import jackiecrazy.wardance.utils.SkillUtils;
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.Entity;
@@ -70,6 +72,9 @@ elemental might: +1 burn/snowball/poison/drown damage to targets you have attack
     public static void oops(LivingDamageEvent e) {
         LivingEntity uke = e.getEntity();
         if (CasterData.getCap(uke).getEquippedSkills().contains(WarSkills.PRIDEFUL_MIGHT.get())) {
+            if (CombatData.getCap(uke).getMight() == CombatData.getCap(uke).getMaxMight())
+                if (uke instanceof ServerPlayer sp)
+                    WarAdvancements.CHALLENGE_ONLY.trigger(sp, CasterData.getCap(uke).getSkillData(WarSkills.PRIDEFUL_MIGHT.get()).orElse(SkillData.DUMMY));
             CombatData.getCap(uke).setMight(0);
         }
     }

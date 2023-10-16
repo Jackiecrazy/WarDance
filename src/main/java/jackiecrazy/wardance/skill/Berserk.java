@@ -2,6 +2,7 @@ package jackiecrazy.wardance.skill;
 
 import jackiecrazy.footwork.api.FootworkAttributes;
 import jackiecrazy.footwork.capability.resources.CombatData;
+import jackiecrazy.wardance.config.WeaponStats;
 import jackiecrazy.wardance.utils.DamageUtils;
 import jackiecrazy.wardance.utils.SkillUtils;
 import net.minecraft.world.entity.LivingEntity;
@@ -44,6 +45,8 @@ public class Berserk extends Skill {
 
     @Override
     public boolean equippedTick(LivingEntity caster, SkillData stats) {
+        if (caster.getMainHandItem().is(WeaponStats.TWO_HANDED) && caster.getOffhandItem().is(WeaponStats.TWO_HANDED) && stats.getState() == STATE.ACTIVE)
+            completeChallenge(caster);
         return activeTick(stats);
     }
 

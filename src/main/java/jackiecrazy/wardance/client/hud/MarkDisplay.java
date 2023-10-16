@@ -1,5 +1,6 @@
 package jackiecrazy.wardance.client.hud;
 
+import com.mojang.blaze3d.platform.GlStateManager;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.datafixers.util.Pair;
@@ -71,12 +72,23 @@ public class MarkDisplay implements IGuiOverlay {
                 afflict.addAll(Marks.getCap(looked).getActiveMarks().values().stream().filter(a -> a.getSkill().showsMark(a, looked)).collect(Collectors.toList()));
                 Pair<Integer, Integer> pair = translateCoords(ClientConfig.CONFIG.enemyAfflict, width, height);
                 for (int index = 0; index < afflict.size(); index++) {
+                    //draw icon
                     SkillData s = afflict.get(index);
                     RenderSystem.setShaderTexture(0, s.getSkill().icon());
                     Color c = s.getSkill().getColor();
                     RenderSystem.setShaderColor(c.getRed() / 255f, c.getGreen() / 255f, c.getBlue() / 255f, 1);
                     final int atX = pair.getFirst() - (afflict.size() - 1 - index) * 16 + (afflict.size() - 1) * 8;
                     GuiComponent.blit(stack, atX - 8, pair.getSecond(), 0, 0, 16, 16, 16, 16);
+
+                    //dark mask
+                    RenderSystem.enableBlend();
+                    RenderSystem.blendFuncSeparate(GlStateManager.SourceFactor.ZERO, GlStateManager.DestFactor.ONE, GlStateManager.SourceFactor.ONE_MINUS_SRC_ALPHA, GlStateManager.DestFactor.ZERO);
+                    RenderSystem.setShaderColor(1,1,1, 1);
+                    if (s.getState() == Skill.STATE.ACTIVE)//inverted
+                        RenderSystem.setShaderColor(c.getRed() / 255f, c.getGreen() / 255f, c.getBlue() / 255f, 1);
+                    GuiComponent.blit(stack, atX - 8, pair.getSecond(), 0, 0, 16, 16, 16, 16);
+
+                    //draw spin
                     if (s.getMaxDuration() >= 1) {
                         //cooldown/active spinny
                         float cd = s.getDuration();
@@ -84,6 +96,7 @@ public class MarkDisplay implements IGuiOverlay {
                         if (s.getState() == Skill.STATE.ACTIVE)
                             cdPerc = (s.getMaxDuration() - cd) / s.getMaxDuration();
                         RenderSystem.setShaderTexture(0, RenderUtils.cooldown);
+                        //fixme only works to the halfway point???
                         RenderUtils.drawCooldownCircle(stack, atX, pair.getSecond(), 16, cdPerc, s.getState()== Skill.STATE.ACTIVE);
                         RenderSystem.disableBlend();
 

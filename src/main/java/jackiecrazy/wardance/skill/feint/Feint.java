@@ -123,7 +123,7 @@ public class Feint extends Skill {
     @Override
     public boolean markTick(LivingEntity caster, LivingEntity target, SkillData sd) {
         if (sd.getDuration() > 0.1 || sd.getArbitraryFloat() <= 0) {
-            sd.decrementDuration(0.05f);
+            return markTickDown(sd);
         }
         return super.markTick(caster, target, sd);
     }

@@ -59,6 +59,9 @@ public class FlameDance extends WarCry {
                 if (!DamageUtils.isSkillAttack(lae.getSource())) {
                     DamageSource kaboom = new CombatDamageSource("player", caster).setDamageTyping(CombatDamageSource.TYPE.MAGICAL).setProcSkillEffects(true).setSkillUsed(this).setPostureDamage(0).bypassArmor();
                     float f = getExistingMark(target).getArbitraryFloat() * SkillUtils.getSkillEffectiveness(caster);
+                    if(getExistingMark(target).getArbitraryFloat()>49){
+                        completeChallenge(caster);
+                    }
                     target.hurt(kaboom, f * ((int) (2 + f / 10)) / 2f);
                     target.hurtTime = target.hurtDuration = target.invulnerableTime = 0;
                     removeMark(target);
@@ -72,6 +75,7 @@ public class FlameDance extends WarCry {
         }
         super.onProc(caster, procPoint, state, stats, target);
     }
+
 
     @Override
     public boolean equippedTick(LivingEntity caster, SkillData stats) {

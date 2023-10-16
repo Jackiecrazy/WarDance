@@ -35,11 +35,13 @@ public class BiteTheDust extends CoupDeGrace {
         return none;
     }
 
+
     @Override
     public void onProc(LivingEntity caster, Event procPoint, STATE state, SkillData stats, LivingEntity target) {
         if (procPoint instanceof StunEvent && ((StunEvent) procPoint).getAttacker() == caster && procPoint.getPhase() == EventPriority.HIGHEST) {
             float damage = 1;
             float currentMark = getExistingMark(target).getDuration();
+            if(currentMark>=6)completeChallenge(caster);
             while (currentMark > 0) {
                 damage *= 2;
                 currentMark--;
