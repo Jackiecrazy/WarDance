@@ -86,6 +86,7 @@ public class SkillCastScreen extends Screen {
         matrixStack.pushPose();
         //RenderSystem.enableAlphaTest();
         RenderSystem.enableBlend();
+        RenderSystem.defaultBlendFunc();
         RenderSystem.setShaderTexture(0, radial);
         this.exIndex = index;
         //mc.player.sendStatusMessage(new StringTextComponent(selected == null ? "none" : selected.getRegistryName().toString()), true);

@@ -1,8 +1,18 @@
-// 1.19.2	2023-10-16T23:14:14.170667942	Advancements
+// 1.19.2	2023-10-18T01:42:52.763920965	Advancements
+38860e322ca4f7856de8fa61345d71aa9c059ad0 data/wardance/advancements/backflip.json
 35749a56cde8b270056b20c0579cb8d7dc1bb68d data/wardance/advancements/berserk.json
 2e1538604b275d9145b5d57053fa542598e7fa63 data/wardance/advancements/bite_the_dust.json
+deb190a9a25b02cd3997cbe8a4894b62c65d8578 data/wardance/advancements/cursed_palms.json
+896717770fe7fda3696f2e8a736cdbc9327df417 data/wardance/advancements/demon_hunter.json
 797f8ae2bc223c1c5047b89aa17460ae8320bd2b data/wardance/advancements/flame_dance.json
 3575815ac41a50f60f3a7572dfb36edf736a0944 data/wardance/advancements/gamblers_whimsy.json
 7593840344dc04fd378688837684081ff58a0bc9 data/wardance/advancements/leverage.json
+cf55a274bcd5d4c798140c55588caf6a391eb4e8 data/wardance/advancements/lockdown.json
+1ae173f29654cb73735c90c27b19d7ceefb3e4a4 data/wardance/advancements/natural_sprinter.json
+f609334b01fc9d932fad53e327d3e1a6016c37cb data/wardance/advancements/phantom_dive.json
 21461289611cec3651192399b6b882047bab1050 data/wardance/advancements/prideful_might.json
+22af592509a1a3cb784c8d369709223654880d28 data/wardance/advancements/sabaton_smash.json
+4518eea64908a2bb16fd6aba5cbd229ab7a45a1f data/wardance/advancements/selfish_mascot.json
 7c7123025bee1d85b4873eaed9be272903db450d data/wardance/advancements/survivor.json
+eed8ae6baf37c9460f987aec19b2b53b6e97ccd9 data/wardance/advancements/taunt.json
+9b695046c41bd76d5c4f9cf157d7c83dcc10edd9 data/wardance/advancements/tornado.json

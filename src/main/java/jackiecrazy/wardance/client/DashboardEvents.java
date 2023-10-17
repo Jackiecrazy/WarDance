@@ -27,7 +27,7 @@ public class DashboardEvents {
     @SubscribeEvent
     public static void add(DashboardEvent e) {
         Player player = e.getPlayer();
-        if (player.getMainHandItem().getItem() == Items.WRITABLE_BOOK || player.getMainHandItem().getItem() == Items.WRITTEN_BOOK)
+        if (player.getMainHandItem().getItem() == Items.WRITTEN_BOOK)
             e.addThought(new PonderingOrb(e.getScreen(), MANUALIZE, a -> {
                 if (player.getMainHandItem().getItem() == Items.WRITTEN_BOOK) {
                     CombatChannel.INSTANCE.sendToServer(new ManualizePacket());

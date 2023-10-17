@@ -41,8 +41,7 @@ public class ManualizePacket {
                 if (player.getMainHandItem().getItem() != Items.WRITTEN_BOOK)
                     return;
                 ItemStack give = new ItemStack(WarItems.MANUAL.get());
-                if (player.getMainHandItem().getItem() != Items.WRITTEN_BOOK)
-                    give.setTag(player.getMainHandItem().getOrCreateTag().copy());
+                give.setTag(player.getMainHandItem().getOrCreateTag().copy());
                 ManualItem.setSkill(give, CasterData.getCap(player).getEquippedSkillsAndStyle());
                 ManualItem.setAutoLearn(give, true);
                 if (!player.getAbilities().instabuild)

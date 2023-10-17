@@ -58,6 +58,7 @@ public class ResourceDisplay implements IGuiOverlay {
             case NEWDARK -> drawNewDarkPostureBarAt(you, ms, elb, width, height);
             case CLASSIC -> drawOldPostureBarAt(you, ms, elb, width, height);
         }
+        RenderSystem.defaultBlendFunc();
     }
 
     /**

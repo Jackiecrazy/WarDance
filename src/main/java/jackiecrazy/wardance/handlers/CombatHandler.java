@@ -351,7 +351,7 @@ public class CombatHandler {
                     e.setCanceled(true);
                     return;
                 }
-                if (ukeCap.getStunTime() == 0) {
+                if (!ukeCap.isVulnerable()) {
                     //overflow posture
                     float consumption = pe.getPostureConsumption();
                     float knockback = ukeCap.consumePosture(seme, consumption);

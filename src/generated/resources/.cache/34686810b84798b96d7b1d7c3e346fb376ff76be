@@ -1,4 +1,4 @@
-// 1.19.2	2023-10-16T22:26:15.252088078	Item Models: wardance
+// 1.19.2	2023-10-18T01:42:52.758758647	Item Models: wardance
 18838816da9e91aaad246f1cdde8c1d12dade94d assets/wardance/models/skill/afterimage.json
 6c9ef392faeb94ba7047aa0ccf541d1e39ac554d assets/wardance/models/skill/apathy.json
 6c9ef392faeb94ba7047aa0ccf541d1e39ac554d assets/wardance/models/skill/archers_paradox.json
@@ -30,7 +30,6 @@ db1224de877a180038273ffd518001e053979fd8 assets/wardance/models/skill/bloodlust.
 e42843abae436072702b2e39e3dff2bfa4fd83ed assets/wardance/models/skill/gamblers_whimsy.json
 5c426111abed38f7f8a780136da49af5deb61761 assets/wardance/models/skill/gangrene.json
 2e358826dbf3fec1fde588babe76c4b10ad510b7 assets/wardance/models/skill/gold_rush.json
-4bba4845a4c36c9214cd0c7a43c9de69206c3889 assets/wardance/models/skill/hopping_mad.json
 3c64a11e78bdaa81464209bea1f6b85a53c9f8d5 assets/wardance/models/skill/iron_chop.json
 2bbc0dc0d5fd9e2f16dd0ea4d145a3e9c0a5e8c7 assets/wardance/models/skill/itchy_curse.json
 6c9ef392faeb94ba7047aa0ccf541d1e39ac554d assets/wardance/models/skill/lady_luck.json
@@ -39,7 +38,7 @@ bf4f3405b79268a0c18391caf6a39437a41d7df1 assets/wardance/models/skill/leverage.j
 18838816da9e91aaad246f1cdde8c1d12dade94d assets/wardance/models/skill/mikiri.json
 bf4f3405b79268a0c18391caf6a39437a41d7df1 assets/wardance/models/skill/momentum.json
 e01bdd6fbbf0457cdffeaf03aa87f31ce60cb3e7 assets/wardance/models/skill/montante.json
-6c9ef392faeb94ba7047aa0ccf541d1e39ac554d assets/wardance/models/skill/natural_sprinter.json
+cb90564fdb6c51d7f4d077be4a0a7204992e1338 assets/wardance/models/skill/natural_sprinter.json
 db1224de877a180038273ffd518001e053979fd8 assets/wardance/models/skill/necrosis.json
 3f385f188e84b8ca6f7d633cb4b7bd634bd4e281 assets/wardance/models/skill/overbear.json
 18838816da9e91aaad246f1cdde8c1d12dade94d assets/wardance/models/skill/overpower.json
@@ -69,6 +68,7 @@ db1224de877a180038273ffd518001e053979fd8 assets/wardance/models/skill/static_dis
 a00378b08260cf0651abc54371e2d399df838c5e assets/wardance/models/skill/survivor.json
 6834e30d293afc6f79c372f0511abf4733d175ec assets/wardance/models/skill/tabula_rasa.json
 806dcc57372149416ef5f8a9db904a843bffded1 assets/wardance/models/skill/tackle.json
+c5375711d8f3c21155cd4d72a6fe74f262bebe82 assets/wardance/models/skill/taunt.json
 3b6d639beb5ceae3886833d3aee6bb24672f55cf assets/wardance/models/skill/throw.json
 e3df5614e18fc7fc14748ae55192ef97bc633823 assets/wardance/models/skill/timberfall.json
 806dcc57372149416ef5f8a9db904a843bffded1 assets/wardance/models/skill/tornado.json
@@ -76,7 +76,6 @@ e3df5614e18fc7fc14748ae55192ef97bc633823 assets/wardance/models/skill/timberfall
 b720d0f55f790e7ab352bb98c30614a909bfd373 assets/wardance/models/skill/unravel.json
 ade3ce554d7997b7bdb7600bcd398f451e5c0c28 assets/wardance/models/skill/unstable_spirit.json
 17647b27ab6ba08b99acda671fe7518b9daaa18c assets/wardance/models/skill/unyielding_spirit.json
-57956fb31fb65f8c7c87b3a0d50e1541c583d283 assets/wardance/models/skill/upper_hand.json
 0a85e00773e898a40e6b28b42ac91b4c0f778d47 assets/wardance/models/skill/vengeful_might.json
 8d953dd53bdba0f3bd961580b50c0ea952e5baf1 assets/wardance/models/skill/viral_decay.json
 bf4f3405b79268a0c18391caf6a39437a41d7df1 assets/wardance/models/skill/vital_strike.json

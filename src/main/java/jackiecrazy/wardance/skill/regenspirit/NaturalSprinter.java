@@ -4,6 +4,7 @@ import jackiecrazy.footwork.api.FootworkAttributes;
 import jackiecrazy.footwork.capability.resources.CombatData;
 import jackiecrazy.wardance.skill.*;
 import jackiecrazy.wardance.utils.SkillUtils;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.ai.attributes.AttributeModifier;
 import net.minecraftforge.event.entity.living.LivingDeathEvent;
@@ -30,6 +31,17 @@ confidence: your spirit regeneration speed scales proportionally with how much s
     private final HashSet<String> tag = makeTag("passive", ProcPoints.on_kill, ProcPoints.change_spirit);
     private final HashSet<String> no = none;
 
+    @Nonnull
+    @Override
+    public SkillArchetype getArchetype() {
+        return SkillArchetypes.morale;
+    }
+
+    @Override
+    public ResourceLocation icon() {
+        return new ResourceLocation("wardance:textures/skill/natural_sprinter.png");
+    }
+
     @Override
     public HashSet<String> getTags() {
         return passive;
@@ -39,12 +51,6 @@ confidence: your spirit regeneration speed scales proportionally with how much s
     @Override
     public HashSet<String> getSoftIncompatibility(LivingEntity caster) {
         return none;
-    }
-
-    @Nonnull
-    @Override
-    public SkillArchetype getArchetype() {
-        return SkillArchetypes.morale;
     }
 
     @Override
@@ -63,7 +69,10 @@ confidence: your spirit regeneration speed scales proportionally with how much s
     @Override
     public void onProc(LivingEntity caster, Event procPoint, STATE state, SkillData stats, LivingEntity target) {
         if (procPoint instanceof LivingDeathEvent && procPoint.getPhase() == EventPriority.HIGHEST) {
+            if (CombatData.getCap(caster).getSpirit() < CombatData.getCap(caster).getMaxSpirit() - 3 && caster.isSprinting())
+                completeChallenge(caster);
             CombatData.getCap(caster).addSpirit(3);
+
         }
     }
 

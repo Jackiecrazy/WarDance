@@ -1,0 +1,39 @@
+{
+  "parent": "wardance:root",
+  "criteria": {
+    "skill": {
+      "conditions": {
+        "skill": {
+          "skill": "wardance:lockdown"
+        }
+      },
+      "trigger": "wardance:skill_challenge"
+    }
+  },
+  "display": {
+    "announce_to_chat": false,
+    "description": {
+      "translate": "advancements.wardance.lockdown.description"
+    },
+    "frame": "challenge",
+    "hidden": false,
+    "icon": {
+      "item": "wardance:dummy",
+      "nbt": "{randomPick:0b,skills:{\"wardance:lockdown\":1b}}"
+    },
+    "show_toast": true,
+    "title": {
+      "translate": "advancements.wardance.lockdown.title"
+    }
+  },
+  "requirements": [
+    [
+      "skill"
+    ]
+  ],
+  "rewards": {
+    "loot": [
+      "wardance:skillscroll"
+    ]
+  }
+}

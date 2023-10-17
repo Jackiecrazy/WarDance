@@ -81,6 +81,8 @@ public class DemonHunter extends ColorRestrictionStyle {
                     CombatUtils.knockBack(caster, target, 1, true, true);
                     Vec3 vec = caster.getDeltaMovement();
                     caster.lerpMotion(vec.x, vec.y + 1, vec.z);
+                    if(SkillUtils.hasAttribute(caster, ForgeMod.ATTACK_RANGE.get(), reach))
+                        completeChallenge(caster);
                 }
             } else mark(caster, target, 3);
             SkillUtils.removeAttribute(caster, ForgeMod.ATTACK_RANGE.get(), reach);

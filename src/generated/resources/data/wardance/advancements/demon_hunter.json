@@ -1,0 +1,39 @@
+{
+  "parent": "wardance:root",
+  "criteria": {
+    "skill": {
+      "conditions": {
+        "skill": {
+          "skill": "wardance:demon_hunter"
+        }
+      },
+      "trigger": "wardance:skill_challenge"
+    }
+  },
+  "display": {
+    "announce_to_chat": false,
+    "description": {
+      "translate": "advancements.wardance.demon_hunter.description"
+    },
+    "frame": "challenge",
+    "hidden": false,
+    "icon": {
+      "item": "wardance:dummy",
+      "nbt": "{randomPick:0b,skills:{\"wardance:demon_hunter\":1b}}"
+    },
+    "show_toast": true,
+    "title": {
+      "translate": "advancements.wardance.demon_hunter.title"
+    }
+  },
+  "requirements": [
+    [
+      "skill"
+    ]
+  ],
+  "rewards": {
+    "loot": [
+      "wardance:stylescroll"
+    ]
+  }
+}

@@ -8,7 +8,8 @@
     "frame": "challenge",
     "hidden": false,
     "icon": {
-      "item": "minecraft:feather"
+      "item": "wardance:dummy",
+      "nbt": "{randomPick:0b,skills:{\"wardance:shadowless_kick\":1b}}"
     },
     "show_toast": true,
     "title": {
@@ -21,7 +22,10 @@
       "conditions": {
         "skilldata": {
           "skill": "wardance:shadowless_kick",
-          "stack": 7
+          "stack": 7,
+          "effectiveness": {
+            "min": 5
+          }
         }
       }
     }

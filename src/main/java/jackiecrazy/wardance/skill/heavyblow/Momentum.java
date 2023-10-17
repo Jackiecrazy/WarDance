@@ -24,7 +24,7 @@ public class Momentum extends HeavyBlow {
             ((ParryEvent) procPoint).setPostureConsumption(((ParryEvent) procPoint).getPostureConsumption() + 0.01f * SkillUtils.getSkillEffectiveness(caster) * power(2, CombatData.getCap(caster).getComboRank()));
         } else if (procPoint instanceof CriticalHitEvent && procPoint.getPhase() == EventPriority.HIGHEST) {
             float combo = stats.getArbitraryFloat() + 1;
-            combo %= 8 - CombatData.getCap(caster).getComboRank();
+            combo %= 7 - CombatData.getCap(caster).getComboRank();
             if (combo == 0) {
                 procPoint.setResult(Event.Result.ALLOW);
             } else procPoint.setResult(Event.Result.DENY);

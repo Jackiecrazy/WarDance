@@ -3,23 +3,28 @@ package jackiecrazy.wardance.items;
 import jackiecrazy.wardance.WarDance;
 import jackiecrazy.wardance.capability.skill.CasterData;
 import jackiecrazy.wardance.capability.skill.ISkillCapability;
+import jackiecrazy.wardance.config.GeneralConfig;
 import jackiecrazy.wardance.networking.CombatChannel;
 import jackiecrazy.wardance.networking.OpenManualScreenPacket;
 import jackiecrazy.wardance.skill.Skill;
 import jackiecrazy.wardance.skill.styles.SkillStyle;
 import net.minecraft.ChatFormatting;
+import net.minecraft.core.NonNullList;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.util.StringUtil;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResultHolder;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.item.Item;
-import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.Rarity;
-import net.minecraft.world.item.TooltipFlag;
+import net.minecraft.world.item.*;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.storage.loot.LootContext;
+import net.minecraft.world.level.storage.loot.LootTable;
+import net.minecraft.world.level.storage.loot.parameters.LootContextParamSets;
+import net.minecraft.world.level.storage.loot.parameters.LootContextParams;
 import net.minecraftforge.network.PacketDistributor;
 
 import java.util.ArrayList;
@@ -77,16 +82,29 @@ public class ManualItem extends Item {
         stack.getOrCreateTag().putBoolean("noUnlock", !s);
     }
 
+    private static final ResourceLocation BOOKS=new ResourceLocation(WarDance.MODID, "manuals");
+
     @Override
     public InteractionResultHolder<ItemStack> use(Level l, Player p, InteractionHand hand) {
         ItemStack stack = p.getItemInHand(hand);
-        if (p instanceof ServerPlayer sp) {
+        if (p instanceof ServerPlayer sp && l instanceof ServerLevel sl) {
+            int random=stack.getOrCreateTag().getInt("rollRandom");
+            if(random>0){
+                if(!p.getAbilities().instabuild)
+                    stack.shrink(1);
+                LootContext lootcontext = (new LootContext.Builder(sl)).withParameter(LootContextParams.THIS_ENTITY, p).withParameter(LootContextParams.ORIGIN, p.position()).withRandom(p.getRandom()).withLuck(p.getLuck()).create(LootContextParamSets.ADVANCEMENT_REWARD); // FORGE: luck to LootContext
+                LootTable lt=l.getServer().getLootTables().get(BOOKS);
+                lt.getRandomItems(lootcontext).forEach(sp::addItem);
+                return InteractionResultHolder.success(stack);
+            }
             CombatChannel.INSTANCE.send(PacketDistributor.PLAYER.with(() -> sp), new OpenManualScreenPacket(hand == InteractionHand.OFF_HAND));
             return InteractionResultHolder.success(stack);
         }
         return InteractionResultHolder.success(stack);//learn(p, stack);
     }
     public static InteractionResultHolder<ItemStack> learn(Player p, ItemStack stack) {
+        if(GeneralConfig.debug)
+        System.out.println(stack.save(new CompoundTag()).getAsString());
         final List<Skill> skills = getSkills(stack);
         boolean autoLearn = autoLearn(stack);
         final ISkillCapability cap = CasterData.getCap(p);
@@ -132,9 +150,13 @@ public class ManualItem extends Item {
     @Override
     public void appendHoverText(ItemStack stack, @org.jetbrains.annotations.Nullable Level p_41422_, List<Component> component, TooltipFlag flag) {
         CompoundTag compoundtag = stack.getOrCreateTag();
+        if(compoundtag.getInt("rollRandom")!=0){
+            component.add(Component.translatable("wardance.manual.random").withStyle(ChatFormatting.GRAY));
+            return;
+        }
         String author = compoundtag.getString("author");
         if (!StringUtil.isNullOrEmpty(author)) {
-            component.add(Component.translatable("book.byAuthor", author).withStyle(ChatFormatting.GRAY));
+            component.add(Component.literal(author).withStyle(ChatFormatting.GRAY));
         }
         if (autoLearn(stack))
             component.add(Component.translatable("wardance.manual.autolearn").withStyle(ChatFormatting.GOLD));
@@ -145,6 +167,19 @@ public class ManualItem extends Item {
         for (Skill s : getSkills(stack)) {
             if (s != null)
                 component.add(s.getDisplayName(null).withStyle(s.getCategory().getFormattings()));
+        }
+    }
+
+    public void fillItemCategory(CreativeModeTab tab, NonNullList<ItemStack> list) {
+        if (tab == WarDance.WARTAB) {
+//            ItemStack chest=new ItemStack(WarItems.MANUAL.get());
+//            chest.setHoverName(Component.literal("Library of Alexandria"));
+//            chest.getOrCreateTag().putInt("rollRandom", 2);
+//            list.add(chest);
+            ItemStack chest=new ItemStack(WarItems.MANUAL.get());
+            chest.setHoverName(Component.literal("Dusty Tattered Tome"));
+            chest.getOrCreateTag().putInt("rollRandom", 1);
+            list.add(chest);
         }
     }
 }

@@ -23,10 +23,14 @@ public class CursedPalms extends Throw {
         areaeffectcloud.setOwner(caster);
         areaeffectcloud.setRadius(5.0F * SkillUtils.getSkillEffectiveness(caster));
         areaeffectcloud.setDuration((int) (140 * SkillUtils.getSkillEffectiveness(caster)));
+        int counter=0;
         for (MobEffectInstance mobeffectinstance : target.getActiveEffects()) {
-            if (!mobeffectinstance.getEffect().isBeneficial())
+            if (!mobeffectinstance.getEffect().isBeneficial()) {
                 areaeffectcloud.addEffect(new MobEffectInstance(mobeffectinstance));
+                counter++;
+            }
         }
+        if(counter>=4)completeChallenge(caster);
         caster.level.addFreshEntity(areaeffectcloud);
     }
 }

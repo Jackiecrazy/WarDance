@@ -18,7 +18,7 @@ public class ItchyCurse extends Hex {
     public boolean onStateChange(LivingEntity caster, SkillData prev, STATE from, STATE to) {
         LivingEntity target = SkillUtils.aimLiving(caster);
         if (to == STATE.ACTIVE && target != null && cast(caster, target, -999)) {
-            mark(caster, target, 3);
+            mark(caster, target, 6);
             markUsed(caster);
             if (caster.level instanceof ServerLevel sl) {
                 sl.sendParticles(ParticleTypes.ENCHANT, target.getX(), target.getY(), target.getZ(), 20, target.getBbWidth(), target.getBbHeight(), target.getBbWidth(), 0f);
@@ -37,7 +37,7 @@ public class ItchyCurse extends Hex {
             markTickDown(sd);
         }
         sd.addArbitraryFloat(0.05f);
-        if (sd.getArbitraryFloat() >= 3) {
+        if (sd.getArbitraryFloat() >= 2) {
             SkillUtils.modifyAttribute(target, Attributes.MOVEMENT_SPEED, HEX, -1, AttributeModifier.Operation.MULTIPLY_TOTAL);
             CombatData.getCap(target).setHandBind(InteractionHand.MAIN_HAND, 20);
             CombatData.getCap(target).setHandBind(InteractionHand.OFF_HAND, 20);

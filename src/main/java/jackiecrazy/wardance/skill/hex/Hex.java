@@ -143,8 +143,9 @@ public class Hex extends Skill {
 
     @Override
     public void onProc(LivingEntity caster, Event procPoint, STATE state, SkillData stats, LivingEntity target) {
-        if (this == WarSkills.CURSE_OF_MISFORTUNE.get() && procPoint instanceof LuckEvent.Post && state != STATE.COOLING) {
-            stats.setArbitraryFloat(Math.min(11, stats.getArbitraryFloat() + 1));
+        if (this == WarSkills.CURSE_OF_MISFORTUNE.get() && procPoint instanceof LuckEvent.Post luck && state != STATE.COOLING) {
+            if (!luck.isPass())
+                stats.setArbitraryFloat(Math.min(11, stats.getArbitraryFloat() + 1));
         }
     }
 
@@ -155,7 +156,7 @@ public class Hex extends Skill {
             mark(caster, target, duration(), prev.getArbitraryFloat());
             prev.setArbitraryFloat(0);
             if (caster.level instanceof ServerLevel sl) {
-                sl.sendParticles(ParticleTypes.ENCHANT, target.getX(), target.getY(), target.getZ(), 100, target.getBbWidth(), target.getBbHeight()/2, target.getBbWidth(), 0f);
+                sl.sendParticles(ParticleTypes.ENCHANT, target.getX(), target.getY(), target.getZ(), 100, target.getBbWidth(), target.getBbHeight() / 2, target.getBbWidth(), 0f);
             }
             markUsed(caster);
         }

@@ -103,12 +103,17 @@ public class ShadowlessKick extends Kick {
                 MinecraftForge.EVENT_BUS.post(sce);
             }
             float mult = 1;
-            mult *= sce.getEffectiveness();
+            float stack = stats.getArbitraryFloat();
+            while (stack > 0) {
+                mult *= sce.getEffectiveness();
+                stack--;
+            }
+            stats.setEffectiveness(mult);
             CombatData.getCap(target).consumePosture(caster, 2 * mult);
             target.hurt(new CombatDamageSource("fallingBlock", caster).setDamageTyping(CombatDamageSource.TYPE.PHYSICAL).setProcSkillEffects(true).setSkillUsed(this).setProcNormalEffects(false).setProcAttackEffects(true).setKnockbackPercentage(0.4f), mult);
             if (target.getLastHurtByMob() == null)
                 target.setLastHurtByMob(caster);
-            if(caster instanceof ServerPlayer sp)
+            if (caster instanceof ServerPlayer sp)
                 WarAdvancements.SKILL_CAST_TRIGGER.trigger(sp, target, stats);
             if (stats.getArbitraryFloat() >= 7) {
                 ParticleUtils.playBonkParticle(caster.level, caster.getEyePosition().add(caster.getLookAngle().scale(Math.sqrt(GeneralUtils.getDistSqCompensated(caster, target)))), 1.5, 0, 12, getColor());

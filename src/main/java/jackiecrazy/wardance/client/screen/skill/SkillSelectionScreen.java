@@ -364,8 +364,8 @@ public class SkillSelectionScreen extends Screen {
         addRenderableWidget(search);
         search.setFocus(false);
         search.setCanLoseFocus(true);
-        addRenderableWidget(skillInfo);
         addRenderableWidget(style);
+        addRenderableWidget(skillInfo);
         for (SkillCategorySort scc : filters)
             addRenderableWidget(scc.button);
     }

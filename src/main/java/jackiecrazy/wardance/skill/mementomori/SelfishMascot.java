@@ -48,6 +48,8 @@ public class SelfishMascot extends Skill {
                     e.addEffect(new MobEffectInstance(MobEffects.UNLUCK, 60));
                     e.getAttribute(Attributes.LUCK).removeModifier(uid);
                     stacks += e.getAttributeValue(Attributes.LUCK);
+                    if(stacks>=20)
+                        completeChallenge(caster);
                     e.getAttribute(Attributes.LUCK).addPermanentModifier(unluck);
                     SkillUtils.modifyAttribute(caster, Attributes.LUCK, uid, stacks * SkillUtils.getSkillEffectiveness(caster), AttributeModifier.Operation.ADDITION);
                 }

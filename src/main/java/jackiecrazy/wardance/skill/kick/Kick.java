@@ -11,6 +11,7 @@ import jackiecrazy.wardance.skill.*;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.monster.Phantom;
 import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.eventbus.api.Event;
 import net.minecraftforge.eventbus.api.EventPriority;
@@ -99,6 +100,8 @@ public class Kick extends Skill {
             caster.setDeltaMovement(caster.getDeltaMovement().add(noy.x, 0.4, noy.z));
             caster.hurtMarked = true;
             final ICombatCapability cap = CombatData.getCap(caster);
+            if (caster.getY() > 320 && target instanceof Phantom)
+                completeChallenge(caster);
             cap.addRank(0.3f);
             cap.addPosture(0.3f * sd.getEffectiveness() * (cap.getPosture() / cap.getMaxPosture()));
         }

@@ -60,14 +60,25 @@ public class SkillUtils {
         atr.addPermanentModifier(am);
     }
 
-    public static void removeAttribute(LivingEntity to, Attribute a, AttributeModifier am) {
-        removeAttribute(to, a, am.getId());
+    public static boolean hasAttribute(LivingEntity to, Attribute a, AttributeModifier am) {
+        return hasAttribute(to, a, am.getId());
     }
 
-    public static void removeAttribute(LivingEntity to, Attribute a, UUID am) {
+    public static boolean hasAttribute(LivingEntity to, Attribute a, UUID am) {
         final AttributeInstance atr = to.getAttribute(a);
-        if (atr == null) return;
+        if (atr == null) return false;
+        return atr.getModifier(am) != null;
+    }
+
+    public static boolean removeAttribute(LivingEntity to, Attribute a, AttributeModifier am) {
+        return removeAttribute(to, a, am.getId());
+    }
+
+    public static boolean removeAttribute(LivingEntity to, Attribute a, UUID am) {
+        final AttributeInstance atr = to.getAttribute(a);
+        if (atr == null) return false;
         atr.removeModifier(am);
+        return true;
     }
 
     public static void createCloud(Level world, Entity entityIn, double x, double y, double z, float size, ParticleOptions type) {
@@ -86,6 +97,14 @@ public class SkillUtils {
 
     public static LivingEntity aimLiving(LivingEntity caster) {
         return GeneralUtils.raytraceLiving(caster.level, caster, caster.getAttributeValue(ForgeMod.ATTACK_RANGE.get()));
+    }
+
+    public static Entity aimEntity(LivingEntity caster, double range) {
+        return GeneralUtils.raytraceEntity(caster.level, caster, range);
+    }
+
+    public static LivingEntity aimLiving(LivingEntity caster, double range) {
+        return GeneralUtils.raytraceLiving(caster.level, caster, range);
     }
 
     public static boolean auxAttack(LivingEntity caster, LivingEntity target, DamageSource s, float dmg, float posdmg, Runnable onHit, Runnable onDamage) {
@@ -120,7 +139,7 @@ public class SkillUtils {
             double distsq = toBeMoved.distanceToSqr(moveTowards);
             Vec3 point = moveTowards.position();
 
-            if (maxDist*maxDist < distsq) {
+            if (maxDist * maxDist < distsq) {
                 toBeMoved.push((point.x - toBeMoved.getX()) * 0.05, (point.y - toBeMoved.getY()) * 0.05, (point.z - toBeMoved.getZ()) * 0.05);
             }
             toBeMoved.hurtMarked = true;

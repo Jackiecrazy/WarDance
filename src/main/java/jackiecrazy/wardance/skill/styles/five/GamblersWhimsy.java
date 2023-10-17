@@ -23,6 +23,13 @@ public class GamblersWhimsy extends SkillStyle {
     }
 
     @Override
+    public boolean onStateChange(LivingEntity caster, SkillData prev, STATE from, STATE to) {
+        if(to==STATE.COOLING)
+            reroll(caster, prev);
+        return super.onStateChange(caster, prev, from, to);
+    }
+
+    @Override
     public boolean canCast(LivingEntity caster, Skill s) {
         if (!s.isPassive(caster)) {
             //find the skill
@@ -41,17 +48,21 @@ public class GamblersWhimsy extends SkillStyle {
     public void onProc(LivingEntity caster, Event procPoint, STATE state, SkillData stats, @Nullable LivingEntity target) {
         if (procPoint instanceof SkillCastEvent sre && sre.getPhase() == EventPriority.LOWEST) {
 
-            //slots that can be cast
-            int allowed = 0b00000;
-            int indices = (int) (CombatData.getCap(caster).getComboRank() * SkillUtils.getSkillEffectiveness(caster) / 2d + 1.5);
-            while (indices > 0) {
-                int index = WarDance.rand.nextInt(indices);
-                allowed = unban(allowed, index);
-                indices--;
-            }
-            stats.setDuration(allowed);
+            reroll(caster, stats);
             sre.setEffectiveness(WarDance.rand.nextFloat() * (caster.getAttributeValue(Attributes.LUCK) + sre.getEffectiveness() - (sre.getTarget() == null ? 0 : sre.getTarget().getAttributeValue(Attributes.LUCK))));
         }
+    }
+
+    private void reroll(LivingEntity caster, SkillData stats) {
+        //slots that can be cast
+        int allowed = 0b00000;
+        int indices = (int) (CombatData.getCap(caster).getComboRank() * SkillUtils.getSkillEffectiveness(caster) / 2d + 1);
+        while (indices > 0) {
+            int index = WarDance.rand.nextInt(indices);
+            allowed = unban(allowed, index);
+            indices--;
+        }
+        stats.setDuration(allowed);
     }
 
     private int unban(int orig, int index) {

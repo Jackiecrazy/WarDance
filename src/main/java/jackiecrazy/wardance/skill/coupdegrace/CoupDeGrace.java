@@ -160,7 +160,7 @@ public class CoupDeGrace extends Skill {
 
         @Override
         protected float getDamage(LivingEntity caster, LivingEntity target, SkillData sd) {
-            return GeneralUtils.getMaxHealthBeforeWounding(target) * SkillUtils.getSkillEffectiveness(caster) * (1 - (target.getHealth() / GeneralUtils.getMaxHealthBeforeWounding(target))) * (0.2f + 0.2f * (CombatData.getCap(caster).getRank() / 10));
+            return GeneralUtils.getMaxHealthBeforeWounding(target) * SkillUtils.getSkillEffectiveness(caster) * (1 - (target.getHealth() / GeneralUtils.getMaxHealthBeforeWounding(target))) * (0.1f + 0.3f * (CombatData.getCap(caster).getRank() / 10));
         }
     }
 

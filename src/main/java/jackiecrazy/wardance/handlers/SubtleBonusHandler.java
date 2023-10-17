@@ -31,7 +31,7 @@ public class SubtleBonusHandler {
     @SubscribeEvent
     public static void tank(LivingHealEvent e) {
         if (CombatConfig.adrenaline < 0) return;
-        e.setAmount(e.getAmount() * (1 + (CombatData.getCap(e.getEntity()).getComboRank() * 0.02f * (CombatData.getCap(e.getEntity()).halvedAdrenaline() ? 0f : 1))));
+        e.setAmount(e.getAmount() * (1 + (CombatData.getCap(e.getEntity()).getComboRank() * 0.03f * (CombatData.getCap(e.getEntity()).halvedAdrenaline() ? 0f : 1))));
     }
 
     @SubscribeEvent
@@ -39,8 +39,8 @@ public class SubtleBonusHandler {
         if (CombatConfig.adrenaline < 0) return;
         if (e.player.tickCount % 60 == 0 || update) {
             final boolean adrenaline = CombatData.getCap(e.player).halvedAdrenaline();
-            SkillUtils.modifyAttribute(e.player, Attributes.MOVEMENT_SPEED, u, 0.02 * CombatData.getCap(e.player).getComboRank() * (adrenaline ? 0 : 1), AttributeModifier.Operation.MULTIPLY_BASE);
-            SkillUtils.modifyAttribute(e.player, Attributes.ATTACK_SPEED, u, 0.02 * CombatData.getCap(e.player).getComboRank() * (adrenaline ? 0 : 1), AttributeModifier.Operation.MULTIPLY_TOTAL);
+            SkillUtils.modifyAttribute(e.player, Attributes.MOVEMENT_SPEED, u, 0.03 * CombatData.getCap(e.player).getComboRank() * (adrenaline ? 0 : 1), AttributeModifier.Operation.MULTIPLY_BASE);
+            SkillUtils.modifyAttribute(e.player, Attributes.ATTACK_SPEED, u, 0.03 * CombatData.getCap(e.player).getComboRank() * (adrenaline ? 0 : 1), AttributeModifier.Operation.MULTIPLY_TOTAL);
             update = false;
         }
     }

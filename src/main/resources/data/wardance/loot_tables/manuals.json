@@ -10,7 +10,52 @@
           "functions": [
             {
               "function": "set_nbt",
-              "tag": "{\"patchouli:book\": \"footwork:combat_manual\"}"
+              "tag": "{active1:\"wardance:tackle\",active3:\"wardance:lockdown\",active5:\"wardance:followup\",author:\"Lost Adventurer Ignacio Greentarge\",filtered_title:\"The Wanderer of Iron Will\",noUnlock:0b,pages:['{\"text\":\"Keep your friends close, and {your shield closer;GREEN}, it\\'s a dangerous world out there. No sense in theatrics, power lies in simplicity. \\\\n \\\\nYour shield is your friend. Send back projectiles, bide your time.\"}','{\"text\":\"And if they don\\'t let up?\\\\n\\\\n{Make them.;RED}\\\\n\\\\nShove their weapon away with {Lockdown;GREEN}, {Followup;BOLD} with your sword. {Tackle;GREEN} them down and {Pummel;BOLD} them into submission. \"}','{\"text\":\"Remember those who wish harm to you, do not let their transgression go unpunished.\\\\n\\\\nYou will live. Despite all odds, you will live.\"}'],passive1:\"wardance:pummel\",passive4:\"wardance:vital_strike\",passive5:\"wardance:vengeful_might\",resolved:1b,style:\"wardance:tabula_rasa\",title:\"The Wanderer of Iron Will\",generation:3}"
+            }
+          ]
+        },{
+          "type": "item",
+          "name": "wardance:manual",
+          "functions": [
+            {
+              "function": "set_nbt",
+              "tag": "{active1:\"wardance:shadowless_kick\",active3:\"wardance:flurry\",active5:\"wardance:suplex\",author:\"High Monk Agniruha\",filtered_title:\"Sutra of Flowing Flame\",noUnlock:0b,pages:['{\"text\":\"Wash over the battlefield like a wildfire.\\\\n\\\\nStrike with an empty palm to {lunge;RED} at your foes, then disperse them with an {unexpected;BLUE} uppercut.\\\\n\\\\nThe more you hit the same target, the more each hit hurts. \"}','{\"text\":\"Strike at vital pressure points when at {max might;GOLD} to defeat them in an immolating flash.\\\\n\\\\nFollow up rapid attacks with a string of {kicks;BLUE}, each more painful than the last.\"}','{\"text\":\"\\\\nTo those who scorn your lighter hits, take them down with a brutal {Suplex;RED}. Be wary of your surroundings, lest you be caught unawares after this exhausting maneuver.\"}','{\"text\":\"\\\\nWhen outnumbered and alone, surrender yourself to the flow. Lash out continuously in a {Flurry;BLUE} of hits.\\\\n\\\\nYour path to the {Sifu;BOLD} has just started. \"}'],passive1:\"wardance:fiery_lunge\",passive3:\"wardance:mikiri\",passive4:\"wardance:natural_sprinter\",style:\"wardance:flame_dance\",title:\"Sutra of Flowing Flame\"}"
+            }
+          ]
+        },{
+          "type": "item",
+          "name": "wardance:manual",
+          "functions": [
+            {
+              "function": "set_nbt",
+              "tag": "{active1:\"wardance:backflip\",active2:\"wardance:smirking_shadow\",active4:\"wardance:tornado\",author:\"Witchblade Gavin of Malenia\",filtered_title:\"To Hunt Demons\",noUnlock:0b,pages:['{\"text\":\"Strike from high on unsuspecting prey and rains arrows with acrobatic precision.\\\\n\\\\n{Dive;GRAY} into your enemies with the precision of a hawk upon voles to catch them unaware and land the first strike.\\\\n\\\\n\"}','{\"text\":\"The work of a hunter leaves one breathless for words. {Silence;GRAY} your target with a veiled strike to leave them helpless and alone.\\\\n\\\\n{Leap;AQUA} {backwards;GRAY} to keep your distance. {Rally;AQUA} with arrows midair to pad your fall.\"}','{\"text\":\"\\\\nYour arrows are tipped with a powerful poison. {Detonate;AQUA} them at the right time to wreak havoc on your foes.\\\\n\\\\nIf you\\'ve read this far, care to toss a coin to a friend of humanity?\"}'],passive1:\"wardance:phantom_dive\",passive4:\"wardance:silencer\",passive5:\"wardance:archers_paradox\",resolved:1b,style:\"wardance:demon_hunter\",title:\"To Hunt Demons\"}"
+            }
+          ]
+        },{
+          "type": "item",
+          "name": "wardance:manual",
+          "functions": [
+            {
+              "function": "set_nbt",
+              "tag": "{active1:\"wardance:trample\",active3:\"wardance:curse_of_misfortune\",active4:\"wardance:decapitate\",author:\"Tesso Kanemochi, MBA\",filtered_title:\"Das Kapital\",noUnlock:0b,pages:['{\"text\":\"Money is king. Greed is good. Just don\\'t lose it all in a blunder.\\\\n\\\\nTime is money. The faster you rush, the quicker {treasure;GOLD} will come to you.\\\\n\\\\n{Run;BOLD} your adversaries down quickly. You don\\'t have time to waste on them.\"}','{\"text\":\"\\\\n\\\\n{Luck;GOLD} can make or break a man\\'s spirit. If yours is poor, consider just {blaming;LIGHT_PURPLE} someone else for it.\\\\n\\\\n{Joint ventures;GOLD} are often more successful. Just be sure {you get the credit;GOLD}, and {run fast;GOLD} if the markets crash.\"}','{\"text\":\"\\\\n{Timeliness;BOLD} is the soul of an enterprise. Line your skills up for the perfect sales pitch.\\\\n\\\\nAre you really going to defile those graves for money? Of course you are.\"}'],passive1:\"wardance:lady_luck\",passive4:\"wardance:selfish_mascot\",passive5:\"wardance:fatal_cadence\",style:\"wardance:gold_rush\",title:\"Das Kapital\"}"
+            }
+          ]
+        },{
+          "type": "item",
+          "name": "wardance:manual",
+          "functions": [
+            {
+              "function": "set_nbt",
+              "tag": "{active2:\"wardance:petrify\",active3:\"wardance:cursed_palms\",active4:\"wardance:viral_decay\",author:\"Acererak, Lich of Horrors\",filtered_title:\"Necromancy for Dummies\",noUnlock:0b,pages:['{\"text\":\"Life... life is a disease.\\\\n\\\\nYour {withered flesh;LIGHT_PURPLE} serves as a perfect conduit for {electrical magic;AQUA}. Unholy thunderclaps keep the filthy peasants from touching you. If they get too close, simply {disengage;AQUA}.\"}','{\"text\":\"Every {debilitation and hex;LIGHT_PURPLE} on the enemy feeds your blade, leaving more horrific wounds as you attack.\\\\n\\\\nSpread the plague through your {Cursed Palms;LIGHT_PURPLE} to use your enemies as unwilling, unholy hand grenades.\"}','{\"text\":\"\\\\nFor the lesser rabble, a single touch can turn them to {stone;LIGHT_PURPLE}. The most powerful mortals may need an injection of {Viral Decay;LIGHT_PURPLE} to be convinced into death.\\\\n\\\\nCome to the dark side.\"}'],passive1:\"wardance:static_discharge\",passive4:\"wardance:necrosis\",passive5:\"wardance:backpedal\",style:\"wardance:pestilent_edge\",title:\"Necromancy for Dummies\"}"
+            }
+          ]
+        },{
+          "type": "item",
+          "name": "wardance:manual",
+          "functions": [
+            {
+              "function": "set_nbt",
+              "tag": "{active1:\"wardance:taunt\",active3:\"wardance:pound_of_flesh\",active5:\"wardance:reaping\",author:\"Wandering Bard Windcloak Songseller\",filtered_title:\"Ballad of the Drunken Swordsman\",noUnlock:0b,pages:['{\"text\":\"He was rowdy, rude, and always drunk, yet in swordsmanship he was unparalleled.\\\\n\\\\nThough always {stumbling around;GOLD}, each move {danced;BLUE} out of harm\\'s way, to be returned by a boorish {insult;GREEN} that enrages his foe.\"}','{\"text\":\"\\\\nAs they lose composure, he seems ever more firm, using {momentum;BLUE} from his staggering steps to steady his blows.\\\\n\\\\nWhen cornered, he whirls and {laughs;RED} like mad, as if he\\'s willing to {throw away his life;RED}\"}','{\"text\":\"\\\\nEven when harmed, he shows no pain. The blood, to him, is just another way to {slip from an incoming hit;GREEN}.\\\\n\\\\nHe is a fool, or a demon. But to me, the drifting bard, he is a true hero.\"}'],passive1:\"wardance:mikiri\",passive4:\"wardance:momentum\",passive5:\"wardance:rapid_clotting\",resolved:1b,style:\"wardance:walk_of_dionysus\",title:\"Ballad of the Drunken Swordsman\"}"
             }
           ]
         }

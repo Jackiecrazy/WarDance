@@ -31,13 +31,13 @@ public class PhantomDive extends Skill {
 
     @Override
     public boolean equippedTick(LivingEntity caster, SkillData stats) {
-        float prev=stats.getArbitraryFloat();
+        float prev = stats.getArbitraryFloat();
         if (caster.isOnGround()) {
             stats.setArbitraryFloat((float) caster.getY());
         } else if (caster.getDeltaMovement().y() > 0) {
             stats.setArbitraryFloat((float) caster.getY());
         }
-        return stats.getArbitraryFloat()!=prev;
+        return stats.getArbitraryFloat() != prev;
     }
 
     @Override
@@ -61,6 +61,7 @@ public class PhantomDive extends Skill {
                     case ALERT -> awareness = StealthUtils.Awareness.DISTRACTED;
                 }
             }
+            if (length >= 600) completeChallenge(caster);
             if (length > 0) e.getEntity().addEffect(new MobEffectInstance(FootworkEffects.PARALYSIS.get(), length));
             e.setAwareness(awareness);
             stats.setArbitraryFloat((float) caster.getY());
