@@ -8,7 +8,7 @@ import jackiecrazy.wardance.client.screen.skill.SkillSliceButton;
 import jackiecrazy.wardance.client.screen.skill.SkillStyleButton;
 import jackiecrazy.wardance.items.ManualItem;
 import jackiecrazy.wardance.networking.CombatChannel;
-import jackiecrazy.wardance.networking.UpdateSkillSelectionPacket;
+import jackiecrazy.wardance.networking.LearnManualPacket;
 import jackiecrazy.wardance.skill.Skill;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.screens.inventory.BookViewScreen;
@@ -59,8 +59,7 @@ public class NewManualScreen extends SkillSelectionScreen {
         study = new Button(this.width / 2 + 20, y, 80, 20, Component.translatable("wardance.manual.gui.study"), (p_98299_) -> {
             //send study request to server
             if (ManualItem.learn(getMinecraft().player, manual).getResult() != InteractionResult.FAIL) {
-                List<Skill> newSkills = ManualItem.getSkills(manual);
-                CombatChannel.INSTANCE.sendToServer(new UpdateSkillSelectionPacket(ManualItem.getStyle(manual), newSkills));
+                CombatChannel.INSTANCE.sendToServer(new LearnManualPacket(this.minecraft.player.getMainHandItem()!=this.manual));
             }
             this.minecraft.setScreen(null);
         });

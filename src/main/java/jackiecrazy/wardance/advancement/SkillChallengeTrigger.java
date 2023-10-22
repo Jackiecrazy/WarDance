@@ -46,7 +46,7 @@ public class SkillChallengeTrigger extends SimpleCriterionTrigger<SkillChallenge
         @Nonnull
         public JsonObject serializeToJson(@Nonnull SerializationContext obj) {
             JsonObject jsonobject = super.serializeToJson(obj);
-            jsonobject.add("skill", data.serializeToJson());
+            jsonobject.add("skilldata", data.serializeToJson());
             return jsonobject;
         }
     }

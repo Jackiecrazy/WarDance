@@ -33,12 +33,12 @@ import java.util.List;
 
 public class ManualItem extends Item {
     private static final Item.Properties prop = new Properties().rarity(Rarity.RARE).stacksTo(1).tab(WarDance.WARTAB);
+    private static final ResourceLocation BOOKS = new ResourceLocation(WarDance.MODID, "manuals");
+
 
     public ManualItem() {
         super(prop);
     }
-
-
 
     public static List<Skill> getSkills(ItemStack stack) {
         //style, active12345, passive12345
@@ -82,33 +82,13 @@ public class ManualItem extends Item {
         stack.getOrCreateTag().putBoolean("noUnlock", !s);
     }
 
-    private static final ResourceLocation BOOKS=new ResourceLocation(WarDance.MODID, "manuals");
-
-    @Override
-    public InteractionResultHolder<ItemStack> use(Level l, Player p, InteractionHand hand) {
-        ItemStack stack = p.getItemInHand(hand);
-        if (p instanceof ServerPlayer sp && l instanceof ServerLevel sl) {
-            int random=stack.getOrCreateTag().getInt("rollRandom");
-            if(random>0){
-                if(!p.getAbilities().instabuild)
-                    stack.shrink(1);
-                LootContext lootcontext = (new LootContext.Builder(sl)).withParameter(LootContextParams.THIS_ENTITY, p).withParameter(LootContextParams.ORIGIN, p.position()).withRandom(p.getRandom()).withLuck(p.getLuck()).create(LootContextParamSets.ADVANCEMENT_REWARD); // FORGE: luck to LootContext
-                LootTable lt=l.getServer().getLootTables().get(BOOKS);
-                lt.getRandomItems(lootcontext).forEach(sp::addItem);
-                return InteractionResultHolder.success(stack);
-            }
-            CombatChannel.INSTANCE.send(PacketDistributor.PLAYER.with(() -> sp), new OpenManualScreenPacket(hand == InteractionHand.OFF_HAND));
-            return InteractionResultHolder.success(stack);
-        }
-        return InteractionResultHolder.success(stack);//learn(p, stack);
-    }
     public static InteractionResultHolder<ItemStack> learn(Player p, ItemStack stack) {
-        if(GeneralConfig.debug)
-        System.out.println(stack.save(new CompoundTag()).getAsString());
+        if (GeneralConfig.debug)
+            System.out.println(stack.save(new CompoundTag()).getAsString());
         final List<Skill> skills = getSkills(stack);
         boolean autoLearn = autoLearn(stack);
         final ISkillCapability cap = CasterData.getCap(p);
-        final SkillStyle ss =getStyle(stack);
+        final SkillStyle ss = getStyle(stack);
         skills.add(0, ss);
         for (Skill s : skills) {
             if (autoLearn)
@@ -135,6 +115,48 @@ public class ManualItem extends Item {
         }
     }
 
+    @Override
+    public InteractionResultHolder<ItemStack> use(Level l, Player p, InteractionHand hand) {
+        ItemStack stack = p.getItemInHand(hand);
+        if (p instanceof ServerPlayer sp && l instanceof ServerLevel sl) {
+            int random = stack.getOrCreateTag().getInt("rollRandom");
+            if (random > 0) {
+                if (!p.getAbilities().instabuild)
+                    stack.shrink(1);
+                LootContext lootcontext = (new LootContext.Builder(sl)).withParameter(LootContextParams.THIS_ENTITY, p).withParameter(LootContextParams.ORIGIN, p.position()).withRandom(p.getRandom()).withLuck(p.getLuck()).create(LootContextParamSets.ADVANCEMENT_REWARD); // FORGE: luck to LootContext
+                LootTable lt = l.getServer().getLootTables().get(BOOKS);
+                lt.getRandomItems(lootcontext).forEach(sp::addItem);
+                return InteractionResultHolder.success(stack);
+            }
+            CombatChannel.INSTANCE.send(PacketDistributor.PLAYER.with(() -> sp), new OpenManualScreenPacket(hand == InteractionHand.OFF_HAND));
+            return InteractionResultHolder.success(stack);
+        }
+        return InteractionResultHolder.success(stack);//learn(p, stack);
+    }
+
+    @Override
+    public void appendHoverText(ItemStack stack, @org.jetbrains.annotations.Nullable Level p_41422_, List<Component> component, TooltipFlag flag) {
+        CompoundTag compoundtag = stack.getOrCreateTag();
+        if (compoundtag.getInt("rollRandom") != 0) {
+            component.add(Component.translatable("wardance.manual.random").withStyle(ChatFormatting.GRAY));
+            return;
+        }
+        String author = compoundtag.getString("author");
+        if (!StringUtil.isNullOrEmpty(author)) {
+            component.add(Component.literal(author).withStyle(ChatFormatting.GRAY));
+        }
+        if (autoLearn(stack))
+            component.add(Component.translatable("wardance.manual.autolearn").withStyle(ChatFormatting.GOLD));
+        else component.add(Component.translatable("wardance.manual.nolearn").withStyle(ChatFormatting.GRAY));
+        final SkillStyle style = getStyle(stack);
+        if (style != null)
+            component.add(style.getDisplayName(null).withStyle(ChatFormatting.UNDERLINE));
+        for (Skill s : getSkills(stack)) {
+            if (s != null)
+                component.add(s.getDisplayName(null).withStyle(s.getCategory().getFormattings()));
+        }
+    }
+
     public Component getName(ItemStack p_43480_) {
         CompoundTag compoundtag = p_43480_.getTag();
         if (compoundtag != null) {
@@ -147,36 +169,13 @@ public class ManualItem extends Item {
         return super.getName(p_43480_);
     }
 
-    @Override
-    public void appendHoverText(ItemStack stack, @org.jetbrains.annotations.Nullable Level p_41422_, List<Component> component, TooltipFlag flag) {
-        CompoundTag compoundtag = stack.getOrCreateTag();
-        if(compoundtag.getInt("rollRandom")!=0){
-            component.add(Component.translatable("wardance.manual.random").withStyle(ChatFormatting.GRAY));
-            return;
-        }
-        String author = compoundtag.getString("author");
-        if (!StringUtil.isNullOrEmpty(author)) {
-            component.add(Component.literal(author).withStyle(ChatFormatting.GRAY));
-        }
-        if (autoLearn(stack))
-            component.add(Component.translatable("wardance.manual.autolearn").withStyle(ChatFormatting.GOLD));
-        else component.add(Component.translatable("wardance.manual.nolearn").withStyle(ChatFormatting.GRAY));
-        final SkillStyle style = getStyle(stack);
-        if(style !=null)
-            component.add(style.getDisplayName(null).withStyle(ChatFormatting.UNDERLINE));
-        for (Skill s : getSkills(stack)) {
-            if (s != null)
-                component.add(s.getDisplayName(null).withStyle(s.getCategory().getFormattings()));
-        }
-    }
-
     public void fillItemCategory(CreativeModeTab tab, NonNullList<ItemStack> list) {
         if (tab == WarDance.WARTAB) {
 //            ItemStack chest=new ItemStack(WarItems.MANUAL.get());
 //            chest.setHoverName(Component.literal("Library of Alexandria"));
 //            chest.getOrCreateTag().putInt("rollRandom", 2);
 //            list.add(chest);
-            ItemStack chest=new ItemStack(WarItems.MANUAL.get());
+            ItemStack chest = new ItemStack(WarItems.MANUAL.get());
             chest.setHoverName(Component.literal("Dusty Tattered Tome"));
             chest.getOrCreateTag().putInt("rollRandom", 1);
             list.add(chest);

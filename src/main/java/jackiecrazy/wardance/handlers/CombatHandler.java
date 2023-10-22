@@ -358,6 +358,7 @@ public class CombatHandler {
                     //no parries if stabby
                     if (StealthConfig.ignore && awareness == StealthUtils.Awareness.UNAWARE) return;
                     if (pe.canParry()) {
+                        //TODO does this allow onHit to trigger? I'm pretty sure it doesn't, but then why does chikage proc
                         e.setCanceled(true);
                         //reset manual parry
                         ukeCap.setParryingTick(0);

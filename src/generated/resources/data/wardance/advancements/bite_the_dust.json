@@ -3,7 +3,7 @@
   "criteria": {
     "skill": {
       "conditions": {
-        "skill": {
+        "skilldata": {
           "skill": "wardance:bite_the_dust"
         }
       },

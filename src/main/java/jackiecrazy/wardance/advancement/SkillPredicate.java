@@ -51,7 +51,7 @@ public class SkillPredicate {
 
     public boolean matches(Skill s, double dur, double maxDur, double eff, double stack) {
         if (this == ANY) {
-            return true;
+            return false;
         } else if (!this.duration.matches(dur)) {
             return false;
         } else if (skill != s) {
