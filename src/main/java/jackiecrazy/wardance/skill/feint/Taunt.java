@@ -80,8 +80,8 @@ public class Taunt extends Skill {
         LivingEntity target = SkillUtils.aimLiving(caster, 8);
         if (to == STATE.ACTIVE && target != null && cast(caster, target, -999)) {
             mark(caster, target, duration(), prev.getEffectiveness());
-            if (caster.level instanceof ServerLevel sl) {
-                caster.level.playSound(null, caster.getX(), caster.getY(), caster.getZ(), SoundEvents.VINDICATOR_CELEBRATE, SoundSource.PLAYERS, 0.8f + WarDance.rand.nextFloat() * 0.5f, 0.75f + WarDance.rand.nextFloat() * 0.5f);
+            if (caster.level() instanceof ServerLevel sl) {
+                caster.level().playSound(null, caster.getX(), caster.getY(), caster.getZ(), SoundEvents.VINDICATOR_CELEBRATE, SoundSource.PLAYERS, 0.8f + WarDance.rand.nextFloat() * 0.5f, 0.75f + WarDance.rand.nextFloat() * 0.5f);
                 sl.sendParticles(ParticleTypes.ANGRY_VILLAGER, target.getX(), target.getY(), target.getZ(), 20, target.getBbWidth(), target.getBbHeight() / 2, target.getBbWidth(), 0f);
             }
             if (caster instanceof Player p) {

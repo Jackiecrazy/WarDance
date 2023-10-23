@@ -1,9 +1,9 @@
 package jackiecrazy.wardance.client.screen.skill;
 
 import com.mojang.blaze3d.systems.RenderSystem;
-import com.mojang.blaze3d.vertex.PoseStack;
 import jackiecrazy.wardance.WarDance;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.resources.ResourceLocation;
 
 import java.awt.*;
@@ -45,20 +45,20 @@ public class PassiveButton extends SkillSelectionButton {
         }
     }
 
-    public void renderButton(PoseStack matrixStack, int mouseX, int mouseY, float partialTicks) {
+    public void renderWidget(GuiGraphics matrixStack, int mouseX, int mouseY, float partialTicks) {
         RenderSystem.setShaderTexture(0, passive);
         if (!this.isHovered) {
             RenderSystem.setShaderColor(0.6f, 0.6f, 0.6f, 1);
         }
         applySlotTint();
         //base
-        blit(matrixStack, this.getX(), this.getY(), 0, 0, this.width, this.height, width, height);
+        matrixStack.blit(passive, this.getX(), this.getY(), 0, 0, this.width, this.height, width, height);
         //skill
         if (s != null) {
             RenderSystem.setShaderTexture(0, s.icon());
             Color c = s.getColor();
             RenderSystem.setShaderColor(c.getRed() / 255f, c.getGreen() / 255f, c.getBlue() / 255f, 1);
-            blit(matrixStack, this.getX(), this.getY(), 0, 0, this.width, this.height, width, height);
+            matrixStack.blit(s.icon(), this.getX(), this.getY(), 0, 0, this.width, this.height, width, height);
         }
         RenderSystem.setShaderColor(1, 1, 1, 1);
 //        if (this.isHoveredOrFocused()) {

@@ -2,7 +2,6 @@ package jackiecrazy.wardance.client.screen.skill;
 
 import com.mojang.blaze3d.platform.GlStateManager;
 import com.mojang.blaze3d.systems.RenderSystem;
-import com.mojang.blaze3d.vertex.PoseStack;
 import jackiecrazy.wardance.WarDance;
 import jackiecrazy.wardance.capability.skill.CasterData;
 import jackiecrazy.wardance.capability.skill.ISkillCapability;
@@ -13,7 +12,7 @@ import jackiecrazy.wardance.networking.SelectSkillPacket;
 import jackiecrazy.wardance.skill.Skill;
 import jackiecrazy.wardance.skill.SkillData;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.GuiComponent;
+import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
@@ -54,7 +53,6 @@ public class SkillCastScreen extends Screen {
 
     public SkillCastScreen(List<Skill> skills) {
         super(Component.empty());
-        this.passEvents = true;
         this.elements = new Skill[5];
         for (int a = 0; a < elements.length; a++) {
             elements[a] = skills.size() > a ? skills.get(a) : null;
@@ -62,8 +60,8 @@ public class SkillCastScreen extends Screen {
     }
 
     @Override
-    public void render(PoseStack matrixStack, int mouseX, int mouseY, float partialTicks) {
-        super.render(matrixStack, mouseX, mouseY, partialTicks);
+    public void render(GuiGraphics graphics, int mouseX, int mouseY, float partialTicks) {
+        super.render(graphics, mouseX, mouseY, partialTicks);
         //draw background, then slice, then each skill at determined points
         //don't draw slices that cannot be used (so they appear to be greyed out)
         //highlight a slice based on distance from center (to allow cancel leeway) and direction
@@ -83,25 +81,25 @@ public class SkillCastScreen extends Screen {
             distance = cutoffy > centeredy;
         }
         int index = distance ? (int) Math.floor((angle / 90) % 4) + 1 : 0;
-        matrixStack.pushPose();
+        graphics.pose().pushPose();
         //RenderSystem.enableAlphaTest();
         RenderSystem.enableBlend();
         RenderSystem.defaultBlendFunc();
-        RenderSystem.setShaderTexture(0, radial);
+        //RenderSystem.setShaderTexture(0, radial);
         this.exIndex = index;
         //mc.player.sendStatusMessage(new StringTextComponent(selected == null ? "none" : selected.getRegistryName().toString()), true);
         int x = width / 2 - 100;
         int y = height / 2 - 100;
         RenderSystem.setShaderColor(0.6f, 0.6f, 0.6f, 1);
-        blit(matrixStack, x, y, 0, 0, 200, 200, 600, 600);
+        graphics.blit(radial, x, y, 0, 0, 200, 200, 600, 600);
         RenderSystem.setShaderColor(1, 1, 1, 1);
         for (int a = 0; a < elements.length; a++) {
             if (elements[a] != null) {
                 Skill s = elements[a];
 
                 //radial slice for highlighting
-                matrixStack.pushPose();
-                RenderSystem.setShaderTexture(0, radial);
+                graphics.pose().pushPose();
+                //RenderSystem.setShaderTexture(0, radial);
                 //holstered is green
                 final ISkillCapability cap = CasterData.getCap(mc.player);
                 if (cap.getHolsteredSkill() == elements[a])
@@ -115,75 +113,75 @@ public class SkillCastScreen extends Screen {
                     //allowed is light gray, selected is white
                 else if (a != index)
                     RenderSystem.setShaderColor(0.6f, 0.6f, 0.6f, 1);
-                blit(matrixStack, x, y, fixedU[a], fixedV[a], 200, 200, 600, 600);
-                matrixStack.popPose();
+                graphics.blit(radial, x, y, fixedU[a], fixedV[a], 200, 200, 600, 600);
+                graphics.pose().popPose();
 
                 //skill icon
-                matrixStack.pushPose();
-                RenderSystem.setShaderTexture(0, s.icon());
+                graphics.pose().pushPose();
+                //RenderSystem.setShaderTexture(0, s.icon());
                 Color c = s.getColor();
                 RenderSystem.setShaderColor(c.getRed() / 255f, c.getGreen() / 255f, c.getBlue() / 255f, 1);
-                GuiComponent.blit(matrixStack, x + iconX[a], y + iconY[a], 0, 0, 32, 32, 32, 32);
+                graphics.blit(s.icon(), x + iconX[a], y + iconY[a], 0, 0, 32, 32, 32, 32);
                 RenderSystem.setShaderColor(1, 1, 1, 1);
-                matrixStack.popPose();
+                graphics.pose().popPose();
 
                 //cooldown overlay and mask
                 if (cap.getSkillState(s) == Skill.STATE.COOLING) {
-                    matrixStack.pushPose();
+                    graphics.pose().pushPose();
                     //overlay mask
                     RenderSystem.enableBlend();
                     RenderSystem.blendFuncSeparate(GlStateManager.SourceFactor.ZERO, GlStateManager.DestFactor.ONE, GlStateManager.SourceFactor.ONE_MINUS_SRC_ALPHA, GlStateManager.DestFactor.ZERO);
-                    GuiComponent.blit(matrixStack, x + iconX[a], y + iconY[a], 0, 0, 32, 32, 32, 32);
+                    graphics.blit(s.icon(), x + iconX[a], y + iconY[a], 0, 0, 32, 32, 32, 32);
                     if (cap.getSkillData(s).orElse(SkillData.DUMMY).getMaxDuration() != 0) {
                         //cooldown spinny
                         float cd = cap.getSkillData(s).orElse(SkillData.DUMMY).getDuration();
                         float cdPerc = cd / cap.getSkillData(s).orElse(SkillData.DUMMY).getMaxDuration();
-                        RenderSystem.setShaderTexture(0, RenderUtils.cooldown);
-                        RenderUtils.drawCooldownCircle(matrixStack, x + iconX[a], y + iconY[a], 32, cdPerc, false);
+                        //RenderSystem.setShaderTexture(0, RenderUtils.cooldown);
+                        RenderUtils.drawCooldownCircle(graphics.pose(), x + iconX[a], y + iconY[a], 32, cdPerc, false);
                         RenderSystem.disableBlend();
 
                         //cooldown number
                         String num = String.valueOf((int) cd);
                         if (Math.ceil(cd) != cd)
                             num = formatter.format(cd);
-                        matrixStack.pushPose();
+                        graphics.pose().pushPose();
                         RenderSystem.setShaderTexture(0, RenderUtils.cooldown);
                         RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, 0.6F);
                         //AbstractGui.blit(matrixStack, x + iconX[a], y + iconY[a], 0, 0, 32, 32, 32, 32);
-                        mc.font.draw(matrixStack, num, x + iconX[a] + 16 - mc.font.width(num) / 2f, y + iconY[a] + 12, 0xFFFFFF);
-                        matrixStack.popPose();
+                        graphics.drawString(mc.font, String.valueOf(num), (int) (x + iconX[a] + 16 - mc.font.width(num) / 2f), y + iconY[a] + 12, 0xFFFFFF);
+                        graphics.pose().popPose();
                     }
-                    matrixStack.popPose();
+                    graphics.pose().popPose();
                 } else if (cap.getSkillState(s) == Skill.STATE.ACTIVE) {
-                    matrixStack.pushPose();
+                    graphics.pose().pushPose();
                     int finalA = a;
                     cap.getSkillData(s).ifPresent((sd) -> {
                         RenderSystem.enableBlend();
                         //active mask
                         RenderSystem.blendFuncSeparate(GlStateManager.SourceFactor.ZERO, GlStateManager.DestFactor.ONE, GlStateManager.SourceFactor.ONE_MINUS_SRC_ALPHA, GlStateManager.DestFactor.ZERO);
-                        GuiComponent.blit(matrixStack, x + iconX[finalA], y + iconY[finalA], 0, 0, 32, 32, 32, 32);
+                        graphics.blit(s.icon(), x + iconX[finalA], y + iconY[finalA], 0, 0, 32, 32, 32, 32);
                         if (sd.getMaxDuration() != 0) {
                             //active spinny
                             float cdPerc = sd.getDuration() / sd.getMaxDuration();
                             RenderSystem.setShaderTexture(0, RenderUtils.cooldown);
                             float cd = sd.getDuration();
                             RenderSystem.setShaderColor(0.4f, 0.7f, 0.4f, 1);
-                            RenderUtils.drawCooldownCircle(matrixStack, x + iconX[finalA], y + iconY[finalA], 32, cdPerc, false);
+                            RenderUtils.drawCooldownCircle(graphics.pose(), x + iconX[finalA], y + iconY[finalA], 32, cdPerc, false);
 
                             //active number
                             String num = String.valueOf((int) cd);
                             if (Math.ceil(cd) != cd)
                                 num = formatter.format(cd);
-                            matrixStack.pushPose();
+                            graphics.pose().pushPose();
                             RenderSystem.setShaderTexture(0, RenderUtils.cooldown);
                             RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, 0.6F);
                             //AbstractGui.blit(matrixStack, x + iconX[a], y + iconY[a], 0, 0, 32, 32, 32, 32);
-                            mc.font.draw(matrixStack, num, x + iconX[finalA] + 16 - mc.font.width(num) / 2f, y + iconY[finalA] + 12, 0xFFFFFF);
-                            matrixStack.popPose();
+                            graphics.drawString(mc.font, String.valueOf(num), (int) (x + iconX[finalA] + 16 - mc.font.width(num) / 2f), y + iconY[finalA] + 12, 0xFFFFFF);
+                            graphics.pose().popPose();
                         }
                         RenderSystem.disableBlend();
                     });
-                    matrixStack.popPose();
+                    graphics.pose().popPose();
                 }
             }
         }
@@ -191,7 +189,7 @@ public class SkillCastScreen extends Screen {
             Skill selected = elements[index];
             String print = selected.getDisplayName(mc.player).getString();
             int yee = mc.font.width(print);
-            mc.gui.getFont().draw(matrixStack, print, (width - yee) / 2f, 4, selected.getColor().getRGB());
+            graphics.drawString(mc.font, String.valueOf(print), (width - yee) / 2, 4, selected.getColor().getRGB());
             final Skill.CastStatus castStatus = selected.castingCheck(mc.player, CasterData.getCap(mc.player).getSkillData(selected).orElse(SkillData.DUMMY));
             if (castStatus != Skill.CastStatus.ALLOWED && castStatus != Skill.CastStatus.HOLSTERED && castStatus != Skill.CastStatus.ACTIVE) {
                 switch (castStatus) {
@@ -219,13 +217,13 @@ public class SkillCastScreen extends Screen {
                         break;
                 }
                 yee = mc.font.width(print);
-                mc.gui.getFont().draw(matrixStack, print, (width - yee) / 2f, 12, Color.RED.getRGB());
+                graphics.drawString(mc.font, String.valueOf(print), (width - yee) / 2, 12, Color.RED.getRGB());
             }
 
         }
         //RenderSystem.disableAlphaTest();
         RenderSystem.disableBlend();
-        matrixStack.popPose();
+        graphics.pose().popPose();
 
     }
 

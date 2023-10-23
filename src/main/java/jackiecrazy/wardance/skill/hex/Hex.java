@@ -12,7 +12,6 @@ import jackiecrazy.wardance.utils.SkillUtils;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
-import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.ai.attributes.AttributeInstance;
@@ -54,7 +53,7 @@ public class Hex extends Skill {
         Marks.getCap(target).getActiveMark(WarSkills.CURSE_OF_ECHOES.get()).ifPresent(a -> {
             if (a.getArbitraryFloat() < 0 && DamageUtils.isMeleeAttack(e.getSource())) {
                 target.invulnerableTime = 0;
-                target.hurt(new CombatDamageSource("echo", a.getCaster(target.level)).setDamageTyping(CombatDamageSource.TYPE.TRUE).setProcSkillEffects(true).setSkillUsed(WarSkills.CURSE_OF_ECHOES.get()).bypassArmor().bypassMagic(), e.getAmount() * 0.4f);
+                target.hurt(new CombatDamageSource(a.getCaster(target.level())).setDamageTyping(CombatDamageSource.TYPE.TRUE).setProcSkillEffects(true).setSkillUsed(WarSkills.CURSE_OF_ECHOES.get()).bypassArmor().bypassMagic(), e.getAmount() * 0.4f);
                 a.setArbitraryFloat(1);
             }
         });
@@ -155,7 +154,7 @@ public class Hex extends Skill {
         if (to == STATE.ACTIVE && target != null && cast(caster, target, -999)) {
             mark(caster, target, duration(), prev.getArbitraryFloat());
             prev.setArbitraryFloat(0);
-            if (caster.level instanceof ServerLevel sl) {
+            if (caster.level() instanceof ServerLevel sl) {
                 sl.sendParticles(ParticleTypes.ENCHANT, target.getX(), target.getY(), target.getZ(), 100, target.getBbWidth(), target.getBbHeight() / 2, target.getBbWidth(), 0f);
             }
             markUsed(caster);
@@ -227,7 +226,7 @@ public class Hex extends Skill {
                 }
             }
             if (proc)
-                FakeExplosion.explode(caster.level, caster, target.getX(), target.getY() + target.getBbHeight() * 1.1f, target.getZ(), size, DamageSource.explosion(caster).setMagic(), damage);
+                FakeExplosion.explode(caster.level(), caster, target.getX(), target.getY() + target.getBbHeight() * 1.1f, target.getZ(), size, new CombatDamageSource(caster).setExplosion().setMagic(), damage);
         }
     }
 

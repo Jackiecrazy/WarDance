@@ -1,0 +1,33 @@
+{
+  "parent": "wardance:shadowless_kick",
+  "criteria": {
+    "tick": {
+      "conditions": {},
+      "trigger": "minecraft:tick"
+    }
+  },
+  "display": {
+    "announce_to_chat": false,
+    "description": {
+      "italic": true,
+      "translate": "wardance.category.fervor.desc"
+    },
+    "frame": "task",
+    "hidden": false,
+    "icon": {
+      "item": "wardance:dummy",
+      "nbt": "{style:\"fervor\"}"
+    },
+    "show_toast": false,
+    "title": {
+      "color": "blue",
+      "translate": "wardance.category.fervor.name"
+    }
+  },
+  "requirements": [
+    [
+      "tick"
+    ]
+  ],
+  "sends_telemetry_event": true
+}

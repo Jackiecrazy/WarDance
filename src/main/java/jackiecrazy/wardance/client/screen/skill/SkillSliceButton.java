@@ -1,9 +1,8 @@
 package jackiecrazy.wardance.client.screen.skill;
 
-import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.systems.RenderSystem;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.GuiComponent;
+import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.Mth;
 
@@ -56,7 +55,8 @@ public class SkillSliceButton extends SkillSelectionButton {
         return false;
     }
 
-    public void render(PoseStack matrixStack, int mouseX, int mouseY, float partialTicks) {
+    @Override
+    public void render(GuiGraphics graphics, int mouseX, int mouseY, float partialTicks) {
         if (this.visible) {
             final int x = this.getX();
             final int y = this.getY();
@@ -86,21 +86,21 @@ public class SkillSliceButton extends SkillSelectionButton {
 //            }
 
             if (this.visible) {
-                matrixStack.pushPose();
+                graphics.pose().pushPose();
                 //blue if it is the literal skill, grey if it is selectable, orange if it is not selectable, red if they share a parent, yellow if they're incompatible
                 if (!this.isHovered) {
                     RenderSystem.setShaderColor(0.6f, 0.6f, 0.6f, 1);
                 }
                 applySlotTint();
-                this.renderButton(matrixStack, mouseX, mouseY, partialTicks);
+                this.renderWidget(graphics, mouseX, mouseY, partialTicks);
                 if (s != null) {
                     RenderSystem.setShaderTexture(0, s.icon());
                     Color c = s.getColor();
                     RenderSystem.setShaderColor(c.getRed() / 255f, c.getGreen() / 255f, c.getBlue() / 255f, 1);
-                    GuiComponent.blit(matrixStack, x + iconX[index], y + iconY[index], 0, 0, 24, 24, 24, 24);
+                    graphics.blit(s.icon(), x + iconX[index], y + iconY[index], 0, 0, 24, 24, 24, 24);
                 }
                 RenderSystem.setShaderColor(1f, 1f, 1f, 1);
-                matrixStack.popPose();
+                graphics.pose().popPose();
             }
 
             //this.narrate();

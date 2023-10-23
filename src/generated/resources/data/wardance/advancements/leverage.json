@@ -1,5 +1,5 @@
 {
-  "parent": "wardance:root",
+  "parent": "wardance:tornado",
   "criteria": {
     "skill": {
       "conditions": {
@@ -35,5 +35,6 @@
     "loot": [
       "wardance:skillscroll"
     ]
-  }
+  },
+  "sends_telemetry_event": true
 }

@@ -107,9 +107,9 @@ end him rightly: keep the weapon in your hand and throw the pommel instead, dist
         Entity entity1 = this.getOwner();
         DamageSource damagesource;
         if (entity1 == null) {
-            damagesource = DamageSource.arrow(this, this);
+            damagesource = entity.level().damageSources().arrow(this, this);
         } else {
-            damagesource = DamageSource.arrow(this, entity1);
+            damagesource = entity.level().damageSources().arrow(this, entity1);
             if (entity1 instanceof LivingEntity) {
                 ((LivingEntity) entity1).setLastHurtMob(entity);
             }
@@ -128,7 +128,7 @@ end him rightly: keep the weapon in your hand and throw the pommel instead, dist
 
             if (entity instanceof LivingEntity) {
                 LivingEntity livingentity = (LivingEntity) entity;
-                if (!this.level.isClientSide && this.getPierceLevel() <= 0) {
+                if (!this.level().isClientSide && this.getPierceLevel() <= 0) {
                     livingentity.setArrowCount(livingentity.getArrowCount() + 1);
                 }
 
@@ -139,7 +139,7 @@ end him rightly: keep the weapon in your hand and throw the pommel instead, dist
                     }
                 }
 
-                if (!this.level.isClientSide && entity1 instanceof LivingEntity) {
+                if (!this.level().isClientSide && entity1 instanceof LivingEntity) {
                     EnchantmentHelper.doPostHurtEffects(livingentity, entity1);
                     EnchantmentHelper.doPostDamageEffects((LivingEntity) entity1, livingentity);
                 }
@@ -153,7 +153,7 @@ end him rightly: keep the weapon in your hand and throw the pommel instead, dist
                     this.piercedAndKilledEntities.add(livingentity);
                 }
 
-                if (!this.level.isClientSide && entity1 instanceof ServerPlayer) {
+                if (!this.level().isClientSide && entity1 instanceof ServerPlayer) {
                     ServerPlayer serverplayerentity = (ServerPlayer) entity1;
                     if (this.piercedAndKilledEntities != null && this.shotFromCrossbow()) {
                         CriteriaTriggers.KILLED_BY_CROSSBOW.trigger(serverplayerentity, this.piercedAndKilledEntities);
@@ -172,7 +172,7 @@ end him rightly: keep the weapon in your hand and throw the pommel instead, dist
             this.setDeltaMovement(this.getDeltaMovement().scale(-0.1D));
             setYRot(getYRot() + 180f);
             this.yRotO += 180.0F;
-            if (!this.level.isClientSide && this.getDeltaMovement().lengthSqr() < 1.0E-7D) {
+            if (!this.level().isClientSide && this.getDeltaMovement().lengthSqr() < 1.0E-7D) {
                 if (this.pickup == AbstractArrow.Pickup.ALLOWED) {
                     this.spawnAtLocation(this.getPickupItem(), 0.1F);
                 }

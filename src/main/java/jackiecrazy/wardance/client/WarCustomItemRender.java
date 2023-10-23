@@ -6,17 +6,23 @@ import jackiecrazy.wardance.WarDance;
 import jackiecrazy.wardance.items.DummyItem;
 import jackiecrazy.wardance.items.WarItems;
 import jackiecrazy.wardance.skill.Skill;
+import jackiecrazy.wardance.skill.SkillCategory;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.model.geom.EntityModelSet;
 import net.minecraft.client.renderer.BlockEntityWithoutLevelRenderer;
+import net.minecraft.client.renderer.LightTexture;
 import net.minecraft.client.renderer.MultiBufferSource;
-import net.minecraft.client.renderer.block.model.ItemTransforms;
+import net.minecraft.client.renderer.Sheets;
 import net.minecraft.client.renderer.blockentity.BlockEntityRenderDispatcher;
-import net.minecraft.client.renderer.entity.ItemRenderer;
-import net.minecraft.client.resources.model.BakedModel;
+import net.minecraft.client.renderer.texture.OverlayTexture;
+import net.minecraft.client.renderer.texture.TextureAtlas;
+import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.item.ItemDisplayContext;
 import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.client.model.renderable.BakedModelRenderable;
+
+import java.awt.*;
 
 public class WarCustomItemRender extends BlockEntityWithoutLevelRenderer {
     public static final ResourceLocation BASE_SCROLL = new ResourceLocation(WarDance.MODID, "item/scroll");
@@ -28,24 +34,30 @@ public class WarCustomItemRender extends BlockEntityWithoutLevelRenderer {
     }
 
     @Override
-    public void renderByItem(ItemStack stack, ItemTransforms.TransformType type, PoseStack pose, MultiBufferSource bufferSource, int light, int overlay) {
+    public void renderByItem(ItemStack stack, ItemDisplayContext p_270899_, PoseStack pose, MultiBufferSource bufferSource, int light, int overlay) {
         if (!stack.isEmpty() && stack.is(WarItems.DUMMY.get())) {
             pose.pushPose();
-            BakedModel models = Minecraft.getInstance().getModelManager().getModel(new ResourceLocation(WarDance.MODID, "skill/" + DummyItem.getSkill(stack).getRegistryName().getPath()));//models = net.minecraftforge.client.ForgeHooksClient.handleCameraTransforms(pose, models, type, true);
-            //pose.translate(-0.5D, -0.5D, -0.5D);
-            //TODO this is really really dumb
-            for (var model : models.getRenderPasses(stack, true)) {
-                for (var rendertype : model.getRenderTypes(stack, true)) {
-                    VertexConsumer vertexconsumer = ItemRenderer.getFoilBufferDirect(bufferSource, rendertype, true, stack.hasFoil());
-                    Minecraft.getInstance().getItemRenderer().renderModelLists(model, stack, light, overlay, pose, vertexconsumer);
-                }
+            ResourceLocation loc;
+            TextureAtlasSprite tas;
+            Color col;
+            if(stack.getOrCreateTag().contains("style")){
+                loc=new ResourceLocation(WarDance.MODID, "skill/categories/"+stack.getOrCreateTag().getString("style"));
+                col = SkillCategory.fromString(stack.getOrCreateTag().getString("style")).getColor();
             }
-//            matrixStack.translate(0, 0, zOffset + 200);
-//            MultiBufferSource vc = MultiBufferSource.immediate(Tesselator.getInstance().getBuilder());
-//            String id = String.valueOf(6);
-//            renderer.draw(id, (float) (x + 19 - 2 - renderer.getWidth(id)), (float) (y + 6 + 3), 16777215, true, matrixStack.peek().getPositionMatrix(), vc, false, 0, 15728880);
-//            vc.draw();
-
+            else {
+                loc = new ResourceLocation(DummyItem.getSkill(stack).icon().toString().replace("textures/", "").replace(".png", ""));
+                col = DummyItem.getSkill(stack).getColor();
+            }
+            tas = Minecraft.getInstance().getTextureAtlas(TextureAtlas.LOCATION_BLOCKS).apply(loc);
+            VertexConsumer consumer = bufferSource.getBuffer(Sheets.translucentItemSheet());
+            final float u0 = tas.getU0();
+            final float u1 = tas.getU1();
+            final float v1 = tas.getV0();
+            final float v0 = tas.getV1();
+            consumer.vertex(pose.last().pose(), 0, 1, 0).color(col.getRed(), col.getGreen(), col.getBlue(), col.getAlpha()).uv(u0, v1).overlayCoords(OverlayTexture.NO_OVERLAY).uv2(LightTexture.FULL_BRIGHT).normal(pose.last().normal(), 0, 0, 1).endVertex();
+            consumer.vertex(pose.last().pose(), 0, 0, 0).color(col.getRed(), col.getGreen(), col.getBlue(), col.getAlpha()).uv(u0, v0).overlayCoords(OverlayTexture.NO_OVERLAY).uv2(LightTexture.FULL_BRIGHT).normal(pose.last().normal(), 0, 0, 1).endVertex();
+            consumer.vertex(pose.last().pose(), 1, 0, 0).color(col.getRed(), col.getGreen(), col.getBlue(), col.getAlpha()).uv(u1, v0).overlayCoords(OverlayTexture.NO_OVERLAY).uv2(LightTexture.FULL_BRIGHT).normal(pose.last().normal(), 0, 0, 1).endVertex();
+            consumer.vertex(pose.last().pose(), 1, 1, 0).color(col.getRed(), col.getGreen(), col.getBlue(), col.getAlpha()).uv(u1, v1).overlayCoords(OverlayTexture.NO_OVERLAY).uv2(LightTexture.FULL_BRIGHT).normal(pose.last().normal(), 0, 0, 1).endVertex();
             pose.popPose();
         }
     }

@@ -9,7 +9,6 @@ import jackiecrazy.wardance.networking.OpenManualScreenPacket;
 import jackiecrazy.wardance.skill.Skill;
 import jackiecrazy.wardance.skill.styles.SkillStyle;
 import net.minecraft.ChatFormatting;
-import net.minecraft.core.NonNullList;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
@@ -21,7 +20,7 @@ import net.minecraft.world.InteractionResultHolder;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.*;
 import net.minecraft.world.level.Level;
-import net.minecraft.world.level.storage.loot.LootContext;
+import net.minecraft.world.level.storage.loot.LootParams;
 import net.minecraft.world.level.storage.loot.LootTable;
 import net.minecraft.world.level.storage.loot.parameters.LootContextParamSets;
 import net.minecraft.world.level.storage.loot.parameters.LootContextParams;
@@ -32,7 +31,7 @@ import java.util.HashSet;
 import java.util.List;
 
 public class ManualItem extends Item {
-    private static final Item.Properties prop = new Properties().rarity(Rarity.RARE).stacksTo(1).tab(WarDance.WARTAB);
+    private static final Item.Properties prop = new Properties().rarity(Rarity.RARE).stacksTo(1);
     private static final ResourceLocation BOOKS = new ResourceLocation(WarDance.MODID, "manuals");
 
 
@@ -123,8 +122,8 @@ public class ManualItem extends Item {
             if (random > 0) {
                 if (!p.getAbilities().instabuild)
                     stack.shrink(1);
-                LootContext lootcontext = (new LootContext.Builder(sl)).withParameter(LootContextParams.THIS_ENTITY, p).withParameter(LootContextParams.ORIGIN, p.position()).withRandom(p.getRandom()).withLuck(p.getLuck()).create(LootContextParamSets.ADVANCEMENT_REWARD); // FORGE: luck to LootContext
-                LootTable lt = l.getServer().getLootTables().get(BOOKS);
+                LootParams lootcontext = (new LootParams.Builder(sp.serverLevel())).withParameter(LootContextParams.THIS_ENTITY, sp).withParameter(LootContextParams.ORIGIN, sp.position()).withLuck(sp.getLuck()).create(LootContextParamSets.ADVANCEMENT_REWARD);
+                LootTable lt = l.getServer().getLootData().getLootTable(BOOKS);
                 lt.getRandomItems(lootcontext).forEach(sp::addItem);
                 return InteractionResultHolder.success(stack);
             }
@@ -169,8 +168,9 @@ public class ManualItem extends Item {
         return super.getName(p_43480_);
     }
 
-    public void fillItemCategory(CreativeModeTab tab, NonNullList<ItemStack> list) {
-        if (tab == WarDance.WARTAB) {
+    public static List<ItemStack> fillItemCategory(CreativeModeTab tab) {
+        ArrayList<ItemStack> list=new ArrayList<>();
+        if (tab == WarDance.WARTAB.get()) {
 //            ItemStack chest=new ItemStack(WarItems.MANUAL.get());
 //            chest.setHoverName(Component.literal("Library of Alexandria"));
 //            chest.getOrCreateTag().putInt("rollRandom", 2);
@@ -180,5 +180,6 @@ public class ManualItem extends Item {
             chest.getOrCreateTag().putInt("rollRandom", 1);
             list.add(chest);
         }
+        return list;
     }
 }

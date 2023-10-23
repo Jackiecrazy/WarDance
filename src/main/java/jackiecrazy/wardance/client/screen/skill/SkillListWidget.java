@@ -4,7 +4,7 @@ import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.*;
 import jackiecrazy.wardance.skill.Skill;
 import net.minecraft.client.gui.Font;
-import net.minecraft.client.gui.GuiComponent;
+import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.ObjectSelectionList;
 import net.minecraft.locale.Language;
 import net.minecraft.network.chat.Component;
@@ -33,27 +33,27 @@ public class SkillListWidget extends ObjectSelectionList<SkillListWidget.Categor
     }
 
     @Override
-    protected void renderBackground(PoseStack mStack) {
-        fill(mStack, x0, y0, x1, y1, -16777216);
+    protected void renderBackground(GuiGraphics mStack) {
+        mStack.fill(x0, y0, x1, y1, -16777216);
     }
 
     @Override
-    protected void renderDecorations(PoseStack matrixStack, int mouseX, int mouseY) {
+    protected void renderDecorations(GuiGraphics matrixStack, int mouseX, int mouseY) {
 
     }
 
     @Override
-    public void render(PoseStack matrixStack, int mouseX, int mouseY, float partialTicks) {
+    public void render(GuiGraphics matrixStack, int mouseX, int mouseY, float partialTicks) {
         int color = this.isFocused() ? 255 : 160;
         BufferBuilder bufferbuilder = Tesselator.getInstance().getBuilder();
-        RenderSystem.disableTexture();
+        //RenderSystem.disableTexture();
         bufferbuilder.begin(VertexFormat.Mode.QUADS, DefaultVertexFormat.POSITION_COLOR);
         bufferbuilder.vertex((double) this.x0 + 1, (double) this.y1 + 1, 0.0D).uv((float) this.x0 / 32.0F, (float) (this.y1 + (int) this.getScrollAmount()) / 32.0F).color(color, color, color, 255).endVertex();
         bufferbuilder.vertex((double) this.x1, (double) this.y1 + 1, 0.0D).uv((float) this.x1 / 32.0F, (float) (this.y1 + (int) this.getScrollAmount()) / 32.0F).color(color, color, color, 255).endVertex();
         bufferbuilder.vertex((double) this.x1, (double) this.y0 + 3, 0.0D).uv((float) this.x1 / 32.0F, (float) (this.y0 + (int) this.getScrollAmount()) / 32.0F).color(color, color, color, 255).endVertex();
         bufferbuilder.vertex((double) this.x0 + 1, (double) this.y0 + 3, 0.0D).uv((float) this.x0 / 32.0F, (float) (this.y0 + (int) this.getScrollAmount()) / 32.0F).color(color, color, color, 255).endVertex();
         BufferUploader.drawWithShader(bufferbuilder.end());
-        RenderSystem.enableTexture();
+        //RenderSystem.enableTexture();
         RenderSystem.disableBlend();
         double d0 = this.minecraft.getWindow().getGuiScale();
         RenderSystem.enableScissor((int) ((double) (this.getRowLeft()) * d0), (int) ((double) (this.height - this.y1) * d0), (int) ((double) (this.getScrollbarPosition() - 10) * d0), (int) ((double) (this.height - (this.height - this.y1) - this.y0 - 4) * d0));
@@ -86,12 +86,12 @@ public class SkillListWidget extends ObjectSelectionList<SkillListWidget.Categor
         }
 
         @Override
-        public void render(PoseStack ms, int entryIdx, int top, int left, int entryWidth, int entryHeight, int mouseX, int mouseY, boolean something, float partialTicks) {
+        public void render(GuiGraphics ms, int entryIdx, int top, int left, int entryWidth, int entryHeight, int mouseX, int mouseY, boolean something, float partialTicks) {
             Component name = s.getDisplayName(null);
             //ITextComponent version = new StringTextComponent(stripControlCodes(MavenVersionStringHelper.artifactVersionToString(modInfo.getVersion())));
             //VersionChecker.CheckResult vercheck = VersionChecker.getResult(modInfo);
             Font font = this.parent.getFontRenderer();
-            font.draw(ms, Language.getInstance().getVisualOrder(FormattedText.composite(font.substrByWidth(name, listWidth))), left + 3, top + 2, 0xffffff);
+            ms.drawString(font, Language.getInstance().getVisualOrder(FormattedText.composite(font.substrByWidth(name, listWidth))), left + 3, top + 2, 0xffffff);
             //font.draw(ms, LanguageMap.getInstance().getVisualOrder(ITextProperties.composite(font.substrByWidth(version, listWidth))), left + 3, top + 2 + font.FONT_HEIGHT, 0xCCCCCC);
             //lil' skill icon
             RenderSystem.setShaderTexture(0, s.icon());
@@ -99,9 +99,9 @@ public class SkillListWidget extends ObjectSelectionList<SkillListWidget.Categor
             float g = s.getColor().getGreen() / 255f;
             float b = s.getColor().getBlue() / 255f;
             RenderSystem.setShaderColor(r, g, b, 1);
-            ms.pushPose();
-            GuiComponent.blit(ms, getLeft() + width - 12, top + entryHeight / 4, 0, 0, 8, 8, 8, 8);
-            ms.popPose();
+            ms.pose().pushPose();
+            ms.blit(s.icon(), getLeft() + width - 12, top + entryHeight / 4, 0, 0, 8, 8, 8, 8);
+            ms.pose().popPose();
             RenderSystem.setShaderColor(1, 1, 1, 1);
         }
 

@@ -26,13 +26,13 @@ public class WindScar extends WarCry {
 
     @Override
     public void onEquip(LivingEntity caster) {
-        SkillUtils.addAttribute(caster, ForgeMod.ATTACK_RANGE.get(), reach);
+        SkillUtils.addAttribute(caster, ForgeMod.ENTITY_REACH.get(), reach);
         super.onEquip(caster);
     }
 
     @Override
     public void onUnequip(LivingEntity caster, SkillData stats) {
-        SkillUtils.removeAttribute(caster, ForgeMod.ATTACK_RANGE.get(), reach);
+        SkillUtils.removeAttribute(caster, ForgeMod.ENTITY_REACH.get(), reach);
         super.onUnequip(caster, stats);
     }
 

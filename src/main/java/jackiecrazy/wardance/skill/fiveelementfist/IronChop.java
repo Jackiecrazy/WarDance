@@ -21,7 +21,7 @@ public class IronChop extends FiveElementFist {
     public void onProc(LivingEntity caster, Event procPoint, STATE state, SkillData stats, @Nullable LivingEntity target) {
         if (procPoint instanceof ParryEvent e && e.getEntity() == caster && e.canParry() && procPoint.getPhase() == EventPriority.HIGHEST && stats.isCondition()) {
             e.setPostureConsumption(0);
-            if (caster.level instanceof ServerLevel s)
+            if (caster.level() instanceof ServerLevel s)
                 for (int reps = 0; reps < 40; reps++) {
                     Vec3 startAt = caster.position().add((((caster.tickCount+reps) * 5) % caster.getBbWidth()) - caster.getBbWidth() / 2, (((caster.tickCount+reps) * 31) % caster.getBbHeight()), (((caster.tickCount+reps) * 17) % caster.getBbWidth()) - caster.getBbWidth() / 2);
                     Vec3 move = startAt.subtract(caster.position()).normalize();

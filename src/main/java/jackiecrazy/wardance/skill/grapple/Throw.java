@@ -55,7 +55,7 @@ public class Throw extends Grapple {
         if (to == STATE.ACTIVE) {
             if (caster.getFirstPassenger() != null && cast(caster)) {
                 //yeet!
-                Entity yeet = caster.getFirstPassenger();//caster.level.getEntity((int) prev.getDuration());
+                Entity yeet = caster.getFirstPassenger();//caster.level().getEntity((int) prev.getDuration());
                 if (yeet != null) {
                     Entity rider = yeet.getVehicle();
                     yeet.stopRiding();
@@ -86,7 +86,7 @@ public class Throw extends Grapple {
     }
 
     protected void performEffect(LivingEntity caster, LivingEntity target, SkillData stats) {
-        caster.level.playSound(null, target.getX(), target.getY(), target.getZ(), SoundEvents.BARREL_OPEN, SoundSource.PLAYERS, 0.3f + WarDance.rand.nextFloat() * 0.5f, 0.75f + WarDance.rand.nextFloat() * 0.5f);
+        caster.level().playSound(null, target.getX(), target.getY(), target.getZ(), SoundEvents.BARREL_OPEN, SoundSource.PLAYERS, 0.3f + WarDance.rand.nextFloat() * 0.5f, 0.75f + WarDance.rand.nextFloat() * 0.5f);
         if (CombatData.getCap(target).consumePosture(caster, 7 * stats.getEffectiveness(), 0, true) < 0 || CombatData.getCap(target).isVulnerable()) {
             stats.setDuration(target.getId());
             mark(caster, target, 100, stats.getEffectiveness());
@@ -122,10 +122,10 @@ public class Throw extends Grapple {
 
     protected void targetCollision(LivingEntity caster, LivingEntity target, SkillData sd, Entity collide) {
         if (caster != null) {
-            target.hurt(new CombatDamageSource("fallingBlock", caster).setDamageTyping(CombatDamageSource.TYPE.PHYSICAL).setProcSkillEffects(true).setSkillUsed(this).setProcAttackEffects(true), 10 * sd.getArbitraryFloat() * sd.getArbitraryFloat());
+            target.hurt(new CombatDamageSource(caster).setDamageTyping(CombatDamageSource.TYPE.PHYSICAL).setProcSkillEffects(true).setSkillUsed(this).setProcAttackEffects(true), 10 * sd.getArbitraryFloat() * sd.getArbitraryFloat());
             if (collide instanceof LivingEntity elb) {
                 CombatData.getCap(elb).consumePosture(caster, 7 * sd.getArbitraryFloat() * sd.getArbitraryFloat());
-                elb.hurt(new CombatDamageSource("fallingBlock", caster).setDamageTyping(CombatDamageSource.TYPE.PHYSICAL).setProcSkillEffects(true).setSkillUsed(this).setProcAttackEffects(true), 3 * sd.getArbitraryFloat() * sd.getArbitraryFloat());
+                elb.hurt(new CombatDamageSource(caster).setDamageTyping(CombatDamageSource.TYPE.PHYSICAL).setProcSkillEffects(true).setSkillUsed(this).setProcAttackEffects(true), 3 * sd.getArbitraryFloat() * sd.getArbitraryFloat());
             }
         }
     }

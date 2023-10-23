@@ -43,7 +43,7 @@ public class Judgment extends Skill {
 
     protected void performEffect(LivingEntity caster, LivingEntity target, int stack, SkillData sd) {
         float amount = stack == 3 ? target.getHealth() * 0.15f : target.getHealth() * 0.03f;
-        target.hurt(new CombatDamageSource("player", caster).setDamageTyping(CombatDamageSource.TYPE.PHYSICAL).setProcSkillEffects(true).setProcAttackEffects(true).setDamageTyping(CombatDamageSource.TYPE.TRUE).bypassArmor().bypassMagic(), amount);
+        target.hurt(new CombatDamageSource(caster).setDamageTyping(CombatDamageSource.TYPE.PHYSICAL).setProcSkillEffects(true).setProcAttackEffects(true).setDamageTyping(CombatDamageSource.TYPE.TRUE).bypassArmor().bypassMagic(), amount);
     }
 
     @Override
@@ -79,7 +79,7 @@ public class Judgment extends Skill {
             int stack = 1;
             float arb = Marks.getCap(target).getActiveMark(this).orElse(SkillData.DUMMY).getArbitraryFloat();
             if (arb >= 2) {//detonate
-                caster.level.playSound(null, caster.getX(), caster.getY(), caster.getZ(), SoundEvents.DRAGON_FIREBALL_EXPLODE, SoundSource.PLAYERS, 0.25f + WarDance.rand.nextFloat() * 0.5f, 0.5f + WarDance.rand.nextFloat() * 0.5f);
+                caster.level().playSound(null, caster.getX(), caster.getY(), caster.getZ(), SoundEvents.DRAGON_FIREBALL_EXPLODE, SoundSource.PLAYERS, 0.25f + WarDance.rand.nextFloat() * 0.5f, 0.5f + WarDance.rand.nextFloat() * 0.5f);
                 removeMark(target);
             } else {
                 prev.flagCondition(true);
@@ -91,7 +91,7 @@ public class Judgment extends Skill {
             boolean offhand = stack == 2;
             CombatUtils.attack(caster, target, offhand);
             caster.swing(offhand ? InteractionHand.OFF_HAND : InteractionHand.MAIN_HAND, true);
-            caster.level.playSound(null, caster.getX(), caster.getY(), caster.getZ(), SoundEvents.RAVAGER_STEP, SoundSource.PLAYERS, 0.25f + WarDance.rand.nextFloat() * 0.5f, 0.5f + WarDance.rand.nextFloat() * 0.5f);
+            caster.level().playSound(null, caster.getX(), caster.getY(), caster.getZ(), SoundEvents.RAVAGER_STEP, SoundSource.PLAYERS, 0.25f + WarDance.rand.nextFloat() * 0.5f, 0.5f + WarDance.rand.nextFloat() * 0.5f);
         }
         if (to == STATE.COOLING) {
             if (prev.isCondition())
@@ -100,7 +100,7 @@ public class Judgment extends Skill {
             return true;
         }
         if (from != STATE.COOLING && to == STATE.HOLSTERED)
-            caster.level.playSound(null, caster.getX(), caster.getY(), caster.getZ(), SoundEvents.GRINDSTONE_USE, SoundSource.PLAYERS, 0.25f + WarDance.rand.nextFloat() * 0.5f, 0.5f + WarDance.rand.nextFloat() * 0.5f);
+            caster.level().playSound(null, caster.getX(), caster.getY(), caster.getZ(), SoundEvents.GRINDSTONE_USE, SoundSource.PLAYERS, 0.25f + WarDance.rand.nextFloat() * 0.5f, 0.5f + WarDance.rand.nextFloat() * 0.5f);
         return boundCast(prev, from, to);
     }
 
@@ -124,10 +124,12 @@ public class Judgment extends Skill {
         if (procPoint instanceof LivingDeathEvent && procPoint.getPhase() == EventPriority.HIGHEST && ((LivingDeathEvent) procPoint).getEntity() == target) {
             Marks.getCap(target).getActiveMark(this).ifPresent((a) -> CombatData.getCap(caster).addMight(a.getArbitraryFloat() * mightConsumption(caster) * 1.4f));
         }
-        if (procPoint instanceof LivingAttackEvent && ((LivingAttackEvent) procPoint).getEntity() == target) {
-            if (state == STATE.ACTIVE)
-                ((LivingAttackEvent) procPoint).getSource().bypassArmor().bypassMagic();
-            Marks.getCap(target).getActiveMark(this).ifPresent((a) -> a.setDuration(a.getArbitraryFloat() == 1 ? 6 : 12));
+        if (procPoint instanceof LivingAttackEvent lae && lae.getEntity() == target) {
+            if (state == STATE.ACTIVE && lae.getSource() instanceof CombatDamageSource ds)
+                if(ds.canProcAutoEffects()) {
+                    ds.bypassArmor().bypassMagic();
+                    Marks.getCap(target).getActiveMark(this).ifPresent((a) -> a.setDuration(a.getArbitraryFloat() == 1 ? 6 : 12));
+                }
         }
     }
 

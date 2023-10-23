@@ -18,7 +18,7 @@ public class Backpedal extends IronGuard {
     }
     @Override
     protected void parry(LivingEntity caster, ParryEvent procPoint, SkillData stats, LivingEntity target, STATE state) {
-        if (!caster.isOnGround() && state != STATE.COOLING && cast(caster, target, -999)) {
+        if (!caster.onGround() && state != STATE.COOLING && cast(caster, target, -999)) {
             float str = -Math.min(procPoint.getPostureConsumption() / 2, 2) * stats.getEffectiveness();
             caster.setDeltaMovement(caster.getDeltaMovement().add(caster.position().vectorTo(target.position()).normalize().scale(str)));
             caster.hurtMarked = true;

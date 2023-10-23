@@ -1,12 +1,11 @@
 package jackiecrazy.wardance.client.screen.skill;
 
 import com.mojang.blaze3d.systems.RenderSystem;
-import com.mojang.blaze3d.vertex.PoseStack;
 import jackiecrazy.wardance.WarDance;
-import jackiecrazy.wardance.client.screen.manual.NewManualScreen;
 import jackiecrazy.wardance.skill.Skill;
 import jackiecrazy.wardance.skill.styles.SkillStyle;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 
@@ -15,12 +14,7 @@ public class SkillStyleButton extends SkillSelectionButton {
     private int flashTime;
 
     public SkillStyleButton(SkillSelectionScreen sss, int xIn, int yIn, int sides) {
-        super(xIn, yIn, sides, sides, 0, 0, 0, passive, 256, 256, (a) -> {}, (butt, stack, butx, buty) -> {
-            SkillStyleButton b = (SkillStyleButton) butt;
-            if (b.getStyle() != null && !(sss instanceof NewManualScreen)) {
-                sss.renderTooltip(stack, Component.translatable("wardance.tooltip.resetStyle" + (b.getParentSelection() == null ? "3" : (b.parent.isValidInsertion(b.getParentSelection()) ? "2" : "1"))), butx, buty);
-            }
-        }, Component.empty());
+        super(xIn, yIn, sides, sides, 0, 0, 0, passive, 256, 256, (a) -> {});
         parent = sss;
     }
 
@@ -56,7 +50,7 @@ public class SkillStyleButton extends SkillSelectionButton {
         }
     }
 
-    public void renderButton(PoseStack matrixStack, int mouseX, int mouseY, float partialTicks) {
+    public void renderWidget(GuiGraphics graphics, int mouseX, int mouseY, float partialTicks) {
         RenderSystem.setShaderTexture(0, passive);
         if (!this.isHovered || !isValidSelection()) {
             RenderSystem.setShaderColor(0.6f, 0.6f, 0.6f, 1);
@@ -66,21 +60,23 @@ public class SkillStyleButton extends SkillSelectionButton {
         }
         applySlotTint();
         //base
-        blit(matrixStack, this.getX(), this.getY(), 0, 0, this.width, this.height, width, height);
+        graphics.blit(passive, this.getX(), this.getY(), 0, 0, this.width, this.height, width, height);
         //skill
         RenderSystem.setShaderColor(1, 1, 1, 1);
         if (s != null) {
             RenderSystem.setShaderTexture(0, s.icon());
             //Color c = s.getColor();
             //RenderSystem.setShaderColor(c.getRed() / 255f, c.getGreen() / 255f, c.getBlue() / 255f, 1);
-            blit(matrixStack, this.getX(), this.getY(), 0, 0, this.width, this.height, width, height);
+            graphics.blit(s.icon(), this.getX(), this.getY(), 0, 0, this.width, this.height, width, height);
         }
         RenderSystem.setShaderColor(1, 1, 1, 1);
 //        if (this.isHoveredOrFocused()) {
 //            this.render(matrixStack, mouseX, mouseY, partialTicks);
 //        }
         if (this.isHovered) {
-            this.renderToolTip(matrixStack, mouseX, mouseY);
+            graphics.pose().translate(0, -10, 100);
+            graphics.renderTooltip(parent.getMinecraftInstance().font, Component.translatable("wardance.tooltip.resetStyle" + (getParentSelection() == null ? "3" : (parent.isValidInsertion(getParentSelection()) ? "2" : "1"))), mouseX, mouseY);
+            //graphics.pose().translate(0, 10, -100);
         }
     }
 

@@ -112,17 +112,6 @@ public class CombatCapability implements ICombatCapability {
         e.getAttribute(Attributes.ARMOR).removeModifier(WOUND);
     }
 
-    public int getComboRank() {
-        float workingCombo = this.getRank();
-        if (workingCombo >= 9.0F) {
-            return 6;
-        } else if (workingCombo >= 6.0F) {
-            return 5;
-        } else {
-            return workingCombo >= 4.0F ? 4 : (int)workingCombo;
-        }
-    }
-
     @Override
     public float getMaxMight() {
         return mmight;
@@ -304,12 +293,14 @@ public class CombatCapability implements ICombatCapability {
             amount = posture - above;
         } else if (posture - amount < 0) {
             ret = posture - amount;
-            posture = 0;
             if (addFracture(assailant, 1)) {
                 final boolean knockdown = elb.hasEffect(FootworkEffects.UNSTEADY.get());
                 StunEvent se = new StunEvent(elb, assailant, knockdown ? CombatConfig.knockdownDuration : CombatConfig.staggerDuration, knockdown);
                 MinecraftForge.EVENT_BUS.post(se);
-                if (se.isCanceled()) return 0f;
+                if (se.isCanceled()) {
+                    posture = 0;
+                    return 0f;
+                }
                 elb.stopUsingItem();
                 if (se.isKnockdown()) {
                     knockdown(se.getLength());
@@ -317,8 +308,9 @@ public class CombatCapability implements ICombatCapability {
                 } else stun(se.getLength());
                 if (assailant != null)
                     CombatData.getCap(assailant).addRank(se.isKnockdown() ? 0.2f : 0.1f);
-                elb.level.playSound(null, elb.getX(), elb.getY(), elb.getZ(), SoundEvents.ZOMBIE_ATTACK_WOODEN_DOOR, SoundSource.PLAYERS, 0.3f + WarDance.rand.nextFloat() * 0.5f, 0.75f + WarDance.rand.nextFloat() * 0.5f);
+                elb.level().playSound(null, elb.getX(), elb.getY(), elb.getZ(), SoundEvents.ZOMBIE_ATTACK_WOODEN_DOOR, SoundSource.PLAYERS, 0.3f + WarDance.rand.nextFloat() * 0.5f, 0.75f + WarDance.rand.nextFloat() * 0.5f);
             }
+            posture = 0;
 //            elb.stopRiding();
 //            for (Entity rider : elb.getPassengers())
 //                rider.stopRiding();
@@ -470,7 +462,7 @@ public class CombatCapability implements ICombatCapability {
     public void clearFracture(@Nullable LivingEntity of, boolean clearInvalid) {
         if (clearInvalid) {
             final LivingEntity e = dude.get();
-            if (e != null && e.level instanceof ServerLevel server)
+            if (e != null && e.level() instanceof ServerLevel server)
                 fractures.entrySet().removeIf((id) -> server.getEntity(id.getKey()) == null);
         } else {
             if (of == null) fractures.clear();
@@ -505,7 +497,7 @@ public class CombatCapability implements ICombatCapability {
         }//entering expose
         else if (e != null && time > 0 && expose == 0) {
             stun(0);
-            e.level.playSound(null, e.getX(), e.getY(), e.getZ(), SoundEvents.ZOMBIE_BREAK_WOODEN_DOOR, SoundSource.PLAYERS, 0.3f + WarDance.rand.nextFloat() * 0.5f, 0.75f + WarDance.rand.nextFloat() * 0.5f);
+            e.level().playSound(null, e.getX(), e.getY(), e.getZ(), SoundEvents.ZOMBIE_BREAK_WOODEN_DOOR, SoundSource.PLAYERS, 0.3f + WarDance.rand.nextFloat() * 0.5f, 0.75f + WarDance.rand.nextFloat() * 0.5f);
             e.getAttribute(Attributes.MOVEMENT_SPEED).removeModifier(WOUND);
             e.getAttribute(Attributes.MOVEMENT_SPEED).addPermanentModifier(EXPOSEA);
 
@@ -541,6 +533,17 @@ public class CombatCapability implements ICombatCapability {
 //        }
         if (!Float.isFinite(rank)) rank = 0;
         else rank = Mth.clamp(amount, 0, 10);
+    }
+
+    public int getComboRank() {
+        float workingCombo = this.getRank();
+        if (workingCombo >= 9.0F) {
+            return 6;
+        } else if (workingCombo >= 6.0F) {
+            return 5;
+        } else {
+            return workingCombo >= 4.0F ? 4 : (int) workingCombo;
+        }
     }
 
     @Override
@@ -709,7 +712,7 @@ public class CombatCapability implements ICombatCapability {
     public void serverTick() {
         LivingEntity elb = dude.get();
         if (elb == null) return;
-        final int ticks = (int) (elb.level.getGameTime() - lastUpdate);
+        final int ticks = (int) (elb.level().getGameTime() - lastUpdate);
         if (ticks < 1) return;//sometimes time runs backwards
         //initialize posture and fracture
 
@@ -822,7 +825,7 @@ public class CombatCapability implements ICombatCapability {
             prev = elb.getOffhandItem();
             setOffhandCooldown(0);
         }
-        lastUpdate = elb.level.getGameTime();
+        lastUpdate = elb.level().getGameTime();
         first = false;
         sync();
     }
@@ -830,7 +833,7 @@ public class CombatCapability implements ICombatCapability {
     @Override
     public void sync() {
         LivingEntity elb = dude.get();
-        if (elb == null || elb.level.isClientSide) return;
+        if (elb == null || elb.level().isClientSide) return;
         CombatChannel.INSTANCE.send(PacketDistributor.TRACKING_ENTITY.with(() -> elb), new UpdateClientResourcePacket(elb.getId(), quickWrite()));
         if (!(elb instanceof FakePlayer) && elb instanceof ServerPlayer sp)
             CombatChannel.INSTANCE.send(PacketDistributor.PLAYER.with(() -> sp), new UpdateClientResourcePacket(elb.getId(), write()));

@@ -23,7 +23,7 @@ import jackiecrazy.wardance.skill.styles.ColorRestrictionStyle;
 import jackiecrazy.wardance.utils.CombatUtils;
 import jackiecrazy.wardance.utils.DamageUtils;
 import jackiecrazy.wardance.utils.SkillUtils;
-import net.minecraft.core.Registry;
+import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.effect.MobEffectInstance;
@@ -45,7 +45,7 @@ import java.util.UUID;
 
 @Mod.EventBusSubscriber(modid = WarDance.MODID)
 public class Sifu extends ColorRestrictionStyle {
-    public static final TagKey<EntityType<?>> EVIL = TagKey.create(Registry.ENTITY_TYPE_REGISTRY, new ResourceLocation(WarDance.MODID, "great_evil"));
+    public static final TagKey<EntityType<?>> EVIL = TagKey.create(Registries.ENTITY_TYPE, new ResourceLocation(WarDance.MODID, "great_evil"));
     private static final AttributeModifier kbr = new AttributeModifier(UUID.fromString("abc24c38-73e3-4551-9df4-e06e117699c1"), "sifu target", 1, AttributeModifier.Operation.ADDITION);
 
     public Sifu() {
@@ -57,7 +57,7 @@ public class Sifu extends ColorRestrictionStyle {
     public static void death(LivingDeathEvent e) {
         if (Marks.getCap(e.getEntity()).isMarked(WarSkills.SIFU.get())) {
             e.setCanceled(true);
-            fakeDie(e.getEntity(), e.getEntity().getCombatTracker().getKiller());
+            fakeDie(e.getEntity(), e.getEntity().getKillCredit());
         }
     }
 
@@ -120,7 +120,7 @@ public class Sifu extends ColorRestrictionStyle {
         if (procPoint instanceof LivingHurtEvent e && DamageUtils.isPhysicalAttack(e.getSource()) && e.getEntity() == caster && e.getPhase() == EventPriority.HIGHEST) {
             //ouch
             if (caster.getAttributeValue(FootworkAttributes.STEALTH.get()) < 0)
-                e.setAmount(e.getAmount() * (float) (1 - (caster.getAttributeValue(FootworkAttributes.STEALTH.get()) * 0.05*SkillUtils.getSkillEffectiveness(caster))));
+                e.setAmount(e.getAmount() * (float) (1 - (caster.getAttributeValue(FootworkAttributes.STEALTH.get()) * 0.05 * SkillUtils.getSkillEffectiveness(caster))));
         }
         if (procPoint.getPhase() == EventPriority.LOWEST) {
             //frugality
@@ -129,7 +129,7 @@ public class Sifu extends ColorRestrictionStyle {
             }
             //exp
             if (procPoint instanceof LivingExperienceDropEvent e) {
-                e.setDroppedExperience((int) (e.getDroppedExperience() * 3*SkillUtils.getSkillEffectiveness(caster)));
+                e.setDroppedExperience((int) (e.getDroppedExperience() * 3 * SkillUtils.getSkillEffectiveness(caster)));
             }
         }
         //great evils
@@ -150,8 +150,9 @@ public class Sifu extends ColorRestrictionStyle {
             }
             //%max health dealt immediately on expose
             if (CombatData.getCap(target).isExposed()) {
-                lae.setAmount(lae.getAmount() + target.getMaxHealth() * 0.07f*SkillUtils.getSkillEffectiveness(caster));
-                lae.getSource().bypassArmor().bypassEnchantments().bypassMagic();
+                lae.setAmount(lae.getAmount() + target.getMaxHealth() * 0.07f * SkillUtils.getSkillEffectiveness(caster));
+                if (lae.getSource() instanceof CombatDamageSource cds)
+                    cds.bypassArmor().bypassEnchantments().bypassMagic();
             }
         } else if (procPoint instanceof StunEvent sce && procPoint.getPhase() == EventPriority.HIGHEST && sce.getEntity() != caster) {
             SkillUtils.removeAttribute(target, Attributes.KNOCKBACK_RESISTANCE, kbr);
@@ -170,7 +171,7 @@ public class Sifu extends ColorRestrictionStyle {
     public SkillData onMarked(LivingEntity caster, LivingEntity target, SkillData sd, @Nullable SkillData existing) {
         if (sd.isCondition()) return sd;
         if (existing != null) return existing;
-        for (LivingEntity entity : caster.level.getEntitiesOfClass(LivingEntity.class, caster.getBoundingBoxForCulling().inflate(7), a -> !TargetingUtils.isAlly(a, caster))) {
+        for (LivingEntity entity : caster.level().getEntitiesOfClass(LivingEntity.class, caster.getBoundingBoxForCulling().inflate(7), a -> !TargetingUtils.isAlly(a, caster))) {
             if (entity != target && entity != caster) {
                 entity.addEffect(new MobEffectInstance(MobEffects.MOVEMENT_SLOWDOWN, (int) (60 * SkillUtils.getSkillEffectiveness(caster)), 1));
                 CombatUtils.knockBack(entity, caster, 0.6f * SkillUtils.getSkillEffectiveness(caster), true, false);
@@ -187,7 +188,7 @@ public class Sifu extends ColorRestrictionStyle {
             final SifuDropsMixin sifu = (SifuDropsMixin) target;
             if (caster instanceof Player p)
                 target.setLastHurtByPlayer(p);
-            sifu.callDropAllDeathLoot(new CombatDamageSource("player", caster));
+            sifu.callDropAllDeathLoot(new CombatDamageSource(caster));
             target.remove(Entity.RemovalReason.KILLED);
         }
     }

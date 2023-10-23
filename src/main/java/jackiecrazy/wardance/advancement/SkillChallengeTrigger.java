@@ -18,7 +18,7 @@ public class SkillChallengeTrigger extends SimpleCriterionTrigger<SkillChallenge
     }
 
     @Nonnull
-    public TriggerInstance createInstance(JsonObject obj, @Nonnull EntityPredicate.Composite entity, DeserializationContext ctx) {
+    public TriggerInstance createInstance(JsonObject obj, @Nonnull ContextAwarePredicate entity, DeserializationContext ctx) {
         SkillPredicate skill = SkillPredicate.fromJson(obj.get("skilldata"));
         return new TriggerInstance(entity, skill);
     }
@@ -30,8 +30,8 @@ public class SkillChallengeTrigger extends SimpleCriterionTrigger<SkillChallenge
     public static class TriggerInstance extends AbstractCriterionTriggerInstance {
         private final SkillPredicate data;
 
-        public TriggerInstance(EntityPredicate.Composite caster, SkillPredicate skilldata) {
-            super(SkillChallengeTrigger.ID, caster);
+        public TriggerInstance(ContextAwarePredicate cap, SkillPredicate skilldata) {
+            super(SkillChallengeTrigger.ID, cap);
             data = skilldata;
         }
 
@@ -40,7 +40,7 @@ public class SkillChallengeTrigger extends SimpleCriterionTrigger<SkillChallenge
         }
 
         public static TriggerInstance skill(Skill s) {
-            return new TriggerInstance(EntityPredicate.Composite.ANY, new SkillPredicate(s));
+            return new TriggerInstance(ContextAwarePredicate.ANY, new SkillPredicate(s));
         }
 
         @Nonnull

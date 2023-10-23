@@ -3,10 +3,13 @@ package jackiecrazy.wardance.skill.regenspirit;
 import jackiecrazy.footwork.api.FootworkAttributes;
 import jackiecrazy.footwork.capability.resources.CombatData;
 import jackiecrazy.footwork.capability.resources.ICombatCapability;
+import jackiecrazy.wardance.event.SkillCastEvent;
 import jackiecrazy.wardance.skill.*;
 import jackiecrazy.wardance.utils.SkillUtils;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.ai.attributes.AttributeModifier;
+import net.minecraftforge.eventbus.api.Event;
+import org.jetbrains.annotations.Nullable;
 
 import javax.annotation.Nonnull;
 import java.util.HashSet;
@@ -58,6 +61,13 @@ confidence: your spirit regeneration speed scales proportionally with how much s
         SkillUtils.addAttribute(caster, FootworkAttributes.MAX_SPIRIT.get(), sprint);
         SkillUtils.addAttribute(caster, FootworkAttributes.SPIRIT_COOLDOWN.get(), sprint2);
         super.onEquip(caster);
+    }
+
+    @Override
+    public void onProc(LivingEntity caster, Event procPoint, STATE state, SkillData stats, @Nullable LivingEntity target) {
+        if(procPoint instanceof SkillCastEvent e &&e.getSpirit()>=2){
+            completeChallenge(caster);
+        }
     }
 
     @Override

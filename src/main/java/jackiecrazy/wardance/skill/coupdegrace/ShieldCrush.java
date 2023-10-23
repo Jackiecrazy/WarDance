@@ -144,7 +144,7 @@ public class ShieldCrush extends ShieldBash {
 
     @Override
     public boolean onStateChange(LivingEntity caster, SkillData prev, STATE from, STATE to) {
-        LivingEntity e = GeneralUtils.raytraceLiving(caster.level, caster, 3);
+        LivingEntity e = GeneralUtils.raytraceLiving(caster.level(), caster, 3);
         if (to == STATE.ACTIVE && e != null && CombatUtils.isHoldingShield(caster) && cast(caster, e, duration())) {
             mark(caster, e, duration(), 10);
             prev.setArbitraryFloat(0);

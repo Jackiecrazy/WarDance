@@ -57,7 +57,7 @@ public class RequestSweepPacket {
                 if (sender != null && (GeneralConfig.dual || updateClientPacket.main) && CombatUtils.getCooledAttackStrength(sender, h, 1f) >= 0.9f) {
                     //TODO throw weapon
                     if (!sender.hasEffect(MobEffects.BLINDNESS))
-                        CombatUtils.sweep(sender, sender.level.getEntity(updateClientPacket.id), h, GeneralUtils.getAttributeValueSafe(sender, ForgeMod.ATTACK_RANGE.get()));
+                        CombatUtils.sweep(sender, sender.level().getEntity(updateClientPacket.id), h, GeneralUtils.getAttributeValueSafe(sender, ForgeMod.ENTITY_REACH.get()));
                 }
                 if (h == InteractionHand.OFF_HAND)
                     CombatUtils.setHandCooldown(sender, h, 0, false);

@@ -100,7 +100,7 @@ public class ZTargetHandler {
     private static int cycle = -1;
 
     public static Entity findNearby(Player player) {
-        List<LivingEntity> entities = player.level.getNearbyEntities(LivingEntity.class, ENEMY_CONDITION, player, player.getBoundingBox().inflate(10.0D, 2.0D, 10.0D));
+        List<LivingEntity> entities = player.level().getNearbyEntities(LivingEntity.class, ENEMY_CONDITION, player, player.getBoundingBox().inflate(10.0D, 2.0D, 10.0D));
         if (lockedOn) {
             cycle++;
             for (LivingEntity entity : entities) {

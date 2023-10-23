@@ -25,7 +25,7 @@ public class MovementUtils {
 //    public static boolean willHitWall(Entity elb) {
 //        double allowance = 1;
 //        AABB aabb = elb.getBoundingBox();
-//        Iterable<VoxelShape> boxes = elb.level.getBlockCollisions(elb, aabb.expandTowards(elb.getDeltaMovement()));
+//        Iterable<VoxelShape> boxes = elb.level().getBlockCollisions(elb, aabb.expandTowards(elb.getDeltaMovement()));
 //        for (VoxelShape a : boxes) {
 //            boxes.
 //            if (aabb.calculateXOffset(a, allowance) != allowance) return true;
@@ -76,7 +76,7 @@ public class MovementUtils {
 
 //    public static boolean attemptJump(LivingEntity elb) {
 //        //if you're on the ground, I'll let vanilla handle you
-//        if (elb.isOnGround()||elb.isRiding()) return false;
+//        if (elb.onGround()||elb.isRiding()) return false;
 //        ITaoStatCapability itsc = CombatData.getCap(elb);
 //        if (!itsc.isInCombatMode()) return false;
 //        //qi has to be nonzero
@@ -199,7 +199,7 @@ public class MovementUtils {
 //        return ret;
 //    }
     public static boolean attemptSlide(LivingEntity elb) {
-        if (!elb.isOnGround()) return false;
+        if (!elb.onGround()) return false;
         ICombatCapability itsc = CombatData.getCap(elb);
         if (!itsc.isCombatMode()) return false;
         DodgeEvent e = new DodgeEvent(elb, DodgeEvent.Direction.FORWARD, 1.5);

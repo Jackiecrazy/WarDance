@@ -65,7 +65,7 @@ Flow: cooldown of all attack skills are halved, and any cooled attack skill is a
         if (!CombatData.getCap(caster).consumeMight(0.05f / stats.getEffectiveness())) markUsed(caster);
         if (stats.getState() == STATE.ACTIVE && caster.tickCount % 10 == 0 && !caster.isAutoSpinAttack()) {
             //spin to win!
-            double reach = caster.getAttributeValue(ForgeMod.ATTACK_RANGE.get());
+            double reach = caster.getAttributeValue(ForgeMod.ENTITY_REACH.get());
             CombatUtils.setHandCooldown(caster, InteractionHand.MAIN_HAND, 1f, false);
             CombatUtils.sweep(caster, null, InteractionHand.MAIN_HAND, WeaponStats.SWEEPTYPE.CIRCLE, reach, reach, 0);
             CombatUtils.setHandCooldown(caster, InteractionHand.MAIN_HAND, 0, true);

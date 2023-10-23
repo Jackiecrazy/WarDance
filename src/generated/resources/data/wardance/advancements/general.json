@@ -1,0 +1,33 @@
+{
+  "parent": "wardance:trample",
+  "criteria": {
+    "tick": {
+      "conditions": {},
+      "trigger": "minecraft:tick"
+    }
+  },
+  "display": {
+    "announce_to_chat": false,
+    "description": {
+      "italic": true,
+      "translate": "wardance.category.general.desc"
+    },
+    "frame": "task",
+    "hidden": false,
+    "icon": {
+      "item": "wardance:dummy",
+      "nbt": "{style:\"general\"}"
+    },
+    "show_toast": false,
+    "title": {
+      "color": "white",
+      "translate": "wardance.category.general.name"
+    }
+  },
+  "requirements": [
+    [
+      "tick"
+    ]
+  ],
+  "sends_telemetry_event": true
+}

@@ -16,10 +16,10 @@ import net.minecraft.world.entity.LivingEntity;
 public class CursedPalms extends Throw {
     @Override
     protected void targetCollision(LivingEntity caster, LivingEntity target, SkillData stats, Entity collide) {
-        caster.level.playSound(null, target.getX(), target.getY(), target.getZ(), SoundEvents.BARREL_OPEN, SoundSource.PLAYERS, 0.3f + WarDance.rand.nextFloat() * 0.5f, 0.75f + WarDance.rand.nextFloat() * 0.5f);
+        caster.level().playSound(null, target.getX(), target.getY(), target.getZ(), SoundEvents.BARREL_OPEN, SoundSource.PLAYERS, 0.3f + WarDance.rand.nextFloat() * 0.5f, 0.75f + WarDance.rand.nextFloat() * 0.5f);
         ParticleUtils.playSweepParticle(FootworkParticles.IMPACT.get(), caster, target.position(), 0, 1, getColor(), 0);
         target.addEffect(new MobEffectInstance(MobEffects.CONFUSION, 60));
-        AreaEffectCloud areaeffectcloud = new AreaEffectCloud(caster.level, target.getX(), target.getY(), target.getZ());
+        AreaEffectCloud areaeffectcloud = new AreaEffectCloud(caster.level(), target.getX(), target.getY(), target.getZ());
         areaeffectcloud.setOwner(caster);
         areaeffectcloud.setRadius(5.0F * SkillUtils.getSkillEffectiveness(caster));
         areaeffectcloud.setDuration((int) (140 * SkillUtils.getSkillEffectiveness(caster)));
@@ -31,6 +31,6 @@ public class CursedPalms extends Throw {
             }
         }
         if(counter>=4)completeChallenge(caster);
-        caster.level.addFreshEntity(areaeffectcloud);
+        caster.level().addFreshEntity(areaeffectcloud);
     }
 }

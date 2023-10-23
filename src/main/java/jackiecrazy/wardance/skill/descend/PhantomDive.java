@@ -32,7 +32,7 @@ public class PhantomDive extends Skill {
     @Override
     public boolean equippedTick(LivingEntity caster, SkillData stats) {
         float prev = stats.getArbitraryFloat();
-        if (caster.isOnGround()) {
+        if (caster.onGround()) {
             stats.setArbitraryFloat((float) caster.getY());
         } else if (caster.getDeltaMovement().y() > 0) {
             stats.setArbitraryFloat((float) caster.getY());

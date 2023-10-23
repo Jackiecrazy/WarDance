@@ -32,7 +32,7 @@ public class PestilentEdge extends SkillStyle {
             }
             debuffs += Marks.getCap(target).getActiveMarks().size();
             cpe.setPostureConsumption(cpe.getPostureConsumption() + debuffs * SkillUtils.getSkillEffectiveness(caster));
-            if (debuffs > 0 && caster.level instanceof ServerLevel server)
+            if (debuffs > 0 && caster.level() instanceof ServerLevel server)
                 server.sendParticles(ParticleTypes.ITEM_SLIME, target.getX(), target.getY(), target.getZ(), (int) debuffs * 5, target.getBbWidth(), target.getBbHeight() / 2, target.getBbWidth(), 0.5f);
         } else if (procPoint instanceof LivingHurtEvent cpe && cpe.getPhase() == EventPriority.HIGHEST && DamageUtils.isMeleeAttack(cpe.getSource()) && cpe.getEntity() == target) {
             if (!cpe.isCanceled()) {

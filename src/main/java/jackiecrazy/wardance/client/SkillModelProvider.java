@@ -18,7 +18,7 @@ import java.util.stream.Collectors;
 public class SkillModelProvider  extends ModelProvider<SkillModelProvider.SkillModelBuilder> {
 
     public SkillModelProvider(DataGenerator generator, String modid, ExistingFileHelper existingFileHelper) {
-        super(generator, modid, "skill", SkillModelBuilder::new, existingFileHelper);
+        super(generator.getPackOutput(), modid, "skill", SkillModelBuilder::new, existingFileHelper);
     }
 
     private SkillModelBuilder build(Skill s){

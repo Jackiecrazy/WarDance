@@ -46,6 +46,7 @@ public class Necrosis extends Skill {
         SkillUtils.modifyAttribute(caster, Attributes.MAX_HEALTH, uuid, amount, AttributeModifier.Operation.MULTIPLY_TOTAL);
         final double shouldBe = Math.ceil(caster.getMaxHealth() / (1 + amount));
         if (caster.getHealth() > shouldBe) caster.setHealth((float) shouldBe);
+        if(amount>shouldBe*2)completeChallenge(caster);
         return super.equippedTick(caster, stats);
     }
 

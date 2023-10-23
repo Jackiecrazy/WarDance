@@ -15,7 +15,7 @@ public class ReturnToSender extends IronGuard {
     public void onProc(LivingEntity caster, Event procPoint, STATE state, SkillData stats, @Nullable LivingEntity target) {
         if (procPoint instanceof final ProjectileParryEvent ppe && procPoint.getPhase() == EventPriority.HIGHEST && ppe.getReturnVec() != null && ppe.getEntity() == caster&& cast(caster)) {
             ppe.setReturnVec(ppe.getProjectile().getDeltaMovement().reverse());
-            ppe.setPostureConsumption(ppe.getPostureConsumption() * 1.5f / SkillUtils.getSkillEffectiveness(caster));
+            ppe.setPostureConsumption(ppe.getPostureConsumption() * 2f / SkillUtils.getSkillEffectiveness(caster));
             markUsed(caster);
         }
     }

@@ -4,8 +4,8 @@ import com.mojang.blaze3d.systems.RenderSystem;
 import jackiecrazy.wardance.skill.Skill;
 import jackiecrazy.wardance.skill.styles.SkillStyle;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.components.ImageButton;
+import net.minecraft.client.gui.components.Tooltip;
 import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
@@ -24,8 +24,9 @@ public abstract class SkillSelectionButton extends ImageButton {
         super(xIn, yIn, widthIn, heightIn, xTexStartIn, yTexStartIn, yDiffTextIn, resourceLocationIn, textureWidth, textureHeight, onPressIn);
     }
 
-    public SkillSelectionButton(int xIn, int yIn, int widthIn, int heightIn, int xTexStartIn, int yTexStartIn, int yDiffTextIn, ResourceLocation resourceLocationIn, int textureWidth, int textureHeight, OnPress onPressIn, Button.OnTooltip p_94253_, Component p_94254_) {
-        super(xIn, yIn, widthIn, heightIn, xTexStartIn, yTexStartIn, yDiffTextIn, resourceLocationIn, textureWidth, textureHeight, onPressIn, p_94253_, p_94254_);
+    public SkillSelectionButton(int xIn, int yIn, int widthIn, int heightIn, int xTexStartIn, int yTexStartIn, int yDiffTextIn, ResourceLocation resourceLocationIn, int textureWidth, int textureHeight, OnPress onPressIn, Tooltip p_94253_, Component p_94254_) {
+        super(xIn, yIn, widthIn, heightIn, xTexStartIn, yTexStartIn, yDiffTextIn, resourceLocationIn, textureWidth, textureHeight, onPressIn, p_94254_);
+        setTooltip(p_94253_);
     }
 
     protected void applySlotTint() {
@@ -70,13 +71,5 @@ public abstract class SkillSelectionButton extends ImageButton {
         if (!parent.isValidInsertion(s))
             return false;
         return true;
-    }
-
-    protected int getX() {
-        return x;
-    }
-
-    protected int getY() {
-        return y;
     }
 }

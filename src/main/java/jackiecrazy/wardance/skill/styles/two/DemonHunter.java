@@ -48,7 +48,7 @@ public class DemonHunter extends ColorRestrictionStyle {
     @SubscribeEvent()
     public static void slow(LivingEntityUseItemEvent e) {
         //charge faster
-        if (e.getEntity() instanceof Player player && !player.level.isClientSide && !player.isOnGround()) {
+        if (e.getEntity() instanceof Player player && !player.level().isClientSide && !player.onGround()) {
             if (!(e.getItem().getItem() instanceof ProjectileWeaponItem) && !(e.getItem().getItem() instanceof TridentItem))
                 return;
             if (CasterData.getCap(player).getStyle() != WarSkills.DEMON_HUNTER.get()) return;
@@ -63,10 +63,10 @@ public class DemonHunter extends ColorRestrictionStyle {
 
             //more pain for marked
             Marks.getCap(uke).getActiveMark(WarSkills.DEMON_HUNTER.get()).ifPresent(a -> {
-                LivingEntity marker = a.getCaster(e.getEntity().level);
+                LivingEntity marker = a.getCaster(e.getEntity().level());
                 CombatData.getCap(uke).consumePosture(marker, 2 * SkillUtils.getSkillEffectiveness(marker));
                 a.decrementDuration();
-                if (uke.level instanceof ServerLevel server)
+                if (uke.level() instanceof ServerLevel server)
                     server.sendParticles(ParticleTypes.CRIT, uke.getX(), uke.getY(), uke.getZ(), (int) 20, uke.getBbWidth(), uke.getBbHeight(), uke.getBbWidth(), 0f);
 
             });
@@ -77,18 +77,18 @@ public class DemonHunter extends ColorRestrictionStyle {
     public void onProc(LivingEntity caster, Event procPoint, STATE state, SkillData stats, @Nullable LivingEntity target) {
         if (procPoint instanceof LivingAttackEvent a && DamageUtils.isMeleeAttack(a.getSource()) && target != null && a.getEntity() != caster && a.getPhase() == EventPriority.LOWEST) {
             if (Marks.getCap(target).isMarked(this)) {
-                if (!caster.isOnGround()) {
+                if (!caster.onGround()) {
                     CombatUtils.knockBack(caster, target, 1, true, true);
                     Vec3 vec = caster.getDeltaMovement();
                     caster.lerpMotion(vec.x, vec.y + 1, vec.z);
-                    if(SkillUtils.hasAttribute(caster, ForgeMod.ATTACK_RANGE.get(), reach))
+                    if(SkillUtils.hasAttribute(caster, ForgeMod.ENTITY_REACH.get(), reach))
                         completeChallenge(caster);
                 }
             } else mark(caster, target, 3);
-            SkillUtils.removeAttribute(caster, ForgeMod.ATTACK_RANGE.get(), reach);
+            SkillUtils.removeAttribute(caster, ForgeMod.ENTITY_REACH.get(), reach);
         }
         if(procPoint instanceof SweepEvent se){
-            if (!caster.isOnGround()||caster.getAttribute(ForgeMod.ATTACK_RANGE.get()).hasModifier(reach)) {
+            if (!caster.onGround()||caster.getAttribute(ForgeMod.ENTITY_REACH.get()).hasModifier(reach)) {
                 se.setColor(Color.CYAN);
             }
         }
@@ -102,6 +102,6 @@ public class DemonHunter extends ColorRestrictionStyle {
 
     @Override
     public void onMarkEnd(LivingEntity caster, LivingEntity target, SkillData sd) {
-        CasterData.getCap(caster).getSkillData(this).ifPresent(a -> SkillUtils.addAttribute(caster, ForgeMod.ATTACK_RANGE.get(), reach));
+        CasterData.getCap(caster).getSkillData(this).ifPresent(a -> SkillUtils.addAttribute(caster, ForgeMod.ENTITY_REACH.get(), reach));
     }
 }

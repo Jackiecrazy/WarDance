@@ -24,7 +24,7 @@ public class SkillEventHandler {
 
     @SubscribeEvent(priority = EventPriority.LOWEST)
     public static void sleep(PlayerWakeUpEvent e) {
-        boolean flag = !e.wakeImmediately() && (!e.updateLevel() || e.getEntity().level.isDay());
+        boolean flag = !e.wakeImmediately() && (!e.updateLevel() || e.getEntity().level().isDay());
         if ((flag || ResourceConfig.sleepingHealsDecay == ResourceConfig.ThirdOption.FORCED) && e.getEntity().isEffectiveAi()) {
 //            if (ResourceConfig.sleepingHealsDecay != ResourceConfig.ThirdOption.FALSE) {
 //                final ICombatCapability cap = CombatData.getCap(e.getPlayer());
@@ -274,7 +274,7 @@ public class SkillEventHandler {
 
     @SubscribeEvent(priority = EventPriority.HIGHEST)
     public static void projectileImpact(ProjectileImpactEvent e) {
-        if (e.getEntity().level.isClientSide) return;
+        if (e.getEntity().level().isClientSide) return;
         Entity proj = e.getEntity();
         if (proj instanceof Projectile) {
             Entity shooter = ((Projectile) proj).getOwner();
@@ -609,7 +609,7 @@ public class SkillEventHandler {
 
     @SubscribeEvent(priority = EventPriority.LOWEST)
     public static void projectileImpacT(ProjectileImpactEvent e) {
-        if (e.getEntity().level.isClientSide) return;
+        if (e.getEntity().level().isClientSide) return;
         Entity proj = e.getEntity();
         if (proj instanceof Projectile) {
             Entity shooter = ((Projectile) proj).getOwner();

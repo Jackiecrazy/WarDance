@@ -55,6 +55,8 @@ public class Kick extends Skill {
     public void onProc(LivingEntity caster, Event procPoint, STATE state, SkillData stats, @Nullable LivingEntity target) {
         attackCooldown(procPoint, caster, stats);
         if (procPoint instanceof StunEvent e && state == STATE.ACTIVE && this == WarSkills.TRAMPLE.get() && e.getPhase() == EventPriority.LOWEST) {
+            if (CombatData.getCap(target).getPosture() == CombatData.getCap(target).getMaxPosture())
+                completeChallenge(caster);
             e.setKnockdown(true);
         }
     }
@@ -65,12 +67,12 @@ public class Kick extends Skill {
         if (from == STATE.HOLSTERED && to == STATE.ACTIVE && target != null && cast(caster, target, -999)) {
             float amount = getDamage(prev, target);
             CombatData.getCap(target).consumePosture(caster, amount);
-            ParticleUtils.playBonkParticle(caster.level, caster.getEyePosition().add(caster.getLookAngle().scale(Math.sqrt(GeneralUtils.getDistSqCompensated(caster, target)))), 1, 0, 8, getColor());
+            ParticleUtils.playBonkParticle(caster.level(), caster.getEyePosition().add(caster.getLookAngle().scale(Math.sqrt(GeneralUtils.getDistSqCompensated(caster, target)))), 1, 0, 8, getColor());
             additionally(caster, target, prev);
-            target.hurt(new CombatDamageSource("fallingBlock", caster).setDamageTyping(CombatDamageSource.TYPE.PHYSICAL).setProcSkillEffects(true).setSkillUsed(this).setProcAttackEffects(true), 2 * prev.getEffectiveness());
+            target.hurt(new CombatDamageSource(caster).setDamageTyping(CombatDamageSource.TYPE.PHYSICAL).setProcSkillEffects(true).setSkillUsed(this).setProcAttackEffects(true), 2 * prev.getEffectiveness());
             if (target.getLastHurtByMob() == null)
                 target.setLastHurtByMob(caster);
-            caster.level.playSound(null, caster.getX(), caster.getY(), caster.getZ(), SoundEvents.ZOMBIE_ATTACK_WOODEN_DOOR, SoundSource.PLAYERS, 0.25f + WarDance.rand.nextFloat() * 0.5f, 0.5f + WarDance.rand.nextFloat() * 0.5f);
+            caster.level().playSound(null, caster.getX(), caster.getY(), caster.getZ(), SoundEvents.ZOMBIE_ATTACK_WOODEN_DOOR, SoundSource.PLAYERS, 0.25f + WarDance.rand.nextFloat() * 0.5f, 0.5f + WarDance.rand.nextFloat() * 0.5f);
         }
         if (to == STATE.COOLING) {
             setCooldown(caster, prev, 4);

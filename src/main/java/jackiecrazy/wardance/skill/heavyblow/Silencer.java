@@ -60,7 +60,7 @@ public class Silencer extends HeavyBlow {
     @Override
     public void onProc(LivingEntity caster, Event procPoint, STATE state, SkillData stats, LivingEntity target) {
         if (procPoint instanceof CriticalHitEvent && ((CriticalHitEvent) procPoint).getTarget() == target && state == STATE.INACTIVE) {
-            if (caster.level.isClientSide() || caster == target) return;
+            if (caster.level().isClientSide() || caster == target) return;
             if (StealthUtils.INSTANCE.getAwareness(caster, target) != StealthUtils.Awareness.UNAWARE || !cast(caster, target, -999))
                 return;
             final int i = (int) (60 * stats.getEffectiveness());

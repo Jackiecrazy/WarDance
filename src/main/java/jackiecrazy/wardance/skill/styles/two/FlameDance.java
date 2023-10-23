@@ -13,6 +13,7 @@ import jackiecrazy.wardance.utils.DamageUtils;
 import jackiecrazy.wardance.utils.SkillUtils;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.server.level.ServerLevel;
+import net.minecraft.tags.DamageTypeTags;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraftforge.event.entity.living.LivingAttackEvent;
@@ -52,12 +53,12 @@ public class FlameDance extends WarCry {
     @Override
     public void onProc(LivingEntity caster, Event procPoint, STATE state, SkillData stats, LivingEntity target) {
         if (caster == target) return;
-        if (procPoint instanceof LivingAttackEvent lae && (DamageUtils.isMeleeAttack(lae.getSource()) || DamageUtils.isSkillAttack(lae.getSource())) && !lae.getSource().isBypassArmor() && procPoint.getPhase() == EventPriority.HIGHEST && lae.getEntity() == target) {
+        if (procPoint instanceof LivingAttackEvent lae && (DamageUtils.isMeleeAttack(lae.getSource()) || DamageUtils.isSkillAttack(lae.getSource())) && !lae.getSource().is(DamageTypeTags.BYPASSES_ARMOR) && procPoint.getPhase() == EventPriority.HIGHEST && lae.getEntity() == target) {
             mark(caster, target, 0.1f, 1);
             //kaboom!
             if (CombatData.getCap(caster).getMight() == CombatData.getCap(caster).getMaxMight()) {
                 if (!DamageUtils.isSkillAttack(lae.getSource())) {
-                    DamageSource kaboom = new CombatDamageSource("player", caster).setDamageTyping(CombatDamageSource.TYPE.MAGICAL).setProcSkillEffects(true).setSkillUsed(this).setPostureDamage(0).bypassArmor();
+                    DamageSource kaboom = new CombatDamageSource(caster).setDamageTyping(CombatDamageSource.TYPE.MAGICAL).setProcSkillEffects(true).setSkillUsed(this).setPostureDamage(0).bypassArmor();
                     float f = getExistingMark(target).getArbitraryFloat() * SkillUtils.getSkillEffectiveness(caster);
                     if(getExistingMark(target).getArbitraryFloat()>49){
                         completeChallenge(caster);
@@ -65,7 +66,7 @@ public class FlameDance extends WarCry {
                     target.hurt(kaboom, f * ((int) (2 + f / 10)) / 2f);
                     target.hurtTime = target.hurtDuration = target.invulnerableTime = 0;
                     removeMark(target);
-                    if (caster.level instanceof ServerLevel server) {
+                    if (caster.level() instanceof ServerLevel server) {
                         server.sendParticles(ParticleTypes.SMALL_FLAME, target.getX(), target.getY(), target.getZ(), (int) f * 5, target.getBbWidth(), target.getBbHeight(), target.getBbWidth(), 0f);
                     }
                 }

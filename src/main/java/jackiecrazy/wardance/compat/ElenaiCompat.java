@@ -1,6 +1,5 @@
 package jackiecrazy.wardance.compat;
 
-import com.elenai.feathers.api.FeathersHelper;
 import jackiecrazy.footwork.event.DodgeEvent;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraftforge.eventbus.api.EventPriority;
@@ -8,9 +7,9 @@ import net.minecraftforge.eventbus.api.SubscribeEvent;
 
 public class ElenaiCompat {
     public static void manipulateFeather(ServerPlayer e, int amount) {
-        if (amount > 0)
-            FeathersHelper.addFeathers(e, amount);
-        else FeathersHelper.spendFeathers(e, -amount);
+//        if (amount > 0)
+//            FeathersHelper.addFeathers(e, amount);
+//        else FeathersHelper.spendFeathers(e, -amount);
     }
 
 //    @SubscribeEvent(priority = EventPriority.HIGHEST)

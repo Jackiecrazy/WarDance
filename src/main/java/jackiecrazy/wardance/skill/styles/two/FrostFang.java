@@ -40,7 +40,7 @@ public class FrostFang extends WarCry {
             stats.setMaxDuration(2);
         } else if (procPoint instanceof ParryEvent cpe && state == STATE.ACTIVE && cpe.getEntity() != caster) {
             cpe.setPostureConsumption(cpe.getPostureConsumption() * (1 + stats.getArbitraryFloat() / 10));
-            if (caster.level instanceof ServerLevel server)
+            if (caster.level() instanceof ServerLevel server)
                 server.sendParticles(new BlockParticleOption(ParticleTypes.BLOCK, Blocks.BLUE_ICE.defaultBlockState()).setPos(target.blockPosition()), target.getX(), target.getY(), target.getZ(), (int) stats.getArbitraryFloat() * 20, target.getBbWidth(), target.getBbHeight() / 2, target.getBbWidth(), 0.5f);
 
         } else if (procPoint instanceof LivingHurtEvent cpe && state == STATE.ACTIVE && cpe.getEntity() != caster) {

@@ -9,6 +9,7 @@
     "MixinShieldDisabler",
     "MixinSuppressSwapSound",
     "MixinSweepDurabilitySuppressor",
+    "YouTestMyPatienceAccessor",
     "ProjectileImpactMixin",
     "SifuDropsMixin"
   ],

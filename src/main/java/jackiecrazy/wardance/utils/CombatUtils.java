@@ -299,7 +299,7 @@ public class CombatUtils {
             double motionX = vec.x, motionY = vec.y, motionZ = vec.z;
             to.hasImpulse = true;
             double pythagora = Math.sqrt(xRatio * xRatio + zRatio * zRatio);
-            if (to.isOnGround()) {
+            if (to.onGround()) {
                 motionY /= 2.0D;
                 motionY += Math.abs(strength);
 
@@ -418,9 +418,9 @@ public class CombatUtils {
         float charge = Math.max(CombatUtils.getCooledAttackStrength(e, InteractionHand.MAIN_HAND, 0.5f), CombatData.getCap(e).getCachedCooldown());
         boolean hit = false;
         isSweeping = ignore != null;
-        Vec3 starting = ignore == null ? GeneralUtils.raytraceAnything(e.level, e, reach).getLocation() : ignore.position();
+        Vec3 starting = ignore == null ? GeneralUtils.raytraceAnything(e.level(), e, reach).getLocation() : ignore.position();
         //grab everyone in "range"
-        for (Entity target : e.level.getEntities(e, e.getBoundingBox().inflate(reach * 2))) {
+        for (Entity target : e.level().getEntities(e, e.getBoundingBox().inflate(reach * 2))) {
             if (target == e) continue;
             if (target.hasPassenger(e) || e.hasPassenger(target)) continue;//poor horse
             if (target == ignore) {
@@ -491,7 +491,7 @@ public class CombatUtils {
             }
         }
         ParticleUtils.playSweepParticle(particle, e, starting, 0, radius, sre.getColor(), offset);
-        e.level.playSound(null, e.getX(), e.getY(), e.getZ(), SoundEvents.PLAYER_ATTACK_SWEEP, e.getSoundSource(), 1.0F, 1.0F);
+        e.level().playSound(null, e.getX(), e.getY(), e.getZ(), SoundEvents.PLAYER_ATTACK_SWEEP, e.getSoundSource(), 1.0F, 1.0F);
         //}
         isSweeping = false;
         if (h == InteractionHand.OFF_HAND) {
@@ -512,7 +512,7 @@ public class CombatUtils {
         if (entity.isCrouching()) return WeaponStats.SWEEPSTATE.SNEAKING;
         if (entity.isSwimming() || entity.isSprinting() || entity.isFallFlying() || MovementUtils.hasInvFrames(entity))
             return WeaponStats.SWEEPSTATE.SPRINTING;
-        if ((!(entity instanceof Player p) || !p.getAbilities().flying) && !entity.isOnGround() && entity.fallDistance > 0 && !entity.onClimbable() && !entity.isInWater())
+        if ((!(entity instanceof Player p) || !p.getAbilities().flying) && !entity.onGround() && entity.fallDistance > 0 && !entity.onClimbable() && !entity.isInWater())
             return WeaponStats.SWEEPSTATE.FALLING;
         return WeaponStats.SWEEPSTATE.STANDING;
     }

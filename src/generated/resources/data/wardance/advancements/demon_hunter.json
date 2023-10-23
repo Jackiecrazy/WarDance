@@ -35,5 +35,6 @@
     "loot": [
       "wardance:stylescroll"
     ]
-  }
+  },
+  "sends_telemetry_event": true
 }

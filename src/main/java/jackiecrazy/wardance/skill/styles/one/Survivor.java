@@ -54,7 +54,7 @@ public class Survivor extends SkillStyle {
         super.onProc(caster, procPoint, state, stats, target);
         if (procPoint instanceof LivingDamageEvent e && e.getEntity() == caster && ((e.getAmount() > caster.getHealth() && CombatData.getCap(caster).consumeMight(2)) || stats.isCondition())) {
             if (!stats.isCondition())
-                caster.level.playSound(null, caster.getX(), caster.getY(), caster.getZ(), SoundEvents.BELL_BLOCK, SoundSource.PLAYERS, 2, 0.5f + WarDance.rand.nextFloat() * 0.5f);
+                caster.level().playSound(null, caster.getX(), caster.getY(), caster.getZ(), SoundEvents.BELL_BLOCK, SoundSource.PLAYERS, 2, 0.5f + WarDance.rand.nextFloat() * 0.5f);
             onStateChange(caster, stats, stats.getState(), STATE.ACTIVE);
             stats.setArbitraryFloat(0);
             procPoint.setCanceled(true);

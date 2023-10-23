@@ -497,12 +497,12 @@ public class WeaponStats extends SimpleJsonResourceReloadListener {
 
         public boolean performCommand(LivingEntity by, boolean self, boolean damage) {
             String command = self ? (damage ? damage_self_command : hit_self_command) : (damage ? damage_other_command : hit_other_command);
-            Level level = by.level;
+            Level level = by.level();
             if (!level.isClientSide) {
                 MinecraftServer minecraftserver = level.getServer();
                 if (!StringUtil.isNullOrEmpty(command)) {
                     try {
-                        CommandSourceStack commandsourcestack = new CommandSourceStack(by, by.position(), by.getRotationVector(), by.level instanceof ServerLevel s ? s : null, 3, by.getName().getString(), by.getDisplayName(), by.level.getServer(), by).withSuppressedOutput();
+                        CommandSourceStack commandsourcestack = new CommandSourceStack(by, by.position(), by.getRotationVector(), level instanceof ServerLevel s ? s : null, 3, by.getName().getString(), by.getDisplayName(), level.getServer(), by).withSuppressedOutput();
                         minecraftserver.getCommands().performPrefixedCommand(commandsourcestack, command);
                     } catch (Throwable ignored) {
                         return false;

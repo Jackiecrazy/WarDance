@@ -78,7 +78,7 @@ public abstract class FiveElementFist extends Skill {
 
     @Override
     public void onUnequip(LivingEntity caster, SkillData stats) {
-        SkillUtils.modifyAttribute(caster, ForgeMod.ATTACK_RANGE.get(), u, 0, AttributeModifier.Operation.ADDITION);
+        SkillUtils.modifyAttribute(caster, ForgeMod.ENTITY_REACH.get(), u, 0, AttributeModifier.Operation.ADDITION);
         super.onUnequip(caster, stats);
     }
 
@@ -88,7 +88,7 @@ public abstract class FiveElementFist extends Skill {
         if (procPoint instanceof CriticalHitEvent lae && lae.getTarget() == target && CombatUtils.isUnarmed(caster, InteractionHand.MAIN_HAND)) {
             if (lae.getPhase() == EventPriority.HIGHEST) {
                 onStateChange(caster, stats, STATE.INACTIVE, STATE.ACTIVE);
-                ParticleUtils.playBonkParticle(caster.level, caster.getEyePosition().add(caster.getLookAngle().scale(Math.sqrt(GeneralUtils.getDistSqCompensated(caster, target)) * 0.9)), 0.5, 0.1, 8, getColor());
+                ParticleUtils.playBonkParticle(caster.level(), caster.getEyePosition().add(caster.getLookAngle().scale(Math.sqrt(GeneralUtils.getDistSqCompensated(caster, target)) * 0.9)), 0.5, 0.1, 8, getColor());
             }
         }
         //unarmed attack

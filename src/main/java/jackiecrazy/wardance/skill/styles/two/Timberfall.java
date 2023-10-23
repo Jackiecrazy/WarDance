@@ -52,7 +52,7 @@ public class Timberfall extends WarCry {
             markUsed(caster);
         } else if (procPoint instanceof ParryEvent cpe && state == STATE.ACTIVE && cpe.getEntity() == target) {
             cpe.setPostureConsumption(cpe.getPostureConsumption() * 1.4f * SkillUtils.getSkillEffectiveness(caster));
-            if (caster.level instanceof ServerLevel server)
+            if (caster.level() instanceof ServerLevel server)
                 server.sendParticles(new BlockParticleOption(ParticleTypes.BLOCK, Blocks.OAK_LOG.defaultBlockState()).setPos(target.blockPosition()), target.getX(), target.getY(), target.getZ(), (int) stats.getArbitraryFloat() * 20, target.getBbWidth(), target.getBbHeight() / 2, target.getBbWidth(), 0.5f);
 
         } else if (procPoint instanceof FractureEvent cpe && state == STATE.ACTIVE && cpe.getEntity() == target) {

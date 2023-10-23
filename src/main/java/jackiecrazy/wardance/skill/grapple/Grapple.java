@@ -76,7 +76,7 @@ public class Grapple extends Skill {
     }
 
     protected void performEffect(LivingEntity caster, LivingEntity target, SkillData stats) {
-        caster.level.playSound(null, target.getX(), target.getY(), target.getZ(), SoundEvents.BARREL_OPEN, SoundSource.PLAYERS, 0.3f + WarDance.rand.nextFloat() * 0.5f, 0.75f + WarDance.rand.nextFloat() * 0.5f);
+        caster.level().playSound(null, target.getX(), target.getY(), target.getZ(), SoundEvents.BARREL_OPEN, SoundSource.PLAYERS, 0.3f + WarDance.rand.nextFloat() * 0.5f, 0.75f + WarDance.rand.nextFloat() * 0.5f);
         CombatData.getCap(target).consumePosture(caster, 7 * stats.getEffectiveness() * stats.getEffectiveness(), 0, true);
         ParticleUtils.playSweepParticle(FootworkParticles.IMPACT.get(), caster, caster.position(), 0, 1, getColor(), 0);
     }
@@ -88,7 +88,7 @@ public class Grapple extends Skill {
     public static class Suplex extends Grapple {
 
         protected void performEffect(LivingEntity caster, LivingEntity target, SkillData stats) {
-            caster.level.playSound(null, target.getX(), target.getY(), target.getZ(), SoundEvents.ZOMBIE_ATTACK_IRON_DOOR, SoundSource.PLAYERS, 0.3f + WarDance.rand.nextFloat() * 0.5f, 0.75f + WarDance.rand.nextFloat() * 0.5f);
+            caster.level().playSound(null, target.getX(), target.getY(), target.getZ(), SoundEvents.ZOMBIE_ATTACK_IRON_DOOR, SoundSource.PLAYERS, 0.3f + WarDance.rand.nextFloat() * 0.5f, 0.75f + WarDance.rand.nextFloat() * 0.5f);
             final ICombatCapability casterCap = CombatData.getCap(caster);
             float posture = casterCap.getPosture();
             target.setDeltaMovement(caster.getDeltaMovement().add(caster.position().vectorTo(target.position()).scale(-0.3)));
@@ -97,8 +97,8 @@ public class Grapple extends Skill {
             if (overflow < 0) {
                 //suplex shockwave
                 ParticleUtils.playSweepParticle(FootworkParticles.IMPACT.get(), caster, target.position(), 0, 7 * stats.getEffectiveness(), getColor(), 0);
-                //SkillUtils.createCloud(caster.level, caster, target.getX(), target.getY(), target.getZ(), 7 * stats.getEffectiveness(), ParticleTypes.LARGE_SMOKE);
-                for (LivingEntity entity : target.level.getEntitiesOfClass(LivingEntity.class, target.getBoundingBoxForCulling().inflate(7 * stats.getEffectiveness()), a -> !TargetingUtils.isAlly(a, caster))) {
+                //SkillUtils.createCloud(caster.level(), caster, target.getX(), target.getY(), target.getZ(), 7 * stats.getEffectiveness(), ParticleTypes.LARGE_SMOKE);
+                for (LivingEntity entity : target.level().getEntitiesOfClass(LivingEntity.class, target.getBoundingBoxForCulling().inflate(7 * stats.getEffectiveness()), a -> !TargetingUtils.isAlly(a, caster))) {
                     CombatData.getCap(entity).consumePosture(caster, overflow / -2);
                 }
             }

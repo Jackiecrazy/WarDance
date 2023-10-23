@@ -5,8 +5,6 @@ import jackiecrazy.footwork.potion.FootworkEffects;
 import jackiecrazy.footwork.utils.GeneralUtils;
 import jackiecrazy.wardance.WarDance;
 import net.minecraft.nbt.CompoundTag;
-import net.minecraft.network.protocol.Packet;
-import net.minecraft.network.protocol.game.ClientboundAddEntityPacket;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.Entity;
@@ -57,13 +55,13 @@ public class FearEntity extends Entity implements ITetherAnchor {
         //do nothing
     }
 
-    public void setFearSource(Entity source) {
-        feared = source;
-    }
-
     @Override
     public double getTetherLength() {
         return 2;
+    }
+
+    public void setFearSource(Entity source) {
+        feared = source;
     }
 
     @Override
@@ -74,12 +72,12 @@ public class FearEntity extends Entity implements ITetherAnchor {
     @Override
     public void baseTick() {
         super.baseTick();
-        if (!level.isClientSide) {
+        if (!level().isClientSide) {
             if (feared != null && wuss != null) {
                 double x = getX() - feared.getX();
                 double z = getZ() - feared.getZ();
                 x = x == 0 ? 0 : 40 * wuss.getAttributeValue(Attributes.MOVEMENT_SPEED) / x;
-                double y = wuss.isOnGround() ? 0 : 0.02;
+                double y = wuss.onGround() ? 0 : 0.02;
                 z = z == 0 ? 0 : 40 * wuss.getAttributeValue(Attributes.MOVEMENT_SPEED) / z;
                 move(MoverType.SELF, new Vec3((x + WarDance.rand.nextFloat() - 0.5) * 0.05, (y + WarDance.rand.nextFloat() - 0.5) * 0.05, (z + WarDance.rand.nextFloat() - 0.5) * 0.05));
                 markHurt();
@@ -95,15 +93,15 @@ public class FearEntity extends Entity implements ITetherAnchor {
 
     @Override
     protected void readAdditionalSaveData(CompoundTag compound) {
-        if (compound.hasUUID("cthulhu") && level instanceof ServerLevel) {
-            feared = ((ServerLevel) level).getEntity(compound.getUUID("cthulhu"));
-        } else feared = level.getEntity(compound.getInt("yogsothoth"));
-        if (compound.hasUUID("lovecraft") && level instanceof ServerLevel) {
-            Entity potWuss = ((ServerLevel) level).getEntity(compound.getUUID("lovecraft"));
+        if (compound.hasUUID("cthulhu") && level() instanceof ServerLevel sl) {
+            feared = sl.getEntity(compound.getUUID("cthulhu"));
+        } else feared = level().getEntity(compound.getInt("yogsothoth"));
+        if (compound.hasUUID("lovecraft") && level() instanceof ServerLevel sl) {
+            Entity potWuss = sl.getEntity(compound.getUUID("lovecraft"));
             if (potWuss instanceof LivingEntity)
                 wuss = (LivingEntity) potWuss;
         } else {
-            Entity potWuss = level.getEntity(compound.getInt("bruh"));
+            Entity potWuss = level().getEntity(compound.getInt("bruh"));
             if (potWuss instanceof LivingEntity)
                 wuss = (LivingEntity) potWuss;
         }
@@ -119,10 +117,5 @@ public class FearEntity extends Entity implements ITetherAnchor {
             compound.putUUID("lovecraft", wuss.getUUID());
             compound.putInt("bruh", wuss.getId());
         }
-    }
-
-    @Override
-    public Packet<?> getAddEntityPacket() {
-        return new ClientboundAddEntityPacket(this);
     }
 }

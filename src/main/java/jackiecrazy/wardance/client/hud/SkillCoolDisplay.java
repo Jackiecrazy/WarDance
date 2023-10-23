@@ -12,7 +12,7 @@ import jackiecrazy.wardance.config.ClientConfig;
 import jackiecrazy.wardance.skill.Skill;
 import jackiecrazy.wardance.skill.SkillData;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.GuiComponent;
+import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.world.entity.player.Player;
 import net.minecraftforge.client.gui.overlay.ForgeGui;
 import net.minecraftforge.client.gui.overlay.IGuiOverlay;
@@ -22,7 +22,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class SkillCoolDisplay implements IGuiOverlay {
-    private static void drawSkills(PoseStack stack, Minecraft mc, List<SkillData> skill, int x, int y) {
+    private static void drawSkills(GuiGraphics graphics, Minecraft mc, List<SkillData> skill, int x, int y) {
+        PoseStack stack=graphics.pose();
         stack.pushPose();
         for (int index = 0; index < skill.size(); index++) {
 
@@ -33,7 +34,7 @@ public class SkillCoolDisplay implements IGuiOverlay {
             Color c = s.getSkill().getColor();
             RenderSystem.setShaderColor(c.getRed() / 255f, c.getGreen() / 255f, c.getBlue() / 255f, 1);
             final int centerX = x - (skill.size() - 1 - index) * 18 + (skill.size() - 1) * 8;
-            GuiComponent.blit(stack, centerX - 8, y, 0, 0, 16, 16, 16, 16);
+            graphics.blit(s.getSkill().icon(), centerX - 8, y, 0, 0, 16, 16, 16, 16);
 //            if (s.getState() == Skill.STATE.ACTIVE && s.getMaxDuration() >= 0) {
 //                String display = formatter.format(Math.round(s.getDuration()));
 //                mc.font.drawShadow(stack, display, centerX - 8, y - 2, 0xffffff);
@@ -42,7 +43,7 @@ public class SkillCoolDisplay implements IGuiOverlay {
                 RenderUtils.formatter.setMinimumFractionDigits(0);
                 RenderUtils.formatter.setMaximumFractionDigits(1);
                 String display = RenderUtils.formatter.format(s.getArbitraryFloat());
-                mc.font.drawShadow(stack, display, centerX + 8 - mc.font.width(display) / 2, y + 8, 0xffffff);
+                graphics.drawString(mc.font, display, centerX + 8 - mc.font.width(display) / 2, y + 8, 0xffffff);
             }
             stack.popPose();
 
@@ -52,7 +53,7 @@ public class SkillCoolDisplay implements IGuiOverlay {
             RenderSystem.blendFuncSeparate(GlStateManager.SourceFactor.ZERO, GlStateManager.DestFactor.ONE, GlStateManager.SourceFactor.ONE_MINUS_SRC_ALPHA, GlStateManager.DestFactor.ZERO);
             if (s.getState() == Skill.STATE.ACTIVE)//inverted
                 RenderSystem.setShaderColor(c.getRed() / 255f, c.getGreen() / 255f, c.getBlue() / 255f, 1);
-            GuiComponent.blit(stack, centerX - 8, y, 0, 0, 16, 16, 16, 16);
+            graphics.blit(s.getSkill().icon(), centerX - 8, y, 0, 0, 16, 16, 16, 16);
             if (s.getMaxDuration() >= 0) {
                 //cooldown/active spinny
                 float cd = s.getDuration();
@@ -70,7 +71,7 @@ public class SkillCoolDisplay implements IGuiOverlay {
                 stack.pushPose();
                 RenderSystem.setShaderTexture(0, RenderUtils.cooldown);
                 RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, 0.6F);
-                mc.font.draw(stack, num, centerX - 8 - mc.font.width(num) / 2f, y, 0xFFFFFF);
+                graphics.drawString(mc.font, num, centerX - 8 - mc.font.width(num) / 2, y, 0xFFFFFF);
                 stack.popPose();
             }
         }
@@ -81,11 +82,12 @@ public class SkillCoolDisplay implements IGuiOverlay {
     }
 
     @Override
-    public void render(ForgeGui gui, PoseStack stack, float partialTick, int width, int height) {
+    public void render(ForgeGui gui, GuiGraphics guiGraphics, float partialTick, int width, int height) {
         Minecraft mc = Minecraft.getInstance();
         Player player = mc.player;
         if (player == null) return;
         if (!CombatData.getCap(player).isCombatMode()) return;
+        PoseStack stack=guiGraphics.pose();
         stack.pushPose();
 //render skill cooldown
         if (ClientConfig.CONFIG.skillCD.enabled) {
@@ -95,10 +97,10 @@ public class SkillCoolDisplay implements IGuiOverlay {
             final ISkillCapability cap = CasterData.getCap(player);
             skill.addAll(cap.getAllSkillData().values().stream().filter(a -> a != null && cap.isSkillEquipped(a.getSkill()) && !a.getSkill().isPassive(player) && a.getDuration() >= 0 && (a.getState() == Skill.STATE.COOLING || a.getState() == Skill.STATE.ACTIVE || a.getSkill().displaysInactive(player, a))).toList());
             Pair<Integer, Integer> pair = RenderUtils.translateCoords(ClientConfig.CONFIG.skillCD, width, height);
-            drawSkills(stack, mc, skill, pair.getFirst(), pair.getSecond());
+            drawSkills(guiGraphics, mc, skill, pair.getFirst(), pair.getSecond());
             skill.clear();
             skill.addAll(cap.getAllSkillData().values().stream().filter(a -> a != null && cap.isSkillEquipped(a.getSkill()) && a.getSkill().isPassive(player) && a.getDuration() >= 0 && (a.getState() == Skill.STATE.COOLING || a.getState() == Skill.STATE.ACTIVE || a.getSkill().displaysInactive(player, a))).toList());
-            drawSkills(stack, mc, skill, pair.getFirst(), pair.getSecond() + 18);
+            drawSkills(guiGraphics, mc, skill, pair.getFirst(), pair.getSecond() + 18);
             stack.popPose();
         }
         RenderSystem.setShaderColor(1, 1, 1, 1);

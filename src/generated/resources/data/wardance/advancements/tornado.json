@@ -35,5 +35,6 @@
     "loot": [
       "wardance:skillscroll"
     ]
-  }
+  },
+  "sends_telemetry_event": true
 }

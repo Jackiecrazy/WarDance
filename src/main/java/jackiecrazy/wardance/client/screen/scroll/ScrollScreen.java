@@ -1,7 +1,6 @@
 package jackiecrazy.wardance.client.screen.scroll;
 
 import com.mojang.blaze3d.systems.RenderSystem;
-import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.Tesselator;
 import jackiecrazy.wardance.client.screen.TooltipUtils;
 import jackiecrazy.wardance.networking.CombatChannel;
@@ -10,6 +9,7 @@ import jackiecrazy.wardance.skill.Skill;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
+import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.components.ImageButton;
 import net.minecraft.client.gui.narration.NarrationElementOutput;
@@ -21,7 +21,6 @@ import net.minecraft.network.chat.Style;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.FormattedCharSequence;
 import net.minecraft.util.Mth;
-import net.minecraftforge.client.gui.ScreenUtils;
 import net.minecraftforge.client.gui.widget.ScrollPanel;
 
 import javax.annotation.Nonnull;
@@ -46,7 +45,7 @@ public class ScrollScreen extends Screen {
     }
 
     @Override
-    public void render(PoseStack mStack, int mouseX, int mouseY, float partialTicks) {
+    public void render(GuiGraphics mStack, int mouseX, int mouseY, float partialTicks) {
         this.renderBackground(mStack);
         super.render(mStack, mouseX, mouseY, partialTicks);
     }
@@ -143,23 +142,34 @@ public class ScrollScreen extends Screen {
             }
         }
 
-        public void renderButton(PoseStack stack, int x, int y, float partial) {
+        public void renderWidget(GuiGraphics stack, int x, int y, float partial) {
             Minecraft minecraft = Minecraft.getInstance();
             Font font = minecraft.font;
             RenderSystem.setShader(GameRenderer::getPositionTexShader);
             RenderSystem.setShaderTexture(0, WIDGETS_LOCATION);
             RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, this.alpha);
-            int i = this.getYImage(this.isHoveredOrFocused());
+            int i = getTextureY();
             RenderSystem.enableBlend();
             RenderSystem.defaultBlendFunc();
             RenderSystem.enableDepthTest();
-            this.blit(stack, this.x, this.y, 0, 46 + i * 20, this.width / 2, this.height);
-            this.blit(stack, this.x + this.width / 2, this.y, 200 - this.width / 2, 46 + i * 20, this.width / 2, this.height);
-            this.renderBg(stack, minecraft, x, y);
-            RenderSystem.setShaderTexture(0, finalize ? check : cross);
+            stack.setColor(1.0F, 1.0F, 1.0F, this.alpha);
+            stack.blitNineSliced(WIDGETS_LOCATION, this.getX(), this.getY(), this.getWidth(), this.getHeight(), 20, 4, 200, 20, 0, this.getTextureY());
+            //stack.blit(WIDGETS_LOCATION, getX(),getY(), 0, 46 + i * 20, this.width / 2, this.height);
+            //stack.blit(WIDGETS_LOCATION, getX() + this.width / 2, getY(), 200 - this.width / 2, 46 + i * 20, this.width / 2, this.height);
 
             float pos = this.isHovered ? 0.5f : 0f;
-            blit(stack, this.x, this.y, 0, pos, this.width, this.height, 40, 20);
+            stack.blit(finalize?check:cross, this.getX(), this.getY(), 0, pos, this.width, this.height, 40, 20);
+        }
+
+        private int getTextureY() {
+            int i = 1;
+            if (!this.active) {
+                i = 0;
+            } else if (this.isHoveredOrFocused()) {
+                i = 2;
+            }
+
+            return 46 + i * 20;
         }
     }
 
@@ -230,16 +240,16 @@ public class ScrollScreen extends Screen {
         }
 
         @Override
-        protected void drawBackground(PoseStack matrix, Tesselator tess, float partialTick) {
+        protected void drawBackground(GuiGraphics matrix, Tesselator tess, float partialTick) {
             //this.drawGradientRect(matrix, this.left+1, this.top+1, this.right-1, this.bottom-1, 0xC0101010, 0xC0101010);
             //super.drawBackground(matrix, tess, partialTick);
         }
 
         @Override
-        protected void drawPanel(PoseStack mStack, int entryRight, int relativeY, Tesselator tess, int mouseX, int mouseY) {
+        protected void drawPanel(GuiGraphics mStack, int entryRight, int relativeY, Tesselator tess, int mouseX, int mouseY) {
             RenderSystem.enableBlend();
-            fill(mStack, left, top, right, bottom, 0xffA9A9A9);
-            fill(mStack, left + 1, top + 1, right - 1, bottom - 1, -16777216);
+            mStack.fill(left, top, right, bottom, 0xffA9A9A9);
+            mStack.fill(left + 1, top + 1, right - 1, bottom - 1, -16777216);
             if (logoPath != null) {
                 RenderSystem.setShader(GameRenderer::getPositionTexShader);
                 RenderSystem.enableBlend();
@@ -248,14 +258,14 @@ public class ScrollScreen extends Screen {
                 RenderSystem.setShaderTexture(0, logoPath);
                 // Draw the logo image inscribed in a rectangle with width entryWidth (minus some padding) and height 50
                 int headerHeight = 50;
-                ScreenUtils.blitInscribed(mStack, left + width / 2 - 32, relativeY, width - (PADDING * 2), headerHeight, 64, 64, false, true);
+                mStack.blitInscribed(logoPath, left + width / 2 - 32, relativeY, width - (PADDING * 2), headerHeight, 64, 64, false, true);
                 relativeY += headerHeight + PADDING;
                 RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, 1.0F);
             }
 
             for (FormattedCharSequence line : lines) {
                 if (line != null) {
-                    ScrollScreen.this.font.drawShadow(mStack, line, left + PADDING, relativeY, 0xFFFFFF);
+                    mStack.drawString(font, line, left + PADDING, relativeY, 0xFFFFFF);
                     //RenderSystem.disableAlphaTest();
                     RenderSystem.disableBlend();
                 }
@@ -279,12 +289,12 @@ public class ScrollScreen extends Screen {
         }
 
         @Override
-        public void render(PoseStack matrix, int mouseX, int mouseY, float partialTick) {
+        public void render(GuiGraphics matrix, int mouseX, int mouseY, float partialTick) {
             super.render(matrix, mouseX, mouseY, partialTick);
 
             final Style component = findTextLine(mouseX, mouseY);
-            if (component != null) {
-                ScrollScreen.this.renderComponentHoverEffect(matrix, component, mouseX, mouseY);
+            if (component!=null) {
+                matrix.renderComponentHoverEffect(font, component, mouseX, mouseY);
             }
         }
 

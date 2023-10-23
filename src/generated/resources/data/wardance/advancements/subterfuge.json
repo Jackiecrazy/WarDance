@@ -1,0 +1,33 @@
+{
+  "parent": "wardance:phantom_dive",
+  "criteria": {
+    "tick": {
+      "conditions": {},
+      "trigger": "minecraft:tick"
+    }
+  },
+  "display": {
+    "announce_to_chat": false,
+    "description": {
+      "italic": true,
+      "translate": "wardance.category.subterfuge.desc"
+    },
+    "frame": "task",
+    "hidden": false,
+    "icon": {
+      "item": "wardance:dummy",
+      "nbt": "{style:\"subterfuge\"}"
+    },
+    "show_toast": false,
+    "title": {
+      "color": "gray",
+      "translate": "wardance.category.subterfuge.name"
+    }
+  },
+  "requirements": [
+    [
+      "tick"
+    ]
+  ],
+  "sends_telemetry_event": true
+}

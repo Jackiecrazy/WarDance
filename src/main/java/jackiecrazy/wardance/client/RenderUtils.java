@@ -4,13 +4,13 @@ import com.mojang.blaze3d.platform.GlStateManager;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.*;
 import com.mojang.datafixers.util.Pair;
+import jackiecrazy.footwork.client.GuiComponent;
 import jackiecrazy.footwork.config.DisplayConfigUtils;
 import jackiecrazy.wardance.WarDance;
 import jackiecrazy.wardance.client.screen.manual.NewManualScreen;
 import jackiecrazy.wardance.client.screen.scroll.ScrollScreen;
 import jackiecrazy.wardance.skill.Skill;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.GuiComponent;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.Mth;
 import net.minecraft.world.InteractionHand;
@@ -92,7 +92,7 @@ public class RenderUtils {
 
     public static HitResult raycast(Vec3 origin, Vec3 ray, Entity e, double len) {
         Vec3 next = origin.add(ray.normalize().scale(len));
-        return e.level.clip(new ClipContext(origin, next, ClipContext.Block.COLLIDER, ClipContext.Fluid.NONE, e));
+        return e.level().clip(new ClipContext(origin, next, ClipContext.Block.COLLIDER, ClipContext.Fluid.NONE, e));
     }
 
     public static void drawCooldownCircle(PoseStack ms, int x, int y, int size, float v, boolean inverted) {
@@ -102,12 +102,12 @@ public class RenderUtils {
         //RenderSystem.enableAlphaTest();
         RenderSystem.enableBlend();
         RenderSystem.blendFunc(GlStateManager.SourceFactor.ONE_MINUS_SRC_ALPHA, GlStateManager.DestFactor.DST_ALPHA);
-        RenderSystem.setShaderTexture(0, cooldown);
+        //RenderSystem.setShaderTexture(0, cooldown);
         if (v <= 0) return; // nothing to be drawn
         int x2 = x + size, y2 = y + size; // bottom-right corner
         if (v >= 1) {
             RenderSystem.setShaderColor(0.125F, 0.125F, 0.125F, 0.1F);
-            GuiComponent.blit(ms, x, y, 0, 0, size, size, size, size);
+            GuiComponent.blit(ms, cooldown, x, y, 0, 0, size, size, size, size);
             ms.popPose();
             // entirely filled
             return;

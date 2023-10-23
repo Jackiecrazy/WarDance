@@ -20,7 +20,7 @@ public class ItchyCurse extends Hex {
         if (to == STATE.ACTIVE && target != null && cast(caster, target, -999)) {
             mark(caster, target, 6);
             markUsed(caster);
-            if (caster.level instanceof ServerLevel sl) {
+            if (caster.level() instanceof ServerLevel sl) {
                 sl.sendParticles(ParticleTypes.ENCHANT, target.getX(), target.getY(), target.getZ(), 20, target.getBbWidth(), target.getBbHeight(), target.getBbWidth(), 0f);
             }
         }

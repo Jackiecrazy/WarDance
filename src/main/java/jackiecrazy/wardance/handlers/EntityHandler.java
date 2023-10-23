@@ -135,7 +135,7 @@ public class EntityHandler {
     @SubscribeEvent
     public static void tickMobs(LivingEvent.LivingTickEvent e) {
         LivingEntity elb = e.getEntity();
-        if (!elb.level.isClientSide) {
+        if (!elb.level().isClientSide) {
             Marks.getCap(elb).update();
             if (!(elb instanceof Player)) {
                         /*

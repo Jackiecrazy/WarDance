@@ -22,7 +22,7 @@ public class FakeExplosion extends Explosion {
     private Level world;
 
     public FakeExplosion(Level worldIn, @Nullable Entity entityIn, double x, double y, double z, float radius, DamageSource ds, float damage) {
-        super(worldIn, entityIn, ds, null, x, y, z, radius, false, BlockInteraction.NONE);
+        super(worldIn, entityIn, ds, null, x, y, z, radius, false, BlockInteraction.KEEP);
         this.radius = radius * 2;
         world = worldIn;
         this.damage = damage;

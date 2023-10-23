@@ -2,6 +2,7 @@ package jackiecrazy.wardance.items;
 
 import jackiecrazy.wardance.client.WarCustomItemRender;
 import jackiecrazy.wardance.skill.Skill;
+import jackiecrazy.wardance.skill.SkillCategory;
 import jackiecrazy.wardance.skill.WarSkills;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.renderer.BlockEntityWithoutLevelRenderer;
@@ -22,6 +23,11 @@ public class DummyItem extends ScrollItem{
         ItemStack itemstack = new ItemStack(WarItems.DUMMY.get());
         setSkills(itemstack, s);
         setRandom(itemstack, random);
+        return itemstack;
+    }
+    public static ItemStack makeCategory(SkillCategory s) {
+        ItemStack itemstack = new ItemStack(WarItems.DUMMY.get());
+        itemstack.getOrCreateTag().putString("style", s.rawName());
         return itemstack;
     }
     @Override

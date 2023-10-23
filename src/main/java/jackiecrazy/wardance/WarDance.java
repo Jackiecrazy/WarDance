@@ -21,6 +21,8 @@ import jackiecrazy.wardance.skill.WarSkills;
 import net.minecraft.commands.synchronization.ArgumentTypeInfo;
 import net.minecraft.commands.synchronization.ArgumentTypeInfos;
 import net.minecraft.commands.synchronization.SingletonArgumentInfo;
+import net.minecraft.core.registries.Registries;
+import net.minecraft.network.chat.Component;
 import net.minecraft.world.item.CreativeModeTab;
 import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.client.event.RegisterGuiOverlaysEvent;
@@ -44,7 +46,6 @@ import net.minecraftforge.registries.*;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import javax.annotation.Nonnull;
 import java.util.Random;
 
 // The value here should match an entry in the META-INF/mods.toml file
@@ -54,13 +55,8 @@ public class WarDance {
     public static final Random rand = new Random();
 
     public static final Logger LOGGER = LogManager.getLogger();
-    public static final CreativeModeTab WARTAB = new CreativeModeTab(-1, "wardance") {
-        @Nonnull
-        @Override
-        public ItemStack makeIcon() {
-            return new ItemStack(WarItems.SCROLL.get());
-        }
-    };
+    public static final DeferredRegister<CreativeModeTab> TABS = DeferredRegister.create(Registries.CREATIVE_MODE_TAB, MODID);
+    public static final RegistryObject<CreativeModeTab> WARTAB = TABS.register("scrolls", ()->CreativeModeTab.builder().icon(()->new ItemStack(WarItems.SCROLL.get())).title(Component.translatable("itemGroup.wardance.scrolls")).build());
     private static final DeferredRegister<ArgumentTypeInfo<?, ?>> COMMAND_ARGUMENT_TYPES = DeferredRegister.create(ForgeRegistries.COMMAND_ARGUMENT_TYPES, "forge");
     private static final RegistryObject<SingletonArgumentInfo<SkillArgument>> WARDANCE_COMMAND_SKI_ARGUMENT_TYPE = COMMAND_ARGUMENT_TYPES.register("war_skills", () ->
             ArgumentTypeInfos.registerByClass(SkillArgument.class,
@@ -85,7 +81,7 @@ public class WarDance {
 
         // Register ourselves for server and other game events we are interested in
         MinecraftForge.EVENT_BUS.register(this);
-        FMLPaths.getOrCreateGameRelativePath(FMLPaths.CONFIGDIR.get().resolve(MODID), MODID);
+        FMLPaths.getOrCreateGameRelativePath(FMLPaths.CONFIGDIR.get().resolve(MODID));
         ModLoadingContext.get().registerConfig(ModConfig.Type.COMMON, GeneralConfig.CONFIG_SPEC, MODID + "/general.toml");
         ModLoadingContext.get().registerConfig(ModConfig.Type.COMMON, StealthConfig.CONFIG_SPEC, MODID + "/stealth.toml");
         ModLoadingContext.get().registerConfig(ModConfig.Type.COMMON, CombatConfig.CONFIG_SPEC, MODID + "/combat.toml");
@@ -99,6 +95,7 @@ public class WarDance {
         WarSkills.SKILLS.register(bus);
         WarEntities.ENTITIES.register(bus);
         WarItems.ITEMS.register(bus);
+        TABS.register(bus);
         COMMAND_ARGUMENT_TYPES.register(bus);
         MinecraftForge.EVENT_BUS.addListener(this::commands);
     }

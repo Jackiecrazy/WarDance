@@ -39,7 +39,7 @@ public class GoldRush extends ColorRestrictionStyle {
             //expire
             a.setDuration(-10);
             //infect
-            ((GoldRush) WarSkills.GOLD_RUSH.get()).mark(a.getCaster(e.getAttacker().level), e.getAttacker(), 60, a.getArbitraryFloat());
+            ((GoldRush) WarSkills.GOLD_RUSH.get()).mark(a.getCaster(e.getAttacker().level()), e.getAttacker(), 60, a.getArbitraryFloat());
         });
     }
 

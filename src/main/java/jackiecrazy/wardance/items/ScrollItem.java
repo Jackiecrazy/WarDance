@@ -8,7 +8,6 @@ import jackiecrazy.wardance.skill.Skill;
 import jackiecrazy.wardance.skill.WarSkills;
 import jackiecrazy.wardance.skill.styles.SkillStyle;
 import net.minecraft.ChatFormatting;
-import net.minecraft.core.NonNullList;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerPlayer;
@@ -20,13 +19,14 @@ import net.minecraft.world.level.Level;
 import net.minecraftforge.network.PacketDistributor;
 
 import javax.annotation.Nonnull;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 public class ScrollItem extends Item {
-    protected static final Item.Properties prop = new Properties().rarity(Rarity.UNCOMMON).stacksTo(1).tab(WarDance.WARTAB);
+    protected static final Item.Properties prop = new Properties().rarity(Rarity.UNCOMMON).stacksTo(1);
 
     public ScrollItem() {
         super(prop);
@@ -187,8 +187,9 @@ public class ScrollItem extends Item {
         }
     }
 
-    public void fillItemCategory(CreativeModeTab tab, NonNullList<ItemStack> list) {
-        if (tab == WarDance.WARTAB) {
+    public static List<ItemStack> fillItemCategory(CreativeModeTab tab) {
+        ArrayList<ItemStack> list=new ArrayList<>();
+        if (tab == WarDance.WARTAB.get()) {
             final Collection<Skill> values = WarSkills.SUPPLIER.get().getValues();
             ItemStack everything = makeScroll(false, (Skill) null);
             setRandomSize(everything, 4);
@@ -211,5 +212,6 @@ public class ScrollItem extends Item {
                 list.add(makeScroll(false, a));
             });
         }
+        return list;
     }
 }

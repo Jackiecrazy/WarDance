@@ -39,7 +39,7 @@ public class BoulderBrace extends WarCry {
             pe.setPostureConsumption(pe.getPostureConsumption() + (cap.getPosture() * SkillUtils.getSkillEffectiveness(caster) * cds.getCritDamage() / 2));
             cap.consumePosture(cap.getPosture() / 2);
 
-            if (caster.level instanceof ServerLevel s)
+            if (caster.level() instanceof ServerLevel s)
                 for (int reps = 0; reps < 100; reps++) {
                     Vec3 startAt = target.position().add((((target.tickCount+reps) * 5) % target.getBbWidth()) - target.getBbWidth() / 2, (((target.tickCount+reps) * 31) % target.getBbHeight()), (((target.tickCount+reps) * 17) % target.getBbWidth()) - target.getBbWidth() / 2);
                     Vec3 move = startAt.subtract(target.position()).normalize();

@@ -65,8 +65,8 @@ public class Feint extends Skill {
         Marks.getCap(uke).getActiveMark(WarSkills.SPIRIT_RESONANCE.get()).ifPresent((a) -> {
             if (a.getDuration() <= 0.1 && e.getSource() instanceof CombatDamageSource && ((CombatDamageSource) e.getSource()).canProcSkillEffects()) {
                 if(seme!=null) {
-                    ParticleUtils.playBonkParticle(uke.level, seme.getEyePosition().add(seme.getLookAngle().scale(Math.sqrt(GeneralUtils.getDistSqCompensated(seme, uke)))), 1.5, 0, 12, WarColors.AZURE);
-                    seme.level.playSound(null, seme.getX(), seme.getY(), seme.getZ(), SoundEvents.NOTE_BLOCK_PLING, SoundSource.PLAYERS, 0.5f + WarDance.rand.nextFloat() * 0.5f, 0.5f + WarDance.rand.nextFloat() * 0.5f);
+                    ParticleUtils.playBonkParticle(uke.level(), seme.getEyePosition().add(seme.getLookAngle().scale(Math.sqrt(GeneralUtils.getDistSqCompensated(seme, uke)))), 1.5, 0, 12, WarColors.AZURE);
+                    seme.level().playSound(null, seme.getX(), seme.getY(), seme.getZ(), SoundEvents.NOTE_BLOCK_PLING.get(), SoundSource.PLAYERS, 0.5f + WarDance.rand.nextFloat() * 0.5f, 0.5f + WarDance.rand.nextFloat() * 0.5f);
                 }
                 a.flagCondition(true);
                 a.addArbitraryFloat(-1);
@@ -144,7 +144,7 @@ public class Feint extends Skill {
             CombatUtils.setHandCooldown(caster, InteractionHand.MAIN_HAND, this == WarSkills.FOLLOWUP.get() ? 1 : (0.5f * stats.getEffectiveness()), true);
             mark(caster, target, dur / 20f + 0.1f, 6);
             procPoint.setCanceled(true);
-            if (caster.level instanceof ServerLevel sl) {
+            if (caster.level() instanceof ServerLevel sl) {
                 sl.sendParticles(ParticleTypes.LARGE_SMOKE, target.getX(), target.getY(), target.getZ(), 20, target.getBbWidth(), target.getBbHeight(), target.getBbWidth(), 0f);
                 ParticleUtils.playSweepParticle(FootworkParticles.SWEEP.get(), caster, caster.getEyePosition().add(caster.getLookAngle().scale(Math.sqrt(GeneralUtils.getDistSqCompensated(caster, target)) * 0.9)), 0, 0.5, getColor(), 0);
             }

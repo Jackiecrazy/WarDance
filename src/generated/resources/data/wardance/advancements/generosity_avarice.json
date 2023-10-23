@@ -1,0 +1,33 @@
+{
+  "parent": "wardance:prideful_might",
+  "criteria": {
+    "tick": {
+      "conditions": {},
+      "trigger": "minecraft:tick"
+    }
+  },
+  "display": {
+    "announce_to_chat": false,
+    "description": {
+      "italic": true,
+      "translate": "wardance.category.generosity_avarice.desc"
+    },
+    "frame": "task",
+    "hidden": false,
+    "icon": {
+      "item": "wardance:dummy",
+      "nbt": "{style:\"generosity_avarice\"}"
+    },
+    "show_toast": false,
+    "title": {
+      "color": "gold",
+      "translate": "wardance.category.generosity_avarice.name"
+    }
+  },
+  "requirements": [
+    [
+      "tick"
+    ]
+  ],
+  "sends_telemetry_event": true
+}

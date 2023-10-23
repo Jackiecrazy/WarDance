@@ -35,7 +35,7 @@ public class SelfishMascot extends Skill {
         boolean prev = stats.isCondition();
         if (caster.tickCount % 40 == 0) {
             double stacks = 0;
-            for (LivingEntity e : caster.level.getEntitiesOfClass(LivingEntity.class, caster.getBoundingBox().inflate(6))) {
+            for (LivingEntity e : caster.level().getEntitiesOfClass(LivingEntity.class, caster.getBoundingBox().inflate(6))) {
                 if (e == caster) continue;
                 if (caster.getHealth() > caster.getMaxHealth() / 2) {
                     stats.flagCondition(false);

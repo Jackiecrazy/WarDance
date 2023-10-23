@@ -14,6 +14,7 @@ public class SkillData {
     private float max;
     private float var;
     private float effectiveness = 1;
+    private int castCounter = 0;
     private boolean condition, dirty;
     private Skill.STATE state = Skill.STATE.INACTIVE;
     private LivingEntity caster;
@@ -45,6 +46,18 @@ public class SkillData {
         return ret;
     }
 
+    public void addCounter() {
+        castCounter++;
+    }
+
+    public int getCounter() {
+        return castCounter;
+    }
+
+    public void resetCounter() {
+        castCounter = 0;
+    }
+
     public float getEffectiveness() {
         return effectiveness;
     }
@@ -65,7 +78,7 @@ public class SkillData {
     }
 
     public SkillData setCaster(@Nullable LivingEntity caster) {
-        if(caster==null)return this;
+        if (caster == null) return this;
         casterID = caster.getUUID();
         this.caster = caster;
         return this;

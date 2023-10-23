@@ -1,15 +1,16 @@
 package jackiecrazy.wardance.client.screen.manual;
 
 import com.google.common.collect.ImmutableList;
-import com.mojang.blaze3d.vertex.PoseStack;
 import jackiecrazy.wardance.client.screen.skill.PassiveButton;
 import jackiecrazy.wardance.client.screen.skill.SkillSelectionScreen;
 import jackiecrazy.wardance.client.screen.skill.SkillSliceButton;
 import jackiecrazy.wardance.client.screen.skill.SkillStyleButton;
 import jackiecrazy.wardance.items.ManualItem;
+import jackiecrazy.wardance.mixin.YouTestMyPatienceAccessor;
 import jackiecrazy.wardance.networking.CombatChannel;
 import jackiecrazy.wardance.networking.LearnManualPacket;
 import jackiecrazy.wardance.skill.Skill;
+import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.screens.inventory.BookViewScreen;
 import net.minecraft.nbt.CompoundTag;
@@ -44,7 +45,7 @@ public class NewManualScreen extends SkillSelectionScreen {
     }
 
     @Override
-    protected void renderSearchText(PoseStack mStack) {
+    protected void renderSearchText(GuiGraphics mStack) {
 
     }
 
@@ -56,16 +57,16 @@ public class NewManualScreen extends SkillSelectionScreen {
     @Override
     public void init() {
         int y = this.height - 20 - PADDING;
-        study = new Button(this.width / 2 + 20, y, 80, 20, Component.translatable("wardance.manual.gui.study"), (p_98299_) -> {
+        study = YouTestMyPatienceAccessor.createButton(this.width / 2 + 20, y, 80, 20, Component.translatable("wardance.manual.gui.study"), (p_98299_) -> {
             //send study request to server
             if (ManualItem.learn(getMinecraft().player, manual).getResult() != InteractionResult.FAIL) {
                 CombatChannel.INSTANCE.sendToServer(new LearnManualPacket(this.minecraft.player.getMainHandItem()!=this.manual));
             }
             this.minecraft.setScreen(null);
-        });
-        cancel = new Button(this.width / 2 - 100, y, 80, 20, CommonComponents.GUI_CANCEL, (p_98299_) -> {
+        }, YouTestMyPatienceAccessor.getDEFAULT_NARRATION());
+        cancel = YouTestMyPatienceAccessor.createButton(this.width / 2 - 100, y, 80, 20, CommonComponents.GUI_CANCEL, (p_98299_) -> {
             this.minecraft.setScreen(null);
-        });
+        }, YouTestMyPatienceAccessor.getDEFAULT_NARRATION());
         int split = (this.height - (PADDING) * 3 - 20);
         int descWidth = (width - (PADDING * 4) - SKILL_CIRCLE_WIDTH)/2;
         this.manualDesc = new InfoPanel(this.minecraft, descWidth, split, PADDING, PADDING);

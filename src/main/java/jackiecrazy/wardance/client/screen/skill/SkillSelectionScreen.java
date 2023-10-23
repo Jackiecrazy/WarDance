@@ -1,12 +1,12 @@
 package jackiecrazy.wardance.client.screen.skill;
 
 import com.mojang.blaze3d.systems.RenderSystem;
-import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.Tesselator;
 import jackiecrazy.wardance.WarDance;
 import jackiecrazy.wardance.capability.skill.CasterData;
 import jackiecrazy.wardance.capability.skill.ISkillCapability;
 import jackiecrazy.wardance.client.screen.TooltipUtils;
+import jackiecrazy.wardance.mixin.YouTestMyPatienceAccessor;
 import jackiecrazy.wardance.networking.CombatChannel;
 import jackiecrazy.wardance.networking.UpdateSkillSelectionPacket;
 import jackiecrazy.wardance.skill.Skill;
@@ -17,6 +17,7 @@ import jackiecrazy.wardance.skill.styles.SkillStyle;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
+import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.components.EditBox;
 import net.minecraft.client.gui.components.ObjectSelectionList;
@@ -29,7 +30,6 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.Style;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.FormattedCharSequence;
-import net.minecraftforge.client.gui.ScreenUtils;
 import net.minecraftforge.client.gui.widget.ScrollPanel;
 import net.minecraftforge.fml.loading.StringUtils;
 
@@ -176,7 +176,7 @@ public class SkillSelectionScreen extends Screen {
     }
 
     @Override
-    public void render(PoseStack mStack, int mouseX, int mouseY, float partialTicks) {
+    public void render(GuiGraphics mStack, int mouseX, int mouseY, float partialTicks) {
         this.renderBackground(mStack);
         renderSearchText(mStack);
         super.render(mStack, mouseX, mouseY, partialTicks);
@@ -205,12 +205,12 @@ public class SkillSelectionScreen extends Screen {
         final boolean noStyle = style.getSkill() == null;
         int noStyleOffset = 0;
         if (noStyle) {
-            style.x = width - SKILL_CIRCLE_WIDTH / 2 - 12;
-            style.y = PADDING + SKILL_CIRCLE_WIDTH / 2 - 12;
+            style.setX(width - SKILL_CIRCLE_WIDTH / 2 - 12);
+            style.setY(PADDING + SKILL_CIRCLE_WIDTH / 2 - 12);
             noStyleOffset = width;
         } else {
-            style.x = width - style.getWidth() - PADDING;
-            style.y = height - style.getHeight() - PADDING;
+            style.setX(width - style.getWidth() - PADDING);
+            style.setY(height - style.getHeight() - PADDING);
         }
 
         //filter buttons
@@ -234,14 +234,14 @@ public class SkillSelectionScreen extends Screen {
         //done button
         int doneButtonWidth = Math.min(infoWidth, 200);
         int y = this.height - 20 - PADDING;
-        doneButton = new Button(((listWidth + PADDING + this.width - doneButtonWidth) / 2), y, doneButtonWidth, 20, Component.translatable("gui.done"), b -> SkillSelectionScreen.this.onClose());
+        doneButton = YouTestMyPatienceAccessor.createButton(((listWidth + PADDING + this.width - doneButtonWidth) / 2), y, doneButtonWidth, 20, Component.translatable("gui.done"), b -> SkillSelectionScreen.this.onClose(), YouTestMyPatienceAccessor.getDEFAULT_NARRATION());
 
         //search bar
         search = new EditBox(getFontRenderer(), PADDING + 1, y, listWidth - 2, 14, Component.translatable("fml.menu.mods.search"));
 
         //skill list
         int fullButtonHeight = PADDING + 16 + PADDING + 16 + PADDING;
-        this.skillList = new SkillListWidget(this, listWidth, fullButtonHeight, search.y - getFontRenderer().lineHeight - PADDING);
+        this.skillList = new SkillListWidget(this, listWidth, fullButtonHeight, search.getY() - getFontRenderer().lineHeight - PADDING);
         this.skillList.setLeftPos(PADDING);
 
         //skill info
@@ -343,14 +343,15 @@ public class SkillSelectionScreen extends Screen {
         updateCache();
     }
 
-    protected void renderSearchText(PoseStack mStack) {
+    protected void renderSearchText(GuiGraphics mStack) {
         Component text = Component.translatable("fml.menu.mods.search");
         int x = skillList.getLeft() + ((skillList.getRight() - skillList.getLeft()) / 2) - (getFontRenderer().width(text) / 2);
-        getFontRenderer().draw(mStack, text.getVisualOrderText(), x, search.y - getFontRenderer().lineHeight, 0xFFFFFF);
+        mStack.drawString(getFontRenderer(), text.getVisualOrderText(), x, search.getY() - getFontRenderer().lineHeight, 0xFFFFFF);
     }
 
     protected void addWidgets() {
         //use a builder in 1.19.3
+        addRenderableWidget(style);
         this.addRenderableWidget(doneButton);
         for (SkillSliceButton skillSliceButton : skillPie) {
             addRenderableWidget(skillSliceButton);
@@ -362,9 +363,8 @@ public class SkillSelectionScreen extends Screen {
         addRenderableWidget(skillList);
         //addRenderableWidget(variationList);
         addRenderableWidget(search);
-        search.setFocus(false);
+        search.setFocused(false);
         search.setCanLoseFocus(true);
-        addRenderableWidget(style);
         addRenderableWidget(skillInfo);
         for (SkillCategorySort scc : filters)
             addRenderableWidget(scc.button);
@@ -506,14 +506,14 @@ public class SkillSelectionScreen extends Screen {
         }
 
         @Override
-        protected void drawBackground(PoseStack matrix, Tesselator tess, float partialTick) {
-            fill(matrix, this.left, this.top, this.right, this.bottom, 0xFFA0A0A0);
-            fill(matrix, left+1, top+1, right-1, bottom-1, 0xFF000000);
+        protected void drawBackground(GuiGraphics matrix, Tesselator tess, float partialTick) {
+            matrix.fill(this.left, this.top, this.right, this.bottom, 0xFFA0A0A0);
+            matrix.fill(left+1, top+1, right-1, bottom-1, 0xFF000000);
             //super.drawBackground(matrix, tess, partialTick);
         }
 
         @Override
-        protected void drawPanel(PoseStack mStack, int entryRight, int relativeY, Tesselator tess, int mouseX, int mouseY) {
+        protected void drawPanel(GuiGraphics mStack, int entryRight, int relativeY, Tesselator tess, int mouseX, int mouseY) {
             if (logoPath != null) {
                 RenderSystem.setShader(GameRenderer::getPositionTexShader);
                 RenderSystem.enableBlend();
@@ -521,14 +521,14 @@ public class SkillSelectionScreen extends Screen {
                 RenderSystem.setShaderTexture(0, logoPath);
                 // Draw the logo image inscribed in a rectangle with width entryWidth (minus some padding) and height 50
                 int headerHeight = 50;
-                ScreenUtils.blitInscribed(mStack, left + width / 2 - 32, relativeY, width - (PADDING * 2), headerHeight, 64, 64, false, true);
+                mStack.blitInscribed(logoPath, left + width / 2 - 32, relativeY, width - (PADDING * 2), headerHeight, 64, 64, false, true);
                 relativeY += headerHeight + PADDING;
             }
 
             for (FormattedCharSequence line : lines) {
                 if (line != null) {
                     RenderSystem.enableBlend();
-                    SkillSelectionScreen.this.font.drawShadow(mStack, line, left + PADDING, relativeY, 0xFFFFFF);
+                    mStack.drawString(getFontRenderer(), line, left + PADDING, relativeY, 0xFFFFFF);
                     //RenderSystem.disableAlphaTest();
                     RenderSystem.disableBlend();
                 }
@@ -552,12 +552,12 @@ public class SkillSelectionScreen extends Screen {
         }
 
         @Override
-        public void render(PoseStack matrix, int mouseX, int mouseY, float partialTick) {
+        public void render(GuiGraphics matrix, int mouseX, int mouseY, float partialTick) {
             super.render(matrix, mouseX, mouseY, partialTick);
 
             final Style component = findTextLine(mouseX, mouseY);
-            if (component != null) {
-                SkillSelectionScreen.this.renderComponentHoverEffect(matrix, component, mouseX, mouseY);
+            if (component!=null) {
+                matrix.renderComponentHoverEffect(font, component, mouseX, mouseY);
             }
         }
 

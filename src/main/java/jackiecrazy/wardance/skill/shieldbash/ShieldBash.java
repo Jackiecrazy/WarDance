@@ -73,7 +73,7 @@ public class ShieldBash extends Skill {
         }
         if (procPoint instanceof ParryEvent e && e.getAttacker() == caster && e.getPhase() == EventPriority.HIGHEST && state == STATE.ACTIVE) {
             e.setPostureConsumption(performEffect(caster, target, e.getPostureConsumption() * stats.getEffectiveness()));
-            caster.level.playSound(null, caster.getX(), caster.getY(), caster.getZ(), SoundEvents.ZOMBIE_ATTACK_IRON_DOOR, SoundSource.PLAYERS, 0.25f + WarDance.rand.nextFloat() * 0.5f, 0.5f + WarDance.rand.nextFloat() * 0.5f);
+            caster.level().playSound(null, caster.getX(), caster.getY(), caster.getZ(), SoundEvents.ZOMBIE_ATTACK_IRON_DOOR, SoundSource.PLAYERS, 0.25f + WarDance.rand.nextFloat() * 0.5f, 0.5f + WarDance.rand.nextFloat() * 0.5f);
             markUsed(caster);
         }
     }
@@ -87,7 +87,7 @@ public class ShieldBash extends Skill {
 
     protected float performEffect(LivingEntity caster, LivingEntity target, float attack) {
         final ICombatCapability cap = CombatData.getCap(caster);
-        //SkillUtils.auxAttack(caster, target, new CombatDamageSource("player", caster).setProcNormalEffects(false).setProcAttackEffects(true).setProcSkillEffects(true).setAttackingHand(InteractionHand.OFF_HAND).setDamageTyping(CombatDamageSource.TYPE.PHYSICAL).setDamageDealer(caster.getMainHandItem()), 0, attack);
+        //SkillUtils.auxAttack(caster, target, new CombatDamageSource(caster).setProcNormalEffects(false).setProcAttackEffects(true).setProcSkillEffects(true).setAttackingHand(InteractionHand.OFF_HAND).setDamageTyping(CombatDamageSource.TYPE.PHYSICAL).setDamageDealer(caster.getMainHandItem()), 0, attack);
         return attack;
     }
 

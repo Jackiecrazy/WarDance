@@ -41,7 +41,7 @@ public class Wrestle extends Skill {
             });
             Marks.getCap(attacker).getActiveMark(WarSkills.WRESTLE.get()).ifPresent(a -> {
                 a.addArbitraryFloat(-1);
-                if (target == a.getCaster(target.level)) a.addArbitraryFloat(-2);
+                if (target == a.getCaster(target.level())) a.addArbitraryFloat(-2);
                 if (a.getArbitraryFloat() < 0) a.setDuration(-999);
             });
         }
@@ -121,8 +121,10 @@ public class Wrestle extends Skill {
 
     @Override
     public boolean onStateChange(LivingEntity caster, SkillData prev, STATE from, STATE to) {
-        LivingEntity e = GeneralUtils.raytraceLiving(caster.level, caster, 3);
+        LivingEntity e = GeneralUtils.raytraceLiving(caster.level(), caster, 3);
         if (to == STATE.ACTIVE && e != null && CombatUtils.isFullyUnarmed(caster) && cast(caster, e, duration())) {
+            if(caster.isInvisible())
+                completeChallenge(caster);
             mark(caster, e, duration(), 10 * prev.getEffectiveness());
             prev.setArbitraryFloat(0);
         }

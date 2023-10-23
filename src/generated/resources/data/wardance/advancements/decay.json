@@ -1,0 +1,33 @@
+{
+  "parent": "wardance:cursed_palms",
+  "criteria": {
+    "tick": {
+      "conditions": {},
+      "trigger": "minecraft:tick"
+    }
+  },
+  "display": {
+    "announce_to_chat": false,
+    "description": {
+      "italic": true,
+      "translate": "wardance.category.decay.desc"
+    },
+    "frame": "task",
+    "hidden": false,
+    "icon": {
+      "item": "wardance:dummy",
+      "nbt": "{style:\"decay\"}"
+    },
+    "show_toast": false,
+    "title": {
+      "color": "dark_purple",
+      "translate": "wardance.category.decay.name"
+    }
+  },
+  "requirements": [
+    [
+      "tick"
+    ]
+  ],
+  "sends_telemetry_event": true
+}

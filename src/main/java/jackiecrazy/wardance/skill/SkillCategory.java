@@ -1,5 +1,6 @@
 package jackiecrazy.wardance.skill;
 
+import jackiecrazy.wardance.WarDance;
 import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
@@ -36,6 +37,10 @@ public class SkillCategory {
 
     public String rawName() {
         return category;
+    }
+
+    public ResourceLocation baseName() {
+        return new ResourceLocation(WarDance.MODID, category);
     }
 
     public Component name() {

@@ -22,14 +22,14 @@ public class WoodenJab extends FiveElementFist {
 
     @Override
     public boolean equippedTick(LivingEntity caster, SkillData stats) {
-        SkillUtils.modifyAttribute(caster, ForgeMod.ATTACK_RANGE.get(), u, CombatUtils.isUnarmed(caster, InteractionHand.MAIN_HAND) ? 1 : 0, AttributeModifier.Operation.ADDITION);
+        SkillUtils.modifyAttribute(caster, ForgeMod.ENTITY_REACH.get(), u, CombatUtils.isUnarmed(caster, InteractionHand.MAIN_HAND) ? 1 : 0, AttributeModifier.Operation.ADDITION);
         SkillUtils.modifyAttribute(caster, Attributes.ATTACK_KNOCKBACK, u, 0, AttributeModifier.Operation.MULTIPLY_TOTAL);
         return super.equippedTick(caster, stats);
     }
 
     @Override
     public void onUnequip(LivingEntity caster, SkillData stats) {
-        SkillUtils.modifyAttribute(caster, ForgeMod.ATTACK_RANGE.get(), u, 0, AttributeModifier.Operation.ADDITION);
+        SkillUtils.modifyAttribute(caster, ForgeMod.ENTITY_REACH.get(), u, 0, AttributeModifier.Operation.ADDITION);
         super.onUnequip(caster, stats);
     }
 

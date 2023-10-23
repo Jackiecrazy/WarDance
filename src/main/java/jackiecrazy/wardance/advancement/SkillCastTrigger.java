@@ -19,9 +19,9 @@ public class SkillCastTrigger extends SimpleCriterionTrigger<SkillCastTrigger.Tr
     }
 
     @Nonnull
-    public TriggerInstance createInstance(JsonObject obj, @Nonnull EntityPredicate.Composite entity, DeserializationContext ctx) {
+    public TriggerInstance createInstance(JsonObject obj, @Nonnull ContextAwarePredicate entity, DeserializationContext ctx) {
         SkillPredicate skill = SkillPredicate.fromJson(obj.get("skilldata"));
-        EntityPredicate.Composite target = EntityPredicate.Composite.fromJson(obj, "target", ctx);
+        ContextAwarePredicate target = EntityPredicate.fromJson(obj, "target", ctx);
         return new TriggerInstance(entity, target, skill);
     }
 
@@ -36,9 +36,9 @@ public class SkillCastTrigger extends SimpleCriterionTrigger<SkillCastTrigger.Tr
 
     public static class TriggerInstance extends AbstractCriterionTriggerInstance {
         private final SkillPredicate data;
-        private final EntityPredicate.Composite caster, target;
+        private final ContextAwarePredicate caster, target;
 
-        public TriggerInstance(EntityPredicate.Composite caster, EntityPredicate.Composite target, SkillPredicate skilldata) {
+        public TriggerInstance(ContextAwarePredicate caster, ContextAwarePredicate target, SkillPredicate skilldata) {
             super(SkillCastTrigger.ID, caster);
             this.target = target;
             this.caster = caster;

@@ -25,7 +25,7 @@ public class ComboBreaker extends Judgment {
 
     private void detonate(LivingEntity caster, LivingEntity target, SkillData sd) {
         float amount = (float) (sd.getArbitraryFloat() * 0.04 * target.getHealth());
-        target.hurt(new CombatDamageSource("player", caster).setDamageTyping(CombatDamageSource.TYPE.PHYSICAL).setProcSkillEffects(true).setProcAttackEffects(true).setDamageTyping(CombatDamageSource.TYPE.TRUE).bypassArmor().bypassMagic(), amount);
+        target.hurt(new CombatDamageSource(caster).setDamageTyping(CombatDamageSource.TYPE.PHYSICAL).setProcSkillEffects(true).setProcAttackEffects(true).setDamageTyping(CombatDamageSource.TYPE.TRUE).bypassArmor().bypassMagic(), amount);
     }
 
     @Override

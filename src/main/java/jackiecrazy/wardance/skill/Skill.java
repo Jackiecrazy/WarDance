@@ -168,7 +168,7 @@ public abstract class Skill extends Move {
     }
 
     public void onCooledDown(LivingEntity caster, float overflow) {
-        caster.level.playSound(null, caster, SoundEvents.EXPERIENCE_ORB_PICKUP, SoundSource.AMBIENT, 0.3f + WarDance.rand.nextFloat(), 0.5f + WarDance.rand.nextFloat());
+        caster.level().playSound(null, caster, SoundEvents.EXPERIENCE_ORB_PICKUP, SoundSource.AMBIENT, 0.3f + WarDance.rand.nextFloat(), 0.5f + WarDance.rand.nextFloat());
     }
 
     protected boolean showArchetypeDescription() {
@@ -437,7 +437,7 @@ public abstract class Skill extends Move {
      */
     protected boolean activate(LivingEntity caster, float effectiveness, float duration, boolean flag, float something) {
         //default implementation scales duration
-        caster.level.playSound(null, caster, SoundEvents.FIRECHARGE_USE, SoundSource.AMBIENT, 0.3f + WarDance.rand.nextFloat(), 0.5f + WarDance.rand.nextFloat());
+        caster.level().playSound(null, caster, SoundEvents.FIRECHARGE_USE, SoundSource.AMBIENT, 0.3f + WarDance.rand.nextFloat(), 0.5f + WarDance.rand.nextFloat());
         CasterData.getCap(caster).getSkillData(this).ifPresent(a -> {
             a.setDuration(duration);
             a.setMaxDuration(duration);
@@ -469,7 +469,7 @@ public abstract class Skill extends Move {
         if (GeneralConfig.debug)
             WarDance.LOGGER.debug(this.getRegistryName() + " has ended");
         if (!silent)
-            caster.level.playSound(null, caster, SoundEvents.FIRE_EXTINGUISH, SoundSource.AMBIENT, 0.3f + WarDance.rand.nextFloat() * 0.5f, 0.5f + WarDance.rand.nextFloat());
+            caster.level().playSound(null, caster, SoundEvents.FIRE_EXTINGUISH, SoundSource.AMBIENT, 0.3f + WarDance.rand.nextFloat() * 0.5f, 0.5f + WarDance.rand.nextFloat());
         CasterData.getCap(caster).getSkillData(this).ifPresent(a -> {
             a.setDuration(-999);
             a.setState(STATE.ACTIVE);

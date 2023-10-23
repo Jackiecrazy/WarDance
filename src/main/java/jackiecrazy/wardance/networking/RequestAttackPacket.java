@@ -54,8 +54,8 @@ public class RequestAttackPacket {
             contextSupplier.get().enqueueWork(() -> {
                 ServerPlayer sender = contextSupplier.get().getSender();
                 if (sender != null) {
-                    Entity e = sender.level.getEntity(updateClientPacket.id);
-                    if (e != null && (GeneralConfig.dual||updateClientPacket.main) && GeneralUtils.getDistSqCompensated(sender, e) < GeneralUtils.getAttributeValueSafe(sender, ForgeMod.ATTACK_RANGE.get()) * GeneralUtils.getAttributeValueSafe(sender, ForgeMod.ATTACK_RANGE.get())) {
+                    Entity e = sender.level().getEntity(updateClientPacket.id);
+                    if (e != null && (GeneralConfig.dual||updateClientPacket.main) && GeneralUtils.getDistSqCompensated(sender, e) < GeneralUtils.getAttributeValueSafe(sender, ForgeMod.ENTITY_REACH.get()) * GeneralUtils.getAttributeValueSafe(sender, ForgeMod.ENTITY_REACH.get())) {
                         if (!updateClientPacket.main) {
                             if(CombatData.getCap(sender).getHandBind(InteractionHand.OFF_HAND)>0)//no go
                                 return;

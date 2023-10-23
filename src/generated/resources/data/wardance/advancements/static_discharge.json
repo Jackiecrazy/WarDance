@@ -1,0 +1,40 @@
+{
+  "parent": "wardance:leverage",
+  "criteria": {
+    "skill": {
+      "conditions": {
+        "skilldata": {
+          "skill": "wardance:static_discharge"
+        }
+      },
+      "trigger": "wardance:skill_challenge"
+    }
+  },
+  "display": {
+    "announce_to_chat": false,
+    "description": {
+      "translate": "advancements.wardance.static_discharge.description"
+    },
+    "frame": "challenge",
+    "hidden": false,
+    "icon": {
+      "item": "wardance:dummy",
+      "nbt": "{randomPick:0b,skills:{\"wardance:static_discharge\":1b}}"
+    },
+    "show_toast": true,
+    "title": {
+      "translate": "advancements.wardance.static_discharge.title"
+    }
+  },
+  "requirements": [
+    [
+      "skill"
+    ]
+  ],
+  "rewards": {
+    "loot": [
+      "wardance:skillscroll"
+    ]
+  },
+  "sends_telemetry_event": true
+}

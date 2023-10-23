@@ -1,8 +1,8 @@
 package jackiecrazy.wardance.client.screen.dashboard;
 
-import com.mojang.blaze3d.vertex.PoseStack;
 import jackiecrazy.wardance.WarDance;
 import jackiecrazy.wardance.event.DashboardEvent;
+import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.entity.player.Player;
@@ -24,10 +24,9 @@ public class DashboardScreen extends Screen {
     public DashboardScreen(Player player) {
         super(Component.translatable("wardance.gui.dashboard"));
         p = player;
-        this.passEvents = true;
     }
 
-    public void render(@Nonnull PoseStack matrixStack, int mouseX, int mouseY, float partialTicks) {
+    public void render(@Nonnull GuiGraphics matrixStack, int mouseX, int mouseY, float partialTicks) {
         for (int i = 0; i < orbs.size(); i++) {
             PonderingOrb A = orbs.get(i);
             for (int j = i + 1; j < orbs.size(); j++) {
@@ -65,8 +64,8 @@ public class DashboardScreen extends Screen {
 
     void handleCollision(PonderingOrb A, PonderingOrb B) {
 
-        double xDist = A.x - B.x;
-        double yDist = A.y - B.y;
+        double xDist = A.getX() - B.getX();
+        double yDist = A.getY() - B.getY();
         double distSquared = xDist * xDist + yDist * yDist;
         double xVelocity = B.xVelocity - A.xVelocity;
         double yVelocity = B.yVelocity - A.yVelocity;
@@ -91,8 +90,8 @@ public class DashboardScreen extends Screen {
     }
 
     boolean collides(PonderingOrb ball1, PonderingOrb ball2) {
-        double dx = ball1.x - ball2.x;
-        double dy = ball1.y - ball2.y;
+        double dx = ball1.getX() - ball2.getX();
+        double dy = ball1.getY() - ball2.getY();
         double distance = (dx * dx + dy * dy);
         if (distance <= (ball1.getWidth()) * (ball1.getHeight())) {
             return true;

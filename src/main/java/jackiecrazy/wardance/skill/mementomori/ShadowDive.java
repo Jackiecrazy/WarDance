@@ -28,13 +28,13 @@ public class ShadowDive extends MementoMori {
                 lde.setAmount(threshold);
                 caster.addEffect(new MobEffectInstance(MobEffects.INVISIBILITY, duration));
                 caster.addEffect(new MobEffectInstance(MobEffects.MOVEMENT_SPEED, duration));
-                SkillUtils.createCloud(caster.level, caster, caster.getX(), caster.getY(), caster.getZ(), 7, ParticleTypes.LARGE_SMOKE);
+                SkillUtils.createCloud(caster.level(), caster, caster.getX(), caster.getY(), caster.getZ(), 7, ParticleTypes.LARGE_SMOKE);
             }
         }
         if (procPoint instanceof LivingAttackEvent lde && state == STATE.ACTIVE && lde.getEntity() == target && procPoint.getPhase() == EventPriority.HIGHEST && !stats.isCondition()) {
             stats.flagCondition(true);
-            SkillUtils.createCloud(caster.level, caster, caster.getX(), caster.getY(), caster.getZ(), 7, ParticleTypes.ANGRY_VILLAGER);
-            for (LivingEntity e : caster.level.getEntitiesOfClass(LivingEntity.class, caster.getBoundingBox().inflate(40), (a) -> TargetingUtils.isHostile(a, caster))) {
+            SkillUtils.createCloud(caster.level(), caster, caster.getX(), caster.getY(), caster.getZ(), 7, ParticleTypes.ANGRY_VILLAGER);
+            for (LivingEntity e : caster.level().getEntitiesOfClass(LivingEntity.class, caster.getBoundingBox().inflate(40), (a) -> TargetingUtils.isHostile(a, caster))) {
                 e.setLastHurtByMob(target);
                 if (e instanceof Mob mob) {
                     mob.setTarget(target);
@@ -52,8 +52,8 @@ public class ShadowDive extends MementoMori {
             //collide entity, transfer aggression
             if (tar instanceof LivingEntity && !d.isCondition()) {
                 d.flagCondition(true);
-                SkillUtils.createCloud(caster.level, caster, caster.getX(), caster.getY(), caster.getZ(), 7, ParticleTypes.ANGRY_VILLAGER);
-                for (LivingEntity e : caster.level.getEntitiesOfClass(LivingEntity.class, caster.getBoundingBox().inflate(40), (a) -> TargetingUtils.isHostile(a, caster))) {
+                SkillUtils.createCloud(caster.level(), caster, caster.getX(), caster.getY(), caster.getZ(), 7, ParticleTypes.ANGRY_VILLAGER);
+                for (LivingEntity e : caster.level().getEntitiesOfClass(LivingEntity.class, caster.getBoundingBox().inflate(40), (a) -> TargetingUtils.isHostile(a, caster))) {
                     e.setLastHurtByMob((LivingEntity) tar);
                     if (e instanceof Mob) {
                         ((Mob) e).setTarget((LivingEntity) tar);

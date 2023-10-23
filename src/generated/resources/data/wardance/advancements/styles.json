@@ -1,0 +1,30 @@
+{
+  "parent": "wardance:gamblers_whimsy",
+  "criteria": {
+    "tick": {
+      "conditions": {},
+      "trigger": "minecraft:tick"
+    }
+  },
+  "display": {
+    "announce_to_chat": false,
+    "description": {
+      "translate": "advancements.wardance.styles.description"
+    },
+    "frame": "task",
+    "hidden": false,
+    "icon": {
+      "item": "wardance:manual"
+    },
+    "show_toast": false,
+    "title": {
+      "translate": "advancements.wardance.styles.title"
+    }
+  },
+  "requirements": [
+    [
+      "tick"
+    ]
+  ],
+  "sends_telemetry_event": true
+}

@@ -58,6 +58,10 @@ public class Pummel extends ShieldBash {
         if (procPoint instanceof LivingAttackEvent lae && lae.getEntity() == target && DamageUtils.isMeleeAttack(lae.getSource()) && procPoint.getPhase() == EventPriority.HIGHEST) {
             updateCasterShieldDamage(caster, target);
         }
+        if(procPoint instanceof LivingAttackEvent lae && lae.getEntity() == target && DamageUtils.isMeleeAttack(lae.getSource()) && procPoint.getPhase() == EventPriority.HIGHEST){
+            if(WeaponStats.isShield(caster,InteractionHand.MAIN_HAND))
+                completeChallenge(caster);
+        }
         stats.setState(STATE.INACTIVE);
     }
 
