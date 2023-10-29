@@ -7,6 +7,7 @@ import jackiecrazy.footwork.utils.GeneralUtils;
 import jackiecrazy.wardance.compat.WarCompat;
 import jackiecrazy.wardance.config.CombatConfig;
 import net.minecraft.util.Mth;
+import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.Pose;
 import net.minecraft.world.entity.player.Player;
@@ -231,15 +232,15 @@ public class MovementUtils {
         if (itsc.getRollTime() == 0) {//
             if (side == 99) return attemptSlide(elb);
             itsc.setRollTime(CombatConfig.rollCooldown);
-//            Entity target = GeneralUtils.raytraceEntity(elb.world, elb, 32);
+            Entity target = GeneralUtils.raytraceEntity(elb.level(), elb, 32);
 //            float adjustment = 0;
 //            if (target != null) {
-//                float distsq = (float) (elb.getDistanceSq(target));
+//                float distsq = (float) (elb.distanceToSqr(target));
 //                float toacos = (distsq + distsq - 36) / (2 * distsq);//magic number wee
 //                float acos=(float) Math.acos(toacos);
 //                adjustment = GeneralUtils.deg(acos) / 2f;
 //            }
-            double x = 0, y = 0.3, z = 0;
+            double x = 0, y = 0.25, z = 0;
             DodgeEvent.Direction d = DodgeEvent.Direction.FORWARD;
             switch (side) {
                 case 0://left
@@ -253,7 +254,7 @@ public class MovementUtils {
                     d = DodgeEvent.Direction.BACK;
                     break;
                 case 2://right
-                    x = Mth.cos(GeneralUtils.rad(elb.getYRot() - 180));//-adjustment
+                    x = Mth.cos(GeneralUtils.rad(elb.getYRot() - 180 ));//-adjustment
                     z = Mth.sin(GeneralUtils.rad(elb.getYRot() - 180));
                     d = DodgeEvent.Direction.RIGHT;
                     break;
@@ -263,9 +264,10 @@ public class MovementUtils {
                     d = DodgeEvent.Direction.FORWARD;
                     break;
             }
-            DodgeEvent e = new DodgeEvent(elb, d, 1.5);
+            DodgeEvent e = new DodgeEvent(elb, d, 1.2);
             MinecraftForge.EVENT_BUS.post(e);
             if (e.isCanceled()) return false;
+            if(d== DodgeEvent.Direction.FORWARD)e.setForce((float) (e.getForce()*1.5f));
             x *= e.getForce();
             z *= e.getForce();
 

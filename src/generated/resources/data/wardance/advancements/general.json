@@ -1,5 +1,5 @@
 {
-  "parent": "wardance:trample",
+  "parent": "wardance:pummel",
   "criteria": {
     "tick": {
       "conditions": {},

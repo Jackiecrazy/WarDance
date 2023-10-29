@@ -8,6 +8,8 @@ import jackiecrazy.footwork.potion.FootworkEffects;
 import jackiecrazy.footwork.utils.GeneralUtils;
 import jackiecrazy.wardance.WarDance;
 import jackiecrazy.wardance.capability.action.PermissionData;
+import jackiecrazy.wardance.compat.ElenaiCompat;
+import jackiecrazy.wardance.compat.WarCompat;
 import jackiecrazy.wardance.config.*;
 import jackiecrazy.wardance.event.FractureEvent;
 import jackiecrazy.wardance.handlers.TwoHandingHandler;
@@ -325,6 +327,8 @@ public class CombatCapability implements ICombatCapability {
         double cooldown = ResourceConfig.postureCD * weakness;
         posture -= amount;
         setPostureGrace((int) cooldown);
+        if (WarCompat.elenaiDodge && elb instanceof ServerPlayer sp)
+            ElenaiCompat.manipulateFeather(sp, 0);
         sync();
         return ret;
     }

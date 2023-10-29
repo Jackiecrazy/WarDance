@@ -1,5 +1,5 @@
 {
-  "parent": "wardance:bite_the_dust",
+  "parent": "wardance:taunt",
   "criteria": {
     "tick": {
       "conditions": {},

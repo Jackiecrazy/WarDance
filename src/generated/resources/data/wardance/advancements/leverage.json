@@ -1,5 +1,5 @@
 {
-  "parent": "wardance:tornado",
+  "parent": "wardance:static_discharge",
   "criteria": {
     "skill": {
       "conditions": {

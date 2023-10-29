@@ -25,7 +25,7 @@ public class DamageUtils {
         if (s instanceof CombatDamageSource cds) {
             return cds.getDamageTyping() == CombatDamageSource.TYPE.PHYSICAL;
         }
-        return !s.is(DamageTypeTags.IS_EXPLOSION) && !s.is(DamageTypeTags.IS_FIRE) && !s.is(DamageTypeTags.WITCH_RESISTANT_TO) && !s.is(DamageTypeTags.BYPASSES_ARMOR);
+        return !s.is(DamageTypeTags.IS_FIRE) && !s.is(DamageTypeTags.WITCH_RESISTANT_TO) && !s.is(DamageTypeTags.BYPASSES_ARMOR);
     }
 
     public static boolean isTrueDamage(DamageSource s) {

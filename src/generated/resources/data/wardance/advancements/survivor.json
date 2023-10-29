@@ -1,5 +1,5 @@
 {
-  "parent": "wardance:flame_dance",
+  "parent": "wardance:root",
   "criteria": {
     "skill": {
       "conditions": {

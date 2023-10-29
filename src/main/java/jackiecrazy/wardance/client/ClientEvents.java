@@ -140,7 +140,7 @@ public class ClientEvents {
 //            }
 //            tapped[3] = mi.forwardKeyDown;
             }
-            if (mc.player.isSprinting() && mc.options.keySprint.isDown() && mi.shiftKeyDown && !sneak) {
+            if (mc.player.isSprinting() && mi.shiftKeyDown && !sneak) {
                 //if(mc.world.getTotalWorldTime()-lastSneak<=ALLOWANCE){
                 dir = 99;
                 //}

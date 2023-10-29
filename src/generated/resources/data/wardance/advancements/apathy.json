@@ -1,5 +1,5 @@
 {
-  "parent": "wardance:root",
+  "parent": "wardance:trample",
   "criteria": {
     "skill": {
       "conditions": {

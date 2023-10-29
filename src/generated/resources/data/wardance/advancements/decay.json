@@ -1,5 +1,5 @@
 {
-  "parent": "wardance:cursed_palms",
+  "parent": "wardance:necrosis",
   "criteria": {
     "tick": {
       "conditions": {},

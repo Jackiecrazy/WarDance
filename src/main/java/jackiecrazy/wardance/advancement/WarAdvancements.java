@@ -87,6 +87,7 @@ public class WarAdvancements {
                         null, FrameType.CHALLENGE, true, false, false)
                 .addCriterion("skill", SkillChallengeTrigger.TriggerInstance.skill(s))
                 .parent(s instanceof SkillStyle ? style : last_in_cat.get(s.getCategory()))
+                .rewards(AdvancementRewards.Builder.loot(ResourceLocation.tryParse("wardance:skillscroll")))
                 .rewards(AdvancementRewards.Builder.loot(s instanceof SkillStyle ? STYLE : SKILL).build());
     }
 
@@ -108,6 +109,7 @@ public class WarAdvancements {
                         Component.translatable("advancements.wardance.root.title"),
                         Component.translatable("advancements.wardance.root.description"),
                         new ResourceLocation("minecraft:textures/gui/advancements/backgrounds/stone.png"), FrameType.TASK, false, false, false)
+                .rewards(AdvancementRewards.Builder.loot(ResourceLocation.tryParse("wardance:manuals")))
                 .addCriterion("tick", PlayerTrigger.TriggerInstance.tick());
     }
 

@@ -120,11 +120,11 @@ public class ManualItem extends Item {
         if (p instanceof ServerPlayer sp && l instanceof ServerLevel sl) {
             int random = stack.getOrCreateTag().getInt("rollRandom");
             if (random > 0) {
-                if (!p.getAbilities().instabuild)
-                    stack.shrink(1);
                 LootParams lootcontext = (new LootParams.Builder(sp.serverLevel())).withParameter(LootContextParams.THIS_ENTITY, sp).withParameter(LootContextParams.ORIGIN, sp.position()).withLuck(sp.getLuck()).create(LootContextParamSets.ADVANCEMENT_REWARD);
                 LootTable lt = l.getServer().getLootData().getLootTable(BOOKS);
                 lt.getRandomItems(lootcontext).forEach(sp::addItem);
+                if (!p.getAbilities().instabuild)
+                    stack.shrink(1);
                 return InteractionResultHolder.success(stack);
             }
             CombatChannel.INSTANCE.send(PacketDistributor.PLAYER.with(() -> sp), new OpenManualScreenPacket(hand == InteractionHand.OFF_HAND));

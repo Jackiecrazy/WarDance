@@ -1,5 +1,5 @@
 {
-  "parent": "wardance:leverage",
+  "parent": "wardance:root",
   "criteria": {
     "skill": {
       "conditions": {

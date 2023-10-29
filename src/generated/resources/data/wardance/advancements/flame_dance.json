@@ -1,5 +1,5 @@
 {
-  "parent": "wardance:demon_hunter",
+  "parent": "wardance:gamblers_whimsy",
   "criteria": {
     "skill": {
       "conditions": {

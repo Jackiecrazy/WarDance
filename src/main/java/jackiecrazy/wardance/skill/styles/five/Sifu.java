@@ -55,10 +55,10 @@ public class Sifu extends ColorRestrictionStyle {
     //redundancy, just in case
     @SubscribeEvent
     public static void death(LivingDeathEvent e) {
-        if (Marks.getCap(e.getEntity()).isMarked(WarSkills.SIFU.get())) {
+        Marks.getCap(e.getEntity()).getActiveMark(WarSkills.SIFU.get()).ifPresent(a->{
             e.setCanceled(true);
-            fakeDie(e.getEntity(), e.getEntity().getKillCredit());
-        }
+            fakeDie(e.getEntity(), a.getCaster(e.getEntity().level()));
+        });
     }
 
     private static void fakeDie(LivingEntity target, @Nullable LivingEntity caster) {
@@ -188,7 +188,8 @@ public class Sifu extends ColorRestrictionStyle {
             final SifuDropsMixin sifu = (SifuDropsMixin) target;
             if (caster instanceof Player p)
                 target.setLastHurtByPlayer(p);
-            sifu.callDropAllDeathLoot(new CombatDamageSource(caster));
+            if (caster != null)
+                sifu.callDropAllDeathLoot(new CombatDamageSource(caster));
             target.remove(Entity.RemovalReason.KILLED);
         }
     }

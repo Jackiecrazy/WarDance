@@ -1,5 +1,5 @@
 {
-  "parent": "wardance:lockdown",
+  "parent": "wardance:root",
   "criteria": {
     "skill": {
       "conditions": {

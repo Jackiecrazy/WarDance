@@ -74,7 +74,7 @@ public class SkillStyleButton extends SkillSelectionButton {
 //            this.render(matrixStack, mouseX, mouseY, partialTicks);
 //        }
         if (this.isHovered) {
-            graphics.pose().translate(0, -10, 100);
+            //graphics.pose().translate(0, -10, 100);
             graphics.renderTooltip(parent.getMinecraftInstance().font, Component.translatable("wardance.tooltip.resetStyle" + (getParentSelection() == null ? "3" : (parent.isValidInsertion(getParentSelection()) ? "2" : "1"))), mouseX, mouseY);
             //graphics.pose().translate(0, 10, -100);
         }

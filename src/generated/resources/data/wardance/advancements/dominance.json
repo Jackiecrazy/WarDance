@@ -1,5 +1,5 @@
 {
-  "parent": "wardance:berserk",
+  "parent": "wardance:sabaton_smash",
   "criteria": {
     "tick": {
       "conditions": {},

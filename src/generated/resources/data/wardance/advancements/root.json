@@ -26,5 +26,10 @@
       "tick"
     ]
   ],
+  "rewards": {
+    "loot": [
+      "wardance:manuals"
+    ]
+  },
   "sends_telemetry_event": true
 }

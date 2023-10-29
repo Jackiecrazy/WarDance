@@ -1,5 +1,5 @@
 {
-  "parent": "wardance:taunt",
+  "parent": "wardance:bite_the_dust",
   "criteria": {
     "skill": {
       "conditions": {

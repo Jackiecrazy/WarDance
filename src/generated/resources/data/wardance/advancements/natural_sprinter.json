@@ -1,5 +1,5 @@
 {
-  "parent": "wardance:sabaton_smash",
+  "parent": "wardance:root",
   "criteria": {
     "skill": {
       "conditions": {

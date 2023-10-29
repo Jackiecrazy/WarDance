@@ -1,5 +1,5 @@
 {
-  "parent": "wardance:static_discharge",
+  "parent": "wardance:tornado",
   "criteria": {
     "tick": {
       "conditions": {},
