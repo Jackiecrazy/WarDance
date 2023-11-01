@@ -106,12 +106,6 @@ elemental might: +1 burn/snowball/poison/drown damage to targets you have attack
         return passive;
     }
 
-    @Nonnull
-    @Override
-    public HashSet<String> getSoftIncompatibility(LivingEntity caster) {
-        return none;
-    }
-
     @Override
     public void onEquip(LivingEntity caster) {
         super.onEquip(caster);

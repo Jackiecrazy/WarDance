@@ -24,12 +24,6 @@ public class WarCry extends SkillStyle {
         return none;
     }
 
-    @Nonnull
-    @Override
-    public HashSet<String> getSoftIncompatibility(LivingEntity caster) {
-        return none;
-    }
-
     @Override
     public float mightConsumption(LivingEntity caster) {
         return 2;

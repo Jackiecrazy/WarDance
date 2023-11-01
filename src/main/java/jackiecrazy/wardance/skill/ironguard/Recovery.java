@@ -29,12 +29,6 @@ public class Recovery extends Skill {
         return passive;
     }
 
-    @Nonnull
-    @Override
-    public HashSet<String> getSoftIncompatibility(LivingEntity caster) {
-        return none;
-    }
-
     @Override
     public void onProc(LivingEntity caster, Event procPoint, STATE state, SkillData stats, @Nullable LivingEntity target) {
         if (procPoint instanceof ConsumePostureEvent && procPoint.getPhase() == EventPriority.HIGHEST) {

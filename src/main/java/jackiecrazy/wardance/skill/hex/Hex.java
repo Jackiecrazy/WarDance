@@ -23,6 +23,7 @@ import net.minecraftforge.event.entity.living.LivingDamageEvent;
 import net.minecraftforge.event.entity.living.LivingHealEvent;
 import net.minecraftforge.event.entity.living.LivingHurtEvent;
 import net.minecraftforge.eventbus.api.Event;
+import net.minecraftforge.eventbus.api.EventPriority;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 
@@ -47,7 +48,7 @@ public class Hex extends Skill {
         Marks.getCap(entity).getActiveMark(WarSkills.GANGRENE.get()).ifPresent(a -> e.setCanceled(true));
     }
 
-    @SubscribeEvent
+    @SubscribeEvent(priority = EventPriority.LOWEST)
     public static void echoes(LivingHurtEvent e) {
         LivingEntity target = e.getEntity();
         Marks.getCap(target).getActiveMark(WarSkills.CURSE_OF_ECHOES.get()).ifPresent(a -> {
@@ -205,6 +206,7 @@ public class Hex extends Skill {
         @Override
         public boolean markTick(LivingEntity caster, LivingEntity target, SkillData sd) {
             sd.addArbitraryFloat(-0.05f);
+            if (sd.getArbitraryFloat() < 0) sd.setArbitraryFloat(0);
             return super.markTick(caster, target, sd);
         }
     }

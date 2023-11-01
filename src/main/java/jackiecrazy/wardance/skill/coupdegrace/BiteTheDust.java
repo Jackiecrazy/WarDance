@@ -29,12 +29,6 @@ public class BiteTheDust extends CoupDeGrace {
         return passive;
     }
 
-    @Nonnull
-    @Override
-    public HashSet<String> getSoftIncompatibility(LivingEntity caster) {
-        return none;
-    }
-
 
     @Override
     public void onProc(LivingEntity caster, Event procPoint, STATE state, SkillData stats, LivingEntity target) {

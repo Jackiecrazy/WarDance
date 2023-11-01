@@ -7,7 +7,6 @@ import net.minecraft.world.entity.LivingEntity;
 import net.minecraftforge.eventbus.api.Event;
 import net.minecraftforge.eventbus.api.EventPriority;
 
-import javax.annotation.Nonnull;
 import java.util.HashSet;
 
 public class FatalCadence extends Skill {
@@ -15,12 +14,6 @@ public class FatalCadence extends Skill {
     @Override
     public HashSet<String> getTags() {
         return passive;
-    }
-
-    @Nonnull
-    @Override
-    public HashSet<String> getSoftIncompatibility(LivingEntity caster) {
-        return none;
     }
 
     @Override

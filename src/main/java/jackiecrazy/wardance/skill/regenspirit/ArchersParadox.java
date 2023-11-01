@@ -33,12 +33,6 @@ apathy: your max spirit is 4, your spirit instantly refills after cooldown, you 
         return passive;
     }
 
-    @Nonnull
-    @Override
-    public HashSet<String> getSoftIncompatibility(LivingEntity caster) {
-        return none;
-    }
-
     @Override
     public boolean equippedTick(LivingEntity caster, SkillData d) {
         return cooldownTick(d);

@@ -35,12 +35,6 @@ confidence: your spirit regeneration speed scales proportionally with how much s
         return passive;
     }
 
-    @Nonnull
-    @Override
-    public HashSet<String> getSoftIncompatibility(LivingEntity caster) {
-        return none;
-    }
-
     @Override
     public void onProc(LivingEntity caster, Event procPoint, STATE state, SkillData stats, LivingEntity target) {
         if (procPoint instanceof RegenSpiritEvent && procPoint.getPhase() == EventPriority.HIGHEST) {

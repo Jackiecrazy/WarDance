@@ -1118,7 +1118,7 @@
   "minecraft:crossbow": {
     "attack": 2.4,
     "defend": 1.0,
-    "shield": true,
+    "shield": false,
     "sweep": "CONE",
     "knockback": 1.0,
     "damage_scale": 0.5,

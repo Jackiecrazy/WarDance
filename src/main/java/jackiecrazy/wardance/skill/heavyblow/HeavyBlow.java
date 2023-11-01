@@ -9,12 +9,10 @@ import net.minecraftforge.eventbus.api.Event;
 import net.minecraftforge.eventbus.api.EventPriority;
 
 import javax.annotation.Nonnull;
-import java.util.Arrays;
 import java.util.HashSet;
 
 public class HeavyBlow extends Skill {
-    private final HashSet<String> tag = (new HashSet<>(Arrays.asList("physical", ProcPoints.disable_shield, ProcPoints.melee, ProcPoints.on_hurt, "boundCast", ProcPoints.normal_attack, ProcPoints.modify_crit, ProcPoints.recharge_normal, ProcPoints.on_being_parried)));
-    private final HashSet<String> tags = makeTag(SkillTags.physical, SkillTags.forced_crit, SkillTags.passive, SkillTags.offensive, SkillTags.disable_shield);
+    private final HashSet<String> tags = makeTag(SkillTags.passive, SkillTags.disable_shield);
 
     @Nonnull
     @Override
@@ -24,13 +22,7 @@ public class HeavyBlow extends Skill {
 
     @Override
     public HashSet<String> getTags() {
-        return passive;
-    }
-
-    @Nonnull
-    @Override
-    public HashSet<String> getSoftIncompatibility(LivingEntity caster) {
-        return none;
+        return tags;
     }
 
     @Override

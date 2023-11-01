@@ -208,7 +208,9 @@ public abstract class Skill extends Move {
     public abstract HashSet<String> getTags();//requires breath, bound, debuffing, healing, aoe, etc.
 
     @Nonnull
-    public abstract HashSet<String> getSoftIncompatibility(LivingEntity caster);
+    public HashSet<String> getSoftIncompatibility(LivingEntity caster){
+        return none;
+    }
 
     public HashSet<String> getHardIncompatibility() {
         return none;
