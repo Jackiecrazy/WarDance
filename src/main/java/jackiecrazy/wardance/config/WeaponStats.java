@@ -47,6 +47,9 @@ import java.util.stream.Collectors;
 
 public class WeaponStats extends SimpleJsonResourceReloadListener {
     public static final TagKey<Item> TWO_HANDED = ItemTags.create(new ResourceLocation(WarDance.MODID, "two_handed"));
+    public static final TagKey<Item> PARRY_PROJECTILE = ItemTags.create(new ResourceLocation(WarDance.MODID, "parry_projectiles"));
+    public static final TagKey<Item> CAN_BE_DISABLED = ItemTags.create(new ResourceLocation(WarDance.MODID, "can_be_disabled"));
+    public static final TagKey<Item> AXE_LIKE = ItemTags.create(new ResourceLocation(WarDance.MODID, "disable_shield"));
     public static final TagKey<Item> UNARMED = ItemTags.create(new ResourceLocation(WarDance.MODID, "unarmed"));
     public static final TagKey<Item> PIERCE_PARRY = ItemTags.create(new ResourceLocation(WarDance.MODID, "pierce_parry"));
     public static final TagKey<Item> PIERCE_SHIELD = ItemTags.create(new ResourceLocation(WarDance.MODID, "pierce_shield"));
@@ -168,6 +171,7 @@ public class WeaponStats extends SimpleJsonResourceReloadListener {
 
     @Nullable
     public static MeleeInfo lookupStats(ItemStack is) {
+        if (is == null) return null;
         if (combatList.containsKey(is.getItem())) return combatList.get(is.getItem());
         for (TagKey<Item> tag : archetypes.keySet()) {
             if (is.is(tag))
@@ -180,6 +184,16 @@ public class WeaponStats extends SimpleJsonResourceReloadListener {
         if (stack == null) return false;
         MeleeInfo rt = lookupStats(stack);//stack.isShield(e);
         return rt != null && rt.isShield;
+    }
+
+    public static boolean canParryProjectile(LivingEntity e, ItemStack stack) {
+        if (stack == null) return false;
+        return stack.is(PARRY_PROJECTILE) || isShield(e, stack);
+    }
+
+    public static boolean canBeDisabled(LivingEntity e, LivingEntity attacker, ItemStack stack) {
+        if (stack == null) return false;
+        return stack.is(CAN_BE_DISABLED) || isShield(e, stack);
     }
 
     public static boolean isShield(LivingEntity e, InteractionHand hand) {

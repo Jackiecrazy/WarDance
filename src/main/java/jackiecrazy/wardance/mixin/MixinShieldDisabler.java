@@ -1,6 +1,7 @@
 package jackiecrazy.wardance.mixin;
 
 import jackiecrazy.wardance.capability.skill.CasterData;
+import jackiecrazy.wardance.config.WeaponStats;
 import jackiecrazy.wardance.skill.ProcPoints;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.item.ItemStack;
@@ -23,7 +24,7 @@ public interface MixinShieldDisabler {
     @Overwrite
     default boolean canDisableShield(ItemStack shield, LivingEntity entity, LivingEntity attacker) {
         if (CasterData.getCap(attacker).isTagActive(ProcPoints.disable_shield)) return true;
-
+        if(self().is(WeaponStats.AXE_LIKE)) return true;
         return self().getItem().canDisableShield(self(), shield, entity, attacker);
     }
 }

@@ -638,7 +638,7 @@ public class CombatCapability implements ICombatCapability {
             if (isVulnerable()) return 1;
             LivingEntity bro = dude.get();
             if (dude.get() != null) {
-                if (h == InteractionHand.OFF_HAND && (WeaponStats.isTwoHanded(bro.getOffhandItem(), bro, InteractionHand.OFF_HAND) || WeaponStats.isTwoHanded(bro.getMainHandItem(), bro, InteractionHand.MAIN_HAND)))
+                if (h == InteractionHand.OFF_HAND && (WeaponStats.isTwoHanded(bro.getOffhandItem(), bro, InteractionHand.OFF_HAND) || (WeaponStats.isTwoHanded(bro.getMainHandItem(), bro, InteractionHand.MAIN_HAND)&&WeaponStats.lookupStats(bro.getOffhandItem())!=null)))
                     return 1;
             }
         }

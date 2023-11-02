@@ -90,13 +90,13 @@ public class CombatHandler {
                 return;
             }
             //dodged
-            if (MovementUtils.hasInvFrames(uke)) e.setImpactResult(ProjectileImpactEvent.ImpactResult.SKIP_ENTITY);
+            if (MovementUtils.hasInvFrames(uke))
+                e.setCanceled(true);//.setImpactResult(ProjectileImpactEvent.ImpactResult.SKIP_ENTITY);
             //defer to vanilla
             if (uke.isBlocking()) return;
             //refuse to handle piercing arrows to prevent oddity
-            if (e.getEntity() instanceof AbstractArrow) {
-                if (((AbstractArrow) e.getEntity()).getPierceLevel() > 0)
-                    return;
+            if (e.getEntity() instanceof AbstractArrow aa && aa.getPierceLevel() > 0) {
+                return;
             }
             //hard no go
             if (!PermissionData.getCap(uke).canParry()) {
@@ -112,11 +112,11 @@ public class CombatHandler {
             ItemStack defend = null;
             InteractionHand h = null;
             float defMult = 0;
-            if (WeaponStats.isShield(uke, uke.getOffhandItem()) && CombatUtils.canParry(uke, e.getEntity(), uke.getOffhandItem(), 0)) {
+            if (WeaponStats.canParryProjectile(uke, uke.getOffhandItem()) && CombatUtils.canParry(uke, e.getEntity(), uke.getOffhandItem(), 0)) {
                 defend = uke.getOffhandItem();
                 defMult = CombatUtils.getPostureDef(null, uke, defend, 0);
                 h = InteractionHand.OFF_HAND;
-            } else if (WeaponStats.isShield(uke, uke.getMainHandItem()) && CombatUtils.canParry(uke, e.getEntity(), uke.getMainHandItem(), 0)) {
+            } else if (WeaponStats.canParryProjectile(uke, uke.getMainHandItem()) && CombatUtils.canParry(uke, e.getEntity(), uke.getMainHandItem(), 0)) {
                 defend = uke.getMainHandItem();
                 defMult = CombatUtils.getPostureDef(null, uke, defend, 0);
                 h = InteractionHand.MAIN_HAND;
@@ -154,7 +154,7 @@ public class CombatHandler {
                 pe.setResult(Event.Result.ALLOW);
             MinecraftForge.EVENT_BUS.post(pe);
             if (pe.getResult() == Event.Result.ALLOW || (defend != null && canParry && pe.getResult() == Event.Result.DEFAULT)) {
-                e.setImpactResult(ProjectileImpactEvent.ImpactResult.STOP_AT_CURRENT_NO_DAMAGE);
+                e.setCanceled(true);//.setImpactResult(ProjectileImpactEvent.ImpactResult.STOP_AT_CURRENT_NO_DAMAGE);
                 ukeCap.consumePosture(pe.getPostureConsumption(), 1);
                 //do not change shooter! It makes drowned tridents and skeleton arrows collectable, which is honestly silly
                 uke.level().playSound(null, uke.getX(), uke.getY(), uke.getZ(), SoundEvents.WOODEN_TRAPDOOR_CLOSE, SoundSource.PLAYERS, 0.75f + WarDance.rand.nextFloat() * 0.5f, (1 - (ukeCap.getPosture() / ukeCap.getMaxPosture())) + WarDance.rand.nextFloat() * 0.5f);
@@ -374,7 +374,7 @@ public class CombatHandler {
                         boolean disshield = false;
                         parryHand = uke.getOffhandItem() == defend ? InteractionHand.OFF_HAND : InteractionHand.MAIN_HAND;
                         //barrier has already been handled. Subsequent binding and cooldown are handled by the capability.
-                        if (WeaponStats.isShield(uke, defend)) {
+                        if (WeaponStats.canBeDisabled(uke, seme, defend)) {
                             //Tuple<Integer, Float> stat = CombatUtils.getShieldStats(defend);
                             if (attack.canDisableShield(defend, uke, seme)) {
                                 //shield is disabled

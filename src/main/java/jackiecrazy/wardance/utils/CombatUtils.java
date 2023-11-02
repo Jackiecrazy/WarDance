@@ -141,16 +141,20 @@ public class CombatUtils {
         if (postureDamage < 0) return false;
         if (attacker instanceof LivingEntity && getPostureDef((LivingEntity) attacker, defender, defend, postureDamage) < 0)
             return false;
+        //can't parry lah
         if (defend.is(WeaponStats.CANNOT_PARRY))
             return false;
+        //attack pierces parry/shield
         if (attack != null) {
             if (attack.is(WeaponStats.PIERCE_PARRY) && WeaponStats.isWeapon(defender, defend))
                 return false;
             if (attack.is(WeaponStats.PIERCE_SHIELD) && WeaponStats.isShield(defender, defend))
                 return false;
         }
+        //item cooldown
         if (defender instanceof Player && ((Player) defender).getCooldowns().isOnCooldown(defend.getItem()))
             return false;
+        //hand bound
         if (CombatData.getCap(defender).getHandBind(h) > 0)
             return false;
         float rand = WarDance.rand.nextFloat();
