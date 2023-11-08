@@ -7,8 +7,8 @@ import jackiecrazy.footwork.capability.resources.CombatData;
 import jackiecrazy.wardance.WarDance;
 import jackiecrazy.wardance.client.RenderUtils;
 import jackiecrazy.wardance.networking.CombatChannel;
-import jackiecrazy.wardance.networking.SyncItemDataPacket;
-import jackiecrazy.wardance.networking.SyncTagDataPacket;
+import jackiecrazy.wardance.networking.sync.SyncItemDataPacket;
+import jackiecrazy.wardance.networking.sync.SyncTagDataPacket;
 import jackiecrazy.wardance.utils.CombatUtils;
 import net.minecraft.ChatFormatting;
 import net.minecraft.commands.CommandSourceStack;
@@ -100,12 +100,15 @@ public class WeaponStats extends SimpleJsonResourceReloadListener {
             if (GeneralConfig.debug)
                 WarDance.LOGGER.debug("loading " + key);
             file.entrySet().forEach(entry -> {
-                final String name = entry.getKey();
+                 String name = entry.getKey();
                 if (name.startsWith("#")) {//register tags separately
                     try {
+                        name = name.substring(1);
+                        if (!name.contains(":"))
+                            name = "wardance:" + name;
                         JsonObject obj = entry.getValue().getAsJsonObject();
                         MeleeInfo put = parseMeleeInfo(obj);
-                        archetypes.put(ItemTags.create(new ResourceLocation(WarDance.MODID, name.substring(1))), put);
+                        archetypes.put(ItemTags.create(new ResourceLocation(name)), put);
                     } catch (Exception x) {
                         WarDance.LOGGER.error("malformed json under " + name + "!");
                         x.printStackTrace();

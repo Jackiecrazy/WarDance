@@ -18,7 +18,7 @@ import jackiecrazy.wardance.config.WeaponStats;
 import jackiecrazy.wardance.event.ProjectileParryEvent;
 import jackiecrazy.wardance.event.SweepEvent;
 import jackiecrazy.wardance.networking.CombatChannel;
-import jackiecrazy.wardance.networking.UpdateAttackPacket;
+import jackiecrazy.wardance.networking.combat.UpdateAttackCooldownPacket;
 import net.minecraft.core.particles.ParticleType;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
@@ -152,7 +152,7 @@ public class CombatUtils {
                 return false;
         }
         //item cooldown
-        if (defender instanceof Player && ((Player) defender).getCooldowns().isOnCooldown(defend.getItem()))
+        if (defender instanceof Player p && defend.is(WeaponStats.CAN_BE_DISABLED) && p.getCooldowns().isOnCooldown(defend.getItem()))
             return false;
         //hand bound
         if (CombatData.getCap(defender).getHandBind(h) > 0)
@@ -332,7 +332,7 @@ public class CombatUtils {
                 if (!(e instanceof Player)) return;
                 e.attackStrengthTicker = real;
                 if (!(e instanceof FakePlayer) && e instanceof ServerPlayer && sync)
-                    CombatChannel.INSTANCE.send(PacketDistributor.PLAYER.with(() -> (ServerPlayer) e), new UpdateAttackPacket(e.getId(), real));
+                    CombatChannel.INSTANCE.send(PacketDistributor.PLAYER.with(() -> (ServerPlayer) e), new UpdateAttackCooldownPacket(e.getId(), real));
                 break;
             case OFF_HAND:
                 CombatData.getCap(e).setOffhandCooldown(real);
@@ -346,7 +346,7 @@ public class CombatUtils {
                 if (!(e instanceof Player)) return;
                 e.attackStrengthTicker = amount;
                 if (!(e instanceof FakePlayer) && e instanceof ServerPlayer && sync)
-                    CombatChannel.INSTANCE.send(PacketDistributor.PLAYER.with(() -> (ServerPlayer) e), new UpdateAttackPacket(e.getId(), amount));
+                    CombatChannel.INSTANCE.send(PacketDistributor.PLAYER.with(() -> (ServerPlayer) e), new UpdateAttackCooldownPacket(e.getId(), amount));
                 break;
             case OFF_HAND:
                 CombatData.getCap(e).setOffhandCooldown(amount);

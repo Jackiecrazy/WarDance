@@ -32,7 +32,7 @@ public class TwoHandingHandler {
 
     public static final Function<Tuple<AttributeModifier, AttributeModifier>, AttributeModifier> MAIN = Tuple::getA;
     public static final Function<Tuple<AttributeModifier, AttributeModifier>, AttributeModifier> OFF = Tuple::getB;
-    private static final Map<Attribute, List<AttributeModifier>> none = new HashMap<>();
+    private static final Map<Attribute, Tuple<List<AttributeModifier>, List<AttributeModifier>>> none = new HashMap<>();
 
     @SubscribeEvent
     public static void twohanding(LivingEquipmentChangeEvent e) {
@@ -44,9 +44,9 @@ public class TwoHandingHandler {
 
     public static void updateTwoHanding(LivingEntity e, ItemStack fromStack, ItemStack toStack) {
         for (InteractionHand hand : InteractionHand.values()) {
-            getStats(fromStack, hand).forEach((k, v) -> v.forEach(am -> SkillUtils.removeAttribute(e, k, am)));
+            getStats(fromStack, hand).forEach((k, v) -> (hand==InteractionHand.MAIN_HAND?v.getA():v.getB()).forEach(am -> SkillUtils.removeAttribute(e, k, am)));
             if (WeaponStats.twoHandBonus(e, hand)) {
-                getStats(toStack, hand).forEach((k, v) -> v.forEach(am -> SkillUtils.addAttribute(e, k, am)));
+                getStats(toStack, hand).forEach((k, v) -> (hand==InteractionHand.MAIN_HAND?v.getA():v.getB()).forEach(am -> SkillUtils.addAttribute(e, k, am)));
             }
         }
     }
@@ -60,13 +60,13 @@ public class TwoHandingHandler {
         return the.getResult() == Event.Result.ALLOW;
     }
 
-    public static Map<Attribute, List<AttributeModifier>> getStats(ItemStack i, InteractionHand h) {
+    public static Map<Attribute, Tuple<List<AttributeModifier>,List<AttributeModifier>>> getStats(ItemStack i, InteractionHand h) {
         if (TwohandingStats.MAP.containsKey(i.getItem())) {
-            return readHand(TwohandingStats.MAP.get(i.getItem()), h);
+            return TwohandingStats.MAP.get(i.getItem());
         } else {
-            for (Map.Entry<TagKey<Item>, Tuple<Map<Attribute, List<AttributeModifier>>, Map<Attribute, List<AttributeModifier>>>> entry : TwohandingStats.ARCHETYPES.entrySet()) {
+            for (Map.Entry<TagKey<Item>, Map<Attribute, Tuple<List<AttributeModifier>, List<AttributeModifier>>>> entry : TwohandingStats.ARCHETYPES.entrySet()) {
                 if (i.is(entry.getKey())) {
-                    return readHand(entry.getValue(), h);
+                    return entry.getValue();
                 }
             }
         }

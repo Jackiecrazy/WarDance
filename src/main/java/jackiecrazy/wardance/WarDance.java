@@ -17,6 +17,13 @@ import jackiecrazy.wardance.entity.WarEntities;
 import jackiecrazy.wardance.items.WarItems;
 import jackiecrazy.wardance.loot.ScrollLootModifier;
 import jackiecrazy.wardance.networking.*;
+import jackiecrazy.wardance.networking.combat.*;
+import jackiecrazy.wardance.networking.meta.*;
+import jackiecrazy.wardance.networking.skill.EvokeSkillPacket;
+import jackiecrazy.wardance.networking.skill.SelectSkillPacket;
+import jackiecrazy.wardance.networking.skill.UpdateMarkPacket;
+import jackiecrazy.wardance.networking.skill.UpdateSkillSelectionPacket;
+import jackiecrazy.wardance.networking.sync.*;
 import jackiecrazy.wardance.skill.WarSkills;
 import net.minecraft.commands.synchronization.ArgumentTypeInfo;
 import net.minecraft.commands.synchronization.ArgumentTypeInfos;
@@ -106,7 +113,7 @@ public class WarDance {
         int index = 0;
         CombatChannel.INSTANCE.registerMessage(index++, UpdateClientResourcePacket.class, new UpdateClientResourcePacket.UpdateClientEncoder(), new UpdateClientResourcePacket.UpdateClientDecoder(), new UpdateClientResourcePacket.UpdateClientHandler());
         CombatChannel.INSTANCE.registerMessage(index++, UpdateMarkPacket.class, new UpdateMarkPacket.UpdateClientEncoder(), new UpdateMarkPacket.UpdateClientDecoder(), new UpdateMarkPacket.UpdateClientHandler());
-        CombatChannel.INSTANCE.registerMessage(index++, UpdateAttackPacket.class, new UpdateAttackPacket.UpdateAttackEncoder(), new UpdateAttackPacket.UpdateAttackDecoder(), new UpdateAttackPacket.UpdateAttackHandler());
+        CombatChannel.INSTANCE.registerMessage(index++, UpdateAttackCooldownPacket.class, new UpdateAttackCooldownPacket.UpdateAttackEncoder(), new UpdateAttackCooldownPacket.UpdateAttackDecoder(), new UpdateAttackCooldownPacket.UpdateAttackHandler());
         CombatChannel.INSTANCE.registerMessage(index++, DodgePacket.class, new DodgePacket.DodgeEncoder(), new DodgePacket.DodgeDecoder(), new DodgePacket.DodgeHandler());
         CombatChannel.INSTANCE.registerMessage(index++, RequestUpdatePacket.class, new RequestUpdatePacket.RequestUpdateEncoder(), new RequestUpdatePacket.RequestUpdateDecoder(), new RequestUpdatePacket.RequestUpdateHandler());
         CombatChannel.INSTANCE.registerMessage(index++, CombatModePacket.class, new CombatModePacket.CombatEncoder(), new CombatModePacket.CombatDecoder(), new CombatModePacket.CombatHandler());
@@ -126,6 +133,8 @@ public class WarDance {
         CombatChannel.INSTANCE.registerMessage(index++, OpenManualScreenPacket.class, new OpenManualScreenPacket.Encoder(), new OpenManualScreenPacket.Decoder(), new OpenManualScreenPacket.Handler());
         CombatChannel.INSTANCE.registerMessage(index++, ManualizePacket.class, new ManualizePacket.Encoder(), new ManualizePacket.Decoder(), new ManualizePacket.Handler());
         CombatChannel.INSTANCE.registerMessage(index++, LearnManualPacket.class, new LearnManualPacket.Encoder(), new LearnManualPacket.Decoder(), new LearnManualPacket.Handler());
+        CombatChannel.INSTANCE.registerMessage(index++, TwoHandItemDataPacket.class, new TwoHandItemDataPacket.Encoder(), new TwoHandItemDataPacket.Decoder(), new TwoHandItemDataPacket.Handler());
+        CombatChannel.INSTANCE.registerMessage(index++, TwoHandTagDataPacket.class, new TwoHandTagDataPacket.Encoder(), new TwoHandTagDataPacket.Decoder(), new TwoHandTagDataPacket.Handler());
     }
 
     private void doClientStuff(final FMLClientSetupEvent event) {

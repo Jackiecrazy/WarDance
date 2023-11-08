@@ -8,7 +8,7 @@ import jackiecrazy.wardance.capability.skill.ISkillCapability;
 import jackiecrazy.wardance.client.Keybinds;
 import jackiecrazy.wardance.client.RenderUtils;
 import jackiecrazy.wardance.networking.CombatChannel;
-import jackiecrazy.wardance.networking.SelectSkillPacket;
+import jackiecrazy.wardance.networking.skill.SelectSkillPacket;
 import jackiecrazy.wardance.skill.Skill;
 import jackiecrazy.wardance.skill.SkillData;
 import net.minecraft.client.Minecraft;

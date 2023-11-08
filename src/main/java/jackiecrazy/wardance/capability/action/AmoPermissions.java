@@ -1,7 +1,7 @@
 package jackiecrazy.wardance.capability.action;
 
 import jackiecrazy.wardance.networking.CombatChannel;
-import jackiecrazy.wardance.networking.UpdateClientPermissionPacket;
+import jackiecrazy.wardance.networking.meta.UpdateClientPermissionPacket;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.player.Player;

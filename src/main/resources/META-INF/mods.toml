@@ -34,7 +34,7 @@ credits="Swirtz, Shadow, Darkhax, everyone on the discord server!" #optional
 authors="Jackiecrazy, DarkMega, amoooooooooooo, Raiguri" #optional
 # The description text for the mod (multi line!) (#mandatory)
 description='''
-A mod about in-combat resources. Dodge, kick, stagger, and dual-wield your way to victory.
+A mod about in-combat resources. Dodge, parry, stun, and dual-wield your way to victory.
 '''
 # A dependency - use the . to indicate dependency for a specific modid. Dependencies are optional.
 [[dependencies.wardance]] #optional
@@ -59,7 +59,7 @@ A mod about in-combat resources. Dodge, kick, stagger, and dual-wield your way t
 [[dependencies.wardance]]
     modId="footwork"
     mandatory=true
-    versionRange="[3.2,)"
+    versionRange="[4.3,)"
     ordering="AFTER"
     side="BOTH"
 [[dependencies.wardance]]

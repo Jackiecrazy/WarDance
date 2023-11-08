@@ -17,7 +17,6 @@ public class ClientRegistry {
     public static void keys(final RegisterKeyMappingsEvent event) {
         event.register(Keybinds.COMBAT);
         event.register(Keybinds.CAST);
-        event.register(Keybinds.SELECT);
         event.register(Keybinds.BINDCAST);
         event.register(Keybinds.PARRY);
     }

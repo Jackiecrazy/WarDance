@@ -1,4 +1,4 @@
-package jackiecrazy.wardance.networking;
+package jackiecrazy.wardance.networking.combat;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.network.FriendlyByteBuf;
@@ -11,36 +11,36 @@ import java.util.function.BiConsumer;
 import java.util.function.Function;
 import java.util.function.Supplier;
 
-public class UpdateAttackPacket {
+public class UpdateAttackCooldownPacket {
     int e;
     int icc;
 
-    public UpdateAttackPacket(int ent, int c) {
+    public UpdateAttackCooldownPacket(int ent, int c) {
         e = ent;
         icc = c;
     }
 
-    public static class UpdateAttackEncoder implements BiConsumer<UpdateAttackPacket, FriendlyByteBuf> {
+    public static class UpdateAttackEncoder implements BiConsumer<UpdateAttackCooldownPacket, FriendlyByteBuf> {
 
         @Override
-        public void accept(UpdateAttackPacket updateClientPacket, FriendlyByteBuf packetBuffer) {
+        public void accept(UpdateAttackCooldownPacket updateClientPacket, FriendlyByteBuf packetBuffer) {
             packetBuffer.writeInt(updateClientPacket.e);
             packetBuffer.writeInt(updateClientPacket.icc);
         }
     }
 
-    public static class UpdateAttackDecoder implements Function<FriendlyByteBuf, UpdateAttackPacket> {
+    public static class UpdateAttackDecoder implements Function<FriendlyByteBuf, UpdateAttackCooldownPacket> {
 
         @Override
-        public UpdateAttackPacket apply(FriendlyByteBuf packetBuffer) {
-            return new UpdateAttackPacket(packetBuffer.readInt(), packetBuffer.readInt());
+        public UpdateAttackCooldownPacket apply(FriendlyByteBuf packetBuffer) {
+            return new UpdateAttackCooldownPacket(packetBuffer.readInt(), packetBuffer.readInt());
         }
     }
 
-    public static class UpdateAttackHandler implements BiConsumer<UpdateAttackPacket, Supplier<NetworkEvent.Context>> {
+    public static class UpdateAttackHandler implements BiConsumer<UpdateAttackCooldownPacket, Supplier<NetworkEvent.Context>> {
 
         @Override
-        public void accept(UpdateAttackPacket updateClientPacket, Supplier<NetworkEvent.Context> contextSupplier) {
+        public void accept(UpdateAttackCooldownPacket updateClientPacket, Supplier<NetworkEvent.Context> contextSupplier) {
             contextSupplier.get().enqueueWork(() -> {
                 DistExecutor.unsafeRunWhenOn(Dist.CLIENT, () -> () -> {
                     if (Minecraft.getInstance().level != null && Minecraft.getInstance().level.getEntity(updateClientPacket.e) instanceof LivingEntity e)

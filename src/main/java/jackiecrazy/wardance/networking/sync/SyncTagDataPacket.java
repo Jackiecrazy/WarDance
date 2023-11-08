@@ -1,4 +1,4 @@
-package jackiecrazy.wardance.networking;
+package jackiecrazy.wardance.networking.sync;
 
 import jackiecrazy.wardance.config.WeaponStats;
 import net.minecraft.network.FriendlyByteBuf;

@@ -45,7 +45,12 @@ public class Hex extends Skill {
         if (!e.getEntity().isEffectiveAi()) return;
         LivingEntity entity = e.getEntity();
         //snakebite nullifies healing
-        Marks.getCap(entity).getActiveMark(WarSkills.GANGRENE.get()).ifPresent(a -> e.setCanceled(true));
+        Marks.getCap(entity).getActiveMark(WarSkills.GANGRENE.get()).ifPresent(a -> {
+            e.setCanceled(true);
+            final LivingEntity caster = a.getCaster(entity.level());
+            if (caster != null)
+                entity.hurt(new CombatDamageSource(caster).setDamageTyping(CombatDamageSource.TYPE.MAGICAL).setProcSkillEffects(true).setSkillUsed(WarSkills.GANGRENE.get()).bypassArmor().setProxy(entity), e.getAmount()/2);
+        });
     }
 
     @SubscribeEvent(priority = EventPriority.LOWEST)
@@ -54,7 +59,9 @@ public class Hex extends Skill {
         Marks.getCap(target).getActiveMark(WarSkills.CURSE_OF_ECHOES.get()).ifPresent(a -> {
             if (a.getArbitraryFloat() < 0 && DamageUtils.isMeleeAttack(e.getSource())) {
                 target.invulnerableTime = 0;
-                target.hurt(new CombatDamageSource(a.getCaster(target.level())).setDamageTyping(CombatDamageSource.TYPE.TRUE).setProcSkillEffects(true).setSkillUsed(WarSkills.CURSE_OF_ECHOES.get()).bypassArmor().bypassMagic(), e.getAmount() * 0.4f);
+                final LivingEntity caster = a.getCaster(target.level());
+                if (caster != null)
+                    target.hurt(new CombatDamageSource(caster).setDamageTyping(CombatDamageSource.TYPE.TRUE).setProxy(target).setProcSkillEffects(true).setSkillUsed(WarSkills.CURSE_OF_ECHOES.get()).bypassArmor().bypassMagic(), e.getAmount() * 0.4f);
                 a.setArbitraryFloat(1);
             }
         });
@@ -228,7 +235,7 @@ public class Hex extends Skill {
                 }
             }
             if (proc)
-                FakeExplosion.explode(caster.level(), caster, target.getX(), target.getY() + target.getBbHeight() * 1.1f, target.getZ(), size, new CombatDamageSource(caster).setExplosion().setMagic(), damage);
+                FakeExplosion.explode(caster.level(), caster, target.getX(), target.getY() + target.getBbHeight() * 1.1f, target.getZ(), size, new CombatDamageSource(caster).setExplosion().setDamageTyping(CombatDamageSource.TYPE.MAGICAL).setProxy(target), damage);
         }
     }
 

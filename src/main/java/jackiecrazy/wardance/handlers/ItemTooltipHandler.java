@@ -7,6 +7,7 @@ import jackiecrazy.wardance.utils.CombatUtils;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.Component;
+import net.minecraft.util.Tuple;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.ai.attributes.Attribute;
 import net.minecraft.world.entity.ai.attributes.AttributeModifier;
@@ -82,11 +83,11 @@ public class ItemTooltipHandler {
                 }
             }
             tips.clear();
-            final Map<Attribute, List<AttributeModifier>> stats = TwoHandingHandler.getStats(e.getItemStack(), InteractionHand.MAIN_HAND);
+            final Map<Attribute, Tuple<List<AttributeModifier>, List<AttributeModifier>>> stats = TwoHandingHandler.getStats(e.getItemStack(), InteractionHand.MAIN_HAND);
             if (!stats.isEmpty()) {
                 if (Screen.hasControlDown()) {
                     tips.add(Component.translatable("wardance.tooltip.twohanding").withStyle(ChatFormatting.GOLD));
-                    stats.forEach((attr, lis) -> lis.forEach(am -> {
+                    stats.forEach((attr, lis) -> lis.getA().forEach(am -> {
                         double amount = am.getAmount();
                         switch (am.getOperation()) {
                             case MULTIPLY_TOTAL, MULTIPLY_BASE -> amount *= 100;

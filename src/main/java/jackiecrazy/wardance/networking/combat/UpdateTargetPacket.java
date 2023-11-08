@@ -1,4 +1,4 @@
-package jackiecrazy.wardance.networking;
+package jackiecrazy.wardance.networking.combat;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.multiplayer.ClientLevel;

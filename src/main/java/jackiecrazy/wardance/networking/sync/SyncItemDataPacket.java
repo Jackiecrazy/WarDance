@@ -1,6 +1,5 @@
-package jackiecrazy.wardance.networking;
+package jackiecrazy.wardance.networking.sync;
 
-import jackiecrazy.wardance.WarDance;
 import jackiecrazy.wardance.config.WeaponStats;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.world.item.Item;
@@ -50,8 +49,6 @@ public class SyncItemDataPacket {
 
             //prevent client overriding server
             if (contextSupplier.get().getDirection() == NetworkDirection.PLAY_TO_CLIENT || contextSupplier.get().getDirection() == NetworkDirection.LOGIN_TO_CLIENT) {
-                if (!updateClientPacket.map.keySet().isEmpty())
-                    WarDance.LOGGER.debug("synced namespace with example ID: " + updateClientPacket.map.entrySet().stream().findFirst().get().getKey().getDescriptionId());
                 contextSupplier.get().enqueueWork(() -> {
                     WeaponStats.clientWeaponOverride(updateClientPacket.map);
                 });

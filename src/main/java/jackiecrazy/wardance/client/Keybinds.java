@@ -4,13 +4,11 @@ import com.mojang.blaze3d.platform.InputConstants;
 import jackiecrazy.footwork.capability.resources.CombatData;
 import jackiecrazy.footwork.capability.resources.ICombatCapability;
 import jackiecrazy.wardance.WarDance;
-import jackiecrazy.wardance.capability.action.PermissionData;
 import jackiecrazy.wardance.capability.skill.CasterData;
-import jackiecrazy.wardance.client.screen.dashboard.DashboardScreen;
 import jackiecrazy.wardance.client.screen.skill.SkillCastScreen;
 import jackiecrazy.wardance.networking.CombatChannel;
-import jackiecrazy.wardance.networking.CombatModePacket;
-import jackiecrazy.wardance.networking.EvokeSkillPacket;
+import jackiecrazy.wardance.networking.combat.CombatModePacket;
+import jackiecrazy.wardance.networking.skill.EvokeSkillPacket;
 import net.minecraft.client.KeyMapping;
 import net.minecraft.client.Minecraft;
 import net.minecraft.network.chat.Component;
@@ -41,7 +39,6 @@ public class Keybinds {
     public static final KeyMapping COMBAT = new KeyMapping("wardance.combat", KeyConflictContext.IN_GAME, KeyModifier.SHIFT, InputConstants.Type.KEYSYM, GLFW.GLFW_KEY_R, "key.categories.wardance");
     public static final KeyMapping CAST = new KeyMapping("wardance.skill", IN_COMBAT, InputConstants.Type.KEYSYM, GLFW.GLFW_KEY_R, "key.categories.wardance");
     public static final KeyMapping BINDCAST = new KeyMapping("wardance.bindCast", IN_COMBAT, InputConstants.Type.MOUSE, GLFW.GLFW_MOUSE_BUTTON_MIDDLE, "key.categories.wardance");
-    public static final KeyMapping SELECT = new KeyMapping("wardance.selectSkill", KeyConflictContext.IN_GAME, InputConstants.Type.KEYSYM, GLFW.GLFW_KEY_V, "key.categories.wardance");
     public static final KeyMapping PARRY = new KeyMapping("wardance.parry", KeyConflictContext.IN_GAME, InputConstants.Type.KEYSYM, GLFW.GLFW_KEY_LEFT_ALT, "key.categories.wardance");
 
     @SubscribeEvent(priority = EventPriority.HIGHEST)
@@ -56,14 +53,6 @@ public class Keybinds {
         }
         if (CAST.getKeyConflictContext().isActive() && CAST.consumeClick() && mc.player.isAlive()) {
             mc.setScreen(new SkillCastScreen(CasterData.getCap(mc.player).getEquippedSkills()));
-        }
-        if (SELECT.getKeyConflictContext().isActive() && SELECT.consumeClick() && mc.player.isAlive()) {
-            //hard no go
-            if (!PermissionData.getCap(mc.player).canSelectSkills()) {
-                return;
-            }
-            mc.setScreen(new DashboardScreen(mc.player));
-            //mc.setScreen(new ScrollScreen(WarSkills.VITAL_STRIKE.get(), WarSkills.SUPLEX.get(), WarSkills.DEMON_HUNTER.get(), WarSkills.SIFU.get(), WarSkills.GOLD_RUSH.get(), WarSkills.UNSTABLE_SPIRIT.get(), WarSkills.CURSE_OF_ECHOES.get(), WarSkills.PRIDEFUL_MIGHT.get(), WarSkills.BACKFLIP.get(), WarSkills.MOMENTUM.get(), WarSkills.MONTANTE.get(), WarSkills.PHANTOM_DIVE.get(), WarSkills.SHIELD_CRUSH.get()));
         }
         if (BINDCAST.getKeyConflictContext().isActive() && BINDCAST.consumeClick() && mc.player.isAlive()) {
             CombatChannel.INSTANCE.sendToServer(new EvokeSkillPacket());

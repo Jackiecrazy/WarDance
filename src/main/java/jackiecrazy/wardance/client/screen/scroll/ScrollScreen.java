@@ -4,7 +4,7 @@ import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.Tesselator;
 import jackiecrazy.wardance.client.screen.TooltipUtils;
 import jackiecrazy.wardance.networking.CombatChannel;
-import jackiecrazy.wardance.networking.LearnScrollPacket;
+import jackiecrazy.wardance.networking.meta.LearnScrollPacket;
 import jackiecrazy.wardance.skill.Skill;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;

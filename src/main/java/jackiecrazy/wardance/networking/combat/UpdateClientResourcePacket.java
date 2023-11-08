@@ -1,4 +1,4 @@
-package jackiecrazy.wardance.networking;
+package jackiecrazy.wardance.networking.combat;
 
 import jackiecrazy.footwork.capability.resources.CombatData;
 import net.minecraft.client.Minecraft;
@@ -15,36 +15,36 @@ import java.util.function.BiConsumer;
 import java.util.function.Function;
 import java.util.function.Supplier;
 
-public class UpdateClientPassengerPacket {
+public class UpdateClientResourcePacket {
     int e;
     CompoundTag icc;
 
-    public UpdateClientPassengerPacket(int ent, CompoundTag c) {
+    public UpdateClientResourcePacket(int ent, CompoundTag c) {
         e = ent;
         icc = c;
     }
 
-    public static class UpdateClientEncoder implements BiConsumer<UpdateClientPassengerPacket, FriendlyByteBuf> {
+    public static class UpdateClientEncoder implements BiConsumer<UpdateClientResourcePacket, FriendlyByteBuf> {
 
         @Override
-        public void accept(UpdateClientPassengerPacket updateClientResourcePacket, FriendlyByteBuf packetBuffer) {
+        public void accept(UpdateClientResourcePacket updateClientResourcePacket, FriendlyByteBuf packetBuffer) {
             packetBuffer.writeInt(updateClientResourcePacket.e);
             packetBuffer.writeNbt(updateClientResourcePacket.icc);
         }
     }
 
-    public static class UpdateClientDecoder implements Function<FriendlyByteBuf, UpdateClientPassengerPacket> {
+    public static class UpdateClientDecoder implements Function<FriendlyByteBuf, UpdateClientResourcePacket> {
 
         @Override
-        public UpdateClientPassengerPacket apply(FriendlyByteBuf packetBuffer) {
-            return new UpdateClientPassengerPacket(packetBuffer.readInt(), packetBuffer.readNbt());
+        public UpdateClientResourcePacket apply(FriendlyByteBuf packetBuffer) {
+            return new UpdateClientResourcePacket(packetBuffer.readInt(), packetBuffer.readNbt());
         }
     }
 
-    public static class UpdateClientHandler implements BiConsumer<UpdateClientPassengerPacket, Supplier<NetworkEvent.Context>> {
+    public static class UpdateClientHandler implements BiConsumer<UpdateClientResourcePacket, Supplier<NetworkEvent.Context>> {
 
         @Override
-        public void accept(UpdateClientPassengerPacket updateClientResourcePacket, Supplier<NetworkEvent.Context> contextSupplier) {
+        public void accept(UpdateClientResourcePacket updateClientResourcePacket, Supplier<NetworkEvent.Context> contextSupplier) {
             contextSupplier.get().enqueueWork(() -> DistExecutor.unsafeRunWhenOn(Dist.CLIENT, () -> () -> {
                 ClientLevel world = Minecraft.getInstance().level;
                 if (world != null) {

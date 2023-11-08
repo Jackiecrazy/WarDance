@@ -3,7 +3,7 @@ package jackiecrazy.wardance.items;
 import jackiecrazy.wardance.WarDance;
 import jackiecrazy.wardance.capability.skill.CasterData;
 import jackiecrazy.wardance.networking.CombatChannel;
-import jackiecrazy.wardance.networking.OpenScrollScreenPacket;
+import jackiecrazy.wardance.networking.meta.OpenScrollScreenPacket;
 import jackiecrazy.wardance.skill.Skill;
 import jackiecrazy.wardance.skill.WarSkills;
 import jackiecrazy.wardance.skill.styles.SkillStyle;

@@ -544,7 +544,7 @@ public class CombatHandler {
                         MinecraftForge.EVENT_BUS.post(eae);
                         e.setAmount(e.getAmount() + eae.getAmount());
                         if (e.getSource() instanceof CombatDamageSource cds)
-                            cds.bypassArmor().bypassEnchantments().bypassMagic();
+                            cds.setDamageTyping(CombatDamageSource.TYPE.TRUE).bypassArmor().bypassEnchantments().bypassMagic();
                         //fatality!
                         if (ds.getEntity() instanceof LivingEntity seme) {
                             if (seme.level() instanceof ServerLevel) {

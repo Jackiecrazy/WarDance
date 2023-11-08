@@ -4,7 +4,7 @@ import jackiecrazy.wardance.WarDance;
 import jackiecrazy.wardance.config.GeneralConfig;
 import jackiecrazy.wardance.config.SkillConfig;
 import jackiecrazy.wardance.networking.CombatChannel;
-import jackiecrazy.wardance.networking.SyncSkillPacket;
+import jackiecrazy.wardance.networking.sync.SyncSkillPacket;
 import jackiecrazy.wardance.skill.Skill;
 import jackiecrazy.wardance.skill.SkillCategory;
 import jackiecrazy.wardance.skill.SkillData;

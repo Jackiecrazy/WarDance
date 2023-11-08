@@ -1,4 +1,4 @@
-package jackiecrazy.wardance.networking;
+package jackiecrazy.wardance.networking.meta;
 
 import jackiecrazy.wardance.capability.action.PermissionData;
 import jackiecrazy.wardance.items.ManualItem;

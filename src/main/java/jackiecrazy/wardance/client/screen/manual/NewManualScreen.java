@@ -8,7 +8,7 @@ import jackiecrazy.wardance.client.screen.skill.SkillStyleButton;
 import jackiecrazy.wardance.items.ManualItem;
 import jackiecrazy.wardance.mixin.YouTestMyPatienceAccessor;
 import jackiecrazy.wardance.networking.CombatChannel;
-import jackiecrazy.wardance.networking.LearnManualPacket;
+import jackiecrazy.wardance.networking.meta.LearnManualPacket;
 import jackiecrazy.wardance.skill.Skill;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.Button;

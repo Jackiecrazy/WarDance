@@ -10,10 +10,11 @@ import jackiecrazy.wardance.capability.skill.ISkillCapability;
 import jackiecrazy.wardance.capability.skill.SkillCapability;
 import jackiecrazy.wardance.capability.status.Mark;
 import jackiecrazy.wardance.capability.status.Marks;
+import jackiecrazy.wardance.config.TwohandingStats;
 import jackiecrazy.wardance.config.WeaponStats;
 import jackiecrazy.wardance.entity.ai.ExposeGoal;
 import jackiecrazy.wardance.networking.CombatChannel;
-import jackiecrazy.wardance.networking.SyncSkillPacket;
+import jackiecrazy.wardance.networking.sync.SyncSkillPacket;
 import net.minecraft.core.BlockPos;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
@@ -80,13 +81,15 @@ public class EntityHandler {
     public static void login(PlayerEvent.PlayerLoggedInEvent e) {
         if (e.getEntity() instanceof ServerPlayer sp) {
             WeaponStats.sendItemData(sp);
+            TwohandingStats.sendItemData(sp);
         }
     }
 
     @SubscribeEvent
     public static void reload(OnDatapackSyncEvent e) {
-        for (ServerPlayer p : e.getPlayerList().getPlayers()) {
-            WeaponStats.sendItemData(p);
+        for (ServerPlayer sp : e.getPlayerList().getPlayers()) {
+            WeaponStats.sendItemData(sp);
+            TwohandingStats.sendItemData(sp);
         }
     }
 

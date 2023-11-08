@@ -1,4 +1,4 @@
-package jackiecrazy.wardance.networking;
+package jackiecrazy.wardance.networking.combat;
 
 import jackiecrazy.wardance.utils.MovementUtils;
 import net.minecraft.network.FriendlyByteBuf;

@@ -8,7 +8,7 @@ import jackiecrazy.wardance.capability.skill.ISkillCapability;
 import jackiecrazy.wardance.client.screen.TooltipUtils;
 import jackiecrazy.wardance.mixin.YouTestMyPatienceAccessor;
 import jackiecrazy.wardance.networking.CombatChannel;
-import jackiecrazy.wardance.networking.UpdateSkillSelectionPacket;
+import jackiecrazy.wardance.networking.skill.UpdateSkillSelectionPacket;
 import jackiecrazy.wardance.skill.Skill;
 import jackiecrazy.wardance.skill.SkillArchetype;
 import jackiecrazy.wardance.skill.SkillCategory;

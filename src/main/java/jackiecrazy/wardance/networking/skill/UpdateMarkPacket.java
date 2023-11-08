@@ -1,4 +1,4 @@
-package jackiecrazy.wardance.networking;
+package jackiecrazy.wardance.networking.skill;
 
 import jackiecrazy.wardance.capability.status.Marks;
 import net.minecraft.client.Minecraft;

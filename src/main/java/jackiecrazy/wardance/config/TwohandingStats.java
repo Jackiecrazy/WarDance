@@ -1,8 +1,13 @@
 package jackiecrazy.wardance.config;
 
+import com.google.common.collect.Maps;
 import com.google.gson.*;
 import jackiecrazy.wardance.WarDance;
+import jackiecrazy.wardance.networking.*;
+import jackiecrazy.wardance.networking.sync.TwoHandItemDataPacket;
+import jackiecrazy.wardance.networking.sync.TwoHandTagDataPacket;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.server.packs.resources.ResourceManager;
 import net.minecraft.server.packs.resources.SimpleJsonResourceReloadListener;
 import net.minecraft.tags.ItemTags;
@@ -14,19 +19,38 @@ import net.minecraft.world.entity.ai.attributes.AttributeModifier;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.Items;
 import net.minecraftforge.event.AddReloadListenerEvent;
+import net.minecraftforge.network.PacketDistributor;
 import net.minecraftforge.registries.ForgeRegistries;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 public class TwohandingStats extends SimpleJsonResourceReloadListener {
     public static final UUID uuid = UUID.fromString("a516026a-bee2-4014-bcb6-b6a5776663de");
     public static final UUID offhanduuid = UUID.fromString("a516026a-bee2-5125-bcb6-b6a5776663de");
-    public static final Map<Item, Tuple<Map<Attribute, List<AttributeModifier>>, Map<Attribute, List<AttributeModifier>>>> MAP = new HashMap<>();
-    public static final Map<TagKey<Item>, Tuple<Map<Attribute, List<AttributeModifier>>, Map<Attribute, List<AttributeModifier>>>> ARCHETYPES = new HashMap<>();
+    public static final Map<Item, Map<Attribute, Tuple<List<AttributeModifier>, List<AttributeModifier>>>> MAP = new HashMap<>();
+    public static final Map<TagKey<Item>,  Map<Attribute, Tuple<List<AttributeModifier>, List<AttributeModifier>>>> ARCHETYPES = new HashMap<>();
     public static Gson GSON = new GsonBuilder().registerTypeAdapter(ResourceLocation.class, new ResourceLocation.Serializer()).create();
 
     public TwohandingStats() {
         super(GSON, "war_twohanding");
+    }
+
+    public static void sendItemData(ServerPlayer p) {
+        //duplicated removed automatically
+        Set<String> paths = MAP.keySet().stream().map(a -> ForgeRegistries.ITEMS.getKey(a).getNamespace()).collect(Collectors.toSet());
+        for (String namespace : paths)
+            CombatChannel.INSTANCE.send(PacketDistributor.PLAYER.with(() -> p), new TwoHandItemDataPacket(Maps.filterEntries(MAP, a -> ForgeRegistries.ITEMS.getKey(a.getKey()).getNamespace().equals(namespace))));
+        //CombatChannel.INSTANCE.send(PacketDistributor.PLAYER.with(() -> p), new SyncItemDataPacket(new HashMap<>(combatList)));
+        CombatChannel.INSTANCE.send(PacketDistributor.PLAYER.with(() -> p), new TwoHandTagDataPacket(ARCHETYPES));
+    }
+
+    public static void clientWeaponOverride(Map<Item, Map<Attribute, Tuple<List<AttributeModifier>, List<AttributeModifier>>>> server) {
+        MAP.putAll(server);
+    }
+
+    public static void clientTagOverride(Map<TagKey<Item>, Map<Attribute, Tuple<List<AttributeModifier>, List<AttributeModifier>>>> server) {
+        ARCHETYPES.putAll(server);
     }
 
     public static void register(AddReloadListenerEvent event) {
@@ -45,10 +69,12 @@ public class TwohandingStats extends SimpleJsonResourceReloadListener {
                 if (name.startsWith("#")) {//tag
                     isTag = true;
                     name = name.substring(1);
+                    if (!name.contains(":"))
+                        name = "wardance:" + name;
                 }
                 ResourceLocation i = new ResourceLocation(name);
                 item = ForgeRegistries.ITEMS.getValue(i);
-                if (item == null || item == Items.AIR) {
+                if (!isTag && (item == null || item == Items.AIR)) {
                     //Attributizer.LOGGER.debug(name + " is not a registered item!");
                     return;
                 }
@@ -86,20 +112,18 @@ public class TwohandingStats extends SimpleJsonResourceReloadListener {
                         AttributeModifier off = new AttributeModifier(offuid, "two-handing bonus", modify, AttributeModifier.Operation.valueOf(type));
                         if (isTag) {
                             final TagKey<Item> tag = ItemTags.create(i);
-                            ARCHETYPES.putIfAbsent(tag, new Tuple<>(new HashMap<>(), new HashMap<>()));
-                            Tuple<Map<Attribute, List<AttributeModifier>>, Map<Attribute, List<AttributeModifier>>> sub = ARCHETYPES.get(tag);
-                            sub.getA().putIfAbsent(a, new ArrayList<>());
-                            sub.getA().get(a).add(main);
-                            sub.getB().putIfAbsent(a, new ArrayList<>());
-                            sub.getB().get(a).add(off);
+                            ARCHETYPES.putIfAbsent(tag, new HashMap<>());
+                            final Map<Attribute, Tuple<List<AttributeModifier>, List<AttributeModifier>>> sub = ARCHETYPES.get(tag);
+                            sub.putIfAbsent(a, new Tuple<>(new ArrayList<>(), new ArrayList<>()));
+                            sub.get(a).getA().add(main);
+                            sub.get(a).getB().add(off);
                             ARCHETYPES.put(tag, sub);
                         } else {
-                            MAP.putIfAbsent(item, new Tuple<>(new HashMap<>(), new HashMap<>()));
-                            Tuple<Map<Attribute, List<AttributeModifier>>, Map<Attribute, List<AttributeModifier>>> sub = MAP.get(item);
-                            sub.getA().putIfAbsent(a, new ArrayList<>());
-                            sub.getA().get(a).add(main);
-                            sub.getB().putIfAbsent(a, new ArrayList<>());
-                            sub.getB().get(a).add(off);
+                            MAP.putIfAbsent(item, new HashMap<>());
+                            final Map<Attribute, Tuple<List<AttributeModifier>, List<AttributeModifier>>> sub = MAP.get(item);
+                            sub.putIfAbsent(a, new Tuple<>(new ArrayList<>(), new ArrayList<>()));
+                            sub.get(a).getA().add(main);
+                            sub.get(a).getB().add(off);
                             MAP.put(item, sub);
                         }
                     } catch (Exception x) {

@@ -1,4 +1,4 @@
-package jackiecrazy.wardance.networking;
+package jackiecrazy.wardance.networking.meta;
 
 import jackiecrazy.wardance.capability.skill.CasterData;
 import jackiecrazy.wardance.items.ManualItem;
