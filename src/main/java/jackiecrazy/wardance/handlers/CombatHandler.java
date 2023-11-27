@@ -418,16 +418,16 @@ public class CombatHandler {
                 }
                 //internally enforced hand bind to bypass slimes
                 //added to world check to bypass goety lichdom weirdness
-//                if (!(seme instanceof Player) && uke.isAddedToWorld()) {
-//                    semeCap.setHandBind(attackingHand, CombatUtils.getCooldownPeriod(seme, attackingHand) + 1);
-//                }
+                if (!(seme instanceof Player) && uke.isAddedToWorld()) {
+                    semeCap.setHandBind(attackingHand, CombatUtils.getCooldownPeriod(seme, attackingHand) + 1);
+                }
             }
             //evade, at the rock bottom of the attack event, saving your protected butt.
             if (!uke.isBlocking() && !e.isCanceled()) {
-                if (DamageUtils.isPhysicalAttack(e.getSource()) && StealthUtils.INSTANCE.getAwareness(e.getSource().getDirectEntity() instanceof LivingEntity ? (LivingEntity) e.getSource().getDirectEntity() : null, uke) != StealthUtils.Awareness.UNAWARE && CombatData.getCap(uke).consumeEvade()) {
+                if (DamageUtils.isPhysicalAttack(e.getSource()) && StealthUtils.INSTANCE.getAwareness(e.getSource().getEntity() instanceof LivingEntity seme ? seme : null, uke) != StealthUtils.Awareness.UNAWARE && CombatData.getCap(uke).consumeEvade()) {
 
                     e.setCanceled(true);
-                    uke.level().playSound(null, uke.getX(), uke.getY(), uke.getZ(), SoundEvents.IRON_DOOR_OPEN, SoundSource.PLAYERS, 0.25f + WarDance.rand.nextFloat() * 0.5f, 0.75f + WarDance.rand.nextFloat() * 0.5f);
+                    uke.level().playSound(null, uke.getX(), uke.getY(), uke.getZ(), SoundEvents.PLAYER_ATTACK_NODAMAGE, SoundSource.PLAYERS, 0.25f + WarDance.rand.nextFloat() * 0.5f, 0.75f + WarDance.rand.nextFloat() * 0.5f);
                     //otherwise the rest of the damage goes through and is handled later down the line anyway
                 } else if (e.getSource() instanceof CombatDamageSource cds && cds.getPostureDamage() > 0) {
                     CombatData.getCap(e.getEntity()).consumePosture(cds.getEntity() instanceof LivingEntity elb ? elb : null, cds.getPostureDamage());
@@ -511,10 +511,10 @@ public class CombatHandler {
             WarDance.LOGGER.debug("damage from " + e.getSource() + " received with amount " + e.getAmount());
         }
         LivingEntity uke = e.getEntity();
-        LivingEntity kek = null;
+        LivingEntity seme = null;
         DamageSource ds = e.getSource();
-        if (ds.getDirectEntity() instanceof LivingEntity) {
-            kek = (LivingEntity) ds.getDirectEntity();
+        if (ds.getDirectEntity() instanceof LivingEntity direct) {
+            seme = direct;
         }
         //stuff used to exist here, moved to footwork
 
@@ -522,15 +522,15 @@ public class CombatHandler {
         cap.setSpiritGrace(ResourceConfig.spiritCD);
         cap.setAdrenalineCooldown(CombatConfig.adrenaline);
         SubtleBonusHandler.update = true;
-        StealthUtils.Awareness awareness = StealthUtils.INSTANCE.getAwareness(kek, uke);
-        if (ds.getEntity() instanceof LivingEntity seme) {
-            final WeaponStats.SweepInfo sweepInfo = WeaponStats.getSweepInfo(seme.getMainHandItem(), CombatUtils.getSweepState(seme));
-            sweepInfo.performCommand(seme, true, true);
+        StealthUtils.Awareness awareness = StealthUtils.INSTANCE.getAwareness(seme, uke);
+        if (ds.getEntity() instanceof LivingEntity trueSource) {
+            final WeaponStats.SweepInfo sweepInfo = WeaponStats.getSweepInfo(trueSource.getMainHandItem(), CombatUtils.getSweepState(trueSource));
+            sweepInfo.performCommand(trueSource, true, true);
             sweepInfo.performCommand(uke, false, true);
             if (DamageUtils.isPhysicalAttack(e.getSource())) {
                 cap.setMightGrace(0);
             }
-            double luckDiff = WarDance.rand.nextFloat() * (GeneralUtils.getAttributeValueSafe(seme, Attributes.LUCK)) - WarDance.rand.nextFloat() * (GeneralUtils.getAttributeValueSafe(uke, Attributes.LUCK));
+            double luckDiff = WarDance.rand.nextFloat() * (GeneralUtils.getAttributeValueSafe(trueSource, Attributes.LUCK)) - WarDance.rand.nextFloat() * (GeneralUtils.getAttributeValueSafe(uke, Attributes.LUCK));
             e.setAmount(e.getAmount() + (float) luckDiff * GeneralConfig.luck);
         }
         if (DamageUtils.isPhysicalAttack(ds)) {
@@ -540,17 +540,17 @@ public class CombatHandler {
                     e.setAmount(e.getAmount() * CombatConfig.exposeDamage);
                     if (DamageUtils.isMeleeAttack(ds)) {
                         //expose, add 10% max health damage
-                        ExposeAttackEvent eae = new ExposeAttackEvent(kek, e.getSource(), uke);
+                        ExposeAttackEvent eae = new ExposeAttackEvent(seme, e.getSource(), uke);
                         MinecraftForge.EVENT_BUS.post(eae);
                         e.setAmount(e.getAmount() + eae.getAmount());
                         if (e.getSource() instanceof CombatDamageSource cds)
                             cds.setDamageTyping(CombatDamageSource.TYPE.TRUE).bypassArmor().bypassEnchantments().bypassMagic();
                         //fatality!
-                        if (ds.getEntity() instanceof LivingEntity seme) {
-                            if (seme.level() instanceof ServerLevel) {
-                                ((ServerLevel) seme.level()).sendParticles(ParticleTypes.ANGRY_VILLAGER, uke.getX(), uke.getY(), uke.getZ(), 5, uke.getBbWidth(), uke.getBbHeight(), uke.getBbWidth(), 0.5f);
+                        if (ds.getEntity() instanceof LivingEntity trueSource) {
+                            if (trueSource.level() instanceof ServerLevel sl) {
+                                sl.sendParticles(ParticleTypes.ANGRY_VILLAGER, uke.getX(), uke.getY(), uke.getZ(), 5, uke.getBbWidth(), uke.getBbHeight(), uke.getBbWidth(), 0.5f);
                             }
-                            seme.level().playSound(null, uke.getX(), uke.getY(), uke.getZ(), SoundEvents.GENERIC_BIG_FALL, SoundSource.PLAYERS, 0.25f + WarDance.rand.nextFloat() * 0.5f, 0.75f + WarDance.rand.nextFloat() * 0.5f);
+                            trueSource.level().playSound(null, uke.getX(), uke.getY(), uke.getZ(), SoundEvents.GENERIC_BIG_FALL, SoundSource.PLAYERS, 0.25f + WarDance.rand.nextFloat() * 0.5f, 0.75f + WarDance.rand.nextFloat() * 0.5f);
                         }
                     }
                 }

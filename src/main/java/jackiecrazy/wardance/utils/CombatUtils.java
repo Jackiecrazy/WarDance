@@ -142,6 +142,8 @@ public class CombatUtils {
         if (attacker instanceof LivingEntity && getPostureDef((LivingEntity) attacker, defender, defend, postureDamage) < 0)
             return false;
         //can't parry lah
+        if (defender.getType().is(MobSpecs.CANNOT_PARRY))
+            return false;
         if (defend.is(WeaponStats.CANNOT_PARRY))
             return false;
         //attack pierces parry/shield
@@ -505,10 +507,11 @@ public class CombatUtils {
     }
 
     public static void initializePPE(ProjectileParryEvent ppe, float mult) {
-        ProjectileInfo pi = projectileMap.getOrDefault(ppe.getProjectile().getType(), DEFAULTRANGED);
-        ppe.setReturnVec(pi.destroy ? null : ppe.getProjectile().getDeltaMovement().normalize().scale(-0.1));
+        final EntityType<?> type = ppe.getProjectile().getType();
+        ProjectileInfo pi = projectileMap.getOrDefault(type, DEFAULTRANGED);
+        ppe.setReturnVec(pi.destroy | type.is(MobSpecs.DESTROY_ON_PARRY) ? null : ppe.getProjectile().getDeltaMovement().normalize().scale(-0.1));
         ppe.setPostureConsumption((float) pi.posture * mult);
-        ppe.setTrigger(pi.trigger);
+        ppe.setTrigger(pi.trigger | type.is(MobSpecs.TRIGGER_ON_PARRY));
     }
 
     public static WeaponStats.SWEEPSTATE getSweepState(LivingEntity entity) {

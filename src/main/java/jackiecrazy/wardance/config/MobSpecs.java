@@ -5,9 +5,11 @@ import com.google.gson.GsonBuilder;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import jackiecrazy.wardance.WarDance;
+import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.packs.resources.ResourceManager;
 import net.minecraft.server.packs.resources.SimpleJsonResourceReloadListener;
+import net.minecraft.tags.TagKey;
 import net.minecraft.util.profiling.ProfilerFiller;
 import net.minecraft.world.entity.EntityType;
 import net.minecraftforge.event.AddReloadListenerEvent;
@@ -19,6 +21,9 @@ import java.util.Map;
 public class MobSpecs extends SimpleJsonResourceReloadListener {
 
     public static final MobInfo DEFAULT = new MobInfo();
+    public static final TagKey<EntityType<?>> CANNOT_PARRY =TagKey.create(Registries.ENTITY_TYPE, new ResourceLocation(WarDance.MODID, "cannot_parry"));
+    public static final TagKey<EntityType<?>> DESTROY_ON_PARRY =TagKey.create(Registries.ENTITY_TYPE, new ResourceLocation(WarDance.MODID, "destroy_on_parry"));
+    public static final TagKey<EntityType<?>> TRIGGER_ON_PARRY =TagKey.create(Registries.ENTITY_TYPE, new ResourceLocation(WarDance.MODID, "trigger_on_parry"));
     public static Gson GSON = new GsonBuilder().registerTypeAdapter(ResourceLocation.class, new ResourceLocation.Serializer()).create();
     public static HashMap<EntityType<?>, MobInfo> mobMap = new HashMap<>();
 

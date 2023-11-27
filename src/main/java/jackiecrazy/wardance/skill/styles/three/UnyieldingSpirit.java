@@ -50,10 +50,10 @@ public class UnyieldingSpirit extends ColorRestrictionStyle {
     @Override
     public void onProc(LivingEntity caster, Event procPoint, STATE state, SkillData stats, @Nullable LivingEntity target) {
         if (caster == target) return;
-        if (procPoint instanceof LivingAttackEvent lae && lae.getEntity() == target && DamageUtils.isMeleeAttack(lae.getSource()) && procPoint.getPhase() == EventPriority.HIGHEST) {
+        if (procPoint instanceof LivingAttackEvent lae && procPoint.getPhase() == EventPriority.HIGHEST) {
             //bonk
 
-            if (CombatData.getCap(caster).consumeSpirit(1) && lae.getEntity() == target) {
+            if (DamageUtils.isMeleeAttack(lae.getSource()) && lae.getEntity() == target && CombatData.getCap(caster).consumeSpirit(1)) {
                 CombatData.getCap(target).consumePosture(caster, 6);
             }
             if (lae.getEntity() == caster) {
