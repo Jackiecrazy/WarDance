@@ -89,6 +89,7 @@ public abstract class FiveElementFist extends Skill {
         if (procPoint instanceof DamageKnockbackEvent lae && lae.getEntity() == target && CombatUtils.isUnarmed(caster, InteractionHand.MAIN_HAND)) {
             if (lae.getPhase() == EventPriority.HIGHEST) {
                 if (lae.getDamageSource() instanceof CombatDamageSource cds) {
+                    if (cds.getSkillUsed() != null) return;
                     cds.setSkillUsed(this);
                     cds.setProcSkillEffects(true);
                 }

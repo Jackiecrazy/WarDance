@@ -353,12 +353,11 @@ public class CombatHandler {
                     return;
                 }
                 if (!ukeCap.isVulnerable()) {
-                    //overflow posture
-                    float consumption = pe.getPostureConsumption();
-                    float knockback = ukeCap.consumePosture(seme, consumption);
-                    //no parries if stabby
+                    //no parries or evades if stabby
                     if (StealthConfig.ignore && awareness == StealthUtils.Awareness.UNAWARE) return;
                     if (pe.canParry()) {
+                        //overflow posture
+                        float knockback = ukeCap.consumePosture(seme, pe.getPostureConsumption());
                         //TODO does this allow onHit to trigger? I'm pretty sure it doesn't, but then why does chikage proc
                         e.setCanceled(true);
                         //reset manual parry
@@ -414,6 +413,12 @@ public class CombatHandler {
                             ItemStack finalDefend1 = uke.getItemInHand(other);
                             finalDefend1.getCapability(CombatManipulator.CAP).ifPresent((i) -> i.onOtherHandParry(seme, uke, finalDefend1, e.getAmount()));
                         }
+                    } else if (!ukeCap.consumeEvade()) {
+                        ukeCap.consumePosture(seme, pe.getPostureConsumption());
+                    }else{
+                        //ugly evade code T_T
+                        e.setCanceled(true);
+                        uke.level().playSound(null, uke.getX(), uke.getY(), uke.getZ(), SoundEvents.PLAYER_ATTACK_NODAMAGE, SoundSource.PLAYERS, 0.25f + WarDance.rand.nextFloat() * 0.5f, 0.75f + WarDance.rand.nextFloat() * 0.5f);
                     }
                 }
                 //internally enforced hand bind to bypass slimes
@@ -425,11 +430,11 @@ public class CombatHandler {
             //evade, at the rock bottom of the attack event, saving your protected butt.
             if (!uke.isBlocking() && !e.isCanceled()) {
                 if (DamageUtils.isPhysicalAttack(e.getSource()) && StealthUtils.INSTANCE.getAwareness(e.getSource().getEntity() instanceof LivingEntity seme ? seme : null, uke) != StealthUtils.Awareness.UNAWARE && CombatData.getCap(uke).consumeEvade()) {
-
                     e.setCanceled(true);
                     uke.level().playSound(null, uke.getX(), uke.getY(), uke.getZ(), SoundEvents.PLAYER_ATTACK_NODAMAGE, SoundSource.PLAYERS, 0.25f + WarDance.rand.nextFloat() * 0.5f, 0.75f + WarDance.rand.nextFloat() * 0.5f);
                     //otherwise the rest of the damage goes through and is handled later down the line anyway
                 } else if (e.getSource() instanceof CombatDamageSource cds && cds.getPostureDamage() > 0) {
+                    //not saved
                     CombatData.getCap(e.getEntity()).consumePosture(cds.getEntity() instanceof LivingEntity elb ? elb : null, cds.getPostureDamage());
                 }
             }

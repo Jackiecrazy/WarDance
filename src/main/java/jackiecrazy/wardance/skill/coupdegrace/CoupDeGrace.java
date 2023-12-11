@@ -82,21 +82,20 @@ public class CoupDeGrace extends Skill {
     public void onProc(LivingEntity caster, Event procPoint, STATE state, SkillData stats, LivingEntity target) {
         if (procPoint.getPhase() == EventPriority.HIGHEST && state == STATE.ACTIVE) {
             if (procPoint instanceof LivingHurtEvent e && e.getEntity() == target) {
-                if (CombatData.getCap(e.getEntity()).isExposed() && !CombatData.getCap(e.getEntity()).isStaggeringStrike()) {
-                    if (willKillOnCast(caster, target, stats))
-                        target.setHealth(1);
-                    if (e.getSource() instanceof CombatDamageSource cds) {
-                        cds.setDamageTyping(CombatDamageSource.TYPE.TRUE);
-                        cds.bypassMagic().bypassArmor();
-                    }
-                    deathCheck(caster, target, e.getAmount());
-                    markUsed(caster);
-                } else if (!CombatData.getCap(e.getEntity()).isExposed() && willKillOnCast(caster, target, stats)) {
+                if (!CombatData.getCap(e.getEntity()).isExposed() && willKillOnCast(caster, target, stats)) {
                     e.setCanceled(true);
                     CombatData.getCap(target).consumePosture(caster, e.getAmount());
                 }
             }
             if (procPoint instanceof ExposeAttackEvent e && e.getEntity() == target) {
+                if (willKillOnCast(caster, target, stats))
+                    target.setHealth(1);
+                if (e.getDamageSource() instanceof CombatDamageSource cds) {
+                    cds.setDamageTyping(CombatDamageSource.TYPE.TRUE);
+                    cds.bypassMagic().bypassArmor();
+                }
+                deathCheck(caster, target, e.getAmount());
+                markUsed(caster);
                 e.setAmount(getDamage(caster, target, stats));
             }
         } else if (procPoint instanceof SkillCastEvent && procPoint.getPhase() == EventPriority.HIGHEST && state == STATE.COOLING) {
@@ -112,6 +111,7 @@ public class CoupDeGrace extends Skill {
             if (procPoint instanceof LivingDropsEvent && ((LivingDropsEvent) procPoint).getEntity() == target) {
                 ItemStack drop = GeneralUtils.dropSkull(target);
                 if (drop == null) return;
+                //don't dupe skulls
                 for (ItemEntity i : ((LivingDropsEvent) procPoint).getDrops()) {
                     if (i.getItem().getItem() == drop.getItem() && (!(target instanceof Player) || i.getItem().getOrCreateTag().getString("SkullOwner").equalsIgnoreCase(drop.getTag().getString("SkullOwner"))))
                         return;

@@ -55,7 +55,7 @@ public class SkillUtils {
 
     public static void addAttribute(LivingEntity to, Attribute a, AttributeModifier am) {
         final AttributeInstance atr = to.getAttribute(a);
-        if (atr == null) return;
+        if (atr == null||atr.hasModifier(am)) return;
         atr.removeModifier(am.getId());
         atr.addPermanentModifier(am);
     }

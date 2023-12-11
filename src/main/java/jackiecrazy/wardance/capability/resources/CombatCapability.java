@@ -74,7 +74,7 @@ public class CombatCapability implements ICombatCapability {
     private int mBind, oBind;
     private int staggert, mstaggert, offhandcd, roll, expose, mexpose, sweepAngle = -1;
     private float mpos, mspi, mmight, mfrac;
-    private boolean offhand, combat, painful, knockdown;
+    private boolean offhand, combat, incomingPain, knockdown;
     private long lastUpdate;
     private boolean first = true, client, fractureDirty = true;
     private float cache;//no need to save this because it'll be used within the span of a tick
@@ -103,8 +103,8 @@ public class CombatCapability implements ICombatCapability {
 
     @Override
     public void updateDefenselessStatus() {
-        if (!painful) return;
-        painful = false;
+        if (!incomingPain) return;
+        incomingPain = false;
         knockdown = false;
         setPosture(getMaxPosture());
         LivingEntity e = dude.get();
@@ -294,13 +294,17 @@ public class CombatCapability implements ICombatCapability {
             ret = amount - above;
             amount = posture - above;
         } else if (posture - amount < 0) {
+            //stun related hijinks
+            if(consumeEvade()){
+                return 0;
+            }
             ret = posture - amount;
             if (addFracture(assailant, 1)) {
                 final boolean knockdown = elb.hasEffect(FootworkEffects.UNSTEADY.get());
                 StunEvent se = new StunEvent(elb, assailant, knockdown ? CombatConfig.knockdownDuration : CombatConfig.staggerDuration, knockdown);
                 MinecraftForge.EVENT_BUS.post(se);
                 if (se.isCanceled()) {
-                    posture = 0;
+                    posture = Math.max(0, posture);
                     return 0f;
                 }
                 elb.stopUsingItem();
@@ -370,7 +374,7 @@ public class CombatCapability implements ICombatCapability {
                 fly.removeModifier(WOUND);
                 fly.addPermanentModifier(STAGGER);
             }
-            painful = true;
+            incomingPain = true;
         }
         mstaggert = Math.max(mstaggert, time);
         staggert = time;
@@ -404,7 +408,7 @@ public class CombatCapability implements ICombatCapability {
                 fly.removeModifier(WOUND);
                 fly.addPermanentModifier(EXPOSEA);
             }
-            painful = true;
+            incomingPain = true;
         }
         mstaggert = Math.max(mstaggert, time);
         staggert = time;
@@ -412,7 +416,7 @@ public class CombatCapability implements ICombatCapability {
 
     @Override
     public boolean isStunned() {
-        return getStunTime() > 0 && painful;
+        return getStunTime() > 0 && incomingPain;
     }
 
     @Override
@@ -514,7 +518,7 @@ public class CombatCapability implements ICombatCapability {
             e.getAttribute(Attributes.ARMOR).addPermanentModifier(EXPOSEA);
             if (e instanceof Player)
                 e.addEffect(new MobEffectInstance(FootworkEffects.EXPOSED.get(), time, 0));
-            painful = true;
+            incomingPain = true;
         }
         mexpose = Math.max(mexpose, time);
         expose = time;
@@ -522,7 +526,7 @@ public class CombatCapability implements ICombatCapability {
 
     @Override
     public boolean isExposed() {
-        return getExposeTime() > 0 && painful;
+        return getExposeTime() > 0 && incomingPain;
     }
 
     @Override
@@ -918,7 +922,7 @@ public class CombatCapability implements ICombatCapability {
         c.putInt("offBind", oBind);
         c.putBoolean("offhand", isOffhandAttack());
         c.putBoolean("combat", isCombatMode());
-        c.putBoolean("painful", painful);
+        c.putBoolean("painful", incomingPain);
         c.putBoolean("knocked", knockdown);
         c.putLong("lastUpdate", lastUpdate);
         c.putBoolean("first", first);
@@ -942,9 +946,10 @@ public class CombatCapability implements ICombatCapability {
         mexpose = c.getInt("mexpose");
         mpos = c.getFloat("maxposture");
         mfrac = c.getFloat("maxfracture");
-        painful = c.getBoolean("painful");
+        incomingPain = c.getBoolean("painful");
         knockdown = c.getBoolean("knocked");
         setPosture(c.getFloat("posture"));
+        setEvade(c.getInt("shattercd"));
         if (c.contains("fractures")) {
             fractures.clear();
             CompoundTag t = (CompoundTag) c.get("fractures");
@@ -953,7 +958,6 @@ public class CombatCapability implements ICombatCapability {
             }
         }
         if (!c.contains("qi")) return;
-        setEvade(c.getInt("shattercd"));
         mspi = c.getFloat("maxspirit");
         mmight = c.getFloat("maxmight");
         setMight(c.getFloat("qi"));
@@ -1084,13 +1088,14 @@ public class CombatCapability implements ICombatCapability {
         c.putFloat("posture", getPosture());
         c.putInt("staggert", getStunTime());
         c.putInt("mstaggert", getMaxStunTime());
-        c.putBoolean("painful", painful);
+        c.putBoolean("painful", incomingPain);
         c.putInt("expose", getExposeTime());
         c.putInt("mexpose", getMaxExposeTime());
         c.putLong("lastUpdate", lastUpdate);
         c.putFloat("maxposture", getMaxPosture());
         c.putFloat("maxfracture", getMaxFracture());
         c.putBoolean("knocked", knockdown);
+        c.putInt("shattercd", getEvade());
         if (fractureDirty) {
             CompoundTag fractures = new CompoundTag();
             for (Map.Entry<UUID, Integer> e : getFractureList().entrySet()) {

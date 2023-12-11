@@ -16,28 +16,13 @@ import java.awt.*;
 public class SweepEvent extends LivingEvent {
     private final double oangle;
     private final double oscale;
-
-    public double getOriginalSweepLevel() {
-        return olevel;
-    }
-
-    public double getSweepLevel() {
-        return level;
-    }
-
-    public SweepEvent setSweepLevel(double level) {
-        this.level = level;
-        return this;
-    }
-
     private final double olevel;
     private final InteractionHand hand;
     private final ItemStack stack;
     private double a, b, level;
-    private Color color=Color.WHITE;
+    private Color color = Color.WHITE;
     private WeaponStats.SWEEPTYPE t;
     private WeaponStats.SWEEPSTATE state;
-
     public SweepEvent(LivingEntity entity, InteractionHand hand, ItemStack stack, WeaponStats.SWEEPTYPE type, double base, double scale) {
         super(entity);
         oangle = a = base;
@@ -47,6 +32,18 @@ public class SweepEvent extends LivingEvent {
         olevel = level = EnchantmentHelper.getEnchantmentLevel(Enchantments.SWEEPING_EDGE, this.getEntity());
         t = type;
         state = CombatUtils.getSweepState(entity);
+    }
+
+    public double getOriginalSweepLevel() {
+        return olevel;
+    }
+
+    public double getSweepLevel() {
+        return level;
+    }
+
+    public void setSweepLevel(double level) {
+        this.level = level;
     }
 
     public InteractionHand getHand() {

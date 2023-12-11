@@ -103,10 +103,12 @@ public class SkillSelectionScreen extends Screen {
         stylebases.sort(STYLESORT);
 
         this.unsortedSkills = Collections.unmodifiableList(this.bases);
-        this.unsortedStyles = Collections.unmodifiableList(this.bases);
+        this.unsortedStyles = Collections.unmodifiableList(this.stylebases);
     }
 
-    private static String stripControlCodes(String value) {return net.minecraft.util.StringUtil.stripColor(value);}
+    private static String stripControlCodes(String value) {
+        return net.minecraft.util.StringUtil.stripColor(value);
+    }
 
     private boolean selectable(SkillArchetype s) {
         for (Skill sub : Skill.variationMap.get(s))
@@ -253,13 +255,13 @@ public class SkillSelectionScreen extends Screen {
         //currently equipped skills
         List<Skill> oldList = skillCache == null ? cap.getEquippedSkills() : skillCache;
         for (int d = 0; d < skillPie.length; d++) {
-            skillPie[d] = new SkillSliceButton(this, width - SKILL_CIRCLE_WIDTH + noStyleOffset-PADDING, PADDING / 2, SKILL_CIRCLE_WIDTH, fixedU[d], fixedV[d], radial, d);
+            skillPie[d] = new SkillSliceButton(this, width - SKILL_CIRCLE_WIDTH + noStyleOffset - PADDING, PADDING / 2, SKILL_CIRCLE_WIDTH, fixedU[d], fixedV[d], radial, d);
             if (!noStyle)
                 skillPie[d].setSkill(oldList.get(d));
         }
 
         for (int d = 0; d < passives.length; d++) {
-            passives[d] = new PassiveButton(this, width - SKILL_CIRCLE_WIDTH + d * (31) + noStyleOffset-PADDING, PADDING + SKILL_CIRCLE_WIDTH, 23, d);
+            passives[d] = new PassiveButton(this, width - SKILL_CIRCLE_WIDTH + d * (31) + noStyleOffset - PADDING, PADDING + SKILL_CIRCLE_WIDTH, 23, d);
             if (!noStyle)
                 passives[d].setSkill(oldList.get(d + skillPie.length));
         }
@@ -415,7 +417,9 @@ public class SkillSelectionScreen extends Screen {
         if (style.getStyle() == null && selectedSkill == null) {
             this.skillInfo.clearInfo();
             List<String> lines = new ArrayList<>();
-            lines.add(Component.translatable("wardance.skills_style").getString() + "\n");
+            if (stylebases.isEmpty())// :(
+                lines.add(Component.translatable("wardance.skills_style_none").getString() + "\n");
+            else lines.add(Component.translatable("wardance.skills_style").getString() + "\n");
             skillInfo.setInfo(lines, null);
             return;
         }
@@ -500,7 +504,7 @@ public class SkillSelectionScreen extends Screen {
         @Override
         public int getContentHeight() {
             int height = 0;
-            height += (lines.size() * (font.lineHeight+2));
+            height += (lines.size() * (font.lineHeight + 2));
             if (height < this.bottom - this.top - 8) height = this.bottom - this.top - 8;
             return height;
         }
@@ -508,7 +512,7 @@ public class SkillSelectionScreen extends Screen {
         @Override
         protected void drawBackground(GuiGraphics matrix, Tesselator tess, float partialTick) {
             matrix.fill(this.left, this.top, this.right, this.bottom, 0xFFA0A0A0);
-            matrix.fill(left+1, top+1, right-1, bottom-1, 0xFF000000);
+            matrix.fill(left + 1, top + 1, right - 1, bottom - 1, 0xFF000000);
             //super.drawBackground(matrix, tess, partialTick);
         }
 
@@ -538,7 +542,7 @@ public class SkillSelectionScreen extends Screen {
 
         @Override
         protected int getScrollAmount() {
-            return (font.lineHeight+2) * 3;
+            return (font.lineHeight + 2) * 3;
         }
 
         @Override
@@ -556,7 +560,7 @@ public class SkillSelectionScreen extends Screen {
             super.render(matrix, mouseX, mouseY, partialTick);
 
             final Style component = findTextLine(mouseX, mouseY);
-            if (component!=null) {
+            if (component != null) {
                 matrix.renderComponentHoverEffect(font, component, mouseX, mouseY);
             }
         }
@@ -569,7 +573,7 @@ public class SkillSelectionScreen extends Screen {
             }
             if (offset <= 0 || xoff < 1) return null;
 
-            int lineIdx = (int) (offset / (font.lineHeight+2));
+            int lineIdx = (int) (offset / (font.lineHeight + 2));
             if (lineIdx >= lines.size() || lineIdx < 1)
                 return null;
 

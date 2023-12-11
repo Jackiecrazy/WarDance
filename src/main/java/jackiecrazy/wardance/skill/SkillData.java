@@ -1,15 +1,21 @@
 package jackiecrazy.wardance.skill;
 
-import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.ListTag;
+import net.minecraft.nbt.Tag;
+import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.level.Level;
 
 import javax.annotation.Nullable;
+import java.util.ArrayList;
 import java.util.UUID;
 
 public class SkillData {
     public static final SkillData DUMMY = new SkillData(WarSkills.VITAL_STRIKE.get(), 0);
     private final Skill s;
+    private final ArrayList<LivingEntity> targets = new ArrayList<>();
+    private static final ArrayList<LivingEntity> empty = new ArrayList<>();
+    private final ArrayList<UUID> targetIDs = new ArrayList<>();
     private float duration;
     private float max;
     private float var;
@@ -43,6 +49,15 @@ public class SkillData {
         ret.state = Skill.STATE.values()[from.getInt("state")];
         if (from.contains("caster"))
             ret.casterID = from.getUUID("caster");
+        if (from.contains("targets")) {
+            ListTag t = from.getList("targets", Tag.TAG_COMPOUND);
+            ret.targetIDs.clear();
+            for (Tag sub : t) {
+                if (sub instanceof CompoundTag ct) {
+                    ret.targetIDs.add(ct.getUUID("uid"));
+                }
+            }
+        }
         return ret;
     }
 
@@ -75,6 +90,20 @@ public class SkillData {
             caster = world.getPlayerByUUID(casterID);
         }
         return caster;
+    }
+
+    public ArrayList<LivingEntity> getTargets(Level world) {
+        return targets;
+    }
+
+    public void addTarget(LivingEntity target) {
+        targets.add(target);
+        targets.removeIf(a -> a.isDeadOrDying() || a.isRemoved() || a == caster);
+    }
+
+    public void removeTarget(LivingEntity target) {
+        targets.remove(target);
+        targets.removeIf(a -> a.isDeadOrDying() || a.isRemoved() || a == caster);
     }
 
     public SkillData setCaster(@Nullable LivingEntity caster) {
@@ -166,6 +195,13 @@ public class SkillData {
         to.putBoolean("condition", condition);
         if (casterID != null)
             to.putUUID("caster", casterID);
+        ListTag sub = new ListTag();
+        for (UUID target : targetIDs) {
+            CompoundTag ct = new CompoundTag();
+            ct.putUUID("uid", target);
+            sub.add(ct);
+        }
+        to.put("targets", sub);
         return to;
     }
 

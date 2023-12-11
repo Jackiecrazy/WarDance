@@ -49,7 +49,7 @@ public class Hex extends Skill {
             e.setCanceled(true);
             final LivingEntity caster = a.getCaster(entity.level());
             if (caster != null)
-                entity.hurt(new CombatDamageSource(caster).setDamageTyping(CombatDamageSource.TYPE.MAGICAL).setProcSkillEffects(true).setSkillUsed(WarSkills.GANGRENE.get()).bypassArmor().setProxy(entity), e.getAmount()/2);
+                entity.hurt(new CombatDamageSource(caster).setDamageTyping(CombatDamageSource.TYPE.MAGICAL).setProcSkillEffects(true).setSkillUsed(WarSkills.GANGRENE.get()).bypassArmor().setProxy(entity), e.getAmount()*2);
         });
     }
 

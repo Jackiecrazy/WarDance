@@ -380,7 +380,7 @@ public class ResourceDisplay implements IGuiOverlay {
                 } else {
                     //filled up, start animation frames
                     if (lcurrentEvasion != (float) evasionPerc && (evasionPerc == 1 || evasionPerc < lcurrentEvasion)) {
-                        lnewDarkAnimFrames = (int) (2000 * (evasionPerc - 0.5));
+                        lnewDarkAnimFrames = (int) (56 * (evasionPerc - 0.5));
                     }
                     lcurrentEvasion = (float) evasionPerc;
                     statusV = 107;

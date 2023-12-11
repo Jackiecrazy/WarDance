@@ -10,6 +10,8 @@ import jackiecrazy.wardance.capability.skill.ISkillCapability;
 import jackiecrazy.wardance.capability.skill.SkillCapability;
 import jackiecrazy.wardance.capability.status.Mark;
 import jackiecrazy.wardance.capability.status.Marks;
+import jackiecrazy.wardance.compat.ElenaiCompat;
+import jackiecrazy.wardance.compat.WarCompat;
 import jackiecrazy.wardance.config.TwohandingStats;
 import jackiecrazy.wardance.config.WeaponStats;
 import jackiecrazy.wardance.entity.ai.ExposeGoal;
@@ -132,6 +134,9 @@ public class EntityHandler {
                 return;
             } else CombatData.getCap(e.player).serverTick();
             CasterData.getCap(e.player).update();
+            if(WarCompat.elenaiDodge){
+                ElenaiCompat.syncIFrames(e.player);
+            }
         }
     }
 

@@ -32,8 +32,9 @@ public class BoulderBrace extends WarCry {
         //TODO doesn't do fist crits?????
         final ICombatCapability cap = CombatData.getCap(caster);
         if (procPoint instanceof StunEvent se && procPoint.getPhase() == EventPriority.HIGHEST) {
-            if (se.getEntity() == caster && cap.consumeMight(1 / SkillUtils.getSkillEffectiveness(caster)))
+            if (se.getEntity() == caster && cap.consumeMight(1 / SkillUtils.getSkillEffectiveness(caster))) {
                 se.setCanceled(true);
+            }
         }
         if (procPoint instanceof ParryEvent pe && procPoint.getPhase() == EventPriority.HIGHEST && pe.getDamageSource() instanceof CombatDamageSource cds && cds.isCrit()) {
             pe.setPostureConsumption(pe.getPostureConsumption() + (cap.getPosture() * SkillUtils.getSkillEffectiveness(caster) * cds.getCritDamage() / 2));
