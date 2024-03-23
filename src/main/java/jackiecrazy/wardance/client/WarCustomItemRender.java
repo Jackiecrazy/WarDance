@@ -35,30 +35,34 @@ public class WarCustomItemRender extends BlockEntityWithoutLevelRenderer {
 
     @Override
     public void renderByItem(ItemStack stack, ItemDisplayContext p_270899_, PoseStack pose, MultiBufferSource bufferSource, int light, int overlay) {
-        if (!stack.isEmpty() && stack.is(WarItems.DUMMY.get())) {
-            pose.pushPose();
-            ResourceLocation loc;
-            TextureAtlasSprite tas;
-            Color col;
-            if(stack.getOrCreateTag().contains("style")){
-                loc=new ResourceLocation(WarDance.MODID, "skill/categories/"+stack.getOrCreateTag().getString("style"));
-                col = SkillCategory.fromString(stack.getOrCreateTag().getString("style")).getColor();
+        if (!stack.isEmpty()) {
+            if(stack.is(WarItems.DUMMY.get())) {
+                pose.pushPose();
+                ResourceLocation loc;
+                TextureAtlasSprite tas;
+                Color col;
+                if (stack.getOrCreateTag().contains("style")) {
+                    loc = new ResourceLocation(WarDance.MODID, "skill/categories/" + stack.getOrCreateTag().getString("style"));
+                    col = SkillCategory.fromString(stack.getOrCreateTag().getString("style")).getColor();
+                } else {
+                    loc = new ResourceLocation(DummyItem.getSkill(stack).icon().toString().replace("textures/", "").replace(".png", ""));
+                    col = DummyItem.getSkill(stack).getColor();
+                }
+                tas = Minecraft.getInstance().getTextureAtlas(TextureAtlas.LOCATION_BLOCKS).apply(loc);
+                VertexConsumer consumer = bufferSource.getBuffer(Sheets.translucentItemSheet());
+                final float u0 = tas.getU0();
+                final float u1 = tas.getU1();
+                final float v1 = tas.getV0();
+                final float v0 = tas.getV1();
+                consumer.vertex(pose.last().pose(), 0, 1, 0).color(col.getRed(), col.getGreen(), col.getBlue(), col.getAlpha()).uv(u0, v1).overlayCoords(OverlayTexture.NO_OVERLAY).uv2(LightTexture.FULL_BRIGHT).normal(pose.last().normal(), 0, 0, 1).endVertex();
+                consumer.vertex(pose.last().pose(), 0, 0, 0).color(col.getRed(), col.getGreen(), col.getBlue(), col.getAlpha()).uv(u0, v0).overlayCoords(OverlayTexture.NO_OVERLAY).uv2(LightTexture.FULL_BRIGHT).normal(pose.last().normal(), 0, 0, 1).endVertex();
+                consumer.vertex(pose.last().pose(), 1, 0, 0).color(col.getRed(), col.getGreen(), col.getBlue(), col.getAlpha()).uv(u1, v0).overlayCoords(OverlayTexture.NO_OVERLAY).uv2(LightTexture.FULL_BRIGHT).normal(pose.last().normal(), 0, 0, 1).endVertex();
+                consumer.vertex(pose.last().pose(), 1, 1, 0).color(col.getRed(), col.getGreen(), col.getBlue(), col.getAlpha()).uv(u1, v1).overlayCoords(OverlayTexture.NO_OVERLAY).uv2(LightTexture.FULL_BRIGHT).normal(pose.last().normal(), 0, 0, 1).endVertex();
+                pose.popPose();
             }
-            else {
-                loc = new ResourceLocation(DummyItem.getSkill(stack).icon().toString().replace("textures/", "").replace(".png", ""));
-                col = DummyItem.getSkill(stack).getColor();
-            }
-            tas = Minecraft.getInstance().getTextureAtlas(TextureAtlas.LOCATION_BLOCKS).apply(loc);
-            VertexConsumer consumer = bufferSource.getBuffer(Sheets.translucentItemSheet());
-            final float u0 = tas.getU0();
-            final float u1 = tas.getU1();
-            final float v1 = tas.getV0();
-            final float v0 = tas.getV1();
-            consumer.vertex(pose.last().pose(), 0, 1, 0).color(col.getRed(), col.getGreen(), col.getBlue(), col.getAlpha()).uv(u0, v1).overlayCoords(OverlayTexture.NO_OVERLAY).uv2(LightTexture.FULL_BRIGHT).normal(pose.last().normal(), 0, 0, 1).endVertex();
-            consumer.vertex(pose.last().pose(), 0, 0, 0).color(col.getRed(), col.getGreen(), col.getBlue(), col.getAlpha()).uv(u0, v0).overlayCoords(OverlayTexture.NO_OVERLAY).uv2(LightTexture.FULL_BRIGHT).normal(pose.last().normal(), 0, 0, 1).endVertex();
-            consumer.vertex(pose.last().pose(), 1, 0, 0).color(col.getRed(), col.getGreen(), col.getBlue(), col.getAlpha()).uv(u1, v0).overlayCoords(OverlayTexture.NO_OVERLAY).uv2(LightTexture.FULL_BRIGHT).normal(pose.last().normal(), 0, 0, 1).endVertex();
-            consumer.vertex(pose.last().pose(), 1, 1, 0).color(col.getRed(), col.getGreen(), col.getBlue(), col.getAlpha()).uv(u1, v1).overlayCoords(OverlayTexture.NO_OVERLAY).uv2(LightTexture.FULL_BRIGHT).normal(pose.last().normal(), 0, 0, 1).endVertex();
-            pose.popPose();
+//            if(stack.is(WarItems.SCROLL.get())){
+//                //render the base scroll, but also layer the available skills on top
+//            }
         }
     }
 

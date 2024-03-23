@@ -52,6 +52,7 @@ apathy: your max spirit is 4, your spirit instantly refills after cooldown, you 
             if (LuckUtils.luckRoll(caster, stats.getArbitraryFloat())) {
                 sre.setSpirit(0);
                 stats.setArbitraryFloat(0);
+                stats.markDirty();
             }
         }
     }

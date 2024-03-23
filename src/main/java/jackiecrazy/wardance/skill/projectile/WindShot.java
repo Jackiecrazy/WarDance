@@ -33,10 +33,10 @@ public class WindShot extends Skill {
     //shooting an arrow will consume evasion to give it 3 levels of piercing and pull all enemies in a 4 block radius towards point of impact
     @SubscribeEvent(priority = EventPriority.HIGHEST)
     public static void wind(ProjectileImpactEvent e) {
-        if (e.getProjectile().getOwner() instanceof LivingEntity shooter && CasterData.getCap(shooter).isSkillEquipped(WarSkills.WIND_SHOT.get()) && CombatData.getCap(shooter).consumeEvade()) {
+        if (e.getProjectile().getOwner() instanceof LivingEntity shooter && CasterData.getCap(shooter).getSkillState(WarSkills.WIND_SHOT.get()) == STATE.HOLSTERED && CombatData.getCap(shooter).consumeEvade()) {
             if (e.getProjectile() instanceof Arrow arrow) arrow.setPierceLevel((byte) (arrow.getPierceLevel() + 3));
             ParticleUtils.playSweepParticle(FootworkParticles.CIRCLE.get(), shooter, e.getProjectile().position(), 0, 4, Color.CYAN, 0.1);
-            int radius =4;
+            int radius = 4;
 
             List<LivingEntity> list = shooter.level().getEntitiesOfClass(LivingEntity.class, AABB.unitCubeFromLowerCorner(e.getProjectile().position()).inflate(radius));
 
@@ -53,8 +53,11 @@ public class WindShot extends Skill {
 
     @Override
     public boolean onStateChange(LivingEntity caster, SkillData prev, STATE from, STATE to) {
-        prev.setState(STATE.INACTIVE);
-        return false;
+        if (to == STATE.COOLING) {
+            prev.setState(STATE.INACTIVE);
+            return true;
+        }
+        return boundCast(prev, from, to);
     }
 
     @Override

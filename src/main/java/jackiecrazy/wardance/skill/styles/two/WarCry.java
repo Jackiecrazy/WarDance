@@ -26,7 +26,7 @@ public class WarCry extends SkillStyle {
 
     @Override
     public float mightConsumption(LivingEntity caster) {
-        return 2;
+        return 0;
     }
 
     @Nonnull

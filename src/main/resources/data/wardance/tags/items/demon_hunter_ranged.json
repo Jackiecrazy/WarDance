@@ -52,10 +52,6 @@
     {
       "id": "#wardance:chakram",
       "required": false
-    },
-    {
-      "id": "#wardance:dagger",
-      "required": false
     }
   ]
 }

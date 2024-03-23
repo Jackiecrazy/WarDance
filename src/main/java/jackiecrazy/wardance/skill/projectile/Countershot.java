@@ -8,6 +8,8 @@ import jackiecrazy.wardance.skill.Skill;
 import jackiecrazy.wardance.skill.SkillData;
 import jackiecrazy.wardance.skill.WarSkills;
 import jackiecrazy.wardance.utils.MovementUtils;
+import net.minecraft.sounds.SoundEvents;
+import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.LivingEntity;
@@ -32,18 +34,27 @@ public class Countershot extends Skill {
 
     @Override
     public boolean onStateChange(LivingEntity caster, SkillData prev, STATE from, STATE to) {
-        if (to == STATE.COOLING)
+        if (to == STATE.ACTIVE) {
+            prev.setState(STATE.ACTIVE);
+            return true;
+        }
+        if (to == STATE.COOLING) {
             prev.setState(STATE.INACTIVE);
+            return true;
+        }
         return passive(prev, from, to);
     }
 
     @Override
     public void onProc(LivingEntity caster, Event procPoint, STATE state, SkillData stats, @Nullable LivingEntity target) {
-        if (procPoint instanceof LivingAttackEvent lae && lae.getPhase() == EventPriority.HIGHEST && lae.getEntity() == caster) {
-            if (MovementUtils.hasInvFrames(caster))
-                cast(caster, 3);
+        if (procPoint instanceof LivingAttackEvent lae && !caster.level().isClientSide() && lae.getPhase() == EventPriority.HIGHEST && lae.getEntity() == caster) {
+            if (MovementUtils.hasInvFrames(caster)) {
+                if (stats.getState() != STATE.ACTIVE)
+                    caster.level().playSound(null, caster.getX(), caster.getY(), caster.getZ(), SoundEvents.PLAYER_ATTACK_NODAMAGE, SoundSource.PLAYERS, 0.25f + WarDance.rand.nextFloat() * 0.5f, 0.75f + WarDance.rand.nextFloat() * 0.5f);
+                activate(caster, 3);
+            }
         }
-        if (state==STATE.ACTIVE && procPoint instanceof LivingEntityUseItemEvent.Tick e && e.getPhase() == EventPriority.HIGHEST) {
+        if (state == STATE.ACTIVE && procPoint instanceof LivingEntityUseItemEvent.Tick e && e.getPhase() == EventPriority.HIGHEST) {
             e.setDuration(e.getDuration() - 1);
         }
     }

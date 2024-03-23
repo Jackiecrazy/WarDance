@@ -978,9 +978,9 @@ public class CombatCapability implements ICombatCapability {
         parrying = c.getInt("parrying");
         setTempItemStack(ItemStack.of(c.getCompound("temp")));
         if (dude.get() instanceof Player p) {
-            if (getRollTime() > CombatConfig.rollEndsAt && c.getBoolean("rolling"))
+            if (c.getBoolean("rolling"))
                 p.setForcedPose(Pose.SLEEPING);
-            else if (temp == (CombatConfig.rollEndsAt))
+            else if (temp == 0)
                 p.setForcedPose(null);
         }
     }

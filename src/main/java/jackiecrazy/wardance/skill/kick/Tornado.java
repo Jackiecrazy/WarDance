@@ -24,7 +24,7 @@ public class Tornado extends Kick {
     public boolean onStateChange(LivingEntity caster, SkillData prev, STATE from, STATE to) {
         if (from == STATE.HOLSTERED && to == STATE.ACTIVE && cast(caster)) {
             int counter = 0;
-            for (Entity t : caster.level().getEntities(caster, caster.getBoundingBox().inflate(caster.getAttributeValue(ForgeMod.ENTITY_REACH.get())), (a -> !TargetingUtils.isAlly(a, caster))))
+            for (Entity t : caster.level().getEntities(caster, caster.getBoundingBox().inflate(3), (a -> !TargetingUtils.isAlly(a, caster))))
                 if (t instanceof LivingEntity) {
                     counter++;
                     LivingEntity target = (LivingEntity) t;

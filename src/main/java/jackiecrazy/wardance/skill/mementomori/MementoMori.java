@@ -1,14 +1,18 @@
 package jackiecrazy.wardance.skill.mementomori;
 
 import jackiecrazy.footwork.api.CombatDamageSource;
+import jackiecrazy.footwork.capability.resources.CombatData;
 import jackiecrazy.footwork.potion.FootworkEffects;
 import jackiecrazy.footwork.utils.EffectUtils;
 import jackiecrazy.footwork.utils.GeneralUtils;
 import jackiecrazy.footwork.utils.TargetingUtils;
+import jackiecrazy.wardance.WarDance;
 import jackiecrazy.wardance.skill.*;
 import jackiecrazy.wardance.utils.CombatUtils;
 import jackiecrazy.wardance.utils.DamageUtils;
 import jackiecrazy.wardance.utils.SkillUtils;
+import net.minecraft.sounds.SoundEvents;
+import net.minecraft.sounds.SoundSource;
 import net.minecraft.tags.DamageTypeTags;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.entity.LivingEntity;
@@ -100,6 +104,56 @@ pound of flesh: active skill. Consumes all your spirit, and until your spirit re
         //You can accumulate up to (max health/5) charge.
 
         @Override
+        public HashSet<String> getTags() {
+            return none;
+        }
+
+        @Override
+        public boolean equippedTick(LivingEntity caster, SkillData d) {
+            if (d.getState() == STATE.ACTIVE) {
+                if (CombatData.getCap(caster).getSpirit() == CombatData.getCap(caster).getMaxSpirit())
+                    markUsed(caster);
+                return activeTick(d);
+            }
+            return super.equippedTick(caster, d);
+        }
+
+        @Override
+        public boolean displaysInactive(LivingEntity caster, SkillData stats) {
+            return true;
+        }
+
+        @Override
+        public CastStatus castingCheck(LivingEntity caster, SkillData sd) {
+            if(sd.getArbitraryFloat()<1)return CastStatus.OTHER;
+            return super.castingCheck(caster, sd);
+        }
+
+        @Override
+        public boolean onStateChange(LivingEntity caster, SkillData prev, STATE from, STATE to) {
+            if (to == STATE.COOLING) {
+                prev.setState(STATE.INACTIVE);
+                prev.setDuration(0);
+            }
+            if (to == STATE.HOLSTERED) {
+                float stat = prev.getArbitraryFloat();
+                if (stat > 1 && cast(caster)) {
+                    caster.level().playSound(null, caster.getX(), caster.getY(), caster.getZ(), SoundEvents.LIGHTNING_BOLT_THUNDER, SoundSource.PLAYERS, 0.25f + WarDance.rand.nextFloat() * 0.5f, 0.75f + WarDance.rand.nextFloat() * 0.5f);
+                    //EXPLOOOOSION
+                    if (stat >= caster.getMaxHealth())
+                        completeChallenge(caster);
+                    for (LivingEntity e : caster.level().getEntitiesOfClass(LivingEntity.class, caster.getBoundingBox().inflate(5*prev.getEffectiveness()))) {
+                        if (TargetingUtils.isHostile(e, caster)) {
+                            e.hurt(new CombatDamageSource(caster).setDamageTyping(CombatDamageSource.TYPE.MAGICAL).setProcSkillEffects(true).setKnockbackPercentage(stat/4).setAttackingHand(null).setSkillUsed(this).flag(DamageTypeTags.IS_LIGHTNING), stat *prev.getEffectiveness());
+                        }
+                    }
+                    prev.setArbitraryFloat(0);
+                }
+            }
+            return instantCast(prev, from, to);
+        }
+
+        @Override
         public void onProc(LivingEntity caster, Event procPoint, STATE state, SkillData stats, LivingEntity target) {
             if (procPoint instanceof final LivingHealEvent lhe && procPoint.getPhase() == EventPriority.HIGHEST && lhe.getEntity() == caster) {
                 lhe.setAmount(Math.min(lhe.getAmount(), caster.getMaxHealth() - caster.getHealth()));
@@ -107,21 +161,7 @@ pound of flesh: active skill. Consumes all your spirit, and until your spirit re
                 stat += lhe.getAmount();
                 stat = Math.min(stat, GeneralUtils.getMaxHealthBeforeWounding(caster));
                 stats.setArbitraryFloat(stat);
-            }
-            if (procPoint instanceof LivingAttackEvent && procPoint.getPhase() == EventPriority.HIGHEST && DamageUtils.isMeleeAttack(((LivingAttackEvent) procPoint).getSource()) && ((LivingAttackEvent) procPoint).getEntity() == target) {
-                float stat = stats.getArbitraryFloat();
-                if (stat > 1) {
-                    //EXPLOOOOSION
-                    if(stat==caster.getMaxHealth())
-                        completeChallenge(caster);
-                    for (LivingEntity e : caster.level().getEntitiesOfClass(LivingEntity.class, caster.getBoundingBox().inflate(5))) {
-                        if (TargetingUtils.isHostile(e, caster)) {
-                            e.hurt(new CombatDamageSource(caster).setDamageTyping(CombatDamageSource.TYPE.MAGICAL).setProcSkillEffects(true).setKnockbackPercentage(0).setAttackingHand(null).setSkillUsed(this).flag(DamageTypeTags.IS_LIGHTNING), stat * SkillUtils.getSkillEffectiveness(caster));
-                            CombatUtils.knockBack(e, caster, stat / 4, true, false);
-                        }
-                    }
-                    stats.setArbitraryFloat(0);
-                }
+                stats.markDirty();
             }
         }
     }

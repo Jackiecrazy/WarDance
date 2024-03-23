@@ -218,7 +218,7 @@ public class MovementUtils {
         if (e.isCanceled()) return false;
         Vec3 v = elb.getLookAngle().subtract(0, elb.getLookAngle().y, 0).normalize().scale(e.getForce());
         itsc.consumePosture(0);
-        itsc.setRollTime(CombatConfig.rollCooldown);
+        itsc.setRollTime(-CombatConfig.rollCooldown);
         if (elb instanceof Player)
             ((Player) elb).setForcedPose(Pose.SLEEPING);
         elb.setSprinting(false);
