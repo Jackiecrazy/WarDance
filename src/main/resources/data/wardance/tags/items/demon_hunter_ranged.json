@@ -1,0 +1,61 @@
+{
+  "replace": false,
+  "values": [
+    {
+      "id": "minecraft:bow",
+      "required": false
+    },
+    {
+      "id": "minecraft:crossbow",
+      "required": false
+    },
+    {
+      "id": "minecraft:trident",
+      "required": false
+    },
+    {
+      "id": "#forge:weapons/bows",
+      "required": false
+    },
+    {
+      "id": "#forge:weapons/crossbows",
+      "required": false
+    },
+    {
+      "id": "#wardance:crossbow",
+      "required": false
+    },
+    {
+      "id": "#wardance:bow",
+      "required": false
+    },
+    {
+      "id": "#wardance:longbow",
+      "required": false
+    },
+    {
+      "id": "#wardance:arbalest",
+      "required": false
+    },
+    {
+      "id": "#wardance:handgun",
+      "required": false
+    },
+    {
+      "id": "#wardance:launcher",
+      "required": false
+    },
+    {
+      "id": "#wardance:rifle",
+      "required": false
+    },
+    {
+      "id": "#wardance:chakram",
+      "required": false
+    },
+    {
+      "id": "#wardance:dagger",
+      "required": false
+    }
+  ]
+}

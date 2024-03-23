@@ -31,7 +31,7 @@ public class Survivor extends SkillStyle {
 
     @Override
     public boolean onStateChange(LivingEntity caster, SkillData prev, STATE from, STATE to) {
-        if (to == STATE.COOLING) {
+        if (from != STATE.INACTIVE && to == STATE.COOLING) {
             if (prev.getArbitraryFloat() >= 10) completeChallenge(caster);
             caster.setHealth(caster.getHealth() + (prev.getArbitraryFloat() * caster.getMaxHealth() * 0.1f));
             prev.setState(STATE.INACTIVE);

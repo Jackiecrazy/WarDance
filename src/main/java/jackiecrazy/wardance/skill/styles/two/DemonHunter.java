@@ -4,6 +4,7 @@ import jackiecrazy.footwork.capability.resources.CombatData;
 import jackiecrazy.wardance.WarDance;
 import jackiecrazy.wardance.capability.skill.CasterData;
 import jackiecrazy.wardance.capability.status.Marks;
+import jackiecrazy.wardance.config.WeaponStats;
 import jackiecrazy.wardance.event.SweepEvent;
 import jackiecrazy.wardance.skill.SkillColors;
 import jackiecrazy.wardance.skill.SkillData;
@@ -46,18 +47,6 @@ public class DemonHunter extends ColorRestrictionStyle {
     }
 
     @SubscribeEvent()
-    public static void slow(LivingEntityUseItemEvent e) {
-        //charge faster
-        if (e.getEntity() instanceof Player player && !player.level().isClientSide && !player.onGround()) {
-            if (!(e.getItem().getItem() instanceof ProjectileWeaponItem) && !(e.getItem().getItem() instanceof TridentItem))
-                return;
-            if (CasterData.getCap(player).getStyle() != WarSkills.DEMON_HUNTER.get()) return;
-            player.addEffect(new MobEffectInstance(MobEffects.SLOW_FALLING, 60, 0, true, false, false));
-            if (player.tickCount % 2 == 0) e.setDuration(e.getDuration() - 1);
-        }
-    }
-
-    @SubscribeEvent()
     public static void pain(ProjectileImpactEvent e) {
         if (e.getRayTraceResult().getType() == HitResult.Type.ENTITY && e.getRayTraceResult() instanceof EntityHitResult ehr && ehr.getEntity() instanceof LivingEntity uke) {
 
@@ -81,15 +70,23 @@ public class DemonHunter extends ColorRestrictionStyle {
                     CombatUtils.knockBack(caster, target, 1, true, true);
                     Vec3 vec = caster.getDeltaMovement();
                     caster.lerpMotion(vec.x, vec.y + 1, vec.z);
-                    if(SkillUtils.hasAttribute(caster, ForgeMod.ENTITY_REACH.get(), reach))
+                    if (SkillUtils.hasAttribute(caster, ForgeMod.ENTITY_REACH.get(), reach))
                         completeChallenge(caster);
                 }
             } else mark(caster, target, 3);
             SkillUtils.removeAttribute(caster, ForgeMod.ENTITY_REACH.get(), reach);
         }
-        if(procPoint instanceof SweepEvent se){
-            if (!caster.onGround()||caster.getAttribute(ForgeMod.ENTITY_REACH.get()).hasModifier(reach)) {
+        if (procPoint instanceof SweepEvent se) {
+            if (!caster.onGround() || caster.getAttribute(ForgeMod.ENTITY_REACH.get()).hasModifier(reach)) {
                 se.setColor(Color.CYAN);
+            }
+        }
+        if (procPoint instanceof LivingEntityUseItemEvent.Tick e && e.getPhase() == EventPriority.HIGHEST) {
+            if (!caster.level().isClientSide && !caster.onGround()) {
+                if (!e.getItem().is(WeaponStats.DEMON_HUNTER_CHARGE_RANGED))
+                    return;
+                caster.addEffect(new MobEffectInstance(MobEffects.SLOW_FALLING, 60, 0, true, false, false));
+                if (caster.tickCount % 2 == 0) e.setDuration(e.getDuration() - 1);
             }
         }
     }

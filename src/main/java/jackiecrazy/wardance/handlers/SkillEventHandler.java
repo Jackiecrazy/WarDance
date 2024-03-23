@@ -11,6 +11,8 @@ import jackiecrazy.wardance.skill.Skill;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.projectile.Projectile;
+import net.minecraft.world.phys.EntityHitResult;
+import net.minecraft.world.phys.HitResult;
 import net.minecraftforge.event.entity.ProjectileImpactEvent;
 import net.minecraftforge.event.entity.living.*;
 import net.minecraftforge.event.entity.player.CriticalHitEvent;
@@ -276,16 +278,33 @@ public class SkillEventHandler {
     public static void projectileImpact(ProjectileImpactEvent e) {
         if (e.getEntity().level().isClientSide) return;
         Projectile proj = e.getProjectile();
-        if (proj !=null) {
-            Entity shooter = proj.getOwner();
-            if (shooter instanceof LivingEntity) {
-                ISkillCapability isc = CasterData.getCap((LivingEntity) shooter);
-                for (Skill s : isc.getEquippedSkillsAndStyle()) {
-                    isc.getSkillData(s).ifPresent(d -> s.onProc((LivingEntity) shooter, e, d.getState(), d, null));
-                }
-            }
+        LivingEntity theShooter;
+        LivingEntity theTarget;
+
+        //effectively final grab
+        if (proj != null && proj.getOwner() instanceof LivingEntity shot) {
+            theShooter = shot;
+        } else {
+            theShooter = null;
+        }
+        if (e.getRayTraceResult() instanceof EntityHitResult ehr && ehr.getEntity() instanceof LivingEntity hit) {
+            theTarget = hit;
+        } else {
+            theTarget = null;
         }
 
+        if (theShooter != null) {
+            ISkillCapability isc = CasterData.getCap(theShooter);
+            for (Skill s : isc.getEquippedSkillsAndStyle()) {
+                isc.getSkillData(s).ifPresent(d -> s.onProc(theShooter, e, d.getState(), d, theTarget));
+            }
+        }
+        if (theTarget != null) {
+            ISkillCapability isc = CasterData.getCap(theTarget);
+            for (Skill s : isc.getEquippedSkillsAndStyle()) {
+                isc.getSkillData(s).ifPresent(d -> s.onProc(theTarget, e, d.getState(), d, theShooter));
+            }
+        }
     }
 
     @SubscribeEvent(priority = EventPriority.HIGHEST)
@@ -611,16 +630,33 @@ public class SkillEventHandler {
     public static void projectileImpacT(ProjectileImpactEvent e) {
         if (e.getEntity().level().isClientSide) return;
         Projectile proj = e.getProjectile();
-        if (proj !=null) {
-            Entity shooter = proj.getOwner();
-            if (shooter instanceof LivingEntity) {
-                ISkillCapability isc = CasterData.getCap((LivingEntity) shooter);
-                for (Skill s : isc.getEquippedSkillsAndStyle()) {
-                    isc.getSkillData(s).ifPresent(d -> s.onProc((LivingEntity) shooter, e, d.getState(), d, null));
-                }
-            }
+        LivingEntity theShooter;
+        LivingEntity theTarget;
+
+        //effectively final grab
+        if (proj != null && proj.getOwner() instanceof LivingEntity shot) {
+            theShooter = shot;
+        } else {
+            theShooter = null;
+        }
+        if (e.getRayTraceResult() instanceof EntityHitResult ehr && ehr.getEntity() instanceof LivingEntity hit) {
+            theTarget = hit;
+        } else {
+            theTarget = null;
         }
 
+        if (theShooter != null) {
+            ISkillCapability isc = CasterData.getCap(theShooter);
+            for (Skill s : isc.getEquippedSkillsAndStyle()) {
+                isc.getSkillData(s).ifPresent(d -> s.onProc(theShooter, e, d.getState(), d, theTarget));
+            }
+        }
+        if (theTarget != null) {
+            ISkillCapability isc = CasterData.getCap(theTarget);
+            for (Skill s : isc.getEquippedSkillsAndStyle()) {
+                isc.getSkillData(s).ifPresent(d -> s.onProc(theTarget, e, d.getState(), d, theShooter));
+            }
+        }
     }
 
     @SubscribeEvent(priority = EventPriority.LOWEST)
@@ -745,7 +781,7 @@ public class SkillEventHandler {
     @SubscribeEvent(priority = EventPriority.HIGHEST)
     public static void exp(FractureEvent e) {
         if (e.getEntity() == null || !e.getEntity().isEffectiveAi()) return;
-        ISkillCapability  isc = CasterData.getCap(e.getEntity());
+        ISkillCapability isc = CasterData.getCap(e.getEntity());
         for (Skill s : isc.getEquippedSkillsAndStyle()) {
             isc.getSkillData(s).ifPresent(d -> s.onProc(e.getEntity(), e, d.getState(), d, e.getAttacker()));
         }
@@ -759,7 +795,7 @@ public class SkillEventHandler {
     @SubscribeEvent(priority = EventPriority.LOWEST)
     public static void expe(FractureEvent e) {
         if (e.getEntity() == null || !e.getEntity().isEffectiveAi()) return;
-        ISkillCapability  isc = CasterData.getCap(e.getEntity());
+        ISkillCapability isc = CasterData.getCap(e.getEntity());
         for (Skill s : isc.getEquippedSkillsAndStyle()) {
             isc.getSkillData(s).ifPresent(d -> s.onProc(e.getEntity(), e, d.getState(), d, e.getAttacker()));
         }
@@ -812,6 +848,22 @@ public class SkillEventHandler {
 
     @SubscribeEvent(priority = EventPriority.LOWEST)
     public static void sweepe(SweepEvent e) {
+        ISkillCapability isc = CasterData.getCap(e.getEntity());
+        for (Skill s : isc.getEquippedSkillsAndStyle()) {
+            isc.getSkillData(s).ifPresent(d -> s.onProc(e.getEntity(), e, d.getState(), d, null));
+        }
+    }
+
+    @SubscribeEvent(priority = EventPriority.HIGHEST)
+    public static void use(LivingEntityUseItemEvent e) {
+        ISkillCapability isc = CasterData.getCap(e.getEntity());
+        for (Skill s : isc.getEquippedSkillsAndStyle()) {
+            isc.getSkillData(s).ifPresent(d -> s.onProc(e.getEntity(), e, d.getState(), d, null));
+        }
+    }
+
+    @SubscribeEvent(priority = EventPriority.LOWEST)
+    public static void uses(LivingEntityUseItemEvent e) {
         ISkillCapability isc = CasterData.getCap(e.getEntity());
         for (Skill s : isc.getEquippedSkillsAndStyle()) {
             isc.getSkillData(s).ifPresent(d -> s.onProc(e.getEntity(), e, d.getState(), d, null));

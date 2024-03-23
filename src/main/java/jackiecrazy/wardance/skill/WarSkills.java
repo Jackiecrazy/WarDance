@@ -27,6 +27,7 @@ import jackiecrazy.wardance.skill.misc.Berserk;
 import jackiecrazy.wardance.skill.misc.FatalCadence;
 import jackiecrazy.wardance.skill.misc.Lunge;
 import jackiecrazy.wardance.skill.misc.Pounce;
+import jackiecrazy.wardance.skill.projectile.Countershot;
 import jackiecrazy.wardance.skill.projectile.WindShot;
 import jackiecrazy.wardance.skill.regenspirit.*;
 import jackiecrazy.wardance.skill.shieldbash.Lockdown;
@@ -173,5 +174,6 @@ public class WarSkills {
     public static final RegistryObject<Skill> LUNGE = SKILLS.register("lunge", () -> new Lunge().setCategory(SkillColors.cyan));
     public static final RegistryObject<Skill> POUNCE = SKILLS.register("pounce", () -> new Pounce().setCategory(SkillColors.gray));
     public static final RegistryObject<Skill> WIND_SHOT = SKILLS.register("wind_shot", () -> new WindShot().setCategory(SkillColors.cyan));
+    public static final RegistryObject<Skill> COUNTERSHOT = SKILLS.register("countershot", () -> new Countershot().setCategory(SkillColors.cyan));
 
 }

@@ -532,6 +532,8 @@
   "wardance.pounce.desc": "{[Skill Type];AQUA,BOLD;wardance.skill.cast_type.desc}: Passive.\n\n {[Effects];GOLD,BOLD}\nAfter invulnerability frames end, attack all targets that you have touched while invulnerable with both hands.\nThis attack deals {50% less damage and knockback;RED}.",
   "wardance.wind_shot.name": "Wind Shot",
   "wardance.wind_shot.desc": "{[Skill Type];AQUA,BOLD;wardance.skill.cast_type.desc}: Passive.\n\n {[Effects];GOLD,BOLD}\nYour projectiles will, on impact, consume your evade to gain 3 levels of piercing and pull all targets in a 4 block radius toward the point of impact.",
+  "wardance.countershot.name": "Countershot",
+  "wardance.countershot.desc": "{[Skill Type];AQUA,BOLD;wardance.skill.cast_type.desc}: Passive.\n\n {[Effects];GOLD,BOLD}\nDodging through an attack doubles item charge speed for 3 seconds.",
   "archetype..desc": "",
   "wardance..name": "",
   "wardance..desc": "",

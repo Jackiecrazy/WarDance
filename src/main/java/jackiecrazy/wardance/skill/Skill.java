@@ -439,7 +439,6 @@ public abstract class Skill extends Move {
      * @return whether the skill was successfully cast
      */
     protected boolean activate(LivingEntity caster, float effectiveness, float duration, boolean flag, float something) {
-        //default implementation scales duration
         caster.level().playSound(null, caster, SoundEvents.FIRECHARGE_USE, SoundSource.AMBIENT, 0.3f + WarDance.rand.nextFloat(), 0.5f + WarDance.rand.nextFloat());
         CasterData.getCap(caster).getSkillData(this).ifPresent(a -> {
             a.setDuration(duration);
