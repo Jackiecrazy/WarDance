@@ -1,6 +1,8 @@
-package jackiecrazy.wardance.skill;
+package jackiecrazy.wardance.skill.misc;
 
 import jackiecrazy.wardance.event.SkillCastEvent;
+import jackiecrazy.wardance.skill.Skill;
+import jackiecrazy.wardance.skill.SkillData;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.entity.LivingEntity;

@@ -49,21 +49,24 @@ public class Timberfall extends WarCry {
     public void onProc(LivingEntity caster, Event procPoint, STATE state, SkillData stats, LivingEntity target) {
         if (procPoint.getPhase() != EventPriority.LOWEST) return;
         if (procPoint instanceof LivingAttackEvent lae && DamageUtils.isMeleeAttack(lae.getSource()) && state == STATE.ACTIVE && lae.getEntity() == target) {
+            //basic recursion check
+            stats.flagCondition(true);
             markUsed(caster);
-        } else if (procPoint instanceof ParryEvent cpe && state == STATE.ACTIVE && cpe.getEntity() == target) {
+        } else if (procPoint instanceof ParryEvent cpe && state == STATE.ACTIVE && stats.isCondition() && cpe.getEntity() == target) {
             cpe.setPostureConsumption(cpe.getPostureConsumption() * 1.4f * SkillUtils.getSkillEffectiveness(caster));
             if (caster.level() instanceof ServerLevel server)
                 server.sendParticles(new BlockParticleOption(ParticleTypes.BLOCK, Blocks.OAK_LOG.defaultBlockState()).setPos(target.blockPosition()), target.getX(), target.getY(), target.getZ(), (int) stats.getArbitraryFloat() * 20, target.getBbWidth(), target.getBbHeight() / 2, target.getBbWidth(), 0.5f);
-
         } else if (procPoint instanceof FractureEvent cpe && state == STATE.ACTIVE && cpe.getEntity() == target) {
             if (!cpe.isCanceled()) cpe.addAmount(1);
-        } else if (procPoint instanceof LivingHurtEvent cpe && DamageUtils.isMeleeAttack(cpe.getSource()) && state == STATE.ACTIVE && cpe.getEntity() == target) {
+        } else if (procPoint instanceof LivingHurtEvent cpe && stats.isCondition() && DamageUtils.isMeleeAttack(cpe.getSource()) && state == STATE.ACTIVE && cpe.getEntity() == target) {
             if (!cpe.isCanceled()) {
                 if (cpe.getSource() instanceof CombatDamageSource cds) {
                     cds.setProcSkillEffects(true);
                     cds.setSkillUsed(this);
                 }
                 cpe.setAmount(cpe.getAmount() * 1.4f * SkillUtils.getSkillEffectiveness(caster));
+                //basic recursion cancel
+                stats.flagCondition(false);
             }
         } else if (procPoint instanceof SkillCastEvent sce && sce.getSkill()!=this && state == STATE.INACTIVE && sce.getEntity() == caster) {
             cast(caster, 3);

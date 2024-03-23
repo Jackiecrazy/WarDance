@@ -1,8 +1,11 @@
-package jackiecrazy.wardance.skill;
+package jackiecrazy.wardance.skill.misc;
 
 import jackiecrazy.footwork.api.FootworkAttributes;
 import jackiecrazy.footwork.capability.resources.CombatData;
 import jackiecrazy.wardance.config.WeaponStats;
+import jackiecrazy.wardance.skill.Skill;
+import jackiecrazy.wardance.skill.SkillData;
+import jackiecrazy.wardance.skill.SkillTags;
 import jackiecrazy.wardance.utils.DamageUtils;
 import jackiecrazy.wardance.utils.SkillUtils;
 import net.minecraft.world.entity.LivingEntity;

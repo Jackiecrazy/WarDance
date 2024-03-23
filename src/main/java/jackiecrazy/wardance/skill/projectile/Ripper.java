@@ -17,7 +17,7 @@ import org.jetbrains.annotations.Nullable;
 import java.util.HashSet;
 
 public class Ripper extends CoupDeGrace {
-    //pounce, teleport slash, countershot, weapon throw, ripper, shell shock, bomb arrow and datura tip
+    //pounce, teleport slash, countershot, wind shot, weapon throw, ripper, shell shock, bomb arrow and datura tip
     //locust stones, pocket sand, bone toss, boulder dash, scavenger?
 
     @Override

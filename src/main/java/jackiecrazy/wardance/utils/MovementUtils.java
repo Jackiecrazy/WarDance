@@ -4,6 +4,7 @@ import jackiecrazy.footwork.capability.resources.CombatData;
 import jackiecrazy.footwork.capability.resources.ICombatCapability;
 import jackiecrazy.footwork.event.DodgeEvent;
 import jackiecrazy.footwork.utils.GeneralUtils;
+import jackiecrazy.footwork.utils.TargetingUtils;
 import jackiecrazy.wardance.compat.WarCompat;
 import jackiecrazy.wardance.config.CombatConfig;
 import net.minecraft.util.Mth;
@@ -11,8 +12,12 @@ import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.Pose;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.common.MinecraftForge;
+
+import java.util.List;
+import java.util.function.Predicate;
 
 public class MovementUtils {
 
@@ -146,26 +151,31 @@ public class MovementUtils {
 //        return cap.getRollCounter()<20+2*cap.getQi();
 //    }
 
-    //    /**
-//     * Checks the +x, -x, +y, -y, +z, -z, in that order
-//     *
-//     * @param elb
-//     * @return
-//     */
-//    public static Entity collidingEntity(Entity elb) {
-//        AABB aabb = elb.getEntityBoundingBox();
-//        List<Entity> entities = elb.world.getEntitiesInAABBexcluding(elb, aabb.expand(elb.motionX, elb.motionY * 6, elb.motionZ), VALID_TARGETS::test);
-//        double dist = 0;
-//        Entity pick = null;
-//        for (Entity e : entities) {
-//            if (e.getDistanceSq(elb) < dist || dist == 0) {
-//                pick = e;
-//                dist = e.getDistanceSq(elb);
-//            }
-//        }
-//        return pick;
-//    }
-//
+    /**
+     * Checks the +x, -x, +y, -y, +z, -z, in that order
+     *
+     * @param elb
+     * @return
+     */
+    public static Entity collidingEntity(Entity elb, Predicate<Entity> predicate) {
+        AABB aabb = elb.getBoundingBox();
+        Vec3 vec = elb.getDeltaMovement();
+        List<Entity> entities = elb.level().getEntities(elb, aabb.inflate(vec.x * 4, vec.y * 6, vec.z * 4), predicate);
+        double dist = 0;
+        Entity pick = null;
+        for (Entity e : entities) {
+            if (e.distanceToSqr(elb) < dist || dist == 0) {
+                pick = e;
+                dist = e.distanceToSqr(elb);
+            }
+        }
+        return pick;
+    }
+    public static Entity collidingEntity(Entity elb){
+        return collidingEntity(elb, Entity::isAlive);
+    }
+
+    //
 //    public static void kick(LivingEntity elb, LivingEntity uke) {
 //        if (elb.isRiding()) return;
 //        uke.attackEntityFrom(DamageSource.FALLING_BLOCK, 1);
@@ -254,7 +264,7 @@ public class MovementUtils {
                     d = DodgeEvent.Direction.BACK;
                     break;
                 case 2://right
-                    x = Mth.cos(GeneralUtils.rad(elb.getYRot() - 180 ));//-adjustment
+                    x = Mth.cos(GeneralUtils.rad(elb.getYRot() - 180));//-adjustment
                     z = Mth.sin(GeneralUtils.rad(elb.getYRot() - 180));
                     d = DodgeEvent.Direction.RIGHT;
                     break;
@@ -267,7 +277,7 @@ public class MovementUtils {
             DodgeEvent e = new DodgeEvent(elb, d, 1.2);
             MinecraftForge.EVENT_BUS.post(e);
             if (e.isCanceled()) return false;
-            if(d== DodgeEvent.Direction.FORWARD)e.setForce((float) (e.getForce()*1.5f));
+            if (d == DodgeEvent.Direction.FORWARD) e.setForce((float) (e.getForce() * 1.5f));
             x *= e.getForce();
             z *= e.getForce();
 

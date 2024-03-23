@@ -44,10 +44,6 @@ public class HeavyBlow extends Skill {
         return passive(prev, from, to);
     }
 
-    protected boolean isCrit(CriticalHitEvent c) {
-        return (c.getResult() == Event.Result.DEFAULT && c.isVanillaCritical()) || c.getResult() == Event.Result.ALLOW;
-    }
-
     protected void onCrit(CriticalHitEvent proc, SkillData stats, LivingEntity caster, LivingEntity target) {
         if (this == WarSkills.VITAL_STRIKE.get())
             proc.setDamageModifier(proc.getDamageModifier() * 1.5f * stats.getEffectiveness() * stats.getEffectiveness());

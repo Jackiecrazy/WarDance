@@ -8,14 +8,15 @@ import net.minecraft.world.level.Level;
 
 import javax.annotation.Nullable;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.UUID;
 
 public class SkillData {
     public static final SkillData DUMMY = new SkillData(WarSkills.VITAL_STRIKE.get(), 0);
     private final Skill s;
-    private final ArrayList<LivingEntity> targets = new ArrayList<>();
-    private static final ArrayList<LivingEntity> empty = new ArrayList<>();
-    private final ArrayList<UUID> targetIDs = new ArrayList<>();
+    private final HashSet<LivingEntity> targets = new HashSet<>();
+    private static final HashSet<LivingEntity> empty = new HashSet<>();
+    private final HashSet<UUID> targetIDs = new HashSet<>();
     private float duration;
     private float max;
     private float var;
@@ -92,7 +93,11 @@ public class SkillData {
         return caster;
     }
 
-    public ArrayList<LivingEntity> getTargets(Level world) {
+    public boolean isUsed() {
+        return duration < 0;
+    }
+
+    public HashSet<LivingEntity> getTargets() {
         return targets;
     }
 

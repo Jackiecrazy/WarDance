@@ -491,6 +491,7 @@ public class ResourceDisplay implements IGuiOverlay {
                     int x = Math.max(pair.getFirst(), 0);
                     int y = Math.min(pair.getSecond(), height - 5);
                     int fillHeight = (int) (currentMightLevel * 32 / cap.getMaxMight());
+                    //might bar
                     if (ClientConfig.CONFIG.mightBar.enabled) {
                         RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, 1.0F);
                         drawMightBar(stack, x, y, currentMightLevel, currentMightLevel == cap.getMaxMight());
@@ -718,10 +719,10 @@ public class ResourceDisplay implements IGuiOverlay {
         }
         if (maxed) {
             //gold covering
-            GuiComponent.blit(stack, might, x, y, -90, 0, 70, length, 5, 256, 256);
+            GuiComponent.blit(stack, might, x, y-1, -90, 0, 70, length, 5, 256, 256);
             //gold cap
             if (prog != (int) prog)
-                GuiComponent.blit(stack, might, x + i - 1, y, -90, 88, 70, 4, 5, 256, 256);
+                GuiComponent.blit(stack, might, x + i - 1, y-1, -90, 88, 70, 4, 5, 256, 256);
         }
 
     }

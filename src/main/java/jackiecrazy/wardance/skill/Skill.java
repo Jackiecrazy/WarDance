@@ -23,6 +23,7 @@ import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.entity.living.LivingAttackEvent;
+import net.minecraftforge.event.entity.player.CriticalHitEvent;
 import net.minecraftforge.eventbus.api.Event;
 import net.minecraftforge.eventbus.api.EventPriority;
 
@@ -515,6 +516,10 @@ public abstract class Skill extends Move {
 
     protected boolean hasSkill(LivingEntity caster) {
         return CasterData.getCap(caster).getSkillData(this).isPresent();
+    }
+
+    protected boolean isCrit(CriticalHitEvent c) {
+        return (c.getResult() == Event.Result.DEFAULT && c.isVanillaCritical()) || c.getResult() == Event.Result.ALLOW;
     }
 
     public enum CastStatus {

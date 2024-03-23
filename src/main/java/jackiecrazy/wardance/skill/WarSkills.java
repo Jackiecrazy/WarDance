@@ -23,6 +23,11 @@ import jackiecrazy.wardance.skill.ironguard.*;
 import jackiecrazy.wardance.skill.judgment.ViralDecay;
 import jackiecrazy.wardance.skill.kick.*;
 import jackiecrazy.wardance.skill.mementomori.*;
+import jackiecrazy.wardance.skill.misc.Berserk;
+import jackiecrazy.wardance.skill.misc.FatalCadence;
+import jackiecrazy.wardance.skill.misc.Lunge;
+import jackiecrazy.wardance.skill.misc.Pounce;
+import jackiecrazy.wardance.skill.projectile.WindShot;
 import jackiecrazy.wardance.skill.regenspirit.*;
 import jackiecrazy.wardance.skill.shieldbash.Lockdown;
 import jackiecrazy.wardance.skill.shieldbash.Overbear;
@@ -165,5 +170,8 @@ public class WarSkills {
     public static final RegistryObject<Skill> WATER_UPPERCUT = SKILLS.register("water_uppercut", () -> new WaterUppercut().setCategory(SkillColors.cyan));
     public static final RegistryObject<Skill> WOODEN_JAB = SKILLS.register("wooden_jab", () -> new WoodenJab().setCategory(SkillColors.azure));
     public static final RegistryObject<Skill> WRESTLE = SKILLS.register("wrestle", () -> new Wrestle().setCategory(SkillColors.azure).setChallenge());
+    public static final RegistryObject<Skill> LUNGE = SKILLS.register("lunge", () -> new Lunge().setCategory(SkillColors.cyan));
+    public static final RegistryObject<Skill> POUNCE = SKILLS.register("pounce", () -> new Pounce().setCategory(SkillColors.gray));
+    public static final RegistryObject<Skill> WIND_SHOT = SKILLS.register("wind_shot", () -> new WindShot().setCategory(SkillColors.cyan));
 
 }
