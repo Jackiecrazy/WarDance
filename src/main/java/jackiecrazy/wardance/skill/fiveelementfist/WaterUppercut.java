@@ -14,7 +14,7 @@ import org.jetbrains.annotations.Nullable;
 public class WaterUppercut extends FiveElementFist {
     @Override
     public void onProc(LivingEntity caster, Event procPoint, STATE state, SkillData stats, @Nullable LivingEntity target) {
-        if (procPoint instanceof EntityAwarenessEvent e && procPoint.getPhase() == EventPriority.HIGHEST && CombatUtils.isUnarmed(caster, InteractionHand.MAIN_HAND) && e.getAttacker() == caster) {
+        if (procPoint instanceof EntityAwarenessEvent.Attack e && procPoint.getPhase() == EventPriority.HIGHEST && CombatUtils.isUnarmed(caster, InteractionHand.MAIN_HAND) && e.getAttacker() == caster) {
             e.setAwareness(e.getOriginalAwareness() == StealthUtils.Awareness.ALERT ? StealthUtils.Awareness.DISTRACTED : StealthUtils.Awareness.UNAWARE);
         }
         if (procPoint instanceof LivingHurtEvent lhe && procPoint.getPhase() == EventPriority.HIGHEST && lhe.getEntity() != caster && CombatUtils.isUnarmed(caster, InteractionHand.MAIN_HAND)) {

@@ -44,8 +44,8 @@ apathy: your max spirit is 4, your spirit instantly refills after cooldown, you 
         if (procPoint instanceof ProjectileImpactEvent pie && procPoint.getPhase()== EventPriority.HIGHEST && pie.getProjectile().getOwner()==caster) {
             CombatData.getCap(caster).addSpirit(1);
             markUsed(caster, true);
-        } else if (procPoint instanceof EntityAwarenessEvent && ((EntityAwarenessEvent) procPoint).getAttacker() == caster && procPoint.getPhase() == EventPriority.HIGHEST) {
-            if (((EntityAwarenessEvent) procPoint).getAwareness() != StealthUtils.Awareness.ALERT) {
+        } else if (procPoint instanceof EntityAwarenessEvent.Attack eae && eae.getAttacker() == caster && procPoint.getPhase() == EventPriority.HIGHEST) {
+            if (eae.getAwareness() != StealthUtils.Awareness.ALERT) {
                 CombatData.getCap(caster).addSpirit(1);
                 markUsed(caster, true);
             }

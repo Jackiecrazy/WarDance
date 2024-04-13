@@ -48,7 +48,7 @@ public class PhantomDive extends Skill {
         if (procPoint instanceof LivingFallEvent) {
             stats.setArbitraryFloat((float) caster.getY());
         }
-        if (procPoint instanceof EntityAwarenessEvent e && e.getAttacker() == caster && state == STATE.ACTIVE) {
+        if (procPoint instanceof EntityAwarenessEvent.Attack e && e.getAttacker() == caster && state == STATE.ACTIVE) {
             StealthUtils.Awareness awareness = e.getAwareness();
             double posDiff = stats.getArbitraryFloat() - caster.getY();
             int length = 0;
