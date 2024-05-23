@@ -85,6 +85,11 @@ pound of flesh: active skill. Consumes all your spirit, and until your spirit re
         return caster.getHealth() != caster.getMaxHealth();
     }
 
+    @Override
+    protected boolean showArchetypeDescription() {
+        return false;
+    }
+
     public static class RapidClotting extends MementoMori {
 
         @Override

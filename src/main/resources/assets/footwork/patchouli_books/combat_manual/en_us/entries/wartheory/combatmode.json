@@ -10,12 +10,12 @@
 	  "footwork:textures/guide/pure_gui.png"
 	  ],
 	  "border": true,
-      "text": "The 3 main hud displays. $(#FF3333)Might$() $(o)(red orb), $()$(#33FFFF)Spirit $(o)(Blue orb) and $()Posture and status $(o)(bi-directional meter)$(br2)Pressing $(k:footwork.combat) activates and deactivates combat mode.",
+      "text": "The 3 main hud displays. $(#FF3333)Might$() $(o)(red orb), $()$(#33FFFF)Spirit $(o)(Blue orb) and $()Posture and status $(o)(bi-directional meter)$(br2)Pressing $(k:wardance.combat) activates and deactivates combat mode.",
 	  "title": "Combat Mode: Hud"
     },
     {
       "type": "patchouli:text",
-      "text": "To utilize a number of features $(o)(and also as precaution of accidental misfires of such mechanics)$() you must activate $(thing)\"Combat mode\"$(). Combat mode also allows you to see the three pictured resources constantly. $(br2)Outside of combat mode mechanics such as $(o)improved sweeping attacks, skill usage, offhand swinging and resource meter displays$() are suppressed. However Parrying and related posture mechanics will remain active (resources will also continue to restore or be contributed to as normal also despite being hidden).$(br2)"
+      "text": "To utilize a number of features $(o)(and also as precaution of accidental misfires of such mechanics)$() you must activate $(thing)\"Combat mode\"$(). Combat mode also allows you to see the three pictured resources constantly. $(br2)Outside of combat mode mechanics such as $(o)improved sweeping attacks, skill usage, offhand swinging and resource meter displays$() are suppressed. However Parrying and related posture mechanics will remain active (resources will also continue to regenerate or be consumed despite being hidden).$(br2)"
     }
   ]
 }

@@ -15,11 +15,11 @@
     },
     {
       "type": "patchouli:text",
-      "text": "To bring you combat to the next level, one should consider using $(thing)Skills$() during combat. Pressing $(thing)[$(k:wardance.selectSkill)]$() to get into the menu, pictured left.$(br2)A full \"build\" of skills constitutes $(thing)A style$()$(o)(bottom right square), $(thing)5 Active Skills$()$(o)(Top right segmented diamond shape), $(thing) and 5 passive skills$()$(o)(the squares underneath)$(). $(br2)In singleplayer this menu pauses the game, so take all the time you need to read through the skills and styles and test them. Your skills can be switched at any time, but changing skills will cause all equipped skills to enter cooldown."
+      "text": "To bring you combat to the next level, one should consider using $(thing)Skills$() during combat. Pressing $(thing)[$(k:footwork.trance)]$() and select \"Open the Skill Selection Screen\" to get into the menu, pictured left.$(br2)A full \"build\" of skills constitutes $(thing)A style$()$(o)(bottom right square), $(thing)5 Active Skills$()$(o)(Top right segmented diamond shape), $(thing) and 5 passive skills$()$(o)(the squares underneath)$(). $(br2)In singleplayer this menu pauses the game, so take all the time you need to read through the skills and styles and test them. Your skills can be switched at any time, but changing skills will cause all equipped skills to enter cooldown."
     },
     {
       "type": "patchouli:text",
-      "text": "The Skill GUI has some small tutorial when it is first opened and nothing is currently selected. It will cover things such as styles and their color limitations. $(br2)highlighted, boldened and italicized text often contains mouse-over tooltips related to repeating information, such cast types, skill effectiveness attribute scaling, or the effects of marks."
+      "text": "The Skill GUI has some small tutorial when it is first opened and nothing is currently selected. It will cover things such as styles and their color limitations. $(br2)highlighted, boldened and italicized text often contains mouse-over tooltips related to key information, such cast types, skill effectiveness attribute scaling, or the effects of marks."
     }
   ]
 }

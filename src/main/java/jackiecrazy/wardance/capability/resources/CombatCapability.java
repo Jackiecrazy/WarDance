@@ -31,6 +31,7 @@ import net.minecraft.world.entity.Pose;
 import net.minecraft.world.entity.ai.attributes.AttributeInstance;
 import net.minecraft.world.entity.ai.attributes.AttributeModifier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
+import net.minecraft.world.entity.monster.Skeleton;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.phys.Vec3;
@@ -268,8 +269,10 @@ public class CombatCapability implements ICombatCapability {
         float ret = 0;
         LivingEntity elb = dude.get();
         if (elb == null) return ret;
+        //necessary update before polling, TODO mirror onto other stats?
+        serverTick();
         //staggered already, no more posture damage
-        if (getStunTime() > 0 || getExposeTime() > 0 || posture == 0) return amount;
+        if (getStunTime() > 0 || getExposeTime() > 0 || posture <= 0) return amount;
         if (!Float.isFinite(posture)) posture = getMaxPosture();
         //resistance go brr
         if (elb.hasEffect(MobEffects.DAMAGE_RESISTANCE) && GeneralConfig.resistance)
@@ -286,25 +289,25 @@ public class CombatCapability implements ICombatCapability {
 //            ret = amount - getTrueMaxPosture() * CombatConfig.posCap;
 //            amount = getTrueMaxPosture() * CombatConfig.posCap;
 //        }
-        if (amount > getMaxPosture() / 2) {
-            elb.addEffect(new MobEffectInstance(FootworkEffects.UNSTEADY.get(), 40));
-        }
         if (above > 0 && posture - amount < above) {
             //posture floor, set and bypass stagger test
             ret = amount - above;
             amount = posture - above;
         } else if (posture - amount < 0) {
             //stun related hijinks
-            if(consumeEvade()){
+            if (consumeEvade()) {
                 return 0;
             }
             ret = posture - amount;
+            //I don't like this here but I don't see a good way around it
+            float prev = posture;
+            posture = 0;
             if (addFracture(assailant, 1)) {
                 final boolean knockdown = elb.hasEffect(FootworkEffects.UNSTEADY.get());
                 StunEvent se = new StunEvent(elb, assailant, knockdown ? CombatConfig.knockdownDuration : CombatConfig.staggerDuration, knockdown);
                 MinecraftForge.EVENT_BUS.post(se);
                 if (se.isCanceled()) {
-                    posture = Math.max(0, posture);
+                    posture = prev;
                     return 0f;
                 }
                 elb.stopUsingItem();
@@ -316,7 +319,8 @@ public class CombatCapability implements ICombatCapability {
                     CombatData.getCap(assailant).addRank(se.isKnockdown() ? 0.2f : 0.1f);
                 elb.level().playSound(null, elb.getX(), elb.getY(), elb.getZ(), SoundEvents.ZOMBIE_ATTACK_WOODEN_DOOR, SoundSource.PLAYERS, 0.3f + WarDance.rand.nextFloat() * 0.5f, 0.75f + WarDance.rand.nextFloat() * 0.5f);
             }
-            posture = 0;
+            //why was resetting posture set here?
+
 //            elb.stopRiding();
 //            for (Entity rider : elb.getPassengers())
 //                rider.stopRiding();
@@ -442,6 +446,10 @@ public class CombatCapability implements ICombatCapability {
         return fractures;
     }
 
+    /**
+     *
+     * @return false if fractures overflow
+     */
     @Override
     public boolean addFracture(@Nullable LivingEntity livingEntity, int i) {
         FractureEvent fe = new FractureEvent(dude.get(), i, livingEntity);
@@ -454,6 +462,7 @@ public class CombatCapability implements ICombatCapability {
             if (se.isCanceled()) return false;
             dude.get().stopUsingItem();
             expose(se.getLength());
+            sync();
             if (livingEntity != null)
                 CombatData.getCap(livingEntity).addRank(0.4f);
             clearFracture(null, false);
@@ -642,7 +651,7 @@ public class CombatCapability implements ICombatCapability {
             if (isVulnerable()) return 1;
             LivingEntity bro = dude.get();
             if (dude.get() != null) {
-                if (h == InteractionHand.OFF_HAND && (WeaponStats.isTwoHanded(bro.getOffhandItem(), bro, InteractionHand.OFF_HAND) || (WeaponStats.isTwoHanded(bro.getMainHandItem(), bro, InteractionHand.MAIN_HAND)&&WeaponStats.lookupStats(bro.getOffhandItem())!=null)))
+                if (h == InteractionHand.OFF_HAND && (WeaponStats.isTwoHanded(bro.getOffhandItem(), bro, InteractionHand.OFF_HAND) || (WeaponStats.isTwoHanded(bro.getMainHandItem(), bro, InteractionHand.MAIN_HAND) && WeaponStats.lookupStats(bro.getOffhandItem()) != null)))
                     return 1;
             }
         }
@@ -723,6 +732,8 @@ public class CombatCapability implements ICombatCapability {
         final int ticks = (int) (elb.level().getGameTime() - lastUpdate);
         if (ticks < 1) return;//sometimes time runs backwards
         //initialize posture and fracture
+        if(elb instanceof Skeleton && isExposed())
+            System.out.println("aaaaaaa");
 
         final boolean uninitializedPosture = elb.getAttribute(FootworkAttributes.MAX_POSTURE.get()).getBaseValue() == 0d;
         final boolean uninitializedFracture = elb.getAttribute(FootworkAttributes.MAX_FRACTURE.get()).getBaseValue() == 0d;

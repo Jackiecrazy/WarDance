@@ -54,7 +54,7 @@ public class FlameDance extends WarCry {
     public void onProc(LivingEntity caster, Event procPoint, STATE state, SkillData stats, LivingEntity target) {
         if (caster == target) return;
         if (procPoint instanceof LivingAttackEvent lae && (DamageUtils.isMeleeAttack(lae.getSource()) || DamageUtils.isSkillAttack(lae.getSource())) && !lae.getSource().is(DamageTypeTags.BYPASSES_ARMOR) && procPoint.getPhase() == EventPriority.HIGHEST && lae.getEntity() == target) {
-            mark(caster, target, 0.1f, 1);
+            mark(caster, target, 4, 1);
             //kaboom!
             if (CombatData.getCap(caster).getMight() == CombatData.getCap(caster).getMaxMight()) {
                 if (!DamageUtils.isSkillAttack(lae.getSource())) {
@@ -72,7 +72,7 @@ public class FlameDance extends WarCry {
                 }
             }
         } else if (procPoint instanceof SkillCastEvent sce && procPoint.getPhase() == EventPriority.HIGHEST && sce.getEntity() == caster) {
-            mark(caster, target, 0.1f, 1);
+            mark(caster, target, 4, 1);
         }
         super.onProc(caster, procPoint, state, stats, target);
     }
@@ -84,6 +84,11 @@ public class FlameDance extends WarCry {
             return activeTick(stats);
         }
         return super.equippedTick(caster, stats);
+    }
+
+    @Override
+    public boolean markTick(@Nullable LivingEntity caster, LivingEntity target, SkillData sd) {
+        return markTickDown(sd);
     }
 
     @Nullable

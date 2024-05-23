@@ -15,7 +15,7 @@
     },
     {
       "type": "patchouli:text",
-      "text": "In the case of a combatant being stunned by a posture damage hit equivalent to or more than half their maximum posture, a stun will be upgraded into a $(#CCCC00)$(l)knockdown$().$(br2)When knocked down, the movement debilitation is upgraded to a complete inability to move, and their hands are bound as usual.$(br2)"
+      "text": "In the case of a combatant being stunned when having the Unsteady effect, a stun will be upgraded into a $(#CCCC00)$(l)knockdown$().$(br2)When knocked down, the movement debilitation is upgraded to a complete inability to move, and their hands are bound as usual.$(br2)"
     },
     {
       "type": "patchouli:text",
@@ -31,7 +31,7 @@
     },
     {
       "type": "patchouli:text",
-      "text": "Similarly to a stun, a knocked down mob is completely disabled and should typically have their ai shut off until it gets back up or its knockdown state is removed on hit.$(br2)Knockdowns are also quite common when taking large amounts of fall damage.$(br2)Knockdowns, being an upgraded stun, are also represented by the trio of stars on the posture widget."
+      "text": "Similarly to a stun, a knocked down mob is completely disabled and should typically have their AI shut off until it gets back up or its knockdown state is removed on hit.$(br2)Knockdowns are also quite common when taking large amounts of fall damage.$(br2)Knockdowns, being an upgraded stun, are also represented by the trio of stars on the posture widget."
     }
   ]
 }

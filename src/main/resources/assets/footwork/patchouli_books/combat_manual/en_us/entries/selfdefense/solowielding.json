@@ -15,11 +15,11 @@
     },
     {
       "type": "patchouli:text",
-      "text": "$(br2)Most weapons come with a \"two-handing bonus\", which is engaged when a weapon is wielded without an active shield in your offhand. Some large weapons, particularly modded weapons, may be considered two-handed.$(br)Two-handed weapons $(thing)$(l:footwork:selfdefense/binding)bind$() your offhand if it is a weapon or shield, preventing their use; they are typically large weapons with wide sweeps and heavy posture damage.$(o)(of course, this means they almost always benefit from the two-handed bonus)$()"
+      "text": "$(br2)Most weapons come with a \"two-handing bonus\", which is engaged when a weapon is wielded without an active weapon or shield in your offhand. Some large weapons, particularly modded weapons, may be considered two-handed.$(br)Two-handed weapons $(thing)$(l:footwork:selfdefense/binding)bind$() your offhand if it is a weapon or shield, preventing their use; they are typically large weapons with wide sweeps and heavy posture damage.$(o)(of course, this means they almost always benefit from the two-handed bonus)$()"
     },
     {
       "type": "patchouli:text",
-      "text": "A weapon can have its two-handed bonuses checked by holding ALT while browsing a weapon's tooltips. It varies between different types and sizes of weapons, but generally confers a sizeable helping of useful attributes. $(br2)Most similar weapons of a class type $(o)(hammers, axes, katanas, spears, etc.)$() will share the same two-handing bonus."
+      "text": "A weapon can have its two-handed bonuses checked by holding CTRL while browsing a weapon's tooltips. It varies between different types and sizes of weapons, but generally confers a sizeable helping of useful attributes. $(br2)Most similar weapons of a class type $(o)(hammers, axes, katanas, spears, etc.)$() will share the same two-handing bonus."
     }
   ]
 }

@@ -10,7 +10,7 @@
 	  "footwork:textures/guide/smokin.png"
 	  ],
 	  "border": true,
-      "text": "\"ARE YOU NOT ENTERTAINED?!\"$(br2)A player's power rank at empty (D) and full (triple S).",
+      "text": "\"ARE YOU NOT ENTERTAINED?!\"$(br1)A player's power rank at empty (D) and full (triple S).",
 	  "title": "Combat Mode[2]: Rank"
     },
     {

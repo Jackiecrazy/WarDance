@@ -23,7 +23,7 @@
     },
     {
       "type": "patchouli:text",
-      "text": "$(#FF3333)Might$() is built with every attack, the rate determined by the base attack rate of your weapon. Slower weapons and attacks generate it faster. Might remains stable for up to 10 seconds, before gradually dropping back down until empty. $(br2)If you have might being held and take damage, your might will immediately start to decay. Be sure to fight back to maintain it, even in a tough fight!"
+      "text": "$(#FF3333)Might$() is built with every attack, the rate determined by the base attack rate of your weapon. Slower weapons and attacks generate it faster. Might remains stable for up to 10 seconds, before gradually dropping back down until empty. $(br2)If you have might being held and take damage, your might will immediately start to decay. Be sure to fight back to maintain it, even in a tough battle!"
     }
   ]
 }

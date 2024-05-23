@@ -19,12 +19,12 @@ import net.minecraftforge.client.gui.overlay.ForgeGui;
 import net.minecraftforge.client.gui.overlay.IGuiOverlay;
 
 import java.awt.*;
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import static jackiecrazy.wardance.client.RenderUtils.formatter;
-import static jackiecrazy.wardance.client.RenderUtils.translateCoords;
+import static jackiecrazy.wardance.client.RenderUtils.*;
 
 public class MarkDisplay implements IGuiOverlay {
     @Override
@@ -47,11 +47,13 @@ public class MarkDisplay implements IGuiOverlay {
                 RenderSystem.setShaderColor(c.getRed() / 255f, c.getGreen() / 255f, c.getBlue() / 255f, 1);
                 guiGraphics.blit(s.getSkill().icon(), pair.getFirst() - (afflict.size() - 1 - index) * 16 + (afflict.size() - 1) * 8 - 8, pair.getSecond(), 0, 0, 16, 16, 16, 16);
                 if (s.getMaxDuration() >= 1) {
-                    String display = formatter.format(Math.round(s.getDuration()));
+                    DecimalFormat use= s.getMaxDuration()>=3?formatter_truncate:formatter;
+                    String display = use.format(Math.round(s.getDuration()));
                     guiGraphics.drawString(mc.font, display, pair.getFirst() - (afflict.size() - 1 - index) * 16 + (afflict.size() - 1) * 8 - 8, pair.getSecond() - 2, 0xffffff);
                 }
                 if (s.getArbitraryFloat() != 0) {
-                    String display = formatter.format(s.getArbitraryFloat());
+                    DecimalFormat use= s.getArbitraryFloat()>=3?formatter_truncate:formatter;
+                    String display = use.format(s.getArbitraryFloat());
                     guiGraphics.drawString(mc.font, display, pair.getFirst() - (afflict.size() - 1 - index) * 16 + (afflict.size() - 1) * 8 + 4, pair.getSecond() + 8, 0xffffff);
                 }
 

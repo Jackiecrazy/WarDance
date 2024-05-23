@@ -50,13 +50,13 @@ elemental might: +1 burn/snowball/poison/drown damage to targets you have attack
         if (ent instanceof LivingEntity seme) {
             final Skill venge = WarSkills.VENGEFUL_MIGHT.get();
             for (Player p : uke.level().players())
-                if (TargetingUtils.isAlly(p, uke) && !TargetingUtils.isAlly(p, seme) && p.distanceToSqr(uke) < 100 && CasterData.getCap(p).getEquippedSkills().contains(venge)) {
+                if (CasterData.getCap(p).getEquippedSkills().contains(venge) && TargetingUtils.isAlly(p, uke) && !TargetingUtils.isAlly(p, seme) && p.distanceToSqr(uke) < 100) {
                     seme.addEffect(new MobEffectInstance(MobEffects.GLOWING, 100));
                     SkillData apply = Marks.getCap(seme).getActiveMark(venge).orElse(new SkillData(venge, 0));
                     apply.addArbitraryFloat(e.getAmount() * SkillUtils.getSkillEffectiveness(p));
                     Marks.getCap(seme).mark(apply);
                 }
-            if (Marks.getCap(uke).isMarked(venge) && CasterData.getCap(seme).getEquippedSkills().contains(venge)) {
+            if (CasterData.getCap(seme).getEquippedSkills().contains(venge) && Marks.getCap(uke).isMarked(venge)) {
                 Marks.getCap(uke).getActiveMark(venge).ifPresent(a -> {
                     final float amnt = Math.min(e.getAmount(), a.getArbitraryFloat()) * SkillUtils.getSkillEffectiveness(seme);
                     CombatData.getCap(seme).addMight(amnt / 10);

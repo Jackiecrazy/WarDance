@@ -40,7 +40,7 @@ apathy: your max spirit is 4, your spirit instantly refills after cooldown, you 
 
     @Override
     public void onProc(LivingEntity caster, Event procPoint, STATE state, SkillData stats, LivingEntity target) {
-        if (stats.isCondition()||state==STATE.COOLING) return;
+        if (state==STATE.COOLING) return;
         if (procPoint instanceof ProjectileImpactEvent pie && procPoint.getPhase()== EventPriority.HIGHEST && pie.getProjectile().getOwner()==caster) {
             CombatData.getCap(caster).addSpirit(1);
             markUsed(caster, true);

@@ -15,7 +15,7 @@
     },
     {
       "type": "patchouli:text",
-      "text": "When $(l:patchouli:wartheory/gearcheck)\"holding shift on an item\"$() you will potentially come across a shockingly large amount of information.$(br)The information here is how you can dynamically alter your attacks with the 5 main movements and various weapons.$(br2)Initially all I can really say is to not spam, and test out your weapons with up to 5 different primary movements: $(l)standing/walking, sprinting, sneaking, falling, and riding/mounted$() to get a feel of how you should use them."
+      "text": "When $(l:footwork:wartheory/gearcheck)\"holding shift on an item\"$() you will potentially come across a shockingly large amount of information.$(br)The information here is how you can dynamically alter your attacks with the 5 main movements and various weapons.$(br2)Initially all I can really say is to not spam, and test out your weapons with up to 5 different primary movements: $(l)standing/walking, sprinting, sneaking, falling, and riding/mounted$() to get a feel of how you should use them."
     },
     {
       "type": "patchouli:image",
@@ -36,7 +36,7 @@
     },
     {
       "type": "patchouli:text",
-      "text": "Provided you can install the $(l)Sweeping Edge enchantment$() onto your weapon or item of choice, all sweep sizes (other than none) can be improved.$(br2)Similar to vanilla, sweep attacks of any given type will only trigger when swinging a weapon at 90% or higher charge. Unlike vanilla, sweeps will only trigger in combat mode to prevent accidental friendly fire. Combo your different swings for different purposes based on the weapon for more dynamic combat. Becoming blinded will also nullify the ability to sweep."
+      "text": "Provided you can install the $(l)Sweeping Edge enchantment$() onto your weapon or item of choice, all sweep sizes (other than none) can be improved.$(br2)Similar to vanilla, sweep attacks of any given type will only trigger when swinging a weapon at 90% or higher charge, and only when not blinded. Unlike vanilla, sweeps will only trigger in combat mode to prevent accidental friendly fire. Combo your different swings for different purposes based on the weapon for more dynamic combat."
     }
   ]
 }

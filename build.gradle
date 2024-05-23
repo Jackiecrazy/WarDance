@@ -131,6 +131,8 @@ dependencies {
     implementation fg.deobf("jackiecrazy.cloakanddagger:cloakanddagger-${cd_version}:${mc_version}")
     runtimeOnly fg.deobf("curse.maven:patchouli-306770:4636277")
     runtimeOnly fg.deobf("curse.maven:armorpoints-396094:4817924")
+    runtimeOnly fg.deobf("curse.maven:moonlight-499980:4800629")
+    runtimeOnly fg.deobf("curse.maven:dummy-225738:4724732")
     //compile fg.deobf("curse.maven:offhandcombat-417112:3203449")
 }
 

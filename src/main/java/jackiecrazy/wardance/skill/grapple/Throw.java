@@ -37,7 +37,7 @@ public class Throw extends Grapple {
             if (procPoint instanceof LivingAttackEvent lae && lae.getEntity() != caster && DamageUtils.isMeleeAttack(lae.getSource()) && procPoint.getPhase() == EventPriority.HIGHEST) {
                 if (caster.getFirstPassenger() != null)
                     lae.setCanceled(true);
-                if (stats.isCondition() && caster.getLastHurtMob() == target && caster.tickCount - caster.getLastHurtMobTimestamp() < 40 && cast(caster, target, 10)) {
+                if (stats.isCondition() && caster.getLastHurtMob() == target && caster.tickCount - caster.getLastHurtMobTimestamp() < 40) {
                     ParticleUtils.playSweepParticle(FootworkParticles.IMPACT.get(), caster, caster.position(), 0, 1, getColor(), 0);
                     performEffect(caster, target, stats);
                 } else {
@@ -78,14 +78,14 @@ public class Throw extends Grapple {
             if (prev.isCondition()) {
                 prev.setState(STATE.HOLSTERED);
                 CasterData.getCap(caster).holsterSkill(this);
-            }
-            else
+            } else
                 setCooldown(caster, prev, 7);
         }
         return boundCast(prev, from, to);
     }
 
     protected void performEffect(LivingEntity caster, LivingEntity target, SkillData stats) {
+        if (!cast(caster, target, 10)) return;
         caster.level().playSound(null, target.getX(), target.getY(), target.getZ(), SoundEvents.BARREL_OPEN, SoundSource.PLAYERS, 0.3f + WarDance.rand.nextFloat() * 0.5f, 0.75f + WarDance.rand.nextFloat() * 0.5f);
         if (CombatData.getCap(target).consumePosture(caster, 7 * stats.getEffectiveness(), 0, true) < 0 || CombatData.getCap(target).isVulnerable()) {
             stats.setDuration(target.getId());

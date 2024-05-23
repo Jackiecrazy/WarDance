@@ -30,7 +30,7 @@
     },
     {
       "type": "patchouli:text",
-      "text": "$(br2)$(l)\"Encirclement Distance\", $(o)$(#d0a800)[footwork:encirclement_distance]:$() dictates the distance around it's intended target which a mob will try to maintain when not actively attacking while under combat circle AI. Does nothing for a player and shouldn't appear on anything.$(br2)$(l)\"Threat\", $(o)$(#d0a800)[footwork:threat]:$() Currently does nothing. Was meant to be for mobs and how powerful they are."
+      "text": "$(br2)$(l)\"Encirclement Distance\", $(o)$(#d0a800)[footwork:encirclement_distance]:$() dictates the distance around its intended target which a mob will try to maintain when not actively attacking while under combat circle AI. Does nothing for a player and shouldn't appear on anything yet.$(br2)$(l)\"Threat\", $(o)$(#d0a800)[footwork:threat]:$() Currently does nothing. Was meant to be for mobs and how powerful they are."
     }
   ]
 }

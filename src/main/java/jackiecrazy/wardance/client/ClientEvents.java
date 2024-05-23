@@ -174,9 +174,6 @@ public class ClientEvents {
     public static void downTick(LivingEvent.LivingTickEvent event) {
         final LivingEntity e = event.getEntity();
         if (e.isAlive()) {
-            if (CombatData.getCap(e).isStunned()) {
-                event.getEntity().level().addParticle(ParticleTypes.CRIT, e.getX() + Math.sin(e.tickCount) * e.getBbWidth() / 2, e.getY() + e.getBbHeight() + 0.4, e.getZ() + Math.cos(e.tickCount) * e.getBbWidth() / 2, 0, 0, 0);
-            }
             if (CombatData.getCap(e).isExposed()) {
                 //boolean reg = (rotate.containsKey(EntityType.getKey(e.getType()).toString()));
                 float height = e.getBbHeight();// reg && rotate.getOrDefault(EntityType.getKey(e.getType()).toString(), false) ? e.getBbWidth() : e.getBbHeight();
@@ -186,7 +183,10 @@ public class ClientEvents {
             if (CombatData.getCap(e).isKnockedDown()) {
                 if (event.getEntity().tickCount % 10 == 0)
                     event.getEntity().level().addParticle(ParticleTypes.MYCELIUM, e.getX() + Math.sin(e.tickCount) * e.getBbHeight() / 2, e.getY(), e.getZ() + Math.cos(e.tickCount) * e.getBbHeight() / 2, 0, 0, 0);
+            }else if (CombatData.getCap(e).isStunned()) {
+                event.getEntity().level().addParticle(ParticleTypes.CRIT, e.getX() + Math.sin(e.tickCount) * e.getBbWidth() / 2, e.getY() + e.getBbHeight() + 0.4, e.getZ() + Math.cos(e.tickCount) * e.getBbWidth() / 2, 0, 0, 0);
             }
+
 
 
         }
@@ -207,7 +207,6 @@ public class ClientEvents {
 
         if (e.isAlive()) {
             if (CombatData.getCap(event.getEntity()).isKnockedDown()) {
-                //System.out.println("yes");
                 PoseStack ms = event.getPoseStack();
                 //ms.push();
                 //tall bois become flat bois
