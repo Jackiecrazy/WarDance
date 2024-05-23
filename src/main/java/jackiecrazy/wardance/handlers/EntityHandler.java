@@ -12,6 +12,7 @@ import jackiecrazy.wardance.capability.status.Mark;
 import jackiecrazy.wardance.capability.status.Marks;
 import jackiecrazy.wardance.compat.ElenaiCompat;
 import jackiecrazy.wardance.compat.WarCompat;
+import jackiecrazy.wardance.config.GeneralConfig;
 import jackiecrazy.wardance.config.TwohandingStats;
 import jackiecrazy.wardance.config.WeaponStats;
 import jackiecrazy.wardance.entity.ai.ExposeGoal;
@@ -21,6 +22,7 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.util.Tuple;
+import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.Mob;
@@ -165,6 +167,8 @@ Mobs should move into a position that is close to the player, far from allies, a
                 ICombatCapability cap = CombatData.getCap(elb);
                 if (cap.isVulnerable() || mustUpdate.containsValue(e.getEntity()))
                     cap.serverTick();
+                float nausea = elb instanceof Player || !elb.hasEffect(MobEffects.CONFUSION) ? 0 : (elb.getEffect(MobEffects.CONFUSION).getAmplifier() + 1) * GeneralConfig.nausea;
+                if (nausea > 0) cap.consumePosture(nausea, 0.1f);
             }
         }
     }

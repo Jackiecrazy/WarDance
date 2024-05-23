@@ -732,8 +732,6 @@ public class CombatCapability implements ICombatCapability {
         final int ticks = (int) (elb.level().getGameTime() - lastUpdate);
         if (ticks < 1) return;//sometimes time runs backwards
         //initialize posture and fracture
-        if(elb instanceof Skeleton && isExposed())
-            System.out.println("aaaaaaa");
 
         final boolean uninitializedPosture = elb.getAttribute(FootworkAttributes.MAX_POSTURE.get()).getBaseValue() == 0d;
         final boolean uninitializedFracture = elb.getAttribute(FootworkAttributes.MAX_FRACTURE.get()).getBaseValue() == 0d;
@@ -813,8 +811,6 @@ public class CombatCapability implements ICombatCapability {
         }
         if (getPosture() > getMaxPosture())
             setPosture(getMaxPosture());
-        float nausea = elb instanceof Player || !elb.hasEffect(MobEffects.CONFUSION) ? 0 : (elb.getEffect(MobEffects.CONFUSION).getAmplifier() + 1) * GeneralConfig.nausea;
-        if (nausea > 0) consumePosture(nausea * ticks, 0.1f);
         if (getSpiritGrace() == 0 && getStunTime() == 0 && getSpirit() < getMaxSpirit()) {
             setSpirit(getSpirit() + getSPT() * spExtra);//to not run into spirit increase mod
         }

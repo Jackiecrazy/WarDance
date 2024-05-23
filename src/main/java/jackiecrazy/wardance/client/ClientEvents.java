@@ -70,8 +70,11 @@ public class ClientEvents {
 
     static {
         RenderUtils.formatter.setRoundingMode(RoundingMode.DOWN);
+        RenderUtils.formatter_truncate.setRoundingMode(RoundingMode.DOWN);
         //eurgh
         RenderUtils.formatter.setMaximumFractionDigits(1); //340 = DecimalFormat.DOUBLE_FRACTION_DIGITS
+        RenderUtils.formatter.setMinimumFractionDigits(0);
+        RenderUtils.formatter.setMaximumFractionDigits(0); //340 = DecimalFormat.DOUBLE_FRACTION_DIGITS
         RenderUtils.formatter.setMinimumFractionDigits(0);
     }
 
