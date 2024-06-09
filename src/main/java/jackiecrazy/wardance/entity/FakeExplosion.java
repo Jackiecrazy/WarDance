@@ -19,11 +19,15 @@ import java.util.List;
 
 public class FakeExplosion extends Explosion {
     private float radius, damage;
+    private double xp, yp, zp;
     private Level world;
 
     public FakeExplosion(Level worldIn, @Nullable Entity entityIn, double x, double y, double z, float radius, DamageSource ds, float damage) {
         super(worldIn, entityIn, ds, null, x, y, z, radius, false, BlockInteraction.KEEP);
         this.radius = radius * 2;
+        xp=x;
+        yp=y;
+        zp=z;
         world = worldIn;
         this.damage = damage;
 
@@ -34,6 +38,11 @@ public class FakeExplosion extends Explosion {
         explosion.explode(friendlyFire);
         explosion.finalizeExplosion(true);
         //oh wow, yikes
+//            if (!(radius < 2.0F) && flag) {
+//                explosion.world.addParticle(ParticleTypes.EXPLOSION_EMITTER, explosion.xp, explosion.yp, explosion.zp, 1.0, 0.0, 0.0);
+//            } else {
+//                explosion.world.addParticle(ParticleTypes.EXPLOSION, explosion.xp, explosion.yp, explosion.zp, 1.0, 0.0, 0.0);
+//            }
         SkillUtils.createCloud(world, entityIn, x, y, z, radius * 2, ParticleTypes.EXPLOSION);
         return explosion;
     }

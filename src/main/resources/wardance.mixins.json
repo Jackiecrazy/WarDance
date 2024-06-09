@@ -9,12 +9,12 @@
     "MixinShieldDisabler",
     "MixinSuppressSwapSound",
     "MixinSweepDurabilitySuppressor",
-    "YouTestMyPatienceAccessor",
     "ProjectileImpactMixin",
     "SifuDropsMixin"
   ],
   "client": [
     "ItchyCurseMixin",
+    "YouTestMyPatienceAccessor",
     "MixinEquipProgress"
   ],
   "injectors": {
