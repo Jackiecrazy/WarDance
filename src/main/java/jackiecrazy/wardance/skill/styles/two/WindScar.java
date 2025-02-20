@@ -12,7 +12,9 @@ import jackiecrazy.wardance.utils.SkillUtils;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.ai.attributes.AttributeModifier;
 import net.minecraftforge.common.ForgeMod;
+import net.minecraftforge.event.entity.living.LivingAttackEvent;
 import net.minecraftforge.event.entity.living.LivingHurtEvent;
+import net.minecraftforge.event.entity.player.AttackEntityEvent;
 import net.minecraftforge.eventbus.api.Event;
 import net.minecraftforge.eventbus.api.EventPriority;
 
@@ -47,7 +49,7 @@ public class WindScar extends WarCry {
 
     @Override
     public void onProc(LivingEntity caster, Event procPoint, STATE state, SkillData stats, LivingEntity target) {
-        if (procPoint instanceof LivingHurtEvent hurt && procPoint.getPhase() == EventPriority.HIGHEST && state == STATE.ACTIVE && hurt.getEntity() == target) {
+        if (procPoint instanceof LivingAttackEvent hurt && procPoint.getPhase() == EventPriority.HIGHEST && state == STATE.ACTIVE && hurt.getEntity() == target) {
             double dist = Math.sqrt(GeneralUtils.getDistSqCompensated(caster, target));
             if (hurt.getSource() instanceof CombatDamageSource cds)
                 cds.setArmorReductionPercentage((float) (dist * 0.15f));

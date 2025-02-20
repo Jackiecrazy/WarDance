@@ -65,7 +65,7 @@ public class Pummel extends ShieldBash {
 
     @Override
     public void onProc(LivingEntity caster, Event procPoint, STATE state, SkillData stats, LivingEntity target) {
-        if (procPoint instanceof AttackEntityEvent lae && lae.getEntity() == target && procPoint.getPhase() == EventPriority.HIGHEST) {
+        if (procPoint instanceof AttackEntityEvent lae && lae.getTarget() == target && procPoint.getPhase() == EventPriority.HIGHEST) {
             updateCasterShieldDamage(caster, target);
         }
         if(procPoint instanceof LivingDeathEvent lae && lae.getEntity() == target && DamageUtils.isMeleeAttack(lae.getSource()) && procPoint.getPhase() == EventPriority.HIGHEST){

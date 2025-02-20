@@ -3,6 +3,7 @@ package jackiecrazy.wardance.client;
 import jackiecrazy.wardance.WarDance;
 import jackiecrazy.wardance.items.DummyItem;
 import jackiecrazy.wardance.items.WarItems;
+import net.minecraft.client.KeyMapping;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.client.event.RegisterColorHandlersEvent;
 import net.minecraftforge.client.event.RegisterKeyMappingsEvent;
@@ -19,6 +20,9 @@ public class ClientRegistry {
         event.register(Keybinds.CAST);
         event.register(Keybinds.BINDCAST);
         event.register(Keybinds.PARRY);
+        for(KeyMapping km: Keybinds.SKILL){
+            event.register(km);
+        }
     }
 
     @SubscribeEvent(priority = EventPriority.HIGHEST)
