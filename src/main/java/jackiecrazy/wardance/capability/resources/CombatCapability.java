@@ -1,3 +1,4 @@
+/*
 package jackiecrazy.wardance.capability.resources;
 
 import jackiecrazy.footwork.api.FootworkAttributes;
@@ -46,7 +47,8 @@ import java.util.*;
 
 public class CombatCapability implements ICombatCapability {
 
-    /*
+    */
+/*
     posture is a long bar that is almost guaranteed to be lethal when broken. It recharges at a steady pace after not being consumed for a few moments. When staggered your posture will rapidly regenerate until full again, though stagger will immediately break after 1 attack
     breach is a small bar on the posture bar that records posture damage from the last few seconds, decaying constantly. If it exceeds a threshold, the entity is stunned and bound for a brief moment, which is also broken by attacks, and until breach finishes cannot be breached again
     greatly reduce attack knockback to encourage use of breach, but chaff mobs can be breached easily
@@ -55,7 +57,8 @@ public class CombatCapability implements ICombatCapability {
     spirit is a line of symbols, 3-5, which are consumed in increments of 1 to cast certain skills
     might/fury is a bar that charges up to twice, and can either be automatically consumed by certain passives or manually expended to cast powerful skills
 
-     */
+     *//*
+
 
     public static final UUID WOUND = UUID.fromString("982bbbb2-bbd0-4166-801a-560d1a4149c8");
     public static final int EVADE_CHARGE = 2000;//100 seconds
@@ -64,9 +67,11 @@ public class CombatCapability implements ICombatCapability {
     private final WeakReference<LivingEntity> dude;
     int lastRangeTick = 0;
     HashMap<UUID, Integer> fractures = new HashMap<>();
-    /**
+    */
+/**
      * only used on the client
-     */
+     *//*
+
     ArrayList<LivingEntity> fractureQueue = new ArrayList<>();
     private ItemStack prev;
     private float might, spirit, posture, rank, vision;
@@ -446,10 +451,12 @@ public class CombatCapability implements ICombatCapability {
         return fractures;
     }
 
-    /**
+    */
+/**
      *
      * @return false if fractures overflow
-     */
+     *//*
+
     @Override
     public boolean addFracture(@Nullable LivingEntity livingEntity, int i) {
         FractureEvent fe = new FractureEvent(dude.get(), i, livingEntity);
@@ -1151,3 +1158,4 @@ public class CombatCapability implements ICombatCapability {
         return ev.getQuantity();
     }
 }
+*/

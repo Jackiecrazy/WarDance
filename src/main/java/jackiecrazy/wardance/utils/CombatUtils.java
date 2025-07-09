@@ -3,6 +3,7 @@ package jackiecrazy.wardance.utils;
 import jackiecrazy.footwork.api.CombatDamageSource;
 import jackiecrazy.footwork.capability.resources.CombatData;
 import jackiecrazy.footwork.capability.resources.ICombatCapability;
+import jackiecrazy.footwork.capability.stylish.StylishData;
 import jackiecrazy.footwork.capability.weaponry.CombatManipulator;
 import jackiecrazy.footwork.client.particle.FootworkParticles;
 import jackiecrazy.footwork.client.particle.ScalingParticleType;
@@ -215,12 +216,12 @@ public class CombatUtils {
             }
             //scale by mob and sweep
             if (attacker != null) {
-                base *= MobSpecs.mobMap.getOrDefault(attacker.getType(), MobSpecs.DEFAULT).getItemPostureScaling();
+                base *= MobSpecs.getOrDefault(attacker).getItemPostureScaling();
             }
 
         } else {//unarmed
             if (attacker != null && !(attacker instanceof Player)) {
-                base = MobSpecs.mobMap.getOrDefault(attacker.getType(), MobSpecs.DEFAULT).getBaseAttackPosture();
+                base = MobSpecs.getOrDefault(attacker).getBaseAttackPosture();
                 if (base == -1)
                     base = CombatData.getCap(attacker).getMaxPosture() * CombatConfig.defaultMultiplierPostureMob;
             }
@@ -228,7 +229,7 @@ public class CombatUtils {
         if (attacker == null || h == null) return (float) base;
         double finalScale = scaler;
         if (attacker instanceof Player) {
-            finalScale = (Math.max(CombatData.getCap(attacker).getCachedCooldown(), ((Player) attacker).getAttackStrengthScale(0.5f)) - 0.20) / 0.80;
+            finalScale = (Math.max(CombatData.getCap(attacker).getProc("swing"), ((Player) attacker).getAttackStrengthScale(0.5f)) - 0.20) / 0.80;
         }
         return (float) (base * finalScale);
     }
@@ -252,10 +253,10 @@ public class CombatUtils {
         ICombatCapability semeCap = CombatData.getCap(seme);
         final float magicScale = 1.722f;
         final float magicNumber = 1562.5f;//magic numbers scale the modified formula to 0.1 per sword hit
-        final float cooldownSq = semeCap.getCachedCooldown() * semeCap.getCachedCooldown();
+        final float cooldownSq = semeCap.getProc("tick") * semeCap.getProc("tick");
         final double period = 20.0D / (seme.getAttribute(Attributes.ATTACK_SPEED).getValue() + 0.5d);//+0.5 makes sure heavies don't scale forever, light ones are still puny
         float might = cooldownSq * cooldownSq * magicScale * (float) period * (float) period / magicNumber;
-        might *= (1f + (semeCap.getRank() / 20f));//combo bonus
+        //might *= (1f + (semeCap.getRank() / 20f));//combo bonus
         float weakness = 1;
         if (seme.hasEffect(MobEffects.WEAKNESS))
             for (int foo = 0; foo < seme.getEffect(MobEffects.WEAKNESS).getAmplifier() + 1; foo++) {
@@ -333,8 +334,8 @@ public class CombatUtils {
             case MAIN_HAND:
                 if (!(e instanceof Player)) return;
                 e.attackStrengthTicker = real;
-                if (!(e instanceof FakePlayer) && e instanceof ServerPlayer && sync)
-                    CombatChannel.INSTANCE.send(PacketDistributor.PLAYER.with(() -> (ServerPlayer) e), new UpdateAttackCooldownPacket(e.getId(), real));
+                if (!(e instanceof FakePlayer) && e instanceof ServerPlayer sp && sync)
+                    CombatChannel.INSTANCE.send(PacketDistributor.PLAYER.with(() -> sp), new UpdateAttackCooldownPacket(e.getId(), real));
                 break;
             case OFF_HAND:
                 CombatData.getCap(e).setOffhandCooldown(real);
@@ -347,8 +348,8 @@ public class CombatUtils {
             case MAIN_HAND:
                 if (!(e instanceof Player)) return;
                 e.attackStrengthTicker = amount;
-                if (!(e instanceof FakePlayer) && e instanceof ServerPlayer && sync)
-                    CombatChannel.INSTANCE.send(PacketDistributor.PLAYER.with(() -> (ServerPlayer) e), new UpdateAttackCooldownPacket(e.getId(), amount));
+                if (!(e instanceof FakePlayer) && e instanceof ServerPlayer sp && sync)
+                    CombatChannel.INSTANCE.send(PacketDistributor.PLAYER.with(() -> sp), new UpdateAttackCooldownPacket(e.getId(), amount));
                 break;
             case OFF_HAND:
                 CombatData.getCap(e).setOffhandCooldown(amount);
@@ -396,7 +397,7 @@ public class CombatUtils {
     public static void sweep(LivingEntity e, Entity ignore, InteractionHand h, WeaponStats.SWEEPTYPE type, double reach, double base, double scaling) {
         //no go cases
         if (!GeneralConfig.betterSweep) return;//a shame, but alas
-        if (!CombatData.getCap(e).isCombatMode()) return;
+        if (!StylishData.getCap(e).isCombatMode()) return;
         if (CombatData.getCap(e).getHandBind(h) > 0) return;//don't even try dude
         if (h == InteractionHand.OFF_HAND) {
             swapHeldItems(e);
@@ -421,7 +422,7 @@ public class CombatUtils {
         }
         if (e.getMainHandItem().getCapability(CombatManipulator.CAP).isPresent())
             radius = e.getMainHandItem().getCapability(CombatManipulator.CAP).resolve().get().sweepArea(e, e.getMainHandItem());
-        float charge = Math.max(CombatUtils.getCooledAttackStrength(e, InteractionHand.MAIN_HAND, 0.5f), CombatData.getCap(e).getCachedCooldown());
+        double charge = Math.max(CombatUtils.getCooledAttackStrength(e, InteractionHand.MAIN_HAND, 0.5f), CombatData.getCap(e).getProc("swing"));
         boolean hit = false;
         isSweeping = ignore != null;
         Vec3 starting = ignore == null ? GeneralUtils.raytraceAnything(e.level(), e, reach).getLocation() : ignore.position();
@@ -460,7 +461,7 @@ public class CombatUtils {
                 }
             }
 
-            CombatUtils.setHandCooldown(e, InteractionHand.MAIN_HAND, charge, false);
+            CombatUtils.setHandCooldown(e, InteractionHand.MAIN_HAND, (float) charge, false);
             hit = true;
             if (e instanceof Player)
                 ((Player) e).attack(target);

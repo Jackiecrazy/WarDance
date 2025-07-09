@@ -4,6 +4,8 @@ import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.math.Axis;
 import jackiecrazy.footwork.capability.resources.CombatData;
 import jackiecrazy.footwork.capability.resources.ICombatCapability;
+import jackiecrazy.footwork.capability.stylish.IStyleCapability;
+import jackiecrazy.footwork.capability.stylish.StylishData;
 import jackiecrazy.footwork.client.screen.dashboard.DashboardScreen;
 import jackiecrazy.footwork.utils.GeneralUtils;
 import jackiecrazy.wardance.WarDance;
@@ -11,7 +13,6 @@ import jackiecrazy.wardance.client.screen.scroll.ScrollScreen;
 import jackiecrazy.wardance.client.screen.skill.SkillSelectionScreen;
 import jackiecrazy.wardance.compat.WarCompat;
 import jackiecrazy.wardance.config.ClientConfig;
-import jackiecrazy.wardance.config.CombatConfig;
 import jackiecrazy.wardance.config.GeneralConfig;
 import jackiecrazy.wardance.config.WeaponStats;
 import jackiecrazy.wardance.handlers.TwoHandingHandler;
@@ -23,7 +24,6 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.player.AbstractClientPlayer;
 import net.minecraft.client.player.Input;
 import net.minecraft.core.particles.ParticleTypes;
-import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.Entity;
@@ -106,12 +106,13 @@ public class ClientEvents {
         Minecraft mc = Minecraft.getInstance();
         Input mi = e.getInput();
         final ICombatCapability itsc = CombatData.getCap(mc.player);
+        final IStyleCapability is = StylishData.getCap(mc.player);
 //        if (itsc.getStunTime() > 0) {
 //            //no moving while you're rooted!
 //            KeyBinding.unPressAllKeys();
 //            return;
 //        }
-        if (itsc.isCombatMode() && mc.level != null) {
+        if (is.isCombatMode() && mc.level != null) {
             final boolean onSprint = mc.options.keySprint.consumeClick();
             int dir = -1;
             if (!WarCompat.elenaiDodge) {
@@ -154,7 +155,7 @@ public class ClientEvents {
                 CombatChannel.INSTANCE.sendToServer(new DodgePacket(dir, mi.shiftKeyDown));
         }
 
-        if (itsc.isExposed()) {
+        if (itsc.isKnockdown()) {
             //no moving while you're down! (except for a safety roll)
             KeyMapping.releaseAll();
             return;
@@ -166,7 +167,7 @@ public class ClientEvents {
         if (Minecraft.getInstance().player == null) return;
         if ((e.getEntity() == Minecraft.getInstance().player && e.getSource().getEntity() instanceof LivingEntity) || e.getSource().getEntity() == Minecraft.getInstance().player) {
             if (ClientConfig.autoCombat > 0 && combatTicks != Integer.MAX_VALUE) {
-                if (!CombatData.getCap(Minecraft.getInstance().player).isCombatMode())
+                if (!StylishData.getCap(Minecraft.getInstance().player).isCombatMode())
                     CombatChannel.INSTANCE.sendToServer(new CombatModePacket());
                 combatTicks = Minecraft.getInstance().player.tickCount;
             }
@@ -177,16 +178,10 @@ public class ClientEvents {
     public static void downTick(LivingEvent.LivingTickEvent event) {
         final LivingEntity e = event.getEntity();
         if (e.isAlive()) {
-            if (CombatData.getCap(e).isExposed()) {
-                //boolean reg = (rotate.containsKey(EntityType.getKey(e.getType()).toString()));
-                float height = e.getBbHeight();// reg && rotate.getOrDefault(EntityType.getKey(e.getType()).toString(), false) ? e.getBbWidth() : e.getBbHeight();
-                if (event.getEntity().tickCount % 10 == 0)
-                    event.getEntity().level().addParticle(ParticleTypes.ANGRY_VILLAGER, e.getX() + Math.sin(e.tickCount) * e.getBbWidth() / 2, e.getY() + height / 2, e.getZ() + Math.cos(e.tickCount) * e.getBbWidth() / 2, 0, 0, 0);
-            }
-            if (CombatData.getCap(e).isKnockedDown()) {
+            if (CombatData.getCap(e).isKnockdown()) {//knockdown
                 if (event.getEntity().tickCount % 10 == 0)
                     event.getEntity().level().addParticle(ParticleTypes.MYCELIUM, e.getX() + Math.sin(e.tickCount) * e.getBbHeight() / 2, e.getY(), e.getZ() + Math.cos(e.tickCount) * e.getBbHeight() / 2, 0, 0, 0);
-            }else if (CombatData.getCap(e).isStunned()) {
+            }else if (CombatData.getCap(e).isStunned()) {//stun spinny star
                 event.getEntity().level().addParticle(ParticleTypes.CRIT, e.getX() + Math.sin(e.tickCount) * e.getBbWidth() / 2, e.getY() + e.getBbHeight() + 0.4, e.getZ() + Math.cos(e.tickCount) * e.getBbWidth() / 2, 0, 0, 0);
             }
 
@@ -197,7 +192,7 @@ public class ClientEvents {
 
     @SubscribeEvent
     public static void noXP(RenderGuiOverlayEvent.Pre e) {
-        if (ClientConfig.hide && Minecraft.getInstance().player != null && CombatData.getCap(Minecraft.getInstance().player).isCombatMode() && e.getOverlay() == VanillaGuiOverlay.EXPERIENCE_BAR.type()) {
+        if (ClientConfig.hide && Minecraft.getInstance().player != null && StylishData.getCap(Minecraft.getInstance().player).isCombatMode() && e.getOverlay() == VanillaGuiOverlay.EXPERIENCE_BAR.type()) {
             e.setCanceled(true);
         }
     }
@@ -209,7 +204,7 @@ public class ClientEvents {
         float height = e.getBbHeight();
 
         if (e.isAlive()) {
-            if (CombatData.getCap(event.getEntity()).isKnockedDown()) {
+            if (CombatData.getCap(event.getEntity()).isKnockdown()) {
                 PoseStack ms = event.getPoseStack();
                 //ms.push();
                 //tall bois become flat bois
@@ -225,7 +220,7 @@ public class ClientEvents {
                 //flat bois become flatter bois
                 //multi bois do nothing
             }
-            if (CombatData.getCap(e).getRollTime() != 0 && e.getPose() == Pose.SLEEPING) {
+            if (CombatData.getCap(e).isDodging() && e.getPose() == Pose.SLEEPING) {
                 PoseStack ms = event.getPoseStack();
                 ms.mulPose(Axis.YN.rotationDegrees(e.getYRot() - e.getBedOrientation().toYRot()));
 //                ms.rotate(Vector3f.ZP.rotationDegrees(-e.renderYawOffset));
@@ -258,7 +253,7 @@ public class ClientEvents {
     public static void handRaising(RenderHandEvent e) {
         if (e.getHand().equals(InteractionHand.MAIN_HAND) || !GeneralConfig.dual) return;
         AbstractClientPlayer p = Minecraft.getInstance().player;
-        if (p == null || p.isInvisible() || (!CombatData.getCap(p).isCombatMode() && (p.swingingArm != InteractionHand.OFF_HAND || !p.swinging)))
+        if (p == null || p.isInvisible() || (!StylishData.getCap(p).isCombatMode() && (p.swingingArm != InteractionHand.OFF_HAND || !p.swinging)))
             return;
         if (CombatData.getCap(p).getHandBind(InteractionHand.OFF_HAND) > 0) {
             e.setCanceled(true);
@@ -285,7 +280,7 @@ public class ClientEvents {
                     else
                         CombatChannel.INSTANCE.sendToServer(new RequestUpdatePacket(-1));
                 }
-                if (combatTicks != Integer.MAX_VALUE && combatTicks + ClientConfig.autoCombat == p.tickCount && CombatData.getCap(p).isCombatMode()) {
+                if (combatTicks != Integer.MAX_VALUE && combatTicks + ClientConfig.autoCombat == p.tickCount && StylishData.getCap(p).isCombatMode()) {
                     CombatChannel.INSTANCE.sendToServer(new CombatModePacket());
                 }
                 if (!Keybinds.PARRY.isDown())
@@ -311,24 +306,20 @@ public class ClientEvents {
 
     @SubscribeEvent
     public static void noFovChange(ComputeFovModifierEvent e) {
-        if (CombatData.getCap(e.getPlayer()).isExposed())
+        if (CombatData.getCap(e.getPlayer()).isKnockdown())
             e.setNewFovModifier(0.7f);
     }
 
-    @SubscribeEvent(priority = EventPriority.HIGHEST)
-    public static void handleInputEvent(InputEvent event) {
-        Minecraft mc = Minecraft.getInstance();
-        if (mc.player == null) return;
-        if (Keybinds.PARRY.getKeyConflictContext().isActive() && !lastTickParry && CombatConfig.parryTime != 0 && Keybinds.PARRY.consumeClick() && mc.player.isAlive()) {
-            if (CombatConfig.parryTime < 0) {
-                mc.player.displayClientMessage(Component.translatable("wardance.toggleparry." + (CombatData.getCap(mc.player).getParryingTick() == -1 ? "on" : "off")), true);
-
-            }
-            CombatChannel.INSTANCE.sendToServer(new ManualParryPacket());
-            lastTickParry = true;
-
-        }
-    }
+//    @SubscribeEvent(priority = EventPriority.HIGHEST)
+//    public static void handleInputEvent(InputEvent event) {
+//        Minecraft mc = Minecraft.getInstance();
+//        if (mc.player == null) return;
+//        if (Keybinds.PARRY.getKeyConflictContext().isActive() && !lastTickParry && CombatConfig.parryTime != 0 && Keybinds.PARRY.consumeClick() && mc.player.isAlive()) {
+//            CombatChannel.INSTANCE.sendToServer(new ManualParryPacket());
+//            lastTickParry = true;
+//
+//        }
+//    }
 
     @SubscribeEvent
     public static void sweepSwing(PlayerInteractEvent.LeftClickEmpty e) {
@@ -346,7 +337,7 @@ public class ClientEvents {
     public static void sweepSwingOff(PlayerInteractEvent.RightClickEmpty e) {
         if (TwoHandingHandler.suppressOffhand(e.getEntity(), e.getEntity().getMainHandItem()) && e.getHand() == InteractionHand.OFF_HAND)
             return;
-        if (!rightClick && GeneralConfig.dual && e.getHand() == InteractionHand.OFF_HAND&& CombatData.getCap(e.getEntity()).isCombatMode() && (WeaponStats.isWeapon(e.getEntity(), e.getItemStack()) || e.getItemStack().isEmpty() || WeaponStats.isShield(e.getEntity(), e.getItemStack()))) {
+        if (!rightClick && GeneralConfig.dual && e.getHand() == InteractionHand.OFF_HAND&& StylishData.getCap(e.getEntity()).isCombatMode() && (WeaponStats.isWeapon(e.getEntity(), e.getItemStack()) || e.getItemStack().isEmpty() || WeaponStats.isShield(e.getEntity(), e.getItemStack()))) {
             rightClick = true;
             Entity n = RenderUtils.getEntityLookedAt(e.getEntity(), GeneralUtils.getAttributeValueHandSensitive(e.getEntity(), ForgeMod.ENTITY_REACH.get(), InteractionHand.OFF_HAND));
             if (n == null && WeaponStats.isShield(e.getEntity(), e.getItemStack())) return;
@@ -379,7 +370,7 @@ public class ClientEvents {
     public static void sweepSwingOffItem(PlayerInteractEvent.RightClickItem e) {
         if (TwoHandingHandler.suppressOffhand(e.getEntity(), e.getEntity().getMainHandItem()) && e.getHand() == InteractionHand.OFF_HAND)
             return;
-        if (!rightClick && GeneralConfig.dual && e.getHand() == InteractionHand.OFF_HAND && CombatData.getCap(e.getEntity()).isCombatMode() && (WeaponStats.isWeapon(e.getEntity(), e.getItemStack()) || e.getItemStack().isEmpty() || WeaponStats.isShield(e.getEntity(), e.getItemStack()))) {
+        if (!rightClick && GeneralConfig.dual && e.getHand() == InteractionHand.OFF_HAND && StylishData.getCap(e.getEntity()).isCombatMode() && (WeaponStats.isWeapon(e.getEntity(), e.getItemStack()) || e.getItemStack().isEmpty() || WeaponStats.isShield(e.getEntity(), e.getItemStack()))) {
             rightClick = true;
             Entity n = RenderUtils.getEntityLookedAt(e.getEntity(), GeneralUtils.getAttributeValueHandSensitive(e.getEntity(), ForgeMod.ENTITY_REACH.get(), InteractionHand.OFF_HAND));
             if (n == null && WeaponStats.isShield(e.getEntity(), e.getItemStack())) return;
@@ -391,6 +382,9 @@ public class ClientEvents {
             if (lastSweepTick != e.getEntity().tickCount)
                 CombatChannel.INSTANCE.sendToServer(new RequestSweepPacket(false, n));
             lastSweepTick = e.getEntity().tickCount;
+            //TODO cancel right click in combat mode
+//            e.setCanceled(true);
+//            e.setCancellationResult(InteractionResult.SUCCESS);
         }
     }
 
@@ -398,7 +392,7 @@ public class ClientEvents {
     public static void punchy(PlayerInteractEvent.EntityInteract e) {
         if (TwoHandingHandler.suppressOffhand(e.getEntity(), e.getEntity().getMainHandItem()) && e.getHand() == InteractionHand.OFF_HAND)
             return;
-        if (!rightClick && GeneralConfig.dual && e.getHand() == InteractionHand.OFF_HAND && CombatData.getCap(e.getEntity()).isCombatMode() && (WeaponStats.isWeapon(e.getEntity(), e.getItemStack()) || e.getItemStack().isEmpty() || WeaponStats.isShield(e.getEntity(), e.getItemStack()))) {
+        if (!rightClick && GeneralConfig.dual && e.getHand() == InteractionHand.OFF_HAND && StylishData.getCap(e.getEntity()).isCombatMode() && (WeaponStats.isWeapon(e.getEntity(), e.getItemStack()) || e.getItemStack().isEmpty() || WeaponStats.isShield(e.getEntity(), e.getItemStack()))) {
             rightClick = true;
             Entity n = RenderUtils.getEntityLookedAt(e.getEntity(), GeneralUtils.getAttributeValueHandSensitive(e.getEntity(), ForgeMod.ENTITY_REACH.get(), InteractionHand.OFF_HAND));
             e.getEntity().swing(InteractionHand.OFF_HAND, false);
@@ -417,7 +411,7 @@ public class ClientEvents {
     public static void sweepSwingOffItemBlock(PlayerInteractEvent.RightClickBlock e) {
         if (TwoHandingHandler.suppressOffhand(e.getEntity(), e.getEntity().getMainHandItem()) && e.getHand() == InteractionHand.OFF_HAND)
             return;
-        if (!rightClick && GeneralConfig.dual && e.getHand() == InteractionHand.OFF_HAND && CombatData.getCap(e.getEntity()).isCombatMode() && (WeaponStats.isWeapon(e.getEntity(), e.getItemStack()) || e.getItemStack().isEmpty() || WeaponStats.isShield(e.getEntity(), e.getItemStack()))) {
+        if (!rightClick && GeneralConfig.dual && e.getHand() == InteractionHand.OFF_HAND && StylishData.getCap(e.getEntity()).isCombatMode() && (WeaponStats.isWeapon(e.getEntity(), e.getItemStack()) || e.getItemStack().isEmpty() || WeaponStats.isShield(e.getEntity(), e.getItemStack()))) {
             rightClick = true;
             Entity n = RenderUtils.getEntityLookedAt(e.getEntity(), GeneralUtils.getAttributeValueHandSensitive(e.getEntity(), ForgeMod.ENTITY_REACH.get(), InteractionHand.OFF_HAND) - (e.getItemStack().isEmpty() ? 1 : 0));
             e.getEntity().swing(InteractionHand.OFF_HAND, false);

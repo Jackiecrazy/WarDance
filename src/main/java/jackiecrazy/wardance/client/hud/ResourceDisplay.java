@@ -140,7 +140,7 @@ public class ResourceDisplay implements IGuiOverlay {
         final int barHeight = 7;
         //double shatter = MathHelper.clamp(itsc.getBarrier() / itsc.getMaxBarrier(), 0, 1);
         if (cap > 0) {
-            final int shatter = itsc.getEvade();
+            final int shatter = itsc.getDamageRecordTime();
             //final int mshatter = (int) GeneralUtils.getAttributeValueSafe(elb, FootworkAttributes.SHATTER.get());
             //take a two-way approach to draw this:
             //first draw the cap brackets
@@ -225,19 +225,13 @@ public class ResourceDisplay implements IGuiOverlay {
                 flexBarWidth = time;//Math.max(count, time);
                 ms.blit(darkmega, atX, atY - 2, 238 - flexBarWidth, 20, flexBarWidth, barHeight);
                 ms.blit(darkmega, atX - flexBarWidth, atY - 2, 0, 20, flexBarWidth, barHeight);
-            } else if (itsc.getExposeTime() > 0) {
-                //int count = (int) ((itsc.getMaxStaggerCount() - itsc.getStaggerCount()) * flexBarWidth / (float) itsc.getMaxStaggerCount()) + 3;
-                int time = (int) ((itsc.getMaxExposeTime() - itsc.getExposeTime()) * flexBarWidth / (float) itsc.getMaxExposeTime()) + 3;
-                flexBarWidth = time;//Math.max(count, time);
-                ms.blit(darkmega, atX, atY - 2, 238 - flexBarWidth, 20, flexBarWidth, barHeight);
-                ms.blit(darkmega, atX - flexBarWidth, atY - 2, 0, 20, flexBarWidth, barHeight);
             } else {
                 flexBarWidth = (int) (itsc.getPosture() * halfBarWidth / itsc.getMaxPosture()) + 4;
                 //reduce length by posture percentage
                 ms.blit(darkmega, atX, atY - 2, 238 - flexBarWidth, 10, flexBarWidth, barHeight);
                 ms.blit(darkmega, atX - flexBarWidth, atY - 2, 2, 10, flexBarWidth, barHeight);
                 // draw barrier if eligible
-//                flexBarWidth = (int) (itsc.getBarrier() * halfBarWidth / itsc.getTrueMaxPosture()) + 5;
+//                flexBarWidth = (int) getEvade(itsc.getBarrier() * halfBarWidth / itsc.getTrueMaxPosture()) + 5;
                 // hacky flip for usage
 //                flip = !flip;
 //                final int vOffset = itsc.consumeBarrier(flip ? -0.001f : 0.001f) == 0 ? 40 : 30;
@@ -638,28 +632,6 @@ public class ResourceDisplay implements IGuiOverlay {
             Entity look = RenderUtils.getEntityLookedAt(player, 32);
             if (look instanceof LivingEntity looked) {
                 RenderSystem.setShaderColor(1, 1, 1, 1);
-                stealth:
-                {
-                    if (ClientConfig.CONFIG.stealth.enabled && cap.isCombatMode()) {
-                        Pair<Integer, Integer> pair = RenderUtils.translateCoords(ClientConfig.CONFIG.stealth, width, height);
-                        final Tuple<StealthUtils.Awareness, Double> info = stealthInfo(looked);
-                        double dist = info.getB();
-                        int shift = 0;
-                        switch (info.getA()) {
-                            case ALERT:
-                                break stealth;
-                            case DISTRACTED:
-                                shift = 1;
-                                break;
-                            case UNAWARE:
-                                if (Minecraft.getInstance().player != null)
-                                    shift = looked.distanceToSqr(Minecraft.getInstance().player) < dist * dist ? 2 : 3;
-                                break;
-                        }
-                        if (info.getB() < 0) shift = 0;
-                        graphics.blit(stealth, pair.getFirst() - 16, pair.getSecond() - 8, 0, shift * 16, 32, 16, 64, 64);
-                    }
-                }
                 final ICombatCapability loocap = CombatData.getCap((LivingEntity) look);
                 if (ClientConfig.CONFIG.enemyPosture.enabled && (cap.isCombatMode() || loocap.getPosture() < loocap.getMaxPosture() || loocap.isVulnerable()))
                     drawPostureBarAt(false, graphics, looked, width, height);//Math.min(HudConfig.client.enemyPosture.x, width - 64), Math.min(HudConfig.client.enemyPosture.y, height - 64));

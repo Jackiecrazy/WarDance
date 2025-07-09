@@ -76,8 +76,12 @@ public class EntityHandler {
 
     @SubscribeEvent
     public static void death(LivingEvent.LivingJumpEvent e) {
-        if (!(e.getEntity() instanceof Player) && CombatData.getCap(e.getEntity()).getExposeTime() > 0) {
-            e.getEntity().setDeltaMovement(0, 0, 0);
+        if (CombatData.getCap(e.getEntity()).isStunned()) {
+            if (!(e.getEntity() instanceof Player))
+                e.getEntity().setDeltaMovement(0, 0, 0);
+            else{
+                //TODO circle sweep up
+            }
         }
     }
 
@@ -91,6 +95,7 @@ public class EntityHandler {
 
     @SubscribeEvent
     public static void reload(OnDatapackSyncEvent e) {
+        //fixme still doesn't sync to server
         for (ServerPlayer sp : e.getPlayerList().getPlayers()) {
             WeaponStats.sendItemData(sp);
             TwohandingStats.sendItemData(sp);
@@ -136,7 +141,7 @@ public class EntityHandler {
                 return;
             } else CombatData.getCap(e.player).serverTick();
             CasterData.getCap(e.player).update();
-            if(WarCompat.elenaiDodge){
+            if (WarCompat.elenaiDodge) {
                 ElenaiCompat.syncIFrames(e.player);
             }
         }
@@ -165,10 +170,10 @@ Mobs should move into a position that is close to the player, far from allies, a
                          */
                 //staggered mobs bypass update interval
                 ICombatCapability cap = CombatData.getCap(elb);
-                if (cap.isVulnerable() || mustUpdate.containsValue(e.getEntity()))
+                if (cap.isStunned() || mustUpdate.containsValue(e.getEntity()))
                     cap.serverTick();
                 float nausea = elb instanceof Player || !elb.hasEffect(MobEffects.CONFUSION) ? 0 : (elb.getEffect(MobEffects.CONFUSION).getAmplifier() + 1) * GeneralConfig.nausea;
-                if (nausea > 0) cap.consumePosture(nausea, 0.1f);
+                if (nausea > 0) cap.consumePosture(null, nausea, false);
             }
         }
     }

@@ -3,6 +3,8 @@ package jackiecrazy.wardance.client;
 import com.mojang.blaze3d.platform.InputConstants;
 import jackiecrazy.footwork.capability.resources.CombatData;
 import jackiecrazy.footwork.capability.resources.ICombatCapability;
+import jackiecrazy.footwork.capability.stylish.IStyleCapability;
+import jackiecrazy.footwork.capability.stylish.StylishData;
 import jackiecrazy.wardance.WarDance;
 import jackiecrazy.wardance.capability.skill.CasterData;
 import jackiecrazy.wardance.client.screen.skill.SkillCastScreen;
@@ -30,7 +32,7 @@ public class Keybinds {
 
         @Override
         public boolean isActive() {
-            return Minecraft.getInstance().player != null && CombatData.getCap(Minecraft.getInstance().player).isCombatMode() && !KeyConflictContext.GUI.isActive();
+            return Minecraft.getInstance().player != null && StylishData.getCap(Minecraft.getInstance().player).isCombatMode() && !KeyConflictContext.GUI.isActive();
         }
 
         @Override
@@ -56,7 +58,7 @@ public class Keybinds {
     public static void handleInputEvent(InputEvent event) {
         Minecraft mc = Minecraft.getInstance();
         if (mc.player == null) return;
-        ICombatCapability itsc = CombatData.getCap(mc.player);
+        IStyleCapability itsc = StylishData.getCap(mc.player);
         if (COMBAT.getKeyConflictContext().isActive() && COMBAT.consumeClick()) {
             ClientEvents.combatTicks = itsc.isCombatMode() ? -999 : Integer.MAX_VALUE;
             mc.player.displayClientMessage(Component.translatable("wardance.combat." + (itsc.isCombatMode() ? "off" : "on")), true);

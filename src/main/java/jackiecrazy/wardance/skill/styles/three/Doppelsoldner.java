@@ -1,6 +1,7 @@
 package jackiecrazy.wardance.skill.styles.three;
 
 import jackiecrazy.footwork.capability.resources.CombatData;
+import jackiecrazy.footwork.capability.stylish.StylishData;
 import jackiecrazy.wardance.event.SuppressOffhandEvent;
 import jackiecrazy.wardance.skill.SkillData;
 import jackiecrazy.wardance.skill.styles.SkillStyle;
@@ -23,8 +24,8 @@ public class Doppelsoldner extends SkillStyle {
 
     @Override
     public boolean equippedTick(LivingEntity caster, SkillData stats) {
-        SkillUtils.modifyAttribute(caster, Attributes.ATTACK_SPEED, uid, CombatData.getCap(caster).isCombatMode() ? 0.4 * SkillUtils.getSkillEffectiveness(caster) : 0, AttributeModifier.Operation.ADDITION);
-        if (CombatData.getCap(caster).isCombatMode()) {
+        SkillUtils.modifyAttribute(caster, Attributes.ATTACK_SPEED, uid, StylishData.getCap(caster).isCombatMode() ? 0.4 * SkillUtils.getSkillEffectiveness(caster) : 0, AttributeModifier.Operation.ADDITION);
+        if (StylishData.getCap(caster).isCombatMode()) {
             CombatData.getCap(caster).setHandBind(InteractionHand.OFF_HAND, 60);
         }
         return false;

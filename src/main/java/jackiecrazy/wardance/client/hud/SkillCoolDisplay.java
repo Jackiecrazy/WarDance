@@ -5,6 +5,7 @@ import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.datafixers.util.Pair;
 import jackiecrazy.footwork.capability.resources.CombatData;
+import jackiecrazy.footwork.capability.stylish.StylishData;
 import jackiecrazy.wardance.capability.skill.CasterData;
 import jackiecrazy.wardance.capability.skill.ISkillCapability;
 import jackiecrazy.wardance.client.RenderUtils;
@@ -86,7 +87,7 @@ public class SkillCoolDisplay implements IGuiOverlay {
         Minecraft mc = Minecraft.getInstance();
         Player player = mc.player;
         if (player == null) return;
-        if (!CombatData.getCap(player).isCombatMode()) return;
+        if (!StylishData.getCap(player).isCombatMode()) return;
         PoseStack stack=guiGraphics.pose();
         stack.pushPose();
 //render skill cooldown

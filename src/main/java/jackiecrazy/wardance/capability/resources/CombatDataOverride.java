@@ -5,6 +5,6 @@ import net.minecraft.world.entity.LivingEntity;
 
 public class CombatDataOverride extends CombatData {
     public CombatDataOverride(LivingEntity e){
-        super(new CombatCapability(e));
+        super(new NewCombatCapability(e));
     }
 }

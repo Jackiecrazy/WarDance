@@ -59,7 +59,8 @@ public class CombatHandler {
 
     @SubscribeEvent
     public static void mohistWhy(AttackEntityEvent e) {
-        CombatData.getCap(e.getEntity()).setCachedCooldown(e.getEntity().getAttackStrengthScale(0.5f));
+        float cd=e.getEntity().getAttackStrengthScale(0.5f);
+        CombatData.getCap(e.getEntity()).tickProc("swing", cd);
     }
 
     /**
@@ -254,7 +255,6 @@ public class CombatHandler {
                     e.setCanceled(true);
                     return;
                 }
-                boolean sweeping = false;
                 //capability handler
                 seme.getMainHandItem().getCapability(CombatManipulator.CAP).ifPresent((i) -> i.attackStart(e.getSource(), seme, uke, seme.getMainHandItem(), e.getAmount()));
                 final WeaponStats.SweepInfo sweepInfo = WeaponStats.getSweepInfo(seme.getMainHandItem(), CombatUtils.getSweepState(seme));
@@ -266,13 +266,12 @@ public class CombatHandler {
                     cds.setCritDamage((float) sweepInfo.getCritDamage());
                 }
                 //add stats if it's the first attack this tick and cooldown is sufficient
-                if (semeCap.getSweepTick() != seme.tickCount) {//first hit of a potential sweep attack
+                if (!semeCap.alreadyProc("attack")) {//first hit of a potential sweep attack
                     //semeCap.addRank(0.1f);
                     float might = CombatUtils.getAttackMight(seme, uke);
                     semeCap.addMight(might);
                     semeCap.setSweepTick(seme.tickCount);
                 } else {//hitting twice in a sweep attack, disqualified from parry refund
-                    sweeping = true;
                 }
                 //blocking, reset posture cooldown without resetting combo cooldown, bypass parry
                 if (uke.isBlocking()) {
@@ -394,17 +393,6 @@ public class CombatHandler {
                         CombatUtils.knockBack(seme, uke, Math.min(uke instanceof Player ? 1.6f : 1.3f, 0.1f + pe.getPostureConsumption() * (float) kb / semeCap.getMaxPosture()), true, false);
                         uke.level().playSound(null, uke.getX(), uke.getY(), uke.getZ(), disshield ? SoundEvents.SHIELD_BLOCK : SoundEvents.ANVIL_PLACE, SoundSource.PLAYERS, 0.25f + WarDance.rand.nextFloat() * 0.25f, (1 - (ukeCap.getPosture() / ukeCap.getMaxPosture())) + WarDance.rand.nextFloat() * 0.5f);
                         //reset cooldown
-//                        if (defMult != 0) {//shield time
-//                            int ticks = (int) ((consumption + 1) * 5);//(posture consumption+1)*5 ticks of cooldown
-//                            float cd = CombatUtils.getCooldownPeriod(uke, parryHand);//attack cooldown ticks
-//                            if (cd > ticks)//if attack speed is lower, refund partial cooldown
-//                                CombatUtils.setHandCooldownDirect(uke, parryHand, ticks, true);
-//                            else//otherwise bind hand
-//                                ukeCap.setHandBind(parryHand, (ticks - (int) cd));
-//                        }
-                        if (sweeping) {
-                            CombatUtils.setHandCooldown(seme, attackingHand, 0, true);
-                        } else CombatUtils.setHandCooldown(seme, attackingHand, (float) (1 - kb), true);
                         //sword on sword is 1.4, sword on shield is 1.12
                         if (defend != null) {
                             ItemStack finalDefend = defend;
@@ -524,7 +512,7 @@ public class CombatHandler {
         //stuff used to exist here, moved to footwork
 
         ICombatCapability cap = CombatData.getCap(uke);
-        cap.setSpiritGrace(ResourceConfig.spiritCD);
+        cap.setSpiritGrace(ResourceConfig.postureRegen);
         cap.setAdrenalineCooldown(CombatConfig.adrenaline);
         SubtleBonusHandler.update = true;
         StealthUtils.Awareness awareness = StealthUtils.INSTANCE.getAwareness(seme, uke);

@@ -178,8 +178,11 @@ public class WeaponStats extends SimpleJsonResourceReloadListener {
         if (is == null) return null;
         if (combatList.containsKey(is.getItem())) return combatList.get(is.getItem());
         for (TagKey<Item> tag : archetypes.keySet()) {
-            if (is.is(tag))
+            if (is.is(tag)) {
+                //cache lookup
+                combatList.put(is.getItem(), archetypes.get(tag));
                 return archetypes.get(tag);
+            }
         }
         return null;
     }

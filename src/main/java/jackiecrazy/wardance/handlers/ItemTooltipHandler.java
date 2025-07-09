@@ -56,9 +56,9 @@ public class ItemTooltipHandler {
 
             List<Component> tips = new ArrayList<>();
 
-            if (stack.canDisableShield(stack, e.getEntity(), e.getEntity())) {
-                tips.add(Component.translatable("wardance.tooltip.disableShield").withStyle(ChatFormatting.GREEN));
-            }
+//            if (stack.canDisableShield(stack, e.getEntity(), e.getEntity())) {
+//                tips.add(Component.translatable("wardance.tooltip.disableShield").withStyle(ChatFormatting.GREEN));
+//            }
             if (stack.is(WeaponStats.PIERCE_PARRY)) {
                 tips.add(Component.translatable("wardance.tooltip.ignoreParry").withStyle(ChatFormatting.GREEN));
             }

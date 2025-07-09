@@ -4,7 +4,6 @@ import jackiecrazy.footwork.capability.resources.CombatData;
 import jackiecrazy.footwork.capability.resources.ICombatCapability;
 import jackiecrazy.footwork.event.DodgeEvent;
 import jackiecrazy.footwork.utils.GeneralUtils;
-import jackiecrazy.footwork.utils.TargetingUtils;
 import jackiecrazy.wardance.compat.WarCompat;
 import jackiecrazy.wardance.config.CombatConfig;
 import net.minecraft.util.Mth;
@@ -22,7 +21,7 @@ import java.util.function.Predicate;
 public class MovementUtils {
 
     public static boolean hasInvFrames(LivingEntity elb) {
-        return CombatData.getCap(elb).getRollTime() > CombatConfig.rollEndsAt || CombatData.getCap(elb).getRollTime() < 0;
+        return CombatData.getCap(elb).getRollTime() > CombatConfig.rollTime || CombatData.getCap(elb).getRollTime() < 0;
     }
 
     /**

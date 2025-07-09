@@ -2,6 +2,8 @@ package jackiecrazy.wardance.networking.combat;
 
 import jackiecrazy.footwork.capability.resources.CombatData;
 import jackiecrazy.footwork.capability.resources.ICombatCapability;
+import jackiecrazy.footwork.capability.stylish.IStyleCapability;
+import jackiecrazy.footwork.capability.stylish.StylishData;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraftforge.network.NetworkEvent;
 
@@ -34,7 +36,7 @@ public class CombatModePacket {
         @Override
         public void accept(CombatModePacket updateClientPacket, Supplier<NetworkEvent.Context> contextSupplier) {
             contextSupplier.get().enqueueWork(() -> {
-                ICombatCapability cap = CombatData.getCap(Objects.requireNonNull(contextSupplier.get().getSender()));
+                IStyleCapability cap = StylishData.getCap(Objects.requireNonNull(contextSupplier.get().getSender()));
                 cap.toggleCombatMode(!cap.isCombatMode());
             });
             contextSupplier.get().setPacketHandled(true);
