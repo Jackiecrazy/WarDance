@@ -1,6 +1,7 @@
 package jackiecrazy.wardance.skill.judgment;
 
 import jackiecrazy.footwork.api.CombatDamageSource;
+import jackiecrazy.footwork.api.FootworkDamageArchetype;
 import jackiecrazy.wardance.capability.status.Marks;
 import jackiecrazy.wardance.skill.SkillData;
 import net.minecraft.world.entity.EntityType;
@@ -20,7 +21,7 @@ public class LichtenbergScar extends Judgment {
 
     @Override
     protected void performEffect(LivingEntity caster, LivingEntity target, int stack, SkillData sd) {
-        DamageSource cds = new CombatDamageSource(caster).setDamageTyping(CombatDamageSource.TYPE.MAGICAL).setSkillUsed(this).setProcSkillEffects(true).setProxy(target).bypassArmor();
+        DamageSource cds = new CombatDamageSource(caster).setDamageTyping(FootworkDamageArchetype.MAGICAL).setSkillUsed(this).setProcSkillEffects(true).setProxy(target).bypassArmor();
         if (stack != 3) {
             target.hurt(cds, 0);
             return;

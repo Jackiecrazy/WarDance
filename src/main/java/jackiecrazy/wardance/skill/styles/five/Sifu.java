@@ -96,7 +96,7 @@ public class Sifu extends ColorRestrictionStyle {
 
     @Override
     public boolean markTick(LivingEntity caster, LivingEntity target, SkillData sd) {
-        if (sd.isCondition() && target instanceof Mob && !CombatData.getCap(target).isVulnerable()) {
+        if (sd.isCondition() && target instanceof Mob && !CombatData.getCap(target).isStunned()) {
             if (caster != null) {
                 if (!target.hasEffect(FootworkEffects.FEAR.get()))
                     EffectUtils.causeFear(target, caster, 100);
@@ -136,7 +136,7 @@ public class Sifu extends ColorRestrictionStyle {
         if (target == null || isGreatEvil(target)) return;
         //applies to eligible enemies
         if (procPoint instanceof LivingAttackEvent lae && procPoint.getPhase() == EventPriority.HIGHEST && lae.getEntity() == target) {
-            if (CombatData.getCap(target).isVulnerable()) {
+            if (CombatData.getCap(target).isStunned()) {
                 //cannot attack the weak
                 lae.setCanceled(true);
             }
@@ -149,7 +149,7 @@ public class Sifu extends ColorRestrictionStyle {
                 lae.setAmount(lae.getAmount() * 0.85f * SkillUtils.getSkillEffectiveness(caster));
             }
             //%max health dealt immediately on expose
-            if (CombatData.getCap(target).isExposed()) {
+            if (CombatData.getCap(target).isStunned()) {
                 lae.setAmount(lae.getAmount() + target.getMaxHealth() * 0.07f * SkillUtils.getSkillEffectiveness(caster));
                 if (lae.getSource() instanceof CombatDamageSource cds)
                     cds.bypassArmor().bypassEnchantments().bypassMagic();

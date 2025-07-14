@@ -9,13 +9,10 @@ import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.packs.resources.ResourceManager;
 import net.minecraft.server.packs.resources.SimpleJsonResourceReloadListener;
-import net.minecraft.tags.EntityTypeTags;
 import net.minecraft.tags.TagKey;
 import net.minecraft.util.profiling.ProfilerFiller;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
-import net.minecraft.world.item.Item;
-import net.minecraftforge.common.Tags;
 import net.minecraftforge.event.AddReloadListenerEvent;
 import net.minecraftforge.registries.ForgeRegistries;
 
@@ -25,7 +22,7 @@ import java.util.Map;
 public class MobSpecs extends SimpleJsonResourceReloadListener {
 
     public static final MobInfo DEFAULT = new MobInfo();
-    public static final TagKey<EntityType<?>> CANNOT_PARRY = TagKey.create(Registries.ENTITY_TYPE, new ResourceLocation(WarDance.MODID, "cannot_parry"));
+    public static final TagKey<EntityType<?>> CANNOT_BLOCK = TagKey.create(Registries.ENTITY_TYPE, new ResourceLocation(WarDance.MODID, "cannot_parry"));
     public static final TagKey<EntityType<?>> DESTROY_ON_PARRY = TagKey.create(Registries.ENTITY_TYPE, new ResourceLocation(WarDance.MODID, "destroy_on_parry"));
     public static final TagKey<EntityType<?>> TRIGGER_ON_PARRY = TagKey.create(Registries.ENTITY_TYPE, new ResourceLocation(WarDance.MODID, "trigger_on_parry"));
     public static Gson GSON = new GsonBuilder().registerTypeAdapter(ResourceLocation.class, new ResourceLocation.Serializer()).create();
@@ -112,9 +109,9 @@ public class MobSpecs extends SimpleJsonResourceReloadListener {
         private double item_attack_posture_scaling = 1;
         private double posture_regeneration_speed = 0.4;
         private int posture_regeneration_cooldown = 40;
-        private double auto_parry_multiplier = 1;
-        private double parry_chance = 0;
-        private boolean parry_omnidirectional = false;
+        private double auto_block_multiplier = 1;
+        private double block_chance = 0;
+        private boolean block_omnidirectional = false;
         private boolean natural_shield = false;
 
         public int getPostureRegenerationCooldown() {
@@ -137,16 +134,16 @@ public class MobSpecs extends SimpleJsonResourceReloadListener {
             return base_max_posture;
         }
 
-        public double getAutoParryMultiplier() {
-            return auto_parry_multiplier;
+        public double getBlockMult() {
+            return auto_block_multiplier;
         }
 
-        public double getParryChance() {
-            return parry_chance;
+        public double getBlockChance() {
+            return block_chance;
         }
 
         public boolean isOmnidirectional() {
-            return parry_omnidirectional;
+            return block_omnidirectional;
         }
 
         public boolean isShield() {

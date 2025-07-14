@@ -1,33 +1,40 @@
 package jackiecrazy.wardance.utils;
 
 import jackiecrazy.footwork.api.CombatDamageSource;
+import jackiecrazy.footwork.api.FootworkDamageArchetype;
 import jackiecrazy.footwork.capability.resources.CombatData;
 import jackiecrazy.footwork.capability.resources.ICombatCapability;
 import jackiecrazy.footwork.capability.stylish.StylishData;
+import jackiecrazy.footwork.capability.timeslow.TimeSlowData;
 import jackiecrazy.footwork.capability.weaponry.CombatManipulator;
 import jackiecrazy.footwork.client.particle.FootworkParticles;
 import jackiecrazy.footwork.client.particle.ScalingParticleType;
-import jackiecrazy.footwork.event.AttackMightEvent;
+import jackiecrazy.footwork.potion.FootworkEffects;
+import jackiecrazy.footwork.utils.EffectUtils;
 import jackiecrazy.footwork.utils.GeneralUtils;
 import jackiecrazy.footwork.utils.ParticleUtils;
+import jackiecrazy.footwork.utils.TargetingUtils;
 import jackiecrazy.wardance.WarDance;
 import jackiecrazy.wardance.capability.action.PermissionData;
 import jackiecrazy.wardance.config.CombatConfig;
 import jackiecrazy.wardance.config.GeneralConfig;
 import jackiecrazy.wardance.config.MobSpecs;
 import jackiecrazy.wardance.config.WeaponStats;
-import jackiecrazy.wardance.event.ProjectileParryEvent;
+import jackiecrazy.wardance.entity.FakeExplosion;
+import jackiecrazy.wardance.event.ProjectileDefendEvent;
 import jackiecrazy.wardance.event.SweepEvent;
+import jackiecrazy.wardance.mixin.ShieldBlockAccessor;
 import jackiecrazy.wardance.networking.CombatChannel;
 import jackiecrazy.wardance.networking.combat.UpdateAttackCooldownPacket;
 import net.minecraft.core.particles.ParticleType;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvents;
+import net.minecraft.sounds.SoundSource;
 import net.minecraft.util.Mth;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.damagesource.DamageSource;
-import net.minecraft.world.effect.MobEffects;
+import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.EquipmentSlot;
@@ -133,25 +140,31 @@ public class CombatUtils {
         return isUnarmed(e, InteractionHand.MAIN_HAND) && isUnarmed(e, InteractionHand.OFF_HAND);
     }
 
-    public static boolean canParry(LivingEntity defender, Entity attacker, @Nonnull ItemStack i, float postureDamage) {
-        return canParry(defender, attacker, i, null, postureDamage);
+    public static boolean canBlock(LivingEntity defender, Entity attacker, @Nonnull ItemStack i, float postureDamage) {
+        return canBlock(defender, attacker, i, null, postureDamage);
     }
 
-    public static boolean canParry(LivingEntity defender, Entity attacker, @Nonnull ItemStack defend, @Nullable ItemStack attack, float postureDamage) {
+    public static boolean canBlock(LivingEntity defender, Entity attacker, @Nonnull ItemStack defend, @Nullable ItemStack attack, float postureDamage) {
         InteractionHand h = defender.getOffhandItem() == defend ? InteractionHand.OFF_HAND : InteractionHand.MAIN_HAND;
-        if (postureDamage < 0) return false;
+
+        //what
+        if (postureDamage < 0) return true;
+
+        //cannot be parried
         if (attacker instanceof LivingEntity && getPostureDef((LivingEntity) attacker, defender, defend, postureDamage) < 0)
             return false;
-        //can't parry lah
-        if (defender.getType().is(MobSpecs.CANNOT_PARRY))
+
+        //the mob itself cannot block
+        if (defender.getType().is(MobSpecs.CANNOT_BLOCK))
             return false;
-        if (defend.is(WeaponStats.CANNOT_PARRY))
+
+        //the item cannot block
+        if (defend.is(WeaponStats.CANNOT_BLOCK))
             return false;
-        //attack pierces parry/shield
+
+        //attack pierces blocks,
         if (attack != null) {
-            if (attack.is(WeaponStats.PIERCE_PARRY) && WeaponStats.isWeapon(defender, defend))
-                return false;
-            if (attack.is(WeaponStats.PIERCE_SHIELD) && WeaponStats.isShield(defender, defend))
+            if (WeaponStats.canPierceShield(attack, attacker))
                 return false;
         }
         //item cooldown
@@ -161,18 +174,18 @@ public class CombatUtils {
         if (CombatData.getCap(defender).getHandBind(h) > 0)
             return false;
         float rand = WarDance.rand.nextFloat();
-        boolean recharge = !WeaponStats.isShield(defender, defend) || getCooledAttackStrength(defender, h, 0.5f) > 0.9f && CombatData.getCap(defender).getHandBind(h) == 0;
-        recharge &= (!(defender instanceof Player) || ((Player) defender).getCooldowns().getCooldownPercent(defender.getItemInHand(h).getItem(), 0) == 0);
+        //check the hand is off cooldown
+        boolean notOnCooldown = CombatData.getCap(defender).getHandBind(h) == 0;
+        notOnCooldown &= (!(defender instanceof Player) || ((Player) defender).getCooldowns().getCooldownPercent(defender.getItemInHand(h).getItem(), 0) == 0);
         if (defend.getCapability(CombatManipulator.CAP).isPresent() && attacker instanceof LivingEntity) {
-            return defend.getCapability(CombatManipulator.CAP).resolve().get().canBlock(defender, attacker, defend, recharge, postureDamage);
+            return defend.getCapability(CombatManipulator.CAP).resolve().get().canBlock(defender, attacker, defend, notOnCooldown, postureDamage);
         }
         if (WeaponStats.isShield(defender, defend)) {
             boolean canShield = (defender instanceof Player || rand < CombatConfig.mobParryChanceShield);
-            boolean canParry = true;//CombatData.getCap(defender).getBarrierCooldown() == 0 || CombatData.getCap(defender).getBarrier() > 0;
-            return recharge & canParry & canShield;
+            return notOnCooldown & canShield;
         } else if (WeaponStats.isWeapon(defender, defend)) {
             boolean canWeapon = (defender instanceof Player || rand < CombatConfig.mobParryChanceWeapon);
-            return recharge & canWeapon;
+            return notOnCooldown & canWeapon;
         } else return false;
     }
 
@@ -247,25 +260,6 @@ public class CombatUtils {
             return (float) meleeInfo.getDefensePostureMultiplier();
         }
         return (float) WeaponStats.DEFAULTMELEE.getDefensePostureMultiplier();
-    }
-
-    public static float getAttackMight(LivingEntity seme, LivingEntity uke) {
-        ICombatCapability semeCap = CombatData.getCap(seme);
-        final float magicScale = 1.722f;
-        final float magicNumber = 1562.5f;//magic numbers scale the modified formula to 0.1 per sword hit
-        final float cooldownSq = semeCap.getProc("tick") * semeCap.getProc("tick");
-        final double period = 20.0D / (seme.getAttribute(Attributes.ATTACK_SPEED).getValue() + 0.5d);//+0.5 makes sure heavies don't scale forever, light ones are still puny
-        float might = cooldownSq * cooldownSq * magicScale * (float) period * (float) period / magicNumber;
-        //might *= (1f + (semeCap.getRank() / 20f));//combo bonus
-        float weakness = 1;
-        if (seme.hasEffect(MobEffects.WEAKNESS))
-            for (int foo = 0; foo < seme.getEffect(MobEffects.WEAKNESS).getAmplifier() + 1; foo++) {
-                weakness *= GeneralConfig.weakness;
-            }
-        might *= weakness;//weakness malus
-        AttackMightEvent ame = new AttackMightEvent(seme, uke, might);
-        MinecraftForge.EVENT_BUS.post(ame);
-        return ame.getQuantity();
     }
 
     /**
@@ -507,7 +501,7 @@ public class CombatUtils {
         }
     }
 
-    public static void initializePPE(ProjectileParryEvent ppe, float mult) {
+    public static void initializePPE(ProjectileDefendEvent ppe, float mult) {
         final EntityType<?> type = ppe.getProjectile().getType();
         ProjectileInfo pi = projectileMap.getOrDefault(type, DEFAULTRANGED);
         ppe.setReturnVec(pi.destroy | type.is(MobSpecs.DESTROY_ON_PARRY) ? null : ppe.getProjectile().getDeltaMovement().normalize().scale(-0.1));
@@ -518,11 +512,92 @@ public class CombatUtils {
     public static WeaponStats.SWEEPSTATE getSweepState(LivingEntity entity) {
         if (entity.isPassenger()) return WeaponStats.SWEEPSTATE.RIDING;
         if (entity.isCrouching()) return WeaponStats.SWEEPSTATE.SNEAKING;
-        if (entity.isSwimming() || entity.isSprinting() || entity.isFallFlying() || MovementUtils.hasInvFrames(entity))
+        if (entity.isSwimming() || entity.isSprinting() || entity.isFallFlying() || CombatData.getCap(entity).isDodging() || CombatData.getCap(entity).isIframe())
             return WeaponStats.SWEEPSTATE.SPRINTING;
         if ((!(entity instanceof Player p) || !p.getAbilities().flying) && !entity.onGround() && entity.fallDistance > 0 && !entity.onClimbable() && !entity.isInWater())
             return WeaponStats.SWEEPSTATE.FALLING;
         return WeaponStats.SWEEPSTATE.STANDING;
+    }
+
+    public static void onSuccessfulBlock(LivingEntity defender, Entity attacker, @Nullable InteractionHand hand, @Nullable ItemStack defend, float amount) {
+        //quickly refill one trigger and trigger block effects
+        //add 15% extra posture damage to the mob, removed on next hit but stacks
+        //If the attack was guard breaking (entity flag 30) disable block for a while (handled somewhere else)
+        defender.level().playSound(null, defender.getX(), defender.getY(), defender.getZ(), SoundEvents.SHIELD_BLOCK, SoundSource.PLAYERS, WarDance.rand.nextFloat() * 0.3f + Math.min(1f, 1 - CombatData.getCap(defender).getPosturePercentage()), Math.min(0.75f, amount / 7) + WarDance.rand.nextFloat() * 0.5f);
+        StylishData.getCap(defender).addTriggerTime(10, true);
+        StylishData.getCap(defender).addCombo(0.2f, "block");
+
+        if (attacker instanceof LivingEntity le) {
+            ((ShieldBlockAccessor) (defender)).callBlockUsingShield(le);
+            EffectUtils.attemptAddPot(le, EffectUtils.stackPot(le, new MobEffectInstance(FootworkEffects.COUNTERSTRIKE.get(), 100, 0), EffectUtils.StackingMethod.MAXDURATION), true);
+        }
+
+        //item specific effects
+        if (defend != null) {
+            ItemStack finalDefend = defend;
+            defend.getCapability(CombatManipulator.CAP).ifPresent((i) -> i.onBlock(defender, attacker, finalDefend, amount));
+            InteractionHand other = hand == InteractionHand.MAIN_HAND ? InteractionHand.OFF_HAND : InteractionHand.MAIN_HAND;
+            ItemStack finalDefend1 = defender.getItemInHand(other);
+            finalDefend1.getCapability(CombatManipulator.CAP).ifPresent((i) -> i.onOtherHandBlock(defender, attacker, finalDefend1, amount));
+        }
+    }
+
+    public static void triggerSteveTime(LivingEntity from, int time){
+        //ZA WAAAAARUDO! TOKI WO TOMARE!
+        for (Entity t : from.level().getEntities(from, from.getBoundingBox().inflate(32), (a -> !(a instanceof Player)))) {
+            TimeSlowData.getCap(t).alterSpeed(time, 0.5);
+        }
+    }
+
+    public static void onSuccessfulDodge(LivingEntity defender, Entity attacker) {
+        //normal dodges already refill 1 spirit. Perfect dodging maxes out spirit.
+        //slow all mobs in a 32 block range for about 2 seconds and convert remaining dodge frames to iframes to stop repeated procs
+        defender.level().playSound(null, defender.getX(), defender.getY(), defender.getZ(), SoundEvents.NOTE_BLOCK_BELL.get(), SoundSource.PLAYERS, 0.3f + WarDance.rand.nextFloat() * 0.5f, 0.75f + WarDance.rand.nextFloat() * 0.5f);
+        StylishData.getCap(defender).addCombo(0.3f, "dodge");
+        ICombatCapability cap = CombatData.getCap(defender);
+        int remaining = cap.getDodgeTime();
+        if (attacker instanceof LivingEntity e) {
+            CombatData.getCap(e).setHandBind(InteractionHand.MAIN_HAND, remaining);//prevent further attacks
+        }
+        cap.setSpirit(cap.getMaxSpirit());
+        cap.setDodgeTime(0);
+        cap.setIframe(remaining);
+        if (defender instanceof Player) {
+            triggerSteveTime(defender, 40);
+        }
+    }
+
+    public static void onSuccessfulParry(LivingEntity defender, Entity attacker, @Nullable InteractionHand hand, @Nullable ItemStack defend, float amount) {
+        //resolve trigger charges and emit a shockwave that deals ??? posture damage in an area. Cannot breach.
+        //grant 2 seconds of iframes, which conveniently stops repeated parrying
+        //FakeExplosion.explode(defender.level(), defender, defender.getX(), defender.getY() + defender.getBbHeight() * 1.1f, defender.getZ(), 5);
+        defender.level().playSound(null, defender.getX(), defender.getY(), defender.getZ(), SoundEvents.ANVIL_PLACE, SoundSource.PLAYERS, Math.min(1, amount / 10) + WarDance.rand.nextFloat() * 0.3f, 0.5f + WarDance.rand.nextFloat() * 0.25f);
+        StylishData.getCap(defender).addCombo(0.4f, "parry");
+        ICombatCapability cap = CombatData.getCap(defender);
+        StylishData.getCap(defender).processAttack(true);
+        StylishData.getCap(defender).processAttack(false);
+        //cap.setParryTime(40);
+        cap.setIframe(40);
+        if (defender instanceof Player) {
+            for (Entity t : defender.level().getEntities(defender, defender.getBoundingBox().inflate(5), (a -> !TargetingUtils.isAlly(a, defender)))) {
+                float strength = 1.3f;
+                if (t instanceof LivingEntity e) {
+                    CombatData.getCap(e).consumePosture(defender, 7, false, 1);
+                    strength = Math.min(strength, 0.2f + Math.min(1f, amount * CombatData.getCap(e).getPosturePercentage()));
+                }
+                CombatUtils.knockBack(attacker, defender, -strength, true, false);
+
+            }
+        }
+
+        //perform item related procs
+        if (defend != null) {
+            ItemStack finalDefend = defend;
+            defend.getCapability(CombatManipulator.CAP).ifPresent((i) -> i.onParry(defender, attacker, finalDefend, amount));
+            InteractionHand other = defender.getMainHandItem() == defend ? InteractionHand.OFF_HAND : InteractionHand.MAIN_HAND;
+            ItemStack finalDefend1 = defender.getItemInHand(other);
+            finalDefend1.getCapability(CombatManipulator.CAP).ifPresent((i) -> i.onOtherHandParry(defender, attacker, finalDefend1, amount));
+        }
     }
 
     private static class ProjectileInfo {

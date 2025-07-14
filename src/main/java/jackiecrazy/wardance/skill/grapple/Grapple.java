@@ -13,7 +13,6 @@ import jackiecrazy.wardance.event.FractureEvent;
 import jackiecrazy.wardance.skill.*;
 import jackiecrazy.wardance.utils.CombatUtils;
 import jackiecrazy.wardance.utils.DamageUtils;
-import jackiecrazy.wardance.utils.SkillUtils;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.effect.MobEffectInstance;
@@ -36,7 +35,7 @@ public class Grapple extends Skill {
     }
 
     @Override
-    public float spiritConsumption(LivingEntity caster) {
+    public int spiritConsumption(LivingEntity caster) {
         return 1;
     }
 
@@ -80,7 +79,7 @@ public class Grapple extends Skill {
     protected void performEffect(LivingEntity caster, LivingEntity target, SkillData stats) {
         if (!cast(caster, target, -999)) return;
         caster.level().playSound(null, target.getX(), target.getY(), target.getZ(), SoundEvents.BARREL_OPEN, SoundSource.PLAYERS, 0.3f + WarDance.rand.nextFloat() * 0.5f, 0.75f + WarDance.rand.nextFloat() * 0.5f);
-        CombatData.getCap(target).consumePosture(caster, 7 * stats.getEffectiveness() * stats.getEffectiveness(), 0, true);
+        CombatData.getCap(target).consumePosture(caster, 7 * stats.getEffectiveness() * stats.getEffectiveness(), true, 1);
         ParticleUtils.playSweepParticle(FootworkParticles.IMPACT.get(), caster, caster.position(), 0, 1, getColor(), 0);
     }
 
@@ -98,7 +97,7 @@ public class Grapple extends Skill {
             getExistingData(caster).addTarget(target);
             target.setDeltaMovement(caster.getDeltaMovement().add(caster.position().vectorTo(target.position()).scale(-0.3)));
             target.hurtMarked = true;
-            float overflow = CombatData.getCap(target).consumePosture(caster, posture * 1.5f, 0, true);
+            float overflow = CombatData.getCap(target).consumePosture(caster, posture * 1.5f, true, 1);
             if (overflow < 0) {
                 //suplex shockwave
                 ParticleUtils.playSweepParticle(FootworkParticles.IMPACT.get(), caster, target.position(), 0, 7 * stats.getEffectiveness(), getColor(), 0);

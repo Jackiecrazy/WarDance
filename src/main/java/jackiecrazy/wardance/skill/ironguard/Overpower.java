@@ -2,7 +2,7 @@ package jackiecrazy.wardance.skill.ironguard;
 
 import jackiecrazy.footwork.capability.resources.CombatData;
 import jackiecrazy.footwork.capability.resources.ICombatCapability;
-import jackiecrazy.wardance.event.ParryEvent;
+import jackiecrazy.wardance.event.MeleePostureEvent;
 import jackiecrazy.wardance.skill.SkillData;
 import jackiecrazy.wardance.utils.CombatUtils;
 import net.minecraft.world.entity.LivingEntity;
@@ -10,7 +10,7 @@ import net.minecraft.world.entity.LivingEntity;
 public class Overpower extends IronGuard {
 
     @Override
-    protected void parry(LivingEntity caster, ParryEvent procPoint, SkillData stats, LivingEntity target, STATE state) {
+    protected void parry(LivingEntity caster, MeleePostureEvent.Defense procPoint, SkillData stats, LivingEntity target, STATE state) {
         if (state == STATE.COOLING) return;
         CombatData.getCap(procPoint.getAttacker()).consumePosture(caster, CombatUtils.getPostureAtk(caster, target, procPoint.getDefendingHand(), null, procPoint.getAttackDamage(), procPoint.getDefendingStack()) * stats.getEffectiveness());
         CombatData.getCap(procPoint.getAttacker()).consumePosture(caster, procPoint.getPostureConsumption() * stats.getEffectiveness());

@@ -19,7 +19,7 @@ public class Submission extends Grapple {
         consume *= stats.getEffectiveness();
         ParticleUtils.playSweepParticle(FootworkParticles.IMPACT.get(), caster, target.position(), 0, 1, getColor(), 0);
         caster.level().playSound(null, target.getX(), target.getY(), target.getZ(), SoundEvents.BARREL_OPEN, SoundSource.PLAYERS, 0.3f + WarDance.rand.nextFloat() * 0.5f, 0.75f + WarDance.rand.nextFloat() * 0.5f);
-        if (CombatData.getCap(target).consumePosture(caster, consume, 0, true) < 0) {
+        if (CombatData.getCap(target).consumePosture(caster, consume, true) < 0) {
             CombatData.getCap(caster).addSpirit(1);
         }
         CombatData.getCap(caster).addPosture(armor);

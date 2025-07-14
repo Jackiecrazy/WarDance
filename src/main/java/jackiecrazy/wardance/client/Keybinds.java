@@ -62,6 +62,7 @@ public class Keybinds {
         if (COMBAT.getKeyConflictContext().isActive() && COMBAT.consumeClick()) {
             ClientEvents.combatTicks = itsc.isCombatMode() ? -999 : Integer.MAX_VALUE;
             mc.player.displayClientMessage(Component.translatable("wardance.combat." + (itsc.isCombatMode() ? "off" : "on")), true);
+            itsc.toggleCombatMode(!itsc.isCombatMode());
             CombatChannel.INSTANCE.sendToServer(new CombatModePacket());
         }
         if (CAST.getKeyConflictContext().isActive() && CAST.consumeClick() && mc.player.isAlive()) {

@@ -105,7 +105,7 @@ public class Feint extends Skill {
     }
 
     @Override
-    public float spiritConsumption(LivingEntity caster) {
+    public int spiritConsumption(LivingEntity caster) {
         return 2;
     }
 

@@ -1,6 +1,6 @@
 package jackiecrazy.wardance.skill.ironguard;
 
-import jackiecrazy.wardance.event.ParryEvent;
+import jackiecrazy.wardance.event.MeleePostureEvent;
 import jackiecrazy.wardance.skill.SkillData;
 import jackiecrazy.wardance.utils.SkillUtils;
 import net.minecraft.core.particles.ParticleTypes;
@@ -15,12 +15,12 @@ import javax.annotation.Nullable;
 public class Afterimage extends IronGuard {
     @Override
     public void onProc(LivingEntity caster, Event procPoint, STATE state, SkillData stats, @Nullable LivingEntity target) {
-        if (procPoint instanceof final ParryEvent pe && procPoint.getPhase() == EventPriority.HIGHEST && state!=STATE.COOLING && pe.getEntity() == caster && pe.canParry() && pe.getPostureConsumption() > 0) {
+        if (procPoint instanceof final MeleePostureEvent.Defense pe && procPoint.getPhase() == EventPriority.HIGHEST && state!=STATE.COOLING && pe.getEntity() == caster && pe.success() && pe.getPostureConsumption() > 0) {
             parry(caster, pe, stats, target, state);
         }
     }
     @Override
-    protected void parry(LivingEntity caster, ParryEvent procPoint, SkillData stats, LivingEntity target, STATE state) {
+    protected void parry(LivingEntity caster, MeleePostureEvent.Defense procPoint, SkillData stats, LivingEntity target, STATE state) {
         if (!caster.isShiftKeyDown() || state == STATE.COOLING || !cast(caster, target, -999)) return;
         final float cost = procPoint.getPostureConsumption() * stats.getEffectiveness();
         SkillUtils.createCloud(caster.level(), caster, caster.getX(), caster.getY(), caster.getZ(), cost, ParticleTypes.LARGE_SMOKE);

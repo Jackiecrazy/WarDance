@@ -1,9 +1,9 @@
 package jackiecrazy.wardance.skill.styles.three;
 
-import jackiecrazy.footwork.event.GainMightEvent;
+import jackiecrazy.footwork.event.GainAdrenalineEvent;
 import jackiecrazy.wardance.WarDance;
 import jackiecrazy.wardance.capability.status.Marks;
-import jackiecrazy.wardance.event.ParryEvent;
+import jackiecrazy.wardance.event.MeleePostureEvent;
 import jackiecrazy.wardance.skill.SkillColors;
 import jackiecrazy.wardance.skill.SkillData;
 import jackiecrazy.wardance.skill.WarSkills;
@@ -31,7 +31,7 @@ public class GoldRush extends ColorRestrictionStyle {
     }
 
     @SubscribeEvent(priority = EventPriority.LOWEST)
-    public static void spread(ParryEvent e) {
+    public static void spread(MeleePostureEvent.Defense e) {
         //spread mark
         Marks.getCap(e.getEntity()).getActiveMark(WarSkills.GOLD_RUSH.get()).ifPresent(a -> {
             //more pain
@@ -80,7 +80,7 @@ public class GoldRush extends ColorRestrictionStyle {
     @Override
     public void onProc(LivingEntity caster, Event procPoint, STATE state, SkillData pd, LivingEntity target) {
         if (procPoint.getPhase() != EventPriority.LOWEST) return;
-        if (procPoint instanceof final GainMightEvent gme) {
+        if (procPoint instanceof final GainAdrenalineEvent gme) {
             pd.addArbitraryFloat(gme.getQuantity() * SkillUtils.getSkillEffectiveness(caster));
             if (pd.getArbitraryFloat() > 1) {
                 mark(caster, caster, 60, 1);

@@ -20,7 +20,7 @@ public class MastersLesson extends Judgment {
         if (procPoint instanceof StunEvent && ((StunEvent) procPoint).getEntity() == target) {
             ((StunEvent) procPoint).setLength(200);
         } else if (procPoint instanceof LivingAttackEvent && ((LivingAttackEvent) procPoint).getEntity() == target) {
-            if (CombatData.getCap(target).isVulnerable())
+            if (CombatData.getCap(target).isStunned())
                 procPoint.setCanceled(true);
             else if (procPoint.getPhase() == EventPriority.HIGHEST && Marks.getCap(target).isMarked(this)) {
                 CombatData.getCap(target).consumePosture(((LivingAttackEvent) procPoint).getAmount());

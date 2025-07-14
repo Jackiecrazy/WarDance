@@ -2,7 +2,7 @@ package jackiecrazy.wardance.skill.styles.two;
 
 import jackiecrazy.footwork.api.CombatDamageSource;
 import jackiecrazy.wardance.capability.status.Marks;
-import jackiecrazy.wardance.event.ParryEvent;
+import jackiecrazy.wardance.event.MeleePostureEvent;
 import jackiecrazy.wardance.skill.SkillData;
 import jackiecrazy.wardance.skill.styles.SkillStyle;
 import jackiecrazy.wardance.utils.DamageUtils;
@@ -25,7 +25,7 @@ public class PestilentEdge extends SkillStyle {
 
     @Override
     public void onProc(LivingEntity caster, Event procPoint, STATE state, SkillData stats, @Nullable LivingEntity target) {
-        if (procPoint instanceof ParryEvent cpe && cpe.getEntity() == target && cpe.getPhase() == EventPriority.HIGHEST) {
+        if (procPoint instanceof MeleePostureEvent.Defense cpe && cpe.getEntity() == target && cpe.getPhase() == EventPriority.HIGHEST) {
             int debuffs = 0;
             for (MobEffectInstance mei : target.getActiveEffects().stream().toList()) {
                 if (mei.getEffect().getCategory() == MobEffectCategory.HARMFUL) debuffs += mei.getAmplifier() + 1;

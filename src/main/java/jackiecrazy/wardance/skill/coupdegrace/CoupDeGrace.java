@@ -1,8 +1,10 @@
 package jackiecrazy.wardance.skill.coupdegrace;
 
 import jackiecrazy.footwork.api.CombatDamageSource;
+import jackiecrazy.footwork.api.FootworkDamageArchetype;
 import jackiecrazy.footwork.capability.resources.CombatData;
 import jackiecrazy.footwork.capability.resources.ICombatCapability;
+import jackiecrazy.footwork.capability.stylish.StylishData;
 import jackiecrazy.footwork.client.particle.FootworkParticles;
 import jackiecrazy.footwork.event.StunEvent;
 import jackiecrazy.footwork.utils.GeneralUtils;
@@ -16,6 +18,7 @@ import jackiecrazy.wardance.entity.FakeExplosion;
 import jackiecrazy.wardance.event.ExposeAttackEvent;
 import jackiecrazy.wardance.event.SkillCastEvent;
 import jackiecrazy.wardance.skill.*;
+import jackiecrazy.wardance.utils.CombatUtils;
 import jackiecrazy.wardance.utils.SkillUtils;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
@@ -82,16 +85,17 @@ public class CoupDeGrace extends Skill {
     public void onProc(LivingEntity caster, Event procPoint, STATE state, SkillData stats, LivingEntity target) {
         if (procPoint.getPhase() == EventPriority.HIGHEST && state == STATE.ACTIVE) {
             if (procPoint instanceof LivingHurtEvent e && e.getEntity() == target) {
-                if (!CombatData.getCap(e.getEntity()).isExposed() && willKillOnCast(caster, target, stats)) {
+                if (!CombatData.getCap(e.getEntity()).isStunned() && willKillOnCast(caster, target, stats)) {
                     e.setCanceled(true);
                     CombatData.getCap(target).consumePosture(caster, e.getAmount());
                 }
             }
             if (procPoint instanceof ExposeAttackEvent e && e.getEntity() == target) {
+                CombatUtils.triggerSteveTime(caster, 15);
                 if (willKillOnCast(caster, target, stats))
                     target.setHealth(1);
                 if (e.getDamageSource() instanceof CombatDamageSource cds) {
-                    cds.setDamageTyping(CombatDamageSource.TYPE.TRUE);
+                    cds.setDamageTyping(FootworkDamageArchetype.TRUE);
                     cds.bypassMagic().bypassArmor();
                 }
                 deathCheck(caster, target, e.getAmount());
@@ -103,7 +107,7 @@ public class CoupDeGrace extends Skill {
         } else if (procPoint instanceof StunEvent e && procPoint.getPhase() == EventPriority.HIGHEST && state == STATE.ACTIVE) {
             if (e.getEntity() == target) {
                 if (willKillOnCast(caster, target, stats)) {
-                    CombatData.getCap(target).expose(CombatConfig.exposeDuration);
+                    CombatData.getCap(target).stun(CombatConfig.staggerDuration);
                 }
             }
         }
@@ -158,7 +162,7 @@ public class CoupDeGrace extends Skill {
         @Override
         protected void deathCheck(LivingEntity caster, LivingEntity target, float amount) {
             CombatData.getCap(target).consumeSpirit(CombatData.getCap(target).getSpirit() / 2);
-            FakeExplosion.explode(caster.level(), caster, target.getX(), target.getY(), target.getZ(), (float) Math.sqrt(CombatData.getCap(target).getMaxPosture()), new CombatDamageSource(caster).setProxy(target).setSkillUsed(this).setDamageTyping(CombatDamageSource.TYPE.PHYSICAL).setProcSkillEffects(true).setExplosion(), 4 * CombatData.getCap(target).getSpirit());
+            FakeExplosion.explode(caster.level(), caster, target.getX(), target.getY(), target.getZ(), (float) Math.sqrt(CombatData.getCap(target).getMaxPosture()), new CombatDamageSource(caster).setProxy(target).setSkillUsed(this).setDamageTyping(FootworkDamageArchetype.PHYSICAL).setProcSkillEffects(true).setExplosion(), 4 * CombatData.getCap(target).getSpirit());
         }
     }
 
@@ -166,7 +170,7 @@ public class CoupDeGrace extends Skill {
 
         @Override
         protected float getDamage(LivingEntity caster, LivingEntity target, SkillData sd) {
-            return GeneralUtils.getMaxHealthBeforeWounding(target) * SkillUtils.getSkillEffectiveness(caster) * (1 - (target.getHealth() / GeneralUtils.getMaxHealthBeforeWounding(target))) * (0.1f + 0.3f * (CombatData.getCap(caster).getRank() / 10));
+            return GeneralUtils.getMaxHealthBeforeWounding(target) * SkillUtils.getSkillEffectiveness(caster) * (1 - (target.getHealth() / GeneralUtils.getMaxHealthBeforeWounding(target))) * (0.1f + 0.3f * (StylishData.getCap(caster).getAdrenaline() / 10));
         }
     }
 
@@ -202,9 +206,9 @@ public class CoupDeGrace extends Skill {
                 ParticleUtils.playSweepParticle(FootworkParticles.CIRCLE.get(), caster, caster.position().add(caster.getLookAngle().multiply(1, 0, 1)), 0, caster.getAttributeValue(ForgeMod.ENTITY_REACH.get()), Color.RED, 0.5f);
                 for (Entity e : caster.level().getEntities(caster, caster.getBoundingBox().inflate(caster.getAttributeValue(ForgeMod.ENTITY_REACH.get())), (a -> !TargetingUtils.isAlly(a, caster)))) {
                     if (!(e instanceof LivingEntity) || !caster.hasLineOfSight(e)) continue;
-                    final CombatDamageSource die = new CombatDamageSource(caster).setDamageTyping(CombatDamageSource.TYPE.PHYSICAL).setProcSkillEffects(true).setSkillUsed(this);
+                    final CombatDamageSource die = new CombatDamageSource(caster).setDamageTyping(FootworkDamageArchetype.PHYSICAL).setProcSkillEffects(true).setSkillUsed(this);
                     if (willKillOnCast(caster, (LivingEntity) e, prev)) {
-                        die.setCrit(true).setCritDamage(1).setKnockbackPercentage(0).setDamageTyping(CombatDamageSource.TYPE.TRUE).bypassArmor().bypassMagic();
+                        die.setCrit(true).setCritDamage(1).setKnockbackPercentage(0).setDamageTyping(FootworkDamageArchetype.TRUE).bypassArmor().bypassMagic();
                     }
                     e.hurt(die, GeneralUtils.getMaxHealthBeforeWounding((LivingEntity) e) * prev.getEffectiveness() / 10 + (float) caster.getAttributeValue(Attributes.ATTACK_DAMAGE));
                     if (((LivingEntity) e).isDeadOrDying()) prev.flagCondition(true);

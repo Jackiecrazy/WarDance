@@ -1,7 +1,7 @@
 package jackiecrazy.wardance.skill.ironguard;
 
-import jackiecrazy.wardance.event.ParryEvent;
-import jackiecrazy.wardance.event.ProjectileParryEvent;
+import jackiecrazy.wardance.event.MeleePostureEvent;
+import jackiecrazy.wardance.event.ProjectileDefendEvent;
 import jackiecrazy.wardance.skill.SkillData;
 import jackiecrazy.wardance.utils.SkillUtils;
 import net.minecraft.world.entity.LivingEntity;
@@ -13,7 +13,7 @@ import javax.annotation.Nullable;
 public class ReturnToSender extends IronGuard {
     @Override
     public void onProc(LivingEntity caster, Event procPoint, STATE state, SkillData stats, @Nullable LivingEntity target) {
-        if (procPoint instanceof final ProjectileParryEvent ppe && procPoint.getPhase() == EventPriority.HIGHEST && ppe.getReturnVec() != null && ppe.getEntity() == caster&& cast(caster)) {
+        if (procPoint instanceof final ProjectileDefendEvent ppe && procPoint.getPhase() == EventPriority.HIGHEST && ppe.getReturnVec() != null && ppe.getEntity() == caster&& cast(caster)) {
             ppe.setReturnVec(ppe.getProjectile().getDeltaMovement().reverse());
             ppe.setPostureConsumption(ppe.getPostureConsumption() * 2f / SkillUtils.getSkillEffectiveness(caster));
             markUsed(caster);
@@ -32,7 +32,7 @@ public class ReturnToSender extends IronGuard {
     }
 
     @Override
-    protected void parry(LivingEntity caster, ParryEvent procPoint, SkillData stats, LivingEntity target, STATE state) {
+    protected void parry(LivingEntity caster, MeleePostureEvent.Defense procPoint, SkillData stats, LivingEntity target, STATE state) {
 
     }
 }

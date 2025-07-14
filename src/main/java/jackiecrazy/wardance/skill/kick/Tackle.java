@@ -13,7 +13,7 @@ public class Tackle extends Kick {
     @Override
     public void additionally(LivingEntity caster, LivingEntity target, SkillData sd) {
         caster.setDeltaMovement(caster.getDeltaMovement().add(caster.position().vectorTo(target.position()).scale(0.18)));
-        CombatData.getCap(caster).setRollTime((int) (-10*sd.getEffectiveness()));
+        CombatData.getCap(caster).setDodgeTime((int) (10*sd.getEffectiveness()));
         caster.hurtMarked = true;
     }
 

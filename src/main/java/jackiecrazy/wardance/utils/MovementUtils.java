@@ -2,6 +2,7 @@ package jackiecrazy.wardance.utils;
 
 import jackiecrazy.footwork.capability.resources.CombatData;
 import jackiecrazy.footwork.capability.resources.ICombatCapability;
+import jackiecrazy.footwork.capability.stylish.StylishData;
 import jackiecrazy.footwork.event.DodgeEvent;
 import jackiecrazy.footwork.utils.GeneralUtils;
 import jackiecrazy.wardance.compat.WarCompat;
@@ -19,10 +20,6 @@ import java.util.List;
 import java.util.function.Predicate;
 
 public class MovementUtils {
-
-    public static boolean hasInvFrames(LivingEntity elb) {
-        return CombatData.getCap(elb).getRollTime() > CombatConfig.rollTime || CombatData.getCap(elb).getRollTime() < 0;
-    }
 
     /**
      * Checks the +x, -x, +y, -y, +z, -z, in that order
@@ -170,7 +167,8 @@ public class MovementUtils {
         }
         return pick;
     }
-    public static Entity collidingEntity(Entity elb){
+
+    public static Entity collidingEntity(Entity elb) {
         return collidingEntity(elb, Entity::isAlive);
     }
 
@@ -211,13 +209,14 @@ public class MovementUtils {
     public static boolean attemptSlide(LivingEntity elb) {
         if (!elb.onGround()) return false;
         ICombatCapability itsc = CombatData.getCap(elb);
-        if (!itsc.isCombatMode()) return false;
+        if (!StylishData.getCap(elb).isCombatMode()) return false;
         DodgeEvent e = new DodgeEvent(elb, DodgeEvent.Direction.FORWARD, 1.5);
         MinecraftForge.EVENT_BUS.post(e);
         if (e.isCanceled()) return false;
         Vec3 v = elb.getLookAngle().subtract(0, elb.getLookAngle().y, 0).normalize().scale(e.getForce());
         itsc.consumePosture(0);
-        itsc.setRollTime(-CombatConfig.rollCooldown);
+        itsc.addSpirit(1);
+        itsc.setDodgeTime(CombatConfig.rollTime);
         if (elb instanceof Player)
             ((Player) elb).setForcedPose(Pose.SLEEPING);
         elb.setSprinting(false);
@@ -237,23 +236,22 @@ public class MovementUtils {
          */
         ICombatCapability itsc = CombatData.getCap(elb);
         if (!CombatConfig.dodge) return false;
-        if (!itsc.isCombatMode() && (!WarCompat.elenaiDodge || itsc.getStunTime() == 0)) return false;
-        if (itsc.getRollTime() == 0) {//
+        if (!StylishData.getCap(elb).isCombatMode() && (!WarCompat.elenaiDodge || itsc.getStunTime() == 0)) return false;
+        if (itsc.getDodgeTime() <=-CombatConfig.rollCooldown) {
             if (side == 99) return attemptSlide(elb);
-            itsc.setRollTime(CombatConfig.rollCooldown);
             Entity target = GeneralUtils.raytraceEntity(elb.level(), elb, 32);
-//            float adjustment = 0;
-//            if (target != null) {
-//                float distsq = (float) (elb.distanceToSqr(target));
-//                float toacos = (distsq + distsq - 36) / (2 * distsq);//magic number wee
-//                float acos=(float) Math.acos(toacos);
-//                adjustment = GeneralUtils.deg(acos) / 2f;
-//            }
+            float adjustment = 0;
+            if (target != null) {
+                float distsq = (float) (elb.distanceToSqr(target));
+                float toacos = (distsq + distsq - 36) / (2 * distsq);//magic number wee
+                float acos=(float) Math.acos(toacos);
+                adjustment = GeneralUtils.deg(acos) / 2f;
+            }
             double x = 0, y = 0.25, z = 0;
             DodgeEvent.Direction d = DodgeEvent.Direction.FORWARD;
             switch (side) {
                 case 0://left
-                    x = Mth.cos(GeneralUtils.rad(elb.getYRot()));//+adjustment
+                    x = Mth.cos(GeneralUtils.rad(elb.getYRot()+adjustment));//
                     z = Mth.sin(GeneralUtils.rad(elb.getYRot()));
                     d = DodgeEvent.Direction.LEFT;
                     break;
@@ -263,7 +261,7 @@ public class MovementUtils {
                     d = DodgeEvent.Direction.BACK;
                     break;
                 case 2://right
-                    x = Mth.cos(GeneralUtils.rad(elb.getYRot() - 180));//-adjustment
+                    x = Mth.cos(GeneralUtils.rad(elb.getYRot() - 180-adjustment));//
                     z = Mth.sin(GeneralUtils.rad(elb.getYRot() - 180));
                     d = DodgeEvent.Direction.RIGHT;
                     break;
@@ -276,6 +274,8 @@ public class MovementUtils {
             DodgeEvent e = new DodgeEvent(elb, d, 1.2);
             MinecraftForge.EVENT_BUS.post(e);
             if (e.isCanceled()) return false;
+            itsc.setDodgeTime(CombatConfig.rollTime);
+            itsc.addSpirit(1);
             if (d == DodgeEvent.Direction.FORWARD) e.setForce((float) (e.getForce() * 1.5f));
             x *= e.getForce();
             z *= e.getForce();

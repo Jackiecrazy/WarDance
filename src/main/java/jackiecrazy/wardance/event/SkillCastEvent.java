@@ -6,8 +6,7 @@ import net.minecraftforge.event.entity.living.LivingEvent;
 
 public class SkillCastEvent extends LivingEvent {
     private final Skill s;
-    private final float might;
-    private final float spirit;
+    private final int spirit;
     private final double oeffectiveness;
     private final LivingEntity target;
     private float duration;
@@ -15,14 +14,13 @@ public class SkillCastEvent extends LivingEvent {
     private double effectiveness;
     private boolean flag;
 
-    public SkillCastEvent(LivingEntity entity, LivingEntity t, Skill skill, double effectiveness, float mig, float spi, float dur, boolean fla, float arb) {
+    public SkillCastEvent(LivingEntity entity, LivingEntity t, Skill skill, double effectiveness, int spi, float dur, boolean fla, float arb) {
         super(entity);
         s = skill;
         oeffectiveness = this.effectiveness = effectiveness;
         duration = dur;
         arbitrary = arb;
         flag = fla;
-        might = mig;
         spirit = spi;
         target = t;
     }
@@ -40,11 +38,7 @@ public class SkillCastEvent extends LivingEvent {
         return oeffectiveness;
     }
 
-    public float getMight() {
-        return might;
-    }
-
-    public float getSpirit() {
+    public int getSpirit() {
         return spirit;
     }
 

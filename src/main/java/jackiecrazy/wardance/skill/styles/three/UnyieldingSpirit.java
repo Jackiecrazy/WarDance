@@ -2,8 +2,6 @@ package jackiecrazy.wardance.skill.styles.three;
 
 import jackiecrazy.footwork.capability.resources.CombatData;
 import jackiecrazy.footwork.event.GainSpiritEvent;
-import jackiecrazy.footwork.event.RegenSpiritEvent;
-import jackiecrazy.wardance.capability.resources.CombatCapability;
 import jackiecrazy.wardance.skill.SkillColors;
 import jackiecrazy.wardance.skill.SkillData;
 import jackiecrazy.wardance.skill.styles.ColorRestrictionStyle;
@@ -56,23 +54,10 @@ public class UnyieldingSpirit extends ColorRestrictionStyle {
             if (DamageUtils.isMeleeAttack(lae.getSource()) && lae.getEntity() == target && CombatData.getCap(caster).consumeSpirit(1)) {
                 CombatData.getCap(target).consumePosture(caster, 6);
             }
-            if (lae.getEntity() == caster) {
-                if (!CombatData.getCap(caster).consumeEvade()) {
-                    if (stats.getDuration() >= 1) {
-                        //consume one charge of itself to fully charge your evade meter
-                        stats.decrementDuration();
-                        CombatData.getCap(caster).setEvade(CombatCapability.EVADE_CHARGE);
-                    }
-                } else {
-                    //ate the evade by accident, refund it for free
-                    CombatData.getCap(caster).setEvade(CombatCapability.EVADE_CHARGE);
-                }
-            }
+
         } else if (procPoint instanceof GainSpiritEvent sce && procPoint.getPhase() == EventPriority.LOWEST && sce.getEntity() == caster) {
             add(stats, sce.getQuantity());
-        } else if (procPoint instanceof RegenSpiritEvent sce && procPoint.getPhase() == EventPriority.LOWEST && sce.getEntity() == caster) {
-            add(stats, sce.getQuantity());
-        }
+        } 
     }
 
     @Override

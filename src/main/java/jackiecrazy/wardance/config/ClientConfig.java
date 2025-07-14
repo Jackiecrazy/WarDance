@@ -17,7 +17,7 @@ public class ClientConfig {
     public static final ClientConfig CONFIG;
     public static final ForgeConfigSpec CONFIG_SPEC;
     public static int spiritColor;
-    public static int mightColor;
+    public static int adrenalineColor;
     public static int autoCombat;
     public static boolean hide;
 
@@ -27,25 +27,25 @@ public class ClientConfig {
         CONFIG_SPEC = specPair.getRight();
     }
 
-    public final DisplayConfigUtils.DisplayData mightBar, mightNumber, spiritBar, spiritNumber, combo, playerAfflict, enemyAfflict, skillCD, stealth;
+    public final DisplayConfigUtils.DisplayData adrenalineBar, adrenalineNumber, spiritBar, spiritNumber, combo, playerAfflict, enemyAfflict, skillCD, stealth;
     public final PostureData playerPosture, enemyPosture;
-    public final CircleData mightCircle, spiritCircle;
+    public final CircleData adrenalineCircle, spiritCircle;
     private final ForgeConfigSpec.IntValue _autoCombat;
     private final ForgeConfigSpec.BooleanValue _hidexp;
-    private final ForgeConfigSpec.ConfigValue<String> _mightColor;
+    private final ForgeConfigSpec.ConfigValue<String> _adrenalineColor;
     private final ForgeConfigSpec.ConfigValue<String> _spiritColor;
     private final ForgeConfigSpec.ConfigValue<List<? extends String>> _customPosture;
 
     public ClientConfig(ForgeConfigSpec.Builder b) {
         b.push("convenience");
         _autoCombat = b.translation("wardance.config.autoCombat").comment("combat mode will be automatically engaged once you attack or get attacked by an entity if it is not already on, for this number of ticks before turning itself off. Set to 0 to disable this feature.").defineInRange("auto combat mode", 0, 0, Integer.MAX_VALUE);
-        _hidexp = b.translation("wardance.config.hidexp").comment("hide the exp bar while combat mode is on to make space for the might and spirit bars.").define("combat mode hides exp", true);
+        _hidexp = b.translation("wardance.config.hidexp").comment("hide the exp bar while combat mode is on to make space for the adrenaline and spirit bars.").define("combat mode hides exp", true);
         b.pop();
-        b.push("might");
-        mightCircle = new CircleData(b, "might circle", DisplayConfigUtils.AnchorPoint.BOTTOMLEFT, 32, -16);
-        mightBar = new DisplayConfigUtils.DisplayData(b, "might bar", DisplayConfigUtils.AnchorPoint.BOTTOMCENTER, -91, -29);
-        mightNumber = new CircleData(b, "might number", DisplayConfigUtils.AnchorPoint.BOTTOMLEFT, 32, -38);
-        _mightColor = b.translation("wardance.config.mightC").comment("might color in hexadecimal").define("might color", "ccac00");
+        b.push("adrenaline");
+        adrenalineCircle = new CircleData(b, "adrenaline circle", DisplayConfigUtils.AnchorPoint.BOTTOMLEFT, 32, -16);
+        adrenalineBar = new DisplayConfigUtils.DisplayData(b, "adrenaline bar", DisplayConfigUtils.AnchorPoint.BOTTOMCENTER, -91, -29);
+        adrenalineNumber = new CircleData(b, "adrenaline number", DisplayConfigUtils.AnchorPoint.BOTTOMLEFT, 32, -38);
+        _adrenalineColor = b.translation("wardance.config.adrenalineC").comment("adrenaline color in hexadecimal").define("adrenaline color", "ccac00");
         b.pop();
         b.push("spirit");
         spiritCircle = new CircleData(b, "spirit circle", DisplayConfigUtils.AnchorPoint.BOTTOMLEFT, 80, -16);
@@ -78,12 +78,12 @@ public class ClientConfig {
     }
 
     public static void bake() {
-        CONFIG.mightBar.bake();
-        CONFIG.mightCircle.bake();
+        CONFIG.adrenalineBar.bake();
+        CONFIG.adrenalineCircle.bake();
         CONFIG.spiritNumber.bake();
         CONFIG.spiritBar.bake();
         CONFIG.spiritCircle.bake();
-        CONFIG.mightNumber.bake();
+        CONFIG.adrenalineNumber.bake();
         CONFIG.combo.bake();
         CONFIG.playerPosture.bake();
         CONFIG.enemyAfflict.bake();
@@ -93,7 +93,7 @@ public class ClientConfig {
         CONFIG.stealth.bake();
         hide = CONFIG._hidexp.get();
         spiritColor = Integer.parseInt(CONFIG._spiritColor.get(), 16);
-        mightColor = Integer.parseInt(CONFIG._mightColor.get(), 16);
+        adrenalineColor = Integer.parseInt(CONFIG._adrenalineColor.get(), 16);
         autoCombat = CONFIG._autoCombat.get();
         ClientEvents.updateList(CONFIG._customPosture.get());
     }

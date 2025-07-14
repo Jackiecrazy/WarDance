@@ -1,7 +1,7 @@
 package jackiecrazy.wardance.skill.styles.two;
 
 import jackiecrazy.footwork.api.CombatDamageSource;
-import jackiecrazy.wardance.event.ParryEvent;
+import jackiecrazy.wardance.event.MeleePostureEvent;
 import jackiecrazy.wardance.skill.ProcPoints;
 import jackiecrazy.wardance.skill.SkillData;
 import jackiecrazy.wardance.skill.SkillTags;
@@ -38,7 +38,7 @@ public class FrostFang extends WarCry {
         if (procPoint instanceof LivingAttackEvent lae && state == STATE.INACTIVE && lae.getEntity() != caster) {
             activate(caster, 2, stats.getArbitraryFloat());
             stats.setMaxDuration(2);
-        } else if (procPoint instanceof ParryEvent cpe && state == STATE.ACTIVE && cpe.getEntity() != caster) {
+        } else if (procPoint instanceof MeleePostureEvent.Defense cpe && state == STATE.ACTIVE && cpe.getEntity() != caster) {
             cpe.setPostureConsumption(cpe.getPostureConsumption() * (1 + stats.getArbitraryFloat() / 10));
             if (caster.level() instanceof ServerLevel server)
                 server.sendParticles(new BlockParticleOption(ParticleTypes.BLOCK, Blocks.BLUE_ICE.defaultBlockState()).setPos(target.blockPosition()), target.getX(), target.getY(), target.getZ(), (int) stats.getArbitraryFloat() * 20, target.getBbWidth(), target.getBbHeight() / 2, target.getBbWidth(), 0.5f);

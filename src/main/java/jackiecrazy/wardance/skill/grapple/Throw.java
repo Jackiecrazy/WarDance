@@ -1,6 +1,7 @@
 package jackiecrazy.wardance.skill.grapple;
 
 import jackiecrazy.footwork.api.CombatDamageSource;
+import jackiecrazy.footwork.api.FootworkDamageArchetype;
 import jackiecrazy.footwork.capability.resources.CombatData;
 import jackiecrazy.footwork.client.particle.FootworkParticles;
 import jackiecrazy.footwork.event.StunEvent;
@@ -27,7 +28,7 @@ public class Throw extends Grapple {
 
 
     @Override
-    public float spiritConsumption(LivingEntity caster) {
+    public int spiritConsumption(LivingEntity caster) {
         return caster.getFirstPassenger() == null ? 1 : 0;
     }
 
@@ -68,7 +69,7 @@ public class Throw extends Grapple {
                 }
             } else {
                 LivingEntity le = SkillUtils.aimLiving(caster);
-                if (le != null && (le.isShiftKeyDown() || CombatData.getCap(le).isVulnerable())) {
+                if (le != null && (le.isShiftKeyDown() || CombatData.getCap(le).isStunned())) {
                     //auto pickup for friendly throw
                     mark(caster, le, 100, SkillUtils.getSkillEffectiveness(caster));
                 }
@@ -87,7 +88,7 @@ public class Throw extends Grapple {
     protected void performEffect(LivingEntity caster, LivingEntity target, SkillData stats) {
         if (!cast(caster, target, 10)) return;
         caster.level().playSound(null, target.getX(), target.getY(), target.getZ(), SoundEvents.BARREL_OPEN, SoundSource.PLAYERS, 0.3f + WarDance.rand.nextFloat() * 0.5f, 0.75f + WarDance.rand.nextFloat() * 0.5f);
-        if (CombatData.getCap(target).consumePosture(caster, 7 * stats.getEffectiveness(), 0, true) < 0 || CombatData.getCap(target).isVulnerable()) {
+        if (CombatData.getCap(target).consumePosture(caster, 7 * stats.getEffectiveness(), true) < 0 || CombatData.getCap(target).isStunned()) {
             stats.setDuration(target.getId());
             mark(caster, target, 100, stats.getEffectiveness());
             stats.flagCondition(true);
@@ -112,7 +113,7 @@ public class Throw extends Grapple {
             targetCollision(caster, target, sd, collide);
         }
         if (!sd.isCondition()) {
-            if (!CombatData.getCap(target).isVulnerable() && !target.isShiftKeyDown()) {
+            if (!CombatData.getCap(target).isStunned() && !target.isShiftKeyDown()) {
                 removeMark(target);
                 setCooldown(caster, CasterData.getCap(caster).getSkillData(this).get(), 7);
             }
@@ -122,10 +123,10 @@ public class Throw extends Grapple {
 
     protected void targetCollision(LivingEntity caster, LivingEntity target, SkillData sd, Entity collide) {
         if (caster != null) {
-            target.hurt(new CombatDamageSource(caster).setDamageTyping(CombatDamageSource.TYPE.PHYSICAL).setProcSkillEffects(true).setSkillUsed(this).setProcAttackEffects(true), 10 * sd.getArbitraryFloat() * sd.getArbitraryFloat());
+            target.hurt(new CombatDamageSource(caster).setDamageTyping(FootworkDamageArchetype.PHYSICAL).setProcSkillEffects(true).setSkillUsed(this).setProcAttackEffects(true), 10 * sd.getArbitraryFloat() * sd.getArbitraryFloat());
             if (collide instanceof LivingEntity elb) {
                 CombatData.getCap(elb).consumePosture(caster, 7 * sd.getArbitraryFloat() * sd.getArbitraryFloat());
-                elb.hurt(new CombatDamageSource(caster).setDamageTyping(CombatDamageSource.TYPE.PHYSICAL).setProcSkillEffects(true).setSkillUsed(this).setProcAttackEffects(true), 3 * sd.getArbitraryFloat() * sd.getArbitraryFloat());
+                elb.hurt(new CombatDamageSource(caster).setDamageTyping(FootworkDamageArchetype.PHYSICAL).setProcSkillEffects(true).setSkillUsed(this).setProcAttackEffects(true), 3 * sd.getArbitraryFloat() * sd.getArbitraryFloat());
             }
         }
     }

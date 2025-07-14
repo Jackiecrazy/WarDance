@@ -1,6 +1,7 @@
 package jackiecrazy.wardance.skill.mementomori;
 
 import jackiecrazy.footwork.api.CombatDamageSource;
+import jackiecrazy.footwork.api.FootworkDamageArchetype;
 import jackiecrazy.footwork.capability.resources.CombatData;
 import jackiecrazy.footwork.potion.FootworkEffects;
 import jackiecrazy.footwork.utils.EffectUtils;
@@ -147,9 +148,9 @@ pound of flesh: active skill. Consumes all your spirit, and until your spirit re
                     //EXPLOOOOSION
                     if (stat >= caster.getMaxHealth())
                         completeChallenge(caster);
-                    for (LivingEntity e : caster.level().getEntitiesOfClass(LivingEntity.class, caster.getBoundingBox().inflate(5*prev.getEffectiveness()))) {
+                    for (LivingEntity e : caster.level().getEntitiesOfClass(LivingEntity.class, caster.getBoundingBox().inflate(5))) {
                         if (TargetingUtils.isHostile(e, caster)) {
-                            e.hurt(new CombatDamageSource(caster).setDamageTyping(CombatDamageSource.TYPE.MAGICAL).setProcSkillEffects(true).setKnockbackPercentage(stat/4).setAttackingHand(null).setSkillUsed(this).flag(DamageTypeTags.IS_LIGHTNING), stat *prev.getEffectiveness());
+                            e.hurt(new CombatDamageSource(caster).setDamageTyping(FootworkDamageArchetype.MAGICAL).setProcSkillEffects(true).setKnockbackPercentage(stat/4).setAttackingHand(null).setSkillUsed(this).flag(DamageTypeTags.IS_LIGHTNING), stat *prev.getEffectiveness());
                         }
                     }
                     prev.setArbitraryFloat(0);
@@ -182,7 +183,7 @@ pound of flesh: active skill. Consumes all your spirit, and until your spirit re
                     if (TargetingUtils.isHostile(e, caster) && !target.hasEffect(FootworkEffects.VULNERABLE.get())) {
                         ee.setCanceled(true);
                         e.addEffect(EffectUtils.stackPot(e, new MobEffectInstance(FootworkEffects.VULNERABLE.get(), (int) (5 * ee.getAmount() * SkillUtils.getSkillEffectiveness(caster)), 0), EffectUtils.StackingMethod.MAXDURATION));
-                        //e.hurt(new CombatDamageSource("lightningBolt", caster).setDamageTyping(CombatDamageSource.TYPE.MAGICAL).setProcSkillEffects(true).setKnockbackPercentage(0).setAttackingHand(null).setSkillUsed(this).setMagic(), ee.getAmount() * SkillUtils.getSkillEffectiveness(caster));
+                        //e.hurt(new CombatDamageSource("lightningBolt", caster).setDamageTyping(FootworkDamageArchetype.MAGICAL).setProcSkillEffects(true).setKnockbackPercentage(0).setAttackingHand(null).setSkillUsed(this).setMagic(), ee.getAmount() * SkillUtils.getSkillEffectiveness(caster));
                         return;
                     }
                 }

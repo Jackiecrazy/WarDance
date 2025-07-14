@@ -10,7 +10,7 @@ import net.minecraftforge.event.entity.living.LivingEvent;
 import net.minecraftforge.eventbus.api.Event;
 
 @Event.HasResult
-public class ProjectileParryEvent extends LivingEvent {
+public abstract class ProjectileDefendEvent extends LivingEvent {
     private final Entity projectile;
     private final InteractionHand defendingHand;
     private final ItemStack defendingStack;
@@ -23,7 +23,7 @@ public class ProjectileParryEvent extends LivingEvent {
      */
     private Vec3 returnVec;
 
-    public ProjectileParryEvent(LivingEntity entity, Entity seme, InteractionHand dhand, ItemStack d, float mult) {
+    public ProjectileDefendEvent(LivingEntity entity, Entity seme, InteractionHand dhand, ItemStack d, float mult) {
         super(entity);
         projectile = seme;
         defendingHand = dhand;
@@ -70,4 +70,21 @@ public class ProjectileParryEvent extends LivingEvent {
     public Vec3 getReturnVec() {return returnVec;}
 
     public void setReturnVec(Vec3 vec) {returnVec = vec;}
+
+    public static class Block extends ProjectileDefendEvent {
+
+        public Block(LivingEntity entity, Entity seme, InteractionHand dhand, ItemStack d, float mult) {
+            super(entity, seme, dhand, d, mult);
+        }
+    }
+
+    public static class Parry extends ProjectileDefendEvent {
+
+        public Parry(LivingEntity entity, Entity seme, InteractionHand dhand, ItemStack d, float mult) {
+            super(entity, seme, dhand, d, 0);
+            setPostureConsumption(0);
+            setReturnVec(entity.getLookAngle().scale(seme.getDeltaMovement().length()));
+            setTrigger(false);
+        }
+    }
 }

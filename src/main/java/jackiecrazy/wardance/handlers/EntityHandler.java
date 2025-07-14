@@ -10,6 +10,7 @@ import jackiecrazy.wardance.capability.skill.ISkillCapability;
 import jackiecrazy.wardance.capability.skill.SkillCapability;
 import jackiecrazy.wardance.capability.status.Mark;
 import jackiecrazy.wardance.capability.status.Marks;
+import jackiecrazy.wardance.capability.stylish.StyleDataOverride;
 import jackiecrazy.wardance.compat.ElenaiCompat;
 import jackiecrazy.wardance.compat.WarCompat;
 import jackiecrazy.wardance.config.GeneralConfig;
@@ -66,6 +67,7 @@ public class EntityHandler {
     public static void caps(AttachCapabilitiesEvent<Entity> e) {
         if (e.getObject() instanceof LivingEntity lb) {
             e.addCapability(new ResourceLocation("wardance:combatinfo"), new CombatDataOverride(lb));
+            e.addCapability(new ResourceLocation("wardance:stylishdata"), new StyleDataOverride(lb));
             e.addCapability(new ResourceLocation("wardance:statuseffects"), new Marks(new Mark(lb)));
             if (lb instanceof Player) {
                 e.addCapability(new ResourceLocation("wardance:casterinfo"), new CasterData(new SkillCapability(lb)));

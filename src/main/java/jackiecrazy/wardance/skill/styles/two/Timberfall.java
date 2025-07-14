@@ -1,10 +1,7 @@
 package jackiecrazy.wardance.skill.styles.two;
 
 import jackiecrazy.footwork.api.CombatDamageSource;
-import jackiecrazy.wardance.event.FractureEvent;
-import jackiecrazy.wardance.event.ParryEvent;
-import jackiecrazy.wardance.event.SkillCastEvent;
-import jackiecrazy.wardance.event.SweepEvent;
+import jackiecrazy.wardance.event.*;
 import jackiecrazy.wardance.skill.ProcPoints;
 import jackiecrazy.wardance.skill.SkillData;
 import jackiecrazy.wardance.utils.DamageUtils;
@@ -54,7 +51,7 @@ public class Timberfall extends WarCry {
         if (procPoint.getPhase() != EventPriority.LOWEST) return;
         if (procPoint instanceof LivingAttackEvent lae && DamageUtils.isMeleeAttack(lae.getSource()) && state == STATE.ACTIVE && lae.getEntity() == target) {
             markUsed(caster, true);
-        } else if (procPoint instanceof ParryEvent cpe && state == STATE.ACTIVE && cpe.getEntity() == target) {
+        } else if (procPoint instanceof MeleePostureEvent.Defense cpe && state == STATE.ACTIVE && cpe.getEntity() == target) {
             cpe.setPostureConsumption(cpe.getPostureConsumption() * 1.4f * SkillUtils.getSkillEffectiveness(caster));
             markUsed(caster, true);
             if (caster.level() instanceof ServerLevel server)

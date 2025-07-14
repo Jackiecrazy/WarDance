@@ -2,6 +2,7 @@ package jackiecrazy.wardance.skill.styles.two;
 
 import jackiecrazy.footwork.api.CombatDamageSource;
 import jackiecrazy.footwork.capability.resources.CombatData;
+import jackiecrazy.footwork.capability.stylish.StylishData;
 import jackiecrazy.footwork.utils.GeneralUtils;
 import jackiecrazy.wardance.config.WeaponStats;
 import jackiecrazy.wardance.event.SweepEvent;
@@ -39,7 +40,7 @@ public class WindScar extends WarCry {
     }
 
     protected boolean cast(LivingEntity caster, float duration) {
-        return cast(caster, null, duration, false, CombatData.getCap(caster).getMight());
+        return cast(caster, null, duration, false, 1);
     }
 
     @Override
@@ -55,8 +56,8 @@ public class WindScar extends WarCry {
                 cds.setArmorReductionPercentage((float) (dist * 0.15f));
         }
         if (procPoint instanceof SweepEvent se && se.getPhase() == EventPriority.LOWEST && se.getType() != WeaponStats.SWEEPTYPE.NONE) {
-            if (!CombatData.getCap(caster).halvedAdrenaline() && CombatData.getCap(caster).getComboRank() >= ComboRanks.S) {
-                se.setSweepLevel(se.getSweepLevel() + CombatData.getCap(caster).getComboRank() - ComboRanks.A);
+            if (StylishData.getCap(caster).getCombo()>1) {
+                se.setSweepLevel(se.getSweepLevel() + StylishData.getCap(caster).getCombo()-1);
             }
         }
         super.onProc(caster, procPoint, state, stats, target);

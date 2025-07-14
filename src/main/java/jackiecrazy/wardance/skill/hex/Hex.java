@@ -1,8 +1,8 @@
 package jackiecrazy.wardance.skill.hex;
 
 import jackiecrazy.footwork.api.CombatDamageSource;
+import jackiecrazy.footwork.api.FootworkDamageArchetype;
 import jackiecrazy.footwork.event.LuckEvent;
-import jackiecrazy.footwork.utils.EffectUtils;
 import jackiecrazy.wardance.WarDance;
 import jackiecrazy.wardance.capability.status.Marks;
 import jackiecrazy.wardance.entity.FakeExplosion;
@@ -49,7 +49,7 @@ public class Hex extends Skill {
             e.setCanceled(true);
             final LivingEntity caster = a.getCaster(entity.level());
             if (caster != null)
-                entity.hurt(new CombatDamageSource(caster).setDamageTyping(CombatDamageSource.TYPE.MAGICAL).setProcSkillEffects(true).setSkillUsed(WarSkills.GANGRENE.get()).bypassArmor().setProxy(entity), e.getAmount()*2);
+                entity.hurt(new CombatDamageSource(caster).setDamageTyping(FootworkDamageArchetype.MAGICAL).setProcSkillEffects(true).setSkillUsed(WarSkills.GANGRENE.get()).bypassArmor().setProxy(entity), e.getAmount()*2);
         });
     }
 
@@ -61,7 +61,7 @@ public class Hex extends Skill {
                 target.invulnerableTime = 0;
                 final LivingEntity caster = a.getCaster(target.level());
                 if (caster != null)
-                    target.hurt(new CombatDamageSource(caster).setDamageTyping(CombatDamageSource.TYPE.TRUE).setProxy(target).setProcSkillEffects(true).setSkillUsed(WarSkills.CURSE_OF_ECHOES.get()).bypassArmor().bypassMagic(), e.getAmount() * 0.4f);
+                    target.hurt(new CombatDamageSource(caster).setDamageTyping(FootworkDamageArchetype.TRUE).setProxy(target).setProcSkillEffects(true).setSkillUsed(WarSkills.CURSE_OF_ECHOES.get()).bypassArmor().bypassMagic(), e.getAmount() * 0.4f);
                 a.setArbitraryFloat(1);
             }
         });
@@ -107,7 +107,7 @@ public class Hex extends Skill {
 //        //crit explosion on petrified target
 //        StatusEffects.getCap(target).getActiveStatus(WarSkills.PETRIFY.get()).ifPresent((sd) -> {
 //            if (sd.isCondition() && (e.getResult() == Event.Result.ALLOW || (e.getResult() == Event.Result.DEFAULT && e.isVanillaCritical()))) {
-//                FakeExplosion.explode(e.getEntity().world, e.getPlayer(), target.getPosX(), target.getPosY(), target.getPosZ(), target.getWidth() * target.getHeight() * 3, new CombatDamageSource("explosion.player", e.getPlayer()).setArmorReductionPercentage(2).setDamageTyping(CombatDamageSource.TYPE.PHYSICAL).setProcSkillEffects(false).setProcNormalEffects(false).setProcAttackEffects(false).setExplosion(), target.getTotalArmorValue());
+//                FakeExplosion.explode(e.getEntity().world, e.getPlayer(), target.getPosX(), target.getPosY(), target.getPosZ(), target.getWidth() * target.getHeight() * 3, new CombatDamageSource("explosion.player", e.getPlayer()).setArmorReductionPercentage(2).setDamageTyping(FootworkDamageArchetype.PHYSICAL).setProcSkillEffects(false).setProcNormalEffects(false).setProcAttackEffects(false).setExplosion(), target.getTotalArmorValue());
 //                StatusEffects.getCap(target).removeStatus(WarSkills.PETRIFY.get());
 //            }
 //        });
@@ -115,7 +115,7 @@ public class Hex extends Skill {
 //    }
 
     @Override
-    public float spiritConsumption(LivingEntity caster) {
+    public int spiritConsumption(LivingEntity caster) {
         return 1;
     }
 
@@ -223,19 +223,14 @@ public class Hex extends Skill {
         protected void mark(LivingEntity caster, LivingEntity target, float duration, float arbitrary) {
             ItemStack milk = new ItemStack(Items.MILK_BUCKET);
             final Collection<MobEffectInstance> potions = new ArrayList<>(target.getActiveEffects());
+            boolean proc = false;
+            if(potions.stream().anyMatch(a->a.getCurativeItems().contains(milk))){
+                proc=true;
+            }
             target.curePotionEffects(milk);
             float size = 8, damage = 6;
-            boolean proc = false;
-            for (MobEffectInstance ei : potions) {
-                proc = true;
-                MobEffectInstance drop = new MobEffectInstance(ei.getEffect(), 0, -2);
-                drop = EffectUtils.stackPot(caster, drop, EffectUtils.StackingMethod.MAXDURATION);
-                if (drop.getAmplifier() >= 0) {
-                    target.addEffect(drop);
-                }
-            }
             if (proc)
-                FakeExplosion.explode(caster.level(), caster, target.getX(), target.getY() + target.getBbHeight() * 1.1f, target.getZ(), size, new CombatDamageSource(caster).setExplosion().setDamageTyping(CombatDamageSource.TYPE.MAGICAL).setProxy(target), damage);
+                FakeExplosion.explode(caster.level(), caster, target.getX(), target.getY() + target.getBbHeight() * 1.1f, target.getZ(), size, new CombatDamageSource(caster).setExplosion().setDamageTyping(FootworkDamageArchetype.MAGICAL).setProxy(target), damage);
         }
     }
 

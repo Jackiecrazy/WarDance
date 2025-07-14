@@ -1,6 +1,7 @@
 package jackiecrazy.wardance.skill.styles.three;
 
 import jackiecrazy.footwork.capability.resources.CombatData;
+import jackiecrazy.footwork.capability.stylish.StylishData;
 import jackiecrazy.footwork.event.StunEvent;
 import jackiecrazy.footwork.utils.TargetingUtils;
 import jackiecrazy.wardance.config.CombatConfig;
@@ -21,9 +22,9 @@ public class WalkOfDionysus extends SkillStyle {
 
     @Override
     public boolean equippedTick(LivingEntity caster, SkillData stats) {
-        if (!CombatData.getCap(caster).isVulnerable() && CombatData.getCap(caster).consumeMight(1)) {
+        if (!CombatData.getCap(caster).isStunned() && StylishData.getCap(caster).canTrigger()) {
             CombatData.getCap(caster).knockdown(CombatConfig.knockdownDuration);
-            CombatData.getCap(caster).updateDefenselessStatus();
+            StylishData.getCap(caster).resetTriggerBar();
             fall(caster);
         }
         return false;

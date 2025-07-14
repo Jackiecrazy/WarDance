@@ -1,6 +1,7 @@
 package jackiecrazy.wardance.skill.misc;
 
 import jackiecrazy.footwork.api.CombatDamageSource;
+import jackiecrazy.footwork.capability.resources.CombatData;
 import jackiecrazy.wardance.skill.Skill;
 import jackiecrazy.wardance.skill.SkillData;
 import jackiecrazy.wardance.utils.CombatUtils;
@@ -42,7 +43,7 @@ public class Pounce extends Skill {
 
     @Override
     public boolean equippedTick(LivingEntity caster, SkillData stats) {
-        if (MovementUtils.hasInvFrames(caster)) {
+        if (CombatData.getCap(caster).isDodging() || CombatData.getCap(caster).isIframe()) {
             Entity collide = MovementUtils.collidingEntity(caster);
             if (collide instanceof LivingEntity le) {
                 stats.addTarget(le);

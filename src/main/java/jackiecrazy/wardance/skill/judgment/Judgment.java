@@ -1,6 +1,8 @@
 package jackiecrazy.wardance.skill.judgment;
 
+import jackiecrazy.footwork.api.FootworkDamageArchetype;
 import jackiecrazy.footwork.capability.resources.CombatData;
+import jackiecrazy.footwork.capability.stylish.StylishData;
 import jackiecrazy.wardance.WarDance;
 import jackiecrazy.footwork.api.CombatDamageSource;
 import jackiecrazy.wardance.capability.status.Marks;
@@ -43,12 +45,12 @@ public class Judgment extends Skill {
 
     protected void performEffect(LivingEntity caster, LivingEntity target, int stack, SkillData sd) {
         float amount = stack == 3 ? target.getHealth() * 0.15f : target.getHealth() * 0.03f;
-        target.hurt(new CombatDamageSource(caster).setDamageTyping(CombatDamageSource.TYPE.PHYSICAL).setProcSkillEffects(true).setProcAttackEffects(true).setDamageTyping(CombatDamageSource.TYPE.TRUE).bypassArmor().bypassMagic(), amount);
+        target.hurt(new CombatDamageSource(caster).setDamageTyping(FootworkDamageArchetype.PHYSICAL).setProcSkillEffects(true).setProcAttackEffects(true).setDamageTyping(FootworkDamageArchetype.TRUE).bypassArmor().bypassMagic(), amount);
     }
 
     @Override
     public CastStatus castingCheck(LivingEntity caster, SkillData sd) {
-        if (CombatData.getCap(caster).getComboRank() < 5)
+        if (!StylishData.getCap(caster).maxAdrenaline())
             return CastStatus.OTHER;
         return super.castingCheck(caster, sd);
     }
@@ -122,7 +124,7 @@ public class Judgment extends Skill {
     @Override
     public void onProc(LivingEntity caster, Event procPoint, STATE state, SkillData stats, @Nullable LivingEntity target) {
         if (procPoint instanceof LivingDeathEvent && procPoint.getPhase() == EventPriority.HIGHEST && ((LivingDeathEvent) procPoint).getEntity() == target) {
-            Marks.getCap(target).getActiveMark(this).ifPresent((a) -> CombatData.getCap(caster).addMight(a.getArbitraryFloat() * mightConsumption(caster) * 1.4f));
+            //Marks.getCap(target).getActiveMark(this).ifPresent((a) -> CombatData.getCap(caster).addMight(a.getArbitraryFloat() * mightConsumption(caster) * 1.4f));
         }
         if (procPoint instanceof LivingAttackEvent lae && lae.getEntity() == target) {
             if (state == STATE.ACTIVE && lae.getSource() instanceof CombatDamageSource ds)

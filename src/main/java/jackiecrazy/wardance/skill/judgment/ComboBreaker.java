@@ -1,6 +1,7 @@
 package jackiecrazy.wardance.skill.judgment;
 
 import jackiecrazy.footwork.api.CombatDamageSource;
+import jackiecrazy.footwork.api.FootworkDamageArchetype;
 import jackiecrazy.wardance.event.SkillCastEvent;
 import jackiecrazy.wardance.skill.SkillData;
 import net.minecraft.world.entity.LivingEntity;
@@ -25,7 +26,7 @@ public class ComboBreaker extends Judgment {
 
     private void detonate(LivingEntity caster, LivingEntity target, SkillData sd) {
         float amount = (float) (sd.getArbitraryFloat() * 0.04 * target.getHealth());
-        target.hurt(new CombatDamageSource(caster).setDamageTyping(CombatDamageSource.TYPE.PHYSICAL).setProcSkillEffects(true).setProcAttackEffects(true).setDamageTyping(CombatDamageSource.TYPE.TRUE).bypassArmor().bypassMagic(), amount);
+        target.hurt(new CombatDamageSource(caster).setDamageTyping(FootworkDamageArchetype.PHYSICAL).setProcSkillEffects(true).setProcAttackEffects(true).setDamageTyping(FootworkDamageArchetype.TRUE).bypassArmor().bypassMagic(), amount);
     }
 
     @Override

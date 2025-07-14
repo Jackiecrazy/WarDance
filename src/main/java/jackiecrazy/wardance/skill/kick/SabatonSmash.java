@@ -1,5 +1,6 @@
 package jackiecrazy.wardance.skill.kick;
 
+import jackiecrazy.footwork.api.FootworkDamageArchetype;
 import jackiecrazy.footwork.capability.resources.CombatData;
 import jackiecrazy.footwork.api.CombatDamageSource;
 import jackiecrazy.wardance.skill.SkillData;
@@ -22,7 +23,7 @@ public class SabatonSmash extends Kick {
             if (caster != null) {
                 if(CombatData.getCap(target).consumePosture(caster.getArmorValue() * SkillUtils.getSkillEffectiveness(caster) / 4f)!=0)
                     completeChallenge(caster);
-                target.hurt(new CombatDamageSource(caster).setDamageTyping(CombatDamageSource.TYPE.PHYSICAL).setProcSkillEffects(true).setSkillUsed(this).setProcAttackEffects(true), caster.getArmorValue() * SkillUtils.getSkillEffectiveness(caster) / 4f);
+                target.hurt(new CombatDamageSource(caster).setDamageTyping(FootworkDamageArchetype.PHYSICAL).setProcSkillEffects(true).setSkillUsed(this).setProcAttackEffects(true), caster.getArmorValue() * SkillUtils.getSkillEffectiveness(caster) / 4f);
 
             }
         }

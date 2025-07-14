@@ -143,7 +143,7 @@ public class CombatCapability implements ICombatCapability {
         if (dude.get() != null) {
             amount *= dude.get().getAttributeValue(FootworkAttributes.MIGHT_GEN.get());
         }
-        GainMightEvent gme = new GainMightEvent(dude.get(), amount);
+        GainAdrenalineEvent gme = new GainAdrenalineEvent(dude.get(), amount);
         MinecraftForge.EVENT_BUS.post(gme);
         if (gme.isCanceled()) return -1;
         amount = gme.getQuantity();
@@ -655,7 +655,7 @@ public class CombatCapability implements ICombatCapability {
     @Override
     public int getHandBind(InteractionHand h) {
         if (!CombatUtils.suppress) {
-            if (isVulnerable()) return 1;
+            if (isStunned()) return 1;
             LivingEntity bro = dude.get();
             if (dude.get() != null) {
                 if (h == InteractionHand.OFF_HAND && (WeaponStats.isTwoHanded(bro.getOffhandItem(), bro, InteractionHand.OFF_HAND) || (WeaponStats.isTwoHanded(bro.getMainHandItem(), bro, InteractionHand.MAIN_HAND) && WeaponStats.lookupStats(bro.getOffhandItem()) != null)))

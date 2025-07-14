@@ -34,7 +34,6 @@ public class Recovery extends Skill {
         if (procPoint instanceof ConsumePostureEvent && procPoint.getPhase() == EventPriority.HIGHEST) {
             if (CombatData.getCap(caster).getPosture() < CombatData.getCap(caster).getMaxPosture() * 0.25 * SkillUtils.getSkillEffectiveness(caster))
                 ((ConsumePostureEvent) procPoint).setResetCooldown(false);
-            CombatData.getCap(caster).setMightGrace(ResourceConfig.qiGrace);
         }
     }
 

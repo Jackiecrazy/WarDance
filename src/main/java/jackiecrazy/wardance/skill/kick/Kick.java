@@ -1,8 +1,10 @@
 package jackiecrazy.wardance.skill.kick;
 
 import jackiecrazy.footwork.api.CombatDamageSource;
+import jackiecrazy.footwork.api.FootworkDamageArchetype;
 import jackiecrazy.footwork.capability.resources.CombatData;
 import jackiecrazy.footwork.capability.resources.ICombatCapability;
+import jackiecrazy.footwork.capability.stylish.StylishData;
 import jackiecrazy.footwork.event.StunEvent;
 import jackiecrazy.footwork.utils.GeneralUtils;
 import jackiecrazy.footwork.utils.ParticleUtils;
@@ -31,7 +33,7 @@ public class Kick extends Skill {
     }
 
     @Override
-    public float spiritConsumption(LivingEntity caster) {
+    public int spiritConsumption(LivingEntity caster) {
         return 1;
     }
 
@@ -69,7 +71,7 @@ public class Kick extends Skill {
             CombatData.getCap(target).consumePosture(caster, amount);
             ParticleUtils.playBonkParticle(caster.level(), caster.getEyePosition().add(caster.getLookAngle().scale(Math.sqrt(GeneralUtils.getDistSqCompensated(caster, target)))), 1, 0, 8, getColor());
             additionally(caster, target, prev);
-            target.hurt(new CombatDamageSource(caster).setDamageTyping(CombatDamageSource.TYPE.PHYSICAL).setProcSkillEffects(true).setSkillUsed(this).setProcAttackEffects(true), 2 * prev.getEffectiveness());
+            target.hurt(new CombatDamageSource(caster).setDamageTyping(FootworkDamageArchetype.PHYSICAL).setProcSkillEffects(true).setSkillUsed(this).setProcAttackEffects(true), 2 * prev.getEffectiveness());
             if (target.getLastHurtByMob() == null)
                 target.setLastHurtByMob(caster);
             caster.level().playSound(null, caster.getX(), caster.getY(), caster.getZ(), SoundEvents.ZOMBIE_ATTACK_WOODEN_DOOR, SoundSource.PLAYERS, 0.25f + WarDance.rand.nextFloat() * 0.5f, 0.5f + WarDance.rand.nextFloat() * 0.5f);
@@ -104,7 +106,7 @@ public class Kick extends Skill {
             final ICombatCapability cap = CombatData.getCap(caster);
             if (caster.getY() > 320 && target instanceof Phantom)
                 completeChallenge(caster);
-            cap.addRank(0.3f);
+            StylishData.getCap(caster).addCombo(0.3f, "backflip");
             cap.addPosture(0.3f * sd.getEffectiveness() * (cap.getPosture() / cap.getMaxPosture()));
         }
     }

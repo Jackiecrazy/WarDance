@@ -1,6 +1,6 @@
 package jackiecrazy.wardance.skill.ironguard;
 
-import jackiecrazy.wardance.event.ParryEvent;
+import jackiecrazy.wardance.event.MeleePostureEvent;
 import jackiecrazy.wardance.skill.SkillData;
 import jackiecrazy.wardance.utils.SkillUtils;
 import net.minecraft.world.entity.LivingEntity;
@@ -15,8 +15,8 @@ public class Mikiri extends IronGuard {
     @Override
     public void onProc(LivingEntity caster, Event procPoint, STATE state, SkillData stats, @Nullable LivingEntity target) {
         super.onProc(caster, procPoint, state, stats, target);
-        if (procPoint instanceof ParryEvent && procPoint.getPhase() == EventPriority.HIGHEST && ((ParryEvent) procPoint).getEntity() == caster && ((ParryEvent) procPoint).canParry() && state == STATE.COOLING) {
-            parry(caster, (ParryEvent) procPoint, stats, target, state);
+        if (procPoint instanceof MeleePostureEvent.Defense && procPoint.getPhase() == EventPriority.HIGHEST && ((MeleePostureEvent.Defense) procPoint).getEntity() == caster && ((MeleePostureEvent.Defense) procPoint).success() && state == STATE.COOLING) {
+            parry(caster, (MeleePostureEvent.Defense) procPoint, stats, target, state);
         }
         if (procPoint instanceof LivingAttackEvent && caster.getLastHurtMobTimestamp() != caster.tickCount && ((LivingAttackEvent) procPoint).getEntity() == target && procPoint.getPhase() == EventPriority.HIGHEST && state == STATE.COOLING) {
             stats.decrementDuration();
@@ -24,7 +24,7 @@ public class Mikiri extends IronGuard {
     }
 
     @Override
-    protected void parry(LivingEntity caster, ParryEvent procPoint, SkillData stats, LivingEntity target, STATE state) {
+    protected void parry(LivingEntity caster, MeleePostureEvent.Defense procPoint, SkillData stats, LivingEntity target, STATE state) {
         if (state == STATE.COOLING) {
             stats.decrementDuration();
         } else {

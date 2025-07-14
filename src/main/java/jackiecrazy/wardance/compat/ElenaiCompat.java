@@ -21,7 +21,7 @@ public class ElenaiCompat {
     }
 
     public static void syncIFrames(Player player){
-        player.getCapability(PlayerInvincibilityProvider.PLAYER_INVINCIBILITY).ifPresent((i) -> CombatData.getCap(player).setRollTime(Math.min(-i.getInvincibility(), CombatData.getCap(player).getRollTime())));
+        player.getCapability(PlayerInvincibilityProvider.PLAYER_INVINCIBILITY).ifPresent((i) -> CombatData.getCap(player).setDodgeTime(i.getInvincibility()));
     }
 
 //    @SubscribeEvent(priority = EventPriority.HIGHEST)

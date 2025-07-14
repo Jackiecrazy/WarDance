@@ -13,7 +13,6 @@ import jackiecrazy.wardance.event.SkillCastEvent;
 import jackiecrazy.wardance.event.SkillCooldownEvent;
 import jackiecrazy.wardance.event.SkillResourceEvent;
 import jackiecrazy.wardance.skill.styles.SkillStyle;
-import jackiecrazy.wardance.utils.CombatUtils;
 import jackiecrazy.wardance.utils.DamageUtils;
 import jackiecrazy.wardance.utils.SkillUtils;
 import net.minecraft.network.chat.Component;
@@ -138,12 +137,10 @@ public abstract class Skill extends Move {
         if (caster.isSilent() && getTags().contains("chant")) return CastStatus.SILENCE;
         if (CombatData.getCap(caster).getSpirit() < spiritConsumption(caster))
             return CastStatus.SPIRIT;
-        if (CombatData.getCap(caster).getMight() < mightConsumption(caster))
-            return CastStatus.MIGHT;
         return CastStatus.ALLOWED;
     }
 
-    public float spiritConsumption(LivingEntity caster) {
+    public int spiritConsumption(LivingEntity caster) {
         return 0;
     }
 
@@ -391,12 +388,10 @@ public abstract class Skill extends Move {
     protected boolean cast(LivingEntity caster, @Nullable LivingEntity target, float duration, boolean flag, float arbitrary) {
         SkillResourceEvent sre = new SkillResourceEvent(caster, target, this);
         MinecraftForge.EVENT_BUS.post(sre);
-        if (!sre.isCanceled() && CombatData.getCap(caster).getMight() >= sre.getMight() && CombatData.getCap(caster).getSpirit() >= sre.getSpirit()) {
-            SkillCastEvent sce = initializeCast(caster, target, SkillUtils.getSkillEffectiveness(caster), sre.getMight(), sre.getSpirit(), duration, flag, arbitrary);
+        if (!sre.isCanceled() && CombatData.getCap(caster).getSpirit() >= sre.getSpirit()) {
+            SkillCastEvent sce = initializeCast(caster, target, SkillUtils.getSkillEffectiveness(caster), sre.getSpirit(), duration, flag, arbitrary);
 
             MinecraftForge.EVENT_BUS.post(sce);
-            if (sce.getMight() > 0)
-                CombatData.getCap(caster).consumeMight(sce.getMight());
             if (sce.getSpirit() > 0)
                 CombatData.getCap(caster).consumeSpirit(sce.getSpirit());
             activate(caster, (float) sce.getEffectiveness(), sce.getDuration(), sce.isFlag(), sce.getArbitrary());
@@ -507,8 +502,8 @@ public abstract class Skill extends Move {
     /**
      * returns an event with all enhancements from effectiveness already applied. Override as needed.
      */
-    protected SkillCastEvent initializeCast(LivingEntity caster, @Nullable LivingEntity target, double effectiveness, float might, float spirit, float duration, boolean flag, float arbitrary) {
-        return new SkillCastEvent(caster, target, this, effectiveness, might, spirit, duration, flag, arbitrary);
+    protected SkillCastEvent initializeCast(LivingEntity caster, @Nullable LivingEntity target, double effectiveness, int spirit, float duration, boolean flag, float arbitrary) {
+        return new SkillCastEvent(caster, target, this, effectiveness, spirit, duration, flag, arbitrary);
     }
 
     protected boolean hasMark(LivingEntity target) {

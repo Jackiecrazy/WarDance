@@ -1,6 +1,7 @@
 package jackiecrazy.wardance.skill.kick;
 
 import jackiecrazy.footwork.api.CombatDamageSource;
+import jackiecrazy.footwork.api.FootworkDamageArchetype;
 import jackiecrazy.footwork.capability.resources.CombatData;
 import jackiecrazy.footwork.utils.GeneralUtils;
 import jackiecrazy.footwork.utils.ParticleUtils;
@@ -94,13 +95,12 @@ public class ShadowlessKick extends Kick {
         LivingEntity target = GeneralUtils.raytraceLiving(caster, distance());
         if (target != null) {
             SkillResourceEvent sre = new SkillResourceEvent(caster, target, this);
-            SkillCastEvent sce = new SkillCastEvent(caster, target, this, SkillUtils.getSkillEffectiveness(caster), 0, 0, 0, false, stats.getArbitraryFloat());
+            SkillCastEvent sce = new SkillCastEvent(caster, target, this, SkillUtils.getSkillEffectiveness(caster), 0, 0, false, stats.getArbitraryFloat());
             if (stats.getArbitraryFloat() != 0) {
                 sre.setSpirit(0);
-                sre.setMight(0);
                 MinecraftForge.EVENT_BUS.post(sre);
                 if (sre.isCanceled()) return false;
-                sce = initializeCast(caster, target, SkillUtils.getSkillEffectiveness(caster), 0, 0, 0, false, stats.getArbitraryFloat());
+                sce = initializeCast(caster, target, SkillUtils.getSkillEffectiveness(caster), 0, 0, false, stats.getArbitraryFloat());
                 MinecraftForge.EVENT_BUS.post(sce);
             }
             stats.addArbitraryFloat(1);
@@ -111,8 +111,8 @@ public class ShadowlessKick extends Kick {
                 stack--;
             }
             stats.setEffectiveness(mult);
-            CombatData.getCap(target).consumePosture(caster, 2 * mult);
-            target.hurt(new CombatDamageSource(caster).setDamageTyping(CombatDamageSource.TYPE.PHYSICAL).setProcSkillEffects(true).setSkillUsed(this).setProcNormalEffects(false).setProcAttackEffects(true).setKnockbackPercentage(0.4f), mult);
+            CombatData.getCap(target).consumePosture(caster, 2 * mult,stats.getArbitraryFloat() >= 7);
+            target.hurt(new CombatDamageSource(caster).setDamageTyping(FootworkDamageArchetype.PHYSICAL).setProcSkillEffects(true).setSkillUsed(this).setProcNormalEffects(false).setProcAttackEffects(true).setKnockbackPercentage(0.4f), mult);
             if (target.getLastHurtByMob() == null)
                 target.setLastHurtByMob(caster);
             if (caster instanceof ServerPlayer sp)

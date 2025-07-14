@@ -1,6 +1,7 @@
 package jackiecrazy.wardance.skill.judgment;
 
 import jackiecrazy.footwork.api.CombatDamageSource;
+import jackiecrazy.footwork.api.FootworkDamageArchetype;
 import jackiecrazy.footwork.utils.TargetingUtils;
 import jackiecrazy.wardance.WarDance;
 import jackiecrazy.wardance.capability.status.Marks;
@@ -32,9 +33,9 @@ public class ViralDecay extends Judgment {
         for (LivingEntity enemy : list) {
             if (enemy == target) continue;
             Marks.getCap(enemy).mark(new SkillData(WarSkills.VIRAL_DECAY.get(), 6).setArbitraryFloat(1).setCaster(caster));
-            enemy.hurt(new CombatDamageSource(caster).setDamageTyping(CombatDamageSource.TYPE.MAGICAL), 2);
+            enemy.hurt(new CombatDamageSource(caster).setDamageTyping(FootworkDamageArchetype.MAGICAL), 2);
         }
-        target.hurt(new CombatDamageSource(caster).setDamageTyping(CombatDamageSource.TYPE.PHYSICAL).setProcSkillEffects(true).setProcAttackEffects(true).setDamageTyping(CombatDamageSource.TYPE.TRUE).bypassArmor().bypassMagic(), target.getHealth() / 10);
+        target.hurt(new CombatDamageSource(caster).setDamageTyping(FootworkDamageArchetype.PHYSICAL).setProcSkillEffects(true).setProcAttackEffects(true).setDamageTyping(FootworkDamageArchetype.TRUE).bypassArmor().bypassMagic(), target.getHealth() / 10);
     }
 
     @Override
@@ -47,7 +48,7 @@ public class ViralDecay extends Judgment {
     @Override
     public boolean markTick(LivingEntity caster, LivingEntity target, SkillData sd) {
         if (target.tickCount % 20 == 0)
-            target.hurt(new CombatDamageSource(caster).setDamageTyping(CombatDamageSource.TYPE.MAGICAL), sd.getArbitraryFloat()*SkillUtils.getSkillEffectiveness(caster));
+            target.hurt(new CombatDamageSource(caster).setDamageTyping(FootworkDamageArchetype.MAGICAL), sd.getArbitraryFloat()*SkillUtils.getSkillEffectiveness(caster));
         return super.markTick(caster, target, sd);
     }
 

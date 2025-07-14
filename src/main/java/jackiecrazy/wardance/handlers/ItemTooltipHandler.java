@@ -38,7 +38,7 @@ public class ItemTooltipHandler {
                 }
                 final float def = CombatUtils.getPostureDef(null, null, stack, 0);
                 if (PermissionData.getCap(e.getEntity()).canParry()) {
-                    if (stack.is(WeaponStats.CANNOT_PARRY))
+                    if (stack.is(WeaponStats.CANNOT_BLOCK))
                         e.getToolTip().add(Component.translatable("wardance.tooltip.noParry").withStyle(ChatFormatting.DARK_RED));
                     else
                         e.getToolTip().add(Component.translatable("wardance.tooltip.postureDefend", Component.literal(formatter.format(def)).withStyle(ChatFormatting.DARK_GREEN)));
@@ -59,9 +59,6 @@ public class ItemTooltipHandler {
 //            if (stack.canDisableShield(stack, e.getEntity(), e.getEntity())) {
 //                tips.add(Component.translatable("wardance.tooltip.disableShield").withStyle(ChatFormatting.GREEN));
 //            }
-            if (stack.is(WeaponStats.PIERCE_PARRY)) {
-                tips.add(Component.translatable("wardance.tooltip.ignoreParry").withStyle(ChatFormatting.GREEN));
-            }
             if (stack.is(WeaponStats.PIERCE_SHIELD)) {
                 tips.add(Component.translatable("wardance.tooltip.ignoreShield").withStyle(ChatFormatting.GREEN));
             }

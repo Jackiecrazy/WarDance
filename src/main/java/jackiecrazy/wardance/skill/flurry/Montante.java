@@ -1,11 +1,12 @@
 package jackiecrazy.wardance.skill.flurry;
 
 import jackiecrazy.footwork.capability.resources.CombatData;
-import jackiecrazy.footwork.event.GainMightEvent;
+import jackiecrazy.footwork.capability.stylish.StylishData;
+import jackiecrazy.footwork.event.GainAdrenalineEvent;
 import jackiecrazy.wardance.capability.skill.CasterData;
 import jackiecrazy.wardance.config.WeaponStats;
-import jackiecrazy.wardance.event.ParryEvent;
-import jackiecrazy.wardance.event.ProjectileParryEvent;
+import jackiecrazy.wardance.event.MeleePostureEvent;
+import jackiecrazy.wardance.event.ProjectileDefendEvent;
 import jackiecrazy.wardance.skill.Skill;
 import jackiecrazy.wardance.skill.SkillData;
 import jackiecrazy.wardance.skill.SkillTags;
@@ -31,7 +32,7 @@ public class Montante extends Skill {
 
     @Override
     public CastStatus castingCheck(LivingEntity caster, SkillData sd) {
-        if (CombatData.getCap(caster).getMight() < 1) return CastStatus.OTHER;
+        if (!StylishData.getCap(caster).maxAdrenaline()) return CastStatus.OTHER;
         return super.castingCheck(caster, sd);
     }
 
@@ -62,7 +63,7 @@ Flow: cooldown of all attack skills are halved, and any cooled attack skill is a
     @Override
     public boolean equippedTick(LivingEntity caster, SkillData stats) {
         if (stats.getState() != STATE.ACTIVE) return false;
-        if (!CombatData.getCap(caster).consumeMight(0.05f / stats.getEffectiveness())) markUsed(caster);
+        activeTick(stats);
         if (stats.getState() == STATE.ACTIVE && caster.tickCount % 10 == 0 && !caster.isAutoSpinAttack()) {
             //spin to win!
             double reach = caster.getAttributeValue(ForgeMod.ENTITY_REACH.get());
@@ -75,17 +76,17 @@ Flow: cooldown of all attack skills are halved, and any cooled attack skill is a
 
     @Override
     public void onProc(LivingEntity caster, Event procPoint, STATE state, SkillData stats, @Nullable LivingEntity target) {
-        if (procPoint instanceof ParryEvent lae && lae.getEntity() == caster && state == STATE.ACTIVE && procPoint.getPhase() == EventPriority.LOWEST) {
+        if (procPoint instanceof MeleePostureEvent.Defense lae && lae.getEntity() == caster && state == STATE.ACTIVE && procPoint.getPhase() == EventPriority.LOWEST) {
             lae.setPostureConsumption(0);
             if (target != null)
                 CombatData.getCap(lae.getAttacker()).consumePosture(caster, CombatUtils.getPostureAtk(caster, target, InteractionHand.MAIN_HAND, null, (float) caster.getAttributeValue(Attributes.ATTACK_DAMAGE), caster.getMainHandItem()));
             lae.setResult(Event.Result.ALLOW);
         }
-        if (procPoint instanceof ProjectileParryEvent lae && lae.getEntity() == caster && state == STATE.ACTIVE && procPoint.getPhase() == EventPriority.LOWEST) {
+        if (procPoint instanceof ProjectileDefendEvent lae && lae.getEntity() == caster && state == STATE.ACTIVE && procPoint.getPhase() == EventPriority.LOWEST) {
             lae.setPostureConsumption(0);
             lae.setResult(Event.Result.ALLOW);
         }
-        if (procPoint instanceof GainMightEvent gme && state == STATE.ACTIVE && procPoint.getPhase() == EventPriority.LOWEST) {
+        if (procPoint instanceof GainAdrenalineEvent gme && state == STATE.ACTIVE && procPoint.getPhase() == EventPriority.LOWEST) {
             gme.setQuantity(0);
         }
     }
@@ -95,7 +96,8 @@ Flow: cooldown of all attack skills are halved, and any cooled attack skill is a
         if (from == STATE.INACTIVE && to == STATE.HOLSTERED && cast(caster, 1)) {
             CasterData.getCap(caster).removeActiveTag(SkillTags.state);
             SkillUtils.addAttribute(caster, Attributes.ATTACK_DAMAGE, bad);
-            prev.setMaxDuration(0);
+            activate(caster, 5*prev.getEffectiveness());
+            CombatUtils.triggerSteveTime(caster, 15);
             return true;
         }
         if (from == STATE.ACTIVE && to == STATE.COOLING) {

@@ -1,6 +1,7 @@
 package jackiecrazy.wardance.skill.kick;
 
 import jackiecrazy.footwork.api.CombatDamageSource;
+import jackiecrazy.footwork.api.FootworkDamageArchetype;
 import jackiecrazy.footwork.capability.resources.CombatData;
 import jackiecrazy.footwork.client.particle.FootworkParticles;
 import jackiecrazy.footwork.utils.ParticleUtils;
@@ -29,7 +30,7 @@ public class Tornado extends Kick {
                     counter++;
                     LivingEntity target = (LivingEntity) t;
                     CombatData.getCap(target).consumePosture(caster, 4);
-                    target.hurt(new CombatDamageSource(caster).setDamageTyping(CombatDamageSource.TYPE.PHYSICAL).setSkillUsed(this).setProcSkillEffects(true).setProcAttackEffects(true), 2);
+                    target.hurt(new CombatDamageSource(caster).setDamageTyping(FootworkDamageArchetype.PHYSICAL).setSkillUsed(this).setProcSkillEffects(true).setProcAttackEffects(true), 2);
                     if (target.getLastHurtByMob() == null)
                         target.setLastHurtByMob(caster);
                 }

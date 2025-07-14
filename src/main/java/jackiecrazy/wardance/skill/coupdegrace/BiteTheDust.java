@@ -1,6 +1,7 @@
 package jackiecrazy.wardance.skill.coupdegrace;
 
 import jackiecrazy.footwork.api.CombatDamageSource;
+import jackiecrazy.footwork.api.FootworkDamageArchetype;
 import jackiecrazy.footwork.event.StunEvent;
 import jackiecrazy.wardance.skill.SkillArchetype;
 import jackiecrazy.wardance.skill.SkillArchetypes;
@@ -42,7 +43,7 @@ public class BiteTheDust extends CoupDeGrace {
             }
             damage *= stats.getEffectiveness();
             target.hurtTime = target.hurtDuration = target.invulnerableTime = 0;
-            target.hurt(new CombatDamageSource(caster).setDamageTyping(CombatDamageSource.TYPE.TRUE).setProcSkillEffects(true).setSkillUsed(this).setKnockbackPercentage(0).bypassArmor().bypassMagic(), damage);
+            target.hurt(new CombatDamageSource(caster).setDamageTyping(FootworkDamageArchetype.TRUE).setProcSkillEffects(true).setSkillUsed(this).setKnockbackPercentage(0).bypassArmor().bypassMagic(), damage);
             mark(caster, target, 1);
         }
     }

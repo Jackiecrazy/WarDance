@@ -2,6 +2,7 @@ package jackiecrazy.wardance.skill.fiveelementfist;
 
 import jackiecrazy.footwork.api.CombatDamageSource;
 import jackiecrazy.footwork.capability.resources.CombatData;
+import jackiecrazy.footwork.capability.stylish.StylishData;
 import jackiecrazy.footwork.event.DamageKnockbackEvent;
 import jackiecrazy.footwork.utils.GeneralUtils;
 import jackiecrazy.footwork.utils.ParticleUtils;
@@ -132,7 +133,7 @@ public abstract class FiveElementFist extends Skill {
             if (found >= 0) {
                 int next = (x + 1) % cycle.length;
                 if (next == (found + 1) % cycle.length)
-                    CombatData.getCap(caster).addRank(0.1f);
+                    StylishData.getCap(caster).addCombo(0.1f, this.toString());
                 final Skill skill = cycle[next];
                 if (CasterData.getCap(caster).replaceSkill(this, skill)) {
                     return;

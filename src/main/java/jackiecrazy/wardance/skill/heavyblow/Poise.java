@@ -1,7 +1,7 @@
 package jackiecrazy.wardance.skill.heavyblow;
 
 import jackiecrazy.footwork.capability.resources.CombatData;
-import jackiecrazy.wardance.event.ParryEvent;
+import jackiecrazy.wardance.event.MeleePostureEvent;
 import jackiecrazy.wardance.skill.ProcPoints;
 import jackiecrazy.wardance.skill.SkillData;
 import net.minecraft.world.entity.LivingEntity;
@@ -22,9 +22,8 @@ public class Poise extends HeavyBlow {
 
     @Override
     public void onProc(LivingEntity caster, Event procPoint, STATE state, SkillData stats, LivingEntity target) {
-        if (stats.isCondition() && procPoint instanceof ParryEvent && procPoint.getPhase() == EventPriority.LOWEST && ((ParryEvent) procPoint).getAttacker() == caster) {
-            CombatData.getCap(caster).setPostureGrace(0);
-            CombatData.getCap(caster).addPosture(((ParryEvent) procPoint).getPostureConsumption());
+        if (stats.isCondition() && procPoint instanceof MeleePostureEvent.Block && procPoint.getPhase() == EventPriority.LOWEST && ((MeleePostureEvent.Defense) procPoint).getAttacker() == caster) {
+            CombatData.getCap(caster).rally(((MeleePostureEvent.Block) procPoint).getPostureConsumption());
         }else if (procPoint instanceof CriticalHitEvent) {
             if (isCrit((CriticalHitEvent) procPoint) && state != STATE.COOLING && procPoint.getPhase() == EventPriority.LOWEST) {
                 onCrit((CriticalHitEvent) procPoint, stats, caster, target);

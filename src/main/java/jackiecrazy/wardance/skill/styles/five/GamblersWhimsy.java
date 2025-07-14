@@ -56,7 +56,7 @@ public class GamblersWhimsy extends SkillStyle {
     private void reroll(LivingEntity caster, SkillData stats) {
         //slots that can be cast
         int allowed = 0b00000;
-        int indices = (int) (CombatData.getCap(caster).getComboRank() * SkillUtils.getSkillEffectiveness(caster) / 2d + 1);
+        int indices = (int) (3 * SkillUtils.getSkillEffectiveness(caster) / 2d + 1);
         while (indices > 0) {
             int index = WarDance.rand.nextInt(indices);
             allowed = unban(allowed, index);

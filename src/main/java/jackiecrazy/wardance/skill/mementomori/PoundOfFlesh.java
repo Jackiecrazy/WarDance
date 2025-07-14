@@ -1,9 +1,10 @@
 package jackiecrazy.wardance.skill.mementomori;
 
+import jackiecrazy.footwork.api.FootworkDamageArchetype;
 import jackiecrazy.footwork.capability.resources.CombatData;
 import jackiecrazy.footwork.utils.GeneralUtils;
 import jackiecrazy.footwork.api.CombatDamageSource;
-import jackiecrazy.wardance.event.ParryEvent;
+import jackiecrazy.wardance.event.MeleePostureEvent;
 import jackiecrazy.wardance.skill.ProcPoints;
 import jackiecrazy.wardance.skill.SkillData;
 import net.minecraft.world.entity.LivingEntity;
@@ -47,13 +48,13 @@ public class PoundOfFlesh extends MementoMori {
     public void onProc(LivingEntity caster, Event procPoint, STATE state, SkillData stats, LivingEntity target) {
         if (state == STATE.ACTIVE) {
             final float amount = GeneralUtils.getMaxHealthBeforeWounding(caster) * 0.1f/stats.getEffectiveness();
-            if (procPoint instanceof ParryEvent pe && pe.getAttacker()!=caster && procPoint.getPhase() == EventPriority.HIGHEST && pe.canParry()) {
+            if (procPoint instanceof MeleePostureEvent.Defense pe && pe.getAttacker()!=caster && procPoint.getPhase() == EventPriority.HIGHEST && pe.success()) {
                 caster.invulnerableTime = 0;
-                caster.hurt(CombatDamageSource.causeSelfDamage(caster).setDamageTyping(CombatDamageSource.TYPE.TRUE).setSkillUsed(this).bypassArmor().bypassMagic(), amount);
+                caster.hurt(CombatDamageSource.causeSelfDamage(caster).setDamageTyping(FootworkDamageArchetype.TRUE).setSkillUsed(this).bypassArmor().bypassMagic(), amount);
                 pe.setPostureConsumption(pe.getPostureConsumption() + CombatData.getCap(target).getMaxPosture() * 0.15f * stats.getEffectiveness());
             } else if (procPoint instanceof LivingHurtEvent lhe && procPoint.getPhase() == EventPriority.HIGHEST && lhe.getEntity() != caster && (!(lhe.getSource() instanceof CombatDamageSource cds) || cds.getSkillUsed() != this)) {
                 caster.invulnerableTime = 0;
-                caster.hurt(CombatDamageSource.causeSelfDamage(caster).setDamageTyping(CombatDamageSource.TYPE.TRUE).setSkillUsed(this).bypassArmor().bypassMagic(), amount);
+                caster.hurt(CombatDamageSource.causeSelfDamage(caster).setDamageTyping(FootworkDamageArchetype.TRUE).setSkillUsed(this).bypassArmor().bypassMagic(), amount);
                 lhe.setAmount(((LivingHurtEvent) procPoint).getAmount() + GeneralUtils.getMaxHealthBeforeWounding(target) * 0.07f * stats.getEffectiveness());
             }
         }

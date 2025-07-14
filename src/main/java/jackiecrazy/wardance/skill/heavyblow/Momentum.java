@@ -1,11 +1,11 @@
 package jackiecrazy.wardance.skill.heavyblow;
 
 import jackiecrazy.footwork.capability.resources.CombatData;
+import jackiecrazy.footwork.capability.stylish.StylishData;
 import jackiecrazy.wardance.WarDance;
 import jackiecrazy.wardance.capability.skill.CasterData;
 import jackiecrazy.wardance.capability.skill.ISkillCapability;
-import jackiecrazy.wardance.event.ParryEvent;
-import jackiecrazy.wardance.skill.Skill;
+import jackiecrazy.wardance.event.MeleePostureEvent;
 import jackiecrazy.wardance.skill.SkillArchetypes;
 import jackiecrazy.wardance.skill.SkillData;
 import jackiecrazy.wardance.skill.WarSkills;
@@ -27,22 +27,22 @@ public class Momentum extends HeavyBlow {
         if (cap.getEquippedSkillsAndStyle().contains(WarSkills.MOMENTUM.get())) {
             cap.getSkillData(WarSkills.MOMENTUM.get()).ifPresent(stats -> {
                 float combo = stats.getArbitraryFloat() + 1;
-                combo %= 7 - CombatData.getCap(procPoint.getEntity()).getComboRank();
+                combo %= 7 - (int)StylishData.getCap(procPoint.getEntity()).getCombo();
                 if (combo == 0) {
                     procPoint.setResult(Event.Result.ALLOW);
                 } else procPoint.setResult(Event.Result.DENY);
                 stats.setArbitraryFloat(combo);
-                procPoint.setDamageModifier(procPoint.getDamageModifier() + 0.005f * SkillUtils.getSkillEffectiveness(procPoint.getEntity()) * power(2, CombatData.getCap(procPoint.getEntity()).getComboRank()));
+                procPoint.setDamageModifier(procPoint.getDamageModifier() + 0.005f * SkillUtils.getSkillEffectiveness(procPoint.getEntity()) * power(2, (int)StylishData.getCap(procPoint.getEntity()).getCombo()));
             });
         }
     }
 
     @Override
     public void onProc(LivingEntity caster, Event procPoint, STATE state, SkillData stats, LivingEntity target) {
-        if (procPoint instanceof ParryEvent && ((ParryEvent) procPoint).getDefendingHand() != null && procPoint.getPhase() == EventPriority.HIGHEST && ((ParryEvent) procPoint).getAttacker() == caster) {
+        if (procPoint instanceof MeleePostureEvent.Defense && ((MeleePostureEvent.Defense) procPoint).getDefendingHand() != null && procPoint.getPhase() == EventPriority.HIGHEST && ((MeleePostureEvent.Defense) procPoint).getAttacker() == caster) {
             if (CasterData.getCap(target).getEquippedVariations(SkillArchetypes.iron_guard).stream().anyMatch(a -> CasterData.getCap(target).getSkillState(a) == STATE.ACTIVE))
                 return;
-            ((ParryEvent) procPoint).setPostureConsumption(((ParryEvent) procPoint).getPostureConsumption() + 0.01f * SkillUtils.getSkillEffectiveness(caster) * power(2, CombatData.getCap(caster).getComboRank()));
+            ((MeleePostureEvent.Defense) procPoint).setPostureConsumption(((MeleePostureEvent.Defense) procPoint).getPostureConsumption() + 0.01f * SkillUtils.getSkillEffectiveness(caster) * power(2, (int)StylishData.getCap(caster).getCombo()));
         }
     }
 

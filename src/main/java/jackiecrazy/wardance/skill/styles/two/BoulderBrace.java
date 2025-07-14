@@ -5,7 +5,7 @@ import jackiecrazy.footwork.api.FootworkAttributes;
 import jackiecrazy.footwork.capability.resources.CombatData;
 import jackiecrazy.footwork.capability.resources.ICombatCapability;
 import jackiecrazy.footwork.event.StunEvent;
-import jackiecrazy.wardance.event.ParryEvent;
+import jackiecrazy.wardance.event.MeleePostureEvent;
 import jackiecrazy.wardance.skill.SkillData;
 import jackiecrazy.wardance.utils.SkillUtils;
 import net.minecraft.core.particles.BlockParticleOption;
@@ -31,12 +31,7 @@ public class BoulderBrace extends WarCry {
     public void onProc(LivingEntity caster, Event procPoint, STATE state, SkillData stats, LivingEntity target) {
         //TODO doesn't do fist crits?????
         final ICombatCapability cap = CombatData.getCap(caster);
-        if (procPoint instanceof StunEvent se && procPoint.getPhase() == EventPriority.HIGHEST) {
-            if (se.getEntity() == caster && cap.consumeMight(1 / SkillUtils.getSkillEffectiveness(caster))) {
-                se.setCanceled(true);
-            }
-        }
-        if (procPoint instanceof ParryEvent pe && procPoint.getPhase() == EventPriority.HIGHEST && pe.getDamageSource() instanceof CombatDamageSource cds && cds.isCrit()) {
+        if (procPoint instanceof MeleePostureEvent.Defense pe && procPoint.getPhase() == EventPriority.HIGHEST && pe.getDamageSource() instanceof CombatDamageSource cds && cds.isCrit()) {
             pe.setPostureConsumption(pe.getPostureConsumption() + (cap.getPosture() * SkillUtils.getSkillEffectiveness(caster) * cds.getCritDamage() / 2));
             cap.consumePosture(cap.getPosture() / 2);
 
@@ -54,21 +49,21 @@ public class BoulderBrace extends WarCry {
     public boolean equippedTick(LivingEntity caster, SkillData stats) {
         boolean stationary = caster.zza == 0 && caster.xxa == 0 && caster.yya == 0;
         if (stationary) {
-            SkillUtils.addAttribute(caster, FootworkAttributes.POSTURE_REGEN.get(), brace);
-        } else SkillUtils.removeAttribute(caster, FootworkAttributes.POSTURE_REGEN.get(), brace);
+            SkillUtils.addAttribute(caster, FootworkAttributes.RALLY_DURATION.get(), brace);
+        } else SkillUtils.removeAttribute(caster, FootworkAttributes.RALLY_DURATION.get(), brace);
         return super.equippedTick(caster, stats);
     }
 
     @Override
     public void onEquip(LivingEntity caster) {
-        SkillUtils.addAttribute(caster, FootworkAttributes.POSTURE_COOLDOWN.get(), brrrr);
+        SkillUtils.addAttribute(caster, FootworkAttributes.RALLY_CONVERSION.get(), brrrr);
         super.onEquip(caster);
     }
 
     @Override
     public void onUnequip(LivingEntity caster, SkillData stats) {
-        SkillUtils.addAttribute(caster, FootworkAttributes.POSTURE_REGEN.get(), brace);
-        SkillUtils.addAttribute(caster, FootworkAttributes.POSTURE_COOLDOWN.get(), brrrr);
+        SkillUtils.addAttribute(caster, FootworkAttributes.RALLY_DURATION.get(), brace);
+        SkillUtils.addAttribute(caster, FootworkAttributes.RALLY_CONVERSION.get(), brrrr);
         super.onUnequip(caster, stats);
     }
 

@@ -8,11 +8,9 @@ import jackiecrazy.wardance.capability.status.Marks;
 import jackiecrazy.wardance.config.ResourceConfig;
 import jackiecrazy.wardance.event.*;
 import jackiecrazy.wardance.skill.Skill;
-import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.projectile.Projectile;
 import net.minecraft.world.phys.EntityHitResult;
-import net.minecraft.world.phys.HitResult;
 import net.minecraftforge.event.entity.ProjectileImpactEvent;
 import net.minecraftforge.event.entity.living.*;
 import net.minecraftforge.event.entity.player.AttackEntityEvent;
@@ -418,7 +416,7 @@ public class SkillEventHandler {
     }
 
     @SubscribeEvent(priority = EventPriority.LOWEST)
-    public static void gainMightFlagS(GainMightEvent e) {
+    public static void gainMightFlagS(GainAdrenalineEvent e) {
         if (!e.getEntity().isEffectiveAi()) return;
         LivingEntity attacker = e.getEntity();
         final ISkillCapability cap = CasterData.getCap(e.getEntity());
@@ -429,7 +427,7 @@ public class SkillEventHandler {
     }
 
     @SubscribeEvent(priority = EventPriority.HIGHEST)
-    public static void gainMightFlags(GainMightEvent e) {
+    public static void gainMightFlags(GainAdrenalineEvent e) {
         if (!e.getEntity().isEffectiveAi()) return;
         LivingEntity attacker = e.getEntity();
         final ISkillCapability cap = CasterData.getCap(e.getEntity());
@@ -584,7 +582,7 @@ public class SkillEventHandler {
     }
 
     @SubscribeEvent(priority = EventPriority.LOWEST)
-    public static void mightFlagS(AttackMightEvent e) {
+    public static void mightFlagS(AttackAdrenalineEvent e) {
         if (!e.getEntity().isEffectiveAi()) return;
         final ISkillCapability cap = CasterData.getCap(e.getAttacker());
         for (Skill s : cap.getEquippedSkillsAndStyle()) {
@@ -594,7 +592,7 @@ public class SkillEventHandler {
     }
 
     @SubscribeEvent(priority = EventPriority.HIGHEST)
-    public static void mightFlags(AttackMightEvent e) {
+    public static void mightFlags(AttackAdrenalineEvent e) {
         if (!e.getEntity().isEffectiveAi()) return;
         final ISkillCapability cap = CasterData.getCap(e.getAttacker());
         for (Skill s : cap.getEquippedSkillsAndStyle()) {
@@ -604,7 +602,7 @@ public class SkillEventHandler {
     }
 
     @SubscribeEvent(priority = EventPriority.LOWEST)
-    public static void parryFlagS(ParryEvent e) {
+    public static void parryFlagS(MeleePostureEvent.Defense e) {
         if (!e.getEntity().isEffectiveAi()) return;
         if (e.getAttacker() != null) {
             LivingEntity attacker = e.getAttacker();
@@ -620,7 +618,7 @@ public class SkillEventHandler {
     }
 
     @SubscribeEvent(priority = EventPriority.LOWEST)
-    public static void parryFlagS(ProjectileParryEvent e) {
+    public static void parryFlagS(ProjectileDefendEvent e) {
         if (!e.getEntity().isEffectiveAi()) return;
         final ISkillCapability isc = CasterData.getCap(e.getEntity());
         for (Skill s : isc.getEquippedSkillsAndStyle()) {
@@ -629,7 +627,7 @@ public class SkillEventHandler {
     }
 
     @SubscribeEvent(priority = EventPriority.HIGHEST)
-    public static void parryFlags(ParryEvent e) {
+    public static void parryFlags(MeleePostureEvent.Defense e) {
         if (!e.getEntity().isEffectiveAi()) return;
         if (e.getAttacker() != null) {
             LivingEntity attacker = e.getAttacker();
@@ -645,7 +643,7 @@ public class SkillEventHandler {
     }
 
     @SubscribeEvent(priority = EventPriority.HIGHEST)
-    public static void parryFlags(ProjectileParryEvent e) {
+    public static void parryFlags(ProjectileDefendEvent e) {
         if (!e.getEntity().isEffectiveAi()) return;
         final ISkillCapability isc = CasterData.getCap(e.getEntity());
         for (Skill s : isc.getEquippedSkillsAndStyle()) {
@@ -774,24 +772,6 @@ public class SkillEventHandler {
                     isc.changeSkillState(s, Skill.STATE.INACTIVE);
                 }
             }
-        }
-    }
-
-    @SubscribeEvent(priority = EventPriority.LOWEST)
-    public static void spiritFlagS(RegenSpiritEvent e) {
-        if (!e.getEntity().isEffectiveAi()) return;
-        final ISkillCapability cap = CasterData.getCap(e.getEntity());
-        for (Skill s : cap.getEquippedSkillsAndStyle()) {
-            cap.getSkillData(s).ifPresent(d -> s.onProc(e.getEntity(), e, d.getState(), d, null));
-        }
-    }
-
-    @SubscribeEvent(priority = EventPriority.HIGHEST)
-    public static void spiritFlags(RegenSpiritEvent e) {
-        if (!e.getEntity().isEffectiveAi()) return;
-        final ISkillCapability cap = CasterData.getCap(e.getEntity());
-        for (Skill s : cap.getEquippedSkillsAndStyle()) {
-            cap.getSkillData(s).ifPresent(d -> s.onProc(e.getEntity(), e, d.getState(), d, null));
         }
     }
 

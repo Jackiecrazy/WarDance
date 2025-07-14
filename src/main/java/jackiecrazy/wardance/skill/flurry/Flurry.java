@@ -2,8 +2,9 @@ package jackiecrazy.wardance.skill.flurry;
 
 import jackiecrazy.footwork.capability.resources.CombatData;
 import jackiecrazy.footwork.capability.resources.ICombatCapability;
+import jackiecrazy.footwork.capability.stylish.StylishData;
 import jackiecrazy.footwork.event.DamageKnockbackEvent;
-import jackiecrazy.footwork.event.GainMightEvent;
+import jackiecrazy.footwork.event.GainAdrenalineEvent;
 import jackiecrazy.wardance.capability.skill.CasterData;
 import jackiecrazy.wardance.config.WeaponStats;
 import jackiecrazy.wardance.skill.Skill;
@@ -31,7 +32,7 @@ public class Flurry extends Skill {
 
     @Override
     public CastStatus castingCheck(LivingEntity caster, SkillData sd) {
-        if (CombatData.getCap(caster).getMight() < 1) return CastStatus.OTHER;
+        if (!StylishData.getCap(caster).maxAdrenaline()) return CastStatus.OTHER;
         return super.castingCheck(caster, sd);
     }
 
@@ -63,7 +64,7 @@ Flow: cooldown of all attack skills are halved, and any cooled attack skill is a
     public boolean equippedTick(LivingEntity caster, SkillData stats) {
         if (stats.getState() != STATE.ACTIVE) return false;
         final ICombatCapability cap = CombatData.getCap(caster);
-        if (!cap.consumeMight(0.05f/ stats.getEffectiveness())) markUsed(caster);
+        activeTick(stats);
         caster.attackStrengthTicker++;
         cap.setOffhandCooldown(cap.getOffhandCooldown() + 1);
         //main hand flurry
@@ -83,7 +84,7 @@ Flow: cooldown of all attack skills are halved, and any cooled attack skill is a
     @Override
     public void onProc(LivingEntity caster, Event procPoint, STATE state, SkillData stats, @Nullable LivingEntity target) {
         if(state == STATE.ACTIVE && procPoint.getPhase() == EventPriority.LOWEST) {
-            if (procPoint instanceof GainMightEvent gme) {
+            if (procPoint instanceof GainAdrenalineEvent gme) {
                 gme.setQuantity(0);
             }
             if(procPoint instanceof DamageKnockbackEvent e && target!=caster){
@@ -98,7 +99,8 @@ Flow: cooldown of all attack skills are halved, and any cooled attack skill is a
         if (from == STATE.INACTIVE && to == STATE.HOLSTERED && cast(caster, 1)) {
             CasterData.getCap(caster).removeActiveTag(SkillTags.state);
             SkillUtils.addAttribute(caster, Attributes.ATTACK_DAMAGE, bad);
-            prev.setMaxDuration(0);
+            activate(caster, 5*prev.getEffectiveness());
+            CombatUtils.triggerSteveTime(caster, 15);
             return true;
         }
         if (from == STATE.ACTIVE && to == STATE.COOLING) {

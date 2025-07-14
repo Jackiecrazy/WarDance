@@ -1,6 +1,7 @@
 package jackiecrazy.wardance.utils;
 
 import jackiecrazy.footwork.api.CombatDamageSource;
+import jackiecrazy.footwork.api.FootworkDamageArchetype;
 import net.minecraft.tags.DamageTypeTags;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraftforge.event.entity.player.CriticalHitEvent;
@@ -23,14 +24,14 @@ public class DamageUtils {
 
     public static boolean isPhysicalAttack(DamageSource s) {
         if (s instanceof CombatDamageSource cds) {
-            return cds.getDamageTyping() == CombatDamageSource.TYPE.PHYSICAL;
+            return cds.getDamageTyping() == FootworkDamageArchetype.PHYSICAL;
         }
         return !s.is(DamageTypeTags.IS_FIRE) && !s.is(DamageTypeTags.WITCH_RESISTANT_TO) && !s.is(DamageTypeTags.BYPASSES_ARMOR);
     }
 
     public static boolean isTrueDamage(DamageSource s) {
         if (s instanceof CombatDamageSource cds) {
-            return cds.getDamageTyping() == CombatDamageSource.TYPE.TRUE;
+            return cds.getDamageTyping() == FootworkDamageArchetype.TRUE;
         }
         return !s.is(DamageTypeTags.BYPASSES_INVULNERABILITY) || (!s.is(DamageTypeTags.BYPASSES_EFFECTS) && !s.is(DamageTypeTags.BYPASSES_ARMOR));
     }

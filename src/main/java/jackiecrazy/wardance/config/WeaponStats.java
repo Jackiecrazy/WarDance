@@ -26,6 +26,7 @@ import net.minecraft.tags.TagKey;
 import net.minecraft.util.StringUtil;
 import net.minecraft.util.profiling.ProfilerFiller;
 import net.minecraft.world.InteractionHand;
+import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
@@ -51,9 +52,8 @@ public class WeaponStats extends SimpleJsonResourceReloadListener {
     public static final TagKey<Item> CAN_BE_DISABLED = ItemTags.create(new ResourceLocation(WarDance.MODID, "can_be_disabled"));
     public static final TagKey<Item> AXE_LIKE = ItemTags.create(new ResourceLocation(WarDance.MODID, "disable_shield"));
     public static final TagKey<Item> UNARMED = ItemTags.create(new ResourceLocation(WarDance.MODID, "unarmed"));
-    public static final TagKey<Item> PIERCE_PARRY = ItemTags.create(new ResourceLocation(WarDance.MODID, "pierce_parry"));
     public static final TagKey<Item> PIERCE_SHIELD = ItemTags.create(new ResourceLocation(WarDance.MODID, "pierce_shield"));
-    public static final TagKey<Item> CANNOT_PARRY = ItemTags.create(new ResourceLocation(WarDance.MODID, "cannot_parry"));
+    public static final TagKey<Item> CANNOT_BLOCK = ItemTags.create(new ResourceLocation(WarDance.MODID, "cannot_parry"));
     public static final TagKey<Item> DEMON_HUNTER_CHARGE_RANGED = ItemTags.create(new ResourceLocation(WarDance.MODID, "demon_hunter_ranged"));
     private static final SweepInfo DEFAULT_FAN = new SweepInfo(SWEEPTYPE.CONE, 30, 30);
     private static final SweepInfo DEFAULT_CLEAVE = new SweepInfo(SWEEPTYPE.CLEAVE, 30, 30);
@@ -247,11 +247,7 @@ public class WeaponStats extends SimpleJsonResourceReloadListener {
         return h == InteractionHand.MAIN_HAND && offhandFree;
     }
 
-    public static boolean canPierceParry(ItemStack is, LivingEntity e) {
-        return is.is(PIERCE_PARRY);
-    }
-
-    public static boolean canPierceShield(ItemStack is, LivingEntity e) {
+    public static boolean canPierceShield(ItemStack is, Entity e) {
         return is.is(PIERCE_SHIELD);
     }
 

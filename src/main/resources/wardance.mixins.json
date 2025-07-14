@@ -4,18 +4,21 @@
   "compatibilityLevel": "JAVA_8",
   "refmap": "wardance.refmap.json",
   "mixins": [
+    "InCombatAccessor",
+    "MixinLivingEntity",
     "MixinNewSweepAttack",
     "MixinPlayerEntity",
-    "MixinShieldDisabler",
-    "MixinSuppressSwapSound",
     "MixinSweepDurabilitySuppressor",
     "ProjectileImpactMixin",
+    "ShieldBlockAccessor",
+    "ShieldDisableOverwrite",
     "SifuDropsMixin"
   ],
   "client": [
     "ItchyCurseMixin",
-    "YouTestMyPatienceAccessor",
-    "MixinEquipProgress"
+    "MixinBlockFrameDisable",
+    "MixinEquipProgress",
+    "YouTestMyPatienceAccessor"
   ],
   "injectors": {
     "defaultRequire": 1

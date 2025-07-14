@@ -1,6 +1,7 @@
 package jackiecrazy.wardance.capability.stylish;
 
 import jackiecrazy.footwork.api.FootworkAttributes;
+import jackiecrazy.footwork.capability.resources.CombatData;
 import jackiecrazy.footwork.capability.resources.ICombatCapability;
 import jackiecrazy.footwork.capability.stylish.IStyleCapability;
 import jackiecrazy.footwork.event.*;
@@ -12,6 +13,7 @@ import jackiecrazy.wardance.config.*;
 import jackiecrazy.wardance.handlers.TwoHandingHandler;
 import jackiecrazy.wardance.networking.CombatChannel;
 import jackiecrazy.wardance.networking.combat.UpdateClientResourcePacket;
+import jackiecrazy.wardance.networking.combat.UpdateClientStylePacket;
 import jackiecrazy.wardance.utils.CombatUtils;
 import jackiecrazy.wardance.utils.SkillUtils;
 import net.minecraft.nbt.CompoundTag;
@@ -92,9 +94,9 @@ public class StylishCapability implements IStyleCapability {
     @Override
     public void tick() {
         meleeFinisher++;
-        if (meleeFinisher > 20) meleeFinisher = 10;
+        if (meleeFinisher > 20) meleeFinisher = 20;
         rangedFinisher++;
-        if (rangedFinisher > 20) rangedFinisher = 10;
+        if (rangedFinisher > 20) rangedFinisher = 20;
         comboTimer--;
         if (comboTimer == 0) resetCombo();
     }
@@ -114,6 +116,7 @@ public class StylishCapability implements IStyleCapability {
             }
             rangedFinisher = 0;
         }
+        sync();
     }
 
     @Override
@@ -131,16 +134,20 @@ public class StylishCapability implements IStyleCapability {
         comboTimer = COMBO_TIMER;
         //too stale!
         if (amount <= 0) return;
+        combo+=amount;
+        addAdrenaline(amount/6);
         freshness.add(source);
         while (freshness.size() > TRACKED_FRESHNESS_ACTIONS) {
             freshness.poll();
         }
+        sync();
     }
 
     @Override
     public void resetCombo() {
         combo = 1;
         freshness.clear();
+        sync();
     }
 
     @Override
@@ -152,12 +159,14 @@ public class StylishCapability implements IStyleCapability {
     public void setTriggerTime(int time, boolean melee) {
         if (melee) meleeFinisher = time;
         else rangedFinisher = time;
+        sync();
     }
 
     @Override
     public void addTriggerTime(int time, boolean melee) {
         if (melee) meleeFinisher += time;
         else rangedFinisher += time;
+        sync();
     }
 
     @Override
@@ -168,16 +177,19 @@ public class StylishCapability implements IStyleCapability {
     @Override
     public void setTriggerBar(int amnt) {
         finisherBar = Math.min(amnt, MAX_FINISHER_CHARGE);
+        sync();
     }
 
     @Override
     public void resetTriggerBar() {
         finisherBar = 0;
+        sync();
     }
 
     @Override
     public void addTriggerBar(int amnt) {
         setTriggerBar(finisherBar + amnt);
+        sync();
     }
 
     @Override
@@ -227,9 +239,9 @@ public class StylishCapability implements IStyleCapability {
     private void sync() {
         LivingEntity elb = dude.get();
         if (elb == null || elb.level().isClientSide) return;
-        CombatChannel.INSTANCE.send(PacketDistributor.TRACKING_ENTITY.with(() -> elb), new UpdateClientResourcePacket(elb.getId(), write()));
+        CombatChannel.INSTANCE.send(PacketDistributor.TRACKING_ENTITY.with(() -> elb), new UpdateClientStylePacket(elb.getId(), write()));
         if (!(elb instanceof FakePlayer) && elb instanceof ServerPlayer sp)
-            CombatChannel.INSTANCE.send(PacketDistributor.PLAYER.with(() -> sp), new UpdateClientResourcePacket(elb.getId(), write()));
+            CombatChannel.INSTANCE.send(PacketDistributor.PLAYER.with(() -> sp), new UpdateClientStylePacket(elb.getId(), write()));
 
     }
 }

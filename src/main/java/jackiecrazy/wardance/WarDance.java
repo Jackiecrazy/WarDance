@@ -112,6 +112,7 @@ public class WarDance {
         //packets
         int index = 0;
         CombatChannel.INSTANCE.registerMessage(index++, UpdateClientResourcePacket.class, new UpdateClientResourcePacket.UpdateClientEncoder(), new UpdateClientResourcePacket.UpdateClientDecoder(), new UpdateClientResourcePacket.UpdateClientHandler());
+        CombatChannel.INSTANCE.registerMessage(index++, UpdateClientStylePacket.class, new UpdateClientStylePacket.UpdateClientEncoder(), new UpdateClientStylePacket.UpdateClientDecoder(), new UpdateClientStylePacket.UpdateClientHandler());
         CombatChannel.INSTANCE.registerMessage(index++, UpdateMarkPacket.class, new UpdateMarkPacket.UpdateClientEncoder(), new UpdateMarkPacket.UpdateClientDecoder(), new UpdateMarkPacket.UpdateClientHandler());
         CombatChannel.INSTANCE.registerMessage(index++, UpdateAttackCooldownPacket.class, new UpdateAttackCooldownPacket.UpdateAttackEncoder(), new UpdateAttackCooldownPacket.UpdateAttackDecoder(), new UpdateAttackCooldownPacket.UpdateAttackHandler());
         CombatChannel.INSTANCE.registerMessage(index++, DodgePacket.class, new DodgePacket.DodgeEncoder(), new DodgePacket.DodgeDecoder(), new DodgePacket.DodgeHandler());
@@ -123,7 +124,6 @@ public class WarDance {
         CombatChannel.INSTANCE.registerMessage(index++, EvokeSkillPacket.class, new EvokeSkillPacket.EvokeEncoder(), new EvokeSkillPacket.EvokeDecoder(), new EvokeSkillPacket.EvokeHandler());
         CombatChannel.INSTANCE.registerMessage(index++, UpdateSkillSelectionPacket.class, new UpdateSkillSelectionPacket.UpdateSkillEncoder(), new UpdateSkillSelectionPacket.UpdateSkillDecoder(), new UpdateSkillSelectionPacket.UpdateSkillHandler());
         CombatChannel.INSTANCE.registerMessage(index++, SyncSkillPacket.class, new SyncSkillPacket.SyncSkillEncoder(), new SyncSkillPacket.SyncSkillDecoder(), new SyncSkillPacket.SyncSkillHandler());
-        CombatChannel.INSTANCE.registerMessage(index++, ManualParryPacket.class, new ManualParryPacket.ParryEncoder(), new ManualParryPacket.ParryDecoder(), new ManualParryPacket.ParryHandler());
         CombatChannel.INSTANCE.registerMessage(index++, UpdateTargetPacket.class, new UpdateTargetPacket.UpdateTargetEncoder(), new UpdateTargetPacket.UpdateTargetDecoder(), new UpdateTargetPacket.UpdateTargetHandler());
         CombatChannel.INSTANCE.registerMessage(index++, SyncItemDataPacket.class, new SyncItemDataPacket.Encoder(), new SyncItemDataPacket.Decoder(), new SyncItemDataPacket.Handler());
         CombatChannel.INSTANCE.registerMessage(index++, SyncTagDataPacket.class, new SyncTagDataPacket.Encoder(), new SyncTagDataPacket.Decoder(), new SyncTagDataPacket.Handler());

@@ -1,15 +1,17 @@
 package jackiecrazy.wardance.capability.resources;
 
 import jackiecrazy.footwork.api.FootworkAttributes;
+import jackiecrazy.footwork.capability.resources.CombatData;
 import jackiecrazy.footwork.capability.resources.ICombatCapability;
 import jackiecrazy.footwork.event.*;
-import jackiecrazy.footwork.utils.GeneralUtils;
+import jackiecrazy.footwork.potion.FootworkEffects;
 import jackiecrazy.wardance.WarDance;
 import jackiecrazy.wardance.capability.action.PermissionData;
 import jackiecrazy.wardance.compat.ElenaiCompat;
 import jackiecrazy.wardance.compat.WarCompat;
 import jackiecrazy.wardance.config.*;
 import jackiecrazy.wardance.handlers.TwoHandingHandler;
+import jackiecrazy.wardance.mixin.InCombatAccessor;
 import jackiecrazy.wardance.networking.CombatChannel;
 import jackiecrazy.wardance.networking.combat.UpdateClientResourcePacket;
 import jackiecrazy.wardance.utils.CombatUtils;
@@ -36,7 +38,6 @@ import net.minecraftforge.network.PacketDistributor;
 
 import java.lang.ref.WeakReference;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.Map;
 import java.util.UUID;
 
@@ -161,7 +162,7 @@ public class NewCombatCapability implements ICombatCapability {
     }
 
     @Override
-    public float consumePosture(LivingEntity assailant, float amount, boolean breach) {
+    public float consumePosture(LivingEntity assailant, float amount, boolean breach, float rallyDock) {
         //while posture is not empty incoming damage is reduced by posture??? How to calculate damage <> posture?
         //on taking a breaching hit to posture, flag stun, which interrupts all AI, cancels all knockback, and records damage?
         //on taking a breaching hit while stunned, flag knockdown, greatly knockback, make entity invulnerable until end.
@@ -178,18 +179,42 @@ public class NewCombatCapability implements ICombatCapability {
         if (elb == null) return ret;
         //necessary update before polling, TODO mirror onto other stats?
         serverTick();
-        //staggered already, no more posture damage
-        if (isStunned()) return amount;
+        //knocked down already, no more posture damage
+        if (isKnockdown()) return amount;
         if (!Float.isFinite(posture)) posture = getMaxPosture();
+
         //resistance go brr
         if (elb.hasEffect(MobEffects.DAMAGE_RESISTANCE) && GeneralConfig.resistance)
             amount *= (1 - (elb.getEffect(MobEffects.DAMAGE_RESISTANCE).getAmplifier() + 1) * 0.2f);
+        if (elb.hasEffect(FootworkEffects.ENFEEBLE.get()))
+            amount *= (1 + (elb.getEffect(FootworkEffects.ENFEEBLE.get()).getAmplifier() + 1) * 0.2f);
+        if (elb.hasEffect(FootworkEffects.COUNTERSTRIKE.get())) {
+            int cycles = elb.getEffect(FootworkEffects.COUNTERSTRIKE.get()).getAmplifier() + 1;
+            while (cycles > 0) {
+                cycles--;
+                amount *= (1.15f);
+            }
+            elb.removeEffect(FootworkEffects.COUNTERSTRIKE.get());
+        }
+
+
         //event for oodles of compat
         ConsumePostureEvent cpe = new ConsumePostureEvent(elb, assailant, amount);
         MinecraftForge.EVENT_BUS.post(cpe);
+
         //cancel consumption if... canceled
         if (cpe.isCanceled()) return 0;
         amount = cpe.getAmount();
+
+        //players heal rally
+        if (assailant instanceof Player p) {
+            CombatData.getCap(p).rally((float) (amount * p.getAttributeValue(FootworkAttributes.RALLY_CONVERSION.get())));
+        }
+
+        //target gets rally reduced
+        rally *= (1 - rallyDock);
+
+        //stun check
         if ((posture - amount < 0) && breach) {
             //start stun
             ret = posture - amount;
@@ -206,10 +231,14 @@ public class NewCombatCapability implements ICombatCapability {
             }
             elb.stopUsingItem();
             if (se.isKnockdown()) {
-                knockdown(assailant, se.getLength());
-            } else stun(assailant, se.getLength());
-//            if (assailant != null)
-//                CombatData.getCap(assailant).addRank(se.isKnockdown() ? 0.2f : 0.1f);
+                //ugly fix. Posture is consumed before damage so the final hit that knocks down a mob will not deal damage.
+                //this delays the processing until damage
+                tickProc("knockdown", se.getLength());
+            } else {
+                //stun sets the posture to max so you can deplete it again
+                posture = getMaxPosture();
+                stun(assailant, se.getLength());
+            }
             elb.level().playSound(null, elb.getX(), elb.getY(), elb.getZ(), SoundEvents.ZOMBIE_ATTACK_WOODEN_DOOR, SoundSource.PLAYERS, 0.3f + WarDance.rand.nextFloat() * 0.5f, 0.75f + WarDance.rand.nextFloat() * 0.5f);
             //why was resetting posture set here?
 
@@ -226,7 +255,9 @@ public class NewCombatCapability implements ICombatCapability {
         double cooldown = ResourceConfig.postureCD * weakness;
         posture -= amount;
         setRally((float) (amount * elb.getAttributeValue(FootworkAttributes.RALLY_PERCENTAGE.get())));
-        if (!player) mobPosCD = maxMobPosCD;
+        if (player)
+            mobPosCD = 200;
+        else mobPosCD = maxMobPosCD;
         if (WarCompat.elenaiDodge && elb instanceof ServerPlayer sp)
             ElenaiCompat.manipulateFeather(sp, 0);
         return ret;
@@ -245,11 +276,13 @@ public class NewCombatCapability implements ICombatCapability {
 
     @Override
     public void rally(float amount) {
+        if (alreadyProc("rally")) return;
         RallyPostureEvent rpe = new RallyPostureEvent(dude.get(), amount);
         MinecraftForge.EVENT_BUS.post(rpe);
         if (rpe.isCanceled()) return;
         amount = Math.min(rpe.getQuantity(), rally);
         rally -= amount;
+        tickProc("rally");
         setPosture(posture + amount);
     }
 
@@ -260,7 +293,7 @@ public class NewCombatCapability implements ICombatCapability {
 
     @Override
     public double getProc(String key) {
-        return procs.get(key);
+        return procs.getOrDefault(key, 0d);
     }
 
     @Override
@@ -318,8 +351,8 @@ public class NewCombatCapability implements ICombatCapability {
         final boolean uninitializedPosture = elb.getAttribute(FootworkAttributes.MAX_POSTURE.get()).getBaseValue() == 0d;
         if (uninitializedPosture) {
             final float mPos = getMPos(elb);
-            if (uninitializedPosture && !player) {//ew
-                elb.getAttribute(FootworkAttributes.MAX_POSTURE.get()).setBaseValue(mPos);
+            elb.getAttribute(FootworkAttributes.MAX_POSTURE.get()).setBaseValue(mPos);
+            if (!player) {//ew
                 MobSpecs.MobInfo specs = MobSpecs.getMobInfo(elb);
                 if (specs == null) specs = MobSpecs.DEFAULT;
                 mobPosRegenSpd = specs.getPostureRegenerationSpeed();
@@ -327,9 +360,9 @@ public class NewCombatCapability implements ICombatCapability {
                 double permScale = specs.getMaxPostureScaling();
                 if (permScale != 1)
                     elb.getAttribute(FootworkAttributes.MAX_POSTURE.get()).addPermanentModifier(new AttributeModifier(CombatUtils.main, "json bonus", permScale, AttributeModifier.Operation.MULTIPLY_TOTAL));
-                mpos = (float) elb.getAttributeValue(FootworkAttributes.MAX_POSTURE.get());
-                setPosture(getMaxPosture());
             }
+            mpos = (float) elb.getAttributeValue(FootworkAttributes.MAX_POSTURE.get());
+            setPosture(getMaxPosture());
         }
 
         //update max values
@@ -366,9 +399,10 @@ public class NewCombatCapability implements ICombatCapability {
 
         //dodge/block/parry/iframe resolution
         dodgeFrame -= ticks;
-        if (elb.isBlocking() || elb.isShiftKeyDown()) guardFrame = 10;
+        if (elb.isShiftKeyDown()) guardFrame = 10;//todo check holding weapon
         else {
-            if (guardFrame > 0) setParryTime(CombatConfig.parryTime);
+            if (guardFrame > 0)
+                setParryTime(CombatConfig.parryTime);
             guardFrame = -10;
         }
         parryFrame -= ticks;
@@ -392,10 +426,13 @@ public class NewCombatCapability implements ICombatCapability {
         }
 
         //regenerate posture
-        if (isStunned() && getPosture() < getMaxPosture()) {
+        if (isKnockdown() && getPosture() < getMaxPosture()) {
             setPosture(getPosture() + getMaxPosture() / getMaxStunTime());
         } else if (!player) handleMobPostureRegen(ticks);
-        else if (elb.moveDist > 0) addPosture(0.05f);
+        else {
+            handlePlayerPostureReset(ticks);
+            if (elb.moveDist > 0) addPosture(0.05f);
+        }
         if (getPosture() > getMaxPosture())
             setPosture(getMaxPosture());
         if (prev == null || !ItemStack.matches(elb.getOffhandItem(), prev)) {
@@ -405,7 +442,7 @@ public class NewCombatCapability implements ICombatCapability {
 
         //decrement or clear turn procs
         procs.replaceAll((k, v) -> v - 1);
-        procs.entrySet().removeIf(entry -> entry.getValue() < 0);
+        procs.entrySet().removeIf(entry -> entry.getValue() <= 0);
 
         lastUpdate = elb.level().getGameTime();
         first = false;
@@ -458,7 +495,10 @@ public class NewCombatCapability implements ICombatCapability {
         if (isStunned() && getPosture() < getMaxPosture()) {
             setPosture(getPosture() + getMaxPosture() / getMaxStunTime());
         } else if (!player) handleMobPostureRegen(ticks);
-        else if (elb.moveDist > 0) addPosture(0.05f);
+        else {
+            handlePlayerPostureReset(ticks);
+            if (elb.moveDist > 0) addPosture(0.05f);
+        }
         if (getPosture() > getMaxPosture())
             setPosture(getMaxPosture());
         if (prev == null || !ItemStack.matches(elb.getOffhandItem(), prev)) {
@@ -502,6 +542,17 @@ public class NewCombatCapability implements ICombatCapability {
     @Override
     public boolean isParrying() {
         return parryFrame > 0 && !alreadyProc("cannot_parry");
+    }
+
+    @Override
+    public int getParryCooldown() {
+        return Math.max(parryFrame + CombatConfig.parryCD, 0);
+    }
+
+    @Override
+    public float getParryCooldownPerc() {
+        if(parryFrame>0)return (float) -parryFrame /CombatConfig.parryTime;
+        return (float) getParryCooldown() / CombatConfig.parryCD;
     }
 
     @Override
@@ -640,7 +691,9 @@ public class NewCombatCapability implements ICombatCapability {
     public CompoundTag write() {
         CompoundTag c = new CompoundTag();
         c.putInt("spirit", spirit);
+        c.putInt("mspi", mspi);
         c.putFloat("posture", posture);
+        c.putFloat("mpos", mpos);
         c.putFloat("rally", rally);
         c.putInt("mBind", mBind);
         c.putInt("oBind", oBind);
@@ -672,6 +725,8 @@ public class NewCombatCapability implements ICombatCapability {
 
     @Override
     public void read(CompoundTag t) {
+        mspi=t.getInt("mspi");
+        mpos=t.getFloat("mpos");
         setSpirit(t.getInt("spirit"));
         setPosture(t.getFloat("posture"));
         setRally(t.getFloat("rally"));
@@ -692,7 +747,6 @@ public class NewCombatCapability implements ICombatCapability {
         mobPosCD = t.getInt("mobPosCD");
         maxMobPosCD = t.getInt("maxMobPosCD");
         mobPosRegenSpd = t.getDouble("mobPosRegenSpd");
-        player = t.getBoolean("player");
         if (t.contains("procs")) {
             procs.clear();
             CompoundTag c = (CompoundTag) t.get("procs");
@@ -715,6 +769,12 @@ public class NewCombatCapability implements ICombatCapability {
         offhand = offhandAttack;
     }
 
+    private void handlePlayerPostureReset(int ticks) {
+        if (!((InCombatAccessor) (dude.get().getCombatTracker())).isInCombat())
+            mobPosCD -= ticks;
+        if (mobPosCD < 0) setPosture(getMaxPosture());
+    }
+
     private void handleMobPostureRegen(int ticks) {
         mobPosCD -= ticks;
         float mult = 1;
@@ -730,9 +790,9 @@ public class NewCombatCapability implements ICombatCapability {
             mult *= poison;
         }
         if (mobPosCD < 0) {
-            mobPosCD = 0;
             int overflow = -mobPosCD;
-            setPosture((float) (getPosture() + overflow * mobPosRegenSpd * mult));
+            mobPosCD = 0;
+            setPosture((float) (getPosture() + overflow * mobPosRegenSpd * mult/20));
         }
     }
 }

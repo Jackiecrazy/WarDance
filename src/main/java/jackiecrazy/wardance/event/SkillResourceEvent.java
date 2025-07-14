@@ -11,30 +11,20 @@ import javax.annotation.Nullable;
 public class SkillResourceEvent extends LivingEvent {
     private final Skill s;
     private final LivingEntity targ;
-    private float might, spirit;
+    private int spirit;
 
     public SkillResourceEvent(LivingEntity entity, @Nullable LivingEntity target, Skill skill) {
         super(entity);
         s = skill;
-        might = skill.mightConsumption(entity);
         spirit = skill.spiritConsumption(entity);
         targ = target;
     }
 
-    public float getMight() {
-        return might;
-    }
-
-    public SkillResourceEvent setMight(float might) {
-        this.might = might;
-        return this;
-    }
-
-    public float getSpirit() {
+    public int getSpirit() {
         return spirit;
     }
 
-    public SkillResourceEvent setSpirit(float spirit) {
+    public SkillResourceEvent setSpirit(int spirit) {
         this.spirit = spirit;
         return this;
     }

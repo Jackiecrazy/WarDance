@@ -1,6 +1,6 @@
 package jackiecrazy.wardance.skill.fiveelementfist;
 
-import jackiecrazy.wardance.event.ParryEvent;
+import jackiecrazy.wardance.event.MeleePostureEvent;
 import jackiecrazy.wardance.skill.SkillData;
 import jackiecrazy.wardance.utils.CombatUtils;
 import jackiecrazy.wardance.utils.SkillUtils;
@@ -19,7 +19,7 @@ import org.jetbrains.annotations.Nullable;
 public class IronChop extends FiveElementFist {
     @Override
     public void onProc(LivingEntity caster, Event procPoint, STATE state, SkillData stats, @Nullable LivingEntity target) {
-        if (procPoint instanceof ParryEvent e && e.getEntity() == caster && e.canParry() && procPoint.getPhase() == EventPriority.HIGHEST && stats.isCondition()) {
+        if (procPoint instanceof MeleePostureEvent.Defense e && e.getEntity() == caster && e.success() && procPoint.getPhase() == EventPriority.HIGHEST && stats.isCondition()) {
             e.setPostureConsumption(0);
             if (caster.level() instanceof ServerLevel s)
                 for (int reps = 0; reps < 40; reps++) {

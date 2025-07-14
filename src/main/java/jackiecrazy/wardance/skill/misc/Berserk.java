@@ -2,10 +2,12 @@ package jackiecrazy.wardance.skill.misc;
 
 import jackiecrazy.footwork.api.FootworkAttributes;
 import jackiecrazy.footwork.capability.resources.CombatData;
+import jackiecrazy.footwork.capability.stylish.StylishData;
 import jackiecrazy.wardance.config.WeaponStats;
 import jackiecrazy.wardance.skill.Skill;
 import jackiecrazy.wardance.skill.SkillData;
 import jackiecrazy.wardance.skill.SkillTags;
+import jackiecrazy.wardance.utils.CombatUtils;
 import jackiecrazy.wardance.utils.DamageUtils;
 import jackiecrazy.wardance.utils.SkillUtils;
 import net.minecraft.world.entity.LivingEntity;
@@ -26,7 +28,7 @@ public class Berserk extends Skill {
     private final HashSet<String> tag = makeTag(SkillTags.offensive, SkillTags.physical);
 
     @Override
-    public float spiritConsumption(LivingEntity caster) {
+    public int spiritConsumption(LivingEntity caster) {
         return 1;
     }
 
@@ -54,11 +56,18 @@ public class Berserk extends Skill {
     }
 
     @Override
+    public CastStatus castingCheck(LivingEntity caster, SkillData sd) {
+        if(!StylishData.getCap(caster).maxAdrenaline())return CastStatus.OTHER;
+        return super.castingCheck(caster, sd);
+    }
+
+    @Override
     public void onProc(LivingEntity caster, Event procPoint, STATE state, SkillData stats, LivingEntity target) {
         if (procPoint instanceof LivingAttackEvent lae && lae.getEntity() == target && DamageUtils.isMeleeAttack(lae.getSource()) && procPoint.getPhase() == EventPriority.HIGHEST) {
-            if (state == STATE.HOLSTERED && cast(caster, target, 3 * SkillUtils.getSkillEffectiveness(caster) * (2 - (caster.getHealth() / caster.getMaxHealth())) * (CombatData.getCap(caster).getMight()))) {
+            if (state == STATE.HOLSTERED && cast(caster, target, 5 * SkillUtils.getSkillEffectiveness(caster) * (2 - (caster.getHealth() / caster.getMaxHealth())))) {
                 SkillUtils.addAttribute(caster, FootworkAttributes.TWO_HANDING.get(), berserk);
                 SkillUtils.addAttribute(caster, Attributes.ATTACK_SPEED, berserk1);
+                CombatUtils.triggerSteveTime(caster, 30);
             }
         }
         if (procPoint instanceof LivingDeathEvent && state == STATE.ACTIVE && procPoint.getPhase() == EventPriority.HIGHEST) {
@@ -70,7 +79,6 @@ public class Berserk extends Skill {
     public boolean onStateChange(LivingEntity caster, SkillData prev, STATE from, STATE to) {
         if (to == STATE.COOLING) {
             prev.setState(STATE.INACTIVE);
-            CombatData.getCap(caster).setMight(0);
             SkillUtils.removeAttribute(caster, FootworkAttributes.TWO_HANDING.get(), berserk);
             SkillUtils.removeAttribute(caster, Attributes.ATTACK_SPEED, berserk1);
         }

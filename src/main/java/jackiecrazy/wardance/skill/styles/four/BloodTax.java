@@ -30,7 +30,7 @@ public class BloodTax extends SkillStyle {
             max = Math.min(max, 1);
             double absorbed = Math.min(e.getAmount() * max, CombatData.getCap(caster).getSpirit());
             e.setAmount((float) (e.getAmount() - absorbed));
-            CombatData.getCap(caster).consumeSpirit((float) absorbed);
+            CombatData.getCap(caster).consumeSpirit((int)absorbed);
         }
     }
 }

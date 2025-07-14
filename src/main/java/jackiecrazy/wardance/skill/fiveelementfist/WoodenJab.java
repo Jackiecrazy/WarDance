@@ -1,6 +1,7 @@
 package jackiecrazy.wardance.skill.fiveelementfist;
 
 import jackiecrazy.footwork.capability.resources.CombatData;
+import jackiecrazy.footwork.capability.stylish.StylishData;
 import jackiecrazy.footwork.event.DamageKnockbackEvent;
 import jackiecrazy.wardance.skill.SkillData;
 import jackiecrazy.wardance.utils.CombatUtils;
@@ -43,6 +44,6 @@ public class WoodenJab extends FiveElementFist {
 
     @Override
     protected void doAttack(LivingEntity caster, LivingEntity target) {
-        CombatData.getCap(caster).addRank(0.1f);
+        StylishData.getCap(caster).addCombo(0.1f, "wooden");
     }
 }

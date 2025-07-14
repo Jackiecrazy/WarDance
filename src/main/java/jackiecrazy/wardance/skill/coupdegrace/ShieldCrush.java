@@ -1,6 +1,7 @@
 package jackiecrazy.wardance.skill.coupdegrace;
 
 import jackiecrazy.footwork.capability.resources.CombatData;
+import jackiecrazy.footwork.event.StunEvent;
 import jackiecrazy.footwork.potion.FootworkEffects;
 import jackiecrazy.footwork.utils.GeneralUtils;
 import jackiecrazy.wardance.WarDance;
@@ -88,7 +89,7 @@ public class ShieldCrush extends ShieldBash {
     }
 
     @Override
-    public float spiritConsumption(LivingEntity caster) {
+    public int spiritConsumption(LivingEntity caster) {
         return 1;
     }
 
@@ -116,7 +117,7 @@ public class ShieldCrush extends ShieldBash {
                 SkillUtils.modifyAttribute(elb, Attributes.ATTACK_SPEED, debuffID, -0.2, AttributeModifier.Operation.MULTIPLY_TOTAL);
                 SkillUtils.modifyAttribute(elb, Attributes.KNOCKBACK_RESISTANCE, debuffID, 10, AttributeModifier.Operation.ADDITION);
                 //up your grindset
-                if (CombatData.getCap(elb).consumePosture(caster, 0.1f * posdam / 2) < 0 || CombatData.getCap(elb).isVulnerable()) {
+                if (CombatData.getCap(elb).consumePosture(caster, 0.1f * posdam / 2) < 0 || CombatData.getCap(elb).isStunned()) {
                     //crush, end state
                     markUsed(caster);
                 }
@@ -137,9 +138,10 @@ public class ShieldCrush extends ShieldBash {
 
     @Override
     public void onProc(LivingEntity caster, Event procPoint, STATE state, SkillData stats, LivingEntity target) {
-        if (procPoint instanceof FractureEvent se && state == STATE.ACTIVE && se.getAttacker() == caster) {
+        if (procPoint instanceof StunEvent se && state == STATE.ACTIVE && se.getAttacker() == caster) {
+            se.setKnockdown(true);
             //...is this overflowing?
-            se.setAmount(Integer.MAX_VALUE - CombatData.getCap(target).getFractureCount());
+            //se.setAmount(Integer.MAX_VALUE - CombatData.getCap(target).getFractureCount());
         }
     }
 
