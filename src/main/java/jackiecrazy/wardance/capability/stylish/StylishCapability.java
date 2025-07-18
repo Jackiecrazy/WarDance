@@ -78,6 +78,7 @@ public class StylishCapability implements IStyleCapability {
     @Override
     public void setAdrenaline(float to) {
         adrenaline = to;
+        sync();
     }
 
     @Override
@@ -98,7 +99,10 @@ public class StylishCapability implements IStyleCapability {
         rangedFinisher++;
         if (rangedFinisher > 20) rangedFinisher = 20;
         comboTimer--;
-        if (comboTimer == 0) resetCombo();
+        if (comboTimer == 0) {
+            combo=1;
+            resetCombo();
+        }
     }
 
     @Override
@@ -134,8 +138,8 @@ public class StylishCapability implements IStyleCapability {
         comboTimer = COMBO_TIMER;
         //too stale!
         if (amount <= 0) return;
-        combo+=amount;
-        addAdrenaline(amount/6);
+        combo += amount;
+        addAdrenaline(amount / 6);
         freshness.add(source);
         while (freshness.size() > TRACKED_FRESHNESS_ACTIONS) {
             freshness.poll();
@@ -145,8 +149,11 @@ public class StylishCapability implements IStyleCapability {
 
     @Override
     public void resetCombo() {
-        combo = 1;
-        freshness.clear();
+        combo /= 2;
+        if (combo <= 1) {
+            combo = 1;
+            freshness.clear();
+        }
         sync();
     }
 

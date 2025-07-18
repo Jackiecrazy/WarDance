@@ -50,6 +50,7 @@ public abstract class MeleePostureEvent extends LivingEvent {
 
     public void setPostureConsumption(float amount) {
         postureConsumption = amount;
+        //fixme damage is becoming posture somewhere in the line
     }
 
     public float getAttackDamage() {
@@ -76,7 +77,7 @@ public abstract class MeleePostureEvent extends LivingEvent {
         private final ItemStack defendingStack;
 
         public Defense(LivingEntity entity, LivingEntity seme, boolean canParry, InteractionHand hand, ItemStack a, InteractionHand dhand, ItemStack d, float posture, float orig, DamageSource ds, float damage, boolean canBreach) {
-            super(entity, seme, hand, a, ds, orig, damage, posture, canBreach);
+            super(entity, seme, hand, a, ds, damage, orig, posture, canBreach);
             originally = canParry;
             defendingHand = dhand;
             defendingStack = d;
@@ -132,6 +133,17 @@ public abstract class MeleePostureEvent extends LivingEvent {
 
         public boolean success() {
             return getResult() == Result.ALLOW || (originally && getResult() == Result.DEFAULT);
+        }
+    }
+
+    /**
+     * by convention you should only use this for what happens on a parry
+     */
+    @HasResult
+    public static class Environment extends Parry {
+
+        public Environment(LivingEntity entity, boolean canParry, float posture, DamageSource ds, float damage, boolean canBreach) {
+            super(entity, null, canParry, InteractionHand.MAIN_HAND, ItemStack.EMPTY, InteractionHand.MAIN_HAND, ItemStack.EMPTY, posture, posture, ds, damage, canBreach);
         }
     }
 }

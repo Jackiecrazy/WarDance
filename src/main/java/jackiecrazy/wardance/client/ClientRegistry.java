@@ -19,7 +19,7 @@ public class ClientRegistry {
         event.register(Keybinds.COMBAT);
         event.register(Keybinds.CAST);
         event.register(Keybinds.BINDCAST);
-        event.register(Keybinds.PARRY);
+        event.register(Keybinds.DODGE);
         for(KeyMapping km: Keybinds.SKILL){
             event.register(km);
         }

@@ -79,7 +79,7 @@ public class ResourceDisplay implements IGuiOverlay {
             final int barY = atY - barHeight / 2;
             ms.blit(newdark, atX, barY, 243 - flexBarWidth, 0, flexBarWidth, barHeight);
             ms.blit(newdark, atX - flexBarWidth, barY, 0, 0, flexBarWidth, barHeight);
-            //grayscale and change width if staggered
+            //grayscale if staggered
             if (itsc.getStunTime() > 0) {
                 //draw two bars, one for stun time and one for posture. The shorter one is drawn in front.
                 int stunBarWidth = (int) ((itsc.getStunTime()) * flexBarWidth / (float) itsc.getMaxStunTime()) + 3;
@@ -100,16 +100,22 @@ public class ResourceDisplay implements IGuiOverlay {
                     ms.blit(newdark, atX - stunBarWidth, barY, 0, 24, stunBarWidth, barHeight);
                 }
             } else {
-                //otherwise draw normal posture
-                flexBarWidth = (int) ((itsc.getMaxPosture() - itsc.getPosture()) * halfBarWidth / itsc.getMaxPosture()) + 3;
-                ms.blit(newdark, atX, barY, 243 - flexBarWidth, 12, flexBarWidth, barHeight);
-                ms.blit(newdark, atX - flexBarWidth, barY, 0, 12, flexBarWidth, barHeight);
+                //otherwise draw posture and rally
+                //draw the "true" posture bar as gray
+                int rally = (int) (Math.min(itsc.getMaxPosture(), itsc.getMaxPosture() - itsc.getPosture()) * halfBarWidth / itsc.getMaxPosture()) + 3;
+                ms.blit(newdark, atX, barY, 243 - rally, 12, rally, barHeight);
+                ms.blit(newdark, atX - rally, barY, 0, 12, rally, barHeight);
+
+                //then layer posture bar minus rally for recoverable area
+                flexBarWidth = (int) ((itsc.getMaxPosture() - itsc.getPosture() - itsc.getRally()) * halfBarWidth / itsc.getMaxPosture()) + 3;
+                ms.blit(newdark, atX, barY, 243 - flexBarWidth, 24, flexBarWidth, barHeight);
+                ms.blit(newdark, atX - flexBarWidth, barY, 0, 24, flexBarWidth, barHeight);
             }
             // render steve time frames
             if (itsc.isIframe()) {
-                float otemp = (float) Math.min(1, itsc.getDodgeTime() / 100);
+                float otemp = (float) Math.min(1, itsc.getIframe() / 40f);
                 int fini = (int) (otemp * halfBarWidth);
-                int shatterV = Math.min(36 + (int) (otemp * 2.8) * 12, 60);
+                int shatterV = 48;
                 //gold that stretches out to the edges before disappearing
                 ms.blit(newdark, atX + 5, atY - barHeight / 2, 243 - fini, shatterV, fini, barHeight);
                 ms.blit(newdark, atX - fini - 5, atY - barHeight / 2, 0, shatterV, fini, barHeight);
@@ -229,7 +235,6 @@ public class ResourceDisplay implements IGuiOverlay {
             if ((int) prev < (int) currentSpiritLevel)//advance up 1
                 spiritFrames = 10;
             currentAdrenaline = updateValue(currentAdrenaline, style.getAdrenaline());
-            currentComboLevel = style.getCombo()-1;
             //yourCurrentPostureLevel = updateValue(yourCurrentPostureLevel, cap.getPosture());
             PoseStack stack = graphics.pose();
             if (style.isCombatMode()) {
@@ -340,6 +345,8 @@ public class ResourceDisplay implements IGuiOverlay {
                     stack.popPose();
                 }
 
+
+                currentComboLevel = style.getCombo() - 1;
                 //RenderSystem.disableAlphaTest();
                 RenderSystem.disableBlend();
                 stack.popPose();
@@ -347,7 +354,7 @@ public class ResourceDisplay implements IGuiOverlay {
                 //initial bar
                 RenderSystem.enableBlend();
                 stack.pushPose();
-                if (ClientConfig.CONFIG.combo.enabled) {
+                if (ClientConfig.CONFIG.combo.enabled && currentComboLevel > 0) {
                     RenderSystem.setShaderTexture(0, raihud);
                     int combowidth = 32;
                     float workingCombo = currentComboLevel * 3.4f;

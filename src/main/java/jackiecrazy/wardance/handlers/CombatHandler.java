@@ -4,6 +4,7 @@ import jackiecrazy.footwork.api.CombatDamageSource;
 import jackiecrazy.footwork.capability.resources.CombatData;
 import jackiecrazy.footwork.capability.resources.ICombatCapability;
 import jackiecrazy.footwork.capability.stylish.StylishData;
+import jackiecrazy.footwork.capability.timeslow.TimeSlowData;
 import jackiecrazy.footwork.capability.weaponry.CombatManipulator;
 import jackiecrazy.footwork.event.DamageKnockbackEvent;
 import jackiecrazy.footwork.event.MeleeKnockbackEvent;
@@ -348,9 +349,16 @@ public class CombatHandler {
                 atkMult = original = pe.getPostureConsumption();
                 canBreach = pe.canBreach();
 
-                //it's a trap! no parries or evades if stabby
-                if (StealthConfig.ignore && awareness == StealthUtils.Awareness.UNAWARE) {
+                //it's a trap! no parrying backstabs
+                if (awareness == StealthUtils.Awareness.UNAWARE) {
                     ukeCap.consumePosture(seme, pe.getPostureConsumption(), pe.canBreach(), 1);
+                    return;
+                }
+
+                //not only can mobs not defend in time slow, the attacker gets a steve time extension
+                if (TimeSlowData.getCap(uke).getEffectiveSpeed() < 1) {
+                    ukeCap.consumePosture(seme, pe.getPostureConsumption(), pe.canBreach(), 1);
+                    CombatUtils.triggerSteveTime(seme, (int) (TimeSlowData.getCap(uke).getTimeRemaining() * 1.5));
                     return;
                 }
 
@@ -360,10 +368,10 @@ public class CombatHandler {
                 float defMult = 1;
 
                 //find the preferred defend tool
-                boolean offChip = CombatUtils.canBlock(uke, e.getEntity(), uke.getOffhandItem(), atkMult);
-                boolean mainChip = CombatUtils.canBlock(uke, e.getEntity(), uke.getMainHandItem(), atkMult);
-                float offDefMult = CombatUtils.getPostureDef(null, uke, uke.getOffhandItem(), atkMult);
-                float mainDefMult = CombatUtils.getPostureDef(null, uke, uke.getMainHandItem(), atkMult);
+                boolean offChip = CombatUtils.canBlock(uke, seme, uke.getOffhandItem(), attack, atkMult);
+                boolean mainChip = CombatUtils.canBlock(uke, seme, uke.getMainHandItem(), attack, atkMult);
+                float offDefMult = CombatUtils.getPostureDef(seme, uke, uke.getOffhandItem(), atkMult);
+                float mainDefMult = CombatUtils.getPostureDef(seme, uke, uke.getMainHandItem(), atkMult);
                 if (offChip) {
                     defend = uke.getOffhandItem();
                     defendingHand = InteractionHand.OFF_HAND;
@@ -377,7 +385,7 @@ public class CombatHandler {
                 }
 
                 //players block if they are... blocking, mobs block if they are in angle
-                boolean defenderMaybeBlocking = uke.isBlocking() || GeneralUtils.isFacingEntity(uke, seme, 90, 140);
+                boolean defenderMaybeBlocking = uke instanceof Player ? uke.isBlocking() : GeneralUtils.isFacingEntity(uke, seme, 90, 140);
 
                 //special mob blocking overrides
                 MobSpecs.MobInfo stats = MobSpecs.getMobInfo(uke);
@@ -413,6 +421,7 @@ public class CombatHandler {
                 //success!
                 if (pe1.success()) {
                     e.setCanceled(true);
+                    WarDance.LOGGER.debug("successfully parried!");
                     CombatUtils.onSuccessfulParry(uke, seme, defendingHand, defend, pe1.getPostureConsumption());
                     return;
                 }
@@ -422,13 +431,15 @@ public class CombatHandler {
                 MinecraftForge.EVENT_BUS.post(pe2);
 
                 //success!
-                if (pe2.success()) {
+                if (pe2.success() && ukeCap.consumePosture(seme, pe2.getPostureConsumption(), pe2.canBreach(), 0f) == 0) {//todo config rally value
                     e.setCanceled(true);
+                    WarDance.LOGGER.debug("successfully blocked!");
                     CombatUtils.onSuccessfulBlock(uke, seme, defendingHand, defend, pe2.getPostureConsumption());
-                    ukeCap.consumePosture(seme, pe2.getPostureConsumption(), pe2.canBreach(), 0.3f);//todo config
                 } else {
                     //failed everything, use the original damage and reset rally
-                    ukeCap.consumePosture(seme, pe.getPostureConsumption(), pe.canBreach(), 1);
+                    WarDance.LOGGER.debug("failed everything! " + defenderMaybeBlocking + " " + defend);
+                    if (!pe2.success())
+                        ukeCap.consumePosture(seme, pe.getPostureConsumption(), pe.canBreach(), 1f);
                 }
                 //internally enforced hand bind to bypass slimes
                 //added to world check to bypass goety lichdom weirdness
@@ -438,6 +449,13 @@ public class CombatHandler {
 //                }
             }
         } else {
+            //parry nukes and the earth
+            if (e.getSource().is(DamageTypeTags.IS_FALL) || e.getSource().is(DamageTypeTags.IS_EXPLOSION) || e.getSource().is(DamageTypeTags.IS_LIGHTNING)) {
+                MeleePostureEvent.Environment pe1 = new MeleePostureEvent.Environment(e.getEntity(), CombatData.getCap(e.getEntity()).isParrying(), e.getAmount(), e.getSource(), e.getAmount(), true);
+                MinecraftForge.EVENT_BUS.post(pe1);
+                if (pe1.success())
+                    CombatUtils.onSuccessfulParry(e.getEntity(), null, null, null, pe1.getPostureConsumption());
+            }
             //handle nonphysical cases of combat damage docking posture, this can never breach
             if (e.getSource() instanceof CombatDamageSource cds && cds.getPostureDamage() > 0) {
                 CombatData.getCap(e.getEntity()).consumePosture(cds.getEntity() instanceof LivingEntity elb ? elb : null, cds.getPostureDamage(), cds.canBreach(), 0);
@@ -536,6 +554,9 @@ public class CombatHandler {
             sweepInfo.performCommand(uke, false, true);
             double luckDiff = WarDance.rand.nextFloat() * (GeneralUtils.getAttributeValueSafe(trueSource, Attributes.LUCK)) - WarDance.rand.nextFloat() * (GeneralUtils.getAttributeValueSafe(uke, Attributes.LUCK));
             e.setAmount(e.getAmount() + (float) luckDiff * GeneralConfig.luck);
+
+            //dock rally for being melee hit
+            cap.setRally(cap.getRally() / 2);
         }
 
         if (DamageUtils.isPhysicalAttack(ds)) {
@@ -598,12 +619,12 @@ public class CombatHandler {
         final ICombatCapability cap = CombatData.getCap(e.getEntity());
 
         //fall damage deducts posture
-        if (e.getSource().is(DamageTypeTags.IS_FALL)) {
+        if (e.getSource().is(DamageTypeTags.IS_FALL) || e.getSource().is(DamageTypeTags.IS_EXPLOSION)) {
             cap.consumePosture(null, e.getAmount(), true, 0);
         }
 
         //finalize knockdown, ugly fix to prevent the knocking hit from being skipped
-        if(cap.alreadyProc("knockdown")) {
+        if (cap.alreadyProc("knockdown")) {
             cap.knockdown(e.getEntity(), (int) cap.getProc("knockdown"));
             cap.tickProc("knockdown", 1);
         }

@@ -57,6 +57,7 @@ public class Survivor extends SkillStyle {
             if (!stats.isCondition())
                 caster.level().playSound(null, caster.getX(), caster.getY(), caster.getZ(), SoundEvents.BELL_BLOCK, SoundSource.PLAYERS, 2, 0.5f + WarDance.rand.nextFloat() * 0.5f);
             onStateChange(caster, stats, stats.getState(), STATE.ACTIVE);
+            StylishData.getCap(caster).setAdrenaline(0);
             stats.setArbitraryFloat(0);
             procPoint.setCanceled(true);
         }

@@ -14,7 +14,7 @@ public abstract class MixinBlockFrameDisable {
     @Inject(method = "broadcastEntityEvent", at=@At("HEAD"))
     private void slow(Entity ent, byte by, CallbackInfo ci) {
         if(ent instanceof LivingEntity elb && by==30){
-            CombatData.getCap(elb).tickProc("cannot_block", 100);
+            CombatData.getCap(elb).tickProc("cannot_block", 40);
         }
     }
 }

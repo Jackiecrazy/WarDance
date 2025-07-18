@@ -219,7 +219,7 @@ public class MovementUtils {
         itsc.setDodgeTime(CombatConfig.rollTime);
         if (elb instanceof Player)
             ((Player) elb).setForcedPose(Pose.SLEEPING);
-        elb.setSprinting(false);
+        elb.setSprinting(true);
         elb.setDeltaMovement(v.x, 0, v.z);
         elb.hurtMarked = true;
         return true;
@@ -235,8 +235,13 @@ public class MovementUtils {
         twiddle till it works :v
          */
         ICombatCapability itsc = CombatData.getCap(elb);
+        //cannot dodge
         if (!CombatConfig.dodge) return false;
-        if (!StylishData.getCap(elb).isCombatMode() && (!WarCompat.elenaiDodge || itsc.getStunTime() == 0)) return false;
+        //let elenai do it
+        if(WarCompat.elenaiDodge ) return false;
+        //can only dodge outside of combat mode if you're stunned or if elenai compat is on
+        if (!StylishData.getCap(elb).isCombatMode() && (itsc.getStunTime() == 0)) return false;
+        //dodge time check
         if (itsc.getDodgeTime() <=-CombatConfig.rollCooldown) {
             if (side == 99) return attemptSlide(elb);
             Entity target = GeneralUtils.raytraceEntity(elb.level(), elb, 32);

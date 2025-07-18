@@ -97,6 +97,7 @@ Flow: cooldown of all attack skills are halved, and any cooled attack skill is a
             CasterData.getCap(caster).removeActiveTag(SkillTags.state);
             SkillUtils.addAttribute(caster, Attributes.ATTACK_DAMAGE, bad);
             activate(caster, 5*prev.getEffectiveness());
+            StylishData.getCap(caster).setAdrenaline(0);
             CombatUtils.triggerSteveTime(caster, 15);
             return true;
         }

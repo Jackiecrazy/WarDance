@@ -79,6 +79,7 @@ public class Berserk extends Skill {
     public boolean onStateChange(LivingEntity caster, SkillData prev, STATE from, STATE to) {
         if (to == STATE.COOLING) {
             prev.setState(STATE.INACTIVE);
+            StylishData.getCap(caster).setAdrenaline(0);
             SkillUtils.removeAttribute(caster, FootworkAttributes.TWO_HANDING.get(), berserk);
             SkillUtils.removeAttribute(caster, Attributes.ATTACK_SPEED, berserk1);
         }

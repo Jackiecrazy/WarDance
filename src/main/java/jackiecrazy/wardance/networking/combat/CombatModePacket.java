@@ -31,7 +31,8 @@ public class CombatModePacket {
         }
     }
 
-    public static class CombatHandler implements BiConsumer<CombatModePacket, Supplier<NetworkEvent.Context>> {
+    public static class
+    CombatHandler implements BiConsumer<CombatModePacket, Supplier<NetworkEvent.Context>> {
 
         @Override
         public void accept(CombatModePacket updateClientPacket, Supplier<NetworkEvent.Context> contextSupplier) {

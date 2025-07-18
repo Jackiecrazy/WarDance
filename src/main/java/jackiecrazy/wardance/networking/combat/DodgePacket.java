@@ -11,11 +11,9 @@ import java.util.function.Supplier;
 
 public class DodgePacket {
     int direction;
-    boolean isRoll;
 
-    public DodgePacket(int dir, boolean roll) {
+    public DodgePacket(int dir) {
         direction = dir;
-        isRoll = roll;
     }
 
     public static class DodgeEncoder implements BiConsumer<DodgePacket, FriendlyByteBuf> {
@@ -23,7 +21,6 @@ public class DodgePacket {
         @Override
         public void accept(DodgePacket updateClientPacket, FriendlyByteBuf packetBuffer) {
             packetBuffer.writeInt(updateClientPacket.direction);
-            packetBuffer.writeBoolean(updateClientPacket.isRoll);
         }
     }
 
@@ -31,7 +28,7 @@ public class DodgePacket {
 
         @Override
         public DodgePacket apply(FriendlyByteBuf packetBuffer) {
-            return new DodgePacket(packetBuffer.readInt(), packetBuffer.readBoolean());
+            return new DodgePacket(packetBuffer.readInt());
         }
     }
 

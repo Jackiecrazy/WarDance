@@ -175,8 +175,9 @@ public class CombatUtils {
             return false;
         float rand = WarDance.rand.nextFloat();
         //check the hand is off cooldown
-        boolean notOnCooldown = CombatData.getCap(defender).getHandBind(h) == 0;
-        notOnCooldown &= (!(defender instanceof Player) || ((Player) defender).getCooldowns().getCooldownPercent(defender.getItemInHand(h).getItem(), 0) == 0);
+        int bind = CombatData.getCap(defender).getHandBind(h);
+        boolean notOnCooldown = bind <= 0;
+        //notOnCooldown &= (!(defender instanceof Player p) || p.getCooldowns().getCooldownPercent(defender.getItemInHand(h).getItem(), 0) == 0);
         if (defend.getCapability(CombatManipulator.CAP).isPresent() && attacker instanceof LivingEntity) {
             return defend.getCapability(CombatManipulator.CAP).resolve().get().canBlock(defender, attacker, defend, notOnCooldown, postureDamage);
         }
@@ -275,7 +276,7 @@ public class CombatUtils {
         } else {
             //eh
             if (considerRelativeAngle) {
-                to.lerpMotion(distVec.x * -strength, to.verticalCollision ? 0.1 : distVec.y * -strength, distVec.z * -strength);
+                to.lerpMotion(distVec.x * -strength, to.onGround() ? 0.1 : distVec.y * -strength, distVec.z * -strength);
             } else {
                 to.push(-Mth.sin(-from.getYRot() * 0.017453292F - (float) Math.PI) * 0.5, 0.1, -Mth.cos(-from.getYRot() * 0.017453292F - (float) Math.PI) * 0.5);
             }
@@ -385,6 +386,9 @@ public class CombatUtils {
         //apply instantaneous damage multiplier
         SkillUtils.modifyAttribute(e, Attributes.ATTACK_DAMAGE, main, info.getDamageScale() - 1, AttributeModifier.Operation.MULTIPLY_TOTAL);
         sweep(e, ignore, h, info.getType(), reach, info.getBase(), info.getScaling());
+//        stack.releaseUsing(e.level(), e, 0);
+//        if (e instanceof Player p)
+//            stack.use(e.level(), p, h);
         SkillUtils.removeAttribute(e, Attributes.ATTACK_DAMAGE, main);
     }
 
@@ -512,7 +516,7 @@ public class CombatUtils {
     public static WeaponStats.SWEEPSTATE getSweepState(LivingEntity entity) {
         if (entity.isPassenger()) return WeaponStats.SWEEPSTATE.RIDING;
         if (entity.isCrouching()) return WeaponStats.SWEEPSTATE.SNEAKING;
-        if (entity.isSwimming() || entity.isSprinting() || entity.isFallFlying() || CombatData.getCap(entity).isDodging() || CombatData.getCap(entity).isIframe())
+        if (entity.isSwimming() || entity.isSprinting() || entity.isFallFlying() || CombatData.getCap(entity).isDodging())
             return WeaponStats.SWEEPSTATE.SPRINTING;
         if ((!(entity instanceof Player p) || !p.getAbilities().flying) && !entity.onGround() && entity.fallDistance > 0 && !entity.onClimbable() && !entity.isInWater())
             return WeaponStats.SWEEPSTATE.FALLING;
@@ -528,9 +532,16 @@ public class CombatUtils {
         StylishData.getCap(defender).addCombo(0.2f, "block");
 
         if (attacker instanceof LivingEntity le) {
+            //THIS DOESN'T KNOCK BACK ANYONE!
             ((ShieldBlockAccessor) (defender)).callBlockUsingShield(le);
+            //so I have to do it here
+            knockBack(le, defender, 0.5f, true, false);
             EffectUtils.attemptAddPot(le, EffectUtils.stackPot(le, new MobEffectInstance(FootworkEffects.COUNTERSTRIKE.get(), 100, 0), EffectUtils.StackingMethod.MAXDURATION), true);
         }
+
+        //hacky. If you can no longer block it must mean your block has been breached, so knock back. FIXME
+        if (!CombatData.getCap(defender).canBlock())
+            knockBack(defender, attacker, 1.2f, false, true);
 
         //item specific effects
         if (defend != null) {
@@ -542,10 +553,12 @@ public class CombatUtils {
         }
     }
 
-    public static void triggerSteveTime(LivingEntity from, int time){
+    public static void triggerSteveTime(LivingEntity from, int time) {
         //ZA WAAAAARUDO! TOKI WO TOMARE!
         for (Entity t : from.level().getEntities(from, from.getBoundingBox().inflate(32), (a -> !(a instanceof Player)))) {
-            TimeSlowData.getCap(t).alterSpeed(time, 0.5);
+            TimeSlowData.getCap(t).alterSpeed(time, 0.1);
+            //jostle everything a tiny amount so you know the time slow is happening
+            knockBack(t, from, 0.2f, true, false);
         }
     }
 
@@ -562,8 +575,13 @@ public class CombatUtils {
         cap.setSpirit(cap.getMaxSpirit());
         cap.setDodgeTime(0);
         cap.setIframe(remaining);
+
+        //temporary. Halves your posture damage and adds equivalent parry.
+        float toHeal = (cap.getMaxPosture() - cap.getPosture()) / 2;
+        cap.addRally(toHeal);
+
         if (defender instanceof Player) {
-            triggerSteveTime(defender, 40);
+            triggerSteveTime(defender, 20);
         }
     }
 
@@ -576,8 +594,7 @@ public class CombatUtils {
         ICombatCapability cap = CombatData.getCap(defender);
         StylishData.getCap(defender).processAttack(true);
         StylishData.getCap(defender).processAttack(false);
-        //cap.setParryTime(40);
-        cap.setIframe(40);
+        cap.setIframe(20);
         if (defender instanceof Player) {
             for (Entity t : defender.level().getEntities(defender, defender.getBoundingBox().inflate(5), (a -> !TargetingUtils.isAlly(a, defender)))) {
                 float strength = 1.3f;
@@ -585,7 +602,7 @@ public class CombatUtils {
                     CombatData.getCap(e).consumePosture(defender, 7, false, 1);
                     strength = Math.min(strength, 0.2f + Math.min(1f, amount * CombatData.getCap(e).getPosturePercentage()));
                 }
-                CombatUtils.knockBack(attacker, defender, -strength, true, false);
+                CombatUtils.knockBack(t, defender, strength, true, false);
 
             }
         }

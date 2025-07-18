@@ -1,8 +1,6 @@
 package jackiecrazy.wardance.client;
 
 import com.mojang.blaze3d.platform.InputConstants;
-import jackiecrazy.footwork.capability.resources.CombatData;
-import jackiecrazy.footwork.capability.resources.ICombatCapability;
 import jackiecrazy.footwork.capability.stylish.IStyleCapability;
 import jackiecrazy.footwork.capability.stylish.StylishData;
 import jackiecrazy.wardance.WarDance;
@@ -10,9 +8,9 @@ import jackiecrazy.wardance.capability.skill.CasterData;
 import jackiecrazy.wardance.client.screen.skill.SkillCastScreen;
 import jackiecrazy.wardance.networking.CombatChannel;
 import jackiecrazy.wardance.networking.combat.CombatModePacket;
+import jackiecrazy.wardance.networking.combat.DodgePacket;
 import jackiecrazy.wardance.networking.skill.EvokeSkillPacket;
 import jackiecrazy.wardance.networking.skill.SelectSkillPacket;
-import jackiecrazy.wardance.skill.Skill;
 import net.minecraft.client.KeyMapping;
 import net.minecraft.client.Minecraft;
 import net.minecraft.network.chat.Component;
@@ -43,7 +41,7 @@ public class Keybinds {
     public static final KeyMapping COMBAT = new KeyMapping("wardance.combat", KeyConflictContext.IN_GAME, KeyModifier.SHIFT, InputConstants.Type.KEYSYM, GLFW.GLFW_KEY_R, "key.categories.wardance");
     public static final KeyMapping CAST = new KeyMapping("wardance.skill", IN_COMBAT, InputConstants.Type.KEYSYM, GLFW.GLFW_KEY_R, "key.categories.wardance");
     public static final KeyMapping BINDCAST = new KeyMapping("wardance.bindCast", IN_COMBAT, InputConstants.Type.MOUSE, GLFW.GLFW_MOUSE_BUTTON_MIDDLE, "key.categories.wardance");
-    public static final KeyMapping PARRY = new KeyMapping("wardance.parry", KeyConflictContext.IN_GAME, InputConstants.Type.KEYSYM, GLFW.GLFW_KEY_LEFT_ALT, "key.categories.wardance");
+    public static final KeyMapping DODGE = new KeyMapping("wardance.dodge", KeyConflictContext.IN_GAME, InputConstants.Type.KEYSYM, GLFW.GLFW_KEY_LEFT_ALT, "key.categories.wardance");
     //center, top right, down clockwise
     public static final KeyMapping[] SKILL = {
             new KeyMapping("wardance.skill1", KeyConflictContext.IN_GAME, InputConstants.UNKNOWN, "key.categories.wardance"),
@@ -68,11 +66,27 @@ public class Keybinds {
         if (CAST.getKeyConflictContext().isActive() && CAST.consumeClick() && mc.player.isAlive()) {
             mc.setScreen(new SkillCastScreen(CasterData.getCap(mc.player).getEquippedSkills()));
         }
+        if (DODGE.getKeyConflictContext().isActive() && CAST.consumeClick() && mc.player.isAlive()) {
+            //slide>front>side>back(default)
+            //left back right forward
+            int side = 1;
+            if(mc.player.input.left)
+                side=0;
+            if(mc.player.input.right)
+                side=2;
+            if(mc.player.input.up)
+                side=3;
+            if(mc.player.isSprinting())
+                side=99;
+            CombatChannel.INSTANCE.sendToServer(new DodgePacket(side));
+        }
         for (int x = 0; x < SKILL.length; x++) {
             if (SKILL[x].getKeyConflictContext().isActive() && SKILL[x].consumeClick())
                 CombatChannel.INSTANCE.sendToServer(new SelectSkillPacket(x));
         }
         if (BINDCAST.getKeyConflictContext().isActive() && BINDCAST.consumeClick() && mc.player.isAlive()) {
+            //I think this cancels pick block?
+            BINDCAST.setDown(false);
             CombatChannel.INSTANCE.sendToServer(new EvokeSkillPacket());
         }
     }

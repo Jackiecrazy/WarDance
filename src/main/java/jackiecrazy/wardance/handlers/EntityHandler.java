@@ -2,6 +2,7 @@ package jackiecrazy.wardance.handlers;
 
 import jackiecrazy.footwork.capability.resources.CombatData;
 import jackiecrazy.footwork.capability.resources.ICombatCapability;
+import jackiecrazy.footwork.capability.stylish.StylishData;
 import jackiecrazy.wardance.WarDance;
 import jackiecrazy.wardance.capability.action.PermissionData;
 import jackiecrazy.wardance.capability.resources.CombatDataOverride;
@@ -143,6 +144,7 @@ public class EntityHandler {
                 return;
             } else CombatData.getCap(e.player).serverTick();
             CasterData.getCap(e.player).update();
+            StylishData.getCap(e.player).tick();
             if (WarCompat.elenaiDodge) {
                 ElenaiCompat.syncIFrames(e.player);
             }
@@ -155,21 +157,6 @@ public class EntityHandler {
         if (!elb.level().isClientSide) {
             Marks.getCap(elb).update();
             if (!(elb instanceof Player)) {
-                        /*
-                        The battle circle AI basically works like this (from an enemy's perspective):
-First, walk towards the player until I get within a "danger" radius
-While in "danger" mode, don't get too close to another enemy, unless I am given permission to attack the player.
-Also while in "danger" mode, try to approach the player. If there are too many enemies in my way, I will effectively not be able to reach the player until the enemies move or the player moves.
-When the player is in my "attack" radius (roughly the maximum range of my attack) ask the player if I'm allowed to attack. If so, add me to the list of current attackers on the player object.
-If there are already the maximum allowed number of attackers on the list, I'm denied permission.
-If I'm denied permission, try strafing for a second or two in a random direction until I'm given permission.
-If the player moves out of attack range—even if I'm attacking—remove me from the attacker list.
-If I die, or am stunned or otherwise unable to attack, remove me from the attacker list.
-The maximum allowed number of simultaneous attackers is critical in balancing your battle circle. A higher number causes an exponential increase in pressure. In the example demo I have it set at 2; less twitchy and more "cinematic" games set it at 1. If you put this number too high, you defeat the purpose of the circle, because large groups of enemies become unassailable or can only be defeated with uninteresting poke-and-run tactics.
-Of similar importance is the enemy attack rate. This is not the fastest possible attack rate of the enemy, but how often they will choose to attack when given permission.
-As you would expect, a lower number increases pressure, but you should generally have this be several times higher than the real attack rate. You can make this rate a bit more unpredictable (and thus the amount of pressure slightly less predictable) by increasing attackRateFluctuation, which will increase or decrease the attack rate after each attack.
-Mobs should move into a position that is close to the player, far from allies, and close to them.
-                         */
                 //staggered mobs bypass update interval
                 ICombatCapability cap = CombatData.getCap(elb);
                 if (cap.isStunned() || mustUpdate.containsValue(e.getEntity()))
