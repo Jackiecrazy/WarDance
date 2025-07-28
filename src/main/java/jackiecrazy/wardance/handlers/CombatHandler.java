@@ -585,7 +585,7 @@ public class CombatHandler {
         //no food!
         ItemStack active = uke.getItemInHand(uke.getUsedItemHand());
         if (DamageUtils.isPhysicalAttack(e.getSource()) && CombatConfig.foodCool >= 0 && (active.getItem().getUseAnimation(active) == UseAnim.EAT || active.getItem().getUseAnimation(active) == UseAnim.DRINK) && uke.isUsingItem()) {
-            uke.releaseUsingItem();
+            uke.stopUsingItem();
             if (uke instanceof Player && CombatConfig.foodCool > 0) {
                 ((Player) uke).getCooldowns().addCooldown(active.getItem(), CombatConfig.foodCool);
             }

@@ -5,6 +5,7 @@ import jackiecrazy.footwork.capability.resources.ICombatCapability;
 import jackiecrazy.footwork.capability.stylish.StylishData;
 import jackiecrazy.wardance.WarDance;
 import jackiecrazy.wardance.capability.action.PermissionData;
+import jackiecrazy.wardance.capability.flyingweapon.FlyingWeaponData;
 import jackiecrazy.wardance.capability.resources.CombatDataOverride;
 import jackiecrazy.wardance.capability.skill.CasterData;
 import jackiecrazy.wardance.capability.skill.ISkillCapability;
@@ -70,9 +71,10 @@ public class EntityHandler {
             e.addCapability(new ResourceLocation("wardance:combatinfo"), new CombatDataOverride(lb));
             e.addCapability(new ResourceLocation("wardance:stylishdata"), new StyleDataOverride(lb));
             e.addCapability(new ResourceLocation("wardance:statuseffects"), new Marks(new Mark(lb)));
-            if (lb instanceof Player) {
+            if (lb instanceof Player p) {
                 e.addCapability(new ResourceLocation("wardance:casterinfo"), new CasterData(new SkillCapability(lb)));
-                e.addCapability(new ResourceLocation("wardance:permissions"), new PermissionData());
+                e.addCapability(new ResourceLocation("wardance:permissions"), new PermissionData(p));
+                e.addCapability(new ResourceLocation("wardance:flyingweapon"), new FlyingWeaponData(p));
             }
         }
     }
@@ -145,6 +147,7 @@ public class EntityHandler {
             } else CombatData.getCap(e.player).serverTick();
             CasterData.getCap(e.player).update();
             StylishData.getCap(e.player).tick();
+            FlyingWeaponData.getCap(e.player).tick();
             if (WarCompat.elenaiDodge) {
                 ElenaiCompat.syncIFrames(e.player);
             }

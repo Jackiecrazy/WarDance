@@ -1,32 +1,25 @@
 package jackiecrazy.wardance.utils;
 
 import jackiecrazy.footwork.api.CombatDamageSource;
-import jackiecrazy.footwork.api.FootworkDamageArchetype;
 import jackiecrazy.footwork.capability.resources.CombatData;
 import jackiecrazy.footwork.capability.resources.ICombatCapability;
 import jackiecrazy.footwork.capability.stylish.StylishData;
 import jackiecrazy.footwork.capability.timeslow.TimeSlowData;
 import jackiecrazy.footwork.capability.weaponry.CombatManipulator;
-import jackiecrazy.footwork.client.particle.FootworkParticles;
-import jackiecrazy.footwork.client.particle.ScalingParticleType;
 import jackiecrazy.footwork.potion.FootworkEffects;
-import jackiecrazy.footwork.utils.EffectUtils;
-import jackiecrazy.footwork.utils.GeneralUtils;
-import jackiecrazy.footwork.utils.ParticleUtils;
-import jackiecrazy.footwork.utils.TargetingUtils;
+import jackiecrazy.footwork.utils.*;
 import jackiecrazy.wardance.WarDance;
 import jackiecrazy.wardance.capability.action.PermissionData;
+import jackiecrazy.wardance.capability.flyingweapon.FlyingWeaponData;
 import jackiecrazy.wardance.config.CombatConfig;
 import jackiecrazy.wardance.config.GeneralConfig;
 import jackiecrazy.wardance.config.MobSpecs;
 import jackiecrazy.wardance.config.WeaponStats;
-import jackiecrazy.wardance.entity.FakeExplosion;
 import jackiecrazy.wardance.event.ProjectileDefendEvent;
 import jackiecrazy.wardance.event.SweepEvent;
 import jackiecrazy.wardance.mixin.ShieldBlockAccessor;
 import jackiecrazy.wardance.networking.CombatChannel;
 import jackiecrazy.wardance.networking.combat.UpdateAttackCooldownPacket;
-import net.minecraft.core.particles.ParticleType;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvents;
@@ -57,6 +50,7 @@ import java.util.Optional;
 import java.util.UUID;
 
 public class CombatUtils {
+
     public static final UUID off = UUID.fromString("8c8028c8-da69-49a2-99cd-f92d7ad22534");
     public static final UUID main = UUID.fromString("8c8028c8-da67-49a2-99cd-f92d7ad22534");
     public static boolean isSweeping = false;
@@ -397,10 +391,10 @@ public class CombatUtils {
         if (!GeneralConfig.betterSweep) return;//a shame, but alas
         if (!StylishData.getCap(e).isCombatMode()) return;
         if (CombatData.getCap(e).getHandBind(h) > 0) return;//don't even try dude
-        if (h == InteractionHand.OFF_HAND) {
+        /**if (h == InteractionHand.OFF_HAND) {
             swapHeldItems(e);
             CombatData.getCap(e).setOffhandAttack(true);
-        }
+        }*/
         if (!PermissionData.getCap(e).canSweep()) type = WeaponStats.SWEEPTYPE.NONE;
         double radius;
 
@@ -412,15 +406,16 @@ public class CombatUtils {
         type = sre.getType();
         if (sre.isCanceled() || type == WeaponStats.SWEEPTYPE.NONE || radius == 0) {
             //no go, swap items back and stop
-            if (h == InteractionHand.OFF_HAND) {
+            /**if (h == InteractionHand.OFF_HAND) {
                 swapHeldItems(e);
                 CombatData.getCap(e).setOffhandAttack(false);
-            }
+            }*/
             return;
         }
         if (e.getMainHandItem().getCapability(CombatManipulator.CAP).isPresent())
             radius = e.getMainHandItem().getCapability(CombatManipulator.CAP).resolve().get().sweepArea(e, e.getMainHandItem());
-        double charge = Math.max(CombatUtils.getCooledAttackStrength(e, InteractionHand.MAIN_HAND, 0.5f), CombatData.getCap(e).getProc("swing"));
+        FlyingWeaponData.getCap(e).scheduleAction(h, TemporaryMoveTranslator.temp_getMMFromType(CombatUtils.getCooldownPeriod(e, h), type, radius), reach);
+        /**double charge = Math.max(CombatUtils.getCooledAttackStrength(e, InteractionHand.MAIN_HAND, 0.5f), CombatData.getCap(e).getProc("swing"));
         boolean hit = false;
         isSweeping = ignore != null;
         Vec3 starting = ignore == null ? GeneralUtils.raytraceAnything(e.level(), e, reach).getLocation() : ignore.position();
@@ -461,8 +456,8 @@ public class CombatUtils {
 
             CombatUtils.setHandCooldown(e, InteractionHand.MAIN_HAND, (float) charge, false);
             hit = true;
-            if (e instanceof Player)
-                ((Player) e).attack(target);
+            if (e instanceof Player p)
+                p.attack(target);
             else e.doHurtTarget(target);
             isSweeping = true;
         }
@@ -502,7 +497,7 @@ public class CombatUtils {
         if (h == InteractionHand.OFF_HAND) {
             swapHeldItems(e);
             CombatData.getCap(e).setOffhandAttack(false);
-        }
+        }*/
     }
 
     public static void initializePPE(ProjectileDefendEvent ppe, float mult) {
