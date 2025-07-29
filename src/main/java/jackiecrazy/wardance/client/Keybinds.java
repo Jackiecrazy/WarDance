@@ -66,7 +66,7 @@ public class Keybinds {
         if (CAST.getKeyConflictContext().isActive() && CAST.consumeClick() && mc.player.isAlive()) {
             mc.setScreen(new SkillCastScreen(CasterData.getCap(mc.player).getEquippedSkills()));
         }
-        if (DODGE.getKeyConflictContext().isActive() && CAST.consumeClick() && mc.player.isAlive()) {
+        if (DODGE.getKeyConflictContext().isActive() && DODGE.consumeClick() && mc.player.isAlive()) {
             //slide>front>side>back(default)
             //left back right forward
             int side = 1;

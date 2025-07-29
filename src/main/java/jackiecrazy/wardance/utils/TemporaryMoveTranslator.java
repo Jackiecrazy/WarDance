@@ -7,6 +7,7 @@ import jackiecrazy.footwork.move.motionframe.MotionManagers;
 import jackiecrazy.footwork.utils.EasingFunction;
 import jackiecrazy.wardance.WarDance;
 import jackiecrazy.wardance.config.WeaponStats;
+import net.minecraft.util.Mth;
 import net.minecraft.world.phys.Vec3;
 import org.joml.Vector4d;
 
@@ -39,19 +40,28 @@ public class TemporaryMoveTranslator {
 
     private static Vec3 generateFrame(float pitch, float yaw){
         Vec3 base = new Vec3(0,0,1);//forward pointing
-        return base.xRot(pitch).yRot(yaw).normalize();
+        return base.xRot(Mth.DEG_TO_RAD*pitch).yRot(Mth.DEG_TO_RAD*yaw).normalize();
     }
 
 
     public static MotionManager temp_getMMFromType(int time, WeaponStats.SWEEPTYPE type, double area){
         //take off 3 ticks for the start. Yes, this means it's possible to loop attacks and skip recovery if you time it tight.
         time-=3;
+        //clamp time. The remaining time is expended in recovery.
+        time=Mth.clamp(time, 2, 5);
         float flip = WarDance.rand.nextBoolean()?1:-1;
         switch (type){
             case CONE:
+
+                final Vec3 startFrame = generateFrame(10, (float) (-area) * flip);
+                final Vec3 endFrame = generateFrame(-10, (float) (area) * flip);
+                Vec3 dirStart = startFrame.normalize();
+                Vec3 dirEnd = endFrame.normalize();
+                double angleRadians = Math.acos(Mth.clamp(dirStart.dot(dirEnd), -1.0, 1.0));
+                double angleDegrees = Math.toDegrees(angleRadians);
                 return new MotionManagers.DefinitionMM(new MotionDefinition(List.of(
-                        new MotionFrame(generateFrame(-10, (float) (-area)*flip), new Vec3(0, 0, 1)),
-                        new MotionFrame(generateFrame(10, (float) (area)*flip), new Vec3(0, 0, 1))),
+                        new MotionFrame(startFrame, new Vec3(0, 0, 1), (int) angleDegrees),
+                        new MotionFrame(endFrame, new Vec3(0, 0, 1), (int) angleDegrees)),
                                                                             EasingFunction.IN_CUBIC, time));
             case LINE:
                 return new MotionManagers.DefinitionMM(new MotionDefinition(STAB, EasingFunction.OUT_CUBIC, time));
@@ -59,8 +69,8 @@ public class TemporaryMoveTranslator {
                 return new MotionManagers.DefinitionMM(new MotionDefinition(CIRCLE, EasingFunction.IN_OUT_CUBIC, time));
             case CLEAVE:
                 return new MotionManagers.DefinitionMM(new MotionDefinition(List.of(
-                        new MotionFrame(generateFrame((float) (area/2), 30*flip), new Vec3(0, 0, 1)),
-                        new MotionFrame(generateFrame((float) (-area/2), -30*flip), new Vec3(0, 0, 1))),
+                        new MotionFrame(generateFrame((float) (area/2), 5*flip), new Vec3(0, 0, 1)),
+                        new MotionFrame(generateFrame((float) (-area/2), -5*flip), new Vec3(0, 0, 1))),
                                                                             EasingFunction.IN_CUBIC, time));
             case IMPACT:
                 new MotionManagers.DefinitionMM(new MotionDefinition(CHOP, EasingFunction.IN_CUBIC, time));

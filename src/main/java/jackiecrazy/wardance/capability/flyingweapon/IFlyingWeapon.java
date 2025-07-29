@@ -7,7 +7,7 @@ import net.minecraft.world.InteractionHand;
 public interface IFlyingWeapon {
     FlyingWeaponEntity getWeapon(InteractionHand hand);
 
-    void scheduleAction(InteractionHand hand, MotionManager mm, double range);
+    void scheduleAction(InteractionHand hand, MotionManager mm, double range, int totalTime);
 
     void tick();
 
@@ -19,7 +19,7 @@ public interface IFlyingWeapon {
         }
 
         @Override
-        public void scheduleAction(InteractionHand hand, MotionManager mm, double range) {
+        public void scheduleAction(InteractionHand hand, MotionManager mm, double range, int totalTime) {
 
         }
 

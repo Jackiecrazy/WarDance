@@ -51,12 +51,12 @@ public class FlyingWeaponCapability implements IFlyingWeapon {
     }
 
     @Override
-    public void scheduleAction(InteractionHand hand, MotionManager mm, double range) {
+    public void scheduleAction(InteractionHand hand, MotionManager mm, double range, int totalTime) {
         final boolean isMain = hand == InteractionHand.MAIN_HAND;
         boolean scheduleLock = isMain ? mainSwap : offSwap;
         FlyingWeaponEntity fwe = getWeapon(hand);
         if (!scheduleLock && fwe != null) {
-            fwe.queuePath(mm, 3, 4);
+            fwe.queuePath(mm, 2, totalTime-2-mm.getDuration());
             fwe.setAttackRange((float) range);
             fwe.setIdlePose(idleFrame[isMain ? 0 : 1]);
             fwe.setUniversalOffset(idleOffset[isMain ? 0 : 1]);
@@ -70,16 +70,17 @@ public class FlyingWeaponCapability implements IFlyingWeapon {
         if (off != null && off.isRemoved()) off = null;
 
         //not in combat mode, dismiss weapons
-        if (!StylishData.getCap(player).isCombatMode()) {
+        if (!StylishData.getCap(player).isCombatMode()||player.isDeadOrDying()) {
             if (main != null) main.remove(Entity.RemovalReason.DISCARDED);
             if (off != null) off.remove(Entity.RemovalReason.DISCARDED);
             main = off = null;
+            return;
         }
         for (InteractionHand hand : InteractionHand.values()) {
             boolean isMain = hand == InteractionHand.MAIN_HAND;
             if (!StylishData.getCap(player).isCombatMode()) ;
-                //make new weapons
             else if (getWeapon(hand) == null) {
+                //make new weapons
                 //create a flying weapon
                 FlyingWeaponEntity fwe = new FlyingWeaponEntity(FootworkEntities.WEAPON.get(), player.level());
                 updateWeapon(fwe, hand);
@@ -117,8 +118,6 @@ public class FlyingWeaponCapability implements IFlyingWeapon {
                         fwe.setUniversalOffset(idleOffset[isMain ? 0 : 1]);
                     }
                 }
-
-
             }
         }
     }

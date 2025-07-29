@@ -414,7 +414,10 @@ public class CombatUtils {
         }
         if (e.getMainHandItem().getCapability(CombatManipulator.CAP).isPresent())
             radius = e.getMainHandItem().getCapability(CombatManipulator.CAP).resolve().get().sweepArea(e, e.getMainHandItem());
-        FlyingWeaponData.getCap(e).scheduleAction(h, TemporaryMoveTranslator.temp_getMMFromType(CombatUtils.getCooldownPeriod(e, h), type, radius), reach);
+        int time=CombatUtils.getCooldownPeriod(e, h);
+        FlyingWeaponData.getCap(e).scheduleAction(h, TemporaryMoveTranslator.temp_getMMFromType(time, type, radius), reach, time);
+        //todo somehow make it respect player attack stuff at the moment of pressing attack
+
         /**double charge = Math.max(CombatUtils.getCooledAttackStrength(e, InteractionHand.MAIN_HAND, 0.5f), CombatData.getCap(e).getProc("swing"));
         boolean hit = false;
         isSweeping = ignore != null;
