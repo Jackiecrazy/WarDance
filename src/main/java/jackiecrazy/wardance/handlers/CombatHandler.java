@@ -191,7 +191,11 @@ public class CombatHandler {
         }
     }
 
-    private static void handleProjectileDefense(ProjectileImpactEvent e, ProjectileDefendEvent pe, ItemStack defend, Entity projectile, LivingEntity uke) {
+    private static void handleProjectileDefense(ProjectileImpactEvent e,
+                                                ProjectileDefendEvent pe,
+                                                ItemStack defend,
+                                                Entity projectile,
+                                                LivingEntity uke) {
         e.setCanceled(true);//.setImpactResult(ProjectileImpactEvent.ImpactResult.STOP_AT_CURRENT_NO_DAMAGE);
         ICombatCapability ukeCap = CombatData.getCap(uke);
         ukeCap.consumePosture(null, pe.getPostureConsumption(), false, 0);//fixme
@@ -306,7 +310,7 @@ public class CombatHandler {
                 }
 
                 //add stats if it's the first attack this tick and cooldown is sufficient
-                if (!semeCap.alreadyProc("attack")) {//first hit of a sweep attack this tick, add combo based on state
+                if (!semeCap.alreadyProc("attack") && !semeCap.alreadyProc("oncePerSweep")) {//first hit of a sweep attack this tick, add combo based on state
                     //semeCap.addRank(0.1f);
                     StylishData.getCap(seme).processAttack(true);
                     StylishData.getCap(seme).addCombo(0.1f, semeCap.isOffhandAttack() + CombatUtils.getSweepState(seme).name());
@@ -322,7 +326,7 @@ public class CombatHandler {
                 //stunned, add extra finisher points
                 if (ukeCap.isStunned()) {
                     //add extra finisher charge to attacker
-                    if (!semeCap.alreadyProc("stunTrigger")) {
+                    if (!semeCap.alreadyProc("stunTrigger") && !semeCap.alreadyProc("oncePerSweep")) {
                         StylishData.getCap(seme).addTriggerBar(1);
                         semeCap.tickProc("stunTrigger");
                     }
@@ -358,7 +362,7 @@ public class CombatHandler {
                 //not only can mobs not defend in time slow, the attacker gets a steve time extension
                 if (TimeSlowData.getCap(uke).getEffectiveSpeed() < 1) {
                     ukeCap.consumePosture(seme, pe.getPostureConsumption(), pe.canBreach(), 1);
-                    CombatUtils.triggerSteveTime(seme, (int) (TimeSlowData.getCap(uke).getTimeRemaining() * 1.5));
+                    //CombatUtils.triggerSteveTime(seme, (int) (TimeSlowData.getCap(uke).getTimeRemaining() * 1.5));
                     return;
                 }
 

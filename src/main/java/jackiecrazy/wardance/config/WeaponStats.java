@@ -284,11 +284,11 @@ public class WeaponStats extends SimpleJsonResourceReloadListener {
 
     public enum SWEEPSTATE {
         STANDING,
-        //RISING, //may implement some day
+        RISING, //may implement some day
         FALLING,
         SNEAKING,
-        SPRINTING,//also while swimming
-        RIDING //no speed requirement
+        SPRINTING//,//also while swimming
+        //RIDING //no speed requirement
     }
 
     public static class MeleeInfo {

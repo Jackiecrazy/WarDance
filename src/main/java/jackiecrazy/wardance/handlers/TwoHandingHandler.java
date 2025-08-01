@@ -36,7 +36,7 @@ public class TwoHandingHandler {
 
     @SubscribeEvent
     public static void twohanding(LivingEquipmentChangeEvent e) {
-        if (CombatUtils.suppress) return;//don't handle on offhand swap attack stuff
+        if (CombatUtils.suppressChangeFunctions) return;//don't handle on offhand swap attack stuff
         final LivingEntity living = e.getEntity();
         if (e.getSlot() != EquipmentSlot.MAINHAND && e.getSlot() != EquipmentSlot.OFFHAND) return;
         updateTwoHanding(living, e.getFrom(), e.getTo());

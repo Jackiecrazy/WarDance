@@ -1,5 +1,7 @@
 package jackiecrazy.wardance;
 
+import jackiecrazy.footwork.client.render.ItemEntityRenderer;
+import jackiecrazy.footwork.entity.FootworkEntities;
 import jackiecrazy.wardance.capability.action.IAction;
 import jackiecrazy.wardance.capability.skill.ISkillCapability;
 import jackiecrazy.wardance.capability.status.IMark;
@@ -25,6 +27,7 @@ import jackiecrazy.wardance.networking.skill.UpdateMarkPacket;
 import jackiecrazy.wardance.networking.skill.UpdateSkillSelectionPacket;
 import jackiecrazy.wardance.networking.sync.*;
 import jackiecrazy.wardance.skill.WarSkills;
+import net.minecraft.client.renderer.entity.EntityRenderers;
 import net.minecraft.commands.synchronization.ArgumentTypeInfo;
 import net.minecraft.commands.synchronization.ArgumentTypeInfos;
 import net.minecraft.commands.synchronization.SingletonArgumentInfo;
@@ -140,6 +143,7 @@ public class WarDance {
     private void doClientStuff(final FMLClientSetupEvent event) {
         // do something that can only be done on the client
         ClientConfig.bake();
+        EntityRenderers.register(WarEntities.WEAPON.get(), ItemEntityRenderer::new);
     }
 
 

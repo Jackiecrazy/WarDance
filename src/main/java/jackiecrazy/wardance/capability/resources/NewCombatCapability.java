@@ -6,11 +6,9 @@ import jackiecrazy.footwork.capability.resources.ICombatCapability;
 import jackiecrazy.footwork.capability.stylish.StylishData;
 import jackiecrazy.footwork.event.*;
 import jackiecrazy.footwork.potion.FootworkEffects;
-import jackiecrazy.footwork.utils.GeneralUtils;
 import jackiecrazy.footwork.utils.TargetingUtils;
 import jackiecrazy.wardance.WarDance;
 import jackiecrazy.wardance.capability.action.PermissionData;
-import jackiecrazy.wardance.capability.stylish.StylishCapability;
 import jackiecrazy.wardance.compat.ElenaiCompat;
 import jackiecrazy.wardance.compat.WarCompat;
 import jackiecrazy.wardance.config.*;
@@ -19,7 +17,6 @@ import jackiecrazy.wardance.mixin.InCombatAccessor;
 import jackiecrazy.wardance.networking.CombatChannel;
 import jackiecrazy.wardance.networking.combat.UpdateClientResourcePacket;
 import jackiecrazy.wardance.utils.CombatUtils;
-import jackiecrazy.wardance.utils.MovementUtils;
 import jackiecrazy.wardance.utils.SkillUtils;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.server.level.ServerPlayer;
@@ -410,7 +407,7 @@ public class NewCombatCapability implements ICombatCapability {
         mBind -= ticks;
         int prevOBind = oBind;
         oBind -= ticks;
-        if (!CombatUtils.suppress && (oBind > 0 || prevOBind > 0) && (oBind <= 0 || prevOBind <= 0))
+        if (!CombatUtils.suppressChangeFunctions && (oBind > 0 || prevOBind > 0) && (oBind <= 0 || prevOBind <= 0))
             TwoHandingHandler.updateTwoHanding(elb, elb.getMainHandItem(), elb.getMainHandItem());
 
         //offhand cooldown
@@ -519,7 +516,7 @@ public class NewCombatCapability implements ICombatCapability {
         int prevOBind = oBind;
         oBind -= ticks;
         LivingEntity e = dude.get();
-        if (!CombatUtils.suppress && (oBind > 0 || prevOBind > 0) && (oBind <= 0 || prevOBind <= 0) && e != null)
+        if (!CombatUtils.suppressChangeFunctions && (oBind > 0 || prevOBind > 0) && (oBind <= 0 || prevOBind <= 0) && e != null)
             TwoHandingHandler.updateTwoHanding(e, e.getMainHandItem(), e.getMainHandItem());
         offhandCD += ticks;
         dodgeFrame -= ticks;
@@ -699,7 +696,7 @@ public class NewCombatCapability implements ICombatCapability {
 
     @Override
     public int getHandBind(InteractionHand h) {
-        if (!CombatUtils.suppress) {
+        if (!CombatUtils.suppressChangeFunctions) {
             if (isStunned()) return 1;
             LivingEntity bro = dude.get();
             if (bro != null) {
@@ -721,7 +718,7 @@ public class NewCombatCapability implements ICombatCapability {
                 mBind = amount;
             }
             case OFF_HAND -> {
-                if (!CombatUtils.suppress && (oBind == 0 || amount == 0) && oBind != amount && e != null)
+                if (!CombatUtils.suppressChangeFunctions && (oBind == 0 || amount == 0) && oBind != amount && e != null)
                     TwoHandingHandler.updateTwoHanding(e, e.getMainHandItem(), e.getMainHandItem());
                 oBind = amount;
             }

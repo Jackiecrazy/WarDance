@@ -24,7 +24,7 @@ public abstract class MixinLivingEntity extends Entity {
             at = @At(value = "INVOKE",
                     target = "Lnet/minecraft/world/entity/LivingEntity;isSilent()Z"))
     private boolean alert(LivingEntity instance) {
-        if (CombatUtils.suppress)
+        if (CombatUtils.suppressChangeFunctions)
             return true;
         return isSilent();
     }

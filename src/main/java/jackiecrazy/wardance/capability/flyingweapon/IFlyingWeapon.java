@@ -1,13 +1,14 @@
 package jackiecrazy.wardance.capability.flyingweapon;
 
-import jackiecrazy.footwork.entity.flyingweapon.FlyingWeaponEntity;
 import jackiecrazy.footwork.move.motionframe.MotionManager;
+import jackiecrazy.wardance.config.WeaponStats;
+import jackiecrazy.wardance.entity.FlyingWeaponEntity;
 import net.minecraft.world.InteractionHand;
 
 public interface IFlyingWeapon {
     FlyingWeaponEntity getWeapon(InteractionHand hand);
 
-    void scheduleAction(InteractionHand hand, MotionManager mm, double range, int totalTime);
+    void scheduleAction(InteractionHand hand, MotionManager mm, WeaponStats.SweepInfo info, double range, int totalTime);
 
     void tick();
 
@@ -19,7 +20,7 @@ public interface IFlyingWeapon {
         }
 
         @Override
-        public void scheduleAction(InteractionHand hand, MotionManager mm, double range, int totalTime) {
+        public void scheduleAction(InteractionHand hand, MotionManager mm, WeaponStats.SweepInfo info, double range, int totalTime) {
 
         }
 

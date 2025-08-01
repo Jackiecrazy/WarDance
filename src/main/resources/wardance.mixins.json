@@ -15,6 +15,7 @@
     "SifuDropsMixin"
   ],
   "client": [
+    "AttackCanceler",
     "ItchyCurseMixin",
     "MixinBlockFrameDisable",
     "MixinEquipProgress",

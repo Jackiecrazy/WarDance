@@ -13,6 +13,7 @@ import jackiecrazy.wardance.event.SkillCastEvent;
 import jackiecrazy.wardance.event.SkillCooldownEvent;
 import jackiecrazy.wardance.event.SkillResourceEvent;
 import jackiecrazy.wardance.skill.styles.SkillStyle;
+import jackiecrazy.wardance.utils.CombatUtils;
 import jackiecrazy.wardance.utils.DamageUtils;
 import jackiecrazy.wardance.utils.SkillUtils;
 import net.minecraft.network.chat.Component;
@@ -336,7 +337,7 @@ public abstract class Skill extends Move {
     }
 
     protected void attackCooldown(Event e, LivingEntity caster, SkillData stats) {
-        if (e instanceof LivingAttackEvent el && el.getEntity() != caster && DamageUtils.isMeleeAttack(el.getSource()) && stats.getState() == STATE.COOLING && e.getPhase() == EventPriority.HIGHEST) {
+        if (e instanceof LivingAttackEvent el && !CombatData.getCap(caster).alreadyProc("oncePerSweep") && el.getEntity() != caster && DamageUtils.isMeleeAttack(el.getSource()) && stats.getState() == STATE.COOLING && e.getPhase() == EventPriority.HIGHEST) {
             stats.decrementDuration();
         }
     }

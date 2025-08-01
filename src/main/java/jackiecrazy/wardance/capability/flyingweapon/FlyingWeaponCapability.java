@@ -1,12 +1,14 @@
 package jackiecrazy.wardance.capability.flyingweapon;
 
 import jackiecrazy.footwork.capability.stylish.StylishData;
-import jackiecrazy.footwork.entity.FootworkEntities;
-import jackiecrazy.footwork.entity.flyingweapon.FlyingWeaponEntity;
 import jackiecrazy.footwork.move.motionframe.MotionFrame;
 import jackiecrazy.footwork.move.motionframe.MotionManager;
 import jackiecrazy.footwork.move.motionframe.MotionManagers;
 import jackiecrazy.footwork.utils.GeneralUtils;
+import jackiecrazy.wardance.config.WeaponStats;
+import jackiecrazy.wardance.entity.FlyingWeaponEntity;
+import jackiecrazy.wardance.entity.WarEntities;
+import jackiecrazy.wardance.utils.CombatUtils;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.player.Player;
@@ -51,15 +53,18 @@ public class FlyingWeaponCapability implements IFlyingWeapon {
     }
 
     @Override
-    public void scheduleAction(InteractionHand hand, MotionManager mm, double range, int totalTime) {
+    public void scheduleAction(InteractionHand hand, MotionManager mm, WeaponStats.SweepInfo info, double range, int totalTime) {
         final boolean isMain = hand == InteractionHand.MAIN_HAND;
         boolean scheduleLock = isMain ? mainSwap : offSwap;
         FlyingWeaponEntity fwe = getWeapon(hand);
         if (!scheduleLock && fwe != null) {
-            fwe.queuePath(mm, 2, totalTime-2-mm.getDuration());
+            fwe.queuePath(mm, 0, totalTime-mm.getDuration());
             fwe.setAttackRange((float) range);
             fwe.setIdlePose(idleFrame[isMain ? 0 : 1]);
             fwe.setUniversalOffset(idleOffset[isMain ? 0 : 1]);
+            fwe.setIncorporeal(false);
+            fwe.setSweepState(CombatUtils.getSweepState(player));
+            fwe.setInfo(info);
         }
     }
 
@@ -82,7 +87,7 @@ public class FlyingWeaponCapability implements IFlyingWeapon {
             else if (getWeapon(hand) == null) {
                 //make new weapons
                 //create a flying weapon
-                FlyingWeaponEntity fwe = new FlyingWeaponEntity(FootworkEntities.WEAPON.get(), player.level());
+                FlyingWeaponEntity fwe = new FlyingWeaponEntity(WarEntities.WEAPON.get(), player.level());
                 updateWeapon(fwe, hand);
                 if (isMain) {
                     main = fwe;
@@ -124,7 +129,7 @@ public class FlyingWeaponCapability implements IFlyingWeapon {
 
     private void updateWeapon(FlyingWeaponEntity fwe, InteractionHand hand) {
         if (fwe.isRemoved()) {
-            fwe = new FlyingWeaponEntity(FootworkEntities.WEAPON.get(), player.level());
+            fwe = new FlyingWeaponEntity(WarEntities.WEAPON.get(), player.level());
             player.level().addFreshEntity(fwe);
         }
         fwe.setHeldItem(player.getItemInHand(hand));

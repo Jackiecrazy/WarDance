@@ -22,4 +22,10 @@ public class WarEntities {
             .sized(0.5F, 0.5F)
             .build("fear"));
 
+    public static final RegistryObject<EntityType<FlyingWeaponEntity>> WEAPON = ENTITIES.register("flying_weapon", () -> EntityType.Builder
+            .of(FlyingWeaponEntity::new, MobCategory.MISC)
+            .sized(0.8F, 0.8F)
+            .updateInterval(1)
+            .setShouldReceiveVelocityUpdates(true)
+            .build("flying_weapon"));
 }

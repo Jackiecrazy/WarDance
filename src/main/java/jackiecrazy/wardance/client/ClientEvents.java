@@ -23,6 +23,7 @@ import net.minecraft.client.KeyMapping;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.player.AbstractClientPlayer;
 import net.minecraft.client.player.Input;
+import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.InteractionHand;
@@ -32,6 +33,7 @@ import net.minecraft.world.entity.HumanoidArm;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.Pose;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.entity.vehicle.Minecart;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.client.event.*;
 import net.minecraftforge.client.gui.overlay.VanillaGuiOverlay;
@@ -253,6 +255,7 @@ public class ClientEvents {
 
     @SubscribeEvent
     public static void handRaising(RenderHandEvent e) {
+        //todo empty render on disarm
         if (e.getHand().equals(InteractionHand.MAIN_HAND) || !GeneralConfig.dual) return;
         AbstractClientPlayer p = Minecraft.getInstance().player;
         if (p == null || p.isInvisible() || (!StylishData.getCap(p).isCombatMode() && (p.swingingArm != InteractionHand.OFF_HAND || !p.swinging)))
@@ -290,7 +293,8 @@ public class ClientEvents {
             } else {
                 if (!mc.options.keyUse.isDown())
                     rightClick = false;
-                //TODO reenable after elenai compat
+                //TODO somehow intercept and cancel left clicking to attack
+                // also find a way to have left click instead charge the held item
 //                if (WarCompat.elenaiDodge) {
 //                    if (GeneralConfig.elenaiP && CombatData.getCap(p).getPostureGrace() > 0) {
 //                        ClientTickEventListener.regen++;
@@ -322,6 +326,39 @@ public class ClientEvents {
 //
 //        }
 //    }
+
+    @SubscribeEvent
+    public static void universalSweepSwing(InputEvent.InteractionKeyMappingTriggered e) {
+        /// I do not cancel this because it would cancel block breaking too
+        final LocalPlayer p = Minecraft.getInstance().player;
+        if (e.isAttack() &&
+                StylishData.getCap(p).isCombatMode() &&
+                (WeaponStats.isWeapon(p, p.getMainHandItem()) ||
+                        p.getMainHandItem().isEmpty() ||
+                        WeaponStats.isShield(p, p.getMainHandItem())) &&
+                lastSweepTick != p.tickCount) {
+            //sweep
+            CombatChannel.INSTANCE.sendToServer(new RequestSweepPacket(true, null));
+        }
+        if (e.isUseItem() &&
+                GeneralConfig.dual &&
+                StylishData.getCap(p).isCombatMode() &&
+                !TwoHandingHandler.suppressOffhand(p, p.getOffhandItem()) &&
+                (WeaponStats.isWeapon(p, p.getOffhandItem()) ||
+                        p.getOffhandItem().isEmpty() ||
+                        WeaponStats.isShield(p, p.getOffhandItem())) &&
+                lastSweepTick != p.tickCount) {
+            //sweep
+            CombatChannel.INSTANCE.sendToServer(new RequestSweepPacket(true, null));
+        }
+        lastSweepTick = p.tickCount;
+
+        //when finding a long press on either button, check if there is an item in use.
+        // if not, call use with the respective hand
+        // if yes, check if it is this hand.
+        //  If not, do nothing.
+        //  If yes, set the item use key to true
+    }
 
     @SubscribeEvent
     public static void sweepSwing(PlayerInteractEvent.LeftClickEmpty e) {
@@ -389,6 +426,7 @@ public class ClientEvents {
                 lastSweepTick = e.getEntity().tickCount;
             }
             if (e.getHand() == InteractionHand.MAIN_HAND) {
+                //cancel right click main hand
                 e.setCanceled(true);
                 e.setCancellationResult(InteractionResult.FAIL);
             }
