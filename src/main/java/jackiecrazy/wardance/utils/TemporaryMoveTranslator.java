@@ -1,22 +1,27 @@
 package jackiecrazy.wardance.utils;
 
-import jackiecrazy.footwork.move.motionframe.MotionDefinition;
+import jackiecrazy.footwork.move.motionframe.WeaponMotion;
 import jackiecrazy.footwork.move.motionframe.MotionFrame;
 import jackiecrazy.footwork.move.motionframe.MotionManager;
 import jackiecrazy.footwork.move.motionframe.MotionManagers;
 import jackiecrazy.footwork.utils.EasingFunction;
+import jackiecrazy.footwork.utils.GeneralUtils;
 import jackiecrazy.wardance.WarDance;
+import jackiecrazy.wardance.capability.flyingweapon.FlyingWeaponCapability;
+import jackiecrazy.wardance.capability.flyingweapon.FlyingWeaponData;
 import jackiecrazy.wardance.config.WeaponStats;
 import net.minecraft.util.Mth;
+import net.minecraft.world.InteractionHand;
+import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.phys.Vec3;
 import org.joml.Vector4d;
 
 import java.util.List;
 
 public class TemporaryMoveTranslator {
-
     private static final List<MotionFrame> STAB = List.of(
             new MotionFrame(new Vec3(0, 0, 1), new Vec3(0, 0, -0.5)),
+            new MotionFrame(new Vec3(0, 0, 1), new Vec3(0, 0, 1.5)),
             new MotionFrame(new Vec3(0, 0, 1), new Vec3(0, 0, 1.5))
     );
     private static final List<MotionFrame> CIRCLE = List.of(
@@ -25,6 +30,12 @@ public class TemporaryMoveTranslator {
             new MotionFrame(new Vec3(0, 0, -1), new Vec3(0, 0, 1), new Vector4d(0, 0, -1, 90)),
             new MotionFrame(new Vec3(1, 0, 0), new Vec3(0, 0, 1), new Vector4d(1, 0, 0, 90)),
             new MotionFrame(new Vec3(0, 0, 1), new Vec3(0, 0, 1), new Vector4d(0, 0, 1, 90)));
+    private static final List<MotionFrame> LOOP = List.of(
+            new MotionFrame(new Vec3(0, -1, 0), new Vec3(0, 0, 1)),
+            new MotionFrame(new Vec3(0, 0, -1), new Vec3(0, 0, 1)),
+            new MotionFrame(new Vec3(0, 1, 0), new Vec3(0, 0, 1)),
+            new MotionFrame(new Vec3(0, 0, 1), new Vec3(0, 0, 1)),
+            new MotionFrame(new Vec3(0, -2, 1), new Vec3(0, 0, 1)));
     private static final List<MotionFrame> SLASH = List.of(
             new MotionFrame(new Vec3(1, 0.6, 1), new Vec3(0, 0, 1)),
             new MotionFrame(new Vec3(-1, -0.4, 0), new Vec3(0, 0, 1), new Vector4d(-1, -0.4, 1, 45)));
@@ -32,48 +43,88 @@ public class TemporaryMoveTranslator {
     private static final List<MotionFrame> CHOP = List.of(
             new MotionFrame(new Vec3(0, 1, 0.2), new Vec3(0, 0, 1)),
             new MotionFrame(new Vec3(0, -0.5, 1), new Vec3(0, 0, 1)));
-    private static final MotionManager CIRCLe=new MotionManagers.DefinitionMM(new MotionDefinition(CIRCLE, EasingFunction.IN_OUT_CUBIC, 10));
-    private static final MotionManager LINE= new MotionManagers.DefinitionMM(new MotionDefinition(STAB, EasingFunction.IN_CUBIC, 10));
-    private static final MotionManager CONE1=  new MotionManagers.DefinitionMM(new MotionDefinition(SLASH, EasingFunction.IN_OUT_CUBIC, 10));
-    private static final MotionManager CONE2=  new MotionManagers.DefinitionMM(new MotionDefinition(BACKSLASH, EasingFunction.IN_OUT_CUBIC, 10));
-    private static final MotionManager IMPACT=  new MotionManagers.DefinitionMM(new MotionDefinition(CHOP, EasingFunction.IN_CUBIC, 10));
+    private static final MotionManager circle_finish = new MotionManagers.DefinitionMM(new WeaponMotion(CIRCLE, EasingFunction.IN_OUT_CUBIC, 10));
+    private static final MotionManager LINE = new MotionManagers.DefinitionMM(new WeaponMotion(STAB, EasingFunction.IN_CUBIC, 10));
+    private static final MotionManager CONE1 = new MotionManagers.DefinitionMM(new WeaponMotion(SLASH, EasingFunction.IN_OUT_CUBIC, 10));
+    private static final MotionManager CONE2 = new MotionManagers.DefinitionMM(new WeaponMotion(BACKSLASH, EasingFunction.IN_OUT_CUBIC, 10));
+    private static final MotionManager IMPACT = new MotionManagers.DefinitionMM(new WeaponMotion(CHOP, EasingFunction.IN_CUBIC, 10));
+    private static int flip = 1;
 
-    private static Vec3 generateFrame(float pitch, float yaw){
-        Vec3 base = new Vec3(0,0,1);//forward pointing
-        return base.xRot(Mth.DEG_TO_RAD*pitch).yRot(Mth.DEG_TO_RAD*yaw).normalize();
+    private static Vec3 generateFrame(float pitch, float yaw) {
+        Vec3 base = new Vec3(0, 0, 1);//forward pointing
+        return base.xRot(Mth.DEG_TO_RAD * pitch).yRot(Mth.DEG_TO_RAD * yaw).normalize();
     }
 
+    public static void scheduleFinisher(LivingEntity e,
+                                        InteractionHand hand,
+                                        WeaponStats.SweepInfo base) {
+        switch (base.getType()) {
+            case CONE -> {
+                //flourish thrice and stab
+                FlyingWeaponData.getCap(e).scheduleAction(hand, temp_getMMFromType(3, WeaponStats.SWEEPTYPE.CONE, base.getBase() + 3 * base.getScaling()), base, 5, 10);
+                FlyingWeaponData.getCap(e).scheduleAction(hand, temp_getMMFromType(3, WeaponStats.SWEEPTYPE.CONE, base.getBase() + 3 * base.getScaling()), base, 5, 10);
+                FlyingWeaponData.getCap(e).scheduleAction(hand, temp_getMMFromType(3, WeaponStats.SWEEPTYPE.CONE, base.getBase() + 3 * base.getScaling()), base, 5, 10);
+                FlyingWeaponData.getCap(e).scheduleAction(hand, temp_getMMFromType(20, WeaponStats.SWEEPTYPE.LINE, base.getBase() + 3 * base.getScaling()), base.finisherCopy(), 7, 20);
+            }
+            case CLEAVE -> {
+                //tcs
+                FlyingWeaponData.getCap(e).scheduleAction(hand, new MotionManagers.DefinitionMM(new WeaponMotion(LOOP, EasingFunction.IN_CUBIC, 20)), base.finisherCopy(), 5, 9);
+            }
+            case IMPACT -> {
+                //spin twice and slam down
+                FlyingWeaponData.getCap(e).scheduleAction(hand, temp_getMMFromType(8, WeaponStats.SWEEPTYPE.CIRCLE, base.getBase() + 3 * base.getScaling()), base, 5, 9);
+                FlyingWeaponData.getCap(e).scheduleAction(hand, temp_getMMFromType(8, WeaponStats.SWEEPTYPE.CIRCLE, base.getBase() + 3 * base.getScaling()), base, 5, 9);
+                FlyingWeaponData.getCap(e).scheduleAction(hand, temp_getMMFromType(10, WeaponStats.SWEEPTYPE.CLEAVE, base.getBase() + 3 * base.getScaling()), base.finisherCopy(), 5, 9);
+            }
+            case CIRCLE -> {
+                //beeeeeg circle
+                FlyingWeaponData.getCap(e).scheduleAction(hand, temp_getMMFromType(8, WeaponStats.SWEEPTYPE.CIRCLE, base.getBase() + 3 * base.getScaling()), base.finisherCopy(), 8, 9);
+            }
+            case LINE -> {
+                //triple jab followed by big jab
+                FlyingWeaponData.getCap(e).scheduleAction(hand, temp_getMMFromType(3, WeaponStats.SWEEPTYPE.LINE, base.getBase() + 3 * base.getScaling()), base, 5, 3);
+                FlyingWeaponData.getCap(e).scheduleAction(hand, temp_getMMFromType(5, WeaponStats.SWEEPTYPE.LINE, base.getBase() + 3 * base.getScaling()), base, 5, 3);
+                FlyingWeaponData.getCap(e).scheduleAction(hand, temp_getMMFromType(10, WeaponStats.SWEEPTYPE.LINE, base.getBase() + 3 * base.getScaling()), base.finisherCopy(), 8, 5);
+            }
+            case NONE -> {
+                //flurry of blows
+                FlyingWeaponData.getCap(e).scheduleAction(hand, temp_getMMFromType(3, WeaponStats.SWEEPTYPE.LINE, base.getBase() + 3 * base.getScaling()), base, 5, 3);
+                FlyingWeaponData.getCap(e).scheduleAction(hand, temp_getMMFromType(3, WeaponStats.SWEEPTYPE.LINE, base.getBase() + 3 * base.getScaling()), base, 5, 3);
+                FlyingWeaponData.getCap(e).scheduleAction(hand, temp_getMMFromType(3, WeaponStats.SWEEPTYPE.LINE, base.getBase() + 3 * base.getScaling()), base, 5, 3);
+                FlyingWeaponData.getCap(e).scheduleAction(hand, temp_getMMFromType(10, WeaponStats.SWEEPTYPE.LINE, base.getBase() + 3 * base.getScaling()), base.finisherCopy(), 8, 5);
+            }
+        }
+    }
 
-    public static MotionManager temp_getMMFromType(int time, WeaponStats.SWEEPTYPE type, double area){
-        //take off 3 ticks for the start. Yes, this means it's possible to loop attacks and skip recovery if you time it tight.
-        time-=3;
+    public static MotionManager temp_getMMFromType(int time, WeaponStats.SWEEPTYPE type, double area) {
         //clamp time. The remaining time is expended in recovery.
-        time=Mth.clamp(time, 2, 5);
-        float flip = WarDance.rand.nextBoolean()?1:-1;
-        switch (type){
+        //time = Mth.clamp(time, 2, 5);
+        flip *= -1;
+        switch (type) {
             case CONE:
 
                 final Vec3 startFrame = generateFrame(10, (float) (-area) * flip);
                 final Vec3 endFrame = generateFrame(-10, (float) (area) * flip);
-                Vec3 dirStart = startFrame.normalize();
-                Vec3 dirEnd = endFrame.normalize();
-                double angleRadians = Math.acos(Mth.clamp(dirStart.dot(dirEnd), -1.0, 1.0));
-                double angleDegrees = Math.toDegrees(angleRadians);
-                return new MotionManagers.DefinitionMM(new MotionDefinition(List.of(
+                final Vec3 up = new Vec3(0,1,0);
+                double dot = Mth.clamp(up.dot(endFrame.subtract(startFrame).normalize()), -1.0, 1.0);
+                double angleRadians = Math.acos(dot);
+                double angleDegrees = Math.toDegrees(angleRadians)*flip;
+                System.out.println(angleDegrees);//well paint me green and call me a pickle, that measures the angle between the two arcs instead of the ground
+                return new MotionManagers.DefinitionMM(new WeaponMotion(List.of(
                         new MotionFrame(startFrame, new Vec3(0, 0, 1), (int) angleDegrees),
                         new MotionFrame(endFrame, new Vec3(0, 0, 1), (int) angleDegrees)),
-                                                                            EasingFunction.IN_CUBIC, time));
+                                                                        EasingFunction.IN_CUBIC, time));
             case LINE:
-                return new MotionManagers.DefinitionMM(new MotionDefinition(STAB, EasingFunction.OUT_CUBIC, time));
+                return new MotionManagers.DefinitionMM(new WeaponMotion(STAB, EasingFunction.IN_OUT_CUBIC, time));
             case CIRCLE:
-                return new MotionManagers.DefinitionMM(new MotionDefinition(CIRCLE, EasingFunction.IN_OUT_CUBIC, time));
+                return new MotionManagers.DefinitionMM(new WeaponMotion(CIRCLE, EasingFunction.IN_OUT_CUBIC, time));
             case CLEAVE:
-                return new MotionManagers.DefinitionMM(new MotionDefinition(List.of(
-                        new MotionFrame(generateFrame((float) (area/2), 5*flip), new Vec3(0, 0, 1)),
-                        new MotionFrame(generateFrame((float) (-area/2), -5*flip), new Vec3(0, 0, 1))),
-                                                                            EasingFunction.IN_CUBIC, time));
+                return new MotionManagers.DefinitionMM(new WeaponMotion(List.of(
+                        new MotionFrame(generateFrame((float) (area / 2), 5 * flip), new Vec3(0, 0, 1)),
+                        new MotionFrame(generateFrame((float) (-area / 2), -5 * flip), new Vec3(0, 0, 1))),
+                                                                        EasingFunction.IN_CUBIC, time));
             case IMPACT:
-                new MotionManagers.DefinitionMM(new MotionDefinition(CHOP, EasingFunction.IN_CUBIC, time));
+                new MotionManagers.DefinitionMM(new WeaponMotion(CHOP, EasingFunction.IN_CUBIC, time));
             default:
                 return CONE1;
         }

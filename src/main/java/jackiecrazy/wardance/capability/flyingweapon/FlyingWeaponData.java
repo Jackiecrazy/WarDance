@@ -43,11 +43,6 @@ public class FlyingWeaponData implements ICapabilitySerializable<CompoundTag> {
 
     @Override
     public CompoundTag serializeNBT() {
-        //do not persist
-        for (InteractionHand hand : InteractionHand.values()) {
-            if (instance.getWeapon(hand) != null)
-                instance.getWeapon(hand).remove(Entity.RemovalReason.DISCARDED);
-        }
         return new CompoundTag();
     }
 

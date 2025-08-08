@@ -64,6 +64,7 @@ public class WeaponStats extends SimpleJsonResourceReloadListener {
     public static Gson GSON = new GsonBuilder().registerTypeAdapter(SweepInfo.class, new SweepAdapter()).registerTypeAdapter(ResourceLocation.class, new ResourceLocation.Serializer()).create();
     public static MeleeInfo DEFAULTMELEE = new MeleeInfo(1, 1);
     public static HashMap<Item, MeleeInfo> combatList = new HashMap<>();
+    public static SweepInfo tmp_info = null;
     private static HashMap<TagKey<Item>, MeleeInfo> archetypes = new HashMap<>();
 
     public WeaponStats() {
@@ -91,7 +92,9 @@ public class WeaponStats extends SimpleJsonResourceReloadListener {
         archetypes = new HashMap<>(server);
     }
 
-    public static void updateItems(Map<ResourceLocation, JsonElement> object, ResourceManager rm, ProfilerFiller profiler) {
+    public static void updateItems(Map<ResourceLocation, JsonElement> object,
+                                   ResourceManager rm,
+                                   ProfilerFiller profiler) {
         DEFAULTMELEE = new MeleeInfo(CombatConfig.defaultMultiplierPostureAttack, CombatConfig.defaultMultiplierPostureDefend);
         combatList = new HashMap<>();
         archetypes = new HashMap<>();
@@ -101,7 +104,7 @@ public class WeaponStats extends SimpleJsonResourceReloadListener {
             if (GeneralConfig.debug)
                 WarDance.LOGGER.debug("loading " + key);
             file.entrySet().forEach(entry -> {
-                 String name = entry.getKey();
+                String name = entry.getKey();
                 if (name.startsWith("#")) {//register tags separately
                     try {
                         name = name.substring(1);
@@ -203,6 +206,15 @@ public class WeaponStats extends SimpleJsonResourceReloadListener {
         return stack.is(CAN_BE_DISABLED) || isShield(e, stack);
     }
 
+    public static boolean isCombatItem(LivingEntity e, ItemStack stack) {
+        return lookupStats(stack) != null;
+    }
+
+    public static boolean isCombatItem(LivingEntity e, InteractionHand hand) {
+        if (e == null) return false;
+        return isCombatItem(e, e.getItemInHand(hand));
+    }
+
     public static boolean isShield(LivingEntity e, InteractionHand hand) {
         if (e == null) return false;
         return isShield(e, e.getItemInHand(hand));
@@ -252,6 +264,7 @@ public class WeaponStats extends SimpleJsonResourceReloadListener {
     }
 
     public static SweepInfo getSweepInfo(ItemStack i, SWEEPSTATE s) {
+        if (tmp_info != null) return tmp_info;
         final MeleeInfo info = lookupStats(i);
         return info == null ? DEFAULT_NONE : info.sweeps[s.ordinal()];
     }
@@ -269,7 +282,9 @@ public class WeaponStats extends SimpleJsonResourceReloadListener {
     }
 
     @Override
-    protected void apply(@Nonnull Map<ResourceLocation, JsonElement> object, @Nonnull ResourceManager rm, @Nonnull ProfilerFiller profiler) {
+    protected void apply(@Nonnull Map<ResourceLocation, JsonElement> object,
+                         @Nonnull ResourceManager rm,
+                         @Nonnull ProfilerFiller profiler) {
         updateItems(object, rm, profiler);
     }
 
@@ -295,11 +310,13 @@ public class WeaponStats extends SimpleJsonResourceReloadListener {
         private double attackPostureMultiplier, defensePostureMultiplier;
         private boolean isShield, ignoreParry, ignoreShield, canParry;
         //standing, falling, sneaking, sprinting, riding
-        private SweepInfo[] sweeps = {DEFAULT_FAN.clone(),
+        private SweepInfo[] sweeps = {
+                DEFAULT_FAN.clone(),
                 DEFAULT_CLEAVE.clone(),
                 DEFAULT_IMPACT.clone(),
                 DEFAULT_CIRCLE.clone(),
-                DEFAULT_LINE.clone()};
+                DEFAULT_LINE.clone()
+        };
 
         private MeleeInfo(double attack, double defend) {
             attackPostureMultiplier = attack;
@@ -337,20 +354,23 @@ public class WeaponStats extends SimpleJsonResourceReloadListener {
     }
 
     public static class SweepInfo {
-        private static final SweepInfo REFERENCE = new SweepInfo(SWEEPTYPE.NONE, 0, 0);
+        public static final SweepInfo NOTHING = new SweepInfo(SWEEPTYPE.NONE, 0, 0);
         //general effects:
         // knockback scaling (negative supported),
         // (posture) damage scaling,
         // force crit,
         // crit damage
+        //where tf do I even store this for weapon entities and sweeps? Separately?
         private double knockback = 1;
         private double damage_scale = 1;
         private double posture_scale = 1;
         private boolean crit = false;
+        private boolean breach = false;
         private double crit_damage = 1.5;
         private double sweep_base = 0;
         private double sweep_scale = 0;
         private SWEEPTYPE sweep = SWEEPTYPE.NONE;
+        private double range_multiplier = 1;
         private String hit_self_command = "", hit_other_command = "", damage_self_command = "", damage_other_command = "";
 
         private SweepInfo(SWEEPTYPE t, double b, double s) {
@@ -374,7 +394,7 @@ public class WeaponStats extends SimpleJsonResourceReloadListener {
             //grab different tooltips if and only if they are different
             double damage = damage_scale;
             double posture = posture_scale;
-            if (knockback != REFERENCE.knockback) {
+            if (knockback != NOTHING.knockback) {
                 MutableComponent cp = Component.literal(RenderUtils.formatter.format(knockback) + "x");
                 if (!advanced) {
                     if (knockback > 1)
@@ -530,11 +550,27 @@ public class WeaponStats extends SimpleJsonResourceReloadListener {
                 return false;
             }
         }
+
+        public double getRangeMult() {
+            return range_multiplier;
+        }
+
+        public boolean canBreach() {
+            return breach;
+        }
+
+        public SweepInfo finisherCopy() {
+            SweepInfo ret = clone();
+            ret.breach = true;
+            return ret;
+        }
     }
 
     public static class SweepAdapter implements JsonDeserializer<SweepInfo> {
         @Override
-        public SweepInfo deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context) throws JsonParseException {
+        public SweepInfo deserialize(JsonElement json,
+                                     Type typeOfT,
+                                     JsonDeserializationContext context) throws JsonParseException {
             if (!json.isJsonObject()) return null;
             JsonObject sub = json.getAsJsonObject();
             SweepInfo sweep = new SweepInfo(SWEEPTYPE.NONE, 0, 0);

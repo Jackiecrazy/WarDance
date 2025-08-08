@@ -16,6 +16,7 @@
   ],
   "client": [
     "AttackCanceler",
+    "ClientAccessors",
     "ItchyCurseMixin",
     "MixinBlockFrameDisable",
     "MixinEquipProgress",

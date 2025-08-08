@@ -21,6 +21,23 @@ how to implement new actions:
     When the probe intersects an entity, it swaps the player's mainhand item into its recorded stack, calls a vanilla attack function, and swaps back.
     Jump codes can skip to specific frames.
     Optionally this can be always active. The player will thus have two floating weapons to send into combat as long as they're in combat mode.
+
+
+    Sweep rewrite brainstorm:
+        each sweep is composed of x motion managers
+        each motion manager can be one keyframe, many keyframes, or simply marked as transition
+        In any case they have a duration, lerp speed, and a smoothing function.
+        transition motion managers can execute actions at the start or end.
+        each keyframe needs a referent entity (which doesn't have to be the player!) and can also execute actions
+            -when the smoothing function reaches or finishes them.
+            -when hitting an entity or block.
+                This directly overwrites an onHitBlock/Entity field in flyingweapon with its respective action.
+                If this field is not defined the previous hitBlock/Entity are kept.
+        while executing the weapon holds a list of string tags and interprets them.
+            skip would have the weapon immediately skip to the next move and remove this tag.
+            cancel will clear the entire attack queue.
+            retargetEntity/Block would have the weapon clear its hitlist and remove this tag.
+            noClipBlock would skip block collision checks, same noClipEntity.
 - syncing entity motions by tethering one to another
     easy, use the tether capability
 - mark time periods as having dodge, guard, parry, or invulnerable frames

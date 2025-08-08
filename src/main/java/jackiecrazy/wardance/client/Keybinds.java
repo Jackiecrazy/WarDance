@@ -41,14 +41,16 @@ public class Keybinds {
     public static final KeyMapping COMBAT = new KeyMapping("wardance.combat", KeyConflictContext.IN_GAME, KeyModifier.SHIFT, InputConstants.Type.KEYSYM, GLFW.GLFW_KEY_R, "key.categories.wardance");
     public static final KeyMapping CAST = new KeyMapping("wardance.skill", IN_COMBAT, InputConstants.Type.KEYSYM, GLFW.GLFW_KEY_R, "key.categories.wardance");
     public static final KeyMapping BINDCAST = new KeyMapping("wardance.bindCast", IN_COMBAT, InputConstants.Type.MOUSE, GLFW.GLFW_MOUSE_BUTTON_MIDDLE, "key.categories.wardance");
-    public static final KeyMapping DODGE = new KeyMapping("wardance.dodge", KeyConflictContext.IN_GAME, InputConstants.Type.KEYSYM, GLFW.GLFW_KEY_LEFT_ALT, "key.categories.wardance");
+    public static final KeyMapping DODGE = new KeyMapping("wardance.dodge", IN_COMBAT, InputConstants.Type.KEYSYM, GLFW.GLFW_KEY_LEFT_ALT, "key.categories.wardance");
+    public static final KeyMapping EVOKE = new KeyMapping("wardance.evoke", IN_COMBAT, InputConstants.Type.KEYSYM, GLFW.GLFW_KEY_V, "key.categories.wardance");
+    public static final KeyMapping FINISHER = new KeyMapping("wardance.finisher", IN_COMBAT, InputConstants.Type.KEYSYM, GLFW.GLFW_KEY_Q, "key.categories.wardance");
     //center, top right, down clockwise
     public static final KeyMapping[] SKILL = {
-            new KeyMapping("wardance.skill1", KeyConflictContext.IN_GAME, InputConstants.UNKNOWN, "key.categories.wardance"),
-            new KeyMapping("wardance.skill2", KeyConflictContext.IN_GAME, InputConstants.UNKNOWN, "key.categories.wardance"),
-            new KeyMapping("wardance.skill3", KeyConflictContext.IN_GAME, InputConstants.UNKNOWN, "key.categories.wardance"),
-            new KeyMapping("wardance.skill4", KeyConflictContext.IN_GAME, InputConstants.UNKNOWN, "key.categories.wardance"),
-            new KeyMapping("wardance.skill5", KeyConflictContext.IN_GAME, InputConstants.UNKNOWN, "key.categories.wardance")
+            new KeyMapping("wardance.skill1", IN_COMBAT, InputConstants.UNKNOWN, "key.categories.wardance"),
+            new KeyMapping("wardance.skill2", IN_COMBAT, InputConstants.UNKNOWN, "key.categories.wardance"),
+            new KeyMapping("wardance.skill3", IN_COMBAT, InputConstants.UNKNOWN, "key.categories.wardance"),
+            new KeyMapping("wardance.skill4", IN_COMBAT, InputConstants.UNKNOWN, "key.categories.wardance"),
+            new KeyMapping("wardance.skill5", IN_COMBAT, InputConstants.UNKNOWN, "key.categories.wardance")
     };
 
 

@@ -69,6 +69,7 @@ public class NewCombatCapability implements ICombatCapability {
     private int recordingTime = 0;
     private float recordedDamage = 0;
     private int pinTime;
+    private boolean dirty = false;
 
     public NewCombatCapability(LivingEntity e) {
         dude = new WeakReference<>(e);
@@ -103,6 +104,7 @@ public class NewCombatCapability implements ICombatCapability {
     @Override
     public void setSpirit(int v) {
         spirit = Mth.clamp(v, 0, getMaxSpirit());
+        dirty = true;
     }
 
     @Override
@@ -117,7 +119,7 @@ public class NewCombatCapability implements ICombatCapability {
 
         if (cse.getResult() == Event.Result.DEFAULT && lacking) return false;
         amount = Math.min(amount, spirit);
-        spirit -= amount;
+        setSpirit(spirit - amount);
         //addRank(amount / 5);
         double cd = ResourceConfig.postureRegen;
         //setSpiritGrace((int) cd);
@@ -152,6 +154,7 @@ public class NewCombatCapability implements ICombatCapability {
     @Override
     public void setPosture(float amount) {
         posture = Mth.clamp(amount, 0, getMaxPosture());
+        dirty = true;
     }
 
     @Override
@@ -183,6 +186,7 @@ public class NewCombatCapability implements ICombatCapability {
         if (elb == null) return ret;
         //necessary update before polling, TODO mirror onto other stats?
         serverTick();
+        dirty = true;
         //knocked down already, no more posture damage
         if (isKnockdown()) return amount;
         if (!Float.isFinite(posture)) posture = getMaxPosture();
@@ -222,7 +226,7 @@ public class NewCombatCapability implements ICombatCapability {
             //I don't like this here but I don't see a good way around it
             float prev = posture;
             //if already stunned, a second breaching hit
-            final boolean knockdown = isStunned() || alreadyProc("forceKnockDown") || (posture==0 && player);
+            final boolean knockdown = isStunned() || alreadyProc("forceKnockDown") || (posture == 0 && player);
             posture = 0;
             StunEvent se = new StunEvent(elb, assailant, knockdown ? CombatConfig.knockdownDuration : CombatConfig.staggerDuration, knockdown);
             MinecraftForge.EVENT_BUS.post(se);
@@ -234,7 +238,6 @@ public class NewCombatCapability implements ICombatCapability {
             if (se.isKnockdown()) {
                 //ugly fix. Posture is consumed before damage so the final hit that knocks down a mob will not deal damage.
                 //this delays the processing until damage
-                //fixme doesn't work on blocking mobs and players due to mixin
                 //solution: when posture is 0 mark guard as broken and disable block after that hit is over.
                 //basically allow player stunning, but player stunning is just guard break and doesn't recover any posture
                 tickProc("knockdown", se.getLength());
@@ -285,6 +288,7 @@ public class NewCombatCapability implements ICombatCapability {
         if (player) {
             rally = v;//(float) Math.min(v, dude.get().getAttributeValue(FootworkAttributes.MAX_RALLY.get()));
             rallyCD = RALLY_CD;
+            dirty = true;
         }
     }
 
@@ -304,6 +308,7 @@ public class NewCombatCapability implements ICombatCapability {
     @Override
     public void tickProc(String key, double ticks) {
         procs.put(key, ticks);
+        dirty = true;
     }
 
     @Override
@@ -336,6 +341,7 @@ public class NewCombatCapability implements ICombatCapability {
         }
         maxStaggerTime = Math.max(maxStaggerTime, time);
         staggerTime = time;
+        dirty = true;
     }
 
     @Override
@@ -483,17 +489,18 @@ public class NewCombatCapability implements ICombatCapability {
 
         lastUpdate = elb.level().getGameTime();
         first = false;
-        //todo sync only if the cap is dirty
         sync();
     }
 
     private void sync() {
+        //if (dirty) {
         LivingEntity elb = dude.get();
         if (elb == null || elb.level().isClientSide) return;
         CombatChannel.INSTANCE.send(PacketDistributor.TRACKING_ENTITY.with(() -> elb), new UpdateClientResourcePacket(elb.getId(), write()));
         if (!(elb instanceof FakePlayer) && elb instanceof ServerPlayer sp)
             CombatChannel.INSTANCE.send(PacketDistributor.PLAYER.with(() -> sp), new UpdateClientResourcePacket(elb.getId(), write()));
-
+        dirty = false;
+        //}
     }
 
     @Override
@@ -610,7 +617,15 @@ public class NewCombatCapability implements ICombatCapability {
 
     @Override
     public boolean isBlocking() {
-        if (dude.get() == null) return false;
+        final LivingEntity e = dude.get();
+        if (e == null) return false;
+        //need to have at least one valid hand
+        float main = CombatUtils.getCooledAttackStrength(e, InteractionHand.MAIN_HAND, 0.5f);
+        float off = CombatUtils.getCooledAttackStrength(e, InteractionHand.OFF_HAND, 0.5f);
+        final boolean mains = e.getMainHandItem().isEmpty() || WeaponStats.isCombatItem(e, InteractionHand.MAIN_HAND);
+        final boolean offs = e.getOffhandItem().isEmpty() || WeaponStats.isCombatItem(e, InteractionHand.OFF_HAND);
+        if ((!mains || main < 0.9)
+                && (!offs || off < 0.9)) return false;
         return guardFrame > 0 && posture > 0 && !alreadyProc("cannot_block");
     }
 

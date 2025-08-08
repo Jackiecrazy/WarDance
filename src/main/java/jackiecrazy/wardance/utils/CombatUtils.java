@@ -6,6 +6,8 @@ import jackiecrazy.footwork.capability.resources.ICombatCapability;
 import jackiecrazy.footwork.capability.stylish.StylishData;
 import jackiecrazy.footwork.capability.timeslow.TimeSlowData;
 import jackiecrazy.footwork.capability.weaponry.CombatManipulator;
+import jackiecrazy.footwork.client.particle.FootworkParticles;
+import jackiecrazy.footwork.client.particle.ScalingParticleType;
 import jackiecrazy.footwork.potion.FootworkEffects;
 import jackiecrazy.footwork.utils.*;
 import jackiecrazy.wardance.WarDance;
@@ -20,6 +22,7 @@ import jackiecrazy.wardance.event.SweepEvent;
 import jackiecrazy.wardance.mixin.ShieldBlockAccessor;
 import jackiecrazy.wardance.networking.CombatChannel;
 import jackiecrazy.wardance.networking.combat.UpdateAttackCooldownPacket;
+import net.minecraft.core.particles.ParticleType;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvents;
@@ -426,14 +429,20 @@ public class CombatUtils {
                              double reach,
                              double base,
                              double scaling) {
+
+
+
         //no go cases
         if (!GeneralConfig.betterSweep) return;//a shame, but alas
         if (!StylishData.getCap(e).isCombatMode()) return;
         if (CombatData.getCap(e).getHandBind(h) > 0) return;//don't even try dude
-        /**if (h == InteractionHand.OFF_HAND) {
+
+        if (h == InteractionHand.OFF_HAND) {
          swapHeldItems(e);
          CombatData.getCap(e).setOffhandAttack(true);
-         }*/
+         }
+
+
         if (!PermissionData.getCap(e).canSweep()) type = WeaponStats.SWEEPTYPE.NONE;
         double radius;
 
@@ -445,101 +454,103 @@ public class CombatUtils {
         type = sre.getType();
         if (sre.isCanceled() || type == WeaponStats.SWEEPTYPE.NONE || radius == 0) {
             //no go, swap items back and stop
-            /**if (h == InteractionHand.OFF_HAND) {
+            if (h == InteractionHand.OFF_HAND) {
              swapHeldItems(e);
              CombatData.getCap(e).setOffhandAttack(false);
-             }*/
+             }
             return;
         }
         if (e.getMainHandItem().getCapability(CombatManipulator.CAP).isPresent())
             radius = e.getMainHandItem().getCapability(CombatManipulator.CAP).resolve().get().sweepArea(e, e.getMainHandItem());
         int time = CombatUtils.getCooldownPeriod(e, h);
-        FlyingWeaponData.getCap(e).scheduleAction(h, TemporaryMoveTranslator.temp_getMMFromType(time, type, radius), WeaponStats.getSweepInfo(e.getMainHandItem(), getSweepState(e)), reach, time);
-        //todo somehow make it respect player attack stuff at the moment of pressing attack
 
-        /**double charge = Math.max(CombatUtils.getCooledAttackStrength(e, InteractionHand.MAIN_HAND, 0.5f), CombatData.getCap(e).getProc("swing"));
-         boolean hit = false;
-         isSweeping = ignore != null;
-         Vec3 starting = ignore == null ? GeneralUtils.raytraceAnything(e.level(), e, reach).getLocation() : ignore.position();
-         //grab everyone in "range"
-         for (Entity target : e.level().getEntities(e, e.getBoundingBox().inflate(reach * 2))) {
-         if (target == e) continue;
-         if (target.hasPassenger(e) || e.hasPassenger(target)) continue;//poor horse
-         if (target == ignore) {
-         if (radius > 0)
-         hit = true;
-         continue;
-         }
-         if (!e.hasLineOfSight(target)) continue;
-         //type specific sweep checks
-         switch (type) {
-         case CONE -> {
-         if (!GeneralUtils.isFacingEntity(e, target, (int) radius, 40)) continue;
-         if (GeneralUtils.getDistSqCompensated(e, target) > reach * reach) continue;
-         }
-         case CLEAVE -> {
-         if (!GeneralUtils.isFacingEntity(e, target, 40, (int) radius)) continue;
-         if (GeneralUtils.getDistSqCompensated(e, target) > reach * reach) continue;
-         }
-         case IMPACT -> {
-         if (GeneralUtils.getDistSqCompensated(target, starting) > radius * radius) continue;
-         }
-         case CIRCLE -> {
-         if (GeneralUtils.getDistSqCompensated(target, e) > radius * radius) continue;
-         }
-         case LINE -> {
-         Vec3 eye = e.getEyePosition(0.5F);
-         Vec3 look = e.getLookAngle();
-         Vec3 start = eye.add(look.scale(radius));
-         Vec3 end = eye.add(look.scale(reach));
-         if (!target.getBoundingBox().inflate(radius).intersects(start, end)) continue;
-         }
-         }
+        //purely visual attack
+        FlyingWeaponData.getCap(e).scheduleAction(h, TemporaryMoveTranslator.temp_getMMFromType(3, type, radius), null, reach, time);
 
-         CombatUtils.setHandCooldown(e, InteractionHand.MAIN_HAND, (float) charge, false);
-         hit = true;
-         if (e instanceof Player p)
-         p.attack(target);
-         else e.doHurtTarget(target);
-         isSweeping = true;
-         }
-         //if (e instanceof Player && hit) {
-         //play sweep particles in different ways
-         ParticleType<ScalingParticleType> particle = FootworkParticles.SWEEP.get();
-         Vec3 look = e.getLookAngle();
-         starting = e.getEyePosition().add(look.scale(reach));
-         float offset = 0;//(float) look.scale(reach).y;
-         switch (type) {
-         case LINE -> {
-         particle = FootworkParticles.LINE.get();
-         //ParticleUtils.playSweepParticle(particle, e, e.getEyePosition().add(look.normalize()), 0, radius, Color.WHITE, offset);
-         }
-         case CIRCLE -> {
-         starting = e.position().add(look.x, 0, look.z);
-         particle = FootworkParticles.CIRCLE.get();
-         offset = e.getEyeHeight() / 2;
-         }
-         case CONE -> {
-         radius = Math.tan(GeneralUtils.rad((float) radius / 2)) * reach;
-         particle = h == InteractionHand.OFF_HAND ? FootworkParticles.SWEEP_LEFT.get() : FootworkParticles.SWEEP.get();
-         }
-         case CLEAVE -> {
-         particle = FootworkParticles.CLEAVE.get();
-         radius = Math.tan(GeneralUtils.rad((float) radius / 2)) * reach;
-         }
-         case IMPACT -> {
-         particle = FootworkParticles.IMPACT.get();
-         offset = 0;
-         }
-         }
-         ParticleUtils.playSweepParticle(particle, e, starting, 0, radius, sre.getColor(), offset);
-         e.level().playSound(null, e.getX(), e.getY(), e.getZ(), SoundEvents.PLAYER_ATTACK_SWEEP, e.getSoundSource(), 1.0F, 1.0F);
-         //}
-         isSweeping = false;
-         if (h == InteractionHand.OFF_HAND) {
-         swapHeldItems(e);
-         CombatData.getCap(e).setOffhandAttack(false);
-         }*/
+        double charge = Math.max(CombatUtils.getCooledAttackStrength(e, InteractionHand.MAIN_HAND, 0.5f), CombatData.getCap(e).getProc("swing"));
+        boolean hit = false;
+        if (ignore != null)
+            CombatData.getCap(e).tickProc("oncePerSweep");
+        Vec3 starting = ignore == null ? GeneralUtils.raytraceAnything(e.level(), e, reach).getLocation() : ignore.position();
+        //grab everyone in "range"
+        for (Entity target : e.level().getEntities(e, e.getBoundingBox().inflate(reach * 2))) {
+            if (target == e) continue;
+            if (target.hasPassenger(e) || e.hasPassenger(target)) continue;//poor horse
+            if (target == ignore) {
+                if (radius > 0)
+                    hit = true;
+                continue;
+            }
+            if (!e.hasLineOfSight(target)) continue;
+            //type specific sweep checks
+            switch (type) {
+                case CONE -> {
+                    if (!GeneralUtils.isFacingEntity(e, target, (int) radius, 40)) continue;
+                    if (GeneralUtils.getDistSqCompensated(e, target) > reach * reach) continue;
+                }
+                case CLEAVE -> {
+                    if (!GeneralUtils.isFacingEntity(e, target, 40, (int) radius)) continue;
+                    if (GeneralUtils.getDistSqCompensated(e, target) > reach * reach) continue;
+                }
+                case IMPACT -> {
+                    if (GeneralUtils.getDistSqCompensated(target, starting) > radius * radius) continue;
+                }
+                case CIRCLE -> {
+                    if (GeneralUtils.getDistSqCompensated(target, e) > radius * radius) continue;
+                }
+                case LINE -> {
+                    Vec3 eye = e.getEyePosition(0.5F);
+                    Vec3 look = e.getLookAngle();
+                    Vec3 start = eye.add(look.scale(radius));
+                    Vec3 end = eye.add(look.scale(reach));
+                    if (!target.getBoundingBox().inflate(radius).intersects(start, end)) continue;
+                }
+            }
+
+            CombatUtils.setHandCooldown(e, InteractionHand.MAIN_HAND, (float) charge, false);
+            hit = true;
+            if (e instanceof Player p)
+                p.attack(target);
+            else e.doHurtTarget(target);
+            CombatData.getCap(e).tickProc("oncePerSweep");
+        }
+        //if (e instanceof Player && hit) {
+        //play sweep particles in different ways
+        ParticleType<ScalingParticleType> particle = FootworkParticles.SWEEP.get();
+        Vec3 look = e.getLookAngle();
+        starting = e.getEyePosition().add(look.scale(reach));
+        float offset = 0;//(float) look.scale(reach).y;
+        switch (type) {
+            case LINE -> {
+                particle = FootworkParticles.LINE.get();
+                //ParticleUtils.playSweepParticle(particle, e, e.getEyePosition().add(look.normalize()), 0, radius, Color.WHITE, offset);
+            }
+            case CIRCLE -> {
+                starting = e.position().add(look.x, 0, look.z);
+                particle = FootworkParticles.CIRCLE.get();
+                offset = e.getEyeHeight() / 2;
+            }
+            case CONE -> {
+                radius = Math.tan(GeneralUtils.rad((float) radius / 2)) * reach;
+                particle = h == InteractionHand.OFF_HAND ? FootworkParticles.SWEEP_LEFT.get() : FootworkParticles.SWEEP.get();
+            }
+            case CLEAVE -> {
+                particle = FootworkParticles.CLEAVE.get();
+                radius = Math.tan(GeneralUtils.rad((float) radius / 2)) * reach;
+            }
+            case IMPACT -> {
+                particle = FootworkParticles.IMPACT.get();
+                offset = 0;
+            }
+        }
+        ParticleUtils.playSweepParticle(particle, e, starting, 0, radius, sre.getColor(), offset);
+        e.level().playSound(null, e.getX(), e.getY(), e.getZ(), SoundEvents.PLAYER_ATTACK_SWEEP, e.getSoundSource(), 1.0F, 1.0F);
+        //}
+        CombatData.getCap(e).tickProc("oncePerSweep", 0);
+        if (h == InteractionHand.OFF_HAND) {
+            swapHeldItems(e);
+            CombatData.getCap(e).setOffhandAttack(false);
+        }
     }
 
     public static void initializePPE(ProjectileDefendEvent ppe, float mult) {
@@ -551,7 +562,8 @@ public class CombatUtils {
     }
 
     public static WeaponStats.SWEEPSTATE getSweepState(LivingEntity entity) {
-        if(CombatData.getCap(entity).alreadyProc("sweepStateOverride"))return WeaponStats.SWEEPSTATE.values()[(int) CombatData.getCap(entity).getProc("sweepStateOverride")];
+        if (CombatData.getCap(entity).alreadyProc("sweepStateOverride"))
+            return WeaponStats.SWEEPSTATE.values()[(int) CombatData.getCap(entity).getProc("sweepStateOverride")];
         if (entity.isCrouching()) return WeaponStats.SWEEPSTATE.SNEAKING;
         if (entity.isSwimming() || entity.isSprinting() || entity.isFallFlying() || CombatData.getCap(entity).isDodging())
             return WeaponStats.SWEEPSTATE.SPRINTING;

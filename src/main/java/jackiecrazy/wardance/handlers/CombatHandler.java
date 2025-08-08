@@ -345,7 +345,8 @@ public class CombatHandler {
                     if (cds.isCrit()) atkMult *= cds.getCritDamage();
                     canBreach = cds.canBreach();
                 }
-
+                canBreach |= sweepInfo.canBreach();
+                canBreach |= semeCap.alreadyProc("canBreach");
 
                 MeleePostureEvent.Pre pe = new MeleePostureEvent.Pre(uke, seme, attackingHand, attack, atkMult, original, e.getSource(), e.getAmount(), canBreach);
                 MinecraftForge.EVENT_BUS.post(pe);

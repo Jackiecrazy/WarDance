@@ -107,6 +107,7 @@ public class StylishCapability implements IStyleCapability {
 
     @Override
     public void processAttack(boolean melee) {
+        if(CombatData.getCap(dude.get()).alreadyProc("noFinisherCharge"))return;
         if (melee) {
             while (meleeFinisher >= 10) {
                 meleeFinisher -= 10;
@@ -201,7 +202,7 @@ public class StylishCapability implements IStyleCapability {
 
     @Override
     public boolean canTrigger() {
-        return getTriggerBar() == MAX_FINISHER_CHARGE;
+        return getTriggerBar() >= MAX_FINISHER_CHARGE;
     }
 
     @Override
