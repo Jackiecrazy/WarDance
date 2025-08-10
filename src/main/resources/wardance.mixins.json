@@ -20,6 +20,7 @@
     "ItchyCurseMixin",
     "MixinBlockFrameDisable",
     "MixinEquipProgress",
+    "TwoHandingRenderMixin",
     "YouTestMyPatienceAccessor"
   ],
   "injectors": {

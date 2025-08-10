@@ -10,11 +10,14 @@ import jackiecrazy.footwork.move.motionframe.MotionManagers;
 import jackiecrazy.footwork.utils.GeneralUtils;
 import jackiecrazy.footwork.utils.ParticleUtils;
 import jackiecrazy.footwork.utils.TargetingUtils;
+import jackiecrazy.wardance.capability.flyingweapon.FlyingWeaponCapability;
+import jackiecrazy.wardance.capability.flyingweapon.FlyingWeaponData;
 import jackiecrazy.wardance.config.WeaponStats;
 import jackiecrazy.wardance.utils.CombatUtils;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.server.level.ServerLevel;
+import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
@@ -53,10 +56,15 @@ public class FlyingWeaponEntity extends FlyingItemEntity {
         super.tick();
         if (!level().isClientSide ) {
             if(isIdle()) {
-                internalIdleTimer++;
-                if (internalIdleTimer > 120 || getOwner() == null)//reasonably sure the player doesn't need it anymore
+                if(getOwner()==null)
                     remove(RemovalReason.DISCARDED);
-            }else internalIdleTimer=0;
+                boolean valid=false;
+                for(InteractionHand h:InteractionHand.values())
+                    if(FlyingWeaponData.getCap(getOwner()).getWeapon(h)==this)
+                        valid=true;
+                if (!valid)//reasonably sure the player doesn't need it anymore
+                    remove(RemovalReason.DISCARDED);
+            }
         }
 //        if (level() instanceof ServerLevel s&&!isIdle()&&tickCount%3==0) {
 //            Vec3 vec= getPosition(0);
@@ -130,6 +138,15 @@ public class FlyingWeaponEntity extends FlyingItemEntity {
     }
 
     @Override
+    protected void returnToIdle() {
+        super.returnToIdle();
+        setShouldRender(FlyingWeaponEffect.TRAIL,false);
+        setShouldRender(FlyingWeaponEffect.AFTERIMAGE,false);
+        setShouldRender(FlyingWeaponEffect.BIG_SHADOW,false);
+        setShouldRender(FlyingWeaponEffect.WEAPON,false);
+    }
+
+    @Override
     protected boolean updateMotionTargets(boolean forceskip) {
         //true if a new move started
         boolean ret = super.updateMotionTargets(forceskip);
@@ -157,12 +174,12 @@ public class FlyingWeaponEntity extends FlyingItemEntity {
             }
         } else setTransitioning(true);
 
-        if (transitioning()) {
-            //not attacking
-            setShouldRender(FlyingWeaponEffect.TRAIL, false);
-            setShouldRender(FlyingWeaponEffect.BIG_SHADOW, false);
-            setShouldRender(FlyingWeaponEffect.WEAPON, true);
-        }
+//        if (transitioning()) {
+//            //not attacking
+//            setShouldRender(FlyingWeaponEffect.TRAIL, false);
+//            setShouldRender(FlyingWeaponEffect.BIG_SHADOW, false);
+//            setShouldRender(FlyingWeaponEffect.WEAPON, true);
+//        }
         if (!isIdle()) {
             //setUniversalOffset(Vec3.ZERO);
         } else if (getOwner() != null) {

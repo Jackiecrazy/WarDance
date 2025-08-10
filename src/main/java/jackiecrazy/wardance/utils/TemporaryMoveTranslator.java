@@ -31,7 +31,7 @@ public class TemporaryMoveTranslator {
             new MotionFrame(new Vec3(1, 0, 0), new Vec3(0, 0, 1), new Vector4d(1, 0, 0, 90)),
             new MotionFrame(new Vec3(0, 0, 1), new Vec3(0, 0, 1), new Vector4d(0, 0, 1, 90)));
     private static final List<MotionFrame> LOOP = List.of(
-            new MotionFrame(new Vec3(0, -1, 0), new Vec3(0, 0, 1)),
+            //new MotionFrame(new Vec3(0, -1, 0), new Vec3(0, 0, 1)),
             new MotionFrame(new Vec3(0, 0, -1), new Vec3(0, 0, 1)),
             new MotionFrame(new Vec3(0, 1, 0), new Vec3(0, 0, 1)),
             new MotionFrame(new Vec3(0, 0, 1), new Vec3(0, 0, 1)),
@@ -109,7 +109,6 @@ public class TemporaryMoveTranslator {
                 double dot = Mth.clamp(up.dot(endFrame.subtract(startFrame).normalize()), -1.0, 1.0);
                 double angleRadians = Math.acos(dot);
                 double angleDegrees = Math.toDegrees(angleRadians)*flip;
-                System.out.println(angleDegrees);//well paint me green and call me a pickle, that measures the angle between the two arcs instead of the ground
                 return new MotionManagers.DefinitionMM(new WeaponMotion(List.of(
                         new MotionFrame(startFrame, new Vec3(0, 0, 1), (int) angleDegrees),
                         new MotionFrame(endFrame, new Vec3(0, 0, 1), (int) angleDegrees)),
@@ -120,7 +119,7 @@ public class TemporaryMoveTranslator {
                 return new MotionManagers.DefinitionMM(new WeaponMotion(CIRCLE, EasingFunction.IN_OUT_CUBIC, time));
             case CLEAVE:
                 return new MotionManagers.DefinitionMM(new WeaponMotion(List.of(
-                        new MotionFrame(generateFrame((float) (area / 2), 5 * flip), new Vec3(0, 0, 1)),
+                        new MotionFrame(generateFrame((float) (area * 2), 5 * flip), new Vec3(0, 0, 1)),
                         new MotionFrame(generateFrame((float) (-area / 2), -5 * flip), new Vec3(0, 0, 1))),
                                                                         EasingFunction.IN_CUBIC, time));
             case IMPACT:

@@ -28,6 +28,7 @@ import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.Pose;
 import net.minecraft.world.entity.ai.attributes.AttributeModifier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.player.Player;
@@ -420,7 +421,7 @@ public class NewCombatCapability implements ICombatCapability {
         offhandCD += ticks;
 
         //dodge/block/parry/iframe resolution
-        dodgeFrame -= ticks;
+        setDodgeTime(dodgeFrame-ticks);
         if (elb.isShiftKeyDown()) guardFrame = 10;
         else {
             if (guardFrame > 0)
@@ -526,7 +527,7 @@ public class NewCombatCapability implements ICombatCapability {
         if (!CombatUtils.suppressChangeFunctions && (oBind > 0 || prevOBind > 0) && (oBind <= 0 || prevOBind <= 0) && e != null)
             TwoHandingHandler.updateTwoHanding(e, e.getMainHandItem(), e.getMainHandItem());
         offhandCD += ticks;
-        dodgeFrame -= ticks;
+        setDodgeTime(dodgeFrame-ticks);
 
         //stagger
         if (isStunned())
@@ -581,6 +582,11 @@ public class NewCombatCapability implements ICombatCapability {
 
     @Override
     public void setDodgeTime(int i) {
+//        if(dodgeFrame>0&&i<=0&&dude.get() instanceof Player p)
+//            p.setForcedPose(Pose.SWIMMING);
+        if(i==0&&dodgeFrame!=0&&dude.get() instanceof Player p)
+            //cancel slide pose change
+            p.setForcedPose(null);
         dodgeFrame = i;
     }
 

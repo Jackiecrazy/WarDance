@@ -1,6 +1,7 @@
 package jackiecrazy.wardance.client;
 
 import com.mojang.blaze3d.platform.InputConstants;
+import jackiecrazy.footwork.capability.resources.CombatData;
 import jackiecrazy.footwork.capability.stylish.IStyleCapability;
 import jackiecrazy.footwork.capability.stylish.StylishData;
 import jackiecrazy.wardance.WarDance;
@@ -14,6 +15,7 @@ import jackiecrazy.wardance.networking.skill.SelectSkillPacket;
 import net.minecraft.client.KeyMapping;
 import net.minecraft.client.Minecraft;
 import net.minecraft.network.chat.Component;
+import net.minecraft.world.entity.Pose;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.client.event.InputEvent;
 import net.minecraftforge.client.settings.IKeyConflictContext;
@@ -42,7 +44,6 @@ public class Keybinds {
     public static final KeyMapping CAST = new KeyMapping("wardance.skill", IN_COMBAT, InputConstants.Type.KEYSYM, GLFW.GLFW_KEY_R, "key.categories.wardance");
     public static final KeyMapping BINDCAST = new KeyMapping("wardance.bindCast", IN_COMBAT, InputConstants.Type.MOUSE, GLFW.GLFW_MOUSE_BUTTON_MIDDLE, "key.categories.wardance");
     public static final KeyMapping DODGE = new KeyMapping("wardance.dodge", IN_COMBAT, InputConstants.Type.KEYSYM, GLFW.GLFW_KEY_LEFT_ALT, "key.categories.wardance");
-    public static final KeyMapping EVOKE = new KeyMapping("wardance.evoke", IN_COMBAT, InputConstants.Type.KEYSYM, GLFW.GLFW_KEY_V, "key.categories.wardance");
     public static final KeyMapping FINISHER = new KeyMapping("wardance.finisher", IN_COMBAT, InputConstants.Type.KEYSYM, GLFW.GLFW_KEY_Q, "key.categories.wardance");
     //center, top right, down clockwise
     public static final KeyMapping[] SKILL = {
@@ -68,7 +69,7 @@ public class Keybinds {
         if (CAST.getKeyConflictContext().isActive() && CAST.consumeClick() && mc.player.isAlive()) {
             mc.setScreen(new SkillCastScreen(CasterData.getCap(mc.player).getEquippedSkills()));
         }
-        if (DODGE.getKeyConflictContext().isActive() && DODGE.consumeClick() && mc.player.isAlive()) {
+        if (DODGE.getKeyConflictContext().isActive() && DODGE.consumeClick() && mc.player.isAlive()&& CombatData.getCap(mc.player).canDodge()) {
             //slide>front>side>back(default)
             //left back right forward
             int side = 1;
@@ -78,8 +79,10 @@ public class Keybinds {
                 side=2;
             if(mc.player.input.up)
                 side=3;
-            if(mc.player.isSprinting())
-                side=99;
+            if(mc.player.isSprinting()) {
+                side = 99;
+                mc.player.setForcedPose(Pose.SLEEPING);
+            }
             CombatChannel.INSTANCE.sendToServer(new DodgePacket(side));
         }
         for (int x = 0; x < SKILL.length; x++) {

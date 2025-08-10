@@ -431,16 +431,15 @@ public class CombatUtils {
                              double scaling) {
 
 
-
         //no go cases
         if (!GeneralConfig.betterSweep) return;//a shame, but alas
         if (!StylishData.getCap(e).isCombatMode()) return;
         if (CombatData.getCap(e).getHandBind(h) > 0) return;//don't even try dude
 
         if (h == InteractionHand.OFF_HAND) {
-         swapHeldItems(e);
-         CombatData.getCap(e).setOffhandAttack(true);
-         }
+            swapHeldItems(e);
+            CombatData.getCap(e).setOffhandAttack(true);
+        }
 
 
         if (!PermissionData.getCap(e).canSweep()) type = WeaponStats.SWEEPTYPE.NONE;
@@ -455,9 +454,9 @@ public class CombatUtils {
         if (sre.isCanceled() || type == WeaponStats.SWEEPTYPE.NONE || radius == 0) {
             //no go, swap items back and stop
             if (h == InteractionHand.OFF_HAND) {
-             swapHeldItems(e);
-             CombatData.getCap(e).setOffhandAttack(false);
-             }
+                swapHeldItems(e);
+                CombatData.getCap(e).setOffhandAttack(false);
+            }
             return;
         }
         if (e.getMainHandItem().getCapability(CombatManipulator.CAP).isPresent())
@@ -543,7 +542,7 @@ public class CombatUtils {
                 offset = 0;
             }
         }
-        ParticleUtils.playSweepParticle(particle, e, starting, 0, radius, sre.getColor(), offset);
+        //ParticleUtils.playSweepParticle(particle, e, starting, 0, radius, sre.getColor(), offset);
         e.level().playSound(null, e.getX(), e.getY(), e.getZ(), SoundEvents.PLAYER_ATTACK_SWEEP, e.getSoundSource(), 1.0F, 1.0F);
         //}
         CombatData.getCap(e).tickProc("oncePerSweep", 0);
@@ -589,7 +588,8 @@ public class CombatUtils {
             //THIS DOESN'T KNOCK BACK ANYONE!
             ((ShieldBlockAccessor) (defender)).callBlockUsingShield(le);
             //so I have to do it here
-            knockBack(le, defender, 0.5f, true, false);
+            float strength = attacker instanceof Player ? 0.2f : 0.5f;
+            knockBack(le, defender, strength, true, false);
             EffectUtils.attemptAddPot(le, EffectUtils.stackPot(le, new MobEffectInstance(FootworkEffects.COUNTERSTRIKE.get(), 100, 0), EffectUtils.StackingMethod.MAXDURATION), true);
         }
 

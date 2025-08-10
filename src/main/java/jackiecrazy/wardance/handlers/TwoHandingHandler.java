@@ -1,9 +1,9 @@
 package jackiecrazy.wardance.handlers;
 
+import jackiecrazy.footwork.capability.resources.CombatData;
 import jackiecrazy.wardance.WarDance;
 import jackiecrazy.wardance.config.TwohandingStats;
 import jackiecrazy.wardance.config.WeaponStats;
-import jackiecrazy.wardance.event.SuppressOffhandEvent;
 import jackiecrazy.wardance.utils.CombatUtils;
 import jackiecrazy.wardance.utils.SkillUtils;
 import net.minecraft.tags.TagKey;
@@ -15,7 +15,6 @@ import net.minecraft.world.entity.ai.attributes.Attribute;
 import net.minecraft.world.entity.ai.attributes.AttributeModifier;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
-import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.entity.living.LivingEquipmentChangeEvent;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 import net.minecraftforge.eventbus.api.Event;
@@ -53,11 +52,9 @@ public class TwoHandingHandler {
 
     public static boolean suppressOffhand(LivingEntity living, ItemStack i) {
         boolean def = WeaponStats.isTwoHanded(i, living, InteractionHand.MAIN_HAND);
-        SuppressOffhandEvent the = new SuppressOffhandEvent(living, i);
-        MinecraftForge.EVENT_BUS.post(the);
-        if (the.getResult() == Event.Result.DEFAULT)
-            return def;
-        return the.getResult() == Event.Result.ALLOW;
+        if(CombatData.getCap(living).alreadyProc("suppressOffhand"))return true;
+        if(CombatData.getCap(living).alreadyProc("releaseOffhand"))return false;
+        return def;
     }
 
     public static Map<Attribute, Tuple<List<AttributeModifier>,List<AttributeModifier>>> getStats(ItemStack i, InteractionHand h) {

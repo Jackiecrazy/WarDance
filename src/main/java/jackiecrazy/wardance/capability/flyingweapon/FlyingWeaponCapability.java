@@ -2,6 +2,7 @@ package jackiecrazy.wardance.capability.flyingweapon;
 
 import jackiecrazy.footwork.capability.stylish.StylishData;
 import jackiecrazy.footwork.entity.flyingweapon.FlyingItemEntity;
+import jackiecrazy.footwork.entity.flyingweapon.FlyingWeaponEffect;
 import jackiecrazy.footwork.move.motionframe.MotionFrame;
 import jackiecrazy.footwork.move.motionframe.MotionManager;
 import jackiecrazy.footwork.move.motionframe.MotionManagers;
@@ -19,16 +20,16 @@ import org.joml.Vector4d;
 
 public class FlyingWeaponCapability implements IFlyingWeapon {
     private static final MotionManager[] idleFrame = {
-            new MotionManagers.FixedMM(new MotionFrame(new Vec3(0, -1, 0), Vec3.ZERO, new Vector4d(0, 1, 0, 0)), 20),
-            new MotionManagers.FixedMM(new MotionFrame(new Vec3(0, -1, 0), Vec3.ZERO, new Vector4d(0, 1, 0, 0)), 20)
+            new MotionManagers.FixedMM(new MotionFrame(new Vec3(0, -1, 0), new Vec3(0,-0.4,0), new Vector4d(0, 1, 0, 0)), 20),
+            new MotionManagers.FixedMM(new MotionFrame(new Vec3(0, -1, 0), new Vec3(0,-0.4,0), new Vector4d(0, 1, 0, 0)), 20)
     };
     private static final MotionManager[] blockingFrame = {
             new MotionManagers.FixedMM(new MotionFrame(new Vec3(0, -1, 1), Vec3.ZERO, new Vector4d(1, 1, 0, 0)), 20),
             new MotionManagers.FixedMM(new MotionFrame(new Vec3(0, -1, 1), Vec3.ZERO, new Vector4d(-1, 1, 0, 0)), 20)
     };
     private static final Vec3[] idleOffset = {
-            new Vec3(1, 0, 0.5),
-            new Vec3(-1, 0, 0.5)
+            new Vec3(0.5, 0, 0.5),
+            new Vec3(-0.5, 0, 0.5)
     };
     private static final Vec3[] blockOffset = {
             new Vec3(0, 0, 1),
@@ -67,6 +68,7 @@ public class FlyingWeaponCapability implements IFlyingWeapon {
         if (!scheduleLock && fwe != null) {
             fwe.queuePath(new WeaponMotionManager(mm, info, range), 0, totalTime - mm.getDuration());
             fwe.setIdlePose(idleFrame[isMain ? 0 : 1]);
+            //fwe.setShouldRender(FlyingWeaponEffect.WEAPON,true);
             //fwe.setUniversalOffset(idleOffset[isMain ? 0 : 1]);
         }
     }
@@ -125,6 +127,7 @@ public class FlyingWeaponCapability implements IFlyingWeapon {
                 }
                 //if weapons are idle
                 if (fwe.isIdle()) {
+
                     //and the flag is set, they are replaced and the flag is reset
                     if (isMain ? mainSwap : offSwap) {
                         updateWeapon(fwe, hand);
@@ -133,9 +136,12 @@ public class FlyingWeaponCapability implements IFlyingWeapon {
                     }
                     //if the player is blocking, change position
                     if (player.isBlocking()) {
+                        fwe.setShouldRender(FlyingWeaponEffect.WEAPON, true);
                         fwe.setIdlePose(blockingFrame[isMain ? 0 : 1]);
                         fwe.setUniversalOffset(blockOffset[isMain ? 0 : 1]);
                     } else {
+                        //hide them, testing
+                        fwe.setShouldRender(FlyingWeaponEffect.WEAPON, false);
                         fwe.setIdlePose(idleFrame[isMain ? 0 : 1]);
                         fwe.setUniversalOffset(idleOffset[isMain ? 0 : 1]);
                     }

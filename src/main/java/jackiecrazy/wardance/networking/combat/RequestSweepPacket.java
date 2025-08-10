@@ -75,7 +75,7 @@ public class RequestSweepPacket {
                     if (!sender.hasEffect(MobEffects.BLINDNESS)) {
                         if (updateClientPacket.finish) {
                             shouldAttack=false;
-                            if (!StylishData.getCap(sender).canTrigger()) {
+                            if (!StylishData.getCap(sender).canTrigger()&&!sender.getAbilities().instabuild) {
                                 sender.displayClientMessage(Component.literal("Not enough Finisher Charge! Currently " + StylishData.getCap(sender).getTriggerBar()), true);
                                 return;
                             }

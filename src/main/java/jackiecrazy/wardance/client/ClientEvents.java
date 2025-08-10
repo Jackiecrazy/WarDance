@@ -7,6 +7,7 @@ import jackiecrazy.footwork.capability.resources.ICombatCapability;
 import jackiecrazy.footwork.capability.stylish.IStyleCapability;
 import jackiecrazy.footwork.capability.stylish.StylishData;
 import jackiecrazy.footwork.client.screen.dashboard.DashboardScreen;
+import jackiecrazy.footwork.utils.GeneralUtils;
 import jackiecrazy.wardance.WarDance;
 import jackiecrazy.wardance.client.screen.scroll.ScrollScreen;
 import jackiecrazy.wardance.client.screen.skill.SkillSelectionScreen;
@@ -243,17 +244,23 @@ public class ClientEvents {
 //    }
 
     @SubscribeEvent
+    public static void handRaisingThird(RenderPlayerEvent.Pre e){
+        //todo render two-handed weapons and hide weapons in third person
+        //e.getRenderer().getModel()
+    }
+
+    @SubscribeEvent
     public static void handRaising(RenderHandEvent e) {
         //todo empty render on disarm
         AbstractClientPlayer p = Minecraft.getInstance().player;
         //render empty hand on flying weapons
-        if(StylishData.getCap(p).isCombatMode()){
+        if(StylishData.getCap(p).isCombatMode()&& CombatUtils.getCooledAttackStrength(p, e.getHand(), 0.4f)<1 &&p.swingingArm==e.getHand()){
             e.setCanceled(true);
             HumanoidArm armToRender = (p.getMainArm() == HumanoidArm.RIGHT) == (e.getHand() == InteractionHand.MAIN_HAND)
                     ? HumanoidArm.RIGHT
                     : HumanoidArm.LEFT;
             e.getPoseStack().pushPose();
-            Minecraft.getInstance().gameRenderer.itemInHandRenderer.renderPlayerArm(e.getPoseStack(), e.getMultiBufferSource(), e.getPackedLight(), e.getEquipProgress(), e.getSwingProgress(), armToRender);
+            //Minecraft.getInstance().gameRenderer.itemInHandRenderer.renderPlayerArm(e.getPoseStack(), e.getMultiBufferSource(), e.getPackedLight(), e.getEquipProgress(), e.getSwingProgress(), armToRender);
             e.getPoseStack().popPose();
             //Minecraft.getInstance().gameRenderer.itemInHandRenderer.renderPlayerArm(e.getPoseStack(), e.getMultiBufferSource(), e.getPackedLight(), e.getEquipProgress(), e.getSwingProgress(), HumanoidArm.RIGHT);
             return;
@@ -294,13 +301,13 @@ public class ClientEvents {
                 //when finding a long press on left button, check if there is an item in use.
                 if (StylishData.getCap(p).isCombatMode()) {
                     Keybinds.FINISHER.consumeClick();
-                    mc.options.keyPickItem.setDown(false);//prevent pick block in combat mode, is this really a good idea?
-                    while(mc.options.keyDrop.consumeClick());//prevent dropping items in combat mode, fixme doesn't work
+                    while(mc.options.keyPickItem.consumeClick());//prevent pick block in combat mode, is this really a good idea?
+                    while(mc.options.keyDrop.consumeClick());//prevent dropping items in combat mode
 
-                    if(Keybinds.EVOKE.isDown()) {
+                    //if(Keybinds.EVOKE.isDown()) {
                         if (mc.options.keyUse.isDown()) {
                             int allow = ALLOWANCE;
-                            if (!mc.player.isUsingItem() && offUseTick % allow == 0) {
+                            if (!mc.player.isUsingItem() && offUseTick % allow == allow-1) {
                                 testingHand = InteractionHand.OFF_HAND;
                                 ((ClientAccessors) mc).callStartUseItem();
                             }
@@ -312,20 +319,21 @@ public class ClientEvents {
                             if (mc.player.isUsingItem() && mc.player.getUsedItemHand() == InteractionHand.MAIN_HAND) {
                                 //hack. Spoof use item key to down for the keybind processing
                                 mc.options.keyUse.setDown(true);
-                            } else if (!mc.player.isUsingItem() && mainUseTick % allow == 0) {//don't call when already using item for obvious reasons
+                            } else if (!mc.player.isUsingItem() && mainUseTick % allow == allow-1) {//don't call when already using item for obvious reasons
                                 testingHand = InteractionHand.MAIN_HAND;
                                 ((ClientAccessors) mc).callStartUseItem();
                                 if (!mc.options.keyUse.isDown())
                                     mc.options.keyUse.setDown(mc.player.isUsingItem());
                             }
-                            mc.options.keyAttack.consumeClick();
+                            if(mainUseTick>0)
+                                mc.options.keyAttack.consumeClick();
                             ++mainUseTick;
                         } else {
                             mainUseTick = 0;
                             if (mc.player.isUsingItem() && mc.player.getUsedItemHand() == InteractionHand.MAIN_HAND)
                                 mc.options.keyUse.setDown(false);
                         }
-                    }
+                    //}
                 }
                 // if not, call use with the respective hand
                 // if yes, check if it is this hand.
@@ -381,6 +389,7 @@ public class ClientEvents {
                 (WeaponStats.isWeapon(p, p.getMainHandItem()) ||
                         p.getMainHandItem().isEmpty() ||
                         WeaponStats.isShield(p, p.getMainHandItem()))
+                &&CombatUtils.getCooledAttackStrength(p, InteractionHand.MAIN_HAND, 1)>0.9
             //&& mainUseTick == 1
         ) {
             Entity aimed = Minecraft.getInstance().hitResult instanceof EntityHitResult h?h.getEntity():null;
@@ -395,6 +404,7 @@ public class ClientEvents {
                 (WeaponStats.isWeapon(p, p.getOffhandItem()) ||
                         p.getOffhandItem().isEmpty() ||
                         WeaponStats.isShield(p, p.getOffhandItem()))
+                &&CombatUtils.getCooledAttackStrength(p, InteractionHand.MAIN_HAND, 1)>0.9
             //&& offUseTick == 1
         ) {
             Entity aimed = Minecraft.getInstance().hitResult instanceof EntityHitResult h?h.getEntity():null;
