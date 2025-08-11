@@ -71,7 +71,7 @@ public class RequestSweepPacket {
                 if(sender==null)return;
                 float cool=CombatUtils.getCooledAttackStrength(sender, h, 1f);
                 if ((GeneralConfig.dual || updateClientPacket.main) && cool >= 0.9f) {
-                    //TODO throw weapon
+                    //TODO move this finisher stuff somewhere else
                     if (!sender.hasEffect(MobEffects.BLINDNESS)) {
                         if (updateClientPacket.finish) {
                             shouldAttack=false;
@@ -85,6 +85,7 @@ public class RequestSweepPacket {
                             WeaponStats.SWEEPSTATE s = CombatUtils.getSweepState(sender);
                             WeaponStats.SweepInfo info = WeaponStats.getSweepInfo(sender.getItemInHand(h), s);
                             TemporaryMoveTranslator.scheduleFinisher(sender, h, info);
+                            CombatData.getCap(sender).setSpirit(CombatData.getCap(sender).getMaxSpirit());
                         } else {
                             CombatUtils.sweep(sender, sender.level().getEntity(updateClientPacket.id), h, GeneralUtils.getAttributeValueSafe(sender, ForgeMod.ENTITY_REACH.get()));
                         }

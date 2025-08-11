@@ -254,7 +254,7 @@ public class ClientEvents {
         //todo empty render on disarm
         AbstractClientPlayer p = Minecraft.getInstance().player;
         //render empty hand on flying weapons
-        if(StylishData.getCap(p).isCombatMode()&& CombatUtils.getCooledAttackStrength(p, e.getHand(), 0.4f)<1 &&p.swingingArm==e.getHand()){
+        if(StylishData.getCap(p).isCombatMode()&& CombatUtils.getCooledAttackStrength(p, e.getHand(), 0.4f)<1){
             e.setCanceled(true);
             HumanoidArm armToRender = (p.getMainArm() == HumanoidArm.RIGHT) == (e.getHand() == InteractionHand.MAIN_HAND)
                     ? HumanoidArm.RIGHT
@@ -316,6 +316,7 @@ public class ClientEvents {
 
                         if (mc.options.keyAttack.isDown()) {
                             int allow = ALLOWANCE;
+                            System.out.println(mc.player.isUsingItem());
                             if (mc.player.isUsingItem() && mc.player.getUsedItemHand() == InteractionHand.MAIN_HAND) {
                                 //hack. Spoof use item key to down for the keybind processing
                                 mc.options.keyUse.setDown(true);
@@ -384,6 +385,12 @@ public class ClientEvents {
 
         final LocalPlayer p = Minecraft.getInstance().player;
         if (!StylishData.getCap(p).isCombatMode()) return;
+        //prevent offhand from being called when the main hand is being long clicked without a valid use function
+        if (e.isUseItem() && e.getHand() == InteractionHand.OFF_HAND && testingHand == InteractionHand.MAIN_HAND) {
+            e.setCanceled(true);
+            e.setSwingHand(false);
+            return;
+        }
         if (e.getHand() == InteractionHand.MAIN_HAND && e.isAttack() && !Minecraft.getInstance().gameMode.isDestroying() &&
                 StylishData.getCap(p).isCombatMode() &&
                 (WeaponStats.isWeapon(p, p.getMainHandItem()) ||
@@ -410,11 +417,6 @@ public class ClientEvents {
             Entity aimed = Minecraft.getInstance().hitResult instanceof EntityHitResult h?h.getEntity():null;
             //sweep
             CombatChannel.INSTANCE.sendToServer(new RequestSweepPacket(false, aimed, Keybinds.FINISHER.isDown()));
-        }
-        //prevent offhand from being called when the main hand is being long clicked without a valid use function
-        if (e.isUseItem() && e.getHand() == InteractionHand.OFF_HAND && testingHand == InteractionHand.MAIN_HAND) {
-            e.setCanceled(true);
-            e.setSwingHand(false);
         }
     }
 

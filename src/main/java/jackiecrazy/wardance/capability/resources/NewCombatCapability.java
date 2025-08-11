@@ -1,6 +1,8 @@
 package jackiecrazy.wardance.capability.resources;
 
+import jackiecrazy.footwork.api.CombatDamageSource;
 import jackiecrazy.footwork.api.FootworkAttributes;
+import jackiecrazy.footwork.api.FootworkDamageArchetype;
 import jackiecrazy.footwork.capability.resources.CombatData;
 import jackiecrazy.footwork.capability.resources.ICombatCapability;
 import jackiecrazy.footwork.capability.stylish.StylishData;
@@ -25,6 +27,7 @@ import net.minecraft.sounds.SoundSource;
 import net.minecraft.util.Mth;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.damagesource.DamageSource;
+import net.minecraft.world.damagesource.DamageSources;
 import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
@@ -403,7 +406,7 @@ public class NewCombatCapability implements ICombatCapability {
         //damage recording resolution
         --recordingTime;
         if (recordingTime < 0 && recordedDamage > 0 && elb.getKillCredit() != null)
-            stopRecording(elb.getLastDamageSource());
+            stopRecording(new CombatDamageSource(elb.getKillCredit()).setDamageTyping(FootworkDamageArchetype.TRUE).setProcAttackEffects(false).setProcNormalEffects(false).setProcSkillEffects(false));
 
         //tick down everything
         //hand bind
@@ -688,9 +691,10 @@ public class NewCombatCapability implements ICombatCapability {
     @Override
     public void stopRecording(DamageSource damageSource) {
         recordingTime = 0;
-        if (dude.get() != null)
+        if (dude.get() != null&&damageSource!=null) {
             dude.get().hurt(damageSource, recordedDamage);
-        recordedDamage = 0;
+            recordedDamage = 0;
+        }
     }
 
     @Override

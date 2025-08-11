@@ -24,6 +24,10 @@ public class TemporaryMoveTranslator {
             new MotionFrame(new Vec3(0, 0, 1), new Vec3(0, 0, 1.5)),
             new MotionFrame(new Vec3(0, 0, 1), new Vec3(0, 0, 1.5))
     );
+    private static final List<MotionFrame> PUNCH = List.of(
+            new MotionFrame(new Vec3(0, 0, 1), new Vec3(0, 0, -0.5),60),
+            new MotionFrame(new Vec3(0, 0, 1), new Vec3(0, 0, 1.5),0)
+    );
     private static final List<MotionFrame> CIRCLE = List.of(
             new MotionFrame(new Vec3(0, 0, 1), new Vec3(0, 0, 1), new Vector4d(0, 0, 1, 90)),
             new MotionFrame(new Vec3(-1, 0, 0), new Vec3(0, 0, 1), new Vector4d(-1, 0, 0, 90)),
@@ -58,40 +62,42 @@ public class TemporaryMoveTranslator {
     public static void scheduleFinisher(LivingEntity e,
                                         InteractionHand hand,
                                         WeaponStats.SweepInfo base) {
+        final WeaponStats.SweepInfo preFinish = base.preFinishCopy();
+        final WeaponStats.SweepInfo finish = base.finisherCopy();
         switch (base.getType()) {
             case CONE -> {
                 //flourish thrice and stab
-                FlyingWeaponData.getCap(e).scheduleAction(hand, temp_getMMFromType(3, WeaponStats.SWEEPTYPE.CONE, base.getBase() + 3 * base.getScaling()), base, 5, 10);
-                FlyingWeaponData.getCap(e).scheduleAction(hand, temp_getMMFromType(3, WeaponStats.SWEEPTYPE.CONE, base.getBase() + 3 * base.getScaling()), base, 5, 10);
-                FlyingWeaponData.getCap(e).scheduleAction(hand, temp_getMMFromType(3, WeaponStats.SWEEPTYPE.CONE, base.getBase() + 3 * base.getScaling()), base, 5, 10);
-                FlyingWeaponData.getCap(e).scheduleAction(hand, temp_getMMFromType(20, WeaponStats.SWEEPTYPE.LINE, base.getBase() + 3 * base.getScaling()), base.finisherCopy(), 7, 20);
+                FlyingWeaponData.getCap(e).scheduleAction(hand, temp_getMMFromType(3, WeaponStats.SWEEPTYPE.CONE, base.getBase() + 3 * base.getScaling()), preFinish, 5, 10);
+                FlyingWeaponData.getCap(e).scheduleAction(hand, temp_getMMFromType(3, WeaponStats.SWEEPTYPE.CONE, base.getBase() + 3 * base.getScaling()), preFinish, 5, 10);
+                FlyingWeaponData.getCap(e).scheduleAction(hand, temp_getMMFromType(3, WeaponStats.SWEEPTYPE.CONE, base.getBase() + 3 * base.getScaling()), preFinish, 5, 10);
+                FlyingWeaponData.getCap(e).scheduleAction(hand, temp_getMMFromType(20, WeaponStats.SWEEPTYPE.LINE, 3), finish, 7, 20);
             }
             case CLEAVE -> {
                 //tcs
-                FlyingWeaponData.getCap(e).scheduleAction(hand, new MotionManagers.DefinitionMM(new WeaponMotion(LOOP, EasingFunction.IN_CUBIC, 20)), base.finisherCopy(), 5, 9);
+                FlyingWeaponData.getCap(e).scheduleAction(hand, new MotionManagers.DefinitionMM(new WeaponMotion(LOOP, EasingFunction.IN_CUBIC, 20)), finish, 5, 9);
             }
             case IMPACT -> {
                 //spin twice and slam down
-                FlyingWeaponData.getCap(e).scheduleAction(hand, temp_getMMFromType(8, WeaponStats.SWEEPTYPE.CIRCLE, base.getBase() + 3 * base.getScaling()), base, 5, 9);
-                FlyingWeaponData.getCap(e).scheduleAction(hand, temp_getMMFromType(8, WeaponStats.SWEEPTYPE.CIRCLE, base.getBase() + 3 * base.getScaling()), base, 5, 9);
-                FlyingWeaponData.getCap(e).scheduleAction(hand, temp_getMMFromType(10, WeaponStats.SWEEPTYPE.CLEAVE, base.getBase() + 3 * base.getScaling()), base.finisherCopy(), 5, 9);
+                FlyingWeaponData.getCap(e).scheduleAction(hand, temp_getMMFromType(8, WeaponStats.SWEEPTYPE.CIRCLE, base.getBase() + 3 * base.getScaling()), preFinish, 5, 9);
+                FlyingWeaponData.getCap(e).scheduleAction(hand, temp_getMMFromType(8, WeaponStats.SWEEPTYPE.CIRCLE, base.getBase() + 3 * base.getScaling()), preFinish, 5, 9);
+                FlyingWeaponData.getCap(e).scheduleAction(hand, temp_getMMFromType(10, WeaponStats.SWEEPTYPE.CLEAVE, 60), finish, 5, 9);
             }
             case CIRCLE -> {
                 //beeeeeg circle
-                FlyingWeaponData.getCap(e).scheduleAction(hand, temp_getMMFromType(8, WeaponStats.SWEEPTYPE.CIRCLE, base.getBase() + 3 * base.getScaling()), base.finisherCopy(), 8, 9);
+                FlyingWeaponData.getCap(e).scheduleAction(hand, temp_getMMFromType(8, WeaponStats.SWEEPTYPE.CIRCLE, base.getBase() + 3 * base.getScaling()), finish, 8, 9);
             }
             case LINE -> {
                 //triple jab followed by big jab
-                FlyingWeaponData.getCap(e).scheduleAction(hand, temp_getMMFromType(3, WeaponStats.SWEEPTYPE.LINE, base.getBase() + 3 * base.getScaling()), base, 5, 3);
-                FlyingWeaponData.getCap(e).scheduleAction(hand, temp_getMMFromType(5, WeaponStats.SWEEPTYPE.LINE, base.getBase() + 3 * base.getScaling()), base, 5, 3);
-                FlyingWeaponData.getCap(e).scheduleAction(hand, temp_getMMFromType(10, WeaponStats.SWEEPTYPE.LINE, base.getBase() + 3 * base.getScaling()), base.finisherCopy(), 8, 5);
+                FlyingWeaponData.getCap(e).scheduleAction(hand, temp_getMMFromType(3, WeaponStats.SWEEPTYPE.LINE, base.getBase() + 3 * base.getScaling()), preFinish, 5, 3);
+                FlyingWeaponData.getCap(e).scheduleAction(hand, temp_getMMFromType(5, WeaponStats.SWEEPTYPE.LINE, base.getBase() + 3 * base.getScaling()), preFinish, 5, 3);
+                FlyingWeaponData.getCap(e).scheduleAction(hand, temp_getMMFromType(10, WeaponStats.SWEEPTYPE.LINE, base.getBase() + 3 * base.getScaling()), finish, 8, 5);
             }
             case NONE -> {
                 //flurry of blows
-                FlyingWeaponData.getCap(e).scheduleAction(hand, temp_getMMFromType(3, WeaponStats.SWEEPTYPE.LINE, base.getBase() + 3 * base.getScaling()), base, 5, 3);
-                FlyingWeaponData.getCap(e).scheduleAction(hand, temp_getMMFromType(3, WeaponStats.SWEEPTYPE.LINE, base.getBase() + 3 * base.getScaling()), base, 5, 3);
-                FlyingWeaponData.getCap(e).scheduleAction(hand, temp_getMMFromType(3, WeaponStats.SWEEPTYPE.LINE, base.getBase() + 3 * base.getScaling()), base, 5, 3);
-                FlyingWeaponData.getCap(e).scheduleAction(hand, temp_getMMFromType(10, WeaponStats.SWEEPTYPE.LINE, base.getBase() + 3 * base.getScaling()), base.finisherCopy(), 8, 5);
+                FlyingWeaponData.getCap(e).scheduleAction(hand, temp_getMMFromType(3, WeaponStats.SWEEPTYPE.LINE, base.getBase() + 3 * base.getScaling()), preFinish, 5, 3);
+                FlyingWeaponData.getCap(e).scheduleAction(hand, temp_getMMFromType(3, WeaponStats.SWEEPTYPE.LINE, base.getBase() + 3 * base.getScaling()), preFinish, 5, 3);
+                FlyingWeaponData.getCap(e).scheduleAction(hand, temp_getMMFromType(3, WeaponStats.SWEEPTYPE.LINE, base.getBase() + 3 * base.getScaling()), preFinish, 5, 3);
+                FlyingWeaponData.getCap(e).scheduleAction(hand, temp_getMMFromType(10, WeaponStats.SWEEPTYPE.LINE, base.getBase() + 3 * base.getScaling()), finish, 8, 5);
             }
         }
     }
@@ -119,13 +125,13 @@ public class TemporaryMoveTranslator {
                 return new MotionManagers.DefinitionMM(new WeaponMotion(CIRCLE, EasingFunction.IN_OUT_CUBIC, time));
             case CLEAVE:
                 return new MotionManagers.DefinitionMM(new WeaponMotion(List.of(
-                        new MotionFrame(generateFrame((float) (area * 2), 5 * flip), new Vec3(0, 0, 1)),
-                        new MotionFrame(generateFrame((float) (-area / 2), -5 * flip), new Vec3(0, 0, 1))),
+                        new MotionFrame(generateFrame((float) Math.min(180,area * 2), 5 * flip), new Vec3(0, 0, 1)),
+                        new MotionFrame(generateFrame((float) Math.max(-90, -area / 2), -5 * flip), new Vec3(0, 0, 1))),
                                                                         EasingFunction.IN_CUBIC, time));
             case IMPACT:
-                new MotionManagers.DefinitionMM(new WeaponMotion(CHOP, EasingFunction.IN_CUBIC, time));
+                return new MotionManagers.DefinitionMM(new WeaponMotion(CHOP, EasingFunction.IN_CUBIC, time));
             default:
-                return CONE1;
+                return new MotionManagers.DefinitionMM(new WeaponMotion(PUNCH, EasingFunction.IN_OUT_CUBIC, time));
         }
     }
 }

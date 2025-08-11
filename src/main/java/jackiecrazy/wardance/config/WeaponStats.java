@@ -562,6 +562,14 @@ public class WeaponStats extends SimpleJsonResourceReloadListener {
         public SweepInfo finisherCopy() {
             SweepInfo ret = clone();
             ret.breach = true;
+            ret.crit=true;
+            ret.damage_scale*=1.5;
+            return ret;
+        }
+
+        public SweepInfo preFinishCopy() {
+            SweepInfo ret = clone();
+            ret.damage_scale/=3f;
             return ret;
         }
     }

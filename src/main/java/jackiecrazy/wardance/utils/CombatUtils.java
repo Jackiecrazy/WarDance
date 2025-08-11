@@ -451,6 +451,13 @@ public class CombatUtils {
         scaling = sre.getScaling();
         radius = sre.getFinalizedWidth();
         type = sre.getType();
+
+        //purely visual attack
+        int animTime=type== WeaponStats.SWEEPTYPE.CIRCLE?10:3;
+        int time = CombatUtils.getCooldownPeriod(e, h);
+        FlyingWeaponData.getCap(e).scheduleAction(h, TemporaryMoveTranslator.temp_getMMFromType(animTime, type, radius), null, reach, time);
+
+
         if (sre.isCanceled() || type == WeaponStats.SWEEPTYPE.NONE || radius == 0) {
             //no go, swap items back and stop
             if (h == InteractionHand.OFF_HAND) {
@@ -461,10 +468,7 @@ public class CombatUtils {
         }
         if (e.getMainHandItem().getCapability(CombatManipulator.CAP).isPresent())
             radius = e.getMainHandItem().getCapability(CombatManipulator.CAP).resolve().get().sweepArea(e, e.getMainHandItem());
-        int time = CombatUtils.getCooldownPeriod(e, h);
 
-        //purely visual attack
-        FlyingWeaponData.getCap(e).scheduleAction(h, TemporaryMoveTranslator.temp_getMMFromType(3, type, radius), null, reach, time);
 
         double charge = Math.max(CombatUtils.getCooledAttackStrength(e, InteractionHand.MAIN_HAND, 0.5f), CombatData.getCap(e).getProc("swing"));
         boolean hit = false;

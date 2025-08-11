@@ -1,5 +1,7 @@
 package jackiecrazy.wardance.entity;
 
+import jackiecrazy.footwork.api.CombatDamageSource;
+import jackiecrazy.footwork.api.FootworkDamageArchetype;
 import jackiecrazy.footwork.capability.resources.CombatData;
 import jackiecrazy.footwork.client.particle.FootworkParticles;
 import jackiecrazy.footwork.client.particle.ScalingParticleType;
@@ -35,7 +37,6 @@ import java.util.List;
 
 public class FlyingWeaponEntity extends FlyingItemEntity {
     private final List<Entity> alreadyHit = new ArrayList<>();
-    private int internalIdleTimer = 0;
     private WeaponStats.SweepInfo cacheInfo;
 
     public FlyingWeaponEntity(EntityType<? extends FlyingItemEntity> type,
@@ -54,14 +55,14 @@ public class FlyingWeaponEntity extends FlyingItemEntity {
     @Override
     public void tick() {
         super.tick();
-        if (!level().isClientSide ) {
-            if(isIdle()) {
-                if(getOwner()==null)
+        if (!level().isClientSide) {
+            if (isIdle()) {
+                if (getOwner() == null)
                     remove(RemovalReason.DISCARDED);
-                boolean valid=false;
-                for(InteractionHand h:InteractionHand.values())
-                    if(FlyingWeaponData.getCap(getOwner()).getWeapon(h)==this)
-                        valid=true;
+                boolean valid = false;
+                for (InteractionHand h : InteractionHand.values())
+                    if (FlyingWeaponData.getCap(getOwner()).getWeapon(h) == this)
+                        valid = true;
                 if (!valid)//reasonably sure the player doesn't need it anymore
                     remove(RemovalReason.DISCARDED);
             }
@@ -105,8 +106,14 @@ public class FlyingWeaponEntity extends FlyingItemEntity {
             for (Entity target : targets) {
                 e.attackStrengthTicker = 99999;
                 //temporary pin code
-                if (target instanceof LivingEntity elb)
-                    CombatData.getCap(elb).pin(20);
+                if (target instanceof LivingEntity elb) {
+                    if (getInfo().canBreach()) {
+                        CombatData.getCap(elb).pin(0);
+                    } else {
+                        CombatData.getCap(elb).pin(20);
+                        CombatData.getCap(elb).startRecordingDamage(20);
+                    }
+                }
                 if (!alreadyHit.isEmpty())
                     CombatData.getCap(e).tickProc("oncePerSweep");
                 CombatData.getCap(e).tickProc("noFinisherCharge");
@@ -114,6 +121,9 @@ public class FlyingWeaponEntity extends FlyingItemEntity {
                 target.invulnerableTime = 0;
                 GeneralUtils.attack(e, target);
                 alreadyHit.add(target);
+                if (target instanceof LivingEntity elb&&getInfo().canBreach()) {
+                        CombatData.getCap(elb).stopRecording(new CombatDamageSource(e).setDamageTyping(FootworkDamageArchetype.TRUE));
+                }
             }
         } catch (Exception ex) {
             ex.printStackTrace();
@@ -133,17 +143,17 @@ public class FlyingWeaponEntity extends FlyingItemEntity {
     protected void updateClientData() {
         if (transitioning())
             trailHistory.clear();
-        renderLag=0;
+        renderLag = 0;
         super.updateClientData();
     }
 
     @Override
     protected void returnToIdle() {
         super.returnToIdle();
-        setShouldRender(FlyingWeaponEffect.TRAIL,false);
-        setShouldRender(FlyingWeaponEffect.AFTERIMAGE,false);
-        setShouldRender(FlyingWeaponEffect.BIG_SHADOW,false);
-        setShouldRender(FlyingWeaponEffect.WEAPON,false);
+        setShouldRender(FlyingWeaponEffect.TRAIL, false);
+        setShouldRender(FlyingWeaponEffect.AFTERIMAGE, false);
+        setShouldRender(FlyingWeaponEffect.BIG_SHADOW, false);
+        setShouldRender(FlyingWeaponEffect.WEAPON, false);
     }
 
     @Override
@@ -152,7 +162,6 @@ public class FlyingWeaponEntity extends FlyingItemEntity {
         boolean ret = super.updateMotionTargets(forceskip);
         if (ret) {
             alreadyHit.clear();
-            internalIdleTimer = 0;
         }
         MotionManager motion = moveQueue.peek();
         if (motion instanceof WeaponMotionManager wmm) {
