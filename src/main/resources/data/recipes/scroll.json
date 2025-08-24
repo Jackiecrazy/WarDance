@@ -1,0 +1,13 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "conditions": [],
+  "ingredients": [
+    {
+      "item": "wardance:scroll"
+    }
+  ],
+  "result": {
+    "item": "minecraft:paper",
+    "count": 1
+  }
+}

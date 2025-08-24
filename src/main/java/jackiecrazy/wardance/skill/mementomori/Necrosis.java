@@ -1,6 +1,7 @@
 package jackiecrazy.wardance.skill.mementomori;
 
 import jackiecrazy.footwork.capability.resources.CombatData;
+import jackiecrazy.footwork.capability.stylish.StylishData;
 import jackiecrazy.wardance.skill.Skill;
 import jackiecrazy.wardance.skill.SkillArchetype;
 import jackiecrazy.wardance.skill.SkillArchetypes;
@@ -42,7 +43,7 @@ public class Necrosis extends Skill {
 
     @Override
     public boolean equippedTick(LivingEntity caster, SkillData stats) {
-        final double amount = CombatData.getCap(caster).getDamageRecordTime() * SkillUtils.getSkillEffectiveness(caster) / 7d;
+        final double amount = StylishData.getCap(caster).getCombo() * SkillUtils.getSkillEffectiveness(caster) / 7d;
         SkillUtils.modifyAttribute(caster, Attributes.MAX_HEALTH, uuid, amount, AttributeModifier.Operation.MULTIPLY_TOTAL);
         final double shouldBe = Math.ceil(caster.getMaxHealth() / (1 + amount));
         if (caster.getHealth() > shouldBe) caster.setHealth((float) shouldBe);
@@ -64,7 +65,7 @@ public class Necrosis extends Skill {
     @Override
     public void onProc(LivingEntity caster, Event procPoint, STATE state, SkillData stats, @Nullable LivingEntity target) {
         if (procPoint instanceof LivingHealEvent lhe && procPoint.getPhase()== EventPriority.HIGHEST) {
-            final double amount = CombatData.getCap(caster).getDamageRecordTime() * SkillUtils.getSkillEffectiveness(caster) / 7d;
+            final double amount = StylishData.getCap(caster).getCombo() * SkillUtils.getSkillEffectiveness(caster) / 7d;
             final double shouldBe = Math.ceil(caster.getMaxHealth() / (1 + amount));
             lhe.setAmount((float) Math.min(lhe.getAmount(), shouldBe - caster.getHealth()));
             if(lhe.getAmount()<=0)lhe.setCanceled(true);

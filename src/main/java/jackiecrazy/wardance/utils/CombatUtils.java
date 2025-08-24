@@ -47,10 +47,7 @@ import net.minecraftforge.registries.ForgeRegistries;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Optional;
-import java.util.UUID;
+import java.util.*;
 
 public class CombatUtils {
 
@@ -279,6 +276,7 @@ public class CombatUtils {
                                  float strength,
                                  boolean considerRelativeAngle,
                                  boolean bypassAllChecks) {
+        if (to == null || from == null) return;
         Vec3 distVec = to.position().add(0, to.getBbHeight() / 2, 0).vectorTo(from.position().add(0, from.getBbHeight() / 2, 0)).multiply(1, 0.5, 1).normalize();
         if (to instanceof LivingEntity && !bypassAllChecks) {
             if (considerRelativeAngle)
@@ -453,7 +451,7 @@ public class CombatUtils {
         type = sre.getType();
 
         //purely visual attack
-        int animTime=type== WeaponStats.SWEEPTYPE.CIRCLE?10:3;
+        int animTime = type == WeaponStats.SWEEPTYPE.CIRCLE ? 10 : 3;
         int time = CombatUtils.getCooldownPeriod(e, h);
         FlyingWeaponData.getCap(e).scheduleAction(h, TemporaryMoveTranslator.temp_getMMFromType(animTime, type, radius), null, reach, time);
 
@@ -590,11 +588,17 @@ public class CombatUtils {
 
         if (attacker instanceof LivingEntity le) {
             //THIS DOESN'T KNOCK BACK ANYONE!
-            ((ShieldBlockAccessor) (defender)).callBlockUsingShield(le);
             //so I have to do it here
-            float strength = attacker instanceof Player ? 0.2f : 0.5f;
-            knockBack(le, defender, strength, true, false);
-            EffectUtils.attemptAddPot(le, EffectUtils.stackPot(le, new MobEffectInstance(FootworkEffects.COUNTERSTRIKE.get(), 100, 0), EffectUtils.StackingMethod.MAXDURATION), true);
+            float strength = attacker instanceof Player ? 0.3f : 0.5f;
+            //prioritize mobs for knockback
+            if (le instanceof Player) {
+                knockBack(defender, le, strength, true, false);
+                EffectUtils.attemptAddPot(defender, EffectUtils.stackPot(defender, new MobEffectInstance(FootworkEffects.COUNTERSTRIKE.get(), 100, 0), EffectUtils.StackingMethod.MAXDURATION), true);
+            } else {
+                ((ShieldBlockAccessor) (defender)).callBlockUsingShield(le);
+                knockBack(le, defender, strength, true, false);
+                EffectUtils.attemptAddPot(le, EffectUtils.stackPot(le, new MobEffectInstance(FootworkEffects.COUNTERSTRIKE.get(), 100, 0), EffectUtils.StackingMethod.MAXDURATION), true);
+            }
         }
 
         //hacky. If you can no longer block it must mean your block has been breached, so knock back. FIXME

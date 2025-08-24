@@ -215,7 +215,7 @@ public class MovementUtils {
         if (e.isCanceled()) return false;
         Vec3 v = elb.getLookAngle().subtract(0, elb.getLookAngle().y, 0).normalize().scale(e.getForce());
         itsc.consumePosture(0);
-        itsc.addSpirit(1);
+        itsc.addSpirit(1);//todo remove
         itsc.setDodgeTime(CombatConfig.rollTime);
         if (elb instanceof Player)
             ((Player) elb).setForcedPose(Pose.SLEEPING);
@@ -280,7 +280,7 @@ public class MovementUtils {
             MinecraftForge.EVENT_BUS.post(e);
             if (e.isCanceled()) return false;
             itsc.setDodgeTime(CombatConfig.rollTime);
-            itsc.addSpirit(1);
+            itsc.addSpirit(1);//todo remove
             if (d == DodgeEvent.Direction.FORWARD) e.setForce((float) (e.getForce() * 1.5f));
             x *= e.getForce();
             z *= e.getForce();

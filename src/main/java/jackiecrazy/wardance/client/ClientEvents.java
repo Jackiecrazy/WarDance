@@ -316,7 +316,7 @@ public class ClientEvents {
 
                         if (mc.options.keyAttack.isDown()) {
                             int allow = ALLOWANCE;
-                            System.out.println(mc.player.isUsingItem());
+                            //System.out.println(mc.player.isUsingItem());
                             if (mc.player.isUsingItem() && mc.player.getUsedItemHand() == InteractionHand.MAIN_HAND) {
                                 //hack. Spoof use item key to down for the keybind processing
                                 mc.options.keyUse.setDown(true);
@@ -330,9 +330,10 @@ public class ClientEvents {
                                 mc.options.keyAttack.consumeClick();
                             ++mainUseTick;
                         } else {
-                            mainUseTick = 0;
-                            if (mc.player.isUsingItem() && mc.player.getUsedItemHand() == InteractionHand.MAIN_HAND)
+                            //cancel usage of main hand weapon when attack is released
+                            if (mainUseTick>0&&WeaponStats.isCombatItem(mc.player, mc.player.getMainHandItem())&&mc.player.isUsingItem() && mc.player.getUsedItemHand() == InteractionHand.MAIN_HAND)
                                 mc.options.keyUse.setDown(false);
+                            mainUseTick = 0;
                         }
                     //}
                 }
@@ -361,23 +362,6 @@ public class ClientEvents {
     }
 
     @SubscribeEvent
-    public static void noFovChange(ComputeFovModifierEvent e) {
-        if (CombatData.getCap(e.getPlayer()).isKnockdown())
-            e.setNewFovModifier(0.7f);
-    }
-
-//    @SubscribeEvent(priority = EventPriority.HIGHEST)
-//    public static void handleInputEvent(InputEvent event) {
-//        Minecraft mc = Minecraft.getInstance();
-//        if (mc.player == null) return;
-//        if (Keybinds.PARRY.getKeyConflictContext().isActive() && !lastTickParry && CombatConfig.parryTime != 0 && Keybinds.PARRY.consumeClick() && mc.player.isAlive()) {
-//            CombatChannel.INSTANCE.sendToServer(new ManualParryPacket());
-//            lastTickParry = true;
-//
-//        }
-//    }
-
-    @SubscribeEvent
     public static void universalSweepSwing(InputEvent.InteractionKeyMappingTriggered e) {
         /// I do not cancel this because it would cancel block breaking too
         //interestingly enough, minecraft calls this event once per tick for left click but only once at the start for right click.
@@ -397,7 +381,7 @@ public class ClientEvents {
                         p.getMainHandItem().isEmpty() ||
                         WeaponStats.isShield(p, p.getMainHandItem()))
                 &&CombatUtils.getCooledAttackStrength(p, InteractionHand.MAIN_HAND, 1)>0.9
-            //&& mainUseTick == 1
+            && mainUseTick == 1//testing: disable hold attack spam
         ) {
             Entity aimed = Minecraft.getInstance().hitResult instanceof EntityHitResult h?h.getEntity():null;
             //sweep
@@ -411,8 +395,8 @@ public class ClientEvents {
                 (WeaponStats.isWeapon(p, p.getOffhandItem()) ||
                         p.getOffhandItem().isEmpty() ||
                         WeaponStats.isShield(p, p.getOffhandItem()))
-                &&CombatUtils.getCooledAttackStrength(p, InteractionHand.MAIN_HAND, 1)>0.9
-            //&& offUseTick == 1
+                &&CombatUtils.getCooledAttackStrength(p, InteractionHand.OFF_HAND, 1)>0.9
+            && offUseTick == 1//testing: disable hold attack spam
         ) {
             Entity aimed = Minecraft.getInstance().hitResult instanceof EntityHitResult h?h.getEntity():null;
             //sweep
@@ -422,6 +406,7 @@ public class ClientEvents {
 
     @SubscribeEvent
     public static void sweepSwingOff(PlayerInteractEvent.RightClickEmpty e) {
+        //if(!e.getEntity().level().isClientSide())return;
         if (TwoHandingHandler.suppressOffhand(e.getEntity(), e.getEntity().getMainHandItem()) && e.getHand() == InteractionHand.OFF_HAND)
             return;
         if (!rightClick && GeneralConfig.dual && StylishData.getCap(e.getEntity()).isCombatMode()) {
@@ -434,13 +419,17 @@ public class ClientEvents {
 
     @SubscribeEvent
     public static void sweepSwingOffItem(PlayerInteractEvent.RightClickItem e) {
+        /// enabling this causes the offhand to be unusable
+        //if(!e.getEntity().level().isClientSide())return;
         if (TwoHandingHandler.suppressOffhand(e.getEntity(), e.getEntity().getMainHandItem()) && e.getHand() == InteractionHand.OFF_HAND) {
             e.setCanceled(true);
             e.setCancellationResult(InteractionResult.FAIL);
             return;
         }
         if (GeneralConfig.dual && StylishData.getCap(e.getEntity()).isCombatMode()) {
-            if (e.getHand() != testingHand) {
+            /// enabling this causes the main hand to be right clickable, then immediately canceled
+            /// however enabling this is necessary for the main hand to be right clickable for usable items
+            if (e.getHand() != testingHand&&WeaponStats.isCombatItem(e.getEntity(), e.getItemStack())) {// && testingHand == InteractionHand.MAIN_HAND
                 //cancel right click main hand
                 e.setCanceled(true);
                 e.setCancellationResult(InteractionResult.PASS);
@@ -450,6 +439,7 @@ public class ClientEvents {
 
     @SubscribeEvent
     public static void punchy(PlayerInteractEvent.EntityInteract e) {
+        //if(!e.getEntity().level().isClientSide())return;
         if (TwoHandingHandler.suppressOffhand(e.getEntity(), e.getEntity().getMainHandItem()) && e.getHand() == InteractionHand.OFF_HAND) {
             e.setCanceled(true);
             e.setCancellationResult(InteractionResult.FAIL);
@@ -465,18 +455,36 @@ public class ClientEvents {
 
     @SubscribeEvent
     public static void sweepSwingOffItemBlock(PlayerInteractEvent.RightClickBlock e) {
+        //if(!e.getEntity().level().isClientSide())return;
         if (TwoHandingHandler.suppressOffhand(e.getEntity(), e.getEntity().getMainHandItem()) && e.getHand() == InteractionHand.OFF_HAND) {
             e.setCanceled(true);
             e.setCancellationResult(InteractionResult.FAIL);
             return;
         }
         if (GeneralConfig.dual && StylishData.getCap(e.getEntity()).isCombatMode()) {
-            if (e.getHand() != testingHand) {
+            if (e.getHand() != testingHand && testingHand == InteractionHand.MAIN_HAND) {//extra check for doors and stuff
                 e.setCanceled(true);
                 e.setCancellationResult(InteractionResult.PASS);
             }
         }
     }
+
+    @SubscribeEvent
+    public static void noFovChange(ComputeFovModifierEvent e) {
+        if (CombatData.getCap(e.getPlayer()).isKnockdown())
+            e.setNewFovModifier(0.7f);
+    }
+
+//    @SubscribeEvent(priority = EventPriority.HIGHEST)
+//    public static void handleInputEvent(InputEvent event) {
+//        Minecraft mc = Minecraft.getInstance();
+//        if (mc.player == null) return;
+//        if (Keybinds.PARRY.getKeyConflictContext().isActive() && !lastTickParry && CombatConfig.parryTime != 0 && Keybinds.PARRY.consumeClick() && mc.player.isAlive()) {
+//            CombatChannel.INSTANCE.sendToServer(new ManualParryPacket());
+//            lastTickParry = true;
+//
+//        }
+//    }
 
 //    private static void renderDie(LivingEntity passedEntity, float partialTicks, PoseStack poseStack) {
 //        double x = passedEntity.xo + (passedEntity.getX() - passedEntity.xo) * partialTicks;

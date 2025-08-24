@@ -20,12 +20,12 @@ import org.joml.Vector4d;
 
 public class FlyingWeaponCapability implements IFlyingWeapon {
     private static final MotionManager[] idleFrame = {
-            new MotionManagers.FixedMM(new MotionFrame(new Vec3(0, -1, 0), new Vec3(0,-0.4,0), new Vector4d(0, 1, 0, 0)), 20),
-            new MotionManagers.FixedMM(new MotionFrame(new Vec3(0, -1, 0), new Vec3(0,-0.4,0), new Vector4d(0, 1, 0, 0)), 20)
+            new MotionManagers.FixedMM(new MotionFrame(new Vec3(0, -1, 0), new Vec3(0,-0.4,0), new Vector4d(0, 1, 0, 0)), 5),
+            new MotionManagers.FixedMM(new MotionFrame(new Vec3(0, -1, 0), new Vec3(0,-0.4,0), new Vector4d(0, 1, 0, 0)), 5)
     };
     private static final MotionManager[] blockingFrame = {
-            new MotionManagers.FixedMM(new MotionFrame(new Vec3(0, -1, 1), Vec3.ZERO, new Vector4d(1, 1, 0, 0)), 20),
-            new MotionManagers.FixedMM(new MotionFrame(new Vec3(0, -1, 1), Vec3.ZERO, new Vector4d(-1, 1, 0, 0)), 20)
+            new MotionManagers.FixedMM(new MotionFrame(new Vec3(0, -1, 1), Vec3.ZERO, new Vector4d(1, 1, 0, 0)), 5),
+            new MotionManagers.FixedMM(new MotionFrame(new Vec3(0, -1, 1), Vec3.ZERO, new Vector4d(-1, 1, 0, 0)), 5)
     };
     private static final Vec3[] idleOffset = {
             new Vec3(0.5, 0, 0.5),

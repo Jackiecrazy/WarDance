@@ -28,7 +28,7 @@ public class ResourceConfig {
     public ResourceConfig(ForgeConfigSpec.Builder b) {
         //master, resources, compat, stealth, items, misc
         //_postureCap = b.translation("wardance.config.qiG").comment("numeric hard cap on the amount of posture a mob can regenerate per second, for fairness.").defineInRange("posture regeneration cap", 100, 1, Integer.MAX_VALUE);
-        _postureRegen = b.translation("wardance.config.spiritC").comment("Default percentage of max posture a mob can heal per second. This is capped.").defineInRange("spirit cooldown", 0.4, 1, Double.MAX_VALUE);
+        _postureRegen = b.translation("wardance.config.spiritC").comment("Default percentage of max posture a mob can heal per second. This is capped.").defineInRange("posture regen percentage", 0.4, 0, Double.MAX_VALUE);
         _postureCD = b.translation("wardance.config.postureC").comment("Default number of ticks before a mob begins to regenerate posture again. Does nothing for players.").defineInRange("posture cooldown", 50, 0, Integer.MAX_VALUE);
     }
 

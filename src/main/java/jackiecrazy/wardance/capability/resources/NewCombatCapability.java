@@ -147,6 +147,9 @@ public class NewCombatCapability implements ICombatCapability {
 
     @Override
     public float getMaxPosture() {
+        if (dude.get()!=null) {
+            initializePostureIfNew(dude.get());
+        }
         return mpos;
     }
 
@@ -157,7 +160,7 @@ public class NewCombatCapability implements ICombatCapability {
 
     @Override
     public void setPosture(float amount) {
-        posture = Mth.clamp(amount, 0, getMaxPosture());
+        posture = Mth.clamp(amount, 0, mpos);
         dirty = true;
     }
 
@@ -272,7 +275,7 @@ public class NewCombatCapability implements ICombatCapability {
                 weakness *= GeneralConfig.hunger;
         double cooldown = ResourceConfig.postureCD * weakness;
         posture -= amount;
-        addRally(amount * 0.5f);
+        addRally(amount * rallyConversion);
         if (player)
             mobPosCD = 1200;
         else mobPosCD = maxMobPosCD;
@@ -373,23 +376,7 @@ public class NewCombatCapability implements ICombatCapability {
         if (ticks < 1) return;//sometimes time runs backwards
 
         //initialize posture and fracture
-        final boolean uninitializedPosture = elb.getAttribute(FootworkAttributes.MAX_POSTURE.get()).getBaseValue() == 0d;
-        if (uninitializedPosture) {
-            final float mPos = getMPos(elb);
-            elb.getAttribute(FootworkAttributes.MAX_POSTURE.get()).setBaseValue(mPos);
-            elb.getAttribute(FootworkAttributes.MAX_RALLY.get()).setBaseValue(mPos * 0.2);
-            if (!player) {//ew
-                MobSpecs.MobInfo specs = MobSpecs.getMobInfo(elb);
-                if (specs == null) specs = MobSpecs.DEFAULT;
-                mobPosRegenSpd = specs.getPostureRegenerationSpeed();
-                maxMobPosCD = specs.getPostureRegenerationCooldown();
-                double permScale = specs.getMaxPostureScaling();
-                if (permScale != 1)
-                    elb.getAttribute(FootworkAttributes.MAX_POSTURE.get()).addPermanentModifier(new AttributeModifier(CombatUtils.main, "json bonus", permScale, AttributeModifier.Operation.MULTIPLY_TOTAL));
-            }
-            mpos = (float) elb.getAttributeValue(FootworkAttributes.MAX_POSTURE.get());
-            setPosture(getMaxPosture());
-        }
+        initializePostureIfNew(elb);
 
         //update max values
         mpos = (float) elb.getAttributeValue(FootworkAttributes.MAX_POSTURE.get());
@@ -424,11 +411,12 @@ public class NewCombatCapability implements ICombatCapability {
         offhandCD += ticks;
 
         //dodge/block/parry/iframe resolution
-        setDodgeTime(dodgeFrame-ticks);
-        if (elb.isShiftKeyDown()) guardFrame = 10;
-        else {
-            if (guardFrame > 0)
+        setDodgeTime(dodgeFrame - ticks);
+        if (elb.isShiftKeyDown()) {
+            if (guardFrame < 0 && canParry())
                 setParryTime(CombatConfig.parryTime);
+            guardFrame = 10;
+        } else {
             guardFrame = -10;
         }
         parryFrame -= ticks;
@@ -496,6 +484,28 @@ public class NewCombatCapability implements ICombatCapability {
         sync();
     }
 
+    private void initializePostureIfNew(LivingEntity elb) {
+        final boolean uninitializedPosture = elb.getAttribute(FootworkAttributes.MAX_POSTURE.get()).getBaseValue() == 0d;
+        if (uninitializedPosture) {
+            final float mPos = getMPos(elb);
+            elb.getAttribute(FootworkAttributes.MAX_POSTURE.get()).setBaseValue(mPos);
+            elb.getAttribute(FootworkAttributes.MAX_RALLY.get()).setBaseValue(mPos * 0.2);
+            if (!player) {//ew
+                MobSpecs.MobInfo specs = MobSpecs.getMobInfo(elb);
+                if (specs == null) specs = MobSpecs.DEFAULT;
+                mobPosRegenSpd = specs.getPostureRegenerationSpeed();
+                maxMobPosCD = specs.getPostureRegenerationCooldown();
+                double permScale = specs.getMaxPostureScaling();
+                if (permScale != 1)
+                    elb.getAttribute(FootworkAttributes.MAX_POSTURE.get()).addPermanentModifier(new AttributeModifier(CombatUtils.main, "json bonus", permScale, AttributeModifier.Operation.MULTIPLY_TOTAL));
+            }
+        }
+        if (mpos == 0) {
+            mpos = (float) elb.getAttributeValue(FootworkAttributes.MAX_POSTURE.get());
+            posture=mpos;
+        }
+    }
+
     private void sync() {
         //if (dirty) {
         LivingEntity elb = dude.get();
@@ -530,7 +540,7 @@ public class NewCombatCapability implements ICombatCapability {
         if (!CombatUtils.suppressChangeFunctions && (oBind > 0 || prevOBind > 0) && (oBind <= 0 || prevOBind <= 0) && e != null)
             TwoHandingHandler.updateTwoHanding(e, e.getMainHandItem(), e.getMainHandItem());
         offhandCD += ticks;
-        setDodgeTime(dodgeFrame-ticks);
+        setDodgeTime(dodgeFrame - ticks);
 
         //stagger
         if (isStunned())
@@ -587,7 +597,7 @@ public class NewCombatCapability implements ICombatCapability {
     public void setDodgeTime(int i) {
 //        if(dodgeFrame>0&&i<=0&&dude.get() instanceof Player p)
 //            p.setForcedPose(Pose.SWIMMING);
-        if(i==0&&dodgeFrame!=0&&dude.get() instanceof Player p)
+        if (i == 0 && dodgeFrame != 0 && dude.get() instanceof Player p)
             //cancel slide pose change
             p.setForcedPose(null);
         dodgeFrame = i;
@@ -691,7 +701,7 @@ public class NewCombatCapability implements ICombatCapability {
     @Override
     public void stopRecording(DamageSource damageSource) {
         recordingTime = 0;
-        if (dude.get() != null&&damageSource!=null) {
+        if (dude.get() != null && damageSource != null) {
             dude.get().hurt(damageSource, recordedDamage);
             recordedDamage = 0;
         }

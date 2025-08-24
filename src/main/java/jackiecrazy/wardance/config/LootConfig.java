@@ -41,8 +41,8 @@ public class LootConfig {
     private final ForgeConfigSpec.ConfigValue<List<? extends String>> _style;
 
     public LootConfig(ForgeConfigSpec.Builder b) {
-        _scroll = b.translation("wardance.config.lootTables").comment("Project: War Dance will inject skill scroll drops into these locations. \nFormat is loot table | chance").defineList("projectile parry rules", Arrays.asList(DEFAULT), String.class::isInstance);
-        _style = b.translation("wardance.config.lootTables").comment("Project: War Dance will inject style scroll drops into these locations. \nFormat is loot table | chance").defineList("projectile parry rules", Arrays.asList(DEFAULT), String.class::isInstance);
+        _scroll = b.translation("wardance.config.lootTables").comment("Project: War Dance will inject skill scroll drops into these locations. \nFormat is loot table | chance").defineList("skill loot tables", Arrays.asList(DEFAULT), String.class::isInstance);
+        _style = b.translation("wardance.config.lootTables").comment("Project: War Dance will inject style scroll drops into these locations. \nFormat is loot table | chance").defineList("style loot tables", Arrays.asList(DEFAULT), String.class::isInstance);
     }
 
     private static void bake() {

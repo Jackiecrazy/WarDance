@@ -3,22 +3,16 @@ package jackiecrazy.wardance.entity;
 import jackiecrazy.footwork.api.CombatDamageSource;
 import jackiecrazy.footwork.api.FootworkDamageArchetype;
 import jackiecrazy.footwork.capability.resources.CombatData;
-import jackiecrazy.footwork.client.particle.FootworkParticles;
-import jackiecrazy.footwork.client.particle.ScalingParticleType;
 import jackiecrazy.footwork.entity.flyingweapon.FlyingItemEntity;
 import jackiecrazy.footwork.entity.flyingweapon.FlyingWeaponEffect;
 import jackiecrazy.footwork.move.motionframe.MotionManager;
-import jackiecrazy.footwork.move.motionframe.MotionManagers;
 import jackiecrazy.footwork.utils.GeneralUtils;
-import jackiecrazy.footwork.utils.ParticleUtils;
 import jackiecrazy.footwork.utils.TargetingUtils;
-import jackiecrazy.wardance.capability.flyingweapon.FlyingWeaponCapability;
 import jackiecrazy.wardance.capability.flyingweapon.FlyingWeaponData;
 import jackiecrazy.wardance.config.WeaponStats;
 import jackiecrazy.wardance.utils.CombatUtils;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
-import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
@@ -29,15 +23,13 @@ import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.common.ForgeMod;
 
 import javax.annotation.Nullable;
-import java.awt.*;
-import java.util.ArrayDeque;
 import java.util.ArrayList;
-import java.util.Deque;
 import java.util.List;
 
 public class FlyingWeaponEntity extends FlyingItemEntity {
     private final List<Entity> alreadyHit = new ArrayList<>();
     private WeaponStats.SweepInfo cacheInfo;
+    private WeaponStats.SWEEPSTATE state;
 
     public FlyingWeaponEntity(EntityType<? extends FlyingItemEntity> type,
                               Level level) {
@@ -67,6 +59,8 @@ public class FlyingWeaponEntity extends FlyingItemEntity {
                     remove(RemovalReason.DISCARDED);
             }
         }
+        //clear trail history on tick 1
+
 //        if (level() instanceof ServerLevel s&&!isIdle()&&tickCount%3==0) {
 //            Vec3 vec= getPosition(0);
 //            s.sendParticles(
@@ -102,7 +96,7 @@ public class FlyingWeaponEntity extends FlyingItemEntity {
         ItemStack main = e.getMainHandItem();
         try {
             CombatUtils.quickSwap(e, getHeldItem());
-            WeaponStats.tmp_info = getInfo();
+            WeaponStats.info_override = getInfo();
             for (Entity target : targets) {
                 e.attackStrengthTicker = 99999;
                 //temporary pin code
@@ -117,12 +111,11 @@ public class FlyingWeaponEntity extends FlyingItemEntity {
                 if (!alreadyHit.isEmpty())
                     CombatData.getCap(e).tickProc("oncePerSweep");
                 CombatData.getCap(e).tickProc("noFinisherCharge");
-                CombatData.getCap(e).tickProc("sweepStateOverride", getInfo().getType().ordinal());
                 target.invulnerableTime = 0;
                 GeneralUtils.attack(e, target);
                 alreadyHit.add(target);
-                if (target instanceof LivingEntity elb&&getInfo().canBreach()) {
-                        CombatData.getCap(elb).stopRecording(new CombatDamageSource(e).setDamageTyping(FootworkDamageArchetype.TRUE));
+                if (target instanceof LivingEntity elb && getInfo().canBreach()) {
+                    CombatData.getCap(elb).stopRecording(new CombatDamageSource(e).setDamageTyping(FootworkDamageArchetype.TRUE));
                 }
             }
         } catch (Exception ex) {
@@ -130,7 +123,7 @@ public class FlyingWeaponEntity extends FlyingItemEntity {
         } finally {
             CombatUtils.quickSwap(e, main);
             e.attackStrengthTicker = ticks;
-            WeaponStats.tmp_info = null;
+            WeaponStats.info_override = null;
         }
     }
 
@@ -148,12 +141,13 @@ public class FlyingWeaponEntity extends FlyingItemEntity {
     }
 
     @Override
-    protected void returnToIdle() {
-        super.returnToIdle();
+    protected void returnToIdle(int ticks) {
+        super.returnToIdle(ticks);
         setShouldRender(FlyingWeaponEffect.TRAIL, false);
         setShouldRender(FlyingWeaponEffect.AFTERIMAGE, false);
         setShouldRender(FlyingWeaponEffect.BIG_SHADOW, false);
         setShouldRender(FlyingWeaponEffect.WEAPON, false);
+        //fixme having it here will reset the display state repeatedly client side
     }
 
     @Override
@@ -168,6 +162,7 @@ public class FlyingWeaponEntity extends FlyingItemEntity {
             setInteractionRange((float) wmm.range());
             setTransitioning(false);
             cacheInfo = wmm.info();
+
             if (getInfo() == null) {
                 //special case, do not render big weapon
                 setShouldRender(FlyingWeaponEffect.TRAIL, true);
@@ -178,10 +173,17 @@ public class FlyingWeaponEntity extends FlyingItemEntity {
                 //attacking, on a finisher
                 setShouldRender(FlyingWeaponEffect.TRAIL, true);
                 setShouldRender(FlyingWeaponEffect.AFTERIMAGE, false);
-                setShouldRender(FlyingWeaponEffect.WEAPON, false);
+                setShouldRender(FlyingWeaponEffect.WEAPON, true);
                 setShouldRender(FlyingWeaponEffect.BIG_SHADOW, true);
             }
-        } else setTransitioning(true);
+        } else {
+            //return on a transition frame
+            setShouldRender(FlyingWeaponEffect.TRAIL, false);
+            setShouldRender(FlyingWeaponEffect.AFTERIMAGE, false);
+            setShouldRender(FlyingWeaponEffect.WEAPON, true);
+            setShouldRender(FlyingWeaponEffect.BIG_SHADOW, false);
+            setTransitioning(true);
+        }
 
 //        if (transitioning()) {
 //            //not attacking

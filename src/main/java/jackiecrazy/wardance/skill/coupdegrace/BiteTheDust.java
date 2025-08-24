@@ -36,12 +36,13 @@ public class BiteTheDust extends CoupDeGrace {
         if (procPoint instanceof StunEvent && ((StunEvent) procPoint).getAttacker() == caster && procPoint.getPhase() == EventPriority.HIGHEST) {
             float damage = 1;
             float currentMark = getExistingMark(target).getDuration();
-            if(currentMark>=6)completeChallenge(caster);
+            if (currentMark >= 6) completeChallenge(caster);
             while (currentMark > 0) {
                 damage *= 2;
                 currentMark--;
             }
             damage *= stats.getEffectiveness();
+            damage = Math.min(damage, target.getMaxHealth() / 5);
             target.hurtTime = target.hurtDuration = target.invulnerableTime = 0;
             target.hurt(new CombatDamageSource(caster).setDamageTyping(FootworkDamageArchetype.TRUE).setProcSkillEffects(true).setSkillUsed(this).setKnockbackPercentage(0).bypassArmor().bypassMagic(), damage);
             mark(caster, target, 1);

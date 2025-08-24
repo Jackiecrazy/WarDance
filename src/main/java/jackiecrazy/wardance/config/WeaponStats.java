@@ -64,7 +64,7 @@ public class WeaponStats extends SimpleJsonResourceReloadListener {
     public static Gson GSON = new GsonBuilder().registerTypeAdapter(SweepInfo.class, new SweepAdapter()).registerTypeAdapter(ResourceLocation.class, new ResourceLocation.Serializer()).create();
     public static MeleeInfo DEFAULTMELEE = new MeleeInfo(1, 1);
     public static HashMap<Item, MeleeInfo> combatList = new HashMap<>();
-    public static SweepInfo tmp_info = null;
+    public static SweepInfo info_override = null;
     private static HashMap<TagKey<Item>, MeleeInfo> archetypes = new HashMap<>();
 
     public WeaponStats() {
@@ -264,7 +264,7 @@ public class WeaponStats extends SimpleJsonResourceReloadListener {
     }
 
     public static SweepInfo getSweepInfo(ItemStack i, SWEEPSTATE s) {
-        if (tmp_info != null) return tmp_info;
+        if (info_override != null) return info_override;
         final MeleeInfo info = lookupStats(i);
         return info == null ? DEFAULT_NONE : info.sweeps[s.ordinal()];
     }
@@ -562,14 +562,15 @@ public class WeaponStats extends SimpleJsonResourceReloadListener {
         public SweepInfo finisherCopy() {
             SweepInfo ret = clone();
             ret.breach = true;
-            ret.crit=true;
-            ret.damage_scale*=1.5;
+            ret.crit = true;
+            ret.damage_scale = 1.3;
+            ret.crit_damage=2;
             return ret;
         }
 
         public SweepInfo preFinishCopy() {
             SweepInfo ret = clone();
-            ret.damage_scale/=3f;
+            ret.damage_scale = 0.3f;
             return ret;
         }
     }

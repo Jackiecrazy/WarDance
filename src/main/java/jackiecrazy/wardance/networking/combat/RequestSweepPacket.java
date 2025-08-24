@@ -67,15 +67,15 @@ public class RequestSweepPacket {
             contextSupplier.get().enqueueWork(() -> {
                 ServerPlayer sender = contextSupplier.get().getSender();
                 InteractionHand h = updateClientPacket.main ? InteractionHand.MAIN_HAND : InteractionHand.OFF_HAND;
-                boolean shouldAttack=true;
-                if(sender==null)return;
-                float cool=CombatUtils.getCooledAttackStrength(sender, h, 1f);
+                boolean shouldAttack = true;
+                if (sender == null) return;
+                float cool = CombatUtils.getCooledAttackStrength(sender, h, 1f);
                 if ((GeneralConfig.dual || updateClientPacket.main) && cool >= 0.9f) {
                     //TODO move this finisher stuff somewhere else
                     if (!sender.hasEffect(MobEffects.BLINDNESS)) {
                         if (updateClientPacket.finish) {
-                            shouldAttack=false;
-                            if (!StylishData.getCap(sender).canTrigger()&&!sender.getAbilities().instabuild) {
+                            shouldAttack = false;
+                            if (!StylishData.getCap(sender).canTrigger() && !sender.getAbilities().instabuild) {
                                 sender.displayClientMessage(Component.literal("Not enough Finisher Charge! Currently " + StylishData.getCap(sender).getTriggerBar()), true);
                                 return;
                             }
@@ -93,8 +93,8 @@ public class RequestSweepPacket {
                 }
                 //main attack. Temporary place to drop it.
                 Entity e = sender.level().getEntity(updateClientPacket.id);
-                if (e != null&&shouldAttack) {
-                    CombatUtils.setHandCooldown(sender,h,cool,false);
+                if (e != null && shouldAttack) {
+                    CombatUtils.setHandCooldown(sender, h, cool, false);
                     CombatUtils.attack(sender, e, h == InteractionHand.OFF_HAND);
                 }
                 CombatUtils.setHandCooldown(sender, h, 0, true);

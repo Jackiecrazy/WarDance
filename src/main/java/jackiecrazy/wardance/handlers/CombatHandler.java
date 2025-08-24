@@ -198,7 +198,7 @@ public class CombatHandler {
                                                 LivingEntity uke) {
         e.setCanceled(true);//.setImpactResult(ProjectileImpactEvent.ImpactResult.STOP_AT_CURRENT_NO_DAMAGE);
         ICombatCapability ukeCap = CombatData.getCap(uke);
-        ukeCap.consumePosture(null, pe.getPostureConsumption(), false, 0);//fixme
+        ukeCap.consumePosture(null, pe.getPostureConsumption(), false, 1);//fixme
         //do not change shooter! It makes drowned tridents and skeleton arrows collectable, which is honestly silly
         uke.level().playSound(null, uke.getX(), uke.getY(), uke.getZ(), SoundEvents.WOODEN_TRAPDOOR_CLOSE, SoundSource.PLAYERS, 0.75f + WarDance.rand.nextFloat() * 0.5f, (1 - (ukeCap.getPosture() / ukeCap.getMaxPosture())) + WarDance.rand.nextFloat() * 0.5f);
         if (pe.doesTrigger()) {
@@ -356,13 +356,13 @@ public class CombatHandler {
 
                 //it's a trap! no parrying backstabs
                 if (awareness == StealthUtils.Awareness.UNAWARE) {
-                    ukeCap.consumePosture(seme, pe.getPostureConsumption(), pe.canBreach(), 1);
+                    ukeCap.consumePosture(seme, pe.getPostureConsumption(), pe.canBreach(), 0);
                     return;
                 }
 
                 //not only can mobs not defend in time slow, the attacker gets a steve time extension
                 if (TimeSlowData.getCap(uke).getEffectiveSpeed() < 1) {
-                    ukeCap.consumePosture(seme, pe.getPostureConsumption(), pe.canBreach(), 1);
+                    ukeCap.consumePosture(seme, pe.getPostureConsumption(), pe.canBreach(), 0);
                     //CombatUtils.triggerSteveTime(seme, (int) (TimeSlowData.getCap(uke).getTimeRemaining() * 1.5));
                     return;
                 }
@@ -436,7 +436,7 @@ public class CombatHandler {
                 MinecraftForge.EVENT_BUS.post(pe2);
 
                 //success!
-                if (pe2.success() && ukeCap.consumePosture(seme, pe2.getPostureConsumption(), pe2.canBreach(), 0f) == 0) {//todo config rally value
+                if (pe2.success() && ukeCap.consumePosture(seme, pe2.getPostureConsumption(), pe2.canBreach(), 1) == 0) {//todo config rally value
                     e.setCanceled(true);
                     WarDance.LOGGER.debug("successfully blocked!");
                     CombatUtils.onSuccessfulBlock(uke, seme, defendingHand, defend, pe2.getPostureConsumption());
@@ -444,7 +444,7 @@ public class CombatHandler {
                     //failed everything, use the original damage and reset rally
                     WarDance.LOGGER.debug("failed everything! " + defenderMaybeBlocking + " " + defend);
                     if (!pe2.success())
-                        ukeCap.consumePosture(seme, pe.getPostureConsumption(), pe.canBreach(), 1f);
+                        ukeCap.consumePosture(seme, pe.getPostureConsumption(), pe.canBreach(), 0.5f);
                 }
                 //internally enforced hand bind to bypass slimes
                 //added to world check to bypass goety lichdom weirdness
@@ -463,7 +463,7 @@ public class CombatHandler {
             }
             //handle nonphysical cases of combat damage docking posture, this can never breach
             if (e.getSource() instanceof CombatDamageSource cds && cds.getPostureDamage() > 0) {
-                CombatData.getCap(e.getEntity()).consumePosture(cds.getEntity() instanceof LivingEntity elb ? elb : null, cds.getPostureDamage(), cds.canBreach(), 0);
+                CombatData.getCap(e.getEntity()).consumePosture(cds.getEntity() instanceof LivingEntity elb ? elb : null, cds.getPostureDamage(), cds.canBreach(), 0.5f);//todo conversion percentages
             }
         }
 
@@ -561,7 +561,10 @@ public class CombatHandler {
             e.setAmount(e.getAmount() + (float) luckDiff * GeneralConfig.luck);
 
             //dock rally for being melee hit
-            cap.setRally(cap.getRally() / 2);
+            //cap.setRally(cap.getRally() / 2);
+        }
+        if (GeneralConfig.debug && !e.getEntity().level().isClientSide) {
+            WarDance.LOGGER.debug("luck has been resolved, damage is now " + e.getAmount());
         }
 
         if (DamageUtils.isPhysicalAttack(ds)) {
@@ -574,12 +577,9 @@ public class CombatHandler {
                 e.setAmount(e.getAmount() * CombatConfig.normalDamage);
             }
         }
-    }
-
-    @SubscribeEvent(priority = EventPriority.LOWEST, receiveCanceled = true)
-    public static void paint(LivingHurtEvent e) {
-        if (GeneralConfig.debug && !e.getEntity().level().isClientSide)
-            WarDance.LOGGER.debug((e.isCanceled() ? "canceled " : "") + "damage from " + e.getSource() + " sent for armor calculations with amount " + e.getAmount());
+        if (GeneralConfig.debug && !e.getEntity().level().isClientSide) {
+            WarDance.LOGGER.debug("darktide and config has been resolved, damage is now " + e.getAmount());
+        }
     }
 
     @SubscribeEvent(priority = EventPriority.HIGHEST)
@@ -611,17 +611,20 @@ public class CombatHandler {
     public static void udedlol(LivingDamageEvent e) {
         if (GeneralConfig.debug && !e.isCanceled() && !e.getEntity().level().isClientSide)
             WarDance.LOGGER.debug("damage from " + e.getSource() + " finalized with amount " + e.getAmount());
-        //"halo mode"
-        if (GeneralConfig.test) {
-            //master chief!
-            if (!CombatData.getCap(e.getEntity()).isStunned()) {
-                CombatData.getCap(e.getEntity()).consumePosture(e.getAmount());
-                e.setCanceled(true);
-            }
-        }
         if (!Float.isFinite(e.getAmount()))//what
             e.setAmount(0);
         final ICombatCapability cap = CombatData.getCap(e.getEntity());
+
+        if (DamageUtils.isPhysicalAttack(e.getSource())) {
+            float darktide = e.getAmount() / 2;
+            darktide *= cap.getPosturePercentage();
+            //temporary, darktide
+            if (cap.getMaxPosture() > 0) {
+                e.setAmount(e.getAmount() - darktide);
+                cap.consumePosture(e.getSource().getEntity() instanceof LivingEntity attack ? attack : null,
+                                   darktide, false);
+            }
+        }
 
         //fall damage deducts posture
         if (e.getSource().is(DamageTypeTags.IS_FALL) || e.getSource().is(DamageTypeTags.IS_EXPLOSION)) {

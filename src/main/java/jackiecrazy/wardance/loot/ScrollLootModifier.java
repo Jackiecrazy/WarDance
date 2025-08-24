@@ -39,6 +39,13 @@ public class ScrollLootModifier extends LootModifier {
             ScrollItem.setStyle(scroll, true);
             generatedLoot.add(scroll);
         }
+        if (LootConfig.scrollChances.stream().anyMatch(a -> a.matches(context.getQueriedLootTableId()) && context.getRandom().nextFloat() <= a.chance())) {
+            ItemStack scroll = ScrollItem.makeScroll(false, (Skill) null);
+            ScrollItem.setRandom(scroll, false);
+            ScrollItem.setRandomSize(scroll, 4);
+            ScrollItem.setStyle(scroll, false);
+            generatedLoot.add(scroll);
+        }
         return generatedLoot;
     }
 

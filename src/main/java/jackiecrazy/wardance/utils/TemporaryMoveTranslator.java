@@ -1,6 +1,6 @@
 package jackiecrazy.wardance.utils;
 
-import jackiecrazy.footwork.move.motionframe.WeaponMotion;
+import jackiecrazy.footwork.move.motionframe.MotionGroup;
 import jackiecrazy.footwork.move.motionframe.MotionFrame;
 import jackiecrazy.footwork.move.motionframe.MotionManager;
 import jackiecrazy.footwork.move.motionframe.MotionManagers;
@@ -47,11 +47,11 @@ public class TemporaryMoveTranslator {
     private static final List<MotionFrame> CHOP = List.of(
             new MotionFrame(new Vec3(0, 1, 0.2), new Vec3(0, 0, 1)),
             new MotionFrame(new Vec3(0, -0.5, 1), new Vec3(0, 0, 1)));
-    private static final MotionManager circle_finish = new MotionManagers.DefinitionMM(new WeaponMotion(CIRCLE, EasingFunction.IN_OUT_CUBIC, 10));
-    private static final MotionManager LINE = new MotionManagers.DefinitionMM(new WeaponMotion(STAB, EasingFunction.IN_CUBIC, 10));
-    private static final MotionManager CONE1 = new MotionManagers.DefinitionMM(new WeaponMotion(SLASH, EasingFunction.IN_OUT_CUBIC, 10));
-    private static final MotionManager CONE2 = new MotionManagers.DefinitionMM(new WeaponMotion(BACKSLASH, EasingFunction.IN_OUT_CUBIC, 10));
-    private static final MotionManager IMPACT = new MotionManagers.DefinitionMM(new WeaponMotion(CHOP, EasingFunction.IN_CUBIC, 10));
+    private static final MotionManager circle_finish = new MotionManagers.DefinitionMM(new MotionGroup(CIRCLE, EasingFunction.IN_OUT_CUBIC, 10));
+    private static final MotionManager LINE = new MotionManagers.DefinitionMM(new MotionGroup(STAB, EasingFunction.IN_CUBIC, 10));
+    private static final MotionManager CONE1 = new MotionManagers.DefinitionMM(new MotionGroup(SLASH, EasingFunction.IN_OUT_CUBIC, 10));
+    private static final MotionManager CONE2 = new MotionManagers.DefinitionMM(new MotionGroup(BACKSLASH, EasingFunction.IN_OUT_CUBIC, 10));
+    private static final MotionManager IMPACT = new MotionManagers.DefinitionMM(new MotionGroup(CHOP, EasingFunction.IN_CUBIC, 10));
     private static int flip = 1;
 
     private static Vec3 generateFrame(float pitch, float yaw) {
@@ -69,22 +69,22 @@ public class TemporaryMoveTranslator {
                 //flourish thrice and stab
                 FlyingWeaponData.getCap(e).scheduleAction(hand, temp_getMMFromType(3, WeaponStats.SWEEPTYPE.CONE, base.getBase() + 3 * base.getScaling()), preFinish, 5, 10);
                 FlyingWeaponData.getCap(e).scheduleAction(hand, temp_getMMFromType(3, WeaponStats.SWEEPTYPE.CONE, base.getBase() + 3 * base.getScaling()), preFinish, 5, 10);
-                FlyingWeaponData.getCap(e).scheduleAction(hand, temp_getMMFromType(3, WeaponStats.SWEEPTYPE.CONE, base.getBase() + 3 * base.getScaling()), preFinish, 5, 10);
+                FlyingWeaponData.getCap(e).scheduleAction(hand, temp_getMMFromType(5, WeaponStats.SWEEPTYPE.CONE, base.getBase() + 3 * base.getScaling()), preFinish, 5, 10);
                 FlyingWeaponData.getCap(e).scheduleAction(hand, temp_getMMFromType(20, WeaponStats.SWEEPTYPE.LINE, 3), finish, 7, 20);
             }
             case CLEAVE -> {
                 //tcs
-                FlyingWeaponData.getCap(e).scheduleAction(hand, new MotionManagers.DefinitionMM(new WeaponMotion(LOOP, EasingFunction.IN_CUBIC, 20)), finish, 5, 9);
+                FlyingWeaponData.getCap(e).scheduleAction(hand, new MotionManagers.DefinitionMM(new MotionGroup(LOOP, EasingFunction.IN_CUBIC, 20)), finish, 5, 9);
             }
             case IMPACT -> {
                 //spin twice and slam down
-                FlyingWeaponData.getCap(e).scheduleAction(hand, temp_getMMFromType(8, WeaponStats.SWEEPTYPE.CIRCLE, base.getBase() + 3 * base.getScaling()), preFinish, 5, 9);
-                FlyingWeaponData.getCap(e).scheduleAction(hand, temp_getMMFromType(8, WeaponStats.SWEEPTYPE.CIRCLE, base.getBase() + 3 * base.getScaling()), preFinish, 5, 9);
-                FlyingWeaponData.getCap(e).scheduleAction(hand, temp_getMMFromType(10, WeaponStats.SWEEPTYPE.CLEAVE, 60), finish, 5, 9);
+                FlyingWeaponData.getCap(e).scheduleAction(hand, temp_getMMFromType(15, WeaponStats.SWEEPTYPE.CIRCLE, base.getBase() + 3 * base.getScaling()), preFinish, 5, 9);
+                FlyingWeaponData.getCap(e).scheduleAction(hand, temp_getMMFromType(15, WeaponStats.SWEEPTYPE.CIRCLE, base.getBase() + 3 * base.getScaling()), preFinish, 5, 9);
+                FlyingWeaponData.getCap(e).scheduleAction(hand, temp_getMMFromType(20, WeaponStats.SWEEPTYPE.CLEAVE, 60), finish, 5, 9);
             }
             case CIRCLE -> {
                 //beeeeeg circle
-                FlyingWeaponData.getCap(e).scheduleAction(hand, temp_getMMFromType(8, WeaponStats.SWEEPTYPE.CIRCLE, base.getBase() + 3 * base.getScaling()), finish, 8, 9);
+                FlyingWeaponData.getCap(e).scheduleAction(hand, temp_getMMFromType(40, WeaponStats.SWEEPTYPE.CIRCLE, base.getBase() + 3 * base.getScaling()), finish, 8, 9);
             }
             case LINE -> {
                 //triple jab followed by big jab
@@ -115,23 +115,23 @@ public class TemporaryMoveTranslator {
                 double dot = Mth.clamp(up.dot(endFrame.subtract(startFrame).normalize()), -1.0, 1.0);
                 double angleRadians = Math.acos(dot);
                 double angleDegrees = Math.toDegrees(angleRadians)*flip;
-                return new MotionManagers.DefinitionMM(new WeaponMotion(List.of(
+                return new MotionManagers.DefinitionMM(new MotionGroup(List.of(
                         new MotionFrame(startFrame, new Vec3(0, 0, 1), (int) angleDegrees),
                         new MotionFrame(endFrame, new Vec3(0, 0, 1), (int) angleDegrees)),
                                                                         EasingFunction.IN_CUBIC, time));
             case LINE:
-                return new MotionManagers.DefinitionMM(new WeaponMotion(STAB, EasingFunction.IN_OUT_CUBIC, time));
+                return new MotionManagers.DefinitionMM(new MotionGroup(STAB, EasingFunction.IN_OUT_CUBIC, time));
             case CIRCLE:
-                return new MotionManagers.DefinitionMM(new WeaponMotion(CIRCLE, EasingFunction.IN_OUT_CUBIC, time));
+                return new MotionManagers.DefinitionMM(new MotionGroup(CIRCLE, EasingFunction.IN_OUT_CUBIC, time));
             case CLEAVE:
-                return new MotionManagers.DefinitionMM(new WeaponMotion(List.of(
+                return new MotionManagers.DefinitionMM(new MotionGroup(List.of(
                         new MotionFrame(generateFrame((float) Math.min(180,area * 2), 5 * flip), new Vec3(0, 0, 1)),
                         new MotionFrame(generateFrame((float) Math.max(-90, -area / 2), -5 * flip), new Vec3(0, 0, 1))),
                                                                         EasingFunction.IN_CUBIC, time));
             case IMPACT:
-                return new MotionManagers.DefinitionMM(new WeaponMotion(CHOP, EasingFunction.IN_CUBIC, time));
+                return new MotionManagers.DefinitionMM(new MotionGroup(CHOP, EasingFunction.IN_CUBIC, time));
             default:
-                return new MotionManagers.DefinitionMM(new WeaponMotion(PUNCH, EasingFunction.IN_OUT_CUBIC, time));
+                return new MotionManagers.DefinitionMM(new MotionGroup(PUNCH, EasingFunction.IN_OUT_CUBIC, time));
         }
     }
 }
