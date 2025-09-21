@@ -447,7 +447,7 @@ public class CombatConfig {
     public static int parryTime, parryCD;
     public static int foodCool;
     public static float mobParryChanceWeapon, mobParryChanceShield, mobDeflectChance, mobScaler;
-    public static int knockdownDuration;
+    public static int knockdownDuration, knockdownDurationPlayer;
     public static boolean dodge;
     public static float kbNerf;
 
@@ -473,7 +473,7 @@ public class CombatConfig {
     private final ForgeConfigSpec.DoubleValue _mobDeflectChance;
     private final ForgeConfigSpec.DoubleValue _mobScaler;
     private final ForgeConfigSpec.IntValue _staggerDuration;
-    private final ForgeConfigSpec.IntValue _knockdownDuration;
+    private final ForgeConfigSpec.IntValue _knockdownDuration, _knockdownDurationPlayer;
     private final ForgeConfigSpec.DoubleValue _unstagger, _stun;
     private final ForgeConfigSpec.DoubleValue _knockbackNerf;
     private final ForgeConfigSpec.ConfigValue<List<? extends String>> _customProjectile;
@@ -495,7 +495,8 @@ public class CombatConfig {
         b.pop();
         b.push("expose");
         _staggerDuration = b.translation("wardance.config.staggerD").comment("Number of ticks an entity should be stunned for when its posture reaches 0.").defineInRange("stun duration", 100, 1, Integer.MAX_VALUE);
-        _knockdownDuration = b.translation("wardance.config.knockdownD").comment("Number of ticks an entity should be knocked down for on a large hit.").defineInRange("knockdown duration", 100, 1, Integer.MAX_VALUE);
+        _knockdownDuration = b.translation("wardance.config.knockdownD").comment("Number of ticks a mob should be knocked down.").defineInRange("mob knockdown duration", 100, 1, Integer.MAX_VALUE);
+        _knockdownDurationPlayer = b.translation("wardance.config.knockdownD").comment("Number of ticks a player should be knocked down.").defineInRange("player knockdown duration", 40, 1, Integer.MAX_VALUE);
         _stun = b.translation("wardance.config.unstagger").comment("Damage taken by a stunned entity.").defineInRange("stun damage multiplier", 1, 0, Double.MAX_VALUE);
         _unstagger = b.translation("wardance.config.unstagger").comment("Damage taken by a non-exposed entity. Added out of curiosity.").defineInRange("normal damage multiplier", 1, 0, Double.MAX_VALUE);
         b.pop();
@@ -532,6 +533,7 @@ public class CombatConfig {
         parryCD = CONFIG._parryCD.get();
         staggerDuration = CONFIG._staggerDuration.get();
         knockdownDuration = CONFIG._knockdownDuration.get();
+        knockdownDurationPlayer = CONFIG._knockdownDurationPlayer.get();
         foodCool = CONFIG._foodCool.get();
         adrenaline = CONFIG._adrenaline.get();
         CombatUtils.updateProjectiles(CONFIG._customProjectile.get());

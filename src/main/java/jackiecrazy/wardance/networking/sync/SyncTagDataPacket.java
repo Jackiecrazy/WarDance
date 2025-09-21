@@ -47,7 +47,7 @@ public class SyncTagDataPacket {
         public void accept(SyncTagDataPacket updateClientPacket, Supplier<NetworkEvent.Context> contextSupplier) {
 
             //prevent client overriding server
-            if (contextSupplier.get().getDirection() == NetworkDirection.LOGIN_TO_CLIENT)
+            if (contextSupplier.get().getDirection() == NetworkDirection.LOGIN_TO_CLIENT||contextSupplier.get().getDirection() == NetworkDirection.PLAY_TO_CLIENT)
                 contextSupplier.get().enqueueWork(() -> {
                     WeaponStats.clientTagOverride(updateClientPacket.map);
                 });

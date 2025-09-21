@@ -84,15 +84,15 @@ public class EntityHandler {
         if (CombatData.getCap(e.getEntity()).isStunned()) {
             if (!(e.getEntity() instanceof Player))
                 e.getEntity().setDeltaMovement(0, 0, 0);
-            else{
+            else {
                 //TODO circle sweep up
             }
         }
     }
 
     @SubscribeEvent
-    public static void login(PlayerEvent.PlayerLoggedInEvent e) {
-        if (e.getEntity() instanceof ServerPlayer sp) {
+    public static void login(EntityJoinLevelEvent e) {
+        if (!e.getLevel().isClientSide && e.getEntity() instanceof ServerPlayer sp) {
             WeaponStats.sendItemData(sp);
             TwohandingStats.sendItemData(sp);
         }
@@ -143,6 +143,7 @@ public class EntityHandler {
         if (e.player.isAlive() && e.phase == TickEvent.Phase.START) {
             if (e.side != LogicalSide.SERVER) {
                 CombatData.getCap(e.player).clientTick();
+                //FlyingWeaponData.getCap(e.player).tick();
                 return;
             } else CombatData.getCap(e.player).serverTick();
             CasterData.getCap(e.player).update();

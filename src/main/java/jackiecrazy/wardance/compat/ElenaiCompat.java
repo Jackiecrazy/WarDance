@@ -6,13 +6,8 @@ import jackiecrazy.footwork.capability.resources.CombatData;
 import jackiecrazy.footwork.capability.resources.ICombatCapability;
 import jackiecrazy.footwork.event.DodgeEvent;
 import jackiecrazy.wardance.config.GeneralConfig;
-import jackiecrazy.wardance.utils.MovementUtils;
 import net.minecraft.server.level.ServerPlayer;
-import net.minecraft.world.entity.LivingEntity;
-import net.minecraft.world.entity.Mob;
 import net.minecraft.world.entity.player.Player;
-import net.minecraftforge.event.entity.living.LivingAttackEvent;
-import net.minecraftforge.event.entity.living.LivingHurtEvent;
 import net.minecraftforge.eventbus.api.EventPriority;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 
@@ -30,7 +25,7 @@ public class ElenaiCompat {
             if (i.getInvincibility() > cap.getDodgeTime() && i.getInvincibility()>0) {
                 //start of a new dodge, refill spirit and give appropriate iframes
                 cap.setDodgeTime(i.getInvincibility());
-                CombatData.getCap(player).addSpirit(1);
+                //CombatData.getCap(player).addSpirit(1);
             }
         });
     }
@@ -40,7 +35,7 @@ public class ElenaiCompat {
         if (GeneralConfig.elenai && CombatData.getCap(e.getEntity()).isStunned()) {
             e.setCanceled(true);
         }
-        CombatData.getCap(e.getEntity()).addSpirit(1);
+        //CombatData.getCap(e.getEntity()).addSpirit(1);
     }
 
 //    @SubscribeEvent

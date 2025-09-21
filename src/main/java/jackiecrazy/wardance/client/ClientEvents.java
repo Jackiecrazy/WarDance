@@ -376,10 +376,10 @@ public class ClientEvents {
             return;
         }
         if (e.getHand() == InteractionHand.MAIN_HAND && e.isAttack() && !Minecraft.getInstance().gameMode.isDestroying() &&
-                StylishData.getCap(p).isCombatMode() &&
-                (WeaponStats.isWeapon(p, p.getMainHandItem()) ||
-                        p.getMainHandItem().isEmpty() ||
-                        WeaponStats.isShield(p, p.getMainHandItem()))
+                StylishData.getCap(p).isCombatMode() //&&
+//                (WeaponStats.isWeapon(p, p.getMainHandItem()) ||
+//                        p.getMainHandItem().isEmpty() ||
+//                        WeaponStats.isShield(p, p.getMainHandItem())) //temporarily disabling this to allow attacking with bread
                 &&CombatUtils.getCooledAttackStrength(p, InteractionHand.MAIN_HAND, 1)>0.9
             && mainUseTick == 1//testing: disable hold attack spam
         ) {

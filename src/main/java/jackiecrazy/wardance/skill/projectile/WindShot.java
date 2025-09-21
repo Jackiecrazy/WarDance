@@ -1,10 +1,7 @@
 package jackiecrazy.wardance.skill.projectile;
 
-import jackiecrazy.footwork.api.CombatDamageSource;
-import jackiecrazy.footwork.capability.resources.CombatData;
 import jackiecrazy.footwork.client.particle.FootworkParticles;
 import jackiecrazy.footwork.utils.ParticleUtils;
-import jackiecrazy.footwork.utils.TargetingUtils;
 import jackiecrazy.wardance.WarDance;
 import jackiecrazy.wardance.capability.skill.CasterData;
 import jackiecrazy.wardance.skill.Skill;
@@ -12,11 +9,8 @@ import jackiecrazy.wardance.skill.SkillData;
 import jackiecrazy.wardance.skill.WarSkills;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.projectile.Arrow;
-import net.minecraft.world.item.enchantment.ProtectionEnchantment;
 import net.minecraft.world.phys.AABB;
-import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.event.entity.ProjectileImpactEvent;
-import net.minecraftforge.event.entity.living.LivingAttackEvent;
 import net.minecraftforge.eventbus.api.Event;
 import net.minecraftforge.eventbus.api.EventPriority;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
@@ -24,7 +18,6 @@ import net.minecraftforge.fml.common.Mod;
 import org.jetbrains.annotations.Nullable;
 
 import java.awt.*;
-import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 

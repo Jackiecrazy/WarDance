@@ -8,6 +8,7 @@ import jackiecrazy.footwork.capability.timeslow.TimeSlowData;
 import jackiecrazy.footwork.capability.weaponry.CombatManipulator;
 import jackiecrazy.footwork.client.particle.FootworkParticles;
 import jackiecrazy.footwork.client.particle.ScalingParticleType;
+import jackiecrazy.footwork.entity.flyingweapon.FlyingItemEntity;
 import jackiecrazy.footwork.potion.FootworkEffects;
 import jackiecrazy.footwork.utils.*;
 import jackiecrazy.wardance.WarDance;
@@ -22,8 +23,10 @@ import jackiecrazy.wardance.event.SweepEvent;
 import jackiecrazy.wardance.mixin.ShieldBlockAccessor;
 import jackiecrazy.wardance.networking.CombatChannel;
 import jackiecrazy.wardance.networking.combat.UpdateAttackCooldownPacket;
+import net.minecraft.core.particles.DustParticleOptions;
 import net.minecraft.core.particles.ParticleType;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
@@ -39,6 +42,7 @@ import net.minecraft.world.entity.ai.attributes.AttributeModifier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.util.FakePlayer;
@@ -397,7 +401,6 @@ public class CombatUtils {
     public static void quickSwap(LivingEntity e, ItemStack stack) {
         ItemStack main = e.getMainHandItem();
         suppressChangeFunctions = true;
-        e.setSilent(true);
         e.setItemInHand(InteractionHand.MAIN_HAND, stack);
         suppressChangeFunctions = false;
 
@@ -504,7 +507,9 @@ public class CombatUtils {
                     Vec3 look = e.getLookAngle();
                     Vec3 start = eye.add(look.scale(radius));
                     Vec3 end = eye.add(look.scale(reach));
-                    if (!target.getBoundingBox().inflate(radius).intersects(start, end)) continue;
+                    final AABB inflated = target.getBoundingBox().inflate(radius);
+                    if (!inflated.intersects(start, end) && !inflated.contains(start) && !inflated.contains(end))
+                        continue;
                 }
             }
 
@@ -542,9 +547,9 @@ public class CombatUtils {
             case IMPACT -> {
                 particle = FootworkParticles.IMPACT.get();
                 offset = 0;
+                ParticleUtils.playSweepParticle(particle, e, starting, 0, radius, sre.getColor(), offset);
             }
         }
-        //ParticleUtils.playSweepParticle(particle, e, starting, 0, radius, sre.getColor(), offset);
         e.level().playSound(null, e.getX(), e.getY(), e.getZ(), SoundEvents.PLAYER_ATTACK_SWEEP, e.getSoundSource(), 1.0F, 1.0F);
         //}
         CombatData.getCap(e).tickProc("oncePerSweep", 0);
@@ -615,19 +620,43 @@ public class CombatUtils {
         }
     }
 
+    public static void onIdleGuard(LivingEntity defender,
+                                   Entity attacker,
+                                   @Nullable InteractionHand hand,
+                                   @Nullable ItemStack defend,
+                                   float amount) {
+        //simply knock both sides back
+        //knockback based on posture consumed
+        //defender kb
+        final float kb = Mth.sqrt(amount);
+        CombatUtils.knockBack(defender, attacker, (defender instanceof Player ? 0.25f : 0.5f) * kb, true, false);
+        //attacker kb
+        CombatUtils.knockBack(attacker, defender, (attacker instanceof Player ? 0.25f : 0.5f) * kb, true, false);
+        defender.level().playSound(null, defender.getX(), defender.getY(), defender.getZ(), SoundEvents.CHAIN_PLACE, SoundSource.PLAYERS, 0.25f + WarDance.rand.nextFloat() * 0.25f, (1 - CombatData.getCap(defender).getPosturePercentage()) + WarDance.rand.nextFloat() * 0.5f);
+    }
+
     public static void triggerSteveTime(LivingEntity from, int time) {
         //ZA WAAAAARUDO! TOKI WO TOMARE!
-        for (Entity t : from.level().getEntities(from, from.getBoundingBox().inflate(32), (a -> !(a instanceof Player)))) {
+        for (Entity t : from.level().getEntities(from, from.getBoundingBox().inflate(32), (a -> !(a instanceof Player) && !(a instanceof FlyingItemEntity)))) {
             TimeSlowData.getCap(t).alterSpeed(time, 0.1);
             //jostle everything a tiny amount so you know the time slow is happening
             knockBack(t, from, 0.2f, true, false);
         }
+        if (from.level() instanceof ServerLevel s)
+            for (int i = 0; i < 32; i++) {
+                double x = from.getX(), y = from.getY(), z = from.getZ();
+                float radians = GeneralUtils.rad(i * 360f / 32f);
+
+                final double sin = Mth.sin(radians) * 32;
+                final double cos = Mth.cos(radians) * 32;
+                s.sendParticles(new DustParticleOptions(ParticleUtils.gravel, 1), x + cos, y + 0.7, z + sin, 0, 0, 0, 0.0D, 0);
+            }
     }
 
     public static void onSuccessfulDodge(LivingEntity defender, Entity attacker) {
         //normal dodges already refill 1 spirit. Perfect dodging maxes out spirit.
         //slow all mobs in a 32 block range for about 2 seconds and convert remaining dodge frames to iframes to stop repeated procs
-        defender.level().playSound(null, defender.getX(), defender.getY(), defender.getZ(), SoundEvents.NOTE_BLOCK_BELL.get(), SoundSource.PLAYERS, 0.3f + WarDance.rand.nextFloat() * 0.5f, 0.75f + WarDance.rand.nextFloat() * 0.5f);
+        defender.level().playSound(null, defender.getX(), defender.getY(), defender.getZ(), SoundEvents.ENCHANTMENT_TABLE_USE, SoundSource.PLAYERS, 0.3f + WarDance.rand.nextFloat() * 0.5f, 0.75f + WarDance.rand.nextFloat() * 0.5f);
         StylishData.getCap(defender).addCombo(0.3f, "dodge");
         ICombatCapability cap = CombatData.getCap(defender);
         int remaining = cap.getDodgeTime();
@@ -652,6 +681,8 @@ public class CombatUtils {
                                          @Nullable InteractionHand hand,
                                          @Nullable ItemStack defend,
                                          float amount) {
+        int radius = 5;
+
         //resolve trigger charges and emit a shockwave that deals ??? posture damage in an area. Cannot breach.
         //grant 2 seconds of iframes, which conveniently stops repeated parrying
         //FakeExplosion.explode(defender.level(), defender, defender.getX(), defender.getY() + defender.getBbHeight() * 1.1f, defender.getZ(), 5);
@@ -660,12 +691,23 @@ public class CombatUtils {
         ICombatCapability cap = CombatData.getCap(defender);
         StylishData.getCap(defender).processAttack(true);
         StylishData.getCap(defender).processAttack(false);
-        cap.setIframe(20);
+        cap.setIframe(7);
+
+        if (defender.level() instanceof ServerLevel s)
+            for (int i = 0; i < 32; i++) {
+                double x = defender.getX(), y = defender.getY(), z = defender.getZ();
+                float radians = GeneralUtils.rad(i * 360f / 32f);
+
+                final double sin = Mth.sin(radians) * radius;
+                final double cos = Mth.cos(radians) * radius;
+                s.sendParticles(new DustParticleOptions(ParticleUtils.gravel, 1), x + cos, y + 0.7, z + sin, 0, 0, 0, 0.0D, 0);
+            }
+
         if (defender instanceof Player) {
-            for (Entity t : defender.level().getEntities(defender, defender.getBoundingBox().inflate(5), (a -> !TargetingUtils.isAlly(a, defender)))) {
+            for (Entity t : defender.level().getEntities(defender, defender.getBoundingBox().inflate(radius), (a -> !TargetingUtils.isAlly(a, defender)))) {
                 float strength = 1.3f;
                 if (t instanceof LivingEntity e) {
-                    CombatData.getCap(e).consumePosture(defender, 7, false, 1);
+                    CombatData.getCap(e).consumePosture(defender, 4, false, 1);
                     strength = Math.min(strength, 0.2f + Math.min(1f, amount * CombatData.getCap(e).getPosturePercentage()));
                 }
                 CombatUtils.knockBack(t, defender, strength, true, false);

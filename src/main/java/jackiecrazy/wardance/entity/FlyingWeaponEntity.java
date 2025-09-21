@@ -3,6 +3,7 @@ package jackiecrazy.wardance.entity;
 import jackiecrazy.footwork.api.CombatDamageSource;
 import jackiecrazy.footwork.api.FootworkDamageArchetype;
 import jackiecrazy.footwork.capability.resources.CombatData;
+import jackiecrazy.footwork.capability.timeslow.TimeSlowData;
 import jackiecrazy.footwork.entity.flyingweapon.FlyingItemEntity;
 import jackiecrazy.footwork.entity.flyingweapon.FlyingWeaponEffect;
 import jackiecrazy.footwork.move.motionframe.MotionManager;
@@ -105,7 +106,8 @@ public class FlyingWeaponEntity extends FlyingItemEntity {
                         CombatData.getCap(elb).pin(0);
                     } else {
                         CombatData.getCap(elb).pin(20);
-                        CombatData.getCap(elb).startRecordingDamage(20);
+                        //CombatData.getCap(elb).startRecordingDamage(20);
+                        TimeSlowData.getCap(elb).alterSpeed(20, 0.1);
                     }
                 }
                 if (!alreadyHit.isEmpty())
@@ -115,7 +117,8 @@ public class FlyingWeaponEntity extends FlyingItemEntity {
                 GeneralUtils.attack(e, target);
                 alreadyHit.add(target);
                 if (target instanceof LivingEntity elb && getInfo().canBreach()) {
-                    CombatData.getCap(elb).stopRecording(new CombatDamageSource(e).setDamageTyping(FootworkDamageArchetype.TRUE));
+                    CombatData.getCap(elb).stopRecording(new CombatDamageSource(e).setDamageTyping(FootworkDamageArchetype.PHYSICAL));
+                    TimeSlowData.getCap(elb).resetSpeed();
                 }
             }
         } catch (Exception ex) {
@@ -143,15 +146,11 @@ public class FlyingWeaponEntity extends FlyingItemEntity {
     @Override
     protected void returnToIdle(int ticks) {
         super.returnToIdle(ticks);
-        setShouldRender(FlyingWeaponEffect.TRAIL, false);
-        setShouldRender(FlyingWeaponEffect.AFTERIMAGE, false);
-        setShouldRender(FlyingWeaponEffect.BIG_SHADOW, false);
-        setShouldRender(FlyingWeaponEffect.WEAPON, false);
-        //fixme having it here will reset the display state repeatedly client side
     }
 
     @Override
     protected boolean updateMotionTargets(boolean forceskip) {
+        //fixme gets stuck
         //true if a new move started
         boolean ret = super.updateMotionTargets(forceskip);
         if (ret) {
@@ -165,23 +164,14 @@ public class FlyingWeaponEntity extends FlyingItemEntity {
 
             if (getInfo() == null) {
                 //special case, do not render big weapon
-                setShouldRender(FlyingWeaponEffect.TRAIL, true);
-                setShouldRender(FlyingWeaponEffect.AFTERIMAGE, false);
-                setShouldRender(FlyingWeaponEffect.BIG_SHADOW, false);
-                setShouldRender(FlyingWeaponEffect.WEAPON, true);
+                setShouldRender(FlyingWeaponEffect.TRAIL, FlyingWeaponEffect.WEAPON);
             } else {
                 //attacking, on a finisher
-                setShouldRender(FlyingWeaponEffect.TRAIL, true);
-                setShouldRender(FlyingWeaponEffect.AFTERIMAGE, false);
-                setShouldRender(FlyingWeaponEffect.WEAPON, true);
-                setShouldRender(FlyingWeaponEffect.BIG_SHADOW, true);
+                setShouldRender(FlyingWeaponEffect.TRAIL, FlyingWeaponEffect.WEAPON, FlyingWeaponEffect.BIG_SHADOW);
             }
         } else {
             //return on a transition frame
-            setShouldRender(FlyingWeaponEffect.TRAIL, false);
-            setShouldRender(FlyingWeaponEffect.AFTERIMAGE, false);
-            setShouldRender(FlyingWeaponEffect.WEAPON, true);
-            setShouldRender(FlyingWeaponEffect.BIG_SHADOW, false);
+            setShouldRender(FlyingWeaponEffect.WEAPON);
             setTransitioning(true);
         }
 

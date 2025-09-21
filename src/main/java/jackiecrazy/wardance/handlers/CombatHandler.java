@@ -38,6 +38,7 @@ import net.minecraftforge.event.entity.ProjectileImpactEvent;
 import net.minecraftforge.event.entity.living.*;
 import net.minecraftforge.event.entity.player.AttackEntityEvent;
 import net.minecraftforge.event.entity.player.CriticalHitEvent;
+import net.minecraftforge.event.entity.player.PlayerEvent;
 import net.minecraftforge.eventbus.api.Event;
 import net.minecraftforge.eventbus.api.EventPriority;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
@@ -266,7 +267,7 @@ public class CombatHandler {
         }
     }
 
-    @SubscribeEvent(priority = EventPriority.LOWEST)//because compat with BHT...
+    @SubscribeEvent(priority = EventPriority.LOWEST)//because compat with Better Hurt Timer...
     public static void parry(final LivingAttackEvent e) {
         if (GeneralConfig.debug && !e.getEntity().level().isClientSide) {
             WarDance.LOGGER.debug("attack source " + e.getSource() + " sent to hurt check with amount " + e.getAmount());
@@ -326,7 +327,7 @@ public class CombatHandler {
                 //stunned, add extra finisher points
                 if (ukeCap.isStunned()) {
                     //add extra finisher charge to attacker
-                    if (!semeCap.alreadyProc("stunTrigger") && !semeCap.alreadyProc("oncePerSweep")) {
+                    if (!semeCap.alreadyProc("stunTrigger")) {
                         StylishData.getCap(seme).addTriggerBar(1);
                         semeCap.tickProc("stunTrigger");
                     }
@@ -389,8 +390,10 @@ public class CombatHandler {
                     defMult = mainDefMult;
                 }
 
-                //players block if they are... blocking, mobs block if they are in angle
-                boolean defenderMaybeBlocking = uke instanceof Player ? uke.isBlocking() : GeneralUtils.isFacingEntity(uke, seme, 90, 140);
+                //players block if they are... blocking
+                boolean defenderMaybeBlocking = uke instanceof Player && uke.isBlocking();
+                //mobs can only guard, by being in the right angle
+                boolean defenderMaybeGuarding = GeneralUtils.isFacingEntity(uke, seme, 90, 140);
 
                 //special mob blocking overrides
                 MobSpecs.MobInfo stats = MobSpecs.getMobInfo(uke);
@@ -436,16 +439,29 @@ public class CombatHandler {
                 MinecraftForge.EVENT_BUS.post(pe2);
 
                 //success!
-                if (pe2.success() && ukeCap.consumePosture(seme, pe2.getPostureConsumption(), pe2.canBreach(), 1) == 0) {//todo config rally value
+                if (pe2.success() && ukeCap.consumePosture(seme, pe2.getPostureConsumption(), pe2.canBreach(), Math.max(0, 1 - defMult/2)) == 0) {//todo config rally value
                     e.setCanceled(true);
                     WarDance.LOGGER.debug("successfully blocked!");
                     CombatUtils.onSuccessfulBlock(uke, seme, defendingHand, defend, pe2.getPostureConsumption());
-                } else {
-                    //failed everything, use the original damage and reset rally
-                    WarDance.LOGGER.debug("failed everything! " + defenderMaybeBlocking + " " + defend);
-                    if (!pe2.success())
-                        ukeCap.consumePosture(seme, pe.getPostureConsumption(), pe.canBreach(), 0.5f);
+                    return;
                 }
+
+                //last chance, idle guard resolution
+                MeleePostureEvent.Defense.Guard pe3 = new MeleePostureEvent.Defense.Guard(uke, seme, (defenderMaybeGuarding && uke instanceof Player && defend != null), attackingHand, attack, defendingHand, defend, finalPostureConsumption, originalPostureConsumption, e.getSource(), e.getAmount(), canBreach);
+                MinecraftForge.EVENT_BUS.post(pe3);
+
+                //success!
+                if (pe3.success() && ukeCap.consumePosture(seme, pe3.getPostureConsumption(), pe3.canBreach(), 0) == 0) {
+                    e.setCanceled(true);
+                    WarDance.LOGGER.debug("successfully idle guarded!");
+                    CombatUtils.onIdleGuard(uke, seme, defendingHand, defend, pe3.getPostureConsumption());
+                    return;
+                }
+
+                //failed everything, use the original damage and reset rally
+                WarDance.LOGGER.debug("failed everything! " + defenderMaybeBlocking + " " + defend);
+                if (!pe2.success())
+                    ukeCap.consumePosture(seme, pe.getPostureConsumption(), pe.canBreach(), 0f);
                 //internally enforced hand bind to bypass slimes
                 //added to world check to bypass goety lichdom weirdness
                 //removed for sanity
@@ -549,6 +565,7 @@ public class CombatHandler {
         //stuff used to exist here, moved to footwork
 
         ICombatCapability cap = CombatData.getCap(uke);
+        //TODO combo reduces damage
         StylishData.getCap(uke).resetCombo();
         StealthUtils.Awareness awareness = StealthUtils.INSTANCE.getAwareness(seme, uke);
 
@@ -633,7 +650,11 @@ public class CombatHandler {
 
         //finalize knockdown, ugly fix to prevent the knocking hit from being skipped
         if (cap.alreadyProc("knockdown")) {
+            //temporary, players lose 30% health on knockdown
             cap.knockdown(e.getEntity(), (int) cap.getProc("knockdown"));
+            if (e.getEntity() instanceof Player p) {
+                e.setAmount(p.getMaxHealth() * 0.3f);
+            }
             cap.tickProc("knockdown", 1);
         }
     }
@@ -646,5 +667,12 @@ public class CombatHandler {
         if (e.getSource().getEntity() instanceof LivingEntity killer) {
             StylishData.getCap(killer).addCombo(0.2f, "kill");
         }
+    }
+
+    @SubscribeEvent
+    public static void noHealOnKnockdown(LivingHealEvent e) {
+        LivingEntity elb = e.getEntity();
+        if (CombatData.getCap(elb).isStunned())
+            e.setCanceled(true);
     }
 }

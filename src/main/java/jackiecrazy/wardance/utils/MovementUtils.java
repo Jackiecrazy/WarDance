@@ -215,7 +215,7 @@ public class MovementUtils {
         if (e.isCanceled()) return false;
         Vec3 v = elb.getLookAngle().subtract(0, elb.getLookAngle().y, 0).normalize().scale(e.getForce());
         itsc.consumePosture(0);
-        itsc.addSpirit(1);//todo remove
+        //itsc.addSpirit(1);//todo remove
         itsc.setDodgeTime(CombatConfig.rollTime);
         if (elb instanceof Player)
             ((Player) elb).setForcedPose(Pose.SLEEPING);
@@ -238,60 +238,58 @@ public class MovementUtils {
         //cannot dodge
         if (!CombatConfig.dodge) return false;
         //let elenai do it
-        if(WarCompat.elenaiDodge ) return false;
+        if (WarCompat.elenaiDodge) return false;
         //can only dodge outside of combat mode if you're stunned or if elenai compat is on
         if (!StylishData.getCap(elb).isCombatMode() && (itsc.getStunTime() == 0)) return false;
         //dodge time check
-        if (itsc.getDodgeTime() <=-CombatConfig.rollCooldown) {
+        if (itsc.getDodgeTime() <= -CombatConfig.rollCooldown) {
             if (side == 99) return attemptSlide(elb);
             Entity target = GeneralUtils.raytraceEntity(elb.level(), elb, 32);
             float adjustment = 0;
             if (target != null) {
                 float distsq = (float) (elb.distanceToSqr(target));
                 float toacos = (distsq + distsq - 36) / (2 * distsq);//magic number wee
-                float acos=(float) Math.acos(toacos);
+                float acos = (float) Math.acos(toacos);
                 adjustment = GeneralUtils.deg(acos) / 2f;
             }
-            double x = 0, y = 0.25, z = 0;
+            double x = 0, y = 0.2, z = 0;
+            float angle = 0;
             DodgeEvent.Direction d = DodgeEvent.Direction.FORWARD;
             switch (side) {
+                //todo directly send angle
+
                 case 0://left
-                    x = Mth.cos(GeneralUtils.rad(elb.getYRot()+adjustment));//
-                    z = Mth.sin(GeneralUtils.rad(elb.getYRot()));
+                    angle = 90*Mth.DEG_TO_RAD;
                     d = DodgeEvent.Direction.LEFT;
                     break;
                 case 1://back
-                    x = Mth.cos(GeneralUtils.rad(elb.getYRot() - 90));
-                    z = Mth.sin(GeneralUtils.rad(elb.getYRot() - 90));
+                    angle = 180*Mth.DEG_TO_RAD;
                     d = DodgeEvent.Direction.BACK;
                     break;
                 case 2://right
-                    x = Mth.cos(GeneralUtils.rad(elb.getYRot() - 180-adjustment));//
-                    z = Mth.sin(GeneralUtils.rad(elb.getYRot() - 180));
+                    angle = -90*Mth.DEG_TO_RAD;
                     d = DodgeEvent.Direction.RIGHT;
                     break;
                 case 3://forward
-                    x = Mth.cos(GeneralUtils.rad(elb.getYRot() + 90));
-                    z = Mth.sin(GeneralUtils.rad(elb.getYRot() + 90));
                     d = DodgeEvent.Direction.FORWARD;
                     break;
             }
-            DodgeEvent e = new DodgeEvent(elb, d, 1.2);
+            DodgeEvent e = new DodgeEvent(elb, d, 0.25);
             MinecraftForge.EVENT_BUS.post(e);
             if (e.isCanceled()) return false;
+            Vec3 look = elb.getLookAngle().multiply(e.getForce(), 0, e.getForce()).yRot(angle).normalize();
             itsc.setDodgeTime(CombatConfig.rollTime);
-            itsc.addSpirit(1);//todo remove
-            if (d == DodgeEvent.Direction.FORWARD) e.setForce((float) (e.getForce() * 1.5f));
-            x *= e.getForce();
-            z *= e.getForce();
+            //itsc.addSpirit(1);//todo remove
+            //if (d == DodgeEvent.Direction.FORWARD) e.setForce((float) (e.getForce() * 1.5f));
+            x = look.x;
+            z = look.z;
 
             //NeedyLittleThings.setSize(elb, min, min);
             elb.push(x, y, z);
             elb.hurtMarked = true;
-//            elb.motionX=x;
-//            elb.motionY=y;
-//            elb.motionZ=z;
             itsc.consumePosture(0);
+            //leave stun
+            itsc.stun(0);
             return true;
         }
         return false;

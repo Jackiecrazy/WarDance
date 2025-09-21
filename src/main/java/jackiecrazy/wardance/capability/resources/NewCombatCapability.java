@@ -235,7 +235,7 @@ public class NewCombatCapability implements ICombatCapability {
             //if already stunned, a second breaching hit
             final boolean knockdown = isStunned() || alreadyProc("forceKnockDown") || (posture == 0 && player);
             posture = 0;
-            StunEvent se = new StunEvent(elb, assailant, knockdown ? CombatConfig.knockdownDuration : CombatConfig.staggerDuration, knockdown);
+            StunEvent se = new StunEvent(elb, assailant, knockdown ? (elb instanceof Player?CombatConfig.knockdownDurationPlayer:CombatConfig.knockdownDuration) : CombatConfig.staggerDuration, knockdown);
             MinecraftForge.EVENT_BUS.post(se);
             if (se.isCanceled()) {
                 posture = prev;
@@ -392,8 +392,6 @@ public class NewCombatCapability implements ICombatCapability {
 
         //damage recording resolution
         --recordingTime;
-        if (recordingTime < 0 && recordedDamage > 0 && elb.getKillCredit() != null)
-            stopRecording(new CombatDamageSource(elb.getKillCredit()).setDamageTyping(FootworkDamageArchetype.TRUE).setProcAttackEffects(false).setProcNormalEffects(false).setProcSkillEffects(false));
 
         //tick down everything
         //hand bind

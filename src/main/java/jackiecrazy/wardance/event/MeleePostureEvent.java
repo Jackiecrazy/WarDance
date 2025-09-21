@@ -106,6 +106,22 @@ public abstract class MeleePostureEvent extends LivingEvent {
     }
 
     /**
+     * by convention you should only use this for what happens on a guard
+     */
+    @HasResult
+    public static class Guard extends Defense {
+
+        public Guard(LivingEntity entity, LivingEntity seme, boolean canParry, InteractionHand hand, ItemStack a, InteractionHand dhand, ItemStack d, float posture, float orig, DamageSource ds, float damage, boolean canBreach) {
+            super(entity, seme, canParry, hand, a, dhand, d, posture, orig, ds, damage, canBreach);
+        }
+
+
+        public boolean success() {
+            return getResult() == Result.ALLOW || (originally && getResult() == Result.DEFAULT);
+        }
+    }
+
+    /**
      * by convention you should only use this for what happens on a block
      */
     @HasResult

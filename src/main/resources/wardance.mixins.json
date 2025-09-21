@@ -5,11 +5,13 @@
   "refmap": "wardance.refmap.json",
   "mixins": [
     "InCombatAccessor",
+    "MixinBlockFrameDisable",
     "MixinLivingEntity",
     "MixinNewSweepAttack",
     "MixinPlayerEntity",
     "MixinSweepDurabilitySuppressor",
     "ProjectileImpactMixin",
+    "ServerPlayerNoShakeMixin",
     "ShieldBlockAccessor",
     "ShieldDisableOverwrite",
     "SifuDropsMixin"
@@ -17,8 +19,8 @@
   "client": [
     "AttackCanceler",
     "ClientAccessors",
+    "DarkTideCancelScreenShakeMixin",
     "ItchyCurseMixin",
-    "MixinBlockFrameDisable",
     "MixinEquipProgress",
     "TwoHandingRenderMixin",
     "YouTestMyPatienceAccessor"
