@@ -100,7 +100,6 @@ public class EntityHandler {
 
     @SubscribeEvent
     public static void reload(OnDatapackSyncEvent e) {
-        //fixme still doesn't sync to server
         for (ServerPlayer sp : e.getPlayerList().getPlayers()) {
             WeaponStats.sendItemData(sp);
             TwohandingStats.sendItemData(sp);

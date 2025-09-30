@@ -106,6 +106,7 @@ public class TemporaryMoveTranslator {
         //clamp time. The remaining time is expended in recovery.
         //time = Mth.clamp(time, 2, 5);
         flip *= -1;
+        final Vec3 midFrame = generateFrame(0, 0);
         switch (type) {
             case CONE:
 
@@ -117,6 +118,7 @@ public class TemporaryMoveTranslator {
                 double angleDegrees = Math.toDegrees(angleRadians)*flip;
                 return new MotionManagers.DefinitionMM(new MotionGroup(List.of(
                         new MotionFrame(startFrame, new Vec3(0, 0, 1), (int) angleDegrees),
+                        new MotionFrame(midFrame, new Vec3(0, 0, 1), (int) angleDegrees),
                         new MotionFrame(endFrame, new Vec3(0, 0, 1), (int) angleDegrees)),
                                                                         EasingFunction.IN_CUBIC, time));
             case LINE:
@@ -126,6 +128,7 @@ public class TemporaryMoveTranslator {
             case CLEAVE:
                 return new MotionManagers.DefinitionMM(new MotionGroup(List.of(
                         new MotionFrame(generateFrame((float) Math.min(180,area * 2), 5 * flip), new Vec3(0, 0, 1)),
+                        new MotionFrame(midFrame, new Vec3(0, 0, 1)),
                         new MotionFrame(generateFrame((float) Math.max(-90, -area / 2), -5 * flip), new Vec3(0, 0, 1))),
                                                                         EasingFunction.IN_CUBIC, time));
             case IMPACT:

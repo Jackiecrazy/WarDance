@@ -29,7 +29,7 @@ public class WalkOfDionysus extends SkillStyle {
             CombatData.getCap(caster).knockdown(CombatConfig.knockdownDurationPlayer);
             StylishData.getCap(caster).resetTriggerBar();
             CombatData.getCap(caster).setSpirit(CombatData.getCap(caster).getMaxSpirit());
-            //fall(caster);
+            fall(caster);
             CombatData.getCap(caster).knockdown(0);
         }
         return false;

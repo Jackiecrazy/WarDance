@@ -46,6 +46,11 @@ public class FlyingWeaponEntity extends FlyingItemEntity {
     }
 
     @Override
+    public boolean fireImmune() {
+        return true;
+    }
+
+    @Override
     public void tick() {
         super.tick();
         if (!level().isClientSide) {

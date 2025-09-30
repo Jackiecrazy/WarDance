@@ -147,7 +147,7 @@ public class NewCombatCapability implements ICombatCapability {
 
     @Override
     public float getMaxPosture() {
-        if (dude.get()!=null) {
+        if (dude.get() != null) {
             initializePostureIfNew(dude.get());
         }
         return mpos;
@@ -235,7 +235,7 @@ public class NewCombatCapability implements ICombatCapability {
             //if already stunned, a second breaching hit
             final boolean knockdown = isStunned() || alreadyProc("forceKnockDown") || (posture == 0 && player);
             posture = 0;
-            StunEvent se = new StunEvent(elb, assailant, knockdown ? (elb instanceof Player?CombatConfig.knockdownDurationPlayer:CombatConfig.knockdownDuration) : CombatConfig.staggerDuration, knockdown);
+            StunEvent se = new StunEvent(elb, assailant, knockdown ? (elb instanceof Player ? CombatConfig.knockdownDurationPlayer : CombatConfig.knockdownDuration) : CombatConfig.staggerDuration, knockdown);
             MinecraftForge.EVENT_BUS.post(se);
             if (se.isCanceled()) {
                 posture = prev;
@@ -340,6 +340,9 @@ public class NewCombatCapability implements ICombatCapability {
         if (time == 0 && staggerTime > 0 && e != null) {
             resetPosture();
             maxStaggerTime = 0;
+            pin(0);
+            setHandBind(InteractionHand.MAIN_HAND,0);
+            setHandBind(InteractionHand.OFF_HAND,0);
         }//entering stagger
         else if (e != null && time > 0 && staggerTime == 0) {
             pin(time);
@@ -500,7 +503,7 @@ public class NewCombatCapability implements ICombatCapability {
         }
         if (mpos == 0) {
             mpos = (float) elb.getAttributeValue(FootworkAttributes.MAX_POSTURE.get());
-            posture=mpos;
+            posture = mpos;
         }
     }
 
@@ -595,6 +598,7 @@ public class NewCombatCapability implements ICombatCapability {
     public void setDodgeTime(int i) {
 //        if(dodgeFrame>0&&i<=0&&dude.get() instanceof Player p)
 //            p.setForcedPose(Pose.SWIMMING);
+        if (i<0) i = 0;
         if (i == 0 && dodgeFrame != 0 && dude.get() instanceof Player p)
             //cancel slide pose change
             p.setForcedPose(null);
