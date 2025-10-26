@@ -439,10 +439,11 @@ public class CombatHandler {
                 MinecraftForge.EVENT_BUS.post(pe2);
 
                 //success!
-                if (pe2.success() && ukeCap.consumePosture(seme, pe2.getPostureConsumption(), pe2.canBreach(), Math.max(0, 1 - defMult/2)) == 0) {//todo config rally value
+                if (pe2.success() && ukeCap.consumePosture(seme, pe2.getPostureConsumption(), pe2.canBreach(), Math.max(0, 1 - defMult / 2)) == 0) {//todo config rally value
                     e.setCanceled(true);
                     WarDance.LOGGER.debug("successfully blocked!");
                     CombatUtils.onSuccessfulBlock(uke, seme, defendingHand, defend, pe2.getPostureConsumption());
+                    //do not cancel the event. It technically succeeded but will be blocked by vanilla functions. I just mark the right item to keep processing.
                     return;
                 }
 
@@ -533,7 +534,7 @@ public class CombatHandler {
         ICombatCapability cap = CombatData.getCap(entity);
 
         //the latter three shouldn't make it here, but just to be safe
-        if (cap.isStunned() || cap.isIframe() || cap.isBlocking() || cap.isParrying() || cap.isDodging()) {
+        if (cap.isStunned() || cap.isIframe() || cap.isParrying() || cap.isDodging()) {
             e.setCanceled(true);
             return;
         }
@@ -565,7 +566,8 @@ public class CombatHandler {
         //stuff used to exist here, moved to footwork
 
         ICombatCapability cap = CombatData.getCap(uke);
-        //TODO combo reduces damage
+        // combo reduces damage
+        e.setAmount(e.getAmount() / StylishData.getCap(uke).getCombo());
         StylishData.getCap(uke).resetCombo();
         StealthUtils.Awareness awareness = StealthUtils.INSTANCE.getAwareness(seme, uke);
 
@@ -606,7 +608,7 @@ public class CombatHandler {
         final LivingEntity uke = e.getEntity();
         //no food!
         ItemStack active = uke.getItemInHand(uke.getUsedItemHand());
-        if (DamageUtils.isPhysicalAttack(e.getSource()) && CombatConfig.foodCool >= 0 && (active.getItem().getUseAnimation(active) == UseAnim.EAT || active.getItem().getUseAnimation(active) == UseAnim.DRINK) && uke.isUsingItem()) {
+        if (DamageUtils.isPhysicalAttack(e.getSource()) && CombatConfig.foodCool >= 0 && (active.getUseAnimation() == UseAnim.EAT || active.getItem().getUseAnimation(active) == UseAnim.DRINK) && uke.isUsingItem()) {
             uke.stopUsingItem();
             if (uke instanceof Player && CombatConfig.foodCool > 0) {
                 ((Player) uke).getCooldowns().addCooldown(active.getItem(), CombatConfig.foodCool);
@@ -624,7 +626,7 @@ public class CombatHandler {
         if (e.getAmount() < 0) e.setCanceled(true);
     }
 
-    @SubscribeEvent(priority = EventPriority.LOWEST, receiveCanceled = true)
+    @SubscribeEvent(priority = EventPriority.LOWEST)
     public static void udedlol(LivingDamageEvent e) {
         if (GeneralConfig.debug && !e.isCanceled() && !e.getEntity().level().isClientSide)
             WarDance.LOGGER.debug("damage from " + e.getSource() + " finalized with amount " + e.getAmount());
@@ -645,15 +647,18 @@ public class CombatHandler {
 
         //fall damage deducts posture
         if (e.getSource().is(DamageTypeTags.IS_FALL) || e.getSource().is(DamageTypeTags.IS_EXPLOSION)) {
-            cap.consumePosture(null, e.getAmount(), true, 0);
+            cap.consumePosture(null, e.getAmount(), false, 0);
         }
 
         //finalize knockdown, ugly fix to prevent the knocking hit from being skipped
         if (cap.alreadyProc("knockdown")) {
-            //temporary, players lose 30% health on knockdown
             cap.knockdown(e.getEntity(), (int) cap.getProc("knockdown"));
+            //temporary, players lose 30% health on knockdown todo use deathblow resistance
             if (e.getEntity() instanceof Player p) {
                 e.setAmount(p.getMaxHealth() * 0.3f);
+            }else{
+                e.setAmount(e.getAmount()+e.getEntity().getMaxHealth()/10f);
+                CombatUtils.knockBack(e.getEntity(), e.getSource().getEntity(), 0.7f, true, true);
             }
             cap.tickProc("knockdown", 1);
         }

@@ -25,6 +25,7 @@ import jackiecrazy.wardance.networking.CombatChannel;
 import jackiecrazy.wardance.networking.combat.UpdateAttackCooldownPacket;
 import net.minecraft.core.particles.DustParticleOptions;
 import net.minecraft.core.particles.ParticleType;
+import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
@@ -42,6 +43,7 @@ import net.minecraft.world.entity.ai.attributes.AttributeModifier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.UseAnim;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.common.MinecraftForge;
@@ -612,6 +614,10 @@ public class CombatUtils {
 
         //item specific effects
         if (defend != null) {
+            //hacky. Instantly trigger block for blocking items
+            if (hand != null && defend.getUseAnimation() == UseAnim.BLOCK) {
+                defender.startUsingItem(hand);
+            }
             ItemStack finalDefend = defend;
             defend.getCapability(CombatManipulator.CAP).ifPresent((i) -> i.onBlock(defender, attacker, finalDefend, amount));
             InteractionHand other = hand == InteractionHand.MAIN_HAND ? InteractionHand.OFF_HAND : InteractionHand.MAIN_HAND;
@@ -723,6 +729,21 @@ public class CombatUtils {
             ItemStack finalDefend1 = defender.getItemInHand(other);
             finalDefend1.getCapability(CombatManipulator.CAP).ifPresent((i) -> i.onOtherHandParry(defender, attacker, finalDefend1, amount));
         }
+    }
+
+    public static boolean scheduleFinisher(ServerPlayer sender, InteractionHand h) {
+        if (!StylishData.getCap(sender).canTrigger() && !sender.getAbilities().instabuild) {
+            sender.displayClientMessage(Component.literal("Not enough Finisher Charge! Currently " + StylishData.getCap(sender).getTriggerBar()), true);
+            return false;
+        }
+        if (!StylishData.getCap(sender).isCombatMode()) return false;
+        if (CombatData.getCap(sender).getHandBind(h) > 0) return false;
+        StylishData.getCap(sender).resetTriggerBar();
+        WeaponStats.SWEEPSTATE s = getSweepState(sender);
+        WeaponStats.SweepInfo info = WeaponStats.getSweepInfo(sender.getItemInHand(h), s);
+        TemporaryMoveTranslator.scheduleFinisher(sender, h, info);
+        CombatData.getCap(sender).setSpirit(CombatData.getCap(sender).getMaxSpirit());
+        return true;
     }
 
     private static class ProjectileInfo {

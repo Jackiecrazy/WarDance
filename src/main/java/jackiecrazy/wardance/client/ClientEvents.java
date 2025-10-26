@@ -1,5 +1,6 @@
 package jackiecrazy.wardance.client;
 
+import com.mojang.blaze3d.platform.InputConstants;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.math.Axis;
 import jackiecrazy.footwork.capability.resources.CombatData;
@@ -33,10 +34,13 @@ import net.minecraft.world.entity.HumanoidArm;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.Pose;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.UseAnim;
 import net.minecraft.world.phys.EntityHitResult;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.client.event.*;
 import net.minecraftforge.client.gui.overlay.VanillaGuiOverlay;
+import net.minecraftforge.common.ForgeMod;
 import net.minecraftforge.event.TickEvent;
 import net.minecraftforge.event.entity.living.LivingAttackEvent;
 import net.minecraftforge.event.entity.living.LivingEvent;
@@ -47,6 +51,7 @@ import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.registries.ForgeRegistries;
 
 import java.math.RoundingMode;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
@@ -54,12 +59,15 @@ import java.util.List;
 public class ClientEvents {
     private static final ResourceLocation expose = new ResourceLocation(WarDance.MODID, "textures/hud/exposed.png");
     private static final int ALLOWANCE = 5;
+    private static final List<KeyMapping> conflict = new ArrayList<>();
     public static int combatTicks = -999;
     private static HashMap<String, Boolean> rotate;
     private static Entity lastTickLookAt;
     private static boolean rightClick = false;
     private static int mainUseTick = 0, offUseTick = 0;
     private static InteractionHand testingHand = null;
+    private static boolean initializedConflictMap = false;
+    private static int lastSweepTick = 0, lastAttackTick = 0;
 
     static {
         RenderUtils.formatter.setRoundingMode(RoundingMode.DOWN);
@@ -169,6 +177,22 @@ public class ClientEvents {
         }
     }
 
+//    @SubscribeEvent
+//    public static void buildContents(CreativeModeTabEvent.Register event) {
+//        event.registerCreativeModeTab(new ResourceLocation(Gempire.MODID, "gemstones"), builder ->
+//                // Set name of tab to display
+//                builder.title(Component.translatable("item_group." + Gempire.MODID + ".gemstones"))
+//                        // Set icon of creative tab
+//                        .icon(() -> new ItemStack(ModItems.RUBY_GEM.get()))
+//                        // Add default items to tab
+//                        .displayItems((enabledFlags, populator, hasPermissions) -> {
+//                            populator.accept(ModItems.AQUAMARINE_GEM.get());
+//                            populator.accept(ModItems.NEPHRITE_GEM.get());
+//                            populator.accept(ModItems.BISMUTH_GEM.get());
+//                        })
+//        );
+//    }
+
     @SubscribeEvent
     public static void downTick(LivingEvent.LivingTickEvent event) {
         final LivingEntity e = event.getEntity();
@@ -227,24 +251,8 @@ public class ClientEvents {
         }
     }
 
-//    @SubscribeEvent
-//    public static void buildContents(CreativeModeTabEvent.Register event) {
-//        event.registerCreativeModeTab(new ResourceLocation(Gempire.MODID, "gemstones"), builder ->
-//                // Set name of tab to display
-//                builder.title(Component.translatable("item_group." + Gempire.MODID + ".gemstones"))
-//                        // Set icon of creative tab
-//                        .icon(() -> new ItemStack(ModItems.RUBY_GEM.get()))
-//                        // Add default items to tab
-//                        .displayItems((enabledFlags, populator, hasPermissions) -> {
-//                            populator.accept(ModItems.AQUAMARINE_GEM.get());
-//                            populator.accept(ModItems.NEPHRITE_GEM.get());
-//                            populator.accept(ModItems.BISMUTH_GEM.get());
-//                        })
-//        );
-//    }
-
     @SubscribeEvent
-    public static void handRaisingThird(RenderPlayerEvent.Pre e){
+    public static void handRaisingThird(RenderPlayerEvent.Pre e) {
         //todo render two-handed weapons and hide weapons in third person
         //e.getRenderer().getModel()
     }
@@ -254,7 +262,7 @@ public class ClientEvents {
         //todo empty render on disarm
         AbstractClientPlayer p = Minecraft.getInstance().player;
         //render empty hand on flying weapons
-        if(StylishData.getCap(p).isCombatMode()&& CombatUtils.getCooledAttackStrength(p, e.getHand(), 0.4f)<1){
+        if (StylishData.getCap(p).isCombatMode() && CombatUtils.getCooledAttackStrength(p, e.getHand(), 0.1f) < 1) {
             e.setCanceled(true);
             HumanoidArm armToRender = (p.getMainArm() == HumanoidArm.RIGHT) == (e.getHand() == InteractionHand.MAIN_HAND)
                     ? HumanoidArm.RIGHT
@@ -299,42 +307,49 @@ public class ClientEvents {
                 }
 
                 //when finding a long press on left button, check if there is an item in use.
+
                 if (StylishData.getCap(p).isCombatMode()) {
-                    Keybinds.FINISHER.consumeClick();
-                    while(mc.options.keyPickItem.consumeClick());//prevent pick block in combat mode, is this really a good idea?
-                    while(mc.options.keyDrop.consumeClick());//prevent dropping items in combat mode
+                    suppressConflictingKeys(mc);
+                    //if there is a use action, do both left and right click simultaneously.
+                    // otherwise, right click after a noticeable delay
+                    // If evoke is held, only right click
+                    int allow = ALLOWANCE;
 
                     //if(Keybinds.EVOKE.isDown()) {
-                        if (mc.options.keyUse.isDown()) {
-                            int allow = ALLOWANCE;
-                            if (!mc.player.isUsingItem() && offUseTick % allow == allow-1) {
-                                testingHand = InteractionHand.OFF_HAND;
-                                ((ClientAccessors) mc).callStartUseItem();
-                            }
-                            ++offUseTick;
-                        } else offUseTick = 0;
-
-                        if (mc.options.keyAttack.isDown()) {
-                            int allow = ALLOWANCE;
-                            //System.out.println(mc.player.isUsingItem());
-                            if (mc.player.isUsingItem() && mc.player.getUsedItemHand() == InteractionHand.MAIN_HAND) {
-                                //hack. Spoof use item key to down for the keybind processing
-                                mc.options.keyUse.setDown(true);
-                            } else if (!mc.player.isUsingItem() && mainUseTick % allow == allow-1) {//don't call when already using item for obvious reasons
-                                testingHand = InteractionHand.MAIN_HAND;
-                                ((ClientAccessors) mc).callStartUseItem();
-                                if (!mc.options.keyUse.isDown())
-                                    mc.options.keyUse.setDown(mc.player.isUsingItem());
-                            }
-                            if(mainUseTick>0)
-                                mc.options.keyAttack.consumeClick();
-                            ++mainUseTick;
-                        } else {
-                            //cancel usage of main hand weapon when attack is released
-                            if (mainUseTick>0&&WeaponStats.isCombatItem(mc.player, mc.player.getMainHandItem())&&mc.player.isUsingItem() && mc.player.getUsedItemHand() == InteractionHand.MAIN_HAND)
-                                mc.options.keyUse.setDown(false);
-                            mainUseTick = 0;
+                    //offhand use/attack check
+                    if (specialHandleItem(mc.player, mc.player.getMainHandItem()) && mc.options.keyUse.isDown()) {
+                        //special charge action, immediately start
+                        if (mc.player.getMainHandItem().getUseAnimation() != UseAnim.NONE)
+                            allow = 1;
+                        if (!mc.player.isUsingItem() && offUseTick % allow == allow - 1) {
+                            testingHand = InteractionHand.OFF_HAND;
+                            ((ClientAccessors) mc).callStartUseItem();
                         }
+                        ++offUseTick;
+                    } else offUseTick = 0;
+                    if (specialHandleItem(mc.player, mc.player.getMainHandItem()) && mc.options.keyAttack.isDown()) {
+                        //special charge action, immediately start
+                        if (mc.player.getMainHandItem().getUseAnimation() != UseAnim.NONE)
+                            allow = 1;
+                        if (mc.player.isUsingItem() && mc.player.getUsedItemHand() == InteractionHand.MAIN_HAND) {
+                            //hack. Spoof use item key to down for the keybind processing
+                            mc.options.keyUse.setDown(true);
+                        } else if (!mc.player.isUsingItem() && mainUseTick == allow) {//don't call when already using item for obvious reasons
+                            testingHand = InteractionHand.MAIN_HAND;
+                            ((ClientAccessors) mc).callStartUseItem();
+                            if (!mc.options.keyUse.isDown())
+                                mc.options.keyUse.setDown(mc.player.isUsingItem());
+                        }
+                        //cancel the left click if using or evoking
+                        if (mainUseTick > 0 || Keybinds.EVOKE.isDown())
+                            mc.options.keyAttack.consumeClick();
+                        ++mainUseTick;
+                    } else {
+                        //cancel usage of main hand weapon when attack is released
+                        if (mainUseTick > 0 && WeaponStats.isCombatItem(mc.player, mc.player.getMainHandItem()) && mc.player.isUsingItem() && mc.player.getUsedItemHand() == InteractionHand.MAIN_HAND)
+                            mc.options.keyUse.setDown(false);
+                        mainUseTick = 0;
+                    }
                     //}
                 }
                 // if not, call use with the respective hand
@@ -342,9 +357,10 @@ public class ClientEvents {
                 //  If not, do nothing.
                 //  If yes, set the item use key to true
             } else {
-                if (!mc.options.keyUse.isDown())
+                if (!mc.options.keyUse.isDown()) {
                     rightClick = false;
-                testingHand = null;
+                    testingHand = null;
+                }
 //                if (WarCompat.elenaiDodge) {
 //                    if (GeneralConfig.elenaiP && CombatData.getCap(p).getPostureGrace() > 0) {
 //                        ClientTickEventListener.regen++;
@@ -361,111 +377,160 @@ public class ClientEvents {
         }
     }
 
-    @SubscribeEvent
-    public static void universalSweepSwing(InputEvent.InteractionKeyMappingTriggered e) {
-        /// I do not cancel this because it would cancel block breaking too
-        //interestingly enough, minecraft calls this event once per tick for left click but only once at the start for right click.
-        //this means I only have to cancel it once for right click but need a isDestroying() check for left click
+    private static void suppressConflictingKeys(Minecraft mc) {
 
-        final LocalPlayer p = Minecraft.getInstance().player;
-        if (!StylishData.getCap(p).isCombatMode()) return;
-        //prevent offhand from being called when the main hand is being long clicked without a valid use function
-        if (e.isUseItem() && e.getHand() == InteractionHand.OFF_HAND && testingHand == InteractionHand.MAIN_HAND) {
-            e.setCanceled(true);
-            e.setSwingHand(false);
-            return;
+        if (initializedConflictMap) {
+            conflict.forEach(a -> {
+                while (a.consumeClick()) ;
+            });
+        } else {
+            Keybinds.ALL.forEach(a -> {
+                for (KeyMapping km : mc.options.keyMappings) {
+                    if (!km.getCategory().equals("key.categories.wardance") && km.getKey() != InputConstants.UNKNOWN && Keybinds.IN_COMBAT.conflicts(km.getKeyConflictContext()) && km.getKey().equals(a.getKey())) {
+                        conflict.add(km);
+                        while (km.consumeClick()) ;
+                    }
+                }
+            });
+            initializedConflictMap = true;
         }
-        if (e.getHand() == InteractionHand.MAIN_HAND && e.isAttack() && !Minecraft.getInstance().gameMode.isDestroying() &&
-                StylishData.getCap(p).isCombatMode() //&&
-//                (WeaponStats.isWeapon(p, p.getMainHandItem()) ||
-//                        p.getMainHandItem().isEmpty() ||
-//                        WeaponStats.isShield(p, p.getMainHandItem())) //temporarily disabling this to allow attacking with bread
-                &&CombatUtils.getCooledAttackStrength(p, InteractionHand.MAIN_HAND, 1)>0.9
-            && mainUseTick == 1//testing: disable hold attack spam
-        ) {
-            Entity aimed = Minecraft.getInstance().hitResult instanceof EntityHitResult h?h.getEntity():null;
-            //sweep
-            CombatChannel.INSTANCE.sendToServer(new RequestSweepPacket(true, aimed, Keybinds.FINISHER.isDown()));
-        }
-        //offhand swinging
-        if (e.getHand() == InteractionHand.OFF_HAND && e.isUseItem() &&
-                GeneralConfig.dual &&
-                StylishData.getCap(p).isCombatMode() &&
-                !TwoHandingHandler.suppressOffhand(p, p.getMainHandItem()) &&
-                (WeaponStats.isWeapon(p, p.getOffhandItem()) ||
-                        p.getOffhandItem().isEmpty() ||
-                        WeaponStats.isShield(p, p.getOffhandItem()))
-                &&CombatUtils.getCooledAttackStrength(p, InteractionHand.OFF_HAND, 1)>0.9
-            && offUseTick == 1//testing: disable hold attack spam
-        ) {
-            Entity aimed = Minecraft.getInstance().hitResult instanceof EntityHitResult h?h.getEntity():null;
-            //sweep
-            CombatChannel.INSTANCE.sendToServer(new RequestSweepPacket(false, aimed, Keybinds.FINISHER.isDown()));
-        }
+    }
+
+    @SubscribeEvent
+    public static void sweepSwing(PlayerInteractEvent.LeftClickEmpty e) {
+        Entity n = RenderUtils.getEntityLookedAt(e.getEntity(), GeneralUtils.getAttributeValueHandSensitive(e.getEntity(), ForgeMod.ENTITY_REACH.get(), InteractionHand.MAIN_HAND));
+//        if (n != null && e.getEntity().tickCount != lastAttackTick) {
+//            CombatChannel.INSTANCE.sendToServer(new RequestAttackPacket(true, n));
+//            lastAttackTick = e.getEntity().tickCount;
+//        }
+        if (lastSweepTick != e.getEntity().tickCount)
+            CombatChannel.INSTANCE.sendToServer(new RequestSweepPacket(true, n, Keybinds.FINISHER.isDown()));
+        lastSweepTick = e.getEntity().tickCount;
     }
 
     @SubscribeEvent
     public static void sweepSwingOff(PlayerInteractEvent.RightClickEmpty e) {
-        //if(!e.getEntity().level().isClientSide())return;
         if (TwoHandingHandler.suppressOffhand(e.getEntity(), e.getEntity().getMainHandItem()) && e.getHand() == InteractionHand.OFF_HAND)
             return;
-        if (!rightClick && GeneralConfig.dual && StylishData.getCap(e.getEntity()).isCombatMode()) {
+        //fixme
+        if (testingHand != null && !rightClick && GeneralConfig.dual && StylishData.getCap(e.getEntity()).isCombatMode()) {
             if (e.getHand() != testingHand) {
                 //cancel right click main hand
                 e.setCancellationResult(InteractionResult.PASS);
+                return;
             }
         }
+        if (!Keybinds.EVOKE.isDown() && !rightClick && GeneralConfig.dual && e.getHand() == InteractionHand.OFF_HAND && StylishData.getCap(e.getEntity()).isCombatMode() && specialHandleItem(e.getEntity(), e.getItemStack())) {
+            rightClick = true;
+            Entity n = RenderUtils.getEntityLookedAt(e.getEntity(), GeneralUtils.getAttributeValueHandSensitive(e.getEntity(), ForgeMod.ENTITY_REACH.get(), InteractionHand.OFF_HAND));
+            e.getEntity().swing(InteractionHand.OFF_HAND, false);
+            if (n != null && e.getEntity().tickCount != lastAttackTick) {
+                CombatChannel.INSTANCE.sendToServer(new RequestAttackPacket(false, n));
+                lastAttackTick = e.getEntity().tickCount;
+            }
+            if (lastSweepTick != e.getEntity().tickCount)
+                CombatChannel.INSTANCE.sendToServer(new RequestSweepPacket(false, n, Keybinds.FINISHER.isDown()));
+            lastSweepTick = e.getEntity().tickCount;
+        }
+    }
+
+    private static boolean specialHandleItem(LivingEntity e, ItemStack i) {
+        return WeaponStats.isWeapon(e, i) || i.isEmpty() || WeaponStats.isShield(e, i);
+    }
+
+    @SubscribeEvent
+    public static void sweepSwingBlock(PlayerInteractEvent.LeftClickBlock e) {
+        if (Minecraft.getInstance().gameMode.isDestroying()) return;
+        float temp = CombatUtils.getCooledAttackStrength(e.getEntity(), InteractionHand.MAIN_HAND, 0.5f);
+        Entity n = RenderUtils.getEntityLookedAt(e.getEntity(), GeneralUtils.getAttributeValueHandSensitive(e.getEntity(), ForgeMod.ENTITY_REACH.get(), InteractionHand.MAIN_HAND));
+        if (n != null && e.getEntity().tickCount != lastAttackTick) {
+            CombatChannel.INSTANCE.sendToServer(new RequestAttackPacket(true, n));
+            lastAttackTick = e.getEntity().tickCount;
+        }
+        if (lastSweepTick != e.getEntity().tickCount)
+            CombatChannel.INSTANCE.sendToServer(new RequestSweepPacket(true, n, Keybinds.FINISHER.isDown()));
+        lastSweepTick = e.getEntity().tickCount;
     }
 
     @SubscribeEvent
     public static void sweepSwingOffItem(PlayerInteractEvent.RightClickItem e) {
-        /// enabling this causes the offhand to be unusable
-        //if(!e.getEntity().level().isClientSide())return;
-        if (TwoHandingHandler.suppressOffhand(e.getEntity(), e.getEntity().getMainHandItem()) && e.getHand() == InteractionHand.OFF_HAND) {
-            e.setCanceled(true);
-            e.setCancellationResult(InteractionResult.FAIL);
+        if (TwoHandingHandler.suppressOffhand(e.getEntity(), e.getEntity().getMainHandItem()) && e.getHand() == InteractionHand.OFF_HAND)
             return;
-        }
+        //fixme
         if (GeneralConfig.dual && StylishData.getCap(e.getEntity()).isCombatMode()) {
             /// enabling this causes the main hand to be right clickable, then immediately canceled
             /// however enabling this is necessary for the main hand to be right clickable for usable items
-            if (e.getHand() != testingHand&&WeaponStats.isCombatItem(e.getEntity(), e.getItemStack())) {// && testingHand == InteractionHand.MAIN_HAND
+            //todo is this good?
+            if (testingHand != null && e.getHand() != testingHand && WeaponStats.isCombatItem(e.getEntity(), e.getItemStack())) {// && testingHand == InteractionHand.MAIN_HAND
                 //cancel right click main hand
                 e.setCanceled(true);
                 e.setCancellationResult(InteractionResult.PASS);
+                return;
             }
+        }
+        if (!Keybinds.EVOKE.isDown() && !rightClick && GeneralConfig.dual && e.getHand() == InteractionHand.OFF_HAND && StylishData.getCap(e.getEntity()).isCombatMode() && specialHandleItem(e.getEntity(), e.getItemStack())) {
+            rightClick = true;
+            Entity n = RenderUtils.getEntityLookedAt(e.getEntity(), GeneralUtils.getAttributeValueHandSensitive(e.getEntity(), ForgeMod.ENTITY_REACH.get(), InteractionHand.OFF_HAND));
+            e.getEntity().swing(InteractionHand.OFF_HAND, false);
+            if (n != null && e.getEntity().tickCount != lastAttackTick) {
+                CombatChannel.INSTANCE.sendToServer(new RequestAttackPacket(false, n));
+                lastAttackTick = e.getEntity().tickCount;
+            }
+            if (lastSweepTick != e.getEntity().tickCount)
+                CombatChannel.INSTANCE.sendToServer(new RequestSweepPacket(false, n, Keybinds.FINISHER.isDown()));
+            lastSweepTick = e.getEntity().tickCount;
         }
     }
 
     @SubscribeEvent
     public static void punchy(PlayerInteractEvent.EntityInteract e) {
-        //if(!e.getEntity().level().isClientSide())return;
-        if (TwoHandingHandler.suppressOffhand(e.getEntity(), e.getEntity().getMainHandItem()) && e.getHand() == InteractionHand.OFF_HAND) {
-            e.setCanceled(true);
-            e.setCancellationResult(InteractionResult.FAIL);
+        if (TwoHandingHandler.suppressOffhand(e.getEntity(), e.getEntity().getMainHandItem()) && e.getHand() == InteractionHand.OFF_HAND)
             return;
-        }
+        //fixme
         if (GeneralConfig.dual && StylishData.getCap(e.getEntity()).isCombatMode()) {
-            if (e.getHand() != testingHand) {
+            if (testingHand != null && e.getHand() != testingHand) {
                 e.setCanceled(true);
                 e.setCancellationResult(InteractionResult.PASS);
+                return;
             }
+        }
+        if (!Keybinds.EVOKE.isDown() && !rightClick && GeneralConfig.dual && e.getHand() == InteractionHand.OFF_HAND && StylishData.getCap(e.getEntity()).isCombatMode() && specialHandleItem(e.getEntity(), e.getItemStack())) {
+            rightClick = true;
+            Entity n = RenderUtils.getEntityLookedAt(e.getEntity(), GeneralUtils.getAttributeValueHandSensitive(e.getEntity(), ForgeMod.ENTITY_REACH.get(), InteractionHand.OFF_HAND));
+            e.getEntity().swing(InteractionHand.OFF_HAND, false);
+            if (n != null && e.getEntity().tickCount != lastAttackTick) {
+                CombatChannel.INSTANCE.sendToServer(new RequestAttackPacket(false, n));
+                lastAttackTick = e.getEntity().tickCount;
+            }
+            if (lastSweepTick != e.getEntity().tickCount)
+                CombatChannel.INSTANCE.sendToServer(new RequestSweepPacket(false, n, Keybinds.FINISHER.isDown()));
+            lastSweepTick = e.getEntity().tickCount;
         }
     }
 
     @SubscribeEvent
     public static void sweepSwingOffItemBlock(PlayerInteractEvent.RightClickBlock e) {
-        //if(!e.getEntity().level().isClientSide())return;
-        if (TwoHandingHandler.suppressOffhand(e.getEntity(), e.getEntity().getMainHandItem()) && e.getHand() == InteractionHand.OFF_HAND) {
-            e.setCanceled(true);
-            e.setCancellationResult(InteractionResult.FAIL);
+        if (TwoHandingHandler.suppressOffhand(e.getEntity(), e.getEntity().getMainHandItem()) && e.getHand() == InteractionHand.OFF_HAND)
             return;
-        }
+        //fixme
         if (GeneralConfig.dual && StylishData.getCap(e.getEntity()).isCombatMode()) {
-            if (e.getHand() != testingHand && testingHand == InteractionHand.MAIN_HAND) {//extra check for doors and stuff
+            if (testingHand != null && e.getHand() != testingHand && testingHand == InteractionHand.MAIN_HAND) {//extra check for doors and stuff
                 e.setCanceled(true);
                 e.setCancellationResult(InteractionResult.PASS);
+                return;
             }
+        }
+        if (!Keybinds.EVOKE.isDown() && !rightClick && GeneralConfig.dual && e.getHand() == InteractionHand.OFF_HAND && StylishData.getCap(e.getEntity()).isCombatMode() && specialHandleItem(e.getEntity(), e.getItemStack())) {
+            rightClick = true;
+            Entity n = RenderUtils.getEntityLookedAt(e.getEntity(), GeneralUtils.getAttributeValueHandSensitive(e.getEntity(), ForgeMod.ENTITY_REACH.get(), InteractionHand.OFF_HAND) - (e.getItemStack().isEmpty() ? 1 : 0));
+            e.getEntity().swing(InteractionHand.OFF_HAND, false);
+            if (n != null && e.getEntity().tickCount != lastAttackTick) {
+                CombatChannel.INSTANCE.sendToServer(new RequestAttackPacket(false, n));
+                lastAttackTick = e.getEntity().tickCount;
+            }
+            if (lastSweepTick != e.getEntity().tickCount)
+                CombatChannel.INSTANCE.sendToServer(new RequestSweepPacket(false, n, Keybinds.FINISHER.isDown()));
+            lastSweepTick = e.getEntity().tickCount;
         }
     }
 

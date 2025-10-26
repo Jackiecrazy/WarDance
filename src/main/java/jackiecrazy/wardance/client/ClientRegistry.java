@@ -21,6 +21,7 @@ public class ClientRegistry {
         event.register(Keybinds.BINDCAST);
         event.register(Keybinds.DODGE);
         event.register(Keybinds.FINISHER);
+        event.register(Keybinds.EVOKE);
         for(KeyMapping km: Keybinds.SKILL){
             event.register(km);
         }

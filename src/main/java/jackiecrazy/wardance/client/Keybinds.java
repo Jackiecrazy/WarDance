@@ -26,8 +26,59 @@ import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 import org.lwjgl.glfw.GLFW;
 
+import java.util.ArrayList;
+import java.util.List;
+
 @Mod.EventBusSubscriber(value = Dist.CLIENT, modid = WarDance.MODID)
 public class Keybinds {
+    public static class KeyMapWrapper extends KeyMapping {
+        public KeyMapWrapper(String p_90821_, int p_90822_, String p_90823_) {
+            super(p_90821_, p_90822_, p_90823_);
+            ALL.add(this);
+        }
+
+        public KeyMapWrapper(String p_90825_, InputConstants.Type p_90826_, int p_90827_, String p_90828_) {
+            super(p_90825_, p_90826_, p_90827_, p_90828_);
+            ALL.add(this);
+        }
+
+        public KeyMapWrapper(String description,
+                             IKeyConflictContext keyConflictContext,
+                             InputConstants.Type inputType,
+                             int keyCode,
+                             String category) {
+            super(description, keyConflictContext, inputType, keyCode, category);
+            ALL.add(this);
+        }
+
+        public KeyMapWrapper(String description,
+                             IKeyConflictContext keyConflictContext,
+                             InputConstants.Key keyCode,
+                             String category) {
+            super(description, keyConflictContext, keyCode, category);
+            ALL.add(this);
+        }
+
+        public KeyMapWrapper(String description,
+                             IKeyConflictContext keyConflictContext,
+                             KeyModifier keyModifier,
+                             InputConstants.Type inputType,
+                             int keyCode,
+                             String category) {
+            super(description, keyConflictContext, keyModifier, inputType, keyCode, category);
+            ALL.add(this);
+        }
+
+        public KeyMapWrapper(String description,
+                             IKeyConflictContext keyConflictContext,
+                             KeyModifier keyModifier,
+                             InputConstants.Key keyCode,
+                             String category) {
+            super(description, keyConflictContext, keyModifier, keyCode, category);
+            ALL.add(this);
+        }
+    }
+
     public static final IKeyConflictContext IN_COMBAT = new IKeyConflictContext() {
 
         @Override
@@ -40,18 +91,21 @@ public class Keybinds {
             return other != KeyConflictContext.GUI;
         }
     };
-    public static final KeyMapping COMBAT = new KeyMapping("wardance.combat", KeyConflictContext.IN_GAME, KeyModifier.SHIFT, InputConstants.Type.KEYSYM, GLFW.GLFW_KEY_R, "key.categories.wardance");
-    public static final KeyMapping CAST = new KeyMapping("wardance.skill", IN_COMBAT, InputConstants.Type.KEYSYM, GLFW.GLFW_KEY_R, "key.categories.wardance");
-    public static final KeyMapping BINDCAST = new KeyMapping("wardance.bindCast", IN_COMBAT, InputConstants.Type.MOUSE, GLFW.GLFW_MOUSE_BUTTON_MIDDLE, "key.categories.wardance");
-    public static final KeyMapping DODGE = new KeyMapping("wardance.dodge", IN_COMBAT, InputConstants.Type.KEYSYM, GLFW.GLFW_KEY_LEFT_ALT, "key.categories.wardance");
-    public static final KeyMapping FINISHER = new KeyMapping("wardance.finisher", IN_COMBAT, InputConstants.Type.KEYSYM, GLFW.GLFW_KEY_Q, "key.categories.wardance");
+
+    public static final List<KeyMapping> ALL=new ArrayList<>();
+    public static final KeyMapping COMBAT = new KeyMapWrapper("wardance.combat", KeyConflictContext.IN_GAME, KeyModifier.SHIFT, InputConstants.Type.KEYSYM, GLFW.GLFW_KEY_R, "key.categories.wardance");
+    public static final KeyMapping CAST = new KeyMapWrapper("wardance.skill", IN_COMBAT, InputConstants.Type.KEYSYM, GLFW.GLFW_KEY_R, "key.categories.wardance");
+    public static final KeyMapping BINDCAST = new KeyMapWrapper("wardance.bindCast", IN_COMBAT, InputConstants.Type.MOUSE, GLFW.GLFW_MOUSE_BUTTON_MIDDLE, "key.categories.wardance");
+    public static final KeyMapping DODGE = new KeyMapWrapper("wardance.dodge", IN_COMBAT, InputConstants.Type.KEYSYM, GLFW.GLFW_KEY_LEFT_ALT, "key.categories.wardance");
+    public static final KeyMapping FINISHER = new KeyMapWrapper("wardance.finisher", IN_COMBAT, InputConstants.Type.KEYSYM, GLFW.GLFW_KEY_Q, "key.categories.wardance");
+    public static final KeyMapping EVOKE = new KeyMapWrapper("wardance.evoke", IN_COMBAT, InputConstants.Type.KEYSYM, GLFW.GLFW_KEY_V, "key.categories.wardance");
     //center, top right, down clockwise
     public static final KeyMapping[] SKILL = {
-            new KeyMapping("wardance.skill1", IN_COMBAT, InputConstants.UNKNOWN, "key.categories.wardance"),
-            new KeyMapping("wardance.skill2", IN_COMBAT, InputConstants.UNKNOWN, "key.categories.wardance"),
-            new KeyMapping("wardance.skill3", IN_COMBAT, InputConstants.UNKNOWN, "key.categories.wardance"),
-            new KeyMapping("wardance.skill4", IN_COMBAT, InputConstants.UNKNOWN, "key.categories.wardance"),
-            new KeyMapping("wardance.skill5", IN_COMBAT, InputConstants.UNKNOWN, "key.categories.wardance")
+            new KeyMapWrapper("wardance.skill1", IN_COMBAT, InputConstants.UNKNOWN, "key.categories.wardance"),
+            new KeyMapWrapper("wardance.skill2", IN_COMBAT, InputConstants.UNKNOWN, "key.categories.wardance"),
+            new KeyMapWrapper("wardance.skill3", IN_COMBAT, InputConstants.UNKNOWN, "key.categories.wardance"),
+            new KeyMapWrapper("wardance.skill4", IN_COMBAT, InputConstants.UNKNOWN, "key.categories.wardance"),
+            new KeyMapWrapper("wardance.skill5", IN_COMBAT, InputConstants.UNKNOWN, "key.categories.wardance")
     };
 
 
@@ -94,5 +148,6 @@ public class Keybinds {
             BINDCAST.setDown(false);
             CombatChannel.INSTANCE.sendToServer(new EvokeSkillPacket());
         }
+        FINISHER.consumeClick();
     }
 }

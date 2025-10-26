@@ -1,5 +1,6 @@
 package jackiecrazy.wardance.handlers;
 
+import jackiecrazy.footwork.capability.stylish.StylishData;
 import jackiecrazy.wardance.WarDance;
 import jackiecrazy.wardance.capability.action.PermissionData;
 import jackiecrazy.wardance.config.WeaponStats;
@@ -30,6 +31,7 @@ public class ItemTooltipHandler {
     @SubscribeEvent()
     public static void tooltip(ItemTooltipEvent e) {
         final ItemStack stack = e.getItemStack();
+        if(!StylishData.getCap(e.getEntity()).isCombatMode())return;
         if (WeaponStats.isWeapon(e.getEntity(), stack) || WeaponStats.isShield(e.getEntity(), stack)) {
             if (Screen.hasShiftDown()) {
                 if (PermissionData.getCap(e.getEntity()).canDealPostureDamage()) {

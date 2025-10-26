@@ -227,7 +227,7 @@ public class NewCombatCapability implements ICombatCapability {
         }
 
         //stun check
-        if ((posture - amount < 0) && breach) {
+        if ((isStunned() || posture - amount < 0) && breach) {
             //start stun
             ret = posture - amount;
             //I don't like this here but I don't see a good way around it
@@ -341,8 +341,8 @@ public class NewCombatCapability implements ICombatCapability {
             resetPosture();
             maxStaggerTime = 0;
             pin(0);
-            setHandBind(InteractionHand.MAIN_HAND,0);
-            setHandBind(InteractionHand.OFF_HAND,0);
+            setHandBind(InteractionHand.MAIN_HAND, 0);
+            setHandBind(InteractionHand.OFF_HAND, 0);
         }//entering stagger
         else if (e != null && time > 0 && staggerTime == 0) {
             pin(time);
@@ -598,8 +598,7 @@ public class NewCombatCapability implements ICombatCapability {
     public void setDodgeTime(int i) {
 //        if(dodgeFrame>0&&i<=0&&dude.get() instanceof Player p)
 //            p.setForcedPose(Pose.SWIMMING);
-        if (i<0) i = 0;
-        if (i == 0 && dodgeFrame != 0 && dude.get() instanceof Player p)
+        if (i <= 0 && dodgeFrame > 0 && dude.get() instanceof Player p)
             //cancel slide pose change
             p.setForcedPose(null);
         dodgeFrame = i;
