@@ -36,8 +36,8 @@ public class TemporaryMoveTranslator {
             new MotionFrame(new Vec3(0, 0, 1), new Vec3(0, 0, 1), new Vector4d(0, 0, 1, 90)));
     private static final List<MotionFrame> LOOP = List.of(
             //new MotionFrame(new Vec3(0, -1, 0), new Vec3(0, 0, 1)),
-            new MotionFrame(new Vec3(0, 0, -1), new Vec3(0, 0, 1)),
-            new MotionFrame(new Vec3(0, 1, 0), new Vec3(0, 0, 1)),
+            new MotionFrame(new Vec3(0, 0, -1), new Vec3(0, 0, 1),180),
+            new MotionFrame(new Vec3(0, 1, 0), new Vec3(0, 0, 1),180),
             new MotionFrame(new Vec3(0, 0, 1), new Vec3(0, 0, 1)),
             new MotionFrame(new Vec3(0, -2, 1), new Vec3(0, 0, 1)));
     private static final List<MotionFrame> SLASH = List.of(
@@ -64,17 +64,18 @@ public class TemporaryMoveTranslator {
                                         WeaponStats.SweepInfo base) {
         final WeaponStats.SweepInfo preFinish = base.preFinishCopy();
         final WeaponStats.SweepInfo finish = base.finisherCopy();
+        FlyingWeaponData.getCap(e).getWeapon(hand).lock(e);
         switch (base.getType()) {
             case CONE -> {
                 //flourish thrice and stab
                 FlyingWeaponData.getCap(e).scheduleAction(hand, temp_getMMFromType(3, WeaponStats.SWEEPTYPE.CONE, base.getBase() + 3 * base.getScaling()), preFinish, 5, 10);
                 FlyingWeaponData.getCap(e).scheduleAction(hand, temp_getMMFromType(3, WeaponStats.SWEEPTYPE.CONE, base.getBase() + 3 * base.getScaling()), preFinish, 5, 10);
                 FlyingWeaponData.getCap(e).scheduleAction(hand, temp_getMMFromType(5, WeaponStats.SWEEPTYPE.CONE, base.getBase() + 3 * base.getScaling()), preFinish, 5, 10);
-                FlyingWeaponData.getCap(e).scheduleAction(hand, temp_getMMFromType(20, WeaponStats.SWEEPTYPE.LINE, 3), finish, 7, 20);
+                FlyingWeaponData.getCap(e).scheduleAction(hand, temp_getMMFromType(15, WeaponStats.SWEEPTYPE.LINE, 3), finish, 7, 20);
             }
             case CLEAVE -> {
                 //tcs
-                FlyingWeaponData.getCap(e).scheduleAction(hand, new MotionManagers.DefinitionMM(new MotionGroup(LOOP, EasingFunction.IN_CUBIC, 20)), finish, 5, 9);
+                FlyingWeaponData.getCap(e).scheduleAction(hand, new MotionManagers.DefinitionMM(new MotionGroup(LOOP, EasingFunction.IN_CUBIC, 200)), finish, 5, 9);
             }
             case IMPACT -> {
                 //spin twice and slam down
@@ -113,8 +114,8 @@ public class TemporaryMoveTranslator {
                 final Vec3 startFrame = generateFrame(10, (float) (-area) * flip);
                 final Vec3 endFrame = generateFrame(-10, (float) (area) * flip);
                 final Vec3 up = new Vec3(0,1,0);
-                double dot = Mth.clamp(up.dot(endFrame.subtract(startFrame).normalize()), -1.0, 1.0);
-                double angleRadians = Math.acos(dot);
+                double dot = Mth.clamp(up.dot(startFrame.subtract(endFrame).normalize()), -1.0, 1.0);
+                double angleRadians = -Math.acos(dot);
                 double angleDegrees = Math.toDegrees(angleRadians)*flip;
                 return new MotionManagers.DefinitionMM(new MotionGroup(List.of(
                         new MotionFrame(startFrame, new Vec3(0, 0, 1), (int) angleDegrees),

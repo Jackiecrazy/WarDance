@@ -2,6 +2,7 @@ package jackiecrazy.wardance.skill;
 
 import jackiecrazy.footwork.api.FootworkAttributes;
 import jackiecrazy.footwork.capability.resources.CombatData;
+import jackiecrazy.footwork.capability.stylish.StylishData;
 import jackiecrazy.footwork.move.Move;
 import jackiecrazy.wardance.WarDance;
 import jackiecrazy.wardance.advancement.WarAdvancements;
@@ -438,6 +439,7 @@ public abstract class Skill extends Move {
      */
     protected boolean activate(LivingEntity caster, float effectiveness, float duration, boolean flag, float something) {
         caster.level().playSound(null, caster, SoundEvents.FIRECHARGE_USE, SoundSource.AMBIENT, 0.3f + WarDance.rand.nextFloat(), 0.5f + WarDance.rand.nextFloat());
+        StylishData.getCap(caster).addCombo(0.3f, this.registryName.toString());
         CasterData.getCap(caster).getSkillData(this).ifPresent(a -> {
             a.setDuration(duration);
             a.setMaxDuration(duration);

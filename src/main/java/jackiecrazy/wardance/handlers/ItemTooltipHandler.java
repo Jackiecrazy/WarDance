@@ -12,6 +12,7 @@ import net.minecraft.util.Tuple;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.ai.attributes.Attribute;
 import net.minecraft.world.entity.ai.attributes.AttributeModifier;
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.event.entity.player.ItemTooltipEvent;
@@ -31,21 +32,22 @@ public class ItemTooltipHandler {
     @SubscribeEvent()
     public static void tooltip(ItemTooltipEvent e) {
         final ItemStack stack = e.getItemStack();
-        if(!StylishData.getCap(e.getEntity()).isCombatMode())return;
-        if (WeaponStats.isWeapon(e.getEntity(), stack) || WeaponStats.isShield(e.getEntity(), stack)) {
+        final Player entity = e.getEntity();
+        if(entity==null||!StylishData.getCap(entity).isCombatMode())return;
+        if (WeaponStats.isWeapon(entity, stack) || WeaponStats.isShield(entity, stack)) {
             if (Screen.hasShiftDown()) {
-                if (PermissionData.getCap(e.getEntity()).canDealPostureDamage()) {
+                if (PermissionData.getCap(entity).canDealPostureDamage()) {
                     float atk = CombatUtils.getPostureAtk(null, null, null, null, 0, stack);
                     e.getToolTip().add(Component.translatable("wardance.tooltip.postureAttack", Component.literal(formatter.format(atk)).withStyle(ChatFormatting.RED)));
                 }
                 final float def = CombatUtils.getPostureDef(null, null, stack, 0);
-                if (PermissionData.getCap(e.getEntity()).canParry()) {
+                if (PermissionData.getCap(entity).canParry()) {
                     if (stack.is(WeaponStats.CANNOT_BLOCK))
                         e.getToolTip().add(Component.translatable("wardance.tooltip.noParry").withStyle(ChatFormatting.DARK_RED));
                     else
                         e.getToolTip().add(Component.translatable("wardance.tooltip.postureDefend", Component.literal(formatter.format(def)).withStyle(ChatFormatting.DARK_GREEN)));
                 }
-                if (PermissionData.getCap(e.getEntity()).canSweep()) {
+                if (PermissionData.getCap(entity).canSweep()) {
                     for (WeaponStats.SWEEPSTATE s : WeaponStats.SWEEPSTATE.values())
                         if (s == WeaponStats.SWEEPSTATE.STANDING || !WeaponStats.getSweepInfo(stack, s).equals(WeaponStats.getSweepInfo(stack, WeaponStats.SWEEPSTATE.STANDING))) {
                             final Component toolTip = WeaponStats.getSweepInfo(e.getItemStack(), s).getToolTip(e.getItemStack(), e.getFlags().isAdvanced());
@@ -64,13 +66,13 @@ public class ItemTooltipHandler {
             if (stack.is(WeaponStats.PIERCE_SHIELD)) {
                 tips.add(Component.translatable("wardance.tooltip.ignoreShield").withStyle(ChatFormatting.GREEN));
             }
-            if (WeaponStats.isUnarmed(stack, e.getEntity())) {
+            if (WeaponStats.isUnarmed(stack, entity)) {
                 tips.add(Component.translatable("wardance.tooltip.unarmed").withStyle(ChatFormatting.GOLD));
             }
-            if (WeaponStats.isShield(e.getEntity(), stack)) {
+            if (WeaponStats.isShield(entity, stack)) {
                 tips.add(Component.translatable("wardance.tooltip.shield").withStyle(ChatFormatting.GOLD));
             }
-            if (WeaponStats.isTwoHanded(stack, e.getEntity(), null)) {
+            if (WeaponStats.isTwoHanded(stack, entity, null)) {
                 tips.add(Component.translatable("wardance.tooltip.twoHanded").withStyle(ChatFormatting.DARK_RED));
             }
             boolean hasBuffs = !tips.isEmpty();

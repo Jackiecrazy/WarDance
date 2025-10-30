@@ -45,7 +45,7 @@ public class StylishCapability implements IStyleCapability {
 
     public static final int MAX_FINISHER_CHARGE = 10;
     public static final int TRACKED_FRESHNESS_ACTIONS = 7;
-    public static final int COMBO_TIMER = 80;
+    public static final int COMBO_TIMER = 160;
     private final WeakReference<LivingEntity> dude;
     private boolean combat;
     private float adrenaline;
@@ -98,16 +98,22 @@ public class StylishCapability implements IStyleCapability {
         if (meleeFinisher > 20) meleeFinisher = 20;
         rangedFinisher++;
         if (rangedFinisher > 20) rangedFinisher = 20;
+        final LivingEntity guy = dude.get();
+        final ICombatCapability vergil = CombatData.getCap(dude.get());
+        if (guy.isSprinting() || guy.isUsingItem() || guy.isFallFlying() || !guy.onGround() || guy.isBlocking() ||
+                vergil.isDodging() || vergil.isIframe() || vergil.isParrying()) {
+            //slower combo drain
+        } else comboTimer--;
         comboTimer--;
         if (comboTimer == 0) {
-            combo=1;
+            combo = 1;
             resetCombo();
         }
     }
 
     @Override
     public void processAttack(boolean melee) {
-        if(CombatData.getCap(dude.get()).alreadyProc("noFinisherCharge"))return;
+        if (CombatData.getCap(dude.get()).alreadyProc("noFinisherCharge")) return;
         if (melee) {
             while (meleeFinisher >= 10) {
                 meleeFinisher -= 10;
@@ -136,7 +142,8 @@ public class StylishCapability implements IStyleCapability {
         for (String str : freshness) {
             if (source.equals(str)) amount -= decr;
         }
-        comboTimer = COMBO_TIMER;
+        //reset combo timer even if too stale
+        refresh();
         //too stale!
         if (amount <= 0) return;
         combo += amount;
@@ -156,6 +163,11 @@ public class StylishCapability implements IStyleCapability {
             freshness.clear();
         }
         sync();
+    }
+
+    @Override
+    public void refresh() {
+        comboTimer = COMBO_TIMER;
     }
 
     @Override

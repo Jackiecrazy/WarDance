@@ -68,10 +68,10 @@ public class FlyingWeaponCapability implements IFlyingWeapon {
         FlyingItemEntity fwe = getWeapon(hand);
         if (!scheduleLock && fwe != null) {
             //updateWeapon(fwe, hand);
-            if(info==null)
+            if (info == null)
                 fwe.clearPath();
-            fwe.queuePath(new WeaponMotionManager(mm, info, range), 0, totalTime - mm.getDuration());
-            fwe.setIdlePose(idleFrame[isMain ? 0 : 1]);
+            fwe.queuePath(new WeaponMotionManager(mm, info, range),40,40);
+            //fwe.setIdlePose(idleFrame[isMain ? 0 : 1]);
             //fwe.setShouldRender(FlyingWeaponEffect.WEAPON,true);
             //fwe.setUniversalOffset(idleOffset[isMain ? 0 : 1]);
         }

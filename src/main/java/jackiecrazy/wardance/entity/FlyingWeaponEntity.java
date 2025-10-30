@@ -142,20 +142,17 @@ public class FlyingWeaponEntity extends FlyingItemEntity {
 
     @Override
     protected void updateClientData() {
-        if (transitioning())
-            trailHistory.clear();
-        renderLag = 0;
         super.updateClientData();
     }
 
     @Override
     protected void returnToIdle(int ticks) {
         super.returnToIdle(ticks);
+        setTransitioning(true);
     }
 
     @Override
     protected boolean updateMotionTargets(boolean forceskip) {
-        //fixme gets stuck
         //true if a new move started
         boolean ret = super.updateMotionTargets(forceskip);
         if (ret) {
@@ -168,7 +165,7 @@ public class FlyingWeaponEntity extends FlyingItemEntity {
             cacheInfo = wmm.info();
 
             if (getInfo() == null) {
-                //special case, do not render big weapon
+                //simple basic attacks
                 setShouldRender(FlyingWeaponEffect.TRAIL, FlyingWeaponEffect.WEAPON);
             } else {
                 //attacking, on a finisher

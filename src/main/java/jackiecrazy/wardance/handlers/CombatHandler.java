@@ -314,7 +314,7 @@ public class CombatHandler {
                 if (!semeCap.alreadyProc("attack") && !semeCap.alreadyProc("oncePerSweep")) {//first hit of a sweep attack this tick, add combo based on state
                     //semeCap.addRank(0.1f);
                     StylishData.getCap(seme).processAttack(true);
-                    StylishData.getCap(seme).addCombo(0.1f, semeCap.isOffhandAttack() + CombatUtils.getSweepState(seme).name());
+                    StylishData.getCap(seme).addCombo(0.2f, semeCap.isOffhandAttack() + CombatUtils.getSweepState(seme).name());
                     semeCap.tickProc("attack");
                 }
 
@@ -670,7 +670,7 @@ public class CombatHandler {
         CombatData.getCap(elb).setHandBind(InteractionHand.MAIN_HAND, 0);
         CombatData.getCap(elb).setHandBind(InteractionHand.OFF_HAND, 0);
         if (e.getSource().getEntity() instanceof LivingEntity killer) {
-            StylishData.getCap(killer).addCombo(0.2f, "kill");
+            StylishData.getCap(killer).addCombo(0.3f, "kill");
         }
     }
 
