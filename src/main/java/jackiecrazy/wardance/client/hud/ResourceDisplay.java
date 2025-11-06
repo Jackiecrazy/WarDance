@@ -45,10 +45,6 @@ public class ResourceDisplay implements IGuiOverlay {
     private static int snewDarkAnimFrames = 0, lnewDarkAnimFrames = 0, spiritFrames = 0;
 
     private static void drawPostureBarAt(boolean you, GuiGraphics ms, LivingEntity elb, int width, int height) {
-        ClientConfig.BarType b = ClientConfig.CONFIG.enemyPosture.bar;
-        if (you) {
-            b = ClientConfig.CONFIG.playerPosture.bar;
-        }
         drawNewDarkPostureBarAt(you, ms, elb, width, height);
         RenderSystem.defaultBlendFunc();
     }

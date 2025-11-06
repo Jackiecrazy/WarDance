@@ -70,7 +70,7 @@ public class FlyingWeaponCapability implements IFlyingWeapon {
             //updateWeapon(fwe, hand);
             if (info == null)
                 fwe.clearPath();
-            fwe.queuePath(new WeaponMotionManager(mm, info, range),40,40);
+            fwe.queuePath(new WeaponMotionManager(mm, info, range),1,0);
             //fwe.setIdlePose(idleFrame[isMain ? 0 : 1]);
             //fwe.setShouldRender(FlyingWeaponEffect.WEAPON,true);
             //fwe.setUniversalOffset(idleOffset[isMain ? 0 : 1]);

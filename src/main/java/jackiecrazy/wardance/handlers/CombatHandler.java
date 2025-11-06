@@ -560,6 +560,11 @@ public class CombatHandler {
         LivingEntity uke = e.getEntity();
         LivingEntity seme = null;
         DamageSource ds = e.getSource();
+        if(Float.isNaN(e.getAmount())){
+            WarDance.LOGGER.fatal("intercepted a livinghurtevent with nan damage, canceling");
+            e.setAmount(0);
+            e.setCanceled(true);
+        }
         if (ds.getDirectEntity() instanceof LivingEntity direct) {
             seme = direct;
         }
@@ -567,7 +572,7 @@ public class CombatHandler {
 
         ICombatCapability cap = CombatData.getCap(uke);
         // combo reduces damage
-        e.setAmount(e.getAmount() / StylishData.getCap(uke).getCombo());
+        e.setAmount(e.getAmount() / Math.max(1, StylishData.getCap(uke).getCombo()));
         StylishData.getCap(uke).resetCombo();
         StealthUtils.Awareness awareness = StealthUtils.INSTANCE.getAwareness(seme, uke);
 
@@ -656,8 +661,8 @@ public class CombatHandler {
             //temporary, players lose 30% health on knockdown todo use deathblow resistance
             if (e.getEntity() instanceof Player p) {
                 e.setAmount(p.getMaxHealth() * 0.3f);
-            }else{
-                e.setAmount(e.getAmount()+e.getEntity().getMaxHealth()/10f);
+            } else {
+                e.setAmount(e.getAmount() + e.getEntity().getMaxHealth() / 10f);
                 CombatUtils.knockBack(e.getEntity(), e.getSource().getEntity(), 0.7f, true, true);
             }
             cap.tickProc("knockdown", 1);

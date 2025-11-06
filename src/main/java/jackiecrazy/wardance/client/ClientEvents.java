@@ -314,43 +314,48 @@ public class ClientEvents {
                     // otherwise, right click after a noticeable delay
                     // If evoke is held, only right click
                     int allow = ALLOWANCE;
-
-                    //if(Keybinds.EVOKE.isDown()) {
-                    //offhand use/attack check
-                    if (specialHandleItem(mc.player, mc.player.getMainHandItem()) && mc.options.keyUse.isDown()) {
-                        //special charge action, immediately start
-                        if (mc.player.getMainHandItem().getUseAnimation() != UseAnim.NONE)
-                            allow = 1;
-                        if (!mc.player.isUsingItem() && offUseTick % allow == allow - 1) {
-                            testingHand = InteractionHand.OFF_HAND;
-                            ((ClientAccessors) mc).callStartUseItem();
+                    switch (ClientConfig.bar) {
+                        case CLASSIC -> {
+                            if (Keybinds.EVOKE.isDown())
+                                testingHand = InteractionHand.OFF_HAND;
+                            //offhand use
                         }
-                        ++offUseTick;
-                    } else offUseTick = 0;
-                    if (specialHandleItem(mc.player, mc.player.getMainHandItem()) && mc.options.keyAttack.isDown()) {
-                        //special charge action, immediately start
-                        if (mc.player.getMainHandItem().getUseAnimation() != UseAnim.NONE)
-                            allow = 1;
-                        if (mc.player.isUsingItem() && mc.player.getUsedItemHand() == InteractionHand.MAIN_HAND) {
-                            //hack. Spoof use item key to down for the keybind processing
-                            mc.options.keyUse.setDown(true);
-                        } else if (!mc.player.isUsingItem() && mainUseTick == allow) {//don't call when already using item for obvious reasons
-                            testingHand = InteractionHand.MAIN_HAND;
-                            ((ClientAccessors) mc).callStartUseItem();
-                            if (!mc.options.keyUse.isDown())
-                                mc.options.keyUse.setDown(mc.player.isUsingItem());
+                        case DUAL -> {
+                            if (specialHandleItem(mc.player, mc.player.getMainHandItem()) && mc.options.keyUse.isDown()) {
+                                //special charge action, immediately start
+                                if (mc.player.getMainHandItem().getUseAnimation() != UseAnim.NONE)
+                                    allow = 1;
+                                if (!mc.player.isUsingItem() && offUseTick % allow == allow - 1) {
+                                    testingHand = InteractionHand.OFF_HAND;
+                                    ((ClientAccessors) mc).callStartUseItem();
+                                }
+                                ++offUseTick;
+                            } else offUseTick = 0;
+                            if (specialHandleItem(mc.player, mc.player.getMainHandItem()) && mc.options.keyAttack.isDown()) {
+                                //special charge action, immediately start
+                                if (mc.player.getMainHandItem().getUseAnimation() != UseAnim.NONE)
+                                    allow = 1;
+                                if (mc.player.isUsingItem() && mc.player.getUsedItemHand() == InteractionHand.MAIN_HAND) {
+                                    //hack. Spoof use item key to down for the keybind processing
+                                    mc.options.keyUse.setDown(true);
+                                } else if (!mc.player.isUsingItem() && mainUseTick == allow) {//don't call when already using item for obvious reasons
+                                    testingHand = InteractionHand.MAIN_HAND;
+                                    ((ClientAccessors) mc).callStartUseItem();
+                                    if (!mc.options.keyUse.isDown())
+                                        mc.options.keyUse.setDown(mc.player.isUsingItem());
+                                }
+                                //cancel the left click if using or evoking
+                                if (mainUseTick > 0 || Keybinds.EVOKE.isDown())
+                                    mc.options.keyAttack.consumeClick();
+                                ++mainUseTick;
+                            } else {
+                                //cancel usage of main hand weapon when attack is released
+                                if (mainUseTick > 0 && WeaponStats.isCombatItem(mc.player, mc.player.getMainHandItem()) && mc.player.isUsingItem() && mc.player.getUsedItemHand() == InteractionHand.MAIN_HAND)
+                                    mc.options.keyUse.setDown(false);
+                                mainUseTick = 0;
+                            }
                         }
-                        //cancel the left click if using or evoking
-                        if (mainUseTick > 0 || Keybinds.EVOKE.isDown())
-                            mc.options.keyAttack.consumeClick();
-                        ++mainUseTick;
-                    } else {
-                        //cancel usage of main hand weapon when attack is released
-                        if (mainUseTick > 0 && WeaponStats.isCombatItem(mc.player, mc.player.getMainHandItem()) && mc.player.isUsingItem() && mc.player.getUsedItemHand() == InteractionHand.MAIN_HAND)
-                            mc.options.keyUse.setDown(false);
-                        mainUseTick = 0;
                     }
-                    //}
                 }
                 // if not, call use with the respective hand
                 // if yes, check if it is this hand.
@@ -404,7 +409,7 @@ public class ClientEvents {
 //            lastAttackTick = e.getEntity().tickCount;
 //        }
         if (lastSweepTick != e.getEntity().tickCount)
-            CombatChannel.INSTANCE.sendToServer(new RequestSweepPacket(true, n, Keybinds.FINISHER.isDown()));
+            CombatChannel.INSTANCE.sendToServer(new RequestSweepPacket(true, n));
         lastSweepTick = e.getEntity().tickCount;
     }
 
@@ -429,7 +434,7 @@ public class ClientEvents {
                 lastAttackTick = e.getEntity().tickCount;
             }
             if (lastSweepTick != e.getEntity().tickCount)
-                CombatChannel.INSTANCE.sendToServer(new RequestSweepPacket(false, n, Keybinds.FINISHER.isDown()));
+                CombatChannel.INSTANCE.sendToServer(new RequestSweepPacket(false, n));
             lastSweepTick = e.getEntity().tickCount;
         }
     }
@@ -448,7 +453,7 @@ public class ClientEvents {
             lastAttackTick = e.getEntity().tickCount;
         }
         if (lastSweepTick != e.getEntity().tickCount)
-            CombatChannel.INSTANCE.sendToServer(new RequestSweepPacket(true, n, Keybinds.FINISHER.isDown()));
+            CombatChannel.INSTANCE.sendToServer(new RequestSweepPacket(true, n));
         lastSweepTick = e.getEntity().tickCount;
     }
 
@@ -456,7 +461,6 @@ public class ClientEvents {
     public static void sweepSwingOffItem(PlayerInteractEvent.RightClickItem e) {
         if (TwoHandingHandler.suppressOffhand(e.getEntity(), e.getEntity().getMainHandItem()) && e.getHand() == InteractionHand.OFF_HAND)
             return;
-        //fixme
         if (GeneralConfig.dual && StylishData.getCap(e.getEntity()).isCombatMode()) {
             /// enabling this causes the main hand to be right clickable, then immediately canceled
             /// however enabling this is necessary for the main hand to be right clickable for usable items
@@ -477,7 +481,7 @@ public class ClientEvents {
                 lastAttackTick = e.getEntity().tickCount;
             }
             if (lastSweepTick != e.getEntity().tickCount)
-                CombatChannel.INSTANCE.sendToServer(new RequestSweepPacket(false, n, Keybinds.FINISHER.isDown()));
+                CombatChannel.INSTANCE.sendToServer(new RequestSweepPacket(false, n));
             lastSweepTick = e.getEntity().tickCount;
         }
     }
@@ -503,7 +507,7 @@ public class ClientEvents {
                 lastAttackTick = e.getEntity().tickCount;
             }
             if (lastSweepTick != e.getEntity().tickCount)
-                CombatChannel.INSTANCE.sendToServer(new RequestSweepPacket(false, n, Keybinds.FINISHER.isDown()));
+                CombatChannel.INSTANCE.sendToServer(new RequestSweepPacket(false, n));
             lastSweepTick = e.getEntity().tickCount;
         }
     }
@@ -529,7 +533,7 @@ public class ClientEvents {
                 lastAttackTick = e.getEntity().tickCount;
             }
             if (lastSweepTick != e.getEntity().tickCount)
-                CombatChannel.INSTANCE.sendToServer(new RequestSweepPacket(false, n, Keybinds.FINISHER.isDown()));
+                CombatChannel.INSTANCE.sendToServer(new RequestSweepPacket(false, n));
             lastSweepTick = e.getEntity().tickCount;
         }
     }

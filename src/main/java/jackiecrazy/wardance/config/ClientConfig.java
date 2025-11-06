@@ -28,18 +28,21 @@ public class ClientConfig {
     }
 
     public final DisplayConfigUtils.DisplayData adrenalineBar, adrenalineNumber, spiritBar, spiritNumber, combo, playerAfflict, enemyAfflict, skillCD, stealth;
-    public final PostureData playerPosture, enemyPosture;
+    public final DisplayConfigUtils.DisplayData playerPosture, enemyPosture;
     public final CircleData adrenalineCircle, spiritCircle;
     private final ForgeConfigSpec.IntValue _autoCombat;
     private final ForgeConfigSpec.BooleanValue _hidexp;
     private final ForgeConfigSpec.ConfigValue<String> _adrenalineColor;
     private final ForgeConfigSpec.ConfigValue<String> _spiritColor;
     private final ForgeConfigSpec.ConfigValue<List<? extends String>> _customPosture;
+    private final ForgeConfigSpec.EnumValue<ControlScheme> _ctrl;
+    public static ControlScheme bar;
 
     public ClientConfig(ForgeConfigSpec.Builder b) {
         b.push("convenience");
         _autoCombat = b.translation("wardance.config.autoCombat").comment("combat mode will be automatically engaged once you attack or get attacked by an entity if it is not already on, for this number of ticks before turning itself off. Set to 0 to disable this feature.").defineInRange("auto combat mode", 0, 0, Integer.MAX_VALUE);
         _hidexp = b.translation("wardance.config.hidexp").comment("hide the exp bar while combat mode is on to make space for the adrenaline and spirit bars.").define("combat mode hides exp", true);
+        _ctrl = b.translation("wardance.config.ControlType").comment("Change your control scheme in combat mode. Valid values are \nCLASSIC: right click defaults to main hand, or offhand if main hand has no right click action, and finally offhand attack. Holding the evoke key blocks main hand right clicking. Good for power users or complex weapons.\n DUAL: left click corresponds to main hand, and right click to offhand. Hold input briefly or hold evoke key to right click with the hand. Recommended for new users or weapons without complex right click behavior.").defineEnum("control scheme", ControlScheme.DUAL);
         b.pop();
         b.push("adrenaline");
         adrenalineCircle = new CircleData(b, "adrenaline circle", DisplayConfigUtils.AnchorPoint.BOTTOMLEFT, 32, -16);
@@ -57,10 +60,10 @@ public class ClientConfig {
         combo = new DisplayConfigUtils.DisplayData(b, "combo", DisplayConfigUtils.AnchorPoint.MIDDLERIGHT, -40, -32);
         b.pop();
         b.push("player posture");
-        playerPosture = new PostureData(b, "player posture", DisplayConfigUtils.AnchorPoint.BOTTOMCENTER, 0, -57);
+        playerPosture = new DisplayConfigUtils.DisplayData(b, "player posture", DisplayConfigUtils.AnchorPoint.BOTTOMCENTER, 0, -57);
         b.pop();
         b.push("enemy posture");
-        enemyPosture = new PostureData(b, "target posture", DisplayConfigUtils.AnchorPoint.TOPCENTER, 0, 20);
+        enemyPosture = new DisplayConfigUtils.DisplayData(b, "target posture", DisplayConfigUtils.AnchorPoint.TOPCENTER, 0, 20);
         b.pop();
         b.push("your marks");
         playerAfflict = new DisplayConfigUtils.DisplayData(b, "your marks", DisplayConfigUtils.AnchorPoint.CROSSHAIR, 0, 18);
@@ -95,6 +98,7 @@ public class ClientConfig {
         spiritColor = Integer.parseInt(CONFIG._spiritColor.get(), 16);
         adrenalineColor = Integer.parseInt(CONFIG._adrenalineColor.get(), 16);
         autoCombat = CONFIG._autoCombat.get();
+        bar = CONFIG._ctrl.get();
         ClientEvents.updateList(CONFIG._customPosture.get());
     }
 
@@ -107,27 +111,9 @@ public class ClientConfig {
         }
     }
 
-    public static enum BarType {
+    public enum ControlScheme {
         CLASSIC,
-        AMO,
-        DARKMEGA,
-        NEWDARK
-    }
-
-    public static class PostureData extends DisplayConfigUtils.DisplayData {
-        private final ForgeConfigSpec.EnumValue<BarType> _bar;
-        public BarType bar;
-
-        private PostureData(ForgeConfigSpec.Builder b, String s, DisplayConfigUtils.AnchorPoint ap, int defX, int defY) {
-            super(b, s, ap, defX, defY);
-            _bar = b.translation("wardance.config." + s + "Type").comment("Determine which type of posture bar will be rendered. Valid values are 'classic' (ugly), 'amo' (minimalist), 'darkmega' (old), and 'newdark' (default).").defineEnum(s + " style", BarType.NEWDARK);
-        }
-
-        @Override
-        public void bake() {
-            super.bake();
-            bar = _bar.get();
-        }
+        DUAL
     }
 
     public static class CircleData extends DisplayConfigUtils.DisplayData {

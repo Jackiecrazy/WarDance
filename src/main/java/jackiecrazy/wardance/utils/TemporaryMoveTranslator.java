@@ -36,8 +36,8 @@ public class TemporaryMoveTranslator {
             new MotionFrame(new Vec3(0, 0, 1), new Vec3(0, 0, 1), new Vector4d(0, 0, 1, 90)));
     private static final List<MotionFrame> LOOP = List.of(
             //new MotionFrame(new Vec3(0, -1, 0), new Vec3(0, 0, 1)),
-            new MotionFrame(new Vec3(0, 0, -1), new Vec3(0, 0, 1),180),
-            new MotionFrame(new Vec3(0, 1, 0), new Vec3(0, 0, 1),180),
+            new MotionFrame(new Vec3(0, 0, -1), new Vec3(0, 0, 1),new Vector4d(0, 0, -1, 180)),
+            new MotionFrame(new Vec3(0, 1, 0.1), new Vec3(0, 0, 1),0),
             new MotionFrame(new Vec3(0, 0, 1), new Vec3(0, 0, 1)),
             new MotionFrame(new Vec3(0, -2, 1), new Vec3(0, 0, 1)));
     private static final List<MotionFrame> SLASH = List.of(
@@ -75,7 +75,7 @@ public class TemporaryMoveTranslator {
             }
             case CLEAVE -> {
                 //tcs
-                FlyingWeaponData.getCap(e).scheduleAction(hand, new MotionManagers.DefinitionMM(new MotionGroup(LOOP, EasingFunction.IN_CUBIC, 200)), finish, 5, 9);
+                FlyingWeaponData.getCap(e).scheduleAction(hand, new MotionManagers.DefinitionMM(new MotionGroup(LOOP, EasingFunction.IN_CUBIC, 20)), finish, 5, 9);
             }
             case IMPACT -> {
                 //spin twice and slam down

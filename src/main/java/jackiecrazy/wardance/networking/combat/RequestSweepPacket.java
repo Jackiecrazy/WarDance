@@ -18,19 +18,16 @@ import java.util.function.Supplier;
 public class RequestSweepPacket {
     boolean main;
     int id;
-    boolean finish;
 
-    public RequestSweepPacket(boolean isMainHand, int ignoreID, boolean finisher) {
+    public RequestSweepPacket(boolean isMainHand, int ignoreID) {
         main = isMainHand;
         id = ignoreID;
-        finish = finisher;
     }
 
-    public RequestSweepPacket(boolean isMainHand, Entity ignore, boolean finisher) {
+    public RequestSweepPacket(boolean isMainHand, Entity ignore) {
         main = isMainHand;
         if (ignore == null) id = -1;
         else id = ignore.getId();
-        finish = finisher;
     }
 
     public static class RequestSweepEncoder implements BiConsumer<RequestSweepPacket, FriendlyByteBuf> {
@@ -39,7 +36,6 @@ public class RequestSweepPacket {
         public void accept(RequestSweepPacket updateClientPacket, FriendlyByteBuf packetBuffer) {
             packetBuffer.writeBoolean(updateClientPacket.main);
             packetBuffer.writeInt(updateClientPacket.id);
-            packetBuffer.writeBoolean(updateClientPacket.finish);
         }
     }
 
@@ -47,7 +43,7 @@ public class RequestSweepPacket {
 
         @Override
         public RequestSweepPacket apply(FriendlyByteBuf packetBuffer) {
-            return new RequestSweepPacket(packetBuffer.readBoolean(), packetBuffer.readInt(), packetBuffer.readBoolean());
+            return new RequestSweepPacket(packetBuffer.readBoolean(), packetBuffer.readInt());
         }
     }
 
@@ -63,11 +59,7 @@ public class RequestSweepPacket {
                 float cool = CombatUtils.getCooledAttackStrength(sender, h, 1f);
                 if ((GeneralConfig.dual || updateClientPacket.main) && cool >= 0.9f) {
                     if (!sender.hasEffect(MobEffects.BLINDNESS)) {
-                        if (updateClientPacket.finish) {
-                            if (!CombatUtils.scheduleFinisher(sender, h)) return;
-                        } else {
-                            CombatUtils.sweep(sender, sender.level().getEntity(updateClientPacket.id), h, GeneralUtils.getAttributeValueSafe(sender, ForgeMod.ENTITY_REACH.get()));
-                        }
+                        CombatUtils.sweep(sender, sender.level().getEntity(updateClientPacket.id), h, GeneralUtils.getAttributeValueSafe(sender, ForgeMod.ENTITY_REACH.get()));
                     }
                 }
                 CombatUtils.setHandCooldown(sender, h, 0, true);
