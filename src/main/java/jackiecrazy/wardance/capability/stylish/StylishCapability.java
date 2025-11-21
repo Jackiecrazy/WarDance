@@ -99,9 +99,9 @@ public class StylishCapability implements IStyleCapability {
         rangedFinisher++;
         if (rangedFinisher > 20) rangedFinisher = 20;
         final LivingEntity guy = dude.get();
-        final ICombatCapability vergil = CombatData.getCap(dude.get());
+        final ICombatCapability cap = CombatData.getCap(dude.get());
         if (guy.isSprinting() || guy.isUsingItem() || guy.isFallFlying() || !guy.onGround() || guy.isBlocking() ||
-                vergil.isDodging() || vergil.isIframe() || vergil.isParrying()) {
+                cap.isDodging() || cap.isIframe() || cap.isParrying()) {
             //slower combo drain
         } else comboTimer--;
         comboTimer--;
