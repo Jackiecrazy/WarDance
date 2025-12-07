@@ -35,6 +35,9 @@ public abstract class MixinLivingEntity extends Entity {
     @Shadow
     public abstract void indicateDamage(double p_270514_, double p_270826_);
 
+    @Shadow
+    public abstract float getHealth();
+
     @Redirect(method = "onEquipItem", require = 0,
             at = @At(value = "INVOKE",
                     target = "Lnet/minecraft/world/entity/LivingEntity;isSilent()Z"))
@@ -65,7 +68,7 @@ public abstract class MixinLivingEntity extends Entity {
     @Inject(method = "hurt", at = @At(value = "RETURN"), cancellable = false)
     private void combatModeOverride(DamageSource ds, float amnt, CallbackInfoReturnable<Boolean> cir) {
         //cancel damage shake by inputting invalid values and relying on moar mixins
-        if (ds.getEntity() == null && !ds.is(DamageTypeTags.IS_EXPLOSION) && !ds.is(DamageTypeTags.IS_FALL) && cir.getReturnValue()) {
+        if ((ds.getEntity() == null && !ds.is(DamageTypeTags.IS_EXPLOSION) && !ds.is(DamageTypeTags.IS_FALL) && cir.getReturnValue())) {
             indicateDamage(-99999, -99999);
         }
     }

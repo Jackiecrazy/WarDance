@@ -66,8 +66,8 @@ public class NewCombatCapability implements ICombatCapability {
     private float cache;//no need to save this because it'll be used within the span of a tick
     private int guardFrame, parryFrame, dodgeFrame, iFrame;
     private Vec3 motion;
-    private double mobPosRegenSpd;
-    private int mobPosCD, maxMobPosCD, rallyCD;
+    private double mobPosRegenSpd=0.3;
+    private int mobPosCD=60, maxMobPosCD=60, rallyCD;
     private boolean player;
     private HashMap<String, Double> procs = new HashMap<>();
     private int recordingTime = 0;
@@ -225,6 +225,7 @@ public class NewCombatCapability implements ICombatCapability {
         if (assailant instanceof Player p) {
             CombatData.getCap(p).rally((float) (amount * p.getAttributeValue(FootworkAttributes.RALLY_CONVERSION.get())));
         }
+        mobPosCD = maxMobPosCD;
 
         //stun check
         if ((isStunned() || posture - amount < 0) && breach) {
@@ -276,9 +277,6 @@ public class NewCombatCapability implements ICombatCapability {
         double cooldown = ResourceConfig.postureCD * weakness;
         posture -= amount;
         addRally(amount * rallyConversion);
-        if (player)
-            mobPosCD = 1200;
-        else mobPosCD = maxMobPosCD;
         if (WarCompat.elenaiDodge && elb instanceof ServerPlayer sp)
             ElenaiCompat.manipulateFeather(sp, 0);
         return ret;
@@ -305,11 +303,13 @@ public class NewCombatCapability implements ICombatCapability {
         RallyPostureEvent rpe = new RallyPostureEvent(dude.get(), amount);
         MinecraftForge.EVENT_BUS.post(rpe);
         if (rpe.isCanceled()) return;
-        amount = Math.min(rpe.getQuantity(), rally);
+        amount = rpe.getQuantity();//Math.min(rpe.getQuantity(), rally);
         rally -= amount;
         rallyCD = RALLY_CD;
         tickProc("rally");
-        setPosture(posture + amount);
+        //setPosture(posture + amount);
+        recordedDamage-=amount;
+        if(recordedDamage<0)recordedDamage=0;
     }
 
     @Override
@@ -453,9 +453,9 @@ public class NewCombatCapability implements ICombatCapability {
         //regenerate posture
         if (isKnockdown() && getPosture() < getMaxPosture()) {
             setPosture(getPosture() + getMaxPosture() / getMaxStunTime());
-        } else if (!player) handleMobPostureRegen(ticks);
+        }
         else {
-            handlePlayerPostureReset(ticks);
+            handlePostureRegen(ticks);
             //if (elb.isBlocking()) addPosture(0.01f);
         }
         if (getPosture() > getMaxPosture())
@@ -508,7 +508,7 @@ public class NewCombatCapability implements ICombatCapability {
     }
 
     private void sync() {
-        //if (dirty) {
+        //if (dirty) {//todo
         LivingEntity elb = dude.get();
         if (elb == null || elb.level().isClientSide) return;
         CombatChannel.INSTANCE.send(PacketDistributor.TRACKING_ENTITY.with(() -> elb), new UpdateClientResourcePacket(elb.getId(), write()));
@@ -554,9 +554,9 @@ public class NewCombatCapability implements ICombatCapability {
         //regenerate posture
         if (isStunned() && getPosture() < getMaxPosture()) {
             setPosture(getPosture() + getMaxPosture() / getMaxStunTime());
-        } else if (!player) handleMobPostureRegen(ticks);
+        }
         else {
-            handlePlayerPostureReset(ticks);
+            handlePostureRegen(ticks);
             //if (elb.isBlocking()) addPosture(0.01f);
         }
         if (getPosture() > getMaxPosture())
@@ -681,7 +681,7 @@ public class NewCombatCapability implements ICombatCapability {
 
     @Override
     public int getDamageRecordTime() {
-        return recordingTime;
+        return !isStunned()&&!alreadyProc("knockdown")?1:0;
     }
 
     @Override
@@ -704,8 +704,8 @@ public class NewCombatCapability implements ICombatCapability {
         recordingTime = 0;
         if (dude.get() != null && damageSource != null) {
             dude.get().hurt(damageSource, recordedDamage);
-            recordedDamage = 0;
         }
+        recordedDamage = 0;
     }
 
     @Override
@@ -843,17 +843,9 @@ public class NewCombatCapability implements ICombatCapability {
         offhand = offhandAttack;
     }
 
-    private void handlePlayerPostureReset(int ticks) {
-        if (!((InCombatAccessor) (dude.get().getCombatTracker())).isInCombat())
-            mobPosCD -= ticks;
-        if (mobPosCD < 0) {
-            StylishData.getCap(dude.get()).setAdrenaline(0);
-            setPosture(getMaxPosture());
-        }
-    }
-
-    private void handleMobPostureRegen(int ticks) {
+    private void handlePostureRegen(int ticks) {
         mobPosCD -= ticks;
+        if(mobPosRegenSpd==0)mobPosRegenSpd=0.3;
         float mult = 1;
         LivingEntity elb = dude.get();
         if (elb != null) {

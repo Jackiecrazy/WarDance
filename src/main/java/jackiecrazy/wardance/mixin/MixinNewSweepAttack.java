@@ -18,7 +18,6 @@ public class MixinNewSweepAttack {
     private void sweep(ServerPlayer player, Entity entity) {
         if (CombatUtils.getCooledAttackStrength(player, InteractionHand.MAIN_HAND, 1f) >= 0.9f) {
             int temp = player.attackStrengthTicker;
-            //fixme doesn't do finishers
             if (!player.hasEffect(MobEffects.BLINDNESS))
                 CombatUtils.sweep(player, entity, InteractionHand.MAIN_HAND, player.getAttributeValue(ForgeMod.ENTITY_REACH.get()));
             player.attackStrengthTicker = temp;

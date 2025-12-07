@@ -1,6 +1,7 @@
 package jackiecrazy.wardance.capability.flyingweapon;
 
 import jackiecrazy.footwork.entity.flyingweapon.FlyingItemEntity;
+import jackiecrazy.footwork.entity.flyingweapon.FlyingWeaponEffect;
 import jackiecrazy.footwork.move.motionframe.MotionManager;
 import jackiecrazy.wardance.config.WeaponStats;
 import net.minecraft.world.InteractionHand;
@@ -11,6 +12,8 @@ public interface IFlyingWeapon {
     void scheduleAction(InteractionHand hand, MotionManager mm, WeaponStats.SweepInfo info, double range, int totalTime);
 
     void tick();
+
+    void setRender(InteractionHand hand, FlyingWeaponEffect... effects);
 
     class DummyFlyingWeapon implements IFlyingWeapon{
 
@@ -26,6 +29,11 @@ public interface IFlyingWeapon {
 
         @Override
         public void tick() {
+
+        }
+
+        @Override
+        public void setRender(InteractionHand hand, FlyingWeaponEffect... effects) {
 
         }
     }

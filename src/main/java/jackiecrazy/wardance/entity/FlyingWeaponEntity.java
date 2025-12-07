@@ -122,7 +122,7 @@ public class FlyingWeaponEntity extends FlyingItemEntity {
                 GeneralUtils.attack(e, target);
                 alreadyHit.add(target);
                 if (target instanceof LivingEntity elb && getInfo().canBreach()) {
-                    CombatData.getCap(elb).stopRecording(new CombatDamageSource(e).setDamageTyping(FootworkDamageArchetype.PHYSICAL));
+                    //CombatData.getCap(elb).stopRecording(new CombatDamageSource(e).setDamageTyping(FootworkDamageArchetype.PHYSICAL));
                     TimeSlowData.getCap(elb).resetSpeed();
                 }
             }

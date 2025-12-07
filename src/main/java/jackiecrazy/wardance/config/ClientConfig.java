@@ -36,7 +36,7 @@ public class ClientConfig {
     private final ForgeConfigSpec.ConfigValue<String> _spiritColor;
     private final ForgeConfigSpec.ConfigValue<List<? extends String>> _customPosture;
     private final ForgeConfigSpec.EnumValue<ControlScheme> _ctrl;
-    public static ControlScheme bar;
+    public static ControlScheme controlScheme;
 
     public ClientConfig(ForgeConfigSpec.Builder b) {
         b.push("convenience");
@@ -98,7 +98,7 @@ public class ClientConfig {
         spiritColor = Integer.parseInt(CONFIG._spiritColor.get(), 16);
         adrenalineColor = Integer.parseInt(CONFIG._adrenalineColor.get(), 16);
         autoCombat = CONFIG._autoCombat.get();
-        bar = CONFIG._ctrl.get();
+        controlScheme = CONFIG._ctrl.get();
         ClientEvents.updateList(CONFIG._customPosture.get());
     }
 

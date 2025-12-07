@@ -1,39 +1,16 @@
 package jackiecrazy.wardance.capability.stylish;
 
-import jackiecrazy.footwork.api.FootworkAttributes;
 import jackiecrazy.footwork.capability.resources.CombatData;
 import jackiecrazy.footwork.capability.resources.ICombatCapability;
 import jackiecrazy.footwork.capability.stylish.IStyleCapability;
 import jackiecrazy.footwork.event.*;
-import jackiecrazy.wardance.WarDance;
-import jackiecrazy.wardance.capability.action.PermissionData;
-import jackiecrazy.wardance.compat.ElenaiCompat;
-import jackiecrazy.wardance.compat.WarCompat;
 import jackiecrazy.wardance.config.*;
-import jackiecrazy.wardance.handlers.TwoHandingHandler;
 import jackiecrazy.wardance.networking.CombatChannel;
-import jackiecrazy.wardance.networking.combat.UpdateClientResourcePacket;
 import jackiecrazy.wardance.networking.combat.UpdateClientStylePacket;
-import jackiecrazy.wardance.utils.CombatUtils;
-import jackiecrazy.wardance.utils.SkillUtils;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.server.level.ServerPlayer;
-import net.minecraft.sounds.SoundEvents;
-import net.minecraft.sounds.SoundSource;
-import net.minecraft.util.Mth;
-import net.minecraft.world.InteractionHand;
-import net.minecraft.world.damagesource.DamageSource;
-import net.minecraft.world.effect.MobEffects;
-import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
-import net.minecraft.world.entity.ai.attributes.AttributeModifier;
-import net.minecraft.world.entity.ai.attributes.Attributes;
-import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.phys.Vec3;
-import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.util.FakePlayer;
-import net.minecraftforge.eventbus.api.Event;
 import net.minecraftforge.network.PacketDistributor;
 
 import javax.annotation.Nonnull;
@@ -139,9 +116,15 @@ public class StylishCapability implements IStyleCapability {
     public void addCombo(float amount, @Nonnull String source) {
         //calculate freshness
         float decr = amount / 2;
+        boolean fresh=true;
         for (String str : freshness) {
-            if (source.equals(str)) amount -= decr;
+            if (source.equals(str)){
+                fresh=false;
+                amount -= decr;
+            }
         }
+        //trail. Add spirit on fresh action.
+        if(fresh)CombatData.getCap(dude.get()).addSpirit(1);
         //reset combo timer even if too stale
         refresh();
         //too stale!

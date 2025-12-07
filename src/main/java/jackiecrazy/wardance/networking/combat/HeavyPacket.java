@@ -1,22 +1,19 @@
 package jackiecrazy.wardance.networking.combat;
 
-import jackiecrazy.footwork.utils.GeneralUtils;
-import jackiecrazy.wardance.config.GeneralConfig;
+import jackiecrazy.wardance.config.WeaponStats;
 import jackiecrazy.wardance.utils.CombatUtils;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.InteractionHand;
-import net.minecraft.world.effect.MobEffects;
-import net.minecraft.world.entity.Entity;
-import net.minecraftforge.common.ForgeMod;
 import net.minecraftforge.network.NetworkEvent;
 
 import java.util.function.BiConsumer;
 import java.util.function.Function;
 import java.util.function.Supplier;
 
-public class FinisherPacket {
+public class HeavyPacket {
     boolean main;
+    WeaponStats.SWEEPSTATE state;
     /*
     spitballin:
 
@@ -47,36 +44,38 @@ public class FinisherPacket {
         directly allow parsing a motionmanager as a swing action.
      */
 
-    public FinisherPacket(boolean isMainHand) {
+    public HeavyPacket(boolean isMainHand, WeaponStats.SWEEPSTATE movestate) {
         main = isMainHand;
+        state=movestate;
     }
 
-    public static class Encoder implements BiConsumer<FinisherPacket, FriendlyByteBuf> {
+    public static class Encoder implements BiConsumer<HeavyPacket, FriendlyByteBuf> {
 
         @Override
-        public void accept(FinisherPacket updateClientPacket, FriendlyByteBuf packetBuffer) {
+        public void accept(HeavyPacket updateClientPacket, FriendlyByteBuf packetBuffer) {
             packetBuffer.writeBoolean(updateClientPacket.main);
+            packetBuffer.writeInt(updateClientPacket.state.ordinal());
         }
     }
 
-    public static class Decoder implements Function<FriendlyByteBuf, FinisherPacket> {
+    public static class Decoder implements Function<FriendlyByteBuf, HeavyPacket> {
 
         @Override
-        public FinisherPacket apply(FriendlyByteBuf packetBuffer) {
-            return new FinisherPacket(packetBuffer.readBoolean());
+        public HeavyPacket apply(FriendlyByteBuf packetBuffer) {
+            return new HeavyPacket(packetBuffer.readBoolean(), WeaponStats.SWEEPSTATE.values()[packetBuffer.readInt()]);
         }
     }
 
-    public static class Handler implements BiConsumer<FinisherPacket, Supplier<NetworkEvent.Context>> {
+    public static class Handler implements BiConsumer<HeavyPacket, Supplier<NetworkEvent.Context>> {
 
         @Override
-        public void accept(FinisherPacket updateClientPacket, Supplier<NetworkEvent.Context> contextSupplier) {
+        public void accept(HeavyPacket updateClientPacket, Supplier<NetworkEvent.Context> contextSupplier) {
             contextSupplier.get().enqueueWork(() -> {
                 ServerPlayer sender = contextSupplier.get().getSender();
                 InteractionHand h = updateClientPacket.main ? InteractionHand.MAIN_HAND : InteractionHand.OFF_HAND;
                 if (sender == null) return;
                 CombatUtils.setHandCooldown(sender, h, 2, false);
-                CombatUtils.scheduleFinisher(sender, h);
+                CombatUtils.scheduleFinisher(sender, h, updateClientPacket.state);
                 CombatUtils.setHandCooldown(sender, h, 0, true);
             });
             contextSupplier.get().setPacketHandled(true);

@@ -25,8 +25,8 @@ public class FlyingWeaponCapability implements IFlyingWeapon {
             new MotionManagers.FixedMM(new MotionFrame(new Vec3(0, -1, 0), new Vec3(0, -0.4, 0), new Vector4d(0, 1, 0, 0)), 5)
     };
     private static final MotionManager[] blockingFrame = {
-            new MotionManagers.FixedMM(new MotionFrame(new Vec3(0, -1, 1), Vec3.ZERO, new Vector4d(-1, 1, 0, 0)), 5),
-            new MotionManagers.FixedMM(new MotionFrame(new Vec3(0, -1, 1), Vec3.ZERO, new Vector4d(1, 1, 0, 0)), 5)
+            new MotionManagers.FixedMM(new MotionFrame(new Vec3(0, -1, 1), Vec3.ZERO, new Vector4d(0, 1, 0, 90)), 5),
+            new MotionManagers.FixedMM(new MotionFrame(new Vec3(0, -1, 1), Vec3.ZERO, new Vector4d(0, 1, 0, -90)), 5)
     };
     private static final Vec3[] idleOffset = {
             new Vec3(0.5, 0, 0.5),
@@ -36,6 +36,8 @@ public class FlyingWeaponCapability implements IFlyingWeapon {
             new Vec3(0, 0, 1),
             new Vec3(0, 0, 0.7)
     };
+
+    private FlyingWeaponEffect[] mainFX, offFX;
 
     Player player;
     FlyingItemEntity main, off;
@@ -70,7 +72,7 @@ public class FlyingWeaponCapability implements IFlyingWeapon {
             //updateWeapon(fwe, hand);
             if (info == null)
                 fwe.clearPath();
-            fwe.queuePath(new WeaponMotionManager(mm, info, range),1,0);
+            fwe.queuePath(new WeaponMotionManager(mm, info, range), 0, 0);
             //fwe.setIdlePose(idleFrame[isMain ? 0 : 1]);
             //fwe.setShouldRender(FlyingWeaponEffect.WEAPON,true);
             //fwe.setUniversalOffset(idleOffset[isMain ? 0 : 1]);
@@ -142,13 +144,11 @@ public class FlyingWeaponCapability implements IFlyingWeapon {
                     if (CombatData.getCap(player).getHandBind(hand) > 0) {
                         fwe.setShouldRender();
                     }
-                    //if the player is blocking, change position and appear
+                    //if the player is blocking, change position
                     else if (player.isBlocking()) {
-                        fwe.setShouldRender(FlyingWeaponEffect.WEAPON);
                         fwe.setIdlePose(blockingFrame[isMain ? 0 : 1]);
                         fwe.setUniversalOffset(blockOffset[isMain ? 0 : 1]);
                     } else {
-                        //hide them, testing
                         fwe.setShouldRender();
                         fwe.setIdlePose(idleFrame[isMain ? 0 : 1]);
                         fwe.setUniversalOffset(idleOffset[isMain ? 0 : 1]);
@@ -156,6 +156,12 @@ public class FlyingWeaponCapability implements IFlyingWeapon {
                 }
             }
         }
+    }
+
+    @Override
+    public void setRender(InteractionHand hand, FlyingWeaponEffect... effects) {
+        if (getWeapon(hand).isIdle())
+            getWeapon(hand).setShouldRender(effects);
     }
 
     private void updateWeapon(FlyingItemEntity fwe, InteractionHand hand) {

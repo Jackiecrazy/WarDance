@@ -6,6 +6,7 @@
   "mixins": [
     "InCombatAccessor",
     "MixinBlockFrameDisable",
+    "MixinEmptyHands",
     "MixinLivingEntity",
     "MixinNewSweepAttack",
     "MixinPlayerEntity",
@@ -22,6 +23,7 @@
     "DarkTideCancelScreenShakeMixin",
     "ItchyCurseMixin",
     "MixinEquipProgress",
+    "MixinInternalDamage",
     "TwoHandingRenderMixin",
     "YouTestMyPatienceAccessor"
   ],

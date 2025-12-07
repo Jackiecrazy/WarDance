@@ -97,15 +97,15 @@ public class ResourceDisplay implements IGuiOverlay {
                 }
             } else {
                 //otherwise draw posture and rally
-                //draw the "true" posture bar as gray
+                //draw the rally bar first
                 int rally = (int) (Math.min(itsc.getMaxPosture(), itsc.getMaxPosture() - itsc.getPosture()) * halfBarWidth / itsc.getMaxPosture()) + 3;
                 ms.blit(newdark, atX, barY, 243 - rally, 12, rally, barHeight);
                 ms.blit(newdark, atX - rally, barY, 0, 12, rally, barHeight);
 
-                //then layer posture bar minus rally for recoverable area
-                flexBarWidth = (int) ((itsc.getMaxPosture() - itsc.getPosture() - itsc.getRally()) * halfBarWidth / itsc.getMaxPosture()) + 3;
-                ms.blit(newdark, atX, barY, 243 - flexBarWidth, 24, flexBarWidth, barHeight);
-                ms.blit(newdark, atX - flexBarWidth, barY, 0, 24, flexBarWidth, barHeight);
+                //then layer the gray portion on
+//                flexBarWidth = (int) ((itsc.getMaxPosture() - itsc.getPosture() - itsc.getRally()) * halfBarWidth / itsc.getMaxPosture()) + 3;
+//                ms.blit(newdark, atX, barY, 243 - flexBarWidth, 24, flexBarWidth, barHeight);
+//                ms.blit(newdark, atX - flexBarWidth, barY, 0, 24, flexBarWidth, barHeight);
             }
             // render steve time frames
             if (itsc.isIframe()) {

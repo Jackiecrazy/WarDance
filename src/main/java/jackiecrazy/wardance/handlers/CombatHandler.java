@@ -49,6 +49,7 @@ import java.util.UUID;
 @Mod.EventBusSubscriber(modid = WarDance.MODID)
 public class CombatHandler {
 
+    public static final float magicInternalDamage = 0.3f;
     private static final UUID uuid = UUID.fromString("98c361c7-de32-4f40-b129-d7752bac3712");
     private static final UUID uuid2 = UUID.fromString("98c361c8-de32-4f40-b129-d7752bac3722");
 
@@ -79,7 +80,7 @@ public class CombatHandler {
 
     @SubscribeEvent
     public static void projectileParry(final ProjectileImpactEvent e) {
-        Entity projectile = e.getEntity();
+        Projectile projectile = e.getProjectile();
         if (e.getRayTraceResult().getType() == HitResult.Type.ENTITY && e.getRayTraceResult() instanceof EntityHitResult ehr && ehr.getEntity() instanceof LivingEntity uke) {
             //stealth shot
             if (StealthUtils.INSTANCE.getAwareness(null, uke) != StealthUtils.Awareness.ALERT) {
@@ -92,8 +93,10 @@ public class CombatHandler {
                 return;
             }
 
+            LivingEntity shooter = projectile.getOwner() instanceof LivingEntity s ? s : null;
+
             //nothing applies if you shot it
-            if (projectile instanceof Projectile pro && pro.getOwner() instanceof LivingEntity shooter) {
+            if (shooter != null) {
                 //don't defend against yourself
                 if (shooter == uke) return;
             }
@@ -106,7 +109,7 @@ public class CombatHandler {
             }
 
             //add ranged combo and finisher
-            if (projectile instanceof Projectile pro && pro.getOwner() instanceof LivingEntity shooter) {
+            if (shooter != null) {
                 StylishData.getCap(shooter).addCombo(0.2f, "projectile");
                 StylishData.getCap(shooter).processAttack(false);
             }
@@ -195,7 +198,7 @@ public class CombatHandler {
     private static void handleProjectileDefense(ProjectileImpactEvent e,
                                                 ProjectileDefendEvent pe,
                                                 ItemStack defend,
-                                                Entity projectile,
+                                                Projectile projectile,
                                                 LivingEntity uke) {
         e.setCanceled(true);//.setImpactResult(ProjectileImpactEvent.ImpactResult.STOP_AT_CURRENT_NO_DAMAGE);
         ICombatCapability ukeCap = CombatData.getCap(uke);
@@ -332,6 +335,7 @@ public class CombatHandler {
                         semeCap.tickProc("stunTrigger");
                     }
                 }
+                ukeCap.tickProc("alreadyProcessDamage");
 
                 //posture consumption code start, grab attack multiplier
                 float atkMult = CombatUtils.getPostureAtk(seme, seme, attackingHand, e.getSource(), e.getAmount(), attack);
@@ -442,27 +446,31 @@ public class CombatHandler {
                 if (pe2.success() && ukeCap.consumePosture(seme, pe2.getPostureConsumption(), pe2.canBreach(), Math.max(0, 1 - defMult / 2)) == 0) {//todo config rally value
                     e.setCanceled(true);
                     WarDance.LOGGER.debug("successfully blocked!");
+                    ukeCap.recordDamage(e.getAmount() * (1 - magicInternalDamage));
                     CombatUtils.onSuccessfulBlock(uke, seme, defendingHand, defend, pe2.getPostureConsumption());
                     //do not cancel the event. It technically succeeded but will be blocked by vanilla functions. I just mark the right item to keep processing.
                     return;
                 }
 
                 //last chance, idle guard resolution
-                MeleePostureEvent.Defense.Guard pe3 = new MeleePostureEvent.Defense.Guard(uke, seme, (defenderMaybeGuarding && uke instanceof Player && defend != null), attackingHand, attack, defendingHand, defend, finalPostureConsumption, originalPostureConsumption, e.getSource(), e.getAmount(), canBreach);
-                MinecraftForge.EVENT_BUS.post(pe3);
+//                MeleePostureEvent.Defense.Guard pe3 = new MeleePostureEvent.Defense.Guard(uke, seme, (defenderMaybeGuarding && uke instanceof Player && defend != null), attackingHand, attack, defendingHand, defend, finalPostureConsumption, originalPostureConsumption, e.getSource(), e.getAmount(), canBreach);
+//                MinecraftForge.EVENT_BUS.post(pe3);
+//
+//                //success!
+//                if (pe3.success() && ukeCap.consumePosture(seme, pe3.getPostureConsumption(), pe3.canBreach(), 0) == 0) {
+//                    e.setCanceled(true);
+//                    ukeCap.recordDamage(e.getAmount());
+//                    WarDance.LOGGER.debug("successfully idle guarded!");
+//                    CombatUtils.onIdleGuard(uke, seme, defendingHand, defend, pe3.getPostureConsumption());
+//                    return;
+//                }
 
-                //success!
-                if (pe3.success() && ukeCap.consumePosture(seme, pe3.getPostureConsumption(), pe3.canBreach(), 0) == 0) {
-                    e.setCanceled(true);
-                    WarDance.LOGGER.debug("successfully idle guarded!");
-                    CombatUtils.onIdleGuard(uke, seme, defendingHand, defend, pe3.getPostureConsumption());
-                    return;
-                }
-
-                //failed everything, use the original damage and reset rally
+                //failed everything, use the original damage
                 WarDance.LOGGER.debug("failed everything! " + defenderMaybeBlocking + " " + defend);
-                if (!pe2.success())
+                if (!pe2.success()) {
                     ukeCap.consumePosture(seme, pe.getPostureConsumption(), pe.canBreach(), 0f);
+
+                }
                 //internally enforced hand bind to bypass slimes
                 //added to world check to bypass goety lichdom weirdness
                 //removed for sanity
@@ -558,23 +566,59 @@ public class CombatHandler {
             WarDance.LOGGER.debug("damage from " + e.getSource() + " received with amount " + e.getAmount());
         }
         LivingEntity uke = e.getEntity();
-        LivingEntity seme = null;
         DamageSource ds = e.getSource();
-        if(Float.isNaN(e.getAmount())){
+        if (Float.isNaN(e.getAmount())) {
             WarDance.LOGGER.fatal("intercepted a livinghurtevent with nan damage, canceling");
             e.setAmount(0);
             e.setCanceled(true);
+            return;
         }
-        if (ds.getDirectEntity() instanceof LivingEntity direct) {
-            seme = direct;
+        ICombatCapability cap = CombatData.getCap(uke);
+
+        //provisional. Adds posture damage to the player for eating a projectile because it was not handled before.
+        //Simple formula. Less than 5% health per hit=1 posture, 30%=3, any more = 7. Cannot stun.
+        if (ds.getEntity() != null && ds.isIndirect()) {
+            float amnt = 1;
+            if (e.getAmount() > uke.getMaxHealth() * 0.05)
+                amnt = 3;
+            if (e.getAmount() > uke.getMaxHealth() * 0.3)
+                amnt = 7;
+            cap.consumePosture(null, amnt, false);
+            cap.tickProc("noShake");
+        }
+
+        //darktide
+//        if (DamageUtils.isPhysicalAttack(e.getSource())) {
+//            float darktide = e.getAmount() / 2;
+//            darktide *= cap.getPosturePercentage();
+//            //temporary, darktide
+//            if (cap.getMaxPosture() > 0) {
+//                e.setAmount(e.getAmount() - darktide);
+//                cap.consumePosture(e.getSource().getEntity() instanceof LivingEntity attack ? attack : null,
+//                                   darktide, false);
+//            }
+//        }
+
+        // combo reduces direct damage
+        if (ds.getEntity() != null) {
+            //reduction starts at half and increases with your combo
+            final float dmg = e.getAmount();
+            final float comboDefense = magicInternalDamage / Math.max(1, StylishData.getCap(uke).getCombo());
+            e.setAmount(dmg * comboDefense);
+            //you cannot die unless you are knocked down
+            if (e.getAmount() > uke.getHealth() && !cap.isStunned() && !cap.alreadyProc("knockdown"))
+                e.setAmount(Math.min(e.getAmount(), uke.getHealth() - 1));
+            StylishData.getCap(uke).resetCombo();
+            //the rest of it becomes internal damage
+            if (StealthUtils.INSTANCE.getAwareness(ds.getEntity() instanceof LivingEntity le ? le : null, uke) == StealthUtils.Awareness.ALERT &&
+                    cap.getDamageRecordTime() > 0) {
+                cap.recordDamage(dmg * (1 - comboDefense));
+                cap.tickProc("noShake");
+                //e.setCanceled(true);
+                return;
+            }
         }
         //stuff used to exist here, moved to footwork
-
-        ICombatCapability cap = CombatData.getCap(uke);
-        // combo reduces damage
-        e.setAmount(e.getAmount() / Math.max(1, StylishData.getCap(uke).getCombo()));
-        StylishData.getCap(uke).resetCombo();
-        StealthUtils.Awareness awareness = StealthUtils.INSTANCE.getAwareness(seme, uke);
 
         //weapon on hit effects
         if (ds.getEntity() instanceof LivingEntity trueSource) {
@@ -583,9 +627,6 @@ public class CombatHandler {
             sweepInfo.performCommand(uke, false, true);
             double luckDiff = WarDance.rand.nextFloat() * (GeneralUtils.getAttributeValueSafe(trueSource, Attributes.LUCK)) - WarDance.rand.nextFloat() * (GeneralUtils.getAttributeValueSafe(uke, Attributes.LUCK));
             e.setAmount(e.getAmount() + (float) luckDiff * GeneralConfig.luck);
-
-            //dock rally for being melee hit
-            //cap.setRally(cap.getRally() / 2);
         }
         if (GeneralConfig.debug && !e.getEntity().level().isClientSide) {
             WarDance.LOGGER.debug("luck has been resolved, damage is now " + e.getAmount());
@@ -639,17 +680,6 @@ public class CombatHandler {
             e.setAmount(0);
         final ICombatCapability cap = CombatData.getCap(e.getEntity());
 
-        if (DamageUtils.isPhysicalAttack(e.getSource())) {
-            float darktide = e.getAmount() / 2;
-            darktide *= cap.getPosturePercentage();
-            //temporary, darktide
-            if (cap.getMaxPosture() > 0) {
-                e.setAmount(e.getAmount() - darktide);
-                cap.consumePosture(e.getSource().getEntity() instanceof LivingEntity attack ? attack : null,
-                                   darktide, false);
-            }
-        }
-
         //fall damage deducts posture
         if (e.getSource().is(DamageTypeTags.IS_FALL) || e.getSource().is(DamageTypeTags.IS_EXPLOSION)) {
             cap.consumePosture(null, e.getAmount(), false, 0);
@@ -658,19 +688,22 @@ public class CombatHandler {
         //finalize knockdown, ugly fix to prevent the knocking hit from being skipped
         if (cap.alreadyProc("knockdown")) {
             cap.knockdown(e.getEntity(), (int) cap.getProc("knockdown"));
-            //temporary, players lose 30% health on knockdown todo use deathblow resistance
-            if (e.getEntity() instanceof Player p) {
-                e.setAmount(p.getMaxHealth() * 0.3f);
-            } else {
-                e.setAmount(e.getAmount() + e.getEntity().getMaxHealth() / 10f);
-                CombatUtils.knockBack(e.getEntity(), e.getSource().getEntity(), 0.7f, true, true);
-            }
+            float hardcap = e.getEntity() instanceof Player && e.getEntity().getHealth() > e.getEntity().getMaxHealth() / 2 ? e.getEntity().getHealth() - WarDance.rand.nextFloat() * 3f : 99999;
+            e.setAmount(Math.min(hardcap, e.getAmount() + cap.getRecordedDamage()));
+            cap.stopRecording(null);
+            CombatUtils.knockBack(e.getEntity(), e.getSource().getEntity(), 0.7f, true, true);
             cap.tickProc("knockdown", 1);
+        }
+
+        //nonplayers cannot hold on and will vaporize if their internal damage is too high
+        if (!(e.getEntity() instanceof Player) && cap.getRecordedDamage() > e.getEntity().getMaxHealth() * 2) {
+            e.setAmount(e.getAmount() + cap.getRecordedDamage());
+            cap.stopRecording(null);
         }
     }
 
     @SubscribeEvent(priority = EventPriority.LOWEST, receiveCanceled = true)
-    public static void diepotato(LivingDeathEvent e) {
+    public static void killingBlow(LivingDeathEvent e) {
         LivingEntity elb = e.getEntity();
         CombatData.getCap(elb).setHandBind(InteractionHand.MAIN_HAND, 0);
         CombatData.getCap(elb).setHandBind(InteractionHand.OFF_HAND, 0);

@@ -64,13 +64,11 @@ public class TemporaryMoveTranslator {
                                         WeaponStats.SweepInfo base) {
         final WeaponStats.SweepInfo preFinish = base.preFinishCopy();
         final WeaponStats.SweepInfo finish = base.finisherCopy();
-        FlyingWeaponData.getCap(e).getWeapon(hand).lock(e);
+        //FlyingWeaponData.getCap(e).getWeapon(hand).lock(e);
         switch (base.getType()) {
             case CONE -> {
                 //flourish thrice and stab
                 FlyingWeaponData.getCap(e).scheduleAction(hand, temp_getMMFromType(3, WeaponStats.SWEEPTYPE.CONE, base.getBase() + 3 * base.getScaling()), preFinish, 5, 10);
-                FlyingWeaponData.getCap(e).scheduleAction(hand, temp_getMMFromType(3, WeaponStats.SWEEPTYPE.CONE, base.getBase() + 3 * base.getScaling()), preFinish, 5, 10);
-                FlyingWeaponData.getCap(e).scheduleAction(hand, temp_getMMFromType(5, WeaponStats.SWEEPTYPE.CONE, base.getBase() + 3 * base.getScaling()), preFinish, 5, 10);
                 FlyingWeaponData.getCap(e).scheduleAction(hand, temp_getMMFromType(15, WeaponStats.SWEEPTYPE.LINE, 3), finish, 7, 20);
             }
             case CLEAVE -> {
@@ -78,8 +76,7 @@ public class TemporaryMoveTranslator {
                 FlyingWeaponData.getCap(e).scheduleAction(hand, new MotionManagers.DefinitionMM(new MotionGroup(LOOP, EasingFunction.IN_CUBIC, 20)), finish, 5, 9);
             }
             case IMPACT -> {
-                //spin twice and slam down
-                FlyingWeaponData.getCap(e).scheduleAction(hand, temp_getMMFromType(15, WeaponStats.SWEEPTYPE.CIRCLE, base.getBase() + 3 * base.getScaling()), preFinish, 5, 9);
+                //spin and slam down
                 FlyingWeaponData.getCap(e).scheduleAction(hand, temp_getMMFromType(15, WeaponStats.SWEEPTYPE.CIRCLE, base.getBase() + 3 * base.getScaling()), preFinish, 5, 9);
                 FlyingWeaponData.getCap(e).scheduleAction(hand, temp_getMMFromType(20, WeaponStats.SWEEPTYPE.CLEAVE, 60), finish, 5, 9);
             }

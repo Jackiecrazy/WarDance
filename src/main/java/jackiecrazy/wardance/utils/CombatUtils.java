@@ -59,7 +59,7 @@ public class CombatUtils {
 
     public static final UUID off = UUID.fromString("8c8028c8-da69-49a2-99cd-f92d7ad22534");
     public static final UUID main = UUID.fromString("8c8028c8-da67-49a2-99cd-f92d7ad22534");
-    public static boolean suppressChangeFunctions = false;
+    public static boolean suppressChangeFunctions = false, allowCombatHotbarPickup=false;
     private static ProjectileInfo DEFAULTRANGED = new ProjectileInfo(0.6, 1, false, false);
     private static HashMap<EntityType, ProjectileInfo> projectileMap = new HashMap<>();
 
@@ -246,7 +246,7 @@ public class CombatUtils {
                 base = MobSpecs.getOrDefault(attacker).getBaseAttackPosture();
                 if (base == -1)
                     base = CombatData.getCap(attacker).getMaxPosture() * CombatConfig.defaultMultiplierPostureMob;
-            }
+            }else return 3;//magic number
         }
         if (attacker == null || h == null) return (float) base;
         double finalScale = scaler;
@@ -572,10 +572,11 @@ public class CombatUtils {
     public static WeaponStats.SWEEPSTATE getSweepState(LivingEntity entity) {
         if (CombatData.getCap(entity).alreadyProc("sweepStateOverride"))
             return WeaponStats.SWEEPSTATE.values()[(int) CombatData.getCap(entity).getProc("sweepStateOverride")];
-        if (entity.isCrouching()) return WeaponStats.SWEEPSTATE.SNEAKING;
+        //if (entity.isCrouching()) return WeaponStats.SWEEPSTATE.SNEAKING;
         if (entity.isSwimming() || entity.isSprinting() || entity.isFallFlying() || CombatData.getCap(entity).isDodging())
             return WeaponStats.SWEEPSTATE.SPRINTING;
-        if (CombatData.getCap(entity).getMotionConsistently().y > 0) return WeaponStats.SWEEPSTATE.RISING;
+        if (entity.getDeltaMovement().y > 0)
+            return WeaponStats.SWEEPSTATE.SNEAKING;//fixme
         if ((!(entity instanceof Player p) || !p.getAbilities().flying) && !entity.onGround() && entity.fallDistance > 0 && !entity.onClimbable() && !entity.isInWater())
             return WeaponStats.SWEEPSTATE.FALLING;
         return WeaponStats.SWEEPSTATE.STANDING;
@@ -714,7 +715,7 @@ public class CombatUtils {
                 float strength = 1.3f;
                 if (t instanceof LivingEntity e) {
                     CombatData.getCap(e).consumePosture(defender, 4, false, 1);
-                    strength = Math.min(strength, 0.2f + Math.min(1f, amount * CombatData.getCap(e).getPosturePercentage()));
+                    strength = Math.min(strength, 0.2f + Mth.clamp(amount * 1-CombatData.getCap(e).getPosturePercentage(), 0, 1));
                 }
                 CombatUtils.knockBack(t, defender, strength, true, false);
 
@@ -731,18 +732,17 @@ public class CombatUtils {
         }
     }
 
-    public static boolean scheduleFinisher(ServerPlayer sender, InteractionHand h) {
-        if (!StylishData.getCap(sender).canTrigger() && !sender.getAbilities().instabuild) {
-            sender.displayClientMessage(Component.literal("Not enough Finisher Charge! Currently " + StylishData.getCap(sender).getTriggerBar()), true);
-            return false;
-        }
+    public static boolean scheduleFinisher(ServerPlayer sender, InteractionHand h, WeaponStats.SWEEPSTATE s) {
+//        if (!StylishData.getCap(sender).canTrigger() && !sender.getAbilities().instabuild) {
+//            sender.displayClientMessage(Component.literal("Not enough Finisher Charge! Currently " + StylishData.getCap(sender).getTriggerBar()), true);
+//            return false;
+//        }
         if (!StylishData.getCap(sender).isCombatMode()) return false;
         if (CombatData.getCap(sender).getHandBind(h) > 0) return false;
-        StylishData.getCap(sender).resetTriggerBar();
-        WeaponStats.SWEEPSTATE s = getSweepState(sender);
+        //StylishData.getCap(sender).resetTriggerBar();
         WeaponStats.SweepInfo info = WeaponStats.getSweepInfo(sender.getItemInHand(h), s);
         TemporaryMoveTranslator.scheduleFinisher(sender, h, info);
-        CombatData.getCap(sender).setSpirit(CombatData.getCap(sender).getMaxSpirit());
+        StylishData.getCap(sender).addCombo(0.3f, "heavy" + (h == InteractionHand.OFF_HAND) + s.name());
         return true;
     }
 

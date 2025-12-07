@@ -135,6 +135,7 @@ dependencies {
     runtimeOnly fg.deobf("jackiecrazy.attributizer:attributizer-3.1:${mc_version}")
     implementation fg.deobf("jackiecrazy.footwork:footwork-${footwork_version}:${mc_version}")
     implementation fg.deobf("jackiecrazy.cloakanddagger:cloakanddagger-${cd_version}:${mc_version}")
+    runtimeOnly fg.deobf("curse.maven:neat-238372:6662684")
     runtimeOnly fg.deobf("curse.maven:armorpoints-396094:4817924")
     runtimeOnly fg.deobf("curse.maven:moonlight-499980:4800629")
     runtimeOnly fg.deobf("curse.maven:dummy-225738:4724732")
