@@ -140,6 +140,7 @@ public class WarDance {
         CombatChannel.INSTANCE.registerMessage(index++, TwoHandItemDataPacket.class, new TwoHandItemDataPacket.Encoder(), new TwoHandItemDataPacket.Decoder(), new TwoHandItemDataPacket.Handler());
         CombatChannel.INSTANCE.registerMessage(index++, TwoHandTagDataPacket.class, new TwoHandTagDataPacket.Encoder(), new TwoHandTagDataPacket.Decoder(), new TwoHandTagDataPacket.Handler());
         CombatChannel.INSTANCE.registerMessage(index++, ThrowPacket.class, new ThrowPacket.Encoder(), new ThrowPacket.Decoder(), new ThrowPacket.Handler());
+        CombatChannel.INSTANCE.registerMessage(index++, HookPacket.class, new HookPacket.Encoder(), new HookPacket.Decoder(), new HookPacket.Handler());
         CombatChannel.INSTANCE.registerMessage(index++, UpdateWeaponPositionPacket.class, new UpdateWeaponPositionPacket.Encoder(), new UpdateWeaponPositionPacket.Decoder(), new UpdateWeaponPositionPacket.Handler());
     }
 
@@ -147,6 +148,7 @@ public class WarDance {
         // do something that can only be done on the client
         ClientConfig.bake();
         EntityRenderers.register(WarEntities.WEAPON.get(), ItemEntityRenderer::new);
+        EntityRenderers.register(WarEntities.GRAPPLE.get(), ItemEntityRenderer::new);
     }
 
 

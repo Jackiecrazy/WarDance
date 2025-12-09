@@ -115,8 +115,11 @@ public class FlyingWeaponEntity extends FlyingItemEntity {
             if (isIdle()) {//tied to the owner
                 if (getOwner() == null) remove(RemovalReason.DISCARDED);
                 boolean valid = false;
+
+                //todo this check makes grabbing blocks out of the environment not work
                 for (InteractionHand h : InteractionHand.values())
                     if (FlyingWeaponData.getCap(getOwner()).getWeapon(h) == this) valid = true;
+
                 if (!valid)//reasonably sure the player doesn't need it anymore
                     remove(RemovalReason.DISCARDED);
             } else {//todo remove
@@ -212,7 +215,7 @@ public class FlyingWeaponEntity extends FlyingItemEntity {
     protected void onHitBlock(BlockPos blockPos, Direction hitFace, Vec3 location) {
         setDeltaMovement(Vec3.ZERO);
         setPos(location);
-        if (getHeldItem().isEmpty() && !level().isClientSide) {
+        if (getHeldItem().isEmpty() && !level().isClientSide) {//todo remove
             setTetheringEntity(getOwner());
         }
         ParticleUtils.playSweepParticle(FootworkParticles.IMPACT.get(), this, this.position(), 0, 3, Color.WHITE, 0);

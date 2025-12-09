@@ -362,32 +362,32 @@ public class ClientEvents {
                             }
                         }
                     }
-                    if(Keybinds.FINISHER.consumeClick()){
+                    if (Keybinds.THROW.consumeClick()) {
                         //point them forward
-                    }else if(Keybinds.FINISHER.isDown()){
+                    } else if (Keybinds.THROW.isDown()) {
                         //yeet!
-                        if(mc.options.keyAttack.isDown() && mc.options.keyAttack.consumeClick()) {
+                        if (mc.options.keyAttack.isDown() && mc.options.keyAttack.consumeClick()) {
                             Vec3 destination = GeneralUtils.raytraceAnything(p.level(), p, 32, EntitySelector.LIVING_ENTITY_STILL_ALIVE).getLocation();
                             CombatChannel.INSTANCE.sendToServer(new ThrowPacket(true, destination));
                         }
                         if (mc.options.keyUse.isDown() && mc.options.keyUse.consumeClick()) {
-                            Vec3 destination = GeneralUtils.raytraceAnything(p.level(), p, 32,EntitySelector.LIVING_ENTITY_STILL_ALIVE).getLocation();
-                            CombatChannel.INSTANCE.sendToServer(new ThrowPacket(false, destination));
+                            Vec3 destination = GeneralUtils.raytraceAnything(p.level(), p, 32, EntitySelector.LIVING_ENTITY_STILL_ALIVE).getLocation();
+                            CombatChannel.INSTANCE.sendToServer(new HookPacket(false, destination));
                         }
-                    }else{
+                    } else {
                         //don't point them forward
                     }
                     if (mc.options.keyAttack.isDown() && sneakedTime > magicSneakTime && mc.options.keyAttack.consumeClick()) {
                         CombatChannel.INSTANCE.sendToServer(new HeavyPacket(true, WeaponStats.SWEEPSTATE.STANDING));
                         CombatChannel.INSTANCE.sendToServer(new UpdateWeaponRenderPacket(false));
                         sneakedTime = -99999;
-                        lastUsedHandMain=true;
+                        lastUsedHandMain = true;
                     }
                     if (mc.options.keyUse.isDown() && sneakedTime > magicSneakTime && mc.options.keyUse.consumeClick()) {
                         CombatChannel.INSTANCE.sendToServer(new HeavyPacket(false, WeaponStats.SWEEPSTATE.STANDING));
                         CombatChannel.INSTANCE.sendToServer(new UpdateWeaponRenderPacket(true));
                         sneakedTime = -99999;
-                        lastUsedHandMain=true;
+                        lastUsedHandMain = true;
                     }
                     if (mc.options.keyJump.isDown() && sneakedTime > magicSneakTime && mc.options.keyJump.consumeClick()) {
                         CombatChannel.INSTANCE.sendToServer(new HeavyPacket(false, WeaponStats.SWEEPSTATE.SNEAKING));//FIXME
@@ -396,7 +396,7 @@ public class ClientEvents {
                     if (mc.options.keySwapOffhand.isDown() && sneakedTime > 0 && mc.options.keySwapOffhand.consumeClick()) {
                         lastUsedHandMain = !lastUsedHandMain;
                         CombatChannel.INSTANCE.sendToServer(new UpdateWeaponRenderPacket(!lastUsedHandMain));
-                        CombatChannel.INSTANCE.sendToServer(new UpdateWeaponRenderPacket(lastUsedHandMain, true, sneakedTime>=magicSneakTime, false, false));
+                        CombatChannel.INSTANCE.sendToServer(new UpdateWeaponRenderPacket(lastUsedHandMain, true, sneakedTime >= magicSneakTime, false, false));
                     }
                 }
                 // if not, call use with the respective hand
@@ -410,13 +410,13 @@ public class ClientEvents {
                 }
                 if (p.isShiftKeyDown()) {
                     sneakedTime++;
-                    if(sneakedTime==1)
+                    if (sneakedTime == 1)
                         CombatChannel.INSTANCE.sendToServer(new UpdateWeaponRenderPacket(lastUsedHandMain, FlyingWeaponEffect.WEAPON));
                     if (sneakedTime == magicSneakTime) {
                         p.level().playSound(p, p.getX(), p.getY(), p.getZ(), SoundEvents.EXPERIENCE_ORB_PICKUP, SoundSource.PLAYERS, 0.3f + WarDance.rand.nextFloat() * 0.5f, 0.75f + WarDance.rand.nextFloat() * 0.5f);
                         CombatChannel.INSTANCE.sendToServer(new UpdateWeaponRenderPacket(lastUsedHandMain, FlyingWeaponEffect.WEAPON, FlyingWeaponEffect.BIG_SHADOW));
                     }
-                } else{
+                } else {
 //                    if(sneakedTime!=0){
 //                        CombatChannel.INSTANCE.sendToServer(new UpdateWeaponRenderPacket(true));
 //                        CombatChannel.INSTANCE.sendToServer(new UpdateWeaponRenderPacket(false));
@@ -468,7 +468,7 @@ public class ClientEvents {
         if (lastSweepTick != e.getEntity().tickCount)
             CombatChannel.INSTANCE.sendToServer(new RequestSweepPacket(true, n));
         lastSweepTick = e.getEntity().tickCount;
-        lastUsedHandMain=true;
+        lastUsedHandMain = true;
     }
 
     @SubscribeEvent
@@ -494,7 +494,7 @@ public class ClientEvents {
             if (lastSweepTick != e.getEntity().tickCount)
                 CombatChannel.INSTANCE.sendToServer(new RequestSweepPacket(false, n));
             lastSweepTick = e.getEntity().tickCount;
-            lastUsedHandMain=false;
+            lastUsedHandMain = false;
         }
     }
 
@@ -514,7 +514,7 @@ public class ClientEvents {
         if (lastSweepTick != e.getEntity().tickCount)
             CombatChannel.INSTANCE.sendToServer(new RequestSweepPacket(true, n));
         lastSweepTick = e.getEntity().tickCount;
-        lastUsedHandMain=true;
+        lastUsedHandMain = true;
     }
 
     @SubscribeEvent
@@ -543,7 +543,7 @@ public class ClientEvents {
             if (lastSweepTick != e.getEntity().tickCount)
                 CombatChannel.INSTANCE.sendToServer(new RequestSweepPacket(false, n));
             lastSweepTick = e.getEntity().tickCount;
-            lastUsedHandMain=false;
+            lastUsedHandMain = false;
         }
     }
 
@@ -570,7 +570,7 @@ public class ClientEvents {
             if (lastSweepTick != e.getEntity().tickCount)
                 CombatChannel.INSTANCE.sendToServer(new RequestSweepPacket(false, n));
             lastSweepTick = e.getEntity().tickCount;
-            lastUsedHandMain=false;
+            lastUsedHandMain = false;
         }
     }
 
@@ -597,7 +597,7 @@ public class ClientEvents {
             if (lastSweepTick != e.getEntity().tickCount)
                 CombatChannel.INSTANCE.sendToServer(new RequestSweepPacket(false, n));
             lastSweepTick = e.getEntity().tickCount;
-            lastUsedHandMain=false;
+            lastUsedHandMain = false;
         }
     }
 

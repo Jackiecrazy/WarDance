@@ -2,6 +2,8 @@ package jackiecrazy.wardance.networking.combat;
 
 import jackiecrazy.wardance.capability.flyingweapon.FlyingWeaponData;
 import jackiecrazy.wardance.entity.FlyingWeaponEntity;
+import jackiecrazy.wardance.entity.GrappleEntity;
+import jackiecrazy.wardance.entity.WarEntities;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.InteractionHand;
@@ -15,16 +17,11 @@ import java.util.function.Supplier;
 
 public class HookPacket {
     boolean main;
-    int targetID;
+    Vec3 destination;
 
-    public HookPacket(boolean isMainHand, Entity target) {
+    public HookPacket(boolean isMainHand, Vec3 pos) {
         main = isMainHand;
-        targetID = target.getId();
-    }
-
-    public HookPacket(boolean isMainHand, int target) {
-        main = isMainHand;
-        targetID = target;
+        destination = pos;
     }
 
     public static class Encoder implements BiConsumer<HookPacket, FriendlyByteBuf> {
@@ -32,7 +29,7 @@ public class HookPacket {
         @Override
         public void accept(HookPacket packet, FriendlyByteBuf packetBuffer) {
             packetBuffer.writeBoolean(packet.main);
-            packetBuffer.writeInt(packet.targetID);
+            packetBuffer.writeVector3f(packet.destination.toVector3f());
         }
     }
 
@@ -40,7 +37,7 @@ public class HookPacket {
 
         @Override
         public HookPacket apply(FriendlyByteBuf packetBuffer) {
-            return new HookPacket(packetBuffer.readBoolean(), packetBuffer.readInt());
+            return new HookPacket(packetBuffer.readBoolean(), new Vec3(packetBuffer.readVector3f()));
         }
     }
 
@@ -52,12 +49,14 @@ public class HookPacket {
                 ServerPlayer sender = contextSupplier.get().getSender();
                 InteractionHand h = packet.main ? InteractionHand.MAIN_HAND : InteractionHand.OFF_HAND;
                 if (sender == null) return;
-                Entity tgt = sender.level().getEntity(packet.targetID);
-                //hook to weapon
-                if (tgt instanceof FlyingWeaponEntity fwe) {
-                    fwe.setTetheringEntity(sender);
-                } else
-                    FlyingWeaponData.getCap(sender).yeet(h, sender.getEyePosition().add(sender.getLookAngle().scale(10)));
+                //have a weapon, yeet!
+                GrappleEntity grapple = new GrappleEntity(WarEntities.GRAPPLE.get(), sender.level());
+                grapple.setOwner(sender);
+                grapple.setTransitioning(false);
+                grapple.setInteractionRange(1);
+                grapple.setPosRaw(sender.getX(), sender.getY()+sender.getEyeHeight(), sender.getZ());
+                grapple.setDeltaMovement(packet.destination.subtract(grapple.position()).normalize().scale(1.5));
+                sender.level().addFreshEntity(grapple);
             });
             contextSupplier.get().setPacketHandled(true);
         }

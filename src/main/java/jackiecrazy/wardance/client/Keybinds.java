@@ -50,7 +50,7 @@ public class Keybinds {
     public static final KeyMapping CAST = new KeyMapWrapper("wardance.skill", IN_COMBAT, InputConstants.Type.KEYSYM, GLFW.GLFW_KEY_R, "key.categories.wardance");
     public static final KeyMapping BINDCAST = new KeyMapWrapper("wardance.bindCast", IN_COMBAT, InputConstants.Type.MOUSE, GLFW.GLFW_MOUSE_BUTTON_MIDDLE, "key.categories.wardance");
     public static final KeyMapping DODGE = new KeyMapWrapper("wardance.dodge", IN_COMBAT, InputConstants.Type.KEYSYM, GLFW.GLFW_KEY_LEFT_ALT, "key.categories.wardance");
-    public static final KeyMapping FINISHER = new KeyMapWrapper("wardance.finisher", IN_COMBAT, InputConstants.Type.KEYSYM, GLFW.GLFW_KEY_Q, "key.categories.wardance");//TODO throw
+    public static final KeyMapping THROW = new KeyMapWrapper("wardance.throw", IN_COMBAT, InputConstants.Type.KEYSYM, GLFW.GLFW_KEY_Q, "key.categories.wardance");//TODO throw
     public static final KeyMapping EVOKE = new KeyMapWrapper("wardance.evoke", IN_COMBAT, InputConstants.Type.KEYSYM, GLFW.GLFW_KEY_V, "key.categories.wardance");
     //center, top right, down clockwise
     public static final KeyMapping[] SKILL = {
@@ -102,11 +102,9 @@ public class Keybinds {
                 CombatChannel.INSTANCE.sendToServer(new SelectSkillPacket(x));
         }
         if (BINDCAST.getKeyConflictContext().isActive() && BINDCAST.consumeClick() && mc.player.isAlive()) {
-            //I think this cancels pick block?
             BINDCAST.setDown(false);
             CombatChannel.INSTANCE.sendToServer(new EvokeSkillPacket());
         }
-        FINISHER.consumeClick();
     }
 
     public static class KeyMapWrapper extends KeyMapping {
