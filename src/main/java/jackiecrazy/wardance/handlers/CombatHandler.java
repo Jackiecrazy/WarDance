@@ -483,8 +483,10 @@ public class CombatHandler {
             if (e.getSource().is(DamageTypeTags.IS_FALL) || e.getSource().is(DamageTypeTags.IS_EXPLOSION) || e.getSource().is(DamageTypeTags.IS_LIGHTNING)) {
                 MeleePostureEvent.Environment pe1 = new MeleePostureEvent.Environment(e.getEntity(), CombatData.getCap(e.getEntity()).isParrying(), e.getAmount(), e.getSource(), e.getAmount(), true);
                 MinecraftForge.EVENT_BUS.post(pe1);
-                if (pe1.success())
+                if (pe1.success()) {
                     CombatUtils.onSuccessfulParry(e.getEntity(), null, null, null, pe1.getPostureConsumption());
+                    e.setCanceled(true);
+                }
             }
             //handle nonphysical cases of combat damage docking posture, this can never breach
             if (e.getSource() instanceof CombatDamageSource cds && cds.getPostureDamage() > 0) {
@@ -600,23 +602,24 @@ public class CombatHandler {
 //        }
 
         // combo reduces direct damage
+        final float dmg = e.getAmount();
+        float comboDefense=0;
         if (ds.getEntity() != null) {
             //reduction starts at half and increases with your combo
-            final float dmg = e.getAmount();
-            final float comboDefense = magicInternalDamage / Math.max(1, StylishData.getCap(uke).getCombo());
+            comboDefense = magicInternalDamage / Math.max(1, StylishData.getCap(uke).getCombo());
             e.setAmount(dmg * comboDefense);
-            //you cannot die unless you are knocked down
-            if (e.getAmount() > uke.getHealth() && !cap.isStunned() && !cap.alreadyProc("knockdown"))
-                e.setAmount(Math.min(e.getAmount(), uke.getHealth() - 1));
-            StylishData.getCap(uke).resetCombo();
-            //the rest of it becomes internal damage
-            if (StealthUtils.INSTANCE.getAwareness(ds.getEntity() instanceof LivingEntity le ? le : null, uke) == StealthUtils.Awareness.ALERT &&
-                    cap.getDamageRecordTime() > 0) {
-                cap.recordDamage(dmg * (1 - comboDefense));
-                cap.tickProc("noShake");
-                //e.setCanceled(true);
-                return;
-            }
+        }
+        //you cannot die unless you are knocked down
+        if (e.getAmount() > uke.getHealth() && !cap.isStunned() && !cap.alreadyProc("knockdown"))
+            e.setAmount(Math.min(e.getAmount(), uke.getHealth() - 1));
+        StylishData.getCap(uke).resetCombo();
+        //the rest of it becomes internal damage
+        if (StealthUtils.INSTANCE.getAwareness(ds.getEntity() instanceof LivingEntity le ? le : null, uke) == StealthUtils.Awareness.ALERT &&
+                cap.getDamageRecordTime() > 0) {
+            cap.recordDamage(dmg * (1 - comboDefense));
+            cap.tickProc("noShake");
+            //e.setCanceled(true);
+            return;
         }
         //stuff used to exist here, moved to footwork
 

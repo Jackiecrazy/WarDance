@@ -12,10 +12,10 @@ import net.minecraftforge.registries.RegistryObject;
 public class WarEntities {
     public static final DeferredRegister<EntityType<?>> ENTITIES = DeferredRegister.create(ForgeRegistries.ENTITY_TYPES, WarDance.MODID);
 
-    public static final RegistryObject<EntityType<ThrownWeaponEntity>> THROWN_WEAPON = ENTITIES.register("thrown_weapon", () -> EntityType.Builder
-            .of(ThrownWeaponEntity::new, MobCategory.MISC)
-            .sized(0.8F, 0.8F)
-            .build("thrown_weapon"));
+    public static final RegistryObject<EntityType<GrappleEntity>> GRAPPLE = ENTITIES.register("grapple", () -> EntityType.Builder
+            .of(GrappleEntity::new, MobCategory.MISC)
+            .sized(0.4F, 0.4F)
+            .build("grapple"));
 
     public static final RegistryObject<EntityType<FearEntity>> FEAR = ENTITIES.register("fear", () -> EntityType.Builder
             .of(FearEntity::new, MobCategory.MISC)
@@ -24,6 +24,7 @@ public class WarEntities {
 
     public static final RegistryObject<EntityType<FlyingWeaponEntity>> WEAPON = ENTITIES.register("flying_weapon", () -> EntityType.Builder
             .of(FlyingWeaponEntity::new, MobCategory.MISC)
+            .clientTrackingRange(64)
             .sized(0.8F, 0.8F)
             .updateInterval(1)
             .setShouldReceiveVelocityUpdates(true)

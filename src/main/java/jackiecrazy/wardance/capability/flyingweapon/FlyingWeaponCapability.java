@@ -15,6 +15,7 @@ import jackiecrazy.wardance.entity.WeaponMotionManager;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.common.ForgeMod;
 import org.joml.Vector4d;
@@ -36,12 +37,10 @@ public class FlyingWeaponCapability implements IFlyingWeapon {
             new Vec3(0, 0, 1),
             new Vec3(0, 0, 0.7)
     };
-
-    private FlyingWeaponEffect[] mainFX, offFX;
-
     Player player;
-    FlyingItemEntity main, off;
+    FlyingWeaponEntity main, off;
     boolean mainSwap, offSwap;
+    private FlyingWeaponEffect[] mainFX, offFX;
 
     public FlyingWeaponCapability() {
 
@@ -53,7 +52,7 @@ public class FlyingWeaponCapability implements IFlyingWeapon {
 
 
     @Override
-    public FlyingItemEntity getWeapon(InteractionHand hand) {
+    public FlyingWeaponEntity getWeapon(InteractionHand hand) {
         return hand == InteractionHand.MAIN_HAND ? main : off;
     }
 
@@ -163,6 +162,20 @@ public class FlyingWeaponCapability implements IFlyingWeapon {
         if (getWeapon(hand).isIdle())
             getWeapon(hand).setShouldRender(effects);
     }
+
+    @Override
+    public void yeet(InteractionHand hand, Vec3 pos) {
+        if (getWeapon(hand).isIdle()) {
+            getWeapon(hand).yeet(pos);
+            if(!player.getAbilities().instabuild){
+                player.getItemInHand(hand).shrink(1);
+            }
+            //release the weapon to create another one
+            if (hand == InteractionHand.MAIN_HAND) main = null;
+            else off = null;
+        }
+    }
+
 
     private void updateWeapon(FlyingItemEntity fwe, InteractionHand hand) {
         if (fwe.isRemoved()) {

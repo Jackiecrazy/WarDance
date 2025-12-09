@@ -5,6 +5,7 @@ import jackiecrazy.wardance.capability.flyingweapon.FlyingWeaponData;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.InteractionHand;
+import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.network.NetworkEvent;
 
 import java.util.ArrayList;
@@ -43,6 +44,7 @@ public class UpdateWeaponRenderPacket {
         @Override
         public void accept(UpdateWeaponRenderPacket packet, FriendlyByteBuf packetBuffer) {
             packetBuffer.writeBoolean(packet.main);
+
             packetBuffer.writeBoolean(packet.weapon);
             packetBuffer.writeBoolean(packet.shadow);
             packetBuffer.writeBoolean(packet.after);

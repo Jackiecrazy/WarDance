@@ -139,6 +139,8 @@ public class WarDance {
         CombatChannel.INSTANCE.registerMessage(index++, LearnManualPacket.class, new LearnManualPacket.Encoder(), new LearnManualPacket.Decoder(), new LearnManualPacket.Handler());
         CombatChannel.INSTANCE.registerMessage(index++, TwoHandItemDataPacket.class, new TwoHandItemDataPacket.Encoder(), new TwoHandItemDataPacket.Decoder(), new TwoHandItemDataPacket.Handler());
         CombatChannel.INSTANCE.registerMessage(index++, TwoHandTagDataPacket.class, new TwoHandTagDataPacket.Encoder(), new TwoHandTagDataPacket.Decoder(), new TwoHandTagDataPacket.Handler());
+        CombatChannel.INSTANCE.registerMessage(index++, ThrowPacket.class, new ThrowPacket.Encoder(), new ThrowPacket.Decoder(), new ThrowPacket.Handler());
+        CombatChannel.INSTANCE.registerMessage(index++, UpdateWeaponPositionPacket.class, new UpdateWeaponPositionPacket.Encoder(), new UpdateWeaponPositionPacket.Decoder(), new UpdateWeaponPositionPacket.Handler());
     }
 
     private void doClientStuff(final FMLClientSetupEvent event) {

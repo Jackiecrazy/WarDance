@@ -31,13 +31,11 @@ import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
-import net.minecraft.world.entity.Entity;
-import net.minecraft.world.entity.HumanoidArm;
-import net.minecraft.world.entity.LivingEntity;
-import net.minecraft.world.entity.Pose;
+import net.minecraft.world.entity.*;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.UseAnim;
+import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.client.event.*;
 import net.minecraftforge.client.gui.overlay.VanillaGuiOverlay;
@@ -363,6 +361,21 @@ public class ClientEvents {
                                 mainUseTick = 0;
                             }
                         }
+                    }
+                    if(Keybinds.FINISHER.consumeClick()){
+                        //point them forward
+                    }else if(Keybinds.FINISHER.isDown()){
+                        //yeet!
+                        if(mc.options.keyAttack.isDown() && mc.options.keyAttack.consumeClick()) {
+                            Vec3 destination = GeneralUtils.raytraceAnything(p.level(), p, 32, EntitySelector.LIVING_ENTITY_STILL_ALIVE).getLocation();
+                            CombatChannel.INSTANCE.sendToServer(new ThrowPacket(true, destination));
+                        }
+                        if (mc.options.keyUse.isDown() && mc.options.keyUse.consumeClick()) {
+                            Vec3 destination = GeneralUtils.raytraceAnything(p.level(), p, 32,EntitySelector.LIVING_ENTITY_STILL_ALIVE).getLocation();
+                            CombatChannel.INSTANCE.sendToServer(new ThrowPacket(false, destination));
+                        }
+                    }else{
+                        //don't point them forward
                     }
                     if (mc.options.keyAttack.isDown() && sneakedTime > magicSneakTime && mc.options.keyAttack.consumeClick()) {
                         CombatChannel.INSTANCE.sendToServer(new HeavyPacket(true, WeaponStats.SWEEPSTATE.STANDING));
