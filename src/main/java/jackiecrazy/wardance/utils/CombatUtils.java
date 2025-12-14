@@ -1,6 +1,7 @@
 package jackiecrazy.wardance.utils;
 
 import jackiecrazy.footwork.api.CombatDamageSource;
+import jackiecrazy.footwork.api.FootworkDamageArchetype;
 import jackiecrazy.footwork.capability.resources.CombatData;
 import jackiecrazy.footwork.capability.resources.ICombatCapability;
 import jackiecrazy.footwork.capability.stylish.StylishData;
@@ -53,7 +54,9 @@ import net.minecraftforge.registries.ForgeRegistries;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import java.awt.*;
 import java.util.*;
+import java.util.List;
 
 public class CombatUtils {
 
@@ -730,6 +733,18 @@ public class CombatUtils {
             ItemStack finalDefend1 = defender.getItemInHand(other);
             finalDefend1.getCapability(CombatManipulator.CAP).ifPresent((i) -> i.onOtherHandParry(defender, attacker, finalDefend1, amount));
         }
+    }
+
+    public static void kick(LivingEntity kicker, Entity targetEntity){
+        kicker.level().playSound(null, kicker.getX(), kicker.getY(), kicker.getZ(), SoundEvents.ZOMBIE_ATTACK_WOODEN_DOOR, SoundSource.PLAYERS, 0.25f + WarDance.rand.nextFloat() * 0.5f, 0.5f + WarDance.rand.nextFloat() * 0.5f);
+        if(targetEntity instanceof LivingEntity target) {
+            CombatData.getCap(target).consumePosture(kicker, 4, true);
+            ParticleUtils.playBonkParticle(kicker.level(), kicker.getEyePosition().add(kicker.getLookAngle().scale(Math.sqrt(GeneralUtils.getDistSqCompensated(kicker, target)))), 1, 0, 8, Color.WHITE);
+            target.hurt(new CombatDamageSource(kicker).setDamageTyping(FootworkDamageArchetype.PHYSICAL).setProcAttackEffects(true), 2);
+            if (target.getLastHurtByMob() == null)
+                target.setLastHurtByMob(kicker);
+        }
+        CombatUtils.knockBack(targetEntity, kicker, 0.8f, true, false);
     }
 
     public static boolean scheduleFinisher(ServerPlayer sender, InteractionHand h, WeaponStats.SWEEPSTATE s) {

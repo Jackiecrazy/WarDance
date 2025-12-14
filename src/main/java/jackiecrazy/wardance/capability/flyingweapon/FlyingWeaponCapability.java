@@ -9,13 +9,11 @@ import jackiecrazy.footwork.move.motionframe.MotionManager;
 import jackiecrazy.footwork.move.motionframe.MotionManagers;
 import jackiecrazy.footwork.utils.GeneralUtils;
 import jackiecrazy.wardance.config.WeaponStats;
-import jackiecrazy.wardance.entity.FlyingWeaponEntity;
-import jackiecrazy.wardance.entity.WarEntities;
-import jackiecrazy.wardance.entity.WeaponMotionManager;
+import jackiecrazy.wardance.entity.*;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.common.ForgeMod;
 import org.joml.Vector4d;
@@ -39,11 +37,12 @@ public class FlyingWeaponCapability implements IFlyingWeapon {
     };
     Player player;
     FlyingWeaponEntity main, off;
+    ThrownWeaponEntity held;
+    GrappleEntity grapple;
     boolean mainSwap, offSwap;
     private FlyingWeaponEffect[] mainFX, offFX;
 
     public FlyingWeaponCapability() {
-
     }
 
     public FlyingWeaponCapability(Player bind) {
@@ -54,6 +53,39 @@ public class FlyingWeaponCapability implements IFlyingWeapon {
     @Override
     public FlyingWeaponEntity getWeapon(InteractionHand hand) {
         return hand == InteractionHand.MAIN_HAND ? main : off;
+    }
+
+    @Override
+    public ThrownWeaponEntity getHeldBlock() {
+        return held;
+    }
+
+    @Override
+    public void setHeldBlock(ThrownWeaponEntity sb) {
+        if(held!=null)
+            held.remove(Entity.RemovalReason.DISCARDED);
+        held=sb;
+    }
+
+    @Override
+    public GrappleEntity getGrapple() {
+        return grapple;
+    }
+
+    @Override
+    public void launchGrapple(Vec3 to) {
+        if (!player.level().isClientSide()) {
+            if(getGrapple()!=null){
+                getGrapple().remove(Entity.RemovalReason.DISCARDED);
+            }
+            GrappleEntity grapple = new GrappleEntity(WarEntities.GRAPPLE.get(), player.level());
+            grapple.setOwner(player);
+            grapple.setInteractionRange(1);
+            grapple.setPosRaw(player.getX(), player.getY() + player.getEyeHeight(), player.getZ());
+            grapple.setDeltaMovement(to.subtract(grapple.position()).normalize().scale(1.5));
+            this.grapple = grapple;
+            player.level().addFreshEntity(grapple);
+        }
     }
 
     @Override
@@ -90,6 +122,7 @@ public class FlyingWeaponCapability implements IFlyingWeapon {
         //reset weapons if they're dead
         if (main != null && main.isRemoved()) main = null;
         if (off != null && off.isRemoved()) off = null;
+        if(grapple!=null&&grapple.isRemoved())grapple=null;
 
         //not in combat mode, dismiss weapons
         /*if(!weaponValid(InteractionHand.MAIN_HAND)){
@@ -165,14 +198,26 @@ public class FlyingWeaponCapability implements IFlyingWeapon {
 
     @Override
     public void yeet(InteractionHand hand, Vec3 pos) {
+        if(hand==null&&getHeldBlock()!=null){
+            getHeldBlock().yeet(pos);
+            held=null;
+        }
         if (getWeapon(hand).isIdle()) {
-            getWeapon(hand).yeet(pos);
-            if(!player.getAbilities().instabuild){
+            Level level = getWeapon(hand).level();
+            ThrownWeaponEntity fwe = new ThrownWeaponEntity(WarEntities.THROWN_WEAPON.get(), level);
+            fwe.setHeldItem(player.getItemInHand(hand).copyWithCount(1));
+            fwe.setOwner(player);
+            fwe.setPosRaw(player.getX(), player.getEyeY(), player.getZ());
+            fwe.setInteractionRange(1);
+            fwe.setState(FlyingItemEntity.STATE.THROW_NATURAL);
+            fwe.yeet(pos);
+            level.addFreshEntity(fwe);
+            if (!player.getAbilities().instabuild) {
                 player.getItemInHand(hand).shrink(1);
             }
             //release the weapon to create another one
-            if (hand == InteractionHand.MAIN_HAND) main = null;
-            else off = null;
+//            if (hand == InteractionHand.MAIN_HAND) main = null;
+//            else off = null;
         }
     }
 

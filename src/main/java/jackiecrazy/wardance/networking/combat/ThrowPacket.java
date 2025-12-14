@@ -52,10 +52,6 @@ public class ThrowPacket {
                 //have a weapon, yeet!
                 if (!sender.getItemInHand(h).isEmpty())
                     FlyingWeaponData.getCap(sender).yeet(h, packet.destination);
-                else {
-                    //hook yourself to the destination
-                    FlyingWeaponData.getCap(sender).yeet(h, packet.destination);
-                }
             });
             contextSupplier.get().setPacketHandled(true);
         }

@@ -62,7 +62,7 @@ pound of flesh: active skill. Consumes all your spirit, and until your spirit re
     @Override
     public boolean equippedTick(LivingEntity caster, SkillData d) {
         if (getClass() != MementoMori.class) return false;
-        float health = 1 - (caster.getHealth() / GeneralUtils.getMaxHealthBeforeWounding(caster));
+        float health = 1 - (GeneralUtils.getActualHealth(caster) / caster.getMaxHealth());
         final float amount = health * SkillUtils.getSkillEffectiveness(caster);
         SkillUtils.modifyAttribute(caster, Attributes.ATTACK_DAMAGE, MULT, amount, AttributeModifier.Operation.MULTIPLY_TOTAL);
         float afore = d.getArbitraryFloat();
@@ -95,8 +95,8 @@ pound of flesh: active skill. Consumes all your spirit, and until your spirit re
 
         @Override
         public boolean equippedTick(LivingEntity caster, SkillData d) {
-            float lostHealth = GeneralUtils.getMaxHealthBeforeWounding(caster) - caster.getHealth();
-            lostHealth /= GeneralUtils.getMaxHealthBeforeWounding(caster);
+            float lostHealth = caster.getMaxHealth()-GeneralUtils.getActualHealth(caster);
+            lostHealth /= caster.getMaxHealth();
             final float armor = lostHealth * SkillUtils.getSkillEffectiveness(caster) * 20;
             SkillUtils.modifyAttribute(caster, Attributes.ARMOR, MULT, armor, AttributeModifier.Operation.ADDITION);
             float afore = d.getArbitraryFloat();
@@ -165,7 +165,7 @@ pound of flesh: active skill. Consumes all your spirit, and until your spirit re
                 lhe.setAmount(Math.min(lhe.getAmount(), caster.getMaxHealth() - caster.getHealth()));
                 float stat = stats.getArbitraryFloat();
                 stat += lhe.getAmount();
-                stat = Math.min(stat, GeneralUtils.getMaxHealthBeforeWounding(caster));
+                stat = Math.min(stat, GeneralUtils.getActualHealth(caster));
                 stats.setArbitraryFloat(stat);
                 stats.markDirty();
             }

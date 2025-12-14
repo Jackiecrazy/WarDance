@@ -4,13 +4,27 @@ import jackiecrazy.footwork.entity.flyingweapon.FlyingWeaponEffect;
 import jackiecrazy.footwork.move.motionframe.MotionManager;
 import jackiecrazy.wardance.config.WeaponStats;
 import jackiecrazy.wardance.entity.FlyingWeaponEntity;
+import jackiecrazy.wardance.entity.GrappleEntity;
+import jackiecrazy.wardance.entity.ThrownWeaponEntity;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.phys.Vec3;
 
 public interface IFlyingWeapon {
     FlyingWeaponEntity getWeapon(InteractionHand hand);
 
-    void scheduleAction(InteractionHand hand, MotionManager mm, WeaponStats.SweepInfo info, double range, int totalTime);
+    ThrownWeaponEntity getHeldBlock();
+
+    void setHeldBlock(ThrownWeaponEntity sb);
+
+    GrappleEntity getGrapple();
+
+    void launchGrapple(Vec3 to);
+
+    void scheduleAction(InteractionHand hand,
+                        MotionManager mm,
+                        WeaponStats.SweepInfo info,
+                        double range,
+                        int totalTime);
 
     void tick();
 
@@ -18,7 +32,7 @@ public interface IFlyingWeapon {
 
     void yeet(InteractionHand hand, Vec3 pos);
 
-    class DummyFlyingWeapon implements IFlyingWeapon{
+    class DummyFlyingWeapon implements IFlyingWeapon {
 
         @Override
         public FlyingWeaponEntity getWeapon(InteractionHand hand) {
@@ -26,7 +40,31 @@ public interface IFlyingWeapon {
         }
 
         @Override
-        public void scheduleAction(InteractionHand hand, MotionManager mm, WeaponStats.SweepInfo info, double range, int totalTime) {
+        public ThrownWeaponEntity getHeldBlock() {
+            return null;
+        }
+
+        @Override
+        public void setHeldBlock(ThrownWeaponEntity sb) {
+
+        }
+
+        @Override
+        public GrappleEntity getGrapple() {
+            return null;
+        }
+
+        @Override
+        public void launchGrapple(Vec3 to) {
+
+        }
+
+        @Override
+        public void scheduleAction(InteractionHand hand,
+                                   MotionManager mm,
+                                   WeaponStats.SweepInfo info,
+                                   double range,
+                                   int totalTime) {
 
         }
 

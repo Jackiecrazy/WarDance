@@ -4,6 +4,7 @@ import jackiecrazy.footwork.client.render.ItemEntityRenderer;
 import jackiecrazy.wardance.capability.action.IAction;
 import jackiecrazy.wardance.capability.skill.ISkillCapability;
 import jackiecrazy.wardance.capability.status.IMark;
+import jackiecrazy.wardance.client.GrappleRenderer;
 import jackiecrazy.wardance.client.hud.MarkDisplay;
 import jackiecrazy.wardance.client.hud.OffhandCooldownDisplay;
 import jackiecrazy.wardance.client.hud.ResourceDisplay;
@@ -140,15 +141,19 @@ public class WarDance {
         CombatChannel.INSTANCE.registerMessage(index++, TwoHandItemDataPacket.class, new TwoHandItemDataPacket.Encoder(), new TwoHandItemDataPacket.Decoder(), new TwoHandItemDataPacket.Handler());
         CombatChannel.INSTANCE.registerMessage(index++, TwoHandTagDataPacket.class, new TwoHandTagDataPacket.Encoder(), new TwoHandTagDataPacket.Decoder(), new TwoHandTagDataPacket.Handler());
         CombatChannel.INSTANCE.registerMessage(index++, ThrowPacket.class, new ThrowPacket.Encoder(), new ThrowPacket.Decoder(), new ThrowPacket.Handler());
-        CombatChannel.INSTANCE.registerMessage(index++, HookPacket.class, new HookPacket.Encoder(), new HookPacket.Decoder(), new HookPacket.Handler());
+        CombatChannel.INSTANCE.registerMessage(index++, GrapplePacket.class, new GrapplePacket.Encoder(), new GrapplePacket.Decoder(), new GrapplePacket.Handler());
+        CombatChannel.INSTANCE.registerMessage(index++, UnhookPacket.class, new UnhookPacket.Encoder(), new UnhookPacket.Decoder(), new UnhookPacket.Handler());
         CombatChannel.INSTANCE.registerMessage(index++, UpdateWeaponPositionPacket.class, new UpdateWeaponPositionPacket.Encoder(), new UpdateWeaponPositionPacket.Decoder(), new UpdateWeaponPositionPacket.Handler());
+        CombatChannel.INSTANCE.registerMessage(index++, KickPacket.class, new KickPacket.Encoder(), new KickPacket.Decoder(), new KickPacket.Handler());
     }
 
     private void doClientStuff(final FMLClientSetupEvent event) {
         // do something that can only be done on the client
         ClientConfig.bake();
         EntityRenderers.register(WarEntities.WEAPON.get(), ItemEntityRenderer::new);
-        EntityRenderers.register(WarEntities.GRAPPLE.get(), ItemEntityRenderer::new);
+        EntityRenderers.register(WarEntities.GRAPPLE.get(), GrappleRenderer::new);
+        EntityRenderers.register(WarEntities.FLYING_BLOCK.get(), ItemEntityRenderer::new);
+        EntityRenderers.register(WarEntities.THROWN_WEAPON.get(), ItemEntityRenderer::new);
     }
 
 

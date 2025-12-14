@@ -355,6 +355,7 @@ public class WeaponStats extends SimpleJsonResourceReloadListener {
 
     public static class SweepInfo {
         public static final SweepInfo NOTHING = new SweepInfo(SWEEPTYPE.NONE, 0, 0);
+        public static final SweepInfo BREACHER = NOTHING.finisherCopy();
         //general effects:
         // knockback scaling (negative supported),
         // (posture) damage scaling,

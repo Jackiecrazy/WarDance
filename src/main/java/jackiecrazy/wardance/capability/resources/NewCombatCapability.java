@@ -98,6 +98,7 @@ public class NewCombatCapability implements ICombatCapability {
         SkillUtils.removeAttribute(e, Attributes.FLYING_SPEED, WOUND);
         SkillUtils.removeAttribute(e, Attributes.KNOCKBACK_RESISTANCE, WOUND);
         setPosture(getMaxPosture());
+        knockdown=false;
     }
 
     @Override
@@ -233,7 +234,7 @@ public class NewCombatCapability implements ICombatCapability {
             ret = posture - amount;
             //I don't like this here but I don't see a good way around it
             float prev = posture;
-            //if already stunned, a second breaching hit
+            //if already stunned, a second breaching hit knocks down
             final boolean knockdown = isStunned() || alreadyProc("forceKnockDown") || (posture == 0 && player);
             posture = 0;
             StunEvent se = new StunEvent(elb, assailant, knockdown ? (elb instanceof Player ? CombatConfig.knockdownDurationPlayer : CombatConfig.knockdownDuration) : CombatConfig.staggerDuration, knockdown);

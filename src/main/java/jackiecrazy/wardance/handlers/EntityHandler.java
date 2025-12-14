@@ -3,6 +3,7 @@ package jackiecrazy.wardance.handlers;
 import jackiecrazy.footwork.capability.resources.CombatData;
 import jackiecrazy.footwork.capability.resources.ICombatCapability;
 import jackiecrazy.footwork.capability.stylish.StylishData;
+import jackiecrazy.footwork.capability.timeslow.TimeSlowData;
 import jackiecrazy.wardance.WarDance;
 import jackiecrazy.wardance.capability.action.PermissionData;
 import jackiecrazy.wardance.capability.flyingweapon.FlyingWeaponData;
@@ -36,6 +37,7 @@ import net.minecraftforge.event.OnDatapackSyncEvent;
 import net.minecraftforge.event.TickEvent;
 import net.minecraftforge.event.entity.EntityJoinLevelEvent;
 import net.minecraftforge.event.entity.living.LivingEvent;
+import net.minecraftforge.event.entity.living.LivingFallEvent;
 import net.minecraftforge.event.entity.player.PlayerEvent;
 import net.minecraftforge.event.server.ServerStartingEvent;
 import net.minecraftforge.event.server.ServerStoppingEvent;
@@ -65,6 +67,16 @@ public class EntityHandler {
         alertTracker.clear();
     }
 
+
+
+    @SubscribeEvent
+    public static void fall(LivingFallEvent e) {
+        if(e.getEntity() instanceof Player p&& TimeSlowData.getCap(p).getEffectiveSpeed()<1)
+            e.setCanceled(true);
+    }
+
+
+
     @SubscribeEvent
     public static void caps(AttachCapabilitiesEvent<Entity> e) {
         if (e.getObject() instanceof LivingEntity lb) {
@@ -84,9 +96,6 @@ public class EntityHandler {
         if (CombatData.getCap(e.getEntity()).isStunned()) {
             if (!(e.getEntity() instanceof Player))
                 e.getEntity().setDeltaMovement(0, 0, 0);
-            else {
-                //TODO circle sweep up
-            }
         }
     }
 
@@ -151,6 +160,8 @@ public class EntityHandler {
             if (WarCompat.elenaiDodge) {
                 ElenaiCompat.syncIFrames(e.player);
             }
+        }else if(TimeSlowData.getCap(e.player).getEffectiveSpeed()<1){
+            e.player.resetFallDistance();
         }
     }
 

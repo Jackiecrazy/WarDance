@@ -47,15 +47,12 @@ public class PoundOfFlesh extends MementoMori {
     @Override
     public void onProc(LivingEntity caster, Event procPoint, STATE state, SkillData stats, LivingEntity target) {
         if (state == STATE.ACTIVE) {
-            final float amount = GeneralUtils.getMaxHealthBeforeWounding(caster) * 0.1f/stats.getEffectiveness();
+            final float amount = caster.getMaxHealth() * 0.1f/stats.getEffectiveness();
             if (procPoint instanceof MeleePostureEvent.Defense pe && pe.getAttacker()!=caster && procPoint.getPhase() == EventPriority.HIGHEST && pe.success()) {
-                caster.invulnerableTime = 0;
-                caster.hurt(CombatDamageSource.causeSelfDamage(caster).setDamageTyping(FootworkDamageArchetype.TRUE).setSkillUsed(this).bypassArmor().bypassMagic(), amount);
+                CombatData.getCap(caster).recordDamage(amount);
                 pe.setPostureConsumption(pe.getPostureConsumption() + CombatData.getCap(target).getMaxPosture() * 0.15f * stats.getEffectiveness());
             } else if (procPoint instanceof LivingHurtEvent lhe && procPoint.getPhase() == EventPriority.HIGHEST && lhe.getEntity() != caster && (!(lhe.getSource() instanceof CombatDamageSource cds) || cds.getSkillUsed() != this)) {
-                caster.invulnerableTime = 0;
-                caster.hurt(CombatDamageSource.causeSelfDamage(caster).setDamageTyping(FootworkDamageArchetype.TRUE).setSkillUsed(this).bypassArmor().bypassMagic(), amount);
-                lhe.setAmount(((LivingHurtEvent) procPoint).getAmount() + GeneralUtils.getMaxHealthBeforeWounding(target) * 0.07f * stats.getEffectiveness());
+                lhe.setAmount(((LivingHurtEvent) procPoint).getAmount() + GeneralUtils.getActualHealth(target) * 0.07f * stats.getEffectiveness());
             }
         }
     }

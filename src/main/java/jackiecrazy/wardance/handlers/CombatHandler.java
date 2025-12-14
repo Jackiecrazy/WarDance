@@ -66,8 +66,7 @@ public class CombatHandler {
     public static void mudamudamuda(LivingEntityUseItemEvent e) {
         InteractionHand h = e.getEntity().getMainHandItem() == e.getItem() ? InteractionHand.MAIN_HAND : e.getEntity().getOffhandItem() == e.getItem() ? InteractionHand.OFF_HAND : null;
         if (h != null && CombatData.getCap(e.getEntity()).getHandBind(h) > 0) {
-            if (e.isCancelable())
-                e.setCanceled(true);
+            if (e.isCancelable()) e.setCanceled(true);
             e.setDuration(-1);
         }
     }
@@ -182,8 +181,7 @@ public class CombatHandler {
 
             //block event
             ProjectileDefendEvent.Block pe2 = new ProjectileDefendEvent.Block(uke, projectile, defendingHand, defend, defMult);
-            if (force)
-                pe2.setResult(Event.Result.ALLOW);
+            if (force) pe2.setResult(Event.Result.ALLOW);
             MinecraftForge.EVENT_BUS.post(pe2);
 
             //successful
@@ -344,7 +342,7 @@ public class CombatHandler {
                 //stabby bonus
                 StealthUtils.Awareness awareness = StealthUtils.INSTANCE.getAwareness(seme, uke);
                 //whether the attack can stun someone at 0 posture
-                boolean canBreach = true;
+                boolean canBreach = false;
                 //crit bonus
                 if (e.getSource() instanceof CombatDamageSource cds) {
                     if (cds.isCrit()) atkMult *= cds.getCritDamage();
@@ -366,9 +364,9 @@ public class CombatHandler {
                 }
 
                 //not only can mobs not defend in time slow, the attacker gets a steve time extension
-                if (TimeSlowData.getCap(uke).getEffectiveSpeed() < 1) {
+                if (!(uke instanceof Player) && TimeSlowData.getCap(uke).getEffectiveSpeed() < 1) {
                     ukeCap.consumePosture(seme, pe.getPostureConsumption(), pe.canBreach(), 0);
-                    //CombatUtils.triggerSteveTime(seme, (int) (TimeSlowData.getCap(uke).getTimeRemaining() * 1.5));
+                    CombatUtils.triggerSteveTime(seme, (int) (TimeSlowData.getCap(uke).getTimeRemaining() * 1.5));
                     return;
                 }
 
@@ -581,10 +579,8 @@ public class CombatHandler {
         //Simple formula. Less than 5% health per hit=1 posture, 30%=3, any more = 7. Cannot stun.
         if (ds.getEntity() != null && ds.isIndirect()) {
             float amnt = 1;
-            if (e.getAmount() > uke.getMaxHealth() * 0.05)
-                amnt = 3;
-            if (e.getAmount() > uke.getMaxHealth() * 0.3)
-                amnt = 7;
+            if (e.getAmount() > uke.getMaxHealth() * 0.05) amnt = 3;
+            if (e.getAmount() > uke.getMaxHealth() * 0.3) amnt = 7;
             cap.consumePosture(null, amnt, false);
             cap.tickProc("noShake");
         }
@@ -603,19 +599,22 @@ public class CombatHandler {
 
         // combo reduces direct damage
         final float dmg = e.getAmount();
-        float comboDefense=0;
+        float comboDefense = 0;
         if (ds.getEntity() != null) {
             //reduction starts at half and increases with your combo
             comboDefense = magicInternalDamage / Math.max(1, StylishData.getCap(uke).getCombo());
             e.setAmount(dmg * comboDefense);
         }
         //you cannot die unless you are knocked down
-        if (e.getAmount() > uke.getHealth() && !cap.isStunned() && !cap.alreadyProc("knockdown"))
-            e.setAmount(Math.min(e.getAmount(), uke.getHealth() - 1));
+        final boolean creative = e.getSource().is(DamageTypeTags.BYPASSES_INVULNERABILITY);
+        if (!creative && e.getAmount() > uke.getHealth() && !cap.isStunned() && !cap.alreadyProc("knockdown")) {
+            final float min = Math.min(e.getAmount(), uke.getHealth() - 1);
+            final float leftover = e.getAmount() - min;
+            e.setAmount(min);
+        }
         StylishData.getCap(uke).resetCombo();
         //the rest of it becomes internal damage
-        if (StealthUtils.INSTANCE.getAwareness(ds.getEntity() instanceof LivingEntity le ? le : null, uke) == StealthUtils.Awareness.ALERT &&
-                cap.getDamageRecordTime() > 0) {
+        if (!creative && StealthUtils.INSTANCE.getAwareness(ds.getEntity() instanceof LivingEntity le ? le : null, uke) == StealthUtils.Awareness.ALERT && cap.getDamageRecordTime() > 0) {
             cap.recordDamage(dmg * (1 - comboDefense));
             cap.tickProc("noShake");
             //e.setCanceled(true);
@@ -699,7 +698,7 @@ public class CombatHandler {
         }
 
         //nonplayers cannot hold on and will vaporize if their internal damage is too high
-        if (!(e.getEntity() instanceof Player) && cap.getRecordedDamage() > e.getEntity().getMaxHealth() * 2) {
+        if (!(e.getEntity() instanceof Player) && cap.getRecordedDamage() > e.getEntity().getMaxHealth()) {
             e.setAmount(e.getAmount() + cap.getRecordedDamage());
             cap.stopRecording(null);
         }
@@ -718,7 +717,6 @@ public class CombatHandler {
     @SubscribeEvent
     public static void noHealOnKnockdown(LivingHealEvent e) {
         LivingEntity elb = e.getEntity();
-        if (CombatData.getCap(elb).isStunned())
-            e.setCanceled(true);
+        if (CombatData.getCap(elb).isStunned()) e.setCanceled(true);
     }
 }

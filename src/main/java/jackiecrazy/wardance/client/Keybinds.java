@@ -7,17 +7,23 @@ import jackiecrazy.footwork.capability.stylish.StylishData;
 import jackiecrazy.wardance.WarDance;
 import jackiecrazy.wardance.capability.skill.CasterData;
 import jackiecrazy.wardance.client.screen.skill.SkillCastScreen;
-import jackiecrazy.wardance.config.WeaponStats;
 import jackiecrazy.wardance.networking.CombatChannel;
 import jackiecrazy.wardance.networking.combat.CombatModePacket;
 import jackiecrazy.wardance.networking.combat.DodgePacket;
-import jackiecrazy.wardance.networking.combat.HeavyPacket;
+import jackiecrazy.wardance.networking.combat.GrapplePacket;
+import jackiecrazy.wardance.networking.combat.KickPacket;
 import jackiecrazy.wardance.networking.skill.EvokeSkillPacket;
 import jackiecrazy.wardance.networking.skill.SelectSkillPacket;
 import net.minecraft.client.KeyMapping;
 import net.minecraft.client.Minecraft;
 import net.minecraft.network.chat.Component;
+import net.minecraft.world.entity.EntitySelector;
 import net.minecraft.world.entity.Pose;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.entity.projectile.ProjectileUtil;
+import net.minecraft.world.phys.EntityHitResult;
+import net.minecraft.world.phys.HitResult;
+import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.client.event.InputEvent;
 import net.minecraftforge.client.settings.IKeyConflictContext;
@@ -48,7 +54,7 @@ public class Keybinds {
     public static final List<KeyMapping> ALL = new ArrayList<>();
     public static final KeyMapping COMBAT = new KeyMapWrapper("wardance.combat", KeyConflictContext.IN_GAME, KeyModifier.SHIFT, InputConstants.Type.KEYSYM, GLFW.GLFW_KEY_R, "key.categories.wardance");
     public static final KeyMapping CAST = new KeyMapWrapper("wardance.skill", IN_COMBAT, InputConstants.Type.KEYSYM, GLFW.GLFW_KEY_R, "key.categories.wardance");
-    public static final KeyMapping BINDCAST = new KeyMapWrapper("wardance.bindCast", IN_COMBAT, InputConstants.Type.MOUSE, GLFW.GLFW_MOUSE_BUTTON_MIDDLE, "key.categories.wardance");
+    public static final KeyMapping ALTERNATE_KEY = new KeyMapWrapper("wardance.bindCast", IN_COMBAT, InputConstants.Type.MOUSE, GLFW.GLFW_MOUSE_BUTTON_MIDDLE, "key.categories.wardance");
     public static final KeyMapping DODGE = new KeyMapWrapper("wardance.dodge", IN_COMBAT, InputConstants.Type.KEYSYM, GLFW.GLFW_KEY_LEFT_ALT, "key.categories.wardance");
     public static final KeyMapping THROW = new KeyMapWrapper("wardance.throw", IN_COMBAT, InputConstants.Type.KEYSYM, GLFW.GLFW_KEY_Q, "key.categories.wardance");//TODO throw
     public static final KeyMapping EVOKE = new KeyMapWrapper("wardance.evoke", IN_COMBAT, InputConstants.Type.KEYSYM, GLFW.GLFW_KEY_V, "key.categories.wardance");
@@ -80,10 +86,11 @@ public class Keybinds {
             //slide>front>side>back(default)
             //left back right forward
             int side = 1;
-            if (ClientEvents.heavy(WeaponStats.SWEEPSTATE.SPRINTING)) {
-                side = 3;
-            }
-            else {
+//            if (ClientEvents.heavy(WeaponStats.SWEEPSTATE.SPRINTING)) {
+//                side = 3;
+//            }
+//            else
+            {
                 if (mc.player.input.left)
                     side = 0;
                 if (mc.player.input.right)
@@ -101,9 +108,25 @@ public class Keybinds {
             if (SKILL[x].getKeyConflictContext().isActive() && SKILL[x].consumeClick())
                 CombatChannel.INSTANCE.sendToServer(new SelectSkillPacket(x));
         }
-        if (BINDCAST.getKeyConflictContext().isActive() && BINDCAST.consumeClick() && mc.player.isAlive()) {
-            BINDCAST.setDown(false);
-            CombatChannel.INSTANCE.sendToServer(new EvokeSkillPacket());
+        if (ALTERNATE_KEY.getKeyConflictContext().isActive() && ALTERNATE_KEY.consumeClick() && mc.player.isAlive()) {
+            if (Keybinds.THROW.isDown()) {
+                Player p = mc.player;
+                Vec3 destination = ProjectileUtil.getHitResultOnViewVector(p, EntitySelector.LIVING_ENTITY_STILL_ALIVE, 32).getLocation();
+                CombatChannel.INSTANCE.sendToServer(new GrapplePacket(destination));
+                p.setDeltaMovement(Vec3.ZERO);
+            }
+            if (CasterData.getCap(mc.player).getHolsteredSkill() != null) {
+                ALTERNATE_KEY.setDown(false);
+                CombatChannel.INSTANCE.sendToServer(new EvokeSkillPacket());
+            } else {
+                CombatChannel.INSTANCE.sendToServer(new KickPacket());
+                HitResult destination = ProjectileUtil.getHitResultOnViewVector(mc.player, EntitySelector.LIVING_ENTITY_STILL_ALIVE, 3);
+                if (destination.getType() != HitResult.Type.MISS) {
+                    //jump up
+                    if (!mc.player.onGround())
+                        mc.player.addDeltaMovement(new Vec3(0, 1, 0));
+                }
+            }
         }
     }
 

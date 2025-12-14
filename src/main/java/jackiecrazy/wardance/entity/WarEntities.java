@@ -16,6 +16,14 @@ public class WarEntities {
             .of(GrappleEntity::new, MobCategory.MISC)
             .sized(0.4F, 0.4F)
             .build("grapple"));
+    public static final RegistryObject<EntityType<ThrownWeaponEntity>> THROWN_WEAPON = ENTITIES.register("thrown_weapon", () -> EntityType.Builder
+            .of(ThrownWeaponEntity::new, MobCategory.MISC)
+            .sized(1F, 1F)
+            .build("thrown_weapon"));
+    public static final RegistryObject<EntityType<ThrownWeaponEntity>> FLYING_BLOCK = ENTITIES.register("flying_block", () -> EntityType.Builder
+            .of(ThrownWeaponEntity::new, MobCategory.MISC)
+            .sized(1F, 1F)
+            .build("flying_block"));
 
     public static final RegistryObject<EntityType<FearEntity>> FEAR = ENTITIES.register("fear", () -> EntityType.Builder
             .of(FearEntity::new, MobCategory.MISC)

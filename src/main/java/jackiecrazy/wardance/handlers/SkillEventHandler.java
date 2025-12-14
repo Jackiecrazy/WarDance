@@ -762,7 +762,7 @@ public class SkillEventHandler {
 //                float res = cap.getResolve() + 1;
 //                cap.addFatigue(-res * cap.getTrueMaxPosture() / 10);
 //                cap.addBurnout(-res * cap.getTrueMaxSpirit() / 10);
-//                cap.addWounding(-res * GeneralUtils.getMaxHealthBeforeWounding(e.getPlayer()) / 10);
+//                cap.addWounding(-res * GeneralUtils.getActualHealth(e.getPlayer()) / 10);
 //                cap.setResolve(0);
 //            }
             ISkillCapability isc = CasterData.getCap(e.getEntity());
