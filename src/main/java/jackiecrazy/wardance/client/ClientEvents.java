@@ -1,18 +1,13 @@
 package jackiecrazy.wardance.client;
 
 import com.mojang.blaze3d.platform.InputConstants;
-import com.mojang.blaze3d.vertex.PoseStack;
-import com.mojang.math.Axis;
 import jackiecrazy.footwork.capability.resources.CombatData;
 import jackiecrazy.footwork.capability.resources.ICombatCapability;
 import jackiecrazy.footwork.capability.stylish.IStyleCapability;
 import jackiecrazy.footwork.capability.stylish.StylishData;
-import jackiecrazy.footwork.client.screen.dashboard.DashboardScreen;
 import jackiecrazy.footwork.entity.flyingweapon.FlyingWeaponEffect;
 import jackiecrazy.footwork.utils.GeneralUtils;
 import jackiecrazy.wardance.WarDance;
-import jackiecrazy.wardance.client.screen.scroll.ScrollScreen;
-import jackiecrazy.wardance.client.screen.skill.SkillSelectionScreen;
 import jackiecrazy.wardance.config.ClientConfig;
 import jackiecrazy.wardance.config.GeneralConfig;
 import jackiecrazy.wardance.config.WeaponStats;
@@ -23,10 +18,8 @@ import jackiecrazy.wardance.networking.combat.*;
 import jackiecrazy.wardance.utils.CombatUtils;
 import net.minecraft.client.KeyMapping;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.player.AbstractClientPlayer;
 import net.minecraft.client.player.Input;
 import net.minecraft.core.particles.ParticleTypes;
-import net.minecraft.resources.ResourceLocation;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.InteractionHand;
@@ -50,22 +43,18 @@ import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 import net.minecraftforge.eventbus.api.EventPriority;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
-import net.minecraftforge.registries.ForgeRegistries;
 
 import java.math.RoundingMode;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 
 @Mod.EventBusSubscriber(value = Dist.CLIENT, modid = WarDance.MODID)
 public class ClientEvents {
-    private static final ResourceLocation expose = new ResourceLocation(WarDance.MODID, "textures/hud/exposed.png");
     private static final int ALLOWANCE = 5;
     private static final List<KeyMapping> conflict = new ArrayList<>();
     private static final int magicSneakTime = 20;
     public static int combatTicks = -999;
     public static int sneakedTime = 0;
-    private static HashMap<String, Boolean> rotate;
     private static Entity lastTickLookAt;
     private static boolean rightClick = false;
     private static int mainUseTick = 0, offUseTick = 0;
@@ -88,27 +77,6 @@ public class ClientEvents {
             return true;
         }
         return false;
-    }
-
-    public static void updateList(List<? extends String> pos) {
-        rotate = new HashMap<>();
-        for (String s : pos) {
-            try {
-                String[] val = s.split(",");
-                rotate.put(val[0], Boolean.parseBoolean(val[1]));
-            } catch (Exception e) {
-                if (GeneralConfig.debug)
-                    WarDance.LOGGER.warn("improperly formatted custom rotation definition " + s + "!");
-            }
-        }
-    }
-
-    @SubscribeEvent
-    public static void skillReading(RenderTooltipEvent.Color e) {
-        if (e.getItemStack().isEmpty() && (Minecraft.getInstance().screen instanceof DashboardScreen || Minecraft.getInstance().screen instanceof SkillSelectionScreen || Minecraft.getInstance().screen instanceof ScrollScreen)) {
-            e.setBorderEnd(0xffffffff);
-            e.setBorderStart(0xffffffff);
-        }
     }
 
     @SubscribeEvent(priority = EventPriority.HIGHEST)
@@ -225,79 +193,6 @@ public class ClientEvents {
     }
 
     @SubscribeEvent
-    public static void down(RenderLivingEvent.Pre event) {
-        final LivingEntity e = event.getEntity();
-        float width = e.getBbWidth();
-        float height = e.getBbHeight();
-
-        if (e.isAlive()) {
-            if (CombatData.getCap(event.getEntity()).isKnockdown()) {
-                PoseStack ms = event.getPoseStack();
-                //ms.push();
-                //tall bois become flat bois
-                boolean reg = (ForgeRegistries.ENTITY_TYPES.getKey(e.getType()) != null && rotate.containsKey(ForgeRegistries.ENTITY_TYPES.getKey(e.getType()).toString()));
-                boolean rot = reg ? rotate.getOrDefault(ForgeRegistries.ENTITY_TYPES.getKey(e.getType()).toString(), false) : width < height;
-                if (rot) {
-                    ms.mulPose(Axis.XN.rotationDegrees(90));
-                    ms.mulPose(Axis.ZP.rotationDegrees(-e.yBodyRot));
-                    ms.mulPose(Axis.YP.rotationDegrees(e.yBodyRot));
-                    ms.translate(0, -e.getBbHeight() / 2, 0);
-                }
-                //cube bois become side bois
-                //flat bois become flatter bois
-                //multi bois do nothing
-            }
-            if (CombatData.getCap(e).isDodging() && e.getPose() == Pose.SLEEPING) {
-                PoseStack ms = event.getPoseStack();
-                ms.mulPose(Axis.YN.rotationDegrees(e.getYRot() - e.getBedOrientation().toYRot()));
-//                ms.rotate(Vector3f.ZP.rotationDegrees(-e.renderYawOffset));
-//                ms.rotate(Vector3f.YP.rotationDegrees(e.renderYawOffset));
-            }
-//            if(e.isPotionActive(FootworkEffects.PETRIFY.get())){
-//                event.getRenderer()
-//                Minecraft.getInstance().getTextureManager().bindTexture(AbstractGui.GUI_ICONS_LOCATION);
-//            }
-        }
-    }
-
-    @SubscribeEvent
-    public static void handRaisingThird(RenderPlayerEvent.Pre e) {
-        //todo render two-handed weapons and hide weapons in third person
-        //e.getRenderer().getModel()
-    }
-
-    @SubscribeEvent
-    public static void handRaising(RenderHandEvent e) {
-        //todo empty render on disarm
-        AbstractClientPlayer p = Minecraft.getInstance().player;
-        //render empty hand on flying weapons
-        if (StylishData.getCap(p).isCombatMode() && CombatUtils.getCooledAttackStrength(p, e.getHand(), 0.1f) < 1) {
-            e.setCanceled(true);
-            HumanoidArm armToRender = (p.getMainArm() == HumanoidArm.RIGHT) == (e.getHand() == InteractionHand.MAIN_HAND)
-                    ? HumanoidArm.RIGHT
-                    : HumanoidArm.LEFT;
-            e.getPoseStack().pushPose();
-            //Minecraft.getInstance().gameRenderer.itemInHandRenderer.renderPlayerArm(e.getPoseStack(), e.getMultiBufferSource(), e.getPackedLight(), e.getEquipProgress(), e.getSwingProgress(), armToRender);
-            e.getPoseStack().popPose();
-            //Minecraft.getInstance().gameRenderer.itemInHandRenderer.renderPlayerArm(e.getPoseStack(), e.getMultiBufferSource(), e.getPackedLight(), e.getEquipProgress(), e.getSwingProgress(), HumanoidArm.RIGHT);
-            return;
-        }
-        if (e.getHand().equals(InteractionHand.MAIN_HAND) || !GeneralConfig.dual) return;
-        if (p == null || p.isInvisible() || (!StylishData.getCap(p).isCombatMode() && (p.swingingArm != InteractionHand.OFF_HAND || !p.swinging)))
-            return;
-        if (CombatData.getCap(p).getHandBind(InteractionHand.OFF_HAND) > 0) {
-            e.setCanceled(true);
-            return;
-        }
-        if (!e.getItemStack().isEmpty()) return;
-        if (TwoHandingHandler.suppressOffhand(p, p.getMainHandItem())) return;
-        e.setCanceled(true);
-        float cd = CombatUtils.getCooledAttackStrength(p, InteractionHand.OFF_HAND, e.getPartialTick());
-        float f6 = 1 - (cd * cd * cd);
-        Minecraft.getInstance().gameRenderer.itemInHandRenderer.renderPlayerArm(e.getPoseStack(), e.getMultiBufferSource(), e.getPackedLight(), f6, e.getSwingProgress(), p.getMainArm() == HumanoidArm.RIGHT ? HumanoidArm.LEFT : HumanoidArm.RIGHT);
-    }
-
-    @SubscribeEvent
     public static void tickPlayer(TickEvent.ClientTickEvent e) {
         Minecraft mc = Minecraft.getInstance();
         Player p = mc.player;
@@ -331,17 +226,17 @@ public class ClientEvents {
                         //yeet!
                         if (mc.options.keyAttack.isDown() && mc.options.keyAttack.consumeClick()) {
                             HitResult destination = ProjectileUtil.getHitResultOnViewVector(p, EntitySelector.LIVING_ENTITY_STILL_ALIVE, 32);
-                            Vec3 loc=destination.getLocation();
-                            if(destination.getType() == HitResult.Type.ENTITY){
-                                loc=GeneralUtils.getExactCollision(((EntityHitResult) destination).getEntity(), p.getEyePosition(), p.getEyePosition().add(p.getLookAngle().scale(32)));
+                            Vec3 loc = destination.getLocation();
+                            if (destination.getType() == HitResult.Type.ENTITY) {
+                                loc = GeneralUtils.getExactCollision(((EntityHitResult) destination).getEntity(), p.getEyePosition(), p.getEyePosition().add(p.getLookAngle().scale(32)));
                             }
                             CombatChannel.INSTANCE.sendToServer(new ThrowPacket(true, loc));
                         }
                         if (mc.options.keyUse.isDown() && mc.options.keyUse.consumeClick()) {
                             HitResult destination = ProjectileUtil.getHitResultOnViewVector(p, EntitySelector.LIVING_ENTITY_STILL_ALIVE, 32);
-                            Vec3 loc=destination.getLocation();
-                            if(destination.getType() == HitResult.Type.ENTITY){
-                                loc=GeneralUtils.getExactCollision(((EntityHitResult) destination).getEntity(), p.getEyePosition(), p.getEyePosition().add(p.getLookAngle().scale(32)));
+                            Vec3 loc = destination.getLocation();
+                            if (destination.getType() == HitResult.Type.ENTITY) {
+                                loc = GeneralUtils.getExactCollision(((EntityHitResult) destination).getEntity(), p.getEyePosition(), p.getEyePosition().add(p.getLookAngle().scale(32)));
                             }
                             CombatChannel.INSTANCE.sendToServer(new ThrowPacket(false, loc));
                         }
@@ -363,9 +258,10 @@ public class ClientEvents {
                             //offhand use
                         }
                         case DUAL -> {
+                            boolean probablyNotAttacking = mc.crosshairPickEntity == null;
                             if (specialHandleItem(mc.player, mc.player.getMainHandItem()) && mc.options.keyUse.isDown()) {
                                 //special charge action, immediately start
-                                if (mc.player.getMainHandItem().getUseAnimation() != UseAnim.NONE)
+                                if (probablyNotAttacking && mc.player.getMainHandItem().getUseAnimation() != UseAnim.NONE)
                                     allow = 1;
                                 if (!mc.player.isUsingItem() && offUseTick % allow == allow - 1) {
                                     testingHand = InteractionHand.OFF_HAND;
@@ -375,7 +271,7 @@ public class ClientEvents {
                             } else offUseTick = 0;
                             if (specialHandleItem(mc.player, mc.player.getMainHandItem()) && mc.options.keyAttack.isDown()) {
                                 //special charge action, immediately start
-                                if (mc.player.getMainHandItem().getUseAnimation() != UseAnim.NONE)
+                                if (probablyNotAttacking && mc.player.getMainHandItem().getUseAnimation() != UseAnim.NONE)
                                     allow = 1;
                                 if (mc.player.isUsingItem() && mc.player.getUsedItemHand() == InteractionHand.MAIN_HAND) {
                                     //hack. Spoof use item key to down for the keybind processing
@@ -622,13 +518,7 @@ public class ClientEvents {
         }
     }
 
-    @SubscribeEvent
-    public static void noFovChange(ComputeFovModifierEvent e) {
-        if (CombatData.getCap(e.getPlayer()).isKnockdown())
-            e.setNewFovModifier(0.7f);
-    }
-
-//    @SubscribeEvent(priority = EventPriority.HIGHEST)
+    //    @SubscribeEvent(priority = EventPriority.HIGHEST)
 //    public static void handleInputEvent(InputEvent event) {
 //        Minecraft mc = Minecraft.getInstance();
 //        if (mc.player == null) return;
@@ -637,27 +527,6 @@ public class ClientEvents {
 //            lastTickParry = true;
 //
 //        }
-//    }
-
-//    private static void renderDie(LivingEntity passedEntity, float partialTicks, PoseStack poseStack) {
-//        double x = passedEntity.xo + (passedEntity.getX() - passedEntity.xo) * partialTicks;
-//        double y = passedEntity.yo + (passedEntity.getY() - passedEntity.yo) * partialTicks;
-//        double z = passedEntity.zo + (passedEntity.getZ() - passedEntity.zo) * partialTicks;
-//
-//        EntityRenderDispatcher renderDispatcher = Minecraft.getInstance().getEntityRenderDispatcher();
-//        Vec3 renderPos = renderDispatcher.camera.getPosition();
-//
-//        poseStack.pushPose();
-//        poseStack.translate((float) (x - renderPos.x()), (float) (y - renderPos.y() + passedEntity.getBbHeight()), (float) (z - renderPos.z()));
-//        RenderSystem.setShaderTexture(0, expose);
-//        poseStack.translate(0.0D, (double) 1, 0.0D);
-//        poseStack.mulPose(Minecraft.getInstance().getEntityRenderDispatcher().cameraOrientation());
-//        final float size = Mth.clamp(0.002F * CombatData.getCap(passedEntity).getMaxPosture(), 0.015f, 0.1f);
-//        poseStack.scale(-size, -size, size);
-//        GuiComponent.blit(poseStack, -32, -32, 0, 0, 64, 64, 64, 64);
-//        poseStack.popPose();
-//
-//        //poseStack.translate(0.0D, -(NeatConfig.backgroundHeight + NeatConfig.barHeight + NeatConfig.backgroundPadding), 0.0D);
 //    }
 
     //I think this is no longer necessary, but we'll seal it away for now

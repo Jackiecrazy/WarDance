@@ -207,7 +207,6 @@ public class MovementUtils {
 //        return ret;
 //    }
     public static boolean attemptSlide(LivingEntity elb) {
-        if (!elb.onGround()) return false;
         ICombatCapability itsc = CombatData.getCap(elb);
         if (!StylishData.getCap(elb).isCombatMode()) return false;
         DodgeEvent e = new DodgeEvent(elb, DodgeEvent.Direction.FORWARD, 1.5);
@@ -243,7 +242,7 @@ public class MovementUtils {
         if (!StylishData.getCap(elb).isCombatMode() && (itsc.getStunTime() == 0)) return false;
         //dodge time check
         if (itsc.getDodgeTime() <= -CombatConfig.rollCooldown) {
-            if (side == 99) return attemptSlide(elb);
+            if (side == 99&&elb.onGround()) return attemptSlide(elb);
             Entity target = GeneralUtils.raytraceEntity(elb.level(), elb, 32);
             float adjustment = 0;
             if (target != null) {

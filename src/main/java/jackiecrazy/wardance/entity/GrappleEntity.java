@@ -57,6 +57,7 @@ public class GrappleEntity extends FlyingItemEntity {
         swinger.fallDistance = 0;
         Vec3 pos = swinger.position();
         Vec3 vel = swinger.getDeltaMovement();
+        double spd=vel.length();
 
         // Direction from hook to player
         Vec3 toPlayer = pos.subtract(anchor.position());
@@ -82,17 +83,19 @@ public class GrappleEntity extends FlyingItemEntity {
         // 3. Enforce rope length constraint
         // --------------------------------------------------
         Vec3 correctedPos = anchor.position().add(ropeDir.scale(ropeLength));
-        swinger.setPos(correctedPos.x, correctedPos.y, correctedPos.z);
+        //swinger.setPos(correctedPos.x, correctedPos.y, correctedPos.z);
 
         // --------------------------------------------------
         // 4. Small energy loss (optional, feels good)
         // --------------------------------------------------
         //tangentialVel = tangentialVel.scale(0.995);
 
-        swinger.setDeltaMovement(tangentialVel);
+        swinger.setDeltaMovement(tangentialVel.normalize().scale(spd*1.0001));
         swinger.hasImpulse = true;
         swinger.hurtMarked = true;
     }
+
+    public boolean hooked(){return hooked;}
 
     @Override
     public void updateTetheringVelocity() {
@@ -102,9 +105,14 @@ public class GrappleEntity extends FlyingItemEntity {
         if (getTetherLength() > 0 && toBeMoved != null && hooked) {
             //chain phase
             if (toBeMoved instanceof LivingEntity) {
-                ropeSwingMode(toBeMoved, moveTowards, getTetherLength());
+                //ropeSwingMode(toBeMoved, moveTowards, getTetherLength());
             }
         } else super.updateTetheringVelocity(); //pull phase
+    }
+
+    @Override
+    public boolean shouldRepel() {
+        return false;
     }
 
     @Override

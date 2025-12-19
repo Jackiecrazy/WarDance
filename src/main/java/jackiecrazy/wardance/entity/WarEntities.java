@@ -23,6 +23,7 @@ public class WarEntities {
     public static final RegistryObject<EntityType<ThrownWeaponEntity>> FLYING_BLOCK = ENTITIES.register("flying_block", () -> EntityType.Builder
             .of(ThrownWeaponEntity::new, MobCategory.MISC)
             .sized(1F, 1F)
+            .setTrackingRange(128)
             .build("flying_block"));
 
     public static final RegistryObject<EntityType<FearEntity>> FEAR = ENTITIES.register("fear", () -> EntityType.Builder

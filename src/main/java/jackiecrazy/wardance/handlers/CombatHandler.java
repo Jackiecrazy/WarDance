@@ -49,7 +49,7 @@ import java.util.UUID;
 @Mod.EventBusSubscriber(modid = WarDance.MODID)
 public class CombatHandler {
 
-    public static final float magicInternalDamage = 0.3f;
+    public static final float magicInternalDamage = 0.1f;
     private static final UUID uuid = UUID.fromString("98c361c7-de32-4f40-b129-d7752bac3712");
     private static final UUID uuid2 = UUID.fromString("98c361c8-de32-4f40-b129-d7752bac3722");
 
@@ -109,7 +109,7 @@ public class CombatHandler {
 
             //add ranged combo and finisher
             if (shooter != null) {
-                StylishData.getCap(shooter).addCombo(0.2f, "projectile");
+                StylishData.getCap(shooter).addCombo(0.1f, "projectile");
                 StylishData.getCap(shooter).processAttack(false);
             }
             //defer to vanilla, no longer correct as new blocking directly alters isBlocking
@@ -315,7 +315,7 @@ public class CombatHandler {
                 if (!semeCap.alreadyProc("attack") && !semeCap.alreadyProc("oncePerSweep")) {//first hit of a sweep attack this tick, add combo based on state
                     //semeCap.addRank(0.1f);
                     StylishData.getCap(seme).processAttack(true);
-                    StylishData.getCap(seme).addCombo(0.2f, semeCap.isOffhandAttack() + CombatUtils.getSweepState(seme).name());
+                    StylishData.getCap(seme).addCombo(0.1f, semeCap.isOffhandAttack() + CombatUtils.getSweepState(seme).name());
                     semeCap.tickProc("attack");
                 }
 
@@ -342,7 +342,7 @@ public class CombatHandler {
                 //stabby bonus
                 StealthUtils.Awareness awareness = StealthUtils.INSTANCE.getAwareness(seme, uke);
                 //whether the attack can stun someone at 0 posture
-                boolean canBreach = false;
+                boolean canBreach = uke instanceof Player;
                 //crit bonus
                 if (e.getSource() instanceof CombatDamageSource cds) {
                     if (cds.isCrit()) atkMult *= cds.getCritDamage();
@@ -366,7 +366,6 @@ public class CombatHandler {
                 //not only can mobs not defend in time slow, the attacker gets a steve time extension
                 if (!(uke instanceof Player) && TimeSlowData.getCap(uke).getEffectiveSpeed() < 1) {
                     ukeCap.consumePosture(seme, pe.getPostureConsumption(), pe.canBreach(), 0);
-                    CombatUtils.triggerSteveTime(seme, (int) (TimeSlowData.getCap(uke).getTimeRemaining() * 1.5));
                     return;
                 }
 
@@ -562,10 +561,10 @@ public class CombatHandler {
 
     @SubscribeEvent(priority = EventPriority.HIGHEST)
     public static void pain(LivingHurtEvent e) {
-        if (GeneralConfig.debug && !e.getEntity().level().isClientSide) {
+        final LivingEntity uke = e.getEntity();
+        if (GeneralConfig.debug && !uke.level().isClientSide) {
             WarDance.LOGGER.debug("damage from " + e.getSource() + " received with amount " + e.getAmount());
         }
-        LivingEntity uke = e.getEntity();
         DamageSource ds = e.getSource();
         if (Float.isNaN(e.getAmount())) {
             WarDance.LOGGER.fatal("intercepted a livinghurtevent with nan damage, canceling");
@@ -604,21 +603,14 @@ public class CombatHandler {
             //reduction starts at half and increases with your combo
             comboDefense = magicInternalDamage / Math.max(1, StylishData.getCap(uke).getCombo());
             e.setAmount(dmg * comboDefense);
+            StylishData.getCap(uke).resetCombo();
         }
-        //you cannot die unless you are knocked down
-        final boolean creative = e.getSource().is(DamageTypeTags.BYPASSES_INVULNERABILITY);
-        if (!creative && e.getAmount() > uke.getHealth() && !cap.isStunned() && !cap.alreadyProc("knockdown")) {
-            final float min = Math.min(e.getAmount(), uke.getHealth() - 1);
-            final float leftover = e.getAmount() - min;
-            e.setAmount(min);
-        }
-        StylishData.getCap(uke).resetCombo();
-        //the rest of it becomes internal damage
-        if (!creative && StealthUtils.INSTANCE.getAwareness(ds.getEntity() instanceof LivingEntity le ? le : null, uke) == StealthUtils.Awareness.ALERT && cap.getDamageRecordTime() > 0) {
-            cap.recordDamage(dmg * (1 - comboDefense));
-            cap.tickProc("noShake");
-            //e.setCanceled(true);
-            return;
+
+        //nonplayers cannot hold on and will vaporize if their damage is too high
+        if (!(uke instanceof Player) && e.getAmount() > uke.getMaxHealth() * Math.max(1, uke.getMaxHealth() / cap.getRecordedDamage())) {
+            e.setAmount(e.getAmount() + cap.getRecordedDamage());
+            cap.stopRecording(null);
+            cap.tickProc("canDie");
         }
         //stuff used to exist here, moved to footwork
 
@@ -630,7 +622,7 @@ public class CombatHandler {
             double luckDiff = WarDance.rand.nextFloat() * (GeneralUtils.getAttributeValueSafe(trueSource, Attributes.LUCK)) - WarDance.rand.nextFloat() * (GeneralUtils.getAttributeValueSafe(uke, Attributes.LUCK));
             e.setAmount(e.getAmount() + (float) luckDiff * GeneralConfig.luck);
         }
-        if (GeneralConfig.debug && !e.getEntity().level().isClientSide) {
+        if (GeneralConfig.debug && !uke.level().isClientSide) {
             WarDance.LOGGER.debug("luck has been resolved, damage is now " + e.getAmount());
         }
 
@@ -644,7 +636,7 @@ public class CombatHandler {
                 e.setAmount(e.getAmount() * CombatConfig.normalDamage);
             }
         }
-        if (GeneralConfig.debug && !e.getEntity().level().isClientSide) {
+        if (GeneralConfig.debug && !uke.level().isClientSide) {
             WarDance.LOGGER.debug("darktide and config has been resolved, damage is now " + e.getAmount());
         }
     }
@@ -691,27 +683,49 @@ public class CombatHandler {
         if (cap.alreadyProc("knockdown")) {
             cap.knockdown(e.getEntity(), (int) cap.getProc("knockdown"));
             float hardcap = e.getEntity() instanceof Player && e.getEntity().getHealth() > e.getEntity().getMaxHealth() / 2 ? e.getEntity().getHealth() - WarDance.rand.nextFloat() * 3f : 99999;
-            e.setAmount(Math.min(hardcap, e.getAmount() + cap.getRecordedDamage()));
+            e.setAmount(Math.min(hardcap, e.getAmount() + cap.getRecordedDamage()));//fixme nukes armor?
             cap.stopRecording(null);
             CombatUtils.knockBack(e.getEntity(), e.getSource().getEntity(), 0.7f, true, true);
             cap.tickProc("knockdown", 1);
-        }
-
-        //nonplayers cannot hold on and will vaporize if their internal damage is too high
-        if (!(e.getEntity() instanceof Player) && cap.getRecordedDamage() > e.getEntity().getMaxHealth()) {
-            e.setAmount(e.getAmount() + cap.getRecordedDamage());
-            cap.stopRecording(null);
+        } else {
+            LivingEntity uke = e.getEntity();
+            DamageSource ds = e.getSource();
+            //you cannot die unless you are knocked down
+            final boolean creative = e.getSource().is(DamageTypeTags.BYPASSES_INVULNERABILITY);
+            if (!creative && e.getAmount() > uke.getHealth() && !cap.isStunned() && !cap.alreadyProc("knockdown")) {
+                final float min = Math.min(e.getAmount(), uke.getHealth() - 1);
+                e.setAmount(min);
+            }
+            //the rest of it becomes internal damage
+            if (!creative && StealthUtils.INSTANCE.getAwareness(ds.getEntity() instanceof LivingEntity le ? le : null, uke) == StealthUtils.Awareness.ALERT && cap.getDamageRecordTime() > 0) {
+                cap.recordDamage(e.getAmount() * (1 - magicInternalDamage));
+                cap.tickProc("noShake");
+                //e.setCanceled(true);
+                return;
+            }
         }
     }
 
     @SubscribeEvent(priority = EventPriority.LOWEST, receiveCanceled = true)
     public static void killingBlow(LivingDeathEvent e) {
         LivingEntity elb = e.getEntity();
+        //you cannot die unless you are knocked down
+        final boolean creative = e.getSource().is(DamageTypeTags.BYPASSES_INVULNERABILITY);
+        final ICombatCapability cap = CombatData.getCap(elb);
+        if (!creative && !cap.isStunned() && !cap.alreadyProc("canDie")) {
+            elb.setHealth(1);
+            e.setCanceled(true);
+        }
         CombatData.getCap(elb).setHandBind(InteractionHand.MAIN_HAND, 0);
         CombatData.getCap(elb).setHandBind(InteractionHand.OFF_HAND, 0);
         if (e.getSource().getEntity() instanceof LivingEntity killer) {
             StylishData.getCap(killer).addCombo(0.3f, "kill");
         }
+    }
+
+    @SubscribeEvent(priority = EventPriority.LOWEST)
+    public static void unSteve(LivingDeathEvent e) {
+        //TimeSlowData.getCap(e.getEntity()).resetSpeed();
     }
 
     @SubscribeEvent

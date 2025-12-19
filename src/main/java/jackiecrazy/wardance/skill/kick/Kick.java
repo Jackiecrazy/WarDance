@@ -106,7 +106,7 @@ public class Kick extends Skill {
             final ICombatCapability cap = CombatData.getCap(caster);
             if (caster.getY() > 320 && target instanceof Phantom)
                 completeChallenge(caster);
-            StylishData.getCap(caster).addCombo(0.3f, "backflip");
+            StylishData.getCap(caster).addCombo(0.1f, "backflip");
             cap.addPosture(0.3f * sd.getEffectiveness() * (cap.getPosture() / cap.getMaxPosture()));
         }
     }

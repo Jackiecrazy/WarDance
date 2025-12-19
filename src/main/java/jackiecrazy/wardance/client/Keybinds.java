@@ -97,7 +97,7 @@ public class Keybinds {
                     side = 2;
                 if (mc.player.input.up)
                     side = 3;
-                if (mc.player.isSprinting()) {
+                if (mc.player.isSprinting()&&mc.player.onGround()) {
                     side = 99;
                     mc.player.setForcedPose(Pose.SLEEPING);
                 }
@@ -109,14 +109,14 @@ public class Keybinds {
                 CombatChannel.INSTANCE.sendToServer(new SelectSkillPacket(x));
         }
         if (ALTERNATE_KEY.getKeyConflictContext().isActive() && ALTERNATE_KEY.consumeClick() && mc.player.isAlive()) {
+            ALTERNATE_KEY.setDown(false);
             if (Keybinds.THROW.isDown()) {
                 Player p = mc.player;
                 Vec3 destination = ProjectileUtil.getHitResultOnViewVector(p, EntitySelector.LIVING_ENTITY_STILL_ALIVE, 32).getLocation();
                 CombatChannel.INSTANCE.sendToServer(new GrapplePacket(destination));
                 p.setDeltaMovement(Vec3.ZERO);
             }
-            if (CasterData.getCap(mc.player).getHolsteredSkill() != null) {
-                ALTERNATE_KEY.setDown(false);
+            else if (CasterData.getCap(mc.player).getHolsteredSkill() != null) {
                 CombatChannel.INSTANCE.sendToServer(new EvokeSkillPacket());
             } else {
                 CombatChannel.INSTANCE.sendToServer(new KickPacket());

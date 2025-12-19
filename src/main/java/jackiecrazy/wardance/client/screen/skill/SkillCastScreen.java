@@ -21,9 +21,11 @@ import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 
 import java.awt.*;
+import java.text.DecimalFormat;
 import java.util.List;
 
 import static jackiecrazy.wardance.client.RenderUtils.formatter;
+import static jackiecrazy.wardance.client.RenderUtils.formatter_truncate;
 
 @OnlyIn(Dist.CLIENT)
 public class SkillCastScreen extends Screen {
@@ -140,10 +142,9 @@ public class SkillCastScreen extends Screen {
                         RenderUtils.drawCooldownCircle(graphics.pose(), x + iconX[a], y + iconY[a], 32, cdPerc, false);
                         RenderSystem.disableBlend();
 
+                        DecimalFormat use= cd>=3?formatter_truncate:formatter;
                         //cooldown number
-                        String num = String.valueOf((int) cd);
-                        if (Math.ceil(cd) != cd)
-                            num = formatter.format(cd);
+                        String num = use.format(cd);
                         graphics.pose().pushPose();
                         RenderSystem.setShaderTexture(0, RenderUtils.cooldown);
                         RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, 0.6F);

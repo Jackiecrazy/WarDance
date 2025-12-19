@@ -66,8 +66,8 @@ public class NewCombatCapability implements ICombatCapability {
     private float cache;//no need to save this because it'll be used within the span of a tick
     private int guardFrame, parryFrame, dodgeFrame, iFrame;
     private Vec3 motion;
-    private double mobPosRegenSpd=0.3;
-    private int mobPosCD=60, maxMobPosCD=60, rallyCD;
+    private double mobPosRegenSpd = 0.3;
+    private int mobPosCD = 60, maxMobPosCD = 60, rallyCD;
     private boolean player;
     private HashMap<String, Double> procs = new HashMap<>();
     private int recordingTime = 0;
@@ -98,7 +98,7 @@ public class NewCombatCapability implements ICombatCapability {
         SkillUtils.removeAttribute(e, Attributes.FLYING_SPEED, WOUND);
         SkillUtils.removeAttribute(e, Attributes.KNOCKBACK_RESISTANCE, WOUND);
         setPosture(getMaxPosture());
-        knockdown=false;
+        knockdown = false;
     }
 
     @Override
@@ -309,8 +309,8 @@ public class NewCombatCapability implements ICombatCapability {
         rallyCD = RALLY_CD;
         tickProc("rally");
         //setPosture(posture + amount);
-        recordedDamage-=amount;
-        if(recordedDamage<0)recordedDamage=0;
+        recordedDamage -= amount;
+        if (recordedDamage < 0) recordedDamage = 0;
     }
 
     @Override
@@ -454,8 +454,7 @@ public class NewCombatCapability implements ICombatCapability {
         //regenerate posture
         if (isKnockdown() && getPosture() < getMaxPosture()) {
             setPosture(getPosture() + getMaxPosture() / getMaxStunTime());
-        }
-        else {
+        } else {
             handlePostureRegen(ticks);
             //if (elb.isBlocking()) addPosture(0.01f);
         }
@@ -555,8 +554,7 @@ public class NewCombatCapability implements ICombatCapability {
         //regenerate posture
         if (isStunned() && getPosture() < getMaxPosture()) {
             setPosture(getPosture() + getMaxPosture() / getMaxStunTime());
-        }
-        else {
+        } else {
             handlePostureRegen(ticks);
             //if (elb.isBlocking()) addPosture(0.01f);
         }
@@ -682,7 +680,7 @@ public class NewCombatCapability implements ICombatCapability {
 
     @Override
     public int getDamageRecordTime() {
-        return !isStunned()&&!alreadyProc("knockdown")?1:0;
+        return !isStunned() && !alreadyProc("knockdown") ? 1 : 0;
     }
 
     @Override
@@ -697,6 +695,7 @@ public class NewCombatCapability implements ICombatCapability {
 
     @Override
     public void recordDamage(float v) {
+        if(recordedDamage<0)recordedDamage=0;
         recordedDamage += v;
     }
 
@@ -846,7 +845,7 @@ public class NewCombatCapability implements ICombatCapability {
 
     private void handlePostureRegen(int ticks) {
         mobPosCD -= ticks;
-        if(mobPosRegenSpd==0)mobPosRegenSpd=0.3;
+        if (mobPosRegenSpd == 0) mobPosRegenSpd = 0.3;
         float mult = 1;
         LivingEntity elb = dude.get();
         if (elb != null) {
@@ -863,6 +862,9 @@ public class NewCombatCapability implements ICombatCapability {
             int overflow = -mobPosCD;
             mobPosCD = 0;
             setPosture((float) (getPosture() + overflow * mobPosRegenSpd * mult / 20));
+            if (getPosturePercentage() == 1) {
+                recordDamage(-overflow / 20f);
+            }
         }
     }
 }

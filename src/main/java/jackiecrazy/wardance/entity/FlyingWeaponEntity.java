@@ -175,9 +175,7 @@ public class FlyingWeaponEntity extends FlyingItemEntity {
                     if (getInfo().canBreach()) {
                         CombatData.getCap(elb).pin(0);
                     } else {
-                        CombatData.getCap(elb).pin(20);
-                        //CombatData.getCap(elb).startRecordingDamage(20);
-                        TimeSlowData.getCap(elb).alterSpeed(20, 0.1);
+                        CombatData.getCap(elb).pin(10);
                     }
                 }
                 if (!alreadyHit.isEmpty()) CombatData.getCap(e).tickProc("oncePerSweep");
@@ -186,10 +184,6 @@ public class FlyingWeaponEntity extends FlyingItemEntity {
                 GeneralUtils.attack(e, target);
                 ret=true;
                 alreadyHit.add(target);
-                if (target instanceof LivingEntity elb && getInfo().canBreach()) {
-                    //CombatData.getCap(elb).stopRecording(new CombatDamageSource(e).setDamageTyping(FootworkDamageArchetype.PHYSICAL));
-                    TimeSlowData.getCap(elb).resetSpeed();
-                }
             }
         } catch (Exception ex) {
             ex.printStackTrace();

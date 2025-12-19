@@ -68,7 +68,7 @@ public class Petrify extends Hex {
     public void onMarkEnd(LivingEntity caster, LivingEntity target, SkillData sd) {
         SkillUtils.removeAttribute(target, Attributes.MOVEMENT_SPEED, SPEED);
         SkillUtils.removeAttribute(target, Attributes.FLYING_SPEED, SPEED);
-        target.level().playSound(null, caster, SoundEvents.ZOMBIE_VILLAGER_CURE, SoundSource.PLAYERS, 0.3f + WarDance.rand.nextFloat(), 0.25f + WarDance.rand.nextFloat() * 0.25f);
+        target.level().playSound(null, target, SoundEvents.ZOMBIE_VILLAGER_CURE, SoundSource.PLAYERS, 0.3f + WarDance.rand.nextFloat(), 0.25f + WarDance.rand.nextFloat() * 0.25f);
         target.addEffect(new MobEffectInstance(FootworkEffects.PETRIFY.get(), 60));
         super.onMarkEnd(caster, target, sd);
     }

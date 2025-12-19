@@ -38,6 +38,11 @@ public class ShadowBlockEntity extends ThrownWeaponEntity {
     }
 
     @Override
+    public boolean isReal() {
+        return !transitioning();
+    }
+
+    @Override
     protected void onHitBlock(BlockPos blockPos, Direction hitFace, Vec3 location) {
         if(transitioning())return;
         super.onHitBlock(blockPos, hitFace, location);

@@ -108,10 +108,20 @@ public class ResourceDisplay implements IGuiOverlay {
 //                ms.blit(newdark, atX - flexBarWidth, barY, 0, 24, flexBarWidth, barHeight);
             }
             // render steve time frames
-            if (itsc.isIframe()) {
-                float otemp = (float) Math.min(1, itsc.getIframe() / 40f);
+//            if (itsc.isIframe()) {
+//                float otemp = (float) Math.min(1, itsc.getIframe() / 40f);
+//                int fini = (int) (otemp * halfBarWidth);
+//                int shatterV = 48;
+//                //gold that stretches out to the edges before disappearing
+//                ms.blit(newdark, atX + 5, atY - barHeight / 2, 243 - fini, shatterV, fini, barHeight);
+//                ms.blit(newdark, atX - fini - 5, atY - barHeight / 2, 0, shatterV, fini, barHeight);
+//                RenderSystem.setShaderColor(1, 1, 1, 1);
+//            }
+            if (itsc.getRecordedDamage() > 0) {
+                //internal damage as a percentage of max health
+                float otemp = Mth.clamp(itsc.getRecordedDamage() / (2 * elb.getMaxHealth()),0,1);
                 int fini = (int) (otemp * halfBarWidth);
-                int shatterV = 48;
+                int shatterV = Math.min(36 + (int) (otemp * 2.8) * 12, 60);
                 //gold that stretches out to the edges before disappearing
                 ms.blit(newdark, atX + 5, atY - barHeight / 2, 243 - fini, shatterV, fini, barHeight);
                 ms.blit(newdark, atX - fini - 5, atY - barHeight / 2, 0, shatterV, fini, barHeight);

@@ -595,7 +595,7 @@ public class CombatUtils {
         //If the attack was guard breaking (entity flag 30) disable block for a while (handled somewhere else)
         defender.level().playSound(null, defender.getX(), defender.getY(), defender.getZ(), SoundEvents.SHIELD_BLOCK, SoundSource.PLAYERS, WarDance.rand.nextFloat() * 0.3f + Math.min(1f, 1 - CombatData.getCap(defender).getPosturePercentage()), Math.min(0.75f, amount / 7) + WarDance.rand.nextFloat() * 0.5f);
         StylishData.getCap(defender).addTriggerTime(10, true);
-        StylishData.getCap(defender).addCombo(0.2f, "block");
+        StylishData.getCap(defender).addCombo(0.1f, "block");
 
         if (attacker instanceof LivingEntity le) {
             //THIS DOESN'T KNOCK BACK ANYONE!
@@ -667,7 +667,7 @@ public class CombatUtils {
         //normal dodges already refill 1 spirit. Perfect dodging maxes out spirit.
         //slow all mobs in a 32 block range for about 2 seconds and convert remaining dodge frames to iframes to stop repeated procs
         defender.level().playSound(null, defender.getX(), defender.getY(), defender.getZ(), SoundEvents.ENCHANTMENT_TABLE_USE, SoundSource.PLAYERS, 0.3f + WarDance.rand.nextFloat() * 0.5f, 0.75f + WarDance.rand.nextFloat() * 0.5f);
-        StylishData.getCap(defender).addCombo(0.3f, "dodge");
+        StylishData.getCap(defender).addCombo(0.2f, "dodge");
         ICombatCapability cap = CombatData.getCap(defender);
         int remaining = cap.getDodgeTime();
         if (attacker instanceof LivingEntity e) {
@@ -682,7 +682,7 @@ public class CombatUtils {
         cap.addRally(toHeal);
 
         if (defender instanceof Player) {
-            triggerSteveTime(defender, 20);
+            triggerSteveTime(defender, 30);
         }
     }
 
@@ -697,7 +697,7 @@ public class CombatUtils {
         //grant 2 seconds of iframes, which conveniently stops repeated parrying
         //FakeExplosion.explode(defender.level(), defender, defender.getX(), defender.getY() + defender.getBbHeight() * 1.1f, defender.getZ(), 5);
         defender.level().playSound(null, defender.getX(), defender.getY(), defender.getZ(), SoundEvents.ANVIL_PLACE, SoundSource.PLAYERS, Math.min(1, amount / 10) + WarDance.rand.nextFloat() * 0.3f, 0.5f + WarDance.rand.nextFloat() * 0.25f);
-        StylishData.getCap(defender).addCombo(0.4f, "parry");
+        StylishData.getCap(defender).addCombo(0.3f, "parry");
         ICombatCapability cap = CombatData.getCap(defender);
         StylishData.getCap(defender).processAttack(true);
         StylishData.getCap(defender).processAttack(false);
@@ -738,9 +738,9 @@ public class CombatUtils {
     public static void kick(LivingEntity kicker, Entity targetEntity){
         kicker.level().playSound(null, kicker.getX(), kicker.getY(), kicker.getZ(), SoundEvents.ZOMBIE_ATTACK_WOODEN_DOOR, SoundSource.PLAYERS, 0.25f + WarDance.rand.nextFloat() * 0.5f, 0.5f + WarDance.rand.nextFloat() * 0.5f);
         if(targetEntity instanceof LivingEntity target) {
-            CombatData.getCap(target).consumePosture(kicker, 4, true);
+            CombatData.getCap(target).consumePosture(kicker, 2, false);
             ParticleUtils.playBonkParticle(kicker.level(), kicker.getEyePosition().add(kicker.getLookAngle().scale(Math.sqrt(GeneralUtils.getDistSqCompensated(kicker, target)))), 1, 0, 8, Color.WHITE);
-            target.hurt(new CombatDamageSource(kicker).setDamageTyping(FootworkDamageArchetype.PHYSICAL).setProcAttackEffects(true), 2);
+            target.hurt(new CombatDamageSource(kicker).setDamageTyping(FootworkDamageArchetype.PHYSICAL).setProcAttackEffects(true), 1);
             if (target.getLastHurtByMob() == null)
                 target.setLastHurtByMob(kicker);
         }
@@ -757,7 +757,7 @@ public class CombatUtils {
         //StylishData.getCap(sender).resetTriggerBar();
         WeaponStats.SweepInfo info = WeaponStats.getSweepInfo(sender.getItemInHand(h), s);
         TemporaryMoveTranslator.scheduleFinisher(sender, h, info);
-        StylishData.getCap(sender).addCombo(0.3f, "heavy" + (h == InteractionHand.OFF_HAND) + s.name());
+        StylishData.getCap(sender).addCombo(0.25f, "heavy" + (h == InteractionHand.OFF_HAND) + s.name());
         return true;
     }
 

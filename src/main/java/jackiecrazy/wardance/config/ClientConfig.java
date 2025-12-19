@@ -3,7 +3,7 @@ package jackiecrazy.wardance.config;
 import com.google.common.collect.Lists;
 import jackiecrazy.footwork.config.DisplayConfigUtils;
 import jackiecrazy.wardance.WarDance;
-import jackiecrazy.wardance.client.ClientEvents;
+import jackiecrazy.wardance.client.RenderEvents;
 import net.minecraftforge.common.ForgeConfigSpec;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
@@ -99,7 +99,7 @@ public class ClientConfig {
         adrenalineColor = Integer.parseInt(CONFIG._adrenalineColor.get(), 16);
         autoCombat = CONFIG._autoCombat.get();
         controlScheme = CONFIG._ctrl.get();
-        ClientEvents.updateList(CONFIG._customPosture.get());
+        RenderEvents.updateList(CONFIG._customPosture.get());
     }
 
     @SubscribeEvent
