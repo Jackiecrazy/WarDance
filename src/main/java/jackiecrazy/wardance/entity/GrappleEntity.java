@@ -1,12 +1,17 @@
 package jackiecrazy.wardance.entity;
 
+import jackiecrazy.footwork.capability.resources.CombatData;
 import jackiecrazy.footwork.capability.timeslow.TimeSlowData;
 import jackiecrazy.footwork.entity.flyingweapon.FlyingItemEntity;
 import jackiecrazy.footwork.entity.flyingweapon.FlyingWeaponEffect;
+import jackiecrazy.footwork.utils.GeneralUtils;
+import jackiecrazy.wardance.capability.flyingweapon.FlyingWeaponData;
+import jackiecrazy.wardance.config.WeaponStats;
 import jackiecrazy.wardance.utils.CombatUtils;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
@@ -40,10 +45,10 @@ public class GrappleEntity extends FlyingItemEntity {
     private boolean hooked = false;
     private Entity hookedEntity = null;
     private double hookEntityOffset = 0;
+    private int heldTime = 10;
     private BlockHitResult hookedHit = null;
-    private double hookLength = 10;//set to 0 when you release Q
-    private boolean movePlayer = false;
-    private double remainingRopeStrength = 100;
+    private boolean movePlayer = true;
+    private boolean grabBlock = false;
 
     public GrappleEntity(EntityType<? extends FlyingItemEntity> type,
                          Level level) {
@@ -53,61 +58,23 @@ public class GrappleEntity extends FlyingItemEntity {
         renderLag = SQDIST;
     }
 
-    public void ropeSwingMode(Entity swinger, Entity anchor, double ropeLength) {
-        swinger.fallDistance = 0;
-        Vec3 pos = swinger.position();
-        Vec3 vel = swinger.getDeltaMovement();
-        double spd=vel.length();
-
-        // Direction from hook to player
-        Vec3 toPlayer = pos.subtract(anchor.position());
-        double dist = toPlayer.length();
-
-        if (dist < 0.0001) return;
-
-        Vec3 ropeDir = toPlayer.normalize();
-
-        // --------------------------------------------------
-        // 1. Remove radial velocity (prevents collapsing inward)
-        // --------------------------------------------------
-        double radialSpeed = vel.dot(ropeDir);
-        Vec3 radialVel = ropeDir.scale(radialSpeed);
-        Vec3 tangentialVel = vel.subtract(radialVel);
-
-        // --------------------------------------------------
-        // 2. Apply gravity only to tangential motion
-        // --------------------------------------------------
-        tangentialVel = tangentialVel.normalize().scale(vel.length()).add(0, -0.08, 0);
-
-        // --------------------------------------------------
-        // 3. Enforce rope length constraint
-        // --------------------------------------------------
-        Vec3 correctedPos = anchor.position().add(ropeDir.scale(ropeLength));
-        //swinger.setPos(correctedPos.x, correctedPos.y, correctedPos.z);
-
-        // --------------------------------------------------
-        // 4. Small energy loss (optional, feels good)
-        // --------------------------------------------------
-        //tangentialVel = tangentialVel.scale(0.995);
-
-        swinger.setDeltaMovement(tangentialVel.normalize().scale(spd*1.0001));
-        swinger.hasImpulse = true;
-        swinger.hurtMarked = true;
+    public boolean hooked() {
+        return hooked;
     }
 
-    public boolean hooked(){return hooked;}
+    @Override
+    public boolean stopMotion() {
+        return true;
+    }
+
+    @Override
+    public void moveTargetTowards(Entity toBeMoved, Vec3 point, double force) {
+        super.moveTargetTowards(toBeMoved, point, force*5.5);
+    }
 
     @Override
     public void updateTetheringVelocity() {
-        Vec3 offset = getTetheredOffset();
-        Entity toBeMoved = getOwner();
-        Entity moveTowards = this;
-        if (getTetherLength() > 0 && toBeMoved != null && hooked) {
-            //chain phase
-            if (toBeMoved instanceof LivingEntity) {
-                //ropeSwingMode(toBeMoved, moveTowards, getTetherLength());
-            }
-        } else super.updateTetheringVelocity(); //pull phase
+        super.updateTetheringVelocity(); //pull phase
     }
 
     @Override
@@ -116,15 +83,11 @@ public class GrappleEntity extends FlyingItemEntity {
     }
 
     @Override
-    public boolean stopMotion() {
-        return false;
-    }
-
-    @Override
     protected void readAdditionalSaveData(CompoundTag tag) {
         super.readAdditionalSaveData(tag);
         tag.putBoolean("movePlayer", movePlayer);
     }
+
 
     @Override
     protected void addAdditionalSaveData(CompoundTag tag) {
@@ -150,7 +113,7 @@ public class GrappleEntity extends FlyingItemEntity {
     @Override
     public Entity getTetheredEntity() {
         if (!hooked) return null;
-        if (getTetherLength() > 0) return null;
+        if (hookedHit != null && !movePlayer) return null;
         if (!movePlayer) return getOwner();
         return hookedEntity == null ? this : hookedEntity;
     }
@@ -158,19 +121,14 @@ public class GrappleEntity extends FlyingItemEntity {
     @Override
     public Entity getTetheringEntity() {
         if (!hooked) return null;
-        if (getTetherLength() > 0) return null;
+        if (hookedHit != null && !movePlayer) return null;
         if (movePlayer || hookedEntity == null) return getOwner();
         return hookedEntity;
     }
 
     @Override
-    public double getTetherLength() {
-        return hookLength;
-    }
-
-    @Override
     public boolean shouldRender(double p_20296_, double p_20297_, double p_20298_) {
-        return super.shouldRender(p_20296_, p_20297_, p_20298_)||getOwner()!=null;
+        return super.shouldRender(p_20296_, p_20297_, p_20298_) || getOwner() != null;
     }
 
     @Override
@@ -181,16 +139,20 @@ public class GrappleEntity extends FlyingItemEntity {
     @Override
     public void tick() {
         super.tick();
-        if (!transitioning()) {
+        if (!transitioning()) {//hooked onto something
             renderLag--;
             if (renderLag < 0) renderLag = 0;
+        }else{
+            //become faster over time
+            addDeltaMovement(getDeltaMovement().normalize().scale(0.01));
         }
+        //server side velocity stuff
         if (!level().isClientSide && isAlive()) {
             //general sanity death checks
             if (getOwner() instanceof Player p) {
-                if (p.distanceToSqr(this) > 64 * 64)
+                if (p.distanceToSqr(this) > 128 * 128)
                     remove(RemovalReason.DISCARDED);
-                if (getTetheringEntity() == p && (p.distanceToSqr(this) < SQDIST || p.isShiftKeyDown())) {
+                if ((getTetheringEntity() == p && p.distanceToSqr(this) < SQDIST) || p.isShiftKeyDown()) {
                     remove(RemovalReason.DISCARDED);
                     p.setDeltaMovement(new Vec3(0, 0.5, 0));
                     p.resetFallDistance();
@@ -202,27 +164,50 @@ public class GrappleEntity extends FlyingItemEntity {
 
             if (!hooked) return;
             if (hookedEntity != null) {
+                //pull
                 updateEntityHookPosition();
                 if (hookedEntity instanceof FlyingWeaponEntity fwe && getOwner() instanceof Player p && fwe.distanceToSqr(p) < SQDIST) {
-                    //pick up and spin
-                    fwe.pickup(p);
+                    boolean picked=fwe.pickup(p);
                     remove(RemovalReason.DISCARDED);
+
+                    //if you move to the weapon, spin attack
+                    if(movePlayer&&picked) {
+                        ItemStack held=p.getMainHandItem();
+                        int ticks=p.attackStrengthTicker;
+                        try {
+                            CombatUtils.quickSwap(p, getHeldItem());
+                            FlyingWeaponData.getCap(p).forceRefreshWeapons();
+                            CombatUtils.sweep(p, null, InteractionHand.MAIN_HAND, WeaponStats.SWEEPTYPE.CIRCLE, 3, 3, 1);
+                        } catch (Exception ex) {
+                            ex.printStackTrace();
+                        } finally {
+                            CombatUtils.quickSwap(p, held);
+                            p.attackStrengthTicker = ticks;
+                        }
+                    }
                 }
-                if (hookedEntity instanceof LivingEntity target && getOwner() instanceof Player caster && this.distanceToSqr(getOwner()) < SQDIST) {
-                    //kick
+                if (hookedEntity instanceof LivingEntity target && getOwner() instanceof Player caster && GeneralUtils.getDistSqCompensated(target, getOwner()) < SQDIST) {
                     remove(RemovalReason.DISCARDED);
-                    CombatUtils.kick(caster, target);
+
+                    //if you move to the mob, dropkick them
+                    if (movePlayer)
+                        CombatUtils.kick(caster, target, true);
                 }
                 if (hookedEntity.isRemoved()) {
                     hookedEntity = null;
                     hooked = false;
                 }
+            } else if(!movePlayer) {
+                //hooked a block
+                heldTime--;
+                if (heldTime < 0)
+                    ripBlock();
             }
             if (movePlayer) getOwner().fallDistance = 1;
         }
     }
 
-    public void yank() {
+    public void ripBlock() {
         if (!hooked) {
             remove(RemovalReason.DISCARDED);
             return;
@@ -252,13 +237,11 @@ public class GrappleEntity extends FlyingItemEntity {
             }
         }
         //in any case, tether length is now 0
-        hookLength = 0;
         movePlayer = false;
     }
 
-    public void rappel() {
-        hookLength = 0;
-        movePlayer = true;
+    public void yank() {
+        movePlayer = !movePlayer;
     }
 
     protected void handleEntityCollisions() {
@@ -292,10 +275,6 @@ public class GrappleEntity extends FlyingItemEntity {
             });
         }
         if (hooked) {
-            if (hookLength != 0) {
-                hookLength = hookedEntity.distanceTo(getOwner());
-                movePlayer = false;
-            }
             setTransitioning(false);
             setDeltaMovement(Vec3.ZERO);
             hookEntityOffset = getY() - hookedEntity.getY();
@@ -317,13 +296,12 @@ public class GrappleEntity extends FlyingItemEntity {
         BlockHitResult hit = level().clip(new ClipContext(position(), position().add(getDeltaMovement()), ClipContext.Block.COLLIDER, ClipContext.Fluid.NONE, this));
         if (hit.getType() == HitResult.Type.BLOCK) {
             hooked = true;
+            movePlayer = !movePlayer;
+            grabBlock = true;
             hookedHit = hit;
             setDeltaMovement(Vec3.ZERO);
             setPos(hit.getLocation());
             setTransitioning(false);
-            if (hookLength != 0) {
-                hookLength = distanceTo(getOwner());
-            }
         }
     }
 }

@@ -148,7 +148,7 @@ public class WeaponStats extends SimpleJsonResourceReloadListener {
         if (obj.has("shield")) put.isShield = obj.get("shield").getAsBoolean();
         SweepInfo defaultSweep = GSON.fromJson(obj, SweepInfo.class);
         put.sweeps[0] = defaultSweep;
-        for (SWEEPSTATE s : SWEEPSTATE.values()) {
+        for (AttackType s : AttackType.values()) {
             int ord = s.ordinal();
             JsonElement gottem = obj.get(s.name().toLowerCase(Locale.ROOT));
             if (gottem == null || !gottem.isJsonObject()) {
@@ -156,7 +156,7 @@ public class WeaponStats extends SimpleJsonResourceReloadListener {
                     WarDance.LOGGER.debug("did not find " + s + ", generating defaults");
                 //"smartly" infer what kind of falling attack is wanted:
                 //cone->cleave, impact->impact, line->line, the others->none
-                if (s == SWEEPSTATE.FALLING)
+                if (s == AttackType.FALLING)
                     switch (defaultSweep.sweep) {
                         case CONE -> {
                             SweepInfo fresh = new SweepInfo(SWEEPTYPE.CLEAVE, defaultSweep.sweep_base, defaultSweep.sweep_scale);
@@ -263,21 +263,21 @@ public class WeaponStats extends SimpleJsonResourceReloadListener {
         return is.is(PIERCE_SHIELD);
     }
 
-    public static SweepInfo getSweepInfo(ItemStack i, SWEEPSTATE s) {
+    public static SweepInfo getSweepInfo(ItemStack i, AttackType s) {
         if (info_override != null) return info_override;
         final MeleeInfo info = lookupStats(i);
         return info == null ? DEFAULT_NONE : info.sweeps[s.ordinal()];
     }
 
-    public static SWEEPTYPE getSweepType(LivingEntity e, ItemStack i, SWEEPSTATE s) {
+    public static SWEEPTYPE getSweepType(LivingEntity e, ItemStack i, AttackType s) {
         return getSweepInfo(i, s).sweep;
     }
 
-    public static double getSweepBase(ItemStack i, SWEEPSTATE s) {
+    public static double getSweepBase(ItemStack i, AttackType s) {
         return getSweepInfo(i, s).sweep_base;
     }
 
-    public static double getSweepScale(ItemStack i, SWEEPSTATE s) {
+    public static double getSweepScale(ItemStack i, AttackType s) {
         return getSweepInfo(i, s).sweep_scale;
     }
 
@@ -297,13 +297,20 @@ public class WeaponStats extends SimpleJsonResourceReloadListener {
         CIRCLE//splash with entity as center, ignores range, base and scale add radius
     }
 
-    public enum SWEEPSTATE {
-        STANDING,
-        RISING, //may implement some day
-        FALLING,
-        SNEAKING,
-        SPRINTING//,//also while swimming
-        //RIDING //no speed requirement
+    public enum AttackType {
+        UNDEFINED,//becomes internal damage
+
+        //normal actions//
+        STANDING, //normal intent, posture
+        FALLING, //vertical motion, posture
+        SPRINTING,//forward motion, posture
+
+        //special actions//
+        GRAPPLE_FLYING,//minor posture and knockback
+        GRAPPLE_ATTACK,//breach and internal damage
+        GUARD_COUNTER,//breach and posture damage
+        THROW,//breach and style points
+        PICKUP_FLOURISH//posture
     }
 
     public static class MeleeInfo {
@@ -313,9 +320,13 @@ public class WeaponStats extends SimpleJsonResourceReloadListener {
         private SweepInfo[] sweeps = {
                 DEFAULT_FAN.clone(),
                 DEFAULT_CLEAVE.clone(),
-                DEFAULT_IMPACT.clone(),
-                DEFAULT_CIRCLE.clone(),
-                DEFAULT_LINE.clone()
+                DEFAULT_FAN.clone(),
+                DEFAULT_FAN.clone(),
+                DEFAULT_FAN.clone(),
+                DEFAULT_FAN.clone(),
+                DEFAULT_FAN.clone(),
+                DEFAULT_FAN.clone(),
+                DEFAULT_FAN.clone()
         };
 
         private MeleeInfo(double attack, double defend) {
@@ -564,7 +575,7 @@ public class WeaponStats extends SimpleJsonResourceReloadListener {
             SweepInfo ret = clone();
             ret.breach = true;
             ret.crit = true;
-            ret.damage_scale = 1.3;
+            ret.damage_scale = 1;
             ret.crit_damage=2;
             return ret;
         }

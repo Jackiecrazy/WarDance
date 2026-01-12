@@ -16,6 +16,7 @@ public class MixinNewSweepAttack {
     @Redirect(method = "onAttack",
             at = @At(value = "INVOKE", target = "Lnet/minecraft/server/level/ServerPlayer;attack(Lnet/minecraft/world/entity/Entity;)V"))
     private void sweep(ServerPlayer player, Entity entity) {
+        CombatUtils.updateNormalAttackStatus(player);
         if (CombatUtils.getCooledAttackStrength(player, InteractionHand.MAIN_HAND, 1f) >= 0.9f) {
             int temp = player.attackStrengthTicker;
             if (!player.hasEffect(MobEffects.BLINDNESS))

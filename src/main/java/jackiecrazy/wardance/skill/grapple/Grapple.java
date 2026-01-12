@@ -9,7 +9,6 @@ import jackiecrazy.footwork.utils.ParticleUtils;
 import jackiecrazy.footwork.utils.TargetingUtils;
 import jackiecrazy.wardance.WarDance;
 import jackiecrazy.wardance.config.WeaponStats;
-import jackiecrazy.wardance.event.FractureEvent;
 import jackiecrazy.wardance.skill.*;
 import jackiecrazy.wardance.utils.CombatUtils;
 import jackiecrazy.wardance.utils.DamageUtils;
@@ -79,7 +78,7 @@ public class Grapple extends Skill {
     protected void performEffect(LivingEntity caster, LivingEntity target, SkillData stats) {
         if (!cast(caster, target, -999)) return;
         caster.level().playSound(null, target.getX(), target.getY(), target.getZ(), SoundEvents.BARREL_OPEN, SoundSource.PLAYERS, 0.3f + WarDance.rand.nextFloat() * 0.5f, 0.75f + WarDance.rand.nextFloat() * 0.5f);
-        CombatData.getCap(target).consumePosture(caster, 7 * stats.getEffectiveness() * stats.getEffectiveness(), true, 1);
+        CombatData.getCap(target).consumePosture(caster, 7 * stats.getEffectiveness() * stats.getEffectiveness(), ICombatCapability.BreachLevel.STUN);
         ParticleUtils.playSweepParticle(FootworkParticles.IMPACT.get(), caster, caster.position(), 0, 1, getColor(), 0);
     }
 
@@ -97,7 +96,7 @@ public class Grapple extends Skill {
             getExistingData(caster).addTarget(target);
             target.setDeltaMovement(caster.getDeltaMovement().add(caster.position().vectorTo(target.position()).scale(-0.3)));
             target.hurtMarked = true;
-            float overflow = CombatData.getCap(target).consumePosture(caster, posture * 1.5f, true, 1);
+            float overflow = CombatData.getCap(target).consumePosture(caster, posture * 1.5f, ICombatCapability.BreachLevel.KNOCKDOWN);
             if (overflow < 0) {
                 //suplex shockwave
                 ParticleUtils.playSweepParticle(FootworkParticles.IMPACT.get(), caster, target.position(), 0, 7 * stats.getEffectiveness(), getColor(), 0);
@@ -113,11 +112,6 @@ public class Grapple extends Skill {
 
         @Override
         public void onProc(LivingEntity caster, Event procPoint, STATE state, SkillData stats, LivingEntity target) {
-            if (state == STATE.ACTIVE && procPoint instanceof FractureEvent e) {
-                if (stats.getTargets().contains(target))
-                    e.addAmount(1);
-                else e.setCanceled(true);
-            }
             super.onProc(caster, procPoint, state, stats, target);
         }
     }

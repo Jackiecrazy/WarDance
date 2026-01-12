@@ -1,16 +1,25 @@
 package jackiecrazy.wardance.entity;
 
+import jackiecrazy.footwork.capability.resources.CombatData;
+import jackiecrazy.footwork.capability.resources.ICombatCapability;
 import jackiecrazy.footwork.entity.flyingweapon.FlyingItemEntity;
 import jackiecrazy.footwork.entity.flyingweapon.FlyingWeaponEffect;
+import jackiecrazy.footwork.utils.GeneralUtils;
+import jackiecrazy.footwork.utils.TargetingUtils;
 import jackiecrazy.wardance.capability.flyingweapon.FlyingWeaponData;
+import jackiecrazy.wardance.utils.CombatUtils;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.Vec3i;
 import net.minecraft.core.particles.BlockParticleOption;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.server.level.ServerLevel;
+import net.minecraft.util.Mth;
+import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.level.Level;
@@ -73,6 +82,7 @@ public class ShadowBlockEntity extends ThrownWeaponEntity {
                 );
             }
         }
+        shockwave(5);
         remove(RemovalReason.KILLED);
     }
 
@@ -102,9 +112,21 @@ public class ShadowBlockEntity extends ThrownWeaponEntity {
                     );
                 }
             }
+            shockwave(5);
             remove(RemovalReason.KILLED);
 
         }
         return ret;
+    }
+
+    private void shockwave(double radius) {
+        for (Entity t : level().getEntities(this, this.getBoundingBox().inflate(radius), (a -> !TargetingUtils.isAlly(a, getOwner())))) {
+            float strength = 1.3f;
+            if (t instanceof LivingEntity e) {
+                strength = Math.min(strength, 0.2f + Mth.clamp(strength * 1 - CombatData.getCap(e).getPosturePercentage(), 0, 1));
+            }
+            CombatUtils.knockBack(t, this, strength, true, false);
+
+        }
     }
 }

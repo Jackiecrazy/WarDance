@@ -242,6 +242,7 @@ public class MovementUtils {
         if (!StylishData.getCap(elb).isCombatMode() && (itsc.getStunTime() == 0)) return false;
         //dodge time check
         if (itsc.getDodgeTime() <= -CombatConfig.rollCooldown) {
+            elb.extinguishFire();
             if (side == 99&&elb.onGround()) return attemptSlide(elb);
             Entity target = GeneralUtils.raytraceEntity(elb.level(), elb, 32);
             float adjustment = 0;

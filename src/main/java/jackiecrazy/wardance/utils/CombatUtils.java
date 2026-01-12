@@ -26,7 +26,6 @@ import jackiecrazy.wardance.networking.CombatChannel;
 import jackiecrazy.wardance.networking.combat.UpdateAttackCooldownPacket;
 import net.minecraft.core.particles.DustParticleOptions;
 import net.minecraft.core.particles.ParticleType;
-import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
@@ -62,7 +61,7 @@ public class CombatUtils {
 
     public static final UUID off = UUID.fromString("8c8028c8-da69-49a2-99cd-f92d7ad22534");
     public static final UUID main = UUID.fromString("8c8028c8-da67-49a2-99cd-f92d7ad22534");
-    public static boolean suppressChangeFunctions = false, allowCombatHotbarPickup=false;
+    public static boolean suppressChangeFunctions = false, allowCombatHotbarPickup = false;
     private static ProjectileInfo DEFAULTRANGED = new ProjectileInfo(0.6, 1, false, false);
     private static HashMap<EntityType, ProjectileInfo> projectileMap = new HashMap<>();
 
@@ -96,7 +95,8 @@ public class CombatUtils {
         }
         if (from.attackStrengthTicker > 0) {
             int temp = from.attackStrengthTicker;
-            if (from instanceof Player) ((Player) from).attack(to);
+            CombatUtils.updateNormalAttackStatus(from);
+            if (from instanceof Player p) p.attack(to);
             else from.doHurtTarget(to);
             from.attackStrengthTicker = temp;
         }
@@ -218,11 +218,6 @@ public class CombatUtils {
                                       double amount,
                                       ItemStack stack) {
         double base = amount * (float) WeaponStats.DEFAULTMELEE.getAttackPostureMultiplier();
-        //Spartan Shields compat, doesn't seem to work?
-        if (attacker != null && attacker.isBlocking()) {
-            h = attacker.getUsedItemHand();
-            stack = attacker.getItemInHand(h);
-        }
         if (ds instanceof CombatDamageSource cds && cds.getPostureDamage() >= 0) return cds.getPostureDamage();
         float scaler = CombatConfig.mobScaler;
         if (stack != null && !stack.isEmpty()) {//weapon
@@ -234,7 +229,7 @@ public class CombatUtils {
                 if (meleeInfo != null) {
                     base = (float) meleeInfo.getAttackPostureMultiplier();
                     if (attacker != null) {
-                        final WeaponStats.SweepInfo info = WeaponStats.getSweepInfo(attacker.getMainHandItem(), CombatUtils.getSweepState(attacker));
+                        final WeaponStats.SweepInfo info = WeaponStats.getSweepInfo(attacker.getMainHandItem(), CombatUtils.getAttackState(attacker));
                         base *= info.getPostureScale();
                     }
                 }
@@ -243,18 +238,24 @@ public class CombatUtils {
             if (attacker != null) {
                 base *= MobSpecs.getOrDefault(attacker).getItemPostureScaling();
             }
+            base*=5;//temporary
 
         } else {//unarmed
             if (attacker != null && !(attacker instanceof Player)) {
                 base = MobSpecs.getOrDefault(attacker).getBaseAttackPosture();
                 if (base == -1)
                     base = CombatData.getCap(attacker).getMaxPosture() * CombatConfig.defaultMultiplierPostureMob;
-            }else return 3;//magic number
+            } else return 12;//magic number
         }
         if (attacker == null || h == null) return (float) base;
         double finalScale = scaler;
         if (attacker instanceof Player) {
             finalScale = (Math.max(CombatData.getCap(attacker).getProc("swing"), ((Player) attacker).getAttackStrengthScale(0.5f)) - 0.20) / 0.80;
+        }else{
+            //mob exhaustion penalty
+            if(CombatData.getCap(attacker).getPosture()<=0){
+                finalScale*=0.3;
+            }
         }
         return (float) (base * finalScale);
     }
@@ -417,7 +418,7 @@ public class CombatUtils {
 
     public static void sweep(LivingEntity e, Entity ignore, InteractionHand h, double reach) {
         ItemStack stack = e.getItemInHand(h);
-        WeaponStats.SWEEPSTATE s = getSweepState(e);
+        WeaponStats.AttackType s = getAttackState(e);
         WeaponStats.SweepInfo info = WeaponStats.getSweepInfo(stack, s);
         //apply instantaneous damage multiplier
         SkillUtils.modifyAttribute(e, Attributes.ATTACK_DAMAGE, main, info.getDamageScale() - 1, AttributeModifier.Operation.MULTIPLY_TOTAL);
@@ -453,6 +454,8 @@ public class CombatUtils {
 
         SweepEvent sre = new SweepEvent(e, h, e.getMainHandItem(), type, base, scaling);
         MinecraftForge.EVENT_BUS.post(sre);
+        if (!CombatData.getCap(e).alreadyProc("sweepState"))
+            CombatUtils.updateNormalAttackStatus(e);
         base = sre.getBase();
         scaling = sre.getScaling();
         radius = sre.getFinalizedWidth();
@@ -477,6 +480,7 @@ public class CombatUtils {
 
 
         double charge = Math.max(CombatUtils.getCooledAttackStrength(e, InteractionHand.MAIN_HAND, 0.5f), CombatData.getCap(e).getProc("swing"));
+        //any sweep of mine is going to be SOMETHING
         boolean hit = false;
         if (ignore != null)
             CombatData.getCap(e).tickProc("oncePerSweep");
@@ -572,17 +576,23 @@ public class CombatUtils {
         ppe.setTrigger(pi.trigger | type.is(MobSpecs.TRIGGER_ON_PARRY));
     }
 
-    public static WeaponStats.SWEEPSTATE getSweepState(LivingEntity entity) {
-        if (CombatData.getCap(entity).alreadyProc("sweepStateOverride"))
-            return WeaponStats.SWEEPSTATE.values()[(int) CombatData.getCap(entity).getProc("sweepStateOverride")];
-        //if (entity.isCrouching()) return WeaponStats.SWEEPSTATE.SNEAKING;
+    public static void setAttackType(LivingEntity entity, WeaponStats.AttackType set){
+        CombatData.getCap(entity).tickProc("sweepState", set.ordinal());
+    }
+
+    public static void updateNormalAttackStatus(LivingEntity entity) {
+        WeaponStats.AttackType set = WeaponStats.AttackType.STANDING;
         if (entity.isSwimming() || entity.isSprinting() || entity.isFallFlying() || CombatData.getCap(entity).isDodging())
-            return WeaponStats.SWEEPSTATE.SPRINTING;
-        if (entity.getDeltaMovement().y > 0)
-            return WeaponStats.SWEEPSTATE.SNEAKING;//fixme
+            set = WeaponStats.AttackType.SPRINTING;
         if ((!(entity instanceof Player p) || !p.getAbilities().flying) && !entity.onGround() && entity.fallDistance > 0 && !entity.onClimbable() && !entity.isInWater())
-            return WeaponStats.SWEEPSTATE.FALLING;
-        return WeaponStats.SWEEPSTATE.STANDING;
+            set = WeaponStats.AttackType.FALLING;
+        CombatData.getCap(entity).tickProc("sweepState", set.ordinal());
+    }
+
+    public static WeaponStats.AttackType getAttackState(LivingEntity entity) {
+        if (CombatData.getCap(entity).alreadyProc("sweepState"))
+            return WeaponStats.AttackType.values()[(int) CombatData.getCap(entity).getProc("sweepState")];
+        return WeaponStats.AttackType.UNDEFINED;
     }
 
     public static void onSuccessfulBlock(LivingEntity defender,
@@ -677,10 +687,6 @@ public class CombatUtils {
         cap.setDodgeTime(0);
         cap.setIframe(remaining);
 
-        //temporary. Halves your posture damage and adds equivalent parry.
-        float toHeal = (cap.getMaxPosture() - cap.getPosture()) / 2;
-        cap.addRally(toHeal);
-
         if (defender instanceof Player) {
             triggerSteveTime(defender, 30);
         }
@@ -690,7 +696,7 @@ public class CombatUtils {
                                          Entity attacker,
                                          @Nullable InteractionHand hand,
                                          @Nullable ItemStack defend,
-                                         float amount) {
+                                         float amount, float damage) {
         int radius = 5;
 
         //resolve trigger charges and emit a shockwave that deals ??? posture damage in an area. Cannot breach.
@@ -714,11 +720,15 @@ public class CombatUtils {
             }
 
         if (defender instanceof Player) {
+            if (hand == null)
+                hand = defender.getOffhandItem() == defend ? InteractionHand.OFF_HAND : InteractionHand.MAIN_HAND;
+
             for (Entity t : defender.level().getEntities(defender, defender.getBoundingBox().inflate(radius), (a -> !TargetingUtils.isAlly(a, defender)))) {
                 float strength = 1.3f;
                 if (t instanceof LivingEntity e) {
-                    CombatData.getCap(e).consumePosture(defender, 4, false, 1);
-                    strength = Math.min(strength, 0.2f + Mth.clamp(amount * 1-CombatData.getCap(e).getPosturePercentage(), 0, 1));
+                    CombatData.getCap(e).consumePosture(defender, 4, ICombatCapability.BreachLevel.NO);
+                    CombatData.getCap(e).recordDamage((float) damage);
+                    strength = Math.min(strength, 0.2f + Mth.clamp(amount * 1 - CombatData.getCap(e).getPosturePercentage(), 0, 1));
                 }
                 CombatUtils.knockBack(t, defender, strength, true, false);
 
@@ -735,19 +745,21 @@ public class CombatUtils {
         }
     }
 
-    public static void kick(LivingEntity kicker, Entity targetEntity){
+    public static void kick(LivingEntity kicker, Entity targetEntity, boolean breach) {
         kicker.level().playSound(null, kicker.getX(), kicker.getY(), kicker.getZ(), SoundEvents.ZOMBIE_ATTACK_WOODEN_DOOR, SoundSource.PLAYERS, 0.25f + WarDance.rand.nextFloat() * 0.5f, 0.5f + WarDance.rand.nextFloat() * 0.5f);
-        if(targetEntity instanceof LivingEntity target) {
-            CombatData.getCap(target).consumePosture(kicker, 2, false);
+        if (targetEntity instanceof LivingEntity target) {
+            CombatData.getCap(kicker).tickProc("qiSpent");
+            StylishData.getCap(kicker).addCombo(0.1f, "kick"+breach);
+            CombatData.getCap(target).consumePosture(kicker, 12, breach);
             ParticleUtils.playBonkParticle(kicker.level(), kicker.getEyePosition().add(kicker.getLookAngle().scale(Math.sqrt(GeneralUtils.getDistSqCompensated(kicker, target)))), 1, 0, 8, Color.WHITE);
-            target.hurt(new CombatDamageSource(kicker).setDamageTyping(FootworkDamageArchetype.PHYSICAL).setProcAttackEffects(true), 1);
+            target.hurt(new CombatDamageSource(kicker).setPostureDamage(0).setDamageTyping(FootworkDamageArchetype.PHYSICAL).flagBreach(breach).setProcAttackEffects(true), 1);
             if (target.getLastHurtByMob() == null)
                 target.setLastHurtByMob(kicker);
         }
         CombatUtils.knockBack(targetEntity, kicker, 0.8f, true, false);
     }
 
-    public static boolean scheduleFinisher(ServerPlayer sender, InteractionHand h, WeaponStats.SWEEPSTATE s) {
+    public static boolean scheduleFinisher(ServerPlayer sender, InteractionHand h, WeaponStats.AttackType s) {
 //        if (!StylishData.getCap(sender).canTrigger() && !sender.getAbilities().instabuild) {
 //            sender.displayClientMessage(Component.literal("Not enough Finisher Charge! Currently " + StylishData.getCap(sender).getTriggerBar()), true);
 //            return false;

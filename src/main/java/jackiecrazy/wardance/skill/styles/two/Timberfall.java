@@ -56,8 +56,6 @@ public class Timberfall extends WarCry {
             markUsed(caster, true);
             if (caster.level() instanceof ServerLevel server)
                 server.sendParticles(new BlockParticleOption(ParticleTypes.BLOCK, Blocks.OAK_LOG.defaultBlockState()).setPos(target.blockPosition()), target.getX(), target.getY(), target.getZ(), 40, target.getBbWidth(), target.getBbHeight() / 2, target.getBbWidth(), 0.5f);
-        } else if (procPoint instanceof FractureEvent cpe && state == STATE.ACTIVE && cpe.getEntity() == target) {
-            if (!cpe.isCanceled()) cpe.addAmount(1);
         } else if (procPoint instanceof LivingHurtEvent cpe && stats.isCondition() && DamageUtils.isMeleeAttack(cpe.getSource()) && state == STATE.ACTIVE && cpe.getEntity() == target) {
             if (!cpe.isCanceled()) {
                 if (cpe.getSource() instanceof CombatDamageSource cds) {

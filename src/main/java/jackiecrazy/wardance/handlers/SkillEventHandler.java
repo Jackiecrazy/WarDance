@@ -276,16 +276,16 @@ public class SkillEventHandler {
     }
 
     @SubscribeEvent(priority = EventPriority.HIGHEST)
-    public static void exp(FractureEvent e) {
+    public static void exp(DamageRetconEvent e) {
         if (e.getEntity() == null || !e.getEntity().isEffectiveAi()) return;
         ISkillCapability isc = CasterData.getCap(e.getEntity());
         for (Skill s : isc.getEquippedSkillsAndStyle()) {
-            isc.getSkillData(s).ifPresent(d -> s.onProc(e.getEntity(), e, d.getState(), d, e.getAttacker()));
+            isc.getSkillData(s).ifPresent(d -> s.onProc(e.getEntity(), e, d.getState(), d, e.getTarget()));
         }
-        if (e.getAttacker() == null) return;
-        isc = CasterData.getCap(e.getAttacker());
+        if (e.getTarget() == null) return;
+        isc = CasterData.getCap(e.getTarget());
         for (Skill s : isc.getEquippedSkillsAndStyle()) {
-            isc.getSkillData(s).ifPresent(d -> s.onProc(e.getAttacker(), e, d.getState(), d, e.getEntity()));
+            isc.getSkillData(s).ifPresent(d -> s.onProc(e.getTarget(), e, d.getState(), d, e.getEntity()));
         }
     }
 
@@ -304,16 +304,16 @@ public class SkillEventHandler {
     }
 
     @SubscribeEvent(priority = EventPriority.LOWEST)
-    public static void expe(FractureEvent e) {
+    public static void expe(DamageRetconEvent e) {
         if (e.getEntity() == null || !e.getEntity().isEffectiveAi()) return;
         ISkillCapability isc = CasterData.getCap(e.getEntity());
         for (Skill s : isc.getEquippedSkillsAndStyle()) {
-            isc.getSkillData(s).ifPresent(d -> s.onProc(e.getEntity(), e, d.getState(), d, e.getAttacker()));
+            isc.getSkillData(s).ifPresent(d -> s.onProc(e.getEntity(), e, d.getState(), d, e.getTarget()));
         }
-        if (e.getAttacker() == null) return;
-        isc = CasterData.getCap(e.getAttacker());
+        if (e.getTarget() == null) return;
+        isc = CasterData.getCap(e.getTarget());
         for (Skill s : isc.getEquippedSkillsAndStyle()) {
-            isc.getSkillData(s).ifPresent(d -> s.onProc(e.getAttacker(), e, d.getState(), d, e.getEntity()));
+            isc.getSkillData(s).ifPresent(d -> s.onProc(e.getTarget(), e, d.getState(), d, e.getEntity()));
         }
     }
 

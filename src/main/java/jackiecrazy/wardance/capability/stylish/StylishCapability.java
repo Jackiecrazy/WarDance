@@ -116,17 +116,20 @@ public class StylishCapability implements IStyleCapability {
     public void addCombo(float amount, @Nonnull String source) {
         //calculate freshness
         float decr = amount / 2;
-        boolean fresh=true;
+        int fresh=1;
         for (String str : freshness) {
             if (source.equals(str)){
-                fresh=false;
+                fresh++;
                 amount -= decr;
             }
         }
         //trail. Add spirit on fresh action.
-        if(fresh)CombatData.getCap(dude.get()).addSpirit(1);
+        if(fresh==1)CombatData.getCap(dude.get()).addSpirit(1);
         //reset combo timer even if too stale
         refresh();
+        //hmmmm
+        final float rallied = CombatData.getCap(dude.get()).getRally() / fresh;
+        CombatData.getCap(dude.get()).rally(rallied);
         //too stale!
         if (amount <= 0) return;
         combo += amount;

@@ -1,7 +1,6 @@
 package jackiecrazy.wardance.skill.shieldbash;
 
 import jackiecrazy.footwork.capability.resources.CombatData;
-import jackiecrazy.wardance.event.FractureEvent;
 import jackiecrazy.wardance.skill.ProcPoints;
 import jackiecrazy.wardance.skill.SkillData;
 import net.minecraft.world.InteractionHand;
@@ -29,9 +28,6 @@ public class Overbear extends ShieldBash {
 
     @Override
     public void onProc(LivingEntity caster, Event procPoint, STATE state, SkillData stats, LivingEntity target) {
-        if (state == STATE.ACTIVE && procPoint instanceof FractureEvent e) {
-            e.addAmount(1);
-        }
         super.onProc(caster, procPoint, state, stats, target);
     }
 }

@@ -54,11 +54,11 @@ public class RequestSweepPacket {
             contextSupplier.get().enqueueWork(() -> {
                 ServerPlayer sender = contextSupplier.get().getSender();
                 InteractionHand h = updateClientPacket.main ? InteractionHand.MAIN_HAND : InteractionHand.OFF_HAND;
-                boolean shouldAttack = true;
                 if (sender == null) return;
                 float cool = CombatUtils.getCooledAttackStrength(sender, h, 1f);
                 if ((GeneralConfig.dual || updateClientPacket.main) && cool >= 0.9f) {
                     if (!sender.hasEffect(MobEffects.BLINDNESS)) {
+                        CombatUtils.updateNormalAttackStatus(sender);
                         CombatUtils.sweep(sender, sender.level().getEntity(updateClientPacket.id), h, GeneralUtils.getAttributeValueSafe(sender, ForgeMod.ENTITY_REACH.get()));
                     }
                 }

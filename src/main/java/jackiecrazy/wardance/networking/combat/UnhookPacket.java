@@ -4,7 +4,6 @@ import jackiecrazy.wardance.capability.flyingweapon.FlyingWeaponData;
 import jackiecrazy.wardance.capability.flyingweapon.IFlyingWeapon;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.server.level.ServerPlayer;
-import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.network.NetworkEvent;
 
 import java.util.function.BiConsumer;
@@ -38,11 +37,10 @@ public class UnhookPacket {
             contextSupplier.get().enqueueWork(() -> {
                 ServerPlayer sender = contextSupplier.get().getSender();
                 if (sender == null) return;
-                //have a weapon, yeet!
                 final IFlyingWeapon cap = FlyingWeaponData.getCap(sender);
                 sender.resetFallDistance();
                 if (cap.getGrapple() != null) {
-                    cap.getGrapple().rappel();
+                    cap.getGrapple().yank();
                 }
             });
             contextSupplier.get().setPacketHandled(true);

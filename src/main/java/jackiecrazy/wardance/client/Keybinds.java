@@ -7,6 +7,7 @@ import jackiecrazy.footwork.capability.stylish.StylishData;
 import jackiecrazy.wardance.WarDance;
 import jackiecrazy.wardance.capability.skill.CasterData;
 import jackiecrazy.wardance.client.screen.skill.SkillCastScreen;
+import jackiecrazy.wardance.config.QiCosts;
 import jackiecrazy.wardance.networking.CombatChannel;
 import jackiecrazy.wardance.networking.combat.CombatModePacket;
 import jackiecrazy.wardance.networking.combat.DodgePacket;
@@ -119,12 +120,14 @@ public class Keybinds {
             else if (CasterData.getCap(mc.player).getHolsteredSkill() != null) {
                 CombatChannel.INSTANCE.sendToServer(new EvokeSkillPacket());
             } else {
-                CombatChannel.INSTANCE.sendToServer(new KickPacket());
+                CombatChannel.INSTANCE.sendToServer(new KickPacket(ClientEvents.coyoteTimeID));
                 HitResult destination = ProjectileUtil.getHitResultOnViewVector(mc.player, EntitySelector.LIVING_ENTITY_STILL_ALIVE, 3);
-                if (destination.getType() != HitResult.Type.MISS) {
+                if (destination.getType() != HitResult.Type.MISS&&CombatData.getCap(mc.player).getPosture()>= QiCosts.KICK) {
                     //jump up
-                    if (!mc.player.onGround())
-                        mc.player.addDeltaMovement(new Vec3(0, 1, 0));
+                    if (!mc.player.onGround()) {
+                        Vec3 vel=mc.player.getDeltaMovement();
+                        mc.player.setDeltaMovement(new Vec3(vel.x, 1, vel.z));
+                    }
                 }
             }
         }

@@ -64,6 +64,7 @@ public class RequestAttackPacket {
                         }
                         if (sender.attackStrengthTicker > 0) {
                             int temp = sender.attackStrengthTicker;
+                            CombatUtils.updateNormalAttackStatus(sender);
                             sender.attack(e);
                             sender.attackStrengthTicker = temp;
                         } if (!updateClientPacket.main) {

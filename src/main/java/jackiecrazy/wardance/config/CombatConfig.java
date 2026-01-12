@@ -497,7 +497,7 @@ public class CombatConfig {
         _staggerDuration = b.translation("wardance.config.staggerD").comment("Number of ticks an entity should be stunned for when its posture reaches 0.").defineInRange("stun duration", 100, 1, Integer.MAX_VALUE);
         _knockdownDuration = b.translation("wardance.config.knockdownD").comment("Number of ticks a mob should be knocked down.").defineInRange("mob knockdown duration", 100, 1, Integer.MAX_VALUE);
         _knockdownDurationPlayer = b.translation("wardance.config.knockdownD").comment("Number of ticks a player should be knocked down.").defineInRange("player knockdown duration", 40, 1, Integer.MAX_VALUE);
-        _stun = b.translation("wardance.config.unstagger").comment("Damage taken by a stunned entity.").defineInRange("stun damage multiplier", 1, 0, Double.MAX_VALUE);
+        _stun = b.translation("wardance.config.unstagger").comment("Damage taken by a stunned entity.").defineInRange("stun damage multiplier", 2, 0, Double.MAX_VALUE);
         _unstagger = b.translation("wardance.config.unstagger").comment("Damage taken by a non-exposed entity. Added out of curiosity.").defineInRange("normal damage multiplier", 1, 0, Double.MAX_VALUE);
         b.pop();
         b.push("difficulty");

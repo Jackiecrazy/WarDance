@@ -145,16 +145,7 @@ public class FlyingWeaponCapability implements IFlyingWeapon {
             else if (getWeapon(hand) == null) {
                 //make new weapons
                 //create a flying weapon
-                FlyingWeaponEntity fwe = new FlyingWeaponEntity(WarEntities.WEAPON.get(), player.level());
-                updateWeapon(fwe, hand);
-                if (isMain) {
-                    main = fwe;
-                } else {
-                    fwe.setUniversalOffset(new Vec3(-1, 0, 0));
-                    off = fwe;
-                }
-                if (!player.level().isClientSide())
-                    player.level().addFreshEntity(fwe);
+                respawnWeapon(hand);
             } else {
                 //check the old weapons to see if they need to be replaced
                 FlyingItemEntity fwe = getWeapon(hand);
@@ -190,6 +181,20 @@ public class FlyingWeaponCapability implements IFlyingWeapon {
         }
     }
 
+    private void respawnWeapon(InteractionHand hand) {
+        //fixme a new pair is made every reload
+        FlyingWeaponEntity fwe = new FlyingWeaponEntity(WarEntities.WEAPON.get(), player.level());
+        updateWeapon(fwe, hand);
+        if (hand==InteractionHand.MAIN_HAND) {
+            main = fwe;
+        } else {
+            fwe.setUniversalOffset(new Vec3(-1, 0, 0));
+            off = fwe;
+        }
+        if (!player.level().isClientSide())
+            player.level().addFreshEntity(fwe);
+    }
+
     @Override
     public void setRender(InteractionHand hand, FlyingWeaponEffect... effects) {
         if (getWeapon(hand).isIdle())
@@ -201,8 +206,10 @@ public class FlyingWeaponCapability implements IFlyingWeapon {
         if(hand==null&&getHeldBlock()!=null){
             getHeldBlock().yeet(pos);
             held=null;
+            StylishData.getCap(player).addCombo(0.12f, "blockyeet");
         }
         if (getWeapon(hand).isIdle()) {
+            StylishData.getCap(player).addCombo(0.2f, "throw");
             Level level = getWeapon(hand).level();
             ThrownWeaponEntity fwe = new ThrownWeaponEntity(WarEntities.THROWN_WEAPON.get(), level);
             fwe.setHeldItem(player.getItemInHand(hand).copyWithCount(1));
@@ -231,5 +238,15 @@ public class FlyingWeaponCapability implements IFlyingWeapon {
         fwe.setOwner(player);
         fwe.setPosRaw(player.xo, player.yo, player.zo);
         fwe.setInteractionRange((float) GeneralUtils.getAttributeValueHandSensitive(player, ForgeMod.ENTITY_REACH.get(), hand));
+    }
+
+    @Override
+    public void forceRefreshWeapon(InteractionHand hand) {
+        FlyingItemEntity fwe = getWeapon(hand);
+        if(fwe==null||fwe.isRemoved()){
+            respawnWeapon(hand);
+            fwe=getWeapon(hand);
+        }
+        updateWeapon(fwe, hand);
     }
 }

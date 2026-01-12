@@ -64,9 +64,9 @@ public class ResourceDisplay implements IGuiOverlay {
         mc.getProfiler().push("postureBar");
         float cap = itsc.getMaxPosture();
         //182
-        //so we want the full size to be 240, 25 to be 125, and every 5 max posture changes this by 20 pixels
-        int halfBarWidth = Math.min(240, (int) (Math.sqrt(itsc.getMaxPosture()) * 25)) / 2;
+        //so we want the full size to be 240, 72 to be 125, and every 20 max posture changes this by 20 pixels
         //divvy by 2 for two-pronged approach
+        int halfBarWidth = Math.min(240, (int) (Math.sqrt(itsc.getMaxPosture()) * 14.73)) / 2;
         int flexBarWidth = halfBarWidth + 3;
         final int barHeight = 12;
         //double shatter = MathHelper.clamp(itsc.getBarrier() / itsc.getMaxBarrier(), 0, 1);
@@ -103,9 +103,9 @@ public class ResourceDisplay implements IGuiOverlay {
                 ms.blit(newdark, atX - rally, barY, 0, 12, rally, barHeight);
 
                 //then layer the gray portion on
-//                flexBarWidth = (int) ((itsc.getMaxPosture() - itsc.getPosture() - itsc.getRally()) * halfBarWidth / itsc.getMaxPosture()) + 3;
-//                ms.blit(newdark, atX, barY, 243 - flexBarWidth, 24, flexBarWidth, barHeight);
-//                ms.blit(newdark, atX - flexBarWidth, barY, 0, 24, flexBarWidth, barHeight);
+                flexBarWidth = (int) ((itsc.getMaxPosture() - itsc.getPosture() - itsc.getRally()) * halfBarWidth / itsc.getMaxPosture()) + 3;
+                ms.blit(newdark, atX, barY, 243 - flexBarWidth, 24, flexBarWidth, barHeight);
+                ms.blit(newdark, atX - flexBarWidth, barY, 0, 24, flexBarWidth, barHeight);
             }
             // render steve time frames
 //            if (itsc.isIframe()) {
@@ -119,7 +119,7 @@ public class ResourceDisplay implements IGuiOverlay {
 //            }
             if (itsc.getRecordedDamage() > 0) {
                 //internal damage as a percentage of max health
-                float otemp = Mth.clamp(itsc.getRecordedDamage() / (2 * elb.getMaxHealth()),0,1);
+                float otemp = Mth.clamp(itsc.getRecordedDamage() / (elb.getMaxHealth()),0,1);
                 int fini = (int) (otemp * halfBarWidth);
                 int shatterV = Math.min(36 + (int) (otemp * 2.8) * 12, 60);
                 //gold that stretches out to the edges before disappearing
@@ -128,7 +128,7 @@ public class ResourceDisplay implements IGuiOverlay {
                 RenderSystem.setShaderColor(1, 1, 1, 1);
             }
             //render insignia
-            {
+            if(!itsc.canBlock()||elb.isBlocking()||itsc.isParrying()||itsc.isIframe()||itsc.isStunned()){
                 int insigniaWH = 24;
                 int iconW = 12, iconH = 10;
                 //normal, use green

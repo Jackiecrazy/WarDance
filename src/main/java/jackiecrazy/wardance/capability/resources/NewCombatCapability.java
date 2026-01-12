@@ -14,6 +14,7 @@ import jackiecrazy.wardance.capability.action.PermissionData;
 import jackiecrazy.wardance.compat.ElenaiCompat;
 import jackiecrazy.wardance.compat.WarCompat;
 import jackiecrazy.wardance.config.*;
+import jackiecrazy.wardance.event.DamageRetconEvent;
 import jackiecrazy.wardance.handlers.TwoHandingHandler;
 import jackiecrazy.wardance.mixin.InCombatAccessor;
 import jackiecrazy.wardance.networking.CombatChannel;
@@ -70,10 +71,10 @@ public class NewCombatCapability implements ICombatCapability {
     private int mobPosCD = 60, maxMobPosCD = 60, rallyCD;
     private boolean player;
     private HashMap<String, Double> procs = new HashMap<>();
-    private int recordingTime = 0;
     private float recordedDamage = 0;
     private int pinTime;
     private boolean dirty = false;
+    private int healthyCooldown = 100;
 
     public NewCombatCapability(LivingEntity e) {
         dude = new WeakReference<>(e);
@@ -86,7 +87,7 @@ public class NewCombatCapability implements ICombatCapability {
         MobSpecs.MobInfo mi = MobSpecs.getMobInfo(elb);
         if (mi != null)
             return (float) mi.getMaxPosture();
-        else ret = (float) (Math.ceil(10 / 1.09 * Math.sqrt(elb.getBbWidth() * elb.getBbHeight())));
+        else ret = (float) (Math.ceil(50 / 1.09 * Math.sqrt(elb.getBbWidth() * elb.getBbHeight())));
         if (elb instanceof Player) ret *= 1.5f;
         return ret;
     }
@@ -176,7 +177,7 @@ public class NewCombatCapability implements ICombatCapability {
     }
 
     @Override
-    public float consumePosture(LivingEntity assailant, float amount, boolean breach, float rallyConversion) {
+    public float consumePosture(LivingEntity assailant, float amount, BreachLevel breachLevel) {
         //WarDance.LOGGER.debug("consume posture check 1");
         //while posture is not empty incoming damage is reduced by posture??? How to calculate damage <> posture?
         //on taking a breaching hit to posture, flag stun, which interrupts all AI, cancels all knockback, and records damage?
@@ -224,18 +225,18 @@ public class NewCombatCapability implements ICombatCapability {
 
         //players heal rally
         if (assailant instanceof Player p) {
-            CombatData.getCap(p).rally((float) (amount * p.getAttributeValue(FootworkAttributes.RALLY_CONVERSION.get())));
+            CombatData.getCap(p).retconDamage((float) (amount * p.getAttributeValue(FootworkAttributes.RALLY_CONVERSION.get())));
         }
         mobPosCD = maxMobPosCD;
 
         //stun check
-        if ((isStunned() || posture - amount < 0) && breach) {
+        if ((isStunned() || posture - amount < 0) && (breachLevel == BreachLevel.STUN || breachLevel == BreachLevel.KNOCKDOWN)) {
             //start stun
             ret = posture - amount;
             //I don't like this here but I don't see a good way around it
             float prev = posture;
             //if already stunned, a second breaching hit knocks down
-            final boolean knockdown = isStunned() || alreadyProc("forceKnockDown") || (posture == 0 && player);
+            final boolean knockdown = (posture <= 0 && player);//breachLevel == BreachLevel.KNOCKDOWN || isStunned() || alreadyProc("forceKnockDown") ||
             posture = 0;
             StunEvent se = new StunEvent(elb, assailant, knockdown ? (elb instanceof Player ? CombatConfig.knockdownDurationPlayer : CombatConfig.knockdownDuration) : CombatConfig.staggerDuration, knockdown);
             MinecraftForge.EVENT_BUS.post(se);
@@ -277,7 +278,10 @@ public class NewCombatCapability implements ICombatCapability {
                 weakness *= GeneralConfig.hunger;
         double cooldown = ResourceConfig.postureCD * weakness;
         posture -= amount;
-        addRally(amount * rallyConversion);
+        if (posture < 0) posture = 0;
+        if (amount > 0) {
+            addRally(amount * StylishData.getCap(elb).getCombo());
+        }
         if (WarCompat.elenaiDodge && elb instanceof ServerPlayer sp)
             ElenaiCompat.manipulateFeather(sp, 0);
         return ret;
@@ -292,7 +296,8 @@ public class NewCombatCapability implements ICombatCapability {
     public void setRally(float v) {
         //only players get rally
         if (player) {
-            rally = v;//(float) Math.min(v, dude.get().getAttributeValue(FootworkAttributes.MAX_RALLY.get()));
+            rally = Mth.clamp(v, 0, posture);//(float) Math.min(v, dude.get().getAttributeValue(FootworkAttributes.MAX_RALLY.get()));
+            if (rally < 0) rally = 0;
             rallyCD = RALLY_CD;
             dirty = true;
         }
@@ -301,14 +306,24 @@ public class NewCombatCapability implements ICombatCapability {
     @Override
     public void rally(float amount) {
         if (alreadyProc("rally")) return;
-        RallyPostureEvent rpe = new RallyPostureEvent(dude.get(), amount);
-        MinecraftForge.EVENT_BUS.post(rpe);
-        if (rpe.isCanceled()) return;
-        amount = rpe.getQuantity();//Math.min(rpe.getQuantity(), rally);
+//        RallyPostureEvent rpe = new RallyPostureEvent(dude.get(), amount);
+//        MinecraftForge.EVENT_BUS.post(rpe);
+//        if (rpe.isCanceled()) return;
+        //amount = rpe.getQuantity();//Math.min(rpe.getQuantity(), rally);
         rally -= amount;
         rallyCD = RALLY_CD;
         tickProc("rally");
-        //setPosture(posture + amount);
+        setPosture(posture + amount);
+    }
+
+    @Override
+    public void retconDamage(float amount) {
+        if (alreadyProc("rally")) return;
+        DamageRetconEvent rpe = new DamageRetconEvent(dude.get(), amount);
+        MinecraftForge.EVENT_BUS.post(rpe);
+        if (rpe.isCanceled()) return;
+        amount = rpe.getAmount();//Math.min(rpe.getQuantity(), rally);
+        tickProc("rally");
         recordedDamage -= amount;
         if (recordedDamage < 0) recordedDamage = 0;
     }
@@ -344,11 +359,13 @@ public class NewCombatCapability implements ICombatCapability {
             pin(0);
             setHandBind(InteractionHand.MAIN_HAND, 0);
             setHandBind(InteractionHand.OFF_HAND, 0);
+            SkillUtils.removeAttribute(e, Attributes.ARMOR, STOPMOVING);
         }//entering stagger
         else if (e != null && time > 0 && staggerTime == 0) {
             pin(time);
             setHandBind(InteractionHand.MAIN_HAND, time);
             setHandBind(InteractionHand.OFF_HAND, time);
+            SkillUtils.addAttribute(e, Attributes.ARMOR, STOPMOVING);
         }
         maxStaggerTime = Math.max(maxStaggerTime, time);
         staggerTime = time;
@@ -393,9 +410,6 @@ public class NewCombatCapability implements ICombatCapability {
         //store motion for further use
         if (ticks > 5 || (lastUpdate + ticks) % 5 != lastUpdate % 5)
             motion = elb.position();
-
-        //damage recording resolution
-        --recordingTime;
 
         //tick down everything
         //hand bind
@@ -464,17 +478,6 @@ public class NewCombatCapability implements ICombatCapability {
             prev = elb.getOffhandItem();
             setOffhandCooldown(0);
         }
-
-        //handle rallying
-        if (rally > 0) {
-            if (rallyCD - ticks > 0)
-
-                rallyCD -= ticks;
-            else {
-                rally -= Math.min(rally, 0.01f * (ticks - rallyCD));
-                rallyCD = 0;
-            }
-        } else rally = 0;
 
         //decrement or clear turn procs
         procs.replaceAll((k, v) -> v - 1);
@@ -679,29 +682,19 @@ public class NewCombatCapability implements ICombatCapability {
     }
 
     @Override
-    public int getDamageRecordTime() {
-        return !isStunned() && !alreadyProc("knockdown") ? 1 : 0;
-    }
-
-    @Override
     public float getRecordedDamage() {
         return recordedDamage;
     }
 
     @Override
-    public void startRecordingDamage(int time) {
-        recordingTime = time;
-    }
-
-    @Override
     public void recordDamage(float v) {
-        if(recordedDamage<0)recordedDamage=0;
+        if (v > 0) healthyCooldown = 60;
+        if (recordedDamage < 0) recordedDamage = 0;
         recordedDamage += v;
     }
 
     @Override
     public void stopRecording(DamageSource damageSource) {
-        recordingTime = 0;
         if (dude.get() != null && damageSource != null) {
             dude.get().hurt(damageSource, recordedDamage);
         }
@@ -791,7 +784,6 @@ public class NewCombatCapability implements ICombatCapability {
             proc.putDouble(e.getKey(), e.getValue());
         }
         c.put("procs", proc);
-        c.putInt("recordingTime", recordingTime);
         c.putFloat("recorded", recordedDamage);
         c.putInt("pin", pinTime);
         return c;
@@ -828,7 +820,6 @@ public class NewCombatCapability implements ICombatCapability {
                 procs.put(id, c.getDouble(id));
             }
         }
-        recordingTime = t.getInt("recordingTime");
         recordedDamage = t.getFloat("recorded");
         pin(t.getInt("pin"));
     }
@@ -849,8 +840,17 @@ public class NewCombatCapability implements ICombatCapability {
         float mult = 1;
         LivingEntity elb = dude.get();
         if (elb != null) {
-            mult *= elb.getHealth() / elb.getMaxHealth();
-            mult *= Math.min(CombatUtils.getCooledAttackStrength(elb, InteractionHand.MAIN_HAND, 0.5f), CombatUtils.getCooledAttackStrength(elb, InteractionHand.MAIN_HAND, 0.5f));
+            float healthperc = 0.3f + (elb.getHealth() / elb.getMaxHealth()) * 0.7f;
+            if (player) {
+                //players actually regenerate faster near death, but have lower initial to make up for it.
+                //for the TENSION!
+                healthperc = 0.65f + (1 - healthperc);
+            }
+            //minimum 30% heal rate
+            else healthperc = 0.3f + healthperc * 0.7f;
+
+            mult *= healthperc;
+            //mult *= Math.min(CombatUtils.getCooledAttackStrength(elb, InteractionHand.MAIN_HAND, 0.5f), CombatUtils.getCooledAttackStrength(elb, InteractionHand.MAIN_HAND, 0.5f));
             int exp = elb.hasEffect(MobEffects.POISON) ? (elb.getEffect(MobEffects.POISON).getAmplifier() + 1) : 0;
             float poison = 1;
             for (int j = 0; j < exp; j++) {
@@ -861,9 +861,11 @@ public class NewCombatCapability implements ICombatCapability {
         if (mobPosCD < 0) {
             int overflow = -mobPosCD;
             mobPosCD = 0;
-            setPosture((float) (getPosture() + overflow * mobPosRegenSpd * mult / 20));
+            setPosture((float) (getPosture() + overflow * mobPosRegenSpd * mult));
             if (getPosturePercentage() == 1) {
-                recordDamage(-overflow / 20f);
+                healthyCooldown--;
+                if (healthyCooldown < 0)
+                    recordDamage(Math.min(-1, -getRecordedDamage() / 1000));
             }
         }
     }

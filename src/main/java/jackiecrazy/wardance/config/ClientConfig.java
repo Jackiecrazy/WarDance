@@ -18,7 +18,6 @@ public class ClientConfig {
     public static final ForgeConfigSpec CONFIG_SPEC;
     public static int spiritColor;
     public static int adrenalineColor;
-    public static int autoCombat;
     public static boolean hide;
 
     static {
@@ -30,7 +29,6 @@ public class ClientConfig {
     public final DisplayConfigUtils.DisplayData adrenalineBar, adrenalineNumber, spiritBar, spiritNumber, combo, playerAfflict, enemyAfflict, skillCD, stealth;
     public final DisplayConfigUtils.DisplayData playerPosture, enemyPosture;
     public final CircleData adrenalineCircle, spiritCircle;
-    private final ForgeConfigSpec.IntValue _autoCombat;
     private final ForgeConfigSpec.BooleanValue _hidexp;
     private final ForgeConfigSpec.ConfigValue<String> _adrenalineColor;
     private final ForgeConfigSpec.ConfigValue<String> _spiritColor;
@@ -40,7 +38,6 @@ public class ClientConfig {
 
     public ClientConfig(ForgeConfigSpec.Builder b) {
         b.push("convenience");
-        _autoCombat = b.translation("wardance.config.autoCombat").comment("combat mode will be automatically engaged once you attack or get attacked by an entity if it is not already on, for this number of ticks before turning itself off. Set to 0 to disable this feature.").defineInRange("auto combat mode", 0, 0, Integer.MAX_VALUE);
         _hidexp = b.translation("wardance.config.hidexp").comment("hide the exp bar while combat mode is on to make space for the adrenaline and spirit bars.").define("combat mode hides exp", true);
         _ctrl = b.translation("wardance.config.ControlType").comment("Change your control scheme in combat mode. Valid values are \nCLASSIC: right click defaults to main hand, or offhand if main hand has no right click action, and finally offhand attack. Holding the evoke key blocks main hand right clicking. Good for power users or complex weapons.\n DUAL: left click corresponds to main hand, and right click to offhand. Hold input briefly or hold evoke key to right click with the hand. Recommended for new users or weapons without complex right click behavior.").defineEnum("control scheme", ControlScheme.DUAL);
         b.pop();
@@ -97,7 +94,6 @@ public class ClientConfig {
         hide = CONFIG._hidexp.get();
         spiritColor = Integer.parseInt(CONFIG._spiritColor.get(), 16);
         adrenalineColor = Integer.parseInt(CONFIG._adrenalineColor.get(), 16);
-        autoCombat = CONFIG._autoCombat.get();
         controlScheme = CONFIG._ctrl.get();
         RenderEvents.updateList(CONFIG._customPosture.get());
     }

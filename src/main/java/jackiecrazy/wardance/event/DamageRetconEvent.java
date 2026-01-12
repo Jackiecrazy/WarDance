@@ -5,31 +5,31 @@ import net.minecraftforge.event.entity.living.LivingEvent;
 import net.minecraftforge.eventbus.api.Cancelable;
 
 @Cancelable
-public class FractureEvent extends LivingEvent {
-    private int amount;
-    private LivingEntity attacker;
+public class DamageRetconEvent extends LivingEvent {
+    private float amount;
+    private LivingEntity target;
 
-    public FractureEvent(LivingEntity to, int amount, LivingEntity attacker) {
+    public DamageRetconEvent(LivingEntity to, float amount) {
         super(to);
         this.amount = amount;
-        this.attacker = attacker;
+        this.target = target;
     }
 
-    public int getAmount() {
+    public float getAmount() {
         return amount;
     }
 
-    public FractureEvent setAmount(int amount) {
+    public DamageRetconEvent setAmount(float amount) {
         this.amount = amount;
         return this;
     }
 
-    public FractureEvent addAmount(int amount) {
+    public DamageRetconEvent addAmount(float amount) {
         this.amount += amount;
         return this;
     }
 
-    public LivingEntity getAttacker() {
-        return attacker;
+    public LivingEntity getTarget() {
+        return target;
     }
 }

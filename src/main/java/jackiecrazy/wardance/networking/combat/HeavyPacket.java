@@ -13,7 +13,7 @@ import java.util.function.Supplier;
 
 public class HeavyPacket {
     boolean main;
-    WeaponStats.SWEEPSTATE state;
+    WeaponStats.AttackType state;
     /*
     spitballin:
 
@@ -44,7 +44,7 @@ public class HeavyPacket {
         directly allow parsing a motionmanager as a swing action.
      */
 
-    public HeavyPacket(boolean isMainHand, WeaponStats.SWEEPSTATE movestate) {
+    public HeavyPacket(boolean isMainHand, WeaponStats.AttackType movestate) {
         main = isMainHand;
         state=movestate;
     }
@@ -62,7 +62,7 @@ public class HeavyPacket {
 
         @Override
         public HeavyPacket apply(FriendlyByteBuf packetBuffer) {
-            return new HeavyPacket(packetBuffer.readBoolean(), WeaponStats.SWEEPSTATE.values()[packetBuffer.readInt()]);
+            return new HeavyPacket(packetBuffer.readBoolean(), WeaponStats.AttackType.values()[packetBuffer.readInt()]);
         }
     }
 

@@ -41,15 +41,9 @@ public class GrapplePacket {
             contextSupplier.get().enqueueWork(() -> {
                 ServerPlayer sender = contextSupplier.get().getSender();
                 if (sender == null) return;
-                //have a weapon, yeet!
                 final IFlyingWeapon cap = FlyingWeaponData.getCap(sender);
                 sender.resetFallDistance();
-                if (cap.getGrapple() == null)
-                    cap.launchGrapple(packet.destination);
-                else {
-                    //the player held q and pressed middle button. Pull.
-                    cap.getGrapple().yank();
-                }
+                cap.launchGrapple(packet.destination);
             });
             contextSupplier.get().setPacketHandled(true);
         }

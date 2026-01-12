@@ -1,7 +1,6 @@
 package jackiecrazy.wardance.entity;
 
 import jackiecrazy.footwork.capability.resources.CombatData;
-import jackiecrazy.footwork.capability.timeslow.TimeSlowData;
 import jackiecrazy.footwork.client.particle.FootworkParticles;
 import jackiecrazy.footwork.entity.flyingweapon.FlyingItemEntity;
 import jackiecrazy.footwork.entity.flyingweapon.FlyingWeaponEffect;
@@ -9,14 +8,18 @@ import jackiecrazy.footwork.move.motionframe.MotionManager;
 import jackiecrazy.footwork.utils.GeneralUtils;
 import jackiecrazy.footwork.utils.ParticleUtils;
 import jackiecrazy.footwork.utils.TargetingUtils;
+import jackiecrazy.wardance.capability.flyingweapon.FlyingWeaponData;
 import jackiecrazy.wardance.config.WeaponStats;
 import jackiecrazy.wardance.utils.CombatUtils;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.ClipContext;
@@ -34,7 +37,7 @@ import java.util.List;
 public class FlyingWeaponEntity extends FlyingItemEntity {
     protected final List<Entity> alreadyHit = new ArrayList<>();
     protected WeaponStats.SweepInfo cacheInfo;
-    protected WeaponStats.SWEEPSTATE state;
+    protected WeaponStats.AttackType state;
 
     public FlyingWeaponEntity(EntityType<? extends FlyingItemEntity> type, Level level) {
         //keep hitframes separate and logged here.
@@ -83,13 +86,15 @@ public class FlyingWeaponEntity extends FlyingItemEntity {
         //if holding nothing, prioritize this slot
         int slot = -1;
         if (p.getMainHandItem().isEmpty()) slot = p.getInventory().selected;
+        else if (p.getOffhandItem().isEmpty()) slot = Inventory.SLOT_OFFHAND;
+        boolean success = p.getAbilities().instabuild;
         CombatUtils.allowCombatHotbarPickup = true;
-        if (!p.getAbilities().instabuild)
-            p.getInventory().add(slot, getPickResult());
+        if (!success)
+            success = p.getInventory().add(slot, getPickResult());
         CombatUtils.allowCombatHotbarPickup = false;
-        this.remove(RemovalReason.KILLED);
-        //CombatUtils.sweep(p, null, InteractionHand.MAIN_HAND, WeaponStats.SWEEPTYPE.CIRCLE, 3, 3, 1);
-        return true;
+        if (success)
+            this.remove(RemovalReason.KILLED);
+        return !success;
     }
 
     @Override
@@ -156,7 +161,7 @@ public class FlyingWeaponEntity extends FlyingItemEntity {
 
     @Override
     protected boolean onHitEntity(List<Entity> targets) {
-        boolean ret=false;
+        boolean ret = false;
         //don't do any of this on the client because that's not good:tm:
         if (level().isClientSide()) return false;
         //normal hits skip hit calculation
@@ -182,7 +187,7 @@ public class FlyingWeaponEntity extends FlyingItemEntity {
                 CombatData.getCap(e).tickProc("noFinisherCharge");
                 target.invulnerableTime = 0;
                 GeneralUtils.attack(e, target);
-                ret=true;
+                ret = true;
                 alreadyHit.add(target);
             }
         } catch (Exception ex) {

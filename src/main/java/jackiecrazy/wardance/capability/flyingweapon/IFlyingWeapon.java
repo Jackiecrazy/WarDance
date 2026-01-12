@@ -30,6 +30,12 @@ public interface IFlyingWeapon {
 
     void setRender(InteractionHand hand, FlyingWeaponEffect... effects);
 
+    void forceRefreshWeapon(InteractionHand hand);
+    default void forceRefreshWeapons(){
+        forceRefreshWeapon(InteractionHand.MAIN_HAND);
+        forceRefreshWeapon(InteractionHand.OFF_HAND);
+    }
+
     void yeet(InteractionHand hand, Vec3 pos);
 
     class DummyFlyingWeapon implements IFlyingWeapon {
@@ -75,6 +81,11 @@ public interface IFlyingWeapon {
 
         @Override
         public void setRender(InteractionHand hand, FlyingWeaponEffect... effects) {
+
+        }
+
+        @Override
+        public void forceRefreshWeapon(InteractionHand hand) {
 
         }
 

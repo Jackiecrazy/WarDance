@@ -19,6 +19,8 @@ import jackiecrazy.wardance.utils.CombatUtils;
 import net.minecraft.client.KeyMapping;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.player.Input;
+import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
@@ -29,6 +31,7 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.entity.projectile.ProjectileUtil;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.UseAnim;
+import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.EntityHitResult;
 import net.minecraft.world.phys.HitResult;
 import net.minecraft.world.phys.Vec3;
@@ -63,13 +66,14 @@ public class ClientEvents {
     private static int lastSweepTick = 0, lastAttackTick = 0;
     private static boolean lastUsedHandMain = true;
     private static boolean wasThrowAiming = false;
+    public static int coyoteTimeID=0;
 
     static {
         RenderUtils.formatter.setRoundingMode(RoundingMode.DOWN);
         RenderUtils.formatter_truncate.setRoundingMode(RoundingMode.DOWN);
     }
 
-    public static boolean heavy(WeaponStats.SWEEPSTATE state) {
+    public static boolean heavy(WeaponStats.AttackType state) {
         if (sneakedTime > magicSneakTime) {
             CombatChannel.INSTANCE.sendToServer(new HeavyPacket(lastUsedHandMain, state));
             CombatChannel.INSTANCE.sendToServer(new UpdateWeaponRenderPacket(!lastUsedHandMain));
@@ -85,56 +89,6 @@ public class ClientEvents {
         Input mi = e.getInput();
         final ICombatCapability itsc = CombatData.getCap(mc.player);
         final IStyleCapability is = StylishData.getCap(mc.player);
-//        if (itsc.getStunTime() > 0) {
-//            //no moving while you're rooted!
-//            KeyBinding.unPressAllKeys();
-//            return;
-//        }
-
-        //old roll code, TODO use a mobility capability to handle slide and wall run
-        /*if (is.isCombatMode() && mc.level != null) {
-            final boolean onSprint = mc.options.keySprint.consumeClick();
-            int dir = -1;
-            if (!WarCompat.elenaiDodge) {
-                if (mi.left && (!tapped[0] || onSprint)) {
-                    if (mc.level.getGameTime() - lastTap[0] <= ALLOWANCE || onSprint) {
-                        dir = 0;
-                    }
-                    lastTap[0] = mc.level.getGameTime();
-                }
-                tapped[0] = mi.left;
-                if (mi.down && (!tapped[1] || onSprint)) {
-                    if (mc.level.getGameTime() - lastTap[1] <= ALLOWANCE || onSprint) {
-                        dir = 1;
-                    }
-                    lastTap[1] = mc.level.getGameTime();
-                }
-                tapped[1] = mi.down;
-                if (mi.right && (!tapped[2] || onSprint)) {
-                    if (mc.level.getGameTime() - lastTap[2] <= ALLOWANCE || onSprint) {
-                        dir = 2;
-                    }
-                    lastTap[2] = mc.level.getGameTime();
-                }
-                tapped[2] = mi.right;
-//            if (mi.forwardKeyDown && (!tapped[3] || onSprint)) {
-//                if (mc.world.getGameTime() - lastTap[3] <= ALLOWANCE || onSprint) {
-//                    dir = 3;
-//                }
-//                lastTap[3] = mc.world.getGameTime();
-//            }
-//            tapped[3] = mi.forwardKeyDown;
-            }
-            if (mc.player.isSprinting() && mi.shiftKeyDown && !sneak) {
-                //if(mc.world.getTotalWorldTime()-lastSneak<=ALLOWANCE){
-                dir = 99;
-                //}
-            }
-            sneak = mi.shiftKeyDown;
-            if (dir != -1)
-                CombatChannel.INSTANCE.sendToServer(new DodgePacket(dir, mi.shiftKeyDown));
-        }*/
-
         if (itsc.isKnockdown()) {
             //no moving while you're down! (except for a safety roll)
             KeyMapping.releaseAll();
@@ -207,12 +161,15 @@ public class ClientEvents {
                     else
                         CombatChannel.INSTANCE.sendToServer(new RequestUpdatePacket(-1));
                 }
-//                if (combatTicks != Integer.MAX_VALUE && combatTicks + ClientConfig.autoCombat == p.tickCount && StylishData.getCap(p).isCombatMode()) {
-//                    CombatChannel.INSTANCE.sendToServer(new CombatModePacket());
-//                }
+
+                //store a copy of the mob that the player is looking at for coyote time resolution
+                if(mc.crosshairPickEntity!=null){
+                    coyoteTimeID=mc.crosshairPickEntity.getId();
+                }
 
                 //when finding a long press on left button, check if there is an item in use.
-
+                //no attacking when exhausted, but you can throw
+                boolean exhausted = CombatData.getCap(mc.player).getPosture() <= 0;
                 if (StylishData.getCap(p).isCombatMode()) {
                     suppressConflictingKeys(mc);
 
@@ -246,6 +203,11 @@ public class ClientEvents {
                         //don't point them forward
                     }
 
+                    //only throwing allowed when exhausted
+                    if (exhausted) {
+                        evilKeySuppression(mc);
+                        return;
+                    }
 
                     //if there is a use action, do both left and right click simultaneously.
                     // otherwise, right click after a noticeable delay
@@ -295,13 +257,13 @@ public class ClientEvents {
                         }
                     }
                     if (mc.options.keyAttack.isDown() && sneakedTime > magicSneakTime && mc.options.keyAttack.consumeClick()) {
-                        CombatChannel.INSTANCE.sendToServer(new HeavyPacket(true, WeaponStats.SWEEPSTATE.STANDING));
+                        CombatChannel.INSTANCE.sendToServer(new HeavyPacket(true, WeaponStats.AttackType.STANDING));
                         CombatChannel.INSTANCE.sendToServer(new UpdateWeaponRenderPacket(false));
                         sneakedTime = -99999;
                         lastUsedHandMain = true;
                     }
                     if (mc.options.keyUse.isDown() && sneakedTime > magicSneakTime && mc.options.keyUse.consumeClick()) {
-                        CombatChannel.INSTANCE.sendToServer(new HeavyPacket(false, WeaponStats.SWEEPSTATE.STANDING));
+                        CombatChannel.INSTANCE.sendToServer(new HeavyPacket(false, WeaponStats.AttackType.STANDING));
                         CombatChannel.INSTANCE.sendToServer(new UpdateWeaponRenderPacket(true));
                         sneakedTime = -99999;
                         lastUsedHandMain = true;
@@ -315,6 +277,8 @@ public class ClientEvents {
 //                        CombatChannel.INSTANCE.sendToServer(new UpdateWeaponRenderPacket(!lastUsedHandMain));
 //                        CombatChannel.INSTANCE.sendToServer(new UpdateWeaponRenderPacket(lastUsedHandMain, true, sneakedTime >= magicSneakTime, false, false));
 //                    }
+                } else if (exhausted) {
+                    evilKeySuppression(mc);
                 }
                 // if not, call use with the respective hand
                 // if yes, check if it is this hand.
@@ -373,6 +337,18 @@ public class ClientEvents {
             });
             conflictMap = 400;
         }
+    }
+
+    private static void evilKeySuppression(Minecraft mc) {
+//        mc.options.keyAttack.setDown(false);
+//        while (mc.options.keyAttack.consumeClick()) ;
+//        mc.options.keyUse.setDown(false);
+//        while (mc.options.keyUse.consumeClick()) ;
+//        for (KeyMapping km : mc.options.keyMappings) {
+//            if (!km.getCategory().equals("key.categories.wardance") && !km.getCategory().equals("key.categories.movement") && !km.getCategory().equals("key.categories.inventory") && km.getKey() != InputConstants.UNKNOWN) {
+//                while (km.consumeClick()) ;
+//            }
+//        }
     }
 
     @SubscribeEvent
@@ -572,25 +548,6 @@ public class ClientEvents {
         }
     }
 
-    @SubscribeEvent
-    public static void pickTarget(TickEvent.RenderTickEvent event) {
-        if (event.phase == TickEvent.Phase.END) {
-            Minecraft mc = Minecraft.getInstance();
-            if (mc.player == null) return;
-            double range = GeneralUtils.getAttributeValueSafe(mc.player, ForgeMod.ENTITY_REACH.get()) - (mc.player.getMainHandItem().isEmpty() ? 1 : 0);
-            Vec3 look = mc.player.getViewVector(1);
-            if (mc.crosshairPickEntity != null) {
-                if (GeneralUtils.getDistSqCompensated(mc.crosshairPickEntity, mc.player) > range * range) {
-                    mc.crosshairPickEntity = null;
-                    Vec3 miss = mc.player.position().add(look.scale(range));
-                    mc.hitResult = BlockHitResult.miss(miss, Direction.getNearest(look.x, look.y, look.z), new BlockPos(miss));
-                }
-            } else if (RenderEvents.getEntityLookedAt(mc.player, range) != null) {
-                Entity e = RenderEvents.getEntityLookedAt(mc.player, range);
-                mc.hitResult = new EntityHitResult(e, e.position());
-                mc.crosshairPickEntity = e;
-            }
-        }
-    }*/
+    */
 
 }

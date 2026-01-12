@@ -49,7 +49,7 @@ public class Hex extends Skill {
             e.setCanceled(true);
             final LivingEntity caster = a.getCaster(entity.level());
             if (caster != null)
-                entity.hurt(new CombatDamageSource(caster).setDamageTyping(FootworkDamageArchetype.MAGICAL).setProcSkillEffects(true).setSkillUsed(WarSkills.GANGRENE.get()).bypassArmor().setProxy(entity), e.getAmount()*2);
+                entity.hurt(new CombatDamageSource(caster).setDamageTyping(FootworkDamageArchetype.MAGICAL).setProcSkillEffects(true).setSkillUsed(WarSkills.GANGRENE.get()).bypassArmor().setProxy(entity), e.getAmount() * 2);
         });
     }
 
@@ -220,17 +220,20 @@ public class Hex extends Skill {
 
     public static class Unravel extends Hex {
         @Override
-        protected void mark(LivingEntity caster, LivingEntity target, float duration, float arbitrary) {
+        public boolean markTick(LivingEntity caster, LivingEntity target, SkillData sd) {
             ItemStack milk = new ItemStack(Items.MILK_BUCKET);
             final Collection<MobEffectInstance> potions = new ArrayList<>(target.getActiveEffects());
             boolean proc = false;
-            if(potions.stream().anyMatch(a->a.getCurativeItems().contains(milk))){
-                proc=true;
+            if (target.tickCount % 10 == 0 && potions.stream().anyMatch(a -> a.getCurativeItems().contains(milk))) {
+                proc = true;
             }
             target.curePotionEffects(milk);
             float size = 8, damage = 6;
-            if (proc)
+            if (proc) {
                 FakeExplosion.explode(caster.level(), caster, target.getX(), target.getY() + target.getBbHeight() * 1.1f, target.getZ(), size, new CombatDamageSource(caster).setExplosion().setDamageTyping(FootworkDamageArchetype.MAGICAL).setProxy(target), damage);
+                sd.setDuration(10);
+            }
+            return super.markTick(caster, target, sd);
         }
     }
 

@@ -23,6 +23,8 @@ import net.minecraft.sounds.SoundSource;
 import net.minecraft.tags.DamageTypeTags;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.damagesource.DamageSource;
+import net.minecraft.world.effect.MobEffectInstance;
+import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.*;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.player.Player;
@@ -38,7 +40,6 @@ import net.minecraftforge.event.entity.ProjectileImpactEvent;
 import net.minecraftforge.event.entity.living.*;
 import net.minecraftforge.event.entity.player.AttackEntityEvent;
 import net.minecraftforge.event.entity.player.CriticalHitEvent;
-import net.minecraftforge.event.entity.player.PlayerEvent;
 import net.minecraftforge.eventbus.api.Event;
 import net.minecraftforge.eventbus.api.EventPriority;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
@@ -49,7 +50,6 @@ import java.util.UUID;
 @Mod.EventBusSubscriber(modid = WarDance.MODID)
 public class CombatHandler {
 
-    public static final float magicInternalDamage = 0.1f;
     private static final UUID uuid = UUID.fromString("98c361c7-de32-4f40-b129-d7752bac3712");
     private static final UUID uuid2 = UUID.fromString("98c361c8-de32-4f40-b129-d7752bac3722");
 
@@ -152,7 +152,7 @@ public class CombatHandler {
 
             //successful
             if (pe1.getResult() == Event.Result.ALLOW || (ukeCap.isParrying() && pe1.getResult() == Event.Result.DEFAULT)) {
-                CombatUtils.onSuccessfulParry(uke, projectile, defendingHand, defend, pe1.getPostureConsumption());
+                CombatUtils.onSuccessfulParry(uke, projectile, defendingHand, defend, pe1.getPostureConsumption(), pe1.getPostureConsumption());
                 handleProjectileDefense(e, pe1, defend, projectile, uke);
                 return;
             }
@@ -200,7 +200,7 @@ public class CombatHandler {
                                                 LivingEntity uke) {
         e.setCanceled(true);//.setImpactResult(ProjectileImpactEvent.ImpactResult.STOP_AT_CURRENT_NO_DAMAGE);
         ICombatCapability ukeCap = CombatData.getCap(uke);
-        ukeCap.consumePosture(null, pe.getPostureConsumption(), false, 1);//fixme
+        ukeCap.consumePosture(null, pe.getPostureConsumption(), ICombatCapability.BreachLevel.NO);//fixme
         //do not change shooter! It makes drowned tridents and skeleton arrows collectable, which is honestly silly
         uke.level().playSound(null, uke.getX(), uke.getY(), uke.getZ(), SoundEvents.WOODEN_TRAPDOOR_CLOSE, SoundSource.PLAYERS, 0.75f + WarDance.rand.nextFloat() * 0.5f, (1 - (ukeCap.getPosture() / ukeCap.getMaxPosture())) + WarDance.rand.nextFloat() * 0.5f);
         if (pe.doesTrigger()) {
@@ -230,7 +230,7 @@ public class CombatHandler {
         if (GeneralConfig.debug && !e.getEntity().level().isClientSide) {
             WarDance.LOGGER.debug("attack from " + e.getSource() + " started with amount " + e.getAmount());
         }
-        if (!e.getEntity().level().isClientSide && e.getSource() != null && DamageUtils.isPhysicalAttack(e.getSource())) {
+        if (!e.getEntity().level().isClientSide) {
             LivingEntity uke = e.getEntity();
             ICombatCapability ukeCap = CombatData.getCap(uke);
 
@@ -242,7 +242,8 @@ public class CombatHandler {
 
             //dodged!
             if (ukeCap.isDodging()) {
-                CombatUtils.onSuccessfulDodge(uke, e.getSource().getDirectEntity());
+                if (e.getSource() != null && DamageUtils.isPhysicalAttack(e.getSource()))
+                    CombatUtils.onSuccessfulDodge(uke, e.getSource().getDirectEntity());
                 e.setCanceled(true);
                 return;
             }
@@ -284,71 +285,83 @@ public class CombatHandler {
             }
             ICombatCapability ukeCap = CombatData.getCap(uke);
             ItemStack attack = CombatUtils.getAttackingItemStack(e.getSource());
-            //melee attack from an entity source over 0
-            if (DamageUtils.isMeleeAttack(e.getSource()) && e.getSource().getEntity() instanceof LivingEntity seme && attack != null && e.getAmount() > 0) {
-
+            float atkMult = e.getAmount();
+            if (e.getSource().getEntity() instanceof LivingEntity seme && attack != null && e.getAmount() > 0) {
                 if (seme.getType().getDescriptionId().equals("entity.evilcraft.vengeance_spirit")) {
                     //makes the world lag plus how do you parry a ghost
                     return;
                 }
                 ICombatCapability semeCap = CombatData.getCap(seme);
                 InteractionHand attackingHand = InteractionHand.MAIN_HAND;//semeCap.isOffhandAttack() ? InteractionHand.OFF_HAND : InteractionHand.MAIN_HAND;
+                boolean canBreach = uke instanceof Player;
 
-                //hand bound or staggered, no attack
-                if (semeCap.isStunned() || semeCap.getHandBind(attackingHand) > 0) {
-                    e.setCanceled(true);
-                    return;
-                }
+                //melee specific processing
+                if (DamageUtils.isMeleeAttack(e.getSource())) {
+                    //hand bound or staggered, no attack
+                    if (semeCap.isStunned() || semeCap.getHandBind(attackingHand) > 0) {
+                        e.setCanceled(true);
+                        return;
+                    }
 
-                //handle capability and any on-hit effects, todo revamp to action based system
-                seme.getMainHandItem().getCapability(CombatManipulator.CAP).ifPresent((i) -> i.attackStart(e.getSource(), seme, uke, seme.getMainHandItem(), e.getAmount()));
-                final WeaponStats.SweepInfo sweepInfo = WeaponStats.getSweepInfo(seme.getMainHandItem(), CombatUtils.getSweepState(seme));
-                sweepInfo.performCommand(seme, true, false);
-                sweepInfo.performCommand(uke, false, false);
-                if (e.getSource() instanceof CombatDamageSource cds && WeaponStats.lookupStats(seme.getMainHandItem()) != null) {
-                    cds.setKnockbackPercentage((float) sweepInfo.getKnockback());
-                    cds.setCrit(sweepInfo.isCrit());
-                    cds.setCritDamage((float) sweepInfo.getCritDamage());
-                }
+                    //handle capability and any on-hit effects, todo revamp to action based system
+                    seme.getMainHandItem().getCapability(CombatManipulator.CAP).ifPresent((i) -> i.attackStart(e.getSource(), seme, uke, seme.getMainHandItem(), e.getAmount()));
+                    final WeaponStats.SweepInfo sweepInfo = WeaponStats.getSweepInfo(seme.getMainHandItem(), CombatUtils.getAttackState(seme));
+                    sweepInfo.performCommand(seme, true, false);
+                    sweepInfo.performCommand(uke, false, false);
+                    if (e.getSource() instanceof CombatDamageSource cds && WeaponStats.lookupStats(seme.getMainHandItem()) != null) {
+                        cds.setKnockbackPercentage((float) sweepInfo.getKnockback());
+                        cds.setCrit(sweepInfo.isCrit());
+                        cds.setCritDamage((float) sweepInfo.getCritDamage());
+                    }
 
-                //add stats if it's the first attack this tick and cooldown is sufficient
-                if (!semeCap.alreadyProc("attack") && !semeCap.alreadyProc("oncePerSweep")) {//first hit of a sweep attack this tick, add combo based on state
-                    //semeCap.addRank(0.1f);
-                    StylishData.getCap(seme).processAttack(true);
-                    StylishData.getCap(seme).addCombo(0.1f, semeCap.isOffhandAttack() + CombatUtils.getSweepState(seme).name());
-                    semeCap.tickProc("attack");
-                }
-
-                //blocking, no longer useful due to me directly interfacing with block
+                    //blocking, no longer useful due to me directly interfacing with block
 //                if (uke.isBlocking()) {
 //                    ukeCap.consumePosture(0);
 //                    return;
 //                }
 
-                //stunned, add extra finisher points
-                if (ukeCap.isStunned()) {
-                    //add extra finisher charge to attacker
-                    if (!semeCap.alreadyProc("stunTrigger")) {
-                        StylishData.getCap(seme).addTriggerBar(1);
-                        semeCap.tickProc("stunTrigger");
+                    //stunned, add extra finisher points
+                    if (ukeCap.isStunned()) {
+                        //add extra finisher charge to attacker
+                        if (!semeCap.alreadyProc("stunTrigger")) {
+                            StylishData.getCap(seme).addTriggerBar(1);
+                            semeCap.tickProc("stunTrigger");
+                        }
+                    }
+
+                    //melee specific posture damage and breach
+                    atkMult = CombatUtils.getPostureAtk(seme, uke, attackingHand, e.getSource(), e.getAmount(), attack);
+                    canBreach |= sweepInfo.canBreach();
+
+                    //add stats if it's the first attack this tick and cooldown is sufficient
+                    if (!semeCap.alreadyProc("qiSpent")) {//first hit of a sweep attack this tick, add combo based on state
+                        //semeCap.addRank(0.1f);
+                        semeCap.consumePosture(atkMult);
+
+                        StylishData.getCap(seme).processAttack(true);
+                        StylishData.getCap(seme).addCombo(0.05f, semeCap.isOffhandAttack() + CombatUtils.getAttackState(seme).name());
+                        semeCap.tickProc("qiSpent");
+                    }
+                }else{
+                    //handle stamina consumption on everything else
+                    if (!semeCap.alreadyProc("qiSpent")) {//first hit of a sweep attack this tick, add combo based on state
+                        semeCap.consumePosture(atkMult);
+                        StylishData.getCap(seme).processAttack(false);
+                        StylishData.getCap(seme).addCombo(0.1f, e.getSource().getMsgId());
+                        semeCap.tickProc("qiSpent");
                     }
                 }
-                ukeCap.tickProc("alreadyProcessDamage");
-
-                //posture consumption code start, grab attack multiplier
-                float atkMult = CombatUtils.getPostureAtk(seme, seme, attackingHand, e.getSource(), e.getAmount(), attack);
                 //store atkMult at this stage for event
                 float original = atkMult;
+
                 //stabby bonus
                 StealthUtils.Awareness awareness = StealthUtils.INSTANCE.getAwareness(seme, uke);
                 //whether the attack can stun someone at 0 posture
-                boolean canBreach = uke instanceof Player;
                 //crit bonus
                 if (e.getSource() instanceof CombatDamageSource cds) {
                     if (cds.isCrit()) atkMult *= cds.getCritDamage();
-                    canBreach = cds.canBreach();
+                    canBreach |= cds.canBreach();
                 }
-                canBreach |= sweepInfo.canBreach();
                 canBreach |= semeCap.alreadyProc("canBreach");
 
                 MeleePostureEvent.Pre pe = new MeleePostureEvent.Pre(uke, seme, attackingHand, attack, atkMult, original, e.getSource(), e.getAmount(), canBreach);
@@ -359,13 +372,13 @@ public class CombatHandler {
 
                 //it's a trap! no parrying backstabs
                 if (awareness == StealthUtils.Awareness.UNAWARE) {
-                    ukeCap.consumePosture(seme, pe.getPostureConsumption(), pe.canBreach(), 0);
+                    ukeCap.consumePosture(seme, pe.getPostureConsumption(), pe.canBreach());
                     return;
                 }
 
                 //not only can mobs not defend in time slow, the attacker gets a steve time extension
                 if (!(uke instanceof Player) && TimeSlowData.getCap(uke).getEffectiveSpeed() < 1) {
-                    ukeCap.consumePosture(seme, pe.getPostureConsumption(), pe.canBreach(), 0);
+                    ukeCap.consumePosture(seme, pe.getPostureConsumption(), pe.canBreach());
                     return;
                 }
 
@@ -431,7 +444,7 @@ public class CombatHandler {
                 if (pe1.success()) {
                     e.setCanceled(true);
                     WarDance.LOGGER.debug("successfully parried!");
-                    CombatUtils.onSuccessfulParry(uke, seme, defendingHand, defend, pe1.getPostureConsumption());
+                    CombatUtils.onSuccessfulParry(uke, seme, defendingHand, defend, pe1.getPostureConsumption(), e.getAmount());
                     return;
                 }
 
@@ -440,10 +453,11 @@ public class CombatHandler {
                 MinecraftForge.EVENT_BUS.post(pe2);
 
                 //success!
-                if (pe2.success() && ukeCap.consumePosture(seme, pe2.getPostureConsumption(), pe2.canBreach(), Math.max(0, 1 - defMult / 2)) == 0) {//todo config rally value
+                if (pe2.success() && ukeCap.consumePosture(seme, pe2.getPostureConsumption(), pe2.canBreach()) == 0) {//todo config rally value
                     e.setCanceled(true);
                     WarDance.LOGGER.debug("successfully blocked!");
-                    ukeCap.recordDamage(e.getAmount() * (1 - magicInternalDamage));
+                    if (uke instanceof Player)
+                        ukeCap.recordDamage(e.getAmount());
                     CombatUtils.onSuccessfulBlock(uke, seme, defendingHand, defend, pe2.getPostureConsumption());
                     //do not cancel the event. It technically succeeded but will be blocked by vanilla functions. I just mark the right item to keep processing.
                     return;
@@ -465,7 +479,7 @@ public class CombatHandler {
                 //failed everything, use the original damage
                 WarDance.LOGGER.debug("failed everything! " + defenderMaybeBlocking + " " + defend);
                 if (!pe2.success()) {
-                    ukeCap.consumePosture(seme, pe.getPostureConsumption(), pe.canBreach(), 0f);
+                    ukeCap.consumePosture(seme, pe.getPostureConsumption(), pe.canBreach());
 
                 }
                 //internally enforced hand bind to bypass slimes
@@ -481,13 +495,15 @@ public class CombatHandler {
                 MeleePostureEvent.Environment pe1 = new MeleePostureEvent.Environment(e.getEntity(), CombatData.getCap(e.getEntity()).isParrying(), e.getAmount(), e.getSource(), e.getAmount(), true);
                 MinecraftForge.EVENT_BUS.post(pe1);
                 if (pe1.success()) {
-                    CombatUtils.onSuccessfulParry(e.getEntity(), null, null, null, pe1.getPostureConsumption());
+                    CombatUtils.onSuccessfulParry(e.getEntity(), null, null, null, pe1.getPostureConsumption(), e.getAmount());
+                    if (e.getSource().is(DamageTypeTags.IS_FALL))
+                        e.getEntity().addDeltaMovement(new Vec3(0, 1, 0));
                     e.setCanceled(true);
                 }
             }
             //handle nonphysical cases of combat damage docking posture, this can never breach
             if (e.getSource() instanceof CombatDamageSource cds && cds.getPostureDamage() > 0) {
-                CombatData.getCap(e.getEntity()).consumePosture(cds.getEntity() instanceof LivingEntity elb ? elb : null, cds.getPostureDamage(), cds.canBreach(), 0.5f);//todo conversion percentages
+                CombatData.getCap(e.getEntity()).consumePosture(cds.getEntity() instanceof LivingEntity elb ? elb : null, cds.getPostureDamage(), cds.canBreach());//todo conversion percentages
             }
         }
 
@@ -502,7 +518,7 @@ public class CombatHandler {
                 e.setDamageModifier(seme.getMainHandItem().getCapability(CombatManipulator.CAP).resolve().get().critDamage(seme, uke, seme.getMainHandItem()));
             }
             if (WeaponStats.isWeapon(seme, seme.getMainHandItem())) {
-                final WeaponStats.SweepInfo info = WeaponStats.getSweepInfo(seme.getMainHandItem(), CombatUtils.getSweepState(seme));
+                final WeaponStats.SweepInfo info = WeaponStats.getSweepInfo(seme.getMainHandItem(), CombatUtils.getAttackState(seme));
                 e.setResult(info.isCrit() ? Event.Result.ALLOW : Event.Result.DENY);
                 e.setDamageModifier((float) info.getCritDamage());
             }
@@ -572,58 +588,108 @@ public class CombatHandler {
             e.setCanceled(true);
             return;
         }
-        ICombatCapability cap = CombatData.getCap(uke);
+        final ICombatCapability cap = CombatData.getCap(uke);
 
         //provisional. Adds posture damage to the player for eating a projectile because it was not handled before.
-        //Simple formula. Less than 5% health per hit=1 posture, 30%=3, any more = 7. Cannot stun.
-        if (ds.getEntity() != null && ds.isIndirect()) {
-            float amnt = 1;
-            if (e.getAmount() > uke.getMaxHealth() * 0.05) amnt = 3;
-            if (e.getAmount() > uke.getMaxHealth() * 0.3) amnt = 7;
-            cap.consumePosture(null, amnt, false);
-            cap.tickProc("noShake");
-        }
-
-        //darktide
-//        if (DamageUtils.isPhysicalAttack(e.getSource())) {
-//            float darktide = e.getAmount() / 2;
-//            darktide *= cap.getPosturePercentage();
-//            //temporary, darktide
-//            if (cap.getMaxPosture() > 0) {
-//                e.setAmount(e.getAmount() - darktide);
-//                cap.consumePosture(e.getSource().getEntity() instanceof LivingEntity attack ? attack : null,
-//                                   darktide, false);
-//            }
+        //Simple formula. Less than 10% health per hit=1 posture, 30%=3, any more = 7. Cannot stun.
+//        if (ds.getEntity() != null && ds.isIndirect()) {
+//            float amnt = 1;
+//            if (e.getAmount() > uke.getMaxHealth() * 0.1) amnt = 3;
+//            if (e.getAmount() > uke.getMaxHealth() * 0.3) amnt = 7;
+//            cap.consumePosture(null, amnt, false);
+//            cap.tickProc("noShake");
 //        }
 
         // combo reduces direct damage
         final float dmg = e.getAmount();
         float comboDefense = 0;
+        //reduction starts at half and increases with your combo
+        comboDefense = 1 / Math.max(1, StylishData.getCap(uke).getCombo());
+        e.setAmount(dmg * comboDefense);
         if (ds.getEntity() != null) {
-            //reduction starts at half and increases with your combo
-            comboDefense = magicInternalDamage / Math.max(1, StylishData.getCap(uke).getCombo());
-            e.setAmount(dmg * comboDefense);
-            StylishData.getCap(uke).resetCombo();
+            StylishData.getCap(uke).resetCombo();//reset combo for direct hits
+            if (ds.getEntity() instanceof LivingEntity m && CombatData.getCap(m).getPosture() <= 0) {
+                //overextension penalty
+                //CombatData.getCap(m).pin(10);
+                e.setAmount(e.getAmount() * 0.3f);
+                CombatData.getCap(m).recordDamage(e.getAmount() / 2);
+                m.addEffect(new MobEffectInstance(MobEffects.MOVEMENT_SLOWDOWN, 20));
+            }
         }
 
-        //nonplayers cannot hold on and will vaporize if their damage is too high
-        if (!(uke instanceof Player) && e.getAmount() > uke.getMaxHealth() * Math.max(1, uke.getMaxHealth() / cap.getRecordedDamage())) {
-            e.setAmount(e.getAmount() + cap.getRecordedDamage());
-            cap.stopRecording(null);
-            cap.tickProc("canDie");
+        if (GeneralConfig.debug && !uke.level().isClientSide) {
+            WarDance.LOGGER.debug("combo guard and exhaustion has been resolved, damage is now " + e.getAmount());
         }
-        //stuff used to exist here, moved to footwork
+
+        //fall damage deducts posture
+        if (e.getSource().is(DamageTypeTags.IS_FALL) || e.getSource().is(DamageTypeTags.IS_EXPLOSION)) {
+            cap.consumePosture(null, e.getAmount(), ICombatCapability.BreachLevel.STUN);
+        }
 
         //weapon on hit effects
         if (ds.getEntity() instanceof LivingEntity trueSource) {
-            final WeaponStats.SweepInfo sweepInfo = WeaponStats.getSweepInfo(trueSource.getMainHandItem(), CombatUtils.getSweepState(trueSource));
+            final WeaponStats.SweepInfo sweepInfo = WeaponStats.getSweepInfo(trueSource.getMainHandItem(), CombatUtils.getAttackState(trueSource));
             sweepInfo.performCommand(trueSource, true, true);
             sweepInfo.performCommand(uke, false, true);
             double luckDiff = WarDance.rand.nextFloat() * (GeneralUtils.getAttributeValueSafe(trueSource, Attributes.LUCK)) - WarDance.rand.nextFloat() * (GeneralUtils.getAttributeValueSafe(uke, Attributes.LUCK));
             e.setAmount(e.getAmount() + (float) luckDiff * GeneralConfig.luck);
+
+            //consume stamina if we didn't do it yet
+            if (!CombatData.getCap(trueSource).alreadyProc("qiSpent")) {
+                e.setAmount(CombatData.getCap(trueSource).consumePosture(e.getAmount()));
+                CombatData.getCap(trueSource).tickProc("qiSpent");
+            }
+
+            if (GeneralConfig.debug && !uke.level().isClientSide) {
+                WarDance.LOGGER.debug("special sweep been resolved, damage is now " + e.getAmount());
+            }
         }
+
+        final boolean alert = StealthUtils.INSTANCE.getAwareness(ds.getEntity() instanceof LivingEntity le ? le : null, uke) == StealthUtils.Awareness.ALERT;
+        final boolean creative = e.getSource().is(DamageTypeTags.BYPASSES_INVULNERABILITY);
+        final boolean environmentalDamage = (e.getSource().getEntity() == null);
+        final boolean nonMeleeDamage = e.getSource().isIndirect() || !(e.getSource().getEntity() instanceof LivingEntity le) || CombatUtils.getAttackState(le) == WeaponStats.AttackType.UNDEFINED;
+        //nonplayers cannot hold on and will vaporize if the damage is too high
+        if (!(uke instanceof Player) && e.getAmount() > uke.getMaxHealth() * 2) {
+            e.setAmount(e.getAmount() + cap.getRecordedDamage());
+            cap.stopRecording(null);
+        } else if (!creative && !cap.isStunned() && !cap.alreadyProc("knockdown")) {
+            //yeah this is basically darktide with discrimination
+
+            // environmental: qi drain only
+            if (environmentalDamage) {
+                cap.consumePosture(QiCosts.translateEnvironment(ds));
+                e.setAmount(0);
+                cap.tickProc("deathDenied");
+            } else if (uke instanceof Player) {
+                //players
+                // you cannot die unless you are knocked down
+                // vs projectile: qi drain then internal damage
+                // vs melee: damage and posture simultaneously
+                cap.tickProc("deathDenied");
+                if (!nonMeleeDamage && cap.getPosture() <= 0)
+                    cap.recordDamage(e.getAmount());
+                e.setAmount(e.getAmount() * (1 - cap.getPosturePercentage()));
+            } else {
+                //mobs
+                // vs projectiles: qi drain then damage
+                // vs melee: qi drain then damage
+                if (alert){// ) {
+                    e.setAmount(e.getAmount() * (1 - cap.getPosturePercentage()));
+                    if (nonMeleeDamage&& (cap.getPosture() > 0)) {
+                        //cap.recordDamage(cap.consumePosture(e.getAmount()));//I think this is double dipping posture for projectiles?
+                        e.setAmount(e.getAmount()/2);
+                        cap.recordDamage(e.getAmount());
+                    }
+                }
+            }
+            //if the damage made it all the way here, congratulations! It hurts the entity.
+            cap.tickProc("noShake");
+            //e.setCanceled(true);
+        }
+        //stuff used to exist here, moved to footwork
         if (GeneralConfig.debug && !uke.level().isClientSide) {
-            WarDance.LOGGER.debug("luck has been resolved, damage is now " + e.getAmount());
+            WarDance.LOGGER.debug("internal damage has been resolved, damage is now " + e.getAmount());
         }
 
         if (DamageUtils.isPhysicalAttack(ds)) {
@@ -637,7 +703,7 @@ public class CombatHandler {
             }
         }
         if (GeneralConfig.debug && !uke.level().isClientSide) {
-            WarDance.LOGGER.debug("darktide and config has been resolved, damage is now " + e.getAmount());
+            WarDance.LOGGER.debug("config has been resolved, damage is now " + e.getAmount());
         }
     }
 
@@ -674,34 +740,18 @@ public class CombatHandler {
             e.setAmount(0);
         final ICombatCapability cap = CombatData.getCap(e.getEntity());
 
-        //fall damage deducts posture
-        if (e.getSource().is(DamageTypeTags.IS_FALL) || e.getSource().is(DamageTypeTags.IS_EXPLOSION)) {
-            cap.consumePosture(null, e.getAmount(), false, 0);
-        }
-
         //finalize knockdown, ugly fix to prevent the knocking hit from being skipped
         if (cap.alreadyProc("knockdown")) {
             cap.knockdown(e.getEntity(), (int) cap.getProc("knockdown"));
-            float hardcap = e.getEntity() instanceof Player && e.getEntity().getHealth() > e.getEntity().getMaxHealth() / 2 ? e.getEntity().getHealth() - WarDance.rand.nextFloat() * 3f : 99999;
-            e.setAmount(Math.min(hardcap, e.getAmount() + cap.getRecordedDamage()));//fixme nukes armor?
+            cap.tickProc("knockdown", 1);
+        }
+        if (cap.isStunned() && cap.getRecordedDamage() > 0) {
+            e.setAmount(e.getAmount() + cap.getRecordedDamage());
             cap.stopRecording(null);
             CombatUtils.knockBack(e.getEntity(), e.getSource().getEntity(), 0.7f, true, true);
-            cap.tickProc("knockdown", 1);
-        } else {
-            LivingEntity uke = e.getEntity();
-            DamageSource ds = e.getSource();
-            //you cannot die unless you are knocked down
-            final boolean creative = e.getSource().is(DamageTypeTags.BYPASSES_INVULNERABILITY);
-            if (!creative && e.getAmount() > uke.getHealth() && !cap.isStunned() && !cap.alreadyProc("knockdown")) {
-                final float min = Math.min(e.getAmount(), uke.getHealth() - 1);
-                e.setAmount(min);
-            }
-            //the rest of it becomes internal damage
-            if (!creative && StealthUtils.INSTANCE.getAwareness(ds.getEntity() instanceof LivingEntity le ? le : null, uke) == StealthUtils.Awareness.ALERT && cap.getDamageRecordTime() > 0) {
-                cap.recordDamage(e.getAmount() * (1 - magicInternalDamage));
-                cap.tickProc("noShake");
-                //e.setCanceled(true);
-                return;
+        } else if (!cap.isStunned()) {
+            if (cap.alreadyProc("deathDenied")) {
+                e.setAmount(Math.min(e.getAmount(), e.getEntity().getHealth() - 1));
             }
         }
     }
@@ -712,7 +762,7 @@ public class CombatHandler {
         //you cannot die unless you are knocked down
         final boolean creative = e.getSource().is(DamageTypeTags.BYPASSES_INVULNERABILITY);
         final ICombatCapability cap = CombatData.getCap(elb);
-        if (!creative && !cap.isStunned() && !cap.alreadyProc("canDie")) {
+        if (!creative && !cap.isStunned() && cap.alreadyProc("deathDenied")) {
             elb.setHealth(1);
             e.setCanceled(true);
         }

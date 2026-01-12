@@ -9,6 +9,7 @@ import net.minecraft.world.damagesource.DamageType;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
@@ -25,9 +26,9 @@ public abstract class MixinLivingEntity extends Entity {
     }
 
     @Redirect(method = "hurt", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/damagesource/DamageSource;is(Lnet/minecraft/tags/TagKey;)Z"))
-    private boolean injected(DamageSource instance, TagKey<DamageType> type) {
-        if (type == DamageTypeTags.NO_IMPACT && instance.getEntity() == null) {
-            return false;
+    private boolean noImpact(DamageSource instance, TagKey<DamageType> type) {
+        if (type == DamageTypeTags.NO_IMPACT && (Object) this instanceof Player) {// && instance.getEntity() == null
+            return true;
         }
         return instance.is(type);
     }

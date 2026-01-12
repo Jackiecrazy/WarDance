@@ -109,6 +109,7 @@ public class RenderEvents {
 
     @SubscribeEvent
     public static void eyes(RenderLevelStageEvent event) {
+        //render things that show up on a mob
         Minecraft mc = Minecraft.getInstance();
         if (event.getStage() != RenderLevelStageEvent.Stage.AFTER_CUTOUT_BLOCKS) return;
 
