@@ -23,6 +23,7 @@ import jackiecrazy.wardance.entity.ai.ExposeGoal;
 import jackiecrazy.wardance.networking.CombatChannel;
 import jackiecrazy.wardance.networking.sync.SyncSkillPacket;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.util.Tuple;
@@ -31,6 +32,8 @@ import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.Mob;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraftforge.event.AttachCapabilitiesEvent;
 import net.minecraftforge.event.OnDatapackSyncEvent;
@@ -59,6 +62,9 @@ public class EntityHandler {
     public static void start(ServerStartingEvent e) {
         mustUpdate.clear();
         alertTracker.clear();
+        WeaponStats.DESPERATION = BuiltInRegistries.ITEM.stream()
+                .filter(item -> item.builtInRegistryHolder().is(WeaponStats.DESPERATE_THROW))
+                .toList();
     }
 
     @SubscribeEvent
@@ -76,6 +82,11 @@ public class EntityHandler {
     }
 
 
+
+    @SubscribeEvent
+    public static void what(AttachCapabilitiesEvent<ItemStack> e) {
+
+    }
 
     @SubscribeEvent
     public static void caps(AttachCapabilitiesEvent<Entity> e) {

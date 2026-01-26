@@ -76,6 +76,11 @@ public class Taunt extends Skill {
     }
 
     @Override
+    public int getAimRange(LivingEntity caster, SkillData sd) {
+        return 8;
+    }
+
+    @Override
     public boolean onStateChange(LivingEntity caster, SkillData prev, STATE from, STATE to) {
         LivingEntity target = SkillUtils.aimLiving(caster, 8);
         if (to == STATE.ACTIVE && target != null && cast(caster, target, -999)) {

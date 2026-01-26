@@ -278,9 +278,13 @@ public class NewCombatCapability implements ICombatCapability {
                 weakness *= GeneralConfig.hunger;
         double cooldown = ResourceConfig.postureCD * weakness;
         posture -= amount;
-        if (posture < 0) posture = 0;
+        if (posture < 0){
+            ret=Math.abs(posture);
+            posture = 0;
+        }
         if (amount > 0) {
-            addRally(amount * StylishData.getCap(elb).getCombo());
+            addRally(amount*0.6f * StylishData.getCap(elb).getCombo());
+            //System.out.println("rally: "+getRally());
         }
         if (WarCompat.elenaiDodge && elb instanceof ServerPlayer sp)
             ElenaiCompat.manipulateFeather(sp, 0);
@@ -296,7 +300,7 @@ public class NewCombatCapability implements ICombatCapability {
     public void setRally(float v) {
         //only players get rally
         if (player) {
-            rally = Mth.clamp(v, 0, posture);//(float) Math.min(v, dude.get().getAttributeValue(FootworkAttributes.MAX_RALLY.get()));
+            rally = Mth.clamp(v, 0, getMaxPosture()-getPosture());//(float) Math.min(v, dude.get().getAttributeValue(FootworkAttributes.MAX_RALLY.get()));
             if (rally < 0) rally = 0;
             rallyCD = RALLY_CD;
             dirty = true;
@@ -305,14 +309,15 @@ public class NewCombatCapability implements ICombatCapability {
 
     @Override
     public void rally(float amount) {
-        if (alreadyProc("rally")) return;
+        //if (alreadyProc("rally")) return;
 //        RallyPostureEvent rpe = new RallyPostureEvent(dude.get(), amount);
 //        MinecraftForge.EVENT_BUS.post(rpe);
 //        if (rpe.isCanceled()) return;
         //amount = rpe.getQuantity();//Math.min(rpe.getQuantity(), rally);
+        amount=Math.min(amount, rally);
         rally -= amount;
-        rallyCD = RALLY_CD;
-        tickProc("rally");
+        //rallyCD = RALLY_CD;
+        //tickProc("rally");
         setPosture(posture + amount);
     }
 
@@ -688,7 +693,7 @@ public class NewCombatCapability implements ICombatCapability {
 
     @Override
     public void recordDamage(float v) {
-        if (v > 0) healthyCooldown = 60;
+        if (v >= 0) healthyCooldown = 60;
         if (recordedDamage < 0) recordedDamage = 0;
         recordedDamage += v;
     }
@@ -836,9 +841,15 @@ public class NewCombatCapability implements ICombatCapability {
 
     private void handlePostureRegen(int ticks) {
         mobPosCD -= ticks;
+        rallyCD-=ticks;
         if (mobPosRegenSpd == 0) mobPosRegenSpd = 0.3;
         float mult = 1;
         LivingEntity elb = dude.get();
+        if(rallyCD<0){
+            rally(Math.max(1,getRally()/10));
+            rallyCD=0;
+        }
+        if(mobPosCD>0||rally>0)return;
         if (elb != null) {
             float healthperc = 0.3f + (elb.getHealth() / elb.getMaxHealth()) * 0.7f;
             if (player) {

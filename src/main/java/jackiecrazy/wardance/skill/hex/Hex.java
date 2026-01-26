@@ -172,6 +172,10 @@ public class Hex extends Skill {
         return boundCast(prev, from, to);
     }
 
+    public int getAimRange(LivingEntity caster, SkillData sd) {
+        return 3;
+    }
+
     @Override
     public SkillData onMarked(LivingEntity caster, LivingEntity target, SkillData sd, @Nullable SkillData existing) {
         final AttributeInstance luck = target.getAttribute(Attributes.LUCK);

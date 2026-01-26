@@ -47,7 +47,8 @@ import java.util.stream.Collectors;
 
 @Mod.EventBusSubscriber(value = Dist.CLIENT, modid = WarDance.MODID)
 public class RenderEvents {
-    private static final ResourceLocation expose = new ResourceLocation(WarDance.MODID, "textures/hud/stevetime.png");
+    private static final ResourceLocation timeslow = new ResourceLocation(WarDance.MODID, "textures/hud/stevetime.png");
+    private static final ResourceLocation crosshair = new ResourceLocation(WarDance.MODID, "textures/hud/crosshair.png");
     private static HashMap<String, Boolean> rotate;
 
     public static void updateList(List<? extends String> pos) {
@@ -125,16 +126,18 @@ public class RenderEvents {
 
         ClientLevel client = mc.level;
         if (client != null) {
+            final boolean combatMode = StylishData.getCap(mc.player).isCombatMode();
             for (Entity entity : client.entitiesForRendering()) {
-                if (entity instanceof LivingEntity le && le != cameraEntity && le.isAlive() &&
+                if (entity != cameraEntity && entity.isAlive() &&
                         !entity.getIndirectPassengers().iterator().hasNext() &&
                         entity.shouldRender(cameraPos.x(), cameraPos.y(), cameraPos.z()) &&
-                        !GeneralUtils.viewBlocked(mc.player, le, false) &&
+                        !GeneralUtils.viewBlocked(mc.player, entity, false) &&
                         (entity.noCulling || frustum.isVisible(entity.getBoundingBox()))) {
-                    if (TimeSlowData.getCap(le).getEffectiveSpeed() < 1)
-                        steveTime(le, partialTicks, poseStack);
-
-                    if (!Marks.getCap(le).getActiveMarks().isEmpty() && look != entity) {
+                    if (TimeSlowData.getCap(entity).getEffectiveSpeed() < 1)
+                        steveTime(entity, partialTicks, poseStack);
+                    if(entity.getId()==ClientEvents.coyoteTimeID&& combatMode)
+                        crosshair(entity, partialTicks, poseStack);
+                    if (entity instanceof LivingEntity le&&!Marks.getCap(le).getActiveMarks().isEmpty() && look != entity) {
                         renderMarks(le, partialTicks, poseStack);
                     }
                 }
@@ -187,7 +190,7 @@ public class RenderEvents {
             e.setNewFovModifier(0.7f);
     }
 
-    private static void steveTime(LivingEntity passedEntity, float partialTicks, PoseStack poseStack) {
+    private static void steveTime(Entity passedEntity, float partialTicks, PoseStack poseStack) {
         double x = passedEntity.xo + (passedEntity.getX() - passedEntity.xo) * partialTicks;
         double y = passedEntity.yo + (passedEntity.getY() - passedEntity.yo) * partialTicks;
         double z = passedEntity.zo + (passedEntity.getZ() - passedEntity.zo) * partialTicks;
@@ -203,7 +206,29 @@ public class RenderEvents {
         poseStack.mulPose(Minecraft.getInstance().getEntityRenderDispatcher().cameraOrientation());
         final float size = passedEntity.getBbWidth() * 0.02f;
         poseStack.scale(-size, -size, size);
-        GuiComponent.blit(poseStack, expose, -16, -16, 0, 0, 32, 32, 32, 32);
+        GuiComponent.blit(poseStack, timeslow, -16, -16, 0, 0, 32, 32, 32, 32);
+        poseStack.popPose();
+
+        //poseStack.translate(0.0D, -(NeatConfig.backgroundHeight + NeatConfig.barHeight + NeatConfig.backgroundPadding), 0.0D);
+    }
+
+    private static void crosshair(Entity passedEntity, float partialTicks, PoseStack poseStack) {
+        double x = passedEntity.xo + (passedEntity.getX() - passedEntity.xo) * partialTicks;
+        double y = passedEntity.yo + (passedEntity.getY() - passedEntity.yo) * partialTicks;
+        double z = passedEntity.zo + (passedEntity.getZ() - passedEntity.zo) * partialTicks;
+
+        EntityRenderDispatcher renderDispatcher = Minecraft.getInstance().getEntityRenderDispatcher();
+        Vec3 renderPos = renderDispatcher.camera.getPosition();
+
+        poseStack.pushPose();
+        poseStack.translate((float) (x - renderPos.x()), (float) (y - renderPos.y()), (float) (z - renderPos.z()));
+        //RenderSystem.setShaderTexture(0, expose);
+        Vec3 offset = passedEntity.position().subtract(renderPos).normalize().scale(passedEntity.getBbWidth() * -1.2);
+        poseStack.translate(offset.x, offset.y + passedEntity.getBbHeight() / 2, offset.z);
+        poseStack.mulPose(Minecraft.getInstance().getEntityRenderDispatcher().cameraOrientation());
+        final float size = passedEntity.getBbWidth() * 0.03f;
+        poseStack.scale(-size, -size, size);
+        GuiComponent.blit(poseStack, crosshair, -32, -32, 0, 0, 64, 64, 64, 64);
         poseStack.popPose();
 
         //poseStack.translate(0.0D, -(NeatConfig.backgroundHeight + NeatConfig.barHeight + NeatConfig.backgroundPadding), 0.0D);

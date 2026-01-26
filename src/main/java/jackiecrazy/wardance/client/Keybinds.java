@@ -111,15 +111,21 @@ public class Keybinds {
         }
         if (ALTERNATE_KEY.getKeyConflictContext().isActive() && ALTERNATE_KEY.consumeClick() && mc.player.isAlive()) {
             ALTERNATE_KEY.setDown(false);
+            //grapple
             if (Keybinds.THROW.isDown()) {
                 Player p = mc.player;
                 Vec3 destination = ProjectileUtil.getHitResultOnViewVector(p, EntitySelector.LIVING_ENTITY_STILL_ALIVE, 32).getLocation();
-                CombatChannel.INSTANCE.sendToServer(new GrapplePacket(destination));
+                if (ClientEvents.coyoteTimeID >=0) {
+                    destination = ClientEvents.coyoteVector;
+                }
+                CombatChannel.INSTANCE.sendToServer(new GrapplePacket(destination, ClientEvents.coyoteTimeID));
                 p.setDeltaMovement(Vec3.ZERO);
             }
+            //skills
             else if (CasterData.getCap(mc.player).getHolsteredSkill() != null) {
-                CombatChannel.INSTANCE.sendToServer(new EvokeSkillPacket());
+                CombatChannel.INSTANCE.sendToServer(new EvokeSkillPacket(ClientEvents.coyoteTimeID));
             } else {
+                //kick
                 CombatChannel.INSTANCE.sendToServer(new KickPacket(ClientEvents.coyoteTimeID));
                 HitResult destination = ProjectileUtil.getHitResultOnViewVector(mc.player, EntitySelector.LIVING_ENTITY_STILL_ALIVE, 3);
                 if (destination.getType() != HitResult.Type.MISS&&CombatData.getCap(mc.player).getPosture()>= QiCosts.KICK) {

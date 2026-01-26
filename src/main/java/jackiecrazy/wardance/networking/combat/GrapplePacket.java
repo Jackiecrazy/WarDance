@@ -4,6 +4,7 @@ import jackiecrazy.wardance.capability.flyingweapon.FlyingWeaponData;
 import jackiecrazy.wardance.capability.flyingweapon.IFlyingWeapon;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.entity.Entity;
 import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.network.NetworkEvent;
 
@@ -13,9 +14,11 @@ import java.util.function.Supplier;
 
 public class GrapplePacket {
     Vec3 destination;
+    int entID;
 
-    public GrapplePacket(Vec3 pos) {
+    public GrapplePacket(Vec3 pos, int id) {
         destination = pos;
+        entID=id;
     }
 
     public static class Encoder implements BiConsumer<GrapplePacket, FriendlyByteBuf> {
@@ -23,6 +26,7 @@ public class GrapplePacket {
         @Override
         public void accept(GrapplePacket packet, FriendlyByteBuf packetBuffer) {
             packetBuffer.writeVector3f(packet.destination.toVector3f());
+            packetBuffer.writeInt(packet.entID);
         }
     }
 
@@ -30,7 +34,7 @@ public class GrapplePacket {
 
         @Override
         public GrapplePacket apply(FriendlyByteBuf packetBuffer) {
-            return new GrapplePacket(new Vec3(packetBuffer.readVector3f()));
+            return new GrapplePacket(new Vec3(packetBuffer.readVector3f()), packetBuffer.readInt());
         }
     }
 
@@ -44,6 +48,10 @@ public class GrapplePacket {
                 final IFlyingWeapon cap = FlyingWeaponData.getCap(sender);
                 sender.resetFallDistance();
                 cap.launchGrapple(packet.destination);
+                final Entity found = sender.level().getEntity(packet.entID);
+                if(cap.getGrapple()!=null){
+                    cap.getGrapple().setMotionTarget(found);
+                }
             });
             contextSupplier.get().setPacketHandled(true);
         }

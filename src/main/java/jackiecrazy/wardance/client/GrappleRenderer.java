@@ -21,6 +21,8 @@ import net.minecraft.world.phys.Vec3;
 import org.joml.Matrix3f;
 import org.joml.Matrix4f;
 
+import java.awt.*;
+
 public class GrappleRenderer extends EntityRenderer<GrappleEntity> {
     private static final ResourceLocation TEXTURE_LOCATION = new ResourceLocation("textures/entity/fishing_hook.png");
     private static final RenderType RENDER_TYPE = RenderType.entityCutout(TEXTURE_LOCATION);
@@ -86,23 +88,34 @@ public class GrappleRenderer extends EntityRenderer<GrappleEntity> {
             PoseStack.Pose pose,
             Vec3 a,
             Vec3 b,
+            Color c,
             int light
     ) {
         Matrix4f mat = pose.pose();
         Matrix3f norm = pose.normal();
 
         consumer.vertex(mat, (float) a.x, (float) a.y, (float) a.z)
-                .color(0, 0, 0, 255)
+                .color(c.getRed(), c.getGreen(), c.getBlue(), c.getAlpha())
                 .normal(norm, 0, 1, 0)
                 .uv2(light)
                 .endVertex();
 
         consumer.vertex(mat, (float) b.x, (float) b.y, (float) b.z)
-                .color(0, 0, 0, 255)
+                .color(c.getRed(), c.getGreen(), c.getBlue(), c.getAlpha())
                 .normal(norm, 0, 1, 0)
                 .uv2(light)
                 .endVertex();
     }
+
+    private static final Color[] RAINBOW={
+            Color.RED,
+            Color.ORANGE,
+            Color.YELLOW,
+            Color.GREEN,
+            Color.CYAN,
+            Color.BLUE,
+            Color.MAGENTA
+    };
 
     @Override
     public void render(GrappleEntity hook,
@@ -174,7 +187,7 @@ public class GrappleRenderer extends EntityRenderer<GrappleEntity> {
                 Vec3 pA = cubicBezier(P0, P1, P2, P3, t1);
                 Vec3 pB = cubicBezier(P0, P1, P2, P3, t2);
 
-                lineVertex(vertexconsumer1, posestack$pose1, pA, pB, light);
+                lineVertex(vertexconsumer1, posestack$pose1, pA, pB, i%2==0?Color.WHITE:Color.DARK_GRAY, light);
             }
 
 

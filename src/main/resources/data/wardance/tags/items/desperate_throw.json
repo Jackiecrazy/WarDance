@@ -1,0 +1,14 @@
+{
+  "replace": false,
+  "values": [
+    "minecraft:stick",
+    "minecraft:bone",
+    "minecraft:potato",
+    "minecraft:stone_button",
+    "minecraft:polished_blackstone_button",
+    "minecraft:oak_button",
+    "minecraft:flint",
+    "minecraft:wooden_sword",
+    "minecraft:brick"
+  ]
+}

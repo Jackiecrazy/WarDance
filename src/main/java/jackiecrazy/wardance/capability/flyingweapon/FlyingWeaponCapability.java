@@ -13,6 +13,7 @@ import jackiecrazy.wardance.entity.*;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.common.ForgeMod;
@@ -62,9 +63,9 @@ public class FlyingWeaponCapability implements IFlyingWeapon {
 
     @Override
     public void setHeldBlock(ThrownWeaponEntity sb) {
-        if(held!=null)
+        if (held != null)
             held.remove(Entity.RemovalReason.DISCARDED);
-        held=sb;
+        held = sb;
     }
 
     @Override
@@ -75,7 +76,7 @@ public class FlyingWeaponCapability implements IFlyingWeapon {
     @Override
     public void launchGrapple(Vec3 to) {
         if (!player.level().isClientSide()) {
-            if(getGrapple()!=null){
+            if (getGrapple() != null) {
                 getGrapple().remove(Entity.RemovalReason.DISCARDED);
             }
             GrappleEntity grapple = new GrappleEntity(WarEntities.GRAPPLE.get(), player.level());
@@ -93,7 +94,7 @@ public class FlyingWeaponCapability implements IFlyingWeapon {
                                MotionManager mm,
                                WeaponStats.SweepInfo info,
                                double range,
-                               int totalTime) {
+                               int totalTime, FlyingWeaponEffect... fx) {
         //set attack range from manager, then temporarily set the rest to override whatever sweep the player should have grabbed
         //no idea how this should be stored on the player. Since it's used in the span of a single function, maybe a global is fine?
         final boolean isMain = hand == InteractionHand.MAIN_HAND;
@@ -103,10 +104,11 @@ public class FlyingWeaponCapability implements IFlyingWeapon {
             //updateWeapon(fwe, hand);
             if (info == null)
                 fwe.clearPath();
-            fwe.queuePath(new WeaponMotionManager(mm, info, range), 0, 0);
+            fwe.queuePath(new WeaponMotionManager(mm, info, range), 0, 0);//fixme weird trail jump
             //fwe.setIdlePose(idleFrame[isMain ? 0 : 1]);
             //fwe.setShouldRender(FlyingWeaponEffect.WEAPON,true);
             //fwe.setUniversalOffset(idleOffset[isMain ? 0 : 1]);
+            fwe.setShouldRender(fx);
         }
     }
 
@@ -122,7 +124,7 @@ public class FlyingWeaponCapability implements IFlyingWeapon {
         //reset weapons if they're dead
         if (main != null && main.isRemoved()) main = null;
         if (off != null && off.isRemoved()) off = null;
-        if(grapple!=null&&grapple.isRemoved())grapple=null;
+        if (grapple != null && grapple.isRemoved()) grapple = null;
 
         //not in combat mode, dismiss weapons
         /*if(!weaponValid(InteractionHand.MAIN_HAND)){
@@ -185,7 +187,7 @@ public class FlyingWeaponCapability implements IFlyingWeapon {
         //fixme a new pair is made every reload
         FlyingWeaponEntity fwe = new FlyingWeaponEntity(WarEntities.WEAPON.get(), player.level());
         updateWeapon(fwe, hand);
-        if (hand==InteractionHand.MAIN_HAND) {
+        if (hand == InteractionHand.MAIN_HAND) {
             main = fwe;
         } else {
             fwe.setUniversalOffset(new Vec3(-1, 0, 0));
@@ -203,16 +205,17 @@ public class FlyingWeaponCapability implements IFlyingWeapon {
 
     @Override
     public void yeet(InteractionHand hand, Vec3 pos) {
-        if(hand==null&&getHeldBlock()!=null){
+        if (hand == null && getHeldBlock() != null) {
             getHeldBlock().yeet(pos);
-            held=null;
+            held = null;
             StylishData.getCap(player).addCombo(0.12f, "blockyeet");
         }
         if (getWeapon(hand).isIdle()) {
             StylishData.getCap(player).addCombo(0.2f, "throw");
             Level level = getWeapon(hand).level();
             ThrownWeaponEntity fwe = new ThrownWeaponEntity(WarEntities.THROWN_WEAPON.get(), level);
-            fwe.setHeldItem(player.getItemInHand(hand).copyWithCount(1));
+            final ItemStack held = player.getItemInHand(hand);
+            fwe.setHeldItem(held.copyWithCount(1));
             fwe.setOwner(player);
             fwe.setPosRaw(player.getX(), player.getEyeY(), player.getZ());
             fwe.setInteractionRange(1);
@@ -220,8 +223,13 @@ public class FlyingWeaponCapability implements IFlyingWeapon {
             fwe.yeet(pos);
             level.addFreshEntity(fwe);
             if (!player.getAbilities().instabuild) {
-                player.getItemInHand(hand).shrink(1);
+                held.shrink(1);
+                player.getInventory().setChanged();
+                if (held.getCount() == 0)
+                    player.setItemInHand(hand, ItemStack.EMPTY);
             }
+            mainSwap = offSwap = true;
+            updateWeapon(getWeapon(hand), hand);
             //release the weapon to create another one
 //            if (hand == InteractionHand.MAIN_HAND) main = null;
 //            else off = null;
@@ -230,6 +238,7 @@ public class FlyingWeaponCapability implements IFlyingWeapon {
 
 
     private void updateWeapon(FlyingItemEntity fwe, InteractionHand hand) {
+        //fwe.remove(Entity.RemovalReason.DISCARDED);
         if (fwe.isRemoved()) {
             fwe = new FlyingWeaponEntity(WarEntities.WEAPON.get(), player.level());
             player.level().addFreshEntity(fwe);
@@ -243,9 +252,9 @@ public class FlyingWeaponCapability implements IFlyingWeapon {
     @Override
     public void forceRefreshWeapon(InteractionHand hand) {
         FlyingItemEntity fwe = getWeapon(hand);
-        if(fwe==null||fwe.isRemoved()){
+        if (fwe == null || fwe.isRemoved()) {
             respawnWeapon(hand);
-            fwe=getWeapon(hand);
+            fwe = getWeapon(hand);
         }
         updateWeapon(fwe, hand);
     }

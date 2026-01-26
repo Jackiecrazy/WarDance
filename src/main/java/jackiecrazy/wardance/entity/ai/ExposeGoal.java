@@ -16,7 +16,7 @@ public class ExposeGoal extends Goal {
 
     @Override
     public boolean canUse() {
-        return CombatData.getCap(e).isKnockdown();
+        return CombatData.getCap(e).isStunned();
     }
 
     @Override

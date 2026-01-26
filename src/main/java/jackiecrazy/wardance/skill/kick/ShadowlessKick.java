@@ -24,7 +24,7 @@ public class ShadowlessKick extends Kick {
 
     @Override
     public boolean onStateChange(LivingEntity caster, SkillData prev, STATE from, STATE to) {
-        LivingEntity target = GeneralUtils.raytraceLiving(caster, distance());
+        LivingEntity target = GeneralUtils.raytraceLiving(caster, getAimRange(caster, prev));
         if (from == STATE.HOLSTERED && to == STATE.ACTIVE && target != null) {
             if (cast(caster, target, prev.getDuration())) {
                 prev.setMaxDuration(7);
@@ -92,7 +92,7 @@ public class ShadowlessKick extends Kick {
     }
 
     private boolean kick(LivingEntity caster, SkillData stats) {
-        LivingEntity target = GeneralUtils.raytraceLiving(caster, distance());
+        LivingEntity target = GeneralUtils.raytraceLiving(caster, getAimRange(caster, stats));
         if (target != null) {
             SkillResourceEvent sre = new SkillResourceEvent(caster, target, this);
             SkillCastEvent sce = new SkillCastEvent(caster, target, this, SkillUtils.getSkillEffectiveness(caster), 0, 0, false, stats.getArbitraryFloat());

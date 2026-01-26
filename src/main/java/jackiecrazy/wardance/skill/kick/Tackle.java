@@ -18,7 +18,7 @@ public class Tackle extends Kick {
     }
 
     @Override
-    protected int distance() {
+    public int getAimRange(LivingEntity caster, SkillData sd) {
         return 5;
     }
 }

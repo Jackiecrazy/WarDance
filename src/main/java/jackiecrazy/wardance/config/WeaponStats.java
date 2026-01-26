@@ -12,6 +12,7 @@ import jackiecrazy.wardance.networking.sync.SyncTagDataPacket;
 import jackiecrazy.wardance.utils.CombatUtils;
 import net.minecraft.ChatFormatting;
 import net.minecraft.commands.CommandSourceStack;
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
@@ -40,27 +41,26 @@ import net.minecraftforge.registries.ForgeRegistries;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.lang.reflect.Type;
-import java.util.HashMap;
-import java.util.Locale;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 
 public class WeaponStats extends SimpleJsonResourceReloadListener {
     public static final TagKey<Item> TWO_HANDED = ItemTags.create(new ResourceLocation(WarDance.MODID, "two_handed"));
     public static final TagKey<Item> PARRY_PROJECTILE = ItemTags.create(new ResourceLocation(WarDance.MODID, "parry_projectiles"));
     public static final TagKey<Item> CAN_BE_DISABLED = ItemTags.create(new ResourceLocation(WarDance.MODID, "can_be_disabled"));
-    public static final TagKey<Item> AXE_LIKE = ItemTags.create(new ResourceLocation(WarDance.MODID, "disable_shield"));
+    public static final TagKey<Item> DISABLE_SHIELD = ItemTags.create(new ResourceLocation(WarDance.MODID, "disable_shield"));
     public static final TagKey<Item> UNARMED = ItemTags.create(new ResourceLocation(WarDance.MODID, "unarmed"));
     public static final TagKey<Item> PIERCE_SHIELD = ItemTags.create(new ResourceLocation(WarDance.MODID, "pierce_shield"));
     public static final TagKey<Item> CANNOT_BLOCK = ItemTags.create(new ResourceLocation(WarDance.MODID, "cannot_parry"));
     public static final TagKey<Item> DEMON_HUNTER_CHARGE_RANGED = ItemTags.create(new ResourceLocation(WarDance.MODID, "demon_hunter_ranged"));
+    public static final TagKey<Item> DESPERATE_THROW = ItemTags.create(new ResourceLocation(WarDance.MODID, "desperate_throw"));
     private static final SweepInfo DEFAULT_FAN = new SweepInfo(SWEEPTYPE.CONE, 30, 30);
     private static final SweepInfo DEFAULT_CLEAVE = new SweepInfo(SWEEPTYPE.CLEAVE, 30, 30);
     private static final SweepInfo DEFAULT_IMPACT = new SweepInfo(SWEEPTYPE.IMPACT, 1, 1.5);
     private static final SweepInfo DEFAULT_LINE = new SweepInfo(SWEEPTYPE.LINE, 1, 1.5);
     private static final SweepInfo DEFAULT_CIRCLE = new SweepInfo(SWEEPTYPE.CIRCLE, 1, 1.5);
     private static final SweepInfo DEFAULT_NONE = new SweepInfo(SWEEPTYPE.NONE, 0, 0);
+    public static List<Item> DESPERATION = new ArrayList<>();
     public static Gson GSON = new GsonBuilder().registerTypeAdapter(SweepInfo.class, new SweepAdapter()).registerTypeAdapter(ResourceLocation.class, new ResourceLocation.Serializer()).create();
     public static MeleeInfo DEFAULTMELEE = new MeleeInfo(1, 1);
     public static HashMap<Item, MeleeInfo> combatList = new HashMap<>();
@@ -576,7 +576,7 @@ public class WeaponStats extends SimpleJsonResourceReloadListener {
             ret.breach = true;
             ret.crit = true;
             ret.damage_scale = 1;
-            ret.crit_damage=2;
+            ret.crit_damage = 2;
             return ret;
         }
 

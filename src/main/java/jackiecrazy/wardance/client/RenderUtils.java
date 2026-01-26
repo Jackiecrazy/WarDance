@@ -104,7 +104,10 @@ public class RenderUtils {
         RenderSystem.enableBlend();
         RenderSystem.blendFunc(GlStateManager.SourceFactor.ONE_MINUS_SRC_ALPHA, GlStateManager.DestFactor.DST_ALPHA);
         //RenderSystem.setShaderTexture(0, cooldown);
-        if (v <= 0) return; // nothing to be drawn
+        if (v <= 0){
+            ms.popPose();
+            return; // nothing to be drawn
+        }
         int x2 = x + size, y2 = y + size; // bottom-right corner
         if (v >= 1) {
             RenderSystem.setShaderColor(0.125F, 0.125F, 0.125F, 0.1F);

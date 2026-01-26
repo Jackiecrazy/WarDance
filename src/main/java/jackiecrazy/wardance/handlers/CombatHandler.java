@@ -12,6 +12,7 @@ import jackiecrazy.footwork.utils.GeneralUtils;
 import jackiecrazy.footwork.utils.StealthUtils;
 import jackiecrazy.wardance.WarDance;
 import jackiecrazy.wardance.capability.action.PermissionData;
+import jackiecrazy.wardance.capability.stylish.StylishCapability;
 import jackiecrazy.wardance.config.*;
 import jackiecrazy.wardance.event.MeleePostureEvent;
 import jackiecrazy.wardance.event.ProjectileDefendEvent;
@@ -74,7 +75,7 @@ public class CombatHandler {
     @SubscribeEvent
     public static void swapItemFreshness(LivingEquipmentChangeEvent e) {
         if (e.getSlot() == EquipmentSlot.MAINHAND || e.getSlot() == EquipmentSlot.OFFHAND)
-            StylishData.getCap(e.getEntity()).addCombo(0.1f, "swap");
+            StylishData.getCap(e.getEntity()).addCombo(0.04f, "swap");
     }
 
     @SubscribeEvent
@@ -339,10 +340,10 @@ public class CombatHandler {
                         semeCap.consumePosture(atkMult);
 
                         StylishData.getCap(seme).processAttack(true);
-                        StylishData.getCap(seme).addCombo(0.05f, semeCap.isOffhandAttack() + CombatUtils.getAttackState(seme).name());
+                        StylishData.getCap(seme).addCombo(0.05f, StylishCapability.getNormalAttackString(seme));
                         semeCap.tickProc("qiSpent");
                     }
-                }else{
+                } else {
                     //handle stamina consumption on everything else
                     if (!semeCap.alreadyProc("qiSpent")) {//first hit of a sweep attack this tick, add combo based on state
                         semeCap.consumePosture(atkMult);
@@ -608,11 +609,11 @@ public class CombatHandler {
         e.setAmount(dmg * comboDefense);
         if (ds.getEntity() != null) {
             StylishData.getCap(uke).resetCombo();//reset combo for direct hits
-            if (ds.getEntity() instanceof LivingEntity m && CombatData.getCap(m).getPosture() <= 0) {
+            if (ds.getEntity() instanceof Mob m && CombatData.getCap(m).getPosture() <= 0) {
                 //overextension penalty
                 //CombatData.getCap(m).pin(10);
-                e.setAmount(e.getAmount() * 0.3f);
                 CombatData.getCap(m).recordDamage(e.getAmount() / 2);
+                e.setAmount(e.getAmount() * 0.3f);
                 m.addEffect(new MobEffectInstance(MobEffects.MOVEMENT_SLOWDOWN, 20));
             }
         }
@@ -656,29 +657,32 @@ public class CombatHandler {
         } else if (!creative && !cap.isStunned() && !cap.alreadyProc("knockdown")) {
             //yeah this is basically darktide with discrimination
 
-            // environmental: qi drain only
+            // environmental: only deal damage at 0 qi
             if (environmentalDamage) {
-                cap.consumePosture(QiCosts.translateEnvironment(ds));
-                e.setAmount(0);
-                cap.tickProc("deathDenied");
+                if(cap.consumePosture(QiCosts.translateEnvironment(ds)) == 0) {
+                    e.setAmount(0);
+                    cap.tickProc("deathDenied");
+                }//else e.setAmount(e.getAmount()/2);
             } else if (uke instanceof Player) {
                 //players
                 // you cannot die unless you are knocked down
                 // vs projectile: qi drain then internal damage
                 // vs melee: damage and posture simultaneously
                 cap.tickProc("deathDenied");
-                if (!nonMeleeDamage && cap.getPosture() <= 0)
-                    cap.recordDamage(e.getAmount());
                 e.setAmount(e.getAmount() * (1 - cap.getPosturePercentage()));
+                if (nonMeleeDamage && cap.getPosture() <= 0) {
+                    cap.recordDamage(e.getAmount());
+                    e.setAmount(0);
+                }
             } else {
                 //mobs
                 // vs projectiles: qi drain then damage
                 // vs melee: qi drain then damage
-                if (alert){// ) {
+                if (alert) {// ) {
                     e.setAmount(e.getAmount() * (1 - cap.getPosturePercentage()));
-                    if (nonMeleeDamage&& (cap.getPosture() > 0)) {
+                    if (nonMeleeDamage && (cap.getPosture() > 0)) {
                         //cap.recordDamage(cap.consumePosture(e.getAmount()));//I think this is double dipping posture for projectiles?
-                        e.setAmount(e.getAmount()/2);
+                        e.setAmount(e.getAmount() / 2);
                         cap.recordDamage(e.getAmount());
                     }
                 }

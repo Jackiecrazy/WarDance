@@ -8,19 +8,24 @@ import jackiecrazy.footwork.capability.stylish.StylishData;
 import jackiecrazy.footwork.entity.flyingweapon.FlyingWeaponEffect;
 import jackiecrazy.footwork.utils.GeneralUtils;
 import jackiecrazy.wardance.WarDance;
+import jackiecrazy.wardance.capability.skill.CasterData;
+import jackiecrazy.wardance.capability.skill.ISkillCapability;
 import jackiecrazy.wardance.config.ClientConfig;
 import jackiecrazy.wardance.config.GeneralConfig;
 import jackiecrazy.wardance.config.WeaponStats;
+import jackiecrazy.wardance.entity.FlyingWeaponEntity;
+import jackiecrazy.wardance.entity.GhostBlockEntity;
+import jackiecrazy.wardance.entity.GrappleEntity;
+import jackiecrazy.wardance.entity.ThrownWeaponEntity;
 import jackiecrazy.wardance.handlers.TwoHandingHandler;
 import jackiecrazy.wardance.mixin.ClientAccessors;
 import jackiecrazy.wardance.networking.*;
 import jackiecrazy.wardance.networking.combat.*;
+import jackiecrazy.wardance.skill.Skill;
 import jackiecrazy.wardance.utils.CombatUtils;
 import net.minecraft.client.KeyMapping;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.player.Input;
-import net.minecraft.core.BlockPos;
-import net.minecraft.core.Direction;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
@@ -31,7 +36,6 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.entity.projectile.ProjectileUtil;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.UseAnim;
-import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.EntityHitResult;
 import net.minecraft.world.phys.HitResult;
 import net.minecraft.world.phys.Vec3;
@@ -50,14 +54,19 @@ import net.minecraftforge.fml.common.Mod;
 import java.math.RoundingMode;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.function.Predicate;
 
 @Mod.EventBusSubscriber(value = Dist.CLIENT, modid = WarDance.MODID)
 public class ClientEvents {
+    public static final Predicate<Entity> GRAPPLE_VALID = (a) -> EntitySelector.LIVING_ENTITY_STILL_ALIVE.test(a) || (a instanceof ThrownWeaponEntity b && !(a instanceof GhostBlockEntity) && b.isReal()&&b.transitioning());
     private static final int ALLOWANCE = 5;
     private static final List<KeyMapping> conflict = new ArrayList<>();
     private static final int magicSneakTime = 20;
     public static int combatTicks = -999;
     public static int sneakedTime = 0;
+    public static int coyoteTimeID = -1;
+    public static Vec3 coyoteVector = Vec3.ZERO;
+    private static int coyotedTime = 20;
     private static Entity lastTickLookAt;
     private static boolean rightClick = false;
     private static int mainUseTick = 0, offUseTick = 0;
@@ -66,7 +75,6 @@ public class ClientEvents {
     private static int lastSweepTick = 0, lastAttackTick = 0;
     private static boolean lastUsedHandMain = true;
     private static boolean wasThrowAiming = false;
-    public static int coyoteTimeID=0;
 
     static {
         RenderUtils.formatter.setRoundingMode(RoundingMode.DOWN);
@@ -93,6 +101,30 @@ public class ClientEvents {
             //no moving while you're down! (except for a safety roll)
             KeyMapping.releaseAll();
             return;
+        }
+    }
+
+    private static void aimAssist() {
+        Player p = Minecraft.getInstance().player;
+        //store a copy of the mob that the player is looking at for coyote time resolution
+        double aimRange;
+        Predicate<Entity> pred = EntitySelector.LIVING_ENTITY_STILL_ALIVE;
+        if (Keybinds.THROW.isDown()) {
+            aimRange = GrappleEntity.MAXDIST;
+            pred = GRAPPLE_VALID;
+        } else if (CasterData.getCap(Minecraft.getInstance().player).getHolsteredSkill() != null) {
+            ISkillCapability sc = CasterData.getCap(Minecraft.getInstance().player);
+            final Skill s = sc.getHolsteredSkill();
+            aimRange = s.getAimRange(Minecraft.getInstance().player, sc.getSkillData(s).orElse(null));
+        } else {
+            aimRange = 3;//kick
+        }
+        HitResult dest = ProjectileUtil.getHitResultOnViewVector(p, pred, aimRange);
+        final Vec3 eyePosition = p.getEyePosition();
+        if (dest instanceof EntityHitResult eh) {
+            coyoteTimeID = eh.getEntity().getId();
+            coyoteVector = GeneralUtils.getExactCollision(eh.getEntity(), eyePosition, eyePosition.add(p.getLookAngle().scale(aimRange)));
+            coyotedTime = 20;
         }
     }
 
@@ -162,9 +194,12 @@ public class ClientEvents {
                         CombatChannel.INSTANCE.sendToServer(new RequestUpdatePacket(-1));
                 }
 
-                //store a copy of the mob that the player is looking at for coyote time resolution
-                if(mc.crosshairPickEntity!=null){
-                    coyoteTimeID=mc.crosshairPickEntity.getId();
+                aimAssist();
+                //coyote time expiry
+                coyotedTime--;
+                if (coyotedTime < 0) {
+                    coyoteTimeID = -1;
+                    coyoteVector = Vec3.ZERO;
                 }
 
                 //when finding a long press on left button, check if there is an item in use.
@@ -179,13 +214,16 @@ public class ClientEvents {
 //                        //point them forward
 //                    } else
                     if (Keybinds.THROW.isDown()) {
+                        final Vec3 eyePosition = p.getEyePosition();
                         wasThrowAiming = true;
                         //yeet!
                         if (mc.options.keyAttack.isDown() && mc.options.keyAttack.consumeClick()) {
                             HitResult destination = ProjectileUtil.getHitResultOnViewVector(p, EntitySelector.LIVING_ENTITY_STILL_ALIVE, 32);
                             Vec3 loc = destination.getLocation();
                             if (destination.getType() == HitResult.Type.ENTITY) {
-                                loc = GeneralUtils.getExactCollision(((EntityHitResult) destination).getEntity(), p.getEyePosition(), p.getEyePosition().add(p.getLookAngle().scale(32)));
+                                loc = GeneralUtils.getExactCollision(((EntityHitResult) destination).getEntity(), eyePosition, eyePosition.add(p.getLookAngle().scale(32)));
+                            } else if (coyoteTimeID >=0) {
+                                loc = coyoteVector;
                             }
                             CombatChannel.INSTANCE.sendToServer(new ThrowPacket(true, loc));
                         }
@@ -193,7 +231,9 @@ public class ClientEvents {
                             HitResult destination = ProjectileUtil.getHitResultOnViewVector(p, EntitySelector.LIVING_ENTITY_STILL_ALIVE, 32);
                             Vec3 loc = destination.getLocation();
                             if (destination.getType() == HitResult.Type.ENTITY) {
-                                loc = GeneralUtils.getExactCollision(((EntityHitResult) destination).getEntity(), p.getEyePosition(), p.getEyePosition().add(p.getLookAngle().scale(32)));
+                                loc = GeneralUtils.getExactCollision(((EntityHitResult) destination).getEntity(), eyePosition, eyePosition.add(p.getLookAngle().scale(32)));
+                            } else if (coyoteTimeID >=0) {
+                                loc = coyoteVector;
                             }
                             CombatChannel.INSTANCE.sendToServer(new ThrowPacket(false, loc));
                         }
@@ -250,7 +290,7 @@ public class ClientEvents {
                                 ++mainUseTick;
                             } else {
                                 //cancel usage of main hand weapon when attack is released
-                                if (mainUseTick > 0 && WeaponStats.isCombatItem(mc.player, mc.player.getMainHandItem()) && mc.player.isUsingItem() && mc.player.getUsedItemHand() == InteractionHand.MAIN_HAND)
+                                if (mainUseTick > 0)// && WeaponStats.isCombatItem(mc.player, mc.player.getMainHandItem()) && mc.player.isUsingItem() && mc.player.getUsedItemHand() == InteractionHand.MAIN_HAND)
                                     mc.options.keyUse.setDown(false);
                                 mainUseTick = 0;
                             }

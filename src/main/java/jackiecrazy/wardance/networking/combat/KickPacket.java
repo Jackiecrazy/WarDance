@@ -58,15 +58,13 @@ public class KickPacket {
                         Vec3 loc = destination.getLocation();
                         if (destination.getType() == HitResult.Type.ENTITY) {
                             loc = GeneralUtils.getExactCollision(((EntityHitResult) destination).getEntity(), sender.getEyePosition(), sender.getEyePosition().add(sender.getLookAngle().scale(32)));
-                        }else if (target!=null){
-                            loc=target.getEyePosition();
                         }
                         FlyingWeaponData.getCap(sender).yeet(null, loc);
                     } else {
                         HitResult destination = ProjectileUtil.getHitResultOnViewVector(sender, EntitySelector.LIVING_ENTITY_STILL_ALIVE, 3);
                         if (destination instanceof EntityHitResult hit && CombatData.getCap(sender).consumePosture(QiCosts.KICK) == 0) {
                             CombatUtils.kick(sender, hit.getEntity(), false);
-                        }else if(target instanceof LivingEntity e&&e.distanceToSqr(sender)<9){
+                        }else if(target instanceof LivingEntity e&&GeneralUtils.getDistSqCompensated(e, sender)<9 && CombatData.getCap(sender).consumePosture(QiCosts.KICK) == 0){
                             CombatUtils.kick(sender, e, false);
                         }
                     }

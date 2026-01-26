@@ -10,11 +10,13 @@ import jackiecrazy.footwork.capability.weaponry.CombatManipulator;
 import jackiecrazy.footwork.client.particle.FootworkParticles;
 import jackiecrazy.footwork.client.particle.ScalingParticleType;
 import jackiecrazy.footwork.entity.flyingweapon.FlyingItemEntity;
+import jackiecrazy.footwork.entity.flyingweapon.FlyingWeaponEffect;
 import jackiecrazy.footwork.potion.FootworkEffects;
 import jackiecrazy.footwork.utils.*;
 import jackiecrazy.wardance.WarDance;
 import jackiecrazy.wardance.capability.action.PermissionData;
 import jackiecrazy.wardance.capability.flyingweapon.FlyingWeaponData;
+import jackiecrazy.wardance.capability.stylish.StylishCapability;
 import jackiecrazy.wardance.config.CombatConfig;
 import jackiecrazy.wardance.config.GeneralConfig;
 import jackiecrazy.wardance.config.MobSpecs;
@@ -64,6 +66,8 @@ public class CombatUtils {
     public static boolean suppressChangeFunctions = false, allowCombatHotbarPickup = false;
     private static ProjectileInfo DEFAULTRANGED = new ProjectileInfo(0.6, 1, false, false);
     private static HashMap<EntityType, ProjectileInfo> projectileMap = new HashMap<>();
+    private static ItemStack cacheLeft, cacheRight;//primarily useful in client
+    private static int cacheLeftAtk, cacheRightAtk;
 
     public static void updateProjectiles(List<? extends String> interpretP) {
         projectileMap.clear();
@@ -113,7 +117,19 @@ public class CombatUtils {
     }
 
     public static int getCooldownPeriod(LivingEntity e, InteractionHand h) {
-        return (int) (1.0D / GeneralUtils.getAttributeValueHandSensitive(e, Attributes.ATTACK_SPEED, h) * 20.0D);
+        if(h==InteractionHand.MAIN_HAND){
+            if(e.getItemInHand(h) == cacheRight)return cacheRightAtk;
+            int ret = (int) (1.0D / GeneralUtils.getAttributeValueHandSensitive(e, Attributes.ATTACK_SPEED, h) * 20.0D);
+            cacheRight=e.getItemInHand(InteractionHand.MAIN_HAND);
+            cacheRightAtk=ret;
+            return ret;
+        }else{
+            if(e.getItemInHand(h) == cacheLeft)return cacheLeftAtk;
+            int ret = (int) (1.0D / GeneralUtils.getAttributeValueHandSensitive(e, Attributes.ATTACK_SPEED, h) * 20.0D);
+            cacheLeft=e.getItemInHand(InteractionHand.OFF_HAND);
+            cacheLeftAtk=ret;
+            return ret;
+        }
     }
 
     public static boolean isHoldingShield(LivingEntity e) {
@@ -238,7 +254,7 @@ public class CombatUtils {
             if (attacker != null) {
                 base *= MobSpecs.getOrDefault(attacker).getItemPostureScaling();
             }
-            base*=5;//temporary
+            base *= 5;//temporary
 
         } else {//unarmed
             if (attacker != null && !(attacker instanceof Player)) {
@@ -251,10 +267,10 @@ public class CombatUtils {
         double finalScale = scaler;
         if (attacker instanceof Player) {
             finalScale = (Math.max(CombatData.getCap(attacker).getProc("swing"), ((Player) attacker).getAttackStrengthScale(0.5f)) - 0.20) / 0.80;
-        }else{
+        } else {
             //mob exhaustion penalty
-            if(CombatData.getCap(attacker).getPosture()<=0){
-                finalScale*=0.3;
+            if (CombatData.getCap(attacker).getPosture() <= 0) {
+                finalScale *= 0.3;
             }
         }
         return (float) (base * finalScale);
@@ -464,7 +480,15 @@ public class CombatUtils {
         //purely visual attack
         int animTime = type == WeaponStats.SWEEPTYPE.CIRCLE ? 10 : 3;
         int time = CombatUtils.getCooldownPeriod(e, h);
-        FlyingWeaponData.getCap(e).scheduleAction(h, TemporaryMoveTranslator.temp_getMMFromType(animTime, type, radius), null, reach, time);
+        List<FlyingWeaponEffect> fx = new ArrayList<>();
+        fx.add(FlyingWeaponEffect.WEAPON);
+        if (StylishData.getCap(e).getFreshness(StylishCapability.getNormalAttackString(e)) > 0) {
+            fx.add(FlyingWeaponEffect.TRAIL);
+        }
+        if (TimeSlowData.getCap(e).getEffectiveSpeed() < 1) {
+            fx.add(FlyingWeaponEffect.AFTERIMAGE);
+        }
+        FlyingWeaponData.getCap(e).scheduleAction(h, TemporaryMoveTranslator.temp_getMMFromType(animTime, type, radius), null, reach, time, fx.toArray(new FlyingWeaponEffect[fx.size()]));
 
 
         if (sre.isCanceled() || type == WeaponStats.SWEEPTYPE.NONE || radius == 0) {
@@ -576,7 +600,7 @@ public class CombatUtils {
         ppe.setTrigger(pi.trigger | type.is(MobSpecs.TRIGGER_ON_PARRY));
     }
 
-    public static void setAttackType(LivingEntity entity, WeaponStats.AttackType set){
+    public static void setAttackType(LivingEntity entity, WeaponStats.AttackType set) {
         CombatData.getCap(entity).tickProc("sweepState", set.ordinal());
     }
 
@@ -657,7 +681,7 @@ public class CombatUtils {
 
     public static void triggerSteveTime(LivingEntity from, int time) {
         //ZA WAAAAARUDO! TOKI WO TOMARE!
-        for (Entity t : from.level().getEntities(from, from.getBoundingBox().inflate(32), (a -> !(a instanceof Player) && !(a instanceof FlyingItemEntity)))) {
+        for (Entity t : from.level().getEntities((Entity) null, from.getBoundingBox().inflate(32), (a -> !(a instanceof FlyingItemEntity)))) {
             TimeSlowData.getCap(t).alterSpeed(time, 0.1);
             //jostle everything a tiny amount so you know the time slow is happening
             knockBack(t, from, 0.2f, true, false);
@@ -749,7 +773,7 @@ public class CombatUtils {
         kicker.level().playSound(null, kicker.getX(), kicker.getY(), kicker.getZ(), SoundEvents.ZOMBIE_ATTACK_WOODEN_DOOR, SoundSource.PLAYERS, 0.25f + WarDance.rand.nextFloat() * 0.5f, 0.5f + WarDance.rand.nextFloat() * 0.5f);
         if (targetEntity instanceof LivingEntity target) {
             CombatData.getCap(kicker).tickProc("qiSpent");
-            StylishData.getCap(kicker).addCombo(0.1f, "kick"+breach);
+            StylishData.getCap(kicker).addCombo(0.1f, "kick" + breach);
             CombatData.getCap(target).consumePosture(kicker, 12, breach);
             ParticleUtils.playBonkParticle(kicker.level(), kicker.getEyePosition().add(kicker.getLookAngle().scale(Math.sqrt(GeneralUtils.getDistSqCompensated(kicker, target)))), 1, 0, 8, Color.WHITE);
             target.hurt(new CombatDamageSource(kicker).setPostureDamage(0).setDamageTyping(FootworkDamageArchetype.PHYSICAL).flagBreach(breach).setProcAttackEffects(true), 1);

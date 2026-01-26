@@ -7,11 +7,13 @@ import jackiecrazy.footwork.event.*;
 import jackiecrazy.wardance.config.*;
 import jackiecrazy.wardance.networking.CombatChannel;
 import jackiecrazy.wardance.networking.combat.UpdateClientStylePacket;
+import jackiecrazy.wardance.utils.CombatUtils;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraftforge.common.util.FakePlayer;
 import net.minecraftforge.network.PacketDistributor;
+import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nonnull;
 import java.awt.*;
@@ -35,6 +37,10 @@ public class StylishCapability implements IStyleCapability {
 
     public StylishCapability(LivingEntity dude) {
         this.dude = new WeakReference<>(dude);
+    }
+
+    public static @NotNull String getNormalAttackString(LivingEntity seme) {
+        return CombatData.getCap(seme).isOffhandAttack() + CombatUtils.getAttackState(seme).name();
     }
 
     @Override
@@ -115,21 +121,12 @@ public class StylishCapability implements IStyleCapability {
     @Override
     public void addCombo(float amount, @Nonnull String source) {
         //calculate freshness
-        float decr = amount / 2;
-        int fresh=1;
-        for (String str : freshness) {
-            if (source.equals(str)){
-                fresh++;
-                amount -= decr;
-            }
-        }
+        float fresh=getFreshness(source);
+        amount*=fresh;
         //trail. Add spirit on fresh action.
         if(fresh==1)CombatData.getCap(dude.get()).addSpirit(1);
         //reset combo timer even if too stale
         refresh();
-        //hmmmm
-        final float rallied = CombatData.getCap(dude.get()).getRally() / fresh;
-        CombatData.getCap(dude.get()).rally(rallied);
         //too stale!
         if (amount <= 0) return;
         combo += amount;
@@ -216,6 +213,18 @@ public class StylishCapability implements IStyleCapability {
     @Override
     public void removeOrb(Color of) {
 
+    }
+
+    @Override
+    public float getFreshness(String s) {
+        float fresh=1;
+        for (String str : freshness) {
+            if (s.equals(str)){
+                fresh-=0.5f;
+            }
+        }
+        //trail. Add spirit on fresh action.
+        return fresh;
     }
 
     @Override

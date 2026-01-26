@@ -1,10 +1,7 @@
 package jackiecrazy.wardance.entity;
 
 import jackiecrazy.footwork.capability.resources.CombatData;
-import jackiecrazy.footwork.capability.resources.ICombatCapability;
 import jackiecrazy.footwork.entity.flyingweapon.FlyingItemEntity;
-import jackiecrazy.footwork.entity.flyingweapon.FlyingWeaponEffect;
-import jackiecrazy.footwork.utils.GeneralUtils;
 import jackiecrazy.footwork.utils.TargetingUtils;
 import jackiecrazy.wardance.capability.flyingweapon.FlyingWeaponData;
 import jackiecrazy.wardance.utils.CombatUtils;
@@ -15,11 +12,9 @@ import net.minecraft.core.particles.BlockParticleOption;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.util.Mth;
-import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
-import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.level.Level;
@@ -29,10 +24,10 @@ import net.minecraft.world.phys.Vec3;
 
 import java.util.List;
 
-public class ShadowBlockEntity extends ThrownWeaponEntity {
+public class GhostBlockEntity extends ThrownWeaponEntity {
 
-    public ShadowBlockEntity(EntityType<? extends FlyingItemEntity> type,
-                             Level level) {
+    public GhostBlockEntity(EntityType<? extends FlyingItemEntity> type,
+                            Level level) {
         super(type, level);
     }
 

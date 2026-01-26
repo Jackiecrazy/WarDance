@@ -37,8 +37,13 @@ public class SkillUtils {
             return value;
         }
     };
+    public static Entity temp = null;
 
-    public static void modifyAttribute(LivingEntity caster, Attribute a, UUID id, double amount, AttributeModifier.Operation op) {
+    public static void modifyAttribute(LivingEntity caster,
+                                       Attribute a,
+                                       UUID id,
+                                       double amount,
+                                       AttributeModifier.Operation op) {
         final AttributeInstance atr = caster.getAttribute(a);
         if (atr == null) return;
         final AttributeModifier modifier = atr.getModifier(id);
@@ -55,7 +60,7 @@ public class SkillUtils {
 
     public static void addAttribute(LivingEntity to, Attribute a, AttributeModifier am) {
         final AttributeInstance atr = to.getAttribute(a);
-        if (atr == null||atr.hasModifier(am)) return;
+        if (atr == null || atr.hasModifier(am)) return;
         atr.removeModifier(am.getId());
         atr.addPermanentModifier(am);
     }
@@ -81,7 +86,13 @@ public class SkillUtils {
         return true;
     }
 
-    public static void createCloud(Level world, Entity entityIn, double x, double y, double z, float size, ParticleOptions type) {
+    public static void createCloud(Level world,
+                                   Entity entityIn,
+                                   double x,
+                                   double y,
+                                   double z,
+                                   float size,
+                                   ParticleOptions type) {
         AreaEffectCloud areaeffectcloudentity = new AreaEffectCloud(world, x, y, z);
         if (entityIn instanceof LivingEntity)
             areaeffectcloudentity.setOwner((LivingEntity) entityIn);
@@ -91,23 +102,28 @@ public class SkillUtils {
         world.addFreshEntity(areaeffectcloudentity);
     }
 
-    public static Entity aimEntity(LivingEntity caster) {
-        return GeneralUtils.raytraceEntity(caster.level(), caster, caster.getAttributeValue(ForgeMod.ENTITY_REACH.get()));
-    }
-
     public static LivingEntity aimLiving(LivingEntity caster) {
-        return GeneralUtils.raytraceLiving(caster.level(), caster, caster.getAttributeValue(ForgeMod.ENTITY_REACH.get()));
-    }
-
-    public static Entity aimEntity(LivingEntity caster, double range) {
-        return GeneralUtils.raytraceEntity(caster.level(), caster, range);
+        return aimLiving(caster, caster.getAttributeValue(ForgeMod.ENTITY_REACH.get()));
     }
 
     public static LivingEntity aimLiving(LivingEntity caster, double range) {
+        if (temp instanceof LivingEntity le && GeneralUtils.getDistSqCompensated(caster, temp) < range * range)
+            return le;
         return GeneralUtils.raytraceLiving(caster.level(), caster, range);
     }
 
-    public static boolean auxAttack(LivingEntity caster, LivingEntity target, DamageSource s, float dmg, float posdmg, Runnable onHit, Runnable onDamage) {
+    public static Entity aimEntity(LivingEntity caster, double range) {
+        if (temp != null && caster.distanceToSqr(temp) < range * range) return temp;
+        return GeneralUtils.raytraceEntity(caster.level(), caster, range);
+    }
+
+    public static boolean auxAttack(LivingEntity caster,
+                                    LivingEntity target,
+                                    DamageSource s,
+                                    float dmg,
+                                    float posdmg,
+                                    Runnable onHit,
+                                    Runnable onDamage) {
         CombatData.getCap(target).consumePosture(posdmg);
         onHit.run();
         if (dmg > 0) {
@@ -118,12 +134,22 @@ public class SkillUtils {
         return false;
     }
 
-    public static boolean auxAttack(LivingEntity caster, LivingEntity target, DamageSource s, float dmg, float posdmg, Runnable run, boolean onHit) {
-        return auxAttack(caster, target, s, dmg, posdmg, onHit ? run : () -> {}, onHit ? () -> {} : run);
+    public static boolean auxAttack(LivingEntity caster,
+                                    LivingEntity target,
+                                    DamageSource s,
+                                    float dmg,
+                                    float posdmg,
+                                    Runnable run,
+                                    boolean onHit) {
+        return auxAttack(caster, target, s, dmg, posdmg, onHit ? run : () -> {
+        }, onHit ? () -> {
+        } : run);
     }
 
     public static boolean auxAttack(LivingEntity caster, LivingEntity target, DamageSource s, float dmg, float posdmg) {
-        return auxAttack(caster, target, s, dmg, posdmg, () -> {}, () -> {});
+        return auxAttack(caster, target, s, dmg, posdmg, () -> {
+        }, () -> {
+        });
     }
 
     /**

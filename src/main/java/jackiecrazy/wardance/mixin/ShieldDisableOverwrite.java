@@ -24,7 +24,7 @@ public interface ShieldDisableOverwrite {
     @Overwrite
     default boolean canDisableShield(ItemStack shield, LivingEntity entity, LivingEntity attacker) {
         if (CasterData.getCap(attacker).isTagActive(ProcPoints.disable_shield)) return true;
-        if(self().is(WeaponStats.AXE_LIKE)) return true;
+        if(self().is(WeaponStats.DISABLE_SHIELD)) return true;
         return self().getItem().canDisableShield(self(), shield, entity, attacker);
     }
 }

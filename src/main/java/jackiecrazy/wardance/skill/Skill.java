@@ -14,7 +14,6 @@ import jackiecrazy.wardance.event.SkillCastEvent;
 import jackiecrazy.wardance.event.SkillCooldownEvent;
 import jackiecrazy.wardance.event.SkillResourceEvent;
 import jackiecrazy.wardance.skill.styles.SkillStyle;
-import jackiecrazy.wardance.utils.CombatUtils;
 import jackiecrazy.wardance.utils.DamageUtils;
 import jackiecrazy.wardance.utils.SkillUtils;
 import net.minecraft.network.chat.Component;
@@ -519,6 +518,10 @@ public abstract class Skill extends Move {
 
     protected boolean isCrit(CriticalHitEvent c) {
         return (c.getResult() == Event.Result.DEFAULT && c.isVanillaCritical()) || c.getResult() == Event.Result.ALLOW;
+    }
+
+    public int getAimRange(LivingEntity caster, SkillData sd) {
+        return -1;
     }
 
     public enum CastStatus {

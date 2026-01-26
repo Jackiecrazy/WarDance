@@ -1,6 +1,8 @@
 package jackiecrazy.wardance.entity;
 
 import jackiecrazy.footwork.capability.resources.CombatData;
+import jackiecrazy.footwork.capability.stylish.StylishData;
+import jackiecrazy.footwork.capability.timeslow.TimeSlowData;
 import jackiecrazy.footwork.client.particle.FootworkParticles;
 import jackiecrazy.footwork.entity.flyingweapon.FlyingItemEntity;
 import jackiecrazy.footwork.entity.flyingweapon.FlyingWeaponEffect;
@@ -92,9 +94,27 @@ public class FlyingWeaponEntity extends FlyingItemEntity {
         if (!success)
             success = p.getInventory().add(slot, getPickResult());
         CombatUtils.allowCombatHotbarPickup = false;
-        if (success)
+        if (success) {
             this.remove(RemovalReason.KILLED);
-        return !success;
+
+            //pickup flourish
+            ItemStack held=p.getMainHandItem();
+            int ticks=p.attackStrengthTicker;
+            try {
+                CombatUtils.quickSwap(p, getHeldItem());
+                CombatData.getCap(p).tickProc("canBreach");
+                FlyingWeaponData.getCap(p).forceRefreshWeapons();
+                CombatUtils.sweep(p, null, InteractionHand.MAIN_HAND, WeaponStats.SWEEPTYPE.CIRCLE, 3, 3, 1);
+            } catch (Exception ex) {
+                ex.printStackTrace();
+            } finally {
+                CombatUtils.quickSwap(p, held);
+                p.attackStrengthTicker = ticks;
+            }
+            p.resetFallDistance();
+            TimeSlowData.getCap(p).alterSpeed(40, 0.3);
+        }
+        return success;
     }
 
     @Override
@@ -121,7 +141,7 @@ public class FlyingWeaponEntity extends FlyingItemEntity {
         super.tick();
         if (!level().isClientSide && isAlive()) {
             if (isIdle()) {//tied to the owner
-//                if (getOwner() == null) remove(RemovalReason.DISCARDED);
+                if (getOwner() == null&&!isReal()) remove(RemovalReason.DISCARDED);
 //                boolean valid = false;
 //
 //                //todo this check makes grabbing blocks out of the environment not work
@@ -177,9 +197,7 @@ public class FlyingWeaponEntity extends FlyingItemEntity {
                 e.attackStrengthTicker = 99999;
                 //temporary pin code
                 if (target instanceof LivingEntity elb) {
-                    if (getInfo().canBreach()) {
-                        CombatData.getCap(elb).pin(0);
-                    } else {
+                    if (!getInfo().canBreach()) {
                         CombatData.getCap(elb).pin(10);
                     }
                 }
@@ -243,7 +261,7 @@ public class FlyingWeaponEntity extends FlyingItemEntity {
 
     @Override
     public boolean isIdle() {
-        return super.isIdle();
+        return super.isIdle()&&getState()==STATE.FOLLOW;
     }
 
     @Override
@@ -264,14 +282,6 @@ public class FlyingWeaponEntity extends FlyingItemEntity {
             setInteractionRange((float) wmm.range());
             setTransitioning(false);
             cacheInfo = wmm.info();
-
-            if (getInfo() == null) {
-                //simple basic attacks
-                setShouldRender(FlyingWeaponEffect.TRAIL, FlyingWeaponEffect.WEAPON);
-            } else {
-                //attacking, on a finisher
-                setShouldRender(FlyingWeaponEffect.TRAIL, FlyingWeaponEffect.WEAPON, FlyingWeaponEffect.BIG_SHADOW);
-            }
         } else {
             //return on a transition frame
             setShouldRender(FlyingWeaponEffect.WEAPON);

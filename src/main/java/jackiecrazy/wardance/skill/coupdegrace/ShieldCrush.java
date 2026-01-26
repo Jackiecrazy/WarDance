@@ -97,8 +97,8 @@ public class ShieldCrush extends ShieldBash {
         activeTick(stats);
         if (stats.getState() == STATE.ACTIVE) {
             //check the looked entity
-            Entity look = SkillUtils.aimEntity(caster);
-            if (look instanceof LivingEntity elb && CombatUtils.isHoldingShield(caster)) {
+            LivingEntity elb = SkillUtils.aimLiving(caster);
+            if (elb!=null && CombatUtils.isHoldingShield(caster)) {
                 float remainingTime = stats.getDuration() / stats.getMaxDuration();
                 ItemStack main = caster.getMainHandItem(), off = caster.getOffhandItem();
                 float posdam = 2;

@@ -24,7 +24,7 @@ public interface IFlyingWeapon {
                         MotionManager mm,
                         WeaponStats.SweepInfo info,
                         double range,
-                        int totalTime);
+                        int totalTime, FlyingWeaponEffect... fx);
 
     void tick();
 
@@ -70,7 +70,7 @@ public interface IFlyingWeapon {
                                    MotionManager mm,
                                    WeaponStats.SweepInfo info,
                                    double range,
-                                   int totalTime) {
+                                   int totalTime, FlyingWeaponEffect... fx) {
 
         }
 

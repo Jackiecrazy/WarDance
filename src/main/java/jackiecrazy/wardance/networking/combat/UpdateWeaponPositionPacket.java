@@ -8,10 +8,7 @@ import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.network.NetworkEvent;
-import org.joml.Vector3d;
-import org.joml.Vector3f;
-import org.joml.Vector4d;
-import org.joml.Vector4f;
+import org.joml.*;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -23,7 +20,7 @@ import java.util.function.Supplier;
 public class UpdateWeaponPositionPacket {
     boolean main;
     Vec3 direction, offset;
-    Vector4d renderOrientation;
+    Quaternionf renderOrientation;
 
     public UpdateWeaponPositionPacket(boolean isMainHand, MotionFrame mf) {
         main = isMainHand;
@@ -33,7 +30,7 @@ public class UpdateWeaponPositionPacket {
     }
 
     public UpdateWeaponPositionPacket(boolean isMainHand,
-                                      Vector3f dir, Vector3f off, Vector4d RO) {
+                                      Vector3f dir, Vector3f off, Quaternionf RO) {
         main = isMainHand;
         direction = new Vec3(dir);
         offset = new Vec3(off);
@@ -57,7 +54,7 @@ public class UpdateWeaponPositionPacket {
 
         @Override
         public UpdateWeaponPositionPacket apply(FriendlyByteBuf packetBuffer) {
-            return new UpdateWeaponPositionPacket(packetBuffer.readBoolean(), packetBuffer.readVector3f(), packetBuffer.readVector3f(), new Vector4d(packetBuffer.readFloat(), packetBuffer.readFloat(), packetBuffer.readFloat(), packetBuffer.readFloat()));
+            return new UpdateWeaponPositionPacket(packetBuffer.readBoolean(), packetBuffer.readVector3f(), packetBuffer.readVector3f(), new Quaternionf(packetBuffer.readFloat(), packetBuffer.readFloat(), packetBuffer.readFloat(), packetBuffer.readFloat()));
         }
     }
 
