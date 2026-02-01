@@ -15,7 +15,7 @@ public class SelectSkillPacket {
         sk = index;
     }
 
-    public static class CombatEncoder implements BiConsumer<SelectSkillPacket, FriendlyByteBuf> {
+    public static class Encoder implements BiConsumer<SelectSkillPacket, FriendlyByteBuf> {
 
         @Override
         public void accept(SelectSkillPacket updateClientPacket, FriendlyByteBuf packetBuffer) {
@@ -23,7 +23,7 @@ public class SelectSkillPacket {
         }
     }
 
-    public static class CombatDecoder implements Function<FriendlyByteBuf, SelectSkillPacket> {
+    public static class Decoder implements Function<FriendlyByteBuf, SelectSkillPacket> {
 
         @Override
         public SelectSkillPacket apply(FriendlyByteBuf packetBuffer) {
@@ -31,7 +31,7 @@ public class SelectSkillPacket {
         }
     }
 
-    public static class CombatHandler implements BiConsumer<SelectSkillPacket, Supplier<NetworkEvent.Context>> {
+    public static class Handler implements BiConsumer<SelectSkillPacket, Supplier<NetworkEvent.Context>> {
 
         @Override
         public void accept(SelectSkillPacket updateClientPacket, Supplier<NetworkEvent.Context> contextSupplier) {

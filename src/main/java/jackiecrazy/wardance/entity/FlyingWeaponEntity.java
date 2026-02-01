@@ -84,22 +84,19 @@ public class FlyingWeaponEntity extends FlyingItemEntity {
         return false;
     }
 
-    public boolean pickup(Player p) {
-        //if holding nothing, prioritize this slot
-        int slot = -1;
-        if (p.getMainHandItem().isEmpty()) slot = p.getInventory().selected;
-        else if (p.getOffhandItem().isEmpty()) slot = Inventory.SLOT_OFFHAND;
-        boolean success = p.getAbilities().instabuild;
-        CombatUtils.allowCombatHotbarPickup = true;
-        if (!success)
-            success = p.getInventory().add(slot, getPickResult());
-        CombatUtils.allowCombatHotbarPickup = false;
-        if (success) {
+    public boolean elaborateSwap(Player p) {
+        if (!WeaponStats.isCombatItem(p, getPickResult())||p.getMainHandItem().isEmpty()) return pickup(p);
+        //push out the offhand into ender chest, move the main hand to the offhand, replace main hand
+        p.setItemInHand(InteractionHand.OFF_HAND, p.getEnderChestInventory().addItem(p.getOffhandItem()));
+        //displace offhand into inventory
+        if (p.getOffhandItem().isEmpty()||p.getInventory().add(-1, p.getOffhandItem().copy())) {
+            CombatUtils.swapHeldItems(p);
+            p.setItemInHand(InteractionHand.MAIN_HAND, getPickResult());
             this.remove(RemovalReason.KILLED);
 
             //pickup flourish
-            ItemStack held=p.getMainHandItem();
-            int ticks=p.attackStrengthTicker;
+            ItemStack held = p.getMainHandItem();
+            int ticks = p.attackStrengthTicker;
             try {
                 CombatUtils.quickSwap(p, getHeldItem());
                 CombatData.getCap(p).tickProc("canBreach");
@@ -112,7 +109,46 @@ public class FlyingWeaponEntity extends FlyingItemEntity {
                 p.attackStrengthTicker = ticks;
             }
             p.resetFallDistance();
-            TimeSlowData.getCap(p).alterSpeed(40, 0.3);
+            return true;
+        }
+        return false;
+
+    }
+
+    public boolean pickup(Player p) {
+        //if holding nothing, prioritize this slot
+        int slot = -1;
+        boolean success = p.getAbilities().instabuild;
+        if (p.getMainHandItem().isEmpty()) slot = p.getInventory().selected;
+        else if (p.getOffhandItem().isEmpty()){
+            //special offhand handling
+            slot = Inventory.SLOT_OFFHAND;
+            success=true;
+            p.setItemInHand(InteractionHand.OFF_HAND, getPickResult());
+        }
+        CombatUtils.allowCombatHotbarPickup = true;
+        if (!success)
+            success = p.getInventory().add(slot, getPickResult());
+        CombatUtils.allowCombatHotbarPickup = false;
+        if (success) {
+            this.remove(RemovalReason.KILLED);
+
+            //pickup flourish
+            ItemStack held = p.getMainHandItem();
+            int ticks = p.attackStrengthTicker;
+            try {
+                CombatUtils.quickSwap(p, getHeldItem());
+                CombatData.getCap(p).tickProc("canBreach");
+                FlyingWeaponData.getCap(p).forceRefreshWeapons();
+                CombatUtils.sweep(p, null, InteractionHand.MAIN_HAND, WeaponStats.SWEEPTYPE.CIRCLE, 3, 3, 1);
+            } catch (Exception ex) {
+                ex.printStackTrace();
+            } finally {
+                CombatUtils.quickSwap(p, held);
+                p.attackStrengthTicker = ticks;
+            }
+            p.resetFallDistance();
+            //TimeSlowData.getCap(p).alterSpeed(40, 0.3);
         }
         return success;
     }
@@ -141,7 +177,7 @@ public class FlyingWeaponEntity extends FlyingItemEntity {
         super.tick();
         if (!level().isClientSide && isAlive()) {
             if (isIdle()) {//tied to the owner
-                if (getOwner() == null&&!isReal()) remove(RemovalReason.DISCARDED);
+                if (getOwner() == null && !isReal()) remove(RemovalReason.DISCARDED);
 //                boolean valid = false;
 //
 //                //todo this check makes grabbing blocks out of the environment not work
@@ -152,7 +188,7 @@ public class FlyingWeaponEntity extends FlyingItemEntity {
 //                    remove(RemovalReason.DISCARDED);
             } else {
                 if (getOwner() instanceof Player p) {
-                    if (p.distanceToSqr(this) > 64 * 64)
+                    if (p.distanceToSqr(this) > 32 * 32)
                         pickup(p);
                 }
             }
@@ -248,7 +284,7 @@ public class FlyingWeaponEntity extends FlyingItemEntity {
         entityData.set(IDLE_TICK, 0);
         setDeltaMovement(to.subtract(position()).normalize().scale(2));
         //setTetheringEntity(getOwner());
-        setTransitioning(false);
+        setIntangible(false);
         setInteractionRange(0.5f);
         cacheInfo = WeaponStats.SweepInfo.BREACHER;
         //setDeltaMovement(new Vec3(0,1,0));
@@ -261,13 +297,13 @@ public class FlyingWeaponEntity extends FlyingItemEntity {
 
     @Override
     public boolean isIdle() {
-        return super.isIdle()&&getState()==STATE.FOLLOW;
+        return super.isIdle() && getState() == STATE.FOLLOW;
     }
 
     @Override
     protected void returnToIdle(int ticks) {
         super.returnToIdle(ticks);
-        setTransitioning(true);
+        setIntangible(true);
     }
 
     @Override
@@ -280,15 +316,15 @@ public class FlyingWeaponEntity extends FlyingItemEntity {
         MotionManager motion = moveQueue.peek();
         if (motion instanceof WeaponMotionManager wmm) {
             setInteractionRange((float) wmm.range());
-            setTransitioning(false);
+            setIntangible(false);
             cacheInfo = wmm.info();
         } else {
             //return on a transition frame
             setShouldRender(FlyingWeaponEffect.WEAPON);
-            setTransitioning(true);
+            setIntangible(true);
         }
 
-//        if (transitioning()) {
+//        if (intangible()) {
 //            //not attacking
 //            setShouldRender(FlyingWeaponEffect.TRAIL, false);
 //            setShouldRender(FlyingWeaponEffect.BIG_SHADOW, false);

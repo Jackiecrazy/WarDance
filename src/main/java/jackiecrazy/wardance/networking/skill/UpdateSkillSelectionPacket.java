@@ -33,7 +33,7 @@ public class UpdateSkillSelectionPacket {
         this.style = style;
     }
 
-    public static class UpdateSkillEncoder implements BiConsumer<UpdateSkillSelectionPacket, FriendlyByteBuf> {
+    public static class Encoder implements BiConsumer<UpdateSkillSelectionPacket, FriendlyByteBuf> {
 
         @Override
         public void accept(UpdateSkillSelectionPacket updateSkillPacket, FriendlyByteBuf packetBuffer) {
@@ -46,7 +46,7 @@ public class UpdateSkillSelectionPacket {
         }
     }
 
-    public static class UpdateSkillDecoder implements Function<FriendlyByteBuf, UpdateSkillSelectionPacket> {
+    public static class Decoder implements Function<FriendlyByteBuf, UpdateSkillSelectionPacket> {
 
         @Override
         public UpdateSkillSelectionPacket apply(FriendlyByteBuf packetBuffer) {
@@ -60,7 +60,7 @@ public class UpdateSkillSelectionPacket {
         }
     }
 
-    public static class UpdateSkillHandler implements BiConsumer<UpdateSkillSelectionPacket, Supplier<NetworkEvent.Context>> {
+    public static class Handler implements BiConsumer<UpdateSkillSelectionPacket, Supplier<NetworkEvent.Context>> {
 
         @Override
         public void accept(UpdateSkillSelectionPacket updateSkillPacket, Supplier<NetworkEvent.Context> contextSupplier) {

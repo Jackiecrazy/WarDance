@@ -24,7 +24,7 @@ public class UpdateClientResourcePacket {
         icc = c;
     }
 
-    public static class UpdateClientEncoder implements BiConsumer<UpdateClientResourcePacket, FriendlyByteBuf> {
+    public static class Encoder implements BiConsumer<UpdateClientResourcePacket, FriendlyByteBuf> {
 
         @Override
         public void accept(UpdateClientResourcePacket updateClientResourcePacket, FriendlyByteBuf packetBuffer) {
@@ -33,7 +33,7 @@ public class UpdateClientResourcePacket {
         }
     }
 
-    public static class UpdateClientDecoder implements Function<FriendlyByteBuf, UpdateClientResourcePacket> {
+    public static class Decoder implements Function<FriendlyByteBuf, UpdateClientResourcePacket> {
 
         @Override
         public UpdateClientResourcePacket apply(FriendlyByteBuf packetBuffer) {
@@ -41,7 +41,7 @@ public class UpdateClientResourcePacket {
         }
     }
 
-    public static class UpdateClientHandler implements BiConsumer<UpdateClientResourcePacket, Supplier<NetworkEvent.Context>> {
+    public static class Handler implements BiConsumer<UpdateClientResourcePacket, Supplier<NetworkEvent.Context>> {
 
         @Override
         public void accept(UpdateClientResourcePacket updateClientResourcePacket, Supplier<NetworkEvent.Context> contextSupplier) {

@@ -1,8 +1,10 @@
 package jackiecrazy.wardance.networking.sync;
 
 import jackiecrazy.wardance.capability.skill.CasterData;
+import jackiecrazy.wardance.client.hud.QuiverDisplay;
 import net.minecraft.client.Minecraft;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.ListTag;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.world.entity.player.Player;
 import net.minecraftforge.api.distmarker.Dist;
@@ -13,33 +15,39 @@ import java.util.function.BiConsumer;
 import java.util.function.Function;
 import java.util.function.Supplier;
 
-public class SyncSkillPacket {
-    CompoundTag icc;
+public class SyncQuiverPacket {
+    CompoundTag icc=new CompoundTag();
 
-    public SyncSkillPacket(CompoundTag c) {
-        icc = c;
+    public SyncQuiverPacket(Player p) {
+
+        icc.put("inv",p.getEnderChestInventory().createTag());
     }
 
-    public static class Encoder implements BiConsumer<SyncSkillPacket, FriendlyByteBuf> {
+    public SyncQuiverPacket(CompoundTag p) {
+
+        icc=p;
+    }
+
+    public static class Encoder implements BiConsumer<SyncQuiverPacket, FriendlyByteBuf> {
 
         @Override
-        public void accept(SyncSkillPacket SyncSkillPacket, FriendlyByteBuf packetBuffer) {
-            packetBuffer.writeNbt(SyncSkillPacket.icc);
+        public void accept(SyncQuiverPacket pkt, FriendlyByteBuf packetBuffer) {
+            packetBuffer.writeNbt(pkt.icc);
         }
     }
 
-    public static class Decoder implements Function<FriendlyByteBuf, SyncSkillPacket> {
+    public static class Decoder implements Function<FriendlyByteBuf, SyncQuiverPacket> {
 
         @Override
-        public SyncSkillPacket apply(FriendlyByteBuf packetBuffer) {
-            return new SyncSkillPacket(packetBuffer.readNbt());
+        public SyncQuiverPacket apply(FriendlyByteBuf packetBuffer) {
+            return new SyncQuiverPacket(packetBuffer.readNbt());
         }
     }
 
-    public static class Handler implements BiConsumer<SyncSkillPacket, Supplier<NetworkEvent.Context>> {
+    public static class Handler implements BiConsumer<SyncQuiverPacket, Supplier<NetworkEvent.Context>> {
 
         @Override
-        public void accept(SyncSkillPacket SyncSkillPacket, Supplier<NetworkEvent.Context> contextSupplier) {
+        public void accept(SyncQuiverPacket SyncSkillPacket, Supplier<NetworkEvent.Context> contextSupplier) {
             contextSupplier.get().enqueueWork(() -> {
                 DistExecutor.unsafeRunWhenOn(Dist.CLIENT, () -> Handle.handleClient(SyncSkillPacket.icc));
 
@@ -55,7 +63,8 @@ public class SyncSkillPacket {
                 public void run() {
                     Player player = (Player) Minecraft.getInstance().player;
                     if (player == null) return;
-                    CasterData.getCap(player).read(icc);
+                    ListTag list=icc.getList("inv", ListTag.TAG_COMPOUND);
+                    QuiverDisplay.refreshInventory(player, list);
                 }
             };
         }

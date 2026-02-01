@@ -74,8 +74,7 @@ public class CombatHandler {
 
     @SubscribeEvent
     public static void swapItemFreshness(LivingEquipmentChangeEvent e) {
-        if (e.getSlot() == EquipmentSlot.MAINHAND || e.getSlot() == EquipmentSlot.OFFHAND)
-            StylishData.getCap(e.getEntity()).addCombo(0.04f, "swap");
+        //if (e.getSlot() == EquipmentSlot.MAINHAND || e.getSlot() == EquipmentSlot.OFFHAND)
     }
 
     @SubscribeEvent
@@ -340,7 +339,7 @@ public class CombatHandler {
                         semeCap.consumePosture(atkMult);
 
                         StylishData.getCap(seme).processAttack(true);
-                        StylishData.getCap(seme).addCombo(0.05f, StylishCapability.getNormalAttackString(seme));
+                        StylishData.getCap(seme).addCombo(0.05f, StylishCapability.getNormalAttackString(seme)+seme.getMainHandItem().getItem().toString());
                         semeCap.tickProc("qiSpent");
                     }
                 } else {

@@ -24,7 +24,7 @@ public class UpdateMarkPacket {
         icc = c;
     }
 
-    public static class UpdateClientEncoder implements BiConsumer<UpdateMarkPacket, FriendlyByteBuf> {
+    public static class Encoder implements BiConsumer<UpdateMarkPacket, FriendlyByteBuf> {
 
         @Override
         public void accept(UpdateMarkPacket updateClientPacket, FriendlyByteBuf packetBuffer) {
@@ -33,7 +33,7 @@ public class UpdateMarkPacket {
         }
     }
 
-    public static class UpdateClientDecoder implements Function<FriendlyByteBuf, UpdateMarkPacket> {
+    public static class Decoder implements Function<FriendlyByteBuf, UpdateMarkPacket> {
 
         @Override
         public UpdateMarkPacket apply(FriendlyByteBuf packetBuffer) {
@@ -41,7 +41,7 @@ public class UpdateMarkPacket {
         }
     }
 
-    public static class UpdateClientHandler implements BiConsumer<UpdateMarkPacket, Supplier<NetworkEvent.Context>> {
+    public static class Handler implements BiConsumer<UpdateMarkPacket, Supplier<NetworkEvent.Context>> {
 
         @Override
         public void accept(UpdateMarkPacket updateClientPacket, Supplier<NetworkEvent.Context> contextSupplier) {

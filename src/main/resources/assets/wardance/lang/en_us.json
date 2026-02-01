@@ -155,6 +155,7 @@
   "wardance.q": "Weapon attack override (Combat Mode only)",
   "wardance.evoke": "Use item toggle (Combat Mode only)",
   "wardance.throw": "Throw weapon modifier (Combat Mode only)",
+  "wardance.swap": "Swap attack modifier (Combat Mode only)",
   "wardance.skill1": "Select Center Skill",
   "wardance.skill2": "Select Top Right Skill",
   "wardance.skill3": "Select Bottom Right Skill",

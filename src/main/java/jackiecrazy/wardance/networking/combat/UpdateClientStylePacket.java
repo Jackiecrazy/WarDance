@@ -1,6 +1,5 @@
 package jackiecrazy.wardance.networking.combat;
 
-import jackiecrazy.footwork.capability.resources.CombatData;
 import jackiecrazy.footwork.capability.stylish.StylishData;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.multiplayer.ClientLevel;
@@ -25,7 +24,7 @@ public class UpdateClientStylePacket {
         icc = c;
     }
 
-    public static class UpdateClientEncoder implements BiConsumer<UpdateClientStylePacket, FriendlyByteBuf> {
+    public static class Encoder implements BiConsumer<UpdateClientStylePacket, FriendlyByteBuf> {
 
         @Override
         public void accept(UpdateClientStylePacket updateClientResourcePacket, FriendlyByteBuf packetBuffer) {
@@ -34,7 +33,7 @@ public class UpdateClientStylePacket {
         }
     }
 
-    public static class UpdateClientDecoder implements Function<FriendlyByteBuf, UpdateClientStylePacket> {
+    public static class Decoder implements Function<FriendlyByteBuf, UpdateClientStylePacket> {
 
         @Override
         public UpdateClientStylePacket apply(FriendlyByteBuf packetBuffer) {
@@ -42,7 +41,7 @@ public class UpdateClientStylePacket {
         }
     }
 
-    public static class UpdateClientHandler implements BiConsumer<UpdateClientStylePacket, Supplier<NetworkEvent.Context>> {
+    public static class Handler implements BiConsumer<UpdateClientStylePacket, Supplier<NetworkEvent.Context>> {
 
         @Override
         public void accept(UpdateClientStylePacket updateClientResourcePacket, Supplier<NetworkEvent.Context> contextSupplier) {

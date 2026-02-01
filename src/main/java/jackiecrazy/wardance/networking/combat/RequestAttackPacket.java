@@ -30,7 +30,7 @@ public class RequestAttackPacket {
         else id = entity.getId();
     }
 
-    public static class RequestAttackEncoder implements BiConsumer<RequestAttackPacket, FriendlyByteBuf> {
+    public static class Encoder implements BiConsumer<RequestAttackPacket, FriendlyByteBuf> {
 
         @Override
         public void accept(RequestAttackPacket updateClientPacket, FriendlyByteBuf packetBuffer) {
@@ -39,7 +39,7 @@ public class RequestAttackPacket {
         }
     }
 
-    public static class RequestAttackDecoder implements Function<FriendlyByteBuf, RequestAttackPacket> {
+    public static class Decoder implements Function<FriendlyByteBuf, RequestAttackPacket> {
 
         @Override
         public RequestAttackPacket apply(FriendlyByteBuf packetBuffer) {
@@ -47,7 +47,7 @@ public class RequestAttackPacket {
         }
     }
 
-    public static class RequestAttackHandler implements BiConsumer<RequestAttackPacket, Supplier<NetworkEvent.Context>> {
+    public static class Handler implements BiConsumer<RequestAttackPacket, Supplier<NetworkEvent.Context>> {
 
         @Override
         public void accept(RequestAttackPacket updateClientPacket, Supplier<NetworkEvent.Context> contextSupplier) {
@@ -55,21 +55,25 @@ public class RequestAttackPacket {
                 ServerPlayer sender = contextSupplier.get().getSender();
                 if (sender != null) {
                     Entity e = sender.level().getEntity(updateClientPacket.id);
-                    if (e != null && (GeneralConfig.dual||updateClientPacket.main) && GeneralUtils.getDistSqCompensated(sender, e) < GeneralUtils.getAttributeValueSafe(sender, ForgeMod.ENTITY_REACH.get()) * GeneralUtils.getAttributeValueSafe(sender, ForgeMod.ENTITY_REACH.get())) {
-                        if (!updateClientPacket.main) {
-                            if(CombatData.getCap(sender).getHandBind(InteractionHand.OFF_HAND)>0)//no go
-                                return;
-                            CombatUtils.swapHeldItems(sender);
-                            CombatData.getCap(sender).setOffhandAttack(true);
-                        }
-                        if (sender.attackStrengthTicker > 0) {
-                            int temp = sender.attackStrengthTicker;
-                            CombatUtils.updateNormalAttackStatus(sender);
-                            sender.attack(e);
-                            sender.attackStrengthTicker = temp;
-                        } if (!updateClientPacket.main) {
-                            CombatUtils.swapHeldItems(sender);
-                            CombatData.getCap(sender).setOffhandAttack(false);
+                    if (e != null && (GeneralConfig.dual || updateClientPacket.main)) {
+                        final double reach = GeneralUtils.getAttributeValueSafe(sender, ForgeMod.ENTITY_REACH.get());
+                        if (GeneralUtils.getDistSqCompensated(sender, e) < reach * reach) {
+                            if (!updateClientPacket.main) {
+                                if (CombatData.getCap(sender).getHandBind(InteractionHand.OFF_HAND) > 0)//no go
+                                    return;
+                                CombatUtils.swapHeldItems(sender);
+                                CombatData.getCap(sender).setOffhandAttack(true);
+                            }
+                            if (sender.attackStrengthTicker > 0) {
+                                int temp = sender.attackStrengthTicker;
+                                CombatUtils.updateNormalAttackStatus(sender);
+                                sender.attack(e);
+                                sender.attackStrengthTicker = temp;
+                            }
+                            if (!updateClientPacket.main) {
+                                CombatUtils.swapHeldItems(sender);
+                                CombatData.getCap(sender).setOffhandAttack(false);
+                            }
                         }
                     }
                 }

@@ -54,7 +54,7 @@ public class SkillUtils {
         atr.removeModifier(id);
         if (amount != 0) {
             AttributeModifier am = new AttributeModifier(id, "skill modifier", amount, op);
-            atr.addPermanentModifier(am);
+            atr.addTransientModifier(am);
         }
     }
 
@@ -62,7 +62,7 @@ public class SkillUtils {
         final AttributeInstance atr = to.getAttribute(a);
         if (atr == null || atr.hasModifier(am)) return;
         atr.removeModifier(am.getId());
-        atr.addPermanentModifier(am);
+        atr.addTransientModifier(am);
     }
 
     public static boolean hasAttribute(LivingEntity to, Attribute a, AttributeModifier am) {

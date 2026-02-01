@@ -36,19 +36,19 @@ public class GhostBlockEntity extends ThrownWeaponEntity {
         FlyingWeaponData.getCap(p).setHeldBlock(this);
         this.setUniversalOffset(new Vec3(0, p.getBbHeight(), 0.5));
         setDeltaMovement(Vec3.ZERO);
-        setTransitioning(true);
+        setIntangible(true);
         setState(STATE.FOLLOW);
         return true;
     }
 
     @Override
     public boolean isReal() {
-        return !transitioning();
+        return !intangible();
     }
 
     @Override
     protected void onHitBlock(BlockPos blockPos, Direction hitFace, Vec3 location) {
-        if(transitioning())return;
+        if(intangible())return;
         super.onHitBlock(blockPos, hitFace, location);
         //shatter
 
@@ -83,7 +83,7 @@ public class GhostBlockEntity extends ThrownWeaponEntity {
 
     @Override
     protected boolean onHitEntity(List<Entity> targets) {
-        if(transitioning())return false;
+        if(intangible())return false;
         boolean ret = super.onHitEntity(targets);
         if (ret) {
             //shatter

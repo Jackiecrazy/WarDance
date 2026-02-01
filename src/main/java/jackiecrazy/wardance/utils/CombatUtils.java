@@ -66,7 +66,7 @@ public class CombatUtils {
     public static boolean suppressChangeFunctions = false, allowCombatHotbarPickup = false;
     private static ProjectileInfo DEFAULTRANGED = new ProjectileInfo(0.6, 1, false, false);
     private static HashMap<EntityType, ProjectileInfo> projectileMap = new HashMap<>();
-    private static ItemStack cacheLeft, cacheRight;//primarily useful in client
+    private static int cacheLeft, cacheRight;//primarily useful in client
     private static int cacheLeftAtk, cacheRightAtk;
 
     public static void updateProjectiles(List<? extends String> interpretP) {
@@ -118,15 +118,15 @@ public class CombatUtils {
 
     public static int getCooldownPeriod(LivingEntity e, InteractionHand h) {
         if(h==InteractionHand.MAIN_HAND){
-            if(e.getItemInHand(h) == cacheRight)return cacheRightAtk;
+            if(e.tickCount==cacheRight)return cacheRightAtk;
             int ret = (int) (1.0D / GeneralUtils.getAttributeValueHandSensitive(e, Attributes.ATTACK_SPEED, h) * 20.0D);
-            cacheRight=e.getItemInHand(InteractionHand.MAIN_HAND);
+            cacheRight=e.tickCount;
             cacheRightAtk=ret;
             return ret;
         }else{
-            if(e.getItemInHand(h) == cacheLeft)return cacheLeftAtk;
+            if(e.tickCount==cacheLeft)return cacheLeftAtk;
             int ret = (int) (1.0D / GeneralUtils.getAttributeValueHandSensitive(e, Attributes.ATTACK_SPEED, h) * 20.0D);
-            cacheLeft=e.getItemInHand(InteractionHand.OFF_HAND);
+            cacheLeft=e.tickCount;
             cacheLeftAtk=ret;
             return ret;
         }
@@ -254,7 +254,7 @@ public class CombatUtils {
             if (attacker != null) {
                 base *= MobSpecs.getOrDefault(attacker).getItemPostureScaling();
             }
-            base *= 5;//temporary
+            base *= ReworkConstants.POSTURE_QI;//temporary
 
         } else {//unarmed
             if (attacker != null && !(attacker instanceof Player)) {
@@ -478,8 +478,8 @@ public class CombatUtils {
         type = sre.getType();
 
         //purely visual attack
-        int animTime = type == WeaponStats.SWEEPTYPE.CIRCLE ? 10 : 3;
         int time = CombatUtils.getCooldownPeriod(e, h);
+        int animTime = type == WeaponStats.SWEEPTYPE.CIRCLE ? 10 : 5;
         List<FlyingWeaponEffect> fx = new ArrayList<>();
         fx.add(FlyingWeaponEffect.WEAPON);
         if (StylishData.getCap(e).getFreshness(StylishCapability.getNormalAttackString(e)) > 0) {

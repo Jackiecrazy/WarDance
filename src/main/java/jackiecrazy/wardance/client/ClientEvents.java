@@ -10,6 +10,7 @@ import jackiecrazy.footwork.utils.GeneralUtils;
 import jackiecrazy.wardance.WarDance;
 import jackiecrazy.wardance.capability.skill.CasterData;
 import jackiecrazy.wardance.capability.skill.ISkillCapability;
+import jackiecrazy.wardance.client.hud.QuiverDisplay;
 import jackiecrazy.wardance.config.ClientConfig;
 import jackiecrazy.wardance.config.GeneralConfig;
 import jackiecrazy.wardance.config.WeaponStats;
@@ -58,22 +59,22 @@ import java.util.function.Predicate;
 
 @Mod.EventBusSubscriber(value = Dist.CLIENT, modid = WarDance.MODID)
 public class ClientEvents {
-    public static final Predicate<Entity> GRAPPLE_VALID = (a) -> EntitySelector.LIVING_ENTITY_STILL_ALIVE.test(a) || (a instanceof ThrownWeaponEntity b && !(a instanceof GhostBlockEntity) && b.isReal()&&b.transitioning());
+    public static final Predicate<Entity> GRAPPLE_VALID = (a) -> EntitySelector.LIVING_ENTITY_STILL_ALIVE.test(a) || (a instanceof ThrownWeaponEntity b && !(a instanceof GhostBlockEntity) && b.isReal()&&b.intangible());
     private static final int ALLOWANCE = 5;
     private static final List<KeyMapping> conflict = new ArrayList<>();
     private static final int magicSneakTime = 20;
     public static int combatTicks = -999;
     public static int sneakedTime = 0;
-    public static int coyoteTimeID = -1;
+    public static int coyoteTimeID = -1, grappleID=-1;
     public static Vec3 coyoteVector = Vec3.ZERO;
-    private static int coyotedTime = 20;
+    private static int coyotedTime = 20, grappleTime=20;
     private static Entity lastTickLookAt;
     private static boolean rightClick = false;
     private static int mainUseTick = 0, offUseTick = 0;
     private static InteractionHand testingHand = null;
     private static int conflictMap = 0;
     private static int lastSweepTick = 0, lastAttackTick = 0;
-    private static boolean lastUsedHandMain = true;
+    public static boolean lastUsedHandMain = true;
     private static boolean wasThrowAiming = false;
 
     static {
@@ -108,10 +109,12 @@ public class ClientEvents {
         Player p = Minecraft.getInstance().player;
         //store a copy of the mob that the player is looking at for coyote time resolution
         double aimRange;
+        boolean updateGrapple=false;
         Predicate<Entity> pred = EntitySelector.LIVING_ENTITY_STILL_ALIVE;
         if (Keybinds.THROW.isDown()) {
             aimRange = GrappleEntity.MAXDIST;
             pred = GRAPPLE_VALID;
+            updateGrapple=true;
         } else if (CasterData.getCap(Minecraft.getInstance().player).getHolsteredSkill() != null) {
             ISkillCapability sc = CasterData.getCap(Minecraft.getInstance().player);
             final Skill s = sc.getHolsteredSkill();
@@ -125,6 +128,10 @@ public class ClientEvents {
             coyoteTimeID = eh.getEntity().getId();
             coyoteVector = GeneralUtils.getExactCollision(eh.getEntity(), eyePosition, eyePosition.add(p.getLookAngle().scale(aimRange)));
             coyotedTime = 20;
+            if(updateGrapple){
+                grappleID=eh.getEntity().getId();
+                grappleTime=20;
+            }
         }
     }
 
@@ -213,7 +220,14 @@ public class ClientEvents {
 //                        System.out.println("throw is eaten");
 //                        //point them forward
 //                    } else
-                    if (Keybinds.THROW.isDown()) {
+                    if (Keybinds.SWAP.isDown()) {
+                        if (mc.options.keyAttack.isDown() && mc.options.keyAttack.consumeClick()) {
+                            CombatChannel.INSTANCE.sendToServer(new SwapAttackPacket(true, QuiverDisplay.invIndex));
+                        }
+                        if (mc.options.keyUse.isDown() && mc.options.keyUse.consumeClick()) {
+                            CombatChannel.INSTANCE.sendToServer(new SwapAttackPacket(false, QuiverDisplay.invIndex));
+                        }
+                    } if (Keybinds.THROW.isDown()) {
                         final Vec3 eyePosition = p.getEyePosition();
                         wasThrowAiming = true;
                         //yeet!
@@ -225,7 +239,7 @@ public class ClientEvents {
                             } else if (coyoteTimeID >=0) {
                                 loc = coyoteVector;
                             }
-                            CombatChannel.INSTANCE.sendToServer(new ThrowPacket(true, loc));
+                            CombatChannel.INSTANCE.sendToServer(new ThrowPacket(true, loc, QuiverDisplay.invIndex));
                         }
                         if (mc.options.keyUse.isDown() && mc.options.keyUse.consumeClick()) {
                             HitResult destination = ProjectileUtil.getHitResultOnViewVector(p, EntitySelector.LIVING_ENTITY_STILL_ALIVE, 32);
@@ -235,7 +249,7 @@ public class ClientEvents {
                             } else if (coyoteTimeID >=0) {
                                 loc = coyoteVector;
                             }
-                            CombatChannel.INSTANCE.sendToServer(new ThrowPacket(false, loc));
+                            CombatChannel.INSTANCE.sendToServer(new ThrowPacket(false, loc, QuiverDisplay.invIndex));
                         }
                     } else if (wasThrowAiming) {
                         CombatChannel.INSTANCE.sendToServer(new UnhookPacket());
@@ -329,7 +343,7 @@ public class ClientEvents {
                     rightClick = false;
                     testingHand = null;
                 }
-                if (p.isShiftKeyDown()) {
+                if (p.isShiftKeyDown()&&StylishData.getCap(p).isCombatMode()) {
                     sneakedTime++;
                     if (sneakedTime == 1)
                         CombatChannel.INSTANCE.sendToServer(new UpdateWeaponRenderPacket(lastUsedHandMain, FlyingWeaponEffect.WEAPON));

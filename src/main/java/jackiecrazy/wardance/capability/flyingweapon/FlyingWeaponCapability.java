@@ -222,17 +222,6 @@ public class FlyingWeaponCapability implements IFlyingWeapon {
             fwe.setState(FlyingItemEntity.STATE.THROW_NATURAL);
             fwe.yeet(pos);
             level.addFreshEntity(fwe);
-            if (!player.getAbilities().instabuild) {
-                held.shrink(1);
-                player.getInventory().setChanged();
-                if (held.getCount() == 0)
-                    player.setItemInHand(hand, ItemStack.EMPTY);
-            }
-            mainSwap = offSwap = true;
-            updateWeapon(getWeapon(hand), hand);
-            //release the weapon to create another one
-//            if (hand == InteractionHand.MAIN_HAND) main = null;
-//            else off = null;
         }
     }
 
@@ -245,6 +234,7 @@ public class FlyingWeaponCapability implements IFlyingWeapon {
         }
         fwe.setHeldItem(player.getItemInHand(hand));
         fwe.setOwner(player);
+        fwe.setFlipRender(hand == InteractionHand.OFF_HAND);
         fwe.setPosRaw(player.xo, player.yo, player.zo);
         fwe.setInteractionRange((float) GeneralUtils.getAttributeValueHandSensitive(player, ForgeMod.ENTITY_REACH.get(), hand));
     }

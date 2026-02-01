@@ -21,6 +21,7 @@ import jackiecrazy.wardance.config.TwohandingStats;
 import jackiecrazy.wardance.config.WeaponStats;
 import jackiecrazy.wardance.entity.ai.ExposeGoal;
 import jackiecrazy.wardance.networking.CombatChannel;
+import jackiecrazy.wardance.networking.sync.SyncQuiverPacket;
 import jackiecrazy.wardance.networking.sync.SyncSkillPacket;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.registries.BuiltInRegistries;
@@ -32,6 +33,8 @@ import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.Mob;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.inventory.ChestMenu;
+import net.minecraft.world.inventory.PlayerEnderChestContainer;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
@@ -41,6 +44,7 @@ import net.minecraftforge.event.TickEvent;
 import net.minecraftforge.event.entity.EntityJoinLevelEvent;
 import net.minecraftforge.event.entity.living.LivingEvent;
 import net.minecraftforge.event.entity.living.LivingFallEvent;
+import net.minecraftforge.event.entity.player.PlayerContainerEvent;
 import net.minecraftforge.event.entity.player.PlayerEvent;
 import net.minecraftforge.event.server.ServerStartingEvent;
 import net.minecraftforge.event.server.ServerStoppingEvent;
@@ -115,6 +119,7 @@ public class EntityHandler {
         if (!e.getLevel().isClientSide && e.getEntity() instanceof ServerPlayer sp) {
             WeaponStats.sendItemData(sp);
             TwohandingStats.sendItemData(sp);
+            CombatChannel.INSTANCE.send(PacketDistributor.PLAYER.with(() -> sp), new SyncQuiverPacket(sp));
         }
     }
 
@@ -134,6 +139,13 @@ public class EntityHandler {
         if (e.getEntity() instanceof Mob mob) {
             mob.goalSelector.addGoal(-1, new ExposeGoal(mob));
             mob.targetSelector.addGoal(-1, new ExposeGoal(mob));
+        }
+    }
+
+    @SubscribeEvent
+    public static void inventory(PlayerContainerEvent.Close e) {
+        if(e.getContainer() instanceof ChestMenu menu&&menu.getContainer() instanceof PlayerEnderChestContainer){
+            CombatChannel.INSTANCE.send(PacketDistributor.PLAYER.with(() -> (ServerPlayer) e.getEntity()), new SyncQuiverPacket(e.getEntity()));
         }
     }
 

@@ -3,7 +3,6 @@ package jackiecrazy.wardance.networking.skill;
 import jackiecrazy.wardance.capability.skill.CasterData;
 import jackiecrazy.wardance.capability.skill.ISkillCapability;
 import jackiecrazy.wardance.skill.Skill;
-import jackiecrazy.wardance.utils.CombatUtils;
 import jackiecrazy.wardance.utils.SkillUtils;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraftforge.network.NetworkEvent;
@@ -19,7 +18,7 @@ public class EvokeSkillPacket {
         coyote=tempMob;
     }
 
-    public static class EvokeEncoder implements BiConsumer<EvokeSkillPacket, FriendlyByteBuf> {
+    public static class Encoder implements BiConsumer<EvokeSkillPacket, FriendlyByteBuf> {
 
         @Override
         public void accept(EvokeSkillPacket updateClientPacket, FriendlyByteBuf packetBuffer) {
@@ -27,7 +26,7 @@ public class EvokeSkillPacket {
         }
     }
 
-    public static class EvokeDecoder implements Function<FriendlyByteBuf, EvokeSkillPacket> {
+    public static class Decoder implements Function<FriendlyByteBuf, EvokeSkillPacket> {
 
         @Override
         public EvokeSkillPacket apply(FriendlyByteBuf packetBuffer) {
@@ -35,7 +34,7 @@ public class EvokeSkillPacket {
         }
     }
 
-    public static class EvokeHandler implements BiConsumer<EvokeSkillPacket, Supplier<NetworkEvent.Context>> {
+    public static class Handler implements BiConsumer<EvokeSkillPacket, Supplier<NetworkEvent.Context>> {
 
         @Override
         public void accept(EvokeSkillPacket updateClientPacket, Supplier<NetworkEvent.Context> contextSupplier) {

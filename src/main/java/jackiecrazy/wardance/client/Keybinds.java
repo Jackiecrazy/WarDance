@@ -57,7 +57,8 @@ public class Keybinds {
     public static final KeyMapping CAST = new KeyMapWrapper("wardance.skill", IN_COMBAT, InputConstants.Type.KEYSYM, GLFW.GLFW_KEY_R, "key.categories.wardance");
     public static final KeyMapping ALTERNATE_KEY = new KeyMapWrapper("wardance.bindCast", IN_COMBAT, InputConstants.Type.MOUSE, GLFW.GLFW_MOUSE_BUTTON_MIDDLE, "key.categories.wardance");
     public static final KeyMapping DODGE = new KeyMapWrapper("wardance.dodge", IN_COMBAT, InputConstants.Type.KEYSYM, GLFW.GLFW_KEY_LEFT_ALT, "key.categories.wardance");
-    public static final KeyMapping THROW = new KeyMapWrapper("wardance.throw", IN_COMBAT, InputConstants.Type.KEYSYM, GLFW.GLFW_KEY_Q, "key.categories.wardance");//TODO throw
+    public static final KeyMapping THROW = new KeyMapWrapper("wardance.throw", IN_COMBAT, InputConstants.Type.KEYSYM, GLFW.GLFW_KEY_Q, "key.categories.wardance");
+    public static final KeyMapping SWAP = new KeyMapWrapper("wardance.swap", IN_COMBAT, InputConstants.Type.KEYSYM, GLFW.GLFW_KEY_F, "key.categories.wardance");
     public static final KeyMapping EVOKE = new KeyMapWrapper("wardance.evoke", IN_COMBAT, InputConstants.Type.KEYSYM, GLFW.GLFW_KEY_V, "key.categories.wardance");
     //center, top right, down clockwise
     public static final KeyMapping[] SKILL = {
@@ -118,6 +119,7 @@ public class Keybinds {
                 if (ClientEvents.coyoteTimeID >=0) {
                     destination = ClientEvents.coyoteVector;
                 }
+
                 CombatChannel.INSTANCE.sendToServer(new GrapplePacket(destination, ClientEvents.coyoteTimeID));
                 p.setDeltaMovement(Vec3.ZERO);
             }

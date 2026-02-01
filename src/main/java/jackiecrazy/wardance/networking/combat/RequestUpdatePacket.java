@@ -19,7 +19,7 @@ public class RequestUpdatePacket {
         e = ent;
     }
 
-    public static class RequestUpdateEncoder implements BiConsumer<RequestUpdatePacket, FriendlyByteBuf> {
+    public static class Encoder implements BiConsumer<RequestUpdatePacket, FriendlyByteBuf> {
 
         @Override
         public void accept(RequestUpdatePacket updateClientPacket, FriendlyByteBuf packetBuffer) {
@@ -27,7 +27,7 @@ public class RequestUpdatePacket {
         }
     }
 
-    public static class RequestUpdateDecoder implements Function<FriendlyByteBuf, RequestUpdatePacket> {
+    public static class Decoder implements Function<FriendlyByteBuf, RequestUpdatePacket> {
 
         @Override
         public RequestUpdatePacket apply(FriendlyByteBuf packetBuffer) {
@@ -35,7 +35,7 @@ public class RequestUpdatePacket {
         }
     }
 
-    public static class RequestUpdateHandler implements BiConsumer<RequestUpdatePacket, Supplier<NetworkEvent.Context>> {
+    public static class Handler implements BiConsumer<RequestUpdatePacket, Supplier<NetworkEvent.Context>> {
 
         @Override
         public void accept(RequestUpdatePacket updateClientPacket, Supplier<NetworkEvent.Context> contextSupplier) {

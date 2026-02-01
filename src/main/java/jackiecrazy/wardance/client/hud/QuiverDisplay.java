@@ -2,81 +2,179 @@ package jackiecrazy.wardance.client.hud;
 
 import com.mojang.blaze3d.platform.GlStateManager;
 import com.mojang.blaze3d.systems.RenderSystem;
+import com.mojang.blaze3d.vertex.PoseStack;
+import com.mojang.blaze3d.vertex.VertexConsumer;
 import jackiecrazy.footwork.utils.GeneralUtils;
+import jackiecrazy.wardance.WarDance;
+import jackiecrazy.wardance.client.Keybinds;
 import jackiecrazy.wardance.client.RenderUtils;
+import jackiecrazy.wardance.config.WeaponStats;
 import jackiecrazy.wardance.utils.CombatUtils;
 import net.minecraft.client.AttackIndicatorStatus;
 import net.minecraft.client.CameraType;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.renderer.RenderType;
+import net.minecraft.nbt.ListTag;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.util.Mth;
+import net.minecraft.util.Tuple;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.HumanoidArm;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.inventory.PlayerEnderChestContainer;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.Items;
+import net.minecraftforge.client.event.InputEvent;
 import net.minecraftforge.client.gui.overlay.ForgeGui;
 import net.minecraftforge.client.gui.overlay.IGuiOverlay;
 import net.minecraftforge.common.ForgeMod;
+import net.minecraftforge.eventbus.api.SubscribeEvent;
+import net.minecraftforge.fml.common.Mod;
+import org.joml.Matrix4f;
 
+import java.util.ArrayList;
+import java.util.List;
+
+@Mod.EventBusSubscriber(modid = WarDance.MODID)
 public class QuiverDisplay implements IGuiOverlay {
     private static final ResourceLocation GUI_ICONS_LOCATION = new ResourceLocation("textures/gui/icons.png");
+    public static int listIndex, invIndex;
+    private static ItemStack selected = ItemStack.EMPTY;
+    private static List<Tuple<Integer, ItemStack>> inventory = new ArrayList<>();
+
+    public static void refreshInventory(Player p, ListTag tag) {
+        inventory.clear();
+        inventory.add(new Tuple<>(-1, new ItemStack(Items.BARRIER)));
+        PlayerEnderChestContainer ender = p.getEnderChestInventory();
+        ender.fromTag(tag);
+        for (int i = 0; i < ender.getContainerSize(); i++) {
+            final ItemStack item = ender.getItem(i);
+            if (!item.isEmpty() && WeaponStats.isCombatItem(p, item)) {
+                inventory.add(new Tuple<>(i, item));
+                if (selected == item) {
+                    listIndex = inventory.size() - 1;
+                    invIndex = i;
+                }
+            }
+        }
+        nextItem(0);
+    }
+
+    private static void nextItem(int jump) {
+        if (inventory.isEmpty()) return;
+        listIndex += jump;
+        listIndex %= inventory.size();
+        //modulo?
+        if (listIndex < 0) {
+            listIndex += inventory.size();
+        }
+        selected = inventory.get(listIndex).getB();
+        invIndex = inventory.get(listIndex).getA();
+    }
+
+    private static void renderItem(GuiGraphics gfx, ItemStack stack, int x, int y) {
+        gfx.renderItem(stack, x - 8, y - 8);          // icon
+        gfx.renderItemDecorations(
+                Minecraft.getInstance().font,
+                stack,
+                x - 8,
+                y - 8
+        );
+    }
+
+    @SubscribeEvent
+    public static void onScroll(InputEvent.MouseScrollingEvent event) {
+        if (!showQuiver()) return;
+
+        double delta = event.getScrollDelta();
+        if (delta == 0) return;
+
+        if (delta > 0) {
+            nextItem(-1);
+        } else {
+            nextItem(1);
+        }
+
+        event.setCanceled(true); // prevents hotbar scroll
+    }
+
+    private static boolean showQuiver() {
+        return Keybinds.THROW.isDown()||Keybinds.SWAP.isDown();
+    }
+
+    public void drawSlice(GuiGraphics guiGraphics,
+                          float x,
+                          float y,
+                          float z,
+                          float radiusIn,
+                          float radiusOut,
+                          float startAngle,
+                          float endAngle,
+                          int r,
+                          int g,
+                          int b,
+                          int a) {
+        float angle = endAngle - startAngle;
+        int sections = Math.max(1, Mth.ceil(angle / 5f));
+
+        startAngle = (float) Math.toRadians(startAngle);
+        endAngle = (float) Math.toRadians(endAngle);
+        angle = endAngle - startAngle;
+
+        var buffer = guiGraphics.bufferSource().getBuffer(RenderType.gui());
+
+        for (int i = 0; i < sections; i++) {
+            float angle1 = startAngle + (i / (float) sections) * angle;
+            float angle2 = startAngle + ((i + 1) / (float) sections) * angle;
+
+            float pos1InX = x + radiusIn * (float) Math.cos(angle1);
+            float pos1InY = y + radiusIn * (float) Math.sin(angle1);
+            float pos1OutX = x + radiusOut * (float) Math.cos(angle1);
+            float pos1OutY = y + radiusOut * (float) Math.sin(angle1);
+            float pos2OutX = x + radiusOut * (float) Math.cos(angle2);
+            float pos2OutY = y + radiusOut * (float) Math.sin(angle2);
+            float pos2InX = x + radiusIn * (float) Math.cos(angle2);
+            float pos2InY = y + radiusIn * (float) Math.sin(angle2);
+
+            buffer.vertex(pos1OutX, pos1OutY, z).color(r, g, b, a);
+            buffer.vertex(pos1InX, pos1InY, z).color(r, g, b, a);
+            buffer.vertex(pos2InX, pos2InY, z).color(r, g, b, a);
+            buffer.vertex(pos2OutX, pos2OutY, z).color(r, g, b, a);
+        }
+
+        guiGraphics.flush();
+    }
+
     @Override
     public void render(ForgeGui gui, GuiGraphics guiGraphics, float partialTick, int width, int height) {
         Minecraft mc = Minecraft.getInstance();
         Player player = mc.player;
         RenderSystem.setShaderTexture(0, GUI_ICONS_LOCATION);
-        if (mc.options.getCameraType() != CameraType.FIRST_PERSON || player == null) return;
-        if (Minecraft.getInstance().options.attackIndicator().get() == AttackIndicatorStatus.HOTBAR) {
-            if (mc.getCameraEntity() instanceof Player p) {
-                GlStateManager._clearColor(1.0F, 1.0F, 1.0F, 1.0F);
-                ItemStack itemstack = p.getOffhandItem();
-                HumanoidArm oppositeHand = p.getMainArm().getOpposite();
-                int halfOfScreen = width / 2;
-
-                //GlStateManager._enableRescaleNormal();
-                RenderSystem.enableBlend();
-                RenderSystem.defaultBlendFunc();
-                //Lighting.turnBackOn();
-
-                if (mc.options.attackIndicator().get() == AttackIndicatorStatus.HOTBAR) {
-                    float strength = CombatUtils.getCooledAttackStrength(p, InteractionHand.OFF_HAND, 0);
-                    if (strength < 1.0F) {
-                        int y = height - 20;
-                        int x = halfOfScreen + 91 + 6;
-                        if (oppositeHand == HumanoidArm.LEFT) {
-                            x = halfOfScreen - 91 - 22;
-                        }
-
-                        RenderSystem.setShaderTexture(0, GUI_ICONS_LOCATION);
-                        int modStrength = (int) (strength * 19.0F);
-                        RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, 1.0F);
-                        guiGraphics.blit( GUI_ICONS_LOCATION, x + 18, y, 0, 94, 18, 18);
-                        guiGraphics.blit(GUI_ICONS_LOCATION, x + 18, y + 18 - modStrength, 18, 112 - modStrength, 18, modStrength);
-                    }
-                }
-
-                //Lighting.turnOff();
-                RenderSystem.disableBlend();
-            }
-        } else if (mc.options.attackIndicator().get() == AttackIndicatorStatus.CROSSHAIR) {
-            float cooldown = CombatUtils.getCooledAttackStrength(player, InteractionHand.OFF_HAND, 0f);
-            boolean hyperspeed = false;
-
-            if (RenderUtils.getEntityLookedAt(player, GeneralUtils.getAttributeValueHandSensitive(player, ForgeMod.ENTITY_REACH.get(), InteractionHand.OFF_HAND)) != null && cooldown >= 1.0F) {
-                hyperspeed = CombatUtils.getCooldownPeriod(player, InteractionHand.OFF_HAND) > 5.0F;
-                hyperspeed = hyperspeed & (RenderUtils.getEntityLookedAt(player, GeneralUtils.getAttributeValueHandSensitive(player, ForgeMod.ENTITY_REACH.get(), InteractionHand.OFF_HAND))).isAlive();
-            }
-
-            int y = height / 2 - 7 - 7;
-            int x = width / 2 - 8;
-
-            if (hyperspeed) {
-                guiGraphics.blit(GUI_ICONS_LOCATION, x, y, 68, 94, 16, 16);
-            } else if (cooldown < 1.0F) {
-                int k = (int) (cooldown * 17.0F);
-                guiGraphics.blit(GUI_ICONS_LOCATION, x, y, 36, 94, 16, 4);
-                guiGraphics.blit(GUI_ICONS_LOCATION, x, y, 52, 94, k, 4);
-            }
+        if (player == null || !showQuiver()) {
+            return;
         }
+        if (inventory.isEmpty()) return;
+        //grab ender chest content
+        //find the index stack and 2 before/after it
+        //draw them on the screen
+        int max = Mth.clamp(inventory.size()/2, 0, 2);
+        double angle = -90 - (15 * max);
+        for (int a = listIndex - max; a < listIndex + 1 + max; a++) {
+            int corrected = a % inventory.size();
+            if (corrected < 0) corrected += inventory.size();
+            int offset = height / 2;
+            int x = (int) (Math.cos(Mth.DEG_TO_RAD * angle) * offset);
+            int y = (int) (Math.sin(Mth.DEG_TO_RAD * angle) * offset);
+            renderItem(guiGraphics, inventory.get(corrected).getB(), width / 2 + x, height + y);
+            angle += 15;
+        }
+//        float step = (float)(2 * Math.PI / 3);
+//        float centerAngle = -Mth.HALF_PI; // top
+//
+//        float a0 = centerAngle - step / 2f;
+//        float a1 = centerAngle + step / 2f;
+//        drawSlice(guiGraphics, width/2f, height/2f, 10, 200, 400, a0, a1, 256,256,256,180);
+        //forward index to packet when needed
     }
 }

@@ -30,7 +30,7 @@ public class RequestSweepPacket {
         else id = ignore.getId();
     }
 
-    public static class RequestSweepEncoder implements BiConsumer<RequestSweepPacket, FriendlyByteBuf> {
+    public static class Encoder implements BiConsumer<RequestSweepPacket, FriendlyByteBuf> {
 
         @Override
         public void accept(RequestSweepPacket updateClientPacket, FriendlyByteBuf packetBuffer) {
@@ -39,7 +39,7 @@ public class RequestSweepPacket {
         }
     }
 
-    public static class RequestSweepDecoder implements Function<FriendlyByteBuf, RequestSweepPacket> {
+    public static class Decoder implements Function<FriendlyByteBuf, RequestSweepPacket> {
 
         @Override
         public RequestSweepPacket apply(FriendlyByteBuf packetBuffer) {
@@ -47,7 +47,7 @@ public class RequestSweepPacket {
         }
     }
 
-    public static class RequestSweepHandler implements BiConsumer<RequestSweepPacket, Supplier<NetworkEvent.Context>> {
+    public static class Handler implements BiConsumer<RequestSweepPacket, Supplier<NetworkEvent.Context>> {
 
         @Override
         public void accept(RequestSweepPacket updateClientPacket, Supplier<NetworkEvent.Context> contextSupplier) {

@@ -61,7 +61,7 @@ public class GrappleEntity extends FlyingItemEntity {
 
     @Override
     public void moveTargetTowards(Entity toBeMoved, Vec3 point, double force) {
-        super.moveTargetTowards(toBeMoved, point, force*5.5);
+        super.moveTargetTowards(toBeMoved, point, force * 5.5);
     }
 
     @Override
@@ -89,7 +89,7 @@ public class GrappleEntity extends FlyingItemEntity {
 
     @Override
     public STATE getState() {
-        return getMotionTarget()==null? STATE.THROW_NATURAL:STATE.THROW_TRACK;
+        return getMotionTarget() == null ? STATE.THROW_NATURAL : STATE.THROW_TRACK;
     }
 
     @Override
@@ -131,10 +131,10 @@ public class GrappleEntity extends FlyingItemEntity {
     @Override
     public void tick() {
         super.tick();
-        if (!transitioning()) {//hooked onto something
+        if (!intangible()) {//hooked onto something
             renderLag--;
             if (renderLag < 0) renderLag = 0;
-        }else{
+        } else {
             //become faster over time
             addDeltaMovement(getDeltaMovement().normalize().scale(0.01));
         }
@@ -159,12 +159,13 @@ public class GrappleEntity extends FlyingItemEntity {
                 //pull
                 updateEntityHookPosition();
                 if (hookedEntity instanceof FlyingWeaponEntity fwe && getOwner() instanceof Player p && fwe.distanceToSqr(p) < SQDIST) {
-                    boolean picked=fwe.pickup(p);
+                    boolean picked = fwe.elaborateSwap(p);
                     remove(RemovalReason.DISCARDED);
 
-                    //if you move to the weapon, spin attack
-                    if(movePlayer&&picked) {
-
+                    //if you move to the weapon, slow gravity a bit
+                    if (movePlayer && picked) {
+                        TimeSlowData.getCap(p).alterSpeed(40, 0.3);
+                        p.setDeltaMovement(new Vec3(0, 0.1, 0));
                     }
                 }
                 if (hookedEntity instanceof LivingEntity target && getOwner() instanceof Player p && GeneralUtils.getDistSqCompensated(target, getOwner()) < SQDIST) {
@@ -180,7 +181,7 @@ public class GrappleEntity extends FlyingItemEntity {
                     hookedEntity = null;
                     hooked = false;
                 }
-            } else if(!movePlayer) {
+            } else if (!movePlayer) {
                 //hooked a block
                 heldTime--;
                 if (heldTime < 0)
@@ -212,7 +213,7 @@ public class GrappleEntity extends FlyingItemEntity {
                     fwe.setPosRaw(pos.x, pos.y, pos.z);
                     fwe.setInteractionRange(1);
                     fwe.setState(STATE.THROW_NATURAL);
-                    fwe.setTransitioning(true);
+                    fwe.setIntangible(true);
                     level().addFreshEntity(fwe);
                     hookedHit = null;
                     hookedEntity = fwe;
@@ -245,13 +246,13 @@ public class GrappleEntity extends FlyingItemEntity {
     protected boolean onHitEntity(List<Entity> targets) {
         if (distanceToSqr(getOwner()) < SQDIST) return false;
         if (hooked) return false;
-        if(getMotionTarget()!=getOwner()){
-            if(targets.contains(getMotionTarget())) {
+        if (getMotionTarget() != getOwner()) {
+            if (targets.contains(getMotionTarget())) {
                 hooked = true;
                 hookedEntity = getMotionTarget();
                 setMotionTarget(null);
             }
-        }else {
+        } else {
             targets.stream().forEach(a -> {
                 if (a instanceof FlyingWeaponEntity fwe && fwe.isReal()) {
                     hookedEntity = fwe;
@@ -266,7 +267,7 @@ public class GrappleEntity extends FlyingItemEntity {
             }
         }
         if (hooked) {
-            setTransitioning(false);
+            setIntangible(false);
             setDeltaMovement(Vec3.ZERO);
             hookEntityOffset = getY() - hookedEntity.getY();
             updateEntityHookPosition();
@@ -282,7 +283,7 @@ public class GrappleEntity extends FlyingItemEntity {
     @Override
     protected void handleBlockCollisions() {
         if (hooked) return;
-        if(getMotionTarget()!=getOwner())return;
+        if (getMotionTarget() != getOwner()) return;
         if (distanceToSqr(getOwner()) < SQDIST) return;
 
         BlockHitResult hit = level().clip(new ClipContext(position(), position().add(getDeltaMovement()), ClipContext.Block.COLLIDER, ClipContext.Fluid.NONE, this));
@@ -293,7 +294,7 @@ public class GrappleEntity extends FlyingItemEntity {
             hookedHit = hit;
             setDeltaMovement(Vec3.ZERO);
             setPos(hit.getLocation());
-            setTransitioning(false);
+            setIntangible(false);
         }
     }
 }

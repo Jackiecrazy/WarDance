@@ -129,7 +129,6 @@ public class GrappleRenderer extends EntityRenderer<GrappleEntity> {
         if (player != null) {
             stack.pushPose();
             int armShift = player.getMainArm() == HumanoidArm.RIGHT ? -1 : 1;
-
             float circlePhase = 40;
             float handOffset = Mth.sin(Mth.sqrt(circlePhase) * (float) Math.PI);
             float rotationOffset = Mth.lerp(partialtick, player.yBodyRotO, player.yBodyRot) * ((float) Math.PI / 180F);

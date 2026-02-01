@@ -9,6 +9,7 @@ import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.Vec3;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
 
@@ -21,7 +22,7 @@ public class ThrownWeaponEntity extends FlyingWeaponEntity {
         super(type, level);
         setInteractionRange(1);
         setShouldRender(FlyingWeaponEffect.WEAPON);
-        setTransitioning(false);
+        setIntangible(false);
     }
 
     @Override
@@ -36,14 +37,20 @@ public class ThrownWeaponEntity extends FlyingWeaponEntity {
 
     @Override
     public void tick() {
-        super.tick();
-        if (falling)
+        if (falling&&!intangible())
             addDeltaMovement(new Vec3(0, -0.02, 0));
+        super.tick();
+    }
+
+    @Override
+    public void setDeltaMovement(@NotNull Vec3 vec3) {
+        super.setDeltaMovement(vec3);
+        setIntangible(false);
     }
 
     @Override
     protected boolean onHitEntity(List<Entity> targets) {
-        if (transitioning()) return false;
+        if (intangible()) return false;
         boolean ret = super.onHitEntity(targets);
         if (getHeldItem().getItem() instanceof BlockItem)
             for (Entity a : alreadyHit) {
@@ -59,9 +66,9 @@ public class ThrownWeaponEntity extends FlyingWeaponEntity {
 
     @Override
     protected void onHitBlock(BlockPos blockPos, Direction hitFace, Vec3 location) {
-        if(transitioning())return;
+        if(intangible())return;
         super.onHitBlock(blockPos, hitFace, location);
-        setTransitioning(true);
+        setIntangible(true);
         falling = false;
     }
 }

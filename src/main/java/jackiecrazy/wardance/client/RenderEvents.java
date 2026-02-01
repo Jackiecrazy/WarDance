@@ -48,7 +48,8 @@ import java.util.stream.Collectors;
 @Mod.EventBusSubscriber(value = Dist.CLIENT, modid = WarDance.MODID)
 public class RenderEvents {
     private static final ResourceLocation timeslow = new ResourceLocation(WarDance.MODID, "textures/hud/stevetime.png");
-    private static final ResourceLocation crosshair = new ResourceLocation(WarDance.MODID, "textures/hud/crosshair.png");
+    private static final ResourceLocation timeslow1 = new ResourceLocation(WarDance.MODID, "textures/hud/stevetimefill.png");
+    private static final ResourceLocation crosshair = new ResourceLocation(WarDance.MODID, "textures/hud/throw_target.png");
     private static HashMap<String, Boolean> rotate;
 
     public static void updateList(List<? extends String> pos) {
@@ -135,10 +136,11 @@ public class RenderEvents {
                         (entity.noCulling || frustum.isVisible(entity.getBoundingBox()))) {
                     if (TimeSlowData.getCap(entity).getEffectiveSpeed() < 1)
                         steveTime(entity, partialTicks, poseStack);
-                    if(entity.getId()==ClientEvents.coyoteTimeID&& combatMode)
+                    if (entity.getId() == ClientEvents.coyoteTimeID && combatMode)
                         crosshair(entity, partialTicks, poseStack);
-                    if (entity instanceof LivingEntity le&&!Marks.getCap(le).getActiveMarks().isEmpty() && look != entity) {
-                        renderMarks(le, partialTicks, poseStack);
+                    if (entity instanceof LivingEntity le) {
+                        if (!Marks.getCap(le).getActiveMarks().isEmpty() && look != entity)
+                            renderMarks(le, partialTicks, poseStack);
                     }
                 }
             }
@@ -157,18 +159,22 @@ public class RenderEvents {
     public static void handRaising(RenderHandEvent e) {
         //todo empty render on disarm
         AbstractClientPlayer p = Minecraft.getInstance().player;
-        //render empty hand on flying weapons
-        if (StylishData.getCap(p).isCombatMode() && CombatUtils.getCooledAttackStrength(p, e.getHand(), 0.1f) < 1) {
+        //cancel hand rendering when they are being swung, or when the player is guarding with that arm
+        if (StylishData.getCap(p).isCombatMode() &&
+                (CombatUtils.getCooledAttackStrength(p, e.getHand(), 0.1f) < 1 ||
+                        (p.isShiftKeyDown() && (ClientEvents.lastUsedHandMain ? e.getHand() == InteractionHand.MAIN_HAND : e.getHand() == InteractionHand.OFF_HAND)))) {
             e.setCanceled(true);
-            HumanoidArm armToRender = (p.getMainArm() == HumanoidArm.RIGHT) == (e.getHand() == InteractionHand.MAIN_HAND)
-                    ? HumanoidArm.RIGHT
-                    : HumanoidArm.LEFT;
-            e.getPoseStack().pushPose();
-            //Minecraft.getInstance().gameRenderer.itemInHandRenderer.renderPlayerArm(e.getPoseStack(), e.getMultiBufferSource(), e.getPackedLight(), e.getEquipProgress(), e.getSwingProgress(), armToRender);
-            e.getPoseStack().popPose();
-            //Minecraft.getInstance().gameRenderer.itemInHandRenderer.renderPlayerArm(e.getPoseStack(), e.getMultiBufferSource(), e.getPackedLight(), e.getEquipProgress(), e.getSwingProgress(), HumanoidArm.RIGHT);
+
+//            HumanoidArm armToRender = (p.getMainArm() == HumanoidArm.RIGHT) == (e.getHand() == InteractionHand.MAIN_HAND)
+//                    ? HumanoidArm.RIGHT
+//                    : HumanoidArm.LEFT;
+//            e.getPoseStack().pushPose();
+//            Minecraft.getInstance().gameRenderer.itemInHandRenderer.renderPlayerArm(e.getPoseStack(), e.getMultiBufferSource(), e.getPackedLight(), e.getEquipProgress(), e.getSwingProgress(), armToRender);
+//            e.getPoseStack().popPose();
+//            Minecraft.getInstance().gameRenderer.itemInHandRenderer.renderPlayerArm(e.getPoseStack(), e.getMultiBufferSource(), e.getPackedLight(), e.getEquipProgress(), e.getSwingProgress(), HumanoidArm.RIGHT);
             return;
         }
+        //specifically deals with left hand rendering
         if (e.getHand().equals(InteractionHand.MAIN_HAND) || !GeneralConfig.dual) return;
         if (p == null || p.isInvisible() || (!StylishData.getCap(p).isCombatMode() && (p.swingingArm != InteractionHand.OFF_HAND || !p.swinging)))
             return;
@@ -207,6 +213,8 @@ public class RenderEvents {
         final float size = passedEntity.getBbWidth() * 0.02f;
         poseStack.scale(-size, -size, size);
         GuiComponent.blit(poseStack, timeslow, -16, -16, 0, 0, 32, 32, 32, 32);
+        int yAmnt = (int) (32 * ((TimeSlowData.getCap(passedEntity).getTimeRemaining() + partialTicks) / 60f));
+        GuiComponent.blit(poseStack, timeslow1, -16, 16 - yAmnt, 0, 32 - yAmnt, 32, 32, 32, 32);
         poseStack.popPose();
 
         //poseStack.translate(0.0D, -(NeatConfig.backgroundHeight + NeatConfig.barHeight + NeatConfig.backgroundPadding), 0.0D);

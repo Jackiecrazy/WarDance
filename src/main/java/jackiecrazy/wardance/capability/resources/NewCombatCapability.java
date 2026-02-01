@@ -1,8 +1,6 @@
 package jackiecrazy.wardance.capability.resources;
 
-import jackiecrazy.footwork.api.CombatDamageSource;
 import jackiecrazy.footwork.api.FootworkAttributes;
-import jackiecrazy.footwork.api.FootworkDamageArchetype;
 import jackiecrazy.footwork.capability.resources.CombatData;
 import jackiecrazy.footwork.capability.resources.ICombatCapability;
 import jackiecrazy.footwork.capability.stylish.StylishData;
@@ -16,10 +14,10 @@ import jackiecrazy.wardance.compat.WarCompat;
 import jackiecrazy.wardance.config.*;
 import jackiecrazy.wardance.event.DamageRetconEvent;
 import jackiecrazy.wardance.handlers.TwoHandingHandler;
-import jackiecrazy.wardance.mixin.InCombatAccessor;
 import jackiecrazy.wardance.networking.CombatChannel;
 import jackiecrazy.wardance.networking.combat.UpdateClientResourcePacket;
 import jackiecrazy.wardance.utils.CombatUtils;
+import jackiecrazy.wardance.utils.ReworkConstants;
 import jackiecrazy.wardance.utils.SkillUtils;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.server.level.ServerPlayer;
@@ -28,11 +26,9 @@ import net.minecraft.sounds.SoundSource;
 import net.minecraft.util.Mth;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.damagesource.DamageSource;
-import net.minecraft.world.damagesource.DamageSources;
 import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
-import net.minecraft.world.entity.Pose;
 import net.minecraft.world.entity.ai.attributes.AttributeModifier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.player.Player;
@@ -87,7 +83,8 @@ public class NewCombatCapability implements ICombatCapability {
         MobSpecs.MobInfo mi = MobSpecs.getMobInfo(elb);
         if (mi != null)
             return (float) mi.getMaxPosture();
-        else ret = (float) (Math.ceil(50 / 1.09 * Math.sqrt(elb.getBbWidth() * elb.getBbHeight())));
+        else
+            ret = (float) (Math.ceil(ReworkConstants.POSTURE_QI * 10 / 1.09 * Math.sqrt(elb.getBbWidth() * elb.getBbHeight())));
         if (elb instanceof Player) ret *= 1.5f;
         return ret;
     }
@@ -118,17 +115,13 @@ public class NewCombatCapability implements ICombatCapability {
         ConsumeSpiritEvent cse = new ConsumeSpiritEvent(dude.get(), amount);
         MinecraftForge.EVENT_BUS.post(cse);
         amount = cse.getAmount();
-        final boolean lacking = spirit < amount;
+        final boolean lacking = posture < amount * ReworkConstants.SPIRIT_QI;
         if (cse.isCanceled()) {
             return cse.getResult() == Event.Result.ALLOW || (cse.getResult() != Event.Result.DENY && !lacking);
         }
 
         if (cse.getResult() == Event.Result.DEFAULT && lacking) return false;
-        amount = Math.min(amount, spirit);
-        setSpirit(spirit - amount);
-        //addRank(amount / 5);
-        double cd = ResourceConfig.postureRegen;
-        //setSpiritGrace((int) cd);
+        consumePosture(amount * ReworkConstants.SPIRIT_QI);
         return cse.getResult() != Event.Result.DENY;
     }
 
@@ -137,9 +130,8 @@ public class NewCombatCapability implements ICombatCapability {
         GainSpiritEvent cse = new GainSpiritEvent(dude.get(), amount);
         MinecraftForge.EVENT_BUS.post(cse);
         amount = cse.getQuantity();
-        int overflow = Math.max(0, spirit + amount - getMaxSpirit());
-        setSpirit(spirit + amount);
-        return overflow;
+        addPosture(amount * ReworkConstants.SPIRIT_QI);
+        return 0;
     }
 
     @Override
@@ -278,12 +270,12 @@ public class NewCombatCapability implements ICombatCapability {
                 weakness *= GeneralConfig.hunger;
         double cooldown = ResourceConfig.postureCD * weakness;
         posture -= amount;
-        if (posture < 0){
-            ret=Math.abs(posture);
+        if (posture < 0) {
+            ret = Math.abs(posture);
             posture = 0;
         }
         if (amount > 0) {
-            addRally(amount*0.6f * StylishData.getCap(elb).getCombo());
+            addRally(amount * 0.6f * StylishData.getCap(elb).getCombo());
             //System.out.println("rally: "+getRally());
         }
         if (WarCompat.elenaiDodge && elb instanceof ServerPlayer sp)
@@ -300,7 +292,7 @@ public class NewCombatCapability implements ICombatCapability {
     public void setRally(float v) {
         //only players get rally
         if (player) {
-            rally = Mth.clamp(v, 0, getMaxPosture()-getPosture());//(float) Math.min(v, dude.get().getAttributeValue(FootworkAttributes.MAX_RALLY.get()));
+            rally = Mth.clamp(v, 0, getMaxPosture() - getPosture());//(float) Math.min(v, dude.get().getAttributeValue(FootworkAttributes.MAX_RALLY.get()));
             if (rally < 0) rally = 0;
             rallyCD = RALLY_CD;
             dirty = true;
@@ -314,7 +306,7 @@ public class NewCombatCapability implements ICombatCapability {
 //        MinecraftForge.EVENT_BUS.post(rpe);
 //        if (rpe.isCanceled()) return;
         //amount = rpe.getQuantity();//Math.min(rpe.getQuantity(), rally);
-        amount=Math.min(amount, rally);
+        amount = Math.min(amount, rally);
         rally -= amount;
         //rallyCD = RALLY_CD;
         //tickProc("rally");
@@ -841,15 +833,15 @@ public class NewCombatCapability implements ICombatCapability {
 
     private void handlePostureRegen(int ticks) {
         mobPosCD -= ticks;
-        rallyCD-=ticks;
+        rallyCD -= ticks;
         if (mobPosRegenSpd == 0) mobPosRegenSpd = 0.3;
         float mult = 1;
         LivingEntity elb = dude.get();
-        if(rallyCD<0){
-            rally(Math.max(1,getRally()/10));
-            rallyCD=0;
+        if (rallyCD < 0) {
+            rally(Math.max(1, getRally() / 10));
+            rallyCD = 0;
         }
-        if(mobPosCD>0||rally>0)return;
+        if (mobPosCD > 0 || rally > 0) return;
         if (elb != null) {
             float healthperc = 0.3f + (elb.getHealth() / elb.getMaxHealth()) * 0.7f;
             if (player) {

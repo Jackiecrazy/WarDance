@@ -22,7 +22,7 @@ public class UpdateTargetPacket {
         t = target;
     }
 
-    public static class UpdateTargetEncoder implements BiConsumer<UpdateTargetPacket, FriendlyByteBuf> {
+    public static class Encoder implements BiConsumer<UpdateTargetPacket, FriendlyByteBuf> {
 
         @Override
         public void accept(UpdateTargetPacket updateClientPacket, FriendlyByteBuf packetBuffer) {
@@ -31,7 +31,7 @@ public class UpdateTargetPacket {
         }
     }
 
-    public static class UpdateTargetDecoder implements Function<FriendlyByteBuf, UpdateTargetPacket> {
+    public static class Decoder implements Function<FriendlyByteBuf, UpdateTargetPacket> {
 
         @Override
         public UpdateTargetPacket apply(FriendlyByteBuf packetBuffer) {
@@ -39,7 +39,7 @@ public class UpdateTargetPacket {
         }
     }
 
-    public static class UpdateTargetHandler implements BiConsumer<UpdateTargetPacket, Supplier<NetworkEvent.Context>> {
+    public static class Handler implements BiConsumer<UpdateTargetPacket, Supplier<NetworkEvent.Context>> {
 
         @Override
         public void accept(UpdateTargetPacket updateClientPacket, Supplier<NetworkEvent.Context> contextSupplier) {

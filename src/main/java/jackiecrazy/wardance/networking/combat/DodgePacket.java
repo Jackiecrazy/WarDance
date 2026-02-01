@@ -16,7 +16,7 @@ public class DodgePacket {
         direction = dir;
     }
 
-    public static class DodgeEncoder implements BiConsumer<DodgePacket, FriendlyByteBuf> {
+    public static class Encoder implements BiConsumer<DodgePacket, FriendlyByteBuf> {
 
         @Override
         public void accept(DodgePacket updateClientPacket, FriendlyByteBuf packetBuffer) {
@@ -24,7 +24,7 @@ public class DodgePacket {
         }
     }
 
-    public static class DodgeDecoder implements Function<FriendlyByteBuf, DodgePacket> {
+    public static class Decoder implements Function<FriendlyByteBuf, DodgePacket> {
 
         @Override
         public DodgePacket apply(FriendlyByteBuf packetBuffer) {
@@ -32,7 +32,7 @@ public class DodgePacket {
         }
     }
 
-    public static class DodgeHandler implements BiConsumer<DodgePacket, Supplier<NetworkEvent.Context>> {
+    public static class Handler implements BiConsumer<DodgePacket, Supplier<NetworkEvent.Context>> {
 
         @Override
         public void accept(DodgePacket updateClientPacket, Supplier<NetworkEvent.Context> contextSupplier) {

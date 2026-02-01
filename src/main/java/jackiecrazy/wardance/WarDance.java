@@ -5,10 +5,7 @@ import jackiecrazy.wardance.capability.action.IAction;
 import jackiecrazy.wardance.capability.skill.ISkillCapability;
 import jackiecrazy.wardance.capability.status.IMark;
 import jackiecrazy.wardance.client.GrappleRenderer;
-import jackiecrazy.wardance.client.hud.MarkDisplay;
-import jackiecrazy.wardance.client.hud.OffhandCooldownDisplay;
-import jackiecrazy.wardance.client.hud.ResourceDisplay;
-import jackiecrazy.wardance.client.hud.SkillCoolDisplay;
+import jackiecrazy.wardance.client.hud.*;
 import jackiecrazy.wardance.command.CategoryArgument;
 import jackiecrazy.wardance.command.SkillArgument;
 import jackiecrazy.wardance.command.WarDanceCommand;
@@ -114,22 +111,22 @@ public class WarDance {
         // some preinit code
         //packets
         int index = 0;
-        CombatChannel.INSTANCE.registerMessage(index++, UpdateClientResourcePacket.class, new UpdateClientResourcePacket.UpdateClientEncoder(), new UpdateClientResourcePacket.UpdateClientDecoder(), new UpdateClientResourcePacket.UpdateClientHandler());
-        CombatChannel.INSTANCE.registerMessage(index++, UpdateClientStylePacket.class, new UpdateClientStylePacket.UpdateClientEncoder(), new UpdateClientStylePacket.UpdateClientDecoder(), new UpdateClientStylePacket.UpdateClientHandler());
-        CombatChannel.INSTANCE.registerMessage(index++, UpdateMarkPacket.class, new UpdateMarkPacket.UpdateClientEncoder(), new UpdateMarkPacket.UpdateClientDecoder(), new UpdateMarkPacket.UpdateClientHandler());
-        CombatChannel.INSTANCE.registerMessage(index++, UpdateAttackCooldownPacket.class, new UpdateAttackCooldownPacket.UpdateAttackEncoder(), new UpdateAttackCooldownPacket.UpdateAttackDecoder(), new UpdateAttackCooldownPacket.UpdateAttackHandler());
-        CombatChannel.INSTANCE.registerMessage(index++, DodgePacket.class, new DodgePacket.DodgeEncoder(), new DodgePacket.DodgeDecoder(), new DodgePacket.DodgeHandler());
-        CombatChannel.INSTANCE.registerMessage(index++, RequestUpdatePacket.class, new RequestUpdatePacket.RequestUpdateEncoder(), new RequestUpdatePacket.RequestUpdateDecoder(), new RequestUpdatePacket.RequestUpdateHandler());
-        CombatChannel.INSTANCE.registerMessage(index++, CombatModePacket.class, new CombatModePacket.CombatEncoder(), new CombatModePacket.CombatDecoder(), new CombatModePacket.CombatHandler());
-        CombatChannel.INSTANCE.registerMessage(index++, RequestSweepPacket.class, new RequestSweepPacket.RequestSweepEncoder(), new RequestSweepPacket.RequestSweepDecoder(), new RequestSweepPacket.RequestSweepHandler());
+        CombatChannel.INSTANCE.registerMessage(index++, UpdateClientResourcePacket.class, new UpdateClientResourcePacket.Encoder(), new UpdateClientResourcePacket.Decoder(), new UpdateClientResourcePacket.Handler());
+        CombatChannel.INSTANCE.registerMessage(index++, UpdateClientStylePacket.class, new UpdateClientStylePacket.Encoder(), new UpdateClientStylePacket.Decoder(), new UpdateClientStylePacket.Handler());
+        CombatChannel.INSTANCE.registerMessage(index++, UpdateMarkPacket.class, new UpdateMarkPacket.Encoder(), new UpdateMarkPacket.Decoder(), new UpdateMarkPacket.Handler());
+        CombatChannel.INSTANCE.registerMessage(index++, UpdateAttackCooldownPacket.class, new UpdateAttackCooldownPacket.Encoder(), new UpdateAttackCooldownPacket.Decoder(), new UpdateAttackCooldownPacket.Handler());
+        CombatChannel.INSTANCE.registerMessage(index++, DodgePacket.class, new DodgePacket.Encoder(), new DodgePacket.Decoder(), new DodgePacket.Handler());
+        CombatChannel.INSTANCE.registerMessage(index++, RequestUpdatePacket.class, new RequestUpdatePacket.Encoder(), new RequestUpdatePacket.Decoder(), new RequestUpdatePacket.Handler());
+        CombatChannel.INSTANCE.registerMessage(index++, CombatModePacket.class, new CombatModePacket.Encoder(), new CombatModePacket.Decoder(), new CombatModePacket.Handler());
+        CombatChannel.INSTANCE.registerMessage(index++, RequestSweepPacket.class, new RequestSweepPacket.Encoder(), new RequestSweepPacket.Decoder(), new RequestSweepPacket.Handler());
         CombatChannel.INSTANCE.registerMessage(index++, HeavyPacket.class, new HeavyPacket.Encoder(), new HeavyPacket.Decoder(), new HeavyPacket.Handler());
         CombatChannel.INSTANCE.registerMessage(index++, UpdateWeaponRenderPacket.class, new UpdateWeaponRenderPacket.Encoder(), new UpdateWeaponRenderPacket.Decoder(), new UpdateWeaponRenderPacket.Handler());
-        CombatChannel.INSTANCE.registerMessage(index++, RequestAttackPacket.class, new RequestAttackPacket.RequestAttackEncoder(), new RequestAttackPacket.RequestAttackDecoder(), new RequestAttackPacket.RequestAttackHandler());
-        CombatChannel.INSTANCE.registerMessage(index++, SelectSkillPacket.class, new SelectSkillPacket.CombatEncoder(), new SelectSkillPacket.CombatDecoder(), new SelectSkillPacket.CombatHandler());
-        CombatChannel.INSTANCE.registerMessage(index++, EvokeSkillPacket.class, new EvokeSkillPacket.EvokeEncoder(), new EvokeSkillPacket.EvokeDecoder(), new EvokeSkillPacket.EvokeHandler());
-        CombatChannel.INSTANCE.registerMessage(index++, UpdateSkillSelectionPacket.class, new UpdateSkillSelectionPacket.UpdateSkillEncoder(), new UpdateSkillSelectionPacket.UpdateSkillDecoder(), new UpdateSkillSelectionPacket.UpdateSkillHandler());
-        CombatChannel.INSTANCE.registerMessage(index++, SyncSkillPacket.class, new SyncSkillPacket.SyncSkillEncoder(), new SyncSkillPacket.SyncSkillDecoder(), new SyncSkillPacket.SyncSkillHandler());
-        CombatChannel.INSTANCE.registerMessage(index++, UpdateTargetPacket.class, new UpdateTargetPacket.UpdateTargetEncoder(), new UpdateTargetPacket.UpdateTargetDecoder(), new UpdateTargetPacket.UpdateTargetHandler());
+        CombatChannel.INSTANCE.registerMessage(index++, RequestAttackPacket.class, new RequestAttackPacket.Encoder(), new RequestAttackPacket.Decoder(), new RequestAttackPacket.Handler());
+        CombatChannel.INSTANCE.registerMessage(index++, SelectSkillPacket.class, new SelectSkillPacket.Encoder(), new SelectSkillPacket.Decoder(), new SelectSkillPacket.Handler());
+        CombatChannel.INSTANCE.registerMessage(index++, EvokeSkillPacket.class, new EvokeSkillPacket.Encoder(), new EvokeSkillPacket.Decoder(), new EvokeSkillPacket.Handler());
+        CombatChannel.INSTANCE.registerMessage(index++, UpdateSkillSelectionPacket.class, new UpdateSkillSelectionPacket.Encoder(), new UpdateSkillSelectionPacket.Decoder(), new UpdateSkillSelectionPacket.Handler());
+        CombatChannel.INSTANCE.registerMessage(index++, SyncSkillPacket.class, new SyncSkillPacket.Encoder(), new SyncSkillPacket.Decoder(), new SyncSkillPacket.Handler());
+        CombatChannel.INSTANCE.registerMessage(index++, UpdateTargetPacket.class, new UpdateTargetPacket.Encoder(), new UpdateTargetPacket.Decoder(), new UpdateTargetPacket.Handler());
         CombatChannel.INSTANCE.registerMessage(index++, SyncItemDataPacket.class, new SyncItemDataPacket.Encoder(), new SyncItemDataPacket.Decoder(), new SyncItemDataPacket.Handler());
         CombatChannel.INSTANCE.registerMessage(index++, SyncTagDataPacket.class, new SyncTagDataPacket.Encoder(), new SyncTagDataPacket.Decoder(), new SyncTagDataPacket.Handler());
         CombatChannel.INSTANCE.registerMessage(index++, UpdateClientPermissionPacket.class, new UpdateClientPermissionPacket.Encoder(), new UpdateClientPermissionPacket.Decoder(), new UpdateClientPermissionPacket.Handler());
@@ -145,6 +142,8 @@ public class WarDance {
         CombatChannel.INSTANCE.registerMessage(index++, UnhookPacket.class, new UnhookPacket.Encoder(), new UnhookPacket.Decoder(), new UnhookPacket.Handler());
         CombatChannel.INSTANCE.registerMessage(index++, UpdateWeaponPositionPacket.class, new UpdateWeaponPositionPacket.Encoder(), new UpdateWeaponPositionPacket.Decoder(), new UpdateWeaponPositionPacket.Handler());
         CombatChannel.INSTANCE.registerMessage(index++, KickPacket.class, new KickPacket.Encoder(), new KickPacket.Decoder(), new KickPacket.Handler());
+        CombatChannel.INSTANCE.registerMessage(index++, SyncQuiverPacket.class, new SyncQuiverPacket.Encoder(), new SyncQuiverPacket.Decoder(), new SyncQuiverPacket.Handler());
+        CombatChannel.INSTANCE.registerMessage(index++, SwapAttackPacket.class, new SwapAttackPacket.Encoder(), new SwapAttackPacket.Decoder(), new SwapAttackPacket.Handler());
     }
 
     private void doClientStuff(final FMLClientSetupEvent event) {
@@ -175,6 +174,7 @@ public class WarDance {
         event.registerAboveAll("pwdresources", new ResourceDisplay());
         event.registerAboveAll("pwdskills", new SkillCoolDisplay());
         event.registerAboveAll("pwdmarks", new MarkDisplay());
+        event.registerAboveAll("pwdthrowingquiver", new QuiverDisplay());
     }
 
     private void caps(final RegisterCapabilitiesEvent event) {

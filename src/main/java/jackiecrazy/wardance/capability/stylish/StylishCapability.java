@@ -3,8 +3,6 @@ package jackiecrazy.wardance.capability.stylish;
 import jackiecrazy.footwork.capability.resources.CombatData;
 import jackiecrazy.footwork.capability.resources.ICombatCapability;
 import jackiecrazy.footwork.capability.stylish.IStyleCapability;
-import jackiecrazy.footwork.event.*;
-import jackiecrazy.wardance.config.*;
 import jackiecrazy.wardance.networking.CombatChannel;
 import jackiecrazy.wardance.networking.combat.UpdateClientStylePacket;
 import jackiecrazy.wardance.utils.CombatUtils;
@@ -30,10 +28,11 @@ public class StylishCapability implements IStyleCapability {
     private float adrenaline;
     private int finisherBar = 0;
     private int meleeFinisher, rangedFinisher;
-    private int comboTimer;
+    private int comboTimer, adrenalineTimer;
     //there's no real reason to save this
     private Queue<String> freshness = new LinkedList<>();
     private float combo;
+    private boolean dirty=true;
 
     public StylishCapability(LivingEntity dude) {
         this.dude = new WeakReference<>(dude);
@@ -51,6 +50,7 @@ public class StylishCapability implements IStyleCapability {
     @Override
     public void toggleCombatMode(boolean on) {
         combat = on;
+        markDirty();
     }
 
     @Override
@@ -61,7 +61,7 @@ public class StylishCapability implements IStyleCapability {
     @Override
     public void setAdrenaline(float to) {
         adrenaline = to;
-        sync();
+        markDirty();
     }
 
     @Override
@@ -72,6 +72,7 @@ public class StylishCapability implements IStyleCapability {
             ret = adrenaline - 1;
             adrenaline = 1;
         }
+        adrenalineTimer=COMBO_TIMER;
         return ret;
     }
 
@@ -88,9 +89,21 @@ public class StylishCapability implements IStyleCapability {
             //slower combo drain
         } else comboTimer--;
         comboTimer--;
+        adrenalineTimer--;
         if (comboTimer == 0) {
             combo = 1;
             resetCombo();
+        }
+        if (adrenalineTimer <= 0)
+            adrenaline = 0;
+
+        if(dirty){
+            LivingEntity elb = dude.get();
+            if (elb == null || elb.level().isClientSide) return;
+            CombatChannel.INSTANCE.send(PacketDistributor.TRACKING_ENTITY.with(() -> elb), new UpdateClientStylePacket(elb.getId(), write()));
+            if (!(elb instanceof FakePlayer) && elb instanceof ServerPlayer sp)
+                CombatChannel.INSTANCE.send(PacketDistributor.PLAYER.with(() -> sp), new UpdateClientStylePacket(elb.getId(), write()));
+
         }
     }
 
@@ -110,7 +123,7 @@ public class StylishCapability implements IStyleCapability {
             }
             rangedFinisher = 0;
         }
-        sync();
+        markDirty();
     }
 
     @Override
@@ -121,10 +134,10 @@ public class StylishCapability implements IStyleCapability {
     @Override
     public void addCombo(float amount, @Nonnull String source) {
         //calculate freshness
-        float fresh=getFreshness(source);
-        amount*=fresh;
+        float fresh = getFreshness(source);
+        amount *= fresh;
         //trail. Add spirit on fresh action.
-        if(fresh==1)CombatData.getCap(dude.get()).addSpirit(1);
+        if (fresh == 1) CombatData.getCap(dude.get()).addSpirit(1);
         //reset combo timer even if too stale
         refresh();
         //too stale!
@@ -135,7 +148,7 @@ public class StylishCapability implements IStyleCapability {
         while (freshness.size() > TRACKED_FRESHNESS_ACTIONS) {
             freshness.poll();
         }
-        sync();
+        markDirty();
     }
 
     @Override
@@ -145,12 +158,13 @@ public class StylishCapability implements IStyleCapability {
             combo = 1;
             freshness.clear();
         }
-        sync();
+        markDirty();
     }
 
     @Override
     public void refresh() {
         comboTimer = COMBO_TIMER;
+        adrenalineTimer=COMBO_TIMER;
     }
 
     @Override
@@ -162,14 +176,14 @@ public class StylishCapability implements IStyleCapability {
     public void setTriggerTime(int time, boolean melee) {
         if (melee) meleeFinisher = time;
         else rangedFinisher = time;
-        sync();
+        markDirty();
     }
 
     @Override
     public void addTriggerTime(int time, boolean melee) {
         if (melee) meleeFinisher += time;
         else rangedFinisher += time;
-        sync();
+        markDirty();
     }
 
     @Override
@@ -180,19 +194,19 @@ public class StylishCapability implements IStyleCapability {
     @Override
     public void setTriggerBar(int amnt) {
         finisherBar = Math.min(amnt, MAX_FINISHER_CHARGE);
-        sync();
+        markDirty();
     }
 
     @Override
     public void resetTriggerBar() {
         finisherBar = 0;
-        sync();
+        markDirty();
     }
 
     @Override
     public void addTriggerBar(int amnt) {
         setTriggerBar(finisherBar + amnt);
-        sync();
+        markDirty();
     }
 
     @Override
@@ -217,10 +231,10 @@ public class StylishCapability implements IStyleCapability {
 
     @Override
     public float getFreshness(String s) {
-        float fresh=1;
+        float fresh = 1;
         for (String str : freshness) {
-            if (s.equals(str)){
-                fresh-=0.5f;
+            if (s.equals(str)) {
+                fresh -= 0.5f;
             }
         }
         //trail. Add spirit on fresh action.
@@ -251,12 +265,7 @@ public class StylishCapability implements IStyleCapability {
         combo = t.getFloat("combo");
     }
 
-    private void sync() {
-        LivingEntity elb = dude.get();
-        if (elb == null || elb.level().isClientSide) return;
-        CombatChannel.INSTANCE.send(PacketDistributor.TRACKING_ENTITY.with(() -> elb), new UpdateClientStylePacket(elb.getId(), write()));
-        if (!(elb instanceof FakePlayer) && elb instanceof ServerPlayer sp)
-            CombatChannel.INSTANCE.send(PacketDistributor.PLAYER.with(() -> sp), new UpdateClientStylePacket(elb.getId(), write()));
-
+    private void markDirty() {
+        dirty=true;
     }
 }

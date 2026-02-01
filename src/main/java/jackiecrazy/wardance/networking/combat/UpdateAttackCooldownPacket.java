@@ -20,7 +20,7 @@ public class UpdateAttackCooldownPacket {
         icc = c;
     }
 
-    public static class UpdateAttackEncoder implements BiConsumer<UpdateAttackCooldownPacket, FriendlyByteBuf> {
+    public static class Encoder implements BiConsumer<UpdateAttackCooldownPacket, FriendlyByteBuf> {
 
         @Override
         public void accept(UpdateAttackCooldownPacket updateClientPacket, FriendlyByteBuf packetBuffer) {
@@ -29,7 +29,7 @@ public class UpdateAttackCooldownPacket {
         }
     }
 
-    public static class UpdateAttackDecoder implements Function<FriendlyByteBuf, UpdateAttackCooldownPacket> {
+    public static class Decoder implements Function<FriendlyByteBuf, UpdateAttackCooldownPacket> {
 
         @Override
         public UpdateAttackCooldownPacket apply(FriendlyByteBuf packetBuffer) {
@@ -37,7 +37,7 @@ public class UpdateAttackCooldownPacket {
         }
     }
 
-    public static class UpdateAttackHandler implements BiConsumer<UpdateAttackCooldownPacket, Supplier<NetworkEvent.Context>> {
+    public static class Handler implements BiConsumer<UpdateAttackCooldownPacket, Supplier<NetworkEvent.Context>> {
 
         @Override
         public void accept(UpdateAttackCooldownPacket updateClientPacket, Supplier<NetworkEvent.Context> contextSupplier) {
