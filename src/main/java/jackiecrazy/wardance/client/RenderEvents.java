@@ -212,9 +212,9 @@ public class RenderEvents {
         poseStack.mulPose(Minecraft.getInstance().getEntityRenderDispatcher().cameraOrientation());
         final float size = passedEntity.getBbWidth() * 0.02f;
         poseStack.scale(-size, -size, size);
-        GuiComponent.blit(poseStack, timeslow, -16, -16, 0, 0, 32, 32, 32, 32);
-        int yAmnt = (int) (32 * ((TimeSlowData.getCap(passedEntity).getTimeRemaining() + partialTicks) / 60f));
-        GuiComponent.blit(poseStack, timeslow1, -16, 16 - yAmnt, 0, 32 - yAmnt, 32, 32, 32, 32);
+        GuiComponent.blit(poseStack, timeslow1, -16, -16, 0, 0, 32, 32, 32, 32);
+        int yAmnt = (int) (32 * ((TimeSlowData.getCap(passedEntity).getTimeRemaining()) / 30f));
+        GuiComponent.blit(poseStack, timeslow, -16, 16 - yAmnt, 0, 32 - yAmnt, 32, yAmnt, 32, 32);
         poseStack.popPose();
 
         //poseStack.translate(0.0D, -(NeatConfig.backgroundHeight + NeatConfig.barHeight + NeatConfig.backgroundPadding), 0.0D);
