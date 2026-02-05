@@ -217,11 +217,11 @@ public class ResourceDisplay implements IGuiOverlay {
         boolean close = true;
         float temp = f;
         if (to > f) {
-            f += Mth.clamp((to - temp) / 20, 0.01, 0.1);
+            f += (float) Math.max((to - temp) / 20, 0.01);
             close = false;
         }
         if (to < f) {
-            f += Mth.clamp((to - temp) / 20, -0.1, -0.01);
+            f += (float) Math.min((to - temp) / 20, -0.1);
             close = !close;
         }
         if (close) f = to;
@@ -238,8 +238,8 @@ public class ResourceDisplay implements IGuiOverlay {
             RenderSystem.setShaderTexture(0, raihud);
             float prev = currentSpiritLevel;
             currentSpiritLevel = updateValue(currentSpiritLevel, cap.getSpirit());
-            if ((int) prev < (int) currentSpiritLevel)//advance up 1
-                spiritFrames = 10;
+//            if ((int) prev < (int) currentSpiritLevel)//advance up 1
+//                spiritFrames = 10;
             currentAdrenaline = updateValue(currentAdrenaline, style.getAdrenaline());
             //yourCurrentPostureLevel = updateValue(yourCurrentPostureLevel, cap.getPosture());
             PoseStack stack = graphics.pose();
@@ -415,30 +415,38 @@ public class ResourceDisplay implements IGuiOverlay {
     }
 
     private void drawSpiritBar(PoseStack stack, int x, int y, float prog, float max) {
-        final int length = 92;//you only have this many pixels
-        int perBar = (int) (length / max) - 2;
-        //draw from the center outwards
-        //draw one side of the bar
-        int firstbar = perBar;
-        for (int i = 0; i < max; i++) {
-            int workingPerBar = perBar;
-            if (i == 0 && (max - (int) max) != 0) {
-                workingPerBar = (int) ((max - (int) max) * perBar);
-                firstbar = workingPerBar;
-            }
-            GuiComponent.blit(stack, might, x + (workingPerBar + 2) * (i - 1) + firstbar, y, -90, 0, 40, workingPerBar - 2, 5, 256, 256);
-            //draw cap
-            GuiComponent.blit(stack, might, x + (i) * (workingPerBar + 2) + firstbar - 7, y, -90, 85, 40, 6, 5, 256, 256);
-
-            int remainder = (int) ((prog - (int) prog) * workingPerBar);
-            if (prog == max - i || i > max - prog)//filling up
-                remainder = workingPerBar;
-            if (max - i > Mth.ceil(prog))//not there yet
-                remainder = 0;
-            if (remainder > 0) {
-                GuiComponent.blit(stack, might, x + (i) * (workingPerBar + 2) + firstbar - remainder, y, -90, 92 - remainder - 2, 45, remainder - 2, 5, 256, 256);
-                //this.drawBar(stack, x + (i) * perBar+remainder-2, y, 4, 92, 92-remainder-2);
-            }
+//        final int length = 92;//you only have this many pixels
+//        int perBar = 92;
+//        //draw from the center outwards
+//        //draw one side of the bar
+//        int firstbar = perBar;
+//        int i=0;
+//        for (int i = 0; i < max; i++) {
+//            int workingPerBar = perBar;
+//            if (i == 0) {
+//                workingPerBar = (int) (prog*perBar/max));
+//                firstbar = workingPerBar;
+//            }
+//            GuiComponent.blit(stack, might, x + (workingPerBar + 2) * (i - 1) + firstbar, y, -90, 0, 40, workingPerBar - 2, 5, 256, 256);
+//            //draw cap
+//            GuiComponent.blit(stack, might, x + (i) * (workingPerBar + 2) + firstbar - 7, y, -90, 85, 40, 6, 5, 256, 256);
+//
+//            int remainder = (int) ((prog - (int) prog) * workingPerBar);
+//            if (prog == max - i || i > max - prog)//filling up
+//                remainder = workingPerBar;
+//            if (max - i > Mth.ceil(prog))//not there yet
+//                remainder = 0;
+//            if (remainder > 0) {
+//                GuiComponent.blit(stack, might, x + (i) * (workingPerBar + 2) + firstbar - remainder, y, -90, 92 - remainder - 2, 45, remainder - 2, 5, 256, 256);
+//                //this.drawBar(stack, x + (i) * perBar+remainder-2, y, 4, 92, 92-remainder-2);
+//            }
+//        }
+        final int length = 92;
+        int index = (int) prog;
+        GuiComponent.blit(stack, might, x-2, y, -90, 0, 40, length, 5, 256, 256);
+        int i = (int) ((1-prog/max) * length);
+        if (prog >0) {
+            GuiComponent.blit(stack, might, x-2+i, y, -90, i, 45, length-i, 5, 256, 256);
         }
     }
 

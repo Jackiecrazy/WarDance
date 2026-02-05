@@ -49,21 +49,21 @@ public class BoulderBrace extends WarCry {
     public boolean equippedTick(LivingEntity caster, SkillData stats) {
         boolean stationary = caster.zza == 0 && caster.xxa == 0 && caster.yya == 0;
         if (stationary) {
-            SkillUtils.addAttribute(caster, FootworkAttributes.MAX_RALLY.get(), brace);
-        } else SkillUtils.removeAttribute(caster, FootworkAttributes.MAX_RALLY.get(), brace);
+            //SkillUtils.addAttribute(caster, FootworkAttributes.MAX_RALLY.get(), brace);
+        } //else SkillUtils.removeAttribute(caster, FootworkAttributes.MAX_RALLY.get(), brace);
         return super.equippedTick(caster, stats);
     }
 
     @Override
     public void onEquip(LivingEntity caster) {
-        SkillUtils.addAttribute(caster, FootworkAttributes.RALLY_CONVERSION.get(), brrrr);
+        //SkillUtils.addAttribute(caster, FootworkAttributes.RALLY_CONVERSION.get(), brrrr);
         super.onEquip(caster);
     }
 
     @Override
     public void onUnequip(LivingEntity caster, SkillData stats) {
-        SkillUtils.addAttribute(caster, FootworkAttributes.MAX_RALLY.get(), brace);
-        SkillUtils.addAttribute(caster, FootworkAttributes.RALLY_CONVERSION.get(), brrrr);
+        //SkillUtils.addAttribute(caster, FootworkAttributes.MAX_RALLY.get(), brace);
+        //SkillUtils.addAttribute(caster, FootworkAttributes.RALLY_CONVERSION.get(), brrrr);
         super.onUnequip(caster, stats);
     }
 

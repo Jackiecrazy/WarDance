@@ -33,7 +33,7 @@ public class ThrowPacket {
     public ThrowPacket(boolean isMainHand, Vec3 pos, int next) {
         main = isMainHand;
         destination = pos;
-        this.next=next;
+        this.next = next;
     }
 
     public static class Encoder implements BiConsumer<ThrowPacket, FriendlyByteBuf> {
@@ -66,27 +66,25 @@ public class ThrowPacket {
                 final ItemStack held = player.getItemInHand(h);
                 if (!held.isEmpty()) {
                     final IFlyingWeapon cap = FlyingWeaponData.getCap(player);
-                    cap.yeet(h, packet.destination);
-                    if (!player.getAbilities().instabuild) {
+                    if (cap.yeet(h, packet.destination) && !player.getAbilities().instabuild) {
                         held.shrink(1);
                         player.getInventory().setChanged();
                         if (held.getCount() == 0) {
-                            ItemStack replace=ItemStack.EMPTY;
-                            if(packet.next>=0){
-                                replace=player.getEnderChestInventory().removeItem(packet.next, 999);
+                            ItemStack replace = ItemStack.EMPTY;
+                            if (packet.next >= 0) {
+                                replace = player.getEnderChestInventory().removeItem(packet.next, 999);
                             }
                             player.setItemInHand(h, replace);
                             CombatChannel.INSTANCE.send(PacketDistributor.PLAYER.with(() -> player), new SyncQuiverPacket(player));
                         }
                     }
                     cap.forceRefreshWeapons();
-                }
-                else if(!WeaponStats.DESPERATION.isEmpty()&& CombatData.getCap(player).consumePosture(6)==0){
+                } else if (!WeaponStats.DESPERATION.isEmpty() && CombatData.getCap(player).consumeSpirit(6)) {
                     //desperation throw
                     StylishData.getCap(player).addCombo(0.1f, "desperatethrow");
                     Level level = player.level();
                     GhostBlockEntity fwe = new GhostBlockEntity(WarEntities.FLYING_BLOCK.get(), level);
-                    Item desperate= WeaponStats.DESPERATION.get(WarDance.rand.nextInt(WeaponStats.DESPERATION.size()));
+                    Item desperate = WeaponStats.DESPERATION.get(WarDance.rand.nextInt(WeaponStats.DESPERATION.size()));
                     fwe.setHeldItem(new ItemStack(desperate));
                     fwe.setOwner(player);
                     fwe.setPosRaw(player.getX(), player.getEyeY(), player.getZ());
@@ -94,8 +92,8 @@ public class ThrowPacket {
                     fwe.setState(FlyingItemEntity.STATE.THROW_NATURAL);
                     fwe.yeet(packet.destination);
                     level.addFreshEntity(fwe);
-                    if(packet.next>=0){
-                        player.setItemInHand(h,player.getEnderChestInventory().removeItem(packet.next, 999));
+                    if (packet.next >= 0) {
+                        player.setItemInHand(h, player.getEnderChestInventory().removeItem(packet.next, 999));
                         CombatChannel.INSTANCE.send(PacketDistributor.PLAYER.with(() -> player), new SyncQuiverPacket(player));
                     }
                 }

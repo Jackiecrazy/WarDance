@@ -15,6 +15,7 @@ import jackiecrazy.wardance.event.SkillCooldownEvent;
 import jackiecrazy.wardance.event.SkillResourceEvent;
 import jackiecrazy.wardance.skill.styles.SkillStyle;
 import jackiecrazy.wardance.utils.DamageUtils;
+import jackiecrazy.wardance.utils.ReworkConstants;
 import jackiecrazy.wardance.utils.SkillUtils;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
@@ -394,7 +395,7 @@ public abstract class Skill extends Move {
 
             MinecraftForge.EVENT_BUS.post(sce);
             if (sce.getSpirit() > 0)
-                CombatData.getCap(caster).consumeSpirit(sce.getSpirit());
+                CombatData.getCap(caster).consumeSpirit(sce.getSpirit()* ReworkConstants.SPIRIT_QI);
             activate(caster, (float) sce.getEffectiveness(), sce.getDuration(), sce.isFlag(), sce.getArbitrary());
             if(caster instanceof ServerPlayer sp)
                 WarAdvancements.SKILL_CAST_TRIGGER.trigger(sp, target, getExistingData(caster));

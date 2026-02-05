@@ -36,7 +36,7 @@ public interface IFlyingWeapon {
         forceRefreshWeapon(InteractionHand.OFF_HAND);
     }
 
-    void yeet(InteractionHand hand, Vec3 pos);
+    boolean yeet(InteractionHand hand, Vec3 pos);
 
     class DummyFlyingWeapon implements IFlyingWeapon {
 
@@ -90,8 +90,8 @@ public interface IFlyingWeapon {
         }
 
         @Override
-        public void yeet(InteractionHand hand, Vec3 pos) {
-
+        public boolean yeet(InteractionHand hand, Vec3 pos) {
+            return false;
         }
     }
 }

@@ -51,7 +51,7 @@ public class NewCombatCapability implements ICombatCapability {
     private static final AttributeModifier NOKNOCKBACK = new AttributeModifier(WOUND, "stagger penalty", 10, AttributeModifier.Operation.ADDITION);
     private final WeakReference<LivingEntity> dude;
     private ItemStack prev;
-    private int spirit;
+    private float spirit;
     private float posture, rally;
     private int mBind, oBind;
     private int staggerTime, maxStaggerTime, offhandCD;
@@ -64,7 +64,7 @@ public class NewCombatCapability implements ICombatCapability {
     private int guardFrame, parryFrame, dodgeFrame, iFrame;
     private Vec3 motion;
     private double mobPosRegenSpd = 0.3;
-    private int mobPosCD = 60, maxMobPosCD = 60, rallyCD;
+    private int mobPosCD = 60, maxMobPosCD = 60, spiritCD, maxSpiritCD = 20;
     private boolean player;
     private HashMap<String, Double> procs = new HashMap<>();
     private float recordedDamage = 0;
@@ -100,42 +100,75 @@ public class NewCombatCapability implements ICombatCapability {
     }
 
     @Override
-    public int getSpirit() {
+    public float getSpirit() {
         return spirit;
     }
 
     @Override
-    public void setSpirit(int v) {
+    public void setSpirit(float v) {
         spirit = Mth.clamp(v, 0, getMaxSpirit());
         dirty = true;
     }
 
+    /**
+     * cancel to not consume spirit
+     * allow to return true, deny to return false
+     * if not canceled and denied, the spirit will be consumed but will return false.
+     * if not canceled and allowed, the spirit will be consumed to the limit, but will always return true.
+     */
     @Override
-    public boolean consumeSpirit(int amount) {
+    public float doConsumeSpirit(float amount) {
         ConsumeSpiritEvent cse = new ConsumeSpiritEvent(dude.get(), amount);
         MinecraftForge.EVENT_BUS.post(cse);
         amount = cse.getAmount();
-        final boolean lacking = posture < amount * ReworkConstants.SPIRIT_QI;
+        dirty=true;
+        final boolean lacking = spirit < amount;
         if (cse.isCanceled()) {
-            return cse.getResult() == Event.Result.ALLOW || (cse.getResult() != Event.Result.DENY && !lacking);
+            if (cse.getResult() != Event.Result.DENY)
+                return 0;
+            else {
+                return 5;
+            }
         }
-
-        if (cse.getResult() == Event.Result.DEFAULT && lacking) return false;
-        consumePosture(amount * ReworkConstants.SPIRIT_QI);
-        return cse.getResult() != Event.Result.DENY;
+        spiritCD = maxSpiritCD;
+        if (cse.getResult() == Event.Result.DEFAULT && lacking) return amount - spirit;
+        if (cse.getResult() == Event.Result.DENY) {
+            setSpirit(spirit - amount);
+            return 5;
+        } else if (cse.getResult() == Event.Result.ALLOW) {
+            setSpirit(spirit - amount);
+            return 0;
+        }
+        if (!lacking) {
+            setSpirit(spirit - amount);
+            return 0;
+        }
+        return amount - spirit;
     }
 
     @Override
-    public int addSpirit(int amount) {
+    public boolean consumeSpirit(float amount) {
+        return doConsumeSpirit(amount) <= 0;
+    }
+
+    @Override
+    public float addSpirit(float amount) {
         GainSpiritEvent cse = new GainSpiritEvent(dude.get(), amount);
         MinecraftForge.EVENT_BUS.post(cse);
         amount = cse.getQuantity();
-        addPosture(amount * ReworkConstants.SPIRIT_QI);
-        return 0;
+        float ret = 0;
+        spirit += amount * ReworkConstants.SPIRIT_QI;
+        if (spirit > getMaxSpirit()) {
+            ret = spirit - getMaxSpirit();
+            spirit = getMaxSpirit();
+        }
+        //addPosture(amount * ReworkConstants.SPIRIT_QI);
+        dirty = true;
+        return ret;
     }
 
     @Override
-    public int getMaxSpirit() {
+    public float getMaxSpirit() {
         return mspi;
     }
 
@@ -217,7 +250,7 @@ public class NewCombatCapability implements ICombatCapability {
 
         //players heal rally
         if (assailant instanceof Player p) {
-            CombatData.getCap(p).retconDamage((float) (amount * p.getAttributeValue(FootworkAttributes.RALLY_CONVERSION.get())));
+            CombatData.getCap(p).retconDamage((float) (amount));
         }
         mobPosCD = maxMobPosCD;
 
@@ -275,7 +308,7 @@ public class NewCombatCapability implements ICombatCapability {
             posture = 0;
         }
         if (amount > 0) {
-            addRally(amount * 0.6f * StylishData.getCap(elb).getCombo());
+            addRally((amount - ret) * 0.6f * StylishData.getCap(elb).getCombo());
             //System.out.println("rally: "+getRally());
         }
         if (WarCompat.elenaiDodge && elb instanceof ServerPlayer sp)
@@ -294,7 +327,6 @@ public class NewCombatCapability implements ICombatCapability {
         if (player) {
             rally = Mth.clamp(v, 0, getMaxPosture() - getPosture());//(float) Math.min(v, dude.get().getAttributeValue(FootworkAttributes.MAX_RALLY.get()));
             if (rally < 0) rally = 0;
-            rallyCD = RALLY_CD;
             dirty = true;
         }
     }
@@ -400,7 +432,7 @@ public class NewCombatCapability implements ICombatCapability {
         mpos = (float) elb.getAttributeValue(FootworkAttributes.MAX_POSTURE.get());
         if (posture > mpos)
             setPosture(mpos);
-        mspi = (int) elb.getAttributeValue(FootworkAttributes.MAX_SPIRIT.get());
+        mspi = (int) elb.getAttributeValue(FootworkAttributes.MAX_QI.get());
         if (spirit > mspi)
             setSpirit(mspi);
 
@@ -467,6 +499,7 @@ public class NewCombatCapability implements ICombatCapability {
             setPosture(getPosture() + getMaxPosture() / getMaxStunTime());
         } else {
             handlePostureRegen(ticks);
+            handleSpiritRegen(ticks);
             //if (elb.isBlocking()) addPosture(0.01f);
         }
         if (getPosture() > getMaxPosture())
@@ -490,7 +523,6 @@ public class NewCombatCapability implements ICombatCapability {
         if (uninitializedPosture) {
             final float mPos = getMPos(elb);
             elb.getAttribute(FootworkAttributes.MAX_POSTURE.get()).setBaseValue(mPos);
-            elb.getAttribute(FootworkAttributes.MAX_RALLY.get()).setBaseValue(mPos * 0.2);
             if (!player) {//ew
                 MobSpecs.MobInfo specs = MobSpecs.getMobInfo(elb);
                 if (specs == null) specs = MobSpecs.DEFAULT;
@@ -508,22 +540,21 @@ public class NewCombatCapability implements ICombatCapability {
     }
 
     private void sync() {
-        //if (dirty) {//todo
-        LivingEntity elb = dude.get();
-        if (elb == null || elb.level().isClientSide) return;
-        CombatChannel.INSTANCE.send(PacketDistributor.TRACKING_ENTITY.with(() -> elb), new UpdateClientResourcePacket(elb.getId(), write()));
-        if (!(elb instanceof FakePlayer) && elb instanceof ServerPlayer sp)
-            CombatChannel.INSTANCE.send(PacketDistributor.PLAYER.with(() -> sp), new UpdateClientResourcePacket(elb.getId(), write()));
-        dirty = false;
-        //}
+        if (dirty) {//todo
+            LivingEntity elb = dude.get();
+            if (elb == null || elb.level().isClientSide) return;
+            CombatChannel.INSTANCE.send(PacketDistributor.TRACKING_ENTITY.with(() -> elb), new UpdateClientResourcePacket(elb.getId(), write()));
+            if (!(elb instanceof FakePlayer) && elb instanceof ServerPlayer sp)
+                CombatChannel.INSTANCE.send(PacketDistributor.PLAYER.with(() -> sp), new UpdateClientResourcePacket(elb.getId(), write()));
+            dirty = false;
+        }
     }
 
     @Override
     public void clientTick() {
         LivingEntity elb = dude.get();
         if (elb == null) return;
-        final int ticks = (int) (elb.level().getGameTime() - lastUpdate);
-        if (ticks < 1) return;//sometimes time runs backwards
+        final int ticks = 1;
         //update max values
         mpos = (float) elb.getAttributeValue(FootworkAttributes.MAX_POSTURE.get());
         if (posture > mpos)
@@ -535,11 +566,8 @@ public class NewCombatCapability implements ICombatCapability {
                 CombatUtils.setHandCooldown(elb, h, 0, true);
         }
         mBind -= ticks;
-        int prevOBind = oBind;
         oBind -= ticks;
         LivingEntity e = dude.get();
-        if (!CombatUtils.suppressChangeFunctions && (oBind > 0 || prevOBind > 0) && (oBind <= 0 || prevOBind <= 0) && e != null)
-            TwoHandingHandler.updateTwoHanding(e, e.getMainHandItem(), e.getMainHandItem());
         offhandCD += ticks;
         setDodgeTime(dodgeFrame - ticks);
 
@@ -556,6 +584,7 @@ public class NewCombatCapability implements ICombatCapability {
             setPosture(getPosture() + getMaxPosture() / getMaxStunTime());
         } else {
             handlePostureRegen(ticks);
+            handleSpiritRegen(ticks);
             //if (elb.isBlocking()) addPosture(0.01f);
         }
         if (getPosture() > getMaxPosture())
@@ -564,7 +593,6 @@ public class NewCombatCapability implements ICombatCapability {
             prev = elb.getOffhandItem();
             setOffhandCooldown(0);
         }
-        lastUpdate = elb.level().getGameTime();
         first = false;
     }
 
@@ -576,6 +604,7 @@ public class NewCombatCapability implements ICombatCapability {
     @Override
     public void setOffhandCooldown(int i) {
         offhandCD = i;
+        dirty=true;
     }
 
     @Override
@@ -601,6 +630,7 @@ public class NewCombatCapability implements ICombatCapability {
             //cancel slide pose change
             p.setForcedPose(null);
         dodgeFrame = i;
+        dirty=true;
     }
 
     @Override
@@ -632,6 +662,7 @@ public class NewCombatCapability implements ICombatCapability {
     @Override
     public void setParryTime(int i) {
         parryFrame = i;
+        dirty=true;
     }
 
     @Override
@@ -661,6 +692,7 @@ public class NewCombatCapability implements ICombatCapability {
     @Override
     public void setGuardTime(int i) {
         guardFrame = i;
+        dirty=true;
     }
 
     @Override
@@ -676,6 +708,7 @@ public class NewCombatCapability implements ICombatCapability {
     @Override
     public void setIframe(int i) {
         iFrame = i;
+        dirty=true;
     }
 
     @Override
@@ -688,6 +721,7 @@ public class NewCombatCapability implements ICombatCapability {
         if (v >= 0) healthyCooldown = 60;
         if (recordedDamage < 0) recordedDamage = 0;
         recordedDamage += v;
+        dirty=true;
     }
 
     @Override
@@ -754,7 +788,7 @@ public class NewCombatCapability implements ICombatCapability {
     @Override
     public CompoundTag write() {
         CompoundTag c = new CompoundTag();
-        c.putInt("spirit", spirit);
+        c.putFloat("spirit", spirit);
         c.putInt("mspi", mspi);
         c.putFloat("posture", posture);
         c.putFloat("mpos", mpos);
@@ -773,6 +807,7 @@ public class NewCombatCapability implements ICombatCapability {
         c.putInt("dodge", dodgeFrame);
         c.putInt("invul", iFrame);
         c.putInt("mobPosCD", mobPosCD);
+        c.putInt("spiCD", spiritCD);
         c.putInt("maxMobPosCD", maxMobPosCD);
         c.putDouble("mobPosRegenSpd", mobPosRegenSpd);
         c.putBoolean("player", player);
@@ -790,7 +825,7 @@ public class NewCombatCapability implements ICombatCapability {
     public void read(CompoundTag t) {
         mspi = t.getInt("mspi");
         mpos = t.getFloat("mpos");
-        setSpirit(t.getInt("spirit"));
+        setSpirit(t.getFloat("spirit"));
         setPosture(t.getFloat("posture"));
         setRally(t.getFloat("rally"));
         setHandBind(InteractionHand.MAIN_HAND, t.getInt("mBind"));
@@ -809,6 +844,7 @@ public class NewCombatCapability implements ICombatCapability {
         setIframe(t.getInt("invul"));
         mobPosCD = t.getInt("mobPosCD");
         maxMobPosCD = t.getInt("maxMobPosCD");
+        spiritCD = t.getInt("spiCD");
         mobPosRegenSpd = t.getDouble("mobPosRegenSpd");
         if (t.contains("procs")) {
             procs.clear();
@@ -833,24 +869,17 @@ public class NewCombatCapability implements ICombatCapability {
 
     private void handlePostureRegen(int ticks) {
         mobPosCD -= ticks;
-        rallyCD -= ticks;
-        if (mobPosRegenSpd == 0) mobPosRegenSpd = 0.3;
+        if (mobPosRegenSpd == 0) mobPosRegenSpd = 0.4;
         float mult = 1;
         LivingEntity elb = dude.get();
-        if (rallyCD < 0) {
-            rally(Math.max(1, getRally() / 10));
-            rallyCD = 0;
-        }
         if (mobPosCD > 0 || rally > 0) return;
         if (elb != null) {
             float healthperc = 0.3f + (elb.getHealth() / elb.getMaxHealth()) * 0.7f;
             if (player) {
-                //players actually regenerate faster near death, but have lower initial to make up for it.
+                //players actually regenerate faster near death.
                 //for the TENSION!
                 healthperc = 0.65f + (1 - healthperc);
             }
-            //minimum 30% heal rate
-            else healthperc = 0.3f + healthperc * 0.7f;
 
             mult *= healthperc;
             //mult *= Math.min(CombatUtils.getCooledAttackStrength(elb, InteractionHand.MAIN_HAND, 0.5f), CombatUtils.getCooledAttackStrength(elb, InteractionHand.MAIN_HAND, 0.5f));
@@ -870,6 +899,14 @@ public class NewCombatCapability implements ICombatCapability {
                 if (healthyCooldown < 0)
                     recordDamage(Math.min(-1, -getRecordedDamage() / 1000));
             }
+        }
+    }
+
+    private void handleSpiritRegen(int ticks) {
+        spiritCD -= ticks;
+        if (spiritCD <= 0) {
+            addSpirit((float) -spiritCD /ReworkConstants.SPIRIT_QI);
+            spiritCD = 0;
         }
     }
 }

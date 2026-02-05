@@ -240,6 +240,7 @@ public class ClientEvents {
                                 loc = coyoteVector;
                             }
                             CombatChannel.INSTANCE.sendToServer(new ThrowPacket(true, loc, QuiverDisplay.invIndex));
+                            while(mc.options.keyAttack.consumeClick());
                         }
                         if (mc.options.keyUse.isDown() && mc.options.keyUse.consumeClick()) {
                             HitResult destination = ProjectileUtil.getHitResultOnViewVector(p, EntitySelector.LIVING_ENTITY_STILL_ALIVE, 32);
@@ -250,6 +251,7 @@ public class ClientEvents {
                                 loc = coyoteVector;
                             }
                             CombatChannel.INSTANCE.sendToServer(new ThrowPacket(false, loc, QuiverDisplay.invIndex));
+                            while(mc.options.keyUse.consumeClick());
                         }
                     } else if (wasThrowAiming) {
                         CombatChannel.INSTANCE.sendToServer(new UnhookPacket());
@@ -430,7 +432,7 @@ public class ClientEvents {
                 return;
             }
         }
-        if (!Keybinds.EVOKE.isDown() && !rightClick && GeneralConfig.dual && e.getHand() == InteractionHand.OFF_HAND && StylishData.getCap(e.getEntity()).isCombatMode() && specialHandleItem(e.getEntity(), e.getItemStack())) {
+        if (!Keybinds.EVOKE.isDown() &&!Keybinds.THROW.isDown() && !rightClick && GeneralConfig.dual && e.getHand() == InteractionHand.OFF_HAND && StylishData.getCap(e.getEntity()).isCombatMode() && specialHandleItem(e.getEntity(), e.getItemStack())) {
             rightClick = true;
             Entity n = RenderUtils.getEntityLookedAt(e.getEntity(), GeneralUtils.getAttributeValueHandSensitive(e.getEntity(), ForgeMod.ENTITY_REACH.get(), InteractionHand.OFF_HAND));
             e.getEntity().swing(InteractionHand.OFF_HAND, false);
@@ -479,7 +481,7 @@ public class ClientEvents {
                 return;
             }
         }
-        if (!Keybinds.EVOKE.isDown() && !rightClick && GeneralConfig.dual && e.getHand() == InteractionHand.OFF_HAND && StylishData.getCap(e.getEntity()).isCombatMode() && specialHandleItem(e.getEntity(), e.getItemStack())) {
+        if (!Keybinds.EVOKE.isDown() &&!Keybinds.THROW.isDown() && !rightClick && GeneralConfig.dual && e.getHand() == InteractionHand.OFF_HAND && StylishData.getCap(e.getEntity()).isCombatMode() && specialHandleItem(e.getEntity(), e.getItemStack())) {
             rightClick = true;
             Entity n = RenderUtils.getEntityLookedAt(e.getEntity(), GeneralUtils.getAttributeValueHandSensitive(e.getEntity(), ForgeMod.ENTITY_REACH.get(), InteractionHand.OFF_HAND));
             e.getEntity().swing(InteractionHand.OFF_HAND, false);
@@ -506,7 +508,7 @@ public class ClientEvents {
                 return;
             }
         }
-        if (!Keybinds.EVOKE.isDown() && !rightClick && GeneralConfig.dual && e.getHand() == InteractionHand.OFF_HAND && StylishData.getCap(e.getEntity()).isCombatMode() && specialHandleItem(e.getEntity(), e.getItemStack())) {
+        if (!Keybinds.EVOKE.isDown() &&!Keybinds.THROW.isDown() && !rightClick && GeneralConfig.dual && e.getHand() == InteractionHand.OFF_HAND && StylishData.getCap(e.getEntity()).isCombatMode() && specialHandleItem(e.getEntity(), e.getItemStack())) {
             rightClick = true;
             Entity n = RenderUtils.getEntityLookedAt(e.getEntity(), GeneralUtils.getAttributeValueHandSensitive(e.getEntity(), ForgeMod.ENTITY_REACH.get(), InteractionHand.OFF_HAND));
             e.getEntity().swing(InteractionHand.OFF_HAND, false);
@@ -533,7 +535,7 @@ public class ClientEvents {
                 return;
             }
         }
-        if (!Keybinds.EVOKE.isDown() && !rightClick && GeneralConfig.dual && e.getHand() == InteractionHand.OFF_HAND && StylishData.getCap(e.getEntity()).isCombatMode() && specialHandleItem(e.getEntity(), e.getItemStack())) {
+        if (!Keybinds.EVOKE.isDown() &&!Keybinds.THROW.isDown() && !rightClick && GeneralConfig.dual && e.getHand() == InteractionHand.OFF_HAND && StylishData.getCap(e.getEntity()).isCombatMode() && specialHandleItem(e.getEntity(), e.getItemStack())) {
             rightClick = true;
             Entity n = RenderUtils.getEntityLookedAt(e.getEntity(), GeneralUtils.getAttributeValueHandSensitive(e.getEntity(), ForgeMod.ENTITY_REACH.get(), InteractionHand.OFF_HAND) - (e.getItemStack().isEmpty() ? 1 : 0));
             e.getEntity().swing(InteractionHand.OFF_HAND, false);

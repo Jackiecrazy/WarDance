@@ -62,9 +62,9 @@ public class KickPacket {
                         FlyingWeaponData.getCap(sender).yeet(null, loc);
                     } else {
                         HitResult destination = ProjectileUtil.getHitResultOnViewVector(sender, EntitySelector.LIVING_ENTITY_STILL_ALIVE, 3);
-                        if (destination instanceof EntityHitResult hit && CombatData.getCap(sender).consumePosture(QiCosts.KICK) == 0) {
+                        if (destination instanceof EntityHitResult hit && CombatData.getCap(sender).doConsumeSpirit(QiCosts.KICK) == 0) {
                             CombatUtils.kick(sender, hit.getEntity(), false);
-                        }else if(target instanceof LivingEntity e&&GeneralUtils.getDistSqCompensated(e, sender)<9 && CombatData.getCap(sender).consumePosture(QiCosts.KICK) == 0){
+                        }else if(target instanceof LivingEntity e&&GeneralUtils.getDistSqCompensated(e, sender)<9 && CombatData.getCap(sender).doConsumeSpirit(QiCosts.KICK) == 0){
                             CombatUtils.kick(sender, e, false);
                         }
                     }

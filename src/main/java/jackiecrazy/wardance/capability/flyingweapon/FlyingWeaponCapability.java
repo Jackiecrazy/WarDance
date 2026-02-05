@@ -204,25 +204,29 @@ public class FlyingWeaponCapability implements IFlyingWeapon {
     }
 
     @Override
-    public void yeet(InteractionHand hand, Vec3 pos) {
-        if (hand == null && getHeldBlock() != null) {
-            getHeldBlock().yeet(pos);
-            held = null;
-            StylishData.getCap(player).addCombo(0.12f, "blockyeet");
+    public boolean yeet(InteractionHand hand, Vec3 pos) {
+        if (hand == null) {
+            if (getHeldBlock() != null) {
+                getHeldBlock().yeet(pos);
+                held = null;
+                StylishData.getCap(player).addCombo(0.12f, "blockyeet");
+                return true;
+            }
+            return false;
         }
-        if (getWeapon(hand).isIdle()) {
-            StylishData.getCap(player).addCombo(0.2f, "throw");
-            Level level = getWeapon(hand).level();
-            ThrownWeaponEntity fwe = new ThrownWeaponEntity(WarEntities.THROWN_WEAPON.get(), level);
-            final ItemStack held = player.getItemInHand(hand);
-            fwe.setHeldItem(held.copyWithCount(1));
-            fwe.setOwner(player);
-            fwe.setPosRaw(player.getX(), player.getEyeY(), player.getZ());
-            fwe.setInteractionRange(1);
-            fwe.setState(FlyingItemEntity.STATE.THROW_NATURAL);
-            fwe.yeet(pos);
-            level.addFreshEntity(fwe);
-        }
+        StylishData.getCap(player).addCombo(0.2f, "throw");
+        getWeapon(hand).clearPath();
+        Level level = getWeapon(hand).level();
+        ThrownWeaponEntity fwe = new ThrownWeaponEntity(WarEntities.THROWN_WEAPON.get(), level);
+        final ItemStack held = player.getItemInHand(hand);
+        fwe.setHeldItem(held.copyWithCount(1));
+        fwe.setOwner(player);
+        fwe.setPosRaw(player.getX(), player.getEyeY(), player.getZ());
+        fwe.setInteractionRange(1);
+        fwe.setState(FlyingItemEntity.STATE.THROW_NATURAL);
+        fwe.yeet(pos);
+        level.addFreshEntity(fwe);
+        return true;
     }
 
 

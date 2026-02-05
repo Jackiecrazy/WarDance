@@ -136,8 +136,6 @@ public class StylishCapability implements IStyleCapability {
         //calculate freshness
         float fresh = getFreshness(source);
         amount *= fresh;
-        //trail. Add spirit on fresh action.
-        if (fresh == 1) CombatData.getCap(dude.get()).addSpirit(1);
         //reset combo timer even if too stale
         refresh();
         //too stale!

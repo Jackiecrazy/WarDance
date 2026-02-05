@@ -242,7 +242,7 @@ public class CombatHandler {
 
             //dodged!
             if (ukeCap.isDodging()) {
-                if (e.getSource() != null && DamageUtils.isPhysicalAttack(e.getSource()))
+                if (e.getSource() != null)
                     CombatUtils.onSuccessfulDodge(uke, e.getSource().getDirectEntity());
                 e.setCanceled(true);
                 return;
@@ -271,9 +271,6 @@ public class CombatHandler {
 
     @SubscribeEvent(priority = EventPriority.LOWEST)//because compat with Better Hurt Timer...
     public static void parry(final LivingAttackEvent e) {
-        if (GeneralConfig.debug && !e.getEntity().level().isClientSide) {
-            WarDance.LOGGER.debug("attack source " + e.getSource() + " sent to hurt check with amount " + e.getAmount());
-        }
         //if physical attack with source
         if (!e.getEntity().level().isClientSide && e.getSource() != null && DamageUtils.isPhysicalAttack(e.getSource())) {
             LivingEntity uke = e.getEntity();
@@ -336,16 +333,17 @@ public class CombatHandler {
                     //add stats if it's the first attack this tick and cooldown is sufficient
                     if (!semeCap.alreadyProc("qiSpent")) {//first hit of a sweep attack this tick, add combo based on state
                         //semeCap.addRank(0.1f);
-                        semeCap.consumePosture(atkMult);
-
+                        double percRed = semeCap.doConsumeSpirit(atkMult) / atkMult;
+                        semeCap.tickProc("darktide", percRed);
                         StylishData.getCap(seme).processAttack(true);
-                        StylishData.getCap(seme).addCombo(0.05f, StylishCapability.getNormalAttackString(seme)+seme.getMainHandItem().getItem().toString());
+                        StylishData.getCap(seme).addCombo(0.05f, StylishCapability.getNormalAttackString(seme) + seme.getMainHandItem().getItem().toString());
                         semeCap.tickProc("qiSpent");
                     }
                 } else {
                     //handle stamina consumption on everything else
                     if (!semeCap.alreadyProc("qiSpent")) {//first hit of a sweep attack this tick, add combo based on state
-                        semeCap.consumePosture(atkMult);
+                        double percRed = semeCap.doConsumeSpirit(atkMult) / atkMult;
+                        semeCap.tickProc("darktide", percRed);
                         StylishData.getCap(seme).processAttack(false);
                         StylishData.getCap(seme).addCombo(0.1f, e.getSource().getMsgId());
                         semeCap.tickProc("qiSpent");
@@ -490,12 +488,15 @@ public class CombatHandler {
 //                }
             }
         } else {
+            if (GeneralConfig.debug && !e.getEntity().level().isClientSide) {
+                WarDance.LOGGER.debug("attack source " + e.getSource() + " is nonphysical or sourceless, anti-terrain measures deployed.");
+            }
             //parry nukes and the earth
-            if (e.getSource().is(DamageTypeTags.IS_FALL) || e.getSource().is(DamageTypeTags.IS_EXPLOSION) || e.getSource().is(DamageTypeTags.IS_LIGHTNING)) {
+            if (e.getSource().is(DamageTypeTags.IS_FALL) || e.getSource().is(DamageTypeTags.IS_EXPLOSION) || e.getSource().is(DamageTypeTags.IS_LIGHTNING) || e.getSource().getEntity() != null) {
                 MeleePostureEvent.Environment pe1 = new MeleePostureEvent.Environment(e.getEntity(), CombatData.getCap(e.getEntity()).isParrying(), e.getAmount(), e.getSource(), e.getAmount(), true);
                 MinecraftForge.EVENT_BUS.post(pe1);
                 if (pe1.success()) {
-                    CombatUtils.onSuccessfulParry(e.getEntity(), null, null, null, pe1.getPostureConsumption(), e.getAmount());
+                    CombatUtils.onSuccessfulParry(e.getEntity(), e.getSource().getEntity(), null, null, pe1.getPostureConsumption(), e.getAmount());
                     if (e.getSource().is(DamageTypeTags.IS_FALL))
                         e.getEntity().addDeltaMovement(new Vec3(0, 1, 0));
                     e.setCanceled(true);
@@ -505,6 +506,9 @@ public class CombatHandler {
             if (e.getSource() instanceof CombatDamageSource cds && cds.getPostureDamage() > 0) {
                 CombatData.getCap(e.getEntity()).consumePosture(cds.getEntity() instanceof LivingEntity elb ? elb : null, cds.getPostureDamage(), cds.canBreach());//todo conversion percentages
             }
+        }
+        if (GeneralConfig.debug && !e.getEntity().level().isClientSide) {
+            WarDance.LOGGER.debug("attack source " + e.getSource() + " sent to hurt check with amount " + e.getAmount());
         }
 
     }
@@ -608,13 +612,13 @@ public class CombatHandler {
         e.setAmount(dmg * comboDefense);
         if (ds.getEntity() != null) {
             StylishData.getCap(uke).resetCombo();//reset combo for direct hits
-            if (ds.getEntity() instanceof Mob m && CombatData.getCap(m).getPosture() <= 0) {
-                //overextension penalty
-                //CombatData.getCap(m).pin(10);
-                CombatData.getCap(m).recordDamage(e.getAmount() / 2);
-                e.setAmount(e.getAmount() * 0.3f);
-                m.addEffect(new MobEffectInstance(MobEffects.MOVEMENT_SLOWDOWN, 20));
-            }
+//            if (ds.getEntity() instanceof Mob m && CombatData.getCap(m).getPosture() <= 0) {
+//                //overextension penalty
+//                //CombatData.getCap(m).pin(10);
+//                CombatData.getCap(m).recordDamage(e.getAmount() / 2);
+//                e.setAmount(e.getAmount() * 0.3f);
+//                m.addEffect(new MobEffectInstance(MobEffects.MOVEMENT_SLOWDOWN, 20));
+//            }
         }
 
         if (GeneralConfig.debug && !uke.level().isClientSide) {
@@ -636,12 +640,19 @@ public class CombatHandler {
 
             //consume stamina if we didn't do it yet
             if (!CombatData.getCap(trueSource).alreadyProc("qiSpent")) {
-                e.setAmount(CombatData.getCap(trueSource).consumePosture(e.getAmount()));
+                final float exhausted = CombatData.getCap(trueSource).doConsumeSpirit(e.getAmount());
+                cap.recordDamage(exhausted);
+                e.setAmount(e.getAmount() - exhausted);
                 CombatData.getCap(trueSource).tickProc("qiSpent");
+            } else if (CombatData.getCap(trueSource).alreadyProc("darktide")) {
+                //handle partial attacks
+                final float darktide = (float) CombatData.getCap(trueSource).getProc("darktide");
+                cap.recordDamage(e.getAmount() * darktide);
+                e.setAmount(e.getAmount() * (1 - darktide));
             }
 
             if (GeneralConfig.debug && !uke.level().isClientSide) {
-                WarDance.LOGGER.debug("special sweep been resolved, damage is now " + e.getAmount());
+                WarDance.LOGGER.debug("luck has been resolved, damage is now " + e.getAmount());
             }
         }
 
@@ -654,11 +665,12 @@ public class CombatHandler {
             e.setAmount(e.getAmount() + cap.getRecordedDamage());
             cap.stopRecording(null);
         } else if (!creative && !cap.isStunned() && !cap.alreadyProc("knockdown")) {
+            cap.tickProc("noShake");
             //yeah this is basically darktide with discrimination
 
             // environmental: only deal damage at 0 qi
             if (environmentalDamage) {
-                if(cap.consumePosture(QiCosts.translateEnvironment(ds)) == 0) {
+                if (cap.consumePosture(QiCosts.translateEnvironment(ds)) == 0) {
                     e.setAmount(0);
                     cap.tickProc("deathDenied");
                 }//else e.setAmount(e.getAmount()/2);
@@ -677,7 +689,8 @@ public class CombatHandler {
                 //mobs
                 // vs projectiles: qi drain then damage
                 // vs melee: qi drain then damage
-                if (alert) {// ) {
+                if (alert) {
+                    //darktide
                     e.setAmount(e.getAmount() * (1 - cap.getPosturePercentage()));
                     if (nonMeleeDamage && (cap.getPosture() > 0)) {
                         //cap.recordDamage(cap.consumePosture(e.getAmount()));//I think this is double dipping posture for projectiles?
@@ -687,7 +700,6 @@ public class CombatHandler {
                 }
             }
             //if the damage made it all the way here, congratulations! It hurts the entity.
-            cap.tickProc("noShake");
             //e.setCanceled(true);
         }
         //stuff used to exist here, moved to footwork

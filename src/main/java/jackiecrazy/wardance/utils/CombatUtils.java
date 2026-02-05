@@ -708,8 +708,8 @@ public class CombatUtils {
             CombatData.getCap(e).setHandBind(InteractionHand.MAIN_HAND, remaining);//prevent further attacks
         }
         cap.setSpirit(cap.getMaxSpirit());
-        cap.setDodgeTime(0);
-        cap.setIframe(remaining);
+        cap.setDodgeTime(CombatConfig.rollTime);
+        //cap.setIframe(remaining);
 
         if (defender instanceof Player) {
             triggerSteveTime(defender, 30);
@@ -731,7 +731,7 @@ public class CombatUtils {
         ICombatCapability cap = CombatData.getCap(defender);
         StylishData.getCap(defender).processAttack(true);
         StylishData.getCap(defender).processAttack(false);
-        cap.setIframe(7);
+        cap.setParryTime(CombatConfig.parryTime);
 
         if (defender.level() instanceof ServerLevel s)
             for (int i = 0; i < 32; i++) {
@@ -746,6 +746,11 @@ public class CombatUtils {
         if (defender instanceof Player) {
             if (hand == null)
                 hand = defender.getOffhandItem() == defend ? InteractionHand.OFF_HAND : InteractionHand.MAIN_HAND;
+
+            if(attacker instanceof LivingEntity e){
+                CombatData.getCap(e).consumePosture(defender, 4, ICombatCapability.BreachLevel.KNOCKDOWN);
+                CombatData.getCap(e).recordDamage((float) damage);
+            }
 
             for (Entity t : defender.level().getEntities(defender, defender.getBoundingBox().inflate(radius), (a -> !TargetingUtils.isAlly(a, defender)))) {
                 float strength = 1.3f;
