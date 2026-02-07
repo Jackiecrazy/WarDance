@@ -245,8 +245,8 @@ public class CombatUtils {
                 if (meleeInfo != null) {
                     base = (float) meleeInfo.getAttackPostureMultiplier();
                     if (attacker != null) {
-                        final WeaponStats.SweepInfo info = WeaponStats.getSweepInfo(attacker.getMainHandItem(), CombatUtils.getAttackState(attacker));
-                        base *= info.getPostureScale();
+                        final SweepActions.SweepInfo info = WeaponStats.getSweepInfo(attacker.getMainHandItem(), CombatUtils.getAttackState(attacker));
+                        base *= info.getHitInfo().getPostureScale();
                     }
                 }
             }
@@ -435,9 +435,9 @@ public class CombatUtils {
     public static void sweep(LivingEntity e, Entity ignore, InteractionHand h, double reach) {
         ItemStack stack = e.getItemInHand(h);
         WeaponStats.AttackType s = getAttackState(e);
-        WeaponStats.SweepInfo info = WeaponStats.getSweepInfo(stack, s);
+        SweepActions.SweepInfo info = WeaponStats.getSweepInfo(stack, s);
         //apply instantaneous damage multiplier
-        SkillUtils.modifyAttribute(e, Attributes.ATTACK_DAMAGE, main, info.getDamageScale() - 1, AttributeModifier.Operation.MULTIPLY_TOTAL);
+        SkillUtils.modifyAttribute(e, Attributes.ATTACK_DAMAGE, main, info.getHitInfo().getDamageScale() - 1, AttributeModifier.Operation.MULTIPLY_TOTAL);
         sweep(e, ignore, h, info.getType(), reach, info.getBase(), info.getScaling());
 //        stack.releaseUsing(e.level(), e, 0);
 //        if (e instanceof Player p)
@@ -448,7 +448,7 @@ public class CombatUtils {
     public static void sweep(LivingEntity e,
                              Entity ignore,
                              InteractionHand h,
-                             WeaponStats.SWEEPTYPE type,
+                             SweepActions.SweepInfo.SWEEPTYPE type,
                              double reach,
                              double base,
                              double scaling) {
@@ -465,7 +465,7 @@ public class CombatUtils {
         }
 
 
-        if (!PermissionData.getCap(e).canSweep()) type = WeaponStats.SWEEPTYPE.NONE;
+        if (!PermissionData.getCap(e).canSweep()) type = SweepActions.SweepInfo.SWEEPTYPE.NONE;
         double radius;
 
         SweepEvent sre = new SweepEvent(e, h, e.getMainHandItem(), type, base, scaling);
@@ -479,7 +479,7 @@ public class CombatUtils {
 
         //purely visual attack
         int time = CombatUtils.getCooldownPeriod(e, h);
-        int animTime = type == WeaponStats.SWEEPTYPE.CIRCLE ? 10 : 5;
+        int animTime = type == SweepActions.SweepInfo.SWEEPTYPE.CIRCLE ? 10 : 5;
         List<FlyingWeaponEffect> fx = new ArrayList<>();
         fx.add(FlyingWeaponEffect.WEAPON);
         if (StylishData.getCap(e).getFreshness(StylishCapability.getNormalAttackString(e)) > 0) {
@@ -491,7 +491,7 @@ public class CombatUtils {
         FlyingWeaponData.getCap(e).scheduleAction(h, TemporaryMoveTranslator.temp_getMMFromType(animTime, type, radius), null, reach, time, fx.toArray(new FlyingWeaponEffect[fx.size()]));
 
 
-        if (sre.isCanceled() || type == WeaponStats.SWEEPTYPE.NONE || radius == 0) {
+        if (sre.isCanceled() || type == SweepActions.SweepInfo.SWEEPTYPE.NONE || radius == 0) {
             //no go, swap items back and stop
             if (h == InteractionHand.OFF_HAND) {
                 swapHeldItems(e);
@@ -797,7 +797,7 @@ public class CombatUtils {
         if (!StylishData.getCap(sender).isCombatMode()) return false;
         if (CombatData.getCap(sender).getHandBind(h) > 0) return false;
         //StylishData.getCap(sender).resetTriggerBar();
-        WeaponStats.SweepInfo info = WeaponStats.getSweepInfo(sender.getItemInHand(h), s);
+        SweepActions.SweepInfo info = WeaponStats.getSweepInfo(sender.getItemInHand(h), s);
         TemporaryMoveTranslator.scheduleFinisher(sender, h, info);
         StylishData.getCap(sender).addCombo(0.25f, "heavy" + (h == InteractionHand.OFF_HAND) + s.name());
         return true;

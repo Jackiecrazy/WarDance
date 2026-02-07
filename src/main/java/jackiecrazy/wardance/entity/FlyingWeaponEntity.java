@@ -1,8 +1,6 @@
 package jackiecrazy.wardance.entity;
 
 import jackiecrazy.footwork.capability.resources.CombatData;
-import jackiecrazy.footwork.capability.stylish.StylishData;
-import jackiecrazy.footwork.capability.timeslow.TimeSlowData;
 import jackiecrazy.footwork.client.particle.FootworkParticles;
 import jackiecrazy.footwork.entity.flyingweapon.FlyingItemEntity;
 import jackiecrazy.footwork.entity.flyingweapon.FlyingWeaponEffect;
@@ -10,19 +8,15 @@ import jackiecrazy.footwork.move.motionframe.MotionManager;
 import jackiecrazy.footwork.utils.GeneralUtils;
 import jackiecrazy.footwork.utils.ParticleUtils;
 import jackiecrazy.footwork.utils.TargetingUtils;
-import jackiecrazy.wardance.capability.flyingweapon.FlyingWeaponData;
 import jackiecrazy.wardance.config.WeaponStats;
 import jackiecrazy.wardance.utils.CombatUtils;
+import jackiecrazy.wardance.utils.SweepActions;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.nbt.CompoundTag;
-import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
-import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.LivingEntity;
-import net.minecraft.world.entity.player.Inventory;
-import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.ClipContext;
 import net.minecraft.world.level.Level;
@@ -38,7 +32,7 @@ import java.util.List;
 
 public class FlyingWeaponEntity extends FlyingItemEntity {
     protected final List<Entity> alreadyHit = new ArrayList<>();
-    protected WeaponStats.SweepInfo cacheInfo;
+    protected SweepActions.HitInfo cacheInfo;
     protected WeaponStats.AttackType state;
 
     public FlyingWeaponEntity(EntityType<? extends FlyingItemEntity> type, Level level) {
@@ -50,7 +44,7 @@ public class FlyingWeaponEntity extends FlyingItemEntity {
     }
 
     @Nullable
-    public WeaponStats.SweepInfo getInfo() {
+    public SweepActions.HitInfo getInfo() {
         return cacheInfo;
     }
 
@@ -199,7 +193,7 @@ public class FlyingWeaponEntity extends FlyingItemEntity {
         //setTetheringEntity(getOwner());
         setIntangible(false);
         setInteractionRange(0.5f);
-        cacheInfo = WeaponStats.SweepInfo.BREACHER;
+        cacheInfo = SweepActions.HitInfo.BREACH;
         //setDeltaMovement(new Vec3(0,1,0));
     }
 

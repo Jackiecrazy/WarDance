@@ -10,6 +10,7 @@ import jackiecrazy.footwork.move.motionframe.MotionManagers;
 import jackiecrazy.footwork.utils.GeneralUtils;
 import jackiecrazy.wardance.config.WeaponStats;
 import jackiecrazy.wardance.entity.*;
+import jackiecrazy.wardance.utils.SweepActions;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.player.Player;
@@ -92,7 +93,7 @@ public class FlyingWeaponCapability implements IFlyingWeapon {
     @Override
     public void scheduleAction(InteractionHand hand,
                                MotionManager mm,
-                               WeaponStats.SweepInfo info,
+                               SweepActions.SweepInfo info,
                                double range,
                                int totalTime, FlyingWeaponEffect... fx) {
         //set attack range from manager, then temporarily set the rest to override whatever sweep the player should have grabbed

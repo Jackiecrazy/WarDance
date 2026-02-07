@@ -20,13 +20,12 @@ import jackiecrazy.wardance.event.ProjectileDefendEvent;
 import jackiecrazy.wardance.mixin.ProjectileImpactMixin;
 import jackiecrazy.wardance.utils.CombatUtils;
 import jackiecrazy.wardance.utils.DamageUtils;
+import jackiecrazy.wardance.utils.SweepActions;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.tags.DamageTypeTags;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.damagesource.DamageSource;
-import net.minecraft.world.effect.MobEffectInstance;
-import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.*;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.player.Player;
@@ -303,7 +302,7 @@ public class CombatHandler {
 
                     //handle capability and any on-hit effects, todo revamp to action based system
                     seme.getMainHandItem().getCapability(CombatManipulator.CAP).ifPresent((i) -> i.attackStart(e.getSource(), seme, uke, seme.getMainHandItem(), e.getAmount()));
-                    final WeaponStats.SweepInfo sweepInfo = WeaponStats.getSweepInfo(seme.getMainHandItem(), CombatUtils.getAttackState(seme));
+                    final SweepActions.HitInfo sweepInfo = WeaponStats.getHitInfo(seme.getMainHandItem(), CombatUtils.getAttackState(seme));
                     sweepInfo.performCommand(seme, true, false);
                     sweepInfo.performCommand(uke, false, false);
                     if (e.getSource() instanceof CombatDamageSource cds && WeaponStats.lookupStats(seme.getMainHandItem()) != null) {
@@ -335,7 +334,7 @@ public class CombatHandler {
                     if (!semeCap.alreadyProc("qiSpent")) {//first hit of a sweep attack this tick, add combo based on state
                         //semeCap.addRank(0.1f);
                         double percRed = semeCap.doConsumeSpirit(atkMult) / atkMult;
-                        //semeCap.tickProc("darktide", percRed);
+                        semeCap.tickProc("darktide", percRed);
                         StylishData.getCap(seme).processAttack(true);
                         StylishData.getCap(seme).addCombo(0.05f, StylishCapability.getNormalAttackString(seme) + seme.getMainHandItem().getItem().toString());
                         //the attacker gets a steve time extension
@@ -349,7 +348,7 @@ public class CombatHandler {
                     //handle stamina consumption on everything else
                     if (!semeCap.alreadyProc("qiSpent")) {//first hit of a sweep attack this tick, add combo based on state
                         double percRed = semeCap.doConsumeSpirit(atkMult) / atkMult;
-                        //semeCap.tickProc("darktide", percRed);
+                        semeCap.tickProc("darktide", percRed);
                         StylishData.getCap(seme).processAttack(false);
                         StylishData.getCap(seme).addCombo(0.1f, e.getSource().getMsgId());
                         semeCap.tickProc("qiSpent");
@@ -532,7 +531,7 @@ public class CombatHandler {
                 e.setDamageModifier(seme.getMainHandItem().getCapability(CombatManipulator.CAP).resolve().get().critDamage(seme, uke, seme.getMainHandItem()));
             }
             if (WeaponStats.isWeapon(seme, seme.getMainHandItem())) {
-                final WeaponStats.SweepInfo info = WeaponStats.getSweepInfo(seme.getMainHandItem(), CombatUtils.getAttackState(seme));
+                final SweepActions.HitInfo info = WeaponStats.getHitInfo(seme.getMainHandItem(), CombatUtils.getAttackState(seme));
                 e.setResult(info.isCrit() ? Event.Result.ALLOW : Event.Result.DENY);
                 e.setDamageModifier((float) info.getCritDamage());
             }
@@ -642,7 +641,7 @@ public class CombatHandler {
 
         //weapon on hit effects
         if (ds.getEntity() instanceof LivingEntity trueSource) {
-            final WeaponStats.SweepInfo sweepInfo = WeaponStats.getSweepInfo(trueSource.getMainHandItem(), CombatUtils.getAttackState(trueSource));
+            final SweepActions.HitInfo sweepInfo = WeaponStats.getHitInfo(trueSource.getMainHandItem(), CombatUtils.getAttackState(trueSource));
             sweepInfo.performCommand(trueSource, true, true);
             sweepInfo.performCommand(uke, false, true);
             double luckDiff = WarDance.rand.nextFloat() * (GeneralUtils.getAttributeValueSafe(trueSource, Attributes.LUCK)) - WarDance.rand.nextFloat() * (GeneralUtils.getAttributeValueSafe(uke, Attributes.LUCK));

@@ -2,10 +2,10 @@ package jackiecrazy.wardance.capability.flyingweapon;
 
 import jackiecrazy.footwork.entity.flyingweapon.FlyingWeaponEffect;
 import jackiecrazy.footwork.move.motionframe.MotionManager;
-import jackiecrazy.wardance.config.WeaponStats;
 import jackiecrazy.wardance.entity.FlyingWeaponEntity;
 import jackiecrazy.wardance.entity.GrappleEntity;
 import jackiecrazy.wardance.entity.ThrownWeaponEntity;
+import jackiecrazy.wardance.utils.SweepActions;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.phys.Vec3;
 
@@ -22,7 +22,7 @@ public interface IFlyingWeapon {
 
     void scheduleAction(InteractionHand hand,
                         MotionManager mm,
-                        WeaponStats.SweepInfo info,
+                        SweepActions.SweepInfo info,
                         double range,
                         int totalTime, FlyingWeaponEffect... fx);
 
@@ -68,7 +68,7 @@ public interface IFlyingWeapon {
         @Override
         public void scheduleAction(InteractionHand hand,
                                    MotionManager mm,
-                                   WeaponStats.SweepInfo info,
+                                   SweepActions.SweepInfo info,
                                    double range,
                                    int totalTime, FlyingWeaponEffect... fx) {
 

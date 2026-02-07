@@ -7,7 +7,6 @@ import jackiecrazy.footwork.move.motionframe.MotionManager;
 import jackiecrazy.footwork.move.motionframe.MotionManagers;
 import jackiecrazy.footwork.utils.EasingFunction;
 import jackiecrazy.wardance.capability.flyingweapon.FlyingWeaponData;
-import jackiecrazy.wardance.config.WeaponStats;
 import net.minecraft.util.Mth;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.LivingEntity;
@@ -60,16 +59,16 @@ public class TemporaryMoveTranslator {
 
     public static void scheduleFinisher(LivingEntity e,
                                         InteractionHand hand,
-                                        WeaponStats.SweepInfo base) {
-        final WeaponStats.SweepInfo preFinish = base.preFinishCopy();
-        final WeaponStats.SweepInfo finish = base.finisherCopy();
+                                        SweepActions.SweepInfo base) {
+        final SweepActions.SweepInfo preFinish = base.preFinishCopy();
+        final SweepActions.SweepInfo finish = base.finisherCopy();
         final double range = e.getAttributeValue(ForgeMod.ENTITY_REACH.get());
         //FlyingWeaponData.getCap(e).getWeapon(hand).lock(e);
         switch (base.getType()) {
             case CONE -> {
                 //flourish thrice and stab
-                FlyingWeaponData.getCap(e).scheduleAction(hand, temp_getMMFromType(3, WeaponStats.SWEEPTYPE.CONE, base.getBase() + 3 * base.getScaling()), preFinish, range, 10, FlyingWeaponEffect.TRAIL, FlyingWeaponEffect.WEAPON, FlyingWeaponEffect.BIG_SHADOW);
-                FlyingWeaponData.getCap(e).scheduleAction(hand, temp_getMMFromType(15, WeaponStats.SWEEPTYPE.LINE, 3), finish, range+2, 20, FlyingWeaponEffect.TRAIL, FlyingWeaponEffect.WEAPON, FlyingWeaponEffect.BIG_SHADOW);
+                FlyingWeaponData.getCap(e).scheduleAction(hand, temp_getMMFromType(3, SweepActions.SweepInfo.SWEEPTYPE.CONE, base.getBase() + 3 * base.getScaling()), preFinish, range, 10, FlyingWeaponEffect.TRAIL, FlyingWeaponEffect.WEAPON, FlyingWeaponEffect.BIG_SHADOW);
+                FlyingWeaponData.getCap(e).scheduleAction(hand, temp_getMMFromType(15, SweepActions.SweepInfo.SWEEPTYPE.LINE, 3), finish, range+2, 20, FlyingWeaponEffect.TRAIL, FlyingWeaponEffect.WEAPON, FlyingWeaponEffect.BIG_SHADOW);
             }
             case CLEAVE -> {
                 //tcs
@@ -77,30 +76,30 @@ public class TemporaryMoveTranslator {
             }
             case IMPACT -> {
                 //spin and slam down
-                FlyingWeaponData.getCap(e).scheduleAction(hand, temp_getMMFromType(15, WeaponStats.SWEEPTYPE.CIRCLE, base.getBase() + 3 * base.getScaling()), preFinish, range, 9, FlyingWeaponEffect.TRAIL, FlyingWeaponEffect.WEAPON, FlyingWeaponEffect.BIG_SHADOW);
-                FlyingWeaponData.getCap(e).scheduleAction(hand, temp_getMMFromType(20, WeaponStats.SWEEPTYPE.CLEAVE, 60), finish, range, 9, FlyingWeaponEffect.TRAIL, FlyingWeaponEffect.WEAPON, FlyingWeaponEffect.BIG_SHADOW);
+                FlyingWeaponData.getCap(e).scheduleAction(hand, temp_getMMFromType(15, SweepActions.SweepInfo.SWEEPTYPE.CIRCLE, base.getBase() + 3 * base.getScaling()), preFinish, range, 9, FlyingWeaponEffect.TRAIL, FlyingWeaponEffect.WEAPON, FlyingWeaponEffect.BIG_SHADOW);
+                FlyingWeaponData.getCap(e).scheduleAction(hand, temp_getMMFromType(20, SweepActions.SweepInfo.SWEEPTYPE.CLEAVE, 60), finish, range, 9, FlyingWeaponEffect.TRAIL, FlyingWeaponEffect.WEAPON, FlyingWeaponEffect.BIG_SHADOW);
             }
             case CIRCLE -> {
                 //beeeeeg circle
-                FlyingWeaponData.getCap(e).scheduleAction(hand, temp_getMMFromType(40, WeaponStats.SWEEPTYPE.CIRCLE, base.getBase() + 3 * base.getScaling()), finish, range+2, 9, FlyingWeaponEffect.TRAIL, FlyingWeaponEffect.WEAPON, FlyingWeaponEffect.BIG_SHADOW);
+                FlyingWeaponData.getCap(e).scheduleAction(hand, temp_getMMFromType(40, SweepActions.SweepInfo.SWEEPTYPE.CIRCLE, base.getBase() + 3 * base.getScaling()), finish, range+2, 9, FlyingWeaponEffect.TRAIL, FlyingWeaponEffect.WEAPON, FlyingWeaponEffect.BIG_SHADOW);
             }
             case LINE -> {
                 //triple jab followed by big jab
-                FlyingWeaponData.getCap(e).scheduleAction(hand, temp_getMMFromType(3, WeaponStats.SWEEPTYPE.LINE, base.getBase() + 3 * base.getScaling()), preFinish, range, 3, FlyingWeaponEffect.TRAIL, FlyingWeaponEffect.WEAPON, FlyingWeaponEffect.BIG_SHADOW);
-                FlyingWeaponData.getCap(e).scheduleAction(hand, temp_getMMFromType(5, WeaponStats.SWEEPTYPE.LINE, base.getBase() + 3 * base.getScaling()), preFinish, range, 3, FlyingWeaponEffect.TRAIL, FlyingWeaponEffect.WEAPON, FlyingWeaponEffect.BIG_SHADOW);
-                FlyingWeaponData.getCap(e).scheduleAction(hand, temp_getMMFromType(10, WeaponStats.SWEEPTYPE.LINE, base.getBase() + 3 * base.getScaling()), finish, range+2, 5, FlyingWeaponEffect.TRAIL, FlyingWeaponEffect.WEAPON, FlyingWeaponEffect.BIG_SHADOW);
+                FlyingWeaponData.getCap(e).scheduleAction(hand, temp_getMMFromType(3, SweepActions.SweepInfo.SWEEPTYPE.LINE, base.getBase() + 3 * base.getScaling()), preFinish, range, 3, FlyingWeaponEffect.TRAIL, FlyingWeaponEffect.WEAPON, FlyingWeaponEffect.BIG_SHADOW);
+                FlyingWeaponData.getCap(e).scheduleAction(hand, temp_getMMFromType(5, SweepActions.SweepInfo.SWEEPTYPE.LINE, base.getBase() + 3 * base.getScaling()), preFinish, range, 3, FlyingWeaponEffect.TRAIL, FlyingWeaponEffect.WEAPON, FlyingWeaponEffect.BIG_SHADOW);
+                FlyingWeaponData.getCap(e).scheduleAction(hand, temp_getMMFromType(10, SweepActions.SweepInfo.SWEEPTYPE.LINE, base.getBase() + 3 * base.getScaling()), finish, range+2, 5, FlyingWeaponEffect.TRAIL, FlyingWeaponEffect.WEAPON, FlyingWeaponEffect.BIG_SHADOW);
             }
             case NONE -> {
                 //flurry of blows
-                FlyingWeaponData.getCap(e).scheduleAction(hand, temp_getMMFromType(3, WeaponStats.SWEEPTYPE.LINE, base.getBase() + 3 * base.getScaling()), preFinish, range, 3, FlyingWeaponEffect.TRAIL, FlyingWeaponEffect.WEAPON, FlyingWeaponEffect.BIG_SHADOW);
-                FlyingWeaponData.getCap(e).scheduleAction(hand, temp_getMMFromType(3, WeaponStats.SWEEPTYPE.LINE, base.getBase() + 3 * base.getScaling()), preFinish, range, 3, FlyingWeaponEffect.TRAIL, FlyingWeaponEffect.WEAPON, FlyingWeaponEffect.BIG_SHADOW);
-                FlyingWeaponData.getCap(e).scheduleAction(hand, temp_getMMFromType(3, WeaponStats.SWEEPTYPE.LINE, base.getBase() + 3 * base.getScaling()), preFinish, range, 3, FlyingWeaponEffect.TRAIL, FlyingWeaponEffect.WEAPON, FlyingWeaponEffect.BIG_SHADOW);
-                FlyingWeaponData.getCap(e).scheduleAction(hand, temp_getMMFromType(10, WeaponStats.SWEEPTYPE.LINE, base.getBase() + 3 * base.getScaling()), finish, range+2, 5, FlyingWeaponEffect.TRAIL, FlyingWeaponEffect.WEAPON, FlyingWeaponEffect.BIG_SHADOW);
+                FlyingWeaponData.getCap(e).scheduleAction(hand, temp_getMMFromType(3, SweepActions.SweepInfo.SWEEPTYPE.LINE, base.getBase() + 3 * base.getScaling()), preFinish, range, 3, FlyingWeaponEffect.TRAIL, FlyingWeaponEffect.WEAPON, FlyingWeaponEffect.BIG_SHADOW);
+                FlyingWeaponData.getCap(e).scheduleAction(hand, temp_getMMFromType(3, SweepActions.SweepInfo.SWEEPTYPE.LINE, base.getBase() + 3 * base.getScaling()), preFinish, range, 3, FlyingWeaponEffect.TRAIL, FlyingWeaponEffect.WEAPON, FlyingWeaponEffect.BIG_SHADOW);
+                FlyingWeaponData.getCap(e).scheduleAction(hand, temp_getMMFromType(3, SweepActions.SweepInfo.SWEEPTYPE.LINE, base.getBase() + 3 * base.getScaling()), preFinish, range, 3, FlyingWeaponEffect.TRAIL, FlyingWeaponEffect.WEAPON, FlyingWeaponEffect.BIG_SHADOW);
+                FlyingWeaponData.getCap(e).scheduleAction(hand, temp_getMMFromType(10, SweepActions.SweepInfo.SWEEPTYPE.LINE, base.getBase() + 3 * base.getScaling()), finish, range+2, 5, FlyingWeaponEffect.TRAIL, FlyingWeaponEffect.WEAPON, FlyingWeaponEffect.BIG_SHADOW);
             }
         }
     }
 
-    public static MotionManager temp_getMMFromType(int time, WeaponStats.SWEEPTYPE type, double area) {
+    public static MotionManager temp_getMMFromType(int time, SweepActions.SweepInfo.SWEEPTYPE type, double area) {
         //clamp time. The remaining time is expended in recovery.
         //time = Mth.clamp(time, 2, 5);
         flip *= -1;

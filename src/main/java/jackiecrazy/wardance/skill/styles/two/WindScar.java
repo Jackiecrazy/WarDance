@@ -1,21 +1,17 @@
 package jackiecrazy.wardance.skill.styles.two;
 
 import jackiecrazy.footwork.api.CombatDamageSource;
-import jackiecrazy.footwork.capability.resources.CombatData;
 import jackiecrazy.footwork.capability.stylish.StylishData;
 import jackiecrazy.footwork.utils.GeneralUtils;
-import jackiecrazy.wardance.config.WeaponStats;
 import jackiecrazy.wardance.event.SweepEvent;
 import jackiecrazy.wardance.skill.ProcPoints;
 import jackiecrazy.wardance.skill.SkillData;
-import jackiecrazy.wardance.utils.ComboRanks;
 import jackiecrazy.wardance.utils.SkillUtils;
+import jackiecrazy.wardance.utils.SweepActions;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.ai.attributes.AttributeModifier;
 import net.minecraftforge.common.ForgeMod;
 import net.minecraftforge.event.entity.living.LivingAttackEvent;
-import net.minecraftforge.event.entity.living.LivingHurtEvent;
-import net.minecraftforge.event.entity.player.AttackEntityEvent;
 import net.minecraftforge.eventbus.api.Event;
 import net.minecraftforge.eventbus.api.EventPriority;
 
@@ -55,7 +51,7 @@ public class WindScar extends WarCry {
             if (hurt.getSource() instanceof CombatDamageSource cds)
                 cds.setArmorReductionPercentage((float) (dist * 0.15f));
         }
-        if (procPoint instanceof SweepEvent se && se.getPhase() == EventPriority.LOWEST && se.getType() != WeaponStats.SWEEPTYPE.NONE) {
+        if (procPoint instanceof SweepEvent se && se.getPhase() == EventPriority.LOWEST && se.getType() != SweepActions.SweepInfo.SWEEPTYPE.NONE) {
             if (StylishData.getCap(caster).getCombo()>1) {
                 se.setSweepLevel(se.getSweepLevel() + StylishData.getCap(caster).getCombo()-1);
             }
