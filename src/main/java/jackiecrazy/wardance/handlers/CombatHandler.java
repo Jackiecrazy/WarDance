@@ -1,6 +1,7 @@
 package jackiecrazy.wardance.handlers;
 
 import jackiecrazy.footwork.api.CombatDamageSource;
+import jackiecrazy.footwork.api.FootworkDamageTypeTags;
 import jackiecrazy.footwork.capability.resources.CombatData;
 import jackiecrazy.footwork.capability.resources.ICombatCapability;
 import jackiecrazy.footwork.capability.stylish.StylishData;
@@ -334,19 +335,28 @@ public class CombatHandler {
                     if (!semeCap.alreadyProc("qiSpent")) {//first hit of a sweep attack this tick, add combo based on state
                         //semeCap.addRank(0.1f);
                         double percRed = semeCap.doConsumeSpirit(atkMult) / atkMult;
-                        semeCap.tickProc("darktide", percRed);
+                        //semeCap.tickProc("darktide", percRed);
                         StylishData.getCap(seme).processAttack(true);
                         StylishData.getCap(seme).addCombo(0.05f, StylishCapability.getNormalAttackString(seme) + seme.getMainHandItem().getItem().toString());
+                        //the attacker gets a steve time extension
+//                        if (!(uke instanceof Player) && TimeSlowData.getCap(uke).getEffectiveSpeed() < 1) {
+//                            CombatUtils.triggerSteveTime(seme, (int) (TimeSlowData.getCap(uke).getTimeRemaining() * 1.5));
+//                            //return;
+//                        }
                         semeCap.tickProc("qiSpent");
                     }
                 } else {
                     //handle stamina consumption on everything else
                     if (!semeCap.alreadyProc("qiSpent")) {//first hit of a sweep attack this tick, add combo based on state
                         double percRed = semeCap.doConsumeSpirit(atkMult) / atkMult;
-                        semeCap.tickProc("darktide", percRed);
+                        //semeCap.tickProc("darktide", percRed);
                         StylishData.getCap(seme).processAttack(false);
                         StylishData.getCap(seme).addCombo(0.1f, e.getSource().getMsgId());
                         semeCap.tickProc("qiSpent");
+//                        if (!(uke instanceof Player) && TimeSlowData.getCap(uke).getEffectiveSpeed() < 1) {
+//                            CombatUtils.triggerSteveTime(seme, (int) (TimeSlowData.getCap(uke).getTimeRemaining() * 1.5));
+//                            //return;
+//                        }
                     }
                 }
                 //store atkMult at this stage for event
@@ -454,8 +464,8 @@ public class CombatHandler {
                 if (pe2.success() && ukeCap.consumePosture(seme, pe2.getPostureConsumption(), pe2.canBreach()) == 0) {//todo config rally value
                     e.setCanceled(true);
                     WarDance.LOGGER.debug("successfully blocked!");
-                    if (uke instanceof Player)
-                        ukeCap.recordDamage(e.getAmount());
+//                    if (uke instanceof Player)
+//                        ukeCap.recordDamage(e.getAmount());
                     CombatUtils.onSuccessfulBlock(uke, seme, defendingHand, defend, pe2.getPostureConsumption());
                     //do not cancel the event. It technically succeeded but will be blocked by vanilla functions. I just mark the right item to keep processing.
                     return;
@@ -475,9 +485,9 @@ public class CombatHandler {
 //                }
 
                 //failed everything, use the original damage
-                WarDance.LOGGER.debug("failed everything! " + defenderMaybeBlocking + " " + defend);
                 if (!pe2.success()) {
-                    ukeCap.consumePosture(seme, pe.getPostureConsumption(), pe.canBreach());
+                    WarDance.LOGGER.debug("failed everything! " + defenderMaybeBlocking + " " + defend);
+                    ukeCap.consumePosture(seme, (uke instanceof Player) ? 0 : pe2.getPostureConsumption(), pe.canBreach());
 
                 }
                 //internally enforced hand bind to bypass slimes
@@ -611,7 +621,7 @@ public class CombatHandler {
         comboDefense = 1 / Math.max(1, StylishData.getCap(uke).getCombo());
         e.setAmount(dmg * comboDefense);
         if (ds.getEntity() != null) {
-            StylishData.getCap(uke).resetCombo();//reset combo for direct hits
+            //StylishData.getCap(uke).resetCombo();//reset combo for direct hits
 //            if (ds.getEntity() instanceof Mob m && CombatData.getCap(m).getPosture() <= 0) {
 //                //overextension penalty
 //                //CombatData.getCap(m).pin(10);
@@ -679,24 +689,35 @@ public class CombatHandler {
                 // you cannot die unless you are knocked down
                 // vs projectile: qi drain then internal damage
                 // vs melee: damage and posture simultaneously
-                cap.tickProc("deathDenied");
-                e.setAmount(e.getAmount() * (1 - cap.getPosturePercentage()));
-                if (nonMeleeDamage && cap.getPosture() <= 0) {
-                    cap.recordDamage(e.getAmount());
-                    e.setAmount(0);
+                //cap.tickProc("deathDenied");
+                //e.setAmount(e.getAmount() * (1 - cap.getPosturePercentage()));
+                final float hpcap = uke.getMaxHealth() / 5;
+                float toAdd=Math.min(e.getAmount(), hpcap);
+                if (cap.getRecordedDamage() > hpcap) {
+                    //consume equivalent qi
+                    cap.consumePosture((e.getAmount()-hpcap) * 3f);
                 }
+                cap.recordDamage(toAdd);
+                e.setAmount(0);
+//                if (nonMeleeDamage && cap.getPosture() <= 0) {wn
+//                    cap.recordDamage(e.getAmount());
+//                    e.setAmount(0);
+//                }
             } else {
                 //mobs
                 // vs projectiles: qi drain then damage
                 // vs melee: qi drain then damage
                 if (alert) {
                     //darktide
-                    e.setAmount(e.getAmount() * (1 - cap.getPosturePercentage()));
-                    if (nonMeleeDamage && (cap.getPosture() > 0)) {
-                        //cap.recordDamage(cap.consumePosture(e.getAmount()));//I think this is double dipping posture for projectiles?
-                        e.setAmount(e.getAmount() / 2);
+//                    e.setAmount(e.getAmount() * (1 - cap.getPosturePercentage()));
+//                    if (nonMeleeDamage && (cap.getPosture() > 0)) {
+//                        //cap.recordDamage(cap.consumePosture(e.getAmount()));//I think this is double dipping posture for projectiles?
+//                        e.setAmount(e.getAmount() / 2);
+//                        cap.recordDamage(e.getAmount());
+//                    }
+                    if (!e.getSource().is(FootworkDamageTypeTags.AUTO))
                         cap.recordDamage(e.getAmount());
-                    }
+                    e.setAmount(0);
                 }
             }
             //if the damage made it all the way here, congratulations! It hurts the entity.
@@ -750,7 +771,7 @@ public class CombatHandler {
     @SubscribeEvent(priority = EventPriority.LOWEST)
     public static void udedlol(LivingDamageEvent e) {
         if (GeneralConfig.debug && !e.isCanceled() && !e.getEntity().level().isClientSide)
-            WarDance.LOGGER.debug("damage from " + e.getSource() + " finalized with amount " + e.getAmount());
+            WarDance.LOGGER.debug("damage from " + e.getSource() + " finalized on " + e.getEntity().getName() + " with amount " + e.getAmount());
         if (!Float.isFinite(e.getAmount()))//what
             e.setAmount(0);
         final ICombatCapability cap = CombatData.getCap(e.getEntity());
@@ -771,7 +792,7 @@ public class CombatHandler {
         }
     }
 
-    @SubscribeEvent(priority = EventPriority.LOWEST, receiveCanceled = true)
+    @SubscribeEvent(priority = EventPriority.LOWEST, receiveCanceled = false)
     public static void killingBlow(LivingDeathEvent e) {
         LivingEntity elb = e.getEntity();
         //you cannot die unless you are knocked down

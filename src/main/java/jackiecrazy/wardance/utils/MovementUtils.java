@@ -283,6 +283,7 @@ public class MovementUtils {
             z = look.z;
 
             //NeedyLittleThings.setSize(elb, min, min);
+            elb.setDeltaMovement(elb.getDeltaMovement().multiply(1,0,1));
             elb.push(x, y, z);
             elb.hurtMarked = true;
             itsc.consumePosture(0);

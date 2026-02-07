@@ -681,7 +681,8 @@ public class CombatUtils {
 
     public static void triggerSteveTime(LivingEntity from, int time) {
         //ZA WAAAAARUDO! TOKI WO TOMARE!
-        for (Entity t : from.level().getEntities((Entity) null, from.getBoundingBox().inflate(32), (a -> !(a instanceof FlyingItemEntity)))) {
+        TimeSlowData.getCap(from).alterSpeed(time, 0.1);
+        for (Entity t : from.level().getEntities(from, from.getBoundingBox().inflate(32), (a -> !(a instanceof FlyingItemEntity)))) {
             TimeSlowData.getCap(t).alterSpeed(time, 0.1);
             //jostle everything a tiny amount so you know the time slow is happening
             knockBack(t, from, 0.2f, true, false);
@@ -698,7 +699,7 @@ public class CombatUtils {
     }
 
     public static void onSuccessfulDodge(LivingEntity defender, Entity attacker) {
-        //normal dodges already refill 1 spirit. Perfect dodging maxes out spirit.
+        //Perfect dodging maxes out spirit.
         //slow all mobs in a 32 block range for about 2 seconds and convert remaining dodge frames to iframes to stop repeated procs
         defender.level().playSound(null, defender.getX(), defender.getY(), defender.getZ(), SoundEvents.ENCHANTMENT_TABLE_USE, SoundSource.PLAYERS, 0.3f + WarDance.rand.nextFloat() * 0.5f, 0.75f + WarDance.rand.nextFloat() * 0.5f);
         StylishData.getCap(defender).addCombo(0.2f, "dodge");
@@ -709,7 +710,7 @@ public class CombatUtils {
         }
         cap.setSpirit(cap.getMaxSpirit());
         cap.setDodgeTime(CombatConfig.rollTime);
-        //cap.setIframe(remaining);
+        cap.setIframe(remaining);
 
         if (defender instanceof Player) {
             triggerSteveTime(defender, 30);

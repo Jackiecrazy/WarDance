@@ -64,7 +64,7 @@ public class FlyingWeaponCapability implements IFlyingWeapon {
     @Override
     public void setHeldBlock(ThrownWeaponEntity sb) {
         if (held != null)
-            held.remove(Entity.RemovalReason.DISCARDED);
+            held.remove(Entity.RemovalReason.UNLOADED_WITH_PLAYER);
         held = sb;
     }
 
@@ -77,7 +77,7 @@ public class FlyingWeaponCapability implements IFlyingWeapon {
     public void launchGrapple(Vec3 to) {
         if (!player.level().isClientSide()) {
             if (getGrapple() != null) {
-                getGrapple().remove(Entity.RemovalReason.DISCARDED);
+                getGrapple().remove(Entity.RemovalReason.UNLOADED_WITH_PLAYER);
             }
             GrappleEntity grapple = new GrappleEntity(WarEntities.GRAPPLE.get(), player.level());
             grapple.setOwner(player);
@@ -147,6 +147,7 @@ public class FlyingWeaponCapability implements IFlyingWeapon {
             else if (getWeapon(hand) == null) {
                 //make new weapons
                 //create a flying weapon
+                //fixme doesn't work on relog?
                 respawnWeapon(hand);
             } else {
                 //check the old weapons to see if they need to be replaced

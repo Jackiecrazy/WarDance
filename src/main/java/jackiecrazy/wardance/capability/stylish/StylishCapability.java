@@ -9,6 +9,7 @@ import jackiecrazy.wardance.utils.CombatUtils;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.player.Player;
 import net.minecraftforge.common.util.FakePlayer;
 import net.minecraftforge.network.PacketDistributor;
 import org.jetbrains.annotations.NotNull;
@@ -94,8 +95,10 @@ public class StylishCapability implements IStyleCapability {
             combo = 1;
             resetCombo();
         }
-        if (adrenalineTimer <= 0)
+        if (adrenalineTimer <= 0) {
             adrenaline = 0;
+            dirty=true;
+        }
 
         if(dirty){
             LivingEntity elb = dude.get();
@@ -140,6 +143,10 @@ public class StylishCapability implements IStyleCapability {
         refresh();
         //too stale!
         if (amount <= 0) return;
+        //fully rally if fresh fresh fresh
+        if(fresh>=1&&dude.get() instanceof Player le){
+            CombatData.getCap(le).rally(1);
+        }
         combo += amount;
         addAdrenaline(amount / 6);
         freshness.add(source);

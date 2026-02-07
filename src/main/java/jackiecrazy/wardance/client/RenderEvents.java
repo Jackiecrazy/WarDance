@@ -210,10 +210,10 @@ public class RenderEvents {
         Vec3 offset = passedEntity.position().subtract(renderPos).normalize().scale(passedEntity.getBbWidth() * -1.2);
         poseStack.translate(offset.x, offset.y + passedEntity.getBbHeight() / 2, offset.z);
         poseStack.mulPose(Minecraft.getInstance().getEntityRenderDispatcher().cameraOrientation());
-        final float size = passedEntity.getBbWidth() * 0.02f;
+        final float size = passedEntity.getBbWidth() * 0.01f;
         poseStack.scale(-size, -size, size);
         GuiComponent.blit(poseStack, timeslow1, -16, -16, 0, 0, 32, 32, 32, 32);
-        int yAmnt = (int) (32 * ((TimeSlowData.getCap(passedEntity).getTimeRemaining()) / 30f));
+        int yAmnt = (int) Math.min(32, 32 * ((TimeSlowData.getCap(passedEntity).getTimeRemaining() - partialTicks) / 30f));
         GuiComponent.blit(poseStack, timeslow, -16, 16 - yAmnt, 0, 32 - yAmnt, 32, yAmnt, 32, 32);
         poseStack.popPose();
 

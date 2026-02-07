@@ -46,6 +46,7 @@ public class FlyingWeaponEntity extends FlyingItemEntity {
         //keep defense frames here?
         super(type, level);
         setShouldRender(FlyingWeaponEffect.BIG_SHADOW, false);
+        setInvulnerable(true);
     }
 
     @Nullable
@@ -53,10 +54,6 @@ public class FlyingWeaponEntity extends FlyingItemEntity {
         return cacheInfo;
     }
 
-    @Override
-    public boolean isPickable() {
-        return isReal() && !this.isRemoved();
-    }
 
     @Override
     public boolean shouldRenderAtSqrDistance(double d) {
@@ -70,87 +67,6 @@ public class FlyingWeaponEntity extends FlyingItemEntity {
     @Override
     public boolean fireImmune() {
         return true;
-    }
-
-    public boolean isReal() {
-        return getState() == STATE.THROW_NATURAL || getState() == STATE.THROW_TRACK;
-    }
-
-    @Override
-    public boolean skipAttackInteraction(Entity ent) {
-        if (!ent.level().isClientSide && ent instanceof Player p && p.getMainHandItem().isEmpty() && isReal()) {
-            return pickup(p);
-        }
-        return false;
-    }
-
-    public boolean elaborateSwap(Player p) {
-        if (!WeaponStats.isCombatItem(p, getPickResult())||p.getMainHandItem().isEmpty()) return pickup(p);
-        //push out the offhand into ender chest, move the main hand to the offhand, replace main hand
-        p.setItemInHand(InteractionHand.OFF_HAND, p.getEnderChestInventory().addItem(p.getOffhandItem()));
-        //displace offhand into inventory
-        if (p.getOffhandItem().isEmpty()||p.getInventory().add(-1, p.getOffhandItem().copy())) {
-            CombatUtils.swapHeldItems(p);
-            p.setItemInHand(InteractionHand.MAIN_HAND, getPickResult());
-            this.remove(RemovalReason.KILLED);
-
-            //pickup flourish
-            ItemStack held = p.getMainHandItem();
-            int ticks = p.attackStrengthTicker;
-            try {
-                CombatUtils.quickSwap(p, getHeldItem());
-                CombatData.getCap(p).tickProc("canBreach");
-                FlyingWeaponData.getCap(p).forceRefreshWeapons();
-                CombatUtils.sweep(p, null, InteractionHand.MAIN_HAND, WeaponStats.SWEEPTYPE.CIRCLE, 3, 3, 1);
-            } catch (Exception ex) {
-                ex.printStackTrace();
-            } finally {
-                CombatUtils.quickSwap(p, held);
-                p.attackStrengthTicker = ticks;
-            }
-            p.resetFallDistance();
-            return true;
-        }
-        return false;
-
-    }
-
-    public boolean pickup(Player p) {
-        //if holding nothing, prioritize this slot
-        int slot = -1;
-        boolean success = p.getAbilities().instabuild;
-        if (p.getMainHandItem().isEmpty()) slot = p.getInventory().selected;
-        else if (p.getOffhandItem().isEmpty()){
-            //special offhand handling
-            slot = Inventory.SLOT_OFFHAND;
-            success=true;
-            p.setItemInHand(InteractionHand.OFF_HAND, getPickResult());
-        }
-        CombatUtils.allowCombatHotbarPickup = true;
-        if (!success)
-            success = p.getInventory().add(slot, getPickResult());
-        CombatUtils.allowCombatHotbarPickup = false;
-        if (success) {
-            this.remove(RemovalReason.KILLED);
-
-            //pickup flourish
-            ItemStack held = p.getMainHandItem();
-            int ticks = p.attackStrengthTicker;
-            try {
-                CombatUtils.quickSwap(p, getHeldItem());
-                CombatData.getCap(p).tickProc("canBreach");
-                FlyingWeaponData.getCap(p).forceRefreshWeapons();
-                CombatUtils.sweep(p, null, InteractionHand.MAIN_HAND, WeaponStats.SWEEPTYPE.CIRCLE, 3, 3, 1);
-            } catch (Exception ex) {
-                ex.printStackTrace();
-            } finally {
-                CombatUtils.quickSwap(p, held);
-                p.attackStrengthTicker = ticks;
-            }
-            p.resetFallDistance();
-            //TimeSlowData.getCap(p).alterSpeed(40, 0.3);
-        }
-        return success;
     }
 
     @Override
@@ -177,7 +93,7 @@ public class FlyingWeaponEntity extends FlyingItemEntity {
         super.tick();
         if (!level().isClientSide && isAlive()) {
             if (isIdle()) {//tied to the owner
-                if (getOwner() == null && !isReal()) remove(RemovalReason.DISCARDED);
+                if (getOwner() == null) remove(RemovalReason.UNLOADED_WITH_PLAYER);
 //                boolean valid = false;
 //
 //                //todo this check makes grabbing blocks out of the environment not work
@@ -187,10 +103,7 @@ public class FlyingWeaponEntity extends FlyingItemEntity {
 //                if (tickCount>100)//reasonably sure the player doesn't need it anymore
 //                    remove(RemovalReason.DISCARDED);
             } else {
-                if (getOwner() instanceof Player p) {
-                    if (p.distanceToSqr(this) > 32 * 32)
-                        pickup(p);
-                }
+
             }
         }
         //clear trail history on tick 1

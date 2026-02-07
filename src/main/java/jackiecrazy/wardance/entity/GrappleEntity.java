@@ -3,6 +3,7 @@ package jackiecrazy.wardance.entity;
 import jackiecrazy.footwork.capability.timeslow.TimeSlowData;
 import jackiecrazy.footwork.entity.flyingweapon.FlyingItemEntity;
 import jackiecrazy.footwork.utils.GeneralUtils;
+import jackiecrazy.wardance.capability.aerial.AerialModeData;
 import jackiecrazy.wardance.utils.CombatUtils;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -136,7 +137,7 @@ public class GrappleEntity extends FlyingItemEntity {
             if (renderLag < 0) renderLag = 0;
         } else {
             //become faster over time
-            addDeltaMovement(getDeltaMovement().normalize().scale(0.01));
+            //addDeltaMovement(getDeltaMovement().normalize().scale(0.01));
         }
         //server side velocity stuff
         if (!level().isClientSide && isAlive()) {
@@ -148,7 +149,8 @@ public class GrappleEntity extends FlyingItemEntity {
                     remove(RemovalReason.DISCARDED);
                     p.setDeltaMovement(new Vec3(0, 0.5, 0));
                     p.resetFallDistance();
-                    TimeSlowData.getCap(p).alterSpeed(40, 0.3);
+                    //FIXME poor way to do it for players
+                    AerialModeData.getCap(p).alterGravity(40, 0.3);
                 }
             }
             if (tickCount > 100 && !hooked)
@@ -158,20 +160,20 @@ public class GrappleEntity extends FlyingItemEntity {
             if (hookedEntity != null) {
                 //pull
                 updateEntityHookPosition();
-                if (hookedEntity instanceof FlyingWeaponEntity fwe && getOwner() instanceof Player p && fwe.distanceToSqr(p) < SQDIST) {
-                    boolean picked = fwe.elaborateSwap(p);
+                if (hookedEntity instanceof ThrownWeaponEntity fwe && getOwner() instanceof Player p && fwe.distanceToSqr(p) < SQDIST) {
+                    boolean picked = fwe.pickup(p);
                     remove(RemovalReason.DISCARDED);
 
                     //if you move to the weapon, slow gravity a bit
                     if (movePlayer && picked) {
-                        TimeSlowData.getCap(p).alterSpeed(40, 0.3);
+                        AerialModeData.getCap(p).alterGravity(40, 0.3);
                         p.setDeltaMovement(new Vec3(0, 0.1, 0));
                     }
                 }
                 if (hookedEntity instanceof LivingEntity target && getOwner() instanceof Player p && GeneralUtils.getDistSqCompensated(target, getOwner()) < SQDIST) {
                     remove(RemovalReason.DISCARDED);
                     p.resetFallDistance();
-                    TimeSlowData.getCap(p).alterSpeed(40, 0.3);
+                    AerialModeData.getCap(p).alterGravity(40, 0.3);
 
                     //if you move to the mob, dropkick them
                     if (movePlayer)
@@ -180,6 +182,7 @@ public class GrappleEntity extends FlyingItemEntity {
                 if (hookedEntity.isRemoved()) {
                     hookedEntity = null;
                     hooked = false;
+                    remove(RemovalReason.DISCARDED);
                 }
             } else if (!movePlayer) {
                 //hooked a block
@@ -254,7 +257,7 @@ public class GrappleEntity extends FlyingItemEntity {
             }
         } else {
             targets.stream().forEach(a -> {
-                if (a instanceof FlyingWeaponEntity fwe && fwe.isReal()) {
+                if (a instanceof ThrownWeaponEntity fwe && fwe.isReal()) {
                     hookedEntity = fwe;
                     hooked = true;
                 }
@@ -293,8 +296,14 @@ public class GrappleEntity extends FlyingItemEntity {
             grabBlock = true;
             hookedHit = hit;
             setDeltaMovement(Vec3.ZERO);
+            hurtMarked=true;
             setPos(hit.getLocation());
             setIntangible(false);
         }
+    }
+
+    @Override
+    protected void returnToIdle(int duration) {
+
     }
 }

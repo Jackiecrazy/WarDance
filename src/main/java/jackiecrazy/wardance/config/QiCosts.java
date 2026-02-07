@@ -4,7 +4,7 @@ import net.minecraft.tags.DamageTypeTags;
 import net.minecraft.world.damagesource.DamageSource;
 
 public class QiCosts {
-    public static final float KICK = 12f;
+    public static final float KICK = 0;
 
     public static float translateEnvironment(DamageSource ds) {
         if (ds.is(DamageTypeTags.IS_LIGHTNING)) return 50;
