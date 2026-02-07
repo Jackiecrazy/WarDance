@@ -1,15 +1,16 @@
-package jackiecrazy.wardance.config;
+package jackiecrazy.wardance.config.weapon;
 
 import com.google.common.collect.Maps;
 import com.google.gson.*;
 import jackiecrazy.footwork.api.FootworkAttributes;
 import jackiecrazy.footwork.capability.resources.CombatData;
 import jackiecrazy.wardance.WarDance;
+import jackiecrazy.wardance.config.CombatConfig;
+import jackiecrazy.wardance.config.GeneralConfig;
 import jackiecrazy.wardance.networking.CombatChannel;
 import jackiecrazy.wardance.networking.sync.SyncItemDataPacket;
 import jackiecrazy.wardance.networking.sync.SyncTagDataPacket;
 import jackiecrazy.wardance.utils.CombatUtils;
-import jackiecrazy.wardance.utils.SweepActions;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
@@ -46,11 +47,11 @@ public class WeaponStats extends SimpleJsonResourceReloadListener {
     public static List<Item> DESPERATION = new ArrayList<>();
     public static MeleeInfo DEFAULTMELEE = new MeleeInfo(1, 1);
     public static HashMap<Item, MeleeInfo> combatList = new HashMap<>();
-    public static SweepActions.HitInfo info_override = null;
+    public static WeaponInteractions.HitInfo info_override = null;
     private static HashMap<TagKey<Item>, MeleeInfo> archetypes = new HashMap<>();
 
     public WeaponStats() {
-        super(SweepActions.GSON, "war_stats");
+        super(WeaponInteractions.GSON, "war_stats");
     }
 
     public static void register(AddReloadListenerEvent event) {
@@ -125,14 +126,16 @@ public class WeaponStats extends SimpleJsonResourceReloadListener {
         if (obj.has("attack")) put.attackPostureMultiplier = obj.get("attack").getAsDouble();
         if (obj.has("defend")) put.defensePostureMultiplier = obj.get("defend").getAsDouble();
         if (obj.has("shield")) put.isShield = obj.get("shield").getAsBoolean();
-        SweepActions.SweepInfo defaultSweep = SweepActions.GSON.fromJson(obj, SweepActions.SweepInfo.class);
+        WeaponInteractions.SweepAttack defaultSweep = WeaponInteractions.GSON.fromJson(obj, WeaponInteractions.SweepAttack.class);
         put.sweeps[0] = defaultSweep;
         for (AttackType s : AttackType.values()) {
             int ord = s.ordinal();
             JsonElement gottem = obj.get(s.name().toLowerCase(Locale.ROOT));
-            JsonObject sub = gottem.getAsJsonObject();
-            SweepActions.SweepInfo sweep = SweepActions.GSON.fromJson(sub, SweepActions.SweepInfo.class);
-            put.sweeps[ord] = sweep;
+            if(gottem!=null) {
+                JsonObject sub = gottem.getAsJsonObject();
+                WeaponInteractions.SweepAttack sweep = WeaponInteractions.GSON.fromJson(sub, WeaponInteractions.SweepAttack.class);
+                put.sweeps[ord] = sweep;
+            }
         }
         return put;
     }
@@ -221,14 +224,15 @@ public class WeaponStats extends SimpleJsonResourceReloadListener {
         return is.is(PIERCE_SHIELD);
     }
 
-    public static SweepActions.SweepInfo getSweepInfo(ItemStack i, AttackType s) {
+    public static WeaponInteractions.WeaponInteraction getSweepInfo(ItemStack i, AttackType s) {
         final MeleeInfo info = lookupStats(i);
-        return info == null ? SweepActions.DEFAULT_NONE : info.sweeps[s.ordinal()];
+        return info == null ? WeaponInteractions.DEFAULT_NONE : info.sweeps[s.ordinal()];
     }
-    public static SweepActions.HitInfo getHitInfo(ItemStack i, AttackType s) {
+    public static WeaponInteractions.HitInfo getHitInfo(ItemStack i, AttackType s) {
         if (info_override != null) return info_override;
         final MeleeInfo info = lookupStats(i);
-        return info == null ? SweepActions.DEFAULT_NONE.getHitInfo() : info.sweeps[s.ordinal()].getHitInfo();
+        if(info==null)return WeaponInteractions.DEFAULT_NONE.getHitInfo();
+        return info.sweeps[s.ordinal()].getHitInfo();
     }
 
     @Override
@@ -247,20 +251,19 @@ public class WeaponStats extends SimpleJsonResourceReloadListener {
         SPRINTING,//forward motion, posture
 
         //special actions//
-        GRAPPLE_FLYING,//minor posture and knockback
-        GRAPPLE_ATTACK,//breach and internal damage
         GUARD_COUNTER,//breach and posture damage
         THROW,//breach and style points
-        PICKUP_FLOURISH//posture
+        PICKUP_FLOURISH,//posture
+        SWAP
     }
 
     public static class MeleeInfo {
         private double attackPostureMultiplier, defensePostureMultiplier;
         private boolean isShield, ignoreParry, ignoreShield, canParry;
         //standing, falling, sneaking, sprinting, riding
-        private SweepActions.SweepInfo[] sweeps = {
-                SweepActions.DEFAULT_FAN.clone(), SweepActions.DEFAULT_CLEAVE.clone(), SweepActions.DEFAULT_FAN.clone(), SweepActions.DEFAULT_FAN.clone(),
-                SweepActions.DEFAULT_FAN.clone(), SweepActions.DEFAULT_FAN.clone(), SweepActions.DEFAULT_FAN.clone(), SweepActions.DEFAULT_FAN.clone(), SweepActions.DEFAULT_FAN.clone()
+        private WeaponInteractions.WeaponInteraction[] sweeps = {
+                WeaponInteractions.DEFAULT_FAN.clone(), WeaponInteractions.DEFAULT_CLEAVE.clone(), WeaponInteractions.DEFAULT_FAN.clone(), WeaponInteractions.DEFAULT_FAN.clone(),
+                WeaponInteractions.DEFAULT_FAN.clone(), WeaponInteractions.DEFAULT_FAN.clone(), WeaponInteractions.DEFAULT_FAN.clone(), WeaponInteractions.DEFAULT_FAN.clone(), WeaponInteractions.DEFAULT_FAN.clone()
         };
 
         private MeleeInfo(double attack, double defend) {
@@ -273,7 +276,7 @@ public class WeaponStats extends SimpleJsonResourceReloadListener {
             ret.attackPostureMultiplier = f.readDouble();
             ret.defensePostureMultiplier = f.readDouble();
             ret.isShield = f.readBoolean();
-            for (SweepActions.SweepInfo ss : ret.sweeps) {
+            for (WeaponInteractions.WeaponInteraction ss : ret.sweeps) {
                 ss.read(f);
             }
             return ret;
@@ -292,7 +295,7 @@ public class WeaponStats extends SimpleJsonResourceReloadListener {
             f.writeDouble(defensePostureMultiplier);
             f.writeBoolean(isShield);
 
-            for (SweepActions.SweepInfo ss : sweeps) {
+            for (WeaponInteractions.WeaponInteraction ss : sweeps) {
                 ss.write(f);
             }
         }

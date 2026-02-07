@@ -1,4 +1,4 @@
-package jackiecrazy.wardance.utils;
+package jackiecrazy.wardance.config.weapon;
 
 import com.google.gson.*;
 import jackiecrazy.wardance.client.RenderUtils;
@@ -17,19 +17,49 @@ import net.minecraft.world.item.enchantment.Enchantments;
 import net.minecraft.world.level.Level;
 
 import java.lang.reflect.Type;
-import java.util.Locale;
 
-public class SweepActions {
-    public static final SweepInfo DEFAULT_FAN = new SweepInfo(SweepInfo.SWEEPTYPE.CONE, 30, 30);
-    public static final SweepInfo DEFAULT_CLEAVE = new SweepInfo(SweepInfo.SWEEPTYPE.CLEAVE, 30, 30);
-    public static final SweepInfo DEFAULT_NONE = new SweepInfo(SweepInfo.SWEEPTYPE.NONE, 0, 0);
-    private static final SweepInfo DEFAULT_IMPACT = new SweepInfo(SweepInfo.SWEEPTYPE.IMPACT, 1, 1.5);
-    private static final SweepInfo DEFAULT_LINE = new SweepInfo(SweepInfo.SWEEPTYPE.LINE, 1, 1.5);
-    private static final SweepInfo DEFAULT_CIRCLE = new SweepInfo(SweepInfo.SWEEPTYPE.CIRCLE, 1, 1.5);
-    public static Gson GSON = new GsonBuilder().registerTypeAdapter(SweepInfo.class, new SweepAdapter()).registerTypeAdapter(ResourceLocation.class, new ResourceLocation.Serializer()).create();
+public class WeaponInteractions {
+    public static final SweepAttack DEFAULT_FAN = new SweepAttack(SweepAttack.SWEEPTYPE.CONE, 30, 30);
+    public static final SweepAttack DEFAULT_CLEAVE = new SweepAttack(SweepAttack.SWEEPTYPE.CLEAVE, 30, 30);
+    public static final SweepAttack DEFAULT_NONE = new SweepAttack(SweepAttack.SWEEPTYPE.NONE, 0, 0);
+    private static final SweepAttack DEFAULT_IMPACT = new SweepAttack(SweepAttack.SWEEPTYPE.IMPACT, 1, 1.5);
+    private static final SweepAttack DEFAULT_LINE = new SweepAttack(SweepAttack.SWEEPTYPE.LINE, 1, 1.5);
+    private static final SweepAttack DEFAULT_CIRCLE = new SweepAttack(SweepAttack.SWEEPTYPE.CIRCLE, 1, 1.5);
+    public static Gson GSON = new GsonBuilder().registerTypeAdapter(SweepAttack.class, new SweepAdapter()).registerTypeAdapter(ResourceLocation.class, new ResourceLocation.Serializer()).create();
 
-    public static class SweepInfo {
-        public static final SweepInfo NOTHING = new SweepInfo(SWEEPTYPE.NONE, 0, 0);
+    public static abstract class WeaponInteraction {
+        private TYPE t;
+
+        public WeaponInteraction(TYPE e) {
+            t = e;
+        }
+
+        public TYPE getInteractionType() {
+            return t;
+        }
+
+        public abstract Component getToolTip(ItemStack e, boolean advanced);
+
+        public abstract WeaponInteraction clone();
+
+        public abstract void write(FriendlyByteBuf f);
+
+        public abstract void read(FriendlyByteBuf f);
+
+        public HitInfo getHitInfo() {
+            return DEFAULT_NONE.getHitInfo();
+        }
+
+        public enum TYPE {
+            SWEEP,
+            USE,
+            THROW,
+            ANIMATE
+        }
+    }
+
+    public static class SweepAttack extends WeaponInteraction {
+        public static final SweepAttack NOTHING = new SweepAttack(SWEEPTYPE.NONE, 0, 0);
 
         private HitInfo hitInfo = new HitInfo();
         private double sweep_base = 0;
@@ -37,7 +67,8 @@ public class SweepActions {
         private SWEEPTYPE sweep = SWEEPTYPE.NONE;
         private double range_multiplier = 1;
 
-        private SweepInfo(SWEEPTYPE t, double b, double s) {
+        private SweepAttack(SWEEPTYPE t, double b, double s) {
+            super(TYPE.SWEEP);
             sweep = t;
             sweep_base = b;
             sweep_scale = s;
@@ -101,11 +132,11 @@ public class SweepActions {
 
         @Override
         public boolean equals(Object obj) {
-            return obj instanceof SweepInfo other && other.sweep == sweep && other.sweep_scale == sweep_scale && other.getHitInfo().damage_scale == getHitInfo().damage_scale && other.getHitInfo().posture_scale == getHitInfo().posture_scale && other.getHitInfo().crit_damage == getHitInfo().crit_damage && other.getHitInfo().crit == getHitInfo().crit && other.getHitInfo().knockback == getHitInfo().knockback && other.getHitInfo().hit_other_command.equals(getHitInfo().hit_other_command) && other.getHitInfo().hit_self_command.equals(getHitInfo().hit_self_command) && other.getHitInfo().damage_other_command.equals(getHitInfo().damage_other_command) && other.getHitInfo().damage_self_command.equals(getHitInfo().damage_self_command) && other.sweep_base == sweep_base;
+            return obj instanceof SweepAttack other && other.sweep == sweep && other.sweep_scale == sweep_scale && other.getHitInfo().damage_scale == getHitInfo().damage_scale && other.getHitInfo().posture_scale == getHitInfo().posture_scale && other.getHitInfo().crit_damage == getHitInfo().crit_damage && other.getHitInfo().crit == getHitInfo().crit && other.getHitInfo().knockback == getHitInfo().knockback && other.getHitInfo().hit_other_command.equals(getHitInfo().hit_other_command) && other.getHitInfo().hit_self_command.equals(getHitInfo().hit_self_command) && other.getHitInfo().damage_other_command.equals(getHitInfo().damage_other_command) && other.getHitInfo().damage_self_command.equals(getHitInfo().damage_self_command) && other.sweep_base == sweep_base;
         }
 
-        public SweepInfo clone() {
-            SweepInfo ret = new SweepInfo(sweep, sweep_base, sweep_scale);
+        public SweepAttack clone() {
+            SweepAttack ret = new SweepAttack(sweep, sweep_base, sweep_scale);
             getHitInfo().copyTo(ret.getHitInfo());
             return ret;
         }
@@ -136,17 +167,17 @@ public class SweepActions {
             getHitInfo().read(f);
         }
 
-        public SweepInfo finisherCopy() {
-            SweepInfo ret = clone();
-            ret.getHitInfo().breach = true;
+        public SweepAttack finisherCopy(boolean breach) {
+            SweepAttack ret = clone();
+            ret.getHitInfo().breach = breach;
             ret.getHitInfo().crit = true;
             ret.getHitInfo().damage_scale = 1;
             ret.getHitInfo().crit_damage = 2;
             return ret;
         }
 
-        public SweepInfo preFinishCopy() {
-            SweepInfo ret = clone();
+        public SweepAttack preFinishCopy() {
+            SweepAttack ret = clone();
             ret.getHitInfo().damage_scale = 0.3f;
             return ret;
         }
@@ -168,7 +199,48 @@ public class SweepActions {
         }
     }
 
+    //uhh
+    public static class Use extends WeaponInteraction {
+        private int startTime = 0;
+        private boolean continuous = true;
+
+        public Use() {
+            super(TYPE.USE);
+        }
+
+        @Override
+        public Component getToolTip(ItemStack e, boolean advanced) {
+            return Component.translatable("key.use");
+        }
+
+        public Use clone() {
+            Use ret = new Use();
+            ret.startTime = startTime;
+            ret.continuous = continuous;
+            return ret;
+        }
+
+        public int getStartTime() {
+            return startTime;
+        }
+
+        public boolean isContinuous() {
+            return continuous;
+        }
+
+        public void write(FriendlyByteBuf f) {
+            f.writeInt(startTime);
+            f.writeBoolean(continuous);
+        }
+
+        public void read(FriendlyByteBuf f) {
+            startTime = f.readInt();
+            continuous = f.readBoolean();
+        }
+    }
+
     public static class HitInfo {
+        public static final HitInfo THROWN = new HitInfo(0, 1, 1, true, false, 1);
         public static final HitInfo BREACH = new HitInfo(0, 1, 1, true, true, 2);
         //general effects:
         // knockback scaling (negative supported),
@@ -285,44 +357,45 @@ public class SweepActions {
         }
     }
 
-    public static class SweepAdapter implements JsonDeserializer<SweepInfo> {
+    public static class SweepAdapter implements JsonDeserializer<WeaponInteraction> {
         @Override
-        public SweepInfo deserialize(JsonElement json,
-                                     Type typeOfT,
-                                     JsonDeserializationContext context) throws JsonParseException {
+        public WeaponInteraction deserialize(JsonElement json,
+                                             Type typeOfT,
+                                             JsonDeserializationContext context) throws JsonParseException {
             if (!json.isJsonObject()) return null;
             JsonObject sub = json.getAsJsonObject();
-            SweepInfo sweep = new SweepInfo(SweepInfo.SWEEPTYPE.NONE, 0, 0);
-            if (sub.has("sweep"))
-                sweep.sweep = SweepInfo.SWEEPTYPE.valueOf(sub.get("sweep").getAsString().toUpperCase(Locale.ROOT));
-            if (!sub.has("sweep_base")) if (sweep.sweep == SweepInfo.SWEEPTYPE.CONE) {
-                sweep.sweep_base = 30;
-            } else {
-                sweep.sweep_base = 1;
+            if (sub.has("type")) {
+                //others go in here
+                String type = sub.get("type").getAsString();
+                if (type.equals("use")) return asUse(sub);
             }
-            else sweep.sweep_base = sub.get("sweep_base").getAsDouble();
-            if (!sub.has("sweep_scale")) if (sweep.sweep == SweepInfo.SWEEPTYPE.CONE) {
-                sweep.sweep_scale = 30;
-            } else {
-                sweep.sweep_scale = 1.5;
-            }
-            else sweep.sweep_scale = sub.get("sweep_scale").getAsDouble();
+            return asSweepAttack(sub);
+        }
 
-            if (sub.has("damage_scale")) {
-                sweep.hitInfo = GSON.fromJson(sub, HitInfo.class);
-            } else sweep.hitInfo = GSON.fromJson(sub.get("hitbox_info"), HitInfo.class);
-//                sweep.hitInfo.damage_scale = sub.get("damage_scale").getAsDouble();
-//            if (sub.has("posture_scale")) sweep.hitInfo.posture_scale = sub.get("posture_scale").getAsDouble();
-//            if (sub.has("knockback")) sweep.hitInfo.knockback = sub.get("knockback").getAsDouble();
-//            if (sub.has("crit")) sweep.hitInfo.crit = sub.get("crit").getAsBoolean();
-//            if (sub.has("crit_damage")) sweep.hitInfo.crit_damage = sub.get("crit_damage").getAsDouble();
-//            if (sub.has("hit_self_command")) sweep.hitInfo.hit_self_command = sub.get("hit_self_command").getAsString();
-//            if (sub.has("hit_other_command"))
-//                sweep.hitInfo.hit_other_command = sub.get("hit_other_command").getAsString();
-//            if (sub.has("damage_self_command"))
-//                sweep.hitInfo.damage_self_command = sub.get("damage_self_command").getAsString();
-//            if (sub.has("damage_other_command"))
-//                sweep.hitInfo.damage_other_command = sub.get("damage_other_command").getAsString();
+        private Use asUse(JsonObject sub) {
+            return GSON.fromJson(sub, Use.class);
+        }
+
+        private SweepAttack asSweepAttack(JsonObject sub) {
+            SweepAttack sweep = GSON.fromJson(sub, SweepAttack.class);
+//            if (sub.has("sweep"))
+//                sweep.sweep = SweepAttack.SWEEPTYPE.valueOf(sub.get("sweep").getAsString().toUpperCase(Locale.ROOT));
+//            if (!sub.has("sweep_base")) if (sweep.sweep == SweepAttack.SWEEPTYPE.CONE) {
+//                sweep.sweep_base = 30;
+//            } else {
+//                sweep.sweep_base = 1;
+//            }
+//            else sweep.sweep_base = sub.get("sweep_base").getAsDouble();
+//            if (!sub.has("sweep_scale")) if (sweep.sweep == SweepAttack.SWEEPTYPE.CONE) {
+//                sweep.sweep_scale = 30;
+//            } else {
+//                sweep.sweep_scale = 1.5;
+//            }
+//            else sweep.sweep_scale = sub.get("sweep_scale").getAsDouble();
+
+            if (sub.has("hitbox_info")) {
+                sweep.hitInfo = GSON.fromJson(sub.get("hitbox_info"), HitInfo.class);
+            } else sweep.hitInfo = GSON.fromJson(sub, HitInfo.class);
             return sweep;
         }
     }

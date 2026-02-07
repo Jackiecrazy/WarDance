@@ -20,7 +20,8 @@ import jackiecrazy.wardance.capability.stylish.StylishCapability;
 import jackiecrazy.wardance.config.CombatConfig;
 import jackiecrazy.wardance.config.GeneralConfig;
 import jackiecrazy.wardance.config.MobSpecs;
-import jackiecrazy.wardance.config.WeaponStats;
+import jackiecrazy.wardance.config.weapon.WeaponInteractions;
+import jackiecrazy.wardance.config.weapon.WeaponStats;
 import jackiecrazy.wardance.event.ProjectileDefendEvent;
 import jackiecrazy.wardance.event.SweepEvent;
 import jackiecrazy.wardance.mixin.ShieldBlockAccessor;
@@ -117,17 +118,17 @@ public class CombatUtils {
     }
 
     public static int getCooldownPeriod(LivingEntity e, InteractionHand h) {
-        if(h==InteractionHand.MAIN_HAND){
-            if(e.tickCount==cacheRight)return cacheRightAtk;
+        if (h == InteractionHand.MAIN_HAND) {
+            if (e.tickCount == cacheRight) return cacheRightAtk;
             int ret = (int) (1.0D / GeneralUtils.getAttributeValueHandSensitive(e, Attributes.ATTACK_SPEED, h) * 20.0D);
-            cacheRight=e.tickCount;
-            cacheRightAtk=ret;
+            cacheRight = e.tickCount;
+            cacheRightAtk = ret;
             return ret;
-        }else{
-            if(e.tickCount==cacheLeft)return cacheLeftAtk;
+        } else {
+            if (e.tickCount == cacheLeft) return cacheLeftAtk;
             int ret = (int) (1.0D / GeneralUtils.getAttributeValueHandSensitive(e, Attributes.ATTACK_SPEED, h) * 20.0D);
-            cacheLeft=e.tickCount;
-            cacheLeftAtk=ret;
+            cacheLeft = e.tickCount;
+            cacheLeftAtk = ret;
             return ret;
         }
     }
@@ -245,8 +246,10 @@ public class CombatUtils {
                 if (meleeInfo != null) {
                     base = (float) meleeInfo.getAttackPostureMultiplier();
                     if (attacker != null) {
-                        final SweepActions.SweepInfo info = WeaponStats.getSweepInfo(attacker.getMainHandItem(), CombatUtils.getAttackState(attacker));
-                        base *= info.getHitInfo().getPostureScale();
+                        base*=WeaponStats.getHitInfo(attacker.getMainHandItem(), CombatUtils.getAttackState(attacker)).getPostureScale();
+                        final WeaponInteractions.WeaponInteraction info = WeaponStats.getSweepInfo(attacker.getMainHandItem(), CombatUtils.getAttackState(attacker));
+                        if (info instanceof WeaponInteractions.SweepAttack si)
+                            base *= si.getHitInfo().getPostureScale();
                     }
                 }
             }
@@ -435,10 +438,12 @@ public class CombatUtils {
     public static void sweep(LivingEntity e, Entity ignore, InteractionHand h, double reach) {
         ItemStack stack = e.getItemInHand(h);
         WeaponStats.AttackType s = getAttackState(e);
-        SweepActions.SweepInfo info = WeaponStats.getSweepInfo(stack, s);
-        //apply instantaneous damage multiplier
-        SkillUtils.modifyAttribute(e, Attributes.ATTACK_DAMAGE, main, info.getHitInfo().getDamageScale() - 1, AttributeModifier.Operation.MULTIPLY_TOTAL);
-        sweep(e, ignore, h, info.getType(), reach, info.getBase(), info.getScaling());
+        WeaponInteractions.WeaponInteraction info = WeaponStats.getSweepInfo(stack, s);
+        if(info instanceof WeaponInteractions.SweepAttack sweep) {
+            //apply instantaneous damage multiplier
+            SkillUtils.modifyAttribute(e, Attributes.ATTACK_DAMAGE, main, sweep.getHitInfo().getDamageScale() - 1, AttributeModifier.Operation.MULTIPLY_TOTAL);
+            sweep(e, ignore, h, sweep.getType(), reach, sweep.getBase(), sweep.getScaling());
+        }
 //        stack.releaseUsing(e.level(), e, 0);
 //        if (e instanceof Player p)
 //            stack.use(e.level(), p, h);
@@ -448,7 +453,7 @@ public class CombatUtils {
     public static void sweep(LivingEntity e,
                              Entity ignore,
                              InteractionHand h,
-                             SweepActions.SweepInfo.SWEEPTYPE type,
+                             WeaponInteractions.SweepAttack.SWEEPTYPE type,
                              double reach,
                              double base,
                              double scaling) {
@@ -465,7 +470,7 @@ public class CombatUtils {
         }
 
 
-        if (!PermissionData.getCap(e).canSweep()) type = SweepActions.SweepInfo.SWEEPTYPE.NONE;
+        if (!PermissionData.getCap(e).canSweep()) type = WeaponInteractions.SweepAttack.SWEEPTYPE.NONE;
         double radius;
 
         SweepEvent sre = new SweepEvent(e, h, e.getMainHandItem(), type, base, scaling);
@@ -479,7 +484,7 @@ public class CombatUtils {
 
         //purely visual attack
         int time = CombatUtils.getCooldownPeriod(e, h);
-        int animTime = type == SweepActions.SweepInfo.SWEEPTYPE.CIRCLE ? 10 : 5;
+        int animTime = type == WeaponInteractions.SweepAttack.SWEEPTYPE.CIRCLE ? 10 : 5;
         List<FlyingWeaponEffect> fx = new ArrayList<>();
         fx.add(FlyingWeaponEffect.WEAPON);
         if (StylishData.getCap(e).getFreshness(StylishCapability.getNormalAttackString(e)) > 0) {
@@ -491,7 +496,7 @@ public class CombatUtils {
         FlyingWeaponData.getCap(e).scheduleAction(h, TemporaryMoveTranslator.temp_getMMFromType(animTime, type, radius), null, reach, time, fx.toArray(new FlyingWeaponEffect[fx.size()]));
 
 
-        if (sre.isCanceled() || type == SweepActions.SweepInfo.SWEEPTYPE.NONE || radius == 0) {
+        if (sre.isCanceled() || type == WeaponInteractions.SweepAttack.SWEEPTYPE.NONE || radius == 0) {
             //no go, swap items back and stop
             if (h == InteractionHand.OFF_HAND) {
                 swapHeldItems(e);
@@ -748,7 +753,7 @@ public class CombatUtils {
             if (hand == null)
                 hand = defender.getOffhandItem() == defend ? InteractionHand.OFF_HAND : InteractionHand.MAIN_HAND;
 
-            if(attacker instanceof LivingEntity e){
+            if (attacker instanceof LivingEntity e) {
                 CombatData.getCap(e).consumePosture(defender, 4, ICombatCapability.BreachLevel.KNOCKDOWN);
                 CombatData.getCap(e).recordDamage((float) damage);
             }
@@ -797,7 +802,7 @@ public class CombatUtils {
         if (!StylishData.getCap(sender).isCombatMode()) return false;
         if (CombatData.getCap(sender).getHandBind(h) > 0) return false;
         //StylishData.getCap(sender).resetTriggerBar();
-        SweepActions.SweepInfo info = WeaponStats.getSweepInfo(sender.getItemInHand(h), s);
+        WeaponInteractions.SweepAttack info = WeaponStats.getSweepInfo(sender.getItemInHand(h), s);
         TemporaryMoveTranslator.scheduleFinisher(sender, h, info);
         StylishData.getCap(sender).addCombo(0.25f, "heavy" + (h == InteractionHand.OFF_HAND) + s.name());
         return true;

@@ -6,7 +6,7 @@ import jackiecrazy.footwork.capability.resources.ICombatCapability;
 import jackiecrazy.footwork.potion.FootworkEffects;
 import jackiecrazy.wardance.WarDance;
 import jackiecrazy.wardance.capability.skill.CasterData;
-import jackiecrazy.wardance.config.WeaponStats;
+import jackiecrazy.wardance.config.weapon.WeaponStats;
 import jackiecrazy.wardance.event.MeleePostureEvent;
 import jackiecrazy.wardance.skill.*;
 import jackiecrazy.wardance.utils.CombatUtils;

@@ -12,6 +12,8 @@ import jackiecrazy.wardance.command.WarDanceCommand;
 import jackiecrazy.wardance.compat.ElenaiCompat;
 import jackiecrazy.wardance.compat.WarCompat;
 import jackiecrazy.wardance.config.*;
+import jackiecrazy.wardance.config.weapon.TwohandingStats;
+import jackiecrazy.wardance.config.weapon.WeaponStats;
 import jackiecrazy.wardance.entity.WarEntities;
 import jackiecrazy.wardance.items.WarItems;
 import jackiecrazy.wardance.loot.ScrollLootModifier;
@@ -175,6 +177,7 @@ public class WarDance {
         event.registerAboveAll("pwdskills", new SkillCoolDisplay());
         event.registerAboveAll("pwdmarks", new MarkDisplay());
         event.registerAboveAll("pwdthrowingquiver", new QuiverDisplay());
+        event.registerAboveAll("pwdeath", new DeathDoorDisplay());
     }
 
     private void caps(final RegisterCapabilitiesEvent event) {

@@ -1,6 +1,6 @@
 package jackiecrazy.wardance.networking.sync;
 
-import jackiecrazy.wardance.config.WeaponStats;
+import jackiecrazy.wardance.config.weapon.WeaponStats;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.world.item.Item;
 import net.minecraftforge.network.NetworkDirection;

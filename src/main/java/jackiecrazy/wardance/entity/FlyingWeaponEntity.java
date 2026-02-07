@@ -8,9 +8,9 @@ import jackiecrazy.footwork.move.motionframe.MotionManager;
 import jackiecrazy.footwork.utils.GeneralUtils;
 import jackiecrazy.footwork.utils.ParticleUtils;
 import jackiecrazy.footwork.utils.TargetingUtils;
-import jackiecrazy.wardance.config.WeaponStats;
+import jackiecrazy.wardance.config.weapon.WeaponStats;
 import jackiecrazy.wardance.utils.CombatUtils;
-import jackiecrazy.wardance.utils.SweepActions;
+import jackiecrazy.wardance.config.weapon.WeaponInteractions;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.nbt.CompoundTag;
@@ -32,7 +32,7 @@ import java.util.List;
 
 public class FlyingWeaponEntity extends FlyingItemEntity {
     protected final List<Entity> alreadyHit = new ArrayList<>();
-    protected SweepActions.HitInfo cacheInfo;
+    protected WeaponInteractions.HitInfo cacheInfo;
     protected WeaponStats.AttackType state;
 
     public FlyingWeaponEntity(EntityType<? extends FlyingItemEntity> type, Level level) {
@@ -44,7 +44,7 @@ public class FlyingWeaponEntity extends FlyingItemEntity {
     }
 
     @Nullable
-    public SweepActions.HitInfo getInfo() {
+    public WeaponInteractions.HitInfo getInfo() {
         return cacheInfo;
     }
 
@@ -193,7 +193,10 @@ public class FlyingWeaponEntity extends FlyingItemEntity {
         //setTetheringEntity(getOwner());
         setIntangible(false);
         setInteractionRange(0.5f);
-        cacheInfo = SweepActions.HitInfo.BREACH;
+
+        if (CombatData.getCap(getOwner()).consumeSpirit(CombatData.getCap(getOwner()).getMaxSpirit()))
+            cacheInfo = WeaponInteractions.HitInfo.BREACH;
+        else cacheInfo = WeaponInteractions.HitInfo.THROWN;
         //setDeltaMovement(new Vec3(0,1,0));
     }
 

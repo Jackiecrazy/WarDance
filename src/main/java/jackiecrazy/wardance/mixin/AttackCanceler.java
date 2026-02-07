@@ -2,7 +2,7 @@ package jackiecrazy.wardance.mixin;
 
 import jackiecrazy.footwork.capability.stylish.StylishData;
 import jackiecrazy.wardance.client.ClientEvents;
-import jackiecrazy.wardance.config.WeaponStats;
+import jackiecrazy.wardance.config.weapon.WeaponStats;
 import net.minecraft.client.multiplayer.MultiPlayerGameMode;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.player.Player;

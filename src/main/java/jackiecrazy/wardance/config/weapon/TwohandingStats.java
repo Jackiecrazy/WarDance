@@ -1,4 +1,4 @@
-package jackiecrazy.wardance.config;
+package jackiecrazy.wardance.config.weapon;
 
 import com.google.common.collect.Maps;
 import com.google.gson.*;

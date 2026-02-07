@@ -1,7 +1,6 @@
 package jackiecrazy.wardance.handlers;
 
 import jackiecrazy.footwork.api.CombatDamageSource;
-import jackiecrazy.footwork.api.FootworkDamageTypeTags;
 import jackiecrazy.footwork.capability.resources.CombatData;
 import jackiecrazy.footwork.capability.resources.ICombatCapability;
 import jackiecrazy.footwork.capability.stylish.StylishData;
@@ -15,12 +14,14 @@ import jackiecrazy.wardance.WarDance;
 import jackiecrazy.wardance.capability.action.PermissionData;
 import jackiecrazy.wardance.capability.stylish.StylishCapability;
 import jackiecrazy.wardance.config.*;
+import jackiecrazy.wardance.config.weapon.WeaponStats;
 import jackiecrazy.wardance.event.MeleePostureEvent;
 import jackiecrazy.wardance.event.ProjectileDefendEvent;
 import jackiecrazy.wardance.mixin.ProjectileImpactMixin;
 import jackiecrazy.wardance.utils.CombatUtils;
 import jackiecrazy.wardance.utils.DamageUtils;
-import jackiecrazy.wardance.utils.SweepActions;
+import jackiecrazy.wardance.utils.ReworkConstants;
+import jackiecrazy.wardance.config.weapon.WeaponInteractions;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.tags.DamageTypeTags;
@@ -302,7 +303,7 @@ public class CombatHandler {
 
                     //handle capability and any on-hit effects, todo revamp to action based system
                     seme.getMainHandItem().getCapability(CombatManipulator.CAP).ifPresent((i) -> i.attackStart(e.getSource(), seme, uke, seme.getMainHandItem(), e.getAmount()));
-                    final SweepActions.HitInfo sweepInfo = WeaponStats.getHitInfo(seme.getMainHandItem(), CombatUtils.getAttackState(seme));
+                    final WeaponInteractions.HitInfo sweepInfo = WeaponStats.getHitInfo(seme.getMainHandItem(), CombatUtils.getAttackState(seme));
                     sweepInfo.performCommand(seme, true, false);
                     sweepInfo.performCommand(uke, false, false);
                     if (e.getSource() instanceof CombatDamageSource cds && WeaponStats.lookupStats(seme.getMainHandItem()) != null) {
@@ -333,7 +334,7 @@ public class CombatHandler {
                     //add stats if it's the first attack this tick and cooldown is sufficient
                     if (!semeCap.alreadyProc("qiSpent")) {//first hit of a sweep attack this tick, add combo based on state
                         //semeCap.addRank(0.1f);
-                        double percRed = semeCap.doConsumeSpirit(atkMult) / atkMult;
+                        double percRed = semeCap.addSpirit(atkMult / ReworkConstants.POSTURE_QI) / atkMult;
                         semeCap.tickProc("darktide", percRed);
                         StylishData.getCap(seme).processAttack(true);
                         StylishData.getCap(seme).addCombo(0.05f, StylishCapability.getNormalAttackString(seme) + seme.getMainHandItem().getItem().toString());
@@ -346,7 +347,7 @@ public class CombatHandler {
                     }
                 } else {
                     //handle stamina consumption on everything else
-                    if (!semeCap.alreadyProc("qiSpent")) {//first hit of a sweep attack this tick, add combo based on state
+                    if (!semeCap.alreadyProc("qiSpent")) {//first hit of a multihit attack this tick, add combo based on state
                         double percRed = semeCap.doConsumeSpirit(atkMult) / atkMult;
                         semeCap.tickProc("darktide", percRed);
                         StylishData.getCap(seme).processAttack(false);
@@ -486,7 +487,7 @@ public class CombatHandler {
                 //failed everything, use the original damage
                 if (!pe2.success()) {
                     WarDance.LOGGER.debug("failed everything! " + defenderMaybeBlocking + " " + defend);
-                    ukeCap.consumePosture(seme, (uke instanceof Player) ? 0 : pe2.getPostureConsumption(), pe.canBreach());
+                    ukeCap.consumePosture(seme, pe2.getPostureConsumption(), pe.canBreach());
 
                 }
                 //internally enforced hand bind to bypass slimes
@@ -531,7 +532,7 @@ public class CombatHandler {
                 e.setDamageModifier(seme.getMainHandItem().getCapability(CombatManipulator.CAP).resolve().get().critDamage(seme, uke, seme.getMainHandItem()));
             }
             if (WeaponStats.isWeapon(seme, seme.getMainHandItem())) {
-                final SweepActions.HitInfo info = WeaponStats.getHitInfo(seme.getMainHandItem(), CombatUtils.getAttackState(seme));
+                final WeaponInteractions.HitInfo info = WeaponStats.getHitInfo(seme.getMainHandItem(), CombatUtils.getAttackState(seme));
                 e.setResult(info.isCrit() ? Event.Result.ALLOW : Event.Result.DENY);
                 e.setDamageModifier((float) info.getCritDamage());
             }
@@ -546,7 +547,9 @@ public class CombatHandler {
             seme.getMainHandItem().getCapability(CombatManipulator.CAP).ifPresent((i) -> i.onKnockingBack(seme, uke, seme.getMainHandItem(), e.getOriginalStrength()));
             uke.getMainHandItem().getCapability(CombatManipulator.CAP).ifPresent((i) -> i.onBeingKnockedBack(seme, uke, seme.getMainHandItem(), e.getOriginalStrength()));
             uke.getOffhandItem().getCapability(CombatManipulator.CAP).ifPresent((i) -> i.onBeingKnockedBack(seme, uke, seme.getOffhandItem(), e.getOriginalStrength()));
-
+            if (CombatData.getCap(seme).getSpirit() >= CombatData.getCap(seme).getMaxSpirit()) {
+                e.setStrength((float) (e.getOriginalStrength() * 1.3));
+            }
         }
     }
 
@@ -641,13 +644,13 @@ public class CombatHandler {
 
         //weapon on hit effects
         if (ds.getEntity() instanceof LivingEntity trueSource) {
-            final SweepActions.HitInfo sweepInfo = WeaponStats.getHitInfo(trueSource.getMainHandItem(), CombatUtils.getAttackState(trueSource));
+            final WeaponInteractions.HitInfo sweepInfo = WeaponStats.getHitInfo(trueSource.getMainHandItem(), CombatUtils.getAttackState(trueSource));
             sweepInfo.performCommand(trueSource, true, true);
             sweepInfo.performCommand(uke, false, true);
             double luckDiff = WarDance.rand.nextFloat() * (GeneralUtils.getAttributeValueSafe(trueSource, Attributes.LUCK)) - WarDance.rand.nextFloat() * (GeneralUtils.getAttributeValueSafe(uke, Attributes.LUCK));
             e.setAmount(e.getAmount() + (float) luckDiff * GeneralConfig.luck);
 
-            //consume stamina if we didn't do it yet
+            //consume stamina if we didn't do it yet, somehow
             if (!CombatData.getCap(trueSource).alreadyProc("qiSpent")) {
                 final float exhausted = CombatData.getCap(trueSource).doConsumeSpirit(e.getAmount());
                 cap.recordDamage(exhausted);
@@ -664,6 +667,11 @@ public class CombatHandler {
                 WarDance.LOGGER.debug("luck has been resolved, damage is now " + e.getAmount());
             }
         }
+
+        //death's door!
+//        if(StylishData.getCap(uke).isDeathDoor()){
+//            e.setCanceled();
+//        }
 
         final boolean alert = StealthUtils.INSTANCE.getAwareness(ds.getEntity() instanceof LivingEntity le ? le : null, uke) == StealthUtils.Awareness.ALERT;
         final boolean creative = e.getSource().is(DamageTypeTags.BYPASSES_INVULNERABILITY);
@@ -689,15 +697,9 @@ public class CombatHandler {
                 // vs projectile: qi drain then internal damage
                 // vs melee: damage and posture simultaneously
                 //cap.tickProc("deathDenied");
-                //e.setAmount(e.getAmount() * (1 - cap.getPosturePercentage()));
-                final float hpcap = uke.getMaxHealth() / 5;
-                float toAdd=Math.min(e.getAmount(), hpcap);
-                if (cap.getRecordedDamage() > hpcap) {
-                    //consume equivalent qi
-                    cap.consumePosture((e.getAmount()-hpcap) * 3f);
-                }
-                cap.recordDamage(toAdd);
-                e.setAmount(0);
+                cap.recordDamage(e.getAmount() * cap.getPosturePercentage());
+                e.setAmount(e.getAmount() * (1 - cap.getPosturePercentage()));
+                //e.setAmount(0);
 //                if (nonMeleeDamage && cap.getPosture() <= 0) {wn
 //                    cap.recordDamage(e.getAmount());
 //                    e.setAmount(0);
@@ -708,15 +710,15 @@ public class CombatHandler {
                 // vs melee: qi drain then damage
                 if (alert) {
                     //darktide
-//                    e.setAmount(e.getAmount() * (1 - cap.getPosturePercentage()));
-//                    if (nonMeleeDamage && (cap.getPosture() > 0)) {
-//                        //cap.recordDamage(cap.consumePosture(e.getAmount()));//I think this is double dipping posture for projectiles?
-//                        e.setAmount(e.getAmount() / 2);
-//                        cap.recordDamage(e.getAmount());
-//                    }
-                    if (!e.getSource().is(FootworkDamageTypeTags.AUTO))
+                    e.setAmount(e.getAmount() * (1 - cap.getPosturePercentage()));
+                    if (nonMeleeDamage && (cap.getPosture() > 0)) {
+                        //cap.recordDamage(cap.consumePosture(e.getAmount()));//I think this is double dipping posture for projectiles?
+                        e.setAmount(e.getAmount() / 2);
                         cap.recordDamage(e.getAmount());
-                    e.setAmount(0);
+                    }
+//                    if (!e.getSource().is(FootworkDamageTypeTags.AUTO))
+//                        cap.recordDamage(e.getAmount());
+//                    e.setAmount(0);
                 }
             }
             //if the damage made it all the way here, congratulations! It hurts the entity.
@@ -782,7 +784,7 @@ public class CombatHandler {
         }
         if (cap.isStunned() && cap.getRecordedDamage() > 0) {
             e.setAmount(e.getAmount() + cap.getRecordedDamage());
-            cap.stopRecording(null);
+            //cap.stopRecording(null);
             CombatUtils.knockBack(e.getEntity(), e.getSource().getEntity(), 0.7f, true, true);
         } else if (!cap.isStunned()) {
             if (cap.alreadyProc("deathDenied")) {
@@ -797,9 +799,16 @@ public class CombatHandler {
         //you cannot die unless you are knocked down
         final boolean creative = e.getSource().is(DamageTypeTags.BYPASSES_INVULNERABILITY);
         final ICombatCapability cap = CombatData.getCap(elb);
-        if (!creative && !cap.isStunned() && cap.alreadyProc("deathDenied")) {
-            elb.setHealth(1);
-            e.setCanceled(true);
+        if (!creative) {
+            if (!cap.isStunned() && cap.alreadyProc("deathDenied")) {
+                elb.setHealth(1);
+                e.setCanceled(true);
+            } else if (elb instanceof Player && StylishData.getCap(elb).avoidDeath()) {
+                //elb.setHealth(CombatData.getCap(elb).getRecordedDamage());
+                cap.stopRecording(null);
+                elb.setHealth(1);
+                e.setCanceled(true);
+            }
         }
         CombatData.getCap(elb).setHandBind(InteractionHand.MAIN_HAND, 0);
         CombatData.getCap(elb).setHandBind(InteractionHand.OFF_HAND, 0);
@@ -816,6 +825,6 @@ public class CombatHandler {
     @SubscribeEvent
     public static void noHealOnKnockdown(LivingHealEvent e) {
         LivingEntity elb = e.getEntity();
-        if (CombatData.getCap(elb).isStunned()) e.setCanceled(true);
+        if (CombatData.getCap(elb).isStunned() || StylishData.getCap(elb).isDeathDoor()) e.setCanceled(true);
     }
 }

@@ -1,6 +1,6 @@
 package jackiecrazy.wardance.networking.sync;
 
-import jackiecrazy.wardance.config.TwohandingStats;
+import jackiecrazy.wardance.config.weapon.TwohandingStats;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.tags.ItemTags;
 import net.minecraft.tags.TagKey;

@@ -2,8 +2,8 @@ package jackiecrazy.wardance.handlers;
 
 import jackiecrazy.footwork.capability.resources.CombatData;
 import jackiecrazy.wardance.WarDance;
-import jackiecrazy.wardance.config.TwohandingStats;
-import jackiecrazy.wardance.config.WeaponStats;
+import jackiecrazy.wardance.config.weapon.TwohandingStats;
+import jackiecrazy.wardance.config.weapon.WeaponStats;
 import jackiecrazy.wardance.utils.CombatUtils;
 import jackiecrazy.wardance.utils.SkillUtils;
 import net.minecraft.tags.TagKey;

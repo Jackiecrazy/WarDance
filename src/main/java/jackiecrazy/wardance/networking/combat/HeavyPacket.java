@@ -1,6 +1,6 @@
 package jackiecrazy.wardance.networking.combat;
 
-import jackiecrazy.wardance.config.WeaponStats;
+import jackiecrazy.wardance.config.weapon.WeaponStats;
 import jackiecrazy.wardance.utils.CombatUtils;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.server.level.ServerPlayer;
@@ -75,7 +75,7 @@ public class HeavyPacket {
                 InteractionHand h = updateClientPacket.main ? InteractionHand.MAIN_HAND : InteractionHand.OFF_HAND;
                 if (sender == null) return;
                 CombatUtils.setHandCooldown(sender, h, 2, false);
-                CombatUtils.scheduleFinisher(sender, h, updateClientPacket.state);
+                CombatUtils.scheduleFinisher(sender, h, WeaponStats.AttackType.STANDING);
                 CombatUtils.setHandCooldown(sender, h, 0, true);
             });
             contextSupplier.get().setPacketHandled(true);

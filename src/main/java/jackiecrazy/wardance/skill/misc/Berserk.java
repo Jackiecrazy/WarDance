@@ -1,9 +1,8 @@
 package jackiecrazy.wardance.skill.misc;
 
 import jackiecrazy.footwork.api.FootworkAttributes;
-import jackiecrazy.footwork.capability.resources.CombatData;
 import jackiecrazy.footwork.capability.stylish.StylishData;
-import jackiecrazy.wardance.config.WeaponStats;
+import jackiecrazy.wardance.config.weapon.WeaponStats;
 import jackiecrazy.wardance.skill.Skill;
 import jackiecrazy.wardance.skill.SkillData;
 import jackiecrazy.wardance.skill.SkillTags;

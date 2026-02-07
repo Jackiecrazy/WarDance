@@ -3,6 +3,7 @@ package jackiecrazy.wardance.skill.regenspirit;
 import jackiecrazy.footwork.api.FootworkAttributes;
 import jackiecrazy.footwork.capability.resources.CombatData;
 import jackiecrazy.wardance.skill.*;
+import jackiecrazy.wardance.utils.ReworkConstants;
 import jackiecrazy.wardance.utils.SkillUtils;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.LivingEntity;
@@ -71,7 +72,7 @@ confidence: your spirit regeneration speed scales proportionally with how much s
         if (procPoint instanceof LivingDeathEvent && procPoint.getPhase() == EventPriority.HIGHEST) {
             if (CombatData.getCap(caster).getSpirit() < CombatData.getCap(caster).getMaxSpirit() - 3 && caster.isSprinting())
                 completeChallenge(caster);
-            CombatData.getCap(caster).addSpirit(3);
+            CombatData.getCap(caster).addSpirit(3* ReworkConstants.SPIRIT_QI);
 
         }
     }

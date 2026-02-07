@@ -4,6 +4,7 @@ import jackiecrazy.footwork.capability.resources.CombatData;
 import jackiecrazy.footwork.event.EntityAwarenessEvent;
 import jackiecrazy.footwork.utils.StealthUtils;
 import jackiecrazy.wardance.skill.*;
+import jackiecrazy.wardance.utils.ReworkConstants;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraftforge.event.entity.ProjectileImpactEvent;
 import net.minecraftforge.eventbus.api.Event;
@@ -42,11 +43,11 @@ apathy: your max spirit is 4, your spirit instantly refills after cooldown, you 
     public void onProc(LivingEntity caster, Event procPoint, STATE state, SkillData stats, LivingEntity target) {
         if (state==STATE.COOLING) return;
         if (procPoint instanceof ProjectileImpactEvent pie && procPoint.getPhase()== EventPriority.HIGHEST && pie.getProjectile().getOwner()==caster) {
-            CombatData.getCap(caster).addSpirit(1);
+            CombatData.getCap(caster).addSpirit(1* ReworkConstants.SPIRIT_QI);
             markUsed(caster, true);
         } else if (procPoint instanceof EntityAwarenessEvent.Attack eae && eae.getAttacker() == caster && procPoint.getPhase() == EventPriority.LOWEST) {
             if (eae.getAwareness() != StealthUtils.Awareness.ALERT) {
-                CombatData.getCap(caster).addSpirit(1);
+                CombatData.getCap(caster).addSpirit(1* ReworkConstants.SPIRIT_QI);
                 markUsed(caster, true);
             }
         }

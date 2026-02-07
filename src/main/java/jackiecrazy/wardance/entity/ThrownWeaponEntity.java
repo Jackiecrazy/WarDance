@@ -4,9 +4,9 @@ import jackiecrazy.footwork.capability.resources.CombatData;
 import jackiecrazy.footwork.entity.flyingweapon.FlyingItemEntity;
 import jackiecrazy.footwork.entity.flyingweapon.FlyingWeaponEffect;
 import jackiecrazy.wardance.capability.flyingweapon.FlyingWeaponData;
-import jackiecrazy.wardance.config.WeaponStats;
+import jackiecrazy.wardance.config.weapon.WeaponStats;
 import jackiecrazy.wardance.utils.CombatUtils;
-import jackiecrazy.wardance.utils.SweepActions;
+import jackiecrazy.wardance.config.weapon.WeaponInteractions;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.world.InteractionHand;
@@ -68,7 +68,7 @@ public class ThrownWeaponEntity extends FlyingWeaponEntity {
                 CombatUtils.quickSwap(p, getHeldItem());
                 CombatData.getCap(p).tickProc("canBreach");
                 FlyingWeaponData.getCap(p).forceRefreshWeapons();
-                CombatUtils.sweep(p, null, InteractionHand.MAIN_HAND, SweepActions.SweepInfo.SWEEPTYPE.CIRCLE, 3, 3, 1);
+                CombatUtils.sweep(p, null, InteractionHand.MAIN_HAND, WeaponInteractions.SweepAttack.SWEEPTYPE.CIRCLE, 3, 3, 1);
             } catch (Exception ex) {
                 ex.printStackTrace();
             } finally {
@@ -99,7 +99,7 @@ public class ThrownWeaponEntity extends FlyingWeaponEntity {
                 CombatUtils.quickSwap(p, getHeldItem());
                 CombatData.getCap(p).tickProc("canBreach");
                 FlyingWeaponData.getCap(p).forceRefreshWeapons();
-                CombatUtils.sweep(p, null, InteractionHand.MAIN_HAND, SweepActions.SweepInfo.SWEEPTYPE.CIRCLE, 3, 3, 1);
+                CombatUtils.sweep(p, null, InteractionHand.MAIN_HAND, WeaponInteractions.SweepAttack.SWEEPTYPE.CIRCLE, 3, 3, 1);
             } catch (Exception ex) {
                 ex.printStackTrace();
             } finally {
@@ -163,7 +163,7 @@ public class ThrownWeaponEntity extends FlyingWeaponEntity {
                 CombatUtils.quickSwap(p, getHeldItem());
                 CombatData.getCap(p).tickProc("canBreach");
                 FlyingWeaponData.getCap(p).forceRefreshWeapons();
-                CombatUtils.sweep(p, null, h, SweepActions.SweepInfo.SWEEPTYPE.CIRCLE, 3, 3, 1);
+                CombatUtils.sweep(p, null, h, WeaponInteractions.SweepAttack.SWEEPTYPE.CIRCLE, 3, 3, 1);
             } catch (Exception ex) {
                 ex.printStackTrace();
             } finally {

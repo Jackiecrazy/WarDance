@@ -6,7 +6,7 @@ import jackiecrazy.footwork.entity.flyingweapon.FlyingItemEntity;
 import jackiecrazy.wardance.WarDance;
 import jackiecrazy.wardance.capability.flyingweapon.FlyingWeaponData;
 import jackiecrazy.wardance.capability.flyingweapon.IFlyingWeapon;
-import jackiecrazy.wardance.config.WeaponStats;
+import jackiecrazy.wardance.config.weapon.WeaponStats;
 import jackiecrazy.wardance.entity.GhostBlockEntity;
 import jackiecrazy.wardance.entity.WarEntities;
 import jackiecrazy.wardance.networking.CombatChannel;

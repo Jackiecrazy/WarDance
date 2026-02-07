@@ -3,12 +3,21 @@ package jackiecrazy.wardance.capability.stylish;
 import jackiecrazy.footwork.capability.resources.CombatData;
 import jackiecrazy.footwork.capability.resources.ICombatCapability;
 import jackiecrazy.footwork.capability.stylish.IStyleCapability;
+import jackiecrazy.footwork.utils.GeneralUtils;
+import jackiecrazy.wardance.WarDance;
+import jackiecrazy.wardance.config.CombatConfig;
 import jackiecrazy.wardance.networking.CombatChannel;
 import jackiecrazy.wardance.networking.combat.UpdateClientStylePacket;
 import jackiecrazy.wardance.utils.CombatUtils;
+import jackiecrazy.wardance.utils.ComboRanks;
+import jackiecrazy.wardance.utils.SkillUtils;
+import net.minecraft.ChatFormatting;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.ai.attributes.AttributeModifier;
+import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.player.Player;
 import net.minecraftforge.common.util.FakePlayer;
 import net.minecraftforge.network.PacketDistributor;
@@ -20,7 +29,7 @@ import java.lang.ref.WeakReference;
 import java.util.*;
 
 public class StylishCapability implements IStyleCapability {
-
+    public static final UUID WOUND = UUID.fromString("982bbbb2-bbd0-4166-801a-560d1a4149c8");
     public static final int MAX_FINISHER_CHARGE = 10;
     public static final int TRACKED_FRESHNESS_ACTIONS = 7;
     public static final int COMBO_TIMER = 160;
@@ -33,7 +42,11 @@ public class StylishCapability implements IStyleCapability {
     //there's no real reason to save this
     private Queue<String> freshness = new LinkedList<>();
     private float combo;
-    private boolean dirty=true;
+    private boolean dirty = true;
+    private boolean deathDoor = false;
+    private double deathDoorReduction = 0;
+    private int hitTimer = 0;
+    private boolean recalcHealth = true;
 
     public StylishCapability(LivingEntity dude) {
         this.dude = new WeakReference<>(dude);
@@ -73,8 +86,14 @@ public class StylishCapability implements IStyleCapability {
             ret = adrenaline - 1;
             adrenaline = 1;
         }
-        adrenalineTimer=COMBO_TIMER;
+        adrenalineTimer = COMBO_TIMER;
         return ret;
+    }
+
+    @Override
+    public boolean isDyingFast() {
+        //return hitTimer > 0;
+        return false;
     }
 
     @Override
@@ -95,17 +114,41 @@ public class StylishCapability implements IStyleCapability {
             combo = 1;
             resetCombo();
         }
+        hitTimer--;
         if (adrenalineTimer <= 0) {
+            if (hitTimer < -600) {
+                deathDoorReduction += 0.00125;
+                deathDoorReduction = Math.min(deathDoorReduction, 0);
+                recalcHealth = true;
+            }
+            adrenalineTimer = 0;
             adrenaline = 0;
-            dirty=true;
+            dirty = true;
         }
 
-        if(dirty){
-            LivingEntity elb = dude.get();
-            if (elb == null || elb.level().isClientSide) return;
-            CombatChannel.INSTANCE.send(PacketDistributor.TRACKING_ENTITY.with(() -> elb), new UpdateClientStylePacket(elb.getId(), write()));
-            if (!(elb instanceof FakePlayer) && elb instanceof ServerPlayer sp)
-                CombatChannel.INSTANCE.send(PacketDistributor.PLAYER.with(() -> sp), new UpdateClientStylePacket(elb.getId(), write()));
+        if (deathDoor) {
+            //slowly drain max health, ends when player max health<1 or stored damage is fully realized
+            double drain = 0.0025;
+            if (isDyingFast()) {
+                drain *= 2;
+            }
+            deathDoorReduction -= drain;
+            recalcHealth = true;
+//            //prioritize draining empty hearts
+//            if(guy.getHealth()>guy.getMaxHealth())
+//                guy.setHealth(guy.getMaxHealth());
+//            if (guy.getHealth() >= guy.getMaxHealth() && CombatData.getCap(guy).getRecordedDamage() > 0)
+//                CombatData.getCap(guy).recordDamage((float) (-drain * guy.getMaxHealth()));
+            if (guy.getMaxHealth() <= 1 || getCombo() > ComboRanks.B)
+                stabilize();
+        }
+        SkillUtils.modifyAttribute(guy, Attributes.MAX_HEALTH, WOUND, deathDoorReduction, AttributeModifier.Operation.MULTIPLY_TOTAL);
+
+        if (dirty) {
+            if (guy == null || guy.level().isClientSide) return;
+            CombatChannel.INSTANCE.send(PacketDistributor.TRACKING_ENTITY.with(() -> guy), new UpdateClientStylePacket(guy.getId(), write()));
+            if (!(guy instanceof FakePlayer) && guy instanceof ServerPlayer sp)
+                CombatChannel.INSTANCE.send(PacketDistributor.PLAYER.with(() -> sp), new UpdateClientStylePacket(guy.getId(), write()));
 
         }
     }
@@ -144,7 +187,7 @@ public class StylishCapability implements IStyleCapability {
         //too stale!
         if (amount <= 0) return;
         //fully rally if fresh fresh fresh
-        if(fresh>=1&&dude.get() instanceof Player le){
+        if (fresh >= 1 && dude.get() instanceof Player le) {
             CombatData.getCap(le).rally(1);
         }
         combo += amount;
@@ -158,18 +201,15 @@ public class StylishCapability implements IStyleCapability {
 
     @Override
     public void resetCombo() {
-        combo /= 2;
-        if (combo <= 1) {
-            combo = 1;
-            freshness.clear();
-        }
+        combo = 1;
+        freshness.clear();
         markDirty();
     }
 
     @Override
     public void refresh() {
         comboTimer = COMBO_TIMER;
-        adrenalineTimer=COMBO_TIMER;
+        adrenalineTimer = COMBO_TIMER;
     }
 
     @Override
@@ -220,18 +260,37 @@ public class StylishCapability implements IStyleCapability {
     }
 
     @Override
-    public void addOrb(Color of) {
-
+    public boolean isDeathDoor() {
+        return deathDoor;
     }
 
     @Override
-    public boolean hasOrb(Color of) {
+    public boolean avoidDeath() {
+        if (dude.get() != null) {
+            LivingEntity p = dude.get();
+            if (p.getMaxHealth() <= 1) {
+                //sorry bud
+                return false;
+            }
+            if (!deathDoor) {
+                if (p instanceof Player pl) {
+                    pl.displayClientMessage(Component.translatable("wardance.deathdoor." + WarDance.rand.nextInt(5)).withStyle(ChatFormatting.RED), true);
+                }
+                resetCombo();
+                CombatData.getCap(p).knockdown(CombatConfig.knockdownDurationPlayer);
+                deathDoor = true;
+                dirty = true;
+            }
+            hitTimer = 60;
+            return true;
+        }
         return false;
     }
 
     @Override
-    public void removeOrb(Color of) {
-
+    public void stabilize() {
+        deathDoor = false;
+        dirty = true;
     }
 
     @Override
@@ -256,6 +315,9 @@ public class StylishCapability implements IStyleCapability {
         t.putFloat("adr", adrenaline);
         t.putInt("comboTimer", comboTimer);
         t.putFloat("combo", combo);
+        t.putBoolean("ddoor", deathDoor);
+        t.putDouble("healthDown", deathDoorReduction);
+        t.putInt("hit", hitTimer);
         return t;
     }
 
@@ -268,9 +330,12 @@ public class StylishCapability implements IStyleCapability {
         adrenaline = t.getFloat("adr");
         comboTimer = t.getInt("comboTimer");
         combo = t.getFloat("combo");
+        deathDoor = t.getBoolean("ddoor");
+        deathDoorReduction = t.getDouble("healthDown");
+        hitTimer = t.getInt("hit");
     }
 
     private void markDirty() {
-        dirty=true;
+        dirty = true;
     }
 }

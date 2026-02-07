@@ -192,7 +192,7 @@ public class RenderEvents {
 
     @SubscribeEvent
     public static void noFovChange(ComputeFovModifierEvent e) {
-        if (CombatData.getCap(e.getPlayer()).isKnockdown())
+        if (CombatData.getCap(e.getPlayer()).isKnockdown()||StylishData.getCap(e.getPlayer()).isDeathDoor())
             e.setNewFovModifier(0.7f);
     }
 

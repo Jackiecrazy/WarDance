@@ -2,12 +2,12 @@ package jackiecrazy.wardance.skill.fiveelementfist;
 
 import jackiecrazy.footwork.capability.resources.CombatData;
 import jackiecrazy.footwork.event.ConsumePostureEvent;
-import jackiecrazy.wardance.config.WeaponStats;
+import jackiecrazy.wardance.config.weapon.WeaponStats;
 import jackiecrazy.wardance.event.SweepEvent;
 import jackiecrazy.wardance.skill.SkillData;
 import jackiecrazy.wardance.utils.CombatUtils;
 import jackiecrazy.wardance.utils.SkillUtils;
-import jackiecrazy.wardance.utils.SweepActions;
+import jackiecrazy.wardance.config.weapon.WeaponInteractions;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraftforge.eventbus.api.Event;
@@ -22,7 +22,7 @@ public class EarthenSweep extends FiveElementFist {
             e.setAmount(e.getAmount() * 2);
         }
         if (procPoint instanceof SweepEvent e && procPoint.getPhase() == EventPriority.HIGHEST && WeaponStats.isUnarmed(e.getStack(), caster)) {
-            e.setType(SweepActions.SweepInfo.SWEEPTYPE.CONE);
+            e.setType(WeaponInteractions.SweepAttack.SWEEPTYPE.CONE);
             e.setBase(40+(SkillUtils.getSkillEffectiveness(caster)*100)-100);
             e.setScaling(0);
         }

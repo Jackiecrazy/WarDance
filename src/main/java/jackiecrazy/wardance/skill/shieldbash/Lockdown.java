@@ -1,7 +1,7 @@
 package jackiecrazy.wardance.skill.shieldbash;
 
 import jackiecrazy.footwork.capability.resources.CombatData;
-import jackiecrazy.wardance.config.WeaponStats;
+import jackiecrazy.wardance.config.weapon.WeaponStats;
 import jackiecrazy.wardance.skill.SkillData;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.LivingEntity;

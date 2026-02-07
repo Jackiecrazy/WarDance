@@ -7,7 +7,7 @@ import jackiecrazy.wardance.event.SweepEvent;
 import jackiecrazy.wardance.skill.ProcPoints;
 import jackiecrazy.wardance.skill.SkillData;
 import jackiecrazy.wardance.utils.SkillUtils;
-import jackiecrazy.wardance.utils.SweepActions;
+import jackiecrazy.wardance.config.weapon.WeaponInteractions;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.ai.attributes.AttributeModifier;
 import net.minecraftforge.common.ForgeMod;
@@ -51,7 +51,7 @@ public class WindScar extends WarCry {
             if (hurt.getSource() instanceof CombatDamageSource cds)
                 cds.setArmorReductionPercentage((float) (dist * 0.15f));
         }
-        if (procPoint instanceof SweepEvent se && se.getPhase() == EventPriority.LOWEST && se.getType() != SweepActions.SweepInfo.SWEEPTYPE.NONE) {
+        if (procPoint instanceof SweepEvent se && se.getPhase() == EventPriority.LOWEST && se.getType() != WeaponInteractions.SweepAttack.SWEEPTYPE.NONE) {
             if (StylishData.getCap(caster).getCombo()>1) {
                 se.setSweepLevel(se.getSweepLevel() + StylishData.getCap(caster).getCombo()-1);
             }

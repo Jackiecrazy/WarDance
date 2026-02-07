@@ -11,7 +11,7 @@ import jackiecrazy.wardance.skill.SkillData;
 import jackiecrazy.wardance.skill.SkillTags;
 import jackiecrazy.wardance.utils.CombatUtils;
 import jackiecrazy.wardance.utils.SkillUtils;
-import jackiecrazy.wardance.utils.SweepActions;
+import jackiecrazy.wardance.config.weapon.WeaponInteractions;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.LivingEntity;
@@ -68,7 +68,7 @@ Flow: cooldown of all attack skills are halved, and any cooled attack skill is a
             //spin to win!
             double reach = caster.getAttributeValue(ForgeMod.ENTITY_REACH.get());
             CombatUtils.setHandCooldown(caster, InteractionHand.MAIN_HAND, 1f, false);
-            CombatUtils.sweep(caster, null, InteractionHand.MAIN_HAND, SweepActions.SweepInfo.SWEEPTYPE.CIRCLE, reach, reach, 0);
+            CombatUtils.sweep(caster, null, InteractionHand.MAIN_HAND, WeaponInteractions.SweepAttack.SWEEPTYPE.CIRCLE, reach, reach, 0);
             CombatUtils.setHandCooldown(caster, InteractionHand.MAIN_HAND, 0, true);
         }
         return super.equippedTick(caster, stats);

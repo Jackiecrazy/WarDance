@@ -12,12 +12,12 @@ import jackiecrazy.wardance.capability.action.PermissionData;
 import jackiecrazy.wardance.compat.ElenaiCompat;
 import jackiecrazy.wardance.compat.WarCompat;
 import jackiecrazy.wardance.config.*;
+import jackiecrazy.wardance.config.weapon.WeaponStats;
 import jackiecrazy.wardance.event.DamageRetconEvent;
 import jackiecrazy.wardance.handlers.TwoHandingHandler;
 import jackiecrazy.wardance.networking.CombatChannel;
 import jackiecrazy.wardance.networking.combat.UpdateClientResourcePacket;
 import jackiecrazy.wardance.utils.CombatUtils;
-import jackiecrazy.wardance.utils.ComboRanks;
 import jackiecrazy.wardance.utils.ReworkConstants;
 import jackiecrazy.wardance.utils.SkillUtils;
 import net.minecraft.nbt.CompoundTag;
@@ -158,7 +158,8 @@ public class NewCombatCapability implements ICombatCapability {
         MinecraftForge.EVENT_BUS.post(cse);
         amount = cse.getQuantity();
         float ret = 0;
-        spirit += amount * ReworkConstants.SPIRIT_QI;
+        spirit += amount;
+        if (spirit < 0) spirit = 0;
         if (spirit > getMaxSpirit()) {
             ret = spirit - getMaxSpirit();
             spirit = getMaxSpirit();
@@ -251,9 +252,9 @@ public class NewCombatCapability implements ICombatCapability {
         amount = cpe.getAmount();
 
         //players heal internal damage
-//        if (assailant instanceof Player p) {
-//            CombatData.getCap(p).retconDamage((float) (amount));
-//        }
+        if (assailant instanceof Player p && StylishData.getCap(p).isDeathDoor()) {
+            CombatData.getCap(p).retconDamage((float) (amount / ReworkConstants.POSTURE_QI));
+        }
         mobPosCD = maxMobPosCD;
 
         //stun check
@@ -353,13 +354,15 @@ public class NewCombatCapability implements ICombatCapability {
     @Override
     public void retconDamage(float amount) {
         if (alreadyProc("rally")) return;
+        recordedDamage = Math.min(dude.get().getMaxHealth(), recordedDamage);
         DamageRetconEvent rpe = new DamageRetconEvent(dude.get(), amount);
         MinecraftForge.EVENT_BUS.post(rpe);
         if (rpe.isCanceled()) return;
-        amount = rpe.getAmount();//Math.min(rpe.getQuantity(), rally);
+        amount = Math.min(rpe.getAmount(), recordedDamage);
         tickProc("rally");
         recordedDamage -= amount;
         if (recordedDamage < 0) recordedDamage = 0;
+        dirty = true;
     }
 
     @Override
@@ -735,6 +738,7 @@ public class NewCombatCapability implements ICombatCapability {
             dude.get().hurt(damageSource, recordedDamage);
         }
         recordedDamage = 0;
+        dirty = true;
     }
 
     @Override
@@ -852,7 +856,7 @@ public class NewCombatCapability implements ICombatCapability {
         maxMobPosCD = t.getInt("maxMobPosCD");
         spiritCD = t.getInt("spiCD");
         mobPosRegenSpd = t.getDouble("mobPosRegenSpd");
-        healthyCooldown=t.getInt("healthyCooldown");
+        healthyCooldown = t.getInt("healthyCooldown");
         if (t.contains("procs")) {
             procs.clear();
             CompoundTag c = (CompoundTag) t.get("procs");
@@ -909,10 +913,10 @@ public class NewCombatCapability implements ICombatCapability {
     }
 
     private void handleSpiritRegen(int ticks) {
-        spiritCD -= ticks;
-        if (spiritCD <= 0) {
-            addSpirit((float) -spiritCD / ReworkConstants.SPIRIT_QI);
-            spiritCD = 0;
-        }
+//        spiritCD -= ticks;
+//        if (spiritCD <= 0) {
+//            addSpirit((float) spiritCD / ReworkConstants.SPIRIT_QI);
+//            spiritCD = 0;
+//        }
     }
 }

@@ -1,5 +1,6 @@
 package jackiecrazy.wardance.entity;
 
+import jackiecrazy.footwork.capability.resources.CombatData;
 import jackiecrazy.footwork.capability.timeslow.TimeSlowData;
 import jackiecrazy.footwork.entity.flyingweapon.FlyingItemEntity;
 import jackiecrazy.footwork.utils.GeneralUtils;
@@ -177,7 +178,7 @@ public class GrappleEntity extends FlyingItemEntity {
 
                     //if you move to the mob, dropkick them
                     if (movePlayer)
-                        CombatUtils.kick(p, target, true);
+                        CombatUtils.kick(p, target, CombatData.getCap(p).consumeSpirit(CombatData.getCap(p).getMaxSpirit()));
                 }
                 if (hookedEntity.isRemoved()) {
                     hookedEntity = null;
