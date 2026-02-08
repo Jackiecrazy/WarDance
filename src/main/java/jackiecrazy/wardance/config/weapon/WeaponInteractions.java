@@ -17,6 +17,7 @@ import net.minecraft.world.item.enchantment.Enchantments;
 import net.minecraft.world.level.Level;
 
 import java.lang.reflect.Type;
+import java.util.Locale;
 
 public class WeaponInteractions {
     public static final SweepAttack DEFAULT_FAN = new SweepAttack(SweepAttack.SWEEPTYPE.CONE, 30, 30);
@@ -25,26 +26,34 @@ public class WeaponInteractions {
     private static final SweepAttack DEFAULT_IMPACT = new SweepAttack(SweepAttack.SWEEPTYPE.IMPACT, 1, 1.5);
     private static final SweepAttack DEFAULT_LINE = new SweepAttack(SweepAttack.SWEEPTYPE.LINE, 1, 1.5);
     private static final SweepAttack DEFAULT_CIRCLE = new SweepAttack(SweepAttack.SWEEPTYPE.CIRCLE, 1, 1.5);
-    public static Gson GSON = new GsonBuilder().registerTypeAdapter(SweepAttack.class, new SweepAdapter()).registerTypeAdapter(ResourceLocation.class, new ResourceLocation.Serializer()).create();
+    public static Gson GSON = new GsonBuilder().registerTypeAdapter(WeaponInteraction.class, new WeaponAdapter()).registerTypeAdapter(ResourceLocation.class, new ResourceLocation.Serializer()).create();
 
     public static abstract class WeaponInteraction {
-        private TYPE t;
 
-        public WeaponInteraction(TYPE e) {
-            t = e;
-        }
-
-        public TYPE getInteractionType() {
-            return t;
-        }
+        public abstract TYPE getInteractionType() ;
 
         public abstract Component getToolTip(ItemStack e, boolean advanced);
 
         public abstract WeaponInteraction clone();
 
-        public abstract void write(FriendlyByteBuf f);
+        public  void write(FriendlyByteBuf f){
+            f.writeInt(getInteractionType().ordinal());
+        }
 
-        public abstract void read(FriendlyByteBuf f);
+        public static WeaponInteraction readFromByte(FriendlyByteBuf f){
+            switch (TYPE.values()[f.readInt()]){
+                case SWEEP -> {
+                    return SweepAttack.NOTHING.clone().read(f);
+                }
+                case USE -> {
+                    return new Use().read(f);
+                }
+            }
+            return SweepAttack.NOTHING.clone();
+        }
+
+
+        public abstract WeaponInteraction read(FriendlyByteBuf f);
 
         public HitInfo getHitInfo() {
             return DEFAULT_NONE.getHitInfo();
@@ -68,7 +77,6 @@ public class WeaponInteractions {
         private double range_multiplier = 1;
 
         private SweepAttack(SWEEPTYPE t, double b, double s) {
-            super(TYPE.SWEEP);
             sweep = t;
             sweep_base = b;
             sweep_scale = s;
@@ -78,6 +86,11 @@ public class WeaponInteractions {
             if (a > 1) return ChatFormatting.GREEN;
             else if (a < 0) return ChatFormatting.YELLOW;
             else return ChatFormatting.RED;
+        }
+
+        @Override
+        public TYPE getInteractionType() {
+            return TYPE.SWEEP;
         }
 
         public Component getToolTip(ItemStack e, boolean advanced) {
@@ -154,17 +167,19 @@ public class WeaponInteractions {
         }
 
         public void write(FriendlyByteBuf f) {
+            super.write(f);
             f.writeInt(sweep.ordinal());
             f.writeDouble(sweep_base);
             f.writeDouble(sweep_scale);
             getHitInfo().write(f);
         }
 
-        public void read(FriendlyByteBuf f) {
+        public WeaponInteraction read(FriendlyByteBuf f) {
             sweep = SWEEPTYPE.values()[f.readInt()];
             sweep_base = f.readDouble();
             sweep_scale = f.readDouble();
             getHitInfo().read(f);
+            return this;
         }
 
         public SweepAttack finisherCopy(boolean breach) {
@@ -202,10 +217,10 @@ public class WeaponInteractions {
     //uhh
     public static class Use extends WeaponInteraction {
         private int startTime = 0;
-        private boolean continuous = true;
 
-        public Use() {
-            super(TYPE.USE);
+        @Override
+        public TYPE getInteractionType() {
+            return TYPE.USE;
         }
 
         @Override
@@ -216,7 +231,6 @@ public class WeaponInteractions {
         public Use clone() {
             Use ret = new Use();
             ret.startTime = startTime;
-            ret.continuous = continuous;
             return ret;
         }
 
@@ -224,18 +238,17 @@ public class WeaponInteractions {
             return startTime;
         }
 
-        public boolean isContinuous() {
-            return continuous;
-        }
 
         public void write(FriendlyByteBuf f) {
+            super.write(f);
             f.writeInt(startTime);
-            f.writeBoolean(continuous);
+            //f.writeBoolean(continuous);
         }
 
-        public void read(FriendlyByteBuf f) {
+        public WeaponInteraction read(FriendlyByteBuf f) {
             startTime = f.readInt();
-            continuous = f.readBoolean();
+            //continuous = f.readBoolean();
+            return this;
         }
     }
 
@@ -357,7 +370,7 @@ public class WeaponInteractions {
         }
     }
 
-    public static class SweepAdapter implements JsonDeserializer<WeaponInteraction> {
+    public static class WeaponAdapter implements JsonDeserializer<WeaponInteraction> {
         @Override
         public WeaponInteraction deserialize(JsonElement json,
                                              Type typeOfT,
@@ -367,7 +380,7 @@ public class WeaponInteractions {
             if (sub.has("type")) {
                 //others go in here
                 String type = sub.get("type").getAsString();
-                if (type.equals("use")) return asUse(sub);
+                if (type.toLowerCase(Locale.ROOT).equals("use")) return asUse(sub);
             }
             return asSweepAttack(sub);
         }

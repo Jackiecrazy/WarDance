@@ -13,6 +13,7 @@ import jackiecrazy.wardance.capability.skill.ISkillCapability;
 import jackiecrazy.wardance.client.hud.QuiverDisplay;
 import jackiecrazy.wardance.config.ClientConfig;
 import jackiecrazy.wardance.config.GeneralConfig;
+import jackiecrazy.wardance.config.weapon.WeaponInteractions;
 import jackiecrazy.wardance.config.weapon.WeaponStats;
 import jackiecrazy.wardance.entity.GhostBlockEntity;
 import jackiecrazy.wardance.entity.GrappleEntity;
@@ -58,22 +59,22 @@ import java.util.function.Predicate;
 
 @Mod.EventBusSubscriber(value = Dist.CLIENT, modid = WarDance.MODID)
 public class ClientEvents {
-    public static final Predicate<Entity> GRAPPLE_VALID = (a) -> EntitySelector.LIVING_ENTITY_STILL_ALIVE.test(a) || (a instanceof ThrownWeaponEntity b && !(a instanceof GhostBlockEntity) && b.isReal()&&b.intangible());
+    public static final Predicate<Entity> GRAPPLE_VALID = (a) -> EntitySelector.LIVING_ENTITY_STILL_ALIVE.test(a) || (a instanceof ThrownWeaponEntity b && !(a instanceof GhostBlockEntity) && b.isReal() && b.intangible());
     private static final int ALLOWANCE = 5;
     private static final List<KeyMapping> conflict = new ArrayList<>();
     private static final int magicSneakTime = 20;
     public static int combatTicks = -999;
     public static int sneakedTime = 0;
-    public static int coyoteTimeID = -1, grappleID=-1;
+    public static int coyoteTimeID = -1, grappleID = -1;
     public static Vec3 coyoteVector = Vec3.ZERO;
-    private static int coyotedTime = 20, grappleTime=20;
+    public static boolean lastUsedHandMain = true;
+    private static int coyotedTime = 20, grappleTime = 20;
     private static Entity lastTickLookAt;
     private static boolean rightClick = false;
     private static int mainUseTick = 0, offUseTick = 0;
     private static InteractionHand testingHand = null;
     private static int conflictMap = 0;
     private static int lastSweepTick = 0, lastAttackTick = 0;
-    public static boolean lastUsedHandMain = true;
     private static boolean wasThrowAiming = false;
 
     static {
@@ -108,12 +109,12 @@ public class ClientEvents {
         Player p = Minecraft.getInstance().player;
         //store a copy of the mob that the player is looking at for coyote time resolution
         double aimRange;
-        boolean updateGrapple=false;
+        boolean updateGrapple = false;
         Predicate<Entity> pred = EntitySelector.LIVING_ENTITY_STILL_ALIVE;
         if (Keybinds.THROW.isDown()) {
             aimRange = GrappleEntity.MAXDIST;
             pred = GRAPPLE_VALID;
-            updateGrapple=true;
+            updateGrapple = true;
         } else if (CasterData.getCap(Minecraft.getInstance().player).getHolsteredSkill() != null) {
             ISkillCapability sc = CasterData.getCap(Minecraft.getInstance().player);
             final Skill s = sc.getHolsteredSkill();
@@ -127,9 +128,9 @@ public class ClientEvents {
             coyoteTimeID = eh.getEntity().getId();
             coyoteVector = GeneralUtils.getExactCollision(eh.getEntity(), eyePosition, eyePosition.add(p.getLookAngle().scale(aimRange)));
             coyotedTime = 20;
-            if(updateGrapple){
-                grappleID=eh.getEntity().getId();
-                grappleTime=20;
+            if (updateGrapple) {
+                grappleID = eh.getEntity().getId();
+                grappleTime = 20;
             }
         }
     }
@@ -226,7 +227,8 @@ public class ClientEvents {
                         if (mc.options.keyUse.isDown() && mc.options.keyUse.consumeClick()) {
                             CombatChannel.INSTANCE.sendToServer(new SwapAttackPacket(false, QuiverDisplay.invIndex));
                         }
-                    } if (Keybinds.THROW.isDown()) {
+                    }
+                    if (Keybinds.THROW.isDown()) {
                         final Vec3 eyePosition = p.getEyePosition();
                         wasThrowAiming = true;
                         //yeet!
@@ -235,22 +237,22 @@ public class ClientEvents {
                             Vec3 loc = destination.getLocation();
                             if (destination.getType() == HitResult.Type.ENTITY) {
                                 loc = GeneralUtils.getExactCollision(((EntityHitResult) destination).getEntity(), eyePosition, eyePosition.add(p.getLookAngle().scale(32)));
-                            } else if (coyoteTimeID >=0) {
+                            } else if (coyoteTimeID >= 0) {
                                 loc = coyoteVector;
                             }
                             CombatChannel.INSTANCE.sendToServer(new ThrowPacket(true, loc, QuiverDisplay.invIndex));
-                            while(mc.options.keyAttack.consumeClick());
+                            while (mc.options.keyAttack.consumeClick()) ;
                         }
                         if (mc.options.keyUse.isDown() && mc.options.keyUse.consumeClick()) {
                             HitResult destination = ProjectileUtil.getHitResultOnViewVector(p, EntitySelector.LIVING_ENTITY_STILL_ALIVE, 32);
                             Vec3 loc = destination.getLocation();
                             if (destination.getType() == HitResult.Type.ENTITY) {
                                 loc = GeneralUtils.getExactCollision(((EntityHitResult) destination).getEntity(), eyePosition, eyePosition.add(p.getLookAngle().scale(32)));
-                            } else if (coyoteTimeID >=0) {
+                            } else if (coyoteTimeID >= 0) {
                                 loc = coyoteVector;
                             }
                             CombatChannel.INSTANCE.sendToServer(new ThrowPacket(false, loc, QuiverDisplay.invIndex));
-                            while(mc.options.keyUse.consumeClick());
+                            while (mc.options.keyUse.consumeClick()) ;
                         }
                     } else if (wasThrowAiming) {
                         CombatChannel.INSTANCE.sendToServer(new UnhookPacket());
@@ -268,49 +270,50 @@ public class ClientEvents {
                     // otherwise, right click after a noticeable delay
                     // If evoke is held, only right click
                     int allow = ALLOWANCE;
-                    switch (ClientConfig.controlScheme) {
-                        case CLASSIC -> {
-                            if (Keybinds.EVOKE.isDown())
+                    if(mc.options.keyUse.isDown()||mc.options.keyAttack.isDown()) {
+                        boolean probablyNotAttacking = mc.crosshairPickEntity == null;
+                        if (CombatUtils.getAttackState(mc.player) == WeaponStats.AttackType.UNDEFINED)
+                            CombatUtils.updateNormalAttackStatus(mc.player);
+                        final WeaponStats.AttackType state = CombatUtils.getAttackState(mc.player);
+                        final WeaponInteractions.WeaponInteraction.TYPE type = WeaponStats.getSweepInfo(mc.player.getMainHandItem(), state).getInteractionType();
+                        //fixme this is inconstant because the attack request gets sent to the server and the server processes it and sends a tickproc back
+                        if (type == WeaponInteractions.WeaponInteraction.TYPE.USE && mc.options.keyUse.isDown()) {
+                            //special charge action, immediately start
+                            //if (probablyNotAttacking && mc.player.getMainHandItem().getUseAnimation() != UseAnim.NONE)
+                                allow = 1;
+                            if (!mc.player.isUsingItem() && offUseTick % allow == allow - 1) {
                                 testingHand = InteractionHand.OFF_HAND;
-                            //offhand use
-                        }
-                        case DUAL -> {
-                            boolean probablyNotAttacking = mc.crosshairPickEntity == null;
-                            if (specialHandleItem(mc.player, mc.player.getMainHandItem()) && mc.options.keyUse.isDown()) {
-                                //special charge action, immediately start
-                                if (probablyNotAttacking && mc.player.getMainHandItem().getUseAnimation() != UseAnim.NONE)
-                                    allow = 1;
-                                if (!mc.player.isUsingItem() && offUseTick % allow == allow - 1) {
-                                    testingHand = InteractionHand.OFF_HAND;
-                                    ((ClientAccessors) mc).callStartUseItem();
-                                }
-                                ++offUseTick;
-                            } else offUseTick = 0;
-                            if (specialHandleItem(mc.player, mc.player.getMainHandItem()) && mc.options.keyAttack.isDown()) {
-                                //special charge action, immediately start
-                                if (probablyNotAttacking && mc.player.getMainHandItem().getUseAnimation() != UseAnim.NONE)
-                                    allow = 1;
-                                if (mc.player.isUsingItem() && mc.player.getUsedItemHand() == InteractionHand.MAIN_HAND) {
-                                    //hack. Spoof use item key to down for the keybind processing
-                                    mc.options.keyUse.setDown(true);
-                                } else if (!mc.player.isUsingItem() && mainUseTick == allow) {//don't call when already using item for obvious reasons
-                                    testingHand = InteractionHand.MAIN_HAND;
-                                    ((ClientAccessors) mc).callStartUseItem();
-                                    if (!mc.options.keyUse.isDown())
-                                        mc.options.keyUse.setDown(mc.player.isUsingItem());
-                                }
-                                //cancel the left click if using or evoking
-                                if (mainUseTick > 0 || Keybinds.EVOKE.isDown())
-                                    mc.options.keyAttack.consumeClick();
-                                ++mainUseTick;
-                            } else {
-                                //cancel usage of main hand weapon when attack is released
-                                if (mainUseTick > 0)// && WeaponStats.isCombatItem(mc.player, mc.player.getMainHandItem()) && mc.player.isUsingItem() && mc.player.getUsedItemHand() == InteractionHand.MAIN_HAND)
-                                    mc.options.keyUse.setDown(false);
-                                mainUseTick = 0;
+                                ((ClientAccessors) mc).callStartUseItem();
                             }
+                            ++offUseTick;
+                        } else offUseTick = 0;
+
+
+                        if (type == WeaponInteractions.WeaponInteraction.TYPE.USE && mc.options.keyAttack.isDown()) {
+                            //special charge action, immediately start
+                            //if (probablyNotAttacking && mc.player.getMainHandItem().getUseAnimation() != UseAnim.NONE)
+                                allow = 1;
+                            if (mc.player.isUsingItem() && mc.player.getUsedItemHand() == InteractionHand.MAIN_HAND) {
+                                //hack. Spoof use item key to down for the keybind processing
+                                mc.options.keyUse.setDown(true);
+                            } else if (!mc.player.isUsingItem() && mainUseTick == allow) {//don't call when already using item for obvious reasons
+                                testingHand = InteractionHand.MAIN_HAND;
+                                ((ClientAccessors) mc).callStartUseItem();
+                                if (!mc.options.keyUse.isDown())
+                                    mc.options.keyUse.setDown(mc.player.isUsingItem());
+                            }
+                            //cancel the left click if using or evoking
+                            if (mainUseTick > 0 || Keybinds.EVOKE.isDown())
+                                while (mc.options.keyAttack.consumeClick()) ;
+                            ++mainUseTick;
+                        } else {
+                            //cancel usage of main hand weapon when attack is released
+                            if (mainUseTick > 0)// && WeaponStats.isCombatItem(mc.player, mc.player.getMainHandItem()) && mc.player.isUsingItem() && mc.player.getUsedItemHand() == InteractionHand.MAIN_HAND)
+                                mc.options.keyUse.setDown(false);
+                            mainUseTick = 0;
                         }
                     }
+
                     if (mc.options.keyAttack.isDown() && sneakedTime > magicSneakTime && mc.options.keyAttack.consumeClick()) {
                         CombatChannel.INSTANCE.sendToServer(new HeavyPacket(true, WeaponStats.AttackType.STANDING));
                         CombatChannel.INSTANCE.sendToServer(new UpdateWeaponRenderPacket(false));
@@ -344,7 +347,7 @@ public class ClientEvents {
                     rightClick = false;
                     testingHand = null;
                 }
-                if (p.isShiftKeyDown()&&StylishData.getCap(p).isCombatMode()) {
+                if (p.isShiftKeyDown() && StylishData.getCap(p).isCombatMode()) {
                     sneakedTime++;
                     if (sneakedTime == 1)
                         CombatChannel.INSTANCE.sendToServer(new UpdateWeaponRenderPacket(lastUsedHandMain, FlyingWeaponEffect.WEAPON));
@@ -423,7 +426,7 @@ public class ClientEvents {
     public static void sweepSwingOff(PlayerInteractEvent.RightClickEmpty e) {
         if (TwoHandingHandler.suppressOffhand(e.getEntity(), e.getEntity().getMainHandItem()) && e.getHand() == InteractionHand.OFF_HAND)
             return;
-        //fixme
+        //todo turn into other model
         if (testingHand != null && !rightClick && GeneralConfig.dual && StylishData.getCap(e.getEntity()).isCombatMode()) {
             if (e.getHand() != testingHand) {
                 //cancel right click main hand
@@ -431,12 +434,12 @@ public class ClientEvents {
                 return;
             }
         }
-        if (!Keybinds.EVOKE.isDown() &&!Keybinds.THROW.isDown() && !rightClick && GeneralConfig.dual && e.getHand() == InteractionHand.OFF_HAND && StylishData.getCap(e.getEntity()).isCombatMode() && specialHandleItem(e.getEntity(), e.getItemStack())) {
+        if (!Keybinds.EVOKE.isDown() && !Keybinds.THROW.isDown() && !rightClick && GeneralConfig.dual && e.getHand() == InteractionHand.OFF_HAND && StylishData.getCap(e.getEntity()).isCombatMode() && specialHandleItem(e.getEntity(), e.getItemStack())) {
             rightClick = true;
             Entity n = RenderUtils.getEntityLookedAt(e.getEntity(), GeneralUtils.getAttributeValueHandSensitive(e.getEntity(), ForgeMod.ENTITY_REACH.get(), InteractionHand.OFF_HAND));
             e.getEntity().swing(InteractionHand.OFF_HAND, false);
             if (n != null && e.getEntity().tickCount != lastAttackTick) {
-                CombatChannel.INSTANCE.sendToServer(new RequestAttackPacket(false, n));
+                CombatChannel.INSTANCE.sendToServer(new RequestAttackPacket(false, n));//todo obsolete in favor of click actions
                 lastAttackTick = e.getEntity().tickCount;
             }
             if (lastSweepTick != e.getEntity().tickCount)
@@ -480,7 +483,7 @@ public class ClientEvents {
                 return;
             }
         }
-        if (!Keybinds.EVOKE.isDown() &&!Keybinds.THROW.isDown() && !rightClick && GeneralConfig.dual && e.getHand() == InteractionHand.OFF_HAND && StylishData.getCap(e.getEntity()).isCombatMode() && specialHandleItem(e.getEntity(), e.getItemStack())) {
+        if (!Keybinds.EVOKE.isDown() && !Keybinds.THROW.isDown() && !rightClick && GeneralConfig.dual && e.getHand() == InteractionHand.OFF_HAND && StylishData.getCap(e.getEntity()).isCombatMode() && specialHandleItem(e.getEntity(), e.getItemStack())) {
             rightClick = true;
             Entity n = RenderUtils.getEntityLookedAt(e.getEntity(), GeneralUtils.getAttributeValueHandSensitive(e.getEntity(), ForgeMod.ENTITY_REACH.get(), InteractionHand.OFF_HAND));
             e.getEntity().swing(InteractionHand.OFF_HAND, false);
@@ -507,7 +510,7 @@ public class ClientEvents {
                 return;
             }
         }
-        if (!Keybinds.EVOKE.isDown() &&!Keybinds.THROW.isDown() && !rightClick && GeneralConfig.dual && e.getHand() == InteractionHand.OFF_HAND && StylishData.getCap(e.getEntity()).isCombatMode() && specialHandleItem(e.getEntity(), e.getItemStack())) {
+        if (!Keybinds.EVOKE.isDown() && !Keybinds.THROW.isDown() && !rightClick && GeneralConfig.dual && e.getHand() == InteractionHand.OFF_HAND && StylishData.getCap(e.getEntity()).isCombatMode() && specialHandleItem(e.getEntity(), e.getItemStack())) {
             rightClick = true;
             Entity n = RenderUtils.getEntityLookedAt(e.getEntity(), GeneralUtils.getAttributeValueHandSensitive(e.getEntity(), ForgeMod.ENTITY_REACH.get(), InteractionHand.OFF_HAND));
             e.getEntity().swing(InteractionHand.OFF_HAND, false);
@@ -534,7 +537,7 @@ public class ClientEvents {
                 return;
             }
         }
-        if (!Keybinds.EVOKE.isDown() &&!Keybinds.THROW.isDown() && !rightClick && GeneralConfig.dual && e.getHand() == InteractionHand.OFF_HAND && StylishData.getCap(e.getEntity()).isCombatMode() && specialHandleItem(e.getEntity(), e.getItemStack())) {
+        if (!Keybinds.EVOKE.isDown() && !Keybinds.THROW.isDown() && !rightClick && GeneralConfig.dual && e.getHand() == InteractionHand.OFF_HAND && StylishData.getCap(e.getEntity()).isCombatMode() && specialHandleItem(e.getEntity(), e.getItemStack())) {
             rightClick = true;
             Entity n = RenderUtils.getEntityLookedAt(e.getEntity(), GeneralUtils.getAttributeValueHandSensitive(e.getEntity(), ForgeMod.ENTITY_REACH.get(), InteractionHand.OFF_HAND) - (e.getItemStack().isEmpty() ? 1 : 0));
             e.getEntity().swing(InteractionHand.OFF_HAND, false);

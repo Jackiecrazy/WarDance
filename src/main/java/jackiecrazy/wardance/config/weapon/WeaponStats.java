@@ -110,7 +110,7 @@ public class WeaponStats extends SimpleJsonResourceReloadListener {
                     JsonObject obj = entry.getValue().getAsJsonObject();
                     MeleeInfo put = parseMeleeInfo(obj);
                     if (GeneralConfig.debug)
-                        WarDance.LOGGER.debug(name + " has been registered with sweep types: " + put.sweeps[0].getType() + " " + put.sweeps[1].getType() + " " + put.sweeps[2].getType() + " " + put.sweeps[3].getType() + " " + put.sweeps[4].getType() + " ");
+                        WarDance.LOGGER.debug(name + " has been registered with sweep types: " + put.sweeps[0].getInteractionType() + " " + put.sweeps[1].getInteractionType() + " " + put.sweeps[2].getInteractionType() + " " + put.sweeps[3].getInteractionType() + " " + put.sweeps[4].getInteractionType() + " ");
                     combatList.put(item, put);
                 } catch (Exception x) {
                     WarDance.LOGGER.error("malformed json under " + name + "!");
@@ -126,14 +126,14 @@ public class WeaponStats extends SimpleJsonResourceReloadListener {
         if (obj.has("attack")) put.attackPostureMultiplier = obj.get("attack").getAsDouble();
         if (obj.has("defend")) put.defensePostureMultiplier = obj.get("defend").getAsDouble();
         if (obj.has("shield")) put.isShield = obj.get("shield").getAsBoolean();
-        WeaponInteractions.SweepAttack defaultSweep = WeaponInteractions.GSON.fromJson(obj, WeaponInteractions.SweepAttack.class);
+        WeaponInteractions.WeaponInteraction defaultSweep = WeaponInteractions.GSON.fromJson(obj, WeaponInteractions.WeaponInteraction.class);
         put.sweeps[0] = defaultSweep;
         for (AttackType s : AttackType.values()) {
             int ord = s.ordinal();
             JsonElement gottem = obj.get(s.name().toLowerCase(Locale.ROOT));
             if(gottem!=null) {
                 JsonObject sub = gottem.getAsJsonObject();
-                WeaponInteractions.SweepAttack sweep = WeaponInteractions.GSON.fromJson(sub, WeaponInteractions.SweepAttack.class);
+                WeaponInteractions.WeaponInteraction sweep = WeaponInteractions.GSON.fromJson(sub, WeaponInteractions.WeaponInteraction.class);
                 put.sweeps[ord] = sweep;
             }
         }
@@ -261,14 +261,14 @@ public class WeaponStats extends SimpleJsonResourceReloadListener {
         private double attackPostureMultiplier, defensePostureMultiplier;
         private boolean isShield, ignoreParry, ignoreShield, canParry;
         //standing, falling, sneaking, sprinting, riding
-        private WeaponInteractions.WeaponInteraction[] sweeps = {
-                WeaponInteractions.DEFAULT_FAN.clone(), WeaponInteractions.DEFAULT_CLEAVE.clone(), WeaponInteractions.DEFAULT_FAN.clone(), WeaponInteractions.DEFAULT_FAN.clone(),
-                WeaponInteractions.DEFAULT_FAN.clone(), WeaponInteractions.DEFAULT_FAN.clone(), WeaponInteractions.DEFAULT_FAN.clone(), WeaponInteractions.DEFAULT_FAN.clone(), WeaponInteractions.DEFAULT_FAN.clone()
-        };
+        private WeaponInteractions.WeaponInteraction[] sweeps = new WeaponInteractions.WeaponInteraction[AttackType.values().length];
 
         private MeleeInfo(double attack, double defend) {
             attackPostureMultiplier = attack;
             defensePostureMultiplier = defend;
+            for(int i=0;i<sweeps.length;i++){
+                sweeps[i]=WeaponInteractions.DEFAULT_FAN.clone();
+            }
         }
 
         public static MeleeInfo read(FriendlyByteBuf f) {
@@ -276,8 +276,8 @@ public class WeaponStats extends SimpleJsonResourceReloadListener {
             ret.attackPostureMultiplier = f.readDouble();
             ret.defensePostureMultiplier = f.readDouble();
             ret.isShield = f.readBoolean();
-            for (WeaponInteractions.WeaponInteraction ss : ret.sweeps) {
-                ss.read(f);
+            for(int x=0;x<ret.sweeps.length;x++){
+                ret.sweeps[x]= WeaponInteractions.WeaponInteraction.readFromByte(f);
             }
             return ret;
         }

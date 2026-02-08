@@ -2698,11 +2698,7 @@
     "sweep_base": 40.0,
     "sweep_scale": 15.0,
     "standing": {
-      "sweep": "CONE",
-      "damage_scale": 0.75,
-      "posture_scale": 0.5,
-      "sweep_base": 40.0,
-      "sweep_scale": 15.0
+      "type": "USE"
     },
     "falling": {
       "sweep": "IMPACT",
@@ -2752,12 +2748,7 @@
     "sweep_base": 40.0,
     "sweep_scale": 15.0,
     "standing": {
-      "sweep": "CLEAVE",
-      "knockback": 1.5,
-      "damage_scale": 0.75,
-      "posture_scale": 0.75,
-      "sweep_base": 40.0,
-      "sweep_scale": 15.0
+      "type": "USE"
     },
     "falling": {
       "sweep": "CLEAVE",
