@@ -3,9 +3,7 @@ package jackiecrazy.wardance.networking.combat;
 import jackiecrazy.footwork.capability.resources.CombatData;
 import jackiecrazy.footwork.utils.GeneralUtils;
 import jackiecrazy.wardance.capability.flyingweapon.FlyingWeaponData;
-import jackiecrazy.wardance.capability.status.Marks;
 import jackiecrazy.wardance.config.QiCosts;
-import jackiecrazy.wardance.handlers.EntityHandler;
 import jackiecrazy.wardance.utils.CombatUtils;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.server.level.ServerPlayer;
@@ -59,7 +57,7 @@ public class KickPacket {
                         if (destination.getType() == HitResult.Type.ENTITY) {
                             loc = GeneralUtils.getExactCollision(((EntityHitResult) destination).getEntity(), sender.getEyePosition(), sender.getEyePosition().add(sender.getLookAngle().scale(32)));
                         }
-                        FlyingWeaponData.getCap(sender).yeet(null, loc);
+                        FlyingWeaponData.getCap(sender).yeet(null, loc, 2.0);
                     } else {
                         HitResult destination = ProjectileUtil.getHitResultOnViewVector(sender, EntitySelector.LIVING_ENTITY_STILL_ALIVE, 3);
                         if (destination instanceof EntityHitResult hit) {

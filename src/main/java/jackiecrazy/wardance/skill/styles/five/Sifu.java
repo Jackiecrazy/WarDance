@@ -20,8 +20,8 @@ import jackiecrazy.wardance.skill.SkillColors;
 import jackiecrazy.wardance.skill.SkillData;
 import jackiecrazy.wardance.skill.WarSkills;
 import jackiecrazy.wardance.skill.styles.ColorRestrictionStyle;
-import jackiecrazy.wardance.utils.CombatUtils;
 import jackiecrazy.wardance.utils.DamageUtils;
+import jackiecrazy.wardance.utils.MobilityUtils;
 import jackiecrazy.wardance.utils.SkillUtils;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.ResourceLocation;
@@ -156,7 +156,7 @@ public class Sifu extends ColorRestrictionStyle {
             }
         } else if (procPoint instanceof StunEvent sce && procPoint.getPhase() == EventPriority.HIGHEST && sce.getEntity() != caster) {
             SkillUtils.removeAttribute(target, Attributes.KNOCKBACK_RESISTANCE, kbr);
-            CombatUtils.knockBack(target, caster, 1f, false, true);
+            MobilityUtils.knockBack(target, caster, 1f, false, true);
             //upgrade to knockdown
             sce.setKnockdown(true);
         } else if (procPoint instanceof LivingDeathEvent e && e.getPhase() == EventPriority.LOWEST && e.getEntity() != caster) {
@@ -174,7 +174,7 @@ public class Sifu extends ColorRestrictionStyle {
         for (LivingEntity entity : caster.level().getEntitiesOfClass(LivingEntity.class, caster.getBoundingBoxForCulling().inflate(7), a -> !TargetingUtils.isAlly(a, caster))) {
             if (entity != target && entity != caster) {
                 entity.addEffect(new MobEffectInstance(MobEffects.MOVEMENT_SLOWDOWN, (int) (60 * SkillUtils.getSkillEffectiveness(caster)), 1));
-                CombatUtils.knockBack(entity, caster, 0.6f * SkillUtils.getSkillEffectiveness(caster), true, false);
+                MobilityUtils.knockBack(entity, caster, 0.6f * SkillUtils.getSkillEffectiveness(caster), true, false);
             }
         }
         SkillUtils.addAttribute(target, Attributes.KNOCKBACK_RESISTANCE, kbr);

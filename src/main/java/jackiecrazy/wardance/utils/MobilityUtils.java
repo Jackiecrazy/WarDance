@@ -11,6 +11,7 @@ import net.minecraft.util.Mth;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.Pose;
+import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
@@ -19,7 +20,7 @@ import net.minecraftforge.common.MinecraftForge;
 import java.util.List;
 import java.util.function.Predicate;
 
-public class MovementUtils {
+public class MobilityUtils {
 
     /**
      * Checks the +x, -x, +y, -y, +z, -z, in that order
@@ -292,5 +293,74 @@ public class MovementUtils {
             return true;
         }
         return false;
+    }
+
+    /**
+     * knocks the target back, with regards to the attacker's relative angle to the target, and adding y knockback
+     */
+    public static void knockBack(Entity to,
+                                 Entity from,
+                                 float strength,
+                                 boolean considerRelativeAngle,
+                                 boolean bypassAllChecks) {
+        if (to == null || from == null) return;
+        Vec3 distVec = to.position().add(0, to.getBbHeight() / 2, 0).vectorTo(from.position().add(0, from.getBbHeight() / 2, 0)).multiply(1, 0.5, 1).normalize();
+        if (to instanceof LivingEntity && !bypassAllChecks) {
+            if (considerRelativeAngle)
+                knockBack((LivingEntity) to, strength, distVec.x, distVec.y, distVec.z, false);
+            else
+                knockBack(((LivingEntity) to), (float) strength * 0.5F, (double) Mth.sin(from.getYRot() * 0.017453292F), 0, (double) (-Mth.cos(from.getYRot() * 0.017453292F)), false);
+        } else {
+            //eh
+            if (considerRelativeAngle) {
+                to.lerpMotion(distVec.x * -strength, to.onGround() ? 0.1 : distVec.y * -strength, distVec.z * -strength);
+            } else {
+                to.push(-Mth.sin(-from.getYRot() * 0.017453292F - (float) Math.PI) * 0.5, 0.1, -Mth.cos(-from.getYRot() * 0.017453292F - (float) Math.PI) * 0.5);
+            }
+            to.hurtMarked = true;
+        }
+    }
+
+    /**
+     * knockback in LivingEntity except it makes sense and the resist is factored into the event
+     */
+    public static void knockBack(LivingEntity to,
+                                 float strength,
+                                 double xRatio,
+                                 double yRatio,
+                                 double zRatio,
+                                 boolean bypassEventCheck) {
+        if (!bypassEventCheck) {
+            net.minecraftforge.event.entity.living.LivingKnockBackEvent event = net.minecraftforge.common.ForgeHooks.onLivingKnockBack(to, strength, xRatio, zRatio);
+            if (event.isCanceled()) return;
+            strength = event.getStrength();
+            xRatio = event.getRatioX();
+            zRatio = event.getRatioZ();
+        }
+        strength *= (float) Math.max(0, 1 - GeneralUtils.getAttributeValueSafe(to, Attributes.KNOCKBACK_RESISTANCE));
+        if (strength != 0f) {
+            Vec3 vec = to.getDeltaMovement();
+            double motionX = vec.x, motionY = vec.y, motionZ = vec.z;
+            to.hasImpulse = true;
+            double pythagora = Math.sqrt(xRatio * xRatio + zRatio * zRatio);
+            if (to.onGround()) {
+                motionY /= 2.0D;
+                motionY += Math.abs(strength);
+
+                if (motionY > 0.4000000059604645D) {
+                    motionY = 0.4000000059604645D;
+                }
+            } else if (yRatio != 0) {
+                pythagora = Math.sqrt(xRatio * xRatio + zRatio * zRatio + yRatio * yRatio);
+                motionY /= 2.0D;
+                motionY -= yRatio / (double) pythagora * (double) strength;
+            }
+            motionX /= 2.0D;
+            motionZ /= 2.0D;
+            motionX -= xRatio / (double) pythagora * (double) strength;
+            motionZ -= zRatio / (double) pythagora * (double) strength;
+            to.setDeltaMovement(motionX, motionY, motionZ);
+            to.hurtMarked = true;
+        }
     }
 }

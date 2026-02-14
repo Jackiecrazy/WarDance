@@ -10,8 +10,8 @@ import jackiecrazy.wardance.skill.SkillColors;
 import jackiecrazy.wardance.skill.SkillData;
 import jackiecrazy.wardance.skill.WarSkills;
 import jackiecrazy.wardance.skill.styles.ColorRestrictionStyle;
-import jackiecrazy.wardance.utils.CombatUtils;
 import jackiecrazy.wardance.utils.DamageUtils;
+import jackiecrazy.wardance.utils.MobilityUtils;
 import jackiecrazy.wardance.utils.SkillUtils;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.server.level.ServerLevel;
@@ -64,7 +64,7 @@ public class DemonHunter extends ColorRestrictionStyle {
         if (procPoint instanceof LivingAttackEvent a && DamageUtils.isMeleeAttack(a.getSource()) && target != null && a.getEntity() != caster && a.getPhase() == EventPriority.LOWEST) {
             if (Marks.getCap(target).isMarked(this)) {
                 if (!caster.onGround()) {
-                    CombatUtils.knockBack(caster, target, 1, true, true);
+                    MobilityUtils.knockBack(caster, target, 1, true, true);
                     Vec3 vec = caster.getDeltaMovement();
                     caster.lerpMotion(vec.x, vec.y + 1, vec.z);
                     if (SkillUtils.hasAttribute(caster, ForgeMod.ENTITY_REACH.get(), reach))

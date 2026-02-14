@@ -5,7 +5,6 @@ import jackiecrazy.footwork.move.motionframe.MotionManager;
 import jackiecrazy.wardance.entity.FlyingWeaponEntity;
 import jackiecrazy.wardance.entity.GrappleEntity;
 import jackiecrazy.wardance.entity.ThrownWeaponEntity;
-import jackiecrazy.wardance.config.weapon.WeaponInteractions;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.phys.Vec3;
 
@@ -22,9 +21,7 @@ public interface IFlyingWeapon {
 
     void scheduleAction(InteractionHand hand,
                         MotionManager mm,
-                        WeaponInteractions.HitInfo info,
-                        double range,
-                        int totalTime, FlyingWeaponEffect... fx);
+                        FlyingWeaponEffect... fx);
 
     void tick();
 
@@ -36,7 +33,7 @@ public interface IFlyingWeapon {
         forceRefreshWeapon(InteractionHand.OFF_HAND);
     }
 
-    boolean yeet(InteractionHand hand, Vec3 pos);
+    ThrownWeaponEntity yeet(InteractionHand hand, Vec3 pos, double strength);
 
     class DummyFlyingWeapon implements IFlyingWeapon {
 
@@ -68,9 +65,7 @@ public interface IFlyingWeapon {
         @Override
         public void scheduleAction(InteractionHand hand,
                                    MotionManager mm,
-                                   WeaponInteractions.HitInfo info,
-                                   double range,
-                                   int totalTime, FlyingWeaponEffect... fx) {
+                                   FlyingWeaponEffect... fx) {
 
         }
 
@@ -90,8 +85,8 @@ public interface IFlyingWeapon {
         }
 
         @Override
-        public boolean yeet(InteractionHand hand, Vec3 pos) {
-            return false;
+        public ThrownWeaponEntity yeet(InteractionHand hand, Vec3 pos, double strength) {
+            return null;
         }
     }
 }

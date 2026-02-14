@@ -2698,7 +2698,9 @@
     "sweep_base": 40.0,
     "sweep_scale": 15.0,
     "standing": {
-      "type": "USE"
+      "type": "USE",
+      "velocity": [0,-1,0],
+      "use_speed": 2
     },
     "falling": {
       "sweep": "IMPACT",
@@ -2707,7 +2709,8 @@
       "sweep_scale": 0.5,
       "hit_self_command": "/function wardance:attack/self_mildfatigue",
       "damage_other_command": "/function wardance:attack/damageother_milddestabilize",
-      "crit": true
+      "crit": true,
+      "velocity": [-1,1,0]
     },
     "sneaking": {
       "sweep": "CONE",
@@ -2748,7 +2751,12 @@
     "sweep_base": 40.0,
     "sweep_scale": 15.0,
     "standing": {
-      "type": "USE"
+      "sweep": "CLEAVE",
+      "knockback": 1.5,
+      "damage_scale": 0.75,
+      "posture_scale": 0.75,
+      "sweep_base": 40.0,
+      "sweep_scale": 15.0
     },
     "falling": {
       "sweep": "CLEAVE",

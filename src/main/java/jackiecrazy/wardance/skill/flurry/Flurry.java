@@ -6,12 +6,12 @@ import jackiecrazy.footwork.capability.stylish.StylishData;
 import jackiecrazy.footwork.event.DamageKnockbackEvent;
 import jackiecrazy.footwork.event.GainAdrenalineEvent;
 import jackiecrazy.wardance.capability.skill.CasterData;
+import jackiecrazy.wardance.config.weapon.interactions.SweepAttack;
 import jackiecrazy.wardance.skill.Skill;
 import jackiecrazy.wardance.skill.SkillData;
 import jackiecrazy.wardance.skill.SkillTags;
 import jackiecrazy.wardance.utils.CombatUtils;
 import jackiecrazy.wardance.utils.SkillUtils;
-import jackiecrazy.wardance.config.weapon.WeaponInteractions;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.LivingEntity;
@@ -69,13 +69,13 @@ Flow: cooldown of all attack skills are halved, and any cooled attack skill is a
         cap.setOffhandCooldown(cap.getOffhandCooldown() + 1);
         //main hand flurry
         if (stats.getState() == STATE.ACTIVE && CombatUtils.getCooledAttackStrength(caster, InteractionHand.MAIN_HAND, 0f) == 1f && !caster.isAutoSpinAttack()) {
-            CombatUtils.sweep(caster, null, InteractionHand.MAIN_HAND, WeaponInteractions.SweepAttack.SWEEPTYPE.CIRCLE, 3, 3, 0);
+            CombatUtils.enhancedSweep(caster, null, InteractionHand.MAIN_HAND, SweepAttack.SWEEPTYPE.CIRCLE, 3, 3, 0);
             CombatUtils.setHandCooldown(caster, InteractionHand.MAIN_HAND, 0, true);
         }
         //offhand flurry
         if (stats.getState() == STATE.ACTIVE && CombatUtils.getCooledAttackStrength(caster, InteractionHand.OFF_HAND, 0f) == 1f && !caster.isAutoSpinAttack()) {
             //spin to win!
-            CombatUtils.sweep(caster, null, InteractionHand.OFF_HAND, WeaponInteractions.SweepAttack.SWEEPTYPE.CIRCLE, 3, 3, 0);
+            CombatUtils.enhancedSweep(caster, null, InteractionHand.OFF_HAND, SweepAttack.SWEEPTYPE.CIRCLE, 3, 3, 0);
             CombatUtils.setHandCooldown(caster, InteractionHand.OFF_HAND, 0, true);
         }
         return super.equippedTick(caster, stats);

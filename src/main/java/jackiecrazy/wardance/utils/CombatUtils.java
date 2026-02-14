@@ -11,20 +11,25 @@ import jackiecrazy.footwork.client.particle.FootworkParticles;
 import jackiecrazy.footwork.client.particle.ScalingParticleType;
 import jackiecrazy.footwork.entity.flyingweapon.FlyingItemEntity;
 import jackiecrazy.footwork.entity.flyingweapon.FlyingWeaponEffect;
+import jackiecrazy.footwork.move.motionframe.HitInfo;
+import jackiecrazy.footwork.move.motionframe.MotionManager;
 import jackiecrazy.footwork.potion.FootworkEffects;
 import jackiecrazy.footwork.utils.*;
 import jackiecrazy.wardance.WarDance;
 import jackiecrazy.wardance.capability.action.PermissionData;
+import jackiecrazy.wardance.capability.charging.ChargingData;
 import jackiecrazy.wardance.capability.flyingweapon.FlyingWeaponData;
+import jackiecrazy.wardance.capability.flyingweapon.IFlyingWeapon;
 import jackiecrazy.wardance.capability.stylish.StylishCapability;
 import jackiecrazy.wardance.config.CombatConfig;
 import jackiecrazy.wardance.config.GeneralConfig;
 import jackiecrazy.wardance.config.MobSpecs;
-import jackiecrazy.wardance.config.weapon.WeaponInteractions;
+import jackiecrazy.wardance.config.weapon.interactions.*;
 import jackiecrazy.wardance.config.weapon.WeaponStats;
+import jackiecrazy.wardance.entity.ThrownWeaponEntity;
 import jackiecrazy.wardance.event.ProjectileDefendEvent;
 import jackiecrazy.wardance.event.SweepEvent;
-import jackiecrazy.wardance.mixin.ShieldBlockAccessor;
+import jackiecrazy.wardance.mixin.LivingEntityAccessors;
 import jackiecrazy.wardance.networking.CombatChannel;
 import jackiecrazy.wardance.networking.combat.UpdateAttackCooldownPacket;
 import net.minecraft.core.particles.DustParticleOptions;
@@ -65,6 +70,7 @@ public class CombatUtils {
     public static final UUID off = UUID.fromString("8c8028c8-da69-49a2-99cd-f92d7ad22534");
     public static final UUID main = UUID.fromString("8c8028c8-da67-49a2-99cd-f92d7ad22534");
     public static boolean suppressChangeFunctions = false, allowCombatHotbarPickup = false;
+    public static Vec3 temp_dest = Vec3.ZERO;
     private static ProjectileInfo DEFAULTRANGED = new ProjectileInfo(0.6, 1, false, false);
     private static HashMap<EntityType, ProjectileInfo> projectileMap = new HashMap<>();
     private static int cacheLeft, cacheRight;//primarily useful in client
@@ -246,10 +252,9 @@ public class CombatUtils {
                 if (meleeInfo != null) {
                     base = (float) meleeInfo.getAttackPostureMultiplier();
                     if (attacker != null) {
-                        base *= WeaponStats.getHitInfo(attacker.getMainHandItem(), CombatUtils.getAttackState(attacker)).getPostureScale();
-                        final WeaponInteractions.WeaponInteraction info = WeaponStats.getSweepInfo(attacker.getMainHandItem(), CombatUtils.getAttackState(attacker));
-                        if (info instanceof WeaponInteractions.SweepAttack si)
-                            base *= si.getHitInfo().getPostureScale();
+                        base *= WeaponStats.getHitInfo(attacker.getMainHandItem(), attacker, CombatUtils.getAttackState(attacker)).getPostureScale();
+                        final HitInfo info = WeaponStats.getHitInfo(attacker.getMainHandItem(), attacker, CombatUtils.getAttackState(attacker));
+                        base *= info.getPostureScale();
                     }
                 }
             }
@@ -264,7 +269,7 @@ public class CombatUtils {
                 base = MobSpecs.getOrDefault(attacker).getBaseAttackPosture();
                 if (base == -1)
                     base = CombatData.getCap(attacker).getMaxPosture() * CombatConfig.defaultMultiplierPostureMob;
-            } else return 12;//magic number
+            } else return 4;//magic number
         }
         if (attacker == null || h == null) return (float) base;
         double finalScale = scaler;
@@ -295,75 +300,6 @@ public class CombatUtils {
             return (float) meleeInfo.getDefensePostureMultiplier();
         }
         return (float) WeaponStats.DEFAULTMELEE.getDefensePostureMultiplier();
-    }
-
-    /**
-     * knocks the target back, with regards to the attacker's relative angle to the target, and adding y knockback
-     */
-    public static void knockBack(Entity to,
-                                 Entity from,
-                                 float strength,
-                                 boolean considerRelativeAngle,
-                                 boolean bypassAllChecks) {
-        if (to == null || from == null) return;
-        Vec3 distVec = to.position().add(0, to.getBbHeight() / 2, 0).vectorTo(from.position().add(0, from.getBbHeight() / 2, 0)).multiply(1, 0.5, 1).normalize();
-        if (to instanceof LivingEntity && !bypassAllChecks) {
-            if (considerRelativeAngle)
-                knockBack((LivingEntity) to, strength, distVec.x, distVec.y, distVec.z, false);
-            else
-                knockBack(((LivingEntity) to), (float) strength * 0.5F, (double) Mth.sin(from.getYRot() * 0.017453292F), 0, (double) (-Mth.cos(from.getYRot() * 0.017453292F)), false);
-        } else {
-            //eh
-            if (considerRelativeAngle) {
-                to.lerpMotion(distVec.x * -strength, to.onGround() ? 0.1 : distVec.y * -strength, distVec.z * -strength);
-            } else {
-                to.push(-Mth.sin(-from.getYRot() * 0.017453292F - (float) Math.PI) * 0.5, 0.1, -Mth.cos(-from.getYRot() * 0.017453292F - (float) Math.PI) * 0.5);
-            }
-            to.hurtMarked = true;
-        }
-    }
-
-    /**
-     * knockback in LivingEntity except it makes sense and the resist is factored into the event
-     */
-    public static void knockBack(LivingEntity to,
-                                 float strength,
-                                 double xRatio,
-                                 double yRatio,
-                                 double zRatio,
-                                 boolean bypassEventCheck) {
-        if (!bypassEventCheck) {
-            net.minecraftforge.event.entity.living.LivingKnockBackEvent event = net.minecraftforge.common.ForgeHooks.onLivingKnockBack(to, strength, xRatio, zRatio);
-            if (event.isCanceled()) return;
-            strength = event.getStrength();
-            xRatio = event.getRatioX();
-            zRatio = event.getRatioZ();
-        }
-        strength *= (float) Math.max(0, 1 - GeneralUtils.getAttributeValueSafe(to, Attributes.KNOCKBACK_RESISTANCE));
-        if (strength != 0f) {
-            Vec3 vec = to.getDeltaMovement();
-            double motionX = vec.x, motionY = vec.y, motionZ = vec.z;
-            to.hasImpulse = true;
-            double pythagora = Math.sqrt(xRatio * xRatio + zRatio * zRatio);
-            if (to.onGround()) {
-                motionY /= 2.0D;
-                motionY += Math.abs(strength);
-
-                if (motionY > 0.4000000059604645D) {
-                    motionY = 0.4000000059604645D;
-                }
-            } else if (yRatio != 0) {
-                pythagora = Math.sqrt(xRatio * xRatio + zRatio * zRatio + yRatio * yRatio);
-                motionY /= 2.0D;
-                motionY -= yRatio / (double) pythagora * (double) strength;
-            }
-            motionX /= 2.0D;
-            motionZ /= 2.0D;
-            motionX -= xRatio / (double) pythagora * (double) strength;
-            motionZ -= zRatio / (double) pythagora * (double) strength;
-            to.setDeltaMovement(motionX, motionY, motionZ);
-            to.hurtMarked = true;
-        }
     }
 
     public static void setHandCooldown(LivingEntity e, InteractionHand h, float percent, boolean sync) {
@@ -435,33 +371,56 @@ public class CombatUtils {
         }));
     }
 
-    public static void sweep(LivingEntity e, Entity ignore, InteractionHand h, double reach) {
+    public static void processWeaponInteraction(LivingEntity e, Entity ignore, InteractionHand h, double reach) {
         ItemStack stack = e.getItemInHand(h);
         WeaponStats.AttackType s = getAttackState(e);
-        WeaponInteractions.WeaponInteraction info = WeaponStats.getSweepInfo(stack, s);
-        if (info instanceof WeaponInteractions.SweepAttack sweep) {
+        WeaponInteractions.WeaponInteraction info = WeaponStats.getSweepInfo(stack, e, s);
+        MovementUtils.applyVelocity(info.getVelocity(), e, info.isSetVelocity());
+        info.on_swing().runEffects(e, e);
+        if (info instanceof SweepAttack sweep) {
             //apply instantaneous damage multiplier
             SkillUtils.modifyAttribute(e, Attributes.ATTACK_DAMAGE, main, sweep.getHitInfo().getDamageScale() - 1, AttributeModifier.Operation.MULTIPLY_TOTAL);
-            sweep(e, ignore, h, sweep.getType(), reach, sweep.getBase(), sweep.getScaling());
+            enhancedSweep(e, ignore, h, sweep.getType(), reach, sweep.getBase(), sweep.getScaling());
             SkillUtils.removeAttribute(e, Attributes.ATTACK_DAMAGE, main);
         }
-        if (info instanceof WeaponInteractions.Use use) {
-            //todo use speed/timer
+        if (info instanceof Use use) {
             //stack.releaseUsing(e.level(), e, use.getStartTime());
             if (e instanceof Player p) {
+                ChargingData.getCap(p).alterSpeed(stack, use.getUseSpeed());
                 stack.use(e.level(), p, h);
                 p.startUsingItem(h);
+                //as long as the item timer is on,
             }
+        }
+        if (info instanceof Animation anim) {
+            for (MotionManager mm : anim.getActions())
+                FlyingWeaponData.getCap(e).scheduleAction(h, mm);
+        }
+        if (info instanceof Throw t) {
+            final IFlyingWeapon cap = FlyingWeaponData.getCap(e);
+            if (temp_dest == null) temp_dest = e.getEyePosition().add(e.getLookAngle().scale(32));
+            ThrownWeaponEntity fwe = cap.yeet(h, temp_dest, t.getThrowSpeed());
+            t.transformThrown(fwe);
+            if (t.consume() && e instanceof Player player && !player.getAbilities().instabuild) {
+                final ItemStack held = player.getItemInHand(h);
+                held.shrink(1);
+                player.getInventory().setChanged();
+                if (held.getCount() == 0) {
+                    player.setItemInHand(h, ItemStack.EMPTY);
+                }
+            }
+            cap.forceRefreshWeapons();
+            temp_dest = null;
         }
     }
 
-    public static void sweep(LivingEntity e,
-                             Entity ignore,
-                             InteractionHand h,
-                             WeaponInteractions.SweepAttack.SWEEPTYPE type,
-                             double reach,
-                             double base,
-                             double scaling) {
+    public static void enhancedSweep(LivingEntity e,
+                                     Entity ignore,
+                                     InteractionHand h,
+                                     SweepAttack.SWEEPTYPE type,
+                                     double reach,
+                                     double base,
+                                     double scaling) {
 
 
         //no go cases
@@ -475,7 +434,7 @@ public class CombatUtils {
         }
 
 
-        if (!PermissionData.getCap(e).canSweep()) type = WeaponInteractions.SweepAttack.SWEEPTYPE.NONE;
+        if (!PermissionData.getCap(e).canSweep()) type = SweepAttack.SWEEPTYPE.NONE;
         double radius;
 
         SweepEvent sre = new SweepEvent(e, h, e.getMainHandItem(), type, base, scaling);
@@ -489,7 +448,11 @@ public class CombatUtils {
 
         //purely visual attack
         int time = CombatUtils.getCooldownPeriod(e, h);
-        int animTime = type == WeaponInteractions.SweepAttack.SWEEPTYPE.CIRCLE ? 10 : 5;
+        int animTime = type == SweepAttack.SWEEPTYPE.CIRCLE ? 10 : 5;
+        if (type == SweepAttack.SWEEPTYPE.CIRCLE) {
+            animTime = 10;//smoother
+            reach = radius;
+        }
         List<FlyingWeaponEffect> fx = new ArrayList<>();
         fx.add(FlyingWeaponEffect.WEAPON);
         if (StylishData.getCap(e).getFreshness(StylishCapability.getNormalAttackString(e)) > 0) {
@@ -498,10 +461,10 @@ public class CombatUtils {
         if (TimeSlowData.getCap(e).getEffectiveSpeed() < 1) {
             fx.add(FlyingWeaponEffect.AFTERIMAGE);
         }
-        FlyingWeaponData.getCap(e).scheduleAction(h, TemporaryMoveTranslator.temp_getMMFromType(animTime, type, radius), null, reach, time, fx.toArray(new FlyingWeaponEffect[fx.size()]));
+        FlyingWeaponData.getCap(e).scheduleAction(h, TemporaryMoveTranslator.temp_getMMFromType(animTime, type, radius, null, reach), fx.toArray(new FlyingWeaponEffect[fx.size()]));
 
 
-        if (sre.isCanceled() || type == WeaponInteractions.SweepAttack.SWEEPTYPE.NONE || radius == 0) {
+        if (sre.isCanceled() || type == SweepAttack.SWEEPTYPE.NONE || radius == 0) {
             //no go, swap items back and stop
             if (h == InteractionHand.OFF_HAND) {
                 swapHeldItems(e);
@@ -647,18 +610,18 @@ public class CombatUtils {
             float strength = attacker instanceof Player ? 0.3f : 0.5f;
             //prioritize mobs for knockback
             if (le instanceof Player) {
-                knockBack(defender, le, strength, true, false);
+                MobilityUtils.knockBack(defender, le, strength, true, false);
                 EffectUtils.attemptAddPot(defender, EffectUtils.stackPot(defender, new MobEffectInstance(FootworkEffects.COUNTERSTRIKE.get(), 100, 0), EffectUtils.StackingMethod.MAXDURATION), true);
             } else {
-                ((ShieldBlockAccessor) (defender)).callBlockUsingShield(le);
-                knockBack(le, defender, strength, true, false);
+                ((LivingEntityAccessors) (defender)).callBlockUsingShield(le);
+                MobilityUtils.knockBack(le, defender, strength, true, false);
                 EffectUtils.attemptAddPot(le, EffectUtils.stackPot(le, new MobEffectInstance(FootworkEffects.COUNTERSTRIKE.get(), 100, 0), EffectUtils.StackingMethod.MAXDURATION), true);
             }
         }
 
         //hacky. If you can no longer block it must mean your block has been breached, so knock back. FIXME
         if (!CombatData.getCap(defender).canBlock())
-            knockBack(defender, attacker, 1.2f, false, true);
+            MobilityUtils.knockBack(defender, attacker, 1.2f, false, true);
 
         //item specific effects
         if (defend != null) {
@@ -683,9 +646,9 @@ public class CombatUtils {
         //knockback based on posture consumed
         //defender kb
         final float kb = Mth.sqrt(amount);
-        CombatUtils.knockBack(defender, attacker, (defender instanceof Player ? 0.25f : 0.5f) * kb, true, false);
+        MobilityUtils.knockBack(defender, attacker, (defender instanceof Player ? 0.25f : 0.5f) * kb, true, false);
         //attacker kb
-        CombatUtils.knockBack(attacker, defender, (attacker instanceof Player ? 0.25f : 0.5f) * kb, true, false);
+        MobilityUtils.knockBack(attacker, defender, (attacker instanceof Player ? 0.25f : 0.5f) * kb, true, false);
         defender.level().playSound(null, defender.getX(), defender.getY(), defender.getZ(), SoundEvents.CHAIN_PLACE, SoundSource.PLAYERS, 0.25f + WarDance.rand.nextFloat() * 0.25f, (1 - CombatData.getCap(defender).getPosturePercentage()) + WarDance.rand.nextFloat() * 0.5f);
     }
 
@@ -695,7 +658,7 @@ public class CombatUtils {
         for (Entity t : from.level().getEntities(from, from.getBoundingBox().inflate(32), (a -> !(a instanceof FlyingItemEntity)))) {
             TimeSlowData.getCap(t).alterSpeed(time, 0.1);
             //jostle everything a tiny amount so you know the time slow is happening
-            knockBack(t, from, 0.2f, true, false);
+            MobilityUtils.knockBack(t, from, 0.2f, true, false);
         }
         if (from.level() instanceof ServerLevel s)
             for (int i = 0; i < 32; i++) {
@@ -718,7 +681,6 @@ public class CombatUtils {
         if (attacker instanceof LivingEntity e) {
             CombatData.getCap(e).setHandBind(InteractionHand.MAIN_HAND, remaining);//prevent further attacks
         }
-        cap.setSpirit(cap.getMaxSpirit());
         cap.setDodgeTime(CombatConfig.rollTime);
         cap.setIframe(remaining);
 
@@ -770,7 +732,7 @@ public class CombatUtils {
                     CombatData.getCap(e).recordDamage((float) damage);
                     strength = Math.min(strength, 0.2f + Mth.clamp(amount * 1 - CombatData.getCap(e).getPosturePercentage(), 0, 1));
                 }
-                CombatUtils.knockBack(t, defender, strength, true, false);
+                MobilityUtils.knockBack(t, defender, strength, true, false);
 
             }
         }
@@ -796,7 +758,7 @@ public class CombatUtils {
             if (target.getLastHurtByMob() == null)
                 target.setLastHurtByMob(kicker);
         }
-        CombatUtils.knockBack(targetEntity, kicker, 0.8f, true, false);
+        MobilityUtils.knockBack(targetEntity, kicker, 0.8f, true, false);
     }
 
     public static boolean scheduleFinisher(ServerPlayer sender, InteractionHand h, WeaponStats.AttackType s) {
@@ -807,8 +769,9 @@ public class CombatUtils {
         if (!StylishData.getCap(sender).isCombatMode()) return false;
         if (CombatData.getCap(sender).getHandBind(h) > 0) return false;
         //StylishData.getCap(sender).resetTriggerBar();
-        WeaponInteractions.SweepAttack info = (WeaponInteractions.SweepAttack) WeaponStats.getSweepInfo(sender.getItemInHand(h), s);
-        TemporaryMoveTranslator.scheduleFinisher(sender, h, info);
+        WeaponInteractions.WeaponInteraction info = WeaponStats.getSweepInfo(sender.getItemInHand(h), sender, s);
+        if (info instanceof SweepAttack sa)//todo
+            TemporaryMoveTranslator.scheduleFinisher(sender, h, sa);
         StylishData.getCap(sender).addCombo(0.25f, "heavy" + (h == InteractionHand.OFF_HAND) + s.name());
         return true;
     }

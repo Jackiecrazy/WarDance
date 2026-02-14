@@ -10,8 +10,8 @@ import jackiecrazy.footwork.utils.TargetingUtils;
 import jackiecrazy.wardance.WarDance;
 import jackiecrazy.wardance.config.weapon.WeaponStats;
 import jackiecrazy.wardance.skill.*;
-import jackiecrazy.wardance.utils.CombatUtils;
 import jackiecrazy.wardance.utils.DamageUtils;
+import jackiecrazy.wardance.utils.MobilityUtils;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.effect.MobEffectInstance;
@@ -103,7 +103,7 @@ public class Grapple extends Skill {
                 //SkillUtils.createCloud(caster.level(), caster, target.getX(), target.getY(), target.getZ(), 7 * stats.getEffectiveness(), ParticleTypes.LARGE_SMOKE);
                 for (LivingEntity entity : target.level().getEntitiesOfClass(LivingEntity.class, target.getBoundingBoxForCulling().inflate(7 * stats.getEffectiveness()), a -> !TargetingUtils.isAlly(a, caster))) {
                     entity.addEffect(new MobEffectInstance(FootworkEffects.UNSTEADY.get(), 40));
-                    CombatUtils.knockBack(entity, target, 0.6f, true, false);
+                    MobilityUtils.knockBack(entity, target, 0.6f, true, false);
                     CombatData.getCap(entity).consumePosture(caster, overflow / -2);
                 }
             }

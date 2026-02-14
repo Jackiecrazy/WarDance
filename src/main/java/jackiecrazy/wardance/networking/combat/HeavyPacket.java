@@ -5,6 +5,7 @@ import jackiecrazy.wardance.utils.CombatUtils;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.InteractionHand;
+import net.minecraftforge.common.ForgeMod;
 import net.minecraftforge.network.NetworkEvent;
 
 import java.util.function.BiConsumer;
@@ -75,7 +76,9 @@ public class HeavyPacket {
                 InteractionHand h = updateClientPacket.main ? InteractionHand.MAIN_HAND : InteractionHand.OFF_HAND;
                 if (sender == null) return;
                 CombatUtils.setHandCooldown(sender, h, 2, false);
-                CombatUtils.scheduleFinisher(sender, h, WeaponStats.AttackType.STANDING);
+                CombatUtils.setAttackType(sender, updateClientPacket.state);
+                CombatUtils.processWeaponInteraction(sender, null, h, sender.getAttributeValue(ForgeMod.ENTITY_REACH.get()));
+                //CombatUtils.scheduleFinisher(sender, h, WeaponStats.AttackType.STANDING);
                 CombatUtils.setHandCooldown(sender, h, 0, true);
             });
             contextSupplier.get().setPacketHandled(true);

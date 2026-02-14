@@ -4,16 +4,20 @@ import jackiecrazy.footwork.capability.resources.CombatData;
 import jackiecrazy.footwork.client.particle.FootworkParticles;
 import jackiecrazy.footwork.entity.flyingweapon.FlyingItemEntity;
 import jackiecrazy.footwork.entity.flyingweapon.FlyingWeaponEffect;
+import jackiecrazy.footwork.move.motionframe.FrameEffects;
+import jackiecrazy.footwork.move.motionframe.HitInfo;
 import jackiecrazy.footwork.move.motionframe.MotionManager;
 import jackiecrazy.footwork.utils.GeneralUtils;
+import jackiecrazy.footwork.utils.MovementUtils;
 import jackiecrazy.footwork.utils.ParticleUtils;
 import jackiecrazy.footwork.utils.TargetingUtils;
+import jackiecrazy.wardance.capability.flyingweapon.FlyingWeaponData;
 import jackiecrazy.wardance.config.weapon.WeaponStats;
 import jackiecrazy.wardance.utils.CombatUtils;
-import jackiecrazy.wardance.config.weapon.WeaponInteractions;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
@@ -32,22 +36,22 @@ import java.util.List;
 
 public class FlyingWeaponEntity extends FlyingItemEntity {
     protected final List<Entity> alreadyHit = new ArrayList<>();
-    protected WeaponInteractions.HitInfo cacheInfo;
+    protected HitInfo cacheInfo;
     protected WeaponStats.AttackType state;
+    private boolean fading = false;
 
     public FlyingWeaponEntity(EntityType<? extends FlyingItemEntity> type, Level level) {
         //keep hitframes separate and logged here.
         //keep defense frames here?
         super(type, level);
-        setShouldRender(FlyingWeaponEffect.BIG_SHADOW, false);
+        setEffect(FlyingWeaponEffect.BIG_SHADOW, false);
         setInvulnerable(true);
     }
 
     @Nullable
-    public WeaponInteractions.HitInfo getInfo() {
+    public HitInfo getInfo() {
         return cacheInfo;
     }
-
 
     @Override
     public boolean shouldRenderAtSqrDistance(double d) {
@@ -68,18 +72,22 @@ public class FlyingWeaponEntity extends FlyingItemEntity {
         return 0;
     }
 
+    public void invalidateWhenDone() {
+        fading = true;
+    }
+
     @Override
     protected void readAdditionalSaveData(CompoundTag tag) {
         super.readAdditionalSaveData(tag);
+        fading = tag.getBoolean("fading");
         //tag.putDouble("xROT", this.getXRot());
     }
 
     @Override
     protected void addAdditionalSaveData(CompoundTag tag) {
         super.addAdditionalSaveData(tag);
-//        if(isReal()){
+        tag.putBoolean("fading", fading);
 //            todo fix orientation
-//        }
     }
 
     @Override
@@ -87,15 +95,16 @@ public class FlyingWeaponEntity extends FlyingItemEntity {
         super.tick();
         if (!level().isClientSide && isAlive()) {
             if (isIdle()) {//tied to the owner
-                if (getOwner() == null) remove(RemovalReason.UNLOADED_WITH_PLAYER);
-//                boolean valid = false;
+                if (getOwner() == null || fading) remove(RemovalReason.UNLOADED_WITH_PLAYER);
+//                if(this.getClass()== FlyingWeaponEntity.class) {
+//                    boolean valid = false;
 //
-//                //todo this check makes grabbing blocks out of the environment not work
-//                for (InteractionHand h : InteractionHand.values())
-//                    if (FlyingWeaponData.getCap(getOwner()).getWeapon(h) == this) valid = true;
-//
-//                if (tickCount>100)//reasonably sure the player doesn't need it anymore
-//                    remove(RemovalReason.DISCARDED);
+//                    //todo this check makes grabbing blocks out of the environment not work
+//                    for (InteractionHand h : InteractionHand.values())
+//                        if (FlyingWeaponData.getCap(getOwner()).getWeapon(h) == this) valid = true;
+//                    if(!valid)
+//                        remove(RemovalReason.UNLOADED_WITH_PLAYER);
+//                }
             } else {
 
             }
@@ -145,11 +154,12 @@ public class FlyingWeaponEntity extends FlyingItemEntity {
                     }
                 }
                 if (!alreadyHit.isEmpty()) CombatData.getCap(e).tickProc("oncePerSweep");
-                CombatData.getCap(e).tickProc("noFinisherCharge");
+                CombatData.getCap(e).tickProc("qiSpent");
                 target.invulnerableTime = 0;
                 GeneralUtils.attack(e, target);
                 ret = true;
                 alreadyHit.add(target);
+                extraOnHit(e, target);
             }
         } catch (Exception ex) {
             ex.printStackTrace();
@@ -159,6 +169,9 @@ public class FlyingWeaponEntity extends FlyingItemEntity {
             WeaponStats.info_override = null;
         }
         return ret;
+    }
+
+    protected void extraOnHit(LivingEntity e, Entity target) {
     }
 
     @Override
@@ -184,20 +197,20 @@ public class FlyingWeaponEntity extends FlyingItemEntity {
         }// else super.handleBlockCollisions();
     }
 
-    public void yeet(Vec3 to) {
+    public void yeet(Vec3 to, double strength) {
         setHeldItem(getHeldItem().copyWithCount(1));
         getEntityData().set(CURRENT_STATE, STATE.THROW_NATURAL);
-        setShouldRender(FlyingWeaponEffect.WEAPON);
+        //setEffect(FlyingWeaponEffect.WEAPON);
         entityData.set(IDLE_TICK, 0);
-        setDeltaMovement(to.subtract(position()).normalize().scale(2));
+        setDeltaMovement(to.subtract(position()).normalize().scale(strength));
         //setTetheringEntity(getOwner());
         setIntangible(false);
-        setInteractionRange(0.5f);
+        setInteractionRange(1f);
 
-        if (CombatData.getCap(getOwner()).consumeSpirit(CombatData.getCap(getOwner()).getMaxSpirit()))
-            cacheInfo = WeaponInteractions.HitInfo.BREACH;
-        else cacheInfo = WeaponInteractions.HitInfo.THROWN;
-        //setDeltaMovement(new Vec3(0,1,0));
+//        if (CombatData.getCap(getOwner()).consumeSpirit(CombatData.getCap(getOwner()).getMaxSpirit()))
+//            cacheInfo = HitInfo.BREACH;
+//        else cacheInfo = HitInfo.THROWN;
+        //todo remove
     }
 
     @Override
@@ -213,7 +226,20 @@ public class FlyingWeaponEntity extends FlyingItemEntity {
     @Override
     protected void returnToIdle(int ticks) {
         super.returnToIdle(ticks);
-        setIntangible(true);
+        setIntangible(true);//do I need this?
+    }
+
+    @Override
+    protected void updateFrameEffects(FrameEffects effects) {
+        currentEffects = effects;
+        if (effects != null) {
+            setIntangible(false);
+            if (effects.getRange() >= 0) setInteractionRange((float) effects.getRange());
+            if (effects.getEffects() != null) setEffect(effects.getEffects().toArray(new FlyingWeaponEffect[0]));
+            cacheInfo = effects.getHit();
+            LivingEntity e = getOwner();
+            MovementUtils.applyVelocity(effects.getVelocity(), e, effects.isSetVelocity());
+        }
     }
 
     @Override
@@ -224,13 +250,14 @@ public class FlyingWeaponEntity extends FlyingItemEntity {
             alreadyHit.clear();
         }
         MotionManager motion = moveQueue.peek();
-        if (motion instanceof WeaponMotionManager wmm) {
-            setInteractionRange((float) wmm.range());
-            setIntangible(false);
-            cacheInfo = wmm.info();
-        } else {
+//        if (motion instanceof WeaponMotionManager wmm) {
+//            setInteractionRange((float) wmm.range());
+//            setIntangible(false);
+//            cacheInfo = wmm.info();
+//        } else
+        if (moveQueue.isEmpty()) {
             //return on a transition frame
-            setShouldRender(FlyingWeaponEffect.WEAPON);
+            setEffect(FlyingWeaponEffect.WEAPON);
             setIntangible(true);
         }
 

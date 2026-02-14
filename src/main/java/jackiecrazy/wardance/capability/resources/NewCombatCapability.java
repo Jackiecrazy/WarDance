@@ -18,6 +18,7 @@ import jackiecrazy.wardance.handlers.TwoHandingHandler;
 import jackiecrazy.wardance.networking.CombatChannel;
 import jackiecrazy.wardance.networking.combat.UpdateClientResourcePacket;
 import jackiecrazy.wardance.utils.CombatUtils;
+import jackiecrazy.wardance.utils.MobilityUtils;
 import jackiecrazy.wardance.utils.ReworkConstants;
 import jackiecrazy.wardance.utils.SkillUtils;
 import net.minecraft.nbt.CompoundTag;
@@ -133,15 +134,16 @@ public class NewCombatCapability implements ICombatCapability {
         }
         spiritCD = maxSpiritCD;
         if (cse.getResult() == Event.Result.DEFAULT && lacking) return amount - spirit;
+        final float finalized = spirit - amount;
         if (cse.getResult() == Event.Result.DENY) {
-            setSpirit(spirit - amount);
+            setSpirit(finalized);
             return 5;
         } else if (cse.getResult() == Event.Result.ALLOW) {
-            setSpirit(spirit - amount);
+            setSpirit(finalized);
             return 0;
         }
         if (!lacking) {
-            setSpirit(spirit - amount);
+            setSpirit(finalized);
             return 0;
         }
         return amount - spirit;
@@ -283,7 +285,7 @@ public class NewCombatCapability implements ICombatCapability {
             } else {
                 if (player) {
                     //cancels blocking and returns successful on that specific hit
-                    CombatUtils.knockBack(elb, assailant, 0.7f, true, true);
+                    MobilityUtils.knockBack(elb, assailant, 0.7f, true, true);
                     return 0;
                 } else {
                     //stun sets the posture to max so you can deplete it again
@@ -487,7 +489,7 @@ public class NewCombatCapability implements ICombatCapability {
                     setIframe(40);
                     for (Entity t : defender.level().getEntities(defender, defender.getBoundingBox().inflate(5), (a -> !TargetingUtils.isAlly(a, defender)))) {
                         float strength = 0.7f;
-                        CombatUtils.knockBack(t, defender, strength, true, false);
+                        MobilityUtils.knockBack(t, defender, strength, true, false);
 
                     }
                 }
@@ -678,12 +680,7 @@ public class NewCombatCapability implements ICombatCapability {
         final LivingEntity e = dude.get();
         if (e == null) return false;
         //need to have at least one valid hand
-        float main = CombatUtils.getCooledAttackStrength(e, InteractionHand.MAIN_HAND, 0.5f);
-        float off = CombatUtils.getCooledAttackStrength(e, InteractionHand.OFF_HAND, 0.5f);
-        final boolean mains = e.getMainHandItem().isEmpty() || WeaponStats.isCombatItem(e, InteractionHand.MAIN_HAND);
-        final boolean offs = e.getOffhandItem().isEmpty() || WeaponStats.isCombatItem(e, InteractionHand.OFF_HAND);
-        if ((!mains || main < 0.9)
-                && (!offs || off < 0.9)) return false;
+        if (getHandBind(InteractionHand.MAIN_HAND) > 0 && getHandBind(InteractionHand.OFF_HAND) > 0) return false;
         return guardFrame > 0 && posture > 0 && !alreadyProc("cannot_block");
     }
 

@@ -18,7 +18,7 @@ public class WarEntities {
             .build("grapple"));
     public static final RegistryObject<EntityType<ThrownWeaponEntity>> THROWN_WEAPON = ENTITIES.register("thrown_weapon", () -> EntityType.Builder
             .of(ThrownWeaponEntity::new, MobCategory.MISC)
-            .sized(1F, 1F)
+            .sized(0.4F, 0.4F)
             .build("thrown_weapon"));
     public static final RegistryObject<EntityType<ThrownWeaponEntity>> FLYING_BLOCK = ENTITIES.register("flying_block", () -> EntityType.Builder
             .of(ThrownWeaponEntity::new, MobCategory.MISC)

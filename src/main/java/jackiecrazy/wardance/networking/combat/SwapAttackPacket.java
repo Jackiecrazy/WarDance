@@ -4,13 +4,13 @@ import jackiecrazy.footwork.capability.stylish.StylishData;
 import jackiecrazy.footwork.utils.GeneralUtils;
 import jackiecrazy.wardance.capability.flyingweapon.FlyingWeaponData;
 import jackiecrazy.wardance.config.GeneralConfig;
+import jackiecrazy.wardance.config.weapon.WeaponStats;
 import jackiecrazy.wardance.networking.CombatChannel;
 import jackiecrazy.wardance.networking.sync.SyncQuiverPacket;
 import jackiecrazy.wardance.utils.CombatUtils;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.InteractionHand;
-import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.common.ForgeMod;
 import net.minecraftforge.network.NetworkEvent;
@@ -56,17 +56,16 @@ public class SwapAttackPacket {
                 if (p == null) return;
                 float cool = CombatUtils.getCooledAttackStrength(p, h, 1f);
                 if ((GeneralConfig.dual || packet.main) && cool >= 0.9f) {
-                    if (!p.hasEffect(MobEffects.BLINDNESS)) {
-                        //stuff the old one somewhere
-                        final ItemStack unsheath = p.getEnderChestInventory().removeItem(packet.nextSlot, 999);
-                        if(p.getEnderChestInventory().addItem(p.getItemInHand(h)).isEmpty()){
-                            StylishData.getCap(p).addCombo(0.1f, "swap");
-                            p.setItemInHand(h, unsheath);
-                            FlyingWeaponData.getCap(p).forceRefreshWeapons();
-                            CombatUtils.sweep(p, null, h, GeneralUtils.getAttributeValueSafe(p, ForgeMod.ENTITY_REACH.get()));
-                        }else p.getEnderChestInventory().addItem(unsheath);
-                        CombatChannel.INSTANCE.send(PacketDistributor.PLAYER.with(() -> p), new SyncQuiverPacket(p));
-                    }
+                    //stuff the old one somewhere
+                    final ItemStack nextItem = p.getEnderChestInventory().removeItem(packet.nextSlot, 999);
+                    if (p.getEnderChestInventory().addItem(p.getItemInHand(h)).isEmpty()) {
+                        StylishData.getCap(p).addCombo(0.1f, "swap");
+                        p.setItemInHand(h, nextItem);
+                        FlyingWeaponData.getCap(p).forceRefreshWeapons();
+                        CombatUtils.setAttackType(p, WeaponStats.AttackType.DRAW_ATTACK);
+                        CombatUtils.processWeaponInteraction(p, null, h, GeneralUtils.getAttributeValueSafe(p, ForgeMod.ENTITY_REACH.get()));
+                    } else p.getEnderChestInventory().addItem(nextItem);
+                    CombatChannel.INSTANCE.send(PacketDistributor.PLAYER.with(() -> p), new SyncQuiverPacket(p));
                 }
                 CombatUtils.setHandCooldown(p, h, 0, true);
             });

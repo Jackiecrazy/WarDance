@@ -13,7 +13,7 @@
     "MixinSweepDurabilitySuppressor",
     "ProjectileImpactMixin",
     "ServerPlayerNoShakeMixin",
-    "ShieldBlockAccessor",
+    "LivingEntityAccessors",
     "ShieldDisableOverwrite",
     "SifuDropsMixin"
   ],

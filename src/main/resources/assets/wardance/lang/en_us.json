@@ -139,6 +139,11 @@
   "wardance.tooltip.ignoreShield": "Pierces shield parries",
   "wardance.tooltip.shield": "Shield: parries projectiles",
 
+  "wardance.tooltip.attacks.animation": "Hit sequence",
+  "wardance.tooltip.attacks.use": "Use the weapon",
+  "wardance.tooltip.attacks.throw": "Throw the weapon",
+  "wardance.tooltip.attacks.sweep": "Sweep attack",
+
   "wardance.tooltip.resetStyle1": "Cannot equip this skill!",
   "wardance.tooltip.resetStyle2": "Left click to show info. To reset your style, deselect current skill entry by clicking it again.",
   "wardance.tooltip.resetStyle3": "Left click to show info. Right click to reset. Beware, this will also clear your skill selections!",

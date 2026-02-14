@@ -11,6 +11,7 @@ import jackiecrazy.wardance.event.MeleePostureEvent;
 import jackiecrazy.wardance.skill.*;
 import jackiecrazy.wardance.utils.CombatUtils;
 import jackiecrazy.wardance.utils.DamageUtils;
+import jackiecrazy.wardance.utils.MobilityUtils;
 import jackiecrazy.wardance.utils.SkillUtils;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
@@ -95,7 +96,7 @@ public class ShieldBash extends Skill {
 
         protected float performEffect(LivingEntity caster, LivingEntity target, float atk) {
             target.addEffect(new MobEffectInstance(MobEffects.CONFUSION, 100));
-            CombatUtils.knockBack(target, caster, (float) atk, true, false);
+            MobilityUtils.knockBack(target, caster, (float) atk, true, false);
             return 4;
         }
     }

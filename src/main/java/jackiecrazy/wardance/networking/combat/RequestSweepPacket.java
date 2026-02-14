@@ -6,7 +6,6 @@ import jackiecrazy.wardance.utils.CombatUtils;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.InteractionHand;
-import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.Entity;
 import net.minecraftforge.common.ForgeMod;
 import net.minecraftforge.network.NetworkEvent;
@@ -57,10 +56,8 @@ public class RequestSweepPacket {
                 if (sender == null) return;
                 float cool = CombatUtils.getCooledAttackStrength(sender, h, 1f);
                 if ((GeneralConfig.dual || updateClientPacket.main) && cool >= 0.9f) {
-                    if (!sender.hasEffect(MobEffects.BLINDNESS)) {
                         CombatUtils.updateNormalAttackStatus(sender);
-                        CombatUtils.sweep(sender, sender.level().getEntity(updateClientPacket.id), h, GeneralUtils.getAttributeValueSafe(sender, ForgeMod.ENTITY_REACH.get()));
-                    }
+                        CombatUtils.processWeaponInteraction(sender, sender.level().getEntity(updateClientPacket.id), h, GeneralUtils.getAttributeValueSafe(sender, ForgeMod.ENTITY_REACH.get()));
                 }
                 CombatUtils.setHandCooldown(sender, h, 0, true);
             });

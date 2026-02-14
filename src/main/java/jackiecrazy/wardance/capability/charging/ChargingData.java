@@ -1,4 +1,4 @@
-package jackiecrazy.wardance.capability.aerial;
+package jackiecrazy.wardance.capability.charging;
 
 import net.minecraft.core.Direction;
 import net.minecraft.nbt.CompoundTag;
@@ -13,25 +13,22 @@ import net.minecraftforge.common.util.LazyOptional;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
-public class AerialModeData implements ICapabilitySerializable<Tag> {
-    public AerialModeData(Entity bound) {
-        this.instance = new AerialCapability(bound);
+public class ChargingData implements ICapabilitySerializable<Tag> {
+
+    public ChargingData() {
     }
 
-    public AerialModeData() {
-    }
+    private static IChargingSpeed OHNO = new ChargingCapability();
 
-    private static IAerialMode OHNO = new AerialCapability();
-
-    public static Capability<IAerialMode> CAP = CapabilityManager.get(new CapabilityToken<>() {
+    public static Capability<IChargingSpeed> CAP = CapabilityManager.get(new CapabilityToken<>() {
     });
 
-    public static IAerialMode getCap(Entity le) {
+    public static IChargingSpeed getCap(Entity le) {
         return le.getCapability(CAP).orElse(OHNO);//.orElseThrow(() -> new IllegalArgumentException("attempted to find a nonexistent capability"));
     }
 
 
-    private IAerialMode instance = new AerialCapability();
+    private IChargingSpeed instance = new ChargingCapability();
 
     @Nonnull
     @Override

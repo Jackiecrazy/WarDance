@@ -11,6 +11,7 @@ import jackiecrazy.wardance.entity.GhostBlockEntity;
 import jackiecrazy.wardance.entity.WarEntities;
 import jackiecrazy.wardance.networking.CombatChannel;
 import jackiecrazy.wardance.networking.sync.SyncQuiverPacket;
+import jackiecrazy.wardance.utils.CombatUtils;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.InteractionHand;
@@ -18,6 +19,7 @@ import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.Vec3;
+import net.minecraftforge.common.ForgeMod;
 import net.minecraftforge.network.NetworkEvent;
 import net.minecraftforge.network.PacketDistributor;
 
@@ -66,18 +68,10 @@ public class ThrowPacket {
                 final ItemStack held = player.getItemInHand(h);
                 if (!held.isEmpty()) {
                     final IFlyingWeapon cap = FlyingWeaponData.getCap(player);
-                    if (cap.yeet(h, packet.destination) && !player.getAbilities().instabuild) {
-                        held.shrink(1);
-                        player.getInventory().setChanged();
-                        if (held.getCount() == 0) {
-                            ItemStack replace = ItemStack.EMPTY;
-                            if (packet.next >= 0) {
-                                replace = player.getEnderChestInventory().removeItem(packet.next, 999);
-                            }
-                            player.setItemInHand(h, replace);
-                            CombatChannel.INSTANCE.send(PacketDistributor.PLAYER.with(() -> player), new SyncQuiverPacket(player));
-                        }
-                    }
+                    CombatUtils.temp_dest = packet.destination;
+                    CombatUtils.setAttackType(player, WeaponStats.AttackType.THROW);
+                    CombatUtils.processWeaponInteraction(player, null, h, player.getAttributeValue(ForgeMod.ENTITY_REACH.get()));
+                    swapFromEnderChest(packet.next, player, h);
                     cap.forceRefreshWeapons();
                 } else if (!WeaponStats.DESPERATION.isEmpty() && CombatData.getCap(player).consumeSpirit(6)) {
                     //desperation throw
@@ -90,7 +84,7 @@ public class ThrowPacket {
                     fwe.setPosRaw(player.getX(), player.getEyeY(), player.getZ());
                     fwe.setInteractionRange(1);
                     fwe.setState(FlyingItemEntity.STATE.THROW_NATURAL);
-                    fwe.yeet(packet.destination);
+                    fwe.yeet(packet.destination, 2);
                     level.addFreshEntity(fwe);
                     if (packet.next >= 0) {
                         player.setItemInHand(h, player.getEnderChestInventory().removeItem(packet.next, 999));
@@ -99,6 +93,18 @@ public class ThrowPacket {
                 }
             });
             contextSupplier.get().setPacketHandled(true);
+        }
+
+        private static void swapFromEnderChest(int packet, ServerPlayer player, InteractionHand h) {
+            ItemStack held = player.getItemInHand(h);
+            if (held.getCount() == 0 || held.isEmpty()) {
+                ItemStack replace = ItemStack.EMPTY;
+                if (packet >= 0) {
+                    replace = player.getEnderChestInventory().removeItem(packet, 999);
+                }
+                player.setItemInHand(h, replace);
+                CombatChannel.INSTANCE.send(PacketDistributor.PLAYER.with(() -> player), new SyncQuiverPacket(player));
+            }
         }
     }
 }

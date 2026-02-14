@@ -69,7 +69,8 @@ public abstract class MixinLivingEntity extends Entity {
     @Inject(method = "hurt", at = @At(value = "RETURN"), cancellable = false)
     private void combatModeOverride(DamageSource ds, float amnt, CallbackInfoReturnable<Boolean> cir) {
         //cancel damage shake by inputting invalid values and relying on moar mixins
-        if ((ds.getEntity() == null && !ds.is(DamageTypeTags.IS_EXPLOSION) && !ds.is(DamageTypeTags.IS_FALL) && cir.getReturnValue())) {
+        LivingEntity le = (LivingEntity) (Object) this;
+        if (CombatData.getCap(le).alreadyProc("cancelShake") || (ds.getEntity() == null && !ds.is(DamageTypeTags.IS_EXPLOSION) && !ds.is(DamageTypeTags.IS_FALL) && cir.getReturnValue())) {
             indicateDamage(-99999, -99999);
         }
     }

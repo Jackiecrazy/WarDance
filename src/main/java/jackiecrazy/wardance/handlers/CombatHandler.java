@@ -8,6 +8,7 @@ import jackiecrazy.footwork.capability.timeslow.TimeSlowData;
 import jackiecrazy.footwork.capability.weaponry.CombatManipulator;
 import jackiecrazy.footwork.event.DamageKnockbackEvent;
 import jackiecrazy.footwork.event.MeleeKnockbackEvent;
+import jackiecrazy.footwork.move.motionframe.HitInfo;
 import jackiecrazy.footwork.utils.GeneralUtils;
 import jackiecrazy.footwork.utils.StealthUtils;
 import jackiecrazy.wardance.WarDance;
@@ -20,8 +21,7 @@ import jackiecrazy.wardance.event.ProjectileDefendEvent;
 import jackiecrazy.wardance.mixin.ProjectileImpactMixin;
 import jackiecrazy.wardance.utils.CombatUtils;
 import jackiecrazy.wardance.utils.DamageUtils;
-import jackiecrazy.wardance.utils.ReworkConstants;
-import jackiecrazy.wardance.config.weapon.WeaponInteractions;
+import jackiecrazy.wardance.utils.MobilityUtils;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.tags.DamageTypeTags;
@@ -223,7 +223,7 @@ public class CombatHandler {
                 ((Projectile) projectile).shoot(pe.getReturnVec().x, pe.getReturnVec().y, pe.getReturnVec().z, (float) power, 0);
             }
         } else projectile.remove(Entity.RemovalReason.KILLED);
-        CombatUtils.knockBack(uke, projectile, 0.01f, true, false);
+        MobilityUtils.knockBack(uke, projectile, 0.01f, true, false);
     }
 
     @SubscribeEvent(priority = EventPriority.HIGHEST)
@@ -303,9 +303,9 @@ public class CombatHandler {
 
                     //handle capability and any on-hit effects, todo revamp to action based system
                     seme.getMainHandItem().getCapability(CombatManipulator.CAP).ifPresent((i) -> i.attackStart(e.getSource(), seme, uke, seme.getMainHandItem(), e.getAmount()));
-                    final WeaponInteractions.HitInfo sweepInfo = WeaponStats.getHitInfo(seme.getMainHandItem(), CombatUtils.getAttackState(seme));
-                    sweepInfo.performCommand(seme, true, false);
-                    sweepInfo.performCommand(uke, false, false);
+                    final HitInfo sweepInfo = WeaponStats.getHitInfo(seme.getMainHandItem(), seme, CombatUtils.getAttackState(seme));
+                    sweepInfo.runEffects(seme,seme, true, false);
+                    sweepInfo.runEffects(seme,uke, false, false);
                     if (e.getSource() instanceof CombatDamageSource cds && WeaponStats.lookupStats(seme.getMainHandItem()) != null) {
                         cds.setKnockbackPercentage((float) sweepInfo.getKnockback());
                         cds.setCrit(sweepInfo.isCrit());
@@ -334,7 +334,7 @@ public class CombatHandler {
                     //add stats if it's the first attack this tick and cooldown is sufficient
                     if (!semeCap.alreadyProc("qiSpent")) {//first hit of a sweep attack this tick, add combo based on state
                         //semeCap.addRank(0.1f);
-                        double percRed = semeCap.addSpirit(atkMult / ReworkConstants.POSTURE_QI) / atkMult;
+                        double percRed = semeCap.addSpirit(atkMult) / atkMult;
                         semeCap.tickProc("darktide", percRed);
                         StylishData.getCap(seme).processAttack(true);
                         StylishData.getCap(seme).addCombo(0.05f, StylishCapability.getNormalAttackString(seme) + seme.getMainHandItem().getItem().toString());
@@ -532,7 +532,7 @@ public class CombatHandler {
                 e.setDamageModifier(seme.getMainHandItem().getCapability(CombatManipulator.CAP).resolve().get().critDamage(seme, uke, seme.getMainHandItem()));
             }
             if (WeaponStats.isWeapon(seme, seme.getMainHandItem())) {
-                final WeaponInteractions.HitInfo info = WeaponStats.getHitInfo(seme.getMainHandItem(), CombatUtils.getAttackState(seme));
+                final HitInfo info = WeaponStats.getHitInfo(seme.getMainHandItem(), seme, CombatUtils.getAttackState(seme));
                 e.setResult(info.isCrit() ? Event.Result.ALLOW : Event.Result.DENY);
                 e.setDamageModifier((float) info.getCritDamage());
             }
@@ -563,7 +563,7 @@ public class CombatHandler {
             //not handled by LivingEntity, so we have to do it ourselves
             LivingEntity to = e.getEntity();
             Vec3 distVec = to.position().add(0, to.getBbHeight() / 2, 0).vectorTo(from.position().add(0, from.getBbHeight() / 2, 0)).multiply(1, 0.5, 1).normalize();
-            CombatUtils.knockBack(e.getEntity(), (float) e.getStrength(), distVec.x, distVec.y, distVec.z, true);
+            MobilityUtils.knockBack(e.getEntity(), (float) e.getStrength(), distVec.x, distVec.y, distVec.z, true);
         }
     }
 
@@ -644,9 +644,9 @@ public class CombatHandler {
 
         //weapon on hit effects
         if (ds.getEntity() instanceof LivingEntity trueSource) {
-            final WeaponInteractions.HitInfo sweepInfo = WeaponStats.getHitInfo(trueSource.getMainHandItem(), CombatUtils.getAttackState(trueSource));
-            sweepInfo.performCommand(trueSource, true, true);
-            sweepInfo.performCommand(uke, false, true);
+            final HitInfo sweepInfo = WeaponStats.getHitInfo(trueSource.getMainHandItem(), trueSource, CombatUtils.getAttackState(trueSource));
+            sweepInfo.runEffects(trueSource,trueSource, true, true);
+            sweepInfo.runEffects(trueSource,uke, false, true);
             double luckDiff = WarDance.rand.nextFloat() * (GeneralUtils.getAttributeValueSafe(trueSource, Attributes.LUCK)) - WarDance.rand.nextFloat() * (GeneralUtils.getAttributeValueSafe(uke, Attributes.LUCK));
             e.setAmount(e.getAmount() + (float) luckDiff * GeneralConfig.luck);
 
@@ -682,7 +682,7 @@ public class CombatHandler {
             e.setAmount(e.getAmount() + cap.getRecordedDamage());
             cap.stopRecording(null);
         } else if (!creative && !cap.isStunned() && !cap.alreadyProc("knockdown")) {
-            cap.tickProc("noShake");
+            cap.tickProc("cancelShake");
             //yeah this is basically darktide with discrimination
 
             // environmental: only deal damage at 0 qi
@@ -785,7 +785,7 @@ public class CombatHandler {
         if (cap.isStunned() && cap.getRecordedDamage() > 0) {
             e.setAmount(e.getAmount() + cap.getRecordedDamage());
             //cap.stopRecording(null);
-            CombatUtils.knockBack(e.getEntity(), e.getSource().getEntity(), 0.7f, true, true);
+            MobilityUtils.knockBack(e.getEntity(), e.getSource().getEntity(), 0.7f, true, true);
         } else if (!cap.isStunned()) {
             if (cap.alreadyProc("deathDenied")) {
                 e.setAmount(Math.min(e.getAmount(), e.getEntity().getHealth() - 1));
@@ -793,7 +793,7 @@ public class CombatHandler {
         }
     }
 
-    @SubscribeEvent(priority = EventPriority.LOWEST, receiveCanceled = false)
+    @SubscribeEvent(priority = EventPriority.HIGHEST)
     public static void killingBlow(LivingDeathEvent e) {
         LivingEntity elb = e.getEntity();
         //you cannot die unless you are knocked down

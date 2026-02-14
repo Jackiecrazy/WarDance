@@ -8,6 +8,7 @@ import jackiecrazy.footwork.capability.timeslow.TimeSlowData;
 import jackiecrazy.wardance.WarDance;
 import jackiecrazy.wardance.capability.action.PermissionData;
 import jackiecrazy.wardance.capability.aerial.AerialModeData;
+import jackiecrazy.wardance.capability.charging.ChargingData;
 import jackiecrazy.wardance.capability.flyingweapon.FlyingWeaponData;
 import jackiecrazy.wardance.capability.resources.CombatDataOverride;
 import jackiecrazy.wardance.capability.skill.CasterData;
@@ -41,12 +42,14 @@ import net.minecraftforge.event.AttachCapabilitiesEvent;
 import net.minecraftforge.event.OnDatapackSyncEvent;
 import net.minecraftforge.event.TickEvent;
 import net.minecraftforge.event.entity.EntityJoinLevelEvent;
+import net.minecraftforge.event.entity.living.LivingEntityUseItemEvent;
 import net.minecraftforge.event.entity.living.LivingEvent;
 import net.minecraftforge.event.entity.living.LivingFallEvent;
 import net.minecraftforge.event.entity.player.PlayerContainerEvent;
 import net.minecraftforge.event.entity.player.PlayerEvent;
 import net.minecraftforge.event.server.ServerStartingEvent;
 import net.minecraftforge.event.server.ServerStoppingEvent;
+import net.minecraftforge.eventbus.api.EventPriority;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.LogicalSide;
 import net.minecraftforge.fml.common.Mod;
@@ -59,12 +62,12 @@ import java.util.concurrent.ConcurrentHashMap;
 @Mod.EventBusSubscriber(modid = WarDance.MODID)
 public class EntityHandler {
     public static final HashMap<Player, Entity> mustUpdate = new HashMap<>();
-    public static final ConcurrentHashMap<Tuple<Level, BlockPos>, Float> alertTracker = new ConcurrentHashMap<>();
+    public static final HashMap<Player, Double> fasterUse = new HashMap<>();
 
     @SubscribeEvent
     public static void start(ServerStartingEvent e) {
         mustUpdate.clear();
-        alertTracker.clear();
+        fasterUse.clear();
         WeaponStats.DESPERATION = BuiltInRegistries.ITEM.stream()
                 .filter(item -> item.builtInRegistryHolder().is(WeaponStats.DESPERATE_THROW))
                 .toList();
@@ -73,7 +76,26 @@ public class EntityHandler {
     @SubscribeEvent
     public static void stop(ServerStoppingEvent e) {
         mustUpdate.clear();
-        alertTracker.clear();
+        fasterUse.clear();
+    }
+
+    @SubscribeEvent
+    public static void sonic(LivingEntityUseItemEvent.Start e) {
+        if (e.getEntity() instanceof Player p) {
+            if (CombatData.getCap(p).alreadyProc("speedItemUseTimer")) {
+                double spd = CombatData.getCap(p).getProc("speedItemUseTick");
+                fasterUse.put(p, spd);
+            }
+        }
+    }
+
+    @SubscribeEvent
+    public static void sonic(LivingEntityUseItemEvent.Tick e) {
+        if (e.getEntity() instanceof Player p) {
+            int ticked = ChargingData.getCap(p).tick(e.getItem());
+            if (ticked != 1)
+                e.setDuration(e.getDuration() + 1 - ticked);
+        }
     }
 
 
@@ -84,9 +106,11 @@ public class EntityHandler {
     }
 
 
-    @SubscribeEvent
+    @SubscribeEvent(priority = EventPriority.LOWEST)
     public static void what(AttachCapabilitiesEvent<ItemStack> e) {
-
+        if (e.getObject().isStackable() && !e.getCapabilities().isEmpty()) {
+            WarDance.LOGGER.fatal(e.getCapabilities());
+        }
     }
 
     @SubscribeEvent
@@ -100,6 +124,7 @@ public class EntityHandler {
                 e.addCapability(new ResourceLocation("wardance:casterinfo"), new CasterData(new SkillCapability(lb)));
                 e.addCapability(new ResourceLocation("wardance:permissions"), new PermissionData(p));
                 e.addCapability(new ResourceLocation("wardance:flyingweapon"), new FlyingWeaponData(p));
+                e.addCapability(new ResourceLocation("wardance:fasterusing"), new ChargingData());
             }
         }
     }

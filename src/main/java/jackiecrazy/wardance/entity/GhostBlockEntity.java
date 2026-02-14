@@ -4,7 +4,7 @@ import jackiecrazy.footwork.capability.resources.CombatData;
 import jackiecrazy.footwork.entity.flyingweapon.FlyingItemEntity;
 import jackiecrazy.footwork.utils.TargetingUtils;
 import jackiecrazy.wardance.capability.flyingweapon.FlyingWeaponData;
-import jackiecrazy.wardance.utils.CombatUtils;
+import jackiecrazy.wardance.utils.MobilityUtils;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.Vec3i;
@@ -32,9 +32,9 @@ public class GhostBlockEntity extends ThrownWeaponEntity {
     }
 
     @Override
-    public boolean pickup(Player p) {
-        FlyingWeaponData.getCap(p).setHeldBlock(this);
-        this.setUniversalOffset(new Vec3(0, p.getBbHeight(), 0.5));
+    public boolean pickup(Player player) {
+        FlyingWeaponData.getCap(player).setHeldBlock(this);
+        this.setUniversalOffset(new Vec3(0, player.getBbHeight(), 0.5));
         setDeltaMovement(Vec3.ZERO);
         setIntangible(true);
         setState(STATE.FOLLOW);
@@ -120,7 +120,7 @@ public class GhostBlockEntity extends ThrownWeaponEntity {
             if (t instanceof LivingEntity e) {
                 strength = Math.min(strength, 0.2f + Mth.clamp(strength * 1 - CombatData.getCap(e).getPosturePercentage(), 0, 1));
             }
-            CombatUtils.knockBack(t, this, strength, true, false);
+            MobilityUtils.knockBack(t, this, strength, true, false);
 
         }
     }

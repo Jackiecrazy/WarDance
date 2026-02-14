@@ -5,7 +5,7 @@ import jackiecrazy.footwork.capability.resources.CombatData;
 import jackiecrazy.wardance.skill.Skill;
 import jackiecrazy.wardance.skill.SkillData;
 import jackiecrazy.wardance.utils.CombatUtils;
-import jackiecrazy.wardance.utils.MovementUtils;
+import jackiecrazy.wardance.utils.MobilityUtils;
 import jackiecrazy.wardance.utils.SkillUtils;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
@@ -44,7 +44,7 @@ public class Pounce extends Skill {
     @Override
     public boolean equippedTick(LivingEntity caster, SkillData stats) {
         if (CombatData.getCap(caster).isDodging() || CombatData.getCap(caster).isIframe()) {
-            Entity collide = MovementUtils.collidingEntity(caster);
+            Entity collide = MobilityUtils.collidingEntity(caster);
             if (collide instanceof LivingEntity le) {
                 stats.addTarget(le);
             }

@@ -49,8 +49,8 @@ public class ItemTooltipHandler {
                 }
                 if (PermissionData.getCap(entity).canSweep()) {
                     for (WeaponStats.AttackType s : WeaponStats.AttackType.values())
-                        if (s == WeaponStats.AttackType.STANDING || !WeaponStats.getSweepInfo(stack, s).equals(WeaponStats.getSweepInfo(stack, WeaponStats.AttackType.STANDING))) {
-                            final Component toolTip = WeaponStats.getSweepInfo(e.getItemStack(), s).getToolTip(e.getItemStack(), e.getFlags().isAdvanced());
+                        if (s == WeaponStats.AttackType.STANDING || !WeaponStats.getSweepInfo(stack, entity, s).equals(WeaponStats.getSweepInfo(stack, entity, WeaponStats.AttackType.STANDING))) {
+                            final Component toolTip = WeaponStats.getSweepInfo(e.getItemStack(), entity, s).getToolTip(e.getItemStack(), e.getFlags().isAdvanced());
                             e.getToolTip().add(Component.translatable("wardance.tooltip.sweep." + s.name().toLowerCase(Locale.ROOT), toolTip).withStyle(ChatFormatting.DARK_AQUA));
                         }
                 }
