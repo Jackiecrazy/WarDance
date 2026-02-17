@@ -2,6 +2,7 @@ package jackiecrazy.wardance.networking.combat;
 
 import jackiecrazy.footwork.entity.flyingweapon.FlyingWeaponEffect;
 import jackiecrazy.wardance.capability.flyingweapon.FlyingWeaponData;
+import jackiecrazy.wardance.config.weapon.WeaponStats;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.InteractionHand;
@@ -73,10 +74,14 @@ public class UpdateWeaponRenderPacket {
                     if (packet.shadow) fx.add(FlyingWeaponEffect.BIG_SHADOW);
                     if (packet.weapon) fx.add(FlyingWeaponEffect.WEAPON);
                     if (packet.after) fx.add(FlyingWeaponEffect.AFTERIMAGE);
-                    FlyingWeaponData.getCap(sender).setRender(packet.main ? InteractionHand.MAIN_HAND : InteractionHand.OFF_HAND, fx.toArray(new FlyingWeaponEffect[fx.size()]));
-                }
-            });
-            contextSupplier.get().setPacketHandled(true);
+                    for (InteractionHand h : InteractionHand.values()) {
+                        WeaponStats.WeaponInfo wi = WeaponStats.lookupStats(sender.getItemInHand(h));
+                        if (wi != null && FlyingWeaponData.getCap(sender).getWeapon(h) != null) {
+                            FlyingWeaponData.getCap(sender).setRender(h, fx.toArray(new FlyingWeaponEffect[fx.size()]));
+                        }
+                    }
+                }});
+                contextSupplier.get().setPacketHandled(true);
+            }
         }
     }
-}

@@ -12,6 +12,7 @@ import jackiecrazy.footwork.utils.MovementUtils;
 import jackiecrazy.footwork.utils.ParticleUtils;
 import jackiecrazy.footwork.utils.TargetingUtils;
 import jackiecrazy.wardance.capability.flyingweapon.FlyingWeaponData;
+import jackiecrazy.wardance.config.MobSpecs;
 import jackiecrazy.wardance.config.weapon.WeaponStats;
 import jackiecrazy.wardance.utils.CombatUtils;
 import net.minecraft.core.BlockPos;
@@ -46,6 +47,7 @@ public class FlyingWeaponEntity extends FlyingItemEntity {
         super(type, level);
         setEffect(FlyingWeaponEffect.BIG_SHADOW, false);
         setInvulnerable(true);
+        //wasIdle=false;
     }
 
     @Nullable
@@ -96,15 +98,15 @@ public class FlyingWeaponEntity extends FlyingItemEntity {
         if (!level().isClientSide && isAlive()) {
             if (isIdle()) {//tied to the owner
                 if (getOwner() == null || fading) remove(RemovalReason.UNLOADED_WITH_PLAYER);
-//                if(this.getClass()== FlyingWeaponEntity.class) {
-//                    boolean valid = false;
-//
-//                    //todo this check makes grabbing blocks out of the environment not work
-//                    for (InteractionHand h : InteractionHand.values())
-//                        if (FlyingWeaponData.getCap(getOwner()).getWeapon(h) == this) valid = true;
-//                    if(!valid)
-//                        remove(RemovalReason.UNLOADED_WITH_PLAYER);
-//                }
+                if (this.getClass() == FlyingWeaponEntity.class && tickCount % 100 == 40) {
+                    boolean valid = false;
+
+                    //todo this check makes grabbing blocks out of the environment not work
+                    for (InteractionHand h : InteractionHand.values())
+                        if (FlyingWeaponData.getCap(getOwner()).getWeapon(h) == this) valid = true;
+                    if (!valid)
+                        invalidateWhenDone();
+                }
             } else {
 
             }
@@ -138,7 +140,7 @@ public class FlyingWeaponEntity extends FlyingItemEntity {
         if (level().isClientSide()) return false;
         //normal hits skip hit calculation
         if (getInfo() == null) return false;
-        targets = targets.stream().filter(tg -> tg != owner && !alreadyHit.contains(tg) && !TargetingUtils.isAlly(tg, owner) && !tg.isInvulnerable()).toList();
+        targets = targets.stream().filter(tg -> tg != owner && !alreadyHit.contains(tg) && !TargetingUtils.isAlly(tg, owner) && !tg.getType().is(MobSpecs.IGNORED_BY_SWEEP) && !tg.isInvulnerable()).toList();
         LivingEntity e = getOwner();
         int ticks = e.attackStrengthTicker;
         ItemStack main = e.getMainHandItem();
@@ -154,7 +156,7 @@ public class FlyingWeaponEntity extends FlyingItemEntity {
                     }
                 }
                 if (!alreadyHit.isEmpty()) CombatData.getCap(e).tickProc("oncePerSweep");
-                CombatData.getCap(e).tickProc("qiSpent");
+                //CombatData.getCap(e).tickProc("qiSpent");
                 target.invulnerableTime = 0;
                 GeneralUtils.attack(e, target);
                 ret = true;
@@ -235,10 +237,14 @@ public class FlyingWeaponEntity extends FlyingItemEntity {
         if (effects != null) {
             setIntangible(false);
             if (effects.getRange() >= 0) setInteractionRange((float) effects.getRange());
-            if (effects.getEffects() != null) setEffect(effects.getEffects().toArray(new FlyingWeaponEffect[0]));
+            if (effects.getEffects() != null)
+                setEffect(effects.getEffects().toArray(new FlyingWeaponEffect[0]));
             cacheInfo = effects.getHit();
+            if (effects.reset_hit())
+                alreadyHit.clear();
             LivingEntity e = getOwner();
-            MovementUtils.applyVelocity(effects.getVelocity(), e, effects.isSetVelocity());
+            if (e != null)
+                MovementUtils.applyVelocity(effects.getVelocity(), e, effects.isSetVelocity());
         }
     }
 

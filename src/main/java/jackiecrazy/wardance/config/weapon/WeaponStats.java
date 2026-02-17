@@ -4,7 +4,8 @@ import com.google.common.collect.Maps;
 import com.google.gson.*;
 import jackiecrazy.footwork.api.FootworkAttributes;
 import jackiecrazy.footwork.capability.resources.CombatData;
-import jackiecrazy.footwork.move.motionframe.HitInfo;
+import jackiecrazy.footwork.entity.flyingweapon.FlyingWeaponEffect;
+import jackiecrazy.footwork.move.motionframe.*;
 import jackiecrazy.footwork.move.utils.ArgumentContext;
 import jackiecrazy.wardance.WarDance;
 import jackiecrazy.wardance.config.CombatConfig;
@@ -28,9 +29,11 @@ import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
+import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.event.AddReloadListenerEvent;
 import net.minecraftforge.network.PacketDistributor;
 import net.minecraftforge.registries.ForgeRegistries;
+import org.joml.Vector4d;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -49,12 +52,12 @@ public class WeaponStats extends SimpleJsonResourceReloadListener {
     public static final TagKey<Item> DESPERATE_THROW = ItemTags.create(new ResourceLocation(WarDance.MODID, "desperate_throw"));
     private static final ResourceLocation air = new ResourceLocation("air");
     public static List<Item> DESPERATION = new ArrayList<>();
-    public static MeleeInfo DEFAULTMELEE = new MeleeInfo(1, 1);
-    public static HashMap<Item, MeleeInfo> combatList = new HashMap<>();
-    public static HashMap<Item, MeleeInfo> clientItems = new HashMap<>();
+    public static WeaponInfo DEFAULTMELEE = new WeaponInfo(1, 1);
+    public static HashMap<Item, WeaponInfo> combatList = new HashMap<>();
+    public static HashMap<Item, WeaponInfo> clientItems = new HashMap<>();
     public static HitInfo info_override = null;
-    private static HashMap<TagKey<Item>, MeleeInfo> archetypes = new HashMap<>();
-    private static HashMap<TagKey<Item>, MeleeInfo> clientArchetypes = new HashMap<>();
+    private static HashMap<TagKey<Item>, WeaponInfo> archetypes = new HashMap<>();
+    private static HashMap<TagKey<Item>, WeaponInfo> clientArchetypes = new HashMap<>();
 
     public WeaponStats() {
         super(WeaponInteractions.GSON, "war_stats");
@@ -73,18 +76,18 @@ public class WeaponStats extends SimpleJsonResourceReloadListener {
         CombatChannel.INSTANCE.send(PacketDistributor.PLAYER.with(() -> p), new SyncTagDataPacket(archetypes));
     }
 
-    public static void clientWeaponOverride(Map<Item, MeleeInfo> server) {
+    public static void clientWeaponOverride(Map<Item, WeaponInfo> server) {
         clientItems.putAll(server);//the client doesn't need *that* much info, so we keep its list separate and save packets
     }
 
-    public static void clientTagOverride(Map<TagKey<Item>, MeleeInfo> server) {
+    public static void clientTagOverride(Map<TagKey<Item>, WeaponInfo> server) {
         clientArchetypes = new HashMap<>(server);
     }
 
     public static void updateItems(Map<ResourceLocation, JsonElement> object,
                                    ResourceManager rm,
                                    ProfilerFiller profiler) {
-        DEFAULTMELEE = new MeleeInfo(CombatConfig.defaultMultiplierPostureAttack, CombatConfig.defaultMultiplierPostureDefend);
+        DEFAULTMELEE = new WeaponInfo();
         combatList = new HashMap<>();
         archetypes = new HashMap<>();
 
@@ -98,7 +101,7 @@ public class WeaponStats extends SimpleJsonResourceReloadListener {
                         name = name.substring(1);
                         if (!name.contains(":")) name = "wardance:" + name;
                         JsonObject obj = entry.getValue().getAsJsonObject();
-                        MeleeInfo put = parseMeleeInfo(obj);
+                        WeaponInfo put = parseMeleeInfo(name, obj);
                         archetypes.put(ItemTags.create(new ResourceLocation(name)), put);
                     } catch (Exception x) {
                         WarDance.LOGGER.error("malformed json under " + name + "!");
@@ -113,7 +116,7 @@ public class WeaponStats extends SimpleJsonResourceReloadListener {
                 }
                 try {
                     JsonObject obj = entry.getValue().getAsJsonObject();
-                    MeleeInfo put = parseMeleeInfo(obj);
+                    WeaponInfo put = parseMeleeInfo(name, obj);
                     if (GeneralConfig.debug)
                         WarDance.LOGGER.debug(name + " has been registered with sweep types: " + put.sweeps[0].getInteractionType() + " " + put.sweeps[1].getInteractionType() + " " + put.sweeps[2].getInteractionType() + " " + put.sweeps[3].getInteractionType() + " " + put.sweeps[4].getInteractionType() + " ");
                     combatList.put(item, put);
@@ -126,11 +129,8 @@ public class WeaponStats extends SimpleJsonResourceReloadListener {
     }
 
     @Nonnull
-    private static MeleeInfo parseMeleeInfo(JsonObject obj) {
-        MeleeInfo put = new MeleeInfo(CombatConfig.defaultMultiplierPostureAttack, CombatConfig.defaultMultiplierPostureDefend);
-        if (obj.has("attack")) put.attackPostureMultiplier = obj.get("attack").getAsDouble();
-        if (obj.has("defend")) put.defensePostureMultiplier = obj.get("defend").getAsDouble();
-        if (obj.has("shield")) put.isShield = obj.get("shield").getAsBoolean();
+    private static WeaponInfo parseMeleeInfo(String root, JsonObject obj) {
+        WeaponInfo put = WeaponInteractions.GSON.fromJson(obj, WeaponInfo.class);
         WeaponInteractions.WeaponInteraction defaultSweep = WeaponInteractions.GSON.fromJson(obj, WeaponInteractions.WeaponInteraction.class);
         put.sweeps[0] = defaultSweep;
         for (AttackType s : AttackType.values()) {
@@ -141,12 +141,16 @@ public class WeaponStats extends SimpleJsonResourceReloadListener {
                 WeaponInteractions.WeaponInteraction sweep = WeaponInteractions.GSON.fromJson(sub, WeaponInteractions.WeaponInteraction.class);
                 put.sweeps[ord] = sweep;
             }
+            WeaponInteractions.WeaponInteraction sweep=put.sweeps[ord];
+            if (sweep.description() == null)
+                sweep.setDescription("wardance.tooltip.attacks." + root + "." + s.toString().toLowerCase(Locale.ROOT));
+            else sweep.setDescription(sweep.description());//initialize the component
         }
         return put;
     }
 
     @Nullable
-    public static MeleeInfo lookupStats(ItemStack is) {
+    public static WeaponInfo lookupStats(ItemStack is) {
         if (is == null) return null;
         if (combatList.containsKey(is.getItem())) return combatList.get(is.getItem());
         for (TagKey<Item> tag : archetypes.keySet()) {
@@ -169,8 +173,8 @@ public class WeaponStats extends SimpleJsonResourceReloadListener {
 
     public static boolean isShield(LivingEntity e, ItemStack stack) {
         if (stack == null) return false;
-        MeleeInfo rt = lookupStats(stack);//stack.isShield(e);
-        return rt != null && rt.isShield;
+        WeaponInfo rt = lookupStats(stack);//stack.isShield(e);
+        return rt != null && rt.shield;
     }
 
     public static boolean canParryProjectile(LivingEntity e, ItemStack stack) {
@@ -199,8 +203,8 @@ public class WeaponStats extends SimpleJsonResourceReloadListener {
 
     public static boolean isWeapon(@Nullable LivingEntity e, ItemStack stack) {
         if (stack == null) return false;
-        MeleeInfo rt = lookupStats(stack);
-        return rt != null && !rt.isShield;
+        WeaponInfo rt = lookupStats(stack);
+        return rt != null && !rt.shield;
     }
 
     public static boolean isUnarmed(ItemStack is, LivingEntity e) {
@@ -238,7 +242,7 @@ public class WeaponStats extends SimpleJsonResourceReloadListener {
     }
 
     public static WeaponInteractions.WeaponInteraction getSweepInfo(ItemStack i, LivingEntity wielder, AttackType s) {
-        final MeleeInfo info = lookupStats(i);
+        final WeaponInfo info = lookupStats(i);
         if (info == null) {
             return SweepAttack.DEFAULT_NONE;
         } else {
@@ -257,7 +261,7 @@ public class WeaponStats extends SimpleJsonResourceReloadListener {
 
     public static HitInfo getHitInfo(ItemStack i, LivingEntity wielder, AttackType s) {
         if (info_override != null) return info_override;
-//        final MeleeInfo info = lookupStats(i);
+//        final WeaponInfo info = lookupStats(i);
 //        if (info == null) return SweepAttack.DEFAULT_NONE.getHitInfo();
         return getSweepInfo(i, wielder, s).getHitInfo();
     }
@@ -285,15 +289,23 @@ public class WeaponStats extends SimpleJsonResourceReloadListener {
         DRAW_ATTACK
     }
 
-    public static class MeleeInfo {
-        private double attackPostureMultiplier, defensePostureMultiplier;
-        private boolean isShield, ignoreParry, ignoreShield, canParry;
+    public static class WeaponInfo {
+        private double attack, defend;
+        private boolean shield;
+        private MotionManager idle_frame = new MotionManagers.FixedMM(new MotionFrame(new Vec3(0, 1, 0), Vec3.ZERO, 0).setEffects(new FrameEffects().setEffects()), 5);
+        private MotionManager guard_frame = new MotionManagers.FixedMM(new MotionFrame(new Vec3(0, -1, 1), Vec3.ZERO, new Vector4d(0, 1, 0, 90)).setEffects(new FrameEffects().setEffects(FlyingWeaponEffect.WEAPON)), CombatConfig.parryTime / 2);
+        private MotionManager aim_frame = new MotionManagers.FixedMM(new MotionFrame(new Vec3(0, 0, 1), new Vec3(0, 0, 1), 0).setEffects(new FrameEffects().setEffects(FlyingWeaponEffect.WEAPON)), 2);
+        private MotionManager swap_frame = new MotionManagers.FixedMM(new MotionFrame(new Vec3(0, 0, 1), Vec3.ZERO, 0).setEffects(new FrameEffects().setEffects(FlyingWeaponEffect.WEAPON, FlyingWeaponEffect.AFTERIMAGE)), 2);
         //standing, falling, sneaking, sprinting, riding
         private WeaponInteractions.WeaponInteraction[] sweeps = new WeaponInteractions.WeaponInteraction[AttackType.values().length];
 
-        private MeleeInfo(double attack, double defend) {
-            attackPostureMultiplier = attack;
-            defensePostureMultiplier = defend;
+        private WeaponInfo() {
+            this(CombatConfig.defaultMultiplierPostureAttack, CombatConfig.defaultMultiplierPostureDefend);
+        }
+
+        private WeaponInfo(double attack, double defend) {
+            this.attack = attack;
+            this.defend = defend;
             for (int i = 0; i < sweeps.length; i++) {
                 sweeps[i] = SweepAttack.DEFAULT_FAN.clone();
             }
@@ -302,29 +314,45 @@ public class WeaponStats extends SimpleJsonResourceReloadListener {
             sweeps[AttackType.PICKUP_FLOURISH.ordinal()] = Animation.CIRCLE;
         }
 
-        public static MeleeInfo read(FriendlyByteBuf f) {
-            MeleeInfo ret = new MeleeInfo(0, 0);
-            ret.attackPostureMultiplier = f.readDouble();
-            ret.defensePostureMultiplier = f.readDouble();
-            ret.isShield = f.readBoolean();
+        public static WeaponInfo read(FriendlyByteBuf f) {
+            WeaponInfo ret = new WeaponInfo();
+            ret.attack = f.readDouble();
+            ret.defend = f.readDouble();
+            ret.shield = f.readBoolean();
             for (int x = 0; x < ret.sweeps.length; x++) {
                 ret.sweeps[x] = WeaponInteractions.WeaponInteraction.readFromByte(f);
             }
             return ret;
         }
 
+        public MotionManager swap_frame() {
+            return swap_frame;
+        }
+
+        public MotionManager aim_frame() {
+            return aim_frame;
+        }
+
+        public MotionManager guard_frame() {
+            return guard_frame;
+        }
+
+        public MotionManager idle_frame() {
+            return idle_frame;
+        }
+
         public double getAttackPostureMultiplier() {
-            return attackPostureMultiplier;
+            return attack;
         }
 
         public double getDefensePostureMultiplier() {
-            return defensePostureMultiplier;
+            return defend;
         }
 
         public void write(FriendlyByteBuf f) {
-            f.writeDouble(attackPostureMultiplier);
-            f.writeDouble(defensePostureMultiplier);
-            f.writeBoolean(isShield);
+            f.writeDouble(attack);
+            f.writeDouble(defend);
+            f.writeBoolean(shield);
 
             for (WeaponInteractions.WeaponInteraction ss : sweeps) {
                 ss.write(f);

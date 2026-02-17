@@ -107,7 +107,7 @@ public class FlyingWeaponCapability implements IFlyingWeapon {
                 //fwe.setIdlePose(idleFrame[isMain ? 0 : 1]);
                 //fwe.setShouldRender(FlyingWeaponEffect.WEAPON,true);
                 //fwe.setUniversalOffset(idleOffset[isMain ? 0 : 1]);
-                fwe.setEffect(fx);
+                //fwe.setEffect(fx);
             }
         } catch (Throwable t) {
             t.printStackTrace();
@@ -174,11 +174,11 @@ public class FlyingWeaponCapability implements IFlyingWeapon {
                     }
                     //if the player is blocking, change position
                     else if (player.isBlocking()) {
-                        fwe.setIdlePose(blockingFrame[isMain ? 0 : 1]);
+                        //fwe.setIdlePose(blockingFrame[isMain ? 0 : 1]);
                         fwe.setUniversalOffset(blockOffset[isMain ? 0 : 1]);
                     } else {
-                        fwe.setEffect();
-                        fwe.setIdlePose(idleFrame[isMain ? 0 : 1]);
+                        //fwe.setEffect();
+                        //fwe.setIdlePose(idleFrame[isMain ? 0 : 1]);
                         fwe.setUniversalOffset(idleOffset[isMain ? 0 : 1]);
                     }
                 }
@@ -247,7 +247,12 @@ public class FlyingWeaponCapability implements IFlyingWeapon {
             fwe = new FlyingWeaponEntity(WarEntities.WEAPON.get(), player.level());
             player.level().addFreshEntity(fwe);
         }
-        fwe.setHeldItem(player.getItemInHand(hand));
+        final ItemStack stack = player.getItemInHand(hand);
+        final WeaponStats.WeaponInfo info = WeaponStats.lookupStats(stack);
+        if(info !=null)
+            fwe.setIdlePose(info.idle_frame());
+        else fwe.setIdlePose(WeaponStats.DEFAULTMELEE.idle_frame());
+        fwe.setHeldItem(stack);
         fwe.setOwner(player);
         fwe.setFlipRender(hand == InteractionHand.OFF_HAND);
         fwe.setPosRaw(player.xo, player.yo, player.zo);

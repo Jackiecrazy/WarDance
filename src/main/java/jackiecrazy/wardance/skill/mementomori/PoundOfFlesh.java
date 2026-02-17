@@ -52,7 +52,7 @@ public class PoundOfFlesh extends MementoMori {
                 CombatData.getCap(caster).recordDamage(amount);
                 pe.setPostureConsumption(pe.getPostureConsumption() + CombatData.getCap(target).getMaxPosture() * 0.15f * stats.getEffectiveness());
             } else if (procPoint instanceof LivingHurtEvent lhe && procPoint.getPhase() == EventPriority.HIGHEST && lhe.getEntity() != caster && (!(lhe.getSource() instanceof CombatDamageSource cds) || cds.getSkillUsed() != this)) {
-                lhe.setAmount(((LivingHurtEvent) procPoint).getAmount() + GeneralUtils.getActualHealth(target) * 0.07f * stats.getEffectiveness());
+                lhe.setAmount(lhe.getAmount() + GeneralUtils.getActualHealth(target) * 0.07f * stats.getEffectiveness());
             }
         }
     }

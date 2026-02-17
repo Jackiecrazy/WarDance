@@ -1,0 +1,17 @@
+{
+  "values": [
+    {
+      "id": "minecraft:item_frame",
+      "required": false
+    }, {
+      "id": "minecraft:glow_item_frame",
+      "required": false
+    }, {
+      "id": "minecraft:armor_stand",
+      "required": false
+    }, {
+      "id": "quark:glass_item_frame",
+      "required": false
+    }
+  ]
+}

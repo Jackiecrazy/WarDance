@@ -64,6 +64,8 @@ public class ThrowPacket {
                 ServerPlayer player = contextSupplier.get().getSender();
                 InteractionHand h = packet.main ? InteractionHand.MAIN_HAND : InteractionHand.OFF_HAND;
                 if (player == null) return;
+                float cool = CombatUtils.getCooledAttackStrength(player, h, 1f);
+                if(cool<0.9)return;
                 //have a weapon, yeet!
                 final ItemStack held = player.getItemInHand(h);
                 if (!held.isEmpty()) {

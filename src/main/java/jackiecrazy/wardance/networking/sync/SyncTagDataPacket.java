@@ -15,13 +15,13 @@ import java.util.function.Supplier;
 
 public class SyncTagDataPacket {
     private static final FriendlyByteBuf.Writer<TagKey<Item>> item = (f, item) -> f.writeResourceLocation(item.location());
-    private static final FriendlyByteBuf.Writer<WeaponStats.MeleeInfo> info = (f, info) -> info.write(f);
+    private static final FriendlyByteBuf.Writer<WeaponStats.WeaponInfo> info = (f, info) -> info.write(f);
 
     private static final FriendlyByteBuf.Reader<TagKey<Item>> ritem = f -> ItemTags.create(f.readResourceLocation());;
-    private static final FriendlyByteBuf.Reader<WeaponStats.MeleeInfo> rinfo = WeaponStats.MeleeInfo::read;
-    private final Map<TagKey<Item>, WeaponStats.MeleeInfo> map;
+    private static final FriendlyByteBuf.Reader<WeaponStats.WeaponInfo> rinfo = WeaponStats.WeaponInfo::read;
+    private final Map<TagKey<Item>, WeaponStats.WeaponInfo> map;
 
-    public SyncTagDataPacket(Map<TagKey<Item>, WeaponStats.MeleeInfo> map) {
+    public SyncTagDataPacket(Map<TagKey<Item>, WeaponStats.WeaponInfo> map) {
         this.map = map;
     }
 

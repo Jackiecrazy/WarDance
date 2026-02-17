@@ -91,7 +91,7 @@ public class GrappleEntity extends FlyingItemEntity {
 
     @Override
     public STATE getState() {
-        return getMotionTarget() == null ? STATE.THROW_NATURAL : STATE.THROW_TRACK;
+        return getMotionTarget() !=getOwner() ? STATE.THROW_TRACK : STATE.THROW_NATURAL;
     }
 
     @Override
@@ -269,6 +269,10 @@ public class GrappleEntity extends FlyingItemEntity {
                     hooked = true;
                 });
             }
+        }
+        if(hookedEntity instanceof ThrownWeaponEntity fwe){
+
+            fwe.setState(STATE.THROW_NATURAL);
         }
         if (hooked) {
             setIntangible(false);

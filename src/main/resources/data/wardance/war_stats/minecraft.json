@@ -126,7 +126,15 @@
           ],
           "offset": [
             0, 0, 1.3
-          ]
+          ],
+          "effects": {
+            "effects": ["BIG_SHADOW", "AFTERIMAGE"],
+            "range": 10,
+            "velocity": [0, 1, 0],
+            "hit": {
+              "damage_scale": 1.2
+            }
+          }
         }, {
           "direction": [
             0, 0, 1
@@ -141,8 +149,78 @@
       ]
     },
     "aerial": {
-      "sweep": "LINE",
-      "sweep_base": 0.6
+      "type": "animation",
+      "duration": 7,
+      "easing": "IN_OUT_SINE",
+      "animations": [
+        {
+          "frames": [
+            {
+              "direction": [
+                0, 0, 1
+              ],
+              "offset": [
+                0, 0, 0
+              ]
+            }, {
+              "direction": [
+                0, 0, 1
+              ],
+              "offset": [
+                0, 0, 1.3
+              ],
+              "effects": {
+                "effects": ["WEAPON", "AFTERIMAGE"],
+                "range": 10,
+                "velocity": [0, 1, 0],
+                "hit": {
+                  "damage_scale": 1.2
+                }
+              }
+            }, {
+              "direction": [
+                0, 0, 1
+              ],
+              "offset": [
+                0, 0, 0
+              ]
+            }
+          ]
+        }, {
+          "frames": [
+            {
+              "direction": [
+                0, 0, 1
+              ],
+              "offset": [
+                0, 0, 0
+              ]
+            }, {
+              "direction": [
+                0, 0, 1
+              ],
+              "offset": [
+                0, 0, 1.3
+              ],
+              "effects": {
+                "effects": ["WEAPON", "AFTERIMAGE"],
+                "range": 10,
+                "velocity": [0, 1, 0],
+                "hit": {
+                  "damage_scale": 1.2
+                }
+              }
+            }, {
+              "direction": [
+                0, 0, 1
+              ],
+              "offset": [
+                0, 0, 0
+              ]
+            }
+          ]
+        }
+      ]
     },
     "guard_counter": {
       "type": "throw",
@@ -191,6 +269,435 @@
     "draw_attack": {
       "sweep": "CONE",
       "sweep_base": 40
+    }
+  },
+  "minecraft:iron_sword": {
+    "attack": 3,
+    "defend": 0.5,
+    "shield": false,
+    "sweep": "CONE",
+    "knockback": 0.5,
+    "damage_scale": 1,
+    "posture_scale": 1,
+    "crit": false,
+    "crit_damage": 1.5,
+    "sweep_base": 60,
+    "sweep_scale": 10,
+    "standing": {
+      "type": "animation",
+      "duration": 5,
+      "easing": "IN_OUT_SINE",
+      "on_swing": {
+        "command": "/playsound minecraft:entity.player.attack.sweep player @a ~ ~ ~ 1 1 0"
+      },
+      "frames": [
+        {
+          "direction": [
+            0.5, 0.5, 1
+          ],
+          "offset": [
+            1, 1, 0
+          ],
+          "knockback": 0.5,
+          "damage_scale": 1,
+          "posture_scale": 1,
+          "crit": false,
+          "crit_damage": 1.5
+        }, {
+          "direction": [
+            -0.5, -0.5, 1
+          ],
+          "offset": [
+            -1, -0.5, 1.3
+          ]
+        }
+      ]
+    },
+    "falling": {
+      "sweep": "CLEAVE",
+      "sweep_base": 60,
+      "crit": true,
+      "knockback": 1,
+      "hit_other": {
+        "velocity": [
+          0, -1, 0
+        ],
+        "set_velocity": true
+      }
+    },
+    "sprinting": {
+      "type": "animation",
+      "duration": 7,
+      "easing": "IN_OUT_SINE",
+      "on_swing": {
+        "command": "/playsound minecraft:entity.player.attack.sweep player @a ~ ~ ~ 1 1 0"
+      },
+      "frames": [
+        {
+          "direction": [
+            0.5, -0.75, 1
+          ],
+          "offset": [
+            0, 0, 0
+          ],
+          "knockback": 2,
+          "damage_scale": 1,
+          "posture_scale": 1,
+          "crit": false,
+          "crit_damage": 1.5,
+          "hit_other": {
+            "command": "/effect give @s footwork:distraction 3 0"
+          }
+        }, {
+          "direction": [
+            -2, 1, 1
+          ],
+          "offset": [
+            0, 0, 1.3
+          ]
+        }
+      ],
+      "overrides": [
+        {
+          "condition": {
+            "ID": "on_ground"
+          },
+          "override": {
+            "velocity": [
+              0, 0.1, 2
+            ]
+          }
+        }
+      ]
+    },
+    "guard_counter": {
+      "type": "animation",
+      "duration": 12,
+      "easing": "IN_OUT_SINE",
+      "on_swing": {
+        "command": "/playsound minecraft:entity.player.attack.sweep player @a ~ ~ ~ 1.1 0.5 0"
+      },
+      "frames": [
+        {
+          "direction": [
+            0, 0.25, 1
+          ],
+          "offset": [
+            0, 1, -0.5
+          ],
+          "knockback": 0,
+          "damage_scale": 1.5,
+          "posture_scale": 1.5,
+          "crit": false,
+          "crit_damage": 1.5,
+          "hit": {
+            "breach": false
+          }
+        }, {
+          "direction": [
+            0, 0.5, 1
+          ],
+          "offset": [
+            0, 1.25, -0.75
+          ]
+        }, {
+          "direction": [
+            0, -1, 1
+          ],
+          "offset": [
+            -0.25, -1, 1.3
+          ]
+        }
+      ],
+      "overrides": [
+        {
+          "condition": {
+            "ID": "consume_resource",
+            "format": "PERCENTAGE",
+            "resource": "SPIRIT",
+            "amount": 1,
+            "operation": "CONSUME"
+          },
+          "override": {
+            "frames": [
+              {
+                "effects": {
+                  "hit": {
+                    "spirit_multiplier": 0,
+                    "breach": true
+                  }
+                }
+              }, {}, {}
+            ]
+          }
+        }
+      ]
+    },
+    "throw": {
+      "type": "animation",
+      "duration": 7,
+      "easing": "IN_OUT_SINE",
+      "on_swing": {
+        "command": "/playsound minecraft:entity.player.attack.sweep player @a ~ ~ ~ 1 1 0"
+      },
+      "frames": [
+        {
+          "direction": [
+            0, 0.75, 1
+          ],
+          "offset": [
+            0, 1, 0
+          ],
+          "knockback": 0,
+          "damage_scale": 1.25,
+          "posture_scale": 1.25,
+          "crit": false,
+          "crit_damage": 1.5,
+          "hit_other": {
+            "command": "/effect give @s footwork:corrosion 5 2"
+          }
+        }, {
+          "direction": [
+            0, -1, 1
+          ],
+          "offset": [
+            -0.5, 0, 1.5
+          ]
+        }
+      ]
+    },
+    "pickup_flourish": {
+      "sweep": "CIRCLE",
+      "sweep_base": 1.5,
+      "on_swing": {
+        "command": "/say How did you even do this?  You can't throw a longsword..."
+      }
+    },
+    "draw_attack": {
+      "type": "animation",
+      "duration": 7,
+      "easing": "IN_OUT_SINE",
+      "on_swing": {
+        "command": "/playsound minecraft:entity.player.attack.sweep player @a ~ ~ ~ 1 1 0"
+      },
+      "frames": [
+        {
+          "direction": [
+            0.5, -0.5, 1
+          ],
+          "offset": [
+            -0.5, -0.25, 0
+          ],
+          "knockback": 0,
+          "damage_scale": 1,
+          "posture_scale": 1,
+          "crit": false,
+          "crit_damage": 1.5,
+          "hit_other": {
+            "velocity": [
+              0, 1, 0
+            ],
+            "set_velocity": true
+          }
+        }, {
+          "direction": [
+            -0.5, 0.5, 1
+          ],
+          "offset": [
+            -1.5, 0.5, 1.3
+          ]
+        }
+      ]
+    }
+  },
+  "minecraft:stone_sword": {
+    "attack": 0.5,
+    "defend": 1,
+    "shield": false,
+    "sweep": "CONE",
+    "knockback": 0.25,
+    "damage_scale": 0.25,
+    "posture_scale": 0.25,
+    "crit": false,
+    "crit_damage": 1.5,
+    "sweep_base": 60,
+    "sweep_scale": 10,
+    "standing": {
+      "sweep": "CONE",
+      "sweep_base": 60,
+      "posture_scale": 0.5
+    },
+    "falling": {
+      "sweep": "CLEAVE",
+      "sweep_base": 60,
+      "damage_scale": 0.5,
+      "posture_scale": 0.75
+    },
+    "sprinting": {
+      "type": "animation",
+      "duration": 12,
+      "easing": "IN_OUT_SINE",
+      "on_swing": {
+        "command": "/function rwd:deflect"
+      },
+      "velocity": [
+        0, 0.1, 1.25
+      ],
+      "frames": [
+        {
+          "direction": [
+            0.5, 0.5, 1
+          ],
+          "offset": [
+            0.5, 1, 0.5
+          ],
+          "knockback": 0.5,
+          "damage_scale": 0.25,
+          "posture_scale": 0.25
+        }, {
+          "direction": [
+            -0.5, -0.5, 1
+          ],
+          "offset": [
+            -0.5, -1, 1
+          ],
+          "effects": {
+            "reset_hit": true
+          }
+        }, {
+          "direction": [
+            -0.5, 0.5, 1
+          ],
+          "offset": [
+            -0.5, 1, 0.5
+          ],
+          "knockback": 0.5,
+          "damage_scale": 0.25,
+          "posture_scale": 0.25
+        }, {
+          "direction": [
+            0.5, -0.5, 1
+          ],
+          "offset": [
+            0.5, -1, 1
+          ]
+        }
+      ]
+    },
+    "guard_counter": {
+      "type": "animation",
+      "duration": 6,
+      "easing": "IN_OUT_SINE",
+      "on_swing": {
+        "command": "/playsound minecraft:entity.player.attack.sweep player @a ~ ~ ~ 1.1 0.5 0"
+      },
+      "frames": [
+        {
+          "direction": [
+            0.5, 0.5, 1
+          ],
+          "offset": [
+            0.5, 1, 0.5
+          ],
+          "knockback": 1.5,
+          "damage_scale": 1.5,
+          "posture_scale": 1.5,
+          "crit": false,
+          "crit_damage": 1.5,
+          "hit_self": {
+            "command": "/function rwd:katana/killmode_enter"
+          }
+        }, {
+          "direction": [
+            0.75, 0.75, 1
+          ],
+          "offset": [
+            0.75, 1.25, 0.75
+          ]
+        }, {
+          "direction": [
+            -0.5, -0.5, 1
+          ],
+          "offset": [
+            -0.5, -1, -0.75
+          ]
+        }
+      ]
+    },
+    "throw": {
+      "sweep": "LINE",
+      "knockback": 0.25,
+      "damage_scale": 0.1,
+      "posture_scale": 0.1,
+      "sweep_base": 0.25,
+      "hit_other": {
+        "command": "/tag @s add rwd.katana_mark"
+      },
+      "overrides": [
+        {
+          "condition": {
+            "ID": "has_effect",
+            "effect": "footwork:reveal",
+            "minimum_potency": 9
+          },
+          "override": {
+            "breach": true,
+            "crit": true,
+            "knockback": 0.25,
+            "damage_scale": 30,
+            "posture_scale": 30,
+            "hit_self": {
+              "command": "/function rwd:katana/killmode_teleport"
+            },
+            "hit_other": {
+              "command": "/tag @s remove rwd.katana_mark"
+            }
+          }
+        }
+      ]
+    },
+    "pickup_flourish": {
+      "sweep": "CIRCLE",
+      "sweep_base": 1.5,
+      "on_swing": {
+        "command": "/say How did you even do this?  You can't throw a katana..."
+      }
+    },
+    "draw_attack": {
+      "type": "animation",
+      "duration": 5,
+      "easing": "IN_OUT_SINE",
+      "on_swing": {
+        "command": "/playsound minecraft:entity.player.attack.sweep player @a ~ ~ ~ 1 1 0"
+      },
+      "frames": [
+        {
+          "direction": [
+            0.5, 0, 1
+          ],
+          "offset": [
+            1, 0, 0
+          ],
+          "knockback": 0.5,
+          "damage_scale": 0,
+          "posture_scale": 0,
+          "crit": false,
+          "crit_damage": 1.5,
+          "hit_other": {
+            "command": "/function rwd:katana/iai_mark"
+          },
+          "hit_self": {
+            "command": "/effect give @s haste 1 9 true"
+          }
+        }, {
+          "direction": [
+            -0.5, 0, 1
+          ],
+          "offset": [
+            -1, 0, 1
+          ]
+        }
+      ]
     }
   }
 }

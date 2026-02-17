@@ -1,6 +1,7 @@
 package jackiecrazy.wardance.config.weapon.interactions;
 
 import com.google.gson.*;
+import io.netty.buffer.ByteBufUtil;
 import jackiecrazy.footwork.move.action.Action;
 import jackiecrazy.footwork.move.action.timer.TimerAction;
 import jackiecrazy.footwork.move.argument.Argument;
@@ -62,6 +63,13 @@ public class WeaponInteractions {
         private boolean swingHand = true;
         private HitEffects on_swing=new HitEffects();
 
+        public String description() {
+            return description;
+        }
+
+        private String description;
+        private transient Component desc;
+
         public HitEffects on_swing() {
             return on_swing;
         }
@@ -101,6 +109,12 @@ public class WeaponInteractions {
             return SweepAttack.NOTHING.clone();
         }
 
+        public WeaponInteraction setDescription(String description) {
+            this.description = description;
+            desc=Component.translatable(description);
+            return this;
+        }
+
         public Vec3 getVelocity() {
             return velocity;
         }
@@ -116,7 +130,7 @@ public class WeaponInteractions {
         public abstract TYPE getInteractionType();
 
         public Component getToolTip(ItemStack e, boolean advanced) {
-            return Component.translatable("wardance.tooltip.attacks." + getInteractionType().toString().toLowerCase(Locale.ROOT));
+            return desc;
         }
 
         public abstract WeaponInteraction clone();
@@ -126,12 +140,14 @@ public class WeaponInteractions {
             f.writeVector3f(velocity.toVector3f());
             f.writeBoolean(set_velocity);
             f.writeBoolean(swingHand);
+            f.writeComponent(desc);
         }
 
         public WeaponInteraction read(FriendlyByteBuf f) {
             velocity = new Vec3(f.readVector3f());
             set_velocity = f.readBoolean();
             swingHand = f.readBoolean();
+            desc=f.readComponent();
             return this;
         }
 
@@ -148,6 +164,7 @@ public class WeaponInteractions {
     }
 
     public record InteractionOverride(Condition condition, WeaponInteraction override) {
+        //fixme anim overrides do not inherit added trail effects (which are weapon and trail by default, where did I define this???)
     }
 
     public static class WeaponDeserializer implements JsonDeserializer<WeaponInteraction> {
@@ -203,12 +220,12 @@ public class WeaponInteractions {
 
         private Animation asAnimation(JsonObject sub) {
             Animation anim = GSON.fromJson(sub, Animation.class);
-            if (sub.has("actions")) {
-                anim.actions = GSON.fromJson(sub.get("actions"), ArrayList.class);
+            if (sub.has("animations")) {
+                anim.animations = GSON.fromJson(sub.get("animations"), ArrayList.class);
             } else {
                 List<MotionManager> added = new ArrayList<>();
                 added.add(GSON.fromJson(sub, MotionManager.class));
-                anim.actions = added;
+                anim.animations = added;
             }
             return anim;
         }

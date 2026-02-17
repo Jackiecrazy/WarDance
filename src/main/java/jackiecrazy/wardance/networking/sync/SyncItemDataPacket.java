@@ -15,13 +15,13 @@ import java.util.function.Supplier;
 
 public class SyncItemDataPacket {
     private static final FriendlyByteBuf.Writer<Item> item = (f, item) -> f.writeResourceLocation(Objects.requireNonNull(ForgeRegistries.ITEMS.getKey(item)));
-    private static final FriendlyByteBuf.Writer<WeaponStats.MeleeInfo> info = (f, info) -> info.write(f);
+    private static final FriendlyByteBuf.Writer<WeaponStats.WeaponInfo> info = (f, info) -> info.write(f);
 
     private static final FriendlyByteBuf.Reader<Item> ritem = friendlyByteBuf -> ForgeRegistries.ITEMS.getValue(friendlyByteBuf.readResourceLocation());
-    private static final FriendlyByteBuf.Reader<WeaponStats.MeleeInfo> rinfo = WeaponStats.MeleeInfo::read;
-    private final Map<Item, WeaponStats.MeleeInfo> map;
+    private static final FriendlyByteBuf.Reader<WeaponStats.WeaponInfo> rinfo = WeaponStats.WeaponInfo::read;
+    private final Map<Item, WeaponStats.WeaponInfo> map;
 
-    public SyncItemDataPacket(Map<Item, WeaponStats.MeleeInfo> map) {
+    public SyncItemDataPacket(Map<Item, WeaponStats.WeaponInfo> map) {
         this.map = map;
     }
 
@@ -37,7 +37,7 @@ public class SyncItemDataPacket {
 
         @Override
         public SyncItemDataPacket apply(FriendlyByteBuf packetBuffer) {
-            final Map<Item, WeaponStats.MeleeInfo> huh = packetBuffer.readMap(ritem, rinfo);
+            final Map<Item, WeaponStats.WeaponInfo> huh = packetBuffer.readMap(ritem, rinfo);
             return new SyncItemDataPacket(huh);
         }
     }

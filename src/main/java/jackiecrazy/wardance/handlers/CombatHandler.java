@@ -334,8 +334,11 @@ public class CombatHandler {
                     //add stats if it's the first attack this tick and cooldown is sufficient
                     if (!semeCap.alreadyProc("qiSpent")) {//first hit of a sweep attack this tick, add combo based on state
                         //semeCap.addRank(0.1f);
-                        double percRed = semeCap.addSpirit(atkMult) / atkMult;
-                        semeCap.tickProc("darktide", percRed);
+                        float spiritAdded= (float) (atkMult*sweepInfo.spirit_multiplier());
+                        if(spiritAdded!=0) {
+                            double percRed = semeCap.addSpirit(spiritAdded) / spiritAdded;
+                            semeCap.tickProc("darktide", percRed);
+                        }
                         StylishData.getCap(seme).processAttack(true);
                         StylishData.getCap(seme).addCombo(0.05f, StylishCapability.getNormalAttackString(seme) + seme.getMainHandItem().getItem().toString());
                         //the attacker gets a steve time extension
@@ -652,7 +655,7 @@ public class CombatHandler {
 
             //consume stamina if we didn't do it yet, somehow
             if (!CombatData.getCap(trueSource).alreadyProc("qiSpent")) {
-                final float exhausted = CombatData.getCap(trueSource).doConsumeSpirit(e.getAmount());
+                final float exhausted = CombatData.getCap(trueSource).doConsumeSpirit((float) (e.getAmount()*sweepInfo.spirit_multiplier()));
                 cap.recordDamage(exhausted);
                 e.setAmount(e.getAmount() - exhausted);
                 CombatData.getCap(trueSource).tickProc("qiSpent");
@@ -784,7 +787,7 @@ public class CombatHandler {
         }
         if (cap.isStunned() && cap.getRecordedDamage() > 0) {
             e.setAmount(e.getAmount() + cap.getRecordedDamage());
-            //cap.stopRecording(null);
+            cap.stopRecording(null);
             MobilityUtils.knockBack(e.getEntity(), e.getSource().getEntity(), 0.7f, true, true);
         } else if (!cap.isStunned()) {
             if (cap.alreadyProc("deathDenied")) {

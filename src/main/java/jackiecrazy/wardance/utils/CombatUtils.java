@@ -248,9 +248,9 @@ public class CombatUtils {
             if (stack.getCapability(CombatManipulator.CAP).isPresent()) {
                 base = stack.getCapability(CombatManipulator.CAP).resolve().get().postureDealtBase(attacker, defender, stack, amount);
             } else {
-                final WeaponStats.MeleeInfo meleeInfo = WeaponStats.lookupStats(stack);
-                if (meleeInfo != null) {
-                    base = (float) meleeInfo.getAttackPostureMultiplier();
+                final WeaponStats.WeaponInfo weaponInfo = WeaponStats.lookupStats(stack);
+                if (weaponInfo != null) {
+                    base = (float) weaponInfo.getAttackPostureMultiplier();
                     if (attacker != null) {
                         base *= WeaponStats.getHitInfo(attacker.getMainHandItem(), attacker, CombatUtils.getAttackState(attacker)).getPostureScale();
                         final HitInfo info = WeaponStats.getHitInfo(attacker.getMainHandItem(), attacker, CombatUtils.getAttackState(attacker));
@@ -295,9 +295,9 @@ public class CombatUtils {
         if (stack.getCapability(CombatManipulator.CAP).isPresent()) {
             return stack.getCapability(CombatManipulator.CAP).resolve().get().postureMultiplierDefend(attacker, defender, stack, amount);
         }
-        final WeaponStats.MeleeInfo meleeInfo = WeaponStats.lookupStats(stack);
-        if (meleeInfo != null) {
-            return (float) meleeInfo.getDefensePostureMultiplier();
+        final WeaponStats.WeaponInfo weaponInfo = WeaponStats.lookupStats(stack);
+        if (weaponInfo != null) {
+            return (float) weaponInfo.getDefensePostureMultiplier();
         }
         return (float) WeaponStats.DEFAULTMELEE.getDefensePostureMultiplier();
     }
@@ -375,6 +375,7 @@ public class CombatUtils {
         ItemStack stack = e.getItemInHand(h);
         WeaponStats.AttackType s = getAttackState(e);
         WeaponInteractions.WeaponInteraction info = WeaponStats.getSweepInfo(stack, e, s);
+        WeaponStats.info_override=info.getHitInfo();
         MovementUtils.applyVelocity(info.getVelocity(), e, info.isSetVelocity());
         info.on_swing().runEffects(e, e);
         if (info instanceof SweepAttack sweep) {
@@ -393,7 +394,7 @@ public class CombatUtils {
             }
         }
         if (info instanceof Animation anim) {
-            for (MotionManager mm : anim.getActions())
+            for (MotionManager mm : anim.getAnimations())
                 FlyingWeaponData.getCap(e).scheduleAction(h, mm);
         }
         if (info instanceof Throw t) {
@@ -412,6 +413,7 @@ public class CombatUtils {
             cap.forceRefreshWeapons();
             temp_dest = null;
         }
+        WeaponStats.info_override=null;
     }
 
     public static void enhancedSweep(LivingEntity e,
@@ -485,6 +487,7 @@ public class CombatUtils {
         //grab everyone in "range"
         for (Entity target : e.level().getEntities(e, e.getBoundingBox().inflate(reach * 2))) {
             if (target == e) continue;
+            if(target.getType().is(MobSpecs.IGNORED_BY_SWEEP))continue;//poor item frames
             if (target.hasPassenger(e) || e.hasPassenger(target)) continue;//poor horse
             if (target == ignore) {
                 if (radius > 0)
@@ -758,7 +761,7 @@ public class CombatUtils {
             if (target.getLastHurtByMob() == null)
                 target.setLastHurtByMob(kicker);
         }
-        MobilityUtils.knockBack(targetEntity, kicker, 0.8f, true, false);
+        MobilityUtils.knockBack(targetEntity, kicker, 0.6f, true, false);
     }
 
     public static boolean scheduleFinisher(ServerPlayer sender, InteractionHand h, WeaponStats.AttackType s) {
@@ -770,7 +773,7 @@ public class CombatUtils {
         if (CombatData.getCap(sender).getHandBind(h) > 0) return false;
         //StylishData.getCap(sender).resetTriggerBar();
         WeaponInteractions.WeaponInteraction info = WeaponStats.getSweepInfo(sender.getItemInHand(h), sender, s);
-        if (info instanceof SweepAttack sa)//todo
+        if (info instanceof SweepAttack sa)
             TemporaryMoveTranslator.scheduleFinisher(sender, h, sa);
         StylishData.getCap(sender).addCombo(0.25f, "heavy" + (h == InteractionHand.OFF_HAND) + s.name());
         return true;

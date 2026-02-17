@@ -142,7 +142,7 @@ public class WarDance {
         CombatChannel.INSTANCE.registerMessage(index++, ThrowPacket.class, new ThrowPacket.Encoder(), new ThrowPacket.Decoder(), new ThrowPacket.Handler());
         CombatChannel.INSTANCE.registerMessage(index++, GrapplePacket.class, new GrapplePacket.Encoder(), new GrapplePacket.Decoder(), new GrapplePacket.Handler());
         CombatChannel.INSTANCE.registerMessage(index++, UnhookPacket.class, new UnhookPacket.Encoder(), new UnhookPacket.Decoder(), new UnhookPacket.Handler());
-        CombatChannel.INSTANCE.registerMessage(index++, UpdateWeaponPositionPacket.class, new UpdateWeaponPositionPacket.Encoder(), new UpdateWeaponPositionPacket.Decoder(), new UpdateWeaponPositionPacket.Handler());
+        CombatChannel.INSTANCE.registerMessage(index++, UpdateWeaponFramePacket.class, new UpdateWeaponFramePacket.Encoder(), new UpdateWeaponFramePacket.Decoder(), new UpdateWeaponFramePacket.Handler());
         CombatChannel.INSTANCE.registerMessage(index++, KickPacket.class, new KickPacket.Encoder(), new KickPacket.Decoder(), new KickPacket.Handler());
         CombatChannel.INSTANCE.registerMessage(index++, SyncQuiverPacket.class, new SyncQuiverPacket.Encoder(), new SyncQuiverPacket.Decoder(), new SyncQuiverPacket.Handler());
         CombatChannel.INSTANCE.registerMessage(index++, SwapAttackPacket.class, new SwapAttackPacket.Encoder(), new SwapAttackPacket.Decoder(), new SwapAttackPacket.Handler());

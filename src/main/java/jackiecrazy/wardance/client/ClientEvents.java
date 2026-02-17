@@ -7,7 +7,9 @@ import jackiecrazy.footwork.capability.stylish.IStyleCapability;
 import jackiecrazy.footwork.capability.stylish.StylishData;
 import jackiecrazy.footwork.entity.flyingweapon.FlyingWeaponEffect;
 import jackiecrazy.footwork.utils.GeneralUtils;
+import jackiecrazy.footwork.utils.TargetingUtils;
 import jackiecrazy.wardance.WarDance;
+import jackiecrazy.wardance.capability.charging.ChargingData;
 import jackiecrazy.wardance.capability.skill.CasterData;
 import jackiecrazy.wardance.capability.skill.ISkillCapability;
 import jackiecrazy.wardance.client.hud.QuiverDisplay;
@@ -61,7 +63,7 @@ import java.util.function.Predicate;
 
 @Mod.EventBusSubscriber(value = Dist.CLIENT, modid = WarDance.MODID)
 public class ClientEvents {
-    public static final Predicate<Entity> GRAPPLE_VALID = (a) -> EntitySelector.LIVING_ENTITY_STILL_ALIVE.test(a) || (a instanceof ThrownWeaponEntity b && !(a instanceof GhostBlockEntity) && b.isReal() && b.intangible());
+    public static final Predicate<Entity> GRAPPLE_VALID = (a) -> (a instanceof ThrownWeaponEntity b && !(a instanceof GhostBlockEntity) && b.isReal() && b.intangible());
     private static final int ALLOWANCE = 5;
     private static final List<KeyMapping> conflict = new ArrayList<>();
     private static final int magicSneakTime = 20;
@@ -77,7 +79,7 @@ public class ClientEvents {
     private static InteractionHand testingHand = null;
     private static int conflictMap = 0;
     private static int lastSweepTick = 0, lastAttackTick = 0;
-    private static boolean wasThrowAiming = false;
+    private static boolean wasThrowAiming = false, wasAiming = false;
 
     static {
         RenderUtils.formatter.setRoundingMode(RoundingMode.DOWN);
@@ -87,7 +89,7 @@ public class ClientEvents {
     public static boolean heavy(WeaponStats.AttackType state) {
         if (sneakedTime > magicSneakTime) {
             CombatChannel.INSTANCE.sendToServer(new HeavyPacket(lastUsedHandMain, state));
-            CombatChannel.INSTANCE.sendToServer(new UpdateWeaponRenderPacket(!lastUsedHandMain));
+            //CombatChannel.INSTANCE.sendToServer(new UpdateWeaponRenderPacket(!lastUsedHandMain));
             sneakedTime = -99999;
             return true;
         }
@@ -112,10 +114,10 @@ public class ClientEvents {
         //store a copy of the mob that the player is looking at for coyote time resolution
         double aimRange;
         boolean updateGrapple = false;
-        Predicate<Entity> pred = a->a instanceof ThrownWeaponEntity;
+        Predicate<Entity> pred = a -> EntitySelector.LIVING_ENTITY_STILL_ALIVE.test(a) && !TargetingUtils.isAlly(a, p);
         if (Keybinds.THROW.isDown()) {
             aimRange = GrappleEntity.MAXDIST;
-            pred = pred;
+            pred = GRAPPLE_VALID;
             updateGrapple = true;
         } else if (CasterData.getCap(Minecraft.getInstance().player).getHolsteredSkill() != null) {
             ISkillCapability sc = CasterData.getCap(Minecraft.getInstance().player);
@@ -219,20 +221,31 @@ public class ClientEvents {
 
                     //swap attack code
                     if (Keybinds.SWAP.isDown()) {
+                        if (!wasAiming)
+                            CombatChannel.INSTANCE.sendToServer(new UpdateWeaponFramePacket(WeaponStats.AttackType.DRAW_ATTACK));
+                        wasAiming = true;
                         if (mc.options.keyAttack.isDown() && mc.options.keyAttack.consumeClick()) {
+                            CombatUtils.setAttackType(p, WeaponStats.AttackType.DRAW_ATTACK);
                             CombatChannel.INSTANCE.sendToServer(new SwapAttackPacket(true, QuiverDisplay.invIndex));
                         }
                         if (mc.options.keyUse.isDown() && mc.options.keyUse.consumeClick()) {
+                            CombatUtils.setAttackType(p, WeaponStats.AttackType.DRAW_ATTACK);
                             CombatChannel.INSTANCE.sendToServer(new SwapAttackPacket(false, QuiverDisplay.invIndex));
                         }
+                    } else if (wasAiming) {
+                        CombatChannel.INSTANCE.sendToServer(new UpdateWeaponFramePacket(WeaponStats.AttackType.STANDING));
+                        wasAiming = false;
                     }
 
                     //throw code
                     if (Keybinds.THROW.isDown()) {
                         final Vec3 eyePosition = p.getEyePosition();
+                        if (!wasThrowAiming)
+                            CombatChannel.INSTANCE.sendToServer(new UpdateWeaponFramePacket(WeaponStats.AttackType.THROW));
                         wasThrowAiming = true;
                         //yeet!
                         if (mc.options.keyAttack.isDown() && mc.options.keyAttack.consumeClick()) {
+                            CombatUtils.setAttackType(p, WeaponStats.AttackType.THROW);
                             HitResult destination = ProjectileUtil.getHitResultOnViewVector(p, EntitySelector.LIVING_ENTITY_STILL_ALIVE, 32);
                             Vec3 loc = destination.getLocation();
                             if (destination.getType() == HitResult.Type.ENTITY) {
@@ -244,6 +257,7 @@ public class ClientEvents {
                             while (mc.options.keyAttack.consumeClick()) ;
                         }
                         if (mc.options.keyUse.isDown() && mc.options.keyUse.consumeClick()) {
+                            CombatUtils.setAttackType(p, WeaponStats.AttackType.THROW);
                             HitResult destination = ProjectileUtil.getHitResultOnViewVector(p, EntitySelector.LIVING_ENTITY_STILL_ALIVE, 32);
                             Vec3 loc = destination.getLocation();
                             if (destination.getType() == HitResult.Type.ENTITY) {
@@ -255,6 +269,7 @@ public class ClientEvents {
                             while (mc.options.keyUse.consumeClick()) ;
                         }
                     } else if (wasThrowAiming) {
+                        CombatChannel.INSTANCE.sendToServer(new UpdateWeaponFramePacket(WeaponStats.AttackType.STANDING));
                         CombatChannel.INSTANCE.sendToServer(new UnhookPacket());
                         wasThrowAiming = false;
                         //don't point them forward
@@ -268,14 +283,16 @@ public class ClientEvents {
 
                     //guard counter
                     if (mc.options.keyAttack.isDown() && sneakedTime > magicSneakTime && mc.options.keyAttack.consumeClick()) {
+                        CombatUtils.setAttackType(p, WeaponStats.AttackType.GUARD_COUNTER);
                         CombatChannel.INSTANCE.sendToServer(new HeavyPacket(true, WeaponStats.AttackType.GUARD_COUNTER));
-                        CombatChannel.INSTANCE.sendToServer(new UpdateWeaponRenderPacket(false));
+                        //CombatChannel.INSTANCE.sendToServer(new UpdateWeaponRenderPacket(false));
                         sneakedTime = -99999;
                         lastUsedHandMain = true;
                     }
                     if (mc.options.keyUse.isDown() && sneakedTime > magicSneakTime && mc.options.keyUse.consumeClick()) {
+                        CombatUtils.setAttackType(p, WeaponStats.AttackType.GUARD_COUNTER);
                         CombatChannel.INSTANCE.sendToServer(new HeavyPacket(false, WeaponStats.AttackType.GUARD_COUNTER));
-                        CombatChannel.INSTANCE.sendToServer(new UpdateWeaponRenderPacket(true));
+                        //CombatChannel.INSTANCE.sendToServer(new UpdateWeaponRenderPacket(true));
                         sneakedTime = -99999;
                         lastUsedHandMain = true;
                     }
@@ -289,15 +306,18 @@ public class ClientEvents {
                     //fixme guard counters
                     if (mc.options.keyUse.isDown()) {
                         final WeaponInteractions.WeaponInteraction offInfo = WeaponStats.getSweepInfo(mc.player.getOffhandItem(), mc.player, state);
-                        if((Keybinds.EVOKE.isDown() || offInfo.getInteractionType() == WeaponInteractions.WeaponInteraction.TYPE.USE)) {
+                        if ((Keybinds.EVOKE.isDown() || offInfo.getInteractionType() == WeaponInteractions.WeaponInteraction.TYPE.USE)) {
                             //special charge action, immediately start
                             //if (probablyNotAttacking && mc.player.getMainHandItem().getUseAnimation() != UseAnim.NONE)
                             if (!mc.player.isUsingItem()) {
                                 testingHand = InteractionHand.OFF_HAND;
                                 ((ClientAccessors) mc).callStartUseItem();
                             }
+                            if(offInfo instanceof Use u){
+                                ChargingData.getCap(p).alterSpeed(mc.player.getOffhandItem(), u.getUseSpeed());
+                            }
                             ++offUseTick;
-                        }else offUseTick=0;//microoptimization is the root of all spaghetti
+                        } else offUseTick = 0;//microoptimization is the root of all spaghetti
                     } else offUseTick = 0;
 
 
@@ -310,6 +330,9 @@ public class ClientEvents {
                         } else if (!mc.player.isUsingItem() && (Keybinds.EVOKE.isDown() || mainInfo.getInteractionType() == WeaponInteractions.WeaponInteraction.TYPE.USE)) {//don't call when already using item for obvious reasons
                             testingHand = InteractionHand.MAIN_HAND;
                             ((ClientAccessors) mc).callStartUseItem();
+                            if(mainInfo instanceof Use u){
+                                ChargingData.getCap(p).alterSpeed(mc.player.getMainHandItem(), u.getUseSpeed());
+                            }
                             if (!mc.options.keyUse.isDown())
                                 mc.options.keyUse.setDown(mc.player.isUsingItem());
                         }
@@ -346,17 +369,19 @@ public class ClientEvents {
                 }
                 if (p.isShiftKeyDown() && StylishData.getCap(p).isCombatMode()) {
                     sneakedTime++;
-                    if (sneakedTime == 1)
-                        CombatChannel.INSTANCE.sendToServer(new UpdateWeaponRenderPacket(lastUsedHandMain, FlyingWeaponEffect.WEAPON));
+                    if (sneakedTime == 1) {
+                        //CombatChannel.INSTANCE.sendToServer(new UpdateWeaponRenderPacket(lastUsedHandMain, FlyingWeaponEffect.WEAPON));
+                        CombatChannel.INSTANCE.sendToServer(new UpdateWeaponFramePacket(WeaponStats.AttackType.GUARD_COUNTER));
+                    }
                     if (sneakedTime == magicSneakTime) {
                         p.level().playSound(p, p.getX(), p.getY(), p.getZ(), SoundEvents.EXPERIENCE_ORB_PICKUP, SoundSource.PLAYERS, 0.3f + WarDance.rand.nextFloat() * 0.5f, 0.75f + WarDance.rand.nextFloat() * 0.5f);
                         CombatChannel.INSTANCE.sendToServer(new UpdateWeaponRenderPacket(lastUsedHandMain, FlyingWeaponEffect.WEAPON, FlyingWeaponEffect.BIG_SHADOW));
                     }
                 } else {
-//                    if(sneakedTime!=0){
-//                        CombatChannel.INSTANCE.sendToServer(new UpdateWeaponRenderPacket(true));
-//                        CombatChannel.INSTANCE.sendToServer(new UpdateWeaponRenderPacket(false));
-//                    }
+                    if (sneakedTime != 0) {
+                        CombatChannel.INSTANCE.sendToServer(new UpdateWeaponFramePacket(WeaponStats.AttackType.STANDING));
+                        //CombatChannel.INSTANCE.sendToServer(new UpdateWeaponRenderPacket(lastUsedHandMain, FlyingWeaponEffect.WEAPON));
+                    }
                     sneakedTime = 0;
                 }
 //                if (WarCompat.elenaiDodge) {

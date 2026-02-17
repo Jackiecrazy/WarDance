@@ -12,8 +12,10 @@ public class Overpower extends IronGuard {
     @Override
     protected void parry(LivingEntity caster, MeleePostureEvent.Defense procPoint, SkillData stats, LivingEntity target, STATE state) {
         if (state == STATE.COOLING) return;
-        CombatData.getCap(procPoint.getAttacker()).consumePosture(caster, CombatUtils.getPostureAtk(caster, target, procPoint.getDefendingHand(), null, procPoint.getAttackDamage(), procPoint.getDefendingStack()) * stats.getEffectiveness());
-        CombatData.getCap(procPoint.getAttacker()).consumePosture(caster, procPoint.getPostureConsumption() * stats.getEffectiveness());
+        final LivingEntity attacker = procPoint.getAttacker();
+        if(attacker==null)return;
+        CombatData.getCap(attacker).consumePosture(caster, CombatUtils.getPostureAtk(caster, target, procPoint.getDefendingHand(), null, procPoint.getAttackDamage(), procPoint.getDefendingStack()) * stats.getEffectiveness());
+        CombatData.getCap(attacker).consumePosture(caster, procPoint.getPostureConsumption() * stats.getEffectiveness());
         markUsed(caster);
     }
 

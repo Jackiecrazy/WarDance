@@ -11,7 +11,7 @@
     "parry_omnidirectional": true,
     "natural_shield": true
   },
-  "minecraft:spider": {
+  "minecraft:cave_spider": {
     "base_max_posture": 12,
     "max_posture_scaling": 0.80,
     "base_attack_posture": 5,

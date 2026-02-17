@@ -22,7 +22,7 @@ public class Poise extends HeavyBlow {
 
     @Override
     public void onProc(LivingEntity caster, Event procPoint, STATE state, SkillData stats, LivingEntity target) {
-        if (stats.isCondition() && procPoint instanceof MeleePostureEvent.Block && procPoint.getPhase() == EventPriority.LOWEST && ((MeleePostureEvent.Defense) procPoint).getAttacker() == caster) {
+        if (stats.isCondition() && procPoint instanceof MeleePostureEvent.Block && procPoint.getPhase() == EventPriority.LOWEST) {
             //CombatData.getCap(caster).rally(((MeleePostureEvent.Block) procPoint).getPostureConsumption());
         }else if (procPoint instanceof CriticalHitEvent) {
             if (isCrit((CriticalHitEvent) procPoint) && state != STATE.COOLING && procPoint.getPhase() == EventPriority.LOWEST) {
