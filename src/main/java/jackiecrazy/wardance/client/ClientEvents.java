@@ -23,7 +23,6 @@ import jackiecrazy.wardance.entity.GrappleEntity;
 import jackiecrazy.wardance.entity.ThrownWeaponEntity;
 import jackiecrazy.wardance.handlers.TwoHandingHandler;
 import jackiecrazy.wardance.mixin.ClientAccessors;
-import jackiecrazy.wardance.mixin.LivingEntityAccessors;
 import jackiecrazy.wardance.networking.*;
 import jackiecrazy.wardance.networking.combat.*;
 import jackiecrazy.wardance.skill.Skill;
@@ -40,7 +39,6 @@ import net.minecraft.world.entity.*;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.entity.projectile.ProjectileUtil;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.UseAnim;
 import net.minecraft.world.phys.EntityHitResult;
 import net.minecraft.world.phys.HitResult;
 import net.minecraft.world.phys.Vec3;
@@ -305,15 +303,16 @@ public class ClientEvents {
                     //offhand first
                     //fixme guard counters
                     if (mc.options.keyUse.isDown()) {
-                        final WeaponInteractions.WeaponInteraction offInfo = WeaponStats.getSweepInfo(mc.player.getOffhandItem(), mc.player, state);
-                        if ((Keybinds.EVOKE.isDown() || offInfo.getInteractionType() == WeaponInteractions.WeaponInteraction.TYPE.USE)) {
+                        final WeaponInteractions.InteractionGroup offInfo = WeaponStats.getSweepInfo(mc.player.getOffhandItem(), mc.player, state);
+                        if ((Keybinds.EVOKE.isDown() || offInfo.hasInteractionType(WeaponInteractions.WeaponInteraction.InteractionType.USE))) {
                             //special charge action, immediately start
                             //if (probablyNotAttacking && mc.player.getMainHandItem().getUseAnimation() != UseAnim.NONE)
                             if (!mc.player.isUsingItem()) {
                                 testingHand = InteractionHand.OFF_HAND;
                                 ((ClientAccessors) mc).callStartUseItem();
                             }
-                            if(offInfo instanceof Use u){
+                            WeaponInteractions.WeaponInteraction offuse=offInfo.getInteractionOfType(WeaponInteractions.WeaponInteraction.InteractionType.USE);
+                            if(offuse instanceof Use u){
                                 ChargingData.getCap(p).alterSpeed(mc.player.getOffhandItem(), u.getUseSpeed());
                             }
                             ++offUseTick;
@@ -322,15 +321,16 @@ public class ClientEvents {
 
 
                     if (mc.options.keyAttack.isDown()) {
-                        final WeaponInteractions.WeaponInteraction mainInfo = WeaponStats.getSweepInfo(mc.player.getMainHandItem(), mc.player, state);
+                        final WeaponInteractions.InteractionGroup mainInfo = WeaponStats.getSweepInfo(mc.player.getMainHandItem(), mc.player, state);
                         //special charge action, immediately start
                         if (mc.player.isUsingItem() && mc.player.getUsedItemHand() == InteractionHand.MAIN_HAND) {
                             //hack. Spoof use item key to down for the keybind processing
                             mc.options.keyUse.setDown(true);
-                        } else if (!mc.player.isUsingItem() && (Keybinds.EVOKE.isDown() || mainInfo.getInteractionType() == WeaponInteractions.WeaponInteraction.TYPE.USE)) {//don't call when already using item for obvious reasons
+                        } else if (!mc.player.isUsingItem() && (Keybinds.EVOKE.isDown() || mainInfo.hasInteractionType(WeaponInteractions.WeaponInteraction.InteractionType.USE))) {//don't call when already using item for obvious reasons
                             testingHand = InteractionHand.MAIN_HAND;
                             ((ClientAccessors) mc).callStartUseItem();
-                            if(mainInfo instanceof Use u){
+                            WeaponInteractions.WeaponInteraction mainUse=mainInfo.getInteractionOfType(WeaponInteractions.WeaponInteraction.InteractionType.USE);
+                            if(mainUse instanceof Use u){
                                 ChargingData.getCap(p).alterSpeed(mc.player.getMainHandItem(), u.getUseSpeed());
                             }
                             if (!mc.options.keyUse.isDown())
@@ -606,7 +606,7 @@ public class ClientEvents {
         }
         var sweepInfo = WeaponStats.getSweepInfo(stack, state);
 
-        boolean hasUseAction = sweepInfo != null && sweepInfo.getInteractionType() == WeaponInteractions.WeaponInteraction.TYPE.USE;
+        boolean hasUseAction = sweepInfo != null && sweepInfo.getInteractionType() == WeaponInteractions.WeaponInteraction.InteractionType.USE;
 
         if (hasUseAction) {
             CombatChannel.INSTANCE.sendToServer(new RequestSweepPacket(intendedHand == InteractionHand.MAIN_HAND, null));

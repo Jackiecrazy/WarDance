@@ -42,6 +42,7 @@ import java.util.stream.Collectors;
 
 public class WeaponStats extends SimpleJsonResourceReloadListener {
     public static final TagKey<Item> TWO_HANDED = ItemTags.create(new ResourceLocation(WarDance.MODID, "two_handed"));
+    public static final TagKey<Item> SHIELD = ItemTags.create(new ResourceLocation(WarDance.MODID, "is_shield"));
     public static final TagKey<Item> PARRY_PROJECTILE = ItemTags.create(new ResourceLocation(WarDance.MODID, "parry_projectiles"));
     public static final TagKey<Item> CAN_BE_DISABLED = ItemTags.create(new ResourceLocation(WarDance.MODID, "can_be_disabled"));
     public static final TagKey<Item> DISABLE_SHIELD = ItemTags.create(new ResourceLocation(WarDance.MODID, "disable_shield"));
@@ -117,8 +118,8 @@ public class WeaponStats extends SimpleJsonResourceReloadListener {
                 try {
                     JsonObject obj = entry.getValue().getAsJsonObject();
                     WeaponInfo put = parseMeleeInfo(name, obj);
-                    if (GeneralConfig.debug)
-                        WarDance.LOGGER.debug(name + " has been registered with sweep types: " + put.sweeps[0].getInteractionType() + " " + put.sweeps[1].getInteractionType() + " " + put.sweeps[2].getInteractionType() + " " + put.sweeps[3].getInteractionType() + " " + put.sweeps[4].getInteractionType() + " ");
+                    //if (GeneralConfig.debug)
+                        //WarDance.LOGGER.debug(name + " has been registered with sweep types: " + put.sweeps[0].getInteractionType() + " " + put.sweeps[1].getInteractionType() + " " + put.sweeps[2].getInteractionType() + " " + put.sweeps[3].getInteractionType() + " " + put.sweeps[4].getInteractionType() + " ");
                     combatList.put(item, put);
                 } catch (Exception x) {
                     WarDance.LOGGER.error("malformed json under " + name + "!");
@@ -131,17 +132,17 @@ public class WeaponStats extends SimpleJsonResourceReloadListener {
     @Nonnull
     private static WeaponInfo parseMeleeInfo(String root, JsonObject obj) {
         WeaponInfo put = WeaponInteractions.GSON.fromJson(obj, WeaponInfo.class);
-        WeaponInteractions.WeaponInteraction defaultSweep = WeaponInteractions.GSON.fromJson(obj, WeaponInteractions.WeaponInteraction.class);
+        WeaponInteractions.InteractionGroup defaultSweep = WeaponInteractions.GSON.fromJson(obj, WeaponInteractions.InteractionGroup.class);
         put.sweeps[0] = defaultSweep;
         for (AttackType s : AttackType.values()) {
             int ord = s.ordinal();
             JsonElement gottem = obj.get(s.name().toLowerCase(Locale.ROOT));
             if (gottem != null) {
                 JsonObject sub = gottem.getAsJsonObject();
-                WeaponInteractions.WeaponInteraction sweep = WeaponInteractions.GSON.fromJson(sub, WeaponInteractions.WeaponInteraction.class);
+                WeaponInteractions.InteractionGroup sweep = WeaponInteractions.GSON.fromJson(sub, WeaponInteractions.InteractionGroup.class);
                 put.sweeps[ord] = sweep;
             }
-            WeaponInteractions.WeaponInteraction sweep=put.sweeps[ord];
+            WeaponInteractions.InteractionGroup sweep = put.sweeps[ord];
             if (sweep.description() == null)
                 sweep.setDescription("wardance.tooltip.attacks." + root + "." + s.toString().toLowerCase(Locale.ROOT));
             else sweep.setDescription(sweep.description());//initialize the component
@@ -173,8 +174,7 @@ public class WeaponStats extends SimpleJsonResourceReloadListener {
 
     public static boolean isShield(LivingEntity e, ItemStack stack) {
         if (stack == null) return false;
-        WeaponInfo rt = lookupStats(stack);//stack.isShield(e);
-        return rt != null && rt.shield;
+        return stack.is(SHIELD);
     }
 
     public static boolean canParryProjectile(LivingEntity e, ItemStack stack) {
@@ -241,14 +241,14 @@ public class WeaponStats extends SimpleJsonResourceReloadListener {
         return is.is(PIERCE_SHIELD);
     }
 
-    public static WeaponInteractions.WeaponInteraction getSweepInfo(ItemStack i, LivingEntity wielder, AttackType s) {
+    public static WeaponInteractions.InteractionGroup getSweepInfo(ItemStack i, LivingEntity wielder, AttackType s) {
         final WeaponInfo info = lookupStats(i);
         if (info == null) {
             return SweepAttack.DEFAULT_NONE;
         } else {
-            final WeaponInteractions.WeaponInteraction intl = info.sweeps[s.ordinal()];
+            final WeaponInteractions.InteractionGroup intl = info.sweeps[s.ordinal()];
             if (!intl.getOverrides().isEmpty()) {
-                ArgumentContext ctx = new ArgumentContext(wielder, wielder);//todo allow target in the future?
+                ArgumentContext ctx = new ArgumentContext(wielder, wielder);
                 for (WeaponInteractions.InteractionOverride io : intl.getOverrides()) {
                     if (Boolean.TRUE.equals(io.condition().resolve(ctx))) {
                         return io.override();
@@ -263,7 +263,7 @@ public class WeaponStats extends SimpleJsonResourceReloadListener {
         if (info_override != null) return info_override;
 //        final WeaponInfo info = lookupStats(i);
 //        if (info == null) return SweepAttack.DEFAULT_NONE.getHitInfo();
-        return getSweepInfo(i, wielder, s).getHitInfo();
+        return getSweepInfo(i, wielder, s).getInteractions().get(0).getHitInfo();//fixme
     }
 
     @Override
@@ -297,7 +297,7 @@ public class WeaponStats extends SimpleJsonResourceReloadListener {
         private MotionManager aim_frame = new MotionManagers.FixedMM(new MotionFrame(new Vec3(0, 0, 1), new Vec3(0, 0, 1), 0).setEffects(new FrameEffects().setEffects(FlyingWeaponEffect.WEAPON)), 2);
         private MotionManager swap_frame = new MotionManagers.FixedMM(new MotionFrame(new Vec3(0, 0, 1), Vec3.ZERO, 0).setEffects(new FrameEffects().setEffects(FlyingWeaponEffect.WEAPON, FlyingWeaponEffect.AFTERIMAGE)), 2);
         //standing, falling, sneaking, sprinting, riding
-        private WeaponInteractions.WeaponInteraction[] sweeps = new WeaponInteractions.WeaponInteraction[AttackType.values().length];
+        private WeaponInteractions.InteractionGroup[] sweeps = new WeaponInteractions.InteractionGroup[AttackType.values().length];
 
         private WeaponInfo() {
             this(CombatConfig.defaultMultiplierPostureAttack, CombatConfig.defaultMultiplierPostureDefend);
@@ -307,7 +307,7 @@ public class WeaponStats extends SimpleJsonResourceReloadListener {
             this.attack = attack;
             this.defend = defend;
             for (int i = 0; i < sweeps.length; i++) {
-                sweeps[i] = SweepAttack.DEFAULT_FAN.clone();
+                sweeps[i] = SweepAttack.DEFAULT_FAN.clone().asGroup();
             }
             sweeps[AttackType.GUARD_COUNTER.ordinal()] = Animation.FLURRY;
             sweeps[AttackType.THROW.ordinal()] = Throw.DEFAULT;
@@ -320,7 +320,7 @@ public class WeaponStats extends SimpleJsonResourceReloadListener {
             ret.defend = f.readDouble();
             ret.shield = f.readBoolean();
             for (int x = 0; x < ret.sweeps.length; x++) {
-                ret.sweeps[x] = WeaponInteractions.WeaponInteraction.readFromByte(f);
+                ret.sweeps[x] = new WeaponInteractions.InteractionGroup().read(f);//WeaponInteractions.WeaponInteraction.readFromByte(f);
             }
             return ret;
         }
@@ -354,7 +354,7 @@ public class WeaponStats extends SimpleJsonResourceReloadListener {
             f.writeDouble(defend);
             f.writeBoolean(shield);
 
-            for (WeaponInteractions.WeaponInteraction ss : sweeps) {
+            for (WeaponInteractions.InteractionGroup ss : sweeps) {
                 ss.write(f);
             }
         }

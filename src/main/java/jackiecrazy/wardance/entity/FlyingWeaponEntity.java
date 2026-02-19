@@ -240,6 +240,8 @@ public class FlyingWeaponEntity extends FlyingItemEntity {
             if (effects.getEffects() != null)
                 setEffect(effects.getEffects().toArray(new FlyingWeaponEffect[0]));
             cacheInfo = effects.getHit();
+            if (cacheInfo != null && getOwner() != null)
+                CombatUtils.applyFrames(getOwner(), cacheInfo);
             if (effects.reset_hit())
                 alreadyHit.clear();
             LivingEntity e = getOwner();

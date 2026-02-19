@@ -1,7 +1,7 @@
 package jackiecrazy.wardance.config.weapon.interactions;
 
+import com.google.common.collect.ImmutableList;
 import com.google.gson.*;
-import io.netty.buffer.ByteBufUtil;
 import jackiecrazy.footwork.move.action.Action;
 import jackiecrazy.footwork.move.action.timer.TimerAction;
 import jackiecrazy.footwork.move.argument.Argument;
@@ -33,14 +33,12 @@ import java.util.function.Supplier;
 
 public class WeaponInteractions {
     public static final ConsumeResourceCondition BREACH_CONDITION = new ConsumeResourceCondition(ResourceEnums.ResourceFormat.PERCENTAGE, ResourceEnums.TYPE.SPIRIT, new FixedNumberArgument(1));
-    public static Gson GSON = new GsonBuilder()
-            .registerTypeAdapter(WeaponInteraction.class, new WeaponDeserializer())
+    public static Gson GSON = new GsonBuilder().registerTypeAdapter(WeaponInteraction.class, new InteractionDeserializer())
             .registerTypeAdapter(ResourceLocation.class, new ResourceLocation.Serializer())
             .registerTypeAdapter(Vec3.class, new JsonAdapters.Vec3TypeAdapter())
             .registerTypeAdapter(MotionFrame.class, new JsonAdapters.MotionFrameAdapter())
             .registerTypeAdapter(MotionManager.class, new JsonAdapters.MotionManagerDeserializer())
             .registerTypeAdapter(HitInfo.class, new JsonAdapters.HitInfoAdapter())
-
             .registerTypeAdapter(Class.class, new ActionJsonAdapters.ClassAdapter())
             .registerTypeAdapter(Supplier.class, new ActionJsonAdapters.SupplierAdapter())
             .registerTypeAdapter(Action.class, new ActionJsonAdapters.ActionAdapter())
@@ -53,28 +51,85 @@ public class WeaponInteractions {
             .registerTypeAdapter(Filter.class, new ActionJsonAdapters.FilterAdapter())
             .registerTypeAdapter(ResourceLocation.class, new ResourceLocation.Serializer())
             .registerTypeAdapter(CompoundTag.class, new ActionJsonAdapters.NBTAdapter())
+            .registerTypeAdapter(InteractionGroup.class, new GroupDeserializer())
 
 
             .create();
 
-    public static abstract class WeaponInteraction {
+    public static class InteractionGroup {
+        private List<WeaponInteraction> interactions = new ArrayList<>();
         private Vec3 velocity = Vec3.ZERO;
         private boolean set_velocity = false;
         private boolean swingHand = true;
-        private HitEffects on_swing=new HitEffects();
+        private HitEffects on_swing = new HitEffects();
+        private String description;
+        private transient Component desc;
+        private List<InteractionOverride> overrides = new ArrayList<>();
+        private transient Map<WeaponInteraction.InteractionType, WeaponInteraction> bakedTypes = null;
+        private double minimum_cooldown = 0.9;
+        private double cooldown_refund = 0;
+
+        public InteractionGroup() {
+        }
+
+        public double getCooldownRefund() {
+            return cooldown_refund;
+        }
+
+        public double getMinimumCooldown() {
+            return minimum_cooldown;
+        }
+
+        public void write(FriendlyByteBuf f) {
+            f.writeVector3f(velocity.toVector3f());
+            f.writeBoolean(set_velocity);
+            f.writeBoolean(swingHand);
+            f.writeComponent(desc);
+            f.writeCollection(interactions, (a, b) -> {
+                b.write(a);
+            });
+        }
+
+        public InteractionGroup read(FriendlyByteBuf f) {
+            velocity = new Vec3(f.readVector3f());
+            set_velocity = f.readBoolean();
+            swingHand = f.readBoolean();
+            desc = f.readComponent();
+            interactions = f.readList(WeaponInteraction::readFromByte);
+            return this;
+        }
+
+        public Vec3 getVelocity() {
+            return velocity;
+        }
+
+        public boolean isSetVelocity() {
+            return set_velocity;
+        }
+
+        public boolean isSwingHand() {
+            return swingHand;
+        }
 
         public String description() {
             return description;
         }
 
-        private String description;
-        private transient Component desc;
-
         public HitEffects on_swing() {
             return on_swing;
         }
 
-        public WeaponInteraction addOverride(InteractionOverride io){
+        public InteractionGroup setDescription(String description) {
+            this.description = description;
+            desc = Component.translatable(description);
+            return this;
+        }
+
+        public Component getToolTip(ItemStack e, boolean advanced) {
+            return desc;
+        }
+
+        public InteractionGroup addOverride(InteractionOverride io) {
             getOverrides().add(io);
             return this;
         }
@@ -83,16 +138,45 @@ public class WeaponInteractions {
             return overrides;
         }
 
-        private List<InteractionOverride> overrides = new ArrayList<>();
+        public boolean hasInteractionType(WeaponInteraction.InteractionType interactionType) {
+            //bake types for faster lookup
+            if (bakedTypes == null) {
+                bakedTypes = new HashMap<>();
+                for (WeaponInteraction wi : interactions) {
+                    bakedTypes.putIfAbsent(wi.getInteractionType(), wi);
+                }
+            }
+            return bakedTypes.containsKey(interactionType);
+        }
 
+        public WeaponInteraction getInteractionOfType(WeaponInteraction.InteractionType interactionType) {
+            //bake types for faster lookup
+            if (bakedTypes == null) {
+                bakedTypes = new HashMap<>();
+                for (WeaponInteraction wi : interactions) {
+                    bakedTypes.putIfAbsent(wi.getInteractionType(), wi);
+                }
+            }
+            return bakedTypes.get(interactionType);
+        }
+
+        public List<WeaponInteraction> getInteractions() {
+            return interactions;
+        }
+
+        public InteractionGroup setInteractions(List<WeaponInteraction> interactions) {
+            this.interactions = ImmutableList.copyOf(interactions);
+            return this;
+        }
+    }
+
+    public static abstract class WeaponInteraction {
         public WeaponInteraction() {
-            velocity = Vec3.ZERO;
-            set_velocity = false;
-            swingHand = true;
+
         }
 
         public static WeaponInteraction readFromByte(FriendlyByteBuf f) {
-            switch (TYPE.values()[f.readInt()]) {
+            switch (InteractionType.values()[f.readInt()]) {
                 case SWEEP -> {
                     return SweepAttack.NOTHING.clone().read(f);
                 }
@@ -109,73 +193,85 @@ public class WeaponInteractions {
             return SweepAttack.NOTHING.clone();
         }
 
-        public WeaponInteraction setDescription(String description) {
-            this.description = description;
-            desc=Component.translatable(description);
-            return this;
-        }
-
-        public Vec3 getVelocity() {
-            return velocity;
-        }
-
-        public boolean isSetVelocity() {
-            return set_velocity;
-        }
-
-        public boolean isSwingHand() {
-            return swingHand;
-        }
-
-        public abstract TYPE getInteractionType();
-
-        public Component getToolTip(ItemStack e, boolean advanced) {
-            return desc;
-        }
+        public abstract InteractionType getInteractionType();
 
         public abstract WeaponInteraction clone();
 
         public void write(FriendlyByteBuf f) {
             f.writeInt(getInteractionType().ordinal());
-            f.writeVector3f(velocity.toVector3f());
-            f.writeBoolean(set_velocity);
-            f.writeBoolean(swingHand);
-            f.writeComponent(desc);
         }
 
         public WeaponInteraction read(FriendlyByteBuf f) {
-            velocity = new Vec3(f.readVector3f());
-            set_velocity = f.readBoolean();
-            swingHand = f.readBoolean();
-            desc=f.readComponent();
             return this;
         }
 
         public HitInfo getHitInfo() {
-            return SweepAttack.DEFAULT_NONE.getHitInfo();
+            return SweepAttack.DEFAULT_NONE.interactions.get(0).getHitInfo();
         }
 
-        public enum TYPE {
-            SWEEP,
-            USE,
-            THROW,
-            ANIMATE
+        public InteractionGroup asGroup() {
+            InteractionGroup ret = new InteractionGroup();
+            ret.setInteractions(List.of(this));
+            return ret;
+        }
+
+        public enum InteractionType {
+            SWEEP, USE, THROW, ANIMATE
         }
     }
 
-    public record InteractionOverride(Condition condition, WeaponInteraction override) {
+    public record InteractionOverride(Condition condition, InteractionGroup override) {
         //fixme anim overrides do not inherit added trail effects (which are weapon and trail by default, where did I define this???)
     }
 
-    public static class WeaponDeserializer implements JsonDeserializer<WeaponInteraction> {
+    public static class GroupDeserializer implements JsonDeserializer<InteractionGroup> {
+
+        @Override
+        public InteractionGroup deserialize(JsonElement json,
+                                            Type typeOfT,
+                                            JsonDeserializationContext context) throws JsonParseException {
+            //fixme a naive deconstruction has no idea what a condition is
+            InteractionGroup ret = ActionJsonAdapters.gson.fromJson(json, InteractionGroup.class);
+            if (json.isJsonObject()) {
+                //could be either a full fledged def or just a single interaction, possibly containing overrides
+                //extract partial overrides first
+                final JsonObject baseObj = json.getAsJsonObject();
+                JsonElement overObj = baseObj.remove("overrides");
+                if (ret.getInteractions().isEmpty()) {
+                    ret = GSON.fromJson(json, WeaponInteraction.class).asGroup();
+                }
+                if (overObj != null && overObj.isJsonArray()) {
+                    JsonArray overrides = overObj.getAsJsonArray();
+                    for (JsonElement override : overrides.asList()) {
+                        if (override.isJsonObject()) {
+                            JsonObject obj = override.getAsJsonObject();
+                            if (obj.has("override") && obj.has("condition")) {
+                                Condition c = ActionJsonAdapters.gson.fromJson(obj.get("condition"), Condition.class);
+                                final JsonObject merged = JsonUtils.deepMerge(baseObj, obj.get("override").getAsJsonObject());
+                                InteractionGroup wi = GSON.fromJson(merged, InteractionGroup.class);
+                                ret.overrides.add(new InteractionOverride(c, wi));
+                            }
+                        }
+                    }
+                }
+                return ret;
+            }
+            if (json.isJsonArray()) {
+                //a simple list of interactions with no override, tooltip, or velocity. I'm not sure why you would want this.
+                List<WeaponInteraction> list = context.deserialize(json, ArrayList.class);
+                ret.setInteractions(list);
+            }
+            return ret;
+        }
+    }
+
+    public static class InteractionDeserializer implements JsonDeserializer<WeaponInteraction> {
         @Override
         public WeaponInteraction deserialize(JsonElement json,
                                              Type typeOfT,
                                              JsonDeserializationContext context) throws JsonParseException {
             if (!json.isJsonObject()) return null;
             JsonObject baseObj = json.getAsJsonObject();
-            //extract partial overrides first
-            JsonElement overObj = baseObj.remove("overrides");
             WeaponInteraction ret = asSweepAttack(baseObj);
             if (baseObj.has("type")) {
                 //others go in here
@@ -183,20 +279,6 @@ public class WeaponInteractions {
                 if (type.toLowerCase(Locale.ROOT).equals("use")) ret = asUse(baseObj);
                 if (type.toLowerCase(Locale.ROOT).equals("animation")) ret = asAnimation(baseObj);
                 if (type.toLowerCase(Locale.ROOT).equals("throw")) ret = asThrow(baseObj);
-            }
-            if (overObj != null && overObj.isJsonArray()) {
-                JsonArray overrides = overObj.getAsJsonArray();
-                for (JsonElement override : overrides.asList()) {
-                    if (override.isJsonObject()) {
-                        JsonObject obj = override.getAsJsonObject();
-                        if (obj.has("override") && obj.has("condition")) {
-                            Condition c = ActionJsonAdapters.gson.fromJson(obj.get("condition"), Condition.class);
-                            final JsonObject merged = JsonUtils.deepMerge(baseObj, obj.get("override").getAsJsonObject());
-                            WeaponInteraction wi = GSON.fromJson(merged, WeaponInteraction.class);
-                            ret.overrides.add(new InteractionOverride(c, wi));
-                        }
-                    }
-                }
             }
             return ret;
         }

@@ -9,23 +9,23 @@ import net.minecraft.world.phys.Vec3;
 import java.util.List;
 
 public class Animation extends WeaponInteractions.WeaponInteraction {
-    public static final Animation CIRCLE = new Animation().setAction(TemporaryMoveTranslator.temp_getMMFromType(10, SweepAttack.SWEEPTYPE.CIRCLE, 3, HitInfo.BREACH, 5));
+    public static final WeaponInteractions.InteractionGroup CIRCLE = new Animation().setAction(TemporaryMoveTranslator.temp_getMMFromType(10, SweepAttack.SWEEPTYPE.CIRCLE, 3, HitInfo.BREACH, 5)).asGroup();
     private static final List<MotionFrame> STAB = List.of(
             new MotionFrame(new Vec3(0, 0, 1), new Vec3(0, 0, -0.5)),
             new MotionFrame(new Vec3(0, 0, 1), new Vec3(0, 0, 1.5)),
             new MotionFrame(new Vec3(0, 0, 1), new Vec3(0, 0, 1.5))
     );
-    public static final Animation FLURRY_BREACH = new Animation().setAction(
+    public static final WeaponInteractions.InteractionGroup FLURRY_BREACH = new Animation().setAction(
             new MotionManagers.DefinitionMM(new MotionGroup(STAB, EasingFunctionEnum.OUT_CUBIC, 3, new FrameEffects().setEffects(FlyingWeaponEffect.WEAPON, FlyingWeaponEffect.TRAIL, FlyingWeaponEffect.BIG_SHADOW).setHit(HitInfo.THROWN))),
             new MotionManagers.DefinitionMM(new MotionGroup(STAB, EasingFunctionEnum.OUT_CUBIC, 3, new FrameEffects().setEffects(FlyingWeaponEffect.WEAPON, FlyingWeaponEffect.TRAIL, FlyingWeaponEffect.BIG_SHADOW).setHit(HitInfo.THROWN))),
             new MotionManagers.DefinitionMM(new MotionGroup(STAB, EasingFunctionEnum.OUT_CUBIC, 3, new FrameEffects().setEffects(FlyingWeaponEffect.WEAPON, FlyingWeaponEffect.TRAIL, FlyingWeaponEffect.BIG_SHADOW).setHit(HitInfo.THROWN))),
             new MotionManagers.DefinitionMM(new MotionGroup(STAB, EasingFunctionEnum.OUT_CUBIC, 10, new FrameEffects().setEffects(FlyingWeaponEffect.WEAPON, FlyingWeaponEffect.TRAIL, FlyingWeaponEffect.BIG_SHADOW).setHit(HitInfo.BREACH)))
-    );
-    public static final WeaponInteractions.WeaponInteraction FLURRY = new Animation().setAction(
+    ).asGroup();
+    public static final WeaponInteractions.InteractionGroup FLURRY = new Animation().setAction(
             new MotionManagers.DefinitionMM(new MotionGroup(STAB, EasingFunctionEnum.OUT_CUBIC, 3, new FrameEffects().setEffects(FlyingWeaponEffect.WEAPON, FlyingWeaponEffect.TRAIL).setHit(HitInfo.THROWN))),
             new MotionManagers.DefinitionMM(new MotionGroup(STAB, EasingFunctionEnum.OUT_CUBIC, 3, new FrameEffects().setEffects(FlyingWeaponEffect.WEAPON, FlyingWeaponEffect.TRAIL).setHit(HitInfo.THROWN))),
             new MotionManagers.DefinitionMM(new MotionGroup(STAB, EasingFunctionEnum.OUT_CUBIC, 3, new FrameEffects().setEffects(FlyingWeaponEffect.WEAPON, FlyingWeaponEffect.TRAIL).setHit(HitInfo.THROWN)))
-            ).addOverride(new WeaponInteractions.InteractionOverride(WeaponInteractions.BREACH_CONDITION, FLURRY_BREACH));
+            ).asGroup().addOverride(new WeaponInteractions.InteractionOverride(WeaponInteractions.BREACH_CONDITION, FLURRY_BREACH));
 
     public List<MotionManager> getAnimations() {
         return animations;
@@ -38,8 +38,8 @@ public class Animation extends WeaponInteractions.WeaponInteraction {
     }
 
     @Override
-    public TYPE getInteractionType() {
-        return TYPE.ANIMATE;
+    public InteractionType getInteractionType() {
+        return InteractionType.ANIMATE;
     }
 
     public Animation setAnimations(List<MotionManager> animations) {

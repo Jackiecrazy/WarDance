@@ -9,9 +9,9 @@ import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.world.phys.Vec3;
 
 public class Throw extends WeaponInteractions.WeaponInteraction {
-    public static final WeaponInteractions.WeaponInteraction DEFAULT = new Throw()
+    public static final WeaponInteractions.InteractionGroup DEFAULT = new Throw().asGroup()
             .addOverride(
-                    new WeaponInteractions.InteractionOverride(WeaponInteractions.BREACH_CONDITION, new Throw().setHit(HitInfo.BREACH)));
+                    new WeaponInteractions.InteractionOverride(WeaponInteractions.BREACH_CONDITION, new Throw().setHit(HitInfo.BREACH).asGroup()));
 
     public Throw setHit(HitInfo attack_info) {
         this.attack_info = attack_info;
@@ -47,8 +47,8 @@ public class Throw extends WeaponInteractions.WeaponInteraction {
     }
 
     @Override
-    public TYPE getInteractionType() {
-        return TYPE.THROW;
+    public InteractionType getInteractionType() {
+        return InteractionType.THROW;
     }
 
     @Override

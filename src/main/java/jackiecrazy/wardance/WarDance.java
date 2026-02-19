@@ -1,6 +1,8 @@
 package jackiecrazy.wardance;
 
 import jackiecrazy.footwork.client.render.ItemEntityRenderer;
+import jackiecrazy.footwork.move.motionframe.HitInfo;
+import jackiecrazy.footwork.utils.JsonAdapters;
 import jackiecrazy.wardance.capability.action.IAction;
 import jackiecrazy.wardance.capability.skill.ISkillCapability;
 import jackiecrazy.wardance.capability.status.IMark;
@@ -14,6 +16,7 @@ import jackiecrazy.wardance.compat.WarCompat;
 import jackiecrazy.wardance.config.*;
 import jackiecrazy.wardance.config.weapon.TwohandingStats;
 import jackiecrazy.wardance.config.weapon.WeaponStats;
+import jackiecrazy.wardance.config.weapon.interactions.*;
 import jackiecrazy.wardance.entity.WarEntities;
 import jackiecrazy.wardance.items.WarItems;
 import jackiecrazy.wardance.loot.ScrollLootModifier;

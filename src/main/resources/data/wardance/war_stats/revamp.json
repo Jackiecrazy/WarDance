@@ -1,31 +1,30 @@
 {
-  "#sword": {
+  "#todo": {
     "attack": 2.6,
     "defend": 0.9,
-    "shield": false,
+    "idle_frame": {
+    },
+    "guard_frame": {
+    },
+    "aim_frame": {
+    },
+    "swap_frame": {
+    },
     "standing": {
-
     },
     "falling": {
-
     },
     "sprinting": {
-
     },
     "aerial": {
-
     },
     "guard_counter": {
-
     },
     "throw": {
-
     },
     "pickup_flourish": {
-
     },
     "draw_attack": {
-
     }
   }
 }

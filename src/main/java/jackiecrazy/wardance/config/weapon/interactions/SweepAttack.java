@@ -1,19 +1,14 @@
 package jackiecrazy.wardance.config.weapon.interactions;
 
 import jackiecrazy.footwork.move.motionframe.HitInfo;
-import jackiecrazy.wardance.client.RenderUtils;
 import net.minecraft.ChatFormatting;
 import net.minecraft.network.FriendlyByteBuf;
-import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.MutableComponent;
-import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.enchantment.Enchantments;
 
 public class SweepAttack extends WeaponInteractions.WeaponInteraction {
     public static final SweepAttack NOTHING = new SweepAttack(SWEEPTYPE.NONE, 0, 0);
     public static final SweepAttack DEFAULT_FAN = new SweepAttack(SWEEPTYPE.CONE, 30, 30);
     public static final SweepAttack DEFAULT_CLEAVE = new SweepAttack(SWEEPTYPE.CLEAVE, 30, 30);
-    public static final SweepAttack DEFAULT_NONE = new SweepAttack(SWEEPTYPE.NONE, 0, 0);
+    public static final WeaponInteractions.InteractionGroup DEFAULT_NONE = new SweepAttack(SWEEPTYPE.NONE, 0, 0).asGroup();
     private static final SweepAttack DEFAULT_IMPACT = new SweepAttack(SWEEPTYPE.IMPACT, 1, 1.5);
     private static final SweepAttack DEFAULT_LINE = new SweepAttack(SWEEPTYPE.LINE, 1, 1.5);
     private static final SweepAttack DEFAULT_CIRCLE = new SweepAttack(SWEEPTYPE.CIRCLE, 1, 1.5);
@@ -42,37 +37,8 @@ public class SweepAttack extends WeaponInteractions.WeaponInteraction {
     }
 
     @Override
-    public TYPE getInteractionType() {
-        return TYPE.SWEEP;
-    }
-
-    public Component getToolTip(ItemStack e, boolean advanced) {
-        String advance = "";
-        double finalized = sweep_base + (sweep_scale * e.getEnchantmentLevel(Enchantments.SWEEPING_EDGE));
-        MutableComponent sweepTip = Component.translatable("wardance.tooltip.sweep." + sweep, Component.literal(String.valueOf(finalized)).withStyle(ChatFormatting.AQUA));
-        //grab different tooltips if and only if they are different
-        double damage = getHitInfo().getDamageScale();
-        double posture = getHitInfo().getPostureScale();
-        if (getHitInfo().getKnockback() != NOTHING.getHitInfo().getKnockback()) {
-            MutableComponent cp = Component.literal(RenderUtils.formatter.format(getHitInfo().getKnockback()) + "x");
-            if (!advanced) {
-                if (getHitInfo().getKnockback() > 1) cp = Component.translatable("wardance.tooltip.more");
-                else if (getHitInfo().getKnockback() < 0) cp = Component.translatable("wardance.tooltip.negative");
-                else cp = Component.translatable("wardance.tooltip.less");
-            }
-            sweepTip.append(Component.translatable("wardance.tooltip.sweep.knockback", cp.withStyle(getColorFromValue(getHitInfo().getKnockback()))));
-        }
-        if (getHitInfo().isCrit()) {
-            sweepTip.append(Component.translatable("wardance.tooltip.sweep.crit").withStyle(ChatFormatting.GOLD));
-            damage *= getHitInfo().getCritDamage();
-            posture *= getHitInfo().getCritDamage();
-        }
-        if (damage != 1)
-            sweepTip.append(Component.translatable("wardance.tooltip.sweep.damage" + advance, Component.literal(RenderUtils.formatter.format(damage * 100) + "%").withStyle(getColorFromValue(damage))));
-        if (posture != 1)
-            sweepTip.append(Component.translatable("wardance.tooltip.sweep.posture" + advance, Component.literal(RenderUtils.formatter.format(posture * 100) + "%").withStyle(getColorFromValue(posture))));
-        sweepTip = sweepTip.withStyle(ChatFormatting.WHITE);
-        return sweepTip;
+    public InteractionType getInteractionType() {
+        return InteractionType.SWEEP;
     }
 
     @Override

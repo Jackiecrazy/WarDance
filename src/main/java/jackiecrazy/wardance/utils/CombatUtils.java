@@ -17,6 +17,7 @@ import jackiecrazy.footwork.potion.FootworkEffects;
 import jackiecrazy.footwork.utils.*;
 import jackiecrazy.wardance.WarDance;
 import jackiecrazy.wardance.capability.action.PermissionData;
+import jackiecrazy.wardance.capability.aerial.AerialModeData;
 import jackiecrazy.wardance.capability.charging.ChargingData;
 import jackiecrazy.wardance.capability.flyingweapon.FlyingWeaponData;
 import jackiecrazy.wardance.capability.flyingweapon.IFlyingWeapon;
@@ -371,49 +372,61 @@ public class CombatUtils {
         }));
     }
 
+    public static void applyFrames(LivingEntity swinger, HitInfo info) {
+        if (info.guard_frames() > 0) CombatData.getCap(swinger).setGuardTime(info.guard_frames());
+        if (info.parry_frames() > 0) CombatData.getCap(swinger).setParryTime(info.parry_frames());
+        if (info.dodge_frames() > 0) CombatData.getCap(swinger).setDodgeTime(info.dodge_frames());
+        if (info.invulnerable_frames() > 0) CombatData.getCap(swinger).setIframe(info.invulnerable_frames());
+    }
+
     public static void processWeaponInteraction(LivingEntity e, Entity ignore, InteractionHand h, double reach) {
         ItemStack stack = e.getItemInHand(h);
         WeaponStats.AttackType s = getAttackState(e);
-        WeaponInteractions.WeaponInteraction info = WeaponStats.getSweepInfo(stack, e, s);
-        WeaponStats.info_override=info.getHitInfo();
-        MovementUtils.applyVelocity(info.getVelocity(), e, info.isSetVelocity());
-        info.on_swing().runEffects(e, e);
-        if (info instanceof SweepAttack sweep) {
-            //apply instantaneous damage multiplier
-            SkillUtils.modifyAttribute(e, Attributes.ATTACK_DAMAGE, main, sweep.getHitInfo().getDamageScale() - 1, AttributeModifier.Operation.MULTIPLY_TOTAL);
-            enhancedSweep(e, ignore, h, sweep.getType(), reach, sweep.getBase(), sweep.getScaling());
-            SkillUtils.removeAttribute(e, Attributes.ATTACK_DAMAGE, main);
-        }
-        if (info instanceof Use use) {
-            //stack.releaseUsing(e.level(), e, use.getStartTime());
-            if (e instanceof Player p) {
-                ChargingData.getCap(p).alterSpeed(stack, use.getUseSpeed());
-                stack.use(e.level(), p, h);
-                p.startUsingItem(h);
-                //as long as the item timer is on,
+        WeaponInteractions.InteractionGroup group = WeaponStats.getSweepInfo(stack, e, s);
+        if (CombatUtils.getCooledAttackStrength(e, InteractionHand.MAIN_HAND, 1f) < group.getMinimumCooldown())return;
+        MovementUtils.applyVelocity(group.getVelocity(), e, group.isSetVelocity());
+        group.on_swing().runEffects(e, e);
+        for (WeaponInteractions.WeaponInteraction info : group.getInteractions()) {
+            WeaponStats.info_override = info.getHitInfo();
+            CombatUtils.applyFrames(e, info.getHitInfo());
+            if (info instanceof SweepAttack sweep) {
+                //apply instantaneous damage multiplier
+                SkillUtils.modifyAttribute(e, Attributes.ATTACK_DAMAGE, main, sweep.getHitInfo().getDamageScale() - 1, AttributeModifier.Operation.MULTIPLY_TOTAL);
+                enhancedSweep(e, ignore, h, sweep.getType(), reach, sweep.getBase(), sweep.getScaling());
+                SkillUtils.removeAttribute(e, Attributes.ATTACK_DAMAGE, main);
             }
-        }
-        if (info instanceof Animation anim) {
-            for (MotionManager mm : anim.getAnimations())
-                FlyingWeaponData.getCap(e).scheduleAction(h, mm);
-        }
-        if (info instanceof Throw t) {
-            final IFlyingWeapon cap = FlyingWeaponData.getCap(e);
-            if (temp_dest == null) temp_dest = e.getEyePosition().add(e.getLookAngle().scale(32));
-            ThrownWeaponEntity fwe = cap.yeet(h, temp_dest, t.getThrowSpeed());
-            t.transformThrown(fwe);
-            if (t.consume() && e instanceof Player player && !player.getAbilities().instabuild) {
-                final ItemStack held = player.getItemInHand(h);
-                held.shrink(1);
-                player.getInventory().setChanged();
-                if (held.getCount() == 0) {
-                    player.setItemInHand(h, ItemStack.EMPTY);
+            if (info instanceof Use use) {
+                //stack.releaseUsing(e.level(), e, use.getStartTime());
+                if (e instanceof Player p) {
+                    ChargingData.getCap(p).alterSpeed(stack, use.getUseSpeed());
+                    stack.use(e.level(), p, h);
+                    p.startUsingItem(h);
+                    //as long as the item timer is on,
                 }
             }
-            cap.forceRefreshWeapons();
-            temp_dest = null;
+            if (info instanceof Animation anim) {
+                for (MotionManager mm : anim.getAnimations())
+                    FlyingWeaponData.getCap(e).scheduleAction(h, mm);
+            }
+            if (info instanceof Throw t) {
+                final IFlyingWeapon cap = FlyingWeaponData.getCap(e);
+                if (temp_dest == null) temp_dest = e.getEyePosition().add(e.getLookAngle().scale(32));
+                ThrownWeaponEntity fwe = cap.yeet(h, temp_dest, t.getThrowSpeed());
+                t.transformThrown(fwe);
+                if (t.consume() && e instanceof Player player && !player.getAbilities().instabuild) {
+                    final ItemStack held = player.getItemInHand(h);
+                    held.shrink(1);
+                    player.getInventory().setChanged();
+                    if (held.getCount() == 0) {
+                        player.setItemInHand(h, ItemStack.EMPTY);
+                    }
+                }
+                cap.forceRefreshWeapons();
+                temp_dest = null;
+            }
+            WeaponStats.info_override = null;
         }
-        WeaponStats.info_override=null;
+        setHandCooldown(e, h, (float)group.getCooldownRefund(), true);
     }
 
     public static void enhancedSweep(LivingEntity e,
@@ -487,7 +500,7 @@ public class CombatUtils {
         //grab everyone in "range"
         for (Entity target : e.level().getEntities(e, e.getBoundingBox().inflate(reach * 2))) {
             if (target == e) continue;
-            if(target.getType().is(MobSpecs.IGNORED_BY_SWEEP))continue;//poor item frames
+            if (target.getType().is(MobSpecs.IGNORED_BY_SWEEP)) continue;//poor item frames
             if (target.hasPassenger(e) || e.hasPassenger(target)) continue;//poor horse
             if (target == ignore) {
                 if (radius > 0)
@@ -582,6 +595,7 @@ public class CombatUtils {
 
     public static void updateNormalAttackStatus(LivingEntity entity) {
         WeaponStats.AttackType set = WeaponStats.AttackType.STANDING;
+        //if (AerialModeData.getCap(entity).getEffectiveSpeed() < 1) set = WeaponStats.AttackType.AERIAL;
         if (entity.isSwimming() || entity.isSprinting() || entity.isFallFlying() || CombatData.getCap(entity).isDodging())
             set = WeaponStats.AttackType.SPRINTING;
         if ((!(entity instanceof Player p) || !p.getAbilities().flying) && !entity.onGround() && entity.fallDistance > 0 && !entity.onClimbable() && !entity.isInWater())
@@ -772,9 +786,9 @@ public class CombatUtils {
         if (!StylishData.getCap(sender).isCombatMode()) return false;
         if (CombatData.getCap(sender).getHandBind(h) > 0) return false;
         //StylishData.getCap(sender).resetTriggerBar();
-        WeaponInteractions.WeaponInteraction info = WeaponStats.getSweepInfo(sender.getItemInHand(h), sender, s);
-        if (info instanceof SweepAttack sa)
-            TemporaryMoveTranslator.scheduleFinisher(sender, h, sa);
+        WeaponInteractions.InteractionGroup info = WeaponStats.getSweepInfo(sender.getItemInHand(h), sender, s);
+//        if (info instanceof SweepAttack sa)
+//            TemporaryMoveTranslator.scheduleFinisher(sender, h, sa);
         StylishData.getCap(sender).addCombo(0.25f, "heavy" + (h == InteractionHand.OFF_HAND) + s.name());
         return true;
     }

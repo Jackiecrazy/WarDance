@@ -8,10 +8,8 @@ import jackiecrazy.wardance.networking.CombatChannel;
 import jackiecrazy.wardance.networking.combat.RequestSweepPacket;
 import jackiecrazy.wardance.utils.CombatUtils;
 import net.minecraft.client.multiplayer.MultiPlayerGameMode;
-import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.player.Player;
-import net.minecraftforge.common.ForgeMod;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
@@ -30,7 +28,7 @@ public class AttackCanceler {
             //cancel direct attack for anything that is not a normal sweep
             final WeaponStats.AttackType state = CombatUtils.getAttackState(p);
             if(state!= WeaponStats.AttackType.UNDEFINED){
-                if(WeaponStats.getSweepInfo(p.getMainHandItem(), p, state).getInteractionType()!= WeaponInteractions.WeaponInteraction.TYPE.SWEEP){
+                if(!WeaponStats.getSweepInfo(p.getMainHandItem(), p, state).hasInteractionType(WeaponInteractions.WeaponInteraction.InteractionType.SWEEP)){
                     ci.cancel();
                     CombatChannel.INSTANCE.sendToServer(new RequestSweepPacket(true, null));
                     //CombatUtils.processWeaponInteraction(p, null, InteractionHand.MAIN_HAND, p.getAttributeValue(ForgeMod.ENTITY_REACH.get()));

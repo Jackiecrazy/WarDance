@@ -7,8 +7,8 @@ public class Use extends WeaponInteractions.WeaponInteraction {
     private double use_speed = 1;
 
     @Override
-    public TYPE getInteractionType() {
-        return TYPE.USE;
+    public InteractionType getInteractionType() {
+        return InteractionType.USE;
     }
 
     public Use clone() {
