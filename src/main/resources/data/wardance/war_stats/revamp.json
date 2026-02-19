@@ -1,0 +1,31 @@
+{
+  "#sword": {
+    "attack": 2.6,
+    "defend": 0.9,
+    "shield": false,
+    "standing": {
+
+    },
+    "falling": {
+
+    },
+    "sprinting": {
+
+    },
+    "aerial": {
+
+    },
+    "guard_counter": {
+
+    },
+    "throw": {
+
+    },
+    "pickup_flourish": {
+
+    },
+    "draw_attack": {
+
+    }
+  }
+}
