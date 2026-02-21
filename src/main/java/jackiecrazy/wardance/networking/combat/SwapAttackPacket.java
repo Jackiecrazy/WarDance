@@ -5,6 +5,7 @@ import jackiecrazy.footwork.utils.GeneralUtils;
 import jackiecrazy.wardance.capability.flyingweapon.FlyingWeaponData;
 import jackiecrazy.wardance.config.GeneralConfig;
 import jackiecrazy.wardance.config.weapon.WeaponStats;
+import jackiecrazy.wardance.config.weapon.interactions.WeaponInteractions;
 import jackiecrazy.wardance.networking.CombatChannel;
 import jackiecrazy.wardance.networking.sync.SyncQuiverPacket;
 import jackiecrazy.wardance.utils.CombatUtils;
@@ -54,10 +55,15 @@ public class SwapAttackPacket {
                 ServerPlayer p = contextSupplier.get().getSender();
                 InteractionHand h = packet.main ? InteractionHand.MAIN_HAND : InteractionHand.OFF_HAND;
                 if (p == null) return;
-                float cool = CombatUtils.getCooledAttackStrength(p, h, 1f);
-                if ((GeneralConfig.dual || packet.main) && cool >= 0.9f) {
+                if ((GeneralConfig.dual || packet.main)) {
                     //stuff the old one somewhere
                     final ItemStack nextItem = p.getEnderChestInventory().removeItem(packet.nextSlot, 999);
+
+                    //this needs special handling
+                    WeaponStats.AttackType s = CombatUtils.getAttackState(p);
+                    WeaponInteractions.InteractionGroup group = WeaponStats.getSweepInfo(nextItem, p, s);
+                    if (CombatUtils.getCooledAttackStrength(p, h, 1f) < group.getMinimumCooldown())return;
+
                     if (p.getEnderChestInventory().addItem(p.getItemInHand(h)).isEmpty()) {
                         StylishData.getCap(p).addCombo(0.1f, "swap");
                         p.setItemInHand(h, nextItem);

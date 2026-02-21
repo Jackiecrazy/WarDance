@@ -379,11 +379,11 @@ public class CombatUtils {
         if (info.invulnerable_frames() > 0) CombatData.getCap(swinger).setIframe(info.invulnerable_frames());
     }
 
-    public static void processWeaponInteraction(LivingEntity e, Entity ignore, InteractionHand h, double reach) {
+    public static boolean processWeaponInteraction(LivingEntity e, Entity ignore, InteractionHand h, double reach) {
         ItemStack stack = e.getItemInHand(h);
         WeaponStats.AttackType s = getAttackState(e);
         WeaponInteractions.InteractionGroup group = WeaponStats.getSweepInfo(stack, e, s);
-        if (CombatUtils.getCooledAttackStrength(e, InteractionHand.MAIN_HAND, 1f) < group.getMinimumCooldown())return;
+        if (CombatUtils.getCooledAttackStrength(e, h, 1f) < group.getMinimumCooldown()) return false;
         MovementUtils.applyVelocity(group.getVelocity(), e, group.isSetVelocity());
         group.on_swing().runEffects(e, e);
         for (WeaponInteractions.WeaponInteraction info : group.getInteractions()) {
@@ -392,6 +392,7 @@ public class CombatUtils {
             if (info instanceof SweepAttack sweep) {
                 //apply instantaneous damage multiplier
                 SkillUtils.modifyAttribute(e, Attributes.ATTACK_DAMAGE, main, sweep.getHitInfo().getDamageScale() - 1, AttributeModifier.Operation.MULTIPLY_TOTAL);
+                FlyingWeaponData.getCap(e).getWeapon(h).setUniversalOffset(h == InteractionHand.MAIN_HAND ? group.right_hand_offset() : group.left_hand_offset());
                 enhancedSweep(e, ignore, h, sweep.getType(), reach, sweep.getBase(), sweep.getScaling());
                 SkillUtils.removeAttribute(e, Attributes.ATTACK_DAMAGE, main);
             }
@@ -405,6 +406,7 @@ public class CombatUtils {
                 }
             }
             if (info instanceof Animation anim) {
+                FlyingWeaponData.getCap(e).getWeapon(h).setUniversalOffset(h == InteractionHand.MAIN_HAND ? group.right_hand_offset() : group.left_hand_offset());
                 for (MotionManager mm : anim.getAnimations())
                     FlyingWeaponData.getCap(e).scheduleAction(h, mm);
             }
@@ -426,7 +428,8 @@ public class CombatUtils {
             }
             WeaponStats.info_override = null;
         }
-        setHandCooldown(e, h, (float)group.getCooldownRefund(), true);
+        setHandCooldown(e, h, (float) group.getCooldownRefund(), true);
+        return true;
     }
 
     public static void enhancedSweep(LivingEntity e,

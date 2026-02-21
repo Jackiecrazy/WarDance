@@ -244,6 +244,9 @@ public class WeaponStats extends SimpleJsonResourceReloadListener {
     public static WeaponInteractions.InteractionGroup getSweepInfo(ItemStack i, LivingEntity wielder, AttackType s) {
         final WeaponInfo info = lookupStats(i);
         if (info == null) {
+            if (Objects.requireNonNull(s) == AttackType.THROW) {
+                return Throw.DEFAULT;
+            }
             return SweepAttack.DEFAULT_NONE;
         } else {
             final WeaponInteractions.InteractionGroup intl = info.sweeps[s.ordinal()];

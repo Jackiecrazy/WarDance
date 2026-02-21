@@ -685,11 +685,11 @@ public class CombatHandler {
             e.setAmount(e.getAmount() + cap.getRecordedDamage());
             cap.stopRecording(null);
         } else if (!creative && !cap.isStunned() && !cap.alreadyProc("knockdown")) {
-            cap.tickProc("cancelShake");
             //yeah this is basically darktide with discrimination
 
             // environmental: only deal damage at 0 qi
             if (environmentalDamage) {
+                cap.tickProc("cancelShake");
                 if (cap.consumePosture(QiCosts.translateEnvironment(ds)) == 0) {
                     e.setAmount(0);
                     cap.tickProc("deathDenied");

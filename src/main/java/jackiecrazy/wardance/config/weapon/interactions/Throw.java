@@ -9,41 +9,46 @@ import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.world.phys.Vec3;
 
 public class Throw extends WeaponInteractions.WeaponInteraction {
-    public static final WeaponInteractions.InteractionGroup DEFAULT = new Throw().asGroup()
+    public static final WeaponInteractions.InteractionGroup DEFAULT = new Throw().setBounce(5).asGroup()
             .addOverride(
                     new WeaponInteractions.InteractionOverride(WeaponInteractions.BREACH_CONDITION, new Throw().setHit(HitInfo.BREACH).asGroup()));
+    private HitInfo attack_info = HitInfo.BREACH;
+    private int pierce = 0;
+    private int bounce = 0;
+    private MotionManager flying_pose = new MotionManagers.FixedMM(new MotionFrame(new Vec3(0, 0, 1), new Vec3(0, 0, 0)), 5);
+    private Vec3 direction = new Vec3(0, 0, 1);
+    private Vec3 offset = new Vec3(0, 0, 1);
+    private double gravity = 0;
+    private boolean lodge_block = true;
+    private boolean lodge_entity = true;
+    private int auto_recall_cooldown = -1;
+    private double throw_speed = 2;
+    private boolean consume_item = true;
+
+    public Throw() {
+    }
+
+    public Throw setBounce(int bounce) {
+        this.bounce = bounce;
+        return this;
+    }
 
     public Throw setHit(HitInfo attack_info) {
         this.attack_info = attack_info;
         return this;
     }
 
-    private HitInfo attack_info = HitInfo.BREACH;
-    private int pierce = 0;
-    private int bounce = 0;
-    private MotionManager flying_pose = new MotionManagers.FixedMM(new MotionFrame(new Vec3(0, 0, 1), new Vec3(0, 0, 0)), 5);
-    private double gravity = 0;
-    private boolean lodge_block = true;
-    private boolean lodge_entity = true;
-    private int auto_recall_cooldown = -1;
-
     public double getThrowSpeed() {
         return throw_speed;
     }
-
-    public boolean consume() {
-        return consume_item;
-    }
-
-    private double throw_speed =2;
-    private boolean consume_item = true;
             /*
             pierce bounce embed (wall/entity) -> hit wall/entity behavior?
             auto retrieve/homing return, pull player? impact aoe/shatter
             homing throw, hitstop on mobs?
              */
 
-    public Throw() {
+    public boolean consume() {
+        return consume_item;
     }
 
     @Override
@@ -78,9 +83,9 @@ public class Throw extends WeaponInteractions.WeaponInteraction {
         e.setLodgeEntity(lodge_entity);
         e.setLodgeBlock(lodge_block);
         e.setPierce(pierce).setBounce(bounce);
-        e.setHitInfo(attack_info);
         e.setIdlePose(flying_pose);
         e.setGravity(gravity);
         e.setFake(!consume_item);
+        e.setHitInfo(attack_info);
     }
 }

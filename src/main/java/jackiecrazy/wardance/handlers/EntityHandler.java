@@ -109,9 +109,9 @@ public class EntityHandler {
 
     @SubscribeEvent(priority = EventPriority.LOWEST)
     public static void what(AttachCapabilitiesEvent<ItemStack> e) {
-        if (e.getObject().isStackable() && !e.getCapabilities().isEmpty()) {
-            WarDance.LOGGER.fatal(e.getCapabilities());
-        }
+//        if (e.getObject().isStackable() && !e.getCapabilities().isEmpty()) {
+//            WarDance.LOGGER.fatal(e.getObject().getItem()+" has "+e.getCapabilities()+" attached to it, this is probably bad.");
+//        }
     }
 
     @SubscribeEvent

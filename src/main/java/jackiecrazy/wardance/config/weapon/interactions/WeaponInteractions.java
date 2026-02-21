@@ -2,6 +2,7 @@ package jackiecrazy.wardance.config.weapon.interactions;
 
 import com.google.common.collect.ImmutableList;
 import com.google.gson.*;
+import com.google.gson.reflect.TypeToken;
 import jackiecrazy.footwork.move.action.Action;
 import jackiecrazy.footwork.move.action.timer.TimerAction;
 import jackiecrazy.footwork.move.argument.Argument;
@@ -20,6 +21,7 @@ import jackiecrazy.footwork.move.motionframe.MotionManager;
 import jackiecrazy.footwork.utils.ActionJsonAdapters;
 import jackiecrazy.footwork.utils.JsonAdapters;
 import jackiecrazy.footwork.utils.JsonUtils;
+import jackiecrazy.wardance.WarDance;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.chat.Component;
@@ -52,7 +54,7 @@ public class WeaponInteractions {
             .registerTypeAdapter(ResourceLocation.class, new ResourceLocation.Serializer())
             .registerTypeAdapter(CompoundTag.class, new ActionJsonAdapters.NBTAdapter())
             .registerTypeAdapter(InteractionGroup.class, new GroupDeserializer())
-
+            .setPrettyPrinting()
 
             .create();
 
@@ -60,7 +62,7 @@ public class WeaponInteractions {
         private List<WeaponInteraction> interactions = new ArrayList<>();
         private Vec3 velocity = Vec3.ZERO;
         private boolean set_velocity = false;
-        private boolean swingHand = true;
+        private boolean swing_hand = true;
         private HitEffects on_swing = new HitEffects();
         private String description;
         private transient Component desc;
@@ -68,6 +70,18 @@ public class WeaponInteractions {
         private transient Map<WeaponInteraction.InteractionType, WeaponInteraction> bakedTypes = null;
         private double minimum_cooldown = 0.9;
         private double cooldown_refund = 0;
+        private Vec3 left_hand_offset=new Vec3(-0.5, 0, 0.5);
+
+        public Vec3 left_hand_offset() {
+            return left_hand_offset;
+        }
+
+        public Vec3 right_hand_offset() {
+            return right_hand_offset;
+        }
+
+        private Vec3 right_hand_offset=new Vec3(0.5, 0, 0.5);
+        private boolean debug=false;
 
         public InteractionGroup() {
         }
@@ -83,7 +97,7 @@ public class WeaponInteractions {
         public void write(FriendlyByteBuf f) {
             f.writeVector3f(velocity.toVector3f());
             f.writeBoolean(set_velocity);
-            f.writeBoolean(swingHand);
+            f.writeBoolean(swing_hand);
             f.writeComponent(desc);
             f.writeCollection(interactions, (a, b) -> {
                 b.write(a);
@@ -93,7 +107,7 @@ public class WeaponInteractions {
         public InteractionGroup read(FriendlyByteBuf f) {
             velocity = new Vec3(f.readVector3f());
             set_velocity = f.readBoolean();
-            swingHand = f.readBoolean();
+            swing_hand = f.readBoolean();
             desc = f.readComponent();
             interactions = f.readList(WeaponInteraction::readFromByte);
             return this;
@@ -108,7 +122,7 @@ public class WeaponInteractions {
         }
 
         public boolean isSwingHand() {
-            return swingHand;
+            return swing_hand;
         }
 
         public String description() {
@@ -230,15 +244,14 @@ public class WeaponInteractions {
         public InteractionGroup deserialize(JsonElement json,
                                             Type typeOfT,
                                             JsonDeserializationContext context) throws JsonParseException {
-            //fixme a naive deconstruction has no idea what a condition is
-            InteractionGroup ret = ActionJsonAdapters.gson.fromJson(json, InteractionGroup.class);
             if (json.isJsonObject()) {
                 //could be either a full fledged def or just a single interaction, possibly containing overrides
                 //extract partial overrides first
                 final JsonObject baseObj = json.getAsJsonObject();
                 JsonElement overObj = baseObj.remove("overrides");
+                InteractionGroup ret = ActionJsonAdapters.gson.fromJson(json, InteractionGroup.class);
                 if (ret.getInteractions().isEmpty()) {
-                    ret = GSON.fromJson(json, WeaponInteraction.class).asGroup();
+                    ret.setInteractions(List.of(GSON.fromJson(json, WeaponInteraction.class)));
                 }
                 if (overObj != null && overObj.isJsonArray()) {
                     JsonArray overrides = overObj.getAsJsonArray();
@@ -254,8 +267,14 @@ public class WeaponInteractions {
                         }
                     }
                 }
+
+                if(ret.debug){
+                    WarDance.LOGGER.info("DEBUG - interaction group deserialized into");
+                    WarDance.LOGGER.info(GSON.toJson(ret));
+                }
                 return ret;
             }
+            InteractionGroup ret = ActionJsonAdapters.gson.fromJson(json, InteractionGroup.class);
             if (json.isJsonArray()) {
                 //a simple list of interactions with no override, tooltip, or velocity. I'm not sure why you would want this.
                 List<WeaponInteraction> list = context.deserialize(json, ArrayList.class);
@@ -303,7 +322,9 @@ public class WeaponInteractions {
         private Animation asAnimation(JsonObject sub) {
             Animation anim = GSON.fromJson(sub, Animation.class);
             if (sub.has("animations")) {
-                anim.animations = GSON.fromJson(sub.get("animations"), ArrayList.class);
+                if (anim.animations.isEmpty())
+                    anim.animations = GSON.fromJson(sub.get("animations"), new TypeToken<List<MotionManager>>() {
+                    }.getType());
             } else {
                 List<MotionManager> added = new ArrayList<>();
                 added.add(GSON.fromJson(sub, MotionManager.class));

@@ -17,11 +17,9 @@ public class MixinNewSweepAttack {
             at = @At(value = "INVOKE", target = "Lnet/minecraft/server/level/ServerPlayer;attack(Lnet/minecraft/world/entity/Entity;)V"))
     private void sweep(ServerPlayer player, Entity entity) {
         CombatUtils.updateNormalAttackStatus(player);
-        if (CombatUtils.getCooledAttackStrength(player, InteractionHand.MAIN_HAND, 1f) >= 0.9f) {
             int temp = player.attackStrengthTicker;
                 CombatUtils.processWeaponInteraction(player, entity, InteractionHand.MAIN_HAND, player.getAttributeValue(ForgeMod.ENTITY_REACH.get()));
             player.attackStrengthTicker = temp;
-        }
         player.attack(entity);
     }
 

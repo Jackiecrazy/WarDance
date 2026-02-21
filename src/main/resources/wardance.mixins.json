@@ -3,30 +3,8 @@
   "package": "jackiecrazy.wardance.mixin",
   "compatibilityLevel": "JAVA_8",
   "refmap": "wardance.refmap.json",
-  "mixins": [
-    "InCombatAccessor",
-    "MixinBlockFrameDisable",
-    "MixinEmptyHands",
-    "MixinLivingEntity",
-    "MixinNewSweepAttack",
-    "MixinPlayerEntity",
-    "MixinSweepDurabilitySuppressor",
-    "ProjectileImpactMixin",
-    "ServerPlayerNoShakeMixin",
-    "LivingEntityAccessors",
-    "ShieldDisableOverwrite",
-    "SifuDropsMixin"
-  ],
-  "client": [
-    "AttackCanceler",
-    "ClientAccessors",
-    "DarkTideCancelScreenShakeMixin",
-    "ItchyCurseMixin",
-    "MixinEquipProgress",
-    "MixinInternalDamage",
-    "TwoHandingRenderMixin",
-    "YouTestMyPatienceAccessor"
-  ],
+  "mixins": ["InCombatAccessor", "LivingEntityAccessors", "MixinBlockFrameDisable", "MixinEmptyHands", "MixinLivingEntity", "MixinNewSweepAttack", "MixinPlayerEntity", "MixinSweepDurabilitySuppressor", "ProjectileImpactMixin", "ServerPlayerNoShakeMixin", "ShieldDisableOverwrite", "SifuDropsMixin"],
+  "client": ["AttackCanceler", "ClientAccessors", "DarkTideCancelScreenShakeMixin", "ItchyCurseMixin", "MixinAerialMode", "MixinEquipProgress", "MixinInternalDamage", "TwoHandingRenderMixin", "YouTestMyPatienceAccessor"],
   "injectors": {
     "defaultRequire": 1
   },

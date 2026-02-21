@@ -55,11 +55,10 @@ public class RequestSweepPacket {
                 InteractionHand h = updateClientPacket.main ? InteractionHand.MAIN_HAND : InteractionHand.OFF_HAND;
                 if (sender == null) return;
                 float cool = CombatUtils.getCooledAttackStrength(sender, h, 1f);
-                if ((GeneralConfig.dual || updateClientPacket.main) && cool >= 0.9f) {
+                if ((GeneralConfig.dual || updateClientPacket.main)) {
                         CombatUtils.updateNormalAttackStatus(sender);
                         CombatUtils.processWeaponInteraction(sender, sender.level().getEntity(updateClientPacket.id), h, GeneralUtils.getAttributeValueSafe(sender, ForgeMod.ENTITY_REACH.get()));
                 }
-                CombatUtils.setHandCooldown(sender, h, 0, true);
             });
             contextSupplier.get().setPacketHandled(true);
         }

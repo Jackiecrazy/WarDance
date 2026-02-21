@@ -58,6 +58,16 @@ public class ThrowPacket {
 
     public static class Handler implements BiConsumer<ThrowPacket, Supplier<NetworkEvent.Context>> {
 
+        private static void swapFromEnderChest(int packet, ServerPlayer player, InteractionHand h) {
+            if(packet<0)return;
+            ItemStack held = player.getItemInHand(h);
+            final ItemStack nextItem = player.getEnderChestInventory().removeItem(packet, 999);
+            if (held.getCount() == 0 || held.isEmpty() || player.getEnderChestInventory().addItem(held).isEmpty()) {
+                player.setItemInHand(h, nextItem);
+                CombatChannel.INSTANCE.send(PacketDistributor.PLAYER.with(() -> player), new SyncQuiverPacket(player));
+            } else player.getEnderChestInventory().addItem(nextItem);
+        }
+
         @Override
         public void accept(ThrowPacket packet, Supplier<NetworkEvent.Context> contextSupplier) {
             contextSupplier.get().enqueueWork(() -> {
@@ -65,16 +75,17 @@ public class ThrowPacket {
                 InteractionHand h = packet.main ? InteractionHand.MAIN_HAND : InteractionHand.OFF_HAND;
                 if (player == null) return;
                 float cool = CombatUtils.getCooledAttackStrength(player, h, 1f);
-                if(cool<0.9)return;
+                //if (cool < 0.9) return;//todo how to change this to moveset based cooldown check
                 //have a weapon, yeet!
                 final ItemStack held = player.getItemInHand(h);
                 if (!held.isEmpty()) {
                     final IFlyingWeapon cap = FlyingWeaponData.getCap(player);
                     CombatUtils.temp_dest = packet.destination;
                     CombatUtils.setAttackType(player, WeaponStats.AttackType.THROW);
-                    CombatUtils.processWeaponInteraction(player, null, h, player.getAttributeValue(ForgeMod.ENTITY_REACH.get()));
-                    swapFromEnderChest(packet.next, player, h);
-                    cap.forceRefreshWeapons();
+                    if (CombatUtils.processWeaponInteraction(player, null, h, player.getAttributeValue(ForgeMod.ENTITY_REACH.get()))) {
+                        swapFromEnderChest(packet.next, player, h);
+                        cap.forceRefreshWeapons();
+                    }
                 } else if (!WeaponStats.DESPERATION.isEmpty() && CombatData.getCap(player).consumeSpirit(6)) {
                     //desperation throw
                     StylishData.getCap(player).addCombo(0.1f, "desperatethrow");
@@ -95,18 +106,6 @@ public class ThrowPacket {
                 }
             });
             contextSupplier.get().setPacketHandled(true);
-        }
-
-        private static void swapFromEnderChest(int packet, ServerPlayer player, InteractionHand h) {
-            ItemStack held = player.getItemInHand(h);
-            if (held.getCount() == 0 || held.isEmpty()) {
-                ItemStack replace = ItemStack.EMPTY;
-                if (packet >= 0) {
-                    replace = player.getEnderChestInventory().removeItem(packet, 999);
-                }
-                player.setItemInHand(h, replace);
-                CombatChannel.INSTANCE.send(PacketDistributor.PLAYER.with(() -> player), new SyncQuiverPacket(player));
-            }
         }
     }
 }

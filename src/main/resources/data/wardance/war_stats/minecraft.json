@@ -36,672 +36,379 @@
       "crit_damage": 2.0
     }
   },
-  "minecraft:trident": {
-    "attack": 2.0,
-    "defend": 0.7,
-    "shield": false,
-    "sweep": "LINE",
-    "knockback": 1.0,
-    "damage_scale": 1.0,
-    "posture_scale": 1.0,
-    "crit": false,
-    "crit_damage": 1.5,
-    "sweep_base": 0.6,
-    "sweep_scale": 0.3,
-    "standing": {
-      "sweep": "CIRCLE",
-      "sweep_base": 2,
-      "on_swing": {
-        "command": "/effect give @s minecraft:haste 5"
-      },
-      "overrides": [
-        {
-          "condition": {
-            "ID": "has_effect",
-            "effect": "minecraft:haste",
-            "minimum_potency": 2
-          },
-          "override": {
-            "sweep": "CLEAVE",
-            "sweep_base": "60",
-            "on_swing": {
-              "command": "/effect clear @s minecraft:haste"
-            }
-          }
-        }, {
-          "condition": {
-            "ID": "has_effect",
-            "effect": "minecraft:haste",
-            "minimum_potency": 1
-          },
-          "override": {
-            "sweep_base": "6",
-            "on_swing": {
-              "command": "/effect give @s minecraft:haste 5 2"
-            }
-          }
-        }, {
-          "condition": {
-            "ID": "has_effect",
-            "effect": "minecraft:haste",
-            "minimum_potency": 0
-          },
-          "override": {
-            "sweep_base": "4",
-            "on_swing": {
-              "command": "/effect give @s minecraft:haste 5 1"
-            }
-          }
-        }
-      ]
-    },
-    "falling": {
-      "type": "use",
-      "use_speed": 2
-    },
-    "sprinting": {
-      "type": "animation",
-      "duration": 7,
-      "easing": "IN_OUT_SINE",
+  "minecraft:iron_sword": {
+    "attack": 3,
+    "defend": 0.8,
+    "idle_frame": {
+      "duration": 3,
+      "easing": "LINEAR",
+      "angular_velocity": [0, 0, 0],
       "frames": [
         {
-          "direction": [
-            0, 0, 1
-          ],
-          "offset": [
-            0, 0, 0
-          ],
-          "knockback": 1.0,
-          "damage_scale": 1.2,
-          "posture_scale": 1.0,
-          "crit": false,
-          "crit_damage": 1.5,
-          "hit_self": {
-            "velocity": [0, 1, -0.5],
-            "set_velocity": true
-          }
-        }, {
-          "direction": [
-            0, 0, 1
-          ],
-          "offset": [
-            0, 0, 1.3
-          ],
+          "direction": [0, 0.25, 0.25],
+          "offset": [0, -0.2, 1],
           "effects": {
-            "effects": ["AFTERIMAGE"],
-            "range": 10,
-            "velocity": [0, 1, 0],
-            "hit": {
-              "damage_scale": 1.2
-            }
+            "effects": ["WEAPON", "TRAIL"],
+            "range": -1,
+            "velocity": [0, 0, 0],
+            "set_velocity": false,
+            "attack_info": {}
           }
-        }, {
-          "direction": [
-            0, 0, 1
-          ],
-          "offset": [
-            0, 0, 0
-          ]
         }
-      ],
-      "velocity": [
-        0, 0.2, 2
       ]
     },
-    "aerial": {
+    "guard_frame": {
+      "duration": 2,
+      "easing": "LINEAR",
+      "angular_velocity": [0, 0, 0],
+      "frames": [
+        {
+          "direction": [-0.25, 0.2, 0.1],
+          "offset": [0.1, 0.25, 0.2],
+          "effects": {
+            "effects": ["WEAPON", "TRAIL"],
+            "range": -1,
+            "velocity": [0, 0, 0],
+            "set_velocity": false,
+            "attack_info": {}
+          }
+        }
+      ]
+    },
+    "aim_frame": {
+      "duration": 5,
+      "easing": "LINEAR",
+      "angular_velocity": [0, 0, 0],
+      "frames": [
+        {
+          "direction": [0, 0, 2],
+          "offset": [0, 0.25, 1],
+          "effects": {
+            "effects": ["WEAPON", "TRAIL"],
+            "range": -1,
+            "velocity": [0, 0, 0],
+            "set_velocity": false,
+            "attack_info": {}
+          }
+        }
+      ]
+    },
+    "swap_frame": {
+      "duration": 3,
+      "easing": "LINEAR",
+      "angular_velocity": [0, 0, 0],
+      "frames": [
+        {
+          "direction": [0, -0.25, -0.5],
+          "offset": [-0.1, 0.1, 0.5],
+          "effects": {
+            "effects": ["WEAPON", "TRAIL"],
+            "range": -1,
+            "velocity": [0, 0, 0],
+            "set_velocity": false,
+            "attack_info": {}
+          }
+        }
+      ]
+    },
+    "standing": {
       "type": "animation",
       "animations": [
         {
-          "duration": 7,
-          "easing": "OUT_SINE",
+          "duration": 6,
+          "easing": "IN_OUT_SINE",
+          "on_swing": {
+            "command": "/playsound minecraft:entity.player.attack.sweep player @s ~ ~ ~ 0.8 1.2 0"
+          },
           "frames": [
             {
-              "direction": [
-                0, 0, 1
-              ],
-              "offset": [
-                0, 0, 0
-              ]
-            }, {
-              "direction": [
-                0, 0, 1
-              ],
-              "offset": [
-                0, 0, 1.3
-              ],
+              "direction": [0, 1, 0.5],
+              "offset": [0.5, 0.5, 0.25],
               "effects": {
-                "effects": ["WEAPON", "AFTERIMAGE"],
-                "range": 10,
-                "velocity": [0, 1, 0],
-                "hit": {
-                  "damage_scale": 1.2
-                }
-              }
-            }, {
-              "direction": [
-                0, 0, 1
-              ],
-              "offset": [
-                0, 0, 0
-              ]
-            }
-          ]
-        }, {
-          "duration": 20,
-          "easing": "IN_SINE",
-          "frames": [
-            {
-              "direction": [
-                0, 0, 1
-              ],
-              "offset": [
-                0, 0, 0
-              ]
-            }, {
-              "direction": [
-                0, 0, 1
-              ],
-              "offset": [
-                0, 0, 1.3
-              ],
-              "effects": {
-                "effects": ["WEAPON", "AFTERIMAGE"],
-                "range": 10,
-                "velocity": [0, 1, 0],
-                "hit": {
-                  "damage_scale": 1.2
-                }
-              }
-            }, {
-              "direction": [
-                0, 0, 1
-              ],
-              "offset": [
-                0, 0, 0
-              ]
-            }
-          ]
-        }
-      ]
-    },
-    "guard_counter": {
-      "type": "throw",
-      "bounce": 5,
-      "throw_speed": 1,
-      "auto_recall_cooldown": 30,
-      "lodge_entity": false,
-      "lodge_block": true,
-      "consume_item": false,
-      "overrides": [
-        {
-          "condition": {
-            "ID": "consume_resource",
-            "format": "PERCENTAGE",
-            "resource": "SPIRIT",
-            "amount": 1,
-            "operation": "CONSUME"
-          },
-          "override": {
-            "breach": true
-          }
-        }
-      ]
-    },
-    "throw": {
-      "type": "throw",
-      "pierce": 5,
-      "overrides": [{
-        "condition": {
-          "ID": "consume_resource",
-          "format": "PERCENTAGE",
-          "resource": "SPIRIT",
-          "amount": 1,
-          "operation": "CONSUME"
-        },
-        "override": {
-          "breach": true
-        }
-      }]
-    },
-    "pickup_flourish": {
-      "sweep": "LINE",
-      "sweep_base": 0.6,
-      "velocity": [
-        0, 0.2, 2
-      ]
-    },
-    "draw_attack": {
-      "sweep": "CONE",
-      "sweep_base": 40
-    }
-  },
-  "minecraft:iron_sword": {
-    "attack": 3,
-    "defend": 0.5,
-    "shield": false,
-    "sweep": "CONE",
-    "knockback": 0.5,
-    "damage_scale": 1,
-    "posture_scale": 1,
-    "crit": false,
-    "crit_damage": 1.5,
-    "sweep_base": 60,
-    "sweep_scale": 10,
-    "standing": {
-      "type": "animation",
-      "duration": 5,
-      "easing": "IN_OUT_SINE",
-      "on_swing": {
-        "command": "/playsound minecraft:entity.player.attack.sweep player @a ~ ~ ~ 1 1 0"
-      },
-      "frames": [
-        {
-          "direction": [
-            0.5, 0.5, 1
-          ],
-          "offset": [
-            1, 1, 0
-          ],
-          "knockback": 0.5,
-          "damage_scale": 1,
-          "posture_scale": 1,
-          "crit": false,
-          "crit_damage": 1.5
-        }, {
-          "direction": [
-            -0.5, -0.5, 1
-          ],
-          "offset": [
-            -1, -0.5, 1.3
-          ]
-        }
-      ]
-    },
-    "falling": {
-      "sweep": "CLEAVE",
-      "sweep_base": 60,
-      "crit": true,
-      "knockback": 1,
-      "hit_other": {
-        "velocity": [
-          0, -1, 0
-        ],
-        "set_velocity": true
-      }
-    },
-    "sprinting": {
-      "type": "animation",
-      "duration": 7,
-      "easing": "IN_OUT_SINE",
-      "on_swing": {
-        "command": "/playsound minecraft:entity.player.attack.sweep player @a ~ ~ ~ 1 1 0"
-      },
-      "frames": [
-        {
-          "direction": [
-            0.5, -0.75, 1
-          ],
-          "offset": [
-            0, 0, 0
-          ],
-          "knockback": 2,
-          "damage_scale": 1,
-          "posture_scale": 1,
-          "crit": false,
-          "crit_damage": 1.5,
-          "hit_other": {
-            "command": "/effect give @s footwork:distraction 3 0"
-          }
-        }, {
-          "direction": [
-            -2, 1, 1
-          ],
-          "offset": [
-            0, 0, 1.3
-          ]
-        }
-      ],
-      "overrides": [
-        {
-          "condition": {
-            "ID": "on_ground"
-          },
-          "override": {
-            "velocity": [
-              0, 0.1, 2
-            ]
-          }
-        }
-      ]
-    },
-    "guard_counter": {
-      "type": "animation",
-      "duration": 12,
-      "easing": "IN_OUT_SINE",
-      "on_swing": {
-        "command": "/playsound minecraft:entity.player.attack.sweep player @a ~ ~ ~ 1.1 0.5 0"
-      },
-      "frames": [
-        {
-          "direction": [
-            0, 0.25, 1
-          ],
-          "offset": [
-            0, 1, -0.5
-          ],
-          "knockback": 0,
-          "damage_scale": 1.5,
-          "posture_scale": 1.5,
-          "crit": false,
-          "crit_damage": 1.5,
-          "hit": {
-            "breach": false
-          }
-        }, {
-          "direction": [
-            0, 0.5, 1
-          ],
-          "offset": [
-            0, 1.25, -0.75
-          ]
-        }, {
-          "direction": [
-            0, -1, 1
-          ],
-          "offset": [
-            -0.25, -1, 1.3
-          ]
-        }
-      ],
-      "overrides": [
-        {
-          "condition": {
-            "ID": "consume_resource",
-            "format": "PERCENTAGE",
-            "resource": "SPIRIT",
-            "amount": 1,
-            "operation": "CONSUME"
-          },
-          "override": {
-            "frames": [
-              {
-                "effects": {
-                  "hit": {
-                    "spirit_multiplier": 0,
-                    "breach": true
+                "effects": ["WEAPON", "BIG_SHADOW"],
+                "range": -1,
+                "velocity": [0, 0, 0],
+                "set_velocity": false,
+                "attack_info": {
+                  "knockback": 0.5,
+                  "damage_scale": 0.75,
+                  "posture_scale": 0.75,
+                  "crit": false,
+                  "crit_damage": 1.25,
+                  "spirit_multiplier": 0.5,
+                  "hit_self": {
+                    "command": "/function wardance:hit_combo"
                   }
                 }
-              }, {}, {}
-            ]
-          }
-        }
-      ]
-    },
-    "throw": {
-      "type": "animation",
-      "duration": 7,
-      "easing": "IN_OUT_SINE",
-      "on_swing": {
-        "command": "/playsound minecraft:entity.player.attack.sweep player @a ~ ~ ~ 1 1 0"
-      },
-      "frames": [
-        {
-          "direction": [
-            0, 0.75, 1
-          ],
-          "offset": [
-            0, 1, 0
-          ],
-          "knockback": 0,
-          "damage_scale": 1.25,
-          "posture_scale": 1.25,
-          "crit": false,
-          "crit_damage": 1.5,
-          "hit_other": {
-            "command": "/effect give @s footwork:corrosion 5 2"
-          }
-        }, {
-          "direction": [
-            0, -1, 1
-          ],
-          "offset": [
-            -0.5, 0, 1.5
+              }
+            }, {
+              "direction": [-0.5, -0.5, 1],
+              "offset": [-1, -0.5, 1.5]
+            }
           ]
         }
-      ]
-    },
-    "pickup_flourish": {
-      "sweep": "CIRCLE",
-      "sweep_base": 1.5,
-      "on_swing": {
-        "command": "/say How did you even do this?  You can't throw a longsword..."
-      }
-    },
-    "draw_attack": {
-      "type": "animation",
-      "duration": 7,
-      "easing": "IN_OUT_SINE",
-      "on_swing": {
-        "command": "/playsound minecraft:entity.player.attack.sweep player @a ~ ~ ~ 1 1 0"
-      },
-      "frames": [
-        {
-          "direction": [
-            0.5, -0.5, 1
-          ],
-          "offset": [
-            -0.5, -0.25, 0
-          ],
-          "knockback": 0,
-          "damage_scale": 1,
-          "posture_scale": 1,
-          "crit": false,
-          "crit_damage": 1.5,
-          "hit_other": {
-            "velocity": [
-              0, 1, 0
-            ],
-            "set_velocity": true
-          }
-        }, {
-          "direction": [
-            -0.5, 0.5, 1
-          ],
-          "offset": [
-            -1.5, 0.5, 1.3
-          ]
-        }
-      ]
-    }
-  },
-  "minecraft:stone_sword": {
-    "attack": 0.5,
-    "defend": 1,
-    "shield": false,
-    "sweep": "CONE",
-    "knockback": 0.25,
-    "damage_scale": 0.25,
-    "posture_scale": 0.25,
-    "crit": false,
-    "crit_damage": 1.5,
-    "sweep_base": 60,
-    "sweep_scale": 10,
-    "standing": {
-      "sweep": "CONE",
-      "sweep_base": 60,
-      "posture_scale": 0.5
-    },
-    "falling": {
-      "sweep": "CLEAVE",
-      "sweep_base": 60,
-      "damage_scale": 0.5,
-      "posture_scale": 0.75
-    },
-    "sprinting": {
-      "type": "animation",
-      "duration": 12,
-      "easing": "IN_OUT_SINE",
-      "on_swing": {
-        "command": "/function rwd:deflect"
-      },
-      "velocity": [
-        0, 0.1, 1.25
       ],
-      "frames": [
-        {
-          "direction": [
-            0.5, 0.5, 1
-          ],
-          "offset": [
-            0.5, 1, 0.5
-          ],
-          "knockback": 0.5,
-          "damage_scale": 0.25,
-          "posture_scale": 0.25
-        }, {
-          "direction": [
-            -0.5, -0.5, 1
-          ],
-          "offset": [
-            -0.5, -1, 1
-          ],
-          "effects": {
-            "reset_hit": true
-          }
-        }, {
-          "direction": [
-            -0.5, 0.5, 1
-          ],
-          "offset": [
-            -0.5, 1, 0.5
-          ],
-          "knockback": 0.5,
-          "damage_scale": 0.25,
-          "posture_scale": 0.25
-        }, {
-          "direction": [
-            0.5, -0.5, 1
-          ],
-          "offset": [
-            0.5, -1, 1
-          ]
-        }
-      ]
-    },
-    "guard_counter": {
-      "type": "animation",
-      "duration": 6,
-      "easing": "IN_OUT_SINE",
-      "on_swing": {
-        "command": "/playsound minecraft:entity.player.attack.sweep player @a ~ ~ ~ 1.1 0.5 0"
-      },
-      "frames": [
-        {
-          "direction": [
-            0.5, 0.5, 1
-          ],
-          "offset": [
-            0.5, 1, 0.5
-          ],
-          "knockback": 1.5,
-          "damage_scale": 1.5,
-          "posture_scale": 1.5,
-          "crit": false,
-          "crit_damage": 1.5,
-          "hit_self": {
-            "command": "/function rwd:katana/killmode_enter"
-          }
-        }, {
-          "direction": [
-            0.75, 0.75, 1
-          ],
-          "offset": [
-            0.75, 1.25, 0.75
-          ]
-        }, {
-          "direction": [
-            -0.5, -0.5, 1
-          ],
-          "offset": [
-            -0.5, -1, -0.75
-          ]
-        }
-      ]
-    },
-    "throw": {
-      "sweep": "LINE",
-      "knockback": 0.25,
-      "damage_scale": 0.1,
-      "posture_scale": 0.1,
-      "sweep_base": 0.25,
-      "hit_other": {
-        "command": "/tag @s add rwd.katana_mark"
-      },
       "overrides": [
         {
           "condition": {
             "ID": "has_effect",
             "effect": "footwork:reveal",
-            "minimum_potency": 9
+            "minimum_potency": 0
           },
           "override": {
-            "breach": true,
-            "crit": true,
-            "knockback": 0.25,
-            "damage_scale": 30,
-            "posture_scale": 30,
-            "hit_self": {
-              "command": "/function rwd:katana/killmode_teleport"
+            "animations": [
+              {
+                "duration": 6,
+                "easing": "IN_OUT_SINE",
+                "on_swing": {
+                  "command": "/playsound minecraft:entity.player.attack.sweep player @s ~ ~ ~ 0.8 1.0 0"
+                },
+                "frames": [
+                  {
+                    "direction": [-1, 0, 0.5],
+                    "offset": [-1, 0.25, 0.25],
+                    "render_rotation": [-1, 0, 0.5, 45],
+                    "effects": {
+                      "effects": ["WEAPON", "BIG_SHADOW"],
+                      "range": -1,
+                      "velocity": [0, 0, 0],
+                      "set_velocity": false,
+                      "attack_info": {
+                        "knockback": 1,
+                        "damage_scale": 0.75,
+                        "posture_scale": 1,
+                        "crit": false,
+                        "crit_damage": 1.25,
+                        "hit_self": {
+                          "command": "/function wardance:hit_combo_2"
+                        }
+                      }
+                    }
+                  }, {
+                    "direction": [1, 0, 0.5],
+                    "offset": [0.5, 0.25, 1.5],
+                    "render_rotation": [1, 0, 0.5, 45]
+                  }
+                ]
+              }
+            ]
+          }
+        }
+      ]
+    },
+    "falling": {},
+    "aerial": {},
+    "sprinting": {
+      "type": "animation",
+      "animations": [
+        {
+          "duration": 4,
+          "easing": "IN_OUT_SINE",
+          "on_swing": {
+            "command": "/playsound minecraft:entity.player.attack.sweep player @s ~ ~ ~ 0.8 1.2 0"
+          },
+          "frames": [
+            {
+              "direction": [0, 0, 1],
+              "offset": [0.2, 0.2, -0.25],
+              "effects": {
+                "effects": ["WEAPON", "TRAIL"],
+                "range": -1,
+                "velocity": [0, 0, 0],
+                "set_velocity": false,
+                "attack_info": {
+                  "knockback": 1,
+                  "damage_scale": 1,
+                  "posture_scale": 1,
+                  "crit": false,
+                  "crit_damage": 1.25,
+                  "spirit_multiplier": 0.5,
+                  "hit_self": {
+                    "command": "/function wardance:hit_combo_2"
+                  }
+                }
+              }
+            }, {
+              "direction": [0, 0, 1],
+              "offset": [0, 0.4, 1.5]
+            }
+          ],
+          "overrides": [
+            {
+              "condition": {
+                "ID": "has_effect",
+                "effect": "footwork:reveal",
+                "minimum_potency": 0
+              },
+              "override": {
+                "duration": 3,
+                "on_swing": {
+                  "command": "/playsound minecraft:entity.player.attack.sweep player @s ~ ~ ~ 0.8 1 0"
+                },
+                "frames": [
+                  {
+                    "direction": [0, 0, 1],
+                    "offset": [0.2, 0.2, -0.25],
+                    "effects": {
+                      "effects": ["WEAPON", "AFTERIMAGE"],
+                      "range": -1,
+                      "velocity": [0, 0, 0],
+                      "set_velocity": false,
+                      "attack_info": {
+                        "knockback": 1.5,
+                        "damage_scale": 1,
+                        "posture_scale": 1,
+                        "crit": true,
+                        "crit_damage": 1.25,
+                        "hit_self": {
+                          "command": "/function wardance:hit_combo_clear"
+                        }
+                      }
+                    }
+                  }, {
+                    "direction": [0, 0, 1],
+                    "offset": [0, 0.4, 1.5]
+                  }
+                ]
+              }
+            }
+          ]
+        }
+      ]
+    },
+    "guard_counter": {},
+    "throw": {
+      "debug": true,
+      "type": "throw",
+      "attack_info": {
+        "damage_scale": 0.5,
+        "posture_scale": 0.75,
+        "crit": false,
+        "breach": false,
+        "crit_damage": 1.25,
+        "spirit_multiplier": -0.5,
+        "knockback": 1.25
+      },
+      "bounce": 0,
+      "pierce": 0,
+      "throw_speed": 1,
+      "auto_recall_cooldown": 30,
+      "lodge_entity": true,
+      "lodge_block": true,
+      "consume_item": true,
+      "flying_pose": {
+        "duration": 5,
+        "easing": "LINEAR",
+        "angular_velocity": [0, 30, 0],
+        "frames": [
+          {
+            "direction": [0, 0, 2],
+            "offset": [0, 0.25, 1],
+            "effects": {
+              "effects": ["WEAPON", "TRAIL"],
+              "range": -1,
+              "velocity": [0, 0, 0],
+              "set_velocity": false
+            }
+          }
+        ]
+      },
+      "gravity": -0.05,
+      "overrides": [
+        {
+          "condition": {
+            "ID": "consume_resource",
+            "format": "PERCENTAGE",
+            "resource": "SPIRIT",
+            "amount": 1,
+            "operation": "CONSUME"
+          },
+          "override": {
+            "attack_info": {
+              "damage_scale": 0.75,
+              "posture_scale": 0.75,
+              "crit": true,
+              "breach": true,
+              "crit_damage": 1.5,
+              "spirit_multiplier": 1.0,
+              "knockback": 2.0
             },
-            "hit_other": {
-              "command": "/tag @s remove rwd.katana_mark"
+            "lodge_entity": false,
+            "throw_speed": 2,
+            "flying_pose": {
+              "duration": 5,
+              "easing": "LINEAR",
+              "angular_velocity": [0, 0, 0],
+              "frames": [
+                {
+                  "direction": [0, 0, 2],
+                  "offset": [0, 0.25, 1],
+                  "effects": {
+                    "effects": ["WEAPON", "AFTERIMAGE"],
+                    "range": -1,
+                    "velocity": [0, 0, 0],
+                    "set_velocity": false
+                  }
+                }
+              ]
             }
           }
         }
       ]
     },
     "pickup_flourish": {
-      "sweep": "CIRCLE",
-      "sweep_base": 1.5,
-      "on_swing": {
-        "command": "/say How did you even do this?  You can't throw a katana..."
-      }
-    },
-    "draw_attack": {
       "type": "animation",
-      "duration": 5,
-      "easing": "IN_OUT_SINE",
-      "on_swing": {
-        "command": "/playsound minecraft:entity.player.attack.sweep player @a ~ ~ ~ 1 1 0"
-      },
-      "frames": [
+      "left_hand_offset": [0,0,0],
+      "right_hand_offset": [0,0,0],
+      "animations": [
         {
-          "direction": [
-            0.5, 0, 1
-          ],
-          "offset": [
-            1, 0, 0
-          ],
-          "knockback": 0.5,
-          "damage_scale": 0,
-          "posture_scale": 0,
-          "crit": false,
-          "crit_damage": 1.5,
-          "hit_other": {
-            "command": "/function rwd:katana/iai_mark"
+          "duration": 100,
+          "easing": "LINEAR",
+          "on_swing": {
+            "command": "/playsound minecraft:entity.player.attack.sweep player @s ~ ~ ~ 0.8 1.0 0"
           },
-          "hit_self": {
-            "command": "/effect give @s haste 1 9 true"
-          }
-        }, {
-          "direction": [
-            -0.5, 0, 1
-          ],
-          "offset": [
-            -1, 0, 1
+          "frames": [
+            {
+              "direction": [0, 0, 1],
+              "offset": [0, 0, 1],
+              "render_rotation": [0, 0, 1, 90],
+              "effects": {
+                "effects": ["WEAPON", "TRAIL", "LOCK_ORIENTATION"],
+                "range": -1,
+                "velocity": [0, 0, 0],
+                "set_velocity": true,
+                "attack_info": {
+                  "knockback": 1.25,
+                  "damage_scale": 0.75,
+                  "posture_scale": 1,
+                  "crit": false,
+                  "crit_damage": 1.25,
+                  "hit_self": {
+                    "command": "/function wardance:hit_combo_2"
+                  }
+                }
+              }
+            }, {
+              "direction": [1, 0, 0],
+              "offset": [0, 0, 1],
+              "render_rotation": [1, 0, 0, 90]
+            }, {
+              "direction": [0, 0, -1],
+              "offset": [0, 0, 1],
+              "render_rotation": [0, 0, -1, 90]
+            }, {
+              "direction": [-1, 0, 0],
+              "offset": [0, 0, 1],
+              "render_rotation": [-1, 0, 0, 90]
+            }, {
+              "direction": [0, 0, 1],
+              "offset": [0, 0, 1],
+              "render_rotation": [0, 0, 1, 90]
+            }
           ]
         }
       ]
-    }
+    },
+    "draw_attack": {}
   }
 }

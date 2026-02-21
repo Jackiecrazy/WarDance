@@ -250,6 +250,7 @@ public class ThrownWeaponEntity extends FlyingWeaponEntity {
             int ticks = player.attackStrengthTicker;
             try {
                 CombatUtils.quickSwap(player, getHeldItem());
+                CombatUtils.setHandCooldown(player, InteractionHand.MAIN_HAND, 2, false);
                 CombatUtils.setAttackType(player, WeaponStats.AttackType.PICKUP_FLOURISH);
                 FlyingWeaponData.getCap(player).getWeapon(InteractionHand.MAIN_HAND).clearPath();
                 FlyingWeaponData.getCap(player).forceRefreshWeapons();
