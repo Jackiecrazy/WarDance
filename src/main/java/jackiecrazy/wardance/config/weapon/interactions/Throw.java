@@ -1,11 +1,14 @@
 package jackiecrazy.wardance.config.weapon.interactions;
 
+import jackiecrazy.footwork.move.argument.Argument;
 import jackiecrazy.footwork.move.motionframe.HitInfo;
 import jackiecrazy.footwork.move.motionframe.MotionFrame;
 import jackiecrazy.footwork.move.motionframe.MotionManager;
 import jackiecrazy.footwork.move.motionframe.MotionManagers;
+import jackiecrazy.footwork.move.utils.ArgumentContext;
 import jackiecrazy.wardance.entity.ThrownWeaponEntity;
 import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.phys.Vec3;
 
 public class Throw extends WeaponInteractions.WeaponInteraction {
@@ -24,6 +27,7 @@ public class Throw extends WeaponInteractions.WeaponInteraction {
     private int auto_recall_cooldown = -1;
     private double throw_speed = 2;
     private boolean consume_item = true;
+    private Argument<ItemStack> display_stack;
 
     public Throw() {
     }
@@ -69,6 +73,12 @@ public class Throw extends WeaponInteractions.WeaponInteraction {
         f.writeDouble(gravity);
     }
 
+    public void applyCosmeticStack(ThrownWeaponEntity twe, ArgumentContext ctx){
+        if(display_stack==null)return;
+        ItemStack is= display_stack.resolve(ctx);
+        twe.setCosmeticItem(is);
+    }
+
     @Override
     public WeaponInteractions.WeaponInteraction read(FriendlyByteBuf f) {
         super.read(f);
@@ -87,5 +97,6 @@ public class Throw extends WeaponInteractions.WeaponInteraction {
         e.setGravity(gravity);
         e.setFake(!consume_item);
         e.setHitInfo(attack_info);
+        applyCosmeticStack(e, new ArgumentContext(e.getOwner(), null));
     }
 }

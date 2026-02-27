@@ -1,6 +1,14 @@
 package jackiecrazy.wardance.capability.aerial;
 
+import net.minecraft.core.Direction;
+
 public interface IAerialMode {
+    public enum WallState{
+        NONE,
+        WALL_RUN,
+        CLING,
+        CEILING_CLING
+    }
     /*
     Attacking within a few ticks of jumping counts as a launching attack and sets you to aerial mode. Alternatively, double tap space in the air to change into aerial mode.
 Aerial mode gives slight slow fall. You cannot fall attack in air mode, but you can do the 'aerial' sweep.
@@ -24,9 +32,16 @@ jump to leap off early, sneak to stop and cling (drains spirit?)
 near surface: hit a block with an exposed top face near head level to hang on for free. Hanging continues along the same y level along unbroken line of blocks (outcrops ok), sneak to drop, jump to mantle up
 roof cling: jump when within half a block of the ceiling to stick
      */
+    default boolean isAerialMode(){
+        return getEffectiveSpeed()<1;
+    }
     void alterGravity(int ticks, double speed);
     void tick();
     void resetSpeed();
     double getEffectiveSpeed();
     int getTimeRemaining();
+    WallState getState();
+    void setState(WallState state);
+    Direction getWallDir();  // Facing normal.
+    void setWallDir(Direction dir);
 }

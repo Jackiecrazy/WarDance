@@ -402,7 +402,6 @@ public class CombatUtils {
                     ChargingData.getCap(p).alterSpeed(stack, use.getUseSpeed());
                     stack.use(e.level(), p, h);
                     p.startUsingItem(h);
-                    //as long as the item timer is on,
                 }
             }
             if (info instanceof Animation anim) {

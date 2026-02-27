@@ -1,15 +1,11 @@
 package jackiecrazy.wardance.capability.aerial;
 
-import jackiecrazy.footwork.capability.timeslow.ITimeChange;
-import jackiecrazy.footwork.networking.FootworkChannel;
-import jackiecrazy.footwork.networking.UpdateTimeSlowPacket;
+import net.minecraft.core.Direction;
 import net.minecraft.util.Tuple;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.ai.attributes.AttributeModifier;
-import net.minecraft.world.entity.player.Player;
 import net.minecraftforge.common.ForgeMod;
-import net.minecraftforge.network.PacketDistributor;
 
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
@@ -21,6 +17,8 @@ public class AerialCapability implements IAerialMode {
     WeakReference<Entity> bind;
     private double speed = 1;
     private int longest;
+    private WallState state = WallState.NONE;
+    private Direction direction = Direction.DOWN;
 
     public AerialCapability() {
     }
@@ -77,5 +75,25 @@ public class AerialCapability implements IAerialMode {
     @Override
     public int getTimeRemaining() {
         return longest;
+    }
+
+    @Override
+    public WallState getState() {
+        return state;
+    }
+
+    @Override
+    public void setState(WallState state) {
+        this.state = state;
+    }
+
+    @Override
+    public Direction getWallDir() {
+        return direction;
+    }
+
+    @Override
+    public void setWallDir(Direction dir) {
+        direction = dir;
     }
 }
