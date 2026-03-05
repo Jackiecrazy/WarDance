@@ -1,7 +1,10 @@
 package jackiecrazy.wardance.mixin;
 
 import jackiecrazy.footwork.capability.resources.CombatData;
+import jackiecrazy.wardance.capability.aerial.AerialModeData;
+import jackiecrazy.wardance.entity.GrappleEntity;
 import jackiecrazy.wardance.utils.CombatUtils;
+import net.minecraft.core.Direction;
 import net.minecraft.tags.DamageTypeTags;
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.damagesource.DamageSource;
@@ -11,11 +14,13 @@ import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.phys.Vec3;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.Redirect;
+import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 @Mixin(LivingEntity.class)
@@ -73,6 +78,25 @@ public abstract class MixinLivingEntity extends Entity {
         if (CombatData.getCap(le).alreadyProc("cancelShake") || (ds.getEntity() == null && !ds.is(DamageTypeTags.IS_EXPLOSION) && !ds.is(DamageTypeTags.IS_FALL) && cir.getReturnValue())) {
             indicateDamage(-99999, -99999);
         }
+    }
+
+    @Inject(method = "travel", at = @At("RETURN"))
+    private void onTravel(Vec3 vec, CallbackInfo ci) {
+//        LivingEntity ent = (LivingEntity) (Object) this;
+//        final Direction dir = AerialModeData.getCap(ent).getWallDir();
+//        Vec3 clamp=ent.getDeltaMovement();
+//        if(dir !=null){
+//            if(dir.getAxis()== Direction.Axis.X){
+//                double change= dir.getAxisDirection().getStep()*-1*clamp.x;
+//                clamp=clamp.multiply(0,0,1).add(0, change, 0);
+//            }
+//            else if(dir.getAxis()== Direction.Axis.Z){
+//                double change= dir.getAxisDirection().getStep()*-1*clamp.z;
+//                clamp=clamp.multiply(1,0,0).add(0, change, 0);
+//            }
+//            ent.setDeltaMovement(clamp);
+//        }
+//        ent.setDeltaMovement(Vec3.ZERO);
     }
 
 }

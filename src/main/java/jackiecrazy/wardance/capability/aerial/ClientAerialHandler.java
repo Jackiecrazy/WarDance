@@ -10,6 +10,7 @@ import jackiecrazy.wardance.utils.ReworkConstants;
 import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.util.Mth;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
@@ -35,25 +36,50 @@ public class ClientAerialHandler {
     }
 
     public static Vec3 handleCollisions(Entity self, Vec3 baseVec, Vec3 collided) {
-//        if (pl.horizontalCollision && pl.getDeltaMovement().y > -0.2) {
-//            if (collidesWithBlock(pl.level(), pl.getBoundingBox().inflate(0.01, -pl.maxUpStep() + 0.02, 0.01))) {
-//                pl.setOnGround(true);
-//            }
-//        }
-//
-//        if (pl.isSprinting() && pl.getDeltaMovement().length() > 0.08)
-//            pl.horizontalCollision = false;
-        // Early exits: Skip if grounded (vanilla handles), no step height, or no Spirit.
         if (self.onGround() || self.getStepHeight() <= 0.0F) {
             return collided;
         }
-        // Airborne check: Minor downward or neutral/ascending vel (tweak thresh for "falling gently").
-        Vec3 vel = self.getDeltaMovement();
-        //if (vel.y < -0.2) return;  // Too fast fall? Skip to avoid cheese ascents.
 
-        // Get vanilla's base clipped delta.
+        if (self instanceof Player e && StylishData.getCap(e).isCombatMode()) {
+            final IAerialMode cap = AerialModeData.getCap(e);
+            //todo convert velocity that is orthogonal to wall into vertical
+            //clamp vector if on wall
+            if (cap.getWallDir() != null && cap.getState() == IAerialMode.WallState.CLING) {
+                Vec3 movement = self.getDeltaMovement();
+                Vec3 look = self.getLookAngle();
+                Direction firstFace=cap.getWallDir();
+                Direction secondFace=firstFace;
+                double max =0.4;
+                if (!isSupportedByWall(self.level(), e, self.getBoundingBox(), cap.getWallDir().getOpposite(), 0.3)){//self.level().getBlockCollisions(self, self.getBoundingBox().inflate(0.1).expandTowards(normal)).iterator().hasNext()) {
+                    //turning point on the wall.
+                    cap.setWallDir(Direction.getNearest(movement.x, movement.y, movement.z).getOpposite());
+                    secondFace=cap.getWallDir();
+                }
+                if(firstFace!=null) {
+                    if (firstFace != secondFace) {
+                        //turning point, lock movement to the two faces
+                        Vec3 firstDir = Vec3.atLowerCornerOf(firstFace.getNormal()).normalize();
+                        Vec3 secondDir = Vec3.atLowerCornerOf(secondFace.getNormal()).normalize();
+                        Vec3 test = firstDir.add(secondDir);
+                        Vec3 testMove = movement.multiply(test.x, test.y, test.z);
+                        if (testMove.x < 0) movement = movement.multiply(0, 1, 1);//moving outwards
+                        if (testMove.z < 0) movement = movement.multiply(1, 1, 0);//moving outwards
+                    } else if (cap.getWallDir().getAxis() == Direction.Axis.X) {
+                        double change = Mth.clamp((movement.y + cap.getWallDir().getAxisDirection().getStep() * movement.x) * 0.9, -max, max);
+                        baseVec = baseVec.multiply(0, 1, 1);
+                        collided = collided.multiply(0, 1, 1);
+                        movement=(movement.multiply(0, 0, 1).add(0, change, 0));
+                    } else if (cap.getWallDir().getAxis() == Direction.Axis.Z) {
+                        double change = Mth.clamp((movement.y + cap.getWallDir().getAxisDirection().getStep() * movement.z) * 0.9, -max, max);
+                        baseVec = baseVec.multiply(1, 1, 0);
+                        collided = collided.multiply(1, 1, 0);
+                        movement=(movement.multiply(1, 0, 0).add(0, change, 0));
+                    }
+                    e.setDeltaMovement(movement);
+                }
+            }
+        }
 
-        // Flags like vanilla: Did horiz clip happen? (Obstacle ahead.)
         boolean horizBlocked = collided.x != baseVec.x || collided.z != baseVec.z;
         if (!horizBlocked) return collided;  // No obstacle? No need to air-step.
 
@@ -82,35 +108,10 @@ public class ClientAerialHandler {
             Vec3 finalDrop = self.collideBoundingBox(self, new Vec3(0.0D, -airStep1.y + collided.y, 0.0D), aabb.move(airStep1), self.level(), collisions);
             Vec3 airVec = airStep1.add(finalDrop);
 
-            // Momentum Preserve: Don't reset vel fully—scale horiz ~90%, minor up-boost.
-            // (Call setVelocity in your mod's tick mixin; here just return adjusted delta.)
-            // For wall: Check if step was "up-side" via raycast (add below).
-
-            // Drain Spirit per step (e.g., 5 points).
-            //self.drainSpirit(5.0F);  // Tweak amount.
-
-            // Set return: Override vanilla with air-stepped delta.
             AerialModeData.getCap(self).setState(IAerialMode.WallState.NONE);
             return airVec;
         } else if (self instanceof LivingEntity e && StylishData.getCap(e).isCombatMode()) {
             final IAerialMode cap = AerialModeData.getCap(e);
-            //todo convert velocity that is orthogonal to wall into vertical
-            //clamp vector if on wall
-            if(cap.getWallDir()!=null){
-                //if on axis, moving into face=up, moving same dir=down
-                //multiply axis dir and relevant axis velocity then invert into y
-                if(cap.getWallDir().getAxis()== Direction.Axis.X){
-                    double change=cap.getWallDir().getAxisDirection().getStep()*-1*baseVec.x;
-                    baseVec=baseVec.multiply(0,0,1).add(0, change, 0);
-                    collided=collided.multiply(0,0,1).add(0, change, 0);
-                }
-                else if(cap.getWallDir().getAxis()== Direction.Axis.X){
-                    double change=cap.getWallDir().getAxisDirection().getStep()*-1*baseVec.x;
-                    baseVec=baseVec.multiply(0,0,1).add(0, change, 0);
-                    collided=collided.multiply(0,0,1).add(0, change, 0);
-                }
-
-            }
 
             if ((baseVec.x != collided.x || baseVec.z != collided.z)) {
                 // Approximate the face we just hit (horizontal only)
@@ -267,13 +268,13 @@ public class ClientAerialHandler {
                 cap.setState(IAerialMode.WallState.NONE);
 
             //if (!self.level().getBlockCollisions(self, self.getBoundingBox().inflate(0.1).expandTowards(normal)).iterator().hasNext()) {
-            if(!isSupportedByWall(self.level(), self, self.getBoundingBox(), cap.getWallDir().getOpposite(), 0.3)){
+            if(cap.getWallDir()!=null&&!isSupportedByWall(self.level(), self, self.getBoundingBox(), cap.getWallDir().getOpposite(), 0.3)){
                 cap.setState(IAerialMode.WallState.CLING);
                 self.setDeltaMovement(Vec3.ZERO);
                 cap.setWallDir(Direction.getNearest(sliding.x, sliding.y, sliding.z).getOpposite());
             }
 
-            if (length < 0.5) {
+            if (length < 0.4) {
                 cap.setState(IAerialMode.WallState.CLING);
                 self.setDeltaMovement(Vec3.ZERO);
             }
@@ -283,17 +284,39 @@ public class ClientAerialHandler {
         // spider mode
         // ─────────────────────────────────────────────
         else if (state == IAerialMode.WallState.CLING) {
-            Vec3 normal = Vec3.atLowerCornerOf(wallDir.getNormal()).normalize();
-            Vec3 input = self.getDeltaMovement();
+            Vec3 movement = self.getDeltaMovement();
             Vec3 look = self.getLookAngle();
-            Vec3 projLook = input.subtract(normal.scale(input.dot(normal)));
-            //todo convert motion to ladder-esque
+            Direction firstFace=cap.getWallDir();
+            Direction secondFace=firstFace;
+            //if turning point, lock movement to the two corner axes
+            //if not,
 
-            // Move along projected look at sprint speed
-            self.setDeltaMovement(projLook);  // ~sprint speed
             if (!isSupportedByWall(self.level(), self, self.getBoundingBox(), cap.getWallDir().getOpposite(), 0.3)){//self.level().getBlockCollisions(self, self.getBoundingBox().inflate(0.1).expandTowards(normal)).iterator().hasNext()) {
-                cap.setWallDir(Direction.getNearest(projLook.x, projLook.y, projLook.z).getOpposite());
+                //turning point on the wall.
+                cap.setWallDir(Direction.getNearest(movement.x, movement.y, movement.z).getOpposite());
+                secondFace=cap.getWallDir();
             }
+            if(firstFace!=null){
+                if(firstFace!=secondFace){
+                    //turning point, lock movement to the two faces
+                    Vec3 firstDir=Vec3.atLowerCornerOf(firstFace.getNormal()).normalize();
+                    Vec3 secondDir=Vec3.atLowerCornerOf(secondFace.getNormal()).normalize();
+                    Vec3 test= firstDir.add(secondDir);
+                    Vec3 testMove = movement.multiply(test.x, test.y, test.z);
+                    if(testMove.x<0) movement=movement.multiply(0,1,1);//moving outwards
+                    if(testMove.z<0) movement=movement.multiply(1,1,0);//moving outwards
+                }
+                else if(firstFace.getAxis()== Direction.Axis.X){
+                    double change=firstFace.getAxisDirection().getStep()*-1*movement.x;
+                    movement=movement.multiply(0,0,1).add(0, change, 0);
+                }
+                else if(firstFace.getAxis()== Direction.Axis.Z){
+                    double change=firstFace.getAxisDirection().getStep()*-1*movement.z;
+                    movement=movement.multiply(1,0,0).add(0, change, 0);
+                }
+            }
+
+            self.setDeltaMovement(movement);  // ~sprint speed
 
             //self.setOnGround(true);
             if (self.onGround())

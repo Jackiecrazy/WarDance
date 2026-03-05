@@ -338,7 +338,7 @@ public class CombatHandler {
                         float spiritAdded = (float) (atkMult * sweepInfo.spirit_multiplier());
                         if (spiritAdded != 0) {
                             double percRed = semeCap.addSpirit(spiritAdded) / spiritAdded;
-                            semeCap.tickProc(SPIRITKB, 1 + percRed);
+                            semeCap.tickProc(SPIRITKB, 3);
                         }
                         StylishData.getCap(seme).processAttack(true);
                         StylishData.getCap(seme).addCombo(0.05f, StylishCapability.getNormalAttackString(seme) + seme.getMainHandItem().getItem().toString());

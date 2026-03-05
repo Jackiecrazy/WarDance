@@ -43,7 +43,6 @@ public class ResetAirJumpPacket {
         public void accept(ResetAirJumpPacket packet, Supplier<NetworkEvent.Context> contextSupplier) {
             contextSupplier.get().enqueueWork(() -> {
                 DistExecutor.unsafeRunWhenOn(Dist.CLIENT, Handle::handleClient);
-
             });
             contextSupplier.get().setPacketHandled(true);
         }

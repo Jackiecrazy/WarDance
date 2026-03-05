@@ -198,7 +198,7 @@ public class RenderEvents {
         if (CombatData.getCap(e.getPlayer()).isKnockdown()||StylishData.getCap(e.getPlayer()).isDeathDoor())
             e.setNewFovModifier(0.7f);
         if(AerialModeData.getCap(e.getPlayer()).getState()== IAerialMode.WallState.CLING){
-            e.setNewFovModifier(e.getNewFovModifier()*0.8f);
+            e.setNewFovModifier(e.getNewFovModifier()*0.6f);
         }
     }
 

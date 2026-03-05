@@ -1,8 +1,11 @@
 package jackiecrazy.wardance.mixin;
 
+import jackiecrazy.wardance.capability.aerial.AerialModeData;
+import jackiecrazy.wardance.capability.aerial.IAerialMode;
 import jackiecrazy.wardance.capability.flyingweapon.FlyingWeaponCapability;
 import jackiecrazy.wardance.capability.flyingweapon.FlyingWeaponData;
 import jackiecrazy.wardance.entity.GrappleEntity;
+import net.minecraft.core.Direction;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.phys.Vec3;
@@ -19,13 +22,13 @@ public class PlayerSwingingMixin {
     private static final double PUSH_FACTOR = 0.08;
     private static final double RADIAL_CONTROL = 0.33;
 
-    @Inject(method = "travel", at = @At("TAIL"))
+    @Inject(method = "travel", at = @At("HEAD"))
     private void onTravel(Vec3 travelVector, CallbackInfo ci) {
         Player player = (Player) (Object) this;
-        GrappleEntity ge = FlyingWeaponData.getCap(player).getGrapple();
+        GrappleEntity ge = FlyingWeaponData.getCap(player).getGrapple(); //todo reimplement one day
 
         // === HOOK HANDLING ===
-        if (ge != null && ge.hooked() && !player.level().isClientSide()) {
+        if (ge != null && ge.hooked()) {
 
             Vec3 hookPos = ge.position();
             Vec3 eyePos = player.getEyePosition();

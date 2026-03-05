@@ -1,13 +1,11 @@
 package jackiecrazy.wardance.capability.aerial;
 
-import jackiecrazy.footwork.networking.FootworkChannel;
-import jackiecrazy.footwork.networking.UpdateTimeSlowPacket;
-import jackiecrazy.wardance.WarDance;
 import jackiecrazy.wardance.networking.CombatChannel;
 import jackiecrazy.wardance.networking.combat.ResetAirJumpPacket;
 import jackiecrazy.wardance.networking.sync.UpdateAirPacket;
 import jackiecrazy.wardance.utils.SkillUtils;
 import net.minecraft.core.Direction;
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.util.Tuple;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
@@ -60,8 +58,8 @@ public class AerialCapability implements IAerialMode {
     public void alterGravity(int ticks, double speed) {
         modify.add(new Tuple<>(ticks, speed));
         recalculateSpeed();
-        if (!bind.get().level().isClientSide)
-            FootworkChannel.INSTANCE.send(PacketDistributor.TRACKING_ENTITY.with(() -> bind.get()), new ResetAirJumpPacket());
+        if (bind.get() instanceof ServerPlayer sp)
+            CombatChannel.INSTANCE.send(PacketDistributor.PLAYER.with(() -> sp), new ResetAirJumpPacket());
     }
 
     @Override
@@ -97,11 +95,6 @@ public class AerialCapability implements IAerialMode {
     @Override
     public boolean setState(WallState state) {
         //validate the state
-        if(state!=this.state) {
-            WarDance.LOGGER.info("changing from " + this.state + " to " + state);
-            //WarDance.LOGGER.info();
-            new Throwable().fillInStackTrace().printStackTrace();
-        }
         this.state = state;
         if (bind.get() instanceof LivingEntity e) {
             if (state.noGravity) {
