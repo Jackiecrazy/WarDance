@@ -16,7 +16,7 @@ import jackiecrazy.wardance.config.weapon.WeaponStats;
 import jackiecrazy.wardance.event.DamageRetconEvent;
 import jackiecrazy.wardance.handlers.TwoHandingHandler;
 import jackiecrazy.wardance.networking.CombatChannel;
-import jackiecrazy.wardance.networking.combat.UpdateClientResourcePacket;
+import jackiecrazy.wardance.networking.sync.UpdateClientResourcePacket;
 import jackiecrazy.wardance.utils.CombatUtils;
 import jackiecrazy.wardance.utils.MobilityUtils;
 import jackiecrazy.wardance.utils.ReworkConstants;
@@ -442,7 +442,7 @@ public class NewCombatCapability implements ICombatCapability {
         mpos = (float) elb.getAttributeValue(FootworkAttributes.MAX_POSTURE.get());
         if (posture > mpos)
             setPosture(mpos);
-        mspi = (int) elb.getAttributeValue(FootworkAttributes.MAX_QI.get());
+        mspi = (int) elb.getAttributeValue(FootworkAttributes.MAX_SPIRIT.get());
         if (spirit > mspi)
             setSpirit(mspi);
 

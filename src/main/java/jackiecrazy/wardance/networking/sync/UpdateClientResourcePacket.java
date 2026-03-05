@@ -1,6 +1,6 @@
-package jackiecrazy.wardance.networking.combat;
+package jackiecrazy.wardance.networking.sync;
 
-import jackiecrazy.footwork.capability.stylish.StylishData;
+import jackiecrazy.footwork.capability.resources.CombatData;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.nbt.CompoundTag;
@@ -15,41 +15,41 @@ import java.util.function.BiConsumer;
 import java.util.function.Function;
 import java.util.function.Supplier;
 
-public class UpdateClientStylePacket {
+public class UpdateClientResourcePacket {
     int e;
     CompoundTag icc;
 
-    public UpdateClientStylePacket(int ent, CompoundTag c) {
+    public UpdateClientResourcePacket(int ent, CompoundTag c) {
         e = ent;
         icc = c;
     }
 
-    public static class Encoder implements BiConsumer<UpdateClientStylePacket, FriendlyByteBuf> {
+    public static class Encoder implements BiConsumer<UpdateClientResourcePacket, FriendlyByteBuf> {
 
         @Override
-        public void accept(UpdateClientStylePacket updateClientResourcePacket, FriendlyByteBuf packetBuffer) {
+        public void accept(UpdateClientResourcePacket updateClientResourcePacket, FriendlyByteBuf packetBuffer) {
             packetBuffer.writeInt(updateClientResourcePacket.e);
             packetBuffer.writeNbt(updateClientResourcePacket.icc);
         }
     }
 
-    public static class Decoder implements Function<FriendlyByteBuf, UpdateClientStylePacket> {
+    public static class Decoder implements Function<FriendlyByteBuf, UpdateClientResourcePacket> {
 
         @Override
-        public UpdateClientStylePacket apply(FriendlyByteBuf packetBuffer) {
-            return new UpdateClientStylePacket(packetBuffer.readInt(), packetBuffer.readNbt());
+        public UpdateClientResourcePacket apply(FriendlyByteBuf packetBuffer) {
+            return new UpdateClientResourcePacket(packetBuffer.readInt(), packetBuffer.readNbt());
         }
     }
 
-    public static class Handler implements BiConsumer<UpdateClientStylePacket, Supplier<NetworkEvent.Context>> {
+    public static class Handler implements BiConsumer<UpdateClientResourcePacket, Supplier<NetworkEvent.Context>> {
 
         @Override
-        public void accept(UpdateClientStylePacket updateClientResourcePacket, Supplier<NetworkEvent.Context> contextSupplier) {
+        public void accept(UpdateClientResourcePacket updateClientResourcePacket, Supplier<NetworkEvent.Context> contextSupplier) {
             contextSupplier.get().enqueueWork(() -> DistExecutor.unsafeRunWhenOn(Dist.CLIENT, () -> () -> {
                 ClientLevel world = Minecraft.getInstance().level;
                 if (world != null) {
                     Entity entity = world.getEntity(updateClientResourcePacket.e);
-                    if (entity instanceof LivingEntity) StylishData.getCap((LivingEntity) entity).read(updateClientResourcePacket.icc);
+                    if (entity instanceof LivingEntity) CombatData.getCap((LivingEntity) entity).read(updateClientResourcePacket.icc);
                 }
             }));
             contextSupplier.get().setPacketHandled(true);

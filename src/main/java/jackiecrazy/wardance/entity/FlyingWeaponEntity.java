@@ -149,12 +149,6 @@ public class FlyingWeaponEntity extends FlyingItemEntity {
             WeaponStats.info_override = getInfo();
             for (Entity target : targets) {
                 e.attackStrengthTicker = 99999;
-                //temporary pin code
-                if (target instanceof LivingEntity elb) {
-                    if (!getInfo().canBreach()) {
-                        CombatData.getCap(elb).pin(10);
-                    }
-                }
                 if (!alreadyHit.isEmpty()) CombatData.getCap(e).tickProc("oncePerSweep");
                 //CombatData.getCap(e).tickProc("qiSpent");
                 target.invulnerableTime = 0;

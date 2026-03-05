@@ -14,8 +14,8 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 @Mixin(LivingEntityRenderer.class)
-public abstract class ItchyCurseMixin<T extends LivingEntity, M extends EntityModel<T>> extends EntityRenderer<T> implements RenderLayerParent<T, M> {
-    protected ItchyCurseMixin(EntityRendererProvider.Context p_174008_) {
+public abstract class RenderItchyCurseMixin<T extends LivingEntity, M extends EntityModel<T>> extends EntityRenderer<T> implements RenderLayerParent<T, M> {
+    protected RenderItchyCurseMixin(EntityRendererProvider.Context p_174008_) {
         super(p_174008_);
     }
 

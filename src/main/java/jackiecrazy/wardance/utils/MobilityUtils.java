@@ -286,7 +286,7 @@ public class MobilityUtils {
             //NeedyLittleThings.setSize(elb, min, min);
             elb.setDeltaMovement(elb.getDeltaMovement().multiply(1,0,1));
             elb.push(x, y, z);
-            elb.hurtMarked = true;
+            //elb.hurtMarked = true;
             itsc.consumePosture(0);
             //leave stun
             itsc.stun(0);

@@ -15,7 +15,7 @@ import jackiecrazy.wardance.config.*;
 import jackiecrazy.wardance.event.FractureEvent;
 import jackiecrazy.wardance.handlers.TwoHandingHandler;
 import jackiecrazy.wardance.networking.CombatChannel;
-import jackiecrazy.wardance.networking.combat.UpdateClientResourcePacket;
+import jackiecrazy.wardance.networking.sync.UpdateClientResourcePacket;
 import jackiecrazy.wardance.utils.CombatUtils;
 import jackiecrazy.wardance.utils.ComboRanks;
 import net.minecraft.nbt.CompoundTag;

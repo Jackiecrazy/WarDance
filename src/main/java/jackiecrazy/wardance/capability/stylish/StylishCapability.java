@@ -3,11 +3,10 @@ package jackiecrazy.wardance.capability.stylish;
 import jackiecrazy.footwork.capability.resources.CombatData;
 import jackiecrazy.footwork.capability.resources.ICombatCapability;
 import jackiecrazy.footwork.capability.stylish.IStyleCapability;
-import jackiecrazy.footwork.utils.GeneralUtils;
 import jackiecrazy.wardance.WarDance;
 import jackiecrazy.wardance.config.CombatConfig;
 import jackiecrazy.wardance.networking.CombatChannel;
-import jackiecrazy.wardance.networking.combat.UpdateClientStylePacket;
+import jackiecrazy.wardance.networking.sync.UpdateClientStylePacket;
 import jackiecrazy.wardance.utils.CombatUtils;
 import jackiecrazy.wardance.utils.ComboRanks;
 import jackiecrazy.wardance.utils.SkillUtils;
@@ -19,12 +18,12 @@ import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.ai.attributes.AttributeModifier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.player.Player;
+import net.minecraftforge.common.ForgeMod;
 import net.minecraftforge.common.util.FakePlayer;
 import net.minecraftforge.network.PacketDistributor;
 import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nonnull;
-import java.awt.*;
 import java.lang.ref.WeakReference;
 import java.util.*;
 
@@ -64,6 +63,12 @@ public class StylishCapability implements IStyleCapability {
     @Override
     public void toggleCombatMode(boolean on) {
         combat = on;
+        if (dude.get() != null) {
+            LivingEntity guy = dude.get();
+            if (on)
+                SkillUtils.modifyAttribute(guy, ForgeMod.STEP_HEIGHT_ADDITION.get(), WOUND, 0.9, AttributeModifier.Operation.ADDITION);
+            else SkillUtils.removeAttribute(guy, ForgeMod.STEP_HEIGHT_ADDITION.get(), WOUND);
+        }
         markDirty();
     }
 

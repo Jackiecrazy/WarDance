@@ -5,6 +5,8 @@ import jackiecrazy.footwork.capability.resources.CombatData;
 import jackiecrazy.footwork.capability.stylish.IStyleCapability;
 import jackiecrazy.footwork.capability.stylish.StylishData;
 import jackiecrazy.wardance.WarDance;
+import jackiecrazy.wardance.capability.aerial.AerialModeData;
+import jackiecrazy.wardance.capability.aerial.IAerialMode;
 import jackiecrazy.wardance.capability.skill.CasterData;
 import jackiecrazy.wardance.client.screen.skill.SkillCastScreen;
 import jackiecrazy.wardance.config.QiCosts;
@@ -15,6 +17,7 @@ import jackiecrazy.wardance.networking.combat.GrapplePacket;
 import jackiecrazy.wardance.networking.combat.KickPacket;
 import jackiecrazy.wardance.networking.skill.EvokeSkillPacket;
 import jackiecrazy.wardance.networking.skill.SelectSkillPacket;
+import jackiecrazy.wardance.utils.MobilityUtils;
 import net.minecraft.client.KeyMapping;
 import net.minecraft.client.Minecraft;
 import net.minecraft.network.chat.Component;
@@ -104,6 +107,8 @@ public class Keybinds {
                     mc.player.setForcedPose(Pose.SLEEPING);
                 }
             }
+            AerialModeData.getCap(mc.player).setState(IAerialMode.WallState.STICKY);
+            MobilityUtils.attemptDodge(mc.player, side);
             CombatChannel.INSTANCE.sendToServer(new DodgePacket(side));
         }
         for (int x = 0; x < SKILL.length; x++) {

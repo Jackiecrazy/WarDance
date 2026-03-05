@@ -1,8 +1,6 @@
 package jackiecrazy.wardance;
 
 import jackiecrazy.footwork.client.render.ItemEntityRenderer;
-import jackiecrazy.footwork.move.motionframe.HitInfo;
-import jackiecrazy.footwork.utils.JsonAdapters;
 import jackiecrazy.wardance.capability.action.IAction;
 import jackiecrazy.wardance.capability.skill.ISkillCapability;
 import jackiecrazy.wardance.capability.status.IMark;
@@ -16,7 +14,6 @@ import jackiecrazy.wardance.compat.WarCompat;
 import jackiecrazy.wardance.config.*;
 import jackiecrazy.wardance.config.weapon.TwohandingStats;
 import jackiecrazy.wardance.config.weapon.WeaponStats;
-import jackiecrazy.wardance.config.weapon.interactions.*;
 import jackiecrazy.wardance.entity.WarEntities;
 import jackiecrazy.wardance.items.WarItems;
 import jackiecrazy.wardance.loot.ScrollLootModifier;
@@ -65,6 +62,7 @@ import java.util.Random;
 public class WarDance {
     public static final String MODID = "wardance";
     public static final Random rand = new Random();
+    public static int lastReport = 0;
 
     public static final Logger LOGGER = LogManager.getLogger();
     public static final DeferredRegister<CreativeModeTab> TABS = DeferredRegister.create(Registries.CREATIVE_MODE_TAB, MODID);
@@ -149,6 +147,9 @@ public class WarDance {
         CombatChannel.INSTANCE.registerMessage(index++, KickPacket.class, new KickPacket.Encoder(), new KickPacket.Decoder(), new KickPacket.Handler());
         CombatChannel.INSTANCE.registerMessage(index++, SyncQuiverPacket.class, new SyncQuiverPacket.Encoder(), new SyncQuiverPacket.Decoder(), new SyncQuiverPacket.Handler());
         CombatChannel.INSTANCE.registerMessage(index++, SwapAttackPacket.class, new SwapAttackPacket.Encoder(), new SwapAttackPacket.Decoder(), new SwapAttackPacket.Handler());
+        CombatChannel.INSTANCE.registerMessage(index++, AerialSpiritPacket.class, new AerialSpiritPacket.Encoder(), new AerialSpiritPacket.Decoder(), new AerialSpiritPacket.Handler());
+        CombatChannel.INSTANCE.registerMessage(index++, ResetAirJumpPacket.class, new ResetAirJumpPacket.Encoder(), new ResetAirJumpPacket.Decoder(), new ResetAirJumpPacket.Handler());
+        CombatChannel.INSTANCE.registerMessage(index++, UpdateAirPacket.class, new UpdateAirPacket.Encoder(), new UpdateAirPacket.Decoder(), new UpdateAirPacket.Handler());
     }
 
     private void doClientStuff(final FMLClientSetupEvent event) {

@@ -15,6 +15,7 @@ import java.util.function.Function;
 import java.util.function.Supplier;
 
 public class RequestSweepPacket {
+    //todo package move state here?
     boolean main;
     int id;
 

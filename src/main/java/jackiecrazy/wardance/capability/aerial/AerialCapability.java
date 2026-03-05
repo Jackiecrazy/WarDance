@@ -1,11 +1,19 @@
 package jackiecrazy.wardance.capability.aerial;
 
+import jackiecrazy.footwork.networking.FootworkChannel;
+import jackiecrazy.footwork.networking.UpdateTimeSlowPacket;
+import jackiecrazy.wardance.WarDance;
+import jackiecrazy.wardance.networking.CombatChannel;
+import jackiecrazy.wardance.networking.combat.ResetAirJumpPacket;
+import jackiecrazy.wardance.networking.sync.UpdateAirPacket;
+import jackiecrazy.wardance.utils.SkillUtils;
 import net.minecraft.core.Direction;
 import net.minecraft.util.Tuple;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.ai.attributes.AttributeModifier;
 import net.minecraftforge.common.ForgeMod;
+import net.minecraftforge.network.PacketDistributor;
 
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
@@ -42,6 +50,8 @@ public class AerialCapability implements IAerialMode {
                 p.getAttribute(ForgeMod.ENTITY_GRAVITY.get()).removeModifier(GRAVITY);
                 p.getAttribute(ForgeMod.ENTITY_GRAVITY.get()).addTransientModifier(new AttributeModifier(GRAVITY, "time slow", speed - 1, AttributeModifier.Operation.MULTIPLY_TOTAL));
             }
+            if (!bound.level().isClientSide)
+                CombatChannel.INSTANCE.send(PacketDistributor.TRACKING_ENTITY.with(() -> bound), new UpdateAirPacket(bound.getId(), spd, longest));
         }
 
     }
@@ -50,6 +60,8 @@ public class AerialCapability implements IAerialMode {
     public void alterGravity(int ticks, double speed) {
         modify.add(new Tuple<>(ticks, speed));
         recalculateSpeed();
+        if (!bind.get().level().isClientSide)
+            FootworkChannel.INSTANCE.send(PacketDistributor.TRACKING_ENTITY.with(() -> bind.get()), new ResetAirJumpPacket());
     }
 
     @Override
@@ -83,12 +95,26 @@ public class AerialCapability implements IAerialMode {
     }
 
     @Override
-    public void setState(WallState state) {
+    public boolean setState(WallState state) {
+        //validate the state
+        if(state!=this.state) {
+            WarDance.LOGGER.info("changing from " + this.state + " to " + state);
+            //WarDance.LOGGER.info();
+            new Throwable().fillInStackTrace().printStackTrace();
+        }
         this.state = state;
+        if (bind.get() instanceof LivingEntity e) {
+            if (state.noGravity) {
+                SkillUtils.modifyAttribute(e, ForgeMod.ENTITY_GRAVITY.get(), GRAVITY, -1, AttributeModifier.Operation.MULTIPLY_TOTAL);
+            } else
+                SkillUtils.removeAttribute(e, ForgeMod.ENTITY_GRAVITY.get(), GRAVITY);
+        }
+        return true;
     }
 
     @Override
     public Direction getWallDir() {
+        if (getState() != WallState.WALL_SLIDE && getState() != WallState.CLING) return null;
         return direction;
     }
 

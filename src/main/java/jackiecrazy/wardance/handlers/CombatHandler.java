@@ -52,6 +52,7 @@ import java.util.UUID;
 @Mod.EventBusSubscriber(modid = WarDance.MODID)
 public class CombatHandler {
 
+    public static final String SPIRITKB = "kbMult";
     private static final UUID uuid = UUID.fromString("98c361c7-de32-4f40-b129-d7752bac3712");
     private static final UUID uuid2 = UUID.fromString("98c361c8-de32-4f40-b129-d7752bac3722");
 
@@ -304,8 +305,8 @@ public class CombatHandler {
                     //handle capability and any on-hit effects, todo revamp to action based system
                     seme.getMainHandItem().getCapability(CombatManipulator.CAP).ifPresent((i) -> i.attackStart(e.getSource(), seme, uke, seme.getMainHandItem(), e.getAmount()));
                     final HitInfo sweepInfo = WeaponStats.getHitInfo(seme.getMainHandItem(), seme, CombatUtils.getAttackState(seme));
-                    sweepInfo.runEffects(seme,seme, true, false);
-                    sweepInfo.runEffects(seme,uke, false, false);
+                    sweepInfo.runEffects(seme, seme, true, false);
+                    sweepInfo.runEffects(seme, uke, false, false);
                     if (e.getSource() instanceof CombatDamageSource cds && WeaponStats.lookupStats(seme.getMainHandItem()) != null) {
                         cds.setKnockbackPercentage((float) sweepInfo.getKnockback());
                         cds.setCrit(sweepInfo.isCrit());
@@ -334,10 +335,10 @@ public class CombatHandler {
                     //add stats if it's the first attack this tick and cooldown is sufficient
                     if (!semeCap.alreadyProc("qiSpent")) {//first hit of a sweep attack this tick, add combo based on state
                         //semeCap.addRank(0.1f);
-                        float spiritAdded= (float) (atkMult*sweepInfo.spirit_multiplier());
-                        if(spiritAdded!=0) {
+                        float spiritAdded = (float) (atkMult * sweepInfo.spirit_multiplier());
+                        if (spiritAdded != 0) {
                             double percRed = semeCap.addSpirit(spiritAdded) / spiritAdded;
-                            semeCap.tickProc("darktide", percRed);
+                            semeCap.tickProc(SPIRITKB, 1 + percRed);
                         }
                         StylishData.getCap(seme).processAttack(true);
                         StylishData.getCap(seme).addCombo(0.05f, StylishCapability.getNormalAttackString(seme) + seme.getMainHandItem().getItem().toString());
@@ -352,7 +353,7 @@ public class CombatHandler {
                     //handle stamina consumption on everything else
                     if (!semeCap.alreadyProc("qiSpent")) {//first hit of a multihit attack this tick, add combo based on state
                         double percRed = semeCap.doConsumeSpirit(atkMult) / atkMult;
-                        semeCap.tickProc("darktide", percRed);
+                        semeCap.tickProc(SPIRITKB, percRed);
                         StylishData.getCap(seme).processAttack(false);
                         StylishData.getCap(seme).addCombo(0.1f, e.getSource().getMsgId());
                         semeCap.tickProc("qiSpent");
@@ -591,6 +592,10 @@ public class CombatHandler {
                     CombatData.getCap((LivingEntity) ride).consumePosture(e.getStrength() / divisor);
             }
         }
+        if (cap.alreadyProc(SPIRITKB)) {
+            e.setStrength((float) (e.getStrength() * cap.getProc(SPIRITKB)));
+            if (e.getStrength() <= 0) e.setCanceled(true);
+        }
         e.setStrength(e.getStrength() * CombatConfig.kbNerf);
     }
 
@@ -648,22 +653,20 @@ public class CombatHandler {
         //weapon on hit effects
         if (ds.getEntity() instanceof LivingEntity trueSource) {
             final HitInfo sweepInfo = WeaponStats.getHitInfo(trueSource.getMainHandItem(), trueSource, CombatUtils.getAttackState(trueSource));
-            sweepInfo.runEffects(trueSource,trueSource, true, true);
-            sweepInfo.runEffects(trueSource,uke, false, true);
+            sweepInfo.runEffects(trueSource, trueSource, true, true);
+            sweepInfo.runEffects(trueSource, uke, false, true);
             double luckDiff = WarDance.rand.nextFloat() * (GeneralUtils.getAttributeValueSafe(trueSource, Attributes.LUCK)) - WarDance.rand.nextFloat() * (GeneralUtils.getAttributeValueSafe(uke, Attributes.LUCK));
             e.setAmount(e.getAmount() + (float) luckDiff * GeneralConfig.luck);
 
             //consume stamina if we didn't do it yet, somehow
             if (!CombatData.getCap(trueSource).alreadyProc("qiSpent")) {
-                final float exhausted = CombatData.getCap(trueSource).doConsumeSpirit((float) (e.getAmount()*sweepInfo.spirit_multiplier()));
+                final float exhausted = CombatData.getCap(trueSource).doConsumeSpirit((float) (e.getAmount() * sweepInfo.spirit_multiplier()));
                 cap.recordDamage(exhausted);
                 e.setAmount(e.getAmount() - exhausted);
                 CombatData.getCap(trueSource).tickProc("qiSpent");
-            } else if (CombatData.getCap(trueSource).alreadyProc("darktide")) {
-                //handle partial attacks
-                final float darktide = (float) CombatData.getCap(trueSource).getProc("darktide");
-                cap.recordDamage(e.getAmount() * darktide);
-                e.setAmount(e.getAmount() * (1 - darktide));
+            } else if (CombatData.getCap(trueSource).alreadyProc(SPIRITKB)) {
+                //overcommitment penalty
+                e.setAmount(e.getAmount() / 2);
             }
 
             if (GeneralConfig.debug && !uke.level().isClientSide) {

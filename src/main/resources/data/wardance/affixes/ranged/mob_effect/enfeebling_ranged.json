@@ -5,7 +5,7 @@
 	"values": {
 		"rare": {
 			"duration": {
-				"min": 20,
+				"min": 60,
 				"steps": 3,
 				"step": 20
 			},
@@ -13,7 +13,7 @@
 		},
 		"epic": {
 			"duration": {
-				"min": 40,
+				"min": 80,
 				"steps": 3,
 				"step": 20
 			},
@@ -25,7 +25,7 @@
 		},
 		"mythic": {
 			"duration": {
-				"min": 60,
+				"min": 120,
 				"steps": 5,
 				"step": 20
 			},
@@ -37,7 +37,7 @@
 		},
 		"ancient": {
 			"duration": {
-				"min": 80,
+				"min": 160,
 				"steps": 4,
 				"step": 40
 			},

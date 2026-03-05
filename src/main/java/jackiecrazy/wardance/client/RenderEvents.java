@@ -11,6 +11,8 @@ import jackiecrazy.footwork.client.GuiComponent;
 import jackiecrazy.footwork.client.screen.dashboard.DashboardScreen;
 import jackiecrazy.footwork.utils.GeneralUtils;
 import jackiecrazy.wardance.WarDance;
+import jackiecrazy.wardance.capability.aerial.AerialModeData;
+import jackiecrazy.wardance.capability.aerial.IAerialMode;
 import jackiecrazy.wardance.capability.status.Marks;
 import jackiecrazy.wardance.client.screen.scroll.ScrollScreen;
 import jackiecrazy.wardance.client.screen.skill.SkillSelectionScreen;
@@ -38,6 +40,7 @@ import net.minecraftforge.client.event.*;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.registries.ForgeRegistries;
+import org.apache.commons.compress.archivers.sevenz.CLI;
 
 import java.awt.*;
 import java.util.ArrayList;
@@ -194,6 +197,9 @@ public class RenderEvents {
     public static void noFovChange(ComputeFovModifierEvent e) {
         if (CombatData.getCap(e.getPlayer()).isKnockdown()||StylishData.getCap(e.getPlayer()).isDeathDoor())
             e.setNewFovModifier(0.7f);
+        if(AerialModeData.getCap(e.getPlayer()).getState()== IAerialMode.WallState.CLING){
+            e.setNewFovModifier(e.getNewFovModifier()*0.8f);
+        }
     }
 
     private static void steveTime(Entity passedEntity, float partialTicks, PoseStack poseStack) {

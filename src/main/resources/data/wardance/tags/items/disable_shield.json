@@ -1,0 +1,65 @@
+{
+  "replace": false,
+  "values": [
+    {
+      "id": "#wardance:halberd",
+      "required": false
+    },
+    {
+      "id": "#wardance:glaive",
+      "required": false
+    },
+    {
+      "id": "#wardance:anchor",
+      "required": false
+    },
+    {
+      "id": "#wardance:axe",
+      "required": false
+    },
+    {
+      "id": "#wardance:battleaxe",
+      "required": false
+    },
+    {
+      "id": "#wardance:buster",
+      "required": false
+    },
+    {
+      "id": "#wardance:flail",
+      "required": false
+    },
+    {
+      "id": "#wardance:greathammer",
+      "required": false
+    },
+    {
+      "id": "#wardance:greatmace",
+      "required": false
+    },
+    {
+      "id": "#wardance:greatsword",
+      "required": false
+    },
+    {
+      "id": "#wardance:hammer",
+      "required": false
+    },
+    {
+      "id": "#wardance:mace",
+      "required": false
+    },
+    {
+      "id": "#wardance:machete",
+      "required": false
+    },
+    {
+      "id": "#wardance:towershield",
+      "required": false
+    },
+    {
+      "id": "#wardance:door",
+      "required": false
+    }
+  ]
+}

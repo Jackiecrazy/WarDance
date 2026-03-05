@@ -4,10 +4,20 @@ import net.minecraft.core.Direction;
 
 public interface IAerialMode {
     public enum WallState{
-        NONE,
-        WALL_RUN,
-        CLING,
-        CEILING_CLING
+        NONE(false, false),//always sticks
+        STICKY(false, false),
+        WALL_SLIDE(false, true),
+        WALL_JUMP(false, false),//cannot stick to the previous wall
+        CLING(true, true),
+        CEILING_CLING(true, false);
+
+
+        public final boolean noGravity;
+        public final boolean wall;
+        WallState(boolean antigrav, boolean wall) {
+            noGravity=antigrav;
+            this.wall=wall;
+        }
     }
     /*
     Attacking within a few ticks of jumping counts as a launching attack and sets you to aerial mode. Alternatively, double tap space in the air to change into aerial mode.
@@ -41,7 +51,7 @@ roof cling: jump when within half a block of the ceiling to stick
     double getEffectiveSpeed();
     int getTimeRemaining();
     WallState getState();
-    void setState(WallState state);
+    boolean setState(WallState state);
     Direction getWallDir();  // Facing normal.
     void setWallDir(Direction dir);
 }
