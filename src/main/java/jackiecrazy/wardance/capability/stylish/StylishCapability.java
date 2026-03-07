@@ -138,6 +138,7 @@ public class StylishCapability implements IStyleCapability {
                 drain *= 2;
             }
             deathDoorReduction -= drain;
+            guy.setHealth(1);
             recalcHealth = true;
 //            //prioritize draining empty hearts
 //            if(guy.getHealth()>guy.getMaxHealth())
@@ -147,7 +148,10 @@ public class StylishCapability implements IStyleCapability {
             if (guy.getMaxHealth() <= 1 || getCombo() > ComboRanks.B)
                 stabilize();
         }
-        SkillUtils.modifyAttribute(guy, Attributes.MAX_HEALTH, WOUND, deathDoorReduction, AttributeModifier.Operation.MULTIPLY_TOTAL);
+        if(recalcHealth) {
+            SkillUtils.modifyAttribute(guy, Attributes.MAX_HEALTH, WOUND, deathDoorReduction, AttributeModifier.Operation.MULTIPLY_TOTAL);
+            recalcHealth=false;
+        }
 
         if (dirty) {
             if (guy == null || guy.level().isClientSide) return;

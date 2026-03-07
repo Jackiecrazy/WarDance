@@ -139,7 +139,7 @@ public class ThrownWeaponEntity extends FlyingWeaponEntity {
     public void setDeltaMovement(@NotNull Vec3 vec3) {
         super.setDeltaMovement(vec3);
         //makes sure weapons don't start clipping into walls when they get hit by explosions etc.
-        if (dormant) {
+        if (dormant&&vec3.lengthSqr()>0) {
             dormant = false;
             setIntangible(false);
         }
@@ -165,6 +165,7 @@ public class ThrownWeaponEntity extends FlyingWeaponEntity {
             setIdlePose(new MotionManagers.FixedMM(new MotionFrame(localOffset, new Vec3(0, 0, -lodgedMob.getBbWidth() / 1.75)), 1));
             setUniversalOffset(Vec3.ZERO);
             setDeltaMovement(Vec3.ZERO);
+            setIntangible(true);
             dormant = true;
         } else {
             //otherwise lose all velocity and start dropping to the ground

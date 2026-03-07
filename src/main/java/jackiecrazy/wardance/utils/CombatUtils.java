@@ -17,6 +17,8 @@ import jackiecrazy.footwork.potion.FootworkEffects;
 import jackiecrazy.footwork.utils.*;
 import jackiecrazy.wardance.WarDance;
 import jackiecrazy.wardance.capability.action.PermissionData;
+import jackiecrazy.wardance.capability.aerial.AerialModeData;
+import jackiecrazy.wardance.capability.aerial.IAerialMode;
 import jackiecrazy.wardance.capability.charging.ChargingData;
 import jackiecrazy.wardance.capability.flyingweapon.FlyingWeaponData;
 import jackiecrazy.wardance.capability.flyingweapon.IFlyingWeapon;
@@ -601,6 +603,12 @@ public class CombatUtils {
             set = WeaponStats.AttackType.SPRINTING;
         if ((!(entity instanceof Player p) || !p.getAbilities().flying) && !entity.onGround() && entity.fallDistance > 0 && !entity.onClimbable() && !entity.isInWater())
             set = WeaponStats.AttackType.FALLING;
+        if (AerialModeData.getCap(entity).getEffectiveSpeed() < 1) set = WeaponStats.AttackType.AERIAL;
+        switch (AerialModeData.getCap(entity).getState()) {
+            case CLING, CEILING_CLING -> set = WeaponStats.AttackType.STANDING;
+            case WALL_SLIDE -> set = WeaponStats.AttackType.SPRINTING;
+            case WALL_JUMP -> set = WeaponStats.AttackType.AERIAL;
+        }
         CombatData.getCap(entity).tickProc("sweepState", set.ordinal());
     }
 

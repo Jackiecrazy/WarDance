@@ -1,6 +1,7 @@
 package jackiecrazy.wardance.networking.combat;
 
 import jackiecrazy.footwork.capability.resources.CombatData;
+import jackiecrazy.wardance.capability.aerial.AerialModeData;
 import jackiecrazy.wardance.capability.flyingweapon.FlyingWeaponData;
 import jackiecrazy.wardance.capability.flyingweapon.IFlyingWeapon;
 import net.minecraft.network.FriendlyByteBuf;
@@ -44,6 +45,7 @@ public class AerialSpiritPacket {
                 ServerPlayer sender = contextSupplier.get().getSender();
                 if (sender == null) return;
                 sender.resetFallDistance();
+                AerialModeData.getCap(sender).alterGravity(40, 0.3);
                 //CombatData.getCap(sender).consumeSpirit(packet.amount);
             });
             contextSupplier.get().setPacketHandled(true);

@@ -174,6 +174,7 @@ public class WeaponStats extends SimpleJsonResourceReloadListener {
 
     public static boolean isShield(LivingEntity e, ItemStack stack) {
         if (stack == null) return false;
+        if(lookupStats(stack)!=null&&lookupStats(stack).shield)return true;
         return stack.is(SHIELD);
     }
 
@@ -204,7 +205,7 @@ public class WeaponStats extends SimpleJsonResourceReloadListener {
     public static boolean isWeapon(@Nullable LivingEntity e, ItemStack stack) {
         if (stack == null) return false;
         WeaponInfo rt = lookupStats(stack);
-        return rt != null && !rt.shield;
+        return rt != null;
     }
 
     public static boolean isUnarmed(ItemStack is, LivingEntity e) {

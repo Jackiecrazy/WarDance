@@ -103,8 +103,9 @@ public class MarkDisplay implements IGuiOverlay {
 
                         //cooldown number
                         String num = String.valueOf((int) cd);
+                        DecimalFormat use= s.getMaxDuration()>=3?formatter_truncate:formatter;
                         if (Math.ceil(cd) != cd)
-                            num = RenderUtils.formatter.format(cd);
+                            num = use.format(cd);
                         guiGraphics.pose().pushPose();
                         RenderSystem.setShaderTexture(0, RenderUtils.cooldown);
                         RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, 0.6F);

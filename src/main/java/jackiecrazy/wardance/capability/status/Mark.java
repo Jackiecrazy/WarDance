@@ -118,7 +118,7 @@ public class Mark implements IMark {
         final Collection<SkillData> active = new ArrayList<>(getActiveMarks().values());
         for (SkillData cd : active) {
             final LivingEntity caster = cd.getCaster(ticker.level());
-            if (cd.getSkill().markTick(caster, ticker, cd)) sync = true;
+            if (caster!=null&&cd.getSkill().markTick(caster, ticker, cd)) sync = true;
             if (cd._isDirty()) sync = true;
             if (cd.getDuration() <= 0) {
                 removeMark(cd.getSkill());

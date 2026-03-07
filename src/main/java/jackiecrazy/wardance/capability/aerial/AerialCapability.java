@@ -58,8 +58,6 @@ public class AerialCapability implements IAerialMode {
     public void alterGravity(int ticks, double speed) {
         modify.add(new Tuple<>(ticks, speed));
         recalculateSpeed();
-        if (bind.get() instanceof ServerPlayer sp)
-            CombatChannel.INSTANCE.send(PacketDistributor.PLAYER.with(() -> sp), new ResetAirJumpPacket());
     }
 
     @Override

@@ -17,6 +17,7 @@ import jackiecrazy.wardance.capability.skill.SkillCapability;
 import jackiecrazy.wardance.capability.status.Mark;
 import jackiecrazy.wardance.capability.status.Marks;
 import jackiecrazy.wardance.capability.stylish.StyleDataOverride;
+import jackiecrazy.wardance.client.ClientEvents;
 import jackiecrazy.wardance.compat.ElenaiCompat;
 import jackiecrazy.wardance.compat.WarCompat;
 import jackiecrazy.wardance.config.GeneralConfig;
@@ -29,6 +30,7 @@ import jackiecrazy.wardance.networking.sync.SyncSkillPacket;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.util.Tuple;
 import net.minecraft.world.effect.MobEffects;
@@ -39,8 +41,10 @@ import net.minecraft.world.inventory.PlayerEnderChestContainer;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraftforge.event.AttachCapabilitiesEvent;
+import net.minecraftforge.event.ItemAttributeModifierEvent;
 import net.minecraftforge.event.OnDatapackSyncEvent;
 import net.minecraftforge.event.TickEvent;
+import net.minecraftforge.event.entity.EntityAttributeModificationEvent;
 import net.minecraftforge.event.entity.EntityJoinLevelEvent;
 import net.minecraftforge.event.entity.living.LivingEntityUseItemEvent;
 import net.minecraftforge.event.entity.living.LivingEvent;
@@ -55,6 +59,7 @@ import net.minecraftforge.fml.LogicalSide;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.network.PacketDistributor;
 import net.minecraftforge.registries.ForgeRegistries;
+import net.minecraftforge.server.ServerLifecycleHooks;
 
 import java.util.HashMap;
 import java.util.Objects;
@@ -64,6 +69,15 @@ import java.util.concurrent.ConcurrentHashMap;
 public class EntityHandler {
     public static final HashMap<Player, Entity> mustUpdate = new HashMap<>();
     public static final HashMap<Player, Double> fasterUse = new HashMap<>();
+
+    public static Level getWorld() {
+        MinecraftServer server = ServerLifecycleHooks.getCurrentServer();
+        if (server == null) {
+            return ClientEvents.getClientWorld();
+        } else {
+            return server.getLevel(Level.OVERWORLD);
+        }
+    }
 
     @SubscribeEvent
     public static void start(ServerStartingEvent e) {

@@ -226,16 +226,11 @@ public class Hex extends Skill {
         @Override
         public boolean markTick(LivingEntity caster, LivingEntity target, SkillData sd) {
             ItemStack milk = new ItemStack(Items.MILK_BUCKET);
-            final Collection<MobEffectInstance> potions = new ArrayList<>(target.getActiveEffects());
-            boolean proc = false;
-            if (target.tickCount % 10 == 0 && potions.stream().anyMatch(a -> a.getCurativeItems().contains(milk))) {
-                proc = true;
-            }
-            target.curePotionEffects(milk);
-            float size = 8, damage = 6;
-            if (proc) {
-                FakeExplosion.explode(caster.level(), caster, target.getX(), target.getY() + target.getBbHeight() * 1.1f, target.getZ(), size, new CombatDamageSource(caster).setExplosion().setDamageTyping(FootworkDamageArchetype.MAGICAL).setProxy(target), damage);
-                sd.setDuration(10);
+            if (target.tickCount % 5 == 0 && target.curePotionEffects(milk)) {
+                float size = 8, damage = 6+sd.getArbitraryFloat()*2;
+                FakeExplosion.explode(target.level(), caster, target.getX(), target.getY() + target.getBbHeight() * 1.1f, target.getZ(), size, new CombatDamageSource(caster).setExplosion().setDamageTyping(FootworkDamageArchetype.MAGICAL).setProxy(target), damage);
+                sd.setDuration(1f);
+                sd.setArbitraryFloat(sd.getArbitraryFloat()+1);
             }
             return super.markTick(caster, target, sd);
         }

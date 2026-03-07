@@ -174,6 +174,7 @@ public class FlyingWeaponEntity extends FlyingItemEntity {
     protected void onHitBlock(BlockPos blockPos, Direction hitFace, Vec3 location) {
         setDeltaMovement(Vec3.ZERO);
         setPos(location);
+        //todo open this for datapacking
         ParticleUtils.playSweepParticle(FootworkParticles.IMPACT.get(), this, this.position(), 0, 3, Color.WHITE, 0);
         List<Entity> selfTarget = level().getEntities(getOwner(), getBoundingBox().inflate(0.3f), e -> e != getOwner() && e.isAlive() && e.isAttackable());
         onHitEntity(selfTarget);
@@ -222,7 +223,7 @@ public class FlyingWeaponEntity extends FlyingItemEntity {
     @Override
     protected void returnToIdle(int ticks) {
         super.returnToIdle(ticks);
-        setIntangible(true);//do I need this?
+        //setIntangible(true);//do I need this?
     }
 
     @Override
@@ -261,6 +262,7 @@ public class FlyingWeaponEntity extends FlyingItemEntity {
             //return on a transition frame
             setEffect(FlyingWeaponEffect.WEAPON);
             setIntangible(true);
+            unlock();
         }
 
 //        if (intangible()) {

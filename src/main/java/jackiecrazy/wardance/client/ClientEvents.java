@@ -41,6 +41,7 @@ import net.minecraft.world.entity.*;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.entity.projectile.ProjectileUtil;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.EntityHitResult;
 import net.minecraft.world.phys.HitResult;
 import net.minecraft.world.phys.Vec3;
@@ -63,7 +64,7 @@ import java.util.function.Predicate;
 
 @Mod.EventBusSubscriber(value = Dist.CLIENT, modid = WarDance.MODID)
 public class ClientEvents {
-    public static final Predicate<Entity> GRAPPLE_VALID = (a) -> (a instanceof ThrownWeaponEntity b && !(a instanceof GhostBlockEntity) && b.isReal() && b.intangible());
+    public static final Predicate<Entity> GRAPPLE_VALID = (a) -> (a instanceof ThrownWeaponEntity b && !(a instanceof GhostBlockEntity) && b.intangible());
     private static final int ALLOWANCE = 5;
     private static final List<KeyMapping> conflict = new ArrayList<>();
     private static final int magicSneakTime = 20;
@@ -80,6 +81,10 @@ public class ClientEvents {
     private static int conflictMap = 0;
     private static int lastSweepTick = 0, lastAttackTick = 0;
     private static boolean wasThrowAiming = false, wasAiming = false;
+
+    public static Level getClientWorld() {
+        return Minecraft.getInstance().level;
+    }
 
     static {
         RenderUtils.formatter.setRoundingMode(RoundingMode.DOWN);

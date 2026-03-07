@@ -280,83 +280,13 @@
     },
     "guard_counter": {},
     "throw": {
-      "debug": true,
       "type": "throw",
-      "attack_info": {
-        "damage_scale": 0.5,
-        "posture_scale": 0.75,
-        "crit": false,
-        "breach": false,
-        "crit_damage": 1.25,
-        "spirit_multiplier": -0.5,
-        "knockback": 1.25
+      "on_swing": {
+        "velocity": [0, 0, -100],
+        "set_velocity": true
       },
-      "bounce": 0,
-      "pierce": 0,
-      "throw_speed": 1,
-      "auto_recall_cooldown": 30,
-      "lodge_entity": true,
-      "lodge_block": true,
-      "consume_item": true,
-      "flying_pose": {
-        "duration": 5,
-        "easing": "LINEAR",
-        "angular_velocity": [0, 30, 0],
-        "frames": [
-          {
-            "direction": [0, 0, 2],
-            "offset": [0, 0.25, 1],
-            "effects": {
-              "effects": ["WEAPON", "TRAIL"],
-              "range": -1,
-              "velocity": [0, 0, 0],
-              "set_velocity": false
-            }
-          }
-        ]
-      },
-      "gravity": -0.05,
-      "overrides": [
-        {
-          "condition": {
-            "ID": "consume_resource",
-            "format": "PERCENTAGE",
-            "resource": "SPIRIT",
-            "amount": 1,
-            "operation": "CONSUME"
-          },
-          "override": {
-            "attack_info": {
-              "damage_scale": 0.75,
-              "posture_scale": 0.75,
-              "crit": true,
-              "breach": true,
-              "crit_damage": 1.5,
-              "spirit_multiplier": 1.0,
-              "knockback": 2.0
-            },
-            "lodge_entity": false,
-            "throw_speed": 2,
-            "flying_pose": {
-              "duration": 5,
-              "easing": "LINEAR",
-              "angular_velocity": [0, 0, 0],
-              "frames": [
-                {
-                  "direction": [0, 0, 2],
-                  "offset": [0, 0.25, 1],
-                  "effects": {
-                    "effects": ["WEAPON", "AFTERIMAGE"],
-                    "range": -1,
-                    "velocity": [0, 0, 0],
-                    "set_velocity": false
-                  }
-                }
-              ]
-            }
-          }
-        }
-      ]
+      "pierce": 1,
+      "gravity": -0.1
     },
     "pickup_flourish": {
       "type": "animation",
