@@ -2,6 +2,7 @@ package jackiecrazy.wardance.entity;
 
 import jackiecrazy.footwork.capability.resources.CombatData;
 import jackiecrazy.footwork.entity.flyingweapon.FlyingItemEntity;
+import jackiecrazy.footwork.move.motionframe.HitInfo;
 import jackiecrazy.footwork.utils.TargetingUtils;
 import jackiecrazy.wardance.capability.flyingweapon.FlyingWeaponData;
 import jackiecrazy.wardance.utils.MobilityUtils;
@@ -31,8 +32,13 @@ public class GhostBlockEntity extends ThrownWeaponEntity {
         super(type, level);
     }
 
+    public boolean canBeCollidedWith() {
+        return !intangible();
+    }
+
     @Override
     public boolean pickup(Player player) {
+        if (getInfo() != null) return false;
         FlyingWeaponData.getCap(player).setHeldBlock(this);
         this.setUniversalOffset(new Vec3(0, player.getBbHeight(), 0.5));
         setDeltaMovement(Vec3.ZERO);
@@ -48,7 +54,7 @@ public class GhostBlockEntity extends ThrownWeaponEntity {
 
     @Override
     protected void onHitBlock(BlockPos blockPos, Direction hitFace, Vec3 location) {
-        if(intangible())return;
+        if (intangible()) return;
         super.onHitBlock(blockPos, hitFace, location);
         //shatter
 
@@ -67,7 +73,7 @@ public class GhostBlockEntity extends ThrownWeaponEntity {
                         .scale(0.15);
 
                 Vec3i pain = hitFace.getNormal();
-                Vec3 loc=location.add(pain.getX(), pain.getY(), pain.getZ());
+                Vec3 loc = location.add(pain.getX(), pain.getY(), pain.getZ());
                 sl.sendParticles(
                         new BlockParticleOption(ParticleTypes.BLOCK, base),
                         loc.x, loc.y, loc.z,
@@ -78,12 +84,18 @@ public class GhostBlockEntity extends ThrownWeaponEntity {
             }
         }
         shockwave(5);
-        remove(RemovalReason.KILLED);
+        remove(RemovalReason.UNLOADED_WITH_PLAYER);
+    }
+
+    @Override
+    public void yeet(Vec3 to, double strength) {
+        super.yeet(to, strength);
+        setHitInfo(HitInfo.THROWN);
     }
 
     @Override
     protected boolean onHitEntity(List<Entity> targets) {
-        if(intangible())return false;
+        if (intangible()) return false;
         boolean ret = super.onHitEntity(targets);
         if (ret) {
             //shatter
@@ -108,7 +120,7 @@ public class GhostBlockEntity extends ThrownWeaponEntity {
                 }
             }
             shockwave(5);
-            remove(RemovalReason.KILLED);
+            remove(RemovalReason.UNLOADED_WITH_PLAYER);
 
         }
         return ret;

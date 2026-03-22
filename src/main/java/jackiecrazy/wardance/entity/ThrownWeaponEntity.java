@@ -1,6 +1,7 @@
 package jackiecrazy.wardance.entity;
 
 import jackiecrazy.footwork.capability.resources.CombatData;
+import jackiecrazy.footwork.client.particle.FootworkParticles;
 import jackiecrazy.footwork.entity.flyingweapon.FlyingItemEntity;
 import jackiecrazy.footwork.entity.flyingweapon.FlyingWeaponEffect;
 import jackiecrazy.footwork.move.motionframe.HitInfo;
@@ -8,6 +9,7 @@ import jackiecrazy.footwork.move.motionframe.MotionFrame;
 import jackiecrazy.footwork.move.motionframe.MotionManager;
 import jackiecrazy.footwork.move.motionframe.MotionManagers;
 import jackiecrazy.footwork.utils.GeneralUtils;
+import jackiecrazy.footwork.utils.ParticleUtils;
 import jackiecrazy.footwork.utils.TargetingUtils;
 import jackiecrazy.wardance.capability.flyingweapon.FlyingWeaponData;
 import jackiecrazy.wardance.config.weapon.WeaponStats;
@@ -30,6 +32,7 @@ import org.jetbrains.annotations.NotNull;
 import org.joml.Quaternionf;
 import org.joml.Vector3f;
 
+import java.awt.*;
 import java.util.Comparator;
 import java.util.List;
 
@@ -296,12 +299,20 @@ public class ThrownWeaponEntity extends FlyingWeaponEntity {
         if (intangible()) return;
         if (ricochet()) return;
         if (lodge_block || hitFace == Direction.UP) {
+
+//            setDeltaMovement(Vec3.ZERO);
+//            setPos(location);
+
+            //todo open this for datapacking
+            ParticleUtils.playSweepParticle(FootworkParticles.IMPACT.get(), this, this.position(), 0, 3, Color.WHITE, 0);
+            List<Entity> selfTarget = level().getEntities(getOwner(), getBoundingBox().inflate(0.3f), e -> e != getOwner() && e.isAlive() && e.isAttackable());
+            onHitEntity(selfTarget);
+
             setIntangible(true);
             dormant = true;
             getIdlePose().setAngularVelocity(Vec3.ZERO.toVector3f());
             setDeltaMovement(Vec3.ZERO);
             gravity = 0;
         } else doneHitting();
-        super.onHitBlock(blockPos, hitFace, location);
     }
 }

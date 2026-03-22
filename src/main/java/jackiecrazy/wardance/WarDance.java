@@ -147,7 +147,7 @@ public class WarDance {
         CombatChannel.INSTANCE.registerMessage(index++, KickPacket.class, new KickPacket.Encoder(), new KickPacket.Decoder(), new KickPacket.Handler());
         CombatChannel.INSTANCE.registerMessage(index++, SyncQuiverPacket.class, new SyncQuiverPacket.Encoder(), new SyncQuiverPacket.Decoder(), new SyncQuiverPacket.Handler());
         CombatChannel.INSTANCE.registerMessage(index++, SwapAttackPacket.class, new SwapAttackPacket.Encoder(), new SwapAttackPacket.Decoder(), new SwapAttackPacket.Handler());
-        CombatChannel.INSTANCE.registerMessage(index++, AerialSpiritPacket.class, new AerialSpiritPacket.Encoder(), new AerialSpiritPacket.Decoder(), new AerialSpiritPacket.Handler());
+        CombatChannel.INSTANCE.registerMessage(index++, UpdateAerialPacket.class, new UpdateAerialPacket.Encoder(), new UpdateAerialPacket.Decoder(), new UpdateAerialPacket.Handler());
         CombatChannel.INSTANCE.registerMessage(index++, ResetAirJumpPacket.class, new ResetAirJumpPacket.Encoder(), new ResetAirJumpPacket.Decoder(), new ResetAirJumpPacket.Handler());
         CombatChannel.INSTANCE.registerMessage(index++, UpdateAirPacket.class, new UpdateAirPacket.Encoder(), new UpdateAirPacket.Decoder(), new UpdateAirPacket.Handler());
     }

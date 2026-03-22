@@ -338,7 +338,8 @@ public class CombatHandler {
                         float spiritAdded = (float) (atkMult * sweepInfo.spirit_multiplier());
                         if (spiritAdded != 0) {
                             double percRed = semeCap.addSpirit(spiritAdded) / spiritAdded;
-                            semeCap.tickProc(SPIRITKB, 3);
+                            if (percRed > 0)
+                                semeCap.tickProc(SPIRITKB, 3);
                         }
                         StylishData.getCap(seme).processAttack(true);
                         StylishData.getCap(seme).addCombo(0.05f, StylishCapability.getNormalAttackString(seme) + seme.getMainHandItem().getItem().toString());
@@ -642,7 +643,7 @@ public class CombatHandler {
         }
 
         if (GeneralConfig.debug && !uke.level().isClientSide) {
-            WarDance.LOGGER.debug("combo guard and exhaustion has been resolved, damage is now " + e.getAmount());
+            WarDance.LOGGER.debug("combo guard has been resolved, damage is now " + e.getAmount());
         }
 
         //fall damage deducts posture
@@ -658,6 +659,10 @@ public class CombatHandler {
             double luckDiff = WarDance.rand.nextFloat() * (GeneralUtils.getAttributeValueSafe(trueSource, Attributes.LUCK)) - WarDance.rand.nextFloat() * (GeneralUtils.getAttributeValueSafe(uke, Attributes.LUCK));
             e.setAmount(e.getAmount() + (float) luckDiff * GeneralConfig.luck);
 
+            if (GeneralConfig.debug && !uke.level().isClientSide) {
+                WarDance.LOGGER.debug("luck has been resolved, damage is now " + e.getAmount());
+            }
+
             //consume stamina if we didn't do it yet, somehow
             if (!CombatData.getCap(trueSource).alreadyProc("qiSpent")) {
                 final float exhausted = CombatData.getCap(trueSource).doConsumeSpirit((float) (e.getAmount() * sweepInfo.spirit_multiplier()));
@@ -670,7 +675,7 @@ public class CombatHandler {
             }
 
             if (GeneralConfig.debug && !uke.level().isClientSide) {
-                WarDance.LOGGER.debug("luck has been resolved, damage is now " + e.getAmount());
+                WarDance.LOGGER.debug("stamina has been resolved, damage is now " + e.getAmount());
             }
         }
 

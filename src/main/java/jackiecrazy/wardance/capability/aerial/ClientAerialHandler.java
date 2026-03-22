@@ -2,11 +2,9 @@ package jackiecrazy.wardance.capability.aerial;
 
 import jackiecrazy.footwork.api.FootworkAttributes;
 import jackiecrazy.footwork.capability.stylish.StylishData;
-import jackiecrazy.wardance.WarDance;
 import jackiecrazy.wardance.config.QiCosts;
 import jackiecrazy.wardance.networking.CombatChannel;
-import jackiecrazy.wardance.networking.combat.AerialSpiritPacket;
-import jackiecrazy.wardance.utils.ReworkConstants;
+import jackiecrazy.wardance.networking.combat.UpdateAerialPacket;
 import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -19,9 +17,6 @@ import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.Vec3;
 import net.minecraft.world.phys.shapes.VoxelShape;
-import org.apache.commons.compress.archivers.sevenz.CLI;
-import org.checkerframework.checker.units.qual.A;
-import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 import javax.annotation.Nullable;
 import java.util.List;
@@ -61,12 +56,12 @@ public class ClientAerialHandler {
                         Vec3 secondDir = Vec3.atLowerCornerOf(secondFace.getNormal()).normalize();
                         Vec3 test = firstDir.add(secondDir);
                         Vec3 testMove = movement.multiply(test.x, test.y, test.z);
-                        if (testMove.x < 0){
+                        if (testMove.x < 0) {
                             baseVec = baseVec.multiply(0, 1, 1);
                             collided = collided.multiply(0, 1, 1);
                             movement = movement.multiply(0, 1, 1);//moving outwards
                         }
-                        if (testMove.z < 0){
+                        if (testMove.z < 0) {
                             baseVec = baseVec.multiply(1, 1, 0);
                             collided = collided.multiply(1, 1, 0);
                             movement = movement.multiply(1, 1, 0);//moving outwards
@@ -129,17 +124,33 @@ public class ClientAerialHandler {
                 Direction hitFace = Direction.getNearest(blocked.x, 0, blocked.z).getOpposite();
                 if (hitFace.getAxis().isHorizontal()) {
                     Vec3 normal = Vec3.atLowerCornerOf(hitFace.getNormal()).normalize();
+                    Vec3 velocity = e.getDeltaMovement();
+                    IAerialMode.WallState newState = null;
                     //if hit from wall jump, cling. If hit from any dodge,
                     //if sideways velocity is greater than inwards velocity wall slide, otherwise cling
-                    if (cap.getState() == IAerialMode.WallState.STICKY) {
-                        cap.setState(IAerialMode.WallState.WALL_SLIDE);
-                        Vec3 sliding = e.getDeltaMovement();
-                        Vec3 decelerating = sliding.subtract(normal.scale(sliding.dot(normal))).normalize().scale(sliding.length());
-                        e.setDeltaMovement(decelerating);
-                    } else if (cap.getState() == IAerialMode.WallState.WALL_JUMP && lastDir != hitFace) {
-                        cap.setState(IAerialMode.WallState.CLING);
+                    double intoWallSpeed = velocity.dot(normal);  // negative dot = moving into wall
+                    Vec3 parallel = velocity.subtract(normal.scale(velocity.dot(normal)));
+                    double parallelSpeed = parallel.length();
+
+                    // Decide state based on which is stronger
+                    if (cap.getState() == IAerialMode.WallState.WALL_JUMP && lastDir != hitFace) {
+                        newState= IAerialMode.WallState.CLING;
                         e.setDeltaMovement(Vec3.ZERO);
-                    } //else WarDance.LOGGER.debug("slide failed: not sticky");
+                    } else if (cap.getState() == IAerialMode.WallState.STICKY) {
+                        if (intoWallSpeed > parallelSpeed) {
+                            // Dominant into-wall → CLING (stick hard, stop movement)
+                            newState = IAerialMode.WallState.CLING;
+                            e.setDeltaMovement(Vec3.ZERO);
+                        } else {
+                            newState = IAerialMode.WallState.WALL_SLIDE;
+                            e.setDeltaMovement(parallel.normalize().scale(velocity.length()));
+                        }
+                    }
+
+                    // Apply state + direction if we decided to cling/slide
+                    if (newState != null && newState.wall) {
+                        cap.setState(newState);
+                    }
                     if (cap.getState().wall)
                         cap.setWallDir(hitFace);
                 } else if (hitFace == Direction.DOWN)
@@ -206,24 +217,22 @@ public class ClientAerialHandler {
                     Direction wall = cap.getWallDir();
                     if (wall != null) {
                         //add some wall velocity
-                        Vec3 wallFlip = Vec3.atLowerCornerOf(wall.getNormal()).scale(0.33);
+                        Vec3 wallFlip = Vec3.atLowerCornerOf(wall.getOpposite().getNormal()).scale(0.33);
                         //add the player's look vector
                         Vec3 look = pl.getLookAngle();
                         //figure out which axis is correct
-                        if (wallFlip.x != 0 && wallFlip.x < 0 != look.x < 0) look = look.multiply(-1, 1, 1);
-                        if (wallFlip.z != 0 && wallFlip.z < 0 != look.z < 0) look = look.multiply(1, 1, -1);
-                        //fix the y
-                        look = look.multiply(1, 0, 1).add(0, 0.6, 0);
-                        wallFlip = wallFlip.add(look);
-                        pl.addDeltaMovement(wallFlip);
+//                        if (wallFlip.x != 0 && wallFlip.x < 0 != look.x < 0) look = look.multiply(-1, 1, 1);
+//                        if (wallFlip.z != 0 && wallFlip.z < 0 != look.z < 0) look = look.multiply(1, 1, -1);
+//                        //fix the y
+//                        look = look.multiply(1, 0, 1).add(0, 0.4, 0);
+//                        wallFlip = wallFlip.add(look);
+                        pl.setDeltaMovement(look.scale(2));
                         lastDir = cap.getWallDir();
                         cap.setState(IAerialMode.WallState.WALL_JUMP);
                     }
                     jumpCount--;
 
                     pl.resetFallDistance();
-                    //send packet
-                    CombatChannel.INSTANCE.sendToServer(new AerialSpiritPacket(QiCosts.JUMP));
                 }
 
                 jumpKey = true;
@@ -236,7 +245,7 @@ public class ClientAerialHandler {
     }
 
     public static void resetMultiJumps(LocalPlayer pl) {
-        jumpCount= (int) pl.getAttributeValue(FootworkAttributes.AIR_JUMPS.get());
+        jumpCount = (int) pl.getAttributeValue(FootworkAttributes.AIR_JUMPS.get());
     }
 
     public static void handleWallRuns(Player self, IAerialMode cap) {
@@ -279,7 +288,7 @@ public class ClientAerialHandler {
                 cap.setState(IAerialMode.WallState.NONE);
 
             //if (!self.level().getBlockCollisions(self, self.getBoundingBox().inflate(0.1).expandTowards(normal)).iterator().hasNext()) {
-            if(cap.getWallDir()!=null&&!isSupportedByWall(self.level(), self, self.getBoundingBox(), cap.getWallDir().getOpposite(), 0.3)){
+            if (cap.getWallDir() != null && !isSupportedByWall(self.level(), self, self.getBoundingBox(), cap.getWallDir().getOpposite(), 0.3)) {
                 cap.setState(IAerialMode.WallState.CLING);
                 self.setDeltaMovement(Vec3.ZERO);
                 cap.setWallDir(Direction.getNearest(sliding.x, sliding.y, sliding.z).getOpposite());
@@ -295,10 +304,7 @@ public class ClientAerialHandler {
         // spider mode
         // ─────────────────────────────────────────────
         else if (state == IAerialMode.WallState.CLING) {
-            Vec3 movement = self.getDeltaMovement();
-            Vec3 look = self.getLookAngle();
-            Direction firstFace=cap.getWallDir();
-            self.setDeltaMovement(movement);  // ~sprint speed
+            Vec3 move = self.getDeltaMovement();
 
             //self.setOnGround(true);
             if (self.onGround())
@@ -308,7 +314,7 @@ public class ClientAerialHandler {
             // Ceiling cling check (upward expand)
 
             BlockHitResult upHit = predictNextCollision(self.level(), self, self.getBoundingBox(), new Vec3(0, 1, 0), 2.0);
-            if (look.y > 0 && upHit != null && upHit.getDirection() == Direction.DOWN) {
+            if (move.y > 0 && upHit != null && upHit.getDirection() == Direction.DOWN) {
                 cap.setState(IAerialMode.WallState.CEILING_CLING);
                 self.setDeltaMovement(Vec3.ZERO);
             }

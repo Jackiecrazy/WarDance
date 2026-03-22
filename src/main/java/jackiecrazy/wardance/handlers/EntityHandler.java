@@ -224,6 +224,7 @@ public class EntityHandler {
         if (e.player.isAlive() && e.phase == TickEvent.Phase.START) {
             if (e.side != LogicalSide.SERVER) {
                 CombatData.getCap(e.player).clientTick();
+                AerialModeData.getCap(e.player).tick();
                 //FlyingWeaponData.getCap(e.player).tick();
                 return;
             } else CombatData.getCap(e.player).serverTick();

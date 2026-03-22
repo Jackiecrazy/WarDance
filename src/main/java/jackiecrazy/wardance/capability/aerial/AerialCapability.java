@@ -1,7 +1,9 @@
 package jackiecrazy.wardance.capability.aerial;
 
+import jackiecrazy.wardance.config.QiCosts;
 import jackiecrazy.wardance.networking.CombatChannel;
 import jackiecrazy.wardance.networking.combat.ResetAirJumpPacket;
+import jackiecrazy.wardance.networking.combat.UpdateAerialPacket;
 import jackiecrazy.wardance.networking.sync.UpdateAirPacket;
 import jackiecrazy.wardance.utils.SkillUtils;
 import net.minecraft.core.Direction;
@@ -23,6 +25,7 @@ public class AerialCapability implements IAerialMode {
     WeakReference<Entity> bind;
     private double speed = 1;
     private int longest;
+    private int off;
     private WallState state = WallState.NONE;
     private Direction direction = Direction.DOWN;
 
@@ -68,6 +71,7 @@ public class AerialCapability implements IAerialMode {
             recalculateSpeed();
         }
         longest--;
+        off--;
     }
 
     @Override
@@ -92,6 +96,8 @@ public class AerialCapability implements IAerialMode {
 
     @Override
     public boolean setState(WallState state) {
+        if (this.state == state)
+            return false;
         //validate the state
         this.state = state;
         if (bind.get() instanceof LivingEntity e) {
@@ -99,6 +105,11 @@ public class AerialCapability implements IAerialMode {
                 SkillUtils.modifyAttribute(e, ForgeMod.ENTITY_GRAVITY.get(), GRAVITY, -1, AttributeModifier.Operation.MULTIPLY_TOTAL);
             } else
                 SkillUtils.removeAttribute(e, ForgeMod.ENTITY_GRAVITY.get(), GRAVITY);
+            if (state == WallState.NONE) {
+                //temporarily stick on the surface
+                noOffFor(10);
+                //CombatChannel.INSTANCE.sendToServer(new UpdateAerialPacket(state));
+            }else noOffFor(0);
         }
         return true;
     }
@@ -112,5 +123,15 @@ public class AerialCapability implements IAerialMode {
     @Override
     public void setWallDir(Direction dir) {
         direction = dir;
+    }
+
+    @Override
+    public boolean enforcedNoOff() {
+        return off > 0;
+    }
+
+    @Override
+    public void noOffFor(int ticks) {
+        off = ticks;
     }
 }

@@ -54,4 +54,6 @@ roof cling: jump when within half a block of the ceiling to stick
     boolean setState(WallState state);
     Direction getWallDir();  // Facing normal.
     void setWallDir(Direction dir);
+    boolean enforcedNoOff();
+    void noOffFor(int ticks);
 }

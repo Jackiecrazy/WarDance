@@ -99,6 +99,7 @@ public class FlyingWeaponEntity extends FlyingItemEntity {
             if (isIdle()) {//tied to the owner
                 if (getOwner() == null || fading) remove(RemovalReason.UNLOADED_WITH_PLAYER);
                 if (this.getClass() == FlyingWeaponEntity.class && tickCount % 100 == 40) {
+                    flushTrailHistory();
                     boolean valid = false;
 
                     //todo this check makes grabbing blocks out of the environment not work
@@ -172,12 +173,6 @@ public class FlyingWeaponEntity extends FlyingItemEntity {
 
     @Override
     protected void onHitBlock(BlockPos blockPos, Direction hitFace, Vec3 location) {
-        setDeltaMovement(Vec3.ZERO);
-        setPos(location);
-        //todo open this for datapacking
-        ParticleUtils.playSweepParticle(FootworkParticles.IMPACT.get(), this, this.position(), 0, 3, Color.WHITE, 0);
-        List<Entity> selfTarget = level().getEntities(getOwner(), getBoundingBox().inflate(0.3f), e -> e != getOwner() && e.isAlive() && e.isAttackable());
-        onHitEntity(selfTarget);
     }
 
     @Override
@@ -241,7 +236,7 @@ public class FlyingWeaponEntity extends FlyingItemEntity {
                 alreadyHit.clear();
             LivingEntity e = getOwner();
             if (e != null)
-                MovementUtils.applyVelocity(effects.getVelocity(), e, effects.isSetVelocity());
+                effects.runEffects(e, e);
         }
     }
 

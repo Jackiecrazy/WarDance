@@ -266,20 +266,21 @@ public class GrappleEntity extends FlyingItemEntity {
             }
         }
         //this is freeform hook entity code
-//        else {
-//            targets.stream().forEach(a -> {
-//                if (a instanceof ThrownWeaponEntity fwe && fwe.isReal()) {
-//                    hookedEntity = fwe;
-//                    hooked = true;
-//                }
-//            });
-//            if (!hooked) {
-//                targets.stream().filter(a -> !(a instanceof FlyingItemEntity)).sorted((a, b) -> (int) (a.distanceToSqr(this) - b.distanceToSqr(this))).findFirst().ifPresent(a -> {
-//                    hookedEntity = a;
-//                    hooked = true;
-//                });
-//            }
-//        }
+        else {
+            targets.stream().forEach(a -> {
+                if (a instanceof ThrownWeaponEntity fwe && fwe.isReal()) {
+                    hookedEntity = fwe;
+                    hooked = true;
+                }
+            });
+            if (!hooked) {
+                targets.stream().filter(a -> !(a instanceof FlyingItemEntity)).sorted((a, b) -> (int) (a.distanceToSqr(this) - b.distanceToSqr(this))).findFirst().ifPresent(a -> {
+                    hookedEntity = a;
+                    hooked = true;
+                });
+            }
+        }
+
         if(hookedEntity instanceof ThrownWeaponEntity fwe){
 
             fwe.setState(STATE.THROW_NATURAL);
