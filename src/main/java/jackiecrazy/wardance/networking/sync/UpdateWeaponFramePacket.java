@@ -43,14 +43,15 @@ public class UpdateWeaponFramePacket {
             contextSupplier.get().enqueueWork(() -> {
                 ServerPlayer sender = contextSupplier.get().getSender();
                 if (sender != null) {
-                    for(InteractionHand h:InteractionHand.values()) {
+                    for (InteractionHand h : InteractionHand.values()) {
                         WeaponStats.WeaponInfo wi = WeaponStats.lookupStats(sender.getItemInHand(h));
                         if (wi != null && FlyingWeaponData.getCap(sender).getWeapon(h) != null) {
-                            MotionManager mm = wi.idle_frame();
+                            final boolean flip = h == InteractionHand.OFF_HAND;
+                            MotionManager mm = wi.idle_frame(flip);
                             switch (packet.ordinal) {
-                                case GUARD_COUNTER -> mm = wi.guard_frame();
-                                case THROW -> mm = wi.aim_frame();
-                                case DRAW_ATTACK -> mm = wi.swap_frame();
+                                case GUARD_COUNTER -> mm = wi.guard_frame(flip);
+                                case THROW -> mm = wi.aim_frame(flip);
+                                case DRAW_ATTACK -> mm = wi.swap_frame(flip);
                             }
                             FlyingWeaponData.getCap(sender).getWeapon(h).setIdlePose(mm);
                         }

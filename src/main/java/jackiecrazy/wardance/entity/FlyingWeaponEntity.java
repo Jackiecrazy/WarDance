@@ -144,6 +144,7 @@ public class FlyingWeaponEntity extends FlyingItemEntity {
         targets = targets.stream().filter(tg -> tg != owner && !alreadyHit.contains(tg) && !TargetingUtils.isAlly(tg, owner) && !tg.getType().is(MobSpecs.IGNORED_BY_SWEEP) && !tg.isInvulnerable()).toList();
         LivingEntity e = getOwner();
         int ticks = e.attackStrengthTicker;
+        if(targets.isEmpty())return ret;
         ItemStack main = e.getMainHandItem();
         try {
             CombatUtils.quickSwap(e, getHeldItem());

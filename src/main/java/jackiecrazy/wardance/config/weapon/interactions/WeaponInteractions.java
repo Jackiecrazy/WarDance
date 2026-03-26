@@ -55,7 +55,6 @@ public class WeaponInteractions {
             .registerTypeAdapter(CompoundTag.class, new ActionJsonAdapters.NBTAdapter())
             .registerTypeAdapter(InteractionGroup.class, new GroupDeserializer())
             .setPrettyPrinting()
-
             .create();
 
     public static class InteractionGroup {
@@ -70,7 +69,12 @@ public class WeaponInteractions {
         private transient Map<WeaponInteraction.InteractionType, WeaponInteraction> bakedTypes = null;
         private double minimum_cooldown = 0.9;
         private double cooldown_refund = 0;
-        private Vec3 left_hand_offset=new Vec3(-0.5, 0, 0.5);
+        private Vec3 left_hand_offset = new Vec3(-0.5, 0, 0.5);
+        private Vec3 right_hand_offset = new Vec3(0.5, 0, 0.5);
+        private boolean debug = false;
+
+        public InteractionGroup() {
+        }
 
         public Vec3 left_hand_offset() {
             return left_hand_offset;
@@ -78,12 +82,6 @@ public class WeaponInteractions {
 
         public Vec3 right_hand_offset() {
             return right_hand_offset;
-        }
-
-        private Vec3 right_hand_offset=new Vec3(0.5, 0, 0.5);
-        private boolean debug=false;
-
-        public InteractionGroup() {
         }
 
         public double getCooldownRefund() {
@@ -268,7 +266,7 @@ public class WeaponInteractions {
                     }
                 }
 
-                if(ret.debug){
+                if (ret.debug) {
                     WarDance.LOGGER.info("DEBUG - interaction group deserialized into");
                     WarDance.LOGGER.info(GSON.toJson(ret));
                 }

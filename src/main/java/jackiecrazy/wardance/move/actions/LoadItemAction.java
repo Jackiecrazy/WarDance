@@ -2,7 +2,9 @@ package jackiecrazy.wardance.move.actions;
 
 import jackiecrazy.footwork.entity.flyingweapon.FlyingItemEntity;
 import jackiecrazy.footwork.move.action.Action;
+import jackiecrazy.footwork.move.action.ExplodeAction;
 import jackiecrazy.footwork.move.argument.Argument;
+import jackiecrazy.footwork.move.argument.stack.EquippedItemArgument;
 import jackiecrazy.footwork.move.motionframe.MotionFrame;
 import jackiecrazy.footwork.move.motionframe.MotionManager;
 import jackiecrazy.footwork.move.motionframe.MotionManagers;
@@ -17,8 +19,8 @@ import net.minecraft.world.phys.Vec3;
 import java.util.List;
 
 public class LoadItemAction extends Action {
-    private List<Action> on_impact = List.of();
-    private Argument<ItemStack> stack;
+    private List<Action> on_impact = List.of(new ExplodeAction());
+    private Argument<ItemStack> stack=new EquippedItemArgument();
     private MotionManager pose = new MotionManagers.FixedMM(new MotionFrame(new Vec3(0, 0, 1), new Vec3(0, 0, 0)), 5);
 
     @Override
@@ -32,9 +34,10 @@ public class LoadItemAction extends Action {
             fwe.setOwner(le);
             fwe.setPosRaw(pos.x, pos.y, pos.z);
             fwe.setInteractionRange(1);
-            fwe.setState(FlyingItemEntity.STATE.THROW_NATURAL);
             fwe.setIntangible(true);
-            fwe.setIdlePose(pose);
+            fwe.setUniversalOffset(new Vec3(0, le.getBbHeight(), 0.5));
+            fwe.setState(FlyingItemEntity.STATE.FOLLOW);
+            fwe.setImpactActions(on_impact);
             le.level().addFreshEntity(fwe);
             FlyingWeaponData.getCap(le).setHeldBlock(fwe);
         }

@@ -290,6 +290,7 @@ public class MobilityUtils {
             itsc.consumePosture(0);
             //leave stun
             itsc.stun(0);
+            elb.resetFallDistance();
             return true;
         }
         return false;

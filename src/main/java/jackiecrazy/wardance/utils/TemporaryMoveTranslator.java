@@ -49,7 +49,7 @@ public class TemporaryMoveTranslator {
     private static final MotionManager CONE1 = new MotionManagers.DefinitionMM(new MotionGroup(SLASH, EasingFunctionEnum.IN_OUT_CUBIC, 10));
     private static final MotionManager CONE2 = new MotionManagers.DefinitionMM(new MotionGroup(BACKSLASH, EasingFunctionEnum.IN_OUT_CUBIC, 10));
     private static final MotionManager IMPACT = new MotionManagers.DefinitionMM(new MotionGroup(CHOP, EasingFunctionEnum.IN_CUBIC, 10));
-    private static int flip = 1;
+    public static int flip = 1;
 
     private static Vec3 generateFrame(float pitch, float yaw) {
         Vec3 base = new Vec3(0, 0, 1);//forward pointing

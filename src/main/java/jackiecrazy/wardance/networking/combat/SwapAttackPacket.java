@@ -61,7 +61,7 @@ public class SwapAttackPacket {
 
                     //this needs special handling
                     WeaponStats.AttackType s = CombatUtils.getAttackState(p);
-                    WeaponInteractions.InteractionGroup group = WeaponStats.getSweepInfo(nextItem, p, s);
+                    WeaponInteractions.InteractionGroup group = WeaponStats.getSweepInfo(nextItem, p, s, false);
                     if (CombatUtils.getCooledAttackStrength(p, h, 1f) < group.getMinimumCooldown())return;
 
                     if (p.getEnderChestInventory().addItem(p.getItemInHand(h)).isEmpty()) {

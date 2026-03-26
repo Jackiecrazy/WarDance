@@ -37,7 +37,9 @@ import org.joml.Vector4d;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import java.awt.*;
 import java.util.*;
+import java.util.List;
 import java.util.stream.Collectors;
 
 public class WeaponStats extends SimpleJsonResourceReloadListener {
@@ -119,7 +121,7 @@ public class WeaponStats extends SimpleJsonResourceReloadListener {
                     JsonObject obj = entry.getValue().getAsJsonObject();
                     WeaponInfo put = parseMeleeInfo(name, obj);
                     //if (GeneralConfig.debug)
-                        //WarDance.LOGGER.debug(name + " has been registered with sweep types: " + put.sweeps[0].getInteractionType() + " " + put.sweeps[1].getInteractionType() + " " + put.sweeps[2].getInteractionType() + " " + put.sweeps[3].getInteractionType() + " " + put.sweeps[4].getInteractionType() + " ");
+                    //WarDance.LOGGER.debug(name + " has been registered with sweep types: " + put.sweeps[0].getInteractionType() + " " + put.sweeps[1].getInteractionType() + " " + put.sweeps[2].getInteractionType() + " " + put.sweeps[3].getInteractionType() + " " + put.sweeps[4].getInteractionType() + " ");
                     combatList.put(item, put);
                 } catch (Exception x) {
                     WarDance.LOGGER.error("malformed json under " + name + "!");
@@ -143,9 +145,15 @@ public class WeaponStats extends SimpleJsonResourceReloadListener {
                 put.sweeps[ord] = sweep;
             }
             WeaponInteractions.InteractionGroup sweep = put.sweeps[ord];
-            if (sweep.description() == null)
-                sweep.setDescription("wardance.tooltip.attacks." + root + "." + s.toString().toLowerCase(Locale.ROOT));
-            else sweep.setDescription(sweep.description());//initialize the component
+            if (sweep.description() == null) {
+                sweep.setDescription(root + "." + s.toString().toLowerCase(Locale.ROOT));
+                //default values for simple sweeps
+                if (sweep.getInteractions().size() == 1) {
+                    if (sweep.getInteractions().get(0) instanceof SweepAttack sa)
+                        sweep.setDescription("wardance.tooltip.sweep." + sa.getType().name().toLowerCase(Locale.ROOT));
+                    //else sweep.setDescription("wardance.tooltip.attacks."+sweep.getInteractions().get(0).getInteractionType().name().toLowerCase(Locale.ROOT));
+                }
+            } else sweep.setDescription(sweep.description());//initialize the component
         }
         return put;
     }
@@ -174,7 +182,8 @@ public class WeaponStats extends SimpleJsonResourceReloadListener {
 
     public static boolean isShield(LivingEntity e, ItemStack stack) {
         if (stack == null) return false;
-        if(lookupStats(stack)!=null&&lookupStats(stack).shield)return true;
+        final WeaponInfo info = lookupStats(stack);
+        if (info != null && info.shield) return true;
         return stack.is(SHIELD);
     }
 
@@ -242,7 +251,8 @@ public class WeaponStats extends SimpleJsonResourceReloadListener {
         return is.is(PIERCE_SHIELD);
     }
 
-    public static WeaponInteractions.InteractionGroup getSweepInfo(ItemStack i, LivingEntity wielder, AttackType s) {
+    public static WeaponInteractions.InteractionGroup getSweepInfo(ItemStack i, LivingEntity wielder, AttackType s,
+                                                                   boolean ignoreOverrides) {
         final WeaponInfo info = lookupStats(i);
         if (info == null) {
             if (Objects.requireNonNull(s) == AttackType.THROW) {
@@ -251,6 +261,7 @@ public class WeaponStats extends SimpleJsonResourceReloadListener {
             return SweepAttack.DEFAULT_NONE;
         } else {
             final WeaponInteractions.InteractionGroup intl = info.sweeps[s.ordinal()];
+            if (ignoreOverrides) return intl;
             if (!intl.getOverrides().isEmpty()) {
                 ArgumentContext ctx = new ArgumentContext(wielder, wielder);
                 for (WeaponInteractions.InteractionOverride io : intl.getOverrides()) {
@@ -267,7 +278,7 @@ public class WeaponStats extends SimpleJsonResourceReloadListener {
         if (info_override != null) return info_override;
 //        final WeaponInfo info = lookupStats(i);
 //        if (info == null) return SweepAttack.DEFAULT_NONE.getHitInfo();
-        return getSweepInfo(i, wielder, s).getInteractions().get(0).getHitInfo();//fixme
+        return getSweepInfo(i, wielder, s, false).getInteractions().get(0).getHitInfo();//fixme
     }
 
     @Override
@@ -296,6 +307,7 @@ public class WeaponStats extends SimpleJsonResourceReloadListener {
     public static class WeaponInfo {
         private double attack, defend;
         private boolean shield;
+        private transient MotionManager idleFlip, guardFlip, aimFlip, swapFlip;
         private MotionManager idle_frame = new MotionManagers.FixedMM(new MotionFrame(new Vec3(0, 1, 0), Vec3.ZERO, 0).setEffects(new FrameEffects().setEffects()), 5);
         private MotionManager guard_frame = new MotionManagers.FixedMM(new MotionFrame(new Vec3(0, -1, 1), Vec3.ZERO, new Vector4d(0, 1, 0, 90)).setEffects(new FrameEffects().setEffects(FlyingWeaponEffect.WEAPON)), CombatConfig.parryTime / 2);
         private MotionManager aim_frame = new MotionManagers.FixedMM(new MotionFrame(new Vec3(0, 0, 1), new Vec3(0, 0, 1), 0).setEffects(new FrameEffects().setEffects(FlyingWeaponEffect.WEAPON)), 2);
@@ -329,19 +341,35 @@ public class WeaponStats extends SimpleJsonResourceReloadListener {
             return ret;
         }
 
-        public MotionManager swap_frame() {
+        public MotionManager swap_frame(boolean inverted) {
+            if (inverted) {
+                if (swapFlip == null) swapFlip = swap_frame.flipFrames();
+                return swapFlip;
+            }
             return swap_frame;
         }
 
-        public MotionManager aim_frame() {
+        public MotionManager aim_frame(boolean inverted) {
+            if (inverted) {
+                if (aimFlip == null) aimFlip = aim_frame.flipFrames();
+                return aimFlip;
+            }
             return aim_frame;
         }
 
-        public MotionManager guard_frame() {
+        public MotionManager guard_frame(boolean inverted) {
+            if (inverted) {
+                if (guardFlip == null) guardFlip = guard_frame.flipFrames();
+                return guardFlip;
+            }
             return guard_frame;
         }
 
-        public MotionManager idle_frame() {
+        public MotionManager idle_frame(boolean inverted) {
+            if (inverted) {
+                if (idleFlip == null) idleFlip = idle_frame.flipFrames();
+                return idleFlip;
+            }
             return idle_frame;
         }
 

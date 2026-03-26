@@ -33,7 +33,7 @@ public class ItemTooltipHandler {
     public static void tooltip(ItemTooltipEvent e) {
         final ItemStack stack = e.getItemStack();
         final Player entity = e.getEntity();
-        if(entity==null||!StylishData.getCap(entity).isCombatMode())return;
+        if (entity == null || !StylishData.getCap(entity).isCombatMode()) return;
         if (WeaponStats.isWeapon(entity, stack) || WeaponStats.isShield(entity, stack)) {
             if (Screen.hasShiftDown()) {
                 if (PermissionData.getCap(entity).canDealPostureDamage()) {
@@ -43,16 +43,19 @@ public class ItemTooltipHandler {
                 final float def = CombatUtils.getPostureDef(null, null, stack, 0);
                 if (PermissionData.getCap(entity).canParry()) {
                     if (stack.is(WeaponStats.CANNOT_BLOCK))
-                        e.getToolTip().add(Component.translatable("wardance.tooltip.noParry").withStyle(ChatFormatting.DARK_RED));
+                        e.getToolTip().add(Component.translatable("wardance.tooltip.noBlock").withStyle(ChatFormatting.DARK_RED));
                     else
                         e.getToolTip().add(Component.translatable("wardance.tooltip.postureDefend", Component.literal(formatter.format(def)).withStyle(ChatFormatting.DARK_GREEN)));
                 }
                 if (PermissionData.getCap(entity).canSweep()) {
-                    for (WeaponStats.AttackType s : WeaponStats.AttackType.values())
-                        if (s == WeaponStats.AttackType.STANDING || !WeaponStats.getSweepInfo(stack, entity, s).equals(WeaponStats.getSweepInfo(stack, entity, WeaponStats.AttackType.STANDING))) {
-                            final Component toolTip = WeaponStats.getSweepInfo(e.getItemStack(), entity, s).getToolTip(e.getItemStack(), e.getFlags().isAdvanced());
-                            e.getToolTip().add(Component.translatable("wardance.tooltip.sweep." + s.name().toLowerCase(Locale.ROOT), toolTip).withStyle(ChatFormatting.DARK_AQUA));
-                        }
+                    //final Component standing = WeaponStats.getSweepInfo(stack, entity, WeaponStats.AttackType.STANDING, false).getToolTip(e.getItemStack(), e.getFlags().isAdvanced());
+                    for (WeaponStats.AttackType s : WeaponStats.AttackType.values()) {
+                        if (s == WeaponStats.AttackType.UNDEFINED) continue;
+                        final Component sweepGroup = WeaponStats.getSweepInfo(stack, entity, s, true).getToolTip(e.getItemStack(), e.getFlags().isAdvanced());
+                        if(sweepGroup==null) e.getToolTip().add(Component.literal("no sweep!?"));
+//                        if (s == WeaponStats.AttackType.STANDING || !sweepGroup.equals(standing))
+                        else e.getToolTip().add(Component.translatable("wardance.tooltip.sweep." + s.name().toLowerCase(Locale.ROOT), sweepGroup.copy().withStyle(ChatFormatting.DARK_AQUA)).withStyle(ChatFormatting.GRAY));
+                    }
                 }
             } else {
                 e.getToolTip().add(Component.translatable("wardance.tooltip.shift").withStyle(ChatFormatting.GREEN));
@@ -99,7 +102,7 @@ public class ItemTooltipHandler {
                                             am.getOperation().toValue(),
                                     ATTRIBUTE_MODIFIER_FORMAT.format(amount),
                                     Component.translatable(attr.getDescriptionId())))
-                                    .withStyle(ChatFormatting.BLUE));
+                                             .withStyle(ChatFormatting.BLUE));
                         } else {
                             ;
                             tips.add((Component.translatable(
@@ -107,7 +110,7 @@ public class ItemTooltipHandler {
                                             am.getOperation().toValue(),
                                     ATTRIBUTE_MODIFIER_FORMAT.format(-amount),
                                     Component.translatable(attr.getDescriptionId())))
-                                    .withStyle(ChatFormatting.RED));
+                                             .withStyle(ChatFormatting.RED));
                         }
                     }));
                     e.getToolTip().addAll(tips);

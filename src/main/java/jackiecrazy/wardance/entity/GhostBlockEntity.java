@@ -33,7 +33,7 @@ public class GhostBlockEntity extends ThrownWeaponEntity {
     }
 
     public boolean canBeCollidedWith() {
-        return !intangible();
+        return false;
     }
 
     @Override

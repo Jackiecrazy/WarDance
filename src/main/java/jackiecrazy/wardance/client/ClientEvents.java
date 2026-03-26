@@ -310,7 +310,7 @@ public class ClientEvents {
                     //offhand first
                     //fixme guard counters
                     if (mc.options.keyUse.isDown()) {
-                        final WeaponInteractions.InteractionGroup offInfo = WeaponStats.getSweepInfo(mc.player.getOffhandItem(), mc.player, state);
+                        final WeaponInteractions.InteractionGroup offInfo = WeaponStats.getSweepInfo(mc.player.getOffhandItem(), mc.player, state, false);
                         if ((Keybinds.EVOKE.isDown() || offInfo.hasInteractionType(WeaponInteractions.WeaponInteraction.InteractionType.USE))) {
                             //special charge action, immediately start
                             //if (probablyNotAttacking && mc.player.getMainHandItem().getUseAnimation() != UseAnim.NONE)
@@ -328,7 +328,7 @@ public class ClientEvents {
 
 
                     if (mc.options.keyAttack.isDown()) {
-                        final WeaponInteractions.InteractionGroup mainInfo = WeaponStats.getSweepInfo(mc.player.getMainHandItem(), mc.player, state);
+                        final WeaponInteractions.InteractionGroup mainInfo = WeaponStats.getSweepInfo(mc.player.getMainHandItem(), mc.player, state, false);
                         //special charge action, immediately start
                         if (mc.player.isUsingItem() && mc.player.getUsedItemHand() == InteractionHand.MAIN_HAND) {
                             //hack. Spoof use item key to down for the keybind processing

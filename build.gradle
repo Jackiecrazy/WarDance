@@ -125,12 +125,12 @@ dependencies {
 
     //Patchouli
     compileOnly fg.deobf("curse.maven:patchouli-306770:4636277")
-    runtimeOnly fg.deobf("curse.maven:patchouli-306770:4636277")
     compileOnly fg.deobf("curse.maven:feathers-699933:4814309")
     compileOnly fg.deobf("curse.maven:elenaidodge2-442962:4814313")
     runtimeOnly fg.deobf("curse.maven:moonlight-499980:4800629")
     runtimeOnly fg.deobf("curse.maven:dummy-225738:4724732")
     runtimeOnly fg.deobf("curse.maven:neat-238372:5838485")
+
     //def ctDep = 'com.blamejared.crafttweaker:CraftTweaker-forge-1.19.2:10.1.38'
     //compileOnly(ctDep)
     //runtimeOnly(fg.deobf(ctDep))
@@ -139,7 +139,6 @@ dependencies {
     //implementation fg.deobf("com.mialliance:mialliance-4.5.0:${mc_version}")
     implementation fg.deobf("jackiecrazy.footwork:footwork-${footwork_version}:${mc_version}")
     implementation fg.deobf("jackiecrazy.cloakanddagger:cloakanddagger-${cd_version}:${mc_version}")
-    runtimeOnly fg.deobf("curse.maven:armorpoints-396094:4817924")
 
 }
 

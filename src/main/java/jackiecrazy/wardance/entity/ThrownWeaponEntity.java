@@ -1,19 +1,20 @@
 package jackiecrazy.wardance.entity;
 
-import jackiecrazy.footwork.capability.resources.CombatData;
-import jackiecrazy.footwork.client.particle.FootworkParticles;
+import jackiecrazy.footwork.capability.action.ActionData;
 import jackiecrazy.footwork.entity.flyingweapon.FlyingItemEntity;
 import jackiecrazy.footwork.entity.flyingweapon.FlyingWeaponEffect;
+import jackiecrazy.footwork.move.ActionSetWrapper;
+import jackiecrazy.footwork.move.action.Action;
+import jackiecrazy.footwork.move.action.ExplodeAction;
 import jackiecrazy.footwork.move.motionframe.HitInfo;
 import jackiecrazy.footwork.move.motionframe.MotionFrame;
 import jackiecrazy.footwork.move.motionframe.MotionManager;
 import jackiecrazy.footwork.move.motionframe.MotionManagers;
 import jackiecrazy.footwork.utils.GeneralUtils;
-import jackiecrazy.footwork.utils.ParticleUtils;
 import jackiecrazy.footwork.utils.TargetingUtils;
 import jackiecrazy.wardance.capability.flyingweapon.FlyingWeaponData;
 import jackiecrazy.wardance.config.weapon.WeaponStats;
-import jackiecrazy.wardance.config.weapon.interactions.SweepAttack;
+import jackiecrazy.wardance.move.actions.LoadItemAction;
 import jackiecrazy.wardance.utils.CombatUtils;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -32,7 +33,6 @@ import org.jetbrains.annotations.NotNull;
 import org.joml.Quaternionf;
 import org.joml.Vector3f;
 
-import java.awt.*;
 import java.util.Comparator;
 import java.util.List;
 
@@ -47,6 +47,7 @@ public class ThrownWeaponEntity extends FlyingWeaponEntity {
     private int auto_recall = -1;
     private boolean recalling = false;
     private boolean fake = false;
+    private List<Action> impactActions = List.of();
 
     public ThrownWeaponEntity(EntityType<? extends FlyingItemEntity> type,
                               Level level) {
@@ -58,7 +59,7 @@ public class ThrownWeaponEntity extends FlyingWeaponEntity {
 
     public ThrownWeaponEntity setFake(boolean fake) {
         this.fake = fake;
-        if (fake) {
+        if (fake&&getCosmeticItem().equals(getHeldItem())) {
             setEffect(FlyingWeaponEffect.BIG_SHADOW);
         } else setEffect(FlyingWeaponEffect.WEAPON);
         return this;
@@ -142,7 +143,7 @@ public class ThrownWeaponEntity extends FlyingWeaponEntity {
     public void setDeltaMovement(@NotNull Vec3 vec3) {
         super.setDeltaMovement(vec3);
         //makes sure weapons don't start clipping into walls when they get hit by explosions etc.
-        if (dormant&&vec3.lengthSqr()>0) {
+        if (dormant && vec3.lengthSqr() > 0) {
             dormant = false;
             setIntangible(false);
         }
@@ -200,6 +201,10 @@ public class ThrownWeaponEntity extends FlyingWeaponEntity {
         return false;
     }
 
+//    public boolean canCollideWith(Entity e) {
+//        return true;
+//    }
+
     private boolean ricochet() {
         if (bounce <= 0) {
             return false;
@@ -219,10 +224,6 @@ public class ThrownWeaponEntity extends FlyingWeaponEntity {
         }
         return false;
     }
-
-//    public boolean canCollideWith(Entity e) {
-//        return true;
-//    }
 
     public boolean canBeCollidedWith() {
         return true;
@@ -294,24 +295,29 @@ public class ThrownWeaponEntity extends FlyingWeaponEntity {
 
     }
 
+    public void setImpactActions(List<Action> on_impact) {
+        this.impactActions = on_impact;
+    }
+
     @Override
     protected void onHitBlock(BlockPos blockPos, Direction hitFace, Vec3 location) {
         if (intangible()) return;
         if (ricochet()) return;
         if (lodge_block || hitFace == Direction.UP) {
 
-//            setDeltaMovement(Vec3.ZERO);
-//            setPos(location);
 
             //todo open this for datapacking
-            ParticleUtils.playSweepParticle(FootworkParticles.IMPACT.get(), this, this.position(), 0, 3, Color.WHITE, 0);
-            List<Entity> selfTarget = level().getEntities(getOwner(), getBoundingBox().inflate(0.3f), e -> e != getOwner() && e.isAlive() && e.isAttackable());
-            onHitEntity(selfTarget);
+//            ParticleUtils.playSweepParticle(FootworkParticles.IMPACT.get(), this, this.position(), 0, 3, Color.WHITE, 0);
+//            List<Entity> selfTarget = level().getEntities(getOwner(), getBoundingBox().inflate(0.3f), e -> e != getOwner() && e.isAlive() && e.isAttackable());
+//            onHitEntity(selfTarget);
+            if (!impactActions.isEmpty())
+                ActionData.getCap(this).mark(getOwner(), new ActionSetWrapper(impactActions));
 
             setIntangible(true);
             dormant = true;
             getIdlePose().setAngularVelocity(Vec3.ZERO.toVector3f());
             setDeltaMovement(Vec3.ZERO);
+            setPos(location);
             gravity = 0;
         } else doneHitting();
     }

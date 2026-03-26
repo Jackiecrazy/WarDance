@@ -236,7 +236,7 @@ public class WarDanceCommand {
     private static int setSpirit(CommandContext<CommandSourceStack> ctx) throws CommandSyntaxException {
         Entity player = EntityArgument.getEntity(ctx, "entity");
         if (!(player instanceof LivingEntity)) throw EntitySelectorOptions.ERROR_INAPPLICABLE_OPTION.create(player);
-        int i = IntegerArgumentType.getInteger(ctx, "amount");
+        float i = FloatArgumentType.getFloat(ctx, "amount");
         CombatData.getCap((LivingEntity) player).setSpirit(i);
         ctx.getSource().sendSuccess(()->Component.translatable("wardance.command.setSpirit", player.getDisplayName(), i), false);
         return Command.SINGLE_SUCCESS;
@@ -245,7 +245,7 @@ public class WarDanceCommand {
     private static int consumeSpirit(CommandContext<CommandSourceStack> ctx) throws CommandSyntaxException {
         Entity player = EntityArgument.getEntity(ctx, "entity");
         if (!(player instanceof LivingEntity)) throw EntitySelectorOptions.ERROR_INAPPLICABLE_OPTION.create(player);
-        int i = IntegerArgumentType.getInteger(ctx, "amount");
+        float i = FloatArgumentType.getFloat(ctx, "amount");
         CombatData.getCap((LivingEntity) player).consumeSpirit(i);
         ctx.getSource().sendSuccess(()->Component.translatable("wardance.command.conSpirit", player.getDisplayName(), i), false);
         return Command.SINGLE_SUCCESS;
@@ -254,7 +254,7 @@ public class WarDanceCommand {
     private static int addSpirit(CommandContext<CommandSourceStack> ctx) throws CommandSyntaxException {
         Entity player = EntityArgument.getEntity(ctx, "entity");
         if (!(player instanceof LivingEntity)) throw EntitySelectorOptions.ERROR_INAPPLICABLE_OPTION.create(player);
-        int i = IntegerArgumentType.getInteger(ctx, "amount");
+        float i = FloatArgumentType.getFloat(ctx, "amount");
         CombatData.getCap((LivingEntity) player).addSpirit(i);
         ctx.getSource().sendSuccess(()->Component.translatable("wardance.command.addSpirit", player.getDisplayName(), i), false);
         return Command.SINGLE_SUCCESS;

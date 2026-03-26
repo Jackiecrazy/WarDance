@@ -1,20 +1,23 @@
 package jackiecrazy.wardance.config.weapon.interactions;
 
+import jackiecrazy.footwork.move.action.Action;
 import jackiecrazy.footwork.move.argument.Argument;
+import jackiecrazy.footwork.move.argument.stack.RawItemStackArgument;
 import jackiecrazy.footwork.move.motionframe.HitInfo;
 import jackiecrazy.footwork.move.motionframe.MotionFrame;
 import jackiecrazy.footwork.move.motionframe.MotionManager;
 import jackiecrazy.footwork.move.motionframe.MotionManagers;
 import jackiecrazy.footwork.move.utils.ArgumentContext;
+import jackiecrazy.footwork.utils.MovementUtils;
 import jackiecrazy.wardance.entity.ThrownWeaponEntity;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.phys.Vec3;
 
+import java.util.List;
+
 public class Throw extends WeaponInteractions.WeaponInteraction {
-    public static final WeaponInteractions.InteractionGroup DEFAULT = new Throw().setBounce(5).asGroup()
-            .addOverride(
-                    new WeaponInteractions.InteractionOverride(WeaponInteractions.BREACH_CONDITION, new Throw().setHit(HitInfo.BREACH).asGroup()));
+    public static final WeaponInteractions.InteractionGroup DEFAULT = new Throw().asGroup().addOverride(new WeaponInteractions.InteractionOverride(WeaponInteractions.BREACH_CONDITION, new Throw().setBounce(5).setHit(HitInfo.BREACH).asGroup()));
     private HitInfo attack_info = HitInfo.BREACH;
     private int pierce = 0;
     private int bounce = 0;
@@ -28,8 +31,69 @@ public class Throw extends WeaponInteractions.WeaponInteraction {
     private double throw_speed = 2;
     private boolean consume_item = true;
     private Argument<ItemStack> display_stack;
+    private List<Action> on_impact = List.of();
 
     public Throw() {
+    }
+
+    public Throw setPierce(int pierce) {
+        this.pierce = pierce;
+        return this;
+    }
+
+    public Throw setFlying_pose(MotionManager flying_pose) {
+        this.flying_pose = flying_pose;
+        return this;
+    }
+
+    public Throw setDirection(Vec3 direction) {
+        this.direction = direction;
+        return this;
+    }
+
+    public Throw setOffset(Vec3 offset) {
+        this.offset = offset;
+        return this;
+    }
+
+    public Throw setGravity(double gravity) {
+        this.gravity = gravity;
+        return this;
+    }
+
+    public Throw setLodge_block(boolean lodge_block) {
+        this.lodge_block = lodge_block;
+        return this;
+    }
+
+    public Throw setLodge_entity(boolean lodge_entity) {
+        this.lodge_entity = lodge_entity;
+        return this;
+    }
+
+    public Throw setAuto_recall_cooldown(int auto_recall_cooldown) {
+        this.auto_recall_cooldown = auto_recall_cooldown;
+        return this;
+    }
+
+    public Throw setThrow_speed(double throw_speed) {
+        this.throw_speed = throw_speed;
+        return this;
+    }
+
+    public Throw setConsumeItem(boolean consume_item) {
+        this.consume_item = consume_item;
+        return this;
+    }
+
+    public Throw setDisplay_stack(Argument<ItemStack> display_stack) {
+        this.display_stack = new RawItemStackArgument();
+        return this;
+    }
+
+    public Throw setImpact(List<Action> on_impact) {
+        this.on_impact = on_impact;
+        return this;
     }
 
     public Throw setBounce(int bounce) {
@@ -73,9 +137,9 @@ public class Throw extends WeaponInteractions.WeaponInteraction {
         f.writeDouble(gravity);
     }
 
-    public void applyCosmeticStack(ThrownWeaponEntity twe, ArgumentContext ctx){
-        if(display_stack==null)return;
-        ItemStack is= display_stack.resolve(ctx);
+    public void applyCosmeticStack(ThrownWeaponEntity twe, ArgumentContext ctx) {
+        if (display_stack == null) return;
+        ItemStack is = display_stack.resolve(ctx);
         twe.setCosmeticItem(is);
     }
 
@@ -88,6 +152,10 @@ public class Throw extends WeaponInteractions.WeaponInteraction {
         return this;
     }
 
+    public Vec3 transformDirection(Vec3 dir) {
+        return MovementUtils.resolveVelocity(dir, direction);
+    }
+
     public void transformThrown(ThrownWeaponEntity e) {
         e.setAutoRecall(auto_recall_cooldown);
         e.setLodgeEntity(lodge_entity);
@@ -95,8 +163,9 @@ public class Throw extends WeaponInteractions.WeaponInteraction {
         e.setPierce(pierce).setBounce(bounce);
         e.setIdlePose(flying_pose);
         e.setGravity(gravity);
-        e.setFake(!consume_item);
         e.setHitInfo(attack_info);
+        //e.setImpactActions(on_impact);
         applyCosmeticStack(e, new ArgumentContext(e.getOwner(), null));
+        e.setFake(!consume_item);
     }
 }

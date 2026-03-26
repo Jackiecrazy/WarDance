@@ -1,7 +1,7 @@
 {
-  "#todo": {
-    "attack": 2.6,
-    "defend": 0.9,
+  "#test": {
+    "attack": 1.0,
+    "defend": 1.0,
     "idle_frame": {
     },
     "guard_frame": {
@@ -25,6 +25,355 @@
     "pickup_flourish": {
     },
     "draw_attack": {
+    }
+  },
+  "#hoe": {
+    "attack": 1.0,
+    "defend": 1.0,
+    "standing": {
+      "sweep": "CLEAVE",
+      "knockback": 0.5,
+      "sweep_base": 60.0,
+      "sweep_scale": 20.0,
+      "overrides": [
+        {
+          "condition": {
+            "ID": "consume_resource",
+            "format": "PERCENTAGE",
+            "resource": "SPIRIT",
+            "amount": 1,
+            "operation": "CONSUME"
+          },
+          "override": {
+            "type": "throw",
+            "attack_info": {
+              "damage_scale": 1,
+              "crit": true,
+              "breach": true,
+              "crit_damage": 1,
+              "knockback": 0
+            },
+            "lodge_entity": false,
+            "lodge_block": true,
+            "throw_speed": 2,
+            "consume_item": false,
+            "display_stack": {
+              "ID": "itemstack",
+              "item": "minecraft:wheat_seeds"
+            }
+          }
+        }
+      ]
+    },
+    "falling": {
+      "sweep": "CLEAVE",
+      "knockback": 0.5,
+      "sweep_base": 60.0,
+      "sweep_scale": 20.0,
+      "overrides": [
+        {
+          "condition": {
+            "ID": "consume_resource",
+            "format": "PERCENTAGE",
+            "resource": "SPIRIT",
+            "amount": 1,
+            "operation": "CONSUME"
+          },
+          "override": {
+            "type": "throw",
+            "attack_info": {
+              "damage_scale": 1,
+              "crit": true,
+              "breach": true,
+              "crit_damage": 2,
+              "knockback": 1.4,
+              "hit_other": {
+                "command": "/effect give @s minecraft:nausea 5"
+              }
+            },
+            "lodge_entity": false,
+            "lodge_block": false,
+            "throw_speed": 2,
+            "bounce": 5,
+            "consume_item": false,
+            "display_stack": {
+              "ID": "itemstack",
+              "item": "minecraft:poisonous_potato"
+            }
+          }
+        }
+      ]
+    },
+    "sprinting": {
+      "sweep": "CLEAVE",
+      "knockback": 0.5,
+      "sweep_base": 60.0,
+      "sweep_scale": 20.0,
+      "overrides": [
+        {
+          "condition": {
+            "ID": "consume_resource",
+            "format": "PERCENTAGE",
+            "resource": "SPIRIT",
+            "amount": 1,
+            "operation": "CONSUME"
+          },
+          "override": {
+            "type": "throw",
+            "attack_info": {
+              "damage_scale": 2,
+              "crit": true,
+              "breach": true,
+              "crit_damage": 2,
+              "knockback": 0
+            },
+            "lodge_entity": true,
+            "lodge_block": true,
+            "throw_speed": 2,
+            "pierce": 10,
+            "consume_item": false,
+            "display_stack": {
+              "ID": "itemstack",
+              "item": "minecraft:carrot"
+            }
+          }
+        }
+      ]
+    },
+    "aerial": {
+      "sweep": "CLEAVE",
+      "knockback": 0.5,
+      "sweep_base": 60.0,
+      "sweep_scale": 20.0,
+      "overrides": [
+        {
+          "condition": {
+            "ID": "consume_resource",
+            "format": "PERCENTAGE",
+            "resource": "SPIRIT",
+            "amount": 1,
+            "operation": "CONSUME"
+          },
+          "override": {
+            "type": "throw",
+            "attack_info": {
+              "damage_scale": 1,
+              "crit": true,
+              "breach": true,
+              "crit_damage": 2,
+              "knockback": 0
+            },
+            "lodge_entity": true,
+            "lodge_block": true,
+            "throw_speed": 2,
+            "bounce": 5,
+            "consume_item": false,
+            "display_stack": {
+              "ID": "itemstack",
+              "item": "minecraft:nether_wart"
+            },
+            "on_impact": [
+              {
+                "ID": "explode",
+                "radius": 1,
+                "on_hit": [
+                  {
+                    "ID": "add_effect",
+                    "effect": "footwork:distraction",
+                    "potency": 1,
+                    "duration": 40
+                  }
+                ]
+              }
+            ]
+          }
+        }
+      ]
+    },
+    "guard_counter": {
+      "sweep": "CLEAVE",
+      "knockback": 0.5,
+      "sweep_base": 60.0,
+      "sweep_scale": 20.0,
+      "overrides": [
+        {
+          "condition": {
+            "ID": "consume_resource",
+            "format": "PERCENTAGE",
+            "resource": "SPIRIT",
+            "amount": 1,
+            "operation": "CONSUME"
+          },
+          "override": {
+            "type": "throw",
+            "attack_info": {
+              "damage_scale": 1,
+              "crit": true,
+              "breach": true,
+              "crit_damage": 2,
+              "knockback": 4
+            },
+            "lodge_entity": true,
+            "lodge_block": false,
+            "throw_speed": 2,
+            "consume_item": false,
+            "display_stack": {
+              "ID": "itemstack",
+              "item": "minecraft:beetroot"
+            }
+          }
+        }
+      ]
+    },
+    "throw": {
+      "sweep": "CLEAVE",
+      "knockback": 0.5,
+      "sweep_base": 60.0,
+      "sweep_scale": 20.0,
+      "overrides": [
+        {
+          "condition": {
+            "ID": "consume_resource",
+            "format": "PERCENTAGE",
+            "resource": "SPIRIT",
+            "amount": 1,
+            "operation": "CONSUME"
+          },
+          "override": {
+            "type": "throw",
+            "attack_info": {
+              "damage_scale": 2,
+              "crit": true,
+              "breach": true,
+              "crit_damage": 2,
+              "knockback": 0
+            },
+            "lodge_entity": false,
+            "lodge_block": true,
+            "throw_speed": 2,
+            "pierce": 10,
+            "consume_item": false,
+            "display_stack": {
+              "ID": "itemstack",
+              "item": "minecraft:sweet_berry"
+            }
+          }
+        }
+      ]
+    },
+    "pickup_flourish": {
+      "type": "animation",
+      "animations": [
+        {
+          "duration": 6,
+          "easing": "IN_OUT_SINE",
+          "on_swing": {
+            "command": "/playsound minecraft:entity.player.attack.sweep player @s ~ ~ ~ 0.8 1.2 0"
+          },
+          "frames": [
+            {
+              "direction": [
+                0, -1, 1
+              ],
+              "offset": [
+                0, 0, 1
+              ],
+              "render_rotation": [
+                0, 0, 1, 180
+              ],
+              "effects": {
+                "attack_info": {
+                  "knockback": 0.5
+                },
+                "effects": [
+                  "WEAPON",
+                  "TRAIL"
+                ]
+              }
+            }, {
+              "direction": [
+                0, 1, 1
+              ],
+              "offset": [
+                0, 0, 1
+              ],
+              "render_rotation": [
+                0, 0, 1, 180
+              ]
+            }
+          ]
+        }
+      ],
+      "overrides": [
+        {
+          "condition": {
+            "ID": "consume_resource",
+            "format": "PERCENTAGE",
+            "resource": "SPIRIT",
+            "amount": 1,
+            "operation": "CONSUME"
+          },
+          "override": {
+            "on_swing": {
+              "run_actions": [
+                {
+                  "ID": "wardance:load_item",
+                  "stack": {
+                    "ID": "itemstack",
+                    "item": "minecraft:melon"
+                  },
+                  "on_impact":[
+                    {
+                      "ID": "explode",
+                      "radius": 10
+                    }
+                  ]
+                }
+              ]
+            }
+          }
+        }
+      ]
+    },
+    "draw_attack": {
+      "sweep": "CLEAVE",
+      "knockback": 0.5,
+      "sweep_base": 60.0,
+      "sweep_scale": 20.0,
+      "overrides": [
+        {
+          "condition": {
+            "ID": "consume_resource",
+            "format": "PERCENTAGE",
+            "resource": "SPIRIT",
+            "amount": 1,
+            "operation": "CONSUME"
+          },
+          "override": {
+            "type": "throw",
+            "on_swing": {
+              "velocity": [0, 1, 0],
+              "command": "/effect apply footwork:reach 20 3"
+            },
+            "attack_info": {
+              "damage_scale": 2,
+              "crit": true,
+              "breach": true,
+              "crit_damage": 2,
+              "knockback": 0
+            },
+            "lodge_entity": false,
+            "lodge_block": false,
+            "throw_speed": 2,
+            "pierce": 10,
+            "consume_item": false,
+            "display_stack": {
+              "ID": "itemstack",
+              "item": "minecraft:bamboo"
+            }
+          }
+        }
+      ]
     }
   }
 }

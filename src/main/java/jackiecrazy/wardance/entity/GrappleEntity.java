@@ -281,15 +281,16 @@ public class GrappleEntity extends FlyingItemEntity {
             }
         }
 
-        if(hookedEntity instanceof ThrownWeaponEntity fwe){
-
-            fwe.setState(STATE.THROW_NATURAL);
-        }
         if (hooked) {
             setIntangible(false);
             setDeltaMovement(Vec3.ZERO);
             hookEntityOffset = getY() - hookedEntity.getY();
             updateEntityHookPosition();
+        }
+        if(hookedEntity instanceof ThrownWeaponEntity fwe){
+
+            fwe.setState(STATE.THROW_NATURAL);
+            hookEntityOffset =0;
         }
         return hooked;
     }

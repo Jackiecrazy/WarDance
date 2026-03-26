@@ -20,8 +20,8 @@ public class WarEntities {
             .of(ThrownWeaponEntity::new, MobCategory.MISC)
             .sized(0.4F, 0.4F)
             .build("thrown_weapon"));
-    public static final RegistryObject<EntityType<ThrownWeaponEntity>> FLYING_BLOCK = ENTITIES.register("flying_block", () -> EntityType.Builder
-            .of(ThrownWeaponEntity::new, MobCategory.MISC)
+    public static final RegistryObject<EntityType<GhostBlockEntity>> FLYING_BLOCK = ENTITIES.register("flying_block", () -> EntityType.Builder
+            .of(GhostBlockEntity::new, MobCategory.MISC)
             .sized(1F, 1F)
             .setTrackingRange(128)
             .build("flying_block"));

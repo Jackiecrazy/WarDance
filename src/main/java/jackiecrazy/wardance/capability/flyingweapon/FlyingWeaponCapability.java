@@ -250,8 +250,8 @@ public class FlyingWeaponCapability implements IFlyingWeapon {
         final ItemStack stack = player.getItemInHand(hand);
         final WeaponStats.WeaponInfo info = WeaponStats.lookupStats(stack);
         if(info !=null)
-            fwe.setIdlePose(info.idle_frame());
-        else fwe.setIdlePose(WeaponStats.DEFAULTMELEE.idle_frame());
+            fwe.setIdlePose(info.idle_frame(hand==InteractionHand.OFF_HAND));
+        else fwe.setIdlePose(WeaponStats.DEFAULTMELEE.idle_frame(hand==InteractionHand.OFF_HAND));
         fwe.setHeldItem(stack);
         fwe.setOwner(player);
         fwe.setFlipRender(hand == InteractionHand.OFF_HAND);

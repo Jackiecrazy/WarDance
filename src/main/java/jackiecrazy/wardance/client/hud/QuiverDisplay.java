@@ -1,6 +1,7 @@
 package jackiecrazy.wardance.client.hud;
 
 import com.mojang.blaze3d.systems.RenderSystem;
+import com.mojang.blaze3d.vertex.PoseStack;
 import jackiecrazy.wardance.WarDance;
 import jackiecrazy.wardance.client.Keybinds;
 import jackiecrazy.wardance.config.weapon.WeaponStats;
@@ -61,7 +62,13 @@ public class QuiverDisplay implements IGuiOverlay {
         invIndex = inventory.get(listIndex).getA();
     }
 
-    private static void renderItem(GuiGraphics gfx, ItemStack stack, int x, int y) {
+    private static void renderItem(GuiGraphics gfx, ItemStack stack, int x, int y, float scale) {
+        final PoseStack pose = gfx.pose();
+        pose.pushPose();// Center the scaling on the item
+        if(scale!=1) {
+            pose.translate(-x, -y, 0);
+            pose.scale(scale, scale, 1.0F);
+        }
         gfx.renderItem(stack, x - 8, y - 8);          // icon
         gfx.renderItemDecorations(
                 Minecraft.getInstance().font,
@@ -69,6 +76,7 @@ public class QuiverDisplay implements IGuiOverlay {
                 x - 8,
                 y - 8
         );
+        pose.popPose();
     }
 
     @SubscribeEvent
@@ -154,7 +162,9 @@ public class QuiverDisplay implements IGuiOverlay {
             int offset = height / 2;
             int x = (int) (Math.cos(Mth.DEG_TO_RAD * angle) * offset);
             int y = (int) (Math.sin(Mth.DEG_TO_RAD * angle) * offset);
-            renderItem(guiGraphics, inventory.get(corrected).getB(), width / 2 + x, height + y);
+            float scale =1;
+            if(corrected==listIndex)scale=2;
+            renderItem(guiGraphics, inventory.get(corrected).getB(), width / 2 + x, height + y, scale);
             angle += 15;
         }
 //        float step = (float)(2 * Math.PI / 3);

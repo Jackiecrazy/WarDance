@@ -18,7 +18,6 @@ import jackiecrazy.footwork.utils.*;
 import jackiecrazy.wardance.WarDance;
 import jackiecrazy.wardance.capability.action.PermissionData;
 import jackiecrazy.wardance.capability.aerial.AerialModeData;
-import jackiecrazy.wardance.capability.aerial.IAerialMode;
 import jackiecrazy.wardance.capability.charging.ChargingData;
 import jackiecrazy.wardance.capability.flyingweapon.FlyingWeaponData;
 import jackiecrazy.wardance.capability.flyingweapon.IFlyingWeapon;
@@ -72,7 +71,7 @@ public class CombatUtils {
     public static final UUID off = UUID.fromString("8c8028c8-da69-49a2-99cd-f92d7ad22534");
     public static final UUID main = UUID.fromString("8c8028c8-da67-49a2-99cd-f92d7ad22534");
     public static boolean suppressChangeFunctions = false, allowCombatHotbarPickup = false;
-    public static Vec3 temp_dest = Vec3.ZERO;
+    public static Vec3 throw_vec = Vec3.ZERO;
     private static ProjectileInfo DEFAULTRANGED = new ProjectileInfo(0.6, 1, false, false);
     private static HashMap<EntityType, ProjectileInfo> projectileMap = new HashMap<>();
     private static int cacheLeft, cacheRight;//primarily useful in client
@@ -383,7 +382,13 @@ public class CombatUtils {
     public static boolean processWeaponInteraction(LivingEntity e, Entity ignore, InteractionHand h, double reach) {
         ItemStack stack = e.getItemInHand(h);
         WeaponStats.AttackType s = getAttackState(e);
-        WeaponInteractions.InteractionGroup group = WeaponStats.getSweepInfo(stack, e, s);
+        WeaponInteractions.InteractionGroup group = WeaponStats.getSweepInfo(stack, e, s, false);
+        return processWeaponInteraction(e, ignore, h, reach, group);
+    }
+
+    public static boolean processWeaponInteraction(LivingEntity e, Entity ignore, InteractionHand h, double reach, WeaponInteractions.InteractionGroup group) {
+        //todo allow a proxy param to move the origin vec3
+        ItemStack stack = e.getItemInHand(h);
         if (CombatUtils.getCooledAttackStrength(e, h, 1f) < group.getMinimumCooldown()) return false;
         MovementUtils.applyVelocity(group.getVelocity(), e, group.isSetVelocity());
         group.on_swing().runEffects(e, e);
@@ -406,15 +411,21 @@ public class CombatUtils {
                 }
             }
             if (info instanceof Animation anim) {
+                TemporaryMoveTranslator.flip*=-1;
                 FlyingWeaponData.getCap(e).getWeapon(h).setUniversalOffset(h == InteractionHand.MAIN_HAND ? group.right_hand_offset() : group.left_hand_offset());
                 for (MotionManager mm : anim.getAnimations())
-                    FlyingWeaponData.getCap(e).scheduleAction(h, mm);
+                    FlyingWeaponData.getCap(e).scheduleAction(h, TemporaryMoveTranslator.flip<0?mm.flipFrames():mm);
             }
             if (info instanceof Throw t) {
                 final IFlyingWeapon cap = FlyingWeaponData.getCap(e);
-                if (temp_dest == null) temp_dest = e.getEyePosition().add(e.getLookAngle().scale(32));
-                ThrownWeaponEntity fwe = cap.yeet(h, temp_dest, t.getThrowSpeed());
+                if (throw_vec == null) throw_vec = e.getLookAngle().scale(32);
+                throw_vec =t.transformDirection(throw_vec);
+                //bogus yeet to create the entity
+                ThrownWeaponEntity fwe = cap.yeet(h, e.getEyePosition().add(throw_vec), 1);
+                //transform it...
                 t.transformThrown(fwe);
+                //then yeet it for real
+                fwe.yeet(e.getEyePosition().add(throw_vec), t.getThrowSpeed());
                 if (t.consume() && e instanceof Player player && !player.getAbilities().instabuild) {
                     final ItemStack held = player.getItemInHand(h);
                     held.shrink(1);
@@ -424,7 +435,7 @@ public class CombatUtils {
                     }
                 }
                 cap.forceRefreshWeapons();
-                temp_dest = null;
+                throw_vec = null;
             }
             WeaponStats.info_override = null;
         }
@@ -795,7 +806,7 @@ public class CombatUtils {
         if (!StylishData.getCap(sender).isCombatMode()) return false;
         if (CombatData.getCap(sender).getHandBind(h) > 0) return false;
         //StylishData.getCap(sender).resetTriggerBar();
-        WeaponInteractions.InteractionGroup info = WeaponStats.getSweepInfo(sender.getItemInHand(h), sender, s);
+        WeaponInteractions.InteractionGroup info = WeaponStats.getSweepInfo(sender.getItemInHand(h), sender, s, false);
 //        if (info instanceof SweepAttack sa)
 //            TemporaryMoveTranslator.scheduleFinisher(sender, h, sa);
         StylishData.getCap(sender).addCombo(0.25f, "heavy" + (h == InteractionHand.OFF_HAND) + s.name());

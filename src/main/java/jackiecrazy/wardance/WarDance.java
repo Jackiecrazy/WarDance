@@ -17,6 +17,7 @@ import jackiecrazy.wardance.config.weapon.WeaponStats;
 import jackiecrazy.wardance.entity.WarEntities;
 import jackiecrazy.wardance.items.WarItems;
 import jackiecrazy.wardance.loot.ScrollLootModifier;
+import jackiecrazy.wardance.move.actions.WarActionsRegistry;
 import jackiecrazy.wardance.networking.*;
 import jackiecrazy.wardance.networking.combat.*;
 import jackiecrazy.wardance.networking.meta.*;
@@ -105,6 +106,7 @@ public class WarDance {
         WarSkills.SKILLS.register(bus);
         WarEntities.ENTITIES.register(bus);
         WarItems.ITEMS.register(bus);
+        WarActionsRegistry.ACTIONS.register(bus);
         TABS.register(bus);
         COMMAND_ARGUMENT_TYPES.register(bus);
         MinecraftForge.EVENT_BUS.addListener(this::commands);
