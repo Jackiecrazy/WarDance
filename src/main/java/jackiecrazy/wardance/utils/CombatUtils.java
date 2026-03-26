@@ -418,7 +418,7 @@ public class CombatUtils {
             }
             if (info instanceof Throw t) {
                 final IFlyingWeapon cap = FlyingWeaponData.getCap(e);
-                if (throw_vec == null) throw_vec = e.getLookAngle().scale(32);
+                if (throw_vec == null) throw_vec = e.getLookAngle();
                 throw_vec =t.transformDirection(throw_vec);
                 //bogus yeet to create the entity
                 ThrownWeaponEntity fwe = cap.yeet(h, e.getEyePosition().add(throw_vec), 1);

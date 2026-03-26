@@ -164,6 +164,7 @@ public class Throw extends WeaponInteractions.WeaponInteraction {
         e.setIdlePose(flying_pose);
         e.setGravity(gravity);
         e.setHitInfo(attack_info);
+        e.setPos(e.position().add(MovementUtils.resolveVelocity(e.getDeltaMovement().normalize(), offset)));
         //e.setImpactActions(on_impact);
         applyCosmeticStack(e, new ArgumentContext(e.getOwner(), null));
         e.setFake(!consume_item);

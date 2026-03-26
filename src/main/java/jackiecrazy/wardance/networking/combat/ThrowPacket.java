@@ -80,7 +80,7 @@ public class ThrowPacket {
                 final ItemStack held = player.getItemInHand(h);
                 if (!held.isEmpty()) {
                     final IFlyingWeapon cap = FlyingWeaponData.getCap(player);
-                    CombatUtils.throw_vec = packet.destination.subtract(player.getEyePosition());
+                    CombatUtils.throw_vec = packet.destination.subtract(player.getEyePosition()).normalize();
                     CombatUtils.setAttackType(player, WeaponStats.AttackType.THROW);
                     if (CombatUtils.processWeaponInteraction(player, null, h, player.getAttributeValue(ForgeMod.ENTITY_REACH.get()))) {
                         swapFromEnderChest(packet.next, player, h);
