@@ -17,11 +17,22 @@
             "operation": "CONSUME"
           },
           "override": {
+
+            "on_swing": {
+              "run_actions": [
+                {
+                  "ID": "attach_action",
+                  "effect": "wardance:machine_gun_seeds"
+                }
+              ]
+            },
+
             "type": "throw",
             "attack_info": {
               "damage_scale": 1,
               "crit": true,
               "breach": true,
+              "spirit_multiplier": 0,
               "crit_damage": 1,
               "knockback": 0
             },
@@ -57,6 +68,7 @@
               "damage_scale": 1,
               "crit": true,
               "breach": true,
+              "spirit_multiplier": 0,
               "crit_damage": 2,
               "knockback": 1.4,
               "hit_other": {
@@ -96,6 +108,7 @@
               "damage_scale": 2,
               "crit": true,
               "breach": true,
+              "spirit_multiplier": 0,
               "crit_damage": 2,
               "knockback": 0
             },
@@ -108,287 +121,6 @@
               "ID": "itemstack",
               "item": "minecraft:carrot"
             }
-          }
-        }
-      ]
-    },
-    "aerial": {
-      "interactions": [
-        {
-          "sweep": "CLEAVE",
-          "knockback": 0.5,
-          "sweep_base": 60.0,
-          "sweep_scale": 20.0
-        }
-      ],
-      "overrides": [
-        {
-          "condition": {
-            "ID": "consume_resource",
-            "format": "PERCENTAGE",
-            "resource": "SPIRIT",
-            "amount": 1,
-            "operation": "CONSUME"
-          },
-          "override": {
-            "interactions": [
-              {
-                "type": "throw",
-                "attack_info": {
-                  "damage_scale": 1,
-                  "crit": true,
-                  "breach": true,
-                  "crit_damage": 2,
-                  "knockback": 0
-                },
-                "throw_speed": 2,
-                "consume_item": false,
-                "display_stack": {
-                  "ID": "itemstack",
-                  "item": "minecraft:nether_wart"
-                },
-                "on_impact": [
-                  {
-                    "ID": "explode",
-                    "radius": 1,
-                    "on_hit": [
-                      {
-                        "ID": "add_effect",
-                        "effect": "footwork:distraction",
-                        "potency": 1,
-                        "duration": 40
-                      }
-                    ]
-                  }, {
-                    "ID": "remove"
-                  }
-                ]
-              }, {
-                "type": "throw",
-                "direction": [1, 0, 0],
-                "attack_info": {
-                  "damage_scale": 1,
-                  "crit": true,
-                  "breach": true,
-                  "crit_damage": 2,
-                  "knockback": 0
-                },
-                "throw_speed": 2,
-                "consume_item": false,
-                "display_stack": {
-                  "ID": "itemstack",
-                  "item": "minecraft:nether_wart"
-                },
-                "on_impact": [
-                  {
-                    "ID": "explode",
-                    "radius": 1,
-                    "on_hit": [
-                      {
-                        "ID": "add_effect",
-                        "effect": "footwork:distraction",
-                        "potency": 1,
-                        "duration": 40
-                      }
-                    ]
-                  }, {
-                    "ID": "remove"
-                  }
-                ]
-              }, {
-                "type": "throw",
-                "direction": [0, 0, -1],
-                "attack_info": {
-                  "damage_scale": 1,
-                  "crit": true,
-                  "breach": true,
-                  "crit_damage": 2,
-                  "knockback": 0
-                },
-                "throw_speed": 2,
-                "consume_item": false,
-                "display_stack": {
-                  "ID": "itemstack",
-                  "item": "minecraft:nether_wart"
-                },
-                "on_impact": [
-                  {
-                    "ID": "explode",
-                    "radius": 1,
-                    "on_hit": [
-                      {
-                        "ID": "add_effect",
-                        "effect": "footwork:distraction",
-                        "potency": 1,
-                        "duration": 40
-                      }
-                    ]
-                  }, {
-                    "ID": "remove"
-                  }
-                ]
-              }, {
-                "type": "throw",
-                "direction": [-1, 0, 0],
-                "attack_info": {
-                  "damage_scale": 1,
-                  "crit": true,
-                  "breach": true,
-                  "crit_damage": 2,
-                  "knockback": 0
-                },
-                "throw_speed": 2,
-                "consume_item": false,
-                "display_stack": {
-                  "ID": "itemstack",
-                  "item": "minecraft:nether_wart"
-                },
-                "on_impact": [
-                  {
-                    "ID": "explode",
-                    "radius": 1,
-                    "on_hit": [
-                      {
-                        "ID": "add_effect",
-                        "effect": "footwork:distraction",
-                        "potency": 1,
-                        "duration": 40
-                      }
-                    ]
-                  }, {
-                    "ID": "remove"
-                  }
-                ]
-              }, {
-                "type": "throw",
-                "direction": [1, 0, 1],
-                "attack_info": {
-                  "damage_scale": 1,
-                  "crit": true,
-                  "breach": true,
-                  "crit_damage": 2,
-                  "knockback": 0
-                },
-                "throw_speed": 2,
-                "consume_item": false,
-                "display_stack": {
-                  "ID": "itemstack",
-                  "item": "minecraft:nether_wart"
-                },
-                "on_impact": [
-                  {
-                    "ID": "explode",
-                    "radius": 1,
-                    "on_hit": [
-                      {
-                        "ID": "add_effect",
-                        "effect": "footwork:distraction",
-                        "potency": 1,
-                        "duration": 40
-                      }
-                    ]
-                  }, {
-                    "ID": "remove"
-                  }
-                ]
-              }, {
-                "type": "throw",
-                "direction": [-1, 0, 1],
-                "attack_info": {
-                  "damage_scale": 1,
-                  "crit": true,
-                  "breach": true,
-                  "crit_damage": 2,
-                  "knockback": 0
-                },
-                "throw_speed": 2,
-                "consume_item": false,
-                "display_stack": {
-                  "ID": "itemstack",
-                  "item": "minecraft:nether_wart"
-                },
-                "on_impact": [
-                  {
-                    "ID": "explode",
-                    "radius": 1,
-                    "on_hit": [
-                      {
-                        "ID": "add_effect",
-                        "effect": "footwork:distraction",
-                        "potency": 1,
-                        "duration": 40
-                      }
-                    ]
-                  }, {
-                    "ID": "remove"
-                  }
-                ]
-              }, {
-                "type": "throw",
-                "direction": [1, 0, -1],
-                "attack_info": {
-                  "damage_scale": 1,
-                  "crit": true,
-                  "breach": true,
-                  "crit_damage": 2,
-                  "knockback": 0
-                },
-                "throw_speed": 2,
-                "consume_item": false,
-                "display_stack": {
-                  "ID": "itemstack",
-                  "item": "minecraft:nether_wart"
-                },
-                "on_impact": [
-                  {
-                    "ID": "explode",
-                    "radius": 1,
-                    "on_hit": [
-                      {
-                        "ID": "add_effect",
-                        "effect": "footwork:distraction",
-                        "potency": 1,
-                        "duration": 40
-                      }
-                    ]
-                  }, {
-                    "ID": "remove"
-                  }
-                ]
-              }, {
-                "type": "throw",
-                "direction": [-1, 0, -1],
-                "attack_info": {
-                  "damage_scale": 1,
-                  "crit": true,
-                  "breach": true,
-                  "crit_damage": 2,
-                  "knockback": 0
-                },
-                "throw_speed": 2,
-                "consume_item": false,
-                "display_stack": {
-                  "ID": "itemstack",
-                  "item": "minecraft:nether_wart"
-                },
-                "on_impact": [
-                  {
-                    "ID": "explode",
-                    "radius": 1,
-                    "on_hit": [
-                      {
-                        "ID": "add_effect",
-                        "effect": "footwork:distraction",
-                        "potency": 1,
-                        "duration": 40
-                      }
-                    ]
-                  }, {
-                    "ID": "remove"
-                  }
-                ]
-              }
-            ]
           }
         }
       ]
@@ -419,6 +151,304 @@
                   "damage_scale": 1,
                   "crit": true,
                   "breach": true,
+              "spirit_multiplier": 0,
+                  "crit_damage": 2,
+                  "knockback": 0
+                },
+                "throw_speed": 1,
+                "gravity": -0.2,
+                "consume_item": false,
+                "display_stack": {
+                  "ID": "itemstack",
+                  "item": "minecraft:nether_wart"
+                },
+                "on_impact": [
+                  {
+                    "ID": "explode",
+                    "radius": 1,
+                    "on_hit": [
+                      {
+                        "ID": "add_effect",
+                        "effect": "footwork:distraction",
+                        "potency": 1,
+                        "duration": 40
+                      }
+                    ]
+                  }, {
+                    "ID": "remove"
+                  }
+                ]
+              }, {
+                "type": "throw",
+                "direction": [1, 0, 0],
+                "attack_info": {
+                  "damage_scale": 1,
+                  "crit": true,
+                  "breach": true,
+              "spirit_multiplier": 0,
+                  "crit_damage": 2,
+                  "knockback": 0
+                },
+                "throw_speed": 1,
+                "gravity": -0.2,
+                "consume_item": false,
+                "display_stack": {
+                  "ID": "itemstack",
+                  "item": "minecraft:nether_wart"
+                },
+                "on_impact": [
+                  {
+                    "ID": "explode",
+                    "radius": 1,
+                    "on_hit": [
+                      {
+                        "ID": "add_effect",
+                        "effect": "footwork:distraction",
+                        "potency": 1,
+                        "duration": 40
+                      }
+                    ]
+                  }, {
+                    "ID": "remove"
+                  }
+                ]
+              }, {
+                "type": "throw",
+                "direction": [0, 0, -1],
+                "attack_info": {
+                  "damage_scale": 1,
+                  "crit": true,
+                  "breach": true,
+              "spirit_multiplier": 0,
+                  "crit_damage": 2,
+                  "knockback": 0
+                },
+                "throw_speed": 1,
+                "gravity": -0.2,
+                "consume_item": false,
+                "display_stack": {
+                  "ID": "itemstack",
+                  "item": "minecraft:nether_wart"
+                },
+                "on_impact": [
+                  {
+                    "ID": "explode",
+                    "radius": 1,
+                    "on_hit": [
+                      {
+                        "ID": "add_effect",
+                        "effect": "footwork:distraction",
+                        "potency": 1,
+                        "duration": 40
+                      }
+                    ]
+                  }, {
+                    "ID": "remove"
+                  }
+                ]
+              }, {
+                "type": "throw",
+                "direction": [-1, 0, 0],
+                "attack_info": {
+                  "damage_scale": 1,
+                  "crit": true,
+                  "breach": true,
+              "spirit_multiplier": 0,
+                  "crit_damage": 2,
+                  "knockback": 0
+                },
+                "throw_speed": 1,
+                "gravity": -0.2,
+                "consume_item": false,
+                "display_stack": {
+                  "ID": "itemstack",
+                  "item": "minecraft:nether_wart"
+                },
+                "on_impact": [
+                  {
+                    "ID": "explode",
+                    "radius": 1,
+                    "on_hit": [
+                      {
+                        "ID": "add_effect",
+                        "effect": "footwork:distraction",
+                        "potency": 1,
+                        "duration": 40
+                      }
+                    ]
+                  }, {
+                    "ID": "remove"
+                  }
+                ]
+              }, {
+                "type": "throw",
+                "direction": [1, 0, 1],
+                "attack_info": {
+                  "damage_scale": 1,
+                  "crit": true,
+                  "breach": true,
+              "spirit_multiplier": 0,
+                  "crit_damage": 2,
+                  "knockback": 0
+                },
+                "throw_speed": 1,
+                "gravity": -0.2,
+                "consume_item": false,
+                "display_stack": {
+                  "ID": "itemstack",
+                  "item": "minecraft:nether_wart"
+                },
+                "on_impact": [
+                  {
+                    "ID": "explode",
+                    "radius": 1,
+                    "on_hit": [
+                      {
+                        "ID": "add_effect",
+                        "effect": "footwork:distraction",
+                        "potency": 1,
+                        "duration": 40
+                      }
+                    ]
+                  }, {
+                    "ID": "remove"
+                  }
+                ]
+              }, {
+                "type": "throw",
+                "direction": [-1, 0, 1],
+                "attack_info": {
+                  "damage_scale": 1,
+                  "crit": true,
+                  "breach": true,
+              "spirit_multiplier": 0,
+                  "crit_damage": 2,
+                  "knockback": 0
+                },
+                "throw_speed": 1,
+                "gravity": -0.2,
+                "consume_item": false,
+                "display_stack": {
+                  "ID": "itemstack",
+                  "item": "minecraft:nether_wart"
+                },
+                "on_impact": [
+                  {
+                    "ID": "explode",
+                    "radius": 1,
+                    "on_hit": [
+                      {
+                        "ID": "add_effect",
+                        "effect": "footwork:distraction",
+                        "potency": 1,
+                        "duration": 40
+                      }
+                    ]
+                  }, {
+                    "ID": "remove"
+                  }
+                ]
+              }, {
+                "type": "throw",
+                "direction": [1, 0, -1],
+                "attack_info": {
+                  "damage_scale": 1,
+                  "crit": true,
+                  "breach": true,
+              "spirit_multiplier": 0,
+                  "crit_damage": 2,
+                  "knockback": 0
+                },
+                "throw_speed": 1,
+                "gravity": -0.2,
+                "consume_item": false,
+                "display_stack": {
+                  "ID": "itemstack",
+                  "item": "minecraft:nether_wart"
+                },
+                "on_impact": [
+                  {
+                    "ID": "explode",
+                    "radius": 1,
+                    "on_hit": [
+                      {
+                        "ID": "add_effect",
+                        "effect": "footwork:distraction",
+                        "potency": 1,
+                        "duration": 40
+                      }
+                    ]
+                  }, {
+                    "ID": "remove"
+                  }
+                ]
+              }, {
+                "type": "throw",
+                "direction": [-1, 0, -1],
+                "attack_info": {
+                  "damage_scale": 1,
+                  "crit": true,
+                  "breach": true,
+              "spirit_multiplier": 0,
+                  "crit_damage": 2,
+                  "knockback": 0
+                },
+                "throw_speed": 1,
+                "gravity": -0.2,
+                "consume_item": false,
+                "display_stack": {
+                  "ID": "itemstack",
+                  "item": "minecraft:nether_wart"
+                },
+                "on_impact": [
+                  {
+                    "ID": "explode",
+                    "radius": 1,
+                    "on_hit": [
+                      {
+                        "ID": "add_effect",
+                        "effect": "footwork:distraction",
+                        "potency": 1,
+                        "duration": 40
+                      }
+                    ]
+                  }, {
+                    "ID": "remove"
+                  }
+                ]
+              }
+            ]
+          }
+        }
+      ]
+    },
+    "aerial": {
+      "interactions": [
+        {
+          "sweep": "CLEAVE",
+          "knockback": 0.5,
+          "sweep_base": 60.0,
+          "sweep_scale": 20.0
+        }
+      ],
+      "overrides": [
+        {
+          "condition": {
+            "ID": "consume_resource",
+            "format": "PERCENTAGE",
+            "resource": "SPIRIT",
+            "amount": 1,
+            "operation": "CONSUME"
+          },
+          "override": {
+            "interactions": [
+              {
+                "type": "throw",
+                "attack_info": {
+                  "damage_scale": 1,
+                  "crit": true,
+                  "breach": true,
+              "spirit_multiplier": 0,
                   "crit_damage": 2,
                   "knockback": 4
                 },
@@ -437,6 +467,7 @@
                   "damage_scale": 1,
                   "crit": true,
                   "breach": true,
+              "spirit_multiplier": 0,
                   "crit_damage": 2,
                   "knockback": 4
                 },
@@ -455,6 +486,7 @@
                   "damage_scale": 1,
                   "crit": true,
                   "breach": true,
+              "spirit_multiplier": 0,
                   "crit_damage": 2,
                   "knockback": 4
                 },
@@ -492,6 +524,7 @@
               "damage_scale": 2,
               "crit": true,
               "breach": true,
+              "spirit_multiplier": 0,
               "crit_damage": 2,
               "knockback": 0
             },
@@ -599,12 +632,13 @@
             "type": "throw",
             "on_swing": {
               "velocity": [0, 1, 0],
-              "command": "/effect apply footwork:reach 20 3"
+              "command": "/effect give @s footwork:reach 20 3"
             },
             "attack_info": {
               "damage_scale": 2,
               "crit": true,
               "breach": true,
+              "spirit_multiplier": 0,
               "crit_damage": 2,
               "knockback": 0
             },

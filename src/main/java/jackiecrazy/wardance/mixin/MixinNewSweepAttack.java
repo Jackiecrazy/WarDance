@@ -18,13 +18,10 @@ public class MixinNewSweepAttack {
     @Redirect(method = "onAttack",
             at = @At(value = "INVOKE", target = "Lnet/minecraft/server/level/ServerPlayer;attack(Lnet/minecraft/world/entity/Entity;)V"))
     private void sweep(ServerPlayer player, Entity entity) {
-        if(StylishData.getCap(player).isCombatMode()) {
+        if (StylishData.getCap(player).isCombatMode()) {
             CombatUtils.updateNormalAttackStatus(player);
-            int temp = player.attackStrengthTicker;
             CombatUtils.processWeaponInteraction(player, entity, InteractionHand.MAIN_HAND, player.getAttributeValue(ForgeMod.ENTITY_REACH.get()));
-            player.attackStrengthTicker = temp;
-        }
-        player.attack(entity);
+        } else player.attack(entity);
     }
 
 }

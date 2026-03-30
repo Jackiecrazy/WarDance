@@ -191,7 +191,10 @@ public class FlyingWeaponEntity extends FlyingItemEntity {
     }
 
     public void yeet(Vec3 to, double strength) {
+        //needed because setting the held item resets the cosmetic item.
+        ItemStack temp=getCosmeticItem();
         setHeldItem(getHeldItem().copyWithCount(1));
+        setCosmeticItem(temp);
         getEntityData().set(CURRENT_STATE, STATE.THROW_NATURAL);
         //setEffect(FlyingWeaponEffect.WEAPON);
         entityData.set(IDLE_TICK, 0);
@@ -219,7 +222,7 @@ public class FlyingWeaponEntity extends FlyingItemEntity {
     @Override
     protected void returnToIdle(int ticks) {
         super.returnToIdle(ticks);
-        //setIntangible(true);//do I need this?
+        setIntangible(true);//this is needed to prevent the weapon hitting stuff when idle
     }
 
     @Override

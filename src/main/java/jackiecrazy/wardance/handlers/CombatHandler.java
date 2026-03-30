@@ -724,7 +724,7 @@ public class CombatHandler {
                     e.setAmount(e.getAmount() * (1 - cap.getPosturePercentage()));
                     if (nonMeleeDamage && (cap.getPosture() > 0)) {
                         //cap.recordDamage(cap.consumePosture(e.getAmount()));//I think this is double dipping posture for projectiles?
-                        e.setAmount(e.getAmount() / 2);
+                        //e.setAmount(e.getAmount() / 2);
                         cap.recordDamage(e.getAmount());
                     }
 //                    if (!e.getSource().is(FootworkDamageTypeTags.AUTO))
@@ -737,7 +737,7 @@ public class CombatHandler {
         }
         //stuff used to exist here, moved to footwork
         if (GeneralConfig.debug && !uke.level().isClientSide) {
-            WarDance.LOGGER.debug("internal damage has been resolved, damage is now " + e.getAmount());
+            WarDance.LOGGER.debug("internal damage and darktide have been resolved, damage is now " + e.getAmount());
         }
 
         if (DamageUtils.isPhysicalAttack(ds)) {

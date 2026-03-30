@@ -386,7 +386,11 @@ public class CombatUtils {
         return processWeaponInteraction(e, ignore, h, reach, group);
     }
 
-    public static boolean processWeaponInteraction(LivingEntity e, Entity ignore, InteractionHand h, double reach, WeaponInteractions.InteractionGroup group) {
+    public static boolean processWeaponInteraction(LivingEntity e,
+                                                   Entity ignore,
+                                                   InteractionHand h,
+                                                   double reach,
+                                                   WeaponInteractions.InteractionGroup group) {
         //todo allow a proxy param to move the origin vec3
         ItemStack stack = e.getItemInHand(h);
         if (CombatUtils.getCooledAttackStrength(e, h, 1f) < group.getMinimumCooldown()) return false;
@@ -396,11 +400,19 @@ public class CombatUtils {
             WeaponStats.info_override = info.getHitInfo();
             CombatUtils.applyFrames(e, info.getHitInfo());
             if (info instanceof SweepAttack sweep) {
+                WeaponStats.info_override = sweep.getHitInfo();
+                final double damageBonus = sweep.getHitInfo().getDamageScale() - 1;
+                if (ignore != null && damageBonus <= 0)
+                    attack(e, ignore, h == InteractionHand.OFF_HAND);
                 //apply instantaneous damage multiplier
-                SkillUtils.modifyAttribute(e, Attributes.ATTACK_DAMAGE, main, sweep.getHitInfo().getDamageScale() - 1, AttributeModifier.Operation.MULTIPLY_TOTAL);
+                SkillUtils.modifyAttribute(e, Attributes.ATTACK_DAMAGE, main, damageBonus, AttributeModifier.Operation.MULTIPLY_TOTAL);
+                //duplicate the above to make the base attack stronger if the swing is stronger than usual
+                if (ignore != null && damageBonus > 0)
+                    attack(e, ignore, h == InteractionHand.OFF_HAND);
                 FlyingWeaponData.getCap(e).getWeapon(h).setUniversalOffset(h == InteractionHand.MAIN_HAND ? group.right_hand_offset() : group.left_hand_offset());
                 enhancedSweep(e, ignore, h, sweep.getType(), reach, sweep.getBase(), sweep.getScaling());
                 SkillUtils.removeAttribute(e, Attributes.ATTACK_DAMAGE, main);
+                WeaponStats.info_override = null;
             }
             if (info instanceof Use use) {
                 //stack.releaseUsing(e.level(), e, use.getStartTime());
@@ -411,21 +423,21 @@ public class CombatUtils {
                 }
             }
             if (info instanceof Animation anim) {
-                TemporaryMoveTranslator.flip*=-1;
+                TemporaryMoveTranslator.flip *= -1;
                 FlyingWeaponData.getCap(e).getWeapon(h).setUniversalOffset(h == InteractionHand.MAIN_HAND ? group.right_hand_offset() : group.left_hand_offset());
                 for (MotionManager mm : anim.getAnimations())
-                    FlyingWeaponData.getCap(e).scheduleAction(h, TemporaryMoveTranslator.flip<0?mm.flipFrames():mm);
+                    FlyingWeaponData.getCap(e).scheduleAction(h, TemporaryMoveTranslator.flip < 0 ? mm.flipFrames() : mm);
             }
             if (info instanceof Throw t) {
                 final IFlyingWeapon cap = FlyingWeaponData.getCap(e);
                 if (throw_vec == null) throw_vec = e.getLookAngle();
-                throw_vec =t.transformDirection(throw_vec);
+                throw_vec = t.transformDirection(throw_vec);
                 //bogus yeet to create the entity
                 ThrownWeaponEntity fwe = cap.yeet(h, e.getEyePosition().add(throw_vec), 1);
                 //transform it...
                 t.transformThrown(fwe);
                 //then yeet it for real
-                fwe.yeet(e.getEyePosition().add(throw_vec), t.getThrowSpeed());
+                fwe.yeet(e.getEyePosition().add(throw_vec.scale(32)), t.getThrowSpeed());
                 if (t.consume() && e instanceof Player player && !player.getAbilities().instabuild) {
                     final ItemStack held = player.getItemInHand(h);
                     held.shrink(1);

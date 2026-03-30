@@ -226,7 +226,7 @@ public class ThrownWeaponEntity extends FlyingWeaponEntity {
     }
 
     public boolean canBeCollidedWith() {
-        return true;
+        return intangible();
     }
 
     public boolean pickup(Player player) {

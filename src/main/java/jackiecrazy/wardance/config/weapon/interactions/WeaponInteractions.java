@@ -35,7 +35,24 @@ import java.util.function.Supplier;
 
 public class WeaponInteractions {
     public static final ConsumeResourceCondition BREACH_CONDITION = new ConsumeResourceCondition(ResourceEnums.ResourceFormat.PERCENTAGE, ResourceEnums.TYPE.SPIRIT, new FixedNumberArgument(1));
-    public static Gson GSON = new GsonBuilder().registerTypeAdapter(WeaponInteraction.class, new InteractionDeserializer())
+
+    public static final Gson NAIVE = (new GsonBuilder())
+            .registerTypeAdapter(Class.class, new ActionJsonAdapters.ClassAdapter())
+            .registerTypeAdapter(Supplier.class, new ActionJsonAdapters.SupplierAdapter())
+            .registerTypeAdapter(Action.class, new ActionJsonAdapters.ActionAdapter())
+            .registerTypeAdapter(TimerAction.class, new ActionJsonAdapters.ActionAdapter())
+            .registerTypeAdapter(Argument.class, new ActionJsonAdapters.ArgumentAdapter())
+            .registerTypeAdapter(NumberArgument.class, new ActionJsonAdapters.NumberAdapter())
+            .registerTypeAdapter(VectorArgument.class, new ActionJsonAdapters.VectorAdapter())
+            .registerTypeAdapter(ResourceLocationArgument.class, new ActionJsonAdapters.ResourceAdapter())
+            .registerTypeAdapter(Condition.class, new ActionJsonAdapters.ConditionAdapter())
+            .registerTypeAdapter(Filter.class, new ActionJsonAdapters.FilterAdapter())
+            .registerTypeAdapter(ResourceLocation.class, new ResourceLocation.Serializer())
+            .registerTypeAdapter(CompoundTag.class, new ActionJsonAdapters.NBTAdapter())
+            .registerTypeAdapter(WeaponInteraction.class, new InteractionDeserializer())
+            .registerTypeAdapter(Vec3.class, new JsonAdapters.Vec3TypeAdapter()).setPrettyPrinting().create();
+    public static Gson GSON = new GsonBuilder()
+            .registerTypeAdapter(WeaponInteraction.class, new InteractionDeserializer())
             .registerTypeAdapter(ResourceLocation.class, new ResourceLocation.Serializer())
             .registerTypeAdapter(Vec3.class, new JsonAdapters.Vec3TypeAdapter())
             .registerTypeAdapter(MotionFrame.class, new JsonAdapters.MotionFrameAdapter())
@@ -247,7 +264,7 @@ public class WeaponInteractions {
                 //extract partial overrides first
                 final JsonObject baseObj = json.getAsJsonObject();
                 JsonElement overObj = baseObj.remove("overrides");
-                InteractionGroup ret = ActionJsonAdapters.gson.fromJson(json, InteractionGroup.class);
+                InteractionGroup ret = NAIVE.fromJson(json, InteractionGroup.class);
                 if (ret.getInteractions().isEmpty()) {
                     ret.setInteractions(List.of(GSON.fromJson(json, WeaponInteraction.class)));
                 }
@@ -272,12 +289,14 @@ public class WeaponInteractions {
                 }
                 return ret;
             }
-            InteractionGroup ret = ActionJsonAdapters.gson.fromJson(json, InteractionGroup.class);
             if (json.isJsonArray()) {
+                InteractionGroup ret=new InteractionGroup();
                 //a simple list of interactions with no override, tooltip, or velocity. I'm not sure why you would want this.
-                List<WeaponInteraction> list = context.deserialize(json, ArrayList.class);
+                List<WeaponInteraction> list = context.deserialize(json, new TypeToken<ArrayList<WeaponInteraction>>() {}.getType());
                 ret.setInteractions(list);
+                return ret;
             }
+            InteractionGroup ret = ActionJsonAdapters.gson.fromJson(json, InteractionGroup.class);
             return ret;
         }
     }

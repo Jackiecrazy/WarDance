@@ -1,0 +1,48 @@
+{
+  "ID": "wait",
+  "max_time": 20,
+  "waiting": [
+    {
+      "ID": "wardance:play_interaction",
+      "interaction": {
+        "interactions": [
+          {
+            "type": "throw",
+            "attack_info": {
+              "damage_scale": 1,
+              "crit": true,
+              "breach": true,
+              "crit_damage": 1,
+              "knockback": 0,
+              "spirit_multiplier": 0
+            },
+            "lodge_entity": false,
+            "lodge_block": true,
+            "throw_speed": 2,
+            "consume_item": false,
+            "display_stack": {
+              "ID": "itemstack",
+              "item": "minecraft:wheat_seeds"
+            }
+          }
+        ]
+      },
+      "on_impact": [
+        {
+          "ID": "explode",
+          "radius": 10
+        }
+      ],
+      "condition": {
+        "ID": "and",
+        "values": [
+          {
+            "ID": "time_window",
+            "every": "4"
+          }
+        ]
+      },
+      "repeatable": true
+    }
+  ]
+}

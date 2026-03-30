@@ -82,13 +82,13 @@ public class ClientEvents {
     private static int lastSweepTick = 0, lastAttackTick = 0;
     private static boolean wasThrowAiming = false, wasAiming = false;
 
-    public static Level getClientWorld() {
-        return Minecraft.getInstance().level;
-    }
-
     static {
         RenderUtils.formatter.setRoundingMode(RoundingMode.DOWN);
         RenderUtils.formatter_truncate.setRoundingMode(RoundingMode.DOWN);
+    }
+
+    public static Level getClientWorld() {
+        return Minecraft.getInstance().level;
     }
 
     public static boolean heavy(WeaponStats.AttackType state) {
@@ -318,8 +318,8 @@ public class ClientEvents {
                                 testingHand = InteractionHand.OFF_HAND;
                                 ((ClientAccessors) mc).callStartUseItem();
                             }
-                            WeaponInteractions.WeaponInteraction offuse=offInfo.getInteractionOfType(WeaponInteractions.WeaponInteraction.InteractionType.USE);
-                            if(offuse instanceof Use u){
+                            WeaponInteractions.WeaponInteraction offuse = offInfo.getInteractionOfType(WeaponInteractions.WeaponInteraction.InteractionType.USE);
+                            if (offuse instanceof Use u) {
                                 ChargingData.getCap(p).alterSpeed(mc.player.getOffhandItem(), u.getUseSpeed());
                             }
                             ++offUseTick;
@@ -336,9 +336,12 @@ public class ClientEvents {
                         } else if (!mc.player.isUsingItem() && (Keybinds.EVOKE.isDown() || mainInfo.hasInteractionType(WeaponInteractions.WeaponInteraction.InteractionType.USE))) {//don't call when already using item for obvious reasons
                             testingHand = InteractionHand.MAIN_HAND;
                             ((ClientAccessors) mc).callStartUseItem();
-                            WeaponInteractions.WeaponInteraction mainUse=mainInfo.getInteractionOfType(WeaponInteractions.WeaponInteraction.InteractionType.USE);
-                            if(mainUse instanceof Use u){
+                            WeaponInteractions.WeaponInteraction mainUse = mainInfo.getInteractionOfType(WeaponInteractions.WeaponInteraction.InteractionType.USE);
+                            if (mainUse instanceof Use u) {
                                 ChargingData.getCap(p).alterSpeed(mc.player.getMainHandItem(), u.getUseSpeed());
+                                //manually send a processing packet to the server as this implementation will eat the left click
+                                if (!Keybinds.EVOKE.isDown())
+                                    CombatChannel.INSTANCE.sendToServer(new RequestSweepPacket(true, mc.crosshairPickEntity));
                             }
                             if (!mc.options.keyUse.isDown())
                                 mc.options.keyUse.setDown(mc.player.isUsingItem());
@@ -505,15 +508,15 @@ public class ClientEvents {
             /// enabling this causes the main hand to be right clickable, then immediately canceled
             /// however enabling this is necessary for the main hand to be right clickable for usable items
             //todo is this good?
-            if ((testingHand!=null||e.getHand()==InteractionHand.MAIN_HAND)&&e.getHand() != testingHand && WeaponStats.isCombatItem(e.getEntity(), e.getItemStack())) {// && testingHand == InteractionHand.MAIN_HAND
+            if ((testingHand != null || e.getHand() == InteractionHand.MAIN_HAND) && e.getHand() != testingHand && WeaponStats.isCombatItem(e.getEntity(), e.getItemStack())) {// && testingHand == InteractionHand.MAIN_HAND
                 //cancel right click main hand
                 e.setCanceled(true);
                 e.setCancellationResult(InteractionResult.PASS);
                 return;
             }
         }
-        if (!Keybinds.EVOKE.isDown() && !Keybinds.THROW.isDown()  && GeneralConfig.dual && e.getHand() == InteractionHand.OFF_HAND && StylishData.getCap(e.getEntity()).isCombatMode() && specialHandleItem(e.getEntity(), e.getItemStack())) {
-            if(!rightClick) {
+        if (!Keybinds.EVOKE.isDown() && !Keybinds.THROW.isDown() && GeneralConfig.dual && e.getHand() == InteractionHand.OFF_HAND && StylishData.getCap(e.getEntity()).isCombatMode() && specialHandleItem(e.getEntity(), e.getItemStack())) {
+            if (!rightClick) {
                 rightClick = true;
                 Entity n = RenderUtils.getEntityLookedAt(e.getEntity(), GeneralUtils.getAttributeValueHandSensitive(e.getEntity(), ForgeMod.ENTITY_REACH.get(), InteractionHand.OFF_HAND));
                 e.getEntity().swing(InteractionHand.OFF_HAND, false);
@@ -573,7 +576,7 @@ public class ClientEvents {
             }
         }
         if (!Keybinds.EVOKE.isDown() && !Keybinds.THROW.isDown() && GeneralConfig.dual && e.getHand() == InteractionHand.OFF_HAND && StylishData.getCap(e.getEntity()).isCombatMode() && specialHandleItem(e.getEntity(), e.getItemStack())) {
-            if(!rightClick) {
+            if (!rightClick) {
                 rightClick = true;
                 Entity n = RenderUtils.getEntityLookedAt(e.getEntity(), GeneralUtils.getAttributeValueHandSensitive(e.getEntity(), ForgeMod.ENTITY_REACH.get(), InteractionHand.OFF_HAND) - (e.getItemStack().isEmpty() ? 1 : 0));
                 e.getEntity().swing(InteractionHand.OFF_HAND, false);

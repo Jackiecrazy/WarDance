@@ -140,8 +140,7 @@ public class WeaponStats extends SimpleJsonResourceReloadListener {
             int ord = s.ordinal();
             JsonElement gottem = obj.get(s.name().toLowerCase(Locale.ROOT));
             if (gottem != null) {
-                JsonObject sub = gottem.getAsJsonObject();
-                WeaponInteractions.InteractionGroup sweep = WeaponInteractions.GSON.fromJson(sub, WeaponInteractions.InteractionGroup.class);
+                WeaponInteractions.InteractionGroup sweep = WeaponInteractions.GSON.fromJson(gottem, WeaponInteractions.InteractionGroup.class);
                 put.sweeps[ord] = sweep;
             }
             WeaponInteractions.InteractionGroup sweep = put.sweeps[ord];
