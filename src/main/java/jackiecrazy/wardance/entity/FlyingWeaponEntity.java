@@ -101,7 +101,6 @@ public class FlyingWeaponEntity extends FlyingItemEntity {
                 if (this.getClass() == FlyingWeaponEntity.class && tickCount % 100 == 40) {
                     flushTrailHistory();
                     boolean valid = false;
-
                     //todo this check makes grabbing blocks out of the environment not work
                     for (InteractionHand h : InteractionHand.values())
                         if (FlyingWeaponData.getCap(getOwner()).getWeapon(h) == this) valid = true;
@@ -207,6 +206,11 @@ public class FlyingWeaponEntity extends FlyingItemEntity {
 //            cacheInfo = HitInfo.BREACH;
 //        else cacheInfo = HitInfo.THROWN;
         //todo remove
+    }
+
+    @Override
+    public void updateTetheringVelocity() {
+        super.updateTetheringVelocity();
     }
 
     @Override

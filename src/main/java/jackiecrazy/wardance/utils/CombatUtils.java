@@ -420,6 +420,8 @@ public class CombatUtils {
                     ChargingData.getCap(p).alterSpeed(stack, use.getUseSpeed());
                     stack.use(e.level(), p, h);
                     p.startUsingItem(h);
+                    //todo any animation can override display item
+                    // sword pick shovel axe trident shield
                 }
             }
             if (info instanceof Animation anim) {
@@ -660,11 +662,11 @@ public class CombatUtils {
             //prioritize mobs for knockback
             if (le instanceof Player) {
                 MobilityUtils.knockBack(defender, le, strength, true, false);
-                EffectUtils.attemptAddPot(defender, EffectUtils.stackPot(defender, new MobEffectInstance(FootworkEffects.COUNTERSTRIKE.get(), 100, 0), EffectUtils.StackingMethod.MAXDURATION), true);
+                EffectUtils.attemptAddPot(defender, EffectUtils.stackPot(defender, new MobEffectInstance(FootworkEffects.COUNTERSTRIKE.get(), 100, 0), EffectUtils.StackingMethod.MAX_DURATION), true);
             } else {
                 ((LivingEntityAccessors) (defender)).callBlockUsingShield(le);
                 MobilityUtils.knockBack(le, defender, strength, true, false);
-                EffectUtils.attemptAddPot(le, EffectUtils.stackPot(le, new MobEffectInstance(FootworkEffects.COUNTERSTRIKE.get(), 100, 0), EffectUtils.StackingMethod.MAXDURATION), true);
+                EffectUtils.attemptAddPot(le, EffectUtils.stackPot(le, new MobEffectInstance(FootworkEffects.COUNTERSTRIKE.get(), 100, 0), EffectUtils.StackingMethod.MAX_DURATION), true);
             }
         }
 

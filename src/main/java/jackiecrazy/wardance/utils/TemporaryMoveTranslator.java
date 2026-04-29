@@ -102,6 +102,13 @@ public class TemporaryMoveTranslator {
         }
     }
 
+    private static double signedAngle(Vec3 a, Vec3 b, Vec3 edgeNormal) {
+        Vec3 cross = a.cross(b);
+        double dot = a.dot(b);
+        double sign = edgeNormal.dot(cross);
+        return Math.atan2(sign, dot);
+    }
+
     public static MotionManager temp_getMMFromType(int time, SweepAttack.SWEEPTYPE type, double area,
                                                    HitInfo info,
                                                    double range) {
@@ -117,10 +124,10 @@ public class TemporaryMoveTranslator {
 
                 final Vec3 startFrame = generateFrame(10, (float) (-area) * flip);
                 final Vec3 endFrame = generateFrame(-10, (float) (area) * flip);
-                final Vec3 up = new Vec3(0, 1, 0);
-                double dot = Mth.clamp(up.dot(startFrame.subtract(endFrame).normalize()), -1.0, 1.0);
-                double angleRadians = -Math.acos(dot);
-                double angleDegrees = Math.toDegrees(angleRadians) * flip;
+                final Vec3 up = new Vec3(0, -1, 0);
+//                double dot = Mth.clamp(up.dot(endFrame.subtract(startFrame).normalize()), -1.0, 1.0);
+                double angleRadians = signedAngle(up, endFrame.subtract(startFrame), new Vec3(0,0,-1));//-Math.acos(dot);
+                double angleDegrees = Math.toDegrees(angleRadians);// * flip;
                 return new MotionManagers.DefinitionMM(new MotionGroup(List.of(
                         new MotionFrame(startFrame, new Vec3(0, 0, 1), (int) angleDegrees),
                         new MotionFrame(midFrame, new Vec3(0, 0, 1), (int) angleDegrees),

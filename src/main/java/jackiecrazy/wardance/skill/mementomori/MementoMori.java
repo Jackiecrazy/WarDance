@@ -182,7 +182,7 @@ pound of flesh: active skill. Consumes all your spirit, and until your spirit re
                 for (LivingEntity e : caster.level().getEntitiesOfClass(LivingEntity.class, caster.getBoundingBox().inflate(6))) {
                     if (TargetingUtils.isHostile(e, caster) && !target.hasEffect(FootworkEffects.VULNERABLE.get())) {
                         ee.setCanceled(true);
-                        e.addEffect(EffectUtils.stackPot(e, new MobEffectInstance(FootworkEffects.VULNERABLE.get(), (int) (5 * ee.getAmount() * SkillUtils.getSkillEffectiveness(caster)), 0), EffectUtils.StackingMethod.MAXDURATION));
+                        e.addEffect(EffectUtils.stackPot(e, new MobEffectInstance(FootworkEffects.VULNERABLE.get(), (int) (5 * ee.getAmount() * SkillUtils.getSkillEffectiveness(caster)), 0), EffectUtils.StackingMethod.MAX_DURATION));
                         //e.hurt(new CombatDamageSource("lightningBolt", caster).setDamageTyping(FootworkDamageArchetype.MAGICAL).setProcSkillEffects(true).setKnockbackPercentage(0).setAttackingHand(null).setSkillUsed(this).setMagic(), ee.getAmount() * SkillUtils.getSkillEffectiveness(caster));
                         return;
                     }

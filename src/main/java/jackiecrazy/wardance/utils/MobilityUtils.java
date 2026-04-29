@@ -5,13 +5,13 @@ import jackiecrazy.footwork.capability.resources.ICombatCapability;
 import jackiecrazy.footwork.capability.stylish.StylishData;
 import jackiecrazy.footwork.event.DodgeEvent;
 import jackiecrazy.footwork.utils.GeneralUtils;
+import jackiecrazy.footwork.utils.MovementUtils;
 import jackiecrazy.wardance.compat.WarCompat;
 import jackiecrazy.wardance.config.CombatConfig;
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.Pose;
-import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
@@ -308,9 +308,12 @@ public class MobilityUtils {
         Vec3 distVec = to.position().add(0, to.getBbHeight() / 2, 0).vectorTo(from.position().add(0, from.getBbHeight() / 2, 0)).multiply(1, 0.5, 1).normalize();
         if (to instanceof LivingEntity && !bypassAllChecks) {
             if (considerRelativeAngle)
-                knockBack((LivingEntity) to, strength, distVec.x, distVec.y, distVec.z, false);
-            else
-                knockBack(((LivingEntity) to), (float) strength * 0.5F, (double) Mth.sin(from.getYRot() * 0.017453292F), 0, (double) (-Mth.cos(from.getYRot() * 0.017453292F)), false);
+                MovementUtils.knockBack((LivingEntity) to, strength, distVec.x, distVec.y, distVec.z, false);
+            else {
+                double xRatio = (double) Mth.sin(from.getYRot() * 0.017453292F);
+                double zRatio = (double) (-Mth.cos(from.getYRot() * 0.017453292F));
+                MovementUtils.knockBack(((LivingEntity) to), (float) strength * 0.5F, xRatio, 0, zRatio, false);
+            }
         } else {
             //eh
             if (considerRelativeAngle) {
@@ -322,46 +325,4 @@ public class MobilityUtils {
         }
     }
 
-    /**
-     * knockback in LivingEntity except it makes sense and the resist is factored into the event
-     */
-    public static void knockBack(LivingEntity to,
-                                 float strength,
-                                 double xRatio,
-                                 double yRatio,
-                                 double zRatio,
-                                 boolean bypassEventCheck) {
-        if (!bypassEventCheck) {
-            net.minecraftforge.event.entity.living.LivingKnockBackEvent event = net.minecraftforge.common.ForgeHooks.onLivingKnockBack(to, strength, xRatio, zRatio);
-            if (event.isCanceled()) return;
-            strength = event.getStrength();
-            xRatio = event.getRatioX();
-            zRatio = event.getRatioZ();
-        }
-        strength *= (float) Math.max(0, 1 - GeneralUtils.getAttributeValueSafe(to, Attributes.KNOCKBACK_RESISTANCE));
-        if (strength != 0f) {
-            Vec3 vec = to.getDeltaMovement();
-            double motionX = vec.x, motionY = vec.y, motionZ = vec.z;
-            to.hasImpulse = true;
-            double pythagora = Math.sqrt(xRatio * xRatio + zRatio * zRatio);
-            if (to.onGround()) {
-                motionY /= 2.0D;
-                motionY += Math.abs(strength);
-
-                if (motionY > 0.4000000059604645D) {
-                    motionY = 0.4000000059604645D;
-                }
-            } else if (yRatio != 0) {
-                pythagora = Math.sqrt(xRatio * xRatio + zRatio * zRatio + yRatio * yRatio);
-                motionY /= 2.0D;
-                motionY -= yRatio / (double) pythagora * (double) strength;
-            }
-            motionX /= 2.0D;
-            motionZ /= 2.0D;
-            motionX -= xRatio / (double) pythagora * (double) strength;
-            motionZ -= zRatio / (double) pythagora * (double) strength;
-            to.setDeltaMovement(motionX, motionY, motionZ);
-            to.hurtMarked = true;
-        }
-    }
 }

@@ -60,9 +60,12 @@ public class SwapAttackPacket {
                     final ItemStack nextItem = p.getEnderChestInventory().removeItem(packet.nextSlot, 999);
 
                     //this needs special handling
-                    WeaponStats.AttackType s = CombatUtils.getAttackState(p);
+                    WeaponStats.AttackType s = WeaponStats.AttackType.DRAW_ATTACK;
                     WeaponInteractions.InteractionGroup group = WeaponStats.getSweepInfo(nextItem, p, s, false);
-                    if (CombatUtils.getCooledAttackStrength(p, h, 1f) < group.getMinimumCooldown())return;
+                    if (CombatUtils.getCooledAttackStrength(p, h, 1f) < group.getMinimumCooldown()){
+                        p.getEnderChestInventory().setItem(packet.nextSlot,nextItem);
+                        return;
+                    }
 
                     if (p.getEnderChestInventory().addItem(p.getItemInHand(h)).isEmpty()) {
                         StylishData.getCap(p).addCombo(0.1f, "swap");

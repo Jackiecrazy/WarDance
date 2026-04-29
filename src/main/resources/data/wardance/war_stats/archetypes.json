@@ -1069,60 +1069,6 @@
       "sweep_scale": 0.75
     }
   },
-  "#sword": {
-    "attack": 2.6,
-    "defend": 0.9,
-    "shield": false,
-    "sweep": "CONE",
-    "knockback": 0.75,
-    "damage_scale": 0.75,
-    "posture_scale": 0.75,
-    "crit": false,
-    "crit_damage": 1.5,
-    "sweep_base": 40.0,
-    "sweep_scale": 15.0,
-    "standing": {
-      "sweep": "CONE",
-      "knockback": 0.75,
-      "damage_scale": 0.75,
-      "posture_scale": 0.75,
-      "sweep_base": 40.0,
-      "sweep_scale": 15.0
-    },
-    "falling": {
-      "sweep": "CLEAVE",
-      "sweep_base": 50.0,
-      "sweep_scale": 25.0,
-      "hit_self_command": "/function wardance:attack/self_mildfatigue",
-      "crit": true
-    },
-    "sneaking": {
-      "sweep": "CONE",
-      "knockback": 1.25,
-      "damage_scale": 0.75,
-      "posture_scale": 0.75,
-      "sweep_base": 50.0,
-      "sweep_scale": 25.0,
-      "hit_self_command": "/function wardance:attack/self_mildfatigue"
-    },
-    "sprinting": {
-      "sweep": "LINE",
-      "knockback": 0.75,
-      "damage_scale": 1.25,
-      "sweep_base": 0.3,
-      "sweep_scale": 0.2,
-      "hit_self_command": "/function wardance:attack/self_mildfatigue",
-      "damage_other_command": "/function wardance:attack/damageother_pierce",
-      "crit": true
-    },
-    "riding": {
-      "sweep": "CIRCLE",
-      "damage_scale": 1.5,
-      "crit_damage": 2.0,
-      "sweep_base": 3.0,
-      "sweep_scale": 0.5
-    }
-  },
   "#cutlass": {
     "attack": 2.5,
     "defend": 0.8,
@@ -1506,61 +1452,6 @@
       "sweep_base": 2.5,
       "sweep_scale": 0.5,
       "damage_other_command": "/function wardance:attack/damageother_armorcleaveminor"
-    }
-  },
-  "#longsword": {
-    "attack": 3.2,
-    "defend": 0.9,
-    "shield": false,
-    "sweep": "CONE",
-    "knockback": 0.75,
-    "damage_scale": 0.75,
-    "posture_scale": 0.5,
-    "crit": false,
-    "crit_damage": 1.5,
-    "sweep_base": 50.0,
-    "sweep_scale": 20.0,
-    "standing": {
-      "sweep": "CONE",
-      "knockback": 0.75,
-      "damage_scale": 0.75,
-      "posture_scale": 0.5,
-      "sweep_base": 50.0,
-      "sweep_scale": 20.0
-    },
-    "falling": {
-      "sweep": "CLEAVE",
-      "sweep_base": 60.0,
-      "sweep_scale": 30.0,
-      "hit_self_command": "/function wardance:attack/self_moderatefatigue",
-      "damage_other_command": "/function wardance:attack/damageother_armorcleaveminor",
-      "crit": true
-    },
-    "sneaking": {
-      "sweep": "CONE",
-      "knockback": 1.25,
-      "damage_scale": 0.5,
-      "sweep_base": 70.0,
-      "sweep_scale": 25.0,
-      "hit_self_command": "/function wardance:attack/self_mildfatigue"
-    },
-    "sprinting": {
-      "sweep": "LINE",
-      "knockback": 0.75,
-      "sweep_base": 0.3,
-      "sweep_scale": 0.2,
-      "hit_self_command": "/function wardance:attack/self_mildfatigue",
-      "damage_other_command": "/function wardance:attack/damageother_armorcleave",
-      "crit": true
-    },
-    "riding": {
-      "sweep": "CIRCLE",
-      "knockback": 0.6,
-      "damage_scale": 1.5,
-      "crit_damage": 2.0,
-      "sweep_base": 3.0,
-      "sweep_scale": 0.5,
-      "damage_other_command": "/function wardance:attack/damageother_armorcleave"
     }
   },
   "#greatmace": {
@@ -2409,57 +2300,6 @@
       "sweep_base": 3.0,
       "sweep_scale": 0.75,
       "damage_other_command": "/function wardance:attack/damageother_armorcleaveminor"
-    }
-  },
-  "#hoe": {
-    "attack": 1.0,
-    "defend": 1.0,
-    "shield": false,
-    "sweep": "CONE",
-    "knockback": 1.0,
-    "damage_scale": 1.0,
-    "posture_scale": 1.0,
-    "crit": false,
-    "crit_damage": 1.5,
-    "sweep_base": 40.0,
-    "sweep_scale": 15.0,
-    "standing": {
-      "sweep": "CONE",
-      "sweep_base": 40.0,
-      "sweep_scale": 15.0
-    },
-    "falling": {
-      "sweep": "CLEAVE",
-      "knockback": 0.75,
-      "damage_scale": 2.0,
-      "posture_scale": 1.5,
-      "sweep_base": 60.0,
-      "sweep_scale": 20.0,
-      "hit_self_command": "/function wardance:attack/self_mildfatigue",
-      "crit": true
-    },
-    "sneaking": {
-      "sweep": "CONE",
-      "knockback": 1.25,
-      "sweep_base": 60.0,
-      "sweep_scale": 20.0,
-      "hit_self_command": "/function wardance:attack/self_mildfatigue"
-    },
-    "sprinting": {
-      "sweep": "CLEAVE",
-      "knockback": 1.5,
-      "sweep_base": 50.0,
-      "sweep_scale": 20.0,
-      "hit_self_command": "/function wardance:attack/self_moderatefatigue",
-      "crit": true
-    },
-    "riding": {
-      "sweep": "CIRCLE",
-      "knockback": 1.2,
-      "crit_damage": 2.0,
-      "sweep_base": 2.5,
-      "sweep_scale": 0.5,
-      "hit_self_command": "/function wardance:attack/self_mildfatigue"
     }
   },
   "#arbalest": {

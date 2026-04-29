@@ -308,23 +308,23 @@ public class ClientEvents {
                         CombatUtils.updateNormalAttackStatus(mc.player);
                     final WeaponStats.AttackType state = CombatUtils.getAttackState(mc.player);
                     //offhand first
-                    //fixme guard counters
-                    if (mc.options.keyUse.isDown()) {
-                        final WeaponInteractions.InteractionGroup offInfo = WeaponStats.getSweepInfo(mc.player.getOffhandItem(), mc.player, state, false);
-                        if ((Keybinds.EVOKE.isDown() || offInfo.hasInteractionType(WeaponInteractions.WeaponInteraction.InteractionType.USE))) {
-                            //special charge action, immediately start
-                            //if (probablyNotAttacking && mc.player.getMainHandItem().getUseAnimation() != UseAnim.NONE)
-                            if (!mc.player.isUsingItem()) {
-                                testingHand = InteractionHand.OFF_HAND;
-                                ((ClientAccessors) mc).callStartUseItem();
-                            }
-                            WeaponInteractions.WeaponInteraction offuse = offInfo.getInteractionOfType(WeaponInteractions.WeaponInteraction.InteractionType.USE);
-                            if (offuse instanceof Use u) {
-                                ChargingData.getCap(p).alterSpeed(mc.player.getOffhandItem(), u.getUseSpeed());
-                            }
-                            ++offUseTick;
-                        } else offUseTick = 0;//microoptimization is the root of all spaghetti
-                    } else offUseTick = 0;
+                    //fixme guard counters last hit don't breach
+//                    if (mc.options.keyUse.isDown()&&offUseTick==0) {
+//                        final WeaponInteractions.InteractionGroup offInfo = WeaponStats.getSweepInfo(mc.player.getOffhandItem(), mc.player, state, false);
+//                        if ((Keybinds.EVOKE.isDown() || offInfo.hasInteractionType(WeaponInteractions.WeaponInteraction.InteractionType.USE))) {
+//                            //special charge action, immediately start
+//                            //if (probablyNotAttacking && mc.player.getMainHandItem().getUseAnimation() != UseAnim.NONE)
+//                            if (!mc.player.isUsingItem()) {
+//                                testingHand = InteractionHand.OFF_HAND;
+//                                ((ClientAccessors) mc).callStartUseItem();
+//                            }
+//                            WeaponInteractions.WeaponInteraction offuse = offInfo.getInteractionOfType(WeaponInteractions.WeaponInteraction.InteractionType.USE);
+//                            if (offuse instanceof Use u) {
+//                                ChargingData.getCap(p).alterSpeed(mc.player.getOffhandItem(), u.getUseSpeed());
+//                            }
+//                            ++offUseTick;
+//                        } else offUseTick = 0;//microoptimization is the root of all spaghetti
+//                    } else offUseTick = 0;
 
 
                     if (mc.options.keyAttack.isDown()) {

@@ -302,15 +302,17 @@ public class CombatHandler {
                         return;
                     }
 
-                    //handle capability and any on-hit effects, todo revamp to action based system
+                    //handle capability and any on-hit effects
                     seme.getMainHandItem().getCapability(CombatManipulator.CAP).ifPresent((i) -> i.attackStart(e.getSource(), seme, uke, seme.getMainHandItem(), e.getAmount()));
                     final HitInfo sweepInfo = WeaponStats.getHitInfo(seme.getMainHandItem(), seme, CombatUtils.getAttackState(seme));
                     sweepInfo.runEffects(seme, seme, true, false);
                     sweepInfo.runEffects(seme, uke, false, false);
-                    if (e.getSource() instanceof CombatDamageSource cds && WeaponStats.lookupStats(seme.getMainHandItem()) != null) {
+                    if (e.getSource() instanceof CombatDamageSource cds) {
                         cds.setKnockbackPercentage((float) sweepInfo.getKnockback());
                         cds.setCrit(sweepInfo.isCrit());
                         cds.setCritDamage((float) sweepInfo.getCritDamage());
+                        cds.setArmorReductionPercentage((float) sweepInfo.armor_pierce);
+                        cds.setKnockbackVector(sweepInfo.knockback_direction());
                     }
 
                     //blocking, no longer useful due to me directly interfacing with block
@@ -558,20 +560,6 @@ public class CombatHandler {
         }
     }
 
-    @SubscribeEvent
-    public static void otherKnockbackHooks(DamageKnockbackEvent e) {
-        if (e.getDamageSource() instanceof CombatDamageSource) {
-            CombatDamageSource cds = (CombatDamageSource) e.getDamageSource();
-            e.setStrength(e.getStrength() * cds.getKnockbackPercentage());
-        }
-        if (e.getStrength() < 0 && e.getDamageSource().getEntity() instanceof LivingEntity from) {
-            //not handled by LivingEntity, so we have to do it ourselves
-            LivingEntity to = e.getEntity();
-            Vec3 distVec = to.position().add(0, to.getBbHeight() / 2, 0).vectorTo(from.position().add(0, from.getBbHeight() / 2, 0)).multiply(1, 0.5, 1).normalize();
-            MobilityUtils.knockBack(e.getEntity(), (float) e.getStrength(), distVec.x, distVec.y, distVec.z, true);
-        }
-    }
-
     @SubscribeEvent(priority = EventPriority.HIGHEST)
     public static void knockKnockWhosThere(LivingKnockBackEvent e) {
         final LivingEntity entity = e.getEntity();
@@ -687,7 +675,7 @@ public class CombatHandler {
         final boolean alert = StealthUtils.INSTANCE.getAwareness(ds.getEntity() instanceof LivingEntity le ? le : null, uke) == StealthUtils.Awareness.ALERT;
         final boolean creative = e.getSource().is(DamageTypeTags.BYPASSES_INVULNERABILITY);
         final boolean environmentalDamage = (e.getSource().getEntity() == null);
-        final boolean nonMeleeDamage = e.getSource().isIndirect() || !(e.getSource().getEntity() instanceof LivingEntity le) || CombatUtils.getAttackState(le) == WeaponStats.AttackType.UNDEFINED;
+        final boolean nonMeleeDamage = e.getSource().isIndirect() || !(e.getSource().getEntity() instanceof LivingEntity le) ;//|| CombatUtils.getAttackState(le) == WeaponStats.AttackType.UNDEFINED;
         //nonplayers cannot hold on and will vaporize if the damage is too high
         if (!(uke instanceof Player) && e.getAmount() > uke.getMaxHealth() * 2) {
             e.setAmount(e.getAmount() + cap.getRecordedDamage());

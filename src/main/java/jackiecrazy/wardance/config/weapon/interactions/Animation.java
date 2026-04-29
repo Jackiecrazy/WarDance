@@ -15,11 +15,21 @@ public class Animation extends WeaponInteractions.WeaponInteraction {
             new MotionFrame(new Vec3(0, 0, 1), new Vec3(0, 0, 1.5)),
             new MotionFrame(new Vec3(0, 0, 1), new Vec3(0, 0, 1.5))
     );
+    private static final List<MotionFrame> STAB_BREACH = List.of(
+            new MotionFrame(new Vec3(0, 0, 1), new Vec3(0, 0, -0.5)),
+            new MotionFrame(new Vec3(0, 0, 1), new Vec3(0, 0, 1.5)),
+            new MotionFrame(new Vec3(0, 0, 1), new Vec3(0, 0, 1.5))
+    );
+    private static final List<MotionFrame> STAB_SHADOW = List.of(
+            new MotionFrame(new Vec3(0, 0, 1), new Vec3(0, 0, -0.5)),
+            new MotionFrame(new Vec3(0, 0, 1), new Vec3(0, 0, 1.5)),
+            new MotionFrame(new Vec3(0, 0, 1), new Vec3(0, 0, 1.5))
+    );
     public static final WeaponInteractions.InteractionGroup FLURRY_BREACH = new Animation().setAction(
-            new MotionManagers.DefinitionMM(new MotionGroup(STAB, EasingFunctionEnum.OUT_CUBIC, 3, new FrameEffects().setEffects(FlyingWeaponEffect.WEAPON, FlyingWeaponEffect.TRAIL, FlyingWeaponEffect.BIG_SHADOW).setHit(HitInfo.THROWN))),
-            new MotionManagers.DefinitionMM(new MotionGroup(STAB, EasingFunctionEnum.OUT_CUBIC, 3, new FrameEffects().setEffects(FlyingWeaponEffect.WEAPON, FlyingWeaponEffect.TRAIL, FlyingWeaponEffect.BIG_SHADOW).setHit(HitInfo.THROWN))),
-            new MotionManagers.DefinitionMM(new MotionGroup(STAB, EasingFunctionEnum.OUT_CUBIC, 3, new FrameEffects().setEffects(FlyingWeaponEffect.WEAPON, FlyingWeaponEffect.TRAIL, FlyingWeaponEffect.BIG_SHADOW).setHit(HitInfo.THROWN))),
-            new MotionManagers.DefinitionMM(new MotionGroup(STAB, EasingFunctionEnum.OUT_CUBIC, 10, new FrameEffects().setEffects(FlyingWeaponEffect.WEAPON, FlyingWeaponEffect.TRAIL, FlyingWeaponEffect.BIG_SHADOW).setHit(HitInfo.BREACH)))
+            new MotionManagers.DefinitionMM(new MotionGroup(STAB_SHADOW, EasingFunctionEnum.OUT_CUBIC, 3, new FrameEffects().setEffects(FlyingWeaponEffect.WEAPON, FlyingWeaponEffect.TRAIL, FlyingWeaponEffect.BIG_SHADOW).setHit(HitInfo.THROWN))),
+            new MotionManagers.DefinitionMM(new MotionGroup(STAB_SHADOW, EasingFunctionEnum.OUT_CUBIC, 3)),
+            new MotionManagers.DefinitionMM(new MotionGroup(STAB_SHADOW, EasingFunctionEnum.OUT_CUBIC, 3)),
+            new MotionManagers.DefinitionMM(new MotionGroup(STAB_BREACH, EasingFunctionEnum.OUT_CUBIC, 10, new FrameEffects().setEffects(FlyingWeaponEffect.WEAPON, FlyingWeaponEffect.TRAIL, FlyingWeaponEffect.BIG_SHADOW).copyWithHit(HitInfo.BREACH)))
     ).asGroup();
     public static final WeaponInteractions.InteractionGroup FLURRY = new Animation().setAction(
             new MotionManagers.DefinitionMM(new MotionGroup(STAB, EasingFunctionEnum.OUT_CUBIC, 3, new FrameEffects().setEffects(FlyingWeaponEffect.WEAPON, FlyingWeaponEffect.TRAIL).setHit(HitInfo.THROWN))),
