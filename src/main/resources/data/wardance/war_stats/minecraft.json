@@ -656,7 +656,7 @@
                             0
                           ],
                           "tag": [
-                            "oncePerSweep"
+                            "oncePerAttack"
                           ]
                         }
                       }
@@ -1788,7 +1788,7 @@
                       0
                     ],
                     "tag": [
-                      "oncePerSweep"
+                      "oncePerAttack"
                     ]
                   },
                   "damage_other": {
@@ -2078,7 +2078,7 @@
                       0
                     ],
                     "tag": [
-                      "oncePerSweep"
+                      "oncePerAttack"
                     ]
                   },
                   "damage_other": {

@@ -1,6 +1,6 @@
 package jackiecrazy.wardance.networking.meta;
 
-import jackiecrazy.wardance.capability.action.PermissionData;
+import jackiecrazy.wardance.capability.permission.PermissionData;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.nbt.CompoundTag;
@@ -27,9 +27,9 @@ public class UpdateClientPermissionPacket {
     public static class Encoder implements BiConsumer<UpdateClientPermissionPacket, FriendlyByteBuf> {
 
         @Override
-        public void accept(UpdateClientPermissionPacket updateClientPacket, FriendlyByteBuf packetBuffer) {
-            packetBuffer.writeInt(updateClientPacket.e);
-            packetBuffer.writeNbt(updateClientPacket.icc);
+        public void accept(UpdateClientPermissionPacket packet, FriendlyByteBuf packetBuffer) {
+            packetBuffer.writeInt(packet.e);
+            packetBuffer.writeNbt(packet.icc);
         }
     }
 
@@ -44,12 +44,12 @@ public class UpdateClientPermissionPacket {
     public static class Handler implements BiConsumer<UpdateClientPermissionPacket, Supplier<NetworkEvent.Context>> {
 
         @Override
-        public void accept(UpdateClientPermissionPacket updateClientPacket, Supplier<NetworkEvent.Context> contextSupplier) {
+        public void accept(UpdateClientPermissionPacket packet, Supplier<NetworkEvent.Context> contextSupplier) {
             contextSupplier.get().enqueueWork(() -> DistExecutor.unsafeRunWhenOn(Dist.CLIENT, () -> () -> {
                 ClientLevel world = Minecraft.getInstance().level;
                 if (world != null) {
-                    Entity entity = world.getEntity(updateClientPacket.e);
-                    if (entity instanceof Player p) PermissionData.getCap(p).read(updateClientPacket.icc);
+                    Entity entity = world.getEntity(packet.e);
+                    if (entity instanceof Player p) PermissionData.getCap(p).read(packet.icc);
                 }
             }));
             contextSupplier.get().setPacketHandled(true);

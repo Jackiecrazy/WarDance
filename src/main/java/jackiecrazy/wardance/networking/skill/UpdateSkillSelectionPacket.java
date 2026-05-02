@@ -1,6 +1,6 @@
 package jackiecrazy.wardance.networking.skill;
 
-import jackiecrazy.wardance.capability.action.PermissionData;
+import jackiecrazy.wardance.capability.permission.PermissionData;
 import jackiecrazy.wardance.capability.skill.CasterData;
 import jackiecrazy.wardance.capability.skill.ISkillCapability;
 import jackiecrazy.wardance.skill.Skill;

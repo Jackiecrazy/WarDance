@@ -2,9 +2,6 @@ package jackiecrazy.wardance.capability.aerial;
 
 import jackiecrazy.footwork.api.FootworkAttributes;
 import jackiecrazy.footwork.capability.stylish.StylishData;
-import jackiecrazy.wardance.config.QiCosts;
-import jackiecrazy.wardance.networking.CombatChannel;
-import jackiecrazy.wardance.networking.combat.UpdateAerialPacket;
 import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;

@@ -103,13 +103,13 @@
     },
     "standing": {
       "type": "animation",
+      "on_swing": {
+        "command": "/playsound minecraft:entity.player.attack.sweep player @s ~ ~ ~ 0.8 1.2 0"
+      },
       "animations": [
         {
           "duration": 5,
           "easing": "IN_OUT_SINE",
-          "on_swing": {
-            "command": "/playsound minecraft:entity.player.attack.sweep player @s ~ ~ ~ 0.8 1.2 0"
-          },
           "spin": [
             60,
             0,
@@ -619,7 +619,7 @@
                             0
                           ],
                           "tag": [
-                            "oncePerSweep"
+                            "oncePerAttack"
                           ]
                         }
                       }
@@ -1751,7 +1751,7 @@
                       0
                     ],
                     "tag": [
-                      "oncePerSweep"
+                      "oncePerAttack"
                     ]
                   },
                   "damage_other": {
@@ -2041,7 +2041,7 @@
                       0
                     ],
                     "tag": [
-                      "oncePerSweep"
+                      "oncePerAttack"
                     ]
                   },
                   "damage_other": {

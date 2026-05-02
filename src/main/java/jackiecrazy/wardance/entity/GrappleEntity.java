@@ -67,7 +67,7 @@ public class GrappleEntity extends FlyingItemEntity {
 
     @Override
     public void moveTargetTowards(Entity toBeMoved, Vec3 point, double force) {
-        super.moveTargetTowards(toBeMoved, point, force * 5.5);
+        super.moveTargetTowards(toBeMoved, point, 2);
     }
 
     @Override
@@ -144,6 +144,7 @@ public class GrappleEntity extends FlyingItemEntity {
             //become faster over time
             //addDeltaMovement(getDeltaMovement().normalize().scale(0.01));
         }
+        //if(level().isClientSide) updateTetheringVelocity();
         //server side velocity stuff
         if (!level().isClientSide && isAlive()) {
             //general sanity death checks

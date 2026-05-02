@@ -4,13 +4,12 @@ import jackiecrazy.footwork.capability.resources.CombatData;
 import jackiecrazy.footwork.client.particle.FootworkParticles;
 import jackiecrazy.footwork.entity.flyingweapon.FlyingItemEntity;
 import jackiecrazy.footwork.entity.flyingweapon.FlyingWeaponEffect;
-import jackiecrazy.footwork.move.motionframe.FrameEffects;
-import jackiecrazy.footwork.move.motionframe.HitInfo;
-import jackiecrazy.footwork.move.motionframe.MotionManager;
+import jackiecrazy.footwork.move.motionframe.*;
 import jackiecrazy.footwork.utils.GeneralUtils;
 import jackiecrazy.footwork.utils.MovementUtils;
 import jackiecrazy.footwork.utils.ParticleUtils;
 import jackiecrazy.footwork.utils.TargetingUtils;
+import jackiecrazy.wardance.api.IDrag;
 import jackiecrazy.wardance.capability.flyingweapon.FlyingWeaponData;
 import jackiecrazy.wardance.config.MobSpecs;
 import jackiecrazy.wardance.config.weapon.WeaponStats;
@@ -18,6 +17,10 @@ import jackiecrazy.wardance.utils.CombatUtils;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.network.syncher.EntityDataAccessor;
+import net.minecraft.network.syncher.EntityDataSerializers;
+import net.minecraft.network.syncher.SynchedEntityData;
+import net.minecraft.util.Mth;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
@@ -29,14 +32,23 @@ import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.HitResult;
 import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.common.ForgeMod;
+import org.jetbrains.annotations.NotNull;
+import org.joml.Vector3f;
+import org.joml.Vector4d;
 
 import javax.annotation.Nullable;
 import java.awt.*;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
-public class FlyingWeaponEntity extends FlyingItemEntity {
+public class FlyingWeaponEntity extends FlyingItemEntity implements IDrag {
+    protected static final EntityDataAccessor<Float> DRAG_STRENGTH = SynchedEntityData.defineId(FlyingWeaponEntity.class, EntityDataSerializers.FLOAT);
+    protected static final EntityDataAccessor<Integer> DRAG_TIME = SynchedEntityData.defineId(FlyingWeaponEntity.class, EntityDataSerializers.INT);
+    protected static final EntityDataAccessor<MotionManager> DRAG_POSE = SynchedEntityData.defineId(FlyingWeaponEntity.class, MotionManager.SERIALIZER);
+    protected static final EntityDataAccessor<Vector3f> DRAG_OFFSET = SynchedEntityData.defineId(FlyingWeaponEntity.class, EntityDataSerializers.VECTOR3);
     protected final List<Entity> alreadyHit = new ArrayList<>();
+    protected HashMap<Entity, Integer> dragging = new HashMap<>();
     protected HitInfo cacheInfo;
     protected WeaponStats.AttackType state;
     private boolean fading = false;
@@ -48,6 +60,15 @@ public class FlyingWeaponEntity extends FlyingItemEntity {
         setEffect(FlyingWeaponEffect.BIG_SHADOW, false);
         setInvulnerable(true);
         //wasIdle=false;
+    }
+
+    @Override
+    protected void defineSynchedData() {
+        super.defineSynchedData();
+        this.entityData.define(DRAG_STRENGTH, 3f);
+        this.entityData.define(DRAG_TIME, 0);
+        this.entityData.define(DRAG_OFFSET, new Vector3f(0, 0, 0));
+        this.entityData.define(DRAG_POSE, new MotionManagers.FixedMM(new MotionFrame(new Vec3(0, 0, 1), new Vec3(0, 0, 1)), 5));
     }
 
     @Nullable
@@ -96,6 +117,9 @@ public class FlyingWeaponEntity extends FlyingItemEntity {
     public void tick() {
         super.tick();
         if (!level().isClientSide && isAlive()) {
+            final int dragging = getEntityData().get(DRAG_TIME) - 1;
+            if (dragging < 0 && shouldDrag()) unDrag();
+            getEntityData().set(DRAG_TIME, dragging);
             if (isIdle()) {//tied to the owner
                 if (getOwner() == null || fading) remove(RemovalReason.UNLOADED_WITH_PLAYER);
                 if (this.getClass() == FlyingWeaponEntity.class && tickCount % 100 == 40) {
@@ -143,15 +167,15 @@ public class FlyingWeaponEntity extends FlyingItemEntity {
         targets = targets.stream().filter(tg -> tg != owner && !alreadyHit.contains(tg) && !TargetingUtils.isAlly(tg, owner) && !tg.getType().is(MobSpecs.IGNORED_BY_SWEEP) && !tg.isInvulnerable()).toList();
         LivingEntity e = getOwner();
         int ticks = e.attackStrengthTicker;
-        if(targets.isEmpty())return ret;
+        if (targets.isEmpty()) return ret;
         ItemStack main = e.getMainHandItem();
         try {
             CombatUtils.quickSwap(e, getHeldItem());
             WeaponStats.info_override = getInfo();
             for (Entity target : targets) {
                 e.attackStrengthTicker = 99999;
-                if (!alreadyHit.isEmpty()) CombatData.getCap(e).tickProc("oncePerSweep");
-                //CombatData.getCap(e).tickProc("qiSpent");
+                if (!alreadyHit.isEmpty()) CombatData.getCap(e).tickProc("oncePerAttack");
+                //CombatData.getCap(e).tickProc("oncePerAttack");
                 target.invulnerableTime = 0;
                 GeneralUtils.attack(e, target);
                 ret = true;
@@ -169,6 +193,7 @@ public class FlyingWeaponEntity extends FlyingItemEntity {
     }
 
     protected void extraOnHit(LivingEntity e, Entity target) {
+
     }
 
     @Override
@@ -191,7 +216,7 @@ public class FlyingWeaponEntity extends FlyingItemEntity {
 
     public void yeet(Vec3 to, double strength) {
         //needed because setting the held item resets the cosmetic item.
-        ItemStack temp=getCosmeticItem();
+        ItemStack temp = getCosmeticItem();
         setHeldItem(getHeldItem().copyWithCount(1));
         setCosmeticItem(temp);
         getEntityData().set(CURRENT_STATE, STATE.THROW_NATURAL);
@@ -209,8 +234,8 @@ public class FlyingWeaponEntity extends FlyingItemEntity {
     }
 
     @Override
-    public void updateTetheringVelocity() {
-        super.updateTetheringVelocity();
+    public @org.jetbrains.annotations.Nullable Entity getTetheredEntity() {
+        return getOwner();
     }
 
     @Override
@@ -227,6 +252,7 @@ public class FlyingWeaponEntity extends FlyingItemEntity {
     protected void returnToIdle(int ticks) {
         super.returnToIdle(ticks);
         setIntangible(true);//this is needed to prevent the weapon hitting stuff when idle
+        //unDrag();
     }
 
     @Override
@@ -242,6 +268,8 @@ public class FlyingWeaponEntity extends FlyingItemEntity {
                 CombatUtils.applyFrames(getOwner(), cacheInfo);
             if (effects.reset_hit())
                 alreadyHit.clear();
+            if (effects.shouldUndrag())
+                unDrag();
             LivingEntity e = getOwner();
             if (e != null)
                 effects.runEffects(e, e);
@@ -282,8 +310,78 @@ public class FlyingWeaponEntity extends FlyingItemEntity {
         return ret;
     }
 
-    //TODO add render for aiming
-    enum AIM {
-        IDLE, FLY
+    public void inheritDrag(FlyingWeaponEntity from) {
+        setTetheringEntity(from.getTetheringEntity());
+        alreadyHit.add(getTetheringEntity());
+        getEntityData().set(DRAG_TIME, from.getEntityData().get(DRAG_TIME));
+        getEntityData().set(DRAG_OFFSET, from.getEntityData().get(DRAG_OFFSET));
+        getEntityData().set(DRAG_POSE, from.getEntityData().get(DRAG_POSE));
+        getEntityData().set(DRAG_STRENGTH, from.getEntityData().get(DRAG_STRENGTH));
+        from.unDrag();
+    }
+
+    public void drag(Entity target, double strength, int duration) {
+        //okay but how do I mark a move as dragging? where should it be encoded?
+        if ((getTetheringEntity() == target&&shouldDrag()) || strength < 0) return;
+        setTetheringEntity(target);
+        getEntityData().set(DRAG_TIME, duration);
+        int snapTime = 5;
+        if (target instanceof LivingEntity e) {
+            double fighting = Mth.clamp(CombatData.getCap(e).getMaxPosture() / (CombatData.getCap(getOwner()).getMaxPosture() * strength), 1, 20);
+            fighting *= fighting;
+            snapTime = (int) (fighting * 6);
+            strength = 1 / fighting;
+        }
+        getEntityData().set(DRAG_STRENGTH, (float) strength);
+        getEntityData().set(DRAG_OFFSET, target.position().subtract(this.position()).multiply(0, 1, 0).toVector3f());
+        getEntityData().set(DRAG_POSE, new MotionManagers.FixedMM(new MotionFrame(new Vec3(0, 0, 1), new Vec3(0, 0, getInteractionRange())), snapTime));
+    }
+
+    @Override
+    public void updateTetheringVelocity() {
+        if (shouldDrag()) {
+            final Vec3 offset = new Vec3(getEntityData().get(DRAG_OFFSET));
+            final Vec3 targetPoint = position().add(offset);//todo getIdlePose().getStartFrame().resolveTargetOffset(getOwner(), dragging, 1);
+            //for (Entity theMob:dragging.keySet()) {
+            Entity theMob = getTetheringEntity();
+            moveTargetTowards(theMob, targetPoint, 10);
+//            if (!isIdle() && GeneralUtils.getDistSqCompensated(theMob, this) > 0)
+//                unDrag();
+            //}
+//            if(!isIdle()) {
+//                dragging.replaceAll((entity, value) -> value - 1);
+//                dragging.entrySet().removeIf(entry -> entry.getValue() < 0);
+//            }
+        }
+    }
+
+    @Override
+    public @NotNull Vec3 getTetheredOffset() {
+        return new Vec3(0, 0, 2);
+        //return getIdlePose().getStartFrame().resolveTargetOffset(getOwner(), new Vec3(getEntityData().get(DRAG_OFFSET)), getInteractionRange());
+    }
+
+    public void unDrag() {
+        getEntityData().set(DRAG_TIME, -1);
+        setTetheringEntity(null);
+        setIdlePose(getIdlePose());
+    }
+
+    @Override
+    public MotionManager getIdlePose() {
+        //to avoid actually deleting what it's supposed to be doing
+        if (shouldDrag()) return getEntityData().get(DRAG_POSE);
+        return super.getIdlePose();
+    }
+
+    @Override
+    public double getDragStrength() {
+        //return getEntityData().get(DRAG_STRENGTH);
+        return 10;
+    }
+
+    @Override
+    public int getDragDuration() {
+        return getEntityData().get(DRAG_TIME);
     }
 }

@@ -42,9 +42,8 @@ jump to leap off early, sneak to stop and cling (drains spirit?)
 near surface: hit a block with an exposed top face near head level to hang on for free. Hanging continues along the same y level along unbroken line of blocks (outcrops ok), sneak to drop, jump to mantle up
 roof cling: jump when within half a block of the ceiling to stick
      */
-    default boolean isAerialMode(){
-        return getEffectiveSpeed()<1;
-    }
+    boolean isAerialMode();
+    void setAerialMode(boolean toggle);
     void alterGravity(int ticks, double speed);
     void tick();
     void resetSpeed();

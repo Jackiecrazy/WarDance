@@ -23,9 +23,9 @@ public class UpdateAttackCooldownPacket {
     public static class Encoder implements BiConsumer<UpdateAttackCooldownPacket, FriendlyByteBuf> {
 
         @Override
-        public void accept(UpdateAttackCooldownPacket updateClientPacket, FriendlyByteBuf packetBuffer) {
-            packetBuffer.writeInt(updateClientPacket.e);
-            packetBuffer.writeInt(updateClientPacket.icc);
+        public void accept(UpdateAttackCooldownPacket packet, FriendlyByteBuf packetBuffer) {
+            packetBuffer.writeInt(packet.e);
+            packetBuffer.writeInt(packet.icc);
         }
     }
 
@@ -40,11 +40,11 @@ public class UpdateAttackCooldownPacket {
     public static class Handler implements BiConsumer<UpdateAttackCooldownPacket, Supplier<NetworkEvent.Context>> {
 
         @Override
-        public void accept(UpdateAttackCooldownPacket updateClientPacket, Supplier<NetworkEvent.Context> contextSupplier) {
+        public void accept(UpdateAttackCooldownPacket packet, Supplier<NetworkEvent.Context> contextSupplier) {
             contextSupplier.get().enqueueWork(() -> {
                 DistExecutor.unsafeRunWhenOn(Dist.CLIENT, () -> () -> {
-                    if (Minecraft.getInstance().level != null && Minecraft.getInstance().level.getEntity(updateClientPacket.e) instanceof LivingEntity e)
-                       e.attackStrengthTicker = updateClientPacket.icc;
+                    if (Minecraft.getInstance().level != null && Minecraft.getInstance().level.getEntity(packet.e) instanceof LivingEntity e)
+                       e.attackStrengthTicker = packet.icc;
                 });
             });
             contextSupplier.get().setPacketHandled(true);

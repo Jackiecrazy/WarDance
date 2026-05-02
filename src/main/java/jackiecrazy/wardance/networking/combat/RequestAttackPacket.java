@@ -33,9 +33,9 @@ public class RequestAttackPacket {
     public static class Encoder implements BiConsumer<RequestAttackPacket, FriendlyByteBuf> {
 
         @Override
-        public void accept(RequestAttackPacket updateClientPacket, FriendlyByteBuf packetBuffer) {
-            packetBuffer.writeBoolean(updateClientPacket.main);
-            packetBuffer.writeInt(updateClientPacket.id);
+        public void accept(RequestAttackPacket packet, FriendlyByteBuf packetBuffer) {
+            packetBuffer.writeBoolean(packet.main);
+            packetBuffer.writeInt(packet.id);
         }
     }
 
@@ -50,15 +50,15 @@ public class RequestAttackPacket {
     public static class Handler implements BiConsumer<RequestAttackPacket, Supplier<NetworkEvent.Context>> {
 
         @Override
-        public void accept(RequestAttackPacket updateClientPacket, Supplier<NetworkEvent.Context> contextSupplier) {
+        public void accept(RequestAttackPacket packet, Supplier<NetworkEvent.Context> contextSupplier) {
             contextSupplier.get().enqueueWork(() -> {
                 ServerPlayer sender = contextSupplier.get().getSender();
                 if (sender != null) {
-                    Entity e = sender.level().getEntity(updateClientPacket.id);
-                    if (e != null && (GeneralConfig.dual || updateClientPacket.main)) {
+                    Entity e = sender.level().getEntity(packet.id);
+                    if (e != null && (GeneralConfig.dual || packet.main)) {
                         final double reach = GeneralUtils.getAttributeValueSafe(sender, ForgeMod.ENTITY_REACH.get());
                         if (GeneralUtils.getDistSqCompensated(sender, e) < reach * reach) {
-                            if (!updateClientPacket.main) {
+                            if (!packet.main) {
                                 if (CombatData.getCap(sender).getHandBind(InteractionHand.OFF_HAND) > 0)//no go
                                     return;
                                 CombatUtils.swapHeldItems(sender);
@@ -70,7 +70,7 @@ public class RequestAttackPacket {
                                 sender.attack(e);
                                 sender.attackStrengthTicker = temp;
                             }
-                            if (!updateClientPacket.main) {
+                            if (!packet.main) {
                                 CombatUtils.swapHeldItems(sender);
                                 CombatData.getCap(sender).setOffhandAttack(false);
                             }

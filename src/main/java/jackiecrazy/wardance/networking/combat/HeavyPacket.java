@@ -53,9 +53,9 @@ public class HeavyPacket {
     public static class Encoder implements BiConsumer<HeavyPacket, FriendlyByteBuf> {
 
         @Override
-        public void accept(HeavyPacket updateClientPacket, FriendlyByteBuf packetBuffer) {
-            packetBuffer.writeBoolean(updateClientPacket.main);
-            packetBuffer.writeInt(updateClientPacket.state.ordinal());
+        public void accept(HeavyPacket packet, FriendlyByteBuf packetBuffer) {
+            packetBuffer.writeBoolean(packet.main);
+            packetBuffer.writeInt(packet.state.ordinal());
         }
     }
 
@@ -70,12 +70,12 @@ public class HeavyPacket {
     public static class Handler implements BiConsumer<HeavyPacket, Supplier<NetworkEvent.Context>> {
 
         @Override
-        public void accept(HeavyPacket updateClientPacket, Supplier<NetworkEvent.Context> contextSupplier) {
+        public void accept(HeavyPacket packet, Supplier<NetworkEvent.Context> contextSupplier) {
             contextSupplier.get().enqueueWork(() -> {
                 ServerPlayer sender = contextSupplier.get().getSender();
-                InteractionHand h = updateClientPacket.main ? InteractionHand.MAIN_HAND : InteractionHand.OFF_HAND;
+                InteractionHand h = packet.main ? InteractionHand.MAIN_HAND : InteractionHand.OFF_HAND;
                 if (sender == null) return;
-                CombatUtils.setAttackType(sender, updateClientPacket.state);
+                CombatUtils.setAttackType(sender, packet.state);
                 CombatUtils.processWeaponInteraction(sender, null, h, sender.getAttributeValue(ForgeMod.ENTITY_REACH.get()));
                 //CombatUtils.scheduleFinisher(sender, h, WeaponStats.AttackType.STANDING);
             });

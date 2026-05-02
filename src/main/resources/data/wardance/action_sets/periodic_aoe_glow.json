@@ -1,0 +1,29 @@
+{
+  "ID": "project_hitbox",
+  "max_time": 600,
+  "hit_cooldown": 20,
+  "selector": {
+    "ID": "selector",
+    "position": {
+      "ID": "foot_position",
+      "reference_point": "target"
+    },
+    "range": 5
+  },
+  "actions": [
+    {
+      "ID": "add_effect",
+      "effect": "minecraft:glowing",
+      "potency": 0,
+      "duration": 30,
+      "repeatable": true
+    },
+    {
+      "ID": "add_effect",
+      "effect": "minecraft:slowness",
+      "potency": 0,
+      "duration": 30,
+      "repeatable": true
+    }
+  ]
+}

@@ -535,8 +535,14 @@
             "consume_item": false,
             "display_stack": {
               "ID": "itemstack",
-              "item": "minecraft:sweet_berry"
-            }
+              "item": "minecraft:glow_berries"
+            },
+            "on_impact":[
+              {
+                "ID": "attach_action",
+                "effect": "wardance:periodic_aoe_glow"
+              }
+            ]
           }
         }
       ]
@@ -547,9 +553,6 @@
         {
           "duration": 6,
           "easing": "IN_OUT_SINE",
-          "on_swing": {
-            "command": "/playsound minecraft:entity.player.attack.sweep player @s ~ ~ ~ 0.8 1.2 0"
-          },
           "frames": [
             {
               "direction": [

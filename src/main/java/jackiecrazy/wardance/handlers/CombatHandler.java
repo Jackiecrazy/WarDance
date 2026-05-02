@@ -6,16 +6,17 @@ import jackiecrazy.footwork.capability.resources.ICombatCapability;
 import jackiecrazy.footwork.capability.stylish.StylishData;
 import jackiecrazy.footwork.capability.timeslow.TimeSlowData;
 import jackiecrazy.footwork.capability.weaponry.CombatManipulator;
-import jackiecrazy.footwork.event.DamageKnockbackEvent;
 import jackiecrazy.footwork.event.MeleeKnockbackEvent;
 import jackiecrazy.footwork.move.motionframe.HitInfo;
 import jackiecrazy.footwork.utils.GeneralUtils;
 import jackiecrazy.footwork.utils.StealthUtils;
 import jackiecrazy.wardance.WarDance;
-import jackiecrazy.wardance.capability.action.PermissionData;
+import jackiecrazy.wardance.capability.flyingweapon.FlyingWeaponData;
+import jackiecrazy.wardance.capability.permission.PermissionData;
 import jackiecrazy.wardance.capability.stylish.StylishCapability;
 import jackiecrazy.wardance.config.*;
 import jackiecrazy.wardance.config.weapon.WeaponStats;
+import jackiecrazy.wardance.entity.FlyingWeaponEntity;
 import jackiecrazy.wardance.event.MeleePostureEvent;
 import jackiecrazy.wardance.event.ProjectileDefendEvent;
 import jackiecrazy.wardance.mixin.ProjectileImpactMixin;
@@ -335,7 +336,7 @@ public class CombatHandler {
                     canBreach |= sweepInfo.canBreach();
 
                     //add stats if it's the first attack this tick and cooldown is sufficient
-                    if (!semeCap.alreadyProc("qiSpent")) {//first hit of a sweep attack this tick, add combo based on state
+                    if (!semeCap.alreadyProc("oncePerAttack")) {//first hit of a sweep attack this tick, add combo based on state
                         //semeCap.addRank(0.1f);
                         float spiritAdded = (float) (atkMult * sweepInfo.spirit_multiplier());
                         if (spiritAdded != 0) {
@@ -350,16 +351,16 @@ public class CombatHandler {
 //                            CombatUtils.triggerSteveTime(seme, (int) (TimeSlowData.getCap(uke).getTimeRemaining() * 1.5));
 //                            //return;
 //                        }
-                        semeCap.tickProc("qiSpent");
+                        semeCap.tickProc("oncePerAttack");
                     }
                 } else {
                     //handle stamina consumption on everything else
-                    if (!semeCap.alreadyProc("qiSpent")) {//first hit of a multihit attack this tick, add combo based on state
+                    if (!semeCap.alreadyProc("oncePerAttack")) {//first hit of a multihit attack this tick, add combo based on state
                         double percRed = semeCap.doConsumeSpirit(atkMult) / atkMult;
                         semeCap.tickProc(SPIRITKB, percRed);
                         StylishData.getCap(seme).processAttack(false);
                         StylishData.getCap(seme).addCombo(0.1f, e.getSource().getMsgId());
-                        semeCap.tickProc("qiSpent");
+                        semeCap.tickProc("oncePerAttack");
 //                        if (!(uke instanceof Player) && TimeSlowData.getCap(uke).getEffectiveSpeed() < 1) {
 //                            CombatUtils.triggerSteveTime(seme, (int) (TimeSlowData.getCap(uke).getTimeRemaining() * 1.5));
 //                            //return;
@@ -602,6 +603,7 @@ public class CombatHandler {
             return;
         }
         final ICombatCapability cap = CombatData.getCap(uke);
+        cap.tickProc("hurt");
 
         //provisional. Adds posture damage to the player for eating a projectile because it was not handled before.
         //Simple formula. Less than 10% health per hit=1 posture, 30%=3, any more = 7. Cannot stun.
@@ -644,6 +646,10 @@ public class CombatHandler {
             final HitInfo sweepInfo = WeaponStats.getHitInfo(trueSource.getMainHandItem(), trueSource, CombatUtils.getAttackState(trueSource));
             sweepInfo.runEffects(trueSource, trueSource, true, true);
             sweepInfo.runEffects(trueSource, uke, false, true);
+            if(sweepInfo.getDrag()!=null){
+                FlyingWeaponEntity fwe = FlyingWeaponData.getCap(trueSource).getWeapon(InteractionHand.MAIN_HAND);
+                if(fwe!=null)fwe.drag(uke, sweepInfo.getDrag().strength(), sweepInfo.getDrag().duration());
+            }
             double luckDiff = WarDance.rand.nextFloat() * (GeneralUtils.getAttributeValueSafe(trueSource, Attributes.LUCK)) - WarDance.rand.nextFloat() * (GeneralUtils.getAttributeValueSafe(uke, Attributes.LUCK));
             e.setAmount(e.getAmount() + (float) luckDiff * GeneralConfig.luck);
 
@@ -652,11 +658,11 @@ public class CombatHandler {
             }
 
             //consume stamina if we didn't do it yet, somehow
-            if (!CombatData.getCap(trueSource).alreadyProc("qiSpent")) {
+            if (!CombatData.getCap(trueSource).alreadyProc("oncePerAttack")) {
                 final float exhausted = CombatData.getCap(trueSource).doConsumeSpirit((float) (e.getAmount() * sweepInfo.spirit_multiplier()));
                 cap.recordDamage(exhausted);
                 e.setAmount(e.getAmount() - exhausted);
-                CombatData.getCap(trueSource).tickProc("qiSpent");
+                CombatData.getCap(trueSource).tickProc("oncePerAttack");
             } else if (CombatData.getCap(trueSource).alreadyProc(SPIRITKB)) {
                 //overcommitment penalty
                 e.setAmount(e.getAmount() / 2);
@@ -748,6 +754,7 @@ public class CombatHandler {
         if (GeneralConfig.debug && !e.getEntity().level().isClientSide)
             WarDance.LOGGER.debug("damage from " + e.getSource() + " recalculated to " + e.getAmount());
         final LivingEntity uke = e.getEntity();
+        CombatData.getCap(uke).tickProc("hurt");
         //no food!
         ItemStack active = uke.getItemInHand(uke.getUsedItemHand());
         if (DamageUtils.isPhysicalAttack(e.getSource()) && CombatConfig.foodCool >= 0 && (active.getUseAnimation() == UseAnim.EAT || active.getItem().getUseAnimation(active) == UseAnim.DRINK) && uke.isUsingItem()) {

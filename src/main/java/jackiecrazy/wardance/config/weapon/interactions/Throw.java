@@ -30,6 +30,7 @@ public class Throw extends WeaponInteractions.WeaponInteraction {
     private int auto_recall_cooldown = -1;
     private double throw_speed = 2;
     private boolean consume_item = true;
+    private boolean pickup_flourish = true;
     private Argument<ItemStack> display_stack;
     private List<Action> on_impact = List.of();
 
@@ -168,5 +169,6 @@ public class Throw extends WeaponInteractions.WeaponInteraction {
         e.setImpactActions(on_impact);
         applyCosmeticStack(e, new ArgumentContext(e.getOwner(), null));
         e.setFake(!consume_item);
+        e.setFlourish(pickup_flourish);
     }
 }

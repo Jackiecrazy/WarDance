@@ -1,4 +1,4 @@
-package jackiecrazy.wardance.capability.action;
+package jackiecrazy.wardance.capability.permission;
 
 import jackiecrazy.wardance.networking.CombatChannel;
 import jackiecrazy.wardance.networking.meta.UpdateClientPermissionPacket;
@@ -7,7 +7,7 @@ import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.player.Player;
 import net.minecraftforge.network.PacketDistributor;
 
-public class AmoPermissions implements IAction {
+public class AmoPermissions implements IPermission {
 
     Player boundTo;
 

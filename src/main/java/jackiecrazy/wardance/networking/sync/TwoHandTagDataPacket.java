@@ -60,12 +60,12 @@ public class TwoHandTagDataPacket {
     public static class Handler implements BiConsumer<TwoHandTagDataPacket, Supplier<NetworkEvent.Context>> {
 
         @Override
-        public void accept(TwoHandTagDataPacket updateClientPacket, Supplier<NetworkEvent.Context> contextSupplier) {
+        public void accept(TwoHandTagDataPacket packet, Supplier<NetworkEvent.Context> contextSupplier) {
 
             //prevent client overriding server
             if (contextSupplier.get().getDirection() == NetworkDirection.PLAY_TO_CLIENT)
                 contextSupplier.get().enqueueWork(() -> {
-                    TwohandingStats.clientTagOverride(updateClientPacket.map);
+                    TwohandingStats.clientTagOverride(packet.map);
                 });
             contextSupplier.get().setPacketHandled(true);
         }

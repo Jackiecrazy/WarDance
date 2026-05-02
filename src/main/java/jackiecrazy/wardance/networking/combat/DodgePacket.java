@@ -19,8 +19,8 @@ public class DodgePacket {
     public static class Encoder implements BiConsumer<DodgePacket, FriendlyByteBuf> {
 
         @Override
-        public void accept(DodgePacket updateClientPacket, FriendlyByteBuf packetBuffer) {
-            packetBuffer.writeInt(updateClientPacket.direction);
+        public void accept(DodgePacket packet, FriendlyByteBuf packetBuffer) {
+            packetBuffer.writeInt(packet.direction);
         }
     }
 
@@ -35,9 +35,9 @@ public class DodgePacket {
     public static class Handler implements BiConsumer<DodgePacket, Supplier<NetworkEvent.Context>> {
 
         @Override
-        public void accept(DodgePacket updateClientPacket, Supplier<NetworkEvent.Context> contextSupplier) {
+        public void accept(DodgePacket packet, Supplier<NetworkEvent.Context> contextSupplier) {
             contextSupplier.get().enqueueWork(() -> {
-                MobilityUtils.attemptDodge(Objects.requireNonNull(contextSupplier.get().getSender()), updateClientPacket.direction);
+                MobilityUtils.attemptDodge(Objects.requireNonNull(contextSupplier.get().getSender()), packet.direction);
             });
             contextSupplier.get().setPacketHandled(true);
         }

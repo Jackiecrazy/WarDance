@@ -1,4 +1,4 @@
-package jackiecrazy.wardance.capability.action;
+package jackiecrazy.wardance.capability.permission;
 
 import net.minecraft.core.Direction;
 import net.minecraft.nbt.CompoundTag;
@@ -14,10 +14,10 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 public class PermissionData implements ICapabilitySerializable<CompoundTag> {
-    public static Capability<IAction> CAP = CapabilityManager.get(new CapabilityToken<>() {
+    public static Capability<IPermission> CAP = CapabilityManager.get(new CapabilityToken<>() {
     });
-    private static IAction OHNO = new AmoPermissions();
-    protected final IAction instance;
+    private static IPermission OHNO = new AmoPermissions();
+    protected final IPermission instance;
     public PermissionData() {
         instance = new AmoPermissions();
     }
@@ -25,7 +25,7 @@ public class PermissionData implements ICapabilitySerializable<CompoundTag> {
         instance = new AmoPermissions(sp);
     }
 
-    public static IAction getCap(LivingEntity le) {
+    public static IPermission getCap(LivingEntity le) {
         if (le == null) return OHNO;
         return le.getCapability(CAP).orElse(OHNO);//.orElseThrow(() -> new IllegalArgumentException("attempted to find a nonexistent capability"));
     }

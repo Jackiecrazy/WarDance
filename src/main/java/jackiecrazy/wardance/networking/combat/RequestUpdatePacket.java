@@ -22,8 +22,8 @@ public class RequestUpdatePacket {
     public static class Encoder implements BiConsumer<RequestUpdatePacket, FriendlyByteBuf> {
 
         @Override
-        public void accept(RequestUpdatePacket updateClientPacket, FriendlyByteBuf packetBuffer) {
-            packetBuffer.writeInt(updateClientPacket.e);
+        public void accept(RequestUpdatePacket packet, FriendlyByteBuf packetBuffer) {
+            packetBuffer.writeInt(packet.e);
         }
     }
 
@@ -38,10 +38,10 @@ public class RequestUpdatePacket {
     public static class Handler implements BiConsumer<RequestUpdatePacket, Supplier<NetworkEvent.Context>> {
 
         @Override
-        public void accept(RequestUpdatePacket updateClientPacket, Supplier<NetworkEvent.Context> contextSupplier) {
+        public void accept(RequestUpdatePacket packet, Supplier<NetworkEvent.Context> contextSupplier) {
             contextSupplier.get().enqueueWork(() -> {
                 ServerPlayer sender = contextSupplier.get().getSender();
-                if (sender != null && sender.level().getEntity(updateClientPacket.e) instanceof LivingEntity entity) {
+                if (sender != null && sender.level().getEntity(packet.e) instanceof LivingEntity entity) {
                     EntityHandler.mustUpdate.put(sender, entity);
                     CombatData.getCap(entity).serverTick();
                     Marks.getCap(entity).sync();

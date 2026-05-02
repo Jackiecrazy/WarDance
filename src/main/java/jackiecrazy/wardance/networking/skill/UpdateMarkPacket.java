@@ -27,9 +27,9 @@ public class UpdateMarkPacket {
     public static class Encoder implements BiConsumer<UpdateMarkPacket, FriendlyByteBuf> {
 
         @Override
-        public void accept(UpdateMarkPacket updateClientPacket, FriendlyByteBuf packetBuffer) {
-            packetBuffer.writeInt(updateClientPacket.e);
-            packetBuffer.writeNbt(updateClientPacket.icc);
+        public void accept(UpdateMarkPacket packet, FriendlyByteBuf packetBuffer) {
+            packetBuffer.writeInt(packet.e);
+            packetBuffer.writeNbt(packet.icc);
         }
     }
 
@@ -44,13 +44,13 @@ public class UpdateMarkPacket {
     public static class Handler implements BiConsumer<UpdateMarkPacket, Supplier<NetworkEvent.Context>> {
 
         @Override
-        public void accept(UpdateMarkPacket updateClientPacket, Supplier<NetworkEvent.Context> contextSupplier) {
+        public void accept(UpdateMarkPacket packet, Supplier<NetworkEvent.Context> contextSupplier) {
             contextSupplier.get().enqueueWork(() -> DistExecutor.unsafeRunWhenOn(Dist.CLIENT, () -> () -> {
                 ClientLevel world = Minecraft.getInstance().level;
                 if (world != null) {
-                    Entity entity = world.getEntity(updateClientPacket.e);
+                    Entity entity = world.getEntity(packet.e);
                     if (entity instanceof LivingEntity){
-                        Marks.getCap((LivingEntity) entity).read(updateClientPacket.icc);
+                        Marks.getCap((LivingEntity) entity).read(packet.icc);
                     }
                 }
             }));

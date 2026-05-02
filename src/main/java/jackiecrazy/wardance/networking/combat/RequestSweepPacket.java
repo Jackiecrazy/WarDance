@@ -33,9 +33,9 @@ public class RequestSweepPacket {
     public static class Encoder implements BiConsumer<RequestSweepPacket, FriendlyByteBuf> {
 
         @Override
-        public void accept(RequestSweepPacket updateClientPacket, FriendlyByteBuf packetBuffer) {
-            packetBuffer.writeBoolean(updateClientPacket.main);
-            packetBuffer.writeInt(updateClientPacket.id);
+        public void accept(RequestSweepPacket packet, FriendlyByteBuf packetBuffer) {
+            packetBuffer.writeBoolean(packet.main);
+            packetBuffer.writeInt(packet.id);
         }
     }
 
@@ -50,15 +50,15 @@ public class RequestSweepPacket {
     public static class Handler implements BiConsumer<RequestSweepPacket, Supplier<NetworkEvent.Context>> {
 
         @Override
-        public void accept(RequestSweepPacket updateClientPacket, Supplier<NetworkEvent.Context> contextSupplier) {
+        public void accept(RequestSweepPacket packet, Supplier<NetworkEvent.Context> contextSupplier) {
             contextSupplier.get().enqueueWork(() -> {
                 ServerPlayer sender = contextSupplier.get().getSender();
-                InteractionHand h = updateClientPacket.main ? InteractionHand.MAIN_HAND : InteractionHand.OFF_HAND;
+                InteractionHand h = packet.main ? InteractionHand.MAIN_HAND : InteractionHand.OFF_HAND;
                 if (sender == null) return;
                 float cool = CombatUtils.getCooledAttackStrength(sender, h, 1f);
-                if ((GeneralConfig.dual || updateClientPacket.main)) {
+                if ((GeneralConfig.dual || packet.main)) {
                         CombatUtils.updateNormalAttackStatus(sender);
-                        CombatUtils.processWeaponInteraction(sender, sender.level().getEntity(updateClientPacket.id), h, GeneralUtils.getAttributeValueSafe(sender, ForgeMod.ENTITY_REACH.get()));
+                        CombatUtils.processWeaponInteraction(sender, sender.level().getEntity(packet.id), h, GeneralUtils.getAttributeValueSafe(sender, ForgeMod.ENTITY_REACH.get()));
                 }
             });
             contextSupplier.get().setPacketHandled(true);

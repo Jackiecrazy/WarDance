@@ -62,13 +62,13 @@
     },
     "aerial": {
       "type": "animation",
+      "on_swing": {
+        "command": "/playsound minecraft:entity.player.attack.sweep player @s ~ ~ ~ 0.8 1.2 0"
+      },
       "animations": [
         {
           "duration": 6,
           "easing": "IN_OUT_SINE",
-          "on_swing": {
-            "command": "/playsound minecraft:entity.player.attack.sweep player @s ~ ~ ~ 0.8 1.2 0"
-          },
           "frames": [
             {
               "direction": [0, -1, 1],
@@ -93,13 +93,13 @@
     },
     "guard_counter": {
       "type": "animation",
+      "on_swing": {
+        "command": "/playsound minecraft:entity.player.attack.sweep player @s ~ ~ ~ 0.8 1.2 0"
+      },
       "animations": [
         {
           "duration": 5,
           "easing": "IN_OUT_SINE",
-          "on_swing": {
-            "command": "/playsound minecraft:entity.player.attack.sweep player @s ~ ~ ~ 0.8 1.2 0"
-          },
           "frames": [
             {
               "direction": [1, 1, 1],
@@ -119,9 +119,6 @@
         }, {
           "duration": 5,
           "easing": "IN_OUT_SINE",
-          "on_swing": {
-            "command": "/playsound minecraft:entity.player.attack.sweep player @s ~ ~ ~ 0.8 1.2 0"
-          },
           "frames": [
             {
               "direction": [-1, 1, 1],
@@ -131,7 +128,8 @@
                   "knockback": 0,
                   "crit": true,
                   "crit_damage": 1
-                }
+                },
+                "command": "/playsound minecraft:entity.player.attack.sweep player @s ~ ~ ~ 0.8 1.2 0"
               }
             }, {
               "direction": [1, -1, 1],
@@ -200,9 +198,6 @@
               }, {
                 "duration": 7,
                 "easing": "IN_OUT_SINE",
-                "on_swing": {
-                  "command": "/playsound minecraft:entity.player.attack.sweep player @s ~ ~ ~ 0.8 1.2 0"
-                },
                 "frames": [
                   {
                     "direction": [1, 0, 0.4],
@@ -217,7 +212,8 @@
                       },
                       "effects": [
                         "WEAPON", "BIG_SHADOW"
-                      ]
+                      ],
+                      "command": "/playsound minecraft:entity.player.attack.sweep player @s ~ ~ ~ 0.8 1.2 0"
                     }
                   }, {
                     "direction": [0, 0, 1],
@@ -304,20 +300,20 @@
     "pickup_flourish": {
       "sweep": "CIRCLE",
       "knockback": 1.5,
-      "sweep_base": 2.0,
+      "sweep_base": 4.0,
       "crit": true
     },
     "draw_attack": {
       "type": "animation",
       "minimum_cooldown": 0,
       "cooldown_refund": 1,
+      "on_swing": {
+        "command": "/playsound minecraft:entity.player.attack.sweep player @s ~ ~ ~ 0.8 1.2 0"
+      },
       "animations": [
         {
           "duration": 4,
           "easing": "IN_CUBIC",
-          "on_swing": {
-            "command": "/playsound minecraft:entity.player.attack.sweep player @s ~ ~ ~ 0.8 1.2 0"
-          },
           "frames": [
             {
               "direction": [1, 0, 0.4],

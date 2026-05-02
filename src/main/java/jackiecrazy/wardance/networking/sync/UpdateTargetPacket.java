@@ -25,9 +25,9 @@ public class UpdateTargetPacket {
     public static class Encoder implements BiConsumer<UpdateTargetPacket, FriendlyByteBuf> {
 
         @Override
-        public void accept(UpdateTargetPacket updateClientPacket, FriendlyByteBuf packetBuffer) {
-            packetBuffer.writeInt(updateClientPacket.m);
-            packetBuffer.writeInt(updateClientPacket.t);
+        public void accept(UpdateTargetPacket packet, FriendlyByteBuf packetBuffer) {
+            packetBuffer.writeInt(packet.m);
+            packetBuffer.writeInt(packet.t);
         }
     }
 
@@ -42,16 +42,16 @@ public class UpdateTargetPacket {
     public static class Handler implements BiConsumer<UpdateTargetPacket, Supplier<NetworkEvent.Context>> {
 
         @Override
-        public void accept(UpdateTargetPacket updateClientPacket, Supplier<NetworkEvent.Context> contextSupplier) {
+        public void accept(UpdateTargetPacket packet, Supplier<NetworkEvent.Context> contextSupplier) {
             contextSupplier.get().enqueueWork(() -> DistExecutor.unsafeRunWhenOn(Dist.CLIENT, () -> () -> {
                 ClientLevel world = Minecraft.getInstance().level;
                 if (world != null) {
-                    Entity mob = world.getEntity(updateClientPacket.m);
-                    Entity target = world.getEntity(updateClientPacket.t);
+                    Entity mob = world.getEntity(packet.m);
+                    Entity target = world.getEntity(packet.t);
                     if (mob instanceof Mob) {
                         if (target instanceof LivingEntity)
                             ((Mob) mob).setTarget((LivingEntity) target);
-                        else if(updateClientPacket.t==-1)
+                        else if(packet.t==-1)
                             ((Mob) mob).setTarget(null);
                     }
                 }

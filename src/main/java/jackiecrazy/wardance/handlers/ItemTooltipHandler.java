@@ -2,7 +2,7 @@ package jackiecrazy.wardance.handlers;
 
 import jackiecrazy.footwork.capability.stylish.StylishData;
 import jackiecrazy.wardance.WarDance;
-import jackiecrazy.wardance.capability.action.PermissionData;
+import jackiecrazy.wardance.capability.permission.PermissionData;
 import jackiecrazy.wardance.config.weapon.WeaponStats;
 import jackiecrazy.wardance.utils.CombatUtils;
 import net.minecraft.ChatFormatting;

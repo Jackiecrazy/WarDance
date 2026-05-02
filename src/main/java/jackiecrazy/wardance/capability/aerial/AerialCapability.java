@@ -1,13 +1,9 @@
 package jackiecrazy.wardance.capability.aerial;
 
-import jackiecrazy.wardance.config.QiCosts;
 import jackiecrazy.wardance.networking.CombatChannel;
-import jackiecrazy.wardance.networking.combat.ResetAirJumpPacket;
-import jackiecrazy.wardance.networking.combat.UpdateAerialPacket;
 import jackiecrazy.wardance.networking.sync.UpdateAirPacket;
 import jackiecrazy.wardance.utils.SkillUtils;
 import net.minecraft.core.Direction;
-import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.util.Tuple;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
@@ -28,6 +24,7 @@ public class AerialCapability implements IAerialMode {
     private int off;
     private WallState state = WallState.NONE;
     private Direction direction = Direction.DOWN;
+    private boolean aerial=false;
 
     public AerialCapability() {
     }
@@ -55,6 +52,17 @@ public class AerialCapability implements IAerialMode {
                 CombatChannel.INSTANCE.send(PacketDistributor.TRACKING_ENTITY.with(() -> bound), new UpdateAirPacket(bound.getId(), spd, longest));
         }
 
+    }
+
+    @Override
+    public boolean isAerialMode() {
+        return aerial;
+    }
+
+    @Override
+    public void setAerialMode(boolean toggle) {
+        //todo save
+        aerial=toggle;
     }
 
     @Override
@@ -108,7 +116,7 @@ public class AerialCapability implements IAerialMode {
             if (state == WallState.NONE) {
                 //temporarily stick on the surface
                 noOffFor(10);
-                //CombatChannel.INSTANCE.sendToServer(new UpdateAerialPacket(state));
+                //CombatChannel.INSTANCE.sendToServer(new UpdateWallPacket(state));
             }else noOffFor(0);
         }
         return true;

@@ -17,7 +17,7 @@ public class CombatModePacket {
     public static class Encoder implements BiConsumer<CombatModePacket, FriendlyByteBuf> {
 
         @Override
-        public void accept(CombatModePacket updateClientPacket, FriendlyByteBuf packetBuffer) {
+        public void accept(CombatModePacket packet, FriendlyByteBuf packetBuffer) {
         }
     }
 
@@ -33,7 +33,7 @@ public class CombatModePacket {
     Handler implements BiConsumer<CombatModePacket, Supplier<NetworkEvent.Context>> {
 
         @Override
-        public void accept(CombatModePacket updateClientPacket, Supplier<NetworkEvent.Context> contextSupplier) {
+        public void accept(CombatModePacket packet, Supplier<NetworkEvent.Context> contextSupplier) {
             contextSupplier.get().enqueueWork(() -> {
                 IStyleCapability cap = StylishData.getCap(Objects.requireNonNull(contextSupplier.get().getSender()));
                 cap.toggleCombatMode(!cap.isCombatMode());

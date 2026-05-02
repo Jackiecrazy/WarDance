@@ -11,33 +11,33 @@ import java.util.function.BiConsumer;
 import java.util.function.Function;
 import java.util.function.Supplier;
 
-public class UpdateAerialPacket {
+public class UpdateWallPacket {
     IAerialMode.WallState st;
 
-    public UpdateAerialPacket(IAerialMode.WallState state) {
+    public UpdateWallPacket(IAerialMode.WallState state) {
         st=state;
     }
 
-    public static class Encoder implements BiConsumer<UpdateAerialPacket, FriendlyByteBuf> {
+    public static class Encoder implements BiConsumer<UpdateWallPacket, FriendlyByteBuf> {
 
         @Override
-        public void accept(UpdateAerialPacket packet, FriendlyByteBuf packetBuffer) {
+        public void accept(UpdateWallPacket packet, FriendlyByteBuf packetBuffer) {
             packetBuffer.writeInt(packet.st.ordinal());
         }
     }
 
-    public static class Decoder implements Function<FriendlyByteBuf, UpdateAerialPacket> {
+    public static class Decoder implements Function<FriendlyByteBuf, UpdateWallPacket> {
 
         @Override
-        public UpdateAerialPacket apply(FriendlyByteBuf packetBuffer) {
-            return new UpdateAerialPacket(IAerialMode.WallState.values()[packetBuffer.readInt()]);
+        public UpdateWallPacket apply(FriendlyByteBuf packetBuffer) {
+            return new UpdateWallPacket(IAerialMode.WallState.values()[packetBuffer.readInt()]);
         }
     }
 
-    public static class Handler implements BiConsumer<UpdateAerialPacket, Supplier<NetworkEvent.Context>> {
+    public static class Handler implements BiConsumer<UpdateWallPacket, Supplier<NetworkEvent.Context>> {
 
         @Override
-        public void accept(UpdateAerialPacket packet, Supplier<NetworkEvent.Context> contextSupplier) {
+        public void accept(UpdateWallPacket packet, Supplier<NetworkEvent.Context> contextSupplier) {
             contextSupplier.get().enqueueWork(() -> {
                 ServerPlayer sender = contextSupplier.get().getSender();
                 if (sender == null) return;

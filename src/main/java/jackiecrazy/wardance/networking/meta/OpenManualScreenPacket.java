@@ -1,6 +1,6 @@
 package jackiecrazy.wardance.networking.meta;
 
-import jackiecrazy.wardance.capability.action.PermissionData;
+import jackiecrazy.wardance.capability.permission.PermissionData;
 import jackiecrazy.wardance.client.RenderUtils;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.server.level.ServerPlayer;

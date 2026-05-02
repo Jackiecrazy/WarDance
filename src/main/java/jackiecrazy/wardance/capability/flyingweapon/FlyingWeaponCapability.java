@@ -210,7 +210,7 @@ public class FlyingWeaponCapability implements IFlyingWeapon {
     public ThrownWeaponEntity yeet(InteractionHand hand, Vec3 pos, double strength) {
         if (hand == null) {
             if (getHeldBlock() != null) {
-                ThrownWeaponEntity gbe=held;
+                ThrownWeaponEntity gbe = held;
                 getHeldBlock().yeet(pos, 2);
                 held = null;
                 StylishData.getCap(player).addCombo(0.12f, "blockyeet");
@@ -219,9 +219,12 @@ public class FlyingWeaponCapability implements IFlyingWeapon {
             return null;
         }
         StylishData.getCap(player).addCombo(0.2f, "throw");
-        getWeapon(hand).clearPath();
-        Level level = getWeapon(hand).level();
+        final FlyingWeaponEntity oldFW = getWeapon(hand);
+        oldFW.clearPath();
+        Level level = oldFW.level();
         ThrownWeaponEntity fwe = new ThrownWeaponEntity(WarEntities.THROWN_WEAPON.get(), level);
+        oldFW.unDrag();
+        //fwe.inheritDrag(oldFW);
         final ItemStack held = player.getItemInHand(hand);
         fwe.setHeldItem(held.copyWithCount(1));
         fwe.setOwner(player);
@@ -237,7 +240,7 @@ public class FlyingWeaponCapability implements IFlyingWeapon {
 
     private void updateWeapon(FlyingItemEntity fwe, InteractionHand hand) {
         //fwe.remove(Entity.RemovalReason.DISCARDED);
-        if (!fwe.isIdle()&&fwe instanceof FlyingWeaponEntity f) {
+        if (!fwe.isIdle() && fwe instanceof FlyingWeaponEntity f) {
             //it's still doing something, let it finish
             f.invalidateWhenDone();
             fwe = new FlyingWeaponEntity(WarEntities.WEAPON.get(), player.level());
@@ -249,9 +252,9 @@ public class FlyingWeaponCapability implements IFlyingWeapon {
         }
         final ItemStack stack = player.getItemInHand(hand);
         final WeaponStats.WeaponInfo info = WeaponStats.lookupStats(stack);
-        if(info !=null)
-            fwe.setIdlePose(info.idle_frame(hand==InteractionHand.OFF_HAND));
-        else fwe.setIdlePose(WeaponStats.DEFAULTMELEE.idle_frame(hand==InteractionHand.OFF_HAND));
+        if (info != null)
+            fwe.setIdlePose(info.idle_frame(hand == InteractionHand.OFF_HAND));
+        else fwe.setIdlePose(WeaponStats.DEFAULTMELEE.idle_frame(hand == InteractionHand.OFF_HAND));
         fwe.setHeldItem(stack);
         fwe.setOwner(player);
         fwe.setFlipRender(hand == InteractionHand.OFF_HAND);

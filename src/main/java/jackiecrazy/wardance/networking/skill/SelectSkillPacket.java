@@ -18,8 +18,8 @@ public class SelectSkillPacket {
     public static class Encoder implements BiConsumer<SelectSkillPacket, FriendlyByteBuf> {
 
         @Override
-        public void accept(SelectSkillPacket updateClientPacket, FriendlyByteBuf packetBuffer) {
-            packetBuffer.writeInt(updateClientPacket.sk);
+        public void accept(SelectSkillPacket packet, FriendlyByteBuf packetBuffer) {
+            packetBuffer.writeInt(packet.sk);
         }
     }
 
@@ -34,9 +34,9 @@ public class SelectSkillPacket {
     public static class Handler implements BiConsumer<SelectSkillPacket, Supplier<NetworkEvent.Context>> {
 
         @Override
-        public void accept(SelectSkillPacket updateClientPacket, Supplier<NetworkEvent.Context> contextSupplier) {
+        public void accept(SelectSkillPacket packet, Supplier<NetworkEvent.Context> contextSupplier) {
             contextSupplier.get().enqueueWork(() -> {
-                CasterData.getCap(contextSupplier.get().getSender()).holsterSkill(updateClientPacket.sk);
+                CasterData.getCap(contextSupplier.get().getSender()).holsterSkill(packet.sk);
             });
             contextSupplier.get().setPacketHandled(true);
         }

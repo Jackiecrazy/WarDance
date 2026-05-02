@@ -21,8 +21,8 @@ public class EvokeSkillPacket {
     public static class Encoder implements BiConsumer<EvokeSkillPacket, FriendlyByteBuf> {
 
         @Override
-        public void accept(EvokeSkillPacket updateClientPacket, FriendlyByteBuf packetBuffer) {
-            packetBuffer.writeInt(updateClientPacket.coyote);
+        public void accept(EvokeSkillPacket packet, FriendlyByteBuf packetBuffer) {
+            packetBuffer.writeInt(packet.coyote);
         }
     }
 
@@ -37,10 +37,10 @@ public class EvokeSkillPacket {
     public static class Handler implements BiConsumer<EvokeSkillPacket, Supplier<NetworkEvent.Context>> {
 
         @Override
-        public void accept(EvokeSkillPacket updateClientPacket, Supplier<NetworkEvent.Context> contextSupplier) {
+        public void accept(EvokeSkillPacket packet, Supplier<NetworkEvent.Context> contextSupplier) {
             contextSupplier.get().enqueueWork(() -> {
                 final ISkillCapability cap = CasterData.getCap(contextSupplier.get().getSender());
-                SkillUtils.temp=contextSupplier.get().getSender().level().getEntity(updateClientPacket.coyote);
+                SkillUtils.temp=contextSupplier.get().getSender().level().getEntity(packet.coyote);
                 //comment area is redundant due to the same check in skillcapability
                 if (cap.getHolsteredSkill() != null)// && cap.getSkillState(cap.getHolsteredSkill()) == Skill.STATE.HOLSTERED)
                     cap.changeSkillState(cap.getHolsteredSkill(), Skill.STATE.ACTIVE);

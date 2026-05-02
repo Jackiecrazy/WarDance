@@ -131,10 +131,10 @@ dependencies {
     runtimeOnly fg.deobf("curse.maven:dummy-225738:4724732")
     runtimeOnly fg.deobf("curse.maven:neat-238372:5838485")
 
-    //def ctDep = 'com.blamejared.crafttweaker:CraftTweaker-forge-1.19.2:10.1.38'
+    def ctDep = 'com.blamejared.crafttweaker:CraftTweaker-forge-1.20.1:14.0.60'
     //compileOnly(ctDep)
     //runtimeOnly(fg.deobf(ctDep))
-    //implementation fg.deobf(ctDep)
+    implementation fg.deobf(ctDep)
     runtimeOnly fg.deobf("jackiecrazy.attributizer:attributizer-3.1:${mc_version}")
     //implementation fg.deobf("com.mialliance:mialliance-4.5.0:${mc_version}")
     implementation fg.deobf("jackiecrazy.footwork:footwork-${footwork_version}:${mc_version}")

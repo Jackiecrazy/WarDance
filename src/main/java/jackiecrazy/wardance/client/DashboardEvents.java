@@ -3,7 +3,7 @@ package jackiecrazy.wardance.client;
 import jackiecrazy.footwork.client.screen.dashboard.PonderingOrb;
 import jackiecrazy.footwork.event.DashboardEvent;
 import jackiecrazy.wardance.WarDance;
-import jackiecrazy.wardance.capability.action.PermissionData;
+import jackiecrazy.wardance.capability.permission.PermissionData;
 import jackiecrazy.wardance.client.screen.skill.SkillSelectionScreen;
 import jackiecrazy.wardance.networking.CombatChannel;
 import jackiecrazy.wardance.networking.meta.ManualizePacket;

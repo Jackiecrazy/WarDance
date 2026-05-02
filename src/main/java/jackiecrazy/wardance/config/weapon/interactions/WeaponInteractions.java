@@ -262,9 +262,9 @@ public class WeaponInteractions {
             if (json.isJsonObject()) {
                 //could be either a full fledged def or just a single interaction, possibly containing overrides
                 //extract partial overrides first
-                final JsonObject baseObj = json.getAsJsonObject();
+                final JsonObject baseObj = JsonUtils.parseSyntacticSugar(json).getAsJsonObject();
                 JsonElement overObj = baseObj.remove("overrides");
-                InteractionGroup ret = NAIVE.fromJson(json, InteractionGroup.class);
+                InteractionGroup ret = NAIVE.fromJson(baseObj, InteractionGroup.class);
                 if (ret.getInteractions().isEmpty()) {
                     ret.setInteractions(List.of(GSON.fromJson(json, WeaponInteraction.class)));
                 }

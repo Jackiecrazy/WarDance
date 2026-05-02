@@ -1,7 +1,7 @@
 package jackiecrazy.wardance;
 
 import jackiecrazy.footwork.client.render.ItemEntityRenderer;
-import jackiecrazy.wardance.capability.action.IAction;
+import jackiecrazy.wardance.capability.permission.IPermission;
 import jackiecrazy.wardance.capability.skill.ISkillCapability;
 import jackiecrazy.wardance.capability.status.IMark;
 import jackiecrazy.wardance.client.GrappleRenderer;
@@ -149,9 +149,10 @@ public class WarDance {
         CombatChannel.INSTANCE.registerMessage(index++, KickPacket.class, new KickPacket.Encoder(), new KickPacket.Decoder(), new KickPacket.Handler());
         CombatChannel.INSTANCE.registerMessage(index++, SyncQuiverPacket.class, new SyncQuiverPacket.Encoder(), new SyncQuiverPacket.Decoder(), new SyncQuiverPacket.Handler());
         CombatChannel.INSTANCE.registerMessage(index++, SwapAttackPacket.class, new SwapAttackPacket.Encoder(), new SwapAttackPacket.Decoder(), new SwapAttackPacket.Handler());
-        CombatChannel.INSTANCE.registerMessage(index++, UpdateAerialPacket.class, new UpdateAerialPacket.Encoder(), new UpdateAerialPacket.Decoder(), new UpdateAerialPacket.Handler());
+        CombatChannel.INSTANCE.registerMessage(index++, UpdateWallPacket.class, new UpdateWallPacket.Encoder(), new UpdateWallPacket.Decoder(), new UpdateWallPacket.Handler());
         CombatChannel.INSTANCE.registerMessage(index++, ResetAirJumpPacket.class, new ResetAirJumpPacket.Encoder(), new ResetAirJumpPacket.Decoder(), new ResetAirJumpPacket.Handler());
         CombatChannel.INSTANCE.registerMessage(index++, UpdateAirPacket.class, new UpdateAirPacket.Encoder(), new UpdateAirPacket.Decoder(), new UpdateAirPacket.Handler());
+        CombatChannel.INSTANCE.registerMessage(index++, AerialModePacket.class, new AerialModePacket.Encoder(), new AerialModePacket.Decoder(), new AerialModePacket.Handler());
     }
 
     private void doClientStuff(final FMLClientSetupEvent event) {
@@ -189,7 +190,7 @@ public class WarDance {
     private void caps(final RegisterCapabilitiesEvent event) {
         event.register(IMark.class);
         event.register(ISkillCapability.class);
-        event.register(IAction.class);
+        event.register(IPermission.class);
     }
 
     private void enqueueIMC(final InterModEnqueueEvent event) {

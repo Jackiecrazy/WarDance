@@ -45,12 +45,12 @@ public class SyncItemDataPacket {
     public static class Handler implements BiConsumer<SyncItemDataPacket, Supplier<NetworkEvent.Context>> {
 
         @Override
-        public void accept(SyncItemDataPacket updateClientPacket, Supplier<NetworkEvent.Context> contextSupplier) {
+        public void accept(SyncItemDataPacket packet, Supplier<NetworkEvent.Context> contextSupplier) {
 
             //prevent client overriding server
             if (contextSupplier.get().getDirection() == NetworkDirection.PLAY_TO_CLIENT || contextSupplier.get().getDirection() == NetworkDirection.LOGIN_TO_CLIENT) {
                 contextSupplier.get().enqueueWork(() -> {
-                    WeaponStats.clientWeaponOverride(updateClientPacket.map);
+                    WeaponStats.clientWeaponOverride(packet.map);
                 });
             }
             contextSupplier.get().setPacketHandled(true);

@@ -8,15 +8,87 @@
     "pickup flourish": "raise the ore triumphantly, stacking haste for a semi long duration",
     "draw attack": "heavy sideways hammer smash that consumes mining fatigue. This is so pickaxe can be chained in to essentially animation cancel the hit recovery on other weapons."
   },
-  "#sword": {
+  "#pickaxe": {
     "attack": 2.6,
     "defend": 0.9,
     "standing": {
-      "sweep": "CONE",
-      "knockback": 0.75,
-      "damage_scale": 0.75,
-      "posture_scale": 0.75,
-      "sweep_base": 60.0
+      "sweep": "CLEAVE",
+      "sweep_base": 60.0,
+      "attack_info": {
+        "armor_pierce": 0.5,
+        "knockback": 0.5,
+        "hit_other": {
+          "run_actions": [
+            {
+              "ID": "meta",
+              "actions": [
+                {
+                  "ID": "add_effect",
+                  "effect": "minecraft:luck",
+                  "recipient": "caster",
+                  "duration": 100,
+                  "stacking": "MAX_DURATION"
+                }, {
+                  "ID": "play_sound",
+                  "sound": "minecraft:entity.experience_orb.pickup",
+                  "source": "PLAYERS"
+                }, {
+                  "ID": "play_particle",
+                  "particle": "minecraft:block",
+                  "particle_parameters": "gold_block",
+                  "position": {
+                    "ID": "eye_position",
+                    "reference_point": "target"
+                  },
+                  "quantity": 20
+                }
+              ],
+              "condition": {
+                "ID": "random",
+                "chance": {
+                  "ID": "divide",
+                  "first": {
+                    "ID": "add",
+                    "first": {
+                      "ID": "attribute_value",
+                      "reference_point": "caster",
+                      "attribute": "minecraft:generic.luck"
+                    },
+                    "second": 1
+                  },
+                  "second": {
+                    "ID": "add",
+                    "first": {
+                      "ID": "attribute_value",
+                      "reference_point": "caster",
+                      "attribute": "minecraft:generic.luck"
+                    },
+                    "second": 5
+                  }
+                }
+              }
+            }
+          ]
+        }
+      },
+      "overrides": [
+        {
+          "condition": {
+            "ID": "has_effect",
+            "effect": "minecraft:mining_fatigue"
+          },
+          "override": {
+            "sweep": "CONE",
+            "sweep_base": 120,
+            "attack_info": {
+              "crit": true,
+              "crit_damage": 1,
+              "hit_other": {
+              }
+            }
+          }
+        }
+      ]
     },
     "falling": {
       "sweep": "CLEAVE",
@@ -27,47 +99,60 @@
         "hit_other": {
           "run_actions": [
             {
-              "ID": "add_effect",
-              "effect": "footwork:corrosion",
-              "potency": 0,
-              "duration": 30,
-              "stacking": "MAX_DURATION"
+              "ID": "pin",
+              "duration": 10
             }
           ]
         }
-      }
+      },
+      "overrides": [
+        {
+          "condition": {
+            "ID": "has_effect",
+            "effect": "minecraft:mining_fatigue"
+          },
+          "override": {
+            "sweep": "IMPACT",
+            "sweep_base": 3,
+            "on_swing": {
+              "command": "/effect clear @s minecraft:mining_fatigue"
+            },
+            "attack_info": {
+              "crit": true,
+              "crit_damage": 2,
+              "hit_other": {
+                "run_actions": [
+                  {
+                    "ID": "add_effect",
+                    "effect": "minecraft:blindness",
+                    "duration": 50
+                  }
+                ]
+              }
+            }
+          }
+        }
+      ]
     },
     "sprinting": {
-      "type": "animation",
-      "duration": 7,
-      "easing": "IN_OUT_SINE",
-      "frames": [
-        {
-          "direction": [0, 0, 1],
-          "offset": [0, 0, 0],
-          "knockback": 1,
-          "damage_scale": 1,
-          "posture_scale": 1.0,
-          "armor_pierce": 0.5,
-          "crit": true,
-          "hit_self_velocity": [0, 0, 0],
-          "hit_self_set_velocity": true
-        }, {
-          "direction": [0, 0, 1],
-          "offset": [0, 0, 1.3]
+      "sweep": "CLEAVE",
+      "sweep_base": 60.0,
+      "attack_info": {
+        "drag": {
+          "duration": 30,
+          "strength": 1
         }
-      ],
-      "velocity": [0, 0, 1]
+      }
     },
     "aerial": {
       "type": "animation",
+      "on_swing": {
+        "command": "/effect give @s minecraft:mining_fatigue 10"
+      },
       "animations": [
         {
           "duration": 6,
-          "easing": "IN_OUT_SINE",
-          "on_swing": {
-            "command": "/playsound minecraft:entity.player.attack.sweep player @s ~ ~ ~ 0.8 1.2 0"
-          },
+          "easing": "IN_SINE",
           "frames": [
             {
               "direction": [0, -1, 1],
@@ -92,49 +177,40 @@
     },
     "guard_counter": {
       "type": "animation",
+      "on_swing": {
+        "command": "/playsound minecraft:entity.player.attack.sweep player @s ~ ~ ~ 0.8 1.2 0"
+      },
       "animations": [
         {
-          "duration": 5,
+          "duration": 14,
           "easing": "IN_OUT_SINE",
-          "on_swing": {
-            "command": "/playsound minecraft:entity.player.attack.sweep player @s ~ ~ ~ 0.8 1.2 0"
-          },
           "frames": [
             {
-              "direction": [1, 1, 1],
+              "direction": [1, 0, 0.2],
               "offset": [0, 0, 1],
               "effects": {
                 "attack_info": {
-                  "knockback": 0,
                   "crit": true,
-                  "crit_damage": 1
-                }
+                  "crit_damage": 1,
+                  "hit_other": {
+                    "run_actions": [
+                      {
+                        "ID": "pin",
+                        "duration": 30
+                      }
+                    ]
+                  }
+                },
+                "effects": [
+                  "WEAPON", "TRAIL"
+                ]
               }
             }, {
-              "direction": [-1, -1, 1],
-              "offset": [0, 0, 0.6]
-            }
-          ]
-        }, {
-          "duration": 5,
-          "easing": "IN_OUT_SINE",
-          "on_swing": {
-            "command": "/playsound minecraft:entity.player.attack.sweep player @s ~ ~ ~ 0.8 1.2 0"
-          },
-          "frames": [
-            {
-              "direction": [-1, 1, 1],
-              "offset": [0, 0, 1],
-              "effects": {
-                "attack_info": {
-                  "knockback": 0,
-                  "crit": true,
-                  "crit_damage": 1
-                }
-              }
+              "direction": [0, 0, 1],
+              "offset": [0, 0, 1]
             }, {
-              "direction": [1, -1, 1],
-              "offset": [0, 0, 0.6]
+              "direction": [-1, 0, 0.2],
+              "offset": [0, 0, 1]
             }
           ]
         }
@@ -151,79 +227,64 @@
           "override": {
             "animations": [
               {
-                "duration": 5,
-                "easing": "IN_OUT_SINE",
+                "duration": 14,
+                "easing": "IN_CUBIC",
                 "frames": [
                   {
-                    "direction": [1, 1, 1],
-                    "offset": [0, 0, 1.4],
+                    "direction": [1, 0, 0.2],
+                    "offset": [0, 0, 2],
                     "effects": {
                       "attack_info": {
                         "knockback": 0,
                         "spirit_multiplier": 0,
                         "crit": true,
-                        "crit_damage": 1
+                        "crit_damage": 1,
+                        "hit_other": {
+                          "run_actions": [
+                            {
+                              "ID": "pin",
+                              "duration": 30
+                            }
+                          ]
+                        }
                       },
                       "effects": [
                         "WEAPON", "TRAIL"
                       ]
                     }
                   }, {
-                    "direction": [-1, -1, 1],
-                    "offset": [0, 0, 1.4]
-                  }
-                ]
-              }, {
-                "duration": 5,
-                "easing": "IN_OUT_SINE",
-                "frames": [
-                  {
-                    "direction": [-1, 1, 1],
-                    "offset": [0, 0, 1.4],
-                    "effects": {
-                      "attack_info": {
-                        "knockback": 0,
-                        "spirit_multiplier": 0,
-                        "crit": true,
-                        "crit_damage": 1
-                      },
-                      "effects": [
-                        "WEAPON", "TRAIL"
-                      ]
-                    }
+                    "direction": [0, 0, 1],
+                    "offset": [0, 0, 2]
                   }, {
-                    "direction": [1, -1, 1],
-                    "offset": [0, 0, 1.4]
+                    "direction": [0, 0, 1],
+                    "offset": [0, 0, 2]
                   }
                 ]
               }, {
-                "duration": 7,
-                "easing": "IN_OUT_SINE",
-                "on_swing": {
-                  "command": "/playsound minecraft:entity.player.attack.sweep player @s ~ ~ ~ 0.8 1.2 0"
-                },
+                "duration": 10,
+                "easing": "IN_CUBIC",
                 "frames": [
                   {
-                    "direction": [1, 0, 0.4],
-                    "offset": [0, 0, 1.4],
+                    "direction": [0, 0, 1],
+                    "offset": [0, 0, 2],
                     "effects": {
                       "attack_info": {
-                        "knockback": 1.3,
                         "spirit_multiplier": 0,
                         "crit": true,
                         "crit_damage": 2,
-                        "breach": true
+                        "breach": true,
+                        "drag": {
+                          "duration": 30,
+                          "strength": 2
+                        }
                       },
                       "effects": [
                         "WEAPON", "BIG_SHADOW"
                       ]
                     }
                   }, {
-                    "direction": [0, 0, 1],
-                    "offset": [0, 0, 1]
-                  }, {
-                    "direction": [-1, 0, 0.4],
-                    "offset": [0, 0, 1.4]
+                    "direction": [0, 0, 0.1],
+                    "offset": [0, 0, 0.2]
                   }
                 ]
               }
@@ -233,108 +294,162 @@
       ]
     },
     "throw": {
-      "type": "throw",
-      "attack_info": {
-        "damage_scale": 0.75,
-        "posture_scale": 0.75,
-        "crit": true,
-        "breach": false,
-        "crit_damage": 1.5,
-        "spirit_multiplier": 0.5,
-        "knockback": 1.5
-      },
-      "throw_speed": 1,
-      "auto_recall_cooldown": 40,
-      "lodge_entity": true,
-      "lodge_block": false,
-      "flying_pose": {
-        "duration": 3,
-        "easing": "LINEAR",
-        "spin": [
-          5, 0, 0
-        ],
-        "frames": [
-          {
-            "direction": [
-              0, 0, 1
-            ],
-            "offset": [
-              0, 0, 0
-            ],
-            "effects": {
-              "effects": [
-                "WEAPON"
-              ]
-            }
-          }
-        ]
-      },
-      "gravity": -0.03,
+      "cooldown_refund": 0.5,
+      "interactions": [],
       "overrides": [
         {
+          "condition": [
+            {
+              "ID": "random",
+              "chance": {
+                "ID": "divide",
+                "first": {
+                  "ID": "add",
+                  "first": {
+                    "ID": "attribute_value",
+                    "reference_point": "caster",
+                    "attribute": "minecraft:generic.luck"
+                  },
+                  "second": 1
+                },
+                "second": {
+                  "ID": "add",
+                  "first": {
+                    "ID": "attribute_value",
+                    "reference_point": "caster",
+                    "attribute": "minecraft:generic.luck"
+                  },
+                  "second": 10
+                }
+              }
+            }, {
+              "ID": "consume_resource",
+              "format": "NUMBER",
+              "resource": "SPIRIT",
+              "amount": 7,
+              "operation": "CONSUME"
+            }
+          ],
+          "override": {
+            "type": "throw",
+            "attack_info": {
+              "damage_scale": 1.2,
+              "crit": true,
+              "breach": true,
+              "crit_damage": 2,
+              "spirit_multiplier": 0
+            },
+            "throw_speed": 1,
+            "lodge_block": true,
+            "lodge_entity": false,
+            "gravity": 0,
+            "consume_item": false,
+            "display_stack": {
+              "ID": "item_with_tag",
+              "tag": "forge:ores"
+            }
+          }
+        }, {
           "condition": {
             "ID": "consume_resource",
-            "format": "PERCENTAGE",
+            "format": "NUMBER",
             "resource": "SPIRIT",
-            "amount": 1,
+            "amount": 7,
             "operation": "CONSUME"
           },
           "override": {
+            "type": "throw",
             "attack_info": {
-              "damage_scale": 1.25,
-              "crit": true,
-              "breach": true,
-              "crit_damage": 1.5
+              "damage_scale": 0.6,
+              "spirit_multiplier": 0
             },
-            "bounce": 5,
-            "throw_speed": 2,
-            "flying_pose": {
-              "duration": 5,
-              "easing": "LINEAR",
-              "spin": [
-                0, 0, 0
-              ]
+            "throw_speed": 1,
+            "lodge_block": false,
+            "lodge_entity": false,
+            "gravity": -0.05,
+            "consume_item": false,
+            "pickup_flourish": false,
+            "display_stack": {
+              "ID": "item_with_tag",
+              "tag": "forge:stone"
             },
-            "gravity": 0
+            "on_impact": [
+              {
+                "ID": "remove"
+              }
+            ]
           }
         }
       ]
     },
     "pickup_flourish": {
-      "sweep": "CIRCLE",
-      "knockback": 1.5,
-      "sweep_base": 2.0,
-      "crit": true
+      "type": "animation",
+      "cooldown_refund": 1,
+      "on_swing": {
+        "run_actions": [
+          {
+            "ID": "add_effect",
+            "effect": "minecraft:haste",
+            "recipient": "caster",
+            "duration": 600,
+            "stacking": "MAX_DURATION"
+          }, {
+            "ID": "play_sound",
+            "sound": "minecraft:entity.villager.yes",
+            "source": "PLAYERS"
+          }
+        ]
+      },
+      "animations": [
+        {
+          "duration": 10,
+          "easing": "IN_CUBIC",
+          "frames": [
+            {
+              "direction": [0, 1, 0],
+              "offset": [0, 0, 0],
+              "effects": {
+                "effects": [
+                  "WEAPON"
+                ]
+              }
+            }, {
+              "direction": [0, 1, 0],
+              "offset": [0, 0, 0.6]
+            }
+          ]
+        }
+      ]
     },
     "draw_attack": {
       "type": "animation",
       "minimum_cooldown": 0,
-      "cooldown_refund": 1,
+      "on_swing": {
+        "command": "/effect clear @s minecraft:mining_fatigue"
+      },
       "animations": [
         {
-          "duration": 4,
+          "duration": 10,
           "easing": "IN_CUBIC",
-          "on_swing": {
-            "command": "/playsound minecraft:entity.player.attack.sweep player @s ~ ~ ~ 0.8 1.2 0"
-          },
           "frames": [
             {
-              "direction": [1, 0, 0.4],
-              "offset": [0, 0, 1.4],
+              "direction": [1, 0, 0.2],
+              "offset": [0, 0, 1],
               "effects": {
                 "attack_info": {
-                  "damage_multiplier": 0.8
+                  "crit": true,
+                  "crit_damage": 1
                 },
                 "effects": [
-                  "WEAPON", "AFTERIMAGE"
+                  "WEAPON", "TRAIL"
                 ]
               }
             }, {
               "direction": [0, 0, 1],
               "offset": [0, 0, 1]
             }, {
-              "direction": [-1, 0, 0.4],
-              "offset": [0, 0, 1.4]
+              "direction": [-1, 0, 0.2],
+              "offset": [0, 0, 1]
             }
           ]
         }

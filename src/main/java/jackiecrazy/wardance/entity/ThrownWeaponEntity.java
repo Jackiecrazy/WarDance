@@ -46,7 +46,7 @@ public class ThrownWeaponEntity extends FlyingWeaponEntity {
     private boolean lodge_entity = true;
     private int auto_recall = -1;
     private boolean recalling = false;
-    private boolean fake = false;
+    private boolean fake = false, pickup_flourish=false;
     private List<Action> impactActions = List.of();
 
     public ThrownWeaponEntity(EntityType<? extends FlyingItemEntity> type,
@@ -55,6 +55,11 @@ public class ThrownWeaponEntity extends FlyingWeaponEntity {
         setInteractionRange(1);
         setEffect(FlyingWeaponEffect.WEAPON);
         setIntangible(false);
+    }
+
+    public ThrownWeaponEntity setFlourish(boolean flourish){
+        pickup_flourish=flourish;
+        return this;
     }
 
     public ThrownWeaponEntity setFake(boolean fake) {
@@ -250,21 +255,23 @@ public class ThrownWeaponEntity extends FlyingWeaponEntity {
         if (success) {
             this.remove(RemovalReason.UNLOADED_WITH_PLAYER);
 
-            //pickup flourish
-            ItemStack held = player.getMainHandItem();
-            int ticks = player.attackStrengthTicker;
-            try {
-                CombatUtils.quickSwap(player, getHeldItem());
-                CombatUtils.setHandCooldown(player, InteractionHand.MAIN_HAND, 2, false);
-                CombatUtils.setAttackType(player, WeaponStats.AttackType.PICKUP_FLOURISH);
-                FlyingWeaponData.getCap(player).getWeapon(InteractionHand.MAIN_HAND).clearPath();
-                FlyingWeaponData.getCap(player).forceRefreshWeapons();
-                CombatUtils.processWeaponInteraction(player, null, InteractionHand.MAIN_HAND, player.getAttributeValue(ForgeMod.ENTITY_REACH.get()));
-            } catch (Exception ex) {
-                ex.printStackTrace();
-            } finally {
-                CombatUtils.quickSwap(player, held);
-                player.attackStrengthTicker = ticks;
+            if(pickup_flourish) {
+                //pickup flourish
+                ItemStack held = player.getMainHandItem();
+                int ticks = player.attackStrengthTicker;
+                try {
+                    CombatUtils.quickSwap(player, getHeldItem());
+                    CombatUtils.setHandCooldown(player, InteractionHand.MAIN_HAND, 2, false);
+                    CombatUtils.setAttackType(player, WeaponStats.AttackType.PICKUP_FLOURISH);
+                    FlyingWeaponData.getCap(player).getWeapon(InteractionHand.MAIN_HAND).clearPath();
+                    FlyingWeaponData.getCap(player).forceRefreshWeapons();
+                    CombatUtils.processWeaponInteraction(player, null, InteractionHand.MAIN_HAND, player.getAttributeValue(ForgeMod.ENTITY_REACH.get()));
+                } catch (Exception ex) {
+                    ex.printStackTrace();
+                } finally {
+                    CombatUtils.quickSwap(player, held);
+                    player.attackStrengthTicker = ticks;
+                }
             }
             player.resetFallDistance();
             //TimeSlowData.getCap(p).alterSpeed(40, 0.3);

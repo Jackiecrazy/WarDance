@@ -30,8 +30,8 @@ public class KickPacket {
     public static class Encoder implements BiConsumer<KickPacket, FriendlyByteBuf> {
 
         @Override
-        public void accept(KickPacket updateClientPacket, FriendlyByteBuf packetBuffer) {
-            packetBuffer.writeInt(updateClientPacket.mob);
+        public void accept(KickPacket packet, FriendlyByteBuf packetBuffer) {
+            packetBuffer.writeInt(packet.mob);
         }
     }
 
@@ -46,11 +46,11 @@ public class KickPacket {
     public static class Handler implements BiConsumer<KickPacket, Supplier<NetworkEvent.Context>> {
 
         @Override
-        public void accept(KickPacket updateClientPacket, Supplier<NetworkEvent.Context> contextSupplier) {
+        public void accept(KickPacket packet, Supplier<NetworkEvent.Context> contextSupplier) {
             contextSupplier.get().enqueueWork(() -> {
                 ServerPlayer sender = contextSupplier.get().getSender();
                 if (sender != null) {
-                    Entity target=sender.level().getEntity(updateClientPacket.mob);
+                    Entity target=sender.level().getEntity(packet.mob);
                     if (FlyingWeaponData.getCap(sender).getHeldBlock() != null) {
                         HitResult destination = ProjectileUtil.getHitResultOnViewVector(sender, EntitySelector.LIVING_ENTITY_STILL_ALIVE, 32);
                         Vec3 loc = destination.getLocation();

@@ -44,12 +44,12 @@ public class SyncTagDataPacket {
     public static class Handler implements BiConsumer<SyncTagDataPacket, Supplier<NetworkEvent.Context>> {
 
         @Override
-        public void accept(SyncTagDataPacket updateClientPacket, Supplier<NetworkEvent.Context> contextSupplier) {
+        public void accept(SyncTagDataPacket packet, Supplier<NetworkEvent.Context> contextSupplier) {
 
             //prevent client overriding server
             if (contextSupplier.get().getDirection() == NetworkDirection.LOGIN_TO_CLIENT||contextSupplier.get().getDirection() == NetworkDirection.PLAY_TO_CLIENT)
                 contextSupplier.get().enqueueWork(() -> {
-                    WeaponStats.clientTagOverride(updateClientPacket.map);
+                    WeaponStats.clientTagOverride(packet.map);
                 });
             contextSupplier.get().setPacketHandled(true);
         }

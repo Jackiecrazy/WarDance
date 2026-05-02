@@ -1,8 +1,8 @@
-package jackiecrazy.wardance.capability.action;
+package jackiecrazy.wardance.capability.permission;
 
 import net.minecraft.nbt.CompoundTag;
 
-public interface IAction {
+public interface IPermission {
     public boolean canParry();
 
     public boolean canDealPostureDamage();

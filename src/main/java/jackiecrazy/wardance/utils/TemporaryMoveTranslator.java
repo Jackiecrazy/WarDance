@@ -56,7 +56,6 @@ public class TemporaryMoveTranslator {
         return base.xRot(Mth.DEG_TO_RAD * pitch).yRot(Mth.DEG_TO_RAD * yaw).normalize();
     }
 
-    //todo temp finisher hitdata need to be reflected onto the static lists...
     public static void scheduleFinisher(LivingEntity e,
                                         InteractionHand hand,
                                         SweepAttack base) {
@@ -122,8 +121,8 @@ public class TemporaryMoveTranslator {
         switch (type) {
             case CONE:
 
-                final Vec3 startFrame = generateFrame(10, (float) (-area) * flip);
-                final Vec3 endFrame = generateFrame(-10, (float) (area) * flip);
+                final Vec3 startFrame = generateFrame(10, (float) (-area/2) * flip);
+                final Vec3 endFrame = generateFrame(-10, (float) (area/2) * flip);
                 final Vec3 up = new Vec3(0, -1, 0);
 //                double dot = Mth.clamp(up.dot(endFrame.subtract(startFrame).normalize()), -1.0, 1.0);
                 double angleRadians = signedAngle(up, endFrame.subtract(startFrame), new Vec3(0,0,-1));//-Math.acos(dot);

@@ -20,7 +20,7 @@ public class ManualizePacket {
     public static class Encoder implements BiConsumer<ManualizePacket, FriendlyByteBuf> {
 
         @Override
-        public void accept(ManualizePacket updateClientPacket, FriendlyByteBuf packetBuffer) {
+        public void accept(ManualizePacket packet, FriendlyByteBuf packetBuffer) {
         }
     }
 
@@ -35,7 +35,7 @@ public class ManualizePacket {
     public static class Handler implements BiConsumer<ManualizePacket, Supplier<NetworkEvent.Context>> {
 
         @Override
-        public void accept(ManualizePacket updateClientPacket, Supplier<NetworkEvent.Context> contextSupplier) {
+        public void accept(ManualizePacket packet, Supplier<NetworkEvent.Context> contextSupplier) {
             contextSupplier.get().enqueueWork(() -> {
                 Player player = contextSupplier.get().getSender();
                 if (player.getMainHandItem().getItem() != Items.WRITTEN_BOOK)

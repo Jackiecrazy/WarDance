@@ -8,7 +8,7 @@ import jackiecrazy.footwork.event.*;
 import jackiecrazy.footwork.potion.FootworkEffects;
 import jackiecrazy.footwork.utils.TargetingUtils;
 import jackiecrazy.wardance.WarDance;
-import jackiecrazy.wardance.capability.action.PermissionData;
+import jackiecrazy.wardance.capability.permission.PermissionData;
 import jackiecrazy.wardance.compat.ElenaiCompat;
 import jackiecrazy.wardance.compat.WarCompat;
 import jackiecrazy.wardance.config.*;
@@ -49,7 +49,7 @@ import java.util.UUID;
 public class NewCombatCapability implements ICombatCapability {
     public static final UUID WOUND = UUID.fromString("982bbbb2-bbd0-4166-801a-560d1a4149c8");
     public static final int RALLY_CD = 20;
-    private static final AttributeModifier STOPMOVING = new AttributeModifier(WOUND, "expose penalty", -10, AttributeModifier.Operation.MULTIPLY_TOTAL);
+    private static final AttributeModifier STOPMOVING = new AttributeModifier(WOUND, "expose penalty", -1, AttributeModifier.Operation.MULTIPLY_TOTAL);
     private static final AttributeModifier NOKNOCKBACK = new AttributeModifier(WOUND, "stagger penalty", 10, AttributeModifier.Operation.ADDITION);
     private final WeakReference<LivingEntity> dude;
     private ItemStack prev;

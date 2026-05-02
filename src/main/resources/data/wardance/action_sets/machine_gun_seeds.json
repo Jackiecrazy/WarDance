@@ -27,12 +27,6 @@
           }
         ]
       },
-      "on_impact": [
-        {
-          "ID": "explode",
-          "radius": 10
-        }
-      ],
       "condition": {
         "ID": "and",
         "values": [

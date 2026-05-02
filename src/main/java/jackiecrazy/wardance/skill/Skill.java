@@ -338,7 +338,7 @@ public abstract class Skill extends Move {
     }
 
     protected void attackCooldown(Event e, LivingEntity caster, SkillData stats) {
-        if (e instanceof LivingAttackEvent el && !CombatData.getCap(caster).alreadyProc("oncePerSweep") && el.getEntity() != caster && DamageUtils.isMeleeAttack(el.getSource()) && stats.getState() == STATE.COOLING && e.getPhase() == EventPriority.HIGHEST) {
+        if (e instanceof LivingAttackEvent el && !CombatData.getCap(caster).alreadyProc("oncePerAttack") && el.getEntity() != caster && DamageUtils.isMeleeAttack(el.getSource()) && stats.getState() == STATE.COOLING && e.getPhase() == EventPriority.HIGHEST) {
             stats.decrementDuration();
         }
     }

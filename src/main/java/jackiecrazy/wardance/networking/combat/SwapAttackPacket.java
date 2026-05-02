@@ -33,9 +33,9 @@ public class SwapAttackPacket {
     public static class Encoder implements BiConsumer<SwapAttackPacket, FriendlyByteBuf> {
 
         @Override
-        public void accept(SwapAttackPacket updateClientPacket, FriendlyByteBuf packetBuffer) {
-            packetBuffer.writeBoolean(updateClientPacket.main);
-            packetBuffer.writeInt(updateClientPacket.nextSlot);
+        public void accept(SwapAttackPacket packet, FriendlyByteBuf packetBuffer) {
+            packetBuffer.writeBoolean(packet.main);
+            packetBuffer.writeInt(packet.nextSlot);
         }
     }
 

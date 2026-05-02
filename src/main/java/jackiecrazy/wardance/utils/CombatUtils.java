@@ -16,7 +16,7 @@ import jackiecrazy.footwork.move.motionframe.MotionManager;
 import jackiecrazy.footwork.potion.FootworkEffects;
 import jackiecrazy.footwork.utils.*;
 import jackiecrazy.wardance.WarDance;
-import jackiecrazy.wardance.capability.action.PermissionData;
+import jackiecrazy.wardance.capability.permission.PermissionData;
 import jackiecrazy.wardance.capability.aerial.AerialModeData;
 import jackiecrazy.wardance.capability.charging.ChargingData;
 import jackiecrazy.wardance.capability.flyingweapon.FlyingWeaponData;
@@ -523,7 +523,7 @@ public class CombatUtils {
         //any sweep of mine is going to be SOMETHING
         boolean hit = false;
         if (ignore != null)
-            CombatData.getCap(e).tickProc("oncePerSweep");
+            CombatData.getCap(e).tickProc("oncePerAttack");
         Vec3 starting = ignore == null ? GeneralUtils.raytraceAnything(e.level(), e, reach).getLocation() : ignore.position();
         //grab everyone in "range"
         for (Entity target : e.level().getEntities(e, e.getBoundingBox().inflate(reach * 2))) {
@@ -568,7 +568,7 @@ public class CombatUtils {
             if (e instanceof Player p)
                 p.attack(target);
             else e.doHurtTarget(target);
-            CombatData.getCap(e).tickProc("oncePerSweep");
+            CombatData.getCap(e).tickProc("oncePerAttack");
         }
         //if (e instanceof Player && hit) {
         //play sweep particles in different ways
@@ -602,7 +602,7 @@ public class CombatUtils {
         }
         e.level().playSound(null, e.getX(), e.getY(), e.getZ(), SoundEvents.PLAYER_ATTACK_SWEEP, e.getSoundSource(), 1.0F, 1.0F);
         //}
-        CombatData.getCap(e).tickProc("oncePerSweep", 0);
+        CombatData.getCap(e).tickProc("oncePerAttack", 0);
         if (h == InteractionHand.OFF_HAND) {
             swapHeldItems(e);
             CombatData.getCap(e).setOffhandAttack(false);
@@ -628,7 +628,8 @@ public class CombatUtils {
             set = WeaponStats.AttackType.SPRINTING;
         if ((!(entity instanceof Player p) || !p.getAbilities().flying) && !entity.onGround() && entity.fallDistance > 0 && !entity.onClimbable() && !entity.isInWater())
             set = WeaponStats.AttackType.FALLING;
-        if (AerialModeData.getCap(entity).getEffectiveSpeed() < 1) set = WeaponStats.AttackType.AERIAL;
+        if (AerialModeData.getCap(entity).getEffectiveSpeed() < 1||AerialModeData.getCap(entity).isAerialMode()) set = WeaponStats.AttackType.AERIAL;
+        //todo more ways to be in aerial mode
         switch (AerialModeData.getCap(entity).getState()) {
             case CLING, CEILING_CLING -> set = WeaponStats.AttackType.STANDING;
             case WALL_SLIDE -> set = WeaponStats.AttackType.SPRINTING;
@@ -801,7 +802,7 @@ public class CombatUtils {
     public static void kick(LivingEntity kicker, Entity targetEntity, boolean breach) {
         kicker.level().playSound(null, kicker.getX(), kicker.getY(), kicker.getZ(), SoundEvents.ZOMBIE_ATTACK_WOODEN_DOOR, SoundSource.PLAYERS, 0.25f + WarDance.rand.nextFloat() * 0.5f, 0.5f + WarDance.rand.nextFloat() * 0.5f);
         if (targetEntity instanceof LivingEntity target) {
-            CombatData.getCap(kicker).tickProc("qiSpent");
+            CombatData.getCap(kicker).tickProc("oncePerAttack");
             StylishData.getCap(kicker).addCombo(0.1f, "kick" + breach);
             CombatData.getCap(target).consumePosture(kicker, 12, breach);
             ParticleUtils.playBonkParticle(kicker.level(), kicker.getEyePosition().add(kicker.getLookAngle().scale(Math.sqrt(GeneralUtils.getDistSqCompensated(kicker, target)))), 1, 0, 8, Color.WHITE);
