@@ -604,67 +604,6 @@
       "damage_other_command": "/function wardance:attack/self_mildfatigue"
     }
   },
-  "#axe": {
-    "attack": 4.0,
-    "defend": 0.9,
-    "shield": false,
-    "sweep": "CLEAVE",
-    "knockback": 1.5,
-    "damage_scale": 0.75,
-    "posture_scale": 0.75,
-    "crit": false,
-    "crit_damage": 1.5,
-    "sweep_base": 40.0,
-    "sweep_scale": 15.0,
-    "standing": {
-      "sweep": "CLEAVE",
-      "knockback": 1.5,
-      "damage_scale": 0.75,
-      "posture_scale": 0.75,
-      "sweep_base": 40.0,
-      "sweep_scale": 15.0
-    },
-    "falling": {
-      "sweep": "CLEAVE",
-      "knockback": 0.5,
-      "sweep_base": 50.0,
-      "sweep_scale": 25.0,
-      "on_swing": {
-        "command": "/function wardance:attack/self_moderatefatigue"
-      },
-      "damage_other_command": "/function wardance:attack/damageother_armorcleaveminor",
-      "crit": true
-    },
-    "aerial": {
-      "sweep": "CONE",
-      "knockback": 2.0,
-      "damage_scale": 0.75,
-      "posture_scale": 0.75,
-      "sweep_base": 40.0,
-      "sweep_scale": 15.0
-    },
-    "sprinting": {
-      "sweep": "CIRCLE",
-      "knockback": 1.75,
-      "damage_scale": 0.75,
-      "posture_scale": 0.75,
-      "sweep_base": 2.0,
-      "sweep_scale": 0.75,
-      "on_swing": {
-        "command": "/function wardance:attack/self_moderatefatigue"
-      },
-      "crit": true
-    },
-    "riding": {
-      "sweep": "CIRCLE",
-      "damage_scale": 1.2,
-      "posture_scale": 1.3,
-      "crit_damage": 2.0,
-      "sweep_base": 2.5,
-      "sweep_scale": 0.5,
-      "damage_other_command": "/function wardance:attack/self_mildfatigue"
-    }
-  },
   "#twinblade": {
     "attack": 3.2,
     "defend": 0.8,
@@ -847,68 +786,6 @@
       "sweep_scale": 0.5,
       "damage_self_command": "/function wardance:attack/damageother_stun",
       "damage_other_command": "/function wardance:attack/self_mildfatigue"
-    }
-  },
-  "#shovel": {
-    "attack": 6.0,
-    "defend": 0.9,
-    "shield": false,
-    "sweep": "IMPACT",
-    "knockback": 1.0,
-    "damage_scale": 1.0,
-    "posture_scale": 0.5,
-    "crit": false,
-    "crit_damage": 1.5,
-    "sweep_base": 0.75,
-    "sweep_scale": 0.25,
-    "standing": {
-      "sweep": "IMPACT",
-      "posture_scale": 0.5,
-      "sweep_base": 0.75,
-      "sweep_scale": 0.25
-    },
-    "falling": {
-      "sweep": "IMPACT",
-      "knockback": 1.5,
-      "damage_scale": 1.25,
-      "sweep_base": 1.5,
-      "sweep_scale": 0.75,
-      "on_swing": {
-        "command": "/function wardance:attack/self_moderatefatigue"
-      },
-      "damage_other_command": "/function wardance:attack/damageother_bonkstart",
-      "crit": true
-    },
-    "aerial": {
-      "sweep": "CONE",
-      "knockback": 0.5,
-      "damage_scale": 0.75,
-      "posture_scale": 0.75,
-      "sweep_base": 50.0,
-      "sweep_scale": 30.0,
-      "on_swing": {
-        "command": "/function wardance:attack/self_mildfatigue"
-      }
-    },
-    "sprinting": {
-      "sweep": "NONE",
-      "knockback": 2.0,
-      "damage_scale": 1.25,
-      "posture_scale": 1.25,
-      "on_swing": {
-        "command": "/function wardance:attack/self_mildfatigue"
-      },
-      "damage_other_command": "/function wardance:attack/damageother_mildstun",
-      "crit": true
-    },
-    "riding": {
-      "sweep": "CIRCLE",
-      "knockback": 1.2,
-      "posture_scale": 1.3,
-      "crit_damage": 2.0,
-      "sweep_base": 2.5,
-      "sweep_scale": 0.5,
-      "damage_self_command": "/function wardance:attack/damageother_mildstun"
     }
   },
   "#anchor": {

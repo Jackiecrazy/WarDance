@@ -1,0 +1,20 @@
+{
+  "ID": "wait",
+  "max_time": 100,
+  "waiting": [
+    {
+      "ID": "freeze",
+      "duration": 140,
+      "condition": {
+        "ID": "and",
+        "values": [
+          {
+            "ID": "time_window",
+            "every": "3"
+          }
+        ]
+      },
+      "repeatable": true
+    }
+  ]
+}

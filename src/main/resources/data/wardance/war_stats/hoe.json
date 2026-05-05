@@ -561,9 +561,7 @@
               "offset": [
                 0, 0, 1
               ],
-              "render_rotation": [
-                0, 0, 1, 180
-              ],
+              "render_rotation": 180,
               "effects": {
                 "attack_info": {
                   "knockback": 0.5
@@ -579,9 +577,7 @@
               "offset": [
                 0, 0, 1
               ],
-              "render_rotation": [
-                0, 0, 1, 180
-              ]
+              "render_rotation": 180
             }
           ]
         }

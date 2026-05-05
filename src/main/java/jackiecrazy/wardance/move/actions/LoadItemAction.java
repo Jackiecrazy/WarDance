@@ -19,7 +19,7 @@ import net.minecraft.world.phys.Vec3;
 import java.util.List;
 
 public class LoadItemAction extends Action {
-    private List<Action> on_impact = List.of(new ExplodeAction());
+    private List<Action> on_impact = List.of();
     private Argument<ItemStack> stack=new EquippedItemArgument();
     private MotionManager pose = new MotionManagers.FixedMM(new MotionFrame(new Vec3(0, 0, 1), new Vec3(0, 0, 0)), 5);
 

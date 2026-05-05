@@ -9,8 +9,8 @@
     "draw attack": "heavy sideways hammer smash that consumes mining fatigue. This is so pickaxe can be chained in to essentially animation cancel the hit recovery on other weapons."
   },
   "#pickaxe": {
-    "attack": 2.6,
-    "defend": 0.9,
+    "attack": 3,
+    "defend": 1,
     "standing": {
       "sweep": "CLEAVE",
       "sweep_base": 60.0,
@@ -159,7 +159,7 @@
               "offset": [
                 0, 0, 1
               ],
-              "render_rotation": [0, 0, 1, 180],
+              "render_rotation": 180,
               "effects": {
                 "attack_info": {
                   "knockback": 2,
@@ -169,7 +169,7 @@
             }, {
               "direction": [0, 1, 1],
               "offset": [0, 0, 1],
-              "render_rotation": [0, 0, 1, 180]
+              "render_rotation": 180
             }
           ]
         }
@@ -402,7 +402,7 @@
       },
       "animations": [
         {
-          "duration": 10,
+          "duration": 20,
           "easing": "IN_CUBIC",
           "frames": [
             {

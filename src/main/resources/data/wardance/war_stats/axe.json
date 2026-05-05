@@ -1,0 +1,342 @@
+{
+  "_guide": {
+    "standing": "literally chop from sword falling, also inflicts armor down",
+    "falling": "wider heavy chop that disables shields, if the target is exhausted or enfeebled, bind their main hand",
+    "aerial": "longer range hook that pulls the target to you, idk axe isn't really an aerial weapon",
+    "sprinting": "dispersing spin attack with low damage but high knockback",
+    "guard counter": "handle jab that deals good posture damage and silences/nauseates, at max spirit follow with a wide vertical breaching swing",
+    "throw": "immediately embeds in first target and auto-recalls after a while. At max spirit, explodes and inflicts frost in an area, because kratos.",
+    "pickup": "spin it in your hand, resetting attack cooldown",
+    "draw": "forward shoulder tackle that drags a single mob. At max spirit, drop a tree on them at the end of tackle :v"
+  },
+  "#axe": {
+    "attack": 4.0,
+    "defend": 0.9,
+    "standing": {
+      "sweep": "CLEAVE",
+      "sweep_base": 50.0,
+      "attack_info": {
+        "damage_scale": 1,
+        "posture_scale": 0.5,
+        "hit_other": {
+          "run_actions": [
+            {
+              "ID": "add_effect",
+              "effect": "footwork:corrosion",
+              "potency": 0,
+              "duration": 30,
+              "stacking": "MAX_DURATION"
+            }
+          ]
+        }
+      }
+    },
+    "falling": {
+      "sweep": "CLEAVE",
+      "sweep_base": 90.0,
+      "attack_info": {
+        "damage_scale": 0.6,
+        "posture_scale": 1,
+        "hit_self": {
+          "tags": ["disableShield"]
+        },
+        "hit_other": {
+          "run_actions": [
+            {
+              "ID": "bind",
+              "duration": 30,
+              "condition": {
+                "ID": "has_effect",
+                "effect": "footwork:enfeeble"
+              }
+            }, {
+              "ID": "bind",
+              "duration": 30,
+              "condition": {
+                "ID": "has_effect",
+                "effect": "footwork:exhaustion"
+              }
+            }
+          ]
+        }
+      }
+    },
+    "sprinting": {
+      "sweep": "CIRCLE",
+      "knockback": 1.5,
+      "sweep_base": 3.0,
+      "damage_scale": 0.6,
+      "crit": true,
+      "crit_damage": 1
+    },
+    "aerial": {
+      "type": "animation",
+      "duration": 10,
+      "easing": "IN_OUT_CUBIC",
+      "frames": [
+        {
+          "direction": [0, 1, 0],
+          "offset": [0, 0, 0.4]
+        }, {
+          "direction": [0, 0, 1],
+          "offset": [0, 0, 2],
+          "attack_info": {
+            "knockback": 0,
+            "damage_scale": 1,
+            "posture_scale": 1.0,
+            "hit_self": {
+              "velocity": [0, 0.3, 0]
+            },
+            "drag": {
+              "duration": 40,
+              "strength": 2
+            }
+          }
+        }, {
+          "direction": [0, 0, 1],
+          "offset": [0, 0, 1]
+        }
+      ]
+    },
+    "guard_counter": {
+      "type": "animation",
+      "animations": [
+        {
+          "duration": 20,
+          "easing": "OUT_CUBIC",
+          "frames": [
+            {
+              "direction": [0, 0, 1],
+              "offset": [0, 0, 0],
+              "render_rotation": [0, 0, -1, 180],
+              "effects": {
+                "attack_info": {
+                  "knockback": 0,
+                  "crit": true,
+                  "crit_damage": 1,
+                  "posture_scale": 1.4,
+                  "damage_scale": 0.3,
+                  "hit_self": {
+                    "command": "/playsound minecraft:entity.zombie.attack_wooden_door player @s ~ ~ ~ 0.8 1.2 0"
+                  },
+                  "hit_other": {
+                    "run_actions": [
+                      {
+                        "ID": "add_effect",
+                        "effect": "minecraft:nausea",
+                        "potency": 0,
+                        "duration": 100,
+                        "stacking": "MAX_DURATION"
+                      }
+                    ]
+                  }
+                },
+                "effects": [
+                  "WEAPON"
+                ]
+              }
+            }, {
+              "direction": [0, 0, 1],
+              "offset": [0, 0, 1.2],
+              "render_rotation": [0, 0, -1, 180]
+            }, {
+              "direction": [0, 0, 1],
+              "offset": [0, 0, 0],
+              "render_rotation": [0, 0, -1, 180]
+            }
+          ]
+        }
+      ],
+      "overrides": [
+        {
+          "condition": {
+            "ID": "consume_resource",
+            "format": "PERCENTAGE",
+            "resource": "SPIRIT",
+            "amount": 1,
+            "operation": "CONSUME"
+          },
+          "override": {
+            "animations": [
+              {
+              }, {
+                "duration": 10,
+                "easing": "IN_CUBIC",
+                "frames": [
+                  {
+                    "direction": [0, 0, 1],
+                    "offset": [0, 0, 0],
+                    "render_rotation": [0, 0, -1, 180]
+                  }, {
+                    "direction": [0, 1, 0.2],
+                    "offset": [0, 0, 1.4],
+                    "effects": {
+                      "attack_info": {
+                        "knockback": 1,
+                        "spirit_multiplier": 0,
+                        "crit": true,
+                        "crit_damage": 2,
+                        "breach": true
+                      },
+                      "effects": [
+                        "WEAPON", "BIG_SHADOW"
+                      ],
+                      "command": "/playsound minecraft:entity.zombie.break_wooden_door @s ~ ~ ~ 0.8 1.2 0"
+                    }
+                  }, {
+                    "direction": [0, 0, 1],
+                    "offset": [0, 0, 1.4]
+                  }, {
+                    "direction": [0, -1, 0.4],
+                    "offset": [0, 0, 1.4]
+                  }
+                ]
+              }
+            ]
+          }
+        }
+      ]
+    },
+    "throw": {
+      "type": "throw",
+      "attack_info": {
+        "damage_scale": 0.75,
+        "posture_scale": 0.75,
+        "breach": false,
+        "spirit_multiplier": 0.5
+      },
+      "throw_speed": 1,
+      "auto_recall_cooldown": 60,
+      "lodge_entity": true,
+      "lodge_block": true,
+      "flying_pose": {
+        "duration": 3,
+        "easing": "LINEAR",
+        "spin": [
+          -50, 0, 0
+        ],
+        "frames": [
+          {
+            "direction": [
+              0, 0, 1
+            ],
+            "offset": [
+              0, 0, 0
+            ],
+            "effects": {
+              "effects": [
+                "WEAPON"
+              ]
+            }
+          }
+        ]
+      },
+      "gravity": -0.04,
+      "overrides": [
+        {
+          "condition": {
+            "ID": "consume_resource",
+            "format": "PERCENTAGE",
+            "resource": "SPIRIT",
+            "amount": 1,
+            "operation": "CONSUME"
+          },
+          "override": {
+            "attack_info": {
+              "crit": true,
+              "breach": true,
+              "crit_damage": 2
+            },
+            "on_impact": [
+              {
+                "ID": "explode",
+                "radius": 5,
+                "on_hit": [
+                  {
+                    "ID": "attach_action",
+                    "effect": "wardance:freeze"
+                  }
+                ]
+              }
+            ],
+            "throw_speed": 2,
+            "gravity": -0.02
+          }
+        }
+      ]
+    },
+    "pickup_flourish": {
+      "type": "animation",
+      "cooldown_refund": 1,
+      "on_swing": {
+        "run_actions": [
+          {
+            "ID": "wardance:load_item",
+            "stack": {
+              "ID": "itemstack",
+              "item": "minecraft:oak_log"
+            }
+          }
+        ]
+      },
+      "animations": [
+        {
+          "duration": 20,
+          "easing": "IN_OUT_CUBIC",
+          "frames": [
+            {
+              "direction": [0, 1, 0],
+              "offset": [0, 0, 0],
+              "effects": {
+                "effects": [
+                  "WEAPON", "LOCK_ORIENTATION"
+                ]
+              }
+            }, {
+              "direction": [0, 0, -1],
+              "offset": [0, 0, 0]
+            }, {
+              "direction": [0, -1, 0],
+              "offset": [0, 0, 0]
+            }, {
+              "direction": [0, 0, 1],
+              "offset": [0, 0, 0]
+            }, {
+              "direction": [0, 1, 0],
+              "offset": [0, 0, 0]
+            }
+          ]
+        }
+      ]
+    },
+    "draw_attack": {
+      "type": "animation",
+      "velocity": [0, 0.2, 1],
+      "animations": [
+        {
+          "duration": 4,
+          "easing": "IN_CUBIC",
+          "frames": [
+            {
+              "direction": [0, 0, 1],
+              "offset": [0, 0, 1],
+              "render_rotation": [1, 0, 0],
+              "effects": {
+                "attack_info": {
+                  "damage_multiplier": 0.8,
+                  "drag": {
+                    "duration": 40,
+                    "strength": 2
+                  }
+                },
+                "effects": [
+                  "WEAPON"
+                ]
+              }
+            }
+          ]
+        }
+      ]
+    }
+  }
+}

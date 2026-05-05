@@ -33,6 +33,7 @@ import org.jetbrains.annotations.NotNull;
 import org.joml.Quaternionf;
 import org.joml.Vector3f;
 
+import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 
@@ -154,8 +155,14 @@ public class ThrownWeaponEntity extends FlyingWeaponEntity {
         }
     }
 
+    @Override
+    protected void updateSpin(MotionManager cur) {
+        if(intangible())return;
+        super.updateSpin(cur);
+    }
+
     private void doneHitting() {
-        getIdlePose().setAngularVelocity(Vec3.ZERO.toVector3f());
+        //getIdlePose().setAngularVelocity(Vec3.ZERO.toVector3f());
         if (dormant) return;
         //entity lodge check
         if (lodge_entity && !alreadyHit.isEmpty()) {
@@ -171,6 +178,7 @@ public class ThrownWeaponEntity extends FlyingWeaponEntity {
 
             Vec3 localOffset = new Vec3(relF.x, relF.y, relF.z).multiply(-1, 1, 1).normalize();
             //if(localOffset.lengthSqr()<0.001)localOffset=new Vec3(0,0,1);
+            runImpactActions();
             setIdlePose(new MotionManagers.FixedMM(new MotionFrame(localOffset, new Vec3(0, 0, -lodgedMob.getBbWidth() / 1.75)), 1));
             setUniversalOffset(Vec3.ZERO);
             setDeltaMovement(Vec3.ZERO);
@@ -178,9 +186,16 @@ public class ThrownWeaponEntity extends FlyingWeaponEntity {
             dormant = true;
         } else {
             //otherwise lose all velocity and start dropping to the ground
+            runImpactActions();
             setDeltaMovement(Vec3.ZERO);
             gravity = (float) Math.min(gravity, -0.04);
         }
+    }
+
+    private void runImpactActions() {
+        if (!impactActions.isEmpty())
+            ActionData.getCap(this).mark(getOwner(), new ActionSetWrapper(impactActions));
+        setImpactActions(NOTHING);
     }
 
     private void tickAndRecall() {
@@ -191,7 +206,7 @@ public class ThrownWeaponEntity extends FlyingWeaponEntity {
             setMotionTarget(getOwner());
             setUniversalOffset(Vec3.ZERO);
             setIdlePose(new MotionManagers.FixedMM(new MotionFrame(new Vec3(0, 1, 0.3), new Vec3(0, 0, 0)), 3));
-            getIdlePose().setAngularVelocity(new Vector3f(-1, 0, 0));
+            getIdlePose().setAngularVelocity(new Vector3f(-10, 0, 0));
             setState(STATE.FOLLOW);
             pierce = 99999;//to prevent getting stuck
         }
@@ -302,6 +317,8 @@ public class ThrownWeaponEntity extends FlyingWeaponEntity {
 
     }
 
+    private static final List<Action> NOTHING = new ArrayList<>();
+
     public void setImpactActions(List<Action> on_impact) {
         this.impactActions = on_impact;
     }
@@ -312,17 +329,11 @@ public class ThrownWeaponEntity extends FlyingWeaponEntity {
         if (ricochet()) return;
         if (lodge_block || hitFace == Direction.UP) {
 
-
-            //todo open this for datapacking
-//            ParticleUtils.playSweepParticle(FootworkParticles.IMPACT.get(), this, this.position(), 0, 3, Color.WHITE, 0);
-//            List<Entity> selfTarget = level().getEntities(getOwner(), getBoundingBox().inflate(0.3f), e -> e != getOwner() && e.isAlive() && e.isAttackable());
-//            onHitEntity(selfTarget);
-            if (!impactActions.isEmpty())
-                ActionData.getCap(this).mark(getOwner(), new ActionSetWrapper(impactActions));
+            runImpactActions();
 
             setIntangible(true);
             dormant = true;
-            getIdlePose().setAngularVelocity(Vec3.ZERO.toVector3f());
+            //getIdlePose().setAngularVelocity(Vec3.ZERO.toVector3f());
             setDeltaMovement(Vec3.ZERO);
             setPos(location);
             gravity = 0;
