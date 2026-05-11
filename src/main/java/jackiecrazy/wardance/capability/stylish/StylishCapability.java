@@ -145,7 +145,7 @@ public class StylishCapability implements IStyleCapability {
 //                guy.setHealth(guy.getMaxHealth());
 //            if (guy.getHealth() >= guy.getMaxHealth() && CombatData.getCap(guy).getRecordedDamage() > 0)
 //                CombatData.getCap(guy).recordDamage((float) (-drain * guy.getMaxHealth()));
-            if (guy.getMaxHealth() <= 1 || getCombo() > ComboRanks.B)
+            if (guy.getMaxHealth() <= 1 || getCombo() > ComboRanks.S)
                 stabilize();
         }
         if(recalcHealth) {

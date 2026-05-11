@@ -1,12 +1,11 @@
 package jackiecrazy.wardance.entity;
 
 import jackiecrazy.footwork.capability.resources.CombatData;
-import jackiecrazy.footwork.capability.timeslow.TimeSlowData;
 import jackiecrazy.footwork.entity.flyingweapon.FlyingItemEntity;
 import jackiecrazy.footwork.utils.GeneralUtils;
 import jackiecrazy.wardance.capability.aerial.AerialModeData;
 import jackiecrazy.wardance.networking.CombatChannel;
-import jackiecrazy.wardance.networking.combat.ResetAirJumpPacket;
+import jackiecrazy.wardance.networking.movement.ResetAirJumpPacket;
 import jackiecrazy.wardance.utils.CombatUtils;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;

@@ -1,14 +1,9 @@
-package jackiecrazy.wardance.networking.combat;
+package jackiecrazy.wardance.networking.movement;
 
 import jackiecrazy.wardance.capability.aerial.ClientAerialHandler;
-import jackiecrazy.wardance.capability.skill.CasterData;
-import jackiecrazy.wardance.networking.sync.SyncSkillPacket;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.player.LocalPlayer;
-import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.FriendlyByteBuf;
-import net.minecraft.server.level.ServerPlayer;
-import net.minecraft.world.entity.player.Player;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.fml.DistExecutor;
 import net.minecraftforge.network.NetworkEvent;

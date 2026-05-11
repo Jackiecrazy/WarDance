@@ -1,0 +1,31 @@
+{
+  "#crossbow": {
+    "attack": 2.4,
+    "defend": 1.0,
+    "standing": {
+      "type": "use"
+    },
+    "falling": {
+      "type": "use",
+      "velocity": [
+        0, 0.5, -1
+      ],
+      "set_velocity": true
+    },
+    "aerial": {
+      "type": "use",
+      "use_speed": 2
+    },
+    "sprinting": {
+      "sweep": "NONE",
+      "knockback": 2.0,
+      "damage_scale": 1.25,
+      "posture_scale": 1.25,
+      "on_swing": {
+        "command": "/function wardance:attack/self_mildfatigue"
+      },
+      "damage_other_command": "/function wardance:attack/damageother_mildstun",
+      "crit": true
+    }
+  }
+}

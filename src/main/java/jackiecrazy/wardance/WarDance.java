@@ -21,6 +21,7 @@ import jackiecrazy.wardance.move.actions.WarActionsRegistry;
 import jackiecrazy.wardance.networking.*;
 import jackiecrazy.wardance.networking.combat.*;
 import jackiecrazy.wardance.networking.meta.*;
+import jackiecrazy.wardance.networking.movement.*;
 import jackiecrazy.wardance.networking.skill.EvokeSkillPacket;
 import jackiecrazy.wardance.networking.skill.SelectSkillPacket;
 import jackiecrazy.wardance.networking.skill.UpdateMarkPacket;

@@ -1,8 +1,5 @@
-package jackiecrazy.wardance.networking.combat;
+package jackiecrazy.wardance.networking.movement;
 
-import jackiecrazy.footwork.capability.stylish.IStyleCapability;
-import jackiecrazy.footwork.capability.stylish.StylishData;
-import jackiecrazy.wardance.capability.aerial.AerialCapability;
 import jackiecrazy.wardance.capability.aerial.AerialModeData;
 import jackiecrazy.wardance.capability.aerial.IAerialMode;
 import net.minecraft.network.FriendlyByteBuf;
@@ -14,8 +11,10 @@ import java.util.function.Function;
 import java.util.function.Supplier;
 
 public class AerialModePacket {
-    private boolean toggle;
+    private final boolean toggle;
+
     public AerialModePacket(boolean on) {
+        toggle = on;
     }
 
     public static class Encoder implements BiConsumer<AerialModePacket, FriendlyByteBuf> {

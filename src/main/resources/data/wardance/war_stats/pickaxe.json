@@ -11,6 +11,42 @@
   "#pickaxe": {
     "attack": 3,
     "defend": 1,
+    "idle_frame": {
+      "duration": 3,
+      "easing": "LINEAR",
+      "angular_velocity": [
+        0,
+        0,
+        0
+      ],
+      "frames": [
+        {
+          "direction": [
+            0,
+            0.25,
+            0.25
+          ],
+          "offset": [
+            0,
+            -0.2,
+            1
+          ],
+          "effects": {
+            "effects": [
+              "WEAPON"
+            ],
+            "range": -1,
+            "velocity": [
+              0,
+              0,
+              0
+            ],
+            "set_velocity": false,
+            "attack_info": {}
+          }
+        }
+      ]
+    },
     "standing": {
       "sweep": "CLEAVE",
       "sweep_base": 60.0,
@@ -202,7 +238,8 @@
                   }
                 },
                 "effects": [
-                  "WEAPON", "TRAIL"
+                  "WEAPON", "TRAIL",
+                  "LOCK_POSITION"
                 ]
               }
             }, {
@@ -227,46 +264,29 @@
           "override": {
             "animations": [
               {
-                "duration": 14,
                 "easing": "IN_CUBIC",
                 "frames": [
                   {
-                    "direction": [1, 0, 0.2],
                     "offset": [0, 0, 2],
                     "effects": {
                       "attack_info": {
                         "knockback": 0,
-                        "spirit_multiplier": 0,
-                        "crit": true,
-                        "crit_damage": 1,
-                        "hit_other": {
-                          "run_actions": [
-                            {
-                              "ID": "pin",
-                              "duration": 30
-                            }
-                          ]
-                        }
-                      },
-                      "effects": [
-                        "WEAPON", "TRAIL"
-                      ]
+                        "spirit_multiplier": 0
+                      }
                     }
                   }, {
                     "direction": [0, 0, 1],
                     "offset": [0, 0, 2]
-                  }, {
-                    "direction": [0, 0, 1],
-                    "offset": [0, 0, 2]
-                  }
+                  }, null
                 ]
               }, {
                 "duration": 10,
-                "easing": "IN_CUBIC",
+                "easing": "IN_OUT_SINE",
                 "frames": [
                   {
                     "direction": [0, 0, 1],
                     "offset": [0, 0, 2],
+                    "render_rotation": 90,
                     "effects": {
                       "attack_info": {
                         "spirit_multiplier": 0,
@@ -279,12 +299,14 @@
                         }
                       },
                       "effects": [
-                        "WEAPON", "BIG_SHADOW"
+                        "WEAPON", "BIG_SHADOW",
+                        "LOCK_POSITION"
                       ]
                     }
                   }, {
                     "direction": [0, 0, 0.1],
-                    "offset": [0, 0, 0.2]
+                    "offset": [0, 0, 0.2],
+                    "render_rotation": 90
                   }
                 ]
               }

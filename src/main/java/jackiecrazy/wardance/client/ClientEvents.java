@@ -25,6 +25,7 @@ import jackiecrazy.wardance.handlers.TwoHandingHandler;
 import jackiecrazy.wardance.mixin.ClientAccessors;
 import jackiecrazy.wardance.networking.*;
 import jackiecrazy.wardance.networking.combat.*;
+import jackiecrazy.wardance.networking.movement.UnhookPacket;
 import jackiecrazy.wardance.networking.sync.UpdateWeaponFramePacket;
 import jackiecrazy.wardance.networking.sync.UpdateWeaponRenderPacket;
 import jackiecrazy.wardance.skill.Skill;

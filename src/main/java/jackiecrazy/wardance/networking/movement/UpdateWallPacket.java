@@ -1,4 +1,4 @@
-package jackiecrazy.wardance.networking.combat;
+package jackiecrazy.wardance.networking.movement;
 
 import jackiecrazy.wardance.capability.aerial.AerialModeData;
 import jackiecrazy.wardance.capability.aerial.IAerialMode;

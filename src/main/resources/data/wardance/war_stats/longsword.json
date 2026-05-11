@@ -1,43 +1,7 @@
 {
-  "minecraft:diamond_sword": {
+  "#longsword": {
     "attack": 3,
     "defend": 0.8,
-    "idle_frame": {
-      "duration": 3,
-      "easing": "LINEAR",
-      "angular_velocity": [
-        0,
-        0,
-        0
-      ],
-      "frames": [
-        {
-          "direction": [
-            0,
-            0.25,
-            0.25
-          ],
-          "offset": [
-            0,
-            -0.2,
-            1
-          ],
-          "effects": {
-            "effects": [
-              "WEAPON"
-            ],
-            "range": -1,
-            "velocity": [
-              0,
-              0,
-              0
-            ],
-            "set_velocity": false,
-            "attack_info": {}
-          }
-        }
-      ]
-    },
     "guard_frame": {
       "duration": 2,
       "easing": "LINEAR",

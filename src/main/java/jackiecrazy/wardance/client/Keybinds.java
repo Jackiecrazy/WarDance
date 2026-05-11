@@ -12,8 +12,8 @@ import jackiecrazy.wardance.client.screen.skill.SkillCastScreen;
 import jackiecrazy.wardance.config.QiCosts;
 import jackiecrazy.wardance.networking.CombatChannel;
 import jackiecrazy.wardance.networking.combat.CombatModePacket;
-import jackiecrazy.wardance.networking.combat.DodgePacket;
-import jackiecrazy.wardance.networking.combat.GrapplePacket;
+import jackiecrazy.wardance.networking.movement.DodgePacket;
+import jackiecrazy.wardance.networking.movement.GrapplePacket;
 import jackiecrazy.wardance.networking.combat.KickPacket;
 import jackiecrazy.wardance.networking.skill.EvokeSkillPacket;
 import jackiecrazy.wardance.networking.skill.SelectSkillPacket;
@@ -25,7 +25,6 @@ import net.minecraft.world.entity.EntitySelector;
 import net.minecraft.world.entity.Pose;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.entity.projectile.ProjectileUtil;
-import net.minecraft.world.phys.EntityHitResult;
 import net.minecraft.world.phys.HitResult;
 import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.api.distmarker.Dist;
@@ -62,6 +61,7 @@ public class Keybinds {
     public static final KeyMapping DODGE = new KeyMapWrapper("wardance.dodge", IN_COMBAT, InputConstants.Type.KEYSYM, GLFW.GLFW_KEY_LEFT_ALT, "key.categories.wardance");
     public static final KeyMapping THROW = new KeyMapWrapper("wardance.throw", IN_COMBAT, InputConstants.Type.KEYSYM, GLFW.GLFW_KEY_Q, "key.categories.wardance");
     public static final KeyMapping SWAP = new KeyMapWrapper("wardance.swap", IN_COMBAT, InputConstants.Type.KEYSYM, GLFW.GLFW_KEY_F, "key.categories.wardance");
+    public static final KeyMapping GRAPPLE = new KeyMapWrapper("wardance.grapple", IN_COMBAT, InputConstants.Type.KEYSYM, GLFW.GLFW_KEY_C, "key.categories.wardance");
     public static final KeyMapping EVOKE = new KeyMapWrapper("wardance.evoke", IN_COMBAT, InputConstants.Type.KEYSYM, GLFW.GLFW_KEY_V, "key.categories.wardance");
     //center, top right, down clockwise
     public static final KeyMapping[] SKILL = {

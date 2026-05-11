@@ -102,7 +102,7 @@
       "type": "animation",
       "animations": [
         {
-          "duration": 20,
+          "duration": 10,
           "easing": "OUT_CUBIC",
           "frames": [
             {
@@ -168,8 +168,9 @@
                     "offset": [0, 0, 0],
                     "render_rotation": [0, 0, -1, 180]
                   }, {
-                    "direction": [0, 1, 0.2],
+                    "direction": [0, 1, 0],
                     "offset": [0, 0, 1.4],
+                    "render_rotation": [0, 1, 0, 0],
                     "effects": {
                       "attack_info": {
                         "knockback": 1,
