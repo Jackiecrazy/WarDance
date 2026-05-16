@@ -5,11 +5,20 @@ import jackiecrazy.footwork.capability.stylish.StylishData;
 import jackiecrazy.footwork.entity.flyingweapon.FlyingItemEntity;
 import jackiecrazy.footwork.entity.flyingweapon.FlyingWeaponEffect;
 import jackiecrazy.footwork.move.motionframe.MotionFrame;
+import jackiecrazy.footwork.move.motionframe.MotionGroup;
 import jackiecrazy.footwork.move.motionframe.MotionManager;
 import jackiecrazy.footwork.move.motionframe.MotionManagers;
+import jackiecrazy.footwork.utils.EasingFunctionEnum;
 import jackiecrazy.footwork.utils.GeneralUtils;
+import jackiecrazy.wardance.WarDance;
 import jackiecrazy.wardance.config.weapon.WeaponStats;
 import jackiecrazy.wardance.entity.*;
+import jackiecrazy.wardance.networking.CombatChannel;
+import jackiecrazy.wardance.networking.sync.SyncQuiverPacket;
+import jackiecrazy.wardance.networking.sync.UpdateFlyingWeaponPacket;
+import jackiecrazy.wardance.skill.grapple.Grapple;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.player.Player;
@@ -17,9 +26,14 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.common.ForgeMod;
+import net.minecraftforge.network.PacketDistributor;
 import org.joml.Vector4d;
 
+import java.util.List;
+
 public class FlyingWeaponCapability implements IFlyingWeapon {
+    private static final MotionManager BLOCKYEET= new MotionManagers.DefinitionMM(new MotionGroup(List.of(new MotionFrame(new Vec3(0,1,0.4), new Vec3(0,1,0)),new MotionFrame(new Vec3(0,1,-0.4), new Vec3(0,1,0))), EasingFunctionEnum.IN_SINE, 10) );
+    private static final MotionManager BLOCKHOLD= new MotionManagers.DefinitionMM(new MotionGroup(List.of(new MotionFrame(new Vec3(0,1,0.4), new Vec3(0,1,0))), EasingFunctionEnum.LINEAR, 10) );
     private static final MotionManager[] idleFrame = {
             new MotionManagers.FixedMM(new MotionFrame(new Vec3(0, -1, 0), new Vec3(0, -0.4, 0), new Vector4d(0, 1, 0, 0)), 5),
             new MotionManagers.FixedMM(new MotionFrame(new Vec3(0, -1, 0), new Vec3(0, -0.4, 0), new Vector4d(0, 1, 0, 0)), 5)
@@ -29,12 +43,10 @@ public class FlyingWeaponCapability implements IFlyingWeapon {
             new MotionManagers.FixedMM(new MotionFrame(new Vec3(0, -1, 1), Vec3.ZERO, new Vector4d(0, 1, 0, -90)), 5)
     };
     private static final Vec3[] idleOffset = {
-            new Vec3(0.5, 0, 0.5),
-            new Vec3(-0.5, 0, 0.5)
+            new Vec3(0.5, 0, 0.5), new Vec3(-0.5, 0, 0.5)
     };
     private static final Vec3[] blockOffset = {
-            new Vec3(0, 0, 1),
-            new Vec3(0, 0, 0.7)
+            new Vec3(0, 0, 1), new Vec3(0, 0, 0.7)
     };
     Player player;
     FlyingWeaponEntity main, off;
@@ -63,9 +75,13 @@ public class FlyingWeaponCapability implements IFlyingWeapon {
 
     @Override
     public void setHeldBlock(ThrownWeaponEntity sb) {
-        if (held != null)
-            held.remove(Entity.RemovalReason.UNLOADED_WITH_PLAYER);
+        if (held != null) held.remove(Entity.RemovalReason.UNLOADED_WITH_PLAYER);
         held = sb;
+        if(!sb.level().isClientSide) {
+            sb.queuePath(BLOCKYEET);
+            //sb.queuePath(BLOCKHOLD);
+        }
+        sync();
     }
 
     @Override
@@ -83,16 +99,15 @@ public class FlyingWeaponCapability implements IFlyingWeapon {
             grapple.setOwner(player);
             grapple.setInteractionRange(1);
             grapple.setPosRaw(player.getX(), player.getY() + player.getEyeHeight(), player.getZ());
-            grapple.setDeltaMovement(to.subtract(grapple.position()).normalize().scale(1.5));
+            grapple.setDeltaMovement(to.subtract(grapple.position()).normalize().scale(3));
             this.grapple = grapple;
             player.level().addFreshEntity(grapple);
+            sync();
         }
     }
 
     @Override
-    public void scheduleAction(InteractionHand hand,
-                               MotionManager mm,
-                               FlyingWeaponEffect... fx) {
+    public void scheduleAction(InteractionHand hand, MotionManager mm, FlyingWeaponEffect... fx) {
         //set attack range from manager, then temporarily set the rest to override whatever sweep the player should have grabbed
         //no idea how this should be stored on the player. Since it's used in the span of a single function, maybe a global is fine?
         final boolean isMain = hand == InteractionHand.MAIN_HAND;
@@ -101,8 +116,7 @@ public class FlyingWeaponCapability implements IFlyingWeapon {
         try {
             if (!scheduleLock && fwe != null) {
                 //updateWeapon(fwe, hand);
-                if (mm.getStartFrame() == null)
-                    fwe.clearPath();
+                if (mm.getStartFrame() == null) fwe.clearPath();
                 fwe.queuePath(mm, 0, 0);//fixme weird trail jump
                 //fwe.setIdlePose(idleFrame[isMain ? 0 : 1]);
                 //fwe.setShouldRender(FlyingWeaponEffect.WEAPON,true);
@@ -122,6 +136,40 @@ public class FlyingWeaponCapability implements IFlyingWeapon {
     }
 
     @Override
+    public CompoundTag write() {
+        CompoundTag t = new CompoundTag();
+        if (getWeapon(InteractionHand.MAIN_HAND) != null)
+            t.putInt("mainID", getWeapon(InteractionHand.MAIN_HAND).getId());
+        if (getWeapon(InteractionHand.OFF_HAND) != null)
+            t.putInt("offID", getWeapon(InteractionHand.OFF_HAND).getId());
+        if (getHeldBlock() != null)
+            t.putInt("quiverID", getHeldBlock().getId());
+        if (getGrapple() != null)
+            t.putInt("grappleID", getGrapple().getId());
+        return t;
+    }
+
+    @Override
+    public void read(Level l, CompoundTag t) {
+        Entity e = l.getEntity(t.getInt("mainID"));
+        if (e instanceof FlyingWeaponEntity f)
+            main = f;
+        else main=null;
+        e = l.getEntity(t.getInt("offID"));
+        if (e instanceof FlyingWeaponEntity f)
+            off = f;
+        else off=null;
+        e = l.getEntity(t.getInt("quiverID"));
+        if (e instanceof ThrownWeaponEntity f)
+            setHeldBlock(f);
+        else held=null;
+        e = l.getEntity(t.getInt("grappleID"));
+        if (e instanceof GrappleEntity f)
+            grapple = f;
+        else grapple=null;
+    }
+
+    @Override
     public void tick() {
         //reset weapons if they're dead
         if (main != null && main.isRemoved()) main = null;
@@ -137,6 +185,11 @@ public class FlyingWeaponCapability implements IFlyingWeapon {
             if(off!=null) off.remove(Entity.RemovalReason.DISCARDED);
             off=null;
         }*/
+        //auto yeet block
+        if(getHeldBlock()!=null&&getHeldBlock().isIdle()){
+            Vec3 dest=player.getEyePosition().add(player.getLookAngle().scale(32));
+            yeet(null, dest, 2);
+        }
         if (!StylishData.getCap(player).isCombatMode() || player.isDeadOrDying()) {
             if (main != null) main.invalidateWhenDone();
             if (off != null) off.invalidateWhenDone();
@@ -187,7 +240,6 @@ public class FlyingWeaponCapability implements IFlyingWeapon {
     }
 
     private void respawnWeapon(InteractionHand hand) {
-        //fixme a new pair is made every reload
         FlyingWeaponEntity fwe = new FlyingWeaponEntity(WarEntities.WEAPON.get(), player.level());
         updateWeapon(fwe, hand);
         if (hand == InteractionHand.MAIN_HAND) {
@@ -196,14 +248,19 @@ public class FlyingWeaponCapability implements IFlyingWeapon {
             fwe.setUniversalOffset(new Vec3(-1, 0, 0));
             off = fwe;
         }
-        if (!player.level().isClientSide())
-            player.level().addFreshEntity(fwe);
+        if (!player.level().isClientSide()) player.level().addFreshEntity(fwe);
+        sync();
+    }
+
+    private void sync() {
+        if(player instanceof ServerPlayer sp &&!sp.level().isClientSide){
+            CombatChannel.INSTANCE.send(PacketDistributor.PLAYER.with(() -> sp), new UpdateFlyingWeaponPacket(sp));
+        }
     }
 
     @Override
     public void setRender(InteractionHand hand, FlyingWeaponEffect... effects) {
-        if (getWeapon(hand).isIdle())
-            getWeapon(hand).setEffect(effects);
+        if (getWeapon(hand).isIdle()) getWeapon(hand).setEffect(effects);
     }
 
     @Override
@@ -214,6 +271,7 @@ public class FlyingWeaponCapability implements IFlyingWeapon {
                 getHeldBlock().yeet(pos, 2);
                 held = null;
                 StylishData.getCap(player).addCombo(0.12f, "blockyeet");
+                sync();
                 return gbe;
             }
             return null;
@@ -234,6 +292,7 @@ public class FlyingWeaponCapability implements IFlyingWeapon {
         fwe.yeet(pos, strength);
         fwe.setInteractionRange(1f);
         level.addFreshEntity(fwe);
+        sync();
         return fwe;
     }
 
@@ -252,8 +311,7 @@ public class FlyingWeaponCapability implements IFlyingWeapon {
         }
         final ItemStack stack = player.getItemInHand(hand);
         final WeaponStats.WeaponInfo info = WeaponStats.lookupStats(stack);
-        if (info != null)
-            fwe.setIdlePose(info.idle_frame(hand == InteractionHand.OFF_HAND));
+        if (info != null) fwe.setIdlePose(info.idle_frame(hand == InteractionHand.OFF_HAND));
         else fwe.setIdlePose(WeaponStats.DEFAULTMELEE.idle_frame(hand == InteractionHand.OFF_HAND));
         fwe.setHeldItem(stack);
         fwe.setOwner(player);

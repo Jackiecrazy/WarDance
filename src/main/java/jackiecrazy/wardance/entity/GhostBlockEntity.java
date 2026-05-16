@@ -39,11 +39,11 @@ public class GhostBlockEntity extends ThrownWeaponEntity {
     @Override
     public boolean pickup(Player player) {
         if (getInfo() != null) return false;
-        FlyingWeaponData.getCap(player).setHeldBlock(this);
         this.setUniversalOffset(new Vec3(0, player.getBbHeight(), 0.5));
         setDeltaMovement(Vec3.ZERO);
         setIntangible(true);
         setState(STATE.FOLLOW);
+        FlyingWeaponData.getCap(player).setHeldBlock(this);
         return true;
     }
 

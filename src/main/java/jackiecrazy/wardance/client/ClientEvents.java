@@ -9,7 +9,11 @@ import jackiecrazy.footwork.entity.flyingweapon.FlyingWeaponEffect;
 import jackiecrazy.footwork.utils.GeneralUtils;
 import jackiecrazy.footwork.utils.TargetingUtils;
 import jackiecrazy.wardance.WarDance;
+import jackiecrazy.wardance.capability.aerial.AerialModeData;
+import jackiecrazy.wardance.capability.aerial.ClientAerialHandler;
+import jackiecrazy.wardance.capability.aerial.IAerialMode;
 import jackiecrazy.wardance.capability.charging.ChargingData;
+import jackiecrazy.wardance.capability.flyingweapon.FlyingWeaponData;
 import jackiecrazy.wardance.capability.skill.CasterData;
 import jackiecrazy.wardance.capability.skill.ISkillCapability;
 import jackiecrazy.wardance.client.hud.QuiverDisplay;
@@ -120,8 +124,8 @@ public class ClientEvents {
         //store a copy of the mob that the player is looking at for coyote time resolution
         double aimRange;
         boolean updateGrapple = false;
-        Predicate<Entity> pred = a -> EntitySelector.LIVING_ENTITY_STILL_ALIVE.test(a) && !TargetingUtils.isAlly(a, p);
-        if (Keybinds.THROW.isDown()) {
+        Predicate<Entity> pred = a -> EntitySelector.LIVING_ENTITY_STILL_ALIVE.test(a) && !a.isInvulnerable() && !TargetingUtils.isAlly(a, p);
+        if (Keybinds.GRAPPLE.isDown()) {
             aimRange = GrappleEntity.MAXDIST;
             pred = GRAPPLE_VALID;
             updateGrapple = true;
@@ -225,6 +229,26 @@ public class ClientEvents {
                 if (StylishData.getCap(p).isCombatMode()) {
                     suppressConflictingKeys(mc);
 
+                    //grapple update code
+                    if (FlyingWeaponData.getCap(p).hasGrapple()) {
+//                        if (mc.options.keyAttack.isDown() && mc.options.keyAttack.consumeClick()) {
+//                            CombatChannel.INSTANCE.sendToServer(new UnhookPacket(GrappleEntity.ACTION.ZIP));
+//                            FlyingWeaponData.getCap(mc.player).getGrapple().retract(GrappleEntity.ACTION.ZIP);
+//                            AerialModeData.getCap(mc.player).setState(IAerialMode.WallState.NONE);
+//                        }
+//                        if (mc.options.keyUse.isDown() && mc.options.keyUse.consumeClick()) {
+//                            CombatChannel.INSTANCE.sendToServer(new UnhookPacket(GrappleEntity.ACTION.YANK));
+//                            FlyingWeaponData.getCap(mc.player).getGrapple().retract(GrappleEntity.ACTION.YANK);
+//                            AerialModeData.getCap(mc.player).setState(IAerialMode.WallState.NONE);
+//                        }
+                        if (mc.options.keyJump.isDown() && mc.options.keyJump.consumeClick()) {
+                            CombatChannel.INSTANCE.sendToServer(new UnhookPacket(GrappleEntity.ACTION.JUMP));
+                            FlyingWeaponData.getCap(mc.player).getGrapple().retract(GrappleEntity.ACTION.JUMP);
+                            AerialModeData.getCap(mc.player).setState(IAerialMode.WallState.NONE);
+                            ClientAerialHandler.resetMultiJumps(mc.player);
+                        }
+                    }
+
                     //swap attack code
                     if (Keybinds.SWAP.isDown()) {
                         if (!wasAiming)
@@ -276,7 +300,6 @@ public class ClientEvents {
                         }
                     } else if (wasThrowAiming) {
                         CombatChannel.INSTANCE.sendToServer(new UpdateWeaponFramePacket(WeaponStats.AttackType.STANDING));
-                        CombatChannel.INSTANCE.sendToServer(new UnhookPacket());
                         wasThrowAiming = false;
                         //don't point them forward
                     }

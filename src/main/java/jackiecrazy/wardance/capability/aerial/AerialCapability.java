@@ -17,6 +17,7 @@ import java.util.UUID;
 
 public class AerialCapability implements IAerialMode {
     private static final UUID GRAVITY = UUID.fromString("e2118f5c-8a42-43c2-bf39-6e6264a26ca5");
+    private static final UUID WALL_GRAV = UUID.fromString("e2118f5c-8a42-43c2-bf39-6e6264a26cad");
     private final ArrayList<Tuple<Integer, Double>> modify = new ArrayList<>();
     WeakReference<Entity> bind;
     private double speed = 1;
@@ -45,6 +46,7 @@ public class AerialCapability implements IAerialMode {
             final Entity bound = bind.get();
 
             if (bound instanceof LivingEntity p) {
+                //fixme the server is not aware of the player's wall state so updating attribute causes them to rapidly start sliding down
                 p.getAttribute(ForgeMod.ENTITY_GRAVITY.get()).removeModifier(GRAVITY);
                 p.getAttribute(ForgeMod.ENTITY_GRAVITY.get()).addTransientModifier(new AttributeModifier(GRAVITY, "time slow", speed - 1, AttributeModifier.Operation.MULTIPLY_TOTAL));
             }
@@ -80,6 +82,13 @@ public class AerialCapability implements IAerialMode {
         }
         longest--;
         off--;
+        if (bind != null) {
+            final Entity bound = bind.get();
+
+            if (bound.onGround()) {
+                setAerialMode(false);
+            }
+        }
     }
 
     @Override
@@ -110,9 +119,9 @@ public class AerialCapability implements IAerialMode {
         this.state = state;
         if (bind.get() instanceof LivingEntity e) {
             if (state.noGravity) {
-                SkillUtils.modifyAttribute(e, ForgeMod.ENTITY_GRAVITY.get(), GRAVITY, -1, AttributeModifier.Operation.MULTIPLY_TOTAL);
+                SkillUtils.modifyAttribute(e, ForgeMod.ENTITY_GRAVITY.get(), WALL_GRAV, -1, AttributeModifier.Operation.MULTIPLY_TOTAL);
             } else
-                SkillUtils.removeAttribute(e, ForgeMod.ENTITY_GRAVITY.get(), GRAVITY);
+                SkillUtils.removeAttribute(e, ForgeMod.ENTITY_GRAVITY.get(), WALL_GRAV);
             if (state == WallState.NONE) {
                 //temporarily stick on the surface
                 noOffFor(10);

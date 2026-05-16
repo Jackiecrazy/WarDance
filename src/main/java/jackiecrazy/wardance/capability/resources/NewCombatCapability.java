@@ -1,5 +1,6 @@
 package jackiecrazy.wardance.capability.resources;
 
+import jackiecrazy.footwork.Footwork;
 import jackiecrazy.footwork.api.FootworkAttributes;
 import jackiecrazy.footwork.capability.resources.CombatData;
 import jackiecrazy.footwork.capability.resources.ICombatCapability;
@@ -241,7 +242,7 @@ public class NewCombatCapability implements ICombatCapability {
                 cycles--;
                 amount *= (1.15f);
             }
-            elb.removeEffect(FootworkEffects.COUNTERSTRIKE.get());
+            //elb.removeEffect(FootworkEffects.COUNTERSTRIKE.get());
         }
 
 
@@ -291,6 +292,10 @@ public class NewCombatCapability implements ICombatCapability {
                     //stun sets the posture to max so you can deplete it again
                     posture = getMaxPosture();
                     stun(assailant, se.getLength());
+                    elb.removeEffect(FootworkEffects.COUNTERSTRIKE.get());
+                    if (assailant != null) {
+                        CombatData.getCap(assailant).addRally((float) (CombatData.getCap(assailant).getMaxPosture() * assailant.getAttributeValue(FootworkAttributes.BREACH_RALLY.get())));
+                    }
                 }
             }
             elb.level().playSound(null, elb.getX(), elb.getY(), elb.getZ(), SoundEvents.ZOMBIE_ATTACK_WOODEN_DOOR, SoundSource.PLAYERS, 0.3f + WarDance.rand.nextFloat() * 0.5f, 0.75f + WarDance.rand.nextFloat() * 0.5f);
@@ -343,13 +348,13 @@ public class NewCombatCapability implements ICombatCapability {
 //        MinecraftForge.EVENT_BUS.post(rpe);
 //        if (rpe.isCanceled()) return;
         //amount = rpe.getQuantity();//Math.min(rpe.getQuantity(), rally);
-//        amount = Math.min(amount, rally);
-//        rally -= amount;
-        amount = rally;
+        amount = Math.min(amount, rally);
+        rally -= amount;
+        //amount = rally;
         //rallyCD = RALLY_CD;
         //tickProc("rally");
-        setPosture(posture + amount);
-        rally = 0;
+        setPosture(posture + amount);//todo this is quite harsh
+//        rally = 0;
         dirty = true;
     }
 
@@ -470,12 +475,11 @@ public class NewCombatCapability implements ICombatCapability {
         if (elb.isShiftKeyDown()) {
             if (guardFrame < 0 && canParry())
                 setParryTime(CombatConfig.parryTime);
-            guardFrame = 10;
-        } else {
-            guardFrame = -10;
+            guardFrame = 2;
         }
         parryFrame -= ticks;
         iFrame -= ticks;
+        guardFrame-=ticks;
 
         //stun
         if (isStunned())

@@ -63,9 +63,13 @@ public class ThrownWeaponEntity extends FlyingWeaponEntity {
         return this;
     }
 
+    private boolean noCosmetics(){
+        return getCosmeticItem()==null||(getCosmeticItem().nodes().length==1&&getCosmeticItem().nodes()[0].stack().equals(getHeldItem()));
+    }
+
     public ThrownWeaponEntity setFake(boolean fake) {
         this.fake = fake;
-        if (fake&&getCosmeticItem().equals(getHeldItem())) {
+        if (fake&&noCosmetics()) {
             setEffect(FlyingWeaponEffect.BIG_SHADOW);
         } else setEffect(FlyingWeaponEffect.WEAPON);
         return this;
@@ -171,7 +175,7 @@ public class ThrownWeaponEntity extends FlyingWeaponEntity {
             //setInteractionRange(0);
             setMotionTarget(lodgedMob);
             // Mob yaw in radians
-            float yawRad = (float) Math.toRadians(-lodgedMob.getYRot());
+            float yawRad = (float) Math.toRadians(lodgedMob.getYRot());
             Quaternionf mobRotInv = new Quaternionf().rotateY(yawRad); // inverse yaw
             Vector3f relF = getDeltaMovement().toVector3f();
             mobRotInv.transform(relF);

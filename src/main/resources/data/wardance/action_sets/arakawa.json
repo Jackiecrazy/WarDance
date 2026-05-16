@@ -1,0 +1,82 @@
+[
+  {
+    "ID": "store_vector",
+    "value": {
+      "ID": "foot_position",
+      "reference_point": "target"
+    },
+    "into": "arakawa"
+  },
+  {
+    "ID": "move_along_path",
+    "max_time": 50,
+    "position": {
+      "ID": "get_vector",
+      "from": "arakawa"
+    },
+    "orientation": {
+      "ID": "vector",
+      "x": 1,
+      "y": 0,
+      "z": 0
+    },
+    "path": {
+      "duration": 40,
+      "easing": "LINEAR",
+      "frames": [
+        {
+          "direction": [0, 1, 0],
+          "offset": [0, 0, 0]
+        }, {
+          "direction": [0, 1, 0],
+          "offset": [0, 0, 30]
+        }, {
+          "direction": [0, 1, 0],
+          "offset": [0, 0, 0]
+        }
+      ]
+    },
+    "tick": [
+      {
+        "ID": "look_at",
+        "looker": "target",
+        "vector_target": {
+          "ID": "sum_vector",
+          "addends": [
+            {
+              "ID": "get_vector",
+              "from": "arakawa"
+            },{
+              "ID": "vector",
+              "x": 0,
+              "y": 20,
+              "z": 0
+            }
+          ]
+        },
+        "condition": {
+          "ID": "time_window",
+          "from": 0,
+          "to": 20
+        }
+      },{
+        "ID": "look_at",
+        "looker": "target",
+        "vector_target": {
+          "ID": "get_vector",
+          "from": "arakawa"
+        },
+        "condition": {
+          "ID": "time_window",
+          "from": 20
+        }
+      },{
+        "ID": "remove",
+        "condition": {
+          "ID": "time_window",
+          "from": 50
+        }
+      }
+    ]
+  }
+]

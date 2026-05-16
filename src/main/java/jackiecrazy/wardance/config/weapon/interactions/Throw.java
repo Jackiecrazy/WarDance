@@ -2,11 +2,9 @@ package jackiecrazy.wardance.config.weapon.interactions;
 
 import jackiecrazy.footwork.move.action.Action;
 import jackiecrazy.footwork.move.argument.Argument;
+import jackiecrazy.footwork.move.argument.misc.RenderItemArgument;
 import jackiecrazy.footwork.move.argument.stack.RawItemStackArgument;
-import jackiecrazy.footwork.move.motionframe.HitInfo;
-import jackiecrazy.footwork.move.motionframe.MotionFrame;
-import jackiecrazy.footwork.move.motionframe.MotionManager;
-import jackiecrazy.footwork.move.motionframe.MotionManagers;
+import jackiecrazy.footwork.move.motionframe.*;
 import jackiecrazy.footwork.move.utils.ArgumentContext;
 import jackiecrazy.footwork.utils.MovementUtils;
 import jackiecrazy.wardance.entity.ThrownWeaponEntity;
@@ -31,7 +29,7 @@ public class Throw extends WeaponInteractions.WeaponInteraction {
     private double throw_speed = 2;
     private boolean consume_item = true;
     private boolean pickup_flourish = true;
-    private Argument<ItemStack> display_stack;
+    private RenderItemArgument display_stack;
     private List<Action> on_impact = List.of();
 
     public Throw() {
@@ -87,11 +85,6 @@ public class Throw extends WeaponInteractions.WeaponInteraction {
         return this;
     }
 
-    public Throw setDisplay_stack(Argument<ItemStack> display_stack) {
-        this.display_stack = new RawItemStackArgument();
-        return this;
-    }
-
     public Throw setImpact(List<Action> on_impact) {
         this.on_impact = on_impact;
         return this;
@@ -140,7 +133,7 @@ public class Throw extends WeaponInteractions.WeaponInteraction {
 
     public void applyCosmeticStack(ThrownWeaponEntity twe, ArgumentContext ctx) {
         if (display_stack == null) return;
-        ItemStack is = display_stack.resolve(ctx);
+        RenderItemGroup is = display_stack.resolve(ctx);
         twe.setCosmeticItem(is);
     }
 

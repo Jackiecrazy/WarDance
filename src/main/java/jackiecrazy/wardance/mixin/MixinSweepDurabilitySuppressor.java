@@ -16,6 +16,9 @@ import java.util.function.Consumer;
 public class MixinSweepDurabilitySuppressor {
     @Inject(method = "hurtAndBreak", at = @At("HEAD"), cancellable = true)
     private void halt(int amount, LivingEntity entityIn, Consumer<LivingEntity> onBroken, CallbackInfo ci) {
-        if (!GeneralConfig.sweepDurability && CombatData.getCap(entityIn).alreadyProc("oncePerAttack")) ci.cancel();
+        if (!GeneralConfig.sweepDurability && CombatData.getCap(entityIn).alreadyProc("durabilityConsumed"))
+            ci.cancel();
+        CombatData.getCap(entityIn).tickProc("durabilityConsumed");
+
     }
 }

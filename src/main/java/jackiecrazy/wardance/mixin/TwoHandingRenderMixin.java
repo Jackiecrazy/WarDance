@@ -1,6 +1,7 @@
 package jackiecrazy.wardance.mixin;
 
 import jackiecrazy.footwork.capability.stylish.StylishData;
+import jackiecrazy.wardance.capability.flyingweapon.FlyingWeaponData;
 import jackiecrazy.wardance.handlers.TwoHandingHandler;
 import net.minecraft.client.model.HumanoidModel;
 import net.minecraft.client.player.AbstractClientPlayer;
@@ -17,9 +18,12 @@ public class TwoHandingRenderMixin {
     private static void combatModeOverride(AbstractClientPlayer p,
                                            InteractionHand h,
                                            CallbackInfoReturnable<HumanoidModel.ArmPose> cir) {
-        if(StylishData.getCap(p).isCombatMode()&& TwoHandingHandler.suppressOffhand(p,p.getMainHandItem())){
+        if (StylishData.getCap(p).isCombatMode() && h == InteractionHand.MAIN_HAND && TwoHandingHandler.suppressOffhand(p, p.getMainHandItem())) {
             //two-handing
             cir.setReturnValue(HumanoidModel.ArmPose.CROSSBOW_CHARGE);
+        }
+        if(FlyingWeaponData.getCap(p).getHeldBlock()!=null){
+            cir.setReturnValue(HumanoidModel.ArmPose.THROW_SPEAR);
         }
     }
 }

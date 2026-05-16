@@ -400,6 +400,7 @@ public class CombatUtils {
             WeaponStats.info_override = info.getHitInfo();
             CombatUtils.applyFrames(e, info.getHitInfo());
             if (info instanceof SweepAttack sweep) {
+                if (group.noFlip()) SweepAnimationBuilder.flip = -1;//hacky reset
                 WeaponStats.info_override = sweep.getHitInfo();
                 final double damageBonus = sweep.getHitInfo().getDamageScale() - 1;
                 if (ignore != null && damageBonus <= 0)
@@ -425,10 +426,10 @@ public class CombatUtils {
                 }
             }
             if (info instanceof Animation anim) {
-                TemporaryMoveTranslator.flip *= -1;
+                SweepAnimationBuilder.flip *= -1;
                 FlyingWeaponData.getCap(e).getWeapon(h).setUniversalOffset(h == InteractionHand.MAIN_HAND ? group.right_hand_offset() : group.left_hand_offset());
                 for (MotionManager mm : anim.getAnimations())
-                    FlyingWeaponData.getCap(e).scheduleAction(h, TemporaryMoveTranslator.flip < 0 ? mm.flipFrames() : mm);
+                    FlyingWeaponData.getCap(e).scheduleAction(h, SweepAnimationBuilder.flip > 0 && group.noFlip() ? mm.flipFrames() : mm);
             }
             if (info instanceof Throw t) {
                 final IFlyingWeapon cap = FlyingWeaponData.getCap(e);
@@ -504,7 +505,7 @@ public class CombatUtils {
         if (TimeSlowData.getCap(e).getEffectiveSpeed() < 1) {
             fx.add(FlyingWeaponEffect.AFTERIMAGE);
         }
-        FlyingWeaponData.getCap(e).scheduleAction(h, TemporaryMoveTranslator.temp_getMMFromType(animTime, type, radius, null, reach), fx.toArray(new FlyingWeaponEffect[fx.size()]));
+        FlyingWeaponData.getCap(e).scheduleAction(h, SweepAnimationBuilder.temp_getMMFromType(animTime, type, radius, null, reach), fx.toArray(new FlyingWeaponEffect[fx.size()]));
 
 
         if (sre.isCanceled() || type == SweepAttack.SWEEPTYPE.NONE || radius == 0) {
@@ -628,7 +629,8 @@ public class CombatUtils {
             set = WeaponStats.AttackType.SPRINTING;
         if ((!(entity instanceof Player p) || !p.getAbilities().flying) && !entity.onGround() && entity.fallDistance > 0 && !entity.onClimbable() && !entity.isInWater())
             set = WeaponStats.AttackType.FALLING;
-        if (AerialModeData.getCap(entity).getEffectiveSpeed() < 1||AerialModeData.getCap(entity).isAerialMode()) set = WeaponStats.AttackType.AERIAL;
+        if (AerialModeData.getCap(entity).getEffectiveSpeed() < 1 || AerialModeData.getCap(entity).isAerialMode())
+            set = WeaponStats.AttackType.AERIAL;
         //todo more ways to be in aerial mode
         switch (AerialModeData.getCap(entity).getState()) {
             case CLING, CEILING_CLING -> set = WeaponStats.AttackType.STANDING;
@@ -823,7 +825,7 @@ public class CombatUtils {
         //StylishData.getCap(sender).resetTriggerBar();
         WeaponInteractions.InteractionGroup info = WeaponStats.getSweepInfo(sender.getItemInHand(h), sender, s, false);
 //        if (info instanceof SweepAttack sa)
-//            TemporaryMoveTranslator.scheduleFinisher(sender, h, sa);
+//            SweepAnimationBuilder.scheduleFinisher(sender, h, sa);
         StylishData.getCap(sender).addCombo(0.25f, "heavy" + (h == InteractionHand.OFF_HAND) + s.name());
         return true;
     }

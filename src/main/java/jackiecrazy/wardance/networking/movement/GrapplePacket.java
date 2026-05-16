@@ -18,7 +18,7 @@ public class GrapplePacket {
 
     public GrapplePacket(Vec3 pos, int id) {
         destination = pos;
-        entID=id;
+        entID = id;
     }
 
     public static class Encoder implements BiConsumer<GrapplePacket, FriendlyByteBuf> {
@@ -49,7 +49,7 @@ public class GrapplePacket {
                 sender.resetFallDistance();
                 cap.launchGrapple(packet.destination);
                 final Entity found = sender.level().getEntity(packet.entID);
-                if(cap.getGrapple()!=null){
+                if (cap.getGrapple() != null) {
                     cap.getGrapple().setMotionTarget(found);
                 }
             });

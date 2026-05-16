@@ -5,6 +5,7 @@ import jackiecrazy.footwork.client.particle.FootworkParticles;
 import jackiecrazy.footwork.entity.flyingweapon.FlyingItemEntity;
 import jackiecrazy.footwork.entity.flyingweapon.FlyingWeaponEffect;
 import jackiecrazy.footwork.move.motionframe.*;
+import jackiecrazy.footwork.move.utils.ArgumentContext;
 import jackiecrazy.footwork.utils.GeneralUtils;
 import jackiecrazy.footwork.utils.MovementUtils;
 import jackiecrazy.footwork.utils.ParticleUtils;
@@ -164,7 +165,7 @@ public class FlyingWeaponEntity extends FlyingItemEntity implements IDrag {
         if (level().isClientSide()) return false;
         //normal hits skip hit calculation
         if (getInfo() == null) return false;
-        targets = targets.stream().filter(tg -> tg != owner && !alreadyHit.contains(tg) && !TargetingUtils.isAlly(tg, owner) && !tg.getType().is(MobSpecs.IGNORED_BY_SWEEP) && !tg.isInvulnerable()).toList();
+        targets = targets.stream().distinct().filter(tg -> tg != owner && !alreadyHit.contains(tg) && !TargetingUtils.isAlly(tg, owner) && !tg.getType().is(MobSpecs.IGNORED_BY_SWEEP) && !tg.isInvulnerable()).toList();
         LivingEntity e = getOwner();
         int ticks = e.attackStrengthTicker;
         if (targets.isEmpty()) return ret;
@@ -174,7 +175,10 @@ public class FlyingWeaponEntity extends FlyingItemEntity implements IDrag {
             WeaponStats.info_override = getInfo();
             for (Entity target : targets) {
                 e.attackStrengthTicker = 99999;
-                if (!alreadyHit.isEmpty()) CombatData.getCap(e).tickProc("oncePerAttack");
+                if (!alreadyHit.isEmpty()){
+                    CombatData.getCap(e).tickProc("oncePerAttack");
+                    CombatData.getCap(e).tickProc("durabilityConsumed");
+                }
                 //CombatData.getCap(e).tickProc("oncePerAttack");
                 target.invulnerableTime = 0;
                 GeneralUtils.attack(e, target);
@@ -216,7 +220,7 @@ public class FlyingWeaponEntity extends FlyingItemEntity implements IDrag {
 
     public void yeet(Vec3 to, double strength) {
         //needed because setting the held item resets the cosmetic item.
-        ItemStack temp = getCosmeticItem();
+        RenderItemGroup temp = getCosmeticItem();
         setHeldItem(getHeldItem().copyWithCount(1));
         setCosmeticItem(temp);
         getEntityData().set(CURRENT_STATE, STATE.THROW_NATURAL);
@@ -250,7 +254,9 @@ public class FlyingWeaponEntity extends FlyingItemEntity implements IDrag {
 
     @Override
     protected void returnToIdle(int ticks) {
+        //if(level().isClientSide)return;
         super.returnToIdle(ticks);
+        setDeltaMovement(Vec3.ZERO);
         setIntangible(true);//this is needed to prevent the weapon hitting stuff when idle
         //unDrag();
     }
@@ -273,6 +279,8 @@ public class FlyingWeaponEntity extends FlyingItemEntity implements IDrag {
             LivingEntity e = getOwner();
             if (e != null)
                 effects.runEffects(e, e);
+            if(effects.getDisplayItems()!=null)
+                setCosmeticItem(effects.getDisplayItems().resolve(new ArgumentContext(getOwner(), getOwner())));
         }
     }
 

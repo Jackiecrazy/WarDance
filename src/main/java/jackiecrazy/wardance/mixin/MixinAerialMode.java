@@ -43,23 +43,4 @@ public abstract class MixinAerialMode {
     }
 
 
-    /**
-     * @author
-     * @reason I HATE EVERYTHING
-     */
-//    @Overwrite
-//    public void setDeltaMovement(Vec3 vec) {
-//        IAerialMode cap = AerialModeData.getCap((Entity) (Object) this);
-//        if (cap.getWallDir() != null) {
-//            double max = 0.2;
-//            if (cap.getWallDir().getAxis() == Direction.Axis.X) {
-//                double change = Mth.clamp(vec.y+cap.getWallDir().getAxisDirection().getStep() * vec.x, -max, max);
-//                vec = vec.multiply(0, 0, 1).add(0, change, 0);
-//            } else if (cap.getWallDir().getAxis() == Direction.Axis.Z) {
-//                double change = Mth.clamp(vec.y+cap.getWallDir().getAxisDirection().getStep() * vec.z, -max, max);
-//                vec = vec.multiply(1, 0, 0).add(0, change, 0);
-//            }
-//        }
-//        deltaMovement = vec;
-//    }
 }

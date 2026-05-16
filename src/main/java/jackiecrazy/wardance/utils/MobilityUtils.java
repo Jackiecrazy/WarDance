@@ -6,8 +6,10 @@ import jackiecrazy.footwork.capability.stylish.StylishData;
 import jackiecrazy.footwork.event.DodgeEvent;
 import jackiecrazy.footwork.utils.GeneralUtils;
 import jackiecrazy.footwork.utils.MovementUtils;
+import jackiecrazy.wardance.capability.aerial.AerialModeData;
 import jackiecrazy.wardance.compat.WarCompat;
 import jackiecrazy.wardance.config.CombatConfig;
+import jackiecrazy.wardance.entity.GrappleEntity;
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
@@ -15,6 +17,7 @@ import net.minecraft.world.entity.Pose;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
+import net.minecraftforge.common.ForgeMod;
 import net.minecraftforge.common.MinecraftForge;
 
 import java.util.List;
@@ -243,7 +246,7 @@ public class MobilityUtils {
         //dodge time check
         if (itsc.getDodgeTime() <= -CombatConfig.rollCooldown) {
             elb.extinguishFire();
-            if (side == 99&&elb.onGround()) return attemptSlide(elb);
+            if (side == 99 && elb.onGround()) return attemptSlide(elb);
             Entity target = GeneralUtils.raytraceEntity(elb.level(), elb, 32);
             float adjustment = 0;
             if (target != null) {
@@ -259,15 +262,15 @@ public class MobilityUtils {
                 //todo directly send angle
 
                 case 0://left
-                    angle = 90*Mth.DEG_TO_RAD;
+                    angle = 90 * Mth.DEG_TO_RAD;
                     d = DodgeEvent.Direction.LEFT;
                     break;
                 case 1://back
-                    angle = 180*Mth.DEG_TO_RAD;
+                    angle = 180 * Mth.DEG_TO_RAD;
                     d = DodgeEvent.Direction.BACK;
                     break;
                 case 2://right
-                    angle = -90*Mth.DEG_TO_RAD;
+                    angle = -90 * Mth.DEG_TO_RAD;
                     d = DodgeEvent.Direction.RIGHT;
                     break;
                 case 3://forward
@@ -284,7 +287,7 @@ public class MobilityUtils {
             z = look.z;
 
             //NeedyLittleThings.setSize(elb, min, min);
-            elb.setDeltaMovement(elb.getDeltaMovement().multiply(1,0,1));
+            elb.setDeltaMovement(elb.getDeltaMovement().multiply(1, 0, 1));
             elb.push(x, y, z);
             //elb.hurtMarked = true;
             itsc.consumePosture(0);
@@ -325,4 +328,58 @@ public class MobilityUtils {
         }
     }
 
+    public static void swingin(GrappleEntity hookEntity, Player player) {
+        // --- variables ---
+        Vec3 hookPos = hookEntity.position();
+        Vec3 playerEyePos = player.getEyePosition();
+        Vec3 vecToHook = hookPos.subtract(playerEyePos);
+        Vec3 unitVector = vecToHook.normalize();
+
+//        AerialModeData.getCap(player).alterGravity(5, 0);
+
+        double maxDistance = hookEntity.getTetherLength();
+        double dist = vecToHook.length();
+
+        Vec3 velocity = player.getDeltaMovement().multiply(1.05, 0.9, 1.05);
+//        if(velocity.y<0.1)//manually add gravity?????
+//            velocity=velocity.add(0,-player.getAttributeBaseValue(ForgeMod.ENTITY_GRAVITY.get()),0);
+        double vRadial = velocity.dot(unitVector);
+        Vec3 vTangential = velocity.subtract(unitVector.scale(vRadial));
+
+        double vTangentialMultiplier = 1.01;
+
+
+        if (dist > maxDistance) {
+            double stretch = dist - maxDistance;
+
+            vTangentialMultiplier = 1.047;
+
+            double new_vRadial = stretch * 0.055;
+            if (!(vRadial > new_vRadial)) vRadial = new_vRadial;
+        }
+
+
+        if (!player.onGround() && !player.isFallFlying()) {
+            vTangential = vTangential.scale(vTangentialMultiplier);
+            vRadial = vRadial * 0.99;
+        }
+
+        Vec3 finalVelocity = vTangential.add(unitVector.scale(vRadial));//.multiply(0.5, 1.11, 0.5);
+
+        player.setDeltaMovement(finalVelocity);
+
+
+        if (!player.level().isClientSide()) {
+            // --- server logic for fall damage reset ---
+            player.resetFallDistance();
+            if (!player.onGround()) {
+                player.hurtMarked = false;
+                if ((dist + 0.6) > maxDistance) {
+                    if (unitVector.y > -0.15) {
+                        player.resetFallDistance();
+                    }
+                }
+            }
+        }
+    }
 }

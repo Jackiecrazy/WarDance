@@ -154,6 +154,7 @@ public class WarDance {
         CombatChannel.INSTANCE.registerMessage(index++, ResetAirJumpPacket.class, new ResetAirJumpPacket.Encoder(), new ResetAirJumpPacket.Decoder(), new ResetAirJumpPacket.Handler());
         CombatChannel.INSTANCE.registerMessage(index++, UpdateAirPacket.class, new UpdateAirPacket.Encoder(), new UpdateAirPacket.Decoder(), new UpdateAirPacket.Handler());
         CombatChannel.INSTANCE.registerMessage(index++, AerialModePacket.class, new AerialModePacket.Encoder(), new AerialModePacket.Decoder(), new AerialModePacket.Handler());
+        CombatChannel.INSTANCE.registerMessage(index++, UpdateFlyingWeaponPacket.class, new UpdateFlyingWeaponPacket.Encoder(), new UpdateFlyingWeaponPacket.Decoder(), new UpdateFlyingWeaponPacket.Handler());
     }
 
     private void doClientStuff(final FMLClientSetupEvent event) {

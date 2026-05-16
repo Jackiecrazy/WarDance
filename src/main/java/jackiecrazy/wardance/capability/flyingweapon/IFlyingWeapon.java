@@ -5,7 +5,9 @@ import jackiecrazy.footwork.move.motionframe.MotionManager;
 import jackiecrazy.wardance.entity.FlyingWeaponEntity;
 import jackiecrazy.wardance.entity.GrappleEntity;
 import jackiecrazy.wardance.entity.ThrownWeaponEntity;
+import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.InteractionHand;
+import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.Vec3;
 
 public interface IFlyingWeapon {
@@ -14,6 +16,10 @@ public interface IFlyingWeapon {
     ThrownWeaponEntity getHeldBlock();
 
     void setHeldBlock(ThrownWeaponEntity sb);
+
+    default boolean hasGrapple(){
+        return getGrapple()!=null&&!getGrapple().isRemoved();
+    }
 
     GrappleEntity getGrapple();
 
@@ -32,6 +38,9 @@ public interface IFlyingWeapon {
         forceRefreshWeapon(InteractionHand.MAIN_HAND);
         forceRefreshWeapon(InteractionHand.OFF_HAND);
     }
+
+    public CompoundTag write() ;
+    public void read(Level l, CompoundTag t) ;
 
     ThrownWeaponEntity yeet(InteractionHand hand, Vec3 pos, double strength);
 
@@ -81,6 +90,16 @@ public interface IFlyingWeapon {
 
         @Override
         public void forceRefreshWeapon(InteractionHand hand) {
+
+        }
+
+        @Override
+        public CompoundTag write() {
+            return new CompoundTag();
+        }
+
+        @Override
+        public void read(Level l, CompoundTag t) {
 
         }
 

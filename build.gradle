@@ -124,7 +124,7 @@ dependencies {
     annotationProcessor 'org.spongepowered:mixin:0.8.5:processor'
 
     //Patchouli
-    compileOnly fg.deobf("curse.maven:patchouli-306770:4636277")
+    implementation fg.deobf("curse.maven:patchouli-306770:4636277")
     compileOnly fg.deobf("curse.maven:feathers-699933:4814309")
     compileOnly fg.deobf("curse.maven:elenaidodge2-442962:4814313")
     runtimeOnly fg.deobf("curse.maven:moonlight-499980:4800629")

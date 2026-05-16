@@ -264,6 +264,7 @@ public class WeaponStats extends SimpleJsonResourceReloadListener {
             if (!intl.getOverrides().isEmpty()) {
                 ArgumentContext ctx = new ArgumentContext(wielder, wielder);
                 for (WeaponInteractions.InteractionOverride io : intl.getOverrides()) {
+                    //fixme should be an attack cooldown check here
                     if (Boolean.TRUE.equals(io.condition().resolve(ctx))) {
                         return io.override();
                     }

@@ -7,14 +7,17 @@ import jackiecrazy.footwork.capability.stylish.StylishData;
 import jackiecrazy.wardance.WarDance;
 import jackiecrazy.wardance.capability.aerial.AerialModeData;
 import jackiecrazy.wardance.capability.aerial.IAerialMode;
+import jackiecrazy.wardance.capability.flyingweapon.FlyingWeaponData;
 import jackiecrazy.wardance.capability.skill.CasterData;
 import jackiecrazy.wardance.client.screen.skill.SkillCastScreen;
 import jackiecrazy.wardance.config.QiCosts;
+import jackiecrazy.wardance.entity.GrappleEntity;
 import jackiecrazy.wardance.networking.CombatChannel;
 import jackiecrazy.wardance.networking.combat.CombatModePacket;
 import jackiecrazy.wardance.networking.movement.DodgePacket;
 import jackiecrazy.wardance.networking.movement.GrapplePacket;
 import jackiecrazy.wardance.networking.combat.KickPacket;
+import jackiecrazy.wardance.networking.movement.UnhookPacket;
 import jackiecrazy.wardance.networking.skill.EvokeSkillPacket;
 import jackiecrazy.wardance.networking.skill.SelectSkillPacket;
 import jackiecrazy.wardance.utils.MobilityUtils;
@@ -71,6 +74,8 @@ public class Keybinds {
             new KeyMapWrapper("wardance.skill4", IN_COMBAT, InputConstants.UNKNOWN, "key.categories.wardance"),
             new KeyMapWrapper("wardance.skill5", IN_COMBAT, InputConstants.UNKNOWN, "key.categories.wardance")
     };
+    private static boolean grappleDown;
+    private static int chargeYankTime = 0;
 
     @SubscribeEvent(priority = EventPriority.HIGHEST)
     public static void handleInputEvent(InputEvent event) {
@@ -102,7 +107,7 @@ public class Keybinds {
                     side = 2;
                 if (mc.player.input.up)
                     side = 3;
-                if (mc.player.isSprinting()&&mc.player.onGround()) {
+                if (mc.player.isSprinting() && mc.player.onGround()) {
                     side = 99;
                     mc.player.setForcedPose(Pose.SLEEPING);
                 }
@@ -114,31 +119,42 @@ public class Keybinds {
         for (int x = 0; x < SKILL.length; x++) {
             if (SKILL[x].getKeyConflictContext().isActive() && SKILL[x].consumeClick())
                 CombatChannel.INSTANCE.sendToServer(new SelectSkillPacket(x));
-        }
-        if (ALTERNATE_KEY.getKeyConflictContext().isActive() && ALTERNATE_KEY.consumeClick() && mc.player.isAlive()) {
-            ALTERNATE_KEY.setDown(false);
-            //grapple
-            if (Keybinds.THROW.isDown()) {
-                Player p = mc.player;
+        }//grapple
+        if (Keybinds.GRAPPLE.isDown()&&!grappleDown) {
+            Player p = mc.player;
+            if (FlyingWeaponData.getCap(p).hasGrapple()) {
+                //chargeYankTime++;
+                CombatChannel.INSTANCE.sendToServer(new UnhookPacket(GrappleEntity.ACTION.ZIP));
+                FlyingWeaponData.getCap(mc.player).getGrapple().retract(GrappleEntity.ACTION.ZIP);
+                AerialModeData.getCap(mc.player).setState(IAerialMode.WallState.NONE);
+            } else {
                 Vec3 destination = ProjectileUtil.getHitResultOnViewVector(p, EntitySelector.LIVING_ENTITY_STILL_ALIVE, 32).getLocation();
-                if (ClientEvents.coyoteTimeID >=0) {
+                if (ClientEvents.coyoteTimeID >= 0) {
                     destination = ClientEvents.coyoteVector;
                 }
 
                 CombatChannel.INSTANCE.sendToServer(new GrapplePacket(destination, ClientEvents.coyoteTimeID));
-                p.setDeltaMovement(Vec3.ZERO);
             }
+            grappleDown = true;
+        } else if (!Keybinds.GRAPPLE.isDown() && grappleDown) {
+            grappleDown = false;
+            //CombatChannel.INSTANCE.sendToServer(new UnhookPacket(GrappleEntity.ACTION.RELEASE));
+            //FlyingWeaponData.getCap(mc.player).getGrapple().retract(GrappleEntity.ACTION.RELEASE);
+        }
+        if (ALTERNATE_KEY.getKeyConflictContext().isActive() && ALTERNATE_KEY.consumeClick() && mc.player.isAlive()) {
+            ALTERNATE_KEY.setDown(false);
+
             //skills
-            else if (CasterData.getCap(mc.player).getHolsteredSkill() != null) {
+            if (CasterData.getCap(mc.player).getHolsteredSkill() != null) {
                 CombatChannel.INSTANCE.sendToServer(new EvokeSkillPacket(ClientEvents.coyoteTimeID));
             } else {
                 //kick
                 CombatChannel.INSTANCE.sendToServer(new KickPacket(ClientEvents.coyoteTimeID));
                 HitResult destination = ProjectileUtil.getHitResultOnViewVector(mc.player, EntitySelector.LIVING_ENTITY_STILL_ALIVE, 3);
-                if (destination.getType() != HitResult.Type.MISS&&CombatData.getCap(mc.player).getPosture()>= QiCosts.KICK) {
+                if (destination.getType() != HitResult.Type.MISS && CombatData.getCap(mc.player).getPosture() >= QiCosts.KICK) {
                     //jump up
                     if (!mc.player.onGround()) {
-                        Vec3 vel=mc.player.getDeltaMovement();
+                        Vec3 vel = mc.player.getDeltaMovement();
                         mc.player.setDeltaMovement(new Vec3(vel.x, 1, vel.z));
                     }
                 }

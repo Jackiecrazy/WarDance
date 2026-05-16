@@ -34,6 +34,7 @@ public class LoadItemAction extends Action {
             fwe.setOwner(le);
             fwe.setPosRaw(pos.x, pos.y, pos.z);
             fwe.setInteractionRange(1);
+            fwe.setIdlePose(pose);
             fwe.setIntangible(true);
             fwe.setUniversalOffset(new Vec3(0, le.getBbHeight(), 0.5));
             fwe.setState(FlyingItemEntity.STATE.FOLLOW);

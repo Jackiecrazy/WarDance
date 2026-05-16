@@ -15,7 +15,7 @@ import org.joml.Vector4d;
 
 import java.util.List;
 
-public class TemporaryMoveTranslator {
+public class SweepAnimationBuilder {
     private static final List<MotionFrame> STAB = List.of(
             new MotionFrame(new Vec3(0, 0, 1), new Vec3(0, 0, -0.5)),
             new MotionFrame(new Vec3(0, 0, 1), new Vec3(0, 0, 1.5)),

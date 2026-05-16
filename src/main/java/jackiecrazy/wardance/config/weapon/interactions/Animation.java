@@ -3,13 +3,13 @@ package jackiecrazy.wardance.config.weapon.interactions;
 import jackiecrazy.footwork.entity.flyingweapon.FlyingWeaponEffect;
 import jackiecrazy.footwork.move.motionframe.*;
 import jackiecrazy.footwork.utils.EasingFunctionEnum;
-import jackiecrazy.wardance.utils.TemporaryMoveTranslator;
+import jackiecrazy.wardance.utils.SweepAnimationBuilder;
 import net.minecraft.world.phys.Vec3;
 
 import java.util.List;
 
 public class Animation extends WeaponInteractions.WeaponInteraction {
-    public static final WeaponInteractions.InteractionGroup CIRCLE = new Animation().setAction(TemporaryMoveTranslator.temp_getMMFromType(10, SweepAttack.SWEEPTYPE.CIRCLE, 3, HitInfo.BREACH, 5)).asGroup();
+    public static final WeaponInteractions.InteractionGroup CIRCLE = new Animation().setAction(SweepAnimationBuilder.temp_getMMFromType(10, SweepAttack.SWEEPTYPE.CIRCLE, 3, HitInfo.BREACH, 5)).asGroup();
     private static final List<MotionFrame> STAB = List.of(
             new MotionFrame(new Vec3(0, 0, 1), new Vec3(0, 0, -0.5)),
             new MotionFrame(new Vec3(0, 0, 1), new Vec3(0, 0, 1.5)),

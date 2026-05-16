@@ -7,6 +7,7 @@ import jackiecrazy.footwork.move.action.Action;
 import jackiecrazy.footwork.move.action.timer.TimerAction;
 import jackiecrazy.footwork.move.argument.Argument;
 import jackiecrazy.footwork.move.argument.ResourceEnums;
+import jackiecrazy.footwork.move.argument.misc.RenderItemArgument;
 import jackiecrazy.footwork.move.argument.number.FixedNumberArgument;
 import jackiecrazy.footwork.move.argument.number.NumberArgument;
 import jackiecrazy.footwork.move.argument.resourcelocation.ResourceLocationArgument;
@@ -14,10 +15,7 @@ import jackiecrazy.footwork.move.argument.vector.VectorArgument;
 import jackiecrazy.footwork.move.condition.Condition;
 import jackiecrazy.footwork.move.condition.ConsumeResourceCondition;
 import jackiecrazy.footwork.move.filter.Filter;
-import jackiecrazy.footwork.move.motionframe.HitEffects;
-import jackiecrazy.footwork.move.motionframe.HitInfo;
-import jackiecrazy.footwork.move.motionframe.MotionFrame;
-import jackiecrazy.footwork.move.motionframe.MotionManager;
+import jackiecrazy.footwork.move.motionframe.*;
 import jackiecrazy.footwork.utils.ActionJsonAdapters;
 import jackiecrazy.footwork.utils.JsonAdapters;
 import jackiecrazy.footwork.utils.JsonUtils;
@@ -45,6 +43,7 @@ public class WeaponInteractions {
             .registerTypeAdapter(NumberArgument.class, new ActionJsonAdapters.NumberAdapter())
             .registerTypeAdapter(VectorArgument.class, new ActionJsonAdapters.VectorAdapter())
             .registerTypeAdapter(ResourceLocationArgument.class, new ActionJsonAdapters.ResourceAdapter())
+            .registerTypeAdapter(RenderItemArgument.class, new ActionJsonAdapters.RenderItemAdapter())
             .registerTypeAdapter(Condition.class, new ActionJsonAdapters.ConditionAdapter())
             .registerTypeAdapter(Filter.class, new ActionJsonAdapters.FilterAdapter())
             .registerTypeAdapter(ResourceLocation.class, new ResourceLocation.Serializer())
@@ -55,9 +54,7 @@ public class WeaponInteractions {
             .registerTypeAdapter(WeaponInteraction.class, new InteractionDeserializer())
             .registerTypeAdapter(ResourceLocation.class, new ResourceLocation.Serializer())
             .registerTypeAdapter(Vec3.class, new JsonAdapters.Vec3TypeAdapter())
-            .registerTypeAdapter(MotionFrame.class, new JsonAdapters.MotionFrameAdapter())
             .registerTypeAdapter(MotionManager.class, new JsonAdapters.MotionManagerDeserializer())
-            .registerTypeAdapter(HitInfo.class, new JsonAdapters.HitInfoAdapter())
             .registerTypeAdapter(Class.class, new ActionJsonAdapters.ClassAdapter())
             .registerTypeAdapter(Supplier.class, new ActionJsonAdapters.SupplierAdapter())
             .registerTypeAdapter(Action.class, new ActionJsonAdapters.ActionAdapter())
@@ -66,11 +63,14 @@ public class WeaponInteractions {
             .registerTypeAdapter(NumberArgument.class, new ActionJsonAdapters.NumberAdapter())
             .registerTypeAdapter(VectorArgument.class, new ActionJsonAdapters.VectorAdapter())
             .registerTypeAdapter(ResourceLocationArgument.class, new ActionJsonAdapters.ResourceAdapter())
+            .registerTypeAdapter(RenderItemArgument.class, new ActionJsonAdapters.RenderItemAdapter())
             .registerTypeAdapter(Condition.class, new ActionJsonAdapters.ConditionAdapter())
             .registerTypeAdapter(Filter.class, new ActionJsonAdapters.FilterAdapter())
             .registerTypeAdapter(ResourceLocation.class, new ResourceLocation.Serializer())
             .registerTypeAdapter(CompoundTag.class, new ActionJsonAdapters.NBTAdapter())
             .registerTypeAdapter(InteractionGroup.class, new GroupDeserializer())
+            .registerTypeAdapterFactory(new JsonAdapters.MotionFrameAdapterFactory())
+            .registerTypeAdapterFactory(new JsonAdapters.HitInfoAdapterFactory())
             .setPrettyPrinting()
             .create();
 
@@ -88,6 +88,7 @@ public class WeaponInteractions {
         private double cooldown_refund = 0;
         private Vec3 left_hand_offset = new Vec3(-0.5, 0, 0.5);
         private Vec3 right_hand_offset = new Vec3(0.5, 0, 0.5);
+        private boolean no_flip=false;
         private boolean debug = false;
 
         public InteractionGroup() {
@@ -107,6 +108,10 @@ public class WeaponInteractions {
 
         public double getMinimumCooldown() {
             return minimum_cooldown;
+        }
+
+        public boolean noFlip(){
+            return no_flip;
         }
 
         public void write(FriendlyByteBuf f) {

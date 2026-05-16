@@ -58,14 +58,15 @@ public class ThrowPacket {
 
     public static class Handler implements BiConsumer<ThrowPacket, Supplier<NetworkEvent.Context>> {
 
-        private static void swapFromEnderChest(int packet, ServerPlayer player, InteractionHand h) {
-            if(packet<0)return;
+        private static boolean swapFromEnderChest(int packet, ServerPlayer player, InteractionHand h) {
+            if (packet < 0) return false;
             ItemStack held = player.getItemInHand(h);
             final ItemStack nextItem = player.getEnderChestInventory().removeItem(packet, 999);
             if (held.getCount() == 0 || held.isEmpty() || player.getEnderChestInventory().addItem(held).isEmpty()) {
                 player.setItemInHand(h, nextItem);
                 CombatChannel.INSTANCE.send(PacketDistributor.PLAYER.with(() -> player), new SyncQuiverPacket(player));
             } else player.getEnderChestInventory().addItem(nextItem);
+            return true;
         }
 
         @Override
@@ -83,8 +84,8 @@ public class ThrowPacket {
                     CombatUtils.throw_vec = packet.destination.subtract(player.getEyePosition()).normalize();
                     CombatUtils.setAttackType(player, WeaponStats.AttackType.THROW);
                     if (CombatUtils.processWeaponInteraction(player, null, h, player.getAttributeValue(ForgeMod.ENTITY_REACH.get()))) {
-                        swapFromEnderChest(packet.next, player, h);
-                        cap.forceRefreshWeapons();
+                        if (swapFromEnderChest(packet.next, player, h))
+                            cap.forceRefreshWeapons();
                     }
                 } else if (!WeaponStats.DESPERATION.isEmpty() && CombatData.getCap(player).consumeSpirit(6)) {
                     //desperation throw

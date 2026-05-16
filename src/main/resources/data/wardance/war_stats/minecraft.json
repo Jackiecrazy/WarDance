@@ -140,15 +140,15 @@
     },
     "standing": {
       "type": "animation",
+      "on_swing": {
+        "command": "/playsound minecraft:entity.player.attack.sweep player @s ~ ~ ~ 0.8 1.2 0"
+      },
       "animations": [
         {
           "duration": 5,
           "easing": "IN_OUT_SINE",
-          "on_swing": {
-            "command": "/playsound minecraft:entity.player.attack.sweep player @s ~ ~ ~ 0.8 1.2 0"
-          },
           "spin": [
-            60,
+            -60,
             0,
             0
           ],
@@ -175,6 +175,23 @@
                   "WEAPON",
                   "LOCK_POSITION",
                   "LOCK_ORIENTATION"
+                ],
+                "display_items": [
+                  {
+                    "stack": "equipped_item"
+                  },
+                  {
+                    "stack": "equipped_item",
+                    "rotation": [90,0,0]
+                  },
+                  {
+                    "stack": "equipped_item",
+                    "rotation": [180,0,0]
+                  },
+                  {
+                    "stack": "equipped_item",
+                    "rotation": [270,0,0]
+                  }
                 ],
                 "attack_info": {
                   "knockback": 0.5,
@@ -213,7 +230,7 @@
           "duration": 3,
           "easing": "IN_OUT_SINE",
           "spin": [
-            60,
+            -60,
             0,
             0
           ],
@@ -264,7 +281,7 @@
           "duration": 5,
           "easing": "IN_OUT_SINE",
           "spin": [
-           60,
+            -60,
             0,
             0
           ],
@@ -345,7 +362,7 @@
                 "duration": 12,
                 "easing": "LINEAR",
                 "spin": [
-                  0.5,
+                  -40,
                   0,
                   0
                 ],

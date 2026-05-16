@@ -208,8 +208,10 @@ public class ClientAerialHandler {
         if (vanillaJump) {
             //no jumping and reset the available multijumps.
             resetMultiJumps(pl);
-            if(AerialModeData.getCap(pl).isAerialMode())
+            if(AerialModeData.getCap(pl).isAerialMode()) {
+                AerialModeData.getCap(pl).setAerialMode(false);
                 CombatChannel.INSTANCE.sendToServer(new AerialModePacket(false));
+            }
         } else {
             final IAerialMode cap = AerialModeData.getCap(pl);
             if (pl.input.jumping) {
@@ -232,6 +234,7 @@ public class ClientAerialHandler {
                         cap.setState(IAerialMode.WallState.WALL_JUMP);
                     }
                     jumpCount--;
+                    AerialModeData.getCap(pl).setAerialMode(true);
                     CombatChannel.INSTANCE.sendToServer(new AerialModePacket(true));
 
                     pl.resetFallDistance();
@@ -349,7 +352,7 @@ public class ClientAerialHandler {
         if (cap.getState() != IAerialMode.WallState.NONE) {
             if (self.onGround())
                 cap.setState(IAerialMode.WallState.NONE);
-            else if (self.isShiftKeyDown()) {
+            else if (cap.getState().wall&&self.isShiftKeyDown()) {
                 self.setDeltaMovement(Vec3.ZERO);
                 cap.setState(IAerialMode.WallState.NONE);
             }
