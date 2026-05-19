@@ -16,7 +16,15 @@ public abstract class MeleePostureEvent extends LivingEvent {
     protected float postureConsumption;
     protected boolean canBreach;
 
-    public MeleePostureEvent(LivingEntity entity, LivingEntity seme, InteractionHand hand, ItemStack a, DamageSource ds, float orig, float posture, float damage, boolean breach) {
+    public MeleePostureEvent(LivingEntity entity,
+                             LivingEntity seme,
+                             InteractionHand hand,
+                             ItemStack a,
+                             DamageSource ds,
+                             float orig,
+                             float posture,
+                             float damage,
+                             boolean breach) {
         super(entity);
         attacker = seme;
         attackingHand = hand;
@@ -27,7 +35,6 @@ public abstract class MeleePostureEvent extends LivingEvent {
         postureConsumption = posture;
         canBreach = breach;
     }
-
     public LivingEntity getAttacker() {
         return attacker;
     }
@@ -75,9 +82,22 @@ public abstract class MeleePostureEvent extends LivingEvent {
         protected final InteractionHand defendingHand;
         final boolean originally;
         private final ItemStack defendingStack;
+        protected float rallyPercentage;
 
-        public Defense(LivingEntity entity, LivingEntity seme, boolean canParry, InteractionHand hand, ItemStack a, InteractionHand dhand, ItemStack d, float posture, float orig, DamageSource ds, float damage, boolean canBreach) {
-            super(entity, seme, hand, a, ds, damage, orig, posture, canBreach);
+        public Defense(LivingEntity entity,
+                       LivingEntity seme,
+                       boolean canParry,
+                       InteractionHand hand,
+                       ItemStack a,
+                       InteractionHand dhand,
+                       ItemStack d,
+                       float posture,
+                       float orig,
+                       DamageSource ds,
+                       float damage,
+                       float rallyPerc,
+                       boolean canBreach) {
+            super(entity, seme, hand, a, ds, orig, posture, damage, canBreach);
             originally = canParry;
             defendingHand = dhand;
             defendingStack = d;
@@ -92,6 +112,15 @@ public abstract class MeleePostureEvent extends LivingEvent {
         }
 
         public abstract boolean success();
+
+        public float getRallyPercentage() {
+            return rallyPercentage;
+        }
+
+        public void setRallyPercentage(float rallyPercentage) {
+            this.rallyPercentage = rallyPercentage;
+        }
+
     }
 
 
@@ -100,24 +129,16 @@ public abstract class MeleePostureEvent extends LivingEvent {
      */
     public static class Pre extends MeleePostureEvent {
 
-        public Pre(LivingEntity entity, LivingEntity seme, InteractionHand hand, ItemStack a, float posture, float orig, DamageSource ds, float damage, boolean canBreach) {
+        public Pre(LivingEntity entity,
+                   LivingEntity seme,
+                   InteractionHand hand,
+                   ItemStack a,
+                   float posture,
+                   float orig,
+                   DamageSource ds,
+                   float damage,
+                   boolean canBreach) {
             super(entity, seme, hand, a, ds, posture, orig, damage, canBreach);
-        }
-    }
-
-    /**
-     * by convention you should only use this for what happens on a guard
-     */
-    @HasResult
-    public static class Guard extends Defense {
-
-        public Guard(LivingEntity entity, LivingEntity seme, boolean canParry, InteractionHand hand, ItemStack a, InteractionHand dhand, ItemStack d, float posture, float orig, DamageSource ds, float damage, boolean canBreach) {
-            super(entity, seme, canParry, hand, a, dhand, d, posture, orig, ds, damage, canBreach);
-        }
-
-
-        public boolean success() {
-            return getResult() == Result.ALLOW || (originally && getResult() == Result.DEFAULT);
         }
     }
 
@@ -127,8 +148,20 @@ public abstract class MeleePostureEvent extends LivingEvent {
     @HasResult
     public static class Block extends Defense {
 
-        public Block(LivingEntity entity, LivingEntity seme, boolean canParry, InteractionHand hand, ItemStack a, InteractionHand dhand, ItemStack d, float posture, float orig, DamageSource ds, float damage, boolean canBreach) {
-            super(entity, seme, canParry, hand, a, dhand, d, posture, orig, ds, damage, canBreach);
+        public Block(LivingEntity entity,
+                     LivingEntity seme,
+                     boolean canParry,
+                     InteractionHand hand,
+                     ItemStack a,
+                     InteractionHand dhand,
+                     ItemStack d,
+                     float posture,
+                     float orig,
+                     DamageSource ds,
+                     float damage,
+                     float rallyPerc,
+                     boolean canBreach) {
+            super(entity, seme, canParry, hand, a, dhand, d, posture, orig, ds, damage, rallyPerc, canBreach);
         }
 
 
@@ -143,8 +176,20 @@ public abstract class MeleePostureEvent extends LivingEvent {
     @HasResult
     public static class Parry extends Defense {
 
-        public Parry(LivingEntity entity, LivingEntity seme, boolean canParry, InteractionHand hand, ItemStack a, InteractionHand dhand, ItemStack d, float posture, float orig, DamageSource ds, float damage, boolean canBreach) {
-            super(entity, seme, canParry, hand, a, dhand == null ? InteractionHand.MAIN_HAND : dhand, d == null ? ItemStack.EMPTY : d, posture, orig, ds, damage, canBreach);
+        public Parry(LivingEntity entity,
+                     LivingEntity seme,
+                     boolean canParry,
+                     InteractionHand hand,
+                     ItemStack a,
+                     InteractionHand dhand,
+                     ItemStack d,
+                     float posture,
+                     float orig,
+                     DamageSource ds,
+                     float damage,
+                     float rallyPerc,
+                     boolean canBreach) {
+            super(entity, seme, canParry, hand, a, dhand == null ? InteractionHand.MAIN_HAND : dhand, d == null ? ItemStack.EMPTY : d, posture, orig, ds, damage, rallyPerc, canBreach);
         }
 
         public boolean success() {
@@ -158,8 +203,13 @@ public abstract class MeleePostureEvent extends LivingEvent {
     @HasResult
     public static class Environment extends Parry {
 
-        public Environment(LivingEntity entity, boolean canParry, float posture, DamageSource ds, float damage, boolean canBreach) {
-            super(entity, null, canParry, InteractionHand.MAIN_HAND, ItemStack.EMPTY, InteractionHand.MAIN_HAND, ItemStack.EMPTY, posture, posture, ds, damage, canBreach);
+        public Environment(LivingEntity entity,
+                           boolean canParry,
+                           float posture,
+                           DamageSource ds,
+                           float damage,
+                           boolean canBreach) {
+            super(entity, null, canParry, InteractionHand.MAIN_HAND, ItemStack.EMPTY, InteractionHand.MAIN_HAND, ItemStack.EMPTY, posture, posture, ds, damage, 1, canBreach);
         }
     }
 }

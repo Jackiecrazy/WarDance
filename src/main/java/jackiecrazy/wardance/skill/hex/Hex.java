@@ -48,8 +48,10 @@ public class Hex extends Skill {
         Marks.getCap(entity).getActiveMark(WarSkills.GANGRENE.get()).ifPresent(a -> {
             e.setCanceled(true);
             final LivingEntity caster = a.getCaster(entity.level());
-            if (caster != null)
-                entity.hurt(new CombatDamageSource(caster).setDamageTyping(FootworkDamageArchetype.MAGICAL).setProcSkillEffects(true).setSkillUsed(WarSkills.GANGRENE.get()).bypassArmor().setProxy(entity), e.getAmount() * 2);
+            if (caster != null) {
+                entity.hurt(new CombatDamageSource(caster).setDamageTyping(FootworkDamageArchetype.MAGICAL).setProcSkillEffects(true).setSkillUsed(WarSkills.GANGRENE.get()).bypassArmor().setProxy(null), e.getAmount() * 2);
+                entity.hurtTime = entity.hurtDuration = entity.invulnerableTime = 0;
+            }
         });
     }
 
@@ -228,9 +230,10 @@ public class Hex extends Skill {
             ItemStack milk = new ItemStack(Items.MILK_BUCKET);
             if (target.tickCount % 5 == 0 && target.curePotionEffects(milk)) {
                 float size = 8, damage = 6+sd.getArbitraryFloat()*2;
-                FakeExplosion.explode(target.level(), caster, target.getX(), target.getY() + target.getBbHeight() * 1.1f, target.getZ(), size, new CombatDamageSource(caster).setExplosion().setDamageTyping(FootworkDamageArchetype.MAGICAL).setProxy(target), damage);
+                FakeExplosion.explode(target.level(), caster, target.getX(), target.getY() + target.getBbHeight() * 1.1f, target.getZ(), size, new CombatDamageSource(caster).setExplosion().setDamageTyping(FootworkDamageArchetype.MAGICAL).setProxy(null), damage);
                 sd.setDuration(1f);
                 sd.setArbitraryFloat(sd.getArbitraryFloat()+1);
+                target.hurtTime = target.hurtDuration = target.invulnerableTime = 0;
             }
             return super.markTick(caster, target, sd);
         }

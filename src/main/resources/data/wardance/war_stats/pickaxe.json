@@ -417,7 +417,7 @@
             "stacking": "MAX_DURATION"
           }, {
             "ID": "play_sound",
-            "sound": "minecraft:entity.villager.yes",
+            "sound": "minecraft:entity.villager.celebrate",
             "source": "PLAYERS"
           }
         ]

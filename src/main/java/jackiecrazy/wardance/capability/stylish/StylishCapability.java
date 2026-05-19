@@ -121,7 +121,7 @@ public class StylishCapability implements IStyleCapability {
         }
         hitTimer--;
         if (adrenalineTimer <= 0) {
-            if (hitTimer < -600) {
+            if (hitTimer < -1000) {
                 deathDoorReduction += 0.00125;
                 deathDoorReduction = Math.min(deathDoorReduction, 0);
                 recalcHealth = true;

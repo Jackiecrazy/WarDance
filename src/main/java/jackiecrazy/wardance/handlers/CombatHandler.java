@@ -135,8 +135,8 @@ public class CombatHandler {
             //find the preferred range defend tool
             boolean offChip = CombatUtils.canBlock(uke, e.getEntity(), uke.getOffhandItem(), consume);
             boolean mainChip = CombatUtils.canBlock(uke, e.getEntity(), uke.getMainHandItem(), consume);
-            float offDefMult = CombatUtils.getPostureDef(null, uke, uke.getOffhandItem(), consume);
-            float mainDefMult = CombatUtils.getPostureDef(null, uke, uke.getMainHandItem(), consume);
+            float offDefMult = CombatUtils.getRallyPercentage(null, uke, uke.getOffhandItem(), consume);
+            float mainDefMult = CombatUtils.getRallyPercentage(null, uke, uke.getMainHandItem(), consume);
             if (offChip) {
                 defend = uke.getOffhandItem();
                 defendingHand = InteractionHand.OFF_HAND;
@@ -203,7 +203,8 @@ public class CombatHandler {
                                                 LivingEntity uke) {
         e.setCanceled(true);//.setImpactResult(ProjectileImpactEvent.ImpactResult.STOP_AT_CURRENT_NO_DAMAGE);
         ICombatCapability ukeCap = CombatData.getCap(uke);
-        ukeCap.consumePosture(null, pe.getPostureConsumption(), ICombatCapability.BreachLevel.NO);//fixme
+        float perc = CombatUtils.getRallyPercentage(null, uke, defend, pe.getPostureConsumption());
+        ukeCap.consumePosture(null, pe.getPostureConsumption(), perc, ICombatCapability.BreachLevel.NO);//fixme
         //do not change shooter! It makes drowned tridents and skeleton arrows collectable, which is honestly silly
         uke.level().playSound(null, uke.getX(), uke.getY(), uke.getZ(), SoundEvents.WOODEN_TRAPDOOR_CLOSE, SoundSource.PLAYERS, 0.75f + WarDance.rand.nextFloat() * 0.5f, (1 - (ukeCap.getPosture() / ukeCap.getMaxPosture())) + WarDance.rand.nextFloat() * 0.5f);
         if (pe.doesTrigger()) {
@@ -222,7 +223,7 @@ public class CombatHandler {
             projectile.setDeltaMovement(pe.getReturnVec().x, pe.getReturnVec().y, pe.getReturnVec().z);
             if (projectile instanceof Projectile) {
                 double power = pe.getReturnVec().x / pe.getReturnVec().normalize().x;
-                ((Projectile) projectile).shoot(pe.getReturnVec().x, pe.getReturnVec().y, pe.getReturnVec().z, (float) power, 0);
+                projectile.shoot(pe.getReturnVec().x, pe.getReturnVec().y, pe.getReturnVec().z, (float) power, 0);
             }
         } else projectile.remove(Entity.RemovalReason.KILLED);
         MobilityUtils.knockBack(uke, projectile, 0.01f, true, false);
@@ -401,23 +402,23 @@ public class CombatHandler {
                 //find defending hands
                 ItemStack defend = null;
                 InteractionHand defendingHand = null;
-                float defMult = 1;
+                float rallyPerc = 0;
 
                 //find the preferred defend tool
-                boolean offChip = CombatUtils.canBlock(uke, seme, uke.getOffhandItem(), attack, atkMult);
-                boolean mainChip = CombatUtils.canBlock(uke, seme, uke.getMainHandItem(), attack, atkMult);
-                float offDefMult = CombatUtils.getPostureDef(seme, uke, uke.getOffhandItem(), atkMult);
-                float mainDefMult = CombatUtils.getPostureDef(seme, uke, uke.getMainHandItem(), atkMult);
-                if (offChip) {
+                boolean offCanBlock = CombatUtils.canBlock(uke, seme, uke.getOffhandItem(), attack, atkMult);
+                boolean mainCanBlock = CombatUtils.canBlock(uke, seme, uke.getMainHandItem(), attack, atkMult);
+                float offDefMult = CombatUtils.getRallyPercentage(seme, uke, uke.getOffhandItem(), atkMult);
+                float mainDefMult = CombatUtils.getRallyPercentage(seme, uke, uke.getMainHandItem(), atkMult);
+                if (offCanBlock) {
                     defend = uke.getOffhandItem();
                     defendingHand = InteractionHand.OFF_HAND;
-                    defMult = offDefMult;
+                    rallyPerc = offDefMult;
                 }
                 //this makes blocking prioritize offhand
-                if (mainChip && (!offChip || mainDefMult < defMult)) {
+                if (mainCanBlock && (!offCanBlock || mainDefMult > rallyPerc)) {
                     defend = uke.getMainHandItem();
                     defendingHand = InteractionHand.MAIN_HAND;
-                    defMult = mainDefMult;
+                    rallyPerc = mainDefMult;
                 }
 
                 //players block if they are... blocking
@@ -432,14 +433,16 @@ public class CombatHandler {
                         if (stats.getBlockMult() < 0) {//cannot parry
                             defend = null;
                             defenderMaybeBlocking = false;
-                            defMult = (float) -stats.getBlockMult();
+                            atkMult*= (float) -stats.getBlockMult();
+                            rallyPerc=0;//it's fine because mobs can't rally
                         } else if (stats.isOmnidirectional() || defenderMaybeBlocking) {
-                            if (defMult > stats.getBlockMult()) {
+                            if (rallyPerc > stats.getBlockMult()) {
                                 if (!defenderMaybeBlocking) {
                                     defendingHand = CombatUtils.getCooledAttackStrength(uke, InteractionHand.MAIN_HAND, 0.5f) > CombatUtils.getCooledAttackStrength(uke, InteractionHand.OFF_HAND, 0.5f) ? InteractionHand.MAIN_HAND : InteractionHand.OFF_HAND;
                                 }
                                 defend = ItemStack.EMPTY;
-                                defMult = (float) Math.min(stats.getBlockMult(), defMult);
+                                atkMult*= (float) Math.min(stats.getBlockMult(), rallyPerc);
+                                rallyPerc=0;//it's fine because mobs can't rally
                                 defenderMaybeBlocking = true;
                             }
                         }
@@ -447,13 +450,13 @@ public class CombatHandler {
                 }
 
                 //accounting for negative posture damage, used to mark an item as ignoring parries
-                float finalPostureConsumption = Math.abs(atkMult * defMult);
+                float finalPostureConsumption = Math.abs(atkMult);
 
                 //updating this quickly, it's basically the above without crit and stab multipliers, which were necessary for calculating canParry so they couldn't be eliminated cleanly...
-                float originalPostureConsumption = Math.abs(original * defMult);
+                float originalPostureConsumption = Math.abs(original);
 
                 //begin parry resolution
-                MeleePostureEvent.Defense.Parry pe1 = new MeleePostureEvent.Defense.Parry(uke, seme, ukeCap.isParrying(), attackingHand, attack, defendingHand, defend, finalPostureConsumption, originalPostureConsumption, e.getSource(), e.getAmount(), canBreach);
+                MeleePostureEvent.Defense.Parry pe1 = new MeleePostureEvent.Defense.Parry(uke, seme, ukeCap.isParrying(), attackingHand, attack, defendingHand, defend, finalPostureConsumption, originalPostureConsumption, e.getSource(), e.getAmount(), rallyPerc, canBreach);
                 MinecraftForge.EVENT_BUS.post(pe1);
 
                 //success!
@@ -465,7 +468,7 @@ public class CombatHandler {
                 }
 
                 //begin block resolution
-                MeleePostureEvent.Defense.Block pe2 = new MeleePostureEvent.Defense.Block(uke, seme, (defenderMaybeBlocking && defend != null), attackingHand, attack, defendingHand, defend, finalPostureConsumption, originalPostureConsumption, e.getSource(), e.getAmount(), canBreach);
+                MeleePostureEvent.Defense.Block pe2 = new MeleePostureEvent.Defense.Block(uke, seme, (defenderMaybeBlocking && defend != null), attackingHand, attack, defendingHand, defend, finalPostureConsumption, originalPostureConsumption, e.getSource(), e.getAmount(), rallyPerc, canBreach);
                 MinecraftForge.EVENT_BUS.post(pe2);
 
                 //success!
@@ -478,19 +481,6 @@ public class CombatHandler {
                     //do not cancel the event. It technically succeeded but will be blocked by vanilla functions. I just mark the right item to keep processing.
                     return;
                 }
-
-                //last chance, idle guard resolution
-//                MeleePostureEvent.Defense.Guard pe3 = new MeleePostureEvent.Defense.Guard(uke, seme, (defenderMaybeGuarding && uke instanceof Player && defend != null), attackingHand, attack, defendingHand, defend, finalPostureConsumption, originalPostureConsumption, e.getSource(), e.getAmount(), canBreach);
-//                MinecraftForge.EVENT_BUS.post(pe3);
-//
-//                //success!
-//                if (pe3.success() && ukeCap.consumePosture(seme, pe3.getPostureConsumption(), pe3.canBreach(), 0) == 0) {
-//                    e.setCanceled(true);
-//                    ukeCap.recordDamage(e.getAmount());
-//                    WarDance.LOGGER.debug("successfully idle guarded!");
-//                    CombatUtils.onIdleGuard(uke, seme, defendingHand, defend, pe3.getPostureConsumption());
-//                    return;
-//                }
 
                 //failed everything, use the original damage
                 if (!pe2.success()) {

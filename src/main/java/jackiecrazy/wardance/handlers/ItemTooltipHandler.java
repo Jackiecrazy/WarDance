@@ -40,7 +40,7 @@ public class ItemTooltipHandler {
                     float atk = CombatUtils.getPostureAtk(null, null, null, null, 0, stack);
                     e.getToolTip().add(Component.translatable("wardance.tooltip.postureAttack", Component.literal(formatter.format(atk)).withStyle(ChatFormatting.RED)));
                 }
-                final float def = CombatUtils.getPostureDef(null, null, stack, 0);
+                final float def = CombatUtils.getRallyPercentage(null, null, stack, 0);
                 if (PermissionData.getCap(entity).canParry()) {
                     if (stack.is(WeaponStats.CANNOT_BLOCK))
                         e.getToolTip().add(Component.translatable("wardance.tooltip.noBlock").withStyle(ChatFormatting.DARK_RED));

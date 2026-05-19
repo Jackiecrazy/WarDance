@@ -23,7 +23,7 @@ public class PlayerSwingingMixin {
 
         // --- HOOK HANDLING ---
         if (hookEntity != null && hookEntity.swinging()) {
-            MobilityUtils.swingin(hookEntity, player);
+            //MobilityUtils.swingin(hookEntity, player);
         }
     }
 

@@ -34,6 +34,7 @@ import net.minecraft.commands.synchronization.ArgumentTypeInfos;
 import net.minecraft.commands.synchronization.SingletonArgumentInfo;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.network.chat.Component;
+import net.minecraft.world.entity.MobCategory;
 import net.minecraft.world.item.CreativeModeTab;
 import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.client.event.RegisterGuiOverlaysEvent;
@@ -205,6 +206,12 @@ public class WarDance {
         WarCompat.checkCompatStatus();
         if (WarCompat.elenaiDodge)
             MinecraftForge.EVENT_BUS.register(ElenaiCompat.class);
+        if(GeneralConfig.debug){
+            ForgeRegistries.ENTITY_TYPES.getEntries().stream()
+                    .filter(ent -> ent.getValue().getCategory()!= MobCategory.MISC)
+                    .forEach(a->System.out.println(a.getKey().location()));
+
+        }
     }
 
     private void commands(final RegisterCommandsEvent event) {

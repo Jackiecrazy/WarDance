@@ -78,7 +78,14 @@ public class FlyingWeaponCapability implements IFlyingWeapon {
         if (held != null) held.remove(Entity.RemovalReason.UNLOADED_WITH_PLAYER);
         held = sb;
         if(!sb.level().isClientSide) {
-            sb.queuePath(BLOCKYEET);
+            MotionManager mm=new MotionManagers.DefinitionMM(
+                    new MotionGroup(
+                            List.of(
+                                    new MotionFrame(new Vec3(0,1,0.4), new Vec3(0,1,0), sb.getIdlePose().getStartFrame().renderOrientation()),
+                                    new MotionFrame(new Vec3(0,1,-0.4), new Vec3(0,1,0), sb.getIdlePose().getStartFrame().renderOrientation())),
+                            EasingFunctionEnum.IN_SINE, 10) );
+            sb.queuePath(mm);
+
             //sb.queuePath(BLOCKHOLD);
         }
         sync();
@@ -117,7 +124,7 @@ public class FlyingWeaponCapability implements IFlyingWeapon {
             if (!scheduleLock && fwe != null) {
                 //updateWeapon(fwe, hand);
                 if (mm.getStartFrame() == null) fwe.clearPath();
-                fwe.queuePath(mm, 0, 0);//fixme weird trail jump
+                fwe.queuePath(mm, 0, 0);
                 //fwe.setIdlePose(idleFrame[isMain ? 0 : 1]);
                 //fwe.setShouldRender(FlyingWeaponEffect.WEAPON,true);
                 //fwe.setUniversalOffset(idleOffset[isMain ? 0 : 1]);

@@ -151,6 +151,7 @@ public class Throw extends WeaponInteractions.WeaponInteraction {
     }
 
     public void transformThrown(ThrownWeaponEntity e) {
+        applyCosmeticStack(e, new ArgumentContext(e.getOwner(), null));
         e.setAutoRecall(auto_recall_cooldown);
         e.setLodgeEntity(lodge_entity);
         e.setLodgeBlock(lodge_block);
@@ -160,7 +161,6 @@ public class Throw extends WeaponInteractions.WeaponInteraction {
         e.setHitInfo(attack_info);
         e.setPos(e.position().add(MovementUtils.resolveVelocity(e.getDeltaMovement().normalize(), offset)));
         e.setImpactActions(on_impact);
-        applyCosmeticStack(e, new ArgumentContext(e.getOwner(), null));
         e.setFake(!consume_item);
         e.setFlourish(pickup_flourish);
     }

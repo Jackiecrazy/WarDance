@@ -181,7 +181,7 @@ public class CombatUtils {
         if (postureDamage < 0) return true;
 
         //cannot be parried
-        if (attacker instanceof LivingEntity && getPostureDef((LivingEntity) attacker, defender, defend, postureDamage) < 0)
+        if (attacker instanceof LivingEntity && getRallyPercentage((LivingEntity) attacker, defender, defend, postureDamage) < 0)
             return false;
 
         //the mob itself cannot block
@@ -285,10 +285,10 @@ public class CombatUtils {
         return (float) (base * finalScale);
     }
 
-    public static float getPostureDef(@Nullable LivingEntity attacker,
-                                      @Nullable LivingEntity defender,
-                                      ItemStack stack,
-                                      float amount) {
+    public static float getRallyPercentage(@Nullable LivingEntity attacker,
+                                           @Nullable LivingEntity defender,
+                                           ItemStack stack,
+                                           float amount) {
         if (stack == null) return (float) WeaponStats.DEFAULTMELEE.getDefensePostureMultiplier();
 //        if (defender != null && isShield(defender, stack) && CombatData.getCap(defender).getBarrierCooldown() > 0 && CombatData.getCap(defender).getBarrier() > 0) {
 //            return 0;

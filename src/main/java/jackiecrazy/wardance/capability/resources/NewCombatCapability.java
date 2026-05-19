@@ -208,7 +208,7 @@ public class NewCombatCapability implements ICombatCapability {
     }
 
     @Override
-    public float consumePosture(LivingEntity assailant, float amount, BreachLevel breachLevel) {
+    public float consumePosture(LivingEntity assailant, float amount, float rallyPerc, BreachLevel breachLevel) {
         //WarDance.LOGGER.debug("consume posture check 1");
         //while posture is not empty incoming damage is reduced by posture??? How to calculate damage <> posture?
         //on taking a breaching hit to posture, flag stun, which interrupts all AI, cancels all knockback, and records damage?
@@ -318,7 +318,7 @@ public class NewCombatCapability implements ICombatCapability {
             posture = 0;
         }
         if (amount > 0) {
-            addRally((amount - ret) * 0.3f);
+            addRally((amount - ret) * rallyPerc);
             //System.out.println("rally: "+getRally());
         }
         if (WarCompat.elenaiDodge && elb instanceof ServerPlayer sp)
@@ -348,9 +348,9 @@ public class NewCombatCapability implements ICombatCapability {
 //        MinecraftForge.EVENT_BUS.post(rpe);
 //        if (rpe.isCanceled()) return;
         //amount = rpe.getQuantity();//Math.min(rpe.getQuantity(), rally);
-        amount = Math.min(amount, rally);
-        rally -= amount;
-        //amount = rally;
+//        amount = Math.min(amount, rally);
+//        rally -= amount;
+        amount = rally;
         //rallyCD = RALLY_CD;
         //tickProc("rally");
         setPosture(posture + amount);//todo this is quite harsh

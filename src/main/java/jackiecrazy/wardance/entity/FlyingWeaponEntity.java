@@ -1,5 +1,7 @@
 package jackiecrazy.wardance.entity;
 
+import jackiecrazy.footwork.api.CombatDamageSource;
+import jackiecrazy.footwork.api.FootworkDamageArchetype;
 import jackiecrazy.footwork.capability.resources.CombatData;
 import jackiecrazy.footwork.client.particle.FootworkParticles;
 import jackiecrazy.footwork.entity.flyingweapon.FlyingItemEntity;
@@ -21,6 +23,7 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
 import net.minecraft.network.syncher.SynchedEntityData;
+import net.minecraft.tags.DamageTypeTags;
 import net.minecraft.util.Mth;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.Entity;
@@ -181,7 +184,8 @@ public class FlyingWeaponEntity extends FlyingItemEntity implements IDrag {
                 }
                 //CombatData.getCap(e).tickProc("oncePerAttack");
                 target.invulnerableTime = 0;
-                GeneralUtils.attack(e, target);
+                CombatDamageSource cds = new CombatDamageSource(getOwner(), this, position()).flag(DamageTypeTags.AVOIDS_GUARDIAN_THORNS).setAttackingHand(InteractionHand.MAIN_HAND).setProcAttackEffects(true).setDamageTyping(FootworkDamageArchetype.PHYSICAL);
+                GeneralUtils.attack(e, target, cds);
                 ret = true;
                 alreadyHit.add(target);
                 extraOnHit(e, target);
@@ -329,7 +333,6 @@ public class FlyingWeaponEntity extends FlyingItemEntity implements IDrag {
     }
 
     public void drag(Entity target, double strength, int duration) {
-        //okay but how do I mark a move as dragging? where should it be encoded?
         if ((getTetheringEntity() == target&&shouldDrag()) || strength < 0) return;
         setTetheringEntity(target);
         getEntityData().set(DRAG_TIME, duration);
@@ -339,6 +342,7 @@ public class FlyingWeaponEntity extends FlyingItemEntity implements IDrag {
             fighting *= fighting;
             snapTime = (int) (fighting * 6);
             strength = 1 / fighting;
+            CombatData.getCap(e).bindHands(duration);
         }
         getEntityData().set(DRAG_STRENGTH, (float) strength);
         getEntityData().set(DRAG_OFFSET, target.position().subtract(this.position()).multiply(0, 1, 0).toVector3f());
@@ -349,7 +353,8 @@ public class FlyingWeaponEntity extends FlyingItemEntity implements IDrag {
     public void updateTetheringVelocity() {
         if (shouldDrag()) {
             final Vec3 offset = new Vec3(getEntityData().get(DRAG_OFFSET));
-            final Vec3 targetPoint = position().add(offset);//todo getIdlePose().getStartFrame().resolveTargetOffset(getOwner(), dragging, 1);
+            final Vec3 targetPoint = position().add(offset);
+            //I can also use getIdlePose().getStartFrame().resolveTargetOffset(getOwner(), dragging, 1);
             //for (Entity theMob:dragging.keySet()) {
             Entity theMob = getTetheringEntity();
             moveTargetTowards(theMob, targetPoint, 10);

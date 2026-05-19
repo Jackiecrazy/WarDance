@@ -1,13 +1,13 @@
 {
   "_guide": {
-    "standing": "",
-    "falling": "",
-    "aerial": "",
-    "sprinting": "",
-    "guard counter": "",
-    "throw": "",
-    "pickup": "",
-    "draw": ""
+    "standing": "A long slow stab with drag. If used with revealed (i.e. after attacks), becomes a very fast jab with very short drag for annoyance and followups",
+    "falling": "jab down and drag the mob along with you, pinning and wetting them if they hit the ground with water splash particles.",
+    "aerial": "sweep your hand across the screen and throw a web that slows and distracts enemies, no direct damage",
+    "sprinting": "charge through with block frames leaving a trail of water that wets enemies",
+    "guard counter": "push your trident out with no damage but parry frames. On parry, twist the trident and bind the mob, with a guardian one-two if possible at max spirit",
+    "throw": "non-piercing embedding throw, spawns lightning at full spirit",
+    "pickup": "spin the trident above your head, with two tropical fish circling around it, gaining some dodge frames.",
+    "draw": "throw a net with some salmon trailing behind it that pins and confuses at max spirit"
   },
   "#trident": {
     "attack": 2.0,
@@ -41,6 +41,12 @@
               "tag": "{Glowing:1b,Invulnerable:1b,NoAI:1b,Silent:1b,ActiveEffects:[{Id:14,Duration:-1,Amplifier:1,ShowParticles:0b}]}",
               "on_spawn": [
                 {
+                  "ID": "add_effect",
+                  "effect": "footwork:wet",
+                  "duration": 200,
+                  "forced": true,
+                  "visible": false
+                },{
                   "ID": "attach_action",
                   "effect": "wardance:arakawa"
                 }
@@ -86,16 +92,14 @@
         {
           "direction": [0, 0, 1],
           "offset": [0, 0, 1.3],
-          "attack_info": {
-            "knockback": 1,
-            "damage_scale": 1,
-            "posture_scale": 1.0,
-            "crit": true,
-            "crit_damage": 1,
-            "drag": {
-              "duration": 20,
-              "strength": 2
-            }
+          "effects": {
+            "attack_info": {
+              "knockback": 10,
+              "damage_scale": 1
+            },
+            "effects": [
+              "WEAPON","TRAIL"
+            ]
           }
         }
       ],
