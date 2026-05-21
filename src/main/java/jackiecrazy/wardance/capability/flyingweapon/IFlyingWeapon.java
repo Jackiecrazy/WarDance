@@ -26,8 +26,7 @@ public interface IFlyingWeapon {
     void launchGrapple(Vec3 to);
 
     void scheduleAction(InteractionHand hand,
-                        MotionManager mm,
-                        FlyingWeaponEffect... fx);
+                        MotionManager mm);
 
     void tick();
 
@@ -73,8 +72,7 @@ public interface IFlyingWeapon {
 
         @Override
         public void scheduleAction(InteractionHand hand,
-                                   MotionManager mm,
-                                   FlyingWeaponEffect... fx) {
+                                   MotionManager mm) {
 
         }
 

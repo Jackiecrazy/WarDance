@@ -1,5 +1,6 @@
 package jackiecrazy.wardance.entity;
 
+import jackiecrazy.footwork.api.CombatDamageSource;
 import jackiecrazy.footwork.capability.action.ActionData;
 import jackiecrazy.footwork.entity.flyingweapon.FlyingItemEntity;
 import jackiecrazy.footwork.entity.flyingweapon.FlyingWeaponEffect;
@@ -18,6 +19,7 @@ import jackiecrazy.wardance.move.actions.LoadItemAction;
 import jackiecrazy.wardance.utils.CombatUtils;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
@@ -49,6 +51,7 @@ public class ThrownWeaponEntity extends FlyingWeaponEntity {
     private boolean recalling = false;
     private boolean fake = false, pickup_flourish=false;
     private List<Action> impactActions = List.of();
+    private List<Action> embedActions = List.of();
 
     public ThrownWeaponEntity(EntityType<? extends FlyingItemEntity> type,
                               Level level) {
@@ -61,6 +64,20 @@ public class ThrownWeaponEntity extends FlyingWeaponEntity {
     public ThrownWeaponEntity setFlourish(boolean flourish){
         pickup_flourish=flourish;
         return this;
+    }
+
+    @Override
+    protected void readAdditionalSaveData(CompoundTag tag) {
+        super.readAdditionalSaveData(tag);
+        pickup_flourish=tag.getBoolean("pickup");
+        fake = tag.getBoolean("fake");
+    }
+
+    @Override
+    protected void addAdditionalSaveData(CompoundTag tag) {
+        super.addAdditionalSaveData(tag);
+        tag.putBoolean("pickup", pickup_flourish);
+        tag.putBoolean("fake", fake);
     }
 
     private boolean noCosmetics(){
@@ -183,6 +200,7 @@ public class ThrownWeaponEntity extends FlyingWeaponEntity {
             Vec3 localOffset = new Vec3(relF.x, relF.y, relF.z).multiply(-1, 1, 1).normalize();
             //if(localOffset.lengthSqr()<0.001)localOffset=new Vec3(0,0,1);
             runImpactActions();
+            runEmbedActions();
             setIdlePose(new MotionManagers.FixedMM(new MotionFrame(localOffset, new Vec3(0, 0, -lodgedMob.getBbWidth() / 1.75)), 1));
             setUniversalOffset(Vec3.ZERO);
             setDeltaMovement(Vec3.ZERO);
@@ -191,6 +209,7 @@ public class ThrownWeaponEntity extends FlyingWeaponEntity {
         } else {
             //otherwise lose all velocity and start dropping to the ground
             runImpactActions();
+            setImpactActions(NOTHING);
             setDeltaMovement(Vec3.ZERO);
             gravity = (float) Math.min(gravity, -0.04);
         }
@@ -199,7 +218,13 @@ public class ThrownWeaponEntity extends FlyingWeaponEntity {
     private void runImpactActions() {
         if (!impactActions.isEmpty())
             ActionData.getCap(this).mark(getOwner(), new ActionSetWrapper(impactActions));
+    }
+
+    private void runEmbedActions() {
+        if (!embedActions.isEmpty())
+            ActionData.getCap(this).mark(getOwner(), new ActionSetWrapper(embedActions));
         setImpactActions(NOTHING);
+        setEmbedActions(NOTHING);
     }
 
     private void tickAndRecall() {
@@ -310,8 +335,14 @@ public class ThrownWeaponEntity extends FlyingWeaponEntity {
     protected void extraOnHit(LivingEntity e, Entity target) {
         if (getHeldItem().getItem() instanceof BlockItem)
             target.setDeltaMovement(getDeltaMovement());
+        runImpactActions();
         if (!pierce() && !ricochet())
             doneHitting();
+    }
+
+    @Override
+    protected CombatDamageSource damageSource() {
+        return super.damageSource().setProcNormalEffects(false);
     }
 
     @Override
@@ -326,14 +357,18 @@ public class ThrownWeaponEntity extends FlyingWeaponEntity {
     public void setImpactActions(List<Action> on_impact) {
         this.impactActions = on_impact;
     }
+    public void setEmbedActions(List<Action> on_embed) {
+        this.embedActions = on_embed;
+    }
 
     @Override
     protected void onHitBlock(BlockPos blockPos, Direction hitFace, Vec3 location) {
         if (intangible()) return;
+        runImpactActions();
         if (ricochet()) return;
         if (lodge_block || hitFace == Direction.UP) {
 
-            runImpactActions();
+            runEmbedActions();
 
             setIntangible(true);
             dormant = true;

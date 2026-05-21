@@ -3,6 +3,7 @@ package jackiecrazy.wardance.skill.kick;
 import jackiecrazy.footwork.api.CombatDamageSource;
 import jackiecrazy.footwork.api.FootworkDamageArchetype;
 import jackiecrazy.footwork.capability.resources.CombatData;
+import jackiecrazy.footwork.capability.resources.ICombatCapability;
 import jackiecrazy.footwork.utils.GeneralUtils;
 import jackiecrazy.footwork.utils.ParticleUtils;
 import jackiecrazy.wardance.WarDance;
@@ -111,7 +112,7 @@ public class ShadowlessKick extends Kick {
                 stack--;
             }
             stats.setEffectiveness(mult);
-            CombatData.getCap(target).consumePosture(caster, 2 * mult,stats.getArbitraryFloat() >= 7);
+            CombatData.getCap(target).consumePosture(caster, 2 * mult, stats.getArbitraryFloat() >= 7? ICombatCapability.BreachLevel.STUN: ICombatCapability.BreachLevel.NO);
             target.hurt(new CombatDamageSource(caster).setDamageTyping(FootworkDamageArchetype.PHYSICAL).setProcSkillEffects(true).setSkillUsed(this).setProcNormalEffects(false).setProcAttackEffects(true).setKnockbackPercentage(0.4f), mult);
             if (target.getLastHurtByMob() == null)
                 target.setLastHurtByMob(caster);

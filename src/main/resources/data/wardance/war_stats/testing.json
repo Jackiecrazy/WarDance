@@ -1,29 +1,64 @@
 {
   "_guide": {
-    "standing": "wide swing with decent knockback like a combat shovel, has projectile parry frames to shoot them back at the attacker like a baseball bat. ",
-    "falling": "swing under you, bouncing yourself up if it hits any mob or terrain. ",
-    "aerial": "swing under you, bouncing yourself up if it hits any mob or terrain. ",
-    "sprinting": "slide for a short distance with dodge frames and the shovel stretched out in front of you, pushing the first mob you hit (using drag mechanics) with you ",
-    "guard counter": "fast upward flick of the shovel that buries hit targets. At max spirit, slams back down for breaching damage and a second bury. ",
-    "throw": "no pierce/bounce, embeds in terrain only. At max spirit, aoe buries on impact. ",
-    "pickup": "shovel upswing that applies increased posture damage taken in an area. ",
-    "draw": "vault while attacking under you. "
+    "standing": "A long slow stab with drag. If used with revealed (i.e. after attacks), becomes a very fast jab with very short drag for annoyance and followups",
+    "falling": "jab down and drag the mob along with you, pinning and wetting them if they hit the ground with water splash particles.",
+    "aerial": "sweep your hand across the screen and throw a web that slows and distracts enemies, no direct damage",
+    "sprinting": "charge through with block frames leaving a trail of water that wets enemies",
+    "guard counter": "push your trident out with no damage but parry frames. On parry, twist the trident and bind the mob, with a guardian one-two if possible at max spirit",
+    "throw": "non-piercing embedding throw, spawns lightning at full spirit",
+    "pickup": "spin the trident above your head, with two tropical fish circling around it, gaining some dodge frames.",
+    "draw": "throw a net with some salmon trailing behind it that pins and confuses at max spirit"
   },
-  "#shovel": {
-    "attack": 150,
-    "defend": 0.7,
-    "standing": {
+  "footwork:animation_tester": {
+    "attack": 10,
+    "defend": 0.3,
+    "sprinting": {
       "sweep": "CONE",
       "knockback": 1.5,
       "sweep_base": 120.0,
       "attack_info": {
         "damage_scale": 0.5,
         "posture_scale": 0.5,
-        "parry_frames": 4
+        "hit_other": {
+          "run_actions": [
+            {
+              "ID": "spawn_entity",
+              "entity": "minecraft:elder_guardian",
+              "position": {
+                "ID": "sum_vector",
+                "addends": [
+                  {
+                    "ID": "foot_position",
+                    "reference_point": "target"
+                  },
+                  {
+                    "ID": "vector",
+                    "x": 0,
+                    "y": -6,
+                    "z": 0
+                  }
+                ]
+              },
+              "tag": "{Glowing:1b,Invulnerable:1b,NoAI:1b,Silent:1b,ActiveEffects:[{Id:14,Duration:-1,Amplifier:1,ShowParticles:0b}]}",
+              "on_spawn": [
+                {
+                  "ID": "add_effect",
+                  "effect": "footwork:wet",
+                  "duration": 200,
+                  "forced": true,
+                  "visible": false
+                },
+                {
+                  "ID": "attach_action",
+                  "effect": "wardance:arakawa"
+                }
+              ]
+            }
+          ]
+        }
       }
     },
     "falling": {
-      "cooldown_refund": 0.5,
       "type": "animation",
       "animations": [
         {
@@ -55,7 +90,14 @@
                   "WEAPON",
                   "TRAIL",
                   "LOCK_ORIENTATION"
-                ]
+                ],
+                "on_terrain_impact": {
+                  "run_actions": [
+                    {
+                      "ID": "explode"
+                    }
+                  ]
+                }
               }
             },
             {
@@ -74,7 +116,7 @@
         }
       ]
     },
-    "sprinting": {
+    "standing": {
       "type": "animation",
       "duration": 7,
       "easing": "IN_OUT_SINE",
@@ -88,36 +130,60 @@
           "offset": [
             0,
             0,
-            1.3
+            0
           ],
-          "render_rotation": 90,
           "effects": {
             "attack_info": {
-              "crit": true,
-              "crit_damage": 1,
-              "drag": {
-                "duration": 20,
-                "strength": 2
-              },
-              "dodge_frames": 5
+              "damage_scale": 1,
+              "hit_self": {
+                "run_actions": [
+                  {
+                    "ID": "wardance:play_interaction",
+                    "move_state": "STANDING"
+                  }
+                ]
+              }
             },
             "effects": [
               "WEAPON",
               "TRAIL"
             ]
           }
+        },{
+          "direction": [
+            0,
+            0,
+            1
+          ],
+          "offset": [
+            0,
+            0,
+            1
+          ]
+        },{
+          "direction": [
+            0,
+            0,
+            1
+          ],
+          "offset": [
+            0,
+            0,
+            1
+          ]
         }
       ],
       "velocity": [
         0,
-        0.4,
-        1
+        0.1,
+        0
       ],
-      "set_velocity": true
+      "set_velocity": true,
+      "dodge_frames": 5
     },
     "aerial": {
       "type": "animation",
-      "cooldown_refund": 0.5,
+      "cooldown_refund": 1,
       "animations": [
         {
           "duration": 10,
@@ -148,6 +214,35 @@
                   "WEAPON",
                   "TRAIL",
                   "LOCK_ORIENTATION"
+                ],
+                "display_stack": [
+                  {
+                    "stack": "equipped_item"
+                  },
+                  {
+                    "stack": "equipped_item",
+                    "rotation": [
+                      90,
+                      0,
+                      0
+                    ]
+                  },
+                  {
+                    "stack": "equipped_item",
+                    "rotation": [
+                      180,
+                      0,
+                      0
+                    ]
+                  },
+                  {
+                    "stack": "equipped_item",
+                    "rotation": [
+                      270,
+                      0,
+                      0
+                    ]
+                  }
                 ]
               }
             },
@@ -397,7 +492,7 @@
                 "actions": [
                   {
                     "ID": "pin",
-                    "duration": 50,
+                    "duration": 30,
                     "repeatable": true
                   },
                   {

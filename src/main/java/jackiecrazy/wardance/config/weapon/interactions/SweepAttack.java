@@ -1,6 +1,7 @@
 package jackiecrazy.wardance.config.weapon.interactions;
 
 import jackiecrazy.footwork.move.motionframe.HitInfo;
+import jackiecrazy.footwork.move.motionframe.MotionManager;
 import net.minecraft.ChatFormatting;
 import net.minecraft.network.FriendlyByteBuf;
 
@@ -18,8 +19,9 @@ public class SweepAttack extends WeaponInteractions.WeaponInteraction {
     private double sweep_scale = 0;
     private SWEEPTYPE sweep = SWEEPTYPE.NONE;
     private double range_multiplier = 1;
+    private MotionManager custom_animation = null;
 
-    public SweepAttack(){
+    public SweepAttack() {
         super();
     }
 
@@ -34,6 +36,10 @@ public class SweepAttack extends WeaponInteractions.WeaponInteraction {
         if (a > 1) return ChatFormatting.GREEN;
         else if (a < 0) return ChatFormatting.YELLOW;
         else return ChatFormatting.RED;
+    }
+
+    public MotionManager getCustomAnimation() {
+        return custom_animation;
     }
 
     @Override

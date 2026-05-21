@@ -31,6 +31,7 @@ public class Throw extends WeaponInteractions.WeaponInteraction {
     private boolean pickup_flourish = true;
     private RenderItemArgument display_stack;
     private List<Action> on_impact = List.of();
+    private List<Action> on_embed = List.of();
 
     public Throw() {
     }
@@ -161,6 +162,7 @@ public class Throw extends WeaponInteractions.WeaponInteraction {
         e.setHitInfo(attack_info);
         e.setPos(e.position().add(MovementUtils.resolveVelocity(e.getDeltaMovement().normalize(), offset)));
         e.setImpactActions(on_impact);
+        e.setEmbedActions(on_embed);
         e.setFake(!consume_item);
         e.setFlourish(pickup_flourish);
     }

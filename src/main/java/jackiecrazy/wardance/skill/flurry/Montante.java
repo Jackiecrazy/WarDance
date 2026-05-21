@@ -68,7 +68,7 @@ Flow: cooldown of all attack skills are halved, and any cooled attack skill is a
             //spin to win!
             double reach = caster.getAttributeValue(ForgeMod.ENTITY_REACH.get());
             CombatUtils.setHandCooldown(caster, InteractionHand.MAIN_HAND, 1f, false);
-            CombatUtils.enhancedSweep(caster, null, InteractionHand.MAIN_HAND, SweepAttack.SWEEPTYPE.CIRCLE, reach, reach, 0);
+            CombatUtils.enhancedSweep(caster, null, InteractionHand.MAIN_HAND, SweepAttack.SWEEPTYPE.CIRCLE, reach, reach, 0, null);
             CombatUtils.setHandCooldown(caster, InteractionHand.MAIN_HAND, 0, true);
         }
         return super.equippedTick(caster, stats);
@@ -97,7 +97,7 @@ Flow: cooldown of all attack skills are halved, and any cooled attack skill is a
             CasterData.getCap(caster).removeActiveTag(SkillTags.state);
             SkillUtils.addAttribute(caster, Attributes.ATTACK_DAMAGE, bad);
             activate(caster, 5*prev.getEffectiveness());
-            StylishData.getCap(caster).setAdrenaline(0);
+            StylishData.getCap(caster).resetAdrenaline();
             CombatUtils.triggerSteveTime(caster, 15);
             return true;
         }

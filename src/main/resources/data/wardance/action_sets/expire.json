@@ -1,0 +1,14 @@
+[
+  {
+    "waiting": [
+      {
+        "ID": "remove",
+        "condition": {
+          "time_window": "59-"
+        }
+      }
+    ],
+    "max_time": 60,
+    "ID": "wait"
+  }
+]

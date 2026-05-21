@@ -1,14 +1,16 @@
 {
   "#crossbow": {
-    "attack": 2.4,
-    "defend": 1.0,
+    "attack": 12,
+    "defend": 0.35,
     "standing": {
       "type": "use"
     },
     "falling": {
       "type": "use",
       "velocity": [
-        0, 0.5, -1
+        0,
+        0.5,
+        -1
       ],
       "set_velocity": true
     },

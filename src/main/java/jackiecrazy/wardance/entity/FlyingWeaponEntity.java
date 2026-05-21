@@ -1,6 +1,7 @@
 package jackiecrazy.wardance.entity;
 
 import jackiecrazy.footwork.api.CombatDamageSource;
+import jackiecrazy.footwork.api.DefenseType;
 import jackiecrazy.footwork.api.FootworkDamageArchetype;
 import jackiecrazy.footwork.capability.resources.CombatData;
 import jackiecrazy.footwork.client.particle.FootworkParticles;
@@ -54,6 +55,8 @@ public class FlyingWeaponEntity extends FlyingItemEntity implements IDrag {
     protected final List<Entity> alreadyHit = new ArrayList<>();
     protected HashMap<Entity, Integer> dragging = new HashMap<>();
     protected HitInfo cacheInfo;
+    protected HitEffects terrainEffects=null;
+    private List<HitEffects> onGuard=new ArrayList<>(), onParry=new ArrayList<>(), onDodge=new ArrayList<>(), onIframe=new ArrayList<>();
     protected WeaponStats.AttackType state;
     private boolean fading = false;
 
@@ -115,6 +118,15 @@ public class FlyingWeaponEntity extends FlyingItemEntity implements IDrag {
         super.addAdditionalSaveData(tag);
         tag.putBoolean("fading", fading);
 //            todo fix orientation
+    }
+
+    public void fireDefenseCallbacks(DefenseType t){
+        switch (t){
+            case BLOCK -> onGuard.forEach(a->a.runEffects());
+            case PARRY -> onParry.forEach(a->a.runEffects());
+            case DODGE -> onDodge.forEach(a->a.runEffects());
+            case IFRAME -> onIframe.forEach(a->a.runEffects());
+        }
     }
 
     @Override
@@ -182,12 +194,13 @@ public class FlyingWeaponEntity extends FlyingItemEntity implements IDrag {
                     CombatData.getCap(e).tickProc("oncePerAttack");
                     CombatData.getCap(e).tickProc("durabilityConsumed");
                 }
+                alreadyHit.add(target);//it used to be lower but this allows you to chain attacks properly
                 //CombatData.getCap(e).tickProc("oncePerAttack");
                 target.invulnerableTime = 0;
-                CombatDamageSource cds = new CombatDamageSource(getOwner(), this, position()).flag(DamageTypeTags.AVOIDS_GUARDIAN_THORNS).setAttackingHand(InteractionHand.MAIN_HAND).setProcAttackEffects(true).setDamageTyping(FootworkDamageArchetype.PHYSICAL);
+                CombatDamageSource cds = damageSource();
                 GeneralUtils.attack(e, target, cds);
                 ret = true;
-                alreadyHit.add(target);
+//                alreadyHit.add(target);
                 extraOnHit(e, target);
             }
         } catch (Exception ex) {
@@ -200,12 +213,22 @@ public class FlyingWeaponEntity extends FlyingItemEntity implements IDrag {
         return ret;
     }
 
+    protected CombatDamageSource damageSource() {
+        return new CombatDamageSource(getOwner(), this, position()).flag(DamageTypeTags.AVOIDS_GUARDIAN_THORNS).setAttackingHand(InteractionHand.MAIN_HAND).setProcNormalEffects(true).setProcAttackEffects(true).setDamageTyping(FootworkDamageArchetype.PHYSICAL);
+    }
+
+
     protected void extraOnHit(LivingEntity e, Entity target) {
 
     }
 
     @Override
     protected void onHitBlock(BlockPos blockPos, Direction hitFace, Vec3 location) {
+        if (intangible()) return;
+        if(terrainEffects!=null) {
+            terrainEffects.runEffects(getOwner(), this);
+            terrainEffects=null;//reset after one impact until next terrain effect comes in
+        }
     }
 
     @Override
@@ -219,7 +242,7 @@ public class FlyingWeaponEntity extends FlyingItemEntity implements IDrag {
                 Direction hitFace = hit.getDirection();
                 onHitBlock(blockPos, hitFace, hit.getLocation());
             }
-        }// else super.handleBlockCollisions();
+        } else super.handleBlockCollisions();
     }
 
     public void yeet(Vec3 to, double strength) {
@@ -275,7 +298,7 @@ public class FlyingWeaponEntity extends FlyingItemEntity implements IDrag {
                 setEffect(effects.getEffects().toArray(new FlyingWeaponEffect[0]));
             cacheInfo = effects.getHit();
             if (cacheInfo != null && getOwner() != null)
-                CombatUtils.applyFrames(getOwner(), cacheInfo);
+                CombatUtils.applyFrames(getOwner(), this, effects);
             if (effects.reset_hit())
                 alreadyHit.clear();
             if (effects.shouldUndrag())
@@ -285,7 +308,17 @@ public class FlyingWeaponEntity extends FlyingItemEntity implements IDrag {
                 effects.runEffects(e, e);
             if(effects.getDisplayItems()!=null)
                 setCosmeticItem(effects.getDisplayItems().resolve(new ArgumentContext(getOwner(), getOwner())));
+            if(effects.getColor()!=null)
+                setTrailColor(effects.getColor());
+            if(effects.getTerrainEffects()!=null)
+                terrainEffects=effects.getTerrainEffects();
         }
+    }
+
+    @Override
+    public void clearPath() {
+        super.clearPath();
+        alreadyHit.clear();
     }
 
     @Override
@@ -294,30 +327,21 @@ public class FlyingWeaponEntity extends FlyingItemEntity implements IDrag {
         boolean ret = super.updateMotionTargets(forceskip);
         if (ret) {
             alreadyHit.clear();
+            onGuard.clear();
+            onDodge.clear();
+            onParry.clear();
+            onIframe.clear();
         }
-        MotionManager motion = moveQueue.peek();
-//        if (motion instanceof WeaponMotionManager wmm) {
-//            setInteractionRange((float) wmm.range());
-//            setIntangible(false);
-//            cacheInfo = wmm.info();
-//        } else
         if (moveQueue.isEmpty()) {
             //return on a transition frame
             setEffect(FlyingWeaponEffect.WEAPON);
             setIntangible(true);
             unlock();
         }
-
-//        if (intangible()) {
-//            //not attacking
-//            setShouldRender(FlyingWeaponEffect.TRAIL, false);
-//            setShouldRender(FlyingWeaponEffect.BIG_SHADOW, false);
-//            setShouldRender(FlyingWeaponEffect.WEAPON, true);
-//        }
         if (!isIdle()) {
-            //setUniversalOffset(Vec3.ZERO);
         } else if (getOwner() != null) {
             setInteractionRange((float) getOwner().getAttributeValue(ForgeMod.ENTITY_REACH.get()));
+            setTrailColor(DEFAULT_TRAIL_COLOR);
         }
         return ret;
     }

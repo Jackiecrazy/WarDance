@@ -69,13 +69,13 @@ Flow: cooldown of all attack skills are halved, and any cooled attack skill is a
         cap.setOffhandCooldown(cap.getOffhandCooldown() + 1);
         //main hand flurry
         if (stats.getState() == STATE.ACTIVE && CombatUtils.getCooledAttackStrength(caster, InteractionHand.MAIN_HAND, 0f) == 1f && !caster.isAutoSpinAttack()) {
-            CombatUtils.enhancedSweep(caster, null, InteractionHand.MAIN_HAND, SweepAttack.SWEEPTYPE.CIRCLE, 3, 3, 0);
+            CombatUtils.enhancedSweep(caster, null, InteractionHand.MAIN_HAND, SweepAttack.SWEEPTYPE.CIRCLE, 3, 3, 0, null);
             CombatUtils.setHandCooldown(caster, InteractionHand.MAIN_HAND, 0, true);
         }
         //offhand flurry
         if (stats.getState() == STATE.ACTIVE && CombatUtils.getCooledAttackStrength(caster, InteractionHand.OFF_HAND, 0f) == 1f && !caster.isAutoSpinAttack()) {
             //spin to win!
-            CombatUtils.enhancedSweep(caster, null, InteractionHand.OFF_HAND, SweepAttack.SWEEPTYPE.CIRCLE, 3, 3, 0);
+            CombatUtils.enhancedSweep(caster, null, InteractionHand.OFF_HAND, SweepAttack.SWEEPTYPE.CIRCLE, 3, 3, 0, null);
             CombatUtils.setHandCooldown(caster, InteractionHand.OFF_HAND, 0, true);
         }
         return super.equippedTick(caster, stats);
@@ -100,7 +100,7 @@ Flow: cooldown of all attack skills are halved, and any cooled attack skill is a
             CasterData.getCap(caster).removeActiveTag(SkillTags.state);
             SkillUtils.addAttribute(caster, Attributes.ATTACK_DAMAGE, bad);
             activate(caster, 5*prev.getEffectiveness());
-            StylishData.getCap(caster).setAdrenaline(0);
+            StylishData.getCap(caster).resetAdrenaline();
             CombatUtils.triggerSteveTime(caster, 15);
             return true;
         }

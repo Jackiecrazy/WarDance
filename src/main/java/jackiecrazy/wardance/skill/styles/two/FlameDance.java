@@ -58,7 +58,7 @@ public class FlameDance extends WarCry {
         if (procPoint instanceof LivingAttackEvent lae && (DamageUtils.isMeleeAttack(lae.getSource()) || DamageUtils.isSkillAttack(lae.getSource())) && !lae.getSource().is(DamageTypeTags.BYPASSES_ARMOR) && procPoint.getPhase() == EventPriority.HIGHEST && lae.getEntity() == target) {
             mark(caster, target, 4, 1);
             //kaboom!
-            if (StylishData.getCap(caster).canTrigger()) {
+            if (StylishData.getCap(caster).maxAdrenaline()) {
                 if (!DamageUtils.isSkillAttack(lae.getSource())) {
                     DamageSource kaboom = new CombatDamageSource(caster).setDamageTyping(FootworkDamageArchetype.MAGICAL).setProcSkillEffects(true).setSkillUsed(this).setPostureDamage(0).bypassArmor();
                     float f = getExistingMark(target).getArbitraryFloat() * SkillUtils.getSkillEffectiveness(caster);

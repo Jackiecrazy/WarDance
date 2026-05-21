@@ -124,7 +124,7 @@ public class AerialCapability implements IAerialMode {
                 SkillUtils.removeAttribute(e, ForgeMod.ENTITY_GRAVITY.get(), WALL_GRAV);
             if (state == WallState.NONE) {
                 //temporarily stick on the surface
-                noOffFor(10);
+                noOffFor(5);
                 //CombatChannel.INSTANCE.sendToServer(new UpdateWallPacket(state));
             }else noOffFor(0);
         }

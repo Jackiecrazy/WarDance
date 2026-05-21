@@ -131,31 +131,31 @@ public class CombatHandler {
             //find defending hands
             ItemStack defend = null;
             InteractionHand defendingHand = null;
-            float defMult = 1;
+            float rallyMult = 1;
             //find the preferred range defend tool
-            boolean offChip = CombatUtils.canBlock(uke, e.getEntity(), uke.getOffhandItem(), consume);
-            boolean mainChip = CombatUtils.canBlock(uke, e.getEntity(), uke.getMainHandItem(), consume);
+            boolean offCanBlock = CombatUtils.canBlock(uke, e.getEntity(), uke.getOffhandItem(), consume);
+            boolean mainCanBlock = CombatUtils.canBlock(uke, e.getEntity(), uke.getMainHandItem(), consume);
             float offDefMult = CombatUtils.getRallyPercentage(null, uke, uke.getOffhandItem(), consume);
             float mainDefMult = CombatUtils.getRallyPercentage(null, uke, uke.getMainHandItem(), consume);
-            if (offChip) {
+            if (offCanBlock) {
                 defend = uke.getOffhandItem();
                 defendingHand = InteractionHand.OFF_HAND;
-                defMult = offDefMult;
+                rallyMult = offDefMult;
             }
             //this makes blocking prioritize offhand
-            if (mainChip && (!offChip || mainDefMult < defMult)) {
+            if (mainCanBlock && (!offCanBlock || mainDefMult < rallyMult)) {
                 defend = uke.getMainHandItem();
                 defendingHand = InteractionHand.MAIN_HAND;
-                defMult = mainDefMult;
+                rallyMult = mainDefMult;
             }
 
             //mobs cannot parry so we resolve parry first
-            ProjectileDefendEvent.Parry pe1 = new ProjectileDefendEvent.Parry(uke, projectile, defendingHand == null ? InteractionHand.OFF_HAND : defendingHand, defend == null ? ItemStack.EMPTY : defend, defMult);
+            ProjectileDefendEvent.Parry pe1 = new ProjectileDefendEvent.Parry(uke, projectile, defendingHand == null ? InteractionHand.OFF_HAND : defendingHand, defend == null ? ItemStack.EMPTY : defend, rallyMult);
             MinecraftForge.EVENT_BUS.post(pe1);
 
             //successful
             if (pe1.getResult() == Event.Result.ALLOW || (ukeCap.isParrying() && pe1.getResult() == Event.Result.DEFAULT)) {
-                CombatUtils.onSuccessfulParry(uke, projectile, defendingHand, defend, pe1.getPostureConsumption(), pe1.getPostureConsumption());
+                CombatUtils.onSuccessfulParry(uke, projectile, defendingHand, defend, pe1.getPostureConsumption(), pe1.getPostureConsumption(), pe1.getRallyPercentage());
                 handleProjectileDefense(e, pe1, defend, projectile, uke);
                 return;
             }
@@ -170,25 +170,26 @@ public class CombatHandler {
                 if (stats.isShield() && WarDance.rand.nextFloat() < stats.getBlockChance()) {
                     if (stats.getBlockMult() < 0) {//cannot parry
                         defend = null;
-                        defMult = (float) -stats.getBlockMult();
+                        rallyMult = (float) -stats.getBlockMult();
                     } else if (stats.isOmnidirectional() || inBlockArea) {
                         if (!inBlockArea) {
                             defendingHand = InteractionHand.OFF_HAND;
                         }
                         defend = ItemStack.EMPTY;
-                        defMult = (float) Math.min(stats.getBlockMult(), defMult);
+                        rallyMult = (float) Math.min(stats.getBlockMult(), rallyMult);
                         force = true;
                     }
                 }
             }
 
             //block event
-            ProjectileDefendEvent.Block pe2 = new ProjectileDefendEvent.Block(uke, projectile, defendingHand, defend, defMult);
+            ProjectileDefendEvent.Block pe2 = new ProjectileDefendEvent.Block(uke, projectile, defendingHand, defend, rallyMult);
             if (force) pe2.setResult(Event.Result.ALLOW);
             MinecraftForge.EVENT_BUS.post(pe2);
 
             //successful
             if (pe2.getResult() == Event.Result.ALLOW || (defend != null && pe2.getResult() == Event.Result.DEFAULT && ukeCap.isBlocking())) {
+                ukeCap.consumePosture(null, pe2.getPostureConsumption(), pe2.getRallyPercentage(), ICombatCapability.BreachLevel.NO);
                 CombatUtils.onSuccessfulBlock(uke, projectile, defendingHand, defend, pe2.getPostureConsumption());
                 handleProjectileDefense(e, pe2, defend, projectile, uke);
             }
@@ -203,8 +204,6 @@ public class CombatHandler {
                                                 LivingEntity uke) {
         e.setCanceled(true);//.setImpactResult(ProjectileImpactEvent.ImpactResult.STOP_AT_CURRENT_NO_DAMAGE);
         ICombatCapability ukeCap = CombatData.getCap(uke);
-        float perc = CombatUtils.getRallyPercentage(null, uke, defend, pe.getPostureConsumption());
-        ukeCap.consumePosture(null, pe.getPostureConsumption(), perc, ICombatCapability.BreachLevel.NO);//fixme
         //do not change shooter! It makes drowned tridents and skeleton arrows collectable, which is honestly silly
         uke.level().playSound(null, uke.getX(), uke.getY(), uke.getZ(), SoundEvents.WOODEN_TRAPDOOR_CLOSE, SoundSource.PLAYERS, 0.75f + WarDance.rand.nextFloat() * 0.5f, (1 - (ukeCap.getPosture() / ukeCap.getMaxPosture())) + WarDance.rand.nextFloat() * 0.5f);
         if (pe.doesTrigger()) {
@@ -389,13 +388,13 @@ public class CombatHandler {
 
                 //it's a trap! no parrying backstabs
                 if (awareness == StealthUtils.Awareness.UNAWARE) {
-                    ukeCap.consumePosture(seme, pe.getPostureConsumption(), pe.canBreach());
+                    ukeCap.consumePosture(seme, pe.getPostureConsumption(), 0, pe.canBreach());
                     return;
                 }
 
-                //not only can mobs not defend in time slow, the attacker gets a steve time extension
+                //mobs cannot defend when slowed
                 if (!(uke instanceof Player) && TimeSlowData.getCap(uke).getEffectiveSpeed() < 1) {
-                    ukeCap.consumePosture(seme, pe.getPostureConsumption(), pe.canBreach());
+                    ukeCap.consumePosture(seme, pe.getPostureConsumption(),0, pe.canBreach());
                     return;
                 }
 
@@ -424,7 +423,7 @@ public class CombatHandler {
                 //players block if they are... blocking
                 boolean defenderMaybeBlocking = uke instanceof Player && uke.isBlocking();
                 //mobs can only guard, by being in the right angle
-                boolean defenderMaybeGuarding = GeneralUtils.isFacingEntity(uke, seme, 90, 140);
+                boolean defenderMaybeGuarding = !(uke instanceof Player) && GeneralUtils.isFacingEntity(uke, seme, 90, 140);
 
                 //special mob blocking overrides
                 MobSpecs.MobInfo stats = MobSpecs.getMobInfo(uke);
@@ -433,16 +432,16 @@ public class CombatHandler {
                         if (stats.getBlockMult() < 0) {//cannot parry
                             defend = null;
                             defenderMaybeBlocking = false;
-                            atkMult*= (float) -stats.getBlockMult();
-                            rallyPerc=0;//it's fine because mobs can't rally
+                            atkMult *= (float) -stats.getBlockMult();
+                            rallyPerc = 0;//it's fine because mobs can't rally
                         } else if (stats.isOmnidirectional() || defenderMaybeBlocking) {
                             if (rallyPerc > stats.getBlockMult()) {
                                 if (!defenderMaybeBlocking) {
                                     defendingHand = CombatUtils.getCooledAttackStrength(uke, InteractionHand.MAIN_HAND, 0.5f) > CombatUtils.getCooledAttackStrength(uke, InteractionHand.OFF_HAND, 0.5f) ? InteractionHand.MAIN_HAND : InteractionHand.OFF_HAND;
                                 }
                                 defend = ItemStack.EMPTY;
-                                atkMult*= (float) Math.min(stats.getBlockMult(), rallyPerc);
-                                rallyPerc=0;//it's fine because mobs can't rally
+                                atkMult *= (float) Math.min(stats.getBlockMult(), rallyPerc);
+                                rallyPerc = 0;//it's fine because mobs can't rally
                                 defenderMaybeBlocking = true;
                             }
                         }
@@ -463,7 +462,7 @@ public class CombatHandler {
                 if (pe1.success()) {
                     e.setCanceled(true);
                     WarDance.LOGGER.debug("successfully parried!");
-                    CombatUtils.onSuccessfulParry(uke, seme, defendingHand, defend, pe1.getPostureConsumption(), e.getAmount());
+                    CombatUtils.onSuccessfulParry(uke, seme, defendingHand, defend, pe1.getPostureConsumption(), e.getAmount(), pe1.getRallyPercentage());
                     return;
                 }
 
@@ -472,11 +471,9 @@ public class CombatHandler {
                 MinecraftForge.EVENT_BUS.post(pe2);
 
                 //success!
-                if (pe2.success() && ukeCap.consumePosture(seme, pe2.getPostureConsumption(), pe2.canBreach()) == 0) {//todo config rally value
+                if (pe2.success() && ukeCap.consumePosture(seme, pe2.getPostureConsumption(), pe2.getRallyPercentage(), pe2.canBreach()) == 0) {
                     e.setCanceled(true);
                     WarDance.LOGGER.debug("successfully blocked!");
-//                    if (uke instanceof Player)
-//                        ukeCap.recordDamage(e.getAmount());
                     CombatUtils.onSuccessfulBlock(uke, seme, defendingHand, defend, pe2.getPostureConsumption());
                     //do not cancel the event. It technically succeeded but will be blocked by vanilla functions. I just mark the right item to keep processing.
                     return;
@@ -485,8 +482,7 @@ public class CombatHandler {
                 //failed everything, use the original damage
                 if (!pe2.success()) {
                     WarDance.LOGGER.debug("failed everything! " + defenderMaybeBlocking + " " + defend);
-                    ukeCap.consumePosture(seme, pe2.getPostureConsumption(), pe.canBreach());
-
+                    ukeCap.consumePosture(seme, pe2.getPostureConsumption(), pe2.getRallyPercentage(), pe.canBreach());
                 }
                 //internally enforced hand bind to bypass slimes
                 //added to world check to bypass goety lichdom weirdness
@@ -504,7 +500,7 @@ public class CombatHandler {
                 MeleePostureEvent.Environment pe1 = new MeleePostureEvent.Environment(e.getEntity(), CombatData.getCap(e.getEntity()).isParrying(), e.getAmount(), e.getSource(), e.getAmount(), true);
                 MinecraftForge.EVENT_BUS.post(pe1);
                 if (pe1.success()) {
-                    CombatUtils.onSuccessfulParry(e.getEntity(), e.getSource().getEntity(), null, null, pe1.getPostureConsumption(), e.getAmount());
+                    CombatUtils.onSuccessfulParry(e.getEntity(), e.getSource().getEntity(), null, null, pe1.getPostureConsumption(), e.getAmount(), pe1.getRallyPercentage());
                     if (e.getSource().is(DamageTypeTags.IS_FALL))
                         e.getEntity().addDeltaMovement(new Vec3(0, 1, 0));
                     e.setCanceled(true);
@@ -512,7 +508,7 @@ public class CombatHandler {
             }
             //handle nonphysical cases of combat damage docking posture, this can never breach
             if (e.getSource() instanceof CombatDamageSource cds && cds.getPostureDamage() > 0) {
-                CombatData.getCap(e.getEntity()).consumePosture(cds.getEntity() instanceof LivingEntity elb ? elb : null, cds.getPostureDamage(), cds.canBreach());//todo conversion percentages
+                CombatData.getCap(e.getEntity()).consumePosture(cds.getEntity() instanceof LivingEntity elb ? elb : null, cds.getPostureDamage(), 0.3f, cds.canBreach());//todo conversion percentages
             }
         }
         if (GeneralConfig.debug && !e.getEntity().level().isClientSide) {
@@ -636,9 +632,9 @@ public class CombatHandler {
             final HitInfo sweepInfo = WeaponStats.getHitInfo(trueSource.getMainHandItem(), trueSource, CombatUtils.getAttackState(trueSource));
             sweepInfo.runEffects(trueSource, trueSource, true, true);
             sweepInfo.runEffects(trueSource, uke, false, true);
-            if(sweepInfo.getDrag()!=null){
+            if (sweepInfo.getDrag() != null) {
                 FlyingWeaponEntity fwe = FlyingWeaponData.getCap(trueSource).getWeapon(InteractionHand.MAIN_HAND);
-                if(fwe!=null)fwe.drag(uke, sweepInfo.getDrag().strength(), sweepInfo.getDrag().duration());
+                if (fwe != null) fwe.drag(uke, sweepInfo.getDrag().strength(), sweepInfo.getDrag().duration());
             }
             double luckDiff = WarDance.rand.nextFloat() * (GeneralUtils.getAttributeValueSafe(trueSource, Attributes.LUCK)) - WarDance.rand.nextFloat() * (GeneralUtils.getAttributeValueSafe(uke, Attributes.LUCK));
             e.setAmount(e.getAmount() + (float) luckDiff * GeneralConfig.luck);
@@ -671,7 +667,7 @@ public class CombatHandler {
         final boolean alert = StealthUtils.INSTANCE.getAwareness(ds.getEntity() instanceof LivingEntity le ? le : null, uke) == StealthUtils.Awareness.ALERT;
         final boolean creative = e.getSource().is(DamageTypeTags.BYPASSES_INVULNERABILITY);
         final boolean environmentalDamage = (e.getSource().getEntity() == null);
-        final boolean nonMeleeDamage = e.getSource().isIndirect() || !(e.getSource().getEntity() instanceof LivingEntity le) ;//|| CombatUtils.getAttackState(le) == WeaponStats.AttackType.UNDEFINED;
+        final boolean nonMeleeDamage = e.getSource().isIndirect() || !(e.getSource().getEntity() instanceof LivingEntity le);//|| CombatUtils.getAttackState(le) == WeaponStats.AttackType.UNDEFINED;
         //nonplayers cannot hold on and will vaporize if the damage is too high
         if (!(uke instanceof Player) && e.getAmount() > uke.getMaxHealth() * 2) {
             e.setAmount(e.getAmount() + cap.getRecordedDamage());
@@ -682,7 +678,7 @@ public class CombatHandler {
             // environmental: only deal damage at 0 qi
             if (environmentalDamage) {
                 cap.tickProc("cancelShake");
-                if (cap.consumePosture(QiCosts.translateEnvironment(ds)) == 0) {
+                if (cap.consumePosture(QiCosts.translateEnvironment(ds), 1) == 0) {
                     e.setAmount(0);
                     cap.tickProc("deathDenied");
                 }//else e.setAmount(e.getAmount()/2);

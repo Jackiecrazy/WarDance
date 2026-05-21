@@ -1,7 +1,7 @@
 {
   "#hoe": {
-    "attack": 1.0,
-    "defend": 1.0,
+    "attack": 5,
+    "defend": 0.5,
     "standing": {
       "sweep": "CLEAVE",
       "knockback": 0.5,
@@ -17,7 +17,6 @@
             "operation": "CONSUME"
           },
           "override": {
-
             "on_swing": {
               "run_actions": [
                 {
@@ -26,7 +25,6 @@
                 }
               ]
             },
-
             "type": "throw",
             "attack_info": {
               "damage_scale": 1,
@@ -151,7 +149,7 @@
                   "damage_scale": 1,
                   "crit": true,
                   "breach": true,
-              "spirit_multiplier": 0,
+                  "spirit_multiplier": 0,
                   "crit_damage": 2,
                   "knockback": 0
                 },
@@ -174,18 +172,24 @@
                         "duration": 40
                       }
                     ]
-                  }, {
+                  },
+                  {
                     "ID": "remove"
                   }
                 ]
-              }, {
+              },
+              {
                 "type": "throw",
-                "direction": [1, 0, 0],
+                "direction": [
+                  1,
+                  0,
+                  0
+                ],
                 "attack_info": {
                   "damage_scale": 1,
                   "crit": true,
                   "breach": true,
-              "spirit_multiplier": 0,
+                  "spirit_multiplier": 0,
                   "crit_damage": 2,
                   "knockback": 0
                 },
@@ -208,18 +212,24 @@
                         "duration": 40
                       }
                     ]
-                  }, {
+                  },
+                  {
                     "ID": "remove"
                   }
                 ]
-              }, {
+              },
+              {
                 "type": "throw",
-                "direction": [0, 0, -1],
+                "direction": [
+                  0,
+                  0,
+                  -1
+                ],
                 "attack_info": {
                   "damage_scale": 1,
                   "crit": true,
                   "breach": true,
-              "spirit_multiplier": 0,
+                  "spirit_multiplier": 0,
                   "crit_damage": 2,
                   "knockback": 0
                 },
@@ -242,18 +252,24 @@
                         "duration": 40
                       }
                     ]
-                  }, {
+                  },
+                  {
                     "ID": "remove"
                   }
                 ]
-              }, {
+              },
+              {
                 "type": "throw",
-                "direction": [-1, 0, 0],
+                "direction": [
+                  -1,
+                  0,
+                  0
+                ],
                 "attack_info": {
                   "damage_scale": 1,
                   "crit": true,
                   "breach": true,
-              "spirit_multiplier": 0,
+                  "spirit_multiplier": 0,
                   "crit_damage": 2,
                   "knockback": 0
                 },
@@ -276,18 +292,24 @@
                         "duration": 40
                       }
                     ]
-                  }, {
+                  },
+                  {
                     "ID": "remove"
                   }
                 ]
-              }, {
+              },
+              {
                 "type": "throw",
-                "direction": [1, 0, 1],
+                "direction": [
+                  1,
+                  0,
+                  1
+                ],
                 "attack_info": {
                   "damage_scale": 1,
                   "crit": true,
                   "breach": true,
-              "spirit_multiplier": 0,
+                  "spirit_multiplier": 0,
                   "crit_damage": 2,
                   "knockback": 0
                 },
@@ -310,18 +332,24 @@
                         "duration": 40
                       }
                     ]
-                  }, {
+                  },
+                  {
                     "ID": "remove"
                   }
                 ]
-              }, {
+              },
+              {
                 "type": "throw",
-                "direction": [-1, 0, 1],
+                "direction": [
+                  -1,
+                  0,
+                  1
+                ],
                 "attack_info": {
                   "damage_scale": 1,
                   "crit": true,
                   "breach": true,
-              "spirit_multiplier": 0,
+                  "spirit_multiplier": 0,
                   "crit_damage": 2,
                   "knockback": 0
                 },
@@ -344,18 +372,24 @@
                         "duration": 40
                       }
                     ]
-                  }, {
+                  },
+                  {
                     "ID": "remove"
                   }
                 ]
-              }, {
+              },
+              {
                 "type": "throw",
-                "direction": [1, 0, -1],
+                "direction": [
+                  1,
+                  0,
+                  -1
+                ],
                 "attack_info": {
                   "damage_scale": 1,
                   "crit": true,
                   "breach": true,
-              "spirit_multiplier": 0,
+                  "spirit_multiplier": 0,
                   "crit_damage": 2,
                   "knockback": 0
                 },
@@ -378,18 +412,24 @@
                         "duration": 40
                       }
                     ]
-                  }, {
+                  },
+                  {
                     "ID": "remove"
                   }
                 ]
-              }, {
+              },
+              {
                 "type": "throw",
-                "direction": [-1, 0, -1],
+                "direction": [
+                  -1,
+                  0,
+                  -1
+                ],
                 "attack_info": {
                   "damage_scale": 1,
                   "crit": true,
                   "breach": true,
-              "spirit_multiplier": 0,
+                  "spirit_multiplier": 0,
                   "crit_damage": 2,
                   "knockback": 0
                 },
@@ -412,7 +452,8 @@
                         "duration": 40
                       }
                     ]
-                  }, {
+                  },
+                  {
                     "ID": "remove"
                   }
                 ]
@@ -448,7 +489,7 @@
                   "damage_scale": 1,
                   "crit": true,
                   "breach": true,
-              "spirit_multiplier": 0,
+                  "spirit_multiplier": 0,
                   "crit_damage": 2,
                   "knockback": 4
                 },
@@ -460,14 +501,19 @@
                   "ID": "itemstack",
                   "item": "minecraft:beetroot"
                 }
-              },{
+              },
+              {
                 "type": "throw",
-                "direction": [-0.5, 0, 1],
+                "direction": [
+                  -0.5,
+                  0,
+                  1
+                ],
                 "attack_info": {
                   "damage_scale": 1,
                   "crit": true,
                   "breach": true,
-              "spirit_multiplier": 0,
+                  "spirit_multiplier": 0,
                   "crit_damage": 2,
                   "knockback": 4
                 },
@@ -479,14 +525,19 @@
                   "ID": "itemstack",
                   "item": "minecraft:beetroot"
                 }
-              },{
+              },
+              {
                 "type": "throw",
-                "direction": [0.5, 0, 1],
+                "direction": [
+                  0.5,
+                  0,
+                  1
+                ],
                 "attack_info": {
                   "damage_scale": 1,
                   "crit": true,
                   "breach": true,
-              "spirit_multiplier": 0,
+                  "spirit_multiplier": 0,
                   "crit_damage": 2,
                   "knockback": 4
                 },
@@ -537,7 +588,7 @@
               "ID": "itemstack",
               "item": "minecraft:glow_berries"
             },
-            "on_impact":[
+            "on_impact": [
               {
                 "ID": "attach_action",
                 "effect": "wardance:periodic_aoe_glow"
@@ -556,10 +607,14 @@
           "frames": [
             {
               "direction": [
-                0, -1, 1
+                0,
+                -1,
+                1
               ],
               "offset": [
-                0, 0, 1
+                0,
+                0,
+                1
               ],
               "render_rotation": 180,
               "effects": {
@@ -567,15 +622,21 @@
                   "knockback": 0.5
                 },
                 "effects": [
-                  "WEAPON", "TRAIL"
+                  "WEAPON",
+                  "TRAIL"
                 ]
               }
-            }, {
+            },
+            {
               "direction": [
-                0, 1, 1
+                0,
+                1,
+                1
               ],
               "offset": [
-                0, 0, 1
+                0,
+                0,
+                1
               ],
               "render_rotation": 180
             }
@@ -630,7 +691,11 @@
           "override": {
             "type": "throw",
             "on_swing": {
-              "velocity": [0, 1, 0],
+              "velocity": [
+                0,
+                1,
+                0
+              ],
               "command": "/effect give @s footwork:reach 20 3"
             },
             "attack_info": {

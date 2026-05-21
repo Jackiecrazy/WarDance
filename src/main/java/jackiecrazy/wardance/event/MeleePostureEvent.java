@@ -101,6 +101,7 @@ public abstract class MeleePostureEvent extends LivingEvent {
             originally = canParry;
             defendingHand = dhand;
             defendingStack = d;
+            rallyPercentage=rallyPerc;
         }
 
         public InteractionHand getDefendingHand() {

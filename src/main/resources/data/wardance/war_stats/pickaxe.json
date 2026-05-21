@@ -9,8 +9,8 @@
     "draw attack": "heavy sideways hammer smash that consumes mining fatigue. This is so pickaxe can be chained in to essentially animation cancel the hit recovery on other weapons."
   },
   "#pickaxe": {
-    "attack": 3,
-    "defend": 1,
+    "attack": 15,
+    "defend": 0.4,
     "idle_frame": {
       "duration": 3,
       "easing": "LINEAR",
@@ -33,7 +33,6 @@
           ],
           "effects": {
             "effects": [
-              "WEAPON"
             ],
             "range": -1,
             "velocity": [
@@ -64,11 +63,13 @@
                   "recipient": "caster",
                   "duration": 100,
                   "stacking": "MAX_DURATION"
-                }, {
+                },
+                {
                   "ID": "play_sound",
                   "sound": "minecraft:entity.experience_orb.pickup",
                   "source": "PLAYERS"
-                }, {
+                },
+                {
                   "ID": "play_particle",
                   "particle": "minecraft:block",
                   "particle_parameters": "gold_block",
@@ -119,8 +120,56 @@
             "attack_info": {
               "crit": true,
               "crit_damage": 1,
-              "hit_other": {
-              }
+              "hit_other": {}
+            },
+            "custom_animation": {
+              "duration": 20,
+              "easing": "IN_OUT_SINE",
+              "frames": [
+                {
+                  "direction": [
+                    2,
+                    0,
+                    0.1
+                  ],
+                  "offset": [
+                    0,
+                    0,
+                    1
+                  ],
+                  "effects": {
+                    "color": [255,0,0],
+                    "effects": [
+                      "WEAPON",
+                      "TRAIL"
+                    ]
+                  }
+                },
+                {
+                  "direction": [
+                    0,
+                    0,
+                    1
+                  ],
+                  "offset": [
+                    0,
+                    0,
+                    1
+                  ]
+                },
+                {
+                  "direction": [
+                    -2,
+                    0,
+                    0.1
+                  ],
+                  "offset": [
+                    0,
+                    0,
+                    0.6
+                  ]
+                }
+              ]
             }
           }
         }
@@ -191,20 +240,39 @@
           "easing": "IN_SINE",
           "frames": [
             {
-              "direction": [0, -1, 1],
+              "direction": [
+                0,
+                -1,
+                1
+              ],
               "offset": [
-                0, 0, 1
+                0,
+                0,
+                1
               ],
               "render_rotation": 180,
               "effects": {
                 "attack_info": {
                   "knockback": 2,
-                  "knockback_direction": [0, 1, 0]
+                  "knockback_direction": [
+                    0,
+                    1,
+                    0
+                  ]
                 }
               }
-            }, {
-              "direction": [0, 1, 1],
-              "offset": [0, 0, 1],
+            },
+            {
+              "direction": [
+                0,
+                1,
+                1
+              ],
+              "offset": [
+                0,
+                0,
+                1
+              ],
               "render_rotation": 180
             }
           ]
@@ -222,8 +290,16 @@
           "easing": "IN_OUT_SINE",
           "frames": [
             {
-              "direction": [1, 0, 0.2],
-              "offset": [0, 0, 1],
+              "direction": [
+                1,
+                0,
+                0.2
+              ],
+              "offset": [
+                0,
+                0,
+                1
+              ],
               "effects": {
                 "attack_info": {
                   "crit": true,
@@ -238,16 +314,35 @@
                   }
                 },
                 "effects": [
-                  "WEAPON", "TRAIL",
+                  "WEAPON",
+                  "TRAIL",
                   "LOCK_POSITION"
                 ]
               }
-            }, {
-              "direction": [0, 0, 1],
-              "offset": [0, 0, 1]
-            }, {
-              "direction": [-1, 0, 0.2],
-              "offset": [0, 0, 1]
+            },
+            {
+              "direction": [
+                0,
+                0,
+                1
+              ],
+              "offset": [
+                0,
+                0,
+                1
+              ]
+            },
+            {
+              "direction": [
+                -1,
+                0,
+                0.2
+              ],
+              "offset": [
+                0,
+                0,
+                1
+              ]
             }
           ]
         }
@@ -267,25 +362,48 @@
                 "easing": "IN_CUBIC",
                 "frames": [
                   {
-                    "offset": [0, 0, 2],
+                    "offset": [
+                      0,
+                      0,
+                      2
+                    ],
                     "effects": {
                       "attack_info": {
                         "knockback": 0,
                         "spirit_multiplier": 0
                       }
                     }
-                  }, {
-                    "direction": [0, 0, 1],
-                    "offset": [0, 0, 2]
-                  }, null
+                  },
+                  {
+                    "direction": [
+                      0,
+                      0,
+                      1
+                    ],
+                    "offset": [
+                      0,
+                      0,
+                      2
+                    ]
+                  },
+                  null
                 ]
-              }, {
+              },
+              {
                 "duration": 10,
                 "easing": "IN_OUT_SINE",
                 "frames": [
                   {
-                    "direction": [0, 0, 1],
-                    "offset": [0, 0, 2],
+                    "direction": [
+                      0,
+                      0,
+                      1
+                    ],
+                    "offset": [
+                      0,
+                      0,
+                      2
+                    ],
                     "render_rotation": 90,
                     "effects": {
                       "attack_info": {
@@ -299,13 +417,23 @@
                         }
                       },
                       "effects": [
-                        "WEAPON", "BIG_SHADOW",
+                        "WEAPON",
+                        "BIG_SHADOW",
                         "LOCK_POSITION"
                       ]
                     }
-                  }, {
-                    "direction": [0, 0, 0.1],
-                    "offset": [0, 0, 0.2],
+                  },
+                  {
+                    "direction": [
+                      0,
+                      0,
+                      0.1
+                    ],
+                    "offset": [
+                      0,
+                      0,
+                      0.2
+                    ],
                     "render_rotation": 90
                   }
                 ]
@@ -344,7 +472,8 @@
                   "second": 10
                 }
               }
-            }, {
+            },
+            {
               "ID": "consume_resource",
               "format": "NUMBER",
               "resource": "SPIRIT",
@@ -371,7 +500,8 @@
               "tag": "forge:ores"
             }
           }
-        }, {
+        },
+        {
           "condition": {
             "ID": "consume_resource",
             "format": "NUMBER",
@@ -395,7 +525,7 @@
               "ID": "item_with_tag",
               "tag": "forge:stone"
             },
-            "on_impact": [
+            "on_embed": [
               {
                 "ID": "remove"
               }
@@ -415,7 +545,8 @@
             "recipient": "caster",
             "duration": 600,
             "stacking": "MAX_DURATION"
-          }, {
+          },
+          {
             "ID": "play_sound",
             "sound": "minecraft:entity.villager.celebrate",
             "source": "PLAYERS"
@@ -428,16 +559,33 @@
           "easing": "IN_CUBIC",
           "frames": [
             {
-              "direction": [0, 1, 0],
-              "offset": [0, 0, 0],
+              "direction": [
+                0,
+                1,
+                0
+              ],
+              "offset": [
+                0,
+                0,
+                0
+              ],
               "effects": {
                 "effects": [
                   "WEAPON"
                 ]
               }
-            }, {
-              "direction": [0, 1, 0],
-              "offset": [0, 0, 0.6]
+            },
+            {
+              "direction": [
+                0,
+                1,
+                0
+              ],
+              "offset": [
+                0,
+                0,
+                0.6
+              ]
             }
           ]
         }
@@ -455,23 +603,50 @@
           "easing": "IN_CUBIC",
           "frames": [
             {
-              "direction": [1, 0, 0.2],
-              "offset": [0, 0, 1],
+              "direction": [
+                1,
+                0,
+                0.2
+              ],
+              "offset": [
+                0,
+                0,
+                1
+              ],
               "effects": {
                 "attack_info": {
                   "crit": true,
                   "crit_damage": 1
                 },
                 "effects": [
-                  "WEAPON", "TRAIL"
+                  "WEAPON",
+                  "TRAIL"
                 ]
               }
-            }, {
-              "direction": [0, 0, 1],
-              "offset": [0, 0, 1]
-            }, {
-              "direction": [-1, 0, 0.2],
-              "offset": [0, 0, 1]
+            },
+            {
+              "direction": [
+                0,
+                0,
+                1
+              ],
+              "offset": [
+                0,
+                0,
+                1
+              ]
+            },
+            {
+              "direction": [
+                -1,
+                0,
+                0.2
+              ],
+              "offset": [
+                0,
+                0,
+                1
+              ]
             }
           ]
         }

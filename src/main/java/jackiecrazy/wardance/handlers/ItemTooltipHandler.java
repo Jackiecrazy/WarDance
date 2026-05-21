@@ -45,7 +45,7 @@ public class ItemTooltipHandler {
                     if (stack.is(WeaponStats.CANNOT_BLOCK))
                         e.getToolTip().add(Component.translatable("wardance.tooltip.noBlock").withStyle(ChatFormatting.DARK_RED));
                     else
-                        e.getToolTip().add(Component.translatable("wardance.tooltip.postureDefend", Component.literal(formatter.format(def)).withStyle(ChatFormatting.DARK_GREEN)));
+                        e.getToolTip().add(Component.translatable("wardance.tooltip.postureDefend", Component.literal(formatter.format(def*100)+"%").withStyle(ChatFormatting.DARK_GREEN)));
                 }
                 if (PermissionData.getCap(entity).canSweep()) {
                     //final Component standing = WeaponStats.getSweepInfo(stack, entity, WeaponStats.AttackType.STANDING, false).getToolTip(e.getItemStack(), e.getFlags().isAdvanced());

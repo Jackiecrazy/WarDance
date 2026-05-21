@@ -114,7 +114,7 @@ public class ClientEvents {
         final IStyleCapability is = StylishData.getCap(mc.player);
         if (itsc.isKnockdown()) {
             //no moving while you're down! (except for a safety roll)
-            KeyMapping.releaseAll();
+            //KeyMapping.releaseAll();
             return;
         }
     }

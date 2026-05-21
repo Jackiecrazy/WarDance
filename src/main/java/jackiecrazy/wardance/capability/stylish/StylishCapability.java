@@ -42,7 +42,7 @@ public class StylishCapability implements IStyleCapability {
     private Queue<String> freshness = new LinkedList<>();
     private float combo;
     private boolean dirty = true;
-    private boolean deathDoor = false;
+    private boolean deathDoor = false, canDeathDoor = true;
     private double deathDoorReduction = 0;
     private int hitTimer = 0;
     private boolean recalcHealth = true;
@@ -73,6 +73,15 @@ public class StylishCapability implements IStyleCapability {
     }
 
     @Override
+    public void resetAdrenaline() {
+        if (maxAdrenaline()) {
+            canDeathDoor = true;
+            markDirty();
+        }
+        IStyleCapability.super.resetAdrenaline();
+    }
+
+    @Override
     public float getAdrenaline() {
         return adrenaline;
     }
@@ -86,12 +95,15 @@ public class StylishCapability implements IStyleCapability {
     @Override
     public float addAdrenaline(float amount) {
         float ret = 0;
+        boolean ddoor= !maxAdrenaline();
         adrenaline += amount;
         if (adrenaline > 1) {
             ret = adrenaline - 1;
             adrenaline = 1;
         }
+        if(ddoor&&maxAdrenaline()) canDeathDoor=true;
         adrenalineTimer = COMBO_TIMER;
+        markDirty();
         return ret;
     }
 
@@ -121,10 +133,14 @@ public class StylishCapability implements IStyleCapability {
         }
         hitTimer--;
         if (adrenalineTimer <= 0) {
-            if (hitTimer < -1000) {
+            if (hitTimer < -1000 && deathDoorReduction != 0) {
                 deathDoorReduction += 0.00125;
                 deathDoorReduction = Math.min(deathDoorReduction, 0);
                 recalcHealth = true;
+                if (deathDoorReduction==0) {
+                    canDeathDoor = true;
+                    markDirty();
+                }
             }
             adrenalineTimer = 0;
             adrenaline = 0;
@@ -145,12 +161,14 @@ public class StylishCapability implements IStyleCapability {
 //                guy.setHealth(guy.getMaxHealth());
 //            if (guy.getHealth() >= guy.getMaxHealth() && CombatData.getCap(guy).getRecordedDamage() > 0)
 //                CombatData.getCap(guy).recordDamage((float) (-drain * guy.getMaxHealth()));
+            if (guy.getMaxHealth() <= 1)
+                canDeathDoor = false;
             if (guy.getMaxHealth() <= 1 || getCombo() > ComboRanks.S)
                 stabilize();
         }
-        if(recalcHealth) {
+        if (recalcHealth) {
             SkillUtils.modifyAttribute(guy, Attributes.MAX_HEALTH, WOUND, deathDoorReduction, AttributeModifier.Operation.MULTIPLY_TOTAL);
-            recalcHealth=false;
+            recalcHealth = false;
         }
 
         if (dirty) {
@@ -265,7 +283,7 @@ public class StylishCapability implements IStyleCapability {
 
     @Override
     public boolean canTrigger() {
-        return getTriggerBar() >= MAX_FINISHER_CHARGE;
+        return canDeathDoor;
     }
 
     @Override
@@ -277,7 +295,7 @@ public class StylishCapability implements IStyleCapability {
     public boolean avoidDeath() {
         if (dude.get() != null) {
             LivingEntity p = dude.get();
-            if (p.getMaxHealth() <= 1) {
+            if (!canDeathDoor || p.getMaxHealth() <= 1) {
                 //sorry bud
                 return false;
             }
@@ -324,6 +342,7 @@ public class StylishCapability implements IStyleCapability {
         t.putFloat("adr", adrenaline);
         t.putInt("comboTimer", comboTimer);
         t.putFloat("combo", combo);
+        t.putBoolean("canddoor", canDeathDoor);
         t.putBoolean("ddoor", deathDoor);
         t.putDouble("healthDown", deathDoorReduction);
         t.putInt("hit", hitTimer);
@@ -339,6 +358,7 @@ public class StylishCapability implements IStyleCapability {
         adrenaline = t.getFloat("adr");
         comboTimer = t.getInt("comboTimer");
         combo = t.getFloat("combo");
+        canDeathDoor = t.getBoolean("canddoor");
         deathDoor = t.getBoolean("ddoor");
         deathDoorReduction = t.getDouble("healthDown");
         hitTimer = t.getInt("hit");

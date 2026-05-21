@@ -10,13 +10,10 @@ import jackiecrazy.footwork.move.motionframe.MotionManager;
 import jackiecrazy.footwork.move.motionframe.MotionManagers;
 import jackiecrazy.footwork.utils.EasingFunctionEnum;
 import jackiecrazy.footwork.utils.GeneralUtils;
-import jackiecrazy.wardance.WarDance;
 import jackiecrazy.wardance.config.weapon.WeaponStats;
 import jackiecrazy.wardance.entity.*;
 import jackiecrazy.wardance.networking.CombatChannel;
-import jackiecrazy.wardance.networking.sync.SyncQuiverPacket;
 import jackiecrazy.wardance.networking.sync.UpdateFlyingWeaponPacket;
-import jackiecrazy.wardance.skill.grapple.Grapple;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.InteractionHand;
@@ -114,7 +111,7 @@ public class FlyingWeaponCapability implements IFlyingWeapon {
     }
 
     @Override
-    public void scheduleAction(InteractionHand hand, MotionManager mm, FlyingWeaponEffect... fx) {
+    public void scheduleAction(InteractionHand hand, MotionManager mm) {
         //set attack range from manager, then temporarily set the rest to override whatever sweep the player should have grabbed
         //no idea how this should be stored on the player. Since it's used in the span of a single function, maybe a global is fine?
         final boolean isMain = hand == InteractionHand.MAIN_HAND;
@@ -122,13 +119,8 @@ public class FlyingWeaponCapability implements IFlyingWeapon {
         FlyingItemEntity fwe = getWeapon(hand);
         try {
             if (!scheduleLock && fwe != null) {
-                //updateWeapon(fwe, hand);
                 if (mm.getStartFrame() == null) fwe.clearPath();
                 fwe.queuePath(mm, 0, 0);
-                //fwe.setIdlePose(idleFrame[isMain ? 0 : 1]);
-                //fwe.setShouldRender(FlyingWeaponEffect.WEAPON,true);
-                //fwe.setUniversalOffset(idleOffset[isMain ? 0 : 1]);
-                //fwe.setEffect(fx);
             }
         } catch (Throwable t) {
             t.printStackTrace();

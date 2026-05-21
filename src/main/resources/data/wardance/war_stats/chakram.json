@@ -1,7 +1,7 @@
 {
-  "#chakram":{
-    "attack": 2,
-    "defend": 1,
+  "#chakram": {
+    "attack": 10,
+    "defend": 0.2,
     "idle_frame": {
       "duration": 3,
       "frames": [

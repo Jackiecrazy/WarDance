@@ -86,8 +86,7 @@
   "wardance.scroll.random.desc": "Teaches a random skill or style",
 
   "wardance.tooltip.postureAttack": "Posture per attack: %.2d",
-  "wardance.tooltip.postureDefend": "Defense posture multiplier: %.2d",
-  "wardance.tooltip.parry": "Parries up to %s posture damage per %.2d seconds",
+  "wardance.tooltip.postureDefend": "Defense rating: %.2d",
 
   "wardance.tooltip.more": "extra",
   "wardance.tooltip.less": "reduced",
@@ -175,8 +174,6 @@
   "wardance.skill3": "Select Bottom Right Skill",
   "wardance.skill4": "Select Bottom Left Skill",
   "wardance.skill5": "Select Top Left Skill",
-  "wardance.toggleparry.on": "Parrying Toggled On",
-  "wardance.toggleparry.off": "Parrying Toggled Off",
   "wardance.skill.cooldown": "skill is cooling down",
   "wardance.skill.conflict": "conflicting skills are currently active",
   "wardance.skill.spirit": "requires %s spirit",

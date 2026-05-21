@@ -246,7 +246,7 @@ public class EntityHandler {
                 if (cap.isStunned() || mustUpdate.containsValue(e.getEntity()))
                     cap.serverTick();
                 float nausea = elb instanceof Player || !elb.hasEffect(MobEffects.CONFUSION) ? 0 : (elb.getEffect(MobEffects.CONFUSION).getAmplifier() + 1) * GeneralConfig.nausea;
-                if (nausea > 0) cap.consumePosture(null, nausea, false);
+                if (nausea > 0) cap.consumePosture(null, nausea, 0, false);
             }
         }
     }

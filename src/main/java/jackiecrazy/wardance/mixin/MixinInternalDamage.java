@@ -75,7 +75,7 @@ public abstract class MixinInternalDamage {
         final LocalPlayer p = Minecraft.getInstance().player;
         //your health is greater than what you technically have
         if (tempHP > p.getHealth() - CombatData.getCap(p).getRecordedDamage())
-            renderHeart(graphics, Gui.HeartType.ABSORBING, i1, i2, i3, b1, b2);
+            renderHeart(graphics, Gui.HeartType.WITHERED, i1, i2, i3, b1, b2);
         else renderHeart(graphics, heart, i1, i2, i3, b1, b2);
     }
 

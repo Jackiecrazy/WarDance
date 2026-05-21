@@ -27,8 +27,10 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.phys.Vec3;
 
+import java.awt.*;
 import java.lang.reflect.Type;
 import java.util.*;
+import java.util.List;
 import java.util.function.Supplier;
 
 public class WeaponInteractions {
@@ -46,6 +48,7 @@ public class WeaponInteractions {
             .registerTypeAdapter(RenderItemArgument.class, new ActionJsonAdapters.RenderItemAdapter())
             .registerTypeAdapter(Condition.class, new ActionJsonAdapters.ConditionAdapter())
             .registerTypeAdapter(Filter.class, new ActionJsonAdapters.FilterAdapter())
+            .registerTypeAdapter(Color.class, new JsonAdapters.ColorAdapter())
             .registerTypeAdapter(ResourceLocation.class, new ResourceLocation.Serializer())
             .registerTypeAdapter(CompoundTag.class, new ActionJsonAdapters.NBTAdapter())
             .registerTypeAdapter(WeaponInteraction.class, new InteractionDeserializer())
@@ -69,6 +72,7 @@ public class WeaponInteractions {
             .registerTypeAdapter(ResourceLocation.class, new ResourceLocation.Serializer())
             .registerTypeAdapter(CompoundTag.class, new ActionJsonAdapters.NBTAdapter())
             .registerTypeAdapter(InteractionGroup.class, new GroupDeserializer())
+            .registerTypeAdapter(Color.class, new JsonAdapters.ColorAdapter())
             .registerTypeAdapterFactory(new JsonAdapters.MotionFrameAdapterFactory())
             .registerTypeAdapterFactory(new JsonAdapters.HitInfoAdapterFactory())
             .setPrettyPrinting()
@@ -317,6 +321,7 @@ public class WeaponInteractions {
             if (baseObj.has("type")) {
                 //others go in here
                 String type = baseObj.get("type").getAsString();
+                if (type.toLowerCase(Locale.ROOT).equals("sweep"))return ret;
                 if (type.toLowerCase(Locale.ROOT).equals("use")) ret = asUse(baseObj);
                 if (type.toLowerCase(Locale.ROOT).equals("animation")) ret = asAnimation(baseObj);
                 if (type.toLowerCase(Locale.ROOT).equals("throw")) ret = asThrow(baseObj);

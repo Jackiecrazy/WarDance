@@ -88,7 +88,7 @@ public class Throw extends Grapple {
     protected void performEffect(LivingEntity caster, LivingEntity target, SkillData stats) {
         if (!cast(caster, target, 10)) return;
         caster.level().playSound(null, target.getX(), target.getY(), target.getZ(), SoundEvents.BARREL_OPEN, SoundSource.PLAYERS, 0.3f + WarDance.rand.nextFloat() * 0.5f, 0.75f + WarDance.rand.nextFloat() * 0.5f);
-        if (CombatData.getCap(target).consumePosture(caster, 7 * stats.getEffectiveness(), true) < 0 || CombatData.getCap(target).isStunned()) {
+        if (CombatData.getCap(target).consumePosture(caster, 7 * stats.getEffectiveness(), 1, true) < 0 || CombatData.getCap(target).isStunned()) {
             stats.setDuration(target.getId());
             mark(caster, target, 100, stats.getEffectiveness());
             stats.flagCondition(true);

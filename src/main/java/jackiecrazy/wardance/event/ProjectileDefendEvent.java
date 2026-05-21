@@ -16,7 +16,7 @@ public abstract class ProjectileDefendEvent extends LivingEvent {
     private final ItemStack defendingStack;
     private final float originalPostureConsumption;
     private final Vec3 originalReturnVec;
-    private float postureConsumption;
+    private float postureConsumption, rallyPerc;
     private boolean trigger;
     /**
      * null to delete.
@@ -28,7 +28,8 @@ public abstract class ProjectileDefendEvent extends LivingEvent {
         projectile = seme;
         defendingHand = dhand;
         defendingStack = d;
-        CombatUtils.initializePPE(this, mult);
+        CombatUtils.initializePPE(this);
+        rallyPerc=mult;
         originalPostureConsumption = postureConsumption;
         originalReturnVec = returnVec;
     }
@@ -71,6 +72,14 @@ public abstract class ProjectileDefendEvent extends LivingEvent {
 
     public void setReturnVec(Vec3 vec) {returnVec = vec;}
 
+    public float getRallyPercentage() {
+        return rallyPerc;
+    }
+
+    public void setRallyPercentage(float rallyPerc) {
+        this.rallyPerc = rallyPerc;
+    }
+
     public static class Block extends ProjectileDefendEvent {
 
         public Block(LivingEntity entity, Entity seme, InteractionHand dhand, ItemStack d, float mult) {
@@ -81,7 +90,7 @@ public abstract class ProjectileDefendEvent extends LivingEvent {
     public static class Parry extends ProjectileDefendEvent {
 
         public Parry(LivingEntity entity, Entity seme, InteractionHand dhand, ItemStack d, float mult) {
-            super(entity, seme, dhand, d, 0);
+            super(entity, seme, dhand, d, mult);
             setPostureConsumption(0);
             setReturnVec(entity.getLookAngle().scale(seme.getDeltaMovement().length()));
             setTrigger(false);

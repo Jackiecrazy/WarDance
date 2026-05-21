@@ -41,8 +41,6 @@ public class SkillCoolDisplay implements IGuiOverlay {
 //                mc.font.drawShadow(stack, display, centerX - 8, y - 2, 0xffffff);
 //            }
             if (s.getArbitraryFloat() != 0) {
-                RenderUtils.formatter.setMinimumFractionDigits(0);
-                RenderUtils.formatter.setMaximumFractionDigits(1);
                 String display = RenderUtils.formatter.format(s.getArbitraryFloat());
                 graphics.drawString(mc.font, display, centerX + 8 - mc.font.width(display) / 2, y + 8, 0xffffff);
             }
@@ -67,7 +65,7 @@ public class SkillCoolDisplay implements IGuiOverlay {
 
                 //cooldown number
                 String num = String.valueOf((int) cd);
-                if (Math.ceil(cd) != cd)
+                if (Math.ceil(cd) != cd&&cd<3)
                     num = RenderUtils.formatter.format(cd);
                 stack.pushPose();
                 RenderSystem.setShaderTexture(0, RenderUtils.cooldown);

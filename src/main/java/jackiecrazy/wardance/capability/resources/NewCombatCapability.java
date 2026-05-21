@@ -6,6 +6,7 @@ import jackiecrazy.footwork.capability.resources.CombatData;
 import jackiecrazy.footwork.capability.resources.ICombatCapability;
 import jackiecrazy.footwork.capability.stylish.StylishData;
 import jackiecrazy.footwork.event.*;
+import jackiecrazy.footwork.move.motionframe.HitInfo;
 import jackiecrazy.footwork.potion.FootworkEffects;
 import jackiecrazy.footwork.utils.TargetingUtils;
 import jackiecrazy.wardance.WarDance;
@@ -43,9 +44,7 @@ import net.minecraftforge.eventbus.api.Event;
 import net.minecraftforge.network.PacketDistributor;
 
 import java.lang.ref.WeakReference;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.UUID;
+import java.util.*;
 
 public class NewCombatCapability implements ICombatCapability {
     public static final UUID WOUND = UUID.fromString("982bbbb2-bbd0-4166-801a-560d1a4149c8");
@@ -65,6 +64,7 @@ public class NewCombatCapability implements ICombatCapability {
     private boolean first = true;
     private float cache;//no need to save this because it'll be used within the span of a tick
     private int guardFrame, parryFrame, dodgeFrame, iFrame;
+    //private List<HitInfo> onGuard=new ArrayList<>(), onParry=new ArrayList<>(), onDodge=new ArrayList<>(), onIframe=new ArrayList<>();
     private Vec3 motion;
     private double mobPosRegenSpd = 0.3;
     private int mobPosCD = 60, maxMobPosCD = 60, spiritCD, maxSpiritCD = 20;
@@ -294,7 +294,7 @@ public class NewCombatCapability implements ICombatCapability {
                     stun(assailant, se.getLength());
                     elb.removeEffect(FootworkEffects.COUNTERSTRIKE.get());
                     if (assailant != null) {
-                        CombatData.getCap(assailant).addRally((float) (CombatData.getCap(assailant).getMaxPosture() * assailant.getAttributeValue(FootworkAttributes.BREACH_RALLY.get())));
+//                        CombatData.getCap(assailant).addRally((float) (CombatData.getCap(assailant).getMaxPosture() * assailant.getAttributeValue(FootworkAttributes.BREACH_RALLY.get())));
                     }
                 }
             }
@@ -354,7 +354,7 @@ public class NewCombatCapability implements ICombatCapability {
         //rallyCD = RALLY_CD;
         //tickProc("rally");
         setPosture(posture + amount);//todo this is quite harsh
-//        rally = 0;
+        rally = 0;
         dirty = true;
     }
 

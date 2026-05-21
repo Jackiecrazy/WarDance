@@ -1,7 +1,7 @@
 {
   "#longsword": {
-    "attack": 3,
-    "defend": 0.8,
+    "attack": 15,
+    "defend": 0.6,
     "guard_frame": {
       "duration": 2,
       "easing": "LINEAR",

@@ -1,0 +1,32 @@
+{
+  "ID": "project_hitbox",
+  "max_time": 20,
+  "hit_cooldown": 1,
+  "selector": {
+    "ID": "selector",
+    "position": {
+      "ID": "foot_position",
+      "reference_point": "target"
+    },
+    "range": 2
+  },
+  "actions": [
+    {
+      "ID": "play_particle",
+      "particle": "minecraft:splash",
+      "position": {
+        "ID": "eye_position",
+        "reference_point": "caster",
+        "quantity": 2
+      },
+      "repeatable": true
+    },
+    {
+      "ID": "add_effect",
+      "effect": "footwork:wet",
+      "potency": 0,
+      "duration": 100,
+      "repeatable": true
+    }
+  ]
+}

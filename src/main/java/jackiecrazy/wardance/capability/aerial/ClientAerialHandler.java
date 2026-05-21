@@ -220,7 +220,7 @@ public class ClientAerialHandler {
                     Direction wall = cap.getWallDir();
                     if (wall != null) {
                         //add some wall velocity
-                        Vec3 wallFlip = Vec3.atLowerCornerOf(wall.getOpposite().getNormal()).scale(0.33);
+                        Vec3 wallFlip = Vec3.atLowerCornerOf(wall.getOpposite().getNormal()).scale(1);
                         //add the player's look vector
                         Vec3 look = pl.getLookAngle();
                         //figure out which axis is correct
@@ -229,7 +229,7 @@ public class ClientAerialHandler {
 //                        //fix the y
 //                        look = look.multiply(1, 0, 1).add(0, 0.4, 0);
 //                        wallFlip = wallFlip.add(look);
-                        pl.setDeltaMovement(look.scale(2));
+                        pl.addDeltaMovement(wallFlip.add(0,0.3,0));
                         lastDir = cap.getWallDir();
                         cap.setState(IAerialMode.WallState.WALL_JUMP);
                     }

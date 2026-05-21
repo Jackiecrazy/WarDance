@@ -10,51 +10,58 @@
     "draw": "throw a net with some salmon trailing behind it that pins and confuses at max spirit"
   },
   "#trident": {
-    "attack": 2.0,
-    "defend": 0.7,
+    "attack": 10,
+    "defend": 0.3,
     "standing": {
-      "sweep": "CONE",
-      "knockback": 1.5,
-      "sweep_base": 120.0,
-      "attack_info": {
-        "damage_scale": 0.5,
-        "posture_scale": 0.5,
-        "hit_other": {
-          "run_actions": [
-            {
-              "ID": "spawn_entity",
-              "entity": "minecraft:elder_guardian",
-              "position": {
-              "ID": "sum_vector",
-              "addends": [
-                {
-                  "ID": "foot_position",
-                  "reference_point": "target"
-                },{
-                  "ID": "vector",
-                  "x": 0,
-                  "y": -6,
-                  "z": 0
-                }
-              ]
+      "type": "animation",
+      "duration": 20,
+      "easing": "IN_SINE",
+      "frames": [
+        {
+          "direction": [
+            0, 0, 1
+          ],
+          "offset": [
+            0, 0, 0
+          ],
+          "effects": {
+            "attack_info": {
+              "damage_scale": 1,
+              "drag": {
+                "duration": 60,
+                "strength": 2
+              }
             },
-              "tag": "{Glowing:1b,Invulnerable:1b,NoAI:1b,Silent:1b,ActiveEffects:[{Id:14,Duration:-1,Amplifier:1,ShowParticles:0b}]}",
-              "on_spawn": [
-                {
-                  "ID": "add_effect",
-                  "effect": "footwork:wet",
-                  "duration": 200,
-                  "forced": true,
-                  "visible": false
-                },{
-                  "ID": "attach_action",
-                  "effect": "wardance:arakawa"
-                }
-              ]
-            }
+            "effects": [
+              "WEAPON", "TRAIL"
+            ]
+          }
+        }, {
+          "direction": [
+            0, 0, 1
+          ],
+          "offset": [
+            0, 0, 1.3
           ]
         }
-      }
+      ],
+      "overrides": [
+        {
+          "condition": {
+            "ID": "has_effect",
+            "effect": "footwork:exposed",
+            "minimum_potency": 0
+          },
+          "override": {
+            "type": "sweep",
+            "sweep": "LINE",
+            "knockback": 0.4,
+            "damage_scale": 0.75,
+            "sweep_base": 0.4,
+            "cooldown_refund": 0.5
+          }
+        }
+      ]
     },
     "falling": {
       "type": "animation",
@@ -64,25 +71,85 @@
           "easing": "IN_CUBIC",
           "frames": [
             {
-              "direction": [0.4, -1, 0],
-              "offset": [0, 0, 0.6],
+              "direction": [
+                0, -0.2, 1
+              ],
+              "offset": [
+                0, 0, 0.3
+              ],
               "effects": {
                 "attack_info": {
-                  "hit_self": {
-                    "velocity": [0,1,0]
+                  "drag": {
+                    "duration": 20,
+                    "strength": 2
                   }
                 },
                 "effects": [
-                  "WEAPON","TRAIL","LOCK_ORIENTATION"
-                ]
+                  "WEAPON", "TRAIL", "LOCK_ORIENTATION"
+                ],
+                "on_terrain_impact": {
+                  "command": "/playsound minecraft:entity.player.splash.high_speed player @s ~ ~ ~ 0.8 1.2 0",
+                  "run_actions": [
+                    {
+                      "ID": "play_particle",
+                      "particle": "minecraft:splash",
+                      "position": {
+                        "ID": "foot_position",
+                        "reference_point": "target",
+                        "direction": {
+                          "ID": "raw_vector",
+                          "x": 2,
+                          "y": 0,
+                          "z": 2
+                        },
+                        "quantity": 100
+                      }
+                    }, {
+                      "ID": "project_hitbox",
+                      "max_time": 1,
+                      "selector": {
+                        "ID": "selector",
+                        "filter": {
+                          "ID": "condition",
+                          "condition": {
+                            "ID": "!allied_to"
+                          }
+                        },
+                        "position": {
+                          "ID": "foot_position",
+                          "reference_point": "target"
+                        },
+                        "range": 2
+                      },
+                      "actions": [
+                        {
+                          "ID": "add_effect",
+                          "effect": "footwork:wet",
+                          "potency": 0,
+                          "duration": 100,
+                          "repeatable": true,
+                          "visible": false
+                        }, {
+                          "ID": "pin",
+                          "duration": 40
+                        }
+                      ]
+                    }
+                  ]
+                }
               }
             }, {
-              "direction": [0, -1, 0],
-              "offset": [0, 0, 1.2]
+              "direction": [
+                0, -0.2, 1
+              ],
+              "offset": [
+                0, 0, 1.2
+              ]
             }
           ]
         }
-      ]
+      ],
+      "velocity": [0, -1, 1]
     },
     "sprinting": {
       "type": "animation",
@@ -90,47 +157,125 @@
       "easing": "IN_OUT_SINE",
       "frames": [
         {
-          "direction": [0, 0, 1],
-          "offset": [0, 0, 1.3],
-          "effects": {
-            "attack_info": {
-              "knockback": 10,
-              "damage_scale": 1
-            },
-            "effects": [
-              "WEAPON","TRAIL"
-            ]
-          }
+          "direction": [
+            0, 0, 1
+          ],
+          "offset": [
+            0, 0, 0
+          ],
+          "crit_damage": 1,
+          "crit": true,
+          "guard_frames": 20
+        }, {
+          "direction": [
+            0, 0, 1
+          ],
+          "offset": [
+            0, 0, 1.3
+          ]
         }
       ],
-      "velocity": [0, 0.4, 1],
+      "velocity": [
+        0, 0.2, 1
+      ],
       "set_velocity": true,
-      "dodge_frames": 5
+      "on_swing": {
+        "run_actions": [
+          {
+            "ID": "attach_action",
+            "effect": "wardance:emit_water"
+          }
+        ]
+      }
     },
     "aerial": {
       "type": "animation",
-      "cooldown_refund": 1,
       "animations": [
         {
-          "duration": 10,
-          "easing": "IN_CUBIC",
+          "duration": 5,
+          "easing": "IN_SINE",
           "frames": [
             {
-              "direction": [0.4, -1, 0],
-              "offset": [0, 0, 0.6],
+              "direction": [
+                1, 0, 0.1
+              ],
+              "offset": [
+                0, 0, 1
+              ],
               "effects": {
-                "attack_info": {
-                  "hit_self": {
-                    "velocity": [0,1,0]
-                  }
-                },
                 "effects": [
-                  "WEAPON","TRAIL","LOCK_ORIENTATION"
+                  "WEAPON"
+                ],
+                "display_stack": {
+                  "ID": "itemstack",
+                  "item": "minecraft:air"
+                }
+              }
+            }, {
+              "direction": [
+                0, 0, 1
+              ],
+              "offset": [
+                0, 0, 1
+              ],
+              "effects": {
+                "run_actions": [
+                  {
+                    "ID": "wardance:play_interaction",
+                    "interaction": {
+                      "interactions": [
+                        {
+                          "type": "throw",
+                          "pickup_flourish": false,
+                          "attack_info": {
+                            "damage_scale": 0,
+                            "spirit_multiplier": 0,
+                            "knockback": 0,
+                            "hit_target": {
+                              "run_actions": [
+                                {
+                                  "ID": "pin",
+                                  "duration": 60
+                                },
+                                {
+                                  "ID": "add_effect",
+                                  "effect": "footwork:distraction",
+                                  "potency": 0,
+                                  "duration": 60
+                                }
+                              ]
+                            }
+                          },
+                          "lodge_entity": true,
+                          "lodge_block": true,
+                          "throw_speed": 1,
+                          "gravity": -0.08,
+                          "consume_item": false,
+                          "display_stack": [
+                            {
+                              "stack": "minecraft:cobweb",
+                              "rotation": [90,0,0]
+                            }
+                          ],
+                          "on_impact": [
+                            {
+                              "ID": "attach_action",
+                              "effect": "wardance:expire"
+                            }
+                          ]
+                        }
+                      ]
+                    }
+                  }
                 ]
               }
             }, {
-              "direction": [0, -1, 0],
-              "offset": [0, 0, 1.2]
+              "direction": [
+                -0.5, 0, 1
+              ],
+              "offset": [
+                0, 0, 1
+              ]
             }
           ]
         }
@@ -144,8 +289,12 @@
           "easing": "IN_SINE",
           "frames": [
             {
-              "direction": [0, 1, 0],
-              "offset": [0, 0, 1],
+              "direction": [
+                0, 1, 0
+              ],
+              "offset": [
+                0, 0, 1
+              ],
               "render_rotation": 90,
               "effects": {
                 "attack_info": {
@@ -167,8 +316,12 @@
                 ]
               }
             }, {
-              "direction": [0, -0.4, 1],
-              "offset": [0, 0, 1.4],
+              "direction": [
+                0, -0.4, 1
+              ],
+              "offset": [
+                0, 0, 1.4
+              ],
               "render_rotation": 90
             }
           ]
@@ -194,16 +347,19 @@
                         "crit_damage": 1
                       }
                     }
-                  }, {
-                  }
+                  }, {}
                 ]
               }, {
                 "duration": 12,
                 "easing": "IN_CUBIC",
                 "frames": [
                   {
-                    "direction": [0, 1, 0],
-                    "offset": [0, 0, 1],
+                    "direction": [
+                      0, 1, 0
+                    ],
+                    "offset": [
+                      0, 0, 1
+                    ],
                     "render_rotation": 90,
                     "effects": {
                       "attack_info": {
@@ -227,8 +383,12 @@
                       ]
                     }
                   }, {
-                    "direction": [0, -0.4, 1],
-                    "offset": [0, 0, 1.4],
+                    "direction": [
+                      0, -0.4, 1
+                    ],
+                    "offset": [
+                      0, 0, 1.4
+                    ],
                     "render_rotation": 90
                   }
                 ]
@@ -295,8 +455,7 @@
                 {
                   "effects": {
                     "effects": [
-                      "WEAPON",
-                      "AFTERIMAGE"
+                      "WEAPON", "AFTERIMAGE"
                     ]
                   }
                 }
@@ -325,8 +484,7 @@
                     "ID": "pin",
                     "duration": 30,
                     "repeatable": true
-                  },
-                  {
+                  }, {
                     "ID": "run_command",
                     "command": "tp @s ~ ~-0.5 ~",
                     "repeatable": true
@@ -378,25 +536,45 @@
           "easing": "IN_OUT_CUBIC",
           "frames": [
             {
-              "direction": [0, 1, 0],
-              "offset": [0, 0, 0],
+              "direction": [
+                0, 1, 0
+              ],
+              "offset": [
+                0, 0, 0
+              ],
               "effects": {
                 "effects": [
                   "WEAPON", "LOCK_ORIENTATION"
                 ]
               }
             }, {
-              "direction": [0, 0, -1],
-              "offset": [0, 0, 0]
+              "direction": [
+                0, 0, -1
+              ],
+              "offset": [
+                0, 0, 0
+              ]
             }, {
-              "direction": [0, -1, 0],
-              "offset": [0, 0, 0]
+              "direction": [
+                0, -1, 0
+              ],
+              "offset": [
+                0, 0, 0
+              ]
             }, {
-              "direction": [0, 0, 1],
-              "offset": [0, 0, 0]
+              "direction": [
+                0, 0, 1
+              ],
+              "offset": [
+                0, 0, 0
+              ]
             }, {
-              "direction": [0, 1, 0],
-              "offset": [0, 0, 0]
+              "direction": [
+                0, 1, 0
+              ],
+              "offset": [
+                0, 0, 0
+              ]
             }
           ]
         }
@@ -404,15 +582,21 @@
     },
     "draw_attack": {
       "type": "animation",
-      "velocity": [0,1,1],
+      "velocity": [
+        0, 1, 1
+      ],
       "animations": [
         {
           "duration": 4,
           "easing": "IN_CUBIC",
           "frames": [
             {
-              "direction": [0, 0, 1],
-              "offset": [0, 0, 1],
+              "direction": [
+                0, 0, 1
+              ],
+              "offset": [
+                0, 0, 1
+              ],
               "effects": {
                 "attack_info": {
                   "damage_multiplier": 0.8
@@ -422,11 +606,19 @@
                 ]
               }
             }, {
-              "direction": [0, -1, 0],
-              "offset": [0, 0, 1]
+              "direction": [
+                0, -1, 0
+              ],
+              "offset": [
+                0, 0, 1
+              ]
             }, {
-              "direction": [0, 0, -1],
-              "offset": [0, 0, 1]
+              "direction": [
+                0, 0, -1
+              ],
+              "offset": [
+                0, 0, 1
+              ]
             }
           ]
         }

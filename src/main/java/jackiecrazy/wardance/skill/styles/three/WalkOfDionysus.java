@@ -25,9 +25,9 @@ public class WalkOfDionysus extends SkillStyle {
 
     @Override
     public boolean equippedTick(LivingEntity caster, SkillData stats) {
-        if (!CombatData.getCap(caster).isStunned() && StylishData.getCap(caster).canTrigger()) {
+        if (!CombatData.getCap(caster).isStunned() && StylishData.getCap(caster).maxAdrenaline()) {
             CombatData.getCap(caster).knockdown(CombatConfig.knockdownDurationPlayer);
-            StylishData.getCap(caster).resetTriggerBar();
+            StylishData.getCap(caster).resetAdrenaline();
             CombatData.getCap(caster).setSpirit(CombatData.getCap(caster).getMaxSpirit());
             fall(caster);
             CombatData.getCap(caster).knockdown(0);

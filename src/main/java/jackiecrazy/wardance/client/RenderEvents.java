@@ -28,12 +28,15 @@ import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.client.player.AbstractClientPlayer;
 import net.minecraft.client.renderer.culling.Frustum;
 import net.minecraft.client.renderer.entity.EntityRenderDispatcher;
+import net.minecraft.core.Direction;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.util.Mth;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.HumanoidArm;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.Pose;
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.client.event.*;
@@ -66,6 +69,39 @@ public class RenderEvents {
                     WarDance.LOGGER.warn("improperly formatted custom rotation definition " + s + "!");
             }
         }
+    }
+
+    private static float currentRoll=0;
+    // Client-side event handler
+    @SubscribeEvent
+    public static void onCameraSetup(ViewportEvent.ComputeCameraAngles event) {
+        Player player = Minecraft.getInstance().player;
+        if (player == null) return;
+
+        // Get which wall you're on (left or right wall)
+        Direction wall = AerialModeData.getCap(player).getWallDir(); // your logic
+        if (wall == null || AerialModeData.getCap(player).getState()!= IAerialMode.WallState.WALL_SLIDE || wall.getAxis() == Direction.Axis.Y) {
+            // smoothly lerp roll back to 0 when not wall running
+            currentRoll = Mth.lerp(0.03f, currentRoll, 0);
+            event.setRoll(currentRoll);
+            return;
+        }
+
+        // === Determine left or right wall inline ===
+        Vec3 rightVec = player.getDeltaMovement();
+        Vec3 wallNormal = Vec3.atLowerCornerOf(wall.getNormal());
+
+        double dot = rightVec.cross(wallNormal).y;
+        boolean isLeftWall = dot > 0;
+
+        float targetRoll = isLeftWall ? 10.0f : -10.0f;
+
+        // Smooth interpolation
+        event.getRoll();
+        float lerpedRoll = Mth.lerp(0.03f, currentRoll, targetRoll); // tune speed
+        currentRoll=lerpedRoll;
+
+        event.setRoll(lerpedRoll);
     }
 
     @SubscribeEvent

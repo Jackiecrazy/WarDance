@@ -45,7 +45,7 @@ public class UpdateWallPacket {
                 AerialModeData.getCap(sender).alterGravity(40, 0.3);
                 //AerialModeData.getCap(sender).setState(packet.st);
                 sender.setDeltaMovement(Vec3.ZERO);
-                AerialModeData.getCap(sender).noOffFor(10);
+                AerialModeData.getCap(sender).noOffFor(5);
                 //CombatData.getCap(sender).consumeSpirit(packet.amount);
             });
             contextSupplier.get().setPacketHandled(true);
