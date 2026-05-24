@@ -35,7 +35,6 @@ public class QuiverData implements ICapabilityProvider, INBTSerializable<Compoun
     private final int[] visibleSlots = new int[NUM_QUIVERS];
     private final LazyOptional<QuiverData> holder = LazyOptional.of(() -> this);
     private int selectedQuiver = 0; // Current active quiver index
-    private int selectedSlot = 0;   // Current active slot in that quiver
 
     public QuiverData() {
         for (int i = 0; i < NUM_QUIVERS; i++) {
@@ -88,20 +87,12 @@ public class QuiverData implements ICapabilityProvider, INBTSerializable<Compoun
         if (idx >= 0 && idx < NUM_QUIVERS) selectedQuiver = idx;
     }
 
-    public int getSelectedSlot() {
-        return selectedSlot;
-    }
-
-    public void setSelectedSlot(int slot) {
-        if (slot >= 0 && slot < SLOTS_PER_QUIVER) selectedSlot = slot;
-    }
-
     public void cycleQuiver(boolean forward) {
         selectedQuiver = (selectedQuiver + (forward ? 1 : -1) + NUM_QUIVERS) % NUM_QUIVERS;
     }
 
     // Main swap logic
-    public boolean swapWithHand(Player player) {
+    public boolean swapWithHand(Player player, int selectedSlot) {
         ItemStack hand = player.getMainHandItem().copy();
         ItemStackHandler quiver = quivers[selectedQuiver];
         ItemStack inQuiver = quiver.getStackInSlot(selectedSlot).copy();
@@ -215,7 +206,6 @@ public class QuiverData implements ICapabilityProvider, INBTSerializable<Compoun
         tag.put("quivers", quiversTag);
         tag.put("overflow", overflow.serializeNBT());
         tag.putInt("selectedQuiver", selectedQuiver);
-        tag.putInt("selectedSlot", selectedSlot);
 
         CompoundTag visibleTag = new CompoundTag();
         for (int i = 0; i < NUM_QUIVERS; i++) {
@@ -233,7 +223,6 @@ public class QuiverData implements ICapabilityProvider, INBTSerializable<Compoun
         }
         overflow.deserializeNBT(nbt.getCompound("overflow"));
         selectedQuiver = nbt.getInt("selectedQuiver");
-        selectedSlot = nbt.getInt("selectedSlot");
 
         CompoundTag visibleTag = nbt.getCompound("visible");
         for (int i = 0; i < NUM_QUIVERS; i++) {

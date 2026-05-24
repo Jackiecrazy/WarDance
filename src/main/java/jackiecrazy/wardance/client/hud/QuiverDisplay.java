@@ -22,6 +22,7 @@ import net.minecraftforge.client.gui.overlay.ForgeGui;
 import net.minecraftforge.client.gui.overlay.IGuiOverlay;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
+import net.minecraftforge.items.ItemStackHandler;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -29,37 +30,24 @@ import java.util.List;
 @Mod.EventBusSubscriber(modid = WarDance.MODID)
 public class QuiverDisplay implements IGuiOverlay {
     private static final ResourceLocation GUI_ICONS_LOCATION = new ResourceLocation("textures/gui/icons.png");
-    public static int listIndex, invIndex;
     private static ItemStack selected = ItemStack.EMPTY;
-    private static List<Tuple<Integer, ItemStack>> inventory = new ArrayList<>();
+    private static ItemStackHandler inventory = null;
+    private static QuiverData d;
+    public static int invIndex=0;
 
     public static void refreshInventory(Player p) {
-        inventory.clear();
-        inventory.add(new Tuple<>(-1, new ItemStack(Items.BARRIER)));
-        QuiverData q =QuiverData.getData(p);
-        for (int i = 0; i < q.getFilledSlots(q.getSelectedQuiver()); i++) {
-            final ItemStack item = q.getSelectedQuiverInventory().getStackInSlot(i);
-            if (!item.isEmpty() && WeaponStats.isCombatItem(p, item)) {
-                inventory.add(new Tuple<>(i, item));
-                if (selected == item) {
-                    listIndex = inventory.size() - 1;
-                    invIndex = i;
-                }
-            }
-        }
+        ItemStackHandler prev=inventory;
+        d=QuiverData.getData(p);
+        inventory=d.getSelectedQuiverInventory();
+        if(inventory!=prev)
+            invIndex=0;
         nextItem(0);
     }
 
     private static void nextItem(int jump) {
-        if (inventory.isEmpty()) return;
-        listIndex += jump;
-        listIndex %= inventory.size();
-        //modulo?
-        if (listIndex < 0) {
-            listIndex += inventory.size();
-        }
-        selected = inventory.get(listIndex).getB();
-        invIndex = inventory.get(listIndex).getA();
+        if (inventory==null) return;
+        invIndex += jump;
+        invIndex %= (d.getFilledSlots(d.getSelectedQuiver()));
     }
 
     private static void renderItem(GuiGraphics gfx, ItemStack stack, int x, int y, float scale) {
@@ -150,22 +138,24 @@ public class QuiverDisplay implements IGuiOverlay {
         if (player == null || !showQuiver()) {
             return;
         }
-        if (inventory.isEmpty()) return;
+        if (inventory==null||d==null) return;
         //grab ender chest content
         //find the index stack and 2 before/after it
         //draw them on the screen
-        int max = Mth.clamp(inventory.size()/2, 0, 2);
-        double angle = -90 - (15 * max);
-        for (int a = listIndex - max; a < listIndex + 1 + max; a++) {
-            int corrected = a % inventory.size();
-            if (corrected < 0) corrected += inventory.size();
-            int offset = height / 2;
+        int size=d.getFilledSlots(d.getSelectedQuiver());
+        int max = size;//Mth.clamp(size, 0, 2);
+        double angle = -90;
+        for (int a = 0; a < size; a++) {
+            int offset = height / 5;
             int x = (int) (Math.cos(Mth.DEG_TO_RAD * angle) * offset);
             int y = (int) (Math.sin(Mth.DEG_TO_RAD * angle) * offset);
             float scale =1;
-            if(corrected==listIndex)scale=2;
-            renderItem(guiGraphics, inventory.get(corrected).getB(), width / 2 + x, height + y, scale);
-            angle += 15;
+             ItemStack stack = inventory.getStackInSlot(a);
+            if(a==invIndex)scale=2;
+            if(size-1==a)//special case the barrier
+                stack=new ItemStack(Items.BARRIER);
+            renderItem(guiGraphics, stack, width / 2 + x, height/2 + y, scale);
+            angle += (360d/size);
         }
 //        float step = (float)(2 * Math.PI / 3);
 //        float centerAngle = -Mth.HALF_PI; // top

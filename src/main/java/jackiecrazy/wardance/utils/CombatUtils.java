@@ -429,7 +429,7 @@ public class CombatUtils {
                 SweepAnimationBuilder.flip *= -1;
                 FlyingWeaponData.getCap(e).getWeapon(h).setUniversalOffset(h == InteractionHand.MAIN_HAND ? group.right_hand_offset() : group.left_hand_offset());
                 for (MotionManager mm : anim.getAnimations())
-                    FlyingWeaponData.getCap(e).scheduleAction(h, SweepAnimationBuilder.flip > 0 && group.noFlip() ? mm.flipFrames() : mm);
+                    FlyingWeaponData.getCap(e).scheduleAction(h, SweepAnimationBuilder.flip > 0 && !group.noFlip() ? mm.flipFrames() : mm);
             }
             if (info instanceof Throw t) {
                 final IFlyingWeapon cap = FlyingWeaponData.getCap(e);
