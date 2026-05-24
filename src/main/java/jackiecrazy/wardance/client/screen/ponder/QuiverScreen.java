@@ -4,6 +4,9 @@ package jackiecrazy.wardance.client.screen.ponder;
 import com.mojang.blaze3d.systems.RenderSystem;
 import jackiecrazy.wardance.capability.quiver.QuiverData;
 import jackiecrazy.wardance.capability.quiver.QuiverMenu;
+import jackiecrazy.wardance.skill.Skill;
+import jackiecrazy.wardance.skill.SkillCategory;
+import jackiecrazy.wardance.skill.SkillColors;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
 import net.minecraft.network.chat.Component;
@@ -12,17 +15,22 @@ import net.minecraft.world.entity.player.Inventory;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 
+import java.awt.*;
+import java.util.Iterator;
+
 @OnlyIn(Dist.CLIENT)
 public class QuiverScreen extends AbstractContainerScreen<QuiverMenu> {
 
-    private static final ResourceLocation TEXTURE = new ResourceLocation("wardance", "textures/gui/quiver.png");
+    private static final ResourceLocation TEXTURE = new ResourceLocation("wardance", "textures/gui/quiver_gui.png");
     private final QuiverData capability;
 
     public QuiverScreen(QuiverMenu menu, Inventory playerInventory, Component title) {
         super(menu, playerInventory, title);
-        this.imageWidth = 280;
-        this.imageHeight = 280;
         this.capability = menu.getCapability();
+
+        int columns = menu.getMaxVisibleColumns();
+        this.imageWidth = 176; // Extra space for overflow + labels
+        this.imageHeight = 30 + 8 * 18 + 100;     // 8 colors + player inv
     }
 
     @Override
@@ -30,20 +38,47 @@ public class QuiverScreen extends AbstractContainerScreen<QuiverMenu> {
         RenderSystem.setShaderTexture(0, TEXTURE);
         int x = (this.width - this.imageWidth) / 2;
         int y = (this.height - this.imageHeight) / 2;
-        guiGraphics.blit(TEXTURE, x, y, 0, 0, this.imageWidth, this.imageHeight);
 
-        // Render only visible slots per quiver column
-        for (int quiver = 0; quiver < QuiverData.NUM_QUIVERS; quiver++) {
-            int visible = capability.getVisibleSlots(quiver);
-            for (int slot = 0; slot < QuiverData.SLOTS_PER_QUIVER; slot++) {
-                if (slot >= visible) {
-                    // Optionally draw a "locked" overlay
-                    int sx = x + 29 + quiver * 18;
-                    int sy = y + 19 + slot * 18;
-                    guiGraphics.fill(sx, sy, sx + 16, sy + 16, 0x77AAAAAA); // semi-transparent gray
-                }
-            }
+        //colorize and draw each row
+        final Iterator<SkillCategory> iterator = Skill.categoryMap.keySet().iterator();
+        int j=0;
+        //guiGraphics.blit(TEXTURE, x, y, 0, 0, this.imageWidth, 19);
+        while (iterator.hasNext()) {
+            int slots = menu.getUsableSlots(j);
+            Color c = iterator.next().getColor();
+            RenderSystem.setShaderColor(c.getRed()/255f, c.getGreen()/255f, c.getBlue()/255f, 1);
+            //draw available slots
+            guiGraphics.blit(TEXTURE, x, 19+y+18*j, 0, 19+18*j, 7+18*slots, 18);
+            //then the little cap
+            guiGraphics.blit(TEXTURE, x+7+18*slots, 19+y+18*j, 7+18*9, 19+18*j, 18, 18);
+            j++;
         }
+        RenderSystem.setShaderColor(1,1,1,1);
+
+        int remainingY = imageHeight-(y+18*(j-1))+3;
+        guiGraphics.blit(TEXTURE, x, y+remainingY, 0, remainingY, this.imageWidth, remainingY);
+
+        // Draw color labels on the left
+        String[] colors = {"White", "Gold", "Purple", "Red", "Green", "Cyan", "Blue", "Gray"};
+        for (int i = 0; i < 8; i++) {
+            //guiGraphics.drawString(font, colors[i], x - 32, y + 24 + i * 18, 0xFFFFFF);
+        }
+
+        // Optional: Draw locked slots as faded
+//        int maxCol = menu.getMaxVisibleColumns();
+//        for (int color = 0; color < 8; color++) {
+//            int visible = capability.getVisibleSlots(color);
+//            for (int col = visible; col < QuiverData.SLOTS_PER_QUIVER; col++) {
+//                int sx = x + 8 + col * 18;
+//                int sy = y + 20 + color * 18;
+//                guiGraphics.fill(sx, sy, sx + 16, sy + 16, 0x88AAAAAA);
+//            }
+//        }
+    }
+
+    @Override
+    protected void renderLabels(GuiGraphics p_281635_, int p_282681_, int p_283686_) {
+        //no labels here, nope
     }
 
     @Override
@@ -51,11 +86,5 @@ public class QuiverScreen extends AbstractContainerScreen<QuiverMenu> {
         this.renderBackground(guiGraphics);
         super.render(guiGraphics, mouseX, mouseY, partialTick);
         this.renderTooltip(guiGraphics, mouseX, mouseY);
-    }
-
-    @Override
-    protected void renderLabels(GuiGraphics guiGraphics, int mouseX, int mouseY) {
-        // Title etc.
-        guiGraphics.drawString(this.font, this.title, 8, 6, 0xFFFFFF);
     }
 }

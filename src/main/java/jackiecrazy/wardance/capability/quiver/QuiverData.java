@@ -24,7 +24,7 @@ public class QuiverData implements ICapabilityProvider, INBTSerializable<Compoun
 
     // 8 colors: white, gold, purple, red, green, cyan, blue, gray
     public static final int NUM_QUIVERS = 8;
-    public static final int SLOTS_PER_QUIVER = 10;
+    public static final int SLOTS_PER_QUIVER = 9;
     public static final int OVERFLOW_SIZE = 5;
 
     private final ItemStackHandler[] quivers = new ItemStackHandler[NUM_QUIVERS];
@@ -42,7 +42,7 @@ public class QuiverData implements ICapabilityProvider, INBTSerializable<Compoun
                 @Override
                 protected void onContentsChanged(int slot) {
                     super.onContentsChanged(slot);
-                    updateVisibleSlots();
+                    updateFilledSlots();
                 }
             };
             visibleSlots[i] = 1; // Start with 1 visible slot
@@ -53,7 +53,7 @@ public class QuiverData implements ICapabilityProvider, INBTSerializable<Compoun
         return p.getCapability(QuiverData.QUIVER_CAP).orElseThrow(() -> new IllegalStateException("player has no quiver!"));
     }
 
-    void updateVisibleSlots() {
+    void updateFilledSlots() {
         for (int i = 0; i < NUM_QUIVERS; i++) {
             int filled = 0;
             for (int s = 0; s < SLOTS_PER_QUIVER; s++) {
@@ -63,7 +63,7 @@ public class QuiverData implements ICapabilityProvider, INBTSerializable<Compoun
         }
     }
 
-    public int getVisibleSlots(int quiverIndex) {
+    public int getFilledSlots(int quiverIndex) {
         return visibleSlots[quiverIndex];
     }
 

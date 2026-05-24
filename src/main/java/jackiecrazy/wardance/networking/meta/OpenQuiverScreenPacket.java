@@ -42,7 +42,7 @@ public class OpenQuiverScreenPacket {
                 ServerPlayer sp = contextSupplier.get().getSender();
                 sp.openMenu(new SimpleMenuProvider((id, inv, p) ->
                                                            new QuiverMenu(id, inv, QuiverData.getData(sp)),
-                                                   Component.literal("Quivers")));
+                                                   Component.empty()));
             });
             contextSupplier.get().setPacketHandled(true);
         }
