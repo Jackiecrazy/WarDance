@@ -3,6 +3,7 @@ package jackiecrazy.wardance.client.hud;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.PoseStack;
 import jackiecrazy.wardance.WarDance;
+import jackiecrazy.wardance.capability.quiver.QuiverData;
 import jackiecrazy.wardance.client.Keybinds;
 import jackiecrazy.wardance.config.weapon.WeaponStats;
 import net.minecraft.client.Minecraft;
@@ -32,13 +33,12 @@ public class QuiverDisplay implements IGuiOverlay {
     private static ItemStack selected = ItemStack.EMPTY;
     private static List<Tuple<Integer, ItemStack>> inventory = new ArrayList<>();
 
-    public static void refreshInventory(Player p, ListTag tag) {
+    public static void refreshInventory(Player p) {
         inventory.clear();
         inventory.add(new Tuple<>(-1, new ItemStack(Items.BARRIER)));
-        PlayerEnderChestContainer ender = p.getEnderChestInventory();
-        ender.fromTag(tag);
-        for (int i = 0; i < ender.getContainerSize(); i++) {
-            final ItemStack item = ender.getItem(i);
+        QuiverData q =QuiverData.getData(p);
+        for (int i = 0; i < q.getFilledSlots(q.getSelectedQuiver()); i++) {
+            final ItemStack item = q.getSelectedQuiverInventory().getStackInSlot(i);
             if (!item.isEmpty() && WeaponStats.isCombatItem(p, item)) {
                 inventory.add(new Tuple<>(i, item));
                 if (selected == item) {

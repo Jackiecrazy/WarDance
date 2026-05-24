@@ -1,5 +1,6 @@
 package jackiecrazy.wardance.capability.quiver;
 
+import jackiecrazy.wardance.config.weapon.WeaponStats;
 import net.minecraft.core.Direction;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
@@ -65,6 +66,10 @@ public class QuiverData implements ICapabilityProvider, INBTSerializable<Compoun
 
     public int getFilledSlots(int quiverIndex) {
         return visibleSlots[quiverIndex];
+    }
+
+    public ItemStackHandler getSelectedQuiverInventory() {
+        return quivers[getSelectedQuiver()];
     }
 
     public ItemStackHandler getQuiver(int index) {
@@ -148,8 +153,7 @@ public class QuiverData implements ICapabilityProvider, INBTSerializable<Compoun
 
     // Implement these based on your mod's weapon definition
     private boolean isWeapon(ItemStack stack) {
-        // Example: return stack.getItem() instanceof SwordItem || ... 
-        return true; // placeholder
+        return WeaponStats.isWeapon(null, stack);
     }
 
     private int getPreferredColor(ItemStack stack) {

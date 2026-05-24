@@ -65,7 +65,7 @@ public class SyncQuiverPacket {
                     Player player = (Player) Minecraft.getInstance().player;
                     if (player == null) return;
                     QuiverData.getData(player).deserializeNBT(icc);
-                    //QuiverDisplay.refreshInventory(player, list);
+                    QuiverDisplay.refreshInventory(player);
                 }
             };
         }
