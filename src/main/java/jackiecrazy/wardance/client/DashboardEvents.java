@@ -7,6 +7,7 @@ import jackiecrazy.wardance.capability.permission.PermissionData;
 import jackiecrazy.wardance.client.screen.skill.SkillSelectionScreen;
 import jackiecrazy.wardance.networking.CombatChannel;
 import jackiecrazy.wardance.networking.meta.ManualizePacket;
+import jackiecrazy.wardance.networking.meta.OpenQuiverScreenPacket;
 import net.minecraft.client.Minecraft;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
@@ -20,6 +21,8 @@ import net.minecraftforge.fml.common.Mod;
 public class DashboardEvents {
     private static final ResourceLocation SKILL = new ResourceLocation(WarDance.MODID, "textures/gui/skill.png");
     private static final ResourceLocation MANUALIZE = new ResourceLocation(WarDance.MODID, "textures/gui/manualize.png");
+    private static final ResourceLocation QUIVER = new ResourceLocation(WarDance.MODID, "textures/gui/quiver.png");
+    private static final ResourceLocation WEEB = new ResourceLocation(WarDance.MODID, "textures/gui/weeb.png");
 
     @SubscribeEvent
     public static void add(DashboardEvent e) {
@@ -35,5 +38,8 @@ public class DashboardEvents {
         if (PermissionData.getCap(player).canSelectSkills()) {
             e.addThought(new PonderingOrb(e.getScreen(), SKILL, a -> e.getScreen().getMinecraft().setScreen(new SkillSelectionScreen()), Component.translatable("wardance.dashboard.skills")));
         }
+        e.addThought(new PonderingOrb(e.getScreen(), QUIVER, a-> {
+            CombatChannel.INSTANCE.sendToServer(new OpenQuiverScreenPacket());
+        }, Component.translatable("wardance.dashboard.quiver")));
     }
 }

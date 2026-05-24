@@ -97,6 +97,7 @@
   "wardance.dashboard.manualize": "Convert the written book held in your main hand into a manual",
   "wardance.dashboard.skills": "Open Skill Selection Screen",
   "wardance.dashboard.manual": "Recall The Combatant's Companion",
+  "wardance.dashboard.quiver": "Organize your quiver",
   "wardance.manualized": "You compile your experiences into a manual",
 
   "wardance.tooltip.sweep.standing": "Stand: %s",

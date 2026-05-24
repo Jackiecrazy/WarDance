@@ -53,7 +53,7 @@ public class QuiverData implements ICapabilityProvider, INBTSerializable<Compoun
         return p.getCapability(QuiverData.QUIVER_CAP).orElseThrow(() -> new IllegalStateException("player has no quiver!"));
     }
 
-    private void updateVisibleSlots() {
+    void updateVisibleSlots() {
         for (int i = 0; i < NUM_QUIVERS; i++) {
             int filled = 0;
             for (int s = 0; s < SLOTS_PER_QUIVER; s++) {
@@ -191,7 +191,7 @@ public class QuiverData implements ICapabilityProvider, INBTSerializable<Compoun
         return false;
     }
 
-    private void markDirty(Player player) {
+    void markDirty(Player player) {
         // Trigger sync
         player.inventoryMenu.broadcastChanges();
     }

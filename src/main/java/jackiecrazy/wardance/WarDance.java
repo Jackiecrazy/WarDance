@@ -1,11 +1,16 @@
 package jackiecrazy.wardance;
 
 import jackiecrazy.footwork.client.render.ItemEntityRenderer;
+import jackiecrazy.wardance.capability.aerial.IAerialMode;
+import jackiecrazy.wardance.capability.charging.IChargingSpeed;
+import jackiecrazy.wardance.capability.flyingweapon.IFlyingWeapon;
 import jackiecrazy.wardance.capability.permission.IPermission;
+import jackiecrazy.wardance.capability.quiver.QuiverData;
 import jackiecrazy.wardance.capability.skill.ISkillCapability;
 import jackiecrazy.wardance.capability.status.IMark;
 import jackiecrazy.wardance.client.GrappleRenderer;
 import jackiecrazy.wardance.client.hud.*;
+import jackiecrazy.wardance.client.screen.ponder.QuiverScreen;
 import jackiecrazy.wardance.command.CategoryArgument;
 import jackiecrazy.wardance.command.SkillArgument;
 import jackiecrazy.wardance.command.WarDanceCommand;
@@ -28,6 +33,7 @@ import jackiecrazy.wardance.networking.skill.UpdateMarkPacket;
 import jackiecrazy.wardance.networking.skill.UpdateSkillSelectionPacket;
 import jackiecrazy.wardance.networking.sync.*;
 import jackiecrazy.wardance.skill.WarSkills;
+import net.minecraft.client.gui.screens.MenuScreens;
 import net.minecraft.client.renderer.entity.EntityRenderers;
 import net.minecraft.commands.synchronization.ArgumentTypeInfo;
 import net.minecraft.commands.synchronization.ArgumentTypeInfos;
@@ -108,6 +114,7 @@ public class WarDance {
         WarSkills.SKILLS.register(bus);
         WarEntities.ENTITIES.register(bus);
         WarItems.ITEMS.register(bus);
+        WarContainers.MENUS.register(bus);
         WarActionsRegistry.ACTIONS.register(bus);
         TABS.register(bus);
         COMMAND_ARGUMENT_TYPES.register(bus);
@@ -156,6 +163,7 @@ public class WarDance {
         CombatChannel.INSTANCE.registerMessage(index++, UpdateAirPacket.class, new UpdateAirPacket.Encoder(), new UpdateAirPacket.Decoder(), new UpdateAirPacket.Handler());
         CombatChannel.INSTANCE.registerMessage(index++, AerialModePacket.class, new AerialModePacket.Encoder(), new AerialModePacket.Decoder(), new AerialModePacket.Handler());
         CombatChannel.INSTANCE.registerMessage(index++, UpdateFlyingWeaponPacket.class, new UpdateFlyingWeaponPacket.Encoder(), new UpdateFlyingWeaponPacket.Decoder(), new UpdateFlyingWeaponPacket.Handler());
+        CombatChannel.INSTANCE.registerMessage(index++, OpenQuiverScreenPacket.class, new OpenQuiverScreenPacket.Encoder(), new OpenQuiverScreenPacket.Decoder(), new OpenQuiverScreenPacket.Handler());
     }
 
     private void doClientStuff(final FMLClientSetupEvent event) {
@@ -165,6 +173,9 @@ public class WarDance {
         EntityRenderers.register(WarEntities.GRAPPLE.get(), GrappleRenderer::new);
         EntityRenderers.register(WarEntities.FLYING_BLOCK.get(), ItemEntityRenderer::new);
         EntityRenderers.register(WarEntities.THROWN_WEAPON.get(), ItemEntityRenderer::new);
+        event.enqueueWork(() -> {
+            MenuScreens.register(WarContainers.QUIVER_MENU.get(), QuiverScreen::new);
+        });
     }
 
 
@@ -194,6 +205,10 @@ public class WarDance {
         event.register(IMark.class);
         event.register(ISkillCapability.class);
         event.register(IPermission.class);
+        event.register(IAerialMode.class);
+        event.register(IChargingSpeed.class);
+        event.register(IFlyingWeapon.class);
+        event.register(QuiverData.class);
     }
 
     private void enqueueIMC(final InterModEnqueueEvent event) {
