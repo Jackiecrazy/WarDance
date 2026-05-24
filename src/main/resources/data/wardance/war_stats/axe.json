@@ -7,7 +7,7 @@
     "guard counter": "handle jab that deals good posture damage and silences/nauseates, at max spirit follow with a wide vertical breaching swing",
     "throw": "immediately embeds in first target and auto-recalls after a while. At max spirit, explodes and inflicts frost in an area, because kratos.",
     "pickup": "spin it in your hand, resetting attack cooldown",
-    "draw": "forward shoulder tackle that drags a single mob. At max spirit, drop a tree on them at the end of tackle :v"
+    "draw": "forward shoulder tackle that drags a single mob."
   },
   "#axe": {
     "attack": 20,
@@ -51,8 +51,7 @@
                 "ID": "has_effect",
                 "effect": "footwork:enfeeble"
               }
-            },
-            {
+            }, {
               "ID": "bind",
               "duration": 30,
               "condition": {
@@ -70,7 +69,20 @@
       "sweep_base": 3.0,
       "damage_scale": 0.6,
       "crit": true,
-      "crit_damage": 1
+      "crit_damage": 1,
+      "overrides": [
+        {
+          "condition": {
+            "ID": "consume_resource",
+            "format": "PERCENTAGE",
+            "resource": "SPIRIT",
+            "amount": 1,
+            "operation": "CONSUME"
+          },
+          "override": {
+          }
+        }
+      ]
     },
     "aerial": {
       "type": "animation",
@@ -79,14 +91,10 @@
       "frames": [
         {
           "direction": [
-            0,
-            1,
-            0.3
+            0, 1, 0.3
           ],
           "offset": [
-            0,
-            0,
-            0.4
+            0, 0, 0.4
           ],
           "effects": {
             "attack_info": {
@@ -95,9 +103,7 @@
               "posture_scale": 1.0,
               "hit_self": {
                 "velocity": [
-                  0,
-                  0.3,
-                  0
+                  0, 0.3, 0
                 ]
               },
               "drag": {
@@ -106,33 +112,22 @@
               }
             },
             "effects": [
-              "WEAPON",
-              "TRAIL"
+              "WEAPON", "TRAIL"
             ]
           }
-        },
-        {
+        }, {
           "direction": [
-            0,
-            0,
-            1
+            0, 0, 1
           ],
           "offset": [
-            0,
-            0,
-            2
+            0, 0, 2
           ]
-        },
-        {
+        }, {
           "direction": [
-            0,
-            0,
-            1
+            0, 0, 1
           ],
           "offset": [
-            0,
-            0,
-            1
+            0, 0, 1
           ]
         }
       ]
@@ -146,20 +141,13 @@
           "frames": [
             {
               "direction": [
-                0,
-                0,
-                1
+                0, 0, 1
               ],
               "offset": [
-                0,
-                0,
-                0
+                0, 0, 0
               ],
               "render_rotation": [
-                0,
-                0,
-                -1,
-                180
+                0, 0, -1, 180
               ],
               "effects": {
                 "attack_info": {
@@ -169,7 +157,7 @@
                   "posture_scale": 1.4,
                   "damage_scale": 0.3,
                   "hit_self": {
-                    "command": "/playsound minecraft:entity.zombie.attack_wooden_door player @s ~ ~ ~ 0.8 1.2 0"
+                    "sound": "minecraft:entity.zombie.attack_wooden_door"
                   },
                   "hit_other": {
                     "run_actions": [
@@ -187,41 +175,25 @@
                   "WEAPON"
                 ]
               }
-            },
-            {
+            }, {
               "direction": [
-                0,
-                0,
-                1
+                0, 0, 1
               ],
               "offset": [
-                0,
-                0,
-                2
+                0, 0, 2
               ],
               "render_rotation": [
-                0,
-                0,
-                -1,
-                180
+                0, 0, -1, 180
               ]
-            },
-            {
+            }, {
               "direction": [
-                0,
-                0,
-                1
+                0, 0, 1
               ],
               "offset": [
-                0,
-                0,
-                0
+                0, 0, 0
               ],
               "render_rotation": [
-                0,
-                0,
-                -1,
-                180
+                0, 0, -1, 180
               ]
             }
           ]
@@ -238,45 +210,29 @@
           },
           "override": {
             "animations": [
-              {},
-              {
+              {}, {
                 "duration": 10,
                 "easing": "IN_CUBIC",
                 "frames": [
                   {
                     "direction": [
-                      0,
-                      0,
-                      1
+                      0, 0, 1
                     ],
                     "offset": [
-                      0,
-                      0,
-                      0
+                      0, 0, 0
                     ],
                     "render_rotation": [
-                      0,
-                      0,
-                      -1,
-                      180
+                      0, 0, -1, 180
                     ]
-                  },
-                  {
+                  }, {
                     "direction": [
-                      0,
-                      1,
-                      0
+                      0, 1, 0
                     ],
                     "offset": [
-                      0,
-                      0,
-                      1.4
+                      0, 0, 1.4
                     ],
                     "render_rotation": [
-                      0,
-                      1,
-                      0,
-                      0
+                      0, 1, 0, 0
                     ],
                     "effects": {
                       "attack_info": {
@@ -287,34 +243,23 @@
                         "breach": true
                       },
                       "effects": [
-                        "WEAPON",
-                        "BIG_SHADOW"
+                        "WEAPON", "BIG_SHADOW"
                       ],
-                      "command": "/playsound minecraft:entity.zombie.break_wooden_door @s ~ ~ ~ 0.8 1.2 0"
+                      "sound": "minecraft:entity.zombie.break_wooden_door"
                     }
-                  },
-                  {
+                  }, {
                     "direction": [
-                      0,
-                      0,
-                      1
+                      0, 0, 1
                     ],
                     "offset": [
-                      0,
-                      0,
-                      1.4
+                      0, 0, 1.4
                     ]
-                  },
-                  {
+                  }, {
                     "direction": [
-                      0,
-                      -1,
-                      0.4
+                      0, -1, 0.4
                     ],
                     "offset": [
-                      0,
-                      0,
-                      1.4
+                      0, 0, 1.4
                     ]
                   }
                 ]
@@ -340,21 +285,15 @@
         "duration": 3,
         "easing": "LINEAR",
         "spin": [
-          -50,
-          0,
-          0
+          -100, 0, 0
         ],
         "frames": [
           {
             "direction": [
-              0,
-              0,
-              1
+              0, 0, 1
             ],
             "offset": [
-              0,
-              0,
-              0
+              0, 0, 0
             ],
             "effects": {
               "effects": [
@@ -412,14 +351,10 @@
             "pose": {
               "duration": 3,
               "direction": [
-                1,
-                0,
-                0
+                1, 0, 0
               ],
               "offset": [
-                0,
-                0,
-                0
+                0, 0, 0
               ],
               "effects": {
                 "effects": [
@@ -428,101 +363,65 @@
                 "display_stack": [
                   {
                     "stack": "minecraft:oak_log"
-                  },
-                  {
+                  }, {
                     "stack": "minecraft:oak_log",
                     "translation": [
-                      0,
-                      1,
-                      0
+                      0, 1, 0
                     ]
-                  },
-                  {
+                  }, {
                     "stack": "minecraft:oak_log",
                     "translation": [
-                      0,
-                      -2,
-                      0
+                      0, -2, 0
                     ]
-                  },
-                  {
+                  }, {
                     "stack": "minecraft:oak_log",
                     "translation": [
-                      0,
-                      -1,
-                      0
+                      0, -1, 0
                     ]
-                  },
-                  {
+                  }, {
                     "stack": "minecraft:oak_leaves",
                     "translation": [
-                      -1,
-                      2,
-                      0
+                      -1, 2, 0
                     ]
-                  },
-                  {
+                  }, {
                     "stack": "minecraft:oak_leaves",
                     "translation": [
-                      0,
-                      2,
-                      0
+                      0, 2, 0
                     ]
-                  },
-                  {
+                  }, {
                     "stack": "minecraft:oak_leaves",
                     "translation": [
-                      1,
-                      2,
-                      0
+                      1, 2, 0
                     ]
-                  },
-                  {
+                  }, {
                     "stack": "minecraft:oak_leaves",
                     "translation": [
-                      -1,
-                      2,
-                      1
+                      -1, 2, 1
                     ]
-                  },
-                  {
+                  }, {
                     "stack": "minecraft:oak_leaves",
                     "translation": [
-                      0,
-                      2,
-                      1
+                      0, 2, 1
                     ]
-                  },
-                  {
+                  }, {
                     "stack": "minecraft:oak_leaves",
                     "translation": [
-                      1,
-                      2,
-                      1
+                      1, 2, 1
                     ]
-                  },
-                  {
+                  }, {
                     "stack": "minecraft:oak_leaves",
                     "translation": [
-                      -1,
-                      2,
-                      -1
+                      -1, 2, -1
                     ]
-                  },
-                  {
+                  }, {
                     "stack": "minecraft:oak_leaves",
                     "translation": [
-                      0,
-                      2,
-                      -1
+                      0, 2, -1
                     ]
-                  },
-                  {
+                  }, {
                     "stack": "minecraft:oak_leaves",
                     "translation": [
-                      1,
-                      2,
-                      -1
+                      1, 2, -1
                     ]
                   }
                 ]
@@ -538,68 +437,43 @@
           "frames": [
             {
               "direction": [
-                0,
-                1,
-                0
+                0, 1, 0
               ],
               "offset": [
-                0,
-                0,
-                0
+                0, 0, 0
               ],
               "effects": {
                 "effects": [
-                  "WEAPON",
-                  "LOCK_ORIENTATION"
+                  "WEAPON", "LOCK_ORIENTATION"
                 ]
               }
-            },
-            {
+            }, {
               "direction": [
-                0,
-                0,
-                -1
+                0, 0, -1
               ],
               "offset": [
-                0,
-                0,
-                0
+                0, 0, 0
               ]
-            },
-            {
+            }, {
               "direction": [
-                0,
-                -1,
-                0
+                0, -1, 0
               ],
               "offset": [
-                0,
-                0,
-                0
+                0, 0, 0
               ]
-            },
-            {
+            }, {
               "direction": [
-                0,
-                0,
-                1
+                0, 0, 1
               ],
               "offset": [
-                0,
-                0,
-                0
+                0, 0, 0
               ]
-            },
-            {
+            }, {
               "direction": [
-                0,
-                1,
-                0
+                0, 1, 0
               ],
               "offset": [
-                0,
-                0,
-                0
+                0, 0, 0
               ]
             }
           ]
@@ -609,9 +483,7 @@
     "draw_attack": {
       "type": "animation",
       "velocity": [
-        0,
-        0.2,
-        1
+        0, 0.2, 1
       ],
       "animations": [
         {
@@ -620,19 +492,13 @@
           "frames": [
             {
               "direction": [
-                0,
-                0,
-                1
+                0, 0, 1
               ],
               "offset": [
-                0,
-                0,
-                1
+                0, 0, 1
               ],
               "render_rotation": [
-                1,
-                0,
-                0
+                1, 0, 0
               ],
               "effects": {
                 "attack_info": {

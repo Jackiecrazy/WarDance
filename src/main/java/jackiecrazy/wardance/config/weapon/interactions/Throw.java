@@ -1,15 +1,12 @@
 package jackiecrazy.wardance.config.weapon.interactions;
 
 import jackiecrazy.footwork.move.action.Action;
-import jackiecrazy.footwork.move.argument.Argument;
 import jackiecrazy.footwork.move.argument.misc.RenderItemArgument;
-import jackiecrazy.footwork.move.argument.stack.RawItemStackArgument;
 import jackiecrazy.footwork.move.motionframe.*;
 import jackiecrazy.footwork.move.utils.ArgumentContext;
 import jackiecrazy.footwork.utils.MovementUtils;
 import jackiecrazy.wardance.entity.ThrownWeaponEntity;
 import net.minecraft.network.FriendlyByteBuf;
-import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.phys.Vec3;
 
 import java.util.List;
@@ -152,7 +149,7 @@ public class Throw extends WeaponInteractions.WeaponInteraction {
     }
 
     public void transformThrown(ThrownWeaponEntity e) {
-        applyCosmeticStack(e, new ArgumentContext(e.getOwner(), null));
+        applyCosmeticStack(e, new ArgumentContext(e.getOwner(), e));
         e.setAutoRecall(auto_recall_cooldown);
         e.setLodgeEntity(lodge_entity);
         e.setLodgeBlock(lodge_block);

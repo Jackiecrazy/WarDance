@@ -145,13 +145,11 @@ public class WeaponStats extends SimpleJsonResourceReloadListener {
             }
             WeaponInteractions.InteractionGroup sweep = put.sweeps[ord];
             if (sweep.description() == null) {
-                sweep.setDescription(root + "." + s.toString().toLowerCase(Locale.ROOT));
                 //default values for simple sweeps
-                if (sweep.getInteractions().size() == 1) {
-                    if (sweep.getInteractions().get(0) instanceof SweepAttack sa)
-                        sweep.setDescription("wardance.tooltip.sweep." + sa.getType().name().toLowerCase(Locale.ROOT));
-                    //else sweep.setDescription("wardance.tooltip.attacks."+sweep.getInteractions().get(0).getInteractionType().name().toLowerCase(Locale.ROOT));
-                }
+                if (sweep.getInteractions().size() == 1 && sweep.getInteractions().get(0) instanceof SweepAttack sa) {
+                    sweep.setDescription("wardance.tooltip.sweep." + sa.getType().name());
+                } else
+                    sweep.setDescription(root + "." + s.toString().toLowerCase(Locale.ROOT));
             } else sweep.setDescription(sweep.description());//initialize the component
         }
         return put;
@@ -278,7 +276,9 @@ public class WeaponStats extends SimpleJsonResourceReloadListener {
         if (info_override != null) return info_override;
 //        final WeaponInfo info = lookupStats(i);
 //        if (info == null) return SweepAttack.DEFAULT_NONE.getHitInfo();
-        return getSweepInfo(i, wielder, s, false).getInteractions().get(0).getHitInfo();//fixme
+        if (getSweepInfo(i, wielder, s, false).getInteractions().get(0) instanceof SweepAttack sa)
+            return sa.getHitInfo();
+        return ((SweepAttack) SweepAttack.DEFAULT_NONE.getInteractionOfType(WeaponInteractions.WeaponInteraction.InteractionType.SWEEP)).getHitInfo();
     }
 
     @Override

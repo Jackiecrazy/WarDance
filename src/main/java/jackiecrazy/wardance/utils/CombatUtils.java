@@ -2,6 +2,8 @@ package jackiecrazy.wardance.utils;
 
 import jackiecrazy.footwork.api.CombatDamageSource;
 import jackiecrazy.footwork.api.FootworkDamageArchetype;
+import jackiecrazy.footwork.capability.action.ActionData;
+import jackiecrazy.footwork.capability.action.AttachAction;
 import jackiecrazy.footwork.capability.resources.CombatData;
 import jackiecrazy.footwork.capability.resources.ICombatCapability;
 import jackiecrazy.footwork.capability.stylish.StylishData;
@@ -10,7 +12,6 @@ import jackiecrazy.footwork.capability.weaponry.CombatManipulator;
 import jackiecrazy.footwork.client.particle.FootworkParticles;
 import jackiecrazy.footwork.client.particle.ScalingParticleType;
 import jackiecrazy.footwork.entity.flyingweapon.FlyingItemEntity;
-import jackiecrazy.footwork.entity.flyingweapon.FlyingWeaponEffect;
 import jackiecrazy.footwork.move.motionframe.HitEffects;
 import jackiecrazy.footwork.move.motionframe.HitInfo;
 import jackiecrazy.footwork.move.motionframe.MotionManager;
@@ -22,7 +23,6 @@ import jackiecrazy.wardance.capability.aerial.AerialModeData;
 import jackiecrazy.wardance.capability.charging.ChargingData;
 import jackiecrazy.wardance.capability.flyingweapon.FlyingWeaponData;
 import jackiecrazy.wardance.capability.flyingweapon.IFlyingWeapon;
-import jackiecrazy.wardance.capability.stylish.StylishCapability;
 import jackiecrazy.wardance.config.CombatConfig;
 import jackiecrazy.wardance.config.GeneralConfig;
 import jackiecrazy.wardance.config.MobSpecs;
@@ -362,22 +362,20 @@ public class CombatUtils {
     }
 
     public static void quickSwap(LivingEntity e, ItemStack stack) {
-        ItemStack main = e.getMainHandItem();
-        suppressChangeFunctions = true;
-        e.setItemInHand(InteractionHand.MAIN_HAND, stack);
-        suppressChangeFunctions = false;
-
-        main.getAttributeModifiers(EquipmentSlot.MAINHAND).forEach((att, mod) -> Optional.ofNullable(e.getAttribute(att)).ifPresent((mai) -> mai.removeModifier(mod)));
-        stack.getAttributeModifiers(EquipmentSlot.MAINHAND).forEach((att, mod) -> Optional.ofNullable(e.getAttribute(att)).ifPresent((mai) -> {
-            if (!mai.hasModifier(mod)) mai.addTransientModifier(mod);
-        }));
+        quickSwap(e, stack, InteractionHand.MAIN_HAND);
     }
 
-    public static void applyFrames(LivingEntity swinger, FlyingWeaponEntity fwe, HitEffects info) {
-        if (info.guard_frames() > 0) CombatData.getCap(swinger).setGuardTime(info.guard_frames());
-        if (info.parry_frames() > 0) CombatData.getCap(swinger).setParryTime(info.parry_frames());
-        if (info.dodge_frames() > 0) CombatData.getCap(swinger).setDodgeTime(info.dodge_frames());
-        if (info.invulnerable_frames() > 0) CombatData.getCap(swinger).setIframe(info.invulnerable_frames());
+    public static void quickSwap(LivingEntity e, ItemStack stack, InteractionHand hand) {
+        ItemStack main = e.getMainHandItem();
+        EquipmentSlot slot = hand==InteractionHand.MAIN_HAND?EquipmentSlot.MAINHAND:EquipmentSlot.OFFHAND;
+        suppressChangeFunctions = true;
+        e.setItemInHand(hand, stack);
+        suppressChangeFunctions = false;
+
+        main.getAttributeModifiers(slot).forEach((att, mod) -> Optional.ofNullable(e.getAttribute(att)).ifPresent((mai) -> mai.removeModifier(mod)));
+        stack.getAttributeModifiers(slot).forEach((att, mod) -> Optional.ofNullable(e.getAttribute(att)).ifPresent((mai) -> {
+            if (!mai.hasModifier(mod)) mai.addTransientModifier(mod);
+        }));
     }
 
     public static boolean processWeaponInteraction(LivingEntity e, Entity ignore, InteractionHand h, double reach) {
@@ -399,8 +397,8 @@ public class CombatUtils {
         MovementUtils.applyVelocity(group.getVelocity(), e, group.isSetVelocity());
         group.on_swing().runEffects(e, e, h, stack);
         for (WeaponInteractions.WeaponInteraction info : group.getInteractions()) {
-            WeaponStats.info_override = info.getHitInfo();
-            CombatUtils.applyFrames(e, FlyingWeaponData.getCap(e).getWeapon(h), info.getHitInfo());
+            //WeaponStats.info_override = info.getHitInfo();
+            //CombatUtils.applyFrames(e, FlyingWeaponData.getCap(e).getWeapon(h), info.getHitInfo());
             if (info instanceof SweepAttack sweep) {
                 if (group.noFlip()) SweepAnimationBuilder.flip = -1;//hacky reset
                 WeaponStats.info_override = sweep.getHitInfo();
@@ -452,6 +450,7 @@ public class CombatUtils {
                     }
                 }
                 cap.forceRefreshWeapons();
+                e.level().addFreshEntity(fwe);
                 throw_vec = null;
             }
             WeaponStats.info_override = null;
@@ -676,6 +675,8 @@ public class CombatUtils {
         if (!CombatData.getCap(defender).canBlock())
             MobilityUtils.knockBack(defender, attacker, 1.2f, false, true);
 
+        ActionData.getCap(defender).triggerCallback("guard");
+
         //item specific effects
         if (defend != null) {
             //hacky. Instantly trigger block for blocking items
@@ -736,6 +737,7 @@ public class CombatUtils {
         }
         cap.setDodgeTime(CombatConfig.rollTime);
         cap.setIframe(remaining);
+        ActionData.getCap(defender).triggerCallback("dodge");
 
         if (defender instanceof Player) {
             triggerSteveTime(defender, 30);
@@ -798,6 +800,8 @@ public class CombatUtils {
 
             }
         }
+
+        ActionData.getCap(defender).triggerCallback("parry");
 
         //perform item related procs
         if (defend != null) {

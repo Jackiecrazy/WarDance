@@ -1,13 +1,13 @@
 {
   "_guide": {
-    "standing": "A long slow stab with drag. If used with revealed (i.e. after attacks), becomes a very fast jab with very short drag for annoyance and followups",
-    "falling": "jab down and drag the mob along with you, pinning and wetting them if they hit the ground with water splash particles.",
-    "aerial": "sweep your hand across the screen and throw a web that slows and distracts enemies, no direct damage",
-    "sprinting": "charge through with block frames leaving a trail of water that wets enemies",
-    "guard counter": "push your trident out with no damage but parry frames. On parry, twist the trident and bind the mob, with a guardian one-two if possible at max spirit",
-    "throw": "non-piercing embedding throw, spawns lightning at full spirit",
-    "pickup": "spin the trident above your head, with two tropical fish circling around it, gaining some dodge frames.",
-    "draw": "throw a net with some salmon trailing behind it that pins and confuses at max spirit"
+    "standing": "",
+    "falling": "",
+    "aerial": "",
+    "sprinting": "",
+    "guard counter": "",
+    "throw": "",
+    "pickup": "",
+    "draw": ""
   },
   "footwork:animation_tester": {
     "attack": 10,
@@ -30,8 +30,7 @@
                   {
                     "ID": "foot_position",
                     "reference_point": "target"
-                  },
-                  {
+                  }, {
                     "ID": "vector",
                     "x": 0,
                     "y": -6,
@@ -47,8 +46,7 @@
                   "duration": 200,
                   "forced": true,
                   "visible": false
-                },
-                {
+                }, {
                   "ID": "attach_action",
                   "effect": "wardance:arakawa"
                 }
@@ -67,29 +65,21 @@
           "frames": [
             {
               "direction": [
-                0.4,
-                -1,
-                0
+                0.4, -1, 0
               ],
               "offset": [
-                0,
-                0,
-                0.6
+                0, 0, 0.6
               ],
               "effects": {
                 "attack_info": {
                   "hit_self": {
                     "velocity": [
-                      0,
-                      1,
-                      0
+                      0, 1, 0
                     ]
                   }
                 },
                 "effects": [
-                  "WEAPON",
-                  "TRAIL",
-                  "LOCK_ORIENTATION"
+                  "WEAPON", "TRAIL", "LOCK_ORIENTATION"
                 ],
                 "on_terrain_impact": {
                   "run_actions": [
@@ -99,17 +89,12 @@
                   ]
                 }
               }
-            },
-            {
+            }, {
               "direction": [
-                0,
-                -1,
-                0
+                0, -1, 0
               ],
               "offset": [
-                0,
-                0,
-                1.2
+                0, 0, 1.2
               ]
             }
           ]
@@ -123,14 +108,10 @@
       "frames": [
         {
           "direction": [
-            0,
-            0,
-            1
+            0, 0, 1
           ],
           "offset": [
-            0,
-            0,
-            0
+            0, 0, 0
           ],
           "effects": {
             "attack_info": {
@@ -145,38 +126,27 @@
               }
             },
             "effects": [
-              "WEAPON",
-              "TRAIL"
+              "WEAPON", "TRAIL"
             ]
           }
-        },{
+        }, {
           "direction": [
-            0,
-            0,
-            1
+            0, 0, 1
           ],
           "offset": [
-            0,
-            0,
-            1
+            0, 0, 1
           ]
-        },{
+        }, {
           "direction": [
-            0,
-            0,
-            1
+            0, 0, 1
           ],
           "offset": [
-            0,
-            0,
-            1
+            0, 0, 1
           ]
         }
       ],
       "velocity": [
-        0,
-        0.1,
-        0
+        0, 0.1, 0
       ],
       "set_velocity": true,
       "dodge_frames": 5
@@ -191,71 +161,49 @@
           "frames": [
             {
               "direction": [
-                0.4,
-                -1,
-                0
+                0.4, -1, 0
               ],
               "offset": [
-                0,
-                0,
-                0.6
+                0, 0, 0.6
               ],
               "effects": {
                 "attack_info": {
                   "hit_self": {
                     "velocity": [
-                      0,
-                      1,
-                      0
+                      0, 1, 0
                     ]
                   }
                 },
                 "effects": [
-                  "WEAPON",
-                  "TRAIL",
-                  "LOCK_ORIENTATION"
+                  "WEAPON", "TRAIL", "LOCK_ORIENTATION"
                 ],
                 "display_stack": [
                   {
                     "stack": "equipped_item"
-                  },
-                  {
+                  }, {
                     "stack": "equipped_item",
                     "rotation": [
-                      90,
-                      0,
-                      0
+                      90, 0, 0
                     ]
-                  },
-                  {
+                  }, {
                     "stack": "equipped_item",
                     "rotation": [
-                      180,
-                      0,
-                      0
+                      180, 0, 0
                     ]
-                  },
-                  {
+                  }, {
                     "stack": "equipped_item",
                     "rotation": [
-                      270,
-                      0,
-                      0
+                      270, 0, 0
                     ]
                   }
                 ]
               }
-            },
-            {
+            }, {
               "direction": [
-                0,
-                -1,
-                0
+                0, -1, 0
               ],
               "offset": [
-                0,
-                0,
-                1.2
+                0, 0, 1.2
               ]
             }
           ]
@@ -271,14 +219,10 @@
           "frames": [
             {
               "direction": [
-                0,
-                1,
-                0
+                0, 1, 0
               ],
               "offset": [
-                0,
-                0,
-                1
+                0, 0, 1
               ],
               "render_rotation": 90,
               "effects": {
@@ -297,21 +241,23 @@
                   }
                 },
                 "effects": [
-                  "WEAPON",
-                  "TRAIL"
-                ]
+                  "WEAPON", "TRAIL"
+                ],
+                "guard_frames": 20,
+                "on_guard": {
+                  "run_actions": [
+                    {
+                      "ID": "explode"
+                    }
+                  ]
+                }
               }
-            },
-            {
+            }, {
               "direction": [
-                0,
-                -0.4,
-                1
+                0, -0.4, 1
               ],
               "offset": [
-                0,
-                0,
-                1.4
+                0, 0, 1.4
               ],
               "render_rotation": 90
             }
@@ -338,24 +284,18 @@
                         "crit_damage": 1
                       }
                     }
-                  },
-                  {}
+                  }, {}
                 ]
-              },
-              {
+              }, {
                 "duration": 12,
                 "easing": "IN_CUBIC",
                 "frames": [
                   {
                     "direction": [
-                      0,
-                      1,
-                      0
+                      0, 1, 0
                     ],
                     "offset": [
-                      0,
-                      0,
-                      1
+                      0, 0, 1
                     ],
                     "render_rotation": 90,
                     "effects": {
@@ -376,21 +316,15 @@
                         }
                       },
                       "effects": [
-                        "WEAPON",
-                        "BIG_SHADOW"
+                        "WEAPON", "BIG_SHADOW"
                       ]
                     }
-                  },
-                  {
+                  }, {
                     "direction": [
-                      0,
-                      -0.4,
-                      1
+                      0, -0.4, 1
                     ],
                     "offset": [
-                      0,
-                      0,
-                      1.4
+                      0, 0, 1.4
                     ],
                     "render_rotation": 90
                   }
@@ -417,21 +351,15 @@
         "duration": 3,
         "easing": "LINEAR",
         "spin": [
-          -60,
-          0,
-          0
+          -60, 0, 0
         ],
         "frames": [
           {
             "direction": [
-              0,
-              0,
-              1
+              0, 0, 1
             ],
             "offset": [
-              0,
-              0,
-              0
+              0, 0, 0
             ],
             "effects": {
               "effects": [
@@ -464,8 +392,7 @@
                 {
                   "effects": {
                     "effects": [
-                      "WEAPON",
-                      "AFTERIMAGE"
+                      "WEAPON", "AFTERIMAGE"
                     ]
                   }
                 }
@@ -494,8 +421,7 @@
                     "ID": "pin",
                     "duration": 30,
                     "repeatable": true
-                  },
-                  {
+                  }, {
                     "ID": "run_command",
                     "command": "tp @s ~ ~-0.5 ~",
                     "repeatable": true
@@ -510,118 +436,411 @@
     },
     "pickup_flourish": {
       "type": "animation",
-      "cooldown_refund": 1,
-      "on_swing": {
-        "run_actions": [
-          {
-            "ID": "project_hitbox",
-            "hit_cooldown": 20,
-            "selector": {
-              "ID": "selector",
-              "position": {
-                "ID": "eye_position",
-                "reference_point": "target"
-              },
-              "filter": {
-                "ID": "condition",
-                "condition": {
-                  "ID": "!allied_to"
+      "left_hand_offset": [0, 0.5, 0],
+      "right_hand_offset": [0, 0.5, 0],
+      "minimum_cooldown": 0.75,
+      "animations": [
+        {
+          "duration": 10,
+          "easing": "IN_OUT_SINE",
+          "frames": [
+            {
+              "direction": [0, 0, 1],
+              "offset": [0.0, 0, 1.5],
+              "render_rotation": [0, 0, 1, 90],
+              "effects": {
+                "effects": ["WEAPON", "TRAIL"],
+                "range": -1,
+                "attack_info": {
+                  "damage_scale": 0.5,
+                  "posture_scale": 0.5,
+                  "knockback": 1.5,
+                  "crit": false,
+                  "spirit_multiplier": 0.75,
+                  "hit_self": {
+                    "command": "/function wardance:attack/self_accelerate",
+                    "velocity": [0.0, 0.0, 0.0],
+                    "set_velocity": true
+                  }
                 }
-              },
-              "range": 5
-            },
-            "actions": [
+              }
+            }, {
+              "direction": [1, 0, 0],
+              "offset": [0.0, 0.0, 1.5],
+              "render_rotation": [1, 0, 0, 90]
+            }, {
+              "direction": [0, 0, -1],
+              "offset": [0.0, 0.0, 1.5],
+              "render_rotation": [0, 0, -1, 90]
+            }, {
+              "direction": [-1, 0, 0],
+              "offset": [0.0, 0.0, 1.5],
+              "render_rotation": [-1, 0, 0, 90]
+            }, {
+              "direction": [0, 0, 1],
+              "offset": [0.0, 0.0, 1.5],
+              "render_rotation": [0, 0, 1, 90]
+            }
+          ]
+        }
+      ],
+      "overrides": [
+        {
+          "condition": {
+            "ID": "consume_resource",
+            "format": "PERCENTAGE",
+            "resource": "SPIRIT",
+            "amount": 1,
+            "operation": "CONSUME"
+          },
+          "override": {
+            "type": "animation",
+            "minimum_cooldown": 0.75,
+            "animations": [
               {
-                "ID": "add_effect",
-                "effect": "footwork:enfeeble",
-                "duration": 200,
-                "repeatable": true
+                "duration": 8,
+                "easing": "IN_OUT_SINE",
+                "frames": [
+                  {
+                    "direction": [0, 0, 1],
+                    "offset": [0.0, -0.25, 1.5],
+                    "render_rotation": [0, 0, 1, 90],
+                    "effects": {
+                      "effects": ["WEAPON", "TRAIL", "AFTERIMAGE"],
+                      "range": -1,
+                      "velocity": [0, 0.4, 0.0],
+                      "set_velocity": true,
+                      "attack_info": {
+                        "damage_scale": 0.5,
+                        "posture_scale": 0.5,
+                        "knockback": 0.5,
+                        "crit": true,
+                        "breach": true,
+                        "spirit_multiplier": 0.5,
+                        "hit_self": {
+                          "command": "/function wardance:attack/self_accelerate",
+                          "velocity": [0.0, 0.0, 0.0],
+                          "set_velocity": false
+                        },
+                        "hit_other": {
+                          "velocity": [0.0, 0.5, 0.0],
+                          "set_velocity": true
+                        }
+                      }
+                    }
+                  }, {
+                    "direction": [1, 0, 0],
+                    "offset": [0.0, -0.25, 1.5],
+                    "render_rotation": [1, 0, 0, 90]
+                  }, {
+                    "direction": [0, 0, -1],
+                    "offset": [0.0, -0.25, 1.5],
+                    "render_rotation": [0, 0, -1, 90]
+                  }, {
+                    "direction": [-1, 0, 0],
+                    "offset": [0.0, -0.25, 1.5],
+                    "render_rotation": [-1, 0, 0, 90]
+                  }, {
+                    "direction": [0, 0, 1],
+                    "offset": [0.0, -0.25, 1.5],
+                    "render_rotation": [0, 0, 1, 90]
+                  }
+                ]
+              }, {
+                "duration": 5,
+                "easing": "IN_OUT_SINE",
+                "frames": [
+                  {
+                    "direction": [0, 0, 1],
+                    "offset": [0.0, 0.0, 1.5],
+                    "render_rotation": [0, 0, 1, 90],
+                    "effects": {
+                      "effects": ["TRAIL"],
+                      "range": -1,
+                      "velocity": [0, 0.7, 0.0],
+                      "set_velocity": true,
+                      "attack_info": {
+                        "damage_scale": 0.5,
+                        "posture_scale": 0.5,
+                        "knockback": -0.2,
+                        "crit": false,
+                        "spirit_multiplier": 0.5,
+                        "hit_self": {
+                          "command": "/function wardance:attack/self_accelerate"
+                        },
+                        "hit_other": {
+                          "velocity": [0.0, 0.8, 0.0],
+                          "set_velocity": true
+                        }
+                      }
+                    }
+                  }, {
+                    "direction": [1, 0, 0],
+                    "offset": [0.0, 0, 1.5],
+                    "render_rotation": [1, 0, 0, 90]
+                  }, {
+                    "direction": [0, 0, -1],
+                    "offset": [0.0, 0, 1.5],
+                    "render_rotation": [0, 0, -1, 90]
+                  }, {
+                    "direction": [-1, 0, 0],
+                    "offset": [0.0, 0, 1.5],
+                    "render_rotation": [-1, 0, 0, 90]
+                  }, {
+                    "direction": [0, 0, 1],
+                    "offset": [0.0, 0, 1.5],
+                    "render_rotation": [0, 0, 1, 90]
+                  }
+                ]
+              }, {
+                "duration": 4,
+                "easing": "IN_OUT_SINE",
+                "frames": [
+                  {
+                    "direction": [0, 0, 1],
+                    "offset": [0.0, 0.25, 1.5],
+                    "render_rotation": [0, 0, 1, 90],
+                    "effects": {
+                      "effects": ["TRAIL"],
+                      "range": -1,
+                      "velocity": [0, 0.9, 0.0],
+                      "set_velocity": true,
+                      "attack_info": {
+                        "damage_scale": 0.5,
+                        "posture_scale": 0.5,
+                        "knockback": -0.2,
+                        "crit": false,
+                        "spirit_multiplier": 0.5,
+                        "hit_self": {
+                          "command": "/function wardance:attack/self_accelerate"
+                        },
+                        "hit_other": {
+                          "velocity": [0.0, 1.0, 0.0],
+                          "set_velocity": true
+                        }
+                      }
+                    }
+                  }, {
+                    "direction": [1, 0, 0],
+                    "offset": [0.0, 0.25, 1.5],
+                    "render_rotation": [1, 0, 0, 90]
+                  }, {
+                    "direction": [0, 0, -1],
+                    "offset": [0.0, 0.25, 1.5],
+                    "render_rotation": [0, 0, -1, 90]
+                  }, {
+                    "direction": [-1, 0, 0],
+                    "offset": [0.0, 0.25, 1.5],
+                    "render_rotation": [-1, 0, 0, 90]
+                  }, {
+                    "direction": [0, 0, 1],
+                    "offset": [0.0, 0.25, 1.5],
+                    "render_rotation": [0, 0, 1, 90]
+                  }
+                ]
+              }, {
+                "duration": 4,
+                "easing": "IN_OUT_SINE",
+                "frames": [
+                  {
+                    "direction": [0, 0, 1],
+                    "offset": [0.0, 0.5, 1.5],
+                    "render_rotation": [0, 0, 1, 90],
+                    "effects": {
+                      "effects": ["TRAIL"],
+                      "range": -1,
+                      "velocity": [0, 1.2, 0.0],
+                      "set_velocity": true,
+                      "attack_info": {
+                        "damage_scale": 0.5,
+                        "posture_scale": 0.5,
+                        "knockback": -0.2,
+                        "crit": false,
+                        "spirit_multiplier": 0.5,
+                        "hit_self": {
+                          "command": "/function wardance:attack/self_accelerate"
+                        },
+                        "hit_other": {
+                          "velocity": [0.0, 1.3, 0.0],
+                          "set_velocity": true
+                        }
+                      }
+                    }
+                  }, {
+                    "direction": [1, 0, 0],
+                    "offset": [0.0, 0.5, 1.5],
+                    "render_rotation": [1, 0, 0, 90]
+                  }, {
+                    "direction": [0, 0, -1],
+                    "offset": [0.0, 0.5, 1.5],
+                    "render_rotation": [0, 0, -1, 90]
+                  }, {
+                    "direction": [-1, 0, 0],
+                    "offset": [0.0, 0.5, 1.5],
+                    "render_rotation": [-1, 0, 0, 90]
+                  }, {
+                    "direction": [0, 0, 1],
+                    "offset": [0.0, 0.5, 1.5],
+                    "render_rotation": [0, 0, 1, 90]
+                  }
+                ]
+              }, {
+                "duration": 4,
+                "easing": "IN_OUT_SINE",
+                "frames": [
+                  {
+                    "direction": [0, 0, 1],
+                    "offset": [0.0, 0.5, 1.5],
+                    "render_rotation": [0, 0, 1, 90],
+                    "effects": {
+                      "effects": ["TRAIL"],
+                      "range": -1,
+                      "velocity": [0, 1.5, 0.0],
+                      "set_velocity": true,
+                      "attack_info": {
+                        "damage_scale": 0.5,
+                        "posture_scale": 0.5,
+                        "knockback": -0.2,
+                        "crit": false,
+                        "spirit_multiplier": 0.5,
+                        "hit_self": {
+                          "command": "/function wardance:attack/self_accelerate"
+                        },
+                        "hit_other": {
+                          "velocity": [0.0, 1.2, 0.0],
+                          "set_velocity": true
+                        }
+                      }
+                    }
+                  }, {
+                    "direction": [1, 0, 0],
+                    "offset": [0.0, 0.5, 1.5],
+                    "render_rotation": [1, 0, 0, 90]
+                  }, {
+                    "direction": [0, 0, -1],
+                    "offset": [0.0, 0.5, 1.5],
+                    "render_rotation": [0, 0, -1, 90]
+                  }, {
+                    "direction": [-1, 0, 0],
+                    "offset": [0.0, 0.5, 1.5],
+                    "render_rotation": [-1, 0, 0, 90]
+                  }, {
+                    "direction": [0, 0, 1],
+                    "offset": [0.0, 0.5, 1.5],
+                    "render_rotation": [0, 0, 1, 90]
+                  }
+                ]
+              }, {
+                "duration": 4,
+                "easing": "IN_OUT_SINE",
+                "frames": [
+                  {
+                    "direction": [0, 0, 1],
+                    "offset": [0.0, 0.5, 1.5],
+                    "render_rotation": [0, 0, 1, 90],
+                    "effects": {
+                      "effects": ["TRAIL"],
+                      "range": -1,
+                      "velocity": [0, 1.5, 0.0],
+                      "set_velocity": true,
+                      "attack_info": {
+                        "damage_scale": 0.5,
+                        "posture_scale": 0.5,
+                        "knockback": -0.2,
+                        "crit": false,
+                        "spirit_multiplier": 0.5,
+                        "hit_self": {
+                          "command": "/function wardance:attack/self_accelerate"
+                        },
+                        "hit_other": {
+                          "velocity": [0.0, 1.2, 0.0],
+                          "set_velocity": true
+                        }
+                      }
+                    }
+                  }, {
+                    "direction": [1, 0, 0],
+                    "offset": [0.0, 0.5, 1.5],
+                    "render_rotation": [1, 0, 0, 90]
+                  }, {
+                    "direction": [0, 0, -1],
+                    "offset": [0.0, 0.5, 1.5],
+                    "render_rotation": [0, 0, -1, 90]
+                  }, {
+                    "direction": [-1, 0, 0],
+                    "offset": [0.0, 0.5, 1.5],
+                    "render_rotation": [-1, 0, 0, 90]
+                  }, {
+                    "direction": [0, 0, 1],
+                    "offset": [0.0, 0.5, 1.5],
+                    "render_rotation": [0, 0, 1, 90]
+                  }
+                ]
+              }, {
+                "duration": 6,
+                "easing": "IN_OUT_SINE",
+                "frames": [
+                  {
+                    "direction": [0, 0, 1],
+                    "offset": [0.0, 0.5, 2.5],
+                    "render_rotation": [0, 0, 1, 90],
+                    "effects": {
+                      "effects": ["WEAPON", "TRAIL"],
+                      "range": -1,
+                      "velocity": [0, 1.0, 0.0],
+                      "set_velocity": true,
+                      "attack_info": {
+                        "damage_scale": 1,
+                        "posture_scale": 1,
+                        "knockback": 3,
+                        "crit": true,
+                        "breach": true,
+                        "spirit_multiplier": 2,
+                        "hit_self": {
+                          "command": "/function wardance:hit_combo_super_eclipse",
+                          "velocity": [0.0, 0.0, 0.0],
+                          "set_velocity": false
+                        },
+                        "damage_self": {
+                          "command": "/function wardance:float",
+                          "velocity": [0.0, 0.0, 0.0],
+                          "set_velocity": false
+                        },
+                        "hit_other": {
+                          "command": "/function wardance:float_stun",
+                          "velocity": [0.0, 1.4, -0.6],
+                          "set_velocity": true
+                        }
+                      }
+                    }
+                  }, {
+                    "direction": [1, 0, 0],
+                    "offset": [0.0, 0.5, 2.5],
+                    "render_rotation": [1, 0, 0, 90]
+                  }, {
+                    "direction": [0, 0, -1],
+                    "offset": [0.0, 0.5, 2.5],
+                    "render_rotation": [0, 0, -1, 90]
+                  }, {
+                    "direction": [-1, 0, 0],
+                    "offset": [0.0, 0.5, 2.5],
+                    "render_rotation": [-1, 0, 0, 90]
+                  }, {
+                    "direction": [0, 0, 1],
+                    "offset": [0.0, 0.5, 2.5],
+                    "render_rotation": [0, 0, 1, 90]
+                  }
+                ]
               }
             ]
           }
-        ]
-      },
-      "animations": [
-        {
-          "duration": 20,
-          "easing": "IN_OUT_CUBIC",
-          "frames": [
-            {
-              "direction": [
-                0,
-                1,
-                0
-              ],
-              "offset": [
-                0,
-                0,
-                0
-              ],
-              "effects": {
-                "effects": [
-                  "WEAPON",
-                  "LOCK_ORIENTATION"
-                ]
-              }
-            },
-            {
-              "direction": [
-                0,
-                0,
-                -1
-              ],
-              "offset": [
-                0,
-                0,
-                0
-              ]
-            },
-            {
-              "direction": [
-                0,
-                -1,
-                0
-              ],
-              "offset": [
-                0,
-                0,
-                0
-              ]
-            },
-            {
-              "direction": [
-                0,
-                0,
-                1
-              ],
-              "offset": [
-                0,
-                0,
-                0
-              ]
-            },
-            {
-              "direction": [
-                0,
-                1,
-                0
-              ],
-              "offset": [
-                0,
-                0,
-                0
-              ]
-            }
-          ]
         }
       ]
     },
     "draw_attack": {
       "type": "animation",
       "velocity": [
-        0,
-        1,
-        1
+        0, 1, 1
       ],
       "animations": [
         {
@@ -630,14 +849,10 @@
           "frames": [
             {
               "direction": [
-                0,
-                0,
-                1
+                0, 0, 1
               ],
               "offset": [
-                0,
-                0,
-                1
+                0, 0, 1
               ],
               "effects": {
                 "attack_info": {
@@ -647,29 +862,19 @@
                   "WEAPON"
                 ]
               }
-            },
-            {
+            }, {
               "direction": [
-                0,
-                -1,
-                0
+                0, -1, 0
               ],
               "offset": [
-                0,
-                0,
-                1
+                0, 0, 1
               ]
-            },
-            {
+            }, {
               "direction": [
-                0,
-                0,
-                -1
+                0, 0, -1
               ],
               "offset": [
-                0,
-                0,
-                1
+                0, 0, 1
               ]
             }
           ]

@@ -228,7 +228,7 @@ public class NewCombatCapability implements ICombatCapability {
         serverTick();
         dirty = true;
         //knocked down already, no more posture damage
-        if (isKnockdown()) return amount;
+        if (isStunned()) return amount;
         if (!Float.isFinite(posture)) posture = getMaxPosture();
 
         //resistance go brr

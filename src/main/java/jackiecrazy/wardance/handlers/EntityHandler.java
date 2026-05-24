@@ -10,6 +10,7 @@ import jackiecrazy.wardance.capability.permission.PermissionData;
 import jackiecrazy.wardance.capability.aerial.AerialModeData;
 import jackiecrazy.wardance.capability.charging.ChargingData;
 import jackiecrazy.wardance.capability.flyingweapon.FlyingWeaponData;
+import jackiecrazy.wardance.capability.quiver.QuiverData;
 import jackiecrazy.wardance.capability.resources.CombatDataOverride;
 import jackiecrazy.wardance.capability.skill.CasterData;
 import jackiecrazy.wardance.capability.skill.ISkillCapability;
@@ -28,6 +29,7 @@ import jackiecrazy.wardance.networking.CombatChannel;
 import jackiecrazy.wardance.networking.sync.SyncQuiverPacket;
 import jackiecrazy.wardance.networking.sync.SyncSkillPacket;
 import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.nbt.CompoundTag;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerPlayer;
@@ -135,6 +137,7 @@ public class EntityHandler {
                 e.addCapability(new ResourceLocation("wardance:permissions"), new PermissionData(p));
                 e.addCapability(new ResourceLocation("wardance:flyingweapon"), new FlyingWeaponData(p));
                 e.addCapability(new ResourceLocation("wardance:fasterusing"), new ChargingData());
+                e.addCapability(new ResourceLocation(WarDance.MODID, "quiver_data"), new QuiverData());
             }
         }
     }
@@ -210,6 +213,10 @@ public class EntityHandler {
         cap.setStyle(ocap.getStyle());
         cap.setEquippedSkills(ocap.getEquippedSkills());
         cap.getEquippedSkillsAndStyle().stream().filter(Objects::nonNull).forEach(a -> cap.replaceSkill(a, a));
+        e.getOriginal().getCapability(QuiverData.QUIVER_CAP).ifPresent(oldCap -> e.getEntity().getCapability(QuiverData.QUIVER_CAP).ifPresent(newCap -> {
+            // Copy data
+            newCap.deserializeNBT(oldCap.serializeNBT());
+        }));
         //yare yare daze
         orig.invalidateCaps();
     }

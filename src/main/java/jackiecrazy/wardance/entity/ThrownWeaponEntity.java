@@ -40,6 +40,7 @@ import java.util.Comparator;
 import java.util.List;
 
 public class ThrownWeaponEntity extends FlyingWeaponEntity {
+    private static final List<Action> NOTHING = new ArrayList<>();
     private MotionManager FORWARD = new MotionManagers.FixedMM(new MotionFrame(new Vec3(0, 0, 1), Vec3.ZERO, 0), 1);
     private boolean dormant = false;
     private double gravity = 0;
@@ -49,7 +50,7 @@ public class ThrownWeaponEntity extends FlyingWeaponEntity {
     private boolean lodge_entity = true;
     private int auto_recall = -1;
     private boolean recalling = false;
-    private boolean fake = false, pickup_flourish=false;
+    private boolean fake = false, pickup_flourish = false;
     private List<Action> impactActions = List.of();
     private List<Action> embedActions = List.of();
 
@@ -61,15 +62,15 @@ public class ThrownWeaponEntity extends FlyingWeaponEntity {
         setIntangible(false);
     }
 
-    public ThrownWeaponEntity setFlourish(boolean flourish){
-        pickup_flourish=flourish;
+    public ThrownWeaponEntity setFlourish(boolean flourish) {
+        pickup_flourish = flourish;
         return this;
     }
 
     @Override
     protected void readAdditionalSaveData(CompoundTag tag) {
         super.readAdditionalSaveData(tag);
-        pickup_flourish=tag.getBoolean("pickup");
+        pickup_flourish = tag.getBoolean("pickup");
         fake = tag.getBoolean("fake");
     }
 
@@ -80,13 +81,13 @@ public class ThrownWeaponEntity extends FlyingWeaponEntity {
         tag.putBoolean("fake", fake);
     }
 
-    private boolean noCosmetics(){
-        return getCosmeticItem()==null||(getCosmeticItem().nodes().length==1&&getCosmeticItem().nodes()[0].stack().equals(getHeldItem()));
+    private boolean noCosmetics() {
+        return getCosmeticItem() == null || (getCosmeticItem().nodes().length == 1 && getCosmeticItem().nodes()[0].stack().equals(getHeldItem()));
     }
 
     public ThrownWeaponEntity setFake(boolean fake) {
         this.fake = fake;
-        if (fake&&noCosmetics()) {
+        if (fake && noCosmetics()) {
             setEffect(FlyingWeaponEffect.BIG_SHADOW);
         } else setEffect(FlyingWeaponEffect.WEAPON);
         return this;
@@ -178,7 +179,7 @@ public class ThrownWeaponEntity extends FlyingWeaponEntity {
 
     @Override
     protected void updateSpin(MotionManager cur) {
-        if(intangible())return;
+        if (intangible()) return;
         super.updateSpin(cur);
     }
 
@@ -188,31 +189,34 @@ public class ThrownWeaponEntity extends FlyingWeaponEntity {
         //entity lodge check
         if (lodge_entity && !alreadyHit.isEmpty()) {
             final Entity lodgedMob = alreadyHit.get(alreadyHit.size() - 1);
-            setState(STATE.FOLLOW);
-            //setInteractionRange(0);
-            setMotionTarget(lodgedMob);
-            // Mob yaw in radians
-            float yawRad = (float) Math.toRadians(lodgedMob.getYRot());
-            Quaternionf mobRotInv = new Quaternionf().rotateY(yawRad); // inverse yaw
-            Vector3f relF = getDeltaMovement().toVector3f();
-            mobRotInv.transform(relF);
+            if (lodgedMob != null) {
+                setState(STATE.FOLLOW);
+                //setInteractionRange(0);
+                setMotionTarget(lodgedMob);
+                // Mob yaw in radians
+                float yawRad = (float) Math.toRadians(lodgedMob.getYRot());
+                Quaternionf mobRotInv = new Quaternionf().rotateY(yawRad); // inverse yaw
+                Vector3f relF = getDeltaMovement().toVector3f();
+                mobRotInv.transform(relF);
 
-            Vec3 localOffset = new Vec3(relF.x, relF.y, relF.z).multiply(-1, 1, 1).normalize();
-            //if(localOffset.lengthSqr()<0.001)localOffset=new Vec3(0,0,1);
-            runImpactActions();
-            runEmbedActions();
-            setIdlePose(new MotionManagers.FixedMM(new MotionFrame(localOffset, new Vec3(0, 0, -lodgedMob.getBbWidth() / 1.75)), 1));
-            setUniversalOffset(Vec3.ZERO);
-            setDeltaMovement(Vec3.ZERO);
-            setIntangible(true);
-            dormant = true;
-        } else {
-            //otherwise lose all velocity and start dropping to the ground
-            runImpactActions();
-            setImpactActions(NOTHING);
-            setDeltaMovement(Vec3.ZERO);
-            gravity = (float) Math.min(gravity, -0.04);
+                Vec3 localOffset = new Vec3(relF.x, relF.y, relF.z).multiply(-1, 1, 1).normalize();
+                //if(localOffset.lengthSqr()<0.001)localOffset=new Vec3(0,0,1);
+                runImpactActions();
+                runEmbedActions();
+                setIdlePose(new MotionManagers.FixedMM(new MotionFrame(localOffset, new Vec3(0, 0, -lodgedMob.getBbWidth() / 1.75)), 1));
+                setUniversalOffset(Vec3.ZERO);
+                setDeltaMovement(Vec3.ZERO);
+                setIntangible(true);
+                dormant = true;
+                return;
+            }
         }
+
+        //otherwise lose all velocity and start dropping to the ground
+        runImpactActions();
+        setImpactActions(NOTHING);
+        setDeltaMovement(Vec3.ZERO);
+        gravity = (float) Math.min(gravity, -0.04);
     }
 
     private void runImpactActions() {
@@ -242,6 +246,10 @@ public class ThrownWeaponEntity extends FlyingWeaponEntity {
         auto_recall--;
     }
 
+//    public boolean canCollideWith(Entity e) {
+//        return true;
+//    }
+
     private boolean pierce() {
         if (pierce > 0) {
             pierce--;
@@ -249,10 +257,6 @@ public class ThrownWeaponEntity extends FlyingWeaponEntity {
         }
         return false;
     }
-
-//    public boolean canCollideWith(Entity e) {
-//        return true;
-//    }
 
     private boolean ricochet() {
         if (bounce <= 0) {
@@ -299,7 +303,7 @@ public class ThrownWeaponEntity extends FlyingWeaponEntity {
         if (success) {
             this.remove(RemovalReason.UNLOADED_WITH_PLAYER);
 
-            if(pickup_flourish) {
+            if (pickup_flourish) {
                 //pickup flourish
                 ItemStack held = player.getMainHandItem();
                 int ticks = player.attackStrengthTicker;
@@ -352,11 +356,10 @@ public class ThrownWeaponEntity extends FlyingWeaponEntity {
 
     }
 
-    private static final List<Action> NOTHING = new ArrayList<>();
-
     public void setImpactActions(List<Action> on_impact) {
         this.impactActions = on_impact;
     }
+
     public void setEmbedActions(List<Action> on_embed) {
         this.embedActions = on_embed;
     }

@@ -1,6 +1,6 @@
 {
   "ID": "project_hitbox",
-  "max_time": 20,
+  "max_time": 10,
   "hit_cooldown": 1,
   "selector": {
     "ID": "selector",
@@ -26,7 +26,9 @@
       "effect": "footwork:wet",
       "potency": 0,
       "duration": 100,
-      "repeatable": true
+      "repeatable": true,
+      "forced": true,
+      "visible": false
     }
   ]
 }

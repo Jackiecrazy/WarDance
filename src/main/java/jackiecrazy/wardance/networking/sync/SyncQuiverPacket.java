@@ -1,5 +1,6 @@
 package jackiecrazy.wardance.networking.sync;
 
+import jackiecrazy.wardance.capability.quiver.QuiverData;
 import jackiecrazy.wardance.capability.skill.CasterData;
 import jackiecrazy.wardance.client.hud.QuiverDisplay;
 import net.minecraft.client.Minecraft;
@@ -16,11 +17,11 @@ import java.util.function.Function;
 import java.util.function.Supplier;
 
 public class SyncQuiverPacket {
-    CompoundTag icc=new CompoundTag();
+    CompoundTag icc;
 
     public SyncQuiverPacket(Player p) {
 
-        icc.put("inv",p.getEnderChestInventory().createTag());
+        icc=QuiverData.getData(p).serializeNBT();
     }
 
     public SyncQuiverPacket(CompoundTag p) {
@@ -63,8 +64,8 @@ public class SyncQuiverPacket {
                 public void run() {
                     Player player = (Player) Minecraft.getInstance().player;
                     if (player == null) return;
-                    ListTag list=icc.getList("inv", ListTag.TAG_COMPOUND);
-                    QuiverDisplay.refreshInventory(player, list);
+                    QuiverData.getData(player).deserializeNBT(icc);
+                    //QuiverDisplay.refreshInventory(player, list);
                 }
             };
         }

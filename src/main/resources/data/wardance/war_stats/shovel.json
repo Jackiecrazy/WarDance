@@ -18,8 +18,10 @@
       "sweep_base": 120.0,
       "attack_info": {
         "damage_scale": 0.5,
-        "posture_scale": 0.5,
-        "parry_frames": 4
+        "posture_scale": 0.5
+      },
+      "on_swing": {
+      "parry_frames": 4
       }
     },
     "falling": {
@@ -98,9 +100,9 @@
               "drag": {
                 "duration": 20,
                 "strength": 2
-              },
-              "dodge_frames": 5
+              }
             },
+            "dodge_frames": 5,
             "effects": [
               "WEAPON",
               "TRAIL"

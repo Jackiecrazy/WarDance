@@ -17,7 +17,7 @@ import net.minecraftforge.common.ForgeMod;
 
 public class PlayInteractionAction extends Action {
     private WeaponStats.AttackType move_state;
-    private Argument<ItemStack> stack = new EquippedItemArgument();
+    private Argument<ItemStack> stack;
     private WeaponInteractions.InteractionGroup interaction;
     private Condition immediate = FalseCondition.INSTANCE;
 
@@ -28,18 +28,26 @@ public class PlayInteractionAction extends Action {
             ItemStack prevHeld = performer.getMainHandItem();
             int ticks = performer.attackStrengthTicker;
             try {
-                CombatUtils.quickSwap(performer, stack.resolve(actionContext));
-                CombatUtils.setHandCooldown(performer, InteractionHand.MAIN_HAND, 2, false);
+                ItemStack stack;
+                if (actionContext.getContext("itemstack") instanceof ItemStack is)
+                    stack = is;
+                else stack = this.stack.resolve(actionContext);
+                InteractionHand hand = InteractionHand.MAIN_HAND;
+                if (actionContext.getContext("hand") instanceof InteractionHand is)
+                    hand = is;
+
+                CombatUtils.quickSwap(performer, stack, hand);
+                CombatUtils.setHandCooldown(performer, hand, 2, false);
                 if (move_state != null) {
                     CombatUtils.setAttackType(performer, move_state);
                 }
                 if (immediate.resolve(actionContext))
-                    FlyingWeaponData.getCap(performer).getWeapon(InteractionHand.MAIN_HAND).clearPath();
+                    FlyingWeaponData.getCap(performer).getWeapon(hand).clearPath();
                 FlyingWeaponData.getCap(performer).forceRefreshWeapons();
                 if (interaction != null)
-                    CombatUtils.processWeaponInteraction(performer, null, InteractionHand.MAIN_HAND, performer.getAttributeValue(ForgeMod.ENTITY_REACH.get()), interaction);
+                    CombatUtils.processWeaponInteraction(performer, null, hand, performer.getAttributeValue(ForgeMod.ENTITY_REACH.get()), interaction);
                 else
-                    CombatUtils.processWeaponInteraction(performer, null, InteractionHand.MAIN_HAND, performer.getAttributeValue(ForgeMod.ENTITY_REACH.get()));
+                    CombatUtils.processWeaponInteraction(performer, null, hand, performer.getAttributeValue(ForgeMod.ENTITY_REACH.get()));
             } catch (Exception ex) {
                 ex.printStackTrace();
             } finally {

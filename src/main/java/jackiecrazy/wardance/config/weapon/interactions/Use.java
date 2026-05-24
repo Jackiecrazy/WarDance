@@ -1,5 +1,6 @@
 package jackiecrazy.wardance.config.weapon.interactions;
 
+import jackiecrazy.footwork.move.motionframe.HitInfo;
 import net.minecraft.network.FriendlyByteBuf;
 
 //uhh

@@ -1,6 +1,7 @@
 package jackiecrazy.wardance.handlers;
 
 import jackiecrazy.footwork.api.CombatDamageSource;
+import jackiecrazy.footwork.capability.action.ActionData;
 import jackiecrazy.footwork.capability.resources.CombatData;
 import jackiecrazy.footwork.capability.resources.ICombatCapability;
 import jackiecrazy.footwork.capability.stylish.StylishData;
@@ -91,6 +92,7 @@ public class CombatHandler {
 
             //iframes
             if (CombatData.getCap(uke).isIframe()) {
+                ActionData.getCap(uke).triggerCallback("invulnerable");
                 e.setCanceled(true);
                 return;
             }
@@ -238,7 +240,13 @@ public class CombatHandler {
             ICombatCapability ukeCap = CombatData.getCap(uke);
 
             //iframing and knocked down people are immune to damage
-            if (ukeCap.isIframe() || ukeCap.isKnockdown()) {
+            if (ukeCap.isIframe()) {
+                ActionData.getCap(uke).triggerCallback("invulnerable");
+                e.setCanceled(true);
+                return;
+            }
+
+            if(ukeCap.isKnockdown()){
                 e.setCanceled(true);
                 return;
             }
@@ -306,8 +314,8 @@ public class CombatHandler {
                     //handle capability and any on-hit effects
                     seme.getMainHandItem().getCapability(CombatManipulator.CAP).ifPresent((i) -> i.attackStart(e.getSource(), seme, uke, seme.getMainHandItem(), e.getAmount()));
                     final HitInfo sweepInfo = WeaponStats.getHitInfo(seme.getMainHandItem(), seme, CombatUtils.getAttackState(seme));
-                    sweepInfo.runEffects(seme, seme, true, false);
-                    sweepInfo.runEffects(seme, uke, false, false);
+                    sweepInfo.runEffects(seme, seme, true, false, semeCap.isOffhandAttack()?InteractionHand.OFF_HAND:InteractionHand.MAIN_HAND, seme.getMainHandItem());
+                    sweepInfo.runEffects(seme, uke, false, false, semeCap.isOffhandAttack()?InteractionHand.OFF_HAND:InteractionHand.MAIN_HAND, seme.getMainHandItem());
                     if (e.getSource() instanceof CombatDamageSource cds) {
                         cds.setKnockbackPercentage((float) sweepInfo.getKnockback());
                         cds.setCrit(sweepInfo.isCrit());
@@ -629,9 +637,10 @@ public class CombatHandler {
 
         //weapon on hit effects
         if (ds.getEntity() instanceof LivingEntity trueSource) {
+            final ICombatCapability semeCap = CombatData.getCap(trueSource);
             final HitInfo sweepInfo = WeaponStats.getHitInfo(trueSource.getMainHandItem(), trueSource, CombatUtils.getAttackState(trueSource));
-            sweepInfo.runEffects(trueSource, trueSource, true, true);
-            sweepInfo.runEffects(trueSource, uke, false, true);
+            sweepInfo.runEffects(trueSource, trueSource, true, true, semeCap.isOffhandAttack()?InteractionHand.OFF_HAND:InteractionHand.MAIN_HAND, trueSource.getMainHandItem());
+            sweepInfo.runEffects(trueSource, uke, false, true, semeCap.isOffhandAttack()?InteractionHand.OFF_HAND:InteractionHand.MAIN_HAND, trueSource.getMainHandItem());
             if (sweepInfo.getDrag() != null) {
                 FlyingWeaponEntity fwe = FlyingWeaponData.getCap(trueSource).getWeapon(InteractionHand.MAIN_HAND);
                 if (fwe != null) fwe.drag(uke, sweepInfo.getDrag().strength(), sweepInfo.getDrag().duration());
@@ -644,12 +653,12 @@ public class CombatHandler {
             }
 
             //consume stamina if we didn't do it yet, somehow
-            if (!CombatData.getCap(trueSource).alreadyProc("oncePerAttack")) {
-                final float exhausted = CombatData.getCap(trueSource).doConsumeSpirit((float) (e.getAmount() * sweepInfo.spirit_multiplier()));
+            if (!semeCap.alreadyProc("oncePerAttack")) {
+                final float exhausted = semeCap.doConsumeSpirit((float) (e.getAmount() * sweepInfo.spirit_multiplier()));
                 cap.recordDamage(exhausted);
                 e.setAmount(e.getAmount() - exhausted);
-                CombatData.getCap(trueSource).tickProc("oncePerAttack");
-            } else if (CombatData.getCap(trueSource).alreadyProc(SPIRITKB)) {
+                semeCap.tickProc("oncePerAttack");
+            } else if (semeCap.alreadyProc(SPIRITKB)) {
                 //overcommitment penalty
                 e.setAmount(e.getAmount() / 2);
             }

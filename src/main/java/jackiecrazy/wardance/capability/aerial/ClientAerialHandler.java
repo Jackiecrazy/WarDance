@@ -203,7 +203,6 @@ public class ClientAerialHandler {
         Vec3 motion = pl.getDeltaMovement();
 
         AABB box = new AABB(pos.x, pos.y + (pl.getEyeHeight() * .8), pos.z, pos.x, pos.y + pl.getBbHeight(), pos.z);
-        if (!StylishData.getCap(pl).isCombatMode()) return;
         final boolean vanillaJump = pl.onGround() || pl.level().containsAnyLiquid(box) || pl.isPassenger() || pl.getAbilities().flying;
         if (vanillaJump) {
             //no jumping and reset the available multijumps.
@@ -217,6 +216,8 @@ public class ClientAerialHandler {
             if (pl.input.jumping) {
                 if (!jumpKey && jumpCount > 0 && motion.y < 0.333) {
                     pl.jumpFromGround();
+                    jumpCount--;
+                    if (!StylishData.getCap(pl).isCombatMode()) return;
                     Direction wall = cap.getWallDir();
                     if (wall != null) {
                         //add some wall velocity
@@ -233,7 +234,6 @@ public class ClientAerialHandler {
                         lastDir = cap.getWallDir();
                         cap.setState(IAerialMode.WallState.WALL_JUMP);
                     }
-                    jumpCount--;
                     AerialModeData.getCap(pl).setAerialMode(true);
                     CombatChannel.INSTANCE.sendToServer(new AerialModePacket(true));
 

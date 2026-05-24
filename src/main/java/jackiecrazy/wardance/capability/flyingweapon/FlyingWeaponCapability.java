@@ -281,7 +281,7 @@ public class FlyingWeaponCapability implements IFlyingWeapon {
         Level level = oldFW.level();
         ThrownWeaponEntity fwe = new ThrownWeaponEntity(WarEntities.THROWN_WEAPON.get(), level);
         oldFW.unDrag();
-        //fwe.inheritDrag(oldFW);
+        fwe.inheritDrag(oldFW);
         final ItemStack held = player.getItemInHand(hand);
         fwe.setHeldItem(held.copyWithCount(1));
         fwe.setOwner(player);
@@ -290,7 +290,7 @@ public class FlyingWeaponCapability implements IFlyingWeapon {
 
         fwe.yeet(pos, strength);
         fwe.setInteractionRange(1f);
-        level.addFreshEntity(fwe);
+        //fwe is not added to level here! This is so Throw can transform it again
         sync();
         return fwe;
     }

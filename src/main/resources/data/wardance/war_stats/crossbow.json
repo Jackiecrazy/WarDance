@@ -1,33 +1,268 @@
 {
+  "_guide": {
+    "standing": "stock standard load and shoot",
+    "falling": "load and shoot faster, with brief slowfall for the acrobatic demon hunter feel",
+    "aerial": "load and shoot faster while kicking backwards",
+    "sprinting": "knock back an enemy with a bash before loading and shooting with higher speed",
+    "guard counter": "shoot an acacia stake that drags the first hit mob along and pins them into the terrain.",
+    "throw": "shoot a birch stake that causes the hit mob to take extra ranged damage after receiving melee damage",
+    "pickup": "shoot a piercing oak stake that causes every mob it hits to gain glowing temporarily",
+    "draw": "hammer down the stake, dealing piercing melee damage in front of you. "
+  },
   "#crossbow": {
-    "attack": 12,
+    "attack": 10,
     "defend": 0.35,
+    "guard_frame": {
+      "duration": 2,
+      "frames": [
+        {
+          "direction": [
+            0, 0.0, 1
+          ],
+          "offset": [
+            0.3, 0.8, 0.5
+          ],
+          "effects": {
+            "effects": [
+              "WEAPON"
+            ]
+          }
+        }
+      ]
+    },
+    "swap_frame": {
+      "duration": 2,
+      "frames": [
+        {
+          "direction": [
+            0, 0.0, 1
+          ],
+          "offset": [
+            0.3, 0.8, 0.5
+          ],
+          "effects": {
+            "effects": [
+              "WEAPON"
+            ]
+          }
+        }
+      ]
+    },
+    "aim_frame": {
+      "duration": 2,
+      "frames": [
+        {
+          "direction": [
+            0, 0.0, 1
+          ],
+          "offset": [
+            0.3, 0.8, 0.5
+          ],
+          "effects": {
+            "effects": [
+              "WEAPON"
+            ]
+          }
+        }
+      ]
+    },
     "standing": {
       "type": "use"
     },
     "falling": {
       "type": "use",
-      "velocity": [
-        0,
-        0.5,
-        -1
-      ],
-      "set_velocity": true
+      "use_speed": 2,
+      "on_swing": {
+        "run_actions": [
+          {
+            "ID": "add_effect",
+            "effect": "minecraft:slow_falling",
+            "potency": 0,
+            "duration": 30,
+            "stacking": "MAX_DURATION"
+          }
+        ]
+      }
     },
     "aerial": {
       "type": "use",
-      "use_speed": 2
+      "use_speed": 2,
+      "velocity": [
+        0, 0.5, -0.5
+      ],
+      "set_velocity": true
     },
     "sprinting": {
-      "sweep": "NONE",
-      "knockback": 2.0,
-      "damage_scale": 1.25,
-      "posture_scale": 1.25,
-      "on_swing": {
-        "command": "/function wardance:attack/self_mildfatigue"
-      },
-      "damage_other_command": "/function wardance:attack/damageother_mildstun",
-      "crit": true
+      "interactions": [
+        {
+          "sweep": "NONE",
+          "knockback": 2.0
+        }, {
+          "type": "use",
+          "use_speed": 2
+        }
+      ]
+    },
+    "guard_counter": {
+      "interactions": [],
+      "overrides": [
+        {
+          "condition": [
+            {
+              "ID": "consume_resource",
+              "format": "NUMBER",
+              "resource": "SPIRIT",
+              "amount": 7,
+              "operation": "CONSUME"
+            }
+          ],
+          "override": {
+            "type": "throw",
+            "attack_info": {
+              "damage_scale": 1,
+              "crit": true,
+              "crit_damage": 1,
+              "spirit_multiplier": 0,
+              "drag": {
+                "duration": 60,
+                "strength": 5
+              }
+            },
+            "throw_speed": 1,
+            "lodge_block": true,
+            "lodge_entity": true,
+            "pierce": 999,
+            "gravity": 0,
+            "consume_item": false,
+            "display_stack": {
+              "ID": "itemstack",
+              "item": "minecraft:acacia_fence"
+            }
+          }
+        }
+      ]
+    },
+    "throw": {
+      "interactions": [],
+      "overrides": [
+        {
+          "condition": [
+            {
+              "ID": "consume_resource",
+              "format": "NUMBER",
+              "resource": "SPIRIT",
+              "amount": 7,
+              "operation": "CONSUME"
+            }
+          ],
+          "override": {
+            "type": "throw",
+            "attack_info": {
+              "damage_scale": 1,
+              "crit": true,
+              "crit_damage": 1,
+              "spirit_multiplier": 0
+            },
+            "throw_speed": 1,
+            "lodge_block": true,
+            "lodge_entity": true,
+            "gravity": 0,
+            "consume_item": false,
+            "display_stack": {
+              "ID": "itemstack",
+              "item": "minecraft:birch_fence"
+            }
+          }
+        }
+      ]
+    },
+    "draw_attack": {
+      "interactions": [],
+      "overrides": [
+        {
+          "condition": [
+            {
+              "ID": "consume_resource",
+              "format": "NUMBER",
+              "resource": "SPIRIT",
+              "amount": 7,
+              "operation": "CONSUME"
+            }
+          ],
+          "override": {
+            "type": "throw",
+            "attack_info": {
+              "damage_scale": 1,
+              "crit": true,
+              "crit_damage": 1,
+              "spirit_multiplier": 0,
+              "hit_other": {
+                "run_actions": [
+                  {
+                    "ID": "add_effect",
+                    "effect": "minecraft:glowing",
+                    "potency": 0,
+                    "duration": 200,
+                    "repeatable": true,
+                    "forced": true,
+                    "visible": false
+                  }
+                ]
+              }
+            },
+            "throw_speed": 1,
+            "lodge_block": true,
+            "lodge_entity": true,
+            "gravity": 0,
+            "consume_item": false,
+            "display_stack": {
+              "ID": "itemstack",
+              "item": "minecraft:oak_fence"
+            }
+          }
+        }
+      ]
+    },
+    "pickup_flourish": {
+      "type": "animation",
+      "animations": [
+        {
+          "duration": 6,
+          "easing": "IN_SINE",
+          "frames": [
+            {
+              "direction": [
+                0, 1, 0.4
+              ],
+              "offset": [
+                0, 0, 1
+              ],
+              "render_rotation": [0,1,0],
+              "effects": {
+                "attack_info": {
+                  "armor_pierce": 1,
+                  "knockback": 0,
+                  "crit": true,
+                  "crit_damage": 3,
+                  "breach": true
+                },
+                "display_stack": {
+                  "ID": "itemstack",
+                  "item": "minecraft:nether_brick_fence"
+                }
+              }
+            }, {
+              "direction": [
+                0, -1, 1
+              ],
+              "offset": [
+                0, 0, 1
+              ],
+              "render_rotation": [0,1,0]
+            }
+          ]
+        }
+      ]
     }
   }
 }

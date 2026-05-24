@@ -38,6 +38,33 @@
     },
     "tick": [
       {
+        "ID": "project_hitbox",
+        "max_time": 50,
+        "hit_cooldown": 20,
+        "selector": {
+          "ID": "selector",
+          "position": {
+            "ID": "foot_position",
+            "reference_point": "target"
+          },
+          "range": 3
+        },
+        "actions": [
+          {
+            "ID": "deal_damage",
+            "damage_source": {
+              "armor_pierce_percentage": 1,
+              "proxy": "target",
+              "tags": [
+              ]
+            },
+            "amount": 10,
+            "on_hit": [
+            ]
+          }
+        ]
+      },
+      {
         "ID": "look_at",
         "looker": "target",
         "vector_target": {

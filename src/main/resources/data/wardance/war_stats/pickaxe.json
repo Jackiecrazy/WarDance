@@ -11,41 +11,6 @@
   "#pickaxe": {
     "attack": 15,
     "defend": 0.4,
-    "idle_frame": {
-      "duration": 3,
-      "easing": "LINEAR",
-      "angular_velocity": [
-        0,
-        0,
-        0
-      ],
-      "frames": [
-        {
-          "direction": [
-            0,
-            0.25,
-            0.25
-          ],
-          "offset": [
-            0,
-            -0.2,
-            1
-          ],
-          "effects": {
-            "effects": [
-            ],
-            "range": -1,
-            "velocity": [
-              0,
-              0,
-              0
-            ],
-            "set_velocity": false,
-            "attack_info": {}
-          }
-        }
-      ]
-    },
     "standing": {
       "sweep": "CLEAVE",
       "sweep_base": 60.0,
@@ -63,13 +28,11 @@
                   "recipient": "caster",
                   "duration": 100,
                   "stacking": "MAX_DURATION"
-                },
-                {
+                }, {
                   "ID": "play_sound",
                   "sound": "minecraft:entity.experience_orb.pickup",
                   "source": "PLAYERS"
-                },
-                {
+                }, {
                   "ID": "play_particle",
                   "particle": "minecraft:block",
                   "particle_parameters": "gold_block",
@@ -128,45 +91,30 @@
               "frames": [
                 {
                   "direction": [
-                    2,
-                    0,
-                    0.1
+                    2, 0, 0.1
                   ],
                   "offset": [
-                    0,
-                    0,
-                    1
+                    0, 0, 1
                   ],
                   "effects": {
-                    "color": [255,0,0],
+                    "color": [255, 0, 0],
                     "effects": [
-                      "WEAPON",
-                      "TRAIL"
+                      "WEAPON", "TRAIL"
                     ]
                   }
-                },
-                {
+                }, {
                   "direction": [
-                    0,
-                    0,
-                    1
+                    0, 0, 1
                   ],
                   "offset": [
-                    0,
-                    0,
-                    1
+                    0, 0, 1
                   ]
-                },
-                {
+                }, {
                   "direction": [
-                    -2,
-                    0,
-                    0.1
+                    -2, 0, 0.1
                   ],
                   "offset": [
-                    0,
-                    0,
-                    0.6
+                    0, 0, 0.6
                   ]
                 }
               ]
@@ -241,37 +189,26 @@
           "frames": [
             {
               "direction": [
-                0,
-                -1,
-                1
+                0, -1, 1
               ],
               "offset": [
-                0,
-                0,
-                1
+                0, 0, 1
               ],
               "render_rotation": 180,
               "effects": {
                 "attack_info": {
                   "knockback": 2,
                   "knockback_direction": [
-                    0,
-                    1,
-                    0
+                    0, 1, 0
                   ]
                 }
               }
-            },
-            {
+            }, {
               "direction": [
-                0,
-                1,
-                1
+                0, 1, 1
               ],
               "offset": [
-                0,
-                0,
-                1
+                0, 0, 1
               ],
               "render_rotation": 180
             }
@@ -282,7 +219,7 @@
     "guard_counter": {
       "type": "animation",
       "on_swing": {
-        "command": "/playsound minecraft:entity.player.attack.sweep player @s ~ ~ ~ 0.8 1.2 0"
+        "sound": "minecraft:entity.player.attack.sweep"
       },
       "animations": [
         {
@@ -291,14 +228,10 @@
           "frames": [
             {
               "direction": [
-                1,
-                0,
-                0.2
+                1, 0, 0.2
               ],
               "offset": [
-                0,
-                0,
-                1
+                0, 0, 1
               ],
               "effects": {
                 "attack_info": {
@@ -314,34 +247,22 @@
                   }
                 },
                 "effects": [
-                  "WEAPON",
-                  "TRAIL",
-                  "LOCK_POSITION"
+                  "WEAPON", "TRAIL", "LOCK_POSITION"
                 ]
               }
-            },
-            {
+            }, {
               "direction": [
-                0,
-                0,
-                1
+                0, 0, 1
               ],
               "offset": [
-                0,
-                0,
-                1
+                0, 0, 1
               ]
-            },
-            {
+            }, {
               "direction": [
-                -1,
-                0,
-                0.2
+                -1, 0, 0.2
               ],
               "offset": [
-                0,
-                0,
-                1
+                0, 0, 1
               ]
             }
           ]
@@ -363,9 +284,7 @@
                 "frames": [
                   {
                     "offset": [
-                      0,
-                      0,
-                      2
+                      0, 0, 2
                     ],
                     "effects": {
                       "attack_info": {
@@ -373,36 +292,25 @@
                         "spirit_multiplier": 0
                       }
                     }
-                  },
-                  {
+                  }, {
                     "direction": [
-                      0,
-                      0,
-                      1
+                      0, 0, 1
                     ],
                     "offset": [
-                      0,
-                      0,
-                      2
+                      0, 0, 2
                     ]
-                  },
-                  null
+                  }, null
                 ]
-              },
-              {
+              }, {
                 "duration": 10,
                 "easing": "IN_OUT_SINE",
                 "frames": [
                   {
                     "direction": [
-                      0,
-                      0,
-                      1
+                      0, 0, 1
                     ],
                     "offset": [
-                      0,
-                      0,
-                      2
+                      0, 0, 2
                     ],
                     "render_rotation": 90,
                     "effects": {
@@ -417,22 +325,15 @@
                         }
                       },
                       "effects": [
-                        "WEAPON",
-                        "BIG_SHADOW",
-                        "LOCK_POSITION"
+                        "WEAPON", "BIG_SHADOW", "LOCK_POSITION"
                       ]
                     }
-                  },
-                  {
+                  }, {
                     "direction": [
-                      0,
-                      0,
-                      0.1
+                      0, 0, 0.1
                     ],
                     "offset": [
-                      0,
-                      0,
-                      0.2
+                      0, 0, 0.2
                     ],
                     "render_rotation": 90
                   }
@@ -472,8 +373,7 @@
                   "second": 10
                 }
               }
-            },
-            {
+            }, {
               "ID": "consume_resource",
               "format": "NUMBER",
               "resource": "SPIRIT",
@@ -500,8 +400,7 @@
               "tag": "forge:ores"
             }
           }
-        },
-        {
+        }, {
           "condition": {
             "ID": "consume_resource",
             "format": "NUMBER",
@@ -545,8 +444,7 @@
             "recipient": "caster",
             "duration": 600,
             "stacking": "MAX_DURATION"
-          },
-          {
+          }, {
             "ID": "play_sound",
             "sound": "minecraft:entity.villager.celebrate",
             "source": "PLAYERS"
@@ -560,31 +458,22 @@
           "frames": [
             {
               "direction": [
-                0,
-                1,
-                0
+                0, 1, 0
               ],
               "offset": [
-                0,
-                0,
-                0
+                0, 0, 0
               ],
               "effects": {
                 "effects": [
                   "WEAPON"
                 ]
               }
-            },
-            {
+            }, {
               "direction": [
-                0,
-                1,
-                0
+                0, 1, 0
               ],
               "offset": [
-                0,
-                0,
-                0.6
+                0, 0, 0.6
               ]
             }
           ]
@@ -604,14 +493,10 @@
           "frames": [
             {
               "direction": [
-                1,
-                0,
-                0.2
+                1, 0, 0.2
               ],
               "offset": [
-                0,
-                0,
-                1
+                0, 0, 1
               ],
               "effects": {
                 "attack_info": {
@@ -619,33 +504,22 @@
                   "crit_damage": 1
                 },
                 "effects": [
-                  "WEAPON",
-                  "TRAIL"
+                  "WEAPON", "TRAIL"
                 ]
               }
-            },
-            {
+            }, {
               "direction": [
-                0,
-                0,
-                1
+                0, 0, 1
               ],
               "offset": [
-                0,
-                0,
-                1
+                0, 0, 1
               ]
-            },
-            {
+            }, {
               "direction": [
-                -1,
-                0,
-                0.2
+                -1, 0, 0.2
               ],
               "offset": [
-                0,
-                0,
-                1
+                0, 0, 1
               ]
             }
           ]

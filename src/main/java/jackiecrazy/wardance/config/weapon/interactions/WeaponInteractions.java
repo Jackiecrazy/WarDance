@@ -243,10 +243,6 @@ public class WeaponInteractions {
             return this;
         }
 
-        public HitInfo getHitInfo() {
-            return SweepAttack.DEFAULT_NONE.interactions.get(0).getHitInfo();
-        }
-
         public InteractionGroup asGroup() {
             InteractionGroup ret = new InteractionGroup();
             ret.setInteractions(List.of(this));

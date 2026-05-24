@@ -72,12 +72,13 @@ public class GrappleEntity extends FlyingItemEntity {
     public void moveTargetTowards(Entity toBeMoved, Vec3 point, double force) {
         super.moveTargetTowards(toBeMoved, point, hookStrength);
     }
+    private ACTION retractAction=null;
 
     @Override
     public void updateTetheringVelocity() {
-        //if (retractAction != null) {
-            //super.updateTetheringVelocity(); //pull phase
-        //}
+        if (retractAction !=null) {
+            super.updateTetheringVelocity(); //pull phase
+        }
     }
 
     public void swing() {
@@ -104,7 +105,7 @@ public class GrappleEntity extends FlyingItemEntity {
 
             vTangentialMultiplier = 1.047;
 
-            double new_vRadial = stretch * 0.07;
+            double new_vRadial = stretch*0.07;
             if (vRadial <= new_vRadial) vRadial = new_vRadial;
         }
 
@@ -137,7 +138,7 @@ public class GrappleEntity extends FlyingItemEntity {
     public double getTetherLength() {
         double maxSpeed=2;
          Float origLength = entityData.get(TETHER_LENGTH);
-        return Math.max(2,origLength);
+        return origLength;
     }
 
     public void setTetherLength(double dist) {
@@ -185,7 +186,7 @@ public class GrappleEntity extends FlyingItemEntity {
     @Override
     public Entity getTetheredEntity() {
         if (!hooked) return null;
-        //if (retractAction == ACTION.ZIP) return this;
+        if (retractAction == ACTION.ZIP) return this;
         if (getOwner().isShiftKeyDown()) return getOwner();
         return hookedEntity == null ? this : hookedEntity;
     }
@@ -193,7 +194,7 @@ public class GrappleEntity extends FlyingItemEntity {
     @Override
     public Entity getTetheringEntity() {
         if (!hooked) return null;
-        //if (retractAction == ACTION.ZIP) return getOwner();
+        if (retractAction == ACTION.ZIP) return getOwner();
         if (getOwner().isShiftKeyDown()) return hookedEntity;
         return getOwner();
     }
@@ -223,10 +224,13 @@ public class GrappleEntity extends FlyingItemEntity {
             handleBlockCollisions();
         }
         if(swinging()) {
-            setTetherLength(getTetherLength()-Math.min(5, hookedTicks));
+            if(getTetherLength()>=2) {
+                final double dist = Math.max(2, getTetherLength() - Math.min(1,hookedTicks*0.2));
+                setTetherLength(dist);
+            }
             swing();
         }
-        boolean yank = getOwner().isShiftKeyDown();
+        boolean yank = getOwner().isShiftKeyDown()||(retractAction==ACTION.YANK);
         //server side velocity stuff
         if (isAlive()) {//!level().isClientSide &&
             //general sanity death checks
@@ -248,18 +252,29 @@ public class GrappleEntity extends FlyingItemEntity {
                 updateEntityHookPosition();
                 //give guard frames for your rush
                 CombatData.getCap(getOwner()).setGuardTime(3);
-                if (hookedEntity instanceof ThrownWeaponEntity fwe && getOwner() instanceof Player p && fwe.distanceToSqr(p) < SQDIST) {
-                    boolean picked = fwe.pickup(p);
-                    remove(RemovalReason.DISCARDED);
+                if (hookedEntity instanceof ThrownWeaponEntity fwe) {
 
-                    //if you move to the weapon, slow gravity a bit
-                    if (!yank && picked) {
-                        AerialModeData.getCap(p).alterGravity(40, 0.3);
-                        AerialModeData.getCap(p).setAerialMode(true);
-                        p.setDeltaMovement(new Vec3(0, 0.1, 0));
+                    if(yank) {
+                        fwe.setState(STATE.THROW_NATURAL);
+                        hookEntityOffset = 0;
+                        setTetherLength(0);
+                        retract(ACTION.YANK);
                     }
-                    if (p instanceof ServerPlayer sp)
-                        CombatChannel.INSTANCE.send(PacketDistributor.PLAYER.with(() -> sp), new ResetAirJumpPacket());
+                    else retract(ACTION.ZIP);
+                        if(getOwner() instanceof Player p && fwe.distanceToSqr(p) < SQDIST) {
+                            boolean picked = fwe.pickup(p);
+                            remove(RemovalReason.DISCARDED);
+
+                            //if you move to the weapon, slow gravity a bit
+                            if (!yank && picked) {
+                                AerialModeData.getCap(p).alterGravity(10, 0.3);
+                                AerialModeData.getCap(p).setAerialMode(true);
+                                p.setDeltaMovement(new Vec3(0, 0.5, 0));
+                            }
+                            if (p instanceof ServerPlayer sp)
+                                CombatChannel.INSTANCE.send(PacketDistributor.PLAYER.with(() -> sp), new ResetAirJumpPacket());
+                            p.hurtMarked=true;
+                        }
                 }
                 if (hookedEntity instanceof LivingEntity target && getOwner() instanceof Player p && GeneralUtils.getDistSqCompensated(target, getOwner()) < SQDIST) {
                     unhookAndJump(p, true);
@@ -274,10 +289,13 @@ public class GrappleEntity extends FlyingItemEntity {
                     remove(RemovalReason.DISCARDED);
                 }
             }
-//            else if (hookedHit != null && retractAction == ACTION.YANK) {
-//                //hooked a block
-//                ripBlock();
-//            }
+            else if (hookedHit != null) {
+                //hooked a block
+                if(retractAction == ACTION.YANK)
+                ripBlock();
+                else if(retractAction==ACTION.ZIP&&distanceToSqr(getOwner())<2)
+                    unhookAndJump(getOwner(), true);
+            }
             getOwner().fallDistance = 1;
         }
     }
@@ -329,11 +347,12 @@ public class GrappleEntity extends FlyingItemEntity {
     }
 
     public boolean swinging() {
-        return !isRemoved() && hooked;
+        return !isRemoved() && hooked && retractAction==null;
     }
 
 
     public void retract(ACTION act) {
+        retractAction=act;
         switch (act) {
             case RELEASE -> this.remove(RemovalReason.DISCARDED);//ezpz no more vector changes
             case JUMP -> unhookAndJump(getOwner(), false);
@@ -396,11 +415,6 @@ public class GrappleEntity extends FlyingItemEntity {
             hookEntityOffset = Mth.clamp(getY() - hookedEntity.getY(), 0, hookedEntity.getBbHeight());
             updateEntityHookPosition();
             setTetherLength(Math.sqrt(distanceToSqr(getOwner().getEyePosition())));
-        }
-        if (hookedEntity instanceof ThrownWeaponEntity fwe) {
-
-            fwe.setState(STATE.THROW_NATURAL);
-            hookEntityOffset = 0;
         }
         return hooked;
     }

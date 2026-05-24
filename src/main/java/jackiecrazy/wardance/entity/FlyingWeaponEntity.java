@@ -56,7 +56,6 @@ public class FlyingWeaponEntity extends FlyingItemEntity implements IDrag {
     protected HashMap<Entity, Integer> dragging = new HashMap<>();
     protected HitInfo cacheInfo;
     protected HitEffects terrainEffects=null;
-    private List<HitEffects> onGuard=new ArrayList<>(), onParry=new ArrayList<>(), onDodge=new ArrayList<>(), onIframe=new ArrayList<>();
     protected WeaponStats.AttackType state;
     private boolean fading = false;
 
@@ -118,15 +117,6 @@ public class FlyingWeaponEntity extends FlyingItemEntity implements IDrag {
         super.addAdditionalSaveData(tag);
         tag.putBoolean("fading", fading);
 //            todo fix orientation
-    }
-
-    public void fireDefenseCallbacks(DefenseType t){
-        switch (t){
-            case BLOCK -> onGuard.forEach(a->a.runEffects());
-            case PARRY -> onParry.forEach(a->a.runEffects());
-            case DODGE -> onDodge.forEach(a->a.runEffects());
-            case IFRAME -> onIframe.forEach(a->a.runEffects());
-        }
     }
 
     @Override
@@ -197,11 +187,13 @@ public class FlyingWeaponEntity extends FlyingItemEntity implements IDrag {
                 alreadyHit.add(target);//it used to be lower but this allows you to chain attacks properly
                 //CombatData.getCap(e).tickProc("oncePerAttack");
                 target.invulnerableTime = 0;
+                CombatData.getCap(e).setOffhandAttack(flipClientRender());
                 CombatDamageSource cds = damageSource();
                 GeneralUtils.attack(e, target, cds);
                 ret = true;
 //                alreadyHit.add(target);
                 extraOnHit(e, target);
+                CombatData.getCap(e).setOffhandAttack(false);
             }
         } catch (Exception ex) {
             ex.printStackTrace();
@@ -214,7 +206,7 @@ public class FlyingWeaponEntity extends FlyingItemEntity implements IDrag {
     }
 
     protected CombatDamageSource damageSource() {
-        return new CombatDamageSource(getOwner(), this, position()).flag(DamageTypeTags.AVOIDS_GUARDIAN_THORNS).setAttackingHand(InteractionHand.MAIN_HAND).setProcNormalEffects(true).setProcAttackEffects(true).setDamageTyping(FootworkDamageArchetype.PHYSICAL);
+        return new CombatDamageSource(getOwner(), this, position()).flagBreach(false).flag(DamageTypeTags.AVOIDS_GUARDIAN_THORNS).setAttackingHand(flipClientRender()?InteractionHand.OFF_HAND:InteractionHand.MAIN_HAND).setDamageDealer(getHeldItem()).setProcNormalEffects(true).setProcAttackEffects(true).setDamageTyping(FootworkDamageArchetype.PHYSICAL);
     }
 
 
@@ -226,7 +218,7 @@ public class FlyingWeaponEntity extends FlyingItemEntity implements IDrag {
     protected void onHitBlock(BlockPos blockPos, Direction hitFace, Vec3 location) {
         if (intangible()) return;
         if(terrainEffects!=null) {
-            terrainEffects.runEffects(getOwner(), this);
+            terrainEffects.runEffects(getOwner(), this, flipClientRender()?InteractionHand.OFF_HAND:InteractionHand.MAIN_HAND, getHeldItem());
             terrainEffects=null;//reset after one impact until next terrain effect comes in
         }
     }
@@ -297,15 +289,13 @@ public class FlyingWeaponEntity extends FlyingItemEntity implements IDrag {
             if (effects.getEffects() != null)
                 setEffect(effects.getEffects().toArray(new FlyingWeaponEffect[0]));
             cacheInfo = effects.getHit();
-            if (cacheInfo != null && getOwner() != null)
-                CombatUtils.applyFrames(getOwner(), this, effects);
             if (effects.reset_hit())
                 alreadyHit.clear();
             if (effects.shouldUndrag())
                 unDrag();
             LivingEntity e = getOwner();
             if (e != null)
-                effects.runEffects(e, e);
+                effects.runEffects(e, e, flipClientRender()?InteractionHand.OFF_HAND:InteractionHand.MAIN_HAND, getHeldItem());
             if(effects.getDisplayItems()!=null)
                 setCosmeticItem(effects.getDisplayItems().resolve(new ArgumentContext(getOwner(), getOwner())));
             if(effects.getColor()!=null)
@@ -327,21 +317,20 @@ public class FlyingWeaponEntity extends FlyingItemEntity implements IDrag {
         boolean ret = super.updateMotionTargets(forceskip);
         if (ret) {
             alreadyHit.clear();
-            onGuard.clear();
-            onDodge.clear();
-            onParry.clear();
-            onIframe.clear();
         }
         if (moveQueue.isEmpty()) {
             //return on a transition frame
             setEffect(FlyingWeaponEffect.WEAPON);
-            setIntangible(true);
+            setIntangible(true);//fixme becoming intangible here makes weapons not have the chance to proc hiteffects on the last frame
+            //solution: move these to the very very end of tick
+            //except that will cause all thrown items to break.
+            //aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa
             unlock();
         }
         if (!isIdle()) {
         } else if (getOwner() != null) {
             setInteractionRange((float) getOwner().getAttributeValue(ForgeMod.ENTITY_REACH.get()));
-            setTrailColor(DEFAULT_TRAIL_COLOR);
+            //setTrailColor(DEFAULT_TRAIL_COLOR);
         }
         return ret;
     }

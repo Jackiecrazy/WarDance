@@ -120,7 +120,7 @@
           "duration": 5,
           "easing": "IN_OUT_SINE",
           "on_swing": {
-            "command": "/playsound minecraft:entity.player.attack.sweep player @s ~ ~ ~ 0.8 1.2 0"
+            "sound": "minecraft:entity.player.attack.sweep"
           },
           "frames": [
             {
@@ -199,7 +199,7 @@
                 "duration": 5,
                 "easing": "IN_OUT_SINE",
                 "on_swing": {
-                  "command": "/playsound minecraft:entity.player.attack.sweep player @s ~ ~ ~ 0.8 1.0 0"
+                  "sound": "minecraft:entity.player.attack.sweep"
                 },
                 "frames": [
                   {
@@ -271,7 +271,7 @@
     "falling": {
       "type": "animation",
       "on_swing": {
-        "command": "/playsound minecraft:entity.player.attack.sweep player @s ~ ~ ~ 0.8 1.2 0"
+        "sound":"minecraft:entity.player.attack.sweep"
       },
       "animations": [
         {
@@ -376,7 +376,7 @@
           },
           "override": {
             "on_swing": {
-              "command": "/playsound minecraft:entity.player.attack.sweep player @s ~ ~ ~ 0.8 1.2 0"
+              "sound":"minecraft:entity.player.attack.sweep"
             },
             "animations": [
               {
@@ -487,7 +487,7 @@
           "duration": 4,
           "easing": "IN_OUT_SINE",
           "on_swing": {
-            "command": "/playsound minecraft:entity.player.attack.sweep player @s ~ ~ ~ 0.8 1.2 0"
+            "sound":"minecraft:entity.player.attack.sweep"
           },
           "frames": [
             {
@@ -554,7 +554,7 @@
                 "duration": 5,
                 "easing": "IN_OUT_SINE",
                 "on_swing": {
-                  "command": "/playsound minecraft:entity.player.attack.sweep player @s ~ ~ ~ 0.8 1 0"
+                  "sound":"minecraft:entity.player.attack.sweep player"
                 },
                 "frames": [
                   {
@@ -618,7 +618,7 @@
           "duration": 8,
           "easing": "IN_OUT_SINE",
           "on_swing": {
-            "command": "/playsound minecraft:entity.player.attack.sweep player @s ~ ~ ~ 0.8 1.0 0"
+            "sound":"minecraft:entity.player.attack.sweep"
           },
           "frames": [
             {
@@ -674,7 +674,7 @@
           "duration": 8,
           "easing": "IN_OUT_SINE",
           "on_swing": {
-            "command": "/playsound minecraft:entity.player.attack.sweep player @s ~ ~ ~ 0.8 1.0 0"
+            "sound":"minecraft:entity.player.attack.sweep"
           },
           "frames": [
             {
@@ -1161,7 +1161,7 @@
           "duration": 12,
           "easing": "LINEAR",
           "on_swing": {
-            "command": "/playsound minecraft:entity.player.attack.sweep player @s ~ ~ ~ 0.8 1.0 0"
+            "sound":"minecraft:entity.player.attack.sweep"
           },
           "frames": [
             {
