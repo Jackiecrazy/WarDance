@@ -28,7 +28,7 @@ public class AttackCanceler {
             //cancel direct attack for anything that is not a normal sweep
             final WeaponStats.AttackType state = CombatUtils.getAttackState(p);
             if(state!= WeaponStats.AttackType.UNDEFINED){
-                if(!WeaponStats.getSweepInfo(p.getMainHandItem(), p, state, false).hasInteractionType(WeaponInteractions.WeaponInteraction.InteractionType.SWEEP)){
+                if(!WeaponStats.getSweepInfo(p.getMainHandItem(), p, state, false, null).hasInteractionType(WeaponInteractions.WeaponInteraction.InteractionType.SWEEP)){
                     ci.cancel();
                     CombatChannel.INSTANCE.sendToServer(new RequestSweepPacket(true, null));
                     //CombatUtils.processWeaponInteraction(p, null, InteractionHand.MAIN_HAND, p.getAttributeValue(ForgeMod.ENTITY_REACH.get()));

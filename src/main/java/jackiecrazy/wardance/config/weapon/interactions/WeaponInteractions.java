@@ -93,6 +93,12 @@ public class WeaponInteractions {
         private Vec3 left_hand_offset = new Vec3(-0.5, 0, 0.5);
         private Vec3 right_hand_offset = new Vec3(0.5, 0, 0.5);
         private boolean no_flip=false;
+
+        public boolean forceNextWeapon() {
+            return always_draw_next_weapon;
+        }
+
+        private boolean always_draw_next_weapon =false;
         private boolean debug = false;
 
         public InteractionGroup() {
@@ -163,7 +169,7 @@ public class WeaponInteractions {
             return this;
         }
 
-        public Component getToolTip(ItemStack e, boolean advanced) {
+        public Component getDescription(ItemStack e, boolean advanced) {
             return desc;
         }
 

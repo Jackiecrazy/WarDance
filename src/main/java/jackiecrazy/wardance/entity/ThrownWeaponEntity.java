@@ -14,12 +14,16 @@ import jackiecrazy.footwork.move.motionframe.MotionManagers;
 import jackiecrazy.footwork.utils.GeneralUtils;
 import jackiecrazy.footwork.utils.TargetingUtils;
 import jackiecrazy.wardance.capability.flyingweapon.FlyingWeaponData;
+import jackiecrazy.wardance.capability.quiver.QuiverData;
 import jackiecrazy.wardance.config.weapon.WeaponStats;
 import jackiecrazy.wardance.move.actions.LoadItemAction;
+import jackiecrazy.wardance.networking.CombatChannel;
+import jackiecrazy.wardance.networking.sync.SyncQuiverPacket;
 import jackiecrazy.wardance.utils.CombatUtils;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
@@ -31,6 +35,7 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.common.ForgeMod;
+import net.minecraftforge.network.PacketDistributor;
 import org.jetbrains.annotations.NotNull;
 import org.joml.Quaternionf;
 import org.joml.Vector3f;
@@ -287,19 +292,26 @@ public class ThrownWeaponEntity extends FlyingWeaponEntity {
         int slot = -1;
         InteractionHand h = InteractionHand.MAIN_HAND;
         boolean success = player.getAbilities().instabuild | fake;
-        if (player.getMainHandItem().isEmpty()) slot = player.getInventory().selected;
-        else if (player.getOffhandItem().isEmpty()) {
-            //special offhand handling
-            slot = Inventory.SLOT_OFFHAND;
-            h = InteractionHand.OFF_HAND;
+        if (!success) {
+            //fake items skip all of this inventory insertion stuff
+            if (player.getMainHandItem().isEmpty()) slot = player.getInventory().selected;
+            else if (QuiverData.getData(player).sheathe(getPickResult(), false)) {
+                success = true;
+                if (player instanceof ServerPlayer p)
+                    CombatChannel.INSTANCE.send(PacketDistributor.PLAYER.with(() -> p), new SyncQuiverPacket(p));
+            } else if (player.getOffhandItem().isEmpty()) {
+                //special offhand handling
+                slot = Inventory.SLOT_OFFHAND;
+                h = InteractionHand.OFF_HAND;
+                if (!success)
+                    player.setItemInHand(InteractionHand.OFF_HAND, getPickResult());
+                success = true;
+            }
+            CombatUtils.allowCombatHotbarPickup = true;
             if (!success)
-                player.setItemInHand(InteractionHand.OFF_HAND, getPickResult());
-            success = true;
+                success = player.getInventory().add(slot, getPickResult());
+            CombatUtils.allowCombatHotbarPickup = false;
         }
-        CombatUtils.allowCombatHotbarPickup = true;
-        if (!success)
-            success = player.getInventory().add(slot, getPickResult());
-        CombatUtils.allowCombatHotbarPickup = false;
         if (success) {
             this.remove(RemovalReason.UNLOADED_WITH_PLAYER);
 

@@ -5,16 +5,13 @@ import com.mojang.blaze3d.vertex.PoseStack;
 import jackiecrazy.wardance.WarDance;
 import jackiecrazy.wardance.capability.quiver.QuiverData;
 import jackiecrazy.wardance.client.Keybinds;
-import jackiecrazy.wardance.config.weapon.WeaponStats;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.renderer.RenderType;
-import net.minecraft.nbt.ListTag;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.Mth;
 import net.minecraft.util.Tuple;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.inventory.PlayerEnderChestContainer;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraftforge.client.event.InputEvent;
@@ -30,30 +27,50 @@ import java.util.List;
 @Mod.EventBusSubscriber(modid = WarDance.MODID)
 public class QuiverDisplay implements IGuiOverlay {
     private static final ResourceLocation GUI_ICONS_LOCATION = new ResourceLocation("textures/gui/icons.png");
+    public static int invIndex = 0;
     private static ItemStack selected = ItemStack.EMPTY;
     private static ItemStackHandler inventory = null;
+    private static List<Tuple<Integer, ItemStack>> filledSlots = new ArrayList<>();
     private static QuiverData d;
-    public static int invIndex=0;
 
     public static void refreshInventory(Player p) {
-        ItemStackHandler prev=inventory;
-        d=QuiverData.getData(p);
-        inventory=d.getSelectedQuiverInventory();
-        if(inventory!=prev)
-            invIndex=0;
+        ItemStackHandler prev = inventory;
+        d = QuiverData.getData(p);
+        inventory = d.getSelectedQuiverInventory();
+        if (inventory != prev)
+            invIndex = 0;
+        filledSlots.clear();
+        for (int i = 0; i < inventory.getSlots(); i++) {
+            if (!inventory.getStackInSlot(i).isEmpty())
+                filledSlots.add(new Tuple<>(i, inventory.getStackInSlot(i)));
+        }
+        filledSlots.add(new Tuple<>(-1, new ItemStack(Items.BARRIER)));
         nextItem(0);
     }
 
     private static void nextItem(int jump) {
-        if (inventory==null) return;
+        if (inventory == null) return;
         invIndex += jump;
-        invIndex %= (d.getFilledSlots(d.getSelectedQuiver()));
+        int forcedJump = jump < 0 ? -1 : 1;
+        int tries = QuiverData.SLOTS_PER_QUIVER + 1;
+        while (filledSlots.stream().noneMatch(a -> a.getA() == invIndex)) {
+            if (tries < 0) {
+                WarDance.LOGGER.error("too many tries to find usable item, resetting!");
+                invIndex = -1;
+                break;
+            }
+            invIndex += forcedJump;
+            if (invIndex >= (d.getVisibleSlots(d.getSelectedQuiver())))
+                invIndex = -1;
+            if (invIndex < -1) invIndex += (d.getVisibleSlots(d.getSelectedQuiver()))+1;
+            tries--;
+        }
     }
 
     private static void renderItem(GuiGraphics gfx, ItemStack stack, int x, int y, float scale) {
         final PoseStack pose = gfx.pose();
         pose.pushPose();// Center the scaling on the item
-        if(scale!=1) {
+        if (scale != 1) {
             pose.translate(-x, -y, 0);
             pose.scale(scale, scale, 1.0F);
         }
@@ -84,7 +101,7 @@ public class QuiverDisplay implements IGuiOverlay {
     }
 
     private static boolean showQuiver() {
-        return Keybinds.THROW.isDown()||Keybinds.SWAP.isDown();
+        return Keybinds.THROW.isDown() || Keybinds.SWAP.isDown();
     }
 
     public void drawSlice(GuiGraphics guiGraphics,
@@ -138,24 +155,22 @@ public class QuiverDisplay implements IGuiOverlay {
         if (player == null || !showQuiver()) {
             return;
         }
-        if (inventory==null||d==null) return;
+        if (inventory == null || d == null) return;
         //grab ender chest content
         //find the index stack and 2 before/after it
         //draw them on the screen
-        int size=d.getFilledSlots(d.getSelectedQuiver());
+        int size = filledSlots.size();
         int max = size;//Mth.clamp(size, 0, 2);
         double angle = -90;
-        for (int a = 0; a < size; a++) {
+        for (Tuple<Integer, ItemStack> is : filledSlots) {
             int offset = height / 5;
             int x = (int) (Math.cos(Mth.DEG_TO_RAD * angle) * offset);
             int y = (int) (Math.sin(Mth.DEG_TO_RAD * angle) * offset);
-            float scale =1;
-             ItemStack stack = inventory.getStackInSlot(a);
-            if(a==invIndex)scale=2;
-            if(size-1==a)//special case the barrier
-                stack=new ItemStack(Items.BARRIER);
-            renderItem(guiGraphics, stack, width / 2 + x, height/2 + y, scale);
-            angle += (360d/size);
+            float scale = 1;
+            ItemStack stack = is.getB();
+            if (is.getA() == invIndex) scale = 2;
+            renderItem(guiGraphics, stack, width / 2 + x, height / 2 + y, scale);
+            angle += (360d / (size));
         }
 //        float step = (float)(2 * Math.PI / 3);
 //        float centerAngle = -Mth.HALF_PI; // top

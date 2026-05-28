@@ -16,12 +16,11 @@ import net.minecraftforge.items.SlotItemHandler;
 
 public class QuiverMenu extends AbstractContainerMenu {
 
+    public static final int OVERFLOW_START = QuiverData.NUM_QUIVERS * QuiverData.SLOTS_PER_QUIVER;
+    public static final int PLAYER_INV_START = OVERFLOW_START + QuiverData.OVERFLOW_SIZE; // Will be adjusted dynamically
+    public static final int HOTBAR_START = PLAYER_INV_START + 27;
     private final QuiverData capability;
     private final Player player;
-
-    public static final int OVERFLOW_START = QuiverData.NUM_QUIVERS * QuiverData.SLOTS_PER_QUIVER;
-    public static final int PLAYER_INV_START = 80; // Will be adjusted dynamically
-    public static final int HOTBAR_START = PLAYER_INV_START + 27;
 
     public QuiverMenu(int containerId, Inventory playerInventory, FriendlyByteBuf buf) {
         this(containerId, playerInventory, (QuiverData) null);
@@ -49,7 +48,7 @@ public class QuiverMenu extends AbstractContainerMenu {
                 this.addSlot(new SlotItemHandler(handler, finalCol, x, y) {
                     @Override
                     public boolean isActive() {
-                        return m.capability.getFilledSlots(finalColor)>finalCol; // Only active slots for this row
+                        return m.capability.getVisibleSlots(finalColor) > finalCol; // Only active slots for this row
                     }
                 });
             }
@@ -58,19 +57,19 @@ public class QuiverMenu extends AbstractContainerMenu {
         // Overflow
         IItemHandler overflow = capability.getOverflow();
         for (int i = 0; i < QuiverData.OVERFLOW_SIZE; i++) {
-            //this.addSlot(new SlotItemHandler(overflow, i, 30 + maxVisibleColumns * 18 + 30, 20 + i * 18));
+            this.addSlot(new SlotItemHandler(overflow, i, 180, 20 + i * 18));
         }
 
         // Player Inventory (positioned below)
         int playerY = 10 + 8 * 18 + 20;
         for (int i = 0; i < 3; ++i) {
             for (int j = 0; j < 9; ++j) {
-                this.addSlot(new Slot(playerInventory, j + i * 9 + 8, 8+j * 18, playerY + i * 18));
+                this.addSlot(new Slot(playerInventory, j + i * 9 + 9, 8 + j * 18, playerY + i * 18));
             }
         }
 
         for (int i = 0; i < 9; ++i) {
-            this.addSlot(new Slot(playerInventory, i, 8+i * 18, playerY + 58));
+            this.addSlot(new Slot(playerInventory, i, 8 + i * 18, playerY + 58));
         }
 
         if (!player.level().isClientSide) {
@@ -78,21 +77,21 @@ public class QuiverMenu extends AbstractContainerMenu {
         }
     }
 
-    public int getUsableSlots(int index){
-        return capability.getFilledSlots(index);
+    public int getUsableSlots(int index) {
+        return capability.getVisibleSlots(index);
     }
 
     public int getMaxVisibleColumns() {
         int max = 1;
-        boolean pokey=false;
+        boolean pokey = false;
         for (int i = 0; i < QuiverData.NUM_QUIVERS; i++) {
-            int prevMax=max;
-            max = Math.min(max, capability.getFilledSlots(i));
-            if(max!=prevMax)
-                pokey=true;
+            int prevMax = max;
+            max = Math.min(max, capability.getVisibleSlots(i));
+            if (max != prevMax)
+                pokey = true;
         }
-        if(!pokey)
-            max+=1;
+        if (!pokey)
+            max += 1;
         return max;
     }
 
@@ -109,6 +108,7 @@ public class QuiverMenu extends AbstractContainerMenu {
     public boolean stillValid(Player player) {
         return true;
     }
+
 
     @Override
     public ItemStack quickMoveStack(Player player, int index) {
@@ -129,10 +129,10 @@ public class QuiverMenu extends AbstractContainerMenu {
             else {
                 // Try to put weapons into their preferred quiver or random
                 if (WeaponStats.isWeapon(player, stack)) {
-                    capability.assignOnInsert(stack, index % QuiverData.NUM_QUIVERS, 0); // simplified
-                    slot.set(ItemStack.EMPTY);
+                    if (capability.sheathe(stack, true))
+                        slot.set(ItemStack.EMPTY);
                     capability.markDirty(player); // your method
-                    return moved;
+                    return ItemStack.EMPTY;
                 } else {
                     // Non-weapon -> overflow
                     if (!this.moveItemStackTo(stack, OVERFLOW_START, OVERFLOW_START + QuiverData.OVERFLOW_SIZE, false)) {
@@ -154,10 +154,17 @@ public class QuiverMenu extends AbstractContainerMenu {
     @Override
     public void clicked(int slotId, int button, net.minecraft.world.inventory.ClickType clickType, Player player) {
         super.clicked(slotId, button, clickType, player);
-        // Re-sync after any change to prevent desync
+        if (slotId > 0 && slotId < OVERFLOW_START) {
+            Slot s = getSlot(slotId);
+            if (s.getItem().getMaxStackSize() == 1) {
+                ItemStack stack = s.getItem();
+                stack.getOrCreateTag().putInt("quiverColorIndex", slotId/QuiverData.SLOTS_PER_QUIVER);
+                stack.getOrCreateTag().putInt("quiverSlotIndex", slotId%QuiverData.SLOTS_PER_QUIVER);
+            }
+        }
         if (!player.level().isClientSide) {
+            capability.updateAvailableSlots();
             syncToClient();
-            capability.updateFilledSlots();
         }
     }
 

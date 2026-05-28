@@ -11,6 +11,7 @@ import jackiecrazy.wardance.capability.status.IMark;
 import jackiecrazy.wardance.client.GrappleRenderer;
 import jackiecrazy.wardance.client.hud.*;
 import jackiecrazy.wardance.client.screen.ponder.QuiverScreen;
+import jackiecrazy.wardance.client.screen.ponder.WeaponStyleScreen;
 import jackiecrazy.wardance.command.CategoryArgument;
 import jackiecrazy.wardance.command.SkillArgument;
 import jackiecrazy.wardance.command.WarDanceCommand;
@@ -175,6 +176,7 @@ public class WarDance {
         EntityRenderers.register(WarEntities.THROWN_WEAPON.get(), ItemEntityRenderer::new);
         event.enqueueWork(() -> {
             MenuScreens.register(WarContainers.QUIVER_MENU.get(), QuiverScreen::new);
+            MenuScreens.register(WarContainers.WEEB_MENU.get(), WeaponStyleScreen::new);
         });
     }
 

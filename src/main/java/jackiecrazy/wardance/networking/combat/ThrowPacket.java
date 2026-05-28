@@ -6,7 +6,9 @@ import jackiecrazy.footwork.entity.flyingweapon.FlyingItemEntity;
 import jackiecrazy.wardance.WarDance;
 import jackiecrazy.wardance.capability.flyingweapon.FlyingWeaponData;
 import jackiecrazy.wardance.capability.flyingweapon.IFlyingWeapon;
+import jackiecrazy.wardance.capability.quiver.QuiverData;
 import jackiecrazy.wardance.config.weapon.WeaponStats;
+import jackiecrazy.wardance.config.weapon.interactions.WeaponInteractions;
 import jackiecrazy.wardance.entity.GhostBlockEntity;
 import jackiecrazy.wardance.entity.WarEntities;
 import jackiecrazy.wardance.networking.CombatChannel;
@@ -59,14 +61,7 @@ public class ThrowPacket {
     public static class Handler implements BiConsumer<ThrowPacket, Supplier<NetworkEvent.Context>> {
 
         private static boolean swapFromEnderChest(int packet, ServerPlayer player, InteractionHand h) {
-            if (packet < 0) return false;
-            ItemStack held = player.getItemInHand(h);
-            final ItemStack nextItem = player.getEnderChestInventory().removeItem(packet, 999);
-            if (held.getCount() == 0 || held.isEmpty() || player.getEnderChestInventory().addItem(held).isEmpty()) {
-                player.setItemInHand(h, nextItem);
-                CombatChannel.INSTANCE.send(PacketDistributor.PLAYER.with(() -> player), new SyncQuiverPacket(player));
-            } else player.getEnderChestInventory().addItem(nextItem);
-            return true;
+            return QuiverData.getData(player).swapWithHand(player, h, packet);
         }
 
         @Override
@@ -75,16 +70,16 @@ public class ThrowPacket {
                 ServerPlayer player = contextSupplier.get().getSender();
                 InteractionHand h = packet.main ? InteractionHand.MAIN_HAND : InteractionHand.OFF_HAND;
                 if (player == null) return;
-                float cool = CombatUtils.getCooledAttackStrength(player, h, 1f);
-                //if (cool < 0.9) return;//todo how to change this to moveset based cooldown check
                 //have a weapon, yeet!
                 final ItemStack held = player.getItemInHand(h);
                 if (!held.isEmpty()) {
+                    WeaponInteractions.InteractionGroup ig = WeaponStats.getSweepInfo(held, player, WeaponStats.AttackType.THROW, false, null);
+
                     final IFlyingWeapon cap = FlyingWeaponData.getCap(player);
                     CombatUtils.throw_vec = packet.destination.subtract(player.getEyePosition()).normalize();
                     CombatUtils.setAttackType(player, WeaponStats.AttackType.THROW);
-                    if (CombatUtils.processWeaponInteraction(player, null, h, player.getAttributeValue(ForgeMod.ENTITY_REACH.get()))) {
-                        if (swapFromEnderChest(packet.next, player, h))
+                    if (CombatUtils.processWeaponInteraction(player, null, h, player.getAttributeValue(ForgeMod.ENTITY_REACH.get()), ig)) {
+                        if ((player.getItemInHand(h).isEmpty()||ig.forceNextWeapon()) && swapFromEnderChest(packet.next, player, h))
                             cap.forceRefreshWeapons();
                     }
                 } else if (!WeaponStats.DESPERATION.isEmpty() && CombatData.getCap(player).consumeSpirit(6)) {
@@ -105,6 +100,7 @@ public class ThrowPacket {
                         CombatChannel.INSTANCE.send(PacketDistributor.PLAYER.with(() -> player), new SyncQuiverPacket(player));
                     }
                 }
+                CombatChannel.INSTANCE.send(PacketDistributor.PLAYER.with(() -> player), new SyncQuiverPacket(player));
             });
             contextSupplier.get().setPacketHandled(true);
         }

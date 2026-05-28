@@ -37,7 +37,6 @@ import org.joml.Vector4d;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import java.awt.*;
 import java.util.*;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -249,7 +248,7 @@ public class WeaponStats extends SimpleJsonResourceReloadListener {
     }
 
     public static WeaponInteractions.InteractionGroup getSweepInfo(ItemStack i, LivingEntity wielder, AttackType s,
-                                                                   boolean ignoreOverrides) {
+                                                                   boolean ignoreOverrides, InteractionHand h) {
         final WeaponInfo info = lookupStats(i);
         if (info == null) {
             if (Objects.requireNonNull(s) == AttackType.THROW) {
@@ -263,7 +262,7 @@ public class WeaponStats extends SimpleJsonResourceReloadListener {
                 ArgumentContext ctx = new ArgumentContext(wielder, wielder);
                 for (WeaponInteractions.InteractionOverride io : intl.getOverrides()) {
                     //fixme should be an attack cooldown check here
-                    if (Boolean.TRUE.equals(io.condition().resolve(ctx))) {
+                    if (h != null && CombatUtils.getCooledAttackStrength(wielder, h, 0.5f) > io.override().getMinimumCooldown() && Boolean.TRUE.equals(io.condition().resolve(ctx))) {
                         return io.override();
                     }
                 }
@@ -276,7 +275,7 @@ public class WeaponStats extends SimpleJsonResourceReloadListener {
         if (info_override != null) return info_override;
 //        final WeaponInfo info = lookupStats(i);
 //        if (info == null) return SweepAttack.DEFAULT_NONE.getHitInfo();
-        if (getSweepInfo(i, wielder, s, false).getInteractions().get(0) instanceof SweepAttack sa)
+        if (getSweepInfo(i, wielder, s, false, null).getInteractions().get(0) instanceof SweepAttack sa)
             return sa.getHitInfo();
         return ((SweepAttack) SweepAttack.DEFAULT_NONE.getInteractionOfType(WeaponInteractions.WeaponInteraction.InteractionType.SWEEP)).getHitInfo();
     }
@@ -305,11 +304,12 @@ public class WeaponStats extends SimpleJsonResourceReloadListener {
     }
 
     public static class WeaponInfo {
+        private String id;
         private double attack, defend;
         private boolean shield;
         private transient MotionManager idleFlip, guardFlip, aimFlip, swapFlip;
         private MotionManager idle_frame = new MotionManagers.FixedMM(new MotionFrame(new Vec3(0, 1, 0), Vec3.ZERO, 0).setEffects(new FrameEffects().setEffects()), 5);
-        private MotionManager guard_frame = new MotionManagers.FixedMM(new MotionFrame(new Vec3(0, -1, 1), Vec3.ZERO, new Vector4d(0, 1, 0, 90)).setEffects(new FrameEffects().setEffects(FlyingWeaponEffect.WEAPON)), CombatConfig.parryTime / 2);
+        private MotionManager guard_frame = new MotionManagers.FixedMM(new MotionFrame(new Vec3(0, -1, 1), Vec3.ZERO, new Vector4d(0, 1, 0, 90)).setEffects(new FrameEffects().setEffects(FlyingWeaponEffect.WEAPON)), CombatConfig.parryTime / 5);
         private MotionManager aim_frame = new MotionManagers.FixedMM(new MotionFrame(new Vec3(0, 0, 1), new Vec3(0, 0, 1), 0).setEffects(new FrameEffects().setEffects(FlyingWeaponEffect.WEAPON)), 2);
         private MotionManager swap_frame = new MotionManagers.FixedMM(new MotionFrame(new Vec3(0, 0, 1), Vec3.ZERO, 0).setEffects(new FrameEffects().setEffects(FlyingWeaponEffect.WEAPON, FlyingWeaponEffect.AFTERIMAGE)), 2);
         //standing, falling, sneaking, sprinting, riding

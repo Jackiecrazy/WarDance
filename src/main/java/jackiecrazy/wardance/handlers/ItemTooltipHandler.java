@@ -51,7 +51,7 @@ public class ItemTooltipHandler {
                     //final Component standing = WeaponStats.getSweepInfo(stack, entity, WeaponStats.AttackType.STANDING, false).getToolTip(e.getItemStack(), e.getFlags().isAdvanced());
                     for (WeaponStats.AttackType s : WeaponStats.AttackType.values()) {
                         if (s == WeaponStats.AttackType.UNDEFINED) continue;
-                        final Component sweepGroup = WeaponStats.getSweepInfo(stack, entity, s, true).getToolTip(e.getItemStack(), e.getFlags().isAdvanced());
+                        final Component sweepGroup = WeaponStats.getSweepInfo(stack, entity, s, true, null).getDescription(e.getItemStack(), e.getFlags().isAdvanced());
                         if(sweepGroup==null) e.getToolTip().add(Component.literal("no sweep!?"));
 //                        if (s == WeaponStats.AttackType.STANDING || !sweepGroup.equals(standing))
                         else e.getToolTip().add(Component.translatable("wardance.tooltip.sweep." + s.name().toLowerCase(Locale.ROOT), sweepGroup.copy().withStyle(ChatFormatting.DARK_AQUA)).withStyle(ChatFormatting.GRAY));

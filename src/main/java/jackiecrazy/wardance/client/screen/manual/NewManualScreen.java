@@ -1,6 +1,7 @@
 package jackiecrazy.wardance.client.screen.manual;
 
 import com.google.common.collect.ImmutableList;
+import jackiecrazy.wardance.client.screen.InfoPanel;
 import jackiecrazy.wardance.client.screen.skill.PassiveButton;
 import jackiecrazy.wardance.client.screen.skill.SkillSelectionScreen;
 import jackiecrazy.wardance.client.screen.skill.SkillSliceButton;
@@ -69,9 +70,9 @@ public class NewManualScreen extends SkillSelectionScreen {
         }, YouTestMyPatienceAccessor.getDEFAULT_NARRATION());
         int split = (this.height - (PADDING) * 3 - 20);
         int descWidth = (width - (PADDING * 4) - SKILL_CIRCLE_WIDTH)/2;
-        this.manualDesc = new InfoPanel(this.minecraft, descWidth, split, PADDING, PADDING);
+        this.manualDesc = new InfoPanel(this, this.minecraft, descWidth, split, PADDING, PADDING);
         super.init();
-        this.skillInfo = new InfoPanel(this.minecraft, descWidth, split, PADDING * 2 + descWidth, PADDING);
+        this.skillInfo = new InfoPanel(this, this.minecraft, descWidth, split, PADDING * 2 + descWidth, PADDING);
         clearWidgets();
         ArrayList<String> add=new ArrayList<>();
         BookViewScreen.WrittenBookAccess wba =new BookViewScreen.WrittenBookAccess(manual);

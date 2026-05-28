@@ -43,20 +43,21 @@ public class QuiverScreen extends AbstractContainerScreen<QuiverMenu> {
         final Iterator<SkillCategory> iterator = Skill.categoryMap.keySet().iterator();
         int j=0;
         //guiGraphics.blit(TEXTURE, x, y, 0, 0, this.imageWidth, 19);
+        final int barSpace = 18;
         while (iterator.hasNext()) {
             int slots = menu.getUsableSlots(j);
             Color c = iterator.next().getColor();
             RenderSystem.setShaderColor(c.getRed()/255f, c.getGreen()/255f, c.getBlue()/255f, 1);
             //draw available slots
-            guiGraphics.blit(TEXTURE, x, 19+y+18*j, 0, 19+18*j, 7+18*slots, 18);
+            guiGraphics.blit(TEXTURE, x, 19+y+ barSpace *j, 0, 19+ 18 *j, 7+ 18 *slots, 18);
             //then the little cap
-            guiGraphics.blit(TEXTURE, x+7+18*slots, 19+y+18*j, 7+18*9, 19+18*j, 18, 18);
+            guiGraphics.blit(TEXTURE, x+7+ barSpace *slots, 19+y+ 18 *j, 7+ 18 *9, 19+ 18 *j, 18, 18);
             j++;
         }
         RenderSystem.setShaderColor(1,1,1,1);
 
-        int remainingY = imageHeight-(y+18*(j-1))+3;
-        guiGraphics.blit(TEXTURE, x, y+remainingY, 0, remainingY, this.imageWidth, remainingY);
+        int remainingY = imageHeight-(barSpace *(j))+3;
+        guiGraphics.blit(TEXTURE, x, y+169, 0, 169, this.imageWidth, 87);
 
         // Draw color labels on the left
         String[] colors = {"White", "Gold", "Purple", "Red", "Green", "Cyan", "Blue", "Gray"};

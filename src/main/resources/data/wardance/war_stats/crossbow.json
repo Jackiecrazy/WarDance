@@ -22,6 +22,7 @@
           "offset": [
             0.3, 0.8, 0.5
           ],
+          "render_rotation": [0,1,0],
           "effects": {
             "effects": [
               "WEAPON"
@@ -40,6 +41,7 @@
           "offset": [
             0.3, 0.8, 0.5
           ],
+          "render_rotation": [0,1,0],
           "effects": {
             "effects": [
               "WEAPON"
@@ -58,6 +60,7 @@
           "offset": [
             0.3, 0.8, 0.5
           ],
+          "render_rotation": [0,1,0],
           "effects": {
             "effects": [
               "WEAPON"

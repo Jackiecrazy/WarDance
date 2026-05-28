@@ -3,6 +3,7 @@ package jackiecrazy.wardance.networking.combat;
 import jackiecrazy.footwork.capability.stylish.StylishData;
 import jackiecrazy.footwork.utils.GeneralUtils;
 import jackiecrazy.wardance.capability.flyingweapon.FlyingWeaponData;
+import jackiecrazy.wardance.capability.quiver.QuiverData;
 import jackiecrazy.wardance.config.GeneralConfig;
 import jackiecrazy.wardance.config.weapon.WeaponStats;
 import jackiecrazy.wardance.config.weapon.interactions.WeaponInteractions;
@@ -56,24 +57,20 @@ public class SwapAttackPacket {
                 InteractionHand h = packet.main ? InteractionHand.MAIN_HAND : InteractionHand.OFF_HAND;
                 if (p == null) return;
                 if ((GeneralConfig.dual || packet.main)) {
-                    //stuff the old one somewhere
-                    final ItemStack nextItem = p.getEnderChestInventory().removeItem(packet.nextSlot, 999);
-
-                    //this needs special handling
-                    WeaponStats.AttackType s = WeaponStats.AttackType.DRAW_ATTACK;
-                    WeaponInteractions.InteractionGroup group = WeaponStats.getSweepInfo(nextItem, p, s, false);
-                    if (CombatUtils.getCooledAttackStrength(p, h, 1f) < group.getMinimumCooldown()){
-                        p.getEnderChestInventory().setItem(packet.nextSlot,nextItem);
-                        return;
+                    double cd=CombatUtils.getCooledAttackStrength(p, h, 1f);
+                    if(QuiverData.getData(p).swapWithHand(p, h, packet.nextSlot)){
+                        ItemStack nextItem = p.getItemInHand(h);
+                        WeaponStats.AttackType s = WeaponStats.AttackType.DRAW_ATTACK;
+                        WeaponInteractions.InteractionGroup group = WeaponStats.getSweepInfo(nextItem, p, s, false, null);
+                        if (cd >= group.getMinimumCooldown()){
+                            StylishData.getCap(p).addCombo(0.1f, "swap");
+                            //p.setItemInHand(h, nextItem);
+                            FlyingWeaponData.getCap(p).forceRefreshWeapons();
+                            CombatUtils.setAttackType(p, WeaponStats.AttackType.DRAW_ATTACK);
+                            CombatUtils.processWeaponInteraction(p, null, h, GeneralUtils.getAttributeValueSafe(p, ForgeMod.ENTITY_REACH.get()), group);
+                            //return;
+                        }
                     }
-
-                    if (p.getEnderChestInventory().addItem(p.getItemInHand(h)).isEmpty()) {
-                        StylishData.getCap(p).addCombo(0.1f, "swap");
-                        p.setItemInHand(h, nextItem);
-                        FlyingWeaponData.getCap(p).forceRefreshWeapons();
-                        CombatUtils.setAttackType(p, WeaponStats.AttackType.DRAW_ATTACK);
-                        CombatUtils.processWeaponInteraction(p, null, h, GeneralUtils.getAttributeValueSafe(p, ForgeMod.ENTITY_REACH.get()));
-                    } else p.getEnderChestInventory().addItem(nextItem);
                     CombatChannel.INSTANCE.send(PacketDistributor.PLAYER.with(() -> p), new SyncQuiverPacket(p));
                 }
                 CombatUtils.setHandCooldown(p, h, 0, true);

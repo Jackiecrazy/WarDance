@@ -352,7 +352,7 @@ public class ClientEvents {
 
 
                     if (mc.options.keyAttack.isDown()) {
-                        final WeaponInteractions.InteractionGroup mainInfo = WeaponStats.getSweepInfo(mc.player.getMainHandItem(), mc.player, state, false);
+                        final WeaponInteractions.InteractionGroup mainInfo = WeaponStats.getSweepInfo(mc.player.getMainHandItem(), mc.player, state, false, null);
                         //special charge action, immediately start
                         if (mc.player.isUsingItem() && mc.player.getUsedItemHand() == InteractionHand.MAIN_HAND) {
                             //hack. Spoof use item key to down for the keybind processing
@@ -616,6 +616,22 @@ public class ClientEvents {
             e.setCanceled(true);
             e.setCancellationResult(InteractionResult.PASS);
             return;
+        }
+    }
+
+    @SubscribeEvent
+    public static void onClientAttackInput(InputEvent.InteractionKeyMappingTriggered event) {
+        if (event.isPickBlock() || event.isUseItem() && event.getHand() == InteractionHand.MAIN_HAND) return;
+
+        Player player = Minecraft.getInstance().player;
+        if (player == null)
+            return;
+
+        float cooldownProgress = CombatUtils.getCooledAttackStrength(player, event.getHand(), 0.5f); // 0.0F = current progress
+
+        if (cooldownProgress < WeaponStats.getSweepInfo(player.getItemInHand(event.getHand()), player, CombatUtils.getAttackState(player), false, event.getHand()).getMinimumCooldown()) {
+            event.setCanceled(true);
+            event.setSwingHand(false);
         }
     }
 

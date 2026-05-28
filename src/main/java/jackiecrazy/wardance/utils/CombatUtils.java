@@ -3,7 +3,6 @@ package jackiecrazy.wardance.utils;
 import jackiecrazy.footwork.api.CombatDamageSource;
 import jackiecrazy.footwork.api.FootworkDamageArchetype;
 import jackiecrazy.footwork.capability.action.ActionData;
-import jackiecrazy.footwork.capability.action.AttachAction;
 import jackiecrazy.footwork.capability.resources.CombatData;
 import jackiecrazy.footwork.capability.resources.ICombatCapability;
 import jackiecrazy.footwork.capability.stylish.StylishData;
@@ -12,7 +11,6 @@ import jackiecrazy.footwork.capability.weaponry.CombatManipulator;
 import jackiecrazy.footwork.client.particle.FootworkParticles;
 import jackiecrazy.footwork.client.particle.ScalingParticleType;
 import jackiecrazy.footwork.entity.flyingweapon.FlyingItemEntity;
-import jackiecrazy.footwork.move.motionframe.HitEffects;
 import jackiecrazy.footwork.move.motionframe.HitInfo;
 import jackiecrazy.footwork.move.motionframe.MotionManager;
 import jackiecrazy.footwork.potion.FootworkEffects;
@@ -28,7 +26,6 @@ import jackiecrazy.wardance.config.GeneralConfig;
 import jackiecrazy.wardance.config.MobSpecs;
 import jackiecrazy.wardance.config.weapon.interactions.*;
 import jackiecrazy.wardance.config.weapon.WeaponStats;
-import jackiecrazy.wardance.entity.FlyingWeaponEntity;
 import jackiecrazy.wardance.entity.ThrownWeaponEntity;
 import jackiecrazy.wardance.event.ProjectileDefendEvent;
 import jackiecrazy.wardance.event.SweepEvent;
@@ -44,6 +41,7 @@ import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.util.Mth;
 import net.minecraft.world.InteractionHand;
+import net.minecraft.world.InteractionResult;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.entity.Entity;
@@ -367,7 +365,7 @@ public class CombatUtils {
 
     public static void quickSwap(LivingEntity e, ItemStack stack, InteractionHand hand) {
         ItemStack main = e.getMainHandItem();
-        EquipmentSlot slot = hand==InteractionHand.MAIN_HAND?EquipmentSlot.MAINHAND:EquipmentSlot.OFFHAND;
+        EquipmentSlot slot = hand == InteractionHand.MAIN_HAND ? EquipmentSlot.MAINHAND : EquipmentSlot.OFFHAND;
         suppressChangeFunctions = true;
         e.setItemInHand(hand, stack);
         suppressChangeFunctions = false;
@@ -381,7 +379,7 @@ public class CombatUtils {
     public static boolean processWeaponInteraction(LivingEntity e, Entity ignore, InteractionHand h, double reach) {
         ItemStack stack = e.getItemInHand(h);
         WeaponStats.AttackType s = getAttackState(e);
-        WeaponInteractions.InteractionGroup group = WeaponStats.getSweepInfo(stack, e, s, false);
+        WeaponInteractions.InteractionGroup group = WeaponStats.getSweepInfo(stack, e, s, false, null);
         return processWeaponInteraction(e, ignore, h, reach, group);
     }
 
@@ -419,8 +417,8 @@ public class CombatUtils {
                 //stack.releaseUsing(e.level(), e, use.getStartTime());
                 if (e instanceof Player p) {
                     ChargingData.getCap(p).alterSpeed(stack, use.getUseSpeed());
-                    stack.use(e.level(), p, h);
-                    p.startUsingItem(h);
+                    if (stack.use(e.level(), p, h).getResult() == InteractionResult.CONSUME)
+                        p.startUsingItem(h);
                     //todo any animation can override display item
                     // sword pick shovel axe trident shield
                 }
@@ -481,7 +479,7 @@ public class CombatUtils {
 
         if (!PermissionData.getCap(e).canSweep()) type = SweepAttack.SWEEPTYPE.NONE;
         double radius;
-        SweepAttack.SWEEPTYPE prevtype=type;
+        SweepAttack.SWEEPTYPE prevtype = type;
 
         SweepEvent sre = new SweepEvent(e, h, e.getMainHandItem(), type, base, scaling);
         MinecraftForge.EVENT_BUS.post(sre);
@@ -493,15 +491,15 @@ public class CombatUtils {
         type = sre.getType();
 
         //purely visual attack
-        if(customAnim==null||prevtype!=sre.getType()) {
+        if (customAnim == null || prevtype != sre.getType()) {
             int time = CombatUtils.getCooldownPeriod(e, h);
             int animTime = type == SweepAttack.SWEEPTYPE.CIRCLE ? 10 : 5;
             if (type == SweepAttack.SWEEPTYPE.CIRCLE) {
                 animTime = 10;//smoother
                 reach = radius;
             }
-            time=Math.max(animTime, time/2);
-            customAnim=SweepAnimationBuilder.temp_getMMFromType(animTime, type, radius, null, reach);
+            time = Math.max(animTime, time / 2);
+            customAnim = SweepAnimationBuilder.temp_getMMFromType(animTime, type, radius, null, reach);
         }
         FlyingWeaponData.getCap(e).scheduleAction(h, customAnim);
 
@@ -663,11 +661,11 @@ public class CombatUtils {
             //prioritize mobs for knockback
             if (le instanceof Player) {
                 MobilityUtils.knockBack(defender, le, strength, true, false);
-                EffectUtils.attemptAddPot(defender, EffectUtils.stackPot(defender, new MobEffectInstance(FootworkEffects.COUNTERSTRIKE.get(), 100, 0), EffectUtils.StackingMethod.MAX_DURATION), true);
+                EffectUtils.attemptAddPot(defender, EffectUtils.stackPot(defender, new MobEffectInstance(FootworkEffects.COUNTERSTRIKE.get(), 200, 0), EffectUtils.StackingMethod.MAX_DURATION), true);
             } else {
                 ((LivingEntityAccessors) (defender)).callBlockUsingShield(le);
                 MobilityUtils.knockBack(le, defender, strength, true, false);
-                EffectUtils.attemptAddPot(le, EffectUtils.stackPot(le, new MobEffectInstance(FootworkEffects.COUNTERSTRIKE.get(), 100, 0), EffectUtils.StackingMethod.MAX_DURATION), true);
+                EffectUtils.attemptAddPot(le, EffectUtils.stackPot(le, new MobEffectInstance(FootworkEffects.COUNTERSTRIKE.get(), 200, 0), EffectUtils.StackingMethod.MAX_DURATION), true);
             }
         }
 
@@ -837,7 +835,7 @@ public class CombatUtils {
         if (!StylishData.getCap(sender).isCombatMode()) return false;
         if (CombatData.getCap(sender).getHandBind(h) > 0) return false;
         //StylishData.getCap(sender).resetTriggerBar();
-        WeaponInteractions.InteractionGroup info = WeaponStats.getSweepInfo(sender.getItemInHand(h), sender, s, false);
+        WeaponInteractions.InteractionGroup info = WeaponStats.getSweepInfo(sender.getItemInHand(h), sender, s, false, null);
 //        if (info instanceof SweepAttack sa)
 //            SweepAnimationBuilder.scheduleFinisher(sender, h, sa);
         StylishData.getCap(sender).addCombo(0.25f, "heavy" + (h == InteractionHand.OFF_HAND) + s.name());

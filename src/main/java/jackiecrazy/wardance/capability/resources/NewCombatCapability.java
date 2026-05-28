@@ -88,6 +88,7 @@ public class NewCombatCapability implements ICombatCapability {
             return (float) mi.getMaxPosture();
         else
             ret = (float) (Math.ceil(ReworkConstants.POSTURE_QI * 10 / 1.09 * Math.sqrt(elb.getBbWidth() * elb.getBbHeight())));
+        ret = Math.min(ret, 400);//sanity
         if (elb instanceof Player) ret *= 1.5f;
         return ret;
     }
