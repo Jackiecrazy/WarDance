@@ -2,7 +2,6 @@
   "#glaive": {
     "attack": 20,
     "defend": 0.5,
-    "shield": false,
     "standing": {
       "type": "animation",
       "duration": 10,
@@ -48,7 +47,8 @@
           ],
           "offset": [
             0, 0, 1
-          ]
+          ],
+          "render_rotation": 90
         }, {
           "direction": [
             1, 0, 0
@@ -64,14 +64,24 @@
               "WEAPON", "TRAIL"
             ],
             "trail_color": [10, 10, 240]
-          }
+          },
+          "render_rotation": 90
         }, {
           "direction": [
             0, 0, 1
           ],
           "offset": [
             0, 0, 1
-          ]
+          ],
+          "render_rotation": 90
+        }, {
+          "direction": [
+            -1, 0, 0
+          ],
+          "offset": [
+            0, 0, 1
+          ],
+          "render_rotation": 90
         }
       ]
     },

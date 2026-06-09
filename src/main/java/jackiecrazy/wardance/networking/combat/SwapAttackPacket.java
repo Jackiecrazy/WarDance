@@ -61,7 +61,7 @@ public class SwapAttackPacket {
                     if(QuiverData.getData(p).swapWithHand(p, h, packet.nextSlot)){
                         ItemStack nextItem = p.getItemInHand(h);
                         WeaponStats.AttackType s = WeaponStats.AttackType.DRAW_ATTACK;
-                        WeaponInteractions.InteractionGroup group = WeaponStats.getSweepInfo(nextItem, p, s, false, null);
+                        WeaponInteractions.InteractionGroup group = WeaponStats.getSweepInfo(nextItem, p, s, false, h);
                         if (cd >= group.getMinimumCooldown()){
                             StylishData.getCap(p).addCombo(0.1f, "swap");
                             //p.setItemInHand(h, nextItem);
@@ -71,7 +71,7 @@ public class SwapAttackPacket {
                             //return;
                         }
                     }
-                    CombatChannel.INSTANCE.send(PacketDistributor.PLAYER.with(() -> p), new SyncQuiverPacket(p));
+                    QuiverData.getData(p).sync(p);
                 }
                 CombatUtils.setHandCooldown(p, h, 0, true);
             });

@@ -22,7 +22,8 @@
             "consume_item": false,
             "display_stack": {
               "ID": "itemstack",
-              "item": "minecraft:wheat_seeds"
+              "item": "minecraft:wheat_seeds",
+              "force_item": true
             }
           }
         ]

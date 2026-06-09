@@ -140,6 +140,10 @@ dependencies {
     implementation fg.deobf("jackiecrazy.footwork:footwork-${footwork_version}:${mc_version}")
     implementation fg.deobf("jackiecrazy.cloakanddagger:cloakanddagger-${cd_version}:${mc_version}")
 
+//    implementation fg.deobf("dev.shadowsoffire:Placebo:${placebo_version}-${mc_version}")
+//    implementation fg.deobf("dev.shadowsoffire:Apotheosis:${apotheosis_version}-${mc_version}")
+//    runtimeOnly fg.deobf("curse.maven:attributefix-280510:4911084")
+
 }
 
 tasks.named('jar', Jar).configure {

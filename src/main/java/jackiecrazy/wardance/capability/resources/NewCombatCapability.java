@@ -243,7 +243,14 @@ public class NewCombatCapability implements ICombatCapability {
                 cycles--;
                 amount *= (1.15f);
             }
-            //elb.removeEffect(FootworkEffects.COUNTERSTRIKE.get());
+        }
+        if (elb.hasEffect(FootworkEffects.UNSTEADY.get())) {
+            int cycles = elb.getEffect(FootworkEffects.UNSTEADY.get()).getAmplifier() + 1;
+            while (cycles > 0) {
+                cycles--;
+                amount *= (1.25f);
+            }
+            elb.removeEffect(FootworkEffects.UNSTEADY.get());
         }
 
 
@@ -770,8 +777,8 @@ public class NewCombatCapability implements ICombatCapability {
         if (!CombatUtils.suppressChangeFunctions) {
             if (isStunned()) return 1;
             LivingEntity bro = dude.get();
-            if (bro != null) {
-                if (h == InteractionHand.OFF_HAND && (WeaponStats.isTwoHanded(bro.getOffhandItem(), bro, InteractionHand.OFF_HAND) || (WeaponStats.isTwoHanded(bro.getMainHandItem(), bro, InteractionHand.MAIN_HAND) && WeaponStats.lookupStats(bro.getOffhandItem()) != null)))
+            if (bro != null&&!bro.level().isClientSide) {
+                if (h == InteractionHand.OFF_HAND && (WeaponStats.isTwoHanded(bro.getOffhandItem(), bro, InteractionHand.OFF_HAND) || (WeaponStats.isTwoHanded(bro.getMainHandItem(), bro, InteractionHand.MAIN_HAND) && WeaponStats.isWeapon(bro,bro.getOffhandItem()))))
                     return 1;
             }
         }
@@ -902,6 +909,9 @@ public class NewCombatCapability implements ICombatCapability {
                 poison *= GeneralConfig.poison;
             }
             mult *= poison;
+            double wetDebuff=0.8;
+            if(elb.isInWaterRainOrBubble())
+                mult*=wetDebuff;
         }
         if (mobPosCD < 0) {
             int overflow = -mobPosCD;

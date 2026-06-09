@@ -11,6 +11,7 @@ import jackiecrazy.wardance.capability.aerial.AerialModeData;
 import jackiecrazy.wardance.capability.charging.ChargingData;
 import jackiecrazy.wardance.capability.flyingweapon.FlyingWeaponData;
 import jackiecrazy.wardance.capability.quiver.QuiverData;
+import jackiecrazy.wardance.capability.quiver.QuiverMenu;
 import jackiecrazy.wardance.capability.resources.CombatDataOverride;
 import jackiecrazy.wardance.capability.skill.CasterData;
 import jackiecrazy.wardance.capability.skill.ISkillCapability;
@@ -155,7 +156,7 @@ public class EntityHandler {
         if (!e.getLevel().isClientSide && e.getEntity() instanceof ServerPlayer sp) {
             WeaponStats.sendItemData(sp);
             TwohandingStats.sendItemData(sp);
-            CombatChannel.INSTANCE.send(PacketDistributor.PLAYER.with(() -> sp), new SyncQuiverPacket(sp));
+            QuiverData.getData(sp).sync(sp);
         }
         //steve time extensions
         if (e.getEntity() instanceof OwnableEntity o && o.getOwner() != null) {
@@ -171,13 +172,7 @@ public class EntityHandler {
         }
     }
 
-    @SubscribeEvent
-    public static void reload(OnDatapackSyncEvent e) {
-        for (ServerPlayer sp : e.getPlayerList().getPlayers()) {
-            WeaponStats.sendItemData(sp);
-            TwohandingStats.sendItemData(sp);
-        }
-    }
+
 
     @SubscribeEvent
     public static void takeThis(EntityJoinLevelEvent e) {
@@ -192,8 +187,8 @@ public class EntityHandler {
 
     @SubscribeEvent
     public static void inventory(PlayerContainerEvent.Close e) {
-        if (e.getContainer() instanceof ChestMenu menu && menu.getContainer() instanceof PlayerEnderChestContainer) {
-            CombatChannel.INSTANCE.send(PacketDistributor.PLAYER.with(() -> (ServerPlayer) e.getEntity()), new SyncQuiverPacket(e.getEntity()));
+        if (e.getContainer() instanceof QuiverMenu menu) {
+            QuiverData.getData(e.getEntity()).sync(e.getEntity());
         }
     }
 

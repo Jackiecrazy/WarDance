@@ -6,6 +6,10 @@
       "reference_point": "target"
     },
     "into": "arakawa"
+  },{
+    "ID": "store_entity",
+    "value": "target",
+    "into": "arakawa_guardian"
   },
   {
     "ID": "move_along_path",
@@ -54,11 +58,22 @@
             "ID": "deal_damage",
             "damage_source": {
               "armor_pierce_percentage": 1,
-              "proxy": "target",
+              "proxy": {
+                "ID": "get",
+                "from": "arakawa_guardian"
+              },
               "tags": [
               ]
             },
-            "amount": 10,
+            "amount": {
+              "ID": "multiply",
+              "first": {
+                "ID": "attribute_value",
+                "reference_point": "caster",
+                "attribute": "minecraft:generic.attack_damage"
+              },
+              "second": 2
+            },
             "on_hit": [
             ]
           }

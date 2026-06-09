@@ -346,8 +346,9 @@ public class CombatHandler {
                     //add stats if it's the first attack this tick and cooldown is sufficient
                     if (!semeCap.alreadyProc("oncePerAttack")) {//first hit of a sweep attack this tick, add combo based on state
                         //semeCap.addRank(0.1f);
-                        float spiritAdded = (float) (atkMult * sweepInfo.spirit_multiplier());
+                        float spiritAdded = (float) (atkMult/Math.max(sweepInfo.getPostureScale(), 0.001) * sweepInfo.spirit_multiplier());
                         if (spiritAdded != 0) {
+                            //todo should this factor in posture/crit mult?
                             double percRed = semeCap.addSpirit(spiritAdded) / spiritAdded;
                             if (percRed > 0)
                                 semeCap.tickProc(SPIRITKB, 3);
@@ -642,7 +643,7 @@ public class CombatHandler {
             sweepInfo.runEffects(trueSource, trueSource, true, true, semeCap.isOffhandAttack()?InteractionHand.OFF_HAND:InteractionHand.MAIN_HAND, trueSource.getMainHandItem());
             sweepInfo.runEffects(trueSource, uke, false, true, semeCap.isOffhandAttack()?InteractionHand.OFF_HAND:InteractionHand.MAIN_HAND, trueSource.getMainHandItem());
             if (sweepInfo.getDrag() != null) {
-                FlyingWeaponEntity fwe = FlyingWeaponData.getCap(trueSource).getWeapon(InteractionHand.MAIN_HAND);
+                FlyingWeaponEntity fwe = ds.getDirectEntity() instanceof FlyingWeaponEntity f?f:FlyingWeaponData.getCap(trueSource).getWeapon(InteractionHand.MAIN_HAND);
                 if (fwe != null) fwe.drag(uke, sweepInfo.getDrag().strength(), sweepInfo.getDrag().duration());
             }
             double luckDiff = WarDance.rand.nextFloat() * (GeneralUtils.getAttributeValueSafe(trueSource, Attributes.LUCK)) - WarDance.rand.nextFloat() * (GeneralUtils.getAttributeValueSafe(uke, Attributes.LUCK));

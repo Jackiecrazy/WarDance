@@ -8,6 +8,7 @@ import jackiecrazy.footwork.client.particle.FootworkParticles;
 import jackiecrazy.footwork.entity.flyingweapon.FlyingItemEntity;
 import jackiecrazy.footwork.entity.flyingweapon.FlyingWeaponEffect;
 import jackiecrazy.footwork.move.motionframe.*;
+import jackiecrazy.footwork.move.motionframe.render.RenderItemGroup;
 import jackiecrazy.footwork.move.utils.ArgumentContext;
 import jackiecrazy.footwork.utils.GeneralUtils;
 import jackiecrazy.footwork.utils.MovementUtils;
@@ -131,7 +132,6 @@ public class FlyingWeaponEntity extends FlyingItemEntity implements IDrag {
                 if (this.getClass() == FlyingWeaponEntity.class && tickCount % 100 == 40) {
                     flushTrailHistory();
                     boolean valid = false;
-                    //todo this check makes grabbing blocks out of the environment not work
                     for (InteractionHand h : InteractionHand.values())
                         if (FlyingWeaponData.getCap(getOwner()).getWeapon(h) == this) valid = true;
                     if (!valid)
@@ -273,7 +273,6 @@ public class FlyingWeaponEntity extends FlyingItemEntity implements IDrag {
 
     @Override
     protected void returnToIdle(int ticks) {
-        //if(level().isClientSide)return;
         super.returnToIdle(ticks);
         setDeltaMovement(Vec3.ZERO);
         setIntangible(true);//this is needed to prevent the weapon hitting stuff when idle
@@ -283,11 +282,16 @@ public class FlyingWeaponEntity extends FlyingItemEntity implements IDrag {
     @Override
     protected void updateFrameEffects(FrameEffects effects) {
         currentEffects = effects;
-        if (effects != null) {
+        if (effects != null&& getOwner()!=null) {
             setIntangible(false);
             if (effects.getRange() >= 0) setInteractionRange((float) effects.getRange());
-            if (effects.getEffects() != null)
+            //special handling for vector adjustments on initial orientation lock
+            if (effects.getEffects() != null) {
+                if (effects.getEffects().contains(FlyingWeaponEffect.LOCK_ORIENTATION)) {
+                    lockLook(stateDependentPositionLook().getB().multiply(effects.modify_initial_rotation().x, effects.modify_initial_rotation().y, effects.modify_initial_rotation().z));
+                }
                 setEffect(effects.getEffects().toArray(new FlyingWeaponEffect[0]));
+            }
             cacheInfo = effects.getHit();
             if (effects.reset_hit())
                 alreadyHit.clear();
@@ -312,6 +316,11 @@ public class FlyingWeaponEntity extends FlyingItemEntity implements IDrag {
     }
 
     @Override
+    protected void updateSpin(MotionManager cur) {
+        super.updateSpin(cur);
+    }
+
+    @Override
     protected boolean updateMotionTargets(boolean forceskip) {
         //true if a new move started
         boolean ret = super.updateMotionTargets(forceskip);
@@ -325,6 +334,7 @@ public class FlyingWeaponEntity extends FlyingItemEntity implements IDrag {
             //solution: move these to the very very end of tick
             //except that will cause all thrown items to break.
             //aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa
+            setCosmeticItem(getHeldItem());
             unlock();
         }
         if (!isIdle()) {

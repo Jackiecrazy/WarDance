@@ -11,7 +11,7 @@ import jackiecrazy.wardance.capability.status.IMark;
 import jackiecrazy.wardance.client.GrappleRenderer;
 import jackiecrazy.wardance.client.hud.*;
 import jackiecrazy.wardance.client.screen.ponder.QuiverScreen;
-import jackiecrazy.wardance.client.screen.ponder.WeaponStyleScreen;
+import jackiecrazy.wardance.client.screen.ponder.StudyTheBladeScreen;
 import jackiecrazy.wardance.command.CategoryArgument;
 import jackiecrazy.wardance.command.SkillArgument;
 import jackiecrazy.wardance.command.WarDanceCommand;
@@ -165,6 +165,7 @@ public class WarDance {
         CombatChannel.INSTANCE.registerMessage(index++, AerialModePacket.class, new AerialModePacket.Encoder(), new AerialModePacket.Decoder(), new AerialModePacket.Handler());
         CombatChannel.INSTANCE.registerMessage(index++, UpdateFlyingWeaponPacket.class, new UpdateFlyingWeaponPacket.Encoder(), new UpdateFlyingWeaponPacket.Decoder(), new UpdateFlyingWeaponPacket.Handler());
         CombatChannel.INSTANCE.registerMessage(index++, OpenQuiverScreenPacket.class, new OpenQuiverScreenPacket.Encoder(), new OpenQuiverScreenPacket.Decoder(), new OpenQuiverScreenPacket.Handler());
+        CombatChannel.INSTANCE.registerMessage(index++, OpenStudyScreenPacket.class, new OpenStudyScreenPacket.Encoder(), new OpenStudyScreenPacket.Decoder(), new OpenStudyScreenPacket.Handler());
     }
 
     private void doClientStuff(final FMLClientSetupEvent event) {
@@ -176,7 +177,7 @@ public class WarDance {
         EntityRenderers.register(WarEntities.THROWN_WEAPON.get(), ItemEntityRenderer::new);
         event.enqueueWork(() -> {
             MenuScreens.register(WarContainers.QUIVER_MENU.get(), QuiverScreen::new);
-            MenuScreens.register(WarContainers.WEEB_MENU.get(), WeaponStyleScreen::new);
+            MenuScreens.register(WarContainers.WEEB_MENU.get(), StudyTheBladeScreen::new);
         });
     }
 
@@ -223,12 +224,10 @@ public class WarDance {
         WarCompat.checkCompatStatus();
         if (WarCompat.elenaiDodge)
             MinecraftForge.EVENT_BUS.register(ElenaiCompat.class);
-        if(GeneralConfig.debug){
             ForgeRegistries.ENTITY_TYPES.getEntries().stream()
                     .filter(ent -> ent.getValue().getCategory()!= MobCategory.MISC)
                     .forEach(a->System.out.println(a.getKey().location()));
 
-        }
     }
 
     private void commands(final RegisterCommandsEvent event) {

@@ -78,8 +78,8 @@ public class ThrowPacket {
                     final IFlyingWeapon cap = FlyingWeaponData.getCap(player);
                     CombatUtils.throw_vec = packet.destination.subtract(player.getEyePosition()).normalize();
                     CombatUtils.setAttackType(player, WeaponStats.AttackType.THROW);
-                    if (CombatUtils.processWeaponInteraction(player, null, h, player.getAttributeValue(ForgeMod.ENTITY_REACH.get()), ig)) {
-                        if ((player.getItemInHand(h).isEmpty()||ig.forceNextWeapon()) && swapFromEnderChest(packet.next, player, h))
+                    if (CombatUtils.processWeaponInteraction(player, null, h, player.getAttributeValue(ForgeMod.ENTITY_REACH.get()))) {
+                        if ((player.getItemInHand(h).isEmpty()||ig.forceNextWeapon()||packet.next>=0) && swapFromEnderChest(packet.next, player, h))
                             cap.forceRefreshWeapons();
                     }
                 } else if (!WeaponStats.DESPERATION.isEmpty() && CombatData.getCap(player).consumeSpirit(6)) {
@@ -97,10 +97,10 @@ public class ThrowPacket {
                     level.addFreshEntity(fwe);
                     if (packet.next >= 0) {
                         player.setItemInHand(h, player.getEnderChestInventory().removeItem(packet.next, 999));
-                        CombatChannel.INSTANCE.send(PacketDistributor.PLAYER.with(() -> player), new SyncQuiverPacket(player));
+                        QuiverData.getData(player).sync(player);
                     }
                 }
-                CombatChannel.INSTANCE.send(PacketDistributor.PLAYER.with(() -> player), new SyncQuiverPacket(player));
+                QuiverData.getData(player).sync(player);
             });
             contextSupplier.get().setPacketHandled(true);
         }

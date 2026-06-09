@@ -1,7 +1,7 @@
 {
   "ID": "project_hitbox",
   "max_time": 600,
-  "hit_cooldown": 20,
+  "hit_cooldown": 5,
   "selector": {
     "ID": "selector",
     "position": {
@@ -12,16 +12,22 @@
   },
   "actions": [
     {
-      "ID": "add_effect",
-      "effect": "minecraft:glowing",
-      "potency": 0,
-      "duration": 30,
-      "repeatable": true
+      "ID": "deal_damage",
+      "damage_source": {
+        "type_override": "minecraft:sweet_berry_bush",
+        "proxy": "target",
+        "tags": [
+          "avoids_guardian_thorns"
+        ]
+      },
+      "amount": 2,
+      "on_hit": [
+      ]
     },
     {
       "ID": "add_effect",
       "effect": "minecraft:slowness",
-      "potency": 0,
+      "potency": 1,
       "duration": 30,
       "repeatable": true
     }

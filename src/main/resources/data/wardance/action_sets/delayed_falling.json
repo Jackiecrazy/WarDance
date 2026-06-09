@@ -1,0 +1,21 @@
+[
+  {
+    "waiting": [
+      {
+        "ID": "wardance:play_interaction",
+        "immediate": true,
+        "move_state": "FALLING",
+        "hand": "MAIN_HAND",
+        "stack":{
+          "ID": "equipped_item",
+          "slot": "MAINHAND"
+        },
+        "condition": {
+          "time_window": "2-"
+        }
+      }
+    ],
+    "max_time": 3,
+    "ID": "wait"
+  }
+]

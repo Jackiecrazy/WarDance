@@ -1,0 +1,28 @@
+{
+  "ID": "project_hitbox",
+  "max_time": 100,
+  "hit_cooldown": 10,
+  "selector": {
+    "ID": "selector",
+    "position": {
+      "ID": "foot_position",
+      "reference_point": "target"
+    },
+    "range": 0.4
+  },
+  "actions": [
+    {
+      "ID": "deal_damage",
+      "damage_source": {
+        "armor_pierce_percentage": 1,
+        "proxy": "target",
+        "tags": [
+          "avoids_guardian_thorns"
+        ]
+      },
+      "amount": 2,
+      "on_hit": [
+      ]
+    }
+  ]
+}

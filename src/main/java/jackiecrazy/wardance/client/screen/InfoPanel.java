@@ -35,6 +35,11 @@ public class InfoPanel extends ScrollPanel {
                      Minecraft mcIn, int widthIn, int heightIn, int left, int topIn) {
         super(mcIn, widthIn, heightIn, topIn, left);
         this.parent = skillSelectionScreen;
+        font=mcIn.font;
+    }
+
+    public void setInfo(Component c){
+        setInfo(List.of(c.getString()), null);
     }
 
     public void setInfo(List<String> lines, ResourceLocation logoPath) {

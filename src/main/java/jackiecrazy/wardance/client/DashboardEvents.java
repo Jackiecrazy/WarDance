@@ -8,6 +8,7 @@ import jackiecrazy.wardance.client.screen.skill.SkillSelectionScreen;
 import jackiecrazy.wardance.networking.CombatChannel;
 import jackiecrazy.wardance.networking.meta.ManualizePacket;
 import jackiecrazy.wardance.networking.meta.OpenQuiverScreenPacket;
+import jackiecrazy.wardance.networking.meta.OpenStudyScreenPacket;
 import net.minecraft.client.Minecraft;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
@@ -41,5 +42,8 @@ public class DashboardEvents {
         e.addThought(new PonderingOrb(e.getScreen(), QUIVER, a-> {
             CombatChannel.INSTANCE.sendToServer(new OpenQuiverScreenPacket());
         }, Component.translatable("wardance.dashboard.quiver")));
+        e.addThought(new PonderingOrb(e.getScreen(), WEEB, a-> {
+            CombatChannel.INSTANCE.sendToServer(new OpenStudyScreenPacket());
+        }, Component.translatable("wardance.dashboard.weeb")));
     }
 }

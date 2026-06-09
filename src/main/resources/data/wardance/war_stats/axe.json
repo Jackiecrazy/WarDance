@@ -13,8 +13,12 @@
     "attack": 20,
     "defend": 0.6,
     "standing": {
+      "tags": ["duel", "damage", "pressure"],
       "sweep": "CLEAVE",
       "sweep_base": 50.0,
+      "on_swing": {
+        "sound": "minecraft:entity.player.attack.sweep"
+      },
       "attack_info": {
         "damage_scale": 1,
         "posture_scale": 0.5,
@@ -32,8 +36,12 @@
       }
     },
     "falling": {
+      "tags": ["exploit", "control"],
       "sweep": "CLEAVE",
       "sweep_base": 80.0,
+      "on_swing": {
+        "sound": "minecraft:entity.player.attack.sweep"
+      },
       "attack_info": {
         "damage_scale": 0.6,
         "posture_scale": 1,
@@ -65,6 +73,10 @@
     },
     "sprinting": {
       "sweep": "CIRCLE",
+      "tags": ["control", "crowd"],
+      "on_swing": {
+        "sound": "minecraft:entity.player.attack.sweep"
+      },
       "knockback": 1.5,
       "sweep_base": 3.0,
       "damage_scale": 0.6,
@@ -73,18 +85,155 @@
       "overrides": [
         {
           "condition": {
-            "ID": "consume_resource",
-            "format": "PERCENTAGE",
-            "resource": "SPIRIT",
-            "amount": 1,
-            "operation": "CONSUME"
+            "ID": "==",
+            "first": {
+              "ID": "resource",
+              "resource": "SPIRIT",
+              "format": "PERCENTAGE"
+            },
+            "second": 1
           },
           "override": {
+            "type": "animation",
+            "duration": 10,
+            "easing": "IN_OUT_SINE",
+            "on_swing": {
+              "sound": "minecraft:block.wood.fall"
+            },
+            "frames": [
+              {
+                "direction": [
+                  0, 0, 1
+                ],
+                "offset": [
+                  0, 0, 1
+                ],
+                "effects": {
+                  "range": 6,
+                  "attack_info": {
+                    "damage_scale": 1,
+                    "knockback": 3,
+                    "crit": true,
+                    "crit_damage": 1,
+                    "posture_scale": 2
+                  },
+                  "effects": [
+                    "WEAPON", "TRAIL"
+                  ],
+                  "display_stack": [
+                    {
+                      "stack": "minecraft:oak_log"
+                    }, {
+                      "stack": "minecraft:oak_log",
+                      "translation": [
+                        0, 3, 0
+                      ]
+                    }, {
+                      "stack": "minecraft:oak_log",
+                      "translation": [
+                        0, 2, 0
+                      ]
+                    }, {
+                      "stack": "minecraft:oak_log",
+                      "translation": [
+                        0, 1, 0
+                      ]
+                    }, {
+                      "stack": "minecraft:oak_leaves",
+                      "translation": [
+                        -1, 4, 0
+                      ]
+                    }, {
+                      "stack": "minecraft:oak_leaves",
+                      "translation": [
+                        0, 4, 0
+                      ]
+                    }, {
+                      "stack": "minecraft:oak_leaves",
+                      "translation": [
+                        1, 4, 0
+                      ]
+                    }, {
+                      "stack": "minecraft:oak_leaves",
+                      "translation": [
+                        -1, 4, 1
+                      ]
+                    }, {
+                      "stack": "minecraft:oak_leaves",
+                      "translation": [
+                        0, 4, 1
+                      ]
+                    }, {
+                      "stack": "minecraft:oak_leaves",
+                      "translation": [
+                        1, 4, 1
+                      ]
+                    }, {
+                      "stack": "minecraft:oak_leaves",
+                      "translation": [
+                        -1, 4, -1
+                      ]
+                    }, {
+                      "stack": "minecraft:oak_leaves",
+                      "translation": [
+                        0, 4, -1
+                      ]
+                    }, {
+                      "stack": "minecraft:oak_leaves",
+                      "translation": [
+                        1, 4, -1
+                      ]
+                    }
+                  ],
+                  "trail_color": [240, 10, 0]
+                }
+              }, {
+                "direction": [
+                  -1, 0, 0
+                ],
+                "offset": [
+                  0, 0, 1
+                ]
+              }, {
+                "direction": [
+                  0, 0, -1
+                ],
+                "offset": [
+                  0, 0, 1
+                ],
+                "render_rotation": 90
+              }, {
+                "direction": [
+                  1, 0, 0
+                ],
+                "offset": [
+                  0, 0, 1
+                ],
+                "render_rotation": 90
+              }, {
+                "direction": [
+                  0, 0, 1
+                ],
+                "offset": [
+                  0, 0, 1
+                ],
+                "render_rotation": 90
+              }, {
+                "direction": [
+                  -1, 0, 0
+                ],
+                "offset": [
+                  0, 0, 1
+                ],
+                "render_rotation": 90
+              }
+            ]
           }
         }
       ]
     },
     "aerial": {
+      "tags": ["duel", "engage", "setup"],
       "type": "animation",
       "duration": 10,
       "easing": "IN_OUT_CUBIC",
@@ -133,6 +282,7 @@
       ]
     },
     "guard_counter": {
+      "tags": ["damage", "duel", "punish"],
       "type": "animation",
       "animations": [
         {
@@ -205,8 +355,7 @@
             "ID": "consume_resource",
             "format": "PERCENTAGE",
             "resource": "SPIRIT",
-            "amount": 1,
-            "operation": "CONSUME"
+            "amount": 1
           },
           "override": {
             "animations": [
@@ -270,6 +419,7 @@
       ]
     },
     "throw": {
+      "tags": ["pressure", "utility", "damage"],
       "type": "throw",
       "attack_info": {
         "damage_scale": 0.75,
@@ -310,8 +460,7 @@
             "ID": "consume_resource",
             "format": "PERCENTAGE",
             "resource": "SPIRIT",
-            "amount": 1,
-            "operation": "CONSUME"
+            "amount": 1
           },
           "override": {
             "attack_info": {
@@ -338,149 +487,36 @@
       ]
     },
     "pickup_flourish": {
+      "tags": ["utility", "setup"],
       "type": "animation",
       "cooldown_refund": 1,
-      "on_swing": {
-        "run_actions": [
-          {
-            "ID": "wardance:load_item",
-            "stack": {
-              "ID": "itemstack",
-              "item": "minecraft:oak_log"
-            },
-            "pose": {
-              "duration": 3,
-              "direction": [
-                1, 0, 0
-              ],
-              "offset": [
-                0, 0, 0
-              ],
-              "effects": {
-                "effects": [
-                  "WEAPON"
-                ],
-                "display_stack": [
-                  {
-                    "stack": "minecraft:oak_log"
-                  }, {
-                    "stack": "minecraft:oak_log",
-                    "translation": [
-                      0, 1, 0
-                    ]
-                  }, {
-                    "stack": "minecraft:oak_log",
-                    "translation": [
-                      0, -2, 0
-                    ]
-                  }, {
-                    "stack": "minecraft:oak_log",
-                    "translation": [
-                      0, -1, 0
-                    ]
-                  }, {
-                    "stack": "minecraft:oak_leaves",
-                    "translation": [
-                      -1, 2, 0
-                    ]
-                  }, {
-                    "stack": "minecraft:oak_leaves",
-                    "translation": [
-                      0, 2, 0
-                    ]
-                  }, {
-                    "stack": "minecraft:oak_leaves",
-                    "translation": [
-                      1, 2, 0
-                    ]
-                  }, {
-                    "stack": "minecraft:oak_leaves",
-                    "translation": [
-                      -1, 2, 1
-                    ]
-                  }, {
-                    "stack": "minecraft:oak_leaves",
-                    "translation": [
-                      0, 2, 1
-                    ]
-                  }, {
-                    "stack": "minecraft:oak_leaves",
-                    "translation": [
-                      1, 2, 1
-                    ]
-                  }, {
-                    "stack": "minecraft:oak_leaves",
-                    "translation": [
-                      -1, 2, -1
-                    ]
-                  }, {
-                    "stack": "minecraft:oak_leaves",
-                    "translation": [
-                      0, 2, -1
-                    ]
-                  }, {
-                    "stack": "minecraft:oak_leaves",
-                    "translation": [
-                      1, 2, -1
-                    ]
-                  }
-                ]
-              }
-            }
-          }
-        ]
-      },
       "animations": [
         {
-          "duration": 20,
-          "easing": "IN_OUT_CUBIC",
+          "duration": 5,
+          "easing": "OUT_CUBIC",
+          "spin": [
+            72, 0, 0
+          ],
           "frames": [
             {
               "direction": [
                 0, 1, 0
               ],
               "offset": [
-                0, 0, 0
+                0, 0, 0.1
               ],
               "effects": {
                 "effects": [
-                  "WEAPON", "LOCK_ORIENTATION"
+                  "WEAPON"
                 ]
               }
-            }, {
-              "direction": [
-                0, 0, -1
-              ],
-              "offset": [
-                0, 0, 0
-              ]
-            }, {
-              "direction": [
-                0, -1, 0
-              ],
-              "offset": [
-                0, 0, 0
-              ]
-            }, {
-              "direction": [
-                0, 0, 1
-              ],
-              "offset": [
-                0, 0, 0
-              ]
-            }, {
-              "direction": [
-                0, 1, 0
-              ],
-              "offset": [
-                0, 0, 0
-              ]
             }
           ]
         }
       ]
     },
     "draw_attack": {
+      "tags": ["engage", "control"],
       "type": "animation",
       "velocity": [
         0, 0.2, 1
@@ -504,7 +540,7 @@
                 "attack_info": {
                   "damage_multiplier": 0.8,
                   "drag": {
-                    "duration": 40,
+                    "duration": 60,
                     "strength": 2
                   }
                 },

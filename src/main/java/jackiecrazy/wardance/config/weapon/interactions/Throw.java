@@ -3,6 +3,7 @@ package jackiecrazy.wardance.config.weapon.interactions;
 import jackiecrazy.footwork.move.action.Action;
 import jackiecrazy.footwork.move.argument.misc.RenderItemArgument;
 import jackiecrazy.footwork.move.motionframe.*;
+import jackiecrazy.footwork.move.motionframe.render.RenderItemGroup;
 import jackiecrazy.footwork.move.utils.ArgumentContext;
 import jackiecrazy.footwork.utils.MovementUtils;
 import jackiecrazy.wardance.entity.ThrownWeaponEntity;
@@ -29,6 +30,7 @@ public class Throw extends WeaponInteractions.WeaponInteraction {
     private RenderItemArgument display_stack;
     private List<Action> on_impact = List.of();
     private List<Action> on_embed = List.of();
+    private double max_range=32;
 
     public Throw() {
     }
@@ -162,5 +164,6 @@ public class Throw extends WeaponInteractions.WeaponInteraction {
         e.setEmbedActions(on_embed);
         e.setFake(!consume_item);
         e.setFlourish(pickup_flourish);
+        e.setMaxRange(max_range);
     }
 }

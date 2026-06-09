@@ -11,6 +11,7 @@ import jackiecrazy.footwork.move.motionframe.HitInfo;
 import jackiecrazy.footwork.move.motionframe.MotionFrame;
 import jackiecrazy.footwork.move.motionframe.MotionManager;
 import jackiecrazy.footwork.move.motionframe.MotionManagers;
+import jackiecrazy.footwork.move.motionframe.render.RenderNode;
 import jackiecrazy.footwork.utils.GeneralUtils;
 import jackiecrazy.footwork.utils.TargetingUtils;
 import jackiecrazy.wardance.capability.flyingweapon.FlyingWeaponData;
@@ -56,6 +57,13 @@ public class ThrownWeaponEntity extends FlyingWeaponEntity {
     private int auto_recall = -1;
     private boolean recalling = false;
     private boolean fake = false, pickup_flourish = false;
+    private double maxRange=32;
+
+    public ThrownWeaponEntity setMaxRange(double maxRange) {
+        this.maxRange = maxRange;
+        return this;
+    }
+
     private List<Action> impactActions = List.of();
     private List<Action> embedActions = List.of();
 
@@ -87,7 +95,7 @@ public class ThrownWeaponEntity extends FlyingWeaponEntity {
     }
 
     private boolean noCosmetics() {
-        return getCosmeticItem() == null || (getCosmeticItem().nodes().length == 1 && getCosmeticItem().nodes()[0].stack().equals(getHeldItem()));
+        return getCosmeticItem() == null || (getCosmeticItem().nodes().length == 1 && getCosmeticItem().nodes()[0] instanceof RenderNode.ItemNode in && in.stack().equals(getHeldItem()));
     }
 
     public ThrownWeaponEntity setFake(boolean fake) {
@@ -144,7 +152,8 @@ public class ThrownWeaponEntity extends FlyingWeaponEntity {
 
     @Override
     public boolean skipAttackInteraction(Entity ent) {
-        if (!ent.level().isClientSide && ent instanceof Player p && p.getMainHandItem().isEmpty() && isReal()) {
+        if (ent instanceof Player p && p.getMainHandItem().isEmpty() && isReal()) {
+            //todo skip punch if pickup
             return pickup(p);
         }
         return false;
@@ -166,8 +175,14 @@ public class ThrownWeaponEntity extends FlyingWeaponEntity {
             if (gravity != 0 && !intangible())
                 addDeltaMovement(new Vec3(0, gravity, 0));
             if (getOwner() instanceof Player p) {
-                if (p.distanceToSqr(this) > 32 * 32) pickup(p);
-                if (p.distanceToSqr(this) < 4 && recalling) pickup(p);
+                if (p.distanceToSqr(this) > maxRange*maxRange){
+                    pickup(p);
+                    return;
+                }
+                if (p.distanceToSqr(this) < 4 && recalling){
+                    pickup(p);
+                    return;
+                }
             }
         }
     }
@@ -209,10 +224,10 @@ public class ThrownWeaponEntity extends FlyingWeaponEntity {
                 runImpactActions();
                 runEmbedActions();
                 setIdlePose(new MotionManagers.FixedMM(new MotionFrame(localOffset, new Vec3(0, 0, -lodgedMob.getBbWidth() / 1.75)), 1));
+                dormant = true;
                 setUniversalOffset(Vec3.ZERO);
                 setDeltaMovement(Vec3.ZERO);
                 setIntangible(true);
-                dormant = true;
                 return;
             }
         }
@@ -297,8 +312,7 @@ public class ThrownWeaponEntity extends FlyingWeaponEntity {
             if (player.getMainHandItem().isEmpty()) slot = player.getInventory().selected;
             else if (QuiverData.getData(player).sheathe(getPickResult(), false)) {
                 success = true;
-                if (player instanceof ServerPlayer p)
-                    CombatChannel.INSTANCE.send(PacketDistributor.PLAYER.with(() -> p), new SyncQuiverPacket(p));
+                QuiverData.getData(player).sync(player);
             } else if (player.getOffhandItem().isEmpty()) {
                 //special offhand handling
                 slot = Inventory.SLOT_OFFHAND;

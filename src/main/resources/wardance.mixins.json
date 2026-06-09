@@ -4,7 +4,7 @@
   "compatibilityLevel": "JAVA_17",
   "refmap": "wardance.refmap.json",
   "mixins": ["InCombatAccessor", "LivingEntityAccessors", "MixinAerialMode", "MixinBlockFrameDisable", "MixinEmptyHands", "MixinLivingEntity", "MixinNewSweepAttack", "MixinPlayerEntity", "MixinSweepDurabilitySuppressor", "PlayerSwingingMixin", "ProjectileImpactMixin", "ServerPlayerNoShakeMixin", "ShieldDisableOverwrite", "SifuDropsMixin"],
-  "client": ["AttackCanceler", "ClientAccessors", "DarkTideCancelScreenShakeMixin", "LocalPlayerAerialMixin", "MixinEquipProgress", "MixinInternalDamage", "RenderItchyCurseMixin", "TwoHandingRenderMixin", "YouTestMyPatienceAccessor"],
+  "client": ["AttackCanceler", "ClientAccessors", "DarkTideCancelScreenShakeMixin", "ItemInHandLayerMixin", "LocalPlayerAerialMixin", "MixinEquipProgress", "MixinInternalDamage", "RenderItchyCurseMixin", "TwoHandingRenderMixin", "YouTestMyPatienceAccessor"],
   "injectors": {
     "defaultRequire": 1
   },

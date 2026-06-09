@@ -12,6 +12,7 @@
     "attack": 15,
     "defend": 0.4,
     "standing": {
+      "tags": ["pressure", "setup"],
       "sweep": "CLEAVE",
       "sweep_base": 60.0,
       "attack_info": {
@@ -27,7 +28,15 @@
                   "effect": "minecraft:luck",
                   "recipient": "caster",
                   "duration": 100,
-                  "stacking": "MAX_DURATION"
+                  "potency": {
+                    "ID": "divide",
+                    "first": {
+                      "ID": "attribute_value",
+                      "reference_point": "caster",
+                      "attribute": "minecraft:generic.luck"
+                    },
+                    "second": 2
+                  }
                 }, {
                   "ID": "play_sound",
                   "sound": "minecraft:entity.experience_orb.pickup",
@@ -83,6 +92,7 @@
             "attack_info": {
               "crit": true,
               "crit_damage": 1,
+              "posture_scale": 1.5,
               "hit_other": {}
             },
             "custom_animation": {
@@ -97,10 +107,10 @@
                     0, 0, 1
                   ],
                   "effects": {
-                    "color": [255, 0, 0],
                     "effects": [
                       "WEAPON", "TRAIL"
-                    ]
+                    ],
+                    "trail_color": [250, 50, 50]
                   }
                 }, {
                   "direction": [
@@ -124,6 +134,7 @@
       ]
     },
     "falling": {
+      "tags": ["crowd", "control"],
       "sweep": "CLEAVE",
       "sweep_base": 50.0,
       "attack_info": {
@@ -168,6 +179,7 @@
       ]
     },
     "sprinting": {
+      "tags": ["control"],
       "sweep": "CLEAVE",
       "sweep_base": 60.0,
       "attack_info": {
@@ -178,6 +190,7 @@
       }
     },
     "aerial": {
+      "tags": ["damage", "control"],
       "type": "animation",
       "on_swing": {
         "command": "/effect give @s minecraft:mining_fatigue 10"
@@ -217,6 +230,7 @@
       ]
     },
     "guard_counter": {
+      "tags": ["crowd", "damage", "control"],
       "type": "animation",
       "on_swing": {
         "sound": "minecraft:entity.player.attack.sweep"
@@ -274,8 +288,7 @@
             "ID": "consume_resource",
             "format": "PERCENTAGE",
             "resource": "SPIRIT",
-            "amount": 1,
-            "operation": "CONSUME"
+            "amount": 1
           },
           "override": {
             "animations": [
@@ -345,6 +358,7 @@
       ]
     },
     "throw": {
+      "tags": ["pressure", "damage"],
       "cooldown_refund": 0.5,
       "interactions": [],
       "overrides": [
@@ -405,8 +419,7 @@
             "ID": "consume_resource",
             "format": "NUMBER",
             "resource": "SPIRIT",
-            "amount": 7,
-            "operation": "CONSUME"
+            "amount": 7
           },
           "override": {
             "type": "throw",
@@ -434,6 +447,7 @@
       ]
     },
     "pickup_flourish": {
+      "tags": ["support", "utility"],
       "type": "animation",
       "cooldown_refund": 1,
       "on_swing": {
@@ -481,11 +495,8 @@
       ]
     },
     "draw_attack": {
+      "tags": ["pressure"],
       "type": "animation",
-      "minimum_cooldown": 0,
-      "on_swing": {
-        "command": "/effect clear @s minecraft:mining_fatigue"
-      },
       "animations": [
         {
           "duration": 10,
@@ -523,6 +534,61 @@
               ]
             }
           ]
+        }
+      ],
+
+      "overrides": [
+        {
+          "condition": {
+            "ID": "has_effect",
+            "effect": "minecraft:mining_fatigue"
+          },
+          "override": {
+            "minimum_cooldown": 0,
+            "on_swing": {
+              "command": "/effect clear @s minecraft:mining_fatigue"
+            },
+            "animations": [
+              {
+                "duration": 10,
+                "easing": "IN_CUBIC",
+                "frames": [
+                  {
+                    "direction": [
+                      1, 0, 0.2
+                    ],
+                    "offset": [
+                      0, 0, 1
+                    ],
+                    "effects": {
+                      "attack_info": {
+                        "crit": true,
+                        "crit_damage": 1.2
+                      },
+                      "effects": [
+                        "WEAPON", "TRAIL"
+                      ],
+                      "trail_color": [250, 50, 50]
+                    }
+                  }, {
+                    "direction": [
+                      0, 0, 1
+                    ],
+                    "offset": [
+                      0, 0, 1
+                    ]
+                  }, {
+                    "direction": [
+                      -1, 0, 0.2
+                    ],
+                    "offset": [
+                      0, 0, 1
+                    ]
+                  }
+                ]
+              }
+            ]
+          }
         }
       ]
     }

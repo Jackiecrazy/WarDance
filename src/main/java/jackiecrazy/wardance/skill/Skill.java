@@ -6,6 +6,7 @@ import jackiecrazy.footwork.capability.stylish.StylishData;
 import jackiecrazy.footwork.move.Move;
 import jackiecrazy.wardance.WarDance;
 import jackiecrazy.wardance.advancement.WarAdvancements;
+import jackiecrazy.wardance.capability.quiver.QuiverData;
 import jackiecrazy.wardance.capability.skill.CasterData;
 import jackiecrazy.wardance.capability.skill.ISkillCapability;
 import jackiecrazy.wardance.capability.status.Marks;
@@ -24,6 +25,7 @@ import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.player.Player;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.entity.living.LivingAttackEvent;
 import net.minecraftforge.event.entity.player.CriticalHitEvent;
@@ -50,6 +52,7 @@ public abstract class Skill extends Move {
     protected static final HashSet<String> style = makeTag(SkillTags.style);
     private ResourceLocation registryName;
     private SkillCategory category = SkillColors.none;
+    private boolean challenge;
 
     public Skill() {
         //archetype only, color is handled by category declaration
@@ -59,15 +62,6 @@ public abstract class Skill extends Move {
         }
         insert.add(this);
         variationMap.put(this.getArchetype(), insert);
-    }
-    private boolean challenge;
-
-    public boolean hasChallenge(){
-        return challenge;
-    }
-    public Skill setChallenge(){
-        challenge=true;
-        return this;
     }
 
     protected static HashSet<String> makeTag(String... stuff) {
@@ -82,6 +76,15 @@ public abstract class Skill extends Move {
     @Nullable
     public static Skill getSkill(ResourceLocation name) {
         return WarSkills.SUPPLIER.get().getValue(name);
+    }
+
+    public boolean hasChallenge() {
+        return challenge;
+    }
+
+    public Skill setChallenge() {
+        challenge = true;
+        return this;
     }
 
     public boolean isFamily(Skill s) {
@@ -210,7 +213,7 @@ public abstract class Skill extends Move {
     public abstract HashSet<String> getTags();//requires breath, bound, debuffing, healing, aoe, etc.
 
     @Nonnull
-    public HashSet<String> getSoftIncompatibility(LivingEntity caster){
+    public HashSet<String> getSoftIncompatibility(LivingEntity caster) {
         return none;
     }
 
@@ -219,7 +222,7 @@ public abstract class Skill extends Move {
     }
 
     protected void completeChallenge(LivingEntity caster) {
-        if(caster instanceof ServerPlayer sp)
+        if (caster instanceof ServerPlayer sp)
             WarAdvancements.CHALLENGE_ONLY.trigger(sp, CasterData.getCap(caster).getSkillData(this).orElse(SkillData.DUMMY));
     }
 
@@ -237,6 +240,7 @@ public abstract class Skill extends Move {
     public boolean showsMark(SkillData mark, LivingEntity target) {
         return true;
     }
+
     public boolean fakeMark(LivingEntity caster, LivingEntity target, SkillData stats) {
         return false;
     }
@@ -255,7 +259,11 @@ public abstract class Skill extends Move {
     public void onUnequip(LivingEntity caster, SkillData stats) {
     }
 
-    public void onProc(LivingEntity caster, Event procPoint, STATE state, SkillData stats, @Nullable LivingEntity target) {
+    public void onProc(LivingEntity caster,
+                       Event procPoint,
+                       STATE state,
+                       SkillData stats,
+                       @Nullable LivingEntity target) {
 
     }
 
@@ -387,7 +395,11 @@ public abstract class Skill extends Move {
     upon casting, send event to determine effectiveness
     get effectiveness, feed into activation with custom transformations on a skill-by-skill basis
      */
-    protected boolean cast(LivingEntity caster, @Nullable LivingEntity target, float duration, boolean flag, float arbitrary) {
+    protected boolean cast(LivingEntity caster,
+                           @Nullable LivingEntity target,
+                           float duration,
+                           boolean flag,
+                           float arbitrary) {
         SkillResourceEvent sre = new SkillResourceEvent(caster, target, this);
         MinecraftForge.EVENT_BUS.post(sre);
         if (!sre.isCanceled() && CombatData.getCap(caster).getSpirit() >= sre.getSpirit()) {
@@ -395,9 +407,14 @@ public abstract class Skill extends Move {
 
             MinecraftForge.EVENT_BUS.post(sce);
             if (sce.getSpirit() > 0)
-                CombatData.getCap(caster).consumeSpirit(sce.getSpirit()* ReworkConstants.SPIRIT_QI);
+                CombatData.getCap(caster).consumeSpirit(sce.getSpirit() * ReworkConstants.SPIRIT_QI);
+            //change quiver
+            if (caster instanceof Player p) {
+                QuiverData.getData(p).setSelectedQuiver(this.getCategory());
+                QuiverData.getData(p).sync(p);
+            }
             activate(caster, (float) sce.getEffectiveness(), sce.getDuration(), sce.isFlag(), sce.getArbitrary());
-            if(caster instanceof ServerPlayer sp)
+            if (caster instanceof ServerPlayer sp)
                 WarAdvancements.SKILL_CAST_TRIGGER.trigger(sp, target, getExistingData(caster));
             return true;
         }
@@ -437,7 +454,11 @@ public abstract class Skill extends Move {
     /**
      * @return whether the skill was successfully cast
      */
-    protected boolean activate(LivingEntity caster, float effectiveness, float duration, boolean flag, float something) {
+    protected boolean activate(LivingEntity caster,
+                               float effectiveness,
+                               float duration,
+                               boolean flag,
+                               float something) {
         caster.level().playSound(null, caster, SoundEvents.FIRECHARGE_USE, SoundSource.AMBIENT, 0.3f + WarDance.rand.nextFloat(), 0.5f + WarDance.rand.nextFloat());
         StylishData.getCap(caster).addCombo(0.2f, this.registryName.toString());
         CasterData.getCap(caster).getSkillData(this).ifPresent(a -> {
@@ -505,7 +526,13 @@ public abstract class Skill extends Move {
     /**
      * returns an event with all enhancements from effectiveness already applied. Override as needed.
      */
-    protected SkillCastEvent initializeCast(LivingEntity caster, @Nullable LivingEntity target, double effectiveness, int spirit, float duration, boolean flag, float arbitrary) {
+    protected SkillCastEvent initializeCast(LivingEntity caster,
+                                            @Nullable LivingEntity target,
+                                            double effectiveness,
+                                            int spirit,
+                                            float duration,
+                                            boolean flag,
+                                            float arbitrary) {
         return new SkillCastEvent(caster, target, this, effectiveness, spirit, duration, flag, arbitrary);
     }
 

@@ -379,7 +379,7 @@ public class CombatUtils {
     public static boolean processWeaponInteraction(LivingEntity e, Entity ignore, InteractionHand h, double reach) {
         ItemStack stack = e.getItemInHand(h);
         WeaponStats.AttackType s = getAttackState(e);
-        WeaponInteractions.InteractionGroup group = WeaponStats.getSweepInfo(stack, e, s, false, null);
+        WeaponInteractions.InteractionGroup group = WeaponStats.getSweepInfo(stack, e, s, false, h);
         return processWeaponInteraction(e, ignore, h, reach, group);
     }
 
@@ -419,8 +419,6 @@ public class CombatUtils {
                     ChargingData.getCap(p).alterSpeed(stack, use.getUseSpeed());
                     if (stack.use(e.level(), p, h).getResult() == InteractionResult.CONSUME)
                         p.startUsingItem(h);
-                    //todo any animation can override display item
-                    // sword pick shovel axe trident shield
                 }
             }
             if (info instanceof Animation anim) {

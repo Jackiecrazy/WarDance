@@ -2,9 +2,14 @@ package jackiecrazy.wardance.capability.quiver;
 
 import jackiecrazy.wardance.WarDance;
 import jackiecrazy.wardance.config.weapon.WeaponStats;
+import jackiecrazy.wardance.networking.CombatChannel;
+import jackiecrazy.wardance.networking.sync.SyncQuiverPacket;
+import jackiecrazy.wardance.skill.SkillCategory;
+import jackiecrazy.wardance.skill.SkillColors;
 import net.minecraft.core.Direction;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
@@ -15,6 +20,7 @@ import net.minecraftforge.common.capabilities.ICapabilityProvider;
 import net.minecraftforge.common.util.INBTSerializable;
 import net.minecraftforge.common.util.LazyOptional;
 import net.minecraftforge.items.ItemStackHandler;
+import net.minecraftforge.network.PacketDistributor;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -26,6 +32,10 @@ public class QuiverData implements ICapabilityProvider, INBTSerializable<Compoun
     });
 
     // 8 colors: white, gold, purple, red, green, cyan, blue, gray
+    public static final SkillCategory[] ORDER = {
+            SkillColors.white, SkillColors.red, SkillColors.green, SkillColors.gray, SkillColors.azure,
+            SkillColors.cyan, SkillColors.purple, SkillColors.gold
+    };
     public static final int NUM_QUIVERS = 8;
     public static final int SLOTS_PER_QUIVER = 9;
     public static final int OVERFLOW_SIZE = 5;
@@ -119,7 +129,18 @@ public class QuiverData implements ICapabilityProvider, INBTSerializable<Compoun
     }
 
     public void setSelectedQuiver(int idx) {
-        if (idx >= 0 && idx < NUM_QUIVERS) selectedQuiver = idx;
+        if (idx >= 0 && idx < NUM_QUIVERS) {
+            selectedQuiver = idx;
+        }
+    }
+
+    public void setSelectedQuiver(SkillCategory idx) {
+        for (int i = 0; i < ORDER.length; i++) {
+            if (ORDER[i] == idx) {
+                setSelectedQuiver(i);
+                break;
+            }
+        }
     }
 
     public void cycleQuiver(boolean forward) {
@@ -285,6 +306,11 @@ public class QuiverData implements ICapabilityProvider, INBTSerializable<Compoun
             if (quivers[quiverIdx].getStackInSlot(i).isEmpty()) return true;
         }
         return false;
+    }
+
+    public void sync(Player player) {
+        if (player instanceof ServerPlayer p)
+            CombatChannel.INSTANCE.send(PacketDistributor.PLAYER.with(() -> p), new SyncQuiverPacket(p));
     }
 
     void markDirty(Player player) {

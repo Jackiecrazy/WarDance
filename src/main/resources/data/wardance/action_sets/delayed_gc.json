@@ -1,0 +1,47 @@
+[
+  {
+    "waiting": [
+      {
+        "ID": "meta",
+        "actions": [
+          {
+            "ID": "change_resource",
+            "resource": "SPIRIT",
+            "operation": "ADD",
+            "amount": 100
+          },
+          {
+            "ID": "wardance:play_interaction",
+            "immediate": true,
+            "move_state": "GUARD_COUNTER",
+            "hand": "MAIN_HAND",
+            "stack":{
+              "ID": "equipped_item",
+              "slot": "MAINHAND"
+            }
+          },{
+            "ID": "change_resource",
+            "resource": "SPIRIT",
+            "operation": "ADD",
+            "amount": 100
+          },
+          {
+            "ID": "wardance:play_interaction",
+            "immediate": true,
+            "hand": "OFF_HAND",
+            "move_state": "GUARD_COUNTER",
+            "stack":{
+              "ID": "equipped_item",
+              "slot": "OFFHAND"
+            }
+          }
+        ],
+        "condition": {
+          "time_window": "2-"
+        }
+      }
+    ],
+    "max_time": 3,
+    "ID": "wait"
+  }
+]

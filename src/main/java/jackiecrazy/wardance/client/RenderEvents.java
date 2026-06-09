@@ -9,15 +9,19 @@ import jackiecrazy.footwork.capability.stylish.StylishData;
 import jackiecrazy.footwork.capability.timeslow.TimeSlowData;
 import jackiecrazy.footwork.client.GuiComponent;
 import jackiecrazy.footwork.client.screen.dashboard.DashboardScreen;
+import jackiecrazy.footwork.entity.flyingweapon.FlyingWeaponEffect;
 import jackiecrazy.footwork.utils.GeneralUtils;
 import jackiecrazy.wardance.WarDance;
 import jackiecrazy.wardance.capability.aerial.AerialModeData;
 import jackiecrazy.wardance.capability.aerial.IAerialMode;
+import jackiecrazy.wardance.capability.flyingweapon.FlyingWeaponData;
 import jackiecrazy.wardance.capability.status.Marks;
 import jackiecrazy.wardance.client.screen.scroll.ScrollScreen;
 import jackiecrazy.wardance.client.screen.skill.SkillSelectionScreen;
 import jackiecrazy.wardance.config.ClientConfig;
 import jackiecrazy.wardance.config.GeneralConfig;
+import jackiecrazy.wardance.config.weapon.WeaponStats;
+import jackiecrazy.wardance.entity.FlyingWeaponEntity;
 import jackiecrazy.wardance.handlers.TwoHandingHandler;
 import jackiecrazy.wardance.skill.Skill;
 import jackiecrazy.wardance.skill.SkillData;
@@ -26,6 +30,7 @@ import net.minecraft.client.Camera;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.client.player.AbstractClientPlayer;
+import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.client.renderer.culling.Frustum;
 import net.minecraft.client.renderer.entity.EntityRenderDispatcher;
 import net.minecraft.core.Direction;
@@ -37,6 +42,7 @@ import net.minecraft.world.entity.HumanoidArm;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.Pose;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.client.event.*;
@@ -194,14 +200,25 @@ public class RenderEvents {
         //e.getRenderer().getModel()
     }
 
+    public static boolean handBusy(LivingEntity p, InteractionHand h){
+        if(!StylishData.getCap(p).isCombatMode())return false;
+        if((h == InteractionHand.MAIN_HAND ? p.attackStrengthTicker : CombatData.getCap(p).getOffhandCooldown())<2)return true;
+        ItemStack stack=p.getItemInHand(h);
+        if(!WeaponStats.isWeapon(p,stack)) return false;
+        FlyingWeaponEntity fwe=FlyingWeaponData.getCap(p).getWeapon(h);
+        if(fwe==null)return false;
+        return fwe.getRawVisualTag()>0;
+    }
+
     @SubscribeEvent
     public static void handRaising(RenderHandEvent e) {
         //todo empty render on disarm
         AbstractClientPlayer p = Minecraft.getInstance().player;
         //cancel hand rendering when they are being swung, or when the player is guarding with that arm
-        if (StylishData.getCap(p).isCombatMode() &&
-                (CombatUtils.getCooledAttackStrength(p, e.getHand(), 0.1f) < 1 ||
-                        (p.isShiftKeyDown() && (ClientEvents.lastUsedHandMain ? e.getHand() == InteractionHand.MAIN_HAND : e.getHand() == InteractionHand.OFF_HAND)))) {
+//        if (StylishData.getCap(p).isCombatMode() &&
+//                (CombatUtils.getCooledAttackStrength(p, e.getHand(), 0.1f) < 1 ||
+//                        (p.isShiftKeyDown() && (ClientEvents.lastUsedHandMain ? e.getHand() == InteractionHand.MAIN_HAND : e.getHand() == InteractionHand.OFF_HAND)))) {
+        if(handBusy(p, e.getHand())){
             e.setCanceled(true);
 
 //            HumanoidArm armToRender = (p.getMainArm() == HumanoidArm.RIGHT) == (e.getHand() == InteractionHand.MAIN_HAND)

@@ -18,6 +18,7 @@ import net.minecraftforge.common.ForgeMod;
 public class PlayInteractionAction extends Action {
     private WeaponStats.AttackType move_state;
     private Argument<ItemStack> stack;
+    private InteractionHand hand;
     private WeaponInteractions.InteractionGroup interaction;
     private Condition immediate = FalseCondition.INSTANCE;
 
@@ -25,16 +26,18 @@ public class PlayInteractionAction extends Action {
     public int perform(ActionContext actionContext) {
         if (actionContext.performer() instanceof LivingEntity performer) {
             actionContext.wrapper().getData(this);
-            ItemStack prevHeld = performer.getMainHandItem();
             int ticks = performer.attackStrengthTicker;
+            InteractionHand hand = InteractionHand.MAIN_HAND;
+            if (actionContext.getContext("hand") instanceof InteractionHand is)
+                hand = is;
+            if(this.hand!=null)hand=this.hand;
+            ItemStack prevHeld = performer.getItemInHand(hand);
             try {
-                ItemStack stack;
+                ItemStack stack = ItemStack.EMPTY;
                 if (actionContext.getContext("itemstack") instanceof ItemStack is)
                     stack = is;
-                else stack = this.stack.resolve(actionContext);
-                InteractionHand hand = InteractionHand.MAIN_HAND;
-                if (actionContext.getContext("hand") instanceof InteractionHand is)
-                    hand = is;
+                if(this.stack!=null) stack = this.stack.resolve(actionContext);
+                //todo need some kind of swap stack structure to figure out which item is actually "held" by main hand during attack chains
 
                 CombatUtils.quickSwap(performer, stack, hand);
                 CombatUtils.setHandCooldown(performer, hand, 2, false);
@@ -51,7 +54,7 @@ public class PlayInteractionAction extends Action {
             } catch (Exception ex) {
                 ex.printStackTrace();
             } finally {
-                CombatUtils.quickSwap(performer, prevHeld);
+                CombatUtils.quickSwap(performer, prevHeld, hand);
                 performer.attackStrengthTicker = ticks;
             }
         }

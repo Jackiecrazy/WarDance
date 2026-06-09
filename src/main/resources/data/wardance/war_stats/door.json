@@ -1,0 +1,45 @@
+{
+  "_guide": {
+    "possible idea": "leave behind ethereal doors that can be broken through to stun a la dead cells?",
+    "standing": "wide sideways swing with knockback, mini maul/sabaton effect?",
+    "falling": "crash through a trapdoor straight down, dealing damage and setting up an ethereal door",
+    "aerial": "downward swing for momentum to boost back up",
+    "sprinting": "put down the door and burst through it for stunning shockwave",
+    "guard counter": "open the door for a brief instant, then slam it shut to massively knock back",
+    "throw": "rotating door in front of you dealing damage repeatedly",
+    "pickup": "you can't throw a door...?",
+    "draw": "similar to sprinting?"
+  },
+  "#door": {
+    "attack": 30,
+    "defend": 1,
+    "standing": {
+      "type": "use"
+    },
+    "falling": {
+      "use_speed": 2,
+      "type": "use"
+    },
+    "aerial": {
+      "type": "use",
+      "velocity": [
+        0,
+        0.5,
+        -1
+      ],
+      "set_velocity": true
+    },
+    "sprinting": {
+      "sweep": "CIRCLE",
+      "knockback": 1.5,
+      "damage_scale": 0.75,
+      "posture_scale": 0.75,
+      "sweep_base": 2.0,
+      "sweep_scale": 0.75,
+      "on_swing": {
+        "command": "/function wardance:attack/self_moderatefatigue"
+      },
+      "crit": true
+    }
+  }
+}

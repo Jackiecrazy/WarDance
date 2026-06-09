@@ -225,7 +225,7 @@ public class FlyingWeaponCapability implements IFlyingWeapon {
                         fwe.setEffect();
                     }
                     //if the player is blocking, change position
-                    else if (player.isBlocking()) {
+                    else if (player.isDiscrete()) {
                         //fwe.setIdlePose(blockingFrame[isMain ? 0 : 1]);
                         fwe.setUniversalOffset(blockOffset[isMain ? 0 : 1]);
                     } else {
@@ -327,5 +327,7 @@ public class FlyingWeaponCapability implements IFlyingWeapon {
             fwe = getWeapon(hand);
         }
         updateWeapon(fwe, hand);
+        if(hand==InteractionHand.MAIN_HAND)mainSwap=false;
+        else offSwap=false;
     }
 }

@@ -1,0 +1,26 @@
+{
+  "ID": "project_hitbox",
+  "max_time": 20,
+  "hit_cooldown": 1,
+  "selector": {
+    "ID": "selector",
+    "position": {
+      "ID": "foot_position",
+      "reference_point": "target"
+    },
+    "range": 2
+  },
+  "actions": [
+    {
+      "ID": "play_particle",
+      "particle": "minecraft:block",
+      "particle_parameters": "gravel",
+      "position": {
+        "ID": "foot_position",
+        "reference_point": "caster",
+        "quantity": 2
+      },
+      "repeatable": true
+    }
+  ]
+}

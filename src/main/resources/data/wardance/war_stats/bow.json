@@ -1,0 +1,47 @@
+{
+  "_guide": {
+    "general": "pursuit and hunting. Stalk a single target and deliver the coup de grace while keeping perfect awareness",
+    "standing": "increased charge speed if there is a marked mob in x blocks",
+    "falling": "dodge frames that, if triggered, fires a fake marking arrow for pickup",
+    "aerial": "gain move speed to offset drawing slow and get fov increase",
+    "sprinting": "leave a snare where you were standing, pins a mob for 1 second if they walk over it and deals some posture damage",
+    "guard counter": "low damage marking shot",
+    "throw": "hamstringing throwing knife?",
+    "pickup": "coup de grace scaling with how many shots have been sustained, crit if mob is pinned",
+    "draw": "steve time and aoe fear, hitscan mark the aimed mob",
+    "mark": "glowing and regain spirit on ranged hit against marked mobs",
+    "todo": "add on damage behavior to marks (how doe), triggers? or shift fully to callbacks? hook on projectile creation?"
+  },
+  "#bow": {
+    "attack": 7.5,
+    "defend": 0,
+    "standing": {
+      "type": "use"
+    },
+    "falling": {
+      "use_speed": 2,
+      "type": "use"
+    },
+    "aerial": {
+      "type": "use",
+      "velocity": [
+        0,
+        0.5,
+        -1
+      ],
+      "set_velocity": true
+    },
+    "sprinting": {
+      "sweep": "CIRCLE",
+      "knockback": 1.5,
+      "damage_scale": 0.75,
+      "posture_scale": 0.75,
+      "sweep_base": 2.0,
+      "sweep_scale": 0.75,
+      "on_swing": {
+        "command": "/function wardance:attack/self_moderatefatigue"
+      },
+      "crit": true
+    }
+  }
+}

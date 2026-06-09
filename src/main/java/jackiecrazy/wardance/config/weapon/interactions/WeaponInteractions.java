@@ -16,15 +16,15 @@ import jackiecrazy.footwork.move.condition.Condition;
 import jackiecrazy.footwork.move.condition.ConsumeResourceCondition;
 import jackiecrazy.footwork.move.filter.Filter;
 import jackiecrazy.footwork.move.motionframe.*;
+import jackiecrazy.footwork.move.motionframe.render.RenderNode;
 import jackiecrazy.footwork.utils.ActionJsonAdapters;
 import jackiecrazy.footwork.utils.JsonAdapters;
 import jackiecrazy.footwork.utils.JsonUtils;
 import jackiecrazy.wardance.WarDance;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.FriendlyByteBuf;
-import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.Vec3;
 
 import java.awt.*;
@@ -52,6 +52,8 @@ public class WeaponInteractions {
             .registerTypeAdapter(ResourceLocation.class, new ResourceLocation.Serializer())
             .registerTypeAdapter(CompoundTag.class, new ActionJsonAdapters.NBTAdapter())
             .registerTypeAdapter(WeaponInteraction.class, new InteractionDeserializer())
+            .registerTypeAdapter(BlockState.class, JsonAdapters.BlockStateAdapter.INSTANCE)
+            .registerTypeAdapter(RenderNode.class, new JsonAdapters.RenderNodeAdapter())
             .registerTypeAdapter(Vec3.class, new JsonAdapters.Vec3TypeAdapter()).setPrettyPrinting().create();
     public static Gson GSON = new GsonBuilder()
             .registerTypeAdapter(WeaponInteraction.class, new InteractionDeserializer())
@@ -73,6 +75,8 @@ public class WeaponInteractions {
             .registerTypeAdapter(CompoundTag.class, new ActionJsonAdapters.NBTAdapter())
             .registerTypeAdapter(InteractionGroup.class, new GroupDeserializer())
             .registerTypeAdapter(Color.class, new JsonAdapters.ColorAdapter())
+            .registerTypeAdapter(BlockState.class, JsonAdapters.BlockStateAdapter.INSTANCE)
+            .registerTypeAdapter(RenderNode.class, new JsonAdapters.RenderNodeAdapter())
             .registerTypeAdapterFactory(new JsonAdapters.MotionFrameAdapterFactory())
             .registerTypeAdapterFactory(new JsonAdapters.HitInfoAdapterFactory())
             .setPrettyPrinting()
@@ -84,8 +88,7 @@ public class WeaponInteractions {
         private boolean set_velocity = false;
         private boolean swing_hand = true;
         private HitEffects on_swing = new HitEffects();
-        private String description;
-        private transient Component desc;
+        private List<String> tags=List.of();
         private List<InteractionOverride> overrides = new ArrayList<>();
         private transient Map<WeaponInteraction.InteractionType, WeaponInteraction> bakedTypes = null;
         private double minimum_cooldown = 0.9;
@@ -128,7 +131,6 @@ public class WeaponInteractions {
             f.writeVector3f(velocity.toVector3f());
             f.writeBoolean(set_velocity);
             f.writeBoolean(swing_hand);
-            f.writeComponent(desc);
             f.writeCollection(interactions, (a, b) -> {
                 b.write(a);
             });
@@ -138,7 +140,6 @@ public class WeaponInteractions {
             velocity = new Vec3(f.readVector3f());
             set_velocity = f.readBoolean();
             swing_hand = f.readBoolean();
-            desc = f.readComponent();
             interactions = f.readList(WeaponInteraction::readFromByte);
             return this;
         }
@@ -155,22 +156,12 @@ public class WeaponInteractions {
             return swing_hand;
         }
 
-        public String description() {
-            return description;
+        public List<String> tags() {
+            return tags;
         }
 
         public HitEffects on_swing() {
             return on_swing;
-        }
-
-        public InteractionGroup setDescription(String description) {
-            this.description = description;
-            desc = Component.translatable(description);
-            return this;
-        }
-
-        public Component getDescription(ItemStack e, boolean advanced) {
-            return desc;
         }
 
         public InteractionGroup addOverride(InteractionOverride io) {

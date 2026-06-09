@@ -1,14 +1,14 @@
 {
   "_guide": {
-    "general": "all hits consume posture! be careful.",
-    "standing": "five element fist. Stores which state you are in and transitions to the next state after each hit",
-    "falling": "",
-    "aerial": "shoryuken, revert 2 states",
-    "sprinting": "charge with guard frames, skip 2 states",
+    "general": "nerf attack speed down to 2 please",
+    "standing": "straight forward punches that move you slightly, use FEF to upgrade this.",
+    "falling": "axe kick, ground shatters a second later if at full spirit",
+    "aerial": "shoryuken",
+    "sprinting": "lunging dropkick",
     "guard counter": "a flurry of fast jabs that deal very little damage but pin for an extended period of time. At max spirit, omae wa mou shindeiru.",
     "throw": "consume spirit to throw random items that are capable of breaching",
-    "pickup": "",
-    "draw": "hadouken"
+    "pickup": "whirlwind kick, can I even do that?",
+    "draw": "one-inch punch"
   },
   "#dummy": {
     "attack": 5,

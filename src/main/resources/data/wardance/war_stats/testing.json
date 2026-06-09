@@ -270,8 +270,7 @@
             "ID": "consume_resource",
             "format": "PERCENTAGE",
             "resource": "SPIRIT",
-            "amount": 1,
-            "operation": "CONSUME"
+            "amount": 1
           },
           "override": {
             "animations": [
@@ -376,8 +375,7 @@
             "ID": "consume_resource",
             "format": "PERCENTAGE",
             "resource": "SPIRIT",
-            "amount": 1,
-            "operation": "CONSUME"
+            "amount": 1
           },
           "override": {
             "attack_info": {
@@ -490,8 +488,7 @@
             "ID": "consume_resource",
             "format": "PERCENTAGE",
             "resource": "SPIRIT",
-            "amount": 1,
-            "operation": "CONSUME"
+            "amount": 1
           },
           "override": {
             "type": "animation",

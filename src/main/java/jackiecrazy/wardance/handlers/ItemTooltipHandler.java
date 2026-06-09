@@ -49,13 +49,14 @@ public class ItemTooltipHandler {
                 }
                 if (PermissionData.getCap(entity).canSweep()) {
                     //final Component standing = WeaponStats.getSweepInfo(stack, entity, WeaponStats.AttackType.STANDING, false).getToolTip(e.getItemStack(), e.getFlags().isAdvanced());
-                    for (WeaponStats.AttackType s : WeaponStats.AttackType.values()) {
-                        if (s == WeaponStats.AttackType.UNDEFINED) continue;
-                        final Component sweepGroup = WeaponStats.getSweepInfo(stack, entity, s, true, null).getDescription(e.getItemStack(), e.getFlags().isAdvanced());
-                        if(sweepGroup==null) e.getToolTip().add(Component.literal("no sweep!?"));
-//                        if (s == WeaponStats.AttackType.STANDING || !sweepGroup.equals(standing))
-                        else e.getToolTip().add(Component.translatable("wardance.tooltip.sweep." + s.name().toLowerCase(Locale.ROOT), sweepGroup.copy().withStyle(ChatFormatting.DARK_AQUA)).withStyle(ChatFormatting.GRAY));
-                    }
+//                    for (WeaponStats.AttackType s : WeaponStats.AttackType.values()) {
+//                        if (s == WeaponStats.AttackType.UNDEFINED) continue;
+//                        final Component sweepGroup = Component.translatable(WeaponStats.lookupStats(stack).getName()+"."+s.name().toLowerCase(Locale.ROOT)+".name");
+//                        if(sweepGroup==null) e.getToolTip().add(Component.literal("no sweep!?"));
+////                        if (s == WeaponStats.AttackType.STANDING || !sweepGroup.equals(standing))
+//                        else e.getToolTip().add(Component.translatable("wardance.tooltip.sweep." + s.name().toLowerCase(Locale.ROOT), sweepGroup.copy().withStyle(ChatFormatting.DARK_AQUA)).withStyle(ChatFormatting.GRAY));
+//                    }
+                    e.getToolTip().add(Component.literal("Study this weapon in your trance menu (J) to learn more").withStyle(ChatFormatting.GREEN));
                 }
             } else {
                 e.getToolTip().add(Component.translatable("wardance.tooltip.shift").withStyle(ChatFormatting.GREEN));

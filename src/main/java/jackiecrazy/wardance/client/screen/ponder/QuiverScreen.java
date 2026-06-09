@@ -4,9 +4,11 @@ package jackiecrazy.wardance.client.screen.ponder;
 import com.mojang.blaze3d.systems.RenderSystem;
 import jackiecrazy.wardance.capability.quiver.QuiverData;
 import jackiecrazy.wardance.capability.quiver.QuiverMenu;
+import jackiecrazy.wardance.capability.skill.CasterData;
 import jackiecrazy.wardance.skill.Skill;
 import jackiecrazy.wardance.skill.SkillCategory;
 import jackiecrazy.wardance.skill.SkillColors;
+import jackiecrazy.wardance.skill.SkillData;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
 import net.minecraft.network.chat.Component;
@@ -16,6 +18,7 @@ import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 
 import java.awt.*;
+import java.util.Arrays;
 import java.util.Iterator;
 
 @OnlyIn(Dist.CLIENT)
@@ -40,21 +43,26 @@ public class QuiverScreen extends AbstractContainerScreen<QuiverMenu> {
         int y = (this.height - this.imageHeight) / 2;
 
         //colorize and draw each row
-        final Iterator<SkillCategory> iterator = Skill.categoryMap.keySet().iterator();
+        final Iterator<SkillCategory> iterator = Arrays.stream(QuiverData.ORDER).iterator();
         int j=0;
         //guiGraphics.blit(TEXTURE, x, y, 0, 0, this.imageWidth, 19);
         final int barSpace = 18;
         while (iterator.hasNext()) {
             int slots = menu.getUsableSlots(j);
-            Color c = iterator.next().getColor();
-            RenderSystem.setShaderColor(c.getRed()/255f, c.getGreen()/255f, c.getBlue()/255f, 1);
+            SkillCategory sc = iterator.next();
+            Color c = sc.getColor();
+            if(CasterData.getCap(minecraft.player).getEquippedColors().contains(sc)) {
+                RenderSystem.setShaderColor(c.getRed() / 255f, c.getGreen() / 255f, c.getBlue() / 255f, 1);
+            }
             //draw available slots
             guiGraphics.blit(TEXTURE, x, 19+y+ barSpace *j, 0, 19+ 18 *j, 7+ 18 *slots, 18);
             //then the little cap
+            RenderSystem.setShaderColor(c.getRed() / 255f, c.getGreen() / 255f, c.getBlue() / 255f, 1);
             guiGraphics.blit(TEXTURE, x+7+ barSpace *slots, 19+y+ 18 *j, 7+ 18 *9, 19+ 18 *j, 18, 18);
+            guiGraphics.blit(TEXTURE, x, 19+y+ barSpace *j, 0, 19+ 18 *j, 8, 18);
             j++;
+            RenderSystem.setShaderColor(1,1,1,1);
         }
-        RenderSystem.setShaderColor(1,1,1,1);
 
         int remainingY = imageHeight-(barSpace *(j))+3;
         guiGraphics.blit(TEXTURE, x, y+169, 0, 169, this.imageWidth, 87);

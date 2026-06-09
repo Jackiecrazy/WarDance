@@ -2,6 +2,7 @@ package jackiecrazy.wardance.client.hud;
 
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.PoseStack;
+import jackiecrazy.footwork.client.GuiComponent;
 import jackiecrazy.wardance.WarDance;
 import jackiecrazy.wardance.capability.quiver.QuiverData;
 import jackiecrazy.wardance.client.Keybinds;
@@ -21,13 +22,16 @@ import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.items.ItemStackHandler;
 
+import java.awt.*;
 import java.util.ArrayList;
 import java.util.List;
 
 @Mod.EventBusSubscriber(modid = WarDance.MODID)
 public class QuiverDisplay implements IGuiOverlay {
     private static final ResourceLocation GUI_ICONS_LOCATION = new ResourceLocation("textures/gui/icons.png");
+    private static final ResourceLocation CIRCLE = new ResourceLocation(WarDance.MODID, "textures/hud/quiver_highlight.png");
     public static int invIndex = 0;
+    private static Color c=Color.WHITE;
     private static ItemStack selected = ItemStack.EMPTY;
     private static ItemStackHandler inventory = null;
     private static List<Tuple<Integer, ItemStack>> filledSlots = new ArrayList<>();
@@ -45,6 +49,7 @@ public class QuiverDisplay implements IGuiOverlay {
                 filledSlots.add(new Tuple<>(i, inventory.getStackInSlot(i)));
         }
         filledSlots.add(new Tuple<>(-1, new ItemStack(Items.BARRIER)));
+        c=QuiverData.ORDER[d.getSelectedQuiver()].getColor();
         nextItem(0);
     }
 
@@ -62,7 +67,7 @@ public class QuiverDisplay implements IGuiOverlay {
             invIndex += forcedJump;
             if (invIndex >= (d.getVisibleSlots(d.getSelectedQuiver())))
                 invIndex = -1;
-            if (invIndex < -1) invIndex += (d.getVisibleSlots(d.getSelectedQuiver()))+1;
+            if (invIndex < -1) invIndex += (d.getVisibleSlots(d.getSelectedQuiver()))+2;
             tries--;
         }
     }
@@ -168,7 +173,12 @@ public class QuiverDisplay implements IGuiOverlay {
             int y = (int) (Math.sin(Mth.DEG_TO_RAD * angle) * offset);
             float scale = 1;
             ItemStack stack = is.getB();
-            if (is.getA() == invIndex) scale = 2;
+            if (is.getA() == invIndex){
+                RenderSystem.setShaderColor(c.getRed() / 255f, c.getGreen() / 255f, c.getBlue() / 255f, 1);
+                GuiComponent.blit(guiGraphics.pose(), CIRCLE, width/2+x-33, height/2+y-33, 0, 0, 64, 64, 64, 64);
+                RenderSystem.setShaderColor(1,1,1,1);
+                scale = 2;
+            }
             renderItem(guiGraphics, stack, width / 2 + x, height / 2 + y, scale);
             angle += (360d / (size));
         }

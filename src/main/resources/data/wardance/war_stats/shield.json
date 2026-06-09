@@ -1,0 +1,796 @@
+{
+  "_guide": {
+    "standing": "bash with guard frames and higher knockback, heals rally if hit during guard time",
+    "falling": "drop straight down, pinning hit targets. On landing, inflict unsteady in an area with dust particles, allies gain extra armor.",
+    "aerial": "throw your shield downwards to gain altitude, drags down with long duration",
+    "sprinting": "shield surf, ramps up the first mob you hit and jumps up",
+    "guard counter": "rallying shield bang, aoe counterstrike and buff allies.",
+    "throw": "kick the shield out to hit once, it ricochets back into your hand immediately. Pickup only available when spirit is not full. At max spirit, Long charging shield bash with guard frames, gc with both hands on impact.",
+    "pickup": "free main hand standing attack",
+    "draw": "velocity resetting flash block with guard frames. On guard, repulse in an area"
+  },
+  "#shield": {
+    "attack": 20,
+    "defend": 0.8,
+    "swap_offhand": {
+      "duration": 2,
+      "frames": [
+        {
+          "direction": [
+            0, 0.0, 1
+          ],
+          "offset": [
+            0, 0, 0.2
+          ],
+          "render_rotation": [0, 1, 0, 90],
+          "effects": {
+            "effects": [
+              "WEAPON"
+            ]
+          }
+        }
+      ]
+    },
+    "swap_frame": {
+      "duration": 2,
+      "frames": [
+        {
+          "direction": [
+            0, 0.0, 1
+          ],
+          "offset": [
+            0, 0, 0.2
+          ],
+          "render_rotation": [0, 1, 0, 90],
+          "effects": {
+            "effects": [
+              "WEAPON"
+            ]
+          }
+        }
+      ]
+    },
+    "aim_offhand": {
+      "duration": 2,
+      "frames": [
+        {
+          "direction": [
+            0, 0.0, 1
+          ],
+          "offset": [
+            0, 0, 0.2
+          ],
+          "render_rotation": [0, 1, 0, 90],
+          "effects": {
+            "effects": [
+              "WEAPON"
+            ]
+          }
+        }
+      ]
+    },
+    "aim_frame": {
+      "duration": 2,
+      "frames": [
+        {
+          "direction": [
+            0, 0.0, 1
+          ],
+          "offset": [
+            0, 0, 0.2
+          ],
+          "render_rotation": [0, 1, 0, 90],
+          "effects": {
+            "effects": [
+              "WEAPON"
+            ]
+          }
+        }
+      ]
+    },
+    "guard_offhand": {
+      "duration": 2,
+      "frames": [
+        {
+          "direction": [
+            0, 0.0, 1
+          ],
+          "offset": [
+            0, 0, 0.2
+          ],
+          "render_rotation": [0, 1, 0, 90],
+          "effects": {
+            "effects": [
+              "WEAPON"
+            ]
+          }
+        }
+      ]
+    },
+    "guard_frame": {
+      "duration": 2,
+      "frames": [
+        {
+          "direction": [
+            0, 0.0, 1
+          ],
+          "offset": [
+            0, 0, 0.2
+          ],
+          "render_rotation": [0, 1, 0, 90],
+          "effects": {
+            "effects": [
+              "WEAPON"
+            ]
+          }
+        }
+      ]
+    },
+    "standing": {
+      "tags": ["sustain", "control"],
+      "type": "animation",
+      "duration": 12,
+      "easing": "IN_SINE",
+      "no_flip": true,
+      "frames": [
+        {
+          "direction": [
+            0, 0, 1
+          ],
+          "offset": [
+            0, 0, 0
+          ],
+          "render_rotation": [0, 1, 0, 90],
+          "effects": {
+            "effects": ["WEAPON", "LOCK_ORIENTATION"],
+            "attack_info": {
+              "damage_scale": 0.8,
+              "knockback": 1.2
+            },
+            "guard_frames": 12,
+            "on_guard": {
+              "run_actions": [
+                {
+                  "ID": "change_resource",
+                  "resource": "RALLY",
+                  "operation": "ADD",
+                  "amount": 10
+                }
+              ]
+            }
+          }
+        }, {
+          "direction": [
+            0, 0, 1
+          ],
+          "offset": [
+            0, 0, 1
+          ],
+          "render_rotation": [0, 1, 0, 90]
+        }, {
+          "direction": [
+            0, 0, 1
+          ],
+          "offset": [
+            0, 0, 0
+          ],
+          "render_rotation": [0, 1, 0, 90]
+        }
+      ]
+    },
+    "falling": {
+      "tags": ["support", "crowd", "control"],
+      "type": "animation",
+      "duration": 40,
+      "easing": "IN_OUT_SINE",
+      "no_flip": true,
+      "frames": [
+        {
+          "direction": [
+            0, 0, 0.3
+          ],
+          "offset": [
+            0, 0, 1
+          ],
+          "render_rotation": [0, 1, 0, 90],
+          "effects": {
+            "effects": ["WEAPON", "LOCK_ORIENTATION"],
+            "modify_initial_rotation": [1, 0, 1],
+            "attack_info": {
+              "damage_scale": 0.8,
+              "knockback": 0,
+              "hit_target": {
+                "run_actions": [
+                  {
+                    "ID": "pin",
+                    "duration": 40
+                  }
+                ]
+              }
+            },
+            "on_terrain_impact": {
+              "sound": "minecraft:block.note_block.basedrum",
+              "run_actions": [
+                {
+                  "ID": "pin",
+                  "duration": 30,
+                  "recipient": "caster"
+                }, {
+                  "ID": "play_particle",
+                  "particle": "minecraft:block",
+                  "particle_parameters": "stone",
+                  "position": {
+                    "ID": "foot_position",
+                    "reference_point": "target",
+                    "delta": {
+                      "ID": "vector",
+                      "x": 5,
+                      "y": 0,
+                      "z": 5
+                    },
+                    "quantity": 100
+                  }
+                }, {
+                  "ID": "project_hitbox",
+                  "max_time": 1,
+                  "selector": {
+                    "ID": "selector",
+                    "filter": {
+                      "ID": "condition",
+                      "condition": {
+                        "ID": "!allied_to"
+                      }
+                    },
+                    "position": {
+                      "ID": "foot_position",
+                      "reference_point": "target"
+                    },
+                    "range": 5
+                  },
+                  "actions": [
+                    {
+                      "ID": "add_effect",
+                      "effect": "footwork:unsteady",
+                      "potency": 0,
+                      "duration": 100,
+                      "repeatable": true,
+                      "visible": false
+                    }
+                  ]
+                }, {
+                  "ID": "project_hitbox",
+                  "max_time": 1,
+                  "selector": {
+                    "ID": "selector",
+                    "filter": {
+                      "ID": "condition",
+                      "condition": {
+                        "ID": "allied_to"
+                      }
+                    },
+                    "position": {
+                      "ID": "foot_position",
+                      "reference_point": "target"
+                    },
+                    "range": 5
+                  },
+                  "actions": [
+                    {
+                      "ID": "add_effect",
+                      "effect": "footwork:fortification",
+                      "potency": 1,
+                      "duration": 100,
+                      "repeatable": true,
+                      "visible": false
+                    }
+                  ]
+                }
+              ]
+            },
+            "guard_frames": 40
+          }
+        },{
+          "direction": [
+            0, -1, 0.3
+          ],
+          "offset": [
+            0, 0, 1
+          ],
+          "render_rotation": [0, 1, 0, 90],
+          "effects": {
+            "effects": ["WEAPON", "LOCK_ORIENTATION"]
+          }
+        }
+      ],
+      "velocity": [0, -1, 0],
+      "set_velocity": true
+    },
+    "aerial": {
+      "tags": ["mobility", "control"],
+      "type": "throw",
+      "lodge_entity": false,
+      "lodge_block": false,
+      "throw_speed": 1,
+      "direction": [
+        0, -1, 0
+      ],
+      "attack_info": {
+        "damage_scale": 0.7,
+        "posture_scale": 0.7,
+        "breach": false,
+        "spirit_multiplier": 1.2
+      },
+      "flying_pose": {
+        "duration": 3,
+        "easing": "LINEAR",
+        "frames": [
+          {
+            "direction": [
+              0, -1, 0
+            ],
+            "offset": [
+              0, 0, 0
+            ],
+            "render_rotation": [
+              0, -1, 0, -90
+            ],
+            "effects": {
+              "effects": [
+                "WEAPON"
+              ]
+            }
+          }
+        ]
+      },
+      "gravity": -1,
+      "velocity": [0, 1, 0]
+    },
+    "sprinting": {
+      "tags": ["mobility", "control"],
+      "type": "animation",
+      "left_hand_offset": [0,0,0],
+      "right_hand_offset": [0,0,0],
+      "no_flip": true,
+      "on_swing": {
+        "velocity": [
+          0, 0, 1
+        ],
+        "run_actions": [
+          {
+            "ID": "play_sound",
+            "sound": "minecraft:entity.minecart.riding",
+            "source": "PLAYERS"
+          },{
+            "ID": "attach_action",
+            "effect": "wardance:dust_cloud"
+          }
+        ]
+      },
+      "attack_info": {
+        "damage_scale": 0.6,
+        "crit": true,
+        "crit_damage": 1,
+        "knockback": 2
+      },
+      "animations": [
+        {
+          "duration": 20,
+          "easing": "LINEAR",
+          "frames": [
+            {
+              "direction": [
+                0, -1, 0
+              ],
+              "offset": [
+                0, 0, 0.8
+              ],
+              "render_rotation": [0,0,1,90],
+              "effects": {
+                "block_frames": 20,
+                "attack_info": {
+                  "damage_scale": 0.1,
+                  "posture_scale": 0.1,
+                  "knockback": 3
+                },
+                "effects": [
+                  "WEAPON", "TRAIL", "LOCK_ORIENTATION"
+                ],
+                "modify_initial_rotation": [1, 0, 1],
+                "velocity": [
+                  0, -0.3, 1
+                ]
+              }
+            }, {
+              "direction": [
+                0, -1, 0
+              ],
+              "offset": [
+                0, 0, 0.8
+              ],
+              "render_rotation": [0,0,1,90],
+              "effects": {
+                "reset_hit": true,
+                "velocity": [
+                  0, -0.3, 1
+                ]
+              }
+            }, {
+              "direction": [
+                0, -1, 0
+              ],
+              "offset": [
+                0, 0, 0.8
+              ],
+              "render_rotation": [0,0,1,90],
+              "effects": {
+                "reset_hit": true,
+                "velocity": [
+                  0, -0.3, 1
+                ]
+              }
+            }, {
+              "direction": [
+                0, -1, 0
+              ],
+              "offset": [
+                0, 0, 0.8
+              ],
+              "render_rotation": [0,0,1,90],
+              "effects": {
+                "reset_hit": true,
+                "velocity": [
+                  0, -0.3, 1
+                ]
+              }
+            }, {
+              "direction": [
+                0, -1, 0
+              ],
+              "offset": [
+                0, 0, 0.8
+              ],
+              "render_rotation": [0,0,1,90],
+              "effects": {
+                "reset_hit": true,
+                "velocity": [
+                  0, -0.3, 1
+                ]
+              }
+            }, {
+              "direction": [
+                0, -1, 0
+              ],
+              "offset": [
+                0, 0, 0.8
+              ],
+              "render_rotation": [0,0,1,90],
+              "effects": {
+                "reset_hit": true,
+                "velocity": [
+                  0, -0.3, 1
+                ]
+              }
+            }, {
+              "direction": [
+                0, -1, 0
+              ],
+              "offset": [
+                0, 0, 0.8
+              ],
+              "render_rotation": [0,0,1,90],
+              "effects": {
+                "reset_hit": true,
+                "velocity": [
+                  0, -0.3, 1
+                ]
+              }
+            }, {
+              "direction": [
+                0, -1, 0
+              ],
+              "offset": [
+                0, 0, 0.8
+              ],
+              "render_rotation": [0,0,1,90],
+              "effects": {
+                "reset_hit": true,
+                "velocity": [
+                  0, -0.3, 1
+                ]
+              }
+            }, {
+              "direction": [
+                0, -1, 0
+              ],
+              "offset": [
+                0, 0, 0.8
+              ],
+              "render_rotation": [0,0,1,90],
+              "effects": {
+                "reset_hit": true,
+                "velocity": [
+                  0, -0.3, 1
+                ]
+              }
+            }, {
+              "direction": [
+                0, -1, 0
+              ],
+              "offset": [
+                0, 0, 0.8
+              ],
+              "render_rotation": [0,0,1,90],
+              "effects": {
+                "reset_hit": true,
+                "velocity": [
+                  0, -0.3, 1
+                ]
+              }
+            }, {
+              "direction": [
+                0, -1, 0
+              ],
+              "offset": [
+                0, 0, 0.8
+              ],
+              "render_rotation": [0,0,1,90],
+              "effects": {
+                "reset_hit": true,
+                "velocity": [
+                  0, -0.3, 1
+                ]
+              }
+            }, {
+              "direction": [
+                0, -1, 0
+              ],
+              "offset": [
+                0, 0, 0.8
+              ],
+              "render_rotation": [0,0,1,90],
+              "effects": {
+                "reset_hit": true,
+                "velocity": [
+                  0, -0.3, 1
+                ]
+              }
+            }
+          ]
+        }
+      ]
+    },
+    "guard_counter": {
+      "tags": ["control", "support"],
+      "type": "animation",
+      "no_flip": true,
+      "animations": [
+        {
+          "duration": 20,
+          "easing": "IN_OUT_CUBIC",
+          "frames": [
+            {
+              "direction": [
+                0, 1, 0
+              ],
+              "offset": [
+                0, 0, -1
+              ],
+              "render_rotation": [0, 1, 0, 90],
+              "effects": {
+                "effects": [
+                  "WEAPON", "LOCK_ORIENTATION"
+                ]
+              }
+            }, {
+              "direction": [
+                0, 1, 0
+              ],
+              "offset": [
+                0, 0, 1
+              ],
+              "render_rotation": [0, 1, 0, 90],
+              "effects": {
+                "sound": "minecraft:entity.vindicator.celebrate",
+                "run_actions": [
+                  {
+                    "ID": "project_hitbox",
+                    "hit_cooldown": 20,
+                    "selector": {
+                      "ID": "selector",
+                      "position": {
+                        "ID": "eye_position",
+                        "reference_point": "target"
+                      },
+                      "filter": {
+                        "ID": "condition",
+                        "condition": {
+                          "ID": "!allied_to"
+                        }
+                      },
+                      "range": 8
+                    },
+                    "actions": [
+                      {
+                        "ID": "add_effect",
+                        "effect": "footwork:counterstrike",
+                        "duration": 200
+                      }
+                    ]
+                  },
+                  {
+                    "ID": "project_hitbox",
+                    "max_time": 1,
+                    "selector": {
+                      "ID": "selector",
+                      "filter": {
+                        "ID": "condition",
+                        "condition": {
+                          "ID": "allied_to"
+                        }
+                      },
+                      "position": {
+                        "ID": "foot_position",
+                        "reference_point": "target"
+                      },
+                      "range": 8
+                    },
+                    "actions": [
+                      {
+                        "ID": "change_resource",
+                        "resource": "POSTURE",
+                        "operation": "ADD",
+                        "amount": 10
+                      }
+                    ]
+                  }
+                ]
+              }
+            }
+          ]
+        }
+      ]
+    },
+    "throw": {
+      "tags": ["engage", "exploit", "damage"],
+      "type": "throw",
+      "attack_info": {
+        "damage_scale": 0.75,
+        "posture_scale": 0.75,
+        "breach": false,
+        "spirit_multiplier": 0.5,
+        "knockback": 0
+      },
+      "throw_speed": 1,
+      "auto_recall_cooldown": 1,
+      "max_range": 5,
+      "lodge_entity": true,
+      "lodge_block": true,
+      "flying_pose": {
+        "duration": 3,
+        "easing": "LINEAR",
+        "frames": [
+          {
+            "direction": [
+              0, 0, 1
+            ],
+            "offset": [
+              0, 0, 1
+            ],
+            "render_rotation": [0, 1, 0, 90],
+            "effects": {
+              "effects": [
+                "WEAPON"
+              ]
+            }
+          }
+        ]
+      },
+      "gravity": -0.3,
+      "overrides": [
+        {
+          "condition": {
+            "ID": "consume_resource",
+            "format": "PERCENTAGE",
+            "resource": "SPIRIT",
+            "amount": 1
+          },
+          "override": {
+            "type": "animation",
+            "duration": 7,
+            "easing": "IN_OUT_SINE",
+            "frames": [
+              {
+                "direction": [
+                  0, 0, 1
+                ],
+                "offset": [
+                  0, 0, 0
+                ],
+                "knockback": 1,
+                "damage_scale": 1,
+                "posture_scale": 1.0,
+                "armor_pierce": 0.5,
+                "crit": true,
+                "hit_self": {
+                  "velocity": [0,0,0],
+                  "set_velocity": true,
+                  "run_actions": [
+                    {
+                      "ID": "attach_action",
+                      "effect": "wardance:delayed_gc"
+                    }
+                  ]
+                }
+              }, {
+                "direction": [
+                  0, 0, 1
+                ],
+                "offset": [
+                  0, 0, 1.3
+                ]
+              }
+            ],
+            "velocity": [
+              0, 0.2, 2
+            ],
+            "set_velocity": true
+          }
+        }
+      ]
+    },
+    "pickup_flourish": {
+      "tags": ["defense", "pressure"],
+      "on_swing": {
+        "run_actions": [
+          {
+            "ID": "attach_action",
+            "effect": "wardance:delayed_falling"
+          }
+        ]
+      },
+      "type": "animation",
+      "duration": 12,
+      "easing": "IN_SINE",
+      "no_flip": true,
+      "frames": [
+        {
+          "direction": [
+            0, 0, 1
+          ],
+          "offset": [
+            0, 0, 0
+          ],
+          "render_rotation": [0, 1, 0, 90],
+          "effects": {
+            "effects": ["WEAPON"],
+            "guard_frames": 12
+          }
+        }
+      ]
+    },
+    "draw_attack": {
+      "tags": ["defense"],
+      "type": "animation",
+      "duration": 12,
+      "easing": "IN_SINE",
+      "no_flip": true,
+      "velocity": [0,0,0],
+      "set_velocity": true,
+      "frames": [
+        {
+          "direction": [
+            0, 0, 1
+          ],
+          "offset": [
+            0, 0, 0
+          ],
+          "render_rotation": [0, 1, 0, 90],
+          "effects": {
+            "effects": ["WEAPON", "LOCK_ORIENTATION"],
+            "parry_frames": 12
+          }
+        }
+      ]
+    }
+  }
+}

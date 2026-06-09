@@ -95,15 +95,15 @@
                       "particle": "minecraft:splash",
                       "position": {
                         "ID": "foot_position",
-                        "reference_point": "target",
-                        "delta": {
-                          "ID": "vector",
-                          "x": 2,
-                          "y": 0,
-                          "z": 2
-                        },
-                        "quantity": 100
-                      }
+                        "reference_point": "target"
+                      },
+                      "delta": {
+                        "ID": "vector",
+                        "x": 2,
+                        "y": 0,
+                        "z": 2
+                      },
+                      "quantity": 100
                     }, {
                       "ID": "project_hitbox",
                       "max_time": 1,
@@ -387,8 +387,7 @@
             "ID": "consume_resource",
             "format": "PERCENTAGE",
             "resource": "SPIRIT",
-            "amount": 1,
-            "operation": "CONSUME"
+            "amount": 1
           },
           "override": {
             "pickup_flourish": true,
@@ -449,6 +448,66 @@
               ],
               "effects": {
                 "run_actions": [
+                  {
+                    "ID": "play_particle",
+                    "particle": "minecraft:splash",
+                    "position": {
+                      "ID": "sum_vector",
+                      "addends": [
+                        {
+                          "ID": "ray_trace",
+                          "position": {
+                            "ID": "eye_position",
+                            "reference_point": "caster"
+                          },
+                          "direction": {
+                            "ID": "look_vector",
+                            "reference_point": "caster"
+                          },
+                          "distance": 32
+                        }, {
+                          "ID": "vector",
+                          "x": 0,
+                          "y": -10,
+                          "z": 0
+                        }
+                      ]
+                    },
+                    "quantity": 100,
+                    "delta": {
+                      "ID": "vector",
+                      "x": 2,
+                      "y": 0,
+                      "z": 2
+                    }
+                  }, {
+                    "ID": "project_hitbox",
+                    "max_time": 1,
+                    "selector": {
+                      "ID": "selector",
+                      "filter": {
+                        "ID": "condition",
+                        "condition": {
+                          "ID": "!allied_to"
+                        }
+                      },
+                      "position": {
+                        "ID": "foot_position",
+                        "reference_point": "target"
+                      },
+                      "range": 2
+                    },
+                    "actions": [
+                      {
+                        "ID": "add_effect",
+                        "effect": "footwork:wet",
+                        "potency": 0,
+                        "duration": 100,
+                        "repeatable": true,
+                        "visible": false
+                      }
+                    ]
+                  },
                   {
                     "ID": "spawn_entity",
                     "entity": "minecraft:elder_guardian",
