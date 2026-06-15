@@ -1,11 +1,10 @@
 package jackiecrazy.wardance.mixin;
 
-import jackiecrazy.footwork.capability.resources.CombatData;
 import jackiecrazy.footwork.capability.stylish.StylishData;
+import jackiecrazy.wardance.entity.ThrownWeaponEntity;
 import jackiecrazy.wardance.utils.CombatUtils;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.InteractionHand;
-import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.Entity;
 import net.minecraftforge.common.ForgeMod;
 import org.spongepowered.asm.mixin.Mixin;
@@ -18,7 +17,7 @@ public class MixinNewSweepAttack {
     @Redirect(method = "onAttack",
             at = @At(value = "INVOKE", target = "Lnet/minecraft/server/level/ServerPlayer;attack(Lnet/minecraft/world/entity/Entity;)V"))
     private void sweep(ServerPlayer player, Entity entity) {
-        if (StylishData.getCap(player).isCombatMode()) {
+        if (StylishData.getCap(player).isCombatMode() && (!(entity instanceof ThrownWeaponEntity) || !entity.skipAttackInteraction(player))) {
             CombatUtils.updateNormalAttackStatus(player);
             CombatUtils.processWeaponInteraction(player, entity, InteractionHand.MAIN_HAND, player.getAttributeValue(ForgeMod.ENTITY_REACH.get()));
         } else player.attack(entity);

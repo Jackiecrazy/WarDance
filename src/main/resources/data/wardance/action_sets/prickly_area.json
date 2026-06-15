@@ -28,8 +28,7 @@
       "ID": "add_effect",
       "effect": "minecraft:slowness",
       "potency": 1,
-      "duration": 30,
-      "repeatable": true
+      "duration": 30
     }
   ]
 }

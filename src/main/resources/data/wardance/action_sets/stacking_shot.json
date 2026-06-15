@@ -1,0 +1,86 @@
+[
+  {
+    "ID": "attach_callback",
+    "effect_list": [
+      {
+        "_comment": "store the number of times the mob has been shot",
+        "storage": "target",
+        "ID": "store_number",
+        "into": "shot_times",
+        "value": {
+          "ID": "add",
+          "first": {
+            "ID": "get_number",
+            "from": "shot_times",
+            "storage": "target"
+          },
+          "second": 1
+        }
+      }
+    ],
+    "duration": 400,
+    "max_procs": 5000,
+    "trigger": "shot"
+  }, {
+  "ID": "attach_callback",
+  "effect_list": [
+    {
+      "_comment": "detonate and reset on receiving specific typed damage",
+      "ID": "meta",
+      "actions": [
+        {
+          "ID": "debug",
+          "parameter": {
+            "ID": "get_number",
+            "from": "shot_times",
+            "storage": "target"
+          }
+        },
+        {
+          "ID": "deal_damage",
+          "damage_source": {
+            "armor_pierce_percentage": 1,
+            "typing": "TRUE",
+            "proxy": "target",
+            "breach": true,
+            "proc_normal": false,
+            "proc_skill": true,
+            "tags": [
+              "avoids_guardian_thorns"
+            ]
+          },
+          "amount": {
+            "ID": "multiply",
+            "first": {
+              "ID": "attribute_value",
+              "reference_point": "caster",
+              "attribute": "minecraft:generic.attack_damage"
+            },
+            "second": {
+              "ID": "get_number",
+              "from": "shot_times",
+              "storage": "target"
+            }
+          }
+        }, {
+          "storage": "target",
+          "ID": "store_number",
+          "into": "shot_times",
+          "value": 0
+        }
+      ],
+      "condition": {
+        "ID": "damage_in_tag",
+        "reference": {
+          "ID": "get_context",
+          "key": "source"
+        },
+        "tag": "wardance:bow_execute"
+      }
+    }
+  ],
+  "duration": 400,
+  "max_procs": 5000,
+  "trigger": "hurt"
+}
+]

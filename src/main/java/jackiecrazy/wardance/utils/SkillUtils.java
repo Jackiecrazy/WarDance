@@ -114,7 +114,7 @@ public class SkillUtils {
 
     public static Entity aimEntity(LivingEntity caster, double range) {
         if (temp != null && caster.distanceToSqr(temp) < range * range) return temp;
-        return GeneralUtils.raytraceEntity(caster.level(), caster, range);
+        return GeneralUtils.raytraceEntity(caster.level(), (Entity) caster, range);
     }
 
     public static boolean auxAttack(LivingEntity caster,
@@ -153,7 +153,7 @@ public class SkillUtils {
     }
 
     /**
-     * use {@link SkillData#getEffectiveness()} for any skills that invoke {@link Skill#cast(LivingEntity, float)}
+     * use {@link SkillData#getEffectiveness()} for any skills that invoke
      */
     public static float getSkillEffectiveness(@Nullable LivingEntity caster) {
         if (caster == null) return 1;

@@ -59,7 +59,7 @@
             "damage_source": {
               "armor_pierce_percentage": 1,
               "proxy": {
-                "ID": "get",
+                "ID": "get_entity",
                 "from": "arakawa_guardian"
               },
               "tags": [

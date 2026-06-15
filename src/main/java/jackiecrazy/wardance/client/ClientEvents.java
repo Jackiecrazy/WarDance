@@ -352,23 +352,25 @@ public class ClientEvents {
 
 
                     if (mc.options.keyAttack.isDown()) {
-                        final WeaponInteractions.InteractionGroup mainInfo = WeaponStats.getSweepInfo(mc.player.getMainHandItem(), mc.player, state, false, null);
                         //special charge action, immediately start
                         if (mc.player.isUsingItem() && mc.player.getUsedItemHand() == InteractionHand.MAIN_HAND) {
                             //hack. Spoof use item key to down for the keybind processing
                             mc.options.keyUse.setDown(true);
-                        } else if (!mc.player.isUsingItem() && (Keybinds.EVOKE.isDown() || mainInfo.hasInteractionType(WeaponInteractions.WeaponInteraction.InteractionType.USE))) {//don't call when already using item for obvious reasons
-                            testingHand = InteractionHand.MAIN_HAND;
-                            ((ClientAccessors) mc).callStartUseItem();
-                            WeaponInteractions.WeaponInteraction mainUse = mainInfo.getInteractionOfType(WeaponInteractions.WeaponInteraction.InteractionType.USE);
-                            if (mainUse instanceof Use u) {
-                                ChargingData.getCap(p).alterSpeed(mc.player.getMainHandItem(), u.getUseSpeed());
-                                //manually send a processing packet to the server as this implementation will eat the left click
-                                if (!Keybinds.EVOKE.isDown())
-                                    CombatChannel.INSTANCE.sendToServer(new RequestSweepPacket(true, mc.crosshairPickEntity));
+                        } else {
+                            final WeaponInteractions.InteractionGroup mainInfo = WeaponStats.getSweepInfo(mc.player.getMainHandItem(), mc.player, state, false, InteractionHand.MAIN_HAND);
+                            if (!mc.player.isUsingItem() && (Keybinds.EVOKE.isDown() || mainInfo.hasInteractionType(WeaponInteractions.WeaponInteraction.InteractionType.USE))) {//don't call when already using item for obvious reasons
+                                testingHand = InteractionHand.MAIN_HAND;
+                                ((ClientAccessors) mc).callStartUseItem();
+                                WeaponInteractions.WeaponInteraction mainUse = mainInfo.getInteractionOfType(WeaponInteractions.WeaponInteraction.InteractionType.USE);
+                                if (mainUse instanceof Use u) {
+                                    ChargingData.getCap(p).alterSpeed(mc.player.getMainHandItem(), u.getUseSpeed());
+                                    //manually send a processing packet to the server as this implementation will eat the left click
+                                    if (!Keybinds.EVOKE.isDown())
+                                        CombatChannel.INSTANCE.sendToServer(new RequestSweepPacket(true, mc.crosshairPickEntity));
+                                }
+                                if (!mc.options.keyUse.isDown())
+                                    mc.options.keyUse.setDown(mc.player.isUsingItem());
                             }
-                            if (!mc.options.keyUse.isDown())
-                                mc.options.keyUse.setDown(mc.player.isUsingItem());
                         }
                         //cancel the left click if using or evoking
                         if (mainUseTick > 0 || Keybinds.EVOKE.isDown())

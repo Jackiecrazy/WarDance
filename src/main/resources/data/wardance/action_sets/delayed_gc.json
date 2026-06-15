@@ -34,6 +34,11 @@
               "ID": "equipped_item",
               "slot": "OFFHAND"
             }
+          },{
+            "ID": "change_resource",
+            "resource": "SPIRIT",
+            "operation": "SET",
+            "amount": 0
           }
         ],
         "condition": {

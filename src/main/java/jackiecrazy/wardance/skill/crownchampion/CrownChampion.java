@@ -57,7 +57,7 @@ elemental might: +1 burn/snowball/poison/drown damage to targets you have attack
             if (CasterData.getCap(seme).getEquippedSkills().contains(venge) && Marks.getCap(uke).isMarked(venge)) {
                 Marks.getCap(uke).getActiveMark(venge).ifPresent(a -> {
                     final float amnt = Math.min(e.getAmount(), a.getArbitraryFloat()) * SkillUtils.getSkillEffectiveness(seme);
-                    StylishData.getCap(seme).addAdrenaline(amnt / 30);
+                    StylishData.getCap(seme).addAdrenaline(amnt / 25);
                     e.setAmount(e.getAmount() + amnt);
                     a.addArbitraryFloat(-e.getAmount());
                     if (a.getArbitraryFloat() < 0) a.setDuration(-10);

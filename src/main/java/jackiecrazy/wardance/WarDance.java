@@ -166,6 +166,7 @@ public class WarDance {
         CombatChannel.INSTANCE.registerMessage(index++, UpdateFlyingWeaponPacket.class, new UpdateFlyingWeaponPacket.Encoder(), new UpdateFlyingWeaponPacket.Decoder(), new UpdateFlyingWeaponPacket.Handler());
         CombatChannel.INSTANCE.registerMessage(index++, OpenQuiverScreenPacket.class, new OpenQuiverScreenPacket.Encoder(), new OpenQuiverScreenPacket.Decoder(), new OpenQuiverScreenPacket.Handler());
         CombatChannel.INSTANCE.registerMessage(index++, OpenStudyScreenPacket.class, new OpenStudyScreenPacket.Encoder(), new OpenStudyScreenPacket.Decoder(), new OpenStudyScreenPacket.Handler());
+        CombatChannel.INSTANCE.registerMessage(index++, UpdateChargingPacket.class, new UpdateChargingPacket.Encoder(), new UpdateChargingPacket.Decoder(), new UpdateChargingPacket.Handler());
     }
 
     private void doClientStuff(final FMLClientSetupEvent event) {

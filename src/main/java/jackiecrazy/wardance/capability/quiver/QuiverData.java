@@ -194,6 +194,7 @@ public class QuiverData implements ICapabilityProvider, INBTSerializable<Compoun
 
                 // no preferred colors? Try to get another slot in the same quiver, otherwise fail
                 else {
+                    preferredColor=getSelectedQuiver();
                     int emptySlot = -1;
                     for (int fuckmylife = 0; fuckmylife < quivers[preferredColor].getSlots(); fuckmylife++)
                         if (quivers[preferredColor].getStackInSlot(fuckmylife).isEmpty()) {

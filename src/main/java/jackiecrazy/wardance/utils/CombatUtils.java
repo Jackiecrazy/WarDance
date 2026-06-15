@@ -32,6 +32,7 @@ import jackiecrazy.wardance.event.SweepEvent;
 import jackiecrazy.wardance.mixin.LivingEntityAccessors;
 import jackiecrazy.wardance.networking.CombatChannel;
 import jackiecrazy.wardance.networking.sync.UpdateAttackCooldownPacket;
+import jackiecrazy.wardance.networking.sync.UpdateChargingPacket;
 import net.minecraft.core.particles.DustParticleOptions;
 import net.minecraft.core.particles.ParticleType;
 import net.minecraft.resources.ResourceLocation;
@@ -269,7 +270,7 @@ public class CombatUtils {
                 base = MobSpecs.getOrDefault(attacker).getBaseAttackPosture();
                 if (base == -1)
                     base = CombatData.getCap(attacker).getMaxPosture() * CombatConfig.defaultMultiplierPostureMob;
-            } else return 4;//magic number
+            } else return 14;//magic number
         }
         if (attacker == null || h == null) return (float) base;
         double finalScale = scaler;
@@ -419,6 +420,7 @@ public class CombatUtils {
                     ChargingData.getCap(p).alterSpeed(stack, use.getUseSpeed());
                     if (stack.use(e.level(), p, h).getResult() == InteractionResult.CONSUME)
                         p.startUsingItem(h);
+                    CombatChannel.INSTANCE.send(PacketDistributor.TRACKING_ENTITY_AND_SELF.with(() -> p), new UpdateChargingPacket(p.getId(), stack, use.getUseSpeed()));
                 }
             }
             if (info instanceof Animation anim) {
@@ -671,7 +673,7 @@ public class CombatUtils {
         if (!CombatData.getCap(defender).canBlock())
             MobilityUtils.knockBack(defender, attacker, 1.2f, false, true);
 
-        ActionData.getCap(defender).triggerCallback("guard");
+        ActionData.getCap(defender).triggerCallback("guard", null);
 
         //item specific effects
         if (defend != null) {
@@ -733,7 +735,7 @@ public class CombatUtils {
         }
         cap.setDodgeTime(CombatConfig.rollTime);
         cap.setIframe(remaining);
-        ActionData.getCap(defender).triggerCallback("dodge");
+        ActionData.getCap(defender).triggerCallback("dodge", null);
 
         if (defender instanceof Player) {
             triggerSteveTime(defender, 30);
@@ -797,7 +799,7 @@ public class CombatUtils {
             }
         }
 
-        ActionData.getCap(defender).triggerCallback("parry");
+        ActionData.getCap(defender).triggerCallback("parry", null);
 
         //perform item related procs
         if (defend != null) {

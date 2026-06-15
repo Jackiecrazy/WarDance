@@ -22,7 +22,7 @@
           "offset": [
             0.3, 0.4, 0.25
           ],
-          "render_rotation": [0,1,0],
+          "render_rotation": [0, 1, 0],
           "effects": {
             "effects": [
               "WEAPON"
@@ -41,7 +41,7 @@
           "offset": [
             0.3, 0.8, 0.5
           ],
-          "render_rotation": [0,1,0],
+          "render_rotation": [0, 1, 0],
           "effects": {
             "effects": [
               "WEAPON"
@@ -60,7 +60,7 @@
           "offset": [
             0.3, 0.8, 0.5
           ],
-          "render_rotation": [0,1,0],
+          "render_rotation": [0, 1, 0],
           "effects": {
             "effects": [
               "WEAPON"
@@ -110,15 +110,13 @@
       "interactions": [],
       "overrides": [
         {
-          "condition": [
-            {
-              "ID": "consume_resource",
-              "format": "NUMBER",
-              "resource": "SPIRIT",
-              "amount": 7,
-              "operation": "CONSUME"
-            }
-          ],
+          "condition": {
+            "ID": "consume_resource",
+            "format": "NUMBER",
+            "resource": "SPIRIT",
+            "amount": 7,
+            "operation": "CONSUME"
+          },
           "override": {
             "type": "throw",
             "attack_info": {
@@ -149,34 +147,37 @@
       "interactions": [],
       "overrides": [
         {
-          "condition": [
-            {
-              "ID": "consume_resource",
-              "format": "NUMBER",
-              "resource": "SPIRIT",
-              "amount": 7,
-              "operation": "CONSUME"
-            }
-          ],
+          "condition": {
+            "ID": "consume_resource",
+            "format": "NUMBER",
+            "resource": "SPIRIT",
+            "amount": 7,
+            "operation": "CONSUME"
+          },
           "override": {
             "type": "throw",
             "attack_info": {
               "damage_scale": 1,
               "crit": true,
               "crit_damage": 1,
-              "spirit_multiplier": 0
+              "spirit_multiplier": 0,
+              "hit_other": {
+                "run_actions": [
+                  {
+                    "ID": "attach_callback",
+                    "effect": "wardance:embedded_damage",
+                    "duration": 120,
+                    "max_procs": 600,
+                    "trigger": "hurt"
+                  }
+                ]
+              }
             },
             "throw_speed": 2,
             "lodge_block": true,
             "lodge_entity": true,
             "gravity": 0,
             "consume_item": false,
-            "on_impact": [
-              {
-                "ID": "attach_action",
-                "effect": "wardance:embedded_damage"
-              }
-            ],
             "display_stack": {
               "ID": "itemstack",
               "item": "minecraft:birch_fence"
@@ -189,15 +190,13 @@
       "interactions": [],
       "overrides": [
         {
-          "condition": [
-            {
-              "ID": "consume_resource",
-              "format": "NUMBER",
-              "resource": "SPIRIT",
-              "amount": 7,
-              "operation": "CONSUME"
-            }
-          ],
+          "condition": {
+            "ID": "consume_resource",
+            "format": "NUMBER",
+            "resource": "SPIRIT",
+            "amount": 7,
+            "operation": "CONSUME"
+          },
           "override": {
             "type": "throw",
             "attack_info": {
@@ -246,7 +245,7 @@
               "offset": [
                 0, 0, 1
               ],
-              "render_rotation": [0,1,-0.3],
+              "render_rotation": [0, 1, -0.3],
               "effects": {
                 "effects": [
                   "WEAPON", "AFTERIMAGE"
@@ -271,7 +270,7 @@
               "offset": [
                 0, 0, 1
               ],
-              "render_rotation": [0,1,-0.3]
+              "render_rotation": [0, 1, -0.3]
             }
           ]
         }

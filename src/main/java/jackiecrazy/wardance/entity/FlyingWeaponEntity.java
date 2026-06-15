@@ -1,5 +1,6 @@
 package jackiecrazy.wardance.entity;
 
+import jackiecrazy.footwork.Footwork;
 import jackiecrazy.footwork.api.CombatDamageSource;
 import jackiecrazy.footwork.api.DefenseType;
 import jackiecrazy.footwork.api.FootworkDamageArchetype;
@@ -21,13 +22,18 @@ import jackiecrazy.wardance.config.weapon.WeaponStats;
 import jackiecrazy.wardance.utils.CombatUtils;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.core.registries.Registries;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
 import net.minecraft.network.syncher.SynchedEntityData;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.DamageTypeTags;
+import net.minecraft.tags.TagKey;
 import net.minecraft.util.Mth;
 import net.minecraft.world.InteractionHand;
+import net.minecraft.world.damagesource.DamageSource;
+import net.minecraft.world.damagesource.DamageType;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
@@ -56,7 +62,7 @@ public class FlyingWeaponEntity extends FlyingItemEntity implements IDrag {
     protected final List<Entity> alreadyHit = new ArrayList<>();
     protected HashMap<Entity, Integer> dragging = new HashMap<>();
     protected HitInfo cacheInfo;
-    protected HitEffects terrainEffects=null;
+    protected HitEffects terrainEffects = null;
     protected WeaponStats.AttackType state;
     private boolean fading = false;
 
@@ -180,7 +186,7 @@ public class FlyingWeaponEntity extends FlyingItemEntity implements IDrag {
             WeaponStats.info_override = getInfo();
             for (Entity target : targets) {
                 e.attackStrengthTicker = 99999;
-                if (!alreadyHit.isEmpty()){
+                if (!alreadyHit.isEmpty()) {
                     CombatData.getCap(e).tickProc("oncePerAttack");
                     CombatData.getCap(e).tickProc("durabilityConsumed");
                 }
@@ -206,7 +212,19 @@ public class FlyingWeaponEntity extends FlyingItemEntity implements IDrag {
     }
 
     protected CombatDamageSource damageSource() {
-        return new CombatDamageSource(getOwner(), this, position()).flagBreach(false).flag(DamageTypeTags.AVOIDS_GUARDIAN_THORNS).setAttackingHand(flipClientRender()?InteractionHand.OFF_HAND:InteractionHand.MAIN_HAND).setDamageDealer(getHeldItem()).setProcNormalEffects(true).setProcAttackEffects(true).setDamageTyping(FootworkDamageArchetype.PHYSICAL);
+        final CombatDamageSource ret = new CombatDamageSource(getOwner(), this, position())
+                .flagBreach(false)
+                .flag(DamageTypeTags.AVOIDS_GUARDIAN_THORNS)
+                .setAttackingHand(flipClientRender() ? InteractionHand.OFF_HAND : InteractionHand.MAIN_HAND)
+                .setDamageDealer(getHeldItem())
+                .setProcNormalEffects(true).setProcAttackEffects(true)
+                .setDamageTyping(FootworkDamageArchetype.PHYSICAL);
+        if (getInfo() != null)
+            for (String s : getInfo().damage_tags) {
+                TagKey<DamageType> tag = TagKey.create(Registries.DAMAGE_TYPE, ResourceLocation.tryParse(s));
+                ret.flag(tag);
+            }
+        return ret;
     }
 
 
@@ -217,9 +235,9 @@ public class FlyingWeaponEntity extends FlyingItemEntity implements IDrag {
     @Override
     protected void onHitBlock(BlockPos blockPos, Direction hitFace, Vec3 location) {
         if (intangible()) return;
-        if(terrainEffects!=null) {
-            terrainEffects.runEffects(getOwner(), this, flipClientRender()?InteractionHand.OFF_HAND:InteractionHand.MAIN_HAND, getHeldItem());
-            terrainEffects=null;//reset after one impact until next terrain effect comes in
+        if (terrainEffects != null) {
+            terrainEffects.runEffects(getOwner(), this, flipClientRender() ? InteractionHand.OFF_HAND : InteractionHand.MAIN_HAND, getHeldItem());
+            terrainEffects = null;//reset after one impact until next terrain effect comes in
         }
     }
 
@@ -282,7 +300,7 @@ public class FlyingWeaponEntity extends FlyingItemEntity implements IDrag {
     @Override
     protected void updateFrameEffects(FrameEffects effects) {
         currentEffects = effects;
-        if (effects != null&& getOwner()!=null) {
+        if (effects != null && getOwner() != null) {
             setIntangible(false);
             if (effects.getRange() >= 0) setInteractionRange((float) effects.getRange());
             //special handling for vector adjustments on initial orientation lock
@@ -299,13 +317,13 @@ public class FlyingWeaponEntity extends FlyingItemEntity implements IDrag {
                 unDrag();
             LivingEntity e = getOwner();
             if (e != null)
-                effects.runEffects(e, e, flipClientRender()?InteractionHand.OFF_HAND:InteractionHand.MAIN_HAND, getHeldItem());
-            if(effects.getDisplayItems()!=null)
+                effects.runEffects(e, e, flipClientRender() ? InteractionHand.OFF_HAND : InteractionHand.MAIN_HAND, getHeldItem());
+            if (effects.getDisplayItems() != null)
                 setCosmeticItem(effects.getDisplayItems().resolve(new ArgumentContext(getOwner(), getOwner())));
-            if(effects.getColor()!=null)
+            if (effects.getColor() != null)
                 setTrailColor(effects.getColor());
-            if(effects.getTerrainEffects()!=null)
-                terrainEffects=effects.getTerrainEffects();
+            if (effects.getTerrainEffects() != null)
+                terrainEffects = effects.getTerrainEffects();
         }
     }
 
@@ -356,7 +374,7 @@ public class FlyingWeaponEntity extends FlyingItemEntity implements IDrag {
     }
 
     public void drag(Entity target, double strength, int duration) {
-        if ((getTetheringEntity() == target&&shouldDrag()) || strength < 0) return;
+        if ((getTetheringEntity() == target && shouldDrag()) || strength < 0) return;
         setTetheringEntity(target);
         getEntityData().set(DRAG_TIME, duration);
         int snapTime = 5;

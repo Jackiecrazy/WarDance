@@ -1,28 +1,32 @@
 {
-  "ID": "project_hitbox",
-  "max_time": 100,
-  "hit_cooldown": 10,
-  "selector": {
-    "ID": "selector",
-    "position": {
-      "ID": "foot_position",
-      "reference_point": "target"
-    },
-    "range": 0.4
-  },
-  "actions": [
-    {
+  "ID": "meta",
+  "actions": [{
       "ID": "deal_damage",
       "damage_source": {
         "armor_pierce_percentage": 1,
+        "typing": "TRUE",
         "proxy": "target",
+        "proc_normal": false,
+        "proc_skill": true,
         "tags": [
           "avoids_guardian_thorns"
         ]
       },
-      "amount": 2,
-      "on_hit": [
-      ]
+      "amount": 3
+    }, {
+      "reference_point": "caster",
+      "ID": "change_resource",
+      "resource": "SPIRIT",
+      "operation": "ADD",
+      "amount": 5
     }
-  ]
+  ],
+  "condition": {
+    "ID": "damage_in_tag",
+    "reference": {
+      "ID": "get_context",
+      "key": "source"
+    },
+    "tag": "footwork:normal_attack"
+  }
 }

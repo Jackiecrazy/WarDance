@@ -153,7 +153,6 @@ public class ThrownWeaponEntity extends FlyingWeaponEntity {
     @Override
     public boolean skipAttackInteraction(Entity ent) {
         if (ent instanceof Player p && p.getMainHandItem().isEmpty() && isReal()) {
-            //todo skip punch if pickup
             return pickup(p);
         }
         return false;

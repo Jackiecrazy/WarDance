@@ -1,0 +1,153 @@
+{
+    "on_start": [
+      {
+        "ID": "attach_callback",
+        "effect_list": [
+          {
+            "reference_point": "caster",
+            "ID": "change_resource",
+            "resource": "SPIRIT",
+            "operation": "ADD",
+            "amount": 5
+          }
+        ],
+        "condition": {
+          "ID": "has_effect",
+          "effect": "minecraft:glowing"
+        },
+        "duration": 100,
+        "max_procs": 5,
+        "trigger": "shot"
+      },{
+        "ID": "store_number",
+        "storage": "target",
+        "value": {
+          "ID": "vector_length",
+          "of": {
+            "ID": "velocity",
+            "reference_point": "target"
+          }
+        },
+        "into": "projectile_speed",
+        "condition": {
+          "time_window": "1"
+        }
+      }
+    ],
+    "waiting": [
+      {
+        "ID": "store_entity",
+        "storage": "target",
+        "value": {
+          "ID": "random_entity",
+          "select": {
+            "ID": "selector",
+            "position": {
+              "ID": "foot_position",
+              "reference_point": "target"
+            },
+            "filter": {
+              "ID": "condition",
+              "condition": {
+                "ID": "and",
+                "values": [
+                  {
+                    "ID": "has_effect",
+                    "effect": "minecraft:glowing"
+                  }, {
+                    "ID": "!allied_to"
+                  }
+                ]
+              }
+            },
+            "sort": "nearest",
+            "range": 32
+          }
+        },
+        "into": "tracked_target",
+        "condition": {
+          "ID": "and",
+          "values": [
+            {
+              "ID": "!get_entity",
+              "storage": "target",
+              "from": "tracked_target"
+            },
+            {
+              "ID": "!ray_trace_entity",
+              "from": "target",
+              "look": {
+                "ID": "velocity",
+                "reference_point": "target",
+                "_comment": "did you know that arrows have flipped x and y look vectors? Yeah, I didn't either."
+              },
+              "distance": 16
+            }
+          ]
+        }
+      },
+      {
+        "recipient": "target",
+        "ID": "modify_velocity",
+        "repeatable": true,
+        "direction": {
+          "ID": "sum_vector",
+          "addends": [
+            {
+              "ID": "velocity",
+              "reference_point": "target",
+              "scale": 0.5
+            }, {
+              "ID": "sum_vector",
+              "addends": [
+                {
+                  "ID": "eye_position",
+                  "reference_point": {
+                    "ID": "get_entity",
+                    "storage": "target",
+                    "from": "tracked_target"
+                  }
+                }, {
+                  "ID": "eye_position",
+                  "scale": -1,
+                  "reference_point": "target"
+                }
+              ],
+              "max_length": {
+                "ID": "multiply",
+                "first": {
+                  "ID": "get_number",
+                  "storage": "target",
+                  "from": "projectile_speed"
+                },
+                "second": 0.5
+              }
+            }
+          ]
+        },
+        "set": true,
+        "condition": {
+          "ID": "and",
+          "values": [
+            {
+              "storage": "target",
+              "ID": "get_entity",
+              "from": "tracked_target"
+            },
+            {
+              "ID": "!ray_trace_entity",
+              "from": "target",
+              "look": {
+                "ID": "velocity",
+                "reference_point": "target",
+                "_comment": "did you know that arrows have flipped x and y look vectors? Yeah, I didn't either."
+              },
+              "distance": 16
+            }
+          ]
+        }
+      }
+    ],
+    "max_time": 60,
+    "ID": "wait"
+  }

@@ -2,46 +2,437 @@
   "_guide": {
     "general": "pursuit and hunting. Stalk a single target and deliver the coup de grace while keeping perfect awareness",
     "standing": "increased charge speed if there is a marked mob in x blocks",
-    "falling": "dodge frames that, if triggered, fires a fake marking arrow for pickup",
-    "aerial": "gain move speed to offset drawing slow and get fov increase",
-    "sprinting": "leave a snare where you were standing, pins a mob for 1 second if they walk over it and deals some posture damage",
-    "guard counter": "low damage marking shot",
-    "throw": "hamstringing throwing knife?",
-    "pickup": "coup de grace scaling with how many shots have been sustained, crit if mob is pinned",
+    "falling": "slowfall and invis/speed if marked",
+    "aerial": "slowfall and aoe glowing if marked",
+    "sprinting": "dodge frames and pin target if marked",
+    "guard counter": "straight dragging shot, binds if target marked",
+    "throw": "hamstringing throwing knife inflicting long slow and mark",
+    "pickup": "coup de grace scaling with how many shots have been sustained",
     "draw": "steve time and aoe fear, hitscan mark the aimed mob",
-    "mark": "glowing and regain spirit on ranged hit against marked mobs",
-    "todo": "add on damage behavior to marks (how doe), triggers? or shift fully to callbacks? hook on projectile creation?"
+    "mark": "glowing and regain spirit on ranged hit against marked mobs, arrows aimbot?"
   },
   "#bow": {
-    "attack": 7.5,
+    "attack": 10,
     "defend": 0,
     "standing": {
-      "type": "use"
+      "type": "use",
+      "on_swing": {
+        "run_actions": [
+          {
+            "ID": "attach_callback",
+            "effect": "wardance:aimbot",
+            "duration": 40,
+            "max_procs": 1,
+            "trigger": "shoot_projectile"
+          }
+        ]
+      },
+      "overrides": [
+        {
+          "condition": {
+            "ID": "entity_in_range",
+            "select": {
+              "ID": "selector",
+              "position": {
+                "ID": "foot_position",
+                "reference_point": "target"
+              },
+              "filter": {
+                "ID": "condition",
+                "condition": {
+                  "ID": "and",
+                  "values": [
+                    {
+                      "ID": "has_effect",
+                      "effect": "minecraft:glowing"
+                    }, {
+                      "ID": "!allied_to"
+                    }
+                  ]
+                }
+              },
+              "range": 16
+            }
+          },
+          "override": {
+            "use_speed": 2.5
+          }
+        }
+      ]
     },
     "falling": {
-      "use_speed": 2,
-      "type": "use"
+      "type": "use",
+      "use_speed": 1.5,
+      "on_swing": {
+        "run_actions": [
+          {
+            "ID": "attach_callback",
+            "effect": "wardance:aimbot",
+            "duration": 40,
+            "max_procs": 1,
+            "trigger": "shoot_projectile"
+          }, {
+            "ID": "attach_callback",
+            "effect_list": [
+              {
+                "ID": "attach_callback",
+                "effect_list": [
+                  {
+                    "ID": "meta",
+                    "actions": [
+                      {
+                        "ID": "add_effect",
+                        "effect": "minecraft:invisibility",
+                        "recipient": "caster",
+                        "duration": 60
+                      }, {
+                        "ID": "add_effect",
+                        "effect": "minecraft:speed",
+                        "recipient": "caster",
+                        "duration": 60
+                      }
+                    ],
+                    "condition": {
+                      "ID": "has_effect",
+                      "effect": "minecraft:glowing"
+                    }
+                  }
+                ],
+                "duration": 100,
+                "max_procs": 1,
+                "trigger": "shot_other"
+              }
+            ],
+            "duration": 40,
+            "max_procs": 1,
+            "trigger": "shoot_projectile"
+          }, {
+            "ID": "add_effect",
+            "effect": "minecraft:slow_falling",
+            "potency": 0,
+            "duration": 30,
+            "stacking": "MAX_DURATION"
+          }
+        ]
+      }
     },
     "aerial": {
       "type": "use",
-      "velocity": [
-        0,
-        0.5,
-        -1
-      ],
-      "set_velocity": true
+      "use_speed": 1.5,
+      "on_swing": {
+        "run_actions": [
+          {
+            "ID": "attach_callback",
+            "effect": "wardance:aimbot",
+            "duration": 40,
+            "max_procs": 1,
+            "trigger": "shoot_projectile"
+          }, {
+            "ID": "attach_callback",
+            "effect_list": [
+              {
+                "ID": "attach_callback",
+                "effect_list": [
+                  {
+                    "ID": "project_hitbox",
+                    "max_time": 10,
+                    "hit_cooldown": 5,
+                    "selector": {
+                      "ID": "selector",
+                      "position": {
+                        "ID": "foot_position",
+                        "reference_point": "target"
+                      },
+                      "range": 10
+                    },
+                    "actions": [
+                      {
+                        "ID": "knockback",
+                        "from": {
+                          "ID": "get_context",
+                          "key": "projectile"
+                        },
+                        "to": "target",
+                        "strength": 0.6
+                      }, {
+                        "ID": "add_effect",
+                        "recipient": "target",
+                        "effect": "minecraft:slowness",
+                        "potency": 1,
+                        "duration": 30
+                      }
+                    ],
+                    "condition": {
+                      "ID": "has_effect",
+                      "effect": "minecraft:glowing"
+                    }
+                  }
+                ],
+                "duration": 100,
+                "max_procs": 1,
+                "trigger": "shot_other"
+              }
+            ],
+            "duration": 40,
+            "max_procs": 1,
+            "trigger": "shoot_projectile"
+          }, {
+            "ID": "add_effect",
+            "effect": "minecraft:slow_falling",
+            "potency": 0,
+            "duration": 30,
+            "stacking": "MAX_DURATION"
+          }
+        ]
+      }
     },
     "sprinting": {
-      "sweep": "CIRCLE",
-      "knockback": 1.5,
-      "damage_scale": 0.75,
-      "posture_scale": 0.75,
-      "sweep_base": 2.0,
-      "sweep_scale": 0.75,
+      "type": "use",
+      "use_speed": 1.5,
       "on_swing": {
-        "command": "/function wardance:attack/self_moderatefatigue"
+        "dodge_frames": 10,
+        "run_actions": [
+          {
+            "ID": "attach_callback",
+            "effect": "wardance:aimbot",
+            "duration": 40,
+            "max_procs": 1,
+            "trigger": "shoot_projectile"
+          }, {
+            "ID": "attach_callback",
+            "effect_list": [
+              {
+                "ID": "attach_callback",
+                "effect_list": [
+                  {
+                    "ID": "meta",
+                    "actions": [
+                      {
+                        "ID": "pin",
+                        "duration": 60
+                      }
+                    ],
+                    "condition": {
+                      "ID": "has_effect",
+                      "effect": "minecraft:glowing"
+                    }
+                  }
+                ],
+                "duration": 100,
+                "max_procs": 1,
+                "trigger": "shot_other"
+              }
+            ],
+            "duration": 40,
+            "max_procs": 1,
+            "trigger": "shoot_projectile"
+          }, {
+            "ID": "add_effect",
+            "effect": "minecraft:slow_falling",
+            "potency": 0,
+            "duration": 30,
+            "stacking": "MAX_DURATION"
+          }
+        ]
+      }
+    },
+    "guard_counter": {
+      "type": "use",
+      "use_speed": 100,
+      "on_swing": {
+        "run_actions": [
+          {
+            "ID": "attach_callback",
+            "effect": "wardance:aimbot",
+            "duration": 40,
+            "max_procs": 1,
+            "trigger": "shoot_projectile"
+          }, {
+            "ID": "attach_callback",
+            "effect_list": [
+              {
+                "ID": "attach_callback",
+                "effect_list": [
+                  {
+                    "ID": "bind",
+                    "duration": 60,
+                    "condition": {
+                      "ID": "has_effect",
+                      "effect": "minecraft:glowing"
+                    }
+                  }, {
+                    "ID": "knockback",
+                    "from": {
+                      "ID": "get_context",
+                      "key": "projectile"
+                    },
+                    "to": "target",
+                    "strength": 0.6
+                  }
+                ],
+                "duration": 100,
+                "max_procs": 1,
+                "trigger": "shot_other"
+              }
+            ],
+            "duration": 40,
+            "max_procs": 1,
+            "trigger": "shoot_projectile"
+          }, {
+            "ID": "add_effect",
+            "effect": "minecraft:slow_falling",
+            "potency": 0,
+            "duration": 30,
+            "stacking": "MAX_DURATION"
+          }
+        ]
+      }
+    },
+    "throw": {
+      "interactions": [],
+      "overrides": [
+        {
+          "condition": {
+            "ID": "consume_resource",
+            "format": "PERCENTAGE",
+            "resource": "SPIRIT",
+            "amount": 1,
+            "operation": "CONSUME"
+          },
+          "override": {
+            "type": "throw",
+            "attack_info": {
+              "damage_scale": 1,
+              "crit": true,
+              "crit_damage": 1,
+              "spirit_multiplier": 0,
+              "hit_other": {
+                "run_actions": [
+                  {
+                    "ID": "attach_action",
+                    "effect": "wardance:stacking_shot"
+                  }, {
+                    "ID": "add_effect",
+                    "effect": "minecraft:glowing",
+                    "duration": 400
+                  }
+                ]
+              }
+            },
+            "throw_speed": 2,
+            "lodge_block": true,
+            "lodge_entity": true,
+            "consume_item": false,
+            "display_stack": {
+              "ID": "itemstack",
+              "item": "minecraft:arrow"
+            }
+          }
+        }
+      ]
+    },
+    "pickup_flourish": {
+      "type": "animation",
+      "animations": [
+        {
+          "duration": 6,
+          "easing": "IN_SINE",
+          "frames": [
+            {
+              "direction": [
+                0, 1, 0.4
+              ],
+              "offset": [
+                0, 0, 1
+              ],
+              "render_rotation": [0, 1, -0.3],
+              "effects": {
+                "effects": [
+                  "WEAPON", "AFTERIMAGE"
+                ],
+                "attack_info": {
+                  "armor_pierce": 1,
+                  "knockback": 0,
+                  "crit": true,
+                  "crit_damage": 3,
+                  "posture_scale": 2,
+                  "breach": true,
+                  "damage_tags": ["wardance:bow_execute"]
+                },
+                "display_stack": {
+                  "ID": "itemstack",
+                  "item": "minecraft:iron_sword"
+                }
+              }
+            }, {
+              "direction": [
+                0, -1, 1
+              ],
+              "offset": [
+                0, 0, 1
+              ],
+              "render_rotation": [0, 1, -0.3]
+            }
+          ]
+        }
+      ]
+    },
+    "draw_attack": {
+      "on_swing": {
+        "run_actions": [
+          {
+            "ID": "add_effect",
+            "recipient": {
+              "ID": "ray_trace_entity",
+              "distance": 32
+            },
+            "effect": "minecraft:glowing",
+            "duration": 400
+          }
+        ]
       },
-      "crit": true
+      "overrides": [
+        {
+          "condition": {
+            "ID": "consume_resource",
+            "format": "PERCENTAGE",
+            "resource": "SPIRIT",
+            "amount": 1,
+            "operation": "CONSUME"
+          },
+          "override": {
+            "on_swing": {
+              "run_actions": [
+                {}, {
+                  "ID": "project_hitbox",
+                  "hit_cooldown": 20,
+                  "selector": {
+                    "ID": "selector",
+                    "position": {
+                      "ID": "eye_position",
+                      "reference_point": "caster"
+                    },
+                    "filter": {
+                      "ID": "condition",
+                      "condition": {
+                        "ID": "!allied_to"
+                      }
+                    },
+                    "range": 16
+                  },
+                  "actions": [
+                    {
+                      "ID": "add_effect",
+                      "effect": "footwork:terror",
+                      "duration": 200
+                    }
+                  ]
+                }
+              ]
+            }
+          }
+        }
+      ]
     }
   }
 }

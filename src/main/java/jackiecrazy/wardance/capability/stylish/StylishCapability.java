@@ -31,7 +31,7 @@ public class StylishCapability implements IStyleCapability {
     public static final UUID WOUND = UUID.fromString("982bbbb2-bbd0-4166-801a-560d1a4149c8");
     public static final int MAX_FINISHER_CHARGE = 10;
     public static final int TRACKED_FRESHNESS_ACTIONS = 7;
-    public static final int COMBO_TIMER = 160;
+    public static final int COMBO_TIMER = 200;
     private final WeakReference<LivingEntity> dude;
     private boolean combat;
     private float adrenaline;
@@ -218,7 +218,7 @@ public class StylishCapability implements IStyleCapability {
             CombatData.getCap(le).rally(1);
         }
         combo += amount;
-        addAdrenaline(amount / 6);
+        addAdrenaline(amount / 5);
         freshness.add(source);
         while (freshness.size() > TRACKED_FRESHNESS_ACTIONS) {
             freshness.poll();

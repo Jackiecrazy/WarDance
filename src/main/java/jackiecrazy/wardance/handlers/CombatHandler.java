@@ -92,7 +92,7 @@ public class CombatHandler {
 
             //iframes
             if (CombatData.getCap(uke).isIframe()) {
-                ActionData.getCap(uke).triggerCallback("invulnerable");
+                ActionData.getCap(uke).triggerCallback("invulnerable", null);
                 e.setCanceled(true);
                 return;
             }
@@ -221,6 +221,8 @@ public class CombatHandler {
                 dummy.discard();
             }
         } else if (pe.getReturnVec() != null) {
+            //try this: teleport it out of the player hitbox
+            projectile.setPos(projectile.position().add(pe.getReturnVec().normalize()));
             projectile.setDeltaMovement(pe.getReturnVec().x, pe.getReturnVec().y, pe.getReturnVec().z);
             if (projectile instanceof Projectile) {
                 double power = pe.getReturnVec().x / pe.getReturnVec().normalize().x;
@@ -241,12 +243,12 @@ public class CombatHandler {
 
             //iframing and knocked down people are immune to damage
             if (ukeCap.isIframe()) {
-                ActionData.getCap(uke).triggerCallback("invulnerable");
+                ActionData.getCap(uke).triggerCallback("invulnerable", null);
                 e.setCanceled(true);
                 return;
             }
 
-            if(ukeCap.isKnockdown()){
+            if (ukeCap.isKnockdown()) {
                 e.setCanceled(true);
                 return;
             }
@@ -303,6 +305,17 @@ public class CombatHandler {
                 InteractionHand attackingHand = InteractionHand.MAIN_HAND;//semeCap.isOffhandAttack() ? InteractionHand.OFF_HAND : InteractionHand.MAIN_HAND;
                 boolean canBreach = uke instanceof Player;
 
+                final HitInfo sweepInfo = WeaponStats.getHitInfo(seme.getMainHandItem(), seme, CombatUtils.getAttackState(seme));
+                sweepInfo.runEffects(seme, seme, true, false, semeCap.isOffhandAttack() ? InteractionHand.OFF_HAND : InteractionHand.MAIN_HAND, seme.getMainHandItem());
+                sweepInfo.runEffects(seme, uke, false, false, semeCap.isOffhandAttack() ? InteractionHand.OFF_HAND : InteractionHand.MAIN_HAND, seme.getMainHandItem());
+                if (e.getSource() instanceof CombatDamageSource cds) {
+                    cds.setKnockbackPercentage((float) sweepInfo.getKnockback());
+                    cds.setCrit(sweepInfo.isCrit());
+                    cds.setCritDamage((float) sweepInfo.getCritDamage());
+                    cds.setArmorReductionPercentage((float) sweepInfo.armor_pierce);
+                    cds.setKnockbackVector(sweepInfo.knockback_direction());
+                }
+
                 //melee specific processing
                 if (DamageUtils.isMeleeAttack(e.getSource())) {
                     //hand bound or staggered, no attack
@@ -313,16 +326,6 @@ public class CombatHandler {
 
                     //handle capability and any on-hit effects
                     seme.getMainHandItem().getCapability(CombatManipulator.CAP).ifPresent((i) -> i.attackStart(e.getSource(), seme, uke, seme.getMainHandItem(), e.getAmount()));
-                    final HitInfo sweepInfo = WeaponStats.getHitInfo(seme.getMainHandItem(), seme, CombatUtils.getAttackState(seme));
-                    sweepInfo.runEffects(seme, seme, true, false, semeCap.isOffhandAttack()?InteractionHand.OFF_HAND:InteractionHand.MAIN_HAND, seme.getMainHandItem());
-                    sweepInfo.runEffects(seme, uke, false, false, semeCap.isOffhandAttack()?InteractionHand.OFF_HAND:InteractionHand.MAIN_HAND, seme.getMainHandItem());
-                    if (e.getSource() instanceof CombatDamageSource cds) {
-                        cds.setKnockbackPercentage((float) sweepInfo.getKnockback());
-                        cds.setCrit(sweepInfo.isCrit());
-                        cds.setCritDamage((float) sweepInfo.getCritDamage());
-                        cds.setArmorReductionPercentage((float) sweepInfo.armor_pierce);
-                        cds.setKnockbackVector(sweepInfo.knockback_direction());
-                    }
 
                     //blocking, no longer useful due to me directly interfacing with block
 //                if (uke.isBlocking()) {
@@ -341,12 +344,13 @@ public class CombatHandler {
 
                     //melee specific posture damage and breach
                     atkMult = CombatUtils.getPostureAtk(seme, uke, attackingHand, e.getSource(), e.getAmount(), attack);
+                    float rawAtk = CombatUtils.getPostureAtk(null, null, null, null, 0, attack);
                     canBreach |= sweepInfo.canBreach();
 
                     //add stats if it's the first attack this tick and cooldown is sufficient
                     if (!semeCap.alreadyProc("oncePerAttack")) {//first hit of a sweep attack this tick, add combo based on state
                         //semeCap.addRank(0.1f);
-                        float spiritAdded = (float) (atkMult/Math.max(sweepInfo.getPostureScale(), 0.001) * sweepInfo.spirit_multiplier());
+                        float spiritAdded = (float) (rawAtk * sweepInfo.spirit_multiplier());
                         if (spiritAdded != 0) {
                             //todo should this factor in posture/crit mult?
                             double percRed = semeCap.addSpirit(spiritAdded) / spiritAdded;
@@ -403,7 +407,7 @@ public class CombatHandler {
 
                 //mobs cannot defend when slowed
                 if (!(uke instanceof Player) && TimeSlowData.getCap(uke).getEffectiveSpeed() < 1) {
-                    ukeCap.consumePosture(seme, pe.getPostureConsumption(),0, pe.canBreach());
+                    ukeCap.consumePosture(seme, pe.getPostureConsumption(), 0, pe.canBreach());
                     return;
                 }
 
@@ -640,10 +644,10 @@ public class CombatHandler {
         if (ds.getEntity() instanceof LivingEntity trueSource) {
             final ICombatCapability semeCap = CombatData.getCap(trueSource);
             final HitInfo sweepInfo = WeaponStats.getHitInfo(trueSource.getMainHandItem(), trueSource, CombatUtils.getAttackState(trueSource));
-            sweepInfo.runEffects(trueSource, trueSource, true, true, semeCap.isOffhandAttack()?InteractionHand.OFF_HAND:InteractionHand.MAIN_HAND, trueSource.getMainHandItem());
-            sweepInfo.runEffects(trueSource, uke, false, true, semeCap.isOffhandAttack()?InteractionHand.OFF_HAND:InteractionHand.MAIN_HAND, trueSource.getMainHandItem());
+            sweepInfo.runEffects(trueSource, trueSource, true, true, semeCap.isOffhandAttack() ? InteractionHand.OFF_HAND : InteractionHand.MAIN_HAND, trueSource.getMainHandItem());
+            sweepInfo.runEffects(trueSource, uke, false, true, semeCap.isOffhandAttack() ? InteractionHand.OFF_HAND : InteractionHand.MAIN_HAND, trueSource.getMainHandItem());
             if (sweepInfo.getDrag() != null) {
-                FlyingWeaponEntity fwe = ds.getDirectEntity() instanceof FlyingWeaponEntity f?f:FlyingWeaponData.getCap(trueSource).getWeapon(InteractionHand.MAIN_HAND);
+                FlyingWeaponEntity fwe = ds.getDirectEntity() instanceof FlyingWeaponEntity f ? f : FlyingWeaponData.getCap(trueSource).getWeapon(InteractionHand.MAIN_HAND);
                 if (fwe != null) fwe.drag(uke, sweepInfo.getDrag().strength(), sweepInfo.getDrag().duration());
             }
             double luckDiff = WarDance.rand.nextFloat() * (GeneralUtils.getAttributeValueSafe(trueSource, Attributes.LUCK)) - WarDance.rand.nextFloat() * (GeneralUtils.getAttributeValueSafe(uke, Attributes.LUCK));
@@ -661,7 +665,7 @@ public class CombatHandler {
                 semeCap.tickProc("oncePerAttack");
             } else if (semeCap.alreadyProc(SPIRITKB)) {
                 //overcommitment penalty
-                e.setAmount(e.getAmount() / 2);
+                //e.setAmount(e.getAmount() / 2);
             }
 
             if (GeneralConfig.debug && !uke.level().isClientSide) {

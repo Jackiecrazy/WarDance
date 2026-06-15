@@ -247,7 +247,7 @@ public class MobilityUtils {
         if (itsc.getDodgeTime() <= -CombatConfig.rollCooldown) {
             elb.extinguishFire();
             if (side == 99 && elb.onGround()) return attemptSlide(elb);
-            Entity target = GeneralUtils.raytraceEntity(elb.level(), elb, 32);
+            Entity target = GeneralUtils.raytraceEntity(elb.level(), (Entity) elb, 32);
             float adjustment = 0;
             if (target != null) {
                 float distsq = (float) (elb.distanceToSqr(target));
