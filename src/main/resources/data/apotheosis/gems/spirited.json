@@ -1,5 +1,5 @@
 {
-  "variant": "steady",
+  "variant": "dexterous",
   "weight": 10,
   "quality": 1,
   "dimensions": [
@@ -10,44 +10,59 @@
       "gem_class": {
         "key": "armor",
         "types": [
-          "leggings",
-          "chestplate",
-          "boots",
-          "helmet"
+          "boots"
         ]
       },
-      "attribute": "footwork:max_posture",
+      "attribute": "wardance:air_jumps",
       "operation": "ADDITION",
       "values": {
         "common": {
-          "min": 5,
+          "min": 1,
           "steps": 1,
           "step": 0.5
         },
         "uncommon": {
-          "min": 7.5,
+          "min": 1.5,
           "steps": 2,
           "step": 0.25
         },
         "rare": {
-          "min": 10,
+          "min": 2,
           "steps": 2,
           "step": 0.25
         },
         "epic": {
-          "min": 12.5,
+          "min": 2.5,
           "steps": 3,
           "step": 0.25
         },
         "mythic": {
-          "min": 15,
+          "min": 3,
           "steps": 3,
           "step": 0.25
         },
         "ancient": {
-          "min": 17.5,
+          "min": 4,
           "steps": 4,
           "step": 0.25
+        },
+        "apotheotic_additions:artifact":
+        {
+          "min": 4.5,
+          "steps": 1,
+          "step": 0
+        },
+        "apotheotic_additions:heirloom":
+        {
+          "min": 5,
+          "steps": 1,
+          "step": 0
+        },
+        "apotheotic_additions:esoteric":
+        {
+          "min": 6,
+          "steps": 1,
+          "step": 0
         }
       }
     }

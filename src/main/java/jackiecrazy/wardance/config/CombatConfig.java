@@ -439,7 +439,7 @@ public class CombatConfig {
     public static float defaultMultiplierPostureDefend;
     public static float defaultMultiplierPostureAttack;
     public static float defaultMultiplierPostureMob;
-    public static int rollTime;
+    public static int rollTime, steveThreshold;
     public static int rollCooldown;
     public static int staggerDuration;
     public static int adrenaline;
@@ -461,7 +461,7 @@ public class CombatConfig {
     private final ForgeConfigSpec.DoubleValue _defaultMultiplierPostureMob;
     private final ForgeConfigSpec.DoubleValue _defaultMultiplierPostureDefend;
     private final ForgeConfigSpec.DoubleValue _defaultMultiplierPostureAttack;
-    private final ForgeConfigSpec.IntValue _rollTime;
+    private final ForgeConfigSpec.IntValue _rollTime, _perfectRollTime;
     private final ForgeConfigSpec.IntValue _rollCooldown;
     private final ForgeConfigSpec.BooleanValue _dodge;
     private final ForgeConfigSpec.IntValue _parryTime;
@@ -484,14 +484,15 @@ public class CombatConfig {
         _parryTime = b.translation("wardance.config.sneakParry").comment("you parry attacks for this many seconds after RELEASING your sneak button. 0 to disable parrying.").defineInRange("parry time", 10, 0, Integer.MAX_VALUE);
         _parryCD = b.translation("wardance.config.sneakParryCD").comment("cooldown for parrying attacks if you miss a parry.").defineInRange("parry cooldown", 15, 0, Integer.MAX_VALUE);
         _posturePerProjectile = b.translation("wardance.config.ppp").comment("Posture consumed per projectile parried").defineInRange("posture per projectile", 0.5, 0, Double.MAX_VALUE);
-        _defaultMultiplierPostureAttack = b.translation("wardance.config.dmpa").comment("Default multiplier for any items not defined in the config, multiplied by their attack damage").defineInRange("default attack multiplier", 0.15, 0, Double.MAX_VALUE);
-        _defaultMultiplierPostureDefend = b.translation("wardance.config.dmpd").comment("Default multiplier for any item not defined in the config, when used for parrying").defineInRange("default defense multiplier", 1.4, 0, Double.MAX_VALUE);
+        _defaultMultiplierPostureAttack = b.translation("wardance.config.dmpa").comment("Default multiplier for any items not defined in the config, multiplied by their attack damage").defineInRange("default attack multiplier", 1.5, 0, Double.MAX_VALUE);
+        _defaultMultiplierPostureDefend = b.translation("wardance.config.dmpd").comment("Default multiplier for any item not defined in the config, when used for parrying").defineInRange("default defense multiplier", 0.5, 0, Double.MAX_VALUE);
         _customProjectile = b.translation("wardance.config.projectilePosture").comment("Define custom projectile parrying behavior. Default list provided courtesy of DarkMega. Format is name, posture cost (negative to disable parrying this projectile), and a list of tags:\nProjectiles may be (d)estroyed upon parry.\nThey may also be allowed to (t)rigger their non-damage effects.").defineList("projectile parry rules", Arrays.asList(PROJECTILES), String.class::isInstance);
         b.pop();
         b.push("dodging");
         _dodge = b.translation("wardance.config.dodge").define("enable dodges", true);
-        _rollTime = b.translation("wardance.config.rollT").comment("Within this number of ticks after rolling the entity is considered invulnerable.").defineInRange("roll time", 10, 0, Integer.MAX_VALUE);
-        _rollCooldown = b.translation("wardance.config.rollC").comment("Within this number of ticks after dodging the entity cannot dodge again").defineInRange("roll cooldown", 20, 0, Integer.MAX_VALUE);
+        _rollTime = b.translation("wardance.config.rollT").comment("Within this number of ticks after rolling the entity is considered invulnerable.").defineInRange("dodge time", 10, 0, Integer.MAX_VALUE);
+        _perfectRollTime = b.translation("wardance.config.rollTT").comment("Within this number of ticks after rolling the entity will slow time.").defineInRange("just dodge time", 3, 0, Integer.MAX_VALUE);
+        _rollCooldown = b.translation("wardance.config.rollC").comment("Within this number of ticks after dodging the entity cannot dodge again").defineInRange("dodge cooldown", 20, 0, Integer.MAX_VALUE);
         b.pop();
         b.push("expose");
         _staggerDuration = b.translation("wardance.config.staggerD").comment("Number of ticks an entity should be stunned for when its posture reaches 0.").defineInRange("stun duration", 100, 1, Integer.MAX_VALUE);
@@ -520,7 +521,8 @@ public class CombatConfig {
         defaultMultiplierPostureAttack = CONFIG._defaultMultiplierPostureAttack.get().floatValue();
         defaultMultiplierPostureMob = CONFIG._defaultMultiplierPostureMob.get().floatValue();
         rollCooldown = CONFIG._rollCooldown.get();
-        rollTime = rollCooldown - CONFIG._rollTime.get();
+        rollTime = CONFIG._rollTime.get();
+        steveThreshold = rollTime - CONFIG._perfectRollTime.get();
         normalDamage = CONFIG._unstagger.get().floatValue();
         stunDamage = CONFIG._stun.get().floatValue();
         mobParryChanceWeapon = CONFIG._mobParryChanceWeapon.get().floatValue();

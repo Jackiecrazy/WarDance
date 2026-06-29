@@ -36,9 +36,9 @@ public abstract class MixinAerialMode {
     private Vec3 injectAirStep(Entity instance, Vec3 orig) {
         boolean temp = instance.onGround();
         //temporarily set onground to true for step up
-        instance.setOnGround(true);
+        onGround=true;
         Vec3 collided = collide(orig);
-        instance.setOnGround(temp);
+        onGround=temp;
         return ClientAerialHandler.handleCollisions(instance, orig, collided);
     }
 

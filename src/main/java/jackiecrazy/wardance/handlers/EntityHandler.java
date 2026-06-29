@@ -34,9 +34,11 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.InteractionHand;
 import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.*;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.entity.projectile.Projectile;
 import net.minecraft.world.inventory.ChestMenu;
 import net.minecraft.world.inventory.PlayerEnderChestContainer;
 import net.minecraft.world.item.ItemStack;
@@ -176,6 +178,10 @@ public class EntityHandler {
 
     @SubscribeEvent
     public static void takeThis(EntityJoinLevelEvent e) {
+        if(e.getEntity() instanceof Projectile p && p.getOwner() instanceof LivingEntity le){
+            if(CombatData.getCap(le).getHandBind(InteractionHand.MAIN_HAND)>0)
+                e.setCanceled(true);
+        }
         if (e.getEntity() instanceof ServerPlayer) {
             CombatChannel.INSTANCE.send(PacketDistributor.PLAYER.with(() -> (ServerPlayer) e.getEntity()), new SyncSkillPacket(CasterData.getCap((LivingEntity) e.getEntity()).write()));
         }

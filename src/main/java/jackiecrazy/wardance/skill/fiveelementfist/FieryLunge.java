@@ -2,6 +2,7 @@ package jackiecrazy.wardance.skill.fiveelementfist;
 
 import jackiecrazy.footwork.capability.resources.CombatData;
 import jackiecrazy.footwork.event.DamageKnockbackEvent;
+import jackiecrazy.wardance.api.WarAttributes;
 import jackiecrazy.wardance.skill.SkillData;
 import jackiecrazy.wardance.utils.CombatUtils;
 import jackiecrazy.wardance.utils.SkillUtils;
@@ -36,7 +37,7 @@ public class FieryLunge extends FiveElementFist {
         super.onProc(caster, procPoint, state, stats, target);
         if (procPoint instanceof DamageKnockbackEvent e && procPoint.getPhase() == EventPriority.HIGHEST && CombatUtils.isUnarmed(caster, InteractionHand.MAIN_HAND) && e.getEntity() == target) {
             caster.setDeltaMovement(caster.getDeltaMovement().add(caster.position().vectorTo(target.position()).scale(0.17)));
-            CombatData.getCap(caster).setDodgeTime(10);
+            CombatData.getCap(caster).setDodgeTime((int) (10*caster.getAttributeValue(WarAttributes.DODGE_EXTEND.get())));
             caster.hurtMarked = true;
         }
     }

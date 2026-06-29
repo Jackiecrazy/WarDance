@@ -1,0 +1,14 @@
+{
+  "omae": {
+    "subtitle": "subtitle.warsound",
+    "sounds": [
+      "wardance:omae"
+    ]
+  },
+  "shindeiru": {
+    "subtitle": "subtitle.warsound",
+    "sounds": [
+      "wardance:shindeiru"
+    ]
+  }
+}

@@ -6,6 +6,7 @@ import jackiecrazy.footwork.capability.stylish.StylishData;
 import jackiecrazy.footwork.move.Move;
 import jackiecrazy.wardance.WarDance;
 import jackiecrazy.wardance.advancement.WarAdvancements;
+import jackiecrazy.wardance.api.WarAttributes;
 import jackiecrazy.wardance.capability.quiver.QuiverData;
 import jackiecrazy.wardance.capability.skill.CasterData;
 import jackiecrazy.wardance.capability.skill.ISkillCapability;
@@ -448,7 +449,7 @@ public abstract class Skill extends Move {
     }
 
     protected boolean activate(LivingEntity caster, float duration, boolean flag, float something) {
-        return activate(caster, (float) caster.getAttributeValue(FootworkAttributes.SKILL_EFFECTIVENESS.get()), duration, flag, something);
+        return activate(caster, (float) caster.getAttributeValue(WarAttributes.SKILL_EFFECTIVENESS.get()), duration, flag, something);
     }
 
     /**

@@ -13,6 +13,7 @@
     "attack": 10,
     "defend": 0.3,
     "standing": {
+      "tags": ["pressure","control"],
       "type": "animation",
       "duration": 20,
       "easing": "IN_SINE",
@@ -58,12 +59,19 @@
             "knockback": 0.4,
             "damage_scale": 0.75,
             "sweep_base": 0.4,
-            "cooldown_refund": 0.5
+            "cooldown_refund": 0.5,
+            "attack_info": {
+              "drag": {
+                "duration": 5,
+                "strength": 1
+              }
+            }
           }
         }
       ]
     },
     "falling": {
+      "tags": ["pressure","control","crowd"],
       "type": "animation",
       "animations": [
         {
@@ -152,6 +160,7 @@
       "velocity": [0, -1, 1]
     },
     "sprinting": {
+      "tags": ["engage","defense"],
       "type": "animation",
       "duration": 7,
       "easing": "IN_OUT_SINE",
@@ -189,6 +198,7 @@
       }
     },
     "aerial": {
+      "tags": ["control","setup"],
       "type": "animation",
       "animations": [
         {
@@ -283,6 +293,7 @@
       ]
     },
     "guard_counter": {
+      "tags": ["duel","setup"],
       "type": "animation",
       "animations": [
         {
@@ -323,7 +334,7 @@
           ]
         }, {
           "duration": 10,
-          "easing": "IN_CUBIC",
+          "easing": "IN_SINE",
           "frames": [
             {
               "direction": [
@@ -368,6 +379,7 @@
       ]
     },
     "throw": {
+      "tags": ["damage","punish","finisher"],
       "type": "throw",
       "attack_info": {
         "crit": false,
@@ -411,6 +423,7 @@
       ]
     },
     "pickup_flourish": {
+      "tags": ["damage","finisher"],
       "type": "animation",
       "cooldown_refund": 1,
       "animations": [
@@ -452,26 +465,16 @@
                     "ID": "play_particle",
                     "particle": "minecraft:splash",
                     "position": {
-                      "ID": "sum_vector",
-                      "addends": [
-                        {
-                          "ID": "ray_trace",
-                          "position": {
-                            "ID": "eye_position",
-                            "reference_point": "caster"
-                          },
-                          "direction": {
-                            "ID": "look_vector",
-                            "reference_point": "caster"
-                          },
-                          "distance": 32
-                        }, {
-                          "ID": "vector",
-                          "x": 0,
-                          "y": -10,
-                          "z": 0
-                        }
-                      ]
+                      "ID": "ray_trace",
+                      "position": {
+                        "ID": "eye_position",
+                        "reference_point": "caster"
+                      },
+                      "direction": {
+                        "ID": "look_vector",
+                        "reference_point": "caster"
+                      },
+                      "distance": 32
                     },
                     "quantity": 100,
                     "delta": {
@@ -480,33 +483,6 @@
                       "y": 0,
                       "z": 2
                     }
-                  }, {
-                    "ID": "project_hitbox",
-                    "max_time": 1,
-                    "selector": {
-                      "ID": "selector",
-                      "filter": {
-                        "ID": "condition",
-                        "condition": {
-                          "ID": "!allied_to"
-                        }
-                      },
-                      "position": {
-                        "ID": "foot_position",
-                        "reference_point": "target"
-                      },
-                      "range": 2
-                    },
-                    "actions": [
-                      {
-                        "ID": "add_effect",
-                        "effect": "footwork:wet",
-                        "potency": 0,
-                        "duration": 100,
-                        "repeatable": true,
-                        "visible": false
-                      }
-                    ]
                   },
                   {
                     "ID": "spawn_entity",
@@ -533,7 +509,7 @@
                         }
                       ]
                     },
-                    "tag": "{Glowing:1b,Invulnerable:1b,NoAI:1b,Silent:1b,ActiveEffects:[{Id:14,Duration:-1,Amplifier:1,ShowParticles:0b}]}",
+                    "tag": "{Invulnerable:1b,NoAI:1b,Silent:1b,ActiveEffects:[{Id:14,Duration:-1,Amplifier:1,ShowParticles:0b}]}",
                     "on_spawn": [
                       {
                         "ID": "add_effect",
@@ -555,6 +531,7 @@
       ]
     },
     "draw_attack": {
+      "tags": ["control","setup"],
       "type": "animation",
       "animations": [
         {

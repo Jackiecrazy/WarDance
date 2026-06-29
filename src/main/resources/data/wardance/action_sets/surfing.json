@@ -1,0 +1,47 @@
+{
+    "on_start": [
+      {
+        "ID": "store_vector",
+        "value": {
+          "ID": "sum_vector",
+          "max_length": 0.1,
+          "addends": [
+            {
+              "ID": "multiply_vector",
+              "first": {
+                "ID": "look_vector",
+                "reference_point": "caster"
+              },
+              "second": {
+                "ID": "vector",
+                "x": 1,
+                "y": 0,
+                "z": 1
+              }
+            },
+            {
+              "ID": "vector",
+              "x": 0,
+              "y": -0.3,
+              "z": 0
+            }
+          ]
+        },
+        "into": "surf_direction"
+      }
+    ],
+    "waiting": [
+      {
+        "recipient": "target",
+        "ID": "modify_velocity",
+        "repeatable": true,
+        "direction": {
+          "ID": "get_vector",
+          "from": "surf_direction"
+        },
+        "set": false
+      }
+    ],
+    "max_time": 60,
+    "ID": "wait"
+  }

@@ -67,36 +67,36 @@ public class SweepAnimationBuilder {
         switch (base.getType()) {
             case CONE -> {
                 //flourish thrice and stab
-                FlyingWeaponData.getCap(e).scheduleAction(hand, temp_getMMFromType(3, SweepAttack.SWEEPTYPE.CONE, base.getBase() + 3 * base.getScaling(), preFinish, range));
-                FlyingWeaponData.getCap(e).scheduleAction(hand, temp_getMMFromType(15, SweepAttack.SWEEPTYPE.LINE, 3, finish, range + 2));
+                FlyingWeaponData.getCap(e).scheduleAction(hand, temp_getMMFromType(3, SweepAttack.SWEEPTYPE.CONE, base.getBase() + 3 * base.getScaling(), preFinish, range), false);
+                FlyingWeaponData.getCap(e).scheduleAction(hand, temp_getMMFromType(15, SweepAttack.SWEEPTYPE.LINE, 3, finish, range + 2), false);
             }
             case CLEAVE -> {
                 //tcs
                 final FrameEffects fx = new FrameEffects().setHit(finish).setRange(range);
                 fx.setEffects(FlyingWeaponEffect.WEAPON, FlyingWeaponEffect.BIG_SHADOW, FlyingWeaponEffect.LOCK_ORIENTATION);
-                FlyingWeaponData.getCap(e).scheduleAction(hand, new MotionManagers.DefinitionMM(new MotionGroup(LOOP, EasingFunctionEnum.IN_CUBIC, 20, fx)));
+                FlyingWeaponData.getCap(e).scheduleAction(hand, new MotionManagers.DefinitionMM(new MotionGroup(LOOP, EasingFunctionEnum.IN_CUBIC, 20, fx)), false);
             }
             case IMPACT -> {
                 //spin and slam down
-                FlyingWeaponData.getCap(e).scheduleAction(hand, temp_getMMFromType(15, SweepAttack.SWEEPTYPE.CIRCLE, base.getBase() + 3 * base.getScaling(), preFinish, range));
-                FlyingWeaponData.getCap(e).scheduleAction(hand, temp_getMMFromType(20, SweepAttack.SWEEPTYPE.CLEAVE, 60, finish, range));
+                FlyingWeaponData.getCap(e).scheduleAction(hand, temp_getMMFromType(15, SweepAttack.SWEEPTYPE.CIRCLE, base.getBase() + 3 * base.getScaling(), preFinish, range), false);
+                FlyingWeaponData.getCap(e).scheduleAction(hand, temp_getMMFromType(20, SweepAttack.SWEEPTYPE.CLEAVE, 60, finish, range), false);
             }
             case CIRCLE -> {
                 //beeeeeg circle
-                FlyingWeaponData.getCap(e).scheduleAction(hand, temp_getMMFromType(40, SweepAttack.SWEEPTYPE.CIRCLE, base.getBase() + 3 * base.getScaling(), finish, range + 2));
+                FlyingWeaponData.getCap(e).scheduleAction(hand, temp_getMMFromType(40, SweepAttack.SWEEPTYPE.CIRCLE, base.getBase() + 3 * base.getScaling(), finish, range + 2), false);
             }
             case LINE -> {
                 //triple jab followed by big jab
-                FlyingWeaponData.getCap(e).scheduleAction(hand, temp_getMMFromType(3, SweepAttack.SWEEPTYPE.LINE, base.getBase() + 3 * base.getScaling(), preFinish, range));
-                FlyingWeaponData.getCap(e).scheduleAction(hand, temp_getMMFromType(5, SweepAttack.SWEEPTYPE.LINE, base.getBase() + 3 * base.getScaling(), preFinish, range));
-                FlyingWeaponData.getCap(e).scheduleAction(hand, temp_getMMFromType(10, SweepAttack.SWEEPTYPE.LINE, base.getBase() + 3 * base.getScaling(), finish, range + 2));
+                FlyingWeaponData.getCap(e).scheduleAction(hand, temp_getMMFromType(3, SweepAttack.SWEEPTYPE.LINE, base.getBase() + 3 * base.getScaling(), preFinish, range), false);
+                FlyingWeaponData.getCap(e).scheduleAction(hand, temp_getMMFromType(5, SweepAttack.SWEEPTYPE.LINE, base.getBase() + 3 * base.getScaling(), preFinish, range), false);
+                FlyingWeaponData.getCap(e).scheduleAction(hand, temp_getMMFromType(10, SweepAttack.SWEEPTYPE.LINE, base.getBase() + 3 * base.getScaling(), finish, range + 2), false);
             }
             case NONE -> {
                 //flurry of blows
-                FlyingWeaponData.getCap(e).scheduleAction(hand, temp_getMMFromType(3, SweepAttack.SWEEPTYPE.LINE, base.getBase() + 3 * base.getScaling(), preFinish, range));
-                FlyingWeaponData.getCap(e).scheduleAction(hand, temp_getMMFromType(3, SweepAttack.SWEEPTYPE.LINE, base.getBase() + 3 * base.getScaling(), preFinish, range));
-                FlyingWeaponData.getCap(e).scheduleAction(hand, temp_getMMFromType(3, SweepAttack.SWEEPTYPE.LINE, base.getBase() + 3 * base.getScaling(), preFinish, range));
-                FlyingWeaponData.getCap(e).scheduleAction(hand, temp_getMMFromType(10, SweepAttack.SWEEPTYPE.LINE, base.getBase() + 3 * base.getScaling(), finish, range + 2));
+                FlyingWeaponData.getCap(e).scheduleAction(hand, temp_getMMFromType(3, SweepAttack.SWEEPTYPE.LINE, base.getBase() + 3 * base.getScaling(), preFinish, range), false);
+                FlyingWeaponData.getCap(e).scheduleAction(hand, temp_getMMFromType(3, SweepAttack.SWEEPTYPE.LINE, base.getBase() + 3 * base.getScaling(), preFinish, range), false);
+                FlyingWeaponData.getCap(e).scheduleAction(hand, temp_getMMFromType(3, SweepAttack.SWEEPTYPE.LINE, base.getBase() + 3 * base.getScaling(), preFinish, range), false);
+                FlyingWeaponData.getCap(e).scheduleAction(hand, temp_getMMFromType(10, SweepAttack.SWEEPTYPE.LINE, base.getBase() + 3 * base.getScaling(), finish, range + 2), false);
             }
         }
     }

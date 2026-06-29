@@ -10,6 +10,9 @@
       "id": "minecraft:armor_stand",
       "required": false
     }, {
+      "id": "minecraft:villager",
+      "required": false
+    }, {
       "id": "quark:glass_item_frame",
       "required": false
     }

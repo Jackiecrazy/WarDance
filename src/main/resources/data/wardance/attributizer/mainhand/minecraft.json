@@ -1,9 +1,0 @@
-{
-"minecraft:shield":[
-      {
-        "attribute":"minecraft:generic.attack_speed",
-        "modify":-3.2,
-        "operation":"ADDITION"
-      }
-  ]
-}

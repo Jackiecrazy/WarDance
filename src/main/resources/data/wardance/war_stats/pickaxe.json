@@ -391,7 +391,7 @@
               "ID": "consume_resource",
               "format": "NUMBER",
               "resource": "SPIRIT",
-              "amount": 7,
+              "amount": 10,
               "operation": "CONSUME"
             }
           ],
@@ -419,7 +419,7 @@
             "ID": "consume_resource",
             "format": "NUMBER",
             "resource": "SPIRIT",
-            "amount": 7
+            "amount": 10
           },
           "override": {
             "type": "throw",

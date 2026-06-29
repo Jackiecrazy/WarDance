@@ -9,10 +9,8 @@ import jackiecrazy.wardance.config.weapon.interactions.SweepAttack;
 import jackiecrazy.wardance.config.weapon.interactions.WeaponInteractions;
 import jackiecrazy.wardance.skill.Skill;
 import jackiecrazy.wardance.skill.SkillCategory;
-import net.minecraft.ChatFormatting;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
-import net.minecraft.client.gui.screens.inventory.InventoryScreen;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.InteractionHand;
@@ -45,6 +43,13 @@ public class StudyTheBladeScreen extends AbstractContainerScreen<StudyTheBlade> 
         this.imageHeight = 30 + 8 * 18 + 100;
     }
 
+    private static String orElse(String key, String fallback) {
+        String ret = Component.translatable(key).getString();
+        if (ret.equals(key))
+            ret = Component.translatable(fallback, key).getString();
+        return ret;
+    }
+
     @Override
     protected void renderBg(GuiGraphics guiGraphics, float partialTick, int mouseX, int mouseY) {
         RenderSystem.setShaderTexture(0, TEXTURE);
@@ -67,13 +72,14 @@ public class StudyTheBladeScreen extends AbstractContainerScreen<StudyTheBlade> 
         super.init();
         int mainWidth = 180, mainHeight = 130;
         mainInfo = new InfoPanel(this, minecraft, mainWidth, mainHeight, (width - mainWidth) / 2, 20);
-        tips = new InfoPanel(this, minecraft, 100, mainHeight, 320, 55);
+        tips = new InfoPanel(this, minecraft, 100, mainHeight, width-100, (height-mainHeight)/2);
         tabButtons.clear();
         mainInfo.clearInfo();
         tips.clearInfo();
 
         int tabX = 20;
-        int tabY = 40;
+        int tabY = (height-(WeaponStats.AttackType.values().length*TAB_HEIGHT))/2;
+
 
         for (WeaponStats.AttackType t : WeaponStats.AttackType.values()) {
             StudyStateButton tab = new StudyStateButton(this, tabX, tabY + t.ordinal() * TAB_HEIGHT, TAB_WIDTH, TAB_HEIGHT, t, t.name());
@@ -122,11 +128,13 @@ public class StudyTheBladeScreen extends AbstractContainerScreen<StudyTheBlade> 
         String fallbackDesc = "wardance:wip.desc";
         if (tab != null && tab != WeaponStats.AttackType.UNDEFINED) {
             nee = tab.name().toLowerCase(Locale.ROOT) + ".";
-            final WeaponInteractions.WeaponInteraction interact = WeaponStats.getSweepInfo(displayedStack, player, tab, true, InteractionHand.MAIN_HAND).getInteractions().get(0);
-            if(interact instanceof SweepAttack sa){
-                fallbackDesc="wardance:wip."+ sa.getType().name().toLowerCase(Locale.ROOT);
+            final List<WeaponInteractions.WeaponInteraction> RULESOFNATURE = WeaponStats.getSweepInfo(displayedStack, player, tab, true, InteractionHand.MAIN_HAND).getInteractions();
+            if (!RULESOFNATURE.isEmpty()) {
+                final WeaponInteractions.WeaponInteraction interact = RULESOFNATURE.get(0);
+                if (interact instanceof SweepAttack sa) {
+                    fallbackDesc = "wardance:wip." + sa.getType().name().toLowerCase(Locale.ROOT);
+                } else fallbackDesc = "wardance:wip." + interact.getInteractionType().name().toLowerCase(Locale.ROOT);
             }
-            else fallbackDesc = "wardance:wip."+ interact.getInteractionType().name().toLowerCase(Locale.ROOT);
         }
         //the gui needs to grab several things:
         //general description, general tips,does
@@ -135,8 +143,8 @@ public class StudyTheBladeScreen extends AbstractContainerScreen<StudyTheBlade> 
         //so entry.state.desc/tip/name
         String base = data.getName() + "." + nee;
         List<String> main = new ArrayList<>();
-        final String name =orElse(base + "name", "");
-        main.add("{"+ name +";GOLD}");
+        final String name = orElse(base + "name", "");
+        main.add("{" + name + ";GOLD}");
         String tags = "";
         if (tab != null && tab != WeaponStats.AttackType.UNDEFINED)
             for (String str : data.getTags(tab))
@@ -148,17 +156,10 @@ public class StudyTheBladeScreen extends AbstractContainerScreen<StudyTheBlade> 
 
 
         mainInfo.setInfo(main, null);
-        List<String> tip=new ArrayList<>();
-        tip.add(Component.translatable( "wardance.weeb.tip").getString());
+        List<String> tip = new ArrayList<>();
+        tip.add(Component.translatable("wardance.weeb.tip").getString());
         tip.add(orElse(base + "tips", "wardance:wip.tips"));
         tips.setInfo(tip, null);
-    }
-
-    private static String orElse(String key, String fallback){
-        String ret = Component.translatable(key).getString();
-        if(ret.equals(key))
-            ret=Component.translatable(fallback, key).getString();
-        return ret;
     }
 
     @Override
@@ -184,7 +185,7 @@ public class StudyTheBladeScreen extends AbstractContainerScreen<StudyTheBlade> 
         // Check if click is over any slot
         for (Slot slot : menu.slots) {
             if (slot.isActive() && isHovering(slot.x, slot.y, 16, 16, mouseX, mouseY)) {
-                if (slot.hasItem()) {
+                if (slot.hasItem() || displayedStack == null || displayedStack.isEmpty()) {
                     setDisplayedItem(slot.getItem() == displayedStack ? null : slot.getItem());
                     return true; // Block default pickup / drag behavior
                 }

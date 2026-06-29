@@ -384,56 +384,41 @@
     "sweep_base": 1.0,
     "sweep_scale": 0.25,
     "standing": {
-      "sweep": "LINE",
-      "knockback": 1.25,
-      "damage_scale": 0.75,
-      "posture_scale": 0.5,
-      "sweep_base": 1.0,
-      "sweep_scale": 0.35
+      "type": "use"
     },
     "falling": {
-      "sweep": "IMPACT",
-      "knockback": 0.5,
-      "damage_scale": 1.25,
-      "sweep_base": 1.5,
-      "sweep_scale": 0.75,
+      "type": "use",
+      "use_speed": 2,
       "on_swing": {
-        "command": "/function wardance:attack/self_moderatefatigue"
-      },
-      "damage_other_command": "/function wardance:attack/damageother_mildstun",
-      "crit": true
-    },
-    "aerial": {
-      "sweep": "CONE",
-      "knockback": 2.0,
-      "damage_scale": 0.75,
-      "posture_scale": 0.75,
-      "sweep_base": 50.0,
-      "sweep_scale": 20.0,
-      "on_swing": {
-        "command": "/function wardance:attack/self_mildfatigue"
+        "run_actions": [
+          {
+            "ID": "add_effect",
+            "effect": "minecraft:slow_falling",
+            "potency": 0,
+            "duration": 30,
+            "stacking": "MAX_DURATION"
+          }
+        ]
       }
     },
-    "sprinting": {
-      "sweep": "LINE",
-      "knockback": 1.25,
-      "posture_scale": 1.25,
-      "sweep_base": 1.0,
-      "sweep_scale": 0.5,
-      "on_swing": {
-        "command": "/function wardance:attack/self_mildfatigue"
-      },
-      "damage_other_command": "/function wardance:attack/damageother_mildstun",
-      "crit": true
+    "aerial": {
+      "type": "use",
+      "use_speed": 2,
+      "velocity": [
+        0, 0.5, -0.5
+      ],
+      "set_velocity": true
     },
-    "riding": {
-      "sweep": "CONE",
-      "knockback": 2.0,
-      "crit_damage": 2.0,
-      "sweep_base": 40.0,
-      "sweep_scale": 20.0,
-      "damage_self_command": "/function wardance:attack/damageother_mildstun",
-      "damage_other_command": "/function wardance:attack/self_mildfatigue"
+    "sprinting": {
+      "interactions": [
+        {
+          "sweep": "NONE",
+          "knockback": 2.0
+        }, {
+          "type": "use",
+          "use_speed": 2
+        }
+      ]
     }
   },
   "#book": {
@@ -1672,15 +1657,6 @@
   "#dagger": {
     "attack": 6.5,
     "defend": 0.1,
-    "shield": false,
-    "sweep": "CONE",
-    "knockback": 0.75,
-    "damage_scale": 1.0,
-    "posture_scale": 1.0,
-    "crit": false,
-    "crit_damage": 1.5,
-    "sweep_base": 30.0,
-    "sweep_scale": 10.0,
     "standing": {
       "sweep": "CONE",
       "knockback": 0.75,
@@ -1728,15 +1704,6 @@
   "#fishingrod": {
     "attack": 6,
     "defend": 0.2,
-    "shield": false,
-    "sweep": "LINE",
-    "knockback": 0.5,
-    "damage_scale": 0.75,
-    "posture_scale": 0.75,
-    "crit": false,
-    "crit_damage": 1.5,
-    "sweep_base": 0.5,
-    "sweep_scale": 0.25,
     "standing": {
       "sweep": "LINE",
       "knockback": 0.5,
@@ -1792,15 +1759,6 @@
   "#spear": {
     "attack": 12.5,
     "defend": 0.6,
-    "shield": false,
-    "sweep": "LINE",
-    "knockback": 0.75,
-    "damage_scale": 0.75,
-    "posture_scale": 0.75,
-    "crit": false,
-    "crit_damage": 1.5,
-    "sweep_base": 0.3,
-    "sweep_scale": 0.15,
     "standing": {
       "sweep": "LINE",
       "knockback": 0.75,
@@ -1857,15 +1815,6 @@
   "#hammer": {
     "attack": 30,
     "defend": 0.7,
-    "shield": false,
-    "sweep": "IMPACT",
-    "knockback": 1.25,
-    "damage_scale": 0.75,
-    "posture_scale": 0.5,
-    "crit": false,
-    "crit_damage": 1.5,
-    "sweep_base": 1.0,
-    "sweep_scale": 0.4,
     "standing": {
       "sweep": "IMPACT",
       "knockback": 1.25,
@@ -1920,41 +1869,77 @@
   "#longbow": {
     "attack": 9,
     "defend": 0.1,
-    "shield": false,
-    "sweep": "CONE",
-    "knockback": 0.75,
-    "damage_scale": 0.75,
-    "posture_scale": 0.75,
-    "crit": false,
-    "crit_damage": 1.5,
-    "sweep_base": 30.0,
-    "sweep_scale": 10.0,
     "standing": {
-      "type": "use"
+      "type": "use",
+      "on_swing": {
+        "run_actions": [
+          {
+            "ID": "attach_callback",
+            "effect": "wardance:aimbot",
+            "duration": 40,
+            "max_procs": 1,
+            "trigger": "shoot_projectile"
+          }
+        ]
+      }
     },
     "falling": {
-      "use_speed": 2,
-      "type": "use"
+      "type": "use",
+      "use_speed": 1.5,
+      "on_swing": {
+        "run_actions": [
+          {
+            "ID": "attach_callback",
+            "effect": "wardance:aimbot",
+            "duration": 40,
+            "max_procs": 1,
+            "trigger": "shoot_projectile"
+          }, {
+            "ID": "add_effect",
+            "effect": "minecraft:slow_falling",
+            "potency": 0,
+            "duration": 30,
+            "stacking": "MAX_DURATION"
+          }
+        ]
+      }
     },
     "aerial": {
       "type": "use",
-      "velocity": [
-        0,
-        0.5,
-        -1
-      ],
-      "set_velocity": true
+      "use_speed": 1.5,
+      "on_swing": {
+        "run_actions": [
+          {
+            "ID": "attach_callback",
+            "effect": "wardance:aimbot",
+            "duration": 40,
+            "max_procs": 1,
+            "trigger": "shoot_projectile"
+          }, {
+            "ID": "add_effect",
+            "effect": "minecraft:slow_falling",
+            "potency": 0,
+            "duration": 30,
+            "stacking": "MAX_DURATION"
+          }
+        ]
+      }
     },
     "sprinting": {
-      "sweep": "CIRCLE",
-      "knockback": 1.5,
-      "damage_scale": 0.75,
-      "sweep_base": 2.5,
-      "sweep_scale": 0.5,
+      "type": "use",
+      "use_speed": 1.5,
       "on_swing": {
-        "command": "/function wardance:attack/self_moderatefatigue"
-      },
-      "crit": true
+        "dodge_frames": 10,
+        "run_actions": [
+          {
+            "ID": "attach_callback",
+            "effect": "wardance:aimbot",
+            "duration": 40,
+            "max_procs": 1,
+            "trigger": "shoot_projectile"
+          }
+        ]
+      }
     }
   },
   "#staff": {
@@ -2270,68 +2255,6 @@
       "sweep_scale": 0.75,
       "damage_self_command": "/function wardance:attack/damageother_mildstun",
       "damage_other_command": "/function wardance:attack/self_moderatefatigue"
-    }
-  },
-  "#scythe": {
-    "attack": 15,
-    "defend": 0.3,
-    "shield": false,
-    "sweep": "CONE",
-    "knockback": 1.25,
-    "damage_scale": 0.75,
-    "posture_scale": 0.5,
-    "crit": false,
-    "crit_damage": 1.5,
-    "sweep_base": 60.0,
-    "sweep_scale": 20.0,
-    "standing": {
-      "sweep": "CONE",
-      "knockback": 1.25,
-      "damage_scale": 0.75,
-      "posture_scale": 0.5,
-      "sweep_base": 60.0,
-      "sweep_scale": 20.0
-    },
-    "falling": {
-      "sweep": "CLEAVE",
-      "knockback": 1.25,
-      "damage_scale": 1.25,
-      "sweep_base": 50.0,
-      "sweep_scale": 25.0,
-      "on_swing": {
-        "command": "/function wardance:attack/self_moderatefatigue"
-      },
-      "damage_other_command": "/function wardance:attack/damageother_armorcleaveminor",
-      "crit": true
-    },
-    "aerial": {
-      "sweep": "LINE",
-      "knockback": -1.75,
-      "damage_scale": 0.5,
-      "sweep_base": 1.0,
-      "sweep_scale": 0.5,
-      "damage_other_command": "/function wardance:attack/damageother_mildstun"
-    },
-    "sprinting": {
-      "sweep": "IMPACT",
-      "knockback": 1.5,
-      "damage_scale": 0.5,
-      "posture_scale": 1.5,
-      "sweep_base": 0.75,
-      "sweep_scale": 0.5,
-      "on_swing": {
-        "command": "/function wardance:attack/self_accelerate"
-      },
-      "damage_other_command": "/function wardance:attack/damageother_destabilize",
-      "crit": true
-    },
-    "riding": {
-      "sweep": "CIRCLE",
-      "knockback": 0.5,
-      "damage_scale": 1.2,
-      "crit_damage": 2.0,
-      "sweep_base": 4.0,
-      "sweep_scale": 0.75
     }
   },
   "#executionersword": {

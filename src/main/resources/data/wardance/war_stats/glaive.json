@@ -1,4 +1,14 @@
 {
+  "_guide": {
+    "standing": "spin, crit on the back",
+    "falling": "",
+    "aerial": "",
+    "sprinting": "",
+    "guard counter": "",
+    "throw": "",
+    "pickup": "",
+    "draw": ""
+  },
   "#glaive": {
     "attack": 20,
     "defend": 0.5,
@@ -47,8 +57,7 @@
           ],
           "offset": [
             0, 0, 1
-          ],
-          "render_rotation": 90
+          ]
         }, {
           "direction": [
             1, 0, 0
@@ -64,24 +73,21 @@
               "WEAPON", "TRAIL"
             ],
             "trail_color": [10, 10, 240]
-          },
-          "render_rotation": 90
+          }
         }, {
           "direction": [
             0, 0, 1
           ],
           "offset": [
             0, 0, 1
-          ],
-          "render_rotation": 90
+          ]
         }, {
           "direction": [
             -1, 0, 0
           ],
           "offset": [
             0, 0, 1
-          ],
-          "render_rotation": 90
+          ]
         }
       ]
     },

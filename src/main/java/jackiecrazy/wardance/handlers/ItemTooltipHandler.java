@@ -1,6 +1,7 @@
 package jackiecrazy.wardance.handlers;
 
 import jackiecrazy.footwork.capability.stylish.StylishData;
+import jackiecrazy.footwork.client.Keybinds;
 import jackiecrazy.wardance.WarDance;
 import jackiecrazy.wardance.capability.permission.PermissionData;
 import jackiecrazy.wardance.config.weapon.WeaponStats;
@@ -56,7 +57,7 @@ public class ItemTooltipHandler {
 ////                        if (s == WeaponStats.AttackType.STANDING || !sweepGroup.equals(standing))
 //                        else e.getToolTip().add(Component.translatable("wardance.tooltip.sweep." + s.name().toLowerCase(Locale.ROOT), sweepGroup.copy().withStyle(ChatFormatting.DARK_AQUA)).withStyle(ChatFormatting.GRAY));
 //                    }
-                    e.getToolTip().add(Component.literal("Study this weapon in your trance menu (J) to learn more").withStyle(ChatFormatting.GREEN));
+                    e.getToolTip().add(Component.translatable("wardance.tooltip.weaponMoves", Keybinds.SELECT.getKey().getDisplayName()).withStyle(ChatFormatting.GREEN));
                 }
             } else {
                 e.getToolTip().add(Component.translatable("wardance.tooltip.shift").withStyle(ChatFormatting.GREEN));

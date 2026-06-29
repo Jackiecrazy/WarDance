@@ -1,0 +1,32 @@
+{
+  "minecraft:shield": [
+    {
+      "attribute": "minecraft:generic.attack_speed",
+      "modify": -3.2,
+      "operation": "ADDITION"
+    }
+  ],
+  "#wardance:door": [
+    {
+      "attribute": "minecraft:generic.attack_speed",
+      "modify": -3.2,
+      "operation": "ADDITION"
+    },
+    {
+      "attribute": "minecraft:generic.attack_damage",
+      "modify": 8,
+      "operation": "EQUALIZE"
+    }
+  ],
+  "minecraft:air": [
+    {
+      "attribute": "minecraft:generic.attack_speed",
+      "modify": -0.5,
+      "operation": "MULTIPLY_TOTAL"
+    },{
+      "attribute": "wardance:kick_damage",
+      "modify": 2,
+      "operation": "ADDITION"
+    }
+  ]
+}

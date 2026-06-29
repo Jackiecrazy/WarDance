@@ -94,10 +94,9 @@
               "offset": [
                 0, 0, 1
               ],
-              "render_rotation": [
-                0, 0, 1, 180
-              ],
+              "render_rotation": 180,
               "effects": {
+                "effects": ["WEAPON","TRAIL"],
                 "attack_info": {
                   "knockback": 2,
                   "knockback_direction": [
@@ -402,7 +401,7 @@
               ],
               "effects": {
                 "attack_info": {
-                  "damage_multiplier": 0.8
+                  "damage_scale": 0.8
                 },
                 "effects": [
                   "WEAPON", "AFTERIMAGE"

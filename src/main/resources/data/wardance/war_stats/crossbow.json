@@ -5,7 +5,7 @@
     "aerial": "load and shoot faster while kicking backwards",
     "sprinting": "knock back an enemy with a bash before loading and shooting with higher speed",
     "guard counter": "shoot an acacia stake that drags the first hit mob along and pins them into the terrain.",
-    "throw": "shoot a birch stake that causes the hit mob to take extra ranged damage after receiving melee damage",
+    "throw": "shoot a birch stake that causes the hit mob to take extra damage after receiving melee damage",
     "draw": "shoot a piercing oak stake that causes every mob it hits to gain glowing temporarily",
     "pickup": "hammer down the stake, dealing piercing melee damage in front of you. "
   },
@@ -70,9 +70,11 @@
       ]
     },
     "standing": {
+      "tags": ["pressure"],
       "type": "use"
     },
     "falling": {
+      "tags": ["pressure", "mobility"],
       "type": "use",
       "use_speed": 2,
       "on_swing": {
@@ -88,6 +90,7 @@
       }
     },
     "aerial": {
+      "tags": ["pressure", "mobility"],
       "type": "use",
       "use_speed": 2,
       "velocity": [
@@ -96,6 +99,7 @@
       "set_velocity": true
     },
     "sprinting": {
+      "tags": ["pressure","control"],
       "interactions": [
         {
           "sweep": "NONE",
@@ -107,6 +111,7 @@
       ]
     },
     "guard_counter": {
+      "tags": ["setup","duel","control"],
       "interactions": [],
       "overrides": [
         {
@@ -114,7 +119,7 @@
             "ID": "consume_resource",
             "format": "NUMBER",
             "resource": "SPIRIT",
-            "amount": 7,
+            "amount": 10,
             "operation": "CONSUME"
           },
           "override": {
@@ -144,6 +149,7 @@
       ]
     },
     "throw": {
+      "tags": ["dot","duel","setup"],
       "interactions": [],
       "overrides": [
         {
@@ -151,7 +157,7 @@
             "ID": "consume_resource",
             "format": "NUMBER",
             "resource": "SPIRIT",
-            "amount": 7,
+            "amount": 10,
             "operation": "CONSUME"
           },
           "override": {
@@ -187,6 +193,7 @@
       ]
     },
     "draw_attack": {
+      "tags": ["setup"],
       "interactions": [],
       "overrides": [
         {
@@ -194,7 +201,7 @@
             "ID": "consume_resource",
             "format": "NUMBER",
             "resource": "SPIRIT",
-            "amount": 7,
+            "amount": 10,
             "operation": "CONSUME"
           },
           "override": {
@@ -210,7 +217,7 @@
                     "ID": "add_effect",
                     "effect": "minecraft:glowing",
                     "potency": 0,
-                    "duration": 200,
+                    "duration": 400,
                     "repeatable": true,
                     "forced": true,
                     "visible": false
@@ -218,6 +225,7 @@
                 ]
               }
             },
+            "pierce": 5,
             "throw_speed": 2,
             "lodge_block": true,
             "lodge_entity": true,
@@ -232,6 +240,7 @@
       ]
     },
     "pickup_flourish": {
+      "tags": ["damage","finisher"],
       "type": "animation",
       "animations": [
         {

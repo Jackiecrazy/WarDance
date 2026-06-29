@@ -2,6 +2,7 @@ package jackiecrazy.wardance.capability.aerial;
 
 import jackiecrazy.footwork.api.FootworkAttributes;
 import jackiecrazy.footwork.capability.stylish.StylishData;
+import jackiecrazy.wardance.api.WarAttributes;
 import jackiecrazy.wardance.networking.CombatChannel;
 import jackiecrazy.wardance.networking.movement.AerialModePacket;
 import net.minecraft.client.player.LocalPlayer;
@@ -250,7 +251,7 @@ public class ClientAerialHandler {
     }
 
     public static void resetMultiJumps(LocalPlayer pl) {
-        jumpCount = (int) pl.getAttributeValue(FootworkAttributes.AIR_JUMPS.get());
+        jumpCount = (int) pl.getAttributeValue(WarAttributes.AIR_JUMPS.get());
     }
 
     public static void handleWallRuns(Player self, IAerialMode cap) {

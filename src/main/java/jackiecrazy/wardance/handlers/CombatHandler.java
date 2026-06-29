@@ -12,10 +12,14 @@ import jackiecrazy.footwork.move.motionframe.HitInfo;
 import jackiecrazy.footwork.utils.GeneralUtils;
 import jackiecrazy.footwork.utils.StealthUtils;
 import jackiecrazy.wardance.WarDance;
+import jackiecrazy.wardance.api.WarAttributes;
 import jackiecrazy.wardance.capability.flyingweapon.FlyingWeaponData;
 import jackiecrazy.wardance.capability.permission.PermissionData;
 import jackiecrazy.wardance.capability.stylish.StylishCapability;
-import jackiecrazy.wardance.config.*;
+import jackiecrazy.wardance.config.CombatConfig;
+import jackiecrazy.wardance.config.GeneralConfig;
+import jackiecrazy.wardance.config.MobSpecs;
+import jackiecrazy.wardance.config.QiCosts;
 import jackiecrazy.wardance.config.weapon.WeaponStats;
 import jackiecrazy.wardance.entity.FlyingWeaponEntity;
 import jackiecrazy.wardance.event.MeleePostureEvent;
@@ -27,9 +31,13 @@ import jackiecrazy.wardance.utils.MobilityUtils;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.tags.DamageTypeTags;
+import net.minecraft.util.Mth;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.damagesource.DamageSource;
-import net.minecraft.world.entity.*;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.Marker;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.entity.projectile.AbstractArrow;
@@ -62,6 +70,24 @@ public class CombatHandler {
     public static void mohistWhy(AttackEntityEvent e) {
         float cd = e.getEntity().getAttackStrengthScale(0.5f);
         CombatData.getCap(e.getEntity()).tickProc("swing", cd);
+    }
+
+    @SubscribeEvent
+    public static void dragBonusRanged(ProjectileDefendEvent.Block e) {
+        if (e.getProjectile() != null && CombatUtils.isDragging(e.getEntity(), e.getProjectile().getOwner())) {
+            e.setRallyPercentage(1 - (1 - e.getRallyPercentage()) / 2);
+            e.setPostureConsumption(e.getPostureConsumption() / 2);
+            e.setResult(Event.Result.ALLOW);
+        }
+    }
+
+    @SubscribeEvent
+    public static void dragBonusMelee(MeleePostureEvent.Block e) {
+        if (e.getAttacker() != null && CombatUtils.isDragging(e.getEntity(), e.getAttacker())) {
+            e.setRallyPercentage(1 - (1 - e.getRallyPercentage()) / 2);
+            e.setPostureConsumption(e.getPostureConsumption() / 2);
+            e.setResult(Event.Result.ALLOW);
+        }
     }
 
     /**
@@ -316,6 +342,12 @@ public class CombatHandler {
                     cds.setKnockbackVector(sweepInfo.knockback_direction());
                 }
 
+                //directly cancel a 0 damage attack at this stage
+                if (sweepInfo.damage_scale <= 0) {
+                    e.setCanceled(true);
+                    return;
+                }
+
                 //melee specific processing
                 if (DamageUtils.isMeleeAttack(e.getSource())) {
                     //hand bound or staggered, no attack
@@ -350,7 +382,7 @@ public class CombatHandler {
                     //add stats if it's the first attack this tick and cooldown is sufficient
                     if (!semeCap.alreadyProc("oncePerAttack")) {//first hit of a sweep attack this tick, add combo based on state
                         //semeCap.addRank(0.1f);
-                        float spiritAdded = (float) (rawAtk * sweepInfo.spirit_multiplier());
+                        float spiritAdded = (float) (rawAtk * sweepInfo.spirit_multiplier() / 2);
                         if (spiritAdded != 0) {
                             //todo should this factor in posture/crit mult?
                             double percRed = semeCap.addSpirit(spiritAdded) / spiritAdded;
@@ -543,6 +575,7 @@ public class CombatHandler {
                 e.setResult(info.isCrit() ? Event.Result.ALLOW : Event.Result.DENY);
                 e.setDamageModifier((float) info.getCritDamage());
             }
+            e.setDamageModifier((float) (e.getDamageModifier() * seme.getAttributeValue(WarAttributes.CRIT_DAMAGE.get())));
         }
     }
 
@@ -682,18 +715,20 @@ public class CombatHandler {
         final boolean creative = e.getSource().is(DamageTypeTags.BYPASSES_INVULNERABILITY);
         final boolean environmentalDamage = (e.getSource().getEntity() == null);
         final boolean nonMeleeDamage = e.getSource().isIndirect() || !(e.getSource().getEntity() instanceof LivingEntity le);//|| CombatUtils.getAttackState(le) == WeaponStats.AttackType.UNDEFINED;
-        //nonplayers cannot hold on and will vaporize if the damage is too high
-        if (!(uke instanceof Player) && e.getAmount() > uke.getMaxHealth() * 2) {
+        if (uke.getType().is(MobSpecs.NO_DARKTIDE)) ;//do nothing.
+            //nonplayers cannot hold on and will vaporize if the damage is too high
+        else if (!(uke instanceof Player) && e.getAmount() > uke.getMaxHealth() * 2) {
             e.setAmount(e.getAmount() + cap.getRecordedDamage());
             cap.stopRecording(null);
         } else if (!creative && !cap.isStunned() && !cap.alreadyProc("knockdown")) {
             //yeah this is basically darktide with discrimination
-
+            final float dtEff = (float) uke.getAttributeValue(WarAttributes.DARKTIDE.get());
+            final float reduction = Mth.clamp(cap.getPosturePercentage() * dtEff, 0, 1);
             // environmental: only deal damage at 0 qi
             if (environmentalDamage) {
                 cap.tickProc("cancelShake");
                 if (cap.consumePosture(QiCosts.translateEnvironment(ds), 1) == 0) {
-                    e.setAmount(0);
+                    e.setAmount(e.getAmount() * Mth.clamp(1 - dtEff, 0, 1));
                     cap.tickProc("deathDenied");
                 }//else e.setAmount(e.getAmount()/2);
             } else if (uke instanceof Player) {
@@ -702,13 +737,13 @@ public class CombatHandler {
                 // vs projectile: qi drain then internal damage
                 // vs melee: damage and posture simultaneously
                 //cap.tickProc("deathDenied");
-                cap.recordDamage(e.getAmount() * cap.getPosturePercentage());
-                e.setAmount(e.getAmount() * (1 - cap.getPosturePercentage()));
+                cap.recordDamage(e.getAmount() * reduction);
+                e.setAmount(e.getAmount() * (1 - reduction));
                 //e.setAmount(0);
-//                if (nonMeleeDamage && cap.getPosture() <= 0) {wn
-//                    cap.recordDamage(e.getAmount());
-//                    e.setAmount(0);
-//                }
+                if (nonMeleeDamage && cap.getPosture() > 0) {
+                    e.setAmount(0);
+                    cap.tickProc("deathDenied");
+                }
             } else {
                 //mobs
                 // vs projectiles: qi drain then damage
@@ -716,14 +751,13 @@ public class CombatHandler {
                 if (alert) {
                     //darktide
                     e.setAmount(e.getAmount() * (1 - cap.getPosturePercentage()));
-                    if (nonMeleeDamage && (cap.getPosture() > 0)) {
-                        //cap.recordDamage(cap.consumePosture(e.getAmount()));//I think this is double dipping posture for projectiles?
-                        //e.setAmount(e.getAmount() / 2);
-                        cap.recordDamage(e.getAmount());
-                    }
-//                    if (!e.getSource().is(FootworkDamageTypeTags.AUTO))
-//                        cap.recordDamage(e.getAmount());
-//                    e.setAmount(0);
+//                    if (nonMeleeDamage && (cap.getPosture() > 0)) {
+//                        //cap.recordDamage(cap.consumePosture(e.getAmount()));//I think this is double dipping posture for projectiles?
+//                        float amnt = e.getAmount();
+//                        //reduced by darktide again, the reduced portion becomes internal
+//                        cap.recordDamage(amnt * cap.getPosturePercentage());
+//                        e.setAmount(amnt * (1 - cap.getPosturePercentage()));
+//                    }
                 }
             }
             //if the damage made it all the way here, congratulations! It hurts the entity.
@@ -769,7 +803,7 @@ public class CombatHandler {
 //                return;
 //            float amount = e.getAmount();
 //            //absorption
-//            amount -= GeneralUtils.getAttributeValueSafe(uke, FootworkAttributes.ABSORPTION.get());
+//            amount -= GeneralUtils.getAttributeValueSafe(uke, WarAttributes.ABSORPTION.get());
 //            e.setAmount(Math.max(0, amount));
 //        }
         if (e.getAmount() < 0) e.setCanceled(true);

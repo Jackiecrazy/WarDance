@@ -3,6 +3,7 @@ package jackiecrazy.wardance.utils;
 import jackiecrazy.footwork.api.FootworkAttributes;
 import jackiecrazy.footwork.capability.resources.CombatData;
 import jackiecrazy.footwork.utils.GeneralUtils;
+import jackiecrazy.wardance.api.WarAttributes;
 import jackiecrazy.wardance.skill.Skill;
 import jackiecrazy.wardance.skill.SkillData;
 import net.minecraft.world.entity.AreaEffectCloud;
@@ -157,7 +158,7 @@ public class SkillUtils {
      */
     public static float getSkillEffectiveness(@Nullable LivingEntity caster) {
         if (caster == null) return 1;
-        return (float) caster.getAttributeValue(FootworkAttributes.SKILL_EFFECTIVENESS.get());
+        return (float) caster.getAttributeValue(WarAttributes.SKILL_EFFECTIVENESS.get());
     }
 
     public static void updateTetheringVelocity(LivingEntity moveTowards, LivingEntity toBeMoved, double maxDist) {

@@ -12,5 +12,6 @@ public class WarItems {
     public static final RegistryObject<Item> SCROLL = ITEMS.register("scroll", ScrollItem::new);
     public static final RegistryObject<Item> DUMMY = ITEMS.register("dummy", DummyItem::new);
     public static final RegistryObject<Item> MANUAL = ITEMS.register("manual", ManualItem::new);
+    public static final RegistryObject<Item> PROJECTILE = ITEMS.register("projectile_prop", ProjectilePropItem::new);
 
 }

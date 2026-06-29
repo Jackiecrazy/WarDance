@@ -1,19 +1,14 @@
 package jackiecrazy.wardance.entity;
 
-import jackiecrazy.footwork.Footwork;
 import jackiecrazy.footwork.api.CombatDamageSource;
-import jackiecrazy.footwork.api.DefenseType;
 import jackiecrazy.footwork.api.FootworkDamageArchetype;
 import jackiecrazy.footwork.capability.resources.CombatData;
-import jackiecrazy.footwork.client.particle.FootworkParticles;
 import jackiecrazy.footwork.entity.flyingweapon.FlyingItemEntity;
 import jackiecrazy.footwork.entity.flyingweapon.FlyingWeaponEffect;
 import jackiecrazy.footwork.move.motionframe.*;
 import jackiecrazy.footwork.move.motionframe.render.RenderItemGroup;
 import jackiecrazy.footwork.move.utils.ArgumentContext;
 import jackiecrazy.footwork.utils.GeneralUtils;
-import jackiecrazy.footwork.utils.MovementUtils;
-import jackiecrazy.footwork.utils.ParticleUtils;
 import jackiecrazy.footwork.utils.TargetingUtils;
 import jackiecrazy.wardance.api.IDrag;
 import jackiecrazy.wardance.capability.flyingweapon.FlyingWeaponData;
@@ -32,7 +27,6 @@ import net.minecraft.tags.DamageTypeTags;
 import net.minecraft.tags.TagKey;
 import net.minecraft.util.Mth;
 import net.minecraft.world.InteractionHand;
-import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.damagesource.DamageType;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
@@ -46,10 +40,8 @@ import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.common.ForgeMod;
 import org.jetbrains.annotations.NotNull;
 import org.joml.Vector3f;
-import org.joml.Vector4d;
 
 import javax.annotation.Nullable;
-import java.awt.*;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -110,6 +102,12 @@ public class FlyingWeaponEntity extends FlyingItemEntity implements IDrag {
 
     public void invalidateWhenDone() {
         fading = true;
+        setEffect(FlyingWeaponEffect.AFTERIMAGE, hasEffect(FlyingWeaponEffect.WEAPON));
+        setEffect(FlyingWeaponEffect.WEAPON, false);
+    }
+
+    public boolean fading() {
+        return fading;
     }
 
     @Override
@@ -176,7 +174,7 @@ public class FlyingWeaponEntity extends FlyingItemEntity implements IDrag {
         if (level().isClientSide()) return false;
         //normal hits skip hit calculation
         if (getInfo() == null) return false;
-        targets = targets.stream().distinct().filter(tg -> tg != owner && !alreadyHit.contains(tg) && !TargetingUtils.isAlly(tg, owner) && !tg.getType().is(MobSpecs.IGNORED_BY_SWEEP) && !tg.isInvulnerable()).toList();
+        targets = targets.stream().distinct().filter(tg -> tg != this && tg != owner && !alreadyHit.contains(tg) && (tg instanceof ThrownWeaponEntity || !TargetingUtils.isAlly(tg, owner)) && !tg.getType().is(MobSpecs.IGNORED_BY_SWEEP) && (tg instanceof ThrownWeaponEntity || !tg.isInvulnerable())).toList();
         LivingEntity e = getOwner();
         int ticks = e.attackStrengthTicker;
         if (targets.isEmpty()) return ret;
@@ -383,7 +381,7 @@ public class FlyingWeaponEntity extends FlyingItemEntity implements IDrag {
             fighting *= fighting;
             snapTime = (int) (fighting * 6);
             strength = 1 / fighting;
-            CombatData.getCap(e).bindHands(duration);
+//            CombatData.getCap(e).bindHands(duration);
         }
         getEntityData().set(DRAG_STRENGTH, (float) strength);
         getEntityData().set(DRAG_OFFSET, target.position().subtract(this.position()).multiply(0, 1, 0).toVector3f());

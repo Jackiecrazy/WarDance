@@ -1,0 +1,44 @@
+{
+  "ID": "wait",
+  "max_time": 30,
+  "waiting": [
+    {
+      "ID": "play_sound",
+      "sound": "wardance:shindeiru",
+      "volume": 0.7,
+      "pitch": {
+        "ID": "divide",
+        "first": 60,
+        "second": {
+          "ID": "attribute_value",
+          "reference_point": "target",
+          "attribute": "wardance:max_posture"
+        }
+      }
+    },
+    {
+      "ID": "explode",
+      "radius": 3,
+      "position": {
+        "ID": "sum_vector",
+        "addends": [
+          {
+            "ID": "eye_position",
+            "reference_point": "target"
+          },
+          {
+            "ID": "vector",
+            "x": 0,
+            "y": 0.1,
+            "z": 0,
+            "_comment": "did you know that explosions will not harm the entity whose eye position is exactly at their epicenter?"
+          }
+        ]
+      },
+      "condition": {
+        "ID": "time_window",
+        "from": 29
+      }
+    }
+  ]
+}

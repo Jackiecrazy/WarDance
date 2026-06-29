@@ -209,7 +209,7 @@
               }
             },
             "on_terrain_impact": {
-              "sound": "minecraft:block.note_block.basedrum",
+              "sound": "minecraft:entity.zombie.attack_wooden_door",
               "run_actions": [
                 {
                   "ID": "pin",
@@ -363,6 +363,9 @@
           },{
             "ID": "attach_action",
             "effect": "wardance:dust_cloud"
+          },{
+            "ID": "attach_action",
+            "effect": "wardance:surfing"
           }
         ]
       },
@@ -388,171 +391,12 @@
               "effects": {
                 "block_frames": 20,
                 "attack_info": {
-                  "damage_scale": 0.1,
-                  "posture_scale": 0.1,
                   "knockback": 3
                 },
                 "effects": [
                   "WEAPON", "TRAIL", "LOCK_ORIENTATION"
                 ],
-                "modify_initial_rotation": [1, 0, 1],
-                "velocity": [
-                  0, -0.3, 1
-                ]
-              }
-            }, {
-              "direction": [
-                0, -1, 0
-              ],
-              "offset": [
-                0, 0, 0.8
-              ],
-              "render_rotation": [0,0,1,90],
-              "effects": {
-                "reset_hit": true,
-                "velocity": [
-                  0, -0.3, 1
-                ]
-              }
-            }, {
-              "direction": [
-                0, -1, 0
-              ],
-              "offset": [
-                0, 0, 0.8
-              ],
-              "render_rotation": [0,0,1,90],
-              "effects": {
-                "reset_hit": true,
-                "velocity": [
-                  0, -0.3, 1
-                ]
-              }
-            }, {
-              "direction": [
-                0, -1, 0
-              ],
-              "offset": [
-                0, 0, 0.8
-              ],
-              "render_rotation": [0,0,1,90],
-              "effects": {
-                "reset_hit": true,
-                "velocity": [
-                  0, -0.3, 1
-                ]
-              }
-            }, {
-              "direction": [
-                0, -1, 0
-              ],
-              "offset": [
-                0, 0, 0.8
-              ],
-              "render_rotation": [0,0,1,90],
-              "effects": {
-                "reset_hit": true,
-                "velocity": [
-                  0, -0.3, 1
-                ]
-              }
-            }, {
-              "direction": [
-                0, -1, 0
-              ],
-              "offset": [
-                0, 0, 0.8
-              ],
-              "render_rotation": [0,0,1,90],
-              "effects": {
-                "reset_hit": true,
-                "velocity": [
-                  0, -0.3, 1
-                ]
-              }
-            }, {
-              "direction": [
-                0, -1, 0
-              ],
-              "offset": [
-                0, 0, 0.8
-              ],
-              "render_rotation": [0,0,1,90],
-              "effects": {
-                "reset_hit": true,
-                "velocity": [
-                  0, -0.3, 1
-                ]
-              }
-            }, {
-              "direction": [
-                0, -1, 0
-              ],
-              "offset": [
-                0, 0, 0.8
-              ],
-              "render_rotation": [0,0,1,90],
-              "effects": {
-                "reset_hit": true,
-                "velocity": [
-                  0, -0.3, 1
-                ]
-              }
-            }, {
-              "direction": [
-                0, -1, 0
-              ],
-              "offset": [
-                0, 0, 0.8
-              ],
-              "render_rotation": [0,0,1,90],
-              "effects": {
-                "reset_hit": true,
-                "velocity": [
-                  0, -0.3, 1
-                ]
-              }
-            }, {
-              "direction": [
-                0, -1, 0
-              ],
-              "offset": [
-                0, 0, 0.8
-              ],
-              "render_rotation": [0,0,1,90],
-              "effects": {
-                "reset_hit": true,
-                "velocity": [
-                  0, -0.3, 1
-                ]
-              }
-            }, {
-              "direction": [
-                0, -1, 0
-              ],
-              "offset": [
-                0, 0, 0.8
-              ],
-              "render_rotation": [0,0,1,90],
-              "effects": {
-                "reset_hit": true,
-                "velocity": [
-                  0, -0.3, 1
-                ]
-              }
-            }, {
-              "direction": [
-                0, -1, 0
-              ],
-              "offset": [
-                0, 0, 0.8
-              ],
-              "render_rotation": [0,0,1,90],
-              "effects": {
-                "reset_hit": true,
-                "velocity": [
-                  0, -0.3, 1
-                ]
+                "modify_initial_rotation": [1, 0, 1]
               }
             }
           ]

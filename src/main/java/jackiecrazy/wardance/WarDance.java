@@ -1,6 +1,8 @@
 package jackiecrazy.wardance;
 
+import jackiecrazy.footwork.api.FootworkAttributes;
 import jackiecrazy.footwork.client.render.ItemEntityRenderer;
+import jackiecrazy.wardance.api.WarAttributes;
 import jackiecrazy.wardance.capability.aerial.IAerialMode;
 import jackiecrazy.wardance.capability.charging.IChargingSpeed;
 import jackiecrazy.wardance.capability.flyingweapon.IFlyingWeapon;
@@ -18,6 +20,7 @@ import jackiecrazy.wardance.command.WarDanceCommand;
 import jackiecrazy.wardance.compat.ElenaiCompat;
 import jackiecrazy.wardance.compat.WarCompat;
 import jackiecrazy.wardance.config.*;
+import jackiecrazy.wardance.config.weapon.BCCannibalism;
 import jackiecrazy.wardance.config.weapon.TwohandingStats;
 import jackiecrazy.wardance.config.weapon.WeaponStats;
 import jackiecrazy.wardance.entity.WarEntities;
@@ -41,7 +44,11 @@ import net.minecraft.commands.synchronization.ArgumentTypeInfos;
 import net.minecraft.commands.synchronization.SingletonArgumentInfo;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.network.chat.Component;
+import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.MobCategory;
+import net.minecraft.world.entity.ai.attributes.Attribute;
+import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.item.CreativeModeTab;
 import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.client.event.RegisterGuiOverlaysEvent;
@@ -50,6 +57,7 @@ import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.capabilities.RegisterCapabilitiesEvent;
 import net.minecraftforge.event.AddReloadListenerEvent;
 import net.minecraftforge.event.RegisterCommandsEvent;
+import net.minecraftforge.event.entity.EntityAttributeModificationEvent;
 import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.ModLoadingContext;
@@ -98,6 +106,7 @@ public class WarDance {
         FMLJavaModLoadingContext.get().getModEventBus().addListener(this::doClientStuff);
         FMLJavaModLoadingContext.get().getModEventBus().addListener(this::gui);
         FMLJavaModLoadingContext.get().getModEventBus().addListener(this::register);
+        FMLJavaModLoadingContext.get().getModEventBus().addListener(this::attribute);
 
         // Register ourselves for server and other game events we are interested in
         MinecraftForge.EVENT_BUS.register(this);
@@ -111,12 +120,14 @@ public class WarDance {
         ModLoadingContext.get().registerConfig(ModConfig.Type.COMMON, ResourceConfig.CONFIG_SPEC, MODID + "/resources.toml");
         ModLoadingContext.get().registerConfig(ModConfig.Type.CLIENT, ClientConfig.CONFIG_SPEC, MODID + "/client.toml");
         IEventBus bus = FMLJavaModLoadingContext.get().getModEventBus();
+        WarAttributes.ATTRIBUTES.register(bus);
         WarSkills.SUPPLIER = WarSkills.SKILLS.makeRegistry(RegistryBuilder::new);
         WarSkills.SKILLS.register(bus);
         WarEntities.ENTITIES.register(bus);
         WarItems.ITEMS.register(bus);
         WarContainers.MENUS.register(bus);
         WarActionsRegistry.ACTIONS.register(bus);
+        WarSounds.SOUND_EVENTS.register(bus);
         TABS.register(bus);
         COMMAND_ARGUMENT_TYPES.register(bus);
         MinecraftForge.EVENT_BUS.addListener(this::commands);
@@ -182,10 +193,17 @@ public class WarDance {
         });
     }
 
+    private void attribute(EntityAttributeModificationEvent e) {
+        for (EntityType<? extends LivingEntity> type : e.getTypes()) {
+            for (RegistryObject<Attribute> a : WarAttributes.ATTRIBUTES.getEntries())
+                e.add(type, a.get());
+        }
+    }
 
     @SubscribeEvent
     public void onJsonListener(AddReloadListenerEvent event) {
         WeaponStats.register(event);
+        BCCannibalism.register(event);
         TwohandingStats.register(event);
         MobSpecs.register(event);
     }

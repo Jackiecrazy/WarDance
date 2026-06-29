@@ -9,7 +9,6 @@ import jackiecrazy.footwork.capability.stylish.StylishData;
 import jackiecrazy.footwork.capability.timeslow.TimeSlowData;
 import jackiecrazy.footwork.client.GuiComponent;
 import jackiecrazy.footwork.client.screen.dashboard.DashboardScreen;
-import jackiecrazy.footwork.entity.flyingweapon.FlyingWeaponEffect;
 import jackiecrazy.footwork.utils.GeneralUtils;
 import jackiecrazy.wardance.WarDance;
 import jackiecrazy.wardance.capability.aerial.AerialModeData;
@@ -30,7 +29,6 @@ import net.minecraft.client.Camera;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.client.player.AbstractClientPlayer;
-import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.client.renderer.culling.Frustum;
 import net.minecraft.client.renderer.entity.EntityRenderDispatcher;
 import net.minecraft.core.Direction;
@@ -49,7 +47,6 @@ import net.minecraftforge.client.event.*;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.registries.ForgeRegistries;
-import org.apache.commons.compress.archivers.sevenz.CLI;
 
 import java.awt.*;
 import java.util.ArrayList;
@@ -63,6 +60,7 @@ public class RenderEvents {
     private static final ResourceLocation timeslow1 = new ResourceLocation(WarDance.MODID, "textures/hud/stevetimefill.png");
     private static final ResourceLocation crosshair = new ResourceLocation(WarDance.MODID, "textures/hud/throw_target.png");
     private static HashMap<String, Boolean> rotate;
+    private static float currentRoll = 0;
 
     public static void updateList(List<? extends String> pos) {
         rotate = new HashMap<>();
@@ -77,7 +75,6 @@ public class RenderEvents {
         }
     }
 
-    private static float currentRoll=0;
     // Client-side event handler
     @SubscribeEvent
     public static void onCameraSetup(ViewportEvent.ComputeCameraAngles event) {
@@ -86,7 +83,7 @@ public class RenderEvents {
 
         // Get which wall you're on (left or right wall)
         Direction wall = AerialModeData.getCap(player).getWallDir(); // your logic
-        if (wall == null || AerialModeData.getCap(player).getState()!= IAerialMode.WallState.WALL_SLIDE || wall.getAxis() == Direction.Axis.Y) {
+        if (wall == null || AerialModeData.getCap(player).getState() != IAerialMode.WallState.WALL_SLIDE || wall.getAxis() == Direction.Axis.Y) {
             // smoothly lerp roll back to 0 when not wall running
             currentRoll = Mth.lerp(0.03f, currentRoll, 0);
             event.setRoll(currentRoll);
@@ -105,7 +102,7 @@ public class RenderEvents {
         // Smooth interpolation
         event.getRoll();
         float lerpedRoll = Mth.lerp(0.03f, currentRoll, targetRoll); // tune speed
-        currentRoll=lerpedRoll;
+        currentRoll = lerpedRoll;
 
         event.setRoll(lerpedRoll);
     }
@@ -177,8 +174,8 @@ public class RenderEvents {
                 if (entity != cameraEntity && entity.isAlive() &&
                         !entity.getIndirectPassengers().iterator().hasNext() &&
                         entity.shouldRender(cameraPos.x(), cameraPos.y(), cameraPos.z()) &&
-                        !GeneralUtils.viewBlocked(mc.player, entity, false) &&
-                        (entity.noCulling || frustum.isVisible(entity.getBoundingBox()))) {
+                        (entity.noCulling || frustum.isVisible(entity.getBoundingBox()))// && !GeneralUtils.viewBlocked(mc.player, entity, false)
+                ) {
                     if (TimeSlowData.getCap(entity).getEffectiveSpeed() < 1)
                         steveTime(entity, partialTicks, poseStack);
                     if (entity.getId() == ClientEvents.coyoteTimeID && combatMode)
@@ -200,14 +197,17 @@ public class RenderEvents {
         //e.getRenderer().getModel()
     }
 
-    public static boolean handBusy(LivingEntity p, InteractionHand h){
-        if(!StylishData.getCap(p).isCombatMode())return false;
-        if((h == InteractionHand.MAIN_HAND ? p.attackStrengthTicker : CombatData.getCap(p).getOffhandCooldown())<2)return true;
-        ItemStack stack=p.getItemInHand(h);
-        if(!WeaponStats.isWeapon(p,stack)) return false;
-        FlyingWeaponEntity fwe=FlyingWeaponData.getCap(p).getWeapon(h);
-        if(fwe==null)return false;
-        return fwe.getRawVisualTag()>0;
+    public static boolean handBusy(LivingEntity p, InteractionHand h) {
+        if (!(p instanceof Player)) return false;
+        if (!StylishData.getCap(p).isCombatMode()) return false;
+        ItemStack stack = p.getItemInHand(h);
+        if (h == InteractionHand.OFF_HAND && TwoHandingHandler.suppressOffhand(p, p.getMainHandItem())) return true;
+        if (!WeaponStats.isWeapon(p, stack)) return false;
+        if ((h == InteractionHand.MAIN_HAND ? p.attackStrengthTicker : CombatData.getCap(p).getOffhandCooldown()) < 2)
+            return true;
+        FlyingWeaponEntity fwe = FlyingWeaponData.getCap(p).getWeapon(h);
+        if (fwe == null) return false;
+        return fwe.getRawVisualTag() > 0;
     }
 
     @SubscribeEvent
@@ -218,7 +218,7 @@ public class RenderEvents {
 //        if (StylishData.getCap(p).isCombatMode() &&
 //                (CombatUtils.getCooledAttackStrength(p, e.getHand(), 0.1f) < 1 ||
 //                        (p.isShiftKeyDown() && (ClientEvents.lastUsedHandMain ? e.getHand() == InteractionHand.MAIN_HAND : e.getHand() == InteractionHand.OFF_HAND)))) {
-        if(handBusy(p, e.getHand())){
+        if (handBusy(p, e.getHand())) {
             e.setCanceled(true);
 
 //            HumanoidArm armToRender = (p.getMainArm() == HumanoidArm.RIGHT) == (e.getHand() == InteractionHand.MAIN_HAND)
@@ -248,10 +248,10 @@ public class RenderEvents {
 
     @SubscribeEvent
     public static void noFovChange(ComputeFovModifierEvent e) {
-        if (CombatData.getCap(e.getPlayer()).isKnockdown()||StylishData.getCap(e.getPlayer()).isDeathDoor())
+        if (CombatData.getCap(e.getPlayer()).isKnockdown() || StylishData.getCap(e.getPlayer()).isDeathDoor())
             e.setNewFovModifier(0.7f);
-        if(AerialModeData.getCap(e.getPlayer()).getState()== IAerialMode.WallState.CLING){
-            e.setNewFovModifier(e.getNewFovModifier()*0.6f);
+        if (AerialModeData.getCap(e.getPlayer()).getState() == IAerialMode.WallState.CLING) {
+            e.setNewFovModifier(e.getNewFovModifier() * 0.6f);
         }
     }
 

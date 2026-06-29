@@ -1,0 +1,158 @@
+{
+  "ID": "wait",
+  "max_time": 120,
+  "waiting": [
+    {
+      "ID": "wardance:play_interaction",
+      "interaction": {
+        "type": "animation",
+        "duration": 5,
+        "drift": [0.5, 0.5, 0.5],
+        "easing": "IN_SINE",
+        "frames": [
+          {
+            "direction": [
+              0, 0, 1
+            ],
+            "offset": [
+              0, 0, 0
+            ],
+            "effects": {
+              "attack_info": {
+                "spirit_multiplier": 0,
+                "posture_scale": 0.5,
+                "hit_other": {
+                  "run_actions": [
+                    {
+                      "ID": "pin",
+                      "duration": 10
+                    }, {
+                      "ID": "attach_callback",
+                      "effect": "wardance:hyakuretsu",
+                      "duration": 150,
+                      "max_procs": 1,
+                      "trigger": "omae"
+                    },
+                    {
+                      "ID": "pin",
+                      "duration": 150,
+                      "condition": {
+                        "ID": "==",
+                        "first": {
+                          "ID": "resource",
+                          "resource": "SPIRIT",
+                          "format": "PERCENTAGE"
+                        },
+                        "second": 1
+                      }
+                    },
+                    {
+                      "ID": "bind",
+                      "duration": 150,
+                      "condition": {
+                        "ID": "==",
+                        "first": {
+                          "ID": "resource",
+                          "resource": "SPIRIT",
+                          "format": "PERCENTAGE"
+                        },
+                        "second": 1
+                      }
+                    }
+                  ]
+                }
+              },
+              "effects": [
+                "WEAPON"
+              ]
+            }
+          }, {
+            "direction": [
+              0, 0, 1
+            ],
+            "offset": [
+              0, 0, 0.6
+            ]
+          }
+        ]
+      },
+      "condition": {
+        "ID": "and",
+        "values": [
+          {
+            "ID": "time_window",
+            "to": 20,
+            "every": "2"
+          }
+        ]
+      },
+      "repeatable": true
+    }, {
+      "ID": "stop",
+      "condition": {
+        "ID": "and",
+        "values": [
+          {
+            "ID": "time_window",
+            "from": 20
+          }, {
+            "ID": "<",
+            "first": {
+              "ID": "resource",
+              "resource": "SPIRIT",
+              "format": "PERCENTAGE"
+            },
+            "second": 1
+          }
+        ]
+      }
+    }, {
+      "ID": "play_sound",
+      "sound": "wardance:omae",
+      "volume": 1.2,
+      "condition": {
+        "ID": "and",
+        "values": [
+          {
+            "ID": "time_window",
+            "from": 39
+          }, {
+            "ID": "==",
+            "first": {
+              "ID": "resource",
+              "resource": "SPIRIT",
+              "format": "PERCENTAGE"
+            },
+            "second": 1
+          }
+        ]
+      }
+    }, {
+      "ID": "project_hitbox",
+      "selector": {
+        "ID": "selector",
+        "range": 6
+      },
+      "actions": [
+        {
+          "ID": "trigger_callback",
+          "trigger": "omae"
+        }
+      ],
+      "condition": {
+        "ID": "and",
+        "values": [
+          {
+            "ID": "time_window",
+            "from": 119
+          }, {
+            "ID": "consume_resource",
+            "format": "PERCENTAGE",
+            "resource": "SPIRIT",
+            "amount": 1
+          }
+        ]
+      }
+    }
+  ]
+}

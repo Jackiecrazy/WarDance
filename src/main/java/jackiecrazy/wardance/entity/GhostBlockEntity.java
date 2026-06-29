@@ -48,7 +48,7 @@ public class GhostBlockEntity extends ThrownWeaponEntity {
     }
 
     @Override
-    public boolean isReal() {
+    public boolean canPickup() {
         return !intangible();
     }
 

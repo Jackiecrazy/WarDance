@@ -4,6 +4,7 @@ import jackiecrazy.footwork.capability.resources.CombatData;
 import jackiecrazy.footwork.capability.resources.ICombatCapability;
 import jackiecrazy.footwork.capability.stylish.IStyleCapability;
 import jackiecrazy.wardance.WarDance;
+import jackiecrazy.wardance.api.WarAttributes;
 import jackiecrazy.wardance.config.CombatConfig;
 import jackiecrazy.wardance.networking.CombatChannel;
 import jackiecrazy.wardance.networking.sync.UpdateClientStylePacket;
@@ -14,6 +15,7 @@ import net.minecraft.ChatFormatting;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.ai.attributes.AttributeModifier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
@@ -25,13 +27,15 @@ import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nonnull;
 import java.lang.ref.WeakReference;
-import java.util.*;
+import java.util.LinkedList;
+import java.util.Queue;
+import java.util.UUID;
 
 public class StylishCapability implements IStyleCapability {
     public static final UUID WOUND = UUID.fromString("982bbbb2-bbd0-4166-801a-560d1a4149c8");
     public static final int MAX_FINISHER_CHARGE = 10;
     public static final int TRACKED_FRESHNESS_ACTIONS = 7;
-    public static final int COMBO_TIMER = 200;
+    public static final int COMBO_TIMER = 300;
     private final WeakReference<LivingEntity> dude;
     private boolean combat;
     private float adrenaline;
@@ -94,14 +98,16 @@ public class StylishCapability implements IStyleCapability {
 
     @Override
     public float addAdrenaline(float amount) {
+        if (dude.get() != null)
+            amount *= dude.get().getAttributeValue(WarAttributes.ADRE_BON.get());
         float ret = 0;
-        boolean ddoor= !maxAdrenaline();
+        boolean ddoor = !maxAdrenaline();
         adrenaline += amount;
         if (adrenaline > 1) {
             ret = adrenaline - 1;
             adrenaline = 1;
         }
-        if(ddoor&&maxAdrenaline()) canDeathDoor=true;
+        if (ddoor && maxAdrenaline()) canDeathDoor = true;
         adrenalineTimer = COMBO_TIMER;
         markDirty();
         return ret;
@@ -126,45 +132,52 @@ public class StylishCapability implements IStyleCapability {
             //slower combo drain
         } else comboTimer--;
         comboTimer--;
-        adrenalineTimer--;
         if (comboTimer == 0) {
             combo = 1;
             resetCombo();
         }
+        if (comboTimer < 0)
+            adrenalineTimer--;
         hitTimer--;
         if (adrenalineTimer <= 0) {
-            if (hitTimer < -1000 && deathDoorReduction != 0) {
+            if ((hitTimer < -800 || guy.hasEffect(MobEffects.REGENERATION)) && deathDoorReduction != 0) {
                 deathDoorReduction += 0.00125;
-                deathDoorReduction = Math.min(deathDoorReduction, 0);
                 recalcHealth = true;
-                if (deathDoorReduction==0) {
+                deathDoorReduction = Math.min(deathDoorReduction, 0);
+                if (deathDoorReduction == 0) {
                     canDeathDoor = true;
                     markDirty();
                 }
             }
             adrenalineTimer = 0;
             adrenaline = 0;
-            dirty = true;
         }
 
-        if (deathDoor) {
-            //slowly drain max health, ends when player max health<1 or stored damage is fully realized
-            double drain = 0.0025;
-            if (isDyingFast()) {
-                drain *= 2;
+        if (deathDoor && guy.tickCount % 20 == 0) {
+            //slowly drain max health, ends when player max health<1
+            final double dtime = guy.getAttributeValue(WarAttributes.DDOOR_TIME.get());
+            if (dtime <= 0)
+                deathDoorReduction = -0.999;
+            else {
+                double drain = 0.05;//5% per second
+                //minimum half a health point each time
+                //drain = Math.max(1 / guy.getMaxHealth(), drain) / dtime;
+                deathDoorReduction -= drain;
+                guy.setHealth(1);
+                recalcHealth = true;
+                if (getCombo() > ComboRanks.A) {
+                    stabilize();
+                    if (guy instanceof Player pl) {
+                        pl.displayClientMessage(Component.translatable("wardance.deathdoor.recovered").withStyle(ChatFormatting.GRAY), true);
+                    }
+                } else if (guy.getMaxHealth() <= 1) {
+                    canDeathDoor = false;
+                    stabilize();
+                    if (guy instanceof Player pl) {
+                        pl.displayClientMessage(Component.translatable("wardance.deathdoor.succumbed").withStyle(ChatFormatting.RED), true);
+                    }
+                }
             }
-            deathDoorReduction -= drain;
-            guy.setHealth(1);
-            recalcHealth = true;
-//            //prioritize draining empty hearts
-//            if(guy.getHealth()>guy.getMaxHealth())
-//                guy.setHealth(guy.getMaxHealth());
-//            if (guy.getHealth() >= guy.getMaxHealth() && CombatData.getCap(guy).getRecordedDamage() > 0)
-//                CombatData.getCap(guy).recordDamage((float) (-drain * guy.getMaxHealth()));
-            if (guy.getMaxHealth() <= 1)
-                canDeathDoor = false;
-            if (guy.getMaxHealth() <= 1 || getCombo() > ComboRanks.S)
-                stabilize();
         }
         if (recalcHealth) {
             SkillUtils.modifyAttribute(guy, Attributes.MAX_HEALTH, WOUND, deathDoorReduction, AttributeModifier.Operation.MULTIPLY_TOTAL);
@@ -213,12 +226,12 @@ public class StylishCapability implements IStyleCapability {
         refresh();
         //too stale!
         if (amount <= 0) return;
-        //fully rally if fresh fresh fresh
+        //fully rally if super duper fresh
         if (fresh >= 1 && dude.get() instanceof Player le) {
             CombatData.getCap(le).rally(1);
         }
         combo += amount;
-        addAdrenaline(amount / 5);
+        addAdrenaline(amount / 6);
         freshness.add(source);
         while (freshness.size() > TRACKED_FRESHNESS_ACTIONS) {
             freshness.poll();

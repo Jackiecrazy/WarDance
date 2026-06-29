@@ -27,7 +27,7 @@ import jackiecrazy.wardance.entity.GrappleEntity;
 import jackiecrazy.wardance.entity.ThrownWeaponEntity;
 import jackiecrazy.wardance.handlers.TwoHandingHandler;
 import jackiecrazy.wardance.mixin.ClientAccessors;
-import jackiecrazy.wardance.networking.*;
+import jackiecrazy.wardance.networking.CombatChannel;
 import jackiecrazy.wardance.networking.combat.*;
 import jackiecrazy.wardance.networking.movement.UnhookPacket;
 import jackiecrazy.wardance.networking.sync.UpdateWeaponFramePacket;
@@ -37,12 +37,15 @@ import jackiecrazy.wardance.utils.CombatUtils;
 import net.minecraft.client.KeyMapping;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.player.Input;
+import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
-import net.minecraft.world.entity.*;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.EntitySelector;
+import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.entity.projectile.ProjectileUtil;
 import net.minecraft.world.item.ItemStack;
@@ -51,7 +54,9 @@ import net.minecraft.world.phys.EntityHitResult;
 import net.minecraft.world.phys.HitResult;
 import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.client.event.*;
+import net.minecraftforge.client.event.InputEvent;
+import net.minecraftforge.client.event.MovementInputUpdateEvent;
+import net.minecraftforge.client.event.RenderGuiOverlayEvent;
 import net.minecraftforge.client.gui.overlay.VanillaGuiOverlay;
 import net.minecraftforge.common.ForgeMod;
 import net.minecraftforge.event.TickEvent;
@@ -202,7 +207,7 @@ public class ClientEvents {
     @SubscribeEvent
     public static void tickPlayer(TickEvent.ClientTickEvent e) {
         Minecraft mc = Minecraft.getInstance();
-        Player p = mc.player;
+        final LocalPlayer p = mc.player;
         if (p != null && !mc.isPaused()) {
             if (e.phase == TickEvent.Phase.START) {
                 conflictMap--;
@@ -225,7 +230,7 @@ public class ClientEvents {
 
                 //when finding a long press on left button, check if there is an item in use.
                 //no attacking when exhausted, but you can throw
-                boolean exhausted = CombatData.getCap(mc.player).getPosture() <= 0;
+                boolean exhausted = CombatData.getCap(p).getPosture() <= 0;
                 if (StylishData.getCap(p).isCombatMode()) {
                     suppressConflictingKeys(mc);
 
@@ -243,9 +248,9 @@ public class ClientEvents {
 //                        }
                         if (mc.options.keyJump.isDown() && mc.options.keyJump.consumeClick()) {
                             CombatChannel.INSTANCE.sendToServer(new UnhookPacket(GrappleEntity.ACTION.JUMP));
-                            FlyingWeaponData.getCap(mc.player).getGrapple().retract(GrappleEntity.ACTION.JUMP);
-                            AerialModeData.getCap(mc.player).setState(IAerialMode.WallState.NONE);
-                            ClientAerialHandler.resetMultiJumps(mc.player);
+                            FlyingWeaponData.getCap(p).getGrapple().retract(GrappleEntity.ACTION.JUMP);
+                            AerialModeData.getCap(p).setState(IAerialMode.WallState.NONE);
+                            ClientAerialHandler.resetMultiJumps(p);
                         }
                     }
 
@@ -328,9 +333,9 @@ public class ClientEvents {
 
                     //right click if the action is appropriate
                     // If evoke is held, only right click
-                    if (CombatUtils.getAttackState(mc.player) == WeaponStats.AttackType.UNDEFINED)
-                        CombatUtils.updateNormalAttackStatus(mc.player);
-                    final WeaponStats.AttackType state = CombatUtils.getAttackState(mc.player);
+                    if (CombatUtils.getAttackState(p) == WeaponStats.AttackType.UNDEFINED)
+                        CombatUtils.updateNormalAttackStatus(p);
+                    final WeaponStats.AttackType state = CombatUtils.getAttackState(p);
                     //offhand first
                     //fixme guard counters last hit don't breach
 //                    if (mc.options.keyUse.isDown()&&offUseTick==0) {
@@ -353,23 +358,23 @@ public class ClientEvents {
 
                     if (mc.options.keyAttack.isDown()) {
                         //special charge action, immediately start
-                        if (mc.player.isUsingItem() && mc.player.getUsedItemHand() == InteractionHand.MAIN_HAND) {
+                        if (p.isUsingItem() && p.getUsedItemHand() == InteractionHand.MAIN_HAND) {
                             //hack. Spoof use item key to down for the keybind processing
                             mc.options.keyUse.setDown(true);
                         } else {
-                            final WeaponInteractions.InteractionGroup mainInfo = WeaponStats.getSweepInfo(mc.player.getMainHandItem(), mc.player, state, false, InteractionHand.MAIN_HAND);
-                            if (!mc.player.isUsingItem() && (Keybinds.EVOKE.isDown() || mainInfo.hasInteractionType(WeaponInteractions.WeaponInteraction.InteractionType.USE))) {//don't call when already using item for obvious reasons
+                            final WeaponInteractions.InteractionGroup mainInfo = WeaponStats.getSweepInfo(p.getMainHandItem(), p, state, false, InteractionHand.MAIN_HAND);
+                            if (!p.isUsingItem() && !p.getCooldowns().isOnCooldown(p.getMainHandItem().getItem()) && (Keybinds.EVOKE.isDown() || mainInfo.hasInteractionType(WeaponInteractions.WeaponInteraction.InteractionType.USE))) {//don't call when already using item for obvious reasons
                                 testingHand = InteractionHand.MAIN_HAND;
                                 ((ClientAccessors) mc).callStartUseItem();
                                 WeaponInteractions.WeaponInteraction mainUse = mainInfo.getInteractionOfType(WeaponInteractions.WeaponInteraction.InteractionType.USE);
                                 if (mainUse instanceof Use u) {
-                                    ChargingData.getCap(p).alterSpeed(mc.player.getMainHandItem(), u.getUseSpeed());
+                                    ChargingData.getCap(p).alterSpeed(p.getMainHandItem(), u.getUseSpeed());
                                     //manually send a processing packet to the server as this implementation will eat the left click
                                     if (!Keybinds.EVOKE.isDown())
                                         CombatChannel.INSTANCE.sendToServer(new RequestSweepPacket(true, mc.crosshairPickEntity));
                                 }
                                 if (!mc.options.keyUse.isDown())
-                                    mc.options.keyUse.setDown(mc.player.isUsingItem());
+                                    mc.options.keyUse.setDown(p.isUsingItem());
                             }
                         }
                         //cancel the left click if using or evoking
@@ -411,7 +416,7 @@ public class ClientEvents {
                     }
                     if (sneakedTime == magicSneakTime) {
                         p.level().playSound(p, p.getX(), p.getY(), p.getZ(), SoundEvents.EXPERIENCE_ORB_PICKUP, SoundSource.PLAYERS, 0.3f + WarDance.rand.nextFloat() * 0.5f, 0.75f + WarDance.rand.nextFloat() * 0.5f);
-                        CombatChannel.INSTANCE.sendToServer(new UpdateWeaponRenderPacket(lastUsedHandMain, FlyingWeaponEffect.WEAPON, FlyingWeaponEffect.BIG_SHADOW));
+                        //CombatChannel.INSTANCE.sendToServer(new UpdateWeaponRenderPacket(lastUsedHandMain, FlyingWeaponEffect.WEAPON, FlyingWeaponEffect.BIG_SHADOW));
                     }
                 } else {
                     if (sneakedTime != 0) {
@@ -500,8 +505,10 @@ public class ClientEvents {
                 CombatChannel.INSTANCE.sendToServer(new RequestAttackPacket(false, n));//todo obsolete in favor of click actions
                 lastAttackTick = e.getEntity().tickCount;
             }
-            if (lastSweepTick != e.getEntity().tickCount)
+            if (lastSweepTick != e.getEntity().tickCount) {
                 CombatChannel.INSTANCE.sendToServer(new RequestSweepPacket(false, n));
+                CombatData.getCap(e.getEntity()).setOffhandCooldown(0);
+            }
             lastSweepTick = e.getEntity().tickCount;
             lastUsedHandMain = false;
         }
@@ -550,8 +557,10 @@ public class ClientEvents {
                     CombatChannel.INSTANCE.sendToServer(new RequestAttackPacket(false, n));
                     lastAttackTick = e.getEntity().tickCount;
                 }
-                if (lastSweepTick != e.getEntity().tickCount)
+                if (lastSweepTick != e.getEntity().tickCount) {
                     CombatChannel.INSTANCE.sendToServer(new RequestSweepPacket(false, n));
+                    CombatData.getCap(e.getEntity()).setOffhandCooldown(0);
+                }
                 lastSweepTick = e.getEntity().tickCount;
                 lastUsedHandMain = false;
             }
@@ -582,8 +591,10 @@ public class ClientEvents {
                 CombatChannel.INSTANCE.sendToServer(new RequestAttackPacket(false, n));
                 lastAttackTick = e.getEntity().tickCount;
             }
-            if (lastSweepTick != e.getEntity().tickCount)
+            if (lastSweepTick != e.getEntity().tickCount) {
                 CombatChannel.INSTANCE.sendToServer(new RequestSweepPacket(false, n));
+                CombatData.getCap(e.getEntity()).setOffhandCooldown(0);
+            }
             lastSweepTick = e.getEntity().tickCount;
             lastUsedHandMain = false;
         }
@@ -610,8 +621,10 @@ public class ClientEvents {
                     CombatChannel.INSTANCE.sendToServer(new RequestAttackPacket(false, n));
                     lastAttackTick = e.getEntity().tickCount;
                 }
-                if (lastSweepTick != e.getEntity().tickCount)
+                if (lastSweepTick != e.getEntity().tickCount) {
                     CombatChannel.INSTANCE.sendToServer(new RequestSweepPacket(false, n));
+                    CombatData.getCap(e.getEntity()).setOffhandCooldown(0);
+                }
                 lastSweepTick = e.getEntity().tickCount;
                 lastUsedHandMain = false;
             }

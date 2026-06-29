@@ -1,0 +1,18 @@
+{
+  "ID": "wardance:attack",
+  "damage_source": {
+    "armor_pierce_percentage": 1
+  },
+  "info_override": {
+    "crit": true,
+    "damage_scale":1.5
+  },
+  "on_kill": [
+    {
+      "ID": "change_resource",
+      "resource": "SPIRIT",
+      "operation": "ADD",
+      "amount": 10
+    }
+  ]
+}

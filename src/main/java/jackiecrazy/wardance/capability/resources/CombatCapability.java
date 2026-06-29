@@ -141,7 +141,7 @@ public class CombatCapability implements ICombatCapability {
     public float addMight(float amount) {
         double grace = ResourceConfig.qiGrace;
         if (dude.get() != null) {
-            amount *= dude.get().getAttributeValue(FootworkAttributes.MIGHT_GEN.get());
+            amount *= dude.get().getAttributeValue(WarAttributes.MIGHT_GEN.get());
         }
         GainAdrenalineEvent gme = new GainAdrenalineEvent(dude.get(), amount);
         MinecraftForge.EVENT_BUS.post(gme);
@@ -200,7 +200,7 @@ public class CombatCapability implements ICombatCapability {
     @Override
     public float addSpirit(float amount) {
         if (dude.get() != null)
-            amount *= dude.get().getAttributeValue(FootworkAttributes.SPIRIT_GAIN.get());
+            amount *= dude.get().getAttributeValue(WarAttributes.SPIRIT_GAIN.get());
         GainSpiritEvent cse = new GainSpiritEvent(dude.get(), amount);
         MinecraftForge.EVENT_BUS.post(cse);
         amount = cse.getQuantity();
@@ -257,7 +257,7 @@ public class CombatCapability implements ICombatCapability {
     @Override
     public float addPosture(float amount) {
         if (dude.get() != null)
-            amount *= dude.get().getAttributeValue(FootworkAttributes.POSTURE_GAIN.get());
+            amount *= dude.get().getAttributeValue(WarAttributes.POSTURE_GAIN.get());
         GainPostureEvent cse = new GainPostureEvent(dude.get(), amount);
         MinecraftForge.EVENT_BUS.post(cse);
         amount = cse.getQuantity();
@@ -740,39 +740,39 @@ public class CombatCapability implements ICombatCapability {
         if (ticks < 1) return;//sometimes time runs backwards
         //initialize posture and fracture
 
-        final boolean uninitializedPosture = elb.getAttribute(FootworkAttributes.MAX_POSTURE.get()).getBaseValue() == 0d;
-        final boolean uninitializedFracture = elb.getAttribute(FootworkAttributes.MAX_FRACTURE.get()).getBaseValue() == 0d;
+        final boolean uninitializedPosture = elb.getAttribute(WarAttributes.MAX_POSTURE.get()).getBaseValue() == 0d;
+        final boolean uninitializedFracture = elb.getAttribute(WarAttributes.MAX_FRACTURE.get()).getBaseValue() == 0d;
         if (uninitializedPosture || uninitializedFracture) {
             final float mPos = getMPos(elb);
             if (uninitializedPosture) {//ew
-                elb.getAttribute(FootworkAttributes.MAX_POSTURE.get()).setBaseValue(mPos);
+                elb.getAttribute(WarAttributes.MAX_POSTURE.get()).setBaseValue(mPos);
                 double permScale = MobSpecs.mobMap.getOrDefault(elb.getType(), MobSpecs.DEFAULT).getMaxPostureScaling();
                 if (permScale != 1)
-                    elb.getAttribute(FootworkAttributes.MAX_POSTURE.get()).addPermanentModifier(new AttributeModifier(CombatUtils.main, "json bonus", permScale, AttributeModifier.Operation.MULTIPLY_TOTAL));
-                elb.getAttribute(FootworkAttributes.POSTURE_REGEN.get()).setBaseValue(mPos);
-                mpos = (float) elb.getAttributeValue(FootworkAttributes.MAX_POSTURE.get());
+                    elb.getAttribute(WarAttributes.MAX_POSTURE.get()).addPermanentModifier(new AttributeModifier(CombatUtils.main, "json bonus", permScale, AttributeModifier.Operation.MULTIPLY_TOTAL));
+                elb.getAttribute(WarAttributes.POSTURE_REGEN.get()).setBaseValue(mPos);
+                mpos = (float) elb.getAttributeValue(WarAttributes.MAX_POSTURE.get());
                 setPosture(getMaxPosture());
             }
             if (uninitializedFracture) {//ew
                 double fracs = Math.log(elb.getMaxHealth()) - 1;
                 if (elb instanceof Player)
-                    elb.getAttribute(FootworkAttributes.MAX_FRACTURE.get()).setBaseValue(3);
+                    elb.getAttribute(WarAttributes.MAX_FRACTURE.get()).setBaseValue(3);
                 else
-                    elb.getAttribute(FootworkAttributes.MAX_FRACTURE.get()).setBaseValue(Math.floor(fracs));
+                    elb.getAttribute(WarAttributes.MAX_FRACTURE.get()).setBaseValue(Math.floor(fracs));
             }
         }
         //update max values
         vision = (float) elb.getAttributeValue(Attributes.FOLLOW_RANGE);
-        mpos = (float) elb.getAttributeValue(FootworkAttributes.MAX_POSTURE.get());
+        mpos = (float) elb.getAttributeValue(WarAttributes.MAX_POSTURE.get());
         if (posture > mpos)
             setPosture(mpos);
-        mspi = (float) elb.getAttributeValue(FootworkAttributes.MAX_SPIRIT.get());
+        mspi = (float) elb.getAttributeValue(WarAttributes.MAX_SPIRIT.get());
         if (spirit > mspi)
             setSpirit(mspi);
-        mmight = (float) elb.getAttributeValue(FootworkAttributes.MAX_MIGHT.get());
+        mmight = (float) elb.getAttributeValue(WarAttributes.MAX_MIGHT.get());
         if (might > mmight)
             setMight(mmight);
-        mfrac = (int) elb.getAttributeValue(FootworkAttributes.MAX_FRACTURE.get());
+        mfrac = (int) elb.getAttributeValue(WarAttributes.MAX_FRACTURE.get());
         if (elb.hasEffect(FootworkEffects.SLEEP.get()) || elb.hasEffect(FootworkEffects.PARALYSIS.get()) || elb.hasEffect(FootworkEffects.PETRIFY.get()))
             vision = -1;
         //store motion for further use
@@ -793,13 +793,13 @@ public class CombatCapability implements ICombatCapability {
                 else mBind = CombatConfig.parryCD;
             }
         }
-        evade += ticks * elb.getAttributeValue(FootworkAttributes.EVASION.get());
+        evade += ticks * elb.getAttributeValue(WarAttributes.EVASION.get());
         //tick down everything
         if (adrenaline > 0)
             adrenaline -= Math.min(adrenaline, ticks);
-        float qiExtra = decrementMightGrace((float) (ticks / elb.getAttributeValue(FootworkAttributes.MIGHT_GRACE.get())));
-        float spExtra = decrementSpiritGrace((float) (ticks * elb.getAttributeValue(FootworkAttributes.SPIRIT_COOLDOWN.get())));
-        float poExtra = decrementPostureGrace((float) (ticks * elb.getAttributeValue(FootworkAttributes.POSTURE_COOLDOWN.get())));
+        float qiExtra = decrementMightGrace((float) (ticks / elb.getAttributeValue(WarAttributes.MIGHT_GRACE.get())));
+        float spExtra = decrementSpiritGrace((float) (ticks * elb.getAttributeValue(WarAttributes.SPIRIT_COOLDOWN.get())));
+        float poExtra = decrementPostureGrace((float) (ticks * elb.getAttributeValue(WarAttributes.POSTURE_COOLDOWN.get())));
         for (InteractionHand h : InteractionHand.values()) {
             decrementHandBind(h, ticks);
             if (getHandBind(h) != 0)
@@ -1135,7 +1135,7 @@ public class CombatCapability implements ICombatCapability {
         float healthMod = elb.getHealth() / elb.getMaxHealth();
         //no speed modifier because it encourages not moving
         float speedMod = elb.isSprinting() ? 0.3f : elb.zza == 0 && elb.xxa == 0 && elb.yya == 0 ? 1f : 0.5f;
-        final double ret = (elb.getAttributeValue(FootworkAttributes.POSTURE_REGEN.get()) / 20 * cooldownMod) * speedMod * exhaustMod * healthMod * poison;
+        final double ret = (elb.getAttributeValue(WarAttributes.POSTURE_REGEN.get()) / 20 * cooldownMod) * speedMod * exhaustMod * healthMod * poison;
         RegenPostureEvent ev = new RegenPostureEvent(elb, (float) ret);
         MinecraftForge.EVENT_BUS.post(ev);
         return ev.getQuantity();
@@ -1152,7 +1152,7 @@ public class CombatCapability implements ICombatCapability {
         float exhaustMod = Math.max(0, elb.hasEffect(FootworkEffects.EXHAUSTION.get()) ? 1 - elb.getEffect(FootworkEffects.EXHAUSTION.get()).getAmplifier() * 0.2f : 1);
         //float armorMod = 5f + Math.min(elb.getArmorValue(), 20) * 0.25f;
         //float healthMod = 0.25f + elb.getHealth() / elb.getMaxHealth() * 0.75f;
-        final double ret = GeneralUtils.getAttributeValueSafe(elb, FootworkAttributes.SPIRIT_REGEN.get()) / 20 * exhaustMod * poison;
+        final double ret = GeneralUtils.getAttributeValueSafe(elb, WarAttributes.SPIRIT_REGEN.get()) / 20 * exhaustMod * poison;
         RegenSpiritEvent ev = new RegenSpiritEvent(elb, (float) ret);
         MinecraftForge.EVENT_BUS.post(ev);
         return ev.getQuantity();

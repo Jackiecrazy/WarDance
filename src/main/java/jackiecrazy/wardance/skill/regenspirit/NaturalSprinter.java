@@ -56,15 +56,15 @@ confidence: your spirit regeneration speed scales proportionally with how much s
 
     @Override
     public void onEquip(LivingEntity caster) {
-        SkillUtils.addAttribute(caster, FootworkAttributes.MAX_SPIRIT.get(), sprint);
-        //SkillUtils.addAttribute(caster, FootworkAttributes.SPIRIT_REGEN.get(), sprint2);
+//        SkillUtils.addAttribute(caster, WarAttributes.MAX_SPIRIT.get(), sprint);
+        //SkillUtils.addAttribute(caster, WarAttributes.SPIRIT_REGEN.get(), sprint2);
         super.onEquip(caster);
     }
 
     @Override
     public void onUnequip(LivingEntity caster, SkillData stats) {
-        SkillUtils.removeAttribute(caster, FootworkAttributes.MAX_SPIRIT.get(), sprint);
-        //SkillUtils.removeAttribute(caster, FootworkAttributes.SPIRIT_REGEN.get(), sprint2);
+//        SkillUtils.removeAttribute(caster, WarAttributes.MAX_SPIRIT.get(), sprint);
+        //SkillUtils.removeAttribute(caster, WarAttributes.SPIRIT_REGEN.get(), sprint2);
     }
 
     @Override

@@ -4,7 +4,6 @@ import jackiecrazy.footwork.capability.resources.CombatData;
 import jackiecrazy.footwork.entity.flyingweapon.FlyingItemEntity;
 import jackiecrazy.footwork.utils.GeneralUtils;
 import jackiecrazy.wardance.capability.aerial.AerialModeData;
-import jackiecrazy.wardance.capability.aerial.IAerialMode;
 import jackiecrazy.wardance.networking.CombatChannel;
 import jackiecrazy.wardance.networking.movement.ResetAirJumpPacket;
 import jackiecrazy.wardance.utils.CombatUtils;
@@ -396,7 +395,7 @@ public class GrappleEntity extends FlyingItemEntity {
         //this is freeform hook entity code
         else {
             targets.stream().forEach(a -> {
-                if (a instanceof ThrownWeaponEntity fwe && fwe.isReal()) {
+                if (a instanceof ThrownWeaponEntity fwe && fwe.canPickup()) {
                     hookedEntity = fwe;
                     hooked = true;
                 }

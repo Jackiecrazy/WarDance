@@ -6,6 +6,7 @@ import jackiecrazy.footwork.move.motionframe.*;
 import jackiecrazy.footwork.move.motionframe.render.RenderItemGroup;
 import jackiecrazy.footwork.move.utils.ArgumentContext;
 import jackiecrazy.footwork.utils.MovementUtils;
+import jackiecrazy.wardance.WarDance;
 import jackiecrazy.wardance.entity.ThrownWeaponEntity;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.world.phys.Vec3;
@@ -26,6 +27,7 @@ public class Throw extends WeaponInteractions.WeaponInteraction {
     private int auto_recall_cooldown = -1;
     private double throw_speed = 2;
     private boolean consume_item = true;
+    private boolean attackable = false;
     private boolean pickup_flourish = true;
     private RenderItemArgument display_stack;
     private List<Action> on_impact = List.of();
@@ -147,7 +149,7 @@ public class Throw extends WeaponInteractions.WeaponInteraction {
     }
 
     public Vec3 transformDirection(Vec3 dir) {
-        return MovementUtils.resolveVelocity(dir, direction);
+        return MovementUtils.resolveVelocity(dir, direction, false);
     }
 
     public void transformThrown(ThrownWeaponEntity e) {
@@ -159,9 +161,11 @@ public class Throw extends WeaponInteractions.WeaponInteraction {
         e.setIdlePose(flying_pose);
         e.setGravity(gravity);
         e.setHitInfo(attack_info);
-        e.setPos(e.position().add(MovementUtils.resolveVelocity(e.getDeltaMovement().normalize(), offset)));
+        Vec3 randomDrift = new Vec3((WarDance.rand.nextFloat() * 2 - 1) * getDrift().x, (WarDance.rand.nextFloat() * 2 - 1) * getDrift().y, (WarDance.rand.nextFloat() * 2 - 1) * getDrift().z);
+        e.setPos(e.position().add(randomDrift).add(MovementUtils.resolveVelocity(e.getDeltaMovement().normalize(), offset, false)));
         e.setImpactActions(on_impact);
         e.setEmbedActions(on_embed);
+        e.setAttackable(attackable);
         e.setFake(!consume_item);
         e.setFlourish(pickup_flourish);
         e.setMaxRange(max_range);

@@ -1,0 +1,139 @@
+[
+  {
+    "ID": "play_sound",
+    "sound": "minecraft:entity.zombie.break_wooden_door",
+    "volume": 0.6,
+    "source": "PLAYERS"
+  }, {
+  "ID": "play_particle",
+  "particle": "minecraft:block",
+  "particle_parameters": "oak_door",
+  "position": {
+    "ID": "sum_vector",
+    "addends": [
+      {
+        "ID": "eye_position",
+        "reference_point": {
+          "ID": "get_context",
+          "key": "target"
+        }
+      }, {
+        "ID": "vector",
+        "x": 0,
+        "y": 1,
+        "z": 0
+      }, {
+        "ID": "look_vector",
+        "reference_point": "caster",
+        "scale": 2
+      }
+    ]
+  },
+  "quantity": 50,
+  "delta": {
+    "ID": "vector",
+    "x": 1,
+    "y": 1,
+    "z": 1
+  },
+  "velocity": {
+    "ID": "look_vector",
+    "reference_point": "caster"
+  }
+}, {
+  "ID": "project_hitbox",
+  "selector": {
+    "ID": "selector",
+    "position": {
+      "ID": "sum_vector",
+      "addends": [
+        {
+          "ID": "vector",
+          "x": 0,
+          "y": 1,
+          "z": 0
+        },
+        {
+          "ID": "eye_position",
+          "reference_point": {
+            "ID": "get_context",
+            "key": "target"
+          }
+        }
+      ]
+    },
+    "width": 120,
+    "range": 6,
+    "shape": "CONE",
+    "filter": {
+      "ID": "condition",
+      "condition": {
+        "ID": "!allied_to"
+      }
+    }
+  },
+  "actions": [
+    {
+      "ID": "add_effect",
+      "effect": "footwork:confusion",
+      "potency": 0,
+      "duration": 200,
+      "repeatable": true,
+      "visible": false,
+      "condition": {
+        "ID": "==",
+        "first": {
+          "ID": "resource",
+          "resource": "SPIRIT",
+          "format": "PERCENTAGE"
+        },
+        "second": 1
+      }
+    }, {
+      "ID": "deal_damage",
+      "damage_source": {
+        "crit": true,
+        "breach": {
+          "ID": "==",
+          "first": {
+            "ID": "resource",
+            "resource": "SPIRIT",
+            "format": "PERCENTAGE"
+          },
+          "second": 1
+        }
+      },
+      "amount": {
+        "ID": "multiply",
+        "first": {
+          "ID": "add",
+          "first": 9,
+          "second": {
+            "ID": "get_context",
+            "key": "amount"
+          }
+        },
+        "second": 0.5
+      },
+      "on_hit": [
+      ]
+    }
+  ]
+}, {
+  "ID": "change_resource",
+  "resource": "SPIRIT",
+  "operation": "SET",
+  "amount": 0,
+  "condition": {
+    "ID": "==",
+    "first": {
+      "ID": "resource",
+      "resource": "SPIRIT",
+      "format": "PERCENTAGE"
+    },
+    "second": 1
+  }
+}, {
+  "ID": "remove"
+}
+]

@@ -3,6 +3,7 @@ package jackiecrazy.wardance.event;
 import jackiecrazy.wardance.utils.CombatUtils;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.projectile.Projectile;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.phys.Vec3;
@@ -11,7 +12,7 @@ import net.minecraftforge.eventbus.api.Event;
 
 @Event.HasResult
 public abstract class ProjectileDefendEvent extends LivingEvent {
-    private final Entity projectile;
+    private final Projectile projectile;
     private final InteractionHand defendingHand;
     private final ItemStack defendingStack;
     private final float originalPostureConsumption;
@@ -23,7 +24,7 @@ public abstract class ProjectileDefendEvent extends LivingEvent {
      */
     private Vec3 returnVec;
 
-    public ProjectileDefendEvent(LivingEntity entity, Entity seme, InteractionHand dhand, ItemStack d, float mult) {
+    public ProjectileDefendEvent(LivingEntity entity, Projectile seme, InteractionHand dhand, ItemStack d, float mult) {
         super(entity);
         projectile = seme;
         defendingHand = dhand;
@@ -42,7 +43,7 @@ public abstract class ProjectileDefendEvent extends LivingEvent {
         this.trigger = trigger;
     }
 
-    public Entity getProjectile() {
+    public Projectile getProjectile() {
         return projectile;
     }
 
@@ -82,14 +83,14 @@ public abstract class ProjectileDefendEvent extends LivingEvent {
 
     public static class Block extends ProjectileDefendEvent {
 
-        public Block(LivingEntity entity, Entity seme, InteractionHand dhand, ItemStack d, float mult) {
+        public Block(LivingEntity entity, Projectile seme, InteractionHand dhand, ItemStack d, float mult) {
             super(entity, seme, dhand, d, mult);
         }
     }
 
     public static class Parry extends ProjectileDefendEvent {
 
-        public Parry(LivingEntity entity, Entity seme, InteractionHand dhand, ItemStack d, float mult) {
+        public Parry(LivingEntity entity, Projectile seme, InteractionHand dhand, ItemStack d, float mult) {
             super(entity, seme, dhand, d, mult);
             setPostureConsumption(0);
             setReturnVec(entity.getLookAngle().scale(seme.getDeltaMovement().length()));

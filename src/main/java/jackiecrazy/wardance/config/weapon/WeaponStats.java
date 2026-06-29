@@ -1,16 +1,20 @@
 package jackiecrazy.wardance.config.weapon;
 
 import com.google.common.collect.Maps;
-import com.google.gson.*;
-import jackiecrazy.footwork.api.FootworkAttributes;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
 import jackiecrazy.footwork.capability.resources.CombatData;
 import jackiecrazy.footwork.entity.flyingweapon.FlyingWeaponEffect;
 import jackiecrazy.footwork.move.motionframe.*;
 import jackiecrazy.footwork.move.utils.ArgumentContext;
 import jackiecrazy.wardance.WarDance;
+import jackiecrazy.wardance.api.WarAttributes;
 import jackiecrazy.wardance.config.CombatConfig;
 import jackiecrazy.wardance.config.GeneralConfig;
-import jackiecrazy.wardance.config.weapon.interactions.*;
+import jackiecrazy.wardance.config.weapon.interactions.Animation;
+import jackiecrazy.wardance.config.weapon.interactions.SweepAttack;
+import jackiecrazy.wardance.config.weapon.interactions.Throw;
+import jackiecrazy.wardance.config.weapon.interactions.WeaponInteractions;
 import jackiecrazy.wardance.networking.CombatChannel;
 import jackiecrazy.wardance.networking.sync.SyncItemDataPacket;
 import jackiecrazy.wardance.networking.sync.SyncTagDataPacket;
@@ -38,7 +42,6 @@ import org.joml.Vector4d;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.*;
-import java.util.List;
 import java.util.stream.Collectors;
 
 public class WeaponStats extends SimpleJsonResourceReloadListener {
@@ -155,24 +158,81 @@ public class WeaponStats extends SimpleJsonResourceReloadListener {
         return put;
     }
 
+    private static final List<TagKey<Item>> matching=new ArrayList<>();
+
     @Nullable
     public static WeaponInfo lookupStats(ItemStack is) {
         if (is == null) return null;
+        if (is.hasTag() && is.getTag().contains("wardance_weapon_category")) {
+            String tag = is.getTag().getString("wardance_weapon_category");
+            if (!tag.contains(":")) tag = "wardance:" + tag;
+            TagKey<Item> query = ItemTags.create(new ResourceLocation(tag));
+            if (archetypes.containsKey(query)) {
+                return archetypes.get(query);
+            }
+            if (clientArchetypes.containsKey(query)) {
+                return clientArchetypes.get(query);
+            }
+        }
+        matching.clear();
         if (combatList.containsKey(is.getItem())) return combatList.get(is.getItem());
         for (TagKey<Item> tag : archetypes.keySet()) {
             if (is.is(tag)) {
-                //cache lookup
-                combatList.put(is.getItem(), archetypes.get(tag));
-                return archetypes.get(tag);
+                matching.add(tag);
             }
+        }
+        if(matching.size()==1) {
+            TagKey<Item> tag=matching.get(0);
+            //faster cache lookup in the future
+            combatList.put(is.getItem(), archetypes.get(tag));
+            return archetypes.get(tag);
+        }
+        else if(!matching.isEmpty()) {
+            matching.sort((a, b) -> {
+                if (a == b) return 0;
+                final String aname = a.location().getNamespace();
+                final String bname = b.location().getNamespace();
+                if (aname.contains("wardance")) return -1;
+                if (bname.contains("wardance")) return 1;
+                if (aname.contains("better_combat")) return 2;
+                if (bname.contains("better_combat")) return -2;
+                return 0;
+            });
+            TagKey<Item> tag=matching.get(0);
+            //faster cache lookup in the future
+            combatList.put(is.getItem(), archetypes.get(tag));
+            return archetypes.get(tag);
         }
         if (clientItems.containsKey(is.getItem())) return clientItems.get(is.getItem());
         for (TagKey<Item> tag : clientArchetypes.keySet()) {
             if (is.is(tag)) {
+                matching.add(tag);
                 //cache lookup
                 clientItems.put(is.getItem(), clientArchetypes.get(tag));
                 return clientArchetypes.get(tag);
             }
+        }
+        if(matching.size()==1) {
+            TagKey<Item> tag=matching.get(0);
+            //faster cache lookup in the future
+            clientItems.put(is.getItem(), clientArchetypes.get(tag));
+            return clientArchetypes.get(tag);
+        }
+        else if(!matching.isEmpty()) {
+            matching.sort((a, b) -> {
+                if (a == b) return 0;
+                final String aname = a.location().getNamespace();
+                final String bname = b.location().getNamespace();
+                if (aname.contains("wardance")) return -1;
+                if (bname.contains("wardance")) return 1;
+                if (aname.contains("better_combat")) return 2;
+                if (bname.contains("better_combat")) return -2;
+                return 0;
+            });
+            TagKey<Item> tag=matching.get(0);
+            //faster cache lookup in the future
+            clientItems.put(is.getItem(), clientArchetypes.get(tag));
+            return clientArchetypes.get(tag);
         }
         return null;
     }
@@ -219,7 +279,7 @@ public class WeaponStats extends SimpleJsonResourceReloadListener {
     }
 
     public static boolean isTwoHanded(ItemStack is, LivingEntity e, InteractionHand h) {
-        final double handing = e == null ? 0 : e.getAttributeValue(FootworkAttributes.TWO_HANDING.get());
+        final double handing = e == null ? 0 : e.getAttributeValue(WarAttributes.TWO_HANDING.get());
         if (h == InteractionHand.MAIN_HAND && handing >= 1d) return false;
         if (h == InteractionHand.OFF_HAND && handing >= 3d) return false;
         //the hand is instantly swapped on offhand attack, which means a main hand twohander will now be on the offhand ._.
@@ -234,7 +294,7 @@ public class WeaponStats extends SimpleJsonResourceReloadListener {
         // 2 allows you to do so while maintaining the two-handed bonus.
         // 3 allows dual wielding two-handers with no two-hander bonus, and
         // 4 allows you to maintain the two-handing bonus of both.
-        final double twohanding = e.getAttributeValue(FootworkAttributes.TWO_HANDING.get());
+        final double twohanding = e.getAttributeValue(WarAttributes.TWO_HANDING.get());
         if (twohanding < 0) return false;
         boolean offhandFree = CombatData.getCap(e).getHandBind(InteractionHand.OFF_HAND) > 0 || CombatUtils.isHoldingNonWeapon(e, InteractionHand.OFF_HAND);
         boolean offhandTwo = isTwoHanded(e.getOffhandItem(), e, InteractionHand.OFF_HAND);
@@ -275,7 +335,8 @@ public class WeaponStats extends SimpleJsonResourceReloadListener {
         if (info_override != null) return info_override;
 //        final WeaponInfo info = lookupStats(i);
 //        if (info == null) return SweepAttack.DEFAULT_NONE.getHitInfo();
-        if (getSweepInfo(i, wielder, s, false, null).getInteractions().get(0) instanceof SweepAttack sa)
+        final List<WeaponInteractions.WeaponInteraction> in = getSweepInfo(i, wielder, s, false, null).getInteractions();
+        if (!in.isEmpty() && in.get(0) instanceof SweepAttack sa)
             return sa.getHitInfo();
         return ((SweepAttack) SweepAttack.DEFAULT_NONE.getInteractionOfType(WeaponInteractions.WeaponInteraction.InteractionType.SWEEP)).getHitInfo();
     }
@@ -377,7 +438,7 @@ public class WeaponStats extends SimpleJsonResourceReloadListener {
             return attack;
         }
 
-        public double getDefensePostureMultiplier() {
+        public double getRallyPercentage() {
             return defend;
         }
 
@@ -394,7 +455,8 @@ public class WeaponStats extends SimpleJsonResourceReloadListener {
         public String getName() {
             return id;
         }
-        public List<String> getTags(AttackType t){
+
+        public List<String> getTags(AttackType t) {
             return sweeps[t.ordinal()].tags();
         }
     }

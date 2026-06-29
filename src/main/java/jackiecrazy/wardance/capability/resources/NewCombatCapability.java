@@ -1,19 +1,21 @@
 package jackiecrazy.wardance.capability.resources;
 
-import jackiecrazy.footwork.Footwork;
-import jackiecrazy.footwork.api.FootworkAttributes;
 import jackiecrazy.footwork.capability.resources.CombatData;
 import jackiecrazy.footwork.capability.resources.ICombatCapability;
 import jackiecrazy.footwork.capability.stylish.StylishData;
 import jackiecrazy.footwork.event.*;
-import jackiecrazy.footwork.move.motionframe.HitInfo;
 import jackiecrazy.footwork.potion.FootworkEffects;
 import jackiecrazy.footwork.utils.TargetingUtils;
 import jackiecrazy.wardance.WarDance;
+import jackiecrazy.wardance.api.WarAttributes;
+import jackiecrazy.wardance.capability.flyingweapon.FlyingWeaponData;
 import jackiecrazy.wardance.capability.permission.PermissionData;
 import jackiecrazy.wardance.compat.ElenaiCompat;
 import jackiecrazy.wardance.compat.WarCompat;
-import jackiecrazy.wardance.config.*;
+import jackiecrazy.wardance.config.CombatConfig;
+import jackiecrazy.wardance.config.GeneralConfig;
+import jackiecrazy.wardance.config.MobSpecs;
+import jackiecrazy.wardance.config.ResourceConfig;
 import jackiecrazy.wardance.config.weapon.WeaponStats;
 import jackiecrazy.wardance.event.DamageRetconEvent;
 import jackiecrazy.wardance.handlers.TwoHandingHandler;
@@ -30,6 +32,7 @@ import net.minecraft.sounds.SoundSource;
 import net.minecraft.util.Mth;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.damagesource.DamageSource;
+import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
@@ -44,7 +47,9 @@ import net.minecraftforge.eventbus.api.Event;
 import net.minecraftforge.network.PacketDistributor;
 
 import java.lang.ref.WeakReference;
-import java.util.*;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.UUID;
 
 public class NewCombatCapability implements ICombatCapability {
     public static final UUID WOUND = UUID.fromString("982bbbb2-bbd0-4166-801a-560d1a4149c8");
@@ -87,7 +92,7 @@ public class NewCombatCapability implements ICombatCapability {
         if (mi != null)
             return (float) mi.getMaxPosture();
         else
-            ret = (float) (Math.ceil(ReworkConstants.POSTURE_QI * 10 / 1.09 * Math.sqrt(elb.getBbWidth() * elb.getBbHeight())));
+            ret = (float) (Math.ceil(ReworkConstants.POSTURE_QI * 10 / 1.2 * Math.sqrt(elb.getBbWidth() * elb.getBbHeight())));
         ret = Math.min(ret, 400);//sanity
         if (elb instanceof Player) ret *= 1.5f;
         return ret;
@@ -100,6 +105,7 @@ public class NewCombatCapability implements ICombatCapability {
         SkillUtils.removeAttribute(e, Attributes.FLYING_SPEED, WOUND);
         SkillUtils.removeAttribute(e, Attributes.KNOCKBACK_RESISTANCE, WOUND);
         setPosture(getMaxPosture());
+        SkillUtils.removeAttribute(e, Attributes.ARMOR, STOPMOVING);
         knockdown = false;
     }
 
@@ -136,7 +142,7 @@ public class NewCombatCapability implements ICombatCapability {
         }
         spiritCD = maxSpiritCD;
         if (cse.getResult() == Event.Result.DEFAULT && lacking) return amount - spirit;
-        final float finalized = spirit - amount;
+        final float finalized = (float) (spirit - amount * (1 - dude.get().getAttributeValue(WarAttributes.SPIRIT_REFUND.get())));
         if (cse.getResult() == Event.Result.DENY) {
             setSpirit(finalized);
             return 5;
@@ -210,15 +216,6 @@ public class NewCombatCapability implements ICombatCapability {
 
     @Override
     public float consumePosture(LivingEntity assailant, float amount, float rallyPerc, BreachLevel breachLevel) {
-        //WarDance.LOGGER.debug("consume posture check 1");
-        //while posture is not empty incoming damage is reduced by posture??? How to calculate damage <> posture?
-        //on taking a breaching hit to posture, flag stun, which interrupts all AI, cancels all knockback, and records damage?
-        //on taking a breaching hit while stunned, flag knockdown, greatly knockback, make entity invulnerable until end.
-        //posture is not consumed and regens at a fixed rate when flagged in either condition, but it becomes gray until it's cleared.
-        //it takes about 6s to get back to full.
-        //on receiving jump input as player, perform circle sweep with knockback and return to mobility at current posture percentage.
-        //rally gets set after posture is consumed with a flag to rally (all external sources of damage).
-        // It stays at max for half a second, then loses max(1, 1/(10*rally duration)) of its value per tick until it rounds to the true value.
         if (!PermissionData.getCap(assailant).canDealPostureDamage()) {
             return 0;
         }
@@ -241,7 +238,8 @@ public class NewCombatCapability implements ICombatCapability {
             int cycles = elb.getEffect(FootworkEffects.COUNTERSTRIKE.get()).getAmplifier() + 1;
             while (cycles > 0) {
                 cycles--;
-                amount *= (1.15f);
+                final double val = assailant == null ? WarAttributes.COUNTERSTRIKE.get().getDefaultValue() : assailant.getAttributeValue(WarAttributes.COUNTERSTRIKE.get());
+                amount *= (float) val;
             }
         }
         if (elb.hasEffect(FootworkEffects.UNSTEADY.get())) {
@@ -263,8 +261,8 @@ public class NewCombatCapability implements ICombatCapability {
         amount = cpe.getAmount();
 
         //players heal internal damage
-        if (assailant instanceof Player p && StylishData.getCap(p).isDeathDoor()) {
-            CombatData.getCap(p).retconDamage((float) (amount / ReworkConstants.POSTURE_QI));
+        if (assailant instanceof Player p) {
+            CombatData.getCap(p).retconDamage((float) (amount * p.getAttributeValue(WarAttributes.RALLY_DMG.get()) / ReworkConstants.POSTURE_QI));
         }
         mobPosCD = maxMobPosCD;
 
@@ -277,13 +275,17 @@ public class NewCombatCapability implements ICombatCapability {
             //if already stunned, a second breaching hit knocks down
             final boolean knockdown = (posture <= 0 && player);//breachLevel == BreachLevel.KNOCKDOWN || isStunned() || alreadyProc("forceKnockDown") ||
             posture = 0;
-            StunEvent se = new StunEvent(elb, assailant, knockdown ? (elb instanceof Player ? CombatConfig.knockdownDurationPlayer : CombatConfig.knockdownDuration) : CombatConfig.staggerDuration, knockdown);
+            StunEvent se = new StunEvent(elb, assailant, knockdown ? (int) (elb instanceof Player ? CombatConfig.knockdownDurationPlayer * elb.getAttributeValue(WarAttributes.KNOCK_TIME.get()) : CombatConfig.knockdownDuration) : CombatConfig.staggerDuration, knockdown);
             MinecraftForge.EVENT_BUS.post(se);
             if (se.isCanceled()) {
                 posture = prev;
                 return 0f;
             }
             elb.stopUsingItem();
+            if (player && FlyingWeaponData.getCap(elb).getWeapon(InteractionHand.MAIN_HAND) != null) {
+                FlyingWeaponData.getCap(elb).getWeapon(InteractionHand.MAIN_HAND).unDrag();
+                FlyingWeaponData.getCap(elb).getWeapon(InteractionHand.OFF_HAND).unDrag();
+            }
             if (se.isKnockdown()) {
                 //ugly fix. Posture is consumed before damage so the final hit that knocks down a mob will not deal damage.
                 //this delays the processing until damage
@@ -302,7 +304,7 @@ public class NewCombatCapability implements ICombatCapability {
                     stun(assailant, se.getLength());
                     elb.removeEffect(FootworkEffects.COUNTERSTRIKE.get());
                     if (assailant != null) {
-//                        CombatData.getCap(assailant).addRally((float) (CombatData.getCap(assailant).getMaxPosture() * assailant.getAttributeValue(FootworkAttributes.BREACH_RALLY.get())));
+//                        CombatData.getCap(assailant).addRally((float) (CombatData.getCap(assailant).getMaxPosture() * assailant.getAttributeValue(WarAttributes.BREACH_RALLY.get())));
                     }
                 }
             }
@@ -343,7 +345,8 @@ public class NewCombatCapability implements ICombatCapability {
     public void setRally(float v) {
         //only players get rally
         if (player) {
-            rally = Mth.clamp(v, 0, getMaxPosture() - getPosture());//(float) Math.min(v, dude.get().getAttributeValue(FootworkAttributes.MAX_RALLY.get()));
+            rally = Mth.clamp(v, 0, getMaxPosture() - getPosture());
+            rally = (float) Math.min(rally, getMaxPosture() * dude.get().getAttributeValue(WarAttributes.MAX_RALLY.get()));
             if (rally < 0) rally = 0;
             dirty = true;
         }
@@ -411,7 +414,6 @@ public class NewCombatCapability implements ICombatCapability {
             pin(0);
             setHandBind(InteractionHand.MAIN_HAND, 0);
             setHandBind(InteractionHand.OFF_HAND, 0);
-            SkillUtils.removeAttribute(e, Attributes.ARMOR, STOPMOVING);
         }//entering stagger
         else if (e != null && time > 0 && staggerTime == 0) {
             pin(time);
@@ -452,10 +454,10 @@ public class NewCombatCapability implements ICombatCapability {
         initializePostureIfNew(elb);
 
         //update max values
-        mpos = (float) elb.getAttributeValue(FootworkAttributes.MAX_POSTURE.get());
+        mpos = (float) elb.getAttributeValue(WarAttributes.MAX_POSTURE.get());
         if (posture > mpos)
             setPosture(mpos);
-        mspi = (int) elb.getAttributeValue(FootworkAttributes.MAX_SPIRIT.get());
+        mspi = 100;
         if (spirit > mspi)
             setSpirit(mspi);
 
@@ -482,12 +484,12 @@ public class NewCombatCapability implements ICombatCapability {
         setDodgeTime(dodgeFrame - ticks);
         if (elb.isShiftKeyDown()) {
             if (guardFrame < 0 && canParry())
-                setParryTime(CombatConfig.parryTime);
+                setParryTime((int) (CombatConfig.parryTime * elb.getAttributeValue(WarAttributes.PARRY_EXTEND.get())));
             guardFrame = 2;
         }
         parryFrame -= ticks;
         iFrame -= ticks;
-        guardFrame-=ticks;
+        guardFrame -= ticks;
 
         //stun
         if (isStunned())
@@ -541,10 +543,10 @@ public class NewCombatCapability implements ICombatCapability {
     }
 
     private void initializePostureIfNew(LivingEntity elb) {
-        final boolean uninitializedPosture = elb.getAttribute(FootworkAttributes.MAX_POSTURE.get()).getBaseValue() == 0d;
+        final boolean uninitializedPosture = elb.getAttribute(WarAttributes.MAX_POSTURE.get()).getBaseValue() == 0d;
         if (uninitializedPosture) {
             final float mPos = getMPos(elb);
-            elb.getAttribute(FootworkAttributes.MAX_POSTURE.get()).setBaseValue(mPos);
+            elb.getAttribute(WarAttributes.MAX_POSTURE.get()).setBaseValue(mPos);
             if (!player) {//ew
                 MobSpecs.MobInfo specs = MobSpecs.getMobInfo(elb);
                 if (specs == null) specs = MobSpecs.DEFAULT;
@@ -552,11 +554,11 @@ public class NewCombatCapability implements ICombatCapability {
                 maxMobPosCD = specs.getPostureRegenerationCooldown();
                 double permScale = specs.getMaxPostureScaling();
                 if (permScale != 1)
-                    elb.getAttribute(FootworkAttributes.MAX_POSTURE.get()).addPermanentModifier(new AttributeModifier(CombatUtils.main, "json bonus", permScale, AttributeModifier.Operation.MULTIPLY_TOTAL));
+                    elb.getAttribute(WarAttributes.MAX_POSTURE.get()).addPermanentModifier(new AttributeModifier(CombatUtils.main, "json bonus", permScale, AttributeModifier.Operation.MULTIPLY_TOTAL));
             }
         }
         if (mpos == 0) {
-            mpos = (float) elb.getAttributeValue(FootworkAttributes.MAX_POSTURE.get());
+            mpos = (float) elb.getAttributeValue(WarAttributes.MAX_POSTURE.get());
             posture = mpos;
         }
     }
@@ -578,7 +580,7 @@ public class NewCombatCapability implements ICombatCapability {
         if (elb == null) return;
         final int ticks = 1;
         //update max values
-        mpos = (float) elb.getAttributeValue(FootworkAttributes.MAX_POSTURE.get());
+        mpos = (float) elb.getAttributeValue(WarAttributes.MAX_POSTURE.get());
         if (posture > mpos)
             setPosture(mpos);
         //tick down everything
@@ -777,8 +779,8 @@ public class NewCombatCapability implements ICombatCapability {
         if (!CombatUtils.suppressChangeFunctions) {
             if (isStunned()) return 1;
             LivingEntity bro = dude.get();
-            if (bro != null&&!bro.level().isClientSide) {
-                if (h == InteractionHand.OFF_HAND && (WeaponStats.isTwoHanded(bro.getOffhandItem(), bro, InteractionHand.OFF_HAND) || (WeaponStats.isTwoHanded(bro.getMainHandItem(), bro, InteractionHand.MAIN_HAND) && WeaponStats.isWeapon(bro,bro.getOffhandItem()))))
+            if (bro != null) {// && !bro.level().isClientSide //why did I need this?
+                if (h == InteractionHand.OFF_HAND && (WeaponStats.isTwoHanded(bro.getOffhandItem(), bro, InteractionHand.OFF_HAND) || (WeaponStats.isTwoHanded(bro.getMainHandItem(), bro, InteractionHand.MAIN_HAND) && WeaponStats.isWeapon(bro, bro.getOffhandItem()))))
                     return 1;
             }
         }
@@ -889,10 +891,10 @@ public class NewCombatCapability implements ICombatCapability {
 
     private void handlePostureRegen(int ticks) {
         mobPosCD -= ticks;
+        if (mobPosCD > 0) return;
         if (mobPosRegenSpd == 0) mobPosRegenSpd = 0.4;
         float mult = 1;
         LivingEntity elb = dude.get();
-        if (mobPosCD > 0) return;
         if (elb != null) {
             float healthperc = 0.3f + (elb.getHealth() / elb.getMaxHealth()) * 0.7f;
             if (player) {
@@ -903,21 +905,25 @@ public class NewCombatCapability implements ICombatCapability {
             }
             mult *= healthperc;
             //mult *= Math.min(CombatUtils.getCooledAttackStrength(elb, InteractionHand.MAIN_HAND, 0.5f), CombatUtils.getCooledAttackStrength(elb, InteractionHand.MAIN_HAND, 0.5f));
-            int exp = elb.hasEffect(MobEffects.POISON) ? (elb.getEffect(MobEffects.POISON).getAmplifier() + 1) : 0;
+            final MobEffectInstance wtf = elb.getEffect(MobEffects.POISON);
+            int exp = wtf != null ? (wtf.getAmplifier() + 1) : 0;
             float poison = 1;
             for (int j = 0; j < exp; j++) {
                 poison *= GeneralConfig.poison;
             }
             mult *= poison;
-            double wetDebuff=0.8;
-            if(elb.isInWaterRainOrBubble())
-                mult*=wetDebuff;
+            float wetDebuff = 0.8f;
+            if (elb.isInWaterRainOrBubble())
+                mult *= wetDebuff;
         }
         if (mobPosCD < 0) {
             int overflow = -mobPosCD;
             mobPosCD = 0;
-            if (player) addRally(overflow * mult);
-            else setPosture((float) (getPosture() + overflow * mobPosRegenSpd * mult));
+            if (player) {
+                if (isBlocking()) //blocking players rally a fixed amount per second, todo test
+                    addRally((float) (overflow * mult * elb.getAttributeValue(WarAttributes.RALLY_GUARD.get())));
+                addRally((float) (overflow * mult * elb.getAttributeValue(WarAttributes.RALLY_REGEN.get())));
+            } else setPosture((float) (getPosture() + overflow * mobPosRegenSpd * mult));
             healthyCooldown--;
             if (healthyCooldown < 0)
                 recordDamage((float) Math.min(-0.01f, -getRecordedDamage() / 1000));

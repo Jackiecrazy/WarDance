@@ -15,7 +15,9 @@ import jackiecrazy.footwork.move.argument.vector.VectorArgument;
 import jackiecrazy.footwork.move.condition.Condition;
 import jackiecrazy.footwork.move.condition.ConsumeResourceCondition;
 import jackiecrazy.footwork.move.filter.Filter;
-import jackiecrazy.footwork.move.motionframe.*;
+import jackiecrazy.footwork.move.motionframe.HitEffects;
+import jackiecrazy.footwork.move.motionframe.HitInfo;
+import jackiecrazy.footwork.move.motionframe.MotionManager;
 import jackiecrazy.footwork.move.motionframe.render.RenderNode;
 import jackiecrazy.footwork.utils.ActionJsonAdapters;
 import jackiecrazy.footwork.utils.JsonAdapters;
@@ -88,23 +90,21 @@ public class WeaponInteractions {
         private boolean set_velocity = false;
         private boolean swing_hand = true;
         private HitEffects on_swing = new HitEffects();
-        private List<String> tags=List.of();
+        private List<String> tags = List.of();
         private List<InteractionOverride> overrides = new ArrayList<>();
         private transient Map<WeaponInteraction.InteractionType, WeaponInteraction> bakedTypes = null;
         private double minimum_cooldown = 0.9;
         private double cooldown_refund = 0;
         private Vec3 left_hand_offset = new Vec3(-0.5, 0, 0.5);
         private Vec3 right_hand_offset = new Vec3(0.5, 0, 0.5);
-        private boolean no_flip=false;
+        private boolean no_flip = false;
+        private boolean always_draw_next_weapon = false;
+        private boolean debug = false;
+        public InteractionGroup() {
+        }
 
         public boolean forceNextWeapon() {
             return always_draw_next_weapon;
-        }
-
-        private boolean always_draw_next_weapon =false;
-        private boolean debug = false;
-
-        public InteractionGroup() {
         }
 
         public Vec3 left_hand_offset() {
@@ -123,7 +123,7 @@ public class WeaponInteractions {
             return minimum_cooldown;
         }
 
-        public boolean noFlip(){
+        public boolean noFlip() {
             return no_flip;
         }
 
@@ -206,6 +206,11 @@ public class WeaponInteractions {
     }
 
     public static abstract class WeaponInteraction {
+        public Vec3 getDrift() {
+            return drift;
+        }
+
+        private Vec3 drift=Vec3.ZERO;
         public WeaponInteraction() {
 
         }
@@ -267,7 +272,7 @@ public class WeaponInteractions {
                 final JsonObject baseObj = JsonUtils.parseSyntacticSugar(json).getAsJsonObject();
                 JsonElement overObj = baseObj.remove("overrides");
                 InteractionGroup ret = NAIVE.fromJson(baseObj, InteractionGroup.class);
-                if (ret.getInteractions().isEmpty()) {
+                if ((baseObj.has("type") || baseObj.has("sweep")) && ret.getInteractions().isEmpty()) {
                     ret.setInteractions(List.of(GSON.fromJson(json, WeaponInteraction.class)));
                 }
                 if (overObj != null && overObj.isJsonArray()) {
@@ -292,9 +297,10 @@ public class WeaponInteractions {
                 return ret;
             }
             if (json.isJsonArray()) {
-                InteractionGroup ret=new InteractionGroup();
+                InteractionGroup ret = new InteractionGroup();
                 //a simple list of interactions with no override, tooltip, or velocity. I'm not sure why you would want this.
-                List<WeaponInteraction> list = context.deserialize(json, new TypeToken<ArrayList<WeaponInteraction>>() {}.getType());
+                List<WeaponInteraction> list = context.deserialize(json, new TypeToken<ArrayList<WeaponInteraction>>() {
+                }.getType());
                 ret.setInteractions(list);
                 return ret;
             }
@@ -314,7 +320,7 @@ public class WeaponInteractions {
             if (baseObj.has("type")) {
                 //others go in here
                 String type = baseObj.get("type").getAsString();
-                if (type.toLowerCase(Locale.ROOT).equals("sweep"))return ret;
+                if (type.toLowerCase(Locale.ROOT).equals("sweep")) return ret;
                 if (type.toLowerCase(Locale.ROOT).equals("use")) ret = asUse(baseObj);
                 if (type.toLowerCase(Locale.ROOT).equals("animation")) ret = asAnimation(baseObj);
                 if (type.toLowerCase(Locale.ROOT).equals("throw")) ret = asThrow(baseObj);

@@ -1,0 +1,124 @@
+{
+  "_guide": {
+    "general": "instead of attacking, leaves a delayed mark that is detonated at the end of swing frames",
+    "standing": "slow forward swing",
+    "falling": "",
+    "aerial": "",
+    "sprinting": "",
+    "guard counter": "",
+    "throw": "",
+    "pickup": "",
+    "draw": ""
+  },
+  "#scythe": {
+    "attack": 15,
+    "defend": 0.3,
+    "standing": {
+      "type": "animation",
+      "duration": 15,
+      "easing": "IN_OUT_SINE",
+      "frames": [
+        {
+          "direction": [
+            1, 0.2, 0.5
+          ],
+          "offset": [
+            0, 0, 1
+          ],
+          "effects": {
+            "attack_info": {
+              "damage_scale": 0,
+              "hit_other": {
+                "run_actions": [
+                  {
+                    "ID": "attach_callback",
+                    "effect": "wardance:reaped",
+                    "duration": 20,
+                    "max_procs": 1,
+                    "trigger": "reaper"
+                  }
+                ]
+              }
+            },
+            "effects": [
+              "WEAPON", "TRAIL"
+            ]
+          }
+        }, {
+          "direction": [
+            -1, -0.2, 0.5
+          ],
+          "offset": [
+            0, 0, 0.6
+          ],
+          "effects": {
+            "run_actions": [
+              {
+                "ID": "project_hitbox",
+                "selector": {
+                  "ID": "selector",
+                  "range": {
+                    "ID": "multiply",
+                    "first": {
+                      "ID": "attribute_value",
+                      "reference_point": "caster",
+                      "attribute": "forge:entity_reach"
+                    },
+                    "second": 2
+                  }
+                },
+                "actions": [
+                  {
+                    "ID": "trigger_callback",
+                    "trigger": "reaper"
+                  }
+                ]
+              }
+            ]
+          }
+        }
+      ]
+    },
+    "falling": {
+      "sweep": "CLEAVE",
+      "knockback": 1.25,
+      "damage_scale": 1.25,
+      "sweep_base": 50.0,
+      "sweep_scale": 25.0,
+      "on_swing": {
+        "command": "/function wardance:attack/self_moderatefatigue"
+      },
+      "damage_other_command": "/function wardance:attack/damageother_armorcleaveminor",
+      "crit": true
+    },
+    "aerial": {
+      "sweep": "LINE",
+      "knockback": -1.75,
+      "damage_scale": 0.5,
+      "sweep_base": 1.0,
+      "sweep_scale": 0.5,
+      "damage_other_command": "/function wardance:attack/damageother_mildstun"
+    },
+    "sprinting": {
+      "sweep": "IMPACT",
+      "knockback": 1.5,
+      "damage_scale": 0.5,
+      "posture_scale": 1.5,
+      "sweep_base": 0.75,
+      "sweep_scale": 0.5,
+      "on_swing": {
+        "command": "/function wardance:attack/self_accelerate"
+      },
+      "damage_other_command": "/function wardance:attack/damageother_destabilize",
+      "crit": true
+    },
+    "riding": {
+      "sweep": "CIRCLE",
+      "knockback": 0.5,
+      "damage_scale": 1.2,
+      "crit_damage": 2.0,
+      "sweep_base": 4.0,
+      "sweep_scale": 0.75
+    }
+  }
+}

@@ -1,0 +1,14 @@
+{
+  "values": [
+    {
+      "id": "mowziesmobs:ferrous_wroughtnaut",
+      "required": false
+    },{
+      "id": "mowziesmobs:umvuthana_raptor",
+      "required": false
+    }, {
+      "id": "#forge:bosses",
+      "required": false
+    }
+  ]
+}

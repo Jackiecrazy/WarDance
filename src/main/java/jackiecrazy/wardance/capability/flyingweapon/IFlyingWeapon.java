@@ -17,8 +17,8 @@ public interface IFlyingWeapon {
 
     void setHeldBlock(ThrownWeaponEntity sb);
 
-    default boolean hasGrapple(){
-        return getGrapple()!=null&&!getGrapple().isRemoved();
+    default boolean hasGrapple() {
+        return getGrapple() != null && !getGrapple().isRemoved();
     }
 
     GrappleEntity getGrapple();
@@ -26,20 +26,22 @@ public interface IFlyingWeapon {
     void launchGrapple(Vec3 to);
 
     void scheduleAction(InteractionHand hand,
-                        MotionManager mm);
+                        MotionManager mm, boolean overwrite);
 
     void tick();
 
     void setRender(InteractionHand hand, FlyingWeaponEffect... effects);
 
     void forceRefreshWeapon(InteractionHand hand);
-    default void forceRefreshWeapons(){
+
+    default void forceRefreshWeapons() {
         forceRefreshWeapon(InteractionHand.MAIN_HAND);
         forceRefreshWeapon(InteractionHand.OFF_HAND);
     }
 
-    public CompoundTag write() ;
-    public void read(Level l, CompoundTag t) ;
+    public CompoundTag write();
+
+    public void read(Level l, CompoundTag t);
 
     ThrownWeaponEntity yeet(InteractionHand hand, Vec3 pos, double strength);
 
@@ -72,7 +74,7 @@ public interface IFlyingWeapon {
 
         @Override
         public void scheduleAction(InteractionHand hand,
-                                   MotionManager mm) {
+                                   MotionManager mm, boolean overwrite) {
 
         }
 

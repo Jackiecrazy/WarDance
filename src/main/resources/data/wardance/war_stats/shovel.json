@@ -36,7 +36,7 @@
           "frames": [
             {
               "direction": [
-                0.4, -1, 0
+                0, -1, 0.4
               ],
               "offset": [
                 0, 0, 0.6
@@ -111,7 +111,7 @@
           "frames": [
             {
               "direction": [
-                0.4, -1, 0
+                0, -1, 0.4
               ],
               "offset": [
                 0, 0, 0.6
@@ -269,7 +269,7 @@
       },
       "throw_speed": 1.3,
       "lodge_entity": false,
-      "lodge_block": true,
+      "lodge_block": false,
       "flying_pose": {
         "duration": 3,
         "easing": "LINEAR",
@@ -439,7 +439,7 @@
               ],
               "effects": {
                 "attack_info": {
-                  "damage_multiplier": 1.6
+                  "damage_scale": 1.6
                 },
                 "effects": [
                   "WEAPON"

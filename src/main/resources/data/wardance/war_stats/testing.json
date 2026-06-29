@@ -853,7 +853,7 @@
               ],
               "effects": {
                 "attack_info": {
-                  "damage_multiplier": 0.8
+                  "damage_scale": 0.8
                 },
                 "effects": [
                   "WEAPON"

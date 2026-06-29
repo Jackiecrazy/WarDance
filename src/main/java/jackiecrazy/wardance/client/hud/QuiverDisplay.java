@@ -155,6 +155,7 @@ public class QuiverDisplay implements IGuiOverlay {
     @Override
     public void render(ForgeGui gui, GuiGraphics guiGraphics, float partialTick, int width, int height) {
         Minecraft mc = Minecraft.getInstance();
+        mc.mouseHandler.cursorEntered();
         Player player = mc.player;
         RenderSystem.setShaderTexture(0, GUI_ICONS_LOCATION);
         if (player == null || !showQuiver()) {

@@ -72,7 +72,7 @@ public class ThrowPacket {
                 if (player == null) return;
                 //have a weapon, yeet!
                 final ItemStack held = player.getItemInHand(h);
-                if (!held.isEmpty()) {
+//                if (!held.isEmpty()) {
                     WeaponInteractions.InteractionGroup ig = WeaponStats.getSweepInfo(held, player, WeaponStats.AttackType.THROW, false, null);
 
                     final IFlyingWeapon cap = FlyingWeaponData.getCap(player);
@@ -82,24 +82,25 @@ public class ThrowPacket {
                         if ((player.getItemInHand(h).isEmpty()||ig.forceNextWeapon()||packet.next>=0) && swapFromEnderChest(packet.next, player, h))
                             cap.forceRefreshWeapons();
                     }
-                } else if (!WeaponStats.DESPERATION.isEmpty() && CombatData.getCap(player).consumeSpirit(6)) {
-                    //desperation throw
-                    StylishData.getCap(player).addCombo(0.1f, "desperatethrow");
-                    Level level = player.level();
-                    GhostBlockEntity fwe = new GhostBlockEntity(WarEntities.FLYING_BLOCK.get(), level);
-                    Item desperate = WeaponStats.DESPERATION.get(WarDance.rand.nextInt(WeaponStats.DESPERATION.size()));
-                    fwe.setHeldItem(new ItemStack(desperate));
-                    fwe.setOwner(player);
-                    fwe.setPosRaw(player.getX(), player.getEyeY(), player.getZ());
-                    fwe.setInteractionRange(1);
-                    fwe.setState(FlyingItemEntity.STATE.THROW_NATURAL);
-                    fwe.yeet(packet.destination, 2);
-                    level.addFreshEntity(fwe);
-                    if (packet.next >= 0) {
-                        player.setItemInHand(h, player.getEnderChestInventory().removeItem(packet.next, 999));
-                        QuiverData.getData(player).sync(player);
-                    }
-                }
+//                }
+//                else if (!WeaponStats.DESPERATION.isEmpty() && CombatData.getCap(player).consumeSpirit(6)) {
+//                    //desperation throw
+//                    StylishData.getCap(player).addCombo(0.1f, "desperatethrow");
+//                    Level level = player.level();
+//                    GhostBlockEntity fwe = new GhostBlockEntity(WarEntities.FLYING_BLOCK.get(), level);
+//                    Item desperate = WeaponStats.DESPERATION.get(WarDance.rand.nextInt(WeaponStats.DESPERATION.size()));
+//                    fwe.setHeldItem(new ItemStack(desperate));
+//                    fwe.setOwner(player);
+//                    fwe.setPosRaw(player.getX(), player.getEyeY(), player.getZ());
+//                    fwe.setInteractionRange(1);
+//                    fwe.setState(FlyingItemEntity.STATE.THROW_NATURAL);
+//                    fwe.yeet(packet.destination, 2);
+//                    level.addFreshEntity(fwe);
+//                    if (packet.next >= 0) {
+//                        player.setItemInHand(h, player.getEnderChestInventory().removeItem(packet.next, 999));
+//                        QuiverData.getData(player).sync(player);
+//                    }
+//                }
                 QuiverData.getData(player).sync(player);
             });
             contextSupplier.get().setPacketHandled(true);

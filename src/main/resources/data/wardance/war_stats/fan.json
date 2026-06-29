@@ -1,0 +1,119 @@
+{
+  "_guide": {
+    "standing": "",
+    "falling": "",
+    "aerial": "",
+    "sprinting": "",
+    "guard counter": "",
+    "throw": "",
+    "pickup": "",
+    "draw": ""
+  },
+  "minecraft:bowl": {
+    "attack": 10,
+    "defend": 0.3,
+    "standing":  {
+      "tags": ["pressure", "damage"],
+      "interactions": [],
+      "overrides": [
+        {
+          "condition": [
+            {
+              "ID": "random",
+              "chance": {
+                "ID": "divide",
+                "first": {
+                  "ID": "add",
+                  "first": {
+                    "ID": "attribute_value",
+                    "reference_point": "caster",
+                    "attribute": "minecraft:generic.luck"
+                  },
+                  "second": 1
+                },
+                "second": {
+                  "ID": "add",
+                  "first": {
+                    "ID": "attribute_value",
+                    "reference_point": "caster",
+                    "attribute": "minecraft:generic.luck"
+                  },
+                  "second": 10
+                }
+              }
+            }, {
+              "ID": "consume_resource",
+              "format": "NUMBER",
+              "resource": "SPIRIT",
+              "amount": 7,
+              "operation": "CONSUME"
+            }
+          ],
+          "override": {
+            "type": "throw",
+            "attack_info": {
+              "spirit_multiplier": 0
+            },
+            "flying_pose": {
+              "duration": 3,
+              "easing": "LINEAR",
+              "frames": [
+                {
+                  "direction": [0, 0, 1],
+                  "offset": [0, 0, 0],
+                  "effects": {
+                    "effects": [
+                      "WEAPON",
+                      "AFTERIMAGE"
+                    ]
+                  }
+                }
+              ]
+            },
+            "throw_speed": 2,
+            "pierce": 99,
+            "bounce": 5,
+            "lodge_block": true,
+            "lodge_entity": false,
+            "gravity": 0,
+            "consume_item": false,
+            "pickup_flourish": false,
+            "display_stack": {
+              "ID": "itemstack",
+              "item": "wardance:projectile_prop"
+            }
+          }
+        }, {
+          "condition": {
+            "ID": "consume_resource",
+            "format": "NUMBER",
+            "resource": "SPIRIT",
+            "amount": 7
+          },
+          "override": {
+            "type": "throw",
+            "attack_info": {
+              "spirit_multiplier": 0
+            },
+            "throw_speed": 2,
+            "pierce": 99,
+            "lodge_block": true,
+            "lodge_entity": false,
+            "gravity": 0,
+            "consume_item": false,
+            "pickup_flourish": false,
+            "display_stack": {
+              "ID": "itemstack",
+              "item": "wardance:projectile_prop"
+            },
+            "on_embed": [
+              {
+                "ID": "remove"
+              }
+            ]
+          }
+        }
+      ]
+    }
+  }
+}

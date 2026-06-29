@@ -2,6 +2,7 @@ package jackiecrazy.wardance.skill.misc;
 
 import jackiecrazy.footwork.api.FootworkAttributes;
 import jackiecrazy.footwork.capability.stylish.StylishData;
+import jackiecrazy.wardance.api.WarAttributes;
 import jackiecrazy.wardance.config.weapon.WeaponStats;
 import jackiecrazy.wardance.skill.Skill;
 import jackiecrazy.wardance.skill.SkillData;
@@ -64,7 +65,7 @@ public class Berserk extends Skill {
     public void onProc(LivingEntity caster, Event procPoint, STATE state, SkillData stats, LivingEntity target) {
         if (procPoint instanceof LivingAttackEvent lae && lae.getEntity() == target && DamageUtils.isMeleeAttack(lae.getSource()) && procPoint.getPhase() == EventPriority.HIGHEST) {
             if (state == STATE.HOLSTERED && cast(caster, target, 5 * SkillUtils.getSkillEffectiveness(caster) * (2 - (caster.getHealth() / caster.getMaxHealth())))) {
-                SkillUtils.addAttribute(caster, FootworkAttributes.TWO_HANDING.get(), berserk);
+                SkillUtils.addAttribute(caster, WarAttributes.TWO_HANDING.get(), berserk);
                 SkillUtils.addAttribute(caster, Attributes.ATTACK_SPEED, berserk1);
                 CombatUtils.triggerSteveTime(caster, 30);
             }
@@ -79,7 +80,7 @@ public class Berserk extends Skill {
         if (to == STATE.COOLING) {
             prev.setState(STATE.INACTIVE);
             StylishData.getCap(caster).resetAdrenaline();
-            SkillUtils.removeAttribute(caster, FootworkAttributes.TWO_HANDING.get(), berserk);
+            SkillUtils.removeAttribute(caster, WarAttributes.TWO_HANDING.get(), berserk);
             SkillUtils.removeAttribute(caster, Attributes.ATTACK_SPEED, berserk1);
         }
         return boundCast(prev, from, to);

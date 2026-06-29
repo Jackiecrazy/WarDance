@@ -3,18 +3,19 @@
     "general": "pursuit and hunting. Stalk a single target and deliver the coup de grace while keeping perfect awareness",
     "standing": "increased charge speed if there is a marked mob in x blocks",
     "falling": "slowfall and invis/speed if marked",
-    "aerial": "slowfall and aoe glowing if marked",
+    "aerial": "slowfall and aoe knockback if marked",
     "sprinting": "dodge frames and pin target if marked",
     "guard counter": "straight dragging shot, binds if target marked",
-    "throw": "hamstringing throwing knife inflicting long slow and mark",
+    "throw": "hamstringing shot inflicting long mark",
     "pickup": "coup de grace scaling with how many shots have been sustained",
     "draw": "steve time and aoe fear, hitscan mark the aimed mob",
-    "mark": "glowing and regain spirit on ranged hit against marked mobs, arrows aimbot?"
+    "mark": "glowing and regain spirit on ranged hit against marked mobs, arrows home in on marked mobs"
   },
   "#bow": {
     "attack": 10,
     "defend": 0,
     "standing": {
+      "tags": ["pressure"],
       "type": "use",
       "on_swing": {
         "run_actions": [
@@ -61,6 +62,7 @@
       ]
     },
     "falling": {
+      "tags": ["defense","mobility"],
       "type": "use",
       "use_speed": 1.5,
       "on_swing": {
@@ -117,6 +119,7 @@
       }
     },
     "aerial": {
+      "tags": ["crowd","control"],
       "type": "use",
       "use_speed": 1.5,
       "on_swing": {
@@ -187,6 +190,7 @@
       }
     },
     "sprinting": {
+      "tags": ["duel","control"],
       "type": "use",
       "use_speed": 1.5,
       "on_swing": {
@@ -226,28 +230,17 @@
             "duration": 40,
             "max_procs": 1,
             "trigger": "shoot_projectile"
-          }, {
-            "ID": "add_effect",
-            "effect": "minecraft:slow_falling",
-            "potency": 0,
-            "duration": 30,
-            "stacking": "MAX_DURATION"
           }
         ]
       }
     },
     "guard_counter": {
+      "tags": ["duel","control"],
       "type": "use",
       "use_speed": 100,
       "on_swing": {
         "run_actions": [
           {
-            "ID": "attach_callback",
-            "effect": "wardance:aimbot",
-            "duration": 40,
-            "max_procs": 1,
-            "trigger": "shoot_projectile"
-          }, {
             "ID": "attach_callback",
             "effect_list": [
               {
@@ -278,17 +271,12 @@
             "duration": 40,
             "max_procs": 1,
             "trigger": "shoot_projectile"
-          }, {
-            "ID": "add_effect",
-            "effect": "minecraft:slow_falling",
-            "potency": 0,
-            "duration": 30,
-            "stacking": "MAX_DURATION"
           }
         ]
       }
     },
     "throw": {
+      "tags": ["setup","engage"],
       "interactions": [],
       "overrides": [
         {
@@ -296,7 +284,7 @@
             "ID": "consume_resource",
             "format": "PERCENTAGE",
             "resource": "SPIRIT",
-            "amount": 1,
+            "amount": 0.5,
             "operation": "CONSUME"
           },
           "override": {
@@ -315,6 +303,10 @@
                     "ID": "add_effect",
                     "effect": "minecraft:glowing",
                     "duration": 400
+                  }, {
+                    "ID": "add_effect",
+                    "effect": "minecraft:slowness",
+                    "duration": 400
                   }
                 ]
               }
@@ -332,6 +324,7 @@
       ]
     },
     "pickup_flourish": {
+      "tags": ["finisher","damage"],
       "type": "animation",
       "animations": [
         {
@@ -378,6 +371,7 @@
       ]
     },
     "draw_attack": {
+      "tags": ["setup","control"],
       "on_swing": {
         "run_actions": [
           {
@@ -388,51 +382,33 @@
             },
             "effect": "minecraft:glowing",
             "duration": 400
+          },
+          {
+            "ID": "project_hitbox",
+            "selector": {
+              "ID": "selector",
+              "position": {
+                "ID": "eye_position",
+                "reference_point": "caster"
+              },
+              "filter": {
+                "ID": "condition",
+                "condition": {
+                  "ID": "!allied_to"
+                }
+              },
+              "range": 16
+            },
+            "actions": [
+              {
+                "ID": "add_effect",
+                "effect": "footwork:terror",
+                "duration": 200
+              }
+            ]
           }
         ]
-      },
-      "overrides": [
-        {
-          "condition": {
-            "ID": "consume_resource",
-            "format": "PERCENTAGE",
-            "resource": "SPIRIT",
-            "amount": 1,
-            "operation": "CONSUME"
-          },
-          "override": {
-            "on_swing": {
-              "run_actions": [
-                {}, {
-                  "ID": "project_hitbox",
-                  "hit_cooldown": 20,
-                  "selector": {
-                    "ID": "selector",
-                    "position": {
-                      "ID": "eye_position",
-                      "reference_point": "caster"
-                    },
-                    "filter": {
-                      "ID": "condition",
-                      "condition": {
-                        "ID": "!allied_to"
-                      }
-                    },
-                    "range": 16
-                  },
-                  "actions": [
-                    {
-                      "ID": "add_effect",
-                      "effect": "footwork:terror",
-                      "duration": 200
-                    }
-                  ]
-                }
-              ]
-            }
-          }
-        }
-      ]
+      }
     }
   }
 }

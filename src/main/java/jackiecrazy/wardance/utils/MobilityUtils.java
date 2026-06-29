@@ -6,7 +6,7 @@ import jackiecrazy.footwork.capability.stylish.StylishData;
 import jackiecrazy.footwork.event.DodgeEvent;
 import jackiecrazy.footwork.utils.GeneralUtils;
 import jackiecrazy.footwork.utils.MovementUtils;
-import jackiecrazy.wardance.capability.aerial.AerialModeData;
+import jackiecrazy.wardance.api.WarAttributes;
 import jackiecrazy.wardance.compat.WarCompat;
 import jackiecrazy.wardance.config.CombatConfig;
 import jackiecrazy.wardance.entity.GrappleEntity;
@@ -17,7 +17,6 @@ import net.minecraft.world.entity.Pose;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
-import net.minecraftforge.common.ForgeMod;
 import net.minecraftforge.common.MinecraftForge;
 
 import java.util.List;
@@ -218,7 +217,7 @@ public class MobilityUtils {
         if (e.isCanceled()) return false;
         Vec3 v = elb.getLookAngle().subtract(0, elb.getLookAngle().y, 0).normalize().scale(e.getForce());
         itsc.consumePosture(0);
-        itsc.setDodgeTime(CombatConfig.rollTime);
+        itsc.setDodgeTime((int) (CombatConfig.rollTime*elb.getAttributeValue(WarAttributes.DODGE_EXTEND.get())));
         if (elb instanceof Player)
             ((Player) elb).setForcedPose(Pose.SLEEPING);
         elb.setSprinting(true);
@@ -245,6 +244,7 @@ public class MobilityUtils {
         if (!StylishData.getCap(elb).isCombatMode() && (itsc.getStunTime() == 0)) return false;
         //dodge time check
         if (itsc.getDodgeTime() <= -CombatConfig.rollCooldown) {
+            //CombatData.getCap(elb).consumePosture(ReworkConstants.SPIRIT_QI, (float) (elb.getAttributeValue(WarAttributes.DODGE_EFFICIENCY.get())/2));
             elb.extinguishFire();
             if (side == 99 && elb.onGround()) return attemptSlide(elb);
             Entity target = GeneralUtils.raytraceEntity(elb.level(), (Entity) elb, 32);
@@ -281,7 +281,7 @@ public class MobilityUtils {
             MinecraftForge.EVENT_BUS.post(e);
             if (e.isCanceled()) return false;
             Vec3 look = elb.getLookAngle().multiply(e.getForce(), 0, e.getForce()).yRot(angle).normalize();
-            itsc.setDodgeTime(CombatConfig.rollTime);
+            itsc.setDodgeTime((int) (CombatConfig.rollTime*elb.getAttributeValue(WarAttributes.DODGE_EXTEND.get())));
             //if (d == DodgeEvent.Direction.FORWARD) e.setForce((float) (e.getForce() * 1.5f));
             x = look.x;
             z = look.z;

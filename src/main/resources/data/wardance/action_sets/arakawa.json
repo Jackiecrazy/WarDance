@@ -55,6 +55,14 @@
         },
         "actions": [
           {
+            "ID": "add_effect",
+            "effect": "footwork:wet",
+            "potency": 0,
+            "duration": 100,
+            "repeatable": true,
+            "visible": false
+          },
+          {
             "ID": "deal_damage",
             "damage_source": {
               "armor_pierce_percentage": 1,
