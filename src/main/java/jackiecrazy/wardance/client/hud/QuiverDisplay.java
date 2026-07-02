@@ -1,8 +1,9 @@
 package jackiecrazy.wardance.client.hud;
 
+import com.mojang.blaze3d.platform.Window;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.PoseStack;
-import jackiecrazy.footwork.client.GuiComponent;
+import com.mojang.blaze3d.vertex.VertexConsumer;
 import jackiecrazy.wardance.WarDance;
 import jackiecrazy.wardance.capability.quiver.QuiverData;
 import jackiecrazy.wardance.client.Keybinds;
@@ -31,11 +32,12 @@ public class QuiverDisplay implements IGuiOverlay {
     private static final ResourceLocation GUI_ICONS_LOCATION = new ResourceLocation("textures/gui/icons.png");
     private static final ResourceLocation CIRCLE = new ResourceLocation(WarDance.MODID, "textures/hud/quiver_highlight.png");
     public static int invIndex = 0;
-    private static Color c=Color.WHITE;
+    private static Color c = Color.WHITE;
     private static ItemStack selected = ItemStack.EMPTY;
     private static ItemStackHandler inventory = null;
     private static List<Tuple<Integer, ItemStack>> filledSlots = new ArrayList<>();
     private static QuiverData d;
+    private double prevX = 0, prevY = 0, prevAngle;
 
     public static void refreshInventory(Player p) {
         ItemStackHandler prev = inventory;
@@ -49,7 +51,7 @@ public class QuiverDisplay implements IGuiOverlay {
                 filledSlots.add(new Tuple<>(i, inventory.getStackInSlot(i)));
         }
         filledSlots.add(new Tuple<>(-1, new ItemStack(Items.BARRIER)));
-        c=QuiverData.ORDER[d.getSelectedQuiver()].getColor();
+        c = QuiverData.ORDER[d.getSelectedQuiver()].getColor();
         nextItem(0);
     }
 
@@ -67,7 +69,7 @@ public class QuiverDisplay implements IGuiOverlay {
             invIndex += forcedJump;
             if (invIndex >= (d.getVisibleSlots(d.getSelectedQuiver())))
                 invIndex = -1;
-            if (invIndex < -1) invIndex += (d.getVisibleSlots(d.getSelectedQuiver()))+2;
+            if (invIndex < -1) invIndex += (d.getVisibleSlots(d.getSelectedQuiver())) + 2;
             tries--;
         }
     }
@@ -109,6 +111,49 @@ public class QuiverDisplay implements IGuiOverlay {
         return Keybinds.THROW.isDown() || Keybinds.SWAP.isDown();
     }
 
+    private double getMouseAngle() {
+        Minecraft mc = Minecraft.getInstance();
+        final Window window = mc.getWindow();
+        if (mc.player == null) return 0;
+
+        if (Double.isNaN(prevX) || Double.isNaN(prevY)) {
+            WarDance.LOGGER.warn("invalid angles have been discarded");
+            prevX = prevY = 0;
+        }
+        // Get current mouse position in screen coordinates
+        double mouseX = mc.mouseHandler.xpos();//Mth.lerp(0.8, prevX, mc.mouseHandler.xpos());
+        double mouseY = mc.mouseHandler.ypos();//Mth.lerp(0.8, prevY, mc.mouseHandler.ypos());
+        double dx = mouseX - prevX;
+        double dy = mouseY - prevY;
+        double epsilon = 5;
+
+        //comment out these two to swap to alt scheme
+//        prevX = mouseX;
+//        prevY = mouseY;
+        if (Math.abs(dx) < epsilon && Math.abs(dy) < epsilon) return prevAngle;
+
+        // Angle in degrees, adjusted so 0° is top (like your current rendering)
+        double angle = Math.toDegrees(Math.atan2(dy, dx)) + 90; // +90 to make top = 0
+        if (angle < 0) angle += 360;
+
+        return angle;
+    }
+
+    private void updateSelectionFromMouse(double angle) {
+        if (inventory == null || filledSlots.isEmpty()) return;
+
+        int size = filledSlots.size(); // exclude the barrier maybe? or keep
+        // Each slot gets equal angle slice
+        double sliceAngle = 360.0 / size;
+
+        // Find closest slot
+        int newIndex = (int) Math.floor((angle+sliceAngle/2) / sliceAngle) % size;
+
+        // Map to filledSlots
+        Tuple<Integer, ItemStack> selectedTuple = filledSlots.get(newIndex);
+        invIndex = selectedTuple.getA();
+    }
+
     public void drawSlice(GuiGraphics guiGraphics,
                           float x,
                           float y,
@@ -121,35 +166,37 @@ public class QuiverDisplay implements IGuiOverlay {
                           int g,
                           int b,
                           int a) {
-        float angle = endAngle - startAngle;
-        int sections = Math.max(1, Mth.ceil(angle / 5f));
+        float start = (float) Math.toRadians(startAngle);
+        float end = (float) Math.toRadians(endAngle);
+        float angleDiff = end - start;
 
-        startAngle = (float) Math.toRadians(startAngle);
-        endAngle = (float) Math.toRadians(endAngle);
-        angle = endAngle - startAngle;
+        int sections = Math.max(8, Mth.ceil(Math.abs(angleDiff) / 6f)); // smooth curve
 
-        var buffer = guiGraphics.bufferSource().getBuffer(RenderType.gui());
+        VertexConsumer buffer = guiGraphics.bufferSource().getBuffer(RenderType.gui());
 
         for (int i = 0; i < sections; i++) {
-            float angle1 = startAngle + (i / (float) sections) * angle;
-            float angle2 = startAngle + ((i + 1) / (float) sections) * angle;
+            float t1 = i / (float) sections;
+            float t2 = (i + 1) / (float) sections;
 
-            float pos1InX = x + radiusIn * (float) Math.cos(angle1);
-            float pos1InY = y + radiusIn * (float) Math.sin(angle1);
-            float pos1OutX = x + radiusOut * (float) Math.cos(angle1);
-            float pos1OutY = y + radiusOut * (float) Math.sin(angle1);
-            float pos2OutX = x + radiusOut * (float) Math.cos(angle2);
-            float pos2OutY = y + radiusOut * (float) Math.sin(angle2);
-            float pos2InX = x + radiusIn * (float) Math.cos(angle2);
-            float pos2InY = y + radiusIn * (float) Math.sin(angle2);
+            float a1 = start + t1 * angleDiff;
+            float a2 = start + t2 * angleDiff;
 
-            buffer.vertex(pos1OutX, pos1OutY, z).color(r, g, b, a);
-            buffer.vertex(pos1InX, pos1InY, z).color(r, g, b, a);
-            buffer.vertex(pos2InX, pos2InY, z).color(r, g, b, a);
-            buffer.vertex(pos2OutX, pos2OutY, z).color(r, g, b, a);
+            float x1i = x + radiusIn * Mth.cos(a1);
+            float y1i = y + radiusIn * Mth.sin(a1);
+            float x1o = x + radiusOut * Mth.cos(a1);
+            float y1o = y + radiusOut * Mth.sin(a1);
+
+            float x2i = x + radiusIn * Mth.cos(a2);
+            float y2i = y + radiusIn * Mth.sin(a2);
+            float x2o = x + radiusOut * Mth.cos(a2);
+            float y2o = y + radiusOut * Mth.sin(a2);
+
+            // Draw quad (counter-clockwise order)
+            buffer.vertex(x1o, y1o, z).color(r, g, b, a).endVertex();
+            buffer.vertex(x1i, y1i, z).color(r, g, b, a).endVertex();
+            buffer.vertex(x2i, y2i, z).color(r, g, b, a).endVertex();
+            buffer.vertex(x2o, y2o, z).color(r, g, b, a).endVertex();
         }
-
-        guiGraphics.flush();
     }
 
     @Override
@@ -158,30 +205,58 @@ public class QuiverDisplay implements IGuiOverlay {
         mc.mouseHandler.cursorEntered();
         Player player = mc.player;
         RenderSystem.setShaderTexture(0, GUI_ICONS_LOCATION);
+        float mouseAngle = (float) getMouseAngle();
         if (player == null || !showQuiver()) {
+            prevX = mc.mouseHandler.xpos();//Mth.lerp(0.8, prevX, mc.mouseHandler.xpos());
+            prevY = mc.mouseHandler.ypos();
             return;
         }
         if (inventory == null || d == null) return;
-        //grab ender chest content
+        prevAngle = mouseAngle;
+        updateSelectionFromMouse(mouseAngle);
         //find the index stack and 2 before/after it
         //draw them on the screen
         int size = filledSlots.size();
         int max = size;//Mth.clamp(size, 0, 2);
-        double angle = -90;
+        float angle = -90;
         for (Tuple<Integer, ItemStack> is : filledSlots) {
             int offset = height / 5;
             int x = (int) (Math.cos(Mth.DEG_TO_RAD * angle) * offset);
             int y = (int) (Math.sin(Mth.DEG_TO_RAD * angle) * offset);
             float scale = 1;
             ItemStack stack = is.getB();
-            if (is.getA() == invIndex){
-                RenderSystem.setShaderColor(c.getRed() / 255f, c.getGreen() / 255f, c.getBlue() / 255f, 1);
-                GuiComponent.blit(guiGraphics.pose(), CIRCLE, width/2+x-33, height/2+y-33, 0, 0, 64, 64, 64, 64);
-                RenderSystem.setShaderColor(1,1,1,1);
+            if (is.getA() == invIndex) {
+                //RenderSystem.setShaderColor(c.getRed() / 255f, c.getGreen() / 255f, c.getBlue() / 255f, 1);{
+                //distance indicator
+                double xx = mc.mouseHandler.xpos() - prevX;
+                double yy = mc.mouseHandler.ypos() - prevY;
+                float what = Mth.sqrt((float) (xx * xx + yy * yy));
+                float selectorAngle=30;
+                drawSlice(guiGraphics,
+                          width / 2f,
+                          height / 2f,
+                          1f,           // z-level (higher = on top)
+                          0f,           // inner radius
+                          Mth.clamp(what / 15, 0, 15),
+                          (float) (prevAngle - 90-selectorAngle/2),
+                          (float) (prevAngle - 90+selectorAngle/2),
+                          255, 255, 255, 180);
+
+                drawSlice(guiGraphics,
+                          width / 2f,
+                          height / 2f,
+                          1f,           // z-level (higher = on top)
+                          25f,           // inner radius
+                          70f,          // outer radius
+                          angle - 30,
+                          angle + 30,
+                          c.getRed(), c.getGreen(), c.getBlue(), 180);  // nice visible color + some transparency
+                //GuiComponent.blit(guiGraphics.pose(), CIRCLE, width / 2 + x - 33, height / 2 + y - 33, 0, 0, 64, 64, 64, 64);
+                //RenderSystem.setShaderColor(1, 1, 1, 1);
                 scale = 2;
             }
             renderItem(guiGraphics, stack, width / 2 + x, height / 2 + y, scale);
-            angle += (360d / (size));
+            angle += (360f / (size));
         }
 //        float step = (float)(2 * Math.PI / 3);
 //        float centerAngle = -Mth.HALF_PI; // top

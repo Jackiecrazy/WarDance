@@ -202,8 +202,8 @@ public class WarDance {
 
     @SubscribeEvent
     public void onJsonListener(AddReloadListenerEvent event) {
-        WeaponStats.register(event);
         BCCannibalism.register(event);
+        WeaponStats.register(event);
         TwohandingStats.register(event);
         MobSpecs.register(event);
     }

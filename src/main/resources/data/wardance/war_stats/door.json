@@ -373,12 +373,7 @@
               ]
             },
             "quantity": 50,
-            "delta": {
-              "ID": "vector",
-              "x": 1,
-              "y": 1,
-              "z": 1
-            },
+            "delta": [1,1,1],
             "velocity": {
               "ID": "look_vector",
               "reference_point": "caster"

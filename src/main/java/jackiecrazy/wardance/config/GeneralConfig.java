@@ -62,7 +62,7 @@ public class GeneralConfig {
         b.pop();
         b.push("potion");
         _blindness = b.translation("wardance.config.blindness").comment("whether blindness will cause mobs to drop aggro").define("mob blindness", true);
-        _nausea = b.translation("wardance.config.nausea").comment("how much posture nausea deducts per tick, for mobs only").defineInRange("nausea posture damage", 0.05, 0, Double.MAX_VALUE);
+        _nausea = b.translation("wardance.config.nausea").comment("how much posture nausea deducts per tick, for mobs only").defineInRange("nausea posture damage", 0.5, 0, Double.MAX_VALUE);
         _poison = b.translation("wardance.config.poison").comment("how much each level of poison multiplies posture regeneration by").defineInRange("poison posture debuff", 0.8, 0, Double.MAX_VALUE);
         _hunger = b.translation("wardance.config.hunger").comment("how much the hunger effect extends the posture cooldown by").defineInRange("hunger posture extension", 1.25, 0, Double.MAX_VALUE);
         _weakness = b.translation("wardance.config.weakness").comment("how much weakness multiplies might generation rate").defineInRange("weakness might debuff", 0.7, 0, Double.MAX_VALUE);

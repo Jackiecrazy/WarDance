@@ -133,6 +133,17 @@
                                       "ID": "play_sound",
                                       "sound": "minecraft:entity.zombie.break_wooden_door",
                                       "volume": 0.4
+                                    },
+                                    {
+                                      "ID": "play_particle",
+                                      "particle": "minecraft:block",
+                                      "particle_parameters": "gravel",
+                                      "position": {
+                                        "ID": "foot_position",
+                                        "reference_point": "target",
+                                        "quantity": 30
+                                      },
+                                      "delta": [2,0,2]
                                     }
                                   ],
                                   "condition": {
@@ -172,25 +183,15 @@
           "offset": [
             0, 0, 0
           ],
-          "effects": {
-            "attack_info": {
-              "knockback": 1,
-              "damage_scale": 1,
-              "posture_scale": 1.0,
-              "armor_pierce": 0.5,
-              "crit": true,
-              "drag": {
-                "duration": 30,
-                "strength": 1
-              },
-              "hit_self": {
-                "velocity": [
-                  0, 0, 0
-                ],
-                "set_velocity": true
-              }
-            }
-          }
+          "knockback": 1,
+          "damage_scale": 1,
+          "posture_scale": 1.0,
+          "armor_pierce": 0.5,
+          "crit": true,
+          "hit_self_velocity": [
+            0, 0, 0
+          ],
+          "hit_self_set_velocity": true
         }, {
           "direction": [
             0, 0, 1
@@ -233,7 +234,10 @@
                   "knockback": 2,
                   "knockback_direction": [
                     0, 1, 0
-                  ]
+                  ],
+                  "hit_self": {
+                    "velocity": [0, 0.5, 0]
+                  }
                 }
               }
             }, {
@@ -245,10 +249,7 @@
               ],
               "render_rotation": [
                 0, 1, 0.1
-              ],
-              "effects": {
-                "velocity": [0, 0.5, 0]
-              }
+              ]
             }, {
               "direction": [
                 0, 1, 1

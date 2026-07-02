@@ -4,6 +4,8 @@ import jackiecrazy.footwork.capability.stylish.StylishData;
 import jackiecrazy.wardance.WarDance;
 import jackiecrazy.wardance.config.CombatConfig;
 import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.player.Player;
+import net.minecraftforge.event.entity.living.LivingExperienceDropEvent;
 import net.minecraftforge.event.entity.living.LootingLevelEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
@@ -12,14 +14,19 @@ import java.util.UUID;
 
 @Mod.EventBusSubscriber(modid = WarDance.MODID)
 public class SubtleBonusHandler {
-    private static final UUID u = UUID.fromString("1896391d-0d6c-4a3e-a4a5-5e3c9d173b80");
 
     @SubscribeEvent
     public static void thief(LootingLevelEvent e) {
         if (e.getDamageSource() == null) return;
         if (CombatConfig.adrenaline < 0) return;
-        if (e.getDamageSource().getEntity() instanceof LivingEntity elb)
+        if (e.getDamageSource().getEntity() instanceof Player elb)
             e.setLootingLevel(e.getLootingLevel() + (int) Math.max(0, (StylishData.getCap(elb).getCombo())));
+    }
+    @SubscribeEvent
+    public static void exp(LivingExperienceDropEvent e) {
+        if (e.getAttackingPlayer() == null) return;
+        if (CombatConfig.adrenaline < 0) return;
+        e.setDroppedExperience((int) (e.getDroppedExperience() * Math.max(1, (StylishData.getCap(e.getAttackingPlayer()).getCombo()))));
     }
 
 //    @SubscribeEvent

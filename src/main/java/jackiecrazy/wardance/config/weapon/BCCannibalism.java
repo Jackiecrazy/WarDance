@@ -48,6 +48,7 @@ public class BCCannibalism extends SimpleJsonResourceReloadListener {
                         if(type!=null&& type.isJsonPrimitive()){
                             String t =type.getAsString();
                             final List<TagKey<Item>> prevTags = new ArrayList<>(b.getTagKeys().toList());
+                            WarDance.LOGGER.debug("given tag {} to BC-defined item {}", t, key);
                             prevTags.add(ItemTags.create(new ResourceLocation(t)));
                             b.bindTags(prevTags);
                         }

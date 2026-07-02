@@ -48,6 +48,7 @@ import java.util.List;
 
 public class FlyingWeaponEntity extends FlyingItemEntity implements IDrag {
     protected static final EntityDataAccessor<Float> DRAG_STRENGTH = SynchedEntityData.defineId(FlyingWeaponEntity.class, EntityDataSerializers.FLOAT);
+    protected static final EntityDataAccessor<Float> SPEED = SynchedEntityData.defineId(FlyingWeaponEntity.class, EntityDataSerializers.FLOAT);
     protected static final EntityDataAccessor<Integer> DRAG_TIME = SynchedEntityData.defineId(FlyingWeaponEntity.class, EntityDataSerializers.INT);
     protected static final EntityDataAccessor<MotionManager> DRAG_POSE = SynchedEntityData.defineId(FlyingWeaponEntity.class, MotionManager.SERIALIZER);
     protected static final EntityDataAccessor<Vector3f> DRAG_OFFSET = SynchedEntityData.defineId(FlyingWeaponEntity.class, EntityDataSerializers.VECTOR3);
@@ -72,6 +73,7 @@ public class FlyingWeaponEntity extends FlyingItemEntity implements IDrag {
         super.defineSynchedData();
         this.entityData.define(DRAG_STRENGTH, 3f);
         this.entityData.define(DRAG_TIME, 0);
+        this.entityData.define(SPEED, 1f);
         this.entityData.define(DRAG_OFFSET, new Vector3f(0, 0, 0));
         this.entityData.define(DRAG_POSE, new MotionManagers.FixedMM(new MotionFrame(new Vec3(0, 0, 1), new Vec3(0, 0, 1)), 5));
     }
@@ -125,6 +127,15 @@ public class FlyingWeaponEntity extends FlyingItemEntity implements IDrag {
     }
 
     @Override
+    protected double getWeight() {
+        return getEntityData().get(SPEED);
+    }
+
+    public void setSpeed(float spd) {
+        getEntityData().set(SPEED, spd);
+    }
+
+    @Override
     public void tick() {
         super.tick();
         if (!level().isClientSide && isAlive()) {
@@ -174,7 +185,11 @@ public class FlyingWeaponEntity extends FlyingItemEntity implements IDrag {
         if (level().isClientSide()) return false;
         //normal hits skip hit calculation
         if (getInfo() == null) return false;
-        targets = targets.stream().distinct().filter(tg -> tg != this && tg != owner && !alreadyHit.contains(tg) && (tg instanceof ThrownWeaponEntity || !TargetingUtils.isAlly(tg, owner)) && !tg.getType().is(MobSpecs.IGNORED_BY_SWEEP) && (tg instanceof ThrownWeaponEntity || !tg.isInvulnerable())).toList();
+        targets = targets.stream().distinct()
+                .filter(tg -> tg != this && tg != owner && !alreadyHit.contains(tg) &&
+                        ((tg instanceof ThrownWeaponEntity twe && twe.isAttackable()) || (!TargetingUtils.isAlly(tg, owner) &&
+                                !tg.getType().is(MobSpecs.IGNORED_BY_SWEEP) &&
+                                !tg.isInvulnerable()))).toList();
         LivingEntity e = getOwner();
         int ticks = e.attackStrengthTicker;
         if (targets.isEmpty()) return ret;
@@ -202,7 +217,9 @@ public class FlyingWeaponEntity extends FlyingItemEntity implements IDrag {
         } catch (Exception ex) {
             ex.printStackTrace();
         } finally {
-            CombatUtils.quickSwap(e, main);
+            //todo test this fix
+            if (e.getMainHandItem() == getHeldItem())
+                CombatUtils.quickSwap(e, main);
             e.attackStrengthTicker = ticks;
             WeaponStats.info_override = null;
         }
@@ -346,7 +363,7 @@ public class FlyingWeaponEntity extends FlyingItemEntity implements IDrag {
         if (moveQueue.isEmpty()) {
             //return on a transition frame
             setEffect(FlyingWeaponEffect.WEAPON);
-            setIntangible(true);//fixme becoming intangible here makes weapons not have the chance to proc hiteffects on the last frame
+            setIntangible(true);
             //solution: move these to the very very end of tick
             //except that will cause all thrown items to break.
             //aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa

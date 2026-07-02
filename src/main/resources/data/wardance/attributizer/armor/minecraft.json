@@ -169,7 +169,7 @@
   ],
   "minecraft:chainmail_leggings": [
     {
-      "attribute": "minecraft:luck",
+      "attribute": "minecraft:generic.luck",
       "modify": 3,
       "operation": "ADDITION"
     }

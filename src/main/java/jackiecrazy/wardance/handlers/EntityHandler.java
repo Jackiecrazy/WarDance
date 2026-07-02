@@ -35,6 +35,8 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.InteractionHand;
+import net.minecraft.world.effect.MobEffect;
+import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.*;
 import net.minecraft.world.entity.player.Player;
@@ -253,7 +255,8 @@ public class EntityHandler {
                 ICombatCapability cap = CombatData.getCap(elb);
                 if (cap.isStunned() || mustUpdate.containsValue(e.getEntity()))
                     cap.serverTick();
-                float nausea = elb instanceof Player || !elb.hasEffect(MobEffects.CONFUSION) ? 0 : (elb.getEffect(MobEffects.CONFUSION).getAmplifier() + 1) * GeneralConfig.nausea;
+                MobEffectInstance nau = elb.getEffect(MobEffects.CONFUSION);
+                float nausea = nau==null ? 0 : (nau.getAmplifier() + 1) * GeneralConfig.nausea;
                 if (nausea > 0) cap.consumePosture(null, nausea, 0, false);
             }
         }

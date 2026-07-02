@@ -18,12 +18,7 @@
       "ID": "get_vector",
       "from": "arakawa"
     },
-    "orientation": {
-      "ID": "vector",
-      "x": 1,
-      "y": 0,
-      "z": 0
-    },
+    "orientation": [1,0,0],
     "path": {
       "duration": 40,
       "easing": "LINEAR",
@@ -96,12 +91,7 @@
             {
               "ID": "get_vector",
               "from": "arakawa"
-            },{
-              "ID": "vector",
-              "x": 0,
-              "y": 20,
-              "z": 0
-            }
+            },[0,999,0]
           ]
         },
         "condition": {

@@ -158,6 +158,11 @@ public class ThrownWeaponEntity extends FlyingWeaponEntity {
     }
 
     @Override
+    public boolean isAttackable() {
+        return attackable||dormant;
+    }
+
+    @Override
     public boolean hurt(DamageSource sauce, float amnt) {
         if (attackable) {
             final ArgumentContext addtlctx = new ArgumentContext(null, this).addContext("target", this).addContext("attacker", sauce.getEntity()).addContext("proxy", sauce.getDirectEntity()).addContext("amount", amnt).addContext("source", sauce);
@@ -174,6 +179,7 @@ public class ThrownWeaponEntity extends FlyingWeaponEntity {
 
     @Override
     public boolean skipAttackInteraction(Entity ent) {
+        if(isRemoved()||level().isClientSide)return true;
         if (ent instanceof Player p && (p.getMainHandItem().isEmpty()) && canPickup()) {
             return pickup(p);
         }
@@ -389,6 +395,8 @@ public class ThrownWeaponEntity extends FlyingWeaponEntity {
 
     @Override
     public void remove(RemovalReason reason) {
+        //fixme due to elaborate swap sequences, picking up a thrown weapon with a sprinting sweep will delete it
+        // hand attacks, sets the weapon, performs pickup flourish, but it's still part of the attack action so at the end the hand gets reset to what it was before, air.
         if (reason.shouldDestroy() && getOwner() instanceof Player p && !pickup(p)) {
             return;
         }

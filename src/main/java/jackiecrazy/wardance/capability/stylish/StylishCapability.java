@@ -5,6 +5,7 @@ import jackiecrazy.footwork.capability.resources.ICombatCapability;
 import jackiecrazy.footwork.capability.stylish.IStyleCapability;
 import jackiecrazy.wardance.WarDance;
 import jackiecrazy.wardance.api.WarAttributes;
+import jackiecrazy.wardance.capability.flyingweapon.FlyingWeaponData;
 import jackiecrazy.wardance.config.CombatConfig;
 import jackiecrazy.wardance.networking.CombatChannel;
 import jackiecrazy.wardance.networking.sync.UpdateClientStylePacket;
@@ -15,6 +16,7 @@ import net.minecraft.ChatFormatting;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.InteractionHand;
 import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.ai.attributes.AttributeModifier;
@@ -35,7 +37,9 @@ public class StylishCapability implements IStyleCapability {
     public static final UUID WOUND = UUID.fromString("982bbbb2-bbd0-4166-801a-560d1a4149c8");
     public static final int MAX_FINISHER_CHARGE = 10;
     public static final int TRACKED_FRESHNESS_ACTIONS = 7;
-    public static final int COMBO_TIMER = 300;
+    public static final int COMBO_TIMER = 140;
+    public static final int ADRENALINE_TIMER = 300;
+    private static final UUID STYLISH = UUID.fromString("1896391d-0d6c-4a3e-a4a5-5e3c9d173b80");
     private final WeakReference<LivingEntity> dude;
     private boolean combat;
     private float adrenaline;
@@ -108,7 +112,7 @@ public class StylishCapability implements IStyleCapability {
             adrenaline = 1;
         }
         if (ddoor && maxAdrenaline()) canDeathDoor = true;
-        adrenalineTimer = COMBO_TIMER;
+        adrenalineTimer = ADRENALINE_TIMER;
         markDirty();
         return ret;
     }
@@ -226,9 +230,17 @@ public class StylishCapability implements IStyleCapability {
         refresh();
         //too stale!
         if (amount <= 0) return;
-        //fully rally if super duper fresh
-        if (fresh >= 1 && dude.get() instanceof Player le) {
-            CombatData.getCap(le).rally(1);
+        if (dude.get() instanceof Player le) {
+            //fully rally if super duper fresh
+            if (fresh >= 1)
+                CombatData.getCap(le).rally(1);
+            final float effectiveCombo = getCombo() - 1;
+            SkillUtils.modifyAttribute(le, Attributes.MOVEMENT_SPEED, STYLISH, 0.04 * effectiveCombo, AttributeModifier.Operation.MULTIPLY_BASE);
+            SkillUtils.modifyAttribute(le, Attributes.ATTACK_SPEED, STYLISH, 0.04 * effectiveCombo, AttributeModifier.Operation.MULTIPLY_TOTAL);
+            SkillUtils.modifyAttribute(le, ForgeMod.ENTITY_GRAVITY.get(), STYLISH, -0.1 * effectiveCombo, AttributeModifier.Operation.MULTIPLY_TOTAL);
+            SkillUtils.modifyAttribute(le, ForgeMod.ENTITY_REACH.get(), STYLISH, 0.04 * effectiveCombo, AttributeModifier.Operation.MULTIPLY_TOTAL);
+            SkillUtils.modifyAttribute(le, Attributes.LUCK, STYLISH, effectiveCombo, AttributeModifier.Operation.ADDITION);
+            FlyingWeaponData.getCap(le).getWeapon(InteractionHand.MAIN_HAND);
         }
         combo += amount;
         addAdrenaline(amount / 6);
@@ -243,13 +255,20 @@ public class StylishCapability implements IStyleCapability {
     public void resetCombo() {
         combo = 1;
         freshness.clear();
+        if(dude.get() instanceof Player p){
+            SkillUtils.removeAttribute(p, Attributes.MOVEMENT_SPEED, STYLISH);
+            SkillUtils.removeAttribute(p, Attributes.ATTACK_SPEED, STYLISH);
+            SkillUtils.removeAttribute(p, Attributes.LUCK, STYLISH);
+            SkillUtils.removeAttribute(p, ForgeMod.ENTITY_GRAVITY.get(), STYLISH);
+            SkillUtils.removeAttribute(p, ForgeMod.ENTITY_REACH.get(), STYLISH);
+        }
         markDirty();
     }
 
     @Override
     public void refresh() {
         comboTimer = COMBO_TIMER;
-        adrenalineTimer = COMBO_TIMER;
+        adrenalineTimer = ADRENALINE_TIMER;
     }
 
     @Override
