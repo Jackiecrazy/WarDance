@@ -12,11 +12,14 @@ import jackiecrazy.footwork.capability.stylish.StylishData;
 import jackiecrazy.footwork.client.GuiComponent;
 import jackiecrazy.footwork.utils.StealthUtils;
 import jackiecrazy.wardance.WarDance;
+import jackiecrazy.wardance.capability.aerial.AerialModeData;
+import jackiecrazy.wardance.capability.aerial.ClientAerialHandler;
 import jackiecrazy.wardance.client.RenderUtils;
 import jackiecrazy.wardance.config.ClientConfig;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.player.LocalPlayer;
+import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.Mth;
 import net.minecraft.util.Tuple;
@@ -26,6 +29,7 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraftforge.client.gui.overlay.ForgeGui;
 import net.minecraftforge.client.gui.overlay.IGuiOverlay;
 
+import java.awt.*;
 import java.util.concurrent.TimeUnit;
 
 public class ResourceDisplay implements IGuiOverlay {
@@ -37,7 +41,10 @@ public class ResourceDisplay implements IGuiOverlay {
     private static final ResourceLocation raihud = new ResourceLocation(WarDance.MODID, "textures/hud/thanksrai.png");
     private static final ResourceLocation stealth = new ResourceLocation(WarDance.MODID, "textures/hud/stealth.png");
     private static final ResourceLocation might = new ResourceLocation(WarDance.MODID, "textures/hud/bars.png");
+    private static final ResourceLocation aerial = new ResourceLocation(WarDance.MODID, "textures/hud/aerial_mode.png");
+    private static final ResourceLocation aerialF = new ResourceLocation(WarDance.MODID, "textures/hud/aerial_mode_fill.png");
     static float currentComboLevel = 0;
+    private static final int STALE = Color.DARK_GRAY.getRGB();
     private static float currentAdrenaline = 0;
     private static float currentSpiritLevel = 0;
     private static float scurrentEvasion = 0, lcurrentEvasion = 0;
@@ -245,6 +252,18 @@ public class ResourceDisplay implements IGuiOverlay {
             PoseStack stack = graphics.pose();
             if (style.isCombatMode()) {
                 stack.pushPose();
+                //a tiny wing to show you're airborne, as well as how many jumps you have left (approx)
+                if(AerialModeData.getCap(player).isAerialMode()){
+                    stack.pushPose();
+                    double fillPerc = ClientAerialHandler.getJumpPerc(player);
+                    final int size = 24;
+                    int fromTop = (int) (size *(1-fillPerc));
+                    int leftO=(int)(size *fillPerc);
+                    GuiComponent.blit(stack, aerial, width/2-size/2, height/2-size/2, 0, 0, size, size, size, size);
+                    GuiComponent.blit(stack, aerialF, width/2-size/2, height/2-size/2+fromTop, 0, fromTop, size, leftO, size, size);
+                    stack.popPose();
+                }
+
                 RenderSystem.enableBlend();
                 //RenderSystem.enableAlphaTest();
                 Pair<Integer, Integer> pair = RenderUtils.translateCoords(ClientConfig.CONFIG.adrenalineBar, width, height);
@@ -380,7 +399,23 @@ public class ResourceDisplay implements IGuiOverlay {
 
                     //draw combo string
                     display = RenderUtils.formatter.format(style.getCombo()) + "X";
-                    graphics.drawString(gui.getFont(), display, pair.getFirst() - mc.font.width(display) / 2, pair.getSecond() + 32, ClientConfig.adrenalineColor);
+                    x=pair.getFirst() - mc.font.width(display) / 2;
+                    y=pair.getSecond() + 32;
+                    graphics.drawString(gui.getFont(), display, x, y, ClientConfig.adrenalineColor);
+                    String action="";
+                    int streak = 1;
+                    for(String s:style.getFreshness()){
+                        if(!action.equals(s)) {
+                            int color = ClientConfig.adrenalineColor;
+                            y += gui.getFont().lineHeight + 1;
+                            String toPrint = Component.translatable(action.split(" ")[0]).getString();
+                            if(streak>1)toPrint+=" x"+streak;
+                            if(style.getFreshness(action)<=0)color=STALE;
+                            graphics.drawString(gui.getFont(), toPrint, pair.getFirst() - mc.font.width(s) / 2, y, color);
+                            action=s;
+                            streak=1;
+                        }else streak++;
+                    }
                 }
 
                 stack.popPose();

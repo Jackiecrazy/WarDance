@@ -1,6 +1,7 @@
 package jackiecrazy.wardance.event;
 
 import net.minecraft.world.damagesource.DamageSource;
+import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraftforge.event.entity.living.LivingEvent;
 
@@ -9,11 +10,12 @@ public class ExposeAttackEvent extends LivingEvent {
     private DamageSource ds;
     private float amount = 0;
 
-    public ExposeAttackEvent(LivingEntity attacker, DamageSource ds, LivingEntity entity) {
+    public ExposeAttackEvent(Entity attacker, DamageSource ds, LivingEntity entity, float amnt) {
         super(entity);
-        this.attacker=attacker;
+        if (attacker instanceof LivingEntity le)
+            this.attacker = le;
         this.ds = ds;
-        amount = entity.getMaxHealth() * 0.1f;
+        amount = amnt;
     }
 
     public float getAmount() {

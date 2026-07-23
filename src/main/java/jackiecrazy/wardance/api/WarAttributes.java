@@ -29,6 +29,7 @@ public class WarAttributes {
     public static final RegistryObject<Attribute> IFRAME_EXTEND = register("iframe_window", 1d, 0, 1024);
 
     //mobility attributes
+    public static final RegistryObject<Attribute> AIR_GRAVITY = register("aerial_gravity", 1d, 0, 10);
     public static final RegistryObject<Attribute> AIR_JUMPS = register("air_jumps", 1d, 0, 10);
     //public static final RegistryObject<Attribute> DODGE_EFFICIENCY = register("dodge_efficiency", 1d, 0, 2);
     public static final RegistryObject<Attribute> KNOCK_TIME = register("knockdown_time", 1d, 0, 1024);

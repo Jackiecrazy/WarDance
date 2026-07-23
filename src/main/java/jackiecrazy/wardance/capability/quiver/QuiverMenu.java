@@ -57,7 +57,7 @@ public class QuiverMenu extends AbstractContainerMenu {
         // Overflow
         IItemHandler overflow = capability.getOverflow();
         for (int i = 0; i < QuiverData.OVERFLOW_SIZE; i++) {
-            this.addSlot(new SlotItemHandler(overflow, i, 180, 20 + i * 18));
+            this.addSlot(new SlotItemHandler(overflow, i, 200, 20 + i * 18));
         }
 
         // Player Inventory (positioned below)

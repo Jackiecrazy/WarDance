@@ -119,7 +119,8 @@ elemental might: +1 burn/snowball/poison/drown damage to targets you have attack
     public void onProc(LivingEntity caster, Event procPoint, STATE state, SkillData stats, LivingEntity target) {
         float might = StylishData.getCap(caster).getAdrenaline();
         if (procPoint instanceof LivingAttackEvent && procPoint.getPhase() == EventPriority.LOWEST) {
-            final float amount = 0.15f * might * SkillUtils.getSkillEffectiveness(caster);
+             float amount = 0.15f * might * SkillUtils.getSkillEffectiveness(caster);
+            // amount=0;
             SkillUtils.modifyAttribute(caster, Attributes.ATTACK_DAMAGE, MULT, amount, AttributeModifier.Operation.MULTIPLY_BASE);
             stats.setArbitraryFloat(amount);
         }

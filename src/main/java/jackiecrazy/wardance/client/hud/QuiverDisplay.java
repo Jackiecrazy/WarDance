@@ -16,6 +16,7 @@ import net.minecraft.util.Tuple;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
+import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.client.event.InputEvent;
 import net.minecraftforge.client.gui.overlay.ForgeGui;
 import net.minecraftforge.client.gui.overlay.IGuiOverlay;
@@ -27,7 +28,7 @@ import java.awt.*;
 import java.util.ArrayList;
 import java.util.List;
 
-@Mod.EventBusSubscriber(modid = WarDance.MODID)
+@Mod.EventBusSubscriber(value = Dist.CLIENT, modid = WarDance.MODID)
 public class QuiverDisplay implements IGuiOverlay {
     private static final ResourceLocation GUI_ICONS_LOCATION = new ResourceLocation("textures/gui/icons.png");
     private static final ResourceLocation CIRCLE = new ResourceLocation(WarDance.MODID, "textures/hud/quiver_highlight.png");

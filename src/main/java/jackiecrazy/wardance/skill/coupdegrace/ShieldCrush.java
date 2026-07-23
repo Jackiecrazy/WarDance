@@ -137,7 +137,7 @@ public class ShieldCrush extends ShieldBash {
     @Override
     public void onProc(LivingEntity caster, Event procPoint, STATE state, SkillData stats, LivingEntity target) {
         if (procPoint instanceof StunEvent se && state == STATE.ACTIVE && se.getAttacker() == caster) {
-            se.setKnockdown(true);
+            //se.setKnockdown(true);
             //...is this overflowing?
             //se.setAmount(Integer.MAX_VALUE - CombatData.getCap(target).getFractureCount());
         }

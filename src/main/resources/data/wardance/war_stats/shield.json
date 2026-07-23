@@ -351,10 +351,10 @@
       "left_hand_offset": [0,0,0],
       "right_hand_offset": [0,0,0],
       "no_flip": true,
+      "velocity": [
+        0, 0, 1
+      ],
       "on_swing": {
-        "velocity": [
-          0, 0, 1
-        ],
         "run_actions": [
           {
             "ID": "play_sound",

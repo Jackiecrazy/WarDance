@@ -218,7 +218,7 @@ public class QuiverData implements ICapabilityProvider, INBTSerializable<Compoun
         return success;
     }
 
-    private boolean tryInsertOverflow(ItemStack stack) {
+    public boolean tryInsertOverflow(ItemStack stack) {
         for (int i = 0; i < OVERFLOW_SIZE; i++) {
             if (overflow.getStackInSlot(i).isEmpty()) {
                 overflow.setStackInSlot(i, stack);

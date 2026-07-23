@@ -73,7 +73,7 @@ public class NewCombatCapability implements ICombatCapability {
     private Vec3 motion;
     private double mobPosRegenSpd = 0.3;
     private int mobPosCD = 60, maxMobPosCD = 60, spiritCD, maxSpiritCD = 20;
-    private boolean player;
+    private boolean player, hitZero;
     private HashMap<String, Double> procs = new HashMap<>();
     private float recordedDamage = 0;
     private int pinTime;
@@ -98,6 +98,14 @@ public class NewCombatCapability implements ICombatCapability {
         return ret;
     }
 
+    private void _resetPosture() {
+        setPosture(getMaxPosture());
+        setRally(0);
+        recordedDamage = 0;
+        hitZero = false;
+        dirty = true;
+    }
+
     @Override
     public void resetPosture() {
         LivingEntity e = dude.get();
@@ -107,6 +115,7 @@ public class NewCombatCapability implements ICombatCapability {
         setPosture(getMaxPosture());
         SkillUtils.removeAttribute(e, Attributes.ARMOR, STOPMOVING);
         knockdown = false;
+        _resetPosture();
     }
 
     @Override
@@ -236,9 +245,9 @@ public class NewCombatCapability implements ICombatCapability {
             amount *= (1 + (elb.getEffect(FootworkEffects.ENFEEBLE.get()).getAmplifier() + 1) * 0.2f);
         if (elb.hasEffect(FootworkEffects.COUNTERSTRIKE.get())) {
             int cycles = elb.getEffect(FootworkEffects.COUNTERSTRIKE.get()).getAmplifier() + 1;
+            final double val = assailant == null ? WarAttributes.COUNTERSTRIKE.get().getDefaultValue() : assailant.getAttributeValue(WarAttributes.COUNTERSTRIKE.get());
             while (cycles > 0) {
                 cycles--;
-                final double val = assailant == null ? WarAttributes.COUNTERSTRIKE.get().getDefaultValue() : assailant.getAttributeValue(WarAttributes.COUNTERSTRIKE.get());
                 amount *= (float) val;
             }
         }
@@ -264,8 +273,10 @@ public class NewCombatCapability implements ICombatCapability {
         if (assailant instanceof Player p) {
             CombatData.getCap(p).retconDamage((float) (amount * p.getAttributeValue(WarAttributes.RALLY_DMG.get()) / ReworkConstants.POSTURE_QI));
         }
+        if (posture <= 0) {//TEST: 0 posture mobs enter a fast regen state
+            hitZero = true;
+        }
         mobPosCD = maxMobPosCD;
-
         //stun check
         if ((isStunned() || posture - amount <= 0) && (breachLevel == BreachLevel.STUN || breachLevel == BreachLevel.KNOCKDOWN)) {
             //start stun
@@ -282,9 +293,9 @@ public class NewCombatCapability implements ICombatCapability {
                 return 0f;
             }
             elb.stopUsingItem();
-            if (player && FlyingWeaponData.getCap(elb).getWeapon(InteractionHand.MAIN_HAND) != null) {
-                FlyingWeaponData.getCap(elb).getWeapon(InteractionHand.MAIN_HAND).unDrag();
-                FlyingWeaponData.getCap(elb).getWeapon(InteractionHand.OFF_HAND).unDrag();
+            if (player) {
+                FlyingWeaponData.getCap(elb).getWeapon(InteractionHand.MAIN_HAND).ifPresent(flyingWeaponEntity -> flyingWeaponEntity.unDrag(true));
+                FlyingWeaponData.getCap(elb).getWeapon(InteractionHand.OFF_HAND).ifPresent(flyingWeaponEntity -> flyingWeaponEntity.unDrag(true));
             }
             if (se.isKnockdown()) {
                 //ugly fix. Posture is consumed before damage so the final hit that knocks down a mob will not deal damage.
@@ -327,7 +338,7 @@ public class NewCombatCapability implements ICombatCapability {
             ret = Math.abs(posture);
             posture = 0;
         }
-        if (amount > 0) {
+        if (amount > 0 && player) {
             addRally((amount - ret) * rallyPerc);
             //System.out.println("rally: "+getRally());
         }
@@ -343,13 +354,13 @@ public class NewCombatCapability implements ICombatCapability {
 
     @Override
     public void setRally(float v) {
-        //only players get rally
+        //only players get special rally
         if (player) {
             rally = Mth.clamp(v, 0, getMaxPosture() - getPosture());
             rally = (float) Math.min(rally, getMaxPosture() * dude.get().getAttributeValue(WarAttributes.MAX_RALLY.get()));
             if (rally < 0) rally = 0;
-            dirty = true;
-        }
+        } else rally = v;
+        dirty = true;
     }
 
     @Override
@@ -519,11 +530,19 @@ public class NewCombatCapability implements ICombatCapability {
         }
 
         //regenerate posture
-        if (isKnockdown() && getPosture() < getMaxPosture()) {
+        if (isStunned() && getPosture() < getMaxPosture()) {
             setPosture(getPosture() + getMaxPosture() / getMaxStunTime());
         } else {
-            handlePostureRegen(ticks);
-            handleSpiritRegen(ticks);
+            //TEST: hitting 0 will cause mob to enter rapid regenerative phase, recovering to full in a few seconds if not stunned
+            if (hitZero) {
+                addRally(getMaxPosture() / 120);
+                mobPosCD = 20;
+                if (getPosture() + getRally() >= getMaxPosture())
+                    _resetPosture();
+            } else {
+                handlePostureRegen(ticks);
+                handleSpiritRegen(ticks);
+            }
             //if (elb.isBlocking()) addPosture(0.01f);
         }
         if (getPosture() > getMaxPosture())
@@ -604,7 +623,7 @@ public class NewCombatCapability implements ICombatCapability {
             }
 
         //regenerate posture
-        if (isStunned() && getPosture() < getMaxPosture()) {
+        if ((isStunned()) && getPosture() < getMaxPosture()) {
             setPosture(getPosture() + getMaxPosture() / getMaxStunTime());
         } else {
             handlePostureRegen(ticks);

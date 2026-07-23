@@ -1,6 +1,98 @@
 package jackiecrazy.wardance.config;
 
 /*
+survivor
+tabula rasa
+boulder brace
+wind scar
+flame dance
+timberfall
+frost fang
+pestilent edge
+doppelsoldner
+gold rush
+demon hunter
+unyielding spirit
+walk of dionysus
+blood tax
+unstable spirit
+gambler's whimsy
+sifu
+
+afterimage
+apathy
+archers_paradox
+lockdown
+backflip
+backpedal
+berserk
+bloodlust
+confidence
+crown_champion
+cursed_palms
+curse_of_echoes
+curse_of_misfortune
+danse_macabre
+decapitate
+earthen_sweep
+fatal_cadence
+fiery_lunge
+flurry
+followup
+foot_slam
+frenzy
+gangrene
+iron_chop
+itchy_curse
+lady_luck
+leverage
+mikiri
+momentum
+montante
+natural_sprinter
+necrosis
+overbear
+overpower
+petrify
+phantom_dive
+pound_of_flesh
+prideful_might
+pummel
+rapid_clotting
+reaping
+bite_the_dust
+return_to_sender
+rim_punch
+sabaton_smash
+selfish_mascot
+shadowless_kick
+shadow_dive
+shield_crush
+silencer
+smirking_shadow
+spirit_resonance
+stagger
+static_discharge
+submission
+suplex
+tackle
+throw
+tornado
+trample
+unravel
+taunt
+vengeful_might
+viral_decay
+vital_strike
+water_uppercut
+wooden_jab
+wrestle
+lunge
+pounce
+wind_shot
+countershot
+ripper
+
 how to implement new actions:
 - add jumping moveset
     you are considered to be jump attacking if you jumped within the last half second and you have positive y velocity

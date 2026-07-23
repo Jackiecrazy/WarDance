@@ -340,7 +340,7 @@ public class ThrownWeaponEntity extends FlyingWeaponEntity {
         boolean success = player.getAbilities().instabuild | fake;
         if (!success) {
             //fake items skip all of this inventory insertion stuff
-            if (player.getMainHandItem().isEmpty()) slot = player.getInventory().selected;
+            if (player.getMainHandItem().isEmpty()&&!CombatUtils.inDestructiveSwapSequence()) slot = player.getInventory().selected;
             else if (QuiverData.getData(player).sheathe(getPickResult(), false)) {
                 success = true;
                 QuiverData.getData(player).sync(player);
@@ -371,8 +371,7 @@ public class ThrownWeaponEntity extends FlyingWeaponEntity {
                         CombatUtils.quickSwap(player, getHeldItem());
                         CombatUtils.setHandCooldown(player, InteractionHand.MAIN_HAND, 2, false);
                         CombatUtils.setAttackType(player, WeaponStats.AttackType.PICKUP_FLOURISH);
-                        if (FlyingWeaponData.getCap(player).getWeapon(InteractionHand.MAIN_HAND) != null)
-                            FlyingWeaponData.getCap(player).getWeapon(InteractionHand.MAIN_HAND).clearPath();
+                        FlyingWeaponData.getCap(player).getWeapon(InteractionHand.MAIN_HAND).ifPresent(FlyingWeaponEntity::clearPath);
                         FlyingWeaponData.getCap(player).forceRefreshWeapons();
                         CombatUtils.processWeaponInteraction(player, null, InteractionHand.MAIN_HAND, player.getAttributeValue(ForgeMod.ENTITY_REACH.get()), pickupFlourish);
                     } catch (Exception ex) {

@@ -53,7 +53,8 @@ public class UpdateWeaponFramePacket {
                                 case THROW -> mm = wi.aim_frame(flip);
                                 case DRAW_ATTACK -> mm = wi.swap_frame(flip);
                             }
-                            FlyingWeaponData.getCap(sender).getWeapon(h).setIdlePose(mm);
+                            MotionManager finalMm = mm;
+                            FlyingWeaponData.getCap(sender).getWeapon(h).ifPresent(fwe->fwe.setIdlePose(finalMm));
                         }
                     }
                 }

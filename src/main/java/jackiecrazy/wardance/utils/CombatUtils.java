@@ -21,6 +21,7 @@ import jackiecrazy.wardance.capability.charging.ChargingData;
 import jackiecrazy.wardance.capability.flyingweapon.FlyingWeaponData;
 import jackiecrazy.wardance.capability.flyingweapon.IFlyingWeapon;
 import jackiecrazy.wardance.capability.permission.PermissionData;
+import jackiecrazy.wardance.capability.quiver.QuiverData;
 import jackiecrazy.wardance.config.CombatConfig;
 import jackiecrazy.wardance.config.GeneralConfig;
 import jackiecrazy.wardance.config.MobSpecs;
@@ -51,6 +52,7 @@ import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.ai.attributes.AttributeModifier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
+import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.UseAnim;
@@ -64,21 +66,21 @@ import net.minecraftforge.registries.ForgeRegistries;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.awt.*;
-import java.util.HashMap;
+import java.util.*;
 import java.util.List;
-import java.util.Optional;
-import java.util.UUID;
 
 public class CombatUtils {
 
     public static final UUID off = UUID.fromString("8c8028c8-da69-49a2-99cd-f92d7ad22534");
     public static final UUID main = UUID.fromString("8c8028c8-da67-49a2-99cd-f92d7ad22534");
+    private static final Collection<ItemStack> swappedStacks = new HashSet<>();
     public static boolean suppressChangeFunctions = false, allowCombatHotbarPickup = false;
     public static Vec3 throw_vec = Vec3.ZERO;
     private static ProjectileInfo DEFAULTRANGED = new ProjectileInfo(0.6, 1, false, false);
     private static HashMap<EntityType, ProjectileInfo> projectileMap = new HashMap<>();
     private static int cacheLeft, cacheRight;//primarily useful in client
     private static int cacheLeftAtk, cacheRightAtk;
+    private static ItemStack swapping = null;
 
     public static void updateProjectiles(List<? extends String> interpretP) {
         projectileMap.clear();
@@ -363,7 +365,25 @@ public class CombatUtils {
         cap.setOffhandCooldown(tssl);
     }
 
+    public static boolean inDestructiveSwapSequence() {
+        return swapping != null;
+    }
+
     public static void quickSwap(LivingEntity e, ItemStack stack) {
+        ItemStack main = e.getMainHandItem();
+        if (swapping == null) swapping = main;
+        else if (swapping == stack) swapping = null;
+        else {
+            //swapping during another swap. The currently held item is dropped
+            if (e instanceof ServerPlayer sp&& !QuiverData.getData(sp).tryInsertOverflow(main)) {
+                ItemEntity itementity = sp.drop(main, false);
+                if (itementity != null) {
+                    itementity.setNoPickUpDelay();
+                    itementity.setTarget(sp.getUUID());
+                    itementity.setInvulnerable(true);
+                }
+            }
+        }
         quickSwap(e, stack, InteractionHand.MAIN_HAND);
     }
 
@@ -396,7 +416,9 @@ public class CombatUtils {
         ItemStack stack = e.getItemInHand(h);
         if (CombatUtils.getCooledAttackStrength(e, h, 1f) < group.getMinimumCooldown())
             return false;
-        MovementUtils.applyVelocity(group.getVelocity(), e, group.isSetVelocity());
+        //prevent fist drift when out of combat mode
+        if (StylishData.getCap(e).isCombatMode())
+            MovementUtils.applyVelocity(group.getVelocity(), e, group.isSetVelocity());
         group.on_swing().runEffects(e, e, h, stack);
         for (WeaponInteractions.WeaponInteraction info : group.getInteractions()) {
             //WeaponStats.info_override = info.getHitInfo();
@@ -412,7 +434,7 @@ public class CombatUtils {
                 //duplicate the above to make the base attack stronger if the swing is stronger than usual
                 if (ignore != null && damageBonus > 0)
                     attack(e, ignore, h == InteractionHand.OFF_HAND);
-                FlyingWeaponData.getCap(e).getWeapon(h).setUniversalOffset(h == InteractionHand.MAIN_HAND ? group.right_hand_offset() : group.left_hand_offset());
+                FlyingWeaponData.getCap(e).getWeapon(h).ifPresent(fwe -> fwe.setUniversalOffset(h == InteractionHand.MAIN_HAND ? group.right_hand_offset() : group.left_hand_offset()));
                 enhancedSweep(e, ignore, h, sweep.getType(), reach, sweep.getBase(), sweep.getScaling(), sweep.getCustomAnimation());
                 SkillUtils.removeAttribute(e, Attributes.ATTACK_DAMAGE, main);
                 WeaponStats.info_override = null;
@@ -430,7 +452,7 @@ public class CombatUtils {
                 SweepAnimationBuilder.flip *= -1;
                 Vec3 localDrift = MovementUtils.resolveVelocity(e.getLookAngle(), anim.getDrift());
                 Vec3 randomDrift = new Vec3((WarDance.rand.nextFloat() * 2 - 1) * localDrift.x, (WarDance.rand.nextFloat() * 2 - 1) * localDrift.y, (WarDance.rand.nextFloat() * 2 - 1) * localDrift.z);
-                FlyingWeaponData.getCap(e).getWeapon(h).setUniversalOffset(h == InteractionHand.MAIN_HAND ? group.right_hand_offset().add(randomDrift) : group.left_hand_offset().add(randomDrift));
+                FlyingWeaponData.getCap(e).getWeapon(h).ifPresent(fwe -> fwe.setUniversalOffset(h == InteractionHand.MAIN_HAND ? group.right_hand_offset().add(randomDrift) : group.left_hand_offset().add(randomDrift)));
                 boolean overwrite = true;
                 for (MotionManager mm : anim.getAnimations()) {
                     FlyingWeaponData.getCap(e).scheduleAction(h, SweepAnimationBuilder.flip > 0 && !group.noFlip() ? mm.flipFrames() : mm, overwrite);
@@ -645,6 +667,8 @@ public class CombatUtils {
     }
 
     public static WeaponStats.AttackType getAttackState(LivingEntity entity) {
+        //outside of combat mode fallback
+//        if(!StylishData.getCap(entity).isCombatMode())return WeaponStats.AttackType.STANDING;
         if (CombatData.getCap(entity).alreadyProc("sweepState"))
             return WeaponStats.AttackType.values()[(int) CombatData.getCap(entity).getProc("sweepState")];
         return WeaponStats.AttackType.UNDEFINED;
@@ -660,7 +684,7 @@ public class CombatUtils {
         //If the attack was guard breaking (entity flag 30) disable block for a while (handled somewhere else)
         defender.level().playSound(null, defender.getX(), defender.getY(), defender.getZ(), SoundEvents.SHIELD_BLOCK, SoundSource.PLAYERS, WarDance.rand.nextFloat() * 0.3f + Math.min(1f, 1 - CombatData.getCap(defender).getPosturePercentage()), Math.min(0.75f, amount / 7) + WarDance.rand.nextFloat() * 0.5f);
         StylishData.getCap(defender).addTriggerTime(10, true);
-        StylishData.getCap(defender).addCombo(0.1f, "block");
+        StylishData.getCap(defender).addCombo(0.02f, "wardance.combo.block");
 
         if (attacker instanceof LivingEntity le) {
             //THIS DOESN'T KNOCK BACK ANYONE!
@@ -677,7 +701,7 @@ public class CombatUtils {
             }
         }
 
-        //hacky. If you can no longer block it must mean your block has been breached, so knock back. FIXME
+        //hacky. If you can no longer block it must mean your block has been breached, so knock back.
         if (!CombatData.getCap(defender).canBlock())
             MobilityUtils.knockBack(defender, attacker, 1.2f, false, true);
 
@@ -734,7 +758,7 @@ public class CombatUtils {
     public static void onSuccessfulDodge(LivingEntity defender, Entity attacker) {
         //slow all mobs in a 32 block range for about 2 seconds and convert remaining dodge frames to iframes to stop repeated procs
         defender.level().playSound(null, defender.getX(), defender.getY(), defender.getZ(), SoundEvents.ENCHANTMENT_TABLE_USE, SoundSource.PLAYERS, 0.3f + WarDance.rand.nextFloat() * 0.5f, 0.75f + WarDance.rand.nextFloat() * 0.5f);
-        StylishData.getCap(defender).addCombo(0.2f, "dodge");
+        StylishData.getCap(defender).addCombo(0.15f, "wardance.combo.dodge");
         ICombatCapability cap = CombatData.getCap(defender);
         int remaining = cap.getDodgeTime();
         if (attacker instanceof LivingEntity e) {
@@ -760,7 +784,7 @@ public class CombatUtils {
         //grant 2 seconds of iframes, which conveniently stops repeated parrying
         //FakeExplosion.explode(defender.level(), defender, defender.getX(), defender.getY() + defender.getBbHeight() * 1.1f, defender.getZ(), 5);
         defender.level().playSound(null, defender.getX(), defender.getY(), defender.getZ(), SoundEvents.ANVIL_PLACE, SoundSource.PLAYERS, Math.min(1, amount / 10) + WarDance.rand.nextFloat() * 0.3f, 0.5f + WarDance.rand.nextFloat() * 0.25f);
-        StylishData.getCap(defender).addCombo(0.3f, "parry");
+        StylishData.getCap(defender).addCombo(0.2f, "wardance.combo.parry");
         ICombatCapability cap = CombatData.getCap(defender);
         StylishData.getCap(defender).processAttack(true);
         StylishData.getCap(defender).processAttack(false);
@@ -824,7 +848,7 @@ public class CombatUtils {
         kicker.level().playSound(null, kicker.getX(), kicker.getY(), kicker.getZ(), SoundEvents.ZOMBIE_ATTACK_WOODEN_DOOR, SoundSource.PLAYERS, 0.25f + WarDance.rand.nextFloat() * 0.5f, 0.5f + WarDance.rand.nextFloat() * 0.5f);
         if (targetEntity instanceof LivingEntity target) {
             CombatData.getCap(kicker).tickProc("oncePerAttack");
-            StylishData.getCap(kicker).addCombo(0.1f, "kick" + breach);
+            StylishData.getCap(kicker).addCombo(0.1f, "wardance.combo.kick" + breach);
             //help
             CombatData.getCap(target).consumePosture(kicker, 12, 0.5f, breach);
             ParticleUtils.playBonkParticle(kicker.level(), kicker.getEyePosition().add(kicker.getLookAngle().scale(Math.sqrt(GeneralUtils.getDistSqCompensated(kicker, target)))), 1, 0, 8, Color.WHITE);
@@ -837,11 +861,11 @@ public class CombatUtils {
 
     public static boolean isDragging(LivingEntity dragger, Entity dragged) {
         if (dragged == null) return false;
-        if (FlyingWeaponData.getCap(dragger).getWeapon(InteractionHand.MAIN_HAND) == null) return false;
-        if (FlyingWeaponData.getCap(dragger).getWeapon(InteractionHand.OFF_HAND) == null) return false;
+        if (FlyingWeaponData.getCap(dragger).getWeapon(InteractionHand.MAIN_HAND).isEmpty()) return false;
+        if (FlyingWeaponData.getCap(dragger).getWeapon(InteractionHand.OFF_HAND).isEmpty()) return false;
         return
-                FlyingWeaponData.getCap(dragger).getWeapon(InteractionHand.MAIN_HAND).getTetheringEntity() == dragged ||
-                        FlyingWeaponData.getCap(dragger).getWeapon(InteractionHand.OFF_HAND).getTetheringEntity() == dragged;
+                FlyingWeaponData.getCap(dragger).getWeapon(InteractionHand.MAIN_HAND).get().getTetheringEntity() == dragged ||
+                        FlyingWeaponData.getCap(dragger).getWeapon(InteractionHand.OFF_HAND).get().getTetheringEntity() == dragged;
     }
 
     private static class ProjectileInfo {

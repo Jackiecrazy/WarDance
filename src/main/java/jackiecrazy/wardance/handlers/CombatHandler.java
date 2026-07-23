@@ -22,6 +22,7 @@ import jackiecrazy.wardance.config.MobSpecs;
 import jackiecrazy.wardance.config.QiCosts;
 import jackiecrazy.wardance.config.weapon.WeaponStats;
 import jackiecrazy.wardance.entity.FlyingWeaponEntity;
+import jackiecrazy.wardance.event.ExposeAttackEvent;
 import jackiecrazy.wardance.event.MeleePostureEvent;
 import jackiecrazy.wardance.event.ProjectileDefendEvent;
 import jackiecrazy.wardance.mixin.ProjectileImpactMixin;
@@ -140,7 +141,7 @@ public class CombatHandler {
 
             //add ranged combo and finisher
             if (shooter != null) {
-                StylishData.getCap(shooter).addCombo(0.1f, "projectile");
+                StylishData.getCap(shooter).addCombo(0.05f, "wardance.combo.projectile");
                 StylishData.getCap(shooter).processAttack(false);
             }
             //defer to vanilla, no longer correct as new blocking directly alters isBlocking
@@ -183,7 +184,7 @@ public class CombatHandler {
 
             //successful
             if (pe1.getResult() == Event.Result.ALLOW || (ukeCap.isParrying() && pe1.getResult() == Event.Result.DEFAULT)) {
-                CombatUtils.onSuccessfulParry(uke, projectile, defendingHand, defend, pe1.getPostureConsumption(), pe1.getPostureConsumption(), pe1.getRallyPercentage());
+                CombatUtils.onSuccessfulParry(uke, shooter == null ? projectile : shooter, defendingHand, defend, pe1.getPostureConsumption(), pe1.getPostureConsumption(), pe1.getRallyPercentage());
                 handleProjectileDefense(e, pe1, defend, projectile, uke);
                 return;
             }
@@ -390,7 +391,7 @@ public class CombatHandler {
                                 semeCap.tickProc(SPIRITKB, 3);
                         }
                         StylishData.getCap(seme).processAttack(true);
-                        StylishData.getCap(seme).addCombo(0.05f, StylishCapability.getNormalAttackString(seme) + seme.getMainHandItem().getItem().toString());
+                        StylishData.getCap(seme).addCombo(0.01f, "wardance.combo.attack "+StylishCapability.getNormalAttackString(seme) + seme.getMainHandItem().getItem().toString());
                         //the attacker gets a steve time extension
 //                        if (!(uke instanceof Player) && TimeSlowData.getCap(uke).getEffectiveSpeed() < 1) {
 //                            CombatUtils.triggerSteveTime(seme, (int) (TimeSlowData.getCap(uke).getTimeRemaining() * 1.5));
@@ -404,7 +405,7 @@ public class CombatHandler {
                         double percRed = semeCap.doConsumeSpirit(atkMult) / atkMult;
                         semeCap.tickProc(SPIRITKB, percRed);
                         StylishData.getCap(seme).processAttack(false);
-                        StylishData.getCap(seme).addCombo(0.1f, e.getSource().getMsgId());
+                        StylishData.getCap(seme).addCombo(0.02f, e.getSource().getMsgId());
                         semeCap.tickProc("oncePerAttack");
 //                        if (!(uke instanceof Player) && TimeSlowData.getCap(uke).getEffectiveSpeed() < 1) {
 //                            CombatUtils.triggerSteveTime(seme, (int) (TimeSlowData.getCap(uke).getTimeRemaining() * 1.5));
@@ -680,7 +681,7 @@ public class CombatHandler {
             sweepInfo.runEffects(trueSource, trueSource, true, true, semeCap.isOffhandAttack() ? InteractionHand.OFF_HAND : InteractionHand.MAIN_HAND, trueSource.getMainHandItem());
             sweepInfo.runEffects(trueSource, uke, false, true, semeCap.isOffhandAttack() ? InteractionHand.OFF_HAND : InteractionHand.MAIN_HAND, trueSource.getMainHandItem());
             if (sweepInfo.getDrag() != null) {
-                FlyingWeaponEntity fwe = ds.getDirectEntity() instanceof FlyingWeaponEntity f ? f : FlyingWeaponData.getCap(trueSource).getWeapon(InteractionHand.MAIN_HAND);
+                FlyingWeaponEntity fwe = ds.getDirectEntity() instanceof FlyingWeaponEntity f ? f : FlyingWeaponData.getCap(trueSource).getWeapon(InteractionHand.MAIN_HAND).orElse(null);
                 if (fwe != null) fwe.drag(uke, sweepInfo.getDrag().strength(), sweepInfo.getDrag().duration());
             }
             double luckDiff = WarDance.rand.nextFloat() * (GeneralUtils.getAttributeValueSafe(trueSource, Attributes.LUCK)) - WarDance.rand.nextFloat() * (GeneralUtils.getAttributeValueSafe(uke, Attributes.LUCK));
@@ -715,42 +716,42 @@ public class CombatHandler {
         final boolean creative = e.getSource().is(DamageTypeTags.BYPASSES_INVULNERABILITY);
         final boolean environmentalDamage = (e.getSource().getEntity() == null);
         final boolean nonMeleeDamage = e.getSource().isIndirect() || !(e.getSource().getEntity() instanceof LivingEntity le);//|| CombatUtils.getAttackState(le) == WeaponStats.AttackType.UNDEFINED;
-        if (uke.getType().is(MobSpecs.NO_DARKTIDE)) ;//do nothing.
+        if (!e.getSource().is(WarDance.NO_DARKTIDE_DMG) && !uke.getType().is(MobSpecs.NO_DARKTIDE)) {//skip the whole darktide spiel
             //nonplayers cannot hold on and will vaporize if the damage is too high
-        else if (!(uke instanceof Player) && e.getAmount() > uke.getMaxHealth() * 2) {
-            e.setAmount(e.getAmount() + cap.getRecordedDamage());
-            cap.stopRecording(null);
-        } else if (!creative && !cap.isStunned() && !cap.alreadyProc("knockdown")) {
-            //yeah this is basically darktide with discrimination
-            final float dtEff = (float) uke.getAttributeValue(WarAttributes.DARKTIDE.get());
-            final float reduction = Mth.clamp(cap.getPosturePercentage() * dtEff, 0, 1);
-            // environmental: only deal damage at 0 qi
-            if (environmentalDamage) {
-                cap.tickProc("cancelShake");
-                if (cap.consumePosture(QiCosts.translateEnvironment(ds), 1) == 0) {
-                    e.setAmount(e.getAmount() * Mth.clamp(1 - dtEff, 0, 1));
-                    cap.tickProc("deathDenied");
-                }//else e.setAmount(e.getAmount()/2);
-            } else if (uke instanceof Player) {
-                //players
-                // you cannot die unless you are knocked down
-                // vs projectile: qi drain then internal damage
-                // vs melee: damage and posture simultaneously
-                //cap.tickProc("deathDenied");
-                cap.recordDamage(e.getAmount() * reduction);
-                e.setAmount(e.getAmount() * (1 - reduction));
-                //e.setAmount(0);
-                if (nonMeleeDamage && cap.getPosture() > 0) {
-                    e.setAmount(0);
-                    cap.tickProc("deathDenied");
-                }
-            } else {
-                //mobs
-                // vs projectiles: qi drain then damage
-                // vs melee: qi drain then damage
-                if (alert) {
-                    //darktide
-                    e.setAmount(e.getAmount() * (1 - cap.getPosturePercentage()));
+            if (!(uke instanceof Player) && e.getAmount() > uke.getMaxHealth() * 2) {
+                e.setAmount(e.getAmount() + cap.getRecordedDamage());
+                cap.stopRecording(null);
+            } else if (!creative && !cap.isStunned() && !cap.alreadyProc("knockdown")) {
+                //yeah this is basically darktide with discrimination
+                final float dtEff = (float) uke.getAttributeValue(WarAttributes.DARKTIDE.get());
+                final float reduction = Mth.clamp(cap.getPosturePercentage() * dtEff, 0, 1);
+                // environmental: only deal damage at 0 qi
+                if (environmentalDamage) {
+                    cap.tickProc("cancelShake");
+                    if (cap.consumePosture(QiCosts.translateEnvironment(ds), 1) == 0) {
+                        e.setAmount(e.getAmount() * Mth.clamp(1 - dtEff, 0, 1));
+                        cap.tickProc("deathDenied");
+                    }//else e.setAmount(e.getAmount()/2);
+                } else if (uke instanceof Player) {
+                    //players
+                    // you cannot die unless you are knocked down
+                    // vs projectile: qi drain then internal damage
+                    // vs melee: damage and posture simultaneously
+                    //cap.tickProc("deathDenied");
+                    cap.recordDamage(e.getAmount() * reduction);
+                    e.setAmount(e.getAmount() * (1 - reduction));
+                    //e.setAmount(0);
+                    if (nonMeleeDamage && cap.getPosture() > 0) {
+                        e.setAmount(0);
+                        cap.tickProc("deathDenied");
+                    }
+                } else {
+                    //mobs
+                    // vs projectiles: qi drain then damage
+                    // vs melee: qi drain then damage
+                    if (alert) {
+                        //darktide
+                        e.setAmount(e.getAmount() * (1 - cap.getPosturePercentage()));
 //                    if (nonMeleeDamage && (cap.getPosture() > 0)) {
 //                        //cap.recordDamage(cap.consumePosture(e.getAmount()));//I think this is double dipping posture for projectiles?
 //                        float amnt = e.getAmount();
@@ -758,10 +759,11 @@ public class CombatHandler {
 //                        cap.recordDamage(amnt * cap.getPosturePercentage());
 //                        e.setAmount(amnt * (1 - cap.getPosturePercentage()));
 //                    }
+                    }
                 }
+                //if the damage made it all the way here, congratulations! It hurts the entity.
+                //e.setCanceled(true);
             }
-            //if the damage made it all the way here, congratulations! It hurts the entity.
-            //e.setCanceled(true);
         }
         //stuff used to exist here, moved to footwork
         if (GeneralConfig.debug && !uke.level().isClientSide) {
@@ -822,9 +824,14 @@ public class CombatHandler {
             cap.knockdown(e.getEntity(), (int) cap.getProc("knockdown"));
             cap.tickProc("knockdown", 1);
         }
-        if (cap.isStunned() && cap.getRecordedDamage() > 0) {
-            e.setAmount(e.getAmount() + cap.getRecordedDamage());
-            cap.stopRecording(null);
+        if (cap.isStunned()) {
+            if (cap.getRecordedDamage() > 0) {
+                e.setAmount(e.getAmount() + cap.getRecordedDamage());
+                cap.stopRecording(null);
+            }
+            ExposeAttackEvent eae = new ExposeAttackEvent(e.getSource().getEntity(), e.getSource(), e.getEntity(), e.getAmount());
+            MinecraftForge.EVENT_BUS.post(eae);
+            e.setAmount(eae.getAmount());
             MobilityUtils.knockBack(e.getEntity(), e.getSource().getEntity(), 0.7f, true, true);
         } else if (!cap.isStunned()) {
             if (cap.alreadyProc("deathDenied")) {
@@ -852,8 +859,14 @@ public class CombatHandler {
         }
         CombatData.getCap(elb).setHandBind(InteractionHand.MAIN_HAND, 0);
         CombatData.getCap(elb).setHandBind(InteractionHand.OFF_HAND, 0);
-        if (e.getSource().getEntity() instanceof LivingEntity killer) {
-            StylishData.getCap(killer).addCombo(0.3f, "kill");
+        final Entity finisher = e.getSource().getEntity();
+        final Entity proxy = e.getSource().getDirectEntity();
+        final Entity credit = e.getEntity().getKillCredit();
+        //finisher is credit: kill, overkill if damage exceeds max health
+        //finisher is null: environmental to credit
+        //
+        if (finisher instanceof LivingEntity killer) {
+            StylishData.getCap(killer).addCombo(0.2f, "wardance.combo.kill");
         }
     }
 

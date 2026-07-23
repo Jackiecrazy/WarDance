@@ -86,7 +86,7 @@ public class TwohandingStats extends SimpleJsonResourceReloadListener {
                         final ResourceLocation attribute = new ResourceLocation(obj.get("attribute").getAsString());
                         Attribute a = ForgeRegistries.ATTRIBUTES.getValue(attribute);
                         if (a == null) {
-                            WarDance.LOGGER.debug(attribute + " is not a registered attribute!");
+                            //WarDance.LOGGER.debug(attribute + " is not a registered attribute!");
                             continue;
                         }
 

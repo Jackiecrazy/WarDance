@@ -75,8 +75,8 @@ public class UpdateWeaponRenderPacket {
                     if (packet.after) fx.add(FlyingWeaponEffect.AFTERIMAGE);
                     for (InteractionHand h : InteractionHand.values()) {
                         WeaponStats.WeaponInfo wi = WeaponStats.lookupStats(sender.getItemInHand(h));
-                        if (wi != null && FlyingWeaponData.getCap(sender).getWeapon(h) != null) {
-                            FlyingWeaponData.getCap(sender).setRender(h, fx.toArray(new FlyingWeaponEffect[fx.size()]));
+                        if (wi != null && FlyingWeaponData.getCap(sender).getWeapon(h).isPresent()) {
+                            FlyingWeaponData.getCap(sender).setRender(h, fx.toArray(new FlyingWeaponEffect[0]));
                         }
                     }
                 }});

@@ -1,0 +1,395 @@
+{
+  "#buster": {
+    "attack": 27,
+    "defend": 1,
+    "standing": {
+      "tags": ["pressure"],
+      "type": "animation",
+      "minimum_cooldown": 0,
+      "cooldown_refund": 1,
+      "on_swing": {
+        "sound": "minecraft:entity.player.attack.sweep"
+      },
+      "animations": [
+        {
+          "duration": 8,
+          "easing": "IN_OUT_CUBIC",
+          "frames": [
+            {
+              "direction": [
+                1, 0, 1
+              ],
+              "offset": [
+                0, 0, 1
+              ],
+              "effects": {
+                "attack_info": {
+                  "damage_scale": 0.8
+                },
+                "effects": [
+                  "WEAPON"
+                ]
+              }
+            }, {
+              "direction": [
+                0, 0, 1
+              ],
+              "offset": [
+                0, 0, 1
+              ]
+            }, {
+              "direction": [
+                -1, 0, 1
+              ],
+              "offset": [
+                0, 0, 1
+              ]
+            }
+          ]
+        }
+      ],
+      "overrides": [
+        {
+          "condition": [
+            {
+              "ID": "has_effect",
+              "effect": "footwork:fortification"
+            }
+          ],
+          "override": {
+            "on_swing": {
+              "command": "/effect clear @s minecraft:mining_fatigue"
+            },
+            "animations": [
+              {
+                "frames": [
+                  {
+                    "direction": [
+                      1, 0, 0.4
+                    ],
+                    "offset": [
+                      0, 0, 1.4
+                    ],
+                    "effects": {
+                      "attack_info": {
+                        "knockback": 1.5,
+                        "damage_scale": 1.3
+                      },
+                      "effects": [
+                        "WEAPON", "TRAIL"
+                      ]
+                    }
+                  }, {
+                    "direction": [
+                      0, 0, 1
+                    ],
+                    "offset": [
+                      0, 0, 1
+                    ],
+                    "velocity": [0, 0, 0.3]
+                  }, {
+                    "direction": [
+                      -1, 0, 0.4
+                    ],
+                    "offset": [
+                      0, 0, 1.4
+                    ]
+                  }
+                ]
+              }
+            ]
+          }
+        }
+      ]
+    },
+    "falling": {
+      "sweep": "CLEAVE",
+      "sweep_base": 80.0,
+      "sweep_scale": 30.0,
+      "on_swing": {
+        "command": "/function wardance:attack/self_heavyfatigue"
+      },
+      "damage_other_command": "/function wardance:attack/damageother_armorcleave",
+      "crit": true
+    },
+    "aerial": {
+      "tags": ["setup", "duel", "control"],
+      "type": "animation",
+      "on_swing": {
+        "sound": "minecraft:entity.player.attack.sweep"
+      },
+      "animations": [
+        {
+          "duration": 13,
+          "easing": "IN_OUT_SINE",
+          "frames": [
+            {
+              "direction": [
+                0, -1, 1
+              ],
+              "offset": [
+                0, 0, 1
+              ],
+              "render_rotation": 180,
+              "effects": {
+                "effects": ["WEAPON","TRAIL"],
+                "attack_info": {
+                  "knockback": 4,
+                  "knockback_direction": [
+                    0, 1, 0
+                  ]
+                }
+              }
+            }, {
+              "direction": [
+                0, 1, 1
+              ],
+              "offset": [
+                0, 0, 1
+              ],
+              "render_rotation": [
+                0, 0, 1, 180
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    "sprinting": {
+      "tags": ["engage", "control", "setup"],
+      "type": "animation",
+      "velocity": [
+        0, 0.1, 0.5
+      ],
+      "on_swing": {
+        "guard_frames": 10,
+        "run_actions": [
+          {
+            "ID": "add_effect",
+            "effect": "footwork:fortification",
+            "potency": 0,
+            "duration": 70,
+            "stacking": "MAX_DURATION"
+          }
+        ]
+      },
+      "animations": [
+        {
+          "duration": 20,
+          "easing": "IN_CUBIC",
+          "frames": [
+            {
+              "direction": [
+                0, 0, 1
+              ],
+              "offset": [
+                0, 0, 1
+              ],
+              "render_rotation": [
+                1, -1, 0
+              ],
+              "effects": {
+                "attack_info": {
+                  "damage_scale": 0.5
+                },
+                "effects": [
+                  "WEAPON"
+                ]
+              }
+            }
+          ]
+        }
+      ]
+    },
+    "guard_counter": {
+      "tags": ["damage", "control", "punish"],
+      "type": "animation",
+      "on_swing": {
+        "guard_frames": 10,
+        "run_actions": [
+          {
+            "ID": "add_effect",
+            "effect": "footwork:fortification",
+            "potency": 0,
+            "duration": 70,
+            "stacking": "MAX_DURATION"
+          }
+        ]
+      },
+      "animations": [
+        {
+          "duration": 15,
+          "easing": "IN_CUBIC",
+          "frames": [
+            {
+              "direction": [
+                0, 1, 0
+              ],
+              "offset": [
+                0, 0, 1
+              ],
+              "effects": {
+                "attack_info": {
+                  "spirit_multiplier": 0,
+                  "hit_other": {
+                    "run_actions": [
+                      {
+                        "ID": "pin",
+                        "duration": 30
+                      }
+                    ]
+                  }
+                },
+                "effects": [
+                  "WEAPON", "TRAIL"
+                ]
+              }
+            }, {
+              "direction": [
+                0, 0, 1
+              ],
+              "offset": [
+                0, 0, 1
+              ]
+            }, {
+              "direction": [
+                0, -1, 0.4
+              ],
+              "offset": [
+                0, 0, 1
+              ]
+            }
+          ]
+        }
+      ],
+      "overrides": [
+        {
+          "condition": [
+            {
+              "ID": "has_effect",
+              "effect": "footwork:fortification",
+              "minimum_potency": 1
+            }, {
+              "ID": "consume_resource",
+              "format": "PERCENTAGE",
+              "resource": "SPIRIT",
+              "amount": 1
+            }
+          ],
+          "override": {
+            "animations": [
+              {}, {
+                "duration": 5,
+                "easing": "IN_OUT_CUBIC",
+                "frames": [
+                  {
+                    "direction": [
+                      0, -1, 0.4
+                    ],
+                    "offset": [
+                      0, 0, 1
+                    ],
+                    "effects": {
+                      "effects": [
+                        "WEAPON"
+                      ]
+                    }
+                  }, {
+                    "direction": [
+                      0, -1, 0
+                    ],
+                    "offset": [
+                      0, 0, 1
+                    ]
+                  }, {
+                    "direction": [
+                      0, 0, -1
+                    ],
+                    "offset": [
+                      0, 0, 1
+                    ]
+                  }
+                ]
+              },{
+                "duration": 10,
+                "easing": "IN_CUBIC",
+                "frames": [
+                  {
+                    "direction": [
+                      0, 0, -1
+                    ],
+                    "offset": [
+                      0, 0, 1
+                    ]
+                  }, {
+                    "direction": [
+                      0, 1, 0
+                    ],
+                    "offset": [
+                      0, 0, 1.4
+                    ],
+                    "render_rotation": [
+                      0, 1, 0, 0
+                    ],
+                    "effects": {
+                      "range": 8,
+                      "attack_info": {
+                        "knockback": 0,
+                        "spirit_multiplier": 0,
+                        "crit": true,
+                        "crit_damage": 3,
+                        "breach": true
+                      },
+                      "effects": [
+                        "WEAPON", "BIG_SHADOW"
+                      ]
+                    }
+                  }, {
+                    "direction": [
+                      0, 0, 1
+                    ],
+                    "offset": [
+                      0, 0, 1.4
+                    ]
+                  }, {
+                    "direction": [
+                      0, -1, 0.4
+                    ],
+                    "offset": [
+                      0, 0, 1.4
+                    ]
+                  }
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "condition": [
+            {
+              "ID": "has_effect",
+              "effect": "footwork:fortification"
+            }
+          ],
+          "override": {
+            "animations": [
+              {
+                "frames": [
+                  {
+                    "effects": {
+                      "attack_info": {
+                        "damage_scale":1.2
+                      }
+                    }
+                  }, {
+                  }, {
+                  }
+                ]
+              }
+            ]
+          }
+        }
+      ]
+    }
+  }
+}

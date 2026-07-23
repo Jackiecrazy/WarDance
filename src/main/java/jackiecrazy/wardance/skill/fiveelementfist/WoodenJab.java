@@ -44,6 +44,6 @@ public class WoodenJab extends FiveElementFist {
 
     @Override
     protected void doAttack(LivingEntity caster, LivingEntity target) {
-        StylishData.getCap(caster).addCombo(0.1f, "wooden");
+        StylishData.getCap(caster).addCombo(0.1f, this.getRegistryName().toString());
     }
 }

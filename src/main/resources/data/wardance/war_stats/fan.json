@@ -9,7 +9,7 @@
     "pickup": "",
     "draw": ""
   },
-  "minecraft:bowl": {
+  "#fan": {
     "attack": 10,
     "defend": 0.3,
     "standing":  {

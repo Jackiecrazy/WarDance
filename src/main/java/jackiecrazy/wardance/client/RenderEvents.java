@@ -52,6 +52,7 @@ import java.awt.*;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Mod.EventBusSubscriber(value = Dist.CLIENT, modid = WarDance.MODID)
@@ -205,9 +206,9 @@ public class RenderEvents {
         if (!WeaponStats.isWeapon(p, stack)) return false;
         if ((h == InteractionHand.MAIN_HAND ? p.attackStrengthTicker : CombatData.getCap(p).getOffhandCooldown()) < 2)
             return true;
-        FlyingWeaponEntity fwe = FlyingWeaponData.getCap(p).getWeapon(h);
-        if (fwe == null) return false;
-        return fwe.getRawVisualTag() > 0;
+        Optional<FlyingWeaponEntity> fwe = FlyingWeaponData.getCap(p).getWeapon(h);
+        if (fwe.isEmpty()) return false;
+        return fwe.get().getRawVisualTag() > 0;
     }
 
     @SubscribeEvent

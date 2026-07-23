@@ -9,6 +9,7 @@ import jackiecrazy.footwork.move.utils.ActionContext;
 import jackiecrazy.wardance.capability.flyingweapon.FlyingWeaponData;
 import jackiecrazy.wardance.config.weapon.WeaponStats;
 import jackiecrazy.wardance.config.weapon.interactions.WeaponInteractions;
+import jackiecrazy.wardance.entity.FlyingWeaponEntity;
 import jackiecrazy.wardance.utils.CombatUtils;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.LivingEntity;
@@ -45,7 +46,7 @@ public class PlayInteractionAction extends Action {
                     CombatUtils.setAttackType(performer, move_state);
                 }
                 if (immediate.resolve(actionContext))
-                    FlyingWeaponData.getCap(performer).getWeapon(hand).clearPath();
+                    FlyingWeaponData.getCap(performer).getWeapon(hand).ifPresent(FlyingWeaponEntity::clearPath);
                 FlyingWeaponData.getCap(performer).forceRefreshWeapons();
                 if (interaction != null)
                     CombatUtils.processWeaponInteraction(performer, null, hand, performer.getAttributeValue(ForgeMod.ENTITY_REACH.get()), interaction);

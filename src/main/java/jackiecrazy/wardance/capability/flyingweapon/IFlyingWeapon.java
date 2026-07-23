@@ -10,8 +10,10 @@ import net.minecraft.world.InteractionHand;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.Vec3;
 
+import java.util.Optional;
+
 public interface IFlyingWeapon {
-    FlyingWeaponEntity getWeapon(InteractionHand hand);
+    Optional<FlyingWeaponEntity> getWeapon(InteractionHand hand);
 
     ThrownWeaponEntity getHeldBlock();
 
@@ -39,17 +41,17 @@ public interface IFlyingWeapon {
         forceRefreshWeapon(InteractionHand.OFF_HAND);
     }
 
-    public CompoundTag write();
+    CompoundTag write();
 
-    public void read(Level l, CompoundTag t);
+    void read(Level l, CompoundTag t);
 
     ThrownWeaponEntity yeet(InteractionHand hand, Vec3 pos, double strength);
 
     class DummyFlyingWeapon implements IFlyingWeapon {
 
         @Override
-        public FlyingWeaponEntity getWeapon(InteractionHand hand) {
-            return null;
+        public Optional<FlyingWeaponEntity> getWeapon(InteractionHand hand) {
+            return Optional.empty();
         }
 
         @Override

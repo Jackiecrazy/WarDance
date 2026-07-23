@@ -27,10 +27,10 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.common.ForgeMod;
 import net.minecraftforge.network.PacketDistributor;
-import org.joml.Vector3f;
 import org.joml.Vector4d;
 
 import java.util.List;
+import java.util.Optional;
 
 public class FlyingWeaponCapability implements IFlyingWeapon {
     private static final MotionManager BLOCKYEET = new MotionManagers.DefinitionMM(new MotionGroup(List.of(new MotionFrame(new Vec3(0, 1, 0.4), new Vec3(0, 1, 0)), new MotionFrame(new Vec3(0, 1, -0.4), new Vec3(0, 1, 0))), EasingFunctionEnum.IN_SINE, 10));
@@ -65,8 +65,8 @@ public class FlyingWeaponCapability implements IFlyingWeapon {
 
 
     @Override
-    public FlyingWeaponEntity getWeapon(InteractionHand hand) {
-        return hand == InteractionHand.MAIN_HAND ? main : off;
+    public Optional<FlyingWeaponEntity> getWeapon(InteractionHand hand) {
+        return hand == InteractionHand.MAIN_HAND ? Optional.ofNullable(main) : Optional.ofNullable(off);
     }
 
     @Override
@@ -120,37 +120,37 @@ public class FlyingWeaponCapability implements IFlyingWeapon {
         //no idea how this should be stored on the player. Since it's used in the span of a single function, maybe a global is fine?
         final boolean isMain = hand == InteractionHand.MAIN_HAND;
         boolean scheduleLock = isMain ? mainSwap : offSwap;
-        FlyingWeaponEntity fwe = getWeapon(hand);
-        try {
-            if (!scheduleLock && fwe != null) {
-                if (mm.getStartFrame() == null)
-                    fwe.clearPath();
-                else if (overwrite && !fwe.isIdle()) {
-                    fwe.invalidateWhenDone();
-                    respawnWeapon(hand);
-                    fwe = getWeapon(hand);
+        getWeapon(hand).ifPresent(fwe->{
+            try {
+                if (!scheduleLock) {
+                    if (mm.getStartFrame() == null)
+                        fwe.clearPath();
+                    else if (overwrite && !fwe.isIdle()) {
+                        fwe.invalidateWhenDone();
+                        respawnWeapon(hand);
+                        fwe = getWeapon(hand).get();
+                    }
+                    fwe.queuePath(mm, 0, 0);
                 }
-                fwe.queuePath(mm, 0, 0);
+            } catch (Throwable t) {
+                t.printStackTrace();
             }
-        } catch (Throwable t) {
-            t.printStackTrace();
-        }
+        });
+
     }
 
     private boolean weaponValid(InteractionHand hand) {
         if (!StylishData.getCap(player).isCombatMode() || player.isDeadOrDying()) return false;
         if (!WeaponStats.isCombatItem(player, hand)) return false;
-        if (getWeapon(hand) != null && getWeapon(hand).getHeldItem() != player.getItemInHand(hand)) return false;
+        if (getWeapon(hand).isPresent() && getWeapon(hand).get().getHeldItem() != player.getItemInHand(hand)) return false;
         return true;
     }
 
     @Override
     public CompoundTag write() {
         CompoundTag t = new CompoundTag();
-        if (getWeapon(InteractionHand.MAIN_HAND) != null)
-            t.putInt("mainID", getWeapon(InteractionHand.MAIN_HAND).getId());
-        if (getWeapon(InteractionHand.OFF_HAND) != null)
-            t.putInt("offID", getWeapon(InteractionHand.OFF_HAND).getId());
+        getWeapon(InteractionHand.MAIN_HAND).ifPresent(fwe-> t.putInt("mainID", fwe.getId()));
+        getWeapon(InteractionHand.OFF_HAND).ifPresent(fwe-> t.putInt("offID", fwe.getId()));
         if (getHeldBlock() != null)
             t.putInt("quiverID", getHeldBlock().getId());
         if (getGrapple() != null)
@@ -208,14 +208,14 @@ public class FlyingWeaponCapability implements IFlyingWeapon {
         for (InteractionHand hand : InteractionHand.values()) {
             boolean isMain = hand == InteractionHand.MAIN_HAND;
             if (!StylishData.getCap(player).isCombatMode()) ;//do nothing
-            else if (getWeapon(hand) == null) {
+            else if (getWeapon(hand).isEmpty()) {
                 //make new weapons
                 //create a flying weapon
                 //fixme doesn't work on relog?
                 respawnWeapon(hand);
             } else {
                 //check the old weapons to see if they need to be replaced
-                FlyingItemEntity fwe = getWeapon(hand);
+                FlyingItemEntity fwe = getWeapon(hand).get();
                 if (!fwe.getHeldItem().equals(player.getItemInHand(hand))) {
                     //flag the weapons for replacement
                     if (isMain) mainSwap = true;
@@ -269,7 +269,10 @@ public class FlyingWeaponCapability implements IFlyingWeapon {
 
     @Override
     public void setRender(InteractionHand hand, FlyingWeaponEffect... effects) {
-        if (getWeapon(hand).isIdle()) getWeapon(hand).setEffect(effects);
+        getWeapon(hand).ifPresent(fwe->{
+            if (fwe.isIdle()) fwe.setEffect(effects);
+        });
+
     }
 
     @Override
@@ -279,19 +282,19 @@ public class FlyingWeaponCapability implements IFlyingWeapon {
                 ThrownWeaponEntity gbe = held;
                 getHeldBlock().yeet(pos, 2);
                 held = null;
-                StylishData.getCap(player).addCombo(0.12f, "blockyeet");
+                StylishData.getCap(player).addCombo(0.08f, "wardance.combo.blockyeet");
                 sync();
                 return gbe;
             }
             return null;
         }
-        StylishData.getCap(player).addCombo(0.2f, "throw");
-        final FlyingWeaponEntity oldFW = getWeapon(hand);
-        oldFW.clearPath();
-        Level level = oldFW.level();
-        ThrownWeaponEntity fwe = new ThrownWeaponEntity(WarEntities.THROWN_WEAPON.get(), level);
-        oldFW.unDrag();
-        fwe.inheritDrag(oldFW);
+        StylishData.getCap(player).addCombo(0.1f, "wardance.combo.throw");
+        ThrownWeaponEntity fwe = new ThrownWeaponEntity(WarEntities.THROWN_WEAPON.get(), player.level());
+        getWeapon(hand).ifPresent(oldFW->{
+            oldFW.clearPath();
+            oldFW.unDrag(true);
+            fwe.inheritDrag(oldFW);
+        });
         final ItemStack held = player.getItemInHand(hand);
         fwe.setHeldItem(held.copyWithCount(1));
         fwe.setOwner(player);
@@ -313,11 +316,11 @@ public class FlyingWeaponCapability implements IFlyingWeapon {
             //it's still doing something, let it finish
             f.invalidateWhenDone();
             respawnWeapon(hand);
-            fwe = getWeapon(hand);
+            fwe = getWeapon(hand).get();
         }
         if (fwe.isRemoved()) {
             respawnWeapon(hand);
-            fwe = getWeapon(hand);
+            fwe = getWeapon(hand).get();
         }
         final ItemStack stack = player.getItemInHand(hand);
         final WeaponStats.WeaponInfo info = WeaponStats.lookupStats(stack);
@@ -332,13 +335,15 @@ public class FlyingWeaponCapability implements IFlyingWeapon {
 
     @Override
     public void forceRefreshWeapon(InteractionHand hand) {
-        FlyingWeaponEntity fwe = getWeapon(hand);
-        if (fwe == null || fwe.isRemoved() || fwe.fading()) {
-            respawnWeapon(hand);
-            fwe = getWeapon(hand);
-        }
-        updateWeapon(fwe, hand);
-        if (hand == InteractionHand.MAIN_HAND) mainSwap = false;
-        else offSwap = false;
+        getWeapon(hand).ifPresent(fwe->{
+            if (fwe.isRemoved() || fwe.fading()) {
+                respawnWeapon(hand);
+                fwe = getWeapon(hand).get();
+            }
+            updateWeapon(fwe, hand);
+            if (hand == InteractionHand.MAIN_HAND) mainSwap = false;
+            else offSwap = false;
+        });
+
     }
 }

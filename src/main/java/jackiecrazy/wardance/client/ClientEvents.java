@@ -641,7 +641,7 @@ public class ClientEvents {
         Player player = Minecraft.getInstance().player;
         if (player == null)
             return;
-
+        if(player.isUsingItem()||Minecraft.getInstance().gameMode.isDestroying())return;
         float cooldownProgress = CombatUtils.getCooledAttackStrength(player, event.getHand(), 0.5f); // 0.0F = current progress
 
         if (cooldownProgress < WeaponStats.getSweepInfo(player.getItemInHand(event.getHand()), player, CombatUtils.getAttackState(player), false, event.getHand()).getMinimumCooldown()) {

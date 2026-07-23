@@ -14,6 +14,9 @@ import jackiecrazy.wardance.utils.ComboRanks;
 import jackiecrazy.wardance.utils.SkillUtils;
 import net.minecraft.ChatFormatting;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.ListTag;
+import net.minecraft.nbt.StringTag;
+import net.minecraft.nbt.Tag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.InteractionHand;
@@ -29,15 +32,13 @@ import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nonnull;
 import java.lang.ref.WeakReference;
-import java.util.LinkedList;
-import java.util.Queue;
-import java.util.UUID;
+import java.util.*;
 
 public class StylishCapability implements IStyleCapability {
     public static final UUID WOUND = UUID.fromString("982bbbb2-bbd0-4166-801a-560d1a4149c8");
     public static final int MAX_FINISHER_CHARGE = 10;
-    public static final int TRACKED_FRESHNESS_ACTIONS = 7;
-    public static final int COMBO_TIMER = 140;
+    public static final int TRACKED_FRESHNESS_ACTIONS = 10;
+    public static final int COMBO_TIMER = 200;
     public static final int ADRENALINE_TIMER = 300;
     private static final UUID STYLISH = UUID.fromString("1896391d-0d6c-4a3e-a4a5-5e3c9d173b80");
     private final WeakReference<LivingEntity> dude;
@@ -235,12 +236,14 @@ public class StylishCapability implements IStyleCapability {
             if (fresh >= 1)
                 CombatData.getCap(le).rally(1);
             final float effectiveCombo = getCombo() - 1;
-            SkillUtils.modifyAttribute(le, Attributes.MOVEMENT_SPEED, STYLISH, 0.04 * effectiveCombo, AttributeModifier.Operation.MULTIPLY_BASE);
-            SkillUtils.modifyAttribute(le, Attributes.ATTACK_SPEED, STYLISH, 0.04 * effectiveCombo, AttributeModifier.Operation.MULTIPLY_TOTAL);
-            SkillUtils.modifyAttribute(le, ForgeMod.ENTITY_GRAVITY.get(), STYLISH, -0.1 * effectiveCombo, AttributeModifier.Operation.MULTIPLY_TOTAL);
-            SkillUtils.modifyAttribute(le, ForgeMod.ENTITY_REACH.get(), STYLISH, 0.04 * effectiveCombo, AttributeModifier.Operation.MULTIPLY_TOTAL);
+            SkillUtils.modifyAttribute(le, Attributes.MOVEMENT_SPEED, STYLISH, 0.08 * effectiveCombo, AttributeModifier.Operation.MULTIPLY_BASE);
+            SkillUtils.modifyAttribute(le, Attributes.ATTACK_SPEED, STYLISH, 0.08 * effectiveCombo, AttributeModifier.Operation.MULTIPLY_TOTAL);
+            SkillUtils.modifyAttribute(le, WarAttributes.SKILL_EFFECTIVENESS.get(), STYLISH, 0.08 * effectiveCombo, AttributeModifier.Operation.MULTIPLY_TOTAL);
+            SkillUtils.modifyAttribute(le, WarAttributes.AIR_GRAVITY.get(), STYLISH, -Math.min(0.9, 0.3 * effectiveCombo), AttributeModifier.Operation.MULTIPLY_TOTAL);
+            SkillUtils.modifyAttribute(le, ForgeMod.ENTITY_REACH.get(), STYLISH, 0.08 * effectiveCombo, AttributeModifier.Operation.MULTIPLY_TOTAL);
             SkillUtils.modifyAttribute(le, Attributes.LUCK, STYLISH, effectiveCombo, AttributeModifier.Operation.ADDITION);
-            FlyingWeaponData.getCap(le).getWeapon(InteractionHand.MAIN_HAND);
+            FlyingWeaponData.getCap(le).getWeapon(InteractionHand.MAIN_HAND).ifPresent(fwe -> fwe.setSpeed(1 + effectiveCombo * 0.4f));
+            FlyingWeaponData.getCap(le).getWeapon(InteractionHand.OFF_HAND).ifPresent(fwe -> fwe.setSpeed(1 + effectiveCombo * 0.4f));
         }
         combo += amount;
         addAdrenaline(amount / 6);
@@ -255,12 +258,15 @@ public class StylishCapability implements IStyleCapability {
     public void resetCombo() {
         combo = 1;
         freshness.clear();
-        if(dude.get() instanceof Player p){
+        if (dude.get() instanceof Player p) {
             SkillUtils.removeAttribute(p, Attributes.MOVEMENT_SPEED, STYLISH);
             SkillUtils.removeAttribute(p, Attributes.ATTACK_SPEED, STYLISH);
+            SkillUtils.removeAttribute(p, WarAttributes.SKILL_EFFECTIVENESS.get(), STYLISH);
             SkillUtils.removeAttribute(p, Attributes.LUCK, STYLISH);
-            SkillUtils.removeAttribute(p, ForgeMod.ENTITY_GRAVITY.get(), STYLISH);
+            SkillUtils.removeAttribute(p, WarAttributes.AIR_GRAVITY.get(), STYLISH);
             SkillUtils.removeAttribute(p, ForgeMod.ENTITY_REACH.get(), STYLISH);
+            FlyingWeaponData.getCap(p).getWeapon(InteractionHand.MAIN_HAND).ifPresent(fwe -> fwe.setSpeed(1));
+            FlyingWeaponData.getCap(p).getWeapon(InteractionHand.OFF_HAND).ifPresent(fwe -> fwe.setSpeed(1));
         }
         markDirty();
     }
@@ -353,6 +359,11 @@ public class StylishCapability implements IStyleCapability {
     }
 
     @Override
+    public Collection<String> getFreshness() {
+        return freshness;
+    }
+
+    @Override
     public float getFreshness(String s) {
         float fresh = 1;
         for (String str : freshness) {
@@ -378,6 +389,10 @@ public class StylishCapability implements IStyleCapability {
         t.putBoolean("ddoor", deathDoor);
         t.putDouble("healthDown", deathDoorReduction);
         t.putInt("hit", hitTimer);
+        ListTag fresh = new ListTag();
+        for (String s : freshness)
+            fresh.add(StringTag.valueOf(s));
+        t.put("freshness", fresh);
         return t;
     }
 
@@ -394,6 +409,13 @@ public class StylishCapability implements IStyleCapability {
         deathDoor = t.getBoolean("ddoor");
         deathDoorReduction = t.getDouble("healthDown");
         hitTimer = t.getInt("hit");
+        ListTag fresh = t.getList("freshness", Tag.TAG_STRING);
+        if(!fresh.isEmpty())freshness.clear();
+        for(Tag s:fresh){
+            if(s instanceof StringTag st){
+                freshness.add(st.getAsString());
+            }
+        }
     }
 
     private void markDirty() {

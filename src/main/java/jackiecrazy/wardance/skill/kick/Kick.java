@@ -59,7 +59,7 @@ public class Kick extends Skill {
         if (procPoint instanceof StunEvent e && state == STATE.ACTIVE && this == WarSkills.TRAMPLE.get() && e.getPhase() == EventPriority.LOWEST) {
             if (CombatData.getCap(target).getPosture() == CombatData.getCap(target).getMaxPosture())
                 completeChallenge(caster);
-            e.setKnockdown(true);
+            //e.setKnockdown(true);
         }
     }
 
@@ -106,7 +106,7 @@ public class Kick extends Skill {
             final ICombatCapability cap = CombatData.getCap(caster);
             if (caster.getY() > 320 && target instanceof Phantom)
                 completeChallenge(caster);
-            StylishData.getCap(caster).addCombo(0.1f, "backflip");
+            StylishData.getCap(caster).addCombo(0.1f, getRegistryName().toString());
             cap.addPosture(0.3f * sd.getEffectiveness() * (cap.getPosture() / cap.getMaxPosture()));
         }
     }

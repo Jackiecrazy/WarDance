@@ -10,6 +10,7 @@ import jackiecrazy.footwork.move.motionframe.render.RenderItemGroup;
 import jackiecrazy.footwork.move.utils.ArgumentContext;
 import jackiecrazy.footwork.utils.GeneralUtils;
 import jackiecrazy.footwork.utils.TargetingUtils;
+import jackiecrazy.wardance.WarDance;
 import jackiecrazy.wardance.api.IDrag;
 import jackiecrazy.wardance.capability.flyingweapon.FlyingWeaponData;
 import jackiecrazy.wardance.config.MobSpecs;
@@ -140,7 +141,7 @@ public class FlyingWeaponEntity extends FlyingItemEntity implements IDrag {
         super.tick();
         if (!level().isClientSide && isAlive()) {
             final int dragging = getEntityData().get(DRAG_TIME) - 1;
-            if (dragging < 0 && shouldDrag()) unDrag();
+            if (dragging < 0 && shouldDrag()) unDrag(true);
             getEntityData().set(DRAG_TIME, dragging);
             if (isIdle()) {//tied to the owner
                 if (getOwner() == null || fading) remove(RemovalReason.UNLOADED_WITH_PLAYER);
@@ -148,7 +149,7 @@ public class FlyingWeaponEntity extends FlyingItemEntity implements IDrag {
                     flushTrailHistory();
                     boolean valid = false;
                     for (InteractionHand h : InteractionHand.values())
-                        if (FlyingWeaponData.getCap(getOwner()).getWeapon(h) == this) valid = true;
+                        if (FlyingWeaponData.getCap(getOwner()).getWeapon(h).orElse(null) == this) valid = true;
                     if (!valid)
                         invalidateWhenDone();
                 }
@@ -193,6 +194,7 @@ public class FlyingWeaponEntity extends FlyingItemEntity implements IDrag {
         LivingEntity e = getOwner();
         int ticks = e.attackStrengthTicker;
         if (targets.isEmpty()) return ret;
+        animProgress-=getWeight()/2;
         ItemStack main = e.getMainHandItem();
         try {
             CombatUtils.quickSwap(e, getHeldItem());
@@ -218,8 +220,9 @@ public class FlyingWeaponEntity extends FlyingItemEntity implements IDrag {
             ex.printStackTrace();
         } finally {
             //todo test this fix
-            if (e.getMainHandItem() == getHeldItem())
+//            if (e.getMainHandItem() == getHeldItem())
                 CombatUtils.quickSwap(e, main);
+//            else WarDance.LOGGER.warn("detected that held item is now different, aborting swap back");
             e.attackStrengthTicker = ticks;
             WeaponStats.info_override = null;
         }
@@ -314,7 +317,7 @@ public class FlyingWeaponEntity extends FlyingItemEntity implements IDrag {
 
     @Override
     protected void updateFrameEffects(FrameEffects effects) {
-        currentEffects = effects;
+        currentEffects = effects;//test: move this to the end
         if (effects != null && getOwner() != null) {
             setIntangible(false);
             if (effects.getRange() >= 0) setInteractionRange((float) effects.getRange());
@@ -329,7 +332,9 @@ public class FlyingWeaponEntity extends FlyingItemEntity implements IDrag {
             if (effects.reset_hit())
                 alreadyHit.clear();
             if (effects.shouldUndrag())
-                unDrag();
+                unDrag(false);
+            //so this undrag calls setIdlePose, which sees that the weapon is idle because it has no remaining motion, updating it to the idle pose which has no hit data.
+            //that is why this undrag cannot update the idle frame.
             LivingEntity e = getOwner();
             if (e != null)
                 effects.runEffects(e, e, flipClientRender() ? InteractionHand.OFF_HAND : InteractionHand.MAIN_HAND, getHeldItem());
@@ -339,6 +344,9 @@ public class FlyingWeaponEntity extends FlyingItemEntity implements IDrag {
                 setTrailColor(effects.getColor());
             if (effects.getTerrainEffects() != null)
                 terrainEffects = effects.getTerrainEffects();
+            //temporary: calls them again at the end to ensure that last-frame effects trigger.
+            handleEntityCollisions();
+            handleBlockCollisions();
         }
     }
 
@@ -385,7 +393,7 @@ public class FlyingWeaponEntity extends FlyingItemEntity implements IDrag {
         getEntityData().set(DRAG_OFFSET, from.getEntityData().get(DRAG_OFFSET));
         getEntityData().set(DRAG_POSE, from.getEntityData().get(DRAG_POSE));
         getEntityData().set(DRAG_STRENGTH, from.getEntityData().get(DRAG_STRENGTH));
-        from.unDrag();
+        from.unDrag(false);
     }
 
     public void drag(Entity target, double strength, int duration) {
@@ -430,9 +438,10 @@ public class FlyingWeaponEntity extends FlyingItemEntity implements IDrag {
         //return getIdlePose().getStartFrame().resolveTargetOffset(getOwner(), new Vec3(getEntityData().get(DRAG_OFFSET)), getInteractionRange());
     }
 
-    public void unDrag() {
+    public void unDrag(boolean update) {
         getEntityData().set(DRAG_TIME, -1);
         setTetheringEntity(null);
+        if(update)
         setIdlePose(getIdlePose());
     }
 

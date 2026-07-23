@@ -1,6 +1,5 @@
 package jackiecrazy.wardance.capability.aerial;
 
-import jackiecrazy.footwork.api.FootworkAttributes;
 import jackiecrazy.footwork.capability.stylish.StylishData;
 import jackiecrazy.wardance.api.WarAttributes;
 import jackiecrazy.wardance.networking.CombatChannel;
@@ -93,6 +92,7 @@ public class ClientAerialHandler {
 
         // Air-Step Logic: Mirror vanilla's step paths, but for air.
         // Path 1: Try horiz at stepHeight altitude.
+        //todo this is expensive try to save
         Vec3 airStep1 = Entity.collideBoundingBox(self, new Vec3(collided.x, stepHeight, collided.z), aabb, self.level(), collisions);
 
         // Path 2: Pure up-step first, then horiz from there.
@@ -208,7 +208,7 @@ public class ClientAerialHandler {
         if (vanillaJump) {
             //no jumping and reset the available multijumps.
             resetMultiJumps(pl);
-            if(AerialModeData.getCap(pl).isAerialMode()) {
+            if (AerialModeData.getCap(pl).isAerialMode()) {
                 AerialModeData.getCap(pl).setAerialMode(false);
                 CombatChannel.INSTANCE.sendToServer(new AerialModePacket(false));
             }
@@ -231,7 +231,7 @@ public class ClientAerialHandler {
 //                        //fix the y
 //                        look = look.multiply(1, 0, 1).add(0, 0.4, 0);
 //                        wallFlip = wallFlip.add(look);
-                        pl.addDeltaMovement(wallFlip.add(0,0.3,0));
+                        pl.addDeltaMovement(wallFlip.add(0, 0.3, 0));
                         lastDir = cap.getWallDir();
                         cap.setState(IAerialMode.WallState.WALL_JUMP);
                     }
@@ -248,6 +248,10 @@ public class ClientAerialHandler {
                 jumpKey = false;
             }
         }
+    }
+
+    public static double getJumpPerc(LocalPlayer pl) {
+        return jumpCount / pl.getAttributeValue(WarAttributes.AIR_JUMPS.get());
     }
 
     public static void resetMultiJumps(LocalPlayer pl) {
@@ -353,7 +357,7 @@ public class ClientAerialHandler {
         if (cap.getState() != IAerialMode.WallState.NONE) {
             if (self.onGround())
                 cap.setState(IAerialMode.WallState.NONE);
-            else if (cap.getState().wall&&self.isShiftKeyDown()) {
+            else if (cap.getState().wall && self.isShiftKeyDown()) {
                 self.setDeltaMovement(Vec3.ZERO);
                 cap.setState(IAerialMode.WallState.NONE);
             }

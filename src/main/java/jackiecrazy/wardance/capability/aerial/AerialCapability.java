@@ -1,5 +1,6 @@
 package jackiecrazy.wardance.capability.aerial;
 
+import jackiecrazy.wardance.api.WarAttributes;
 import jackiecrazy.wardance.networking.CombatChannel;
 import jackiecrazy.wardance.networking.sync.UpdateAirPacket;
 import jackiecrazy.wardance.utils.SkillUtils;
@@ -8,6 +9,7 @@ import net.minecraft.util.Tuple;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.ai.attributes.AttributeModifier;
+import net.minecraft.world.entity.player.Player;
 import net.minecraftforge.common.ForgeMod;
 import net.minecraftforge.network.PacketDistributor;
 
@@ -17,6 +19,7 @@ import java.util.UUID;
 
 public class AerialCapability implements IAerialMode {
     private static final UUID GRAVITY = UUID.fromString("e2118f5c-8a42-43c2-bf39-6e6264a26ca5");
+    private static final UUID GRAVITY1 = UUID.fromString("e2118f5d-8a42-43c2-ba39-6e2264a26ca5");
     private static final UUID WALL_GRAV = UUID.fromString("e2118f5c-8a42-43c2-bf39-6e6264a26cad");
     private final ArrayList<Tuple<Integer, Double>> modify = new ArrayList<>();
     WeakReference<Entity> bind;
@@ -25,7 +28,7 @@ public class AerialCapability implements IAerialMode {
     private int off;
     private WallState state = WallState.NONE;
     private Direction direction = Direction.DOWN;
-    private boolean aerial=false;
+    private boolean aerial = false;
 
     public AerialCapability() {
     }
@@ -64,7 +67,12 @@ public class AerialCapability implements IAerialMode {
     @Override
     public void setAerialMode(boolean toggle) {
         //todo save
-        aerial=toggle;
+        aerial = toggle;
+        if (bind != null && bind.get() instanceof Player p) {
+            if (toggle)
+                SkillUtils.modifyAttribute(p, ForgeMod.ENTITY_GRAVITY.get(), GRAVITY1, p.getAttributeValue(WarAttributes.AIR_GRAVITY.get()) - 1, AttributeModifier.Operation.MULTIPLY_TOTAL);
+            else SkillUtils.removeAttribute(p, ForgeMod.ENTITY_GRAVITY.get(), GRAVITY1);
+        }
     }
 
     @Override
@@ -85,7 +93,7 @@ public class AerialCapability implements IAerialMode {
         if (bind != null) {
             final Entity bound = bind.get();
 
-            if (bound.onGround()) {
+            if (bound != null && bound.onGround()) {
                 setAerialMode(false);
             }
         }
@@ -126,7 +134,7 @@ public class AerialCapability implements IAerialMode {
                 //temporarily stick on the surface
                 noOffFor(5);
                 //CombatChannel.INSTANCE.sendToServer(new UpdateWallPacket(state));
-            }else noOffFor(0);
+            } else noOffFor(0);
         }
         return true;
     }

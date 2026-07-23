@@ -461,7 +461,7 @@ public abstract class Skill extends Move {
                                boolean flag,
                                float something) {
         caster.level().playSound(null, caster, SoundEvents.FIRECHARGE_USE, SoundSource.AMBIENT, 0.3f + WarDance.rand.nextFloat(), 0.5f + WarDance.rand.nextFloat());
-        StylishData.getCap(caster).addCombo(0.2f, this.registryName.toString());
+        StylishData.getCap(caster).addCombo(0.1f, this.registryName.toString());
         CasterData.getCap(caster).getSkillData(this).ifPresent(a -> {
             a.setDuration(duration);
             a.setMaxDuration(duration);

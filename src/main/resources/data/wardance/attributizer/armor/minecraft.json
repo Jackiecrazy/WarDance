@@ -22,8 +22,8 @@
   ],
   "minecraft:leather_leggings": [
     {
-      "attribute": "wardance:darktide_power",
-      "modify": 0.3,
+      "attribute": "wardance:aerial_gravity",
+      "modify": -0.2,
       "operation": "MULTIPLY_BASE"
     }
   ],

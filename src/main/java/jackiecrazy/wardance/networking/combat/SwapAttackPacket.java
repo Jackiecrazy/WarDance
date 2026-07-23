@@ -63,7 +63,7 @@ public class SwapAttackPacket {
                         WeaponStats.AttackType s = WeaponStats.AttackType.DRAW_ATTACK;
                         WeaponInteractions.InteractionGroup group = WeaponStats.getSweepInfo(nextItem, p, s, false, h);
                         if (cd >= group.getMinimumCooldown()){
-                            StylishData.getCap(p).addCombo(0.1f, "swap");
+                            StylishData.getCap(p).addCombo(0.1f, "wardance.combo.swap");
                             //p.setItemInHand(h, nextItem);
                             FlyingWeaponData.getCap(p).forceRefreshWeapons();
                             CombatUtils.setAttackType(p, WeaponStats.AttackType.DRAW_ATTACK);
