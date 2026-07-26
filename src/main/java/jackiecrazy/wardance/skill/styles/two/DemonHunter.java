@@ -5,7 +5,7 @@ import jackiecrazy.wardance.WarDance;
 import jackiecrazy.wardance.capability.skill.CasterData;
 import jackiecrazy.wardance.capability.status.Marks;
 import jackiecrazy.wardance.config.weapon.WeaponStats;
-import jackiecrazy.wardance.event.SweepEvent;
+import jackiecrazy.wardance.event.BasicSweepEvent;
 import jackiecrazy.wardance.skill.SkillColors;
 import jackiecrazy.wardance.skill.SkillData;
 import jackiecrazy.wardance.skill.WarSkills;
@@ -73,7 +73,7 @@ public class DemonHunter extends ColorRestrictionStyle {
             } else mark(caster, target, 3);
             SkillUtils.removeAttribute(caster, ForgeMod.ENTITY_REACH.get(), reach);
         }
-        if (procPoint instanceof SweepEvent se) {
+        if (procPoint instanceof BasicSweepEvent se) {
             if (!caster.onGround() || caster.getAttribute(ForgeMod.ENTITY_REACH.get()).hasModifier(reach)) {
                 se.setColor(Color.CYAN);
             }

@@ -36,6 +36,12 @@ minecraft {
 
             property 'mixin.env.refMapRemappingFile', "${projectDir}/build/createSrgToMcp/output.srg"
 
+            environment 'WAYLAND_DISPLAY', ''
+            environment 'GDK_BACKEND', 'x11'
+            environment 'SDL_VIDEODRIVER', 'x11'
+            environment 'QT_QPA_PLATFORM', 'xcb'
+            environment 'XDG_SESSION_TYPE', 'x11'
+
             arg '-mixin.config=wardance.mixins.json'
 
             mods {

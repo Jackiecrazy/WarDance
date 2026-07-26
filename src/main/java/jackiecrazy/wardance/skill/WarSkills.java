@@ -61,7 +61,7 @@ public class WarSkills {
     //===========================================================================================================//
     //                                                      Styles
     //===========================================================================================================//
-    public static final RegistryObject<Skill> SURVIVOR = SKILLS.register("survivor", ()->new Survivor().setChallenge());
+    //public static final RegistryObject<Skill> SURVIVOR = SKILLS.register("survivor", ()->new Survivor().setChallenge());
     //public static final RegistryObject<Skill> REJUVENATE = SKILLS.register("rejuvenate", () -> new WarCry().setCategory(SkillColors.white));
     public static final RegistryObject<Skill> DEMON_HUNTER = SKILLS.register("demon_hunter", () -> new DemonHunter().setColor(Color.CYAN).setChallenge());
     public static final RegistryObject<Skill> TABULA_RASA = SKILLS.register("tabula_rasa", () -> new TabulaRasa().setColor(Color.WHITE));

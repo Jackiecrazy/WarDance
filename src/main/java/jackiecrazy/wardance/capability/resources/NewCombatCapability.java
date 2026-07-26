@@ -70,7 +70,7 @@ public class NewCombatCapability implements ICombatCapability {
     private float cache;//no need to save this because it'll be used within the span of a tick
     private int guardFrame, parryFrame, dodgeFrame, iFrame;
     //private List<HitInfo> onGuard=new ArrayList<>(), onParry=new ArrayList<>(), onDodge=new ArrayList<>(), onIframe=new ArrayList<>();
-    private Vec3 motion;
+    private Vec3 lastPos, motion;
     private double mobPosRegenSpd = 0.3;
     private int mobPosCD = 60, maxMobPosCD = 60, spiritCD, maxSpiritCD = 20;
     private boolean player, hitZero;
@@ -315,6 +315,7 @@ public class NewCombatCapability implements ICombatCapability {
                     stun(assailant, se.getLength());
                     elb.removeEffect(FootworkEffects.COUNTERSTRIKE.get());
                     if (assailant != null) {
+                        StylishData.getCap(assailant).addCombo(0.15f, "wardance.combo.breach");
 //                        CombatData.getCap(assailant).addRally((float) (CombatData.getCap(assailant).getMaxPosture() * assailant.getAttributeValue(WarAttributes.BREACH_RALLY.get())));
                     }
                 }
@@ -450,8 +451,10 @@ public class NewCombatCapability implements ICombatCapability {
 
     @Override
     public Vec3 getMotionConsistently() {
-        if (dude.get() == null || motion == null) return Vec3.ZERO;
-        return dude.get().position().subtract(motion).scale(0.25);
+        final LivingEntity dereference = dude.get();
+        if (dereference == null) return Vec3.ZERO;
+        if (!player) return dereference.getDeltaMovement();
+        return motion;
     }
 
     @Override
@@ -473,8 +476,11 @@ public class NewCombatCapability implements ICombatCapability {
             setSpirit(mspi);
 
         //store motion for further use
-        if (ticks > 5 || (lastUpdate + ticks) % 5 != lastUpdate % 5)
-            motion = elb.position();
+        if (player && (ticks > 5 || (lastUpdate + ticks) % 5 < lastUpdate % 5)) {
+            if (lastPos == null) lastPos = elb.position();
+            motion = elb.position().subtract(lastPos).scale(0.2);
+            lastPos = elb.position();
+        }
 
         //tick down everything
         //hand bind

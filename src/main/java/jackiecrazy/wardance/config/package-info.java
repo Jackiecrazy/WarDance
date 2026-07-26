@@ -1,23 +1,41 @@
 package jackiecrazy.wardance.config;
 
 /*
-survivor
-tabula rasa
-boulder brace
-wind scar
-flame dance
-timberfall
-frost fang
-pestilent edge
-doppelsoldner
-gold rush
-demon hunter
-unyielding spirit
-walk of dionysus
-blood tax
-unstable spirit
-gambler's whimsy
-sifu
+    survivor: nuked
+    tabula rasa: exactly the same, restrictions lifted
+    boulder brace: still and rolling boulder, working it out
+while still: lose half move speed. Gain increased rally regen, rally on block, knockback resist, darktide power. Lose on any move.
+while sprinting: slowly gains move speed. After 1.5 seconds start to deal posture damage and knockback any mob you are about to hit.
+on swing: cancel horizontal velocity and regain still stats. If sprinting or falling at high speed, create an enfeebling and slowing cloud of dust.
+    wind scar: constant erratic movement and ranged pressure
+every movement or combat action generates wind pressure.
+Normal attacks do not but mark targets. Projectiles and throws generate slightly more.
+At 10 wind pressure, automatically consume all to launch (combo) wind blades. Wind blades track targets, favoring marked ones, and pierce through them repeatedly
+(during adrenaline burst throw wind blades repeatedly)
+    flame dance: relentless fire. I can either think of burning away impurities and carbonizing fuel, sticking to the enemy like a glob of magma, or... phoenixes? Repeated death's door style lol
+reduces attack knockback. your body radiates heat. Anyone in your attack radius will slowly gain a stacking penalty to armor/some other things.
+At 100% penalty they will start to take burn damage whenever they are attacked or periodically, scaling with their armor.
+Heat dissipates rapidly when they leave your radius.
+rapid attacks, swapping weapons, casting skills, and in general keeping rhythm will produce bursts of heat that increase heat more than usual.
+This burst will ignite (or burn away fire immunity), disarm, or
+    timberfall: delayed tree falling
+After skill cast, create a tree nearby. (the tree slowly grows in size and damage?)
+Trees count as terrain for sabaton smash etc. TODO update move mixin to fire event on collide
+Dealing damage to the tree or slamming a mob onto it causes it to fall over and deal extra (breaching?) damage
+    frost fang: patience, enter, burst damage, retreat
+you get a spinny wheel with a sweet spot somewhere on it.
+Swinging or attacking locks in the wheel for 2 seconds, then it resets the sweet spot somewhere else.
+Locking the wheel in sweet spot gives extra damage
+    pestilent edge
+    doppelsoldner
+    gold rush
+    demon hunter
+    unyielding spirit
+    walk of dionysus
+    blood tax
+    unstable spirit
+    gambler's whimsy
+    sifu
 
 afterimage
 apathy

@@ -28,8 +28,9 @@ import jackiecrazy.wardance.config.MobSpecs;
 import jackiecrazy.wardance.config.weapon.WeaponStats;
 import jackiecrazy.wardance.config.weapon.interactions.*;
 import jackiecrazy.wardance.entity.ThrownWeaponEntity;
+import jackiecrazy.wardance.event.BasicSweepEvent;
+import jackiecrazy.wardance.event.PlayInteractionEvent;
 import jackiecrazy.wardance.event.ProjectileDefendEvent;
-import jackiecrazy.wardance.event.SweepEvent;
 import jackiecrazy.wardance.mixin.LivingEntityAccessors;
 import jackiecrazy.wardance.networking.CombatChannel;
 import jackiecrazy.wardance.networking.sync.UpdateAttackCooldownPacket;
@@ -375,7 +376,7 @@ public class CombatUtils {
         else if (swapping == stack) swapping = null;
         else {
             //swapping during another swap. The currently held item is dropped
-            if (e instanceof ServerPlayer sp&& !QuiverData.getData(sp).tryInsertOverflow(main)) {
+            if (e instanceof ServerPlayer sp && !QuiverData.getData(sp).tryInsertOverflow(main)) {
                 ItemEntity itementity = sp.drop(main, false);
                 if (itementity != null) {
                     itementity.setNoPickUpDelay();
@@ -403,8 +404,15 @@ public class CombatUtils {
     public static boolean processWeaponInteraction(LivingEntity e, Entity ignore, InteractionHand h, double reach) {
         ItemStack stack = e.getItemInHand(h);
         WeaponStats.AttackType s = getAttackState(e);
-        WeaponInteractions.InteractionGroup group = WeaponStats.getSweepInfo(stack, e, s, false, h);
-        return processWeaponInteraction(e, ignore, h, reach, group);
+        PlayInteractionEvent.Pre pre = new PlayInteractionEvent.Pre(e, h, stack, s);
+        MinecraftForge.EVENT_BUS.post(pre);
+        if (pre.isCanceled()) return false;
+        WeaponInteractions.InteractionGroup group = pre.getInteraction();
+        if (group == null)
+            group = WeaponStats.getSweepInfo(stack, e, pre.getMoveState(), false, h);
+        PlayInteractionEvent.Post post = new PlayInteractionEvent.Post(e, h, stack, s, group);
+        MinecraftForge.EVENT_BUS.post(post);
+        return processWeaponInteraction(e, ignore, h, reach, post.getInteraction());
     }
 
     public static boolean processWeaponInteraction(LivingEntity e,
@@ -463,7 +471,7 @@ public class CombatUtils {
                 final IFlyingWeapon cap = FlyingWeaponData.getCap(e);
                 if (throw_vec == null) throw_vec = e.getLookAngle();
                 throw_vec = t.transformDirection(throw_vec);
-                //bogus yeet to create the entity
+                //create the entity
                 ThrownWeaponEntity fwe = cap.yeet(h, e.getEyePosition().add(throw_vec), 1);
                 //transform it...
                 t.transformThrown(fwe);
@@ -511,7 +519,7 @@ public class CombatUtils {
         double radius;
         SweepAttack.SWEEPTYPE prevtype = type;
 
-        SweepEvent sre = new SweepEvent(e, h, e.getMainHandItem(), type, base, scaling);
+        BasicSweepEvent sre = new BasicSweepEvent(e, h, e.getMainHandItem(), type, base, scaling);
         MinecraftForge.EVENT_BUS.post(sre);
         if (!CombatData.getCap(e).alreadyProc("sweepState"))
             CombatUtils.updateNormalAttackStatus(e);
@@ -684,7 +692,7 @@ public class CombatUtils {
         //If the attack was guard breaking (entity flag 30) disable block for a while (handled somewhere else)
         defender.level().playSound(null, defender.getX(), defender.getY(), defender.getZ(), SoundEvents.SHIELD_BLOCK, SoundSource.PLAYERS, WarDance.rand.nextFloat() * 0.3f + Math.min(1f, 1 - CombatData.getCap(defender).getPosturePercentage()), Math.min(0.75f, amount / 7) + WarDance.rand.nextFloat() * 0.5f);
         StylishData.getCap(defender).addTriggerTime(10, true);
-        StylishData.getCap(defender).addCombo(0.02f, "wardance.combo.block");
+        StylishData.getCap(defender).addCombo(0.05f, "wardance.combo.block");
 
         if (attacker instanceof LivingEntity le) {
             //THIS DOESN'T KNOCK BACK ANYONE!
@@ -758,7 +766,7 @@ public class CombatUtils {
     public static void onSuccessfulDodge(LivingEntity defender, Entity attacker) {
         //slow all mobs in a 32 block range for about 2 seconds and convert remaining dodge frames to iframes to stop repeated procs
         defender.level().playSound(null, defender.getX(), defender.getY(), defender.getZ(), SoundEvents.ENCHANTMENT_TABLE_USE, SoundSource.PLAYERS, 0.3f + WarDance.rand.nextFloat() * 0.5f, 0.75f + WarDance.rand.nextFloat() * 0.5f);
-        StylishData.getCap(defender).addCombo(0.15f, "wardance.combo.dodge");
+        StylishData.getCap(defender).addCombo(0.05f, "wardance.combo.dodge");
         ICombatCapability cap = CombatData.getCap(defender);
         int remaining = cap.getDodgeTime();
         if (attacker instanceof LivingEntity e) {
@@ -784,7 +792,7 @@ public class CombatUtils {
         //grant 2 seconds of iframes, which conveniently stops repeated parrying
         //FakeExplosion.explode(defender.level(), defender, defender.getX(), defender.getY() + defender.getBbHeight() * 1.1f, defender.getZ(), 5);
         defender.level().playSound(null, defender.getX(), defender.getY(), defender.getZ(), SoundEvents.ANVIL_PLACE, SoundSource.PLAYERS, Math.min(1, amount / 10) + WarDance.rand.nextFloat() * 0.3f, 0.5f + WarDance.rand.nextFloat() * 0.25f);
-        StylishData.getCap(defender).addCombo(0.2f, "wardance.combo.parry");
+        StylishData.getCap(defender).addCombo(0.1f, "wardance.combo.parry");
         ICombatCapability cap = CombatData.getCap(defender);
         StylishData.getCap(defender).processAttack(true);
         StylishData.getCap(defender).processAttack(false);

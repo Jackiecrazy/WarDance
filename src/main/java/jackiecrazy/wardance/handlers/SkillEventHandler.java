@@ -836,7 +836,7 @@ public class SkillEventHandler {
     }
 
     @SubscribeEvent(priority = EventPriority.HIGHEST)
-    public static void sweep(SweepEvent e) {
+    public static void sweep(BasicSweepEvent e) {
         ISkillCapability isc = CasterData.getCap(e.getEntity());
         for (Skill s : isc.getEquippedSkillsAndStyle()) {
             isc.getSkillData(s).ifPresent(d -> s.onProc(e.getEntity(), e, d.getState(), d, null));
@@ -844,7 +844,7 @@ public class SkillEventHandler {
     }
 
     @SubscribeEvent(priority = EventPriority.LOWEST)
-    public static void sweepe(SweepEvent e) {
+    public static void sweepe(BasicSweepEvent e) {
         ISkillCapability isc = CasterData.getCap(e.getEntity());
         for (Skill s : isc.getEquippedSkillsAndStyle()) {
             isc.getSkillData(s).ifPresent(d -> s.onProc(e.getEntity(), e, d.getState(), d, null));
@@ -861,6 +861,22 @@ public class SkillEventHandler {
 
     @SubscribeEvent(priority = EventPriority.LOWEST)
     public static void uses(LivingEntityUseItemEvent e) {
+        ISkillCapability isc = CasterData.getCap(e.getEntity());
+        for (Skill s : isc.getEquippedSkillsAndStyle()) {
+            isc.getSkillData(s).ifPresent(d -> s.onProc(e.getEntity(), e, d.getState(), d, null));
+        }
+    }
+
+    @SubscribeEvent(priority = EventPriority.HIGHEST)
+    public static void sweepPre(PlayInteractionEvent e) {
+        ISkillCapability isc = CasterData.getCap(e.getEntity());
+        for (Skill s : isc.getEquippedSkillsAndStyle()) {
+            isc.getSkillData(s).ifPresent(d -> s.onProc(e.getEntity(), e, d.getState(), d, null));
+        }
+    }
+
+    @SubscribeEvent(priority = EventPriority.LOWEST)
+    public static void sweepPost(PlayInteractionEvent e) {
         ISkillCapability isc = CasterData.getCap(e.getEntity());
         for (Skill s : isc.getEquippedSkillsAndStyle()) {
             isc.getSkillData(s).ifPresent(d -> s.onProc(e.getEntity(), e, d.getState(), d, null));

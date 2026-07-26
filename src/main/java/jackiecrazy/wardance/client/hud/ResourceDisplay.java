@@ -17,6 +17,7 @@ import jackiecrazy.wardance.capability.aerial.ClientAerialHandler;
 import jackiecrazy.wardance.client.RenderUtils;
 import jackiecrazy.wardance.config.ClientConfig;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.network.chat.Component;
@@ -44,7 +45,7 @@ public class ResourceDisplay implements IGuiOverlay {
     private static final ResourceLocation aerial = new ResourceLocation(WarDance.MODID, "textures/hud/aerial_mode.png");
     private static final ResourceLocation aerialF = new ResourceLocation(WarDance.MODID, "textures/hud/aerial_mode_fill.png");
     static float currentComboLevel = 0;
-    private static final int STALE = Color.DARK_GRAY.getRGB();
+    private static final int STALE = Color.GRAY.getRGB();
     private static float currentAdrenaline = 0;
     private static float currentSpiritLevel = 0;
     private static float scurrentEvasion = 0, lcurrentEvasion = 0;
@@ -404,14 +405,19 @@ public class ResourceDisplay implements IGuiOverlay {
                     graphics.drawString(gui.getFont(), display, x, y, ClientConfig.adrenalineColor);
                     String action="";
                     int streak = 1;
+                    x=pair.getFirst()+16;
+                    y+=1;
                     for(String s:style.getFreshness()){
                         if(!action.equals(s)) {
                             int color = ClientConfig.adrenalineColor;
-                            y += gui.getFont().lineHeight + 1;
+                            y += gui.getFont().lineHeight;
                             String toPrint = Component.translatable(action.split(" ")[0]).getString();
-                            if(streak>1)toPrint+=" x"+streak;
+                            int atX=x-mc.font.width(toPrint);
+                            if(streak>1){
+                                toPrint+=" x"+streak;
+                            }
                             if(style.getFreshness(action)<=0)color=STALE;
-                            graphics.drawString(gui.getFont(), toPrint, pair.getFirst() - mc.font.width(s) / 2, y, color);
+                            graphics.drawString(gui.getFont(), toPrint, atX, y, color);
                             action=s;
                             streak=1;
                         }else streak++;

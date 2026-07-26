@@ -282,7 +282,7 @@ public class FlyingWeaponCapability implements IFlyingWeapon {
                 ThrownWeaponEntity gbe = held;
                 getHeldBlock().yeet(pos, 2);
                 held = null;
-                StylishData.getCap(player).addCombo(0.08f, "wardance.combo.blockyeet");
+                StylishData.getCap(player).addCombo(0.12f, "wardance.combo.blockyeet");
                 sync();
                 return gbe;
             }
@@ -300,9 +300,9 @@ public class FlyingWeaponCapability implements IFlyingWeapon {
         fwe.setOwner(player);
         Vec3 look=player.getLookAngle().reverse();
         fwe.setPosRaw(player.getX()+look.x, player.getEyeY()+look.y, player.getZ()+look.z);
-        fwe.setState(FlyingItemEntity.STATE.THROW_NATURAL);
+        //fwe.setState(FlyingItemEntity.STATE.THROW_NATURAL);
 
-        fwe.yeet(pos, strength);
+        //fwe.yeet(pos, strength);
         fwe.setInteractionRange(1f);
         //fwe is not added to level here! This is so Throw can transform it again
         sync();

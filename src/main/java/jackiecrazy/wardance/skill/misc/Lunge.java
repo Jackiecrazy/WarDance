@@ -1,6 +1,6 @@
 package jackiecrazy.wardance.skill.misc;
 
-import jackiecrazy.wardance.event.SweepEvent;
+import jackiecrazy.wardance.event.BasicSweepEvent;
 import jackiecrazy.wardance.skill.Skill;
 import jackiecrazy.wardance.skill.SkillData;
 import jackiecrazy.wardance.utils.SkillUtils;
@@ -55,7 +55,7 @@ public class Lunge extends Skill {
         if (procPoint instanceof CriticalHitEvent e && isCrit(e) && e.getPhase() == EventPriority.HIGHEST) {
             e.setDamageModifier(e.getDamageModifier() + 0.2f);
         }
-        if (procPoint instanceof SweepEvent e && e.getPhase() == EventPriority.HIGHEST) {
+        if (procPoint instanceof BasicSweepEvent e && e.getPhase() == EventPriority.HIGHEST) {
             e.setSweepLevel(e.getSweepLevel() + 2);
         }
         super.onProc(caster, procPoint, state, stats, target);

@@ -11,6 +11,7 @@ import jackiecrazy.footwork.event.MeleeKnockbackEvent;
 import jackiecrazy.footwork.move.motionframe.HitInfo;
 import jackiecrazy.footwork.utils.GeneralUtils;
 import jackiecrazy.footwork.utils.StealthUtils;
+import jackiecrazy.footwork.utils.TargetingUtils;
 import jackiecrazy.wardance.WarDance;
 import jackiecrazy.wardance.api.WarAttributes;
 import jackiecrazy.wardance.capability.flyingweapon.FlyingWeaponData;
@@ -141,7 +142,7 @@ public class CombatHandler {
 
             //add ranged combo and finisher
             if (shooter != null) {
-                StylishData.getCap(shooter).addCombo(0.05f, "wardance.combo.projectile");
+                StylishData.getCap(shooter).addCombo(0.1f, "wardance.combo.projectile");
                 StylishData.getCap(shooter).processAttack(false);
             }
             //defer to vanilla, no longer correct as new blocking directly alters isBlocking
@@ -391,7 +392,7 @@ public class CombatHandler {
                                 semeCap.tickProc(SPIRITKB, 3);
                         }
                         StylishData.getCap(seme).processAttack(true);
-                        StylishData.getCap(seme).addCombo(0.01f, "wardance.combo.attack "+StylishCapability.getNormalAttackString(seme) + seme.getMainHandItem().getItem().toString());
+                        StylishData.getCap(seme).addCombo(0.1f, "wardance.combo.attack " + StylishCapability.getNormalAttackString(seme) + seme.getMainHandItem().getItem().toString());
                         //the attacker gets a steve time extension
 //                        if (!(uke instanceof Player) && TimeSlowData.getCap(uke).getEffectiveSpeed() < 1) {
 //                            CombatUtils.triggerSteveTime(seme, (int) (TimeSlowData.getCap(uke).getTimeRemaining() * 1.5));
@@ -405,7 +406,7 @@ public class CombatHandler {
                         double percRed = semeCap.doConsumeSpirit(atkMult) / atkMult;
                         semeCap.tickProc(SPIRITKB, percRed);
                         StylishData.getCap(seme).processAttack(false);
-                        StylishData.getCap(seme).addCombo(0.02f, e.getSource().getMsgId());
+                        StylishData.getCap(seme).addCombo(0.12f, e.getSource().getMsgId());
                         semeCap.tickProc("oncePerAttack");
 //                        if (!(uke instanceof Player) && TimeSlowData.getCap(uke).getEffectiveSpeed() < 1) {
 //                            CombatUtils.triggerSteveTime(seme, (int) (TimeSlowData.getCap(uke).getTimeRemaining() * 1.5));
@@ -842,7 +843,7 @@ public class CombatHandler {
 
     @SubscribeEvent(priority = EventPriority.HIGHEST)
     public static void killingBlow(LivingDeathEvent e) {
-        LivingEntity elb = e.getEntity();
+        final LivingEntity elb = e.getEntity();
         //you cannot die unless you are knocked down
         final boolean creative = e.getSource().is(DamageTypeTags.BYPASSES_INVULNERABILITY);
         final ICombatCapability cap = CombatData.getCap(elb);
@@ -862,11 +863,35 @@ public class CombatHandler {
         final Entity finisher = e.getSource().getEntity();
         final Entity proxy = e.getSource().getDirectEntity();
         final Entity credit = e.getEntity().getKillCredit();
-        //finisher is credit: kill, overkill if damage exceeds max health
-        //finisher is null: environmental to credit
-        //
+        //finisher is credit: kill
+        //finisher is null: environmental to credit, special case fire/explosion/fall
+        //dyer allied with finisher and not with credit: friendly fire
+        //finisher allied with credit: team
+        if (credit instanceof LivingEntity killer) {
+            if (e.getSource().is(DamageTypeTags.IS_EXPLOSION))
+                StylishData.getCap(killer).addCombo(0.15f, "wardance.combo.environmental.explosion");
+            else if (e.getSource().is(DamageTypeTags.IS_FALL))
+                StylishData.getCap(killer).addCombo(0.15f, "wardance.combo.environmental.fall");
+            else if (e.getSource().is(DamageTypeTags.IS_FIRE))
+                StylishData.getCap(killer).addCombo(0.15f, "wardance.combo.environmental.fire");
+            else if (e.getSource().is(DamageTypeTags.IS_FREEZING))
+                StylishData.getCap(killer).addCombo(0.15f, "wardance.combo.environmental.freeze");
+            else if (e.getSource().is(DamageTypeTags.IS_LIGHTNING))
+                StylishData.getCap(killer).addCombo(0.2f, "wardance.combo.environmental.lightning");
+            else if (finisher == null)
+                StylishData.getCap(killer).addCombo(0.15f, "wardance.combo.environmental");
+        }
         if (finisher instanceof LivingEntity killer) {
-            StylishData.getCap(killer).addCombo(0.2f, "wardance.combo.kill");
+            if (killer != credit && credit instanceof LivingEntity c) {
+                if (TargetingUtils.isAlly(killer, credit)) {
+                    StylishData.getCap(killer).addCombo(0.2f, "wardance.combo.teamkill_kill");
+                    StylishData.getCap(c).addCombo(0.2f, "wardance.combo.teamkill_credit");
+                }
+                else{
+                    StylishData.getCap(killer).addCombo(0.2f, "wardance.combo.friendlyfire_kill");
+                    StylishData.getCap(c).addCombo(0.2f, "wardance.combo.friendlyfire_credit");
+                }
+            } else StylishData.getCap(killer).addCombo(0.15f, "wardance.combo.kill");
         }
     }
 

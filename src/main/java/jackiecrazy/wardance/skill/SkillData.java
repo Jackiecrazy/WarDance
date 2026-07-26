@@ -111,6 +111,11 @@ public class SkillData {
         targets.removeIf(a -> a.isDeadOrDying() || a.isRemoved() || a == caster);
     }
 
+    public void clearTargets(){
+        targets.clear();
+        targetIDs.clear();
+    }
+
     public SkillData setCaster(@Nullable LivingEntity caster) {
         if (caster == null) return this;
         casterID = caster.getUUID();
@@ -179,6 +184,10 @@ public class SkillData {
     public void decrementDuration() {
         duration--;
         markDirty();
+    }
+
+    public void addDuration(float amount) {
+        duration += amount;
     }
 
     public void decrementDuration(float amount) {

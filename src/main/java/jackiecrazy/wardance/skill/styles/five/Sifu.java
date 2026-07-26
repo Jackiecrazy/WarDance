@@ -1,6 +1,5 @@
 package jackiecrazy.wardance.skill.styles.five;
 
-import jackiecrazy.footwork.Footwork;
 import jackiecrazy.footwork.api.CombatDamageSource;
 import jackiecrazy.footwork.api.FootworkAttributes;
 import jackiecrazy.footwork.capability.goal.GoalCapabilityProvider;
@@ -12,11 +11,10 @@ import jackiecrazy.footwork.utils.EffectUtils;
 import jackiecrazy.footwork.utils.GeneralUtils;
 import jackiecrazy.footwork.utils.TargetingUtils;
 import jackiecrazy.wardance.WarDance;
-import jackiecrazy.wardance.api.WarAttributes;
 import jackiecrazy.wardance.capability.skill.CasterData;
 import jackiecrazy.wardance.capability.status.Marks;
 import jackiecrazy.wardance.entity.ai.ExposeGoal;
-import jackiecrazy.wardance.event.SweepEvent;
+import jackiecrazy.wardance.event.BasicSweepEvent;
 import jackiecrazy.wardance.mixin.SifuDropsMixin;
 import jackiecrazy.wardance.skill.SkillColors;
 import jackiecrazy.wardance.skill.SkillData;
@@ -115,7 +113,7 @@ public class Sifu extends ColorRestrictionStyle {
     @Override
     public void onProc(LivingEntity caster, Event procPoint, STATE state, SkillData stats, LivingEntity target) {
         //no sweeping
-        if (procPoint instanceof SweepEvent e && procPoint.getPhase() == EventPriority.HIGHEST && stats.getState() == STATE.COOLING) {
+        if (procPoint instanceof BasicSweepEvent e && procPoint.getPhase() == EventPriority.HIGHEST && stats.getState() == STATE.COOLING) {
             e.setCanceled(true);
         }
         //applies to you

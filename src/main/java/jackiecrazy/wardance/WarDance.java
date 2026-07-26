@@ -189,6 +189,7 @@ public class WarDance {
         EntityRenderers.register(WarEntities.GRAPPLE.get(), GrappleRenderer::new);
         EntityRenderers.register(WarEntities.FLYING_BLOCK.get(), ItemEntityRenderer::new);
         EntityRenderers.register(WarEntities.THROWN_WEAPON.get(), ItemEntityRenderer::new);
+        EntityRenderers.register(WarEntities.WIND_BLADE.get(), ItemEntityRenderer::new);
         event.enqueueWork(() -> {
             MenuScreens.register(WarContainers.QUIVER_MENU.get(), QuiverScreen::new);
             MenuScreens.register(WarContainers.WEEB_MENU.get(), StudyTheBladeScreen::new);

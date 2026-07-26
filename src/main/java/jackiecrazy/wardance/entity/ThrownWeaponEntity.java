@@ -109,7 +109,7 @@ public class ThrownWeaponEntity extends FlyingWeaponEntity {
         this.fake = fake;
         if (fake && noCosmetics()) {
             setEffect(FlyingWeaponEffect.BIG_SHADOW);
-        } else setEffect(FlyingWeaponEffect.WEAPON);
+        } //else setEffect(FlyingWeaponEffect.WEAPON);
         return this;
     }
 
@@ -403,7 +403,7 @@ public class ThrownWeaponEntity extends FlyingWeaponEntity {
     }
 
     @Override
-    protected void extraOnHit(LivingEntity e, Entity target) {
+    protected void onHitEntity(LivingEntity e, Entity target) {
         if (getHeldItem().getItem() instanceof BlockItem)
             target.setDeltaMovement(getDeltaMovement());
         runImpactActions();

@@ -10,7 +10,6 @@ import jackiecrazy.footwork.move.motionframe.render.RenderItemGroup;
 import jackiecrazy.footwork.move.utils.ArgumentContext;
 import jackiecrazy.footwork.utils.GeneralUtils;
 import jackiecrazy.footwork.utils.TargetingUtils;
-import jackiecrazy.wardance.WarDance;
 import jackiecrazy.wardance.api.IDrag;
 import jackiecrazy.wardance.capability.flyingweapon.FlyingWeaponData;
 import jackiecrazy.wardance.config.MobSpecs;
@@ -190,40 +189,41 @@ public class FlyingWeaponEntity extends FlyingItemEntity implements IDrag {
                 .filter(tg -> tg != this && tg != owner && !alreadyHit.contains(tg) &&
                         ((tg instanceof ThrownWeaponEntity twe && twe.isAttackable()) || (!TargetingUtils.isAlly(tg, owner) &&
                                 !tg.getType().is(MobSpecs.IGNORED_BY_SWEEP) &&
+                                //tg.hasPassenger(owner)&&
                                 !tg.isInvulnerable()))).toList();
-        LivingEntity e = getOwner();
-        int ticks = e.attackStrengthTicker;
+        LivingEntity owner = getOwner();
+        int ticks = owner.attackStrengthTicker;
         if (targets.isEmpty()) return ret;
         animProgress-=getWeight()/2;
-        ItemStack main = e.getMainHandItem();
+        ItemStack main = owner.getMainHandItem();
         try {
-            CombatUtils.quickSwap(e, getHeldItem());
+            CombatUtils.quickSwap(owner, getHeldItem());
             WeaponStats.info_override = getInfo();
             for (Entity target : targets) {
-                e.attackStrengthTicker = 99999;
+                owner.attackStrengthTicker = 99999;
                 if (!alreadyHit.isEmpty()) {
-                    CombatData.getCap(e).tickProc("oncePerAttack");
-                    CombatData.getCap(e).tickProc("durabilityConsumed");
+                    CombatData.getCap(owner).tickProc("oncePerAttack");
+                    CombatData.getCap(owner).tickProc("durabilityConsumed");
                 }
                 alreadyHit.add(target);//it used to be lower but this allows you to chain attacks properly
                 //CombatData.getCap(e).tickProc("oncePerAttack");
                 target.invulnerableTime = 0;
-                CombatData.getCap(e).setOffhandAttack(flipClientRender());
+                CombatData.getCap(owner).setOffhandAttack(flipClientRender());
                 CombatDamageSource cds = damageSource();
-                GeneralUtils.attack(e, target, cds);
+                GeneralUtils.attack(owner, target, cds);
                 ret = true;
 //                alreadyHit.add(target);
-                extraOnHit(e, target);
-                CombatData.getCap(e).setOffhandAttack(false);
+                onHitEntity(owner, target);
+                CombatData.getCap(owner).setOffhandAttack(false);
             }
         } catch (Exception ex) {
             ex.printStackTrace();
         } finally {
             //todo test this fix
 //            if (e.getMainHandItem() == getHeldItem())
-                CombatUtils.quickSwap(e, main);
+                CombatUtils.quickSwap(owner, main);
 //            else WarDance.LOGGER.warn("detected that held item is now different, aborting swap back");
-            e.attackStrengthTicker = ticks;
+            owner.attackStrengthTicker = ticks;
             WeaponStats.info_override = null;
         }
         return ret;
@@ -246,7 +246,7 @@ public class FlyingWeaponEntity extends FlyingItemEntity implements IDrag {
     }
 
 
-    protected void extraOnHit(LivingEntity e, Entity target) {
+    protected void onHitEntity(LivingEntity e, Entity target) {
 
     }
 

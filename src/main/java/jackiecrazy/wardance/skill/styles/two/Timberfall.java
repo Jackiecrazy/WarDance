@@ -66,7 +66,7 @@ public class Timberfall extends WarCry {
             }
         } else if (procPoint instanceof SkillCastEvent sce && sce.getSkill()!=this && state == STATE.INACTIVE && sce.getEntity() == caster) {
             cast(caster, 3);
-        }else if(procPoint instanceof SweepEvent se&& state==STATE.ACTIVE){
+        }else if(procPoint instanceof BasicSweepEvent se&& state==STATE.ACTIVE){
             se.setColor(Color.ORANGE);
         }
         super.onProc(caster, procPoint, state, stats, target);

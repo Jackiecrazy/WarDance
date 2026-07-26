@@ -14,7 +14,7 @@ import net.minecraftforge.eventbus.api.Cancelable;
 import java.awt.*;
 
 @Cancelable
-public class SweepEvent extends LivingEvent {
+public class BasicSweepEvent extends LivingEvent {
     private final double oangle;
     private final double oscale;
     private final double olevel;
@@ -24,7 +24,7 @@ public class SweepEvent extends LivingEvent {
     private Color color = Color.WHITE;
     private SweepAttack.SWEEPTYPE t;
     private WeaponStats.AttackType state;
-    public SweepEvent(LivingEntity entity, InteractionHand hand, ItemStack stack, SweepAttack.SWEEPTYPE type, double base, double scale) {
+    public BasicSweepEvent(LivingEntity entity, InteractionHand hand, ItemStack stack, SweepAttack.SWEEPTYPE type, double base, double scale) {
         super(entity);
         oangle = a = base;
         oscale = b = scale;
@@ -99,7 +99,7 @@ public class SweepEvent extends LivingEvent {
         return color;
     }
 
-    public SweepEvent setColor(Color color) {
+    public BasicSweepEvent setColor(Color color) {
         this.color = color;
         return this;
     }

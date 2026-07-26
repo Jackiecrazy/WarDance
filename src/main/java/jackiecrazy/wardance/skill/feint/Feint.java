@@ -13,7 +13,7 @@ import jackiecrazy.footwork.api.CombatDamageSource;
 import jackiecrazy.wardance.capability.skill.CasterData;
 import jackiecrazy.wardance.capability.skill.ISkillCapability;
 import jackiecrazy.wardance.capability.status.Marks;
-import jackiecrazy.wardance.event.SweepEvent;
+import jackiecrazy.wardance.event.BasicSweepEvent;
 import jackiecrazy.wardance.skill.*;
 import jackiecrazy.wardance.utils.CombatUtils;
 import jackiecrazy.wardance.utils.DamageUtils;
@@ -130,7 +130,7 @@ public class Feint extends Skill {
 
     @Override
     public void onProc(LivingEntity caster, Event procPoint, STATE state, SkillData stats, LivingEntity target) {
-        if (procPoint instanceof SweepEvent se && procPoint.getPhase() == EventPriority.LOWEST && (state == STATE.HOLSTERED || state == STATE.ACTIVE)) {
+        if (procPoint instanceof BasicSweepEvent se && procPoint.getPhase() == EventPriority.LOWEST && (state == STATE.HOLSTERED || state == STATE.ACTIVE)) {
             se.setCanceled(true);
         }
         if (procPoint instanceof LivingAttackEvent e && procPoint.getPhase() == EventPriority.HIGHEST && state == STATE.HOLSTERED && DamageUtils.isMeleeAttack(e.getSource()) && e.getEntity() == target && cast(caster, target, -999)) {

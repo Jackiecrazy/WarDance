@@ -38,4 +38,9 @@ public class WarEntities {
             .updateInterval(1)
             .setShouldReceiveVelocityUpdates(true)
             .build("flying_weapon"));
+
+    public static final RegistryObject<EntityType<WindBladeEntity>> WIND_BLADE = ENTITIES.register("wind_blade", () -> EntityType.Builder
+            .of(WindBladeEntity::new, MobCategory.MISC)
+            .sized(0.4F, 0.4F)
+            .build("wind_blade"));
 }

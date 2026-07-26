@@ -133,7 +133,7 @@ public abstract class FiveElementFist extends Skill {
             if (found >= 0) {
                 int next = (x + 1) % cycle.length;
                 if (next == (found + 1) % cycle.length)
-                    StylishData.getCap(caster).addCombo(0.05f, this.getRegistryName().toString());
+                    StylishData.getCap(caster).addCombo(0.1f, this.getRegistryName().toString());
                 final Skill skill = cycle[next];
                 if (CasterData.getCap(caster).replaceSkill(this, skill)) {
                     return;

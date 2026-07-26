@@ -173,7 +173,7 @@ public class StylishCapability implements IStyleCapability {
                 if (getCombo() > ComboRanks.A) {
                     stabilize();
                     if (guy instanceof Player pl) {
-                        pl.displayClientMessage(Component.translatable("wardance.deathdoor.recovered").withStyle(ChatFormatting.GRAY), true);
+                        pl.displayClientMessage(Component.translatable("wardance.deathdoor.recovered").withStyle(ChatFormatting.GREEN), true);
                     }
                 } else if (guy.getMaxHealth() <= 1) {
                     canDeathDoor = false;

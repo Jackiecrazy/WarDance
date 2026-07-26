@@ -336,7 +336,7 @@
             ],
             "effects": {
               "effects": [
-                "WEAPON"
+                "WEAPON","TRAIL"
               ]
             }
           }
