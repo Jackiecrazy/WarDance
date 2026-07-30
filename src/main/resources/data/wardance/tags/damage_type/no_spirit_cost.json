@@ -1,0 +1,8 @@
+{
+  "values": [
+    {
+      "id": "footwork:skill",
+      "required": false
+    }
+  ]
+}

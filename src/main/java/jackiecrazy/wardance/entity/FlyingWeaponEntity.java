@@ -10,6 +10,7 @@ import jackiecrazy.footwork.move.motionframe.render.RenderItemGroup;
 import jackiecrazy.footwork.move.utils.ArgumentContext;
 import jackiecrazy.footwork.utils.GeneralUtils;
 import jackiecrazy.footwork.utils.TargetingUtils;
+import jackiecrazy.wardance.WarDance;
 import jackiecrazy.wardance.api.IDrag;
 import jackiecrazy.wardance.capability.flyingweapon.FlyingWeaponData;
 import jackiecrazy.wardance.config.MobSpecs;
@@ -213,7 +214,7 @@ public class FlyingWeaponEntity extends FlyingItemEntity implements IDrag {
                 GeneralUtils.attack(owner, target, cds);
                 ret = true;
 //                alreadyHit.add(target);
-                onHitEntity(owner, target);
+                extraOnHit(owner, target);
                 CombatData.getCap(owner).setOffhandAttack(false);
             }
         } catch (Exception ex) {
@@ -246,7 +247,7 @@ public class FlyingWeaponEntity extends FlyingItemEntity implements IDrag {
     }
 
 
-    protected void onHitEntity(LivingEntity e, Entity target) {
+    protected void extraOnHit(LivingEntity e, Entity target) {
 
     }
 
@@ -285,6 +286,7 @@ public class FlyingWeaponEntity extends FlyingItemEntity implements IDrag {
         //setTetheringEntity(getOwner());
         setIntangible(false);
         setInteractionRange(1f);
+        WarDance.LOGGER.debug("throwing to "+to +", visibility "+getRawVisualTag());
 
 //        if (CombatData.getCap(getOwner()).consumeSpirit(CombatData.getCap(getOwner()).getMaxSpirit()))
 //            cacheInfo = HitInfo.BREACH;

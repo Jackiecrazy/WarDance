@@ -1,6 +1,7 @@
 package jackiecrazy.wardance.handlers;
 
 import jackiecrazy.footwork.api.CombatDamageSource;
+import jackiecrazy.footwork.api.FootworkDamageTypeTags;
 import jackiecrazy.footwork.capability.action.ActionData;
 import jackiecrazy.footwork.capability.resources.CombatData;
 import jackiecrazy.footwork.capability.resources.ICombatCapability;
@@ -403,7 +404,7 @@ public class CombatHandler {
                 } else {
                     //handle stamina consumption on everything else
                     if (!semeCap.alreadyProc("oncePerAttack")) {//first hit of a multihit attack this tick, add combo based on state
-                        double percRed = semeCap.doConsumeSpirit(atkMult) / atkMult;
+                        double percRed = e.getSource().is(WarDance.NO_SPIRIT_COST) ? 1 : semeCap.doConsumeSpirit(atkMult) / atkMult;
                         semeCap.tickProc(SPIRITKB, percRed);
                         StylishData.getCap(seme).processAttack(false);
                         StylishData.getCap(seme).addCombo(0.12f, e.getSource().getMsgId());
@@ -626,10 +627,11 @@ public class CombatHandler {
     @SubscribeEvent(priority = EventPriority.HIGHEST)
     public static void pain(LivingHurtEvent e) {
         final LivingEntity uke = e.getEntity();
+        final DamageSource source = e.getSource();
         if (GeneralConfig.debug && !uke.level().isClientSide) {
-            WarDance.LOGGER.debug("damage from " + e.getSource() + " received with amount " + e.getAmount());
+            WarDance.LOGGER.debug("damage from " + source + " received with amount " + e.getAmount());
         }
-        DamageSource ds = e.getSource();
+        DamageSource ds = source;
         if (Float.isNaN(e.getAmount())) {
             WarDance.LOGGER.fatal("intercepted a livinghurtevent with nan damage, canceling");
             e.setAmount(0);
@@ -671,7 +673,7 @@ public class CombatHandler {
         }
 
         //fall damage deducts posture
-        if (e.getSource().is(DamageTypeTags.IS_FALL) || e.getSource().is(DamageTypeTags.IS_EXPLOSION)) {
+        if (source.is(DamageTypeTags.IS_FALL) || source.is(DamageTypeTags.IS_EXPLOSION)) {
             cap.consumePosture(null, e.getAmount(), ICombatCapability.BreachLevel.STUN);
         }
 
@@ -693,7 +695,7 @@ public class CombatHandler {
             }
 
             //consume stamina if we didn't do it yet, somehow
-            if (!semeCap.alreadyProc("oncePerAttack")) {
+            if (!semeCap.alreadyProc("oncePerAttack") && !source.is(WarDance.NO_SPIRIT_COST)) {
                 final float exhausted = semeCap.doConsumeSpirit((float) (e.getAmount() * sweepInfo.spirit_multiplier()));
                 cap.recordDamage(exhausted);
                 e.setAmount(e.getAmount() - exhausted);
@@ -714,45 +716,47 @@ public class CombatHandler {
 //        }
 
         final boolean alert = StealthUtils.INSTANCE.getAwareness(ds.getEntity() instanceof LivingEntity le ? le : null, uke) == StealthUtils.Awareness.ALERT;
-        final boolean creative = e.getSource().is(DamageTypeTags.BYPASSES_INVULNERABILITY);
-        final boolean environmentalDamage = (e.getSource().getEntity() == null);
-        final boolean nonMeleeDamage = e.getSource().isIndirect() || !(e.getSource().getEntity() instanceof LivingEntity le);//|| CombatUtils.getAttackState(le) == WeaponStats.AttackType.UNDEFINED;
-        if (!e.getSource().is(WarDance.NO_DARKTIDE_DMG) && !uke.getType().is(MobSpecs.NO_DARKTIDE)) {//skip the whole darktide spiel
-            //nonplayers cannot hold on and will vaporize if the damage is too high
-            if (!(uke instanceof Player) && e.getAmount() > uke.getMaxHealth() * 2) {
-                e.setAmount(e.getAmount() + cap.getRecordedDamage());
-                cap.stopRecording(null);
-            } else if (!creative && !cap.isStunned() && !cap.alreadyProc("knockdown")) {
-                //yeah this is basically darktide with discrimination
-                final float dtEff = (float) uke.getAttributeValue(WarAttributes.DARKTIDE.get());
-                final float reduction = Mth.clamp(cap.getPosturePercentage() * dtEff, 0, 1);
-                // environmental: only deal damage at 0 qi
-                if (environmentalDamage) {
-                    cap.tickProc("cancelShake");
-                    if (cap.consumePosture(QiCosts.translateEnvironment(ds), 1) == 0) {
-                        e.setAmount(e.getAmount() * Mth.clamp(1 - dtEff, 0, 1));
-                        cap.tickProc("deathDenied");
-                    }//else e.setAmount(e.getAmount()/2);
-                } else if (uke instanceof Player) {
-                    //players
-                    // you cannot die unless you are knocked down
-                    // vs projectile: qi drain then internal damage
-                    // vs melee: damage and posture simultaneously
-                    //cap.tickProc("deathDenied");
-                    cap.recordDamage(e.getAmount() * reduction);
-                    e.setAmount(e.getAmount() * (1 - reduction));
-                    //e.setAmount(0);
-                    if (nonMeleeDamage && cap.getPosture() > 0) {
-                        e.setAmount(0);
-                        cap.tickProc("deathDenied");
-                    }
-                } else {
-                    //mobs
-                    // vs projectiles: qi drain then damage
-                    // vs melee: qi drain then damage
-                    if (alert) {
-                        //darktide
-                        e.setAmount(e.getAmount() * (1 - cap.getPosturePercentage()));
+        final boolean skipDarkTide = source.is(DamageTypeTags.BYPASSES_INVULNERABILITY)
+                ||source.is(WarDance.NO_DARKTIDE_DMG)
+                ||uke.getType().is(MobSpecs.NO_DARKTIDE)
+                ||source.is(FootworkDamageTypeTags.SKILL);
+        final boolean environmentalDamage = (source.getEntity() == null);
+        final boolean nonMeleeDamage = source.isIndirect() || !(source.getEntity() instanceof LivingEntity le);//|| CombatUtils.getAttackState(le) == WeaponStats.AttackType.UNDEFINED;//skip the whole darktide spiel
+        //nonplayers cannot hold on and will vaporize if the damage is too high
+        if (!(uke instanceof Player) && e.getAmount() > uke.getMaxHealth() * 2) {
+            e.setAmount(e.getAmount() + cap.getRecordedDamage());
+            cap.stopRecording(null);
+        } else if (!skipDarkTide && !cap.isStunned() && !cap.alreadyProc("knockdown")) {
+            //yeah this is basically darktide with discrimination
+            final float dtEff = (float) uke.getAttributeValue(WarAttributes.DARKTIDE.get());
+            final float reduction = Mth.clamp(cap.getPosturePercentage() * dtEff, 0, 1);
+            // environmental: only deal damage at 0 qi for both mobs and players
+            if (environmentalDamage) {
+                cap.tickProc("cancelShake");
+                if (cap.consumePosture(QiCosts.translateEnvironment(ds), 1) == 0) {
+                    e.setAmount(e.getAmount() * Mth.clamp(1 - dtEff, 0, 1));
+                    cap.tickProc("deathDenied");
+                }//else e.setAmount(e.getAmount()/2);
+            } else if (uke instanceof Player) {
+                //players
+                // you cannot die unless you are knocked down
+                // vs projectile: qi drain then internal damage
+                // vs melee: damage and posture simultaneously
+                //cap.tickProc("deathDenied");
+                cap.recordDamage(e.getAmount() * reduction);
+                e.setAmount(e.getAmount() * (1 - reduction));
+                //e.setAmount(0);
+                if (nonMeleeDamage && cap.getPosture() > 0) {
+                    e.setAmount(0);
+                    cap.tickProc("deathDenied");
+                }
+            } else {
+                //mobs
+                // vs projectiles: qi drain then damage
+                // vs melee: qi drain then damage
+                if (alert) {
+                    //darktide
+                    e.setAmount(e.getAmount() * (1 - cap.getPosturePercentage()));
 //                    if (nonMeleeDamage && (cap.getPosture() > 0)) {
 //                        //cap.recordDamage(cap.consumePosture(e.getAmount()));//I think this is double dipping posture for projectiles?
 //                        float amnt = e.getAmount();
@@ -760,11 +764,10 @@ public class CombatHandler {
 //                        cap.recordDamage(amnt * cap.getPosturePercentage());
 //                        e.setAmount(amnt * (1 - cap.getPosturePercentage()));
 //                    }
-                    }
                 }
-                //if the damage made it all the way here, congratulations! It hurts the entity.
-                //e.setCanceled(true);
             }
+            //if the damage made it all the way here, congratulations! It hurts the entity.
+            //e.setCanceled(true);
         }
         //stuff used to exist here, moved to footwork
         if (GeneralConfig.debug && !uke.level().isClientSide) {
@@ -886,8 +889,7 @@ public class CombatHandler {
                 if (TargetingUtils.isAlly(killer, credit)) {
                     StylishData.getCap(killer).addCombo(0.2f, "wardance.combo.teamkill_kill");
                     StylishData.getCap(c).addCombo(0.2f, "wardance.combo.teamkill_credit");
-                }
-                else{
+                } else {
                     StylishData.getCap(killer).addCombo(0.2f, "wardance.combo.friendlyfire_kill");
                     StylishData.getCap(c).addCombo(0.2f, "wardance.combo.friendlyfire_credit");
                 }

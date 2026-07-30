@@ -44,24 +44,25 @@ import java.util.Comparator;
 import java.util.List;
 
 public class ThrownWeaponEntity extends FlyingWeaponEntity {
-    private static final List<Action> NOTHING = new ArrayList<>();
-    private static final EntityDimensions dim = new EntityDimensions(1f, 1f, false);
+    protected static final List<Action> NOTHING = new ArrayList<>();
+    protected static final EntityDimensions dim = new EntityDimensions(1f, 1f, false);
+    public boolean mcDebug = false;
     boolean attackable = false;
-    private MotionManager FORWARD = new MotionManagers.FixedMM(new MotionFrame(new Vec3(0, 0, 1), Vec3.ZERO, 0), 1);
-    private boolean dormant = false;
-    private double gravity = 0;
-    private int pierce = 0;
-    private int bounce = 0;
-    private boolean lodge_block = true;
-    private boolean lodge_entity = true;
-    private int auto_recall = -1;
-    private boolean recalling = false;
-    private boolean fake = false, pickup_flourish = false;
-    private double maxRange = 32;
-    private List<Action> impactActions = List.of();
-    private List<Action> embedActions = List.of();
-    private EntityDimensions recalc = null;
-    private Vec3 hitVec = Vec3.ZERO;
+    protected MotionManager FORWARD = new MotionManagers.FixedMM(new MotionFrame(new Vec3(0, 0, 1), Vec3.ZERO, 0), 1);
+    protected boolean dormant = false;
+    protected double gravity = 0;
+    protected int pierce = 0;
+    protected int bounce = 0;
+    protected boolean lodge_block = true;
+    protected boolean lodge_entity = true;
+    protected int auto_recall = -1;
+    protected boolean recalling = false;
+    protected boolean fake = false, pickup_flourish = false;
+    protected double maxRange = 32;
+    protected List<Action> impactActions = List.of();
+    protected List<Action> embedActions = List.of();
+    protected EntityDimensions recalc = null;
+    protected Vec3 hitVec = Vec3.ZERO;
 
     public ThrownWeaponEntity(EntityType<? extends FlyingItemEntity> type,
                               Level level) {
@@ -98,11 +99,6 @@ public class ThrownWeaponEntity extends FlyingWeaponEntity {
 
     private boolean noCosmetics() {
         return getCosmeticItem() == null || (getCosmeticItem().nodes().length == 1 && getCosmeticItem().nodes()[0] instanceof RenderNode.ItemNode in && in.stack().equals(getHeldItem()));
-    }
-
-    public ThrownWeaponEntity setAttackable(boolean f) {
-        attackable = f;
-        return this;
     }
 
     public ThrownWeaponEntity setFake(boolean fake) {
@@ -159,7 +155,12 @@ public class ThrownWeaponEntity extends FlyingWeaponEntity {
 
     @Override
     public boolean isAttackable() {
-        return attackable||dormant;
+        return attackable || dormant;
+    }
+
+    public ThrownWeaponEntity setAttackable(boolean f) {
+        attackable = f;
+        return this;
     }
 
     @Override
@@ -179,7 +180,7 @@ public class ThrownWeaponEntity extends FlyingWeaponEntity {
 
     @Override
     public boolean skipAttackInteraction(Entity ent) {
-        if(isRemoved()||level().isClientSide)return true;
+        if (isRemoved() || level().isClientSide) return true;
         if (ent instanceof Player p && (p.getMainHandItem().isEmpty()) && canPickup()) {
             return pickup(p);
         }
@@ -203,6 +204,7 @@ public class ThrownWeaponEntity extends FlyingWeaponEntity {
                 addDeltaMovement(new Vec3(0, gravity, 0));
             if (getOwner() instanceof Player p) {
                 if (p.distanceToSqr(this) > maxRange * maxRange) {
+                    System.out.println("debug: exceeded range " + maxRange + " with dist " + p.distanceTo(this));
                     pickup(p);
                     return;
                 }
@@ -229,6 +231,10 @@ public class ThrownWeaponEntity extends FlyingWeaponEntity {
         if (intangible()) return;
         super.updateSpin(cur);
     }
+
+//    public boolean canCollideWith(Entity e) {
+//        return true;
+//    }
 
     private void doneHitting() {
         //getIdlePose().setAngularVelocity(Vec3.ZERO.toVector3f());
@@ -266,23 +272,19 @@ public class ThrownWeaponEntity extends FlyingWeaponEntity {
         gravity = (float) Math.min(gravity, -0.04);
     }
 
-//    public boolean canCollideWith(Entity e) {
-//        return true;
-//    }
-
-    private void runImpactActions() {
+    protected void runImpactActions() {
         if (!impactActions.isEmpty())
             ActionData.getCap(this).mark(getOwner(), new ActionSetWrapper(impactActions));
     }
 
-    private void runEmbedActions() {
+    protected void runEmbedActions() {
         if (!embedActions.isEmpty())
             ActionData.getCap(this).mark(getOwner(), new ActionSetWrapper(embedActions));
         setImpactActions(NOTHING);
         setEmbedActions(NOTHING);
     }
 
-    private void tickAndRecall() {
+    protected void tickAndRecall() {
         if (recalling || getDeltaMovement().lengthSqr() > 0.001) return;
         if (auto_recall == 0) {
             //recall
@@ -340,7 +342,8 @@ public class ThrownWeaponEntity extends FlyingWeaponEntity {
         boolean success = player.getAbilities().instabuild | fake;
         if (!success) {
             //fake items skip all of this inventory insertion stuff
-            if (player.getMainHandItem().isEmpty()&&!CombatUtils.inDestructiveSwapSequence()) slot = player.getInventory().selected;
+            if (player.getMainHandItem().isEmpty() && !CombatUtils.inDestructiveSwapSequence())
+                slot = player.getInventory().selected;
             else if (QuiverData.getData(player).sheathe(getPickResult(), false)) {
                 success = true;
                 QuiverData.getData(player).sync(player);
@@ -403,7 +406,7 @@ public class ThrownWeaponEntity extends FlyingWeaponEntity {
     }
 
     @Override
-    protected void onHitEntity(LivingEntity e, Entity target) {
+    protected void extraOnHit(LivingEntity e, Entity target) {
         if (getHeldItem().getItem() instanceof BlockItem)
             target.setDeltaMovement(getDeltaMovement());
         runImpactActions();
@@ -439,7 +442,7 @@ public class ThrownWeaponEntity extends FlyingWeaponEntity {
 
     @Override
     public EntityDimensions getDimensions(@NotNull Pose p_19975_) {
-        if (intangible()) {
+        if (hitVec!=null&&intangible()) {
             if (recalc == null) {
                 double minX = 0, maxX = 0, minY = 0, maxY = 0;
                 for (RenderNode rn : getCosmeticItem().nodes()) {
@@ -454,6 +457,7 @@ public class ThrownWeaponEntity extends FlyingWeaponEntity {
                 Vec3 height = new Vec3(0, maxY - minY, 0);
                 Vec3 worldUp = new Vec3(0, 1, 0);
                 Vec3 lookRotated = hitVec.cross(worldUp).cross(hitVec);
+                if(lookRotated.lengthSqr()<=0.01)lookRotated=new Vec3(0,0,1);
                 Vec3 add = MovementUtils.resolveVelocity(lookRotated, width, false).add(MovementUtils.resolveVelocity(lookRotated, height, false));
                 recalc = dim.scale(1 + (float) add.multiply(1, 0, 1).length(), 1 + (float) add.y);
                 this.markHurt();
@@ -463,6 +467,11 @@ public class ThrownWeaponEntity extends FlyingWeaponEntity {
             return recalc;
         } else recalc = null;
         return super.getDimensions(p_19975_);
+    }
+
+    @Override
+    public void setPos(double x, double y, double z) {
+        super.setPos(x, y, z);
     }
 
     @Override

@@ -361,6 +361,7 @@ public class RenderEvents {
                     //GuiComponent.drawString(mc.font, String.valueOf(num), atX - mc.font.width(num) / 2, pair.getSecond(), 0xFFFFFF);
                     poseStack.popPose();
                 }
+                RenderSystem.setShaderColor(1,1,1,1);
 //                if (s.getArbitraryFloat() != 0) {
 //                    String display = formatter.format(s.getArbitraryFloat());
 //                    guiGraphics.drawString(mc.font, display, atX + 4, pair.getSecond() + 8, 0xffffff);

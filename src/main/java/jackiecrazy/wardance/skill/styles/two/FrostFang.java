@@ -22,6 +22,19 @@ import java.util.HashSet;
 import java.util.UUID;
 
 public class FrostFang extends WarCry {
+    /*
+     * doubled damage on first melee strike,
+     * sticks a mark on the target that slows them transfers half damage received to internal instead
+     * (basically halves damage taken).
+     * the mark goes down by a bit per second. extra if you're not in range or they're targeting something else.
+     * Mark also goes down somewhat when they are hit by another attacker
+     * at specific mark breakpoints it will ding.
+     * Attacks within ~2 seconds of the ding gain increased damage and ticks the mark down more.
+     *
+     * every x seconds, mark a target nearby for 2 seconds. Mark glows and causes target to take double damage
+     * successful attacks convert mark to frostbite and halves the cooldown to the next mark
+     * Frostbite deals freezing damage, slows the target in time, converts half damage received to internal, and prevents them being marked again
+     */
     private static final AttributeModifier luck = new AttributeModifier(UUID.fromString("77723885-afb9-4937-9c02-612ee5b6135a"), "frost fang bonus", 2, AttributeModifier.Operation.ADDITION);
     private static final AttributeModifier speed = new AttributeModifier(UUID.fromString("07430131-9baa-47b4-a51c-9a6f48d564f4"), "frost fang bonus", 0.4, AttributeModifier.Operation.MULTIPLY_BASE);
     private final HashSet<String> tag = makeTag("chant", ProcPoints.melee, ProcPoints.on_being_hurt, ProcPoints.countdown, ProcPoints.recharge_time, ProcPoints.recharge_sleep);

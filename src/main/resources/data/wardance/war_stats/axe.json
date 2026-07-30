@@ -424,7 +424,7 @@
         "duration": 3,
         "easing": "LINEAR",
         "spin": [
-          -100, 0, 0
+          -130, 0, 0
         ],
         "frames": [
           {

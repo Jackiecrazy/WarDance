@@ -1,22 +1,28 @@
 package jackiecrazy.wardance.skill.styles.two;
 
+import jackiecrazy.footwork.api.CombatDamageSource;
 import jackiecrazy.footwork.capability.stylish.StylishData;
 import jackiecrazy.footwork.entity.flyingweapon.FlyingItemEntity;
 import jackiecrazy.footwork.event.DodgeEvent;
+import jackiecrazy.wardance.WarDance;
 import jackiecrazy.wardance.entity.WarEntities;
 import jackiecrazy.wardance.entity.WindBladeEntity;
 import jackiecrazy.wardance.event.PlayInteractionEvent;
 import jackiecrazy.wardance.skill.ProcPoints;
 import jackiecrazy.wardance.skill.SkillData;
 import jackiecrazy.wardance.utils.SkillUtils;
+import net.minecraft.sounds.SoundEvents;
+import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.ai.attributes.AttributeModifier;
 import net.minecraft.world.entity.projectile.Projectile;
 import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.common.ForgeMod;
 import net.minecraftforge.event.entity.living.LivingAttackEvent;
+import net.minecraftforge.event.entity.living.LivingHurtEvent;
 import net.minecraftforge.eventbus.api.Event;
 import net.minecraftforge.eventbus.api.EventPriority;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.HashSet;
 import java.util.UUID;
@@ -48,12 +54,44 @@ public class WindScar extends WarCry {
     }
 
     @Override
+    public boolean markTick(@Nullable LivingEntity caster, LivingEntity target, SkillData sd) {
+        return markTickDown(sd);
+    }
+
+    @Override
+    public boolean showsMark(SkillData mark, LivingEntity target) {
+        return false;
+    }
+
+    @Override
+    public @Nullable SkillData onMarked(LivingEntity caster,
+                                        LivingEntity target,
+                                        SkillData sd,
+                                        @Nullable SkillData existing) {
+        if (existing != null) {
+            sd.addArbitraryFloat(existing.getArbitraryFloat() + 1);
+        }
+        return sd;
+    }
+
+    @Override
+    public boolean onStateChange(LivingEntity caster, SkillData prev, STATE from, STATE to) {
+        prev.setState(STATE.ACTIVE);
+        return true;
+    }
+
+    @Override
     public void onProc(LivingEntity caster, Event procPoint, STATE state, SkillData stats, LivingEntity target) {
-        if (procPoint instanceof LivingAttackEvent hurt && procPoint.getPhase() == EventPriority.HIGHEST && state == STATE.ACTIVE && hurt.getEntity() == target) {
+        if (procPoint.getPhase() != EventPriority.LOWEST) return;
+        if (procPoint instanceof LivingAttackEvent hurt && hurt.getEntity() == target) {
             stats.addTarget(target);
-            mark(caster, target, 60);
-            if (hurt.getSource().getDirectEntity() instanceof Projectile)
+            if (hurt.getSource().getDirectEntity() instanceof Projectile && (!(hurt.getSource() instanceof CombatDamageSource cds) || cds.getSkillUsed() != this))
                 windPressure(caster, stats, 1);
+        }
+        if (procPoint instanceof LivingHurtEvent hurt && hurt.getEntity() == target) {
+            //reduce damage for repeated hits
+            if (hurt.getSource() instanceof CombatDamageSource cds && cds.getSkillUsed() == this)
+                mark(caster, target, 0.5f);
         }
         if (procPoint instanceof DodgeEvent && !caster.level().isClientSide) {
             windPressure(caster, stats, 1);
@@ -62,44 +100,43 @@ public class WindScar extends WarCry {
             switch (p.getMoveState()) {
                 case AERIAL, SPRINTING:
                     windPressure(caster, stats, 1);
-                case THROW, PICKUP_FLOURISH,DRAW_ATTACK:
+                case THROW, PICKUP_FLOURISH, DRAW_ATTACK:
                     windPressure(caster, stats, 2);
             }
         }
         super.onProc(caster, procPoint, state, stats, target);
     }
 
-    private void windPressure(LivingEntity player, SkillData d, int amount) {
+    private void windPressure(LivingEntity caster, SkillData d, int amount) {
+        if(d.getState()!=STATE.ACTIVE)
+        activate(caster, 0);
+        d.setMaxDuration(10);
         d.addDuration(amount);
-        if (d.getDuration() >= 1) {
+        if (d.getDuration() >= 10) {
             //create wind blades
-            final float numofBlades = StylishData.getCap(player).getCombo() * 1.5f;
+            final float numofBlades = StylishData.getCap(caster).getCombo() * 3f * SkillUtils.getSkillEffectiveness(caster);
             //make a fan shape
             Vec3 up = new Vec3(0, 1, 0);
-            Vec3 forward = player.getLookAngle();
+            Vec3 forward = caster.getLookAngle();
             //cross two different ways to get two corners
             Vec3 firstHalf = up.cross(forward);
             Vec3 secondHalf = forward.cross(up);
-            for (Vec3 v : new Vec3[]{firstHalf, secondHalf})
-                for (int x = 0; x < numofBlades; x++) {
-                    WindBladeEntity fwe = new WindBladeEntity(WarEntities.WIND_BLADE.get(), player.level());
-                    fwe.setOwner(player);
-                    Vec3 look = player.getLookAngle().reverse();
-                    Vec3 interpol = v.lerp(up, x / numofBlades);
-                    fwe.setPosRaw(player.getX() + look.x + interpol.x, player.getEyeY() + look.y + interpol.y, player.getZ() + look.z + interpol.z);
-                    fwe.yeet(player.getEyePosition().add(look).add(interpol.scale(3)), 2.5);
+            caster.level().playSound(null, caster.getX(), caster.getY(), caster.getZ(), SoundEvents.PLAYER_ATTACK_SWEEP, SoundSource.PLAYERS, 0.45f + WarDance.rand.nextFloat() * 0.5f, 0.75f + WarDance.rand.nextFloat() * 0.5f);
+            for (int x = 0; x < numofBlades; x++) {
+                    Vec3 interpol = firstHalf.lerp(secondHalf, x/numofBlades).add(Vec3.ZERO.lerp(up, x/numofBlades));
+                    WindBladeEntity fwe = new WindBladeEntity(WarEntities.WIND_BLADE.get(), caster.level());
+                    fwe.setSkillUsed(this).setOwner(caster);
+                    Vec3 look = caster.getLookAngle().reverse();
+                    fwe.moveTo(caster.getX() + look.x + interpol.x, caster.getEyeY() + look.y + interpol.y, caster.getZ() + look.z + interpol.z);
+                    fwe.yeet(caster.getEyePosition().add(look).add(interpol.scale(3)), 2.5);
                     fwe.setState(FlyingItemEntity.STATE.THROW_TRACK);
                     fwe.addTargets(d.getTargets());
                     fwe.setInteractionRange(1f);
-                    player.level().addFreshEntity(fwe);
+                    caster.level().addFreshEntity(fwe);
                 }
             d.clearTargets();
             d.setDuration(0);
         }
-    }
-
-    @Override
-    public boolean onStateChange(LivingEntity caster, SkillData prev, STATE from, STATE to) {
-        return super.onStateChange(caster, prev, from, to);
+        d.markDirty();
     }
 }

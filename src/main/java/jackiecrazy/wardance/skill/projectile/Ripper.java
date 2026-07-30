@@ -44,7 +44,7 @@ public class Ripper extends Skill {
                     mark(caster, target, extra);
             }
         }
-        if (procPoint instanceof ProjectileImpactEvent pie && procPoint.getPhase() == EventPriority.LOWEST && target!=null && pie.getProjectile().getOwner() == caster) {
+        if (procPoint instanceof ProjectileImpactEvent pie && procPoint.getPhase() == EventPriority.LOWEST && target!=null && target!=caster && pie.getProjectile().getOwner() == caster) {
             mark(caster, target, 1);
         }
     }

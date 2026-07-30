@@ -2,103 +2,135 @@ package jackiecrazy.wardance.skill.styles.two;
 
 import jackiecrazy.footwork.api.CombatDamageSource;
 import jackiecrazy.footwork.api.FootworkDamageArchetype;
+import jackiecrazy.footwork.api.FootworkDamageTypeTags;
 import jackiecrazy.footwork.capability.resources.CombatData;
-import jackiecrazy.footwork.capability.stylish.StylishData;
-import jackiecrazy.footwork.event.ConsumePostureEvent;
+import jackiecrazy.footwork.utils.GeneralUtils;
+import jackiecrazy.footwork.utils.TargetingUtils;
 import jackiecrazy.wardance.WarDance;
-import jackiecrazy.wardance.capability.status.Marks;
+import jackiecrazy.wardance.event.PlayInteractionEvent;
 import jackiecrazy.wardance.event.SkillCastEvent;
-import jackiecrazy.wardance.skill.ProcPoints;
 import jackiecrazy.wardance.skill.SkillData;
-import jackiecrazy.wardance.skill.WarSkills;
-import jackiecrazy.wardance.utils.DamageUtils;
 import jackiecrazy.wardance.utils.SkillUtils;
-import net.minecraft.core.particles.ParticleTypes;
-import net.minecraft.server.level.ServerLevel;
 import net.minecraft.tags.DamageTypeTags;
 import net.minecraft.world.damagesource.DamageSource;
+import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.LivingEntity;
-import net.minecraftforge.event.entity.living.LivingAttackEvent;
+import net.minecraft.world.entity.ai.attributes.AttributeModifier;
+import net.minecraft.world.entity.ai.attributes.Attributes;
+import net.minecraftforge.common.ForgeMod;
 import net.minecraftforge.event.entity.living.LivingHurtEvent;
 import net.minecraftforge.eventbus.api.Event;
 import net.minecraftforge.eventbus.api.EventPriority;
-import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.HashSet;
 import java.util.UUID;
 
 @Mod.EventBusSubscriber(modid = WarDance.MODID)
 public class FlameDance extends WarCry {
-    private static final UUID attackSpeed = UUID.fromString("338a5b6f-46c2-44b6-913f-f15c5e59cd48");
-    private final HashSet<String> tag = makeTag("chant", ProcPoints.melee, ProcPoints.on_being_hurt, ProcPoints.modify_crit, ProcPoints.countdown, ProcPoints.recharge_time, ProcPoints.recharge_sleep);
-    private final HashSet<String> no = makeTag(ProcPoints.melee, ProcPoints.on_parry);
+    private static final UUID attackSpeed = UUID.fromString("338a5b6f-46c2-44b6-921f-f15c5e59cd48");
+    private static final AttributeModifier knockback = new AttributeModifier(attackSpeed, "flame dance debuff", -0.4, AttributeModifier.Operation.MULTIPLY_BASE);
 
-    @SubscribeEvent
-    public static void echoes(LivingHurtEvent e) {
-        LivingEntity target = e.getEntity();
-        Marks.getCap(target).getActiveMark(WarSkills.FLAME_DANCE.get()).ifPresent(a -> e.setAmount(e.getAmount() * (1 + a.getArbitraryFloat() * 0.03f * a.getEffectiveness())));
-    }
-
-    @SubscribeEvent
-    public static void echoes(ConsumePostureEvent e) {
-        LivingEntity target = e.getEntity();
-        Marks.getCap(target).getActiveMark(WarSkills.FLAME_DANCE.get()).ifPresent(a -> e.setAmount(e.getAmount() * (1 + a.getArbitraryFloat() * 0.03f * a.getEffectiveness())));
+    @Override
+    public void onEquip(LivingEntity caster) {
+        SkillUtils.addAttribute(caster, Attributes.ATTACK_KNOCKBACK, knockback);
+        super.onEquip(caster);
     }
 
     @Override
-    protected int getDuration(float might) {
-        return (int) (might * 2);
+    public void onUnequip(LivingEntity caster, SkillData stats) {
+        SkillUtils.removeAttribute(caster, Attributes.ATTACK_KNOCKBACK, knockback);
+        super.onUnequip(caster, stats);
     }
 
     @Override
     public void onProc(LivingEntity caster, Event procPoint, STATE state, SkillData stats, LivingEntity target) {
         if (caster == target) return;
-        if (procPoint instanceof LivingAttackEvent lae && (DamageUtils.isMeleeAttack(lae.getSource()) || DamageUtils.isSkillAttack(lae.getSource())) && !lae.getSource().is(DamageTypeTags.BYPASSES_ARMOR) && procPoint.getPhase() == EventPriority.HIGHEST && lae.getEntity() == target) {
-            mark(caster, target, 4, 1);
-            //kaboom!
-            if (StylishData.getCap(caster).maxAdrenaline()) {
-                if (!DamageUtils.isSkillAttack(lae.getSource())) {
-                    DamageSource kaboom = new CombatDamageSource(caster).setDamageTyping(FootworkDamageArchetype.MAGICAL).setProcSkillEffects(true).setSkillUsed(this).setPostureDamage(0).bypassArmor();
-                    float f = getExistingMark(target).getArbitraryFloat() * SkillUtils.getSkillEffectiveness(caster);
-                    if(getExistingMark(target).getArbitraryFloat()>49){
-                        completeChallenge(caster);
-                    }
-                    target.hurt(kaboom, f * ((int) (2 + f / 10)) / 2f);
-                    target.hurtTime = target.hurtDuration = target.invulnerableTime = 0;
-                    removeMark(target);
-                    if (caster.level() instanceof ServerLevel server) {
-                        server.sendParticles(ParticleTypes.SMALL_FLAME, target.getX(), target.getY(), target.getZ(), (int) f * 5, target.getBbWidth(), target.getBbHeight(), target.getBbWidth(), 0f);
-                    }
-                }
+        if (procPoint instanceof LivingHurtEvent lae && notRecursive(lae.getSource()) && procPoint.getPhase() == EventPriority.HIGHEST && lae.getEntity() == target) {
+            if (hasMark(target) && getExistingMark(target).getArbitraryFloat() > 50 && !CombatData.getCap(target).alreadyProc("flameDance_mark")) {
+                target.hurtTime = target.hurtDuration = target.invulnerableTime = 0;
+                target.hurt(new CombatDamageSource(caster, null, null).setIsFire().flagBreach(false).setIndirect(true).setArmorReductionPercentage(1).setKnockbackPercentage(0).setSkillUsed(this).setProcSkillEffects(true), getExistingMark(target).getArbitraryFloat() * SkillUtils.getSkillEffectiveness(caster) / 100);
+                CombatData.getCap(target).tickProc("flameDance_mark");
             }
-        } else if (procPoint instanceof SkillCastEvent sce && procPoint.getPhase() == EventPriority.HIGHEST && sce.getEntity() == caster) {
-            mark(caster, target, 4, 1);
+            if (!CombatData.getCap(caster).alreadyProc("flameDance") && hasMark(target) && getExistingMark(target).getDuration() > 1.5) {
+                //rapid attack, heat wave
+                heatWave(caster, 5);
+                CombatData.getCap(caster).tickProc("flameDance");
+            }
+            mark(caster, target, 1.70f, 0);
+        }
+        if (procPoint instanceof SkillCastEvent sce && procPoint.getPhase() == EventPriority.HIGHEST && !CombatData.getCap(caster).alreadyProc("flameDance") && sce.getEntity() == caster) {
+            heatWave(caster, 8);
+            CombatData.getCap(caster).tickProc("flameDance");
+        }
+        if (procPoint instanceof PlayInteractionEvent.Post p) {
+            switch (p.getOriginalState()) {
+                case THROW, DRAW_ATTACK:
+                    heatWave(caster, 5);
+                    CombatData.getCap(caster).tickProc("flameDance");
+            }
         }
         super.onProc(caster, procPoint, state, stats, target);
     }
 
+    private boolean notRecursive(DamageSource lae) {
+        return !lae.is(DamageTypeTags.IS_FIRE) && !lae.is(DamageTypeTags.BYPASSES_RESISTANCE) && !lae.is(FootworkDamageTypeTags.SKILL);
+    }
 
     @Override
     public boolean equippedTick(LivingEntity caster, SkillData stats) {
-        if (stats.getState() == STATE.ACTIVE) {
-            return activeTick(stats);
+        if (caster.tickCount % 5 == 0) {
+            //aoe mark
+            heatWave(caster, 3);
         }
         return super.equippedTick(caster, stats);
     }
 
+    private void heatWave(LivingEntity caster, float amount) {
+        final double reach = caster.getAttributeValue(ForgeMod.ENTITY_REACH.get());
+        for (LivingEntity e : caster.level().getEntitiesOfClass(LivingEntity.class, caster.getBoundingBox().inflate(reach * 2))) {
+            if (GeneralUtils.getDistSqCompensated(caster, e) < reach * reach && TargetingUtils.isHostile(e, caster)) {
+                mark(caster, e, 1.5f, amount);
+            }
+        }
+    }
+
     @Override
     public boolean markTick(@Nullable LivingEntity caster, LivingEntity target, SkillData sd) {
-        return markTickDown(sd);
+        boolean ret = markTickDown(sd);
+        if (sd.getDuration() <= 0 && sd.getArbitraryFloat() >= 1) {
+            sd.addArbitraryFloat(-1f);
+            sd.setDuration(0.05f);
+        }
+        return ret;
     }
 
     @Nullable
     @Override
     public SkillData onMarked(LivingEntity caster, LivingEntity target, SkillData sd, @Nullable SkillData existing) {
+        float orig = sd.getArbitraryFloat();
         if (existing != null)
             sd.addArbitraryFloat(existing.getArbitraryFloat());
-        sd.setArbitraryFloat(Math.min(sd.getArbitraryFloat(), 50));
+        SkillUtils.modifyAttribute(target, Attributes.ARMOR, attackSpeed, -sd.getArbitraryFloat() / 100d, AttributeModifier.Operation.MULTIPLY_TOTAL);
+        if (sd.getArbitraryFloat() > 50) {
+            target.removeEffect(MobEffects.FIRE_RESISTANCE);
+        }
+        if (orig > 3 || (sd.getArbitraryFloat() > 100 && target.getRemainingFireTicks() < 10)) {
+            target.setSecondsOnFire(2 + (int) (sd.getArbitraryFloat() / 25));
+        }
+        if (sd.getArbitraryFloat() > 100 && orig > 0 && !CombatData.getCap(target).alreadyProc("flameDance_mark")) {
+            target.hurtTime = target.hurtDuration = target.invulnerableTime = 0;
+            target.hurt(new CombatDamageSource(caster, null, null).setDamageTyping(FootworkDamageArchetype.TRUE).setIndirect(true).flagBreach(false).setArmorReductionPercentage(1).setKnockbackPercentage(0).setSkillUsed(this).setProcSkillEffects(true), orig / 10);
+            sd.setArbitraryFloat(100);
+            target.hurtTime = target.hurtDuration = target.invulnerableTime = 0;
+            CombatData.getCap(target).tickProc("flameDance_mark");
+        }
         return sd;
+    }
+
+    @Override
+    public void onMarkEnd(LivingEntity caster, LivingEntity target, SkillData sd) {
+        SkillUtils.removeAttribute(target, Attributes.ARMOR, attackSpeed);
+        super.onMarkEnd(caster, target, sd);
     }
 }

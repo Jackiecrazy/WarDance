@@ -43,4 +43,8 @@ public class WarEntities {
             .of(WindBladeEntity::new, MobCategory.MISC)
             .sized(0.4F, 0.4F)
             .build("wind_blade"));
+    public static final RegistryObject<EntityType<TimberfallEntity>> TIMBER = ENTITIES.register("timber", () -> EntityType.Builder
+            .of(TimberfallEntity::new, MobCategory.MISC)
+            .sized(0.4F, 0.4F)
+            .build("timber"));
 }

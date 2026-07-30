@@ -153,6 +153,9 @@ public class Throw extends WeaponInteractions.WeaponInteraction {
     }
 
     public void transformThrown(ThrownWeaponEntity e) {
+        e.mcDebug=true;
+        WarDance.LOGGER.debug("[start]owner is at  "+e.getOwner().position());
+        WarDance.LOGGER.debug("[start]weapon currently at"+e.position());
         applyCosmeticStack(e, new ArgumentContext(e.getOwner(), e));
         e.setAutoRecall(auto_recall_cooldown);
         e.setLodgeEntity(lodge_entity);
@@ -161,13 +164,17 @@ public class Throw extends WeaponInteractions.WeaponInteraction {
         e.setIdlePose(flying_pose);
         e.setGravity(gravity);
         e.setHitInfo(attack_info);
+        WarDance.LOGGER.debug("owner is at  "+e.getOwner().position());
+        WarDance.LOGGER.debug("weapon currently at"+e.position());
         Vec3 randomDrift = new Vec3((WarDance.rand.nextFloat() * 2 - 1) * getDrift().x, (WarDance.rand.nextFloat() * 2 - 1) * getDrift().y, (WarDance.rand.nextFloat() * 2 - 1) * getDrift().z);
         e.setPos(e.position().add(randomDrift).add(MovementUtils.resolveVelocity(e.getDeltaMovement().normalize(), offset, false)));
+        WarDance.LOGGER.debug("readjusted thrown item position to "+e.position());
         e.setImpactActions(on_impact);
         e.setEmbedActions(on_embed);
         e.setAttackable(attackable);
         e.setFake(!consume_item);
         e.setFlourish(pickup_flourish);
         e.setMaxRange(max_range);
+        e.mcDebug=false;
     }
 }

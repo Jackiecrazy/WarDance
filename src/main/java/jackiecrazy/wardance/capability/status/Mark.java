@@ -34,10 +34,10 @@ public class Mark implements IMark {
     @Override
     public void mark(SkillData d) {
         if (dude.get() == null) return;
-        if (statuus.containsKey(d.getSkill())) {
-            if (GeneralConfig.debug)
-                WarDance.LOGGER.warn("status " + d + " is already active, merging according to rules.");
-        }
+//        if (statuus.containsKey(d.getSkill())) {
+//            if (GeneralConfig.debug)
+//                WarDance.LOGGER.warn("status " + d + " is already active, merging according to rules.");
+//        }
         SkillData sd = d.getSkill().onMarked(d.getCaster(dude.get().level()), dude.get(), d, statuus.get(d.getSkill()));
         if (sd != null)
             statuus.put(d.getSkill(), sd);

@@ -22,6 +22,7 @@
                 "spirit_multiplier": 0,
                 "posture_scale": 0.5,
                 "hit_other": {
+                  "tags": ["deathDenied"],
                   "run_actions": [
                     {
                       "ID": "pin",

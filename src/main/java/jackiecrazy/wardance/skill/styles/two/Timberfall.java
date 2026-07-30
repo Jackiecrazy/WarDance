@@ -1,6 +1,10 @@
 package jackiecrazy.wardance.skill.styles.two;
 
 import jackiecrazy.footwork.api.CombatDamageSource;
+import jackiecrazy.footwork.entity.flyingweapon.FlyingItemEntity;
+import jackiecrazy.wardance.entity.TimberfallEntity;
+import jackiecrazy.wardance.entity.WarEntities;
+import jackiecrazy.wardance.entity.WindBladeEntity;
 import jackiecrazy.wardance.event.*;
 import jackiecrazy.wardance.skill.ProcPoints;
 import jackiecrazy.wardance.skill.SkillData;
@@ -11,6 +15,7 @@ import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.event.entity.living.LivingAttackEvent;
 import net.minecraftforge.event.entity.living.LivingHurtEvent;
 import net.minecraftforge.eventbus.api.Event;
@@ -66,6 +71,13 @@ public class Timberfall extends WarCry {
             }
         } else if (procPoint instanceof SkillCastEvent sce && sce.getSkill()!=this && state == STATE.INACTIVE && sce.getEntity() == caster) {
             cast(caster, 3);
+            TimberfallEntity fwe = new TimberfallEntity(WarEntities.TIMBER.get(), caster.level());
+            fwe.setSkillUsed(this).setOwner(caster);
+            Vec3 look = caster.getLookAngle();
+            fwe.moveTo(caster.getX() + look.x, caster.getEyeY() + look.y, caster.getZ() + look.z);
+            fwe.yeet(caster.getEyePosition().add(look), 2.5);
+            fwe.setInteractionRange(1f);
+            caster.level().addFreshEntity(fwe);
         }else if(procPoint instanceof BasicSweepEvent se&& state==STATE.ACTIVE){
             se.setColor(Color.ORANGE);
         }

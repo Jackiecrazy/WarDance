@@ -222,6 +222,8 @@ public class StylishCapability implements IStyleCapability {
         return combo;
     }
 
+    private float prevCombo;
+
     @Override
     public void addCombo(float amount, @Nonnull String source) {
         //calculate freshness
@@ -236,14 +238,17 @@ public class StylishCapability implements IStyleCapability {
             if (fresh >= 1)
                 CombatData.getCap(le).rally(1);
             final float effectiveCombo = getCombo() - 1;
-            SkillUtils.modifyAttribute(le, Attributes.MOVEMENT_SPEED, STYLISH, 0.08 * effectiveCombo, AttributeModifier.Operation.MULTIPLY_BASE);
-            SkillUtils.modifyAttribute(le, Attributes.ATTACK_SPEED, STYLISH, 0.08 * effectiveCombo, AttributeModifier.Operation.MULTIPLY_TOTAL);
-            SkillUtils.modifyAttribute(le, WarAttributes.SKILL_EFFECTIVENESS.get(), STYLISH, 0.08 * effectiveCombo, AttributeModifier.Operation.MULTIPLY_TOTAL);
-            SkillUtils.modifyAttribute(le, WarAttributes.AIR_GRAVITY.get(), STYLISH, -Math.min(0.9, 0.3 * effectiveCombo), AttributeModifier.Operation.MULTIPLY_TOTAL);
-            SkillUtils.modifyAttribute(le, ForgeMod.ENTITY_REACH.get(), STYLISH, 0.08 * effectiveCombo, AttributeModifier.Operation.MULTIPLY_TOTAL);
-            SkillUtils.modifyAttribute(le, Attributes.LUCK, STYLISH, effectiveCombo, AttributeModifier.Operation.ADDITION);
-            FlyingWeaponData.getCap(le).getWeapon(InteractionHand.MAIN_HAND).ifPresent(fwe -> fwe.setSpeed(1 + effectiveCombo * 0.4f));
-            FlyingWeaponData.getCap(le).getWeapon(InteractionHand.OFF_HAND).ifPresent(fwe -> fwe.setSpeed(1 + effectiveCombo * 0.4f));
+            if(effectiveCombo!=prevCombo) {
+                SkillUtils.modifyAttribute(le, Attributes.MOVEMENT_SPEED, STYLISH, 0.06 * effectiveCombo, AttributeModifier.Operation.MULTIPLY_BASE);
+                SkillUtils.modifyAttribute(le, Attributes.ATTACK_SPEED, STYLISH, 0.02 * effectiveCombo, AttributeModifier.Operation.MULTIPLY_TOTAL);
+                SkillUtils.modifyAttribute(le, WarAttributes.SKILL_EFFECTIVENESS.get(), STYLISH, 0.02 * effectiveCombo, AttributeModifier.Operation.MULTIPLY_TOTAL);
+                SkillUtils.modifyAttribute(le, WarAttributes.AIR_GRAVITY.get(), STYLISH, -Math.min(0.9, 0.15 * effectiveCombo), AttributeModifier.Operation.MULTIPLY_TOTAL);
+                SkillUtils.modifyAttribute(le, ForgeMod.ENTITY_REACH.get(), STYLISH, 0.02 * effectiveCombo, AttributeModifier.Operation.MULTIPLY_TOTAL);
+                SkillUtils.modifyAttribute(le, Attributes.LUCK, STYLISH, effectiveCombo, AttributeModifier.Operation.ADDITION);
+                FlyingWeaponData.getCap(le).getWeapon(InteractionHand.MAIN_HAND).ifPresent(fwe -> fwe.setSpeed(1 + effectiveCombo * 0.1f));
+                FlyingWeaponData.getCap(le).getWeapon(InteractionHand.OFF_HAND).ifPresent(fwe -> fwe.setSpeed(1 + effectiveCombo * 0.1f));
+                prevCombo = effectiveCombo;
+            }
         }
         combo += amount;
         addAdrenaline(amount / 6);

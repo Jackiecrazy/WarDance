@@ -19,13 +19,13 @@ Heat dissipates rapidly when they leave your radius.
 rapid attacks, swapping weapons, casting skills, and in general keeping rhythm will produce bursts of heat that increase heat more than usual.
 This burst will ignite (or burn away fire immunity), disarm, or
     timberfall: delayed tree falling
-After skill cast, create a tree nearby. (the tree slowly grows in size and damage?)
-Trees count as terrain for sabaton smash etc. TODO update move mixin to fire event on collide
+After skill cast, create a tree nearby. the tree slowly grows in size and damage
+Trees count as terrain for sabaton smash etc.
 Dealing damage to the tree or slamming a mob onto it causes it to fall over and deal extra (breaching?) damage
     frost fang: patience, enter, burst damage, retreat
-you get a spinny wheel with a sweet spot somewhere on it.
-Swinging or attacking locks in the wheel for 2 seconds, then it resets the sweet spot somewhere else.
-Locking the wheel in sweet spot gives extra damage
+doubled damage on first melee strike, sticks a mark on the target that transfers half damage received to internal instead
+the mark goes down by 3 per second. +1 if you're not in range, +2 for distracted, +3 for unaware
+randomly as the mark ticks down it could ding. Attacks within ~2 seconds of the ding gain increased damage and ticks the mark down
     pestilent edge
     doppelsoldner
     gold rush
@@ -34,6 +34,7 @@ Locking the wheel in sweet spot gives extra damage
     walk of dionysus
     blood tax
     unstable spirit
+gunlance's heat gauge?
     gambler's whimsy
     sifu
 

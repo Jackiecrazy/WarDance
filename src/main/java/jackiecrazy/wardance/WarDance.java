@@ -94,6 +94,7 @@ public class WarDance {
             ArgumentTypeInfos.registerByClass(CategoryArgument.class,
                     SingletonArgumentInfo.contextFree(CategoryArgument::color)));
     public static final TagKey<DamageType> NO_DARKTIDE_DMG = TagKey.create(Registries.DAMAGE_TYPE, new ResourceLocation("wardance", "no_darktide"));
+    public static final TagKey<DamageType> NO_SPIRIT_COST = TagKey.create(Registries.DAMAGE_TYPE, new ResourceLocation("wardance", "no_spirit_cost"));
 
     public WarDance() {
 
@@ -190,6 +191,7 @@ public class WarDance {
         EntityRenderers.register(WarEntities.FLYING_BLOCK.get(), ItemEntityRenderer::new);
         EntityRenderers.register(WarEntities.THROWN_WEAPON.get(), ItemEntityRenderer::new);
         EntityRenderers.register(WarEntities.WIND_BLADE.get(), ItemEntityRenderer::new);
+        EntityRenderers.register(WarEntities.TIMBER.get(), ItemEntityRenderer::new);
         event.enqueueWork(() -> {
             MenuScreens.register(WarContainers.QUIVER_MENU.get(), QuiverScreen::new);
             MenuScreens.register(WarContainers.WEEB_MENU.get(), StudyTheBladeScreen::new);

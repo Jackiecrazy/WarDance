@@ -32,7 +32,7 @@ public class LoadItemAction extends Action {
             //level().destroyBlock(hookedHit.getBlockPos(), false, p);
             Vec3 pos = le.position();
             fwe.setOwner(le);
-            fwe.setPosRaw(pos.x, pos.y, pos.z);
+            fwe.moveTo(pos.x, pos.y, pos.z);
             fwe.setInteractionRange(1);
             fwe.setIdlePose(pose);
             fwe.setIntangible(true);

@@ -53,4 +53,9 @@ public class WarCry extends SkillStyle {
 //        }
         return instantCast(prev, from, to);
     }
+    @Override
+    public boolean displaysInactive(LivingEntity caster, SkillData stats) {
+        return true;
+    }
+
 }

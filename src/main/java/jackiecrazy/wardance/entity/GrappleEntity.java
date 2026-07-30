@@ -331,7 +331,7 @@ public class GrappleEntity extends FlyingItemEntity {
                     //level().destroyBlock(hookedHit.getBlockPos(), false, p);
                     Vec3 pos = hookedHit.getBlockPos().getCenter();
                     fwe.setOwner(p);
-                    fwe.setPosRaw(pos.x, pos.y, pos.z);
+                    fwe.moveTo(pos.x, pos.y, pos.z);
                     fwe.setInteractionRange(1);
                     fwe.setState(STATE.THROW_NATURAL);
                     fwe.setIntangible(true);
