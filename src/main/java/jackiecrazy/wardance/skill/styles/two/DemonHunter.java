@@ -6,6 +6,8 @@ import jackiecrazy.wardance.capability.skill.CasterData;
 import jackiecrazy.wardance.capability.status.Marks;
 import jackiecrazy.wardance.config.weapon.WeaponStats;
 import jackiecrazy.wardance.event.BasicSweepEvent;
+import jackiecrazy.wardance.event.KickEvent;
+import jackiecrazy.wardance.event.PlayInteractionEvent;
 import jackiecrazy.wardance.skill.SkillColors;
 import jackiecrazy.wardance.skill.SkillData;
 import jackiecrazy.wardance.skill.WarSkills;
@@ -40,7 +42,7 @@ public class DemonHunter extends ColorRestrictionStyle {
     private static final AttributeModifier reach = new AttributeModifier(UUID.fromString("abe24c38-73e3-4191-9df4-e06e117699c1"), "demon hunter bonus", 3, AttributeModifier.Operation.ADDITION);
 
     public DemonHunter() {
-        super(2, false, SkillColors.cyan);
+        super(3, false, SkillColors.cyan);
     }
 
     @SubscribeEvent()
@@ -61,7 +63,14 @@ public class DemonHunter extends ColorRestrictionStyle {
 
     @Override
     public void onProc(LivingEntity caster, Event procPoint, STATE state, SkillData stats, @Nullable LivingEntity target) {
-        if (procPoint instanceof LivingAttackEvent a && DamageUtils.isMeleeAttack(a.getSource()) && target != null && a.getEntity() != caster && a.getPhase() == EventPriority.LOWEST) {
+        if(procPoint.getPhase() != EventPriority.LOWEST)return;
+        if(procPoint instanceof PlayInteractionEvent.Post){
+            SkillUtils.removeAttribute(caster, ForgeMod.ENTITY_REACH.get(), reach);
+        }
+        if (procPoint instanceof LivingAttackEvent a && DamageUtils.isMeleeAttack(a.getSource()) && target != null && a.getEntity() != caster) {
+            if (!Marks.getCap(target).isMarked(this))  mark(caster, target, 3);
+        }
+        if(procPoint instanceof KickEvent ke && ke.getEntity()==caster){
             if (Marks.getCap(target).isMarked(this)) {
                 if (!caster.onGround()) {
                     MobilityUtils.knockBack(caster, target, 1, true, true);
@@ -70,7 +79,7 @@ public class DemonHunter extends ColorRestrictionStyle {
                     if (SkillUtils.hasAttribute(caster, ForgeMod.ENTITY_REACH.get(), reach))
                         completeChallenge(caster);
                 }
-            } else mark(caster, target, 3);
+            }
             SkillUtils.removeAttribute(caster, ForgeMod.ENTITY_REACH.get(), reach);
         }
         if (procPoint instanceof BasicSweepEvent se) {

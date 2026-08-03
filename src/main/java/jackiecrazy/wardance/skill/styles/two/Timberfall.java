@@ -1,33 +1,62 @@
 package jackiecrazy.wardance.skill.styles.two;
 
 import jackiecrazy.footwork.api.CombatDamageSource;
-import jackiecrazy.footwork.entity.flyingweapon.FlyingItemEntity;
+import jackiecrazy.footwork.event.StunEvent;
+import jackiecrazy.wardance.WarDance;
+import jackiecrazy.wardance.capability.skill.CasterData;
 import jackiecrazy.wardance.entity.TimberfallEntity;
 import jackiecrazy.wardance.entity.WarEntities;
-import jackiecrazy.wardance.entity.WindBladeEntity;
-import jackiecrazy.wardance.event.*;
+import jackiecrazy.wardance.event.MeleePostureEvent;
+import jackiecrazy.wardance.event.PlayInteractionEvent;
+import jackiecrazy.wardance.event.SkillCastEvent;
 import jackiecrazy.wardance.skill.ProcPoints;
 import jackiecrazy.wardance.skill.SkillData;
+import jackiecrazy.wardance.skill.WarSkills;
 import jackiecrazy.wardance.utils.DamageUtils;
 import jackiecrazy.wardance.utils.SkillUtils;
 import net.minecraft.core.particles.BlockParticleOption;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.Mob;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.event.entity.living.LivingAttackEvent;
+import net.minecraftforge.event.entity.living.LivingChangeTargetEvent;
 import net.minecraftforge.event.entity.living.LivingHurtEvent;
 import net.minecraftforge.eventbus.api.Event;
 import net.minecraftforge.eventbus.api.EventPriority;
+import net.minecraftforge.eventbus.api.SubscribeEvent;
+import net.minecraftforge.fml.common.Mod;
 
 import java.awt.*;
 import java.util.HashSet;
 
+import static net.minecraftforge.fml.common.Mod.EventBusSubscriber.Bus.FORGE;
+
+@Mod.EventBusSubscriber(modid = WarDance.MODID, bus = FORGE)
 public class Timberfall extends WarCry {
-    private static final Color c=new Color(71, 48, 9);
+    private static final Color c = new Color(71, 48, 9);
     private final HashSet<String> tag = makeTag("chant", ProcPoints.melee, ProcPoints.modify_crit, ProcPoints.on_hurt, ProcPoints.attack_might, ProcPoints.on_being_hurt, ProcPoints.recharge_time, ProcPoints.recharge_sleep);
     private final HashSet<String> no = none;//.getTagFromContents(new HashSet<>(Collections.emptyList()));
+
+    @SubscribeEvent(priority = EventPriority.LOWEST)
+    public static void targeted(LivingChangeTargetEvent e) {
+        LivingEntity target = e.getNewTarget();
+        if (target != null && e.getEntity() instanceof Mob m && m.getTarget() != target && CasterData.getCap(target).isSkillEquipped(WarSkills.TIMBERFALL.get())){
+            plantTree(target);
+        }
+    }
+
+    private static void plantTree(LivingEntity caster) {
+        TimberfallEntity fwe = new TimberfallEntity(WarEntities.TIMBER.get(), caster.level());
+        fwe.setSkillUsed(WarSkills.TIMBERFALL.get()).setOwner(caster);
+        Vec3 look = Vec3.ZERO.add(WarDance.rand.nextDouble() - 0.5, 0, WarDance.rand.nextDouble() - 0.5).scale(10).add(new Vec3(0, 7, 0));
+        fwe.moveTo(caster.getX() + look.x, caster.getEyeY() + look.y, caster.getZ() + look.z);
+        //fwe.yeet(caster.getEyePosition().add(look.scale(2)), 1);
+        fwe.setInteractionRange(1f);
+        caster.level().addFreshEntity(fwe);
+    }
 
     @Override
     protected int getDuration(float might) {
@@ -36,7 +65,7 @@ public class Timberfall extends WarCry {
 
     @Override
     public boolean onStateChange(LivingEntity caster, SkillData prev, STATE from, STATE to) {
-        if(to==STATE.ACTIVE) {
+        if (to == STATE.ACTIVE) {
             prev.setState(STATE.ACTIVE);
             return true;
         }
@@ -54,32 +83,13 @@ public class Timberfall extends WarCry {
     @Override
     public void onProc(LivingEntity caster, Event procPoint, STATE state, SkillData stats, LivingEntity target) {
         if (procPoint.getPhase() != EventPriority.LOWEST) return;
-        if (procPoint instanceof LivingAttackEvent lae && DamageUtils.isMeleeAttack(lae.getSource()) && state == STATE.ACTIVE && lae.getEntity() == target) {
-            markUsed(caster, true);
-        } else if (procPoint instanceof MeleePostureEvent.Defense cpe && state == STATE.ACTIVE && cpe.getEntity() == target) {
-            cpe.setPostureConsumption(cpe.getPostureConsumption() * 1.4f * SkillUtils.getSkillEffectiveness(caster));
-            markUsed(caster, true);
-            if (caster.level() instanceof ServerLevel server)
-                server.sendParticles(new BlockParticleOption(ParticleTypes.BLOCK, Blocks.OAK_LOG.defaultBlockState()).setPos(target.blockPosition()), target.getX(), target.getY(), target.getZ(), 40, target.getBbWidth(), target.getBbHeight() / 2, target.getBbWidth(), 0.5f);
-        } else if (procPoint instanceof LivingHurtEvent cpe && stats.isCondition() && DamageUtils.isMeleeAttack(cpe.getSource()) && state == STATE.ACTIVE && cpe.getEntity() == target) {
-            if (!cpe.isCanceled()) {
-                if (cpe.getSource() instanceof CombatDamageSource cds) {
-                    cds.setProcSkillEffects(true);
-                    cds.setSkillUsed(this);
-                }
-                cpe.setAmount(cpe.getAmount() * 1.4f * SkillUtils.getSkillEffectiveness(caster));
-            }
-        } else if (procPoint instanceof SkillCastEvent sce && sce.getSkill()!=this && state == STATE.INACTIVE && sce.getEntity() == caster) {
-            cast(caster, 3);
-            TimberfallEntity fwe = new TimberfallEntity(WarEntities.TIMBER.get(), caster.level());
-            fwe.setSkillUsed(this).setOwner(caster);
-            Vec3 look = caster.getLookAngle();
-            fwe.moveTo(caster.getX() + look.x, caster.getEyeY() + look.y, caster.getZ() + look.z);
-            fwe.yeet(caster.getEyePosition().add(look), 2.5);
-            fwe.setInteractionRange(1f);
-            caster.level().addFreshEntity(fwe);
-        }else if(procPoint instanceof BasicSweepEvent se&& state==STATE.ACTIVE){
-            se.setColor(Color.ORANGE);
+        if (procPoint instanceof StunEvent cpe && state == STATE.ACTIVE && cpe.getEntity() == target) {
+            plantTree(caster);
+        } else if (procPoint instanceof SkillCastEvent sce && sce.getEntity() == caster) {
+            plantTree(caster);
+        } else if (procPoint instanceof PlayInteractionEvent.Post se && state == STATE.ACTIVE) {
+            //se.setColor(Color.ORANGE);
+            se.getInteraction().tags();
         }
         super.onProc(caster, procPoint, state, stats, target);
     }

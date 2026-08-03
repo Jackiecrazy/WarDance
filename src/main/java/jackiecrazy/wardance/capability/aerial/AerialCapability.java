@@ -28,7 +28,7 @@ public class AerialCapability implements IAerialMode {
     private int off;
     private WallState state = WallState.NONE;
     private Direction direction = Direction.DOWN;
-    private boolean aerial = false;
+    private int aerial = 0;
 
     public AerialCapability() {
     }
@@ -61,13 +61,15 @@ public class AerialCapability implements IAerialMode {
 
     @Override
     public boolean isAerialMode() {
-        return aerial;
+        return aerial > 0;
     }
 
     @Override
     public void setAerialMode(boolean toggle) {
         //todo save
-        aerial = toggle;
+        if (toggle)
+            aerial = 30;
+        else aerial=-1;
         if (bind != null && bind.get() instanceof Player p) {
             if (toggle)
                 SkillUtils.modifyAttribute(p, ForgeMod.ENTITY_GRAVITY.get(), GRAVITY1, p.getAttributeValue(WarAttributes.AIR_GRAVITY.get()) - 1, AttributeModifier.Operation.MULTIPLY_TOTAL);
@@ -90,6 +92,9 @@ public class AerialCapability implements IAerialMode {
         }
         longest--;
         off--;
+        int prev = aerial;
+        aerial--;
+        if (prev >= 0 && aerial < 0) setAerialMode(false);
         if (bind != null) {
             final Entity bound = bind.get();
 

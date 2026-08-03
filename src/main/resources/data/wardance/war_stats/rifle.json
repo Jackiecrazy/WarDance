@@ -1,0 +1,43 @@
+{
+  "#rifle": {
+    "attack": 17.5,
+    "defend": 0.35,
+    "standing": {
+      "type": "use"
+    },
+    "falling": {
+      "type": "use",
+      "use_speed": 2,
+      "on_swing": {
+        "run_actions": [
+          {
+            "ID": "add_effect",
+            "effect": "minecraft:slow_falling",
+            "potency": 0,
+            "duration": 30,
+            "stacking": "MAX_DURATION"
+          }
+        ]
+      }
+    },
+    "aerial": {
+      "type": "use",
+      "use_speed": 2,
+      "velocity": [
+        0, 0, -1
+      ],
+      "set_velocity": true
+    },
+    "sprinting": {
+      "interactions": [
+        {
+          "sweep": "NONE",
+          "knockback": 2.0
+        }, {
+          "type": "use",
+          "use_speed": 2
+        }
+      ]
+    }
+  }
+}

@@ -19,7 +19,7 @@ Heat dissipates rapidly when they leave your radius.
 rapid attacks, swapping weapons, casting skills, and in general keeping rhythm will produce bursts of heat that increase heat more than usual.
 This burst will ignite (or burn away fire immunity), disarm, or
     timberfall: delayed tree falling
-After skill cast, create a tree nearby. the tree slowly grows in size and damage
+After skill cast, on breach, or when a mob targets you, create a tree nearby. the tree slowly grows in size and damage
 Trees count as terrain for sabaton smash etc.
 Dealing damage to the tree or slamming a mob onto it causes it to fall over and deal extra (breaching?) damage
     frost fang: patience, enter, burst damage, retreat

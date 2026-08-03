@@ -336,25 +336,6 @@ public class ClientEvents {
                     if (CombatUtils.getAttackState(p) == WeaponStats.AttackType.UNDEFINED)
                         CombatUtils.updateNormalAttackStatus(p);
                     final WeaponStats.AttackType state = CombatUtils.getAttackState(p);
-                    //offhand first
-                    //fixme guard counters last hit don't breach
-//                    if (mc.options.keyUse.isDown()&&offUseTick==0) {
-//                        final WeaponInteractions.InteractionGroup offInfo = WeaponStats.getSweepInfo(mc.player.getOffhandItem(), mc.player, state, false);
-//                        if ((Keybinds.EVOKE.isDown() || offInfo.hasInteractionType(WeaponInteractions.WeaponInteraction.InteractionType.USE))) {
-//                            //special charge action, immediately start
-//                            //if (probablyNotAttacking && mc.player.getMainHandItem().getUseAnimation() != UseAnim.NONE)
-//                            if (!mc.player.isUsingItem()) {
-//                                testingHand = InteractionHand.OFF_HAND;
-//                                ((ClientAccessors) mc).callStartUseItem();
-//                            }
-//                            WeaponInteractions.WeaponInteraction offuse = offInfo.getInteractionOfType(WeaponInteractions.WeaponInteraction.InteractionType.USE);
-//                            if (offuse instanceof Use u) {
-//                                ChargingData.getCap(p).alterSpeed(mc.player.getOffhandItem(), u.getUseSpeed());
-//                            }
-//                            ++offUseTick;
-//                        } else offUseTick = 0;//microoptimization is the root of all spaghetti
-//                    } else offUseTick = 0;
-
 
                     if (mc.options.keyAttack.isDown()) {
                         //special charge action, immediately start
@@ -365,7 +346,9 @@ public class ClientEvents {
                             final WeaponInteractions.InteractionGroup mainInfo = WeaponStats.getSweepInfo(p.getMainHandItem(), p, state, false, InteractionHand.MAIN_HAND);
                             if (!p.isUsingItem() && !p.getCooldowns().isOnCooldown(p.getMainHandItem().getItem()) && (Keybinds.EVOKE.isDown() || mainInfo.hasInteractionType(WeaponInteractions.WeaponInteraction.InteractionType.USE))) {//don't call when already using item for obvious reasons
                                 testingHand = InteractionHand.MAIN_HAND;
-                                ((ClientAccessors) mc).callStartUseItem();
+                                //WarDance.LOGGER.debug("DEBUG: item being used on client");
+                                //((ClientAccessors) mc).callStartUseItem();
+                                mc.options.keyUse.setDown(true);
                                 WeaponInteractions.WeaponInteraction mainUse = mainInfo.getInteractionOfType(WeaponInteractions.WeaponInteraction.InteractionType.USE);
                                 if (mainUse instanceof Use u) {
                                     ChargingData.getCap(p).alterSpeed(p.getMainHandItem(), u.getUseSpeed());
@@ -373,8 +356,8 @@ public class ClientEvents {
                                     if (!Keybinds.EVOKE.isDown())
                                         CombatChannel.INSTANCE.sendToServer(new RequestSweepPacket(true, mc.crosshairPickEntity));
                                 }
-                                if (!mc.options.keyUse.isDown())
-                                    mc.options.keyUse.setDown(p.isUsingItem());
+//                                if (!mc.options.keyUse.isDown())
+//                                    mc.options.keyUse.setDown(p.isUsingItem());
                             }
                         }
                         //cancel the left click if using or evoking

@@ -1,0 +1,142 @@
+{
+
+  "#greatsword": {
+    "attack": 19,
+    "defend": 0.75,
+    "standing": {
+      "tags": ["pressure"],
+      "type": "animation",
+      "on_swing": {
+        "sound": "minecraft:entity.player.attack.sweep"
+      },
+      "animations": [
+        {
+          "duration": 10,
+          "easing": "IN_OUT_SINE",
+          "frames": [
+            {
+              "direction": [
+                0.4, 1, 1
+              ],
+              "offset": [
+                0, 0, 1
+              ],
+              "effects": {
+                "attack_info": {
+                  "armor_pierce_percentage": 0.3
+                },
+                "effects": [
+                  "WEAPON"
+                ]
+              }
+            }, {
+              "direction": [
+                0, 0, 1
+              ],
+              "offset": [
+                0, 0, 1
+              ]
+            }, {
+              "direction": [
+                -0.4, -1, 1
+              ],
+              "offset": [
+                0, 0, 1
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    "falling": {
+      "sweep": "CLEAVE",
+      "sweep_base": 60.0,
+      "sweep_scale": 30.0,
+      "on_swing": {
+        "command": "/function wardance:attack/self_heavyfatigue"
+      },
+      "damage_other_command": "/function wardance:attack/damageother_armorcleaveminor",
+      "crit": true
+    },
+    "aerial": {
+      "sweep": "CONE",
+      "knockback": 1.5,
+      "damage_scale": 0.5,
+      "sweep_base": 90.0,
+      "sweep_scale": 30.0,
+      "on_swing": {
+        "command": "/function wardance:attack/self_mildfatigue"
+      }
+    },
+    "sprinting": {
+      "sweep": "LINE",
+      "knockback": 0.75,
+      "damage_scale": 1.25,
+      "sweep_base": 0.3,
+      "sweep_scale": 0.2,
+      "on_swing": {
+        "command": "/function wardance:attack/self_moderatefatigue"
+      },
+      "damage_other_command": "/function wardance:attack/damageother_armorcleaveminor",
+      "crit": true
+    },
+    "guard_counter": {
+      "type": "animation",
+
+      "on_swing": {
+        "sound": "minecraft:entity.player.attack.sweep",
+        "parry_frames": 13
+      },
+      "duration": 13,
+      "easing": "IN_OUT_SINE",
+      "frames": [
+        {
+          "direction": [
+            0, 0.5, -1
+          ],
+          "offset": [
+            0, 0, 1
+          ],
+          "effects": {
+            "attack_info": {
+              "crit": true,
+              "crit_damage": 2
+            },
+            "effects": [
+              "WEAPON", "TRAIL"
+            ],
+            "trail_color": [240, 10, 10]
+          }
+        }, {
+          "direction": [
+            1, 0.1, 0
+          ],
+          "offset": [
+            0, 0, 1
+          ]
+        }, {
+          "direction": [
+            0, -0.3, 1
+          ],
+          "offset": [
+            0, 0, 1
+          ]
+        }, {
+          "direction": [
+            -1, 0, 0
+          ],
+          "offset": [
+            0, 0, 1
+          ]
+        }, {
+          "direction": [
+            0, 0.3, -1
+          ],
+          "offset": [
+            0, 0, 1
+          ]
+        }
+      ]
+    }
+  }
+}

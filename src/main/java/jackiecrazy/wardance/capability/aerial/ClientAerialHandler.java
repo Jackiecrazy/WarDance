@@ -231,7 +231,7 @@ public class ClientAerialHandler {
 //                        //fix the y
 //                        look = look.multiply(1, 0, 1).add(0, 0.4, 0);
 //                        wallFlip = wallFlip.add(look);
-                        pl.addDeltaMovement(wallFlip.add(0, 0.3, 0));
+                        //pl.addDeltaMovement(wallFlip.add(0, 0.3, 0));
                         lastDir = cap.getWallDir();
                         cap.setState(IAerialMode.WallState.WALL_JUMP);
                     }
@@ -264,7 +264,6 @@ public class ClientAerialHandler {
 
         if (state != IAerialMode.WallState.NONE) {
             self.fallDistance = 0.0F;
-            //drainQi(8);  // Adjust cost per tick
             if (!StylishData.getCap(self).isCombatMode()) {
                 cap.setState(IAerialMode.WallState.NONE);
                 return;

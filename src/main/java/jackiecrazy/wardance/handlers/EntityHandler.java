@@ -81,6 +81,14 @@ public class EntityHandler {
         }
     }
 
+    // DANGER REMEMBER TO REMOVE
+//    @SubscribeEvent
+//    public static void lagMachine(TickEvent.ServerTickEvent event) {
+//        try {
+//            Thread.sleep(100);
+//        } catch (InterruptedException ignored) {}
+//    }
+
     @SubscribeEvent
     public static void start(ServerStartingEvent e) {
         mustUpdate.clear();
@@ -226,7 +234,8 @@ public class EntityHandler {
 
     @SubscribeEvent
     public static void tick(TickEvent.PlayerTickEvent e) {
-        if (e.player.isAlive() && e.phase == TickEvent.Phase.START) {
+        if(!e.player.isAlive() || e.player.isSpectator())return;
+        if (e.phase == TickEvent.Phase.START) {
             if (e.side != LogicalSide.SERVER) {
                 CombatData.getCap(e.player).clientTick();
                 AerialModeData.getCap(e.player).tick();

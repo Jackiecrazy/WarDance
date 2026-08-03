@@ -94,6 +94,9 @@
             },[0,999,0]
           ]
         },
+        "head_rotation_x": 180,
+        "head_rotation_Y": 180,
+        "repeatable": true,
         "condition": {
           "ID": "time_window",
           "from": 0,
@@ -106,6 +109,9 @@
           "ID": "get_vector",
           "from": "arakawa"
         },
+        "head_rotation_x": 180,
+        "head_rotation_Y": 180,
+        "repeatable": true,
         "condition": {
           "ID": "time_window",
           "from": 20

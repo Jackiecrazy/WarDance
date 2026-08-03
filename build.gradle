@@ -136,6 +136,8 @@ dependencies {
     runtimeOnly fg.deobf("curse.maven:moonlight-499980:4800629")
     runtimeOnly fg.deobf("curse.maven:dummy-225738:4724732")
     runtimeOnly fg.deobf("curse.maven:neat-238372:5838485")
+    runtimeOnly fg.deobf("curse.maven:artificersarmory-1502992:8501215")
+    runtimeOnly fg.deobf("curse.maven:geckolib-388172:8285794")
 
     def ctDep = 'com.blamejared.crafttweaker:CraftTweaker-forge-1.20.1:14.0.60'
     //compileOnly(ctDep)

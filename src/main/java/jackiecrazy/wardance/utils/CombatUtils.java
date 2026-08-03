@@ -29,6 +29,7 @@ import jackiecrazy.wardance.config.weapon.WeaponStats;
 import jackiecrazy.wardance.config.weapon.interactions.*;
 import jackiecrazy.wardance.entity.ThrownWeaponEntity;
 import jackiecrazy.wardance.event.BasicSweepEvent;
+import jackiecrazy.wardance.event.KickEvent;
 import jackiecrazy.wardance.event.PlayInteractionEvent;
 import jackiecrazy.wardance.event.ProjectileDefendEvent;
 import jackiecrazy.wardance.mixin.LivingEntityAccessors;
@@ -412,6 +413,7 @@ public class CombatUtils {
             group = WeaponStats.getSweepInfo(stack, e, pre.getMoveState(), false, h);
         PlayInteractionEvent.Post post = new PlayInteractionEvent.Post(e, h, stack, s, group);
         MinecraftForge.EVENT_BUS.post(post);
+        
         return processWeaponInteraction(e, ignore, h, reach, post.getInteraction());
     }
 
@@ -661,10 +663,12 @@ public class CombatUtils {
         //if (AerialModeData.getCap(entity).getEffectiveSpeed() < 1) set = WeaponStats.AttackType.AERIAL;
         if (entity.isSwimming() || entity.isSprinting() || entity.isFallFlying() || CombatData.getCap(entity).isDodging())
             set = WeaponStats.AttackType.SPRINTING;
-        if ((!(entity instanceof Player p) || !p.getAbilities().flying) && !entity.onGround() && entity.fallDistance > 0 && !entity.onClimbable() && !entity.isInWater())
-            set = WeaponStats.AttackType.FALLING;
-        if (AerialModeData.getCap(entity).getEffectiveSpeed() < 1 || AerialModeData.getCap(entity).isAerialMode())
-            set = WeaponStats.AttackType.AERIAL;
+        if ((!(entity instanceof Player p) || !p.getAbilities().flying) && !entity.onGround() && !entity.onClimbable() && !entity.isInWater()) {
+            if (entity.fallDistance > 0||CombatData.getCap(entity).getMotionConsistently().y<0)
+                set = WeaponStats.AttackType.FALLING;
+            if (AerialModeData.getCap(entity).isAerialMode()||CombatData.getCap(entity).getMotionConsistently().y<0)
+                set = WeaponStats.AttackType.AERIAL;
+        }
         //todo more ways to be in aerial mode
         switch (AerialModeData.getCap(entity).getState()) {
             case CLING, CEILING_CLING -> set = WeaponStats.AttackType.STANDING;
@@ -856,11 +860,17 @@ public class CombatUtils {
         kicker.level().playSound(null, kicker.getX(), kicker.getY(), kicker.getZ(), SoundEvents.ZOMBIE_ATTACK_WOODEN_DOOR, SoundSource.PLAYERS, 0.25f + WarDance.rand.nextFloat() * 0.5f, 0.5f + WarDance.rand.nextFloat() * 0.5f);
         if (targetEntity instanceof LivingEntity target) {
             CombatData.getCap(kicker).tickProc("oncePerAttack");
+            CombatData.getCap(kicker).consumePosture(kicker, 12, 1f, false);
             StylishData.getCap(kicker).addCombo(0.1f, "wardance.combo.kick" + breach);
-            //help
-            CombatData.getCap(target).consumePosture(kicker, 12, 0.5f, breach);
+            //send event
+            final CombatDamageSource sauce = new CombatDamageSource(kicker).setPostureDamage(0).setDamageTyping(FootworkDamageArchetype.PHYSICAL).setDamageDealer(null).flagBreach(breach).setProcAttackEffects(true);
+            final float dmg = (float) kicker.getAttributeValue(WarAttributes.KICK_DAMAGE.get());
+            KickEvent ke = new KickEvent(kicker, sauce, targetEntity, dmg, 12);
+            MinecraftForge.EVENT_BUS.post(ke);
+            if (ke.isCanceled()) return;
+            CombatData.getCap(target).consumePosture(kicker, ke.getPostureDamage(), 0.5f, breach);
             ParticleUtils.playBonkParticle(kicker.level(), kicker.getEyePosition().add(kicker.getLookAngle().scale(Math.sqrt(GeneralUtils.getDistSqCompensated(kicker, target)))), 1, 0, 8, Color.WHITE);
-            target.hurt(new CombatDamageSource(kicker).setPostureDamage(0).setDamageTyping(FootworkDamageArchetype.PHYSICAL).setDamageDealer(null).flagBreach(breach).setProcAttackEffects(true), (float) kicker.getAttributeValue(WarAttributes.KICK_DAMAGE.get()));
+            target.hurt(ke.getDamageSource(), ke.getDamage());
             if (target.getLastHurtByMob() == null)
                 target.setLastHurtByMob(kicker);
         }

@@ -96,7 +96,7 @@
             {
               "ID": "velocity",
               "reference_point": "target",
-              "scale": 0.5
+              "scale": 0.25
             }, {
               "ID": "sum_vector",
               "addends": [
@@ -120,7 +120,7 @@
                   "storage": "target",
                   "from": "projectile_speed"
                 },
-                "second": 0.5
+                "second": 0.75
               }
             }
           ]

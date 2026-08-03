@@ -5,8 +5,6 @@
     "standing": {
       "tags": ["pressure"],
       "type": "animation",
-      "minimum_cooldown": 0,
-      "cooldown_refund": 1,
       "on_swing": {
         "sound": "minecraft:entity.player.attack.sweep"
       },

@@ -42,7 +42,7 @@ public class UpdateWallPacket {
                 ServerPlayer sender = contextSupplier.get().getSender();
                 if (sender == null) return;
                 sender.resetFallDistance();
-                AerialModeData.getCap(sender).alterGravity(40, 0.3);
+                //AerialModeData.getCap(sender).alterGravity(40, 0.3);
                 //AerialModeData.getCap(sender).setState(packet.st);
                 sender.setDeltaMovement(Vec3.ZERO);
                 AerialModeData.getCap(sender).noOffFor(5);

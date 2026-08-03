@@ -44,10 +44,6 @@ public class WindScar extends WarCry {
         super.onUnequip(caster, stats);
     }
 
-    protected boolean cast(LivingEntity caster, float duration) {
-        return cast(caster, null, duration, false, 1);
-    }
-
     @Override
     protected int getDuration(float might) {
         return (int) (3 * might);
@@ -108,9 +104,12 @@ public class WindScar extends WarCry {
     }
 
     private void windPressure(LivingEntity caster, SkillData d, int amount) {
-        if(d.getState()!=STATE.ACTIVE)
-        activate(caster, 0);
-        d.setMaxDuration(10);
+        if(d.getState()!=STATE.ACTIVE) {
+            d.setDuration(0);
+            d.setMaxDuration(10);
+            d.setArbitraryFloat(0);
+            d.setState(STATE.ACTIVE);
+        }
         d.addDuration(amount);
         if (d.getDuration() >= 10) {
             //create wind blades

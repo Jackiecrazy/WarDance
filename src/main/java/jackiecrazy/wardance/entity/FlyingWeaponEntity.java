@@ -90,7 +90,7 @@ public class FlyingWeaponEntity extends FlyingItemEntity implements IDrag {
     }
 
     public ItemStack getPickResult() {
-        return getHeldItem().copy();
+        return getHeldItem();//.copy(); //todo check what happens if it's not a copy
     }
 
     @Override

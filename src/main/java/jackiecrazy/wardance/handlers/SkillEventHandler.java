@@ -24,6 +24,24 @@ import net.minecraftforge.fml.common.Mod;
 public class SkillEventHandler {
 
     @SubscribeEvent(priority = EventPriority.LOWEST)
+    public static void kickL(KickEvent e) {
+        if (!e.getEntity().isEffectiveAi() || !(e.getTarget() instanceof LivingEntity)) return;
+        final ISkillCapability cap = CasterData.getCap(e.getEntity());
+        for (Skill s : cap.getEquippedSkillsAndStyle()) {
+            cap.getSkillData(s).ifPresent(d -> s.onProc(e.getEntity(), e, d.getState(), d, (LivingEntity) e.getTarget()));
+        }
+    }
+
+    @SubscribeEvent(priority = EventPriority.HIGHEST)
+    public static void kickH(KickEvent e) {
+        if (!e.getEntity().isEffectiveAi() || !(e.getTarget() instanceof LivingEntity)) return;
+        final ISkillCapability cap = CasterData.getCap(e.getEntity());
+        for (Skill s : cap.getEquippedSkillsAndStyle()) {
+            cap.getSkillData(s).ifPresent(d -> s.onProc(e.getEntity(), e, d.getState(), d, (LivingEntity) e.getTarget()));
+        }
+    }
+
+    @SubscribeEvent(priority = EventPriority.LOWEST)
     public static void attackEntitY(AttackEntityEvent e) {
         if (!e.getEntity().isEffectiveAi() || !(e.getTarget() instanceof LivingEntity)) return;
         final ISkillCapability cap = CasterData.getCap(e.getEntity());
@@ -602,7 +620,7 @@ public class SkillEventHandler {
     }
 
     @SubscribeEvent(priority = EventPriority.LOWEST)
-    public static void parryFlagS(MeleePostureEvent.Defense e) {
+    public static void parryFlagS(MeleePostureEvent e) {
         if (!e.getEntity().isEffectiveAi()) return;
         if (e.getAttacker() != null) {
             LivingEntity attacker = e.getAttacker();
@@ -627,7 +645,7 @@ public class SkillEventHandler {
     }
 
     @SubscribeEvent(priority = EventPriority.HIGHEST)
-    public static void parryFlags(MeleePostureEvent.Defense e) {
+    public static void parryFlags(MeleePostureEvent e) {
         if (!e.getEntity().isEffectiveAi()) return;
         if (e.getAttacker() != null) {
             LivingEntity attacker = e.getAttacker();

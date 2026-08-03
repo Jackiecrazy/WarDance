@@ -32,6 +32,7 @@ import net.minecraftforge.event.entity.living.LivingAttackEvent;
 import net.minecraftforge.event.entity.player.CriticalHitEvent;
 import net.minecraftforge.eventbus.api.Event;
 import net.minecraftforge.eventbus.api.EventPriority;
+import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -199,7 +200,11 @@ public abstract class Skill extends Move {
      * @param caster only nonnull if it's in the casting bar!
      */
     public MutableComponent getDisplayName(LivingEntity caster) {
-        return Component.translatable("wardance." + getRegistryName().getPath() + ".name");
+        return Component.translatable(rawSkillString());
+    }
+
+    private @NotNull String rawSkillString() {
+        return "wardance." + getRegistryName().getPath() + ".name";
     }
 
     public ResourceLocation icon() {
@@ -461,7 +466,7 @@ public abstract class Skill extends Move {
                                boolean flag,
                                float something) {
         caster.level().playSound(null, caster, SoundEvents.FIRECHARGE_USE, SoundSource.AMBIENT, 0.3f + WarDance.rand.nextFloat(), 0.5f + WarDance.rand.nextFloat());
-        StylishData.getCap(caster).addCombo(0.1f, this.registryName.toString());
+        StylishData.getCap(caster).addCombo(0.1f, rawSkillString());
         CasterData.getCap(caster).getSkillData(this).ifPresent(a -> {
             a.setDuration(duration);
             a.setMaxDuration(duration);

@@ -1,0 +1,190 @@
+{
+
+  "#boomerang": {
+    "attack": 10,
+    "defend": 0.1,
+    "standing": {
+      "type": "animation",
+      "on_swing": {
+        "sound": "minecraft:entity.player.attack.sweep"
+      },
+      "animations": [
+        {
+          "duration": 5,
+          "easing": "IN_OUT_SINE",
+          "spin": [
+            -60, 0, 0
+          ],
+          "frames": [
+            {
+              "direction": [
+                0, 0, 0.5
+              ],
+              "offset": [
+                0.2, 0.5, 0.25
+              ],
+              "render_rotation": [
+                0, 0.0, 0.5, 90
+              ],
+              "effects": {
+                "effects": [
+                  "WEAPON", "LOCK_POSITION", "LOCK_ORIENTATION"
+                ],
+                "attack_info": {
+                  "knockback": 0.5,
+                  "damage_scale": 0.5,
+                  "posture_scale": 0.3,
+                  "crit": false,
+                  "crit_damage": 1.25,
+                  "spirit_multiplier": 0.5,
+                  "hit_self": {
+                    "command": "/function wardance:hit_combo"
+                  }
+                }
+              }
+            }, {
+              "direction": [
+                0, 0, 0.5
+              ],
+              "offset": [
+                0.2, 0.0, 5
+              ],
+              "render_rotation": [
+                0, 0, 0.5, 90
+              ]
+            }
+          ]
+        }, {
+          "duration": 3,
+          "easing": "IN_OUT_SINE",
+          "spin": [
+            -60, 0, 0
+          ],
+          "frames": [
+            {
+              "direction": [
+                0, 0, 0.5
+              ],
+              "offset": [
+                0.2, 0.0, 5
+              ],
+              "render_rotation": [
+                0, 0, 0.5, 90
+              ],
+              "effects": {
+                "effects": [
+                  "WEAPON"
+                ],
+                "range": -1,
+                "velocity": [
+                  0, 0, 0
+                ],
+                "set_velocity": false,
+                "attack_info": {
+                  "knockback": 0.0,
+                  "damage_scale": 0.2,
+                  "posture_scale": 0.2,
+                  "crit": false,
+                  "crit_damage": 1.25,
+                  "spirit_multiplier": 0.25
+                }
+              }
+            }
+          ]
+        }, {
+          "duration": 5,
+          "easing": "IN_OUT_SINE",
+          "spin": [
+            -60, 0, 0
+          ],
+          "frames": [
+            {
+              "direction": [
+                0, 0, 0.5
+              ],
+              "offset": [
+                0.2, 0.0, 5
+              ],
+              "render_rotation": [
+                0, 0, 0.5, 90
+              ],
+              "effects": {
+                "effects": [
+                  "WEAPON"
+                ],
+                "range": -1,
+                "velocity": [
+                  0, 0, 0
+                ],
+                "set_velocity": false,
+                "attack_info": {
+                  "knockback": 0.5,
+                  "damage_scale": 0.5,
+                  "posture_scale": 0.3,
+                  "crit": false,
+                  "crit_damage": 1.25,
+                  "spirit_multiplier": 0.5,
+                  "hit_self": {
+                    "command": "/function wardance:hit_combo"
+                  }
+                }
+              }
+            }, {
+              "direction": [
+                0, 0, 0.5
+              ],
+              "offset": [
+                0.2, 0.5, 0.25
+              ],
+              "render_rotation": [
+                0, 0.0, 0.5, 90
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    "falling": {
+      "sweep": "IMPACT",
+      "knockback": 1.5,
+      "sweep_base": 1.0,
+      "sweep_scale": 0.5,
+      "on_swing": {
+        "command": "/function wardance:attack/self_heavyfatigue"
+      },
+      "damage_other_command": "/function wardance:attack/damageother_destabilize",
+      "crit": true
+    },
+    "aerial": {
+      "sweep": "CIRCLE",
+      "knockback": 1.5,
+      "damage_scale": 0.5,
+      "posture_scale": 0.5,
+      "sweep_base": 4.0,
+      "sweep_scale": 1.0,
+      "on_swing": {
+        "command": "/function wardance:attack/self_mildfatigue"
+      }
+    },
+    "sprinting": {
+      "sweep": "CLEAVE",
+      "knockback": 1.5,
+      "sweep_base": 50.0,
+      "sweep_scale": 25.0,
+      "on_swing": {
+        "command": "/function wardance:attack/self_moderatefatigue"
+      },
+      "damage_other_command": "/function wardance:attack/damageother_break",
+      "crit": true
+    },
+    "riding": {
+      "sweep": "CONE",
+      "knockback": 1.5,
+      "damage_scale": 1.5,
+      "crit_damage": 2.0,
+      "sweep_base": 60.0,
+      "sweep_scale": 30.0,
+      "damage_self_command": "/function wardance:attack/damageother_destabilize"
+    }
+  }
+}

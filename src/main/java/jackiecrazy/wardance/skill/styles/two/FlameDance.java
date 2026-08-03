@@ -7,8 +7,10 @@ import jackiecrazy.footwork.capability.resources.CombatData;
 import jackiecrazy.footwork.utils.GeneralUtils;
 import jackiecrazy.footwork.utils.TargetingUtils;
 import jackiecrazy.wardance.WarDance;
+import jackiecrazy.wardance.api.IFlameDance;
 import jackiecrazy.wardance.event.PlayInteractionEvent;
 import jackiecrazy.wardance.event.SkillCastEvent;
+import jackiecrazy.wardance.mixin.FlameDanceMixin;
 import jackiecrazy.wardance.skill.SkillData;
 import jackiecrazy.wardance.utils.SkillUtils;
 import net.minecraft.tags.DamageTypeTags;
@@ -30,6 +32,7 @@ import java.util.UUID;
 public class FlameDance extends WarCry {
     private static final UUID attackSpeed = UUID.fromString("338a5b6f-46c2-44b6-921f-f15c5e59cd48");
     private static final AttributeModifier knockback = new AttributeModifier(attackSpeed, "flame dance debuff", -0.4, AttributeModifier.Operation.MULTIPLY_BASE);
+    public static final int MAX_FLAME_STACKS = 100;
 
     @Override
     public void onEquip(LivingEntity caster) {
@@ -49,7 +52,7 @@ public class FlameDance extends WarCry {
         if (procPoint instanceof LivingHurtEvent lae && notRecursive(lae.getSource()) && procPoint.getPhase() == EventPriority.HIGHEST && lae.getEntity() == target) {
             if (hasMark(target) && getExistingMark(target).getArbitraryFloat() > 50 && !CombatData.getCap(target).alreadyProc("flameDance_mark")) {
                 target.hurtTime = target.hurtDuration = target.invulnerableTime = 0;
-                target.hurt(new CombatDamageSource(caster, null, null).setIsFire().flagBreach(false).setIndirect(true).setArmorReductionPercentage(1).setKnockbackPercentage(0).setSkillUsed(this).setProcSkillEffects(true), getExistingMark(target).getArbitraryFloat() * SkillUtils.getSkillEffectiveness(caster) / 100);
+                target.hurt(new CombatDamageSource(caster, null, null).setDamageDealer(null).setAttackingHand(null).setIsFire().flagBreach(false).setIndirect(true).setArmorReductionPercentage(1).setKnockbackPercentage(0).setSkillUsed(this).setProcSkillEffects(true), getExistingMark(target).getArbitraryFloat() * SkillUtils.getSkillEffectiveness(caster) / MAX_FLAME_STACKS);
                 CombatData.getCap(target).tickProc("flameDance_mark");
             }
             if (!CombatData.getCap(caster).alreadyProc("flameDance") && hasMark(target) && getExistingMark(target).getDuration() > 1.5) {
@@ -112,16 +115,16 @@ public class FlameDance extends WarCry {
         if (existing != null)
             sd.addArbitraryFloat(existing.getArbitraryFloat());
         SkillUtils.modifyAttribute(target, Attributes.ARMOR, attackSpeed, -sd.getArbitraryFloat() / 100d, AttributeModifier.Operation.MULTIPLY_TOTAL);
-        if (sd.getArbitraryFloat() > 50) {
+        if (sd.getArbitraryFloat() > MAX_FLAME_STACKS/2) {
             target.removeEffect(MobEffects.FIRE_RESISTANCE);
-        }
-        if (orig > 3 || (sd.getArbitraryFloat() > 100 && target.getRemainingFireTicks() < 10)) {
+        }//else ((IFlameDance)target).warDance$stripFireResist(false);
+        if (orig > 3 || (sd.getArbitraryFloat() > MAX_FLAME_STACKS && target.getRemainingFireTicks() < 10)) {
             target.setSecondsOnFire(2 + (int) (sd.getArbitraryFloat() / 25));
         }
-        if (sd.getArbitraryFloat() > 100 && orig > 0 && !CombatData.getCap(target).alreadyProc("flameDance_mark")) {
+        if (sd.getArbitraryFloat() > MAX_FLAME_STACKS && orig > 0 && !CombatData.getCap(target).alreadyProc("flameDance_mark")) {
             target.hurtTime = target.hurtDuration = target.invulnerableTime = 0;
-            target.hurt(new CombatDamageSource(caster, null, null).setDamageTyping(FootworkDamageArchetype.TRUE).setIndirect(true).flagBreach(false).setArmorReductionPercentage(1).setKnockbackPercentage(0).setSkillUsed(this).setProcSkillEffects(true), orig / 10);
-            sd.setArbitraryFloat(100);
+            target.hurt(new CombatDamageSource(caster, null, null).setDamageDealer(null).setAttackingHand(null).setDamageTyping(FootworkDamageArchetype.TRUE).setIndirect(true).flagBreach(false).setArmorReductionPercentage(1).setKnockbackPercentage(0).setSkillUsed(this).setProcSkillEffects(true), orig / 10);
+            sd.setArbitraryFloat(MAX_FLAME_STACKS);
             target.hurtTime = target.hurtDuration = target.invulnerableTime = 0;
             CombatData.getCap(target).tickProc("flameDance_mark");
         }
