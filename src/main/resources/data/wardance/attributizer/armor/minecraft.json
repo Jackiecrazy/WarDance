@@ -8,7 +8,7 @@
   ],
   "minecraft:leather_chestplate": [
     {
-      "attribute": "wardance:darktide_power",
+      "attribute": "wardance:composure",
       "modify": 0.4,
       "operation": "MULTIPLY_BASE"
     }

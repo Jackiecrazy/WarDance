@@ -26,7 +26,11 @@ Dealing damage to the tree or slamming a mob onto it causes it to fall over and 
 doubled damage on first melee strike, sticks a mark on the target that transfers half damage received to internal instead
 the mark goes down by 3 per second. +1 if you're not in range, +2 for distracted, +3 for unaware
 randomly as the mark ticks down it could ding. Attacks within ~2 seconds of the ding gain increased damage and ticks the mark down
-    pestilent edge
+    pestilent edge: spread debuffs, plague
+your swap attacks (maybe throws too?) marks target as patient zero. Only (combo scaling) patient zero can exist at once.
+patient zero initially take a lot of dot, decreased as they gain resistance to the virus.
+hitting patient zero with throws will move a random debuff from you to it
+later the virus prioritizes spreading, it will infect mobs around patient zero with a weak dot, and it transmits debuffs
     doppelsoldner
     gold rush
     demon hunter

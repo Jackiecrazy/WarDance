@@ -1,6 +1,8 @@
 package jackiecrazy.wardance.skill.ironguard;
 
+import jackiecrazy.wardance.event.ConsumePostureEvent;
 import jackiecrazy.wardance.event.MeleePostureEvent;
+import jackiecrazy.wardance.event.ProjectileDefendEvent;
 import jackiecrazy.wardance.skill.SkillData;
 import jackiecrazy.wardance.utils.SkillUtils;
 import net.minecraft.core.particles.ParticleTypes;
@@ -14,24 +16,20 @@ import javax.annotation.Nullable;
 
 public class Afterimage extends IronGuard {
     @Override
-    public void onProc(LivingEntity caster, Event procPoint, STATE state, SkillData stats, @Nullable LivingEntity target) {
-        if (procPoint instanceof final MeleePostureEvent.Defense pe && procPoint.getPhase() == EventPriority.HIGHEST && state!=STATE.COOLING && pe.getEntity() == caster && pe.success() && pe.getPostureConsumption() > 0) {
-            parry(caster, pe, stats, target, state);
-        }
-    }
-    @Override
-    protected void parry(LivingEntity caster, MeleePostureEvent.Defense procPoint, SkillData stats, LivingEntity target, STATE state) {
-        if (!caster.isShiftKeyDown() || state == STATE.COOLING || !cast(caster, target, -999)) return;
-        final float cost = procPoint.getPostureConsumption() * stats.getEffectiveness();
-        SkillUtils.createCloud(caster.level(), caster, caster.getX(), caster.getY(), caster.getZ(), cost, ParticleTypes.LARGE_SMOKE);
-        for (LivingEntity e : caster.level().getEntitiesOfClass(LivingEntity.class, caster.getBoundingBox().inflate(cost))) {
-            if (e.distanceToSqr(caster) < cost * cost) {
-                e.addEffect(new MobEffectInstance(MobEffects.BLINDNESS, 100));
+    protected void parry(LivingEntity caster, ConsumePostureEvent procPoint, SkillData stats, LivingEntity target, STATE state) {
+        if (state == STATE.COOLING || !cast(caster, target, -999)) return;
+        if(procPoint.getType()== ConsumePostureEvent.TYPE.PARRY&&procPoint.success()) {
+            final float cost = procPoint.getPostureConsumption() * stats.getEffectiveness();
+            SkillUtils.createCloud(caster.level(), caster, caster.getX(), caster.getY(), caster.getZ(), cost, ParticleTypes.LARGE_SMOKE);
+            for (LivingEntity e : caster.level().getEntitiesOfClass(LivingEntity.class, caster.getBoundingBox().inflate(cost))) {
+                if (e.distanceToSqr(caster) < cost * cost) {
+                    e.addEffect(new MobEffectInstance(MobEffects.BLINDNESS, 100));
+                }
             }
+            caster.addEffect(new MobEffectInstance(MobEffects.INVISIBILITY, 20));
+            markUsed(caster);
+            procPoint.setCanceled(true);
         }
-        caster.addEffect(new MobEffectInstance(MobEffects.INVISIBILITY, 20));
-        markUsed(caster);
-        procPoint.setPostureConsumption(0);
     }
 
     @Override

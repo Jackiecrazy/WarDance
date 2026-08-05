@@ -26,17 +26,17 @@ public class WindShot extends Skill {
     //shooting an arrow will consume evasion to give it 3 levels of piercing and pull all enemies in a 4 block radius towards point of impact
     @SubscribeEvent(priority = EventPriority.HIGHEST)
     public static void wind(ProjectileImpactEvent e) {
-        if (e.getProjectile().getOwner() instanceof LivingEntity shooter && CasterData.getCap(shooter).getSkillState(WarSkills.WIND_SHOT.get()) == STATE.HOLSTERED) {
-            if (e.getProjectile() instanceof Arrow arrow) arrow.setPierceLevel((byte) (arrow.getPierceLevel() + 3));
-            ParticleUtils.playSweepParticle(FootworkParticles.CIRCLE.get(), shooter, e.getProjectile().position(), 0, 4, Color.CYAN, 0.1);
-            int radius = 4;
-
-            List<LivingEntity> list = shooter.level().getEntitiesOfClass(LivingEntity.class, AABB.unitCubeFromLowerCorner(e.getProjectile().position()).inflate(radius));
-
-            for (LivingEntity entity : list) {
-                entity.setDeltaMovement(entity.getDeltaMovement().add(entity.position().vectorTo(e.getProjectile().position()).scale(0.18)));
-            }
-        }
+//        if (e.getProjectile().getOwner() instanceof LivingEntity shooter && CasterData.getCap(shooter).getSkillState(WarSkills.WIND_SHOT.get()) == STATE.HOLSTERED) {
+//            if (e.getProjectile() instanceof Arrow arrow) arrow.setPierceLevel((byte) (arrow.getPierceLevel() + 3));
+//            ParticleUtils.playSweepParticle(FootworkParticles.CIRCLE.get(), shooter, e.getProjectile().position(), 0, 4, Color.CYAN, 0.1);
+//            int radius = 4;
+//
+//            List<LivingEntity> list = shooter.level().getEntitiesOfClass(LivingEntity.class, AABB.unitCubeFromLowerCorner(e.getProjectile().position()).inflate(radius));
+//
+//            for (LivingEntity entity : list) {
+//                entity.setDeltaMovement(entity.getDeltaMovement().add(entity.position().vectorTo(e.getProjectile().position()).scale(0.18)));
+//            }
+//        }
     }
 
     @Override

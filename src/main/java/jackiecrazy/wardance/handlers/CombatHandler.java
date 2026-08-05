@@ -49,7 +49,6 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.UseAnim;
 import net.minecraft.world.phys.EntityHitResult;
 import net.minecraft.world.phys.HitResult;
-import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.entity.ProjectileImpactEvent;
 import net.minecraftforge.event.entity.living.*;
@@ -185,7 +184,8 @@ public class CombatHandler {
             MinecraftForge.EVENT_BUS.post(pe1);
 
             //successful
-            if (pe1.getResult() == Event.Result.ALLOW || (ukeCap.isParrying() && pe1.getResult() == Event.Result.DEFAULT)) {
+            if (pe1.success()) {
+                if(!pe1.isCanceled())
                 CombatUtils.onSuccessfulParry(uke, shooter == null ? projectile : shooter, defendingHand, defend, pe1.getPostureConsumption(), pe1.getPostureConsumption(), pe1.getRallyPercentage());
                 handleProjectileDefense(e, pe1, defend, projectile, uke);
                 return;
@@ -219,9 +219,11 @@ public class CombatHandler {
             MinecraftForge.EVENT_BUS.post(pe2);
 
             //successful
-            if (pe2.getResult() == Event.Result.ALLOW || (defend != null && pe2.getResult() == Event.Result.DEFAULT && ukeCap.isBlocking())) {
-                ukeCap.consumePosture(null, pe2.getPostureConsumption(), pe2.getRallyPercentage(), ICombatCapability.BreachLevel.NO);
-                CombatUtils.onSuccessfulBlock(uke, projectile, defendingHand, defend, pe2.getPostureConsumption());
+            if (pe2.success()) {
+                if(!pe1.isCanceled()) {
+                    ukeCap.consumePosture(null, pe2.getPostureConsumption(), pe2.getRallyPercentage(), ICombatCapability.BreachLevel.NO);
+                    CombatUtils.onSuccessfulBlock(uke, projectile, defendingHand, defend, pe2.getPostureConsumption());
+                }
                 handleProjectileDefense(e, pe2, defend, projectile, uke);
             }
 
@@ -407,7 +409,7 @@ public class CombatHandler {
                         double percRed = e.getSource().is(WarDance.NO_SPIRIT_COST) ? 1 : semeCap.doConsumeSpirit(atkMult) / atkMult;
                         semeCap.tickProc(SPIRITKB, percRed);
                         StylishData.getCap(seme).processAttack(false);
-                        StylishData.getCap(seme).addCombo(0.12f, e.getSource().getMsgId());
+                        StylishData.getCap(seme).addCombo(0.05f, e.getSource().getMsgId());
                         semeCap.tickProc("oncePerAttack");
 //                        if (!(uke instanceof Player) && TimeSlowData.getCap(uke).getEffectiveSpeed() < 1) {
 //                            CombatUtils.triggerSteveTime(seme, (int) (TimeSlowData.getCap(uke).getTimeRemaining() * 1.5));
@@ -509,8 +511,9 @@ public class CombatHandler {
                 //success!
                 if (pe1.success()) {
                     e.setCanceled(true);
-                    WarDance.LOGGER.debug("successfully parried!");
-                    CombatUtils.onSuccessfulParry(uke, seme, defendingHand, defend, pe1.getPostureConsumption(), e.getAmount(), pe1.getRallyPercentage());
+                    //WarDance.LOGGER.debug("successfully parried!");
+                    if (!pe1.isCanceled())
+                        CombatUtils.onSuccessfulParry(uke, seme, defendingHand, defend, pe1.getPostureConsumption(), e.getAmount(), pe1.getRallyPercentage());
                     return;
                 }
 
@@ -521,15 +524,16 @@ public class CombatHandler {
                 //success!
                 if (pe2.success() && ukeCap.consumePosture(seme, pe2.getPostureConsumption(), pe2.getRallyPercentage(), pe2.canBreach()) == 0) {
                     e.setCanceled(true);
-                    WarDance.LOGGER.debug("successfully blocked!");
-                    CombatUtils.onSuccessfulBlock(uke, seme, defendingHand, defend, pe2.getPostureConsumption());
+                    //WarDance.LOGGER.debug("successfully blocked!");
+                    if (!pe1.isCanceled())
+                        CombatUtils.onSuccessfulBlock(uke, seme, defendingHand, defend, pe2.getPostureConsumption());
                     //do not cancel the event. It technically succeeded but will be blocked by vanilla functions. I just mark the right item to keep processing.
                     return;
                 }
 
                 //failed everything, use the original damage
                 if (!pe2.success()) {
-                    WarDance.LOGGER.debug("failed everything! " + defenderMaybeBlocking + " " + defend);
+                    //WarDance.LOGGER.debug("failed everything! " + defenderMaybeBlocking + " " + defend);
                     ukeCap.consumePosture(seme, pe2.getPostureConsumption(), pe2.getRallyPercentage(), pe.canBreach());
                 }
                 //internally enforced hand bind to bypass slimes
@@ -548,10 +552,13 @@ public class CombatHandler {
                 MeleePostureEvent.Environment pe1 = new MeleePostureEvent.Environment(e.getEntity(), CombatData.getCap(e.getEntity()).isParrying(), e.getAmount(), e.getSource(), e.getAmount(), true);
                 MinecraftForge.EVENT_BUS.post(pe1);
                 if (pe1.success()) {
-                    CombatUtils.onSuccessfulParry(e.getEntity(), e.getSource().getEntity(), null, null, pe1.getPostureConsumption(), e.getAmount(), pe1.getRallyPercentage());
-                    if (e.getSource().is(DamageTypeTags.IS_FALL))
-                        e.getEntity().addDeltaMovement(new Vec3(0, 1, 0));
                     e.setCanceled(true);
+                    if (!pe1.isCanceled())
+                        CombatUtils.onSuccessfulParry(e.getEntity(), e.getSource().getEntity(), null, null, pe1.getPostureConsumption(), e.getAmount(), pe1.getRallyPercentage());
+//                    if (e.getSource().is(DamageTypeTags.IS_FALL)) {
+//                        e.getEntity().addDeltaMovement(new Vec3(0, 1, 0));
+//                        e.getEntity().hurtMarked=true;
+//                    }
                 }
             }
             //handle nonphysical cases of combat damage docking posture, this can never breach
@@ -717,9 +724,9 @@ public class CombatHandler {
 
         final boolean alert = StealthUtils.INSTANCE.getAwareness(ds.getEntity() instanceof LivingEntity le ? le : null, uke) == StealthUtils.Awareness.ALERT;
         final boolean skipDarkTide = source.is(DamageTypeTags.BYPASSES_INVULNERABILITY)
-                ||source.is(WarDance.NO_DARKTIDE_DMG)
-                ||uke.getType().is(MobSpecs.NO_DARKTIDE)
-                ||source.is(FootworkDamageTypeTags.SKILL);
+                || source.is(WarDance.NO_DARKTIDE_DMG)
+                || uke.getType().is(MobSpecs.NO_DARKTIDE)
+                || source.is(FootworkDamageTypeTags.SKILL);
         final boolean environmentalDamage = (source.getEntity() == null);
         final boolean nonMeleeDamage = source.isIndirect() || !(source.getEntity() instanceof LivingEntity le);//|| CombatUtils.getAttackState(le) == WeaponStats.AttackType.UNDEFINED;//skip the whole darktide spiel
         //nonplayers cannot hold on and will vaporize if the damage is too high
@@ -728,7 +735,7 @@ public class CombatHandler {
             cap.stopRecording(null);
         } else if (!skipDarkTide && !cap.isStunned() && !cap.alreadyProc("knockdown")) {
             //yeah this is basically darktide with discrimination
-            final float dtEff = (float) uke.getAttributeValue(WarAttributes.DARKTIDE.get());
+            final float dtEff = (float) uke.getAttributeValue(WarAttributes.COMPOSURE.get());
             final float reduction = Mth.clamp(cap.getPosturePercentage() * dtEff, 0, 1);
             // environmental: only deal damage at 0 qi for both mobs and players
             if (environmentalDamage) {

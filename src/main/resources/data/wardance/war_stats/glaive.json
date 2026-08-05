@@ -1,9 +1,9 @@
 {
   "_guide": {
-    "standing": "spin, crit on the back",
-    "falling": "",
-    "aerial": "",
-    "sprinting": "",
+    "standing": "spin, crit on the back. Once per spin hitting a mob twice gives a buff/more spirit?",
+    "falling": "wheel slash, lower spirit/buff req to send out three blade beams on terrain slam",
+    "aerial": "up slash that knocks up the mobs in front and knock down the mobs in the back for more damage",
+    "sprinting": "stopping stab",
     "guard counter": "",
     "throw": "",
     "pickup": "",
@@ -26,7 +26,7 @@
           ],
           "effects": {
             "attack_info": {
-              "damage_scale": 1
+              "damage_scale": 0.6
             },
             "effects": [
               "WEAPON", "TRAIL"
@@ -42,6 +42,7 @@
           ],
           "effects": {
             "attack_info": {
+              "damage_scale": 0.6,
               "crit": true,
               "crit_damage": 2
             },
@@ -67,7 +68,7 @@
           ],
           "effects": {
             "attack_info": {
-              "damage_scale": 1
+              "damage_scale": 0.6
             },
             "effects": [
               "WEAPON", "TRAIL"
@@ -95,9 +96,6 @@
       "sweep": "CLEAVE",
       "sweep_base": 60.0,
       "sweep_scale": 30.0,
-      "on_swing": {
-        "command": "/function wardance:attack/self_heavyfatigue"
-      },
       "damage_other_command": "/function wardance:attack/damageother_armorcleaveminor",
       "crit": true
     },
@@ -112,18 +110,40 @@
       },
       "damage_other_command": "/function wardance:attack/damageother_pierce"
     },
-    "sprinting": {
-      "sweep": "CIRCLE",
-      "knockback": 1.75,
-      "damage_scale": 0.75,
-      "posture_scale": 0.75,
-      "sweep_base": 3.5,
-      "sweep_scale": 1.0,
-      "on_swing": {
-        "command": "/function wardance:attack/self_mildfatigue"
-      },
-      "damage_other_command": "/function wardance:attack/damageother_armorcleaveminor",
-      "crit": true
+    "sprinting":  {
+      "tags": ["engage", "damage"],
+      "type": "animation",
+      "duration": 7,
+      "easing": "IN_OUT_SINE",
+      "frames": [
+        {
+          "direction": [
+            0, 0, 1
+          ],
+          "offset": [
+            0, 0, 0
+          ],
+          "knockback": 1,
+          "damage_scale": 1.2,
+          "posture_scale": 1.0,
+          "crit": true,
+          "hit_self_velocity": [
+            0, 0, 0
+          ],
+          "hit_self_set_velocity": true
+        }, {
+          "direction": [
+            0, 0, 1
+          ],
+          "offset": [
+            0, 0, 1.3
+          ]
+        }
+      ],
+      "velocity": [
+        0, 0.2, 1
+      ],
+      "set_velocity": true
     },
     "riding": {
       "sweep": "CONE",

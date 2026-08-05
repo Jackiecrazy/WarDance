@@ -214,7 +214,6 @@ public class StylishCapability implements IStyleCapability {
             }
             rangedFinisher = 0;
         }
-        markDirty();
     }
 
     @Override

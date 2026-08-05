@@ -15,5 +15,6 @@ public class WarActionsRegistry {
     public static final RegistryObject<ActionType> PLAY_INTERACTION = ACTIONS.register("play_interaction", () -> (a) -> WeaponInteractions.GSON.fromJson(a, PlayInteractionAction.class));
     public static final RegistryObject<ActionType> KICK = ACTIONS.register("kick", () -> (a) -> WeaponInteractions.GSON.fromJson(a, KickAction.class));
     public static final RegistryObject<ActionType> ATTACK = ACTIONS.register("attack", () -> (a) -> WeaponInteractions.GSON.fromJson(a, AttackAction.class));
+    public static final RegistryObject<ActionType> AERIAL = ACTIONS.register("modify_aerial_mode", () -> (a) -> WeaponInteractions.GSON.fromJson(a, AerialModeAction.class));
 
 }

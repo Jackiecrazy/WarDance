@@ -336,6 +336,7 @@ public class ThrownWeaponEntity extends FlyingWeaponEntity {
     }
 
     public boolean pickup(Player player) {
+        if(isRemoved())return true;
         //if holding nothing, prioritize this slot
         int slot = -1;
         InteractionHand h = InteractionHand.MAIN_HAND;

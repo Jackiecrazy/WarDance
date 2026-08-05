@@ -7,6 +7,7 @@ import jackiecrazy.footwork.event.DodgeEvent;
 import jackiecrazy.footwork.utils.GeneralUtils;
 import jackiecrazy.footwork.utils.MovementUtils;
 import jackiecrazy.wardance.api.WarAttributes;
+import jackiecrazy.wardance.capability.aerial.AerialModeData;
 import jackiecrazy.wardance.compat.WarCompat;
 import jackiecrazy.wardance.config.CombatConfig;
 import jackiecrazy.wardance.entity.GrappleEntity;
@@ -246,6 +247,8 @@ public class MobilityUtils {
         if (itsc.getDodgeTime() <= -CombatConfig.rollCooldown) {
             //CombatData.getCap(elb).consumePosture(ReworkConstants.SPIRIT_QI, (float) (elb.getAttributeValue(WarAttributes.DODGE_EFFICIENCY.get())/2));
             elb.extinguishFire();
+            if(AerialModeData.getCap(elb).isAerialMode())
+            AerialModeData.getCap(elb).setAerialMode(true);
             if (side == 99 && elb.onGround()) return attemptSlide(elb);
             Entity target = GeneralUtils.raytraceEntity(elb.level(), (Entity) elb, 32);
             float adjustment = 0;
@@ -257,7 +260,7 @@ public class MobilityUtils {
             }
             double x = 0, y = 0.2, z = 0;
             float angle = 0;
-            DodgeEvent.Direction d = DodgeEvent.Direction.FORWARD;
+            DodgeEvent.Direction d = DodgeEvent.Direction.NONE;
             switch (side) {
                 //todo directly send angle
 
@@ -286,10 +289,10 @@ public class MobilityUtils {
             x = look.x;
             z = look.z;
 
-            //NeedyLittleThings.setSize(elb, min, min);
-            elb.setDeltaMovement(elb.getDeltaMovement().multiply(1, 0, 1));
-            elb.push(x, y, z);
-            //elb.hurtMarked = true;
+            if(e.getDirection()!= DodgeEvent.Direction.NONE) {
+                elb.setDeltaMovement(elb.getDeltaMovement().multiply(1, 0, 1));
+                elb.push(x, y, z);
+            }
             itsc.consumePosture(0);
             //leave stun
             itsc.stun(0);

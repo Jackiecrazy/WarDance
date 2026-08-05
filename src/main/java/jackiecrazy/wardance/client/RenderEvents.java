@@ -83,15 +83,14 @@ public class RenderEvents {
         if (player == null) return;
 
         // Get which wall you're on (left or right wall)
-        Direction wall = AerialModeData.getCap(player).getWallDir(); // your logic
+        Direction wall = AerialModeData.getCap(player).getWallDir();
         if (wall == null || AerialModeData.getCap(player).getState() != IAerialMode.WallState.WALL_SLIDE || wall.getAxis() == Direction.Axis.Y) {
-            // smoothly lerp roll back to 0 when not wall running
+            // lerp roll back to 0 when not wall running
             currentRoll = Mth.lerp(0.03f, currentRoll, 0);
             event.setRoll(currentRoll);
             return;
         }
 
-        // === Determine left or right wall inline ===
         Vec3 rightVec = player.getDeltaMovement();
         Vec3 wallNormal = Vec3.atLowerCornerOf(wall.getNormal());
 
@@ -100,8 +99,7 @@ public class RenderEvents {
 
         float targetRoll = isLeftWall ? 10.0f : -10.0f;
 
-        // Smooth interpolation
-        event.getRoll();
+        //event.getRoll();
         float lerpedRoll = Mth.lerp(0.03f, currentRoll, targetRoll); // tune speed
         currentRoll = lerpedRoll;
 

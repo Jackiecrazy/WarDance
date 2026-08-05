@@ -28,6 +28,8 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 
+import java.util.List;
+
 public class WarDanceCommand {
 
     public static final SimpleCommandExceptionType MISSING_ARGUMENT = new SimpleCommandExceptionType(Component.translatable("wardance.command.missing"));
@@ -41,20 +43,24 @@ public class WarDanceCommand {
                 .requires(s -> s.hasPermission(2))
                 .executes(WarDanceCommand::missingArgument)
                 .then(Commands.literal("skill")
-                        .executes(WarDanceCommand::missingArgument)
-                        .then(Commands.argument("player", EntityArgument.player())
-                                .executes(WarDanceCommand::missingArgument)
-                                .then(Commands.argument("skill", SkillArgument.skill())
-                                        .executes(WarDanceCommand::getSkill)
-                                        .then(Commands.argument("enabled", BoolArgumentType.bool())
-                                                .executes(WarDanceCommand::setSkill)))
-                                .then(Commands.literal("reset")
-                                        .executes(WarDanceCommand::resetSkills))
-                                .then(Commands.argument("color", CategoryArgument.color())
-                                        .executes(WarDanceCommand::getSkillCategory)
-                                        .then(Commands.argument("enabled", BoolArgumentType.bool())
-                                                .executes(WarDanceCommand::setSkillCategory)))
-                        )
+                              .executes(WarDanceCommand::missingArgument)
+                              .then(Commands.argument("player", EntityArgument.player())
+                                            .executes(WarDanceCommand::missingArgument)
+                                            .then(Commands.argument("skill", SkillArgument.skill())
+                                                          .executes(WarDanceCommand::getSkill)
+                                                          .then(Commands.argument("enabled", BoolArgumentType.bool())
+                                                                        .executes(WarDanceCommand::setSkill)))
+                                            .then(Commands.literal("reset")
+                                                          .executes(WarDanceCommand::resetSkills))
+                                            .then(Commands.literal("grandmaster")
+                                                          .executes(WarDanceCommand::missingArgument)
+                                                          .then(Commands.argument("enabled", BoolArgumentType.bool())
+                                                                        .executes(WarDanceCommand::grandmaster)))
+                              .then(Commands.argument("color", CategoryArgument.color())
+                                            .executes(WarDanceCommand::getSkillCategory)
+                                            .then(Commands.argument("enabled", BoolArgumentType.bool())
+                                                          .executes(WarDanceCommand::setSkillCategory)))
+                )
                 )
 //                .then(Commands.literal("might")
 //                        .executes(WarDanceCommand::missingArgument)
@@ -73,90 +79,90 @@ public class WarDanceCommand {
 //                        )
 //                )
                 .then(Commands.literal("spirit")
-                        .executes(WarDanceCommand::missingArgument)
-                        .then(Commands.argument("entity", EntityArgument.entity())
-                                .executes(WarDanceCommand::getSpirit)
-                                .then(Commands.argument("amount", FloatArgumentType.floatArg(0))
-                                        .executes(WarDanceCommand::missingArgument)
-                                        .then(Commands.literal("add")
-                                                .executes(WarDanceCommand::addSpirit))
-                                        .then(Commands.literal("consume")
-                                                .executes(WarDanceCommand::consumeSpirit))
-                                        .then(Commands.literal("set")
-                                                .executes(WarDanceCommand::setSpirit)
-                                        )
-                                )
-                        )
-                )
+                              .executes(WarDanceCommand::missingArgument)
+                              .then(Commands.argument("entity", EntityArgument.entity())
+                                            .executes(WarDanceCommand::getSpirit)
+                                            .then(Commands.argument("amount", FloatArgumentType.floatArg(0))
+                                                          .executes(WarDanceCommand::missingArgument)
+                                                          .then(Commands.literal("add")
+                                                                        .executes(WarDanceCommand::addSpirit))
+                                                          .then(Commands.literal("consume")
+                                                                        .executes(WarDanceCommand::consumeSpirit))
+                                                          .then(Commands.literal("set")
+                                                                        .executes(WarDanceCommand::setSpirit)
+                                                          )
+                                            )
+                              )
+        )
                 .then(Commands.literal("posture")
-                        .executes(WarDanceCommand::missingArgument)
-                        .then(Commands.argument("entity", EntityArgument.entity())
-                                .executes(WarDanceCommand::getPosture)
-                                .then(Commands.argument("amount", FloatArgumentType.floatArg(0))
-                                        .executes(WarDanceCommand::missingArgument)
-                                        .then(Commands.literal("add")
-                                                .executes(WarDanceCommand::addPosture))
-                                        .then(Commands.literal("consume")
-                                                .executes(WarDanceCommand::consumePosture))
-                                        .then(Commands.literal("set")
-                                                .executes(WarDanceCommand::setPosture)
-                                        )
-                                )
-                        )
+                              .executes(WarDanceCommand::missingArgument)
+                              .then(Commands.argument("entity", EntityArgument.entity())
+                                            .executes(WarDanceCommand::getPosture)
+                                            .then(Commands.argument("amount", FloatArgumentType.floatArg(0))
+                                                          .executes(WarDanceCommand::missingArgument)
+                                                          .then(Commands.literal("add")
+                                                                        .executes(WarDanceCommand::addPosture))
+                                                          .then(Commands.literal("consume")
+                                                                        .executes(WarDanceCommand::consumePosture))
+                                                          .then(Commands.literal("set")
+                                                                        .executes(WarDanceCommand::setPosture)
+                                                          )
+                                            )
+                              )
                 )
                 .then(Commands.literal("stagger")
-                        .executes(WarDanceCommand::missingArgument)
-                        .then(Commands.argument("entity", EntityArgument.entity())
-                                .executes(WarDanceCommand::missingArgument)
-                                .then(Commands.argument("time", IntegerArgumentType.integer(0))
-                                        .executes(WarDanceCommand::defaultStagger)
-                                        .then(Commands.argument("count", IntegerArgumentType.integer())
-                                                .executes(WarDanceCommand::stagger)
-                                        )
-                                )
-                        )
+                              .executes(WarDanceCommand::missingArgument)
+                              .then(Commands.argument("entity", EntityArgument.entity())
+                                            .executes(WarDanceCommand::missingArgument)
+                                            .then(Commands.argument("time", IntegerArgumentType.integer(0))
+                                                          .executes(WarDanceCommand::defaultStagger)
+                                                          .then(Commands.argument("count", IntegerArgumentType.integer())
+                                                                        .executes(WarDanceCommand::stagger)
+                                                          )
+                                            )
+                              )
                 )
                 .then(Commands.literal("manualize")
-                        .executes(WarDanceCommand::manualize)
-                        .then(Commands.argument("autolearn", BoolArgumentType.bool())
-                                .executes(WarDanceCommand::manualize)
-                        )
+                              .executes(WarDanceCommand::manualize)
+                              .then(Commands.argument("autolearn", BoolArgumentType.bool())
+                                            .executes(WarDanceCommand::manualize)
+                              )
                 )
                 .then(Commands.literal("toggle")
-                        .executes(WarDanceCommand::missingArgument)
-                        .then(Commands.argument("player", EntityArgument.player())
-                                .executes(WarDanceCommand::missingArgument)
-                                .then(Commands.literal("parry")
-                                        .executes(a -> WarDanceCommand.getPermission(a, Permission.PARRY))
-                                        .then(Commands.argument("enabled", BoolArgumentType.bool())
-                                                .executes(a -> WarDanceCommand.setPermission(a, Permission.PARRY))
-                                        )
-                                )
-                                .then(Commands.literal("posture")
-                                        .executes(a -> WarDanceCommand.getPermission(a, Permission.POSTURE))
-                                        .then(Commands.argument("enabled", BoolArgumentType.bool())
-                                                .executes(a -> WarDanceCommand.setPermission(a, Permission.POSTURE))
-                                        )
-                                )
-                                .then(Commands.literal("skill")
-                                        .executes(a -> WarDanceCommand.getPermission(a, Permission.SKILL))
-                                        .then(Commands.argument("enabled", BoolArgumentType.bool())
-                                                .executes(a -> WarDanceCommand.setPermission(a, Permission.SKILL))
-                                        )
-                                )
-                                .then(Commands.literal("combat")
-                                        .executes(a -> WarDanceCommand.getPermission(a, Permission.COMBAT))
-                                        .then(Commands.argument("enabled", BoolArgumentType.bool())
-                                                .executes(a -> WarDanceCommand.setPermission(a, Permission.COMBAT))
-                                        )
-                                )
-                                .then(Commands.literal("sweep")
-                                        .executes(a -> WarDanceCommand.getPermission(a, Permission.SWEEP))
-                                        .then(Commands.argument("enabled", BoolArgumentType.bool())
-                                                .executes(a -> WarDanceCommand.setPermission(a, Permission.SWEEP))
-                                        )
-                                )
-                        )
+                              .executes(WarDanceCommand::missingArgument)
+                              .then(Commands.argument("player", EntityArgument.player())
+                                            .executes(WarDanceCommand::missingArgument)
+                                            .then(Commands.literal("parry")
+                                                          .executes(a -> WarDanceCommand.getPermission(a, Permission.PARRY))
+                                                          .then(Commands.argument("enabled", BoolArgumentType.bool())
+                                                                        .executes(a -> WarDanceCommand.setPermission(a, Permission.PARRY))
+                                                          )
+                                            )
+                                            .then(Commands.literal("posture")
+                                                          .executes(a -> WarDanceCommand.getPermission(a, Permission.POSTURE))
+                                                          .then(Commands.argument("enabled", BoolArgumentType.bool())
+                                                                        .executes(a -> WarDanceCommand.setPermission(a, Permission.POSTURE))
+                                                          )
+                                            )
+                                            .then(Commands.literal("skill")
+                                                          .executes(a -> WarDanceCommand.getPermission(a, Permission.SKILL))
+                                                          .then(Commands.argument("enabled", BoolArgumentType.bool())
+                                                                        .executes(a -> WarDanceCommand.setPermission(a, Permission.SKILL))
+                                                          )
+                                            )
+                                            .then(Commands.literal("combat")
+                                                          .executes(a -> WarDanceCommand.getPermission(a, Permission.COMBAT))
+                                                          .then(Commands.argument("enabled", BoolArgumentType.bool())
+                                                                        .executes(a -> WarDanceCommand.setPermission(a, Permission.COMBAT))
+                                                          )
+                                            )
+                                            .then(Commands.literal("sweep")
+                                                          .executes(a -> WarDanceCommand.getPermission(a, Permission.SWEEP))
+                                                          .then(Commands.argument("enabled", BoolArgumentType.bool())
+                                                                        .executes(a -> WarDanceCommand.setPermission(a, Permission.SWEEP))
+                                                          )
+                                            )
+                              )
                 );
         dispatcher.register(builder);
     }
@@ -185,7 +191,7 @@ public class WarDanceCommand {
         int time = IntegerArgumentType.getInteger(ctx, "time");
         int count = IntegerArgumentType.getInteger(ctx, "count");
         CombatData.getCap((LivingEntity) player).stun(time);
-        ctx.getSource().sendSuccess(()->Component.translatable("wardance.command.stagger", player.getDisplayName(), time, count), false);
+        ctx.getSource().sendSuccess(() -> Component.translatable("wardance.command.stagger", player.getDisplayName(), time, count), false);
         return Command.SINGLE_SUCCESS;
     }
 
@@ -194,7 +200,7 @@ public class WarDanceCommand {
         if (!(player instanceof LivingEntity)) throw EntitySelectorOptions.ERROR_INAPPLICABLE_OPTION.create(player);
         int time = IntegerArgumentType.getInteger(ctx, "time");
         CombatData.getCap((LivingEntity) player).stun(time);
-        ctx.getSource().sendSuccess(()->Component.translatable("wardance.command.staggerDefault", player.getDisplayName(), time), false);
+        ctx.getSource().sendSuccess(() -> Component.translatable("wardance.command.staggerDefault", player.getDisplayName(), time), false);
         return Command.SINGLE_SUCCESS;
     }
 
@@ -238,7 +244,7 @@ public class WarDanceCommand {
         if (!(player instanceof LivingEntity)) throw EntitySelectorOptions.ERROR_INAPPLICABLE_OPTION.create(player);
         float i = FloatArgumentType.getFloat(ctx, "amount");
         CombatData.getCap((LivingEntity) player).setSpirit(i);
-        ctx.getSource().sendSuccess(()->Component.translatable("wardance.command.setSpirit", player.getDisplayName(), i), false);
+        ctx.getSource().sendSuccess(() -> Component.translatable("wardance.command.setSpirit", player.getDisplayName(), i), false);
         return Command.SINGLE_SUCCESS;
     }
 
@@ -247,7 +253,7 @@ public class WarDanceCommand {
         if (!(player instanceof LivingEntity)) throw EntitySelectorOptions.ERROR_INAPPLICABLE_OPTION.create(player);
         float i = FloatArgumentType.getFloat(ctx, "amount");
         CombatData.getCap((LivingEntity) player).consumeSpirit(i);
-        ctx.getSource().sendSuccess(()->Component.translatable("wardance.command.conSpirit", player.getDisplayName(), i), false);
+        ctx.getSource().sendSuccess(() -> Component.translatable("wardance.command.conSpirit", player.getDisplayName(), i), false);
         return Command.SINGLE_SUCCESS;
     }
 
@@ -256,7 +262,7 @@ public class WarDanceCommand {
         if (!(player instanceof LivingEntity)) throw EntitySelectorOptions.ERROR_INAPPLICABLE_OPTION.create(player);
         float i = FloatArgumentType.getFloat(ctx, "amount");
         CombatData.getCap((LivingEntity) player).addSpirit(i);
-        ctx.getSource().sendSuccess(()->Component.translatable("wardance.command.addSpirit", player.getDisplayName(), i), false);
+        ctx.getSource().sendSuccess(() -> Component.translatable("wardance.command.addSpirit", player.getDisplayName(), i), false);
         return Command.SINGLE_SUCCESS;
     }
 
@@ -264,7 +270,7 @@ public class WarDanceCommand {
         Entity player = EntityArgument.getEntity(ctx, "entity");
         if (!(player instanceof LivingEntity)) throw EntitySelectorOptions.ERROR_INAPPLICABLE_OPTION.create(player);
         float spirit = CombatData.getCap((LivingEntity) player).getSpirit();
-        ctx.getSource().sendSuccess(()->Component.translatable("wardance.command.getSpirit", player.getDisplayName(), spirit), false);
+        ctx.getSource().sendSuccess(() -> Component.translatable("wardance.command.getSpirit", player.getDisplayName(), spirit), false);
         return Math.round(spirit);
     }
 
@@ -273,7 +279,7 @@ public class WarDanceCommand {
         if (!(player instanceof LivingEntity)) throw EntitySelectorOptions.ERROR_INAPPLICABLE_OPTION.create(player);
         float i = FloatArgumentType.getFloat(ctx, "amount");
         CombatData.getCap((LivingEntity) player).setPosture(i);
-        ctx.getSource().sendSuccess(()->Component.translatable("wardance.command.setPosture", player.getDisplayName(), i), false);
+        ctx.getSource().sendSuccess(() -> Component.translatable("wardance.command.setPosture", player.getDisplayName(), i), false);
         return Command.SINGLE_SUCCESS;
     }
 
@@ -282,7 +288,7 @@ public class WarDanceCommand {
         if (!(player instanceof LivingEntity)) throw EntitySelectorOptions.ERROR_INAPPLICABLE_OPTION.create(player);
         float i = FloatArgumentType.getFloat(ctx, "amount");
         CombatData.getCap((LivingEntity) player).consumePosture(i);
-        ctx.getSource().sendSuccess(()->Component.translatable("wardance.command.conPosture", player.getDisplayName(), i), false);
+        ctx.getSource().sendSuccess(() -> Component.translatable("wardance.command.conPosture", player.getDisplayName(), i), false);
         return Command.SINGLE_SUCCESS;
     }
 
@@ -291,7 +297,7 @@ public class WarDanceCommand {
         if (!(player instanceof LivingEntity)) throw EntitySelectorOptions.ERROR_INAPPLICABLE_OPTION.create(player);
         float i = FloatArgumentType.getFloat(ctx, "amount");
         CombatData.getCap((LivingEntity) player).addPosture(i);
-        ctx.getSource().sendSuccess(()->Component.translatable("wardance.command.addPosture", player.getDisplayName(), i), false);
+        ctx.getSource().sendSuccess(() -> Component.translatable("wardance.command.addPosture", player.getDisplayName(), i), false);
         return Command.SINGLE_SUCCESS;
     }
 
@@ -299,7 +305,7 @@ public class WarDanceCommand {
         Entity player = EntityArgument.getEntity(ctx, "entity");
         if (!(player instanceof LivingEntity)) throw EntitySelectorOptions.ERROR_INAPPLICABLE_OPTION.create(player);
         float posture = CombatData.getCap((LivingEntity) player).getPosture();
-        ctx.getSource().sendSuccess(()->Component.translatable("wardance.command.getPosture", player.getDisplayName(), posture), false);
+        ctx.getSource().sendSuccess(() -> Component.translatable("wardance.command.getPosture", player.getDisplayName(), posture), false);
         return Math.round(posture);
     }
 
@@ -308,7 +314,7 @@ public class WarDanceCommand {
         final Skill skill = ctx.getArgument("skill", Skill.class);
         final boolean enabled = BoolArgumentType.getBool(ctx, "enabled");
         CasterData.getCap(player).setSkillSelectable(skill, enabled);
-        ctx.getSource().sendSuccess(()->Component.translatable("wardance.command.setSkill" + (CasterData.getCap(player).isSkillSelectable(skill)), player.getDisplayName(), skill.getDisplayName(null)), false);
+        ctx.getSource().sendSuccess(() -> Component.translatable("wardance.command.setSkill" + (CasterData.getCap(player).isSkillSelectable(skill)), player.getDisplayName(), skill.getDisplayName(null)), false);
         return Command.SINGLE_SUCCESS;
     }
 
@@ -316,14 +322,24 @@ public class WarDanceCommand {
         Player player = EntityArgument.getPlayer(ctx, "player");
         final Skill skill = ctx.getArgument("skill", Skill.class);
         final boolean enabled = CasterData.getCap(player).isSkillSelectable(skill);
-        ctx.getSource().sendSuccess(()->Component.translatable("wardance.command.getSkill" + (CasterData.getCap(player).isSkillSelectable(skill)), player.getDisplayName(), skill.getDisplayName(null)), false);
+        ctx.getSource().sendSuccess(() -> Component.translatable("wardance.command.getSkill" + (CasterData.getCap(player).isSkillSelectable(skill)), player.getDisplayName(), skill.getDisplayName(null)), false);
         return enabled ? 1 : 0;
     }
 
     private static int resetSkills(CommandContext<CommandSourceStack> ctx) throws CommandSyntaxException {
         Player player = EntityArgument.getPlayer(ctx, "player");
         CasterData.getCap(player).getSelectableList().clear();
-        ctx.getSource().sendSuccess(()->Component.translatable("wardance.command.clearSkill" + (!SkillConfig.sifu), player.getDisplayName()), false);
+        ctx.getSource().sendSuccess(() -> Component.translatable("wardance.command.clearSkill" + (!SkillConfig.sifu), player.getDisplayName()), false);
+        return Command.SINGLE_SUCCESS;
+    }
+
+    private static int grandmaster(CommandContext<CommandSourceStack> ctx) throws CommandSyntaxException {
+        Player player = EntityArgument.getPlayer(ctx, "player");
+        final boolean enabled = BoolArgumentType.getBool(ctx, "enabled");
+        for (List<Skill> sk : Skill.categoryMap.values())
+            for (Skill s : sk)
+                CasterData.getCap(player).setSkillSelectable(s, enabled);
+        ctx.getSource().sendSuccess(() -> Component.translatable("wardance.command.allSkill" + (enabled), player.getDisplayName()), false);
         return Command.SINGLE_SUCCESS;
     }
 
@@ -333,7 +349,7 @@ public class WarDanceCommand {
         final boolean enabled = BoolArgumentType.getBool(ctx, "enabled");
         for (Skill s : Skill.categoryMap.get(skill))
             CasterData.getCap(player).setSkillSelectable(s, enabled);
-        ctx.getSource().sendSuccess(()->Component.translatable("wardance.command.setSkillCategory" + (enabled), player.getDisplayName(), skill.name()), false);
+        ctx.getSource().sendSuccess(() -> Component.translatable("wardance.command.setSkillCategory" + (enabled), player.getDisplayName(), skill.name()), false);
         return Command.SINGLE_SUCCESS;
     }
 
@@ -347,12 +363,13 @@ public class WarDanceCommand {
         for (Skill s : Skill.categoryMap.get(cat))
             if (CasterData.getCap(player).isSkillSelectable(s))
                 ret++;
-        final int rett=ret;
-        ctx.getSource().sendSuccess(()->Component.translatable("wardance.command.getSkillCategory", player.getDisplayName(), rett, cat.name()), false);
+        final int rett = ret;
+        ctx.getSource().sendSuccess(() -> Component.translatable("wardance.command.getSkillCategory", player.getDisplayName(), rett, cat.name()), false);
         return ret;
     }
 
-    private static int getPermission(CommandContext<CommandSourceStack> ctx, Permission permission) throws CommandSyntaxException {
+    private static int getPermission(CommandContext<CommandSourceStack> ctx,
+                                     Permission permission) throws CommandSyntaxException {
         Player player = EntityArgument.getPlayer(ctx, "player");
         boolean enabled = true;
         switch (permission) {
@@ -362,13 +379,14 @@ public class WarDanceCommand {
             case POSTURE -> enabled = PermissionData.getCap(player).canDealPostureDamage();
             case SWEEP -> enabled = PermissionData.getCap(player).canSweep();
         }
-        final boolean thisIsStupid=enabled;
-        ctx.getSource().sendSuccess(()->Component.translatable("wardance.command.permission." + permission.name() + "." + thisIsStupid, player.getDisplayName()), false);
+        final boolean thisIsStupid = enabled;
+        ctx.getSource().sendSuccess(() -> Component.translatable("wardance.command.permission." + permission.name() + "." + thisIsStupid, player.getDisplayName()), false);
 
         return enabled ? 1 : 0;
     }
 
-    private static int setPermission(CommandContext<CommandSourceStack> ctx, Permission permission) throws CommandSyntaxException {
+    private static int setPermission(CommandContext<CommandSourceStack> ctx,
+                                     Permission permission) throws CommandSyntaxException {
         Player player = EntityArgument.getPlayer(ctx, "player");
         final boolean enabled = BoolArgumentType.getBool(ctx, "enabled");
         switch (permission) {
@@ -378,7 +396,7 @@ public class WarDanceCommand {
             case POSTURE -> PermissionData.getCap(player).setPosture(enabled);
             case SWEEP -> PermissionData.getCap(player).setSweep(enabled);
         }
-        ctx.getSource().sendSuccess(()->Component.translatable("wardance.command.permission." + permission.name() + "." + enabled, player.getDisplayName()), false);
+        ctx.getSource().sendSuccess(() -> Component.translatable("wardance.command.permission." + permission.name() + "." + enabled, player.getDisplayName()), false);
         return Command.SINGLE_SUCCESS;
     }
 

@@ -1,6 +1,6 @@
 package jackiecrazy.wardance.skill.ironguard;
 
-import jackiecrazy.wardance.event.MeleePostureEvent;
+import jackiecrazy.wardance.event.ConsumePostureEvent;
 import jackiecrazy.wardance.skill.Skill;
 import jackiecrazy.wardance.skill.SkillArchetypes;
 import jackiecrazy.wardance.skill.SkillArchetype;
@@ -33,12 +33,12 @@ public abstract class IronGuard extends Skill {
 
     @Override
     public void onProc(LivingEntity caster, Event procPoint, STATE state, SkillData stats, @Nullable LivingEntity target) {
-        if (procPoint instanceof MeleePostureEvent.Defense && procPoint.getPhase() == EventPriority.HIGHEST && state!=STATE.COOLING && ((MeleePostureEvent.Defense) procPoint).getEntity() == caster && ((MeleePostureEvent.Defense) procPoint).success() && ((MeleePostureEvent.Defense) procPoint).getPostureConsumption() > 0 && cast(caster, target, -999)) {
-            parry(caster, (MeleePostureEvent.Defense) procPoint, stats, target, state);
+        if (procPoint instanceof ConsumePostureEvent d && procPoint.getPhase() == EventPriority.HIGHEST && state!=STATE.COOLING && d.getEntity() == caster) {
+            parry(caster, d, stats, target, state);
         }
     }
 
-    protected abstract void parry(LivingEntity caster, MeleePostureEvent.Defense procPoint, SkillData stats, LivingEntity target, STATE state);
+    protected abstract void parry(LivingEntity caster, ConsumePostureEvent procPoint, SkillData stats, LivingEntity target, STATE state);
 
     @Override
     public boolean onStateChange(LivingEntity caster, SkillData prev, STATE from, STATE to) {

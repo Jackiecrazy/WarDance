@@ -266,7 +266,7 @@ public class GrappleEntity extends FlyingItemEntity {
 
                             //if you move to the weapon, slow gravity a bit
                             if (!yank && picked) {
-                                AerialModeData.getCap(p).alterGravity(10, 0.3);
+                                //AerialModeData.getCap(p).alterGravity(10, 0.3);
                                 AerialModeData.getCap(p).setAerialMode(true);
                                 p.setDeltaMovement(new Vec3(0, 0.5, 0));
                             }
@@ -305,7 +305,7 @@ public class GrappleEntity extends FlyingItemEntity {
             p.setDeltaMovement(new Vec3(0, 0.5, 0));
         else p.setDeltaMovement(p.getDeltaMovement().multiply(1, 0, 1).add(0, 0.5, 0));
         p.resetFallDistance();
-        AerialModeData.getCap(p).alterGravity(20, 0.3);
+        //AerialModeData.getCap(p).alterGravity(20, 0.3);
         AerialModeData.getCap(p).setAerialMode(true);
         if (p instanceof ServerPlayer sp)
             CombatChannel.INSTANCE.send(PacketDistributor.PLAYER.with(() -> sp), new ResetAirJumpPacket());

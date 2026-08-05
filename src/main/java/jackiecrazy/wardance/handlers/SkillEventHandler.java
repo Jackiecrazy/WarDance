@@ -113,7 +113,7 @@ public class SkillEventHandler {
     }
 
     @SubscribeEvent(priority = EventPriority.LOWEST)
-    public static void consumePosture(ConsumePostureEvent e) {
+    public static void consumePosture(MeleePostureEvent e) {
         if (!e.getEntity().isEffectiveAi()) return;
         ISkillCapability isc = CasterData.getCap(e.getAttacker());
         for (Skill s : isc.getEquippedSkillsAndStyle()) {
@@ -126,7 +126,7 @@ public class SkillEventHandler {
     }
 
     @SubscribeEvent(priority = EventPriority.HIGHEST)
-    public static void consumePostureE(ConsumePostureEvent e) {
+    public static void consumePostureE(MeleePostureEvent e) {
         if (!e.getEntity().isEffectiveAi()) return;
         ISkillCapability isc = CasterData.getCap(e.getAttacker());
         for (Skill s : isc.getEquippedSkillsAndStyle()) {

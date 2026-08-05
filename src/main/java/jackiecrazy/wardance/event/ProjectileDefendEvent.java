@@ -1,23 +1,23 @@
 package jackiecrazy.wardance.event;
 
+import jackiecrazy.footwork.capability.resources.CombatData;
 import jackiecrazy.wardance.utils.CombatUtils;
-import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.projectile.Projectile;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.phys.Vec3;
-import net.minecraftforge.event.entity.living.LivingEvent;
+import net.minecraftforge.eventbus.api.Cancelable;
 import net.minecraftforge.eventbus.api.Event;
 
 @Event.HasResult
-public abstract class ProjectileDefendEvent extends LivingEvent {
+public abstract class ProjectileDefendEvent extends ConsumePostureEvent {
     private final Projectile projectile;
     private final InteractionHand defendingHand;
     private final ItemStack defendingStack;
     private final float originalPostureConsumption;
     private final Vec3 originalReturnVec;
-    private float postureConsumption, rallyPerc;
+    private float rallyPerc;
     private boolean trigger;
     /**
      * null to delete.
@@ -25,7 +25,7 @@ public abstract class ProjectileDefendEvent extends LivingEvent {
     private Vec3 returnVec;
 
     public ProjectileDefendEvent(LivingEntity entity, Projectile seme, InteractionHand dhand, ItemStack d, float mult) {
-        super(entity);
+        super(entity, 0,0, false);
         projectile = seme;
         defendingHand = dhand;
         defendingStack = d;
@@ -59,14 +59,6 @@ public abstract class ProjectileDefendEvent extends LivingEvent {
         return originalPostureConsumption;
     }
 
-    public float getPostureConsumption() {
-        return postureConsumption;
-    }
-
-    public void setPostureConsumption(float amount) {
-        postureConsumption = amount;
-    }
-
     public Vec3 getOriginalReturnVec() {return originalReturnVec;}
 
     public Vec3 getReturnVec() {return returnVec;}
@@ -81,13 +73,28 @@ public abstract class ProjectileDefendEvent extends LivingEvent {
         this.rallyPerc = rallyPerc;
     }
 
+    public abstract boolean success();
+
+    @HasResult
+    @Cancelable
     public static class Block extends ProjectileDefendEvent {
 
         public Block(LivingEntity entity, Projectile seme, InteractionHand dhand, ItemStack d, float mult) {
             super(entity, seme, dhand, d, mult);
         }
+
+        @Override
+        public boolean success() {
+            return getResult() == Event.Result.ALLOW || (getDefendingStack() != null && getResult() == Event.Result.DEFAULT && CombatData.getCap(getEntity()).isBlocking());
+        }
+        @Override
+        public TYPE getType() {
+            return TYPE.BLOCK;
+        }
     }
 
+    @HasResult
+    @Cancelable
     public static class Parry extends ProjectileDefendEvent {
 
         public Parry(LivingEntity entity, Projectile seme, InteractionHand dhand, ItemStack d, float mult) {
@@ -95,6 +102,15 @@ public abstract class ProjectileDefendEvent extends LivingEvent {
             setPostureConsumption(0);
             setReturnVec(entity.getLookAngle().scale(seme.getDeltaMovement().length()));
             setTrigger(false);
+        }
+
+        @Override
+        public boolean success() {
+            return getResult() == Event.Result.ALLOW || (CombatData.getCap(getEntity()).isParrying() && getResult() == Event.Result.DEFAULT);
+        }
+        @Override
+        public TYPE getType() {
+            return TYPE.PARRY;
         }
     }
 }

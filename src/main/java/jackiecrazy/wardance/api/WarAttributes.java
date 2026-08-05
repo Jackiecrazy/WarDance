@@ -21,7 +21,7 @@ public class WarAttributes {
     public static final RegistryObject<Attribute> ADRE_BON = register("adrenaline_gain", 1, 0, 1024);
 
     //defense attributes
-    public static final RegistryObject<Attribute> DARKTIDE = register("darktide_power", 1d, 0, 1024);
+    public static final RegistryObject<Attribute> COMPOSURE = register("composure", 1d, 0, 1024);
     public static final RegistryObject<Attribute> DDOOR_TIME = register("deaths_door_time", 1d, 0, 1024);
     public static final RegistryObject<Attribute> DODGE_EXTEND = register("dodge_window", 1d, 0, 1024);
     public static final RegistryObject<Attribute> PARRY_EXTEND = register("parry_window", 1d, 0, 1024);

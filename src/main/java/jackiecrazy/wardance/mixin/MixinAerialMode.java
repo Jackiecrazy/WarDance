@@ -3,13 +3,18 @@ package jackiecrazy.wardance.mixin;
 import jackiecrazy.wardance.api.IFlameDance;
 import jackiecrazy.wardance.capability.aerial.ClientAerialHandler;
 import jackiecrazy.wardance.capability.status.Marks;
+import jackiecrazy.wardance.handlers.EntityHandler;
 import jackiecrazy.wardance.skill.WarSkills;
 import jackiecrazy.wardance.skill.styles.two.FlameDance;
 import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.MobCategory;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.Vec3;
+import net.minecraftforge.registries.ForgeRegistries;
+import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
@@ -33,6 +38,11 @@ public abstract class MixinAerialMode {
 
     @Shadow
     protected abstract Vec3 collide(Vec3 p_20273_);
+
+    @Shadow
+    @Final
+    @Deprecated
+    private EntityType<?> type;
 
     @Redirect(method = "move", require = 1,
             at = @At(value = "INVOKE",

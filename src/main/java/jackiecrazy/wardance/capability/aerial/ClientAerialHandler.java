@@ -36,7 +36,6 @@ public class ClientAerialHandler {
 
         if (self instanceof Player e && StylishData.getCap(e).isCombatMode()) {
             final IAerialMode cap = AerialModeData.getCap(e);
-            //todo convert velocity that is orthogonal to wall into vertical
             //clamp vector if on wall
             if (cap.getWallDir() != null && cap.getState() == IAerialMode.WallState.CLING) {
                 Vec3 movement = self.getDeltaMovement();
@@ -220,11 +219,11 @@ public class ClientAerialHandler {
                     jumpCount--;
                     if (!StylishData.getCap(pl).isCombatMode()) return;
                     Direction wall = cap.getWallDir();
-                    if (wall != null) {
+                    if (wall != null||cap.getState()== IAerialMode.WallState.CEILING_CLING) {
                         //add some wall velocity
-                        Vec3 wallFlip = Vec3.atLowerCornerOf(wall.getOpposite().getNormal()).scale(1);
+                        //Vec3 wallFlip = Vec3.atLowerCornerOf(wall.getOpposite().getNormal()).scale(1);
                         //add the player's look vector
-                        Vec3 look = pl.getLookAngle();
+                        //Vec3 look = pl.getLookAngle();
                         //figure out which axis is correct
 //                        if (wallFlip.x != 0 && wallFlip.x < 0 != look.x < 0) look = look.multiply(-1, 1, 1);
 //                        if (wallFlip.z != 0 && wallFlip.z < 0 != look.z < 0) look = look.multiply(1, 1, -1);
@@ -233,6 +232,7 @@ public class ClientAerialHandler {
 //                        wallFlip = wallFlip.add(look);
                         //pl.addDeltaMovement(wallFlip.add(0, 0.3, 0));
                         lastDir = cap.getWallDir();
+                        resetMultiJumps(pl);
                         cap.setState(IAerialMode.WallState.WALL_JUMP);
                     }
                     AerialModeData.getCap(pl).setAerialMode(true);

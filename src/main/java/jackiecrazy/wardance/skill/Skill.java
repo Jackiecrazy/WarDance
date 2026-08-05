@@ -147,6 +147,10 @@ public abstract class Skill extends Move {
         return CastStatus.ALLOWED;
     }
 
+    protected boolean finisher(){
+        return false;
+    }
+
     public int spiritConsumption(LivingEntity caster) {
         return 0;
     }

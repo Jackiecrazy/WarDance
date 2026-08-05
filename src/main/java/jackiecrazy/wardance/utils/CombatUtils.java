@@ -411,9 +411,14 @@ public class CombatUtils {
         WeaponInteractions.InteractionGroup group = pre.getInteraction();
         if (group == null)
             group = WeaponStats.getSweepInfo(stack, e, pre.getMoveState(), false, h);
-        PlayInteractionEvent.Post post = new PlayInteractionEvent.Post(e, h, stack, s, group);
+        PlayInteractionEvent.Post post = new PlayInteractionEvent.Post(e, h, stack, pre.getMoveState(), group);
         MinecraftForge.EVENT_BUS.post(post);
-        
+        if (post.getOriginalState() == WeaponStats.AttackType.AERIAL)
+            AerialModeData.getCap(e).setAerialMode(true);
+        if (post.getOriginalState() == WeaponStats.AttackType.FALLING)
+            AerialModeData.getCap(e).setAerialMode(false);
+        //reset the attack type of the entity so it is properly passed to the flying weapon
+        setAttackType(e, post.getOriginalState());
         return processWeaponInteraction(e, ignore, h, reach, post.getInteraction());
     }
 
@@ -444,7 +449,7 @@ public class CombatUtils {
                 //duplicate the above to make the base attack stronger if the swing is stronger than usual
                 if (ignore != null && damageBonus > 0)
                     attack(e, ignore, h == InteractionHand.OFF_HAND);
-                FlyingWeaponData.getCap(e).getWeapon(h).ifPresent(fwe -> fwe.setUniversalOffset(h == InteractionHand.MAIN_HAND ? group.right_hand_offset() : group.left_hand_offset()));
+                FlyingWeaponData.getCap(e).getWeapon(h).ifPresent(fwe -> fwe.setAttackType(getAttackState(e)).setUniversalOffset(h == InteractionHand.MAIN_HAND ? group.right_hand_offset() : group.left_hand_offset()));
                 enhancedSweep(e, ignore, h, sweep.getType(), reach, sweep.getBase(), sweep.getScaling(), sweep.getCustomAnimation());
                 SkillUtils.removeAttribute(e, Attributes.ATTACK_DAMAGE, main);
                 WeaponStats.info_override = null;
@@ -462,7 +467,7 @@ public class CombatUtils {
                 SweepAnimationBuilder.flip *= -1;
                 Vec3 localDrift = MovementUtils.resolveVelocity(e.getLookAngle(), anim.getDrift());
                 Vec3 randomDrift = new Vec3((WarDance.rand.nextFloat() * 2 - 1) * localDrift.x, (WarDance.rand.nextFloat() * 2 - 1) * localDrift.y, (WarDance.rand.nextFloat() * 2 - 1) * localDrift.z);
-                FlyingWeaponData.getCap(e).getWeapon(h).ifPresent(fwe -> fwe.setUniversalOffset(h == InteractionHand.MAIN_HAND ? group.right_hand_offset().add(randomDrift) : group.left_hand_offset().add(randomDrift)));
+                FlyingWeaponData.getCap(e).getWeapon(h).ifPresent(fwe -> fwe.setAttackType(getAttackState(e)).setUniversalOffset(h == InteractionHand.MAIN_HAND ? group.right_hand_offset().add(randomDrift) : group.left_hand_offset().add(randomDrift)));
                 boolean overwrite = true;
                 for (MotionManager mm : anim.getAnimations()) {
                     FlyingWeaponData.getCap(e).scheduleAction(h, SweepAnimationBuilder.flip > 0 && !group.noFlip() ? mm.flipFrames() : mm, overwrite);
@@ -478,7 +483,7 @@ public class CombatUtils {
                 //transform it...
                 t.transformThrown(fwe);
                 //then yeet it for real
-                fwe.yeet(e.getEyePosition().add(throw_vec.scale(32)), t.getThrowSpeed());
+                fwe.setAttackType(getAttackState(e)).yeet(e.getEyePosition().add(throw_vec.scale(32)), t.getThrowSpeed());
                 if (t.consume() && e instanceof Player player && !player.getAbilities().instabuild) {
                     final ItemStack held = player.getItemInHand(h);
                     held.shrink(1);
@@ -655,34 +660,43 @@ public class CombatUtils {
     }
 
     public static void setAttackType(LivingEntity entity, WeaponStats.AttackType set) {
-        CombatData.getCap(entity).tickProc("sweepState", set.ordinal());
+        //putting in a negative value allows the ticker to clear it on the next tick immediately
+        //0 is not a problem because attack type ordinal 0 is UNDEFINED
+        if (set == null) {
+            CombatData.getCap(entity).tickProc("sweepState", 0);
+            return;
+        }
+        CombatData.getCap(entity).tickProc("sweepState", -set.ordinal());
     }
 
     public static void updateNormalAttackStatus(LivingEntity entity) {
         WeaponStats.AttackType set = WeaponStats.AttackType.STANDING;
         //if (AerialModeData.getCap(entity).getEffectiveSpeed() < 1) set = WeaponStats.AttackType.AERIAL;
-        if (entity.isSwimming() || entity.isSprinting() || entity.isFallFlying() || CombatData.getCap(entity).isDodging())
+        if (entity.isSprinting())
             set = WeaponStats.AttackType.SPRINTING;
         if ((!(entity instanceof Player p) || !p.getAbilities().flying) && !entity.onGround() && !entity.onClimbable() && !entity.isInWater()) {
-            if (entity.fallDistance > 0||CombatData.getCap(entity).getMotionConsistently().y<0)
+            final double epsilon = 0.001;
+            if (entity.fallDistance > 0 || entity.getDeltaMovement().y < epsilon)
                 set = WeaponStats.AttackType.FALLING;
-            if (AerialModeData.getCap(entity).isAerialMode()||CombatData.getCap(entity).getMotionConsistently().y<0)
+            if (AerialModeData.getCap(entity).isAerialMode() || entity.getDeltaMovement().y > epsilon)
                 set = WeaponStats.AttackType.AERIAL;
         }
+        if (entity.isSwimming() || entity.isFallFlying() || CombatData.getCap(entity).isDodging())
+            set = WeaponStats.AttackType.SPRINTING;
         //todo more ways to be in aerial mode
         switch (AerialModeData.getCap(entity).getState()) {
             case CLING, CEILING_CLING -> set = WeaponStats.AttackType.STANDING;
             case WALL_SLIDE -> set = WeaponStats.AttackType.SPRINTING;
             case WALL_JUMP -> set = WeaponStats.AttackType.AERIAL;
         }
-        CombatData.getCap(entity).tickProc("sweepState", set.ordinal());
+        setAttackType(entity, set);
     }
 
     public static WeaponStats.AttackType getAttackState(LivingEntity entity) {
         //outside of combat mode fallback
 //        if(!StylishData.getCap(entity).isCombatMode())return WeaponStats.AttackType.STANDING;
         if (CombatData.getCap(entity).alreadyProc("sweepState"))
-            return WeaponStats.AttackType.values()[(int) CombatData.getCap(entity).getProc("sweepState")];
+            return WeaponStats.AttackType.values()[(int) -CombatData.getCap(entity).getProc("sweepState")];
         return WeaponStats.AttackType.UNDEFINED;
     }
 

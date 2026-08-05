@@ -27,31 +27,26 @@ import jackiecrazy.wardance.config.weapon.TwohandingStats;
 import jackiecrazy.wardance.config.weapon.WeaponStats;
 import jackiecrazy.wardance.entity.ai.ExposeGoal;
 import jackiecrazy.wardance.networking.CombatChannel;
-import jackiecrazy.wardance.networking.sync.SyncQuiverPacket;
 import jackiecrazy.wardance.networking.sync.SyncSkillPacket;
 import net.minecraft.core.registries.BuiltInRegistries;
-import net.minecraft.nbt.CompoundTag;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.InteractionHand;
-import net.minecraft.world.effect.MobEffect;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.*;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.entity.projectile.Projectile;
-import net.minecraft.world.inventory.ChestMenu;
-import net.minecraft.world.inventory.PlayerEnderChestContainer;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraftforge.event.AttachCapabilitiesEvent;
-import net.minecraftforge.event.OnDatapackSyncEvent;
 import net.minecraftforge.event.TickEvent;
 import net.minecraftforge.event.entity.EntityJoinLevelEvent;
 import net.minecraftforge.event.entity.living.LivingEntityUseItemEvent;
 import net.minecraftforge.event.entity.living.LivingEvent;
 import net.minecraftforge.event.entity.living.LivingFallEvent;
+import net.minecraftforge.event.entity.living.MobSpawnEvent;
 import net.minecraftforge.event.entity.player.PlayerContainerEvent;
 import net.minecraftforge.event.entity.player.PlayerEvent;
 import net.minecraftforge.event.server.ServerStartingEvent;
@@ -61,11 +56,13 @@ import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.LogicalSide;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.network.PacketDistributor;
-import net.minecraftforge.registries.ForgeRegistries;
 import net.minecraftforge.server.ServerLifecycleHooks;
 
+import java.util.Comparator;
 import java.util.HashMap;
+import java.util.Map;
 import java.util.Objects;
+import java.util.concurrent.atomic.AtomicReference;
 
 @Mod.EventBusSubscriber(modid = WarDance.MODID)
 public class EntityHandler {
@@ -87,6 +84,27 @@ public class EntityHandler {
 //        try {
 //            Thread.sleep(100);
 //        } catch (InterruptedException ignored) {}
+//    }
+
+    public static final HashMap<ResourceLocation, Integer> LAST_TICK_SPAWN_FAIL=new HashMap<>();
+    public static final HashMap<ResourceLocation, Integer> LAST_TICK_DESPAWN=new HashMap<>();
+    public static final HashMap<ResourceLocation, Integer> HISTORICAL_SPAWN_SUCCESS=new HashMap<>();
+//    @SubscribeEvent
+//    public static void trackSpawns(TickEvent.ServerTickEvent event) {
+//        if(!LAST_TICK_SPAWN_FAIL.isEmpty()) {
+//            WarDance.LOGGER.debug("in the last tick, the following mobs attempted and failed to spawn:");
+//            WarDance.LOGGER.debug(LAST_TICK_SPAWN_FAIL.entrySet().stream().sorted(Comparator.comparingInt(Map.Entry::getValue)).toList());
+//            AtomicReference<Integer> fails= new AtomicReference<>(0);
+//            AtomicReference<Integer> success= new AtomicReference<>(0);
+//            LAST_TICK_SPAWN_FAIL.forEach((k,v)-> fails.updateAndGet(v1 -> v1 + v));
+//            HISTORICAL_SPAWN_SUCCESS.forEach((k,v)-> success.updateAndGet(v1 -> v1 + v));
+//            WarDance.LOGGER.debug("spawn fail rate: "+fails.get()+"/"+(fails.get()+success.get()));
+//            WarDance.LOGGER.debug("in addition the following mobs despawned:");
+//            WarDance.LOGGER.debug(LAST_TICK_DESPAWN.entrySet().stream().sorted(Comparator.comparingInt(Map.Entry::getValue)).toList());
+//            LAST_TICK_SPAWN_FAIL.clear();
+//            HISTORICAL_SPAWN_SUCCESS.clear();
+//            LAST_TICK_DESPAWN.clear();
+//        }
 //    }
 
     @SubscribeEvent

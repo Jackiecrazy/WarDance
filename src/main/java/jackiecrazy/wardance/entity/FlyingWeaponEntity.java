@@ -57,7 +57,13 @@ public class FlyingWeaponEntity extends FlyingItemEntity implements IDrag {
     protected HashMap<Entity, Integer> dragging = new HashMap<>();
     protected HitInfo cacheInfo;
     protected HitEffects terrainEffects = null;
-    protected WeaponStats.AttackType state;
+
+    public FlyingWeaponEntity setAttackType(WeaponStats.AttackType attackType) {
+        this.attackType = attackType;
+        return this;
+    }
+
+    protected WeaponStats.AttackType attackType;
     private boolean fading = false;
 
     public FlyingWeaponEntity(EntityType<? extends FlyingItemEntity> type, Level level) {
@@ -198,6 +204,7 @@ public class FlyingWeaponEntity extends FlyingItemEntity implements IDrag {
         animProgress-=getWeight()/2;
         ItemStack main = owner.getMainHandItem();
         try {
+            CombatUtils.setAttackType(owner, attackType);
             CombatUtils.quickSwap(owner, getHeldItem());
             WeaponStats.info_override = getInfo();
             for (Entity target : targets) {
@@ -314,6 +321,7 @@ public class FlyingWeaponEntity extends FlyingItemEntity implements IDrag {
         super.returnToIdle(ticks);
         setDeltaMovement(Vec3.ZERO);
         setIntangible(true);//this is needed to prevent the weapon hitting stuff when idle
+        setAttackType(WeaponStats.AttackType.UNDEFINED);
         //unDrag();
     }
 
@@ -390,6 +398,7 @@ public class FlyingWeaponEntity extends FlyingItemEntity implements IDrag {
 
     public void inheritDrag(FlyingWeaponEntity from) {
         setTetheringEntity(from.getTetheringEntity());
+        if(getTetheringEntity()!=null)
         alreadyHit.add(getTetheringEntity());
         getEntityData().set(DRAG_TIME, from.getEntityData().get(DRAG_TIME));
         getEntityData().set(DRAG_OFFSET, from.getEntityData().get(DRAG_OFFSET));

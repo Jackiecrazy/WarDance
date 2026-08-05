@@ -46,7 +46,7 @@ public class HeavyBlow extends Skill {
 
     protected void onCrit(CriticalHitEvent proc, SkillData stats, LivingEntity caster, LivingEntity target) {
         if (this == WarSkills.VITAL_STRIKE.get())
-            proc.setDamageModifier(proc.getDamageModifier() * 1.5f * stats.getEffectiveness());
+            proc.setDamageModifier(proc.getDamageModifier() +0.5f * stats.getEffectiveness());
     }
 
     public static class Leverage extends HeavyBlow {

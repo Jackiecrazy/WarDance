@@ -17,7 +17,6 @@ import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
-import net.minecraft.world.effect.MobEffect;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.LivingEntity;
@@ -32,11 +31,8 @@ import java.util.UUID;
 public class BoulderBrace extends WarCry {
     public static final UUID uid = UUID.fromString("abe24c38-73e3-4551-9df4-e06e117699c1");
     public static final UUID sprinting = UUID.fromString("662A6B8D-DA3E-4C1C-8813-96EA6097278D");//this is the sprinting speed UUID so it'll remove sprinting bonus
-    /**
-     * also adds half of your current posture to any crit attack
-     */
     private static final AttributeModifier brace = new AttributeModifier(uid, "boulder brace bonus", 2, AttributeModifier.Operation.ADDITION);
-    private static final AttributeModifier slow = new AttributeModifier(uid, "boulder brace debuff", -0.1, AttributeModifier.Operation.MULTIPLY_TOTAL);
+    private static final AttributeModifier slow = new AttributeModifier(uid, "boulder brace debuff", -0.3, AttributeModifier.Operation.MULTIPLY_TOTAL);
     private static final AttributeModifier fast = new AttributeModifier(uid, "boulder brace buff", 0.5, AttributeModifier.Operation.MULTIPLY_TOTAL);
 
     @Override
@@ -84,6 +80,15 @@ public class BoulderBrace extends WarCry {
     @Override
     public boolean equippedTick(LivingEntity caster, SkillData stats) {
         final Vec3 m = CombatData.getCap(caster).getMotionConsistently();
+        if(!StylishData.getCap(caster).isCombatMode()) {
+            if(stats.isCondition()) {
+                stats.flagCondition(false);
+                SkillUtils.removeAttribute(caster, Attributes.MOVEMENT_SPEED, uid);
+                startMoving(caster);
+            }
+            return true;
+        }
+        stats.flagCondition(true);
         if (m.lengthSqr()==0&& StylishData.getCap(caster).isCombatMode()) {
             beStill(caster, stats);
         } else {
@@ -93,6 +98,7 @@ public class BoulderBrace extends WarCry {
             stats.addDuration(1);
             //slowly accelerate
             final float rollin = Math.min(60,stats.getDuration());
+            SkillUtils.modifyAttribute(caster, Attributes.MOVEMENT_SPEED, uid, (-0.3 + (rollin / 60)), AttributeModifier.Operation.MULTIPLY_TOTAL);
             SkillUtils.modifyAttribute(caster, Attributes.MOVEMENT_SPEED, sprinting, 0.3 * (rollin / 60), AttributeModifier.Operation.MULTIPLY_TOTAL);
             if (rollin == 30) {
                 stats.setState(STATE.ACTIVE);
@@ -100,9 +106,9 @@ public class BoulderBrace extends WarCry {
                 //aoe hit aura
                 CombatData.getCap(caster).consumePosture(0.2f, 1);
                 CombatData.getCap(caster).setGuardTime(6);
-                for (LivingEntity e : caster.level().getEntitiesOfClass(LivingEntity.class, caster.getBoundingBox().expandTowards(m).inflate(2))) {
+                for (LivingEntity e : caster.level().getEntitiesOfClass(LivingEntity.class, caster.getBoundingBox().expandTowards(m).inflate(1+rollin/60))) {
                     if (!TargetingUtils.isAlly(e, caster)) {
-                        e.hurt(new CombatDamageSource(caster).setDamageTyping(FootworkDamageArchetype.MAGICAL).setProcSkillEffects(true).setKnockbackPercentage(1.3f).setAttackingHand(null).setSkillUsed(this), rollin / 15);
+                        e.hurt(new CombatDamageSource(caster).setDamageTyping(FootworkDamageArchetype.MAGICAL).setProcSkillEffects(true).setKnockbackPercentage(rollin/30).setAttackingHand(null).setSkillUsed(this), rollin / 15);
                     }
                 }
             }
@@ -116,16 +122,16 @@ public class BoulderBrace extends WarCry {
         SkillUtils.removeAttribute(caster, WarAttributes.MAX_RALLY.get(), uid);
         SkillUtils.removeAttribute(caster, WarAttributes.RALLY_REGEN.get(), uid);
         SkillUtils.removeAttribute(caster, WarAttributes.RALLY_GUARD.get(), uid);
-        SkillUtils.removeAttribute(caster, WarAttributes.DARKTIDE.get(), uid);
+        SkillUtils.removeAttribute(caster, WarAttributes.COMPOSURE.get(), uid);
         SkillUtils.removeAttribute(caster, Attributes.KNOCKBACK_RESISTANCE, uid);
-        SkillUtils.removeAttribute(caster, Attributes.MOVEMENT_SPEED, slow);
+        //SkillUtils.removeAttribute(caster, Attributes.MOVEMENT_SPEED, slow);
     }
 
     private void beStill(LivingEntity caster, SkillData stats) {
         SkillUtils.addAttribute(caster, WarAttributes.MAX_RALLY.get(), brace);
         SkillUtils.addAttribute(caster, WarAttributes.RALLY_REGEN.get(), brace);
         SkillUtils.addAttribute(caster, WarAttributes.RALLY_GUARD.get(), brace);
-        SkillUtils.addAttribute(caster, WarAttributes.DARKTIDE.get(), brace);
+        SkillUtils.addAttribute(caster, WarAttributes.COMPOSURE.get(), brace);
         SkillUtils.removeAttribute(caster, Attributes.MOVEMENT_SPEED, sprinting);
         SkillUtils.addAttribute(caster, Attributes.MOVEMENT_SPEED, slow);
         stats.setState(STATE.INACTIVE);

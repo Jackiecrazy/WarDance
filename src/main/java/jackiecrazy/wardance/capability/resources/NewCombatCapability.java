@@ -407,6 +407,11 @@ public class NewCombatCapability implements ICombatCapability {
     }
 
     @Override
+    public boolean alreadyProc(String key) {
+        return getProc(key)!=0d;
+    }
+
+    @Override
     public int getMaxStunTime() {
         return maxStaggerTime;
     }

@@ -4,17 +4,14 @@ import net.minecraft.world.InteractionHand;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.item.ItemStack;
-import net.minecraftforge.event.entity.living.LivingEvent;
+import net.minecraftforge.eventbus.api.Cancelable;
 
-public abstract class MeleePostureEvent extends LivingEvent {
+public abstract class MeleePostureEvent extends ConsumePostureEvent {
     protected final LivingEntity attacker;
     protected final InteractionHand attackingHand;
     protected final ItemStack attackingStack;
     protected final DamageSource ds;
-    protected final float originalPostureConsumption;
     protected final float attackDamage;
-    protected float postureConsumption;
-    protected boolean canBreach;
 
     public MeleePostureEvent(LivingEntity entity,
                              LivingEntity seme,
@@ -25,15 +22,12 @@ public abstract class MeleePostureEvent extends LivingEvent {
                              float posture,
                              float damage,
                              boolean breach) {
-        super(entity);
+        super(entity, orig, posture, breach);
         attacker = seme;
         attackingHand = hand;
         attackingStack = a;
         this.ds = ds;
-        originalPostureConsumption = orig;
         attackDamage = damage;
-        postureConsumption = posture;
-        canBreach = breach;
     }
     public LivingEntity getAttacker() {
         return attacker;
@@ -47,19 +41,6 @@ public abstract class MeleePostureEvent extends LivingEvent {
         return attackingStack;
     }
 
-    public float getOriginalPostureConsumption() {
-        return originalPostureConsumption;
-    }
-
-    public float getPostureConsumption() {
-        return postureConsumption;
-    }
-
-    public void setPostureConsumption(float amount) {
-        postureConsumption = amount;
-        //fixme damage is becoming posture somewhere in the line
-    }
-
     public float getAttackDamage() {
         return attackDamage;
     }
@@ -68,15 +49,14 @@ public abstract class MeleePostureEvent extends LivingEvent {
         return ds;
     }
 
-    public boolean canBreach() {
-        return canBreach;
-    }
-
     /**
      * This event is fired whenever an entity parries a melee attack.
      * This event has a result. ALLOW will force a parry, while DENY will cancel a parry.
      * There are three subevents:
      * Pre is run before parry and block checks
+     * Block and parry run for their specific checks
+     * Listening to this event might cause your code to run three times per block, so be careful.
+     * Block and parry are cancelable. Canceling them causes the subsequent block/parry action to not run.
      */
     public abstract static class Defense extends MeleePostureEvent {
         protected final InteractionHand defendingHand;
@@ -141,12 +121,17 @@ public abstract class MeleePostureEvent extends LivingEvent {
                    boolean canBreach) {
             super(entity, seme, hand, a, ds, posture, orig, damage, canBreach);
         }
+        @Override
+        public TYPE getType() {
+            return TYPE.NONE;
+        }
     }
 
     /**
      * by convention you should only use this for what happens on a block
      */
     @HasResult
+    @Cancelable
     public static class Block extends Defense {
 
         public Block(LivingEntity entity,
@@ -169,12 +154,18 @@ public abstract class MeleePostureEvent extends LivingEvent {
         public boolean success() {
             return getResult() == Result.ALLOW || (originally && getResult() == Result.DEFAULT);
         }
+
+        @Override
+        public TYPE getType() {
+            return TYPE.BLOCK;
+        }
     }
 
     /**
      * by convention you should only use this for what happens on a parry
      */
     @HasResult
+    @Cancelable
     public static class Parry extends Defense {
 
         public Parry(LivingEntity entity,
@@ -196,12 +187,17 @@ public abstract class MeleePostureEvent extends LivingEvent {
         public boolean success() {
             return getResult() == Result.ALLOW || (originally && getResult() == Result.DEFAULT);
         }
+        @Override
+        public TYPE getType() {
+            return TYPE.BLOCK;
+        }
     }
 
     /**
      * by convention you should only use this for what happens on a parry
      */
     @HasResult
+    @Cancelable
     public static class Environment extends Parry {
 
         public Environment(LivingEntity entity,

@@ -43,7 +43,10 @@ near surface: hit a block with an exposed top face near head level to hang on fo
 roof cling: jump when within half a block of the ceiling to stick
      */
     boolean isAerialMode();
-    void setAerialMode(boolean toggle);
+    void setAerialMode(int ticks);
+    default void setAerialMode(boolean toggle){
+        setAerialMode(toggle?30:-1);
+    }
     void alterGravity(int ticks, double speed);
     void tick();
     void resetSpeed();

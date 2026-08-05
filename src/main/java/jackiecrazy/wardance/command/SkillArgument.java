@@ -29,7 +29,7 @@ public class SkillArgument implements ArgumentType<Skill> {
                     (context, builder) -> SharedSuggestionProvider.suggestResource(
                             WarSkills.SUPPLIER.get().getKeys(),
                             builder));//, Skill::getRegistryName, (type) -> Component.translatable(Util.makeDescriptionId("skill", type))));
-    private static final Collection<String> EXAMPLES = Stream.of(WarSkills.RETURN_TO_SENDER.get(), WarSkills.VITAL_STRIKE.get()).map((worldKey) -> worldKey.getRegistryName().toString()).collect(Collectors.toList());
+    private static final Collection<String> EXAMPLES = Stream.of(WarSkills.FATAL_CADENCE.get(), WarSkills.VITAL_STRIKE.get()).map((worldKey) -> worldKey.getRegistryName().toString()).collect(Collectors.toList());
     private static final DynamicCommandExceptionType INVALID_SKILL_EXCEPTION = new DynamicCommandExceptionType((worldKey) -> Component.translatable("argument.skill.invalid", worldKey));
 
     public static SkillArgument skill() {

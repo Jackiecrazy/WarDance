@@ -3,7 +3,6 @@ package jackiecrazy.wardance.entity;
 import jackiecrazy.footwork.api.CombatDamageSource;
 import jackiecrazy.footwork.entity.flyingweapon.FlyingItemEntity;
 import jackiecrazy.footwork.entity.flyingweapon.FlyingWeaponEffect;
-import jackiecrazy.footwork.move.action.RemoveFromExistenceAction;
 import jackiecrazy.footwork.move.motionframe.HitInfo;
 import jackiecrazy.footwork.utils.TargetingUtils;
 import jackiecrazy.wardance.WarDance;
@@ -83,26 +82,31 @@ public class WindBladeEntity extends ThrownWeaponEntity {
             setMotionTarget(track);
         } else {
             //find new targets to hit
-            targets.addAll(level().getEntitiesOfClass(LivingEntity.class, getBoundingBox().inflate(16), EntitySelector.LIVING_ENTITY_STILL_ALIVE.and(a -> TargetingUtils.isHostile(a, getOwner()))));
+            targets.addAll(level().getEntitiesOfClass(LivingEntity.class, getBoundingBox().inflate(16),
+                                                      EntitySelector.LIVING_ENTITY_STILL_ALIVE.and(this::validTarget)));
             //no targets? keep flying and try again next tick
         }
+    }
+
+    private boolean validTarget(Entity a) {
+        return a != getOwner()
+                && !a.isRemoved()
+                && !alreadyHit.contains(a)
+                && TargetingUtils.isHostile(a, getOwner());
+                //&& ((!(a instanceof LivingEntity le)) || !Marks.getCap(le).isMarked(skillUsed));
     }
 
     @Override
     public void tick() {
         super.tick();
 //        level().addParticle(ParticleTypes.SWEEP_ATTACK, xOld, yOld, zOld, 0, 0, 0);
-        if (getMotionTarget() == null || getMotionTarget() == getOwner() || getMotionTarget().isRemoved()) {
+        if (getMotionTarget() == null || validTarget(getMotionTarget())) {
             findNewTarget();
         }
         if (getMotionTarget() == null || level().isClientSide) return;
         //hack to allow a curving back wind blade to hit again
         if (tickCount - lastAttackTime > 10)
             alreadyHit.remove(getMotionTarget());
-        final Vec3 target = position().vectorTo(getOwner().getEyePosition());
-
-//        Quaternionf rotation = new Quaternionf().rotationTo(getDeltaMovement().toVector3f(), target.toVector3f());
-//        setIdlePose(new MotionManagers.FixedMM(new MotionFrame(target, Vec3.ZERO, rotation), 10).setAngularVelocity(new Vector3f(0,0,1)));
         if (tickCount > 80) remove(RemovalReason.UNLOADED_WITH_PLAYER);
     }
 
@@ -157,6 +161,7 @@ public class WindBladeEntity extends ThrownWeaponEntity {
         final CombatDamageSource sauce = new CombatDamageSource(getOwner(), this).setKnockbackPercentage(0).flagBreach(false).setSkillUsed(skillUsed).setProcSkillEffects(true).setProjectile().setArmorReductionPercentage(armorReduction);
         for (Entity e : targets) {
             float damage = 4;
+            if(!validTarget(e))continue;
             if (e instanceof LivingEntity le) {
                 Optional<SkillData> a = Marks.getCap(le).getActiveMark(skillUsed);
                 if (a.isPresent()) {
@@ -165,7 +170,8 @@ public class WindBladeEntity extends ThrownWeaponEntity {
                     }
                 }
             }
-            e.invulnerableTime=0;
+            //if (!validTarget(e)) continue;
+            e.invulnerableTime = 0;
             e.hurt(sauce, damage);
 
             alreadyHit.add(e);
