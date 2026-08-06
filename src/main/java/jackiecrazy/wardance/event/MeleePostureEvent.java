@@ -189,7 +189,7 @@ public abstract class MeleePostureEvent extends ConsumePostureEvent {
         }
         @Override
         public TYPE getType() {
-            return TYPE.BLOCK;
+            return TYPE.PARRY;
         }
     }
 

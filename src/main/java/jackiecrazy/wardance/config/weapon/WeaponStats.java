@@ -370,7 +370,7 @@ public class WeaponStats extends SimpleJsonResourceReloadListener {
         private boolean shield;
         private MotionManager idle_offhand, guard_offhand, aim_offhand, swap_offhand;
         private MotionManager idle_frame = new MotionManagers.FixedMM(new MotionFrame(new Vec3(0, 1, 0), Vec3.ZERO, 0).setEffects(new FrameEffects().setEffects()), 5);
-        private MotionManager guard_frame = new MotionManagers.FixedMM(new MotionFrame(new Vec3(0, 0, 1), new Vec3(0, -0.7, 1), new Vector4d(1, 1, 0, 90)).setEffects(new FrameEffects().setEffects(FlyingWeaponEffect.WEAPON)), CombatConfig.parryTime / 5);
+        private MotionManager guard_frame = new MotionManagers.FixedMM(new MotionFrame(new Vec3(0, 0, 1), new Vec3(0, 0, 0.1), new Vector4d(-1, 1, 0, 0)).setEffects(new FrameEffects().setEffects(FlyingWeaponEffect.WEAPON)), CombatConfig.parryTime / 5);
         private MotionManager aim_frame = new MotionManagers.FixedMM(new MotionFrame(new Vec3(0, 0, 1), new Vec3(0, 0, 1), 0).setEffects(new FrameEffects().setEffects(FlyingWeaponEffect.WEAPON)), 2);
         private MotionManager swap_frame = new MotionManagers.FixedMM(new MotionFrame(new Vec3(0, 0, 1), Vec3.ZERO, 0).setEffects(new FrameEffects().setEffects(FlyingWeaponEffect.WEAPON, FlyingWeaponEffect.AFTERIMAGE)), 2);
         //standing, falling, sneaking, sprinting, riding

@@ -189,6 +189,7 @@ public class WarDance {
         EntityRenderers.register(WarEntities.WEAPON.get(), ItemEntityRenderer::new);
         EntityRenderers.register(WarEntities.GRAPPLE.get(), GrappleRenderer::new);
         EntityRenderers.register(WarEntities.FLYING_BLOCK.get(), ItemEntityRenderer::new);
+        EntityRenderers.register(WarEntities.BASEBALL.get(), ItemEntityRenderer::new);
         EntityRenderers.register(WarEntities.THROWN_WEAPON.get(), ItemEntityRenderer::new);
         EntityRenderers.register(WarEntities.WIND_BLADE.get(), ItemEntityRenderer::new);
         EntityRenderers.register(WarEntities.TIMBER.get(), ItemEntityRenderer::new);

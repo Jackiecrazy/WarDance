@@ -96,6 +96,7 @@ public class GhostBlockEntity extends ThrownWeaponEntity {
     @Override
     protected boolean onHitEntity(List<Entity> targets) {
         if (intangible()) return false;
+        alreadyHit.add(getTetheringEntity());
         boolean ret = super.onHitEntity(targets);
         if (ret) {
             //shatter

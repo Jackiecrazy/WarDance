@@ -21,7 +21,7 @@ public class BiteTheDust extends CoupDeGrace {
     }
 
     @Override
-    public float mightConsumption(LivingEntity caster) {
+    public float mightCost(LivingEntity caster) {
         return 0;
     }
 

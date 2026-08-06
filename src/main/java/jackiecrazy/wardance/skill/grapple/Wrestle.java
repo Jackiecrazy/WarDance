@@ -54,12 +54,12 @@ public class Wrestle extends Skill {
     }
 
     @Override
-    public int spiritConsumption(LivingEntity caster) {
+    public int spiritCost(LivingEntity caster) {
         return 1;
     }
 
     @Override
-    public float mightConsumption(LivingEntity caster) {
+    public float mightCost(LivingEntity caster) {
         return 1;
     }
 

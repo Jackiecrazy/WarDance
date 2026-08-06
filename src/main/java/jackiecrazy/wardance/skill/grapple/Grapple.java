@@ -9,13 +9,17 @@ import jackiecrazy.footwork.utils.ParticleUtils;
 import jackiecrazy.footwork.utils.TargetingUtils;
 import jackiecrazy.wardance.WarDance;
 import jackiecrazy.wardance.config.weapon.WeaponStats;
+import jackiecrazy.wardance.event.PlayInteractionEvent;
 import jackiecrazy.wardance.skill.*;
+import jackiecrazy.wardance.utils.CombatUtils;
 import jackiecrazy.wardance.utils.DamageUtils;
 import jackiecrazy.wardance.utils.MobilityUtils;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
+import net.minecraft.world.InteractionHand;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.event.entity.living.LivingAttackEvent;
 import net.minecraftforge.eventbus.api.Event;
 import net.minecraftforge.eventbus.api.EventPriority;
@@ -34,8 +38,8 @@ public class Grapple extends Skill {
     }
 
     @Override
-    public int spiritConsumption(LivingEntity caster) {
-        return 1;
+    public float spiritGain(LivingEntity caster) {
+        return 14;
     }
 
     @Override
@@ -52,11 +56,12 @@ public class Grapple extends Skill {
     @Override
     public void onProc(LivingEntity caster, Event procPoint, STATE state, SkillData stats, LivingEntity target) {
         if (state == STATE.HOLSTERED && isUnarmed(caster)) {
+            if(procPoint instanceof PlayInteractionEvent.Pre pie)
+                pie.setInteraction(WeaponStats.getSweepInfo(ItemStack.EMPTY, caster, WeaponStats.AttackType.STANDING, true, InteractionHand.MAIN_HAND));
             if (procPoint instanceof LivingAttackEvent la && la.getEntity() == target && DamageUtils.isMeleeAttack(la.getSource()) && procPoint.getPhase() == EventPriority.HIGHEST) {
                 if (stats.isCondition() && caster.getLastHurtMob() == target && caster.tickCount - caster.getLastHurtMobTimestamp() < 40) {
                     performEffect(caster, target, stats);
                 } else {
-                    target.addEffect(new MobEffectInstance(FootworkEffects.UNSTEADY.get(), 20));
                     stats.flagCondition(true);
                     caster.setLastHurtMob(target);
                 }
@@ -107,7 +112,7 @@ public class Grapple extends Skill {
                     CombatData.getCap(entity).consumePosture(caster, overflow / -2);
                 }
             }
-            casterCap.consumePosture(posture - 0.1f);
+            casterCap.consumePosture(posture, 0.7f);
         }
 
         @Override

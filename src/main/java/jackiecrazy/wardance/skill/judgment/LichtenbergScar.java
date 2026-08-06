@@ -15,7 +15,7 @@ import java.util.List;
 public class LichtenbergScar extends Judgment {
 
     @Override
-    public float mightConsumption(LivingEntity caster) {
+    public float mightCost(LivingEntity caster) {
         return 1;
     }
 

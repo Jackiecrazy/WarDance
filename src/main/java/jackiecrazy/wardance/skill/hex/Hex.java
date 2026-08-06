@@ -12,7 +12,6 @@ import jackiecrazy.wardance.utils.SkillUtils;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
-import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.ai.attributes.AttributeInstance;
 import net.minecraft.world.entity.ai.attributes.AttributeModifier;
@@ -29,8 +28,6 @@ import net.minecraftforge.fml.common.Mod;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import java.util.ArrayList;
-import java.util.Collection;
 import java.util.HashSet;
 import java.util.UUID;
 
@@ -115,11 +112,6 @@ public class Hex extends Skill {
 //        });
 //
 //    }
-
-    @Override
-    public int spiritConsumption(LivingEntity caster) {
-        return 1;
-    }
 
     @Override
     public ResourceLocation icon() {

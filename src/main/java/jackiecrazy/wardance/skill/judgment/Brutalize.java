@@ -18,7 +18,7 @@ import java.util.List;
 
 public class Brutalize extends Judgment {
     @Override
-    public float mightConsumption(LivingEntity caster) {
+    public float mightCost(LivingEntity caster) {
         return 2;
     }
 

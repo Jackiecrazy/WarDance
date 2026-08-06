@@ -676,10 +676,10 @@ public class CombatUtils {
             set = WeaponStats.AttackType.SPRINTING;
         if ((!(entity instanceof Player p) || !p.getAbilities().flying) && !entity.onGround() && !entity.onClimbable() && !entity.isInWater()) {
             final double epsilon = 0.001;
-            if (entity.fallDistance > 0 || entity.getDeltaMovement().y < epsilon)
-                set = WeaponStats.AttackType.FALLING;
             if (AerialModeData.getCap(entity).isAerialMode() || entity.getDeltaMovement().y > epsilon)
                 set = WeaponStats.AttackType.AERIAL;
+            if (entity.fallDistance > 0 || entity.getDeltaMovement().y < epsilon)
+                set = WeaponStats.AttackType.FALLING;
         }
         if (entity.isSwimming() || entity.isFallFlying() || CombatData.getCap(entity).isDodging())
             set = WeaponStats.AttackType.SPRINTING;

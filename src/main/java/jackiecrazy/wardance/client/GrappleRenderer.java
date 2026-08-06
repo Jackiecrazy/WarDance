@@ -7,19 +7,21 @@ import jackiecrazy.wardance.entity.GrappleEntity;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.RenderType;
+import net.minecraft.client.renderer.block.BlockRenderDispatcher;
 import net.minecraft.client.renderer.entity.EntityRenderer;
 import net.minecraft.client.renderer.entity.EntityRendererProvider;
 import net.minecraft.client.renderer.texture.OverlayTexture;
-import net.minecraft.client.renderer.texture.TextureAtlas;
+import net.minecraft.client.resources.model.BakedModel;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.HumanoidArm;
 import net.minecraft.world.entity.LivingEntity;
-import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.inventory.InventoryMenu;
+import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.phys.Vec3;
 import org.joml.Matrix3f;
 import org.joml.Matrix4f;
+import org.joml.Quaternionf;
 
 import java.awt.*;
 
@@ -28,6 +30,16 @@ public class GrappleRenderer extends EntityRenderer<GrappleEntity> {
     private static final RenderType RENDER_TYPE = RenderType.entityCutout(TEXTURE_LOCATION);
     private static final Vec3 UP = new Vec3(0, 1, 0);
     private static final Vec3 SIDE = new Vec3(1, 0, 0);
+    private static final Color[] RAINBOW = {
+            Color.RED,
+            Color.ORANGE,
+            Color.YELLOW,
+            Color.GREEN,
+            Color.CYAN,
+            Color.BLUE,
+            Color.MAGENTA
+    };
+    private BakedModel chain = null;
 
     public GrappleRenderer(EntityRendererProvider.Context ctx) {
         super(ctx);
@@ -91,6 +103,7 @@ public class GrappleRenderer extends EntityRenderer<GrappleEntity> {
             Color c,
             int light
     ) {
+
         Matrix4f mat = pose.pose();
         Matrix3f norm = pose.normal();
 
@@ -107,16 +120,6 @@ public class GrappleRenderer extends EntityRenderer<GrappleEntity> {
                 .endVertex();
     }
 
-    private static final Color[] RAINBOW={
-            Color.RED,
-            Color.ORANGE,
-            Color.YELLOW,
-            Color.GREEN,
-            Color.CYAN,
-            Color.BLUE,
-            Color.MAGENTA
-    };
-
     @Override
     public void render(GrappleEntity hook,
                        float yaw,
@@ -127,6 +130,13 @@ public class GrappleRenderer extends EntityRenderer<GrappleEntity> {
 
         LivingEntity player = hook.getOwner();
         if (player != null) {
+            if (chain == null) {
+                BlockRenderDispatcher dispatcher =
+                        Minecraft.getInstance().getBlockRenderer();
+
+                chain =
+                        dispatcher.getBlockModel(Blocks.CHAIN.defaultBlockState());
+            }
             stack.pushPose();
             int armShift = player.getMainArm() == HumanoidArm.RIGHT ? -1 : 1;
             float circlePhase = 40;
@@ -162,23 +172,21 @@ public class GrappleRenderer extends EntityRenderer<GrappleEntity> {
             float f4 = (float) (d4 - d9);
             float f5 = (float) (d5 - d10) + f3;
             float f6 = (float) (d6 - d8);
-            VertexConsumer vertexconsumer1 = buffer.getBuffer(RenderType.lineStrip());
+            VertexConsumer vertexconsumer1 = buffer.getBuffer(RenderType.entityCutoutNoCull(InventoryMenu.BLOCK_ATLAS));
             PoseStack.Pose posestack$pose1 = stack.last();
 
             // Convert to Vec3 for easier math
             Vec3 P0 = new Vec3(f4, f5, f6);      // Player hand → hook offset
             Vec3 P3 = Vec3.ZERO;                 // Hook is rendered at origin in this pose stack
 
-// Control points for sag
-// Feel free to tweak these to taste
-            double sag = hook.renderLag / (hook.distanceToSqr(player));//todo start at high sag and pull taut on landing
+            double sag = hook.renderLag / (hook.distanceToSqr(player));
             //hook.distanceToSqr(player);
             Vec3 perpendicular = hook.position().subtract(player.position()).cross(UP);
             if (perpendicular.lengthSqr() < 0.001) perpendicular = SIDE;
-            Vec3 P1 = P0.scale(0.70).add(-sag*perpendicular.x, -sag*perpendicular.y, -sag*perpendicular.z); // Pull down near the player
-            Vec3 P2 = P0.scale(0.80).add(sag*perpendicular.x, sag*perpendicular.y, sag*perpendicular.z); // Pull down near the hook
+            Vec3 P1 = P0.scale(0.70).add(-sag * perpendicular.x, -sag * perpendicular.y, -sag * perpendicular.z); // Pull down near the player
+            Vec3 P2 = P0.scale(0.80).add(sag * perpendicular.x, sag * perpendicular.y, sag * perpendicular.z); // Pull down near the hook
 
-            int segments = 24; // smoother curve
+            int segments = 25; // smoother curve
             for (int i = 0; i <= segments; i++) {
                 float t1 = i / (float) segments;
                 float t2 = (i + 1f) / (float) segments;
@@ -186,12 +194,53 @@ public class GrappleRenderer extends EntityRenderer<GrappleEntity> {
                 Vec3 pA = cubicBezier(P0, P1, P2, P3, t1);
                 Vec3 pB = cubicBezier(P0, P1, P2, P3, t2);
 
-                lineVertex(vertexconsumer1, posestack$pose1, pA, pB, i%2==0?Color.WHITE:Color.DARK_GRAY, light);
+                renderChain(stack, vertexconsumer1, pA, pB, light);
+                //lineVertex(vertexconsumer1, posestack$pose1, pA, pB, i % 2 == 0 ? Color.WHITE : Color.DARK_GRAY, light);
             }
 
 
             stack.popPose();
             super.render(hook, yaw, partialtick, stack, buffer, light);
+        }
+    }
+
+    private void renderChain(PoseStack pose, VertexConsumer buffer, Vec3 start, Vec3 pB, int light) {
+        float spacing = 0.25F;
+        Vec3 dir = pB.subtract(start);
+        double length = dir.length();
+        dir=dir.normalize();
+        Quaternionf rotation = new Quaternionf()
+                .rotationTo(
+                        0, 1, 0,                       // model points along +Y
+                        (float)dir.x,
+                        (float)dir.y,
+                        (float)dir.z);
+        for (float d = 0; d < length; d += spacing) {
+
+            Vec3 pos = start.add(dir.scale(d));
+
+            pose.pushPose();
+
+            pose.translate(pos.x, pos.y, pos.z);
+
+            pose.mulPose(rotation);
+            pose.scale(spacing,spacing,spacing);
+            pose.translate(-0.25, -0.25, -0.25);
+
+//            if (((int)(d / spacing) & 1) == 1)
+//                pose.mulPose(Axis.YP.rotationDegrees(90));
+
+            Minecraft.getInstance().getBlockRenderer().getModelRenderer().renderModel(
+                    pose.last(),
+                    buffer,
+                    Blocks.CHAIN.defaultBlockState(),
+                    chain,
+                    1,1,1,
+                    light,
+                    OverlayTexture.NO_OVERLAY
+            );
+
+            pose.popPose();
         }
     }
 

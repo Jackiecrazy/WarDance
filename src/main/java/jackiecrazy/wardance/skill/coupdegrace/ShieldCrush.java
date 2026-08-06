@@ -32,7 +32,7 @@ public class ShieldCrush extends ShieldBash {
     UUID debuffID = UUID.fromString("abe24c38-73e3-4551-9ef4-e16e117699c1");
 
     @Override
-    public float mightConsumption(LivingEntity caster) {
+    public float mightCost(LivingEntity caster) {
         return 1;
     }
 
@@ -87,7 +87,7 @@ public class ShieldCrush extends ShieldBash {
     }
 
     @Override
-    public int spiritConsumption(LivingEntity caster) {
+    public int spiritCost(LivingEntity caster) {
         return 1;
     }
 

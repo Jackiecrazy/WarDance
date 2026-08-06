@@ -8,9 +8,10 @@
       "on_swing": {
         "sound": "minecraft:entity.player.attack.sweep"
       },
+      "no_flip": true,
       "animations": [
         {
-          "duration": 5,
+          "duration": 10,
           "easing": "IN_OUT_SINE",
           "spin": [
             -60, 0, 0
@@ -18,14 +19,12 @@
           "frames": [
             {
               "direction": [
-                0, 0, 0.5
+                0, 0, 1
               ],
               "offset": [
-                0.2, 0.5, 0.25
+                0, 0.5, 0.25
               ],
-              "render_rotation": [
-                0, 0.0, 0.5, 90
-              ],
+              "render_rotation": 90,
               "effects": {
                 "effects": [
                   "WEAPON", "LOCK_POSITION", "LOCK_ORIENTATION"
@@ -36,74 +35,59 @@
                   "posture_scale": 0.3,
                   "crit": false,
                   "crit_damage": 1.25,
-                  "spirit_multiplier": 0.5,
-                  "hit_self": {
-                    "command": "/function wardance:hit_combo"
-                  }
+                  "spirit_multiplier": 0.5
                 }
               }
             }, {
               "direction": [
-                0, 0, 0.5
+                0, 0, 1
               ],
               "offset": [
-                0.2, 0.0, 5
+                2, 0, 6
               ],
-              "render_rotation": [
-                0, 0, 0.5, 90
-              ]
-            }
-          ]
-        }, {
-          "duration": 3,
-          "easing": "IN_OUT_SINE",
-          "spin": [
-            -60, 0, 0
-          ],
-          "frames": [
-            {
-              "direction": [
-                0, 0, 0.5
-              ],
-              "offset": [
-                0.2, 0.0, 5
-              ],
-              "render_rotation": [
-                0, 0, 0.5, 90
-              ],
+              "render_rotation": 90,
               "effects": {
                 "effects": [
                   "WEAPON"
                 ],
-                "range": -1,
-                "velocity": [
-                  0, 0, 0
-                ],
-                "set_velocity": false,
+                "reset_hit": true,
                 "attack_info": {
-                  "knockback": 0.0,
-                  "damage_scale": 0.2,
-                  "posture_scale": 0.2,
+                  "knockback": 1,
+                  "damage_scale": 0.25,
+                  "posture_scale": 0.3,
                   "crit": false,
                   "crit_damage": 1.25,
-                  "spirit_multiplier": 0.25
+                  "spirit_multiplier": 0.5,
+                  "drag": {
+                    "duration": 60,
+                    "strength": 2
+                  }
                 }
               }
+            },
+            {
+              "direction": [
+                0, 0, 1
+              ],
+              "offset": [
+                0, 0, 12
+              ],
+              "render_rotation": 90
             }
           ]
         }, {
-          "duration": 5,
-          "easing": "IN_OUT_SINE",
+          "duration": 10,
+          "easing": "IN_SINE",
           "spin": [
             -60, 0, 0
           ],
           "frames": [
             {
               "direction": [
-                0, 0, 0.5
+                0, 0, 1
               ],
               "offset": [
-                0.2, 0.0, 5
+                0, 0, 12
               ],
               "render_rotation": [
                 0, 0, 0.5, 90
@@ -112,13 +96,8 @@
                 "effects": [
                   "WEAPON"
                 ],
-                "range": -1,
-                "velocity": [
-                  0, 0, 0
-                ],
-                "set_velocity": false,
                 "attack_info": {
-                  "knockback": 0.5,
+                  "knockback": -1,
                   "damage_scale": 0.5,
                   "posture_scale": 0.3,
                   "crit": false,
@@ -131,14 +110,41 @@
               }
             }, {
               "direction": [
-                0, 0, 0.5
+                0, 0, 1
               ],
               "offset": [
-                0.2, 0.5, 0.25
+                -2, 0, 6
               ],
-              "render_rotation": [
-                0, 0.0, 0.5, 90
-              ]
+              "render_rotation": 90,
+              "effects": {
+                "effects": [
+                  "WEAPON"
+                ],
+                "reset_hit": true,
+                "unDrag": true,
+                "attack_info": {
+                  "knockback": -0.5,
+                  "damage_scale": 0.5,
+                  "posture_scale": 0.3,
+                  "crit": false,
+                  "crit_damage": 1.25,
+                  "spirit_multiplier": 0.5
+                }
+              }
+            }, {
+              "direction": [
+                0, 0, 1
+              ],
+              "offset": [
+                0, 0.5, 0.25
+              ],
+              "render_rotation": 90,
+              "effects": {
+                "effects": [
+                  "WEAPON"
+                ],
+                "reset_hit": true
+              }
             }
           ]
         }
@@ -169,7 +175,7 @@
     "sprinting": {
       "sweep": "CLEAVE",
       "knockback": 1.5,
-      "sweep_base": 50.0,
+      "sweep_base": 50,
       "sweep_scale": 25.0,
       "on_swing": {
         "command": "/function wardance:attack/self_moderatefatigue"
@@ -182,8 +188,8 @@
       "knockback": 1.5,
       "damage_scale": 1.5,
       "crit_damage": 2.0,
-      "sweep_base": 60.0,
-      "sweep_scale": 30.0,
+      "sweep_base": 60,
+      "sweep_scale": 30,
       "damage_self_command": "/function wardance:attack/damageother_destabilize"
     }
   }

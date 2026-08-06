@@ -25,6 +25,11 @@ public class WarEntities {
             .sized(1F, 1F)
             .setTrackingRange(128)
             .build("flying_block"));
+    public static final RegistryObject<EntityType<BaseballEntity>> BASEBALL = ENTITIES.register("physics_dummy", () -> EntityType.Builder
+            .of(BaseballEntity::new, MobCategory.MISC)
+            .sized(1F, 1F)
+            .setTrackingRange(128)
+            .build("physics_dummy"));
 
     public static final RegistryObject<EntityType<FearEntity>> FEAR = ENTITIES.register("fear", () -> EntityType.Builder
             .of(FearEntity::new, MobCategory.MISC)

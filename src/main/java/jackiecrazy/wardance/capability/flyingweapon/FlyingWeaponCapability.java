@@ -116,7 +116,7 @@ public class FlyingWeaponCapability implements IFlyingWeapon {
     }
 
     @Override
-    public void scheduleAction(InteractionHand hand, MotionManager mm, boolean overwrite) {
+    public void scheduleAction(InteractionHand hand, MotionManager mm, boolean overwrite, int inTicks, int outTicks) {
         //set attack range from manager, then temporarily set the rest to override whatever sweep the player should have grabbed
         //no idea how this should be stored on the player. Since it's used in the span of a single function, maybe a global is fine?
         final boolean isMain = hand == InteractionHand.MAIN_HAND;
@@ -131,7 +131,7 @@ public class FlyingWeaponCapability implements IFlyingWeapon {
                         respawnWeapon(hand);
                         fwe = getWeapon(hand).get();
                     }
-                    fwe.queuePath(mm, 0, 0);
+                    fwe.queuePath(mm, inTicks, outTicks);
                 }
             } catch (Throwable t) {
                 t.printStackTrace();

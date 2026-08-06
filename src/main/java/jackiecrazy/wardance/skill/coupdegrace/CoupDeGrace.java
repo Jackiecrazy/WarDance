@@ -61,7 +61,7 @@ public class CoupDeGrace extends Skill {
     }
 
     @Override
-    public float mightConsumption(LivingEntity caster) {
+    public float mightCost(LivingEntity caster) {
         return 2;
     }
 
@@ -182,7 +182,7 @@ public class CoupDeGrace extends Skill {
         private final HashSet<String> tague = (new HashSet<>(Arrays.asList(SkillTags.special, SkillTags.offensive)));
 
         @Override
-        public float mightConsumption(LivingEntity caster) {
+        public float mightCost(LivingEntity caster) {
             return 0;
         }
 

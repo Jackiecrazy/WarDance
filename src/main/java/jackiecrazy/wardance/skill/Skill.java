@@ -1,6 +1,5 @@
 package jackiecrazy.wardance.skill;
 
-import jackiecrazy.footwork.api.FootworkAttributes;
 import jackiecrazy.footwork.capability.resources.CombatData;
 import jackiecrazy.footwork.capability.stylish.StylishData;
 import jackiecrazy.footwork.move.Move;
@@ -8,6 +7,7 @@ import jackiecrazy.wardance.WarDance;
 import jackiecrazy.wardance.advancement.WarAdvancements;
 import jackiecrazy.wardance.api.WarAttributes;
 import jackiecrazy.wardance.capability.quiver.QuiverData;
+import jackiecrazy.wardance.capability.resources.NewCombatCapability;
 import jackiecrazy.wardance.capability.skill.CasterData;
 import jackiecrazy.wardance.capability.skill.ISkillCapability;
 import jackiecrazy.wardance.capability.status.Marks;
@@ -89,6 +89,11 @@ public abstract class Skill extends Move {
         return this;
     }
 
+    public Skill flagConsumer() {
+        this.spiritConsumer = true;
+        return this;
+    }
+
     public boolean isFamily(Skill s) {
         if (s == null) return false;
         return getArchetype().equals(s.getArchetype());
@@ -142,20 +147,22 @@ public abstract class Skill extends Move {
             if (cap.isTagActive(s))
                 return CastStatus.CONFLICT;
         if (caster.isSilent() && getTags().contains("chant")) return CastStatus.SILENCE;
-        if (CombatData.getCap(caster).getSpirit() < spiritConsumption(caster))
+        if (CombatData.getCap(caster).getSpirit() < spiritCost(caster))
             return CastStatus.SPIRIT;
         return CastStatus.ALLOWED;
     }
 
-    protected boolean finisher(){
-        return false;
-    }
-
-    public int spiritConsumption(LivingEntity caster) {
+    public float spiritGain(LivingEntity caster){
         return 0;
     }
 
-    public float mightConsumption(LivingEntity caster) {
+    protected boolean spiritConsumer=false;
+
+    public int spiritCost(LivingEntity caster) {
+        return spiritConsumer? NewCombatCapability.MAX_SPIRIT:0;
+    }
+
+    public float mightCost(LivingEntity caster) {
         return 0;
     }
 
@@ -417,7 +424,7 @@ public abstract class Skill extends Move {
 
             MinecraftForge.EVENT_BUS.post(sce);
             if (sce.getSpirit() > 0)
-                CombatData.getCap(caster).consumeSpirit(sce.getSpirit() * ReworkConstants.SPIRIT_QI);
+                CombatData.getCap(caster).consumeSpirit(sce.getSpirit());
             //change quiver
             if (caster instanceof Player p) {
                 QuiverData.getData(p).setSelectedQuiver(this.getCategory());
@@ -471,6 +478,7 @@ public abstract class Skill extends Move {
                                float something) {
         caster.level().playSound(null, caster, SoundEvents.FIRECHARGE_USE, SoundSource.AMBIENT, 0.3f + WarDance.rand.nextFloat(), 0.5f + WarDance.rand.nextFloat());
         StylishData.getCap(caster).addCombo(0.1f, rawSkillString());
+        CombatData.getCap(caster).addSpirit(spiritGain(caster));
         CasterData.getCap(caster).getSkillData(this).ifPresent(a -> {
             a.setDuration(duration);
             a.setMaxDuration(duration);

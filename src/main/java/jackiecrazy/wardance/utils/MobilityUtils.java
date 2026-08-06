@@ -218,7 +218,7 @@ public class MobilityUtils {
         if (e.isCanceled()) return false;
         Vec3 v = elb.getLookAngle().subtract(0, elb.getLookAngle().y, 0).normalize().scale(e.getForce());
         itsc.consumePosture(0);
-        itsc.setDodgeTime((int) (CombatConfig.rollTime*elb.getAttributeValue(WarAttributes.DODGE_EXTEND.get())));
+        itsc.setDodgeTime((int) (CombatConfig.rollTime * elb.getAttributeValue(WarAttributes.DODGE_EXTEND.get())));
         if (elb instanceof Player)
             ((Player) elb).setForcedPose(Pose.SLEEPING);
         elb.setSprinting(true);
@@ -247,8 +247,8 @@ public class MobilityUtils {
         if (itsc.getDodgeTime() <= -CombatConfig.rollCooldown) {
             //CombatData.getCap(elb).consumePosture(ReworkConstants.SPIRIT_QI, (float) (elb.getAttributeValue(WarAttributes.DODGE_EFFICIENCY.get())/2));
             elb.extinguishFire();
-            if(AerialModeData.getCap(elb).isAerialMode())
-            AerialModeData.getCap(elb).setAerialMode(true);
+            if (AerialModeData.getCap(elb).isAerialMode())
+                AerialModeData.getCap(elb).setAerialMode(true);
             if (side == 99 && elb.onGround()) return attemptSlide(elb);
             Entity target = GeneralUtils.raytraceEntity(elb.level(), (Entity) elb, 32);
             float adjustment = 0;
@@ -284,12 +284,12 @@ public class MobilityUtils {
             MinecraftForge.EVENT_BUS.post(e);
             if (e.isCanceled()) return false;
             Vec3 look = elb.getLookAngle().multiply(e.getForce(), 0, e.getForce()).yRot(angle).normalize();
-            itsc.setDodgeTime((int) (CombatConfig.rollTime*elb.getAttributeValue(WarAttributes.DODGE_EXTEND.get())));
+            itsc.setDodgeTime((int) (CombatConfig.rollTime * elb.getAttributeValue(WarAttributes.DODGE_EXTEND.get())));
             //if (d == DodgeEvent.Direction.FORWARD) e.setForce((float) (e.getForce() * 1.5f));
             x = look.x;
             z = look.z;
 
-            if(e.getDirection()!= DodgeEvent.Direction.NONE) {
+            if (e.getDirection() != DodgeEvent.Direction.NONE) {
                 elb.setDeltaMovement(elb.getDeltaMovement().multiply(1, 0, 1));
                 elb.push(x, y, z);
             }

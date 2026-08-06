@@ -37,7 +37,7 @@ public class ShieldBash extends Skill {
     }
 
     @Override
-    public int spiritConsumption(LivingEntity caster) {
+    public int spiritCost(LivingEntity caster) {
         return 1;
     }
 

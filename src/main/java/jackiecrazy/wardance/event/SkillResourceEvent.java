@@ -16,7 +16,7 @@ public class SkillResourceEvent extends LivingEvent {
     public SkillResourceEvent(LivingEntity entity, @Nullable LivingEntity target, Skill skill) {
         super(entity);
         s = skill;
-        spirit = skill.spiritConsumption(entity);
+        spirit = skill.spiritCost(entity);
         targ = target;
     }
 

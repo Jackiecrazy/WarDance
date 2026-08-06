@@ -56,7 +56,7 @@ public class Judgment extends Skill {
     }
 
     @Override
-    public float mightConsumption(LivingEntity caster) {
+    public float mightCost(LivingEntity caster) {
         return 2;
     }
 

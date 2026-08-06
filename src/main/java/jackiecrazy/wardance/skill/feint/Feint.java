@@ -2,18 +2,19 @@ package jackiecrazy.wardance.skill.feint;
 
 import jackiecrazy.footwork.capability.resources.CombatData;
 import jackiecrazy.footwork.client.particle.FootworkParticles;
+import jackiecrazy.footwork.entity.flyingweapon.FlyingWeaponEffect;
 import jackiecrazy.footwork.event.EntityAwarenessEvent;
+import jackiecrazy.footwork.move.motionframe.*;
 import jackiecrazy.footwork.potion.FootworkEffects;
-import jackiecrazy.footwork.utils.EffectUtils;
-import jackiecrazy.footwork.utils.GeneralUtils;
-import jackiecrazy.footwork.utils.ParticleUtils;
-import jackiecrazy.footwork.utils.StealthUtils;
+import jackiecrazy.footwork.utils.*;
 import jackiecrazy.wardance.WarDance;
 import jackiecrazy.footwork.api.CombatDamageSource;
+import jackiecrazy.wardance.capability.flyingweapon.FlyingWeaponData;
 import jackiecrazy.wardance.capability.skill.CasterData;
 import jackiecrazy.wardance.capability.skill.ISkillCapability;
 import jackiecrazy.wardance.capability.status.Marks;
 import jackiecrazy.wardance.event.BasicSweepEvent;
+import jackiecrazy.wardance.event.PlayInteractionEvent;
 import jackiecrazy.wardance.skill.*;
 import jackiecrazy.wardance.utils.CombatUtils;
 import jackiecrazy.wardance.utils.DamageUtils;
@@ -30,6 +31,7 @@ import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.ai.attributes.AttributeModifier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
+import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.event.entity.living.LivingAttackEvent;
 import net.minecraftforge.event.entity.living.LivingHurtEvent;
 import net.minecraftforge.eventbus.api.Event;
@@ -41,10 +43,13 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 import java.util.UUID;
 
 @Mod.EventBusSubscriber(modid = WarDance.MODID)
 public class Feint extends Skill {
+    public static final Vec3 ONE = new Vec3(0F, 0F, 0.6F);
+
     private final HashSet<String> proc = makeTag("physical", "disableShield", "noDamage", ProcPoints.melee, ProcPoints.afflict_tick, "boundCast", ProcPoints.countdown, ProcPoints.recharge_normal, ProcPoints.change_parry_result);
     private final HashSet<String> tag = makeTag(SkillTags.physical, SkillTags.offensive, "noDamage");
 
@@ -105,11 +110,6 @@ public class Feint extends Skill {
     }
 
     @Override
-    public int spiritConsumption(LivingEntity caster) {
-        return 2;
-    }
-
-    @Override
     public HashSet<String> getTags() {
         return tag;
     }
@@ -130,8 +130,28 @@ public class Feint extends Skill {
 
     @Override
     public void onProc(LivingEntity caster, Event procPoint, STATE state, SkillData stats, LivingEntity target) {
-        if (procPoint instanceof BasicSweepEvent se && procPoint.getPhase() == EventPriority.LOWEST && (state == STATE.HOLSTERED || state == STATE.ACTIVE)) {
+        if (procPoint instanceof PlayInteractionEvent.Pre se && procPoint.getPhase() == EventPriority.LOWEST && (state == STATE.HOLSTERED || state == STATE.ACTIVE)) {
             se.setCanceled(true);
+
+             final List<MotionFrame> TWIRL = List.of(
+                    new MotionFrame(new Vec3(0F, 1.0F, 0F), ONE)
+                            .setEffects(new FrameEffects().setEffects(FlyingWeaponEffect.WEAPON)),
+                    new MotionFrame(new Vec3(-0.15F, 0F, 1), ONE,-90),
+                    new MotionFrame(new Vec3(-0.3F, -1F, 0F),ONE, -180),
+                    new MotionFrame(new Vec3(-0.5F, 0F, -1F), ONE, 0),
+                    new MotionFrame(new Vec3(-0.25F, 1F, 0F), ONE, -180),
+
+                    new MotionFrame(new Vec3(0F, 0F, 1.0F), ONE, -180),
+                    new MotionFrame(new Vec3(0.15F, 0F, 1), ONE, 180),
+                    new MotionFrame(new Vec3(0.3F, -1F, 0F),ONE, 180),
+                    new MotionFrame(new Vec3(0.5F, 0F, -1F), ONE, 90),
+                    new MotionFrame(new Vec3(0.25F, 1F, 0F), ONE, 0),
+
+                    new MotionFrame(new Vec3(0F, 0F, 1.0F), ONE)
+            );
+              MotionManager FEINT = new MotionManagers.DefinitionMM(new MotionGroup(TWIRL, EasingFunctionEnum.IN_SINE, 20));
+
+            FlyingWeaponData.getCap(caster).scheduleAction(se.getHand(), FEINT, false);
         }
         if (procPoint instanceof LivingAttackEvent e && procPoint.getPhase() == EventPriority.HIGHEST && state == STATE.HOLSTERED && DamageUtils.isMeleeAttack(e.getSource()) && e.getEntity() == target && cast(caster, target, -999)) {
             int dur = 20;

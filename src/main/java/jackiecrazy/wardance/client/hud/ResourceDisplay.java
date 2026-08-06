@@ -257,11 +257,12 @@ public class ResourceDisplay implements IGuiOverlay {
                 if(AerialModeData.getCap(player).isAerialMode()){
                     stack.pushPose();
                     double fillPerc = ClientAerialHandler.getJumpPerc(player);
-                    final int size = 24;
+                    final int size = 48;
                     int fromTop = (int) (size *(1-fillPerc));
                     int leftO=(int)(size *fillPerc);
-                    GuiComponent.blit(stack, aerial, width/2-size/2, height/2-size/2, 0, 0, size, size, size, size);
-                    GuiComponent.blit(stack, aerialF, width/2-size/2, height/2-size/2+fromTop, 0, fromTop, size, leftO, size, size);
+                    final int startX = (int)(width / 2d - size / 2d);
+                    GuiComponent.blit(stack, aerial, startX, height/2-size/2, 0, 0, size, size, size, size);
+                    GuiComponent.blit(stack, aerialF, startX, height/2-size/2+fromTop, 0, fromTop, size, leftO, size, size);
                     stack.popPose();
                 }
 

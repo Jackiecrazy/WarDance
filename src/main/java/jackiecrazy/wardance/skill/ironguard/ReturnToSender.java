@@ -1,5 +1,6 @@
 package jackiecrazy.wardance.skill.ironguard;
 
+import jackiecrazy.wardance.event.ConsumePostureEvent;
 import jackiecrazy.wardance.event.MeleePostureEvent;
 import jackiecrazy.wardance.event.ProjectileDefendEvent;
 import jackiecrazy.wardance.skill.SkillData;
@@ -32,7 +33,7 @@ public class ReturnToSender extends IronGuard {
     }
 
     @Override
-    protected void parry(LivingEntity caster, MeleePostureEvent.Defense procPoint, SkillData stats, LivingEntity target, STATE state) {
+    protected void parry(LivingEntity caster, ConsumePostureEvent procPoint, SkillData stats, LivingEntity target, STATE state) {
 
     }
 }

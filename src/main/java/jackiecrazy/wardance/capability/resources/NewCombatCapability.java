@@ -63,7 +63,7 @@ public class NewCombatCapability implements ICombatCapability {
     private int mBind, oBind;
     private int staggerTime, maxStaggerTime, offhandCD;
     private float mpos;
-    private int mspi;
+    public static final int MAX_SPIRIT =100;
     private boolean offhand, knockdown;
     private long lastUpdate;
     private boolean first = true;
@@ -190,7 +190,7 @@ public class NewCombatCapability implements ICombatCapability {
 
     @Override
     public float getMaxSpirit() {
-        return mspi;
+        return MAX_SPIRIT;
     }
 
     @Override
@@ -476,9 +476,8 @@ public class NewCombatCapability implements ICombatCapability {
         mpos = (float) elb.getAttributeValue(WarAttributes.MAX_POSTURE.get());
         if (posture > mpos)
             setPosture(mpos);
-        mspi = 100;
-        if (spirit > mspi)
-            setSpirit(mspi);
+        if (spirit > MAX_SPIRIT)
+            setSpirit(MAX_SPIRIT);
 
         //store motion for further use
         if (player && (ticks > 5 || (lastUpdate + ticks) % 5 < lastUpdate % 5)) {
@@ -839,7 +838,7 @@ public class NewCombatCapability implements ICombatCapability {
     public CompoundTag write() {
         CompoundTag c = new CompoundTag();
         c.putFloat("spirit", spirit);
-        c.putInt("mspi", mspi);
+        c.putInt("mspi", MAX_SPIRIT);
         c.putFloat("posture", posture);
         c.putFloat("mpos", mpos);
         c.putFloat("rally", rally);
@@ -874,7 +873,6 @@ public class NewCombatCapability implements ICombatCapability {
 
     @Override
     public void read(CompoundTag t) {
-        mspi = t.getInt("mspi");
         mpos = t.getFloat("mpos");
         setSpirit(t.getFloat("spirit"));
         setPosture(t.getFloat("posture"));

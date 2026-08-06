@@ -185,8 +185,8 @@ public class CombatHandler {
 
             //successful
             if (pe1.success()) {
-                if(!pe1.isCanceled())
-                CombatUtils.onSuccessfulParry(uke, shooter == null ? projectile : shooter, defendingHand, defend, pe1.getPostureConsumption(), pe1.getPostureConsumption(), pe1.getRallyPercentage());
+                if (!pe1.isCanceled())
+                    CombatUtils.onSuccessfulParry(uke, shooter == null ? projectile : shooter, defendingHand, defend, pe1.getPostureConsumption(), pe1.getPostureConsumption(), pe1.getRallyPercentage());
                 handleProjectileDefense(e, pe1, defend, projectile, uke);
                 return;
             }
@@ -220,7 +220,7 @@ public class CombatHandler {
 
             //successful
             if (pe2.success()) {
-                if(!pe1.isCanceled()) {
+                if (!pe1.isCanceled()) {
                     ukeCap.consumePosture(null, pe2.getPostureConsumption(), pe2.getRallyPercentage(), ICombatCapability.BreachLevel.NO);
                     CombatUtils.onSuccessfulBlock(uke, projectile, defendingHand, defend, pe2.getPostureConsumption());
                 }
@@ -395,7 +395,8 @@ public class CombatHandler {
                                 semeCap.tickProc(SPIRITKB, 3);
                         }
                         StylishData.getCap(seme).processAttack(true);
-                        StylishData.getCap(seme).addCombo(0.1f, "wardance.combo.attack " + StylishCapability.getNormalAttackString(seme) + seme.getMainHandItem().getItem().toString());
+                        if (CombatUtils.getAttackState(seme) != WeaponStats.AttackType.UNDEFINED)
+                            StylishData.getCap(seme).addCombo(0.1f, "wardance.combo.attack " + StylishCapability.getNormalAttackString(seme) + seme.getMainHandItem().getItem().toString());
                         //the attacker gets a steve time extension
 //                        if (!(uke instanceof Player) && TimeSlowData.getCap(uke).getEffectiveSpeed() < 1) {
 //                            CombatUtils.triggerSteveTime(seme, (int) (TimeSlowData.getCap(uke).getTimeRemaining() * 1.5));

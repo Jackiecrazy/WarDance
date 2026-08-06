@@ -27,8 +27,13 @@ public interface IFlyingWeapon {
 
     void launchGrapple(Vec3 to);
 
+    default void scheduleAction(InteractionHand hand,
+                                MotionManager mm, boolean overwrite) {
+        scheduleAction(hand, mm, overwrite, 0, 0);
+    }
+
     void scheduleAction(InteractionHand hand,
-                        MotionManager mm, boolean overwrite);
+                        MotionManager mm, boolean overwrite, int inTicks, int outTicks);
 
     void tick();
 
@@ -76,7 +81,7 @@ public interface IFlyingWeapon {
 
         @Override
         public void scheduleAction(InteractionHand hand,
-                                   MotionManager mm, boolean overwrite) {
+                                   MotionManager mm, boolean overwrite, int inTicks, int outTicks) {
 
         }
 

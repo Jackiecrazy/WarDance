@@ -33,7 +33,7 @@ public class Taunt extends Skill {
     private final HashSet<String> thing = makeTag(SkillTags.offensive, SkillTags.chant);
 
     @Override
-    public int spiritConsumption(LivingEntity caster) {
+    public int spiritCost(LivingEntity caster) {
         return 0;
     }
 

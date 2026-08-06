@@ -4,11 +4,16 @@ import jackiecrazy.footwork.api.CombatDamageSource;
 import jackiecrazy.footwork.api.FootworkDamageArchetype;
 import jackiecrazy.footwork.capability.resources.CombatData;
 import jackiecrazy.footwork.client.particle.FootworkParticles;
+import jackiecrazy.footwork.entity.flyingweapon.FlyingItemEntity;
 import jackiecrazy.footwork.event.StunEvent;
 import jackiecrazy.footwork.utils.GeneralUtils;
 import jackiecrazy.footwork.utils.ParticleUtils;
 import jackiecrazy.wardance.WarDance;
 import jackiecrazy.wardance.capability.skill.CasterData;
+import jackiecrazy.wardance.config.weapon.WeaponStats;
+import jackiecrazy.wardance.entity.BaseballEntity;
+import jackiecrazy.wardance.entity.WarEntities;
+import jackiecrazy.wardance.event.PlayInteractionEvent;
 import jackiecrazy.wardance.skill.SkillData;
 import jackiecrazy.wardance.utils.DamageUtils;
 import jackiecrazy.wardance.utils.SkillUtils;
@@ -16,8 +21,10 @@ import net.minecraft.network.protocol.game.ClientboundSetPassengersPacket;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
+import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.event.entity.living.LivingAttackEvent;
 import net.minecraftforge.eventbus.api.Event;
@@ -26,15 +33,11 @@ import org.jetbrains.annotations.Nullable;
 
 public class Throw extends Grapple {
 
-
-    @Override
-    public int spiritConsumption(LivingEntity caster) {
-        return caster.getFirstPassenger() == null ? 1 : 0;
-    }
-
     @Override
     public void onProc(LivingEntity caster, Event procPoint, STATE state, SkillData stats, LivingEntity target) {
         if (state == STATE.HOLSTERED && isUnarmed(caster)) {
+            if(procPoint instanceof PlayInteractionEvent.Pre pie)
+                pie.setInteraction(WeaponStats.getSweepInfo(ItemStack.EMPTY, caster, WeaponStats.AttackType.STANDING, true, InteractionHand.MAIN_HAND));
             if (procPoint instanceof LivingAttackEvent lae && lae.getEntity() != caster && DamageUtils.isMeleeAttack(lae.getSource()) && procPoint.getPhase() == EventPriority.HIGHEST) {
                 if (caster.getFirstPassenger() != null)
                     lae.setCanceled(true);
@@ -135,7 +138,17 @@ public class Throw extends Grapple {
     @Override
     public SkillData onMarked(LivingEntity caster, LivingEntity target, SkillData sd, @Nullable SkillData existing) {
         if (!sd.isCondition()) {
-            target.startRiding(caster, true);
+            BaseballEntity baseball = new BaseballEntity(WarEntities.BASEBALL.get(), caster.level());
+            baseball.setOwner(caster);
+            baseball.moveTo(caster.getX(), caster.getY() + caster.getBbHeight() + 1, caster.getZ());
+            if (caster instanceof ServerPlayer p)
+                baseball.pickup(p);
+            baseball.drag(target, 90, 1000);
+            baseball.setGravity(-0.08);
+            baseball.setInteractionRange(1);
+            baseball.setIntangible(true);
+            caster.level().addFreshEntity(baseball);
+            //target.startRiding(caster, true);
             if (caster instanceof ServerPlayer p)
                 p.connection.send(new ClientboundSetPassengersPacket(caster));
         }

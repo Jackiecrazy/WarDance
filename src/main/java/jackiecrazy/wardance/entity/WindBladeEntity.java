@@ -166,7 +166,7 @@ public class WindBladeEntity extends ThrownWeaponEntity {
                 Optional<SkillData> a = Marks.getCap(le).getActiveMark(skillUsed);
                 if (a.isPresent()) {
                     for (int i = 0; i < a.get().getArbitraryFloat(); i++) {
-                        damage *= 0.5f;
+                        damage *= 0.7f;
                     }
                 }
             }

@@ -15,6 +15,7 @@ import jackiecrazy.wardance.api.IDrag;
 import jackiecrazy.wardance.capability.flyingweapon.FlyingWeaponData;
 import jackiecrazy.wardance.config.MobSpecs;
 import jackiecrazy.wardance.config.weapon.WeaponStats;
+import jackiecrazy.wardance.skill.Skill;
 import jackiecrazy.wardance.utils.CombatUtils;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -57,15 +58,9 @@ public class FlyingWeaponEntity extends FlyingItemEntity implements IDrag {
     protected HashMap<Entity, Integer> dragging = new HashMap<>();
     protected HitInfo cacheInfo;
     protected HitEffects terrainEffects = null;
-
-    public FlyingWeaponEntity setAttackType(WeaponStats.AttackType attackType) {
-        this.attackType = attackType;
-        return this;
-    }
-
+    protected List<Skill> payload = new ArrayList<>();
     protected WeaponStats.AttackType attackType;
     private boolean fading = false;
-
     public FlyingWeaponEntity(EntityType<? extends FlyingItemEntity> type, Level level) {
         //keep hitframes separate and logged here.
         //keep defense frames here?
@@ -73,6 +68,11 @@ public class FlyingWeaponEntity extends FlyingItemEntity implements IDrag {
         setEffect(FlyingWeaponEffect.BIG_SHADOW, false);
         setInvulnerable(true);
         //wasIdle=false;
+    }
+
+    public FlyingWeaponEntity setAttackType(WeaponStats.AttackType attackType) {
+        this.attackType = attackType;
+        return this;
     }
 
     @Override
@@ -201,7 +201,7 @@ public class FlyingWeaponEntity extends FlyingItemEntity implements IDrag {
         LivingEntity owner = getOwner();
         int ticks = owner.attackStrengthTicker;
         if (targets.isEmpty()) return ret;
-        animProgress-=getWeight()/2;
+        animProgress -= getWeight() / 2;
         ItemStack main = owner.getMainHandItem();
         try {
             CombatUtils.setAttackType(owner, attackType);
@@ -229,7 +229,7 @@ public class FlyingWeaponEntity extends FlyingItemEntity implements IDrag {
         } finally {
             //todo test this fix
 //            if (e.getMainHandItem() == getHeldItem())
-                CombatUtils.quickSwap(owner, main);
+            CombatUtils.quickSwap(owner, main);
 //            else WarDance.LOGGER.warn("detected that held item is now different, aborting swap back");
             owner.attackStrengthTicker = ticks;
             WeaponStats.info_override = null;
@@ -293,7 +293,7 @@ public class FlyingWeaponEntity extends FlyingItemEntity implements IDrag {
         //setTetheringEntity(getOwner());
         setIntangible(false);
         setInteractionRange(1f);
-        WarDance.LOGGER.debug("throwing to "+to +", visibility "+getRawVisualTag());
+        WarDance.LOGGER.debug("throwing to " + to + ", visibility " + getRawVisualTag());
 
 //        if (CombatData.getCap(getOwner()).consumeSpirit(CombatData.getCap(getOwner()).getMaxSpirit()))
 //            cacheInfo = HitInfo.BREACH;
@@ -398,8 +398,8 @@ public class FlyingWeaponEntity extends FlyingItemEntity implements IDrag {
 
     public void inheritDrag(FlyingWeaponEntity from) {
         setTetheringEntity(from.getTetheringEntity());
-        if(getTetheringEntity()!=null)
-        alreadyHit.add(getTetheringEntity());
+        if (getTetheringEntity() != null)
+            alreadyHit.add(getTetheringEntity());
         getEntityData().set(DRAG_TIME, from.getEntityData().get(DRAG_TIME));
         getEntityData().set(DRAG_OFFSET, from.getEntityData().get(DRAG_OFFSET));
         getEntityData().set(DRAG_POSE, from.getEntityData().get(DRAG_POSE));
@@ -452,8 +452,8 @@ public class FlyingWeaponEntity extends FlyingItemEntity implements IDrag {
     public void unDrag(boolean update) {
         getEntityData().set(DRAG_TIME, -1);
         setTetheringEntity(null);
-        if(update)
-        setIdlePose(getIdlePose());
+        if (update)
+            setIdlePose(getIdlePose());
     }
 
     @Override

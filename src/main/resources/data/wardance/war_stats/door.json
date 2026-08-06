@@ -13,6 +13,28 @@
   "#door": {
     "attack": 30,
     "defend": 1,
+    "guard_frame": {
+      "duration": 2,
+      "easing": "LINEAR",
+      "frames": [
+        {
+          "render_rotation": [
+            0, 1, 0
+          ],
+          "direction": [
+            0, 0, 1
+          ],
+          "offset": [
+            0, -0.8, 0.1
+          ],
+          "effects": {
+            "effects": [
+              "WEAPON"
+            ]
+          }
+        }
+      ]
+    },
     "standing": {
       "tags": ["pressure", "control"],
       "type": "animation",
