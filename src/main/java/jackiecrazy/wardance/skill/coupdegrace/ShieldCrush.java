@@ -150,6 +150,7 @@ public class ShieldCrush extends ShieldBash {
             mark(caster, e, duration(), 10);
             prev.setArbitraryFloat(0);
             activate(caster, 10);
+            return true;
         }
         if (to == STATE.COOLING) {
             setCooldown(caster, prev, 1);

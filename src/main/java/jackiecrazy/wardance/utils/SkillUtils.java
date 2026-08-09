@@ -61,7 +61,7 @@ public class SkillUtils {
 
     public static void addAttribute(LivingEntity to, Attribute a, AttributeModifier am) {
         final AttributeInstance atr = to.getAttribute(a);
-        if (atr == null || atr.hasModifier(am)) return;
+        if (atr == null || (atr.hasModifier(am)&&atr.getModifier(am.getId()).getAmount()==am.getAmount())) return;
         atr.removeModifier(am.getId());
         atr.addTransientModifier(am);
     }

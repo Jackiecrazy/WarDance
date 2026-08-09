@@ -1,10 +1,15 @@
 {
 	"type": "apotheosis:attribute",
-	"attribute": "footwork:skill_effectiveness",
+	"attribute": "wardance:skill_effectiveness",
 	"operation": "MULTIPLY_BASE",
 	"values": {
-		"uncommon": {
+		"common": {
 			"min": 0.05,
+			"steps": 1,
+			"step": 0.025
+		},
+		"uncommon": {
+			"min": 0.07,
 			"steps": 1,
 			"step": 0.05
 		},
@@ -27,6 +32,24 @@
 			"min": 0.25,
 			"steps": 5,
 			"step": 0.05
+		},
+		"apotheotic_additions:artifact":
+		{
+			"min": 0.30,
+			"steps": 1,
+			"step": 0
+		},
+		"apotheotic_additions:heirloom":
+		{
+			"min": 0.35,
+			"steps": 1,
+			"step": 0
+		},
+		"apotheotic_additions:esoteric":
+		{
+			"min": 0.40,
+			"steps": 1,
+			"step": 0
 		}
 	},
 	"types": [

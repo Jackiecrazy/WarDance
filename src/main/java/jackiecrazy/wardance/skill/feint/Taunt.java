@@ -94,6 +94,7 @@ public class Taunt extends Skill {
                 p.displayClientMessage(Component.translatable("wardance.taunt." + WarDance.rand.nextInt(10)), true);
             }
             markUsed(caster);
+            return true;
         }
         if (to == STATE.COOLING)
             setCooldown(caster, prev, 2);

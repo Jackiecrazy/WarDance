@@ -23,9 +23,12 @@ public class ItchyCurse extends Hex {
             if (caster.level() instanceof ServerLevel sl) {
                 sl.sendParticles(ParticleTypes.ENCHANT, target.getX(), target.getY(), target.getZ(), 20, target.getBbWidth(), target.getBbHeight(), target.getBbWidth(), 0f);
             }
+            return true;
         }
-        if (to == STATE.COOLING)
+        if (to == STATE.COOLING) {
             setCooldown(caster, prev, 15);
+            return true;
+        }
         return boundCast(prev, from, to);
     }
 

@@ -13,13 +13,13 @@ public class Stagger extends HeavyBlow {
 
     @Override
     public void onProc(LivingEntity caster, Event procPoint, STATE state, SkillData stats, LivingEntity target) {
-        if (procPoint instanceof MeleePostureEvent.Defense && state != STATE.COOLING && stats.isCondition() && procPoint.getPhase() == EventPriority.LOWEST && ((MeleePostureEvent.Defense) procPoint).getAttacker() == caster && ((MeleePostureEvent.Defense) procPoint).getEntity()!=caster) {
+        if (procPoint instanceof final MeleePostureEvent.Defense def && state != STATE.COOLING && stats.isCondition() && procPoint.getPhase() == EventPriority.LOWEST && def.getAttacker() == caster && def.getEntity()!=caster) {
             CombatData.getCap(target).setHandBind(InteractionHand.MAIN_HAND, 60);
             CombatData.getCap(target).setHandBind(InteractionHand.OFF_HAND, 60);
-            ((MeleePostureEvent.Defense) procPoint).setPostureConsumption(((MeleePostureEvent.Defense) procPoint).getPostureConsumption() * stats.getArbitraryFloat() * stats.getArbitraryFloat());
+            def.setPostureConsumption(def.getPostureConsumption() * stats.getArbitraryFloat() * stats.getArbitraryFloat());
             markUsed(caster);
         } else if (procPoint instanceof CriticalHitEvent point) {
-            if (isCrit(point) && state != STATE.COOLING && cast(caster) && procPoint.getPhase() == EventPriority.LOWEST) {
+            if (isCrit(point) && (state == STATE.ACTIVE || cast(caster, 1)) && procPoint.getPhase() == EventPriority.LOWEST) {
                 onCrit(point, stats, caster, target);
             } else if (state == STATE.COOLING && procPoint.getPhase() == EventPriority.HIGHEST) {
                 stats.decrementDuration();

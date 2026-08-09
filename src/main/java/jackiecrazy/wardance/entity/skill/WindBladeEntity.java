@@ -1,4 +1,4 @@
-package jackiecrazy.wardance.entity;
+package jackiecrazy.wardance.entity.skill;
 
 import jackiecrazy.footwork.api.CombatDamageSource;
 import jackiecrazy.footwork.entity.flyingweapon.FlyingItemEntity;
@@ -8,6 +8,7 @@ import jackiecrazy.footwork.utils.TargetingUtils;
 import jackiecrazy.wardance.WarDance;
 import jackiecrazy.wardance.capability.status.Marks;
 import jackiecrazy.wardance.config.MobSpecs;
+import jackiecrazy.wardance.entity.ThrownWeaponEntity;
 import jackiecrazy.wardance.items.WarItems;
 import jackiecrazy.wardance.skill.Skill;
 import jackiecrazy.wardance.skill.SkillData;
@@ -34,7 +35,6 @@ public class WindBladeEntity extends ThrownWeaponEntity {
     private List<LivingEntity> targets = new ArrayList<>();
     private int lastAttackTime;
     private float armorReduction = 0.5f;
-    private Skill skillUsed = WarSkills.WIND_SCAR.get();
 
     public WindBladeEntity(EntityType<? extends FlyingItemEntity> type,
                            Level level) {
@@ -49,6 +49,7 @@ public class WindBladeEntity extends ThrownWeaponEntity {
         setTrailColor(Color.LIGHT_GRAY);
         setHeldItem(new ItemStack(WarItems.PROJECTILE.get()));
         getIdlePose().setAngularVelocity(new Vector3f(0, 25, 0));
+        skillUsed = WarSkills.WIND_SCAR.get();
     }
 
     public WindBladeEntity setSkillUsed(Skill skillUsed) {
@@ -136,8 +137,8 @@ public class WindBladeEntity extends ThrownWeaponEntity {
     }
 
     @Override
-    protected void extraOnHit(LivingEntity e, Entity target) {
-        super.extraOnHit(e, target);
+    protected void extraOnHit(LivingEntity owner, Entity target) {
+        super.extraOnHit(owner, target);
         lastAttackTime = tickCount;
         if (target == getMotionTarget())
             findNewTarget();

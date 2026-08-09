@@ -81,20 +81,25 @@ public class BoulderBrace extends WarCry {
     public boolean equippedTick(LivingEntity caster, SkillData stats) {
         final Vec3 m = CombatData.getCap(caster).getMotionConsistently();
         if(!StylishData.getCap(caster).isCombatMode()) {
-            if(stats.isCondition()) {
-                stats.flagCondition(false);
+            if(stats.getState()!=STATE.COOLING) {
+                stats.setState(STATE.COOLING);
                 SkillUtils.removeAttribute(caster, Attributes.MOVEMENT_SPEED, uid);
                 startMoving(caster);
             }
             return true;
         }
-        stats.flagCondition(true);
-        if (m.lengthSqr()==0&& StylishData.getCap(caster).isCombatMode()) {
-            beStill(caster, stats);
-        } else {
+        if(stats.getState()==STATE.COOLING)stats.setState(STATE.INACTIVE);
+        if (m.lengthSqr()==0) {
+            if(!stats.isCondition()) {
+                beStill(caster, stats);
+                stats.flagCondition(true);
+            }
+        } else if(stats.isCondition()) {
             startMoving(caster);
+            stats.flagCondition(false);
         }
         if (caster.isSprinting()) {
+            stats.flagCondition(false);
             stats.addDuration(1);
             //slowly accelerate
             final float rollin = Math.min(60,stats.getDuration());
@@ -114,6 +119,7 @@ public class BoulderBrace extends WarCry {
             }
         } else if (stats.getState() == STATE.ACTIVE) {
             beStill(caster, stats);
+            stats.flagCondition(true);
         }
         return super.equippedTick(caster, stats);
     }

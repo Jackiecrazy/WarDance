@@ -1,19 +1,22 @@
 package jackiecrazy.wardance.skill.feint;
 
+import jackiecrazy.footwork.api.CombatDamageSource;
 import jackiecrazy.footwork.capability.resources.CombatData;
 import jackiecrazy.footwork.client.particle.FootworkParticles;
 import jackiecrazy.footwork.entity.flyingweapon.FlyingWeaponEffect;
 import jackiecrazy.footwork.event.EntityAwarenessEvent;
+import jackiecrazy.footwork.move.argument.misc.RenderItemArgument;
+import jackiecrazy.footwork.move.argument.misc.RenderNodeArgument;
+import jackiecrazy.footwork.move.argument.stack.RawItemStackArgument;
 import jackiecrazy.footwork.move.motionframe.*;
+import jackiecrazy.footwork.move.motionframe.render.RenderNode;
 import jackiecrazy.footwork.potion.FootworkEffects;
 import jackiecrazy.footwork.utils.*;
 import jackiecrazy.wardance.WarDance;
-import jackiecrazy.footwork.api.CombatDamageSource;
 import jackiecrazy.wardance.capability.flyingweapon.FlyingWeaponData;
 import jackiecrazy.wardance.capability.skill.CasterData;
 import jackiecrazy.wardance.capability.skill.ISkillCapability;
 import jackiecrazy.wardance.capability.status.Marks;
-import jackiecrazy.wardance.event.BasicSweepEvent;
 import jackiecrazy.wardance.event.PlayInteractionEvent;
 import jackiecrazy.wardance.skill.*;
 import jackiecrazy.wardance.utils.CombatUtils;
@@ -31,6 +34,7 @@ import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.ai.attributes.AttributeModifier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
+import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.event.entity.living.LivingAttackEvent;
 import net.minecraftforge.event.entity.living.LivingHurtEvent;
@@ -38,6 +42,7 @@ import net.minecraftforge.eventbus.api.Event;
 import net.minecraftforge.eventbus.api.EventPriority;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
+import org.joml.Vector3f;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -49,6 +54,22 @@ import java.util.UUID;
 @Mod.EventBusSubscriber(modid = WarDance.MODID)
 public class Feint extends Skill {
     public static final Vec3 ONE = new Vec3(0F, 0F, 0.6F);
+    public static final List<MotionFrame> TWIRL = List.of(
+            new MotionFrame(new Vec3(0F, 1.0F, 0F), ONE)
+                    .setEffects(new FrameEffects().setEffects(FlyingWeaponEffect.WEAPON)),
+            new MotionFrame(new Vec3(-0.15F, 0F, 1), ONE, -90),
+            new MotionFrame(new Vec3(-0.3F, -1F, 0F), ONE, -180),
+            new MotionFrame(new Vec3(-0.5F, 0F, -1F), ONE, 0),
+            new MotionFrame(new Vec3(-0.25F, 1F, 0F), ONE, -180),
+
+            new MotionFrame(new Vec3(0F, 0F, 1.0F), ONE, -180),
+            new MotionFrame(new Vec3(0.15F, 0F, 1), ONE, 180),
+            new MotionFrame(new Vec3(0.3F, -1F, 0F), ONE, 180),
+            new MotionFrame(new Vec3(0.5F, 0F, -1F), ONE, 90),
+            new MotionFrame(new Vec3(0.25F, 1F, 0F), ONE, 0),
+
+            new MotionFrame(new Vec3(0F, 0F, 1.0F), ONE)
+    );
 
     private final HashSet<String> proc = makeTag("physical", "disableShield", "noDamage", ProcPoints.melee, ProcPoints.afflict_tick, "boundCast", ProcPoints.countdown, ProcPoints.recharge_normal, ProcPoints.change_parry_result);
     private final HashSet<String> tag = makeTag(SkillTags.physical, SkillTags.offensive, "noDamage");
@@ -69,7 +90,7 @@ public class Feint extends Skill {
         //spirit bomb damage amplification
         Marks.getCap(uke).getActiveMark(WarSkills.SPIRIT_RESONANCE.get()).ifPresent((a) -> {
             if (a.getDuration() <= 0.1 && e.getSource() instanceof CombatDamageSource && ((CombatDamageSource) e.getSource()).canProcSkillEffects()) {
-                if(seme!=null) {
+                if (seme != null) {
                     ParticleUtils.playBonkParticle(uke.level(), seme.getEyePosition().add(seme.getLookAngle().scale(Math.sqrt(GeneralUtils.getDistSqCompensated(seme, uke)))), 1.5, 0, 12, WarColors.AZURE);
                     seme.level().playSound(null, seme.getX(), seme.getY(), seme.getZ(), SoundEvents.NOTE_BLOCK_PLING.get(), SoundSource.PLAYERS, 0.5f + WarDance.rand.nextFloat() * 0.5f, 0.5f + WarDance.rand.nextFloat() * 0.5f);
                 }
@@ -129,51 +150,51 @@ public class Feint extends Skill {
     }
 
     @Override
-    public void onProc(LivingEntity caster, Event procPoint, STATE state, SkillData stats, LivingEntity target) {
+    public void onProc(LivingEntity caster, Event procPoint, STATE state, SkillData stats, LivingEntity t) {
         if (procPoint instanceof PlayInteractionEvent.Pre se && procPoint.getPhase() == EventPriority.LOWEST && (state == STATE.HOLSTERED || state == STATE.ACTIVE)) {
             se.setCanceled(true);
-
-             final List<MotionFrame> TWIRL = List.of(
-                    new MotionFrame(new Vec3(0F, 1.0F, 0F), ONE)
-                            .setEffects(new FrameEffects().setEffects(FlyingWeaponEffect.WEAPON)),
-                    new MotionFrame(new Vec3(-0.15F, 0F, 1), ONE,-90),
-                    new MotionFrame(new Vec3(-0.3F, -1F, 0F),ONE, -180),
-                    new MotionFrame(new Vec3(-0.5F, 0F, -1F), ONE, 0),
-                    new MotionFrame(new Vec3(-0.25F, 1F, 0F), ONE, -180),
-
-                    new MotionFrame(new Vec3(0F, 0F, 1.0F), ONE, -180),
-                    new MotionFrame(new Vec3(0.15F, 0F, 1), ONE, 180),
-                    new MotionFrame(new Vec3(0.3F, -1F, 0F),ONE, 180),
-                    new MotionFrame(new Vec3(0.5F, 0F, -1F), ONE, 90),
-                    new MotionFrame(new Vec3(0.25F, 1F, 0F), ONE, 0),
-
-                    new MotionFrame(new Vec3(0F, 0F, 1.0F), ONE)
-            );
-              MotionManager FEINT = new MotionManagers.DefinitionMM(new MotionGroup(TWIRL, EasingFunctionEnum.IN_SINE, 20));
-
+            int dur = 40;
+            final float percent = this == WarSkills.FOLLOWUP.get() ? 1 : (0.5f * stats.getEffectiveness());
+            final int cd = (int) Math.max(TWIRL.size(), CombatUtils.getCooldownPeriod(caster, se.getHand()) * (1 - percent));
+            final MotionManager FEINT = animation(cd);
             FlyingWeaponData.getCap(caster).scheduleAction(se.getHand(), FEINT, false);
-        }
-        if (procPoint instanceof LivingAttackEvent e && procPoint.getPhase() == EventPriority.HIGHEST && state == STATE.HOLSTERED && DamageUtils.isMeleeAttack(e.getSource()) && e.getEntity() == target && cast(caster, target, -999)) {
-            int dur = 20;
-            if (Marks.getCap(target).isMarked(this)) {
-                SkillData a = Marks.getCap(target).getActiveMark(this).get();
-                dur -= a.getArbitraryFloat();
-            }
+            LivingEntity target = SkillUtils.aimLiving(caster);
+            if(target==null) return;
             CombatData.getCap(target).setHandBind(InteractionHand.MAIN_HAND, dur);
             CombatData.getCap(target).setHandBind(InteractionHand.OFF_HAND, dur);
-            CombatUtils.setHandCooldown(caster, InteractionHand.MAIN_HAND, this == WarSkills.FOLLOWUP.get() ? 1 : (0.5f * stats.getEffectiveness()), true);
-            mark(caster, target, dur / 20f + 0.1f, 6);
-            procPoint.setCanceled(true);
+            CombatUtils.setHandCooldown(caster, InteractionHand.MAIN_HAND, percent, true);
+            mark(caster, target, dur / 20f, 6);
             if (caster.level() instanceof ServerLevel sl) {
                 sl.sendParticles(ParticleTypes.LARGE_SMOKE, target.getX(), target.getY(), target.getZ(), 20, target.getBbWidth(), target.getBbHeight(), target.getBbWidth(), 0f);
                 ParticleUtils.playSweepParticle(FootworkParticles.SWEEP.get(), caster, caster.getEyePosition().add(caster.getLookAngle().scale(Math.sqrt(GeneralUtils.getDistSqCompensated(caster, target)) * 0.9)), 0, 0.5, getColor(), 0);
             }
             markUsed(caster);
         }
-        if (procPoint instanceof LivingAttackEvent e && this == WarSkills.FOLLOWUP.get() && procPoint.getPhase() == EventPriority.LOWEST && DamageUtils.isMeleeAttack(e.getSource()) && e.getEntity() == target &&
-                CombatData.getCap(target).getHandBind(InteractionHand.MAIN_HAND) > 0 && CombatData.getCap(target).getHandBind(InteractionHand.OFF_HAND) > 0) {
+//        if (procPoint instanceof LivingAttackEvent e && procPoint.getPhase() == EventPriority.HIGHEST && state == STATE.HOLSTERED && DamageUtils.isMeleeAttack(e.getSource()) && e.getEntity() == target && cast(caster, target, -999)) {
+//            int dur = 20;
+//            if (Marks.getCap(target).isMarked(this)) {
+//                SkillData a = Marks.getCap(target).getActiveMark(this).get();
+//                dur -= a.getArbitraryFloat();
+//            }
+//            CombatData.getCap(target).setHandBind(InteractionHand.MAIN_HAND, dur);
+//            CombatData.getCap(target).setHandBind(InteractionHand.OFF_HAND, dur);
+//            CombatUtils.setHandCooldown(caster, InteractionHand.MAIN_HAND, this == WarSkills.FOLLOWUP.get() ? 1 : (0.5f * stats.getEffectiveness()), true);
+//            mark(caster, target, dur / 20f + 0.1f, 6);
+//            procPoint.setCanceled(true);
+//            if (caster.level() instanceof ServerLevel sl) {
+//                sl.sendParticles(ParticleTypes.LARGE_SMOKE, target.getX(), target.getY(), target.getZ(), 20, target.getBbWidth(), target.getBbHeight(), target.getBbWidth(), 0f);
+//                ParticleUtils.playSweepParticle(FootworkParticles.SWEEP.get(), caster, caster.getEyePosition().add(caster.getLookAngle().scale(Math.sqrt(GeneralUtils.getDistSqCompensated(caster, target)) * 0.9)), 0, 0.5, getColor(), 0);
+//            }
+//            markUsed(caster);
+//        }
+        if (procPoint instanceof LivingAttackEvent e && this == WarSkills.FOLLOWUP.get() && procPoint.getPhase() == EventPriority.LOWEST && DamageUtils.isMeleeAttack(e.getSource()) && e.getEntity() == t &&
+                CombatData.getCap(t).getHandBind(InteractionHand.MAIN_HAND) > 0 && CombatData.getCap(t).getHandBind(InteractionHand.OFF_HAND) > 0) {
             CombatUtils.setHandCooldown(caster, InteractionHand.MAIN_HAND, 0.5f * SkillUtils.getSkillEffectiveness(caster), true);
         }
+    }
+
+    protected MotionManager animation(int cd) {
+        return new MotionManagers.DefinitionMM(new MotionGroup(TWIRL, EasingFunctionEnum.IN_SINE, cd));
     }
 
     //ignores all attempt to activate it
@@ -197,13 +218,42 @@ public class Feint extends Skill {
         private final HashSet<String> no = makeTag("normalAttack");
 
         @Override
-        public SkillData onMarked(LivingEntity caster, LivingEntity target, SkillData sd, @Nullable SkillData existing) {
+        public SkillData onMarked(LivingEntity caster,
+                                  LivingEntity target,
+                                  SkillData sd,
+                                  @Nullable SkillData existing) {
             target.addEffect(new MobEffectInstance(MobEffects.POISON, 200));
             for (MobEffectInstance ei : new ArrayList<>(target.getActiveEffects())) {
                 MobEffectInstance override = new MobEffectInstance(ei.getEffect(), ei.getDuration(), ei.getAmplifier() + 1, ei.isAmbient(), ei.isVisible(), ei.showIcon());
                 EffectUtils.stackPot(target, override, EffectUtils.StackingMethod.NONE);
             }
             return super.onMarked(caster, target, sd, existing);
+        }
+    }
+
+    public static class SmirkingShadow extends Feint{
+        public static final List<MotionFrame> FLIP = List.of(
+                new MotionFrame(ONE, new Vec3(0F, 0.0F, 0.4F))
+                        .setEffects(new FrameEffects().setEffects(FlyingWeaponEffect.WEAPON)),
+                new MotionFrame(ONE, new Vec3(0F, 1.2F, 0.4)),
+                new MotionFrame(ONE, new Vec3(0F, 0F, 0.4F))
+        );
+
+        @Override
+        protected MotionManager animation(int cd) {
+            return new MotionManagers.DefinitionMM(new MotionGroup(FLIP, EasingFunctionEnum.IN_SINE, cd)).setAngularVelocity(new Vector3f(-45, 0,0));
+        }
+    }
+    public static class SpiritResonance extends Feint{
+        public static final List<MotionFrame> POKE = List.of(
+                new MotionFrame(ONE, new Vec3(0F, 0.0F, 0F))
+                        .setEffects(new FrameEffects().setEffects(FlyingWeaponEffect.WEAPON).setDisplay_stack(new RenderItemArgument().withNodes(new RenderNodeArgument().setStack(new RawItemStackArgument().setItem("minecraft:air"))))),
+                new MotionFrame(ONE, new Vec3(0F, 0F, 0.5))
+        );
+
+        @Override
+        protected MotionManager animation(int cd) {
+            return new MotionManagers.DefinitionMM(new MotionGroup(POKE, EasingFunctionEnum.IN_SINE, cd));
         }
     }
 
@@ -219,7 +269,10 @@ public class Feint extends Skill {
         }
 
         @Override
-        public SkillData onMarked(LivingEntity caster, LivingEntity target, SkillData sd, @Nullable SkillData existing) {
+        public SkillData onMarked(LivingEntity caster,
+                                  LivingEntity target,
+                                  SkillData sd,
+                                  @Nullable SkillData existing) {
             if (existing != null) {
                 sd.setDuration(10);
                 sd.addArbitraryFloat(existing.getArbitraryFloat());

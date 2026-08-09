@@ -15,7 +15,9 @@ import jackiecrazy.wardance.api.IDrag;
 import jackiecrazy.wardance.capability.flyingweapon.FlyingWeaponData;
 import jackiecrazy.wardance.config.MobSpecs;
 import jackiecrazy.wardance.config.weapon.WeaponStats;
+import jackiecrazy.wardance.entity.skill.TimberfallEntity;
 import jackiecrazy.wardance.skill.Skill;
+import jackiecrazy.wardance.skill.WarSkills;
 import jackiecrazy.wardance.utils.CombatUtils;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -59,7 +61,9 @@ public class FlyingWeaponEntity extends FlyingItemEntity implements IDrag {
     protected HitInfo cacheInfo;
     protected HitEffects terrainEffects = null;
     protected List<Skill> payload = new ArrayList<>();
+    protected Skill activeSkill=null;
     protected WeaponStats.AttackType attackType;
+    protected Skill skillUsed = null;
     private boolean fading = false;
     public FlyingWeaponEntity(EntityType<? extends FlyingItemEntity> type, Level level) {
         //keep hitframes separate and logged here.
@@ -140,6 +144,11 @@ public class FlyingWeaponEntity extends FlyingItemEntity implements IDrag {
 
     public void setSpeed(float spd) {
         getEntityData().set(SPEED, spd);
+    }
+
+    public FlyingWeaponEntity setSkillUsed(Skill skillUsed) {
+        this.skillUsed = skillUsed;
+        return this;
     }
 
     @Override
@@ -250,11 +259,13 @@ public class FlyingWeaponEntity extends FlyingItemEntity implements IDrag {
                 TagKey<DamageType> tag = TagKey.create(Registries.DAMAGE_TYPE, ResourceLocation.tryParse(s));
                 ret.flag(tag);
             }
+        if(activeSkill!=null)
+            ret.setSkillUsed(activeSkill);
         return ret;
     }
 
 
-    protected void extraOnHit(LivingEntity e, Entity target) {
+    protected void extraOnHit(LivingEntity owner, Entity target) {
 
     }
 
@@ -319,6 +330,7 @@ public class FlyingWeaponEntity extends FlyingItemEntity implements IDrag {
     @Override
     protected void returnToIdle(int ticks) {
         super.returnToIdle(ticks);
+        payload.clear();
         setDeltaMovement(Vec3.ZERO);
         setIntangible(true);//this is needed to prevent the weapon hitting stuff when idle
         setAttackType(WeaponStats.AttackType.UNDEFINED);

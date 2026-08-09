@@ -9,18 +9,21 @@ import jackiecrazy.wardance.capability.aerial.AerialModeData;
 import jackiecrazy.wardance.capability.aerial.IAerialMode;
 import jackiecrazy.wardance.capability.flyingweapon.FlyingWeaponData;
 import jackiecrazy.wardance.capability.skill.CasterData;
+import jackiecrazy.wardance.capability.skill.ISkillCapability;
 import jackiecrazy.wardance.client.screen.skill.SkillCastScreen;
 import jackiecrazy.wardance.config.QiCosts;
 import jackiecrazy.wardance.entity.GrappleEntity;
 import jackiecrazy.wardance.networking.CombatChannel;
 import jackiecrazy.wardance.networking.combat.CombatModePacket;
+import jackiecrazy.wardance.networking.combat.KickPacket;
 import jackiecrazy.wardance.networking.movement.DodgePacket;
 import jackiecrazy.wardance.networking.movement.GrapplePacket;
-import jackiecrazy.wardance.networking.combat.KickPacket;
 import jackiecrazy.wardance.networking.movement.UnhookPacket;
 import jackiecrazy.wardance.networking.skill.EvokeSkillPacket;
 import jackiecrazy.wardance.networking.skill.SelectSkillPacket;
+import jackiecrazy.wardance.skill.Skill;
 import jackiecrazy.wardance.utils.MobilityUtils;
+import jackiecrazy.wardance.utils.SkillUtils;
 import net.minecraft.client.KeyMapping;
 import net.minecraft.client.Minecraft;
 import net.minecraft.network.chat.Component;
@@ -88,8 +91,9 @@ public class Keybinds {
             itsc.toggleCombatMode(!itsc.isCombatMode());
             CombatChannel.INSTANCE.sendToServer(new CombatModePacket());
         }
+        final ISkillCapability skill = CasterData.getCap(mc.player);
         if (CAST.getKeyConflictContext().isActive() && CAST.consumeClick() && mc.player.isAlive()) {
-            mc.setScreen(new SkillCastScreen(CasterData.getCap(mc.player).getEquippedSkills()));
+            mc.setScreen(new SkillCastScreen(skill.getEquippedSkills()));
         }
         if (DODGE.getKeyConflictContext().isActive() && DODGE.consumeClick() && mc.player.isAlive() && CombatData.getCap(mc.player).canDodge()) {
 
@@ -120,7 +124,7 @@ public class Keybinds {
             if (SKILL[x].getKeyConflictContext().isActive() && SKILL[x].consumeClick())
                 CombatChannel.INSTANCE.sendToServer(new SelectSkillPacket(x));
         }//grapple
-        if (Keybinds.GRAPPLE.isDown()&&!grappleDown) {
+        if (Keybinds.GRAPPLE.isDown() && !grappleDown) {
             Player p = mc.player;
             if (FlyingWeaponData.getCap(p).hasGrapple()) {
                 //chargeYankTime++;
@@ -143,9 +147,10 @@ public class Keybinds {
         }
         if (ALTERNATE_KEY.getKeyConflictContext().isActive() && ALTERNATE_KEY.consumeClick() && mc.player.isAlive()) {
             ALTERNATE_KEY.setDown(false);
-
+            SkillUtils.temp = mc.level.getEntity(ClientEvents.coyoteTimeID);
             //skills
-            if (CasterData.getCap(mc.player).getHolsteredSkill() != null) {
+            //this is awful...
+            if (skill.getHolsteredSkill() != null && skill.changeSkillState(skill.getHolsteredSkill(), Skill.STATE.ACTIVE)) {
                 CombatChannel.INSTANCE.sendToServer(new EvokeSkillPacket(ClientEvents.coyoteTimeID));
             } else {
                 //kick

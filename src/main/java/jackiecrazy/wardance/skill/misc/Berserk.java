@@ -82,6 +82,7 @@ public class Berserk extends Skill {
             StylishData.getCap(caster).resetAdrenaline();
             SkillUtils.removeAttribute(caster, WarAttributes.TWO_HANDING.get(), berserk);
             SkillUtils.removeAttribute(caster, Attributes.ATTACK_SPEED, berserk1);
+            return true;
         }
         return boundCast(prev, from, to);
     }

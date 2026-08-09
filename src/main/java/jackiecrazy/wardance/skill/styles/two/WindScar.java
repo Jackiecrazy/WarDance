@@ -7,7 +7,7 @@ import jackiecrazy.footwork.entity.flyingweapon.FlyingItemEntity;
 import jackiecrazy.footwork.event.DodgeEvent;
 import jackiecrazy.wardance.WarDance;
 import jackiecrazy.wardance.entity.WarEntities;
-import jackiecrazy.wardance.entity.WindBladeEntity;
+import jackiecrazy.wardance.entity.skill.WindBladeEntity;
 import jackiecrazy.wardance.event.PlayInteractionEvent;
 import jackiecrazy.wardance.skill.ProcPoints;
 import jackiecrazy.wardance.skill.SkillData;

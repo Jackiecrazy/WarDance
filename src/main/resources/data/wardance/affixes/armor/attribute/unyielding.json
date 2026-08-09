@@ -1,6 +1,6 @@
 {
 	"type": "apotheosis:attribute",
-	"attribute": "footwork:max_posture",
+	"attribute": "wardance:max_posture",
 	"operation": "ADDITION",
 	"values": {
 		"common": {
@@ -32,6 +32,24 @@
 			"min": 17.5,
 			"steps": 4,
 			"step": 0.25
+		},
+		"apotheotic_additions:artifact":
+		{
+			"min": 20,
+			"steps": 1,
+			"step": 0
+		},
+		"apotheotic_additions:heirloom":
+		{
+			"min": 22,
+			"steps": 1,
+			"step": 0
+		},
+		"apotheotic_additions:esoteric":
+		{
+			"min": 25,
+			"steps": 1,
+			"step": 0
 		}
 	},
 	"types": [

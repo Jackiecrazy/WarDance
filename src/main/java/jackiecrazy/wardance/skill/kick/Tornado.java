@@ -8,6 +8,7 @@ import jackiecrazy.footwork.utils.ParticleUtils;
 import jackiecrazy.footwork.utils.TargetingUtils;
 import jackiecrazy.wardance.WarDance;
 import jackiecrazy.wardance.skill.SkillData;
+import jackiecrazy.wardance.utils.CombatUtils;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.entity.Entity;
@@ -28,11 +29,7 @@ public class Tornado extends Kick {
             for (Entity t : caster.level().getEntities(caster, caster.getBoundingBox().inflate(3), (a -> !TargetingUtils.isAlly(a, caster))))
                 if (t instanceof LivingEntity) {
                     counter++;
-                    LivingEntity target = (LivingEntity) t;
-                    CombatData.getCap(target).consumePosture(caster, 4);
-                    target.hurt(new CombatDamageSource(caster).setDamageTyping(FootworkDamageArchetype.PHYSICAL).setSkillUsed(this).setProcSkillEffects(true).setProcAttackEffects(true), 2);
-                    if (target.getLastHurtByMob() == null)
-                        target.setLastHurtByMob(caster);
+                    CombatUtils.kick(caster, t, false, 0);
                 }
             if (counter >= 6)
                 completeChallenge(caster);
@@ -40,9 +37,10 @@ public class Tornado extends Kick {
             caster.level().playSound(null, caster.getX(), caster.getY(), caster.getZ(), SoundEvents.ZOMBIE_ATTACK_WOODEN_DOOR, SoundSource.PLAYERS, 0.25f + WarDance.rand.nextFloat() * 0.5f, 0.5f + WarDance.rand.nextFloat() * 0.5f);
             for (int radius = 1; radius < 4; ++radius)
                 ParticleUtils.playSweepParticle(FootworkParticles.CIRCLE.get(), caster, caster.position(), 0, radius, Color.CYAN, 0.1 + radius);
+            return true;
         }
         if (to == STATE.COOLING) {
-            setCooldown(caster, prev, 4);
+            setCooldown(caster, prev, 5);
             return true;
         }
         return boundCast(prev, from, to);
@@ -52,4 +50,5 @@ public class Tornado extends Kick {
 
     }
 
+    
 }

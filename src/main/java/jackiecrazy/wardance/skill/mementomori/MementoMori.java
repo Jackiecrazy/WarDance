@@ -155,6 +155,7 @@ pound of flesh: active skill. Consumes all your spirit, and until your spirit re
                     }
                     prev.setArbitraryFloat(0);
                 }
+                return true;
             }
             return instantCast(prev, from, to);
         }

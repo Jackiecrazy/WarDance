@@ -104,6 +104,7 @@ Flow: cooldown of all attack skills are halved, and any cooled attack skill is a
         if (from == STATE.ACTIVE && to == STATE.COOLING) {
             SkillUtils.removeAttribute(caster, Attributes.ATTACK_DAMAGE, bad);
             prev.setState(STATE.INACTIVE);
+            return true;
         }
         return instantCast(prev, from, to);
     }

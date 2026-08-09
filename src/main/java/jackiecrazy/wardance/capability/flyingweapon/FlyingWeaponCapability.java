@@ -79,17 +79,6 @@ public class FlyingWeaponCapability implements IFlyingWeapon {
     public void setHeldBlock(ThrownWeaponEntity sb) {
         if (held != null) held.remove(Entity.RemovalReason.UNLOADED_WITH_PLAYER);
         held = sb;
-        if (!sb.level().isClientSide) {
-            MotionManager mm = new MotionManagers.DefinitionMM(
-                    new MotionGroup(
-                            List.of(
-                                    new MotionFrame(new Vec3(0, 1, 0.4), new Vec3(0, 1, 0), sb.getIdlePose().getStartFrame().renderOrientation()),
-                                    new MotionFrame(new Vec3(0, 1, -0.4), new Vec3(0, 1, 0), sb.getIdlePose().getStartFrame().renderOrientation())),
-                            EasingFunctionEnum.IN_SINE, 10));
-            sb.queuePath(mm);
-
-            //sb.queuePath(BLOCKHOLD);
-        }
         sync();
     }
 
@@ -196,11 +185,6 @@ public class FlyingWeaponCapability implements IFlyingWeapon {
             if(off!=null) off.remove(Entity.RemovalReason.DISCARDED);
             off=null;
         }*/
-        //auto yeet block
-        if (getHeldBlock() != null && getHeldBlock().isIdle()) {
-            Vec3 dest = player.getEyePosition().add(player.getLookAngle().scale(32));
-            yeet(null, dest, 2);
-        }
         if (!StylishData.getCap(player).isCombatMode() || player.isDeadOrDying()) {
             if (main != null) main.invalidateWhenDone();
             if (off != null) off.invalidateWhenDone();
@@ -302,9 +286,9 @@ public class FlyingWeaponCapability implements IFlyingWeapon {
         fwe.setOwner(player);
         Vec3 look = player.getLookAngle().reverse().normalize();
         Vec3 wtfPos = player.getEyePosition();
-        WarDance.LOGGER.debug("weapon is at "+fwe.position());
+        WarDance.LOGGER.debug("weapon is at " + fwe.position());
         fwe.moveTo(wtfPos.add(look));
-        WarDance.LOGGER.debug("weapon should now be at "+fwe.position());
+        WarDance.LOGGER.debug("weapon should now be at " + fwe.position());
         //fwe.setState(FlyingItemEntity.STATE.THROW_NATURAL);
 
         //fwe.yeet(pos, strength);

@@ -1,4 +1,4 @@
-package jackiecrazy.wardance.entity;
+package jackiecrazy.wardance.entity.skill;
 
 import jackiecrazy.footwork.api.CombatDamageSource;
 import jackiecrazy.footwork.api.FootworkDamageArchetype;
@@ -13,7 +13,7 @@ import jackiecrazy.footwork.utils.TargetingUtils;
 import jackiecrazy.wardance.WarDance;
 import jackiecrazy.wardance.api.WarAttributes;
 import jackiecrazy.wardance.config.MobSpecs;
-import jackiecrazy.wardance.skill.Skill;
+import jackiecrazy.wardance.entity.ThrownWeaponEntity;
 import jackiecrazy.wardance.skill.WarSkills;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.world.damagesource.DamageSource;
@@ -75,7 +75,6 @@ public class TimberfallEntity extends ThrownWeaponEntity {
     // When hit, start falling again, or pushed, play fall over sequence and deal damage
     private List<LivingEntity> targets = new ArrayList<>();
     private int growTimer = GROW;
-    private Skill skillUsed = WarSkills.WIND_SCAR.get();
     private int height = 0;
 
     public TimberfallEntity(EntityType<? extends FlyingItemEntity> type,
@@ -91,6 +90,7 @@ public class TimberfallEntity extends ThrownWeaponEntity {
         setAttackable(true);
         pickup_flourish=false;
         setFake(true);
+        skillUsed= WarSkills.TIMBERFALL.get();
     }
 
     private static RenderNode makeNode(BlockState b, double x, double y, double z) {
@@ -101,11 +101,6 @@ public class TimberfallEntity extends ThrownWeaponEntity {
     public boolean hurt(DamageSource sauce, float amnt) {
         fall();
         return false;
-    }
-
-    public TimberfallEntity setSkillUsed(Skill skillUsed) {
-        this.skillUsed = skillUsed;
-        return this;
     }
 
     @Override

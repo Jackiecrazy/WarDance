@@ -1,6 +1,10 @@
 package jackiecrazy.wardance.entity;
 
 import jackiecrazy.wardance.WarDance;
+import jackiecrazy.wardance.entity.skill.BaseballEntity;
+import jackiecrazy.wardance.entity.skill.GrenadeEntity;
+import jackiecrazy.wardance.entity.skill.TimberfallEntity;
+import jackiecrazy.wardance.entity.skill.WindBladeEntity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.MobCategory;
 import net.minecraftforge.fml.common.Mod;
@@ -30,6 +34,11 @@ public class WarEntities {
             .sized(1F, 1F)
             .setTrackingRange(128)
             .build("physics_dummy"));
+    public static final RegistryObject<EntityType<GrenadeEntity>> GRENADE = ENTITIES.register("unholy_hand_grenade", () -> EntityType.Builder
+            .of(GrenadeEntity::new, MobCategory.MISC)
+            .sized(1F, 1F)
+            .setTrackingRange(128)
+            .build("unholy_hand_grenade"));
 
     public static final RegistryObject<EntityType<FearEntity>> FEAR = ENTITIES.register("fear", () -> EntityType.Builder
             .of(FearEntity::new, MobCategory.MISC)

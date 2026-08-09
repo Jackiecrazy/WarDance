@@ -81,8 +81,10 @@ public class ShieldBash extends Skill {
 
     @Override
     public boolean onStateChange(LivingEntity caster, SkillData prev, STATE from, STATE to) {
-        if (to == STATE.COOLING)//no need for cooldown because it basically cools down with shield anyway
+        if (to == STATE.COOLING) {//no need for cooldown because it basically cools down with shield anyway
             setCooldown(caster, prev, 4);
+            return true;
+        }
         return boundCast(prev, from, to);
     }
 

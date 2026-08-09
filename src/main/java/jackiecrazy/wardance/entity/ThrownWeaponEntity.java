@@ -15,6 +15,7 @@ import jackiecrazy.footwork.move.utils.ArgumentContext;
 import jackiecrazy.footwork.utils.GeneralUtils;
 import jackiecrazy.footwork.utils.MovementUtils;
 import jackiecrazy.footwork.utils.TargetingUtils;
+import jackiecrazy.wardance.WarDance;
 import jackiecrazy.wardance.capability.flyingweapon.FlyingWeaponData;
 import jackiecrazy.wardance.capability.quiver.QuiverData;
 import jackiecrazy.wardance.config.weapon.WeaponStats;
@@ -236,7 +237,7 @@ public class ThrownWeaponEntity extends FlyingWeaponEntity {
 //        return true;
 //    }
 
-    private void doneHitting() {
+    protected void doneHitting() {
         //getIdlePose().setAngularVelocity(Vec3.ZERO.toVector3f());
         if (dormant) return;
         //entity lodge check
@@ -398,6 +399,12 @@ public class ThrownWeaponEntity extends FlyingWeaponEntity {
 
     @Override
     public void remove(RemovalReason reason) {
+        WarDance.LOGGER.fatal("if this keeps fucking happening I'm gonna make it not fucking consume the item");
+        try{
+            throw new RuntimeException("flying weapon at "+position()+" has been deleted");
+        } catch (RuntimeException e) {
+            e.printStackTrace();
+        }
         //fixme due to elaborate swap sequences, picking up a thrown weapon with a sprinting sweep will delete it
         // hand attacks, sets the weapon, performs pickup flourish, but it's still part of the attack action so at the end the hand gets reset to what it was before, air.
         if (reason.shouldDestroy() && getOwner() instanceof Player p && !pickup(p)) {
@@ -407,7 +414,7 @@ public class ThrownWeaponEntity extends FlyingWeaponEntity {
     }
 
     @Override
-    protected void extraOnHit(LivingEntity e, Entity target) {
+    protected void extraOnHit(LivingEntity owner, Entity target) {
         if (getHeldItem().getItem() instanceof BlockItem)
             target.setDeltaMovement(getDeltaMovement());
         runImpactActions();

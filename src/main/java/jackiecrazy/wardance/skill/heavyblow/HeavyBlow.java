@@ -1,5 +1,6 @@
 package jackiecrazy.wardance.skill.heavyblow;
 
+import jackiecrazy.footwork.capability.resources.CombatData;
 import jackiecrazy.footwork.utils.GeneralUtils;
 import jackiecrazy.wardance.skill.*;
 import jackiecrazy.wardance.utils.SkillUtils;
@@ -27,13 +28,18 @@ public class HeavyBlow extends Skill {
 
     @Override
     public void onProc(LivingEntity caster, Event procPoint, STATE state, SkillData stats, LivingEntity target) {
-        if (procPoint instanceof CriticalHitEvent crit && caster != target && procPoint.getPhase() == EventPriority.LOWEST) {
-            if (isCrit(crit) && state == STATE.INACTIVE && cast(caster, target, -999)) {
+        if (procPoint instanceof CriticalHitEvent crit && !CombatData.getCap(caster).alreadyProc("oncePerAttack") && caster != target && procPoint.getPhase() == EventPriority.LOWEST) {
+            if (isCrit(crit) && (state==STATE.ACTIVE||(state == STATE.INACTIVE && cast(caster, target, 1)))) {
                 onCrit(crit, stats, caster, target);
             } else if (state == STATE.COOLING) {
                 stats.decrementDuration();
             }
         }
+    }
+
+    @Override
+    public boolean equippedTick(LivingEntity caster, SkillData stats) {
+        return activeTick(stats);
     }
 
     @Override
@@ -46,7 +52,7 @@ public class HeavyBlow extends Skill {
 
     protected void onCrit(CriticalHitEvent proc, SkillData stats, LivingEntity caster, LivingEntity target) {
         if (this == WarSkills.VITAL_STRIKE.get())
-            proc.setDamageModifier(proc.getDamageModifier() +0.5f * stats.getEffectiveness());
+            proc.setDamageModifier(proc.getDamageModifier() +0.7f * stats.getEffectiveness());
     }
 
     public static class Leverage extends HeavyBlow {

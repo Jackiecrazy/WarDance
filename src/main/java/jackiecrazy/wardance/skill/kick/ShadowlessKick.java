@@ -31,6 +31,7 @@ public class ShadowlessKick extends Kick {
                 prev.setMaxDuration(7);
                 kick(caster, prev);
                 prev.decrementDuration();
+                return true;
             }
         }
         if (to == STATE.COOLING) {

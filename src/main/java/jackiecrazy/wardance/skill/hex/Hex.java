@@ -160,9 +160,12 @@ public class Hex extends Skill {
                 sl.sendParticles(ParticleTypes.ENCHANT, target.getX(), target.getY(), target.getZ(), 100, target.getBbWidth(), target.getBbHeight() / 2, target.getBbWidth(), 0f);
             }
             markUsed(caster);
+            return true;
         }
-        if (to == STATE.COOLING)
+        if (to == STATE.COOLING) {
             setCooldown(caster, prev, 15 / prev.getEffectiveness());
+            return true;
+        }
         return boundCast(prev, from, to);
     }
 

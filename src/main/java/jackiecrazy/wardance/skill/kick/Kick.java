@@ -9,7 +9,10 @@ import jackiecrazy.footwork.event.StunEvent;
 import jackiecrazy.footwork.utils.GeneralUtils;
 import jackiecrazy.footwork.utils.ParticleUtils;
 import jackiecrazy.wardance.WarDance;
+import jackiecrazy.wardance.capability.aerial.AerialModeData;
 import jackiecrazy.wardance.skill.*;
+import jackiecrazy.wardance.utils.CombatUtils;
+import jackiecrazy.wardance.utils.SkillUtils;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.entity.LivingEntity;
@@ -33,8 +36,8 @@ public class Kick extends Skill {
     }
 
     @Override
-    public int spiritCost(LivingEntity caster) {
-        return 1;
+    public float spiritGain(LivingEntity caster) {
+        return 9;
     }
 
     @Override
@@ -48,19 +51,14 @@ public class Kick extends Skill {
         return offensive;
     }
 
-    @Override
-    public boolean fakeMark(LivingEntity caster, LivingEntity target, SkillData stats) {
-        return getDamage(stats, target) >= CombatData.getCap(target).getPosture();
-    }
+//    @Override
+//    public boolean fakeMark(LivingEntity caster, LivingEntity target, SkillData stats) {
+//        return getDamage(stats, target) >= CombatData.getCap(target).getPosture();
+//    }
 
     @Override
     public void onProc(LivingEntity caster, Event procPoint, STATE state, SkillData stats, @Nullable LivingEntity target) {
         attackCooldown(procPoint, caster, stats);
-        if (procPoint instanceof StunEvent e && state == STATE.ACTIVE && this == WarSkills.TRAMPLE.get() && e.getPhase() == EventPriority.LOWEST) {
-            if (CombatData.getCap(target).getPosture() == CombatData.getCap(target).getMaxPosture())
-                completeChallenge(caster);
-            //e.setKnockdown(true);
-        }
     }
 
     public int getAimRange(LivingEntity caster, SkillData sd) {
@@ -69,16 +67,11 @@ public class Kick extends Skill {
 
     @Override
     public boolean onStateChange(LivingEntity caster, SkillData prev, STATE from, STATE to) {
-        LivingEntity target = GeneralUtils.raytraceLiving(caster, getAimRange(caster, prev));
+        LivingEntity target = SkillUtils.aimLiving(caster, getAimRange(caster, prev));
         if (from == STATE.HOLSTERED && to == STATE.ACTIVE && target != null && cast(caster, target, -999)) {
-            float amount = getDamage(prev, target);
-            CombatData.getCap(target).consumePosture(caster, amount);
-            ParticleUtils.playBonkParticle(caster.level(), caster.getEyePosition().add(caster.getLookAngle().scale(Math.sqrt(GeneralUtils.getDistSqCompensated(caster, target)))), 1, 0, 8, getColor());
+            CombatUtils.kick(caster, target, false);
             additionally(caster, target, prev);
-            target.hurt(new CombatDamageSource(caster).setDamageTyping(FootworkDamageArchetype.PHYSICAL).setProcSkillEffects(true).setSkillUsed(this).setProcAttackEffects(true), 2 * prev.getEffectiveness());
-            if (target.getLastHurtByMob() == null)
-                target.setLastHurtByMob(caster);
-            caster.level().playSound(null, caster.getX(), caster.getY(), caster.getZ(), SoundEvents.ZOMBIE_ATTACK_WOODEN_DOOR, SoundSource.PLAYERS, 0.25f + WarDance.rand.nextFloat() * 0.5f, 0.5f + WarDance.rand.nextFloat() * 0.5f);
+            return true;
         }
         if (to == STATE.COOLING) {
             setCooldown(caster, prev, 4);
@@ -88,26 +81,26 @@ public class Kick extends Skill {
     }
 
     private float getDamage(SkillData prev, LivingEntity target) {
-        float amount = 4 * prev.getEffectiveness();
-        final float trample = this == WarSkills.TRAMPLE.get() ? 1.5f : 1;
-        amount = amount * trample * prev.getEffectiveness() > CombatData.getCap(target).getPosture() ? amount * trample * prev.getEffectiveness() : amount;
-        return amount;
+        return 4 * prev.getEffectiveness();
     }
 
     protected void additionally(LivingEntity caster, LivingEntity target, SkillData sd) {
     }
 
     public static class Backflip extends Kick {
+
         protected void additionally(LivingEntity caster, LivingEntity target, SkillData sd) {
             final Vec3 vec = caster.position().vectorTo(target.position());
-            final Vec3 noy = new Vec3(vec.x, 0, vec.z).normalize().scale(-1);
-            caster.setDeltaMovement(caster.getDeltaMovement().add(noy.x, 0.4, noy.z));
+            final Vec3 noY = new Vec3(vec.x, 0, vec.z).normalize().scale(-1);
+            caster.setDeltaMovement(caster.getDeltaMovement().add(noY.x, 0.4, noY.z));
             caster.hurtMarked = true;
             final ICombatCapability cap = CombatData.getCap(caster);
             if (caster.getY() > 320 && target instanceof Phantom)
                 completeChallenge(caster);
             StylishData.getCap(caster).addCombo(0.1f, getRegistryName().toString());
             cap.addPosture(0.3f * sd.getEffectiveness() * (cap.getPosture() / cap.getMaxPosture()));
+            AerialModeData.getCap(caster).alterGravity(50, 0.3);
+            AerialModeData.getCap(caster).setAerialMode(50);
         }
     }
 }

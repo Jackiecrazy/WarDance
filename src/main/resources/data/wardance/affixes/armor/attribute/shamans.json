@@ -1,32 +1,55 @@
 {
 	"type": "apotheosis:attribute",
-	"attribute": "footwork:max_spirit",
+	"attribute": "wardance:spirit_refund",
 	"operation": "ADDITION",
 	"values": {
-		"uncommon": {
-			"min": 5,
+		"common": {
+			"min": 0.05,
 			"steps": 1,
-			"step": 0.25
+			"step": 1
+		},
+		"uncommon": {
+			"min": 0.1,
+			"steps": 2,
+			"step": 1
 		},
 		"rare": {
-			"min": 7.5,
-			"steps": 3,
-			"step": 0.25
+			"min": 0.125,
+			"steps": 2,
+			"step": 1
 		},
 		"epic": {
-			"min": 10,
+			"min": 0.15,
 			"steps": 3,
-			"step": 0.25
+			"step": 1
 		},
 		"mythic": {
-			"min": 15,
-			"steps": 4,
-			"step": 0.25
+			"min": 0.175,
+			"steps": 3,
+			"step": 1
 		},
 		"ancient": {
-			"min": 20,
-			"steps": 5,
-			"step": 0.25
+			"min": 0.2,
+			"steps": 3,
+			"step": 1
+		},
+		"apotheotic_additions:artifact":
+		{
+			"min": 0.225,
+			"steps": 1,
+			"step": 0
+		},
+		"apotheotic_additions:heirloom":
+		{
+			"min": 0.25,
+			"steps": 1,
+			"step": 0
+		},
+		"apotheotic_additions:esoteric":
+		{
+			"min": 0.275,
+			"steps": 1,
+			"step": 0
 		}
 	},
 	"types": [

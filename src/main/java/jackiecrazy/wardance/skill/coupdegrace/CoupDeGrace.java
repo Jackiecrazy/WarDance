@@ -203,6 +203,7 @@ public class CoupDeGrace extends Skill {
             if (from == STATE.INACTIVE && to == STATE.HOLSTERED) {
                 caster.level().playSound(null, caster.getX(), caster.getY(), caster.getZ(), SoundEvents.RAVAGER_CELEBRATE, SoundSource.PLAYERS, 0.8f + WarDance.rand.nextFloat() * 0.5f, 0.75f + WarDance.rand.nextFloat() * 0.5f);
                 prev.setState(STATE.HOLSTERED);
+                return true;
             }
             if (to == STATE.ACTIVE && cast(caster)) {
                 //DIE!
@@ -217,6 +218,7 @@ public class CoupDeGrace extends Skill {
                     e.hurt(die, ((LivingEntity) e).getMaxHealth() * prev.getEffectiveness() / 10 + (float) caster.getAttributeValue(Attributes.ATTACK_DAMAGE));
                     if (((LivingEntity) e).isDeadOrDying()) prev.flagCondition(true);
                 }
+                return true;
             }
             if (to == STATE.COOLING) {
                 if (prev.isCondition())

@@ -28,7 +28,6 @@ import javax.annotation.Nonnull;
 import java.util.HashSet;
 
 public class Grapple extends Skill {
-    private final HashSet<String> tag = makeTag("physical", "boundCast", "melee", "normalAttack", "countdown", "unarmed", "rechargeWithAttack");
     private final HashSet<String> unarm = makeTag(SkillTags.offensive, SkillTags.physical, SkillTags.unarmed);
 
     @Nonnull

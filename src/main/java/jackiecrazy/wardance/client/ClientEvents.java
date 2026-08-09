@@ -5,7 +5,6 @@ import jackiecrazy.footwork.capability.resources.CombatData;
 import jackiecrazy.footwork.capability.resources.ICombatCapability;
 import jackiecrazy.footwork.capability.stylish.IStyleCapability;
 import jackiecrazy.footwork.capability.stylish.StylishData;
-import jackiecrazy.footwork.entity.flyingweapon.FlyingWeaponEffect;
 import jackiecrazy.footwork.utils.GeneralUtils;
 import jackiecrazy.footwork.utils.TargetingUtils;
 import jackiecrazy.wardance.WarDance;
@@ -26,12 +25,10 @@ import jackiecrazy.wardance.entity.GhostBlockEntity;
 import jackiecrazy.wardance.entity.GrappleEntity;
 import jackiecrazy.wardance.entity.ThrownWeaponEntity;
 import jackiecrazy.wardance.handlers.TwoHandingHandler;
-import jackiecrazy.wardance.mixin.ClientAccessors;
 import jackiecrazy.wardance.networking.CombatChannel;
 import jackiecrazy.wardance.networking.combat.*;
 import jackiecrazy.wardance.networking.movement.UnhookPacket;
 import jackiecrazy.wardance.networking.sync.UpdateWeaponFramePacket;
-import jackiecrazy.wardance.networking.sync.UpdateWeaponRenderPacket;
 import jackiecrazy.wardance.skill.Skill;
 import jackiecrazy.wardance.utils.CombatUtils;
 import net.minecraft.client.KeyMapping;
@@ -130,16 +127,22 @@ public class ClientEvents {
         double aimRange;
         boolean updateGrapple = false;
         Predicate<Entity> pred = a -> EntitySelector.LIVING_ENTITY_STILL_ALIVE.test(a) && !a.isInvulnerable() && !TargetingUtils.isAlly(a, p);
-        if (Keybinds.GRAPPLE.isDown()) {
-            aimRange = GrappleEntity.MAXDIST;
-            pred = GRAPPLE_VALID;
-            updateGrapple = true;
-        } else if (CasterData.getCap(Minecraft.getInstance().player).getHolsteredSkill() != null) {
+//        if (Keybinds.GRAPPLE.isDown()) {
+//            aimRange = GrappleEntity.MAXDIST;
+//            pred = GRAPPLE_VALID;
+//            updateGrapple = true;
+//        } else
+        if (CasterData.getCap(Minecraft.getInstance().player).getHolsteredSkill() != null) {
             ISkillCapability sc = CasterData.getCap(Minecraft.getInstance().player);
             final Skill s = sc.getHolsteredSkill();
             aimRange = s.getAimRange(Minecraft.getInstance().player, sc.getSkillData(s).orElse(null));
         } else {
             aimRange = 3;//kick
+        }
+        if (aimRange < 0) {
+            //an unaimable skill. Cancel aim assist.
+            coyotedTime = coyoteTimeID = 0;
+            coyoteVector = Vec3.ZERO;
         }
         HitResult dest = ProjectileUtil.getHitResultOnViewVector(p, pred, aimRange);
         final Vec3 eyePosition = p.getEyePosition();
@@ -624,7 +627,7 @@ public class ClientEvents {
         Player player = Minecraft.getInstance().player;
         if (player == null)
             return;
-        if(player.isUsingItem()||Minecraft.getInstance().gameMode.isDestroying())return;
+        if (player.isUsingItem() || Minecraft.getInstance().gameMode.isDestroying()) return;
         float cooldownProgress = CombatUtils.getCooledAttackStrength(player, event.getHand(), 0.5f); // 0.0F = current progress
 
         if (cooldownProgress < WeaponStats.getSweepInfo(player.getItemInHand(event.getHand()), player, CombatUtils.getAttackState(player), false, event.getHand()).getMinimumCooldown()) {

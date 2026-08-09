@@ -111,6 +111,7 @@ public class SkillCapability implements ISkillCapability {
 
     @Override
     public boolean changeSkillState(Skill d, Skill.STATE to) {
+        if(d==null)return false;
         SkillData data = nonNullGet(d);
         if (data != null)
             if (to == Skill.STATE.ACTIVE && data.getState() == Skill.STATE.ACTIVE) {

@@ -28,6 +28,9 @@
           "effects": {
             "attack_info": {
               "damage_scale": 0,
+              "posture_scale": 0,
+              "knockback": 0,
+              "_comment": "knockback should never be triggered unless the scythe is doing another damage source on attack. In that case, at least this won't knock the target back for your delayed strike.",
               "hit_other": {
                 "run_actions": [
                   {

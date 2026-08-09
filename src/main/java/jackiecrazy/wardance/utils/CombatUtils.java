@@ -675,10 +675,10 @@ public class CombatUtils {
         if (entity.isSprinting())
             set = WeaponStats.AttackType.SPRINTING;
         if ((!(entity instanceof Player p) || !p.getAbilities().flying) && !entity.onGround() && !entity.onClimbable() && !entity.isInWater()) {
-            final double epsilon = 0.001;
+            final double epsilon = 0.005;
             if (AerialModeData.getCap(entity).isAerialMode() || entity.getDeltaMovement().y > epsilon)
                 set = WeaponStats.AttackType.AERIAL;
-            if (entity.fallDistance > 0 || entity.getDeltaMovement().y < epsilon)
+            if (entity.fallDistance > 0 || entity.getDeltaMovement().y <= epsilon)
                 set = WeaponStats.AttackType.FALLING;
         }
         if (entity.isSwimming() || entity.isFallFlying() || CombatData.getCap(entity).isDodging())
@@ -871,10 +871,14 @@ public class CombatUtils {
     }
 
     public static void kick(LivingEntity kicker, Entity targetEntity, boolean breach) {
+        kick(kicker, targetEntity, breach, 12);
+    }
+
+    public static void kick(LivingEntity kicker, Entity targetEntity, boolean breach, float postureCost) {
         kicker.level().playSound(null, kicker.getX(), kicker.getY(), kicker.getZ(), SoundEvents.ZOMBIE_ATTACK_WOODEN_DOOR, SoundSource.PLAYERS, 0.25f + WarDance.rand.nextFloat() * 0.5f, 0.5f + WarDance.rand.nextFloat() * 0.5f);
         if (targetEntity instanceof LivingEntity target) {
             CombatData.getCap(kicker).tickProc("oncePerAttack");
-            CombatData.getCap(kicker).consumePosture(kicker, 12, 1f, false);
+            CombatData.getCap(kicker).consumePosture(kicker, postureCost, 1f, false);
             StylishData.getCap(kicker).addCombo(0.1f, "wardance.combo.kick" + breach);
             //send event
             final CombatDamageSource sauce = new CombatDamageSource(kicker).setPostureDamage(0).setDamageTyping(FootworkDamageArchetype.PHYSICAL).setDamageDealer(null).flagBreach(breach).setProcAttackEffects(true);
