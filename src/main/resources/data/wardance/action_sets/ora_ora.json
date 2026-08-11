@@ -110,7 +110,7 @@
     }, {
       "ID": "play_sound",
       "sound": "wardance:omae",
-      "volume": 1.2,
+      "volume": 1.5,
       "condition": {
         "ID": "and",
         "values": [

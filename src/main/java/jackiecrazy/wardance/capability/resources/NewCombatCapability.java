@@ -54,6 +54,8 @@ import java.util.UUID;
 public class NewCombatCapability implements ICombatCapability {
     public static final UUID WOUND = UUID.fromString("982bbbb2-bbd0-4166-801a-560d1a4149c8");
     public static final int RALLY_CD = 20;
+    public static final int MAX_SPIRIT = 100;
+    public static final int FINISHER_THRESHOLD = 95;
     private static final AttributeModifier STOPMOVING = new AttributeModifier(WOUND, "expose penalty", -1, AttributeModifier.Operation.MULTIPLY_TOTAL);
     private static final AttributeModifier NOKNOCKBACK = new AttributeModifier(WOUND, "stagger penalty", 10, AttributeModifier.Operation.ADDITION);
     private final WeakReference<LivingEntity> dude;
@@ -63,7 +65,6 @@ public class NewCombatCapability implements ICombatCapability {
     private int mBind, oBind;
     private int staggerTime, maxStaggerTime, offhandCD;
     private float mpos;
-    public static final int MAX_SPIRIT =100;
     private boolean offhand, knockdown;
     private long lastUpdate;
     private boolean first = true;
@@ -151,19 +152,24 @@ public class NewCombatCapability implements ICombatCapability {
         }
         spiritCD = maxSpiritCD;
         if (cse.getResult() == Event.Result.DEFAULT && lacking) return amount - spirit;
-        final float finalized = (float) (spirit - amount * (1 - dude.get().getAttributeValue(WarAttributes.SPIRIT_REFUND.get())));
+
+        final float finalized = spirit-amount;
+
+        setSpirit(finalized);
+        addSpirit((float) (amount * dude.get().getAttributeValue(WarAttributes.SPIRIT_REFUND.get())));
+        //denied, consume and return false
         if (cse.getResult() == Event.Result.DENY) {
-            setSpirit(finalized);
             return 5;
         } else if (cse.getResult() == Event.Result.ALLOW) {
-            setSpirit(finalized);
+            //allowed, consume to limit and return true
             return 0;
         }
+        //normal consumption
         if (!lacking) {
-            setSpirit(finalized);
             return 0;
         }
-        return amount - spirit;
+        //insufficient, I don't think this can ever happen...
+        return -finalized;
     }
 
     @Override
@@ -408,7 +414,7 @@ public class NewCombatCapability implements ICombatCapability {
 
     @Override
     public boolean alreadyProc(String key) {
-        return getProc(key)!=0d;
+        return getProc(key) != 0d;
     }
 
     @Override

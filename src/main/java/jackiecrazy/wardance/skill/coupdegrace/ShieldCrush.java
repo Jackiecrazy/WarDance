@@ -117,6 +117,8 @@ public class ShieldCrush extends ShieldBash {
                 //up your grindset
                 if (CombatData.getCap(elb).consumePosture(caster, 0.1f * posdam / 2) < 0 || CombatData.getCap(elb).isStunned()) {
                     //crush, end state
+                    //here's your reward
+                    CombatData.getCap(caster).resetPosture();
                     markUsed(caster);
                 }
                 if (CombatData.getCap(caster).consumePosture(caster, 0.1f / remainingTime) < 0) {

@@ -1,12 +1,13 @@
-package jackiecrazy.wardance.skill.flurry;
+package jackiecrazy.wardance.skill.bursts;
 
 import jackiecrazy.footwork.capability.resources.CombatData;
-import jackiecrazy.footwork.capability.resources.ICombatCapability;
 import jackiecrazy.footwork.capability.stylish.StylishData;
-import jackiecrazy.footwork.event.DamageKnockbackEvent;
 import jackiecrazy.footwork.event.GainAdrenalineEvent;
 import jackiecrazy.wardance.capability.skill.CasterData;
 import jackiecrazy.wardance.config.weapon.interactions.SweepAttack;
+import jackiecrazy.wardance.event.BasicSweepEvent;
+import jackiecrazy.wardance.event.MeleePostureEvent;
+import jackiecrazy.wardance.event.ProjectileDefendEvent;
 import jackiecrazy.wardance.skill.Skill;
 import jackiecrazy.wardance.skill.SkillData;
 import jackiecrazy.wardance.skill.SkillTags;
@@ -17,18 +18,19 @@ import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.ai.attributes.AttributeModifier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
+import net.minecraftforge.common.ForgeMod;
 import net.minecraftforge.eventbus.api.Event;
 import net.minecraftforge.eventbus.api.EventPriority;
 import org.jetbrains.annotations.Nullable;
 
 import javax.annotation.Nonnull;
+import java.awt.*;
 import java.util.HashSet;
 import java.util.UUID;
 
-public class Flurry extends Skill {
-
+public class Montante extends Skill {
     private static final AttributeModifier bad = new AttributeModifier(UUID.fromString("abe24c38-73e3-4551-9df4-e06e117600c1"), "flurry", -0.5, AttributeModifier.Operation.MULTIPLY_TOTAL);
-    private static final ResourceLocation rl = new ResourceLocation("wardance:textures/skill/flurry.png");
+    private static final ResourceLocation rl = new ResourceLocation("wardance:textures/skill/montante.png");
 
     @Override
     public CastStatus castingCheck(LivingEntity caster, SkillData sd) {
@@ -63,50 +65,61 @@ Flow: cooldown of all attack skills are halved, and any cooled attack skill is a
     @Override
     public boolean equippedTick(LivingEntity caster, SkillData stats) {
         if (stats.getState() != STATE.ACTIVE) return false;
-        final ICombatCapability cap = CombatData.getCap(caster);
-        activeTick(stats);
-        caster.attackStrengthTicker++;
-        cap.setOffhandCooldown(cap.getOffhandCooldown() + 1);
-        //main hand flurry
-        if (stats.getState() == STATE.ACTIVE && CombatUtils.getCooledAttackStrength(caster, InteractionHand.MAIN_HAND, 0f) == 1f && !caster.isAutoSpinAttack()) {
-            CombatUtils.enhancedSweep(caster, null, InteractionHand.MAIN_HAND, SweepAttack.SWEEPTYPE.CIRCLE, 3, 3, 0, null);
-            CombatUtils.setHandCooldown(caster, InteractionHand.MAIN_HAND, 0, true);
+        if(!StylishData.getCap(caster).drainAdrenaline(0.01f/stats.getEffectiveness())) {
+            markUsed(caster);
+            return true;
         }
-        //offhand flurry
-        if (stats.getState() == STATE.ACTIVE && CombatUtils.getCooledAttackStrength(caster, InteractionHand.OFF_HAND, 0f) == 1f && !caster.isAutoSpinAttack()) {
+        if (stats.getState() == STATE.ACTIVE && caster.tickCount % 10 == 0) {
             //spin to win!
-            CombatUtils.enhancedSweep(caster, null, InteractionHand.OFF_HAND, SweepAttack.SWEEPTYPE.CIRCLE, 3, 3, 0, null);
-            CombatUtils.setHandCooldown(caster, InteractionHand.OFF_HAND, 0, true);
+            double reach = caster.getAttributeValue(ForgeMod.ENTITY_REACH.get());
+            CombatUtils.setHandCooldown(caster, InteractionHand.MAIN_HAND, 1f, false);
+            CombatUtils.enhancedSweep(caster, null, InteractionHand.MAIN_HAND, SweepAttack.SWEEPTYPE.CIRCLE, reach, reach, 0, null);
+            CombatUtils.setHandCooldown(caster, InteractionHand.MAIN_HAND, 0, true);
         }
         return super.equippedTick(caster, stats);
     }
 
     @Override
-    public void onProc(LivingEntity caster, Event procPoint, STATE state, SkillData stats, @Nullable LivingEntity target) {
-        if(state == STATE.ACTIVE && procPoint.getPhase() == EventPriority.LOWEST) {
-            if (procPoint instanceof GainAdrenalineEvent gme) {
-                gme.setQuantity(0);
-            }
-            if(procPoint instanceof DamageKnockbackEvent e && target!=caster){
-                e.setStrength(0);
-            }
+    public void onProc(LivingEntity caster,
+                       Event procPoint,
+                       STATE state,
+                       SkillData stats,
+                       @Nullable LivingEntity target) {
+        if (state != STATE.ACTIVE || procPoint.getPhase() != EventPriority.HIGHEST) return;
+        if (procPoint instanceof MeleePostureEvent.Parry lae && lae.getEntity() == caster) {
+            lae.setPostureConsumption(0);
+            if (target != null)
+                CombatData.getCap(lae.getAttacker()).consumePosture(caster, CombatUtils.getPostureAtk(caster, target, InteractionHand.MAIN_HAND, null, (float) caster.getAttributeValue(Attributes.ATTACK_DAMAGE), caster.getMainHandItem()));
+            lae.setResult(Event.Result.ALLOW);
         }
-
+        if (procPoint instanceof ProjectileDefendEvent.Parry lae && lae.getEntity() == caster) {
+            lae.setPostureConsumption(0);
+            if(lae.getProjectile().getOwner() instanceof LivingEntity le)
+                CombatData.getCap(le).consumePosture(caster, CombatUtils.getPostureAtk(caster, target, InteractionHand.MAIN_HAND, null, (float) caster.getAttributeValue(Attributes.ATTACK_DAMAGE), caster.getMainHandItem()));
+            lae.setResult(Event.Result.ALLOW);
+        }
+        if (procPoint instanceof GainAdrenalineEvent gme) {
+            gme.setQuantity(0);
+        }
+        if (procPoint instanceof BasicSweepEvent s) {
+            s.setColor(Color.GREEN);
+        }
     }
 
     @Override
     public boolean onStateChange(LivingEntity caster, SkillData prev, STATE from, STATE to) {
         if (from == STATE.INACTIVE && to == STATE.HOLSTERED && cast(caster, 1)) {
             CasterData.getCap(caster).removeActiveTag(SkillTags.state);
-            SkillUtils.addAttribute(caster, Attributes.ATTACK_DAMAGE, bad);
-            activate(caster, 5*prev.getEffectiveness());
+            //SkillUtils.addAttribute(caster, Attributes.ATTACK_DAMAGE, bad);
+            activate(caster, 5 * prev.getEffectiveness());
             StylishData.getCap(caster).resetAdrenaline();
-            CombatUtils.triggerSteveTime(caster, 15);
+            CombatUtils.triggerSteveTime(caster, 20);
             return true;
         }
         if (from == STATE.ACTIVE && to == STATE.COOLING) {
-            SkillUtils.removeAttribute(caster, Attributes.ATTACK_DAMAGE, bad);
+            //SkillUtils.removeAttribute(caster, Attributes.ATTACK_DAMAGE, bad);
             prev.setState(STATE.INACTIVE);
+            return true;
         }
         return instantCast(prev, from, to);
     }

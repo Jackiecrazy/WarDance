@@ -35,15 +35,15 @@ public class Wrestle extends Skill {
         Entity t = e.getSource().getEntity();
         //black mark stealing health/posture/spirit
         if (e.getAmount() > 0 && DamageUtils.isMeleeAttack(e.getSource()) && t instanceof LivingEntity attacker) {
-            Marks.getCap(target).getActiveMark(WarSkills.WRESTLE.get()).ifPresent(a -> {
-                a.addArbitraryFloat(-1);
-                if (a.getArbitraryFloat() < 0) a.setDuration(-999);
-            });
-            Marks.getCap(attacker).getActiveMark(WarSkills.WRESTLE.get()).ifPresent(a -> {
-                a.addArbitraryFloat(-1);
-                if (target == a.getCaster(target.level())) a.addArbitraryFloat(-2);
-                if (a.getArbitraryFloat() < 0) a.setDuration(-999);
-            });
+//            Marks.getCap(target).getActiveMark(WarSkills.WRESTLE.get()).ifPresent(a -> {
+//                a.addArbitraryFloat(-1);
+//                if (a.getArbitraryFloat() < 0) a.setDuration(-999);
+//            });
+//            Marks.getCap(attacker).getActiveMark(WarSkills.WRESTLE.get()).ifPresent(a -> {
+//                a.addArbitraryFloat(-1);
+//                if (target == a.getCaster(target.level())) a.addArbitraryFloat(-2);
+//                if (a.getArbitraryFloat() < 0) a.setDuration(-999);
+//            });
         }
     }
 

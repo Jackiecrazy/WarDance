@@ -19,6 +19,7 @@ import net.minecraft.nbt.StringTag;
 import net.minecraft.nbt.Tag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.util.Mth;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.LivingEntity;
@@ -97,7 +98,7 @@ public class StylishCapability implements IStyleCapability {
 
     @Override
     public void setAdrenaline(float to) {
-        adrenaline = to;
+        adrenaline = Mth.clamp(to, 0, 1);
         markDirty();
     }
 

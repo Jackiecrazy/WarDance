@@ -1,40 +1,29 @@
 package jackiecrazy.wardance.config.weapon;
 
-import com.google.common.collect.Maps;
 import com.google.gson.*;
 import jackiecrazy.wardance.WarDance;
 import jackiecrazy.wardance.config.weapon.interactions.WeaponInteractions;
-import jackiecrazy.wardance.networking.CombatChannel;
-import jackiecrazy.wardance.networking.sync.TwoHandItemDataPacket;
-import jackiecrazy.wardance.networking.sync.TwoHandTagDataPacket;
 import net.minecraft.core.Holder;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.server.packs.resources.ResourceManager;
 import net.minecraft.server.packs.resources.SimpleJsonResourceReloadListener;
 import net.minecraft.tags.ItemTags;
 import net.minecraft.tags.TagKey;
-import net.minecraft.util.Tuple;
 import net.minecraft.util.profiling.ProfilerFiller;
-import net.minecraft.world.entity.ai.attributes.Attribute;
-import net.minecraft.world.entity.ai.attributes.AttributeModifier;
 import net.minecraft.world.item.Item;
-import net.minecraft.world.item.Items;
 import net.minecraftforge.event.AddReloadListenerEvent;
-import net.minecraftforge.network.PacketDistributor;
 import net.minecraftforge.registries.ForgeRegistries;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.*;
-import java.util.stream.Collectors;
 
-public class BCCannibalism extends SimpleJsonResourceReloadListener {
-    public BCCannibalism() {
+public class BCBackupProvider extends SimpleJsonResourceReloadListener {
+    public BCBackupProvider() {
         super(WeaponInteractions.GSON, "weapon_attributes");
     }
 
     public static void register(AddReloadListenerEvent event) {
-        event.addListener(new BCCannibalism());
+        event.addListener(new BCBackupProvider());
     }
 
     @Override

@@ -80,6 +80,7 @@ public class BoulderBrace extends WarCry {
     @Override
     public boolean equippedTick(LivingEntity caster, SkillData stats) {
         final Vec3 m = CombatData.getCap(caster).getMotionConsistently();
+        if(m==null)return false;
         if(!StylishData.getCap(caster).isCombatMode()) {
             if(stats.getState()!=STATE.COOLING) {
                 stats.setState(STATE.COOLING);

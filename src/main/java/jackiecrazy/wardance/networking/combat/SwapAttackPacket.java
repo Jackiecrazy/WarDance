@@ -7,8 +7,6 @@ import jackiecrazy.wardance.capability.quiver.QuiverData;
 import jackiecrazy.wardance.config.GeneralConfig;
 import jackiecrazy.wardance.config.weapon.WeaponStats;
 import jackiecrazy.wardance.config.weapon.interactions.WeaponInteractions;
-import jackiecrazy.wardance.networking.CombatChannel;
-import jackiecrazy.wardance.networking.sync.SyncQuiverPacket;
 import jackiecrazy.wardance.utils.CombatUtils;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.server.level.ServerPlayer;
@@ -16,7 +14,6 @@ import net.minecraft.world.InteractionHand;
 import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.common.ForgeMod;
 import net.minecraftforge.network.NetworkEvent;
-import net.minecraftforge.network.PacketDistributor;
 
 import java.util.function.BiConsumer;
 import java.util.function.Function;
@@ -67,7 +64,7 @@ public class SwapAttackPacket {
                             //p.setItemInHand(h, nextItem);
                             FlyingWeaponData.getCap(p).forceRefreshWeapons();
                             CombatUtils.setAttackType(p, WeaponStats.AttackType.DRAW_ATTACK);
-                            CombatUtils.processWeaponInteraction(p, null, h, GeneralUtils.getAttributeValueSafe(p, ForgeMod.ENTITY_REACH.get()), group);
+                            CombatUtils.processWeaponInteraction(p, null, h, GeneralUtils.getAttributeValueSafe(p, ForgeMod.ENTITY_REACH.get()), WeaponStats.AttackType.DRAW_ATTACK, group);
                             //return;
                         }
                     }

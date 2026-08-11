@@ -7,10 +7,8 @@ import jackiecrazy.footwork.capability.resources.CombatData;
 import jackiecrazy.footwork.utils.GeneralUtils;
 import jackiecrazy.footwork.utils.TargetingUtils;
 import jackiecrazy.wardance.WarDance;
-import jackiecrazy.wardance.api.IFlameDance;
 import jackiecrazy.wardance.event.PlayInteractionEvent;
 import jackiecrazy.wardance.event.SkillCastEvent;
-import jackiecrazy.wardance.mixin.FlameDanceMixin;
 import jackiecrazy.wardance.skill.SkillData;
 import jackiecrazy.wardance.utils.SkillUtils;
 import net.minecraft.tags.DamageTypeTags;
@@ -66,7 +64,7 @@ public class FlameDance extends WarCry {
             heatWave(caster, 8);
             CombatData.getCap(caster).tickProc("flameDance");
         }
-        if (procPoint instanceof PlayInteractionEvent.Post p) {
+        if (procPoint instanceof PlayInteractionEvent.Interaction p) {
             switch (p.getOriginalState()) {
                 case THROW, DRAW_ATTACK:
                     heatWave(caster, 5);

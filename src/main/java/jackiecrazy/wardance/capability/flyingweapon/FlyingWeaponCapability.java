@@ -16,10 +16,13 @@ import jackiecrazy.wardance.entity.FlyingWeaponEntity;
 import jackiecrazy.wardance.entity.GrappleEntity;
 import jackiecrazy.wardance.entity.ThrownWeaponEntity;
 import jackiecrazy.wardance.entity.WarEntities;
+import jackiecrazy.wardance.event.GrappleEvent;
 import jackiecrazy.wardance.networking.CombatChannel;
 import jackiecrazy.wardance.networking.sync.UpdateFlyingWeaponPacket;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.sounds.SoundEvents;
+import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.player.Player;
@@ -27,6 +30,7 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.common.ForgeMod;
+import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.network.PacketDistributor;
 import org.joml.Vector4d;
 
@@ -98,8 +102,13 @@ public class FlyingWeaponCapability implements IFlyingWeapon {
             grapple.setInteractionRange(1);
             grapple.moveTo(player.getX(), player.getY() + player.getEyeHeight(), player.getZ());
             grapple.setDeltaMovement(to.subtract(grapple.position()).normalize().scale(3));
+            GrappleEvent ge = new GrappleEvent(player, grapple);
+            MinecraftForge.EVENT_BUS.post(ge);
+            if(ge.isCanceled())return;
             this.grapple = grapple;
             player.level().addFreshEntity(grapple);
+            player.level().playSound(null, player.getX(), player.getY(), player.getZ(), SoundEvents.CHAIN_PLACE, SoundSource.PLAYERS, 0.8f + WarDance.rand.nextFloat() * 0.5f, 0.75f + WarDance.rand.nextFloat() * 0.5f);
+
             sync();
         }
     }

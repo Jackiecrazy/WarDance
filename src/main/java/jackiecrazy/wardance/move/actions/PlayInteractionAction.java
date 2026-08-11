@@ -2,7 +2,6 @@ package jackiecrazy.wardance.move.actions;
 
 import jackiecrazy.footwork.move.action.Action;
 import jackiecrazy.footwork.move.argument.Argument;
-import jackiecrazy.footwork.move.argument.stack.EquippedItemArgument;
 import jackiecrazy.footwork.move.condition.Condition;
 import jackiecrazy.footwork.move.condition.FalseCondition;
 import jackiecrazy.footwork.move.utils.ActionContext;
@@ -49,7 +48,7 @@ public class PlayInteractionAction extends Action {
                     FlyingWeaponData.getCap(performer).getWeapon(hand).ifPresent(FlyingWeaponEntity::clearPath);
                 FlyingWeaponData.getCap(performer).forceRefreshWeapons();
                 if (interaction != null)
-                    CombatUtils.processWeaponInteraction(performer, null, hand, performer.getAttributeValue(ForgeMod.ENTITY_REACH.get()), interaction);
+                    CombatUtils.processWeaponInteraction(performer, null, hand, performer.getAttributeValue(ForgeMod.ENTITY_REACH.get()), move_state, interaction);
                 else
                     CombatUtils.processWeaponInteraction(performer, null, hand, performer.getAttributeValue(ForgeMod.ENTITY_REACH.get()));
             } catch (Exception ex) {

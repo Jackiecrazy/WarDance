@@ -3,6 +3,8 @@ package jackiecrazy.wardance.client;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.mojang.math.Axis;
+import jackiecrazy.footwork.client.render.ItemEntityRenderer;
+import jackiecrazy.footwork.entity.flyingweapon.FlyingItemEntity;
 import jackiecrazy.wardance.entity.GrappleEntity;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.MultiBufferSource;
@@ -25,7 +27,7 @@ import org.joml.Quaternionf;
 
 import java.awt.*;
 
-public class GrappleRenderer extends EntityRenderer<GrappleEntity> {
+public class GrappleRenderer extends ItemEntityRenderer {
     private static final ResourceLocation TEXTURE_LOCATION = new ResourceLocation("textures/entity/fishing_hook.png");
     private static final RenderType RENDER_TYPE = RenderType.entityCutout(TEXTURE_LOCATION);
     private static final Vec3 UP = new Vec3(0, 1, 0);
@@ -121,7 +123,7 @@ public class GrappleRenderer extends EntityRenderer<GrappleEntity> {
     }
 
     @Override
-    public void render(GrappleEntity hook,
+    public void render(FlyingItemEntity hook,
                        float yaw,
                        float partialtick,
                        PoseStack stack,
@@ -138,6 +140,7 @@ public class GrappleRenderer extends EntityRenderer<GrappleEntity> {
                         dispatcher.getBlockModel(Blocks.CHAIN.defaultBlockState());
             }
             stack.pushPose();
+            renderFlyingWeapon(hook, partialtick, stack, hook.getCosmeticItem());
             int armShift = player.getMainArm() == HumanoidArm.RIGHT ? -1 : 1;
             float circlePhase = 40;
             float handOffset = Mth.sin(Mth.sqrt(circlePhase) * (float) Math.PI);
@@ -245,7 +248,7 @@ public class GrappleRenderer extends EntityRenderer<GrappleEntity> {
     }
 
     @Override
-    public ResourceLocation getTextureLocation(GrappleEntity p_114482_) {
+    public ResourceLocation getTextureLocation(FlyingItemEntity p_114482_) {
         return TEXTURE_LOCATION;
     }
 }

@@ -128,16 +128,21 @@ public class Keybinds {
             Player p = mc.player;
             if (FlyingWeaponData.getCap(p).hasGrapple()) {
                 //chargeYankTime++;
-                CombatChannel.INSTANCE.sendToServer(new UnhookPacket(GrappleEntity.ACTION.ZIP));
-                FlyingWeaponData.getCap(mc.player).getGrapple().retract(GrappleEntity.ACTION.ZIP);
-                AerialModeData.getCap(mc.player).setState(IAerialMode.WallState.NONE);
+                if(p.isShiftKeyDown()){
+                    CombatChannel.INSTANCE.sendToServer(new UnhookPacket(GrappleEntity.ACTION.YANK));
+                    FlyingWeaponData.getCap(mc.player).getGrapple().retract(GrappleEntity.ACTION.YANK);
+                }else {
+                    CombatChannel.INSTANCE.sendToServer(new UnhookPacket(GrappleEntity.ACTION.ZIP));
+                    FlyingWeaponData.getCap(mc.player).getGrapple().retract(GrappleEntity.ACTION.ZIP);
+                    AerialModeData.getCap(mc.player).setState(IAerialMode.WallState.NONE);
+                }
             } else {
                 Vec3 destination = ProjectileUtil.getHitResultOnViewVector(p, EntitySelector.LIVING_ENTITY_STILL_ALIVE, 32).getLocation();
-                if (ClientEvents.coyoteTimeID >= 0) {
-                    destination = ClientEvents.coyoteVector;
-                }
+//                if (ClientEvents.coyoteTimeID >= 0) {
+//                    destination = ClientEvents.coyoteVector;
+//                }
 
-                CombatChannel.INSTANCE.sendToServer(new GrapplePacket(destination, ClientEvents.coyoteTimeID));
+                CombatChannel.INSTANCE.sendToServer(new GrapplePacket(destination, -1));
             }
             grappleDown = true;
         } else if (!Keybinds.GRAPPLE.isDown() && grappleDown) {

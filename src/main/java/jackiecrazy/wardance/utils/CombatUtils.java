@@ -376,15 +376,15 @@ public class CombatUtils {
         if (swapping == null) swapping = main;
         else if (swapping == stack) swapping = null;
         else {
-            //swapping during another swap. The currently held item is dropped
-            if (e instanceof ServerPlayer sp && !QuiverData.getData(sp).tryInsertOverflow(main)) {
-                ItemEntity itementity = sp.drop(main, false);
-                if (itementity != null) {
-                    itementity.setNoPickUpDelay();
-                    itementity.setTarget(sp.getUUID());
-                    itementity.setInvulnerable(true);
-                }
-            }
+//            //swapping during another swap. The currently held item is dropped
+//            if (e instanceof ServerPlayer sp && !QuiverData.getData(sp).tryInsertOverflow(main)) {
+//                ItemEntity itementity = sp.drop(main, false);
+//                if (itementity != null) {
+//                    itementity.setNoPickUpDelay();
+//                    itementity.setTarget(sp.getUUID());
+//                    itementity.setInvulnerable(true);
+//                }
+//            }
         }
         quickSwap(e, stack, InteractionHand.MAIN_HAND);
     }
@@ -411,22 +411,22 @@ public class CombatUtils {
         WeaponInteractions.InteractionGroup group = pre.getInteraction();
         if (group == null)
             group = WeaponStats.getSweepInfo(stack, e, pre.getMoveState(), false, h);
-        PlayInteractionEvent.Post post = new PlayInteractionEvent.Post(e, h, stack, pre.getMoveState(), group);
-        MinecraftForge.EVENT_BUS.post(post);
-        if (post.getOriginalState() == WeaponStats.AttackType.AERIAL)
+        PlayInteractionEvent.Interaction interaction = new PlayInteractionEvent.Interaction(e, h, stack, pre.getMoveState(), group);
+        MinecraftForge.EVENT_BUS.post(interaction);
+        if (interaction.getOriginalState() == WeaponStats.AttackType.AERIAL)
             AerialModeData.getCap(e).setAerialMode(true);
-        if (post.getOriginalState() == WeaponStats.AttackType.FALLING)
+        if (interaction.getOriginalState() == WeaponStats.AttackType.FALLING)
             AerialModeData.getCap(e).setAerialMode(false);
         //reset the attack type of the entity so it is properly passed to the flying weapon
-        setAttackType(e, post.getOriginalState());
-        return processWeaponInteraction(e, ignore, h, reach, post.getInteraction());
+        setAttackType(e, interaction.getOriginalState());
+        return processWeaponInteraction(e, ignore, h, reach, s, interaction.getInteraction());
     }
 
     public static boolean processWeaponInteraction(LivingEntity e,
                                                    Entity ignore,
                                                    InteractionHand h,
                                                    double reach,
-                                                   WeaponInteractions.InteractionGroup group) {
+                                                   WeaponStats.AttackType type, WeaponInteractions.InteractionGroup group) {
         //todo allow a proxy param to move the origin vec3
         ItemStack stack = e.getItemInHand(h);
         if (CombatUtils.getCooledAttackStrength(e, h, 1f) < group.getMinimumCooldown())
@@ -498,7 +498,9 @@ public class CombatUtils {
             }
             WeaponStats.info_override = null;
         }
-        setHandCooldown(e, h, (float) group.getCooldownRefund(), true);
+        PlayInteractionEvent.Post p =new PlayInteractionEvent.Post(e, h, stack, type, group);
+        MinecraftForge.EVENT_BUS.post(p);
+        setHandCooldown(e, h, (float) p.getCooldown(), true);
         return true;
     }
 
@@ -546,7 +548,7 @@ public class CombatUtils {
             time = Math.max(animTime, time / 2);
             customAnim = SweepAnimationBuilder.temp_getMMFromType(animTime, type, radius, null, reach);
         }
-        FlyingWeaponData.getCap(e).scheduleAction(h, customAnim, false);
+        FlyingWeaponData.getCap(e).scheduleAction(h, customAnim, true);
 
 
         if (sre.isCanceled() || type == SweepAttack.SWEEPTYPE.NONE || radius == 0) {
@@ -763,10 +765,14 @@ public class CombatUtils {
     }
 
     public static void triggerSteveTime(LivingEntity from, int time) {
+        triggerSteveTime(from, time, 0.1);
+    }
+
+    public static void triggerSteveTime(LivingEntity from, int time, double strength) {
         //ZA WAAAAARUDO! TOKI WO TOMARE!
-        TimeSlowData.getCap(from).alterSpeed(time, 0.1);
+        TimeSlowData.getCap(from).alterSpeed(time, strength);
         for (Entity t : from.level().getEntities(from, from.getBoundingBox().inflate(32), (a -> !(a instanceof FlyingItemEntity)))) {
-            TimeSlowData.getCap(t).alterSpeed(time, 0.1);
+            TimeSlowData.getCap(t).alterSpeed(time, strength);
             //jostle everything a tiny amount so you know the time slow is happening
             MobilityUtils.knockBack(t, from, 0.2f, true, false);
         }

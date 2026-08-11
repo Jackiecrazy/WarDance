@@ -66,16 +66,7 @@ elemental might: +1 burn/snowball/poison/drown damage to targets you have attack
         }
     }
 
-    @SubscribeEvent(priority = EventPriority.LOWEST)
-    public static void oops(LivingDamageEvent e) {
-        LivingEntity uke = e.getEntity();
-        if (CasterData.getCap(uke).getEquippedSkills().contains(WarSkills.PRIDEFUL_MIGHT.get())) {
-            if (StylishData.getCap(uke).getAdrenaline() == StylishData.getCap(uke).getAdrenaline())
-                if (uke instanceof ServerPlayer sp)
-                    WarAdvancements.CHALLENGE_ONLY.trigger(sp, CasterData.getCap(uke).getSkillData(WarSkills.PRIDEFUL_MIGHT.get()).orElse(SkillData.DUMMY));
-            StylishData.getCap(uke).setAdrenaline(0);
-        }
-    }
+
 
     @Nonnull
     @Override

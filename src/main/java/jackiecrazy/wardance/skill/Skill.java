@@ -17,7 +17,6 @@ import jackiecrazy.wardance.event.SkillCooldownEvent;
 import jackiecrazy.wardance.event.SkillResourceEvent;
 import jackiecrazy.wardance.skill.styles.SkillStyle;
 import jackiecrazy.wardance.utils.DamageUtils;
-import jackiecrazy.wardance.utils.ReworkConstants;
 import jackiecrazy.wardance.utils.SkillUtils;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
@@ -51,6 +50,7 @@ public abstract class Skill extends Move {
     protected static final HashSet<String> passive = makeTag(SkillTags.passive);
     protected static final HashSet<String> special = makeTag(SkillTags.special);
     protected static final HashSet<String> state = makeTag(SkillTags.state);
+    protected static final HashSet<String> burst = makeTag(SkillTags.burst);
     protected static final HashSet<String> style = makeTag(SkillTags.style);
     private ResourceLocation registryName;
     private SkillCategory category = SkillColors.none;
@@ -159,7 +159,7 @@ public abstract class Skill extends Move {
     protected boolean spiritConsumer=false;
 
     public int spiritCost(LivingEntity caster) {
-        return spiritConsumer? NewCombatCapability.MAX_SPIRIT:0;
+        return spiritConsumer? NewCombatCapability.FINISHER_THRESHOLD:0;
     }
 
     public float mightCost(LivingEntity caster) {
@@ -576,7 +576,7 @@ public abstract class Skill extends Move {
         CONFLICT,
         HOLSTERED,
         SPIRIT,
-        MIGHT,
+        ADRENALINE,
         SILENCE,
         ACTIVE,
         STYLE,

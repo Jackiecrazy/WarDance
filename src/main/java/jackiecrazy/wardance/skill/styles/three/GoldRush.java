@@ -33,32 +33,32 @@ public class GoldRush extends ColorRestrictionStyle {
     @SubscribeEvent(priority = EventPriority.LOWEST)
     public static void spread(MeleePostureEvent.Defense e) {
         //spread mark
-        Marks.getCap(e.getEntity()).getActiveMark(WarSkills.GOLD_RUSH.get()).ifPresent(a -> {
-            //more pain
-            e.setPostureConsumption(e.getPostureConsumption() * (1 + a.getArbitraryFloat() * 0.1f));
-            //expire
-            a.setDuration(-10);
-            //infect
-            ((GoldRush) WarSkills.GOLD_RUSH.get()).mark(a.getCaster(e.getAttacker().level()), e.getAttacker(), 60, a.getArbitraryFloat());
-        });
+//        Marks.getCap(e.getEntity()).getActiveMark(WarSkills.GOLD_RUSH.get()).ifPresent(a -> {
+//            //more pain
+//            e.setPostureConsumption(e.getPostureConsumption() * (1 + a.getArbitraryFloat() * 0.1f));
+//            //expire
+//            a.setDuration(-10);
+//            //infect
+//            ((GoldRush) WarSkills.GOLD_RUSH.get()).mark(a.getCaster(e.getAttacker().level()), e.getAttacker(), 60, a.getArbitraryFloat());
+//        });
     }
 
     @SubscribeEvent()
     public static void loot(LootingLevelEvent e) {
         //phat loot
-        if (e.getDamageSource() != null && e.getDamageSource().getEntity() instanceof LivingEntity attacker)
-            Marks.getCap(attacker).getActiveMark(WarSkills.GOLD_RUSH.get()).ifPresent(a -> {
-                int lvl = 0;
-                if (a.getArbitraryFloat() >= 10)
-                    lvl++;
-                if (a.getArbitraryFloat() >= 6)
-                    lvl++;
-                if (a.getArbitraryFloat() >= 3)
-                    lvl++;
-                if (a.getArbitraryFloat() >= 1)
-                    lvl++;
-                e.setLootingLevel(e.getLootingLevel() + lvl);
-            });
+//        if (e.getDamageSource() != null && e.getDamageSource().getEntity() instanceof LivingEntity attacker)
+//            Marks.getCap(attacker).getActiveMark(WarSkills.GOLD_RUSH.get()).ifPresent(a -> {
+//                int lvl = 0;
+//                if (a.getArbitraryFloat() >= 10)
+//                    lvl++;
+//                if (a.getArbitraryFloat() >= 6)
+//                    lvl++;
+//                if (a.getArbitraryFloat() >= 3)
+//                    lvl++;
+//                if (a.getArbitraryFloat() >= 1)
+//                    lvl++;
+//                e.setLootingLevel(e.getLootingLevel() + lvl);
+//            });
     }
 
     @Override

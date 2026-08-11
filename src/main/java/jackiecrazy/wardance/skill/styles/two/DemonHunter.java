@@ -64,7 +64,7 @@ public class DemonHunter extends ColorRestrictionStyle {
     @Override
     public void onProc(LivingEntity caster, Event procPoint, STATE state, SkillData stats, @Nullable LivingEntity target) {
         if(procPoint.getPhase() != EventPriority.LOWEST)return;
-        if(procPoint instanceof PlayInteractionEvent.Post){
+        if(procPoint instanceof PlayInteractionEvent.Interaction){
             SkillUtils.removeAttribute(caster, ForgeMod.ENTITY_REACH.get(), reach);
         }
         if (procPoint instanceof LivingAttackEvent a && DamageUtils.isMeleeAttack(a.getSource()) && target != null && a.getEntity() != caster) {

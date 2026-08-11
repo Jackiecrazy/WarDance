@@ -303,7 +303,77 @@
         }
       ],
       "velocity": [0, -1, 0],
-      "set_velocity": true
+      "set_velocity": true,
+      "overrides": [
+        {
+          "condition": [
+            {
+              "ID": "wardance:has_skill",
+              "skill": "wardance:pummel"
+            }
+          ],
+          "override": {
+            "animations": [
+              {
+                "duration": 10,
+                "easing": "IN_CUBIC",
+                "frames": [
+                  {
+                    "direction": [
+                      0, 1, 0
+                    ],
+                    "offset": [
+                      0, 0, 1.4
+                    ],
+                    "render_rotation": [
+                      0, 0, 1
+                    ],
+                    "effects": {
+                      "attack_info": {
+                        "knockback": 1
+                      },
+                      "effects": [
+                        "WEAPON", "TRAIL"
+                      ],
+                      "hit_other": {
+                        "run_actions":[
+                          {
+                            "ID": "add_effect",
+                            "effect": "footwork:distraction",
+                            "potency": 0,
+                            "duration": 50,
+                            "stacking": "MAX_DURATION"
+                          },
+                          {
+                            "ID": "pin",
+                            "duration": 10
+                          }
+                        ]
+                      },
+                      "sound": "minecraft:entity.zombie.attack_wooden_door"
+                    }
+                  }, {
+                    "direction": [
+                      0, 0, 1
+                    ],
+                    "offset": [
+                      0, 0, 1.4
+                    ]
+                  }, {
+                    "direction": [
+                      0, -1, 0.4
+                    ],
+                    "offset": [
+                      0, 0, 1.4
+                    ]
+                  }
+                ]
+              }
+            ]
+          }
+        }
+
+      ]
     },
     "aerial": {
       "tags": ["mobility", "control"],
@@ -401,6 +471,61 @@
             }
           ]
         }
+      ],
+      "overrides": [
+        {
+          "condition": [
+            {
+              "ID": "wardance:has_skill",
+              "skill": "wardance:pummel"
+            }
+          ],
+          "override": {
+            "animations": [
+              {
+                "duration": 10,
+                "easing": "IN_CUBIC",
+                "frames": [
+                  {
+                    "direction": [
+                      0, 0, 1
+                    ],
+                    "offset": [
+                      0, 0, 0.2
+                    ],
+                    "effects": {
+                      "attack_info": {
+                        "knockback": 1.5
+                      },
+                      "effects": [
+                        "WEAPON", "TRAIL"
+                      ],
+                      "hit_other": {
+                        "run_actions":[
+                          {
+                            "ID": "add_effect",
+                            "effect": "minecraft:nausea",
+                            "potency": 0,
+                            "duration": 50,
+                            "stacking": "MAX_DURATION"
+                          }
+                        ]
+                      }
+                    }
+                  }, {
+                    "direction": [
+                      0, 0, 1
+                    ],
+                    "offset": [
+                      0, 0, 1.4
+                    ]
+                  }
+                ]
+              }
+            ]
+          }
+        }
+
       ]
     },
     "guard_counter": {

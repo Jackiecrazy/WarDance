@@ -229,7 +229,7 @@ public class ResourceDisplay implements IGuiOverlay {
             close = false;
         }
         if (to < f) {
-            f += (float) Math.min((to - temp) / 20, -0.1);
+            f += (float) Math.min((to - temp) / 20, -0.01);
             close = !close;
         }
         if (close) f = to;
@@ -489,6 +489,10 @@ public class ResourceDisplay implements IGuiOverlay {
         int i = (int) ((1-prog/max) * length);
         if (prog >0) {
             GuiComponent.blit(stack, might, x-2+i, y, -90, i, 45, length-i, 5, 256, 256);
+            if(prog>=max){
+                GuiComponent.blit(stack, might, x, y - 1, -90, 0, 70, length, 5, 256, 256);
+                GuiComponent.blit(stack, might, x + i - 1, y - 1, -90, 88, 70, 4, 5, 256, 256);
+            }
         }
     }
 

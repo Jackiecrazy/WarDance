@@ -344,23 +344,27 @@ public class ThrownWeaponEntity extends FlyingWeaponEntity {
         boolean success = player.getAbilities().instabuild | fake;
         if (!success) {
             //fake items skip all of this inventory insertion stuff
+            final ItemStack toInsert = getPickResult();
             if (player.getMainHandItem().isEmpty() && !CombatUtils.inDestructiveSwapSequence())
                 slot = player.getInventory().selected;
-            else if (QuiverData.getData(player).sheathe(getPickResult(), false)) {
+            else if (QuiverData.getData(player).sheathe(toInsert, false)) {
                 success = true;
                 QuiverData.getData(player).sync(player);
-            } else if (player.getOffhandItem().isEmpty()) {
+            } else if (player.getOffhandItem().isEmpty() && !CombatUtils.inDestructiveSwapSequence()) {
                 //special offhand handling
                 slot = Inventory.SLOT_OFFHAND;
                 h = InteractionHand.OFF_HAND;
                 if (!success)
-                    player.setItemInHand(InteractionHand.OFF_HAND, getPickResult());
+                    player.setItemInHand(InteractionHand.OFF_HAND, toInsert);
                 success = true;
             }
-            CombatUtils.allowCombatHotbarPickup = true;
-            if (!success)
-                success = player.getInventory().add(slot, getPickResult());
-            CombatUtils.allowCombatHotbarPickup = false;
+            if (!success) {
+                CombatUtils.allowCombatHotbarPickup = true;
+                success = player.getInventory().add(slot, toInsert);
+                CombatUtils.allowCombatHotbarPickup = false;
+            }
+            if(!success)
+                success=QuiverData.getData(player).tryInsertOverflow(toInsert);
         }
         if (success) {
             this.remove(RemovalReason.UNLOADED_WITH_PLAYER);
@@ -378,7 +382,7 @@ public class ThrownWeaponEntity extends FlyingWeaponEntity {
                         CombatUtils.setAttackType(player, WeaponStats.AttackType.PICKUP_FLOURISH);
                         FlyingWeaponData.getCap(player).getWeapon(InteractionHand.MAIN_HAND).ifPresent(FlyingWeaponEntity::clearPath);
                         FlyingWeaponData.getCap(player).forceRefreshWeapons();
-                        CombatUtils.processWeaponInteraction(player, null, InteractionHand.MAIN_HAND, player.getAttributeValue(ForgeMod.ENTITY_REACH.get()), pickupFlourish);
+                        CombatUtils.processWeaponInteraction(player, null, InteractionHand.MAIN_HAND, player.getAttributeValue(ForgeMod.ENTITY_REACH.get()), WeaponStats.AttackType.PICKUP_FLOURISH, pickupFlourish);
                     } catch (Exception ex) {
                         ex.printStackTrace();
                     } finally {

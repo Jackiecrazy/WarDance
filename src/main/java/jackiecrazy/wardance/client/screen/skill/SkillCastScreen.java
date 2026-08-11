@@ -209,8 +209,8 @@ public class SkillCastScreen extends Screen {
                     case SPIRIT:
                         print = Component.translatable("wardance.skill.spirit", selected.spiritCost(mc.player)).getString();
                         break;
-                    case MIGHT:
-                        print = Component.translatable("wardance.skill.might", selected.mightCost(mc.player)).getString();
+                    case ADRENALINE:
+                        print = Component.translatable("wardance.skill.adrenaline").getString();
                         break;
                     case OTHER:
                         final ResourceLocation registryName = elements[index].getRegistryName();

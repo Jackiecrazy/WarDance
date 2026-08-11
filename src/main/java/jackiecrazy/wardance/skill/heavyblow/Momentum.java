@@ -1,13 +1,11 @@
 package jackiecrazy.wardance.skill.heavyblow;
 
-import jackiecrazy.footwork.capability.resources.CombatData;
 import jackiecrazy.footwork.capability.stylish.StylishData;
 import jackiecrazy.wardance.WarDance;
 import jackiecrazy.wardance.capability.skill.CasterData;
 import jackiecrazy.wardance.capability.skill.ISkillCapability;
 import jackiecrazy.wardance.event.MeleePostureEvent;
 import jackiecrazy.wardance.event.PlayInteractionEvent;
-import jackiecrazy.wardance.skill.SkillArchetypes;
 import jackiecrazy.wardance.skill.SkillData;
 import jackiecrazy.wardance.skill.WarSkills;
 import jackiecrazy.wardance.utils.SkillUtils;
@@ -37,7 +35,7 @@ public class Momentum extends HeavyBlow {
 
     @Override
     public void onProc(LivingEntity caster, Event procPoint, STATE state, SkillData stats, LivingEntity target) {
-        if(procPoint instanceof PlayInteractionEvent.Post p){
+        if(procPoint instanceof PlayInteractionEvent.Interaction p){
             stats.setArbitraryFloat(stats.getArbitraryFloat()+1);
             int combo = (int) (stats.getArbitraryFloat() + 1);
             combo %= 7 - (int)StylishData.getCap(caster).getCombo();

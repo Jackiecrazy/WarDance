@@ -13,7 +13,7 @@ public class SabatonSmash extends Kick {
 
     protected void additionally(LivingEntity caster, LivingEntity target, SkillData sd) {
         MobilityUtils.knockBack(target, caster, 1.6f, true, false);
-        mark(caster, target, 2, 0, CombatData.getCap(caster).consumeSpirit(NewCombatCapability.MAX_SPIRIT));
+        mark(caster, target, 2, 0, CombatData.getCap(caster).consumeSpirit(NewCombatCapability.FINISHER_THRESHOLD));
     }
 
     @Override

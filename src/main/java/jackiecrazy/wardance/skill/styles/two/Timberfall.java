@@ -77,7 +77,7 @@ public class Timberfall extends WarCry {
             plantTree(caster);
         } else if (procPoint instanceof SkillCastEvent sce && sce.getEntity() == caster) {
             plantTree(caster);
-        } else if (procPoint instanceof PlayInteractionEvent.Post se && state == STATE.ACTIVE) {
+        } else if (procPoint instanceof PlayInteractionEvent.Interaction se && state == STATE.ACTIVE) {
             //se.setColor(Color.ORANGE);
             se.getInteraction().tags();
         }

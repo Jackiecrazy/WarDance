@@ -3,11 +3,18 @@ package jackiecrazy.wardance.skill.shieldbash;
 import jackiecrazy.footwork.api.CombatDamageSource;
 import jackiecrazy.footwork.capability.resources.CombatData;
 import jackiecrazy.footwork.capability.resources.ICombatCapability;
+import jackiecrazy.footwork.entity.flyingweapon.FlyingItemEntity;
+import jackiecrazy.footwork.entity.flyingweapon.FlyingWeaponEffect;
+import jackiecrazy.footwork.move.action.AddEffectAction;
+import jackiecrazy.footwork.move.motionframe.FrameEffects;
+import jackiecrazy.footwork.move.motionframe.HitInfo;
+import jackiecrazy.footwork.move.motionframe.MotionFrame;
 import jackiecrazy.footwork.potion.FootworkEffects;
 import jackiecrazy.wardance.WarDance;
 import jackiecrazy.wardance.capability.skill.CasterData;
 import jackiecrazy.wardance.config.weapon.WeaponStats;
 import jackiecrazy.wardance.event.MeleePostureEvent;
+import jackiecrazy.wardance.event.PlayInteractionEvent;
 import jackiecrazy.wardance.skill.*;
 import jackiecrazy.wardance.utils.CombatUtils;
 import jackiecrazy.wardance.utils.DamageUtils;
@@ -19,12 +26,15 @@ import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.event.entity.living.LivingAttackEvent;
 import net.minecraftforge.eventbus.api.Event;
 import net.minecraftforge.eventbus.api.EventPriority;
+import org.joml.Vector4d;
 
 import javax.annotation.Nonnull;
 import java.util.HashSet;
+import java.util.List;
 
 public class ShieldBash extends Skill {
     private final HashSet<String> tag = makeTag("shield", SkillTags.offensive, SkillTags.physical);
@@ -95,6 +105,23 @@ public class ShieldBash extends Skill {
     }
 
     public static class RimPunch extends ShieldBash {
+         final Vec3 ONE = new Vec3(0F, 0F, 0.6F);
+        final HitInfo ATTACK_INFO = new HitInfo(1.2, 1, 1, false, false, 1);
+
+
+        @Override
+        public void onProc(LivingEntity caster, Event procPoint, STATE state, SkillData stats, LivingEntity target) {
+            if(state==STATE.HOLSTERED&&procPoint instanceof PlayInteractionEvent.Pre pie && WeaponStats.isShield(caster, pie.getStack())) {
+                ATTACK_INFO.hit_target().command = "effect add @s minecraft:nausea 5";
+                final List<MotionFrame> PUNCH = List.of(
+                        new MotionFrame(ONE, new Vec3(0, 0, 0))
+                                .setEffects(new FrameEffects().setEffects(FlyingWeaponEffect.WEAPON)
+                                                    .setHit(ATTACK_INFO)),
+                        new MotionFrame(ONE, new Vec3(0F, 0F, 1.0F), new Vector4d(1, 1, 0, 0))
+                );
+            }
+            super.onProc(caster, procPoint, state, stats, target);
+        }
 
         protected float performEffect(LivingEntity caster, LivingEntity target, float atk) {
             target.addEffect(new MobEffectInstance(MobEffects.CONFUSION, 100));

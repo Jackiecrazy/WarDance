@@ -10,6 +10,7 @@ import com.mojang.brigadier.context.CommandContext;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import com.mojang.brigadier.exceptions.SimpleCommandExceptionType;
 import jackiecrazy.footwork.capability.resources.CombatData;
+import jackiecrazy.footwork.capability.stylish.StylishData;
 import jackiecrazy.wardance.capability.permission.PermissionData;
 import jackiecrazy.wardance.capability.skill.CasterData;
 import jackiecrazy.wardance.config.SkillConfig;
@@ -17,6 +18,7 @@ import jackiecrazy.wardance.items.ManualItem;
 import jackiecrazy.wardance.items.WarItems;
 import jackiecrazy.wardance.skill.Skill;
 import jackiecrazy.wardance.skill.SkillCategory;
+import jackiecrazy.wardance.skill.WarSkills;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.Commands;
 import net.minecraft.commands.arguments.EntityArgument;
@@ -27,6 +29,7 @@ import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
+import net.minecraftforge.registries.RegistryObject;
 
 import java.util.List;
 
@@ -62,22 +65,22 @@ public class WarDanceCommand {
                                                           .executes(WarDanceCommand::setSkillCategory)))
                 )
                 )
-//                .then(Commands.literal("might")
-//                        .executes(WarDanceCommand::missingArgument)
-//                        .then(Commands.argument("entity", EntityArgument.entity())
-//                                .executes(WarDanceCommand::getMight)
-//                                .then(Commands.argument("amount", FloatArgumentType.floatArg(0))
-//                                        .executes(WarDanceCommand::missingArgument)
-//                                        .then(Commands.literal("add")
-//                                                .executes(WarDanceCommand::addMight))
-//                                        .then(Commands.literal("consume")
-//                                                .executes(WarDanceCommand::consumeMight))
-//                                        .then(Commands.literal("set")
-//                                                .executes(WarDanceCommand::setMight)
-//                                        )
-//                                )
-//                        )
-//                )
+                .then(Commands.literal("adrenaline")
+                        .executes(WarDanceCommand::missingArgument)
+                        .then(Commands.argument("entity", EntityArgument.entity())
+                                .executes(WarDanceCommand::getMight)
+                                .then(Commands.argument("amount", FloatArgumentType.floatArg(0))
+                                        .executes(WarDanceCommand::missingArgument)
+                                        .then(Commands.literal("add")
+                                                .executes(WarDanceCommand::addMight))
+                                        .then(Commands.literal("consume")
+                                                .executes(WarDanceCommand::consumeMight))
+                                        .then(Commands.literal("set")
+                                                .executes(WarDanceCommand::setMight)
+                                        )
+                                )
+                        )
+                )
                 .then(Commands.literal("spirit")
                               .executes(WarDanceCommand::missingArgument)
                               .then(Commands.argument("entity", EntityArgument.entity())
@@ -204,40 +207,40 @@ public class WarDanceCommand {
         return Command.SINGLE_SUCCESS;
     }
 
-//    private static int setMight(CommandContext<CommandSourceStack> ctx) throws CommandSyntaxException {
-//        Entity player = EntityArgument.getEntity(ctx, "entity");
-//        if (!(player instanceof LivingEntity)) throw EntitySelectorOptions.ERROR_INAPPLICABLE_OPTION.create(player);
-//        float i = FloatArgumentType.getFloat(ctx, "amount");
-//        CombatData.getCap((LivingEntity) player).setMight(i);
-//        ctx.getSource().sendSuccess(()->Component.translatable("wardance.command.setMight", player.getDisplayName(), i), false);
-//        return Command.SINGLE_SUCCESS;
-//    }
-//
-//    private static int consumeMight(CommandContext<CommandSourceStack> ctx) throws CommandSyntaxException {
-//        Entity player = EntityArgument.getEntity(ctx, "entity");
-//        if (!(player instanceof LivingEntity)) throw EntitySelectorOptions.ERROR_INAPPLICABLE_OPTION.create(player);
-//        float i = FloatArgumentType.getFloat(ctx, "amount");
-//        CombatData.getCap((LivingEntity) player).consumeMight(i);
-//        ctx.getSource().sendSuccess(()->Component.translatable("wardance.command.conMight", player.getDisplayName(), i), false);
-//        return Command.SINGLE_SUCCESS;
-//    }
-//
-//    private static int addMight(CommandContext<CommandSourceStack> ctx) throws CommandSyntaxException {
-//        Entity player = EntityArgument.getEntity(ctx, "entity");
-//        if (!(player instanceof LivingEntity)) throw EntitySelectorOptions.ERROR_INAPPLICABLE_OPTION.create(player);
-//        float i = FloatArgumentType.getFloat(ctx, "amount");
-//        CombatData.getCap((LivingEntity) player).addMight(i);
-//        ctx.getSource().sendSuccess(()->Component.translatable("wardance.command.addMight", player.getDisplayName(), i), false);
-//        return Command.SINGLE_SUCCESS;
-//    }
-//
-//    private static int getMight(CommandContext<CommandSourceStack> ctx) throws CommandSyntaxException {
-//        Entity player = EntityArgument.getEntity(ctx, "entity");
-//        if (!(player instanceof LivingEntity)) throw EntitySelectorOptions.ERROR_INAPPLICABLE_OPTION.create(player);
-//        float might = CombatData.getCap((LivingEntity) player).getMight();
-//        ctx.getSource().sendSuccess(()->Component.translatable("wardance.command.getMight", player.getDisplayName(), might), false);
-//        return Math.round(might);
-//    }
+    private static int setMight(CommandContext<CommandSourceStack> ctx) throws CommandSyntaxException {
+        Entity player = EntityArgument.getEntity(ctx, "entity");
+        if (!(player instanceof LivingEntity)) throw EntitySelectorOptions.ERROR_INAPPLICABLE_OPTION.create(player);
+        float i = FloatArgumentType.getFloat(ctx, "amount");
+        StylishData.getCap((LivingEntity) player).setAdrenaline(i);
+        ctx.getSource().sendSuccess(()->Component.translatable("wardance.command.setMight", player.getDisplayName(), i), false);
+        return Command.SINGLE_SUCCESS;
+    }
+
+    private static int consumeMight(CommandContext<CommandSourceStack> ctx) throws CommandSyntaxException {
+        Entity player = EntityArgument.getEntity(ctx, "entity");
+        if (!(player instanceof LivingEntity)) throw EntitySelectorOptions.ERROR_INAPPLICABLE_OPTION.create(player);
+        float i = FloatArgumentType.getFloat(ctx, "amount");
+        StylishData.getCap((LivingEntity) player).drainAdrenaline(i);
+        ctx.getSource().sendSuccess(()->Component.translatable("wardance.command.conMight", player.getDisplayName(), i), false);
+        return Command.SINGLE_SUCCESS;
+    }
+
+    private static int addMight(CommandContext<CommandSourceStack> ctx) throws CommandSyntaxException {
+        Entity player = EntityArgument.getEntity(ctx, "entity");
+        if (!(player instanceof LivingEntity)) throw EntitySelectorOptions.ERROR_INAPPLICABLE_OPTION.create(player);
+        float i = FloatArgumentType.getFloat(ctx, "amount");
+        StylishData.getCap((LivingEntity) player).addAdrenaline(i);
+        ctx.getSource().sendSuccess(()->Component.translatable("wardance.command.addMight", player.getDisplayName(), i), false);
+        return Command.SINGLE_SUCCESS;
+    }
+
+    private static int getMight(CommandContext<CommandSourceStack> ctx) throws CommandSyntaxException {
+        Entity player = EntityArgument.getEntity(ctx, "entity");
+        if (!(player instanceof LivingEntity)) throw EntitySelectorOptions.ERROR_INAPPLICABLE_OPTION.create(player);
+        float might = StylishData.getCap((LivingEntity) player).getAdrenaline();
+        ctx.getSource().sendSuccess(()->Component.translatable("wardance.command.getMight", player.getDisplayName(), might), false);
+        return Math.round(might*100);
+    }
 
     private static int setSpirit(CommandContext<CommandSourceStack> ctx) throws CommandSyntaxException {
         Entity player = EntityArgument.getEntity(ctx, "entity");
@@ -336,9 +339,8 @@ public class WarDanceCommand {
     private static int grandmaster(CommandContext<CommandSourceStack> ctx) throws CommandSyntaxException {
         Player player = EntityArgument.getPlayer(ctx, "player");
         final boolean enabled = BoolArgumentType.getBool(ctx, "enabled");
-        for (List<Skill> sk : Skill.categoryMap.values())
-            for (Skill s : sk)
-                CasterData.getCap(player).setSkillSelectable(s, enabled);
+        for (RegistryObject<Skill> s:WarSkills.SKILLS.getEntries())
+            CasterData.getCap(player).setSkillSelectable(s.get(), enabled);
         ctx.getSource().sendSuccess(() -> Component.translatable("wardance.command.allSkill" + (enabled), player.getDisplayName()), false);
         return Command.SINGLE_SUCCESS;
     }

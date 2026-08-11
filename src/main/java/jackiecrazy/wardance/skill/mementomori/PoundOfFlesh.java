@@ -2,9 +2,11 @@ package jackiecrazy.wardance.skill.mementomori;
 
 import jackiecrazy.footwork.api.FootworkDamageArchetype;
 import jackiecrazy.footwork.capability.resources.CombatData;
+import jackiecrazy.footwork.event.GainSpiritEvent;
 import jackiecrazy.footwork.utils.GeneralUtils;
 import jackiecrazy.footwork.api.CombatDamageSource;
 import jackiecrazy.wardance.event.MeleePostureEvent;
+import jackiecrazy.wardance.event.PlayInteractionEvent;
 import jackiecrazy.wardance.skill.ProcPoints;
 import jackiecrazy.wardance.skill.SkillData;
 import net.minecraft.world.entity.LivingEntity;
@@ -25,7 +27,7 @@ public class PoundOfFlesh extends MementoMori {
     @Override
     public boolean equippedTick(LivingEntity caster, SkillData d) {
         if (d.getState() == STATE.ACTIVE) {
-            if (CombatData.getCap(caster).getSpirit() == CombatData.getCap(caster).getMaxSpirit())
+            if (CombatData.getCap(caster).consumeSpirit(0.25f))
                 markUsed(caster);
             return activeTick(d);
         }
@@ -39,8 +41,7 @@ public class PoundOfFlesh extends MementoMori {
             prev.setDuration(0);
             return true;
         }
-        if (to == STATE.HOLSTERED && cast(caster, CombatData.getCap(caster).getSpirit() * 5)) {
-            CombatData.getCap(caster).setSpirit(0);
+        if (to == STATE.HOLSTERED && cast(caster, CombatData.getCap(caster).getSpirit() /4)) {
             return true;
         }
         return instantCast(prev, from, to);
@@ -50,10 +51,14 @@ public class PoundOfFlesh extends MementoMori {
     public void onProc(LivingEntity caster, Event procPoint, STATE state, SkillData stats, LivingEntity target) {
         if (state == STATE.ACTIVE) {
             final float amount = caster.getMaxHealth() * 0.1f/stats.getEffectiveness();
-            if (procPoint instanceof MeleePostureEvent.Defense pe && pe.getAttacker()!=caster && procPoint.getPhase() == EventPriority.HIGHEST && pe.success()) {
+            if(procPoint instanceof GainSpiritEvent gse)
+                gse.setQuantity(0);
+            if(procPoint instanceof PlayInteractionEvent.Pre pe && pe.getPhase()==EventPriority.HIGHEST)
                 CombatData.getCap(caster).recordDamage(amount);
-                pe.setPostureConsumption(pe.getPostureConsumption() + CombatData.getCap(target).getMaxPosture() * 0.15f * stats.getEffectiveness());
-            } else if (procPoint instanceof LivingHurtEvent lhe && procPoint.getPhase() == EventPriority.HIGHEST && lhe.getEntity() != caster && (!(lhe.getSource() instanceof CombatDamageSource cds) || cds.getSkillUsed() != this)) {
+            if (procPoint instanceof MeleePostureEvent.Pre pe && pe.getAttacker()==caster && procPoint.getPhase() == EventPriority.HIGHEST) {
+                pe.setPostureConsumption(pe.getPostureConsumption() + CombatData.getCap(target).getMaxPosture() * 0.07f * stats.getEffectiveness());
+            }
+            if (procPoint instanceof LivingHurtEvent lhe && procPoint.getPhase() == EventPriority.HIGHEST && lhe.getEntity() != caster && (!(lhe.getSource() instanceof CombatDamageSource cds) || cds.getSkillUsed() != this)) {
                 lhe.setAmount(lhe.getAmount() + GeneralUtils.getActualHealth(target) * 0.07f * stats.getEffectiveness());
             }
         }

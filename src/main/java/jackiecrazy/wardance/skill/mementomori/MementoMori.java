@@ -142,7 +142,7 @@ pound of flesh: active skill. Consumes all your spirit, and until your spirit re
                 prev.setDuration(0);
             }
             if (to == STATE.HOLSTERED) {
-                float stat = prev.getArbitraryFloat();
+                float stat = CombatData.getCap(caster).getRecordedDamage();
                 if (stat > 1 && cast(caster)) {
                     caster.level().playSound(null, caster.getX(), caster.getY(), caster.getZ(), SoundEvents.LIGHTNING_BOLT_THUNDER, SoundSource.PLAYERS, 0.25f + WarDance.rand.nextFloat() * 0.5f, 0.75f + WarDance.rand.nextFloat() * 0.5f);
                     //EXPLOOOOSION
@@ -153,7 +153,7 @@ pound of flesh: active skill. Consumes all your spirit, and until your spirit re
                             e.hurt(new CombatDamageSource(caster).setDamageTyping(FootworkDamageArchetype.MAGICAL).setProcSkillEffects(true).setKnockbackPercentage(stat/4).setAttackingHand(null).setSkillUsed(this).flag(DamageTypeTags.IS_LIGHTNING), stat *prev.getEffectiveness());
                         }
                     }
-                    prev.setArbitraryFloat(0);
+                    CombatData.getCap(caster).stopRecording(null);
                 }
                 return true;
             }
@@ -162,14 +162,14 @@ pound of flesh: active skill. Consumes all your spirit, and until your spirit re
 
         @Override
         public void onProc(LivingEntity caster, Event procPoint, STATE state, SkillData stats, LivingEntity target) {
-            if (procPoint instanceof final LivingHealEvent lhe && procPoint.getPhase() == EventPriority.HIGHEST && lhe.getEntity() == caster) {
-                lhe.setAmount(Math.min(lhe.getAmount(), caster.getMaxHealth() - caster.getHealth()));
-                float stat = stats.getArbitraryFloat();
-                stat += lhe.getAmount();
-                stat = Math.min(stat, GeneralUtils.getActualHealth(caster));
-                stats.setArbitraryFloat(stat);
-                stats.markDirty();
-            }
+//            if (procPoint instanceof final LivingHealEvent lhe && procPoint.getPhase() == EventPriority.HIGHEST && lhe.getEntity() == caster) {
+//                lhe.setAmount(Math.min(lhe.getAmount(), caster.getMaxHealth() - caster.getHealth()));
+//                float stat = stats.getArbitraryFloat();
+//                stat += lhe.getAmount();
+//                stat = Math.min(stat, GeneralUtils.getActualHealth(caster));
+//                stats.setArbitraryFloat(stat);
+//                stats.markDirty();
+//            }
         }
     }
 

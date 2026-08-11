@@ -1,7 +1,6 @@
 package jackiecrazy.wardance.skill.judgment;
 
 import jackiecrazy.footwork.api.FootworkDamageArchetype;
-import jackiecrazy.footwork.capability.resources.CombatData;
 import jackiecrazy.footwork.capability.stylish.StylishData;
 import jackiecrazy.wardance.WarDance;
 import jackiecrazy.footwork.api.CombatDamageSource;
@@ -51,13 +50,8 @@ public class Judgment extends Skill {
     @Override
     public CastStatus castingCheck(LivingEntity caster, SkillData sd) {
         if (!StylishData.getCap(caster).maxAdrenaline())
-            return CastStatus.OTHER;
+            return CastStatus.ADRENALINE;
         return super.castingCheck(caster, sd);
-    }
-
-    @Override
-    public float mightCost(LivingEntity caster) {
-        return 2;
     }
 
     @Override

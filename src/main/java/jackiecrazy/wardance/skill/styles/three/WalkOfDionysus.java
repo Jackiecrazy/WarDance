@@ -6,6 +6,7 @@ import jackiecrazy.footwork.capability.resources.CombatData;
 import jackiecrazy.footwork.capability.stylish.StylishData;
 import jackiecrazy.footwork.event.StunEvent;
 import jackiecrazy.footwork.utils.TargetingUtils;
+import jackiecrazy.wardance.capability.resources.NewCombatCapability;
 import jackiecrazy.wardance.config.CombatConfig;
 import jackiecrazy.wardance.skill.SkillData;
 import jackiecrazy.wardance.skill.styles.SkillStyle;
@@ -25,10 +26,9 @@ public class WalkOfDionysus extends SkillStyle {
 
     @Override
     public boolean equippedTick(LivingEntity caster, SkillData stats) {
-        if (!CombatData.getCap(caster).isStunned() && StylishData.getCap(caster).maxAdrenaline()) {
+        if (!CombatData.getCap(caster).isStunned() && CombatData.getCap(caster).getSpirit()==CombatData.getCap(caster).getMaxSpirit()) {
+            CombatData.getCap(caster).consumeSpirit(NewCombatCapability.FINISHER_THRESHOLD);
             CombatData.getCap(caster).knockdown(CombatConfig.knockdownDurationPlayer);
-            StylishData.getCap(caster).resetAdrenaline();
-            CombatData.getCap(caster).setSpirit(CombatData.getCap(caster).getMaxSpirit());
             fall(caster);
             CombatData.getCap(caster).knockdown(0);
         }

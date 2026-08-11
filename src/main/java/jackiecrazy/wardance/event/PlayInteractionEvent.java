@@ -68,14 +68,14 @@ public class PlayInteractionEvent extends LivingEvent {
         }
     }
 
-    public static class Post extends PlayInteractionEvent {
+    public static class Interaction extends PlayInteractionEvent {
         protected WeaponInteractions.InteractionGroup orig;
 
-        public Post(LivingEntity entity,
-                    InteractionHand hand,
-                    ItemStack stack,
-                    WeaponStats.AttackType state,
-                    WeaponInteractions.InteractionGroup interact) {
+        public Interaction(LivingEntity entity,
+                           InteractionHand hand,
+                           ItemStack stack,
+                           WeaponStats.AttackType state,
+                           WeaponInteractions.InteractionGroup interact) {
             super(entity, hand, stack, state);
             this.orig = this.interact = interact;
         }
@@ -91,6 +91,28 @@ public class PlayInteractionEvent extends LivingEvent {
 
         public WeaponInteractions.InteractionGroup getInteraction() {
             return interact;
+        }
+    }
+
+    public static class Post extends PlayInteractionEvent {
+        public double getCooldown() {
+            return cooldown;
+        }
+
+        public Post setCooldown(double cooldown) {
+            this.cooldown = cooldown;
+            return this;
+        }
+
+        private double cooldown;
+
+        public Post(LivingEntity entity,
+                           InteractionHand hand,
+                           ItemStack stack,
+                           WeaponStats.AttackType state,
+                           WeaponInteractions.InteractionGroup interact) {
+            super(entity, hand, stack, state);
+            cooldown=interact.getCooldownRefund();
         }
     }
 }

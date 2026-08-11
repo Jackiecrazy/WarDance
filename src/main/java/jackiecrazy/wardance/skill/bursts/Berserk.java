@@ -1,9 +1,13 @@
-package jackiecrazy.wardance.skill.misc;
+package jackiecrazy.wardance.skill.bursts;
 
-import jackiecrazy.footwork.api.FootworkAttributes;
 import jackiecrazy.footwork.capability.stylish.StylishData;
 import jackiecrazy.wardance.api.WarAttributes;
+import jackiecrazy.wardance.capability.flyingweapon.FlyingWeaponData;
+import jackiecrazy.wardance.capability.flyingweapon.IFlyingWeapon;
 import jackiecrazy.wardance.config.weapon.WeaponStats;
+import jackiecrazy.wardance.entity.FlyingWeaponEntity;
+import jackiecrazy.wardance.event.ConsumePostureEvent;
+import jackiecrazy.wardance.event.GrappleEvent;
 import jackiecrazy.wardance.skill.Skill;
 import jackiecrazy.wardance.skill.SkillData;
 import jackiecrazy.wardance.skill.SkillTags;
@@ -15,6 +19,7 @@ import net.minecraft.world.entity.ai.attributes.AttributeModifier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraftforge.event.entity.living.LivingAttackEvent;
 import net.minecraftforge.event.entity.living.LivingDeathEvent;
+import net.minecraftforge.event.entity.living.LivingHurtEvent;
 import net.minecraftforge.eventbus.api.Event;
 import net.minecraftforge.eventbus.api.EventPriority;
 
@@ -50,9 +55,17 @@ public class Berserk extends Skill {
 
     @Override
     public boolean equippedTick(LivingEntity caster, SkillData stats) {
-        if (caster.getMainHandItem().is(WeaponStats.TWO_HANDED) && caster.getOffhandItem().is(WeaponStats.TWO_HANDED) && stats.getState() == STATE.ACTIVE)
-            completeChallenge(caster);
-        return activeTick(stats);
+        if (stats.getState() == STATE.ACTIVE) {
+            if(!StylishData.getCap(caster).drainAdrenaline(0.01f/stats.getEffectiveness())) {
+                markUsed(caster);
+                return true;
+            }
+            if (caster.getMainHandItem().is(WeaponStats.TWO_HANDED) && caster.getOffhandItem().is(WeaponStats.TWO_HANDED))
+                completeChallenge(caster);
+            if(FlyingWeaponData.getCap(caster).hasGrapple())
+                FlyingWeaponData.getCap(caster).getGrapple().setHookStrength(10);
+        }
+        return false;
     }
 
     @Override
@@ -70,8 +83,19 @@ public class Berserk extends Skill {
                 CombatUtils.triggerSteveTime(caster, 30);
             }
         }
-        if (procPoint instanceof LivingDeathEvent && state == STATE.ACTIVE && procPoint.getPhase() == EventPriority.HIGHEST) {
-            stats.setDuration(stats.getMaxDuration());
+        if(state == STATE.ACTIVE) {
+            if (procPoint instanceof LivingDeathEvent && procPoint.getPhase() == EventPriority.HIGHEST) {
+                stats.setDuration(stats.getMaxDuration());
+            }
+            if (procPoint instanceof GrappleEvent e && e.getEntity()==caster){
+                e.getGrapple().setHookStrength(10000);
+            }
+            if (procPoint instanceof LivingHurtEvent e && e.getEntity()==caster){
+                e.setAmount(0);
+            }
+            if (procPoint instanceof ConsumePostureEvent e && e.getEntity()==caster){
+                e.setPostureConsumption(0);
+            }
         }
     }
 

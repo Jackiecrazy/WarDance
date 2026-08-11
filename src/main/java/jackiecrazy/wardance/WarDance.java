@@ -19,13 +19,14 @@ import jackiecrazy.wardance.command.WarDanceCommand;
 import jackiecrazy.wardance.compat.ElenaiCompat;
 import jackiecrazy.wardance.compat.WarCompat;
 import jackiecrazy.wardance.config.*;
-import jackiecrazy.wardance.config.weapon.BCCannibalism;
+import jackiecrazy.wardance.config.weapon.BCBackupProvider;
 import jackiecrazy.wardance.config.weapon.TwohandingStats;
 import jackiecrazy.wardance.config.weapon.WeaponStats;
 import jackiecrazy.wardance.entity.WarEntities;
 import jackiecrazy.wardance.items.WarItems;
 import jackiecrazy.wardance.loot.ScrollLootModifier;
 import jackiecrazy.wardance.move.actions.WarActionsRegistry;
+import jackiecrazy.wardance.move.conditions.WarConditionsRegistry;
 import jackiecrazy.wardance.networking.*;
 import jackiecrazy.wardance.networking.combat.*;
 import jackiecrazy.wardance.networking.meta.*;
@@ -130,6 +131,7 @@ public class WarDance {
         WarItems.ITEMS.register(bus);
         WarContainers.MENUS.register(bus);
         WarActionsRegistry.ACTIONS.register(bus);
+        WarConditionsRegistry.CONDITIONS.register(bus);
         WarSounds.SOUND_EVENTS.register(bus);
         TABS.register(bus);
         COMMAND_ARGUMENT_TYPES.register(bus);
@@ -209,7 +211,7 @@ public class WarDance {
 
     @SubscribeEvent
     public void onJsonListener(AddReloadListenerEvent event) {
-        BCCannibalism.register(event);
+        BCBackupProvider.register(event);
         WeaponStats.register(event);
         TwohandingStats.register(event);
         MobSpecs.register(event);

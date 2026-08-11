@@ -24,6 +24,23 @@ import net.minecraftforge.fml.common.Mod;
 public class SkillEventHandler {
 
     @SubscribeEvent(priority = EventPriority.LOWEST)
+    public static void grapL(GrappleEvent e) {
+        if (!e.getEntity().isEffectiveAi()) return;
+        final ISkillCapability cap = CasterData.getCap(e.getEntity());
+        for (Skill s : cap.getEquippedSkillsAndStyle()) {
+            cap.getSkillData(s).ifPresent(d -> s.onProc(e.getEntity(), e, d.getState(), d, null));
+        }
+    }
+
+    @SubscribeEvent(priority = EventPriority.HIGHEST)
+    public static void grapH(GrappleEvent e) {
+        if (!e.getEntity().isEffectiveAi()) return;
+        final ISkillCapability cap = CasterData.getCap(e.getEntity());
+        for (Skill s : cap.getEquippedSkillsAndStyle()) {
+            cap.getSkillData(s).ifPresent(d -> s.onProc(e.getEntity(), e, d.getState(), d, null));
+        }
+    }
+    @SubscribeEvent(priority = EventPriority.LOWEST)
     public static void kickL(KickEvent e) {
         if (!e.getEntity().isEffectiveAi() || !(e.getTarget() instanceof LivingEntity)) return;
         final ISkillCapability cap = CasterData.getCap(e.getEntity());
